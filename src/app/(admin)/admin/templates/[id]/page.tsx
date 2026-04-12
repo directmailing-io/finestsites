@@ -1,10 +1,17 @@
 'use client'
 
-import { useState, useEffect, useRef, use } from 'react'
+import { useState, useEffect, useRef, use, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { PlaceholderSchemaEditor, PlaceholderField } from '@/components/admin/PlaceholderSchemaEditor'
 
-const WORKER_URL = 'finestsites-worker.finestsites.workers.dev'
+interface DomainSetup {
+  status: string
+  ssl_status?: string
+  configured?: boolean
+  fallback_host?: string
+  ownership_verification?: { type: string; name: string; value: string }
+  ssl_records?: Array<{ type: string; name: string; value: string }>
+}
 
 export default function EditTemplatePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
@@ -19,6 +26,8 @@ export default function EditTemplatePage({ params }: { params: Promise<{ id: str
   const [bundlePath, setBundlePath] = useState<string | null>(null)
   const [uploadState, setUploadState] = useState<'idle' | 'uploading' | 'done' | 'error'>('idle')
   const [form, setForm] = useState({ title: '', description: '', domain: '', status: 'draft' })
+  const [domainSetup, setDomainSetup] = useState<DomainSetup | null>(null)
+  const [settingUpDomain, setSettingUpDomain] = useState(false)
 
   useEffect(() => {
     fetch(`/api/admin/templates/${id}`)
@@ -35,6 +44,30 @@ export default function EditTemplatePage({ params }: { params: Promise<{ id: str
         setLoading(false)
       })
   }, [id])
+
+  const loadDomainSetup = useCallback(async () => {
+    const res = await fetch(`/api/admin/templates/${id}/domain-setup`)
+    if (res.ok) setDomainSetup(await res.json())
+  }, [id])
+
+  useEffect(() => { loadDomainSetup() }, [loadDomainSetup])
+
+  // Poll while pending
+  useEffect(() => {
+    if (!domainSetup || domainSetup.status === 'none' || domainSetup.status === 'active') return
+    const t = setInterval(loadDomainSetup, 20000)
+    return () => clearInterval(t)
+  }, [domainSetup, loadDomainSetup])
+
+  async function setupDomain() {
+    setSettingUpDomain(true)
+    setError('')
+    const res = await fetch(`/api/admin/templates/${id}/domain-setup`, { method: 'POST' })
+    const data = await res.json()
+    if (!res.ok) { setError(data.error ?? 'Fehler beim Domain-Setup.'); setSettingUpDomain(false); return }
+    setDomainSetup(data)
+    setSettingUpDomain(false)
+  }
 
   function setField(key: string, value: string) {
     setForm(prev => ({ ...prev, [key]: value }))
@@ -278,69 +311,127 @@ export default function EditTemplatePage({ params }: { params: Promise<{ id: str
           <PlaceholderSchemaEditor fields={fields} onChange={setFields} />
         </div>
 
-        {/* Domain Setup Guide */}
+        {/* Domain Setup */}
         {form.domain && (
           <div className="p-6 rounded-[24px] bg-white flex flex-col gap-4"
             style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.08)', border: '1px solid var(--border)' }}>
-            <div>
-              <h2 className="font-medium text-gray-900">Domain-Konfiguration</h2>
-              <p className="text-sm mt-1" style={{ color: 'var(--muted-foreground)' }}>
-                Damit <code className="bg-gray-100 px-1.5 py-0.5 rounded-md font-mono text-xs">username.{form.domain}</code> funktioniert, musst du folgende DNS-Einträge setzen:
-              </p>
-            </div>
-
-            <div className="rounded-[16px] overflow-hidden" style={{ border: '1px solid #E5E7EB' }}>
-              <table className="w-full text-sm">
-                <thead>
-                  <tr style={{ background: '#F9FAFB', borderBottom: '1px solid #E5E7EB' }}>
-                    <th className="text-left px-4 py-2.5 font-medium text-gray-500 text-xs uppercase tracking-wide">Typ</th>
-                    <th className="text-left px-4 py-2.5 font-medium text-gray-500 text-xs uppercase tracking-wide">Name</th>
-                    <th className="text-left px-4 py-2.5 font-medium text-gray-500 text-xs uppercase tracking-wide">Wert</th>
-                    <th className="text-left px-4 py-2.5 font-medium text-gray-500 text-xs uppercase tracking-wide">TTL</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td className="px-4 py-3"><span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md" style={{ background: '#F3E8FF', color: '#7C3AED' }}>CNAME</span></td>
-                    <td className="px-4 py-3 font-mono text-sm text-gray-900 font-bold">*</td>
-                    <td className="px-4 py-3 font-mono text-sm text-gray-700 break-all">{WORKER_URL}</td>
-                    <td className="px-4 py-3 text-gray-500 text-sm">Auto</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-
-            <div className="flex flex-col gap-2.5">
-              <div className="px-4 py-3 rounded-[14px] text-sm"
-                style={{ background: '#F0FDF4', border: '1px solid #BBF7D0' }}>
-                <p className="font-semibold text-green-800 mb-1">✓ Einmalig einrichten — danach läuft alles automatisch</p>
-                <p className="text-xs text-green-700">
-                  Sobald dieser DNS-Eintrag gesetzt ist, bekommt <strong>jeder User</strong> automatisch eine funktionierende HTTPS-Subdomain — kein weiterer Aufwand pro Nutzer.
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <h2 className="font-medium text-gray-900">SSL & Domain-Setup</h2>
+                <p className="text-xs mt-1" style={{ color: 'var(--muted-foreground)' }}>
+                  Nutzer-URLs: <code className="bg-gray-100 px-1.5 py-0.5 rounded font-mono">username.{form.domain}</code>
                 </p>
               </div>
+              {/* Status badge */}
+              {domainSetup && domainSetup.status !== 'none' && (
+                <span className="text-xs px-2.5 py-1 rounded-full font-medium flex-shrink-0" style={{
+                  background: domainSetup.status === 'active' ? '#F0FDF4' : '#FFFBEB',
+                  color: domainSetup.status === 'active' ? '#16A34A' : '#92400E',
+                }}>
+                  {domainSetup.status === 'active' ? '● SSL aktiv' : '○ Ausstehend'}
+                </span>
+              )}
+            </div>
 
-              <div className="px-4 py-3 rounded-[14px] text-sm"
-                style={{ background: '#EFF6FF', border: '1px solid #BFDBFE' }}>
-                <p className="font-semibold text-blue-800 mb-1.5">Schritt-für-Schritt (Cloudflare DNS)</p>
-                <ol className="list-decimal list-inside text-xs flex flex-col gap-1 text-blue-700">
-                  <li>Öffne <strong>dash.cloudflare.com</strong> → deine Domain <strong>{form.domain}</strong></li>
-                  <li>Klicke links auf <strong>DNS → Records</strong></li>
-                  <li>Klicke <strong>Add record</strong></li>
-                  <li>Typ: <code className="bg-blue-100 px-1 rounded">CNAME</code> · Name: <code className="bg-blue-100 px-1 rounded">*</code> · Ziel: <code className="bg-blue-100 px-1 rounded">{WORKER_URL}</code></li>
-                  <li>Proxy-Status: <strong>Proxied (orange Wolke ☁)</strong> — wichtig für HTTPS!</li>
-                  <li>Klicke <strong>Save</strong></li>
-                </ol>
-                <p className="text-xs text-blue-600 mt-2 pt-2" style={{ borderTop: '1px solid #BFDBFE' }}>
-                  Die orange Wolke bedeutet: Cloudflare schaltet sich dazwischen und stellt automatisch ein kostenloses SSL-Zertifikat aus. Grüne Haken bei allen Nutzern, keine Kosten.
-                </p>
-              </div>
-
+            {/* Not yet configured — Cloudflare for SaaS not set up on platform side */}
+            {domainSetup?.configured === false && (
               <div className="px-4 py-3 rounded-[14px] text-xs"
-                style={{ background: '#FFFBEB', border: '1px solid #FDE68A', color: '#92400E' }}>
-                <p className="font-semibold mb-1">Andere DNS-Anbieter (IONOS, Strato, etc.) — nicht empfohlen</p>
-                <p>Wildcard-HTTPS ist dort ohne ein kostenpflichtiges Zertifikat (~80€/Jahr) nicht möglich. Empfehlung: Domain zu Cloudflare migrieren (kostenlos).</p>
+                style={{ background: '#FEF2F2', border: '1px solid #FECACA', color: '#991B1B' }}>
+                <p className="font-semibold mb-1">Platform-Setup erforderlich</p>
+                <p>Füge <code className="bg-red-100 px-1 rounded font-mono">CLOUDFLARE_ZONE_ID</code> und <code className="bg-red-100 px-1 rounded font-mono">CLOUDFLARE_FALLBACK_HOST</code> zu den Umgebungsvariablen hinzu (einmalig für die gesamte Plattform).</p>
               </div>
-            </div>
+            )}
+
+            {/* Not yet set up for this domain */}
+            {(!domainSetup || domainSetup.status === 'none') && domainSetup?.configured !== false && (
+              <div className="flex flex-col gap-3">
+                <div className="px-4 py-3 rounded-[14px] text-sm"
+                  style={{ background: '#EFF6FF', border: '1px solid #BFDBFE' }}>
+                  <p className="font-semibold text-blue-800 mb-1">Funktioniert mit jedem DNS-Anbieter (all-inkl, IONOS, Strato, etc.)</p>
+                  <p className="text-xs text-blue-700">
+                    Klicke auf &quot;Domain einrichten&quot; — die Plattform registriert <strong>{form.domain}</strong> bei Cloudflare for SaaS und zeigt dir dann genau welche 2 DNS-Einträge du bei deinem Anbieter setzen musst. SSL wird automatisch ausgestellt.
+                  </p>
+                </div>
+                <button onClick={setupDomain} disabled={settingUpDomain}
+                  className="self-start px-5 py-2.5 text-sm font-medium text-white rounded-[16px] flex items-center gap-2 transition-all disabled:opacity-60"
+                  style={{ background: '#1a1a1a', boxShadow: '0 4px 14px rgba(26,26,26,0.2)' }}>
+                  {settingUpDomain ? (
+                    <><div className="w-4 h-4 rounded-full border-2 border-white/40 border-t-white animate-spin" />Wird eingerichtet...</>
+                  ) : 'Domain einrichten'}
+                </button>
+              </div>
+            )}
+
+            {/* Pending — show DNS records to add */}
+            {domainSetup && domainSetup.status !== 'none' && domainSetup.status !== 'active' && (
+              <div className="flex flex-col gap-3">
+                <div className="px-4 py-3 rounded-[14px] text-sm"
+                  style={{ background: '#FFFBEB', border: '1px solid #FDE68A' }}>
+                  <p className="font-semibold text-yellow-800 mb-1">Setze diese DNS-Einträge bei deinem Anbieter</p>
+                  <p className="text-xs text-yellow-700 mb-2">Sobald gesetzt, stellt Cloudflare das SSL-Zertifikat automatisch aus (dauert 1–5 Minuten). Die Seite prüft alle 20 Sek. automatisch.</p>
+                </div>
+
+                <div className="rounded-[16px] overflow-hidden" style={{ border: '1px solid #E5E7EB' }}>
+                  <table className="w-full text-xs">
+                    <thead>
+                      <tr style={{ background: '#F9FAFB', borderBottom: '1px solid #E5E7EB' }}>
+                        <th className="text-left px-3 py-2 font-semibold text-gray-500 uppercase tracking-wide">Typ</th>
+                        <th className="text-left px-3 py-2 font-semibold text-gray-500 uppercase tracking-wide">Name</th>
+                        <th className="text-left px-3 py-2 font-semibold text-gray-500 uppercase tracking-wide">Wert</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-100">
+                      {/* CNAME — points to fallback host */}
+                      {domainSetup.fallback_host && (
+                        <tr>
+                          <td className="px-3 py-2.5"><span className="font-mono font-bold px-1.5 py-0.5 rounded" style={{ background: '#F3E8FF', color: '#7C3AED' }}>CNAME</span></td>
+                          <td className="px-3 py-2.5 font-mono font-bold text-gray-900">*</td>
+                          <td className="px-3 py-2.5 font-mono text-gray-700 break-all">{domainSetup.fallback_host}</td>
+                        </tr>
+                      )}
+                      {/* TXT — ownership verification */}
+                      {domainSetup.ownership_verification && (
+                        <tr>
+                          <td className="px-3 py-2.5"><span className="font-mono font-bold px-1.5 py-0.5 rounded" style={{ background: '#FEF3C7', color: '#92400E' }}>TXT</span></td>
+                          <td className="px-3 py-2.5 font-mono text-gray-700 break-all">{domainSetup.ownership_verification.name}</td>
+                          <td className="px-3 py-2.5 font-mono text-gray-700 break-all">{domainSetup.ownership_verification.value}</td>
+                        </tr>
+                      )}
+                      {/* SSL validation TXT records */}
+                      {domainSetup.ssl_records?.map((r, i) => (
+                        <tr key={i}>
+                          <td className="px-3 py-2.5"><span className="font-mono font-bold px-1.5 py-0.5 rounded" style={{ background: '#FEF3C7', color: '#92400E' }}>TXT</span></td>
+                          <td className="px-3 py-2.5 font-mono text-gray-700 break-all">{r.name}</td>
+                          <td className="px-3 py-2.5 font-mono text-gray-700 break-all">{r.value}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+
+                <button onClick={loadDomainSetup}
+                  className="self-start text-xs px-3 py-1.5 rounded-[10px] font-medium"
+                  style={{ background: '#F3F4F6', color: '#374151' }}>
+                  Status jetzt prüfen
+                </button>
+              </div>
+            )}
+
+            {/* Active — all good */}
+            {domainSetup?.status === 'active' && (
+              <div className="px-4 py-3 rounded-[14px] text-sm flex items-start gap-3"
+                style={{ background: '#F0FDF4', border: '1px solid #BBF7D0' }}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#16A34A" strokeWidth="2.5" className="flex-shrink-0 mt-0.5">
+                  <path d="M20 6L9 17l-5-5"/>
+                </svg>
+                <div>
+                  <p className="font-semibold text-green-800">SSL-Zertifikat aktiv</p>
+                  <p className="text-xs text-green-700 mt-0.5">
+                    Alle Subdomains von <strong>{form.domain}</strong> sind automatisch mit HTTPS geschützt. Jeder neue Nutzer bekommt sofort eine funktionierende URL.
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
         )}
 
