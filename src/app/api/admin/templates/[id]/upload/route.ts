@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { uploadToR2 } from '@/lib/r2/client'
+import { processZipUpload } from '@/lib/r2/zip-processor'
 
 async function checkAdmin() {
   const supabase = await createClient()
@@ -21,13 +22,30 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   const file = formData.get('file') as File | null
   if (!file) return NextResponse.json({ error: 'Keine Datei angegeben.' }, { status: 400 })
 
-  const key = `templates/${id}/index.html`
   const buffer = Buffer.from(await file.arrayBuffer())
-  await uploadToR2(key, buffer, 'text/html; charset=utf-8')
+  const isZip = file.name.endsWith('.zip') || file.type === 'application/zip'
+
+  let bundlePath: string
+  let fileCount = 1
+  let files: string[] = []
+
+  if (isZip) {
+    const result = await processZipUpload(buffer, id)
+    bundlePath = result.indexPath
+    fileCount = result.fileCount
+    files = result.files
+  } else {
+    bundlePath = `templates/${id}/index.html`
+    await uploadToR2(bundlePath, buffer, 'text/html; charset=utf-8')
+    files = ['index.html']
+  }
 
   const admin = createAdminClient()
-  const { error } = await admin.from('templates').update({ r2_bundle_path: key }).eq('id', id)
+  const { error } = await admin.from('templates')
+    .update({ r2_bundle_path: bundlePath })
+    .eq('id', id)
+
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 
-  return NextResponse.json({ success: true, key })
+  return NextResponse.json({ success: true, key: bundlePath, fileCount, files })
 }
