@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef, use, useCallback } from 'react'
+import { useState, useEffect, useRef, use } from 'react'
 import { useRouter } from 'next/navigation'
 import { PlaceholderSchemaEditor, PlaceholderField } from '@/components/admin/PlaceholderSchemaEditor'
 
@@ -45,19 +45,23 @@ export default function EditTemplatePage({ params }: { params: Promise<{ id: str
       })
   }, [id])
 
-  const loadDomainSetup = useCallback(async () => {
+  async function loadDomainSetup() {
     const res = await fetch(`/api/admin/templates/${id}/domain-setup`)
     if (res.ok) setDomainSetup(await res.json())
-  }, [id])
+  }
 
-  useEffect(() => { loadDomainSetup() }, [loadDomainSetup])
+  useEffect(() => {
+    loadDomainSetup()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id])
 
   // Poll while pending
   useEffect(() => {
     if (!domainSetup || domainSetup.status === 'none' || domainSetup.status === 'active') return
     const t = setInterval(loadDomainSetup, 20000)
     return () => clearInterval(t)
-  }, [domainSetup, loadDomainSetup])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [domainSetup?.status])
 
   async function setupDomain() {
     setSettingUpDomain(true)
