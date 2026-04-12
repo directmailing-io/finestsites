@@ -192,9 +192,9 @@ export default function EditTemplatePage({ params }: { params: Promise<{ id: str
         <div className="p-6 rounded-[24px] bg-white flex flex-col gap-4"
           style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.08)', border: '1px solid var(--border)' }}>
           <div>
-            <h2 className="font-medium text-gray-900">Website-Datei (HTML)</h2>
+            <h2 className="font-medium text-gray-900">Website-Datei (HTML oder ZIP)</h2>
             <p className="text-xs mt-1" style={{ color: 'var(--muted-foreground)' }}>
-              Lade deine HTML-Datei mit Platzhaltern hoch. Verwende <code className="bg-gray-100 px-1 rounded font-mono">{'{{schluessel}}'}</code> im HTML — z.B. <code className="bg-gray-100 px-1 rounded font-mono">{'{{vorname}}'}</code>, <code className="bg-gray-100 px-1 rounded font-mono">{'{{profilbild}}'}</code>.
+              Lade eine einzelne <strong>.html</strong>-Datei oder ein <strong>.zip</strong>-Archiv mit <code className="bg-gray-100 px-1 rounded font-mono">index.html</code> + Assets hoch. Verwende <code className="bg-gray-100 px-1 rounded font-mono">{'{{schluessel}}'}</code> als Platzhalter.
             </p>
           </div>
 
@@ -232,7 +232,7 @@ export default function EditTemplatePage({ params }: { params: Promise<{ id: str
               </div>
               <div>
                 <p className="text-sm font-medium text-gray-700">Klicken zum Hochladen</p>
-                <p className="text-xs mt-0.5" style={{ color: 'var(--muted-foreground)' }}>.html Datei mit {'{{platzhaltern}}'}</p>
+                <p className="text-xs mt-0.5" style={{ color: 'var(--muted-foreground)' }}>.html oder .zip mit index.html und Assets</p>
               </div>
             </div>
           )}
@@ -240,7 +240,7 @@ export default function EditTemplatePage({ params }: { params: Promise<{ id: str
           <input
             ref={fileInputRef}
             type="file"
-            accept=".html,.htm"
+            accept=".html,.htm,.zip"
             className="hidden"
             onChange={handleFileUpload}
           />
@@ -261,7 +261,7 @@ export default function EditTemplatePage({ params }: { params: Promise<{ id: str
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
               </svg>
-              {bundlePath ? 'Neue Datei hochladen' : 'HTML-Datei hochladen'}
+              {bundlePath ? 'Neue Datei hochladen' : 'HTML / ZIP hochladen'}
             </button>
           )}
         </div>
@@ -328,6 +328,18 @@ export default function EditTemplatePage({ params }: { params: Promise<{ id: str
                 style={{ background: '#FFFBEB', border: '1px solid #FDE68A', color: '#92400E' }}>
                 <p className="font-semibold mb-1">Bei anderen Anbietern (IONOS, Strato, All-Inkl., etc.)</p>
                 <p>Wildcard-CNAME: <code className="bg-yellow-100 px-1 rounded font-mono">*.{form.domain}</code> → <code className="bg-yellow-100 px-1 rounded font-mono">{WORKER_URL}</code></p>
+              </div>
+
+              <div className="px-4 py-3 rounded-[14px] text-xs"
+                style={{ background: '#FEF2F2', border: '1px solid #FECACA', color: '#991B1B' }}>
+                <p className="font-semibold mb-1.5">SSL / HTTPS funktioniert nur bei Cloudflare Proxied</p>
+                <p className="mb-1">
+                  Der CNAME-Eintrag <strong>muss</strong> auf <strong>Proxied (orange Wolke ☁)</strong> stehen — NICHT auf &quot;DNS only&quot; (graue Wolke).
+                </p>
+                <p>
+                  Nur Cloudflare stellt automatisch ein kostenloses SSL-Zertifikat für Wildcard-Subdomains aus.
+                  Bei anderen Anbietern ist Wildcard-SSL ohne ein teures Zertifikat nicht möglich.
+                </p>
               </div>
             </div>
           </div>
