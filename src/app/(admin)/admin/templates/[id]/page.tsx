@@ -27,7 +27,7 @@ export default function EditTemplatePage({ params }: { params: Promise<{ id: str
         setFields(data.placeholder_schema?.fields ?? [])
         setLoading(false)
       })
-    setLoading(true)
+    // loading starts
   }, [id])
 
   function setField(key: string, value: string) {
