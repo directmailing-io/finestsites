@@ -2,11 +2,16 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 
-// GET /api/sites → list current user's sites with template info
+// GET /api/sites → list current user's sites with template info + username
 export async function GET() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+  const admin = createAdminClient()
+
+  // Fetch username
+  const { data: profile } = await admin.from('users').select('username').eq('id', user.id).single()
 
   const { data, error } = await supabase
     .from('user_sites')
@@ -16,7 +21,10 @@ export async function GET() {
     .order('created_at', { ascending: false })
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
-  return NextResponse.json(data)
+
+  // Attach username to each site for URL construction
+  const result = (data ?? []).map(s => ({ ...s, username: profile?.username ?? null }))
+  return NextResponse.json(result)
 }
 
 // POST /api/sites → create a new draft site for a template

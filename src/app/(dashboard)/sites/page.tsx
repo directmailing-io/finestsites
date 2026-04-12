@@ -7,6 +7,7 @@ interface Site {
   id: string
   status: 'draft' | 'published' | 'deleted'
   created_at: string
+  username: string | null
   templates: {
     title: string
     domain: string
@@ -17,8 +18,11 @@ interface Site {
 function SiteCard({ site }: { site: Site }) {
   const isPublished = site.status === 'published'
   const domain = site.templates?.domain
-  const preview = site.templates?.preview_images?.[0] ?? null
-  const siteUrl = isPublished && domain ? `https://me.${domain}` : null
+  const username = site.username
+  const siteUrl = isPublished && domain && username ? `https://${username}.${domain}` : null
+  // Use stored preview image, or live screenshot via thum.io for published sites
+  const preview = site.templates?.preview_images?.[0]
+    ?? (siteUrl ? `https://image.thum.io/get/width/640/crop/400/${siteUrl}` : null)
 
   return (
     <div className="group relative flex flex-col rounded-[20px] bg-white overflow-hidden transition-all duration-200"
@@ -76,9 +80,9 @@ function SiteCard({ site }: { site: Site }) {
             <p className="font-semibold text-gray-900 text-sm leading-tight truncate">
               {site.templates?.title ?? 'Unbekanntes Template'}
             </p>
-            {domain && (
+            {domain && username && (
               <p className="text-xs font-mono mt-0.5 truncate" style={{ color: '#94A3B8' }}>
-                me.{domain}
+                {username}.{domain}
               </p>
             )}
           </div>
