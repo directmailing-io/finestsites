@@ -47,7 +47,22 @@ export default function EditTemplatePage({ params }: { params: Promise<{ id: str
 
   async function loadDomainSetup() {
     const res = await fetch(`/api/admin/templates/${id}/domain-setup`)
-    if (res.ok) setDomainSetup(await res.json())
+    if (!res.ok) return
+    const data = await res.json()
+    setDomainSetup(data)
+    // Auto-activate: if zone is found in CF but route not yet created → trigger automatically
+    if (data.status === 'none' && data.zone_name) {
+      triggerSetup()
+    }
+  }
+
+  async function triggerSetup() {
+    setSettingUpDomain(true)
+    const res = await fetch(`/api/admin/templates/${id}/domain-setup`, { method: 'POST' })
+    const data = await res.json()
+    if (res.ok) setDomainSetup(data)
+    else setError(data.error ?? 'Fehler beim Domain-Setup.')
+    setSettingUpDomain(false)
   }
 
   useEffect(() => {
@@ -55,10 +70,10 @@ export default function EditTemplatePage({ params }: { params: Promise<{ id: str
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id])
 
-  // Poll while pending
+  // Poll every 10s when zone not yet found; stop when active
   useEffect(() => {
-    if (!domainSetup || domainSetup.status === 'none' || domainSetup.status === 'active') return
-    const t = setInterval(loadDomainSetup, 20000)
+    if (!domainSetup || domainSetup.status === 'active') return
+    const t = setInterval(loadDomainSetup, domainSetup.status === 'zone_missing' ? 10000 : 30000)
     return () => clearInterval(t)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [domainSetup?.status])
@@ -342,44 +357,66 @@ export default function EditTemplatePage({ params }: { params: Promise<{ id: str
               <div className="flex flex-col gap-3">
                 <div className="px-4 py-3 rounded-[14px] text-sm"
                   style={{ background: '#FEF2F2', border: '1px solid #FECACA' }}>
-                  <p className="font-semibold text-red-800 mb-1">Domain nicht in Cloudflare gefunden</p>
+                  <p className="font-semibold text-red-800 mb-1">Domain noch nicht in Cloudflare</p>
                   <p className="text-xs text-red-700 mb-2">
-                    <strong>{form.domain}</strong> muss zuerst deinem Cloudflare-Account hinzugefügt werden.
+                    <strong>{form.domain}</strong> muss deinem Cloudflare-Account hinzugefügt werden. Danach erkennt die Plattform sie automatisch.
                   </p>
                   <ol className="text-xs text-red-700 flex flex-col gap-1 list-decimal list-inside">
                     <li>Öffne <strong>dash.cloudflare.com</strong> → &quot;Add a site&quot; → <code className="bg-red-100 px-1 rounded">{form.domain}</code></li>
-                    <li>Wähle den Free Plan</li>
-                    <li>Cloudflare erkennt bestehende DNS-Einträge automatisch</li>
-                    <li>Ändere die Nameserver bei deinem Registrar auf die von Cloudflare</li>
-                    <li>Komm zurück und klicke &quot;Domain einrichten&quot;</li>
+                    <li>Free Plan wählen — Cloudflare erkennt DNS-Einträge automatisch</li>
+                    <li>Nameserver bei deinem Registrar auf die von Cloudflare umstellen</li>
+                    <li>Seite lädt sich alle 10 Sek. automatisch neu — oder manuell unten klicken</li>
                   </ol>
                 </div>
-                <button onClick={setupDomain} disabled={settingUpDomain}
-                  className="self-start px-5 py-2.5 text-sm font-medium text-white rounded-[16px] flex items-center gap-2 transition-all disabled:opacity-60"
-                  style={{ background: '#1a1a1a' }}>
-                  {settingUpDomain
-                    ? <><div className="w-4 h-4 rounded-full border-2 border-white/40 border-t-white animate-spin" />Prüfe...</>
-                    : 'Nochmal versuchen'}
-                </button>
+                <div className="flex gap-2">
+                  <button onClick={setupDomain} disabled={settingUpDomain}
+                    className="px-4 py-2 text-sm font-medium text-white rounded-[12px] flex items-center gap-2 disabled:opacity-60"
+                    style={{ background: '#1a1a1a' }}>
+                    {settingUpDomain
+                      ? <><div className="w-3.5 h-3.5 rounded-full border-2 border-white/40 border-t-white animate-spin" />Prüfe...</>
+                      : 'Jetzt prüfen'}
+                  </button>
+                  <button onClick={async () => {
+                    setSettingUpDomain(true)
+                    await fetch(`/api/admin/templates/${id}/domain-setup`, {
+                      method: 'PATCH',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ forceActive: true }),
+                    })
+                    await loadDomainSetup()
+                    setSettingUpDomain(false)
+                  }} disabled={settingUpDomain}
+                    className="px-4 py-2 text-sm font-medium rounded-[12px] disabled:opacity-60"
+                    style={{ background: '#F0FDF4', color: '#16A34A', border: '1px solid #BBF7D0' }}>
+                    Manuell eingerichtet ✓
+                  </button>
+                </div>
               </div>
             )}
 
-            {/* Not yet set up */}
-            {(!domainSetup || domainSetup.status === 'none') && (
+            {/* Activating automatically */}
+            {(!domainSetup || domainSetup.status === 'none') && settingUpDomain && (
+              <div className="flex items-center gap-3 px-4 py-3 rounded-[14px] text-sm"
+                style={{ background: '#EFF6FF', border: '1px solid #BFDBFE' }}>
+                <div className="w-4 h-4 rounded-full border-2 border-blue-300 border-t-blue-600 animate-spin flex-shrink-0" />
+                <p className="text-blue-700">Worker Route wird automatisch eingerichtet…</p>
+              </div>
+            )}
+
+            {/* Not yet set up — zone not yet checked */}
+            {(!domainSetup || domainSetup.status === 'none') && !settingUpDomain && (
               <div className="flex flex-col gap-3">
                 <div className="px-4 py-3 rounded-[14px] text-sm"
                   style={{ background: '#EFF6FF', border: '1px solid #BFDBFE' }}>
-                  <p className="font-semibold text-blue-800 mb-1">Voraussetzung: Domain in Cloudflare</p>
+                  <p className="font-semibold text-blue-800 mb-1">Prüfe Cloudflare-Account…</p>
                   <p className="text-xs text-blue-700">
-                    <strong>{form.domain}</strong> muss in deinem Cloudflare-Account sein (kostenlos). Danach richtet die Plattform Worker Route + CNAME automatisch ein — SSL läuft sofort.
+                    Sobald <strong>{form.domain}</strong> in deinem Cloudflare-Account ist, wird die Worker Route automatisch eingerichtet.
                   </p>
                 </div>
-                <button onClick={setupDomain} disabled={settingUpDomain}
-                  className="self-start px-5 py-2.5 text-sm font-medium text-white rounded-[16px] flex items-center gap-2 transition-all disabled:opacity-60"
-                  style={{ background: '#1a1a1a', boxShadow: '0 4px 14px rgba(26,26,26,0.2)' }}>
-                  {settingUpDomain
-                    ? <><div className="w-4 h-4 rounded-full border-2 border-white/40 border-t-white animate-spin" />Wird eingerichtet...</>
-                    : 'Domain einrichten'}
+                <button onClick={setupDomain}
+                  className="self-start px-4 py-2 text-sm font-medium rounded-[12px]"
+                  style={{ background: '#F3F4F6', color: '#374151' }}>
+                  Manuell einrichten
                 </button>
               </div>
             )}

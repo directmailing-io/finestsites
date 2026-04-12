@@ -85,6 +85,25 @@ export async function POST(_: NextRequest, { params }: { params: Promise<{ id: s
   }
 }
 
+// PATCH — force-mark as active (for manually configured domains)
+export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const user = await checkAdmin()
+  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+  const { id } = await params
+  const body = await req.json().catch(() => ({}))
+  if (!body.forceActive) return NextResponse.json({ error: 'Invalid' }, { status: 400 })
+
+  const admin = createAdminClient()
+  await admin.from('templates').update({
+    cf_hostname_id: 'manual',
+    cf_hostname_status: 'active',
+    cf_hostname_data: { status: 'active', manual: true },
+  }).eq('id', id)
+
+  return NextResponse.json({ status: 'active', manual: true })
+}
+
 // DELETE — remove Worker Route
 export async function DELETE(_: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const user = await checkAdmin()
