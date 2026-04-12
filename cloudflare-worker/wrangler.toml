@@ -9,7 +9,7 @@ bucket_name = "finestsites-templates"
 
 [[kv_namespaces]]
 binding = "KV_CACHE"
-id = "REPLACE_WITH_KV_NAMESPACE_ID"
+id = "d59a4cba067147dc8db48fdd7b4d39e3"
 
 [vars]
 SUPABASE_URL = "https://blgxussxxziglevezzrk.supabase.co"
