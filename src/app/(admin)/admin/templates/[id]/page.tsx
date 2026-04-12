@@ -312,34 +312,33 @@ export default function EditTemplatePage({ params }: { params: Promise<{ id: str
 
             <div className="flex flex-col gap-2.5">
               <div className="px-4 py-3 rounded-[14px] text-sm"
+                style={{ background: '#F0FDF4', border: '1px solid #BBF7D0' }}>
+                <p className="font-semibold text-green-800 mb-1">✓ Einmalig einrichten — danach läuft alles automatisch</p>
+                <p className="text-xs text-green-700">
+                  Sobald dieser DNS-Eintrag gesetzt ist, bekommt <strong>jeder User</strong> automatisch eine funktionierende HTTPS-Subdomain — kein weiterer Aufwand pro Nutzer.
+                </p>
+              </div>
+
+              <div className="px-4 py-3 rounded-[14px] text-sm"
                 style={{ background: '#EFF6FF', border: '1px solid #BFDBFE' }}>
-                <p className="font-semibold text-blue-800 mb-1.5">📋 Schritt-für-Schritt (Cloudflare DNS)</p>
+                <p className="font-semibold text-blue-800 mb-1.5">Schritt-für-Schritt (Cloudflare DNS)</p>
                 <ol className="list-decimal list-inside text-xs flex flex-col gap-1 text-blue-700">
                   <li>Öffne <strong>dash.cloudflare.com</strong> → deine Domain <strong>{form.domain}</strong></li>
                   <li>Klicke links auf <strong>DNS → Records</strong></li>
                   <li>Klicke <strong>Add record</strong></li>
                   <li>Typ: <code className="bg-blue-100 px-1 rounded">CNAME</code> · Name: <code className="bg-blue-100 px-1 rounded">*</code> · Ziel: <code className="bg-blue-100 px-1 rounded">{WORKER_URL}</code></li>
-                  <li>Proxy-Status: <strong>Proxied</strong> (orange Wolke ✓)</li>
+                  <li>Proxy-Status: <strong>Proxied (orange Wolke ☁)</strong> — wichtig für HTTPS!</li>
                   <li>Klicke <strong>Save</strong></li>
                 </ol>
+                <p className="text-xs text-blue-600 mt-2 pt-2" style={{ borderTop: '1px solid #BFDBFE' }}>
+                  Die orange Wolke bedeutet: Cloudflare schaltet sich dazwischen und stellt automatisch ein kostenloses SSL-Zertifikat aus. Grüne Haken bei allen Nutzern, keine Kosten.
+                </p>
               </div>
 
               <div className="px-4 py-3 rounded-[14px] text-xs"
                 style={{ background: '#FFFBEB', border: '1px solid #FDE68A', color: '#92400E' }}>
-                <p className="font-semibold mb-1">Bei anderen Anbietern (IONOS, Strato, All-Inkl., etc.)</p>
-                <p>Wildcard-CNAME: <code className="bg-yellow-100 px-1 rounded font-mono">*.{form.domain}</code> → <code className="bg-yellow-100 px-1 rounded font-mono">{WORKER_URL}</code></p>
-              </div>
-
-              <div className="px-4 py-3 rounded-[14px] text-xs"
-                style={{ background: '#FEF2F2', border: '1px solid #FECACA', color: '#991B1B' }}>
-                <p className="font-semibold mb-1.5">SSL / HTTPS funktioniert nur bei Cloudflare Proxied</p>
-                <p className="mb-1">
-                  Der CNAME-Eintrag <strong>muss</strong> auf <strong>Proxied (orange Wolke ☁)</strong> stehen — NICHT auf &quot;DNS only&quot; (graue Wolke).
-                </p>
-                <p>
-                  Nur Cloudflare stellt automatisch ein kostenloses SSL-Zertifikat für Wildcard-Subdomains aus.
-                  Bei anderen Anbietern ist Wildcard-SSL ohne ein teures Zertifikat nicht möglich.
-                </p>
+                <p className="font-semibold mb-1">Andere DNS-Anbieter (IONOS, Strato, etc.) — nicht empfohlen</p>
+                <p>Wildcard-HTTPS ist dort ohne ein kostenpflichtiges Zertifikat (~80€/Jahr) nicht möglich. Empfehlung: Domain zu Cloudflare migrieren (kostenlos).</p>
               </div>
             </div>
           </div>
