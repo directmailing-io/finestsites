@@ -1,12 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { createClient } from '@/lib/supabase/server'
-import {
-  createCustomHostname,
-  getCustomHostname,
-  deleteCustomHostname,
-  isConfigured,
-} from '@/lib/cloudflare/custom-hostnames'
+import { setupDomainRouting, findZone, deleteWorkerRoute } from '@/lib/cloudflare/worker-routes'
 
 async function checkAdmin() {
   const supabase = await createClient()
@@ -23,94 +18,91 @@ export async function GET(_: NextRequest, { params }: { params: Promise<{ id: st
 
   const { id } = await params
   const admin = createAdminClient()
-  const { data: tpl } = await admin.from('templates').select('domain, cf_hostname_id, cf_hostname_status, cf_hostname_data').eq('id', id).single()
+  const { data: tpl } = await admin
+    .from('templates')
+    .select('domain, cf_hostname_id, cf_hostname_status, cf_hostname_data')
+    .eq('id', id)
+    .single()
+
   if (!tpl) return NextResponse.json({ error: 'Not found' }, { status: 404 })
+  if (!tpl.domain) return NextResponse.json({ status: 'no_domain' })
 
-  if (!tpl.cf_hostname_id) {
-    return NextResponse.json({ status: 'none', configured: isConfigured() })
-  }
-
-  // Refresh status from Cloudflare
-  try {
-    const cf = await getCustomHostname(tpl.cf_hostname_id)
-    const payload = {
-      status: cf.status,
-      ssl_status: cf.ssl.status,
-      ownership_verification: cf.ownership_verification,
-      ssl_records: cf.ssl.validation_records ?? [],
-      fallback_host: process.env.CLOUDFLARE_FALLBACK_HOST,
-      configured: isConfigured(),
+  // If already set up, verify zone still exists
+  if (tpl.cf_hostname_status === 'active' && tpl.cf_hostname_data) {
+    const zone = await findZone(tpl.domain).catch(() => null)
+    if (!zone) {
+      return NextResponse.json({ status: 'zone_missing', domain: tpl.domain })
     }
-    // Update cached status
-    await admin.from('templates').update({
-      cf_hostname_status: cf.status,
-      cf_hostname_data: payload,
-    }).eq('id', id)
-    return NextResponse.json(payload)
-  } catch (err) {
-    return NextResponse.json({ status: 'error', message: String(err), configured: isConfigured() })
+    return NextResponse.json({ status: 'active', domain: tpl.domain, ...(tpl.cf_hostname_data as object) })
   }
+
+  // Check if zone exists in Cloudflare
+  const zone = await findZone(tpl.domain).catch(() => null)
+  if (!zone) {
+    return NextResponse.json({ status: 'zone_missing', domain: tpl.domain })
+  }
+
+  return NextResponse.json({
+    status: tpl.cf_hostname_status ?? 'none',
+    domain: tpl.domain,
+    zone_name: zone.name,
+    zone_status: zone.status,
+  })
 }
 
-// POST — create Custom Hostname (called when admin clicks "Domain einrichten")
+// POST — set up Worker Route + CNAME automatically
 export async function POST(_: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const user = await checkAdmin()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  if (!isConfigured()) {
-    return NextResponse.json({
-      error: 'CLOUDFLARE_ZONE_ID und CLOUDFLARE_FALLBACK_HOST sind noch nicht konfiguriert.',
-    }, { status: 503 })
-  }
-
   const { id } = await params
   const admin = createAdminClient()
-  const { data: tpl } = await admin.from('templates').select('domain, cf_hostname_id').eq('id', id).single()
+  const { data: tpl } = await admin.from('templates').select('domain, cf_hostname_status').eq('id', id).single()
+
   if (!tpl?.domain) return NextResponse.json({ error: 'Domain fehlt.' }, { status: 400 })
-
-  // If already registered, just return current status
-  if (tpl.cf_hostname_id) {
-    const cf = await getCustomHostname(tpl.cf_hostname_id)
-    return NextResponse.json({
-      status: cf.status,
-      ssl_status: cf.ssl.status,
-      ownership_verification: cf.ownership_verification,
-      ssl_records: cf.ssl.validation_records ?? [],
-      fallback_host: process.env.CLOUDFLARE_FALLBACK_HOST,
-    })
+  if (tpl.cf_hostname_status === 'active') {
+    return NextResponse.json({ status: 'active', domain: tpl.domain })
   }
 
-  // Create wildcard custom hostname
-  const cf = await createCustomHostname(`*.${tpl.domain}`)
+  try {
+    const result = await setupDomainRouting(tpl.domain)
+    const payload = {
+      status: 'active',
+      domain: tpl.domain,
+      zone_id: result.zone.id,
+      route_id: result.routeId,
+    }
+    await admin.from('templates').update({
+      cf_hostname_id: result.routeId,
+      cf_hostname_status: 'active',
+      cf_hostname_data: payload,
+    }).eq('id', id)
 
-  const payload = {
-    status: cf.status,
-    ssl_status: cf.ssl.status,
-    ownership_verification: cf.ownership_verification,
-    ssl_records: cf.ssl.validation_records ?? [],
-    fallback_host: process.env.CLOUDFLARE_FALLBACK_HOST,
+    return NextResponse.json(payload)
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : String(err)
+    return NextResponse.json({ error: message }, { status: 400 })
   }
-
-  await admin.from('templates').update({
-    cf_hostname_id: cf.id,
-    cf_hostname_status: cf.status,
-    cf_hostname_data: payload,
-  }).eq('id', id)
-
-  return NextResponse.json(payload)
 }
 
-// DELETE — remove Custom Hostname (when template is deleted or domain changed)
+// DELETE — remove Worker Route
 export async function DELETE(_: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const user = await checkAdmin()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const { id } = await params
   const admin = createAdminClient()
-  const { data: tpl } = await admin.from('templates').select('cf_hostname_id').eq('id', id).single()
+  const { data: tpl } = await admin
+    .from('templates')
+    .select('cf_hostname_id, cf_hostname_data')
+    .eq('id', id)
+    .single()
 
-  if (tpl?.cf_hostname_id) {
-    await deleteCustomHostname(tpl.cf_hostname_id)
+  if (tpl?.cf_hostname_id && tpl?.cf_hostname_data) {
+    const d = tpl.cf_hostname_data as { zone_id?: string }
+    if (d.zone_id) {
+      await deleteWorkerRoute(d.zone_id, tpl.cf_hostname_id).catch(() => {})
+    }
     await admin.from('templates').update({
       cf_hostname_id: null,
       cf_hostname_status: null,

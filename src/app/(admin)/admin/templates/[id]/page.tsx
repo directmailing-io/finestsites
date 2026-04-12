@@ -337,86 +337,49 @@ export default function EditTemplatePage({ params }: { params: Promise<{ id: str
               )}
             </div>
 
-            {/* Not yet configured — Cloudflare for SaaS not set up on platform side */}
-            {domainSetup?.configured === false && (
-              <div className="px-4 py-3 rounded-[14px] text-xs"
-                style={{ background: '#FEF2F2', border: '1px solid #FECACA', color: '#991B1B' }}>
-                <p className="font-semibold mb-1">Platform-Setup erforderlich</p>
-                <p>Füge <code className="bg-red-100 px-1 rounded font-mono">CLOUDFLARE_ZONE_ID</code> und <code className="bg-red-100 px-1 rounded font-mono">CLOUDFLARE_FALLBACK_HOST</code> zu den Umgebungsvariablen hinzu (einmalig für die gesamte Plattform).</p>
+            {/* Domain not found in Cloudflare */}
+            {domainSetup?.status === 'zone_missing' && (
+              <div className="flex flex-col gap-3">
+                <div className="px-4 py-3 rounded-[14px] text-sm"
+                  style={{ background: '#FEF2F2', border: '1px solid #FECACA' }}>
+                  <p className="font-semibold text-red-800 mb-1">Domain nicht in Cloudflare gefunden</p>
+                  <p className="text-xs text-red-700 mb-2">
+                    <strong>{form.domain}</strong> muss zuerst deinem Cloudflare-Account hinzugefügt werden.
+                  </p>
+                  <ol className="text-xs text-red-700 flex flex-col gap-1 list-decimal list-inside">
+                    <li>Öffne <strong>dash.cloudflare.com</strong> → &quot;Add a site&quot; → <code className="bg-red-100 px-1 rounded">{form.domain}</code></li>
+                    <li>Wähle den Free Plan</li>
+                    <li>Cloudflare erkennt bestehende DNS-Einträge automatisch</li>
+                    <li>Ändere die Nameserver bei deinem Registrar auf die von Cloudflare</li>
+                    <li>Komm zurück und klicke &quot;Domain einrichten&quot;</li>
+                  </ol>
+                </div>
+                <button onClick={setupDomain} disabled={settingUpDomain}
+                  className="self-start px-5 py-2.5 text-sm font-medium text-white rounded-[16px] flex items-center gap-2 transition-all disabled:opacity-60"
+                  style={{ background: '#1a1a1a' }}>
+                  {settingUpDomain
+                    ? <><div className="w-4 h-4 rounded-full border-2 border-white/40 border-t-white animate-spin" />Prüfe...</>
+                    : 'Nochmal versuchen'}
+                </button>
               </div>
             )}
 
-            {/* Not yet set up for this domain */}
-            {(!domainSetup || domainSetup.status === 'none') && domainSetup?.configured !== false && (
+            {/* Not yet set up */}
+            {(!domainSetup || domainSetup.status === 'none') && (
               <div className="flex flex-col gap-3">
                 <div className="px-4 py-3 rounded-[14px] text-sm"
                   style={{ background: '#EFF6FF', border: '1px solid #BFDBFE' }}>
-                  <p className="font-semibold text-blue-800 mb-1">Funktioniert mit jedem DNS-Anbieter (all-inkl, IONOS, Strato, etc.)</p>
+                  <p className="font-semibold text-blue-800 mb-1">Voraussetzung: Domain in Cloudflare</p>
                   <p className="text-xs text-blue-700">
-                    Klicke auf &quot;Domain einrichten&quot; — die Plattform registriert <strong>{form.domain}</strong> bei Cloudflare for SaaS und zeigt dir dann genau welche 2 DNS-Einträge du bei deinem Anbieter setzen musst. SSL wird automatisch ausgestellt.
+                    <strong>{form.domain}</strong> muss in deinem Cloudflare-Account sein (kostenlos). Danach richtet die Plattform Worker Route + CNAME automatisch ein — SSL läuft sofort.
                   </p>
                 </div>
                 <button onClick={setupDomain} disabled={settingUpDomain}
                   className="self-start px-5 py-2.5 text-sm font-medium text-white rounded-[16px] flex items-center gap-2 transition-all disabled:opacity-60"
                   style={{ background: '#1a1a1a', boxShadow: '0 4px 14px rgba(26,26,26,0.2)' }}>
-                  {settingUpDomain ? (
-                    <><div className="w-4 h-4 rounded-full border-2 border-white/40 border-t-white animate-spin" />Wird eingerichtet...</>
-                  ) : 'Domain einrichten'}
-                </button>
-              </div>
-            )}
-
-            {/* Pending — show DNS records to add */}
-            {domainSetup && domainSetup.status !== 'none' && domainSetup.status !== 'active' && (
-              <div className="flex flex-col gap-3">
-                <div className="px-4 py-3 rounded-[14px] text-sm"
-                  style={{ background: '#FFFBEB', border: '1px solid #FDE68A' }}>
-                  <p className="font-semibold text-yellow-800 mb-1">Setze diese DNS-Einträge bei deinem Anbieter</p>
-                  <p className="text-xs text-yellow-700 mb-2">Sobald gesetzt, stellt Cloudflare das SSL-Zertifikat automatisch aus (dauert 1–5 Minuten). Die Seite prüft alle 20 Sek. automatisch.</p>
-                </div>
-
-                <div className="rounded-[16px] overflow-hidden" style={{ border: '1px solid #E5E7EB' }}>
-                  <table className="w-full text-xs">
-                    <thead>
-                      <tr style={{ background: '#F9FAFB', borderBottom: '1px solid #E5E7EB' }}>
-                        <th className="text-left px-3 py-2 font-semibold text-gray-500 uppercase tracking-wide">Typ</th>
-                        <th className="text-left px-3 py-2 font-semibold text-gray-500 uppercase tracking-wide">Name</th>
-                        <th className="text-left px-3 py-2 font-semibold text-gray-500 uppercase tracking-wide">Wert</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-100">
-                      {/* CNAME — points to fallback host */}
-                      {domainSetup.fallback_host && (
-                        <tr>
-                          <td className="px-3 py-2.5"><span className="font-mono font-bold px-1.5 py-0.5 rounded" style={{ background: '#F3E8FF', color: '#7C3AED' }}>CNAME</span></td>
-                          <td className="px-3 py-2.5 font-mono font-bold text-gray-900">*</td>
-                          <td className="px-3 py-2.5 font-mono text-gray-700 break-all">{domainSetup.fallback_host}</td>
-                        </tr>
-                      )}
-                      {/* TXT — ownership verification */}
-                      {domainSetup.ownership_verification && (
-                        <tr>
-                          <td className="px-3 py-2.5"><span className="font-mono font-bold px-1.5 py-0.5 rounded" style={{ background: '#FEF3C7', color: '#92400E' }}>TXT</span></td>
-                          <td className="px-3 py-2.5 font-mono text-gray-700 break-all">{domainSetup.ownership_verification.name}</td>
-                          <td className="px-3 py-2.5 font-mono text-gray-700 break-all">{domainSetup.ownership_verification.value}</td>
-                        </tr>
-                      )}
-                      {/* SSL validation TXT records */}
-                      {domainSetup.ssl_records?.map((r, i) => (
-                        <tr key={i}>
-                          <td className="px-3 py-2.5"><span className="font-mono font-bold px-1.5 py-0.5 rounded" style={{ background: '#FEF3C7', color: '#92400E' }}>TXT</span></td>
-                          <td className="px-3 py-2.5 font-mono text-gray-700 break-all">{r.name}</td>
-                          <td className="px-3 py-2.5 font-mono text-gray-700 break-all">{r.value}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-
-                <button onClick={loadDomainSetup}
-                  className="self-start text-xs px-3 py-1.5 rounded-[10px] font-medium"
-                  style={{ background: '#F3F4F6', color: '#374151' }}>
-                  Status jetzt prüfen
+                  {settingUpDomain
+                    ? <><div className="w-4 h-4 rounded-full border-2 border-white/40 border-t-white animate-spin" />Wird eingerichtet...</>
+                    : 'Domain einrichten'}
                 </button>
               </div>
             )}
