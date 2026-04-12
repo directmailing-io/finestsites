@@ -1,0 +1,6 @@
+.env.local
+.env*.local
+VERCEL_ENV_VARS.md
+cloudflare-worker/
+supabase/
+SETUP.md
