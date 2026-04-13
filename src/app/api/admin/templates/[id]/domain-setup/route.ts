@@ -27,8 +27,14 @@ export async function GET(_: NextRequest, { params }: { params: Promise<{ id: st
   if (!tpl) return NextResponse.json({ error: 'Not found' }, { status: 404 })
   if (!tpl.domain) return NextResponse.json({ status: 'no_domain' })
 
-  // If already set up, verify zone still exists
+  // If already set up, return active immediately
   if (tpl.cf_hostname_status === 'active' && tpl.cf_hostname_data) {
+    const data = tpl.cf_hostname_data as { manual?: boolean }
+    // For manually configured domains, skip zone verification — trust admin's explicit setup
+    if (data.manual) {
+      return NextResponse.json({ status: 'active', domain: tpl.domain, manual: true })
+    }
+    // For auto-configured domains, verify zone still exists
     const zone = await findZone(tpl.domain).catch(() => null)
     if (!zone) {
       return NextResponse.json({ status: 'zone_missing', domain: tpl.domain })

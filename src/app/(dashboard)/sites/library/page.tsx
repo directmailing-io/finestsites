@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useMemo } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 
 interface Template {
   id: string
@@ -15,7 +14,7 @@ interface Template {
   activatedSiteId?: string
 }
 
-function TemplateCard({ tpl, onActivate }: { tpl: Template; onActivate: (id: string) => void }) {
+function TemplateCard({ tpl }: { tpl: Template }) {
   const preview = tpl.preview_images?.[0] ?? null
 
   return (
@@ -109,22 +108,22 @@ function TemplateCard({ tpl, onActivate }: { tpl: Template; onActivate: (id: str
         {/* Actions */}
         <div className="flex items-center gap-1.5 pt-0.5" style={{ borderTop: '1px solid #F1F5F9' }}>
           <Link href={`/sites/library/${tpl.id}`}
-            className="flex items-center gap-1 text-xs px-2.5 py-1.5 rounded-[8px] font-medium transition-colors duration-150"
+            className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-[8px] font-medium transition-all duration-150"
             style={{ color: '#64748B', background: '#F8FAFC' }}>
-            Vorschau
+            Details
           </Link>
           {tpl.activated ? (
             <Link href={`/sites/${tpl.activatedSiteId}/edit`}
-              className="ml-auto flex items-center gap-1 text-xs px-3 py-1.5 rounded-[8px] font-semibold transition-all duration-150"
-              style={{ background: '#F0FDF4', color: '#16A34A', border: '1px solid rgba(22,163,74,0.2)' }}>
+              className="ml-auto flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-[8px] font-semibold text-white transition-all duration-150"
+              style={{ background: '#1a1a1a' }}>
               Bearbeiten →
             </Link>
           ) : (
-            <button onClick={() => onActivate(tpl.id)}
-              className="ml-auto flex items-center gap-1 text-xs px-3 py-1.5 rounded-[8px] font-semibold text-white transition-all duration-150"
+            <Link href={`/sites/library/${tpl.id}`}
+              className="ml-auto flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-[8px] font-semibold text-white transition-all duration-150"
               style={{ background: '#1a1a1a' }}>
-              Aktivieren
-            </button>
+              Details ansehen
+            </Link>
           )}
         </div>
       </div>
@@ -133,13 +132,10 @@ function TemplateCard({ tpl, onActivate }: { tpl: Template; onActivate: (id: str
 }
 
 export default function LibraryPage() {
-  const router = useRouter()
   const [templates, setTemplates] = useState<Template[]>([])
   const [userSites, setUserSites] = useState<Array<{ template_id: string; id: string }>>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
-  const [activating, setActivating] = useState(false)
-  const [limitError, setLimitError] = useState('')
 
   useEffect(() => {
     Promise.all([
@@ -172,25 +168,6 @@ export default function LibraryPage() {
       t.tags?.some(tag => tag.toLowerCase().includes(q))
     )
   }, [enriched, search])
-
-  async function handleActivate(templateId: string) {
-    setActivating(true)
-    setLimitError('')
-    const res = await fetch('/api/sites', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ template_id: templateId }),
-    })
-    const data = await res.json()
-    if (!res.ok) {
-      if (res.status === 403) {
-        setLimitError(data.error ?? 'Plan-Limit erreicht.')
-      }
-      setActivating(false)
-      return
-    }
-    router.push(`/sites/${data.id}/edit`)
-  }
 
   return (
     <div className="max-w-5xl">
@@ -226,14 +203,6 @@ export default function LibraryPage() {
         />
       </div>
 
-      {limitError && (
-        <div className="mb-4 px-4 py-3 rounded-[14px] text-sm flex items-center justify-between"
-          style={{ background: '#FEF9C3', border: '1px solid #FDE68A', color: '#92400E' }}>
-          <span>{limitError}</span>
-          <a href="/billing" className="font-semibold underline ml-2">Tarif upgraden →</a>
-        </div>
-      )}
-
       {loading ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {[1, 2, 3, 4, 5, 6].map(i => (
@@ -256,21 +225,11 @@ export default function LibraryPage() {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {filtered.map(tpl => (
-            <TemplateCard key={tpl.id} tpl={tpl} onActivate={handleActivate} />
+            <TemplateCard key={tpl.id} tpl={tpl} />
           ))}
         </div>
       )}
 
-      {activating && (
-        <div className="fixed inset-0 flex items-center justify-center z-50"
-          style={{ background: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(4px)' }}>
-          <div className="bg-white rounded-[20px] p-6 flex items-center gap-4"
-            style={{ boxShadow: '0 20px 60px rgba(0,0,0,0.2)' }}>
-            <div className="w-6 h-6 rounded-full border-2 border-gray-200 border-t-gray-900 animate-spin" />
-            <span className="text-sm font-medium text-gray-700">Website wird aktiviert…</span>
-          </div>
-        </div>
-      )}
     </div>
   )
 }

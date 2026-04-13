@@ -9,7 +9,7 @@ export async function GET() {
 
   const admin = createAdminClient()
   const [{ data: profile }, { count }] = await Promise.all([
-    admin.from('users').select('plan, billing_interval, subscription_status, stripe_customer_id').eq('id', user.id).single(),
+    admin.from('users').select('plan, billing_interval, subscription_status, stripe_customer_id, username').eq('id', user.id).single(),
     admin.from('user_sites').select('*', { count: 'exact', head: true }).eq('user_id', user.id).in('status', ['draft', 'published']),
   ])
 
@@ -19,5 +19,6 @@ export async function GET() {
     subscription_status: profile?.subscription_status ?? null,
     stripe_customer_id: profile?.stripe_customer_id ?? null,
     sites_count: count ?? 0,
+    username: profile?.username ?? null,
   })
 }

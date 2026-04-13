@@ -238,6 +238,11 @@ function BillingContent() {
                       style={{ background: '#F3F4F6', color: '#6B7280' }}>
                       Aktueller Tarif
                     </div>
+                  ) : PLANS.findIndex(p => p.key === plan.key) < PLANS.findIndex(p => p.key === currentPlan) ? (
+                    <div className="w-full py-2.5 text-sm font-medium text-center rounded-[12px]"
+                      style={{ background: '#F8FAFC', color: '#CBD5E1', border: '1px solid #E2E8F0' }}>
+                      Nicht verfügbar
+                    </div>
                   ) : loading ? (
                     <div className="w-full py-2.5 rounded-[12px] bg-gray-100 animate-pulse" />
                   ) : (
@@ -250,8 +255,7 @@ function BillingContent() {
                       {checkoutLoading === plan.key ? (
                         <span className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
                       ) : null}
-                      {currentPlan === 'starter' || PLANS.findIndex(p => p.key === plan.key) > PLANS.findIndex(p => p.key === currentPlan)
-                        ? 'Upgraden' : 'Wechseln'}
+                      Upgraden
                     </button>
                   )}
                 </div>

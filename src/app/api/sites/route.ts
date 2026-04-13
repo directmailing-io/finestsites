@@ -51,16 +51,25 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Plan-Limit erreicht. Bitte upgraden.' }, { status: 403 })
   }
 
-  // Prevent duplicate site for same template
-  const { data: existing } = await admin.from('user_sites')
+  // Check for any existing row (including soft-deleted)
+  const { data: anyExisting } = await admin.from('user_sites')
     .select('id, status')
     .eq('user_id', user.id)
     .eq('template_id', template_id)
-    .neq('status', 'deleted')
     .single()
 
-  if (existing) {
-    return NextResponse.json({ id: existing.id, existing: true })
+  if (anyExisting && anyExisting.status !== 'deleted') {
+    return NextResponse.json({ id: anyExisting.id, existing: true })
+  }
+
+  // Reactivate soft-deleted row instead of inserting to avoid unique constraint violation
+  if (anyExisting && anyExisting.status === 'deleted') {
+    const { data, error } = await admin.from('user_sites')
+      .update({ status: 'draft', updated_at: new Date().toISOString() })
+      .eq('id', anyExisting.id)
+      .select().single()
+    if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+    return NextResponse.json(data, { status: 201 })
   }
 
   const { data, error } = await admin.from('user_sites').insert({

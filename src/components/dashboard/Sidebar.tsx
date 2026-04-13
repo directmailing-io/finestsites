@@ -2,9 +2,12 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { useState, useEffect } from 'react'
 import { Logo } from '@/components/shared/Logo'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
+
+const PLAN_LIMITS: Record<string, number> = { starter: 1, pro: 3, unlimited: Infinity }
 
 const navItems = [
   {
@@ -67,6 +70,19 @@ export function DashboardSidebar() {
   const router = useRouter()
   const supabase = createClient()
 
+  const [quota, setQuota] = useState<{ used: number; limit: number; plan: string } | null>(null)
+
+  useEffect(() => {
+    fetch('/api/user/profile')
+      .then(r => r.json())
+      .then(data => {
+        const plan = data.plan ?? 'starter'
+        const limit = PLAN_LIMITS[plan] ?? 1
+        setQuota({ used: data.sites_count ?? 0, limit, plan })
+      })
+      .catch(() => {})
+  }, [])
+
   async function handleLogout() {
     await supabase.auth.signOut()
     router.push('/login')
@@ -74,7 +90,7 @@ export function DashboardSidebar() {
 
   return (
     <aside className="hidden lg:flex w-[240px] flex-col flex-shrink-0 p-4 gap-2"
-      style={{ borderRight: '1px solid var(--border)', background: '#FFFFFF', minHeight: '100vh' }}>
+      style={{ borderRight: '1px solid var(--border)', background: '#FFFFFF', height: '100vh', position: 'sticky', top: 0, overflowY: 'auto' }}>
 
       {/* Logo */}
       <div className="px-3 py-4 mb-2">
@@ -101,8 +117,49 @@ export function DashboardSidebar() {
         })}
       </nav>
 
+      {/* Quota widget */}
+      {quota && (
+        <Link href="/billing"
+          className="mx-1 mb-2 px-3 py-3 rounded-[14px] flex flex-col gap-2 transition-all"
+          style={{ background: '#F8FAFC', border: '1px solid #F1F5F9' }}
+          onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = '#F1F5F9'}
+          onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = '#F8FAFC'}>
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-medium" style={{ color: '#374151' }}>
+              {quota.used} von {quota.limit === Infinity ? '∞' : quota.limit} Webseiten
+            </span>
+            <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded-full capitalize"
+              style={{
+                background: quota.plan === 'unlimited' ? '#F0FDF4' : quota.plan === 'pro' ? '#EFF6FF' : '#F3F4F6',
+                color: quota.plan === 'unlimited' ? '#16A34A' : quota.plan === 'pro' ? '#2563EB' : '#6B7280',
+              }}>
+              {quota.plan}
+            </span>
+          </div>
+          {/* Progress bar */}
+          <div className="w-full h-1.5 rounded-full overflow-hidden" style={{ background: '#E2E8F0' }}>
+            <div
+              className="h-full rounded-full transition-all duration-500"
+              style={{
+                width: quota.limit === Infinity ? '0%' : `${Math.min(100, (quota.used / quota.limit) * 100)}%`,
+                background: quota.used >= quota.limit
+                  ? '#EF4444'
+                  : quota.used / quota.limit >= 0.75
+                  ? '#F59E0B'
+                  : '#1a1a1a',
+              }}
+            />
+          </div>
+          {quota.used >= quota.limit && (
+            <p className="text-[10px] font-medium" style={{ color: '#EF4444' }}>
+              Limit erreicht — upgraden →
+            </p>
+          )}
+        </Link>
+      )}
+
       {/* Bottom: Logout */}
-      <div className="pt-4" style={{ borderTop: '1px solid var(--border)' }}>
+      <div className="pt-2" style={{ borderTop: '1px solid var(--border)' }}>
         <button onClick={handleLogout}
           className="flex items-center gap-3 px-3 py-2.5 text-sm w-full rounded-[14px] transition-all"
           style={{ color: '#6B7280' }}

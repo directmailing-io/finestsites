@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef, use } from 'react'
 import { useRouter } from 'next/navigation'
+import ImageCropModal from '@/components/ImageCropModal'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -76,6 +77,111 @@ function CardSelectField({ field, value, onChange }: {
   )
 }
 
+function ImageField({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  const [imgMode, setImgMode] = useState<'url' | 'upload'>('url')
+  const [cropSrc, setCropSrc] = useState<string | null>(null)
+  const [uploading, setUploading] = useState(false)
+  const [uploadError, setUploadError] = useState('')
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
+  const inputStyle = {
+    background: '#FFFFFF', border: '1.5px solid #E5E7EB', borderRadius: '14px',
+    padding: '10px 14px', fontSize: '14px', outline: 'none', width: '100%',
+  }
+
+  function handleFileSelect(file: File) {
+    const url = URL.createObjectURL(file)
+    setCropSrc(url)
+  }
+
+  async function handleCropConfirm(blob: Blob) {
+    if (cropSrc) URL.revokeObjectURL(cropSrc)
+    setCropSrc(null)
+    setUploading(true)
+    setUploadError('')
+    try {
+      const fd = new FormData()
+      fd.append('file', blob, 'image.jpg')
+      const res = await fetch('/api/upload/image', { method: 'POST', body: fd })
+      const data = await res.json()
+      if (!res.ok) { setUploadError(data.error ?? 'Upload fehlgeschlagen'); return }
+      onChange(data.url)
+    } catch {
+      setUploadError('Upload fehlgeschlagen')
+    } finally {
+      setUploading(false)
+    }
+  }
+
+  return (
+    <div className="flex flex-col gap-2">
+      {cropSrc && <ImageCropModal imageUrl={cropSrc} onConfirm={handleCropConfirm} onCancel={() => { URL.revokeObjectURL(cropSrc); setCropSrc(null) }} />}
+
+      {/* Mode toggle */}
+      <div className="flex items-center gap-0.5 p-0.5 rounded-[10px] self-start" style={{ background: '#F3F4F6' }}>
+        {(['url', 'upload'] as const).map(mode => (
+          <button key={mode} type="button" onClick={() => setImgMode(mode)}
+            className="text-xs font-medium px-3 py-1.5 rounded-[8px] transition-all"
+            style={{
+              background: imgMode === mode ? 'white' : 'transparent',
+              color: imgMode === mode ? '#1a1a1a' : '#6B7280',
+              boxShadow: imgMode === mode ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
+            }}>
+            {mode === 'url' ? 'URL eingeben' : 'Datei hochladen'}
+          </button>
+        ))}
+      </div>
+
+      {/* Preview */}
+      {value && (
+        <div className="relative group">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={value} alt="Vorschau" className="w-full h-36 object-cover rounded-[14px]" style={{ border: '2px solid #E5E7EB' }} />
+          <button type="button" onClick={() => onChange('')}
+            className="absolute top-2 right-2 w-6 h-6 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+            style={{ background: 'rgba(0,0,0,0.6)' }}>
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5">
+              <path d="M18 6L6 18M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
+      )}
+
+      {imgMode === 'url' ? (
+        <input value={value} onChange={e => onChange(e.target.value)}
+          placeholder="Bild-URL eingeben (https://...)"
+          style={inputStyle}
+          onFocus={e => (e.target.style.borderColor = '#1a1a1a')}
+          onBlur={e => (e.target.style.borderColor = '#E5E7EB')} />
+      ) : (
+        <>
+          <input ref={fileInputRef} type="file" accept="image/*" className="hidden"
+            onChange={e => { const f = e.target.files?.[0]; if (f) handleFileSelect(f); e.target.value = '' }} />
+          <div
+            className="flex flex-col items-center gap-2 py-6 rounded-[14px] cursor-pointer transition-all"
+            style={{ border: '2px dashed #E5E7EB', background: '#FAFAFA' }}
+            onClick={() => fileInputRef.current?.click()}
+            onDragOver={e => e.preventDefault()}
+            onDrop={e => { e.preventDefault(); const f = e.dataTransfer.files[0]; if (f) handleFileSelect(f) }}>
+            {uploading ? (
+              <div className="w-6 h-6 rounded-full border-2 border-gray-300 border-t-gray-800 animate-spin" />
+            ) : (
+              <>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="1.5">
+                  <path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+                </svg>
+                <p className="text-xs font-medium text-gray-500">Klicken oder hierher ziehen</p>
+                <p className="text-[11px]" style={{ color: '#CBD5E1' }}>JPG, PNG, WebP — max. 5 MB</p>
+              </>
+            )}
+          </div>
+          {uploadError && <p className="text-xs text-red-500">{uploadError}</p>}
+        </>
+      )}
+    </div>
+  )
+}
+
 function FieldRenderer({ field, value, onChange }: {
   field: FieldSchema; value: string; onChange: (v: string) => void
 }) {
@@ -96,24 +202,7 @@ function FieldRenderer({ field, value, onChange }: {
       )
 
     case 'image':
-      return (
-        <div className="flex flex-col gap-2">
-          {value && (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={value} alt="Vorschau"
-              className="w-24 h-24 object-cover rounded-[14px]"
-              style={{ border: '2px solid #E5E7EB' }} />
-          )}
-          <input value={value} onChange={e => onChange(e.target.value)}
-            placeholder="Bild-URL eingeben (https://...)"
-            style={inputStyle}
-            onFocus={e => (e.target.style.borderColor = '#1a1a1a')}
-            onBlur={e => (e.target.style.borderColor = '#E5E7EB')} />
-          <p className="text-xs" style={{ color: 'var(--muted-foreground)' }}>
-            Lade dein Bild auf imgbb.com oder Cloudinary hoch und füge die URL ein.
-          </p>
-        </div>
-      )
+      return <ImageField value={value} onChange={onChange} />
 
     case 'dropdown':
       return (
@@ -180,6 +269,8 @@ export default function SiteEditPage({ params }: { params: Promise<{ id: string 
   const [previewKey, setPreviewKey] = useState(0)
   const [activeSection, setActiveSection] = useState<string | null>(null)
   const [deviceView, setDeviceView] = useState<'desktop' | 'tablet' | 'mobile'>('desktop')
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
+  const [deletingSite, setDeletingSite] = useState(false)
 
   useEffect(() => {
     fetch(`/api/sites/${id}`)
@@ -258,6 +349,19 @@ export default function SiteEditPage({ params }: { params: Promise<{ id: string 
     await fetch(`/api/sites/${id}/publish`, { method: 'DELETE' })
     setSite(prev => prev ? { ...prev, status: 'draft' } : prev)
     setPublishedUrl('')
+    setSuccess('Seite offline genommen.')
+  }
+
+  async function handleDeleteSite() {
+    setDeletingSite(true)
+    const res = await fetch(`/api/sites/${id}`, { method: 'DELETE' })
+    if (res.ok) {
+      router.push('/sites')
+    } else {
+      setDeletingSite(false)
+      setShowDeleteModal(false)
+      setError('Fehler beim Löschen der Website.')
+    }
   }
 
   if (loading) {
@@ -296,7 +400,7 @@ export default function SiteEditPage({ params }: { params: Promise<{ id: string 
               {site.templates?.title}
             </h1>
             <p className="text-xs font-mono" style={{ color: 'var(--muted-foreground)' }}>
-              {site.username ?? '…'}.{site.templates?.domain}
+              {site.username}.{site.templates?.domain}
             </p>
           </div>
           <span className="text-xs px-2.5 py-0.5 rounded-full"
@@ -336,6 +440,11 @@ export default function SiteEditPage({ params }: { params: Promise<{ id: string 
               Offline nehmen
             </button>
           )}
+          <button onClick={() => setShowDeleteModal(true)}
+            className="px-3 py-2 text-sm font-medium rounded-[14px] transition-all"
+            style={{ background: '#FEF2F2', color: '#DC2626' }}>
+            Löschen
+          </button>
         </div>
       </div>
 
@@ -347,16 +456,19 @@ export default function SiteEditPage({ params }: { params: Promise<{ id: string 
       )}
 
       {publishedUrl && (
-        <div className="mx-6 mt-4 px-4 py-3 rounded-[14px] text-sm flex items-center justify-between"
+        <div className="mx-6 mt-4 px-4 py-3 rounded-[14px] text-sm flex items-center justify-between gap-4"
           style={{ background: '#F0FDF4', border: '1px solid #BBF7D0', color: '#16A34A' }}>
-          <span className="font-medium">✓ Deine Website ist live!</span>
+          <div className="flex items-center gap-3">
+            <span className="font-medium">✓ Deine Website ist live!</span>
+            <span className="text-xs" style={{ color: '#6B7280' }}>Änderungen können 1–2 Minuten dauern.</span>
+          </div>
           <a href={publishedUrl} target="_blank" rel="noopener noreferrer"
-            className="font-mono text-xs hover:underline">{publishedUrl}</a>
+            className="font-mono text-xs hover:underline flex-shrink-0">{publishedUrl}</a>
         </div>
       )}
 
       {/* ── Main split layout ── */}
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex flex-1 overflow-hidden" style={{ minHeight: 0 }}>
 
         {/* ── Left: Form ── */}
         <div className="w-96 flex-shrink-0 flex flex-col border-r overflow-hidden"
@@ -406,7 +518,7 @@ export default function SiteEditPage({ params }: { params: Promise<{ id: string 
         </div>
 
         {/* ── Right: Preview ── */}
-        <div className="flex-1 flex flex-col overflow-hidden" style={{ background: '#E8ECF0' }}>
+        <div className="flex-1 flex flex-col" style={{ background: '#E8ECF0', minHeight: 0, overflow: 'hidden' }}>
           <div className="flex items-center justify-between px-4 py-2 border-b bg-white flex-shrink-0"
             style={{ borderColor: 'var(--border)' }}>
             <span className="text-xs font-medium text-gray-500">Live-Vorschau</span>
@@ -441,24 +553,66 @@ export default function SiteEditPage({ params }: { params: Promise<{ id: string 
             </div>
           </div>
 
-          {site.templates?.r2_bundle_path ? (
-            <div className="flex-1 overflow-auto flex items-start justify-center py-6 px-4">
+          {showDeleteModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center" style={{ background: 'rgba(0,0,0,0.5)' }}>
+            <div className="bg-white rounded-[24px] p-6 flex flex-col gap-4 w-full max-w-sm mx-4"
+              style={{ boxShadow: '0 20px 60px rgba(0,0,0,0.2)' }}>
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-[14px] flex items-center justify-center flex-shrink-0"
+                  style={{ background: '#FEF2F2' }}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#DC2626" strokeWidth="2">
+                    <path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/>
+                  </svg>
+                </div>
+                <h2 className="text-base font-semibold text-gray-900">Website löschen?</h2>
+              </div>
+              <p className="text-sm" style={{ color: '#6B7280' }}>
+                Alle deine eingegebenen Inhalte und Daten gehen dauerhaft verloren. Das Kontingent wird freigegeben.
+              </p>
+              <div className="flex gap-3 justify-end">
+                <button onClick={() => setShowDeleteModal(false)}
+                  className="px-4 py-2 text-sm font-medium rounded-[12px]"
+                  style={{ background: '#F3F4F6', color: '#374151' }}>
+                  Abbrechen
+                </button>
+                <button onClick={handleDeleteSite} disabled={deletingSite}
+                  className="px-4 py-2 text-sm font-semibold text-white rounded-[12px] flex items-center gap-2"
+                  style={{ background: '#DC2626', opacity: deletingSite ? 0.7 : 1 }}>
+                  {deletingSite && <span className="w-3.5 h-3.5 rounded-full border-2 border-white/30 border-t-white animate-spin" />}
+                  Endgültig löschen
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {site.templates?.r2_bundle_path ? (
+            <div style={{ flex: 1, minHeight: 0, overflow: 'auto', padding: '24px 16px', display: 'flex', justifyContent: 'center', alignItems: 'flex-start' }}>
               <div
-                className="relative bg-white rounded-[12px] overflow-hidden transition-all duration-300 flex-shrink-0"
+                className="relative bg-white rounded-[12px] flex-shrink-0 transition-all duration-300"
                 style={{
                   width: deviceView === 'desktop' ? '100%' : deviceView === 'tablet' ? '768px' : '390px',
                   maxWidth: '100%',
-                  minHeight: '600px',
                   boxShadow: '0 8px 40px rgba(0,0,0,0.15)',
+                  overflow: 'hidden',
                 }}>
                 <iframe
                   ref={iframeRef}
                   key={previewKey}
                   src={previewUrl}
-                  className="w-full border-0"
-                  style={{ height: '100%', minHeight: '600px', display: 'block' }}
+                  className="w-full border-0 block"
+                  style={{ height: '800px' }}
                   title="Website-Vorschau"
                   sandbox="allow-scripts allow-same-origin"
+                  onLoad={() => {
+                    try {
+                      const iframe = iframeRef.current
+                      if (iframe?.contentDocument?.documentElement) {
+                        const h = iframe.contentDocument.documentElement.scrollHeight
+                        if (h > 100) iframe.style.height = h + 'px'
+                      }
+                    } catch { /* cross-origin */ }
+                  }}
                 />
               </div>
             </div>
