@@ -30,46 +30,73 @@ function SiteCard({ site }: { site: Site }) {
         boxShadow: '0 2px 16px rgba(0,0,0,0.06), 0 0 0 1px rgba(0,0,0,0.05)',
       }}>
 
-      {/* Preview image area */}
-      <Link href={`/sites/${site.id}/edit`} className="block relative overflow-hidden"
-        style={{ aspectRatio: '16/10', background: 'linear-gradient(135deg, #F1F5F9 0%, #E2E8F0 100%)' }}>
+      {/* Browser chrome + Preview */}
+      <Link href={`/sites/${site.id}/edit`} className="block relative overflow-hidden flex-shrink-0"
+        style={{ background: '#F1F5F9' }}>
 
-        {preview ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={preview} alt={site.templates?.title ?? ''} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
-        ) : (
-          /* Placeholder with stylized mockup lines */
-          <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 px-6">
-            <div className="w-full max-w-[160px] flex flex-col gap-1.5 opacity-30">
-              <div className="h-2.5 rounded-full bg-slate-400 w-3/4" />
-              <div className="h-1.5 rounded-full bg-slate-300 w-full" />
-              <div className="h-1.5 rounded-full bg-slate-300 w-5/6" />
-              <div className="h-1.5 rounded-full bg-slate-300 w-4/5 mt-1" />
-              <div className="h-6 rounded-lg bg-slate-400/60 w-1/2 mt-2" />
-            </div>
+        {/* Browser chrome bar */}
+        <div className="flex items-center gap-1.5 px-3 py-2 flex-shrink-0"
+          style={{ background: '#E8ECF0', borderBottom: '1px solid #DDE3EA' }}>
+          <span className="w-2.5 h-2.5 rounded-full" style={{ background: '#FC6058' }} />
+          <span className="w-2.5 h-2.5 rounded-full" style={{ background: '#FEC02F' }} />
+          <span className="w-2.5 h-2.5 rounded-full" style={{ background: '#2ACA44' }} />
+          <div className="flex-1 mx-2 h-4 rounded-sm flex items-center px-2"
+            style={{ background: '#F8FAFC', border: '1px solid #D1D9E0' }}>
+            <span className="text-[9px] font-mono truncate" style={{ color: '#94A3B8' }}>
+              {siteUrl ?? `${username ?? '…'}.${domain}`}
+            </span>
           </div>
-        )}
-
-        {/* Status badge */}
-        <div className="absolute top-3 left-3">
-          <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full flex items-center gap-1"
-            style={{
-              background: isPublished ? 'rgba(22,163,74,0.15)' : 'rgba(0,0,0,0.12)',
-              color: isPublished ? '#15803D' : '#475569',
-              backdropFilter: 'blur(8px)',
-              border: `1px solid ${isPublished ? 'rgba(22,163,74,0.25)' : 'rgba(0,0,0,0.1)'}`,
-            }}>
-            <span className="w-1.5 h-1.5 rounded-full inline-block" style={{ background: isPublished ? '#16A34A' : '#94A3B8' }} />
-            {isPublished ? 'Live' : 'Entwurf'}
-          </span>
         </div>
 
-        {/* Hover overlay */}
-        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-200 flex items-center justify-center">
-          <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-xs font-semibold text-white px-4 py-2 rounded-full"
-            style={{ background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(8px)' }}>
-            Bearbeiten
-          </span>
+        {/* Screenshot */}
+        <div className="relative overflow-hidden" style={{ aspectRatio: '16/10' }}>
+          {preview ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={preview} alt={site.templates?.title ?? ''}
+              className="w-full h-full object-cover object-top transition-transform duration-300 group-hover:scale-[1.03]" />
+          ) : (
+            <div className="absolute inset-0 flex flex-col items-center justify-center gap-3"
+              style={{ background: 'linear-gradient(160deg, #F8FAFC 0%, #EEF2F7 100%)' }}>
+              <div className="flex flex-col items-center gap-2 opacity-40">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" strokeWidth="1.5">
+                  <circle cx="12" cy="12" r="10"/>
+                  <line x1="2" y1="12" x2="22" y2="12"/>
+                  <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                </svg>
+                <div className="flex flex-col gap-1.5 w-24">
+                  <div className="h-1.5 rounded-full bg-slate-300 w-full" />
+                  <div className="h-1.5 rounded-full bg-slate-200 w-5/6" />
+                  <div className="h-1.5 rounded-full bg-slate-200 w-4/6" />
+                </div>
+              </div>
+              {!isPublished && (
+                <span className="text-[10px] font-medium" style={{ color: '#CBD5E1' }}>Vorschau nach Veröffentlichung</span>
+              )}
+            </div>
+          )}
+
+          {/* Status badge */}
+          <div className="absolute top-2.5 left-2.5">
+            <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full flex items-center gap-1"
+              style={{
+                background: isPublished ? 'rgba(22,163,74,0.15)' : 'rgba(0,0,0,0.1)',
+                color: isPublished ? '#15803D' : '#475569',
+                backdropFilter: 'blur(8px)',
+                border: `1px solid ${isPublished ? 'rgba(22,163,74,0.3)' : 'rgba(0,0,0,0.08)'}`,
+              }}>
+              <span className="w-1.5 h-1.5 rounded-full inline-block"
+                style={{ background: isPublished ? '#16A34A' : '#94A3B8' }} />
+              {isPublished ? 'Live' : 'Entwurf'}
+            </span>
+          </div>
+
+          {/* Hover overlay */}
+          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-200 flex items-center justify-center">
+            <span className="opacity-0 group-hover:opacity-100 transition-all duration-200 scale-95 group-hover:scale-100 text-xs font-semibold text-white px-4 py-2 rounded-full"
+              style={{ background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(8px)' }}>
+              Bearbeiten
+            </span>
+          </div>
         </div>
       </Link>
 

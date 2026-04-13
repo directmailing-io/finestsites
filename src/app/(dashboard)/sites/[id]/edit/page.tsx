@@ -18,8 +18,8 @@ interface FieldSchema {
 
 interface SiteData {
   id: string; status: string
+  username: string | null
   templates: { id: string; title: string; domain: string; r2_bundle_path: string | null; placeholder_schema: { fields: FieldSchema[] } }
-  users?: { username: string }
   data: Record<string, string>
 }
 
@@ -294,8 +294,8 @@ export default function SiteEditPage({ params }: { params: Promise<{ id: string 
             <h1 className="text-base font-semibold text-gray-900 leading-tight">
               {site.templates?.title}
             </h1>
-            <p className="text-xs" style={{ color: 'var(--muted-foreground)' }}>
-              username.{site.templates?.domain}
+            <p className="text-xs font-mono" style={{ color: 'var(--muted-foreground)' }}>
+              {site.username ?? '…'}.{site.templates?.domain}
             </p>
           </div>
           <span className="text-xs px-2.5 py-0.5 rounded-full"

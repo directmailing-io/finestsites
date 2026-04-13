@@ -33,7 +33,10 @@ export async function GET(_: NextRequest, { params }: { params: Promise<{ id: st
     dataMap[row.field_key] = row.field_value ?? ''
   }
 
-  return NextResponse.json({ ...site, data: dataMap })
+  // Include username for URL construction
+  const { data: profile } = await admin.from('users').select('username').eq('id', user.id).single()
+
+  return NextResponse.json({ ...site, data: dataMap, username: profile?.username ?? null })
 }
 
 // PATCH /api/sites/[id] → save field values (upsert site_data rows)
