@@ -238,6 +238,7 @@ export default function EditTemplatePage({ params }: { params: Promise<{ id: str
         max_length: typeof f.max_length === 'number' ? f.max_length : null,
         section: typeof f.section === 'string' ? f.section : '',
         order: typeof f.order === 'number' ? f.order : i,
+        aspect_ratio: typeof f.aspect_ratio === 'string' ? f.aspect_ratio : 'free',
         options: Array.isArray(f.options) ? f.options.filter((o: unknown) => typeof o === 'string') : [],
         card_options: Array.isArray(f.card_options)
           ? f.card_options.filter((o: unknown) => o && typeof o === 'object').map((o: any) => ({

@@ -25,6 +25,7 @@ export interface PlaceholderField {
   card_options: CardOption[] // for card_select
   section: string
   order: number
+  aspect_ratio?: string
 }
 
 // ─── Config ───────────────────────────────────────────────────────────────────
@@ -63,7 +64,7 @@ function newField(order: number): PlaceholderField {
   return {
     key: '', label: '', type: 'text', required: false,
     default_value: '', placeholder_text: '',
-    max_length: null, options: [], card_options: [], section: '', order,
+    max_length: null, options: [], card_options: [], section: '', order, aspect_ratio: 'free',
   }
 }
 
@@ -381,6 +382,26 @@ export function PlaceholderSchemaEditor({ fields, onChange }: Props) {
                       onFocus={e => (e.target.style.borderColor = '#1a1a1a')}
                       onBlur={e => (e.target.style.borderColor = '#E5E7EB')} />
                   </div>
+
+                  {/* Aspect ratio — only for image fields */}
+                  {field.type === 'image' && (
+                    <div className="flex flex-col gap-1 col-span-2">
+                      <label className="text-xs font-medium text-gray-600">Seitenverhältnis (Zuschnitt)</label>
+                      <div className="flex gap-2 flex-wrap">
+                        {(['free', '1/1', '4/3', '16/9', '3/2', '9/16'] as const).map(ar => (
+                          <button key={ar} type="button"
+                            onClick={() => updateField(idx, { aspect_ratio: ar })}
+                            className="px-3 py-1.5 text-xs font-medium rounded-[10px] transition-all"
+                            style={{
+                              background: (field.aspect_ratio ?? 'free') === ar ? '#1a1a1a' : '#F3F4F6',
+                              color: (field.aspect_ratio ?? 'free') === ar ? 'white' : '#6B7280',
+                            }}>
+                            {ar === 'free' ? 'Frei' : ar}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
 
                   {/* Placeholder text (not for card_select, image) */}
                   {!['card_select', 'image'].includes(field.type) && (
