@@ -1,0 +1,148 @@
+{
+  "version": 1,
+  "fields": [
+    {
+      "key": "firmenname",
+      "label": "Firmenname",
+      "type": "text",
+      "required": true,
+      "default_value": "",
+      "placeholder_text": "z.B. Muster GmbH",
+      "max_length": 80,
+      "section": "Grunddaten",
+      "order": 0
+    },
+    {
+      "key": "slogan",
+      "label": "Slogan / Tagline",
+      "type": "text",
+      "required": false,
+      "default_value": "",
+      "placeholder_text": "Ihr Slogan in einem Satz",
+      "max_length": 120,
+      "section": "Grunddaten",
+      "order": 1
+    },
+    {
+      "key": "beschreibung",
+      "label": "Über uns",
+      "type": "textarea",
+      "required": true,
+      "default_value": "",
+      "placeholder_text": "Beschreiben Sie Ihr Unternehmen in 2–4 Sätzen...",
+      "max_length": 500,
+      "section": "Grunddaten",
+      "order": 2
+    },
+    {
+      "key": "logo_url",
+      "label": "Logo",
+      "type": "image",
+      "required": false,
+      "default_value": "",
+      "placeholder_text": "",
+      "max_length": null,
+      "section": "Bilder",
+      "order": 3
+    },
+    {
+      "key": "hero_bild",
+      "label": "Hero-Bild",
+      "type": "image",
+      "required": false,
+      "default_value": "",
+      "placeholder_text": "",
+      "max_length": null,
+      "section": "Bilder",
+      "order": 4
+    },
+    {
+      "key": "email",
+      "label": "Kontakt-E-Mail",
+      "type": "email",
+      "required": true,
+      "default_value": "",
+      "placeholder_text": "info@beispiel.de",
+      "max_length": null,
+      "section": "Kontakt",
+      "order": 5
+    },
+    {
+      "key": "website_url",
+      "label": "Website-URL",
+      "type": "url",
+      "required": false,
+      "default_value": "",
+      "placeholder_text": "https://www.beispiel.de",
+      "max_length": null,
+      "section": "Kontakt",
+      "order": 6
+    },
+    {
+      "key": "branche",
+      "label": "Branche",
+      "type": "dropdown",
+      "required": true,
+      "default_value": "",
+      "placeholder_text": "",
+      "max_length": null,
+      "section": "Details",
+      "order": 7,
+      "options": [
+        "Handwerk",
+        "Gastronomie",
+        "Einzelhandel",
+        "Dienstleistungen",
+        "Gesundheit & Beauty",
+        "IT & Technologie",
+        "Immobilien",
+        "Sonstiges"
+      ]
+    },
+    {
+      "key": "farbschema",
+      "label": "Farbschema",
+      "type": "card_select",
+      "required": false,
+      "default_value": "blau",
+      "placeholder_text": "",
+      "max_length": null,
+      "section": "Design",
+      "order": 8,
+      "card_options": [
+        {
+          "value": "blau",
+          "label": "Ocean Blue",
+          "description": "Professionell & vertrauenswürdig",
+          "card_type": "color",
+          "image_url": "",
+          "color": "#1D4ED8"
+        },
+        {
+          "value": "gruen",
+          "label": "Forest Green",
+          "description": "Frisch & natürlich",
+          "card_type": "color",
+          "image_url": "",
+          "color": "#16A34A"
+        },
+        {
+          "value": "schwarz",
+          "label": "Midnight",
+          "description": "Elegant & modern",
+          "card_type": "color",
+          "image_url": "",
+          "color": "#1a1a1a"
+        },
+        {
+          "value": "lila",
+          "label": "Violet",
+          "description": "Kreativ & einzigartig",
+          "card_type": "color",
+          "image_url": "",
+          "color": "#7C3AED"
+        }
+      ]
+    }
+  ]
+}

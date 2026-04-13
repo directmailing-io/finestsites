@@ -23,6 +23,7 @@ export default function EditTemplatePage({ params }: { params: Promise<{ id: str
   const fileInputRef = useRef<HTMLInputElement>(null)
   const folderInputRef = useRef<HTMLInputElement>(null)
   const coverInputRef = useRef<HTMLInputElement>(null)
+  const importInputRef = useRef<HTMLInputElement>(null)
 
   const [activeTab, setActiveTab] = useState<Tab>('info')
   const [loading, setLoading] = useState(true)
@@ -45,6 +46,9 @@ export default function EditTemplatePage({ params }: { params: Promise<{ id: str
   const [coverImage, setCoverImage] = useState<string | null>(null)
   const [coverUploading, setCoverUploading] = useState(false)
   const [cropSrc, setCropSrc] = useState<string | null>(null)
+  const [importError, setImportError] = useState('')
+  const [importSuccess, setImportSuccess] = useState('')
+  const [importMode, setImportMode] = useState<'replace' | 'merge'>('merge')
 
   useEffect(() => {
     fetch(`/api/admin/templates/${id}`)
@@ -189,6 +193,78 @@ export default function EditTemplatePage({ params }: { params: Promise<{ id: str
     a.click()
     document.body.removeChild(a)
     URL.revokeObjectURL(url)
+  }
+
+  async function handleImportJson(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    e.target.value = ''
+    setImportError('')
+    setImportSuccess('')
+
+    let parsed: unknown
+    try {
+      parsed = JSON.parse(await file.text())
+    } catch {
+      setImportError('Ungültige JSON-Datei.')
+      return
+    }
+
+    // Validate top-level shape
+    if (typeof parsed !== 'object' || parsed === null || !Array.isArray((parsed as any).fields)) {
+      setImportError('Ungültiges Format. Die Datei muss ein Objekt mit einem "fields"-Array sein.')
+      return
+    }
+
+    const rawFields: unknown[] = (parsed as any).fields
+    const VALID_TYPES = ['text', 'textarea', 'image', 'url', 'email', 'dropdown', 'card_select'] as const
+    type FType = typeof VALID_TYPES[number]
+
+    const imported: PlaceholderField[] = []
+    for (let i = 0; i < rawFields.length; i++) {
+      const f = rawFields[i] as any
+      if (!f || typeof f !== 'object') { setImportError(`Feld ${i + 1}: muss ein Objekt sein.`); return }
+      if (!f.key || typeof f.key !== 'string') { setImportError(`Feld ${i + 1}: "key" fehlt oder ist kein String.`); return }
+      if (!f.label || typeof f.label !== 'string') { setImportError(`Feld ${i + 1} ("${f.key}"): "label" fehlt oder ist kein String.`); return }
+      if (!VALID_TYPES.includes(f.type)) { setImportError(`Feld "${f.key}": ungültiger type "${f.type}". Erlaubt: ${VALID_TYPES.join(', ')}`); return }
+
+      imported.push({
+        key: f.key.trim(),
+        label: f.label.trim(),
+        type: f.type as FType,
+        required: Boolean(f.required ?? false),
+        default_value: typeof f.default_value === 'string' ? f.default_value : '',
+        placeholder_text: typeof f.placeholder_text === 'string' ? f.placeholder_text : '',
+        max_length: typeof f.max_length === 'number' ? f.max_length : null,
+        section: typeof f.section === 'string' ? f.section : '',
+        order: typeof f.order === 'number' ? f.order : i,
+        options: Array.isArray(f.options) ? f.options.filter((o: unknown) => typeof o === 'string') : [],
+        card_options: Array.isArray(f.card_options)
+          ? f.card_options.filter((o: unknown) => o && typeof o === 'object').map((o: any) => ({
+              value: String(o.value ?? ''),
+              label: String(o.label ?? ''),
+              description: String(o.description ?? ''),
+              card_type: ['text', 'image', 'color'].includes(o.card_type) ? o.card_type : 'text',
+              image_url: String(o.image_url ?? ''),
+              color: String(o.color ?? '#6366F1'),
+            }))
+          : [],
+      })
+    }
+
+    if (importMode === 'replace') {
+      setFields(imported)
+    } else {
+      // merge: keep existing, add/overwrite by key
+      setFields(prev => {
+        const map = new Map(prev.map(f => [f.key, f]))
+        for (const f of imported) map.set(f.key, f)
+        return Array.from(map.values())
+      })
+    }
+
+    setImportSuccess(`${imported.length} Felder erfolgreich importiert (${importMode === 'replace' ? 'ersetzt' : 'zusammengeführt'}).`)
+    setTimeout(() => setImportSuccess(''), 4000)
   }
 
   async function handleSave(statusOverride?: string) {
@@ -491,21 +567,92 @@ export default function EditTemplatePage({ params }: { params: Promise<{ id: str
 
       {/* Placeholders Tab */}
       {activeTab === 'placeholders' && (
-        <div className="p-6 rounded-[24px] bg-white flex flex-col gap-4"
-          style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.08)', border: '1px solid var(--border)' }}>
-          <div>
-            <h2 className="font-medium text-gray-900">Platzhalter-Felder</h2>
-            <p className="text-xs mt-1" style={{ color: 'var(--muted-foreground)' }}>
-              Felder die der Nutzer ausfüllt. Eingebettet als <code className="bg-gray-100 px-1 rounded font-mono text-[11px]">{'{{key}}'}</code>
-            </p>
+        <div className="flex flex-col gap-6">
+
+          {/* Import card */}
+          <div className="p-5 rounded-[20px] bg-white flex flex-col gap-4"
+            style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.08)', border: '1px solid var(--border)' }}>
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <h2 className="font-medium text-gray-900">JSON-Import</h2>
+                <p className="text-xs mt-1" style={{ color: 'var(--muted-foreground)' }}>
+                  Importiere Platzhalter-Felder aus einer JSON-Datei.{' '}
+                  <a href="/examples/placeholders-test.json" download
+                    className="underline" style={{ color: '#2563EB' }}>
+                    Test-Datei herunterladen
+                  </a>
+                  {' · '}
+                  <a href="/examples/placeholders-schema.json" download
+                    className="underline" style={{ color: '#6B7280' }}>
+                    Schema ansehen
+                  </a>
+                </p>
+              </div>
+              {/* Mode toggle */}
+              <div className="flex items-center gap-1 p-1 rounded-[10px] flex-shrink-0"
+                style={{ background: '#F3F4F6' }}>
+                {(['merge', 'replace'] as const).map(m => (
+                  <button key={m} onClick={() => setImportMode(m)}
+                    className="text-xs px-3 py-1 rounded-[8px] font-medium transition-all"
+                    style={{
+                      background: importMode === m ? 'white' : 'transparent',
+                      color: importMode === m ? '#1a1a1a' : '#6B7280',
+                      boxShadow: importMode === m ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
+                    }}>
+                    {m === 'merge' ? 'Zusammenführen' : 'Ersetzen'}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {importError && (
+              <div className="px-4 py-3 text-xs text-red-700 rounded-[12px]"
+                style={{ background: '#FEF2F2', border: '1px solid #FECACA' }}>
+                ✗ {importError}
+              </div>
+            )}
+            {importSuccess && (
+              <div className="px-4 py-3 text-xs text-green-700 rounded-[12px]"
+                style={{ background: '#F0FDF4', border: '1px solid #BBF7D0' }}>
+                ✓ {importSuccess}
+              </div>
+            )}
+
+            <div className="flex items-center gap-2">
+              <button onClick={() => importInputRef.current?.click()}
+                className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium rounded-[14px]"
+                style={{ background: '#1a1a1a', color: 'white', boxShadow: '0 4px 14px rgba(26,26,26,0.2)' }}>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+                </svg>
+                JSON hochladen
+              </button>
+              <p className="text-xs" style={{ color: '#9CA3AF' }}>
+                {importMode === 'merge'
+                  ? 'Vorhandene Felder bleiben erhalten — gleiche Keys werden überschrieben.'
+                  : 'Alle vorhandenen Felder werden durch den Import ersetzt.'}
+              </p>
+            </div>
+            <input ref={importInputRef} type="file" accept=".json,application/json" className="hidden" onChange={handleImportJson} />
           </div>
-          <PlaceholderSchemaEditor fields={fields} onChange={setFields} />
-          <div className="flex items-center gap-3 pt-2 border-t" style={{ borderColor: '#F1F5F9' }}>
-            <button type="button" onClick={() => handleSave()} disabled={saving}
-              className="px-5 py-2.5 text-sm font-medium rounded-[16px]"
-              style={{ background: '#F3F4F6', color: '#374151' }}>
-              {saving ? 'Speichert...' : 'Speichern'}
-            </button>
+
+          {/* Editor card */}
+          <div className="p-6 rounded-[24px] bg-white flex flex-col gap-4"
+            style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.08)', border: '1px solid var(--border)' }}>
+            <div>
+              <h2 className="font-medium text-gray-900">Platzhalter-Felder</h2>
+              <p className="text-xs mt-1" style={{ color: 'var(--muted-foreground)' }}>
+                Felder die der Nutzer ausfüllt. Eingebettet als <code className="bg-gray-100 px-1 rounded font-mono text-[11px]">{'{{key}}'}</code>
+              </p>
+            </div>
+            <PlaceholderSchemaEditor fields={fields} onChange={setFields} />
+            <div className="flex items-center gap-3 pt-2 border-t" style={{ borderColor: '#F1F5F9' }}>
+              <button type="button" onClick={() => handleSave()} disabled={saving}
+                className="px-5 py-2.5 text-sm font-medium rounded-[16px]"
+                style={{ background: '#F3F4F6', color: '#374151' }}>
+                {saving ? 'Speichert...' : 'Speichern'}
+              </button>
+            </div>
           </div>
         </div>
       )}

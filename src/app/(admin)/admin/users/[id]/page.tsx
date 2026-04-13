@@ -162,26 +162,37 @@ export default function AdminUserDetailPage({ params }: { params: Promise<{ id: 
             <p className="text-sm" style={{ color: 'var(--muted-foreground)' }}>Keine Websites vorhanden.</p>
           ) : (
             <div className="flex flex-col gap-2">
-              {sites.map(site => (
-                <div key={site.id} className="flex items-center justify-between p-3 rounded-[14px]"
-                  style={{ background: '#F9FAFB', border: '1px solid #F3F4F6' }}>
-                  <div>
-                    <p className="text-sm font-medium text-gray-900">{site.templates?.title ?? 'Website'}</p>
-                    {site.username && site.templates?.domain && (
-                      <p className="text-xs font-mono mt-0.5" style={{ color: 'var(--muted-foreground)' }}>
-                        {site.username}.{site.templates.domain}
-                      </p>
-                    )}
+              {sites.map(site => {
+                const url = site.username && site.templates?.domain
+                  ? `https://${site.username}.${site.templates.domain}`
+                  : null
+                return (
+                  <div key={site.id} className="flex items-center justify-between p-3 rounded-[14px]"
+                    style={{ background: '#F9FAFB', border: '1px solid #F3F4F6' }}>
+                    <div>
+                      <p className="text-sm font-medium text-gray-900">{site.templates?.title ?? 'Website'}</p>
+                      {url && (
+                        <a href={url} target="_blank" rel="noopener noreferrer"
+                          className="text-xs font-mono mt-0.5 flex items-center gap-1 hover:underline"
+                          style={{ color: '#2563EB' }}
+                          onClick={e => e.stopPropagation()}>
+                          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
+                          </svg>
+                          {site.username}.{site.templates?.domain}
+                        </a>
+                      )}
+                    </div>
+                    <span className="text-xs px-2.5 py-0.5 rounded-full"
+                      style={{
+                        background: site.status === 'published' ? '#F0FDF4' : '#F3F4F6',
+                        color: site.status === 'published' ? '#16A34A' : '#6B7280',
+                      }}>
+                      {site.status === 'published' ? '● Live' : '○ Entwurf'}
+                    </span>
                   </div>
-                  <span className="text-xs px-2.5 py-0.5 rounded-full"
-                    style={{
-                      background: site.status === 'published' ? '#F0FDF4' : '#F3F4F6',
-                      color: site.status === 'published' ? '#16A34A' : '#6B7280',
-                    }}>
-                    {site.status === 'published' ? '● Live' : '○ Entwurf'}
-                  </span>
-                </div>
-              ))}
+                )
+              })}
             </div>
           )}
         </div>
