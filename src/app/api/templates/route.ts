@@ -9,7 +9,7 @@ export async function GET() {
 
   const { data, error } = await supabase
     .from('templates')
-    .select('id, title, description, domain, preview_images, placeholder_schema')
+    .select('id, title, description, domain, preview_images, placeholder_schema, tags')
     .eq('status', 'published')
     .order('created_at', { ascending: false })
 

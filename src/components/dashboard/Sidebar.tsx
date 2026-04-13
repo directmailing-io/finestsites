@@ -31,6 +31,26 @@ const navItems = [
     ),
   },
   {
+    href: '/sites/library',
+    label: 'Webseiten-Bibliothek',
+    icon: (
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+      </svg>
+    ),
+  },
+  {
+    href: '/billing',
+    label: 'Abrechnung',
+    icon: (
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+        <rect x="1" y="4" width="22" height="16" rx="2"/>
+        <line x1="1" y1="10" x2="23" y2="10"/>
+      </svg>
+    ),
+  },
+  {
     href: '/settings',
     label: 'Einstellungen',
     icon: (
@@ -65,7 +85,8 @@ export function DashboardSidebar() {
       <nav className="flex flex-col gap-1 flex-1">
         {navItems.map((item) => {
           const isActive = pathname === item.href ||
-            (item.href !== '/dashboard' && pathname.startsWith(item.href))
+            (item.href !== '/dashboard' && item.href !== '/sites' && pathname.startsWith(item.href)) ||
+            (item.href === '/sites' && (pathname === '/sites' || (pathname.startsWith('/sites/') && !pathname.startsWith('/sites/library'))))
           return (
             <Link key={item.href} href={item.href}
               className="flex items-center gap-3 px-3 py-2.5 text-sm font-medium transition-all rounded-[14px]"

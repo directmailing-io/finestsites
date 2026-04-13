@@ -26,6 +26,8 @@ export default function EditTemplatePage({ params }: { params: Promise<{ id: str
   const [bundlePath, setBundlePath] = useState<string | null>(null)
   const [uploadState, setUploadState] = useState<'idle' | 'uploading' | 'done' | 'error'>('idle')
   const [form, setForm] = useState({ title: '', description: '', domain: '', status: 'draft' })
+  const [tags, setTags] = useState<string[]>([])
+  const [tagInput, setTagInput] = useState('')
   const [domainSetup, setDomainSetup] = useState<DomainSetup | null>(null)
   const [settingUpDomain, setSettingUpDomain] = useState(false)
 
@@ -41,6 +43,7 @@ export default function EditTemplatePage({ params }: { params: Promise<{ id: str
         })
         setFields(data.placeholder_schema?.fields ?? [])
         setBundlePath(data.r2_bundle_path ?? null)
+        setTags(data.tags ?? [])
         setLoading(false)
       })
   }, [id])
@@ -133,6 +136,7 @@ export default function EditTemplatePage({ params }: { params: Promise<{ id: str
         ...form,
         status: statusOverride ?? form.status,
         placeholder_schema: { version: 1, fields },
+        tags,
       }),
     })
 
@@ -224,6 +228,50 @@ export default function EditTemplatePage({ params }: { params: Promise<{ id: str
               rows={3} style={{ ...inputStyle, resize: 'vertical' }}
               onFocus={e => (e.target.style.borderColor = '#1a1a1a')}
               onBlur={e => (e.target.style.borderColor = '#E5E7EB')} />
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <label className="text-sm font-medium text-gray-700">Tags</label>
+            <div className="flex flex-wrap gap-1.5 mb-1">
+              {tags.map(tag => (
+                <span key={tag} className="flex items-center gap-1 text-xs px-2.5 py-1 rounded-full font-medium"
+                  style={{ background: '#F1F5F9', color: '#374151', border: '1px solid #E2E8F0' }}>
+                  {tag}
+                  <button type="button" onClick={() => setTags(tags.filter(t => t !== tag))}
+                    className="ml-0.5 hover:text-red-500 transition-colors">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                      <path d="M18 6L6 18M6 6l12 12"/>
+                    </svg>
+                  </button>
+                </span>
+              ))}
+            </div>
+            <div className="flex gap-2">
+              <input
+                value={tagInput}
+                onChange={e => setTagInput(e.target.value)}
+                onKeyDown={e => {
+                  if ((e.key === 'Enter' || e.key === ',') && tagInput.trim()) {
+                    e.preventDefault()
+                    const newTag = tagInput.trim().toLowerCase()
+                    if (!tags.includes(newTag)) setTags([...tags, newTag])
+                    setTagInput('')
+                  }
+                }}
+                placeholder="Tag eingeben + Enter"
+                style={{ ...inputStyle, flex: 1 }}
+                onFocus={e => (e.target.style.borderColor = '#1a1a1a')}
+                onBlur={e => (e.target.style.borderColor = '#E5E7EB')}
+              />
+              <button type="button" onClick={() => {
+                const newTag = tagInput.trim().toLowerCase()
+                if (newTag && !tags.includes(newTag)) setTags([...tags, newTag])
+                setTagInput('')
+              }}
+                className="px-3 py-2 text-sm font-medium rounded-[14px] flex-shrink-0"
+                style={{ background: '#F3F4F6', color: '#374151' }}>
+                Hinzufügen
+              </button>
+            </div>
           </div>
           <div className="flex flex-col gap-1.5">
             <label className="text-sm font-medium text-gray-700">Template-Domain</label>

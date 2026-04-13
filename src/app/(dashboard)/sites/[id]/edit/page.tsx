@@ -179,6 +179,7 @@ export default function SiteEditPage({ params }: { params: Promise<{ id: string 
   const [values, setValues] = useState<Record<string, string>>({})
   const [previewKey, setPreviewKey] = useState(0)
   const [activeSection, setActiveSection] = useState<string | null>(null)
+  const [deviceView, setDeviceView] = useState<'desktop' | 'tablet' | 'mobile'>('desktop')
 
   useEffect(() => {
     fetch(`/api/sites/${id}`)
@@ -200,7 +201,7 @@ export default function SiteEditPage({ params }: { params: Promise<{ id: string 
       .catch(() => setLoading(false))
   }, [id])
 
-  const updatePreview = useCallback((vals: Record<string, string>) => {
+  const updatePreview = useCallback((_vals: Record<string, string>) => {
     if (debounceRef.current) clearTimeout(debounceRef.current)
     debounceRef.current = setTimeout(() => {
       setPreviewKey(k => k + 1)
@@ -405,29 +406,62 @@ export default function SiteEditPage({ params }: { params: Promise<{ id: string 
         </div>
 
         {/* ── Right: Preview ── */}
-        <div className="flex-1 flex flex-col overflow-hidden" style={{ background: '#F3F4F6' }}>
+        <div className="flex-1 flex flex-col overflow-hidden" style={{ background: '#E8ECF0' }}>
           <div className="flex items-center justify-between px-4 py-2 border-b bg-white flex-shrink-0"
             style={{ borderColor: 'var(--border)' }}>
             <span className="text-xs font-medium text-gray-500">Live-Vorschau</span>
-            <button onClick={() => setPreviewKey(k => k + 1)}
-              className="text-xs flex items-center gap-1.5 px-2.5 py-1 rounded-[8px] transition-all"
-              style={{ background: '#F3F4F6', color: '#6B7280' }}>
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/>
-              </svg>
-              Aktualisieren
-            </button>
+            <div className="flex items-center gap-2">
+              {/* Device toggle */}
+              <div className="flex items-center gap-0.5 p-0.5 rounded-[10px]" style={{ background: '#F3F4F6' }}>
+                {([
+                  { key: 'desktop', label: 'Desktop', icon: <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg> },
+                  { key: 'tablet', label: 'Tablet', icon: <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="4" y="2" width="16" height="20" rx="2"/><circle cx="12" cy="18" r="1"/></svg> },
+                  { key: 'mobile', label: 'Mobile', icon: <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="5" y="2" width="14" height="20" rx="2"/><circle cx="12" cy="18" r="1"/></svg> },
+                ] as const).map(d => (
+                  <button key={d.key} onClick={() => setDeviceView(d.key)}
+                    title={d.label}
+                    className="p-1.5 rounded-[8px] transition-all"
+                    style={{
+                      background: deviceView === d.key ? 'white' : 'transparent',
+                      color: deviceView === d.key ? '#1a1a1a' : '#9CA3AF',
+                      boxShadow: deviceView === d.key ? '0 1px 3px rgba(0,0,0,0.12)' : 'none',
+                    }}>
+                    {d.icon}
+                  </button>
+                ))}
+              </div>
+              <button onClick={() => setPreviewKey(k => k + 1)}
+                className="text-xs flex items-center gap-1.5 px-2.5 py-1 rounded-[8px] transition-all"
+                style={{ background: '#F3F4F6', color: '#6B7280' }}>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/>
+                </svg>
+                Aktualisieren
+              </button>
+            </div>
           </div>
 
           {site.templates?.r2_bundle_path ? (
-            <iframe
-              ref={iframeRef}
-              key={previewKey}
-              src={previewUrl}
-              className="flex-1 w-full border-0"
-              title="Website-Vorschau"
-              sandbox="allow-scripts allow-same-origin"
-            />
+            <div className="flex-1 overflow-auto flex items-start justify-center py-6 px-4">
+              <div
+                className="relative bg-white rounded-[12px] overflow-hidden transition-all duration-300 flex-shrink-0"
+                style={{
+                  width: deviceView === 'desktop' ? '100%' : deviceView === 'tablet' ? '768px' : '390px',
+                  maxWidth: '100%',
+                  minHeight: '600px',
+                  boxShadow: '0 8px 40px rgba(0,0,0,0.15)',
+                }}>
+                <iframe
+                  ref={iframeRef}
+                  key={previewKey}
+                  src={previewUrl}
+                  className="w-full border-0"
+                  style={{ height: '100%', minHeight: '600px', display: 'block' }}
+                  title="Website-Vorschau"
+                  sandbox="allow-scripts allow-same-origin"
+                />
+              </div>
+            </div>
           ) : (
             <div className="flex-1 flex flex-col items-center justify-center text-center p-8">
               <div className="w-16 h-16 rounded-[20px] flex items-center justify-center mb-4"
