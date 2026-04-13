@@ -11,6 +11,7 @@ interface Template {
   domain: string
   preview_images: string[] | null
   tags: string[] | null
+  is_free?: boolean
 }
 
 interface UserSite {
@@ -22,6 +23,7 @@ interface UserSite {
 interface UserProfile {
   plan: string
   sites_count: number
+  paid_sites_count: number
   username: string | null
 }
 
@@ -98,8 +100,9 @@ export default function TemplateDetailPage({ params }: { params: Promise<{ id: s
 
   const plan = profile?.plan ?? 'starter'
   const limit = PLAN_LIMITS[plan] ?? 1
-  const siteCount = profile?.sites_count ?? 0
-  const atLimit = siteCount >= limit
+  const siteCount = profile?.paid_sites_count ?? profile?.sites_count ?? 0
+  // Free templates never count toward the limit
+  const atLimit = !template?.is_free && siteCount >= limit
   const isActivated = !!userSite
   const username = profile?.username ?? null
   const previewUrl = username ? `${username}.${template.domain}` : template.domain
@@ -123,27 +126,6 @@ export default function TemplateDetailPage({ params }: { params: Promise<{ id: s
       {/* Hero section */}
       <div className="rounded-[24px] overflow-hidden mb-6"
         style={{ boxShadow: '0 8px 48px rgba(0,0,0,0.12)', border: '1px solid #E2E8F0', background: '#0F172A' }}>
-
-        {/* Browser chrome bar */}
-        <div className="flex items-center gap-3 px-5 py-3.5"
-          style={{ background: '#1E293B', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
-          <div className="flex items-center gap-1.5 flex-shrink-0">
-            <div className="w-3 h-3 rounded-full" style={{ background: '#FC6058' }} />
-            <div className="w-3 h-3 rounded-full" style={{ background: '#FEC02F' }} />
-            <div className="w-3 h-3 rounded-full" style={{ background: '#2ACA44' }} />
-          </div>
-          {/* URL bar */}
-          <div className="flex-1 flex items-center gap-2 px-3 py-1.5 rounded-[8px] max-w-md mx-auto"
-            style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.12)' }}>
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" strokeWidth="2" className="flex-shrink-0">
-              <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-            </svg>
-            <span className="text-[11px] font-mono" style={{ color: '#94A3B8' }}>
-              {previewUrl}
-            </span>
-          </div>
-          <div className="flex-shrink-0 w-14" />
-        </div>
 
         {/* Preview image */}
         {images ? (
@@ -201,7 +183,16 @@ export default function TemplateDetailPage({ params }: { params: Promise<{ id: s
           {/* Title + URL */}
           <div>
             <div className="flex items-start justify-between gap-3">
-              <h1 className="text-2xl font-bold text-gray-900">{template.title}</h1>
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900">{template.title}</h1>
+                {template.is_free && (
+                  <span className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full mt-2"
+                    style={{ background: '#DBEAFE', color: '#1D4ED8', border: '1px solid rgba(29,78,216,0.2)' }}>
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                    Kostenlos — zählt nicht zum Plan-Limit
+                  </span>
+                )}
+              </div>
               {isActivated && (
                 <span className="flex-shrink-0 flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full mt-0.5"
                   style={{ background: '#F0FDF4', color: '#16A34A', border: '1px solid rgba(22,163,74,0.2)' }}>
@@ -339,13 +330,12 @@ export default function TemplateDetailPage({ params }: { params: Promise<{ id: s
                 {/* URL preview */}
                 <div className="flex items-center gap-2 px-3 py-2.5 rounded-[12px]"
                   style={{ background: '#F8FAFC', border: '1px solid #E2E8F0' }}>
-                  <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: '#22C55E' }} />
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" strokeWidth="2" className="flex-shrink-0">
+                    <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                  </svg>
                   <span className="text-xs font-mono flex-1 truncate" style={{ color: '#475569' }}>
                     {previewUrl}
                   </span>
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" strokeWidth="2">
-                    <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-                  </svg>
                 </div>
 
                 <button onClick={handleActivate} disabled={activating}

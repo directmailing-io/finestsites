@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 
@@ -14,6 +15,8 @@ export default async function DashboardPage() {
 
   if (!profile?.username) redirect('/setup-username')
 
+  const admin = createAdminClient()
+
   const { data: sites } = await supabase
     .from('user_sites')
     .select('*, template:templates(title, domain, preview_images)')
@@ -21,14 +24,36 @@ export default async function DashboardPage() {
     .neq('status', 'deleted')
     .order('created_at', { ascending: false })
 
-  const { count: templateCount } = await supabase
-    .from('templates')
-    .select('*', { count: 'exact', head: true })
-    .eq('status', 'published')
+  // Get all site IDs for submissions query
+  const siteIds = (sites ?? []).map(s => s.id)
 
-  const publishedCount = sites?.filter(s => s.status === 'published').length ?? 0
-  const totalSites = sites?.length ?? 0
-  const recentSites = sites?.slice(0, 3) ?? []
+  // Fetch recent submissions (last 5) and total count
+  const [{ data: recentSubmissions }, { count: totalSubmissions }] = await Promise.all([
+    siteIds.length > 0
+      ? admin
+          .from('form_submissions')
+          .select('id, form_name, data, created_at, read_at, user_site_id')
+          .in('user_site_id', siteIds)
+          .eq('is_spam', false)
+          .is('archived_at', null)
+          .order('created_at', { ascending: false })
+          .limit(5)
+      : { data: [] },
+    siteIds.length > 0
+      ? admin
+          .from('form_submissions')
+          .select('*', { count: 'exact', head: true })
+          .in('user_site_id', siteIds)
+          .eq('is_spam', false)
+          .is('archived_at', null)
+      : { count: 0 },
+  ])
+
+  const siteMap = Object.fromEntries(
+    (sites ?? []).map(s => [s.id, s.template])
+  )
+
+  const publishedCount = (sites ?? []).filter(s => s.status === 'published').length
 
   const plan = profile?.plan ?? 'starter'
   const planLimit = PLAN_LIMITS[plan] ?? 1
@@ -36,13 +61,19 @@ export default async function DashboardPage() {
 
   const planHeroColors: Record<string, { bg: string; border: string; text: string; accent: string }> = {
     starter: { bg: '#EFF6FF', border: '#BFDBFE', text: '#1D4ED8', accent: '#3B82F6' },
-    pro:     { bg: '#F5F3FF', border: '#DDD6FE', text: '#7C3AED', accent: '#8B5CF6' },
-    unlimited: { bg: '#F0FDF4', border: '#BBF7D0', text: '#16A34A', accent: '#22C55E' },
+    pro:     { bg: '#EDE9FE', border: '#C4B5FD', text: '#6D28D9', accent: '#7C3AED' },
+    unlimited: { bg: '#ECFDF5', border: '#A7F3D0', text: '#059669', accent: '#10B981' },
   }
   const hero = planHeroColors[plan] ?? planHeroColors.starter
 
-  const progressPct = planLimit === Infinity ? 0 : Math.min(100, (totalSites / planLimit) * 100)
-  const progressColor = totalSites >= planLimit ? '#EF4444' : totalSites / planLimit >= 0.75 ? '#F59E0B' : hero.accent
+  // Use paid_sites_count for plan limit display
+  const paidSites = (sites ?? []).filter(s => {
+    const t = s.template
+    return !t?.is_free
+  })
+  const paidSitesCount = paidSites.length
+  const progressPct = planLimit === Infinity ? 0 : Math.min(100, (paidSitesCount / planLimit) * 100)
+  const progressColor = paidSitesCount >= planLimit ? '#EF4444' : paidSitesCount / planLimit >= 0.75 ? '#F59E0B' : hero.accent
 
   const statusLabels: Record<string, string> = {
     active: 'Aktiv',
@@ -50,6 +81,16 @@ export default async function DashboardPage() {
     past_due: 'Zahlung offen',
     canceled: 'Gekündigt',
     incomplete: 'Ausstehend',
+  }
+
+  function formatDate(iso: string) {
+    return new Date(iso).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' })
+  }
+
+  function getSubmissionPreview(data: Record<string, string>) {
+    const values = Object.values(data).filter(v => v && typeof v === 'string')
+    const first = values[0] ?? ''
+    return first.length > 50 ? first.slice(0, 50) + '…' : first
   }
 
   return (
@@ -85,7 +126,7 @@ export default async function DashboardPage() {
 
         <div className="flex items-center justify-between mb-2">
           <span className="text-sm font-medium" style={{ color: hero.text }}>
-            {totalSites} von {planLimit === Infinity ? '∞' : planLimit} Webseiten genutzt
+            {paidSitesCount} von {planLimit === Infinity ? '∞' : planLimit} Webseiten genutzt
           </span>
         </div>
         <div className="w-full h-2 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.6)' }}>
@@ -94,95 +135,85 @@ export default async function DashboardPage() {
         </div>
       </div>
 
-      {/* Stats grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-        <div className="p-6 rounded-[24px] bg-white flex flex-col gap-1"
-          style={{ boxShadow: 'var(--shadow-card)', border: '1px solid var(--border)' }}>
-          <div className="text-3xl font-bold" style={{ color: '#16A34A' }}>{publishedCount}</div>
-          <div className="text-sm" style={{ color: 'var(--muted-foreground)' }}>Aktive Seiten</div>
+      {/* Stats grid — 2 pastel cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+        <div className="p-6 rounded-[24px] flex flex-col gap-1"
+          style={{ background: '#ECFDF5', border: '1px solid #A7F3D0' }}>
+          <div className="text-3xl font-bold" style={{ color: '#059669' }}>{publishedCount}</div>
+          <div className="text-sm font-medium" style={{ color: '#047857' }}>Aktive Seiten</div>
         </div>
-        <div className="p-6 rounded-[24px] bg-white flex flex-col gap-1"
-          style={{ boxShadow: 'var(--shadow-card)', border: '1px solid var(--border)' }}>
-          <div className="text-3xl font-bold" style={{ color: '#2563EB' }}>{templateCount ?? 0}</div>
-          <div className="text-sm" style={{ color: 'var(--muted-foreground)' }}>Verfügbare Templates</div>
-        </div>
-        <div className="p-6 rounded-[24px] bg-white flex flex-col gap-1"
-          style={{ boxShadow: 'var(--shadow-card)', border: '1px solid var(--border)' }}>
-          <div className="text-3xl font-bold" style={{ color: '#7C3AED' }}>{totalSites}</div>
-          <div className="text-sm" style={{ color: 'var(--muted-foreground)' }}>Erstellte Seiten gesamt</div>
+        <div className="p-6 rounded-[24px] flex flex-col gap-1"
+          style={{ background: '#EDE9FE', border: '1px solid #C4B5FD' }}>
+          <div className="text-3xl font-bold" style={{ color: '#6D28D9' }}>{totalSubmissions ?? 0}</div>
+          <div className="text-sm font-medium" style={{ color: '#5B21B6' }}>Erhaltene Anfragen</div>
         </div>
       </div>
 
-      {/* Recent sites */}
+      {/* Recent submissions */}
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="font-semibold text-gray-900">Zuletzt erstellt</h2>
-        <Link href="/sites"
+        <h2 className="font-semibold text-gray-900">Die letzten erhaltenen Anfragen</h2>
+        <Link href="/submissions"
           className="text-sm font-medium px-3 py-1.5 rounded-[12px]"
           style={{ background: '#F3F4F6', color: '#374151' }}>
           Alle anzeigen
         </Link>
       </div>
 
-      {recentSites.length === 0 ? (
-        <div className="p-10 rounded-[24px] bg-white text-center"
+      {!recentSubmissions || recentSubmissions.length === 0 ? (
+        <div className="p-8 rounded-[24px] bg-white text-center mb-8"
           style={{ boxShadow: 'var(--shadow-card)', border: '1px solid var(--border)' }}>
-          <div className="w-12 h-12 rounded-[16px] flex items-center justify-center mx-auto mb-3"
+          <div className="w-10 h-10 rounded-[14px] flex items-center justify-center mx-auto mb-3"
             style={{ background: '#F3F4F6' }}>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="1.5">
-              <circle cx="12" cy="12" r="10"/>
-              <line x1="12" y1="8" x2="12" y2="16"/>
-              <line x1="8" y1="12" x2="16" y2="12"/>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="1.5">
+              <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/>
+              <rect x="9" y="3" width="6" height="4" rx="1"/>
+              <path d="M9 12h6M9 16h4"/>
             </svg>
           </div>
-          <p className="text-sm font-medium text-gray-700 mb-1">Noch keine Website</p>
-          <p className="text-sm mb-5" style={{ color: 'var(--muted-foreground)' }}>
-            Wähle ein Template und erstelle deine erste Website.
+          <p className="text-sm font-medium text-gray-700 mb-1">Noch keine Anfragen</p>
+          <p className="text-sm" style={{ color: 'var(--muted-foreground)' }}>
+            Anfragen erscheinen hier, sobald Besucher deine Formulare ausfüllen.
           </p>
-          <Link href="/sites/new"
-            className="inline-flex items-center gap-2 px-6 py-3 text-sm font-medium text-white rounded-[16px]"
-            style={{ background: '#1a1a1a', boxShadow: '0 4px 14px rgba(26,26,26,0.25)' }}>
-            Erste Website erstellen
-          </Link>
         </div>
       ) : (
-        <div className="flex flex-col gap-3">
-          {recentSites.map((site: any) => (
-            <Link key={site.id} href={`/sites/${site.id}/edit`}
-              className="flex items-center justify-between p-4 rounded-[18px] bg-white transition-all"
-              style={{ boxShadow: 'var(--shadow-card)', border: '1px solid var(--border)' }}
-            >
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-[12px] flex items-center justify-center flex-shrink-0"
-                  style={{ background: '#F3F4F6' }}>
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="1.5">
-                    <circle cx="12" cy="12" r="10"/>
-                    <line x1="2" y1="12" x2="22" y2="12"/>
-                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
-                  </svg>
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-gray-900 leading-tight">
-                    {site.template?.title ?? 'Website'}
-                  </p>
-                  {site.username && (
-                    <p className="text-xs font-mono mt-0.5" style={{ color: 'var(--muted-foreground)' }}>
-                      {site.username}.{site.template?.domain}
-                    </p>
-                  )}
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="text-xs px-2.5 py-0.5 rounded-full"
-                  style={{
-                    background: site.status === 'published' ? '#F0FDF4' : '#F3F4F6',
-                    color: site.status === 'published' ? '#16A34A' : '#6B7280',
-                  }}>
-                  {site.status === 'published' ? '● Live' : '○ Entwurf'}
-                </span>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="2">
-                  <path d="M9 18l6-6-6-6"/>
+        <div className="rounded-[20px] overflow-hidden mb-8 bg-white"
+          style={{ boxShadow: 'var(--shadow-card)', border: '1px solid var(--border)' }}>
+          {recentSubmissions.map((sub: any, i: number) => (
+            <Link key={sub.id} href="/submissions"
+              className="flex items-center gap-4 px-5 py-4 transition-all"
+              style={{
+                borderBottom: i < recentSubmissions.length - 1 ? '1px solid #F3F4F6' : 'none',
+                background: !sub.read_at ? '#FAFAF9' : 'white',
+              }}>
+              <div className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center"
+                style={{ background: !sub.read_at ? '#EDE9FE' : '#F3F4F6' }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                  stroke={!sub.read_at ? '#6D28D9' : '#9CA3AF'} strokeWidth="2">
+                  <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
                 </svg>
               </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 mb-0.5">
+                  <span className="text-xs font-semibold text-gray-700 truncate">
+                    {siteMap[sub.user_site_id]?.title ?? 'Unbekannte Seite'}
+                  </span>
+                  {sub.form_name && (
+                    <span className="text-[10px] px-1.5 py-0.5 rounded-full flex-shrink-0"
+                      style={{ background: '#F3F4F6', color: '#6B7280' }}>
+                      {sub.form_name}
+                    </span>
+                  )}
+                  {!sub.read_at && (
+                    <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: '#6D28D9' }} />
+                  )}
+                </div>
+                <p className="text-xs truncate" style={{ color: '#6B7280' }}>
+                  {getSubmissionPreview(sub.data as Record<string, string>)}
+                </p>
+              </div>
+              <span className="text-[10px] flex-shrink-0" style={{ color: '#9CA3AF' }}>
+                {formatDate(sub.created_at)}
+              </span>
             </Link>
           ))}
         </div>
