@@ -41,7 +41,9 @@ export function DashboardSidebar() {
     }
   }, [pathname])
 
-  const navItems = [
+  const navItems: Array<{
+    href: string; label: string; icon: React.ReactNode; badge?: number; indent?: boolean
+  }> = [
     {
       href: '/dashboard',
       label: 'Dashboard',
@@ -97,6 +99,17 @@ export function DashboardSidebar() {
         </svg>
       ),
     },
+    {
+      href: '/billing',
+      label: 'Abrechnung',
+      indent: true,
+      icon: (
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+          <rect x="1" y="4" width="22" height="16" rx="2"/>
+          <line x1="1" y1="10" x2="23" y2="10"/>
+        </svg>
+      ),
+    },
   ]
 
   async function handleLogout() {
@@ -117,42 +130,30 @@ export function DashboardSidebar() {
       <nav className="flex flex-col gap-1 flex-1">
         {navItems.map((item) => {
           const isActive = pathname === item.href ||
-            (item.href !== '/dashboard' && item.href !== '/sites' && pathname.startsWith(item.href)) ||
-            (item.href === '/sites' && (pathname === '/sites' || (pathname.startsWith('/sites/') && !pathname.startsWith('/sites/library'))))
-          const badge = 'badge' in item ? item.badge as number : 0
+            (item.href !== '/dashboard' && item.href !== '/sites' && item.href !== '/billing' && pathname.startsWith(item.href)) ||
+            (item.href === '/sites' && (pathname === '/sites' || (pathname.startsWith('/sites/') && !pathname.startsWith('/sites/library')))) ||
+            (item.href === '/billing' && (pathname === '/billing' || pathname.startsWith('/billing/')))
+          const badge = item.badge ?? 0
           return (
-            <div key={item.href}>
-              <Link href={item.href}
-                className="flex items-center gap-3 px-3 py-2.5 text-sm font-medium transition-all rounded-[14px]"
-                style={{
-                  color: isActive ? '#1a1a1a' : '#6B7280',
-                  background: isActive ? '#F3F4F6' : 'transparent',
-                }}>
-                <span style={{ color: isActive ? '#1a1a1a' : '#9CA3AF' }}>{item.icon}</span>
-                <span className="flex-1">{item.label}</span>
-                {badge > 0 && (
-                  <span className="min-w-[18px] h-[18px] px-1 rounded-full text-[10px] font-bold flex items-center justify-center"
-                    style={{ background: '#EF4444', color: 'white' }}>
-                    {badge > 99 ? '99+' : badge}
-                  </span>
-                )}
-              </Link>
-              {/* Abrechnung as sub-item under Einstellungen */}
-              {item.href === '/settings' && (
-                <Link href="/billing"
-                  className="flex items-center gap-3 pl-9 pr-3 py-2 text-sm font-medium transition-all rounded-[14px] mt-0.5"
-                  style={{
-                    color: pathname === '/billing' || pathname.startsWith('/billing') ? '#1a1a1a' : '#9CA3AF',
-                    background: pathname === '/billing' || pathname.startsWith('/billing') ? '#F3F4F6' : 'transparent',
-                  }}>
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                    <rect x="1" y="4" width="22" height="16" rx="2"/>
-                    <line x1="1" y1="10" x2="23" y2="10"/>
-                  </svg>
-                  <span>Abrechnung</span>
-                </Link>
+            <Link key={item.href} href={item.href}
+              className="flex items-center gap-3 text-sm font-medium transition-all rounded-[14px]"
+              style={{
+                paddingTop: item.indent ? '6px' : '10px',
+                paddingBottom: item.indent ? '6px' : '10px',
+                paddingLeft: item.indent ? '36px' : '12px',
+                paddingRight: '12px',
+                color: isActive ? '#1a1a1a' : item.indent ? '#9CA3AF' : '#6B7280',
+                background: isActive ? '#F3F4F6' : 'transparent',
+              }}>
+              <span style={{ color: isActive ? '#1a1a1a' : '#9CA3AF' }}>{item.icon}</span>
+              <span className="flex-1">{item.label}</span>
+              {badge > 0 && (
+                <span className="min-w-[18px] h-[18px] px-1 rounded-full text-[10px] font-bold flex items-center justify-center"
+                  style={{ background: '#EF4444', color: 'white' }}>
+                  {badge > 99 ? '99+' : badge}
+                </span>
               )}
-            </div>
+            </Link>
           )
         })}
       </nav>

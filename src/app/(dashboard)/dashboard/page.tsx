@@ -15,8 +15,6 @@ export default async function DashboardPage() {
 
   if (!profile?.username) redirect('/setup-username')
 
-  const admin = createAdminClient()
-
   const { data: sites } = await supabase
     .from('user_sites')
     .select('*, template:templates(title, domain, preview_images)')
@@ -24,30 +22,35 @@ export default async function DashboardPage() {
     .neq('status', 'deleted')
     .order('created_at', { ascending: false })
 
-  // Get all site IDs for submissions query
+  // Fetch recent submissions via admin client (wrapped in try/catch to never crash the page)
   const siteIds = (sites ?? []).map(s => s.id)
-
-  // Fetch recent submissions (last 5) and total count
-  const [{ data: recentSubmissions }, { count: totalSubmissions }] = await Promise.all([
-    siteIds.length > 0
-      ? admin
+  let recentSubmissions: any[] = []
+  let totalSubmissions = 0
+  try {
+    const admin = createAdminClient()
+    if (siteIds.length > 0) {
+      const [subRes, countRes] = await Promise.all([
+        admin
           .from('form_submissions')
           .select('id, form_name, data, created_at, read_at, user_site_id')
           .in('user_site_id', siteIds)
           .eq('is_spam', false)
           .is('archived_at', null)
           .order('created_at', { ascending: false })
-          .limit(5)
-      : { data: [] },
-    siteIds.length > 0
-      ? admin
+          .limit(5),
+        admin
           .from('form_submissions')
           .select('*', { count: 'exact', head: true })
           .in('user_site_id', siteIds)
           .eq('is_spam', false)
-          .is('archived_at', null)
-      : { count: 0 },
-  ])
+          .is('archived_at', null),
+      ])
+      recentSubmissions = subRes.data ?? []
+      totalSubmissions = countRes.count ?? 0
+    }
+  } catch {
+    // Fail silently — dashboard still renders without submissions data
+  }
 
   const siteMap = Object.fromEntries(
     (sites ?? []).map(s => [s.id, s.template])
