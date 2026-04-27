@@ -50,7 +50,7 @@ export default async function DashboardPage() {
   const displayName = profile?.username ?? 'dort'
 
   return (
-    <div className="max-w-2xl mx-auto">
+    <div className="max-w-2xl">
 
       {/* ── Greeting ──────────────────────────────────────────────── */}
       <div className="mb-10">
@@ -60,6 +60,47 @@ export default async function DashboardPage() {
         <p className="text-gray-400 mt-1.5 text-base">
           {hasSites ? 'Hier ist deine Webseite.' : 'Schön, dass du da bist.'}
         </p>
+      </div>
+
+      {/* ── How it works ──────────────────────────────────────────── */}
+      <div className="mb-8 rounded-2xl p-5" style={{ background: '#F8F9FA', border: '1px solid #E5E7EB' }}>
+        <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-4">So funktioniert FinestSites</p>
+        <div className="flex flex-col sm:flex-row gap-4">
+          {[
+            {
+              n: '1',
+              title: 'Vorlage auswählen',
+              desc: 'Wähle ein fertiges Design aus der Bibliothek — passend für dein Business.',
+              color: '#E0F0FF',
+              text: '#1D4ED8',
+            },
+            {
+              n: '2',
+              title: 'Daten eingeben',
+              desc: 'Trage deinen Namen, Bilder und Texte ein — ganz ohne technisches Wissen.',
+              color: '#FFF7E0',
+              text: '#92400E',
+            },
+            {
+              n: '3',
+              title: 'Online stellen',
+              desc: 'Ein Klick — und deine Webseite ist sofort im Internet sichtbar.',
+              color: '#E0FFF0',
+              text: '#065F46',
+            },
+          ].map(({ n, title, desc, color, text }) => (
+            <div key={n} className="flex gap-3 flex-1">
+              <div className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-black flex-shrink-0 mt-0.5"
+                style={{ background: color, color: text }}>
+                {n}
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-gray-900">{title}</p>
+                <p className="text-xs text-gray-500 mt-0.5 leading-relaxed">{desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* ── NEW SUBMISSIONS ALERT ─────────────────────────────────── */}

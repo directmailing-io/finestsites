@@ -15,6 +15,7 @@ export function DashboardSidebar() {
   const supabase = createClient()
 
   const [plan, setPlan] = useState<string | null>(null)
+  const [quota, setQuota] = useState<{ used: number; limit: number } | null>(null)
   const [atLimit, setAtLimit] = useState(false)
   const [unreadCount, setUnreadCount] = useState(0)
 
@@ -26,6 +27,7 @@ export function DashboardSidebar() {
         const limit = PLAN_LIMITS[p] ?? 1
         const used = data.paid_sites_count ?? 0
         setPlan(p)
+        setQuota({ used, limit })
         setAtLimit(limit !== Infinity && used >= limit)
       })
       .catch(() => {})
@@ -108,19 +110,27 @@ export function DashboardSidebar() {
       {/* ── Plan & Logout ─────────────────────────────────── */}
       <div className="px-3 pb-5 flex flex-col gap-1">
         {/* Plan hint */}
-        {plan && plan !== 'unlimited' && (
-          <Link
-            href="/billing"
-            className="flex items-center justify-between px-3 py-2.5 rounded-xl mb-1 transition-colors hover:bg-gray-100"
-            style={{ background: atLimit ? '#FEF2F2' : '#F3F4F6' }}>
-            <span className="text-xs font-medium" style={{ color: atLimit ? '#DC2626' : '#6B7280' }}>
-              {atLimit ? 'Limit erreicht' : PLAN_LABELS[plan]}
-            </span>
-            <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full"
-              style={{ background: atLimit ? '#FCA5A5' : '#E5E7EB', color: atLimit ? '#991B1B' : '#374151' }}>
-              {atLimit ? 'Upgrade →' : 'Free'}
-            </span>
-          </Link>
+        {plan && plan !== 'unlimited' && quota && (
+          <div className="relative group mb-1">
+            <Link
+              href="/billing"
+              className="flex items-center justify-between px-3 py-2.5 rounded-xl transition-colors hover:bg-gray-100"
+              style={{ background: atLimit ? '#FEF2F2' : '#F3F4F6' }}>
+              <span className="text-xs font-medium" style={{ color: atLimit ? '#DC2626' : '#6B7280' }}>
+                {atLimit ? 'Limit erreicht' : PLAN_LABELS[plan]}
+              </span>
+              <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full"
+                style={{ background: atLimit ? '#FCA5A5' : '#E5E7EB', color: atLimit ? '#991B1B' : '#374151' }}>
+                {atLimit ? 'Upgrade →' : `${quota.used} / ${quota.limit}`}
+              </span>
+            </Link>
+            {/* Tooltip */}
+            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 rounded-xl text-xs text-white whitespace-nowrap pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity z-50"
+              style={{ background: '#1a1a1a' }}>
+              {quota.used} von {quota.limit} Webseiten genutzt
+              <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent" style={{ borderTopColor: '#1a1a1a' }} />
+            </div>
+          </div>
         )}
 
         {/* Logout */}
