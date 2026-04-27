@@ -37,7 +37,11 @@ export function DashboardSidebar() {
   }, [])
 
   useEffect(() => {
-    if (pathname.startsWith('/submissions')) setUnreadCount(0)
+    if (pathname.startsWith('/submissions')) {
+      // defer to avoid synchronous setState in effect
+      const id = setTimeout(() => setUnreadCount(0), 0)
+      return () => clearTimeout(id)
+    }
   }, [pathname])
 
   async function handleLogout() {
