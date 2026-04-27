@@ -14,16 +14,19 @@ export function DashboardSidebar() {
   const router = useRouter()
   const supabase = createClient()
 
-  const [quota, setQuota] = useState<{ used: number; limit: number; plan: string } | null>(null)
+  const [plan, setPlan] = useState<string | null>(null)
+  const [atLimit, setAtLimit] = useState(false)
   const [unreadCount, setUnreadCount] = useState(0)
 
   useEffect(() => {
     fetch('/api/user/profile')
       .then(r => r.json())
       .then(data => {
-        const plan = data.plan ?? 'starter'
-        const limit = PLAN_LIMITS[plan] ?? 1
-        setQuota({ used: data.paid_sites_count ?? 0, limit, plan })
+        const p = data.plan ?? 'starter'
+        const limit = PLAN_LIMITS[p] ?? 1
+        const used = data.paid_sites_count ?? 0
+        setPlan(p)
+        setAtLimit(limit !== Infinity && used >= limit)
       })
       .catch(() => {})
 
@@ -33,193 +36,183 @@ export function DashboardSidebar() {
       .catch(() => {})
   }, [])
 
-  // Reset badge when navigating to submissions
   useEffect(() => {
-    if (pathname.startsWith('/submissions')) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setUnreadCount(0)
-    }
+    if (pathname.startsWith('/submissions')) setUnreadCount(0)
   }, [pathname])
-
-  const navItems: Array<{
-    href: string; label: string; icon: React.ReactNode; badge?: number; indent?: boolean
-  }> = [
-    {
-      href: '/dashboard',
-      label: 'Dashboard',
-      icon: (
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-          <rect x="3" y="3" width="7" height="7" rx="2"/>
-          <rect x="14" y="3" width="7" height="7" rx="2"/>
-          <rect x="3" y="14" width="7" height="7" rx="2"/>
-          <rect x="14" y="14" width="7" height="7" rx="2"/>
-        </svg>
-      ),
-    },
-    {
-      href: '/sites',
-      label: 'Meine Seiten',
-      icon: (
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-          <circle cx="12" cy="12" r="10"/>
-          <line x1="2" y1="12" x2="22" y2="12"/>
-          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
-        </svg>
-      ),
-    },
-    {
-      href: '/sites/library',
-      label: 'Webseiten-Bibliothek',
-      icon: (
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
-          <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
-        </svg>
-      ),
-    },
-    {
-      href: '/submissions',
-      label: 'Meine Anfragen',
-      badge: unreadCount,
-      icon: (
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-          <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/>
-          <rect x="9" y="3" width="6" height="4" rx="1"/>
-          <path d="M9 12h6M9 16h4"/>
-        </svg>
-      ),
-    },
-    {
-      href: '/settings',
-      label: 'Einstellungen',
-      icon: (
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-          <circle cx="12" cy="12" r="3"/>
-          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
-        </svg>
-      ),
-    },
-    {
-      href: '/billing',
-      label: 'Abrechnung',
-      indent: true,
-      icon: (
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-          <rect x="1" y="4" width="22" height="16" rx="2"/>
-          <line x1="1" y1="10" x2="23" y2="10"/>
-        </svg>
-      ),
-    },
-  ]
 
   async function handleLogout() {
     await supabase.auth.signOut()
     router.push('/login')
   }
 
+  function isActive(href: string) {
+    if (href === '/dashboard') return pathname === '/dashboard'
+    if (href === '/sites') return pathname === '/sites' || (pathname.startsWith('/sites/') && !pathname.startsWith('/sites/library'))
+    return pathname.startsWith(href)
+  }
+
+  const PLAN_LABELS: Record<string, string> = { starter: 'Starter', pro: 'Pro', unlimited: 'Unlimited' }
+
   return (
-    <aside className="hidden lg:flex w-[240px] flex-col flex-shrink-0 p-4 gap-2"
-      style={{ borderRight: '1px solid var(--border)', background: '#FFFFFF', height: '100vh', position: 'sticky', top: 0, overflowY: 'auto' }}>
+    <aside
+      className="hidden lg:flex w-[220px] flex-col flex-shrink-0"
+      style={{
+        borderRight: '1px solid #E5E7EB',
+        background: '#FAFAFA',
+        height: '100vh',
+        position: 'sticky',
+        top: 0,
+      }}>
 
       {/* Logo */}
-      <div className="px-3 py-4 mb-2">
-        <Logo variant="black" height={22} />
+      <div className="px-5 pt-6 pb-5">
+        <Logo variant="black" height={20} />
       </div>
 
-      {/* Nav */}
-      <nav className="flex flex-col gap-1 flex-1">
-        {navItems.map((item) => {
-          const isActive = pathname === item.href ||
-            (item.href !== '/dashboard' && item.href !== '/sites' && item.href !== '/billing' && pathname.startsWith(item.href)) ||
-            (item.href === '/sites' && (pathname === '/sites' || (pathname.startsWith('/sites/') && !pathname.startsWith('/sites/library')))) ||
-            (item.href === '/billing' && (pathname === '/billing' || pathname.startsWith('/billing/')))
-          const badge = item.badge ?? 0
-          return (
-            <Link key={item.href} href={item.href}
-              className="flex items-center gap-3 text-sm font-medium transition-all rounded-[14px]"
-              style={{
-                paddingTop: item.indent ? '6px' : '10px',
-                paddingBottom: item.indent ? '6px' : '10px',
-                paddingLeft: item.indent ? '36px' : '12px',
-                paddingRight: '12px',
-                color: isActive ? '#1a1a1a' : item.indent ? '#9CA3AF' : '#6B7280',
-                background: isActive ? '#F3F4F6' : 'transparent',
-              }}>
-              <span style={{ color: isActive ? '#1a1a1a' : '#9CA3AF' }}>{item.icon}</span>
-              <span className="flex-1">{item.label}</span>
-              {badge > 0 && (
-                <span className="min-w-[18px] h-[18px] px-1 rounded-full text-[10px] font-bold flex items-center justify-center"
-                  style={{ background: '#EF4444', color: 'white' }}>
-                  {badge > 99 ? '99+' : badge}
-                </span>
-              )}
-            </Link>
-          )
-        })}
+      {/* ── Primary nav ──────────────────────────────────── */}
+      <nav className="flex flex-col px-3 gap-0.5">
+        <NavItem href="/dashboard" active={isActive('/dashboard')} icon={<HomeIcon />}>
+          Startseite
+        </NavItem>
+        <NavItem href="/sites" active={isActive('/sites')} icon={<GlobeIcon />}>
+          Meine Webseite
+        </NavItem>
+        <NavItem href="/submissions" active={isActive('/submissions')} icon={<InboxIcon />} badge={unreadCount}>
+          Anfragen
+        </NavItem>
       </nav>
 
-      {/* Quota widget */}
-      {quota && (
-        <Link href="/billing"
-          className="mx-1 mb-2 px-3 py-3 rounded-[14px] flex flex-col gap-2 transition-all"
-          style={{ background: '#F8FAFC', border: '1px solid #F1F5F9' }}
-          onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = '#F1F5F9'}
-          onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = '#F8FAFC'}>
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-medium" style={{ color: '#374151' }}>
-              {quota.used} von {quota.limit === Infinity ? '∞' : quota.limit} Webseiten
-            </span>
-            <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded-full capitalize"
-              style={{
-                background: quota.plan === 'unlimited' ? '#ECFDF5' : quota.plan === 'pro' ? '#EDE9FE' : '#F3F4F6',
-                color: quota.plan === 'unlimited' ? '#059669' : quota.plan === 'pro' ? '#6D28D9' : '#6B7280',
-              }}>
-              {quota.plan}
-            </span>
-          </div>
-          {/* Progress bar */}
-          <div className="w-full h-1.5 rounded-full overflow-hidden" style={{ background: '#E2E8F0' }}>
-            <div
-              className="h-full rounded-full transition-all duration-500"
-              style={{
-                width: quota.limit === Infinity ? '0%' : `${Math.min(100, (quota.used / quota.limit) * 100)}%`,
-                background: quota.used >= quota.limit
-                  ? '#EF4444'
-                  : quota.used / quota.limit >= 0.75
-                  ? '#F59E0B'
-                  : '#1a1a1a',
-              }}
-            />
-          </div>
-          {quota.used >= quota.limit && (
-            <p className="text-[10px] font-medium" style={{ color: '#EF4444' }}>
-              Limit erreicht — upgraden →
-            </p>
-          )}
-        </Link>
-      )}
+      {/* Divider */}
+      <div className="mx-4 my-4" style={{ borderTop: '1px solid #E5E7EB' }} />
 
-      {/* Bottom: Logout */}
-      <div className="pt-2" style={{ borderTop: '1px solid var(--border)' }}>
-        <button onClick={handleLogout}
-          className="flex items-center gap-3 px-3 py-2.5 text-sm w-full rounded-[14px] transition-all"
-          style={{ color: '#6B7280' }}
-          onMouseEnter={e => {
-            (e.currentTarget as HTMLElement).style.background = '#FEF2F2'
-            ;(e.currentTarget as HTMLElement).style.color = '#DC2626'
-          }}
-          onMouseLeave={e => {
-            (e.currentTarget as HTMLElement).style.background = 'transparent'
-            ;(e.currentTarget as HTMLElement).style.color = '#6B7280'
-          }}>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-            <polyline points="16 17 21 12 16 7"/>
-            <line x1="21" y1="12" x2="9" y2="12"/>
+      {/* ── Secondary nav ────────────────────────────────── */}
+      <nav className="flex flex-col px-3 gap-0.5">
+        <NavItem href="/sites/library" active={isActive('/sites/library')} icon={<LibraryIcon />} secondary>
+          Vorlagen
+        </NavItem>
+        <NavItem href="/affiliate" active={isActive('/affiliate')} icon={<PartnerIcon />} secondary>
+          Partnerbereich
+        </NavItem>
+        <NavItem href="/settings" active={isActive('/settings')} icon={<SettingsIcon />} secondary>
+          Einstellungen
+        </NavItem>
+      </nav>
+
+      {/* Spacer */}
+      <div className="flex-1" />
+
+      {/* ── Plan & Logout ─────────────────────────────────── */}
+      <div className="px-3 pb-5 flex flex-col gap-1">
+        {/* Plan hint */}
+        {plan && plan !== 'unlimited' && (
+          <Link
+            href="/billing"
+            className="flex items-center justify-between px-3 py-2.5 rounded-xl mb-1 transition-colors hover:bg-gray-100"
+            style={{ background: atLimit ? '#FEF2F2' : '#F3F4F6' }}>
+            <span className="text-xs font-medium" style={{ color: atLimit ? '#DC2626' : '#6B7280' }}>
+              {atLimit ? 'Limit erreicht' : PLAN_LABELS[plan]}
+            </span>
+            <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full"
+              style={{ background: atLimit ? '#FCA5A5' : '#E5E7EB', color: atLimit ? '#991B1B' : '#374151' }}>
+              {atLimit ? 'Upgrade →' : 'Free'}
+            </span>
+          </Link>
+        )}
+
+        {/* Logout */}
+        <button
+          onClick={handleLogout}
+          className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm w-full text-left transition-colors hover:bg-red-50"
+          style={{ color: '#9CA3AF' }}
+          onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = '#DC2626'}
+          onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = '#9CA3AF'}>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
           </svg>
           Abmelden
         </button>
       </div>
     </aside>
+  )
+}
+
+// ── Sub-components ────────────────────────────────────────────────────────────
+
+function NavItem({
+  href, active, icon, badge, secondary, children,
+}: {
+  href: string
+  active: boolean
+  icon: React.ReactNode
+  badge?: number
+  secondary?: boolean
+  children: React.ReactNode
+}) {
+  return (
+    <Link
+      href={href}
+      className="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors"
+      style={{
+        background: active ? '#1a1a1a' : 'transparent',
+        color: active ? '#ffffff' : secondary ? '#9CA3AF' : '#374151',
+        fontSize: secondary ? '13px' : '14px',
+        fontWeight: active ? 600 : secondary ? 400 : 500,
+      }}>
+      <span style={{ opacity: active ? 1 : secondary ? 0.6 : 0.8 }}>{icon}</span>
+      <span className="flex-1">{children}</span>
+      {badge != null && badge > 0 && (
+        <span className="min-w-[20px] h-5 px-1.5 rounded-full text-[11px] font-bold flex items-center justify-center"
+          style={{ background: active ? 'rgba(255,255,255,0.25)' : '#FEE2E2', color: active ? '#fff' : '#DC2626' }}>
+          {badge > 99 ? '99+' : badge}
+        </span>
+      )}
+    </Link>
+  )
+}
+
+function HomeIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+    </svg>
+  )
+}
+function GlobeIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/>
+      <path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/>
+    </svg>
+  )
+}
+function InboxIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/>
+      <path d="M5.45 5.11L2 12v6a2 2 0 002 2h16a2 2 0 002-2v-6l-3.45-6.89A2 2 0 0016.76 4H7.24a2 2 0 00-1.79 1.11z"/>
+    </svg>
+  )
+}
+function LibraryIcon() {
+  return (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/>
+    </svg>
+  )
+}
+function PartnerIcon() {
+  return (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/>
+      <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>
+    </svg>
+  )
+}
+function SettingsIcon() {
+  return (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <circle cx="12" cy="12" r="3"/>
+      <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/>
+    </svg>
   )
 }
