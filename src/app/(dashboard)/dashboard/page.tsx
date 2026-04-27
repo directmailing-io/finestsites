@@ -3,8 +3,6 @@ import { createAdminClient } from '@/lib/supabase/admin'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 
-const PLAN_LIMITS: Record<string, number> = { starter: 1, pro: 3, unlimited: Infinity }
-
 export default async function DashboardPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -17,210 +15,226 @@ export default async function DashboardPage() {
 
   const { data: sites } = await supabase
     .from('user_sites')
-    .select('*, template:templates(title, domain, preview_images)')
+    .select('*, template:templates(title, domain, preview_images, is_free)')
     .eq('user_id', user.id)
     .neq('status', 'deleted')
     .order('created_at', { ascending: false })
 
-  // Fetch recent submissions via admin client (wrapped in try/catch to never crash the page)
-  const siteIds = (sites ?? []).map(s => s.id)
-  let recentSubmissions: any[] = []
-  let totalSubmissions = 0
+  const activeSites = (sites ?? []).filter(s => s.status !== 'deleted')
+  const hasSites = activeSites.length > 0
+
+  // Unread submissions — only what matters
+  let unreadCount = 0
   try {
     const admin = createAdminClient()
-    if (siteIds.length > 0) {
-      const [subRes, countRes] = await Promise.all([
-        admin
-          .from('form_submissions')
-          .select('id, form_name, data, created_at, read_at, user_site_id')
-          .in('user_site_id', siteIds)
-          .eq('is_spam', false)
-          .is('archived_at', null)
-          .order('created_at', { ascending: false })
-          .limit(5),
-        admin
-          .from('form_submissions')
-          .select('*', { count: 'exact', head: true })
-          .in('user_site_id', siteIds)
-          .eq('is_spam', false)
-          .is('archived_at', null),
-      ])
-      recentSubmissions = subRes.data ?? []
-      totalSubmissions = countRes.count ?? 0
+    if (activeSites.length > 0) {
+      const siteIds = activeSites.map(s => s.id)
+      const { count } = await admin
+        .from('form_submissions')
+        .select('*', { count: 'exact', head: true })
+        .in('user_site_id', siteIds)
+        .eq('is_spam', false)
+        .is('archived_at', null)
+        .is('read_at', null)
+      unreadCount = count ?? 0
     }
-  } catch {
-    // Fail silently — dashboard still renders without submissions data
-  }
-
-  const siteMap = Object.fromEntries(
-    (sites ?? []).map(s => [s.id, s.template])
-  )
-
-  const publishedCount = (sites ?? []).filter(s => s.status === 'published').length
+  } catch { /* fail silently */ }
 
   const plan = profile?.plan ?? 'starter'
+  const PLAN_LIMITS: Record<string, number> = { starter: 1, pro: 3, unlimited: Infinity }
   const planLimit = PLAN_LIMITS[plan] ?? 1
-  const planLabels: Record<string, string> = { starter: 'Starter', pro: 'Pro', unlimited: 'Unlimited' }
+  const paidSites = activeSites.filter(s => !(s.template as any)?.is_free)
+  const atLimit = planLimit !== Infinity && paidSites.length >= planLimit
 
-  const planHeroColors: Record<string, { bg: string; border: string; text: string; accent: string }> = {
-    starter: { bg: '#EFF6FF', border: '#BFDBFE', text: '#1D4ED8', accent: '#3B82F6' },
-    pro:     { bg: '#EDE9FE', border: '#C4B5FD', text: '#6D28D9', accent: '#7C3AED' },
-    unlimited: { bg: '#ECFDF5', border: '#A7F3D0', text: '#059669', accent: '#10B981' },
-  }
-  const hero = planHeroColors[plan] ?? planHeroColors.starter
-
-  // Use paid_sites_count for plan limit display
-  const paidSites = (sites ?? []).filter(s => {
-    const t = s.template
-    return !t?.is_free
-  })
-  const paidSitesCount = paidSites.length
-  const progressPct = planLimit === Infinity ? 0 : Math.min(100, (paidSitesCount / planLimit) * 100)
-  const progressColor = paidSitesCount >= planLimit ? '#EF4444' : paidSitesCount / planLimit >= 0.75 ? '#F59E0B' : hero.accent
-
-  const statusLabels: Record<string, string> = {
-    active: 'Aktiv',
-    trialing: 'Testphase',
-    past_due: 'Zahlung offen',
-    canceled: 'Gekündigt',
-    incomplete: 'Ausstehend',
-  }
-
-  function formatDate(iso: string) {
-    return new Date(iso).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' })
-  }
-
-  function getSubmissionPreview(data: Record<string, string>) {
-    const values = Object.values(data).filter(v => v && typeof v === 'string')
-    const first = values[0] ?? ''
-    return first.length > 50 ? first.slice(0, 50) + '…' : first
-  }
+  // Display name: use username but strip common platform handles cleanly
+  const displayName = profile?.username ?? 'dort'
 
   return (
-    <div className="max-w-4xl">
-      {/* Greeting */}
-      <h1 className="text-2xl font-semibold text-gray-900 mb-8">
-        Hallo, {profile?.username}
-      </h1>
+    <div className="max-w-2xl mx-auto">
 
-      {/* Plan Hero Card */}
-      <div className="p-6 rounded-[24px] mb-6"
-        style={{ background: hero.bg, border: `1px solid ${hero.border}`, boxShadow: '0 4px 20px rgba(0,0,0,0.05)' }}>
-        <div className="flex items-start justify-between gap-4 mb-4">
-          <div>
-            <div className="text-2xl font-bold mb-1" style={{ color: hero.text }}>
-              {planLabels[plan]}
-            </div>
-            {profile?.subscription_status && (
-              <span className="text-xs font-medium px-2.5 py-1 rounded-full inline-block"
-                style={{ background: 'white', color: hero.text, border: `1px solid ${hero.border}` }}>
-                {statusLabels[profile.subscription_status] ?? profile.subscription_status}
-              </span>
-            )}
+      {/* ── Greeting ──────────────────────────────────────────────── */}
+      <div className="mb-10">
+        <h1 className="text-3xl font-bold text-gray-900">
+          Hallo, {displayName}! 👋
+        </h1>
+        <p className="text-gray-400 mt-1.5 text-base">
+          {hasSites ? 'Hier ist deine Webseite.' : 'Schön, dass du da bist.'}
+        </p>
+      </div>
+
+      {/* ── NEW SUBMISSIONS ALERT ─────────────────────────────────── */}
+      {unreadCount > 0 && (
+        <Link href="/submissions"
+          className="flex items-center gap-4 p-5 rounded-2xl mb-6 transition-opacity hover:opacity-90"
+          style={{ background: '#FFF3F0', border: '1.5px solid #F5C5B8' }}>
+          <div className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0"
+            style={{ background: '#FFDDD8' }}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#C0392B" strokeWidth="2">
+              <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+            </svg>
           </div>
-          {plan !== 'unlimited' && (
+          <div className="flex-1">
+            <p className="font-semibold text-gray-900 text-base">
+              {unreadCount === 1
+                ? 'Du hast 1 neue Anfrage'
+                : `Du hast ${unreadCount} neue Anfragen`}
+            </p>
+            <p className="text-sm text-gray-500 mt-0.5">Tippe hier, um sie zu lesen →</p>
+          </div>
+        </Link>
+      )}
+
+      {/* ── NO SITE YET ───────────────────────────────────────────── */}
+      {!hasSites && (
+        <div className="rounded-2xl overflow-hidden" style={{ border: '1px solid #E5E7EB' }}>
+          {/* Colored top bar */}
+          <div className="h-2" style={{ background: 'linear-gradient(90deg, #C07050, #E8A882)' }} />
+          <div className="p-8 text-center">
+            <div className="w-16 h-16 rounded-2xl mx-auto mb-5 flex items-center justify-center"
+              style={{ background: '#FFF8F3' }}>
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#C07050" strokeWidth="1.75">
+                <rect x="3" y="3" width="18" height="18" rx="2"/>
+                <path d="M3 9h18M9 21V9"/>
+              </svg>
+            </div>
+            <h2 className="text-xl font-bold text-gray-900 mb-2">
+              Deine Webseite wartet auf dich
+            </h2>
+            <p className="text-gray-500 text-base leading-relaxed mb-8 max-w-sm mx-auto">
+              Wähle eine fertige Vorlage und trage nur noch deine Daten ein.
+              Ganz ohne technisches Wissen.
+            </p>
+            <Link href="/sites/library"
+              className="inline-flex items-center gap-2 px-8 py-4 rounded-xl text-white text-base font-semibold"
+              style={{ background: '#C07050' }}>
+              Vorlage auswählen
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <path d="M5 12h14M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </Link>
+            {/* Simple steps */}
+            <div className="mt-8 pt-8 border-t border-gray-100 grid grid-cols-3 gap-4 text-center">
+              {[
+                { n: '1', label: 'Vorlage wählen' },
+                { n: '2', label: 'Daten eintragen' },
+                { n: '3', label: 'Online stellen' },
+              ].map(({ n, label }) => (
+                <div key={n}>
+                  <div className="w-8 h-8 rounded-full mx-auto mb-2 flex items-center justify-center text-sm font-bold"
+                    style={{ background: '#FFF8F3', color: '#C07050' }}>
+                    {n}
+                  </div>
+                  <p className="text-xs text-gray-500">{label}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── SITE CARDS ────────────────────────────────────────────── */}
+      {hasSites && (
+        <div className="flex flex-col gap-4">
+          {activeSites.map((site: any) => {
+            const tpl = site.template
+            const isPublished = site.status === 'published'
+            const hasCustomDomain = site.custom_domain_status === 'active' && !!site.custom_domain
+            const displayUrl = hasCustomDomain
+              ? site.custom_domain
+              : (profile.username && tpl?.domain ? `${profile.username}.${tpl.domain}` : null)
+            const siteLink = displayUrl
+              ? `https://${displayUrl}`
+              : null
+
+            return (
+              <div key={site.id} className="rounded-2xl bg-white overflow-hidden"
+                style={{ border: '1px solid #E5E7EB', boxShadow: '0 1px 4px rgba(0,0,0,0.04)' }}>
+
+                {/* Status bar */}
+                <div className="h-1.5"
+                  style={{ background: isPublished ? '#5BAA7B' : '#D4B870' }} />
+
+                <div className="p-6">
+                  {/* Site name + status */}
+                  <div className="flex items-start justify-between gap-4 mb-4">
+                    <div>
+                      <h2 className="text-xl font-bold text-gray-900">
+                        {tpl?.title ?? 'Meine Webseite'}
+                      </h2>
+                      {displayUrl && (
+                        <p className="text-sm mt-1 font-mono" style={{ color: '#9CA3AF' }}>
+                          {displayUrl}
+                        </p>
+                      )}
+                    </div>
+                    <span className="flex-shrink-0 flex items-center gap-1.5 text-sm font-semibold px-3 py-1.5 rounded-full mt-0.5"
+                      style={{
+                        background: isPublished ? '#ECFDF5' : '#FFFBEB',
+                        color: isPublished ? '#065F46' : '#92400E',
+                      }}>
+                      <span className="w-2 h-2 rounded-full"
+                        style={{ background: isPublished ? '#10B981' : '#F59E0B' }} />
+                      {isPublished ? 'Online' : 'Entwurf'}
+                    </span>
+                  </div>
+
+                  {/* Actions */}
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    <Link href={`/sites/${site.id}/edit`}
+                      className="flex-1 flex items-center justify-center gap-2 py-3.5 px-5 rounded-xl text-white font-semibold text-base transition-opacity hover:opacity-90"
+                      style={{ background: '#1a1a1a' }}>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.25">
+                        <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
+                        <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                      </svg>
+                      Webseite bearbeiten
+                    </Link>
+                    {isPublished && siteLink && (
+                      <a href={siteLink} target="_blank" rel="noopener noreferrer"
+                        className="flex items-center justify-center gap-2 py-3.5 px-5 rounded-xl font-semibold text-base transition-colors"
+                        style={{ background: '#F3F4F6', color: '#374151' }}>
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.25">
+                          <circle cx="12" cy="12" r="10"/>
+                          <line x1="2" y1="12" x2="22" y2="12"/>
+                          <path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/>
+                        </svg>
+                        Ansehen
+                      </a>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )
+          })}
+
+          {/* Add site CTA (only if below limit) */}
+          {!atLimit && (
+            <Link href="/sites/library"
+              className="flex items-center justify-center gap-2 p-4 rounded-2xl text-sm font-medium transition-colors hover:bg-gray-50"
+              style={{ border: '1.5px dashed #D1D5DB', color: '#6B7280' }}>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <path d="M12 5v14M5 12h14" strokeLinecap="round"/>
+              </svg>
+              Weitere Webseite hinzufügen
+            </Link>
+          )}
+
+          {/* At limit nudge */}
+          {atLimit && plan !== 'unlimited' && (
             <Link href="/billing"
-              className="text-sm font-semibold px-4 py-2 rounded-[14px] flex-shrink-0"
-              style={{ background: hero.text, color: 'white' }}>
-              Upgrade
+              className="flex items-center justify-between gap-4 p-5 rounded-2xl transition-opacity hover:opacity-90"
+              style={{ background: '#FFFBEB', border: '1px solid #FDE68A' }}>
+              <p className="text-sm font-medium text-amber-800">
+                Du hast dein Limit erreicht — mit einem Upgrade kannst du mehr Webseiten erstellen.
+              </p>
+              <span className="flex-shrink-0 text-sm font-bold text-amber-700 whitespace-nowrap">
+                Upgrade →
+              </span>
             </Link>
           )}
         </div>
-
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-sm font-medium" style={{ color: hero.text }}>
-            {paidSitesCount} von {planLimit === Infinity ? '∞' : planLimit} Webseiten genutzt
-          </span>
-        </div>
-        <div className="w-full h-2 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.6)' }}>
-          <div className="h-full rounded-full transition-all duration-500"
-            style={{ width: planLimit === Infinity ? '0%' : `${progressPct}%`, background: progressColor }} />
-        </div>
-      </div>
-
-      {/* Stats grid — 2 pastel cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
-        <div className="p-6 rounded-[24px] flex flex-col gap-1"
-          style={{ background: '#ECFDF5', border: '1px solid #A7F3D0' }}>
-          <div className="text-3xl font-bold" style={{ color: '#059669' }}>{publishedCount}</div>
-          <div className="text-sm font-medium" style={{ color: '#047857' }}>Aktive Seiten</div>
-        </div>
-        <div className="p-6 rounded-[24px] flex flex-col gap-1"
-          style={{ background: '#EDE9FE', border: '1px solid #C4B5FD' }}>
-          <div className="text-3xl font-bold" style={{ color: '#6D28D9' }}>{totalSubmissions ?? 0}</div>
-          <div className="text-sm font-medium" style={{ color: '#5B21B6' }}>Erhaltene Anfragen</div>
-        </div>
-      </div>
-
-      {/* Recent submissions */}
-      <div className="mb-4 flex items-center justify-between">
-        <h2 className="font-semibold text-gray-900">Die letzten erhaltenen Anfragen</h2>
-        <Link href="/submissions"
-          className="text-sm font-medium px-3 py-1.5 rounded-[12px]"
-          style={{ background: '#F3F4F6', color: '#374151' }}>
-          Alle anzeigen
-        </Link>
-      </div>
-
-      {!recentSubmissions || recentSubmissions.length === 0 ? (
-        <div className="p-8 rounded-[24px] bg-white text-center mb-8"
-          style={{ boxShadow: 'var(--shadow-card)', border: '1px solid var(--border)' }}>
-          <div className="w-10 h-10 rounded-[14px] flex items-center justify-center mx-auto mb-3"
-            style={{ background: '#F3F4F6' }}>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="1.5">
-              <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/>
-              <rect x="9" y="3" width="6" height="4" rx="1"/>
-              <path d="M9 12h6M9 16h4"/>
-            </svg>
-          </div>
-          <p className="text-sm font-medium text-gray-700 mb-1">Noch keine Anfragen</p>
-          <p className="text-sm" style={{ color: 'var(--muted-foreground)' }}>
-            Anfragen erscheinen hier, sobald Besucher deine Formulare ausfüllen.
-          </p>
-        </div>
-      ) : (
-        <div className="rounded-[20px] overflow-hidden mb-8 bg-white"
-          style={{ boxShadow: 'var(--shadow-card)', border: '1px solid var(--border)' }}>
-          {recentSubmissions.map((sub: any, i: number) => (
-            <Link key={sub.id} href="/submissions"
-              className="flex items-center gap-4 px-5 py-4 transition-all"
-              style={{
-                borderBottom: i < recentSubmissions.length - 1 ? '1px solid #F3F4F6' : 'none',
-                background: !sub.read_at ? '#FAFAF9' : 'white',
-              }}>
-              <div className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center"
-                style={{ background: !sub.read_at ? '#EDE9FE' : '#F3F4F6' }}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
-                  stroke={!sub.read_at ? '#6D28D9' : '#9CA3AF'} strokeWidth="2">
-                  <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
-                </svg>
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-0.5">
-                  <span className="text-xs font-semibold text-gray-700 truncate">
-                    {siteMap[sub.user_site_id]?.title ?? 'Unbekannte Seite'}
-                  </span>
-                  {sub.form_name && (
-                    <span className="text-[10px] px-1.5 py-0.5 rounded-full flex-shrink-0"
-                      style={{ background: '#F3F4F6', color: '#6B7280' }}>
-                      {sub.form_name}
-                    </span>
-                  )}
-                  {!sub.read_at && (
-                    <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: '#6D28D9' }} />
-                  )}
-                </div>
-                <p className="text-xs truncate" style={{ color: '#6B7280' }}>
-                  {getSubmissionPreview(sub.data as Record<string, string>)}
-                </p>
-              </div>
-              <span className="text-[10px] flex-shrink-0" style={{ color: '#9CA3AF' }}>
-                {formatDate(sub.created_at)}
-              </span>
-            </Link>
-          ))}
-        </div>
       )}
+
     </div>
   )
 }
