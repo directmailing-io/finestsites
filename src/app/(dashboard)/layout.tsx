@@ -31,7 +31,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
   return (
     <div className="flex min-h-screen" style={{ background: 'var(--background)' }}>
       <DashboardSidebar />
-      <main className="flex-1 min-w-0 p-4 sm:p-6 lg:p-8 pb-[calc(80px+env(safe-area-inset-bottom,0px))] lg:pb-8">
+      <main className="flex-1 min-w-0 p-4 pb-28 sm:p-6 sm:pb-28 lg:p-8 lg:pb-8">
         {children}
       </main>
       <MobileNav />

@@ -12,12 +12,16 @@ export function MobileNav() {
   const [showMore, setShowMore] = useState(false)
   const [unreadCount, setUnreadCount] = useState(0)
 
+  // Hide on editor pages — must be after all hooks
+  const isEditorPage = /^\/sites\/[^/]+\/edit/.test(pathname)
+
   useEffect(() => {
+    if (isEditorPage) return
     fetch('/api/submissions/unread-count')
       .then(r => r.json())
       .then(d => setUnreadCount(d.count ?? 0))
       .catch(() => {})
-  }, [])
+  }, [isEditorPage])
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -27,6 +31,8 @@ export function MobileNav() {
       return () => clearTimeout(id)
     }
   }, [pathname])
+
+  if (isEditorPage) return null
 
   function isActive(href: string) {
     if (href === '/dashboard') return pathname === '/dashboard'
