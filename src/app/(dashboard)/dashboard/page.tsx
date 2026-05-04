@@ -50,7 +50,7 @@ export default async function DashboardPage() {
   const displayName = profile?.username ?? 'dort'
 
   return (
-    <div className="max-w-2xl">
+    <div className="max-w-2xl w-full">
 
       {/* ── Greeting ──────────────────────────────────────────────── */}
       <div className="mb-10">

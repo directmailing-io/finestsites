@@ -54,44 +54,44 @@ function TemplateCard({ tpl }: { tpl: Template }) {
         )}
 
         {/* Badges */}
-        <div className="absolute top-3 left-3 flex gap-1.5">
+        <div className="absolute top-2 left-2 flex gap-1">
           {tpl.activated && (
-            <span className="text-[11px] font-semibold px-2.5 py-1 rounded-full flex items-center gap-1.5"
+            <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full flex items-center gap-1"
               style={{ background: 'rgba(255,255,255,0.92)', color: '#15803D', border: '1px solid rgba(22,163,74,0.25)' }}>
               <span className="w-1.5 h-1.5 rounded-full bg-green-500 inline-block" />
-              Aktiviert
+              Aktiv
             </span>
           )}
           {tpl.is_free && !tpl.activated && (
-            <span className="text-[11px] font-semibold px-2.5 py-1 rounded-full"
+            <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
               style={{ background: 'rgba(255,255,255,0.92)', color: '#1D4ED8', border: '1px solid rgba(37,99,235,0.2)' }}>
-              Kostenlos
+              Gratis
             </span>
           )}
         </div>
 
         {/* Hover overlay */}
-        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-200 flex items-end justify-center pb-4">
-          <span className="opacity-0 group-hover:opacity-100 transition-all duration-200 translate-y-1 group-hover:translate-y-0 text-xs font-semibold text-white px-4 py-2 rounded-full"
+        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-200 flex items-end justify-center pb-3">
+          <span className="opacity-0 group-hover:opacity-100 transition-all duration-200 translate-y-1 group-hover:translate-y-0 text-[11px] font-semibold text-white px-3 py-1.5 rounded-full hidden sm:block"
             style={{ background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(6px)' }}>
-            Vorschau ansehen →
+            Vorschau →
           </span>
         </div>
       </Link>
 
       {/* Card body */}
-      <div className="p-4 flex flex-col gap-3 flex-1">
+      <div className="p-3 sm:p-4 flex flex-col gap-2 flex-1">
         <div className="flex-1">
-          <p className="font-semibold text-gray-900 text-sm leading-snug">{tpl.title}</p>
+          <p className="font-semibold text-gray-900 text-sm leading-snug line-clamp-1">{tpl.title}</p>
           {tpl.description && (
-            <p className="text-xs mt-1 line-clamp-2 leading-relaxed text-gray-400">
+            <p className="text-xs mt-1 line-clamp-2 leading-relaxed text-gray-400 hidden sm:block">
               {tpl.description}
             </p>
           )}
           {visibleTags.length > 0 && (
-            <div className="flex flex-wrap gap-1 mt-2">
+            <div className="flex flex-wrap gap-1 mt-1.5">
               {visibleTags.map(tag => (
-                <span key={tag} className="text-[11px] px-2 py-0.5 rounded-full font-medium"
+                <span key={tag} className="text-[10px] px-1.5 py-0.5 rounded-full font-medium"
                   style={{ background: '#F3F4F6', color: '#6B7280' }}>
                   {TAG_LABEL[tag] ?? tag}
                 </span>
@@ -103,9 +103,9 @@ function TemplateCard({ tpl }: { tpl: Template }) {
         {/* CTA */}
         {tpl.activated ? (
           <Link href={`/sites/${tpl.activatedSiteId}/edit`}
-            className="flex items-center justify-center gap-1.5 text-sm font-semibold py-2.5 rounded-xl transition-opacity hover:opacity-80"
+            className="flex items-center justify-center gap-1 text-xs font-semibold py-2 rounded-xl transition-opacity hover:opacity-80"
             style={{ background: '#F0FDF4', color: '#15803D', border: '1px solid #D1FAE5' }}>
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
               <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
               <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
             </svg>
@@ -113,9 +113,9 @@ function TemplateCard({ tpl }: { tpl: Template }) {
           </Link>
         ) : (
           <Link href={`/sites/library/${tpl.id}`}
-            className="flex items-center justify-center gap-1.5 text-sm font-semibold py-2.5 rounded-xl text-white transition-opacity hover:opacity-90"
+            className="flex items-center justify-center text-xs font-semibold py-2 rounded-xl text-white transition-opacity hover:opacity-90"
             style={{ background: '#1a1a1a' }}>
-            Vorlage wählen
+            Wählen
           </Link>
         )}
       </div>
@@ -174,17 +174,17 @@ export default function LibraryPage() {
     <div className="max-w-4xl">
 
       {/* ── Header ──────────────────────────────────────────────── */}
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900">Vorlagen</h1>
-        <p className="text-gray-400 mt-1">
+      <div className="mb-6">
+        <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Vorlagen</h1>
+        <p className="text-gray-400 mt-1 text-sm">
           Wähle eine fertige Vorlage und richte deine Webseite in Minuten ein.
         </p>
       </div>
 
       {/* ── Search ──────────────────────────────────────────────── */}
-      <div className="relative mb-4">
+      <div className="relative mb-3">
         <svg className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none"
-          width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="2">
+          width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="2">
           <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
         </svg>
         <input
@@ -192,7 +192,7 @@ export default function LibraryPage() {
           value={search}
           onChange={e => setSearch(e.target.value)}
           placeholder="Vorlage suchen…"
-          className="w-full pl-11 pr-10 py-3.5 text-sm rounded-2xl outline-none transition-all bg-white"
+          className="w-full pl-11 pr-10 py-3 text-sm rounded-2xl outline-none transition-all bg-white"
           style={{ border: '1.5px solid #E5E7EB' }}
           onFocus={e => (e.target.style.borderColor = '#1a1a1a')}
           onBlur={e => (e.target.style.borderColor = '#E5E7EB')}
@@ -208,12 +208,12 @@ export default function LibraryPage() {
         )}
       </div>
 
-      {/* ── Tag filters ─────────────────────────────────────────── */}
+      {/* ── Tag filters — horizontal scroll on mobile ────────────── */}
       {allTags.length > 0 && (
-        <div className="flex items-center gap-2 flex-wrap mb-6">
+        <div className="flex items-center gap-2 mb-5 -mx-4 px-4 sm:mx-0 sm:px-0 overflow-x-auto scrollbar-none">
           <button
             onClick={() => setActiveTag(ALL_TAG)}
-            className="text-sm font-medium px-4 py-1.5 rounded-full transition-colors"
+            className="text-sm font-medium px-4 py-1.5 rounded-full transition-colors flex-shrink-0"
             style={{
               background: activeTag === ALL_TAG ? '#1a1a1a' : '#F3F4F6',
               color: activeTag === ALL_TAG ? '#fff' : '#6B7280',
@@ -223,7 +223,7 @@ export default function LibraryPage() {
           {allTags.map(tag => (
             <button key={tag}
               onClick={() => setActiveTag(tag === activeTag ? ALL_TAG : tag)}
-              className="text-sm font-medium px-4 py-1.5 rounded-full transition-colors"
+              className="text-sm font-medium px-4 py-1.5 rounded-full transition-colors flex-shrink-0"
               style={{
                 background: activeTag === tag ? '#1a1a1a' : '#F3F4F6',
                 color: activeTag === tag ? '#fff' : '#6B7280',
@@ -232,7 +232,7 @@ export default function LibraryPage() {
             </button>
           ))}
           {!loading && (
-            <span className="text-xs text-gray-400 ml-1">
+            <span className="text-xs text-gray-400 ml-1 flex-shrink-0">
               {filtered.length} {filtered.length === 1 ? 'Vorlage' : 'Vorlagen'}
             </span>
           )}
@@ -241,15 +241,14 @@ export default function LibraryPage() {
 
       {/* ── Grid ────────────────────────────────────────────────── */}
       {loading ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {[1, 2, 3].map(i => (
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+          {[1, 2, 3, 4].map(i => (
             <div key={i} className="rounded-2xl overflow-hidden bg-white animate-pulse"
               style={{ border: '1px solid #E5E7EB' }}>
               <div className="bg-gray-100" style={{ aspectRatio: '4/3' }} />
-              <div className="p-4 flex flex-col gap-3">
-                <div className="h-3.5 rounded-full bg-gray-100 w-3/5" />
-                <div className="h-2.5 rounded-full bg-gray-100 w-full" />
-                <div className="h-9 rounded-xl bg-gray-100 mt-1" />
+              <div className="p-3 sm:p-4 flex flex-col gap-2">
+                <div className="h-3 rounded-full bg-gray-100 w-3/5" />
+                <div className="h-8 rounded-xl bg-gray-100 mt-1" />
               </div>
             </div>
           ))}
@@ -266,7 +265,7 @@ export default function LibraryPage() {
           </button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
           {filtered.map(tpl => (
             <TemplateCard key={tpl.id} tpl={tpl} />
           ))}
