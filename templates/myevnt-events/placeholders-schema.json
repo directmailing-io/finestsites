@@ -79,14 +79,12 @@
         },
         { "key": "wiederkehrung_bis", "label": "Wiederkehrung läuft bis (optional)", "type": "date", "required": false, "placeholder_text": "Leer = unbegrenzt", "show_when": { "field": "wiederkehrung", "value": ["taeglich", "woechentlich"] } },
         {
-          "key": "wiederkehrung_termine", "label": "Einzelne Termine", "type": "loop", "required": false,
-          "min_items": 0, "max_items": 30,
-          "placeholder_text": "Wähle jeden Termin einzeln aus",
-          "show_when": { "field": "wiederkehrung", "value": "individuell" },
-          "sub_fields": [
-            { "key": "datum",   "label": "Datum",   "type": "date", "required": true, "placeholder_text": "" },
-            { "key": "uhrzeit", "label": "Uhrzeit (optional, sonst wird die Startuhrzeit verwendet)", "type": "time", "required": false, "placeholder_text": "" }
-          ]
+          "key": "wiederkehrung_termine",
+          "label": "Wähle die Termine im Kalender (Mehrfachauswahl, Uhrzeit ist bei allen die gleiche)",
+          "type": "date_multi", "required": false,
+          "default_value": "[]",
+          "placeholder_text": "",
+          "show_when": { "field": "wiederkehrung", "value": "individuell" }
         },
 
         { "key": "ort",  "label": "Adresse",        "type": "textarea", "required": false, "max_length": 200, "placeholder_text": "Straße, PLZ Ort", "show_when": { "field": "typ", "value": "vor_ort" } },

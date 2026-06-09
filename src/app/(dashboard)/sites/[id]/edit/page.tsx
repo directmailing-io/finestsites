@@ -16,7 +16,7 @@ interface CardOption {
 
 interface LoopSubField {
   key: string; label: string
-  type: 'text' | 'textarea' | 'richtext' | 'image' | 'url' | 'email' | 'dropdown' | 'loop' | 'color' | 'date' | 'time' | 'card_select' | 'toggle'
+  type: 'text' | 'textarea' | 'richtext' | 'image' | 'url' | 'email' | 'dropdown' | 'loop' | 'color' | 'date' | 'time' | 'card_select' | 'toggle' | 'date_multi'
   required?: boolean; placeholder_text?: string
   max_length?: number | null; default_value?: string
   aspect_ratio?: string; options?: string[]
@@ -1006,6 +1006,138 @@ function DateField({ value, onChange }: { value: string; onChange: (v: string) =
   )
 }
 
+// ─── MultiDateField (inline calendar, multi-select) ───────────────────────────
+function MultiDateField({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  const dates = (() => {
+    try {
+      const parsed = JSON.parse(value || '[]')
+      if (!Array.isArray(parsed)) return []
+      return parsed.filter((d: unknown) => typeof d === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(d)).sort() as string[]
+    } catch { return [] as string[] }
+  })()
+
+  const [view, setView] = useState(() => {
+    const first = dates[0]
+    const m = first?.match(/^(\d{4})-(\d{2})-(\d{2})$/)
+    const d = m ? new Date(+m[1], +m[2] - 1, 1) : new Date()
+    return { y: d.getFullYear(), m: d.getMonth() }
+  })
+
+  const MONTHS_L = ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember']
+  const WD = ['Mo','Di','Mi','Do','Fr','Sa','So']
+  const today = new Date(); today.setHours(0,0,0,0)
+
+  const firstOfMonth = new Date(view.y, view.m, 1)
+  const firstWeekday = (firstOfMonth.getDay() + 6) % 7
+  const daysInMonth = new Date(view.y, view.m + 1, 0).getDate()
+  const prevMonthDays = new Date(view.y, view.m, 0).getDate()
+  type Cell = { d: number; y: number; m: number; other: boolean }
+  const cells: Cell[] = []
+  for (let i = 0; i < firstWeekday; i++) cells.push({ d: prevMonthDays - firstWeekday + 1 + i, y: view.y, m: view.m - 1, other: true })
+  for (let d = 1; d <= daysInMonth; d++) cells.push({ d, y: view.y, m: view.m, other: false })
+  let next = 1
+  while (cells.length % 7 !== 0) { cells.push({ d: next++, y: view.y, m: view.m + 1, other: true }) }
+  while (cells.length < 42) { cells.push({ d: next++, y: view.y, m: view.m + 1, other: true }) }
+
+  function isoOf(c: Cell) {
+    return `${c.y}-${String(c.m + 1).padStart(2, '0')}-${String(c.d).padStart(2, '0')}`
+  }
+
+  function toggle(iso: string) {
+    const set = new Set(dates)
+    if (set.has(iso)) set.delete(iso); else set.add(iso)
+    onChange(JSON.stringify(Array.from(set).sort()))
+  }
+
+  function remove(iso: string) {
+    onChange(JSON.stringify(dates.filter(d => d !== iso)))
+  }
+
+  function fmtChip(iso: string) {
+    const [y, mo, d] = iso.split('-')
+    return `${parseInt(d, 10)}. ${MONTHS_L[parseInt(mo, 10) - 1].slice(0, 3)} ${y}`
+  }
+
+  return (
+    <div className="flex flex-col gap-3">
+      <div style={{
+        background: '#FFFFFF',
+        border: '1px solid #E5E7EB',
+        borderRadius: 14,
+        padding: 14,
+      }}>
+        <div className="flex items-center justify-between mb-3 px-1">
+          <button type="button" onClick={() => setView(v => v.m === 0 ? { y: v.y - 1, m: 11 } : { y: v.y, m: v.m - 1 })}
+            className="p-1.5 rounded-md hover:bg-gray-100" aria-label="Vorheriger Monat">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+          </button>
+          <div className="text-sm font-bold text-gray-900">{MONTHS_L[view.m]} {view.y}</div>
+          <button type="button" onClick={() => setView(v => v.m === 11 ? { y: v.y + 1, m: 0 } : { y: v.y, m: v.m + 1 })}
+            className="p-1.5 rounded-md hover:bg-gray-100" aria-label="Nächster Monat">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+        </div>
+        <div className="grid grid-cols-7 gap-0.5 mb-1">
+          {WD.map(w => (
+            <div key={w} className="text-[10px] font-semibold text-center py-1" style={{ color: '#9CA3AF', letterSpacing: '0.04em' }}>{w}</div>
+          ))}
+        </div>
+        <div className="grid grid-cols-7 gap-0.5">
+          {cells.map((c, i) => {
+            const dt = new Date(c.y, c.m, c.d); dt.setHours(0,0,0,0)
+            const iso = isoOf(c)
+            const isToday = dt.getTime() === today.getTime()
+            const isSelected = dates.includes(iso)
+            return (
+              <button key={i} type="button" onClick={() => toggle(iso)}
+                className="text-sm font-medium aspect-square flex items-center justify-center transition-all"
+                style={{
+                  borderRadius: 8,
+                  color: c.other ? '#D1D5DB' : isSelected ? '#FFFFFF' : isToday ? '#1a1a1a' : '#374151',
+                  background: isSelected ? '#1a1a1a' : isToday ? '#F3F4F6' : 'transparent',
+                  fontWeight: isSelected || isToday ? 700 : 500,
+                }}>
+                {c.d}
+              </button>
+            )
+          })}
+        </div>
+        <div className="flex items-center justify-between mt-3 pt-3" style={{ borderTop: '1px solid #F3F4F6' }}>
+          <span className="text-xs text-gray-500">{dates.length} Termin{dates.length === 1 ? '' : 'e'} ausgewählt</span>
+          {dates.length > 0 && (
+            <button type="button" onClick={() => onChange(JSON.stringify([]))}
+              className="text-xs font-semibold text-gray-500 hover:text-gray-700 px-1">Alle löschen</button>
+          )}
+        </div>
+      </div>
+
+      {dates.length > 0 && (
+        <div className="flex flex-wrap gap-2">
+          {dates.map(iso => (
+            <span key={iso} className="inline-flex items-center gap-1.5 text-xs font-semibold"
+              style={{
+                padding: '6px 8px 6px 12px',
+                borderRadius: 999,
+                background: '#1a1a1a',
+                color: '#FFFFFF',
+              }}>
+              {fmtChip(iso)}
+              <button type="button" onClick={() => remove(iso)}
+                className="inline-flex items-center justify-center rounded-full"
+                style={{ width: 16, height: 16, background: 'rgba(255,255,255,0.2)' }}
+                aria-label={`${fmtChip(iso)} entfernen`}>
+                <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round">
+                  <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+              </button>
+            </span>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
 function ToggleField({ field, value, onChange }: {
   field: { label: string; description?: string; toggle_on_value?: string; toggle_off_value?: string; placeholder_text?: string }
   value: string
@@ -1206,6 +1338,11 @@ function LoopField({ field, value, onChange, onItemFocus }: {
                         value={item[sf.key] ?? ''}
                         onChange={v => updateSubField(idx, sf.key, v)}
                       />
+                    ) : sf.type === 'date_multi' ? (
+                      <MultiDateField
+                        value={item[sf.key] ?? ''}
+                        onChange={v => updateSubField(idx, sf.key, v)}
+                      />
                     ) : sf.type === 'time' ? (
                       <input
                         type="time"
@@ -1346,6 +1483,8 @@ function FieldRenderer({ field, value, onChange, onItemFocus }: {
       return <ColorField value={value} onChange={onChange} placeholder={field.placeholder_text} />
     case 'date':
       return <DateField value={value} onChange={onChange} />
+    case 'date_multi':
+      return <MultiDateField value={value} onChange={onChange} />
     case 'time':
       return (
         <input type="time" value={value} onChange={e => onChange(e.target.value)}

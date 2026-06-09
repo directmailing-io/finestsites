@@ -586,6 +586,64 @@
   .ev-lead strong { font-weight: 600; }
   .ev-lead a { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
 
+  /* ─── Termine list (individuelle Wiederkehrung) ──────────────── */
+  .termine-list {
+    list-style: none; padding: 0; margin: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 12px;
+    max-width: 880px;
+  }
+  .termine-list li {
+    display: flex; align-items: center; gap: 14px;
+    padding: 16px 18px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    transition: border-color 0.25s ease, transform 0.25s ease;
+  }
+  .termine-list li:hover { border-color: color-mix(in srgb, var(--accent) 40%, var(--border)); transform: translateY(-2px); }
+  .termine-list .termine-day {
+    flex-shrink: 0;
+    width: 48px; height: 52px;
+    border-radius: 10px;
+    background: color-mix(in srgb, var(--accent) 14%, transparent);
+    color: var(--accent);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    line-height: 1;
+  }
+  .termine-list .termine-day .d {
+    font-weight: 700; font-size: 1.125rem;
+    font-variant-numeric: tabular-nums; letter-spacing: -0.02em;
+  }
+  .termine-list .termine-day .m {
+    font-weight: 600; font-size: 0.625rem;
+    text-transform: uppercase; letter-spacing: 0.08em;
+    margin-top: 4px; opacity: 0.85;
+  }
+  .termine-list .termine-info { min-width: 0; }
+  .termine-list .termine-info .wd {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--text-mute);
+    margin-bottom: 2px;
+  }
+  .termine-list .termine-info .full {
+    font-weight: 600;
+    font-size: 0.9375rem;
+    color: var(--text);
+    letter-spacing: -0.01em;
+  }
+  .termine-list .termine-info .time {
+    font-size: 0.8125rem; color: var(--text-soft); margin-top: 2px;
+  }
+  @media (max-width: 720px) {
+    .termine-list { grid-template-columns: 1fr; gap: 10px; }
+    .termine-list li { padding: 14px 16px; }
+  }
+
   /* ─── Highlights — accent-tinted "What to expect" card ─────────── */
   .highlight-wrap {
     position: relative;
@@ -711,6 +769,16 @@
   }
   body.countdown-finished .countdown-section { display: none; }
 
+  @media (max-width: 720px) {
+    .countdown-section { padding: 40px 0 8px; }
+    .countdown-section .countdown-wrap { padding: 32px 16px; border-radius: 22px; }
+    .countdown-section .label { letter-spacing: 0.14em; margin-bottom: 18px; }
+    .countdown-section .blocks { gap: 12px 18px; }
+    .countdown-section .block { min-width: 56px; }
+    .countdown-section .num { font-size: clamp(1.75rem, 10vw, 3rem); }
+    .countdown-section .unit { font-size: 0.625rem; letter-spacing: 0.12em; margin-top: 6px; }
+  }
+
   /* ─── Special Guests row ──────────────────────────────────────── */
   .guests-row {
     display: grid;
@@ -763,12 +831,23 @@
   .location-card {
     background: var(--surface);
     border-radius: 22px;
-    padding: 36px 36px;
+    padding: 32px 36px;
     border: 1px solid var(--border);
     display: grid;
     grid-template-columns: 1fr auto;
     gap: 24px;
     align-items: center;
+  }
+  .location-card .location-text { min-width: 0; }
+  .location-card .location-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+  @media (max-width: 720px) {
+    .location-card {
+      grid-template-columns: 1fr;
+      padding: 24px;
+      border-radius: 18px;
+    }
+    .location-card .location-actions { width: 100%; flex-direction: column; gap: 8px; }
+    .location-card .location-actions .btn { width: 100%; justify-content: center; }
   }
   .location-card .label {
     color: var(--accent);
@@ -798,6 +877,23 @@
     grid-template-columns: auto 1fr auto;
     gap: 20px;
     align-items: center;
+  }
+  .access-card .access-text { min-width: 0; }
+  .access-card .url {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  @media (max-width: 720px) {
+    .access-card {
+      grid-template-columns: 1fr;
+      text-align: left;
+      padding: 24px;
+      border-radius: 18px;
+    }
+    .access-card .icon-wrap { width: 44px; height: 44px; }
+    .access-card .icon-wrap svg { width: 20px; height: 20px; }
+    .access-card .btn { width: 100%; justify-content: center; }
   }
   .access-card .icon-wrap {
     width: 56px; height: 56px;
@@ -1111,10 +1207,7 @@
            data-wiederkehrung="{{this.wiederkehrung}}"
            data-recur-bis="{{this.wiederkehrung_bis}}"
            data-recur-wochentag="{{this.wiederkehrung_wochentag}}"
-           data-recur-monat-typ="{{this.wiederkehrung_monat_typ}}"
-           data-recur-monat-tag="{{this.wiederkehrung_monat_tag}}"
-           data-recur-monat-pos="{{this.wiederkehrung_monat_position}}"
-           data-recur-monat-wochentag="{{this.wiederkehrung_monat_wochentag}}"
+           data-recur-termine="{{this.wiederkehrung_termine}}"
            data-beschreibung="{{this.beschreibung}}"
            data-ort="{{this.ort}}"
            data-link="{{this.link}}"></div>
@@ -1141,6 +1234,7 @@
         data-recur="{{this.wiederkehrung}}"
         data-recur-bis="{{this.wiederkehrung_bis}}"
         data-recur-wochentag="{{this.wiederkehrung_wochentag}}"
+        data-recur-termine="{{this.wiederkehrung_termine}}"
         data-recur-monat-typ="{{this.wiederkehrung_monat_typ}}"
         data-recur-monat-tag="{{this.wiederkehrung_monat_tag}}"
         data-recur-monat-pos="{{this.wiederkehrung_monat_position}}"
@@ -1186,8 +1280,9 @@
           {{/if}}
         </div>
         <div class="ev-cta-row">
-          {{#if this.link}}<a href="{{this.link}}" target="_blank" rel="noopener" class="btn btn-primary">Jetzt beitreten →</a>{{/if}}
-          <button type="button" class="btn {{#if this.link}}btn-ghost{{/if}}{{#unless this.link}}btn-primary{{/unless}}" data-ical-btn>
+          {{#if this.typ=online}}{{#if this.link}}<a href="{{this.link}}" target="_blank" rel="noopener" class="btn btn-primary">Jetzt beitreten →</a>{{/if}}{{/if}}
+          {{#if this.typ=vor_ort}}{{#if this.ort}}<a href="https://www.google.com/maps/search/?api=1&query={{this.ort}}" target="_blank" rel="noopener" class="btn btn-primary">Route planen →</a>{{/if}}{{/if}}
+          <button type="button" class="btn btn-ghost" data-ical-btn>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M8 14h2M14 14h2M8 18h2M14 18h2"/></svg>
             In Kalender speichern
           </button>
@@ -1204,6 +1299,16 @@
           <div class="ev-section-eyebrow">Worum es geht</div>
           <h2 class="ev-section-title">Was dich an diesem Tag erwartet</h2>
           <div class="ev-lead">{{{this.beschreibung}}}</div>
+        </div>
+      </section>
+      {{/if}}
+
+      {{#if this.wiederkehrung=individuell}}
+      <section class="ev-section">
+        <div class="container-narrow reveal">
+          <div class="ev-section-eyebrow">Alle Termine</div>
+          <h2 class="ev-section-title">Wann findet das Event statt</h2>
+          <ul class="termine-list" data-termine-list data-termine="{{this.wiederkehrung_termine}}" data-uhr="{{this.uhrzeit}}" data-uhr2="{{this.uhrzeit_ende}}"></ul>
         </div>
       </section>
       {{/if}}
@@ -1273,6 +1378,7 @@
       </section>
       {{/if}}
 
+      {{#if this.typ=online}}
       {{#if this.teilnahme_modus=direkt}}
       {{#if this.link}}
       <section class="ev-section">
@@ -1285,7 +1391,7 @@
             <div class="icon-wrap">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
             </div>
-            <div>
+            <div class="access-text">
               <div class="label">Beitritts-Link</div>
               <div class="url"><a href="{{this.link}}" target="_blank" rel="noopener">{{this.link}}</a></div>
             </div>
@@ -1293,6 +1399,7 @@
           </div>
         </div>
       </section>
+      {{/if}}
       {{/if}}
       {{/if}}
 
@@ -1333,6 +1440,7 @@
       </section>
       {{/if}}
 
+      {{#if this.typ=vor_ort}}
       {{#if this.teilnahme_modus=direkt}}
       {{#if this.ort}}
       <section class="ev-section">
@@ -1342,11 +1450,11 @@
             <h2 class="ev-section-title">So findest du uns</h2>
           </div>
           <div class="location-card reveal">
-            <div>
+            <div class="location-text">
               <div class="label">Adresse</div>
               <div class="value">{{this.ort}}</div>
             </div>
-            <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            <div class="location-actions">
               <button type="button" class="btn btn-accent" data-ical-btn>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
                 In Kalender
@@ -1358,12 +1466,14 @@
       </section>
       {{/if}}
       {{/if}}
+      {{/if}}
 
       <section class="ev-final">
         <div class="container-narrow reveal">
           <h2 class="ev-final-title">Sei dabei.</h2>
           <div class="ev-final-row">
-            {{#if this.link}}<a href="{{this.link}}" target="_blank" rel="noopener" class="btn btn-accent">Jetzt beitreten →</a>{{/if}}
+            {{#if this.typ=online}}{{#if this.link}}<a href="{{this.link}}" target="_blank" rel="noopener" class="btn btn-accent">Jetzt beitreten →</a>{{/if}}{{/if}}
+            {{#if this.typ=vor_ort}}{{#if this.ort}}<a href="https://www.google.com/maps/search/?api=1&query={{this.ort}}" target="_blank" rel="noopener" class="btn btn-accent">Route planen →</a>{{/if}}{{/if}}
             <button type="button" class="btn btn-primary" data-ical-btn>In Kalender speichern</button>
             <button type="button" class="btn btn-ghost" data-share="{{this.kuerzel}}" data-share-title="{{this.name}}">Teilen</button>
           </div>
@@ -1377,8 +1487,9 @@
         <div class="t">{{this.name}}</div>
         <div class="s" data-date-pretty data-d="{{this.datum}}" data-d2="{{this.datum_ende}}">{{this.datum}} · {{this.uhrzeit}}</div>
       </div>
-      {{#if this.link}}<a href="{{this.link}}" target="_blank" rel="noopener" class="btn btn-accent">Beitreten</a>{{/if}}
-      {{#unless this.link}}<button type="button" class="btn btn-accent" data-ical-btn>Kalender</button>{{/unless}}
+      {{#if this.typ=online}}{{#if this.link}}<a href="{{this.link}}" target="_blank" rel="noopener" class="btn btn-accent">Beitreten</a>{{/if}}{{/if}}
+      {{#if this.typ=vor_ort}}{{#if this.ort}}<a href="https://www.google.com/maps/search/?api=1&query={{this.ort}}" target="_blank" rel="noopener" class="btn btn-accent">Route</a>{{/if}}{{/if}}
+      {{#unless this.link}}{{#unless this.ort}}<button type="button" class="btn btn-accent" data-ical-btn>Kalender</button>{{/unless}}{{/unless}}
     </div>
 
   </main>
@@ -1524,9 +1635,8 @@
       'monatlich':     'Monatlich'
     };
     function fmtShortDate(d){ return d ? d.getDate() + '. ' + MONTHS_LONG[d.getMonth()] + ' ' + d.getFullYear() : '' }
-    function formatRecur(type, datum, bis, wochentag, monatTyp, monatTag, monatPos, monatWochentag){
+    function formatRecur(type, datum, bis, wochentag, termineJson){
       if (!type || type === 'einmalig') return '';
-      var d = parseDate(datum);
       var bd = parseDate(bis);
       var bisStr = bd ? ' bis ' + fmtShortDate(bd) : '';
       switch (type) {
@@ -1534,14 +1644,16 @@
           return 'Täglich' + bisStr;
         case 'woechentlich':
           if (wochentag) return 'Jeden ' + wochentag + bisStr;
+          var d = parseDate(datum);
           return d ? 'Jeden ' + WD_FULL[d.getDay()] + bisStr : 'Wöchentlich' + bisStr;
-        case 'monatlich':
-          if (monatTyp === 'nach_wochentag' && monatPos && monatWochentag) {
-            return 'Am ' + monatPos.toLowerCase() + ' ' + monatWochentag + ' jedes Monats' + bisStr;
-          }
-          var tag = (monatTag || '').replace(/\.$/, '');
-          if (monatTyp === 'nach_tag' && tag) return 'Am ' + tag + '. jedes Monats' + bisStr;
-          return d ? 'Am ' + d.getDate() + '. jedes Monats' + bisStr : 'Monatlich' + bisStr;
+        case 'individuell':
+          try {
+            var arr = JSON.parse(termineJson || '[]');
+            if (Array.isArray(arr) && arr.length) {
+              return arr.length === 1 ? '1 Termin' : arr.length + ' Termine';
+            }
+          } catch(_) {}
+          return 'Individuelle Termine';
       }
       return '';
     }
@@ -1553,10 +1665,7 @@
         page.getAttribute('data-d'),
         page.getAttribute('data-recur-bis'),
         page.getAttribute('data-recur-wochentag'),
-        page.getAttribute('data-recur-monat-typ'),
-        page.getAttribute('data-recur-monat-tag'),
-        page.getAttribute('data-recur-monat-pos'),
-        page.getAttribute('data-recur-monat-wochentag')
+        page.getAttribute('data-recur-termine')
       );
       if (!label) {
         var wrap = el.closest('[data-recur-wrap]');
@@ -1564,6 +1673,40 @@
       } else {
         el.textContent = label;
       }
+    });
+
+    // ─── Termine list (individuelle Wiederkehrung) ──────────────────
+    document.querySelectorAll('[data-termine-list]').forEach(function(ul){
+      var raw = ul.getAttribute('data-termine') || '';
+      var uhr = ul.getAttribute('data-uhr') || '';
+      var uhr2 = ul.getAttribute('data-uhr2') || '';
+      var arr = [];
+      try { var parsed = JSON.parse(raw || '[]'); if (Array.isArray(parsed)) arr = parsed; } catch(_) {}
+      if (!arr.length) {
+        var section = ul.closest('section.ev-section');
+        if (section) section.style.display = 'none';
+        return;
+      }
+      var html = arr
+        .map(function(iso){ return { iso: iso, d: parseDate(iso) } })
+        .filter(function(x){ return !!x.d })
+        .sort(function(a,b){ return a.d - b.d })
+        .map(function(x){
+          var d = x.d;
+          var time = uhr ? (uhr + (uhr2 ? ' – ' + uhr2 : '')) : '';
+          return '<li>' +
+            '<div class="termine-day">' +
+              '<div class="d">' + d.getDate() + '</div>' +
+              '<div class="m">' + MONTHS_SHORT[d.getMonth()] + '</div>' +
+            '</div>' +
+            '<div class="termine-info">' +
+              '<div class="wd">' + WD_FULL[d.getDay()] + '</div>' +
+              '<div class="full">' + d.getDate() + '. ' + MONTHS_LONG[d.getMonth()] + ' ' + d.getFullYear() + '</div>' +
+              (time ? '<div class="time">' + time + '</div>' : '') +
+            '</div>' +
+          '</li>';
+        }).join('');
+      ul.innerHTML = html;
     });
 
     // ─── Tagline from description ───────────────────────────────────
@@ -1841,10 +1984,7 @@
           wiederkehrung: el.getAttribute('data-wiederkehrung') || '',
           wiederkehrung_bis: el.getAttribute('data-recur-bis') || '',
           wiederkehrung_wochentag: el.getAttribute('data-recur-wochentag') || '',
-          wiederkehrung_monat_typ: el.getAttribute('data-recur-monat-typ') || '',
-          wiederkehrung_monat_tag: el.getAttribute('data-recur-monat-tag') || '',
-          wiederkehrung_monat_pos: el.getAttribute('data-recur-monat-pos') || '',
-          wiederkehrung_monat_wochentag: el.getAttribute('data-recur-monat-wochentag') || '',
+          wiederkehrung_termine: el.getAttribute('data-recur-termine') || '',
           beschreibung: el.getAttribute('data-beschreibung') || '',
           ort: el.getAttribute('data-ort') || '',
           link: el.getAttribute('data-link') || '',
@@ -1937,7 +2077,7 @@
             ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>'
             : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>';
           var pillLbl = ev.typ === 'online' ? 'Online' : 'Vor Ort';
-          var recurLabel = formatRecur(ev.wiederkehrung, ev.datum, ev.wiederkehrung_bis, ev.wiederkehrung_wochentag, ev.wiederkehrung_monat_typ, ev.wiederkehrung_monat_tag, ev.wiederkehrung_monat_pos, ev.wiederkehrung_monat_wochentag) || RECUR_SHORT[ev.wiederkehrung] || '';
+          var recurLabel = formatRecur(ev.wiederkehrung, ev.datum, ev.wiederkehrung_bis, ev.wiederkehrung_wochentag, ev.wiederkehrung_termine) || RECUR_SHORT[ev.wiederkehrung] || '';
           var timeLabel = ev.uhrzeit ? (ev.uhrzeit + (ev.uhrzeit_ende ? ' – ' + ev.uhrzeit_ende : '')) : 'Termin folgt';
           var card = document.createElement('article');
           card.className = 'ev-card reveal';

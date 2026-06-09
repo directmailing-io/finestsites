@@ -2,12 +2,12 @@ export type Plan = 'starter' | 'pro' | 'unlimited'
 export type BillingInterval = 'monthly' | 'yearly'
 export type SiteStatus = 'draft' | 'published' | 'deactivated' | 'deleted'
 export type TemplateStatus = 'draft' | 'published'
-export type PlaceholderType = 'text' | 'textarea' | 'richtext' | 'image' | 'url' | 'email' | 'select' | 'dropdown' | 'card_select' | 'loop' | 'color' | 'date' | 'time' | 'toggle'
+export type PlaceholderType = 'text' | 'textarea' | 'richtext' | 'image' | 'url' | 'email' | 'select' | 'dropdown' | 'card_select' | 'loop' | 'color' | 'date' | 'time' | 'toggle' | 'date_multi'
 
 export interface LoopSubField {
   key: string
   label: string
-  type: 'text' | 'textarea' | 'richtext' | 'image' | 'url' | 'email' | 'dropdown' | 'loop' | 'color' | 'date' | 'time' | 'card_select' | 'toggle'
+  type: 'text' | 'textarea' | 'richtext' | 'image' | 'url' | 'email' | 'dropdown' | 'loop' | 'color' | 'date' | 'time' | 'card_select' | 'toggle' | 'date_multi'
   required?: boolean
   placeholder_text?: string
   max_length?: number | null
