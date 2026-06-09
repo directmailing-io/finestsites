@@ -1383,6 +1383,9 @@ export default function SiteEditPage({ params }: { params: Promise<{ id: string 
   const [values, setValues] = useState<Record<string, string>>({})
   const [previewKey, setPreviewKey] = useState(0)
   const [previewHash, setPreviewHash] = useState<string>('')
+  const lastAutosavedRef = useRef<string>('')
+  const autosaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const [autosaveState, setAutosaveState] = useState<'idle' | 'pending' | 'saving' | 'saved' | 'error'>('idle')
   const [activeSection, setActiveSection] = useState<string | null>(null)
   const [deviceView, setDeviceView] = useState<'desktop' | 'tablet' | 'mobile'>('desktop')
   const [showDeleteModal, setShowDeleteModal] = useState(false)
@@ -1432,6 +1435,9 @@ export default function SiteEditPage({ params }: { params: Promise<{ id: string 
           init[f.key] = data.data?.[f.key] ?? ''
         }
         setValues(init)
+        // Mark the initial-loaded state as already-saved so autosave doesn't
+        // fire on the very first render.
+        lastAutosavedRef.current = JSON.stringify(init)
         setLoading(false)
         const sections = [...new Set(fields.map(f => f.section || 'Allgemein').filter(Boolean))]
         if (sections.length > 0) setActiveSection(sections[0])
@@ -1684,6 +1690,54 @@ export default function SiteEditPage({ params }: { params: Promise<{ id: string 
     }
   }, [activeSection])
 
+  // ── Auto-save (debounced) — persists drafts to the server while the user
+  //   edits, so the work survives a page refresh / browser close without
+  //   needing an explicit "Speichern" click.
+  useEffect(() => {
+    if (loading || !site) return
+    const serialized = JSON.stringify(values)
+    if (serialized === lastAutosavedRef.current) return
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setAutosaveState('pending')
+    if (autosaveTimerRef.current) clearTimeout(autosaveTimerRef.current)
+    autosaveTimerRef.current = setTimeout(async () => {
+      setAutosaveState('saving')
+      try {
+        const res = await fetch(`/api/sites/${id}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: serialized,
+        })
+        if (res.ok) {
+          lastAutosavedRef.current = serialized
+          setAutosaveState('saved')
+          setTimeout(() => {
+            setAutosaveState(prev => prev === 'saved' ? 'idle' : prev)
+          }, 2500)
+        } else {
+          setAutosaveState('error')
+        }
+      } catch {
+        setAutosaveState('error')
+      }
+    }, 1200)
+    return () => {
+      if (autosaveTimerRef.current) { clearTimeout(autosaveTimerRef.current); autosaveTimerRef.current = null }
+    }
+  }, [values, loading, site, id])
+
+  // Warn the user before leaving the page if there are unsaved changes
+  useEffect(() => {
+    function onBeforeUnload(e: BeforeUnloadEvent) {
+      if (autosaveState === 'pending' || autosaveState === 'saving') {
+        e.preventDefault()
+        e.returnValue = ''
+      }
+    }
+    window.addEventListener('beforeunload', onBeforeUnload)
+    return () => window.removeEventListener('beforeunload', onBeforeUnload)
+  }, [autosaveState])
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-full">
@@ -1816,6 +1870,44 @@ export default function SiteEditPage({ params }: { params: Promise<{ id: string 
               color: isPublished ? '#16A34A' : '#6B7280',
             }}>
             {isPublished ? '● Live' : '○ Entwurf'}
+          </span>
+
+          {/* Autosave status — subtle, no interaction */}
+          <span className="flex-shrink-0 hidden sm:inline-flex items-center gap-1.5 text-xs font-medium select-none"
+            style={{
+              color:
+                autosaveState === 'saving' || autosaveState === 'pending' ? '#6B7280' :
+                autosaveState === 'saved' ? '#16A34A' :
+                autosaveState === 'error' ? '#DC2626' :
+                '#9CA3AF',
+              opacity: autosaveState === 'idle' ? 0 : 1,
+              transition: 'opacity 0.2s ease, color 0.2s ease',
+            }}
+            aria-live="polite">
+            {(autosaveState === 'saving' || autosaveState === 'pending') && (
+              <>
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="animate-spin">
+                  <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+                </svg>
+                <span>Speichert…</span>
+              </>
+            )}
+            {autosaveState === 'saved' && (
+              <>
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+                <span>Gespeichert</span>
+              </>
+            )}
+            {autosaveState === 'error' && (
+              <>
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+                </svg>
+                <span>Nicht gespeichert</span>
+              </>
+            )}
           </span>
         </div>
 
