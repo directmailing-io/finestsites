@@ -1003,6 +1003,8 @@
            data-uhrzeit="{{this.uhrzeit}}"
            data-uhrzeit-ende="{{this.uhrzeit_ende}}"
            data-wiederkehrung="{{this.wiederkehrung}}"
+           data-recur-bis="{{this.wiederkehrung_bis}}"
+           data-recur-zweiter-tag="{{this.wiederkehrung_zweiter_tag}}"
            data-beschreibung="{{this.beschreibung}}"
            data-ort="{{this.ort}}"
            data-link="{{this.link}}"></div>
@@ -1026,6 +1028,9 @@
         data-beschreibung="{{this.beschreibung}}"
         data-modus-event="{{this.modus_event}}"
         data-accent-event="{{this.akzentfarbe_event}}"
+        data-recur="{{this.wiederkehrung}}"
+        data-recur-bis="{{this.wiederkehrung_bis}}"
+        data-recur-zweiter-tag="{{this.wiederkehrung_zweiter_tag}}"
         {{#if this.akzentfarbe_event}}style="--accent: {{this.akzentfarbe_event}}"{{/if}}>
 
     <section class="ev-hero">
@@ -1324,12 +1329,26 @@
     (function(){
       var b = document.body;
       var defaultModus = b.getAttribute('data-default-modus') || 'dunkel';
+      // Number each event page so the editor preview can target an event by
+      // index even before the user has assigned a kuerzel.
+      var allEventPages = document.querySelectorAll('.page-event');
+      allEventPages.forEach(function(p, i){ p.setAttribute('data-preview-idx', i) });
       function activate(){
         var h = location.hash.replace(/^#/,'');
         document.querySelectorAll('.page-event').forEach(function(p){ p.classList.remove('is-active') });
         if (h) {
-          var target = document.querySelector('.page-event[data-kuerzel="' + (CSS.escape ? CSS.escape(h) : h) + '"]');
-          if (target && target.getAttribute('data-status') === 'veroeffentlicht') {
+          var target = null;
+          var synth = h.match(/^__pidx-(\d+)__$/);
+          if (synth) {
+            target = document.querySelector('.page-event[data-preview-idx="' + synth[1] + '"]');
+          } else {
+            target = document.querySelector('.page-event[data-kuerzel="' + (CSS.escape ? CSS.escape(h) : h) + '"]');
+          }
+          // In the editor preview a freshly added event has no status yet —
+          // treat both "veroeffentlicht" and synthetic-hash hits as visible
+          // so the user can iterate on per-event modus / colour live.
+          var isSynth = !!synth;
+          if (target && (target.getAttribute('data-status') === 'veroeffentlicht' || isSynth)) {
             b.classList.add('view-event');
             target.classList.add('is-active');
             // per-event modus override
@@ -1366,7 +1385,7 @@
     });
 
     // ─── Recurrence ─────────────────────────────────────────────────
-    var RECUR = {
+    var RECUR_SHORT = {
       'einmalig':      '',
       'taeglich':      'Täglich',
       'woechentlich':  'Wöchentlich',
@@ -1374,13 +1393,47 @@
       'monatlich_2x':  '2× pro Monat',
       'individuell':   'Individuell'
     };
-    document.querySelectorAll('[data-recur]').forEach(function(el){
-      var v = el.getAttribute('data-recur');
-      var label = RECUR[v];
+    function fmtShortDate(d){ return d ? d.getDate() + '. ' + MONTHS_LONG[d.getMonth()] + ' ' + d.getFullYear() : '' }
+    function formatRecur(type, datum, bis, zweiterTag){
+      if (!type || type === 'einmalig') return '';
+      var d = parseDate(datum);
+      var bd = parseDate(bis);
+      var bisStr = bd ? ' bis ' + fmtShortDate(bd) : '';
+      switch (type) {
+        case 'taeglich':
+          return 'Täglich' + bisStr;
+        case 'woechentlich':
+          return d ? 'Jeden ' + WD_FULL[d.getDay()] + bisStr : 'Wöchentlich' + bisStr;
+        case 'monatlich_1x':
+          return d ? 'Jeden ' + d.getDate() + '. im Monat' + bisStr : '1× pro Monat' + bisStr;
+        case 'monatlich_2x':
+          var t2 = zweiterTag ? parseInt(zweiterTag, 10) : NaN;
+          if (d && !isNaN(t2)) {
+            var a = d.getDate(), b = t2;
+            if (a > b) { var tmp = a; a = b; b = tmp; }
+            return 'Am ' + a + '. und ' + b + '. jedes Monats' + bisStr;
+          }
+          return d ? 'Jeden ' + d.getDate() + '. + zweiter Tag im Monat' + bisStr : '2× pro Monat' + bisStr;
+        case 'individuell':
+          return 'Individuelle Termine';
+      }
+      return '';
+    }
+    // Detail-page meta-row: replace value with formatted text, or remove the wrap.
+    document.querySelectorAll('.page-event [data-recur-wrap] [data-recur]').forEach(function(el){
+      var page = el.closest('.page-event');
+      var label = formatRecur(
+        page.getAttribute('data-recur'),
+        page.getAttribute('data-d'),
+        page.getAttribute('data-recur-bis'),
+        page.getAttribute('data-recur-zweiter-tag')
+      );
       if (!label) {
         var wrap = el.closest('[data-recur-wrap]');
         (wrap || el).remove();
-      } else el.textContent = label;
+      } else {
+        el.textContent = label;
+      }
     });
 
     // ─── Tagline from description ───────────────────────────────────
@@ -1587,6 +1640,8 @@
           uhrzeit: el.getAttribute('data-uhrzeit') || '',
           uhrzeit_ende: el.getAttribute('data-uhrzeit-ende') || '',
           wiederkehrung: el.getAttribute('data-wiederkehrung') || '',
+          wiederkehrung_bis: el.getAttribute('data-recur-bis') || '',
+          wiederkehrung_zweiter_tag: el.getAttribute('data-recur-zweiter-tag') || '',
           beschreibung: el.getAttribute('data-beschreibung') || '',
           ort: el.getAttribute('data-ort') || '',
           link: el.getAttribute('data-link') || '',
@@ -1679,7 +1734,7 @@
             ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>'
             : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>';
           var pillLbl = ev.typ === 'online' ? 'Online' : 'Vor Ort';
-          var recurLabel = RECUR[ev.wiederkehrung] || '';
+          var recurLabel = formatRecur(ev.wiederkehrung, ev.datum, ev.wiederkehrung_bis, ev.wiederkehrung_zweiter_tag) || RECUR_SHORT[ev.wiederkehrung] || '';
           var timeLabel = ev.uhrzeit ? (ev.uhrzeit + (ev.uhrzeit_ende ? ' – ' + ev.uhrzeit_ende : '')) : 'Termin folgt';
           var card = document.createElement('article');
           card.className = 'ev-card reveal';

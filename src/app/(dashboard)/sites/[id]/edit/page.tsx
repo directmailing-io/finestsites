@@ -1033,7 +1033,7 @@ function ToggleField({ field, value, onChange }: {
 
 function LoopField({ field, value, onChange, onItemFocus }: {
   field: FieldSchema; value: string; onChange: (v: string) => void
-  onItemFocus?: (item: Record<string, string> | null) => void
+  onItemFocus?: (item: Record<string, string> | null, idx: number) => void
 }) {
   const subFields = field.sub_fields ?? []
   const maxItems = field.max_items ?? 50
@@ -1047,8 +1047,8 @@ function LoopField({ field, value, onChange, onItemFocus }: {
   // Notify parent which item is currently being edited (for preview sync)
   useEffect(() => {
     if (!onItemFocus) return
-    if (expandedIdx === null) onItemFocus(null)
-    else onItemFocus(items[expandedIdx] ?? null)
+    if (expandedIdx === null) onItemFocus(null, -1)
+    else onItemFocus(items[expandedIdx] ?? null, expandedIdx)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [expandedIdx, value])
 
@@ -1277,7 +1277,7 @@ function LoopField({ field, value, onChange, onItemFocus }: {
 
 function FieldRenderer({ field, value, onChange, onItemFocus }: {
   field: FieldSchema; value: string; onChange: (v: string) => void
-  onItemFocus?: (item: Record<string, string> | null) => void
+  onItemFocus?: (item: Record<string, string> | null, idx: number) => void
 }) {
   switch (field.type) {
     case 'textarea':
@@ -2112,7 +2112,15 @@ export default function SiteEditPage({ params }: { params: Promise<{ id: string 
                       value={values[field.key] ?? ''}
                       onChange={v => handleChange(field.key, v)}
                       onItemFocus={field.key === 'events'
-                        ? item => setPreviewHash(item?.kuerzel ? String(item.kuerzel) : '')
+                        ? (item, idx) => {
+                            if (!item || idx < 0) { setPreviewHash(''); return }
+                            const slug = item.kuerzel ? String(item.kuerzel).trim() : ''
+                            // Synthetic identifier when the user has not given
+                            // the event a slug yet — keeps the preview locked
+                            // to the event landing in the iframe so per-event
+                            // modus & accent show through immediately.
+                            setPreviewHash(slug || `__pidx-${idx}__`)
+                          }
                         : undefined}
                     />
                   </div>

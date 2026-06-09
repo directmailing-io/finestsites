@@ -65,14 +65,16 @@
           "key": "wiederkehrung", "label": "Wiederkehrung", "type": "card_select", "required": true,
           "default_value": "einmalig",
           "card_options": [
-            { "value": "einmalig",      "label": "Einmalig",      "description": "Findet genau einmal statt.",         "card_type": "color", "color": "#A78BFA", "image_url": "", "icon": "M12 6v6l4 2M12 22a10 10 0 1 1 0-20 10 10 0 0 1 0 20z" },
-            { "value": "taeglich",      "label": "Täglich",       "description": "Jeden Tag zur gleichen Zeit.",       "card_type": "color", "color": "#F59E0B", "image_url": "", "icon": "M3 12h2M12 3v2M12 19v2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4M12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10z" },
-            { "value": "woechentlich",  "label": "Wöchentlich",   "description": "Jede Woche zur gleichen Zeit.",      "card_type": "color", "color": "#10B981", "image_url": "", "icon": "M3 4h18M3 4v16h18V4M3 9h18M8 4v16M16 4v16" },
-            { "value": "monatlich_1x",  "label": "1× pro Monat",  "description": "Einmal im Monat.",                   "card_type": "color", "color": "#06B6D4", "image_url": "", "icon": "M3 5h18v16H3zM3 11h18M8 3v4M16 3v4" },
-            { "value": "monatlich_2x",  "label": "2× pro Monat",  "description": "Zweimal im Monat.",                  "card_type": "color", "color": "#0EA5E9", "image_url": "", "icon": "M3 5h18v16H3zM3 11h18M8 3v4M16 3v4M7 15h2M15 15h2" },
-            { "value": "individuell",   "label": "Individuell",   "description": "Wechselnde Termine, manuell.",       "card_type": "color", "color": "#EC4899", "image_url": "", "icon": "M3 6h3M9 6h3M15 6h3M3 12h3M9 12h3M15 12h3M3 18h3M9 18h3M15 18h3" }
+            { "value": "einmalig",      "label": "Einmalig",      "description": "Findet genau einmal statt.",                                                       "card_type": "color", "color": "#A78BFA", "image_url": "", "icon": "M12 6v6l4 2M12 22a10 10 0 1 1 0-20 10 10 0 0 1 0 20z" },
+            { "value": "taeglich",      "label": "Täglich",       "description": "Jeden Tag zur gleichen Zeit ab Startdatum.",                                       "card_type": "color", "color": "#F59E0B", "image_url": "", "icon": "M3 12h2M12 3v2M12 19v2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4M12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10z" },
+            { "value": "woechentlich",  "label": "Wöchentlich",   "description": "Jeden Wochentag aus dem Startdatum (z. B. jeden Mittwoch).",                       "card_type": "color", "color": "#10B981", "image_url": "", "icon": "M3 4h18M3 4v16h18V4M3 9h18M8 4v16M16 4v16" },
+            { "value": "monatlich_1x",  "label": "1× pro Monat",  "description": "Jeden Monat am Tag aus dem Startdatum (z. B. jeden 15.).",                         "card_type": "color", "color": "#06B6D4", "image_url": "", "icon": "M3 5h18v16H3zM3 11h18M8 3v4M16 3v4" },
+            { "value": "monatlich_2x",  "label": "2× pro Monat",  "description": "Zweimal im Monat, du gibst beide Tage an.",                                        "card_type": "color", "color": "#0EA5E9", "image_url": "", "icon": "M3 5h18v16H3zM3 11h18M8 3v4M16 3v4M7 15h2M15 15h2" },
+            { "value": "individuell",   "label": "Individuell",   "description": "Verschiedene Termine — leg pro Termin am besten ein eigenes Event an.",            "card_type": "color", "color": "#EC4899", "image_url": "", "icon": "M3 6h3M9 6h3M15 6h3M3 12h3M9 12h3M15 12h3M3 18h3M9 18h3M15 18h3" }
           ]
         },
+        { "key": "wiederkehrung_zweiter_tag", "label": "Zweiter Termin im Monat (Tag 1–31)", "type": "text", "required": false, "max_length": 2, "placeholder_text": "z. B. 28", "show_when": { "field": "wiederkehrung", "value": "monatlich_2x" } },
+        { "key": "wiederkehrung_bis",        "label": "Wiederkehrung läuft bis (optional)", "type": "date", "required": false, "placeholder_text": "Leer = unbegrenzt", "show_when": { "field": "wiederkehrung", "value": ["taeglich", "woechentlich", "monatlich_1x", "monatlich_2x"] } },
 
         { "key": "ort",  "label": "Adresse",        "type": "textarea", "required": false, "max_length": 200, "placeholder_text": "Straße, PLZ Ort", "show_when": { "field": "typ", "value": "vor_ort" } },
         { "key": "link", "label": "Beitreten-Link", "type": "url",      "required": false, "placeholder_text": "https://zoom.us/...",  "show_when": { "field": "typ", "value": "online" } },
