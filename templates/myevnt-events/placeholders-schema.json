@@ -1,191 +1,127 @@
 {
   "version": 1,
   "fields": [
+    { "key": "vorname",  "label": "Vorname",  "type": "text", "required": true,  "placeholder_text": "z. B. Anna",  "default_value": "Vorname",  "max_length": 30, "options": [], "card_options": [], "section": "Profil", "order": 1 },
+    { "key": "nachname", "label": "Nachname", "type": "text", "required": true,  "placeholder_text": "z. B. Müller", "default_value": "Nachname", "max_length": 30, "options": [], "card_options": [], "section": "Profil", "order": 2 },
+    { "key": "profilbild", "label": "Profilbild", "type": "image", "required": false, "placeholder_text": "Quadratisch, min. 400×400 px", "default_value": "https://finestsites.vercel.app/placeholders/profilbild.webp", "max_length": null, "options": [], "card_options": [], "section": "Profil", "aspect_ratio": "1/1", "order": 3 },
+    { "key": "headline", "label": "Headline", "type": "text", "required": false, "placeholder_text": "Ein kurzer Satz, was Besucher erwartet", "default_value": "Lerne mich live kennen. Online und vor Ort.", "max_length": 120, "options": [], "card_options": [], "section": "Profil", "order": 4 },
+    { "key": "bio", "label": "Kurze Bio", "type": "textarea", "required": false, "placeholder_text": "Wer bist du? 2–4 Sätze, persönlich.", "default_value": "", "max_length": 600, "options": [], "card_options": [], "section": "Profil", "order": 5 },
+
+    { "key": "instagram", "label": "Instagram (optional)",     "type": "url", "required": false, "placeholder_text": "https://instagram.com/...",      "default_value": "", "max_length": null, "options": [], "card_options": [], "section": "Profil", "order": 6 },
+    { "key": "tiktok",    "label": "TikTok (optional)",        "type": "url", "required": false, "placeholder_text": "https://tiktok.com/@...",         "default_value": "", "max_length": null, "options": [], "card_options": [], "section": "Profil", "order": 7 },
+    { "key": "youtube",   "label": "YouTube (optional)",       "type": "url", "required": false, "placeholder_text": "https://youtube.com/@...",        "default_value": "", "max_length": null, "options": [], "card_options": [], "section": "Profil", "order": 8 },
+    { "key": "linkedin",  "label": "LinkedIn (optional)",      "type": "url", "required": false, "placeholder_text": "https://linkedin.com/in/...",     "default_value": "", "max_length": null, "options": [], "card_options": [], "section": "Profil", "order": 9 },
+    { "key": "website",   "label": "Website / Link (optional)","type": "url", "required": false, "placeholder_text": "https://...",                     "default_value": "", "max_length": null, "options": [], "card_options": [], "section": "Profil", "order": 10 },
+
     {
-      "key": "vorname",
-      "label": "Vorname",
-      "type": "text",
-      "required": true,
-      "placeholder_text": "z. B. Anna",
-      "default_value": "Vorname",
-      "max_length": 30,
-      "options": [],
-      "card_options": [],
-      "section": "Profil",
-      "order": 1
-    },
-    {
-      "key": "nachname",
-      "label": "Nachname",
-      "type": "text",
-      "required": true,
-      "placeholder_text": "z. B. Müller",
-      "default_value": "Nachname",
-      "max_length": 30,
-      "options": [],
-      "card_options": [],
-      "section": "Profil",
-      "order": 2
-    },
-    {
-      "key": "profilbild",
-      "label": "Profilbild",
-      "type": "image",
-      "required": false,
-      "placeholder_text": "Quadratisch, min. 400×400 px",
-      "default_value": "https://finestsites.vercel.app/placeholders/profilbild.webp",
-      "max_length": null,
-      "options": [],
-      "card_options": [],
-      "section": "Profil",
-      "aspect_ratio": "1/1",
-      "order": 3
-    },
-    {
-      "key": "headline",
-      "label": "Headline (optional)",
-      "type": "text",
-      "required": false,
-      "placeholder_text": "Ein kurzer Satz, was Besucher erwartet",
-      "default_value": "Lerne mich live kennen. Online und vor Ort.",
-      "max_length": 100,
-      "options": [],
-      "card_options": [],
-      "section": "Profil",
-      "order": 4
-    },
-    {
-      "key": "modus",
-      "label": "Modus",
-      "type": "card_select",
-      "required": true,
-      "placeholder_text": "",
-      "default_value": "dunkel",
-      "max_length": null,
-      "options": [],
+      "key": "modus", "label": "Modus", "type": "card_select", "required": true,
+      "placeholder_text": "", "default_value": "dunkel", "max_length": null, "options": [],
+      "section": "Design", "order": 11,
       "card_options": [
-        { "value": "dunkel", "label": "Dunkel", "description": "Cinematic, hoher Kontrast.", "card_type": "color", "color": "#0A0A0A", "image_url": "" },
-        { "value": "hell",   "label": "Hell",   "description": "Klar, hell, freundlich.",  "card_type": "color", "color": "#FFFFFF", "image_url": "" }
-      ],
-      "section": "Design",
-      "order": 5
+        { "value": "dunkel", "label": "Dunkel", "description": "Cinematic, hoher Kontrast.", "card_type": "color", "color": "#0A0A0A", "image_url": "", "icon": "M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z" },
+        { "value": "hell",   "label": "Hell",   "description": "Klar, hell, freundlich.",     "card_type": "color", "color": "#F59E0B", "image_url": "", "icon": "M12 17a5 5 0 1 0 0-10 5 5 0 0 0 0 10zM12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" }
+      ]
     },
+    { "key": "akzentfarbe", "label": "Akzentfarbe", "type": "color", "required": true, "placeholder_text": "#7C3AED", "default_value": "#7C3AED", "max_length": null, "options": [], "card_options": [], "section": "Design", "order": 12 },
+
     {
-      "key": "akzentfarbe",
-      "label": "Akzentfarbe",
-      "type": "color",
-      "required": true,
-      "placeholder_text": "#7C3AED",
-      "default_value": "#7C3AED",
-      "max_length": null,
-      "options": [],
-      "card_options": [],
-      "section": "Design",
-      "order": 6
-    },
-    {
-      "key": "events",
-      "label": "Events",
-      "type": "loop",
-      "required": false,
-      "placeholder_text": "Lege deine Events an",
-      "default_value": "",
-      "max_length": null,
-      "options": [],
-      "card_options": [],
-      "section": "Events",
-      "min_items": 0,
-      "max_items": 50,
-      "order": 7,
+      "key": "events", "label": "Events", "type": "loop", "required": false,
+      "placeholder_text": "Lege deine Events an", "default_value": "", "max_length": null,
+      "options": [], "card_options": [], "section": "Events",
+      "min_items": 0, "max_items": 50, "order": 13,
       "sub_fields": [
-        { "key": "name",       "label": "Eventname", "type": "text", "required": true, "max_length": 60, "placeholder_text": "z. B. Teamcall, Powerday, Infocall" },
-        { "key": "kuerzel",    "label": "Kürzel (für die URL)", "type": "text", "required": true, "max_length": 30, "placeholder_text": "z. B. powerday-juni" },
+        { "key": "name",    "label": "Eventname",            "type": "text", "required": true,  "max_length": 60, "placeholder_text": "z. B. Teamcall, Powerday, Infocall" },
+        { "key": "kuerzel", "label": "Kürzel (für die URL)", "type": "text", "required": true,  "max_length": 30, "placeholder_text": "z. B. powerday-juni" },
+
         {
-          "key": "status",
-          "label": "Status",
-          "type": "card_select",
-          "required": true,
-          "default_value": "veroeffentlicht",
+          "key": "status", "label": "Sichtbarkeit", "type": "card_select", "required": true,
+          "default_value": "veroeffentlicht", "display_mode": "toggle",
+          "toggle_on_value": "veroeffentlicht", "toggle_off_value": "entwurf",
           "card_options": [
             { "value": "veroeffentlicht", "label": "Veröffentlicht", "description": "Live auf deiner Seite sichtbar.", "card_type": "color", "color": "#10B981", "image_url": "" },
-            { "value": "entwurf",         "label": "Entwurf",         "description": "Nur für dich sichtbar, nicht öffentlich.", "card_type": "color", "color": "#6B7280", "image_url": "" }
+            { "value": "entwurf",         "label": "Entwurf",         "description": "Nur für dich sichtbar.",          "card_type": "color", "color": "#6B7280", "image_url": "" }
           ]
         },
+
         {
-          "key": "typ",
-          "label": "Art des Events",
-          "type": "card_select",
-          "required": true,
+          "key": "typ", "label": "Art des Events", "type": "card_select", "required": true,
           "default_value": "vor_ort",
           "card_options": [
-            { "value": "vor_ort", "label": "Vor Ort",  "description": "Live in echt, mit Adresse und Maps-Link.", "card_type": "color", "color": "#F97066", "image_url": "" },
-            { "value": "online",  "label": "Online",   "description": "Digital via Zoom, Meet oder Stream-Link.",   "card_type": "color", "color": "#3B82F6", "image_url": "" }
+            { "value": "vor_ort", "label": "Vor Ort", "description": "Live in echt, mit Adresse und Maps-Link.", "card_type": "color", "color": "#F97066", "image_url": "", "icon": "M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0zM12 13a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" },
+            { "value": "online",  "label": "Online",  "description": "Digital via Zoom, Meet oder Stream-Link.",  "card_type": "color", "color": "#3B82F6", "image_url": "", "icon": "M23 7 16 12l7 5V7zM1 5h15v14H1z" }
           ]
         },
-        { "key": "titelbild",  "label": "Titelbild (Banner)", "type": "image", "required": false, "aspect_ratio": "16/9", "placeholder_text": "Querformat, 16:9" },
-        { "key": "datum",      "label": "Datum (Start)",  "type": "date", "required": true, "placeholder_text": "" },
+
+        { "key": "titelbild", "label": "Titelbild (Banner)", "type": "image", "required": false, "aspect_ratio": "16/9", "placeholder_text": "Querformat, 16:9" },
+
+        { "key": "datum",      "label": "Datum (Start)",                    "type": "date", "required": true,  "placeholder_text": "" },
         { "key": "datum_ende", "label": "Datum Ende (optional, mehrtägig)", "type": "date", "required": false, "placeholder_text": "" },
-        { "key": "uhrzeit",      "label": "Uhrzeit (Start)", "type": "time", "required": true, "placeholder_text": "" },
-        { "key": "uhrzeit_ende", "label": "Uhrzeit Ende (optional)", "type": "time", "required": false, "placeholder_text": "" },
+
+        { "key": "uhrzeit", "label": "Uhrzeit (Start)", "type": "time", "required": true, "placeholder_text": "" },
+        { "key": "uhrzeit_ende_aktiv", "label": "Auch Endzeit angeben", "type": "toggle", "required": false, "default_value": "", "toggle_on_value": "ja", "toggle_off_value": "", "placeholder_text": "Aktivieren, wenn das Event eine feste Endzeit hat" },
+        { "key": "uhrzeit_ende", "label": "Uhrzeit Ende", "type": "time", "required": false, "placeholder_text": "", "show_when": { "field": "uhrzeit_ende_aktiv", "value": "ja" } },
+
         {
-          "key": "wiederkehrung",
-          "label": "Wiederkehrung",
-          "type": "card_select",
-          "required": true,
+          "key": "wiederkehrung", "label": "Wiederkehrung", "type": "card_select", "required": true,
           "default_value": "einmalig",
           "card_options": [
-            { "value": "einmalig",      "label": "Einmalig",      "description": "Findet genau einmal statt.",      "card_type": "color", "color": "#A78BFA", "image_url": "" },
-            { "value": "taeglich",      "label": "Täglich",       "description": "Jeden Tag zur gleichen Zeit.",    "card_type": "color", "color": "#F59E0B", "image_url": "" },
-            { "value": "woechentlich",  "label": "Wöchentlich",   "description": "Jede Woche zur gleichen Zeit.",   "card_type": "color", "color": "#10B981", "image_url": "" },
-            { "value": "monatlich_1x",  "label": "1× pro Monat",  "description": "Einmal im Monat.",                "card_type": "color", "color": "#06B6D4", "image_url": "" },
-            { "value": "monatlich_2x",  "label": "2× pro Monat",  "description": "Zweimal im Monat.",               "card_type": "color", "color": "#0EA5E9", "image_url": "" },
-            { "value": "individuell",   "label": "Individuell",   "description": "Wechselnde Termine, manuell.",    "card_type": "color", "color": "#EC4899", "image_url": "" }
+            { "value": "einmalig",      "label": "Einmalig",      "description": "Findet genau einmal statt.",         "card_type": "color", "color": "#A78BFA", "image_url": "", "icon": "M12 6v6l4 2M12 22a10 10 0 1 1 0-20 10 10 0 0 1 0 20z" },
+            { "value": "taeglich",      "label": "Täglich",       "description": "Jeden Tag zur gleichen Zeit.",       "card_type": "color", "color": "#F59E0B", "image_url": "", "icon": "M3 12h2M12 3v2M12 19v2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4M12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10z" },
+            { "value": "woechentlich",  "label": "Wöchentlich",   "description": "Jede Woche zur gleichen Zeit.",      "card_type": "color", "color": "#10B981", "image_url": "", "icon": "M3 4h18M3 4v16h18V4M3 9h18M8 4v16M16 4v16" },
+            { "value": "monatlich_1x",  "label": "1× pro Monat",  "description": "Einmal im Monat.",                   "card_type": "color", "color": "#06B6D4", "image_url": "", "icon": "M3 5h18v16H3zM3 11h18M8 3v4M16 3v4" },
+            { "value": "monatlich_2x",  "label": "2× pro Monat",  "description": "Zweimal im Monat.",                  "card_type": "color", "color": "#0EA5E9", "image_url": "", "icon": "M3 5h18v16H3zM3 11h18M8 3v4M16 3v4M7 15h2M15 15h2" },
+            { "value": "individuell",   "label": "Individuell",   "description": "Wechselnde Termine, manuell.",       "card_type": "color", "color": "#EC4899", "image_url": "", "icon": "M3 6h3M9 6h3M15 6h3M3 12h3M9 12h3M15 12h3M3 18h3M9 18h3M15 18h3" }
           ]
         },
-        { "key": "ort",  "label": "Adresse",         "type": "textarea", "required": false, "max_length": 200, "placeholder_text": "Straße, PLZ Ort", "show_when": { "field": "typ", "value": "vor_ort" } },
-        { "key": "link", "label": "Beitreten-Link",  "type": "url",      "required": false, "placeholder_text": "https://zoom.us/...", "show_when": { "field": "typ", "value": "online" } },
-        { "key": "beschreibung", "label": "Beschreibung", "type": "textarea", "required": true, "max_length": 2000, "placeholder_text": "Worum geht es bei diesem Event? Schreib es so, wie du es einem Freund erzählen würdest." },
+
+        { "key": "ort",  "label": "Adresse",        "type": "textarea", "required": false, "max_length": 200, "placeholder_text": "Straße, PLZ Ort", "show_when": { "field": "typ", "value": "vor_ort" } },
+        { "key": "link", "label": "Beitreten-Link", "type": "url",      "required": false, "placeholder_text": "https://zoom.us/...",  "show_when": { "field": "typ", "value": "online" } },
+
+        { "key": "beschreibung", "label": "Beschreibung", "type": "richtext", "required": true, "max_length": 4000, "placeholder_text": "Worum geht es bei diesem Event?" },
+
         {
-          "key": "highlights",
-          "label": "Highlights",
-          "type": "loop",
-          "required": false,
-          "min_items": 0,
-          "max_items": 12,
+          "key": "highlights", "label": "Highlights", "type": "loop", "required": false,
+          "min_items": 0, "max_items": 12,
           "placeholder_text": "Was macht dieses Event besonders?",
           "sub_fields": [
             { "key": "titel",        "label": "Titel",        "type": "text",     "required": true,  "max_length": 70,  "placeholder_text": "z. B. Konkrete Strategie zum Mitnehmen" },
             { "key": "beschreibung", "label": "Beschreibung", "type": "textarea", "required": false, "max_length": 320, "placeholder_text": "1–3 Sätze: Was bekommt der Teilnehmer hier konkret?" }
           ]
         },
+
         {
-          "key": "special_guests",
-          "label": "Special Guests",
-          "type": "loop",
-          "required": false,
-          "min_items": 0,
-          "max_items": 10,
+          "key": "special_guests", "label": "Special Guests", "type": "loop", "required": false,
+          "min_items": 0, "max_items": 10,
           "placeholder_text": "Gäste mit Bild und Bio",
           "sub_fields": [
-            { "key": "bild",         "label": "Foto (wird quadratisch zugeschnitten)", "type": "image",    "required": true,  "aspect_ratio": "1/1", "placeholder_text": "Quadratisch, min. 400×400 px" },
-            { "key": "name",         "label": "Name",          "type": "text",     "required": true,  "max_length": 60,  "placeholder_text": "Vor- und Nachname" },
-            { "key": "rolle",        "label": "Rolle / Titel (optional)", "type": "text", "required": false, "max_length": 60, "placeholder_text": "z. B. Coach, Bronze Manager" },
-            { "key": "beschreibung", "label": "Kurzbeschreibung (optional)", "type": "textarea", "required": false, "max_length": 240, "placeholder_text": "1–2 Sätze zur Person" }
+            { "key": "bild",         "label": "Foto (wird quadratisch zugeschnitten)", "type": "image", "required": true, "aspect_ratio": "1/1", "placeholder_text": "Quadratisch, min. 400×400 px" },
+            { "key": "name",         "label": "Name",                                 "type": "text",  "required": true,  "max_length": 60, "placeholder_text": "Vor- und Nachname" },
+            { "key": "rolle",        "label": "Rolle / Titel (optional)",             "type": "text",  "required": false, "max_length": 60, "placeholder_text": "z. B. Coach, Bronze Manager" },
+            { "key": "beschreibung", "label": "Kurzbeschreibung (optional)",          "type": "textarea", "required": false, "max_length": 240, "placeholder_text": "1–2 Sätze zur Person" }
           ]
         },
+
         {
-          "key": "modus_event",
-          "label": "Modus (optional, überschreibt globalen)",
-          "type": "card_select",
-          "required": false,
+          "key": "teilnahme_modus", "label": "Wie können Besucher teilnehmen?", "type": "card_select", "required": true,
+          "default_value": "direkt",
+          "card_options": [
+            { "value": "direkt",    "label": "Direkt teilnehmen", "description": "Link bzw. Adresse ist für alle sofort sichtbar.", "card_type": "color", "color": "#10B981", "image_url": "", "icon": "M9 12l2 2 4-4M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" },
+            { "value": "anmeldung", "label": "Mit Anmeldung",     "description": "Besucher füllen ein Formular aus, du schickst Zugang manuell.", "card_type": "color", "color": "#F59E0B", "image_url": "", "icon": "M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z" }
+          ]
+        },
+
+        { "key": "countdown_anzeigen", "label": "Live-Countdown anzeigen", "type": "toggle", "required": false, "default_value": "ja", "toggle_on_value": "ja", "toggle_off_value": "", "placeholder_text": "Floating Countdown im Event-Hero" },
+
+        {
+          "key": "modus_event", "label": "Modus (optional, überschreibt global)", "type": "card_select", "required": false,
           "default_value": "",
           "card_options": [
-            { "value": "",       "label": "Übernehmen", "description": "Nutzt deinen globalen Modus.",            "card_type": "color", "color": "#9CA3AF", "image_url": "" },
-            { "value": "dunkel", "label": "Dunkel",     "description": "Cinematic für dieses Event.",            "card_type": "color", "color": "#0A0A0A", "image_url": "" },
-            { "value": "hell",   "label": "Hell",       "description": "Klar und hell für dieses Event.",        "card_type": "color", "color": "#FFFFFF", "image_url": "" }
+            { "value": "",       "label": "Übernehmen", "description": "Nutzt deinen globalen Modus.",   "card_type": "color", "color": "#9CA3AF", "image_url": "" },
+            { "value": "dunkel", "label": "Dunkel",     "description": "Cinematic für dieses Event.",   "card_type": "color", "color": "#0A0A0A", "image_url": "", "icon": "M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z" },
+            { "value": "hell",   "label": "Hell",       "description": "Klar und hell für dieses Event.", "card_type": "color", "color": "#F59E0B", "image_url": "", "icon": "M12 17a5 5 0 1 0 0-10 5 5 0 0 0 0 10zM12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" }
           ]
         },
-        { "key": "akzentfarbe_event", "label": "Akzentfarbe (optional, überschreibt globale)", "type": "color", "required": false, "default_value": "", "placeholder_text": "Leer = globale Farbe" }
+        { "key": "akzentfarbe_event", "label": "Akzentfarbe (optional, überschreibt global)", "type": "color", "required": false, "default_value": "", "placeholder_text": "Leer = globale Farbe" }
       ]
     }
   ]

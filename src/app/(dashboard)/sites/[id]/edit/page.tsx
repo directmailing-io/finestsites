@@ -11,15 +11,19 @@ import { usePlanQuota } from '@/components/dashboard/PlanQuotaContext'
 interface CardOption {
   value: string; label: string; description: string
   card_type: 'text' | 'image' | 'color'; image_url: string; color: string
+  icon?: string
 }
 
 interface LoopSubField {
   key: string; label: string
-  type: 'text' | 'textarea' | 'image' | 'url' | 'email' | 'dropdown' | 'loop' | 'color' | 'date' | 'time' | 'card_select'
+  type: 'text' | 'textarea' | 'richtext' | 'image' | 'url' | 'email' | 'dropdown' | 'loop' | 'color' | 'date' | 'time' | 'card_select' | 'toggle'
   required?: boolean; placeholder_text?: string
   max_length?: number | null; default_value?: string
   aspect_ratio?: string; options?: string[]
   card_options?: CardOption[]
+  display_mode?: 'chips' | 'toggle'
+  toggle_on_value?: string
+  toggle_off_value?: string
   show_when?: { field: string; value: string | string[] }
   // for nested loop:
   sub_fields?: LoopSubField[]
@@ -34,6 +38,10 @@ interface FieldSchema {
   aspect_ratio?: string
   /** Enables AI compliance check (EU Health Claims Regulation) for richtext fields */
   compliance_check?: boolean
+  display_mode?: 'chips' | 'toggle'
+  toggle_on_value?: string
+  toggle_off_value?: string
+  show_when?: { field: string; value: string | string[] }
   // loop fields
   sub_fields?: LoopSubField[]
   min_items?: number
@@ -393,6 +401,43 @@ function CardSelectField({ field, value, onChange }: {
   field: FieldSchema; value: string; onChange: (v: string) => void
 }) {
   const opts = field.card_options ?? []
+  const [hovered, setHovered] = useState<{ opt: CardOption; rect: DOMRect } | null>(null)
+
+  // ── iOS-style toggle (2 binary options, opt-in via display_mode) ──
+  if (field.display_mode === 'toggle' && opts.length === 2) {
+    const onOpt = opts.find(o => o.value === (field.toggle_on_value ?? opts[0].value)) ?? opts[0]
+    const offOpt = opts.find(o => o.value === (field.toggle_off_value ?? opts[1].value)) ?? opts[1]
+    const isOn = value === onOpt.value
+    const active = isOn ? onOpt : offOpt
+    return (
+      <div className="flex items-center gap-3 px-3.5 py-2.5 rounded-md"
+        style={{ background: '#FAFAFA', border: '1px solid #E5E7EB' }}>
+        <button type="button" onClick={() => onChange(isOn ? offOpt.value : onOpt.value)}
+          aria-pressed={isOn}
+          className="flex-shrink-0 relative inline-flex items-center"
+          style={{
+            width: 44, height: 26, borderRadius: 999,
+            background: isOn ? (onOpt.color || '#10B981') : '#D4D4D8',
+            transition: 'background 0.2s ease',
+            cursor: 'pointer', padding: 0, border: 0,
+          }}>
+          <span style={{
+            position: 'absolute', top: 3, left: isOn ? 21 : 3,
+            width: 20, height: 20, borderRadius: '50%',
+            background: '#FFFFFF',
+            boxShadow: '0 2px 4px rgba(0,0,0,0.18)',
+            transition: 'left 0.2s ease',
+          }} />
+        </button>
+        <div className="flex-1 min-w-0">
+          <div className="text-sm font-semibold" style={{ color: '#1a1a1a' }}>{active.label}</div>
+          {active.description && (
+            <div className="text-xs" style={{ color: '#6B7280', marginTop: 1 }}>{active.description}</div>
+          )}
+        </div>
+      </div>
+    )
+  }
 
   // Compact mode: when no option has an actual image preview, render slim
   // button-like chips instead of the large cards.
@@ -409,8 +454,6 @@ function CardSelectField({ field, value, onChange }: {
     'grid-cols-2 sm:grid-cols-3 lg:grid-cols-4'
   )
 
-  const [hovered, setHovered] = useState<{ opt: CardOption; rect: DOMRect } | null>(null)
-
   function showPreview(opt: CardOption, e: React.MouseEvent<HTMLButtonElement>) {
     if (opt.card_type !== 'image' || !opt.image_url) return
     setHovered({ opt, rect: e.currentTarget.getBoundingClientRect() })
@@ -423,25 +466,38 @@ function CardSelectField({ field, value, onChange }: {
 
         // ── Compact button-like chip (no image) ──────────────────────
         if (isCompact) {
+          const hasIcon = !!opt.icon
           return (
             <button key={opt.value} type="button" onClick={() => onChange(opt.value)}
-              className="group flex items-start gap-2.5 text-left rounded-xl px-3 py-2.5 transition-all"
+              className="group flex items-start gap-2.5 text-left px-3 py-2.5 transition-all"
               style={{
                 border: `1.5px solid ${selected ? '#1a1a1a' : '#E5E7EB'}`,
+                borderRadius: 4,
                 background: selected ? '#FAFAFA' : '#fff',
-                boxShadow: selected
-                  ? '0 0 0 3px rgba(26,26,26,0.06)'
-                  : 'none',
+                boxShadow: selected ? '0 0 0 3px rgba(26,26,26,0.05)' : 'none',
                 cursor: 'pointer',
               }}>
-              {opt.color && (
+              {hasIcon ? (
+                <span className="flex items-center justify-center flex-shrink-0"
+                  style={{
+                    width: 28, height: 28, borderRadius: 4,
+                    background: opt.color ? opt.color + '22' : '#F3F4F6',
+                    marginTop: 1,
+                  }}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                    stroke={opt.color || '#1a1a1a'} strokeWidth="2.2"
+                    strokeLinecap="round" strokeLinejoin="round">
+                    <path d={opt.icon} />
+                  </svg>
+                </span>
+              ) : opt.color ? (
                 <span className="rounded-full flex-shrink-0"
                   style={{
-                    width: 14, height: 14, marginTop: 3,
+                    width: 14, height: 14, marginTop: 4,
                     background: opt.color,
                     boxShadow: 'inset 0 0 0 1.5px rgba(255,255,255,0.7), 0 0 0 1px rgba(0,0,0,0.08)',
                   }} />
-              )}
+              ) : null}
               <div className="flex-1 min-w-0 flex flex-col gap-0.5">
                 <span className="text-sm font-semibold text-gray-900 leading-tight flex items-center gap-1.5">
                   <span className="truncate">{opt.label}</span>
@@ -817,8 +873,162 @@ function checkShowWhen(sf: LoopSubField, item: Record<string, string>): boolean 
   if (!sf.show_when) return true
   const { field, value } = sf.show_when
   const cur = (item[field] ?? '').trim()
+  // Special "truthy" check: show_when value === '__truthy__'
+  if (value === '__truthy__') return cur !== '' && cur !== 'false' && cur !== '0'
   if (Array.isArray(value)) return value.map(v => v.trim()).includes(cur)
   return cur === String(value).trim()
+}
+
+// ─── DateField (custom calendar popover) ──────────────────────────────────────
+function DateField({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  const [open, setOpen] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
+  const [view, setView] = useState(() => {
+    const m = (value || '').match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/)
+    const d = m ? new Date(+m[1], +m[2] - 1, 1) : new Date()
+    return { y: d.getFullYear(), m: d.getMonth() }
+  })
+
+  useEffect(() => {
+    if (!open) return
+    function onDown(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false)
+    }
+    document.addEventListener('mousedown', onDown)
+    return () => document.removeEventListener('mousedown', onDown)
+  }, [open])
+
+  const MONTHS_L = ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember']
+  const WD = ['Mo','Di','Mi','Do','Fr','Sa','So']
+  const today = new Date(); today.setHours(0,0,0,0)
+  const selected = value || ''
+  const display = value
+    ? (() => { const [y, mo, d] = value.split('-'); return `${d}.${mo}.${y}` })()
+    : ''
+
+  const firstOfMonth = new Date(view.y, view.m, 1)
+  const firstWeekday = (firstOfMonth.getDay() + 6) % 7
+  const daysInMonth = new Date(view.y, view.m + 1, 0).getDate()
+  const prevMonthDays = new Date(view.y, view.m, 0).getDate()
+  type Cell = { d: number; y: number; m: number; other: boolean }
+  const cells: Cell[] = []
+  for (let i = 0; i < firstWeekday; i++) cells.push({ d: prevMonthDays - firstWeekday + 1 + i, y: view.y, m: view.m - 1, other: true })
+  for (let d = 1; d <= daysInMonth; d++) cells.push({ d, y: view.y, m: view.m, other: false })
+  let next = 1; while (cells.length % 7 !== 0) { cells.push({ d: next++, y: view.y, m: view.m + 1, other: true }) }
+  while (cells.length < 42) { cells.push({ d: next++, y: view.y, m: view.m + 1, other: true }) }
+
+  function pick(c: Cell) {
+    const dt = new Date(c.y, c.m, c.d)
+    const iso = `${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}-${String(dt.getDate()).padStart(2,'0')}`
+    onChange(iso)
+    setOpen(false)
+  }
+
+  return (
+    <div className="relative" ref={ref}>
+      <button type="button" onClick={() => setOpen(o => !o)}
+        className="flex items-center justify-between w-full text-left transition-colors"
+        style={{ ...INPUT, cursor: 'pointer', borderRadius: 4 }}>
+        <span style={{ color: display ? '#1a1a1a' : '#9CA3AF' }}>{display || 'Tag auswählen'}</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6B7280" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>
+        </svg>
+      </button>
+      {open && (
+        <div style={{
+          position: 'absolute', top: 'calc(100% + 6px)', left: 0,
+          background: '#FFFFFF', border: '1px solid #E5E7EB', borderRadius: 12,
+          boxShadow: '0 20px 50px rgba(0,0,0,0.12)', padding: 12,
+          zIndex: 50, width: 320,
+        }}>
+          <div className="flex items-center justify-between mb-3 px-1">
+            <button type="button" onClick={() => setView(v => v.m === 0 ? { y: v.y - 1, m: 11 } : { y: v.y, m: v.m - 1 })}
+              className="p-1.5 rounded-md hover:bg-gray-100">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+            </button>
+            <div className="text-sm font-bold text-gray-900">{MONTHS_L[view.m]} {view.y}</div>
+            <button type="button" onClick={() => setView(v => v.m === 11 ? { y: v.y + 1, m: 0 } : { y: v.y, m: v.m + 1 })}
+              className="p-1.5 rounded-md hover:bg-gray-100">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+          </div>
+          <div className="grid grid-cols-7 gap-0.5 mb-1">
+            {WD.map(w => (
+              <div key={w} className="text-[10px] font-semibold text-center py-1" style={{ color: '#9CA3AF', letterSpacing: '0.04em' }}>{w}</div>
+            ))}
+          </div>
+          <div className="grid grid-cols-7 gap-0.5">
+            {cells.map((c, i) => {
+              const dt = new Date(c.y, c.m, c.d); dt.setHours(0,0,0,0)
+              const iso = `${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}-${String(dt.getDate()).padStart(2,'0')}`
+              const isToday = dt.getTime() === today.getTime()
+              const isSel = iso === selected
+              return (
+                <button key={i} type="button" onClick={() => pick(c)}
+                  className="text-sm font-medium aspect-square flex items-center justify-center transition-all"
+                  style={{
+                    borderRadius: 8,
+                    color: c.other ? '#D1D5DB' : isSel ? '#FFFFFF' : isToday ? '#1a1a1a' : '#374151',
+                    background: isSel ? '#1a1a1a' : isToday ? '#F3F4F6' : 'transparent',
+                    fontWeight: isSel || isToday ? 700 : 500,
+                  }}>
+                  {c.d}
+                </button>
+              )
+            })}
+          </div>
+          <div className="flex items-center justify-between mt-3 pt-3" style={{ borderTop: '1px solid #F3F4F6' }}>
+            <button type="button" onClick={() => { onChange(''); setOpen(false) }}
+              className="text-xs font-semibold text-gray-500 hover:text-gray-700 px-1">Löschen</button>
+            <button type="button" onClick={() => {
+              const dt = new Date(); dt.setHours(0,0,0,0)
+              const iso = `${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}-${String(dt.getDate()).padStart(2,'0')}`
+              onChange(iso); setOpen(false)
+            }} className="text-xs font-semibold px-3 py-1.5 rounded-md transition-colors"
+              style={{ background: '#1a1a1a', color: '#fff' }}>Heute</button>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
+function ToggleField({ field, value, onChange }: {
+  field: { label: string; description?: string; toggle_on_value?: string; toggle_off_value?: string; placeholder_text?: string }
+  value: string
+  onChange: (v: string) => void
+}) {
+  const on = field.toggle_on_value ?? 'ja'
+  const off = field.toggle_off_value ?? ''
+  const isOn = value === on
+  return (
+    <div className="flex items-center gap-3 px-3.5 py-2.5"
+      style={{ background: '#FAFAFA', border: '1px solid #E5E7EB', borderRadius: 4 }}>
+      <button type="button" onClick={() => onChange(isOn ? off : on)}
+        aria-pressed={isOn}
+        className="flex-shrink-0 relative inline-flex items-center"
+        style={{
+          width: 44, height: 26, borderRadius: 999,
+          background: isOn ? '#10B981' : '#D4D4D8',
+          transition: 'background 0.2s ease',
+          cursor: 'pointer', padding: 0, border: 0,
+        }}>
+        <span style={{
+          position: 'absolute', top: 3, left: isOn ? 21 : 3,
+          width: 20, height: 20, borderRadius: '50%',
+          background: '#FFFFFF',
+          boxShadow: '0 2px 4px rgba(0,0,0,0.18)',
+          transition: 'left 0.2s ease',
+        }} />
+      </button>
+      <div className="flex-1 min-w-0">
+        <div className="text-sm font-semibold" style={{ color: '#1a1a1a' }}>{isOn ? 'Aktiv' : 'Aus'}</div>
+        {field.placeholder_text && (
+          <div className="text-xs" style={{ color: '#6B7280', marginTop: 1 }}>{field.placeholder_text}</div>
+        )}
+      </div>
+    </div>
+  )
 }
 
 function LoopField({ field, value, onChange, onItemFocus }: {
@@ -863,8 +1073,19 @@ function LoopField({ field, value, onChange, onItemFocus }: {
     save(items.map((item, i) => i === itemIdx ? { ...item, [key]: val } : item))
   }
 
+  function moveItem(from: number, to: number) {
+    if (from === to || from < 0 || to < 0 || from >= items.length || to >= items.length) return
+    const next = items.slice()
+    const [moved] = next.splice(from, 1)
+    next.splice(to, 0, moved)
+    save(next)
+    setExpandedIdx(prev => prev === from ? to : prev === to ? from : prev)
+  }
+
   // First text sub-field used as item label in the collapsed header
   const titleKey = subFields.find(sf => sf.type === 'text' || sf.type === 'textarea')?.key
+  const [dragIdx, setDragIdx] = useState<number | null>(null)
+  const [dragOverIdx, setDragOverIdx] = useState<number | null>(null)
 
   return (
     <div className="flex flex-col gap-2">
@@ -878,14 +1099,44 @@ function LoopField({ field, value, onChange, onItemFocus }: {
       {items.map((item, idx) => {
         const isOpen = expandedIdx === idx
         const title = (titleKey && item[titleKey]) ? item[titleKey] : `${field.label} ${idx + 1}`
+        const isDragOver = dragOverIdx === idx && dragIdx !== null && dragIdx !== idx
+        const isDragging = dragIdx === idx
         return (
-          <div key={idx} className="rounded-[16px] overflow-hidden transition-all"
-            style={{ border: `1.5px solid ${isOpen ? '#1a1a1a' : '#E5E7EB'}`, background: 'white' }}>
+          <div key={idx}
+            draggable={items.length > 1}
+            onDragStart={(e) => {
+              setDragIdx(idx)
+              try { e.dataTransfer.effectAllowed = 'move' } catch {}
+              try { e.dataTransfer.setData('text/plain', String(idx)) } catch {}
+            }}
+            onDragOver={(e) => { e.preventDefault(); try { e.dataTransfer.dropEffect = 'move' } catch {}; if (dragOverIdx !== idx) setDragOverIdx(idx) }}
+            onDragLeave={() => setDragOverIdx(prev => prev === idx ? null : prev)}
+            onDrop={(e) => { e.preventDefault(); if (dragIdx !== null) moveItem(dragIdx, idx); setDragIdx(null); setDragOverIdx(null) }}
+            onDragEnd={() => { setDragIdx(null); setDragOverIdx(null) }}
+            className="rounded-[16px] overflow-hidden transition-all"
+            style={{
+              border: `1.5px solid ${isOpen ? '#1a1a1a' : isDragOver ? '#1a1a1a' : '#E5E7EB'}`,
+              background: 'white',
+              opacity: isDragging ? 0.45 : 1,
+              boxShadow: isDragOver ? '0 0 0 3px rgba(26,26,26,0.06)' : 'none',
+            }}>
 
             {/* Item header */}
             <div className="flex items-center justify-between px-4 py-3 cursor-pointer select-none"
               onClick={() => setExpandedIdx(isOpen ? null : idx)}>
               <div className="flex items-center gap-2.5 min-w-0">
+                {items.length > 1 && (
+                  <span className="flex items-center justify-center flex-shrink-0"
+                    style={{ color: '#D1D5DB', cursor: 'grab', width: 16, height: 16 }}
+                    onClick={e => e.stopPropagation()}
+                    title="Zum Verschieben halten und ziehen">
+                    <svg width="12" height="14" viewBox="0 0 12 14" fill="currentColor">
+                      <circle cx="3" cy="3" r="1.3"/><circle cx="9" cy="3" r="1.3"/>
+                      <circle cx="3" cy="7" r="1.3"/><circle cx="9" cy="7" r="1.3"/>
+                      <circle cx="3" cy="11" r="1.3"/><circle cx="9" cy="11" r="1.3"/>
+                    </svg>
+                  </span>
+                )}
                 <span className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0"
                   style={{ background: isOpen ? '#1a1a1a' : '#F3F4F6', color: isOpen ? 'white' : '#9CA3AF' }}>
                   {idx + 1}
@@ -938,12 +1189,9 @@ function LoopField({ field, value, onChange, onItemFocus }: {
                         placeholder={sf.placeholder_text}
                       />
                     ) : sf.type === 'date' ? (
-                      <input
-                        type="date"
+                      <DateField
                         value={item[sf.key] ?? ''}
-                        onChange={e => updateSubField(idx, sf.key, e.target.value)}
-                        style={INPUT}
-                        onFocus={focusBorder} onBlur={blurBorder}
+                        onChange={v => updateSubField(idx, sf.key, v)}
                       />
                     ) : sf.type === 'time' ? (
                       <input
@@ -952,6 +1200,16 @@ function LoopField({ field, value, onChange, onItemFocus }: {
                         onChange={e => updateSubField(idx, sf.key, e.target.value)}
                         style={INPUT}
                         onFocus={focusBorder} onBlur={blurBorder}
+                      />
+                    ) : sf.type === 'toggle' ? (
+                      <ToggleField field={sf} value={item[sf.key] ?? ''} onChange={v => updateSubField(idx, sf.key, v)} />
+                    ) : sf.type === 'richtext' ? (
+                      <RichTextField
+                        value={item[sf.key] ?? ''}
+                        onChange={v => updateSubField(idx, sf.key, v)}
+                        placeholder={sf.placeholder_text || sf.label}
+                        maxLength={sf.max_length}
+                        complianceCheck={false}
                       />
                     ) : sf.type === 'image' ? (
                       <ImageField
@@ -1074,15 +1332,14 @@ function FieldRenderer({ field, value, onChange, onItemFocus }: {
     case 'color':
       return <ColorField value={value} onChange={onChange} placeholder={field.placeholder_text} />
     case 'date':
-      return (
-        <input type="date" value={value} onChange={e => onChange(e.target.value)}
-          style={INPUT} onFocus={focusBorder} onBlur={blurBorder} />
-      )
+      return <DateField value={value} onChange={onChange} />
     case 'time':
       return (
         <input type="time" value={value} onChange={e => onChange(e.target.value)}
           style={INPUT} onFocus={focusBorder} onBlur={blurBorder} />
       )
+    case 'toggle':
+      return <ToggleField field={field} value={value} onChange={onChange} />
     default:
       return (
         <input type="text" value={value} onChange={e => onChange(e.target.value)}

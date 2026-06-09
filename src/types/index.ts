@@ -2,12 +2,12 @@ export type Plan = 'starter' | 'pro' | 'unlimited'
 export type BillingInterval = 'monthly' | 'yearly'
 export type SiteStatus = 'draft' | 'published' | 'deactivated' | 'deleted'
 export type TemplateStatus = 'draft' | 'published'
-export type PlaceholderType = 'text' | 'textarea' | 'image' | 'url' | 'email' | 'select' | 'dropdown' | 'card_select' | 'loop' | 'color' | 'date' | 'time'
+export type PlaceholderType = 'text' | 'textarea' | 'richtext' | 'image' | 'url' | 'email' | 'select' | 'dropdown' | 'card_select' | 'loop' | 'color' | 'date' | 'time' | 'toggle'
 
 export interface LoopSubField {
   key: string
   label: string
-  type: 'text' | 'textarea' | 'image' | 'url' | 'email' | 'dropdown' | 'loop' | 'color' | 'date' | 'time' | 'card_select'
+  type: 'text' | 'textarea' | 'richtext' | 'image' | 'url' | 'email' | 'dropdown' | 'loop' | 'color' | 'date' | 'time' | 'card_select' | 'toggle'
   required?: boolean
   placeholder_text?: string
   max_length?: number | null
@@ -15,6 +15,10 @@ export interface LoopSubField {
   aspect_ratio?: string
   options?: string[]
   card_options?: CardOption[]
+  display_mode?: 'chips' | 'toggle'
+  // for toggle: which value means "on"
+  toggle_on_value?: string
+  toggle_off_value?: string
   // visibility condition based on a sibling sub-field's value
   show_when?: { field: string; value: string | string[] }
   // for nested loop type:
@@ -95,6 +99,8 @@ export interface CardOption {
   card_type: 'text' | 'image' | 'color'
   image_url: string
   color: string
+  /** SVG path 'd' attribute (24×24 viewBox) rendered next to the label. */
+  icon?: string
 }
 
 export interface UserSite {

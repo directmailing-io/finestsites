@@ -39,6 +39,28 @@
     --sticky-border: rgba(255, 255, 255, 0.10);
     --sticky-text: #FFFFFF;
   }
+  body[data-active-modus="dunkel"] {
+    --bg: #0A0A0A;
+    --bg-2: #111111;
+    --surface: #161616;
+    --surface-2: #1C1C1C;
+    --text: #FFFFFF;
+    --text-soft: rgba(255, 255, 255, 0.72);
+    --text-mute: rgba(255, 255, 255, 0.48);
+    --border: rgba(255, 255, 255, 0.08);
+    --border-strong: rgba(255, 255, 255, 0.14);
+    --shadow-lg: 0 32px 100px rgba(0, 0, 0, 0.6);
+    --hero-overlay: linear-gradient(180deg, rgba(0,0,0,0.20) 0%, rgba(0,0,0,0.0) 22%, rgba(0,0,0,0.55) 55%, rgba(0,0,0,0.92) 90%, var(--bg) 100%);
+    --hero-overlay-side: linear-gradient(90deg, rgba(0,0,0,0.6) 0%, transparent 60%);
+    --hero-text: #FFFFFF;
+    --hero-text-soft: rgba(255, 255, 255, 0.88);
+    --hero-text-shadow: 0 2px 20px rgba(0, 0, 0, 0.55);
+    --hero-ghost-bg: rgba(0, 0, 0, 0.38);
+    --hero-ghost-border: rgba(255, 255, 255, 0.22);
+    --sticky-bg: rgba(10, 10, 10, 0.92);
+    --sticky-border: rgba(255, 255, 255, 0.10);
+    --sticky-text: #FFFFFF;
+  }
   body[data-active-modus="hell"] {
     --bg: #FFFFFF;
     --bg-2: #F7F7F7;
@@ -93,32 +115,70 @@
   h1, h2, h3, h4 { font-weight: 600; letter-spacing: -0.025em; line-height: 1.05; margin: 0; }
   .display { font-weight: 600; letter-spacing: -0.035em; }
 
-  /* ─── Header ───────────────────────────────────────────────────── */
-  .ov-header {
-    padding: 56px 0 24px;
-    display: flex; align-items: center; gap: 20px;
-    flex-wrap: wrap;
+  /* ─── Overview Hero ────────────────────────────────────────────── */
+  .ov-hero {
+    padding: 56px 0 12px;
+    text-align: center;
+    position: relative;
   }
+  .ov-hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at top, color-mix(in srgb, var(--accent) 10%, transparent), transparent 55%);
+    pointer-events: none;
+  }
+  .ov-hero-inner { position: relative; }
   .ov-avatar {
-    width: 64px; height: 64px;
+    width: 96px; height: 96px;
     border-radius: 50%; overflow: hidden;
-    border: 1.5px solid var(--border-strong);
-    flex-shrink: 0;
+    border: 2.5px solid var(--surface);
+    box-shadow: 0 0 0 1px var(--border), 0 18px 50px rgba(0, 0, 0, 0.18);
+    margin: 0 auto 22px;
   }
   .ov-avatar img { width: 100%; height: 100%; object-fit: cover; }
   .ov-name {
-    font-size: clamp(1.25rem, 2.4vw, 1.625rem);
+    font-size: clamp(1.75rem, 4vw, 2.75rem);
     font-weight: 600;
-    letter-spacing: -0.025em;
-    line-height: 1.1;
-    margin: 0 0 2px;
+    letter-spacing: -0.035em;
+    line-height: 1.05;
+    margin: 0 0 8px;
   }
   .ov-tagline {
     color: var(--text-soft);
-    font-size: 0.9375rem;
+    font-size: clamp(1rem, 1.5vw, 1.125rem);
     font-weight: 400;
-    line-height: 1.4;
+    line-height: 1.5;
+    max-width: 560px;
+    margin: 0 auto 18px;
   }
+  .ov-bio {
+    color: var(--text-soft);
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    max-width: 580px;
+    margin: 0 auto 24px;
+    white-space: pre-line;
+  }
+  .ov-social {
+    display: inline-flex; gap: 8px;
+    margin-top: 6px;
+  }
+  .ov-social a {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text-soft);
+    transition: all 0.2s ease;
+  }
+  .ov-social a:hover {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+    transform: translateY(-2px);
+  }
+  .ov-social svg { width: 18px; height: 18px; }
 
   /* ─── Featured Event (cinematic block) ────────────────────────── */
   .featured {
@@ -346,21 +406,44 @@
     transition: all 0.25s ease;
   }
   .ev-back:hover { filter: brightness(1.12); transform: translateX(-3px); }
-  .ev-share {
+
+  /* ─── Live countdown (top right of hero) ─────────────────────── */
+  .ev-countdown {
     position: absolute; top: 28px; right: 32px;
     z-index: 10;
-  }
-  .ev-share button {
-    width: 42px; height: 42px;
-    border-radius: 50%;
+    padding: 12px 16px;
     background: var(--hero-ghost-bg);
     border: 1px solid var(--hero-ghost-border);
-    color: var(--hero-text);
+    border-radius: 14px;
     backdrop-filter: blur(16px);
-    display: flex; align-items: center; justify-content: center;
-    transition: all 0.25s ease;
+    color: var(--hero-text);
+    text-shadow: var(--hero-text-shadow);
+    display: none;
   }
-  .ev-share button:hover { filter: brightness(1.12); }
+  .ev-countdown.is-active { display: block; }
+  .ev-countdown .label {
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 6px;
+    text-shadow: none;
+  }
+  .ev-countdown .nums { display: flex; gap: 12px; }
+  .ev-countdown .nums > div { text-align: center; min-width: 30px; }
+  .ev-countdown .num {
+    font-weight: 700; font-size: 1.125rem;
+    font-variant-numeric: tabular-nums; letter-spacing: -0.015em;
+    line-height: 1; color: var(--hero-text);
+  }
+  .ev-countdown .unit {
+    font-size: 0.55rem; font-weight: 500;
+    text-transform: uppercase; letter-spacing: 0.1em;
+    color: var(--hero-text-soft);
+    margin-top: 4px;
+    text-shadow: none;
+  }
   .ev-share svg { width: 17px; height: 17px; }
 
   .ev-eyebrow {
@@ -609,73 +692,118 @@
     word-break: break-word;
   }
 
-  /* ─── Coupon-style online link box ────────────────────────────── */
-  .coupon {
-    position: relative;
-    padding: 44px 48px;
-    border-radius: 28px;
-    background:
-      radial-gradient(circle at 0% 100%, color-mix(in srgb, var(--accent) 18%, transparent), transparent 65%),
-      var(--surface);
-    border: 1.5px dashed color-mix(in srgb, var(--accent) 60%, transparent);
-    overflow: hidden;
-  }
-  .coupon::before, .coupon::after {
-    content: '';
-    position: absolute;
-    width: 28px; height: 28px;
-    border-radius: 50%;
-    background: var(--bg);
-    top: 50%;
-    transform: translateY(-50%);
-  }
-  .coupon::before { left: -14px; }
-  .coupon::after { right: -14px; }
-  .coupon-eyebrow {
-    color: var(--accent);
-    font-weight: 600;
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    letter-spacing: 0.18em;
-    margin-bottom: 18px;
-    display: inline-flex; align-items: center; gap: 10px;
-  }
-  .coupon-eyebrow svg { width: 14px; height: 14px; }
-  .coupon-title {
-    font-weight: 600;
-    font-size: clamp(1.5rem, 2.4vw, 2rem);
-    letter-spacing: -0.025em;
-    line-height: 1.1;
-    margin: 0 0 14px;
-    color: var(--text);
-  }
-  .coupon-link-row {
-    display: flex; align-items: center; gap: 14px;
-    padding: 16px 18px;
-    background: var(--bg);
+  /* ─── Access box (online direct join) ────────────────────────── */
+  .access-card {
+    background: var(--surface);
+    border-radius: 22px;
+    padding: 32px 36px;
     border: 1px solid var(--border);
-    border-radius: 14px;
-    margin-bottom: 20px;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 20px;
+    align-items: center;
   }
-  .coupon-link-row .icon {
-    width: 42px; height: 42px;
-    border-radius: 10px;
+  .access-card .icon-wrap {
+    width: 56px; height: 56px;
+    border-radius: 14px;
     background: color-mix(in srgb, var(--accent) 14%, transparent);
     display: flex; align-items: center; justify-content: center;
     flex-shrink: 0;
   }
-  .coupon-link-row .icon svg { width: 18px; height: 18px; color: var(--accent); }
-  .coupon-link-row .url {
-    flex: 1; min-width: 0;
+  .access-card .icon-wrap svg { width: 24px; height: 24px; color: var(--accent); }
+  .access-card .label {
+    color: var(--text-mute);
+    font-weight: 500;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    margin-bottom: 6px;
+  }
+  .access-card .url {
     font-family: 'Geist Mono', ui-monospace, monospace;
-    font-size: 0.875rem;
+    font-size: 0.9375rem;
     color: var(--text);
     word-break: break-all;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    line-height: 1.4;
   }
-  .coupon-cta { display: flex; gap: 10px; flex-wrap: wrap; }
+  .access-card .url a { color: var(--accent); }
+
+  /* ─── Anmeldung form ──────────────────────────────────────────── */
+  .form-card {
+    background: var(--surface);
+    border-radius: 22px;
+    padding: 36px 40px;
+    border: 1px solid var(--border);
+  }
+  .form-card .form-eyebrow {
+    color: var(--accent);
+    font-weight: 600;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    margin-bottom: 12px;
+  }
+  .form-card h3 {
+    font-weight: 600;
+    font-size: clamp(1.375rem, 2.2vw, 1.875rem);
+    letter-spacing: -0.025em;
+    line-height: 1.15;
+    margin: 0 0 14px;
+    color: var(--text);
+  }
+  .form-card .lead {
+    color: var(--text-soft);
+    font-size: 0.9375rem;
+    line-height: 1.55;
+    margin-bottom: 22px;
+  }
+  .form-grid { display: grid; gap: 12px; }
+  .form-field { display: flex; flex-direction: column; gap: 6px; }
+  .form-field label {
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--text-soft);
+    letter-spacing: -0.005em;
+  }
+  .form-field input {
+    width: 100%;
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-family: inherit;
+    font-size: 0.9375rem;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.2s ease;
+  }
+  .form-field input:focus { border-color: var(--accent); }
+  .form-field input::placeholder { color: var(--text-mute); }
+  .form-helper {
+    font-size: 0.75rem;
+    color: var(--text-mute);
+    margin-top: 14px;
+    line-height: 1.45;
+  }
+  .form-actions { margin-top: 18px; }
+  .form-success {
+    padding: 28px 30px;
+    background: color-mix(in srgb, var(--accent) 10%, transparent);
+    border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+    border-radius: 18px;
+    text-align: center;
+  }
+  .form-success svg {
+    width: 36px; height: 36px;
+    color: var(--accent);
+    margin: 0 auto 12px;
+    display: block;
+  }
+  .form-success h4 {
+    font-weight: 600; font-size: 1.125rem; letter-spacing: -0.015em;
+    margin: 0 0 6px; color: var(--text);
+  }
+  .form-success p { color: var(--text-soft); font-size: 0.875rem; margin: 0; }
 
   /* ─── Final CTA ────────────────────────────────────────────────── */
   .ev-final {
@@ -719,13 +847,57 @@
 
   /* ─── Footer ───────────────────────────────────────────────────── */
   .footer {
+    padding: 64px 32px;
+    border-top: 1px solid var(--border);
+    background: var(--bg-2);
+  }
+  .footer-inner {
+    max-width: 1180px; margin: 0 auto;
+    display: flex; flex-direction: column;
+    align-items: center; gap: 16px;
     text-align: center;
-    padding: 44px 32px;
+  }
+  .footer-author {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: -0.01em;
+  }
+  .footer-author .accent { color: var(--accent); }
+  .footer-author-sub {
+    font-size: 0.8125rem;
+    color: var(--text-mute);
+  }
+  .footer-divider {
+    width: 32px; height: 1px;
+    background: var(--border-strong);
+    margin: 4px 0;
+  }
+  .footer-brand {
+    display: inline-flex; align-items: center; gap: 10px;
     color: var(--text-mute);
     font-size: 0.8125rem;
-    border-top: 1px solid var(--border);
+    transition: color 0.2s ease;
+    padding: 6px 4px;
   }
-  .footer a { color: var(--accent); }
+  .footer-brand:hover { color: var(--text); }
+  .footer-brand .logo {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    font-size: 0.875rem;
+    color: var(--text);
+  }
+  .footer-brand .logo-mark {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 22px; height: 22px;
+    border-radius: 6px;
+    background: var(--text);
+    color: var(--bg);
+    font-weight: 800;
+    font-size: 0.6875rem;
+    letter-spacing: -0.02em;
+  }
 
   /* ─── Reveal ───────────────────────────────────────────────────── */
   .reveal { opacity: 0; transform: translateY(28px); }
@@ -759,11 +931,19 @@
   <!-- ═══ OVERVIEW ═══════════════════════════════════════════════════ -->
   <main class="page-overview">
 
-    <header class="ov-header container">
-      <div class="ov-avatar reveal"><img src="{{profilbild}}" alt="{{vorname}} {{nachname}}" /></div>
-      <div class="reveal">
-        <div class="ov-name">{{vorname}} {{nachname}}</div>
-        {{#if headline}}<div class="ov-tagline">{{headline}}</div>{{/if}}
+    <header class="ov-hero container">
+      <div class="ov-hero-inner">
+        <div class="ov-avatar reveal"><img src="{{profilbild}}" alt="{{vorname}} {{nachname}}" /></div>
+        <h1 class="ov-name reveal">{{vorname}} {{nachname}}</h1>
+        {{#if headline}}<p class="ov-tagline reveal">{{headline}}</p>{{/if}}
+        {{#if bio}}<p class="ov-bio reveal">{{bio}}</p>{{/if}}
+        <div class="ov-social reveal">
+          {{#if instagram}}<a href="{{instagram}}" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>{{/if}}
+          {{#if tiktok}}<a href="{{tiktok}}" target="_blank" rel="noopener" aria-label="TikTok"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.5 6.5a5.5 5.5 0 0 1-5.5-5.5h-3v15.5a3 3 0 1 1-3-3v-3a6 6 0 1 0 6 6v-7.6a8.5 8.5 0 0 0 5.5 1.95v-3z"/></svg></a>{{/if}}
+          {{#if youtube}}<a href="{{youtube}}" target="_blank" rel="noopener" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"/><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02" fill="currentColor"/></svg></a>{{/if}}
+          {{#if linkedin}}<a href="{{linkedin}}" target="_blank" rel="noopener" aria-label="LinkedIn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></a>{{/if}}
+          {{#if website}}<a href="{{website}}" target="_blank" rel="noopener" aria-label="Website"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></a>{{/if}}
+        </div>
       </div>
     </header>
 
@@ -817,11 +997,16 @@
 
     <section class="ev-hero">
       <a class="ev-back" href="#" data-back>← Alle Events</a>
-      <div class="ev-share">
-        <button data-share="{{this.kuerzel}}" data-share-title="{{this.name}}" aria-label="Teilen">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-        </button>
+      {{#if this.countdown_anzeigen=ja}}
+      <div class="ev-countdown" data-countdown>
+        <div class="label">Noch</div>
+        <div class="nums">
+          <div><div class="num" data-cd-d>0</div><div class="unit">Tage</div></div>
+          <div><div class="num" data-cd-h>0</div><div class="unit">Std</div></div>
+          <div><div class="num" data-cd-m>0</div><div class="unit">Min</div></div>
+        </div>
       </div>
+      {{/if}}
       <div class="ev-hero-img" data-hero-parallax>
         <img src="{{this.titelbild}}" alt="{{this.name}}" />
       </div>
@@ -866,7 +1051,7 @@
         <div class="container-narrow reveal">
           <div class="ev-section-eyebrow">Worum es geht</div>
           <h2 class="ev-section-title">Was dich an diesem Tag erwartet</h2>
-          <p class="ev-lead">{{this.beschreibung}}</p>
+          <div class="ev-lead">{{{this.beschreibung}}}</div>
         </div>
       </section>
       {{/if}}
@@ -918,6 +1103,7 @@
       </section>
       {{/if}}
 
+      {{#if this.teilnahme_modus=direkt}}
       {{#if this.link}}
       <section class="ev-section">
         <div class="container-narrow">
@@ -925,30 +1111,59 @@
             <div class="ev-section-eyebrow">Online dabei sein</div>
             <h2 class="ev-section-title">Dein Zugang zum Event</h2>
           </div>
-          <div class="coupon reveal">
-            <div class="coupon-eyebrow">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-              Beitritts-Link
+          <div class="access-card reveal">
+            <div class="icon-wrap">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
             </div>
-            <h3 class="coupon-title">Mit einem Klick dabei</h3>
-            <div class="coupon-link-row">
-              <div class="icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+            <div>
+              <div class="label">Beitritts-Link</div>
+              <div class="url"><a href="{{this.link}}" target="_blank" rel="noopener">{{this.link}}</a></div>
+            </div>
+            <a href="{{this.link}}" target="_blank" rel="noopener" class="btn btn-accent">Jetzt beitreten →</a>
+          </div>
+        </div>
+      </section>
+      {{/if}}
+      {{/if}}
+
+      {{#if this.teilnahme_modus=anmeldung}}
+      <section class="ev-section">
+        <div class="container-narrow">
+          <div class="reveal" style="margin-bottom: 28px;">
+            <div class="ev-section-eyebrow">Anmeldung</div>
+            <h2 class="ev-section-title">Sichere dir deinen Platz</h2>
+          </div>
+          <div class="form-card reveal" data-form-card>
+            <div class="form-eyebrow">In 30 Sekunden dabei</div>
+            <h3>Trag dich ein, ich schicke dir den Zugang persönlich</h3>
+            <p class="lead">Nach deiner Anmeldung bekommst du von mir alle Infos per E-Mail oder WhatsApp.</p>
+            <form data-anmeldung-form data-event-slug="{{this.kuerzel}}" data-event-name="{{this.name}}">
+              <input type="text" name="_honeypot" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
+              <div class="form-grid">
+                <div class="form-field">
+                  <label for="f-name-{{this.kuerzel}}">Dein Name *</label>
+                  <input id="f-name-{{this.kuerzel}}" type="text" name="name" required placeholder="Vor- und Nachname" autocomplete="name">
+                </div>
+                <div class="form-field">
+                  <label for="f-mail-{{this.kuerzel}}">E-Mail-Adresse *</label>
+                  <input id="f-mail-{{this.kuerzel}}" type="email" name="email" required placeholder="dein@email.de" autocomplete="email">
+                </div>
+                <div class="form-field">
+                  <label for="f-wa-{{this.kuerzel}}">WhatsApp-Nummer (optional)</label>
+                  <input id="f-wa-{{this.kuerzel}}" type="tel" name="whatsapp" placeholder="+49 ..." autocomplete="tel">
+                </div>
               </div>
-              <div class="url">{{this.link}}</div>
-            </div>
-            <div class="coupon-cta">
-              <a href="{{this.link}}" target="_blank" rel="noopener" class="btn btn-accent">Jetzt beitreten →</a>
-              <button type="button" class="btn btn-ghost" data-ical-btn style="background:var(--surface-2); color:var(--text); border-color:var(--border-strong); backdrop-filter:none;">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
-                In Kalender
-              </button>
-            </div>
+              <div class="form-helper">Wir nutzen deine Daten nur, um dir den Zugang zum Event zu senden.</div>
+              <div class="form-actions">
+                <button type="submit" class="btn btn-accent">Jetzt anmelden →</button>
+              </div>
+            </form>
           </div>
         </div>
       </section>
       {{/if}}
 
+      {{#if this.teilnahme_modus=direkt}}
       {{#if this.ort}}
       <section class="ev-section">
         <div class="container-narrow">
@@ -971,6 +1186,7 @@
           </div>
         </div>
       </section>
+      {{/if}}
       {{/if}}
 
       <section class="ev-final">
@@ -999,7 +1215,18 @@
   {{/each}}
 
   <footer class="footer">
-    {{vorname}} {{nachname}} · powered by <a href="https://finestsites.de" target="_blank" rel="noopener">FinestSites</a>
+    <div class="footer-inner">
+      <div class="footer-author"><span class="accent">●</span> {{vorname}} {{nachname}}</div>
+      {{#if headline}}<div class="footer-author-sub">{{headline}}</div>{{/if}}
+      <div class="footer-divider"></div>
+      <a class="footer-brand" href="https://finestsites.de" target="_blank" rel="noopener">
+        <span>Made with</span>
+        <span class="logo">
+          <span class="logo-mark">F</span>
+          <span>FinestSites</span>
+        </span>
+      </a>
+    </div>
   </footer>
 
   <script>
@@ -1206,6 +1433,68 @@
       });
     });
 
+    // ─── Live countdown ─────────────────────────────────────────────
+    (function(){
+      function pad(n){ return n < 10 ? '0' + n : String(n) }
+      function update(){
+        document.querySelectorAll('.page-event [data-countdown]').forEach(function(card){
+          var page = card.closest('.page-event');
+          var d = parseDate(page.getAttribute('data-d'));
+          if (!d) { card.classList.remove('is-active'); return }
+          var t = parseTime(page.getAttribute('data-uhr'));
+          if (t) d.setHours(t.h, t.m, 0, 0);
+          var diff = d - new Date();
+          if (diff <= 0) { card.classList.remove('is-active'); return }
+          card.classList.add('is-active');
+          var days = Math.floor(diff / 86400000);
+          var hours = Math.floor((diff % 86400000) / 3600000);
+          var mins = Math.floor((diff % 3600000) / 60000);
+          card.querySelector('[data-cd-d]').textContent = days;
+          card.querySelector('[data-cd-h]').textContent = pad(hours);
+          card.querySelector('[data-cd-m]').textContent = pad(mins);
+        });
+      }
+      update();
+      setInterval(update, 30000);
+      window.addEventListener('hashchange', function(){ setTimeout(update, 50) });
+    })();
+
+    // ─── Anmeldungsformular ─────────────────────────────────────────
+    document.querySelectorAll('[data-anmeldung-form]').forEach(function(form){
+      form.addEventListener('submit', function(e){
+        e.preventDefault();
+        if (form.querySelector('input[name="_honeypot"]').value) return;
+        var card = form.closest('[data-form-card]');
+        var slug = form.getAttribute('data-event-slug') || '';
+        var eventName = form.getAttribute('data-event-name') || '';
+        var data = new FormData(form);
+        var payload = {
+          event_slug: slug,
+          event_name: eventName,
+          name: String(data.get('name') || '').trim(),
+          email: String(data.get('email') || '').trim(),
+          whatsapp: String(data.get('whatsapp') || '').trim(),
+        };
+        // Fire-and-forget POST. Endpoint resolved relative to the published
+        // site (worker proxies /.finestsites/forms/* to the FinestSites API).
+        try {
+          fetch('/.finestsites/forms/event-anmeldung', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+          }).catch(function(){});
+        } catch(_){}
+        if (card) {
+          card.innerHTML =
+            '<div class="form-success">' +
+              '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>' +
+              '<h4>Bist eingetragen.</h4>' +
+              '<p>Du bekommst alle Infos persönlich von mir per E-Mail oder WhatsApp.</p>' +
+            '</div>';
+        }
+      });
+    });
+
     // ─── Hero parallax ──────────────────────────────────────────────
     (function(){
       function tick(){
@@ -1288,10 +1577,15 @@
 
       var hasSlug = !!(f.kuerzel && f.kuerzel.trim());
       var jumpAttr = hasSlug ? 'onclick="location.hash=\'' + f.kuerzel + '\'"' : '';
-      var fImg = f.titelbild ? '<img src="' + f.titelbild.replace(/"/g,'') + '" alt="' + fName.replace(/"/g,'&quot;') + '" />' : '';
+      var fImg = f.titelbild
+        ? '<img src="' + f.titelbild.replace(/"/g,'') + '" alt="' + fName.replace(/"/g,'&quot;') + '" />'
+        : '';
+      var fImgFallback = !f.titelbild
+        ? ' style="background: linear-gradient(135deg, var(--accent), color-mix(in srgb, var(--accent) 50%, #0A0A0A));"'
+        : '';
       slot.innerHTML =
         '<section class="featured reveal" ' + jumpAttr + ' style="' + (hasSlug ? '' : 'cursor:default;') + '">' +
-          '<div class="featured-img">' + fImg + '</div>' +
+          '<div class="featured-img"' + fImgFallback + '>' + fImg + '</div>' +
           '<div class="featured-content">' +
             '<div class="featured-eyebrow"><span class="dot"></span>' + fEyebrowLabel + '</div>' +
             '<h1 class="featured-title">' + fName.replace(/</g,'&lt;') + '</h1>' +
@@ -1323,8 +1617,10 @@
           var card = document.createElement('article');
           card.className = 'ev-card reveal';
           if (ev.kuerzel && ev.kuerzel.trim()) card.onclick = function(){ location.hash = ev.kuerzel };
-          card.innerHTML =
-            (ev.titelbild ? '<div class="ev-card-img" style="background-image: url(\'' + ev.titelbild.replace(/"/g,'') + '\')"></div>' : '<div class="ev-card-img"></div>') +
+          var cardImg = ev.titelbild
+            ? '<div class="ev-card-img" style="background-image: url(\'' + ev.titelbild.replace(/"/g,'') + '\')"></div>'
+            : '<div class="ev-card-img" style="background: linear-gradient(135deg, var(--accent), color-mix(in srgb, var(--accent) 50%, #0A0A0A));"></div>';
+          card.innerHTML = cardImg +
             '<span class="ev-pill">' + pillIco + pillLbl + '</span>' +
             (dt ? '<div class="ev-daystamp"><div class="d">' + dt.getDate() + '</div><div class="m">' + MONTHS_SHORT[dt.getMonth()] + '</div></div>' : '') +
             '<div class="ev-card-content">' +

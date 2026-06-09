@@ -111,6 +111,8 @@ function processLoops(html: string, data: SiteData, stack: Item[]): string {
       let chunk = processLoops(inner, data, newStack)
       // Resolve item-scoped conditionals BEFORE substituting {{this.field}}
       chunk = processItemConditionals(chunk, item)
+      // Raw substitution {{{this.field}}} — for richtext (HTML already)
+      chunk = chunk.replace(/\{\{\{this\.(\w+)\}\}\}/g, (_m, field: string) => String(item[field] ?? ''))
       // Substitute {{this.field}} with current item field (HTML-escaped for safety)
       chunk = chunk.replace(/\{\{this\.(\w+)\}\}/g, (_m, field: string) => htmlEscape(item[field] ?? ''))
       // 1-based index
@@ -196,6 +198,12 @@ function processConditionals(html: string, data: SiteData): string {
 }
 
 function replaceSimplePlaceholders(html: string, data: SiteData): string {
+  // {{{key}}} → raw substitution (no HTML-escape). Used for richtext fields
+  // whose stored value is already HTML.
+  html = html.replace(/\{\{\{\s*([\w]+)\s*\}\}\}/g, (_m, key: string) => {
+    const val = data[key]
+    return val !== undefined && val !== null ? String(val) : ''
+  })
   return html.replace(/\{\{([^#/{}][^{}]*)\}\}/g, (match, key) => {
     const val = data[key.trim()]
     return val !== undefined && val !== null ? val : ''
