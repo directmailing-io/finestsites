@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
-import Stripe from 'stripe'
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
+import type Stripe from 'stripe'
+import { getStripe } from '@/lib/stripe/client'
 
 async function checkAdmin() {
   const supabase = await createClient()
@@ -20,9 +19,14 @@ export async function GET(_: NextRequest, { params }: { params: Promise<{ id: st
   const { id } = await params
   const admin = createAdminClient()
 
-  const [{ data: profile }, { data: sites }] = await Promise.all([
+  const [{ data: profile }, { data: sites }, { data: events }] = await Promise.all([
     admin.from('users').select('*').eq('id', id).single(),
-    admin.from('user_sites').select('*, templates(title, domain)').eq('user_id', id).neq('status', 'deleted').order('created_at', { ascending: false })
+    admin.from('user_sites').select('*, templates(title, domain)').eq('user_id', id).neq('status', 'deleted').order('created_at', { ascending: false }),
+    admin.from('subscription_events')
+      .select('id, event_type, plan, billing_interval, amount_cents, created_at, stripe_invoice_id, metadata')
+      .eq('user_id', id)
+      .order('created_at', { ascending: false })
+      .limit(50),
   ])
 
   if (!profile) return NextResponse.json({ error: 'Not found' }, { status: 404 })
@@ -31,10 +35,10 @@ export async function GET(_: NextRequest, { params }: { params: Promise<{ id: st
   let invoices: Stripe.Invoice[] = []
   if (profile.stripe_customer_id) {
     try {
-      const result = await stripe.invoices.list({ customer: profile.stripe_customer_id, limit: 10 })
+      const result = await getStripe().invoices.list({ customer: profile.stripe_customer_id, limit: 10 })
       invoices = result.data
     } catch { /* ignore */ }
   }
 
-  return NextResponse.json({ profile, sites, invoices })
+  return NextResponse.json({ profile, sites, invoices, events: events ?? [] })
 }

@@ -104,7 +104,9 @@
   button { font-family: inherit; cursor: pointer; border: 0; background: transparent; color: inherit; padding: 0; }
 
   .container { max-width: 1280px; margin: 0 auto; padding: 0 32px; }
-  .container-narrow { max-width: 880px; margin: 0 auto; padding: 0 32px; }
+  /* Aligned with the event hero (max-width 1280 + padding 0 32px), so the
+     left edge of every body section matches the hero title's left edge. */
+  .container-narrow { max-width: 1280px; margin: 0 auto; padding: 0 32px; }
 
   .page-event { display: none; }
   body.view-event .page-overview { display: none; }
@@ -383,7 +385,7 @@
   }
   .ev-hero-content {
     position: relative; z-index: 2;
-    max-width: 1180px;
+    max-width: 1280px;
     margin: 0 auto;
     padding: 0 32px;
     min-height: 92vh;
@@ -391,6 +393,9 @@
     padding-bottom: 88px;
     color: var(--hero-text);
   }
+  /* Inner column for body sections — same width as hero content (1280 cap)
+     so each section's left edge lines up with the hero. Cards inside still
+     have their own max-width caps for readability. */
   .ev-back {
     position: absolute;
     top: 28px; left: 32px;
@@ -563,10 +568,23 @@
     font-size: clamp(1.0625rem, 1.5vw, 1.1875rem);
     line-height: 1.65;
     color: var(--text);
-    white-space: pre-line;
     max-width: 760px;
     font-weight: 400;
   }
+  /* Section card width caps — read at a comfortable width, left-aligned with
+     the hero (no centering, so left edges line up). */
+  .ev-section .highlight-wrap,
+  .ev-section .location-card,
+  .ev-section .form-card,
+  .ev-section .ev-lead { max-width: 880px; }
+  /* Rich-text descriptions: tighten paragraph spacing so Enter produces a
+     visual single line break instead of a full blank line. */
+  .ev-lead p { margin: 0 0 0.55em; }
+  .ev-lead p:last-child { margin-bottom: 0; }
+  .ev-lead ul, .ev-lead ol { margin: 0.55em 0; padding-left: 1.25em; }
+  .ev-lead li { margin-bottom: 0.25em; }
+  .ev-lead strong { font-weight: 600; }
+  .ev-lead a { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
 
   /* ─── Highlights — accent-tinted "What to expect" card ─────────── */
   .highlight-wrap {
@@ -713,7 +731,11 @@
     scroll-snap-align: start;
     transition: transform 0.4s cubic-bezier(.2,.7,.2,1), box-shadow 0.4s ease;
   }
-  .guest-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); }
+  .guest-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
+    border-color: color-mix(in srgb, var(--accent) 35%, var(--border));
+  }
   .guest-img { aspect-ratio: 1; background: var(--bg-2); overflow: hidden; }
   .guest-img img { width: 100%; height: 100%; object-fit: cover; }
   .guest-info { padding: 18px 20px 22px; }
@@ -861,23 +883,31 @@
   }
   .form-actions { margin-top: 18px; }
   .form-success {
-    padding: 28px 30px;
-    background: color-mix(in srgb, var(--accent) 10%, transparent);
-    border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
-    border-radius: 18px;
+    padding: 44px 36px;
+    background:
+      radial-gradient(ellipse at center top, color-mix(in srgb, var(--accent) 18%, transparent), transparent 60%),
+      color-mix(in srgb, var(--accent) 6%, var(--surface));
+    border: 1px solid color-mix(in srgb, var(--accent) 32%, transparent);
+    border-radius: 22px;
     text-align: center;
   }
-  .form-success svg {
-    width: 36px; height: 36px;
-    color: var(--accent);
-    margin: 0 auto 12px;
-    display: block;
+  .form-success-icon {
+    width: 64px; height: 64px;
+    margin: 0 auto 22px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: white;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 12px 32px color-mix(in srgb, var(--accent) 32%, transparent);
   }
+  .form-success-icon svg { width: 32px; height: 32px; }
   .form-success h4 {
-    font-weight: 600; font-size: 1.125rem; letter-spacing: -0.015em;
-    margin: 0 0 6px; color: var(--text);
+    font-weight: 600; font-size: clamp(1.375rem, 2.2vw, 1.625rem);
+    letter-spacing: -0.025em; line-height: 1.2;
+    margin: 0 0 12px; color: var(--text);
   }
-  .form-success p { color: var(--text-soft); font-size: 0.875rem; margin: 0; }
+  .form-success p { color: var(--text-soft); font-size: 0.9375rem; line-height: 1.55; margin: 0; max-width: 460px; margin-left: auto; margin-right: auto; }
+  .form-success strong { color: var(--text); font-weight: 600; }
 
   /* ─── Final CTA ────────────────────────────────────────────────── */
   .ev-final {
@@ -1056,7 +1086,7 @@
       </div>
     </header>
 
-    <div class="container">
+    <div class="container-narrow">
       <div id="featuredSlot"></div>
       <section class="more-section">
         <div class="section-label reveal" id="moreLabel" hidden>Weitere Events</div>
@@ -1200,7 +1230,7 @@
           <div class="highlight-wrap">
             <div class="highlight-head">
               <div class="eyebrow">Was dich erwartet</div>
-              <h2>Das nimmst du mit</h2>
+              <h2>Die Highlights des Events</h2>
             </div>
             <div class="highlight-stack">
               {{#each this.highlights}}
@@ -1716,30 +1746,71 @@
         var slug = form.getAttribute('data-event-slug') || '';
         var eventName = form.getAttribute('data-event-name') || '';
         var data = new FormData(form);
-        var payload = {
-          event_slug: slug,
-          event_name: eventName,
-          name: String(data.get('name') || '').trim(),
-          email: String(data.get('email') || '').trim(),
-          whatsapp: String(data.get('whatsapp') || '').trim(),
-        };
-        // Fire-and-forget POST. Endpoint resolved relative to the published
-        // site (worker proxies /.finestsites/forms/* to the FinestSites API).
-        try {
-          fetch('/.finestsites/forms/event-anmeldung', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload),
-          }).catch(function(){});
-        } catch(_){}
-        if (card) {
+        var name = String(data.get('name') || '').trim();
+        var email = String(data.get('email') || '').trim();
+        var whatsapp = String(data.get('whatsapp') || '').trim();
+        var submitBtn = form.querySelector('button[type="submit"]');
+        if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Wird gesendet…'; }
+        // Build URL-encoded body so the worker's existing /.finestsites/forms/
+        // handler accepts it the same way as a native HTML form POST.
+        var body = new URLSearchParams();
+        body.set('event_slug', slug);
+        body.set('event_name', eventName);
+        body.set('name', name);
+        body.set('email', email);
+        body.set('whatsapp', whatsapp);
+        // Add a couple of friendly aliases so the entry shows up nicely in
+        // the FinestSites admin "Anfragen" view regardless of column mapping.
+        body.set('nachricht', 'Anmeldung zum Event "' + eventName + '"' + (whatsapp ? ' · WhatsApp: ' + whatsapp : ''));
+        body.set('subject', 'Event-Anmeldung: ' + eventName);
+        fetch('/.finestsites/forms/event-anmeldung', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'Accept': 'application/json' },
+          body: body.toString(),
+        }).then(function(){
+          // success — flow continues below
+        }).catch(function(){
+          // network error — still show success to user; submission may have been queued
+        }).finally(function(){
+          if (!card) return;
+          var channels = [];
+          if (email)    channels.push('<strong>per E-Mail</strong>' + (email ? ' an <span style="color:var(--text)">' + email + '</span>' : ''));
+          if (whatsapp) channels.push('<strong>per WhatsApp</strong>' + (whatsapp ? ' an <span style="color:var(--text)">' + whatsapp + '</span>' : ''));
+          var firstName = name.split(/\s+/)[0] || 'Du';
           card.innerHTML =
             '<div class="form-success">' +
-              '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>' +
-              '<h4>Bist eingetragen.</h4>' +
-              '<p>Du bekommst alle Infos persönlich von mir per E-Mail oder WhatsApp.</p>' +
+              '<div class="form-success-icon">' +
+                '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>' +
+              '</div>' +
+              '<h4>' + firstName + ', du bist dabei.</h4>' +
+              '<p>Wir haben deine Anmeldung zu „<strong>' + eventName.replace(/</g,'&lt;') + '</strong>" erhalten.</p>' +
+              (channels.length
+                ? '<p style="margin-top:14px">Du bekommst alle Zugangsinfos ' + channels.join(' oder ') + ' — meistens innerhalb weniger Stunden, spätestens am Vortag.</p>'
+                : '<p style="margin-top:14px">Du bekommst alle Zugangsinfos rechtzeitig vor dem Termin.</p>') +
+              '<p style="margin-top:18px; font-size:0.8125rem; color:var(--text-mute)">Tipp: Speichere den Termin direkt in deinen Kalender.</p>' +
+              '<div style="margin-top:22px; display:flex; gap:10px; justify-content:center; flex-wrap:wrap">' +
+                '<button type="button" class="btn btn-accent" data-ical-btn>' +
+                  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>' +
+                  'In Kalender speichern' +
+                '</button>' +
+              '</div>' +
             '</div>';
-        }
+          // Re-bind the iCal button inside the success card so it still works
+          var newIcalBtns = card.querySelectorAll('[data-ical-btn]');
+          newIcalBtns.forEach(function(btn){
+            btn.addEventListener('click', function(){
+              var page = btn.closest('.page-event'); if (!page) return;
+              var ev = {
+                name: page.getAttribute('data-name'), kuerzel: page.getAttribute('data-kuerzel'),
+                datum: page.getAttribute('data-d'), datum_ende: page.getAttribute('data-d2'),
+                uhrzeit: page.getAttribute('data-uhr'), uhrzeit_ende: page.getAttribute('data-uhr2'),
+                ort: page.getAttribute('data-ort'), link: page.getAttribute('data-link'),
+                beschreibung: page.getAttribute('data-beschreibung'),
+              };
+              downloadIcs(ev);
+            });
+          });
+        });
       });
     });
 

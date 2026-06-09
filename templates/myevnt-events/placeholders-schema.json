@@ -65,59 +65,32 @@
           "key": "wiederkehrung", "label": "Wiederkehrung", "type": "card_select", "required": true,
           "default_value": "einmalig",
           "card_options": [
-            { "value": "einmalig",      "label": "Einmalig",      "description": "Findet genau einmal statt.",                                                       "card_type": "color", "color": "#A78BFA", "image_url": "", "icon": "M12 6v6l4 2M12 22a10 10 0 1 1 0-20 10 10 0 0 1 0 20z" },
-            { "value": "taeglich",      "label": "Täglich",       "description": "Jeden Tag zur gleichen Zeit ab Startdatum.",                                       "card_type": "color", "color": "#F59E0B", "image_url": "", "icon": "M3 12h2M12 3v2M12 19v2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4M12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10z" },
-            { "value": "woechentlich",  "label": "Wöchentlich",   "description": "Jeden Wochentag aus dem Startdatum (z. B. jeden Mittwoch).",                       "card_type": "color", "color": "#10B981", "image_url": "", "icon": "M3 4h18M3 4v16h18V4M3 9h18M8 4v16M16 4v16" },
-            { "value": "monatlich",     "label": "Monatlich",     "description": "Jeden Monat am Tag aus dem Startdatum (z. B. jeden 15.).",                         "card_type": "color", "color": "#06B6D4", "image_url": "", "icon": "M3 5h18v16H3zM3 11h18M8 3v4M16 3v4" }
+            { "value": "einmalig",      "label": "Einmalig",      "description": "Findet genau einmal statt.",                          "card_type": "color", "color": "#A78BFA", "image_url": "", "icon": "M12 6v6l4 2M12 22a10 10 0 1 1 0-20 10 10 0 0 1 0 20z" },
+            { "value": "taeglich",      "label": "Täglich",       "description": "Jeden Tag zur gleichen Zeit ab Startdatum.",          "card_type": "color", "color": "#F59E0B", "image_url": "", "icon": "M3 12h2M12 3v2M12 19v2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4M12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10z" },
+            { "value": "woechentlich",  "label": "Wöchentlich",   "description": "Jeden Montag, Dienstag, … (du wählst den Wochentag).", "card_type": "color", "color": "#10B981", "image_url": "", "icon": "M3 4h18M3 4v16h18V4M3 9h18M8 4v16M16 4v16" },
+            { "value": "individuell",   "label": "Individuell",   "description": "Du wählst die einzelnen Termine im Kalender aus.",   "card_type": "color", "color": "#EC4899", "image_url": "", "icon": "M3 5h18v16H3zM3 11h18M8 3v4M16 3v4" }
           ]
         },
         {
-          "key": "wiederkehrung_wochentag",
-          "label": "Welcher Wochentag?",
-          "type": "dropdown", "required": false,
+          "key": "wiederkehrung_wochentag", "label": "Welcher Wochentag?", "type": "dropdown", "required": false,
           "default_value": "",
           "options": ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag"],
           "show_when": { "field": "wiederkehrung", "value": "woechentlich" }
         },
+        { "key": "wiederkehrung_bis", "label": "Wiederkehrung läuft bis (optional)", "type": "date", "required": false, "placeholder_text": "Leer = unbegrenzt", "show_when": { "field": "wiederkehrung", "value": ["taeglich", "woechentlich"] } },
         {
-          "key": "wiederkehrung_monat_typ",
-          "label": "Wie genau im Monat?",
-          "type": "card_select", "required": false,
-          "default_value": "nach_tag",
-          "card_options": [
-            { "value": "nach_tag",       "label": "Festes Datum",      "description": "Z. B. jeden 15. des Monats.",                                                  "card_type": "color", "color": "#06B6D4", "image_url": "", "icon": "M3 5h18v16H3zM3 11h18M8 3v4M16 3v4" },
-            { "value": "nach_wochentag", "label": "Bestimmter Wochentag", "description": "Z. B. jeden ersten Montag im Monat.",                                       "card_type": "color", "color": "#10B981", "image_url": "", "icon": "M3 4h18M3 4v16h18V4M3 9h18M8 4v16M16 4v16" }
-          ],
-          "show_when": { "field": "wiederkehrung", "value": "monatlich" }
+          "key": "wiederkehrung_termine", "label": "Einzelne Termine", "type": "loop", "required": false,
+          "min_items": 0, "max_items": 30,
+          "placeholder_text": "Wähle jeden Termin einzeln aus",
+          "show_when": { "field": "wiederkehrung", "value": "individuell" },
+          "sub_fields": [
+            { "key": "datum",   "label": "Datum",   "type": "date", "required": true, "placeholder_text": "" },
+            { "key": "uhrzeit", "label": "Uhrzeit (optional, sonst wird die Startuhrzeit verwendet)", "type": "time", "required": false, "placeholder_text": "" }
+          ]
         },
-        {
-          "key": "wiederkehrung_monat_tag",
-          "label": "Tag im Monat (1–31)",
-          "type": "dropdown", "required": false,
-          "default_value": "",
-          "options": ["1.","2.","3.","4.","5.","6.","7.","8.","9.","10.","11.","12.","13.","14.","15.","16.","17.","18.","19.","20.","21.","22.","23.","24.","25.","26.","27.","28.","29.","30.","31."],
-          "show_when": { "field": "wiederkehrung_monat_typ", "value": "nach_tag" }
-        },
-        {
-          "key": "wiederkehrung_monat_position",
-          "label": "Welche Position?",
-          "type": "dropdown", "required": false,
-          "default_value": "",
-          "options": ["Erster", "Zweiter", "Dritter", "Vierter", "Letzter"],
-          "show_when": { "field": "wiederkehrung_monat_typ", "value": "nach_wochentag" }
-        },
-        {
-          "key": "wiederkehrung_monat_wochentag",
-          "label": "Welcher Wochentag?",
-          "type": "dropdown", "required": false,
-          "default_value": "",
-          "options": ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag"],
-          "show_when": { "field": "wiederkehrung_monat_typ", "value": "nach_wochentag" }
-        },
-        { "key": "wiederkehrung_bis", "label": "Wiederkehrung läuft bis (optional)", "type": "date", "required": false, "placeholder_text": "Leer = unbegrenzt", "show_when": { "field": "wiederkehrung", "value": ["taeglich", "woechentlich", "monatlich"] } },
 
         { "key": "ort",  "label": "Adresse",        "type": "textarea", "required": false, "max_length": 200, "placeholder_text": "Straße, PLZ Ort", "show_when": { "field": "typ", "value": "vor_ort" } },
-        { "key": "link", "label": "Beitreten-Link", "type": "url",      "required": false, "placeholder_text": "https://zoom.us/...",  "show_when": { "field": "typ", "value": "online" } },
+        { "key": "link", "label": "Link zum Event", "type": "url",      "required": false, "placeholder_text": "https://zoom.us/...",  "show_when": { "field": "typ", "value": "online" } },
 
         { "key": "beschreibung", "label": "Beschreibung", "type": "richtext", "required": true, "max_length": 4000, "placeholder_text": "Worum geht es bei diesem Event?" },
 
@@ -155,10 +128,9 @@
         { "key": "countdown_anzeigen", "label": "Live-Countdown anzeigen", "type": "toggle", "required": false, "default_value": "ja", "toggle_on_value": "ja", "toggle_off_value": "", "placeholder_text": "Floating Countdown im Event-Hero" },
 
         {
-          "key": "modus_event", "label": "Modus (optional, überschreibt global)", "type": "card_select", "required": false,
+          "key": "modus_event", "label": "Eigener Modus für dieses Event (optional)", "type": "card_select", "required": false,
           "default_value": "",
           "card_options": [
-            { "value": "",       "label": "Übernehmen", "description": "Nutzt deinen globalen Modus.",   "card_type": "color", "color": "#9CA3AF", "image_url": "" },
             { "value": "dunkel", "label": "Dunkel",     "description": "Cinematic für dieses Event.",   "card_type": "color", "color": "#0A0A0A", "image_url": "", "icon": "M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z" },
             { "value": "hell",   "label": "Hell",       "description": "Klar und hell für dieses Event.", "card_type": "color", "color": "#F59E0B", "image_url": "", "icon": "M12 17a5 5 0 1 0 0-10 5 5 0 0 0 0 10zM12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" }
           ]

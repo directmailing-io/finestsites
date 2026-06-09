@@ -868,11 +868,25 @@ function subToFieldSchema(sf: LoopSubField): FieldSchema {
   }
 }
 
-function checkShowWhen(sf: LoopSubField, item: Record<string, string>): boolean {
+function checkShowWhen(
+  sf: LoopSubField,
+  item: Record<string, string>,
+  allFields?: LoopSubField[],
+  seen: Set<string> = new Set(),
+): boolean {
   if (!sf.show_when) return true
+  if (seen.has(sf.key)) return true
+  seen.add(sf.key)
   const { field, value } = sf.show_when
+  // Cascading visibility: if the watched field itself is currently hidden,
+  // this field should be hidden too — regardless of the stored value.
+  if (allFields) {
+    const parent = allFields.find(p => p.key === field)
+    if (parent && parent.show_when && !checkShowWhen(parent, item, allFields, seen)) {
+      return false
+    }
+  }
   const cur = (item[field] ?? '').trim()
-  // Special "truthy" check: show_when value === '__truthy__'
   if (value === '__truthy__') return cur !== '' && cur !== 'false' && cur !== '0'
   if (Array.isArray(value)) return value.map(v => v.trim()).includes(cur)
   return cur === String(value).trim()
@@ -1163,7 +1177,7 @@ function LoopField({ field, value, onChange, onItemFocus }: {
             {/* Sub-fields */}
             {isOpen && (
               <div className="px-4 pb-4 border-t flex flex-col gap-4" style={{ borderColor: '#F3F4F6' }}>
-                {subFields.filter(sf => checkShowWhen(sf, item)).map(sf => (
+                {subFields.filter(sf => checkShowWhen(sf, item, subFields)).map(sf => (
                   <div key={sf.key} className="pt-3">
                     <label className="block text-sm font-semibold text-gray-800 mb-1.5">
                       {sf.label}

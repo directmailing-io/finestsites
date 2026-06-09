@@ -4,9 +4,11 @@ import { useState, useEffect, useRef, use } from 'react'
 import { useRouter } from 'next/navigation'
 import { zipSync } from 'fflate'
 import { PlaceholderSchemaEditor, PlaceholderField } from '@/components/admin/PlaceholderSchemaEditor'
+import FormSchemaEditor from '@/components/admin/FormSchemaEditor'
+import TemplateAccessPanel from '@/components/admin/TemplateAccessPanel'
 import ImageCropModal from '@/components/ImageCropModal'
 
-type Tab = 'info' | 'preview-settings' | 'placeholders'
+type Tab = 'info' | 'preview-settings' | 'placeholders' | 'forms' | 'access'
 
 interface DomainSetup {
   status: string
@@ -49,6 +51,8 @@ export default function EditTemplatePage({ params }: { params: Promise<{ id: str
   const [importError, setImportError] = useState('')
   const [importSuccess, setImportSuccess] = useState('')
   const [importMode, setImportMode] = useState<'replace' | 'merge'>('merge')
+  const [isTest, setIsTest] = useState(false)
+  const [isFree, setIsFree] = useState(false)
 
   useEffect(() => {
     fetch(`/api/admin/templates/${id}`)
@@ -65,6 +69,8 @@ export default function EditTemplatePage({ params }: { params: Promise<{ id: str
         setBundlePath(data.r2_bundle_path ?? null)
         setTags(data.tags ?? [])
         setCoverImage(data.preview_images?.[0] ?? null)
+        setIsTest(data.is_test ?? false)
+        setIsFree(data.is_free ?? false)
         setLoading(false)
       })
   }, [id])
@@ -217,7 +223,7 @@ export default function EditTemplatePage({ params }: { params: Promise<{ id: str
     }
 
     const rawFields: unknown[] = (parsed as any).fields
-    const VALID_TYPES = ['text', 'textarea', 'image', 'url', 'email', 'dropdown', 'card_select'] as const
+    const VALID_TYPES = ['text', 'textarea', 'image', 'url', 'email', 'dropdown', 'card_select', 'loop'] as const
     type FType = typeof VALID_TYPES[number]
 
     const imported: PlaceholderField[] = []
@@ -250,6 +256,22 @@ export default function EditTemplatePage({ params }: { params: Promise<{ id: str
               color: String(o.color ?? '#6366F1'),
             }))
           : [],
+        // loop-specific fields
+        sub_fields: Array.isArray(f.sub_fields)
+          ? f.sub_fields.filter((sf: unknown) => sf && typeof sf === 'object').map((sf: any) => ({
+              key: String(sf.key ?? ''),
+              label: String(sf.label ?? ''),
+              type: ['text', 'textarea', 'image', 'url', 'email', 'dropdown'].includes(sf.type) ? sf.type : 'text',
+              required: Boolean(sf.required ?? false),
+              placeholder_text: typeof sf.placeholder_text === 'string' ? sf.placeholder_text : '',
+              max_length: typeof sf.max_length === 'number' ? sf.max_length : null,
+              default_value: typeof sf.default_value === 'string' ? sf.default_value : '',
+              aspect_ratio: typeof sf.aspect_ratio === 'string' ? sf.aspect_ratio : 'free',
+              options: Array.isArray(sf.options) ? sf.options.filter((o: unknown) => typeof o === 'string') : [],
+            }))
+          : [],
+        min_items: typeof f.min_items === 'number' ? f.min_items : 1,
+        max_items: typeof f.max_items === 'number' ? f.max_items : null,
       })
     }
 
@@ -289,6 +311,8 @@ export default function EditTemplatePage({ params }: { params: Promise<{ id: str
         status: statusOverride ?? form.status,
         placeholder_schema: { version: 1, fields, preview_values: previewValues },
         tags,
+        is_test: isTest,
+        is_free: isFree,
       }),
     })
 
@@ -431,6 +455,8 @@ export default function EditTemplatePage({ params }: { params: Promise<{ id: str
         {([
           { key: 'info', label: 'Webseite Informationen' },
           { key: 'placeholders', label: 'Platzhalter' },
+          { key: 'forms', label: 'Formulare' },
+          { key: 'access', label: isTest ? '🔒 Zugang' : 'Zugang' },
           { key: 'preview-settings', label: 'Vorschaueinstellungen' },
         ] as { key: Tab; label: string }[]).map(tab => (
           <button key={tab.key} onClick={() => setActiveTab(tab.key)}
@@ -470,10 +496,30 @@ export default function EditTemplatePage({ params }: { params: Promise<{ id: str
                       {field.label || field.key}
                       <span className="ml-2 text-xs font-normal font-mono px-1.5 py-0.5 rounded"
                         style={{ background: '#F1F5F9', color: '#64748B' }}>
-                        {`{{${field.key}}}`}
+                        {field.type === 'loop' ? `{{#each ${field.key}}}` : `{{${field.key}}}`}
                       </span>
+                      {field.type === 'loop' && (
+                        <span className="ml-1.5 text-xs px-1.5 py-0.5 rounded-full" style={{ background: '#E0F2FE', color: '#0369A1' }}>Loop</span>
+                      )}
                     </label>
-                    {field.type === 'textarea' ? (
+                    {field.type === 'loop' ? (
+                      <div className="flex flex-col gap-1.5">
+                        <textarea
+                          value={previewValues[field.key] ?? ''}
+                          onChange={e => setPreviewValues(prev => ({ ...prev, [field.key]: e.target.value }))}
+                          rows={4}
+                          placeholder={`JSON-Array, z.B.:\n[{"${(field.sub_fields ?? [])[0]?.key || 'name'}": "Max"}, {"${(field.sub_fields ?? [])[0]?.key || 'name'}": "Anna"}]`}
+                          style={{ background: '#F8FAFC', border: '1.5px solid #E5E7EB', borderRadius: '14px', padding: '10px 14px', fontSize: '12px', fontFamily: 'monospace', outline: 'none', width: '100%', resize: 'vertical' }}
+                          onFocus={e => (e.target.style.borderColor = '#0369A1')}
+                          onBlur={e => (e.target.style.borderColor = '#E5E7EB')}
+                        />
+                        {(field.sub_fields ?? []).length > 0 && (
+                          <p className="text-xs" style={{ color: '#9CA3AF' }}>
+                            Unterfelder: {field.sub_fields!.map(sf => `"${sf.key}"`).join(', ')}
+                          </p>
+                        )}
+                      </div>
+                    ) : field.type === 'textarea' ? (
                       <textarea
                         value={previewValues[field.key] ?? ''}
                         onChange={e => setPreviewValues(prev => ({ ...prev, [field.key]: e.target.value }))}
@@ -658,6 +704,45 @@ export default function EditTemplatePage({ params }: { params: Promise<{ id: str
         </div>
       )}
 
+      {/* Forms Tab */}
+      {activeTab === 'forms' && (
+        <div className="p-6 rounded-[24px] bg-white flex flex-col gap-4"
+          style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.08)', border: '1px solid var(--border)' }}>
+          <div>
+            <h2 className="font-medium text-gray-900">Formulare</h2>
+            <p className="text-xs mt-1" style={{ color: 'var(--muted-foreground)' }}>
+              Definiere Formulare, die Website-Besucher ausfüllen können. Eingaben werden im Dashboard unter &quot;Anfragen&quot; angezeigt.
+            </p>
+          </div>
+          <FormSchemaEditor templateId={id} />
+        </div>
+      )}
+
+      {/* Access Tab */}
+      {activeTab === 'access' && (
+        <div className="p-6 rounded-[24px] bg-white flex flex-col gap-5"
+          style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.08)', border: '1px solid var(--border)' }}>
+          <div>
+            <h2 className="font-medium text-gray-900">Zugangssteuerung</h2>
+            <p className="text-xs mt-1" style={{ color: 'var(--muted-foreground)' }}>
+              Im Test-Modus siehst nur du und freigeschaltete Nutzer dieses Template in der Bibliothek.
+            </p>
+          </div>
+          {!isTest && (
+            <div className="flex items-center gap-3 px-4 py-3.5 rounded-[14px]"
+              style={{ background: '#F0FDF4', border: '1px solid #BBF7D0' }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#16A34A" strokeWidth="2">
+                <circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/>
+              </svg>
+              <p className="text-xs text-green-700">
+                Test-Modus ist deaktiviert — dieses Template ist für alle Nutzer sichtbar. Aktiviere den Test-Modus im Tab &quot;Webseite Informationen&quot; um den Zugang zu steuern.
+              </p>
+            </div>
+          )}
+          <TemplateAccessPanel templateId={id} />
+        </div>
+      )}
+
       {activeTab === 'info' && (
       <div className="flex flex-col gap-6">
         <div className="flex flex-col gap-6">
@@ -743,6 +828,66 @@ export default function EditTemplatePage({ params }: { params: Promise<{ id: str
                 Nutzer-URLs: <code className="font-mono bg-gray-100 px-1 py-0.5 rounded-md">username.{form.domain}</code>
               </p>
             )}
+          </div>
+        </div>
+
+        {/* Visibility Settings */}
+        <div className="p-6 rounded-[24px] bg-white flex flex-col gap-4"
+          style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.08)', border: '1px solid var(--border)' }}>
+          <div>
+            <h2 className="font-medium text-gray-900">Sichtbarkeit</h2>
+            <p className="text-xs mt-1" style={{ color: 'var(--muted-foreground)' }}>
+              Steuere, wer dieses Template sieht und ob es das Plan-Limit zählt.
+            </p>
+          </div>
+          <div className="flex flex-col gap-3">
+            {/* Test-Modus Toggle */}
+            <div className="flex items-center justify-between gap-4 px-4 py-3.5 rounded-[14px]"
+              style={{ background: isTest ? '#FFFBEB' : '#FAFAFA', border: `1px solid ${isTest ? '#FDE68A' : '#F1F5F9'}`, transition: 'all 0.2s' }}>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 mb-0.5">
+                  <span className="text-sm font-semibold text-gray-900">Test-Modus</span>
+                  {isTest && (
+                    <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
+                      style={{ background: '#FEF3C7', color: '#B45309' }}>Aktiv</span>
+                  )}
+                </div>
+                <p className="text-xs" style={{ color: '#94A3B8' }}>
+                  Nur freigeschaltete Nutzer sehen dieses Template in der Bibliothek.
+                </p>
+              </div>
+              <button type="button" onClick={() => setIsTest(v => !v)}
+                className="relative flex-shrink-0 w-11 h-6 rounded-full transition-colors duration-200"
+                style={{ background: isTest ? '#F59E0B' : '#E2E8F0' }}
+                aria-label="Test-Modus umschalten">
+                <span className="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow-sm transition-transform duration-200"
+                  style={{ transform: isTest ? 'translateX(20px)' : 'translateX(0)' }} />
+              </button>
+            </div>
+
+            {/* Kostenlos Toggle */}
+            <div className="flex items-center justify-between gap-4 px-4 py-3.5 rounded-[14px]"
+              style={{ background: isFree ? '#F0FDF4' : '#FAFAFA', border: `1px solid ${isFree ? '#BBF7D0' : '#F1F5F9'}`, transition: 'all 0.2s' }}>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 mb-0.5">
+                  <span className="text-sm font-semibold text-gray-900">Kostenlos</span>
+                  {isFree && (
+                    <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
+                      style={{ background: '#DCFCE7', color: '#15803D' }}>Aktiv</span>
+                  )}
+                </div>
+                <p className="text-xs" style={{ color: '#94A3B8' }}>
+                  Dieses Template zählt nicht gegen das Plan-Limit — auch Starter-Nutzer können es beliebig oft aktivieren.
+                </p>
+              </div>
+              <button type="button" onClick={() => setIsFree(v => !v)}
+                className="relative flex-shrink-0 w-11 h-6 rounded-full transition-colors duration-200"
+                style={{ background: isFree ? '#22C55E' : '#E2E8F0' }}
+                aria-label="Kostenlos umschalten">
+                <span className="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow-sm transition-transform duration-200"
+                  style={{ transform: isFree ? 'translateX(20px)' : 'translateX(0)' }} />
+              </button>
+            </div>
           </div>
         </div>
 

@@ -46,7 +46,7 @@ export default async function AdminTemplatesPage() {
                 style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.08)', border: '1px solid var(--border)' }}>
 
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-1">
+                  <div className="flex items-center gap-2 flex-wrap mb-1">
                     <h3 className="font-medium text-gray-900 text-sm">{t.title}</h3>
                     <span className="text-xs px-2 py-0.5 rounded-full"
                       style={{
@@ -55,6 +55,18 @@ export default async function AdminTemplatesPage() {
                       }}>
                       {isPublished ? 'Veröffentlicht' : 'Entwurf'}
                     </span>
+                    {t.is_test && (
+                      <span className="text-xs px-2 py-0.5 rounded-full font-semibold"
+                        style={{ background: '#FEF3C7', color: '#B45309' }}>
+                        Test
+                      </span>
+                    )}
+                    {t.is_free && (
+                      <span className="text-xs px-2 py-0.5 rounded-full font-semibold"
+                        style={{ background: '#DBEAFE', color: '#1D4ED8' }}>
+                        Kostenlos
+                      </span>
+                    )}
                   </div>
                   <div className="flex items-center gap-4 text-xs" style={{ color: 'var(--muted-foreground)' }}>
                     <span>🌐 {t.domain}</span>

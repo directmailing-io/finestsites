@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
+import { markSiteOffline } from '@/lib/cloudflare/kv'
 
 async function getSiteForUser(siteId: string, userId: string) {
   const admin = createAdminClient()
@@ -69,7 +70,15 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   return NextResponse.json({ success: true })
 }
 
-// DELETE /api/sites/[id] → soft delete
+// DELETE /api/sites/[id] → HARD DELETE
+//
+// Permanently removes the user_site row. The ON DELETE CASCADE foreign keys
+// on `site_data` and `form_submissions` automatically remove all related rows,
+// so the user truly starts from scratch the next time they activate this
+// template (no field values, no submissions, no leftover state).
+//
+// Also: if the site was published we proactively purge the Cloudflare KV cache
+// so the public worker stops serving it immediately.
 export async function DELETE(_: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -77,8 +86,27 @@ export async function DELETE(_: NextRequest, { params }: { params: Promise<{ id:
 
   const { id } = await params
   const admin = createAdminClient()
+
+  // Fetch info before deletion so we can purge KV
+  const { data: site } = await admin.from('user_sites')
+    .select('status, templates(domain), users!user_id(username)')
+    .eq('id', id)
+    .eq('user_id', user.id)
+    .single()
+  if (!site) return NextResponse.json({ error: 'Not found' }, { status: 404 })
+
+  // Purge Worker cache if it was live
+  if (site.status === 'published') {
+    const username = (site.users as unknown as { username: string })?.username
+    const domain = (site.templates as unknown as { domain: string })?.domain
+    if (username && domain) {
+      try { await markSiteOffline(username, domain) } catch { /* non-fatal */ }
+    }
+  }
+
+  // Hard delete — site_data + form_submissions cascade away
   const { error } = await admin.from('user_sites')
-    .update({ status: 'deleted', deactivated_at: new Date().toISOString() })
+    .delete()
     .eq('id', id)
     .eq('user_id', user.id)
 

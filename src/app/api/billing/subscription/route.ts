@@ -1,9 +1,8 @@
 import { NextResponse } from 'next/server'
-import Stripe from 'stripe'
+import type Stripe from 'stripe'
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
+import { getStripe } from '@/lib/stripe/client'
 
 function getSubInfo(sub: Stripe.Subscription, plan: string, billingInterval: string | null) {
   // In Stripe v22+, current_period_end is per subscription item
@@ -37,6 +36,7 @@ export async function GET() {
   }
 
   try {
+    const stripe = getStripe()
     const subscriptions = await stripe.subscriptions.list({
       customer: profile.stripe_customer_id,
       status: 'active',
@@ -79,6 +79,7 @@ export async function DELETE() {
   }
 
   try {
+    const stripe = getStripe()
     const subscriptions = await stripe.subscriptions.list({
       customer: profile.stripe_customer_id,
       status: 'active',

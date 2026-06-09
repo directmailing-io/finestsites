@@ -1,63 +1,134 @@
 import { NextRequest, NextResponse } from 'next/server'
-import Stripe from 'stripe'
+import type Stripe from 'stripe'
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
+import { getStripe, getPriceIdByPlan, type PlanKey, type BillingInterval } from '@/lib/stripe/client'
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
-
-const PRICE_IDS: Record<string, Record<string, string>> = {
-  starter: {
-    monthly: process.env.STRIPE_PRICE_STARTER_MONTHLY!,
-    yearly: process.env.STRIPE_PRICE_STARTER_YEARLY!,
-  },
-  pro: {
-    monthly: process.env.STRIPE_PRICE_PRO_MONTHLY!,
-    yearly: process.env.STRIPE_PRICE_PRO_YEARLY!,
-  },
-  unlimited: {
-    monthly: process.env.STRIPE_PRICE_UNLIMITED_MONTHLY!,
-    yearly: process.env.STRIPE_PRICE_UNLIMITED_YEARLY!,
-  },
-}
-
+/**
+ * Creates a Stripe Checkout Session for a subscription.
+ *
+ * Payment methods: card + SEPA Direct Debit.
+ * Tax: Stripe Tax automatic_tax (gated by STRIPE_AUTOMATIC_TAX=1) — prices are
+ *   stored gross (incl. VAT), so prices in Stripe must have tax_behavior=inclusive.
+ *   Stripe Tax then breaks out the correct VAT per customer location on the invoice.
+ * Address: collected and synced back to the customer so future invoices have it.
+ * VAT-ID (tax_id_collection): enabled so B2B customers can enter their VAT ID
+ *   and benefit from reverse charge where applicable.
+ * Invoicing: invoices are created automatically by Stripe for subscription billing.
+ */
 export async function POST(req: NextRequest) {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  try {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return NextResponse.json({ error: 'Nicht angemeldet.' }, { status: 401 })
 
-  const { plan, interval = 'monthly' } = await req.json()
-  const priceId = PRICE_IDS[plan]?.[interval]
-  if (!priceId) return NextResponse.json({ error: 'Ungültiger Plan.' }, { status: 400 })
+    const { plan, interval = 'monthly' } = await req.json() as { plan: PlanKey; interval?: BillingInterval }
+    const priceId = getPriceIdByPlan(plan, interval)
+    if (!priceId) return NextResponse.json({ error: 'Ungültiger Plan.' }, { status: 400 })
 
-  const admin = createAdminClient()
-  const { data: profile } = await admin.from('users').select('stripe_customer_id, email').eq('id', user.id).single()
+    const stripe = getStripe()
+    const admin = createAdminClient()
+    const { data: profile } = await admin
+      .from('users')
+      .select('stripe_customer_id, email, username, referred_by_username')
+      .eq('id', user.id)
+      .single()
 
-  let customerId = profile?.stripe_customer_id as string | undefined
-  if (!customerId) {
-    const customer = await stripe.customers.create({
-      email: profile?.email ?? user.email ?? '',
-      metadata: { supabase_user_id: user.id },
-    })
-    customerId = customer.id
-    await admin.from('users').update({ stripe_customer_id: customerId }).eq('id', user.id)
+    // Create or reuse Stripe customer
+    let customerId = profile?.stripe_customer_id as string | undefined
+    if (!customerId) {
+      const customer = await stripe.customers.create({
+        email: profile?.email ?? user.email ?? '',
+        metadata: { supabase_user_id: user.id },
+      })
+      customerId = customer.id
+      await admin.from('users').update({ stripe_customer_id: customerId }).eq('id', user.id)
+    }
+
+    // Use request origin so Stripe redirects back to the correct host
+    const origin =
+      req.headers.get('origin') ??
+      req.headers.get('referer')?.replace(/\/[^/]*$/, '') ??
+      process.env.NEXT_PUBLIC_APP_URL ??
+      'http://localhost:3000'
+    const appUrl = origin.replace(/\/$/, '')
+
+    // Success always hits the server-side activate route, which verifies the
+    // Stripe session, updates the DB, then redirects to /sites.
+    const isOnboarding = !profile?.username
+    const successUrl = `${appUrl}/api/billing/activate?session_id={CHECKOUT_SESSION_ID}`
+    const cancelUrl = isOnboarding
+      ? `${appUrl}/onboarding/plan?canceled=1`
+      : `${appUrl}/settings?canceled=1`
+
+    // Apply affiliate discount coupon if user was referred
+    const affiliateCouponId = process.env.STRIPE_AFFILIATE_COUPON_ID
+    const referredBy = profile?.referred_by_username
+      ?? (await supabase.auth.getUser()).data.user?.user_metadata?.referred_by_username
+      ?? null
+    const hasReferral = !!referredBy && !!affiliateCouponId
+
+    // Sync to public.users if found only in metadata
+    if (!profile?.referred_by_username && referredBy) {
+      await admin.from('users').update({ referred_by_username: referredBy }).eq('id', user.id)
+    }
+
+    // Stripe Tax: enabled when STRIPE_AUTOMATIC_TAX=1 in env.
+    // Requires:
+    //  - Stripe Tax activated in Dashboard (Settings → Tax)
+    //  - Origin address set
+    //  - Prices have tax_behavior set (we use 'inclusive')
+    //  - Product has tax_code set
+    //  - Customer has billing address (we collect it below)
+    const automaticTaxEnabled = process.env.STRIPE_AUTOMATIC_TAX === '1'
+
+    const sessionParams: Stripe.Checkout.SessionCreateParams = {
+      customer: customerId,
+      mode: 'subscription',
+      payment_method_types: ['card', 'sepa_debit'],
+      line_items: [{ price: priceId, quantity: 1 }],
+      ...(hasReferral ? { discounts: [{ coupon: affiliateCouponId!.trim() }] } : {}),
+      success_url: successUrl,
+      cancel_url: cancelUrl,
+
+      // Collect billing address — required for Stripe Tax and for proper invoices
+      billing_address_collection: 'required',
+      // Sync address + name from checkout back to the customer object so
+      // future renewal invoices keep the same data
+      customer_update: { address: 'auto', name: 'auto' },
+      // Allow B2B customers to enter their VAT ID (Stripe verifies it via VIES)
+      tax_id_collection: { enabled: true },
+
+      // Stripe Tax: opt-in via env flag (requires Stripe Tax activated in Dashboard)
+      ...(automaticTaxEnabled ? { automatic_tax: { enabled: true } } : {}),
+
+      subscription_data: {
+        metadata: {
+          supabase_user_id: user.id,
+          plan,
+          interval,
+          referred_by: referredBy ?? '',
+        },
+      },
+
+      metadata: {
+        supabase_user_id: user.id,
+        plan,
+        interval,
+        referred_by: referredBy ?? '',
+      },
+
+      // Locale: German by default. Stripe shows checkout in the right language
+      // for international customers via their browser; we set 'auto' so Stripe decides.
+      locale: 'auto',
+    }
+
+    const session = await stripe.checkout.sessions.create(sessionParams)
+
+    return NextResponse.json({ url: session.url })
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Unbekannter Fehler'
+    console.error('[billing/checkout] error:', message)
+    return NextResponse.json({ error: message }, { status: 500 })
   }
-
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'
-  const taxRateId = process.env.STRIPE_TAX_RATE_ID
-
-  const session = await stripe.checkout.sessions.create({
-    customer: customerId,
-    mode: 'subscription',
-    payment_method_types: ['card', 'sepa_debit'],
-    line_items: [{
-      price: priceId,
-      quantity: 1,
-      ...(taxRateId ? { tax_rates: [taxRateId] } : {}),
-    }],
-    success_url: `${appUrl}/billing?success=1`,
-    cancel_url: `${appUrl}/billing?canceled=1`,
-    metadata: { supabase_user_id: user.id, plan, interval },
-  })
-
-  return NextResponse.json({ url: session.url })
 }

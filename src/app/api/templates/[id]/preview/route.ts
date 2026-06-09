@@ -44,6 +44,18 @@ svg{opacity:0.4}p{font-size:14px;font-weight:500}</style></head>
     dataMap[f.key] = previewValues[f.key] ?? f.default_value ?? `[${f.label ?? f.key}]`
   }
 
+  // Rewrite relative CSS/JS/image hrefs so the preview iframe can load them
+  // via /api/templates/[id]/asset/[path] (same-origin, authenticated).
+  const assetBase = `/api/templates/${id}/asset`
+  html = html.replace(
+    /(<link[^>]+href=")(?!https?:\/\/|\/\/|data:|#)([^"]+)(")/gi,
+    (_m, pre, href, post) => `${pre}${assetBase}/${href}${post}`
+  )
+  html = html.replace(
+    /(<script[^>]+src=")(?!https?:\/\/|\/\/|data:)([^"]+)(")/gi,
+    (_m, pre, src, post) => `${pre}${assetBase}/${src}${post}`
+  )
+
   const rendered = renderTemplate(html, dataMap)
 
   return new NextResponse(rendered, {

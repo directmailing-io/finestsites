@@ -17,6 +17,8 @@ interface UserSite {
   id: string
   status: string
   username: string | null
+  custom_domain: string | null
+  custom_domain_status: string | null
   templates: { title: string; domain: string } | null
 }
 
@@ -30,10 +32,22 @@ interface Invoice {
   lines?: { data: Array<{ description: string | null }> }
 }
 
+interface SubscriptionEvent {
+  id: string
+  event_type: string
+  plan: string | null
+  billing_interval: string | null
+  amount_cents: number | null
+  created_at: string
+  stripe_invoice_id: string | null
+  metadata: Record<string, unknown> | null
+}
+
 interface UserDetail {
   profile: UserProfile
   sites: UserSite[]
   invoices: Invoice[]
+  events: SubscriptionEvent[]
 }
 
 const PLAN_COLORS: Record<string, { bg: string; text: string }> = {
@@ -97,7 +111,7 @@ export default function AdminUserDetailPage({ params }: { params: Promise<{ id: 
     )
   }
 
-  const { profile, sites, invoices } = data
+  const { profile, sites, invoices, events } = data
   const planColor = PLAN_COLORS[profile.plan] ?? PLAN_COLORS.starter
 
   return (
@@ -163,23 +177,49 @@ export default function AdminUserDetailPage({ params }: { params: Promise<{ id: 
           ) : (
             <div className="flex flex-col gap-2">
               {sites.map(site => {
-                const url = site.username && site.templates?.domain
-                  ? `https://${site.username}.${site.templates.domain}`
+                const subdomain = profile.username && site.templates?.domain
+                  ? `${profile.username}.${site.templates.domain}`
                   : null
+                const hasCustomDomain = site.custom_domain_status === 'active' && !!site.custom_domain
+                const primaryUrl = hasCustomDomain
+                  ? `https://${site.custom_domain}`
+                  : subdomain ? `https://${subdomain}` : null
                 return (
                   <div key={site.id} className="flex items-center justify-between p-3 rounded-[14px]"
                     style={{ background: '#F9FAFB', border: '1px solid #F3F4F6' }}>
-                    <div>
+                    <div className="min-w-0 flex-1">
                       <p className="text-sm font-medium text-gray-900">{site.templates?.title ?? 'Website'}</p>
-                      {url && (
-                        <a href={url} target="_blank" rel="noopener noreferrer"
+                      {/* Subdomain — always shown */}
+                      {subdomain && (
+                        <a href={`https://${subdomain}`} target="_blank" rel="noopener noreferrer"
                           className="text-xs font-mono mt-0.5 flex items-center gap-1 hover:underline"
-                          style={{ color: '#2563EB' }}
+                          style={{ color: '#94A3B8' }}
                           onClick={e => e.stopPropagation()}>
-                          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                             <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
                           </svg>
-                          {site.username}.{site.templates?.domain}
+                          {subdomain}
+                        </a>
+                      )}
+                      {/* Custom domain — shown with icon when active */}
+                      {site.custom_domain && (
+                        <a href={hasCustomDomain ? `https://${site.custom_domain}` : undefined}
+                          target={hasCustomDomain ? '_blank' : undefined}
+                          rel="noopener noreferrer"
+                          className="text-xs font-mono mt-0.5 flex items-center gap-1"
+                          style={{ color: hasCustomDomain ? '#16A34A' : '#F59E0B', cursor: hasCustomDomain ? 'pointer' : 'default' }}
+                          onClick={e => { if (!hasCustomDomain) e.preventDefault(); else e.stopPropagation() }}>
+                          <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                            <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/>
+                            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                          </svg>
+                          {site.custom_domain}
+                          {!hasCustomDomain && (
+                            <span className="ml-1 text-[9px] font-semibold px-1 py-0.5 rounded"
+                              style={{ background: '#FEF3C7', color: '#92400E' }}>
+                              {site.custom_domain_status === 'pending_ssl' ? 'SSL pending' : 'DNS ausstehend'}
+                            </span>
+                          )}
                         </a>
                       )}
                     </div>
@@ -234,6 +274,89 @@ export default function AdminUserDetailPage({ params }: { params: Promise<{ id: 
                       }}>
                       {isPaid ? 'Bezahlt' : inv.status === 'void' ? 'Storniert' : 'Offen'}
                     </span>
+                  </div>
+                )
+              })}
+            </div>
+          )}
+        </div>
+
+        {/* Abo-Verlauf */}
+        <div className="p-6 rounded-[24px] bg-white flex flex-col gap-3"
+          style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.08)', border: '1px solid var(--border)' }}>
+          <h2 className="font-medium text-gray-900">Abo-Verlauf</h2>
+          {(!events || events.length === 0) ? (
+            <p className="text-sm" style={{ color: 'var(--muted-foreground)' }}>
+              Noch keine Ereignisse aufgezeichnet.
+            </p>
+          ) : (
+            <div className="relative flex flex-col gap-0 mt-1">
+              <div className="absolute left-[9px] top-3 bottom-3 w-px" style={{ background: '#E5E7EB' }} />
+              {events.map((ev, idx) => {
+                const isLast = idx === events.length - 1
+                const dt = new Date(ev.created_at)
+                const dateStr = dt.toLocaleDateString('de-DE', { day: 'numeric', month: 'short', year: 'numeric' })
+                  + ' · '
+                  + dt.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })
+
+                type DotColor = { dot: string; bg: string }
+                const STYLE: Record<string, DotColor> = {
+                  subscription_created: { dot: '#16A34A', bg: '#F0FDF4' },
+                  subscription_renewed: { dot: '#2563EB', bg: '#EFF6FF' },
+                  subscription_updated: { dot: '#9CA3AF', bg: '#F9FAFB' },
+                  subscription_canceled: { dot: '#F97316', bg: '#FFF7ED' },
+                  subscription_deleted: { dot: '#DC2626', bg: '#FEF2F2' },
+                  payment_failed: { dot: '#DC2626', bg: '#FEF2F2' },
+                  payment_succeeded: { dot: '#16A34A', bg: '#F0FDF4' },
+                  account_deactivated: { dot: '#DC2626', bg: '#FEF2F2' },
+                }
+                const style = STYLE[ev.event_type] ?? { dot: '#9CA3AF', bg: '#F9FAFB' }
+
+                const LABEL: Record<string, string> = {
+                  subscription_created: 'Abo gestartet',
+                  subscription_renewed: 'Verlängerung',
+                  subscription_updated: 'Abo geändert',
+                  subscription_canceled: 'Kündigung gesetzt',
+                  subscription_deleted: 'Abo beendet',
+                  payment_failed: 'Zahlung fehlgeschlagen',
+                  payment_succeeded: 'Zahlung erfolgreich',
+                  account_deactivated: 'Konto deaktiviert',
+                }
+                const label = LABEL[ev.event_type] ?? ev.event_type
+
+                let detail: string | null = null
+                if (ev.event_type === 'subscription_created' && ev.plan) {
+                  detail = `${ev.plan}${ev.billing_interval ? ` · ${ev.billing_interval}` : ''}`
+                } else if (ev.event_type === 'subscription_renewed') {
+                  const parts: string[] = []
+                  if (ev.plan) parts.push(ev.plan)
+                  if (ev.amount_cents != null) parts.push(`€ ${(ev.amount_cents / 100).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`)
+                  detail = parts.join(' · ') || null
+                } else if (ev.event_type === 'subscription_updated' && ev.plan) {
+                  detail = ev.plan
+                } else if (ev.event_type === 'payment_succeeded' && ev.amount_cents != null) {
+                  detail = `€ ${(ev.amount_cents / 100).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+                }
+
+                return (
+                  <div key={ev.id} className={`relative flex items-start gap-4 ${isLast ? '' : 'pb-4'}`}>
+                    <div className="relative z-10 mt-0.5 flex-shrink-0">
+                      <div className="w-[19px] h-[19px] rounded-full flex items-center justify-center"
+                        style={{ background: style.bg, border: `2px solid ${style.dot}` }}>
+                        <div className="w-1.5 h-1.5 rounded-full" style={{ background: style.dot }} />
+                      </div>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-baseline justify-between gap-4">
+                        <span className="text-sm font-medium text-gray-900">{label}</span>
+                        <span className="text-xs flex-shrink-0 tabular-nums" style={{ color: '#94A3B8' }}>
+                          {dateStr}
+                        </span>
+                      </div>
+                      {detail && (
+                        <p className="text-xs mt-0.5" style={{ color: '#64748B' }}>{detail}</p>
+                      )}
+                    </div>
                   </div>
                 )
               })}

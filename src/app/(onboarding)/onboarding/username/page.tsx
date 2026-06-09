@@ -1,193 +1,86 @@
-'use client'
+import { redirect } from 'next/navigation'
+import type Stripe from 'stripe'
+import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
+import { getStripe, getPlanByPriceId } from '@/lib/stripe/client'
+import { UsernameForm } from './UsernameForm'
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { createClient } from '@/lib/supabase/client'
+// Statuses that represent a paid, active subscription
+const ACTIVE_STATUSES = ['active', 'trialing', 'past_due']
 
-const SITE_DOMAIN = process.env.NEXT_PUBLIC_SITE_DOMAIN ?? 'finestsites.de'
+export default async function OnboardingUsernamePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ session_id?: string }>
+}) {
+  const { session_id: sessionId } = await searchParams
 
-// Only lowercase a-z, hyphens allowed in middle. No numbers, no umlauts, no special chars.
-function sanitize(val: string) {
-  return val
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '') // remove diacritics (ä→a, ö→o, ü→u)
-    .replace(/[^a-z-]/g, '')         // strip anything not a-z or hyphen
-    .replace(/^-+/, '')              // no leading hyphens
-    .slice(0, 30)
-}
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) redirect('/login')
 
-function isValid(u: string) {
-  // Starts and ends with a-z, can have hyphens in the middle, length 3-30
-  return /^[a-z][a-z-]*[a-z]$/.test(u) && u.length >= 3
-}
+  const admin = createAdminClient()
+  const { data: profile } = await admin
+    .from('users')
+    .select('subscription_status, stripe_subscription_id, username')
+    .eq('id', user.id)
+    .single()
 
-export default function OnboardingUsernamePage() {
-  const [username, setUsername] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
-  const router = useRouter()
-  const supabase = createClient()
+  // Real active subscription: status is valid AND a Stripe subscription ID exists
+  const hasRealSubscription =
+    !!profile?.subscription_status &&
+    ACTIVE_STATUSES.includes(profile.subscription_status) &&
+    !!profile?.stripe_subscription_id
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault()
-    const clean = sanitize(username)
-    if (!isValid(clean)) {
-      setError('Mindestens 3 Buchstaben. Nur a–z und Bindestriche (nicht am Anfang/Ende).')
-      return
-    }
-    setLoading(true)
-    setError('')
-
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) { router.push('/login'); return }
-
-    // Check uniqueness
-    const { data: existing } = await supabase
-      .from('users').select('id').eq('username', clean).single()
-    if (existing) {
-      setError('Dieser Username ist bereits vergeben. Bitte wähle einen anderen.')
-      setLoading(false)
-      return
-    }
-
-    const { error: updateError } = await supabase
-      .from('users')
-      .update({ username: clean, username_set_at: new Date().toISOString() })
-      .eq('id', user.id)
-
-    if (updateError) {
-      const isDuplicate = updateError.code === '23505' || updateError.message?.includes('unique')
-      setError(isDuplicate
-        ? 'Dieser Username ist bereits vergeben. Bitte wähle einen anderen.'
-        : 'Fehler beim Speichern. Bitte versuche es erneut.')
-      setLoading(false)
-      return
-    }
-    router.push('/dashboard')
+  if (hasRealSubscription) {
+    // Subscription already recorded — go to dashboard if username is set, else collect it
+    if (profile?.username) redirect('/sites')
+    return <UsernameForm />
   }
 
-  const display = sanitize(username)
-  const valid = isValid(display)
+  // ── Webhook timing fallback ─────────────────────────────────────────────
+  // With the /api/billing/activate route, the DB is normally already updated
+  // before the user reaches this page. This block is a safety net for edge
+  // cases (direct URL navigation, webhook timing issues, etc.).
+  let sessionVerified = false
+  if (sessionId) {
+    try {
+      const session = await getStripe().checkout.sessions.retrieve(sessionId, {
+        expand: ['subscription'],
+      })
 
-  return (
-    <div className="w-full max-w-sm">
-      {/* Step indicator */}
-      <div className="flex items-center justify-center gap-2 mb-10">
-        <StepDot n={1} done label="Account" />
-        <StepLine />
-        <StepDot n={2} done label="Plan" />
-        <StepLine />
-        <StepDot n={3} active label="Username" />
-      </div>
+      // For subscriptions, payment_status can be 'unpaid' for SEPA/mandate payments
+      // that are still processing. We only need the session to be 'complete' and
+      // a subscription to have been created — webhook will confirm payment later.
+      if (session.status === 'complete' && session.subscription) {
+        const sub = session.subscription as Stripe.Subscription
+        const priceId = sub.items.data[0]?.price.id ?? ''
+        const plan = getPlanByPriceId()[priceId] ?? 'starter'
+        const interval =
+          sub.items.data[0]?.price.recurring?.interval === 'year' ? 'yearly' : 'monthly'
 
-      <div className="text-center mb-8">
-        <div className="w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-5"
-          style={{ background: '#F3F4F6' }}>
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#111827" strokeWidth="1.5">
-            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-            <circle cx="12" cy="7" r="4"/>
-          </svg>
-        </div>
-        <h1 className="text-2xl font-semibold text-gray-900 mb-2">Wähle deinen Username</h1>
-        <p className="text-sm leading-relaxed" style={{ color: '#6B7280' }}>
-          Dein Username ist gleichzeitig die Adresse<br />
-          all deiner aktiven Websites.
-        </p>
-      </div>
+        // Update the DB — webhook will no-op when it arrives
+        await admin.from('users').update({
+          plan,
+          billing_interval: interval,
+          subscription_status: sub.status,
+          stripe_subscription_id: sub.id,
+        }).eq('id', user.id)
 
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-        <div className="flex flex-col gap-1.5">
-          {/* Domain preview badge */}
-          <div
-            className="flex items-center gap-1 px-3 py-2 rounded-xl text-sm font-mono mb-1"
-            style={{ background: '#F9FAFB', border: '1px solid #E5E7EB' }}
-          >
-            <span
-              className="font-semibold transition-colors"
-              style={{ color: valid ? '#111827' : '#9CA3AF' }}
-            >
-              {display || 'deinname'}
-            </span>
-            <span style={{ color: '#9CA3AF' }}>.{SITE_DOMAIN}</span>
-          </div>
+        sessionVerified = true
+      }
+    } catch {
+      // Invalid session_id or Stripe error — fall through to payment wall
+    }
+  }
 
-          <input
-            type="text"
-            value={username}
-            onChange={e => {
-              setUsername(e.target.value)
-              setError('')
-            }}
-            required
-            maxLength={30}
-            placeholder="dein-name"
-            autoFocus
-            autoComplete="username"
-            className="w-full px-4 py-3 text-sm rounded-2xl outline-none transition-all"
-            style={{
-              background: '#fff',
-              border: `1.5px solid ${error ? '#F87171' : '#E5E7EB'}`,
-              boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
-            }}
-            onFocus={e => (e.target.style.borderColor = error ? '#F87171' : '#111827')}
-            onBlur={e => {
-              setUsername(sanitize(e.target.value))
-              e.target.style.borderColor = error ? '#F87171' : '#E5E7EB'
-            }}
-          />
+  // redirect() throws internally in Next.js — must be called OUTSIDE try/catch
+  if (!hasRealSubscription && !sessionVerified) {
+    redirect('/onboarding/plan')
+  }
 
-          {error && (
-            <p className="text-xs px-1" style={{ color: '#DC2626' }}>{error}</p>
-          )}
-          <p className="text-xs px-1" style={{ color: '#9CA3AF' }}>
-            Nur Buchstaben a–z und Bindestriche · Mindestens 3 Zeichen · Keine Zahlen · Unveränderlich
-          </p>
-        </div>
-
-        <div className="px-4 py-3 rounded-xl text-xs" style={{ background: '#FEF9C3', border: '1px solid #FDE68A', color: '#92400E' }}>
-          ⚠️ Der Username kann nach dem Speichern <strong>nicht mehr geändert</strong> werden.
-        </div>
-
-        <button
-          type="submit"
-          disabled={loading || !valid}
-          className="w-full py-3 text-sm font-semibold rounded-2xl transition-all"
-          style={{
-            background: !valid || loading ? '#E5E7EB' : '#111827',
-            color: !valid || loading ? '#9CA3AF' : '#fff',
-            cursor: !valid || loading ? 'not-allowed' : 'pointer',
-            boxShadow: valid && !loading ? '0 4px 14px rgba(17,24,39,0.2)' : 'none',
-          }}
-        >
-          {loading ? 'Wird gespeichert…' : 'Username bestätigen →'}
-        </button>
-      </form>
-    </div>
-  )
-}
-
-function StepDot({ n, active, done, label }: { n: number; active?: boolean; done?: boolean; label: string }) {
-  return (
-    <div className="flex flex-col items-center gap-1.5">
-      <div
-        className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold"
-        style={{
-          background: done ? '#111827' : active ? '#111827' : '#E5E7EB',
-          color: done || active ? '#fff' : '#9CA3AF',
-        }}
-      >
-        {done ? (
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-            <path d="M2.5 7L5.5 10L11.5 4" stroke="#fff" strokeWidth="1.5" strokeLinecap="round"/>
-          </svg>
-        ) : n}
-      </div>
-      <span className="text-[10px] font-medium hidden sm:block" style={{ color: active ? '#111827' : '#9CA3AF' }}>{label}</span>
-    </div>
-  )
-}
-
-function StepLine() {
-  return <div className="flex-1 h-px mx-1" style={{ background: '#E5E7EB', maxWidth: 48 }} />
+  // User has a verified subscription (either from DB or just confirmed above).
+  // If they already have a username, send them straight to the dashboard.
+  if (profile?.username) redirect('/sites')
+  return <UsernameForm />
 }

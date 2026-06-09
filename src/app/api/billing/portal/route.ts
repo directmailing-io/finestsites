@@ -1,9 +1,7 @@
 import { NextResponse } from 'next/server'
-import Stripe from 'stripe'
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
+import { getStripe } from '@/lib/stripe/client'
 
 export async function POST() {
   const supabase = await createClient()
@@ -16,11 +14,17 @@ export async function POST() {
     return NextResponse.json({ error: 'Kein aktives Abonnement gefunden.' }, { status: 400 })
   }
 
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'
-  const session = await stripe.billingPortal.sessions.create({
-    customer: profile.stripe_customer_id,
-    return_url: `${appUrl}/billing`,
-  })
-
-  return NextResponse.json({ url: session.url })
+  try {
+    const stripe = getStripe()
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'
+    const session = await stripe.billingPortal.sessions.create({
+      customer: profile.stripe_customer_id,
+      return_url: `${appUrl}/billing`,
+    })
+    return NextResponse.json({ url: session.url })
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Unknown error'
+    console.error('[billing/portal] error:', message)
+    return NextResponse.json({ error: message }, { status: 500 })
+  }
 }

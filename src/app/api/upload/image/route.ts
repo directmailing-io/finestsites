@@ -22,6 +22,6 @@ export async function POST(req: NextRequest) {
   const buffer = Buffer.from(await file.arrayBuffer())
   await uploadToR2(key, buffer, file.type)
 
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'
-  return NextResponse.json({ url: `${appUrl}/api/media/${key}` })
+  const origin = new URL(req.url).origin
+  return NextResponse.json({ url: `${origin}/api/media/${key}` })
 }

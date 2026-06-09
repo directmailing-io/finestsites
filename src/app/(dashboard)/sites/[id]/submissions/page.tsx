@@ -7,8 +7,9 @@ interface Submission {
   id: string
   form_name: string
   data: Record<string, string>
-  ip_address: string | null
+  submitter_ip_hash: string | null
   read_at: string | null
+  archived_at: string | null
   created_at: string
 }
 
@@ -38,9 +39,19 @@ export default function SubmissionsPage({ params }: { params: Promise<{ id: stri
   const filtered = activeForm === 'all' ? submissions : submissions.filter(s => s.form_name === activeForm)
   const unread = submissions.filter(s => !s.read_at).length
 
+  async function markRead(submissionId: string) {
+    await fetch(`/api/sites/${id}/submissions/${submissionId}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ read: true }),
+    })
+    setSubmissions(prev => prev.map(s => s.id === submissionId ? { ...s, read_at: new Date().toISOString() } : s))
+    setSelected(prev => prev?.id === submissionId ? { ...prev, read_at: new Date().toISOString() } : prev)
+  }
+
   async function deleteSubmission(submissionId: string) {
     setDeleting(submissionId)
-    await fetch(`/api/sites/${id}/submissions?submissionId=${submissionId}`, { method: 'DELETE' })
+    await fetch(`/api/sites/${id}/submissions/${submissionId}`, { method: 'DELETE' })
     setSubmissions(prev => prev.filter(s => s.id !== submissionId))
     if (selected?.id === submissionId) setSelected(null)
     setDeleting(null)
@@ -149,7 +160,7 @@ export default function SubmissionsPage({ params }: { params: Promise<{ id: stri
           <div className="flex-1 flex flex-col gap-2 min-w-0">
             {filtered.map(s => (
               <div key={s.id}
-                onClick={() => setSelected(s)}
+                onClick={() => { setSelected(s); if (!s.read_at) markRead(s.id) }}
                 className="px-5 py-4 rounded-[18px] bg-white cursor-pointer transition-all flex items-center gap-4"
                 style={{
                   boxShadow: selected?.id === s.id ? '0 0 0 2px #1a1a1a' : '0 2px 12px rgba(0,0,0,0.06)',
@@ -171,7 +182,7 @@ export default function SubmissionsPage({ params }: { params: Promise<{ id: stri
                     </span>
                   </div>
                   <p className="text-sm text-gray-700 truncate">
-                    {Object.entries(s.data).slice(0, 3).map(([k, v]) => `${v}`).join(' · ')}
+                    {Object.entries(s.data).slice(0, 3).map(([_k, v]) => `${v}`).join(' · ')}
                   </p>
                 </div>
 
@@ -206,7 +217,6 @@ export default function SubmissionsPage({ params }: { params: Promise<{ id: stri
 
               <p className="text-xs" style={{ color: 'var(--muted-foreground)' }}>
                 {formatDate(selected.created_at)}
-                {selected.ip_address && ` · ${selected.ip_address}`}
               </p>
 
               <div className="flex flex-col gap-3">

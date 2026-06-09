@@ -38,14 +38,6 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
   const { data, error } = await query
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 
-  // Mark as read
-  const unreadIds = (data ?? []).filter(s => !s.read_at).map(s => s.id)
-  if (unreadIds.length > 0) {
-    await admin.from('form_submissions')
-      .update({ read_at: new Date().toISOString() })
-      .in('id', unreadIds)
-  }
-
   return NextResponse.json(data ?? [])
 }
 

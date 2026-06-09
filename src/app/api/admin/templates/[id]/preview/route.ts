@@ -40,7 +40,12 @@ export async function GET(_: NextRequest, { params }: { params: Promise<{ id: st
   }
 
   const rendered = renderTemplate(html, dataMap)
-  return new NextResponse(rendered, {
+
+  // Inject <base> tag so relative asset paths resolve to our asset-serving route
+  const baseTag = `<base href="/api/admin/templates/${id}/asset/">`
+  const withBase = rendered.replace(/(<head[^>]*>)/i, `$1\n  ${baseTag}`)
+
+  return new NextResponse(withBase, {
     headers: { 'Content-Type': 'text/html; charset=utf-8', 'X-Frame-Options': 'SAMEORIGIN', 'Cache-Control': 'no-store' }
   })
 }

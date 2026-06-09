@@ -1,10 +1,17 @@
 import { createAdminClient } from '@/lib/supabase/admin'
 import Link from 'next/link'
 
-const PLAN_COLORS: Record<string, { bg: string; text: string }> = {
-  starter: { bg: '#EFF6FF', text: '#1D4ED8' },
-  pro: { bg: '#F5F3FF', text: '#7C3AED' },
-  unlimited: { bg: '#F0FDF4', text: '#16A34A' },
+const PLAN_META: Record<string, { label: string; bg: string; text: string }> = {
+  starter:   { label: 'Starter',   bg: '#EFF6FF', text: '#1D4ED8' },
+  pro:       { label: 'Pro',        bg: '#F5F3FF', text: '#6D28D9' },
+  unlimited: { label: 'Unlimited', bg: '#ECFDF5', text: '#065F46' },
+}
+
+const STATUS_META: Record<string, { label: string; bg: string; text: string; dot: string }> = {
+  active:   { label: 'Aktiv',     bg: '#F0FDF4', text: '#16A34A', dot: '#22C55E' },
+  trialing: { label: 'Trial',     bg: '#FFF7ED', text: '#C2410C', dot: '#F97316' },
+  past_due: { label: 'Überfällig',bg: '#FEF2F2', text: '#DC2626', dot: '#EF4444' },
+  canceled: { label: 'Gekündigt', bg: '#F9FAFB', text: '#6B7280', dot: '#D1D5DB' },
 }
 
 export default async function AdminUsersPage() {
@@ -17,96 +24,154 @@ export default async function AdminUsersPage() {
       .order('created_at', { ascending: false }),
     admin
       .from('user_sites')
-      .select('user_id, status, username, templates(title, domain)')
-      .eq('status', 'published'),
+      .select('user_id, status, custom_domain, custom_domain_status')
+      .in('status', ['draft', 'published']),
   ])
 
-  // Build map userId → published sites
-  const sitesByUser: Record<string, Array<{ username: string; domain: string; title: string }>> = {}
+  // Count published sites per user + collect active custom domains
+  const siteCountByUser: Record<string, number> = {}
+  const customDomainByUser: Record<string, string[]> = {}
   for (const site of allSites ?? []) {
-    const tpl = (Array.isArray(site.templates) ? site.templates[0] : site.templates) as { title: string; domain: string } | null
-    if (!site.username || !tpl?.domain) continue
-    if (!sitesByUser[site.user_id]) sitesByUser[site.user_id] = []
-    sitesByUser[site.user_id].push({ username: site.username, domain: tpl.domain, title: tpl.title })
+    if (site.status === 'published') {
+      siteCountByUser[site.user_id] = (siteCountByUser[site.user_id] ?? 0) + 1
+    }
+    if (site.custom_domain && site.custom_domain_status === 'active') {
+      customDomainByUser[site.user_id] = customDomainByUser[site.user_id] ?? []
+      customDomainByUser[site.user_id].push(site.custom_domain)
+    }
   }
 
+  const activeCount = users?.filter(u => u.subscription_status === 'active').length ?? 0
+
   return (
-    <div className="max-w-7xl">
-      <div className="mb-8">
-        <h1 className="text-2xl font-semibold text-gray-900">Nutzer</h1>
-        <p className="text-sm mt-1" style={{ color: 'var(--muted-foreground)' }}>
-          {users?.length ?? 0} registrierte Nutzer
-        </p>
+    <div style={{ maxWidth: 1100 }}>
+
+      {/* ── Header ── */}
+      <div className="mb-6 flex items-start justify-between">
+        <div>
+          <h1 className="text-2xl font-semibold text-gray-900 tracking-tight">Nutzer</h1>
+          <p className="text-sm mt-1" style={{ color: '#94A3B8' }}>
+            {users?.length ?? 0} registriert · {activeCount} aktive Abos
+          </p>
+        </div>
       </div>
 
-      <div className="rounded-[24px] bg-white overflow-hidden"
-        style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.08)', border: '1px solid var(--border)' }}>
+      {/* ── Table ── */}
+      <div className="rounded-[20px] bg-white overflow-hidden"
+        style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04)', border: '1px solid #F1F5F9' }}>
 
-        {/* Table header */}
-        <div className="grid gap-4 px-6 py-3 text-xs font-medium"
-          style={{ gridTemplateColumns: '1.2fr 1fr 0.8fr 0.8fr 2fr 0.8fr auto', background: '#F9FAFB', borderBottom: '1px solid var(--border)', color: '#6B7280' }}>
+        {/* Header row */}
+        <div className="grid px-6 py-3 text-[11px] font-semibold uppercase tracking-wide"
+          style={{
+            gridTemplateColumns: '2fr 1.2fr 0.9fr 1.1fr 1.4fr 0.7fr 0.6fr 28px',
+            background: '#F8FAFC',
+            borderBottom: '1px solid #F1F5F9',
+            color: '#94A3B8',
+          }}>
           <span>Nutzer</span>
           <span>Username</span>
           <span>Plan</span>
           <span>Status</span>
-          <span>Aktive Websites</span>
-          <span>Registriert</span>
+          <span>Domain</span>
+          <span className="text-center">Seiten</span>
+          <span>Seit</span>
           <span />
         </div>
 
         {/* Rows */}
         {users?.map((user: any) => {
-          const planColor = PLAN_COLORS[user.plan] ?? PLAN_COLORS.starter
-          const isActive = user.subscription_status === 'active'
-          const publishedSites = sitesByUser[user.id] ?? []
+          const planMeta   = PLAN_META[user.plan]   ?? PLAN_META.starter
+          const statusMeta = STATUS_META[user.subscription_status] ?? null
+          const siteCount  = siteCountByUser[user.id] ?? 0
+          const initials   = user.email.slice(0, 2).toUpperCase()
+
+          const userCustomDomains = customDomainByUser[user.id] ?? []
           return (
             <Link key={user.id} href={`/admin/users/${user.id}`}
-              className="grid gap-4 px-6 py-4 text-sm items-start transition-colors hover:bg-gray-50"
-              style={{ gridTemplateColumns: '1.2fr 1fr 0.8fr 0.8fr 2fr 0.8fr auto', borderBottom: '1px solid #F3F4F6' }}>
-              <span className="text-gray-900 truncate pt-0.5">{user.email}</span>
-              <span className="font-mono text-xs text-gray-500 pt-0.5">
-                {user.username ?? <span className="italic text-gray-400">nicht gesetzt</span>}
-              </span>
-              <span className="pt-0.5">
-                <span className="text-xs font-medium px-2.5 py-1 rounded-full inline-block"
-                  style={{ background: planColor.bg, color: planColor.text }}>
-                  {user.plan}
+              className="grid px-6 py-3.5 text-sm items-center transition-colors hover:bg-gray-50 group"
+              style={{
+                gridTemplateColumns: '2fr 1.2fr 0.9fr 1.1fr 1.4fr 0.7fr 0.6fr 28px',
+                borderBottom: '1px solid #F8FAFC',
+              }}>
+
+              {/* Email + avatar */}
+              <span className="flex items-center gap-3 min-w-0">
+                <span className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0"
+                  style={{ background: planMeta.bg, color: planMeta.text }}>
+                  {initials}
                 </span>
+                <span className="truncate text-sm font-medium text-gray-900">{user.email}</span>
               </span>
-              <span className="pt-0.5">
-                <span className="text-xs px-2.5 py-1 rounded-full inline-block"
-                  style={{
-                    background: isActive ? '#F0FDF4' : '#FEF2F2',
-                    color: isActive ? '#16A34A' : '#DC2626',
-                  }}>
-                  {isActive ? 'aktiv' : user.subscription_status ?? 'inaktiv'}
+
+              {/* Username */}
+              <span className="font-mono text-xs truncate" style={{ color: '#64748B' }}>
+                {user.username
+                  ? <span>@{user.username}</span>
+                  : <span className="italic" style={{ color: '#CBD5E1' }}>nicht gesetzt</span>}
+              </span>
+
+              {/* Plan badge */}
+              <span>
+                <span className="text-xs font-semibold px-2.5 py-1 rounded-full inline-block"
+                  style={{ background: planMeta.bg, color: planMeta.text }}>
+                  {planMeta.label}
                 </span>
               </span>
 
-              {/* Active sites */}
-              <span className="flex flex-col gap-1">
-                {publishedSites.length === 0 ? (
-                  <span className="text-xs" style={{ color: '#9CA3AF' }}>—</span>
+              {/* Status */}
+              <span>
+                {statusMeta ? (
+                  <span className="flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full w-fit"
+                    style={{ background: statusMeta.bg, color: statusMeta.text }}>
+                    <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: statusMeta.dot }} />
+                    {statusMeta.label}
+                  </span>
                 ) : (
-                  publishedSites.map(site => (
-                    <span key={`${site.username}.${site.domain}`}
-                      className="inline-flex items-center gap-1 text-xs font-mono"
-                      style={{ color: '#2563EB' }}
-                      onClick={e => { e.preventDefault(); window.open(`https://${site.username}.${site.domain}`, '_blank') }}>
-                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="flex-shrink-0">
-                        <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/>
-                        <path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/>
-                      </svg>
-                      {site.username}.{site.domain}
-                    </span>
-                  ))
+                  <span className="text-xs" style={{ color: '#CBD5E1' }}>—</span>
                 )}
               </span>
 
-              <span className="text-xs pt-0.5" style={{ color: 'var(--muted-foreground)' }}>
-                {new Date(user.created_at).toLocaleDateString('de-DE')}
+              {/* Custom domain */}
+              <span className="min-w-0">
+                {userCustomDomains.length > 0 ? (
+                  <span className="flex items-center gap-1 text-xs font-mono truncate" style={{ color: '#16A34A' }}>
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="flex-shrink-0">
+                      <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/>
+                      <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                    </svg>
+                    <span className="truncate">{userCustomDomains[0]}</span>
+                    {userCustomDomains.length > 1 && (
+                      <span className="flex-shrink-0 text-[10px] px-1 rounded" style={{ background: '#DCFCE7', color: '#166534' }}>
+                        +{userCustomDomains.length - 1}
+                      </span>
+                    )}
+                  </span>
+                ) : (
+                  <span className="text-xs" style={{ color: '#CBD5E1' }}>—</span>
+                )}
               </span>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="2" className="mt-0.5">
+
+              {/* Sites count */}
+              <span className="flex justify-center">
+                {siteCount > 0 ? (
+                  <span className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold"
+                    style={{ background: '#F0FDF4', color: '#16A34A' }}>
+                    {siteCount}
+                  </span>
+                ) : (
+                  <span className="text-xs" style={{ color: '#CBD5E1' }}>—</span>
+                )}
+              </span>
+
+              {/* Date */}
+              <span className="text-xs" style={{ color: '#94A3B8' }}>
+                {new Date(user.created_at).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: '2-digit' })}
+              </span>
+
+              {/* Arrow */}
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+                stroke="#CBD5E1" strokeWidth="2"
+                className="transition-colors group-hover:stroke-gray-400">
                 <path d="M9 18l6-6-6-6"/>
               </svg>
             </Link>
@@ -114,10 +179,17 @@ export default async function AdminUsersPage() {
         })}
 
         {(!users || users.length === 0) && (
-          <div className="px-6 py-12 text-center text-sm" style={{ color: 'var(--muted-foreground)' }}>
-            Noch keine Nutzer registriert.
+          <div className="px-6 py-16 text-center">
+            <div className="w-12 h-12 rounded-full mx-auto mb-3 flex items-center justify-center"
+              style={{ background: '#F1F5F9' }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" strokeWidth="1.75">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
+              </svg>
+            </div>
+            <p className="text-sm font-medium text-gray-500">Noch keine Nutzer registriert</p>
           </div>
         )}
+
       </div>
     </div>
   )

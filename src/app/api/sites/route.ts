@@ -22,8 +22,30 @@ export async function GET() {
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 
-  // Attach username to each site for URL construction
-  const result = (data ?? []).map(s => ({ ...s, username: profile?.username ?? null }))
+  const siteIds = (data ?? []).map(s => s.id)
+
+  // Fetch unread submission counts per site
+  const unreadMap: Record<string, number> = {}
+  if (siteIds.length > 0) {
+    const { data: unreadRows } = await admin
+      .from('form_submissions')
+      .select('user_site_id')
+      .in('user_site_id', siteIds)
+      .is('read_at', null)
+      .is('archived_at', null)
+      .eq('is_spam', false)
+
+    for (const row of (unreadRows ?? [])) {
+      unreadMap[row.user_site_id] = (unreadMap[row.user_site_id] ?? 0) + 1
+    }
+  }
+
+  // Attach username + unread_submissions to each site
+  const result = (data ?? []).map(s => ({
+    ...s,
+    username: profile?.username ?? null,
+    unread_submissions: unreadMap[s.id] ?? 0,
+  }))
   return NextResponse.json(result)
 }
 
@@ -41,15 +63,18 @@ export async function POST(req: NextRequest) {
   const { data: profile } = await admin.from('users').select('plan').eq('id', user.id).single()
   const plan = profile?.plan ?? 'starter'
 
-  const { count } = await admin.from('user_sites')
-    .select('*', { count: 'exact', head: true })
-    .eq('user_id', user.id)
-    .in('status', ['draft', 'published'])
-
-  const limits: Record<string, number> = { starter: 1, pro: 3, unlimited: Infinity }
-  if ((count ?? 0) >= limits[plan]) {
-    return NextResponse.json({ error: 'Plan-Limit erreicht. Bitte upgraden.' }, { status: 403 })
+  // Check if the template being activated is a test template the user has no access to
+  const { data: tpl } = await admin.from('templates').select('is_test, is_free').eq('id', template_id).single()
+  if (tpl?.is_test) {
+    const { data: access } = await admin.from('template_access')
+      .select('id').eq('template_id', template_id).eq('user_id', user.id).single()
+    if (!access) return NextResponse.json({ error: 'Kein Zugriff auf dieses Template.' }, { status: 403 })
   }
+
+  // Drafts do NOT count toward the plan limit — users can freely experiment.
+  // The limit is enforced at PUBLISH time (see api/sites/[id]/publish).
+  // We still keep the `plan` variable readable for downstream features.
+  void plan
 
   // Check for any existing row (including soft-deleted)
   const { data: anyExisting } = await admin.from('user_sites')
@@ -62,10 +87,18 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ id: anyExisting.id, existing: true })
   }
 
-  // Reactivate soft-deleted row instead of inserting to avoid unique constraint violation
+  // Reactivate soft-deleted row (legacy support for pre-hard-delete data).
+  // Clear any old field values and submissions first so the user starts blank.
   if (anyExisting && anyExisting.status === 'deleted') {
+    await admin.from('site_data').delete().eq('user_site_id', anyExisting.id)
+    await admin.from('form_submissions').delete().eq('user_site_id', anyExisting.id)
     const { data, error } = await admin.from('user_sites')
-      .update({ status: 'draft', updated_at: new Date().toISOString() })
+      .update({
+        status: 'draft',
+        deactivated_at: null,
+        published_at: null,
+        updated_at: new Date().toISOString(),
+      })
       .eq('id', anyExisting.id)
       .select().single()
     if (error) return NextResponse.json({ error: error.message }, { status: 500 })

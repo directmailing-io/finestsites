@@ -118,6 +118,35 @@ export default function NewTemplatePage() {
                 Nutzer-URL: <code className="font-mono">username.{form.domain}</code>
               </p>
             )}
+            {/* Setup-Checkliste */}
+            <div className="mt-1 p-3.5 rounded-[14px] flex flex-col gap-2"
+              style={{ background: '#F0F9FF', border: '1px solid #BAE6FD' }}>
+              <p className="text-xs font-semibold" style={{ color: '#0369A1' }}>
+                Voraussetzungen für diese Domain:
+              </p>
+              <ol className="flex flex-col gap-1.5 text-xs" style={{ color: '#0C4A6E' }}>
+                <li className="flex items-start gap-2">
+                  <span className="flex-shrink-0 w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold mt-0.5"
+                    style={{ background: '#0284C7', color: 'white' }}>1</span>
+                  <span>Domain bei Registrar kaufen (GoDaddy, all-inkl, checkdomain …)</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="flex-shrink-0 w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold mt-0.5"
+                    style={{ background: '#0284C7', color: 'white' }}>2</span>
+                  <span>Nameserver beim Registrar auf Cloudflare umstellen — CF generiert die NS-Adressen automatisch nach Zone-Erstellung</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="flex-shrink-0 w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold mt-0.5"
+                    style={{ background: '#0284C7', color: 'white' }}>3</span>
+                  <span>Warten bis Cloudflare die Zone als <strong>Active</strong> anzeigt (~5–30 Min)</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="flex-shrink-0 w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold mt-0.5"
+                    style={{ background: '#0284C7', color: 'white' }}>4</span>
+                  <span>Template hier speichern, dann auf der Template-Detailseite <strong>&bdquo;Domain Setup&ldquo;</strong> klicken &mdash; Wildcard-DNS und Worker Route werden automatisch angelegt</span>
+                </li>
+              </ol>
+            </div>
           </div>
         </div>
 

@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { DashboardSidebar } from '@/components/dashboard/Sidebar'
 import { MobileNav } from '@/components/dashboard/MobileNav'
+import { PlanQuotaProvider } from '@/components/dashboard/PlanQuotaContext'
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient()
@@ -29,12 +30,14 @@ export default async function DashboardLayout({ children }: { children: React.Re
   }
 
   return (
-    <div className="flex min-h-screen" style={{ background: 'var(--background)' }}>
-      <DashboardSidebar />
-      <main className="flex-1 min-w-0 p-4 pb-28 sm:p-6 sm:pb-28 lg:p-8 lg:pb-8">
-        {children}
-      </main>
-      <MobileNav />
-    </div>
+    <PlanQuotaProvider>
+      <div className="flex min-h-screen" style={{ background: 'var(--background)' }}>
+        <DashboardSidebar />
+        <main className="flex-1 min-w-0 px-5 pt-6 pb-28 sm:px-8 sm:pt-8 sm:pb-28 lg:px-12 lg:py-10">
+          {children}
+        </main>
+        <MobileNav />
+      </div>
+    </PlanQuotaProvider>
   )
 }

@@ -8,7 +8,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   if (!user) redirect('/login')
 
   const { data: profile } = await supabase.from('users').select('is_admin').eq('id', user.id).single()
-  if (!profile?.is_admin) redirect('/dashboard')
+  if (!profile?.is_admin) redirect('/sites')
 
   return (
     <div className="flex min-h-screen" style={{ background: 'var(--background)' }}>

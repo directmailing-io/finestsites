@@ -11,9 +11,9 @@ export async function POST(_: NextRequest, { params }: { params: Promise<{ id: s
   const { id } = await params
   const admin = createAdminClient()
 
-  // Get site with template info
+  // Get site with template info (also need is_free for the plan-limit check)
   const { data: site } = await admin.from('user_sites')
-    .select('*, templates(id, domain, r2_bundle_path), users!user_id(username)')
+    .select('*, templates(id, domain, r2_bundle_path, is_free), users!user_id(username)')
     .eq('id', id)
     .eq('user_id', user.id)
     .single()
@@ -26,6 +26,35 @@ export async function POST(_: NextRequest, { params }: { params: Promise<{ id: s
   const username = (site.users as unknown as { username: string })?.username
   if (!username) {
     return NextResponse.json({ error: 'Kein Benutzername gesetzt. Bitte erst in Einstellungen setzen.' }, { status: 400 })
+  }
+
+  // ── Plan-limit check ───────────────────────────────────────────────────
+  // Count only OTHER currently-published non-free sites. The site being
+  // published right now is excluded (it's still draft or being toggled live).
+  const tplIsFree = (site.templates as unknown as { is_free?: boolean })?.is_free ?? false
+  if (!tplIsFree) {
+    const { data: profile } = await admin.from('users').select('plan').eq('id', user.id).single()
+    const plan = profile?.plan ?? 'starter'
+    const PLAN_LIMITS: Record<string, number> = { starter: 1, pro: 3, unlimited: Infinity }
+    const limit = PLAN_LIMITS[plan] ?? 1
+
+    const { data: otherPublished } = await admin
+      .from('user_sites')
+      .select('id, templates!inner(is_free)')
+      .eq('user_id', user.id)
+      .eq('status', 'published')
+      .neq('id', id)
+
+    const otherPaidCount = (otherPublished ?? []).filter((s: { templates: { is_free: boolean } | { is_free: boolean }[] | null }) => {
+      const t = Array.isArray(s.templates) ? s.templates[0] : s.templates
+      return !t?.is_free
+    }).length
+
+    if (otherPaidCount >= limit) {
+      return NextResponse.json({
+        error: `Plan-Limit erreicht. Dein ${plan}-Plan erlaubt ${limit} ${limit === 1 ? 'aktive Premium-Webseite' : 'aktive Premium-Webseiten'}. Bitte upgrade oder nimm eine andere Seite offline.`,
+      }, { status: 403 })
+    }
   }
 
   // Update to published

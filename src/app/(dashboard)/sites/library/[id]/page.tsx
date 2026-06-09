@@ -114,7 +114,7 @@ export default function TemplateDetailPage({ params }: { params: Promise<{ id: s
     return (
       <div className="flex flex-col items-center justify-center py-24 text-center">
         <p className="text-gray-500 mb-4">Vorlage nicht gefunden.</p>
-        <Link href="/sites/library" className="text-sm font-medium text-gray-700 underline underline-offset-2">
+        <Link href="/sites" className="text-sm font-medium text-gray-700 underline underline-offset-2">
           ← Zurück zur Übersicht
         </Link>
       </div>
@@ -125,7 +125,8 @@ export default function TemplateDetailPage({ params }: { params: Promise<{ id: s
   const plan = profile?.plan ?? 'starter'
   const limit = PLAN_LIMITS[plan] ?? 1
   const siteCount = profile?.paid_sites_count ?? 0
-  const atLimit = !template.is_free && siteCount >= limit
+  // Drafts are FREE — limit only blocks at publish time. Show as info, not blocker.
+  const wouldExceedAtPublish = !template.is_free && siteCount >= limit
   const isActivated = !!userSite
   const isLive = userSite?.status === 'published'
   const username = profile?.username ?? null
@@ -147,7 +148,7 @@ export default function TemplateDetailPage({ params }: { params: Promise<{ id: s
       </svg>
       Webseite bearbeiten
     </Link>
-  ) : atLimit ? (
+  ) : false ? (
     <Link href="/billing"
       className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl text-sm font-bold text-white"
       style={{ background: '#1a1a1a' }}>
@@ -162,7 +163,7 @@ export default function TemplateDetailPage({ params }: { params: Promise<{ id: s
       {activating ? (
         <span className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
       ) : null}
-      {activating ? 'Wird aktiviert…' : 'Vorlage aktivieren'}
+      {activating ? 'Editor öffnet…' : 'Mit Bearbeitung starten →'}
     </button>
   )
 
@@ -170,12 +171,12 @@ export default function TemplateDetailPage({ params }: { params: Promise<{ id: s
     <div style={{ maxWidth: 980 }}>
 
       {/* ── Back ────────────────────────────────────────────────── */}
-      <Link href="/sites/library"
+      <Link href="/sites"
         className="inline-flex items-center gap-1.5 text-sm text-gray-400 hover:text-gray-700 transition-colors mb-5">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
           <path d="M19 12H5M12 5l-7 7 7 7" strokeLinecap="round" strokeLinejoin="round"/>
         </svg>
-        Alle Vorlagen
+        Zurück
       </Link>
 
       {/* ── ACTIVATED BANNER ────────────────────────────────────── */}
@@ -293,7 +294,7 @@ export default function TemplateDetailPage({ params }: { params: Promise<{ id: s
           </div>
 
           {/* Preview button — mobile only */}
-          {!isActivated && !atLimit && (
+          {!isActivated && true && (
             <button onClick={() => setShowPreview(true)}
               className="lg:hidden flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-medium transition-colors"
               style={{ background: '#F3F4F6', color: '#374151' }}>
@@ -344,7 +345,7 @@ export default function TemplateDetailPage({ params }: { params: Promise<{ id: s
               </>
             )}
 
-            {!isActivated && atLimit && (
+            {!isActivated && false && (
               <>
                 <div>
                   <p className="text-base font-bold text-gray-900 mb-1">Tarif-Upgrade nötig</p>
@@ -360,14 +361,14 @@ export default function TemplateDetailPage({ params }: { params: Promise<{ id: s
               </>
             )}
 
-            {!isActivated && !atLimit && (
+            {!isActivated && true && (
               <>
                 <div>
                   <p className="text-base font-bold text-gray-900 mb-1">
-                    {template.is_free ? 'Kostenlos aktivieren' : 'Vorlage aktivieren'}
+                    Webseite konfigurieren
                   </p>
                   <p className="text-sm text-gray-500">
-                    Einmal aktivieren, Daten eintragen — in Minuten online.
+                    Du kommst direkt in den Editor. Inhalte, Farbthema, Sektionen — alles personalisierbar. Plan-Limit wird erst beim Veröffentlichen verbraucht.
                   </p>
                 </div>
 
@@ -379,7 +380,7 @@ export default function TemplateDetailPage({ params }: { params: Promise<{ id: s
                   {activating ? (
                     <span className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
                   ) : null}
-                  {activating ? 'Wird aktiviert…' : 'Webseite aktivieren'}
+                  {activating ? 'Editor öffnet…' : 'Mit Bearbeitung starten'}
                 </button>
 
                 {activateError && (
@@ -441,7 +442,7 @@ export default function TemplateDetailPage({ params }: { params: Promise<{ id: s
             )}
 
             {/* State B: At limit */}
-            {!isActivated && atLimit && (
+            {!isActivated && false && (
               <>
                 <div>
                   <p className="text-base font-bold text-gray-900 mb-1">Tarif-Upgrade nötig</p>
@@ -473,16 +474,25 @@ export default function TemplateDetailPage({ params }: { params: Promise<{ id: s
             )}
 
             {/* State C: Ready to activate */}
-            {!isActivated && !atLimit && (
+            {!isActivated && true && (
               <>
                 <div>
                   <p className="text-base font-bold text-gray-900 mb-1">
-                    {template.is_free ? 'Kostenlos aktivieren' : 'Vorlage aktivieren'}
+                    Webseite konfigurieren
                   </p>
                   <p className="text-sm text-gray-500 leading-relaxed">
-                    Einmal aktivieren, dann deine Daten eintragen — in wenigen Minuten bist du online.
+                    Du kommst direkt in den Editor. Drei Farbthemen, drei Hero-Varianten, optionale Sektionen, persönlicher Text. Plan-Limit wird erst beim Veröffentlichen verbraucht.
                   </p>
                 </div>
+                {wouldExceedAtPublish && (
+                  <div className="flex items-start gap-2 px-3 py-2.5 rounded-xl text-xs"
+                    style={{ background: '#FEF3C7', color: '#92400E', border: '1px solid #FDE68A' }}>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="flex-shrink-0 mt-0.5">
+                      <circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/>
+                    </svg>
+                    <span><strong>Hinweis:</strong> Dein <strong>{plan}</strong>-Tarif erlaubt {limit} aktive {limit === 1 ? 'Webseite' : 'Webseiten'}. Zum Veröffentlichen entweder upgrade oder eine andere Seite offline nehmen.</span>
+                  </div>
+                )}
 
                 <div className="flex items-center gap-2 px-3.5 py-2.5 rounded-xl"
                   style={{ background: '#F9FAFB', border: '1px solid #E5E7EB' }}>
@@ -505,7 +515,7 @@ export default function TemplateDetailPage({ params }: { params: Promise<{ id: s
                     </>
                   ) : (
                     <>
-                      Webseite aktivieren
+                      Mit Bearbeitung starten
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                         <path d="M5 12h14M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round"/>
                       </svg>
@@ -553,7 +563,7 @@ export default function TemplateDetailPage({ params }: { params: Promise<{ id: s
         }}
       >
         {mobileCta}
-        {!isActivated && !atLimit && (
+        {!isActivated && true && (
           <button
             onClick={() => setShowPreview(true)}
             className="flex-shrink-0 flex items-center justify-center w-12 h-12 rounded-xl transition-colors"
