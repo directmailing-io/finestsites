@@ -1389,33 +1389,18 @@
       'einmalig':      '',
       'taeglich':      'Täglich',
       'woechentlich':  'Wöchentlich',
-      'monatlich_1x':  '1× pro Monat',
-      'monatlich_2x':  '2× pro Monat',
-      'individuell':   'Individuell'
+      'monatlich':     'Monatlich'
     };
     function fmtShortDate(d){ return d ? d.getDate() + '. ' + MONTHS_LONG[d.getMonth()] + ' ' + d.getFullYear() : '' }
-    function formatRecur(type, datum, bis, zweiterTag){
+    function formatRecur(type, datum, bis){
       if (!type || type === 'einmalig') return '';
       var d = parseDate(datum);
       var bd = parseDate(bis);
       var bisStr = bd ? ' bis ' + fmtShortDate(bd) : '';
       switch (type) {
-        case 'taeglich':
-          return 'Täglich' + bisStr;
-        case 'woechentlich':
-          return d ? 'Jeden ' + WD_FULL[d.getDay()] + bisStr : 'Wöchentlich' + bisStr;
-        case 'monatlich_1x':
-          return d ? 'Jeden ' + d.getDate() + '. im Monat' + bisStr : '1× pro Monat' + bisStr;
-        case 'monatlich_2x':
-          var t2 = zweiterTag ? parseInt(zweiterTag, 10) : NaN;
-          if (d && !isNaN(t2)) {
-            var a = d.getDate(), b = t2;
-            if (a > b) { var tmp = a; a = b; b = tmp; }
-            return 'Am ' + a + '. und ' + b + '. jedes Monats' + bisStr;
-          }
-          return d ? 'Jeden ' + d.getDate() + '. + zweiter Tag im Monat' + bisStr : '2× pro Monat' + bisStr;
-        case 'individuell':
-          return 'Individuelle Termine';
+        case 'taeglich':     return 'Täglich' + bisStr;
+        case 'woechentlich': return d ? 'Jeden ' + WD_FULL[d.getDay()] + bisStr : 'Wöchentlich' + bisStr;
+        case 'monatlich':    return d ? 'Jeden ' + d.getDate() + '. im Monat' + bisStr : 'Monatlich' + bisStr;
       }
       return '';
     }
@@ -1425,8 +1410,7 @@
       var label = formatRecur(
         page.getAttribute('data-recur'),
         page.getAttribute('data-d'),
-        page.getAttribute('data-recur-bis'),
-        page.getAttribute('data-recur-zweiter-tag')
+        page.getAttribute('data-recur-bis')
       );
       if (!label) {
         var wrap = el.closest('[data-recur-wrap]');
@@ -1512,8 +1496,7 @@
       var rec = ({
         'taeglich': 'RRULE:FREQ=DAILY',
         'woechentlich': 'RRULE:FREQ=WEEKLY',
-        'monatlich_1x': 'RRULE:FREQ=MONTHLY;COUNT=12',
-        'monatlich_2x': 'RRULE:FREQ=MONTHLY;COUNT=24;INTERVAL=1'
+        'monatlich':    'RRULE:FREQ=MONTHLY'
       })[ev.wiederkehrung];
       if (rec) lines.push(rec);
       lines.push('END:VEVENT');
@@ -1734,7 +1717,7 @@
             ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>'
             : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>';
           var pillLbl = ev.typ === 'online' ? 'Online' : 'Vor Ort';
-          var recurLabel = formatRecur(ev.wiederkehrung, ev.datum, ev.wiederkehrung_bis, ev.wiederkehrung_zweiter_tag) || RECUR_SHORT[ev.wiederkehrung] || '';
+          var recurLabel = formatRecur(ev.wiederkehrung, ev.datum, ev.wiederkehrung_bis) || RECUR_SHORT[ev.wiederkehrung] || '';
           var timeLabel = ev.uhrzeit ? (ev.uhrzeit + (ev.uhrzeit_ende ? ' – ' + ev.uhrzeit_ende : '')) : 'Termin folgt';
           var card = document.createElement('article');
           card.className = 'ev-card reveal';
