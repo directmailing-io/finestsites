@@ -1,0 +1,1341 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5" />
+<title>{{vorname}} {{nachname}} — Events</title>
+<meta name="description" content="{{headline}}" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+
+<style>
+  :root {
+    --accent: {{akzentfarbe}};
+    --font: 'Geist', 'Inter', system-ui, -apple-system, sans-serif;
+  }
+  body {
+    --bg: #0A0A0A;
+    --bg-2: #111111;
+    --surface: #161616;
+    --surface-2: #1C1C1C;
+    --text: #FFFFFF;
+    --text-soft: rgba(255, 255, 255, 0.72);
+    --text-mute: rgba(255, 255, 255, 0.48);
+    --border: rgba(255, 255, 255, 0.08);
+    --border-strong: rgba(255, 255, 255, 0.14);
+    --shadow-lg: 0 32px 100px rgba(0, 0, 0, 0.6);
+    --hero-overlay: linear-gradient(180deg, rgba(0,0,0,0.20) 0%, rgba(0,0,0,0.0) 22%, rgba(0,0,0,0.55) 55%, rgba(0,0,0,0.92) 90%, var(--bg) 100%);
+    --hero-overlay-side: linear-gradient(90deg, rgba(0,0,0,0.6) 0%, transparent 60%);
+    --hero-text: #FFFFFF;
+    --hero-text-soft: rgba(255, 255, 255, 0.88);
+    --hero-text-shadow: 0 2px 20px rgba(0, 0, 0, 0.55);
+    --hero-ghost-bg: rgba(0, 0, 0, 0.38);
+    --hero-ghost-border: rgba(255, 255, 255, 0.22);
+    --sticky-bg: rgba(10, 10, 10, 0.92);
+    --sticky-border: rgba(255, 255, 255, 0.10);
+    --sticky-text: #FFFFFF;
+  }
+  body[data-active-modus="hell"] {
+    --bg: #FFFFFF;
+    --bg-2: #F7F7F7;
+    --surface: #FFFFFF;
+    --surface-2: #FAFAFA;
+    --text: #0A0A0A;
+    --text-soft: rgba(10, 10, 10, 0.72);
+    --text-mute: rgba(10, 10, 10, 0.48);
+    --border: rgba(10, 10, 10, 0.08);
+    --border-strong: rgba(10, 10, 10, 0.14);
+    --shadow-lg: 0 32px 100px rgba(10, 10, 10, 0.12);
+    --hero-overlay: linear-gradient(180deg, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.35) 22%, rgba(255,255,255,0.78) 55%, rgba(255,255,255,0.96) 90%, var(--bg) 100%);
+    --hero-overlay-side: linear-gradient(90deg, rgba(255,255,255,0.7) 0%, transparent 60%);
+    --hero-text: #0A0A0A;
+    --hero-text-soft: rgba(10, 10, 10, 0.78);
+    --hero-text-shadow: 0 1px 14px rgba(255, 255, 255, 0.85);
+    --hero-ghost-bg: rgba(255, 255, 255, 0.78);
+    --hero-ghost-border: rgba(10, 10, 10, 0.10);
+    --sticky-bg: rgba(255, 255, 255, 0.96);
+    --sticky-border: rgba(10, 10, 10, 0.08);
+    --sticky-text: #0A0A0A;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; background: var(--bg); -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--text);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-weight: 400;
+    line-height: 1.5;
+    letter-spacing: -0.005em;
+    overflow-x: hidden;
+  }
+  body.loading > main { opacity: 0; }
+  img { max-width: 100%; display: block; }
+  a { color: inherit; text-decoration: none; }
+  button { font-family: inherit; cursor: pointer; border: 0; background: transparent; color: inherit; padding: 0; }
+
+  .container { max-width: 1280px; margin: 0 auto; padding: 0 32px; }
+  .container-narrow { max-width: 880px; margin: 0 auto; padding: 0 32px; }
+
+  .page-event { display: none; }
+  body.view-event .page-overview { display: none; }
+  body.view-event .page-event.is-active { display: block; }
+  main { transition: opacity 0.4s ease; }
+
+  /* ─── Typography defaults ──────────────────────────────────────── */
+  h1, h2, h3, h4 { font-weight: 600; letter-spacing: -0.025em; line-height: 1.05; margin: 0; }
+  .display { font-weight: 600; letter-spacing: -0.035em; }
+
+  /* ─── Header ───────────────────────────────────────────────────── */
+  .ov-header {
+    padding: 56px 0 24px;
+    display: flex; align-items: center; gap: 20px;
+    flex-wrap: wrap;
+  }
+  .ov-avatar {
+    width: 64px; height: 64px;
+    border-radius: 50%; overflow: hidden;
+    border: 1.5px solid var(--border-strong);
+    flex-shrink: 0;
+  }
+  .ov-avatar img { width: 100%; height: 100%; object-fit: cover; }
+  .ov-name {
+    font-size: clamp(1.25rem, 2.4vw, 1.625rem);
+    font-weight: 600;
+    letter-spacing: -0.025em;
+    line-height: 1.1;
+    margin: 0 0 2px;
+  }
+  .ov-tagline {
+    color: var(--text-soft);
+    font-size: 0.9375rem;
+    font-weight: 400;
+    line-height: 1.4;
+  }
+
+  /* ─── Featured Event (cinematic block) ────────────────────────── */
+  .featured {
+    margin: 24px 0 56px;
+    position: relative;
+    height: clamp(420px, 56vh, 620px);
+    border-radius: 28px;
+    overflow: hidden;
+    background: var(--surface);
+    cursor: pointer;
+  }
+  .featured-img {
+    position: absolute; inset: 0;
+    overflow: hidden;
+  }
+  .featured-img img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    transition: transform 0.8s cubic-bezier(.2,.7,.2,1);
+  }
+  .featured:hover .featured-img img { transform: scale(1.04); }
+  .featured-img::after {
+    content: ''; position: absolute; inset: 0;
+    background: var(--hero-overlay), var(--hero-overlay-side);
+  }
+  .featured-content {
+    position: relative; z-index: 2;
+    height: 100%;
+    display: flex; flex-direction: column;
+    justify-content: flex-end;
+    padding: 0 44px 44px;
+    color: var(--hero-text);
+    max-width: 880px;
+  }
+  .featured-eyebrow {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--accent);
+    margin-bottom: 18px;
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 6px 12px 6px 10px;
+    background: var(--hero-ghost-bg);
+    border-radius: 999px;
+    backdrop-filter: blur(14px);
+    border: 1px solid var(--hero-ghost-border);
+    width: fit-content;
+  }
+  .featured-eyebrow .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 12px var(--accent);
+    animation: dot-pulse 1.8s ease-in-out infinite;
+  }
+  @keyframes dot-pulse { 0%, 100% { opacity: 1 } 50% { opacity: 0.4 } }
+  .featured-title {
+    font-size: clamp(2.25rem, 5.5vw, 4.5rem);
+    font-weight: 600;
+    letter-spacing: -0.035em;
+    margin: 0 0 16px;
+    line-height: 0.98;
+    color: var(--hero-text);
+    text-shadow: var(--hero-text-shadow);
+  }
+  .featured-meta { text-shadow: var(--hero-text-shadow); }
+  .featured-meta {
+    display: flex; flex-wrap: wrap; gap: 8px 24px;
+    margin-bottom: 24px;
+    color: var(--hero-text-soft);
+    font-size: 1rem;
+    font-weight: 500;
+  }
+  .featured-meta-item { display: inline-flex; align-items: center; gap: 8px; }
+  .featured-meta-item svg { width: 16px; height: 16px; }
+  .featured-cta { display: flex; gap: 10px; flex-wrap: wrap; }
+
+  /* ─── Events grid ──────────────────────────────────────────────── */
+  .more-section { padding: 0 0 96px; }
+  .section-label {
+    font-size: 0.8125rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--text-mute);
+    margin-bottom: 18px;
+  }
+  .events-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+    gap: 22px;
+  }
+  .ev-card {
+    position: relative;
+    aspect-ratio: 16 / 10;
+    border-radius: 22px;
+    overflow: hidden;
+    cursor: pointer;
+    background: var(--surface);
+    transform-origin: center;
+    transition: transform 0.4s cubic-bezier(.2,.7,.2,1), box-shadow 0.4s ease;
+  }
+  .ev-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+  }
+  .ev-card-img {
+    position: absolute; inset: 0;
+    background-size: cover; background-position: center;
+    transition: transform 0.7s cubic-bezier(.2,.7,.2,1);
+  }
+  .ev-card:hover .ev-card-img { transform: scale(1.06); }
+  .ev-card::before {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.55) 30%, rgba(0,0,0,0.0) 60%);
+    z-index: 1;
+  }
+  .ev-pill {
+    position: absolute; top: 16px; left: 16px;
+    padding: 6px 12px;
+    background: rgba(255, 255, 255, 0.94);
+    color: #0A0A0A;
+    border-radius: 999px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    backdrop-filter: blur(8px);
+    z-index: 3;
+    display: inline-flex; align-items: center; gap: 5px;
+  }
+  .ev-pill svg { width: 11px; height: 11px; }
+  .ev-daystamp {
+    position: absolute; top: 16px; right: 16px;
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.94);
+    color: #0A0A0A;
+    border-radius: 12px;
+    z-index: 3;
+    text-align: center;
+    line-height: 1;
+    backdrop-filter: blur(8px);
+  }
+  .ev-daystamp .d {
+    font-weight: 600; font-size: 1.25rem;
+    letter-spacing: -0.02em; font-variant-numeric: tabular-nums;
+  }
+  .ev-daystamp .m {
+    font-weight: 500; font-size: 0.65rem;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    margin-top: 2px; opacity: 0.72;
+  }
+  .ev-card-content {
+    position: absolute; left: 0; right: 0; bottom: 0;
+    padding: 22px 24px 24px;
+    color: white;
+    z-index: 2;
+  }
+  .ev-card-title {
+    font-size: 1.4rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    margin: 0 0 6px;
+    line-height: 1.15;
+    color: white;
+  }
+  .ev-card-meta {
+    font-size: 0.875rem;
+    color: rgba(255, 255, 255, 0.82);
+    font-weight: 500;
+    display: flex; gap: 6px 12px; flex-wrap: wrap;
+  }
+  .ev-card-meta .sep { opacity: 0.5; }
+
+  .empty-state {
+    text-align: center;
+    padding: 80px 32px;
+    color: var(--text-mute);
+    border: 1.5px dashed var(--border);
+    border-radius: 22px;
+  }
+
+  /* ─── EVENT LANDING ────────────────────────────────────────────── */
+  .ev-hero {
+    position: relative;
+    min-height: 92vh;
+    overflow: hidden;
+  }
+  .ev-hero-img {
+    position: absolute; inset: 0;
+    overflow: hidden;
+  }
+  .ev-hero-img::after {
+    content: ''; position: absolute; inset: 0;
+    background: var(--hero-overlay), var(--hero-overlay-side);
+  }
+  .ev-hero-img img {
+    width: 100%; height: 110%;
+    object-fit: cover;
+    will-change: transform;
+  }
+  .ev-hero-content {
+    position: relative; z-index: 2;
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 0 32px;
+    min-height: 92vh;
+    display: flex; flex-direction: column; justify-content: flex-end;
+    padding-bottom: 88px;
+    color: var(--hero-text);
+  }
+  .ev-back {
+    position: absolute;
+    top: 28px; left: 32px;
+    z-index: 10;
+    padding: 9px 16px;
+    background: var(--hero-ghost-bg);
+    color: var(--hero-text);
+    border-radius: 999px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    backdrop-filter: blur(16px);
+    border: 1px solid var(--hero-ghost-border);
+    display: inline-flex; align-items: center; gap: 8px;
+    transition: all 0.25s ease;
+  }
+  .ev-back:hover { filter: brightness(1.12); transform: translateX(-3px); }
+  .ev-share {
+    position: absolute; top: 28px; right: 32px;
+    z-index: 10;
+  }
+  .ev-share button {
+    width: 42px; height: 42px;
+    border-radius: 50%;
+    background: var(--hero-ghost-bg);
+    border: 1px solid var(--hero-ghost-border);
+    color: var(--hero-text);
+    backdrop-filter: blur(16px);
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.25s ease;
+  }
+  .ev-share button:hover { filter: brightness(1.12); }
+  .ev-share svg { width: 17px; height: 17px; }
+
+  .ev-eyebrow {
+    color: var(--accent);
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    margin-bottom: 22px;
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 6px 12px 6px 10px;
+    background: var(--hero-ghost-bg);
+    border-radius: 999px;
+    backdrop-filter: blur(14px);
+    border: 1px solid var(--hero-ghost-border);
+    width: fit-content;
+  }
+  .ev-eyebrow .accent-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 14px var(--accent);
+    animation: dot-pulse 1.8s ease-in-out infinite;
+  }
+  .ev-title {
+    font-weight: 600;
+    font-size: clamp(2.5rem, 8vw, 6.5rem);
+    letter-spacing: -0.04em;
+    line-height: 0.94;
+    margin: 0 0 24px;
+    max-width: 1100px;
+    color: var(--hero-text);
+    text-shadow: var(--hero-text-shadow);
+  }
+  .ev-tagline {
+    font-size: clamp(1rem, 1.6vw, 1.1875rem);
+    color: var(--hero-text-soft);
+    max-width: 620px;
+    margin: 0 0 30px;
+    font-weight: 400;
+    line-height: 1.55;
+    text-shadow: var(--hero-text-shadow);
+  }
+  .ev-info-row { text-shadow: var(--hero-text-shadow); }
+  .ev-info-row {
+    display: flex; gap: 28px;
+    flex-wrap: wrap;
+    margin-bottom: 32px;
+  }
+  .ev-info { display: flex; flex-direction: column; gap: 3px; }
+  .ev-info .label {
+    font-size: 0.7rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    opacity: 0.6;
+  }
+  .ev-info .value {
+    font-weight: 600;
+    font-size: 1.0625rem;
+    letter-spacing: -0.01em;
+  }
+  .ev-cta-row { display: flex; gap: 10px; flex-wrap: wrap; }
+  .btn {
+    padding: 14px 24px;
+    border-radius: 12px;
+    font-weight: 500;
+    font-size: 0.9375rem;
+    transition: all 0.25s cubic-bezier(.2,.7,.2,1);
+    display: inline-flex; align-items: center; gap: 8px;
+    letter-spacing: -0.005em;
+    border: 1px solid transparent;
+    line-height: 1;
+  }
+  .btn svg { width: 16px; height: 16px; }
+  .btn-primary {
+    background: var(--hero-text);
+    color: var(--bg);
+    box-shadow: 0 14px 36px rgba(0, 0, 0, 0.25);
+  }
+  .btn-primary:hover { transform: translateY(-2px); }
+  .btn-accent {
+    background: var(--accent);
+    color: white;
+    box-shadow: 0 14px 32px color-mix(in srgb, var(--accent) 28%, transparent);
+  }
+  .btn-accent:hover { transform: translateY(-2px); }
+  .btn-ghost {
+    background: var(--hero-ghost-bg);
+    color: var(--hero-text);
+    border-color: var(--hero-ghost-border);
+    backdrop-filter: blur(16px);
+  }
+  .btn-ghost:hover { filter: brightness(1.12); }
+
+  /* ─── Landing body ─────────────────────────────────────────────── */
+  .ev-body { background: var(--bg); position: relative; z-index: 1; }
+  .ev-section { padding: 96px 0; }
+  .ev-section-eyebrow {
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--accent);
+    margin-bottom: 16px;
+  }
+  .ev-section-title {
+    font-weight: 600;
+    font-size: clamp(2rem, 4vw, 3.25rem);
+    letter-spacing: -0.035em;
+    line-height: 1.02;
+    margin: 0 0 28px;
+    color: var(--text);
+  }
+  .ev-lead {
+    font-size: clamp(1.0625rem, 1.5vw, 1.1875rem);
+    line-height: 1.65;
+    color: var(--text);
+    white-space: pre-line;
+    max-width: 760px;
+    font-weight: 400;
+  }
+
+  /* ─── Highlights as cards (stacked vertically) ─────────────────── */
+  .highlight-stack { display: flex; flex-direction: column; gap: 16px; }
+  .hl-card {
+    position: relative;
+    padding: 36px 40px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    display: grid;
+    grid-template-columns: 80px 1fr;
+    gap: 28px;
+    align-items: start;
+    transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
+    overflow: hidden;
+  }
+  .hl-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 0% 0%, color-mix(in srgb, var(--accent) 12%, transparent), transparent 60%);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+  }
+  .hl-card:hover { transform: translateY(-3px); border-color: var(--border-strong); }
+  .hl-card:hover::before { opacity: 1; }
+  .hl-num {
+    font-weight: 500;
+    font-size: clamp(1.75rem, 3vw, 2.25rem);
+    letter-spacing: -0.025em;
+    color: var(--accent);
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+    padding-top: 4px;
+  }
+  .hl-text { position: relative; z-index: 1; }
+  .hl-title {
+    font-weight: 600;
+    font-size: clamp(1.25rem, 1.9vw, 1.5rem);
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    margin: 0 0 10px;
+    color: var(--text);
+  }
+  .hl-desc {
+    color: var(--text-soft);
+    font-size: 1rem;
+    line-height: 1.6;
+    margin: 0;
+    white-space: pre-line;
+  }
+
+  /* ─── Special Guests row ──────────────────────────────────────── */
+  .guests-row {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(260px, 300px);
+    gap: 18px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 4px 4px 16px;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+  }
+  .guest-card {
+    background: var(--surface);
+    border-radius: 18px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    scroll-snap-align: start;
+    transition: transform 0.4s cubic-bezier(.2,.7,.2,1), box-shadow 0.4s ease;
+  }
+  .guest-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); }
+  .guest-img { aspect-ratio: 1; background: var(--bg-2); overflow: hidden; }
+  .guest-img img { width: 100%; height: 100%; object-fit: cover; }
+  .guest-info { padding: 18px 20px 22px; }
+  .guest-name {
+    font-weight: 600;
+    font-size: 1.0625rem;
+    margin: 0 0 4px;
+    letter-spacing: -0.015em;
+  }
+  .guest-role {
+    color: var(--accent);
+    font-weight: 500;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 10px;
+  }
+  .guest-bio {
+    font-size: 0.875rem;
+    color: var(--text-soft);
+    line-height: 1.55;
+  }
+
+  /* ─── Location card (vor Ort) ─────────────────────────────────── */
+  .location-card {
+    background: var(--surface);
+    border-radius: 22px;
+    padding: 36px 36px;
+    border: 1px solid var(--border);
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 24px;
+    align-items: center;
+  }
+  .location-card .label {
+    color: var(--accent);
+    font-weight: 500;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    margin-bottom: 12px;
+  }
+  .location-card .value {
+    font-weight: 600;
+    font-size: clamp(1.1875rem, 1.8vw, 1.5rem);
+    letter-spacing: -0.02em;
+    line-height: 1.3;
+    white-space: pre-line;
+    color: var(--text);
+    word-break: break-word;
+  }
+
+  /* ─── Coupon-style online link box ────────────────────────────── */
+  .coupon {
+    position: relative;
+    padding: 44px 48px;
+    border-radius: 28px;
+    background:
+      radial-gradient(circle at 0% 100%, color-mix(in srgb, var(--accent) 18%, transparent), transparent 65%),
+      var(--surface);
+    border: 1.5px dashed color-mix(in srgb, var(--accent) 60%, transparent);
+    overflow: hidden;
+  }
+  .coupon::before, .coupon::after {
+    content: '';
+    position: absolute;
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: var(--bg);
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  .coupon::before { left: -14px; }
+  .coupon::after { right: -14px; }
+  .coupon-eyebrow {
+    color: var(--accent);
+    font-weight: 600;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    margin-bottom: 18px;
+    display: inline-flex; align-items: center; gap: 10px;
+  }
+  .coupon-eyebrow svg { width: 14px; height: 14px; }
+  .coupon-title {
+    font-weight: 600;
+    font-size: clamp(1.5rem, 2.4vw, 2rem);
+    letter-spacing: -0.025em;
+    line-height: 1.1;
+    margin: 0 0 14px;
+    color: var(--text);
+  }
+  .coupon-link-row {
+    display: flex; align-items: center; gap: 14px;
+    padding: 16px 18px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    margin-bottom: 20px;
+  }
+  .coupon-link-row .icon {
+    width: 42px; height: 42px;
+    border-radius: 10px;
+    background: color-mix(in srgb, var(--accent) 14%, transparent);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .coupon-link-row .icon svg { width: 18px; height: 18px; color: var(--accent); }
+  .coupon-link-row .url {
+    flex: 1; min-width: 0;
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 0.875rem;
+    color: var(--text);
+    word-break: break-all;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .coupon-cta { display: flex; gap: 10px; flex-wrap: wrap; }
+
+  /* ─── Final CTA ────────────────────────────────────────────────── */
+  .ev-final {
+    padding: 120px 0 140px;
+    text-align: center;
+    background: var(--bg-2);
+    border-top: 1px solid var(--border);
+  }
+  .ev-final-title {
+    font-weight: 600;
+    font-size: clamp(2.5rem, 7vw, 5rem);
+    letter-spacing: -0.04em;
+    line-height: 0.98;
+    margin: 0 0 32px;
+    color: var(--text);
+  }
+  .ev-final-row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+  .ev-final .btn-primary { background: var(--text); color: var(--bg); }
+  .ev-final .btn-ghost { background: var(--surface); color: var(--text); border-color: var(--border-strong); backdrop-filter: none; }
+
+  /* ─── Sticky bottom CTA (mobile) ──────────────────────────────── */
+  .sticky-cta {
+    position: fixed;
+    left: 0; right: 0; bottom: 0;
+    z-index: 50;
+    padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+    background: var(--sticky-bg);
+    backdrop-filter: blur(16px);
+    border-top: 1px solid var(--sticky-border);
+    display: none;
+    transform: translateY(100%);
+    transition: transform 0.4s cubic-bezier(.2,.7,.2,1);
+    gap: 12px; align-items: center;
+  }
+  body.view-event .sticky-cta.has-cta { display: flex; }
+  body.view-event .sticky-cta.visible { transform: translateY(0); }
+  .sticky-cta .info { flex: 1; min-width: 0; color: var(--sticky-text); }
+  .sticky-cta .info .t { font-weight: 600; font-size: 0.875rem; line-height: 1.2; }
+  .sticky-cta .info .s { font-size: 0.75rem; opacity: 0.7; margin-top: 2px; }
+  .sticky-cta .btn { padding: 11px 18px; font-size: 0.85rem; }
+
+  /* ─── Footer ───────────────────────────────────────────────────── */
+  .footer {
+    text-align: center;
+    padding: 44px 32px;
+    color: var(--text-mute);
+    font-size: 0.8125rem;
+    border-top: 1px solid var(--border);
+  }
+  .footer a { color: var(--accent); }
+
+  /* ─── Reveal ───────────────────────────────────────────────────── */
+  .reveal { opacity: 0; transform: translateY(28px); }
+
+  /* ─── Responsive ───────────────────────────────────────────────── */
+  @media (max-width: 880px) {
+    .container, .container-narrow { padding: 0 22px; }
+    .ov-header { padding: 36px 0 18px; gap: 14px; }
+    .ov-avatar { width: 52px; height: 52px; }
+    .featured { margin: 16px 0 40px; height: clamp(380px, 70vh, 520px); border-radius: 22px; }
+    .featured-content { padding: 0 28px 32px; }
+    .events-grid { grid-template-columns: 1fr; gap: 14px; }
+    .ev-card { aspect-ratio: 16/10; border-radius: 18px; }
+    .ev-hero { min-height: 88vh; }
+    .ev-hero-content { padding-bottom: 110px; }
+    .ev-back { top: 18px; left: 22px; }
+    .ev-share { top: 18px; right: 22px; }
+    .ev-section { padding: 64px 0; }
+    .hl-card { padding: 26px 24px; grid-template-columns: 56px 1fr; gap: 16px; border-radius: 18px; }
+    .location-card { grid-template-columns: 1fr; padding: 28px 24px; border-radius: 18px; }
+    .coupon { padding: 32px 28px; border-radius: 22px; }
+    .coupon::before, .coupon::after { width: 22px; height: 22px; }
+    .ev-final { padding: 80px 0 100px; }
+  }
+  @media (min-width: 881px) { .sticky-cta { display: none !important; } }
+</style>
+</head>
+
+<body class="loading" data-default-modus="{{modus}}" data-active-modus="{{modus}}">
+
+  <!-- ═══ OVERVIEW ═══════════════════════════════════════════════════ -->
+  <main class="page-overview">
+
+    <header class="ov-header container">
+      <div class="ov-avatar reveal"><img src="{{profilbild}}" alt="{{vorname}} {{nachname}}" /></div>
+      <div class="reveal">
+        <div class="ov-name">{{vorname}} {{nachname}}</div>
+        {{#if headline}}<div class="ov-tagline">{{headline}}</div>{{/if}}
+      </div>
+    </header>
+
+    <div class="container">
+      <div id="featuredSlot"></div>
+      <section class="more-section">
+        <div class="section-label reveal" id="moreLabel" hidden>Weitere Events</div>
+        <div class="events-grid" id="eventsGrid"></div>
+        <div class="empty-state reveal" id="emptyState" hidden>Noch keine Events veröffentlicht.</div>
+      </section>
+    </div>
+
+    <!-- Hidden event data feed -->
+    <div id="eventsData" hidden>
+      {{#each events}}
+      <div class="ev-data"
+           data-name="{{this.name}}"
+           data-kuerzel="{{this.kuerzel}}"
+           data-status="{{this.status}}"
+           data-typ="{{this.typ}}"
+           data-titelbild="{{this.titelbild}}"
+           data-datum="{{this.datum}}"
+           data-datum-ende="{{this.datum_ende}}"
+           data-uhrzeit="{{this.uhrzeit}}"
+           data-uhrzeit-ende="{{this.uhrzeit_ende}}"
+           data-wiederkehrung="{{this.wiederkehrung}}"
+           data-beschreibung="{{this.beschreibung}}"
+           data-ort="{{this.ort}}"
+           data-link="{{this.link}}"></div>
+      {{/each}}
+    </div>
+
+  </main>
+
+  <!-- ═══ EVENT LANDINGS ═════════════════════════════════════════════ -->
+  {{#each events}}
+  <main class="page-event"
+        data-kuerzel="{{this.kuerzel}}"
+        data-status="{{this.status}}"
+        data-name="{{this.name}}"
+        data-d="{{this.datum}}"
+        data-d2="{{this.datum_ende}}"
+        data-uhr="{{this.uhrzeit}}"
+        data-uhr2="{{this.uhrzeit_ende}}"
+        data-ort="{{this.ort}}"
+        data-link="{{this.link}}"
+        data-beschreibung="{{this.beschreibung}}"
+        data-modus-event="{{this.modus_event}}"
+        data-accent-event="{{this.akzentfarbe_event}}"
+        {{#if this.akzentfarbe_event}}style="--accent: {{this.akzentfarbe_event}}"{{/if}}>
+
+    <section class="ev-hero">
+      <a class="ev-back" href="#" data-back>← Alle Events</a>
+      <div class="ev-share">
+        <button data-share="{{this.kuerzel}}" data-share-title="{{this.name}}" aria-label="Teilen">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+        </button>
+      </div>
+      <div class="ev-hero-img" data-hero-parallax>
+        <img src="{{this.titelbild}}" alt="{{this.name}}" />
+      </div>
+      <div class="ev-hero-content">
+        <div class="ev-eyebrow"><span class="accent-dot"></span>
+          {{#if this.typ=online}}Online Event{{/if}}
+          {{#if this.typ=vor_ort}}Live Event · Vor Ort{{/if}}
+        </div>
+        <h1 class="ev-title">{{this.name}}</h1>
+        {{#if this.beschreibung}}<p class="ev-tagline" data-tagline-from="{{this.beschreibung}}"></p>{{/if}}
+        <div class="ev-info-row">
+          <div class="ev-info">
+            <div class="label">Datum</div>
+            <div class="value" data-date-pretty data-d="{{this.datum}}" data-d2="{{this.datum_ende}}">{{this.datum}}</div>
+          </div>
+          <div class="ev-info">
+            <div class="label">Uhrzeit</div>
+            <div class="value">{{this.uhrzeit}}{{#if this.uhrzeit_ende}} – {{this.uhrzeit_ende}}{{/if}}</div>
+          </div>
+          {{#if this.wiederkehrung}}
+          <div class="ev-info" data-recur-wrap>
+            <div class="label">Wiederkehrung</div>
+            <div class="value" data-recur="{{this.wiederkehrung}}">{{this.wiederkehrung}}</div>
+          </div>
+          {{/if}}
+        </div>
+        <div class="ev-cta-row">
+          {{#if this.link}}<a href="{{this.link}}" target="_blank" rel="noopener" class="btn btn-primary">Jetzt beitreten →</a>{{/if}}
+          <button type="button" class="btn {{#if this.link}}btn-ghost{{/if}}{{#unless this.link}}btn-primary{{/unless}}" data-ical-btn>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M8 14h2M14 14h2M8 18h2M14 18h2"/></svg>
+            In Kalender speichern
+          </button>
+          <button type="button" class="btn btn-ghost" data-share="{{this.kuerzel}}" data-share-title="{{this.name}}">Teilen</button>
+        </div>
+      </div>
+    </section>
+
+    <div class="ev-body">
+
+      {{#if this.beschreibung}}
+      <section class="ev-section">
+        <div class="container-narrow reveal">
+          <div class="ev-section-eyebrow">Worum es geht</div>
+          <h2 class="ev-section-title">Was dich an diesem Tag erwartet</h2>
+          <p class="ev-lead">{{this.beschreibung}}</p>
+        </div>
+      </section>
+      {{/if}}
+
+      {{#if this.highlights}}
+      <section class="ev-section">
+        <div class="container-narrow">
+          <div class="reveal" style="margin-bottom: 28px;">
+            <div class="ev-section-eyebrow">Programm</div>
+            <h2 class="ev-section-title">Highlights des Events</h2>
+          </div>
+          <div class="highlight-stack">
+            {{#each this.highlights}}
+            <div class="hl-card reveal">
+              <div class="hl-num">{{@index}}</div>
+              <div class="hl-text">
+                <h3 class="hl-title">{{this.titel}}</h3>
+                {{#if this.beschreibung}}<p class="hl-desc">{{this.beschreibung}}</p>{{/if}}
+              </div>
+            </div>
+            {{/each}}
+          </div>
+        </div>
+      </section>
+      {{/if}}
+
+      {{#if this.special_guests}}
+      <section class="ev-section">
+        <div class="container">
+          <div class="reveal" style="margin-bottom: 28px;">
+            <div class="ev-section-eyebrow">Mit dabei</div>
+            <h2 class="ev-section-title">Special Guests</h2>
+          </div>
+          <div class="guests-row reveal">
+            {{#each this.special_guests}}
+            <div class="guest-card">
+              <div class="guest-img">
+                {{#if this.bild}}<img src="{{this.bild}}" alt="{{this.name}}" loading="lazy" />{{/if}}
+              </div>
+              <div class="guest-info">
+                <h3 class="guest-name">{{this.name}}</h3>
+                {{#if this.rolle}}<div class="guest-role">{{this.rolle}}</div>{{/if}}
+                {{#if this.beschreibung}}<p class="guest-bio">{{this.beschreibung}}</p>{{/if}}
+              </div>
+            </div>
+            {{/each}}
+          </div>
+        </div>
+      </section>
+      {{/if}}
+
+      {{#if this.link}}
+      <section class="ev-section">
+        <div class="container-narrow">
+          <div class="reveal" style="margin-bottom: 28px;">
+            <div class="ev-section-eyebrow">Online dabei sein</div>
+            <h2 class="ev-section-title">Dein Zugang zum Event</h2>
+          </div>
+          <div class="coupon reveal">
+            <div class="coupon-eyebrow">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+              Beitritts-Link
+            </div>
+            <h3 class="coupon-title">Mit einem Klick dabei</h3>
+            <div class="coupon-link-row">
+              <div class="icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+              </div>
+              <div class="url">{{this.link}}</div>
+            </div>
+            <div class="coupon-cta">
+              <a href="{{this.link}}" target="_blank" rel="noopener" class="btn btn-accent">Jetzt beitreten →</a>
+              <button type="button" class="btn btn-ghost" data-ical-btn style="background:var(--surface-2); color:var(--text); border-color:var(--border-strong); backdrop-filter:none;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+                In Kalender
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+      {{/if}}
+
+      {{#if this.ort}}
+      <section class="ev-section">
+        <div class="container-narrow">
+          <div class="reveal" style="margin-bottom: 28px;">
+            <div class="ev-section-eyebrow">Veranstaltungsort</div>
+            <h2 class="ev-section-title">So findest du uns</h2>
+          </div>
+          <div class="location-card reveal">
+            <div>
+              <div class="label">Adresse</div>
+              <div class="value">{{this.ort}}</div>
+            </div>
+            <div style="display:flex; gap:10px; flex-wrap:wrap;">
+              <button type="button" class="btn btn-accent" data-ical-btn>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+                In Kalender
+              </button>
+              <a href="https://www.google.com/maps/search/?api=1&query={{this.ort}}" target="_blank" rel="noopener" class="btn btn-ghost" style="background:var(--surface-2); color:var(--text); border-color:var(--border-strong); backdrop-filter:none;">Karte öffnen</a>
+            </div>
+          </div>
+        </div>
+      </section>
+      {{/if}}
+
+      <section class="ev-final">
+        <div class="container-narrow reveal">
+          <h2 class="ev-final-title">Sei dabei.</h2>
+          <div class="ev-final-row">
+            {{#if this.link}}<a href="{{this.link}}" target="_blank" rel="noopener" class="btn btn-accent">Jetzt beitreten →</a>{{/if}}
+            <button type="button" class="btn btn-primary" data-ical-btn>In Kalender speichern</button>
+            <button type="button" class="btn btn-ghost" data-share="{{this.kuerzel}}" data-share-title="{{this.name}}">Teilen</button>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <div class="sticky-cta" data-sticky-cta>
+      <div class="info">
+        <div class="t">{{this.name}}</div>
+        <div class="s" data-date-pretty data-d="{{this.datum}}" data-d2="{{this.datum_ende}}">{{this.datum}} · {{this.uhrzeit}}</div>
+      </div>
+      {{#if this.link}}<a href="{{this.link}}" target="_blank" rel="noopener" class="btn btn-accent">Beitreten</a>{{/if}}
+      {{#unless this.link}}<button type="button" class="btn btn-accent" data-ical-btn>Kalender</button>{{/unless}}
+    </div>
+
+  </main>
+  {{/each}}
+
+  <footer class="footer">
+    {{vorname}} {{nachname}} · powered by <a href="https://finestsites.de" target="_blank" rel="noopener">FinestSites</a>
+  </footer>
+
+  <script>
+    // ─── Constants ──────────────────────────────────────────────────
+    var MONTHS_LONG  = ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
+    var MONTHS_SHORT = ['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'];
+    var WD_FULL = ['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag'];
+
+    function parseDate(d){
+      if (!d) return null;
+      var dot = String(d).match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);
+      var iso = String(d).match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
+      if (dot) return new Date(+dot[3], +dot[2]-1, +dot[1]);
+      if (iso) return new Date(+iso[1], +iso[2]-1, +iso[3]);
+      return null;
+    }
+    function parseTime(t){
+      var m = String(t || '').match(/(\d{1,2}):(\d{2})/);
+      return m ? { h: +m[1], m: +m[2] } : null;
+    }
+    function fmtPretty(d1, d2){
+      var a = parseDate(d1), b = parseDate(d2);
+      if (!a) return d1 || '';
+      if (!b) return WD_FULL[a.getDay()] + ', ' + a.getDate() + '. ' + MONTHS_LONG[a.getMonth()] + ' ' + a.getFullYear();
+      if (a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth()) {
+        return a.getDate() + '. – ' + b.getDate() + '. ' + MONTHS_LONG[a.getMonth()] + ' ' + a.getFullYear();
+      }
+      return a.getDate() + '. ' + MONTHS_LONG[a.getMonth()] + ' – ' + b.getDate() + '. ' + MONTHS_LONG[b.getMonth()] + ' ' + b.getFullYear();
+    }
+    function pad(n){ return n < 10 ? '0' + n : String(n) }
+
+    // ─── Page switcher ──────────────────────────────────────────────
+    (function(){
+      var b = document.body;
+      var defaultModus = b.getAttribute('data-default-modus') || 'dunkel';
+      function activate(){
+        var h = location.hash.replace(/^#/,'');
+        document.querySelectorAll('.page-event').forEach(function(p){ p.classList.remove('is-active') });
+        if (h) {
+          var target = document.querySelector('.page-event[data-kuerzel="' + (CSS.escape ? CSS.escape(h) : h) + '"]');
+          if (target && target.getAttribute('data-status') === 'veroeffentlicht') {
+            b.classList.add('view-event');
+            target.classList.add('is-active');
+            // per-event modus override
+            var pageModus = target.getAttribute('data-modus-event');
+            b.setAttribute('data-active-modus', pageModus || defaultModus);
+            // per-event accent override (mirror to body for global background etc.)
+            var pageAccent = target.getAttribute('data-accent-event');
+            if (pageAccent) b.style.setProperty('--accent', pageAccent);
+            else b.style.removeProperty('--accent');
+            var sc = target.querySelector('[data-sticky-cta]');
+            if (sc && sc.querySelector('.btn')) {
+              sc.classList.add('has-cta');
+              setTimeout(function(){ sc.classList.add('visible') }, 300);
+            }
+            window.scrollTo(0, 0);
+            return;
+          }
+        }
+        b.classList.remove('view-event');
+        b.setAttribute('data-active-modus', defaultModus);
+        b.style.removeProperty('--accent');
+        document.querySelectorAll('[data-sticky-cta]').forEach(function(s){ s.classList.remove('has-cta', 'visible') });
+      }
+      activate();
+      window.addEventListener('hashchange', activate);
+      b.classList.remove('loading');
+    })();
+
+    // ─── Pretty dates ───────────────────────────────────────────────
+    document.querySelectorAll('[data-date-pretty]').forEach(function(el){
+      var d1 = el.getAttribute('data-d');
+      var d2 = el.getAttribute('data-d2');
+      if (d1) el.textContent = fmtPretty(d1, d2);
+    });
+
+    // ─── Recurrence ─────────────────────────────────────────────────
+    var RECUR = {
+      'einmalig':      '',
+      'taeglich':      'Täglich',
+      'woechentlich':  'Wöchentlich',
+      'monatlich_1x':  '1× pro Monat',
+      'monatlich_2x':  '2× pro Monat',
+      'individuell':   'Individuell'
+    };
+    document.querySelectorAll('[data-recur]').forEach(function(el){
+      var v = el.getAttribute('data-recur');
+      var label = RECUR[v];
+      if (!label) {
+        var wrap = el.closest('[data-recur-wrap]');
+        (wrap || el).remove();
+      } else el.textContent = label;
+    });
+
+    // ─── Tagline from description ───────────────────────────────────
+    document.querySelectorAll('[data-tagline-from]').forEach(function(el){
+      var raw = el.getAttribute('data-tagline-from') || '';
+      var firstPara = raw.split(/\n\s*\n/)[0].trim();
+      if (firstPara.length > 180) firstPara = firstPara.substring(0, 177) + '…';
+      el.textContent = firstPara;
+    });
+
+    // ─── Back & share ───────────────────────────────────────────────
+    document.querySelectorAll('[data-back]').forEach(function(b){
+      b.addEventListener('click', function(e){
+        e.preventDefault();
+        location.hash = '';
+        history.replaceState(null, '', location.pathname);
+        document.body.classList.remove('view-event');
+        document.querySelectorAll('.page-event.is-active').forEach(function(p){ p.classList.remove('is-active') });
+        document.querySelectorAll('[data-sticky-cta]').forEach(function(s){ s.classList.remove('visible', 'has-cta') });
+        window.scrollTo({ top: 0, behavior: 'instant' });
+      });
+    });
+    document.querySelectorAll('[data-share]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var slug = btn.getAttribute('data-share');
+        var title = btn.getAttribute('data-share-title') || '';
+        var url = location.origin + location.pathname + '#' + slug;
+        if (navigator.share) {
+          navigator.share({ title: title, url: url }).catch(function(){});
+        } else if (navigator.clipboard) {
+          navigator.clipboard.writeText(url).then(function(){
+            var old = btn.textContent.trim();
+            btn.textContent = '✓ Kopiert';
+            setTimeout(function(){ btn.textContent = old }, 1800);
+          });
+        }
+      });
+    });
+
+    // ─── iCal download ──────────────────────────────────────────────
+    function buildIcs(ev){
+      var d1 = parseDate(ev.datum); if (!d1) return null;
+      var t1 = parseTime(ev.uhrzeit);
+      if (t1) d1.setHours(t1.h, t1.m, 0, 0); else d1.setHours(10, 0, 0, 0);
+      var d2 = parseDate(ev.datum_ende) || parseDate(ev.datum);
+      var t2 = parseTime(ev.uhrzeit_ende);
+      if (t2) d2.setHours(t2.h, t2.m, 0, 0);
+      else if (t1) d2.setHours(t1.h + 1, t1.m, 0, 0);
+      else d2.setHours(12, 0, 0, 0);
+
+      function fmt(d){
+        return d.getUTCFullYear()
+          + pad(d.getUTCMonth()+1)
+          + pad(d.getUTCDate()) + 'T'
+          + pad(d.getUTCHours())
+          + pad(d.getUTCMinutes()) + '00Z';
+      }
+      function esc(s){ return String(s || '').replace(/\\/g,'\\\\').replace(/\n/g,'\\n').replace(/[,;]/g, function(c){return '\\'+c}) }
+
+      var lines = [
+        'BEGIN:VCALENDAR',
+        'VERSION:2.0',
+        'PRODID:-//FinestSites//myevnt//DE',
+        'CALSCALE:GREGORIAN',
+        'METHOD:PUBLISH',
+        'BEGIN:VEVENT',
+        'UID:' + ev.kuerzel + '@myevnt',
+        'DTSTAMP:' + fmt(new Date()),
+        'DTSTART:' + fmt(d1),
+        'DTEND:' + fmt(d2),
+        'SUMMARY:' + esc(ev.name)
+      ];
+      if (ev.beschreibung) lines.push('DESCRIPTION:' + esc(ev.beschreibung));
+      if (ev.ort) lines.push('LOCATION:' + esc(ev.ort));
+      if (ev.link) lines.push('URL:' + esc(ev.link));
+      var rec = ({
+        'taeglich': 'RRULE:FREQ=DAILY',
+        'woechentlich': 'RRULE:FREQ=WEEKLY',
+        'monatlich_1x': 'RRULE:FREQ=MONTHLY;COUNT=12',
+        'monatlich_2x': 'RRULE:FREQ=MONTHLY;COUNT=24;INTERVAL=1'
+      })[ev.wiederkehrung];
+      if (rec) lines.push(rec);
+      lines.push('END:VEVENT');
+      lines.push('END:VCALENDAR');
+      return lines.join('\r\n');
+    }
+    function downloadIcs(ev){
+      var ics = buildIcs(ev); if (!ics) return;
+      var blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = (ev.kuerzel || 'event') + '.ics';
+      document.body.appendChild(a); a.click();
+      setTimeout(function(){ document.body.removeChild(a); URL.revokeObjectURL(url) }, 200);
+    }
+    document.querySelectorAll('[data-ical-btn]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var page = btn.closest('.page-event'); if (!page) return;
+        var ev = {
+          name: page.getAttribute('data-name'),
+          kuerzel: page.getAttribute('data-kuerzel'),
+          datum: page.getAttribute('data-d'),
+          datum_ende: page.getAttribute('data-d2'),
+          uhrzeit: page.getAttribute('data-uhr'),
+          uhrzeit_ende: page.getAttribute('data-uhr2'),
+          ort: page.getAttribute('data-ort'),
+          link: page.getAttribute('data-link'),
+          beschreibung: page.getAttribute('data-beschreibung'),
+        };
+        downloadIcs(ev);
+      });
+    });
+
+    // ─── Hero parallax ──────────────────────────────────────────────
+    (function(){
+      function tick(){
+        var active = document.querySelector('.page-event.is-active [data-hero-parallax] img');
+        if (active) active.style.transform = 'translate3d(0, ' + (window.scrollY * 0.32) + 'px, 0)';
+        requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+    })();
+
+    // ─── Build overview (featured + grid) ──────────────────────────
+    (function(){
+      var events = [];
+      document.querySelectorAll('#eventsData .ev-data').forEach(function(el){
+        var ev = {
+          name: el.getAttribute('data-name') || '',
+          kuerzel: el.getAttribute('data-kuerzel') || '',
+          status: el.getAttribute('data-status') || '',
+          typ: el.getAttribute('data-typ') || '',
+          titelbild: el.getAttribute('data-titelbild') || '',
+          datum: el.getAttribute('data-datum') || '',
+          datum_ende: el.getAttribute('data-datum-ende') || '',
+          uhrzeit: el.getAttribute('data-uhrzeit') || '',
+          uhrzeit_ende: el.getAttribute('data-uhrzeit-ende') || '',
+          wiederkehrung: el.getAttribute('data-wiederkehrung') || '',
+          beschreibung: el.getAttribute('data-beschreibung') || '',
+          ort: el.getAttribute('data-ort') || '',
+          link: el.getAttribute('data-link') || '',
+        };
+        if (ev.status === 'veroeffentlicht') events.push(ev);
+      });
+
+      var today = new Date(); today.setHours(0,0,0,0);
+      var upcoming = events.map(function(e){ return { e: e, d: parseDate(e.datum) } })
+        .filter(function(x){ return x.d && x.d >= today })
+        .sort(function(a,b){ return a.d - b.d })
+        .map(function(x){ return x.e });
+
+      var grid = document.getElementById('eventsGrid');
+      var empty = document.getElementById('emptyState');
+      var slot = document.getElementById('featuredSlot');
+      var moreLabel = document.getElementById('moreLabel');
+
+      if (upcoming.length === 0) {
+        empty.removeAttribute('hidden');
+        return;
+      }
+
+      // Featured = first upcoming
+      var f = upcoming[0];
+      var fd = parseDate(f.datum);
+      var fEyebrow = '<span class="dot"></span>NÄCHSTES EVENT';
+      var fPill = f.typ === 'online' ? 'Online Event' : 'Live Event · Vor Ort';
+      var fMetaIcon =
+        '<span class="featured-meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>' + fmtPretty(f.datum, f.datum_ende) + '</span>' +
+        '<span class="featured-meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>' + f.uhrzeit + (f.uhrzeit_ende ? ' – ' + f.uhrzeit_ende : '') + '</span>';
+      if (f.typ === 'vor_ort' && f.ort) {
+        fMetaIcon += '<span class="featured-meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>' + f.ort.split(/\n|,/)[0].trim() + '</span>';
+      }
+
+      slot.innerHTML =
+        '<section class="featured reveal" onclick="location.hash=\'' + f.kuerzel + '\'">' +
+          '<div class="featured-img"><img src="' + f.titelbild.replace(/"/g,'') + '" alt="' + f.name.replace(/"/g,'&quot;') + '" /></div>' +
+          '<div class="featured-content">' +
+            '<div class="featured-eyebrow">' + fEyebrow + '</div>' +
+            '<h1 class="featured-title">' + f.name.replace(/</g,'&lt;') + '</h1>' +
+            '<div class="featured-meta">' + fMetaIcon + '</div>' +
+            '<div class="featured-cta">' +
+              '<button class="btn btn-primary" onclick="event.stopPropagation();location.hash=\'' + f.kuerzel + '\'">Zum Event →</button>' +
+              '<button class="btn btn-ghost" onclick="event.stopPropagation()" data-featured-ical>' +
+                '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>' +
+                'In Kalender' +
+              '</button>' +
+            '</div>' +
+          '</div>' +
+        '</section>';
+
+      var icalBtn = document.querySelector('[data-featured-ical]');
+      if (icalBtn) icalBtn.addEventListener('click', function(e){ e.stopPropagation(); downloadIcs(f) });
+
+      // Rest
+      var rest = upcoming.slice(1);
+      if (rest.length > 0) {
+        moreLabel.removeAttribute('hidden');
+        rest.forEach(function(ev){
+          var dt = parseDate(ev.datum);
+          var pillIco = ev.typ === 'online'
+            ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>'
+            : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>';
+          var pillLbl = ev.typ === 'online' ? 'Online' : 'Vor Ort';
+          var recurLabel = RECUR[ev.wiederkehrung] || '';
+          var card = document.createElement('article');
+          card.className = 'ev-card reveal';
+          card.onclick = function(){ location.hash = ev.kuerzel };
+          card.innerHTML =
+            '<div class="ev-card-img" style="background-image: url(\'' + ev.titelbild.replace(/"/g,'') + '\')"></div>' +
+            '<span class="ev-pill">' + pillIco + pillLbl + '</span>' +
+            (dt ? '<div class="ev-daystamp"><div class="d">' + dt.getDate() + '</div><div class="m">' + MONTHS_SHORT[dt.getMonth()] + '</div></div>' : '') +
+            '<div class="ev-card-content">' +
+              '<h4 class="ev-card-title">' + ev.name.replace(/</g,'&lt;') + '</h4>' +
+              '<div class="ev-card-meta">' +
+                '<span>' + ev.uhrzeit + (ev.uhrzeit_ende ? ' – ' + ev.uhrzeit_ende : '') + '</span>' +
+                (recurLabel ? '<span class="sep">·</span><span>' + recurLabel + '</span>' : '') +
+              '</div>' +
+            '</div>';
+          grid.appendChild(card);
+        });
+      }
+
+      window.dispatchEvent(new CustomEvent('dynamic-content-ready'));
+    })();
+
+    // ─── GSAP reveals ───────────────────────────────────────────────
+    if (window.gsap) {
+      function play(scope){
+        var els = (scope || document).querySelectorAll('.reveal:not(.is-revealed)');
+        els.forEach(function(el, i){
+          el.classList.add('is-revealed');
+          gsap.to(el, { opacity: 1, y: 0, duration: 0.75, delay: i * 0.04, ease: 'power3.out' });
+        });
+      }
+      play();
+      window.addEventListener('hashchange', function(){ setTimeout(function(){
+        var active = document.querySelector('.page-event.is-active') || document.querySelector('.page-overview');
+        play(active);
+      }, 80) });
+      window.addEventListener('dynamic-content-ready', function(){ play() });
+    } else {
+      document.querySelectorAll('.reveal').forEach(function(el){ el.style.opacity = 1; el.style.transform = 'none' });
+    }
+  </script>
+</body>
+</html>
