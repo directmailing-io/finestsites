@@ -71,6 +71,49 @@
             { "value": "monatlich",     "label": "Monatlich",     "description": "Jeden Monat am Tag aus dem Startdatum (z. B. jeden 15.).",                         "card_type": "color", "color": "#06B6D4", "image_url": "", "icon": "M3 5h18v16H3zM3 11h18M8 3v4M16 3v4" }
           ]
         },
+        {
+          "key": "wiederkehrung_wochentag",
+          "label": "Welcher Wochentag?",
+          "type": "dropdown", "required": false,
+          "default_value": "",
+          "options": ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag"],
+          "show_when": { "field": "wiederkehrung", "value": "woechentlich" }
+        },
+        {
+          "key": "wiederkehrung_monat_typ",
+          "label": "Wie genau im Monat?",
+          "type": "card_select", "required": false,
+          "default_value": "nach_tag",
+          "card_options": [
+            { "value": "nach_tag",       "label": "Festes Datum",      "description": "Z. B. jeden 15. des Monats.",                                                  "card_type": "color", "color": "#06B6D4", "image_url": "", "icon": "M3 5h18v16H3zM3 11h18M8 3v4M16 3v4" },
+            { "value": "nach_wochentag", "label": "Bestimmter Wochentag", "description": "Z. B. jeden ersten Montag im Monat.",                                       "card_type": "color", "color": "#10B981", "image_url": "", "icon": "M3 4h18M3 4v16h18V4M3 9h18M8 4v16M16 4v16" }
+          ],
+          "show_when": { "field": "wiederkehrung", "value": "monatlich" }
+        },
+        {
+          "key": "wiederkehrung_monat_tag",
+          "label": "Tag im Monat (1–31)",
+          "type": "dropdown", "required": false,
+          "default_value": "",
+          "options": ["1.","2.","3.","4.","5.","6.","7.","8.","9.","10.","11.","12.","13.","14.","15.","16.","17.","18.","19.","20.","21.","22.","23.","24.","25.","26.","27.","28.","29.","30.","31."],
+          "show_when": { "field": "wiederkehrung_monat_typ", "value": "nach_tag" }
+        },
+        {
+          "key": "wiederkehrung_monat_position",
+          "label": "Welche Position?",
+          "type": "dropdown", "required": false,
+          "default_value": "",
+          "options": ["Erster", "Zweiter", "Dritter", "Vierter", "Letzter"],
+          "show_when": { "field": "wiederkehrung_monat_typ", "value": "nach_wochentag" }
+        },
+        {
+          "key": "wiederkehrung_monat_wochentag",
+          "label": "Welcher Wochentag?",
+          "type": "dropdown", "required": false,
+          "default_value": "",
+          "options": ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag"],
+          "show_when": { "field": "wiederkehrung_monat_typ", "value": "nach_wochentag" }
+        },
         { "key": "wiederkehrung_bis", "label": "Wiederkehrung läuft bis (optional)", "type": "date", "required": false, "placeholder_text": "Leer = unbegrenzt", "show_when": { "field": "wiederkehrung", "value": ["taeglich", "woechentlich", "monatlich"] } },
 
         { "key": "ort",  "label": "Adresse",        "type": "textarea", "required": false, "max_length": 200, "placeholder_text": "Straße, PLZ Ort", "show_when": { "field": "typ", "value": "vor_ort" } },

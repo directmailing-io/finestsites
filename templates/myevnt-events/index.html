@@ -568,57 +568,130 @@
     font-weight: 400;
   }
 
-  /* ─── Highlights as cards (stacked vertically) ─────────────────── */
-  .highlight-stack { display: flex; flex-direction: column; gap: 16px; }
-  .hl-card {
+  /* ─── Highlights — accent-tinted "What to expect" card ─────────── */
+  .highlight-wrap {
     position: relative;
-    padding: 36px 40px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 22px;
-    display: grid;
-    grid-template-columns: 80px 1fr;
-    gap: 28px;
-    align-items: start;
-    transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
+    border-radius: 28px;
+    padding: 56px 52px;
+    background:
+      radial-gradient(ellipse at 0% 0%, color-mix(in srgb, var(--accent) 22%, transparent), transparent 60%),
+      color-mix(in srgb, var(--accent) 8%, var(--surface));
+    border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--border));
     overflow: hidden;
   }
-  .hl-card::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(circle at 0% 0%, color-mix(in srgb, var(--accent) 12%, transparent), transparent 60%);
-    opacity: 0;
-    transition: opacity 0.4s ease;
-    pointer-events: none;
+  .highlight-head {
+    display: flex; flex-direction: column; gap: 8px;
+    margin-bottom: 32px;
   }
-  .hl-card:hover { transform: translateY(-3px); border-color: var(--border-strong); }
-  .hl-card:hover::before { opacity: 1; }
+  .highlight-head .eyebrow {
+    color: var(--accent);
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+  }
+  .highlight-head h2 {
+    font-weight: 600;
+    font-size: clamp(2rem, 4vw, 3.25rem);
+    letter-spacing: -0.035em;
+    line-height: 1.02;
+    margin: 0;
+    color: var(--text);
+  }
+  .highlight-stack { display: flex; flex-direction: column; gap: 14px; }
+  .hl-card {
+    position: relative;
+    padding: 24px 28px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    display: grid;
+    grid-template-columns: 60px 1fr;
+    gap: 22px;
+    align-items: start;
+    transition: transform 0.3s ease, border-color 0.3s ease;
+  }
+  .hl-card:hover { transform: translateY(-2px); border-color: color-mix(in srgb, var(--accent) 40%, var(--border)); }
   .hl-num {
-    font-weight: 500;
-    font-size: clamp(1.75rem, 3vw, 2.25rem);
+    font-weight: 600;
+    font-size: 1.625rem;
     letter-spacing: -0.025em;
     color: var(--accent);
     font-variant-numeric: tabular-nums;
     line-height: 1;
-    padding-top: 4px;
+    padding-top: 3px;
   }
-  .hl-text { position: relative; z-index: 1; }
   .hl-title {
     font-weight: 600;
-    font-size: clamp(1.25rem, 1.9vw, 1.5rem);
-    letter-spacing: -0.02em;
-    line-height: 1.2;
-    margin: 0 0 10px;
+    font-size: clamp(1.0625rem, 1.5vw, 1.25rem);
+    letter-spacing: -0.015em;
+    line-height: 1.3;
+    margin: 0 0 6px;
     color: var(--text);
   }
   .hl-desc {
     color: var(--text-soft);
-    font-size: 1rem;
-    line-height: 1.6;
+    font-size: 0.9375rem;
+    line-height: 1.55;
     margin: 0;
     white-space: pre-line;
   }
+  @media (max-width: 720px) {
+    .highlight-wrap { padding: 36px 24px; border-radius: 22px; }
+    .hl-card { padding: 18px 20px; grid-template-columns: 42px 1fr; gap: 14px; }
+  }
+
+  /* ─── Countdown Section (own block, big numbers) ──────────────── */
+  .countdown-section {
+    padding: 64px 0 24px;
+  }
+  .countdown-section .countdown-wrap {
+    position: relative;
+    border-radius: 28px;
+    padding: 48px 32px;
+    background: color-mix(in srgb, var(--accent) 8%, var(--surface));
+    border: 1px solid color-mix(in srgb, var(--accent) 22%, var(--border));
+    text-align: center;
+    overflow: hidden;
+  }
+  .countdown-section .countdown-wrap::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at center top, color-mix(in srgb, var(--accent) 16%, transparent), transparent 60%);
+    pointer-events: none;
+  }
+  .countdown-section .label {
+    position: relative;
+    color: var(--accent);
+    font-weight: 600;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    margin-bottom: 22px;
+  }
+  .countdown-section .blocks {
+    position: relative;
+    display: flex; justify-content: center; gap: clamp(16px, 4vw, 36px);
+    flex-wrap: wrap;
+  }
+  .countdown-section .block { text-align: center; min-width: 80px; }
+  .countdown-section .num {
+    font-weight: 600;
+    font-size: clamp(2.5rem, 7vw, 4.5rem);
+    letter-spacing: -0.035em;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    color: var(--text);
+  }
+  .countdown-section .unit {
+    margin-top: 8px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--text-mute);
+  }
+  body.countdown-finished .countdown-section { display: none; }
 
   /* ─── Special Guests row ──────────────────────────────────────── */
   .guests-row {
@@ -1007,7 +1080,11 @@
            data-uhrzeit-ende="{{this.uhrzeit_ende}}"
            data-wiederkehrung="{{this.wiederkehrung}}"
            data-recur-bis="{{this.wiederkehrung_bis}}"
-           data-recur-zweiter-tag="{{this.wiederkehrung_zweiter_tag}}"
+           data-recur-wochentag="{{this.wiederkehrung_wochentag}}"
+           data-recur-monat-typ="{{this.wiederkehrung_monat_typ}}"
+           data-recur-monat-tag="{{this.wiederkehrung_monat_tag}}"
+           data-recur-monat-pos="{{this.wiederkehrung_monat_position}}"
+           data-recur-monat-wochentag="{{this.wiederkehrung_monat_wochentag}}"
            data-beschreibung="{{this.beschreibung}}"
            data-ort="{{this.ort}}"
            data-link="{{this.link}}"></div>
@@ -1033,7 +1110,11 @@
         data-accent-event="{{this.akzentfarbe_event}}"
         data-recur="{{this.wiederkehrung}}"
         data-recur-bis="{{this.wiederkehrung_bis}}"
-        data-recur-zweiter-tag="{{this.wiederkehrung_zweiter_tag}}"
+        data-recur-wochentag="{{this.wiederkehrung_wochentag}}"
+        data-recur-monat-typ="{{this.wiederkehrung_monat_typ}}"
+        data-recur-monat-tag="{{this.wiederkehrung_monat_tag}}"
+        data-recur-monat-pos="{{this.wiederkehrung_monat_position}}"
+        data-recur-monat-wochentag="{{this.wiederkehrung_monat_wochentag}}"
         {{#if this.akzentfarbe_event}}style="--accent: {{this.akzentfarbe_event}}"{{/if}}>
 
     <section class="ev-hero">
@@ -1097,23 +1178,41 @@
       </section>
       {{/if}}
 
+      {{#if this.countdown_anzeigen=ja}}
+      <section class="countdown-section ev-section">
+        <div class="container-narrow reveal">
+          <div class="countdown-wrap" data-countdown-section data-d="{{this.datum}}" data-uhr="{{this.uhrzeit}}">
+            <div class="label">Es geht los in</div>
+            <div class="blocks">
+              <div class="block"><div class="num" data-cd-section-d>0</div><div class="unit">Tage</div></div>
+              <div class="block"><div class="num" data-cd-section-h>00</div><div class="unit">Stunden</div></div>
+              <div class="block"><div class="num" data-cd-section-m>00</div><div class="unit">Minuten</div></div>
+              <div class="block"><div class="num" data-cd-section-s>00</div><div class="unit">Sekunden</div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+      {{/if}}
+
       {{#if this.highlights}}
       <section class="ev-section">
-        <div class="container-narrow">
-          <div class="reveal" style="margin-bottom: 28px;">
-            <div class="ev-section-eyebrow">Programm</div>
-            <h2 class="ev-section-title">Highlights des Events</h2>
-          </div>
-          <div class="highlight-stack">
-            {{#each this.highlights}}
-            <div class="hl-card reveal">
-              <div class="hl-num">{{@index}}</div>
-              <div class="hl-text">
-                <h3 class="hl-title">{{this.titel}}</h3>
-                {{#if this.beschreibung}}<p class="hl-desc">{{this.beschreibung}}</p>{{/if}}
-              </div>
+        <div class="container-narrow reveal">
+          <div class="highlight-wrap">
+            <div class="highlight-head">
+              <div class="eyebrow">Was dich erwartet</div>
+              <h2>Das nimmst du mit</h2>
             </div>
-            {{/each}}
+            <div class="highlight-stack">
+              {{#each this.highlights}}
+              <div class="hl-card">
+                <div class="hl-num">{{@index}}</div>
+                <div>
+                  <h3 class="hl-title">{{this.titel}}</h3>
+                  {{#if this.beschreibung}}<p class="hl-desc">{{this.beschreibung}}</p>{{/if}}
+                </div>
+              </div>
+              {{/each}}
+            </div>
           </div>
         </div>
       </section>
@@ -1121,7 +1220,7 @@
 
       {{#if this.special_guests}}
       <section class="ev-section">
-        <div class="container">
+        <div class="container-narrow">
           <div class="reveal" style="margin-bottom: 28px;">
             <div class="ev-section-eyebrow">Mit dabei</div>
             <h2 class="ev-section-title">Special Guests</h2>
@@ -1395,15 +1494,24 @@
       'monatlich':     'Monatlich'
     };
     function fmtShortDate(d){ return d ? d.getDate() + '. ' + MONTHS_LONG[d.getMonth()] + ' ' + d.getFullYear() : '' }
-    function formatRecur(type, datum, bis){
+    function formatRecur(type, datum, bis, wochentag, monatTyp, monatTag, monatPos, monatWochentag){
       if (!type || type === 'einmalig') return '';
       var d = parseDate(datum);
       var bd = parseDate(bis);
       var bisStr = bd ? ' bis ' + fmtShortDate(bd) : '';
       switch (type) {
-        case 'taeglich':     return 'Täglich' + bisStr;
-        case 'woechentlich': return d ? 'Jeden ' + WD_FULL[d.getDay()] + bisStr : 'Wöchentlich' + bisStr;
-        case 'monatlich':    return d ? 'Jeden ' + d.getDate() + '. im Monat' + bisStr : 'Monatlich' + bisStr;
+        case 'taeglich':
+          return 'Täglich' + bisStr;
+        case 'woechentlich':
+          if (wochentag) return 'Jeden ' + wochentag + bisStr;
+          return d ? 'Jeden ' + WD_FULL[d.getDay()] + bisStr : 'Wöchentlich' + bisStr;
+        case 'monatlich':
+          if (monatTyp === 'nach_wochentag' && monatPos && monatWochentag) {
+            return 'Am ' + monatPos.toLowerCase() + ' ' + monatWochentag + ' jedes Monats' + bisStr;
+          }
+          var tag = (monatTag || '').replace(/\.$/, '');
+          if (monatTyp === 'nach_tag' && tag) return 'Am ' + tag + '. jedes Monats' + bisStr;
+          return d ? 'Am ' + d.getDate() + '. jedes Monats' + bisStr : 'Monatlich' + bisStr;
       }
       return '';
     }
@@ -1413,7 +1521,12 @@
       var label = formatRecur(
         page.getAttribute('data-recur'),
         page.getAttribute('data-d'),
-        page.getAttribute('data-recur-bis')
+        page.getAttribute('data-recur-bis'),
+        page.getAttribute('data-recur-wochentag'),
+        page.getAttribute('data-recur-monat-typ'),
+        page.getAttribute('data-recur-monat-tag'),
+        page.getAttribute('data-recur-monat-pos'),
+        page.getAttribute('data-recur-monat-wochentag')
       );
       if (!label) {
         var wrap = el.closest('[data-recur-wrap]');
@@ -1543,16 +1656,22 @@
       el.textContent = String(new Date().getFullYear())
     })
 
-    // ─── Live countdown ─────────────────────────────────────────────
+    // ─── Live countdown (section + corner widget) ──────────────────
     (function(){
       function pad(n){ return n < 10 ? '0' + n : String(n) }
+      function eventDate(el){
+        var d = parseDate(el.getAttribute('data-d'));
+        if (!d) return null;
+        var t = parseTime(el.getAttribute('data-uhr'));
+        if (t) d.setHours(t.h, t.m, 0, 0);
+        return d;
+      }
       function update(){
+        // Inline corner widget (legacy)
         document.querySelectorAll('.page-event [data-countdown]').forEach(function(card){
           var page = card.closest('.page-event');
-          var d = parseDate(page.getAttribute('data-d'));
+          var d = eventDate(page);
           if (!d) { card.classList.remove('is-active'); return }
-          var t = parseTime(page.getAttribute('data-uhr'));
-          if (t) d.setHours(t.h, t.m, 0, 0);
           var diff = d - new Date();
           if (diff <= 0) { card.classList.remove('is-active'); return }
           card.classList.add('is-active');
@@ -1563,9 +1682,28 @@
           card.querySelector('[data-cd-h]').textContent = pad(hours);
           card.querySelector('[data-cd-m]').textContent = pad(mins);
         });
+        // Big section block with seconds
+        document.querySelectorAll('[data-countdown-section]').forEach(function(block){
+          var d = eventDate(block);
+          if (!d) { block.style.display = 'none'; return }
+          var diff = d - new Date();
+          if (diff <= 0) {
+            block.style.display = 'none';
+            return;
+          }
+          block.style.display = '';
+          var days = Math.floor(diff / 86400000);
+          var hours = Math.floor((diff % 86400000) / 3600000);
+          var mins = Math.floor((diff % 3600000) / 60000);
+          var secs = Math.floor((diff % 60000) / 1000);
+          block.querySelector('[data-cd-section-d]').textContent = days;
+          block.querySelector('[data-cd-section-h]').textContent = pad(hours);
+          block.querySelector('[data-cd-section-m]').textContent = pad(mins);
+          block.querySelector('[data-cd-section-s]').textContent = pad(secs);
+        });
       }
       update();
-      setInterval(update, 30000);
+      setInterval(update, 1000);
       window.addEventListener('hashchange', function(){ setTimeout(update, 50) });
     })();
 
@@ -1631,7 +1769,11 @@
           uhrzeit_ende: el.getAttribute('data-uhrzeit-ende') || '',
           wiederkehrung: el.getAttribute('data-wiederkehrung') || '',
           wiederkehrung_bis: el.getAttribute('data-recur-bis') || '',
-          wiederkehrung_zweiter_tag: el.getAttribute('data-recur-zweiter-tag') || '',
+          wiederkehrung_wochentag: el.getAttribute('data-recur-wochentag') || '',
+          wiederkehrung_monat_typ: el.getAttribute('data-recur-monat-typ') || '',
+          wiederkehrung_monat_tag: el.getAttribute('data-recur-monat-tag') || '',
+          wiederkehrung_monat_pos: el.getAttribute('data-recur-monat-pos') || '',
+          wiederkehrung_monat_wochentag: el.getAttribute('data-recur-monat-wochentag') || '',
           beschreibung: el.getAttribute('data-beschreibung') || '',
           ort: el.getAttribute('data-ort') || '',
           link: el.getAttribute('data-link') || '',
@@ -1724,7 +1866,7 @@
             ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>'
             : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>';
           var pillLbl = ev.typ === 'online' ? 'Online' : 'Vor Ort';
-          var recurLabel = formatRecur(ev.wiederkehrung, ev.datum, ev.wiederkehrung_bis) || RECUR_SHORT[ev.wiederkehrung] || '';
+          var recurLabel = formatRecur(ev.wiederkehrung, ev.datum, ev.wiederkehrung_bis, ev.wiederkehrung_wochentag, ev.wiederkehrung_monat_typ, ev.wiederkehrung_monat_tag, ev.wiederkehrung_monat_pos, ev.wiederkehrung_monat_wochentag) || RECUR_SHORT[ev.wiederkehrung] || '';
           var timeLabel = ev.uhrzeit ? (ev.uhrzeit + (ev.uhrzeit_ende ? ' – ' + ev.uhrzeit_ende : '')) : 'Termin folgt';
           var card = document.createElement('article');
           card.className = 'ev-card reveal';
