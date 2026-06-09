@@ -445,9 +445,8 @@ function CardSelectField({ field, value, onChange }: {
 
   const gridCls = isCompact ? (
     opts.length <= 2 ? 'grid-cols-2' :
-    opts.length === 3 ? 'grid-cols-3' :
-    opts.length === 4 ? 'grid-cols-2 sm:grid-cols-4' :
-    'grid-cols-2 sm:grid-cols-3'
+    opts.length === 3 ? 'grid-cols-1 sm:grid-cols-3' :
+    'grid-cols-1 sm:grid-cols-2'
   ) : (
     opts.length === 2 ? 'grid-cols-1 sm:grid-cols-2' :
     opts.length === 3 ? 'grid-cols-1 sm:grid-cols-3' :

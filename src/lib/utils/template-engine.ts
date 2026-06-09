@@ -29,9 +29,114 @@ function htmlEscape(s: string): string {
 
 export function renderTemplate(html: string, data: SiteData): string {
   html = processLoops(html, data, [])
-  html = processConditionals(html, data)
+  html = evalConditionalBlocks(html, data, [])
   html = replaceSimplePlaceholders(html, data)
   return html
+}
+
+function evalCondition(tag: 'if' | 'unless', cond: string, data: SiteData, stack: Item[]): boolean {
+  let key = cond
+  let expected: string | null = null
+  const eq = cond.indexOf('=')
+  if (eq !== -1) {
+    key = cond.substring(0, eq).trim()
+    expected = cond.substring(eq + 1).trim()
+  }
+  let val = ''
+  if (key.startsWith('this.')) {
+    val = (stack[stack.length - 1]?.[key.substring(5)] ?? '').toString().trim()
+  } else if (key.startsWith('../')) {
+    val = (stack[stack.length - 2]?.[key.substring(3)] ?? '').toString().trim()
+  } else {
+    val = (data[key] ?? '').toString().trim()
+  }
+  let result: boolean
+  if (expected !== null) result = val === expected.trim()
+  else result = val !== '' && val !== 'false' && val !== '0'
+  if (tag === 'unless') result = !result
+  return result
+}
+
+/**
+ * Depth-counting parser for {{#if KEY}}...{{/if}} and
+ * {{#unless KEY}}...{{/unless}} blocks. Handles arbitrary nesting and
+ * equality/truthy/parent-context forms. Replaces the old regex-based passes
+ * that broke when conditionals were nested.
+ */
+function evalConditionalBlocks(html: string, data: SiteData, stack: Item[]): string {
+  let out = ''
+  let cursor = 0
+  const OPEN_RE = /\{\{#(if|unless)\s+([^}]+)\}\}/g
+
+  while (cursor < html.length) {
+    OPEN_RE.lastIndex = cursor
+    const m = OPEN_RE.exec(html)
+    if (!m) { out += html.substring(cursor); break }
+    out += html.substring(cursor, m.index)
+    const tag = m[1] as 'if' | 'unless'
+    const cond = m[2].trim()
+    const openLen = m[0].length
+    const bodyStart = m.index + openLen
+
+    // Find the matching close tag with depth tracking
+    let depth = 1
+    let scan = bodyStart
+    let bodyEnd = -1
+    let closeTokenLen = 0
+    while (scan < html.length && depth > 0) {
+      // Scan for the next of: open if/unless, close if, close unless
+      let nextOpenPos = -1, nextOpenLen = 0
+      let probe = scan
+      while (probe < html.length) {
+        const t = html.indexOf('{{#', probe)
+        if (t === -1) break
+        const slice = html.substring(t, t + 12)
+        const om = slice.match(/^\{\{#(if|unless)\s/)
+        if (om) {
+          // measure full open tag length
+          const tagEnd = html.indexOf('}}', t)
+          if (tagEnd === -1) { probe = t + 3; continue }
+          nextOpenPos = t
+          nextOpenLen = tagEnd + 2 - t
+          break
+        }
+        probe = t + 3
+      }
+      const ci = html.indexOf('{{/if}}', scan)
+      const cu = html.indexOf('{{/unless}}', scan)
+      const candidates: Array<{ pos: number; what: 'open' | 'ci' | 'cu' }> = []
+      if (nextOpenPos !== -1) candidates.push({ pos: nextOpenPos, what: 'open' })
+      if (ci !== -1) candidates.push({ pos: ci, what: 'ci' })
+      if (cu !== -1) candidates.push({ pos: cu, what: 'cu' })
+      if (candidates.length === 0) break
+      candidates.sort((a, b) => a.pos - b.pos)
+      const next = candidates[0]
+      if (next.what === 'open') {
+        depth++
+        scan = next.pos + nextOpenLen
+      } else {
+        depth--
+        if (depth === 0) {
+          bodyEnd = next.pos
+          closeTokenLen = next.what === 'ci' ? '{{/if}}'.length : '{{/unless}}'.length
+          break
+        }
+        scan = next.pos + (next.what === 'ci' ? '{{/if}}'.length : '{{/unless}}'.length)
+      }
+    }
+    if (bodyEnd === -1) {
+      // Unbalanced — emit the open tag literally and move past it
+      out += m[0]
+      cursor = bodyStart
+      continue
+    }
+
+    const body = html.substring(bodyStart, bodyEnd)
+    const keep = evalCondition(tag, cond, data, stack)
+    if (keep) out += evalConditionalBlocks(body, data, stack)
+    cursor = bodyEnd + closeTokenLen
+  }
+  return out
 }
 
 const OPEN_EACH = /\{\{#each\s+([\w.]+)\}\}/g
@@ -109,8 +214,9 @@ function processLoops(html: string, data: SiteData, stack: Item[]): string {
       const newStack = [...stack, item]
       // Recursively expand inner each-blocks (with new context)
       let chunk = processLoops(inner, data, newStack)
-      // Resolve item-scoped conditionals BEFORE substituting {{this.field}}
-      chunk = processItemConditionals(chunk, item)
+      // Evaluate {{#if}} / {{#unless}} blocks with the new item on the stack
+      // — supports arbitrary nesting via depth-counting parser.
+      chunk = evalConditionalBlocks(chunk, data, newStack)
       // Raw substitution {{{this.field}}} — for richtext (HTML already)
       chunk = chunk.replace(/\{\{\{this\.(\w+)\}\}\}/g, (_m, field: string) => String(item[field] ?? ''))
       // Substitute {{this.field}} with current item field (HTML-escaped for safety)

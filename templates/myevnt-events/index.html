@@ -117,9 +117,10 @@
 
   /* ─── Overview Hero ────────────────────────────────────────────── */
   .ov-hero {
-    padding: 56px 0 12px;
+    padding: 64px 0 32px;
     text-align: center;
     position: relative;
+    overflow: hidden;
   }
   .ov-hero::before {
     content: '';
@@ -933,7 +934,9 @@
   }
 
   /* ─── Reveal ───────────────────────────────────────────────────── */
-  .reveal { opacity: 0; transform: translateY(28px); }
+  /* Default: visible. GSAP toggles a body class to enable the hidden-then-fade-in animation. */
+  .reveal { opacity: 1; transform: none; transition: opacity 0.7s cubic-bezier(.2,.7,.2,1), transform 0.7s cubic-bezier(.2,.7,.2,1); }
+  body.gsap-ready .reveal:not(.is-revealed) { opacity: 0; transform: translateY(28px); }
 
   /* ─── Responsive ───────────────────────────────────────────────── */
   @media (max-width: 880px) {
@@ -1423,9 +1426,13 @@
     // ─── Tagline from description ───────────────────────────────────
     document.querySelectorAll('[data-tagline-from]').forEach(function(el){
       var raw = el.getAttribute('data-tagline-from') || '';
-      var firstPara = raw.split(/\n\s*\n/)[0].trim();
-      if (firstPara.length > 180) firstPara = firstPara.substring(0, 177) + '…';
-      el.textContent = firstPara;
+      // Strip HTML and decode entities — description may be rich text.
+      var tmp = document.createElement('div');
+      tmp.innerHTML = raw;
+      var text = (tmp.textContent || tmp.innerText || '').replace(/\s+/g, ' ').trim();
+      if (!text) { el.remove(); return; }
+      if (text.length > 180) text = text.substring(0, 177) + '…';
+      el.textContent = text;
     });
 
     // ─── Back & share ───────────────────────────────────────────────
@@ -1744,8 +1751,10 @@
 
     // ─── GSAP reveals ───────────────────────────────────────────────
     if (window.gsap) {
+      document.body.classList.add('gsap-ready');
       function play(scope){
         var els = (scope || document).querySelectorAll('.reveal:not(.is-revealed)');
+        gsap.set(els, { opacity: 0, y: 28 });
         els.forEach(function(el, i){
           el.classList.add('is-revealed');
           gsap.to(el, { opacity: 1, y: 0, duration: 0.75, delay: i * 0.04, ease: 'power3.out' });
@@ -1757,9 +1766,15 @@
         play(active);
       }, 80) });
       window.addEventListener('dynamic-content-ready', function(){ play() });
-    } else {
-      document.querySelectorAll('.reveal').forEach(function(el){ el.style.opacity = 1; el.style.transform = 'none' });
     }
+    // Safety net: if GSAP fails to load (CDN block, preview JS error, etc.),
+    // make sure no .reveal element stays invisible. .reveal already defaults
+    // to opacity 1 — this catches the edge case where GSAP partially loaded.
+    setTimeout(function(){
+      document.querySelectorAll('.reveal:not(.is-revealed)').forEach(function(el){
+        el.style.opacity = '1'; el.style.transform = 'none';
+      });
+    }, 800);
   </script>
 </body>
 </html>
