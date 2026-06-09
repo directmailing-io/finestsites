@@ -1239,9 +1239,21 @@
       });
 
       var today = new Date(); today.setHours(0,0,0,0);
+      // Sort all published events: upcoming first (by date), then past, then
+      // no-date items at the end. This way the editor preview shows freshly
+      // added events instantly, even before the date is filled in.
       var upcoming = events.map(function(e){ return { e: e, d: parseDate(e.datum) } })
-        .filter(function(x){ return x.d && x.d >= today })
-        .sort(function(a,b){ return a.d - b.d })
+        .sort(function(a,b){
+          var aFuture = a.d && a.d >= today;
+          var bFuture = b.d && b.d >= today;
+          if (aFuture && bFuture) return a.d - b.d;            // both upcoming → soonest first
+          if (aFuture) return -1;
+          if (bFuture) return 1;
+          if (a.d && b.d) return b.d - a.d;                     // both past → most recent first
+          if (a.d) return -1;
+          if (b.d) return 1;
+          return 0;
+        })
         .map(function(x){ return x.e });
 
       var grid = document.getElementById('eventsGrid');
@@ -1254,31 +1266,40 @@
         return;
       }
 
-      // Featured = first upcoming
+      // Featured = first event (sort already prioritises upcoming-with-date)
       var f = upcoming[0];
       var fd = parseDate(f.datum);
-      var fEyebrow = '<span class="dot"></span>NÄCHSTES EVENT';
-      var fPill = f.typ === 'online' ? 'Online Event' : 'Live Event · Vor Ort';
+      var fName = (f.name && f.name.trim()) || 'Neues Event';
+      var fIsUpcoming = fd && fd >= today;
+      var fIsPast = fd && fd < today;
+      var fEyebrowLabel = fIsPast ? 'VERGANGEN' : 'NÄCHSTES EVENT';
+      var fDateLabel = fd ? fmtPretty(f.datum, f.datum_ende) : 'Termin folgt';
+      var fTimeLabel = f.uhrzeit ? (f.uhrzeit + (f.uhrzeit_ende ? ' – ' + f.uhrzeit_ende : '')) : '';
       var fMetaIcon =
-        '<span class="featured-meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>' + fmtPretty(f.datum, f.datum_ende) + '</span>' +
-        '<span class="featured-meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>' + f.uhrzeit + (f.uhrzeit_ende ? ' – ' + f.uhrzeit_ende : '') + '</span>';
+        '<span class="featured-meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>' + fDateLabel + '</span>';
+      if (fTimeLabel) {
+        fMetaIcon += '<span class="featured-meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>' + fTimeLabel + '</span>';
+      }
       if (f.typ === 'vor_ort' && f.ort) {
         fMetaIcon += '<span class="featured-meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>' + f.ort.split(/\n|,/)[0].trim() + '</span>';
+      } else if (f.typ === 'online') {
+        fMetaIcon += '<span class="featured-meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>Online</span>';
       }
 
+      var hasSlug = !!(f.kuerzel && f.kuerzel.trim());
+      var jumpAttr = hasSlug ? 'onclick="location.hash=\'' + f.kuerzel + '\'"' : '';
+      var fImg = f.titelbild ? '<img src="' + f.titelbild.replace(/"/g,'') + '" alt="' + fName.replace(/"/g,'&quot;') + '" />' : '';
       slot.innerHTML =
-        '<section class="featured reveal" onclick="location.hash=\'' + f.kuerzel + '\'">' +
-          '<div class="featured-img"><img src="' + f.titelbild.replace(/"/g,'') + '" alt="' + f.name.replace(/"/g,'&quot;') + '" /></div>' +
+        '<section class="featured reveal" ' + jumpAttr + ' style="' + (hasSlug ? '' : 'cursor:default;') + '">' +
+          '<div class="featured-img">' + fImg + '</div>' +
           '<div class="featured-content">' +
-            '<div class="featured-eyebrow">' + fEyebrow + '</div>' +
-            '<h1 class="featured-title">' + f.name.replace(/</g,'&lt;') + '</h1>' +
+            '<div class="featured-eyebrow"><span class="dot"></span>' + fEyebrowLabel + '</div>' +
+            '<h1 class="featured-title">' + fName.replace(/</g,'&lt;') + '</h1>' +
             '<div class="featured-meta">' + fMetaIcon + '</div>' +
             '<div class="featured-cta">' +
-              '<button class="btn btn-primary" onclick="event.stopPropagation();location.hash=\'' + f.kuerzel + '\'">Zum Event →</button>' +
-              '<button class="btn btn-ghost" onclick="event.stopPropagation()" data-featured-ical>' +
-                '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>' +
-                'In Kalender' +
-              '</button>' +
+              (hasSlug ? '<button class="btn btn-primary" onclick="event.stopPropagation();location.hash=\'' + f.kuerzel + '\'">Zum Event →</button>' : '') +
+              (fd ? '<button class="btn btn-ghost" onclick="event.stopPropagation()" data-featured-ical>' +
+                '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>In Kalender</button>' : '') +
             '</div>' +
           '</div>' +
         '</section>';
@@ -1292,22 +1313,24 @@
         moreLabel.removeAttribute('hidden');
         rest.forEach(function(ev){
           var dt = parseDate(ev.datum);
+          var name = (ev.name && ev.name.trim()) || 'Neues Event';
           var pillIco = ev.typ === 'online'
             ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>'
             : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>';
           var pillLbl = ev.typ === 'online' ? 'Online' : 'Vor Ort';
           var recurLabel = RECUR[ev.wiederkehrung] || '';
+          var timeLabel = ev.uhrzeit ? (ev.uhrzeit + (ev.uhrzeit_ende ? ' – ' + ev.uhrzeit_ende : '')) : 'Termin folgt';
           var card = document.createElement('article');
           card.className = 'ev-card reveal';
-          card.onclick = function(){ location.hash = ev.kuerzel };
+          if (ev.kuerzel && ev.kuerzel.trim()) card.onclick = function(){ location.hash = ev.kuerzel };
           card.innerHTML =
-            '<div class="ev-card-img" style="background-image: url(\'' + ev.titelbild.replace(/"/g,'') + '\')"></div>' +
+            (ev.titelbild ? '<div class="ev-card-img" style="background-image: url(\'' + ev.titelbild.replace(/"/g,'') + '\')"></div>' : '<div class="ev-card-img"></div>') +
             '<span class="ev-pill">' + pillIco + pillLbl + '</span>' +
             (dt ? '<div class="ev-daystamp"><div class="d">' + dt.getDate() + '</div><div class="m">' + MONTHS_SHORT[dt.getMonth()] + '</div></div>' : '') +
             '<div class="ev-card-content">' +
-              '<h4 class="ev-card-title">' + ev.name.replace(/</g,'&lt;') + '</h4>' +
+              '<h4 class="ev-card-title">' + name.replace(/</g,'&lt;') + '</h4>' +
               '<div class="ev-card-meta">' +
-                '<span>' + ev.uhrzeit + (ev.uhrzeit_ende ? ' – ' + ev.uhrzeit_ende : '') + '</span>' +
+                '<span>' + timeLabel + '</span>' +
                 (recurLabel ? '<span class="sep">·</span><span>' + recurLabel + '</span>' : '') +
               '</div>' +
             '</div>';

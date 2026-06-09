@@ -393,14 +393,21 @@ function CardSelectField({ field, value, onChange }: {
   field: FieldSchema; value: string; onChange: (v: string) => void
 }) {
   const opts = field.card_options ?? []
-  // Layout density:
-  //  - 2 options (typically yes/no toggle)    → 2 columns even on desktop, very large
-  //  - 3 options (hero / 3-way picker)         → 2 cols mobile, 3 cols desktop
-  //  - 4+ options                              → 2 cols mobile, 4 cols desktop
-  const gridCls =
+
+  // Compact mode: when no option has an actual image preview, render slim
+  // button-like chips instead of the large cards.
+  const isCompact = opts.every(o => o.card_type !== 'image' || !o.image_url)
+
+  const gridCls = isCompact ? (
+    opts.length <= 2 ? 'grid-cols-2' :
+    opts.length === 3 ? 'grid-cols-3' :
+    opts.length === 4 ? 'grid-cols-2 sm:grid-cols-4' :
+    'grid-cols-2 sm:grid-cols-3'
+  ) : (
     opts.length === 2 ? 'grid-cols-1 sm:grid-cols-2' :
     opts.length === 3 ? 'grid-cols-1 sm:grid-cols-3' :
     'grid-cols-2 sm:grid-cols-3 lg:grid-cols-4'
+  )
 
   const [hovered, setHovered] = useState<{ opt: CardOption; rect: DOMRect } | null>(null)
 
@@ -410,9 +417,51 @@ function CardSelectField({ field, value, onChange }: {
   }
 
   return (
-    <div className={`grid gap-4 ${gridCls}`} style={{ position: 'relative' }}>
+    <div className={`grid ${isCompact ? 'gap-2' : 'gap-4'} ${gridCls}`} style={{ position: 'relative' }}>
       {opts.map(opt => {
         const selected = value === opt.value
+
+        // ── Compact button-like chip (no image) ──────────────────────
+        if (isCompact) {
+          return (
+            <button key={opt.value} type="button" onClick={() => onChange(opt.value)}
+              className="group flex items-start gap-2.5 text-left rounded-xl px-3 py-2.5 transition-all"
+              style={{
+                border: `1.5px solid ${selected ? '#1a1a1a' : '#E5E7EB'}`,
+                background: selected ? '#FAFAFA' : '#fff',
+                boxShadow: selected
+                  ? '0 0 0 3px rgba(26,26,26,0.06)'
+                  : 'none',
+                cursor: 'pointer',
+              }}>
+              {opt.color && (
+                <span className="rounded-full flex-shrink-0"
+                  style={{
+                    width: 14, height: 14, marginTop: 3,
+                    background: opt.color,
+                    boxShadow: 'inset 0 0 0 1.5px rgba(255,255,255,0.7), 0 0 0 1px rgba(0,0,0,0.08)',
+                  }} />
+              )}
+              <div className="flex-1 min-w-0 flex flex-col gap-0.5">
+                <span className="text-sm font-semibold text-gray-900 leading-tight flex items-center gap-1.5">
+                  <span className="truncate">{opt.label}</span>
+                  {selected && (
+                    <svg className="flex-shrink-0" width="13" height="13" viewBox="0 0 24 24"
+                      fill="none" stroke="#1a1a1a" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                  )}
+                </span>
+                {opt.description && (
+                  <span className="text-xs leading-snug" style={{ color: '#6B7280' }}>
+                    {opt.description}
+                  </span>
+                )}
+              </div>
+            </button>
+          )
+        }
+
         const isImage = opt.card_type === 'image'
         const canZoom = isImage && !!opt.image_url
         return (
@@ -1336,22 +1385,6 @@ export default function SiteEditPage({ params }: { params: Promise<{ id: string 
     }
   }
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-full">
-        <div className="w-8 h-8 rounded-full border-2 border-gray-200 border-t-gray-900 animate-spin" />
-      </div>
-    )
-  }
-  if (!site) return <div className="p-8 text-center text-gray-500">Website nicht gefunden.</div>
-
-  const fields = site.templates?.placeholder_schema?.fields ?? []
-  const sections = [...new Set(fields.map(f => f.section || 'Allgemein'))]
-  // Add the virtual Domain section at the end of the sidebar
-  const allSections = [...sections, DOMAIN_SECTION]
-  const previewDataB64 = Buffer.from(JSON.stringify(values)).toString('base64')
-  const previewUrl = `/api/preview/${id}?data=${encodeURIComponent(previewDataB64)}${previewHash ? '#' + encodeURIComponent(previewHash) : ''}`
-
   // Soft-update iframe location.hash when previewHash changes
   // (avoids full iframe reload while navigating between overview ↔ event landing)
   useEffect(() => {
@@ -1367,17 +1400,35 @@ export default function SiteEditPage({ params }: { params: Promise<{ id: string 
         return true
       } catch { return false }
     }
-    // Retry briefly while iframe may still be navigating
     if (!tryUpdate()) {
-      const id = setTimeout(tryUpdate, 120)
-      return () => clearTimeout(id)
+      const tid = setTimeout(tryUpdate, 120)
+      return () => clearTimeout(tid)
     }
   }, [previewHash])
 
   // Reset the focused event when the user switches away from the Events section
   useEffect(() => {
-    if (activeSection !== 'Events') setPreviewHash('')
+    if (activeSection !== 'Events') {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setPreviewHash('')
+    }
   }, [activeSection])
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <div className="w-8 h-8 rounded-full border-2 border-gray-200 border-t-gray-900 animate-spin" />
+      </div>
+    )
+  }
+  if (!site) return <div className="p-8 text-center text-gray-500">Website nicht gefunden.</div>
+
+  const fields = site.templates?.placeholder_schema?.fields ?? []
+  const sections = [...new Set(fields.map(f => f.section || 'Allgemein'))]
+  // Add the virtual Domain section at the end of the sidebar
+  const allSections = [...sections, DOMAIN_SECTION]
+  const previewDataB64 = Buffer.from(JSON.stringify(values)).toString('base64')
+  const previewUrl = `/api/preview/${id}?data=${encodeURIComponent(previewDataB64)}${previewHash ? '#' + encodeURIComponent(previewHash) : ''}`
 
   function getSectionCompletion(sec: string) {
     const sf = fields.filter(f => (f.section || 'Allgemein') === sec)
