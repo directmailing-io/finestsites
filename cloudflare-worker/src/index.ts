@@ -13,6 +13,8 @@ export interface Env {
   SUPABASE_URL: string
   SUPABASE_SERVICE_KEY: string
   KV_CACHE: KVNamespace
+  RESEND_API_KEY: string
+  APP_URL: string  // e.g. https://app.finestsites.com — for notification links
 }
 
 // ─── Content-Type Map ─────────────────────────────────────────────────────────
@@ -37,30 +39,169 @@ function ct(path: string): string {
 
 type Data = Record<string, string>
 
-function render(html: string, data: Data): string {
-  html = conditionals(html, data)
-  html = html.replace(/\{\{([^#/{}][^{}]*)\}\}/g, (_, k) => data[k.trim()] ?? '')
-  return html
+// ─── Template engine (depth-counting, nested loops + conditionals) ────────────
+// Mirrors src/lib/utils/template-engine.ts so Worker-rendered HTML and Vercel
+// preview HTML match exactly. Keep these two files in sync — any change to one
+// must be ported to the other.
+
+type Item = Record<string, string>
+
+function htmlEscape(s: string): string {
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
 }
 
-function conditionals(html: string, data: Data): string {
-  for (let i = 0; i < 20; i++) {
-    const next = html
-      .replace(/\{\{#if\s+([\w]+)=([\w-]+)\}\}([\s\S]*?)\{\{\/if\}\}/g, (_, k, v, c) =>
-        (data[k] ?? '').trim() === v.trim() ? c : '')
-      .replace(/\{\{#if\s+([\w]+)\}\}([\s\S]*?)\{\{\/if\}\}/g, (_, k, c) => {
-        const v = (data[k] ?? '').trim()
-        return v && v !== 'false' && v !== '0' ? c : ''
-      })
-      .replace(/\{\{#unless\s+([\w]+)=([\w-]+)\}\}([\s\S]*?)\{\{\/unless\}\}/g, (_, k, v, c) =>
-        (data[k] ?? '').trim() !== v.trim() ? c : '')
-      .replace(/\{\{#unless\s+([\w]+)\}\}([\s\S]*?)\{\{\/unless\}\}/g, (_, k, c) => {
-        const v = (data[k] ?? '').trim()
-        return !v || v === 'false' || v === '0' ? c : ''
-      })
-    if (next === html) break
-    html = next
+function evalCondition(tag: 'if' | 'unless', cond: string, data: Data, stack: Item[]): boolean {
+  let key = cond
+  let expected: string | null = null
+  const eq = cond.indexOf('=')
+  if (eq !== -1) { key = cond.substring(0, eq).trim(); expected = cond.substring(eq + 1).trim() }
+  let val = ''
+  if (key.startsWith('this.')) val = (stack[stack.length - 1]?.[key.substring(5)] ?? '').toString().trim()
+  else if (key.startsWith('../')) val = (stack[stack.length - 2]?.[key.substring(3)] ?? '').toString().trim()
+  else val = (data[key] ?? '').toString().trim()
+  let result: boolean
+  if (expected !== null) result = val === expected.trim()
+  else result = val !== '' && val !== 'false' && val !== '0'
+  if (tag === 'unless') result = !result
+  return result
+}
+
+function evalConditionalBlocks(html: string, data: Data, stack: Item[]): string {
+  let out = ''
+  let cursor = 0
+  const OPEN_RE = /\{\{#(if|unless)\s+([^}]+)\}\}/g
+  while (cursor < html.length) {
+    OPEN_RE.lastIndex = cursor
+    const m = OPEN_RE.exec(html)
+    if (!m) { out += html.substring(cursor); break }
+    out += html.substring(cursor, m.index)
+    const tag = m[1] as 'if' | 'unless'
+    const cond = m[2].trim()
+    const openLen = m[0].length
+    const bodyStart = m.index + openLen
+    let depth = 1, scan = bodyStart, bodyEnd = -1, closeTokenLen = 0
+    while (scan < html.length && depth > 0) {
+      let nextOpenPos = -1, nextOpenLen = 0
+      let probe = scan
+      while (probe < html.length) {
+        const t = html.indexOf('{{#', probe)
+        if (t === -1) break
+        const slice = html.substring(t, t + 12)
+        const om = slice.match(/^\{\{#(if|unless)\s/)
+        if (om) {
+          const tagEnd = html.indexOf('}}', t)
+          if (tagEnd === -1) { probe = t + 3; continue }
+          nextOpenPos = t
+          nextOpenLen = tagEnd + 2 - t
+          break
+        }
+        probe = t + 3
+      }
+      const ci = html.indexOf('{{/if}}', scan)
+      const cu = html.indexOf('{{/unless}}', scan)
+      const candidates: Array<{ pos: number; what: 'open' | 'ci' | 'cu' }> = []
+      if (nextOpenPos !== -1) candidates.push({ pos: nextOpenPos, what: 'open' })
+      if (ci !== -1) candidates.push({ pos: ci, what: 'ci' })
+      if (cu !== -1) candidates.push({ pos: cu, what: 'cu' })
+      if (candidates.length === 0) break
+      candidates.sort((a, b) => a.pos - b.pos)
+      const next = candidates[0]
+      if (next.what === 'open') { depth++; scan = next.pos + nextOpenLen }
+      else {
+        depth--
+        if (depth === 0) { bodyEnd = next.pos; closeTokenLen = next.what === 'ci' ? 7 : 11; break }
+        scan = next.pos + (next.what === 'ci' ? 7 : 11)
+      }
+    }
+    if (bodyEnd === -1) { out += m[0]; cursor = bodyStart; continue }
+    const body = html.substring(bodyStart, bodyEnd)
+    const keep = evalCondition(tag, cond, data, stack)
+    if (keep) out += evalConditionalBlocks(body, data, stack)
+    cursor = bodyEnd + closeTokenLen
   }
+  return out
+}
+
+const OPEN_EACH_RE = /\{\{#each\s+([\w.]+)\}\}/g
+
+function resolveArray(key: string, data: Data, stack: Item[]): Item[] {
+  let raw: string | undefined
+  if (key.startsWith('this.')) raw = stack[stack.length - 1]?.[key.substring(5)]
+  else raw = data[key]
+  if (!raw) return []
+  try { const parsed = JSON.parse(raw); return Array.isArray(parsed) ? parsed : [] }
+  catch { return [] }
+}
+
+function processLoops(html: string, data: Data, stack: Item[]): string {
+  let out = ''
+  let cursor = 0
+  OPEN_EACH_RE.lastIndex = 0
+  while (cursor < html.length) {
+    OPEN_EACH_RE.lastIndex = cursor
+    const m = OPEN_EACH_RE.exec(html)
+    if (!m) { out += html.substring(cursor); break }
+    out += html.substring(cursor, m.index)
+    const key = m[1]
+    const bodyStart = m.index + m[0].length
+    let depth = 1, scan = bodyStart, bodyEnd = -1
+    while (scan < html.length && depth > 0) {
+      const nextOpen = html.indexOf('{{#each', scan)
+      const nextClose = html.indexOf('{{/each}}', scan)
+      if (nextClose === -1) break
+      if (nextOpen !== -1 && nextOpen < nextClose) {
+        depth++
+        const tagEnd = html.indexOf('}}', nextOpen)
+        scan = tagEnd === -1 ? html.length : tagEnd + 2
+      } else {
+        depth--
+        if (depth === 0) { bodyEnd = nextClose; break }
+        scan = nextClose + 9
+      }
+    }
+    if (bodyEnd === -1) { out += m[0]; cursor = bodyStart; continue }
+    const inner = html.substring(bodyStart, bodyEnd)
+    const closeEnd = bodyEnd + 9
+    const items = resolveArray(key, data, stack)
+    out += items.map((item, idx) => {
+      const newStack = [...stack, item]
+      let chunk = processLoops(inner, data, newStack)
+      chunk = evalConditionalBlocks(chunk, data, newStack)
+      chunk = chunk.replace(/\{\{\{this\.(\w+)\}\}\}/g, (_m, field: string) => String(item[field] ?? ''))
+      chunk = chunk.replace(/\{\{this\.(\w+)\}\}/g, (_m, field: string) => htmlEscape(item[field] ?? ''))
+      chunk = chunk.replace(/\{\{@index\}\}/g, String(idx + 1))
+      chunk = chunk.replace(/\{\{\.\.\/(\w+)\}\}/g, (_m, field: string) => {
+        const parent = stack[stack.length - 1]
+        return htmlEscape(parent?.[field] ?? '')
+      })
+      return chunk
+    }).join('')
+    cursor = closeEnd
+    OPEN_EACH_RE.lastIndex = cursor
+  }
+  return out
+}
+
+function render(html: string, data: Data): string {
+  html = processLoops(html, data, [])
+  html = evalConditionalBlocks(html, data, [])
+  // {{{key}}} triple-brace raw substitution (for stored HTML, e.g. richtext)
+  html = html.replace(/\{\{\{\s*([\w]+)\s*\}\}\}/g, (_m, k: string) => {
+    const v = data[k]
+    return v !== undefined && v !== null ? String(v) : ''
+  })
+  // Simple {{key}} (HTML-unsafe but historical; matches Vercel engine for parity)
+  html = html.replace(/\{\{([^#/{}][^{}]*)\}\}/g, (_, k) => data[k.trim()] ?? '')
+  // Safety net: drop leftover control tokens so they never leak into output
+  html = html
+    .replace(/\{\{\s*\/\s*(?:each|if|unless)\s*\}\}/g, '')
+    .replace(/\{\{\s*#\s*(?:each|if|unless)[^}]*\}\}/g, '')
+    .replace(/\{\{\s*this\.[^}]*\}\}/g, '')
   return html
 }
 
@@ -134,25 +275,119 @@ async function handleKvAdmin(request: Request, username: string, domain: string,
   return new Response('Bad Request', { status: 400 })
 }
 
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+
+async function hashIP(ip: string): Promise<string> {
+  const encoded = new TextEncoder().encode(ip)
+  const hashBuffer = await crypto.subtle.digest('SHA-256', encoded)
+  return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('')
+}
+
+// ─── Email Notification (fire-and-forget) ─────────────────────────────────────
+
+async function sendSubmissionEmail(
+  env: Env,
+  meta: SiteMeta,
+  formName: string,
+  formData: Record<string, string>,
+  formRecipient: string | null,
+): Promise<void> {
+  if (!env.RESEND_API_KEY) return
+
+  try {
+    // Load user email + form schema in parallel.
+    // User email is the FALLBACK if the form's _recipient field is empty/invalid.
+    const [siteRes, schemaRes] = await Promise.all([
+      fetch(
+        `${env.SUPABASE_URL}/rest/v1/user_sites?id=eq.${meta.siteId}&select=user_id,users!inner(email)&limit=1`,
+        { headers: { apikey: env.SUPABASE_SERVICE_KEY, Authorization: `Bearer ${env.SUPABASE_SERVICE_KEY}` } }
+      ),
+      fetch(
+        `${env.SUPABASE_URL}/rest/v1/form_schemas?template_id=eq.${meta.templateId}&form_name=eq.${formName}&select=title,fields,email_notification_enabled&limit=1`,
+        { headers: { apikey: env.SUPABASE_SERVICE_KEY, Authorization: `Bearer ${env.SUPABASE_SERVICE_KEY}` } }
+      ),
+    ])
+
+    if (!siteRes.ok) return
+    const sites = await siteRes.json() as Array<{ user_id: string; users: { email: string } }>
+    const accountEmail = sites[0]?.users?.email
+
+    // Prefer the form's _recipient (per-template config like {{email_benachrichtigung}})
+    // when it's a valid email; otherwise fall back to the account email.
+    const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    const recipient = (formRecipient && EMAIL_RE.test(formRecipient.trim()))
+      ? formRecipient.trim()
+      : accountEmail
+    if (!recipient) return
+
+    const schemas = schemaRes.ok ? await schemaRes.json() as Array<{ title: string; fields: Array<{key:string;label:string}>; email_notification_enabled: boolean }> : []
+    const schema = schemas[0]
+
+    if (schema && !schema.email_notification_enabled) return
+
+    const formTitle = schema?.title ?? formName
+    const fieldMap = Object.fromEntries((schema?.fields ?? []).map(f => [f.key, f.label]))
+    const appUrl = env.APP_URL ?? 'https://app.finestsites.com'
+
+    const rows = Object.entries(formData)
+      .map(([k, v]) => `<tr><td style="padding:8px 12px;border-bottom:1px solid #f0f0f0;color:#6b7280;font-size:13px;white-space:nowrap">${fieldMap[k] ?? k}</td><td style="padding:8px 12px;border-bottom:1px solid #f0f0f0;color:#111;font-size:13px">${v || '—'}</td></tr>`)
+      .join('')
+
+    const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f5f7;margin:0;padding:32px 16px">
+<div style="max-width:520px;margin:0 auto;background:#fff;border-radius:20px;overflow:hidden;box-shadow:0 2px 20px rgba(0,0,0,0.07)">
+  <div style="padding:28px 32px 20px;border-bottom:1px solid #f0f0f0">
+    <p style="margin:0 0 4px;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#9ca3af">FinestSites · Neue Anfrage</p>
+    <h1 style="margin:0;font-size:20px;font-weight:700;color:#111;letter-spacing:-0.02em">${formTitle}</h1>
+  </div>
+  <table style="width:100%;border-collapse:collapse;margin:0">${rows}</table>
+  <div style="padding:20px 32px 28px">
+    <a href="${appUrl}/submissions" style="display:inline-block;padding:10px 20px;background:#1a1a1a;color:#fff;border-radius:10px;text-decoration:none;font-size:13px;font-weight:600">Alle Anfragen ansehen →</a>
+  </div>
+  <div style="padding:16px 32px;border-top:1px solid #f0f0f0;background:#fafafa">
+    <p style="margin:0;font-size:11px;color:#9ca3af">Gesendet von <a href="https://finestsites.com" style="color:#6b7280;text-decoration:none">FinestSites</a></p>
+  </div>
+</div></body></html>`
+
+    await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        from: 'FinestSites <anfragen@finestsites.com>',
+        to: [recipient],
+        subject: `Neue Anfrage: ${formTitle}`,
+        html,
+      }),
+    })
+  } catch {
+    // Fire-and-forget — never block or crash the response
+  }
+}
+
 // ─── Form Submission Handler ──────────────────────────────────────────────────
 
-async function handleFormSubmission(request: Request, pathname: string, meta: SiteMeta, env: Env): Promise<Response> {
+async function handleFormSubmission(request: Request, pathname: string, meta: SiteMeta, env: Env, ctx: ExecutionContext): Promise<Response> {
   const formName = pathname.split('/').filter(Boolean).pop() ?? 'default'
 
   let formData: Record<string, string> = {}
   let redirectUrl: string | null = null
+  let honeypot = false
+  let formRecipient: string | null = null
 
   const contentType = request.headers.get('content-type') ?? ''
   if (contentType.includes('application/x-www-form-urlencoded') || contentType.includes('multipart/form-data')) {
     const fd = await request.formData()
     for (const [key, value] of fd.entries()) {
       if (key === '_redirect') { redirectUrl = value.toString(); continue }
-      if (key.startsWith('_')) continue // skip system fields
+      if (key === '_honeypot') { if (value.toString().trim() !== '') honeypot = true; continue }
+      if (key === '_recipient') { formRecipient = value.toString(); continue }
+      if (key.startsWith('_')) continue // skip other system fields
       formData[key] = value.toString()
     }
   } else if (contentType.includes('application/json')) {
     const body = await request.json() as Record<string, string>
     redirectUrl = body._redirect ?? null
+    honeypot = (body._honeypot ?? '').trim() !== ''
+    formRecipient = body._recipient ?? null
     for (const [k, v] of Object.entries(body)) {
       if (!k.startsWith('_')) formData[k] = v
     }
@@ -164,8 +399,8 @@ async function handleFormSubmission(request: Request, pathname: string, meta: Si
     })
   }
 
-  // Rate limit check via KV (5 submissions per IP per 10min)
-  const ip = request.headers.get('cf-connecting-ip') ?? ''
+  // Rate limit via KV (5 submissions per IP per 10min)
+  const ip = request.headers.get('cf-connecting-ip') ?? request.headers.get('x-forwarded-for') ?? ''
   const rateLimitKey = `rate:${meta.siteId}:${ip}`
   const rateCount = parseInt(await env.KV_CACHE.get(rateLimitKey) ?? '0')
   if (rateCount >= 5) {
@@ -175,6 +410,8 @@ async function handleFormSubmission(request: Request, pathname: string, meta: Si
   }
   await env.KV_CACHE.put(rateLimitKey, String(rateCount + 1), { expirationTtl: 600 })
 
+  const ipHash = ip ? await hashIP(ip) : null
+
   // Save to Supabase
   const saveRes = await fetch(`${env.SUPABASE_URL}/rest/v1/form_submissions`, {
     method: 'POST',
@@ -182,14 +419,14 @@ async function handleFormSubmission(request: Request, pathname: string, meta: Si
       apikey: env.SUPABASE_SERVICE_KEY,
       Authorization: `Bearer ${env.SUPABASE_SERVICE_KEY}`,
       'Content-Type': 'application/json',
-      Prefer: 'return=minimal',
+      Prefer: 'return=representation',
     },
     body: JSON.stringify({
       user_site_id: meta.siteId,
       form_name: formName,
       data: formData,
-      ip_address: ip,
-      user_agent: request.headers.get('user-agent') ?? null,
+      submitter_ip_hash: ipHash,
+      is_spam: honeypot,
     }),
   })
 
@@ -199,7 +436,12 @@ async function handleFormSubmission(request: Request, pathname: string, meta: Si
     })
   }
 
-  // Check if JSON was requested
+  // Fire-and-forget email notification (only for non-spam)
+  if (!honeypot) {
+    ctx.waitUntil(sendSubmissionEmail(env, meta, formName, formData, formRecipient))
+  }
+
+  // Response
   const acceptsJson = request.headers.get('accept')?.includes('application/json')
   if (acceptsJson) {
     return new Response(JSON.stringify({ success: true }), {
@@ -207,9 +449,7 @@ async function handleFormSubmission(request: Request, pathname: string, meta: Si
     })
   }
 
-  if (redirectUrl) {
-    return Response.redirect(redirectUrl, 302)
-  }
+  if (redirectUrl) return Response.redirect(redirectUrl, 302)
 
   return new Response(successPage(), {
     headers: { 'Content-Type': 'text/html; charset=utf-8' },
@@ -219,7 +459,7 @@ async function handleFormSubmission(request: Request, pathname: string, meta: Si
 // ─── Main Handler ─────────────────────────────────────────────────────────────
 
 export default {
-  async fetch(request: Request, env: Env): Promise<Response> {
+  async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     // CORS preflight
     if (request.method === 'OPTIONS') {
       return new Response(null, {
@@ -232,23 +472,48 @@ export default {
     }
 
     const url = new URL(request.url)
-    const hostname = url.hostname
-    const parts = hostname.split('.')
-
-    // Minimum: username.domain.tld (3 parts)
-    if (parts.length < 3) {
-      return new Response('Not found', { status: 404 })
-    }
-
-    const username = parts[0]
-    const domain = parts.slice(1).join('.')
+    // Resolve the effective hostname:
+    // 1. When called via workers.dev (proxied from Vercel middleware), the actual custom domain
+    //    is passed in X-Forwarded-Host because workers.dev rejects a mismatched Host header.
+    // 2. When invoked directly via the *.womenplus.io/* route, the Host header is authoritative.
+    const isWorkersDevRequest = url.hostname.endsWith('.workers.dev')
+    const hostname = (
+      (isWorkersDevRequest && request.headers.get('x-forwarded-host'))
+        ? request.headers.get('x-forwarded-host')!
+        : (request.headers.get('host') ?? url.hostname)
+    ).split(':')[0].toLowerCase()
     const pathname = url.pathname
 
-    // Health check
+    // Health check (works on any hostname)
     if (pathname === '/.finestsites/health') {
       return new Response(JSON.stringify({ ok: true, ts: Date.now() }), {
         headers: { 'Content-Type': 'application/json' },
       })
+    }
+
+    // ── Resolve username + domain ─────────────────────────────────────────────
+    // First check custom domain KV (e.g. www.meine-domain.de → { username, templateDomain })
+    // This must happen BEFORE subdomain parsing to avoid false matches.
+    let username: string
+    let domain: string
+
+    const customEntry = await env.KV_CACHE.get(`custom:${hostname}`)
+    if (customEntry) {
+      try {
+        const parsed = JSON.parse(customEntry) as { username: string; templateDomain: string }
+        username = parsed.username
+        domain = parsed.templateDomain
+      } catch {
+        return new Response('Not found', { status: 404 })
+      }
+    } else {
+      // Fall back to subdomain pattern: username.template-domain.tld
+      const parts = hostname.split('.')
+      if (parts.length < 3) {
+        return new Response('Not found', { status: 404 })
+      }
+      username = parts[0]
+      domain = parts.slice(1).join('.')
     }
 
     // KV admin — called by Vercel on publish/unpublish (no Cloudflare API token needed)
@@ -283,7 +548,7 @@ export default {
 
       // ── Form submission ──────────────────────────────────────────────────
       if (request.method === 'POST' && pathname.startsWith('/.finestsites/forms/')) {
-        return handleFormSubmission(request, pathname, meta, env)
+        return handleFormSubmission(request, pathname, meta, env, ctx)
       }
 
       // ── Static assets ────────────────────────────────────────────────────
