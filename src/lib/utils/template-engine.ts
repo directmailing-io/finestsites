@@ -31,6 +31,15 @@ export function renderTemplate(html: string, data: SiteData): string {
   html = processLoops(html, data, [])
   html = evalConditionalBlocks(html, data, [])
   html = replaceSimplePlaceholders(html, data)
+  // Safety net: drop any leftover control tokens (orphaned closers, unmatched
+  // openers) that would otherwise leak into the final HTML as literal text.
+  html = html
+    .replace(/\{\{\s*\/\s*(?:each|if|unless)\s*\}\}/g, '')
+    .replace(/\{\{\s*#\s*(?:each|if|unless)[^}]*\}\}/g, '')
+    // Also drop any orphaned simple-substitution placeholder that wasn't
+    // matched by a key in data (renderTemplate already handles knowns,
+    // this catches typos / removed schema fields).
+    .replace(/\{\{\s*this\.[^}]*\}\}/g, '')
   return html
 }
 
