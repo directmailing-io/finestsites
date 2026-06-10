@@ -3,8 +3,17 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5" />
-<title>{{vorname}} {{nachname}} — Events</title>
-<meta name="description" content="{{headline}}" />
+<title>{{vorname}} {{nachname}} – Live-Events & Termine</title>
+<meta name="description" content="Sei live dabei: alle Events von {{vorname}} {{nachname}} auf einen Blick. {{headline}}" />
+<meta name="theme-color" content="{{akzentfarbe}}" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="{{vorname}} {{nachname}} – Live-Events & Termine" />
+<meta property="og:description" content="Sei live dabei: alle Events von {{vorname}} {{nachname}} auf einen Blick." />
+<meta property="og:image" content="{{profilbild}}" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="{{vorname}} {{nachname}} – Events" />
+<meta name="twitter:description" content="Sei live dabei: alle Events auf einen Blick." />
+<meta name="twitter:image" content="{{profilbild}}" />
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -85,7 +94,7 @@
   }
 
   * { box-sizing: border-box; }
-  html { scroll-behavior: smooth; background: var(--bg); -webkit-text-size-adjust: 100%; }
+  html { scroll-behavior: smooth; background: var(--bg); -webkit-text-size-adjust: 100%; min-height: 100vh; }
   body {
     margin: 0;
     font-family: var(--font);
@@ -97,7 +106,14 @@
     line-height: 1.5;
     letter-spacing: -0.005em;
     overflow-x: hidden;
+    /* Sticky footer: make the body a flex column so the footer always sits
+       at the bottom of the viewport even when content is short. */
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
   }
+  body > main { flex: 1 0 auto; }
+  body > .footer { flex-shrink: 0; }
   body.loading > main { opacity: 0; }
   img { max-width: 100%; display: block; }
   a { color: inherit; text-decoration: none; }
@@ -127,8 +143,12 @@
   .ov-hero::before {
     content: '';
     position: absolute; inset: 0;
-    background: radial-gradient(ellipse at top, color-mix(in srgb, var(--accent) 10%, transparent), transparent 55%);
+    background: radial-gradient(ellipse at top, color-mix(in srgb, var(--accent) 28%, transparent), transparent 60%);
     pointer-events: none;
+  }
+  body[data-active-modus="dunkel"] .ov-hero::before {
+    background: radial-gradient(ellipse at 50% -10%, color-mix(in srgb, var(--accent) 45%, transparent), transparent 65%),
+                radial-gradient(circle at 20% 80%, color-mix(in srgb, var(--accent) 18%, transparent), transparent 50%);
   }
   .ov-hero-inner { position: relative; }
   .ov-avatar {
@@ -1237,6 +1257,7 @@
            data-datum="{{this.datum}}"
            data-datum-ende="{{this.datum_ende}}"
            data-uhrzeit="{{this.uhrzeit}}"
+           data-uhrzeit-ende-aktiv="{{this.uhrzeit_ende_aktiv}}"
            data-uhrzeit-ende="{{this.uhrzeit_ende}}"
            data-wiederkehrung="{{this.wiederkehrung}}"
            data-recur-bis="{{this.wiederkehrung_bis}}"
@@ -1260,6 +1281,7 @@
         data-d2="{{this.datum_ende}}"
         data-uhr="{{this.uhrzeit}}"
         data-uhr2="{{this.uhrzeit_ende}}"
+        data-uhr2-aktiv="{{this.uhrzeit_ende_aktiv}}"
         data-ort="{{this.ort}}"
         data-link="{{this.link}}"
         data-beschreibung="{{this.beschreibung}}"
@@ -1304,7 +1326,7 @@
           </div>
           <div class="ev-info">
             <div class="label">Uhrzeit</div>
-            <div class="value">{{this.uhrzeit}}{{#if this.uhrzeit_ende}} – {{this.uhrzeit_ende}}{{/if}}</div>
+            <div class="value">{{this.uhrzeit}}{{#if this.uhrzeit_ende_aktiv=ja}}{{#if this.uhrzeit_ende}} – {{this.uhrzeit_ende}}{{/if}}{{/if}}</div>
           </div>
           {{#if this.wiederkehrung}}
           <div class="ev-info" data-recur-wrap>
@@ -1718,7 +1740,7 @@
     document.querySelectorAll('[data-termine-list]').forEach(function(ul){
       var raw = ul.getAttribute('data-termine') || '';
       var uhr = ul.getAttribute('data-uhr') || '';
-      var uhr2 = ul.getAttribute('data-uhr2') || '';
+      var uhr2 = '';
       var arr = [];
       try { var parsed = JSON.parse(raw || '[]'); if (Array.isArray(parsed)) arr = parsed; } catch(_) {}
       if (!arr.length) {
@@ -1854,7 +1876,7 @@
           datum: page.getAttribute('data-d'),
           datum_ende: page.getAttribute('data-d2'),
           uhrzeit: page.getAttribute('data-uhr'),
-          uhrzeit_ende: page.getAttribute('data-uhr2'),
+          uhrzeit_ende: page.getAttribute('data-uhr2-aktiv') === 'ja' ? page.getAttribute('data-uhr2') : '',
           ort: page.getAttribute('data-ort'),
           link: page.getAttribute('data-link'),
           beschreibung: page.getAttribute('data-beschreibung'),
@@ -2001,7 +2023,8 @@
               var ev = {
                 name: page.getAttribute('data-name'), kuerzel: page.getAttribute('data-kuerzel'),
                 datum: page.getAttribute('data-d'), datum_ende: page.getAttribute('data-d2'),
-                uhrzeit: page.getAttribute('data-uhr'), uhrzeit_ende: page.getAttribute('data-uhr2'),
+                uhrzeit: page.getAttribute('data-uhr'),
+                uhrzeit_ende: page.getAttribute('data-uhr2-aktiv') === 'ja' ? page.getAttribute('data-uhr2') : '',
                 ort: page.getAttribute('data-ort'), link: page.getAttribute('data-link'),
                 beschreibung: page.getAttribute('data-beschreibung'),
               };
@@ -2035,7 +2058,7 @@
           datum: el.getAttribute('data-datum') || '',
           datum_ende: el.getAttribute('data-datum-ende') || '',
           uhrzeit: el.getAttribute('data-uhrzeit') || '',
-          uhrzeit_ende: el.getAttribute('data-uhrzeit-ende') || '',
+          uhrzeit_ende: el.getAttribute('data-uhrzeit-ende-aktiv') === 'ja' ? (el.getAttribute('data-uhrzeit-ende') || '') : '',
           wiederkehrung: el.getAttribute('data-wiederkehrung') || '',
           wiederkehrung_bis: el.getAttribute('data-recur-bis') || '',
           wiederkehrung_wochentag: el.getAttribute('data-recur-wochentag') || '',
