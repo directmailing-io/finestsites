@@ -926,7 +926,13 @@
     border-radius: 22px;
     padding: 36px 40px;
     border: 1px solid var(--border);
+    margin: 0 auto; /* centered horizontally */
   }
+  .ev-section.is-anmeldung .reveal { text-align: center; }
+  .ev-section.is-anmeldung .ev-section-eyebrow,
+  .ev-section.is-anmeldung .ev-section-title { text-align: center; }
+  .ev-section.is-anmeldung .ev-section-title { margin-left: auto; margin-right: auto; }
+  .ev-section.is-anmeldung .form-card { text-align: left; }
   .form-card .form-eyebrow {
     color: var(--accent);
     font-weight: 600;
@@ -977,6 +983,33 @@
     margin-top: 14px;
     line-height: 1.45;
   }
+  .form-check-row {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    cursor: pointer;
+    margin-top: 18px;
+    padding: 14px 16px;
+    border-radius: 12px;
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    transition: border-color 0.2s ease, background 0.2s ease;
+  }
+  .form-check-row:hover { border-color: color-mix(in srgb, var(--accent) 35%, var(--border)); }
+  .form-check-row.is-checked { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 6%, var(--bg)); }
+  .form-check-row input[type="checkbox"] {
+    flex-shrink: 0;
+    margin-top: 2px;
+    width: 18px; height: 18px;
+    cursor: pointer;
+    accent-color: var(--accent);
+  }
+  .form-check-row .check-text {
+    font-size: 0.8125rem;
+    color: var(--text-soft);
+    line-height: 1.5;
+  }
+  .form-check-row .check-text strong { color: var(--text); font-weight: 600; }
   .form-actions { margin-top: 18px; }
   .form-success {
     padding: 44px 36px;
@@ -1140,6 +1173,7 @@
   /* ─── Responsive ───────────────────────────────────────────────── */
   @media (max-width: 880px) {
     .container, .container-narrow { padding: 0 22px; }
+    .ev-section.is-anmeldung .form-card { padding: 28px 22px; }
     .ov-header { padding: 36px 0 18px; gap: 14px; }
     .ov-avatar { width: 52px; height: 52px; }
     .featured { margin: 16px 0 40px; height: clamp(380px, 70vh, 520px); border-radius: 22px; }
@@ -1404,7 +1438,7 @@
       {{/if}}
 
       {{#if this.teilnahme_modus=anmeldung}}
-      <section class="ev-section">
+      <section class="ev-section is-anmeldung">
         <div class="container-narrow">
           <div class="reveal" style="margin-bottom: 28px;">
             <div class="ev-section-eyebrow">Anmeldung</div>
@@ -1430,7 +1464,12 @@
                   <input id="f-wa-{{this.kuerzel}}" type="tel" name="whatsapp" placeholder="+49 ..." autocomplete="tel">
                 </div>
               </div>
-              <div class="form-helper">Wir nutzen deine Daten nur, um dir den Zugang zum Event zu senden.</div>
+              <label class="form-check-row" data-dsgvo-row>
+                <input type="checkbox" name="dsgvo" required data-dsgvo-input>
+                <span class="check-text">
+                  Ich bin damit einverstanden, dass meine Daten <strong>gespeichert</strong> und ausschließlich für die <strong>Kontaktaufnahme zu diesem Event</strong> verwendet werden. Du kannst der Verarbeitung jederzeit widersprechen.
+                </span>
+              </label>
               <div class="form-actions">
                 <button type="submit" class="btn btn-accent">Jetzt anmelden →</button>
               </div>
@@ -1880,11 +1919,25 @@
       window.addEventListener('hashchange', function(){ setTimeout(update, 50) });
     })();
 
+    // ─── DSGVO checkbox visual state ────────────────────────────────
+    document.querySelectorAll('[data-dsgvo-input]').forEach(function(cb){
+      var row = cb.closest('[data-dsgvo-row]');
+      function sync(){ if (row) row.classList.toggle('is-checked', cb.checked) }
+      cb.addEventListener('change', sync); sync();
+    });
+
     // ─── Anmeldungsformular ─────────────────────────────────────────
     document.querySelectorAll('[data-anmeldung-form]').forEach(function(form){
       form.addEventListener('submit', function(e){
         e.preventDefault();
         if (form.querySelector('input[name="_honeypot"]').value) return;
+        // Native browser will block submit without DSGVO check anyway,
+        // but we double-check here in case the field was removed.
+        var dsgvo = form.querySelector('[data-dsgvo-input]');
+        if (dsgvo && !dsgvo.checked) {
+          dsgvo.reportValidity && dsgvo.reportValidity();
+          return;
+        }
         var card = form.closest('[data-form-card]');
         var slug = form.getAttribute('data-event-slug') || '';
         var eventName = form.getAttribute('data-event-name') || '';
@@ -1902,6 +1955,8 @@
         body.set('name', name);
         body.set('email', email);
         body.set('whatsapp', whatsapp);
+        body.set('dsgvo_consent', 'ja');
+        body.set('dsgvo_timestamp', new Date().toISOString());
         // Add a couple of friendly aliases so the entry shows up nicely in
         // the FinestSites admin "Anfragen" view regardless of column mapping.
         body.set('nachricht', 'Anmeldung zum Event "' + eventName + '"' + (whatsapp ? ' · WhatsApp: ' + whatsapp : ''));
