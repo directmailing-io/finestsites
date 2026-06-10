@@ -1739,17 +1739,8 @@
               <div class="eyebrow">Was dich erwartet</div>
               <h2>Die Highlights des Events</h2>
             </div>
-            <div class="highlight-stack">
-              {{#each this.highlights}}
-              <div class="hl-card">
-                <div class="hl-num">{{@index}}</div>
-                <div>
-                  <h3 class="hl-title">{{this.titel}}</h3>
-                  {{#if this.beschreibung}}<p class="hl-desc">{{this.beschreibung}}</p>{{/if}}
-                </div>
-              </div>
-              {{/each}}
-            </div>
+            <div class="highlight-stack" data-highlights-target></div>
+            <script type="application/json" data-highlights-source>{{this.highlights}}</script>
           </div>
         </div>
       </section>
@@ -1762,20 +1753,8 @@
             <div class="ev-section-eyebrow">Mit dabei</div>
             <h2 class="ev-section-title">Special Guests</h2>
           </div>
-          <div class="guests-row reveal">
-            {{#each this.special_guests}}
-            <div class="guest-card">
-              <div class="guest-img">
-                {{#if this.bild}}<img src="{{this.bild}}" alt="{{this.name}}" loading="lazy" />{{/if}}
-              </div>
-              <div class="guest-info">
-                <h3 class="guest-name">{{this.name}}</h3>
-                {{#if this.rolle}}<div class="guest-role">{{this.rolle}}</div>{{/if}}
-                {{#if this.beschreibung}}<p class="guest-bio">{{this.beschreibung}}</p>{{/if}}
-              </div>
-            </div>
-            {{/each}}
-          </div>
+          <div class="guests-row reveal" data-guests-target></div>
+          <script type="application/json" data-guests-source>{{this.special_guests}}</script>
         </div>
       </section>
       {{/if}}
@@ -2083,6 +2062,51 @@
     });
 
     // ─── Termine list (individuelle Wiederkehrung) ──────────────────
+    // ─── Highlights + Special Guests (JS-rendered to avoid nested-each bug in the worker engine) ──
+    function escapeHtml(s){
+      return String(s == null ? '' : s)
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+        .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+    }
+    document.querySelectorAll('[data-highlights-source]').forEach(function(src){
+      var target = src.parentElement && src.parentElement.querySelector('[data-highlights-target]');
+      if (!target) return;
+      var arr = []; try { arr = JSON.parse((src.textContent || '').trim() || '[]'); } catch(_){}
+      if (!Array.isArray(arr) || arr.length === 0) {
+        var section = src.closest('section'); if (section) section.style.display = 'none';
+        return;
+      }
+      target.innerHTML = arr.map(function(h, i){
+        return '<div class="hl-card">' +
+                 '<div class="hl-num">' + (i+1) + '</div>' +
+                 '<div>' +
+                   '<h3 class="hl-title">' + escapeHtml(h.titel) + '</h3>' +
+                   (h.beschreibung ? '<p class="hl-desc">' + escapeHtml(h.beschreibung) + '</p>' : '') +
+                 '</div>' +
+               '</div>';
+      }).join('');
+    });
+    document.querySelectorAll('[data-guests-source]').forEach(function(src){
+      var target = src.parentElement && src.parentElement.querySelector('[data-guests-target]');
+      if (!target) return;
+      var arr = []; try { arr = JSON.parse((src.textContent || '').trim() || '[]'); } catch(_){}
+      if (!Array.isArray(arr) || arr.length === 0) {
+        var section = src.closest('section'); if (section) section.style.display = 'none';
+        return;
+      }
+      target.innerHTML = arr.map(function(g){
+        var img = g.bild ? '<img src="' + escapeHtml(g.bild) + '" alt="' + escapeHtml(g.name) + '" loading="lazy" />' : '';
+        return '<div class="guest-card">' +
+                 '<div class="guest-img">' + img + '</div>' +
+                 '<div class="guest-info">' +
+                   '<h3 class="guest-name">' + escapeHtml(g.name) + '</h3>' +
+                   (g.rolle ? '<div class="guest-role">' + escapeHtml(g.rolle) + '</div>' : '') +
+                   (g.beschreibung ? '<p class="guest-bio">' + escapeHtml(g.beschreibung) + '</p>' : '') +
+                 '</div>' +
+               '</div>';
+      }).join('');
+    });
+
     document.querySelectorAll('[data-termine-list]').forEach(function(ul){
       var raw = ul.getAttribute('data-termine') || '';
       var uhr = ul.getAttribute('data-uhr') || '';

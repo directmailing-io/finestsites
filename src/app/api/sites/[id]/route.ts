@@ -67,6 +67,50 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     if (error) return NextResponse.json({ error: error.message }, { status: 500 })
   }
 
+  // If the site is already published, refresh the Worker's pre-rendered KV
+  // entry so visitors see edits without waiting for the next publish click.
+  // Non-blocking — autosave succeeds even if the KV write fails.
+  if (site.status === 'published') {
+    ;(async () => {
+      try {
+        const { data: full } = await admin
+          .from('user_sites')
+          .select('templates(domain, r2_bundle_path), users!user_id(username)')
+          .eq('id', id)
+          .single()
+        const username = (full?.users as unknown as { username?: string })?.username
+        const tpl = (full?.templates as unknown as { domain?: string; r2_bundle_path?: string }) ?? {}
+        if (username && tpl.domain && tpl.r2_bundle_path) {
+          const { data: rows } = await admin
+            .from('site_data')
+            .select('field_key, field_value')
+            .eq('user_site_id', id)
+          const siteData: Record<string, string> = {}
+          for (const r of rows ?? []) siteData[r.field_key] = r.field_value ?? ''
+          const { S3Client, GetObjectCommand } = await import('@aws-sdk/client-s3')
+          const { renderTemplate } = await import('@/lib/utils/template-engine')
+          const { writeRenderedHtmlKV } = await import('@/lib/cloudflare/kv-api')
+          const client = new S3Client({
+            region: 'auto', endpoint: process.env.CLOUDFLARE_R2_ENDPOINT!,
+            credentials: {
+              accessKeyId: process.env.CLOUDFLARE_R2_ACCESS_KEY_ID!,
+              secretAccessKey: process.env.CLOUDFLARE_R2_SECRET_ACCESS_KEY!,
+            },
+          })
+          const resp = await client.send(new GetObjectCommand({
+            Bucket: process.env.CLOUDFLARE_R2_BUCKET_NAME!,
+            Key: tpl.r2_bundle_path,
+          }))
+          const tplHtml = await resp.Body!.transformToString('utf-8')
+          const rendered = renderTemplate(tplHtml, siteData)
+          await writeRenderedHtmlKV(username, tpl.domain, rendered)
+        }
+      } catch (err) {
+        console.error('[PATCH] pre-render KV refresh failed:', err)
+      }
+    })()
+  }
+
   return NextResponse.json({ success: true })
 }
 

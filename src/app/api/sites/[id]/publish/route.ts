@@ -1,7 +1,51 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3'
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { purgeSiteCache, markSiteOffline } from '@/lib/cloudflare/kv'
+import { writeRenderedHtmlKV } from '@/lib/cloudflare/kv-api'
+import { renderTemplate } from '@/lib/utils/template-engine'
+
+const r2Client = new S3Client({
+  region: 'auto',
+  endpoint: process.env.CLOUDFLARE_R2_ENDPOINT!,
+  credentials: {
+    accessKeyId: process.env.CLOUDFLARE_R2_ACCESS_KEY_ID!,
+    secretAccessKey: process.env.CLOUDFLARE_R2_SECRET_ACCESS_KEY!,
+  },
+})
+
+async function fetchTemplateHtml(path: string): Promise<string> {
+  const resp = await r2Client.send(new GetObjectCommand({
+    Bucket: process.env.CLOUDFLARE_R2_BUCKET_NAME!,
+    Key: path,
+  }))
+  return await resp.Body!.transformToString('utf-8')
+}
+
+/**
+ * Pre-render the template with the user's data and write directly into the
+ * Worker's KV cache. The Worker reads `rendered:{username}:{domain}` first
+ * and serves the cached HTML without invoking its own rendering pass — this
+ * means the live page always uses the canonical Vercel template engine,
+ * even if the Worker code itself is older.
+ */
+async function preRenderAndPushToKV(
+  username: string,
+  templateDomain: string,
+  r2Path: string,
+  siteData: Record<string, string>,
+): Promise<void> {
+  try {
+    const templateHtml = await fetchTemplateHtml(r2Path)
+    const rendered = renderTemplate(templateHtml, siteData)
+    await writeRenderedHtmlKV(username, templateDomain, rendered)
+  } catch (err) {
+    console.error('[publish] pre-render failed:', err)
+    // Non-blocking: even if pre-render fails the publish still succeeds and
+    // the Worker will render on-demand (its own engine, possibly older).
+  }
+}
 
 export async function POST(_: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const supabase = await createClient()
@@ -69,6 +113,16 @@ export async function POST(_: NextRequest, { params }: { params: Promise<{ id: s
 
   // Purge KV cache so the Worker picks up the new status immediately
   await purgeSiteCache(username, site.templates.domain)
+
+  // Pre-render the page with the canonical Vercel engine and write it
+  // directly to Worker KV — bypasses the Worker's own rendering pass.
+  const { data: siteDataRows } = await admin
+    .from('site_data')
+    .select('field_key, field_value')
+    .eq('user_site_id', id)
+  const siteData: Record<string, string> = {}
+  for (const row of siteDataRows ?? []) siteData[row.field_key] = row.field_value ?? ''
+  await preRenderAndPushToKV(username, site.templates.domain, site.templates.r2_bundle_path, siteData)
 
   const url = `https://${username}.${site.templates.domain}`
   return NextResponse.json({ success: true, url })
