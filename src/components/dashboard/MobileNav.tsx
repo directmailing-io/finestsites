@@ -35,8 +35,7 @@ export function MobileNav() {
   if (isEditorPage) return null
 
   function isActive(href: string) {
-    if (href === '/dashboard') return pathname === '/dashboard'
-    if (href === '/sites') return pathname === '/sites' || (pathname.startsWith('/sites/') && !pathname.startsWith('/sites/library'))
+    if (href === '/sites') return pathname === '/sites' || pathname.startsWith('/sites/')
     return pathname.startsWith(href)
   }
 
@@ -46,7 +45,6 @@ export function MobileNav() {
     router.push('/login')
   }
 
-  const activeDashboard = isActive('/dashboard')
   const activeSites = isActive('/sites')
   const activeSubmissions = isActive('/submissions')
 
@@ -78,7 +76,6 @@ export function MobileNav() {
 
         <div className="px-3 pb-3">
           {[
-            { href: '/sites/library', label: 'Vorlagen', icon: <DrawerLibraryIcon /> },
             { href: '/affiliate', label: 'Partnerbereich', icon: <DrawerPartnerIcon /> },
             { href: '/settings', label: 'Einstellungen', icon: <DrawerSettingsIcon /> },
           ].map(item => (
@@ -119,17 +116,6 @@ export function MobileNav() {
           paddingBottom: 'env(safe-area-inset-bottom, 0px)',
         }}
       >
-        <Link
-          href="/dashboard"
-          onClick={() => setShowMore(false)}
-          className="flex-1 flex flex-col items-center justify-center gap-0.5 active:opacity-60 transition-opacity"
-        >
-          <TabHomeIcon active={activeDashboard} />
-          <span className="text-[10px] font-medium" style={{ color: activeDashboard ? '#1a1a1a' : '#9CA3AF' }}>
-            Start
-          </span>
-        </Link>
-
         <Link
           href="/sites"
           onClick={() => setShowMore(false)}
@@ -178,15 +164,6 @@ export function MobileNav() {
 
 // ── Tab Icons (filled when active, outline when not) ──────────────────────────
 
-function TabHomeIcon({ active }: { active: boolean }) {
-  return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={active ? '#1a1a1a' : '#9CA3AF'} strokeWidth={active ? 2.5 : 1.75}>
-      <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" fill={active ? '#1a1a1a' : 'none'} stroke={active ? '#1a1a1a' : '#9CA3AF'}/>
-      <polyline points="9 22 9 12 15 12 15 22" stroke={active ? 'white' : '#9CA3AF'} strokeWidth="1.75"/>
-    </svg>
-  )
-}
-
 function TabGlobeIcon({ active }: { active: boolean }) {
   return (
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={active ? '#1a1a1a' : '#9CA3AF'} strokeWidth={active ? 2 : 1.75}>
@@ -217,14 +194,6 @@ function TabMoreIcon({ active }: { active: boolean }) {
 }
 
 // ── Drawer Icons ──────────────────────────────────────────────────────────────
-
-function DrawerLibraryIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75">
-      <path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/>
-    </svg>
-  )
-}
 
 function DrawerPartnerIcon() {
   return (

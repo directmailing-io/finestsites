@@ -37,6 +37,25 @@ const navItems = [
       </svg>
     ),
   },
+  {
+    href: '/admin/affiliate',
+    label: 'Affiliate',
+    icon: (active: boolean) => (
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+        <path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>
+      </svg>
+    ),
+  },
+  {
+    href: '/admin/newsletter',
+    label: 'Newsletter',
+    icon: (active: boolean) => (
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+        <polyline points="22,6 12,13 2,6"/>
+      </svg>
+    ),
+  },
 ]
 
 export function AdminSidebar() {
@@ -78,13 +97,13 @@ export function AdminSidebar() {
       </nav>
 
       <div className="pt-4" style={{ borderTop: '1px solid var(--border)' }}>
-        <Link href="/dashboard"
+        <Link href="/sites"
           className="flex items-center gap-3 px-3 py-2.5 text-sm rounded-[14px] transition-all"
           style={{ color: '#6B7280' }}>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
             <path d="M19 12H5M12 5l-7 7 7 7"/>
           </svg>
-          Zum Dashboard
+          Zur Webseite
         </Link>
       </div>
     </aside>

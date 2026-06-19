@@ -6,32 +6,17 @@ import { useState, useEffect } from 'react'
 import { Logo } from '@/components/shared/Logo'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
-
-const PLAN_LIMITS: Record<string, number> = { starter: 1, pro: 3, unlimited: Infinity }
+import { usePlanQuota } from '@/components/dashboard/PlanQuotaContext'
 
 export function DashboardSidebar() {
   const pathname = usePathname()
   const router = useRouter()
   const supabase = createClient()
+  const quota = usePlanQuota()
 
-  const [plan, setPlan] = useState<string | null>(null)
-  const [quota, setQuota] = useState<{ used: number; limit: number } | null>(null)
-  const [atLimit, setAtLimit] = useState(false)
   const [unreadCount, setUnreadCount] = useState(0)
 
   useEffect(() => {
-    fetch('/api/user/profile')
-      .then(r => r.json())
-      .then(data => {
-        const p = data.plan ?? 'starter'
-        const limit = PLAN_LIMITS[p] ?? 1
-        const used = data.paid_sites_count ?? 0
-        setPlan(p)
-        setQuota({ used, limit })
-        setAtLimit(limit !== Infinity && used >= limit)
-      })
-      .catch(() => {})
-
     fetch('/api/submissions/unread-count')
       .then(r => r.json())
       .then(data => setUnreadCount(data.count ?? 0))
@@ -52,8 +37,7 @@ export function DashboardSidebar() {
   }
 
   function isActive(href: string) {
-    if (href === '/dashboard') return pathname === '/dashboard'
-    if (href === '/sites') return pathname === '/sites' || (pathname.startsWith('/sites/') && !pathname.startsWith('/sites/library'))
+    if (href === '/sites') return pathname === '/sites' || pathname.startsWith('/sites/')
     return pathname.startsWith(href)
   }
 
@@ -77,9 +61,6 @@ export function DashboardSidebar() {
 
       {/* ── Primary nav ──────────────────────────────────── */}
       <nav className="flex flex-col px-3 gap-0.5">
-        <NavItem href="/dashboard" active={isActive('/dashboard')} icon={<HomeIcon />}>
-          Startseite
-        </NavItem>
         <NavItem href="/sites" active={isActive('/sites')} icon={<GlobeIcon />}>
           Meine Webseite
         </NavItem>
@@ -93,9 +74,6 @@ export function DashboardSidebar() {
 
       {/* ── Secondary nav ────────────────────────────────── */}
       <nav className="flex flex-col px-3 gap-0.5">
-        <NavItem href="/sites/library" active={isActive('/sites/library')} icon={<LibraryIcon />} secondary>
-          Vorlagen
-        </NavItem>
         <NavItem href="/affiliate" active={isActive('/affiliate')} icon={<PartnerIcon />} secondary>
           Partnerbereich
         </NavItem>
@@ -110,24 +88,24 @@ export function DashboardSidebar() {
       {/* ── Plan & Logout ─────────────────────────────────── */}
       <div className="px-3 pb-5 flex flex-col gap-1">
         {/* Plan hint */}
-        {plan && plan !== 'unlimited' && quota && (
+        {quota.plan && quota.plan !== 'unlimited' && !quota.loading && (
           <div className="relative group mb-1">
             <Link
               href="/billing"
               className="flex items-center justify-between px-3 py-2.5 rounded-xl transition-colors hover:bg-gray-100"
-              style={{ background: atLimit ? '#FEF2F2' : '#F3F4F6' }}>
-              <span className="text-xs font-medium" style={{ color: atLimit ? '#DC2626' : '#6B7280' }}>
-                {atLimit ? 'Limit erreicht' : PLAN_LABELS[plan]}
+              style={{ background: quota.atLimit ? '#FEF2F2' : '#F3F4F6' }}>
+              <span className="text-xs font-medium" style={{ color: quota.atLimit ? '#DC2626' : '#6B7280' }}>
+                {quota.atLimit ? 'Limit erreicht' : PLAN_LABELS[quota.plan]}
               </span>
               <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full"
-                style={{ background: atLimit ? '#FCA5A5' : '#E5E7EB', color: atLimit ? '#991B1B' : '#374151' }}>
-                {atLimit ? 'Upgrade →' : `${quota.used} / ${quota.limit}`}
+                style={{ background: quota.atLimit ? '#FCA5A5' : '#E5E7EB', color: quota.atLimit ? '#991B1B' : '#374151' }}>
+                {quota.atLimit ? 'Upgrade →' : `${quota.used} / ${quota.limit}`}
               </span>
             </Link>
             {/* Tooltip */}
             <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 rounded-xl text-xs text-white whitespace-nowrap pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity z-50"
               style={{ background: '#1a1a1a' }}>
-              {quota.used} von {quota.limit} Webseiten genutzt
+              {quota.used} von {quota.limit} {quota.used === 1 ? 'Webseite' : 'Webseiten'} aktiv
               <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent" style={{ borderTopColor: '#1a1a1a' }} />
             </div>
           </div>
@@ -184,13 +162,6 @@ function NavItem({
   )
 }
 
-function HomeIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
-    </svg>
-  )
-}
 function GlobeIcon() {
   return (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -204,13 +175,6 @@ function InboxIcon() {
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
       <polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/>
       <path d="M5.45 5.11L2 12v6a2 2 0 002 2h16a2 2 0 002-2v-6l-3.45-6.89A2 2 0 0016.76 4H7.24a2 2 0 00-1.79 1.11z"/>
-    </svg>
-  )
-}
-function LibraryIcon() {
-  return (
-    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/>
     </svg>
   )
 }

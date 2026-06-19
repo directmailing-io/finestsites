@@ -2,12 +2,12 @@ export type Plan = 'starter' | 'pro' | 'unlimited'
 export type BillingInterval = 'monthly' | 'yearly'
 export type SiteStatus = 'draft' | 'published' | 'deactivated' | 'deleted'
 export type TemplateStatus = 'draft' | 'published'
-export type PlaceholderType = 'text' | 'textarea' | 'richtext' | 'image' | 'url' | 'email' | 'select' | 'dropdown' | 'card_select' | 'loop' | 'color' | 'date' | 'time' | 'toggle' | 'date_multi'
+export type PlaceholderType = 'text' | 'textarea' | 'richtext' | 'image' | 'url' | 'email' | 'select' | 'dropdown' | 'card_select' | 'loop' | 'color' | 'date' | 'time' | 'toggle' | 'date_multi' | 'range'
 
 export interface LoopSubField {
   key: string
   label: string
-  type: 'text' | 'textarea' | 'richtext' | 'image' | 'url' | 'email' | 'dropdown' | 'loop' | 'color' | 'date' | 'time' | 'card_select' | 'toggle' | 'date_multi'
+  type: 'text' | 'textarea' | 'richtext' | 'image' | 'url' | 'email' | 'dropdown' | 'loop' | 'color' | 'date' | 'time' | 'card_select' | 'toggle' | 'date_multi' | 'range'
   required?: boolean
   placeholder_text?: string
   max_length?: number | null
@@ -21,6 +21,11 @@ export interface LoopSubField {
   toggle_off_value?: string
   // visibility condition based on a sibling sub-field's value
   show_when?: { field: string; value: string | string[] }
+  // for range type
+  min?: number
+  max?: number
+  step?: number
+  unit?: string
   // for nested loop type:
   sub_fields?: LoopSubField[]
   min_items?: number
@@ -84,12 +89,20 @@ export interface PlaceholderField {
   min_length?: number
   options?: string[]         // for select / dropdown type
   card_options?: CardOption[] // for card_select type
+  display_mode?: 'chips' | 'toggle' // for card_select type
   section?: string
   order: number
   aspect_ratio?: string       // for image type
   sub_fields?: LoopSubField[] // for loop type
   min_items?: number          // for loop type
   max_items?: number          // for loop type
+  // for range type
+  min?: number
+  max?: number
+  step?: number
+  unit?: string               // e.g. "px", "%"
+  // visibility condition based on another top-level field's value
+  show_when?: { field: string; value: string | string[] }
 }
 
 export interface CardOption {
