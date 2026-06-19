@@ -122,20 +122,21 @@ export default function NewSitePage() {
 
             return (
               <div key={tpl.id}
-                className="rounded-2xl bg-white overflow-hidden"
+                className="flex rounded-2xl bg-white overflow-hidden"
                 style={{
                   boxShadow: '0 1px 4px rgba(0,0,0,0.06), 0 6px 24px rgba(0,0,0,0.06)',
                   border: '1px solid #F1F5F9',
+                  minHeight: 220,
                 }}>
 
-                {/* Image — full width, taller */}
-                <div className="relative overflow-hidden bg-gray-100" style={{ height: 220 }}>
+                {/* Image — left side */}
+                <div className="flex-shrink-0 relative overflow-hidden bg-gray-100" style={{ width: '42%' }}>
                   {preview ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img src={preview} alt={tpl.title}
-                      className="w-full h-full object-cover object-top" />
+                      className="absolute inset-0 w-full h-full object-cover object-top" />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center"
+                    <div className="absolute inset-0 flex items-center justify-center"
                       style={{ background: 'linear-gradient(160deg, #F8FAFC 0%, #F1F5F9 100%)' }}>
                       <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#CBD5E1" strokeWidth="1.5">
                         <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/>
@@ -153,10 +154,10 @@ export default function NewSitePage() {
                   )}
                 </div>
 
-                {/* Content */}
-                <div className="flex flex-col gap-4 p-5">
-                  <div>
-                    <h3 className="font-bold text-gray-900 text-lg leading-snug mb-2">
+                {/* Content — right side */}
+                <div className="flex-1 flex flex-col gap-4 p-6 min-w-0">
+                  <div className="flex-1">
+                    <h3 className="font-bold text-gray-900 text-[17px] leading-snug mb-3">
                       {tpl.title}
                     </h3>
                     {tpl.description && (
