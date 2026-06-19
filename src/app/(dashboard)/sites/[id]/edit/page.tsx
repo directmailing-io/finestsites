@@ -66,6 +66,49 @@ interface SiteData {
   data: Record<string, string>
 }
 
+// ─── Profile Pre-fill ────────────────────────────────────────────────────────
+
+const PROFILE_KEY_MAP: Record<string, string[]> = {
+  first_name:        ['vorname', 'first_name', 'firstname', 'name_vorname'],
+  last_name:         ['nachname', 'last_name', 'lastname', 'name_nachname'],
+  full_name:         ['vollstaendiger_name', 'full_name', 'vollname'],
+  email:             ['email', 'e_mail', 'kontakt_email', 'mail'],
+  phone:             ['telefon', 'phone', 'tel', 'telephone', 'handy', 'mobilnummer', 'whatsapp'],
+  website_url:       ['website', 'webseite', 'website_url', 'homepage', 'url'],
+  instagram:         ['instagram', 'instagram_url', 'instagram_link'],
+  facebook:          ['facebook', 'facebook_url', 'facebook_link'],
+  linkedin:          ['linkedin', 'linkedin_url', 'linkedin_link'],
+  tiktok:            ['tiktok', 'tiktok_url', 'tiktok_link'],
+  youtube:           ['youtube', 'youtube_url', 'youtube_link', 'youtube_kanal'],
+  profile_image_url: ['profilbild', 'profile_image', 'avatar', 'foto', 'photo', 'bild'],
+}
+
+function getProfilePrefill(
+  fieldKey: string,
+  fieldType: string,
+  profile: Record<string, string | null>,
+): string | null {
+  // Only prefill simple text/url/email/image fields
+  if (['loop', 'card_select', 'dropdown', 'toggle', 'range', 'date', 'date_multi', 'time', 'color'].includes(fieldType)) return null
+
+  const key = fieldKey.toLowerCase()
+
+  for (const [profileField, patterns] of Object.entries(PROFILE_KEY_MAP)) {
+    if (patterns.some(p => key === p || key.includes(p))) {
+      // Special case: combine first + last name
+      if (profileField === 'full_name') {
+        const fn = profile.first_name?.trim() ?? ''
+        const ln = profile.last_name?.trim() ?? ''
+        if (fn || ln) return `${fn} ${ln}`.trim()
+        return null
+      }
+      const val = profile[profileField]
+      return val?.trim() || null
+    }
+  }
+  return null
+}
+
 // ─── Domain Panel ─────────────────────────────────────────────────────────────
 
 const DOMAIN_SECTION = '__domain__'
@@ -1626,18 +1669,22 @@ export default function SiteEditPage({ params }: { params: Promise<{ id: string 
   const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => {
-    fetch(`/api/sites/${id}`)
-      .then(r => r.json())
-      .then((data: SiteData) => {
+    Promise.all([
+      fetch(`/api/sites/${id}`).then(r => r.json()),
+      fetch('/api/user/profile').then(r => r.json()).catch(() => ({})),
+    ]).then(([data, userProfile]: [SiteData, Record<string, string | null>]) => {
         setSite(data)
         const fields = data.templates?.placeholder_schema?.fields ?? []
         const init: Record<string, string> = {}
         for (const f of fields) {
-          // Editor always starts with the actual saved value (or empty).
-          // Schema `default_value` is only a fallback for the live preview /
-          // published render — never a pre-fill in the editor. This way new
-          // users get truly blank inputs to fill in fresh.
-          init[f.key] = data.data?.[f.key] ?? ''
+          // If the field has a saved value, use it.
+          // If it's empty, try to pre-fill from the user's profile.
+          const saved = data.data?.[f.key]
+          if (saved) {
+            init[f.key] = saved
+          } else {
+            init[f.key] = getProfilePrefill(f.key, f.type, userProfile) ?? ''
+          }
         }
         setValues(init)
         // Mark the initial-loaded state as already-saved so autosave doesn't

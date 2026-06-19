@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Nicht eingeloggt.' }, { status: 401 })
 
-  const { username } = await req.json()
+  const { username, first_name, last_name } = await req.json()
   const clean = sanitize(username ?? '')
 
   if (!isValid(clean)) {
@@ -60,10 +60,17 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: true })
   }
 
-  // ── Save username ─────────────────────────────────────────────────────
+  // ── Save username + profile name ─────────────────────────────────────
+  const updates: Record<string, string> = {
+    username: clean,
+    username_set_at: new Date().toISOString(),
+  }
+  if (first_name?.trim()) updates.first_name = first_name.trim()
+  if (last_name?.trim()) updates.last_name = last_name.trim()
+
   const { error } = await admin
     .from('users')
-    .update({ username: clean, username_set_at: new Date().toISOString() })
+    .update(updates)
     .eq('id', user.id)
 
   if (error) {

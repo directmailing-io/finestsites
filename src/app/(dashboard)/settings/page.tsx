@@ -21,6 +21,16 @@ interface UserProfile {
   subscription_status: string | null
   stripe_customer_id: string | null
   paid_sites_count: number
+  first_name: string | null
+  last_name: string | null
+  phone: string | null
+  website_url: string | null
+  instagram: string | null
+  facebook: string | null
+  linkedin: string | null
+  tiktok: string | null
+  youtube: string | null
+  profile_image_url: string | null
 }
 
 interface Invoice {
@@ -57,6 +67,17 @@ function SettingsContent() {
   const [pwError, setPwError] = useState('')
   const [pwSuccess, setPwSuccess] = useState('')
 
+  // ── Profile state ──────────────────────────────────────────
+  const [profileFields, setProfileFields] = useState({
+    first_name: '', last_name: '', phone: '', website_url: '',
+    instagram: '', facebook: '', linkedin: '', tiktok: '', youtube: '',
+  })
+  const [profileImageUrl, setProfileImageUrl] = useState<string | null>(null)
+  const [profileSaving, setProfileSaving] = useState(false)
+  const [profileSuccess, setProfileSuccess] = useState('')
+  const [profileError, setProfileError] = useState('')
+  const [avatarUploading, setAvatarUploading] = useState(false)
+
   // ── Billing state ──────────────────────────────────────────
   const [subscription, setSubscription] = useState<SubscriptionInfo | null>(null)
   const [subLoading, setSubLoading] = useState(true)
@@ -87,6 +108,18 @@ function SettingsContent() {
     fetch('/api/user/profile').then(r => r.json()).then(data => {
       setProfile(data)
       if (data.billing_interval) setBillingInterval(data.billing_interval)
+      setProfileFields({
+        first_name: data.first_name ?? '',
+        last_name: data.last_name ?? '',
+        phone: data.phone ?? '',
+        website_url: data.website_url ?? '',
+        instagram: data.instagram ?? '',
+        facebook: data.facebook ?? '',
+        linkedin: data.linkedin ?? '',
+        tiktok: data.tiktok ?? '',
+        youtube: data.youtube ?? '',
+      })
+      setProfileImageUrl(data.profile_image_url ?? null)
     }).catch(() => {})
 
     fetch('/api/billing/invoices')
@@ -154,6 +187,36 @@ function SettingsContent() {
     setPwLoading(false)
   }
 
+  async function handleProfileSave(e: React.FormEvent) {
+    e.preventDefault()
+    setProfileSaving(true); setProfileError(''); setProfileSuccess('')
+    const res = await fetch('/api/user/profile', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(profileFields),
+    })
+    const data = await res.json()
+    if (data.error) {
+      setProfileError(data.error)
+    } else {
+      setProfileSuccess('Profil gespeichert.')
+      setTimeout(() => setProfileSuccess(''), 3000)
+    }
+    setProfileSaving(false)
+  }
+
+  async function handleAvatarUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setAvatarUploading(true)
+    const fd = new FormData()
+    fd.append('file', file)
+    const res = await fetch('/api/user/profile/avatar', { method: 'POST', body: fd })
+    const data = await res.json()
+    if (data.url) setProfileImageUrl(data.url)
+    setAvatarUploading(false)
+  }
+
   async function handlePortal() {
     setPortalLoading(true)
     const res = await fetch('/api/billing/portal', { method: 'POST' })
@@ -218,7 +281,7 @@ function SettingsContent() {
         </div>
       )}
 
-      {/* ── Hero ──────────────────────────────────────────────────────── */}
+      {/* ── Hero ─────────────────────────────────────────────────────── */}
       <div className="mb-10">
         <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight">
           Einstellungen
@@ -227,6 +290,109 @@ function SettingsContent() {
           Verwalte dein Abonnement, Zahlungen und Sicherheit.
         </p>
       </div>
+
+      {/* ════════════════════════════════════════════════════════════════
+          MEIN PROFIL
+          ════════════════════════════════════════════════════════════════ */}
+      <Section title="Mein Profil" subtitle="Diese Angaben werden beim Bearbeiten deiner Webseiten automatisch vorausgefüllt.">
+        <form onSubmit={handleProfileSave} className="flex flex-col gap-6">
+          {/* Avatar */}
+          <div className="flex items-center gap-5">
+            <div className="relative flex-shrink-0">
+              <div className="w-20 h-20 rounded-full overflow-hidden"
+                style={{ background: '#F1F5F9', border: '2px solid #E5E7EB' }}>
+                {profileImageUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={profileImageUrl} alt="Profilbild" className="w-full h-full object-cover" />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#CBD5E1" strokeWidth="1.5">
+                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                      <circle cx="12" cy="7" r="4"/>
+                    </svg>
+                  </div>
+                )}
+              </div>
+              {avatarUploading && (
+                <div className="absolute inset-0 rounded-full flex items-center justify-center"
+                  style={{ background: 'rgba(255,255,255,0.8)' }}>
+                  <span className="w-5 h-5 rounded-full border-2 border-gray-300 border-t-gray-800 animate-spin" />
+                </div>
+              )}
+            </div>
+            <div className="flex flex-col gap-1">
+              <label className="flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-xl cursor-pointer transition-colors"
+                style={{ background: '#F3F4F6', color: '#374151' }}
+                onMouseEnter={e => (e.currentTarget.style.background = '#E5E7EB')}
+                onMouseLeave={e => (e.currentTarget.style.background = '#F3F4F6')}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/>
+                </svg>
+                Foto hochladen
+                <input type="file" accept="image/jpeg,image/png,image/webp" className="sr-only"
+                  onChange={handleAvatarUpload} disabled={avatarUploading} />
+              </label>
+              <p className="text-xs" style={{ color: '#94A3B8' }}>JPG, PNG, WebP · max. 5 MB</p>
+            </div>
+          </div>
+
+          {/* Name */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <Field label="Vorname" value={profileFields.first_name}
+              onChange={v => setProfileFields(p => ({ ...p, first_name: v }))} placeholder="Max" />
+            <Field label="Nachname" value={profileFields.last_name}
+              onChange={v => setProfileFields(p => ({ ...p, last_name: v }))} placeholder="Mustermann" />
+          </div>
+
+          {/* Contact */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <Field label="Telefon / WhatsApp" value={profileFields.phone}
+              onChange={v => setProfileFields(p => ({ ...p, phone: v }))} placeholder="+49 151 12345678" />
+            <Field label="Website" value={profileFields.website_url}
+              onChange={v => setProfileFields(p => ({ ...p, website_url: v }))} placeholder="https://meine-seite.de" />
+          </div>
+
+          {/* Social media */}
+          <div>
+            <p className="text-sm font-semibold text-gray-700 mb-3">Social Media</p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <Field label="Instagram" value={profileFields.instagram}
+                onChange={v => setProfileFields(p => ({ ...p, instagram: v }))} placeholder="https://instagram.com/deinname" />
+              <Field label="Facebook" value={profileFields.facebook}
+                onChange={v => setProfileFields(p => ({ ...p, facebook: v }))} placeholder="https://facebook.com/deinname" />
+              <Field label="LinkedIn" value={profileFields.linkedin}
+                onChange={v => setProfileFields(p => ({ ...p, linkedin: v }))} placeholder="https://linkedin.com/in/deinname" />
+              <Field label="TikTok" value={profileFields.tiktok}
+                onChange={v => setProfileFields(p => ({ ...p, tiktok: v }))} placeholder="https://tiktok.com/@deinname" />
+              <Field label="YouTube" value={profileFields.youtube}
+                onChange={v => setProfileFields(p => ({ ...p, youtube: v }))} placeholder="https://youtube.com/@deinname" />
+            </div>
+          </div>
+
+          {profileError && (
+            <p className="text-sm font-medium px-4 py-3 rounded-2xl"
+              style={{ background: '#FEF2F2', color: '#DC2626' }}>
+              {profileError}
+            </p>
+          )}
+          {profileSuccess && (
+            <p className="text-sm font-medium px-4 py-3 rounded-2xl flex items-center gap-2"
+              style={{ background: '#F0FDF4', color: '#15803D' }}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <path d="M20 6L9 17l-5-5"/>
+              </svg>
+              {profileSuccess}
+            </p>
+          )}
+
+          <button type="submit" disabled={profileSaving}
+            className="self-start flex items-center gap-2 px-5 py-3 text-sm font-bold text-white rounded-xl transition-opacity hover:opacity-90 disabled:opacity-70"
+            style={{ background: '#1a1a1a' }}>
+            {profileSaving && <Spinner />}
+            Profil speichern
+          </button>
+        </form>
+      </Section>
 
       {/* ════════════════════════════════════════════════════════════════
           ABONNEMENT

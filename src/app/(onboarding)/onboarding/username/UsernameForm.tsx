@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { createClient } from '@/lib/supabase/client'
 
 const SITE_DOMAIN = process.env.NEXT_PUBLIC_SITE_DOMAIN ?? 'finestsites.de'
 
@@ -18,6 +17,15 @@ function sanitize(val: string) {
 
 function isValid(u: string) {
   return /^[a-z][a-z-]*[a-z]$/.test(u) && u.length >= 3
+}
+
+function suggestUsername(first: string, last: string): string {
+  const f = sanitize(first.trim())
+  const l = sanitize(last.trim())
+  if (f && l) return `${f}-${l}`.slice(0, 30)
+  if (f) return f
+  if (l) return l
+  return ''
 }
 
 function StepDot({ n, active, done, label }: { n: number; active?: boolean; done?: boolean; label: string }) {
@@ -45,15 +53,54 @@ function StepLine() {
   return <div className="flex-1 h-px mx-1" style={{ background: '#E5E7EB', maxWidth: 48 }} />
 }
 
+function InputField({
+  label, value, onChange, placeholder, autoFocus, autoComplete,
+}: {
+  label: string; value: string; onChange: (v: string) => void
+  placeholder?: string; autoFocus?: boolean; autoComplete?: string
+}) {
+  return (
+    <div className="flex flex-col gap-1.5">
+      <label className="text-sm font-semibold text-gray-700">{label}</label>
+      <input
+        type="text"
+        value={value}
+        onChange={e => onChange(e.target.value)}
+        placeholder={placeholder}
+        autoFocus={autoFocus}
+        autoComplete={autoComplete}
+        className="w-full px-4 py-3 text-sm rounded-2xl outline-none transition-all"
+        style={{ background: '#fff', border: '1.5px solid #E5E7EB', boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}
+        onFocus={e => (e.target.style.borderColor = '#111827')}
+        onBlur={e => (e.target.style.borderColor = '#E5E7EB')}
+      />
+    </div>
+  )
+}
+
 export function UsernameForm() {
+  const [firstName, setFirstName] = useState('')
+  const [lastName, setLastName] = useState('')
   const [username, setUsername] = useState('')
+  const [usernameTouched, setUsernameTouched] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const router = useRouter()
-  const supabase = createClient()
+
+  // Auto-suggest username from first+last name unless user has manually edited it
+  function handleFirstName(v: string) {
+    setFirstName(v)
+    if (!usernameTouched) setUsername(suggestUsername(v, lastName))
+  }
+  function handleLastName(v: string) {
+    setLastName(v)
+    if (!usernameTouched) setUsername(suggestUsername(firstName, v))
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
+    if (!firstName.trim()) { setError('Bitte gib deinen Vornamen ein.'); return }
+    if (!lastName.trim()) { setError('Bitte gib deinen Nachnamen ein.'); return }
     const clean = sanitize(username)
     if (!isValid(clean)) {
       setError('Mindestens 3 Buchstaben. Nur a–z und Bindestriche (nicht am Anfang/Ende).')
@@ -62,14 +109,10 @@ export function UsernameForm() {
     setLoading(true)
     setError('')
 
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) { router.push('/login'); return }
-
-    // Server-side username save — subscription is verified server-side on page load
     const res = await fetch('/api/onboarding/set-username', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username: clean }),
+      body: JSON.stringify({ username: clean, first_name: firstName.trim(), last_name: lastName.trim() }),
     })
     const data = await res.json()
 
@@ -96,7 +139,7 @@ export function UsernameForm() {
         <StepLine />
         <StepDot n={2} done label="Plan" />
         <StepLine />
-        <StepDot n={3} active label="Username" />
+        <StepDot n={3} active label="Profil" />
       </div>
 
       <div className="text-center mb-8">
@@ -107,15 +150,36 @@ export function UsernameForm() {
             <circle cx="12" cy="7" r="4"/>
           </svg>
         </div>
-        <h1 className="text-2xl font-semibold text-gray-900 mb-2">Wähle deinen Username</h1>
+        <h1 className="text-2xl font-semibold text-gray-900 mb-2">Fast geschafft!</h1>
         <p className="text-sm leading-relaxed" style={{ color: '#6B7280' }}>
-          Dein Username ist gleichzeitig die Adresse<br />
-          all deiner aktiven Websites.
+          Gib deinen Namen ein und wähle deinen Username — er wird Teil deiner Website-Adresse.
         </p>
       </div>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        {/* Name fields */}
+        <div className="grid grid-cols-2 gap-3">
+          <InputField
+            label="Vorname"
+            value={firstName}
+            onChange={handleFirstName}
+            placeholder="Max"
+            autoFocus
+            autoComplete="given-name"
+          />
+          <InputField
+            label="Nachname"
+            value={lastName}
+            onChange={handleLastName}
+            placeholder="Mustermann"
+            autoComplete="family-name"
+          />
+        </div>
+
+        {/* Username */}
         <div className="flex flex-col gap-1.5">
+          <label className="text-sm font-semibold text-gray-700">Username</label>
+
           <div
             className="flex items-center gap-1 px-3 py-2 rounded-xl text-sm font-mono mb-1"
             style={{ background: '#F9FAFB', border: '1px solid #E5E7EB' }}
@@ -124,7 +188,7 @@ export function UsernameForm() {
               className="font-semibold transition-colors"
               style={{ color: valid ? '#111827' : '#9CA3AF' }}
             >
-              {display || 'deinname'}
+              {display || 'dein-name'}
             </span>
             <span style={{ color: '#9CA3AF' }}>.{SITE_DOMAIN}</span>
           </div>
@@ -134,12 +198,12 @@ export function UsernameForm() {
             value={username}
             onChange={e => {
               setUsername(e.target.value)
+              setUsernameTouched(true)
               setError('')
             }}
             required
             maxLength={30}
             placeholder="dein-name"
-            autoFocus
             autoComplete="username"
             className="w-full px-4 py-3 text-sm rounded-2xl outline-none transition-all"
             style={{
@@ -158,7 +222,7 @@ export function UsernameForm() {
             <p className="text-xs px-1" style={{ color: '#DC2626' }}>{error}</p>
           )}
           <p className="text-xs px-1" style={{ color: '#9CA3AF' }}>
-            Nur Buchstaben a–z und Bindestriche · Mindestens 3 Zeichen · Keine Zahlen · Unveränderlich
+            Nur Buchstaben a–z und Bindestriche · Mindestens 3 Zeichen · Unveränderlich
           </p>
         </div>
 
@@ -168,16 +232,16 @@ export function UsernameForm() {
 
         <button
           type="submit"
-          disabled={loading || !valid}
+          disabled={loading || !valid || !firstName.trim() || !lastName.trim()}
           className="w-full py-3 text-sm font-semibold rounded-2xl transition-all"
           style={{
-            background: !valid || loading ? '#E5E7EB' : '#111827',
-            color: !valid || loading ? '#9CA3AF' : '#fff',
-            cursor: !valid || loading ? 'not-allowed' : 'pointer',
-            boxShadow: valid && !loading ? '0 4px 14px rgba(17,24,39,0.2)' : 'none',
+            background: (!valid || loading || !firstName.trim() || !lastName.trim()) ? '#E5E7EB' : '#111827',
+            color: (!valid || loading || !firstName.trim() || !lastName.trim()) ? '#9CA3AF' : '#fff',
+            cursor: (!valid || loading) ? 'not-allowed' : 'pointer',
+            boxShadow: (valid && !loading && firstName.trim() && lastName.trim()) ? '0 4px 14px rgba(17,24,39,0.2)' : 'none',
           }}
         >
-          {loading ? 'Wird gespeichert…' : 'Username bestätigen →'}
+          {loading ? 'Wird gespeichert…' : 'Loslegen →'}
         </button>
       </form>
     </div>
