@@ -122,33 +122,30 @@ export default function NewSitePage() {
 
             return (
               <div key={tpl.id}
-                className="flex gap-0 rounded-2xl bg-white overflow-hidden"
+                className="rounded-2xl bg-white overflow-hidden"
                 style={{
-                  boxShadow: '0 1px 4px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04)',
+                  boxShadow: '0 1px 4px rgba(0,0,0,0.06), 0 6px 24px rgba(0,0,0,0.06)',
                   border: '1px solid #F1F5F9',
                 }}>
 
-                {/* Image */}
-                <div className="flex-shrink-0 relative overflow-hidden bg-gray-100"
-                  style={{ width: '42%', minHeight: 140 }}>
+                {/* Image — full width, taller */}
+                <div className="relative overflow-hidden bg-gray-100" style={{ height: 220 }}>
                   {preview ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img src={preview} alt={tpl.title}
-                      className="w-full h-full object-cover object-top absolute inset-0" />
+                      className="w-full h-full object-cover object-top" />
                   ) : (
-                    <div className="absolute inset-0 flex items-center justify-center"
+                    <div className="w-full h-full flex items-center justify-center"
                       style={{ background: 'linear-gradient(160deg, #F8FAFC 0%, #F1F5F9 100%)' }}>
-                      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#CBD5E1" strokeWidth="1.5">
+                      <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#CBD5E1" strokeWidth="1.5">
                         <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/>
                         <path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/>
                       </svg>
                     </div>
                   )}
-
-                  {/* Free badge on image */}
                   {tpl.is_free && (
-                    <div className="absolute top-2 left-2">
-                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full"
+                    <div className="absolute top-3 left-3">
+                      <span className="text-[11px] font-bold px-2.5 py-1 rounded-full"
                         style={{ background: 'rgba(255,255,255,0.95)', color: '#1D4ED8' }}>
                         Gratis
                       </span>
@@ -157,15 +154,13 @@ export default function NewSitePage() {
                 </div>
 
                 {/* Content */}
-                <div className="flex-1 flex flex-col gap-3 p-4 min-w-0">
+                <div className="flex flex-col gap-4 p-5">
                   <div>
-                    <div className="flex items-start gap-2 mb-1.5">
-                      <h3 className="font-bold text-gray-900 text-[15px] leading-snug flex-1">
-                        {tpl.title}
-                      </h3>
-                    </div>
+                    <h3 className="font-bold text-gray-900 text-lg leading-snug mb-2">
+                      {tpl.title}
+                    </h3>
                     {tpl.description && (
-                      <p className="text-sm leading-relaxed line-clamp-3" style={{ color: '#64748B' }}>
+                      <p className="text-sm leading-relaxed" style={{ color: '#64748B' }}>
                         {tpl.description}
                       </p>
                     )}
@@ -174,7 +169,7 @@ export default function NewSitePage() {
                   <button
                     onClick={() => handleSelect(tpl.id)}
                     disabled={!!busy}
-                    className="mt-auto w-full py-2.5 px-4 rounded-xl text-sm font-semibold transition-all active:scale-[0.97] flex items-center justify-center gap-2"
+                    className="w-full py-3 px-4 rounded-xl text-sm font-semibold transition-all active:scale-[0.97] flex items-center justify-center gap-2"
                     style={{
                       background: isBusy ? '#E5E7EB' : '#1a1a1a',
                       color: isBusy ? '#9CA3AF' : '#fff',
@@ -186,7 +181,12 @@ export default function NewSitePage() {
                         Wird geöffnet…
                       </>
                     ) : (
-                      'Webseite jetzt bearbeiten'
+                      <>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                          <path d="M12 5v14M5 12h14"/>
+                        </svg>
+                        Webseite bearbeiten und veröffentlichen
+                      </>
                     )}
                   </button>
                 </div>
