@@ -16,7 +16,7 @@ interface CardOption {
 
 interface LoopSubField {
   key: string; label: string
-  type: 'text' | 'textarea' | 'richtext' | 'image' | 'url' | 'email' | 'dropdown' | 'loop' | 'color' | 'date' | 'time' | 'card_select' | 'toggle' | 'date_multi'
+  type: 'text' | 'textarea' | 'richtext' | 'image' | 'url' | 'email' | 'dropdown' | 'loop' | 'color' | 'date' | 'time' | 'card_select' | 'toggle' | 'date_multi' | 'range'
   required?: boolean; placeholder_text?: string
   max_length?: number | null; default_value?: string
   aspect_ratio?: string; options?: string[]
@@ -25,6 +25,11 @@ interface LoopSubField {
   toggle_on_value?: string
   toggle_off_value?: string
   show_when?: { field: string; value: string | string[] }
+  // for range:
+  min?: number
+  max?: number
+  step?: number
+  unit?: string
   // for nested loop:
   sub_fields?: LoopSubField[]
   min_items?: number
@@ -162,24 +167,25 @@ function DomainPanel({ siteId, subdomain, initialDomain, initialStatus }: {
           </div>
 
           {/* Input */}
-          <div className="flex gap-2.5">
+          <div className="flex flex-col sm:flex-row gap-2.5">
             <input
               type="text"
               value={input}
               onChange={e => { setInput(e.target.value); setError('') }}
               onKeyDown={e => e.key === 'Enter' && handleAdd()}
               placeholder="www.meine-domain.de"
-              className="flex-1 text-sm rounded-[12px] px-4 py-2.5 outline-none"
-              style={{ border: '1.5px solid #E5E7EB', background: '#FAFAFA' }}
+              className="flex-1 text-sm rounded-[12px] px-4 outline-none"
+              style={{ border: '1.5px solid #E5E7EB', background: '#FAFAFA', minHeight: '44px', padding: '11px 16px' }}
             />
             <button
               onClick={handleAdd}
               disabled={loading || !input.trim()}
-              className="px-4 py-2.5 text-sm font-semibold text-white rounded-[12px] flex items-center gap-2 flex-shrink-0 transition-all"
+              className="px-5 text-sm font-semibold text-white rounded-[12px] flex items-center justify-center gap-2 flex-shrink-0 transition-all"
               style={{
                 background: input.trim() ? '#1a1a1a' : '#D1D5DB',
                 cursor: input.trim() ? 'pointer' : 'not-allowed',
                 opacity: loading ? 0.7 : 1,
+                minHeight: '44px',
               }}>
               {loading
                 ? <span className="w-4 h-4 rounded-full border-2 border-white/40 border-t-white animate-spin" />
@@ -307,27 +313,29 @@ function DomainPanel({ siteId, subdomain, initialDomain, initialStatus }: {
                   Hinweis: Für Haupt-Domains ohne Präfix brauchst du einen <strong>ALIAS</strong>- oder <strong>ANAME</strong>-Eintrag. Nicht alle Anbieter unterstützen das — falls es nicht klappt, empfehlen wir <strong>www.{domain}</strong> zu verwenden.
                 </p>
               )}
-              {/* DNS record box */}
-              <div className="rounded-[12px] overflow-hidden" style={{ border: '1.5px solid #E5E7EB' }}>
-                <div className="grid grid-cols-3 text-xs font-semibold uppercase tracking-wider px-3 py-2"
-                  style={{ background: '#F8FAFC', color: '#9CA3AF', borderBottom: '1px solid #E5E7EB' }}>
-                  <span>Typ</span><span>Name</span><span>Ziel (Wert)</span>
-                </div>
-                <div className="grid grid-cols-3 items-center px-3 py-3 gap-2 bg-white">
-                  <span className="text-xs font-bold text-gray-700">{isApex ? 'ALIAS / ANAME' : 'CNAME'}</span>
-                  <span className="text-xs font-mono text-gray-700 truncate">{isApex ? '@' : hostPart}</span>
-                  <div className="flex items-center gap-2 min-w-0">
-                    <span className="text-xs font-mono text-gray-700 truncate flex-1">{fallbackHost}</span>
-                    <button onClick={copyFallback}
-                      className="flex-shrink-0 flex items-center gap-1 text-xs px-2 py-1.5 rounded-[8px] font-medium transition-colors"
-                      style={{ background: copied ? '#DCFCE7' : '#F3F4F6', color: copied ? '#16A34A' : '#374151' }}>
-                      {copied ? (
-                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M20 6L9 17l-5-5"/></svg>
-                      ) : (
-                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-                      )}
-                      {copied ? 'Kopiert!' : 'Kopieren'}
-                    </button>
+              {/* DNS record box — scrollable on mobile */}
+              <div className="rounded-[12px] overflow-hidden overflow-x-auto" style={{ border: '1.5px solid #E5E7EB' }}>
+                <div style={{ minWidth: '320px' }}>
+                  <div className="grid grid-cols-3 text-xs font-semibold uppercase tracking-wider px-3 py-2"
+                    style={{ background: '#F8FAFC', color: '#9CA3AF', borderBottom: '1px solid #E5E7EB' }}>
+                    <span>Typ</span><span>Name</span><span>Ziel (Wert)</span>
+                  </div>
+                  <div className="grid grid-cols-3 items-center px-3 py-3 gap-2 bg-white">
+                    <span className="text-xs font-bold text-gray-700">{isApex ? 'ALIAS / ANAME' : 'CNAME'}</span>
+                    <span className="text-xs font-mono text-gray-700 truncate">{isApex ? '@' : hostPart}</span>
+                    <div className="flex items-center gap-2 min-w-0">
+                      <span className="text-xs font-mono text-gray-700 truncate flex-1">{fallbackHost}</span>
+                      <button onClick={copyFallback}
+                        className="flex-shrink-0 flex items-center gap-1 text-xs px-2 py-1.5 rounded-[8px] font-medium transition-colors min-h-[32px]"
+                        style={{ background: copied ? '#DCFCE7' : '#F3F4F6', color: copied ? '#16A34A' : '#374151' }}>
+                        {copied ? (
+                          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+                        ) : (
+                          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                        )}
+                        {copied ? 'Kopiert!' : 'Kopieren'}
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -386,8 +394,9 @@ function DomainPanel({ siteId, subdomain, initialDomain, initialStatus }: {
 
 const INPUT = {
   background: '#FFFFFF', border: '1.5px solid #E5E7EB',
-  borderRadius: '12px', padding: '10px 14px',
+  borderRadius: '12px', padding: '11px 14px',
   fontSize: '14px', outline: 'none', width: '100%',
+  minHeight: '44px',
 }
 
 const focusBorder = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
@@ -706,7 +715,7 @@ function ImageField({ field, value, onChange }: {
           </div>
           <div className="flex items-center gap-2">
             <button type="button" onClick={() => fileInputRef.current?.click()}
-              className="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-[12px]"
+              className="flex items-center gap-2 px-4 py-3 text-sm font-semibold rounded-[12px] min-h-[44px]"
               style={{ background: '#1a1a1a', color: 'white' }}>
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
@@ -714,7 +723,7 @@ function ImageField({ field, value, onChange }: {
               Ersetzen
             </button>
             <button type="button" onClick={() => onChange('')}
-              className="px-4 py-2.5 text-sm font-semibold rounded-[12px]"
+              className="px-4 py-3 text-sm font-semibold rounded-[12px] min-h-[44px]"
               style={{ background: '#FEF2F2', color: '#DC2626' }}>
               Entfernen
             </button>
@@ -722,8 +731,8 @@ function ImageField({ field, value, onChange }: {
         </div>
       ) : (
         <div onClick={() => fileInputRef.current?.click()}
-          className="flex flex-col items-center justify-center gap-3 rounded-[16px] cursor-pointer transition-all active:scale-[0.98]"
-          style={{ border: '2px dashed #D1D5DB', background: '#FAFAFA', minHeight: '140px', padding: '24px' }}>
+          className="flex flex-col items-center justify-center gap-3 rounded-[16px] cursor-pointer transition-all active:scale-[0.99] active:bg-gray-100"
+          style={{ border: '2px dashed #D1D5DB', background: '#FAFAFA', minHeight: '160px', padding: '28px' }}>
           {uploading ? (
             <div className="w-7 h-7 rounded-full border-2 border-gray-300 border-t-gray-700 animate-spin" />
           ) : (
@@ -1176,6 +1185,59 @@ function ToggleField({ field, value, onChange }: {
   )
 }
 
+function RangeField({ field, value, onChange }: {
+  field: { min?: number; max?: number; step?: number; unit?: string; default_value?: string; placeholder_text?: string }
+  value: string
+  onChange: (v: string) => void
+}) {
+  const min = field.min ?? 0
+  const max = field.max ?? 100
+  const step = field.step ?? 1
+  const unit = field.unit ?? ''
+  const fallback = field.default_value ?? String(min)
+  const raw = value !== undefined && value !== '' ? value : fallback
+  const num = Number.isFinite(parseFloat(raw)) ? parseFloat(raw) : min
+  const pct = Math.max(0, Math.min(1, (num - min) / (max - min || 1)))
+  const display = step < 1
+    ? num.toFixed(String(step).split('.')[1]?.length ?? 2).replace(/\.?0+$/, '')
+    : String(num)
+  return (
+    <div style={{ background: '#FAFAFA', border: '1px solid #E5E7EB', borderRadius: 4, padding: '14px 16px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 10 }}>
+        <span style={{ fontSize: 13, color: '#6B7280' }}>{field.placeholder_text || ''}</span>
+        <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 14, fontWeight: 600, color: '#1a1a1a' }}>
+          {display}{unit}
+        </span>
+      </div>
+      <input
+        type="range" min={min} max={max} step={step} value={num}
+        onChange={e => onChange(e.target.value)}
+        style={{
+          width: '100%',
+          appearance: 'none',
+          height: 6,
+          borderRadius: 999,
+          background: `linear-gradient(to right, #1a1a1a 0%, #1a1a1a ${pct * 100}%, #E5E7EB ${pct * 100}%, #E5E7EB 100%)`,
+          outline: 'none',
+          cursor: 'pointer',
+        }}
+      />
+      <style>{`
+        input[type="range"]::-webkit-slider-thumb {
+          appearance: none; width: 22px; height: 22px; border-radius: 50%;
+          background: #FFFFFF; border: 2px solid #1a1a1a;
+          box-shadow: 0 2px 6px rgba(0,0,0,0.15); cursor: pointer;
+        }
+        input[type="range"]::-moz-range-thumb {
+          width: 22px; height: 22px; border-radius: 50%;
+          background: #FFFFFF; border: 2px solid #1a1a1a;
+          box-shadow: 0 2px 6px rgba(0,0,0,0.15); cursor: pointer;
+        }
+      `}</style>
+    </div>
+  )
+}
+
 function LoopField({ field, value, onChange, onItemFocus }: {
   field: FieldSchema; value: string; onChange: (v: string) => void
   onItemFocus?: (item: Record<string, string> | null, idx: number) => void
@@ -1353,6 +1415,8 @@ function LoopField({ field, value, onChange, onItemFocus }: {
                       />
                     ) : sf.type === 'toggle' ? (
                       <ToggleField field={sf} value={item[sf.key] ?? ''} onChange={v => updateSubField(idx, sf.key, v)} />
+                    ) : sf.type === 'range' ? (
+                      <RangeField field={sf} value={item[sf.key] ?? ''} onChange={v => updateSubField(idx, sf.key, v)} />
                     ) : sf.type === 'richtext' ? (
                       <RichTextField
                         value={item[sf.key] ?? ''}
@@ -1492,6 +1556,8 @@ function FieldRenderer({ field, value, onChange, onItemFocus }: {
       )
     case 'toggle':
       return <ToggleField field={field} value={value} onChange={onChange} />
+    case 'range':
+      return <RangeField field={field} value={value} onChange={onChange} />
     default:
       return (
         <input type="text" value={value} onChange={e => onChange(e.target.value)}
@@ -1648,6 +1714,24 @@ export default function SiteEditPage({ params }: { params: Promise<{ id: string 
       }
       // Section not in DOM → need a reload; queue scroll for after-load
       setPendingScrollSection({ key, mode: val === 'ja' ? 'on' : 'off' })
+      updatePreview(next)
+      return
+    }
+
+    // ── Structural fields ALWAYS reload ─────────────────────────────────
+    // Card-selects, colour pickers, ranges, toggles and image fields all
+    // commonly drive `{{#if key=value}}` conditional <style> blocks or
+    // inline CSS variables. The runtime's text-marker patcher cannot
+    // re-apply those, so an in-place update would leave a half-styled DOM
+    // (the bug where switching theme leaves the preview black). For these
+    // we skip the live update and reload directly, with scroll preserved.
+    const fieldDef = fields.find(f => f.key === key)
+    const structural = fieldDef && ['card_select', 'color', 'toggle', 'range', 'image'].includes(fieldDef.type)
+    if (structural) {
+      try {
+        const iframe = livePreviewIframeRef.current
+        if (iframe?.contentWindow) lastScrollYRef.current = iframe.contentWindow.scrollY || 0
+      } catch { /* cross-origin */ }
       updatePreview(next)
       return
     }
@@ -1904,10 +1988,17 @@ export default function SiteEditPage({ params }: { params: Promise<{ id: string 
   const isFirst = activeIdx === 0
   const isLast  = activeIdx === sections.length - 1
   const isPublished = site.status === 'published'
-  const allRequiredComplete = fields.filter(f => f.required).every(f => !!values[f.key])
+  const allRequiredComplete = fields
+    .filter(f => f.required)
+    .filter(f => checkShowWhen(f as unknown as LoopSubField, values, fields as unknown as LoopSubField[]))
+    .every(f => !!values[f.key])
 
+  // Top-level show_when: hide fields whose visibility depends on another field
+  // whose current value doesn't match the gate. Cascades correctly via the
+  // shared checkShowWhen helper (treats the global `values` map like a loop item).
   const sectionFields = fields
     .filter(f => !activeSection || (f.section || 'Allgemein') === activeSection || sections.length === 1)
+    .filter(f => checkShowWhen(f as unknown as LoopSubField, values, fields as unknown as LoopSubField[]))
     .sort((a, b) => ((a as any).order ?? 0) - ((b as any).order ?? 0))
 
   return (
@@ -1954,9 +2045,24 @@ export default function SiteEditPage({ params }: { params: Promise<{ id: string 
         </button>
         <div className="flex-1 min-w-0">
           <p className="text-sm font-bold text-gray-900 truncate leading-tight">{site.templates?.title}</p>
-          <p className="text-xs truncate leading-tight" style={{ color: '#9CA3AF' }}>
-            {site.username}.{site.templates?.domain}
-          </p>
+          <div className="flex items-center gap-1.5">
+            <p className="text-xs truncate leading-tight" style={{ color: '#9CA3AF' }}>
+              {site.username}.{site.templates?.domain}
+            </p>
+            {/* Autosave indicator — mobile */}
+            {autosaveState !== 'idle' && (
+              <span className="flex-shrink-0 text-[10px] font-medium"
+                style={{
+                  color:
+                    autosaveState === 'saving' || autosaveState === 'pending' ? '#9CA3AF' :
+                    autosaveState === 'saved' ? '#16A34A' :
+                    '#DC2626',
+                }}>
+                {autosaveState === 'saving' || autosaveState === 'pending' ? '· speichert…' :
+                 autosaveState === 'saved' ? '· gespeichert' : '· nicht gespeichert'}
+              </span>
+            )}
+          </div>
         </div>
         <div className="flex items-center gap-2 flex-shrink-0">
           <button onClick={() => { setShowFullPreview(true); setPreviewKey(k => k + 1) }}
@@ -2156,15 +2262,15 @@ export default function SiteEditPage({ params }: { params: Promise<{ id: string 
       {/* ── Mobile: horizontal section tabs ── */}
       {sections.length > 0 && (
         <div className="lg:hidden flex-shrink-0 overflow-x-auto scrollbar-none bg-white border-b"
-          style={{ borderColor: '#E5E7EB' }}>
-          <div className="flex gap-2 px-4 py-2.5 min-w-max">
+          style={{ borderColor: '#E5E7EB', WebkitOverflowScrolling: 'touch' }}>
+          <div className="flex gap-2 px-4 py-2 pb-2.5 min-w-max">
             {sections.map((sec) => {
               const isActive = activeSection === sec
               const { complete } = getSectionCompletion(sec)
               return (
                 <button key={sec} type="button"
                   onClick={() => setActiveSection(sec)}
-                  className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold flex-shrink-0 transition-all"
+                  className="flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-semibold flex-shrink-0 transition-all min-h-[36px]"
                   style={{
                     background: isActive ? '#1a1a1a' : complete ? '#DCFCE7' : '#F3F4F6',
                     color: isActive ? 'white' : complete ? '#16A34A' : '#374151',
@@ -2184,7 +2290,7 @@ export default function SiteEditPage({ params }: { params: Promise<{ id: string 
               return (
                 <button type="button"
                   onClick={() => setActiveSection(DOMAIN_SECTION)}
-                  className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold flex-shrink-0 transition-all"
+                  className="flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-semibold flex-shrink-0 transition-all min-h-[36px]"
                   style={{
                     background: isActive ? '#1a1a1a' : hasDomain ? '#DCFCE7' : '#EFF6FF',
                     color: isActive ? 'white' : hasDomain ? '#16A34A' : '#3B82F6',
@@ -2296,7 +2402,7 @@ export default function SiteEditPage({ params }: { params: Promise<{ id: string 
         {/* ── Right: Form Content ── */}
         <main className="flex-1 flex flex-col overflow-hidden">
           <div id="editor-scroll" className="flex-1 overflow-y-auto">
-          <div className="max-w-2xl mx-auto px-4 sm:px-6 py-4 sm:py-6 pb-4">
+          <div className="max-w-2xl mx-auto px-4 sm:px-6 py-4 sm:py-6 pb-28 lg:pb-6">
 
             {/* ── Domain section ── */}
             {isDomainSection && (
@@ -2442,8 +2548,8 @@ export default function SiteEditPage({ params }: { params: Promise<{ id: string 
           </div>{/* end editor-scroll */}
 
           {/* ── Mobile Bottom Action Bar ── */}
-          <div className="lg:hidden flex-shrink-0 bg-white border-t flex items-center gap-3 px-4 pt-3"
-            style={{ borderColor: '#E5E7EB', paddingBottom: 'max(env(safe-area-inset-bottom, 12px), 12px)' }}>
+          <div className="lg:hidden flex-shrink-0 bg-white border-t flex items-center gap-3 px-4 pt-3 shadow-[0_-1px_0_0_#E5E7EB]"
+            style={{ borderColor: '#E5E7EB', paddingBottom: 'max(env(safe-area-inset-bottom, 16px), 16px)' }}>
 
             {/* Zurück */}
             {!isDomainSection && sections.length > 1 && !isFirst && (

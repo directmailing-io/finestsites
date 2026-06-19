@@ -355,7 +355,7 @@ export default function SitesPage() {
       {/* ── Empty state — no sites yet ──────────────────────────────── */}
       {!loading && !hasSites && (
         <section className="mb-12 sm:mb-16">
-          <div className="rounded-3xl overflow-hidden p-10 sm:p-14 text-center"
+          <div className="rounded-3xl overflow-hidden p-8 sm:p-14 text-center"
             style={{ background: 'linear-gradient(160deg, #FAFAFA 0%, #FFF8F3 100%)' }}>
             <div className="w-16 h-16 rounded-2xl mx-auto mb-5 flex items-center justify-center"
               style={{ background: '#fff', boxShadow: '0 4px 20px rgba(0,0,0,0.06)' }}>
@@ -416,7 +416,7 @@ export default function SitesPage() {
 
         {/* Tag filters */}
         {allTags.length > 0 && (
-          <div className="flex items-center gap-2 mb-6 -mx-4 px-4 sm:mx-0 sm:px-0 overflow-x-auto scrollbar-none">
+          <div className="flex items-center gap-2 mb-6 -mx-4 px-4 sm:mx-0 sm:px-0 overflow-x-auto scrollbar-none pb-1 sm:pb-0">
             <button
               onClick={() => setActiveTag(ALL_TAG)}
               className="text-sm font-medium px-4 py-2 rounded-full transition-colors flex-shrink-0"
@@ -442,7 +442,7 @@ export default function SitesPage() {
 
         {/* Template grid */}
         {loading ? (
-          <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 sm:gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 sm:gap-6">
             {[1, 2, 3, 4].map(i => (
               <div key={i} className="animate-pulse">
                 <div className="rounded-2xl bg-gray-100" style={{ aspectRatio: '4/3' }} />
@@ -465,7 +465,7 @@ export default function SitesPage() {
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 sm:gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 sm:gap-6">
             {filteredTemplates.map(tpl => (
               <TemplateCard key={tpl.id} tpl={tpl} />
             ))}

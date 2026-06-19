@@ -234,21 +234,21 @@ export default function AffiliatePage() {
         <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-white/40 mb-6 relative z-10">
           Deine Einnahmen
         </p>
-        <div className="grid grid-cols-3 gap-4 sm:gap-8 relative z-10">
+        <div className="grid grid-cols-3 gap-3 sm:gap-8 relative z-10">
           <div>
-            <p className="text-2xl sm:text-4xl font-bold tabular-nums tracking-tight">
+            <p className="text-xl sm:text-2xl lg:text-4xl font-bold tabular-nums tracking-tight">
               {euros(availableCents)}
             </p>
             <p className="text-xs sm:text-sm text-white/50 mt-1.5">Verfügbar</p>
           </div>
           <div>
-            <p className="text-2xl sm:text-4xl font-bold tabular-nums tracking-tight" style={{ color: '#FBBF24' }}>
+            <p className="text-xl sm:text-2xl lg:text-4xl font-bold tabular-nums tracking-tight" style={{ color: '#FBBF24' }}>
               {euros(pendingCents)}
             </p>
             <p className="text-xs sm:text-sm text-white/50 mt-1.5">In Wartefrist</p>
           </div>
           <div>
-            <p className="text-2xl sm:text-4xl font-bold tabular-nums tracking-tight text-white/50">
+            <p className="text-xl sm:text-2xl lg:text-4xl font-bold tabular-nums tracking-tight text-white/50">
               {euros(paidCents)}
             </p>
             <p className="text-xs sm:text-sm text-white/50 mt-1.5">Ausgezahlt</p>

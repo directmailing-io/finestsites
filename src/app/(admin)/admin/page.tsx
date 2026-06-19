@@ -205,20 +205,21 @@ export default async function AdminPage() {
     <div style={{ maxWidth: 1100 }}>
 
       {/* ── Header ──────────────────────────────────────────────────────── */}
-      <div className="mb-7 flex items-start justify-between">
-        <div>
+      <div className="mb-7 flex items-start justify-between gap-3">
+        <div className="min-w-0">
           <h1 className="text-2xl font-semibold text-gray-900 tracking-tight">Admin</h1>
-          <p className="text-sm mt-1" style={{ color: '#94A3B8' }}>
+          <p className="text-sm mt-1 truncate" style={{ color: '#94A3B8' }}>
             {now.toLocaleDateString('de-DE', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
           </p>
         </div>
         <Link href="/admin/templates/new"
-          className="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold text-white rounded-[14px]"
+          className="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold text-white rounded-[14px] flex-shrink-0"
           style={{ background: '#1a1a1a', boxShadow: '0 4px 14px rgba(26,26,26,0.2)' }}>
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
             <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
           </svg>
-          Template
+          <span className="hidden sm:inline">Template</span>
+          <span className="sm:hidden">Neu</span>
         </Link>
       </div>
 
@@ -239,7 +240,7 @@ export default async function AdminPage() {
               {now.toLocaleDateString('de-DE', { month: 'long', year: 'numeric' })}
             </span>
           </div>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
 
             {/* Eingegangen */}
             <div>
@@ -277,7 +278,7 @@ export default async function AdminPage() {
             </div>
 
             {/* Nettogewinn */}
-            <div style={{ borderLeft: '1px solid rgba(255,255,255,0.06)', paddingLeft: 20 }}>
+            <div>
               <div className="text-[11px] font-medium mb-1.5" style={{ color: '#64748B' }}>Nettogewinn</div>
               <div className="text-2xl font-bold tracking-tight"
                 style={{ color: netProfitCents > 0 ? '#34D399' : '#94A3B8' }}>
@@ -600,13 +601,13 @@ export default async function AdminPage() {
                     {planMeta.label}
                   </span>
                   {statusMeta && (
-                    <span className="flex items-center gap-1 text-xs px-2 py-0.5 rounded-full"
+                    <span className="hidden sm:flex items-center gap-1 text-xs px-2 py-0.5 rounded-full"
                       style={{ background: statusMeta.bg, color: statusMeta.text }}>
                       <span className="w-1.5 h-1.5 rounded-full" style={{ background: statusMeta.dot }} />
                       {statusMeta.label}
                     </span>
                   )}
-                  <span className="text-xs tabular-nums" style={{ color: '#CBD5E1' }}>
+                  <span className="hidden sm:inline text-xs tabular-nums" style={{ color: '#CBD5E1' }}>
                     {new Date(u.created_at).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: '2-digit' })}
                   </span>
                 </div>

@@ -56,8 +56,76 @@ export default async function AdminUsersPage() {
         </div>
       </div>
 
-      {/* ── Table ── */}
-      <div className="rounded-[20px] bg-white overflow-hidden"
+      {/* ── Mobile Cards (below lg) ── */}
+      <div className="block lg:hidden">
+        {users?.map((user: any) => {
+          const planMeta   = PLAN_META[user.plan]   ?? PLAN_META.starter
+          const statusMeta = STATUS_META[user.subscription_status] ?? null
+          const siteCount  = siteCountByUser[user.id] ?? 0
+          const initials   = user.email.slice(0, 2).toUpperCase()
+          const dateStr    = new Date(user.created_at).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: '2-digit' })
+          return (
+            <Link key={user.id} href={`/admin/users/${user.id}`}
+              className="flex flex-col gap-3 p-4 mb-3 rounded-2xl bg-white active:bg-gray-50"
+              style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04)', border: '1px solid #F1F5F9' }}>
+
+              {/* Top row: avatar + email + chevron */}
+              <div className="flex items-center gap-3">
+                <span className="w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0"
+                  style={{ background: planMeta.bg, color: planMeta.text }}>
+                  {initials}
+                </span>
+                <span className="flex-1 min-w-0">
+                  <span className="block truncate text-sm font-semibold text-gray-900">{user.email}</span>
+                  <span className="block text-xs font-mono" style={{ color: '#94A3B8' }}>
+                    {user.username ? `@${user.username}` : <span className="italic" style={{ color: '#CBD5E1' }}>kein Username</span>}
+                  </span>
+                </span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#CBD5E1" strokeWidth="2.5" className="flex-shrink-0">
+                  <path d="M9 18l6-6-6-6"/>
+                </svg>
+              </div>
+
+              {/* Bottom row: badges + site count + date */}
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-xs font-semibold px-2.5 py-1 rounded-full"
+                  style={{ background: planMeta.bg, color: planMeta.text }}>
+                  {planMeta.label}
+                </span>
+                {statusMeta && (
+                  <span className="flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-full"
+                    style={{ background: statusMeta.bg, color: statusMeta.text }}>
+                    <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: statusMeta.dot }} />
+                    {statusMeta.label}
+                  </span>
+                )}
+                {siteCount > 0 && (
+                  <span className="text-xs font-medium px-2.5 py-1 rounded-full"
+                    style={{ background: '#F0FDF4', color: '#16A34A' }}>
+                    {siteCount} {siteCount === 1 ? 'Seite' : 'Seiten'}
+                  </span>
+                )}
+                <span className="ml-auto text-xs tabular-nums" style={{ color: '#CBD5E1' }}>{dateStr}</span>
+              </div>
+            </Link>
+          )
+        })}
+
+        {(!users || users.length === 0) && (
+          <div className="py-16 text-center">
+            <div className="w-12 h-12 rounded-full mx-auto mb-3 flex items-center justify-center"
+              style={{ background: '#F1F5F9' }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" strokeWidth="1.75">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
+              </svg>
+            </div>
+            <p className="text-sm font-medium text-gray-500">Noch keine Nutzer registriert</p>
+          </div>
+        )}
+      </div>
+
+      {/* ── Desktop Table (lg and above) ── */}
+      <div className="hidden lg:block rounded-[20px] bg-white overflow-hidden"
         style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04)', border: '1px solid #F1F5F9' }}>
 
         {/* Header row */}

@@ -198,7 +198,7 @@ function SettingsContent() {
 
       {/* Toast */}
       {toast && (
-        <div className="fixed top-6 right-6 z-50 px-5 py-3 rounded-2xl text-sm font-medium text-white"
+        <div className="fixed top-4 left-4 right-4 sm:left-auto sm:right-6 sm:top-6 z-50 px-5 py-3 rounded-2xl text-sm font-medium text-white text-center sm:text-left"
           style={{ background: '#1a1a1a', boxShadow: '0 8px 30px rgba(0,0,0,0.25)' }}>
           {toast}
         </div>
@@ -291,8 +291,8 @@ function SettingsContent() {
           ════════════════════════════════════════════════════════════════ */}
       <Section title="Plan wählen" subtitle="Wechsle jederzeit. Wir verrechnen anteilig.">
         {/* Interval toggle — segmented control */}
-        <div className="flex items-center justify-between gap-4 mb-7">
-          <div className="inline-flex p-1 rounded-2xl" style={{ background: '#F1F5F9' }}>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-7">
+          <div className="inline-flex p-1 rounded-2xl self-start" style={{ background: '#F1F5F9' }}>
             <button
               onClick={() => setBillingInterval('monthly')}
               className="px-5 py-2 text-sm font-semibold rounded-xl transition-all"
@@ -318,7 +318,7 @@ function SettingsContent() {
               </span>
             </button>
           </div>
-          <p className="hidden sm:block text-xs" style={{ color: '#94A3B8' }}>
+          <p className="text-xs" style={{ color: '#94A3B8' }}>
             {billingInterval === 'monthly' ? 'Mindestlaufzeit 1 Monat' : 'Jahresrechnung · spare 2 Monate'}
           </p>
         </div>
@@ -462,26 +462,26 @@ function SettingsContent() {
 
               return (
                 <div key={inv.id}
-                  className="flex items-center gap-4 px-3 py-4 rounded-2xl transition-colors hover:bg-gray-50"
+                  className="flex items-center gap-3 px-3 py-4 rounded-2xl transition-colors hover:bg-gray-50"
                   style={{ borderBottom: isLast ? 'none' : '1px solid #F1F5F9' }}>
-                  <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
+                  <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center flex-shrink-0"
                     style={{ background: '#F1F5F9' }}>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#475569" strokeWidth="2">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#475569" strokeWidth="2">
                       <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
                       <polyline points="14 2 14 8 20 8"/>
                     </svg>
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <p className="text-sm font-semibold text-gray-900">
+                      <p className="text-sm font-semibold text-gray-900 truncate">
                         {inv.number ?? `Rechnung ${inv.id.slice(-8)}`}
                       </p>
-                      <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
+                      <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full flex-shrink-0"
                         style={{ background: s.bg, color: s.color }}>
                         {s.text}
                       </span>
                     </div>
-                    <p className="text-xs mt-0.5" style={{ color: '#94A3B8' }}>
+                    <p className="text-xs mt-0.5 break-words" style={{ color: '#94A3B8' }}>
                       {date} · {amountStr} inkl. MwSt.
                     </p>
                   </div>
@@ -533,7 +533,7 @@ function SettingsContent() {
           SICHERHEIT (Passwort)
           ════════════════════════════════════════════════════════════════ */}
       <Section title="Sicherheit" subtitle="Aktualisiere dein Passwort regelmäßig.">
-        <form onSubmit={handlePasswordChange} className="max-w-md flex flex-col gap-4">
+        <form onSubmit={handlePasswordChange} className="w-full sm:max-w-md flex flex-col gap-4">
           <Field
             label="Aktuelles Passwort"
             value={currentPassword}

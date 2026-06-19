@@ -298,7 +298,7 @@ function DetailModal({
 
           {/* Drag handle (mobile) */}
           <div className="sm:hidden flex justify-center pt-3 pb-1 flex-shrink-0">
-            <div className="w-10 h-1 rounded-full" style={{ background: '#E5E7EB' }} />
+            <div className="w-12 h-1.5 rounded-full" style={{ background: '#D1D5DB' }} />
           </div>
 
           {/* Header */}
@@ -757,7 +757,7 @@ export default function SubmissionsPage() {
             return (
               <div key={s.id}
                 onClick={() => handleRowClick(s)}
-                className="group flex items-center gap-3 sm:gap-4 px-2 sm:px-3 py-4 sm:py-5 cursor-pointer transition-colors select-none"
+                className="group flex items-center gap-3 sm:gap-4 px-2 sm:px-3 py-4 sm:py-5 cursor-pointer transition-colors select-none min-h-[64px]"
                 style={{
                   borderBottom: isLast ? 'none' : '1px solid #F1F5F9',
                   background: 'transparent',
@@ -785,7 +785,7 @@ export default function SubmissionsPage() {
                   <div className="relative">
                     <Avatar name={name} size={48} />
                     {isUnread && (
-                      <span className="absolute -top-0.5 -right-0.5 w-3 h-3 rounded-full"
+                      <span className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 rounded-full"
                         style={{ background: '#1a1a1a', border: '2px solid white' }} />
                     )}
                   </div>
