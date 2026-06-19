@@ -4,7 +4,7 @@ import { useState, useEffect, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
-import { PLAN_LIST, PLAN_LABELS, COMMON_FEATURES, PLAN_ORDER, type PlanKey } from '@/lib/plans'
+import { PLAN_LIST, PLAN_LABELS, COMMON_FEATURES, PLAN_ORDER, canUpgradeTo, type PlanKey } from '@/lib/plans'
 
 interface SubscriptionInfo {
   status: string
@@ -64,6 +64,7 @@ function SettingsContent() {
   const [cancelLoading, setCancelLoading] = useState(false)
   const [cancelError, setCancelError] = useState('')
   const [showCancelConfirm, setShowCancelConfirm] = useState(false)
+  const [reactivateLoading, setReactivateLoading] = useState(false)
 
   const [profile, setProfile] = useState<UserProfile | null>(null)
   const [billingInterval, setBillingInterval] = useState<'monthly' | 'yearly'>('monthly')
@@ -174,6 +175,19 @@ function SettingsContent() {
     setCancelLoading(false)
   }
 
+  async function handleReactivate() {
+    setReactivateLoading(true)
+    const res = await fetch('/api/billing/subscription', { method: 'PATCH' })
+    const data = await res.json()
+    if (data.error) {
+      setToast(data.error)
+      setTimeout(() => setToast(''), 4000)
+    } else {
+      setSubscription(prev => prev ? { ...prev, cancel_at_period_end: false, cancel_at: null } : null)
+    }
+    setReactivateLoading(false)
+  }
+
   async function handleCheckout(plan: string) {
     setCheckoutLoading(plan)
     const res = await fetch('/api/billing/checkout', {
@@ -274,6 +288,14 @@ function SettingsContent() {
                   Abonnement kündigen
                 </button>
               )}
+              {subscription?.cancel_at_period_end && (
+                <button onClick={handleReactivate} disabled={reactivateLoading}
+                  className="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-xl transition-opacity hover:opacity-90 disabled:opacity-70"
+                  style={{ background: '#15803D', color: '#fff' }}>
+                  {reactivateLoading ? <Spinner /> : null}
+                  Kündigung zurückziehen
+                </button>
+              )}
             </div>
           </div>
         ) : (
@@ -290,6 +312,17 @@ function SettingsContent() {
           PLAN WECHSELN
           ════════════════════════════════════════════════════════════════ */}
       <Section title="Plan wählen" subtitle="Wechsle jederzeit. Wir verrechnen anteilig.">
+        {/* Secret plan — not self-service */}
+        {currentPlan === 'secret' && (
+          <div className="rounded-3xl p-6 sm:p-7" style={{ background: '#F8FAFC' }}>
+            <p className="text-base font-semibold text-gray-900 mb-1">Secret-Tarif aktiv</p>
+            <p className="text-sm" style={{ color: '#64748B' }}>
+              Du bist auf einem internen Sondertarif mit unlimitierten Premium-Webseiten. Kein Self-Service-Wechsel möglich — wende dich bei Fragen an den Support.
+            </p>
+          </div>
+        )}
+        {currentPlan === 'secret' ? null : (
+        <>
         {/* Interval toggle — segmented control */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-7">
           <div className="inline-flex p-1 rounded-2xl self-start" style={{ background: '#F1F5F9' }}>
@@ -329,7 +362,8 @@ function SettingsContent() {
             const isCurrent = currentPlan === plan.key
             const price = billingInterval === 'monthly' ? plan.monthly_eur : plan.yearly_eur
             const perMonth = billingInterval === 'yearly' ? (plan.yearly_eur / 12).toFixed(0) : plan.monthly_eur
-            const isLower = PLAN_ORDER.indexOf(plan.key) < PLAN_ORDER.indexOf(currentPlan as PlanKey)
+            const isUpgrade = canUpgradeTo(currentPlan, plan.key)
+            const isLower = !isCurrent && !isUpgrade
 
             return (
               <div key={plan.key}
@@ -421,6 +455,8 @@ function SettingsContent() {
             )
           })}
         </div>
+        </>
+        )}
       </Section>
 
       {/* ════════════════════════════════════════════════════════════════

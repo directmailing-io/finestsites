@@ -79,7 +79,7 @@ export async function POST(_: NextRequest, { params }: { params: Promise<{ id: s
   if (!tplIsFree) {
     const { data: profile } = await admin.from('users').select('plan').eq('id', user.id).single()
     const plan = profile?.plan ?? 'starter'
-    const PLAN_LIMITS: Record<string, number> = { starter: 1, pro: 3, unlimited: Infinity }
+    const PLAN_LIMITS: Record<string, number> = { starter: 1, pro: 3, unlimited: Infinity, secret: Infinity }
     const limit = PLAN_LIMITS[plan] ?? 1
 
     const { data: otherPublished } = await admin

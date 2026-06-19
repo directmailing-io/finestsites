@@ -41,7 +41,7 @@ export function DashboardSidebar() {
     return pathname.startsWith(href)
   }
 
-  const PLAN_LABELS: Record<string, string> = { starter: 'Starter', pro: 'Pro', unlimited: 'Unlimited' }
+  const PLAN_LABELS: Record<string, string> = { starter: 'Starter', pro: 'Pro', unlimited: 'Unlimited', secret: 'Secret' }
 
   return (
     <aside
