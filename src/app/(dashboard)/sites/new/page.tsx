@@ -116,8 +116,7 @@ export default function NewSitePage() {
         </div>
       ) : (
         <div className="flex flex-col gap-4">
-          {templates.map(tpl => {
-            const isActivated = !!activatedMap[tpl.id]
+          {templates.filter(tpl => !activatedMap[tpl.id]).map(tpl => {
             const isBusy = busy === tpl.id
             const preview = tpl.preview_images?.[0] ?? null
 
@@ -164,12 +163,6 @@ export default function NewSitePage() {
                       <h3 className="font-bold text-gray-900 text-[15px] leading-snug flex-1">
                         {tpl.title}
                       </h3>
-                      {isActivated && (
-                        <span className="flex-shrink-0 text-[10px] font-semibold px-2 py-0.5 rounded-full"
-                          style={{ background: '#F0FDF4', color: '#16A34A' }}>
-                          Aktiv
-                        </span>
-                      )}
                     </div>
                     {tpl.description && (
                       <p className="text-sm leading-relaxed line-clamp-3" style={{ color: '#64748B' }}>
@@ -183,9 +176,8 @@ export default function NewSitePage() {
                     disabled={!!busy}
                     className="mt-auto w-full py-2.5 px-4 rounded-xl text-sm font-semibold transition-all active:scale-[0.97] flex items-center justify-center gap-2"
                     style={{
-                      background: isBusy ? '#E5E7EB' : isActivated ? '#F8FAFC' : '#1a1a1a',
-                      color: isBusy ? '#9CA3AF' : isActivated ? '#374151' : '#fff',
-                      border: isActivated && !isBusy ? '1.5px solid #E2E8F0' : 'none',
+                      background: isBusy ? '#E5E7EB' : '#1a1a1a',
+                      color: isBusy ? '#9CA3AF' : '#fff',
                     }}
                   >
                     {isBusy ? (
@@ -193,8 +185,6 @@ export default function NewSitePage() {
                         <span className="w-3.5 h-3.5 rounded-full border-2 border-gray-300 border-t-gray-500 animate-spin" />
                         Wird geöffnet…
                       </>
-                    ) : isActivated ? (
-                      'Webseite bearbeiten'
                     ) : (
                       'Webseite jetzt bearbeiten'
                     )}

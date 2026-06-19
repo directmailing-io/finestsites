@@ -127,7 +127,12 @@ export default function SitesPage() {
   }, [])
 
   const hasSites = sites.length > 0
-  const greeting = username ? `Hallo, ${username}` : 'Willkommen'
+
+  function getGreeting() {
+    const hour = new Date().getHours()
+    const time = hour < 12 ? 'Guten Morgen' : hour < 18 ? 'Guten Tag' : 'Guten Abend'
+    return username ? `${time}, ${username}` : time
+  }
 
   return (
     <div className="max-w-7xl mx-auto">
@@ -135,7 +140,7 @@ export default function SitesPage() {
       {/* ── Hero / Greeting ── */}
       <div className="mb-8 sm:mb-10">
         <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight">
-          {greeting}
+          {loading ? '\u00A0' : getGreeting()}
         </h1>
         <p className="text-base mt-1.5" style={{ color: '#94A3B8' }}>
           {hasSites
@@ -180,15 +185,14 @@ export default function SitesPage() {
 
       {/* ── Neue Webseite erstellen CTA ── */}
       {!loading && (
-        <div className={hasSites ? 'mt-2' : ''}>
+        <div className="mt-4">
           <Link
             href="/sites/new"
             className="flex items-center justify-center gap-3 w-full py-4 rounded-2xl font-semibold text-[15px] transition-all active:scale-[0.98]"
             style={{
-              background: hasSites ? '#F8FAFC' : '#1a1a1a',
-              color: hasSites ? '#374151' : '#fff',
-              border: hasSites ? '1.5px dashed #E2E8F0' : 'none',
-              boxShadow: hasSites ? 'none' : '0 4px 20px rgba(0,0,0,0.15)',
+              background: '#1a1a1a',
+              color: '#fff',
+              boxShadow: '0 4px 20px rgba(0,0,0,0.18)',
             }}
           >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
