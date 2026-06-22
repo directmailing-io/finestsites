@@ -1,44 +1,44 @@
 import { NextRequest, NextResponse } from 'next/server'
 import type Stripe from 'stripe'
-import { createAdminClient } from '@/lib/supabase/admin'
+import { db } from '@/lib/db'
+import { users, userSites, subscriptionEvents, affiliateCommissions } from '@/lib/db/schema'
+import { eq, and, inArray } from 'drizzle-orm'
 import { getStripe, getPlanByPriceId, planCents, type PlanKey, type BillingInterval } from '@/lib/stripe/client'
 import { getResend, FROM_EMAIL } from '@/lib/resend'
 import { affiliateNewReferralEmail } from '@/lib/email/templates'
 
 export async function POST(req: NextRequest) {
+  if (!process.env.STRIPE_WEBHOOK_SECRET) throw new Error('Missing STRIPE_WEBHOOK_SECRET')
+
   const body = await req.text()
   const sig = req.headers.get('stripe-signature') ?? ''
-  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET ?? ''
 
   const stripe = getStripe()
   let event: Stripe.Event
   try {
-    event = stripe.webhooks.constructEvent(body, sig, webhookSecret)
+    event = stripe.webhooks.constructEvent(body, sig, process.env.STRIPE_WEBHOOK_SECRET)
   } catch (err) {
     console.error('[webhook] Invalid signature:', err instanceof Error ? err.message : err)
     return NextResponse.json({ error: 'Invalid signature' }, { status: 400 })
   }
 
-  const admin = createAdminClient()
-
   // ── helpers ────────────────────────────────────────────────────────────────
 
   // In Stripe API 2025+, current_period_end moved from Subscription root to
   // SubscriptionItem. We read from the item first, fall back to root.
-  function getPeriodEnd(sub: Stripe.Subscription): string | null {
+  function getPeriodEnd(sub: Stripe.Subscription): Date | null {
     const itemTs = (sub.items.data[0] as any)?.current_period_end
     const rootTs = (sub as any).current_period_end
     const ts = itemTs ?? rootTs
-    return ts ? new Date(ts * 1000).toISOString() : null
+    return ts ? new Date(ts * 1000) : null
   }
 
   async function getUserIdByCustomer(customerId: string): Promise<string | null> {
-    const { data } = await admin
-      .from('users')
-      .select('id')
-      .eq('stripe_customer_id', customerId)
-      .single()
-    return data?.id ?? null
+    const row = await db.query.users.findFirst({
+      where: eq(users.stripeCustomerId, customerId),
+      columns: { id: true },
+    })
+    return row?.id ?? null
   }
 
   async function logEvent(params: {
@@ -52,20 +52,23 @@ export async function POST(req: NextRequest) {
     stripeInvoiceId?: string
     metadata?: Record<string, unknown>
   }) {
-    const { error } = await admin.from('subscription_events').insert({
-      user_id: params.userId,
-      event_type: params.eventType,
-      plan: params.plan ?? null,
-      billing_interval: params.billingInterval ?? null,
-      amount_cents: params.amountCents ?? null,
-      stripe_event_id: params.stripeEventId,
-      stripe_subscription_id: params.stripeSubscriptionId ?? null,
-      stripe_invoice_id: params.stripeInvoiceId ?? null,
-      metadata: params.metadata ?? {},
-    })
-    if (error && error.code !== '23505') {
+    try {
+      await db.insert(subscriptionEvents).values({
+        userId: params.userId,
+        eventType: params.eventType,
+        plan: params.plan ?? null,
+        billingInterval: params.billingInterval ?? null,
+        amountCents: params.amountCents ?? null,
+        stripeEventId: params.stripeEventId,
+        stripeSubscriptionId: params.stripeSubscriptionId ?? null,
+        stripeInvoiceId: params.stripeInvoiceId ?? null,
+        metadata: params.metadata ?? {},
+      })
+    } catch (err: any) {
       // 23505 = unique_violation (duplicate event — idempotency, safe to ignore)
-      console.error('[webhook] logEvent error:', error.message)
+      if (err?.code !== '23505') {
+        console.error('[webhook] logEvent error:', err?.message ?? err)
+      }
     }
   }
 
@@ -82,18 +85,18 @@ export async function POST(req: NextRequest) {
       const priceId = subscription.items.data[0]?.price.id ?? ''
       const plan = getPlanByPriceId()[priceId] ?? 'starter'
       const interval = subscription.items.data[0]?.price.recurring?.interval === 'year' ? 'yearly' : 'monthly'
-      const userId = session.metadata?.supabase_user_id
+      const userId = session.metadata?.supabase_user_id ?? session.metadata?.user_id
       if (!userId) break
 
-      await admin.from('users').update({
+      await db.update(users).set({
         plan,
-        billing_interval: interval,
-        subscription_status: subscription.status,
-        stripe_subscription_id: subscription.id,
-        current_period_end: getPeriodEnd(subscription),
-        payment_failed_at: null,
-        deactivated_at: null,
-      }).eq('id', userId)
+        billingInterval: interval,
+        subscriptionStatus: subscription.status,
+        stripeSubscriptionId: subscription.id,
+        currentPeriodEnd: getPeriodEnd(subscription),
+        paymentFailedAt: null,
+        deactivatedAt: null,
+      }).where(eq(users.id, userId))
 
       await logEvent({
         userId,
@@ -108,35 +111,39 @@ export async function POST(req: NextRequest) {
       // ── Affiliate commission for first payment ────────────────────────────
       const referredBy = session.metadata?.referred_by
       if (referredBy) {
-        const { data: referrer } = await admin
-          .from('users')
-          .select('id, email')
-          .eq('username', referredBy)
-          .single()
+        const referrer = await db.query.users.findFirst({
+          where: eq(users.username, referredBy),
+          columns: { id: true, email: true },
+        })
 
         if (referrer) {
           const grossPaid = session.amount_total ?? 0  // cents, after coupon
           const commissionAmount = Math.floor(grossPaid * 0.15)
-          const availableAt = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString()
+          const availableAt = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000)
 
           // Retrieve the invoice ID from the subscription's latest invoice
           const latestInvoiceId = typeof subscription.latest_invoice === 'string'
             ? subscription.latest_invoice
             : (subscription.latest_invoice as any)?.id ?? null
 
-          const { error: commErr } = await admin.from('affiliate_commissions').insert({
-            referrer_id: referrer.id,
-            referee_id: userId,
-            stripe_invoice_id: latestInvoiceId,
-            stripe_customer_id: session.customer as string,
-            gross_amount: grossPaid,
-            commission_rate: 0.15,
-            commission_amount: commissionAmount,
-            status: 'pending',
-            available_at: availableAt,
-          })
-          if (commErr && commErr.code !== '23505') {
-            console.error('[webhook] first-payment commission error:', commErr.message)
+          if (latestInvoiceId) {
+            try {
+              await db.insert(affiliateCommissions).values({
+                referrerId: referrer.id,
+                refereeId: userId,
+                stripeInvoiceId: latestInvoiceId,
+                stripeCustomerId: session.customer as string,
+                grossAmount: grossPaid,
+                commissionRate: '0.15',
+                commissionAmount,
+                status: 'pending',
+                availableAt,
+              })
+            } catch (err: any) {
+              if (err?.code !== '23505') {
+                console.error('[webhook] first-payment commission error:', err?.message ?? err)
+              }
+            }
           }
 
           // Notify referrer by email (fire-and-forget)
@@ -166,13 +173,13 @@ export async function POST(req: NextRequest) {
       const userId = await getUserIdByCustomer(sub.customer as string)
       if (!userId) break
 
-      await admin.from('users').update({
+      await db.update(users).set({
         plan,
-        billing_interval: interval,
-        subscription_status: sub.status,
-        stripe_subscription_id: sub.id,
-        current_period_end: getPeriodEnd(sub),
-      }).eq('id', userId)
+        billingInterval: interval,
+        subscriptionStatus: sub.status,
+        stripeSubscriptionId: sub.id,
+        currentPeriodEnd: getPeriodEnd(sub),
+      }).where(eq(users.id, userId))
 
       await logEvent({
         userId,
@@ -193,31 +200,35 @@ export async function POST(req: NextRequest) {
       const userId = await getUserIdByCustomer(sub.customer as string)
       if (!userId) break
 
+      const now = new Date()
+      const deletionDate = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+
       // Deactivate user account
-      await admin.from('users').update({
+      await db.update(users).set({
         plan: 'starter',
-        subscription_status: 'canceled',
-        stripe_subscription_id: null,
-        deactivated_at: new Date().toISOString(),
-      }).eq('id', userId)
+        subscriptionStatus: 'canceled',
+        stripeSubscriptionId: null,
+        deactivatedAt: now,
+      }).where(eq(users.id, userId))
 
       // Deactivate all published/draft sites and schedule deletion in 30 days
-      const deletionDate = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
-      await admin.from('user_sites')
-        .update({
-          status: 'deactivated',
-          deactivated_at: new Date().toISOString(),
-          scheduled_deletion_at: deletionDate,
-        })
-        .eq('user_id', userId)
-        .in('status', ['published', 'draft'])
+      await db.update(userSites).set({
+        status: 'deactivated',
+        deactivatedAt: now,
+        scheduledDeletionAt: deletionDate,
+      }).where(
+        and(
+          eq(userSites.userId, userId),
+          inArray(userSites.status, ['published', 'draft'])
+        )
+      )
 
       await logEvent({
         userId,
         eventType: 'subscription_deleted',
         stripeEventId: event.id,
         stripeSubscriptionId: sub.id,
-        metadata: { sites_deactivated: true, scheduled_deletion_at: deletionDate },
+        metadata: { sites_deactivated: true, scheduled_deletion_at: deletionDate.toISOString() },
       })
       break
     }
@@ -228,10 +239,10 @@ export async function POST(req: NextRequest) {
       const userId = await getUserIdByCustomer(invoice.customer as string)
       if (!userId) break
 
-      await admin.from('users').update({
-        subscription_status: 'past_due',
-        payment_failed_at: new Date().toISOString(),
-      }).eq('id', userId)
+      await db.update(users).set({
+        subscriptionStatus: 'past_due',
+        paymentFailedAt: new Date(),
+      }).where(eq(users.id, userId))
 
       const inv1 = invoice as any
       await logEvent({
@@ -267,11 +278,11 @@ export async function POST(req: NextRequest) {
       const plan = getPlanByPriceId()[priceId] ?? 'starter'
       const interval = sub.items.data[0]?.price.recurring?.interval === 'year' ? 'yearly' : 'monthly'
 
-      await admin.from('users').update({
-        subscription_status: sub.status,
-        current_period_end: getPeriodEnd(sub),
-        payment_failed_at: null,
-      }).eq('id', userId)
+      await db.update(users).set({
+        subscriptionStatus: sub.status,
+        currentPeriodEnd: getPeriodEnd(sub),
+        paymentFailedAt: null,
+      }).where(eq(users.id, userId))
 
       await logEvent({
         userId,
@@ -286,38 +297,39 @@ export async function POST(req: NextRequest) {
 
       // ── Affiliate commission ──────────────────────────────────────────────
       // Check if this user was referred
-      const { data: paidUser } = await admin
-        .from('users')
-        .select('referred_by_username')
-        .eq('id', userId)
-        .single()
+      const paidUser = await db.query.users.findFirst({
+        where: eq(users.id, userId),
+        columns: { referredByUsername: true },
+      })
 
-      if (paidUser?.referred_by_username) {
-        const { data: referrer } = await admin
-          .from('users')
-          .select('id')
-          .eq('username', paidUser.referred_by_username)
-          .single()
+      if (paidUser?.referredByUsername) {
+        const referrer = await db.query.users.findFirst({
+          where: eq(users.username, paidUser.referredByUsername),
+          columns: { id: true },
+        })
 
         if (referrer) {
           const grossPaid = invoice.amount_paid  // in cents, after coupon
           const commissionAmount = Math.floor(grossPaid * 0.15)
-          const availableAt = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString()
+          const availableAt = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000)
 
           // Idempotent: unique on stripe_invoice_id
-          const { error: commErr } = await admin.from('affiliate_commissions').insert({
-            referrer_id: referrer.id,
-            referee_id: userId,
-            stripe_invoice_id: invoice.id,
-            stripe_customer_id: invoice.customer as string,
-            gross_amount: grossPaid,
-            commission_rate: 0.15,
-            commission_amount: commissionAmount,
-            status: 'pending',
-            available_at: availableAt,
-          })
-          if (commErr && commErr.code !== '23505') {
-            console.error('[webhook] commission insert error:', commErr.message)
+          try {
+            await db.insert(affiliateCommissions).values({
+              referrerId: referrer.id,
+              refereeId: userId,
+              stripeInvoiceId: invoice.id,
+              stripeCustomerId: invoice.customer as string,
+              grossAmount: grossPaid,
+              commissionRate: '0.15',
+              commissionAmount,
+              status: 'pending',
+              availableAt,
+            })
+          } catch (err: any) {
+            if (err?.code !== '23505') {
+              console.error('[webhook] commission insert error:', err?.message ?? err)
+            }
           }
         }
       }
@@ -330,10 +342,16 @@ export async function POST(req: NextRequest) {
       const invoiceId = charge.invoice
       if (!invoiceId) break
 
-      await admin.from('affiliate_commissions')
-        .update({ status: 'reversed', reversal_reason: 'charge_refunded', updated_at: new Date().toISOString() })
-        .eq('stripe_invoice_id', invoiceId)
-        .in('status', ['pending', 'available'])
+      await db.update(affiliateCommissions).set({
+        status: 'reversed',
+        reversalReason: 'charge_refunded',
+        updatedAt: new Date(),
+      }).where(
+        and(
+          eq(affiliateCommissions.stripeInvoiceId, invoiceId),
+          inArray(affiliateCommissions.status, ['pending', 'available'])
+        )
+      )
       break
     }
   }

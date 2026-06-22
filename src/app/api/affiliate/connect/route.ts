@@ -1,27 +1,26 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
-import { createAdminClient } from '@/lib/supabase/admin'
+import { getUserFromRequest } from '@/lib/auth/server'
+import { db } from '@/lib/db'
+import { users } from '@/lib/db/schema'
+import { eq } from 'drizzle-orm'
 import { getStripe } from '@/lib/stripe/client'
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://finestsites.vercel.app'
 
 // POST /api/affiliate/connect — creates or resumes Stripe Connect Express onboarding
 export async function POST(req: NextRequest) {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const user = await getUserFromRequest(req)
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const admin = createAdminClient()
-  const { data: profile } = await admin
-    .from('users')
-    .select('stripe_connect_id, email, username')
-    .eq('id', user.id)
-    .single()
+  const profile = await db.query.users.findFirst({
+    where: eq(users.id, user.id),
+    columns: { stripeConnectId: true, email: true, username: true },
+  })
 
   const stripe = getStripe()
   const origin = req.headers.get('origin') ?? APP_URL
 
-  let accountId = profile?.stripe_connect_id
+  let accountId = profile?.stripeConnectId
 
   try {
     // Create a new Connect Express account if none exists
@@ -33,14 +32,14 @@ export async function POST(req: NextRequest) {
           transfers: { requested: true },
         },
         metadata: {
-          supabase_user_id: user.id,
+          user_id: user.id,
           username: profile?.username ?? '',
         },
       })
       accountId = account.id
-      await admin.from('users')
-        .update({ stripe_connect_id: accountId })
-        .eq('id', user.id)
+      await db.update(users)
+        .set({ stripeConnectId: accountId })
+        .where(eq(users.id, user.id))
     }
 
     // Create onboarding link

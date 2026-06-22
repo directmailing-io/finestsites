@@ -1,32 +1,42 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
-import { createClient } from '@/lib/supabase/client'
+import { Suspense, useState, useEffect } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { authClient } from '@/lib/auth/client'
 
 export default function UpdatePasswordPage() {
+  return (
+    <Suspense>
+      <UpdatePasswordForm />
+    </Suspense>
+  )
+}
+
+function UpdatePasswordForm() {
   const [password, setPassword] = useState('')
   const [confirm, setConfirm] = useState('')
+  const [currentPassword, setCurrentPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
-  const [sessionReady, setSessionReady] = useState(false)
   const router = useRouter()
-  const supabase = createClient()
+  const searchParams = useSearchParams()
+
+  // BetterAuth sends a `token` in the reset link URL
+  const token = searchParams.get('token')
+  const isResetFlow = !!token
 
   useEffect(() => {
-    // Session is set by the auth/callback route via PKCE exchange
-    // Just verify we have a valid session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) {
-        setSessionReady(true)
-      } else {
-        // No session - the link may have expired
-        setError('Der Reset-Link ist abgelaufen. Bitte fordere einen neuen an.')
-      }
-    })
-  }, [supabase.auth])
+    // If no token, verify we have an active session (user changing password while logged in)
+    if (!isResetFlow) {
+      authClient.getSession().then(({ data }) => {
+        if (!data?.session) {
+          setError('Sitzung abgelaufen. Bitte fordere einen neuen Reset-Link an.')
+        }
+      })
+    }
+  }, [isResetFlow])
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -36,9 +46,24 @@ export default function UpdatePasswordPage() {
     setLoading(true)
     setError('')
 
-    const { error } = await supabase.auth.updateUser({ password })
-    if (error) {
-      setError(error.message)
+    let err: { message?: string } | null | undefined = null
+
+    if (isResetFlow) {
+      // Token-based reset (from email link)
+      const result = await authClient.resetPassword({ newPassword: password, token })
+      err = result.error
+    } else {
+      // Logged-in user changing password — requires current password
+      const result = await authClient.changePassword({
+        newPassword: password,
+        currentPassword,
+        revokeOtherSessions: true,
+      })
+      err = result.error
+    }
+
+    if (err) {
+      setError(err.message ?? 'Fehler beim Speichern des Passworts.')
       setLoading(false)
     } else {
       setSuccess(true)
@@ -72,11 +97,29 @@ export default function UpdatePasswordPage() {
         {error && (
           <div className="px-4 py-3 rounded-2xl text-sm" style={{ background: '#FEF2F2', border: '1px solid #FECACA', color: '#B91C1C' }}>
             {error}
-            {error.includes('abgelaufen') && (
+            {(error.includes('abgelaufen') || error.includes('abgelaufen')) && (
               <div className="mt-2">
                 <a href="/forgot-password" className="font-semibold underline underline-offset-2">Neuen Link anfordern</a>
               </div>
             )}
+          </div>
+        )}
+
+        {!isResetFlow && (
+          <div className="flex flex-col gap-1.5">
+            <label className="text-xs font-medium" style={{ color: '#374151' }}>Aktuelles Passwort</label>
+            <input
+              type="password"
+              value={currentPassword}
+              onChange={e => setCurrentPassword(e.target.value)}
+              required
+              placeholder="Aktuelles Passwort"
+              autoComplete="current-password"
+              className="w-full px-4 py-3 text-sm rounded-2xl outline-none transition-all"
+              style={fieldStyle}
+              onFocus={e => (e.target.style.borderColor = '#111827')}
+              onBlur={e => (e.target.style.borderColor = '#E5E7EB')}
+            />
           </div>
         )}
 
@@ -88,7 +131,6 @@ export default function UpdatePasswordPage() {
               value={password}
               onChange={e => setPassword(e.target.value)}
               required
-              disabled={!sessionReady}
               placeholder="Mindestens 8 Zeichen"
               autoComplete="new-password"
               className="w-full px-4 py-3 pr-11 text-sm rounded-2xl outline-none transition-all"
@@ -115,7 +157,6 @@ export default function UpdatePasswordPage() {
             value={confirm}
             onChange={e => setConfirm(e.target.value)}
             required
-            disabled={!sessionReady}
             placeholder="••••••••"
             autoComplete="new-password"
             className="w-full px-4 py-3 text-sm rounded-2xl outline-none transition-all"
@@ -130,13 +171,13 @@ export default function UpdatePasswordPage() {
 
         <button
           type="submit"
-          disabled={loading || !sessionReady}
+          disabled={loading}
           className="w-full py-3 text-sm font-semibold rounded-2xl transition-all mt-1"
           style={{
-            background: loading || !sessionReady ? '#E5E7EB' : '#111827',
-            color: loading || !sessionReady ? '#9CA3AF' : '#fff',
-            cursor: loading || !sessionReady ? 'not-allowed' : 'pointer',
-            boxShadow: loading || !sessionReady ? 'none' : '0 4px 14px rgba(17,24,39,0.2)',
+            background: loading ? '#E5E7EB' : '#111827',
+            color: loading ? '#9CA3AF' : '#fff',
+            cursor: loading ? 'not-allowed' : 'pointer',
+            boxShadow: loading ? 'none' : '0 4px 14px rgba(17,24,39,0.2)',
           }}
         >
           {loading ? 'Wird gespeichert…' : 'Passwort speichern'}

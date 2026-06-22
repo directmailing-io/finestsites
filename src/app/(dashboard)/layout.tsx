@@ -1,26 +1,27 @@
 import { redirect } from 'next/navigation'
-import { createClient } from '@/lib/supabase/server'
+import { getServerUser } from '@/lib/auth/server'
+import { db } from '@/lib/db'
+import { users } from '@/lib/db/schema'
+import { eq } from 'drizzle-orm'
 import { DashboardSidebar } from '@/components/dashboard/Sidebar'
 import { MobileNav } from '@/components/dashboard/MobileNav'
 import { PlanQuotaProvider } from '@/components/dashboard/PlanQuotaContext'
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const user = await getServerUser()
 
   if (!user) redirect('/login')
 
-  const { data: profile } = await supabase
-    .from('users')
-    .select('username, subscription_status')
-    .eq('id', user.id)
-    .single()
+  const profile = await db.query.users.findFirst({
+    where: eq(users.id, user.id),
+    columns: { username: true, subscriptionStatus: true },
+  })
 
   // Must have an active subscription before accessing dashboard
   // Exception: the owner/admin account bypasses this check entirely
   const ADMIN_EMAIL = 'daniel-kurzeja@live.de'
   const ACTIVE_STATUSES = ['active', 'trialing', 'past_due']
-  if (user.email !== ADMIN_EMAIL && (!profile?.subscription_status || !ACTIVE_STATUSES.includes(profile.subscription_status))) {
+  if (user.email !== ADMIN_EMAIL && (!profile?.subscriptionStatus || !ACTIVE_STATUSES.includes(profile.subscriptionStatus))) {
     redirect('/onboarding/plan')
   }
 

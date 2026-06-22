@@ -227,12 +227,14 @@
   .ov-hero::before {
     content: '';
     position: absolute; inset: 0;
-    background: radial-gradient(ellipse at top, color-mix(in srgb, var(--accent) 22%, transparent), transparent 60%);
+    background: radial-gradient(ellipse 80% 70% at 50% 10%, color-mix(in srgb, var(--accent) 22%, transparent), transparent 70%);
     pointer-events: none;
+    -webkit-mask-image: linear-gradient(to bottom, black 0%, black 55%, transparent 100%);
+            mask-image: linear-gradient(to bottom, black 0%, black 55%, transparent 100%);
   }
   body[data-active-modus="dunkel"] .ov-hero::before {
-    background: radial-gradient(ellipse at 50% -10%, color-mix(in srgb, var(--accent) 38%, transparent), transparent 65%),
-                radial-gradient(circle at 20% 80%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 50%);
+    background: radial-gradient(ellipse 90% 75% at 50% 0%, color-mix(in srgb, var(--accent) 38%, transparent), transparent 70%),
+                radial-gradient(ellipse 60% 60% at 18% 55%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 70%);
   }
   .ov-hero-inner { position: relative; }
   .ov-avatar {
@@ -1955,6 +1957,26 @@
     function pad(n){ return n < 10 ? '0' + n : String(n) }
 
     // ─── Page switcher ──────────────────────────────────────────────
+    // Shared routing helper — accepts both pathname (/testevent — live URLs)
+    // and hash (#testevent or #__pidx-0__ — editor preview). Hash takes
+    // precedence so the editor preview keeps working.
+    function getCurrentSlug(){
+      var h = location.hash.replace(/^#/, '');
+      if (h) return h;
+      var p = location.pathname.replace(/^\/+/, '').replace(/\/+$/, '');
+      // Only single-segment, no file-extension paths count as event slugs
+      if (p && p.indexOf('/') === -1 && !/\.[a-zA-Z0-9]+$/.test(p)) return p;
+      return '';
+    }
+    function navigateToSlug(slug){
+      var target = slug ? '/' + slug : '/';
+      if (location.pathname !== target || location.hash) {
+        history.pushState({ slug: slug || '' }, '', target);
+      }
+      window.dispatchEvent(new Event('route-change'));
+    }
+    window.__navigateToSlug = navigateToSlug;
+
     (function(){
       var b = document.body;
       var defaultModus = b.getAttribute('data-default-modus') || 'dunkel';
@@ -1963,7 +1985,7 @@
       var allEventPages = document.querySelectorAll('.page-event');
       allEventPages.forEach(function(p, i){ p.setAttribute('data-preview-idx', i) });
       function activate(){
-        var h = location.hash.replace(/^#/,'');
+        var h = getCurrentSlug();
         document.querySelectorAll('.page-event').forEach(function(p){ p.classList.remove('is-active') });
         if (h) {
           var target = null;
@@ -2003,6 +2025,8 @@
       }
       activate();
       window.addEventListener('hashchange', activate);
+      window.addEventListener('popstate', activate);
+      window.addEventListener('route-change', activate);
       b.classList.remove('loading');
     })();
 
@@ -2156,19 +2180,18 @@
     document.querySelectorAll('[data-back]').forEach(function(b){
       b.addEventListener('click', function(e){
         e.preventDefault();
-        location.hash = '';
-        history.replaceState(null, '', location.pathname);
         document.body.classList.remove('view-event');
         document.querySelectorAll('.page-event.is-active').forEach(function(p){ p.classList.remove('is-active') });
         document.querySelectorAll('[data-sticky-cta]').forEach(function(s){ s.classList.remove('visible', 'has-cta') });
         window.scrollTo({ top: 0, behavior: 'instant' });
+        navigateToSlug('');
       });
     });
     document.querySelectorAll('[data-share]').forEach(function(btn){
       btn.addEventListener('click', function(){
         var slug = btn.getAttribute('data-share');
         var title = btn.getAttribute('data-share-title') || '';
-        var url = location.origin + location.pathname + '#' + slug;
+        var url = location.origin + '/' + slug;
         if (navigator.share) {
           navigator.share({ title: title, url: url }).catch(function(){});
         } else if (navigator.clipboard) {
@@ -2258,10 +2281,10 @@
     // ─── Footer: current year ───────────────────────────────────────
     document.querySelectorAll('[data-current-year]').forEach(function(el){
       el.textContent = String(new Date().getFullYear())
-    })
+    });
 
     // ─── Live countdown (section + corner widget) ──────────────────
-    (function(){
+    ;(function(){
       function pad(n){ return n < 10 ? '0' + n : String(n) }
       function eventDate(el){
         var d = parseDate(el.getAttribute('data-d'));
@@ -2309,6 +2332,8 @@
       update();
       setInterval(update, 1000);
       window.addEventListener('hashchange', function(){ setTimeout(update, 50) });
+      window.addEventListener('popstate', function(){ setTimeout(update, 50) });
+      window.addEventListener('route-change', function(){ setTimeout(update, 50) });
     })();
 
     // ─── DSGVO checkbox visual state ────────────────────────────────
@@ -2489,7 +2514,7 @@
       }
 
       var hasSlug = !!(f.kuerzel && f.kuerzel.trim());
-      var jumpAttr = hasSlug ? 'onclick="location.hash=\'' + f.kuerzel + '\'"' : '';
+      var jumpAttr = hasSlug ? 'onclick="window.__navigateToSlug(\'' + f.kuerzel + '\')"' : '';
       var fImg = f.titelbild
         ? '<img src="' + f.titelbild.replace(/"/g,'') + '" alt="' + fName.replace(/"/g,'&quot;') + '" />'
         : '';
@@ -2504,7 +2529,7 @@
             '<h1 class="featured-title">' + fName.replace(/</g,'&lt;') + '</h1>' +
             '<div class="featured-meta">' + fMetaIcon + '</div>' +
             '<div class="featured-cta">' +
-              (hasSlug ? '<button class="btn btn-primary" onclick="event.stopPropagation();location.hash=\'' + f.kuerzel + '\'">Zum Event →</button>' : '') +
+              (hasSlug ? '<button class="btn btn-primary" onclick="event.stopPropagation();window.__navigateToSlug(\'' + f.kuerzel + '\')">Zum Event →</button>' : '') +
               (fd ? '<button class="btn btn-ghost" onclick="event.stopPropagation()" data-featured-ical>' +
                 '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>In Kalender</button>' : '') +
             '</div>' +
@@ -2529,7 +2554,7 @@
           var timeLabel = ev.uhrzeit ? (ev.uhrzeit + (ev.uhrzeit_ende ? ' – ' + ev.uhrzeit_ende : '')) : 'Termin folgt';
           var card = document.createElement('article');
           card.className = 'ev-card reveal';
-          if (ev.kuerzel && ev.kuerzel.trim()) card.onclick = function(){ location.hash = ev.kuerzel };
+          if (ev.kuerzel && ev.kuerzel.trim()) card.onclick = function(){ window.__navigateToSlug(ev.kuerzel) };
           var cardImg = ev.titelbild
             ? '<div class="ev-card-img" style="background-image: url(\'' + ev.titelbild.replace(/"/g,'') + '\')"></div>'
             : '<div class="ev-card-img" style="background: linear-gradient(135deg, var(--accent), color-mix(in srgb, var(--accent) 50%, #0A0A0A));"></div>';
@@ -2562,10 +2587,15 @@
         });
       }
       play();
-      window.addEventListener('hashchange', function(){ setTimeout(function(){
-        var active = document.querySelector('.page-event.is-active') || document.querySelector('.page-overview');
-        play(active);
-      }, 80) });
+      function replayOnRoute(){
+        setTimeout(function(){
+          var active = document.querySelector('.page-event.is-active') || document.querySelector('.page-overview');
+          play(active);
+        }, 80);
+      }
+      window.addEventListener('hashchange', replayOnRoute);
+      window.addEventListener('popstate', replayOnRoute);
+      window.addEventListener('route-change', replayOnRoute);
       window.addEventListener('dynamic-content-ready', function(){ play() });
     }
     // Safety net: if GSAP fails to load (CDN block, preview JS error, etc.),

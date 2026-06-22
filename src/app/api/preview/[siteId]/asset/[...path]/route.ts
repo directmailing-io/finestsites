@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
-import { createAdminClient } from '@/lib/supabase/admin'
+import { getUserFromRequest } from '@/lib/auth/server'
+import { db } from '@/lib/db'
+import { userSites } from '@/lib/db/schema'
+import { eq, and } from 'drizzle-orm'
 import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3'
 
 // Serves template static assets (CSS, JS, images) for the preview iframe.
@@ -40,26 +42,21 @@ export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ siteId: string; path: string[] }> }
 ) {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const user = await getUserFromRequest(req)
   if (!user) return new NextResponse('Unauthorized', { status: 401 })
 
   const { siteId, path } = await params
   const assetPath = path.join('/')
-  const admin = createAdminClient()
 
-  // Verify user owns this site and get template r2_bundle_path
-  const { data: site } = await admin
-    .from('user_sites')
-    .select('templates(r2_bundle_path)')
-    .eq('id', siteId)
-    .eq('user_id', user.id)
-    .single()
+  // Verify user owns this site and get template r2BundlePath
+  const site = await db.query.userSites.findFirst({
+    where: and(eq(userSites.id, siteId), eq(userSites.userId, user.id)),
+    with: { template: true },
+  })
 
-  if (!site?.templates) return new NextResponse('Not found', { status: 404 })
+  if (!site?.template) return new NextResponse('Not found', { status: 404 })
 
-  const tpl = Array.isArray(site.templates) ? site.templates[0] : site.templates
-  const bundlePath: string | null = (tpl as { r2_bundle_path: string | null }).r2_bundle_path
+  const bundlePath = site.template.r2BundlePath
   if (!bundlePath) return new NextResponse('Not found', { status: 404 })
 
   // Bundle path is e.g. "templates/abc/index.html" — base dir is "templates/abc"

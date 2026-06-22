@@ -1,0 +1,55 @@
+{
+  "version": 1,
+  "fields": [
+
+    { "key": "vorname", "label": "Vorname", "type": "text", "section": "Profil", "order": 0, "required": true, "placeholder_text": "z. B. Anna", "default_value": "", "max_length": 40, "options": [], "card_options": [] },
+    { "key": "nachname", "label": "Nachname", "type": "text", "section": "Profil", "order": 1, "required": true, "placeholder_text": "z. B. Bauer", "default_value": "", "max_length": 40, "options": [], "card_options": [] },
+    { "key": "profilbild", "label": "Profilbild", "type": "image", "section": "Profil", "order": 2, "required": false, "placeholder_text": "Quadratisch, mind. 400×400 px", "default_value": "", "aspect_ratio": "1/1", "options": [], "card_options": [] },
+    { "key": "geschlecht", "label": "Geschlecht", "type": "card_select", "section": "Profil", "order": 3, "required": true, "placeholder_text": "Für die Bezeichnung &bdquo;Berater/in&ldquo;", "default_value": "weiblich", "max_length": null, "options": [], "card_options": [
+      { "value": "weiblich", "label": "Weiblich", "description": "Beraterin", "card_type": "text", "color": "", "image_url": "" },
+      { "value": "maennlich", "label": "Männlich", "description": "Berater", "card_type": "text", "color": "", "image_url": "" }
+    ]},
+    { "key": "email_benachrichtigung", "label": "Benachrichtigungs-E-Mail", "type": "email", "section": "Profil", "order": 4, "required": true, "placeholder_text": "Hier landen die Auswertungen deiner Interessenten", "default_value": "", "max_length": null, "options": [], "card_options": [] },
+    { "key": "whatsapp_nummer", "label": "WhatsApp-Nummer (Ländercode + Nummer ohne Plus)", "type": "text", "section": "Profil", "order": 5, "required": false, "placeholder_text": "z. B. 491701234567", "default_value": "", "max_length": 20, "options": [], "card_options": [] },
+
+    { "key": "hero_headline", "label": "Headline (Hero)", "type": "text", "section": "Texte", "order": 10, "required": false, "placeholder_text": "z. B. Wie vital fühlst du dich wirklich?", "default_value": "Wie vital fühlst du dich wirklich?", "max_length": 80, "options": [], "card_options": [] },
+    { "key": "hero_subtext", "label": "Begrüßungstext", "type": "textarea", "section": "Texte", "order": 11, "required": false, "placeholder_text": "Kurzbeschreibung des Vitalchecks", "default_value": "60 Sekunden ehrliche Antworten. Du bekommst ein klares Bild deiner vier Vital-Säulen. Anonym, ohne Anmeldung.", "max_length": 220, "options": [], "card_options": [] },
+    { "key": "hero_cta", "label": "Button-Text zum Start", "type": "text", "section": "Texte", "order": 12, "required": false, "placeholder_text": "z. B. Vitalcheck starten", "default_value": "Vitalcheck starten", "max_length": 40, "options": [], "card_options": [] },
+
+    { "key": "farbthema", "label": "Farbthema", "type": "card_select", "section": "Design", "order": 20, "required": true, "placeholder_text": "", "default_value": "hell", "max_length": null, "options": [], "card_options": [
+      { "value": "hell", "label": "Hell", "description": "Cremig-weiß, frisch", "card_type": "color", "color": "#FAFAF7", "image_url": "" },
+      { "value": "dunkel", "label": "Dunkel", "description": "Elegantes Schwarz", "card_type": "color", "color": "#0A0A0A", "image_url": "" }
+    ]},
+    { "key": "akzentfarbe", "label": "Akzentfarbe", "type": "color", "section": "Design", "order": 21, "required": false, "placeholder_text": "Wird für Buttons, Badges, Highlights verwendet", "default_value": "#10B981", "max_length": null, "options": [], "card_options": [] },
+
+    { "key": "zeige_block_verdauung", "label": "Block &bdquo;Verdauung & Ernährung&ldquo; zeigen", "type": "toggle", "section": "Fragen anpassen", "order": 30, "required": false, "default_value": "ja", "placeholder_text": "5 Fragen zu Verdauung, Ernährung, Flüssigkeit", "max_length": null, "options": [], "card_options": [] },
+    { "key": "zeige_block_energie", "label": "Block &bdquo;Energie & Fokus&ldquo; zeigen", "type": "toggle", "section": "Fragen anpassen", "order": 31, "required": false, "default_value": "ja", "placeholder_text": "5 Fragen zu Müdigkeit, Konzentration, Kopfschmerzen", "max_length": null, "options": [], "card_options": [] },
+    { "key": "zeige_block_schlaf", "label": "Block &bdquo;Schlaf & Erholung&ldquo; zeigen", "type": "toggle", "section": "Fragen anpassen", "order": 32, "required": false, "default_value": "ja", "placeholder_text": "5 Fragen zu Schlaf, Stress, Stimmung", "max_length": null, "options": [], "card_options": [] },
+    { "key": "zeige_block_lebensstil", "label": "Block &bdquo;Lebensstil & Körper&ldquo; zeigen", "type": "toggle", "section": "Fragen anpassen", "order": 33, "required": false, "default_value": "ja", "placeholder_text": "5 Fragen zu Haut/Haar, Alter, Sport", "max_length": null, "options": [], "card_options": [] },
+    { "key": "zeige_frage_rauchen", "label": "Frage &bdquo;Rauchst du?&ldquo; zeigen", "type": "toggle", "section": "Fragen anpassen", "order": 34, "required": false, "default_value": "ja", "placeholder_text": "Sensible Frage — manche Berater lassen sie weg", "max_length": null, "options": [], "card_options": [] },
+
+    { "key": "shop_optimalset", "label": "Shop-Link Optimalset", "type": "url", "section": "Produkt-Links", "order": 40, "required": true, "placeholder_text": "Dein personalisierter Shoplink zum Optimalset", "default_value": "https://www.fitline.com/de/de-de/products/9700731", "max_length": null, "options": [], "card_options": [] },
+    { "key": "shop_activize", "label": "Shop-Link Activize Oxyplus", "type": "url", "section": "Produkt-Links", "order": 41, "required": true, "placeholder_text": "Shoplink zu Activize Oxyplus", "default_value": "https://www.fitline.com/de/de-de/products/0708054", "max_length": null, "options": [], "card_options": [] },
+    { "key": "shop_restorate", "label": "Shop-Link Restorate", "type": "url", "section": "Produkt-Links", "order": 42, "required": true, "placeholder_text": "Shoplink zu Restorate", "default_value": "https://www.fitline.com/de/de-de/products/0708052", "max_length": null, "options": [], "card_options": [] },
+    { "key": "shop_probiotic", "label": "Shop-Link Probiotischer Joghurt-Drink", "type": "url", "section": "Produkt-Links", "order": 43, "required": false, "placeholder_text": "Shoplink Probiotik", "default_value": "https://www.fitline.com/de/de-de/products/0708071", "max_length": null, "options": [], "card_options": [] },
+    { "key": "shop_q10", "label": "Shop-Link Q10 Plus", "type": "url", "section": "Produkt-Links", "order": 44, "required": false, "placeholder_text": "Shoplink Q10", "default_value": "https://www.fitline.com/de/de-de/products/0708089", "max_length": null, "options": [], "card_options": [] },
+    { "key": "shop_beauty", "label": "Shop-Link FitLine Beauty", "type": "url", "section": "Produkt-Links", "order": 45, "required": false, "placeholder_text": "Shoplink Beauty", "default_value": "https://www.fitline.com/de/de-de/products/0708137", "max_length": null, "options": [], "card_options": [] },
+    { "key": "shop_basics", "label": "Shop-Link FitLine Basics", "type": "url", "section": "Produkt-Links", "order": 46, "required": false, "placeholder_text": "Shoplink Basics", "default_value": "https://www.fitline.com/de/de-de/products/0708023", "max_length": null, "options": [], "card_options": [] }
+  ],
+  "preview_values": {
+    "vorname": "Anna",
+    "nachname": "Bauer",
+    "geschlecht": "weiblich",
+    "email_benachrichtigung": "anna@example.de",
+    "hero_headline": "Wie vital fühlst du dich wirklich?",
+    "hero_subtext": "60 Sekunden ehrliche Antworten. Du bekommst ein klares Bild deiner vier Vital-Säulen. Anonym, ohne Anmeldung.",
+    "hero_cta": "Vitalcheck starten",
+    "farbthema": "hell",
+    "akzentfarbe": "#10B981",
+    "zeige_block_verdauung": "ja",
+    "zeige_block_energie": "ja",
+    "zeige_block_schlaf": "ja",
+    "zeige_block_lebensstil": "ja",
+    "zeige_frage_rauchen": "ja"
+  }
+}

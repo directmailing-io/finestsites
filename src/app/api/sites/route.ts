@@ -1,116 +1,153 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
-import { createAdminClient } from '@/lib/supabase/admin'
+import { getUserFromRequest } from '@/lib/auth/server'
+import { db } from '@/lib/db'
+import { users, userSites, templates, siteData, formSubmissions, templateAccess } from '@/lib/db/schema'
+import { eq, ne, and, inArray, isNull } from 'drizzle-orm'
 
 // GET /api/sites → list current user's sites with template info + username
-export async function GET() {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+export async function GET(req: NextRequest) {
+  const user = await getUserFromRequest(req)
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const admin = createAdminClient()
+  try {
+    // Fetch profile (username) and sites in parallel
+    const [profile, sites] = await Promise.all([
+      db.query.users.findFirst({ where: eq(users.id, user.id) }),
+      db
+        .select({
+          id: userSites.id,
+          userId: userSites.userId,
+          templateId: userSites.templateId,
+          status: userSites.status,
+          publishedAt: userSites.publishedAt,
+          deactivatedAt: userSites.deactivatedAt,
+          customDomain: userSites.customDomain,
+          customDomainStatus: userSites.customDomainStatus,
+          createdAt: userSites.createdAt,
+          updatedAt: userSites.updatedAt,
+          template: {
+            id: templates.id,
+            title: templates.title,
+            domain: templates.domain,
+            placeholderSchema: templates.placeholderSchema,
+            r2BundlePath: templates.r2BundlePath,
+            previewImages: templates.previewImages,
+          },
+        })
+        .from(userSites)
+        .leftJoin(templates, eq(userSites.templateId, templates.id))
+        .where(and(eq(userSites.userId, user.id), ne(userSites.status, 'deleted')))
+        .orderBy(userSites.createdAt),
+    ])
 
-  // Fetch username
-  const { data: profile } = await admin.from('users').select('username').eq('id', user.id).single()
+    const siteIds = sites.map(s => s.id)
 
-  const { data, error } = await supabase
-    .from('user_sites')
-    .select('*, templates(id, title, domain, placeholder_schema, r2_bundle_path, preview_images)')
-    .eq('user_id', user.id)
-    .neq('status', 'deleted')
-    .order('created_at', { ascending: false })
-
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
-
-  const siteIds = (data ?? []).map(s => s.id)
-
-  // Fetch unread submission counts per site
-  const unreadMap: Record<string, number> = {}
-  if (siteIds.length > 0) {
-    const { data: unreadRows } = await admin
-      .from('form_submissions')
-      .select('user_site_id')
-      .in('user_site_id', siteIds)
-      .is('read_at', null)
-      .is('archived_at', null)
-      .eq('is_spam', false)
-
-    for (const row of (unreadRows ?? [])) {
-      unreadMap[row.user_site_id] = (unreadMap[row.user_site_id] ?? 0) + 1
+    // Fetch unread submission counts per site
+    const unreadMap: Record<string, number> = {}
+    if (siteIds.length > 0) {
+      const unreadRows = await db
+        .select({ userSiteId: formSubmissions.userSiteId })
+        .from(formSubmissions)
+        .where(
+          and(
+            inArray(formSubmissions.userSiteId, siteIds),
+            isNull(formSubmissions.readAt),
+            isNull(formSubmissions.archivedAt),
+            eq(formSubmissions.isSpam, false),
+          )
+        )
+      for (const row of unreadRows) {
+        unreadMap[row.userSiteId] = (unreadMap[row.userSiteId] ?? 0) + 1
+      }
     }
-  }
 
-  // Attach username + unread_submissions to each site
-  const result = (data ?? []).map(s => ({
-    ...s,
-    username: profile?.username ?? null,
-    unread_submissions: unreadMap[s.id] ?? 0,
-  }))
-  return NextResponse.json(result)
+    // Attach username + unread_submissions to each site, return snake_case for API compat
+    const result = sites.map(s => ({
+      id: s.id,
+      user_id: s.userId,
+      template_id: s.templateId,
+      status: s.status,
+      published_at: s.publishedAt,
+      deactivated_at: s.deactivatedAt,
+      custom_domain: s.customDomain,
+      custom_domain_status: s.customDomainStatus,
+      created_at: s.createdAt,
+      updated_at: s.updatedAt,
+      templates: s.template
+        ? {
+            id: s.template.id,
+            title: s.template.title,
+            domain: s.template.domain,
+            placeholder_schema: s.template.placeholderSchema,
+            r2_bundle_path: s.template.r2BundlePath,
+            preview_images: s.template.previewImages,
+          }
+        : null,
+      username: profile?.username ?? null,
+      unread_submissions: unreadMap[s.id] ?? 0,
+    }))
+
+    return NextResponse.json(result)
+  } catch {
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+  }
 }
 
 // POST /api/sites → create a new draft site for a template
 export async function POST(req: NextRequest) {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const user = await getUserFromRequest(req)
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const { template_id } = await req.json()
   if (!template_id) return NextResponse.json({ error: 'template_id required' }, { status: 400 })
 
-  // Check plan limits
-  const admin = createAdminClient()
-  const { data: profile } = await admin.from('users').select('plan').eq('id', user.id).single()
-  const plan = profile?.plan ?? 'starter'
+  try {
+    // Check plan (kept for downstream use)
+    const profile = await db.query.users.findFirst({ where: eq(users.id, user.id) })
+    const plan = profile?.plan ?? 'starter'
 
-  // Check if the template being activated is a test template the user has no access to
-  const { data: tpl } = await admin.from('templates').select('is_test, is_free').eq('id', template_id).single()
-  if (tpl?.is_test) {
-    const { data: access } = await admin.from('template_access')
-      .select('id').eq('template_id', template_id).eq('user_id', user.id).single()
-    if (!access) return NextResponse.json({ error: 'Kein Zugriff auf dieses Template.' }, { status: 403 })
-  }
-
-  // Drafts do NOT count toward the plan limit — users can freely experiment.
-  // The limit is enforced at PUBLISH time (see api/sites/[id]/publish).
-  // We still keep the `plan` variable readable for downstream features.
-  void plan
-
-  // Check for any existing row (including soft-deleted)
-  const { data: anyExisting } = await admin.from('user_sites')
-    .select('id, status')
-    .eq('user_id', user.id)
-    .eq('template_id', template_id)
-    .single()
-
-  if (anyExisting && anyExisting.status !== 'deleted') {
-    return NextResponse.json({ id: anyExisting.id, existing: true })
-  }
-
-  // Reactivate soft-deleted row (legacy support for pre-hard-delete data).
-  // Clear any old field values and submissions first so the user starts blank.
-  if (anyExisting && anyExisting.status === 'deleted') {
-    await admin.from('site_data').delete().eq('user_site_id', anyExisting.id)
-    await admin.from('form_submissions').delete().eq('user_site_id', anyExisting.id)
-    const { data, error } = await admin.from('user_sites')
-      .update({
-        status: 'draft',
-        deactivated_at: null,
-        published_at: null,
-        updated_at: new Date().toISOString(),
+    // Check if the template being activated is a test template the user has no access to
+    const tpl = await db.query.templates.findFirst({ where: eq(templates.id, template_id) })
+    if (tpl?.isTest) {
+      const access = await db.query.templateAccess.findFirst({
+        where: and(eq(templateAccess.templateId, template_id), eq(templateAccess.userId, user.id)),
       })
-      .eq('id', anyExisting.id)
-      .select().single()
-    if (error) return NextResponse.json({ error: error.message }, { status: 500 })
-    return NextResponse.json(data, { status: 201 })
+      if (!access) return NextResponse.json({ error: 'Kein Zugriff auf dieses Template.' }, { status: 403 })
+    }
+
+    // Drafts do NOT count toward the plan limit — users can freely experiment.
+    // The limit is enforced at PUBLISH time (see api/sites/[id]/publish).
+    void plan
+
+    // Check for any existing row (including soft-deleted)
+    const anyExisting = await db.query.userSites.findFirst({
+      where: and(eq(userSites.userId, user.id), eq(userSites.templateId, template_id)),
+    })
+
+    if (anyExisting && anyExisting.status !== 'deleted') {
+      return NextResponse.json({ id: anyExisting.id, existing: true })
+    }
+
+    // Reactivate soft-deleted row (legacy support for pre-hard-delete data).
+    // Clear any old field values and submissions first so the user starts blank.
+    if (anyExisting && anyExisting.status === 'deleted') {
+      await db.delete(siteData).where(eq(siteData.userSiteId, anyExisting.id))
+      await db.delete(formSubmissions).where(eq(formSubmissions.userSiteId, anyExisting.id))
+      const [updated] = await db
+        .update(userSites)
+        .set({ status: 'draft', deactivatedAt: null, publishedAt: null, updatedAt: new Date() })
+        .where(eq(userSites.id, anyExisting.id))
+        .returning()
+      return NextResponse.json(updated, { status: 201 })
+    }
+
+    const [created] = await db
+      .insert(userSites)
+      .values({ userId: user.id, templateId: template_id, status: 'draft' })
+      .returning()
+
+    return NextResponse.json(created, { status: 201 })
+  } catch {
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
-
-  const { data, error } = await admin.from('user_sites').insert({
-    user_id: user.id,
-    template_id,
-    status: 'draft',
-  }).select().single()
-
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
-  return NextResponse.json(data, { status: 201 })
 }

@@ -1,10 +1,13 @@
-import { createAdminClient } from '@/lib/supabase/admin'
+import { db } from '@/lib/db'
+import { templates as templatesTable } from '@/lib/db/schema'
+import { desc } from 'drizzle-orm'
 import Link from 'next/link'
 
 export default async function AdminTemplatesPage() {
-  const admin = createAdminClient()
-  const { data: templates } = await admin
-    .from('templates').select('*').order('created_at', { ascending: false })
+  const templates = await db
+    .select()
+    .from(templatesTable)
+    .orderBy(desc(templatesTable.createdAt))
 
   return (
     <div className="max-w-5xl">
@@ -12,7 +15,7 @@ export default async function AdminTemplatesPage() {
         <div>
           <h1 className="text-2xl font-semibold text-gray-900">Templates</h1>
           <p className="text-sm mt-1" style={{ color: 'var(--muted-foreground)' }}>
-            {templates?.length ?? 0} Template(s) insgesamt
+            {templates.length} Template(s) insgesamt
           </p>
         </div>
         <Link href="/admin/templates/new"
@@ -22,7 +25,7 @@ export default async function AdminTemplatesPage() {
         </Link>
       </div>
 
-      {(!templates || templates.length === 0) ? (
+      {templates.length === 0 ? (
         <div className="p-12 rounded-[24px] bg-white text-center"
           style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.08)', border: '1px solid var(--border)' }}>
           <div className="text-4xl mb-4">📐</div>
@@ -38,8 +41,8 @@ export default async function AdminTemplatesPage() {
         </div>
       ) : (
         <div className="flex flex-col gap-3">
-          {templates.map((t: any) => {
-            const fieldCount = t.placeholder_schema?.fields?.length ?? 0
+          {templates.map((t) => {
+            const fieldCount = (t.placeholderSchema as any)?.fields?.length ?? 0
             const isPublished = t.status === 'published'
             return (
               <div key={t.id} className="flex items-center gap-4 p-5 rounded-[24px] bg-white"
@@ -55,13 +58,13 @@ export default async function AdminTemplatesPage() {
                       }}>
                       {isPublished ? 'Veröffentlicht' : 'Entwurf'}
                     </span>
-                    {t.is_test && (
+                    {t.isTest && (
                       <span className="text-xs px-2 py-0.5 rounded-full font-semibold"
                         style={{ background: '#FEF3C7', color: '#B45309' }}>
                         Test
                       </span>
                     )}
-                    {t.is_free && (
+                    {t.isFree && (
                       <span className="text-xs px-2 py-0.5 rounded-full font-semibold"
                         style={{ background: '#DBEAFE', color: '#1D4ED8' }}>
                         Kostenlos
@@ -71,7 +74,7 @@ export default async function AdminTemplatesPage() {
                   <div className="flex items-center gap-4 text-xs" style={{ color: 'var(--muted-foreground)' }}>
                     <span>🌐 {t.domain}</span>
                     <span>📋 {fieldCount} Felder</span>
-                    <span>{new Date(t.created_at).toLocaleDateString('de-DE')}</span>
+                    <span>{new Date(t.createdAt).toLocaleDateString('de-DE')}</span>
                   </div>
                 </div>
 

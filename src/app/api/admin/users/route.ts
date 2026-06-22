@@ -1,19 +1,34 @@
-import { NextResponse } from 'next/server'
-import { createAdminClient } from '@/lib/supabase/admin'
-import { createClient } from '@/lib/supabase/server'
+import { NextRequest, NextResponse } from 'next/server'
+import { db } from '@/lib/db'
+import { users } from '@/lib/db/schema'
+import { eq, desc } from 'drizzle-orm'
+import { getUserFromRequest } from '@/lib/auth/server'
 
-export async function GET() {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+export async function GET(req: NextRequest) {
+  const user = await getUserFromRequest(req)
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  const { data: profile } = await supabase.from('users').select('is_admin').eq('id', user.id).single()
-  if (!profile?.is_admin) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const admin = createAdminClient()
-  const { data, error } = await admin
-    .from('users')
-    .select('id, email, username, plan, billing_interval, subscription_status, created_at')
-    .order('created_at', { ascending: false })
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
-  return NextResponse.json(data)
+  const profile = await db.query.users.findFirst({
+    where: eq(users.id, user.id),
+    columns: { isAdmin: true },
+  })
+  if (!profile?.isAdmin) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+
+  try {
+    const data = await db.query.users.findMany({
+      orderBy: desc(users.createdAt),
+      columns: {
+        id: true,
+        email: true,
+        username: true,
+        plan: true,
+        billingInterval: true,
+        subscriptionStatus: true,
+        createdAt: true,
+      },
+    })
+    return NextResponse.json(data)
+  } catch {
+    return NextResponse.json({ error: 'Interner Fehler.' }, { status: 500 })
+  }
 }

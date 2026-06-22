@@ -1,37 +1,44 @@
 import { NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
-import { createAdminClient } from '@/lib/supabase/admin'
+import { getUserFromRequest } from '@/lib/auth/server'
+import { db } from '@/lib/db'
+import { userSites, formSubmissions } from '@/lib/db/schema'
+import { eq, inArray, and, isNull, count } from 'drizzle-orm'
 
 /**
  * GET /api/submissions/unread-count
  * Returns the total unread submission count across all the user's sites.
  * Used by the sidebar badge.
  */
-export async function GET() {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+export async function GET(req: Request) {
+  const user = await getUserFromRequest(req)
   if (!user) return NextResponse.json({ count: 0 })
 
-  const admin = createAdminClient()
+  try {
+    // Get all user site IDs
+    const ownedSites = await db
+      .select({ id: userSites.id })
+      .from(userSites)
+      .where(and(
+        eq(userSites.userId, user.id),
+        inArray(userSites.status, ['draft', 'published'])
+      ))
 
-  // Get all user site IDs
-  const { data: userSites } = await admin
-    .from('user_sites')
-    .select('id')
-    .eq('user_id', user.id)
-    .in('status', ['draft', 'published'])
+    if (ownedSites.length === 0) return NextResponse.json({ count: 0 })
 
-  if (!userSites || userSites.length === 0) return NextResponse.json({ count: 0 })
+    const siteIds = ownedSites.map(s => s.id)
 
-  const siteIds = userSites.map(s => s.id)
+    const [{ total }] = await db
+      .select({ total: count() })
+      .from(formSubmissions)
+      .where(and(
+        inArray(formSubmissions.userSiteId, siteIds),
+        isNull(formSubmissions.readAt),
+        isNull(formSubmissions.archivedAt),
+        eq(formSubmissions.isSpam, false)
+      ))
 
-  const { count } = await admin
-    .from('form_submissions')
-    .select('*', { count: 'exact', head: true })
-    .in('user_site_id', siteIds)
-    .is('read_at', null)
-    .is('archived_at', null)
-    .eq('is_spam', false)
-
-  return NextResponse.json({ count: count ?? 0 })
+    return NextResponse.json({ count: total })
+  } catch {
+    return NextResponse.json({ count: 0 })
+  }
 }

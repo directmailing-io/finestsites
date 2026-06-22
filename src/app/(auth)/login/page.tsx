@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { createClient } from '@/lib/supabase/client'
+import { signIn, authClient } from '@/lib/auth/client'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
@@ -15,7 +15,6 @@ export default function LoginPage() {
   const [resending, setResending] = useState(false)
   const [resent, setResent] = useState(false)
   const router = useRouter()
-  const supabase = createClient()
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -23,9 +22,9 @@ export default function LoginPage() {
     setError('')
     setNeedsConfirm(false)
 
-    const { error } = await supabase.auth.signInWithPassword({ email, password })
+    const { error } = await signIn.email({ email, password, callbackURL: '/sites' })
     if (error) {
-      if (error.message.toLowerCase().includes('email not confirmed')) {
+      if (error.message?.toLowerCase().includes('email not confirmed') || error.message?.toLowerCase().includes('email not verified')) {
         setNeedsConfirm(true)
       } else {
         setError('E-Mail oder Passwort falsch.')
@@ -39,7 +38,7 @@ export default function LoginPage() {
 
   async function resendConfirmation() {
     setResending(true)
-    await supabase.auth.resend({ type: 'signup', email })
+    await authClient.sendVerificationEmail({ email, callbackURL: '/sites' })
     setResent(true)
     setResending(false)
   }

@@ -1,28 +1,27 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
-import { createAdminClient } from '@/lib/supabase/admin'
+import { getUserFromRequest } from '@/lib/auth/server'
+import { db } from '@/lib/db'
+import { userSites, siteData } from '@/lib/db/schema'
+import { eq, and } from 'drizzle-orm'
 import { getFromR2 } from '@/lib/r2/client'
 import { renderTemplate } from '@/lib/utils/template-engine'
 
 // GET /api/preview/[siteId]?data=base64json  → renders template HTML for iframe
 // The ?data param overrides stored data for live-preview while user is typing
 export async function GET(req: NextRequest, { params }: { params: Promise<{ siteId: string }> }) {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const user = await getUserFromRequest(req)
   if (!user) return new NextResponse('Unauthorized', { status: 401 })
 
   const { siteId } = await params
-  const admin = createAdminClient()
 
-  const { data: site } = await admin.from('user_sites')
-    .select('*, templates(id, title, domain, r2_bundle_path, placeholder_schema)')
-    .eq('id', siteId)
-    .eq('user_id', user.id)
-    .single()
+  const site = await db.query.userSites.findFirst({
+    where: and(eq(userSites.id, siteId), eq(userSites.userId, user.id)),
+    with: { template: true },
+  })
 
   if (!site) return new NextResponse('Not found', { status: 404 })
-  if (!site.templates?.r2_bundle_path) {
-    return new NextResponse(noFilePage(site.templates?.title ?? 'Template'), {
+  if (!site.template?.r2BundlePath) {
+    return new NextResponse(noFilePage(site.template?.title ?? 'Template'), {
       headers: { 'Content-Type': 'text/html; charset=utf-8' },
     })
   }
@@ -37,7 +36,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ site
   // Layer 3: schema defaults (lowest priority — applied first so later layers override)
   interface SchemaField { key: string; type?: string; default_value?: string }
   interface PlaceholderSchema { fields?: SchemaField[] }
-  const schema = site.templates?.placeholder_schema as PlaceholderSchema | null
+  const schema = site.template?.placeholderSchema as PlaceholderSchema | null
   const schemaDefaults: Record<string, string> = {}
   const imageFieldKeys = new Set<string>()
   for (const f of schema?.fields ?? []) {
@@ -47,17 +46,17 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ site
   dataMap = { ...schemaDefaults }
 
   // Layer 2: DB-saved site_data (overrides defaults)
-  const { data: rows } = await admin.from('site_data')
-    .select('field_key, field_value')
-    .eq('user_site_id', siteId)
-  for (const row of rows ?? []) {
-    const v = row.field_value ?? ''
+  const rows = await db.query.siteData.findMany({
+    where: eq(siteData.userSiteId, siteId),
+  })
+  for (const row of rows) {
+    const v = row.fieldValue ?? ''
     // For image fields: keep the default when DB value is empty string
     // (user hasn't set an image yet → fall back to placeholder).
-    if (v === '' && imageFieldKeys.has(row.field_key) && schemaDefaults[row.field_key]) {
+    if (v === '' && imageFieldKeys.has(row.fieldKey) && schemaDefaults[row.fieldKey]) {
       continue
     }
-    dataMap[row.field_key] = v
+    dataMap[row.fieldKey] = v
   }
 
   // Layer 1: live edit data from query string (highest priority)
@@ -77,7 +76,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ site
 
   let html: string
   try {
-    html = await getFromR2(site.templates.r2_bundle_path)
+    html = await getFromR2(site.template.r2BundlePath)
   } catch {
     return new NextResponse('Template-Datei nicht gefunden.', { status: 500 })
   }

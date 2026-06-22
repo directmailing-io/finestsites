@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
-import { createAdminClient } from '@/lib/supabase/admin'
+import { getUserFromRequest } from '@/lib/auth/server'
+import { db } from '@/lib/db'
+import { users } from '@/lib/db/schema'
+import { eq } from 'drizzle-orm'
 
 const ACTIVE_STATUSES = ['active', 'trialing', 'past_due']
 
@@ -19,8 +21,7 @@ function isValid(u: string) {
 }
 
 export async function POST(req: NextRequest) {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const user = await getUserFromRequest(req)
   if (!user) return NextResponse.json({ error: 'Nicht eingeloggt.' }, { status: 401 })
 
   const { username, first_name, last_name } = await req.json()
@@ -33,20 +34,14 @@ export async function POST(req: NextRequest) {
     )
   }
 
-  const admin = createAdminClient()
-
   // ── Verify the user has an active subscription ────────────────────────
-  const { data: profile } = await admin
-    .from('users')
-    .select('subscription_status, stripe_subscription_id, username')
-    .eq('id', user.id)
-    .single()
+  const profile = await db.query.users.findFirst({ where: eq(users.id, user.id) })
 
   // Require both a valid status AND a real Stripe subscription ID
   const hasRealSubscription =
-    !!profile?.subscription_status &&
-    ACTIVE_STATUSES.includes(profile.subscription_status) &&
-    !!profile?.stripe_subscription_id
+    !!profile?.subscriptionStatus &&
+    ACTIVE_STATUSES.includes(profile.subscriptionStatus) &&
+    !!profile?.stripeSubscriptionId
 
   if (!hasRealSubscription) {
     return NextResponse.json(
@@ -56,35 +51,32 @@ export async function POST(req: NextRequest) {
   }
 
   // Username already set — idempotent (allow dashboard redirect)
-  if (profile.username) {
+  if (profile?.username) {
     return NextResponse.json({ ok: true })
   }
 
   // ── Save username + profile name ─────────────────────────────────────
-  const updates: Record<string, string> = {
+  const updates: Partial<typeof users.$inferInsert> = {
     username: clean,
-    username_set_at: new Date().toISOString(),
+    usernameSetAt: new Date(),
   }
-  if (first_name?.trim()) updates.first_name = first_name.trim()
-  if (last_name?.trim()) updates.last_name = last_name.trim()
+  if (first_name?.trim()) updates.firstName = first_name.trim()
+  if (last_name?.trim()) updates.lastName = last_name.trim()
 
-  const { error } = await admin
-    .from('users')
-    .update(updates)
-    .eq('id', user.id)
-
-  if (error) {
-    const isDuplicate = error.code === '23505' || error.message?.includes('unique')
+  try {
+    await db.update(users).set(updates).where(eq(users.id, user.id))
+    return NextResponse.json({ ok: true })
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : ''
+    const isDuplicate = msg.includes('unique') || msg.includes('23505')
     return NextResponse.json(
       {
         error: isDuplicate
           ? 'Dieser Username ist bereits vergeben.'
           : 'Fehler beim Speichern.',
-        code: isDuplicate ? 'DUPLICATE' : error.code,
+        code: isDuplicate ? 'DUPLICATE' : 'ERROR',
       },
       { status: isDuplicate ? 409 : 500 }
     )
   }
-
-  return NextResponse.json({ ok: true })
 }

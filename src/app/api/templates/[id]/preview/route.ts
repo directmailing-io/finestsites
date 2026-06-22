@@ -1,25 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
-import { createAdminClient } from '@/lib/supabase/admin'
+import { getUserFromRequest } from '@/lib/auth/server'
+import { db } from '@/lib/db'
+import { templates } from '@/lib/db/schema'
+import { eq, and } from 'drizzle-orm'
 import { getFromR2 } from '@/lib/r2/client'
 import { renderTemplate } from '@/lib/utils/template-engine'
 
-export async function GET(_: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const user = await getUserFromRequest(req)
   if (!user) return new NextResponse('Unauthorized', { status: 401 })
 
   const { id } = await params
-  const admin = createAdminClient()
 
-  const { data: template } = await admin
-    .from('templates')
-    .select('*')
-    .eq('id', id)
-    .eq('status', 'published')
-    .single()
+  const template = await db.query.templates.findFirst({
+    where: and(eq(templates.id, id), eq(templates.status, 'published')),
+  })
 
-  if (!template?.r2_bundle_path) {
+  if (!template?.r2BundlePath) {
     return new NextResponse(
       `<!DOCTYPE html><html lang="de"><head><meta charset="UTF-8">
 <style>body{font-family:-apple-system,sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;background:#f9fafb;color:#94a3b8;flex-direction:column;gap:12px}
@@ -32,13 +29,14 @@ svg{opacity:0.4}p{font-size:14px;font-weight:500}</style></head>
 
   let html: string
   try {
-    html = await getFromR2(template.r2_bundle_path)
+    html = await getFromR2(template.r2BundlePath)
   } catch {
     return new NextResponse('Template-Datei nicht gefunden.', { status: 500 })
   }
 
-  const fields = template.placeholder_schema?.fields ?? []
-  const previewValues: Record<string, string> = template.placeholder_schema?.preview_values ?? {}
+  const schema = template.placeholderSchema as { fields?: Array<{ key: string; label?: string; default_value?: string }>; preview_values?: Record<string, string> } | null
+  const fields = schema?.fields ?? []
+  const previewValues: Record<string, string> = schema?.preview_values ?? {}
   const dataMap: Record<string, string> = {}
   for (const f of fields) {
     dataMap[f.key] = previewValues[f.key] ?? f.default_value ?? `[${f.label ?? f.key}]`

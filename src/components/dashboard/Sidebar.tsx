@@ -4,14 +4,13 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import { Logo } from '@/components/shared/Logo'
-import { createClient } from '@/lib/supabase/client'
+import { signOut } from '@/lib/auth/client'
 import { useRouter } from 'next/navigation'
 import { usePlanQuota } from '@/components/dashboard/PlanQuotaContext'
 
 export function DashboardSidebar() {
   const pathname = usePathname()
   const router = useRouter()
-  const supabase = createClient()
   const quota = usePlanQuota()
 
   const [unreadCount, setUnreadCount] = useState(0)
@@ -32,7 +31,7 @@ export function DashboardSidebar() {
   }, [pathname])
 
   async function handleLogout() {
-    await supabase.auth.signOut()
+    await signOut()
     router.push('/login')
   }
 

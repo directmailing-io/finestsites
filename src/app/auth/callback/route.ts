@@ -1,39 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createServerClient } from '@supabase/ssr'
-import { cookies } from 'next/headers'
 
+// This route previously handled Supabase OAuth callbacks.
+// BetterAuth handles all auth callbacks via /api/auth/[...all].
+// Redirect any lingering requests to /sites or /login.
 export async function GET(request: NextRequest) {
-  const { searchParams, origin } = new URL(request.url)
-  const code = searchParams.get('code')
-  const next = searchParams.get('next') ?? '/sites'
-  const type = searchParams.get('type')
-
-  if (code) {
-    const cookieStore = await cookies()
-    const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      {
-        cookies: {
-          getAll() { return cookieStore.getAll() },
-          setAll(cookiesToSet) {
-            cookiesToSet.forEach(({ name, value, options }) =>
-              cookieStore.set(name, value, options)
-            )
-          },
-        },
-      }
-    )
-
-    const { error } = await supabase.auth.exchangeCodeForSession(code)
-    if (!error) {
-      // For recovery (password reset) → go to update-password
-      if (type === 'recovery') {
-        return NextResponse.redirect(`${origin}/update-password`)
-      }
-      return NextResponse.redirect(`${origin}${next}`)
-    }
-  }
-
-  return NextResponse.redirect(`${origin}/login?error=auth_callback_failed`)
+  const { origin } = new URL(request.url)
+  const next = request.nextUrl.searchParams.get('next') ?? '/sites'
+  return NextResponse.redirect(`${origin}${next}`)
 }

@@ -1,38 +1,42 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
-import { createAdminClient } from '@/lib/supabase/admin'
+import { db } from '@/lib/db'
+import { users, formSchemas } from '@/lib/db/schema'
+import { eq, asc } from 'drizzle-orm'
+import { getUserFromRequest } from '@/lib/auth/server'
 
-async function assertAdmin() {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+async function assertAdmin(req: Request) {
+  const user = await getUserFromRequest(req)
   if (!user) return null
-  const admin = createAdminClient()
-  const { data } = await admin.from('users').select('is_admin').eq('id', user.id).single()
-  return data?.is_admin ? user : null
+  const profile = await db.query.users.findFirst({
+    where: eq(users.id, user.id),
+    columns: { isAdmin: true },
+  })
+  return profile?.isAdmin ? user : null
 }
 
 type Params = { params: Promise<{ id: string }> }
 
 // GET /api/admin/templates/[id]/form-schemas
-export async function GET(_req: NextRequest, { params }: Params) {
-  const user = await assertAdmin()
+export async function GET(req: NextRequest, { params }: Params) {
+  const user = await assertAdmin(req)
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const { id } = await params
-  const admin = createAdminClient()
-  const { data, error } = await admin
-    .from('form_schemas')
-    .select('*')
-    .eq('template_id', id)
-    .order('created_at', { ascending: true })
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
-  return NextResponse.json(data ?? [])
+  try {
+    const data = await db.query.formSchemas.findMany({
+      where: eq(formSchemas.templateId, id),
+      orderBy: asc(formSchemas.createdAt),
+    })
+    return NextResponse.json(data)
+  } catch {
+    return NextResponse.json({ error: 'Interner Fehler.' }, { status: 500 })
+  }
 }
 
 // POST /api/admin/templates/[id]/form-schemas
 export async function POST(req: NextRequest, { params }: Params) {
-  const user = await assertAdmin()
+  const user = await assertAdmin(req)
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const { id } = await params
@@ -45,25 +49,24 @@ export async function POST(req: NextRequest, { params }: Params) {
     return NextResponse.json({ error: 'form_name und title sind erforderlich.' }, { status: 400 })
   }
 
-  const admin = createAdminClient()
-  const { data, error } = await admin
-    .from('form_schemas')
-    .insert({
-      template_id: id,
-      form_name: formName,
-      title,
-      fields: Array.isArray(body.fields) ? body.fields : [],
-      email_notification_enabled: body.email_notification_enabled ?? true,
-    })
-    .select()
-    .single()
+  try {
+    const [data] = await db
+      .insert(formSchemas)
+      .values({
+        templateId: id,
+        formName,
+        title,
+        fields: Array.isArray(body.fields) ? body.fields : [],
+        emailNotificationEnabled: body.email_notification_enabled ?? true,
+      })
+      .returning()
 
-  if (error) {
-    if (error.code === '23505') {
+    return NextResponse.json(data, { status: 201 })
+  } catch (err: any) {
+    // Unique constraint violation on (template_id, form_name)
+    if (err?.code === '23505') {
       return NextResponse.json({ error: `Formular-Name "${formName}" ist bereits vergeben.` }, { status: 409 })
     }
-    return NextResponse.json({ error: error.message }, { status: 500 })
+    return NextResponse.json({ error: 'Interner Fehler.' }, { status: 500 })
   }
-
-  return NextResponse.json(data, { status: 201 })
 }

@@ -1,0 +1,109 @@
+{
+  "version": 1,
+  "fields": [
+
+    { "key": "vorname", "label": "Vorname", "type": "text", "section": "Profil", "order": 0, "required": true, "placeholder_text": "z. B. Anna", "default_value": "", "max_length": 40, "options": [], "card_options": [] },
+    { "key": "nachname", "label": "Nachname", "type": "text", "section": "Profil", "order": 1, "required": false, "placeholder_text": "z. B. Bauer", "default_value": "", "max_length": 40, "options": [], "card_options": [] },
+    { "key": "profilbild", "label": "Profilbild", "type": "image", "section": "Profil", "order": 2, "required": false, "placeholder_text": "Quadratisch, mind. 400×400 px", "default_value": "", "aspect_ratio": "1/1", "options": [], "card_options": [] },
+    { "key": "bio", "label": "Biografie", "type": "textarea", "section": "Profil", "order": 3, "required": false, "placeholder_text": "z. B. Designerin aus Berlin. Cats & Code.", "default_value": "", "max_length": 180, "options": [], "card_options": [] },
+
+    { "key": "hintergrund_farbe", "label": "Hintergrundfarbe", "type": "color", "section": "Design", "order": 10, "required": true, "placeholder_text": "Bestimmt die Grundfarbe der Seite", "default_value": "#FFFFFF", "max_length": null, "options": [], "card_options": [] },
+    { "key": "akzentfarbe", "label": "Akzentfarbe", "type": "color", "section": "Design", "order": 11, "required": true, "placeholder_text": "Für Badges, Icons, Highlights", "default_value": "#0A0A0A", "max_length": null, "options": [], "card_options": [] },
+
+    { "key": "theme", "label": "Theme", "type": "card_select", "section": "Design", "order": 12, "required": true, "placeholder_text": "Atmosphärischer Effekt — verwendet die Akzentfarbe", "default_value": "pure", "max_length": null, "options": [], "card_options": [
+      { "value": "pure", "label": "Pure", "description": "Schlicht, ohne Effekte", "card_type": "text", "color": "#1a1a1a", "image_url": "", "icon": "M4 6H20M4 12H20M4 18H14" },
+      { "value": "glow", "label": "Glow", "description": "Weicher Schimmer von oben", "card_type": "text", "color": "#1a1a1a", "image_url": "", "icon": "M12 22V12M12 12C16 12 18 8 18 5C18 4 15 2 12 2C9 2 6 4 6 5C6 8 8 12 12 12Z" },
+      { "value": "mesh", "label": "Mesh", "description": "Mehrere Farbflächen", "card_type": "text", "color": "#1a1a1a", "image_url": "", "icon": "M6 6C8 6 8 10 6 10C4 10 4 6 6 6ZM18 6C20 6 20 10 18 10C16 10 16 6 18 6ZM12 14C14 14 14 18 12 18C10 18 10 14 12 14Z" },
+      { "value": "aurora", "label": "Aurora", "description": "Polarlichter am oberen Rand", "card_type": "text", "color": "#1a1a1a", "image_url": "", "icon": "M3 8C6 5 9 11 12 8C15 5 18 11 21 8M3 14C6 11 9 17 12 14C15 11 18 17 21 14" },
+      { "value": "spotlight", "label": "Spotlight", "description": "Lichtkegel hinter dem Avatar", "card_type": "text", "color": "#1a1a1a", "image_url": "", "icon": "M12 2L8 8H16L12 2ZM4 22H20L17 10H7L4 22Z" },
+      { "value": "grain", "label": "Grain", "description": "Filmkorn-Textur", "card_type": "text", "color": "#1a1a1a", "image_url": "", "icon": "M5 5L7 5M11 5L13 5M17 5L19 5M5 12L7 12M11 12L13 12M17 12L19 12M5 19L7 19M11 19L13 19M17 19L19 19M8 8L9 8M14 8L15 8M8 15L9 15M14 15L15 15" },
+      { "value": "dots", "label": "Dots", "description": "Sanftes Punktraster", "card_type": "text", "color": "#1a1a1a", "image_url": "", "icon": "M6 6L7 6M12 6L13 6M18 6L19 6M6 12L7 12M12 12L13 12M18 12L19 12M6 18L7 18M12 18L13 18M18 18L19 18" },
+      { "value": "lines", "label": "Lines", "description": "Subtile Linien", "card_type": "text", "color": "#1a1a1a", "image_url": "", "icon": "M4 7H20M4 11H20M4 15H20M4 19H20" },
+      { "value": "wave", "label": "Wave", "description": "Welle am unteren Rand", "card_type": "text", "color": "#1a1a1a", "image_url": "", "icon": "M3 16C6 12 9 20 12 16C15 12 18 20 21 16" },
+      { "value": "pulse", "label": "Pulse", "description": "Pulsierendes Glow", "card_type": "text", "color": "#1a1a1a", "image_url": "", "icon": "M12 2C7 2 3 6 3 11C3 16 7 20 12 20C17 20 21 16 21 11C21 6 17 2 12 2ZM12 7C10 7 8 9 8 11C8 13 10 15 12 15C14 15 16 13 16 11C16 9 14 7 12 7Z" },
+      { "value": "corners", "label": "Corners", "description": "Glow in zwei Ecken", "card_type": "text", "color": "#1a1a1a", "image_url": "", "icon": "M2 2C8 2 8 8 2 8M22 22C16 22 16 16 22 16" }
+    ]},
+
+    { "key": "font_combo", "label": "Schrift", "type": "card_select", "section": "Design", "order": 13, "required": true, "placeholder_text": "", "default_value": "modern_clean", "max_length": null, "options": [], "card_options": [
+      { "value": "modern_clean", "label": "Modern Clean", "description": "Inter — neutral, universell", "card_type": "text", "color": "", "image_url": "" },
+      { "value": "editorial", "label": "Editorial", "description": "Fraunces — warm, persönlich, Serif", "card_type": "text", "color": "", "image_url": "" },
+      { "value": "tech_minimal", "label": "Tech Minimal", "description": "Geist — präzise, industrial", "card_type": "text", "color": "", "image_url": "" },
+      { "value": "warm_friendly", "label": "Warm & Friendly", "description": "DM Sans — rund, freundlich", "card_type": "text", "color": "", "image_url": "" },
+      { "value": "bold_grotesk", "label": "Bold Grotesk", "description": "Space Grotesk — markant, modern", "card_type": "text", "color": "", "image_url": "" }
+    ]},
+
+    { "key": "card_style", "label": "Karten-Stil", "type": "card_select", "section": "Design", "order": 14, "required": true, "placeholder_text": "", "default_value": "filled", "max_length": null, "options": [], "display_mode": "chips", "card_options": [
+      { "value": "filled", "label": "Gefüllt", "description": "", "card_type": "text", "color": "#1a1a1a", "image_url": "", "icon": "M4 7C4 5.34315 5.34315 4 7 4H17C18.6569 4 20 5.34315 20 7V17C20 18.6569 18.6569 20 17 20H7C5.34315 20 4 18.6569 4 17V7Z" },
+      { "value": "outlined", "label": "Umrandet", "description": "", "card_type": "text", "color": "#1a1a1a", "image_url": "", "icon": "M7 4H17C18.6569 4 20 5.34315 20 7V17C20 18.6569 18.6569 20 17 20H7C5.34315 20 4 18.6569 4 17V7C4 5.34315 5.34315 4 7 4Z" },
+      { "value": "glass", "label": "Glas", "description": "", "card_type": "text", "color": "#1a1a1a", "image_url": "", "icon": "M7 4H17C18.6569 4 20 5.34315 20 7V17C20 18.6569 18.6569 20 17 20H7C5.34315 20 4 18.6569 4 17V7C4 5.34315 5.34315 4 7 4ZM8 8L16 16M16 8L8 16" },
+      { "value": "elevated", "label": "Schwebend", "description": "", "card_type": "text", "color": "#1a1a1a", "image_url": "", "icon": "M7 3H17C18.6569 3 20 4.34315 20 6V14C20 15.6569 18.6569 17 17 17H7C5.34315 17 4 15.6569 4 14V6C4 4.34315 5.34315 3 7 3ZM4 20H20" },
+      { "value": "flat", "label": "Flach", "description": "", "card_type": "text", "color": "#1a1a1a", "image_url": "", "icon": "M3 8H21M3 12H21M3 16H15" }
+    ]},
+
+    { "key": "card_radius", "label": "Karten-Rundung", "type": "card_select", "section": "Design", "order": 15, "required": true, "placeholder_text": "", "default_value": "normal", "max_length": null, "options": [], "display_mode": "chips", "card_options": [
+      { "value": "eckig", "label": "Eckig", "description": "", "card_type": "text", "color": "#1a1a1a", "image_url": "", "icon": "M4 4H20V20H4Z" },
+      { "value": "soft", "label": "Soft", "description": "", "card_type": "text", "color": "#1a1a1a", "image_url": "", "icon": "M6 4H18A2 2 0 0 1 20 6V18A2 2 0 0 1 18 20H6A2 2 0 0 1 4 18V6A2 2 0 0 1 6 4Z" },
+      { "value": "normal", "label": "Normal", "description": "", "card_type": "text", "color": "#1a1a1a", "image_url": "", "icon": "M9 4H15A5 5 0 0 1 20 9V15A5 5 0 0 1 15 20H9A5 5 0 0 1 4 15V9A5 5 0 0 1 9 4Z" },
+      { "value": "rund", "label": "Rund", "description": "", "card_type": "text", "color": "#1a1a1a", "image_url": "", "icon": "M11 4H13A7 7 0 0 1 20 11V13A7 7 0 0 1 13 20H11A7 7 0 0 1 4 13V11A7 7 0 0 1 11 4Z" },
+      { "value": "pill", "label": "Pill", "description": "", "card_type": "text", "color": "#1a1a1a", "image_url": "", "icon": "M9 7H15A5 5 0 0 1 20 12A5 5 0 0 1 15 17H9A5 5 0 0 1 4 12A5 5 0 0 1 9 7Z" }
+    ]},
+
+    { "key": "hintergrund_bild", "label": "Hintergrundbild (optional)", "type": "image", "section": "Design", "order": 16, "required": false, "placeholder_text": "Überschreibt die Hintergrundfarbe", "default_value": "", "aspect_ratio": "free", "options": [], "card_options": [] },
+    { "key": "hintergrund_bild_blur", "label": "Bild-Unschärfe", "type": "range", "section": "Design", "order": 17, "required": false, "placeholder_text": "Hintergrund weichzeichnen", "default_value": "0", "max_length": null, "options": [], "card_options": [], "min": 0, "max": 30, "step": 1, "unit": "px", "show_when": { "field": "hintergrund_bild", "value": "__truthy__" } },
+    { "key": "hintergrund_bild_overlay", "label": "Dunkel-Overlay", "type": "range", "section": "Design", "order": 18, "required": false, "placeholder_text": "Verbessert Lesbarkeit über Bild", "default_value": "0.3", "max_length": null, "options": [], "card_options": [], "min": 0, "max": 0.8, "step": 0.05, "unit": "", "show_when": { "field": "hintergrund_bild", "value": "__truthy__" } },
+
+    { "key": "links", "label": "Links", "type": "loop", "section": "Links", "order": 40, "required": false, "placeholder_text": "Füge deine wichtigsten Links hinzu", "default_value": "", "max_length": null, "options": [], "card_options": [], "min_items": 0, "max_items": 30, "sub_fields": [
+      { "key": "aktiv", "label": "Aktiv (auf der Live-Seite sichtbar)", "type": "toggle", "required": false, "default_value": "ja", "max_length": null, "placeholder_text": "" },
+      { "key": "typ", "label": "Typ", "type": "card_select", "required": true, "default_value": "link", "max_length": null, "placeholder_text": "", "display_mode": "chips", "card_options": [
+        { "value": "link", "label": "Link", "description": "Button mit Icon & Text", "card_type": "text", "color": "#1a1a1a", "image_url": "", "icon": "M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" },
+        { "value": "youtube", "label": "YouTube", "description": "Eingebettetes Video", "card_type": "color", "color": "#FF0000", "image_url": "", "icon": "M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17M10 15l5-3-5-3z" },
+        { "value": "spotify", "label": "Spotify", "description": "Eingebetteter Player", "card_type": "color", "color": "#1DB954", "image_url": "", "icon": "M12 3a9 9 0 1 1 0 18 9 9 0 0 1 0-18zM8 16c2.5-1 5-1 8 0M8 12c2.5-1 5-1 8 0M8 8c2.5-1 5-1 8 0" }
+      ]},
+      { "key": "titel", "label": "Titel", "type": "text", "required": true, "max_length": 60, "placeholder_text": "z. B. Mein neuester Podcast" },
+      { "key": "url", "label": "URL", "type": "url", "required": true, "max_length": null, "placeholder_text": "https://..." },
+      { "key": "beschreibung", "label": "Beschreibung (optional)", "type": "text", "required": false, "max_length": 100, "placeholder_text": "Kurz erklären, ein Satz", "show_when": { "field": "typ", "value": "link" } },
+      { "key": "icon_bild", "label": "Eigenes Icon (optional)", "type": "image", "required": false, "aspect_ratio": "1/1", "placeholder_text": "Sonst lädt automatisch das Favicon", "show_when": { "field": "typ", "value": "link" } },
+      { "key": "badge", "label": "Badge", "type": "card_select", "required": false, "default_value": "keine", "placeholder_text": "", "display_mode": "chips", "show_when": { "field": "typ", "value": "link" }, "card_options": [
+        { "value": "keine", "label": "Kein Badge", "description": "Standard", "card_type": "text", "color": "", "image_url": "" },
+        { "value": "neu", "label": "Neu", "description": "Frisch dazugekommen", "card_type": "color", "color": "#0A0A0A", "image_url": "" },
+        { "value": "live", "label": "Live", "description": "Pulsierender roter Punkt", "card_type": "color", "color": "#FF3B30", "image_url": "" },
+        { "value": "empfehlung", "label": "Empfehlung", "description": "Gold mit Stern-Icon", "card_type": "color", "color": "#F1B82E", "image_url": "" },
+        { "value": "coming_soon", "label": "Coming Soon", "description": "Vorankündigung", "card_type": "text", "color": "", "image_url": "" }
+      ]}
+    ]},
+
+    { "key": "kontakt_name", "label": "Vor- und Nachname (Inhaber)", "type": "text", "section": "Rechtliches", "order": 45, "required": false, "placeholder_text": "z. B. Anna Bauer", "default_value": "", "max_length": 80, "options": [], "card_options": [] },
+    { "key": "kontakt_firma", "label": "Firma / Marke (optional)", "type": "text", "section": "Rechtliches", "order": 46, "required": false, "placeholder_text": "z. B. Studio Bauer", "default_value": "", "max_length": 80, "options": [], "card_options": [] },
+    { "key": "kontakt_strasse", "label": "Straße und Hausnummer", "type": "text", "section": "Rechtliches", "order": 47, "required": false, "placeholder_text": "z. B. Hauptstraße 12", "default_value": "", "max_length": 80, "options": [], "card_options": [] },
+    { "key": "kontakt_plz_ort", "label": "PLZ und Ort", "type": "text", "section": "Rechtliches", "order": 48, "required": false, "placeholder_text": "z. B. 10115 Berlin", "default_value": "", "max_length": 80, "options": [], "card_options": [] },
+    { "key": "kontakt_land", "label": "Land", "type": "text", "section": "Rechtliches", "order": 49, "required": false, "placeholder_text": "Deutschland", "default_value": "Deutschland", "max_length": 40, "options": [], "card_options": [] },
+    { "key": "kontakt_telefon", "label": "Telefon (optional)", "type": "text", "section": "Rechtliches", "order": 50, "required": false, "placeholder_text": "z. B. +49 30 1234567", "default_value": "", "max_length": 40, "options": [], "card_options": [] },
+    { "key": "kontakt_email", "label": "Kontakt-E-Mail (aktiviert Impressum + Datenschutz)", "type": "email", "section": "Rechtliches", "order": 51, "required": false, "placeholder_text": "hallo@...", "default_value": "", "max_length": null, "options": [], "card_options": [] },
+    { "key": "kontakt_ust_id", "label": "Umsatzsteuer-ID (optional)", "type": "text", "section": "Rechtliches", "order": 52, "required": false, "placeholder_text": "z. B. DE123456789", "default_value": "", "max_length": 30, "options": [], "card_options": [] },
+
+    { "key": "instagram", "label": "Instagram", "type": "url", "section": "Social Media", "order": 60, "required": false, "placeholder_text": "https://instagram.com/...", "default_value": "", "max_length": null, "options": [], "card_options": [] },
+    { "key": "tiktok", "label": "TikTok", "type": "url", "section": "Social Media", "order": 61, "required": false, "placeholder_text": "https://tiktok.com/@...", "default_value": "", "max_length": null, "options": [], "card_options": [] },
+    { "key": "youtube", "label": "YouTube", "type": "url", "section": "Social Media", "order": 62, "required": false, "placeholder_text": "https://youtube.com/@...", "default_value": "", "max_length": null, "options": [], "card_options": [] },
+    { "key": "x_twitter", "label": "X (Twitter)", "type": "url", "section": "Social Media", "order": 63, "required": false, "placeholder_text": "https://x.com/...", "default_value": "", "max_length": null, "options": [], "card_options": [] },
+    { "key": "linkedin", "label": "LinkedIn", "type": "url", "section": "Social Media", "order": 64, "required": false, "placeholder_text": "https://linkedin.com/in/...", "default_value": "", "max_length": null, "options": [], "card_options": [] },
+    { "key": "spotify", "label": "Spotify", "type": "url", "section": "Social Media", "order": 65, "required": false, "placeholder_text": "https://open.spotify.com/...", "default_value": "", "max_length": null, "options": [], "card_options": [] },
+    { "key": "github", "label": "GitHub", "type": "url", "section": "Social Media", "order": 66, "required": false, "placeholder_text": "https://github.com/...", "default_value": "", "max_length": null, "options": [], "card_options": [] },
+    { "key": "mail", "label": "E-Mail-Adresse", "type": "email", "section": "Social Media", "order": 67, "required": false, "placeholder_text": "hallo@...", "default_value": "", "max_length": null, "options": [], "card_options": [] },
+    { "key": "website", "label": "Eigene Website", "type": "url", "section": "Social Media", "order": 68, "required": false, "placeholder_text": "https://...", "default_value": "", "max_length": null, "options": [], "card_options": [] }
+  ],
+  "preview_values": {
+    "vorname": "Anna",
+    "nachname": "Bauer",
+    "bio": "Designerin aus Berlin. Ich helfe kleinen Marken, groß zu wirken.",
+    "hintergrund_farbe": "#FFFFFF",
+    "akzentfarbe": "#7C3AED",
+    "theme": "glow",
+    "font_combo": "modern_clean",
+    "card_style": "filled",
+    "card_radius": "normal",
+    "instagram": "https://instagram.com/example",
+    "tiktok": "https://tiktok.com/@example",
+    "youtube": "https://youtube.com/@example",
+    "links": "[{\"aktiv\":\"ja\",\"typ\":\"link\",\"titel\":\"Mein Portfolio\",\"url\":\"https://example.com\",\"beschreibung\":\"Aktuelle Arbeiten & Cases\",\"badge\":\"neu\"},{\"aktiv\":\"ja\",\"typ\":\"link\",\"titel\":\"Online-Shop\",\"url\":\"https://shop.example.com\",\"beschreibung\":\"Print, Postkarten, Notizbücher\",\"badge\":\"keine\"},{\"aktiv\":\"ja\",\"typ\":\"link\",\"titel\":\"Termin buchen\",\"url\":\"https://cal.com/example\",\"beschreibung\":\"Kostenloses Erstgespräch · 20 Min\",\"badge\":\"empfehlung\"}]"
+  }
+}

@@ -1,0 +1,387 @@
+{
+  "fields": [
+    {
+      "key": "vorname",
+      "label": "Vorname",
+      "type": "text",
+      "required": true,
+      "placeholder_text": "z. B. Anna",
+      "default_value": "Vorname",
+      "max_length": 40,
+      "options": [],
+      "card_options": [],
+      "section": "Profil"
+    },
+    {
+      "key": "nachname",
+      "label": "Nachname",
+      "type": "text",
+      "required": true,
+      "placeholder_text": "z. B. Krempel",
+      "default_value": "Nachname",
+      "max_length": 60,
+      "options": [],
+      "card_options": [],
+      "section": "Profil"
+    },
+    {
+      "key": "geschlecht",
+      "label": "Anrede",
+      "type": "card_select",
+      "required": true,
+      "placeholder_text": "",
+      "default_value": "weiblich",
+      "max_length": null,
+      "options": [],
+      "card_options": [
+        {
+          "value": "weiblich",
+          "label": "Weiblich",
+          "description": "Beraterin, Vertriebspartnerin, deine persönliche…",
+          "card_type": "color",
+          "color": "#FDF2F8",
+          "image_url": ""
+        },
+        {
+          "value": "maennlich",
+          "label": "Männlich",
+          "description": "Berater, Vertriebspartner, dein persönlicher…",
+          "card_type": "color",
+          "color": "#EFF6FF",
+          "image_url": ""
+        }
+      ],
+      "section": "Profil"
+    },
+    {
+      "key": "profilbild",
+      "label": "Profilbild",
+      "type": "image",
+      "required": true,
+      "placeholder_text": "Quadratisch, min. 400×400 px. Wird in Navigation, Header und Signatur verwendet.",
+      "default_value": "https://finestsites.vercel.app/placeholders/profilbild.webp",
+      "max_length": null,
+      "options": [],
+      "card_options": [],
+      "section": "Profil",
+      "aspect_ratio": "1/1"
+    },
+    {
+      "key": "about_bild",
+      "label": "„Über mich\"-Bild",
+      "type": "image",
+      "required": true,
+      "placeholder_text": "Hochformat empfohlen (3/4), min. 600 px breit. Zeigt dich im „Wer ich bin\"-Bereich.",
+      "default_value": "https://finestsites.vercel.app/placeholders/about-bild.webp",
+      "max_length": null,
+      "options": [],
+      "card_options": [],
+      "section": "Profil",
+      "aspect_ratio": "3/4"
+    },
+    {
+      "key": "email_benachrichtigung",
+      "label": "E-Mail für Formular-Benachrichtigungen",
+      "type": "email",
+      "required": true,
+      "placeholder_text": "deine@email.de",
+      "default_value": "",
+      "max_length": null,
+      "options": [],
+      "card_options": [],
+      "section": "Profil"
+    },
+    {
+      "key": "farbthema",
+      "label": "Farbthema",
+      "type": "card_select",
+      "required": true,
+      "placeholder_text": "",
+      "default_value": "gruen",
+      "max_length": null,
+      "options": [],
+      "card_options": [
+        {
+          "value": "gruen",
+          "label": "Grün",
+          "description": "Natürlich, frisch, gesund. Klassische FitLine-Anmutung.",
+          "card_type": "color",
+          "color": "#2F8650",
+          "image_url": ""
+        },
+        {
+          "value": "rot",
+          "label": "Rot",
+          "description": "Kraftvoll, energiegeladen, aufmerksamkeitsstark.",
+          "card_type": "color",
+          "color": "#C0392B",
+          "image_url": ""
+        },
+        {
+          "value": "orange",
+          "label": "Orange",
+          "description": "Warm, einladend, sonnig. Optimismus pur.",
+          "card_type": "color",
+          "color": "#D4851C",
+          "image_url": ""
+        }
+      ],
+      "section": "Design"
+    },
+    {
+      "key": "hero_variant",
+      "label": "Welche Hero-Variante möchtest du nutzen?",
+      "type": "card_select",
+      "required": true,
+      "placeholder_text": "",
+      "default_value": "v2",
+      "max_length": null,
+      "options": [],
+      "card_options": [
+        {
+          "value": "v1",
+          "label": "Produkt-Hotspots",
+          "description": "Interaktive Tooltips zu jedem Produkt direkt im Hero-Bild.",
+          "card_type": "image",
+          "color": "",
+          "image_url": "/templates/fitline-optimalset/hero-previews/hero-v1.webp"
+        },
+        {
+          "value": "v2",
+          "label": "Familie in der Küche",
+          "description": "Warmer Familien-Moment, persönlich und einladend.",
+          "card_type": "image",
+          "color": "",
+          "image_url": "/templates/fitline-optimalset/hero-previews/hero-v2.webp"
+        },
+        {
+          "value": "v3",
+          "label": "Frau mit PowerCocktail",
+          "description": "Fokus auf eine Person beim Genuss.",
+          "card_type": "image",
+          "color": "",
+          "image_url": "/templates/fitline-optimalset/hero-previews/hero-v3.webp"
+        }
+      ],
+      "section": "Design"
+    },
+    {
+      "key": "about_me_html",
+      "label": "„Über mich\"-Text",
+      "type": "richtext",
+      "compliance_check": true,
+      "required": true,
+      "placeholder_text": "Wie bist du zum Optimalset gekommen? Was überzeugt dich? Nutze die Buttons oben für Fettdruck, kursive Schrift und Listen.",
+      "default_value": "<p>Hier kommt dein persönlicher Text. Erzähle, wie du zum Optimalset gekommen bist und was dich überzeugt.</p>",
+      "max_length": 1500,
+      "options": [],
+      "card_options": [],
+      "section": "Inhalte"
+    },
+    {
+      "key": "eigenes_zitat",
+      "label": "Dein persönliches Zitat (Signatur am Seitenende)",
+      "type": "text",
+      "required": true,
+      "placeholder_text": "Ein kurzer Satz, der dich und deine Empfehlung beschreibt.",
+      "default_value": "Dein persönliches Zitat.",
+      "max_length": 220,
+      "options": [],
+      "card_options": [],
+      "section": "Inhalte"
+    },
+    {
+      "key": "shop_optimalset",
+      "label": "Shop-Link Optimalset",
+      "type": "url",
+      "required": true,
+      "placeholder_text": "Dein personalisierter Shoplink zum Optimalset",
+      "default_value": "https://www.fitline.com/de/de-de/products/9700731",
+      "max_length": null,
+      "options": [],
+      "card_options": [],
+      "section": "Inhalte"
+    },
+    {
+      "key": "shop_activize",
+      "label": "Shop-Link Activize Oxyplus",
+      "type": "url",
+      "required": true,
+      "placeholder_text": "Dein personalisierter Shoplink zu Activize Oxyplus",
+      "default_value": "https://www.fitline.com/de/de-de/products/0708054",
+      "max_length": null,
+      "options": [],
+      "card_options": [],
+      "section": "Inhalte"
+    },
+    {
+      "key": "shop_joghurt",
+      "label": "Shop-Link Feel-Good Yoghurt Drink",
+      "type": "url",
+      "required": true,
+      "placeholder_text": "Dein personalisierter Shoplink zum Feel-Good Yoghurt Drink",
+      "default_value": "https://www.fitline.com/de/de-de/products/9709001",
+      "max_length": null,
+      "options": [],
+      "card_options": [],
+      "section": "Inhalte"
+    },
+    {
+      "key": "instagram_url",
+      "label": "Instagram-Profil",
+      "type": "url",
+      "required": false,
+      "placeholder_text": "https://instagram.com/dein.handle",
+      "default_value": "",
+      "max_length": null,
+      "options": [],
+      "card_options": [],
+      "section": "Kontakt"
+    },
+    {
+      "key": "facebook_url",
+      "label": "Facebook-Profil",
+      "type": "url",
+      "required": false,
+      "placeholder_text": "https://facebook.com/dein.handle",
+      "default_value": "",
+      "max_length": null,
+      "options": [],
+      "card_options": [],
+      "section": "Kontakt"
+    },
+    {
+      "key": "whatsapp_number",
+      "label": "WhatsApp-Nummer",
+      "type": "text",
+      "required": false,
+      "placeholder_text": "Internationales Format ohne + und ohne Leerzeichen, z. B. 4915112345678",
+      "default_value": "",
+      "max_length": 20,
+      "options": [],
+      "card_options": [],
+      "section": "Kontakt"
+    },
+    {
+      "key": "telefon",
+      "label": "Telefonnummer",
+      "type": "text",
+      "required": false,
+      "placeholder_text": "z. B. +49 151 1234 5678",
+      "default_value": "",
+      "max_length": 30,
+      "options": [],
+      "card_options": [],
+      "section": "Kontakt"
+    },
+    {
+      "key": "zeige_was_ersetzt",
+      "label": "Sektion „Was das Optimalset ersetzt\"",
+      "type": "card_select",
+      "required": true,
+      "placeholder_text": "",
+      "default_value": "ja",
+      "max_length": null,
+      "options": [],
+      "card_options": [
+        {
+          "value": "ja",
+          "label": "Anzeigen",
+          "description": "Vergleich: einzelne Drogerie-Vitamine vs. Optimalset.",
+          "card_type": "image",
+          "color": "",
+          "image_url": "/templates/fitline-optimalset/section-previews/section-was-ersetzt.webp"
+        },
+        {
+          "value": "nein",
+          "label": "Ausblenden",
+          "description": "Diese Sektion wird auf deiner Webseite nicht angezeigt.",
+          "card_type": "color",
+          "color": "#F1F5F9",
+          "image_url": ""
+        }
+      ],
+      "section": "Sektionen"
+    },
+    {
+      "key": "zeige_mit_optimalset",
+      "label": "Sektion „Mit dem Optimalset\"",
+      "type": "card_select",
+      "required": true,
+      "placeholder_text": "",
+      "default_value": "ja",
+      "max_length": null,
+      "options": [],
+      "card_options": [
+        {
+          "value": "ja",
+          "label": "Anzeigen",
+          "description": "Was dir das Optimalset im Alltag erspart, mit Bon-Vergleich.",
+          "card_type": "image",
+          "color": "",
+          "image_url": "/templates/fitline-optimalset/section-previews/section-mit-optimalset.webp"
+        },
+        {
+          "value": "nein",
+          "label": "Ausblenden",
+          "description": "Diese Sektion wird auf deiner Webseite nicht angezeigt.",
+          "card_type": "color",
+          "color": "#F1F5F9",
+          "image_url": ""
+        }
+      ],
+      "section": "Sektionen"
+    },
+    {
+      "key": "zeige_vergleich",
+      "label": "Sektion „Im direkten Vergleich\"",
+      "type": "card_select",
+      "required": true,
+      "placeholder_text": "",
+      "default_value": "ja",
+      "max_length": null,
+      "options": [],
+      "card_options": [
+        {
+          "value": "ja",
+          "label": "Anzeigen",
+          "description": "Tabellen-Vergleich: Optimalset vs. Einzel-Supplements vs. Smoothie.",
+          "card_type": "image",
+          "color": "",
+          "image_url": "/templates/fitline-optimalset/section-previews/section-vergleich.webp"
+        },
+        {
+          "value": "nein",
+          "label": "Ausblenden",
+          "description": "Diese Sektion wird auf deiner Webseite nicht angezeigt.",
+          "card_type": "color",
+          "color": "#F1F5F9",
+          "image_url": ""
+        }
+      ],
+      "section": "Sektionen"
+    }
+  ],
+  "preview_values": {
+    "vorname": "Anna",
+    "nachname": "Krempel",
+    "geschlecht": "weiblich",
+    "profilbild": "assets/anna-krempel.jpg",
+    "about_bild": "assets/anna-krempel.jpg",
+    "email_benachrichtigung": "anna@example.com",
+    "hero_variant": "v2",
+    "about_me_html": "<p>Ende 2019 hat mich mein Schwager auf das Optimalset aufmerksam gemacht. Ich war ehrlich gesagt skeptisch, aber ich hatte zwei Sachen, die mich schon eine Weile genervt haben: Ich brauchte jeden Mittag einen Schläfchen, weil mir sonst die Energie komplett gefehlt hat. Und meine Haut war trotz allem, was ich ausprobiert habe, Cremes, Behandlungen, alles Mögliche, einfach nicht gut.</p><p>Also habe ich es einfach mal probiert. Drei Monate lang, täglich und konsequent. Was mich wirklich überzeugt hat? Das erzähle ich dir lieber in einem persönlichen Gespräch, als es hier in drei Sätze zu quetschen.</p><p>Weil ich so begeistert war, haben Familie und Freunde automatisch angefangen zu fragen. So bin ich dazu gekommen, das Optimalset weiterzuempfehlen.</p><p>Ob das auch was für dich sein könnte, das schauen wir gerne gemeinsam an. Kein Druck, kein Verkaufsgespräch.</p>",
+    "eigenes_zitat": "Seit 2019 Teil meines Alltags. Meine Empfehlung kommt aus Überzeugung, nicht aus dem Hochglanzprospekt.",
+    "shop_optimalset": "https://www.fitline.com/de/de-de/products/9700731",
+    "shop_activize": "https://www.fitline.com/de/de-de/products/0708054",
+    "shop_joghurt": "https://www.fitline.com/de/de-de/products/9709001",
+    "instagram_url": "https://www.instagram.com/anna.krempel/",
+    "facebook_url": "",
+    "whatsapp_number": "",
+    "telefon": "",
+    "zeige_was_ersetzt": "ja",
+    "zeige_mit_optimalset": "ja",
+    "zeige_vergleich": "ja",
+    "farbthema": "gruen"
+  }
+}

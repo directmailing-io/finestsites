@@ -5,27 +5,27 @@
  */
 
 import { NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
-import { createAdminClient } from '@/lib/supabase/admin'
+import { getUserFromRequest } from '@/lib/auth/server'
+import { db } from '@/lib/db'
+import { users, affiliateCommissions, affiliatePayouts } from '@/lib/db/schema'
+import { eq, and, lte, inArray } from 'drizzle-orm'
 import { getStripe } from '@/lib/stripe/client'
 
-export async function POST() {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+export async function POST(req: Request) {
+  const user = await getUserFromRequest(req)
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const admin = createAdminClient()
   const stripe = getStripe()
-  const now = new Date().toISOString()
+  const now = new Date()
+  const nowIso = now.toISOString()
 
   // Load referrer profile
-  const { data: profile } = await admin
-    .from('users')
-    .select('id, username, stripe_connect_id, affiliate_onboarded')
-    .eq('id', user.id)
-    .single()
+  const profile = await db.query.users.findFirst({
+    where: eq(users.id, user.id),
+    columns: { id: true, username: true, stripeConnectId: true, affiliateOnboarded: true },
+  })
 
-  if (!profile?.affiliate_onboarded || !profile?.stripe_connect_id) {
+  if (!profile?.affiliateOnboarded || !profile?.stripeConnectId) {
     return NextResponse.json(
       { error: 'Kein Auszahlungskonto eingerichtet. Bitte zuerst das Bankkonto verbinden.' },
       { status: 400 }
@@ -33,27 +33,33 @@ export async function POST() {
   }
 
   // Move pending → available for this user where available_at has passed
-  await admin
-    .from('affiliate_commissions')
-    .update({ status: 'available', updated_at: now })
-    .eq('referrer_id', user.id)
-    .eq('status', 'pending')
-    .lte('available_at', now)
+  await db.update(affiliateCommissions)
+    .set({ status: 'available', updatedAt: now })
+    .where(and(
+      eq(affiliateCommissions.referrerId, user.id),
+      eq(affiliateCommissions.status, 'pending'),
+      lte(affiliateCommissions.availableAt, now)
+    ))
 
   // Fetch available commissions for this user
-  const { data: commissions, error } = await admin
-    .from('affiliate_commissions')
-    .select('id, commission_amount')
-    .eq('referrer_id', user.id)
-    .eq('status', 'available')
+  let commissions: { id: string; commissionAmount: number }[]
+  try {
+    commissions = await db
+      .select({ id: affiliateCommissions.id, commissionAmount: affiliateCommissions.commissionAmount })
+      .from(affiliateCommissions)
+      .where(and(
+        eq(affiliateCommissions.referrerId, user.id),
+        eq(affiliateCommissions.status, 'available')
+      ))
+  } catch {
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+  }
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
-
-  if (!commissions || commissions.length === 0) {
+  if (commissions.length === 0) {
     return NextResponse.json({ paid: 0, message: 'Keine auszahlbaren Provisionen vorhanden.' })
   }
 
-  const totalAmount = commissions.reduce((s, c) => s + c.commission_amount, 0)
+  const totalAmount = commissions.reduce((s, c) => s + c.commissionAmount, 0)
   const commissionIds = commissions.map(c => c.id)
 
   if (totalAmount < 100) {
@@ -70,7 +76,7 @@ export async function POST() {
     const transfer = await stripe.transfers.create({
       amount: totalAmount,
       currency: 'eur',
-      destination: profile.stripe_connect_id,
+      destination: profile.stripeConnectId,
       description: `FinestSites Affiliate Provision – ${profile.username}`,
       metadata: {
         referrer_id: profile.id,
@@ -83,25 +89,25 @@ export async function POST() {
     periodStart.setDate(1)
     periodStart.setHours(0, 0, 0, 0)
 
-    const { error: payoutInsertErr } = await admin.from('affiliate_payouts').insert({
-      referrer_id: profile.id,
-      amount: totalAmount,
-      total_amount: totalAmount,
-      commission_count: commissionIds.length,
-      stripe_transfer_id: transfer.id,
-      status: 'completed',
-      period_start: periodStart.toISOString().slice(0, 10),
-      period_end: now.slice(0, 10),
-      paid_at: now,
-    })
-    if (payoutInsertErr) {
-      console.error('[affiliate/payout] payout insert error:', payoutInsertErr.message)
+    try {
+      await db.insert(affiliatePayouts).values({
+        referrerId: profile.id,
+        commissionIds,
+        totalAmount,
+        commissionCount: commissionIds.length,
+        stripeTransferId: transfer.id,
+        status: 'completed',
+        periodStart: periodStart.toISOString().slice(0, 10),
+        periodEnd: nowIso.slice(0, 10),
+        paidAt: now,
+      })
+    } catch (err) {
+      console.error('[affiliate/payout] payout insert error:', err)
     }
 
-    await admin
-      .from('affiliate_commissions')
-      .update({ status: 'paid', paid_at: now, updated_at: now })
-      .in('id', commissionIds)
+    await db.update(affiliateCommissions)
+      .set({ status: 'paid', paidAt: now, updatedAt: now })
+      .where(inArray(affiliateCommissions.id, commissionIds))
 
     return NextResponse.json({ paid: 1, amount_cents: totalAmount, transfer_id: transfer.id })
 
@@ -115,7 +121,7 @@ export async function POST() {
       {
         error: isInsufficientFunds
           ? 'Auszahlung aktuell nicht möglich — die Zahlung deines Partners wird noch von Stripe verarbeitet (ca. 7 Tage). Bitte versuche es in einigen Tagen erneut.'
-          : message,
+          : 'Internal server error',
       },
       { status: 400 }
     )

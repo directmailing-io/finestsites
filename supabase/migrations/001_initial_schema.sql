@@ -13,7 +13,7 @@ CREATE TABLE public.users (
   billing_interval TEXT NOT NULL DEFAULT 'monthly' CHECK (billing_interval IN ('monthly', 'yearly')),
   stripe_customer_id TEXT UNIQUE,
   stripe_subscription_id TEXT UNIQUE,
-  subscription_status TEXT DEFAULT 'active',
+  subscription_status TEXT DEFAULT NULL,  -- NULL until Stripe webhook confirms payment
   current_period_end TIMESTAMPTZ,
   payment_failed_at TIMESTAMPTZ,
   deactivated_at TIMESTAMPTZ,

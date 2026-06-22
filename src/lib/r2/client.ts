@@ -33,6 +33,19 @@ export async function getFromR2(key: string): Promise<string> {
   return body || ''
 }
 
+export async function getRawFromR2(key: string): Promise<{ data: Buffer; contentType: string | undefined }> {
+  const command = new GetObjectCommand({
+    Bucket: BUCKET,
+    Key: key,
+  })
+  const response = await r2Client.send(command)
+  const bytes = await response.Body?.transformToByteArray()
+  return {
+    data: Buffer.from(bytes ?? []),
+    contentType: response.ContentType,
+  }
+}
+
 export async function deleteFromR2(key: string) {
   const command = new DeleteObjectCommand({
     Bucket: BUCKET,

@@ -1,4 +1,6 @@
-import { createAdminClient } from '@/lib/supabase/admin'
+import { db } from '@/lib/db'
+import { affiliateCommissions, users } from '@/lib/db/schema'
+import { desc, eq, isNotNull } from 'drizzle-orm'
 import { getStripe } from '@/lib/stripe/client'
 import { AffiliateAdminActions } from './AffiliateAdminActions'
 
@@ -15,14 +17,41 @@ const STATUS_META: Record<string, { label: string; bg: string; text: string; dot
 }
 
 export default async function AdminAffiliatePage() {
-  const admin = createAdminClient()
-
-  // All commissions with referrer and referee info
-  const { data: commissions } = await admin
-    .from('affiliate_commissions')
-    .select('*, referrer:referrer_id(username, email), referee:referee_id(username, email)')
-    .order('created_at', { ascending: false })
+  // All commissions with referrer and referee info via join
+  const referrerAlias = { id: users.id, username: users.username, email: users.email }
+  const commissionsRaw = await db
+    .select({
+      id: affiliateCommissions.id,
+      referrerId: affiliateCommissions.referrerId,
+      commissionAmount: affiliateCommissions.commissionAmount,
+      grossAmount: affiliateCommissions.grossAmount,
+      status: affiliateCommissions.status,
+      createdAt: affiliateCommissions.createdAt,
+      referrerUsername: users.username,
+      referrerEmail: users.email,
+    })
+    .from(affiliateCommissions)
+    .leftJoin(users, eq(users.id, affiliateCommissions.referrerId))
+    .orderBy(desc(affiliateCommissions.createdAt))
     .limit(200)
+
+  // We need referee info separately for the commissions display
+  // Build a referee lookup by commission id
+  const refereeRows = await db
+    .select({
+      commissionId: affiliateCommissions.id,
+      refereeUsername: users.username,
+    })
+    .from(affiliateCommissions)
+    .leftJoin(users, eq(users.id, affiliateCommissions.refereeId))
+    .orderBy(desc(affiliateCommissions.createdAt))
+    .limit(200)
+  const refereeMap = new Map(refereeRows.map(r => [r.commissionId, r.refereeUsername]))
+
+  const commissions = commissionsRaw.map(c => ({
+    ...c,
+    refereeUsername: refereeMap.get(c.id) ?? null,
+  }))
 
   // Aggregate by referrer
   const referrerMap: Record<string, {
@@ -35,43 +64,44 @@ export default async function AdminAffiliatePage() {
     total: number
   }> = {}
 
-  for (const c of commissions ?? []) {
-    const ref = c.referrer as any
-    if (!ref) continue
-    const key = ref.username ?? ref.email
+  for (const c of commissions) {
+    const username = c.referrerUsername
+    const email = c.referrerEmail
+    if (!username && !email) continue
+    const key = username ?? email ?? ''
     if (!referrerMap[key]) {
-      referrerMap[key] = { username: ref.username, email: ref.email, referral_count: 0, pending: 0, available: 0, paid: 0, total: 0 }
+      referrerMap[key] = { username: username ?? '', email: email ?? '', referral_count: 0, pending: 0, available: 0, paid: 0, total: 0 }
     }
-    referrerMap[key].total += c.commission_amount
-    if (c.status === 'pending') referrerMap[key].pending += c.commission_amount
-    if (c.status === 'available') referrerMap[key].available += c.commission_amount
-    if (c.status === 'paid') referrerMap[key].paid += c.commission_amount
+    referrerMap[key].total += c.commissionAmount
+    if (c.status === 'pending') referrerMap[key].pending += c.commissionAmount
+    if (c.status === 'available') referrerMap[key].available += c.commissionAmount
+    if (c.status === 'paid') referrerMap[key].paid += c.commissionAmount
   }
 
   // Count referred users per affiliate
-  const { data: referredUsers } = await admin
-    .from('users')
-    .select('referred_by_username')
-    .not('referred_by_username', 'is', null)
+  const referredUsers = await db
+    .select({ referredByUsername: users.referredByUsername })
+    .from(users)
+    .where(isNotNull(users.referredByUsername))
 
-  for (const u of referredUsers ?? []) {
-    if (u.referred_by_username && referrerMap[u.referred_by_username]) {
-      referrerMap[u.referred_by_username].referral_count++
+  for (const u of referredUsers) {
+    if (u.referredByUsername && referrerMap[u.referredByUsername]) {
+      referrerMap[u.referredByUsername].referral_count++
     }
   }
 
   const referrers = Object.values(referrerMap).sort((a, b) => b.total - a.total)
 
   // Global stats
-  const pendingCount    = (commissions ?? []).filter(c => c.status === 'pending').length
-  const availableCount  = (commissions ?? []).filter(c => c.status === 'available').length
-  const totalPending    = (commissions ?? []).filter(c => c.status === 'pending' || c.status === 'available')
-    .reduce((s, c) => s + c.commission_amount, 0)
-  const availableTotal  = (commissions ?? []).filter(c => c.status === 'available')
-    .reduce((s, c) => s + c.commission_amount, 0)
-  const totalPaid = (commissions ?? []).filter(c => c.status === 'paid')
-    .reduce((s, c) => s + c.commission_amount, 0)
-  const totalReferrals = referredUsers?.length ?? 0
+  const pendingCount    = commissions.filter(c => c.status === 'pending').length
+  const availableCount  = commissions.filter(c => c.status === 'available').length
+  const totalPending    = commissions.filter(c => c.status === 'pending' || c.status === 'available')
+    .reduce((s, c) => s + c.commissionAmount, 0)
+  const availableTotal  = commissions.filter(c => c.status === 'available')
+    .reduce((s, c) => s + c.commissionAmount, 0)
+  const totalPaid = commissions.filter(c => c.status === 'paid')
+    .reduce((s, c) => s + c.commissionAmount, 0)
+  const totalReferrals = referredUsers.length
 
   // Stripe platform balance
   let stripeBalanceCents = 0
@@ -182,24 +212,24 @@ export default async function AdminAffiliatePage() {
             <span className="text-right">Provision</span>
             <span className="text-right">Status</span>
           </div>
-          {(commissions ?? []).slice(0, 50).map((c: any, i: number) => {
+          {commissions.slice(0, 50).map((c, i) => {
             const meta = STATUS_META[c.status] ?? STATUS_META.pending
             return (
               <div key={c.id}
                 className="grid items-center px-6 py-3.5 text-sm"
                 style={{
                   gridTemplateColumns: '1.5fr 1.5fr 100px 100px 90px',
-                  borderBottom: i < Math.min((commissions?.length ?? 0), 50) - 1 ? '1px solid #F8FAFC' : 'none',
+                  borderBottom: i < Math.min(commissions.length, 50) - 1 ? '1px solid #F8FAFC' : 'none',
                 }}>
                 <span className="text-xs font-mono font-medium text-gray-700 truncate">
-                  @{(c.referrer as any)?.username ?? '—'}
+                  @{c.referrerUsername ?? '—'}
                 </span>
                 <span className="text-xs text-gray-500 truncate">
-                  @{(c.referee as any)?.username ?? '—'}
+                  @{c.refereeUsername ?? '—'}
                 </span>
-                <span className="text-xs font-mono text-right text-gray-700">{euros(c.gross_amount)}</span>
+                <span className="text-xs font-mono text-right text-gray-700">{euros(c.grossAmount)}</span>
                 <span className="text-xs font-mono font-semibold text-right" style={{ color: '#15803D' }}>
-                  +{euros(c.commission_amount)}
+                  +{euros(c.commissionAmount)}
                 </span>
                 <span className="flex justify-end">
                   <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full flex items-center gap-1"
@@ -211,7 +241,7 @@ export default async function AdminAffiliatePage() {
               </div>
             )
           })}
-          {(!commissions || commissions.length === 0) && (
+          {commissions.length === 0 && (
             <div className="px-6 py-12 text-center">
               <p className="text-sm text-gray-500">Noch keine Provisionen erfasst</p>
             </div>

@@ -1,4 +1,6 @@
-import { createAdminClient } from '@/lib/supabase/admin'
+import { db } from '@/lib/db'
+import { users, userSites, templates, subscriptionEvents, affiliateCommissions } from '@/lib/db/schema'
+import { eq, gte, lte, gt, inArray, count, and, desc } from 'drizzle-orm'
 import { getStripe } from '@/lib/stripe/client'
 import Link from 'next/link'
 
@@ -43,92 +45,100 @@ function lastNMonths(n: number) {
 }
 
 export default async function AdminPage() {
-  const admin  = createAdminClient()
   const now    = new Date()
   const monthStart     = new Date(now.getFullYear(), now.getMonth(), 1)
   const monthEnd       = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999)
   const nextMonthStart = new Date(now.getFullYear(), now.getMonth() + 1, 1)
   const nextMonthEnd   = new Date(now.getFullYear(), now.getMonth() + 2, 0, 23, 59, 59, 999)
   const twelveMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 11, 1)
-  const sixMonthsAgo  = new Date(now.getFullYear(), now.getMonth() - 5, 1).toISOString()
-  const sevenDaysAgo  = new Date(now.getTime() - 7  * 86400_000).toISOString()
-  const thirtyDaysAgo = new Date(now.getTime() - 30 * 86400_000).toISOString()
+  const sixMonthsAgo  = new Date(now.getFullYear(), now.getMonth() - 5, 1)
+  const sevenDaysAgo  = new Date(now.getTime() - 7  * 86400_000)
+  const thirtyDaysAgo = new Date(now.getTime() - 30 * 86400_000)
 
   // ── Parallel DB queries ──────────────────────────────────────────────────
   const [
-    { count: totalUsers },
-    { count: newUsersWeek },
-    { count: newUsersMonth },
-    { count: activeSubsCount },
-    { count: canceledCount },
-    { count: totalSites },
-    { count: totalTemplates },
-    { count: publishedTemplates },
-    { count: starterCount },
-    { count: proCount },
-    { count: unlimitedCount },
-    { data: activeUsersForMrr },
-    { data: signupsRaw },
-    { data: recentUsers },
-    { data: monthEvents },
-    { data: monthCommissions },
-    { data: dueThisMonth },
-    { data: dueNextMonth },
-    { data: historicalEvents },
+    [{ total: totalUsers }],
+    [{ total: newUsersWeek }],
+    [{ total: newUsersMonth }],
+    [{ total: activeSubsCount }],
+    [{ total: canceledCount }],
+    [{ total: totalSites }],
+    [{ total: totalTemplates }],
+    [{ total: publishedTemplates }],
+    [{ total: starterCount }],
+    [{ total: proCount }],
+    [{ total: unlimitedCount }],
+    activeUsersForMrr,
+    signupsRaw,
+    recentUsers,
+    monthEvents,
+    monthCommissions,
+    dueThisMonth,
+    dueNextMonth,
+    historicalEvents,
   ] = await Promise.all([
-    admin.from('users').select('*', { count: 'exact', head: true }),
-    admin.from('users').select('*', { count: 'exact', head: true }).gte('created_at', sevenDaysAgo),
-    admin.from('users').select('*', { count: 'exact', head: true }).gte('created_at', thirtyDaysAgo),
-    admin.from('users').select('*', { count: 'exact', head: true }).eq('subscription_status', 'active'),
-    admin.from('users').select('*', { count: 'exact', head: true }).eq('subscription_status', 'canceled'),
-    admin.from('user_sites').select('*', { count: 'exact', head: true }).eq('status', 'published'),
-    admin.from('templates').select('*', { count: 'exact', head: true }),
-    admin.from('templates').select('*', { count: 'exact', head: true }).eq('status', 'published'),
-    admin.from('users').select('*', { count: 'exact', head: true }).eq('plan', 'starter').eq('subscription_status', 'active'),
-    admin.from('users').select('*', { count: 'exact', head: true }).eq('plan', 'pro').eq('subscription_status', 'active'),
-    admin.from('users').select('*', { count: 'exact', head: true }).eq('plan', 'unlimited').eq('subscription_status', 'active'),
+    db.select({ total: count() }).from(users),
+    db.select({ total: count() }).from(users).where(gte(users.createdAt, sevenDaysAgo)),
+    db.select({ total: count() }).from(users).where(gte(users.createdAt, thirtyDaysAgo)),
+    db.select({ total: count() }).from(users).where(eq(users.subscriptionStatus, 'active')),
+    db.select({ total: count() }).from(users).where(eq(users.subscriptionStatus, 'canceled')),
+    db.select({ total: count() }).from(userSites).where(eq(userSites.status, 'published')),
+    db.select({ total: count() }).from(templates),
+    db.select({ total: count() }).from(templates).where(eq(templates.status, 'published')),
+    db.select({ total: count() }).from(users).where(and(eq(users.plan, 'starter'), eq(users.subscriptionStatus, 'active'))),
+    db.select({ total: count() }).from(users).where(and(eq(users.plan, 'pro'), eq(users.subscriptionStatus, 'active'))),
+    db.select({ total: count() }).from(users).where(and(eq(users.plan, 'unlimited'), eq(users.subscriptionStatus, 'active'))),
     // Active users with sub details for MRR
-    admin.from('users').select('plan, billing_interval, stripe_subscription_id').eq('subscription_status', 'active'),
+    db.select({ plan: users.plan, billingInterval: users.billingInterval, stripeSubscriptionId: users.stripeSubscriptionId })
+      .from(users).where(eq(users.subscriptionStatus, 'active')),
     // All signups last 6 months
-    admin.from('users').select('created_at').gte('created_at', sixMonthsAgo),
+    db.select({ createdAt: users.createdAt }).from(users).where(gte(users.createdAt, sixMonthsAgo)),
     // Recent 7 users
-    admin.from('users').select('id, email, username, plan, subscription_status, created_at')
-      .order('created_at', { ascending: false }).limit(7),
+    db.select({ id: users.id, email: users.email, username: users.username, plan: users.plan, subscriptionStatus: users.subscriptionStatus, createdAt: users.createdAt })
+      .from(users).orderBy(desc(users.createdAt)).limit(7),
     // Actual payments this month
-    admin.from('subscription_events')
-      .select('amount_cents')
-      .gte('created_at', monthStart.toISOString())
-      .in('event_type', ['subscription_created', 'subscription_renewed']),
+    db.select({ amountCents: subscriptionEvents.amountCents })
+      .from(subscriptionEvents)
+      .where(and(
+        gte(subscriptionEvents.createdAt, monthStart),
+        inArray(subscriptionEvents.eventType, ['subscription_created', 'subscription_renewed'])
+      )),
     // Affiliate commissions this month
-    admin.from('affiliate_commissions')
-      .select('commission_amount')
-      .gte('created_at', monthStart.toISOString()),
+    db.select({ commissionAmount: affiliateCommissions.commissionAmount })
+      .from(affiliateCommissions)
+      .where(gte(affiliateCommissions.createdAt, monthStart)),
     // Subscriptions renewing later this month (noch fällig)
-    admin.from('users')
-      .select('plan, billing_interval')
-      .eq('subscription_status', 'active')
-      .gt('current_period_end', now.toISOString())
-      .lte('current_period_end', monthEnd.toISOString()),
+    db.select({ plan: users.plan, billingInterval: users.billingInterval })
+      .from(users)
+      .where(and(
+        eq(users.subscriptionStatus, 'active'),
+        gt(users.currentPeriodEnd, now),
+        lte(users.currentPeriodEnd, monthEnd)
+      )),
     // Subscriptions renewing next month (projection)
-    admin.from('users')
-      .select('plan, billing_interval')
-      .eq('subscription_status', 'active')
-      .gte('current_period_end', nextMonthStart.toISOString())
-      .lte('current_period_end', nextMonthEnd.toISOString()),
+    db.select({ plan: users.plan, billingInterval: users.billingInterval })
+      .from(users)
+      .where(and(
+        eq(users.subscriptionStatus, 'active'),
+        gte(users.currentPeriodEnd, nextMonthStart),
+        lte(users.currentPeriodEnd, nextMonthEnd)
+      )),
     // Historical revenue last 12 months
-    admin.from('subscription_events')
-      .select('amount_cents, created_at')
-      .gte('created_at', twelveMonthsAgo.toISOString())
-      .in('event_type', ['subscription_created', 'subscription_renewed']),
+    db.select({ amountCents: subscriptionEvents.amountCents, createdAt: subscriptionEvents.createdAt })
+      .from(subscriptionEvents)
+      .where(and(
+        gte(subscriptionEvents.createdAt, twelveMonthsAgo),
+        inArray(subscriptionEvents.eventType, ['subscription_created', 'subscription_renewed'])
+      )),
   ])
 
   // ── MRR from DB ─────────────────────────────────────────────────────────
   let currentMrr = 0
   const subIdToMrr = new Map<string, number>()
-  for (const u of activeUsersForMrr ?? []) {
-    const rate = mrrFor(u.plan, u.billing_interval)
+  for (const u of activeUsersForMrr) {
+    const rate = mrrFor(u.plan, u.billingInterval)
     currentMrr += rate
-    if (u.stripe_subscription_id) subIdToMrr.set(u.stripe_subscription_id, rate)
+    if (u.stripeSubscriptionId) subIdToMrr.set(u.stripeSubscriptionId, rate)
   }
 
   // ── Stripe: pending cancellations ────────────────────────────────────────
@@ -148,23 +158,23 @@ export default async function AdminPage() {
   const projectedMrr = currentMrr - mrrAtRisk
 
   // ── Cashflow calculations ────────────────────────────────────────────────
-  const actualRevenueCents  = (monthEvents ?? []).reduce((s, e) => s + (e.amount_cents ?? 0), 0)
-  const affiliateCommsCents = (monthCommissions ?? []).reduce((s, c) => s + (c.commission_amount ?? 0), 0)
+  const actualRevenueCents  = monthEvents.reduce((s, e) => s + (e.amountCents ?? 0), 0)
+  const affiliateCommsCents = monthCommissions.reduce((s, c) => s + (c.commissionAmount ?? 0), 0)
   const netProfitCents      = actualRevenueCents - affiliateCommsCents
-  const stillDueCents       = (dueThisMonth ?? []).reduce((s, u) => {
-    return s + (PRICE_CENTS[u.plan]?.[u.billing_interval ?? 'monthly'] ?? 0)
+  const stillDueCents       = dueThisMonth.reduce((s, u) => {
+    return s + (PRICE_CENTS[u.plan]?.[u.billingInterval ?? 'monthly'] ?? 0)
   }, 0)
-  const nextMonthRevenueCents = (dueNextMonth ?? []).reduce((s, u) => {
-    return s + (PRICE_CENTS[u.plan]?.[u.billing_interval ?? 'monthly'] ?? 0)
+  const nextMonthRevenueCents = dueNextMonth.reduce((s, u) => {
+    return s + (PRICE_CENTS[u.plan]?.[u.billingInterval ?? 'monthly'] ?? 0)
   }, 0)
 
   // ── Historical revenue (last 12 months) ─────────────────────────────────
   const revenueMonths = lastNMonths(12)
   const revenueMap: Record<string, number> = {}
   revenueMonths.forEach(m => { revenueMap[m.key] = 0 })
-  for (const e of historicalEvents ?? []) {
-    const k = (e.created_at as string).slice(0, 7)
-    if (k in revenueMap) revenueMap[k] += e.amount_cents ?? 0
+  for (const e of historicalEvents) {
+    const k = (e.createdAt as Date).toISOString().slice(0, 7)
+    if (k in revenueMap) revenueMap[k] += e.amountCents ?? 0
   }
   const monthlyRevenue = revenueMonths.map(m => ({ ...m, cents: revenueMap[m.key] ?? 0 }))
   const maxRevenueCents = Math.max(...monthlyRevenue.map(m => m.cents), 1)
@@ -173,20 +183,20 @@ export default async function AdminPage() {
   const months      = lastNMonths(6)
   const signupMap: Record<string, number> = {}
   months.forEach(m => { signupMap[m.key] = 0 })
-  for (const u of signupsRaw ?? []) {
-    const k = (u.created_at as string).slice(0, 7)
+  for (const u of signupsRaw) {
+    const k = (u.createdAt as Date).toISOString().slice(0, 7)
     if (k in signupMap) signupMap[k]++
   }
   const monthlySignups = months.map(m => ({ ...m, count: signupMap[m.key] ?? 0 }))
   const maxSignups     = Math.max(...monthlySignups.map(m => m.count), 1)
 
   // ── Derived ─────────────────────────────────────────────────────────────
-  const totalActive  = (starterCount ?? 0) + (proCount ?? 0) + (unlimitedCount ?? 0)
-  const conversionPct = (totalUsers ?? 0) > 0
-    ? Math.round((activeSubsCount ?? 0) / (totalUsers ?? 1) * 100) : 0
-  const starterPct   = totalActive > 0 ? (starterCount   ?? 0) / totalActive * 100 : 0
-  const proPct       = totalActive > 0 ? (proCount       ?? 0) / totalActive * 100 : 0
-  const unlimitedPct = totalActive > 0 ? (unlimitedCount ?? 0) / totalActive * 100 : 0
+  const totalActive  = starterCount + proCount + unlimitedCount
+  const conversionPct = totalUsers > 0
+    ? Math.round(activeSubsCount / totalUsers * 100) : 0
+  const starterPct   = totalActive > 0 ? starterCount   / totalActive * 100 : 0
+  const proPct       = totalActive > 0 ? proCount       / totalActive * 100 : 0
+  const unlimitedPct = totalActive > 0 ? unlimitedCount / totalActive * 100 : 0
 
   const PLAN_META = {
     starter:   { label: 'Starter',   color: '#3B82F6', bg: '#EFF6FF', text: '#1D4ED8' },
@@ -261,7 +271,7 @@ export default async function AdminPage() {
                 € {fmtEurCents(stillDueCents)}
               </div>
               <div className="text-[11px] mt-1" style={{ color: '#334155' }}>
-                {dueThisMonth?.length ?? 0} Abos erneuern noch
+                {dueThisMonth.length} Abos erneuern noch
               </div>
             </div>
 
@@ -273,7 +283,7 @@ export default async function AdminPage() {
                 − € {fmtEurCents(affiliateCommsCents)}
               </div>
               <div className="text-[11px] mt-1" style={{ color: '#334155' }}>
-                {(monthCommissions ?? []).length} neue Provisionen
+                {monthCommissions.length} neue Provisionen
               </div>
             </div>
 
@@ -313,7 +323,7 @@ export default async function AdminPage() {
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm text-gray-600">Abos mit Verlängerung</span>
-                <span className="text-sm font-medium text-gray-700">{dueNextMonth?.length ?? 0}</span>
+                <span className="text-sm font-medium text-gray-700">{dueNextMonth.length}</span>
               </div>
               {stripeOk && mrrAtRisk > 0 && (
                 <div className="flex items-center justify-between">
@@ -389,20 +399,20 @@ export default async function AdminPage() {
         <div className="grid grid-cols-3 lg:grid-cols-6 gap-3">
           {[
             {
-              label: 'Nutzer gesamt', value: totalUsers ?? 0,
-              sub: `+${newUsersMonth ?? 0} diesen Monat`,
+              label: 'Nutzer gesamt', value: totalUsers,
+              sub: `+${newUsersMonth} diesen Monat`,
               icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>,
               accent: '#3B82F6', bg: '#EFF6FF',
             },
             {
-              label: 'Neu (7 Tage)', value: newUsersWeek ?? 0,
-              sub: `${newUsersMonth ?? 0} im letzten Monat`,
+              label: 'Neu (7 Tage)', value: newUsersWeek,
+              sub: `${newUsersMonth} im letzten Monat`,
               icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>,
               accent: '#10B981', bg: '#ECFDF5',
             },
             {
-              label: 'Aktive Abos', value: activeSubsCount ?? 0,
-              sub: `${canceledCount ?? 0} gekündigt`,
+              label: 'Aktive Abos', value: activeSubsCount,
+              sub: `${canceledCount} gekündigt`,
               icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>,
               accent: '#8B5CF6', bg: '#F5F3FF',
             },
@@ -413,15 +423,15 @@ export default async function AdminPage() {
               accent: '#0EA5E9', bg: '#F0F9FF',
             },
             {
-              label: 'Aktive Seiten', value: totalSites ?? 0,
+              label: 'Aktive Seiten', value: totalSites,
               sub: 'live im Netz',
               icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>,
               accent: '#F59E0B', bg: '#FFFBEB',
               href: '/admin/sites' as string | undefined,
             },
             {
-              label: 'Templates', value: totalTemplates ?? 0,
-              sub: `${publishedTemplates ?? 0} veröffentlicht`,
+              label: 'Templates', value: totalTemplates,
+              sub: `${publishedTemplates} veröffentlicht`,
               icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>,
               accent: '#EC4899', bg: '#FDF2F8',
             },
@@ -526,7 +536,7 @@ export default async function AdminPage() {
           )}
 
           <div className="flex flex-col gap-3">
-            {([['starter', starterCount ?? 0], ['pro', proCount ?? 0], ['unlimited', unlimitedCount ?? 0]] as [keyof typeof PLAN_META, number][]).map(([key, count]) => {
+            {([['starter', starterCount], ['pro', proCount], ['unlimited', unlimitedCount]] as [keyof typeof PLAN_META, number][]).map(([key, count]) => {
               const meta = PLAN_META[key]
               const pct  = totalActive > 0 ? Math.round(count / totalActive * 100) : 0
               const mrr  = count * mrrFor(key, 'monthly')
@@ -574,13 +584,13 @@ export default async function AdminPage() {
         <div className="px-6 py-4 flex items-center justify-between" style={{ borderBottom: '1px solid #F8FAFC' }}>
           <p className="text-sm font-semibold text-gray-900">Neueste Nutzer</p>
           <Link href="/admin/users" className="text-xs font-medium" style={{ color: '#3B82F6' }}>
-            Alle {totalUsers ?? 0} anzeigen →
+            Alle {totalUsers} anzeigen →
           </Link>
         </div>
         <div className="divide-y" style={{ borderColor: '#F8FAFC' }}>
-          {recentUsers?.map((u: any) => {
+          {recentUsers.map((u) => {
             const planMeta    = PLAN_META[u.plan as keyof typeof PLAN_META] ?? PLAN_META.starter
-            const statusMeta  = u.subscription_status ? (STATUS_META[u.subscription_status] ?? null) : null
+            const statusMeta  = u.subscriptionStatus ? (STATUS_META[u.subscriptionStatus] ?? null) : null
             const initials    = u.email.slice(0, 2).toUpperCase()
             return (
               <Link key={u.id} href={`/admin/users/${u.id}`}
@@ -608,7 +618,7 @@ export default async function AdminPage() {
                     </span>
                   )}
                   <span className="hidden sm:inline text-xs tabular-nums" style={{ color: '#CBD5E1' }}>
-                    {new Date(u.created_at).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: '2-digit' })}
+                    {new Date(u.createdAt).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: '2-digit' })}
                   </span>
                 </div>
               </Link>
@@ -628,13 +638,13 @@ export default async function AdminPage() {
           },
           {
             href: '/admin/templates', label: 'Templates verwalten',
-            desc: `${totalTemplates ?? 0} gesamt · ${publishedTemplates ?? 0} live`,
+            desc: `${totalTemplates} gesamt · ${publishedTemplates} live`,
             icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>,
             accent: '#8B5CF6', bg: '#F5F3FF',
           },
           {
             href: '/admin/users', label: 'Nutzer verwalten',
-            desc: `${totalUsers ?? 0} Nutzer · ${activeSubsCount ?? 0} aktive Abos`,
+            desc: `${totalUsers} Nutzer · ${activeSubsCount} aktive Abos`,
             icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>,
             accent: '#3B82F6', bg: '#EFF6FF',
           },

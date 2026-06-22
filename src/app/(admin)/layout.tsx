@@ -1,15 +1,20 @@
 import { AdminSidebar } from '@/components/admin/AdminSidebar'
 import { AdminMobileNav } from '@/components/admin/AdminMobileNav'
-import { createClient } from '@/lib/supabase/server'
+import { getServerUser } from '@/lib/auth/server'
+import { db } from '@/lib/db'
+import { users } from '@/lib/db/schema'
+import { eq } from 'drizzle-orm'
 import { redirect } from 'next/navigation'
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const user = await getServerUser()
   if (!user) redirect('/login')
 
-  const { data: profile } = await supabase.from('users').select('is_admin').eq('id', user.id).single()
-  if (!profile?.is_admin) redirect('/sites')
+  const profile = await db.query.users.findFirst({
+    where: eq(users.id, user.id),
+    columns: { isAdmin: true },
+  })
+  if (!profile?.isAdmin) redirect('/sites')
 
   return (
     <div className="flex min-h-screen" style={{ background: 'var(--background)' }}>

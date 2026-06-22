@@ -5,14 +5,15 @@
     {
       "key": "string (required) — eindeutiger Bezeichner, wird als {{key}} im Template verwendet",
       "label": "string (required) — lesbare Beschriftung für den Nutzer",
-      "type": "text | textarea | image | url | email | dropdown | card_select",
+      "type": "text | textarea | image | url | email | dropdown | card_select | loop",
       "required": "boolean — muss der Nutzer dieses Feld ausfüllen? (Standard: false)",
       "default_value": "string — vorausgefüllter Wert (optional)",
       "placeholder_text": "string — Platzhaltertext im Eingabefeld (optional)",
       "max_length": "number | null — maximale Zeichenanzahl, nur für text/textarea (optional)",
       "section": "string — Gruppenname um Felder zu gliedern (optional)",
       "order": "number — Reihenfolge im Formular (0-basiert, optional)",
-      "options": ["string", "..."] ,
+      "aspect_ratio": "free | 1/1 | 4/3 | 16/9 | 3/2 | 9/16 — nur für type=image (optional)",
+      "options": ["string", "..."],
       "_note_options": "Nur für type=dropdown: Liste der wählbaren Werte",
       "card_options": [
         {
@@ -24,7 +25,23 @@
           "color": "string — Hex-Farbe wenn card_type=color (z.B. #6366F1)"
         }
       ],
-      "_note_card_options": "Nur für type=card_select: Liste der Karten-Optionen"
+      "_note_card_options": "Nur für type=card_select: Liste der Karten-Optionen",
+      "sub_fields": [
+        {
+          "key": "string — Feld-Key im Loop-Item, wird als {{this.key}} verwendet",
+          "label": "string — Beschriftung für den Nutzer",
+          "type": "text | textarea | image | url | email | dropdown",
+          "required": "boolean (optional)",
+          "placeholder_text": "string (optional)",
+          "max_length": "number | null (optional)",
+          "default_value": "string (optional)",
+          "aspect_ratio": "free | 1/1 | 4/3 | 16/9 | 3/2 | 9/16 — nur für type=image (optional)",
+          "options": ["string", "..."]
+        }
+      ],
+      "_note_sub_fields": "Nur für type=loop: Definiert die Unterfelder jedes Eintrags",
+      "min_items": "number — Mindestanzahl an Einträgen, nur für type=loop (optional, Standard: 1)",
+      "max_items": "number | null — Maximalanzahl an Einträgen, nur für type=loop (optional)"
     }
   ]
 }

@@ -1,16 +1,27 @@
-import { createAdminClient } from '@/lib/supabase/admin'
+import { db } from '@/lib/db'
+import { userSites, users, templates } from '@/lib/db/schema'
+import { eq } from 'drizzle-orm'
+import { desc } from 'drizzle-orm'
 import Link from 'next/link'
 
 export default async function SitesPage() {
-  const admin = createAdminClient()
-
-  const { data: sites } = await admin
-    .from('user_sites')
-    .select('id, status, created_at, published_at, user_id, users(email, username), templates(title, domain)')
-    .eq('status', 'published')
-    .order('published_at', { ascending: false })
-
-  const rows = sites ?? []
+  const rows = await db
+    .select({
+      id: userSites.id,
+      status: userSites.status,
+      createdAt: userSites.createdAt,
+      publishedAt: userSites.publishedAt,
+      userId: userSites.userId,
+      userEmail: users.email,
+      userUsername: users.username,
+      templateTitle: templates.title,
+      templateDomain: templates.domain,
+    })
+    .from(userSites)
+    .leftJoin(users, eq(users.id, userSites.userId))
+    .leftJoin(templates, eq(templates.id, userSites.templateId))
+    .where(eq(userSites.status, 'published'))
+    .orderBy(desc(userSites.publishedAt))
 
   return (
     <div style={{ maxWidth: 1000 }}>
@@ -51,23 +62,21 @@ export default async function SitesPage() {
             <span></span>
           </div>
           <div className="divide-y" style={{ borderColor: '#F8FAFC' }}>
-            {rows.map((site: any) => {
-              const user = Array.isArray(site.users) ? site.users[0] : site.users
-              const tmpl = Array.isArray(site.templates) ? site.templates[0] : site.templates
-              const username = user?.username ?? null
-              const domain = tmpl?.domain ?? null
+            {rows.map((site) => {
+              const username = site.userUsername ?? null
+              const domain = site.templateDomain ?? null
               const siteUrl = username && domain ? `https://${username}.${domain}` : null
-              const publishedAt = site.published_at
-                ? new Date(site.published_at).toLocaleDateString('de-DE', { day: '2-digit', month: 'short', year: 'numeric' })
+              const publishedAt = site.publishedAt
+                ? new Date(site.publishedAt).toLocaleDateString('de-DE', { day: '2-digit', month: 'short', year: 'numeric' })
                 : '—'
 
               return (
-                <Link key={site.id} href={`/admin/users/${site.user_id}`}
+                <Link key={site.id} href={`/admin/users/${site.userId}`}
                   className="grid items-center px-6 py-3.5 transition-colors hover:bg-gray-50"
                   style={{ gridTemplateColumns: '1fr 160px 160px 120px 32px' }}>
                   <div className="min-w-0">
                     <p className="text-sm font-medium text-gray-900 truncate">
-                      {tmpl?.title ?? 'Website'}
+                      {site.templateTitle ?? 'Website'}
                     </p>
                     {siteUrl && (
                       <span className="text-xs font-mono truncate block" style={{ color: '#2563EB' }}>
@@ -76,7 +85,7 @@ export default async function SitesPage() {
                     )}
                   </div>
                   <div className="min-w-0">
-                    <p className="text-sm text-gray-700 truncate">{user?.email ?? '—'}</p>
+                    <p className="text-sm text-gray-700 truncate">{site.userEmail ?? '—'}</p>
                   </div>
                   <div>
                     {username ? (

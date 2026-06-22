@@ -1,18 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
-import { createAdminClient } from '@/lib/supabase/admin'
+import { getUserFromRequest } from '@/lib/auth/server'
+import { db } from '@/lib/db'
+import { userSites } from '@/lib/db/schema'
+import { eq, and } from 'drizzle-orm'
 import { createUserCustomHostname, deleteCustomHostname } from '@/lib/cloudflare/custom-hostnames'
 import { deleteCustomDomainKV } from '@/lib/cloudflare/kv-api'
 
 export const runtime = 'nodejs'
 
 const FALLBACK_HOST = process.env.CLOUDFLARE_FALLBACK_HOST ?? 'custom.womenplus.io'
-
-async function getUser() {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  return user
-}
 
 function isValidHostname(hostname: string): boolean {
   const clean = hostname.trim().toLowerCase()
@@ -28,34 +24,30 @@ function isApexDomain(hostname: string): boolean {
 }
 
 // GET /api/sites/[id]/domain — get current domain status
-export async function GET(_: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const user = await getUser()
+export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const user = await getUserFromRequest(req)
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const { id } = await params
-  const admin = createAdminClient()
 
-  const { data: site } = await admin
-    .from('user_sites')
-    .select('custom_domain, custom_domain_status, cf_custom_hostname_id, custom_domain_verified_at')
-    .eq('id', id)
-    .eq('user_id', user.id)
-    .single()
+  const site = await db.query.userSites.findFirst({
+    where: and(eq(userSites.id, id), eq(userSites.userId, user.id)),
+  })
 
   if (!site) return NextResponse.json({ error: 'Not found' }, { status: 404 })
 
   return NextResponse.json({
-    custom_domain: site.custom_domain ?? null,
-    custom_domain_status: site.custom_domain_status ?? null,
-    custom_domain_verified_at: site.custom_domain_verified_at ?? null,
+    custom_domain: site.customDomain ?? null,
+    custom_domain_status: site.customDomainStatus ?? null,
+    custom_domain_verified_at: site.customDomainVerifiedAt ?? null,
     fallback_host: FALLBACK_HOST,
-    is_apex: site.custom_domain ? isApexDomain(site.custom_domain) : false,
+    is_apex: site.customDomain ? isApexDomain(site.customDomain) : false,
   })
 }
 
 // POST /api/sites/[id]/domain { domain: "www.example.com" } — add domain
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const user = await getUser()
+  const user = await getUserFromRequest(req)
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const { id } = await params
@@ -69,18 +61,15 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   }
 
   const hostname = domain.trim().toLowerCase()
-  const admin = createAdminClient()
 
   // Make sure this site belongs to the user
-  const { data: site } = await admin
-    .from('user_sites')
-    .select('id, custom_domain, templates(domain), users!user_id(username)')
-    .eq('id', id)
-    .eq('user_id', user.id)
-    .single()
+  const site = await db.query.userSites.findFirst({
+    where: and(eq(userSites.id, id), eq(userSites.userId, user.id)),
+    with: { template: true },
+  })
 
   if (!site) return NextResponse.json({ error: 'Website nicht gefunden.' }, { status: 404 })
-  if (site.custom_domain) {
+  if (site.customDomain) {
     return NextResponse.json(
       { error: 'Diese Website hat bereits eine eigene Domain. Entferne sie zuerst.' },
       { status: 400 },
@@ -88,11 +77,9 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   }
 
   // Check uniqueness across all sites
-  const { data: existing } = await admin
-    .from('user_sites')
-    .select('id')
-    .eq('custom_domain', hostname)
-    .maybeSingle()
+  const existing = await db.query.userSites.findFirst({
+    where: eq(userSites.customDomain, hostname),
+  })
 
   if (existing) {
     return NextResponse.json(
@@ -121,17 +108,14 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   }
 
   // Save to DB
-  const { error: dbErr } = await admin
-    .from('user_sites')
-    .update({
-      custom_domain: hostname,
-      custom_domain_status: 'pending_dns',
-      cf_custom_hostname_id: cfHostname.id,
-      custom_domain_verified_at: null,
+  await db.update(userSites)
+    .set({
+      customDomain: hostname,
+      customDomainStatus: 'pending_dns',
+      cfCustomHostnameId: cfHostname.id,
+      customDomainVerifiedAt: null,
     })
-    .eq('id', id)
-
-  if (dbErr) return NextResponse.json({ error: dbErr.message }, { status: 500 })
+    .where(eq(userSites.id, id))
 
   return NextResponse.json({
     custom_domain: hostname,
@@ -142,27 +126,23 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
 }
 
 // DELETE /api/sites/[id]/domain — remove domain
-export async function DELETE(_: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const user = await getUser()
+export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const user = await getUserFromRequest(req)
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const { id } = await params
-  const admin = createAdminClient()
 
-  const { data: site } = await admin
-    .from('user_sites')
-    .select('custom_domain, cf_custom_hostname_id')
-    .eq('id', id)
-    .eq('user_id', user.id)
-    .single()
+  const site = await db.query.userSites.findFirst({
+    where: and(eq(userSites.id, id), eq(userSites.userId, user.id)),
+  })
 
   if (!site) return NextResponse.json({ error: 'Not found' }, { status: 404 })
-  if (!site.custom_domain) return NextResponse.json({ success: true })
+  if (!site.customDomain) return NextResponse.json({ success: true })
 
   // Delete from Cloudflare
-  if (site.cf_custom_hostname_id) {
+  if (site.cfCustomHostnameId) {
     try {
-      await deleteCustomHostname(site.cf_custom_hostname_id)
+      await deleteCustomHostname(site.cfCustomHostnameId)
     } catch (err) {
       console.error('[domain] CF deleteCustomHostname error:', err)
     }
@@ -170,21 +150,20 @@ export async function DELETE(_: NextRequest, { params }: { params: Promise<{ id:
 
   // Delete from KV
   try {
-    await deleteCustomDomainKV(site.custom_domain)
+    await deleteCustomDomainKV(site.customDomain)
   } catch (err) {
     console.error('[domain] KV delete error:', err)
   }
 
   // Clear DB
-  await admin
-    .from('user_sites')
-    .update({
-      custom_domain: null,
-      custom_domain_status: null,
-      cf_custom_hostname_id: null,
-      custom_domain_verified_at: null,
+  await db.update(userSites)
+    .set({
+      customDomain: null,
+      customDomainStatus: null,
+      cfCustomHostnameId: null,
+      customDomainVerifiedAt: null,
     })
-    .eq('id', id)
+    .where(eq(userSites.id, id))
 
   return NextResponse.json({ success: true })
 }

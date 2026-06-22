@@ -39,6 +39,7 @@ export interface CfCustomHostname {
     validation_records?: CfSslRecord[]
     wildcard: boolean
   }
+  verification_errors?: string[]
   ownership_verification: {
     type: string
     name: string
@@ -78,4 +79,28 @@ export async function deleteCustomHostname(cfId: string): Promise<void> {
 
 export function isConfigured(): boolean {
   return !!(process.env.CLOUDFLARE_ZONE_ID && process.env.CLOUDFLARE_FALLBACK_HOST)
+}
+
+/**
+ * Create a Custom Hostname for a user-provided domain (e.g. www.example.com).
+ * Uses HTTP validation — once the user sets the CNAME, Cloudflare validates
+ * and issues the SSL certificate automatically (no TXT record needed).
+ */
+export async function createUserCustomHostname(hostname: string): Promise<CfCustomHostname> {
+  const res = await fetch(cfBase(), {
+    method: 'POST',
+    headers: headers(),
+    body: JSON.stringify({
+      hostname,
+      ssl: {
+        method: 'http',
+        type: 'dv',
+        wildcard: false,
+        settings: { min_tls_version: '1.2' },
+      },
+    }),
+  })
+  const data = await res.json() as { success: boolean; result: CfCustomHostname; errors: { message: string }[] }
+  if (!data.success) throw new Error(data.errors?.[0]?.message ?? 'Cloudflare API error')
+  return data.result
 }

@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
-import { createAdminClient } from '@/lib/supabase/admin'
+import { getServerUser } from '@/lib/auth/server'
+import { db } from '@/lib/db'
+import { users, userSites, templates } from '@/lib/db/schema'
+import { eq, ne } from 'drizzle-orm'
+import { sql } from 'drizzle-orm'
 import { getResend, FROM_EMAIL } from '@/lib/resend'
 import { newsletterEmail, textToHtml } from '@/lib/email/templates'
 
@@ -32,50 +35,56 @@ interface Filters {
 }
 
 async function checkAdmin() {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const user = await getServerUser()
   if (!user) return null
-  const { data } = await supabase.from('users').select('is_admin').eq('id', user.id).single()
-  return data?.is_admin ? user : null
+  const profile = await db.query.users.findFirst({
+    where: eq(users.id, user.id),
+    columns: { isAdmin: true },
+  })
+  return profile?.isAdmin ? user : null
 }
 
-async function getEnrichedUsers(admin: ReturnType<typeof createAdminClient>): Promise<{ users: UserRow[]; templates: TemplateRow[] }> {
-  const [
-    { data: rawUsers },
-    { data: publishedSites },
-    { data: anySites },
-    { data: templates },
-  ] = await Promise.all([
-    admin.from('users').select('id, email, plan, subscription_status').order('email'),
-    admin.from('user_sites').select('user_id, template_id').eq('status', 'published'),
-    admin.from('user_sites').select('user_id').neq('status', 'deleted'),
-    admin.from('templates').select('id, title, tags').eq('status', 'published').order('title'),
+async function getEnrichedUsers(): Promise<{ users: UserRow[]; templates: TemplateRow[] }> {
+  const [rawUsers, publishedSites, anySites, tplRows] = await Promise.all([
+    db.select({ id: users.id, email: users.email, plan: users.plan, subscriptionStatus: users.subscriptionStatus })
+      .from(users)
+      .orderBy(users.email),
+    db.select({ userId: userSites.userId, templateId: userSites.templateId })
+      .from(userSites)
+      .where(eq(userSites.status, 'published')),
+    db.select({ userId: userSites.userId })
+      .from(userSites)
+      .where(ne(userSites.status, 'deleted')),
+    db.select({ id: templates.id, title: templates.title })
+      .from(templates)
+      .where(eq(templates.status, 'published'))
+      .orderBy(templates.title),
   ])
 
   // Build lookup maps
   const publishedMap = new Map<string, Set<string>>()
-  for (const s of publishedSites ?? []) {
-    if (!publishedMap.has(s.user_id)) publishedMap.set(s.user_id, new Set())
-    publishedMap.get(s.user_id)!.add(s.template_id)
+  for (const s of publishedSites) {
+    if (!publishedMap.has(s.userId)) publishedMap.set(s.userId, new Set())
+    publishedMap.get(s.userId)!.add(s.templateId)
   }
-  const anyUserIds = new Set((anySites ?? []).map((s: { user_id: string }) => s.user_id))
+  const anyUserIds = new Set(anySites.map(s => s.userId))
 
-  const users: UserRow[] = (rawUsers ?? []).map((u: { id: string; email: string; plan: string; subscription_status: string | null }) => ({
+  const enrichedUsers: UserRow[] = rawUsers.map(u => ({
     id: u.id,
     email: u.email,
     plan: u.plan,
-    subscription_status: u.subscription_status,
+    subscription_status: u.subscriptionStatus,
     publishedTemplateIds: [...(publishedMap.get(u.id) ?? [])],
     has_any_site: anyUserIds.has(u.id),
   }))
 
-  const tpl: TemplateRow[] = (templates ?? []).map((t: { id: string; title: string; tags: string[] | null }) => ({
+  const tpl: TemplateRow[] = tplRows.map(t => ({
     id: t.id,
     title: t.title,
-    tags: t.tags ?? [],
+    tags: [],  // tags column not in current schema
   }))
 
-  return { users, templates: tpl }
+  return { users: enrichedUsers, templates: tpl }
 }
 
 function filterEmails(users: UserRow[], templates: TemplateRow[], filters: Filters): string[] {
@@ -140,9 +149,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Betreff und Inhalt erforderlich.' }, { status: 400 })
   }
 
-  const admin = createAdminClient()
-  const { users, templates } = await getEnrichedUsers(admin)
-  const emails = filterEmails(users, templates, filters ?? { mode: 'all' })
+  const { users: enrichedUsers, templates } = await getEnrichedUsers()
+  const emails = filterEmails(enrichedUsers, templates, filters ?? { mode: 'all' })
 
   if (emails.length === 0) {
     return NextResponse.json({ error: 'Keine Empfänger gefunden.' }, { status: 400 })
@@ -173,13 +181,21 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  await admin.from('newsletter_sends').insert({
-    subject: subject.trim(),
-    body: body.trim(),
-    recipient_filter: JSON.stringify(filters ?? { mode: 'all' }),
-    specific_emails: filters?.mode === 'specific' ? emails : null,
-    sent, failed, total: emails.length,
-  })
+  // newsletter_sends is not in the Drizzle schema yet — use raw SQL
+  try {
+    await db.execute(sql`
+      INSERT INTO newsletter_sends (subject, body, recipient_filter, specific_emails, sent, failed, total)
+      VALUES (
+        ${subject.trim()},
+        ${body.trim()},
+        ${JSON.stringify(filters ?? { mode: 'all' })},
+        ${filters?.mode === 'specific' ? JSON.stringify(emails) : null},
+        ${sent}, ${failed}, ${emails.length}
+      )
+    `)
+  } catch (err) {
+    console.error('[newsletter] failed to record send:', err)
+  }
 
   return NextResponse.json({ sent, failed, total: emails.length })
 }
@@ -188,11 +204,12 @@ export async function GET() {
   const adminUser = await checkAdmin()
   if (!adminUser) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const admin = createAdminClient()
-  const [{ users, templates }, { data: history }] = await Promise.all([
-    getEnrichedUsers(admin),
-    admin.from('newsletter_sends').select('*').order('sent_at', { ascending: false }).limit(50),
+  const [{ users: enrichedUsers, templates }, historyResult] = await Promise.all([
+    getEnrichedUsers(),
+    db.execute(sql`SELECT * FROM newsletter_sends ORDER BY sent_at DESC LIMIT 50`).catch(() => ({ rows: [] })),
   ])
 
-  return NextResponse.json({ users, templates, history: history ?? [] })
+  const history = Array.isArray(historyResult) ? historyResult : (historyResult as any).rows ?? []
+
+  return NextResponse.json({ users: enrichedUsers, templates, history })
 }

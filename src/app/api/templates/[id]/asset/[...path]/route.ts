@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
-import { createAdminClient } from '@/lib/supabase/admin'
+import { getUserFromRequest } from '@/lib/auth/server'
+import { db } from '@/lib/db'
+import { templates } from '@/lib/db/schema'
+import { eq, and } from 'drizzle-orm'
 import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3'
 
 // Serves template static assets (CSS, JS, images) for the template library preview iframe.
@@ -37,28 +39,23 @@ function mimeFor(filename: string): string {
 }
 
 export async function GET(
-  _req: NextRequest,
+  req: NextRequest,
   { params }: { params: Promise<{ id: string; path: string[] }> }
 ) {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const user = await getUserFromRequest(req)
   if (!user) return new NextResponse('Unauthorized', { status: 401 })
 
   const { id, path } = await params
   const assetPath = path.join('/')
-  const admin = createAdminClient()
 
-  const { data: template } = await admin
-    .from('templates')
-    .select('r2_bundle_path')
-    .eq('id', id)
-    .eq('status', 'published')
-    .single()
+  const template = await db.query.templates.findFirst({
+    where: and(eq(templates.id, id), eq(templates.status, 'published')),
+  })
 
-  if (!template?.r2_bundle_path) return new NextResponse('Not found', { status: 404 })
+  if (!template?.r2BundlePath) return new NextResponse('Not found', { status: 404 })
 
   // Bundle path is e.g. "templates/abc/index.html" — base dir is "templates/abc"
-  const baseDir = template.r2_bundle_path.replace(/\/index\.html$/, '')
+  const baseDir = template.r2BundlePath.replace(/\/index\.html$/, '')
   const r2Key = `${baseDir}/${assetPath}`
 
   try {

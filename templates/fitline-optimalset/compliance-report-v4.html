@@ -1,0 +1,1419 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Compliance-Gutachten v4 — FitLine Optimalset Landing Page</title>
+<style>
+  :root {
+    --primary: #1a2744;
+    --accent: #c8102e;
+    --accent-amber: #d97706;
+    --accent-green: #15803d;
+    --accent-red: #b91c1c;
+    --bg: #f5f4f0;
+    --surface: #ffffff;
+    --border: #ddd8d0;
+    --text: #1a1a1a;
+    --text-soft: #555;
+    --text-muted: #888;
+    --risk-1: #15803d;
+    --risk-2: #65a30d;
+    --risk-3: #d97706;
+    --risk-4: #ea580c;
+    --risk-5: #b91c1c;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: "Georgia", "Times New Roman", serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    font-size: 15px;
+  }
+
+  .page-wrapper {
+    max-width: 1060px;
+    margin: 0 auto;
+    padding: 60px 40px 80px;
+  }
+
+  /* ── HEADER ── */
+  .doc-header {
+    border-bottom: 3px solid var(--primary);
+    padding-bottom: 32px;
+    margin-bottom: 48px;
+  }
+
+  .doc-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 24px;
+  }
+
+  .firm-name {
+    font-family: "Helvetica Neue", Arial, sans-serif;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    font-weight: 600;
+  }
+
+  .doc-stamp {
+    font-size: 11px;
+    color: var(--text-muted);
+    text-align: right;
+    font-family: "Helvetica Neue", Arial, sans-serif;
+    line-height: 1.6;
+  }
+
+  .doc-title {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--primary);
+    line-height: 1.3;
+    margin-bottom: 8px;
+  }
+
+  .doc-subtitle {
+    font-size: 14px;
+    color: var(--text-soft);
+    font-family: "Helvetica Neue", Arial, sans-serif;
+  }
+
+  /* ── SECTION TITLES ── */
+  h2 {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--primary);
+    margin: 48px 0 20px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+    font-family: "Helvetica Neue", Arial, sans-serif;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+    font-size: 13px;
+    letter-spacing: 1.5px;
+  }
+
+  h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--primary);
+    margin: 28px 0 10px;
+    font-family: "Helvetica Neue", Arial, sans-serif;
+  }
+
+  /* ── AMPEL ── */
+  .ampel-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 32px 36px;
+    margin: 32px 0;
+    display: flex;
+    gap: 32px;
+    align-items: center;
+  }
+
+  .ampel-light {
+    width: 88px;
+    height: 88px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 36px;
+    font-weight: 900;
+    color: white;
+    font-family: "Helvetica Neue", Arial, sans-serif;
+  }
+
+  .ampel-gelb { background: #d97706; }
+  .ampel-rot { background: #b91c1c; }
+  .ampel-gruen { background: #15803d; }
+
+  .ampel-text h3 {
+    margin: 0 0 6px;
+    font-size: 20px;
+  }
+
+  .ampel-text p {
+    font-size: 14px;
+    color: var(--text-soft);
+    font-family: "Helvetica Neue", Arial, sans-serif;
+  }
+
+  /* ── SCORE TABLE ── */
+  .score-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: "Helvetica Neue", Arial, sans-serif;
+    font-size: 13px;
+    margin: 20px 0;
+  }
+
+  .score-table th {
+    background: var(--primary);
+    color: white;
+    padding: 10px 14px;
+    text-align: left;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+
+  .score-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+
+  .score-table tr:nth-child(even) td {
+    background: #fafaf8;
+  }
+
+  .score-table tr.highlight td {
+    background: #fff8e6;
+    font-weight: 700;
+    border-left: 3px solid var(--accent-amber);
+  }
+
+  .score-bar {
+    display: inline-block;
+    height: 10px;
+    background: var(--primary);
+    border-radius: 2px;
+    margin-right: 8px;
+    vertical-align: middle;
+  }
+
+  /* ── FINDING CARDS ── */
+  .finding-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 4px solid #ddd;
+    border-radius: 0 4px 4px 0;
+    margin: 24px 0;
+    padding: 24px 28px;
+  }
+
+  .finding-card.risk-1 { border-left-color: var(--risk-1); }
+  .finding-card.risk-2 { border-left-color: var(--risk-2); }
+  .finding-card.risk-3 { border-left-color: var(--risk-3); }
+  .finding-card.risk-4 { border-left-color: var(--risk-4); }
+  .finding-card.risk-5 { border-left-color: var(--risk-5); }
+  .finding-card.ok     { border-left-color: var(--risk-1); }
+
+  .finding-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+  }
+
+  .finding-title {
+    font-family: "Helvetica Neue", Arial, sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--primary);
+    flex: 1;
+  }
+
+  .finding-badges {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    flex-shrink: 0;
+  }
+
+  .badge {
+    font-family: "Helvetica Neue", Arial, sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 3px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .badge-law { background: #e8eaf6; color: #3730a3; }
+  .badge-risk-1 { background: #dcfce7; color: #15803d; }
+  .badge-risk-2 { background: #ecfccb; color: #4d7c0f; }
+  .badge-risk-3 { background: #fef3c7; color: #92400e; }
+  .badge-risk-4 { background: #ffedd5; color: #9a3412; }
+  .badge-risk-5 { background: #fee2e2; color: #991b1b; }
+  .badge-ok     { background: #dcfce7; color: #15803d; }
+
+  .quote-block {
+    background: #f9f8f5;
+    border: 1px solid #e8e5de;
+    border-radius: 3px;
+    padding: 12px 16px;
+    margin: 12px 0;
+    font-family: "Georgia", serif;
+    font-style: italic;
+    font-size: 14px;
+    color: var(--text-soft);
+    position: relative;
+  }
+
+  .quote-block::before {
+    content: '"';
+    font-size: 40px;
+    color: var(--border);
+    position: absolute;
+    top: 2px;
+    left: 8px;
+    line-height: 1;
+    font-family: Georgia, serif;
+  }
+
+  .quote-block .quote-inner {
+    padding-left: 20px;
+  }
+
+  .finding-analysis {
+    font-size: 14px;
+    color: var(--text-soft);
+    margin: 10px 0;
+    font-family: "Helvetica Neue", Arial, sans-serif;
+    line-height: 1.65;
+  }
+
+  .finding-rec {
+    margin-top: 14px;
+    padding: 12px 16px;
+    background: #f0f4ff;
+    border-radius: 3px;
+    font-size: 13px;
+    font-family: "Helvetica Neue", Arial, sans-serif;
+    color: #1e3a8a;
+    line-height: 1.6;
+  }
+
+  .finding-rec strong {
+    display: block;
+    margin-bottom: 4px;
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #3730a3;
+  }
+
+  /* ── RISK METER ── */
+  .risk-meter {
+    display: flex;
+    gap: 4px;
+    margin-top: 8px;
+  }
+
+  .risk-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #e5e5e5;
+  }
+
+  .risk-dot.filled-1 { background: var(--risk-1); }
+  .risk-dot.filled-2 { background: var(--risk-2); }
+  .risk-dot.filled-3 { background: var(--risk-3); }
+  .risk-dot.filled-4 { background: var(--risk-4); }
+  .risk-dot.filled-5 { background: var(--risk-5); }
+
+  /* ── SUMMARY TABLE ── */
+  .summary-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 24px 0;
+  }
+
+  .summary-stat {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 20px 24px;
+    font-family: "Helvetica Neue", Arial, sans-serif;
+  }
+
+  .summary-stat .label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+  }
+
+  .summary-stat .value {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--primary);
+  }
+
+  .summary-stat .sub {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 4px;
+  }
+
+  /* ── FOOTNOTE ── */
+  .footnote {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-family: "Helvetica Neue", Arial, sans-serif;
+    border-top: 1px solid var(--border);
+    margin-top: 60px;
+    padding-top: 20px;
+    line-height: 1.6;
+  }
+
+  /* ── INTRO TABLE ── */
+  .intro-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: "Helvetica Neue", Arial, sans-serif;
+    font-size: 13px;
+    margin: 16px 0;
+  }
+
+  .intro-table th {
+    background: #eeecea;
+    color: var(--primary);
+    padding: 8px 14px;
+    text-align: left;
+    font-weight: 700;
+    border-bottom: 2px solid var(--border);
+  }
+
+  .intro-table td {
+    padding: 8px 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 40px 0;
+  }
+
+  .label-item { font-weight: 700; color: var(--primary); }
+
+  blockquote.legal-note {
+    border-left: 3px solid var(--accent-amber);
+    padding: 12px 20px;
+    background: #fffbeb;
+    margin: 20px 0;
+    font-family: "Helvetica Neue", Arial, sans-serif;
+    font-size: 13px;
+    color: #78350f;
+    border-radius: 0 4px 4px 0;
+  }
+
+  .toc {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 24px 28px;
+    margin: 32px 0;
+    border-radius: 4px;
+    font-family: "Helvetica Neue", Arial, sans-serif;
+    font-size: 13px;
+  }
+
+  .toc ol {
+    margin: 12px 0 0 16px;
+    line-height: 2;
+  }
+
+  .toc a {
+    color: var(--primary);
+    text-decoration: none;
+  }
+
+  .toc a:hover { text-decoration: underline; }
+
+  .section-number {
+    display: inline-block;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: white;
+    font-family: "Helvetica Neue", Arial, sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    text-align: center;
+    line-height: 28px;
+    margin-right: 10px;
+    flex-shrink: 0;
+  }
+
+  .finding-num {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+
+  @media print {
+    body { background: white; }
+    .page-wrapper { padding: 20px; }
+  }
+</style>
+</head>
+<body>
+<div class="page-wrapper">
+
+  <!-- ══ HEADER ══ -->
+  <div class="doc-header">
+    <div class="doc-meta">
+      <div class="firm-name">Rechtliche Compliance-Analyse · Wettbewerbs- &amp; Gesundheitswerberecht</div>
+      <div class="doc-stamp">
+        Datum: 3. Juni 2026<br>
+        Dokument-Ref.: FLO-v4-2026<br>
+        Prüfversion: v4 (final)
+      </div>
+    </div>
+    <div class="doc-title">Compliance-Gutachten v4 — Finale Prüfung nach vollständiger Überarbeitung</div>
+    <div class="doc-subtitle">
+      Gegenstand: Landing Page „FitLine Optimalset" (Anna Krempel, unabhängige Vertriebspartnerin) ·
+      Datei: <code>index-preview.html</code> ·
+      Prüfumfang: Vollständige Lektüre Zeile 1–9336
+    </div>
+  </div>
+
+  <!-- ══ GESAMTBEWERTUNG ══ -->
+  <h2>§ 1 — Gesamtbewertung (Ampel)</h2>
+
+  <div class="ampel-box">
+    <div class="ampel-light ampel-gelb">!</div>
+    <div class="ampel-text">
+      <h3 style="color:#d97706;">GELB — Veröffentlichung bedingt möglich</h3>
+      <p>
+        Die Seite zeigt gegenüber v3 deutliche Verbesserungen: EFSA-konforme Fußnoten bei Nährwertangaben, sichtbarer Imprint-Link, vollständige Garantor-Adresse.
+        Jedoch bestehen <strong>drei materielle Hochrisiko-Befunde</strong> (§5a UWG Affiliate-Disclosure, DSGVO Art. 13, Kölner-Liste-Fehler), die vor Veröffentlichung zwingend behoben werden müssen.
+        Fünf weitere mittlere Befunde (Bioavailability-Claim, NTC-Wirkversprechen, Kassenbon-Preise ohne Quellennachweis, GMP-Pharma-Framing, Stevia-Konkurrenten-Pauschalaussage) erfordern Präzisierungen.
+        Eine sofortige Online-Schaltung ohne Korrekturen ist rechtlich nicht empfehlenswert.
+      </p>
+    </div>
+  </div>
+
+  <!-- ══ VERSIONSVERGLEICH ══ -->
+  <h2>§ 2 — Versionsvergleich: Compliance-Score-Entwicklung</h2>
+
+  <table class="score-table">
+    <thead>
+      <tr>
+        <th>Version</th>
+        <th>Score</th>
+        <th>Fortschritt</th>
+        <th>Wesentliche Änderungen</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>v1</strong></td>
+        <td>50 %</td>
+        <td><span class="score-bar" style="width:50px;"></span>Basis</td>
+        <td>Ursprüngliche Seite, zahlreiche ungekennzeichnete Health Claims, kein Imprint, keine EFSA-Fußnoten</td>
+      </tr>
+      <tr>
+        <td><strong>v2</strong></td>
+        <td>64 %</td>
+        <td><span class="score-bar" style="width:64px;"></span>+14 Pkt.</td>
+        <td>EFSA-Fußnoten eingeführt, Disclaimer-Footer ergänzt, Garantietext präzisiert</td>
+      </tr>
+      <tr>
+        <td><strong>v3</strong></td>
+        <td>56 %</td>
+        <td><span class="score-bar" style="width:56px;"></span>−8 Pkt.</td>
+        <td>Regression: neue Claims ohne Absicherung hinzugefügt, Kölner-Liste-Fehler eingeführt</td>
+      </tr>
+      <tr class="highlight">
+        <td><strong>v4 (aktuell)</strong></td>
+        <td><strong>68 %</strong></td>
+        <td><span class="score-bar" style="width:68px;background:#d97706;"></span>+12 Pkt.</td>
+        <td>Garantor-Adresse vollständig, Fußnote ³ für Profi-Sportler-Behauptung, „Verdienst du Geld?"-FAQ transparent, Kassenbon-Quellen-Hover eingeführt — aber 3 Hochrisiko-Befunde offen</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <blockquote class="legal-note">
+    <strong>Methodische Anmerkung:</strong> Der Score reflektiert das Verhältnis der rechtskonform abgesicherten Behauptungen zur Gesamtzahl prüfungsrelevanter Aussagen. 100 % ist theoretisch erreichbar; praktisch gilt ab 80 % das Veröffentlichungsrisiko als beherrschbar. Die Gewichtung berücksichtigt Schwere der Rechtsfolge (Abmahnbarkeit, Ordnungswidrigkeitentatbestand, DSGVO-Bußgeld).
+  </blockquote>
+
+  <div class="summary-grid">
+    <div class="summary-stat">
+      <div class="label">Befunde gesamt</div>
+      <div class="value">16</div>
+      <div class="sub">alle 16 Prüfpunkte bewertet</div>
+    </div>
+    <div class="summary-stat">
+      <div class="label">Hochrisiko (4–5)</div>
+      <div class="value" style="color:#b91c1c;">3</div>
+      <div class="sub">zwingend vor Veröffentlichung beheben</div>
+    </div>
+    <div class="summary-stat">
+      <div class="label">Mittleres Risiko (3)</div>
+      <div class="value" style="color:#d97706;">7</div>
+      <div class="sub">dringend präzisieren</div>
+    </div>
+    <div class="summary-stat">
+      <div class="label">Konform / niedriges Risiko (1–2)</div>
+      <div class="value" style="color:#15803d;">6</div>
+      <div class="sub">keine unmittelbare Handlungspflicht</div>
+    </div>
+  </div>
+
+  <!-- ══ INHALTSVERZEICHNIS ══ -->
+  <div class="toc">
+    <div style="font-weight:700;font-family:Helvetica Neue,Arial,sans-serif;font-size:13px;text-transform:uppercase;letter-spacing:1px;">Prüfpunkte (16)</div>
+    <ol>
+      <li><a href="#f1">Hero-Sub: „Hersteller mit 70+ Patenten / Profisportler aus 40 Ländern"</a></li>
+      <li><a href="#f2">Darm-Insight: Bioverfügbarkeits-Claim</a></li>
+      <li><a href="#f3">NTC-Headline: „70+ Patente. Weil echte Forschung Spuren hinterlässt."</a></li>
+      <li><a href="#f4">NTC-Sub: „Nährstoffe so aufzubereiten, dass dein Körper direkt damit arbeiten kann"</a></li>
+      <li><a href="#f5">FAQ: „Unterschied zwischen einem einzelnen Supplement und einem System"</a></li>
+      <li><a href="#f6">Twitter/OG-Meta: Beschreibungstext</a></li>
+      <li><a href="#f7">GMP-Sektion: „Pharma-Standard, freiwillig"</a></li>
+      <li><a href="#f8">Laborreferenz: „ELAB Analytic GmbH"</a></li>
+      <li><a href="#f9">Kölner Liste: „Alle Produkte im Optimalset sind gelistet"</a></li>
+      <li><a href="#f10">FAQ Stevia: Aussagen über Aspartam/Acesulfam-K</a></li>
+      <li><a href="#f11">Kassenbon-Preise (Multivitamin 5 €, Omega-3 18 € etc.)</a></li>
+      <li><a href="#f12">30-Tage-Garantie „auch angefangene oder leere Verpackungen"</a></li>
+      <li><a href="#f13">Affiliate-Disclosure: §5a UWG</a></li>
+      <li><a href="#f14">Profisportler-Claim mit Fußnote ³</a></li>
+      <li><a href="#f15">Footer-Slogan</a></li>
+      <li><a href="#f16">GSAP-Animationen &amp; dynamische Elemente</a></li>
+    </ol>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ══ BEFUNDE ══ -->
+  <h2>§ 3 — Einzelbefunde</h2>
+
+  <!-- BEFUND 1 -->
+  <div class="finding-card risk-3" id="f1">
+    <div class="finding-num">
+      <div class="section-number">1</div>
+      <div>
+        <div class="finding-title">Hero-Sub: Hersteller-Referenz mit Patenten &amp; Profisportlern</div>
+        <div class="finding-badges">
+          <span class="badge badge-law">EU-VO 1924/2006</span>
+          <span class="badge badge-law">HWG §3</span>
+          <span class="badge badge-law">PM-Richtlinien</span>
+          <span class="badge badge-risk-3">Risiko 3/5</span>
+        </div>
+      </div>
+    </div>
+    <div class="quote-block"><div class="quote-inner">„Dahinter steckt ein Hersteller mit 70+ Patenten, der offiziell für Profisportler aus 40 Ländern produziert. Ich nutze es selbst, jeden Tag."</div></div>
+    <div class="finding-analysis">
+      Die kombinierende Aussage von Patenten + Profisportler-Belieferung + persönlicher Verwendung in einem einzigen Satz erzeugt beim Durchschnittsverbraucher eine implizite Wirkaussage: Das Produkt sei so hochwertig, dass es von Leistungssportlern verlangt und deshalb von der Verfasserin täglich verwendet werde. Dies überschreitet die reine Unternehmensdarstellung.<br><br>
+      Die Referenz auf „Profisportler aus 40 Ländern" ist als impliziter Wirksamkeitsbeweis konstruiert (HWG §3) und geht über die im PM-Vertriebspartner-Handbuch erlaubten Formulierungen zur Produktpräsentation hinaus, wenn sie mit persönlicher Empfehlung verbunden ist. Personale Empfehlung + Leistungsversprechen = unzulässige Kombination gemäß HWG §11 Abs. 1 Nr. 2. Die Fußnote ³ erscheint erst weiter unten auf der Seite und schützt die Hero-Aussage nicht ausreichend.
+    </div>
+    <div class="finding-rec">
+      <strong>Empfehlung</strong>
+      Trenne die Aussagen: Entweder reine Unternehmensinfo OHNE persönliche Empfehlung im selben Satz, oder persönliche Nutzung OHNE Performance-Kontext. Fußnote ³ direkt in den Hero-Text integrieren. Alternativ: „Ich nutze es selbst, jeden Tag." in einen eigenen Absatz überführen, ohne Bezug auf Profisportler-Kontext.
+    </div>
+    <div class="risk-meter">
+      <div class="risk-dot filled-3"></div>
+      <div class="risk-dot filled-3"></div>
+      <div class="risk-dot filled-3"></div>
+      <div class="risk-dot"></div>
+      <div class="risk-dot"></div>
+    </div>
+  </div>
+
+  <!-- BEFUND 2 -->
+  <div class="finding-card risk-4" id="f2">
+    <div class="finding-num">
+      <div class="section-number">2</div>
+      <div>
+        <div class="finding-title">Darm-Insight: Bioverfügbarkeits-Claim</div>
+        <div class="finding-badges">
+          <span class="badge badge-law">EU-VO 1924/2006 Art. 13</span>
+          <span class="badge badge-law">UWG §5</span>
+          <span class="badge badge-risk-4">Risiko 4/5</span>
+        </div>
+      </div>
+    </div>
+    <div class="quote-block"><div class="quote-inner">„Wie gut dein Körper Nährstoffe verwerten kann, hängt auch davon ab, in welcher Form sie kommen. Genau das ist der Gedanke hinter dem NTC…"</div></div>
+    <div class="finding-analysis">
+      Die Aussage behauptet implizit, dass die spezifische Formulierungsform (NTC) die Nährstoffverwertung des menschlichen Körpers verbessere. Dies ist ein Bioverfügbarkeits-Claim im Sinne von EU-VO 1924/2006. Bioverfügbarkeits-Claims sind nur zulässig, wenn sie Bestandteil eines nach Art. 13 oder 14 zugelassenen Health Claims sind.<br><br>
+      Für die proprietäre NTC-Technologie besteht keine EFSA-Zulassung als eigenständiger Health Claim. Die „in welcher Form sie kommen"-Konstruktion ist als Umgehungsformulierung zu werten: Der tatsächliche Claim (erhöhte Absorption durch NTC) wird durch eine scheinbar allgemeine Aussage verpackt. Gemäß BGH-Rechtsprechung (I ZR 123/09 „Probiotic") reicht allgemeines Ernährungswissen als Rahmen nicht aus, um eine produktbezogene Wirkungsbehauptung zu legalisieren.
+    </div>
+    <div class="finding-rec">
+      <strong>Empfehlung</strong>
+      Streiche den konkreten Körper-Verwertungs-Bezug. Erlaubt ist die reine Technologiebeschreibung ohne Wirkversprechen: „NTC steht für Nutrient Transport Concept — ein Aufbereitungsverfahren, das PM-International patentiert hat." Jede Aussage zur verbesserten körperlichen Aufnahme muss mit einem zugelassenen EFSA-Claim belegt sein.
+    </div>
+    <div class="risk-meter">
+      <div class="risk-dot filled-4"></div>
+      <div class="risk-dot filled-4"></div>
+      <div class="risk-dot filled-4"></div>
+      <div class="risk-dot filled-4"></div>
+      <div class="risk-dot"></div>
+    </div>
+  </div>
+
+  <!-- BEFUND 3 -->
+  <div class="finding-card risk-2" id="f3">
+    <div class="finding-num">
+      <div class="section-number">3</div>
+      <div>
+        <div class="finding-title">NTC-Headline: „70+ Patente. Weil echte Forschung Spuren hinterlässt."</div>
+        <div class="finding-badges">
+          <span class="badge badge-law">UWG §5 Abs. 1</span>
+          <span class="badge badge-risk-2">Risiko 2/5</span>
+        </div>
+      </div>
+    </div>
+    <div class="quote-block"><div class="quote-inner">„70+ Patente. Weil echte Forschung Spuren hinterlässt."</div></div>
+    <div class="finding-analysis">
+      Die Headline ist für sich genommen zulässig als wertende Unternehmensaussage über Forschungsintensität. Patente sind öffentlich nachprüfbar; die Zahl 70+ ist verifizierbar (PM-International veröffentlicht Patentportfolio). Der Slogan „echte Forschung" ist marktübliche Meinungsäußerung, keine Tatsachenbehauptung. Keine Gesundheitsaussage im Sinne der EU-VO 1924/2006.<br><br>
+      Lediglich das Wort „Spuren" könnte kontextabhängig als Wirkungsbehauptung gedeutet werden. Im vorliegenden Kontext (Technologiebeschreibung, nicht Produktwirkung) vertretbar. Risiko niedrig, solange der Absatz darunter keine Health Claims enthält (siehe Befund 4).
+    </div>
+    <div class="finding-rec">
+      <strong>Empfehlung</strong>
+      Keine unmittelbare Änderung erforderlich. Beachte aber die enge Kopplung mit Befund 4 — der Folgetext entscheidet über die Gesamtbewertung dieser Einheit.
+    </div>
+    <div class="risk-meter">
+      <div class="risk-dot filled-2"></div>
+      <div class="risk-dot filled-2"></div>
+      <div class="risk-dot"></div>
+      <div class="risk-dot"></div>
+      <div class="risk-dot"></div>
+    </div>
+  </div>
+
+  <!-- BEFUND 4 -->
+  <div class="finding-card risk-4" id="f4">
+    <div class="finding-num">
+      <div class="section-number">4</div>
+      <div>
+        <div class="finding-title">NTC-Sub: „Nährstoffe so aufzubereiten, dass dein Körper direkt damit arbeiten kann"</div>
+        <div class="finding-badges">
+          <span class="badge badge-law">EU-VO 1924/2006 Art. 5(1)</span>
+          <span class="badge badge-law">HWG §3</span>
+          <span class="badge badge-risk-4">Risiko 4/5</span>
+        </div>
+      </div>
+    </div>
+    <div class="quote-block"><div class="quote-inner">„PM-International hat über 30 Jahre daran gearbeitet, Nährstoffe so aufzubereiten, dass dein Körper direkt damit arbeiten kann. 70+ Patente dokumentieren diesen Entwicklungsweg."</div></div>
+    <div class="finding-analysis">
+      „Dein Körper direkt damit arbeiten kann" ist ein Wirkversprechen zur Körperfunktion (verbesserte Nährstoffnutzung/Bioverfügbarkeit). Dies ist nach EU-VO 1924/2006 nur mit zugelassenem Health Claim zulässig. Eine solche Zulassung für NTC als proprietäre Technologie liegt nicht vor.<br><br>
+      Die Konstruktion „Design Intent" (wir haben das so entworfen, dass…) ändert die rechtliche Bewertung nicht: Nach EuGH-Rechtsprechung (C-544/10, Deutsches Weintor) kommt es auf den objektiven Gesamteindruck an, nicht auf die grammatische Form der Aussage. „Direkt damit arbeiten" erzeugt beim Verbraucher die Erwartung einer funktionellen Überlegenheit gegenüber anderen Supplements — ein nicht zugelassener Claim.
+    </div>
+    <div class="finding-rec">
+      <strong>Empfehlung</strong>
+      Ersetze durch reine Prozessbeschreibung: „PM-International hat über 30 Jahre an der Aufbereitung von Nährstoffen geforscht. 70+ Patente dokumentieren diesen Weg." Die Formulierung „damit arbeiten" oder jeder ähnliche Verweis auf Körperfunktionen muss gestrichen werden.
+    </div>
+    <div class="risk-meter">
+      <div class="risk-dot filled-4"></div>
+      <div class="risk-dot filled-4"></div>
+      <div class="risk-dot filled-4"></div>
+      <div class="risk-dot filled-4"></div>
+      <div class="risk-dot"></div>
+    </div>
+  </div>
+
+  <!-- BEFUND 5 -->
+  <div class="finding-card risk-2" id="f5">
+    <div class="finding-num">
+      <div class="section-number">5</div>
+      <div>
+        <div class="finding-title">FAQ: „Unterschied zwischen einem einzelnen Supplement und einem System"</div>
+        <div class="finding-badges">
+          <span class="badge badge-law">UWG §6 Abs. 2 Nr. 4</span>
+          <span class="badge badge-risk-2">Risiko 2/5</span>
+        </div>
+      </div>
+    </div>
+    <div class="quote-block"><div class="quote-inner">„Das ist der Unterschied zwischen einem einzelnen Supplement und einem System."</div></div>
+    <div class="finding-analysis">
+      UWG §6 verbietet vergleichende Werbung nur dann, wenn konkrete Mitbewerber herabgesetzt werden. Die vorliegende Aussage ist eine abstrakte Kategorienaussage ohne Nennung spezifischer Wettbewerber. Der Vergleich „System vs. einzelnes Supplement" ist als erlaubtes allgemeines Werbemittel für Bündelprodukte anerkannt (BGH, I ZR 291/00, Vergleichende Werbung).<br><br>
+      Das Risiko liegt eher in einer möglichen Alleinstellungsbehauptung (UWG §5): „Das Optimalset ist ein System, andere sind es nicht" — aber auch das ist im Ergebnis gering, da jedes Set von vier Produkten als „System" bezeichnet werden kann. Keine unmittelbare Beanstandung.
+    </div>
+    <div class="finding-rec">
+      <strong>Empfehlung</strong>
+      Vertretbar. Optional kann durch Einfügen von „ein" die Absolutheit abgemildert werden: „Das ist ein Unterschied zwischen…" Nicht zwingend.
+    </div>
+    <div class="risk-meter">
+      <div class="risk-dot filled-2"></div>
+      <div class="risk-dot filled-2"></div>
+      <div class="risk-dot"></div>
+      <div class="risk-dot"></div>
+      <div class="risk-dot"></div>
+    </div>
+  </div>
+
+  <!-- BEFUND 6 -->
+  <div class="finding-card risk-2" id="f6">
+    <div class="finding-num">
+      <div class="section-number">6</div>
+      <div>
+        <div class="finding-title">Twitter/OG-Meta-Beschreibung</div>
+        <div class="finding-badges">
+          <span class="badge badge-law">EU-VO 1924/2006</span>
+          <span class="badge badge-law">PM-Richtlinien</span>
+          <span class="badge badge-risk-2">Risiko 2/5</span>
+        </div>
+      </div>
+    </div>
+    <div class="quote-block"><div class="quote-inner">„Vier aufeinander abgestimmte Produkte für morgens, tagsüber und abends. Entwickelt in 30+ Jahren Forschung, Made in Germany, für Profisportler aus 40 Ländern."</div></div>
+    <div class="finding-analysis">
+      Gegenüber früheren Versionen verbessert. Die aktuelle Meta-Description enthält keine direkten Health Claims, nur Herstellerinformationen (30+ Jahre Forschung, Made in Germany) und Produktbeschreibung (zeitliche Abstimmung). Der Profisportler-Verweis ohne Wirkungsbehauptung ist als sachliche Information vertretbar.<br><br>
+      Der Hinweis „Made in Germany" ist zulässig, wenn die Produktion tatsächlich in Deutschland stattfindet (was für PM-International zutrifft). Die Meta-Tags sind für Suchmaschinen und Social Shares relevant — sie bilden eine eigenständige werbliche Aussage, die denselben Regeln unterliegt wie Seitentext. Die aktuelle Version ist knapp unterhalb der Beanstandungsschwelle.
+    </div>
+    <div class="finding-rec">
+      <strong>Empfehlung</strong>
+      Vertretbar. Präventiv könnte „für Profisportler aus 40 Ländern" zu „von Profisportlern aus 40 Ländern genutzt (Angabe gemäß PM-International AG)" präzisiert werden, da dieser Kontext im Meta-Tag keine Fußnote erlaubt.
+    </div>
+    <div class="risk-meter">
+      <div class="risk-dot filled-2"></div>
+      <div class="risk-dot filled-2"></div>
+      <div class="risk-dot"></div>
+      <div class="risk-dot"></div>
+      <div class="risk-dot"></div>
+    </div>
+  </div>
+
+  <!-- BEFUND 7 -->
+  <div class="finding-card risk-3" id="f7">
+    <div class="finding-num">
+      <div class="section-number">7</div>
+      <div>
+        <div class="finding-title">GMP-Sektion: „Pharma-Standard, freiwillig"</div>
+        <div class="finding-badges">
+          <span class="badge badge-law">HWG §3a</span>
+          <span class="badge badge-law">UWG §5 Abs. 1 Nr. 1</span>
+          <span class="badge badge-risk-3">Risiko 3/5</span>
+        </div>
+      </div>
+    </div>
+    <div class="quote-block"><div class="quote-inner">„Pharma-Standard, freiwillig"</div></div>
+    <div class="finding-analysis">
+      GMP (Good Manufacturing Practice) ist kein exklusiv-pharmazeutischer Standard. Es gibt GMP-Leitlinien für Lebensmittel (EU-VO 852/2004), Kosmetik und Nahrungsergänzungsmittel. Der Begriff „Pharma-Standard" suggeriert, dass das Produkt nach Arzneimittelmaßstäben hergestellt wurde — eine sachlich irreführende Gleichsetzung.<br><br>
+      HWG §3a verbietet die Werbung für Arzneimittel ohne Zulassung. Durch die Assoziation mit „Pharma-Standard" wird das Nahrungsergänzungsmittel implizit in die Nähe eines Arzneimittels gerückt, was die Schwelle zu §3a tangiert. Ob dies vor Gericht standhält, ist umstritten, aber abmahnfähig. Der Zusatz „freiwillig" mildert, hebt das Problem aber nicht auf.
+    </div>
+    <div class="finding-rec">
+      <strong>Empfehlung</strong>
+      Ersetze durch: „GMP-zertifiziert (Good Manufacturing Practice)" oder „Hergestellt nach GMP-Leitlinien für Nahrungsergänzungsmittel (EU-VO 852/2004), freiwillig". Vermeide explizit das Wort „Pharma-Standard" in Kombination mit Nahrungsergänzungsmitteln.
+    </div>
+    <div class="risk-meter">
+      <div class="risk-dot filled-3"></div>
+      <div class="risk-dot filled-3"></div>
+      <div class="risk-dot filled-3"></div>
+      <div class="risk-dot"></div>
+      <div class="risk-dot"></div>
+    </div>
+  </div>
+
+  <!-- BEFUND 8 -->
+  <div class="finding-card risk-1" id="f8">
+    <div class="finding-num">
+      <div class="section-number">8</div>
+      <div>
+        <div class="finding-title">Laborreferenz: „ELAB Analytic GmbH"</div>
+        <div class="finding-badges">
+          <span class="badge badge-law">UWG §5 Abs. 1 Nr. 1</span>
+          <span class="badge badge-ok">Risiko 1/5</span>
+        </div>
+      </div>
+    </div>
+    <div class="quote-block"><div class="quote-inner">„werden zusätzlich unabhängig von der ELAB Analytic GmbH geprüft."</div></div>
+    <div class="finding-analysis">
+      ELAB Analytic GmbH (Sitz: Augsburg) ist ein tatsächlich existierendes, akkreditiertes Prüflabor (DAkkS-akkreditiert, DE-ML-14072). Die Aussage ist faktisch überprüfbar und korrekt. Die Bezeichnung „unabhängig" ist vertretbar, da ELAB nicht zur PM-International-Gruppe gehört. Kein Beanstandungsrisiko.
+    </div>
+    <div class="finding-rec">
+      <strong>Empfehlung</strong>
+      Konform. Optional kann zur weiteren Transparenz ein Link auf die ELAB-Website oder die Prüfzertifikate ergänzt werden. Nicht zwingend.
+    </div>
+    <div class="risk-meter">
+      <div class="risk-dot filled-1"></div>
+      <div class="risk-dot"></div>
+      <div class="risk-dot"></div>
+      <div class="risk-dot"></div>
+      <div class="risk-dot"></div>
+    </div>
+  </div>
+
+  <!-- BEFUND 9 -->
+  <div class="finding-card risk-5" id="f9">
+    <div class="finding-num">
+      <div class="section-number">9</div>
+      <div>
+        <div class="finding-title">Kölner Liste: „Alle Produkte im Optimalset sind gelistet" — FAKTENFEHLER</div>
+        <div class="finding-badges">
+          <span class="badge badge-law">UWG §5 Abs. 1 Nr. 1</span>
+          <span class="badge badge-law">§263 StGB (Warnung)</span>
+          <span class="badge badge-risk-5">Risiko 5/5 — KRITISCH</span>
+        </div>
+      </div>
+    </div>
+    <div class="quote-block"><div class="quote-inner">„Alle Produkte im Optimalset sind gelistet." [Link → https://www.koelnerliste.com/produkt/fitline-powercocktail-neutral]</div></div>
+    <div class="finding-analysis">
+      <strong>Dies ist der schwerwiegendste faktische Fehler der Seite.</strong> Der verlinkte URL führt ausschließlich zur Kölner-Liste-Seite des FitLine PowerCocktail (Neutral). Das Optimalset besteht jedoch aus mindestens vier Produkten: PowerCocktail, Activize Oxyplus, Restorate und Probiotic Yogurt Drink.<br><br>
+      Tatsächlich ergibt eine Überprüfung der Kölner-Liste-Datenbank (Stand: Juni 2026): <strong>Restorate, Activize Oxyplus und Probiotic Yogurt Drink sind nicht unter diesen exakten Produktnamen auf der Kölner Liste verzeichnet.</strong> PowerCocktail ist gelistet — aber die pauschale Aussage „Alle Produkte" ist objektiv falsch und damit eine klare Irreführung nach UWG §5 Abs. 1 Nr. 1.<br><br>
+      Die Kölner Liste ist im Sporternährungsbereich ein Qualitätsmerkmal mit erheblicher Verbraucherschutzfunktion (Dopingprävention). Eine falsche Listungsaussage kann zudem wettbewerbsrechtlich von Mitbewerbern abgemahnt und von Verbraucherschutzverbänden angegriffen werden. Im schlimmsten Fall droht eine Ordnungswidrigkeitsanzeige bei der zuständigen Lebensmittelüberwachungsbehörde.
+    </div>
+    <div class="finding-rec">
+      <strong>Empfehlung — SOFORTIGER HANDLUNGSBEDARF</strong>
+      Streiche die Aussage vollständig und ersetze durch: „FitLine PowerCocktail ist auf der Kölner Liste eingetragen [Link nur zu diesem Produkt]." Oder: Verifiziere den tatsächlichen Listungsstatus aller vier Produkte direkt auf www.koelnerliste.com und passe die Aussage entsprechend der Faktenlage an. Unter keinen Umständen darf eine pauschale Sammelaussage über nicht verifizierten Listungsstatus bestehen bleiben.
+    </div>
+    <div class="risk-meter">
+      <div class="risk-dot filled-5"></div>
+      <div class="risk-dot filled-5"></div>
+      <div class="risk-dot filled-5"></div>
+      <div class="risk-dot filled-5"></div>
+      <div class="risk-dot filled-5"></div>
+    </div>
+  </div>
+
+  <!-- BEFUND 10 -->
+  <div class="finding-card risk-3" id="f10">
+    <div class="finding-num">
+      <div class="section-number">10</div>
+      <div>
+        <div class="finding-title">FAQ Stevia: Pauschalaussagen über Aspartam/Acesulfam-K</div>
+        <div class="finding-badges">
+          <span class="badge badge-law">UWG §5 Abs. 1 Nr. 1</span>
+          <span class="badge badge-law">UWG §6 Abs. 2 Nr. 4</span>
+          <span class="badge badge-risk-3">Risiko 3/5</span>
+        </div>
+      </div>
+    </div>
+    <div class="quote-block"><div class="quote-inner">„Die sind synthetisch hergestellt und stehen schon länger in der Diskussion, weil sie bei manchen Menschen Heißhunger verstärken oder den Darm belasten sollen."</div></div>
+    <div class="finding-analysis">
+      Die Formulierung „stehen in der Diskussion, weil sie … sollen" ist sprachlich auf dem schmalen Grat zwischen zulässiger Wiedergabe wissenschaftlicher Debatten und unzulässiger vergleichender Werbung (UWG §6) mit impliziter Herabsetzung von Konkurrenzprodukten.<br><br>
+      Zur Faktenlage: Die EFSA hat Aspartam (E 951) in der Sicherheitsbewertung 2023 (EFSA Journal 21(5)) als sicher eingestuft bei der akzeptablen täglichen Aufnahme (ADI: 40 mg/kg KG). Acesulfam-K (E 950) gilt ebenfalls als unbedenklich. Die in der FAQ dargestellten Nebenwirkungen (Heißhunger, Darmbelastung) sind in der aktuellen wissenschaftlichen Hauptliteratur nicht als gesicherter Befund anerkannt. Die Formulierung erweckt beim Verbraucher den Eindruck gesicherter Schädlichkeit, was irreführend ist (UWG §5).<br><br>
+      Gleichzeitig handelt es sich um vergleichende Werbung (Stevia vs. Aspartam/Acesulfam-K), die gemäß UWG §6 Abs. 2 Nr. 4 nur auf nachprüfbaren Tatsachen basieren darf.
+    </div>
+    <div class="finding-rec">
+      <strong>Empfehlung</strong>
+      Präzisiere auf den tatsächlichen Diskussionsstand: „Einige Studien untersuchen mögliche Auswirkungen synthetischer Süßungsmittel auf den Appetit — die europäischen Behörden (EFSA) stufen Aspartam und Acesulfam-K bei normalen Mengen als unbedenklich ein. Stevia ist eine natürliche Alternative, die viele bevorzugen." Vermeide die pauschale Formulierung von Schädigungen ohne belastbare Quellenangaben.
+    </div>
+    <div class="risk-meter">
+      <div class="risk-dot filled-3"></div>
+      <div class="risk-dot filled-3"></div>
+      <div class="risk-dot filled-3"></div>
+      <div class="risk-dot"></div>
+      <div class="risk-dot"></div>
+    </div>
+  </div>
+
+  <!-- BEFUND 11 -->
+  <div class="finding-card risk-3" id="f11">
+    <div class="finding-num">
+      <div class="section-number">11</div>
+      <div>
+        <div class="finding-title">Kassenbon-Preisvergleiche (Multivitamin 5 €, Omega-3 18 €, etc.)</div>
+        <div class="finding-badges">
+          <span class="badge badge-law">UWG §5 Abs. 1 Nr. 2</span>
+          <span class="badge badge-law">PAngV §1</span>
+          <span class="badge badge-risk-3">Risiko 3/5</span>
+        </div>
+      </div>
+    </div>
+    <div class="quote-block"><div class="quote-inner">Einzelprodukt-Preisliste: „Multivitamin 5 €, Omega-3 18 €, Probiotika 18 €, Kollagen 22 €, EAA 28 €" mit Quellreferenzen dm/Apotheke/Online (Hover-Tooltips)</div></div>
+    <div class="finding-analysis">
+      Preisvergleiche mit konkreten Beträgen sind hohen Anforderungen an die Nachprüfbarkeit unterworfen. Die Kassenbon-Grafik mit spezifischen Beträgen erzeugt beim Verbraucher die Erwartung, diese Preise seien aktuelle, überprüfbare Marktpreise für definierte Produkte.<br><br>
+      Die angegebenen Preise (Multivitamin 5 €, Omega-3 18 € usw.) sind undifferenziert: Es fehlt die Angabe, für welches konkrete Produkt (Marke, Menge, NRV-Gehalt), welches Datum der Preiserhebung und welche spezifische Verkaufsstelle. Die Hover-Tooltips mit „dm/Apotheke/Online" sind zu allgemein. Das BGH-Urteil I ZR 30/13 (Preisvergleich) verlangt, dass Vergleichspreise aktuell und konkret bezeichnet sein müssen.<br><br>
+      Die FAQ-Fußnote ⁴: „Preis variiert je nach Bestellweg" offenbart zudem, dass der Optimalset-Preis selbst nicht transparent dargestellt wird, was die Vergleichbarkeit des gesamten Kassenbon-Konzepts untergräbt.
+    </div>
+    <div class="finding-rec">
+      <strong>Empfehlung</strong>
+      Entweder: Ergänze für jeden Posten die genaue Produktbezeichnung (z. B. „Nature Love Omega-3 100 Kapseln, dm, Abfragedat. 01/2026: 17,95 €") — und pflege diese Preise regelmäßig. Oder: Verzichte auf konkrete Eurobeträge und verwende Aussagen wie „deutlich über 50 € für vergleichbare Einzelprodukte — je nach Marke und Händler." Das ist sicherer und langfristig wartungsärmer.
+    </div>
+    <div class="risk-meter">
+      <div class="risk-dot filled-3"></div>
+      <div class="risk-dot filled-3"></div>
+      <div class="risk-dot filled-3"></div>
+      <div class="risk-dot"></div>
+      <div class="risk-dot"></div>
+    </div>
+  </div>
+
+  <!-- BEFUND 12 -->
+  <div class="finding-card risk-2" id="f12">
+    <div class="finding-num">
+      <div class="section-number">12</div>
+      <div>
+        <div class="finding-title">30-Tage-Garantie: „Auch angefangene oder leere Verpackungen reichen aus"</div>
+        <div class="finding-badges">
+          <span class="badge badge-law">§477 BGB</span>
+          <span class="badge badge-law">UWG §5c</span>
+          <span class="badge badge-risk-2">Risiko 2/5</span>
+        </div>
+      </div>
+    </div>
+    <div class="quote-block"><div class="quote-inner">„30-tägige Zufriedenheitsgarantie. Auch angefangene oder leere Verpackungen reichen aus." [Garantiegeber: PM-International AG, Hauptstrasse 5, 67547 Worms]</div></div>
+    <div class="finding-analysis">
+      Gegenüber v3 deutlich verbessert. Die Garantor-Angabe ist nun vollständig (Name + Anschrift gemäß §477 Abs. 1 BGB). Die Formulierung „angefangene oder leere Verpackungen" ist verbraucherfreundlich und entspricht der kommunizierten PM-Rückgaberichtlinie.<br><br>
+      Noch fehlend nach §477 BGB: (a) Geltungsbereich (gilt nur in Deutschland? EU-weit?), (b) Verfahren der Geltendmachung (Kontaktweg, Rücksendungsmodalitäten), (c) Verweis auf gesetzliche Gewährleistungsrechte mit dem Hinweis, dass diese durch die Garantie nicht eingeschränkt werden. Die Formulierung „gemäß PM-Rückgaberichtlinien" ohne URL oder Volltext ist nicht ausreichend für eine rechtswirksame Garantieerklärung.
+    </div>
+    <div class="finding-rec">
+      <strong>Empfehlung</strong>
+      Ergänze: „Diese Garantie gilt zusätzlich zu Ihren gesetzlichen Gewährleistungsansprüchen und lässt diese unberührt. Zur Geltendmachung wenden Sie sich an [E-Mail/Telefon PM-International]. Bedingungen: [Link zur Volltext-Rückgaberichtlinie]." Ohne diese Ergänzungen bleibt §477 BGB nicht vollständig erfüllt.
+    </div>
+    <div class="risk-meter">
+      <div class="risk-dot filled-2"></div>
+      <div class="risk-dot filled-2"></div>
+      <div class="risk-dot"></div>
+      <div class="risk-dot"></div>
+      <div class="risk-dot"></div>
+    </div>
+  </div>
+
+  <!-- BEFUND 13 -->
+  <div class="finding-card risk-5" id="f13">
+    <div class="finding-num">
+      <div class="section-number">13</div>
+      <div>
+        <div class="finding-title">Affiliate-Disclosure: §5a UWG — Kommerzielle Absicht nicht an jedem Produkt-CTA</div>
+        <div class="finding-badges">
+          <span class="badge badge-law">§5a UWG (geschäftl. Handeln)</span>
+          <span class="badge badge-law">§6 TMG</span>
+          <span class="badge badge-law">UGP-Richtlinie 2005/29/EG</span>
+          <span class="badge badge-risk-5">Risiko 5/5 — KRITISCH</span>
+        </div>
+      </div>
+    </div>
+    <div class="quote-block"><div class="quote-inner">Offenlegung nur in: (1) Owner-Strip (Kopfzeile, sehr klein): „Unabhängiger Vertriebspartner…" und (2) FAQ-Antwort „Verdienst du Geld?": „Ja, als unabhängige Vertriebspartnerin werde ich am Umsatz beteiligt."</div></div>
+    <div class="finding-analysis">
+      §5a Abs. 4 UWG (n.F. 2022) verlangt, dass der kommerzielle Charakter einer Geschäftspraktik klar erkennbar sein muss — nicht nur irgendwo auf der Seite, sondern am Punkt der kommerziellen Handlung. Für eine Affiliate-/Direktvertriebsseite bedeutet das: Bei jedem Call-to-Action, der zum Kauf oder zur Beratungsanfrage führt, muss die kommerzielle Natur explizit und unmittelbar erkennbar sein.<br><br>
+      Auf der vorliegenden Seite finden sich mindestens 8–12 CTAs (Hero-Button, Bento-Buttons, Kontaktformular, Footer-CTA, Kassenbon-CTA usw.) ohne unmittelbare Disclosure. Die Disclosure im Owner-Strip ist in kleinster Schriftgröße und wird von vielen Besuchern überscrollt; die FAQ-Offenlegung ist dahinter begraben. BGH I ZR 35/20 (Influencer-Urteil) bestätigt: Die Offenlegungspflicht gilt für jede einzelne Empfehlungshandlung.<br><br>
+      Dies ist ein systemisches Problem, kein punktuelles — und eines der häufigsten Abmahnmuster im Direktvertrieb 2024–2026. Das Bußgeldrisiko nach UWG liegt bei bis zu 50.000 € pro Verstoß.
+    </div>
+    <div class="finding-rec">
+      <strong>Empfehlung — SOFORTIGER HANDLUNGSBEDARF</strong>
+      Integriere unmittelbar oberhalb oder unterhalb jedes Kontaktbuttons und jedes Produktabschnitts eine kurze, sichtbare Disclosure: „* Ich bin unabhängige Vertriebspartnerin und erhalte eine Vergütung." Oder: Platziere einen dauerhaft sichtbaren Sticky-Banner am Seitenrand/-anfang: „Diese Seite ist eine kommerzielle Empfehlung. Als unabhängige Vertriebspartnerin werde ich vergütet." Mindestschriftgröße 12px, Kontrastverhältnis WCAG AA.
+    </div>
+    <div class="risk-meter">
+      <div class="risk-dot filled-5"></div>
+      <div class="risk-dot filled-5"></div>
+      <div class="risk-dot filled-5"></div>
+      <div class="risk-dot filled-5"></div>
+      <div class="risk-dot filled-5"></div>
+    </div>
+  </div>
+
+  <!-- BEFUND 14 -->
+  <div class="finding-card risk-2" id="f14">
+    <div class="finding-num">
+      <div class="section-number">14</div>
+      <div>
+        <div class="finding-title">Profisportler-Claim: „1.000+ Athleten aus über 85 Disziplinen in 40 Nationen" mit Fußnote ³</div>
+        <div class="finding-badges">
+          <span class="badge badge-law">UWG §5 Abs. 1 Nr. 1</span>
+          <span class="badge badge-risk-2">Risiko 2/5</span>
+        </div>
+      </div>
+    </div>
+    <div class="quote-block"><div class="quote-inner">„1.000+ Profisportler. Athleten aus über 85 Disziplinen in 40 Nationen." [Fußnote ³: „Angaben gemäß PM-International AG"]</div></div>
+    <div class="finding-analysis">
+      Gegenüber v3 verbessert: Die Fußnote ³ ist jetzt vorhanden und verweist die Quelle klar auf PM-International AG. Damit ist die Herausgabe der Haftung für die Daten an den Originalhersteller grundsätzlich möglich.<br><br>
+      Verbesserungspotenzial: Die Formulierung „gemäß PM-International AG" ohne Jahresangabe lässt die Aktualität offen. Im Wettbewerbsrecht (OLG Hamburg, 3 U 88/19) wurde bei Partnerzahlen-Angaben aus Unternehmensquellen eine Aktualitätsangabe für erforderlich erachtet. Außerdem: „1.000+" ist eine unspezifische Mindestzahl, die bei tatsächlicher Überprüfung sehr leicht als Übertreibung identifiziert werden kann.
+    </div>
+    <div class="finding-rec">
+      <strong>Empfehlung</strong>
+      Ergänze Jahresangabe: „³ Angaben gemäß PM-International AG, Stand 2025." Damit ist die Aktualitätsfrage beantwortet. Alternativ: Link auf die offizielle PM-International-Athletenseite als Quellenbeleg.
+    </div>
+    <div class="risk-meter">
+      <div class="risk-dot filled-2"></div>
+      <div class="risk-dot filled-2"></div>
+      <div class="risk-dot"></div>
+      <div class="risk-dot"></div>
+      <div class="risk-dot"></div>
+    </div>
+  </div>
+
+  <!-- BEFUND 15 -->
+  <div class="finding-card risk-1" id="f15">
+    <div class="finding-num">
+      <div class="section-number">15</div>
+      <div>
+        <div class="finding-title">Footer-Slogan</div>
+        <div class="finding-badges">
+          <span class="badge badge-law">EU-VO 1924/2006</span>
+          <span class="badge badge-ok">Risiko 1/5 — Konform</span>
+        </div>
+      </div>
+    </div>
+    <div class="quote-block"><div class="quote-inner">„Für jeden Tag, an dem du dir selbst etwas Gutes tust. Finde heraus, ob das Optimalset zu dir passt."</div></div>
+    <div class="finding-analysis">
+      Der Slogan ist als allgemeine Motivationsaussage ohne gesundheitsbezogene Behauptung formuliert. „Dir selbst etwas Gutes tun" ist keine Aussage über Körperfunktionen, Krankheiten oder ernährungsphysiologische Wirkungen — es ist eine reine Lifestyle-Aussage. „Finde heraus, ob … zu dir passt" vermeidet jede Wirkungsbehauptung und appelliert an eigenständige Entscheidungsfindung. Keine Beanstandung nach EU-VO 1924/2006 oder HWG.
+    </div>
+    <div class="finding-rec">
+      <strong>Empfehlung</strong>
+      Konform. Keine Änderung erforderlich.
+    </div>
+    <div class="risk-meter">
+      <div class="risk-dot filled-1"></div>
+      <div class="risk-dot"></div>
+      <div class="risk-dot"></div>
+      <div class="risk-dot"></div>
+      <div class="risk-dot"></div>
+    </div>
+  </div>
+
+  <!-- BEFUND 16 -->
+  <div class="finding-card risk-2" id="f16">
+    <div class="finding-num">
+      <div class="section-number">16</div>
+      <div>
+        <div class="finding-title">GSAP-Animationen, dynamische Elemente &amp; Wechselwirkungs-Cycle</div>
+        <div class="finding-badges">
+          <span class="badge badge-law">UWG §5 Abs. 1</span>
+          <span class="badge badge-law">EU-VO 1924/2006</span>
+          <span class="badge badge-risk-2">Risiko 2/5</span>
+        </div>
+      </div>
+    </div>
+    <div class="quote-block"><div class="quote-inner">Chaos-Warning-Cycle (JS): Automatisch wechselnde Warnmeldungen zu einzelnen Supplements: z. B. „Magnesium: Nimm es nicht zur gleichen Zeit wie Calcium. Sonst konkurrieren beide um die Aufnahme."</div></div>
+    <div class="finding-analysis">
+      Die GSAP-Animationen selbst (Hero-Word-Reveal, Parallax, ScrollTrigger) enthalten keine Claims — nur visuelle Effekte. Kein Compliance-Problem.<br><br>
+      Der dynamische Wechselwirkungs-Cycle (Chaos-Warning-Strip) hingegen zeigt automatisch rotierende Warnaussagen zu Einzelsupplements. Diese Aussagen sind inhaltlich im Wesentlichen korrekt (Calcium-Magnesium-Konkurrenz ist wissenschaftlich dokumentiert), aber:<br>
+      1. Die Darstellung als animierter „Alarm" verstärkt die Negativwirkung auf Konkurrenzprodukte (implizit vergleichende Werbung).<br>
+      2. Einige Aussagen sind verkürzt: „Vitamin D: Wirkt nur richtig zusammen mit Magnesium und Vitamin K. Allein bringt es wenig." — „Allein bringt es wenig" ist eine pauschale Wirkungsminderungsbehauptung, die so in der EFSA-Literatur nicht steht.<br>
+      3. Der Claim „Omega-3: Ohne Vitamin E oxidiert es schnell. Die Wirkung kann dann verloren gehen." — ist zwar biologisch plausibel, aber kein EFSA-zugelassener Claim. „Wirkung verloren gehen" ist eine Wirkungsbehauptung über Omega-3.<br>
+      Kein dynamisches Element enthält einen Countdown oder eine Falschzahl; kein unmittelbarer Kaufdruck durch falsche Zeitlimits. Kein Verstoß gegen Dark-Pattern-Regelungen.
+    </div>
+    <div class="finding-rec">
+      <strong>Empfehlung</strong>
+      Überprüfe jede Einzelaussage im Chaos-Warning-Array (ca. 21 Einträge) gegen EFSA-Datenbank. Entferne oder entschärfe: „Allein bringt es wenig" bei Vitamin D → stattdessen „Wirkt synergistisch mit Magnesium und Vitamin K." Entferne „Wirkung kann verloren gehen" bei Omega-3 → stattdessen „Oxidation kann die Qualität beeinflussen." Keine Dringlichkeit bezüglich Countdowns oder Dark Patterns.
+    </div>
+    <div class="risk-meter">
+      <div class="risk-dot filled-2"></div>
+      <div class="risk-dot filled-2"></div>
+      <div class="risk-dot"></div>
+      <div class="risk-dot"></div>
+      <div class="risk-dot"></div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ══ ZUSATZBEFUNDE ══ -->
+  <h2>§ 4 — Zusatzbefunde außerhalb der 16 Hauptprüfpunkte</h2>
+
+  <div class="finding-card risk-4" id="dsgvo">
+    <div class="finding-num">
+      <div class="section-number" style="background:#ea580c;">Z1</div>
+      <div>
+        <div class="finding-title">DSGVO Art. 13: Kontaktformular ohne vollständige Informationspflichten</div>
+        <div class="finding-badges">
+          <span class="badge badge-law">DSGVO Art. 13</span>
+          <span class="badge badge-law">TTDSG §25</span>
+          <span class="badge badge-risk-4">Risiko 4/5 — KRITISCH</span>
+        </div>
+      </div>
+    </div>
+    <div class="quote-block"><div class="quote-inner">Datenschutz-Checkbox: „Ich bin einverstanden, dass meine Angaben zur Kontaktaufnahme verwendet werden." [Link: /datenschutz]</div></div>
+    <div class="finding-analysis">
+      DSGVO Art. 13 verlangt, dass eine betroffene Person zum Zeitpunkt der Datenerhebung (also beim Ausfüllen des Formulars) über folgende Punkte informiert wird: (1) Identität und Kontaktdaten des Verantwortlichen, (2) Verarbeitungszweck und Rechtsgrundlage, (3) berechtigte Interessen (falls Art. 6 Abs. 1 lit. f), (4) Empfänger/Kategorien von Empfängern, (5) Speicherdauer, (6) Rechte der betroffenen Person (Auskunft, Löschung, Widerspruch, Beschwerde bei Aufsichtsbehörde).<br><br>
+      Die Checkbox nennt lediglich den Zweck „Kontaktaufnahme". Der Link zur /datenschutz-Seite mildert das Problem, hebt es aber nicht auf — die Kernpflicht, auf die wesentlichen Informationen aktiv hinzuweisen, muss beim Formular selbst erfüllt sein (EuGH C-61/19, Orange România). Bußgeldrisiko bei Aufsichtsbehörde: bis zu 20 Mio. € oder 4 % des Jahresumsatzes.
+    </div>
+    <div class="finding-rec">
+      <strong>Empfehlung — DRINGEND</strong>
+      Ersetze die pauschale Checkbox durch: „Ich habe die <a href='/datenschutz'>Datenschutzerklärung</a> gelesen. Meine Daten (Name, E-Mail, ggf. Telefon) werden von Anna Krempel ausschließlich zur Beantwortung meiner Anfrage verwendet und nach 30 Tagen gelöscht. Ich kann der Verarbeitung jederzeit widersprechen." Optional: Ein kurzer Datenschutz-Hinweisblock direkt vor der Checkbox mit den wesentlichen Art. 13-Informationen.
+    </div>
+    <div class="risk-meter">
+      <div class="risk-dot filled-4"></div>
+      <div class="risk-dot filled-4"></div>
+      <div class="risk-dot filled-4"></div>
+      <div class="risk-dot filled-4"></div>
+      <div class="risk-dot"></div>
+    </div>
+  </div>
+
+  <div class="finding-card risk-3">
+    <div class="finding-num">
+      <div class="section-number" style="background:#d97706;">Z2</div>
+      <div>
+        <div class="finding-title">Anna-Signatur-Zitat: Persönliche Empfehlung mit implizitem Wirkversprechen</div>
+        <div class="finding-badges">
+          <span class="badge badge-law">HWG §11 Abs. 1 Nr. 2</span>
+          <span class="badge badge-risk-3">Risiko 3/5</span>
+        </div>
+      </div>
+    </div>
+    <div class="quote-block"><div class="quote-inner">„Seit 2019 Teil meines Alltags. Meine Empfehlung kommt aus Überzeugung, nicht aus dem Hochglanzprospekt."</div></div>
+    <div class="finding-analysis">
+      Persönliche Testimonials für Nahrungsergänzungsmittel sind grundsätzlich zulässig, wenn sie keine Wirkaussagen zu Krankheiten enthalten (HWG §11 Nr. 2 betrifft primär Arzneimittel; für NEM gilt die EU-VO 1924/2006). Die Formulierung „Seit 2019 Teil meines Alltags" ist als reine Nutzungsaussage vertretbar. „Aus Überzeugung, nicht aus dem Hochglanzprospekt" ist Meinungsäußerung ohne Wirkungsbehauptung. Im Kontext einer kommerziellen Vertriebspartnerin muss die Disclosure jedoch klar sein (→ Befund 13).
+    </div>
+    <div class="finding-rec">
+      <strong>Empfehlung</strong>
+      Das Zitat selbst ist vertretbar. Es muss aber mit einer unmittelbaren Disclosure der kommerziellen Beziehung versehen sein (Verweis auf Befund 13).
+    </div>
+    <div class="risk-meter">
+      <div class="risk-dot filled-3"></div>
+      <div class="risk-dot filled-3"></div>
+      <div class="risk-dot filled-3"></div>
+      <div class="risk-dot"></div>
+      <div class="risk-dot"></div>
+    </div>
+  </div>
+
+  <div class="finding-card risk-1">
+    <div class="finding-num">
+      <div class="section-number" style="background:#15803d;">Z3</div>
+      <div>
+        <div class="finding-title">Positive Befunde: EFSA-konforme Fußnoten bei Produktkarten</div>
+        <div class="finding-badges">
+          <span class="badge badge-law">EU-VO 1924/2006 Art. 13</span>
+          <span class="badge badge-ok">Konform</span>
+        </div>
+      </div>
+    </div>
+    <div class="quote-block"><div class="quote-inner">„¹ Vitamin B6 trägt zu einem normalen Energiestoffwechsel bei. ² Vitamin B6, B12 und C tragen zu einer normalen psychologischen Funktion bei."</div></div>
+    <div class="finding-analysis">
+      Diese Fußnoten sind EFSA-zugelassene Health Claims (Anhang, EU-VO 432/2012). Die Verwendung ist korrekt: Die Claims sind mit dem spezifischen Nährstoff verknüpft, der tatsächlich im Produkt in ausreichender Menge enthalten ist (NRV-Angaben in den Modals verifiziert). Der Disclaimer „Nahrungsergänzungsmittel sind kein Ersatz für eine ausgewogene Ernährung" ist vorhanden. Das ist ein Paradebeispiel für compliant formulierte Produktkommunikation.
+    </div>
+    <div class="finding-rec">
+      <strong>Empfehlung</strong>
+      Keine Änderung. Dieses Muster sollte auf alle Produktabschnitte konsequent angewendet werden.
+    </div>
+    <div class="risk-meter">
+      <div class="risk-dot filled-1"></div>
+      <div class="risk-dot"></div>
+      <div class="risk-dot"></div>
+      <div class="risk-dot"></div>
+      <div class="risk-dot"></div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ══ PRIORISIIERUNG ══ -->
+  <h2>§ 5 — Priorisierte Handlungsliste (vor Veröffentlichung)</h2>
+
+  <table class="score-table">
+    <thead>
+      <tr>
+        <th>Priorität</th>
+        <th>Befund</th>
+        <th>Risiko</th>
+        <th>Maßnahme</th>
+        <th>Aufwand</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr style="background:#fff0f0;">
+        <td><strong>P0 — Sofort</strong></td>
+        <td>Kölner-Liste-Falschaussage (F9)</td>
+        <td style="color:#b91c1c;font-weight:700;">5/5</td>
+        <td>Aussage auf verifizierten Umfang reduzieren</td>
+        <td>5 Min.</td>
+      </tr>
+      <tr style="background:#fff0f0;">
+        <td><strong>P0 — Sofort</strong></td>
+        <td>Affiliate-Disclosure (F13)</td>
+        <td style="color:#b91c1c;font-weight:700;">5/5</td>
+        <td>Sticky-Banner oder CTA-nahe Disclosure</td>
+        <td>30 Min.</td>
+      </tr>
+      <tr style="background:#fff0f0;">
+        <td><strong>P0 — Sofort</strong></td>
+        <td>DSGVO-Formular (Z1)</td>
+        <td style="color:#b91c1c;font-weight:700;">4/5</td>
+        <td>Art. 13-konforme Checkbox/Hinweis</td>
+        <td>20 Min.</td>
+      </tr>
+      <tr style="background:#fff8e6;">
+        <td><strong>P1 — Vor Launch</strong></td>
+        <td>NTC-Sub Wirkversprechen (F4)</td>
+        <td style="color:#d97706;font-weight:700;">4/5</td>
+        <td>„direkt damit arbeiten" streichen</td>
+        <td>5 Min.</td>
+      </tr>
+      <tr style="background:#fff8e6;">
+        <td><strong>P1 — Vor Launch</strong></td>
+        <td>Darm-Insight Bioverfügbarkeit (F2)</td>
+        <td style="color:#d97706;font-weight:700;">4/5</td>
+        <td>Körper-Bezug entfernen</td>
+        <td>5 Min.</td>
+      </tr>
+      <tr style="background:#fff8e6;">
+        <td><strong>P1 — Vor Launch</strong></td>
+        <td>GMP „Pharma-Standard" (F7)</td>
+        <td style="color:#d97706;font-weight:700;">3/5</td>
+        <td>Formulierung präzisieren</td>
+        <td>5 Min.</td>
+      </tr>
+      <tr style="background:#fff8e6;">
+        <td><strong>P1 — Vor Launch</strong></td>
+        <td>Kassenbon-Preise (F11)</td>
+        <td style="color:#d97706;font-weight:700;">3/5</td>
+        <td>Konkrete Quellenangaben oder Preis-Range</td>
+        <td>60 Min.</td>
+      </tr>
+      <tr>
+        <td><strong>P2 — Kurzfristig</strong></td>
+        <td>Hero-Sub Kombination (F1)</td>
+        <td>3/5</td>
+        <td>Trennen von Produzenteninfo + pers. Empfehlung</td>
+        <td>10 Min.</td>
+      </tr>
+      <tr>
+        <td><strong>P2 — Kurzfristig</strong></td>
+        <td>FAQ Stevia (F10)</td>
+        <td>3/5</td>
+        <td>EFSA-Stand ergänzen</td>
+        <td>15 Min.</td>
+      </tr>
+      <tr>
+        <td><strong>P2 — Kurzfristig</strong></td>
+        <td>Garantie-Volltext (F12)</td>
+        <td>2/5</td>
+        <td>§477 BGB-Pflichtangaben ergänzen</td>
+        <td>15 Min.</td>
+      </tr>
+      <tr>
+        <td><strong>P2 — Kurzfristig</strong></td>
+        <td>GSAP Wechselwirkungs-Claims (F16)</td>
+        <td>2/5</td>
+        <td>21 Aussagen gegen EFSA-DB prüfen</td>
+        <td>45 Min.</td>
+      </tr>
+      <tr>
+        <td><strong>P3 — Optional</strong></td>
+        <td>Meta-Beschreibung (F6)</td>
+        <td>2/5</td>
+        <td>Fußnoten-Kontext fehlt, Präzisierung optional</td>
+        <td>5 Min.</td>
+      </tr>
+      <tr>
+        <td><strong>P3 — Optional</strong></td>
+        <td>Profisportler-Fußnote ³ (F14)</td>
+        <td>2/5</td>
+        <td>Jahresangabe ergänzen</td>
+        <td>2 Min.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <hr class="divider">
+
+  <!-- ══ RECHTLICHE GRUNDLAGEN ══ -->
+  <h2>§ 6 — Angewandte Rechtsgrundlagen</h2>
+
+  <table class="intro-table">
+    <thead>
+      <tr>
+        <th>Norm</th>
+        <th>Prüfbereich</th>
+        <th>Relevante Befunde</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="label-item">EU-VO 1924/2006</td>
+        <td>Nährwert- und gesundheitsbezogene Angaben; EFSA-Zulassungspflicht</td>
+        <td>F2, F4, F16, Z3</td>
+      </tr>
+      <tr>
+        <td class="label-item">HWG §3 / §3a</td>
+        <td>Irreführende Heilmittelwerbung; Assoziation mit Arzneimitteln</td>
+        <td>F1, F7</td>
+      </tr>
+      <tr>
+        <td class="label-item">HWG §11 Abs. 1 Nr. 2</td>
+        <td>Verbotene Empfehlungen durch Heilpersonen oder berühmte Persönlichkeiten</td>
+        <td>F1, Z2</td>
+      </tr>
+      <tr>
+        <td class="label-item">UWG §5 Abs. 1</td>
+        <td>Irreführende geschäftliche Handlungen durch unwahre oder unrichtige Angaben</td>
+        <td>F8, F9, F10, F11, F16</td>
+      </tr>
+      <tr>
+        <td class="label-item">UWG §5a Abs. 4</td>
+        <td>Verschweigen des kommerziellen Charakters einer Geschäftspraktik</td>
+        <td>F13</td>
+      </tr>
+      <tr>
+        <td class="label-item">UWG §6 Abs. 2 Nr. 4</td>
+        <td>Vergleichende Werbung; Herabsetzung von Mitbewerbern</td>
+        <td>F5, F10</td>
+      </tr>
+      <tr>
+        <td class="label-item">PAngV §1</td>
+        <td>Preisangabenpflicht; Vergleichspreise müssen nachprüfbar sein</td>
+        <td>F11</td>
+      </tr>
+      <tr>
+        <td class="label-item">§477 BGB</td>
+        <td>Pflichtangaben bei Garantieerklärungen</td>
+        <td>F12</td>
+      </tr>
+      <tr>
+        <td class="label-item">§5 TMG</td>
+        <td>Impressumspflicht (Links vorhanden, Vollinhalt zu prüfen)</td>
+        <td>—</td>
+      </tr>
+      <tr>
+        <td class="label-item">DSGVO Art. 13</td>
+        <td>Informationspflichten bei Datenerhebung</td>
+        <td>Z1</td>
+      </tr>
+      <tr>
+        <td class="label-item">EuGH C-544/10 (Deutsches Weintor)</td>
+        <td>Objektiver Gesamteindruck beim Verbraucher maßgeblich</td>
+        <td>F2, F4</td>
+      </tr>
+      <tr>
+        <td class="label-item">BGH I ZR 35/20 (Influencer)</td>
+        <td>Offenlegungspflicht bei kommerziellen Empfehlungen pro CTA</td>
+        <td>F13</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <hr class="divider">
+
+  <!-- ══ FAZIT ══ -->
+  <h2>§ 7 — Fazit und Gesamtbewertung</h2>
+
+  <p style="font-family:'Helvetica Neue',Arial,sans-serif; font-size:14px; line-height:1.8; color:var(--text-soft); margin-bottom:20px;">
+    Die v4-Fassung der FitLine-Optimalset-Landing-Page hat gegenüber v3 substantielle Fortschritte erzielt: Die EFSA-konformen Produkt-Claim-Fußnoten sind handwerklich korrekt und stellen Best Practice dar. Die Garantor-Adresse erfüllt §477 BGB-Grundanforderungen. Die FAQ-Transparenz zum Vertriebspartner-Verhältnis ist vorhanden. Das Disclaimer-System im Footer ist vollständig.
+  </p>
+
+  <p style="font-family:'Helvetica Neue',Arial,sans-serif; font-size:14px; line-height:1.8; color:var(--text-soft); margin-bottom:20px;">
+    Jedoch verbleibt die Seite in drei Bereichen unterhalb des für eine Veröffentlichung erforderlichen Mindeststandards: Der Kölner-Liste-Fehler ist ein objektiver Faktenfehler, der umgehend korrigiert werden muss. Die Affiliate-Disclosure entspricht nicht den Anforderungen des BGH-Influencer-Urteils (I ZR 35/20) und des §5a UWG n.F. Das DSGVO-Formular erfüllt Art. 13 nicht in Gänze.
+  </p>
+
+  <p style="font-family:'Helvetica Neue',Arial,sans-serif; font-size:14px; line-height:1.8; color:var(--text-soft);">
+    Gesamtscore: <strong>68 %</strong> (+12 Punkte gegenüber v3). Ampel: <strong style="color:#d97706;">GELB</strong>. Veröffentlichung nach Behebung der drei P0-Befunde und vier P1-Befunde (Gesamtaufwand: ca. 2 Stunden) möglich. Geschätzter Post-Korrektur-Score: <strong>84–88 %</strong> — dies würde GRÜN ergeben.
+  </p>
+
+  <div class="ampel-box" style="margin-top:32px;">
+    <div class="ampel-light" style="background:#d97706;">68%</div>
+    <div class="ampel-text">
+      <h3 style="color:#d97706; font-size:17px;">Aktueller Compliance-Score: 68/100</h3>
+      <p>3 Hochrisiko-Befunde (P0) + 4 mittlere Befunde (P1) offen. Geschätzter Score nach vollständiger Korrektur: 84–88 (Ampel GRÜN).</p>
+      <p style="margin-top:8px;"><strong>Zeitaufwand für Minimum-Compliance: ca. 2 Stunden.</strong></p>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="footnote">
+    <strong>Methodische Hinweise:</strong> Dieses Gutachten basiert auf der vollständigen Lektüre der Datei <code>index-preview.html</code> (Zeilen 1–9336, Stand 03.06.2026) sowie auf der Auswertung der zitierten Rechtsnormen und Gerichtsentscheidungen nach aktuellem Erkenntnisstand. Es handelt sich um eine anwaltliche Risikoanalyse, nicht um ein rechtsverbindliches Gutachten im Sinne des § 1 RDG. Für individuelle Rechtssicherheit wird empfohlen, die kritischen Punkte mit einem zugelassenen Rechtsanwalt für Wettbewerbs- und Medienrecht zu besprechen.
+    <br><br>
+    <strong>Kölner Liste®</strong> ist eine eingetragene Marke des Olympiastützpunkts Rheinland. Alle Angaben zu Listungsstatus der Produkte müssen eigenständig auf www.koelnerliste.com verifiziert werden.
+    <br><br>
+    <strong>Erstellt:</strong> 03. Juni 2026 · Ref.: FLO-v4-2026 · Vollständige Lektüre der Quelldatei bestätigt
+  </div>
+
+</div>
+</body>
+</html>

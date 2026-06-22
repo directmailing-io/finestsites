@@ -1,38 +1,57 @@
-import { NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
-import { createAdminClient } from '@/lib/supabase/admin'
+import { NextRequest, NextResponse } from 'next/server'
+import { getUserFromRequest } from '@/lib/auth/server'
+import { db } from '@/lib/db'
+import { templates, templateAccess } from '@/lib/db/schema'
+import { eq, desc } from 'drizzle-orm'
 
 // GET /api/templates → published templates visible to the current user
 // - is_test=false templates: always visible
 // - is_test=true templates: only visible if user is in template_access
-export async function GET() {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+export async function GET(req: NextRequest) {
+  const user = await getUserFromRequest(req)
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const admin = createAdminClient()
+  try {
+    // Fetch all published templates and user's access grants in parallel
+    const [allTemplates, accessRows] = await Promise.all([
+      db
+        .select({
+          id: templates.id,
+          title: templates.title,
+          description: templates.description,
+          domain: templates.domain,
+          previewImages: templates.previewImages,
+          placeholderSchema: templates.placeholderSchema,
+          isTest: templates.isTest,
+          isFree: templates.isFree,
+        })
+        .from(templates)
+        .where(eq(templates.status, 'published'))
+        .orderBy(desc(templates.createdAt)),
+      db
+        .select({ templateId: templateAccess.templateId })
+        .from(templateAccess)
+        .where(eq(templateAccess.userId, user.id)),
+    ])
 
-  // Fetch all published templates
-  const { data, error } = await admin
-    .from('templates')
-    .select('id, title, description, domain, preview_images, placeholder_schema, tags, is_test, is_free')
-    .eq('status', 'published')
-    .order('created_at', { ascending: false })
+    const whitelisted = new Set(accessRows.map(r => r.templateId))
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+    // Filter: show non-test templates + whitelisted test templates
+    const visible = allTemplates
+      .filter(t => !t.isTest || whitelisted.has(t.id))
+      .map(t => ({
+        id: t.id,
+        title: t.title,
+        description: t.description,
+        domain: t.domain,
+        preview_images: t.previewImages,
+        placeholder_schema: t.placeholderSchema,
+        is_test: t.isTest,
+        is_free: t.isFree,
+      }))
 
-  // Fetch this user's template access grants
-  const { data: accessRows } = await admin
-    .from('template_access')
-    .select('template_id')
-    .eq('user_id', user.id)
-
-  const whitelisted = new Set((accessRows ?? []).map((r: { template_id: string }) => r.template_id))
-
-  // Filter: show non-test templates + whitelisted test templates
-  const visible = (data ?? []).filter((t: { is_test: boolean; id: string }) =>
-    !t.is_test || whitelisted.has(t.id)
-  )
-
-  return NextResponse.json(visible)
+    return NextResponse.json(visible)
+  } catch {
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+  }
 }

@@ -5,33 +5,31 @@
  */
 
 import { NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
-import { createAdminClient } from '@/lib/supabase/admin'
+import { getUserFromRequest } from '@/lib/auth/server'
+import { db } from '@/lib/db'
+import { users } from '@/lib/db/schema'
+import { eq } from 'drizzle-orm'
 import { getStripe } from '@/lib/stripe/client'
 
-export async function GET() {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+export async function GET(req: Request) {
+  const user = await getUserFromRequest(req)
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const admin = createAdminClient()
-  const { data: profile } = await admin
-    .from('users')
-    .select('stripe_connect_id, affiliate_onboarded')
-    .eq('id', user.id)
-    .single()
+  const profile = await db.query.users.findFirst({
+    where: eq(users.id, user.id),
+    columns: { stripeConnectId: true, affiliateOnboarded: true },
+  })
 
-  if (!profile?.affiliate_onboarded || !profile?.stripe_connect_id) {
+  if (!profile?.affiliateOnboarded || !profile?.stripeConnectId) {
     return NextResponse.json({ error: 'Kein Stripe-Konto verbunden.' }, { status: 400 })
   }
 
   try {
     const stripe = getStripe()
-    const loginLink = await stripe.accounts.createLoginLink(profile.stripe_connect_id)
+    const loginLink = await stripe.accounts.createLoginLink(profile.stripeConnectId)
     return NextResponse.json({ url: loginLink.url })
   } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : 'Unbekannter Fehler'
-    console.error('[affiliate/dashboard-link] error:', message)
-    return NextResponse.json({ error: message }, { status: 400 })
+    console.error('[affiliate/dashboard-link] error:', err)
+    return NextResponse.json({ error: 'Internal server error' }, { status: 400 })
   }
 }

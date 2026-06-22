@@ -1,70 +1,89 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
-import { createAdminClient } from '@/lib/supabase/admin'
+import { getUserFromRequest } from '@/lib/auth/server'
+import { db } from '@/lib/db'
+import { users, userSites, templates } from '@/lib/db/schema'
+import { eq } from 'drizzle-orm'
 
-export async function GET() {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+export async function GET(req: NextRequest) {
+  const user = await getUserFromRequest(req)
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const admin = createAdminClient()
   // Plan quota model: ONLY PUBLISHED sites with non-free templates count toward
   // the plan limit. Drafts are free — users can experiment without hitting limits.
-  const [{ data: profile }, { data: activeSites }] = await Promise.all([
-    admin.from('users').select('plan, billing_interval, subscription_status, stripe_customer_id, username, referred_by_username, first_name, last_name, phone, website_url, instagram, facebook, linkedin, tiktok, youtube, profile_image_url').eq('id', user.id).single(),
-    admin.from('user_sites').select('id, status, templates!inner(is_free)').eq('user_id', user.id).in('status', ['draft', 'published']),
+  const [profile, userActiveSites] = await Promise.all([
+    db.query.users.findFirst({ where: eq(users.id, user.id) }),
+    db
+      .select({ id: userSites.id, status: userSites.status, isFree: templates.isFree })
+      .from(userSites)
+      .leftJoin(templates, eq(userSites.templateId, templates.id))
+      .where(eq(userSites.userId, user.id))
+      .then(rows => rows.filter(r => r.status === 'draft' || r.status === 'published')),
   ])
 
-  const allSites = activeSites ?? []
-  const sites_count = allSites.length
+  const sites_count = userActiveSites.length
   // Paid count = published with non-free template (drafts excluded)
-  const paid_sites_count = allSites.filter((s: { status: string; templates: { is_free: boolean } | { is_free: boolean }[] | null }) => {
-    if (s.status !== 'published') return false
-    const t = Array.isArray(s.templates) ? s.templates[0] : s.templates
-    return !t?.is_free
-  }).length
+  const paid_sites_count = userActiveSites.filter(s => s.status === 'published' && s.isFree === false).length
 
   return NextResponse.json({
     plan: profile?.plan ?? 'starter',
-    billing_interval: profile?.billing_interval ?? 'monthly',
-    subscription_status: profile?.subscription_status ?? null,
-    stripe_customer_id: profile?.stripe_customer_id ?? null,
+    billing_interval: profile?.billingInterval ?? 'monthly',
+    subscription_status: profile?.subscriptionStatus ?? null,
+    stripe_customer_id: profile?.stripeCustomerId ?? null,
     sites_count,
     paid_sites_count,
     username: profile?.username ?? null,
-    referred_by_username: profile?.referred_by_username ?? null,
+    referred_by_username: profile?.referredByUsername ?? null,
     // Personal profile fields
-    first_name: profile?.first_name ?? null,
-    last_name: profile?.last_name ?? null,
+    first_name: profile?.firstName ?? null,
+    last_name: profile?.lastName ?? null,
     phone: profile?.phone ?? null,
-    website_url: profile?.website_url ?? null,
+    website_url: profile?.websiteUrl ?? null,
     instagram: profile?.instagram ?? null,
     facebook: profile?.facebook ?? null,
     linkedin: profile?.linkedin ?? null,
     tiktok: profile?.tiktok ?? null,
     youtube: profile?.youtube ?? null,
-    profile_image_url: profile?.profile_image_url ?? null,
+    profile_image_url: profile?.profileImageUrl ?? null,
   })
 }
 
 export async function PATCH(req: NextRequest) {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const user = await getUserFromRequest(req)
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const body = await req.json()
-  const allowed = ['first_name', 'last_name', 'phone', 'website_url', 'instagram', 'facebook', 'linkedin', 'tiktok', 'youtube', 'profile_image_url']
-  const updates: Record<string, string | null> = {}
-  for (const key of allowed) {
-    if (key in body) updates[key] = body[key] ?? null
+
+  // Map snake_case body keys to camelCase Drizzle column names
+  const fieldMap: Record<string, keyof typeof users.$inferInsert> = {
+    first_name: 'firstName',
+    last_name: 'lastName',
+    phone: 'phone',
+    website_url: 'websiteUrl',
+    instagram: 'instagram',
+    facebook: 'facebook',
+    linkedin: 'linkedin',
+    tiktok: 'tiktok',
+    youtube: 'youtube',
+    profile_image_url: 'profileImageUrl',
   }
+
+  const updates: Partial<typeof users.$inferInsert> = {}
+  for (const [bodyKey, dbKey] of Object.entries(fieldMap)) {
+    if (bodyKey in body) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      ;(updates as any)[dbKey] = body[bodyKey] ?? null
+    }
+  }
+
   if (Object.keys(updates).length === 0) {
     return NextResponse.json({ error: 'Keine Felder zum Aktualisieren.' }, { status: 400 })
   }
 
-  const admin = createAdminClient()
-  const { error } = await admin.from('users').update(updates).eq('id', user.id)
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
-  return NextResponse.json({ ok: true })
+  try {
+    await db.update(users).set(updates).where(eq(users.id, user.id))
+    return NextResponse.json({ ok: true })
+  } catch {
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+  }
 }
 

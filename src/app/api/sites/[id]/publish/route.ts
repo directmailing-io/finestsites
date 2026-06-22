@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3'
-import { createClient } from '@/lib/supabase/server'
-import { createAdminClient } from '@/lib/supabase/admin'
+import { getUserFromRequest } from '@/lib/auth/server'
+import { db } from '@/lib/db'
+import { userSites, siteData, users, templates } from '@/lib/db/schema'
+import { eq, and, ne } from 'drizzle-orm'
 import { purgeSiteCache, markSiteOffline } from '@/lib/cloudflare/kv'
 import { writeRenderedHtmlKV } from '@/lib/cloudflare/kv-api'
 import { renderTemplate } from '@/lib/utils/template-engine'
@@ -34,11 +36,11 @@ async function preRenderAndPushToKV(
   username: string,
   templateDomain: string,
   r2Path: string,
-  siteData: Record<string, string>,
+  siteDataMap: Record<string, string>,
 ): Promise<void> {
   try {
     const templateHtml = await fetchTemplateHtml(r2Path)
-    const rendered = renderTemplate(templateHtml, siteData)
+    const rendered = renderTemplate(templateHtml, siteDataMap)
     await writeRenderedHtmlKV(username, templateDomain, rendered)
   } catch (err) {
     console.error('[publish] pre-render failed:', err)
@@ -47,52 +49,52 @@ async function preRenderAndPushToKV(
   }
 }
 
-export async function POST(_: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const user = await getUserFromRequest(req)
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const { id } = await params
-  const admin = createAdminClient()
 
-  // Get site with template info (also need is_free for the plan-limit check)
-  const { data: site } = await admin.from('user_sites')
-    .select('*, templates(id, domain, r2_bundle_path, is_free), users!user_id(username)')
-    .eq('id', id)
-    .eq('user_id', user.id)
-    .single()
+  // Get site with template info
+  const site = await db.query.userSites.findFirst({
+    where: and(eq(userSites.id, id), eq(userSites.userId, user.id)),
+    with: { template: true },
+  })
 
   if (!site) return NextResponse.json({ error: 'Nicht gefunden.' }, { status: 404 })
-  if (!site.templates?.r2_bundle_path) {
+  if (!site.template?.r2BundlePath) {
     return NextResponse.json({ error: 'Template hat keine HTML-Datei.' }, { status: 400 })
   }
 
-  const username = (site.users as unknown as { username: string })?.username
+  // Fetch username
+  const userRow = await db.query.users.findFirst({
+    where: eq(users.id, user.id),
+  })
+  const username = userRow?.username
   if (!username) {
     return NextResponse.json({ error: 'Kein Benutzername gesetzt. Bitte erst in Einstellungen setzen.' }, { status: 400 })
   }
 
   // ── Plan-limit check ───────────────────────────────────────────────────
-  // Count only OTHER currently-published non-free sites. The site being
-  // published right now is excluded (it's still draft or being toggled live).
-  const tplIsFree = (site.templates as unknown as { is_free?: boolean })?.is_free ?? false
+  const tplIsFree = site.template.isFree ?? false
   if (!tplIsFree) {
-    const { data: profile } = await admin.from('users').select('plan').eq('id', user.id).single()
+    const profile = await db.query.users.findFirst({
+      where: eq(users.id, user.id),
+    })
     const plan = profile?.plan ?? 'starter'
     const PLAN_LIMITS: Record<string, number> = { starter: 1, pro: 3, unlimited: Infinity, secret: Infinity }
     const limit = PLAN_LIMITS[plan] ?? 1
 
-    const { data: otherPublished } = await admin
-      .from('user_sites')
-      .select('id, templates!inner(is_free)')
-      .eq('user_id', user.id)
-      .eq('status', 'published')
-      .neq('id', id)
+    const otherPublished = await db.query.userSites.findMany({
+      where: and(
+        eq(userSites.userId, user.id),
+        eq(userSites.status, 'published'),
+        ne(userSites.id, id),
+      ),
+      with: { template: true },
+    })
 
-    const otherPaidCount = (otherPublished ?? []).filter((s: { templates: { is_free: boolean } | { is_free: boolean }[] | null }) => {
-      const t = Array.isArray(s.templates) ? s.templates[0] : s.templates
-      return !t?.is_free
-    }).length
+    const otherPaidCount = otherPublished.filter(s => !s.template?.isFree).length
 
     if (otherPaidCount >= limit) {
       return NextResponse.json({
@@ -102,59 +104,48 @@ export async function POST(_: NextRequest, { params }: { params: Promise<{ id: s
   }
 
   // Update to published
-  const { error } = await admin.from('user_sites')
-    .update({
-      status: 'published',
-      published_at: new Date().toISOString(),
-    })
-    .eq('id', id)
-
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  await db.update(userSites)
+    .set({ status: 'published', publishedAt: new Date() })
+    .where(eq(userSites.id, id))
 
   // Purge KV cache so the Worker picks up the new status immediately
-  await purgeSiteCache(username, site.templates.domain)
+  await purgeSiteCache(username, site.template.domain)
 
   // Pre-render the page with the canonical Vercel engine and write it
   // directly to Worker KV — bypasses the Worker's own rendering pass.
-  const { data: siteDataRows } = await admin
-    .from('site_data')
-    .select('field_key, field_value')
-    .eq('user_site_id', id)
-  const siteData: Record<string, string> = {}
-  for (const row of siteDataRows ?? []) siteData[row.field_key] = row.field_value ?? ''
-  await preRenderAndPushToKV(username, site.templates.domain, site.templates.r2_bundle_path, siteData)
+  const dataRows = await db.query.siteData.findMany({
+    where: eq(siteData.userSiteId, id),
+  })
+  const dataMap: Record<string, string> = {}
+  for (const row of dataRows) dataMap[row.fieldKey] = row.fieldValue ?? ''
+  await preRenderAndPushToKV(username, site.template.domain, site.template.r2BundlePath, dataMap)
 
-  const url = `https://${username}.${site.templates.domain}`
+  const url = `https://${username}.${site.template.domain}`
   return NextResponse.json({ success: true, url })
 }
 
-export async function DELETE(_: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const user = await getUserFromRequest(req)
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const { id } = await params
-  const admin = createAdminClient()
 
   // Fetch site info before unpublishing so we can purge the correct cache keys
-  const { data: site } = await admin.from('user_sites')
-    .select('*, templates(domain), users!user_id(username)')
-    .eq('id', id)
-    .eq('user_id', user.id)
-    .single()
+  const site = await db.query.userSites.findFirst({
+    where: and(eq(userSites.id, id), eq(userSites.userId, user.id)),
+    with: { template: true },
+  })
 
   if (!site) return NextResponse.json({ error: 'Nicht gefunden.' }, { status: 404 })
 
-  const { error } = await admin.from('user_sites')
-    .update({ status: 'draft' })
-    .eq('id', id)
-    .eq('user_id', user.id)
-
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  await db.update(userSites)
+    .set({ status: 'draft' })
+    .where(and(eq(userSites.id, id), eq(userSites.userId, user.id)))
 
   // Purge KV cache immediately so the Worker stops serving the site
-  const username = (site.users as unknown as { username: string })?.username
-  const domain = (site.templates as unknown as { domain: string })?.domain
+  const userRow = await db.query.users.findFirst({ where: eq(users.id, user.id) })
+  const username = userRow?.username
+  const domain = site.template?.domain
   if (username && domain) {
     await markSiteOffline(username, domain)
   }

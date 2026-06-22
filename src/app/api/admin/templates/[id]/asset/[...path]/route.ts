@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
-import { createAdminClient } from '@/lib/supabase/admin'
+import { getUserFromRequest } from '@/lib/auth/server'
+import { db } from '@/lib/db'
+import { users, templates } from '@/lib/db/schema'
+import { eq } from 'drizzle-orm'
 import { getRawFromR2 } from '@/lib/r2/client'
 import path from 'path'
 
@@ -27,36 +29,34 @@ const MIME_TYPES: Record<string, string> = {
   '.txt': 'text/plain',
 }
 
-async function checkAdmin() {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+async function checkAdmin(req: NextRequest) {
+  const user = await getUserFromRequest(req)
   if (!user) return null
-  const { data } = await supabase.from('users').select('is_admin').eq('id', user.id).single()
-  return data?.is_admin ? user : null
+  const userRow = await db.query.users.findFirst({
+    where: eq(users.id, user.id),
+  })
+  return userRow?.isAdmin ? user : null
 }
 
 export async function GET(
-  _: NextRequest,
+  req: NextRequest,
   { params }: { params: Promise<{ id: string; path: string[] }> }
 ) {
-  const user = await checkAdmin()
+  const user = await checkAdmin(req)
   if (!user) return new NextResponse('Unauthorized', { status: 401 })
 
   const { id, path: pathSegments } = await params
-  const admin = createAdminClient()
 
-  const { data: template } = await admin
-    .from('templates')
-    .select('r2_bundle_path')
-    .eq('id', id)
-    .single()
+  const template = await db.query.templates.findFirst({
+    where: eq(templates.id, id),
+  })
 
-  if (!template?.r2_bundle_path) {
+  if (!template?.r2BundlePath) {
     return new NextResponse('Template not found', { status: 404 })
   }
 
-  // Derive the base directory from r2_bundle_path (strip filename)
-  const baseDir = template.r2_bundle_path.replace(/\/[^/]+$/, '')
+  // Derive the base directory from r2BundlePath (strip filename)
+  const baseDir = template.r2BundlePath.replace(/\/[^/]+$/, '')
 
   // Construct the R2 key for the requested asset
   const assetPath = pathSegments.join('/')

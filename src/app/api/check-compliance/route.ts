@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { getUserFromRequest } from '@/lib/auth/server'
 
 /**
  * Compliance check for user-generated text about food supplements.
@@ -90,8 +90,7 @@ Antworte AUSSCHLIESSLICH mit reinem JSON ohne Code-Fences:
 Wenn keine kausale Wirkungs-Zuschreibung gefunden wird, ist der Text compliant=true. Sei NICHT übervorsichtig.`
 
 export async function POST(req: NextRequest) {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const user = await getUserFromRequest(req)
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const apiKey = process.env.OPENAI_API_KEY

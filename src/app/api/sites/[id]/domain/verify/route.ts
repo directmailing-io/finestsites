@@ -1,41 +1,39 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
-import { createAdminClient } from '@/lib/supabase/admin'
+import { getUserFromRequest } from '@/lib/auth/server'
+import { db } from '@/lib/db'
+import { userSites, users } from '@/lib/db/schema'
+import { eq, and } from 'drizzle-orm'
 import { getCustomHostname } from '@/lib/cloudflare/custom-hostnames'
 import { setCustomDomainKV } from '@/lib/cloudflare/kv-api'
 
 export const runtime = 'nodejs'
 
 // POST /api/sites/[id]/domain/verify — re-check verification status with Cloudflare
-export async function POST(_: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const user = await getUserFromRequest(req)
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const { id } = await params
-  const admin = createAdminClient()
 
-  const { data: site } = await admin
-    .from('user_sites')
-    .select('custom_domain, custom_domain_status, cf_custom_hostname_id, templates(domain), users!user_id(username)')
-    .eq('id', id)
-    .eq('user_id', user.id)
-    .single()
+  const site = await db.query.userSites.findFirst({
+    where: and(eq(userSites.id, id), eq(userSites.userId, user.id)),
+    with: { template: true },
+  })
 
   if (!site) return NextResponse.json({ error: 'Not found' }, { status: 404 })
-  if (!site.custom_domain || !site.cf_custom_hostname_id) {
+  if (!site.customDomain || !site.cfCustomHostnameId) {
     return NextResponse.json({ error: 'Keine Domain konfiguriert.' }, { status: 400 })
   }
 
   // Already active — nothing to do
-  if (site.custom_domain_status === 'active') {
-    return NextResponse.json({ custom_domain_status: 'active', custom_domain: site.custom_domain })
+  if (site.customDomainStatus === 'active') {
+    return NextResponse.json({ custom_domain_status: 'active', custom_domain: site.customDomain })
   }
 
   // Fetch current status from Cloudflare
   let cfData
   try {
-    cfData = await getCustomHostname(site.cf_custom_hostname_id)
+    cfData = await getCustomHostname(site.cfCustomHostnameId)
   } catch (err) {
     console.error('[domain/verify] CF error:', err)
     return NextResponse.json({ error: 'Cloudflare-Abfrage fehlgeschlagen.' }, { status: 500 })
@@ -44,34 +42,31 @@ export async function POST(_: NextRequest, { params }: { params: Promise<{ id: s
   const isActive = cfData.status === 'active' && cfData.ssl?.status === 'active'
 
   if (isActive) {
-    const username = (site.users as unknown as { username: string })?.username
-    const templateDomain = (site.templates as unknown as { domain: string })?.domain
+    const userRow = await db.query.users.findFirst({ where: eq(users.id, user.id) })
+    const username = userRow?.username
+    const templateDomain = site.template?.domain
 
     // Write KV entry so the Worker knows this hostname → username + templateDomain
     if (username && templateDomain) {
       try {
-        await setCustomDomainKV(site.custom_domain, username, templateDomain)
+        await setCustomDomainKV(site.customDomain, username, templateDomain)
       } catch (err) {
         console.error('[domain/verify] KV write error:', err)
       }
     }
 
     // Mark as active in DB
-    await admin
-      .from('user_sites')
-      .update({
-        custom_domain_status: 'active',
-        custom_domain_verified_at: new Date().toISOString(),
+    await db.update(userSites)
+      .set({
+        customDomainStatus: 'active',
+        customDomainVerifiedAt: new Date(),
       })
-      .eq('id', id)
+      .where(eq(userSites.id, id))
 
-    return NextResponse.json({ custom_domain_status: 'active', custom_domain: site.custom_domain })
+    return NextResponse.json({ custom_domain_status: 'active', custom_domain: site.customDomain })
   }
 
   // Map CF statuses to our status
-  // CNAME error present → pending_dns (DNS not set up)
-  // No CNAME error, any SSL pending state → pending_ssl (DNS ok, SSL being issued)
-  // hostname active + ssl active → active (handled above)
   let newStatus = 'pending_dns'
   const hasCnameError = cfData.verification_errors?.some((e: string) => e.includes('CNAME'))
   if (cfData.status === 'blocked' || cfData.status === 'error' || cfData.ssl?.status === 'error') {
@@ -81,9 +76,11 @@ export async function POST(_: NextRequest, { params }: { params: Promise<{ id: s
     newStatus = 'pending_ssl'
   }
 
-  if (newStatus !== site.custom_domain_status) {
-    await admin.from('user_sites').update({ custom_domain_status: newStatus }).eq('id', id)
+  if (newStatus !== site.customDomainStatus) {
+    await db.update(userSites)
+      .set({ customDomainStatus: newStatus })
+      .where(eq(userSites.id, id))
   }
 
-  return NextResponse.json({ custom_domain_status: newStatus, custom_domain: site.custom_domain })
+  return NextResponse.json({ custom_domain_status: newStatus, custom_domain: site.customDomain })
 }

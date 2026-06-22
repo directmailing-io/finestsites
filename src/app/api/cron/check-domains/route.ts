@@ -13,7 +13,9 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
-import { createAdminClient } from '@/lib/supabase/admin'
+import { db } from '@/lib/db'
+import { userSites, users as usersTable, templates as templatesTable } from '@/lib/db/schema'
+import { inArray, eq } from 'drizzle-orm'
 import { getCustomHostname } from '@/lib/cloudflare/custom-hostnames'
 import { setCustomDomainKV } from '@/lib/cloudflare/kv-api'
 import { getResend, FROM_EMAIL } from '@/lib/resend'
@@ -29,66 +31,94 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  const admin = createAdminClient()
-
   // Fetch up to 50 pending domains per run to stay within execution time limits
-  const { data: sites, error } = await admin
-    .from('user_sites')
-    .select('id, custom_domain, custom_domain_status, cf_custom_hostname_id, templates(domain), users!user_id(username, email)')
-    .in('custom_domain_status', ['pending_dns', 'pending_ssl'])
-    .not('cf_custom_hostname_id', 'is', null)
-    .not('custom_domain', 'is', null)
-    .limit(50)
-
-  if (error) {
-    console.error('[cron/check-domains] DB error:', error)
-    return NextResponse.json({ error: error.message }, { status: 500 })
+  let sites: {
+    id: string
+    customDomain: string | null
+    customDomainStatus: string | null
+    cfCustomHostnameId: string | null
+    userId: string
+  }[]
+  try {
+    sites = await db
+      .select({
+        id: userSites.id,
+        customDomain: userSites.customDomain,
+        customDomainStatus: userSites.customDomainStatus,
+        cfCustomHostnameId: userSites.cfCustomHostnameId,
+        userId: userSites.userId,
+      })
+      .from(userSites)
+      .where(
+        inArray(userSites.customDomainStatus, ['pending_dns', 'pending_ssl'])
+      )
+      .limit(50)
+    // Filter in JS since Drizzle doesn't have isNotNull for multiple cols easily
+    sites = sites.filter(s => s.cfCustomHostnameId !== null && s.customDomain !== null)
+  } catch (err) {
+    console.error('[cron/check-domains] DB error:', err)
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 
-  if (!sites || sites.length === 0) {
+  if (sites.length === 0) {
     return NextResponse.json({ checked: 0, activated: 0 })
   }
+
+  // We need template domain and user email/username for notifications — fetch separately
+  const siteDetails = await db
+    .select({
+      id: userSites.id,
+      templateDomain: templatesTable.domain,
+      userUsername: usersTable.username,
+      userEmail: usersTable.email,
+    })
+    .from(userSites)
+    .leftJoin(usersTable, eq(usersTable.id, userSites.userId))
+    .leftJoin(templatesTable, eq(templatesTable.id, userSites.templateId))
+    .where(inArray(userSites.id, sites.map(s => s.id)))
+
+  const detailMap = new Map(siteDetails.map(d => [d.id, d]))
 
   let activated = 0
   let errors = 0
 
   for (const site of sites) {
     try {
-      const cfData = await getCustomHostname(site.cf_custom_hostname_id!)
+      const cfData = await getCustomHostname(site.cfCustomHostnameId!)
       const isActive = cfData.status === 'active' && cfData.ssl?.status === 'active'
+      const detail = detailMap.get(site.id)
 
       if (isActive) {
-        const username = (site.users as unknown as { username: string })?.username
-        const templateDomain = (site.templates as unknown as { domain: string })?.domain
-        const userEmail = (site.users as unknown as { email: string })?.email
+        const username = detail?.userUsername ?? null
+        const templateDomain = detail?.templateDomain ?? null
+        const userEmail = detail?.userEmail ?? null
 
         // Write KV so the Worker can route requests for this custom domain
         if (username && templateDomain) {
-          await setCustomDomainKV(site.custom_domain!, username, templateDomain)
+          await setCustomDomainKV(site.customDomain!, username, templateDomain)
         }
 
-        await admin
-          .from('user_sites')
-          .update({
-            custom_domain_status: 'active',
-            custom_domain_verified_at: new Date().toISOString(),
+        await db.update(userSites)
+          .set({
+            customDomainStatus: 'active',
+            customDomainVerifiedAt: new Date(),
           })
-          .eq('id', site.id)
+          .where(eq(userSites.id, site.id))
 
         // Notify user — fire and forget, never block the loop
-        if (userEmail && site.custom_domain) {
+        if (userEmail && site.customDomain) {
           getResend()
             .emails.send({
               from: FROM_EMAIL,
               to: userEmail,
-              subject: `Deine Domain ${site.custom_domain} ist jetzt live!`,
-              html: domainActiveEmail({ domain: site.custom_domain }),
+              subject: `Deine Domain ${site.customDomain} ist jetzt live!`,
+              html: domainActiveEmail({ domain: site.customDomain }),
             })
             .catch(err => console.error('[cron/check-domains] Email send error:', err))
         }
 
         activated++
-        console.log(`[cron/check-domains] Activated: ${site.custom_domain}`)
+        console.log(`[cron/check-domains] Activated: ${site.customDomain}`)
       } else {
         // Progress the status forward if CNAME was set but SSL is still pending
         const hasCnameError = cfData.verification_errors?.some((e: string) => e.includes('CNAME'))
@@ -99,14 +129,16 @@ export async function GET(request: NextRequest) {
           newStatus = 'pending_ssl'
         }
 
-        if (newStatus !== site.custom_domain_status) {
-          await admin.from('user_sites').update({ custom_domain_status: newStatus }).eq('id', site.id)
-          console.log(`[cron/check-domains] Status update: ${site.custom_domain} → ${newStatus}`)
+        if (newStatus !== site.customDomainStatus) {
+          await db.update(userSites)
+            .set({ customDomainStatus: newStatus })
+            .where(eq(userSites.id, site.id))
+          console.log(`[cron/check-domains] Status update: ${site.customDomain} → ${newStatus}`)
         }
       }
     } catch (err) {
       errors++
-      console.error(`[cron/check-domains] Error processing ${site.custom_domain}:`, err)
+      console.error(`[cron/check-domains] Error processing ${site.customDomain}:`, err)
     }
   }
 

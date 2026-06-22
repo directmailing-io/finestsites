@@ -3,12 +3,11 @@
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { useState, useEffect } from 'react'
-import { createClient } from '@/lib/supabase/client'
+import { signOut } from '@/lib/auth/client'
 
 export function MobileNav() {
   const pathname = usePathname()
   const router = useRouter()
-  const supabase = createClient()
   const [showMore, setShowMore] = useState(false)
   const [unreadCount, setUnreadCount] = useState(0)
 
@@ -41,7 +40,7 @@ export function MobileNav() {
 
   async function handleLogout() {
     setShowMore(false)
-    await supabase.auth.signOut()
+    await signOut()
     router.push('/login')
   }
 

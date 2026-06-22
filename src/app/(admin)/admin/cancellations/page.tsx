@@ -1,4 +1,6 @@
-import { createAdminClient } from '@/lib/supabase/admin'
+import { db } from '@/lib/db'
+import { users as usersTable } from '@/lib/db/schema'
+import { inArray } from 'drizzle-orm'
 import { getStripe } from '@/lib/stripe/client'
 import Link from 'next/link'
 
@@ -23,8 +25,6 @@ const PLAN_BADGE: Record<string, { bg: string; text: string; label: string }> = 
 }
 
 export default async function CancellationsPage() {
-  const admin = createAdminClient()
-
   let stripeError: string | null = null
   let cancellations: {
     stripeSubId: string
@@ -48,25 +48,32 @@ export default async function CancellationsPage() {
 
   const subIds = cancellations.map(c => c.stripeSubId)
 
-  let users: Array<{
+  let userRows: Array<{
     id: string
     email: string
     username: string | null
     plan: string
     billing_interval: string | null
     stripe_subscription_id: string | null
-    current_period_end: string | null
+    current_period_end: Date | null
   }> = []
 
   if (subIds.length > 0) {
-    const { data } = await admin
-      .from('users')
-      .select('id, email, username, plan, billing_interval, stripe_subscription_id, current_period_end')
-      .in('stripe_subscription_id', subIds)
-    users = data ?? []
+    userRows = await db
+      .select({
+        id: usersTable.id,
+        email: usersTable.email,
+        username: usersTable.username,
+        plan: usersTable.plan,
+        billing_interval: usersTable.billingInterval,
+        stripe_subscription_id: usersTable.stripeSubscriptionId,
+        current_period_end: usersTable.currentPeriodEnd,
+      })
+      .from(usersTable)
+      .where(inArray(usersTable.stripeSubscriptionId, subIds))
   }
 
-  const userMap = new Map(users.map(u => [u.stripe_subscription_id, u]))
+  const userMap = new Map(userRows.map(u => [u.stripe_subscription_id, u]))
 
   const rows = cancellations.map(c => ({
     ...c,

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
-import { createClient } from '@/lib/supabase/client'
+import { authClient } from '@/lib/auth/client'
 import { useRouter } from 'next/navigation'
 import { PLAN_LIST, PLAN_LABELS, COMMON_FEATURES, PLAN_ORDER, canUpgradeTo, type PlanKey } from '@/lib/plans'
 
@@ -55,7 +55,6 @@ const FAQ = [
 ]
 
 function SettingsContent() {
-  const supabase = createClient()
   const router = useRouter()
   const searchParams = useSearchParams()
 
@@ -170,15 +169,13 @@ function SettingsContent() {
     if (newPassword !== confirmPassword) { setPwError('Die Passwörter stimmen nicht überein.'); return }
 
     setPwLoading(true)
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user?.email) { setPwError('Nicht eingeloggt.'); setPwLoading(false); return }
-
-    const { error: signInError } = await supabase.auth.signInWithPassword({ email: user.email, password: currentPassword })
-    if (signInError) { setPwError('Aktuelles Passwort ist falsch.'); setPwLoading(false); return }
-
-    const { error } = await supabase.auth.updateUser({ password: newPassword })
+    const { error } = await authClient.changePassword({
+      currentPassword,
+      newPassword,
+      revokeOtherSessions: false,
+    })
     if (error) {
-      setPwError(error.message)
+      setPwError(error.message === 'Invalid password' ? 'Aktuelles Passwort ist falsch.' : (error.message ?? 'Fehler beim Ändern des Passworts.'))
     } else {
       setPwSuccess('Passwort erfolgreich geändert.')
       setCurrentPassword(''); setNewPassword(''); setConfirmPassword('')

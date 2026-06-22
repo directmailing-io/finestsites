@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
-import { createAdminClient } from '@/lib/supabase/admin'
+import { getUserFromRequest } from '@/lib/auth/server'
+import { db } from '@/lib/db'
+import { users } from '@/lib/db/schema'
+import { eq } from 'drizzle-orm'
 import { uploadToR2 } from '@/lib/r2/client'
 
 export async function POST(req: NextRequest) {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const user = await getUserFromRequest(req)
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const formData = await req.formData()
@@ -27,8 +28,9 @@ export async function POST(req: NextRequest) {
   const url = `${origin}/api/media/${key}`
 
   // Save to user profile
-  const admin = createAdminClient()
-  await admin.from('users').update({ profile_image_url: url }).eq('id', user.id)
+  await db.update(users)
+    .set({ profileImageUrl: url })
+    .where(eq(users.id, user.id))
 
   return NextResponse.json({ url })
 }

@@ -1,69 +1,80 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createAdminClient } from '@/lib/supabase/admin'
-import { createClient } from '@/lib/supabase/server'
+import { db } from '@/lib/db'
+import { users, templateAccess } from '@/lib/db/schema'
+import { eq, and, desc } from 'drizzle-orm'
+import { getUserFromRequest } from '@/lib/auth/server'
 
-async function checkAdmin() {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+async function checkAdmin(req: Request) {
+  const user = await getUserFromRequest(req)
   if (!user) return null
-  const { data } = await supabase.from('users').select('is_admin').eq('id', user.id).single()
-  return data?.is_admin ? user : null
+  const profile = await db.query.users.findFirst({
+    where: eq(users.id, user.id),
+    columns: { isAdmin: true },
+  })
+  return profile?.isAdmin ? user : null
 }
 
 // GET /api/admin/templates/[id]/access → list whitelisted users
-export async function GET(_: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const admin_user = await checkAdmin()
-  if (!admin_user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const adminUser = await checkAdmin(req)
+  if (!adminUser) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const { id } = await params
-  const admin = createAdminClient()
 
-  const { data, error } = await admin
-    .from('template_access')
-    .select('id, user_id, granted_at, users!template_access_user_id_fkey(email, username)')
-    .eq('template_id', id)
-    .order('granted_at', { ascending: false })
-
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
-  return NextResponse.json(data ?? [])
+  try {
+    const data = await db.query.templateAccess.findMany({
+      where: eq(templateAccess.templateId, id),
+      orderBy: desc(templateAccess.grantedAt),
+      with: {
+        user: { columns: { email: true, username: true } },
+      },
+    })
+    return NextResponse.json(data)
+  } catch {
+    return NextResponse.json({ error: 'Interner Fehler.' }, { status: 500 })
+  }
 }
 
 // POST /api/admin/templates/[id]/access → grant access to a user
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const admin_user = await checkAdmin()
-  if (!admin_user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  const adminUser = await checkAdmin(req)
+  if (!adminUser) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const { id } = await params
   const { user_id } = await req.json()
   if (!user_id) return NextResponse.json({ error: 'user_id required' }, { status: 400 })
 
-  const admin = createAdminClient()
-  const { data, error } = await admin
-    .from('template_access')
-    .upsert({ template_id: id, user_id, granted_by: admin_user.id }, { onConflict: 'template_id,user_id' })
-    .select()
-    .single()
+  try {
+    const [data] = await db
+      .insert(templateAccess)
+      .values({ templateId: id, userId: user_id, grantedBy: adminUser.id })
+      .onConflictDoUpdate({
+        target: [templateAccess.templateId, templateAccess.userId],
+        set: { grantedBy: adminUser.id, grantedAt: new Date() },
+      })
+      .returning()
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
-  return NextResponse.json(data, { status: 201 })
+    return NextResponse.json(data, { status: 201 })
+  } catch {
+    return NextResponse.json({ error: 'Interner Fehler.' }, { status: 500 })
+  }
 }
 
 // DELETE /api/admin/templates/[id]/access → revoke access
 export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const admin_user = await checkAdmin()
-  if (!admin_user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  const adminUser = await checkAdmin(req)
+  if (!adminUser) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const { id } = await params
   const { user_id } = await req.json()
   if (!user_id) return NextResponse.json({ error: 'user_id required' }, { status: 400 })
 
-  const admin = createAdminClient()
-  const { error } = await admin
-    .from('template_access')
-    .delete()
-    .eq('template_id', id)
-    .eq('user_id', user_id)
-
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
-  return NextResponse.json({ success: true })
+  try {
+    await db.delete(templateAccess).where(
+      and(eq(templateAccess.templateId, id), eq(templateAccess.userId, user_id))
+    )
+    return NextResponse.json({ success: true })
+  } catch {
+    return NextResponse.json({ error: 'Interner Fehler.' }, { status: 500 })
+  }
 }

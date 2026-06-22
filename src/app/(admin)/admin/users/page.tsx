@@ -1,4 +1,6 @@
-import { createAdminClient } from '@/lib/supabase/admin'
+import { db } from '@/lib/db'
+import { users, userSites } from '@/lib/db/schema'
+import { desc, inArray } from 'drizzle-orm'
 import Link from 'next/link'
 
 const PLAN_META: Record<string, { label: string; bg: string; text: string }> = {
@@ -15,33 +17,44 @@ const STATUS_META: Record<string, { label: string; bg: string; text: string; dot
 }
 
 export default async function AdminUsersPage() {
-  const admin = createAdminClient()
-
-  const [{ data: users }, { data: allSites }] = await Promise.all([
-    admin
-      .from('users')
-      .select('id, email, username, plan, billing_interval, subscription_status, created_at')
-      .order('created_at', { ascending: false }),
-    admin
-      .from('user_sites')
-      .select('user_id, status, custom_domain, custom_domain_status')
-      .in('status', ['draft', 'published']),
+  const [allUsers, allSites] = await Promise.all([
+    db
+      .select({
+        id: users.id,
+        email: users.email,
+        username: users.username,
+        plan: users.plan,
+        billingInterval: users.billingInterval,
+        subscriptionStatus: users.subscriptionStatus,
+        createdAt: users.createdAt,
+      })
+      .from(users)
+      .orderBy(desc(users.createdAt)),
+    db
+      .select({
+        userId: userSites.userId,
+        status: userSites.status,
+        customDomain: userSites.customDomain,
+        customDomainStatus: userSites.customDomainStatus,
+      })
+      .from(userSites)
+      .where(inArray(userSites.status, ['draft', 'published'])),
   ])
 
   // Count published sites per user + collect active custom domains
   const siteCountByUser: Record<string, number> = {}
   const customDomainByUser: Record<string, string[]> = {}
-  for (const site of allSites ?? []) {
+  for (const site of allSites) {
     if (site.status === 'published') {
-      siteCountByUser[site.user_id] = (siteCountByUser[site.user_id] ?? 0) + 1
+      siteCountByUser[site.userId] = (siteCountByUser[site.userId] ?? 0) + 1
     }
-    if (site.custom_domain && site.custom_domain_status === 'active') {
-      customDomainByUser[site.user_id] = customDomainByUser[site.user_id] ?? []
-      customDomainByUser[site.user_id].push(site.custom_domain)
+    if (site.customDomain && site.customDomainStatus === 'active') {
+      customDomainByUser[site.userId] = customDomainByUser[site.userId] ?? []
+      customDomainByUser[site.userId].push(site.customDomain)
     }
   }
 
-  const activeCount = users?.filter(u => u.subscription_status === 'active').length ?? 0
+  const activeCount = allUsers.filter(u => u.subscriptionStatus === 'active').length
 
   return (
     <div style={{ maxWidth: 1100 }}>
@@ -51,19 +64,19 @@ export default async function AdminUsersPage() {
         <div>
           <h1 className="text-2xl font-semibold text-gray-900 tracking-tight">Nutzer</h1>
           <p className="text-sm mt-1" style={{ color: '#94A3B8' }}>
-            {users?.length ?? 0} registriert · {activeCount} aktive Abos
+            {allUsers.length} registriert · {activeCount} aktive Abos
           </p>
         </div>
       </div>
 
       {/* ── Mobile Cards (below lg) ── */}
       <div className="block lg:hidden">
-        {users?.map((user: any) => {
+        {allUsers.map((user) => {
           const planMeta   = PLAN_META[user.plan]   ?? PLAN_META.starter
-          const statusMeta = STATUS_META[user.subscription_status] ?? null
+          const statusMeta = STATUS_META[user.subscriptionStatus ?? ''] ?? null
           const siteCount  = siteCountByUser[user.id] ?? 0
           const initials   = user.email.slice(0, 2).toUpperCase()
-          const dateStr    = new Date(user.created_at).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: '2-digit' })
+          const dateStr    = new Date(user.createdAt).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: '2-digit' })
           return (
             <Link key={user.id} href={`/admin/users/${user.id}`}
               className="flex flex-col gap-3 p-4 mb-3 rounded-2xl bg-white active:bg-gray-50"
@@ -111,7 +124,7 @@ export default async function AdminUsersPage() {
           )
         })}
 
-        {(!users || users.length === 0) && (
+        {allUsers.length === 0 && (
           <div className="py-16 text-center">
             <div className="w-12 h-12 rounded-full mx-auto mb-3 flex items-center justify-center"
               style={{ background: '#F1F5F9' }}>
@@ -147,9 +160,9 @@ export default async function AdminUsersPage() {
         </div>
 
         {/* Rows */}
-        {users?.map((user: any) => {
+        {allUsers.map((user) => {
           const planMeta   = PLAN_META[user.plan]   ?? PLAN_META.starter
-          const statusMeta = STATUS_META[user.subscription_status] ?? null
+          const statusMeta = STATUS_META[user.subscriptionStatus ?? ''] ?? null
           const siteCount  = siteCountByUser[user.id] ?? 0
           const initials   = user.email.slice(0, 2).toUpperCase()
 
@@ -233,7 +246,7 @@ export default async function AdminUsersPage() {
 
               {/* Date */}
               <span className="text-xs" style={{ color: '#94A3B8' }}>
-                {new Date(user.created_at).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: '2-digit' })}
+                {new Date(user.createdAt).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: '2-digit' })}
               </span>
 
               {/* Arrow */}
@@ -246,7 +259,7 @@ export default async function AdminUsersPage() {
           )
         })}
 
-        {(!users || users.length === 0) && (
+        {allUsers.length === 0 && (
           <div className="px-6 py-16 text-center">
             <div className="w-12 h-12 rounded-full mx-auto mb-3 flex items-center justify-center"
               style={{ background: '#F1F5F9' }}>

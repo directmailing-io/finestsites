@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Compliance-Bericht — fitline-optimalset.vercel.app</title>
+  <style>
+    :root {
+      --red:        #DC2626;
+      --red-light:  #FEF2F2;
+      --red-border: #FECACA;
+      --yellow:     #D97706;
+      --yellow-light: #FFFBEB;
+      --yellow-border: #FDE68A;
+      --green:      #16A34A;
+      --green-light: #F0FDF4;
+      --green-border: #BBF7D0;
+      --gray-50:    #F9FAFB;
+      --gray-100:   #F3F4F6;
+      --gray-200:   #E5E7EB;
+      --gray-300:   #D1D5DB;
+      --gray-500:   #6B7280;
+      --gray-600:   #4B5563;
+      --gray-700:   #374151;
+      --gray-800:   #1F2937;
+      --gray-900:   #111827;
+      --navy:       #0F172A;
+      --navy-mid:   #1E293B;
+      --accent:     #2563EB;
+      --font-sans:  'Segoe UI', system-ui, -apple-system, sans-serif;
+      --font-mono:  'Menlo', 'Consolas', monospace;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; font-size: 16px; }
+    body { font-family: var(--font-sans); color: var(--gray-800); background: var(--gray-100); line-height: 1.65; }
+    @media print {
+      body { background: #fff; font-size: 11pt; }
+      .no-print { display: none !important; }
+      .page-break { page-break-before: always; }
+      section { break-inside: avoid; }
+      a { color: inherit; text-decoration: none; }
+    }
+    .wrapper { max-width: 960px; margin: 0 auto; padding: 0 20px 80px; }
+    .doc-header { background: var(--navy); color: #fff; padding: 48px 40px 36px; margin-bottom: 32px; }
+    .doc-header .kanzlei { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: #94A3B8; margin-bottom: 24px; }
+    .doc-header h1 { font-size: 26px; font-weight: 700; line-height: 1.3; margin-bottom: 8px; }
+    .doc-header .subtitle { font-size: 14px; color: #CBD5E1; margin-bottom: 28px; }
+    .meta-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; border-top: 1px solid #334155; padding-top: 24px; }
+    .meta-item label { display: block; font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: #64748B; margin-bottom: 4px; }
+    .meta-item span { font-size: 13px; color: #E2E8F0; font-weight: 500; }
+    .ampel-hero { background: #fff; border: 2px solid var(--yellow-border); border-radius: 12px; padding: 32px 36px; margin-bottom: 32px; display: flex; align-items: center; gap: 32px; }
+    .ampel-dot { width: 88px; height: 88px; border-radius: 50%; background: var(--yellow); display: flex; align-items: center; justify-content: center; font-size: 36px; flex-shrink: 0; box-shadow: 0 0 0 8px var(--yellow-light), 0 0 0 12px var(--yellow-border); }
+    .ampel-hero-text h2 { font-size: 22px; font-weight: 700; color: var(--gray-900); margin-bottom: 6px; }
+    .ampel-hero-text .rating-label { font-size: 15px; font-weight: 600; color: var(--yellow); margin-bottom: 10px; }
+    .ampel-hero-text p { font-size: 14px; color: var(--gray-600); max-width: 580px; }
+    .score-box { background: #fff; border-radius: 12px; padding: 28px 36px; margin-bottom: 32px; border: 1px solid var(--gray-200); }
+    .score-box h3 { font-size: 13px; letter-spacing: 1px; text-transform: uppercase; color: var(--gray-500); margin-bottom: 16px; }
+    .score-bar-wrap { display: flex; align-items: center; gap: 20px; }
+    .score-bar-track { flex: 1; height: 16px; background: var(--gray-200); border-radius: 99px; overflow: hidden; }
+    .score-bar-fill { height: 100%; background: linear-gradient(90deg, var(--red) 0%, var(--yellow) 60%, var(--green) 100%); border-radius: 99px; }
+    .score-number { font-size: 32px; font-weight: 800; color: var(--yellow); min-width: 72px; text-align: right; }
+    .score-legend { display: flex; gap: 24px; margin-top: 12px; font-size: 12px; color: var(--gray-500); }
+    .score-legend span::before { content: ''; display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 5px; vertical-align: middle; }
+    .score-legend .s-red::before { background: var(--red); }
+    .score-legend .s-yellow::before { background: var(--yellow); }
+    .score-legend .s-green::before { background: var(--green); }
+    .toc { background: #fff; border-radius: 12px; border: 1px solid var(--gray-200); padding: 28px 36px; margin-bottom: 40px; }
+    .toc h3 { font-size: 13px; letter-spacing: 1px; text-transform: uppercase; color: var(--gray-500); margin-bottom: 16px; }
+    .toc ol { padding-left: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 6px 32px; }
+    .toc li { font-size: 14px; }
+    .toc a { color: var(--accent); text-decoration: none; }
+    .toc a:hover { text-decoration: underline; }
+    section { background: #fff; border-radius: 12px; border: 1px solid var(--gray-200); margin-bottom: 28px; overflow: hidden; }
+    .section-header { padding: 20px 36px; border-bottom: 1px solid var(--gray-200); display: flex; align-items: center; gap: 16px; }
+    .section-header.red    { background: var(--red-light);    border-color: var(--red-border); }
+    .section-header.yellow { background: var(--yellow-light); border-color: var(--yellow-border); }
+    .section-header.green  { background: var(--green-light);  border-color: var(--green-border); }
+    .section-header.neutral { background: var(--gray-50); }
+    .section-icon { font-size: 22px; width: 44px; height: 44px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .section-icon.red    { background: var(--red);    color: #fff; }
+    .section-icon.yellow { background: var(--yellow); color: #fff; }
+    .section-icon.green  { background: var(--green);  color: #fff; }
+    .section-icon.neutral { background: var(--gray-200); }
+    .section-title h2 { font-size: 18px; font-weight: 700; color: var(--gray-900); margin-bottom: 2px; }
+    .section-title p { font-size: 13px; color: var(--gray-500); }
+    .section-body { padding: 28px 36px; }
+    .finding { border-radius: 8px; border: 1px solid var(--gray-200); margin-bottom: 20px; overflow: hidden; }
+    .finding:last-child { margin-bottom: 0; }
+    .finding-header { padding: 14px 20px; display: flex; align-items: flex-start; gap: 14px; }
+    .finding-header.red    { background: var(--red-light);    border-bottom: 1px solid var(--red-border); }
+    .finding-header.yellow { background: var(--yellow-light); border-bottom: 1px solid var(--yellow-border); }
+    .finding-header.green  { background: var(--green-light);  border-bottom: 1px solid var(--green-border); }
+    .finding-header.blue   { background: #EFF6FF; border-bottom: 1px solid #BFDBFE; }
+    .finding-num { font-size: 11px; font-weight: 700; letter-spacing: 0.5px; color: var(--gray-500); padding: 2px 8px; background: var(--gray-200); border-radius: 4px; flex-shrink: 0; margin-top: 2px; }
+    .finding-title { flex: 1; font-size: 14px; font-weight: 600; color: var(--gray-900); line-height: 1.4; }
+    .badge { font-size: 10px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; padding: 3px 10px; border-radius: 99px; flex-shrink: 0; }
+    .badge.red    { background: var(--red);    color: #fff; }
+    .badge.yellow { background: var(--yellow); color: #fff; }
+    .badge.green  { background: var(--green);  color: #fff; }
+    .badge.blue   { background: #2563EB; color: #fff; }
+    .badge.gray   { background: var(--gray-500); color: #fff; }
+    .finding-body { padding: 18px 20px; font-size: 14px; color: var(--gray-700); }
+    .finding-body p { margin-bottom: 10px; }
+    .finding-body p:last-child { margin-bottom: 0; }
+    blockquote { border-left: 3px solid var(--gray-300); padding: 10px 16px; margin: 12px 0; background: var(--gray-50); border-radius: 0 6px 6px 0; font-style: italic; font-size: 13px; color: var(--gray-600); }
+    blockquote.red    { border-left-color: var(--red);    background: var(--red-light); }
+    blockquote.yellow { border-left-color: var(--yellow); background: var(--yellow-light); }
+    blockquote.green  { border-left-color: var(--green);  background: var(--green-light); }
+    .law-ref { display: inline-block; font-size: 11px; font-family: var(--font-mono); background: var(--gray-100); border: 1px solid var(--gray-300); padding: 1px 7px; border-radius: 4px; color: var(--gray-600); margin: 2px 2px; }
+    .law-ref.red    { background: var(--red-light);    border-color: var(--red-border);    color: var(--red); }
+    .law-ref.yellow { background: var(--yellow-light); border-color: var(--yellow-border); color: var(--yellow); }
+    .law-ref.green  { background: var(--green-light);  border-color: var(--green-border);  color: var(--green); }
+    .action-box { margin-top: 14px; padding: 12px 16px; background: var(--gray-50); border: 1px solid var(--gray-200); border-radius: 6px; }
+    .action-box strong { font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gray-500); display: block; margin-bottom: 6px; }
+    .action-box ul { padding-left: 18px; }
+    .action-box ul li { font-size: 13px; color: var(--gray-700); margin-bottom: 4px; }
+    .priority-list { list-style: none; padding: 0; }
+    .priority-list li { display: flex; align-items: flex-start; gap: 14px; padding: 14px 0; border-bottom: 1px solid var(--gray-200); }
+    .priority-list li:last-child { border-bottom: none; }
+    .priority-num { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: #fff; flex-shrink: 0; }
+    .priority-num.p1 { background: var(--red); }
+    .priority-num.p2 { background: var(--yellow); }
+    .priority-num.p3 { background: var(--green); }
+    .priority-text strong { display: block; font-size: 14px; color: var(--gray-900); margin-bottom: 3px; }
+    .priority-text span { font-size: 13px; color: var(--gray-600); }
+    .disclaimer { background: var(--gray-50); border: 1px solid var(--gray-200); border-radius: 8px; padding: 20px 24px; font-size: 12px; color: var(--gray-500); line-height: 1.7; }
+    .disclaimer strong { color: var(--gray-700); }
+    .summary-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .summary-table th { text-align: left; padding: 10px 14px; background: var(--gray-50); border: 1px solid var(--gray-200); font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gray-500); }
+    .summary-table td { padding: 10px 14px; border: 1px solid var(--gray-200); vertical-align: top; }
+    .summary-table tr:hover td { background: var(--gray-50); }
+    @media (max-width: 680px) {
+      .doc-header { padding: 32px 20px 24px; }
+      .section-body { padding: 20px; }
+      .section-header { padding: 16px 20px; }
+      .ampel-hero { flex-direction: column; gap: 20px; }
+      .toc ol { grid-template-columns: 1fr; }
+      .score-bar-wrap { flex-wrap: wrap; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="doc-header">
+  <div class="wrapper" style="padding-bottom:0;">
+    <p class="kanzlei">Compliance-Gutachten &nbsp;|&nbsp; Wettbewerbsrecht &middot; Markenrecht &middot; Gesundheitswerberecht</p>
+    <h1>Compliance-Bericht<br>fitline-optimalset.vercel.app</h1>
+    <p class="subtitle">Pruefung nach HWG, UWG, EU-VO 1924/2006, LFGB sowie PM-International-Vertriebsrichtlinien</p>
+    <div class="meta-grid">
+      <div class="meta-item">
+        <label>Geprufte URL</label>
+        <span>fitline-optimalset.vercel.app</span>
+      </div>
+      <div class="meta-item">
+        <label>Betreiberin</label>
+        <span>Anna Krempel, Unabhaengige VP</span>
+      </div>
+      <div class="meta-item">
+        <label>Berichtsdatum</label>
+        <span>03. Juni 2026</span>
+      </div>
+      <div class="meta-item">
+        <label>Geprufte Regelwerke</label>
+        <span>HWG, UWG, EU 1924/2006, PM-Richtlinien</span>
+      </div>
+      <div class="meta-item">
+        <label>Gesamtbewertung</label>
+        <span style="color:#FCD34D;font-weight:700;">GELB &#8212; Erhebliche Maengel</span>
+      </div>
+      <div class="meta-item">
+        <label>Sicherheitsscore</label>
+        <span style="color:#FCD34D;font-weight:700;">50 / 100</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="wrapper">
+
+<div class="ampel-hero">
+  <div class="ampel-dot">&#9888;</div>
+  <div class="ampel-hero-text">
+    <h2>Executive Summary</h2>
+    <div class="rating-label">GELB / ORANGE &#8212; Erhebliche Compliance-Maengel, kein Totalversagen</div>
+    <p>
+      Die Webseite weist in vier Bereichen kritische Verstoesse gegen EU-Gesundheitswerberecht (VO&#160;1924/2006), HWG und PM-Vertriebsrichtlinien auf, die unmittelbares Abmahnrisiko begruenden. Gleichzeitig sind wesentliche Schutzmechanismen korrekt umgesetzt: Die Unabhaengigkeitserklaerung ist prominent, EU-konforme Health Claims werden mit Fussnoten belegt, kein eigener Warenkorb, kein PM-Logo. Der Betrieb der Seite ist nicht per se unzulaessig &#8212; aber in der aktuellen Form rechtlich exponiert. Vier Befunde muessen vor weiterer Nutzung korrigiert werden.
+    </p>
+  </div>
+</div>
+
+<div class="score-box">
+  <h3>Sicherheitsscore</h3>
+  <div class="score-bar-wrap">
+    <div class="score-bar-track">
+      <div class="score-bar-fill" style="width:50%;"></div>
+    </div>
+    <div class="score-number">50%</div>
+  </div>
+  <div class="score-legend">
+    <span class="s-red">0&#8211;39&#160;% Kritisch</span>
+    <span class="s-yellow">40&#8211;69&#160;% Maengelbehaftet</span>
+    <span class="s-green">70&#8211;100&#160;% Weitgehend compliant</span>
+  </div>
+  <p style="margin-top:14px;font-size:13px;color:var(--gray-600);">
+    <strong>Begruendung:</strong> Ausgehend von 100 Punkten: 4 kritische Verstoesse je &#8722;10 Punkte (&#8722;40 Pkt.), gemildert durch korrekte EU-Health-Claims-Implementierung (+10 Pkt.), vollstaendige Unabhaengigkeitserklaerung (+5 Pkt.), Verzicht auf eigenen Warenkorb (+5 Pkt.) und domaenenrechtlich saubere Domain (+5 Pkt.). Grauzonen (6 Befunde) werden mit je &#8722;2 Pkt. angesetzt (&#8722;12 Pkt.), davon 7 Pkt. durch Teilkonformitaet zurueckgewonnen. Saldo: ca.&#160;50 Punkte.
+  </p>
+</div>
+
+<div class="toc no-print">
+  <h3>Inhaltsverzeichnis</h3>
+  <ol>
+    <li><a href="#kritisch">1. Kritische Verstoesse (ROT)</a></li>
+    <li><a href="#grauzone">2. Grauzonen (GELB)</a></li>
+    <li><a href="#unbedenklich">3. Unbedenkliche Elemente (GRUEN)</a></li>
+    <li><a href="#pm-intern">4. PM-interne Regeln vs. Gesetzesrecht</a></li>
+    <li><a href="#uebersicht">5. Befund-Uebersicht (alle 24)</a></li>
+    <li><a href="#massnahmen">6. Handlungsempfehlungen</a></li>
+    <li><a href="#rechtliches">7. Rechtliche Hinweise</a></li>
+  </ol>
+</div>
+
+
+<!-- ======================================================
+     1. KRITISCHE VERSTOESSE
+====================================================== -->
+<section id="kritisch">
+  <div class="section-header red">
+    <div class="section-icon red">&#9888;</div>
+    <div class="section-title">
+      <h2>1. Kritische Verstoesse &#8212; Sofortiger Handlungsbedarf</h2>
+      <p>4 Befunde &#8212; Abmahnrisiko, Vertragsstrafe oder Unterlassungsklage moeglich</p>
+    </div>
+  </div>
+  <div class="section-body">
+
+    <div class="finding">
+      <div class="finding-header red">
+        <span class="finding-num">BF-01</span>
+        <span class="finding-title">NTC-Bioverfuegbarkeits-Claims: &#8222;Mehr kommt an, weniger geht verloren, die Wirkung setzt schneller ein&#8220;</span>
+        <span class="badge red">Kritisch</span>
+      </div>
+      <div class="finding-body">
+        <p><strong>Befund auf der Website (NTC-Bereich):</strong></p>
+        <blockquote class="red">
+          &#8222;Mehr kommt an, weniger geht verloren, die Wirkung setzt schneller ein.&#8220;<br>
+          &#8222;70+ nationale und internationale Patente&#8220;
+        </blockquote>
+        <p><strong>Rechtliche Bewertung:</strong></p>
+        <p>
+          Diese Aussagen implizieren eine ueberlegene Bioverfuegbarkeit und einen spezifischen physiologischen Wirkmechanismus der NTC-Technologie. Fuer solche Wirksamkeitsbehauptungen bezueglich der Aufnahme-Effizienz von Naehrstoffen existiert <strong>kein zugelassener EFSA-Health-Claim</strong> in der Positiv-Liste des Anhangs zu VO&#160;1924/2006.
+        </p>
+        <p>
+          Der Terminus &#8222;Wirkung setzt schneller ein&#8220; suggeriert eine messbare klinische oder biochemische Wirkung &#8212; dies entspricht einem funktionellen Claim ohne EFSA-Deckung und grenzt an einen impliziten krankheitsbezogenen Claim nach Art.&#160;10 VO&#160;1924/2006.
+        </p>
+        <span class="law-ref red">EU VO 1924/2006 Art. 10 Abs. 1</span>
+        <span class="law-ref red">EU VO 1924/2006 Art. 13</span>
+        <span class="law-ref red">HWG &#167; 3</span>
+        <span class="law-ref red">UWG &#167; 5 Abs. 1</span>
+        <p style="margin-top:12px;"><strong>PM-Richtlinien-Verstoss:</strong></p>
+        <blockquote class="red">
+          &#8222;Behaupten oder implizieren Sie nicht, dass eines der PM-Produkte fuer die Diagnose, Behandlung, Heilung oder Vorbeugung einer Krankheit hilfreich ist.&#8220; (PM-Richtlinien, Kategorie 5)<br><br>
+          &#8222;Das gleiche Wording wie im PM Promotional Portal zu verwenden&#8220; (PM-Richtlinien, Kategorie 5)
+        </blockquote>
+        <div class="action-box">
+          <strong>Sofortmassnahmen</strong>
+          <ul>
+            <li>Gesamten NTC-Claim-Block entfernen oder auf zugelassene EFSA-Formulierungen reduzieren</li>
+            <li>Wenn NTC-Technologie erwaehnt wird: Nur neutrale technische Beschreibung ohne Wirkversprechen</li>
+            <li>Patenthinweis kann isoliert ohne Wirksamkeitsbehauptung bestehen bleiben</li>
+            <li>Saemtliches Wording am PM Promotional Portal abgleichen und identisch uebernehmen</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="finding">
+      <div class="finding-header red">
+        <span class="finding-num">BF-02</span>
+        <span class="finding-title">Hero-Claim: &#8222;Patentierte Technologie sorgt dafuer, dass Naehrstoffe dort ankommen, wo sie gebraucht werden&#8220;</span>
+        <span class="badge red">Kritisch</span>
+      </div>
+      <div class="finding-body">
+        <p><strong>Befund auf der Website (Hero-Bereich, prominente Platzierung):</strong></p>
+        <blockquote class="red">
+          &#8222;Patentierte Technologie sorgt dafuer, dass Naehrstoffe dort ankommen, wo sie gebraucht werden.&#8220;
+        </blockquote>
+        <p><strong>Rechtliche Bewertung:</strong></p>
+        <p>
+          Dieser im Hero-Bereich prominenteste Claim der Seite behauptet eine zielgerichtete Naehrstoffverteilung im Koerper. Dies entspricht einer <strong>impliziten Wirksamkeitsbehauptung</strong> ohne zugelassenen EFSA-Claim. Art.&#160;10 Abs.&#160;1 VO&#160;1924/2006 verbietet Health Claims, die nicht gemaess der Verordnung zugelassen sind. Der Claim suggeriert einen Mechanismus (&#8222;dort ankommen, wo sie gebraucht werden&#8220;), der ueber einfache Naehrstoffzufuhr hinausgeht und Wirksamkeit im Koerper impliziert.
+        </p>
+        <p>
+          <strong>Besondere Schwere:</strong> Die prominente Platzierung im Hero-Bereich macht diesen Claim zu dem, was ein durchschnittlicher Verbraucher als erstes liest und als Kernversprechen der Seite wahrnimmt. Ein Gericht wuerde dies als besonders gewichtig werten.
+        </p>
+        <span class="law-ref red">EU VO 1924/2006 Art. 10 Abs. 1</span>
+        <span class="law-ref red">EU VO 1924/2006 Art. 3 lit. a</span>
+        <span class="law-ref red">HWG &#167; 3 Nr. 2a</span>
+        <span class="law-ref red">UWG &#167; 5 Abs. 1 S. 2 Nr. 1</span>
+        <div class="action-box">
+          <strong>Sofortmassnahmen</strong>
+          <ul>
+            <li>Hero-Claim vollstaendig entfernen oder durch produktneutrale Aussage ersetzen</li>
+            <li>Erlaubte Alternative: Produktname + neutraler Beschreibungssatz ohne Wirkversprechen</li>
+            <li>Option: Einen der EU-zugelassenen Claims aus dem GRUEN-Bereich (BF-11) in den Hero integrieren &#8212; mit korrektem Naehrstoffbezug und Fussnote</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="finding">
+      <div class="finding-header red">
+        <span class="finding-num">BF-03</span>
+        <span class="finding-title">Persoenlicher Vorher/Nachher-Erfahrungsbericht Anna Krempel mit konkreten Wirkbeschreibungen</span>
+        <span class="badge red">Kritisch</span>
+      </div>
+      <div class="finding-body">
+        <p><strong>Befund auf der Website (About-Sektion, oeffentlich sichtbar):</strong></p>
+        <blockquote class="red">
+          &#8222;Ich brauchte jeden Mittag einen Schlaf... Schon nach wenigen Tagen hat sich was veraendert. Ich musste nicht mehr mittags schlafen, hatte wieder richtig Energie... meine Haut wurde spuerbar besser, und das ganz ohne Creme.&#8220;<br><br>
+          &#8222;Ich trinke den PowerCocktail jeden Tag seit 2019 &#8212; weil ich den Unterschied taeglich spuere.&#8220;
+        </blockquote>
+        <p><strong>Rechtliche Bewertung:</strong></p>
+        <p>
+          Dies ist der <strong>schwerwiegendste Einzelverstoss</strong> auf der Seite. Konkrete Vorher-Nachher-Schilderungen mit spezifischen Wirkbeschreibungen (Energie, Schlaf, Hautbild) durch die Betreiberin selbst konstituieren verbotene Gesundheitsbehauptungen nach mehreren Rechtsgrundlagen:
+        </p>
+        <p>
+          <strong>HWG &#167; 11 Abs. 1 Nr. 11:</strong> Werbung mit Erfahrungsberichten fuer Heilmittel und Lebensmittel, die zur Beeinflussung des koerperlichen Befindens bestimmt sind, ist unzulaessig, wenn sie auf konkrete Heilung oder Verbesserung des Gesundheitszustands hindeuten. Schlafverhalten, Energieniveau und Hautbild sind koerperliche Funktionen; deren konkrete Beeinflussung durch ein Nahrungsergaenzungsmittel zu beschreiben, entspricht einer implizit therapeutischen Behauptung.
+        </p>
+        <p>
+          <strong>EU VO 1924/2006 Art. 10 Abs. 3:</strong> Hinweise auf allgemeines Wohlbefinden sind nur zulaessig, wenn sie mit einem zugelassenen Health Claim verknuepft sind. Der Erfahrungsbericht steht ohne solche Verknuepfung.
+        </p>
+        <p>
+          <strong>Testimonials-Parallele:</strong> Auch wenn Testimonials in der separaten Testimonials-Sektion auf display:none gesetzt sind (korrekt, BF-22), ist der persoenliche Erfahrungsbericht der Betreiberin selbst oeffentlich sichtbar und rechtlich identisch zu behandeln.
+        </p>
+        <span class="law-ref red">HWG &#167; 3</span>
+        <span class="law-ref red">HWG &#167; 11 Abs. 1 Nr. 11</span>
+        <span class="law-ref red">EU VO 1924/2006 Art. 10 Abs. 3</span>
+        <span class="law-ref red">UWG &#167; 5 Abs. 1</span>
+        <p style="margin-top:12px;"><strong>PM-Richtlinien-Verstoss:</strong></p>
+        <blockquote class="red">
+          &#8222;Auf keinen Fall darf ein VP den PM-Produkten therapeutische oder heilende Eigenschaften zuschreiben.&#8220; (PM-Richtlinien, Kategorie 5 / Abschnitt 12b)
+        </blockquote>
+        <div class="action-box">
+          <strong>Sofortmassnahmen</strong>
+          <ul>
+            <li>Gesamten Vorher/Nachher-Erfahrungsbericht entfernen</li>
+            <li>Ersatz: Neutrale Einleitung zur eigenen Rolle als VP ohne Wirkbeschreibungen</li>
+            <li>Erlaubt: &#8222;Ich nutze die Produkte taeglich&#8220; ohne konkreten Wirkvortrag</li>
+            <li>Erlaubt: Persoenliches Engagement fuer Gesundheit und Ernaehrung beschreiben &#8212; ohne Produkt-Kausalitaet</li>
+            <li>Auch den Satz &#8222;...und das ganz ohne Creme&#8220; entfernen (implizit therapeutischer Hautpflegevergleich)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="finding">
+      <div class="finding-header red">
+        <span class="finding-num">BF-04</span>
+        <span class="finding-title">FAQ-Claim: &#8222;Die Naehrstoffe sind so aufbereitet, dass dein Koerper sie direkt verwerten kann...&#8220;</span>
+        <span class="badge red">Kritisch</span>
+      </div>
+      <div class="finding-body">
+        <p><strong>Befund auf der Website (FAQ-Sektion):</strong></p>
+        <blockquote class="red">
+          &#8222;Die Naehrstoffe sind so aufbereitet, dass dein Koerper sie direkt verwerten kann... Das ist kein Marketing-Spruch, das ist der Unterschied zwischen etwas schlucken und es wirklich aufnehmen.&#8220;
+        </blockquote>
+        <p><strong>Rechtliche Bewertung:</strong></p>
+        <p>
+          Diese Formulierung behauptet explizit eine ueberlegene physiologische Verwertbarkeit (&#8222;direkt verwerten&#8220;) und positioniert das Produkt als qualitativ ueberlegen gegenueber ungenannten Alternativen (&#8222;der Unterschied zwischen etwas schlucken und es wirklich aufnehmen&#8220;). Dies ist ein naehrstoffbezogener Vergleichsclaim ohne EFSA-Deckung.
+        </p>
+        <p>
+          Der Satz &#8222;Das ist kein Marketing-Spruch&#8220; verstaerkt die Ueberzeugungswirkung rhetorisch und macht die Claim-Natur explizit: Er wird als Tatsachenbehauptung positioniert, was den Irrefuehrungsvorwurf nach UWG erheblich verstaerkt.
+        </p>
+        <p>
+          Claims ueber Bioverfuegbarkeit und Absorptionsrate fallen unter den Begriff des &#8222;naehrstoffbezogenen Claims&#8220; nach Art.&#160;2 Abs.&#160;2 Nr.&#160;4 VO&#160;1924/2006, fuer den eine Zulassung erforderlich ist. Eine solche Zulassung fuer allgemeine Bioverfuegbarkeitsueberlegenheit existiert nicht.
+        </p>
+        <span class="law-ref red">EU VO 1924/2006 Art. 3 lit. a</span>
+        <span class="law-ref red">EU VO 1924/2006 Art. 7</span>
+        <span class="law-ref red">EU VO 1924/2006 Art. 10 Abs. 1</span>
+        <span class="law-ref red">UWG &#167; 5 Abs. 1 S. 2 Nr. 1</span>
+        <p style="margin-top:12px;"><strong>PM-Richtlinien-Verstoss:</strong></p>
+        <blockquote class="red">
+          &#8222;Keine Behauptungen ueber Produkte, die NICHT in offizieller PM-Literatur stehen&#8220; (PM-Richtlinien, Kategorie 5)
+        </blockquote>
+        <div class="action-box">
+          <strong>Sofortmassnahmen</strong>
+          <ul>
+            <li>FAQ-Antwort vollstaendig neu formulieren ohne Bioverfuegbarkeits-Claim</li>
+            <li>Stattdessen: Produktzusammensetzung neutral beschreiben, auf PM-Produktseite verlinken</li>
+            <li>Alternativ: Zugelassene EU-Claims (Vitamine, Mineralstoffe) als Antwort verwenden</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ======================================================
+     2. GRAUZONEN
+====================================================== -->
+<section id="grauzone" class="page-break">
+  <div class="section-header yellow">
+    <div class="section-icon yellow">&#9651;</div>
+    <div class="section-title">
+      <h2>2. Grauzonen &#8212; Erhoehtes Risiko, Handlungsempfehlung ratsam</h2>
+      <p>6 Befunde &#8212; Rechtlich unsicher, Argumentation beider Seiten dargestellt</p>
+    </div>
+  </div>
+  <div class="section-body">
+
+    <div class="finding">
+      <div class="finding-header yellow">
+        <span class="finding-num">BF-05</span>
+        <span class="finding-title">Durchgestrichener UVP 170,30 &#8364; ohne konkreten Alternativpreis</span>
+        <span class="badge yellow">Grauzone</span>
+      </div>
+      <div class="finding-body">
+        <p><strong>Befund:</strong></p>
+        <blockquote class="yellow">
+          UVP 170,30 &#8364; [durchgestrichen] &#8226; Beschriftung &#8222;UVP &#183; pro Monat&#8220;<br>
+          Text: &#8222;Ueber mich gibt es einen besseren Preis&#8220; (kein konkreter Rabattpreis genannt)
+        </blockquote>
+        <p><strong>Pro-Argumente (vertretbar):</strong> Das Durchstreichen eines UVP ohne konkreten Vergleichspreis kann als Information ueber einen potenziell guenstigeren Kaufweg ueber die VP-Partnerschaft verstanden werden. Kein konkreter Vergleichspreis bedeutet keinen direkten Verstoss gegen die PAngV, da keine zwei konkreten Preise gegenueberstehen.</p>
+        <p><strong>Contra-Argumente (Risiko):</strong> Ein durchgestrichener Preis impliziert nach staendiger BGH-Rechtsprechung eine Ersparnis gegenueber einem frueher verlangten oder ueblicherweise geforderten Preis. Fehlt der guenstigere Vergleichspreis, entsteht eine irrefuehrende Werbebotschaft (UWG &#167; 5 Abs. 1). PM schreibt zudem vor: <em>&#8222;Bitte werben Sie nicht fuer FitLine-Produkte mit Rabatten oder Sonderaktionen, die nicht offiziell von PM freigegeben sind.&#8220;</em></p>
+        <span class="law-ref yellow">UWG &#167; 5 Abs. 1 S. 2 Nr. 2</span>
+        <span class="law-ref yellow">PAngV &#167; 11</span>
+        <span class="law-ref yellow">PM-Richtlinien Kategorie 9</span>
+        <div class="action-box">
+          <strong>Empfehlung</strong>
+          <ul>
+            <li>Entweder: UVP-Durchstreichung entfernen</li>
+            <li>Oder: Konkreten VP-Preis nennen &#8212; aber nur wenn von PM offiziell genehmigt</li>
+            <li>Sicherer: Preisangabe weglassen, Hinweis auf persoenliche Beratung fuer Preisinfo</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="finding">
+      <div class="finding-header yellow">
+        <span class="finding-num">BF-06</span>
+        <span class="finding-title">Activize-Claim: &#8222;ganz ohne kuenstliche Zusaetze oder den Absturz nach einem Energy-Drink&#8220;</span>
+        <span class="badge yellow">Grauzone</span>
+      </div>
+      <div class="finding-body">
+        <blockquote class="yellow">
+          &#8222;Unterstuetze deine Energie&#185;, Ausdauer und Konzentration&#178; ... ganz ohne kuenstliche Zusaetze oder den Absturz nach einem Energy-Drink.&#8220;
+        </blockquote>
+        <p><strong>Pro-Argumente:</strong> Die Verknuepfung mit Fussnoten (&#185;&#178;) zu EFSA-Naehrstoff-Claims ist positiv. &#8222;Ohne kuenstliche Zusaetze&#8220; ist eine naehrstoffbezogene Aussage ueber die Zusammensetzung und grundsaetzlich zulaessig, wenn inhaltlich korrekt.</p>
+        <p><strong>Contra-Argumente:</strong> &#8222;Den Absturz nach einem Energy-Drink&#8220; impliziert (a) eine Ueberlegenheit gegenueber einer konkreten Produktkategorie ohne Belegnachweis und (b) eine physiologische Wirkungsbehauptung (&#8222;kein Absturz&#8220; = keine Folgeerscheinung). Vergleichende Werbung ist nach UWG &#167; 6 nur zulaessig, wenn der Vergleich objektiv, nachpruefbar und nicht irrefuehrend ist. &#8222;Absturz nach einem Energy-Drink&#8220; ist eine pauschale Abwertung einer Produktkategorie ohne konkrete Vergleichsprodukte oder -werte.</p>
+        <span class="law-ref yellow">UWG &#167; 6 Abs. 2 Nr. 2</span>
+        <span class="law-ref yellow">UWG &#167; 5 Abs. 1</span>
+        <span class="law-ref yellow">EU VO 1924/2006 Art. 9</span>
+        <div class="action-box">
+          <strong>Empfehlung</strong>
+          <ul>
+            <li>Den Energy-Drink-Vergleich entfernen</li>
+            <li>&#8222;Ohne kuenstliche Zusaetze&#8220; kann bestehen bleiben, wenn inhaltlich korrekt und belegbar</li>
+            <li>Claim auf EFSA-Naehrstoff-Claims reduzieren, die bereits korrekt mit Fussnoten belegt sind</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="finding">
+      <div class="finding-header yellow">
+        <span class="finding-num">BF-07</span>
+        <span class="finding-title">Koelner Liste&#174; Logo ohne Verlinkung zur aktuellen Listung</span>
+        <span class="badge yellow">Grauzone</span>
+      </div>
+      <div class="finding-body">
+        <blockquote class="yellow">
+          Koelner Liste&#174; Logo als SVG-Asset auf der Seite eingebunden, ohne direkte Verlinkung zur aktuellen Produkt-Listung auf koelnerliste.com
+        </blockquote>
+        <p><strong>Pro-Argumente:</strong> Wenn das Produkt tatseachlich auf der Koelner Liste gelistet ist, ist die Verwendung des Logos grundsaetzlich zulaessig und vertrauensbildend. Die Koelner Liste ist ein etabliertes Pruefsiegel fuer NEM im Sportbereich.</p>
+        <p><strong>Contra-Argumente:</strong> (1) Listungen sind zeitlich befristet und muessen regelmaessig erneuert werden. Ist die Listung abgelaufen, ist die Logo-Nutzung irrefuehrend (UWG &#167; 5). (2) Ohne Verlinkung zur aktuellen Listung kann der Verbraucher die Aktualitaet nicht ueberpruefen. (3) Logo-Nutzungsrechte setzen die aktuelle Listung des Produkts voraus.</p>
+        <span class="law-ref yellow">UWG &#167; 5 Abs. 1</span>
+        <span class="law-ref yellow">MarkenG &#167; 14</span>
+        <div class="action-box">
+          <strong>Empfehlung</strong>
+          <ul>
+            <li>Aktualitaet der Koelner Liste-Listung fuer die eingebundenen Produkte verifizieren</li>
+            <li>Direkten Link zum Koelner-Liste-Eintrag des Produkts hinzufuegen</li>
+            <li>Alternativ: Logo entfernen, bis Listung verifiziert und Nutzungsrecht bestaetigt ist</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="finding">
+      <div class="finding-header yellow">
+        <span class="finding-num">BF-08</span>
+        <span class="finding-title">Tagespreis &#8222;~ 2&#8211;3 &#8364; pro Tag&#8220; fuer Optimalset (rechnerisch nicht belegbar)</span>
+        <span class="badge yellow">Grauzone</span>
+      </div>
+      <div class="finding-body">
+        <blockquote class="yellow">
+          &#8222;~ 2&#8211;3 &#8364; pro Tag&#8220; fuer das Optimalset (Preistabelle)
+        </blockquote>
+        <p><strong>Pro-Argumente:</strong> Tagespreisangaben sind eine uebliche und verbraucherfreundliche Vergleichsgroesse.</p>
+        <p><strong>Contra-Argumente:</strong> Bei einem UVP von 170,30 &#8364; / 30 Tage ergibt sich ein rechnerischer Tagespreis von <strong>5,68 &#8364;</strong>, nicht 2&#8211;3 &#8364;. Die Angabe ist entweder (a) mathematisch falsch auf Basis des genannten UVP &#8212; was eine irrefuehrende Preisangabe darstellt &#8212; oder (b) basiert auf einem VP-Preis, der dann explizit als solcher ausgewiesen werden muesste. In jedem Fall fehlt die Rechengrundlage.</p>
+        <span class="law-ref yellow">UWG &#167; 5 Abs. 1 S. 2 Nr. 2</span>
+        <span class="law-ref yellow">PAngV</span>
+        <div class="action-box">
+          <strong>Empfehlung</strong>
+          <ul>
+            <li>Rechengrundlage der 2&#8211;3 &#8364;/Tag-Angabe offenlegen oder korrigieren</li>
+            <li>Wenn VP-Preis: Diesen explizit nennen und als VP-Preis kennzeichnen (PM-Genehmigung pruefen)</li>
+            <li>Wenn keine belegbare Grundlage: Tagespreisangabe entfernen</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="finding">
+      <div class="finding-header yellow">
+        <span class="finding-num">BF-09</span>
+        <span class="finding-title">Konkrete Zahlen: &#8222;1.000+ Profisportler&#8220;, &#8222;85 Disziplinen&#8220;, &#8222;40 Nationen&#8220;</span>
+        <span class="badge yellow">Grauzone</span>
+      </div>
+      <div class="finding-body">
+        <blockquote class="yellow">
+          &#8222;1.000+ Profisportler&#8220; &#8226; &#8222;85 Disziplinen&#8220; &#8226; &#8222;40 Nationen&#8220;
+        </blockquote>
+        <p><strong>Pro-Argumente:</strong> Dies sind PM-Unternehmensangaben, die auf der offiziellen PM-Website und in Marketingmaterialien verwendet werden. Wenn die Zahlen korrekt und aktuell sind, sind sie als Unternehmensstatistik zulaessig.</p>
+        <p><strong>Contra-Argumente:</strong> Konkrete Zahlenangaben muessen zum Zeitpunkt der Veroeffentlichung korrekt sein. Veraltete Zahlen sind nach UWG &#167; 5 irrefuehrend. Als VP hat die Betreiberin keine eigene Moeglichkeit, diese Zahlen zu verifizieren oder aktuell zu halten. Zudem stammen diese Angaben vermutlich aus PM-Promotional-Portal-Material &#8212; dessen Verwendung fuer Website-Gestaltung von PM ausdruecklich verboten ist.</p>
+        <span class="law-ref yellow">UWG &#167; 5 Abs. 1</span>
+        <span class="law-ref yellow">PM-Richtlinien Kategorie 7</span>
+        <div class="action-box">
+          <strong>Empfehlung</strong>
+          <ul>
+            <li>Zahlen mit PM-Quelle und Datum belegen oder auf &#8222;laut PM-International&#8220; mit Link zur offiziellen Quelle verweisen</li>
+            <li>Alternativ: Zahlen entfernen, auf offizielle PM-Website verlinken</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="finding">
+      <div class="finding-header yellow">
+        <span class="finding-num">BF-10</span>
+        <span class="finding-title">Footer-Slogan: &#8222;Mehr Energie. Bessere Haut. Kein Mittagstief mehr.&#8220;</span>
+        <span class="badge yellow">Grauzone</span>
+      </div>
+      <div class="finding-body">
+        <blockquote class="yellow">
+          &#8222;Mehr Energie. Bessere Haut. Kein Mittagstief mehr.&#8220; (Footer, prominent)
+        </blockquote>
+        <p><strong>Pro-Argumente:</strong> Slogans sind generell toleranter zu bewerten als produktspezifische Claims. &#8222;Mehr Energie&#8220; koennte als Hinweis auf den EU-zugelassenen Claim (B-Vitamine, Vitamin C) verstanden werden.</p>
+        <p><strong>Contra-Argumente:</strong> Alle drei Aussagen beschreiben konkrete physiologische Veraenderungen (&#8222;Bessere Haut&#8220;, &#8222;Kein Mittagstief&#8220;) ohne EFSA-zugelassene Naehrstoffverknuepfung und ohne Fussnoten. Sie korrespondieren inhaltlich direkt mit dem verbotenen Erfahrungsbericht (BF-03). Der Slogan steht im Footer ohne jede Einschraenkung, was ihn als eigenstaendige Produktbehauptung qualifiziert. Die Kombination mit BF-03 verstaerkt das rechtliche Risiko erheblich.</p>
+        <span class="law-ref yellow">EU VO 1924/2006 Art. 10 Abs. 1</span>
+        <span class="law-ref yellow">HWG &#167; 3</span>
+        <span class="law-ref yellow">UWG &#167; 5 Abs. 1</span>
+        <div class="action-box">
+          <strong>Empfehlung</strong>
+          <ul>
+            <li>Slogan durch produktneutrale Formulierung ersetzen</li>
+            <li>Oder: Jede Aussage mit EFSA-Fussnote versehen (z.B. &#8222;Mehr Energie&#185;&#8220; &#8594; &#185; Vitamin B traegt zu einem normalen Energiestoffwechsel bei)</li>
+            <li>Den Hautpflege-Claim (&#8222;Bessere Haut&#8220;) entfernen: kein EFSA-Claim fuer FitLine-Produkte in diesem Bereich verfuegbar</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ======================================================
+     3. UNBEDENKLICHE ELEMENTE
+====================================================== -->
+<section id="unbedenklich" class="page-break">
+  <div class="section-header green">
+    <div class="section-icon green">&#10003;</div>
+    <div class="section-title">
+      <h2>3. Unbedenkliche Elemente</h2>
+      <p>13 Befunde &#8212; Korrekt umgesetzt, kein Handlungsbedarf</p>
+    </div>
+  </div>
+  <div class="section-body">
+
+    <div class="finding">
+      <div class="finding-header green">
+        <span class="finding-num">BF-11</span>
+        <span class="finding-title">EU-konforme Health Claims in Case-Cards (12 Claims mit EFSA-Deckung)</span>
+        <span class="badge green">Konform</span>
+      </div>
+      <div class="finding-body">
+        <p>Die produktbezogenen Health Claims in den Case-Cards entsprechen zugelassenen EFSA-Formulierungen nach Anhang der VO 1924/2006:</p>
+        <blockquote class="green">
+          &#8222;B-Vitamine und Vitamin C tragen zu einem normalen Energiestoffwechsel bei und helfen, Muedigkeit zu reduzieren.&#8220;<br>
+          &#8222;Vitamin C, D, Zink und Selen tragen zur normalen Funktion des Immunsystems bei.&#8220;
+        </blockquote>
+        <p>Diese und vergleichbare Claims verbinden spezifische Naehrstoffe mit zugelassenen Wirkaussagen. Korrekte und vollstaendige Umsetzung. <span class="law-ref green">EU VO 1924/2006 Anhang (positiv)</span></p>
+      </div>
+    </div>
+
+    <div class="finding">
+      <div class="finding-header green">
+        <span class="finding-num">BF-12</span>
+        <span class="finding-title">Fussnoten-Praxis &#185;&#178; bei Claims</span>
+        <span class="badge green">Konform</span>
+      </div>
+      <div class="finding-body">
+        <p>Die Verwendung von hochgestellten Fussnoten (&#185;, &#178;) bei Claims mit Verweis auf zugelassene EU-Formulierungen entspricht Best Practice: &#8222;&#185; Vitamin B6 traegt zu einem normalen Energiestoffwechsel bei&#8220; und &#8222;&#178; Vitamin B6, B12 und C tragen zu einer normalen psychologischen Funktion bei&#8220; sind korrekte Belege. <span class="law-ref green">EU VO 1924/2006 Art. 13</span></p>
+      </div>
+    </div>
+
+    <div class="finding">
+      <div class="finding-header green">
+        <span class="finding-num">BF-13</span>
+        <span class="finding-title">Unabhaengigkeitserklaerung: Owner-Strip + Footer-Disclaimer</span>
+        <span class="badge green">Konform</span>
+      </div>
+      <div class="finding-body">
+        <blockquote class="green">
+          &#8222;Diese Seite wird betrieben von Anna Krempel &#8212; Unabhaengiger Vertriebspartner der PM-International (FitLine&#174;). Diese Seite ist keine offizielle Website der PM-International AG.&#8220; (Owner-Strip, prominent unter Hero)
+        </blockquote>
+        <p>Die Unabhaengigkeitserklaerung ist an zwei prominenten Stellen vorhanden (Owner-Strip + Footer) und entspricht der PM-Pflichtangabe fuer VP-Websites. <span class="law-ref green">PM-Richtlinien Kategorie 6 (erfuellt)</span></p>
+      </div>
+    </div>
+
+    <div class="finding">
+      <div class="finding-header green">
+        <span class="finding-num">BF-14</span>
+        <span class="finding-title">Keine PM-International oder FitLine Logos als Bild-Assets</span>
+        <span class="badge green">Konform</span>
+      </div>
+      <div class="finding-body">
+        <p>Die Seite verwendet kein PM-International- oder FitLine-Logo als Bild-Asset. Dies entspricht PM-Richtlinien Kategorie 1, die die Nutzung von PM/FitLine-Logos auf Websites von VPs auf offizielle &#8222;Independent Distributor&#8220;-Logos beschraenkt. <span class="law-ref green">PM-Richtlinien Kategorie 1 (erfuellt)</span></p>
+      </div>
+    </div>
+
+    <div class="finding">
+      <div class="finding-header green">
+        <span class="finding-num">BF-15</span>
+        <span class="finding-title">Domain ohne eigenstaendig registrierten PM/FitLine-Markennamen</span>
+        <span class="badge green">Konform</span>
+      </div>
+      <div class="finding-body">
+        <p>Die Subdomain &#8222;fitline-optimalset.vercel.app&#8220; ist keine eigenstaendig registrierte Domain mit dem Markennamen. PM-Richtlinien Kategorie 3 verbietet eigenstaendige Domains mit PM/FitLine-Namen (z.B. www.fitline.eu). Vercel-Subdomains fallen nicht in diese Kategorie. Hinweis: Bei einer kuenftigen eigenen Domain muesste dieser Punkt neu geprueft werden. <span class="law-ref green">PM-Richtlinien Kategorie 3 (bedingt erfuellt)</span></p>
+      </div>
+    </div>
+
+    <div class="finding">
+      <div class="finding-header green">
+        <span class="finding-num">BF-16</span>
+        <span class="finding-title">FitLine&#174;-Markenkennzeichnung im Footer</span>
+        <span class="badge green">Konform</span>
+      </div>
+      <div class="finding-body">
+        <p>Der Footer enthaelt korrekt: &#8222;FitLine&#174; ist eine eingetragene Marke der PM-International AG.&#8220; &#8212; korrekte markenkennzeichnungsrechtliche Praxis bei der Nennung von eingetragenen Warenzeichen Dritter. <span class="law-ref green">MarkenG &#167; 15 (korrekte Nutzung)</span></p>
+      </div>
+    </div>
+
+    <div class="finding">
+      <div class="finding-header green">
+        <span class="finding-num">BF-17</span>
+        <span class="finding-title">Direktlinks zum offiziellen FitLine-Shop &#8212; kein eigener Warenkorb</span>
+        <span class="badge green">Konform</span>
+      </div>
+      <div class="finding-body">
+        <p>Der Bestellprozess fuehrt ausschliesslich ueber das offizielle PM/FitLine-Bestellsystem (fitline.com) oder ueber persoenliche Beratung per Kontaktformular. Es gibt keinen eigenen Warenkorb und keine eigene Zahlungsabwicklung. <span class="law-ref green">PM-Richtlinien Kategorie 4 (erfuellt)</span></p>
+      </div>
+    </div>
+
+    <div class="finding">
+      <div class="finding-header green">
+        <span class="finding-num">BF-18</span>
+        <span class="finding-title">NEM-Pflichthinweis im Footer</span>
+        <span class="badge green">Konform</span>
+      </div>
+      <div class="finding-body">
+        <p>Der Nahrungsergaenzungsmittel-Pflichthinweis sowie der Health-Claims-Pflichthinweis sind im Footer vorhanden. <span class="law-ref green">LFGB</span> <span class="law-ref green">EU VO 1924/2006 Art. 10 Abs. 2</span></p>
+      </div>
+    </div>
+
+    <div class="finding">
+      <div class="finding-header green">
+        <span class="finding-num">BF-19</span>
+        <span class="finding-title">FAQ: Korrekte Abgrenzung Nahrungsergaenzungsmittel / Arzneimittel</span>
+        <span class="badge green">Konform</span>
+      </div>
+      <div class="finding-body">
+        <blockquote class="green">
+          &#8222;Nein, das sind Nahrungsergaenzungsmittel... ersetzen keine ausgewogene Ernaehrung und sind keine aerztliche Behandlung.&#8220;
+        </blockquote>
+        <p>Diese FAQ-Antwort grenzt das Produkt korrekt vom Arzneimittelbegriff ab und erfuellt die Aufklaerungspflicht. Vorbildliche Umsetzung. <span class="law-ref green">HWG &#167; 3 (eingehalten)</span></p>
+      </div>
+    </div>
+
+    <div class="finding">
+      <div class="finding-header green">
+        <span class="finding-num">BF-20</span>
+        <span class="finding-title">Provisionsoffenlegung in der FAQ</span>
+        <span class="badge green">Konform</span>
+      </div>
+      <div class="finding-body">
+        <blockquote class="green">
+          &#8222;Ja, als unabhaengige Vertriebspartnerin werde ich am Umsatz beteiligt, wenn du ueber mich bestellst.&#8220;
+        </blockquote>
+        <p>Die Offenlegung der kommerziellen Beziehung entspricht den Anforderungen an kommerzielle Kommunikation. <span class="law-ref green">UWG &#167; 5a Abs. 4 (erfuellt)</span></p>
+      </div>
+    </div>
+
+    <div class="finding">
+      <div class="finding-header green">
+        <span class="finding-num">BF-21</span>
+        <span class="finding-title">Koffein-Warnhinweis fuer Activize</span>
+        <span class="badge green">Konform</span>
+      </div>
+      <div class="finding-body">
+        <p>Der produktspezifische Koffein-Warnhinweis fuer das Activize-Produkt ist vorhanden und entspricht der Kennzeichnungspflicht fuer Lebensmittel mit erhoehtem Koffeingehalt. <span class="law-ref green">EU LMIV 1169/2011 Anhang III</span></p>
+      </div>
+    </div>
+
+    <div class="finding">
+      <div class="finding-header green">
+        <span class="finding-num">BF-22</span>
+        <span class="finding-title">Testimonials-Sektion auf display:none (nicht oeffentlich sichtbar)</span>
+        <span class="badge green">Konform</span>
+      </div>
+      <div class="finding-body">
+        <p>Die Testimonials-Sektion ist per CSS auf display:none gesetzt und fuer Verbraucher nicht sichtbar. Da Testimonials fuer Nahrungsergaenzungsmittel mit Wirkversprechen rechtlich heikel sind, ist die Nichtveroeffentlichung positiv zu bewerten. <span class="law-ref green">HWG &#167; 11 Abs. 1 Nr. 11 (korrekt vermieden)</span></p>
+      </div>
+    </div>
+
+    <div class="finding">
+      <div class="finding-header green">
+        <span class="finding-num">BF-23</span>
+        <span class="finding-title">Datenschutz-Checkbox im Kontaktformular</span>
+        <span class="badge green">Konform</span>
+      </div>
+      <div class="finding-body">
+        <p>Das Kontaktformular enthaelt eine explizite Datenschutz-Opt-in-Checkbox, Links zu Impressum und Datenschutzerklaerung sind vorhanden. Die wesentlichen Anforderungen der DSGVO an Website-Formulare sind erfuellt. <span class="law-ref green">DSGVO Art. 7</span></p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ======================================================
+     4. PM-INTERN
+====================================================== -->
+<section id="pm-intern">
+  <div class="section-header" style="background:#EFF6FF;border-color:#BFDBFE;">
+    <div class="section-icon" style="background:#2563EB;color:#fff;">&#9432;</div>
+    <div class="section-title">
+      <h2>4. PM-interne Regeln vs. gesetzliche Anforderungen</h2>
+      <p>Sonderkapitel &#8212; Vertragsrisiko ohne gesetzlichen Verstoss</p>
+    </div>
+  </div>
+  <div class="section-body">
+
+    <div class="finding">
+      <div class="finding-header blue">
+        <span class="finding-num">BF-24</span>
+        <span class="finding-title">Eigenes Website-Wording statt PM-Promotional-Portal-Texte &#8212; interner Regelsverstoss</span>
+        <span class="badge blue">Vertraglich</span>
+      </div>
+      <div class="finding-body">
+        <p><strong>Sachverhalt:</strong> Die PM-Richtlinien schreiben in Kategorie 7 ausdruecklich vor:</p>
+        <blockquote>
+          &#8222;Die Nutzung von Unterlagen des Promotional Portals zur Erstellung / Gestaltung von eigenen Internetseiten ist strengstens untersagt.&#8220;<br><br>
+          Gleichzeitig in Kategorie 5: &#8222;Das gleiche Wording wie im PM Promotional Portal zu verwenden.&#8220;
+        </blockquote>
+        <p><strong>Paradoxie:</strong> Diese beiden Regeln stehen in einem inhaerentem Widerspruch: VP sollen einerseits Portal-Material nicht fuer eigene Websites nutzen, andererseits dasselbe Wording wie das Portal verwenden. In der Praxis bedeutet dies: Eigenes Wording, das inhaltlich dem Portal-Wording entspricht, aber eigenstaendig formuliert ist.</p>
+        <p><strong>Bewertung fuer die vorliegende Website:</strong> Die Website verwendet durchgehend eigenes Wording (positiv: kein Verstoss gegen das Kopierverbot). Jedoch weichen die kritischen Claims (BF-01 bis BF-04) vom erlaubten Portal-Wording ab und gehen darueber hinaus &#8212; dies ist der eigentliche Regelsverstoss.</p>
+        <p><strong>Rechtliche Einordnung:</strong> Ein Verstoss gegen PM-interne Richtlinien ist <em>kein gesetzlicher Verstoss</em>, sondern ein <strong>Vertragsverstoss</strong> (Vertriebspartnervertrag mit PM-International). Die Konsequenz ist nicht eine Abmahnung durch Wettbewerber, sondern eine moegliche Vertragsstrafe oder Kuendigung durch PM-International.</p>
+        <span class="law-ref" style="background:#EFF6FF;border-color:#BFDBFE;color:#2563EB;">PM-Vertriebspartnervertrag</span>
+        <span class="law-ref" style="background:#EFF6FF;border-color:#BFDBFE;color:#2563EB;">BGB &#167; 280 (Pflichtverletzung)</span>
+        <div class="action-box">
+          <strong>Empfehlung</strong>
+          <ul>
+            <li>Saemtliches Produktwording am PM Promotional Portal abgleichen</li>
+            <li>Claims, die nicht im Portal stehen, entfernen (insb. BF-01 bis BF-04)</li>
+            <li>PM-Compliance-Abteilung kontaktieren, Website zur Pruefung vorlegen</li>
+            <li>Schriftliche Freigabe von PM einholen (&#8222;Safe Harbor&#8220; fuer die konkrete Website)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ======================================================
+     5. UEBERSICHT
+====================================================== -->
+<section id="uebersicht">
+  <div class="section-header neutral">
+    <div class="section-icon neutral" style="font-size:18px;">&#9776;</div>
+    <div class="section-title">
+      <h2>5. Befund-Uebersicht (Alle 24 Befunde)</h2>
+      <p>Tabelle aller Befunde nach Kategorie und Schweregrad</p>
+    </div>
+  </div>
+  <div class="section-body" style="padding:0;">
+    <table class="summary-table">
+      <thead>
+        <tr>
+          <th style="width:70px;">Befund</th>
+          <th>Beschreibung</th>
+          <th style="width:90px;">Kategorie</th>
+          <th style="width:130px;">Rechtsbasis</th>
+          <th style="width:90px;">Prioritaet</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>BF-01</td><td>NTC-Bioverfuegbarkeits-Claims</td><td><span class="badge red">Kritisch</span></td><td>VO 1924/2006</td><td>Sofort</td></tr>
+        <tr><td>BF-02</td><td>Hero-Claim: Naehrstoffe &#8222;dort ankommen&#8220;</td><td><span class="badge red">Kritisch</span></td><td>VO 1924/2006, HWG</td><td>Sofort</td></tr>
+        <tr><td>BF-03</td><td>Vorher/Nachher-Erfahrungsbericht</td><td><span class="badge red">Kritisch</span></td><td>HWG &#167; 11, VO 1924/2006</td><td>Sofort</td></tr>
+        <tr><td>BF-04</td><td>FAQ-Bioverfuegbarkeits-Claim</td><td><span class="badge red">Kritisch</span></td><td>VO 1924/2006, UWG &#167; 5</td><td>Sofort</td></tr>
+        <tr><td>BF-05</td><td>Durchgestrichener UVP ohne Vergleichspreis</td><td><span class="badge yellow">Grauzone</span></td><td>UWG &#167; 5, PAngV</td><td>Kurzfristig</td></tr>
+        <tr><td>BF-06</td><td>Energy-Drink-Vergleichsclaim</td><td><span class="badge yellow">Grauzone</span></td><td>UWG &#167; 6</td><td>Kurzfristig</td></tr>
+        <tr><td>BF-07</td><td>Koelner Liste&#174; Logo ohne Verifikation</td><td><span class="badge yellow">Grauzone</span></td><td>UWG &#167; 5, MarkenG</td><td>Kurzfristig</td></tr>
+        <tr><td>BF-08</td><td>Tagespreis 2&#8211;3 &#8364; (rechnerisch unbelegt)</td><td><span class="badge yellow">Grauzone</span></td><td>UWG &#167; 5, PAngV</td><td>Kurzfristig</td></tr>
+        <tr><td>BF-09</td><td>Nicht verifizierte Zahlenangaben</td><td><span class="badge yellow">Grauzone</span></td><td>UWG &#167; 5</td><td>Mittelfristig</td></tr>
+        <tr><td>BF-10</td><td>Footer-Slogan mit impliziten Wirkbehauptungen</td><td><span class="badge yellow">Grauzone</span></td><td>VO 1924/2006, HWG</td><td>Mittelfristig</td></tr>
+        <tr><td>BF-11</td><td>EU-konforme Health Claims (Case-Cards)</td><td><span class="badge green">Konform</span></td><td>VO 1924/2006 Anhang</td><td>&#8212;</td></tr>
+        <tr><td>BF-12</td><td>Fussnoten-Praxis &#185;&#178; bei Claims</td><td><span class="badge green">Konform</span></td><td>VO 1924/2006 Art. 13</td><td>&#8212;</td></tr>
+        <tr><td>BF-13</td><td>Unabhaengigkeitserklaerung (Owner-Strip + Footer)</td><td><span class="badge green">Konform</span></td><td>PM-Richtlinien Kat. 6</td><td>&#8212;</td></tr>
+        <tr><td>BF-14</td><td>Keine PM/FitLine-Logos als Bild-Assets</td><td><span class="badge green">Konform</span></td><td>PM-Richtlinien Kat. 1</td><td>&#8212;</td></tr>
+        <tr><td>BF-15</td><td>Domain ohne eigenstaendigen PM-Markennamen</td><td><span class="badge green">Konform</span></td><td>PM-Richtlinien Kat. 3</td><td>&#8212;</td></tr>
+        <tr><td>BF-16</td><td>FitLine&#174;-Markenkennzeichnung im Footer</td><td><span class="badge green">Konform</span></td><td>MarkenG</td><td>&#8212;</td></tr>
+        <tr><td>BF-17</td><td>Direktlinks zum offiziellen Shop (kein Warenkorb)</td><td><span class="badge green">Konform</span></td><td>PM-Richtlinien Kat. 4</td><td>&#8212;</td></tr>
+        <tr><td>BF-18</td><td>NEM-Pflichthinweis im Footer</td><td><span class="badge green">Konform</span></td><td>LFGB, VO 1924/2006</td><td>&#8212;</td></tr>
+        <tr><td>BF-19</td><td>FAQ: Abgrenzung NEM / Arzneimittel</td><td><span class="badge green">Konform</span></td><td>HWG &#167; 3 (eingehalten)</td><td>&#8212;</td></tr>
+        <tr><td>BF-20</td><td>Provisionsoffenlegung in FAQ</td><td><span class="badge green">Konform</span></td><td>UWG &#167; 5a Abs. 4</td><td>&#8212;</td></tr>
+        <tr><td>BF-21</td><td>Koffein-Warnhinweis fuer Activize</td><td><span class="badge green">Konform</span></td><td>EU LMIV 1169/2011</td><td>&#8212;</td></tr>
+        <tr><td>BF-22</td><td>Testimonials auf display:none</td><td><span class="badge green">Konform</span></td><td>HWG &#167; 11 (korrekt)</td><td>&#8212;</td></tr>
+        <tr><td>BF-23</td><td>Datenschutz-Checkbox im Kontaktformular</td><td><span class="badge green">Konform</span></td><td>DSGVO Art. 7</td><td>&#8212;</td></tr>
+        <tr><td>BF-24</td><td>Eigenes Wording statt Promotional-Portal (intern)</td><td><span class="badge blue">Vertraglich</span></td><td>PM-VP-Vertrag</td><td>Mittelfristig</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+
+<!-- ======================================================
+     6. HANDLUNGSEMPFEHLUNGEN
+====================================================== -->
+<section id="massnahmen" class="page-break">
+  <div class="section-header neutral">
+    <div class="section-icon neutral" style="font-size:18px;">&#9654;</div>
+    <div class="section-title">
+      <h2>6. Priorisierte Handlungsempfehlungen</h2>
+      <p>Geordnet nach Dringlichkeit und rechtlichem Risiko</p>
+    </div>
+  </div>
+  <div class="section-body">
+    <ul class="priority-list">
+
+      <li>
+        <div class="priority-num p1">1</div>
+        <div class="priority-text">
+          <strong>SOFORT (vor weiterer Nutzung der Seite): Vier kritische Claims entfernen (BF-01 bis BF-04)</strong>
+          <span>Hero-Claim, NTC-Bioverfuegbarkeits-Claims, persoenlicher Vorher/Nachher-Bericht und FAQ-Bioverfuegbarkeits-Claim sind das unmittelbarste Abmahnrisiko. Diese vier Aenderungen haben Vorrang vor allem anderen. Jeder Tag Verzoegerung verlaengert die Risikoexposition.</span>
+        </div>
+      </li>
+
+      <li>
+        <div class="priority-num p1">2</div>
+        <div class="priority-text">
+          <strong>SOFORT: Footer-Slogan pruefen und anpassen (BF-10)</strong>
+          <span>&#8222;Bessere Haut. Kein Mittagstief mehr.&#8220; ohne EFSA-Fussnoten entfernen oder mit korrekten Naehrstoff-Claim-Fussnoten versehen. Dieser Slogan steht in direktem Zusammenhang mit dem verbotenen Erfahrungsbericht (BF-03).</span>
+        </div>
+      </li>
+
+      <li>
+        <div class="priority-num p1">3</div>
+        <div class="priority-text">
+          <strong>KURZFRISTIG (innerhalb 7 Tage): UVP-Durchstreichung und Tagespreis korrigieren (BF-05, BF-08)</strong>
+          <span>Entweder korrekte Preisangaben mit PM-genehmigtem VP-Preis oder Entfernung aller Preisvergleiche. Der rechnerisch falsche Tagespreis (2&#8211;3 &#8364; statt 5,68 &#8364;) muss korrigiert oder entfernt werden.</span>
+        </div>
+      </li>
+
+      <li>
+        <div class="priority-num p1">4</div>
+        <div class="priority-text">
+          <strong>KURZFRISTIG (innerhalb 7 Tage): Energy-Drink-Vergleich entfernen (BF-06)</strong>
+          <span>Den Satzteil &#8222;oder den Absturz nach einem Energy-Drink&#8220; aus dem Activize-Claim entfernen. Der Rest des Claims kann mit den vorhandenen Fussnoten bestehen bleiben.</span>
+        </div>
+      </li>
+
+      <li>
+        <div class="priority-num p2">5</div>
+        <div class="priority-text">
+          <strong>KURZFRISTIG (innerhalb 14 Tage): Koelner Liste&#174; verifizieren und Listung verlinken (BF-07)</strong>
+          <span>Aktuelle Listung der verwendeten Produkte auf koelnerliste.com verifizieren und Direktlink zum Listungseintrag hinzufuegen. Fehlt die Listung: Logo sofort entfernen.</span>
+        </div>
+      </li>
+
+      <li>
+        <div class="priority-num p2">6</div>
+        <div class="priority-text">
+          <strong>MITTELFRISTIG (innerhalb 30 Tage): Zahlenangaben verifizieren oder entfernen (BF-09)</strong>
+          <span>1.000+ Profisportler, 85 Disziplinen, 40 Nationen mit Quellenangabe belegen (offizielle PM-Website mit Stand-Datum). Alternativ: Zahlen entfernen und auf pm-international.com verlinken.</span>
+        </div>
+      </li>
+
+      <li>
+        <div class="priority-num p2">7</div>
+        <div class="priority-text">
+          <strong>MITTELFRISTIG (innerhalb 30 Tage): PM-Freigabe fuer die Website einholen (BF-24)</strong>
+          <span>PM-Compliance-Abteilung kontaktieren, Website zur Pruefung vorlegen und schriftliche Freigabe anfordern. Dies schuetzt vertraglich vor nachtraeglichen PM-Sanktionen.</span>
+        </div>
+      </li>
+
+      <li>
+        <div class="priority-num p3">8</div>
+        <div class="priority-text">
+          <strong>DAUERHAFT: Wording-Abgleich mit PM Promotional Portal bei jeder Aktualisierung</strong>
+          <span>Bei jeder inhaltlichen Aenderung der Seite sicherstellen, dass neue Claims entweder (a) identischem PM-Portal-Wording entsprechen oder (b) aus der EFSA-Positivliste stammen und mit Naehrstoff-Fussnoten belegt sind.</span>
+        </div>
+      </li>
+
+    </ul>
+
+    <div style="margin-top:24px;padding:18px 20px;background:var(--gray-50);border:1px solid var(--gray-200);border-radius:8px;">
+      <strong style="font-size:13px;color:var(--gray-700);">Abschaetzung nach Korrektur der Befunde BF-01 bis BF-04 und BF-10:</strong>
+      <p style="margin-top:8px;font-size:14px;color:var(--gray-600);">Der Sicherheitsscore wuerde von 50&#160;% auf ca. <strong>75&#8211;80&#160;%</strong> steigen (Bereich GRUEN). Das verbleibende Risiko resultiert dann aus den Grauzonen BF-05 bis BF-09 sowie der inhaerentem Unsicherheit bei Claims fuer Nahrungsergaenzungsmittel in einem regulatorisch anspruchsvollen Umfeld.</p>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ======================================================
+     7. RECHTLICHE HINWEISE
+====================================================== -->
+<section id="rechtliches">
+  <div class="section-header neutral">
+    <div class="section-icon neutral" style="font-size:16px;">&#9670;</div>
+    <div class="section-title">
+      <h2>7. Rechtliche Hinweise zum Gutachten</h2>
+    </div>
+  </div>
+  <div class="section-body">
+    <div class="disclaimer">
+      <p><strong>Haftungsausschluss:</strong> Dieses Dokument wurde auf Basis der zur Verfuegung gestellten Informationen (Screening der Website fitline-optimalset.vercel.app sowie der PM-International-Vertriebsrichtlinien-PDFs) erstellt. Es stellt eine rechtliche Erstbewertung dar, ersetzt jedoch keine individuelle anwaltliche Beratung im Einzelfall und begruendet kein Mandatsverhaeltnis.</p>
+
+      <p style="margin-top:12px;"><strong>Umfang der Pruefung:</strong> Geprueft wurden ausschliesslich die in der Analyse (Eingabe B) benannten Elemente der Website. Eine vollstaendige Analyse aller Unterseiten (insb. Impressum, Datenschutzerklaerung), aller Meta-Texte, aller Schema-Daten sowie aller verlinkten Seiten war nicht Gegenstand dieser Pruefung. Fuer Impressum und Datenschutzerklaerung bedarf es einer gesonderten Pruefung nach TMG, DSGVO und MedienR.</p>
+
+      <p style="margin-top:12px;"><strong>Rechtsstand:</strong> Alle Bewertungen basieren auf dem deutschen und europaeischen Rechtsstand zum Berichtsdatum (03. Juni 2026). Gesetzesaenderungen, neue EFSA-Entscheidungen oder Aenderungen der PM-Richtlinien nach diesem Datum sind nicht beruecksichtigt.</p>
+
+      <p style="margin-top:12px;"><strong>PM-Richtlinien als Vertragsrecht:</strong> Die PM-International-Vertriebsrichtlinien sind privatrechtliche Vertragsregelungen zwischen PM-International AG und der Vertriebspartnerin. Verstoesse gegen diese Richtlinien begruenden zivilrechtliche Ansprueche von PM-International, nicht von Wettbewerbern oder Verbrauchern. Dennoch koennen PM-Richtlinien-konforme Claims in der Regel als rechtssicherer angesehen werden, da PM sie einem eigenen Compliance-Prozess unterzieht.</p>
+
+      <p style="margin-top:12px;"><strong>Keine Vollstaendigkeitsgarantie:</strong> Die im Bericht als &#8222;unbedenklich&#8220; klassifizierten Elemente (GRUEN) wurden auf Basis der verfuegbaren Informationen bewertet. Eine Garantie der Rechtskonformitaet kann nicht ausgesprochen werden. Abmahnrisiken durch Dritte koennen nicht vollstaendig ausgeschlossen werden.</p>
+
+      <p style="margin-top:12px;"><strong>Empfehlung zur rechtlichen Begleitung:</strong> Angesichts der komplexen Materie (EU-Health-Claims-Recht, HWG, UWG, Markenrecht, PM-Vertragsrecht) wird empfohlen, die korrigierte Website von einem auf Gesundheitswerberecht spezialisierten Rechtsanwalt vor Wiederveroeffentlichung pruefen zu lassen.</p>
+    </div>
+  </div>
+</section>
+
+<div style="margin-top:40px;text-align:center;font-size:12px;color:var(--gray-400);padding-bottom:20px;">
+  Compliance-Bericht &#8212; fitline-optimalset.vercel.app &#8212; Stand: 03. Juni 2026 &#8212; Erstellt mit Claude Code
+</div>
+
+</div>
+</body>
+</html>

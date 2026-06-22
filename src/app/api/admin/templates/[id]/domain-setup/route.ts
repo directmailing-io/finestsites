@@ -1,35 +1,36 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createAdminClient } from '@/lib/supabase/admin'
-import { createClient } from '@/lib/supabase/server'
+import { getUserFromRequest } from '@/lib/auth/server'
+import { db } from '@/lib/db'
+import { users, templates } from '@/lib/db/schema'
+import { eq } from 'drizzle-orm'
 import { setupDomainRouting, findZone, deleteWorkerRoute } from '@/lib/cloudflare/worker-routes'
 
-async function checkAdmin() {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+async function checkAdmin(req: NextRequest) {
+  const user = await getUserFromRequest(req)
   if (!user) return null
-  const { data } = await supabase.from('users').select('is_admin').eq('id', user.id).single()
-  return data?.is_admin ? user : null
+  const userRow = await db.query.users.findFirst({
+    where: eq(users.id, user.id),
+  })
+  return userRow?.isAdmin ? user : null
 }
 
 // GET — fetch current domain setup status
-export async function GET(_: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const user = await checkAdmin()
+export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const user = await checkAdmin(req)
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const { id } = await params
-  const admin = createAdminClient()
-  const { data: tpl } = await admin
-    .from('templates')
-    .select('domain, cf_hostname_id, cf_hostname_status, cf_hostname_data')
-    .eq('id', id)
-    .single()
+
+  const tpl = await db.query.templates.findFirst({
+    where: eq(templates.id, id),
+  })
 
   if (!tpl) return NextResponse.json({ error: 'Not found' }, { status: 404 })
   if (!tpl.domain) return NextResponse.json({ status: 'no_domain' })
 
   // If already set up, return active immediately
-  if (tpl.cf_hostname_status === 'active' && tpl.cf_hostname_data) {
-    const data = tpl.cf_hostname_data as { manual?: boolean }
+  if (tpl.cfHostnameStatus === 'active' && tpl.cfHostnameData) {
+    const data = tpl.cfHostnameData as { manual?: boolean }
     // For manually configured domains, skip zone verification — trust admin's explicit setup
     if (data.manual) {
       return NextResponse.json({ status: 'active', domain: tpl.domain, manual: true })
@@ -39,7 +40,7 @@ export async function GET(_: NextRequest, { params }: { params: Promise<{ id: st
     if (!zone) {
       return NextResponse.json({ status: 'zone_missing', domain: tpl.domain })
     }
-    return NextResponse.json({ status: 'active', domain: tpl.domain, ...(tpl.cf_hostname_data as object) })
+    return NextResponse.json({ status: 'active', domain: tpl.domain, ...(tpl.cfHostnameData as object) })
   }
 
   // Check if zone exists in Cloudflare
@@ -49,7 +50,7 @@ export async function GET(_: NextRequest, { params }: { params: Promise<{ id: st
   }
 
   return NextResponse.json({
-    status: tpl.cf_hostname_status ?? 'none',
+    status: tpl.cfHostnameStatus ?? 'none',
     domain: tpl.domain,
     zone_name: zone.name,
     zone_status: zone.status,
@@ -57,16 +58,18 @@ export async function GET(_: NextRequest, { params }: { params: Promise<{ id: st
 }
 
 // POST — set up Worker Route + CNAME automatically
-export async function POST(_: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const user = await checkAdmin()
+export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const user = await checkAdmin(req)
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const { id } = await params
-  const admin = createAdminClient()
-  const { data: tpl } = await admin.from('templates').select('domain, cf_hostname_status').eq('id', id).single()
+
+  const tpl = await db.query.templates.findFirst({
+    where: eq(templates.id, id),
+  })
 
   if (!tpl?.domain) return NextResponse.json({ error: 'Domain fehlt.' }, { status: 400 })
-  if (tpl.cf_hostname_status === 'active') {
+  if (tpl.cfHostnameStatus === 'active') {
     return NextResponse.json({ status: 'active', domain: tpl.domain })
   }
 
@@ -78,11 +81,13 @@ export async function POST(_: NextRequest, { params }: { params: Promise<{ id: s
       zone_id: result.zone.id,
       route_id: result.routeId,
     }
-    await admin.from('templates').update({
-      cf_hostname_id: result.routeId,
-      cf_hostname_status: 'active',
-      cf_hostname_data: payload,
-    }).eq('id', id)
+    await db.update(templates)
+      .set({
+        cfHostnameId: result.routeId,
+        cfHostnameStatus: 'active',
+        cfHostnameData: payload,
+      })
+      .where(eq(templates.id, id))
 
     return NextResponse.json(payload)
   } catch (err: unknown) {
@@ -93,46 +98,47 @@ export async function POST(_: NextRequest, { params }: { params: Promise<{ id: s
 
 // PATCH — force-mark as active (for manually configured domains)
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const user = await checkAdmin()
+  const user = await checkAdmin(req)
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const { id } = await params
   const body = await req.json().catch(() => ({}))
   if (!body.forceActive) return NextResponse.json({ error: 'Invalid' }, { status: 400 })
 
-  const admin = createAdminClient()
-  await admin.from('templates').update({
-    cf_hostname_id: 'manual',
-    cf_hostname_status: 'active',
-    cf_hostname_data: { status: 'active', manual: true },
-  }).eq('id', id)
+  await db.update(templates)
+    .set({
+      cfHostnameId: 'manual',
+      cfHostnameStatus: 'active',
+      cfHostnameData: { status: 'active', manual: true },
+    })
+    .where(eq(templates.id, id))
 
   return NextResponse.json({ status: 'active', manual: true })
 }
 
 // DELETE — remove Worker Route
-export async function DELETE(_: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const user = await checkAdmin()
+export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const user = await checkAdmin(req)
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const { id } = await params
-  const admin = createAdminClient()
-  const { data: tpl } = await admin
-    .from('templates')
-    .select('cf_hostname_id, cf_hostname_data')
-    .eq('id', id)
-    .single()
 
-  if (tpl?.cf_hostname_id && tpl?.cf_hostname_data) {
-    const d = tpl.cf_hostname_data as { zone_id?: string }
+  const tpl = await db.query.templates.findFirst({
+    where: eq(templates.id, id),
+  })
+
+  if (tpl?.cfHostnameId && tpl?.cfHostnameData) {
+    const d = tpl.cfHostnameData as { zone_id?: string }
     if (d.zone_id) {
-      await deleteWorkerRoute(d.zone_id, tpl.cf_hostname_id).catch(() => {})
+      await deleteWorkerRoute(d.zone_id, tpl.cfHostnameId).catch(() => {})
     }
-    await admin.from('templates').update({
-      cf_hostname_id: null,
-      cf_hostname_status: null,
-      cf_hostname_data: null,
-    }).eq('id', id)
+    await db.update(templates)
+      .set({
+        cfHostnameId: null,
+        cfHostnameStatus: null,
+        cfHostnameData: null,
+      })
+      .where(eq(templates.id, id))
   }
 
   return NextResponse.json({ success: true })

@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createAdminClient } from '@/lib/supabase/admin'
+import { db } from '@/lib/db'
+import { users } from '@/lib/db/schema'
+import { eq } from 'drizzle-orm'
 import { getStripe } from '@/lib/stripe/client'
 
 // GET /api/affiliate/connect/return — Stripe redirects here after onboarding
@@ -16,11 +18,9 @@ export async function GET(req: NextRequest) {
   const account = await stripe.accounts.retrieve(accountId)
   const onboarded = account.details_submitted && !account.requirements?.currently_due?.length
 
-  const admin = createAdminClient()
-  await admin.from('users').update({
-    stripe_connect_id: accountId,
-    affiliate_onboarded: onboarded,
-  }).eq('id', userId)
+  await db.update(users)
+    .set({ stripeConnectId: accountId, affiliateOnboarded: onboarded })
+    .where(eq(users.id, userId))
 
   const status = onboarded ? 'success' : 'pending'
   return NextResponse.redirect(new URL(`/affiliate?connect=${status}`, req.url))

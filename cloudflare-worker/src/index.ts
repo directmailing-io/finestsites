@@ -491,6 +491,20 @@ export default {
       })
     }
 
+    // Demo endpoint — serves a pre-rendered template by slug for testing on
+    // any device without setting up the template's actual domain/zone yet.
+    // Push the rendered HTML to KV under `demo:{slug}` (24h TTL).
+    if (pathname.startsWith('/.finestsites/demo/')) {
+      const slug = pathname.replace('/.finestsites/demo/', '').replace(/\/$/, '')
+      const html = await env.KV_CACHE.get(`demo:${slug}`)
+      if (html) {
+        return new Response(html, {
+          headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-cache' },
+        })
+      }
+      return new Response('Demo not found', { status: 404 })
+    }
+
     // ── Resolve username + domain ─────────────────────────────────────────────
     // First check custom domain KV (e.g. www.meine-domain.de → { username, templateDomain })
     // This must happen BEFORE subdomain parsing to avoid false matches.
@@ -552,8 +566,13 @@ export default {
       }
 
       // ── Static assets ────────────────────────────────────────────────────
+      // SPA routing: paths without a file extension (e.g. /testevent, /event-2)
+      // fall through to the rendered HTML below — the template's JS handles the
+      // page switch via location.pathname. Only paths with an explicit file
+      // extension (.css, .png, .woff2 …) are served from R2.
       const assetPath = pathname === '/' ? 'index.html' : pathname.replace(/^\//, '')
-      const isHtml = assetPath === 'index.html' || assetPath.endsWith('.html')
+      const hasFileExt = /\.[a-zA-Z0-9]+$/.test(assetPath)
+      const isHtml = assetPath === 'index.html' || assetPath.endsWith('.html') || !hasFileExt
 
       if (!isHtml && assetPath) {
         const r2Key = `${meta.r2BasePath}/${assetPath}`

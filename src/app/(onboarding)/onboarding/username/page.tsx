@@ -1,7 +1,9 @@
 import { redirect } from 'next/navigation'
 import type Stripe from 'stripe'
-import { createClient } from '@/lib/supabase/server'
-import { createAdminClient } from '@/lib/supabase/admin'
+import { getServerUser } from '@/lib/auth/server'
+import { db } from '@/lib/db'
+import { users } from '@/lib/db/schema'
+import { eq } from 'drizzle-orm'
 import { getStripe, getPlanByPriceId } from '@/lib/stripe/client'
 import { UsernameForm } from './UsernameForm'
 
@@ -15,22 +17,18 @@ export default async function OnboardingUsernamePage({
 }) {
   const { session_id: sessionId } = await searchParams
 
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const user = await getServerUser()
   if (!user) redirect('/login')
 
-  const admin = createAdminClient()
-  const { data: profile } = await admin
-    .from('users')
-    .select('subscription_status, stripe_subscription_id, username')
-    .eq('id', user.id)
-    .single()
+  const profile = await db.query.users.findFirst({
+    where: eq(users.id, user.id),
+  })
 
   // Real active subscription: status is valid AND a Stripe subscription ID exists
   const hasRealSubscription =
-    !!profile?.subscription_status &&
-    ACTIVE_STATUSES.includes(profile.subscription_status) &&
-    !!profile?.stripe_subscription_id
+    !!profile?.subscriptionStatus &&
+    ACTIVE_STATUSES.includes(profile.subscriptionStatus) &&
+    !!profile?.stripeSubscriptionId
 
   if (hasRealSubscription) {
     // Subscription already recorded — go to dashboard if username is set, else collect it
@@ -60,12 +58,14 @@ export default async function OnboardingUsernamePage({
           sub.items.data[0]?.price.recurring?.interval === 'year' ? 'yearly' : 'monthly'
 
         // Update the DB — webhook will no-op when it arrives
-        await admin.from('users').update({
-          plan,
-          billing_interval: interval,
-          subscription_status: sub.status,
-          stripe_subscription_id: sub.id,
-        }).eq('id', user.id)
+        await db.update(users)
+          .set({
+            plan,
+            billingInterval: interval,
+            subscriptionStatus: sub.status,
+            stripeSubscriptionId: sub.id,
+          })
+          .where(eq(users.id, user.id))
 
         sessionVerified = true
       }

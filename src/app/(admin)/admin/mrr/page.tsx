@@ -1,4 +1,6 @@
-import { createAdminClient } from '@/lib/supabase/admin'
+import { db } from '@/lib/db'
+import { users as usersTable } from '@/lib/db/schema'
+import { eq, isNotNull } from 'drizzle-orm'
 import Link from 'next/link'
 
 const CHARGE: Record<string, Record<string, number>> = {
@@ -37,7 +39,7 @@ interface UserRow {
   username: string | null
   plan: string
   billing_interval: string | null
-  current_period_end: string | null
+  current_period_end: Date | null
   stripe_subscription_id: string | null
 }
 
@@ -52,7 +54,7 @@ function groupByDay(users: UserRow[], year: number, month: number): DayGroup[] {
   const map = new Map<number, DayGroup>()
   for (const u of users) {
     if (!u.current_period_end) continue
-    const d = new Date(u.current_period_end)
+    const d = u.current_period_end instanceof Date ? u.current_period_end : new Date(u.current_period_end)
     if (d.getFullYear() !== year || d.getMonth() !== month) continue
     const day = d.getDate()
     if (!map.has(day)) {
@@ -67,20 +69,26 @@ function groupByDay(users: UserRow[], year: number, month: number): DayGroup[] {
 }
 
 export default async function MrrPage() {
-  const admin = createAdminClient()
   const now = new Date()
   const currentYear  = now.getFullYear()
   const currentMonth = now.getMonth()
   const nextYear     = currentMonth === 11 ? currentYear + 1 : currentYear
   const nextMonth    = (currentMonth + 1) % 12
 
-  const { data } = await admin
-    .from('users')
-    .select('id, email, username, plan, billing_interval, current_period_end, stripe_subscription_id')
-    .eq('subscription_status', 'active')
-    .not('current_period_end', 'is', null)
+  const rows = await db
+    .select({
+      id: usersTable.id,
+      email: usersTable.email,
+      username: usersTable.username,
+      plan: usersTable.plan,
+      billing_interval: usersTable.billingInterval,
+      current_period_end: usersTable.currentPeriodEnd,
+      stripe_subscription_id: usersTable.stripeSubscriptionId,
+    })
+    .from(usersTable)
+    .where(eq(usersTable.subscriptionStatus, 'active'))
 
-  const users: UserRow[] = data ?? []
+  const users: UserRow[] = rows.filter(u => u.current_period_end !== null)
 
   const currentGroups = groupByDay(users, currentYear, currentMonth)
   const nextGroups    = groupByDay(users, nextYear,    nextMonth)

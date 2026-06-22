@@ -7,32 +7,36 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
-import { createAdminClient } from '@/lib/supabase/admin'
+import { getUserFromRequest } from '@/lib/auth/server'
+import { db } from '@/lib/db'
+import { users, affiliateCommissions } from '@/lib/db/schema'
+import { eq, and } from 'drizzle-orm'
+
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL ?? 'daniel-kurzeja@live.de'
 
 export async function POST(req: NextRequest) {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const user = await getUserFromRequest(req)
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-
-  const admin = createAdminClient()
-  const { data: profile } = await admin.from('users').select('is_admin').eq('id', user.id).single()
-  if (!profile?.is_admin) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+  if (user.email !== ADMIN_EMAIL) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
 
   const body = await req.json().catch(() => ({}))
-  const now = new Date().toISOString()
+  const now = new Date()
 
-  let query = admin
-    .from('affiliate_commissions')
-    .update({ status: 'available', available_at: now, updated_at: now })
-    .eq('status', 'pending')
-
+  let result
   if (body.referrer_id) {
-    query = query.eq('referrer_id', body.referrer_id)
+    result = await db.update(affiliateCommissions)
+      .set({ status: 'available', availableAt: now, updatedAt: now })
+      .where(and(
+        eq(affiliateCommissions.status, 'pending'),
+        eq(affiliateCommissions.referrerId, body.referrer_id)
+      ))
+      .returning({ id: affiliateCommissions.id })
+  } else {
+    result = await db.update(affiliateCommissions)
+      .set({ status: 'available', availableAt: now, updatedAt: now })
+      .where(eq(affiliateCommissions.status, 'pending'))
+      .returning({ id: affiliateCommissions.id })
   }
 
-  const { data, error } = await query.select('id')
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
-
-  return NextResponse.json({ released: data?.length ?? 0 })
+  return NextResponse.json({ released: result.length })
 }

@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import type Stripe from 'stripe'
-import { createClient } from '@/lib/supabase/server'
-import { createAdminClient } from '@/lib/supabase/admin'
+import { db } from '@/lib/db'
+import { users } from '@/lib/db/schema'
+import { eq } from 'drizzle-orm'
+import { getUserFromRequest } from '@/lib/auth/server'
 import { getStripe, getPriceIdByPlan, type PlanKey, type BillingInterval } from '@/lib/stripe/client'
 
 /**
@@ -18,8 +20,7 @@ import { getStripe, getPriceIdByPlan, type PlanKey, type BillingInterval } from 
  */
 export async function POST(req: NextRequest) {
   try {
-    const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
+    const user = await getUserFromRequest(req)
     if (!user) return NextResponse.json({ error: 'Nicht angemeldet.' }, { status: 401 })
 
     const { plan, interval = 'monthly' } = await req.json() as { plan: PlanKey; interval?: BillingInterval }
@@ -27,22 +28,20 @@ export async function POST(req: NextRequest) {
     if (!priceId) return NextResponse.json({ error: 'Ungültiger Plan.' }, { status: 400 })
 
     const stripe = getStripe()
-    const admin = createAdminClient()
-    const { data: profile } = await admin
-      .from('users')
-      .select('stripe_customer_id, email, username, referred_by_username')
-      .eq('id', user.id)
-      .single()
+    const profile = await db.query.users.findFirst({
+      where: eq(users.id, user.id),
+      columns: { stripeCustomerId: true, email: true, username: true, referredByUsername: true },
+    })
 
     // Create or reuse Stripe customer
-    let customerId = profile?.stripe_customer_id as string | undefined
+    let customerId = profile?.stripeCustomerId ?? undefined
     if (!customerId) {
       const customer = await stripe.customers.create({
         email: profile?.email ?? user.email ?? '',
         metadata: { supabase_user_id: user.id },
       })
       customerId = customer.id
-      await admin.from('users').update({ stripe_customer_id: customerId }).eq('id', user.id)
+      await db.update(users).set({ stripeCustomerId: customerId }).where(eq(users.id, user.id))
     }
 
     // Use request origin so Stripe redirects back to the correct host
@@ -63,15 +62,8 @@ export async function POST(req: NextRequest) {
 
     // Apply affiliate discount coupon if user was referred
     const affiliateCouponId = process.env.STRIPE_AFFILIATE_COUPON_ID
-    const referredBy = profile?.referred_by_username
-      ?? (await supabase.auth.getUser()).data.user?.user_metadata?.referred_by_username
-      ?? null
+    const referredBy = profile?.referredByUsername ?? null
     const hasReferral = !!referredBy && !!affiliateCouponId
-
-    // Sync to public.users if found only in metadata
-    if (!profile?.referred_by_username && referredBy) {
-      await admin.from('users').update({ referred_by_username: referredBy }).eq('id', user.id)
-    }
 
     // Stripe Tax: enabled when STRIPE_AUTOMATIC_TAX=1 in env.
     // Requires:

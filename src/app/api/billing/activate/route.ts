@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import type Stripe from 'stripe'
-import { createClient } from '@/lib/supabase/server'
-import { createAdminClient } from '@/lib/supabase/admin'
+import { db } from '@/lib/db'
+import { users } from '@/lib/db/schema'
+import { eq } from 'drizzle-orm'
+import { getUserFromRequest } from '@/lib/auth/server'
 import { getStripe, getPlanByPriceId } from '@/lib/stripe/client'
 import { getResend, FROM_EMAIL } from '@/lib/resend'
 import { subscriptionConfirmationEmail } from '@/lib/email/templates'
@@ -17,8 +19,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.redirect(new URL('/onboarding/plan', req.url))
   }
 
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const user = await getUserFromRequest(req)
   if (!user) {
     return NextResponse.redirect(new URL('/login', req.url))
   }
@@ -34,7 +35,7 @@ export async function GET(req: NextRequest) {
     }
 
     // Guard: session must belong to this user
-    const sessionUserId = session.metadata?.supabase_user_id
+    const sessionUserId = session.metadata?.supabase_user_id ?? session.metadata?.user_id
     if (sessionUserId && sessionUserId !== user.id) {
       console.error('[billing/activate] user mismatch', sessionUserId, user.id)
       return NextResponse.redirect(new URL('/onboarding/plan', req.url))
@@ -46,25 +47,24 @@ export async function GET(req: NextRequest) {
     const interval =
       sub.items.data[0]?.price.recurring?.interval === 'year' ? 'yearly' : 'monthly'
 
-    const admin = createAdminClient()
-    const { error } = await admin.from('users').update({
-      plan,
-      billing_interval: interval,
-      subscription_status: sub.status,
-      stripe_subscription_id: sub.id,
-      current_period_end: (() => {
-        // In Stripe API 2025+, current_period_end moved to SubscriptionItem
-        const itemTs = (sub.items.data[0] as any)?.current_period_end
-        const rootTs = (sub as any).current_period_end
-        const ts = itemTs ?? rootTs
-        return ts ? new Date(ts * 1000).toISOString() : null
-      })(),
-      payment_failed_at: null,
-      deactivated_at: null,
-    }).eq('id', user.id)
+    // In Stripe API 2025+, current_period_end moved to SubscriptionItem
+    const itemTs = (sub.items.data[0] as any)?.current_period_end
+    const rootTs = (sub as any).current_period_end
+    const ts = itemTs ?? rootTs
+    const currentPeriodEnd = ts ? new Date(ts * 1000) : null
 
-    if (error) {
-      console.error('[billing/activate] DB update error:', error.message)
+    try {
+      await db.update(users).set({
+        plan,
+        billingInterval: interval,
+        subscriptionStatus: sub.status,
+        stripeSubscriptionId: sub.id,
+        currentPeriodEnd,
+        paymentFailedAt: null,
+        deactivatedAt: null,
+      }).where(eq(users.id, user.id))
+    } catch (dbErr) {
+      console.error('[billing/activate] DB update error:', dbErr instanceof Error ? dbErr.message : dbErr)
     }
 
     // Note: subscription_created event is logged by the Stripe webhook (checkout.session.completed)

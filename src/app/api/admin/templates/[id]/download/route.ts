@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { S3Client, ListObjectsV2Command, GetObjectCommand } from '@aws-sdk/client-s3'
 import { zipSync } from 'fflate'
-import { createClient } from '@/lib/supabase/server'
-import { createAdminClient } from '@/lib/supabase/admin'
+import { getUserFromRequest } from '@/lib/auth/server'
+import { db } from '@/lib/db'
+import { users, templates } from '@/lib/db/schema'
+import { eq } from 'drizzle-orm'
 
 const r2Client = new S3Client({
   region: 'auto',
@@ -14,16 +16,17 @@ const r2Client = new S3Client({
 })
 const BUCKET = process.env.CLOUDFLARE_R2_BUCKET_NAME!
 
-async function checkAdmin() {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+async function checkAdmin(req: NextRequest) {
+  const user = await getUserFromRequest(req)
   if (!user) return null
-  const { data } = await supabase.from('users').select('is_admin').eq('id', user.id).single()
-  return data?.is_admin ? user : null
+  const userRow = await db.query.users.findFirst({
+    where: eq(users.id, user.id),
+  })
+  return userRow?.isAdmin ? user : null
 }
 
-export async function GET(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const user = await checkAdmin()
+export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const user = await checkAdmin(req)
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const { id } = await params
@@ -47,8 +50,9 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
 
   const zipped = zipSync(entries)
 
-  const admin = createAdminClient()
-  const { data: template } = await admin.from('templates').select('title').eq('id', id).single()
+  const template = await db.query.templates.findFirst({
+    where: eq(templates.id, id),
+  })
   const filename = (template?.title ?? id).replace(/[^a-z0-9._-]/gi, '_') + '.zip'
 
   return new NextResponse(Buffer.from(zipped), {

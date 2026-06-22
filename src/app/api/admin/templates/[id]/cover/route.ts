@@ -1,19 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
-import { createAdminClient } from '@/lib/supabase/admin'
+import { getUserFromRequest } from '@/lib/auth/server'
+import { db } from '@/lib/db'
+import { users, templates } from '@/lib/db/schema'
+import { eq } from 'drizzle-orm'
 import { uploadToR2 } from '@/lib/r2/client'
 import crypto from 'crypto'
 
-async function checkAdmin() {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+async function checkAdmin(req: NextRequest) {
+  const user = await getUserFromRequest(req)
   if (!user) return null
-  const { data } = await supabase.from('users').select('is_admin').eq('id', user.id).single()
-  return data?.is_admin ? user : null
+  const userRow = await db.query.users.findFirst({
+    where: eq(users.id, user.id),
+  })
+  return userRow?.isAdmin ? user : null
 }
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const user = await checkAdmin()
+  const user = await checkAdmin(req)
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const { id } = await params
@@ -38,29 +41,28 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   const url = `/api/media/${key}`
 
   // Save as first preview_image on the template
-  const admin = createAdminClient()
-  const { data: tpl } = await admin.from('templates').select('preview_images').eq('id', id).single()
-  const existing: string[] = tpl?.preview_images ?? []
-  const updated = [url, ...existing.filter(u => !u.includes('/template-images/'))]
+  const template = await db.query.templates.findFirst({
+    where: eq(templates.id, id),
+  })
+  const existing = (template?.previewImages as string[]) ?? []
+  const updated = [url, ...existing.filter((u: string) => !u.includes('/template-images/'))]
 
-  const { error } = await admin.from('templates')
-    .update({ preview_images: updated })
-    .eq('id', id)
+  await db.update(templates)
+    .set({ previewImages: updated })
+    .where(eq(templates.id, id))
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
   return NextResponse.json({ url })
 }
 
 export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const user = await checkAdmin()
+  const user = await checkAdmin(req)
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const { id } = await params
-  const admin = createAdminClient()
-  const { error } = await admin.from('templates')
-    .update({ preview_images: [] })
-    .eq('id', id)
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  await db.update(templates)
+    .set({ previewImages: [] })
+    .where(eq(templates.id, id))
+
   return NextResponse.json({ success: true })
 }

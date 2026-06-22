@@ -1,7 +1,9 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import type Stripe from 'stripe'
-import { createClient } from '@/lib/supabase/server'
-import { createAdminClient } from '@/lib/supabase/admin'
+import { db } from '@/lib/db'
+import { users } from '@/lib/db/schema'
+import { eq } from 'drizzle-orm'
+import { getUserFromRequest } from '@/lib/auth/server'
 import { getStripe } from '@/lib/stripe/client'
 
 function getSubInfo(sub: Stripe.Subscription, plan: string, billingInterval: string | null) {
@@ -19,26 +21,23 @@ function getSubInfo(sub: Stripe.Subscription, plan: string, billingInterval: str
   }
 }
 
-export async function GET() {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+export async function GET(req: NextRequest) {
+  const user = await getUserFromRequest(req)
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const admin = createAdminClient()
-  const { data: profile } = await admin
-    .from('users')
-    .select('stripe_customer_id, plan, billing_interval, subscription_status')
-    .eq('id', user.id)
-    .single()
+  const profile = await db.query.users.findFirst({
+    where: eq(users.id, user.id),
+    columns: { stripeCustomerId: true, plan: true, billingInterval: true, subscriptionStatus: true },
+  })
 
-  if (!profile?.stripe_customer_id) {
+  if (!profile?.stripeCustomerId) {
     return NextResponse.json({ subscription: null })
   }
 
   try {
     const stripe = getStripe()
     const subscriptions = await stripe.subscriptions.list({
-      customer: profile.stripe_customer_id,
+      customer: profile.stripeCustomerId,
       status: 'active',
       limit: 1,
       expand: ['data.items'],
@@ -46,42 +45,39 @@ export async function GET() {
 
     if (!subscriptions.data.length) {
       const allSubs = await stripe.subscriptions.list({
-        customer: profile.stripe_customer_id,
+        customer: profile.stripeCustomerId,
         limit: 1,
         expand: ['data.items'],
       })
       if (!allSubs.data.length) return NextResponse.json({ subscription: null })
-      return NextResponse.json({ subscription: getSubInfo(allSubs.data[0], profile.plan, profile.billing_interval) })
+      return NextResponse.json({ subscription: getSubInfo(allSubs.data[0], profile.plan, profile.billingInterval) })
     }
 
     return NextResponse.json({
-      subscription: getSubInfo(subscriptions.data[0], profile.plan, profile.billing_interval)
+      subscription: getSubInfo(subscriptions.data[0], profile.plan, profile.billingInterval)
     })
   } catch {
     return NextResponse.json({ subscription: null })
   }
 }
 
-export async function PATCH() {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+export async function PATCH(req: NextRequest) {
+  const user = await getUserFromRequest(req)
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const admin = createAdminClient()
-  const { data: profile } = await admin
-    .from('users')
-    .select('stripe_customer_id')
-    .eq('id', user.id)
-    .single()
+  const profile = await db.query.users.findFirst({
+    where: eq(users.id, user.id),
+    columns: { stripeCustomerId: true },
+  })
 
-  if (!profile?.stripe_customer_id) {
+  if (!profile?.stripeCustomerId) {
     return NextResponse.json({ error: 'Kein aktives Abonnement.' }, { status: 400 })
   }
 
   try {
     const stripe = getStripe()
     const subscriptions = await stripe.subscriptions.list({
-      customer: profile.stripe_customer_id,
+      customer: profile.stripeCustomerId,
       status: 'active',
       limit: 1,
       expand: ['data.items'],
@@ -110,26 +106,23 @@ export async function PATCH() {
   }
 }
 
-export async function DELETE() {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+export async function DELETE(req: NextRequest) {
+  const user = await getUserFromRequest(req)
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const admin = createAdminClient()
-  const { data: profile } = await admin
-    .from('users')
-    .select('stripe_customer_id')
-    .eq('id', user.id)
-    .single()
+  const profile = await db.query.users.findFirst({
+    where: eq(users.id, user.id),
+    columns: { stripeCustomerId: true },
+  })
 
-  if (!profile?.stripe_customer_id) {
+  if (!profile?.stripeCustomerId) {
     return NextResponse.json({ error: 'Kein aktives Abonnement.' }, { status: 400 })
   }
 
   try {
     const stripe = getStripe()
     const subscriptions = await stripe.subscriptions.list({
-      customer: profile.stripe_customer_id,
+      customer: profile.stripeCustomerId,
       status: 'active',
       limit: 1,
       expand: ['data.items'],

@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
-import { createAdminClient } from '@/lib/supabase/admin'
+import { getServerUser } from '@/lib/auth/server'
+import { db } from '@/lib/db'
+import { users } from '@/lib/db/schema'
+import { eq } from 'drizzle-orm'
 import { getStripe } from '@/lib/stripe/client'
 
 /**
@@ -17,18 +19,15 @@ import { getStripe } from '@/lib/stripe/client'
  *  - number (Stripe invoice number, e.g. "INV-2026-0042")
  */
 export async function GET() {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const user = await getServerUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const admin = createAdminClient()
-  const { data: profile } = await admin
-    .from('users')
-    .select('stripe_customer_id')
-    .eq('id', user.id)
-    .single()
+  const profile = await db.query.users.findFirst({
+    where: eq(users.id, user.id),
+    columns: { stripeCustomerId: true },
+  })
 
-  const customerId = profile?.stripe_customer_id
+  const customerId = profile?.stripeCustomerId
   if (!customerId) return NextResponse.json({ invoices: [] })
 
   try {
@@ -36,12 +35,10 @@ export async function GET() {
     const list = await stripe.invoices.list({
       customer: customerId,
       limit: 24,
-      // Exclude drafts and uncollectible noise from the UI
-      status: undefined, // include all so user sees void/uncollectible too — they just won't have PDFs
     })
 
     const invoices = list.data
-      .filter(inv => inv.status !== 'draft') // hide unfinished drafts
+      .filter(inv => inv.status !== 'draft')
       .map(inv => ({
         id: inv.id,
         number: inv.number,

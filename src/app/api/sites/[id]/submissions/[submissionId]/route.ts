@@ -1,15 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
-import { createAdminClient } from '@/lib/supabase/admin'
+import { getUserFromRequest } from '@/lib/auth/server'
+import { db } from '@/lib/db'
+import { userSites, formSubmissions } from '@/lib/db/schema'
+import { eq, and } from 'drizzle-orm'
 
 async function getOwnedSite(siteId: string, userId: string) {
-  const admin = createAdminClient()
-  const { data } = await admin.from('user_sites')
-    .select('id')
-    .eq('id', siteId)
-    .eq('user_id', userId)
-    .single()
-  return data
+  return db.query.userSites.findFirst({
+    where: and(eq(userSites.id, siteId), eq(userSites.userId, userId)),
+  })
 }
 
 type Params = { params: Promise<{ id: string; submissionId: string }> }
@@ -17,8 +15,7 @@ type Params = { params: Promise<{ id: string; submissionId: string }> }
 // PATCH /api/sites/[id]/submissions/[submissionId]
 // Body: { read?: boolean, archived?: boolean }
 export async function PATCH(req: NextRequest, { params }: Params) {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const user = await getUserFromRequest(req)
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const { id, submissionId } = await params
@@ -26,45 +23,37 @@ export async function PATCH(req: NextRequest, { params }: Params) {
   if (!site) return NextResponse.json({ error: 'Not found' }, { status: 404 })
 
   const body = await req.json() as { read?: boolean; archived?: boolean }
-  const update: Record<string, string | null> = {}
+  const update: Record<string, Date | null> = {}
 
   if ('read' in body) {
-    update.read_at = body.read ? new Date().toISOString() : null
+    update.readAt = body.read ? new Date() : null
   }
   if ('archived' in body) {
-    update.archived_at = body.archived ? new Date().toISOString() : null
+    update.archivedAt = body.archived ? new Date() : null
   }
 
   if (Object.keys(update).length === 0) {
     return NextResponse.json({ error: 'Nothing to update' }, { status: 400 })
   }
 
-  const admin = createAdminClient()
-  const { error } = await admin
-    .from('form_submissions')
-    .update(update)
-    .eq('id', submissionId)
-    .eq('user_site_id', id)
+  await db.update(formSubmissions)
+    .set(update)
+    .where(and(eq(formSubmissions.id, submissionId), eq(formSubmissions.userSiteId, id)))
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
   return NextResponse.json({ success: true })
 }
 
 // DELETE /api/sites/[id]/submissions/[submissionId]
-export async function DELETE(_req: NextRequest, { params }: Params) {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+export async function DELETE(req: NextRequest, { params }: Params) {
+  const user = await getUserFromRequest(req)
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const { id, submissionId } = await params
   const site = await getOwnedSite(id, user.id)
   if (!site) return NextResponse.json({ error: 'Not found' }, { status: 404 })
 
-  const admin = createAdminClient()
-  await admin.from('form_submissions')
-    .delete()
-    .eq('id', submissionId)
-    .eq('user_site_id', id)
+  await db.delete(formSubmissions)
+    .where(and(eq(formSubmissions.id, submissionId), eq(formSubmissions.userSiteId, id)))
 
   return NextResponse.json({ success: true })
 }

@@ -1,19 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
-import { createAdminClient } from '@/lib/supabase/admin'
+import { getUserFromRequest } from '@/lib/auth/server'
+import { db } from '@/lib/db'
+import { users, templates } from '@/lib/db/schema'
+import { eq } from 'drizzle-orm'
 import { uploadToR2 } from '@/lib/r2/client'
 import { processZipUpload } from '@/lib/r2/zip-processor'
 
-async function checkAdmin() {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+async function checkAdmin(req: NextRequest) {
+  const user = await getUserFromRequest(req)
   if (!user) return null
-  const { data } = await supabase.from('users').select('is_admin').eq('id', user.id).single()
-  return data?.is_admin ? user : null
+  const userRow = await db.query.users.findFirst({
+    where: eq(users.id, user.id),
+  })
+  return userRow?.isAdmin ? user : null
 }
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const user = await checkAdmin()
+  const user = await checkAdmin(req)
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const { id } = await params
@@ -40,12 +43,9 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     files = ['index.html']
   }
 
-  const admin = createAdminClient()
-  const { error } = await admin.from('templates')
-    .update({ r2_bundle_path: bundlePath })
-    .eq('id', id)
-
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  await db.update(templates)
+    .set({ r2BundlePath: bundlePath })
+    .where(eq(templates.id, id))
 
   return NextResponse.json({ success: true, key: bundlePath, fileCount, files })
 }
