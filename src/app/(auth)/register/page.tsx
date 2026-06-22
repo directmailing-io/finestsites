@@ -1,9 +1,12 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { signIn } from '@/lib/auth/client'
 
 export default function RegisterPage() {
+  const router = useRouter()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirm, setConfirm] = useState('')
@@ -44,8 +47,21 @@ export default function RegisterPage() {
       return
     }
 
-    setSent(true)
-    setLoading(false)
+    // Sign in immediately so the session cookie is set in the browser,
+    // then redirect to plan selection
+    const signInResult = await signIn.email({
+      email: email.toLowerCase().trim(),
+      password,
+    })
+
+    if (signInResult.error) {
+      // Registration succeeded but auto-login failed — redirect to login
+      router.push('/login?registered=1')
+      return
+    }
+
+    // Redirect to onboarding
+    router.push('/onboarding/plan')
   }
 
   if (sent) {
