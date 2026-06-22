@@ -2,10 +2,16 @@ import { NextRequest, NextResponse } from 'next/server'
 import type Stripe from 'stripe'
 import { db } from '@/lib/db'
 import { users, userSites, subscriptionEvents, affiliateCommissions } from '@/lib/db/schema'
-import { eq, and, inArray } from 'drizzle-orm'
+import { eq, and, inArray, isNull } from 'drizzle-orm'
 import { getStripe, getPlanByPriceId, planCents, type PlanKey, type BillingInterval } from '@/lib/stripe/client'
 import { getResend, FROM_EMAIL } from '@/lib/resend'
-import { affiliateNewReferralEmail } from '@/lib/email/templates'
+import {
+  affiliateNewReferralEmail,
+  paymentFailedEmail,
+  accountDeactivatedEmail,
+  accountReactivatedEmail,
+} from '@/lib/email/templates'
+import { setSiteOfflineKV, deleteCustomDomainKV, clearSiteMetaKV, setCustomDomainKV } from '@/lib/cloudflare/kv-api'
 
 export async function POST(req: NextRequest) {
   if (!process.env.STRIPE_WEBHOOK_SECRET) throw new Error('Missing STRIPE_WEBHOOK_SECRET')
@@ -203,6 +209,11 @@ export async function POST(req: NextRequest) {
       const now = new Date()
       const deletionDate = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
 
+      const userRow = await db.query.users.findFirst({
+        where: eq(users.id, userId),
+        columns: { email: true, deactivatedAt: true },
+      })
+
       // Deactivate user account
       await db.update(users).set({
         plan: 'starter',
@@ -210,6 +221,19 @@ export async function POST(req: NextRequest) {
         stripeSubscriptionId: null,
         deactivatedAt: now,
       }).where(eq(users.id, userId))
+
+      // Find published/draft sites to deactivate
+      const liveSites = await db.query.userSites.findMany({
+        where: and(
+          eq(userSites.userId, userId),
+          inArray(userSites.status, ['published', 'draft']),
+        ),
+        columns: { id: true, customDomain: true },
+        with: {
+          template: { columns: { domain: true } },
+          user: { columns: { username: true } },
+        },
+      })
 
       // Deactivate all published/draft sites and schedule deletion in 30 days
       await db.update(userSites).set({
@@ -223,12 +247,34 @@ export async function POST(req: NextRequest) {
         )
       )
 
+      // Take sites offline in KV
+      for (const site of liveSites) {
+        const username       = (site as any).user?.username as string | null
+        const templateDomain = (site as any).template?.domain as string | null
+        if (username && templateDomain) {
+          await setSiteOfflineKV(username, templateDomain).catch(() => {})
+        }
+        if (site.customDomain) {
+          await deleteCustomDomainKV(site.customDomain).catch(() => {})
+        }
+      }
+
+      // Send deactivation email (only if not already deactivated by cron)
+      if (!userRow?.deactivatedAt && userRow?.email) {
+        getResend().emails.send({
+          from: FROM_EMAIL,
+          to: userRow.email,
+          subject: 'Dein FinestSites-Abo ist abgelaufen',
+          html: accountDeactivatedEmail(),
+        }).catch(err => console.error('[webhook] subscription_deleted email error:', err))
+      }
+
       await logEvent({
         userId,
         eventType: 'subscription_deleted',
         stripeEventId: event.id,
         stripeSubscriptionId: sub.id,
-        metadata: { sites_deactivated: true, scheduled_deletion_at: deletionDate.toISOString() },
+        metadata: { sites_deactivated: liveSites.length, scheduled_deletion_at: deletionDate.toISOString() },
       })
       break
     }
@@ -239,10 +285,29 @@ export async function POST(req: NextRequest) {
       const userId = await getUserIdByCustomer(invoice.customer as string)
       if (!userId) break
 
+      // Only set paymentFailedAt on the first failure (don't reset the clock on retries)
+      const existing = await db.query.users.findFirst({
+        where: eq(users.id, userId),
+        columns: { email: true, paymentFailedAt: true },
+      })
+
+      const isFirstFailure = !existing?.paymentFailedAt
       await db.update(users).set({
         subscriptionStatus: 'past_due',
-        paymentFailedAt: new Date(),
+        ...(isFirstFailure ? { paymentFailedAt: new Date() } : {}),
       }).where(eq(users.id, userId))
+
+      // Send email only on first failure
+      if (isFirstFailure && existing?.email) {
+        const inv1 = invoice as any
+        const invoiceUrl = inv1.hosted_invoice_url ?? undefined
+        getResend().emails.send({
+          from: FROM_EMAIL,
+          to: existing.email,
+          subject: 'Zahlung fehlgeschlagen – bitte jetzt klären',
+          html: paymentFailedEmail({ invoiceUrl }),
+        }).catch(err => console.error('[webhook] payment_failed email error:', err))
+      }
 
       const inv1 = invoice as any
       await logEvent({
@@ -251,7 +316,7 @@ export async function POST(req: NextRequest) {
         stripeEventId: event.id,
         stripeSubscriptionId: typeof inv1.subscription === 'string' ? inv1.subscription : inv1.subscription?.id,
         stripeInvoiceId: invoice.id,
-        metadata: { attempt_count: inv1.attempt_count ?? null },
+        metadata: { attempt_count: inv1.attempt_count ?? null, first_failure: isFirstFailure },
       })
       break
     }
@@ -278,11 +343,66 @@ export async function POST(req: NextRequest) {
       const plan = getPlanByPriceId()[priceId] ?? 'starter'
       const interval = sub.items.data[0]?.price.recurring?.interval === 'year' ? 'yearly' : 'monthly'
 
+      // Check if account was deactivated — need to reactivate
+      const userBefore = await db.query.users.findFirst({
+        where: eq(users.id, userId),
+        columns: { email: true, deactivatedAt: true },
+      })
+      const wasDeactivated = !!userBefore?.deactivatedAt
+
       await db.update(users).set({
         subscriptionStatus: sub.status,
         currentPeriodEnd: getPeriodEnd(sub),
         paymentFailedAt: null,
+        deactivatedAt: null,
       }).where(eq(users.id, userId))
+
+      // Reactivate deactivated sites and restore KV entries
+      if (wasDeactivated) {
+        const deactivatedSites = await db.query.userSites.findMany({
+          where: and(
+            eq(userSites.userId, userId),
+            eq(userSites.status, 'deactivated'),
+            // Only reactivate sites deactivated due to billing (no scheduledDeletionAt set
+            // by subscription.deleted — those are permanent)
+            isNull(userSites.scheduledDeletionAt),
+          ),
+          columns: { id: true, customDomain: true },
+          with: {
+            template: { columns: { domain: true } },
+            user: { columns: { username: true } },
+          },
+        })
+
+        for (const site of deactivatedSites) {
+          await db.update(userSites)
+            .set({ status: 'published', deactivatedAt: null })
+            .where(eq(userSites.id, site.id))
+
+          const username       = (site as any).user?.username as string | null
+          const templateDomain = (site as any).template?.domain as string | null
+
+          // Remove offline marker so Worker falls back to DB (now published)
+          if (username && templateDomain) {
+            await clearSiteMetaKV(username, templateDomain).catch(() => {})
+          }
+
+          // Restore custom domain KV entry
+          if (site.customDomain && username && templateDomain) {
+            await setCustomDomainKV(site.customDomain, username, templateDomain).catch(() => {})
+          }
+        }
+
+        // Send reactivation email
+        if (userBefore?.email) {
+          getResend().emails.send({
+            from: FROM_EMAIL,
+            to: userBefore.email,
+            subject: 'Dein Konto ist wieder aktiv!',
+            html: accountReactivatedEmail(),
+          }).catch(err => console.error('[webhook] reactivation email error:', err))
+        }
+      }
 
       await logEvent({
         userId,

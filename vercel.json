@@ -1,4 +1,18 @@
 {
   "buildCommand": "next build",
-  "installCommand": "npm install"
+  "installCommand": "npm install",
+  "crons": [
+    {
+      "path": "/api/cron/check-domains",
+      "schedule": "*/5 * * * *"
+    },
+    {
+      "path": "/api/cron/affiliate-payouts",
+      "schedule": "0 8 1 * *"
+    },
+    {
+      "path": "/api/cron/billing-enforcement",
+      "schedule": "0 6 * * *"
+    }
+  ]
 }

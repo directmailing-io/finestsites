@@ -63,6 +63,34 @@ export async function deleteCustomDomainKV(hostname: string): Promise<void> {
  * TTL: 1 hour — enough for stable serving, short enough to self-heal if the
  * user re-publishes or edits the underlying data.
  */
+/**
+ * Mark a site as offline in KV. The Worker serves an offline/410 page
+ * instead of the real site. Used when a user's account is deactivated
+ * due to payment failure or subscription cancellation.
+ * Key format: meta:{username}:{templateDomain}
+ */
+export async function setSiteOfflineKV(username: string, templateDomain: string): Promise<void> {
+  const key = `meta:${username}:${templateDomain}`
+  await fetch(`${kvBase()}/${encodeURIComponent(key)}`, {
+    method: 'PUT',
+    headers: { ...headers(), 'Content-Type': 'text/plain' },
+    body: '__offline__',
+  })
+}
+
+/**
+ * Remove the offline marker for a site (or any cached meta) so the Worker
+ * falls back to a fresh Supabase lookup and serves the site again.
+ * Called when a user's account is reactivated after a successful payment.
+ */
+export async function clearSiteMetaKV(username: string, templateDomain: string): Promise<void> {
+  const key = `meta:${username}:${templateDomain}`
+  await fetch(`${kvBase()}/${encodeURIComponent(key)}`, {
+    method: 'DELETE',
+    headers: headers(),
+  })
+}
+
 export async function writeRenderedHtmlKV(
   username: string,
   templateDomain: string,
