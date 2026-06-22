@@ -77,7 +77,9 @@ export async function POST(req: NextRequest) {
     const sessionParams: Stripe.Checkout.SessionCreateParams = {
       customer: customerId,
       mode: 'subscription',
-      payment_method_types: ['card', 'sepa_debit'],
+      // sepa_debit must be activated in Stripe Dashboard → Settings → Payment methods
+      // before it can be added here. Using card only until that is done.
+      payment_method_types: ['card'],
       line_items: [{ price: priceId, quantity: 1 }],
       ...(hasReferral ? { discounts: [{ coupon: affiliateCouponId!.trim() }] } : {}),
       success_url: successUrl,
