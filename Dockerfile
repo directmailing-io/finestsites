@@ -6,7 +6,8 @@ RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
 COPY package.json package-lock.json ./
-RUN npm ci --legacy-peer-deps
+# Force NODE_ENV=development so npm ci installs devDependencies (needed for tailwindcss, postcss, etc.)
+RUN NODE_ENV=development npm ci --legacy-peer-deps
 
 # Build the application
 FROM base AS builder
