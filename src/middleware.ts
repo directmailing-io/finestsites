@@ -27,10 +27,8 @@ function isOwnHost(host: string): boolean {
 }
 
 export async function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl
-
   // Health check — always pass through regardless of host
-  if (pathname === '/api/health') return NextResponse.next()
+  if (request.nextUrl.pathname === '/api/health') return NextResponse.next()
 
   const host = (request.headers.get('host') ?? '').split(':')[0].toLowerCase()
 
