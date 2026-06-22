@@ -48,6 +48,11 @@ export const auth = betterAuth({
 
   secret: process.env.BETTER_AUTH_SECRET!,
   baseURL: process.env.BETTER_AUTH_URL ?? process.env.NEXT_PUBLIC_APP_URL!,
+
+  advanced: {
+    // users.id is uuid type in postgres — generate proper UUIDs
+    generateId: () => crypto.randomUUID(),
+  },
 })
 
 export type AuthSession = typeof auth.$Infer.Session
