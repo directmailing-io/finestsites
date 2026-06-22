@@ -27,6 +27,9 @@ export const auth = betterAuth({
         html: passwordResetEmail({ url }),
       })
     },
+  },
+
+  emailVerification: {
     sendVerificationEmail: async ({ user, url }: { user: { email: string; name?: string }; url: string }) => {
       await getResend().emails.send({
         from: FROM_EMAIL,
@@ -50,8 +53,10 @@ export const auth = betterAuth({
   baseURL: process.env.BETTER_AUTH_URL ?? process.env.NEXT_PUBLIC_APP_URL!,
 
   advanced: {
-    // users.id is uuid type in postgres — generate proper UUIDs
-    generateId: () => crypto.randomUUID(),
+    // users.id is uuid type — generate proper UUIDs instead of nanoid strings
+    database: {
+      generateId: 'uuid',
+    },
   },
 })
 
