@@ -95,7 +95,8 @@ export const users = pgTable('users', {
   tiktok: text('tiktok'),
   youtube: text('youtube'),
   profileImageUrl: text('profile_image_url'),
-  // BetterAuth required
+  // BetterAuth required fields
+  name: text('name').notNull().default(''),
   emailVerified: boolean('email_verified').notNull().default(false),
   image: text('image'),
   // Affiliate
