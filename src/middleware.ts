@@ -18,11 +18,20 @@ function isOwnHost(host: string): boolean {
     host === 'finestsites.com' ||
     host.endsWith('.finestsites.de') ||
     host === 'finestsites.de' ||
-    host === 'localhost'
+    host.endsWith('.finestsites.io') ||
+    host === 'finestsites.io' ||
+    host === 'localhost' ||
+    host === '127.0.0.1' ||
+    host === '0.0.0.0'
   )
 }
 
 export async function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl
+
+  // Health check — always pass through regardless of host
+  if (pathname === '/api/health') return NextResponse.next()
+
   const host = (request.headers.get('host') ?? '').split(':')[0].toLowerCase()
 
   // Custom user domain (e.g. www.daniel-kurzeja.de) → proxy to Worker
