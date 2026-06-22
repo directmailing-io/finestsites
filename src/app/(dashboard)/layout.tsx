@@ -19,7 +19,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   // Must have an active subscription before accessing dashboard
   // Exception: the owner/admin account bypasses this check entirely
-  const ADMIN_EMAIL = 'daniel-kurzeja@live.de'
+  const ADMIN_EMAIL = 'info@daniel-kurzeja.de'
   const ACTIVE_STATUSES = ['active', 'trialing', 'past_due']
   if (user.email !== ADMIN_EMAIL && (!profile?.subscriptionStatus || !ACTIVE_STATUSES.includes(profile.subscriptionStatus))) {
     redirect('/onboarding/plan')

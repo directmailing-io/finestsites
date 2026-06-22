@@ -12,7 +12,7 @@ import { db } from '@/lib/db'
 import { users, affiliateCommissions } from '@/lib/db/schema'
 import { eq, and } from 'drizzle-orm'
 
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL ?? 'daniel-kurzeja@live.de'
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL ?? 'info@daniel-kurzeja.de'
 
 export async function POST(req: NextRequest) {
   const user = await getUserFromRequest(req)

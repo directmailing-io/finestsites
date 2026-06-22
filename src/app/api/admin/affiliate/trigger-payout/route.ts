@@ -13,7 +13,7 @@ import { getStripe } from '@/lib/stripe/client'
 import { getResend, FROM_EMAIL } from '@/lib/resend'
 import { affiliatePayoutEmail } from '@/lib/email/templates'
 
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL ?? 'daniel-kurzeja@live.de'
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL ?? 'info@daniel-kurzeja.de'
 
 export async function POST(req: Request) {
   const user = await getUserFromRequest(req)

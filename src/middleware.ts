@@ -6,7 +6,7 @@ import { eq } from 'drizzle-orm'
 
 const WORKER_URL = 'https://finestsites-worker.finestsites.workers.dev'
 const ACTIVE_STATUSES = ['active', 'trialing', 'past_due']
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL ?? 'daniel-kurzeja@live.de'
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL ?? 'info@daniel-kurzeja.de'
 
 // Hostnames that belong to us — let these pass through to the Next.js app normally
 function isOwnHost(host: string): boolean {

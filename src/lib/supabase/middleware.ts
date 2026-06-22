@@ -40,7 +40,7 @@ export async function updateSession(request: NextRequest) {
 
   // ── Logged-in + product routes → enforce subscription + username ──
   // Includes /onboarding/username to prevent bypassing payment via direct URL
-  const ADMIN_EMAIL = 'daniel-kurzeja@live.de'
+  const ADMIN_EMAIL = 'info@daniel-kurzeja.de'
   const gatedPaths = ['/dashboard', '/sites', '/settings', '/billing', '/onboarding/username']
   if (user && gatedPaths.some(p => pathname.startsWith(p))) {
     // Owner/admin account bypasses all subscription and username requirements
