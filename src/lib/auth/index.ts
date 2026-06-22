@@ -53,9 +53,10 @@ export const auth = betterAuth({
   baseURL: process.env.BETTER_AUTH_URL ?? process.env.NEXT_PUBLIC_APP_URL!,
 
   advanced: {
-    // users.id is uuid type — generate proper UUIDs instead of nanoid strings
+    // users.id is uuid type — generate proper UUIDs app-side (not DB default)
+    // so all BetterAuth tables (users/sessions/accounts/verifications) get valid UUIDs
     database: {
-      generateId: 'uuid',
+      generateId: () => crypto.randomUUID(),
     },
   },
 })
