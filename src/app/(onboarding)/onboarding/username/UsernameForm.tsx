@@ -186,17 +186,50 @@ export function UsernameForm() {
         <div className="flex flex-col gap-1.5">
           <label className="text-sm font-semibold text-gray-700">Username</label>
 
+          {/* Safari browser mockup */}
           <div
-            className="flex items-center gap-1 px-3 py-2 rounded-xl text-sm font-mono mb-1"
-            style={{ background: '#F9FAFB', border: '1px solid #E5E7EB' }}
+            className="rounded-2xl overflow-hidden mb-1"
+            style={{ background: '#fff', boxShadow: '0 2px 12px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.06)' }}
           >
-            <span
-              className="font-semibold transition-colors"
-              style={{ color: valid ? '#111827' : '#9CA3AF' }}
-            >
-              {display || 'dein-name'}
-            </span>
-            <span style={{ color: '#9CA3AF' }}>.{SITE_DOMAIN}</span>
+            {/* Browser chrome */}
+            <div className="flex items-center gap-3 px-3.5 py-2.5" style={{ background: '#F4F4F5', borderBottom: '1px solid rgba(0,0,0,0.07)' }}>
+              {/* Traffic lights */}
+              <div className="flex items-center gap-1.5 flex-shrink-0">
+                <div className="w-2.5 h-2.5 rounded-full" style={{ background: '#FF5F57' }} />
+                <div className="w-2.5 h-2.5 rounded-full" style={{ background: '#FEBC2E' }} />
+                <div className="w-2.5 h-2.5 rounded-full" style={{ background: '#28C840' }} />
+              </div>
+              {/* Address bar */}
+              <div
+                className="flex-1 flex items-center justify-center gap-1.5 px-3 py-1 rounded-md text-xs"
+                style={{ background: '#fff', boxShadow: '0 0 0 1px rgba(0,0,0,0.1)', minWidth: 0 }}
+              >
+                {/* Lock icon */}
+                <svg width="9" height="11" viewBox="0 0 9 11" fill="none" style={{ flexShrink: 0, opacity: valid ? 1 : 0.3 }}>
+                  <rect x="0.5" y="4.5" width="8" height="6" rx="1.5" fill="#9CA3AF"/>
+                  <path d="M2.5 4.5V3a2 2 0 0 1 4 0v1.5" stroke="#9CA3AF" strokeWidth="1.2" fill="none" strokeLinecap="round"/>
+                </svg>
+                <span className="font-mono truncate" style={{ color: '#374151', letterSpacing: '-0.01em' }}>
+                  <span style={{ color: valid ? '#111827' : '#9CA3AF', fontWeight: 600, transition: 'color 0.15s' }}>
+                    {display || 'dein-name'}
+                  </span>
+                  <span style={{ color: '#9CA3AF' }}>.{SITE_DOMAIN}</span>
+                </span>
+              </div>
+              {/* Right spacer matching traffic lights width */}
+              <div style={{ width: 42, flexShrink: 0 }} />
+            </div>
+            {/* Fake page content */}
+            <div className="px-3.5 py-3" style={{ background: '#FAFAFA' }}>
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-5 h-5 rounded-sm" style={{ background: '#E5E7EB' }} />
+                <div className="h-2 rounded-full w-24" style={{ background: '#E5E7EB' }} />
+              </div>
+              <div className="space-y-1.5">
+                <div className="h-2 rounded-full" style={{ background: '#E5E7EB', width: '85%' }} />
+                <div className="h-2 rounded-full" style={{ background: '#E5E7EB', width: '65%' }} />
+              </div>
+            </div>
           </div>
 
           <input
