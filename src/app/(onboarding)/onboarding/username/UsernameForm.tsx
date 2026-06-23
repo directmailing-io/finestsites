@@ -8,10 +8,14 @@ const SITE_DOMAIN = process.env.NEXT_PUBLIC_SITE_DOMAIN ?? 'finestsites.de'
 function sanitize(val: string) {
   return val
     .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
+    // German umlauts → ASCII equivalents (must happen before NFD decomposition)
+    .replace(/ä/g, 'ae').replace(/ö/g, 'oe').replace(/ü/g, 'ue').replace(/ß/g, 'ss')
+    // Strip remaining accents (é→e, ñ→n, etc.)
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    // Only a-z and hyphens
     .replace(/[^a-z-]/g, '')
-    .replace(/^-+/, '')
+    // No leading/trailing/consecutive hyphens
+    .replace(/^-+|-+$/g, '').replace(/-{2,}/g, '-')
     .slice(0, 30)
 }
 
@@ -125,7 +129,7 @@ export function UsernameForm() {
       return
     }
 
-    router.push('/sites')
+    router.push('/onboarding/profile')
   }
 
   const display = sanitize(username)
@@ -139,7 +143,9 @@ export function UsernameForm() {
         <StepLine />
         <StepDot n={2} done label="Plan" />
         <StepLine />
-        <StepDot n={3} active label="Profil" />
+        <StepDot n={3} active label="Username" />
+        <StepLine />
+        <StepDot n={4} label="Profil" />
       </div>
 
       <div className="text-center mb-8">

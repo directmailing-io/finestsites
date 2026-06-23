@@ -9,10 +9,10 @@ const ACTIVE_STATUSES = ['active', 'trialing', 'past_due']
 function sanitize(val: string) {
   return val
     .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/ä/g, 'ae').replace(/ö/g, 'oe').replace(/ü/g, 'ue').replace(/ß/g, 'ss')
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
     .replace(/[^a-z-]/g, '')
-    .replace(/^-+/, '')
+    .replace(/^-+|-+$/g, '').replace(/-{2,}/g, '-')
     .slice(0, 30)
 }
 

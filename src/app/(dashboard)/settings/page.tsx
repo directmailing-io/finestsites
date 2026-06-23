@@ -1,10 +1,51 @@
 'use client'
 
-import { useState, useEffect, Suspense } from 'react'
+import { useState, useEffect, Suspense, useRef } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { authClient } from '@/lib/auth/client'
 import { useRouter } from 'next/navigation'
 import { PLAN_LIST, PLAN_LABELS, COMMON_FEATURES, PLAN_ORDER, canUpgradeTo, type PlanKey } from '@/lib/plans'
+import ImageCropModal from '@/components/ImageCropModal'
+
+// ── Social media helpers ──────────────────────────────────────────────────────
+
+const SOCIALS = [
+  { key: 'instagram', label: 'Instagram', prefix: 'instagram.com/',   ph: 'deinname',  icon: <IgIcon /> },
+  { key: 'tiktok',    label: 'TikTok',    prefix: 'tiktok.com/@',    ph: 'deinname',  icon: <TtIcon /> },
+  { key: 'facebook',  label: 'Facebook',  prefix: 'facebook.com/',   ph: 'deinname',  icon: <FbIcon /> },
+  { key: 'linkedin',  label: 'LinkedIn',  prefix: 'linkedin.com/in/', ph: 'dein-name', icon: <LiIcon /> },
+  { key: 'youtube',   label: 'YouTube',   prefix: 'youtube.com/@',   ph: 'deinkanal', icon: <YtIcon /> },
+] as const
+
+function urlToUsername(url: string, prefix: string): string {
+  if (!url) return ''
+  return url
+    .replace(/^https?:\/\//i, '')
+    .replace(/^www\./, '')
+    .replace(new RegExp('^' + prefix.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')), '')
+    .replace(/\/$/, '')
+    .replace(/^@/, '')
+}
+function usernameToUrl(username: string, prefix: string): string {
+  const u = username.trim().replace(/^@/, '')
+  return u ? `https://${prefix}${u}` : ''
+}
+
+const COUNTRIES = [
+  { code: '+49', flag: '🇩🇪' }, { code: '+43', flag: '🇦🇹' }, { code: '+41', flag: '🇨🇭' },
+  { code: '+1',  flag: '🇺🇸' }, { code: '+44', flag: '🇬🇧' }, { code: '+33', flag: '🇫🇷' },
+  { code: '+39', flag: '🇮🇹' }, { code: '+34', flag: '🇪🇸' }, { code: '+31', flag: '🇳🇱' },
+  { code: '+32', flag: '🇧🇪' }, { code: '+48', flag: '🇵🇱' }, { code: '+90', flag: '🇹🇷' },
+]
+
+function parsePhone(full: string): { code: string; number: string } {
+  for (const c of COUNTRIES) {
+    if (full.startsWith(c.code + ' ') || full.startsWith(c.code)) {
+      return { code: c.code, number: full.slice(c.code.length).trim() }
+    }
+  }
+  return { code: '+49', number: full }
+}
 
 interface SubscriptionInfo {
   status: string
@@ -67,11 +108,15 @@ function SettingsContent() {
   const [pwSuccess, setPwSuccess] = useState('')
 
   // ── Profile state ──────────────────────────────────────────
-  const [profileFields, setProfileFields] = useState({
-    first_name: '', last_name: '', phone: '', website_url: '',
-    instagram: '', facebook: '', linkedin: '', tiktok: '', youtube: '',
+  const [profileName, setProfileName] = useState({ first_name: '', last_name: '' })
+  const [countryCode, setCountryCode] = useState('+49')
+  const [phoneNumber, setPhoneNumber] = useState('')
+  const [socialUsernames, setSocialUsernames] = useState<Record<string, string>>({
+    instagram: '', tiktok: '', facebook: '', linkedin: '', youtube: '',
   })
   const [profileImageUrl, setProfileImageUrl] = useState<string | null>(null)
+  const [cropSrc, setCropSrc] = useState<string | null>(null)
+  const avatarInputRef = useRef<HTMLInputElement>(null)
   const [profileSaving, setProfileSaving] = useState(false)
   const [profileSuccess, setProfileSuccess] = useState('')
   const [profileError, setProfileError] = useState('')
@@ -107,16 +152,16 @@ function SettingsContent() {
     fetch('/api/user/profile').then(r => r.json()).then(data => {
       setProfile(data)
       if (data.billing_interval) setBillingInterval(data.billing_interval)
-      setProfileFields({
-        first_name: data.first_name ?? '',
-        last_name: data.last_name ?? '',
-        phone: data.phone ?? '',
-        website_url: data.website_url ?? '',
-        instagram: data.instagram ?? '',
-        facebook: data.facebook ?? '',
-        linkedin: data.linkedin ?? '',
-        tiktok: data.tiktok ?? '',
-        youtube: data.youtube ?? '',
+      setProfileName({ first_name: data.first_name ?? '', last_name: data.last_name ?? '' })
+      const parsed = parsePhone(data.phone ?? '')
+      setCountryCode(parsed.code)
+      setPhoneNumber(parsed.number)
+      setSocialUsernames({
+        instagram: urlToUsername(data.instagram ?? '', 'instagram.com/'),
+        tiktok:    urlToUsername(data.tiktok    ?? '', 'tiktok.com/@'),
+        facebook:  urlToUsername(data.facebook  ?? '', 'facebook.com/'),
+        linkedin:  urlToUsername(data.linkedin  ?? '', 'linkedin.com/in/'),
+        youtube:   urlToUsername(data.youtube   ?? '', 'youtube.com/@'),
       })
       setProfileImageUrl(data.profile_image_url ?? null)
     }).catch(() => {})
@@ -187,10 +232,15 @@ function SettingsContent() {
   async function handleProfileSave(e: React.FormEvent) {
     e.preventDefault()
     setProfileSaving(true); setProfileError(''); setProfileSuccess('')
+    const phone = phoneNumber.trim() ? `${countryCode} ${phoneNumber.trim()}` : ''
+    const socialUrls: Record<string, string> = {}
+    for (const s of SOCIALS) {
+      socialUrls[s.key] = usernameToUrl(socialUsernames[s.key] ?? '', s.prefix)
+    }
     const res = await fetch('/api/user/profile', {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(profileFields),
+      body: JSON.stringify({ ...profileName, phone, ...socialUrls }),
     })
     const data = await res.json()
     if (data.error) {
@@ -202,10 +252,18 @@ function SettingsContent() {
     setProfileSaving(false)
   }
 
-  async function handleAvatarUpload(e: React.ChangeEvent<HTMLInputElement>) {
+  function handleAvatarFileSelect(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
     if (!file) return
+    setCropSrc(URL.createObjectURL(file))
+    e.target.value = ''
+  }
+
+  async function handleCropConfirm(blob: Blob) {
+    if (cropSrc) URL.revokeObjectURL(cropSrc)
+    setCropSrc(null)
     setAvatarUploading(true)
+    const file = new File([blob], 'avatar.jpg', { type: 'image/jpeg' })
     const fd = new FormData()
     fd.append('file', file)
     const res = await fetch('/api/user/profile/avatar', { method: 'POST', body: fd })
@@ -291,79 +349,142 @@ function SettingsContent() {
       {/* ════════════════════════════════════════════════════════════════
           MEIN PROFIL
           ════════════════════════════════════════════════════════════════ */}
+      {cropSrc && (
+        <ImageCropModal
+          imageUrl={cropSrc}
+          aspectRatio={1}
+          outputWidth={400}
+          onConfirm={handleCropConfirm}
+          onCancel={() => { if (cropSrc) URL.revokeObjectURL(cropSrc); setCropSrc(null) }}
+        />
+      )}
+
       <Section title="Mein Profil" subtitle="Diese Angaben werden beim Bearbeiten deiner Webseiten automatisch vorausgefüllt.">
-        <form onSubmit={handleProfileSave} className="flex flex-col gap-6">
-          {/* Avatar */}
+        <form onSubmit={handleProfileSave} className="flex flex-col gap-7">
+
+          {/* ── Avatar ── */}
           <div className="flex items-center gap-5">
-            <div className="relative flex-shrink-0">
-              <div className="w-20 h-20 rounded-full overflow-hidden"
-                style={{ background: '#F1F5F9', border: '2px solid #E5E7EB' }}>
-                {profileImageUrl ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={profileImageUrl} alt="Profilbild" className="w-full h-full object-cover" />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center">
-                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#CBD5E1" strokeWidth="1.5">
-                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                      <circle cx="12" cy="7" r="4"/>
-                    </svg>
-                  </div>
-                )}
+            <div
+              className="relative flex-shrink-0 w-20 h-20 rounded-full overflow-hidden cursor-pointer group"
+              style={{ background: '#F1F5F9', border: '2px solid #E5E7EB' }}
+              onClick={() => avatarInputRef.current?.click()}
+            >
+              {profileImageUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={profileImageUrl} alt="Profilbild" className="w-full h-full object-cover" />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center">
+                  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#CBD5E1" strokeWidth="1.5">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                    <circle cx="12" cy="7" r="4"/>
+                  </svg>
+                </div>
+              )}
+              <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                style={{ background: 'rgba(0,0,0,0.4)' }}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2">
+                  <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/>
+                  <circle cx="12" cy="13" r="4"/>
+                </svg>
               </div>
               {avatarUploading && (
-                <div className="absolute inset-0 rounded-full flex items-center justify-center"
+                <div className="absolute inset-0 flex items-center justify-center rounded-full"
                   style={{ background: 'rgba(255,255,255,0.8)' }}>
                   <span className="w-5 h-5 rounded-full border-2 border-gray-300 border-t-gray-800 animate-spin" />
                 </div>
               )}
             </div>
-            <div className="flex flex-col gap-1">
-              <label className="flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-xl cursor-pointer transition-colors"
+            <div className="flex flex-col gap-1.5">
+              <button
+                type="button"
+                onClick={() => avatarInputRef.current?.click()}
+                disabled={avatarUploading}
+                className="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-xl transition-colors disabled:opacity-50"
                 style={{ background: '#F3F4F6', color: '#374151' }}
                 onMouseEnter={e => (e.currentTarget.style.background = '#E5E7EB')}
-                onMouseLeave={e => (e.currentTarget.style.background = '#F3F4F6')}>
+                onMouseLeave={e => (e.currentTarget.style.background = '#F3F4F6')}
+              >
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/>
+                  <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/>
+                  <circle cx="12" cy="13" r="4"/>
                 </svg>
-                Foto hochladen
-                <input type="file" accept="image/jpeg,image/png,image/webp" className="sr-only"
-                  onChange={handleAvatarUpload} disabled={avatarUploading} />
-              </label>
-              <p className="text-xs" style={{ color: '#94A3B8' }}>JPG, PNG, WebP · max. 5 MB</p>
+                {profileImageUrl ? 'Foto ändern' : 'Foto hochladen'}
+              </button>
+              <p className="text-xs px-1" style={{ color: '#94A3B8' }}>JPG, PNG, WebP · max. 5 MB · wird zugeschnitten</p>
+              <input
+                ref={avatarInputRef}
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                className="sr-only"
+                onChange={handleAvatarFileSelect}
+              />
             </div>
           </div>
 
-          {/* Name */}
+          {/* ── Name ── */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <Field label="Vorname" value={profileFields.first_name}
-              onChange={v => setProfileFields(p => ({ ...p, first_name: v }))} placeholder="Max" />
-            <Field label="Nachname" value={profileFields.last_name}
-              onChange={v => setProfileFields(p => ({ ...p, last_name: v }))} placeholder="Mustermann" />
+            <ProfileField label="Vorname" value={profileName.first_name}
+              onChange={v => setProfileName(p => ({ ...p, first_name: v }))} placeholder="Max" />
+            <ProfileField label="Nachname" value={profileName.last_name}
+              onChange={v => setProfileName(p => ({ ...p, last_name: v }))} placeholder="Mustermann" />
           </div>
 
-          {/* Contact */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <Field label="Telefon / WhatsApp" value={profileFields.phone}
-              onChange={v => setProfileFields(p => ({ ...p, phone: v }))} placeholder="+49 151 12345678" />
-            <Field label="Website" value={profileFields.website_url}
-              onChange={v => setProfileFields(p => ({ ...p, website_url: v }))} placeholder="https://meine-seite.de" />
-          </div>
-
-          {/* Social media */}
-          <div>
-            <p className="text-sm font-semibold text-gray-700 mb-3">Social Media</p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <Field label="Instagram" value={profileFields.instagram}
-                onChange={v => setProfileFields(p => ({ ...p, instagram: v }))} placeholder="https://instagram.com/deinname" />
-              <Field label="Facebook" value={profileFields.facebook}
-                onChange={v => setProfileFields(p => ({ ...p, facebook: v }))} placeholder="https://facebook.com/deinname" />
-              <Field label="LinkedIn" value={profileFields.linkedin}
-                onChange={v => setProfileFields(p => ({ ...p, linkedin: v }))} placeholder="https://linkedin.com/in/deinname" />
-              <Field label="TikTok" value={profileFields.tiktok}
-                onChange={v => setProfileFields(p => ({ ...p, tiktok: v }))} placeholder="https://tiktok.com/@deinname" />
-              <Field label="YouTube" value={profileFields.youtube}
-                onChange={v => setProfileFields(p => ({ ...p, youtube: v }))} placeholder="https://youtube.com/@deinname" />
+          {/* ── Phone ── */}
+          <div className="flex flex-col gap-1.5">
+            <label className="text-sm font-semibold text-gray-700">Telefon / WhatsApp</label>
+            <div className="flex overflow-hidden rounded-2xl" style={{ border: '1.5px solid #E5E7EB' }}>
+              <select
+                value={countryCode}
+                onChange={e => setCountryCode(e.target.value)}
+                className="flex-shrink-0 px-3 py-3 text-sm outline-none"
+                style={{ background: '#FAFAFA', borderRight: '1px solid #F1F5F9', color: '#374151', minWidth: 80 }}
+              >
+                {COUNTRIES.map(c => (
+                  <option key={c.code} value={c.code}>{c.flag} {c.code}</option>
+                ))}
+              </select>
+              <input
+                type="tel"
+                value={phoneNumber}
+                onChange={e => setPhoneNumber(e.target.value)}
+                placeholder="151 12345678"
+                className="flex-1 min-w-0 px-4 py-3 text-sm outline-none bg-white"
+                style={{ color: '#111827' }}
+                onFocus={e => (e.currentTarget.closest('div')!.style.borderColor = '#1a1a1a')}
+                onBlur={e => (e.currentTarget.closest('div')!.style.borderColor = '#E5E7EB')}
+              />
             </div>
+          </div>
+
+          {/* ── Social Media ── */}
+          <div className="flex flex-col gap-2">
+            <p className="text-sm font-semibold text-gray-700 mb-1">Social Media</p>
+            {SOCIALS.map(s => (
+              <div key={s.key}
+                className="flex items-center overflow-hidden rounded-2xl transition-all"
+                style={{ border: '1.5px solid #E5E7EB', background: '#fff' }}
+                onFocusCapture={e => (e.currentTarget.style.borderColor = '#1a1a1a')}
+                onBlurCapture={e => (e.currentTarget.style.borderColor = '#E5E7EB')}
+              >
+                <div className="flex items-center gap-2 px-3 py-3 border-r flex-shrink-0"
+                  style={{ borderColor: '#F1F5F9', background: '#FAFAFA', minWidth: 44 }}>
+                  {s.icon}
+                </div>
+                <div className="px-2 py-3 text-xs flex-shrink-0"
+                  style={{ color: '#9CA3AF', borderRight: '1px solid #F1F5F9', whiteSpace: 'nowrap', userSelect: 'none' }}>
+                  {s.prefix}
+                </div>
+                <input
+                  type="text"
+                  value={socialUsernames[s.key] ?? ''}
+                  onChange={e => setSocialUsernames(prev => ({ ...prev, [s.key]: e.target.value }))}
+                  placeholder={s.ph}
+                  autoComplete="off"
+                  className="flex-1 min-w-0 px-3 py-3 text-sm outline-none bg-transparent"
+                  style={{ color: '#111827' }}
+                />
+              </div>
+            ))}
           </div>
 
           {profileError && (
@@ -894,27 +1015,80 @@ function StatusBadge({ cancelling, children }: { cancelling: boolean; children: 
 function Field({
   label, value, onChange, type = 'text', placeholder,
 }: {
-  label: string
-  value: string
-  onChange: (v: string) => void
-  type?: string
-  placeholder?: string
+  label: string; value: string; onChange: (v: string) => void; type?: string; placeholder?: string
 }) {
   return (
     <div className="flex flex-col gap-1.5">
       <label className="text-sm font-semibold text-gray-700">{label}</label>
       <input
-        type={type}
-        value={value}
-        onChange={e => onChange(e.target.value)}
-        placeholder={placeholder}
-        required
+        type={type} value={value} onChange={e => onChange(e.target.value)}
+        placeholder={placeholder} required
         className="w-full px-4 py-3 text-[15px] rounded-2xl outline-none transition-all bg-white"
         style={{ border: '1.5px solid #E5E7EB' }}
         onFocus={e => (e.target.style.borderColor = '#1a1a1a')}
         onBlur={e => (e.target.style.borderColor = '#E5E7EB')}
       />
     </div>
+  )
+}
+
+function ProfileField({
+  label, value, onChange, placeholder,
+}: {
+  label: string; value: string; onChange: (v: string) => void; placeholder?: string
+}) {
+  return (
+    <div className="flex flex-col gap-1.5">
+      <label className="text-sm font-semibold text-gray-700">{label}</label>
+      <input
+        type="text" value={value} onChange={e => onChange(e.target.value)}
+        placeholder={placeholder}
+        className="w-full px-4 py-3 text-[15px] rounded-2xl outline-none transition-all bg-white"
+        style={{ border: '1.5px solid #E5E7EB' }}
+        onFocus={e => (e.target.style.borderColor = '#1a1a1a')}
+        onBlur={e => (e.target.style.borderColor = '#E5E7EB')}
+      />
+    </div>
+  )
+}
+
+// ── Platform icons ────────────────────────────────────────────────────────────
+
+function IgIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#C13584" strokeWidth="2" strokeLinecap="round">
+      <rect x="2" y="2" width="20" height="20" rx="5"/>
+      <circle cx="12" cy="12" r="5"/>
+      <circle cx="17.5" cy="6.5" r="1" fill="#C13584" stroke="none"/>
+    </svg>
+  )
+}
+function TtIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="#000">
+      <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.26 6.26 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.95a8.16 8.16 0 004.77 1.52V7.02a4.85 4.85 0 01-1-.33z"/>
+    </svg>
+  )
+}
+function FbIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="#1877F2">
+      <path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073c0 6.03 4.388 11.027 10.125 11.927v-8.437H7.078v-3.49h3.047V9.428c0-3.007 1.792-4.67 4.533-4.67 1.312 0 2.686.234 2.686.234v2.953H15.83c-1.491 0-1.956.93-1.956 1.886v2.25h3.328l-.532 3.49h-2.796v8.437C19.612 23.1 24 18.103 24 12.073z"/>
+    </svg>
+  )
+}
+function LiIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="#0A66C2">
+      <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+    </svg>
+  )
+}
+function YtIcon() {
+  return (
+    <svg width="18" height="14" viewBox="0 0 24 17" fill="#FF0000">
+      <path d="M23.495 2.632A3.008 3.008 0 0021.38.516C19.505 0 12 0 12 0S4.495 0 2.62.516A3.008 3.008 0 00.505 2.632C0 4.506 0 8.407 0 8.407s0 3.9.505 5.774a3.008 3.008 0 002.115 2.116C4.495 16.814 12 16.814 12 16.814s7.505 0 9.38-.517a3.008 3.008 0 002.115-2.116C24 12.307 24 8.407 24 8.407s0-3.901-.505-5.775zm-13.956 9.33V5.45l6.272 3.257-6.272 3.256z"/>
+    </svg>
   )
 }
 
