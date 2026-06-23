@@ -7,7 +7,41 @@ export const metadata: Metadata = {
 
 export default function HomePage() {
   return (
-    <div style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif', background: '#f0ede8', minHeight: '100vh' }}>
+    <div style={{ fontFamily: '"Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif', background: '#f0ede8', minHeight: '100vh' }}>
+
+      {/* ── Fonts ────────────────────────────────────────────────────────── */}
+      {/* eslint-disable-next-line @next/next/no-page-custom-font */}
+      <link rel="preconnect" href="https://fonts.googleapis.com" />
+      {/* eslint-disable-next-line @next/next/no-page-custom-font */}
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+      {/* eslint-disable-next-line @next/next/no-page-custom-font */}
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" />
+      <style>{`
+        @font-face {
+          font-family: 'Plein';
+          src: url('/fonts/Plein-Bold.otf') format('opentype');
+          font-weight: 700;
+          font-style: normal;
+          font-display: swap;
+        }
+        @font-face {
+          font-family: 'Plein';
+          src: url('/fonts/Plein-Medium.otf') format('opentype');
+          font-weight: 500;
+          font-style: normal;
+          font-display: swap;
+        }
+        @font-face {
+          font-family: 'Plein';
+          src: url('/fonts/Plein-Regular.otf') format('opentype');
+          font-weight: 400;
+          font-style: normal;
+          font-display: swap;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        a { text-decoration: none; }
+      `}</style>
 
       {/* ── Floating Navbar ───────────────────────────────────────────── */}
       <div style={{ padding: '20px 24px 0', position: 'sticky', top: 20, zIndex: 100 }}>
@@ -22,20 +56,19 @@ export default function HomePage() {
           maxWidth: 1200,
           margin: '0 auto',
         }}>
-          <div style={{ fontWeight: 700, fontSize: 18, color: '#111', letterSpacing: '-0.03em' }}>FinestSites</div>
+          <div style={{ fontFamily: '"Plein", sans-serif', fontWeight: 700, fontSize: 18, color: '#111', letterSpacing: '-0.03em' }}>FinestSites</div>
           <div style={{ display: 'flex', gap: 32, alignItems: 'center' }}>
-            <a href="#features" style={{ color: '#555', fontSize: 14, textDecoration: 'none', fontWeight: 500 }}>Features</a>
-            <a href="#templates" style={{ color: '#555', fontSize: 14, textDecoration: 'none', fontWeight: 500 }}>Templates</a>
-            <a href="#preise" style={{ color: '#555', fontSize: 14, textDecoration: 'none', fontWeight: 500 }}>Preise</a>
+            <a href="#features" style={{ color: '#555', fontSize: 14, fontWeight: 500 }}>Features</a>
+            <a href="#templates" style={{ color: '#555', fontSize: 14, fontWeight: 500 }}>Templates</a>
+            <a href="#preise" style={{ color: '#555', fontSize: 14, fontWeight: 500 }}>Preise</a>
           </div>
           <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-            <a href="/login" style={{ color: '#111', fontSize: 14, fontWeight: 500, textDecoration: 'none', padding: '8px 16px' }}>Anmelden</a>
+            <a href="/login" style={{ color: '#111', fontSize: 14, fontWeight: 500, padding: '8px 16px' }}>Anmelden</a>
             <a href="/register" style={{
               background: '#111',
               color: '#fff',
               fontSize: 14,
               fontWeight: 600,
-              textDecoration: 'none',
               padding: '9px 20px',
               borderRadius: 100,
             }}>Kostenlos starten</a>
@@ -48,36 +81,37 @@ export default function HomePage() {
         background: '#B8CCDB',
         margin: '20px 24px',
         borderRadius: 28,
-        padding: '100px 40px 0',
+        padding: '96px 40px 0',
         textAlign: 'center',
         overflow: 'hidden',
-        minHeight: 560,
+        minHeight: 580,
       }}>
-        <p style={{ fontSize: 13, fontWeight: 600, color: '#3a4a58', letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: 32 }}>
+        <p style={{ fontSize: 12, fontWeight: 600, color: '#3a4a58', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 28 }}>
           Speziell für Network-Marketing-Profis
         </p>
         <h1 style={{
-          fontSize: 'clamp(56px, 9vw, 118px)',
+          fontFamily: '"Plein", sans-serif',
+          fontSize: 'clamp(52px, 8.5vw, 112px)',
           fontWeight: 700,
           color: '#1a2530',
           lineHeight: 1.0,
           letterSpacing: '-0.04em',
-          margin: '0 auto 32px',
+          margin: '0 auto 28px',
           maxWidth: 900,
         }}>
           Deine Website.<br />In Minuten. Fertig.
         </h1>
         <p style={{
-          fontSize: 18,
+          fontSize: 17,
           color: '#3a4a58',
-          lineHeight: 1.6,
-          maxWidth: 480,
+          lineHeight: 1.65,
+          maxWidth: 460,
           margin: '0 auto 44px',
           fontWeight: 400,
         }}>
           Wähle ein Template, fülle deine Inhalte ein — und deine professionelle Produktwebsite ist live.
         </p>
-        <div style={{ display: 'flex', gap: 14, justifyContent: 'center', marginBottom: 60 }}>
+        <div style={{ display: 'flex', gap: 12, justifyContent: 'center', marginBottom: 56 }}>
           <a href="/register" style={{
             background: '#1a2530',
             color: '#fff',
@@ -85,7 +119,6 @@ export default function HomePage() {
             borderRadius: 100,
             fontSize: 15,
             fontWeight: 600,
-            textDecoration: 'none',
             display: 'inline-block',
           }}>Jetzt kostenlos starten</a>
           <a href="#features" style={{
@@ -95,56 +128,204 @@ export default function HomePage() {
             borderRadius: 100,
             fontSize: 15,
             fontWeight: 600,
-            textDecoration: 'none',
             display: 'inline-block',
             border: '1.5px solid rgba(26,37,48,0.18)',
           }}>So funktioniert es</a>
         </div>
 
-        {/* Product mockup */}
+        {/* ── Faithful Editor Mockup ── */}
         <div style={{
           background: '#1a2530',
-          borderRadius: '20px 20px 0 0',
-          padding: '16px 16px 0',
-          maxWidth: 860,
+          borderRadius: '18px 18px 0 0',
+          padding: '14px 14px 0',
+          maxWidth: 900,
           margin: '0 auto',
-          boxShadow: '0 -4px 60px rgba(0,0,0,0.2)',
+          boxShadow: '0 -6px 60px rgba(0,0,0,0.25)',
         }}>
-          <div style={{ display: 'flex', gap: 5, marginBottom: 10, paddingLeft: 2 }}>
-            <div style={{ width: 9, height: 9, borderRadius: '50%', background: '#FF5F57' }} />
-            <div style={{ width: 9, height: 9, borderRadius: '50%', background: '#FFBD2E' }} />
-            <div style={{ width: 9, height: 9, borderRadius: '50%', background: '#28CA41' }} />
-            <div style={{ flex: 1, background: 'rgba(255,255,255,0.1)', borderRadius: 6, height: 18, marginLeft: 6, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <span style={{ fontSize: 9, color: 'rgba(255,255,255,0.4)' }}>maria-mueller.finestsites.io</span>
+          {/* Browser chrome dots + URL bar */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
+            <div style={{ display: 'flex', gap: 5 }}>
+              <div style={{ width: 9, height: 9, borderRadius: '50%', background: '#FF5F57' }} />
+              <div style={{ width: 9, height: 9, borderRadius: '50%', background: '#FFBD2E' }} />
+              <div style={{ width: 9, height: 9, borderRadius: '50%', background: '#28CA41' }} />
+            </div>
+            <div style={{ flex: 1, background: 'rgba(255,255,255,0.08)', borderRadius: 6, height: 22, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.45)', fontFamily: 'monospace' }}>app.finestsites.io/sites/1/edit</span>
             </div>
           </div>
-          <div style={{ background: '#fff', borderRadius: '10px 10px 0 0', overflow: 'hidden' }}>
-            <div style={{ display: 'grid', gridTemplateColumns: '220px 1fr', minHeight: 220 }}>
-              <div style={{ padding: 16, borderRight: '1px solid #f0f0f0', background: '#fafafa' }}>
-                <p style={{ fontSize: 8, fontWeight: 700, color: '#aaa', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 10 }}>INHALTE</p>
-                {['Dein Name', 'Über mich', 'Mein Produkt', 'Kontakt'].map((label, i) => (
-                  <div key={i} style={{
-                    padding: '7px 9px',
-                    borderRadius: 7,
-                    marginBottom: 5,
-                    background: i === 1 ? '#7c3aed' : '#fff',
-                    border: i === 1 ? 'none' : '1px solid #ebebeb',
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                  }}>
-                    <span style={{ fontSize: 10, color: i === 1 ? '#fff' : '#333', fontWeight: i === 1 ? 600 : 400 }}>{label}</span>
-                    {i === 1 && <span style={{ fontSize: 8, color: 'rgba(255,255,255,0.85)', fontWeight: 600 }}>✓ Fertig</span>}
-                  </div>
-                ))}
-              </div>
-              <div style={{ padding: 24, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                <div style={{ width: 44, height: 44, borderRadius: 11, background: '#7c3aed', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 10 }}>
-                  <span style={{ color: '#fff', fontSize: 18 }}>✦</span>
+
+          {/* Editor UI */}
+          <div style={{ background: 'white', borderRadius: '10px 10px 0 0', overflow: 'hidden' }}>
+
+            {/* ── Editor Header ── */}
+            <div style={{
+              background: 'white',
+              borderBottom: '1px solid #E5E7EB',
+              padding: '9px 14px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}>
+              {/* Left */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
+                {/* Back button */}
+                <div style={{
+                  width: 28, height: 28, borderRadius: 9,
+                  background: '#F3F4F6',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  flexShrink: 0,
+                }}>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#374151" strokeWidth="2.5">
+                    <path d="M19 12H5M12 5l-7 7 7 7"/>
+                  </svg>
                 </div>
-                <p style={{ fontWeight: 700, fontSize: 13, color: '#111', marginBottom: 3 }}>Maria Müller</p>
-                <p style={{ fontSize: 10, color: '#999' }}>Ernährungsberaterin · PM International</p>
+                {/* Title + URL */}
+                <div>
+                  <div style={{ fontSize: 11, fontWeight: 700, color: '#111', lineHeight: 1.3 }}>NatureWell Pro</div>
+                  <div style={{ fontSize: 9, fontFamily: 'monospace', color: '#9CA3AF', lineHeight: 1.3 }}>maria-m.finestsites.io</div>
+                </div>
+                {/* Live badge */}
+                <div style={{
+                  background: '#DCFCE7', color: '#16A34A',
+                  fontSize: 9, fontWeight: 600,
+                  padding: '3px 8px', borderRadius: 100,
+                  flexShrink: 0,
+                }}>● Live</div>
+                {/* Autosave */}
+                <div style={{ fontSize: 9, color: '#16A34A', display: 'flex', alignItems: 'center', gap: 3 }}>
+                  <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="20 6 9 17 4 12"/>
+                  </svg>
+                  Gespeichert
+                </div>
               </div>
+              {/* Right: action buttons */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                {/* Live-Vorschau toggle (active = dark) */}
+                <div style={{
+                  background: '#1a1a1a', color: 'white',
+                  fontSize: 9, fontWeight: 500,
+                  padding: '5px 9px', borderRadius: 8,
+                  display: 'flex', alignItems: 'center', gap: 4,
+                }}>
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
+                  </svg>
+                  Live-Vorschau
+                </div>
+                {/* Vorschau button */}
+                <div style={{
+                  background: '#F3F4F6', color: '#374151',
+                  fontSize: 9, fontWeight: 500,
+                  padding: '5px 9px', borderRadius: 8,
+                  display: 'flex', alignItems: 'center', gap: 4,
+                }}>
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+                  </svg>
+                  Vorschau
+                </div>
+                {/* Publish button */}
+                <div style={{
+                  background: '#1a1a1a', color: 'white',
+                  fontSize: 9, fontWeight: 600,
+                  padding: '5px 11px', borderRadius: 8,
+                }}>Veröffentlichen</div>
+              </div>
+            </div>
+
+            {/* ── Two-column body ── */}
+            <div style={{ display: 'grid', gridTemplateColumns: '176px 1fr', minHeight: 230 }}>
+
+              {/* ── Left Sidebar ── */}
+              <div style={{ borderRight: '1px solid #E5E7EB', padding: '12px 8px', background: 'white' }}>
+                <p style={{ fontSize: 7.5, fontWeight: 700, color: '#9CA3AF', letterSpacing: '0.1em', textTransform: 'uppercase', padding: '0 6px', marginBottom: 8 }}>
+                  Abschnitte
+                </p>
+                {/* Section: Dein Name — complete */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 7, padding: '6px 8px', borderRadius: 9, marginBottom: 2 }}>
+                  <div style={{ width: 18, height: 18, borderRadius: '50%', background: '#DCFCE7', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <svg width="8" height="6" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#16A34A" strokeWidth="1.8" strokeLinecap="round"/></svg>
+                  </div>
+                  <span style={{ fontSize: 10, color: '#374151', fontWeight: 400 }}>Dein Name</span>
+                </div>
+                {/* Section: Über mich — complete */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 7, padding: '6px 8px', borderRadius: 9, marginBottom: 2 }}>
+                  <div style={{ width: 18, height: 18, borderRadius: '50%', background: '#DCFCE7', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <svg width="8" height="6" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#16A34A" strokeWidth="1.8" strokeLinecap="round"/></svg>
+                  </div>
+                  <span style={{ fontSize: 10, color: '#374151', fontWeight: 400 }}>Über mich</span>
+                </div>
+                {/* Section: Mein Produkt — ACTIVE */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 7, padding: '6px 8px', borderRadius: 9, marginBottom: 2, background: '#1a1a1a' }}>
+                  <div style={{ width: 18, height: 18, borderRadius: '50%', background: 'rgba(255,255,255,0.18)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <span style={{ fontSize: 8, color: 'white', fontWeight: 700 }}>3</span>
+                  </div>
+                  <span style={{ fontSize: 10, color: 'white', fontWeight: 600 }}>Mein Produkt</span>
+                </div>
+                {/* Section: Kontakt — incomplete */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 7, padding: '6px 8px', borderRadius: 9, marginBottom: 2 }}>
+                  <div style={{ width: 18, height: 18, borderRadius: '50%', background: '#F3F4F6', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <span style={{ fontSize: 8, color: '#6B7280', fontWeight: 700 }}>4</span>
+                  </div>
+                  <span style={{ fontSize: 10, color: '#374151', fontWeight: 400 }}>Kontakt</span>
+                </div>
+                {/* Domain */}
+                <div style={{ borderTop: '1px solid #F3F4F6', marginTop: 8, paddingTop: 8 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 7, padding: '6px 8px', borderRadius: 9 }}>
+                    <div style={{ width: 18, height: 18, borderRadius: '50%', background: '#EFF6FF', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" strokeWidth="2" strokeLinecap="round">
+                        <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/>
+                        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                      </svg>
+                    </div>
+                    <span style={{ fontSize: 10, color: '#374151', fontWeight: 400 }}>Domain</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* ── Right: Live Preview ── */}
+              <div style={{ background: '#F9FAFB', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+                {/* Preview label bar */}
+                <div style={{ background: '#F3F4F6', borderBottom: '1px solid #E5E7EB', padding: '5px 12px', display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#22C55E' }} />
+                  <span style={{ fontSize: 8.5, color: '#6B7280', fontFamily: 'monospace' }}>maria-m.finestsites.io</span>
+                </div>
+                {/* Mini template preview */}
+                <div style={{ flex: 1, overflow: 'hidden' }}>
+                  {/* Hero */}
+                  <div style={{ background: 'linear-gradient(135deg, #0f4c35 0%, #1a6b4a 100%)', padding: '20px 16px 18px', textAlign: 'center' }}>
+                    <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'rgba(255,255,255,0.15)', margin: '0 auto 8px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <span style={{ fontSize: 14 }}>🌿</span>
+                    </div>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: 'white', letterSpacing: '-0.02em', marginBottom: 3 }}>Maria Müller</div>
+                    <div style={{ fontSize: 8.5, color: 'rgba(255,255,255,0.7)' }}>Gesundheitsberaterin · PM International</div>
+                    <div style={{ display: 'flex', gap: 6, justifyContent: 'center', marginTop: 12 }}>
+                      <div style={{ background: '#22C55E', color: 'white', fontSize: 8, fontWeight: 600, padding: '4px 10px', borderRadius: 100 }}>Mehr erfahren</div>
+                      <div style={{ background: 'rgba(255,255,255,0.15)', color: 'white', fontSize: 8, fontWeight: 500, padding: '4px 10px', borderRadius: 100, border: '1px solid rgba(255,255,255,0.25)' }}>Kontakt</div>
+                    </div>
+                  </div>
+                  {/* Active editing section: Mein Produkt */}
+                  <div style={{ background: 'white', padding: '14px 16px' }}>
+                    <div style={{ fontSize: 9, fontWeight: 700, color: '#1a1a1a', marginBottom: 8, letterSpacing: '-0.01em' }}>Mein Produkt</div>
+                    {/* Text field being edited */}
+                    <div style={{ marginBottom: 8 }}>
+                      <div style={{ fontSize: 7.5, fontWeight: 600, color: '#6B7280', marginBottom: 3 }}>Produktname</div>
+                      <div style={{ border: '1.5px solid #3B82F6', borderRadius: 7, padding: '5px 8px', fontSize: 9, color: '#111', background: '#F8FAFF' }}>
+                        FitLine Activize Oxyplus
+                        <span style={{ display: 'inline-block', width: 1, height: 10, background: '#3B82F6', marginLeft: 1, verticalAlign: 'text-bottom', animation: 'none' }} />
+                      </div>
+                    </div>
+                    <div>
+                      <div style={{ fontSize: 7.5, fontWeight: 600, color: '#6B7280', marginBottom: 3 }}>Kurzbeschreibung</div>
+                      <div style={{ border: '1.5px solid #E5E7EB', borderRadius: 7, padding: '5px 8px', fontSize: 9, color: '#9CA3AF', background: 'white' }}>
+                        Beschreibe dein Produkt in 1–2 Sätzen…
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
             </div>
           </div>
         </div>
@@ -157,7 +338,7 @@ export default function HomePage() {
         borderRadius: 28,
         padding: '56px 40px',
       }}>
-        <p style={{ textAlign: 'center', fontSize: 12, fontWeight: 600, color: '#7a5035', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 40 }}>
+        <p style={{ textAlign: 'center', fontSize: 11, fontWeight: 600, color: '#7a5035', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 40 }}>
           Alles was du brauchst
         </p>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, maxWidth: 880, margin: '0 auto' }}>
@@ -174,7 +355,7 @@ export default function HomePage() {
               textAlign: 'center',
               border: '1px solid rgba(255,255,255,0.7)',
             }}>
-              <p style={{ fontSize: 30, fontWeight: 800, color: '#3a1f00', letterSpacing: '-0.04em', marginBottom: 6 }}>{stat.number}</p>
+              <p style={{ fontFamily: '"Plein", sans-serif', fontSize: 30, fontWeight: 700, color: '#3a1f00', letterSpacing: '-0.04em', marginBottom: 6 }}>{stat.number}</p>
               <p style={{ fontSize: 13, color: '#7a5035', lineHeight: 1.4 }}>{stat.label}</p>
             </div>
           ))}
@@ -188,16 +369,17 @@ export default function HomePage() {
         borderRadius: 28,
         padding: '72px 40px',
       }}>
-        <p style={{ textAlign: 'center', fontSize: 12, fontWeight: 600, color: '#aaa', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 16 }}>
+        <p style={{ textAlign: 'center', fontSize: 11, fontWeight: 600, color: '#aaa', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 16 }}>
           So einfach geht es
         </p>
         <h2 style={{
+          fontFamily: '"Plein", sans-serif',
           textAlign: 'center',
           fontSize: 'clamp(32px, 5vw, 60px)',
           fontWeight: 700,
           color: '#111',
           letterSpacing: '-0.04em',
-          lineHeight: 1.1,
+          lineHeight: 1.05,
           maxWidth: 680,
           margin: '0 auto 56px',
         }}>
@@ -211,7 +393,7 @@ export default function HomePage() {
           ].map((card) => (
             <div key={card.step} style={{ background: card.bg, borderRadius: 20, padding: '36px 28px' }}>
               <p style={{ fontSize: 11, fontWeight: 700, color: 'rgba(0,0,0,0.3)', letterSpacing: '0.06em', marginBottom: 20 }}>{card.step}</p>
-              <h3 style={{ fontSize: 20, fontWeight: 700, color: '#111', letterSpacing: '-0.02em', marginBottom: 10 }}>{card.title}</h3>
+              <h3 style={{ fontFamily: '"Plein", sans-serif', fontSize: 20, fontWeight: 700, color: '#111', letterSpacing: '-0.02em', marginBottom: 10 }}>{card.title}</h3>
               <p style={{ fontSize: 14, color: '#444', lineHeight: 1.65 }}>{card.desc}</p>
             </div>
           ))}
@@ -244,6 +426,7 @@ export default function HomePage() {
         textAlign: 'center',
       }}>
         <h2 style={{
+          fontFamily: '"Plein", sans-serif',
           fontSize: 'clamp(36px, 6vw, 72px)',
           fontWeight: 700,
           color: '#fff',
@@ -254,8 +437,8 @@ export default function HomePage() {
         }}>
           Bereit für deine Website?
         </h2>
-        <p style={{ fontSize: 17, color: 'rgba(255,255,255,0.5)', marginBottom: 44, maxWidth: 420, margin: '0 auto 44px' }}>
-          Kostenlos starten. Kein Kreditkarte nötig.
+        <p style={{ fontSize: 17, color: 'rgba(255,255,255,0.5)', maxWidth: 420, margin: '0 auto 44px' }}>
+          Kostenlos starten. Keine Kreditkarte nötig.
         </p>
         <a href="/register" style={{
           background: '#fff',
@@ -264,17 +447,16 @@ export default function HomePage() {
           borderRadius: 100,
           fontSize: 16,
           fontWeight: 700,
-          textDecoration: 'none',
           display: 'inline-block',
         }}>Jetzt kostenlos starten</a>
       </section>
 
       {/* ── Footer ────────────────────────────────────────────────────── */}
       <footer style={{ padding: '28px 48px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <span style={{ fontSize: 13, fontWeight: 700, color: '#333' }}>FinestSites</span>
+        <span style={{ fontFamily: '"Plein", sans-serif', fontSize: 14, fontWeight: 700, color: '#333' }}>FinestSites</span>
         <div style={{ display: 'flex', gap: 24 }}>
-          <a href="/login" style={{ fontSize: 12, color: '#999', textDecoration: 'none' }}>Anmelden</a>
-          <a href="/register" style={{ fontSize: 12, color: '#999', textDecoration: 'none' }}>Registrieren</a>
+          <a href="/login" style={{ fontSize: 12, color: '#999' }}>Anmelden</a>
+          <a href="/register" style={{ fontSize: 12, color: '#999' }}>Registrieren</a>
         </div>
         <span style={{ fontSize: 12, color: '#bbb' }}>© 2026 FinestSites</span>
       </footer>
