@@ -181,7 +181,7 @@ export default function AffiliatePage() {
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-gray-900">Partnerprogramm</h1>
         <p className="text-sm mt-1" style={{ color: '#94A3B8' }}>
-          Empfehle FinestSites — du verdienst <strong className="text-gray-600">15%</strong>, dein Freund spart <strong className="text-gray-600">15%</strong>.
+          Empfehle FinestSites — du verdienst <strong className="text-gray-600">20%</strong>, dein Empfehlter spart <strong className="text-gray-600">15%</strong>.
         </p>
       </div>
 
@@ -208,11 +208,11 @@ export default function AffiliatePage() {
           <div className="hidden sm:flex items-center justify-center flex-shrink-0 mt-6">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#D1D5DB" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
           </div>
-          <HowStep icon="💳" n={2} title="Freund abonniert" desc="Dein Freund bucht FinestSites und zahlt 15% weniger im ersten Monat." />
+          <HowStep icon="💳" n={2} title="Neukunde abonniert" desc="Dein Empfehlter bucht FinestSites und zahlt 15% weniger im ersten Monat." />
           <div className="hidden sm:flex items-center justify-center flex-shrink-0 mt-6">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#D1D5DB" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
           </div>
-          <HowStep icon="💰" n={3} title="Du bekommst Geld" desc="15% des Monatspreises landen automatisch auf deinem Konto — jeden Monat." highlight />
+          <HowStep icon="💰" n={3} title="Du bekommst Geld" desc="20% des Monatspreises landen automatisch auf deinem Konto — jeden Monat." highlight />
         </div>
       </section>
 
@@ -260,7 +260,7 @@ export default function AffiliatePage() {
           <div className="text-center py-4">
             <p className="text-4xl mb-2">🌱</p>
             <p className="text-sm font-semibold text-gray-700 mb-1">Noch keine Einnahmen</p>
-            <p className="text-xs text-gray-400">Sobald dein erster Freund abonniert, siehst du hier deine Einnahmen.</p>
+            <p className="text-xs text-gray-400">Sobald deine erste Empfehlung abonniert, siehst du hier deine Einnahmen.</p>
           </div>
         ) : (
           <div className="grid grid-cols-3 gap-4">
@@ -287,7 +287,7 @@ export default function AffiliatePage() {
         <section className="rounded-3xl p-6 mb-5" style={{ background: '#fff', border: '1.5px solid #E5E7EB' }}>
           <div className="flex items-center justify-between mb-4">
             <p className="text-xs font-semibold uppercase tracking-widest" style={{ color: '#94A3B8' }}>
-              Deine geworbenen Freunde
+              Deine Empfehlungen
             </p>
             <span className="text-xs font-bold bg-gray-100 text-gray-700 px-2.5 py-0.5 rounded-full">
               {stats.referral_count}

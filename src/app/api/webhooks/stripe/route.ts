@@ -124,7 +124,7 @@ export async function POST(req: NextRequest) {
 
         if (referrer) {
           const grossPaid = session.amount_total ?? 0  // cents, after coupon
-          const commissionAmount = Math.floor(grossPaid * 0.15)
+          const commissionAmount = Math.floor(grossPaid * 0.20)
           const availableAt = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000)
 
           // Retrieve the invoice ID from the subscription's latest invoice
@@ -140,7 +140,7 @@ export async function POST(req: NextRequest) {
                 stripeInvoiceId: latestInvoiceId,
                 stripeCustomerId: session.customer as string,
                 grossAmount: grossPaid,
-                commissionRate: '0.15',
+                commissionRate: '0.20',
                 commissionAmount,
                 status: 'pending',
                 availableAt,
@@ -430,7 +430,7 @@ export async function POST(req: NextRequest) {
 
         if (referrer) {
           const grossPaid = invoice.amount_paid  // in cents, after coupon
-          const commissionAmount = Math.floor(grossPaid * 0.15)
+          const commissionAmount = Math.floor(grossPaid * 0.20)
           const availableAt = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000)
 
           // Idempotent: unique on stripe_invoice_id
@@ -441,7 +441,7 @@ export async function POST(req: NextRequest) {
               stripeInvoiceId: invoice.id,
               stripeCustomerId: invoice.customer as string,
               grossAmount: grossPaid,
-              commissionRate: '0.15',
+              commissionRate: '0.20',
               commissionAmount,
               status: 'pending',
               availableAt,
