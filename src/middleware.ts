@@ -85,8 +85,10 @@ export async function middleware(request: NextRequest) {
   // We cannot call auth.api.getSession() or db.query directly from middleware because
   // middleware runs in Edge Runtime where the postgres driver cannot make TCP connections.
   // Instead we delegate to the auth-check API route (Node.js runtime) via loopback HTTP.
-  let user: { id: string; email: string; [key: string]: unknown } | null = null
-  let profile: { username: string | null; subscriptionStatus: string | null; stripeSubscriptionId: string | null } | null = null
+  type AuthUser = { id: string; email: string }
+  type AuthProfile = { username: string | null; subscriptionStatus: string | null; stripeSubscriptionId: string | null }
+  let user: AuthUser | null = null
+  let profile: AuthProfile | null = null
 
   try {
     const controller = new AbortController()
@@ -97,7 +99,7 @@ export async function middleware(request: NextRequest) {
     })
     clearTimeout(timeoutId)
     if (authRes.ok) {
-      const data = await authRes.json() as { user: typeof user; profile: typeof profile }
+      const data = await authRes.json() as { user: AuthUser | null; profile: AuthProfile | null }
       user = data.user
       profile = data.profile
     }
