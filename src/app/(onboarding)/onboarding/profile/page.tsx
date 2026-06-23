@@ -101,7 +101,7 @@ export default function OnboardingProfilePage() {
     fd.append('file', file)
     const res = await fetch('/api/user/profile/avatar', { method: 'POST', body: fd })
     const data = await res.json()
-    if (data.url) setAvatarUrl(data.url)
+    if (data.url) setAvatarUrl(data.url + '?t=' + Date.now())
     setAvatarUploading(false)
   }
 

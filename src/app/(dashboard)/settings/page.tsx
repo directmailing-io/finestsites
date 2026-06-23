@@ -322,7 +322,7 @@ function SettingsContent() {
     fd.append('file', file)
     const res = await fetch('/api/user/profile/avatar', { method: 'POST', body: fd })
     const data = await res.json()
-    if (data.url) setProfileImageUrl(data.url)
+    if (data.url) setProfileImageUrl(data.url + '?t=' + Date.now())
     setAvatarUploading(false)
   }
 
