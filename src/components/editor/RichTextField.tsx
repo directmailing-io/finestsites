@@ -22,6 +22,10 @@ interface Props {
   maxLength?: number | null
   /** Enable AI compliance check (EU Health Claims Regulation) */
   complianceCheck?: boolean
+  /** The approved HTML text from a previous check (stored in parent values as key+'__chk') */
+  complianceApprovedText?: string
+  /** Called when compliance check passes — parent should persist the approved text */
+  onComplianceApproved?: (approvedHtml: string) => void
 }
 
 type CheckState =
@@ -38,11 +42,13 @@ function hash(s: string): string {
   return h.toString(36)
 }
 
-export function RichTextField({ value, onChange, placeholder, maxLength, complianceCheck }: Props) {
+export function RichTextField({ value, onChange, placeholder, maxLength, complianceCheck, complianceApprovedText, onComplianceApproved }: Props) {
   const [linkUrl, setLinkUrl] = useState('')
   const [showLinkInput, setShowLinkInput] = useState(false)
   const [checkState, setCheckState] = useState<CheckState>({ status: 'idle' })
   const [showCheckPanel, setShowCheckPanel] = useState(false)
+  // Track whether we already restored the compliance state from props (run once per mount)
+  const complianceRestoredRef = useRef(false)
   // Guard: suppress onUpdate emissions during the initial mount/content-setting
   // phase. Tiptap fires onUpdate before the editor has rendered the initial
   // content, which would emit '' and overwrite the saved value in the parent.
@@ -104,6 +110,20 @@ export function RichTextField({ value, onChange, placeholder, maxLength, complia
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value, editor])
 
+  // Restore compliance approval state on mount (e.g. after section switch).
+  // If the parent has a previously-approved text that matches the current value,
+  // show the green "Geprüft" state without requiring a re-check.
+  useEffect(() => {
+    if (complianceRestoredRef.current) return
+    if (!complianceCheck || !complianceApprovedText || !value) return
+    // Normalize: strip trailing newlines / whitespace so minor serialization
+    // differences don't cause a false mismatch.
+    if (complianceApprovedText.trim() === value.trim()) {
+      setCheckState({ status: 'ok', checkedHash: hash(complianceApprovedText) })
+      complianceRestoredRef.current = true
+    }
+  }, [complianceCheck, complianceApprovedText, value])
+
   const addLink = useCallback(() => {
     if (!editor) return
     const url = linkUrl.trim()
@@ -137,6 +157,8 @@ export function RichTextField({ value, onChange, placeholder, maxLength, complia
       const h = hash(html)
       if (data.ok) {
         setCheckState({ status: 'ok', checkedHash: h })
+        // Persist approval in parent so it survives section switches and reloads
+        onComplianceApproved?.(html)
       } else {
         setCheckState({
           status: 'issues',

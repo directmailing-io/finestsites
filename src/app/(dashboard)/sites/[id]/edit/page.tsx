@@ -1532,9 +1532,11 @@ function LoopField({ field, value, onChange, onItemFocus }: {
 
 // ─── Field Renderer ───────────────────────────────────────────────────────────
 
-function FieldRenderer({ field, value, onChange, onItemFocus }: {
+function FieldRenderer({ field, value, onChange, onItemFocus, complianceApprovedText, onComplianceApproved }: {
   field: FieldSchema; value: string; onChange: (v: string) => void
   onItemFocus?: (item: Record<string, string> | null, idx: number) => void
+  complianceApprovedText?: string
+  onComplianceApproved?: (approvedHtml: string) => void
 }) {
   switch (field.type) {
     case 'textarea':
@@ -1553,6 +1555,8 @@ function FieldRenderer({ field, value, onChange, onItemFocus }: {
           placeholder={field.placeholder_text || field.label}
           maxLength={field.max_length}
           complianceCheck={field.compliance_check === true}
+          complianceApprovedText={field.compliance_check ? (complianceApprovedText ?? '') : undefined}
+          onComplianceApproved={field.compliance_check ? onComplianceApproved : undefined}
         />
       )
     case 'image':
@@ -2039,7 +2043,17 @@ export default function SiteEditPage({ params }: { params: Promise<{ id: string 
     .filter(f => f.required)
     .filter(f => checkShowWhen(f as unknown as LoopSubField, values, fields as unknown as LoopSubField[]))
     .filter(f => !values[f.key])
-  const allRequiredComplete = missingRequiredFields.length === 0
+  // Fields with compliance_check that haven't been approved (or text changed since approval)
+  const complianceBlockedFields = fields
+    .filter(f => f.compliance_check === true)
+    .filter(f => checkShowWhen(f as unknown as LoopSubField, values, fields as unknown as LoopSubField[]))
+    .filter(f => {
+      const approved = values[f.key + '__chk']
+      const current = values[f.key]
+      // No approval at all, or approved text differs from current text
+      return !approved || approved.trim() !== (current ?? '').trim()
+    })
+  const allRequiredComplete = missingRequiredFields.length === 0 && complianceBlockedFields.length === 0
 
   // Top-level show_when: hide fields whose visibility depends on another field
   // whose current value doesn't match the gate. Cascades correctly via the
@@ -2509,6 +2523,8 @@ export default function SiteEditPage({ params }: { params: Promise<{ id: string 
                       field={field}
                       value={values[field.key] ?? ''}
                       onChange={v => handleChange(field.key, v)}
+                      complianceApprovedText={field.compliance_check ? (values[field.key + '__chk'] ?? '') : undefined}
+                      onComplianceApproved={field.compliance_check ? (approvedHtml) => handleChange(field.key + '__chk', approvedHtml) : undefined}
                       onItemFocus={field.key === 'events'
                         ? (item, idx) => {
                             if (!item || idx < 0) { setPreviewHash(''); return }
@@ -2561,6 +2577,11 @@ export default function SiteEditPage({ params }: { params: Promise<{ id: string 
                     {!allRequiredComplete && missingRequiredFields.length > 0 && (
                       <p className="text-xs text-right" style={{ color: '#EF4444', maxWidth: 260 }}>
                         Noch ausfüllen: {missingRequiredFields.map(f => f.label).join(', ')}
+                      </p>
+                    )}
+                    {!allRequiredComplete && complianceBlockedFields.length > 0 && (
+                      <p className="text-xs text-right" style={{ color: '#D97706', maxWidth: 260 }}>
+                        Bitte EU-Health-Claims-Check durchführen: {complianceBlockedFields.map(f => f.label).join(', ')}
                       </p>
                     )}
                     <button onClick={handlePublish} disabled={publishing || !allRequiredComplete}
