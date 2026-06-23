@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
 
   // Register via BetterAuth — email verification email is sent automatically
   // via the sendVerificationEmail hook configured in src/lib/auth/index.ts
-  const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://finestsites.vercel.app'
+  const APP_URL = (process.env.NEXT_PUBLIC_APP_URL ?? 'https://app.finestsites.io').replace(/\/$/, '')
   const result = await auth.api.signUpEmail({
     body: {
       email: email.toLowerCase().trim(),
