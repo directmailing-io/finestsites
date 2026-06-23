@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
 
   const profile = await db.query.users.findFirst({
     where: eq(users.id, user.id),
-    columns: { stripeConnectId: true, email: true, username: true },
+    columns: { stripeConnectId: true, email: true, username: true, firstName: true, lastName: true },
   })
 
   const stripe = getStripe()
@@ -27,9 +27,23 @@ export async function POST(req: NextRequest) {
     if (!accountId) {
       const account = await stripe.accounts.create({
         type: 'express',
+        country: 'DE',
         email: profile?.email ?? user.email ?? '',
+        business_type: 'individual',
         capabilities: {
           transfers: { requested: true },
+        },
+        // Pre-fill name so Stripe shows it as already entered
+        individual: {
+          email: profile?.email ?? user.email ?? '',
+          ...(profile?.firstName ? { first_name: profile.firstName } : {}),
+          ...(profile?.lastName  ? { last_name:  profile.lastName  } : {}),
+        },
+        // Monthly payouts on the 1st of each month
+        settings: {
+          payouts: {
+            schedule: { interval: 'monthly', monthly_anchor: 1 },
+          },
         },
         metadata: {
           user_id: user.id,

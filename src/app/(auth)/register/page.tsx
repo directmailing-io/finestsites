@@ -197,7 +197,7 @@ export default function RegisterPage() {
                 )}
               </div>
               {referralValid === true && (
-                <p className="text-xs px-1" style={{ color: '#16A34A' }}>✓ Code gültig — 15% Rabatt auf dein Abo!</p>
+                <p className="text-xs px-1" style={{ color: '#16A34A' }}>✓ Code gültig — dauerhaft 20% Rabatt auf dein Abo!</p>
               )}
               {referralValid === false && (
                 <p className="text-xs px-1" style={{ color: '#DC2626' }}>Code nicht gefunden.</p>

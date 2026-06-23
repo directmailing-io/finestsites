@@ -5,8 +5,8 @@ import { useSearchParams } from 'next/navigation'
 import { Suspense } from 'react'
 import { PLAN_LIST, COMMON_FEATURES, type PlanDef } from '@/lib/plans'
 
-const DISCOUNT = 0.15
-const COUPON_LABEL = '15% Partner-Rabatt'
+const DISCOUNT = 0.20
+const COUPON_LABEL = '20% Partner-Rabatt (dauerhaft)'
 
 function discounted(price: number) {
   return Math.round(price * (1 - DISCOUNT) * 100) / 100
@@ -83,7 +83,7 @@ function PlanPageInner() {
               {COUPON_LABEL} wird automatisch angewendet
             </p>
             <p className="text-xs" style={{ color: '#166534' }}>
-              Dein Empfehlungscode gibt dir 15% Rabatt auf den ersten Monat / das erste Jahr.
+              Dein Empfehlungscode gibt dir dauerhaft 20% Rabatt — auf jeden Monat / jedes Jahr.
             </p>
           </div>
         </div>
@@ -196,7 +196,7 @@ function PlanPageInner() {
               ) : (
                 <div className="mb-4">
                   {hasDiscount && (
-                    <p className="text-xs font-semibold" style={{ color: '#15803D' }}>15% Rabatt auf ersten Monat</p>
+                    <p className="text-xs font-semibold" style={{ color: '#15803D' }}>20% Rabatt — dauerhaft</p>
                   )}
                 </div>
               )}

@@ -181,7 +181,7 @@ export default function AffiliatePage() {
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-gray-900">Partnerprogramm</h1>
         <p className="text-sm mt-1" style={{ color: '#94A3B8' }}>
-          Empfehle FinestSites — du verdienst <strong className="text-gray-600">20%</strong>, dein Empfehlter spart <strong className="text-gray-600">15%</strong>.
+          Empfehle FinestSites — du verdienst <strong className="text-gray-600">20%</strong> dauerhaft, dein Empfehlter spart <strong className="text-gray-600">20%</strong> dauerhaft.
         </p>
       </div>
 
@@ -208,7 +208,7 @@ export default function AffiliatePage() {
           <div className="hidden sm:flex items-center justify-center flex-shrink-0 mt-6">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#D1D5DB" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
           </div>
-          <HowStep icon="💳" n={2} title="Neukunde abonniert" desc="Dein Empfehlter bucht FinestSites und zahlt 15% weniger im ersten Monat." />
+          <HowStep icon="💳" n={2} title="Neukunde abonniert" desc="Dein Empfehlter bucht FinestSites und zahlt dauerhaft 20% weniger — egal welchen Tarif." />
           <div className="hidden sm:flex items-center justify-center flex-shrink-0 mt-6">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#D1D5DB" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
           </div>
@@ -316,51 +316,34 @@ export default function AffiliatePage() {
 
       {/* ── Bank account setup ──────────────────────────────────────────────── */}
       {stats.affiliate_onboarded ? (
-        <section className="rounded-3xl p-6 mb-5" style={{ background: '#F0FDF4' }}>
+        <section className="rounded-3xl p-5 mb-5" style={{ background: '#F0FDF4', border: '1px solid #BBF7D0' }}>
           <div className="flex items-start justify-between gap-4">
-            <div>
-              <div className="flex items-center gap-2 mb-1.5">
-                <p className="text-sm font-bold text-gray-900">Bankkonto eingerichtet</p>
-                <span className="text-xs font-semibold px-2 py-0.5 rounded-full" style={{ background: '#DCFCE7', color: '#16A34A' }}>✓ Aktiv</span>
+            <div className="flex items-start gap-3">
+              <div className="w-9 h-9 rounded-2xl flex items-center justify-center flex-shrink-0" style={{ background: '#DCFCE7' }}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#16A34A" strokeWidth="2.5"><path d="M20 6 9 17l-5-5"/></svg>
               </div>
-              {(stats.bank_name || stats.bank_last4) && (
-                <p className="text-sm text-gray-600">
-                  {stats.bank_name} {stats.bank_last4 ? <>•••• <strong>{stats.bank_last4}</strong></> : ''}
-                </p>
-              )}
-              <p className="text-xs text-gray-500 mt-1">Auszahlungen laufen automatisch am 1. jeden Monats.</p>
+              <div>
+                <div className="flex items-center gap-2 mb-0.5">
+                  <p className="text-sm font-bold text-gray-900">Bankkonto eingerichtet</p>
+                  <span className="text-xs font-semibold px-2 py-0.5 rounded-full" style={{ background: '#DCFCE7', color: '#16A34A' }}>Aktiv</span>
+                </div>
+                {(stats.bank_name || stats.bank_last4) && (
+                  <p className="text-sm text-gray-600">
+                    {stats.bank_name}{stats.bank_last4 ? <> · •••• <strong>{stats.bank_last4}</strong></> : ''}
+                  </p>
+                )}
+                <p className="text-xs text-gray-500 mt-0.5">Auszahlung automatisch am 1. des Monats</p>
+              </div>
             </div>
             <button onClick={openStripeDashboard} disabled={stripeLinkLoading}
               className="flex items-center gap-1.5 text-xs font-semibold px-3 py-2 rounded-xl flex-shrink-0 transition-opacity hover:opacity-80"
-              style={{ background: '#fff', color: '#374151', border: '1px solid #E5E7EB' }}>
-              {stripeLinkLoading ? 'Öffnet…' : 'Konto verwalten'}
+              style={{ background: '#fff', color: '#374151', border: '1px solid #D1FAE5' }}>
+              {stripeLinkLoading ? 'Öffnet…' : 'Verwalten'}
             </button>
           </div>
         </section>
       ) : (
-        <section className="rounded-3xl p-6 mb-5" style={{ background: '#FFFBEB', border: '1px solid #FDE68A' }}>
-          <div className="flex items-start gap-4">
-            <div className="w-10 h-10 rounded-2xl flex items-center justify-center flex-shrink-0" style={{ background: '#FEF3C7' }}>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#D97706" strokeWidth="2">
-                <rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/>
-              </svg>
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-bold text-gray-900 mb-1">Bankkonto hinterlegen, um ausgezahlt zu werden</p>
-              <p className="text-xs text-gray-600 leading-relaxed mb-3">
-                Hinterlege einmalig deine IBAN. Sobald du Geld verdient hast, wird es jeden Monat automatisch überwiesen. Sicher über Stripe — deine Daten bleiben dort verschlüsselt.
-              </p>
-              {connectError && (
-                <p className="text-xs text-red-600 bg-red-50 rounded-xl px-3 py-2 mb-3">{connectError}</p>
-              )}
-              <button onClick={startConnect} disabled={connecting}
-                className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold transition-opacity hover:opacity-90"
-                style={{ background: '#1a1a1a', color: '#fff', cursor: connecting ? 'wait' : 'pointer' }}>
-                {connecting ? <><Spinner /> Öffnet…</> : 'Bankkonto einrichten'}
-              </button>
-            </div>
-          </div>
-        </section>
+        <BankSetupCard onStart={startConnect} connecting={connecting} error={connectError} />
       )}
 
       {/* ── Commission history (only if any) ────────────────────────────────── */}
@@ -446,4 +429,125 @@ function CheckIcon() {
 
 function Spinner() {
   return <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="animate-spin"><path d="M21 12a9 9 0 11-6.219-8.56"/></svg>
+}
+
+function BankSetupCard({ onStart, connecting, error }: { onStart: () => void; connecting: boolean; error: string }) {
+  const [expanded, setExpanded] = useState(false)
+
+  return (
+    <section className="rounded-3xl overflow-hidden mb-5" style={{ border: '1.5px solid #E5E7EB' }}>
+
+      {/* Header */}
+      <div className="px-6 pt-6 pb-4" style={{ background: '#fff' }}>
+        <div className="flex items-center gap-2 mb-1">
+          <p className="text-sm font-bold text-gray-900">Einmalig Bankkonto einrichten</p>
+          <span className="text-xs font-semibold px-2 py-0.5 rounded-full" style={{ background: '#F3F4F6', color: '#6B7280' }}>Noch nicht eingerichtet</span>
+        </div>
+        <p className="text-xs leading-relaxed" style={{ color: '#6B7280' }}>
+          Damit deine Provisionen automatisch auf dein Konto überwiesen werden, musst du einmalig deine IBAN hinterlegen.
+          Das läuft sicher über <strong className="text-gray-800">Stripe</strong> — FinestSites sieht deine Bankdaten nicht.
+        </p>
+      </div>
+
+      {/* 3-step visual guide */}
+      <div className="px-6 py-4" style={{ background: '#F8FAFC', borderTop: '1px solid #F1F5F9', borderBottom: '1px solid #F1F5F9' }}>
+        <p className="text-[10px] font-bold uppercase tracking-widest mb-3" style={{ color: '#94A3B8' }}>So läuft die Einrichtung ab</p>
+        <div className="space-y-3">
+          <SetupStep n={1} title='Du klickst auf „Jetzt einrichten"'>
+            Du wirst sicher zu Stripe weitergeleitet — das ist der Dienst, der dein Geld für dich verwahrt und überweist (wie ein Treuhänder).
+          </SetupStep>
+          <SetupStep n={2} title="Stripe fragt dich nach 3 Dingen">
+            <span className="flex flex-wrap gap-x-3 gap-y-1 mt-1">
+              <Chip>✓ Vor- & Nachname</Chip>
+              <Chip>✓ Adresse</Chip>
+              <Chip>✓ IBAN (deine Bankkontonummer)</Chip>
+            </span>
+            <span className="text-xs text-gray-400 block mt-1.5">Dauert ca. 3–5 Minuten. Ausweis wird in der Regel <em>nicht</em> benötigt.</span>
+          </SetupStep>
+          <SetupStep n={3} title="Fertig — ab jetzt läuft alles automatisch">
+            Du wirst zurück zu FinestSites geleitet. Ab dem 1. des nächsten Monats wird dein Guthaben automatisch auf dein Konto überwiesen.
+          </SetupStep>
+        </div>
+      </div>
+
+      {/* FAQ toggle */}
+      <div style={{ background: '#fff', borderBottom: '1px solid #F1F5F9' }}>
+        <button
+          onClick={() => setExpanded(e => !e)}
+          className="w-full flex items-center justify-between px-6 py-3 text-xs font-semibold text-gray-500 hover:text-gray-700 transition-colors"
+        >
+          <span>Was ist Stripe und warum wird das verwendet?</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
+            style={{ transform: expanded ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }}>
+            <path d="M6 9l6 6 6-6"/>
+          </svg>
+        </button>
+        {expanded && (
+          <div className="px-6 pb-4 text-xs leading-relaxed text-gray-500 space-y-2">
+            <p>
+              <strong className="text-gray-700">Stripe</strong> ist einer der weltweit größten Zahlungsdienstleister — dasselbe Unternehmen, das auch große Shops wie Amazon, Shopify oder Airbnb nutzen.
+            </p>
+            <p>
+              Wir verwenden Stripe, damit wir deine sensiblen Bankdaten (IBAN etc.) <strong className="text-gray-700">niemals selbst speichern</strong> müssen. Stripe übernimmt das sicher und überwacht alle Transaktionen.
+            </p>
+            <p>
+              Du brauchst dafür <strong className="text-gray-700">kein Stripe-Konto</strong> zu erstellen — Stripe führt dich durch den Prozess und legt alles automatisch für dich an.
+            </p>
+          </div>
+        )}
+      </div>
+
+      {/* CTA */}
+      <div className="px-6 py-4" style={{ background: '#fff' }}>
+        {error && (
+          <p className="text-xs text-red-600 bg-red-50 rounded-xl px-3 py-2 mb-3">{error}</p>
+        )}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+          <button onClick={onStart} disabled={connecting}
+            className="flex items-center gap-2 px-6 py-3 rounded-2xl text-sm font-bold transition-all hover:opacity-90"
+            style={{ background: connecting ? '#E5E7EB' : '#1a1a1a', color: connecting ? '#9CA3AF' : '#fff', cursor: connecting ? 'wait' : 'pointer' }}>
+            {connecting
+              ? <><Spinner /> Stripe öffnet sich…</>
+              : <>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                  Jetzt einrichten →
+                </>
+            }
+          </button>
+          <div className="flex items-center gap-1.5 text-xs" style={{ color: '#9CA3AF' }}>
+            <svg width="11" height="13" viewBox="0 0 9 11" fill="none">
+              <rect x="0.5" y="4.5" width="8" height="6" rx="1.5" fill="#D1D5DB"/>
+              <path d="M2.5 4.5V3a2 2 0 0 1 4 0v1.5" stroke="#D1D5DB" strokeWidth="1.2" fill="none" strokeLinecap="round"/>
+            </svg>
+            SSL-verschlüsselt · Sicher über Stripe
+          </div>
+        </div>
+      </div>
+
+    </section>
+  )
+}
+
+function SetupStep({ n, title, children }: { n: number; title: string; children: React.ReactNode }) {
+  return (
+    <div className="flex gap-3">
+      <div className="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0 mt-0.5"
+        style={{ background: '#0F172A', color: '#fff' }}>
+        {n}
+      </div>
+      <div className="flex-1">
+        <p className="text-xs font-semibold text-gray-800 mb-0.5">{title}</p>
+        <div className="text-xs text-gray-500 leading-relaxed">{children}</div>
+      </div>
+    </div>
+  )
+}
+
+function Chip({ children }: { children: React.ReactNode }) {
+  return (
+    <span className="inline-flex items-center text-[11px] font-semibold px-2 py-0.5 rounded-full"
+      style={{ background: '#EFF6FF', color: '#1D4ED8' }}>
+      {children}
+    </span>
+  )
 }
