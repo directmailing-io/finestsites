@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Checkliste — Aktueller Stand</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0 }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #F8FAFC; color: #1a1a1a; line-height: 1.65 }
+
+  .hero { background: #1a1a1a; color: #fff; padding: 48px 32px 40px }
+  .hero h1 { font-size: 24px; font-weight: 700; margin-bottom: 8px }
+  .hero p { color: rgba(255,255,255,0.5); font-size: 14px; max-width: 560px }
+
+  .container { max-width: 720px; margin: 0 auto; padding: 40px 24px 80px }
+
+  h2 { font-size: 17px; font-weight: 700; margin: 40px 0 14px; padding-bottom: 10px; border-bottom: 2px solid #E5E7EB }
+  h2:first-child { margin-top: 0 }
+
+  .alert { border-radius: 14px; padding: 16px 20px; margin: 16px 0; display: flex; gap: 12px; align-items: flex-start }
+  .alert-green  { background: #ECFDF5; border: 1px solid #A7F3D0 }
+  .alert-yellow { background: #FFFBEB; border: 1px solid #FDE68A }
+  .alert-blue   { background: #EFF6FF; border: 1px solid #BFDBFE }
+  .alert .icon  { font-size: 20px; flex-shrink: 0 }
+  .alert .body  { font-size: 14px; color: #374151 }
+  .alert .body strong { color: #1a1a1a }
+
+  /* Done items */
+  .done-list { display: flex; flex-direction: column; gap: 8px }
+  .done-item { background: #fff; border: 1px solid #E5E7EB; border-radius: 12px; padding: 14px 18px; display: flex; gap: 12px; align-items: center }
+  .done-check { width: 24px; height: 24px; background: #1a1a1a; border-radius: 7px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 12px; color: #fff; font-weight: 700 }
+  .done-text { font-size: 14px; font-weight: 600; color: #374151; flex: 1 }
+  .done-sub { font-size: 12px; color: #9CA3AF; font-weight: 400; margin-left: 8px }
+
+  /* Single open todo */
+  .todo-card { background: #fff; border: 2px solid #1a1a1a; border-radius: 20px; overflow: hidden; margin-top: 4px }
+  .todo-header { padding: 22px 26px 0 }
+  .todo-header h3 { font-size: 18px; font-weight: 700; margin-bottom: 6px }
+  .todo-header p { font-size: 14px; color: #6B7280; margin-bottom: 20px }
+
+  .explain { background: #F8FAFC; border-left: 3px solid #D1D5DB; border-radius: 0 10px 10px 0; padding: 12px 16px; margin: 0 26px 20px; font-size: 13px; color: #374151 }
+  .explain strong { color: #1a1a1a }
+
+  .steps { display: flex; flex-direction: column; gap: 12px; padding: 0 26px 26px }
+  .step { display: flex; gap: 14px; align-items: flex-start }
+  .step-dot { width: 26px; height: 26px; border-radius: 50%; background: #1a1a1a; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; flex-shrink: 0; margin-top: 1px }
+  .step-text { font-size: 14px; color: #374151 }
+  .step-text strong { color: #1a1a1a }
+  .step-text code { font-family: 'SF Mono', 'Monaco', monospace; background: #F1F5F9; padding: 2px 8px; border-radius: 5px; font-size: 12px; color: #1a1a1a }
+  .step-text .note { font-size: 12px; color: #9CA3AF; margin-top: 5px; display: block }
+
+  /* Decisions summary */
+  .decisions { background: #fff; border: 1px solid #E5E7EB; border-radius: 16px; overflow: hidden; margin-top: 4px }
+  .decision-row { display: flex; gap: 12px; padding: 13px 18px; border-bottom: 1px solid #F1F5F9; font-size: 13px }
+  .decision-row:last-child { border-bottom: none }
+  .decision-key { color: #9CA3AF; width: 130px; flex-shrink: 0 }
+  .decision-val { font-weight: 600; color: #1a1a1a }
+  .decision-val code { font-family: 'SF Mono', 'Monaco', monospace; background: #F1F5F9; padding: 1px 7px; border-radius: 5px; font-size: 12px; color: #1a1a1a; font-weight: 400 }
+
+  .footer { background: #1a1a1a; color: rgba(255,255,255,0.3); font-size: 12px; padding: 20px 32px; text-align: center }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <h1>Checkliste — Aktueller Stand</h1>
+  <p>Fast alles erledigt — noch eine Sache fehlt.</p>
+</div>
+
+<div class="container">
+
+  <div class="alert alert-green">
+    <div class="icon">🚀</div>
+    <div class="body">
+      <strong>Gute Nachrichten:</strong> Da noch keine echten Nutzer vorhanden sind, können wir den Umzug sofort starten sobald der Supabase-Export vorliegt. Kein Downtime-Fenster nötig.
+    </div>
+  </div>
+
+  <!-- DONE -->
+  <h2>Bereits erledigt ✓</h2>
+
+  <div class="done-list">
+    <div class="done-item">
+      <div class="done-check">✓</div>
+      <div class="done-text">SSH-Key erstellt &amp; hochgeladen</div>
+    </div>
+    <div class="done-item">
+      <div class="done-check">✓</div>
+      <div class="done-text">App-Server <span class="done-sub">188.245.35.52</span></div>
+    </div>
+    <div class="done-item">
+      <div class="done-check">✓</div>
+      <div class="done-text">Datenbank-Server <span class="done-sub">142.132.174.86</span></div>
+    </div>
+    <div class="done-item">
+      <div class="done-check">✓</div>
+      <div class="done-text">Load Balancer <span class="done-sub">46.225.32.19</span></div>
+    </div>
+    <div class="done-item">
+      <div class="done-check">✓</div>
+      <div class="done-text">Coolify installiert &amp; läuft <span class="done-sub">http://188.245.35.52:8000</span></div>
+    </div>
+    <div class="done-item">
+      <div class="done-check">✓</div>
+      <div class="done-text">Coolify API Token übergeben</div>
+    </div>
+    <div class="done-item">
+      <div class="done-check">✓</div>
+      <div class="done-text">Domain-Entscheidung getroffen <span class="done-sub">app.finestsites.de = Dashboard</span></div>
+    </div>
+    <div class="done-item">
+      <div class="done-check">✓</div>
+      <div class="done-text">Downtime-Fenster <span class="done-sub">jederzeit möglich, keine echten Nutzer</span></div>
+    </div>
+  </div>
+
+  <!-- ONE THING LEFT -->
+  <h2>Noch eine Sache — du bist fast fertig</h2>
+
+  <div class="todo-card">
+    <div class="todo-header">
+      <h3>Supabase-Export herunterladen</h3>
+      <p>Deine bestehenden Daten als Datei exportieren — damit wir sie auf Hetzner übertragen können.</p>
+    </div>
+
+    <div class="explain">
+      <strong>Warum?</strong> Alle bisherigen Daten (Nutzer-Accounts, Sites, Templates, Einstellungen) liegen aktuell noch in Supabase. Wir exportieren sie einmalig, spielen sie auf den neuen Hetzner-Datenbankserver ein — und dann wird Supabase komplett abgeschaltet und gekündigt. Die Daten ziehen einfach mit um.
+    </div>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-dot">1</div>
+        <div class="step-text">
+          Öffne diesen Link direkt (dein Projekt): <strong>supabase.com/dashboard/project/blgxussxxziglevezzrk</strong><br>
+          <span class="note">Falls du nicht eingeloggt bist, zuerst bei supabase.com anmelden — dann geht der Link direkt zu deinem Projekt.</span>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-dot">2</div>
+        <div class="step-text">Linkes Menü ganz unten → <strong>"Project Settings"</strong> (Zahnrad) → <strong>"Database"</strong></div>
+      </div>
+      <div class="step">
+        <div class="step-dot">3</div>
+        <div class="step-text">Scrolle zu <strong>"Backups"</strong> → beim neuesten Eintrag auf <strong>"Download"</strong> klicken</div>
+      </div>
+      <div class="step">
+        <div class="step-dot">4</div>
+        <div class="step-text">
+          Die Datei (endet auf <code>.sql.gz</code> oder <code>.dump</code>) hier im Chat schicken<br>
+          <span class="note">Falls dort kein Download-Button erscheint (Free Plan): kurz Bescheid geben — ich zeige dir einen anderen Weg.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Decisions summary -->
+  <h2>Entscheidungen — zur Übersicht</h2>
+
+  <div class="decisions">
+    <div class="decision-row">
+      <span class="decision-key">Dashboard</span>
+      <span class="decision-val"><code>app.finestsites.de</code></span>
+    </div>
+    <div class="decision-row">
+      <span class="decision-key">Marketing-Seite</span>
+      <span class="decision-val"><code>finestsites.de</code></span>
+    </div>
+    <div class="decision-row">
+      <span class="decision-key">Login-Service</span>
+      <span class="decision-val"><code>auth.finestsites.de</code> <span style="color:#9CA3AF;font-weight:400">(intern, nicht sichtbar)</span></span>
+    </div>
+    <div class="decision-row">
+      <span class="decision-key">Daten-API</span>
+      <span class="decision-val"><code>api.finestsites.de</code> <span style="color:#9CA3AF;font-weight:400">(intern, nicht sichtbar)</span></span>
+    </div>
+    <div class="decision-row">
+      <span class="decision-key">Umzug</span>
+      <span class="decision-val">Jederzeit möglich — keine echten Nutzer</span>
+    </div>
+    <div class="decision-row">
+      <span class="decision-key">App-Server</span>
+      <span class="decision-val"><code>188.245.35.52</code></span>
+    </div>
+    <div class="decision-row">
+      <span class="decision-key">DB-Server</span>
+      <span class="decision-val"><code>142.132.174.86</code></span>
+    </div>
+    <div class="decision-row">
+      <span class="decision-key">Load Balancer</span>
+      <span class="decision-val"><code>46.225.32.19</code></span>
+    </div>
+  </div>
+
+  <div class="alert alert-blue" style="margin-top: 24px">
+    <div class="icon">⚙️</div>
+    <div class="body">
+      <strong>Was ich parallel bereits starte:</strong> Den Datenbank-Server einrichten (PostgreSQL installieren, absichern, Firewall konfigurieren) und die Code-Umstellung auf BetterAuth + Drizzle ORM. Sobald du den Supabase-Export schickst, kann ich die Daten direkt einspielen und den Umzug abschließen.
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  FinestSites · Checkliste · Stand: 22.06.2026
+</div>
+
+</body>
+</html>

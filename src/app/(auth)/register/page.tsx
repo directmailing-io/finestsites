@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { signIn } from '@/lib/auth/client'
+// signIn removed — raw fetch is used instead for Safari iOS compatibility
 
 export default function RegisterPage() {
   const router = useRouter()
@@ -35,33 +35,40 @@ export default function RegisterPage() {
     setLoading(true)
     setError('')
 
-    const res = await fetch('/api/auth/register', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password, referral_code: referralCode.trim() || undefined }),
-    })
-    const data = await res.json()
-    if (!res.ok) {
-      setError(data.error || 'Registrierung fehlgeschlagen.')
+    try {
+      const res = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password, referral_code: referralCode.trim() || undefined }),
+      })
+      const data = await res.json()
+      if (!res.ok) {
+        setError(data.error || 'Registrierung fehlgeschlagen.')
+        setLoading(false)
+        return
+      }
+
+      // Sign in immediately so the session cookie is set in the browser.
+      // Raw fetch instead of signIn.email() to avoid BetterAuth client issues on Safari iOS.
+      const signInRes = await fetch('/api/auth/sign-in/email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email.toLowerCase().trim(), password, rememberMe: true }),
+        credentials: 'include',
+      })
+
+      if (!signInRes.ok) {
+        // Registration succeeded but auto-login failed — redirect to login
+        window.location.href = '/login?registered=1'
+        return
+      }
+
+      // Full page navigation ensures session cookie is read correctly on all browsers
+      window.location.href = '/onboarding/plan'
+    } catch {
+      setError('Verbindungsfehler. Bitte versuche es erneut.')
       setLoading(false)
-      return
     }
-
-    // Sign in immediately so the session cookie is set in the browser,
-    // then redirect to plan selection
-    const signInResult = await signIn.email({
-      email: email.toLowerCase().trim(),
-      password,
-    })
-
-    if (signInResult.error) {
-      // Registration succeeded but auto-login failed — redirect to login
-      router.push('/login?registered=1')
-      return
-    }
-
-    // Redirect to onboarding
-    router.push('/onboarding/plan')
   }
 
   if (sent) {

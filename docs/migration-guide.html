@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Umzug zu Hetzner — Vollständig</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0 }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #F8FAFC; color: #1a1a1a; line-height: 1.65 }
+
+  .hero { background: #1a1a1a; color: #fff; padding: 48px 32px 40px }
+  .hero h1 { font-size: 24px; font-weight: 700; margin-bottom: 8px }
+  .hero p { color: rgba(255,255,255,0.55); font-size: 14px; max-width: 560px }
+
+  .container { max-width: 720px; margin: 0 auto; padding: 40px 24px 80px }
+
+  h2 { font-size: 18px; font-weight: 700; margin: 44px 0 14px; padding-bottom: 10px; border-bottom: 2px solid #E5E7EB }
+  h2:first-child { margin-top: 0 }
+
+  .alert { border-radius: 14px; padding: 16px 20px; margin: 16px 0; display: flex; gap: 12px; align-items: flex-start }
+  .alert-green  { background: #ECFDF5; border: 1px solid #A7F3D0 }
+  .alert-yellow { background: #FFFBEB; border: 1px solid #FDE68A }
+  .alert-blue   { background: #EFF6FF; border: 1px solid #BFDBFE }
+  .alert-red    { background: #FEF2F2; border: 1px solid #FECACA }
+  .alert .icon { font-size: 20px; flex-shrink: 0; margin-top: 1px }
+  .alert .body { font-size: 14px; color: #374151 }
+  .alert .body strong { color: #1a1a1a }
+
+  /* Moves grid */
+  .moves-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 16px 0 }
+  @media(max-width:580px) { .moves-grid { grid-template-columns: 1fr } }
+  .move-card { background: #fff; border: 1px solid #E5E7EB; border-radius: 16px; padding: 18px 20px }
+  .move-card .label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: #94A3B8; margin-bottom: 6px }
+  .move-card .val { font-size: 15px; font-weight: 700 }
+  .move-card .desc { font-size: 12px; color: #6B7280; margin-top: 4px }
+  .badge { display: inline-block; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 100px; margin-top: 8px }
+  .badge-red   { background: #FEE2E2; color: #B91C1C }
+  .badge-green { background: #D1FAE5; color: #065F46 }
+
+  /* Servers */
+  .servers { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 16px 0 }
+  @media(max-width:580px) { .servers { grid-template-columns: 1fr } }
+  .server { background: #fff; border: 2px solid #E5E7EB; border-radius: 16px; padding: 20px }
+  .server h3 { font-size: 14px; font-weight: 700; margin-bottom: 4px }
+  .server .price { font-size: 13px; font-weight: 600; color: #059669; margin-bottom: 10px }
+  .server ul { list-style: none; display: flex; flex-direction: column; gap: 5px }
+  .server ul li { font-size: 12px; color: #6B7280; display: flex; gap: 6px }
+  .server ul li::before { content: "·"; color: #D1D5DB; flex-shrink: 0 }
+  .server .spec { font-size: 12px; color: #94A3B8; margin-top: 8px; border-top: 1px solid #F1F5F9; padding-top: 8px }
+
+  /* Checklist steps */
+  .steps { display: flex; flex-direction: column; gap: 12px; margin: 20px 0 }
+  .step { background: #fff; border: 1px solid #E5E7EB; border-radius: 16px; padding: 20px 24px; display: flex; gap: 16px; align-items: flex-start }
+  .step-num { width: 32px; height: 32px; background: #1a1a1a; color: #fff; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; flex-shrink: 0; margin-top: 2px }
+  .step-content h3 { font-size: 15px; font-weight: 700; margin-bottom: 5px }
+  .step-content p { font-size: 13px; color: #6B7280; margin-bottom: 4px }
+  .step-content code { font-family: 'SF Mono', 'Monaco', monospace; background: #F1F5F9; padding: 2px 7px; border-radius: 5px; font-size: 12px; color: #374151 }
+  .step-content .note { font-size: 12px; color: #9CA3AF; margin-top: 6px; font-style: italic }
+  .required { display: inline-block; font-size: 10px; font-weight: 700; color: #DC2626; background: #FEE2E2; padding: 2px 7px; border-radius: 100px; margin-left: 6px }
+  .optional  { display: inline-block; font-size: 10px; font-weight: 700; color: #059669; background: #D1FAE5; padding: 2px 7px; border-radius: 100px; margin-left: 6px }
+
+  /* Phase timeline */
+  .phases { display: flex; flex-direction: column; gap: 2px; margin: 16px 0 }
+  .phase { background: #fff; border: 1px solid #E5E7EB; border-radius: 16px; padding: 18px 22px; display: flex; gap: 14px; align-items: flex-start }
+  .phase-dot { width: 10px; height: 10px; border-radius: 50%; background: #1a1a1a; flex-shrink: 0; margin-top: 6px }
+  .phase h3 { font-size: 14px; font-weight: 700; margin-bottom: 3px }
+  .phase p  { font-size: 13px; color: #6B7280 }
+  .phase .time { font-size: 11px; font-weight: 600; color: #94A3B8; margin-top: 4px }
+
+  .footer { background: #1a1a1a; color: rgba(255,255,255,0.4); font-size: 12px; padding: 20px 32px; text-align: center }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <h1>Vollständiger Umzug zu Hetzner</h1>
+  <p>App + Datenbank + Login — alles auf eigenen Servern. Was du wissen musst und was du tun musst.</p>
+</div>
+
+<div class="container">
+
+  <!-- Was zieht um -->
+  <h2>Was zieht um, was bleibt?</h2>
+
+  <div class="moves-grid">
+    <div class="move-card">
+      <div class="label">App (Dashboard, API)</div>
+      <div class="val">Vercel → Hetzner</div>
+      <div class="desc">Die Website, auf der du und deine Kunden arbeiten</div>
+      <span class="badge badge-red">zieht um</span>
+    </div>
+    <div class="move-card">
+      <div class="label">Datenbank</div>
+      <div class="val">Supabase → Hetzner</div>
+      <div class="desc">Alle Kundendaten, Sites, Templates, User</div>
+      <span class="badge badge-red">zieht um</span>
+    </div>
+    <div class="move-card">
+      <div class="label">Login-System</div>
+      <div class="val">Supabase → Hetzner</div>
+      <div class="desc">Anmeldung, Passwörter, Sessions — läuft dann auf deinem Server</div>
+      <span class="badge badge-red">zieht um</span>
+    </div>
+    <div class="move-card">
+      <div class="label">Kundenseiten</div>
+      <div class="val">Cloudflare Workers</div>
+      <div class="desc">Bleiben wo sie sind — laufen unabhängig weiter</div>
+      <span class="badge badge-green">bleibt</span>
+    </div>
+    <div class="move-card">
+      <div class="label">Bilder & Templates</div>
+      <div class="val">Cloudflare R2</div>
+      <div class="desc">Dateispeicher bleibt unverändert</div>
+      <span class="badge badge-green">bleibt</span>
+    </div>
+    <div class="move-card">
+      <div class="label">Stripe & E-Mail</div>
+      <div class="val">Stripe + Resend</div>
+      <div class="desc">Zahlungen und Mails bleiben wo sie sind</div>
+      <span class="badge badge-green">bleibt</span>
+    </div>
+  </div>
+
+  <!-- Die drei Teile -->
+  <h2>Was wir selbst hosten (die drei Teile)</h2>
+
+  <div class="alert alert-blue">
+    <div class="icon">💡</div>
+    <div class="body">
+      <strong>Wichtig zu verstehen:</strong> Supabase macht eigentlich drei Dinge für dich: Datenbank, Login und eine Schnittstelle für die App. Wir ersetzen alle drei auf Hetzner — der App-Code ändert sich dabei <strong>kein bisschen</strong>.
+    </div>
+  </div>
+
+  <div class="steps" style="margin-top: 0">
+    <div class="step">
+      <div class="step-num">DB</div>
+      <div class="step-content">
+        <h3>PostgreSQL — die Datenbank</h3>
+        <p>Alle deine Daten (Nutzer, Sites, Templates, Formulare) liegen in einer PostgreSQL-Datenbank. Die exportieren wir bei Supabase und importieren sie auf Hetzner. Das ist der einfachste Teil.</p>
+        <p class="note">Wie ein USB-Stick: Daten raus, Daten rein.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">Auth</div>
+      <div class="step-content">
+        <h3>GoTrue — das Login-System</h3>
+        <p>Supabase nutzt intern ein Programm namens "GoTrue" für Anmeldungen, Passwörter und Sessions. Das ist Open Source und läuft als kleines Docker-Programm auf Hetzner. Verhält sich exakt gleich wie bei Supabase.</p>
+        <p class="note">Eine Subdomain wird benötigt, z.B. <code>auth.finestsites.de</code></p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">API</div>
+      <div class="step-content">
+        <h3>PostgREST — die Datenschnittstelle</h3>
+        <p>Die App spricht nicht direkt mit der Datenbank, sondern über eine Schnittstelle (API). PostgREST stellt diese Schnittstelle bereit — auch das läuft als Docker-Programm, auch das ist Open Source.</p>
+        <p class="note">Eine Subdomain wird benötigt, z.B. <code>api.finestsites.de</code></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Server -->
+  <h2>Welche Server du brauchst</h2>
+
+  <div class="servers">
+    <div class="server">
+      <h3>App-Server</h3>
+      <div class="price">~ 14 €/Monat · CX32</div>
+      <ul>
+        <li>Next.js App (das Dashboard)</li>
+        <li>GoTrue (Login-System)</li>
+        <li>PostgREST (Datenschnittstelle)</li>
+        <li>Traefik (SSL-Zertifikate)</li>
+        <li>Coolify (Verwaltung)</li>
+      </ul>
+      <div class="spec">4 vCPU · 8 GB RAM · 80 GB SSD · Ubuntu 24.04</div>
+    </div>
+    <div class="server">
+      <h3>Datenbank-Server</h3>
+      <div class="price">~ 8 €/Monat · CX22</div>
+      <ul>
+        <li>PostgreSQL 17</li>
+        <li>PgBouncer (Verbindungspool)</li>
+        <li>Backup-Cronjob (täglich)</li>
+      </ul>
+      <div class="spec">2 vCPU · 4 GB RAM · 40 GB SSD · Ubuntu 24.04</div>
+    </div>
+  </div>
+
+  <div class="alert alert-green">
+    <div class="icon">💰</div>
+    <div class="body">
+      <strong>Gesamtkosten nach Umzug: ca. 22–25 €/Monat.</strong> Vercel (~20 $/Monat) und Supabase (falls kostenpflichtig) fallen komplett weg. Einmaliger Aufwand, dauerhaft gespart.
+    </div>
+  </div>
+
+  <!-- Was du beachten musst -->
+  <h2>Was du beachten musst</h2>
+
+  <div class="alert alert-yellow">
+    <div class="icon">⚠️</div>
+    <div class="body">
+      <strong>Backups:</strong> Bei Supabase passieren Backups automatisch. Auf Hetzner richten wir das selbst ein — täglicher automatischer Export in den Hetzner Object Storage (~5 €/Monat). Das machen wir von Anfang an, bevor wir den DNS umstellen.
+    </div>
+  </div>
+
+  <div class="alert alert-yellow">
+    <div class="icon">⚠️</div>
+    <div class="body">
+      <strong>Updates:</strong> Supabase hält sich selbst aktuell. Auf Hetzner bist du selbst dafür verantwortlich, dass Sicherheitsupdates eingespielt werden. Coolify macht das für die App automatisch. Für den DB-Server empfehle ich unattended-upgrades (automatische Sicherheitsupdates) — richte ich beim Setup ein.
+    </div>
+  </div>
+
+  <div class="alert alert-yellow">
+    <div class="icon">⚠️</div>
+    <div class="body">
+      <strong>Subdomains:</strong> Wir brauchen zwei Subdomains — eine für das Login-System, eine für die Datenschnittstelle. Diese müssen bei Cloudflare eingerichtet werden (ich mache das, du musst nur OK geben). Z.B. <code>auth.finestsites.de</code> und <code>api.finestsites.de</code>.
+    </div>
+  </div>
+
+  <div class="alert alert-blue">
+    <div class="icon">🛡️</div>
+    <div class="body">
+      <strong>Kundenseiten bleiben immer online:</strong> Sie laufen über Cloudflare Workers und sind vollständig unabhängig vom Hetzner-Server. Selbst wenn der Server ausfällt, sind alle Kundenseiten erreichbar.
+    </div>
+  </div>
+
+  <!-- Was du tun musst -->
+  <h2>Was du tun musst (7 Schritte)</h2>
+
+  <div class="steps">
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-content">
+        <h3>App-Server anlegen <span class="required">Pflicht</span></h3>
+        <p>Hetzner Cloud → Neues Projekt → Server erstellen:<br>
+        System: <code>Ubuntu 24.04</code> · Typ: <code>CX32</code> · Region: <code>Nürnberg</code> · SSH-Key hinzufügen</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-content">
+        <h3>Datenbank-Server anlegen <span class="required">Pflicht</span></h3>
+        <p>Zweiter Server: System: <code>Ubuntu 24.04</code> · Typ: <code>CX22</code> · Region: <code>Nürnberg</code> · gleicher SSH-Key<br>
+        Dann: <strong>Private Network</strong> zwischen beiden Servern anlegen (damit sie sicher miteinander reden können, ohne über das Internet zu gehen)</p>
+        <p class="note">Private Network: Hetzner Cloud → Networks → Netzwerk erstellen → beide Server hinzufügen.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-content">
+        <h3>Hetzner Object Storage anlegen <span class="required">Pflicht</span></h3>
+        <p>Für die automatischen Datenbank-Backups: Hetzner Console → Object Storage → Bucket <code>finestsites-backups</code> erstellen → Access Key + Secret Key notieren und mir schicken.</p>
+        <p class="note">Kostet ca. 5 €/Monat und enthält 30 Tage Backups.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-content">
+        <h3>Coolify installieren <span class="required">Pflicht</span></h3>
+        <p>Per SSH auf den App-Server einloggen und diesen Befehl ausführen:</p>
+        <p style="margin: 8px 0"><code>curl -fsSL https://cdn.coollabs.io/coolify/install.sh | bash</code></p>
+        <p>Danach: Browser öffnen → <code>http://SERVER-IP:8000</code> → Admin-Account anlegen.<br>
+        Dann: Coolify URL + API Token (unter Einstellungen → API) an mich schicken.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">5</div>
+      <div class="step-content">
+        <h3>SSH-Zugang schicken <span class="required">Pflicht</span></h3>
+        <p>Ich brauche SSH-Zugang zu beiden Servern — entweder den privaten SSH-Schlüssel oder ein temporäres Root-Passwort.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">6</div>
+      <div class="step-content">
+        <h3>Datenbank-Export aus Supabase <span class="required">Pflicht</span></h3>
+        <p>Supabase Dashboard → <strong>Settings → Database → Backups</strong> → "Download latest backup"<br>
+        Die Datei (endet auf <code>.sql.gz</code> oder <code>.dump</code>) an mich schicken.</p>
+        <p class="note">Das sind alle deine Daten — Nutzer, Sites, Formulare, Templates. Vertraulich behandeln!</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">7</div>
+      <div class="step-content">
+        <h3>Umzugs-Zeitfenster + Subdomains bestätigen <span class="required">Pflicht</span></h3>
+        <p>Bitte beantworte folgende Fragen:<br>
+        — <strong>Wann</strong> darf das Dashboard für ca. 1 Stunde offline sein? (z.B. Sonntag 3:00 Uhr)<br>
+        — Soll ich <code>auth.finestsites.de</code> und <code>api.finestsites.de</code> als Subdomains nutzen — oder andere Namen?<br>
+        — Supabase danach direkt kündigen, oder erst 2 Wochen parallel laufen lassen?</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Was ich erledige -->
+  <h2>Was ich dann erledige</h2>
+
+  <div class="phases">
+    <div class="phase">
+      <div class="phase-dot"></div>
+      <div>
+        <h3>Phase 1 — Server einrichten</h3>
+        <p>PostgreSQL auf dem DB-Server installieren, absichern, Datenbank-Dump importieren. PgBouncer für Verbindungspool. Automatische tägliche Backups zu Hetzner Object Storage. Firewall: DB nur intern erreichbar.</p>
+        <div class="time">ca. 1–2 Stunden · kein Downtime</div>
+      </div>
+    </div>
+    <div class="phase">
+      <div class="phase-dot"></div>
+      <div>
+        <h3>Phase 2 — Login-System und API aufsetzen</h3>
+        <p>GoTrue (Login) und PostgREST (Datenschnittstelle) als Docker-Container auf dem App-Server. Subdomains <code>auth.finestsites.de</code> und <code>api.finestsites.de</code> einrichten mit SSL. Alles testen.</p>
+        <div class="time">ca. 1 Stunde · kein Downtime</div>
+      </div>
+    </div>
+    <div class="phase">
+      <div class="phase-dot"></div>
+      <div>
+        <h3>Phase 3 — App deployen und testen</h3>
+        <p>Next.js über Coolify deployen mit allen neuen Einstellungen (neue DB, neues Login-System). Vollständiger Test unter temporärer URL: Login, Stripe, Editor, Publizieren, Custom Domains.</p>
+        <div class="time">ca. 1 Stunde · kein Downtime</div>
+      </div>
+    </div>
+    <div class="phase">
+      <div class="phase-dot"></div>
+      <div>
+        <h3>Phase 4 — DNS umstellen (Downtime-Fenster)</h3>
+        <p>Letzter Daten-Sync. Dashboard kurz offline setzen. DNS auf Hetzner umbiegen. SSL-Zertifikat. Stripe Webhook aktualisieren. Smoke-Test aller wichtigen Funktionen.</p>
+        <div class="time">ca. 30–60 Minuten Downtime für das Dashboard · Kundenseiten bleiben online</div>
+      </div>
+    </div>
+    <div class="phase">
+      <div class="phase-dot"></div>
+      <div>
+        <h3>Phase 5 — Stabilisierung</h3>
+        <p>Uptime-Monitoring einrichten. Backup-Wiederherstellung testen. Nach 1–2 Wochen stabilem Betrieb: Vercel kündigen, Supabase kündigen.</p>
+        <div class="time">1–2 Wochen Beobachtung</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="alert alert-green">
+    <div class="icon">🚀</div>
+    <div class="body">
+      <strong>Sobald du Schritte 1–7 erledigt hast</strong>, führe ich den kompletten Umzug durch. Du musst dabei nichts weiter tun — ich informiere dich wenn das Zeitfenster beginnt und wenn alles fertig ist.
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  FinestSites · Vollständiger Umzugsplan · Kundenseiten bleiben während des gesamten Umzugs online.
+</div>
+
+</body>
+</html>

@@ -62,10 +62,32 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  // BetterAuth session check (replaces Supabase updateSession)
-  const session = await auth.api.getSession({ headers: request.headers })
-  const user = session?.user ?? null
   const { pathname } = request.nextUrl
+
+  // Skip session check entirely for API routes — they handle their own auth.
+  // This prevents a redundant DB round-trip (and potential hang) in middleware
+  // for every POST to /api/auth/sign-in, /api/sites, etc.
+  if (pathname.startsWith('/api/')) return NextResponse.next()
+
+  // BetterAuth session check — wrap in try/catch so a transient DB failure
+  // doesn't crash the middleware and cause a 524 timeout for every visitor.
+  // Also race against a 5-second timeout so a slow DB never blocks page loads.
+  let session: Awaited<ReturnType<typeof auth.api.getSession>> | null = null
+  try {
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 5000)
+    session = await Promise.race([
+      auth.api.getSession({ headers: request.headers }),
+      new Promise<null>((resolve) => {
+        controller.signal.addEventListener('abort', () => resolve(null))
+      }),
+    ])
+    clearTimeout(timeoutId)
+  } catch {
+    // DB temporarily unavailable — fail open for public routes, block protected
+    session = null
+  }
+  const user = session?.user ?? null
 
   // Logged-in + visiting auth pages → redirect to app
   if (user && (pathname === '/login' || pathname === '/register')) {
@@ -84,15 +106,21 @@ export async function middleware(request: NextRequest) {
     // Admin bypasses all checks
     if (user.email === ADMIN_EMAIL) return NextResponse.next()
 
-    const profile = await db.query.users.findFirst({
-      where: eq(users.id, user.id),
-      columns: { username: true, subscriptionStatus: true, stripeSubscriptionId: true },
-    })
+    let profile: { username: string | null; subscriptionStatus: string | null; stripeSubscriptionId: string | null } | null = null
+    try {
+      profile = await db.query.users.findFirst({
+        where: eq(users.id, user.id),
+        columns: { username: true, subscriptionStatus: true, stripeSubscriptionId: true },
+      }) ?? null
+    } catch {
+      // DB temporarily unavailable — let the request through, layout will re-check
+      return NextResponse.next()
+    }
 
+    // Active subscription = valid status (no stripeSubscriptionId required for manual/admin activations)
     const hasActiveSubscription =
       !!profile?.subscriptionStatus &&
-      ACTIVE_STATUSES.includes(profile.subscriptionStatus) &&
-      !!profile?.stripeSubscriptionId
+      ACTIVE_STATUSES.includes(profile.subscriptionStatus)
 
     // Allow fresh Stripe checkout sessions through before webhook fires
     const hasSessionId = !!request.nextUrl.searchParams.get('session_id')
@@ -101,7 +129,7 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(new URL('/onboarding/plan', request.url))
     }
 
-    if (hasActiveSubscription && !profile?.username && !pathname.startsWith('/onboarding/username')) {
+    if (!profile?.username && !pathname.startsWith('/onboarding/username')) {
       return NextResponse.redirect(new URL('/onboarding/username', request.url))
     }
   }

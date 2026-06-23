@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stack-Diskussion: Expertenteam</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0 }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #F8FAFC; color: #1a1a1a; line-height: 1.65 }
+
+  .hero { background: #1a1a1a; color: #fff; padding: 48px 32px 40px }
+  .hero h1 { font-size: 24px; font-weight: 700; margin-bottom: 8px }
+  .hero p { color: rgba(255,255,255,0.5); font-size: 14px; max-width: 560px }
+
+  .container { max-width: 760px; margin: 0 auto; padding: 48px 24px 80px }
+
+  h2 { font-size: 18px; font-weight: 700; margin: 48px 0 20px; padding-bottom: 10px; border-bottom: 2px solid #E5E7EB }
+  h2:first-child { margin-top: 0 }
+
+  /* Expert cards */
+  .expert { background: #fff; border: 1px solid #E5E7EB; border-radius: 20px; padding: 28px; margin-bottom: 16px }
+  .expert-header { display: flex; align-items: center; gap: 14px; margin-bottom: 18px }
+  .avatar { width: 44px; height: 44px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0 }
+  .expert-meta h3 { font-size: 15px; font-weight: 700 }
+  .expert-meta .role { font-size: 12px; color: #94A3B8; margin-top: 2px }
+
+  .opinion { font-size: 14px; color: #374151; margin-bottom: 14px }
+  .opinion + .opinion { margin-top: -4px }
+
+  .verdict { display: flex; gap: 10px; align-items: flex-start; background: #F8FAFC; border-radius: 12px; padding: 14px 16px; margin-top: 16px }
+  .verdict-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: #94A3B8; flex-shrink: 0; padding-top: 1px }
+  .verdict-text { font-size: 14px; font-weight: 600; color: #1a1a1a }
+
+  .highlight { background: #FEF9C3; border-radius: 4px; padding: 0 3px }
+  .danger  { background: #FEE2E2; border-radius: 4px; padding: 0 3px; color: #991B1B }
+  .good    { background: #D1FAE5; border-radius: 4px; padding: 0 3px; color: #065F46 }
+
+  /* Alert */
+  .alert { border-radius: 14px; padding: 16px 20px; margin: 16px 0; display: flex; gap: 12px; align-items: flex-start }
+  .alert-yellow { background: #FFFBEB; border: 1px solid #FDE68A }
+  .alert-blue   { background: #EFF6FF; border: 1px solid #BFDBFE }
+  .alert .icon { font-size: 20px; flex-shrink: 0 }
+  .alert .body { font-size: 14px; color: #374151 }
+  .alert .body strong { color: #1a1a1a }
+
+  /* Comparison table */
+  .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 20px 0 }
+  @media(max-width: 580px) { .compare { grid-template-columns: 1fr } }
+
+  .option-card { border-radius: 20px; padding: 24px; border: 2px solid #E5E7EB }
+  .option-card.winner { border-color: #1a1a1a; background: #fff }
+  .option-card.alt { background: #F8FAFC }
+  .option-badge { display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: 0.06em; padding: 3px 10px; border-radius: 100px; margin-bottom: 12px }
+  .badge-dark  { background: #1a1a1a; color: #fff }
+  .badge-gray  { background: #E5E7EB; color: #6B7280 }
+  .option-card h3 { font-size: 16px; font-weight: 700; margin-bottom: 6px }
+  .option-card .subtitle { font-size: 12px; color: #94A3B8; margin-bottom: 16px }
+
+  .stack-row { display: flex; justify-content: space-between; align-items: center; padding: 9px 0; border-bottom: 1px solid #F1F5F9; font-size: 13px }
+  .stack-row:last-child { border-bottom: none }
+  .stack-row .what { color: #6B7280 }
+  .stack-row .how { font-weight: 600; color: #1a1a1a }
+
+  .pros-cons { margin-top: 16px; display: flex; flex-direction: column; gap: 6px }
+  .pro, .con { display: flex; gap: 8px; font-size: 13px }
+  .pro::before { content: "✓"; color: #10B981; flex-shrink: 0; font-weight: 700 }
+  .con::before { content: "✗"; color: #EF4444; flex-shrink: 0; font-weight: 700 }
+
+  /* Cost comparison */
+  .costs { background: #fff; border: 1px solid #E5E7EB; border-radius: 20px; overflow: hidden; margin: 20px 0 }
+  .cost-row { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; border-bottom: 1px solid #F1F5F9; font-size: 14px }
+  .cost-row:last-child { border-bottom: none }
+  .cost-row .item { font-weight: 500; color: #374151 }
+  .cost-row .old { color: #EF4444; text-decoration: line-through; font-size: 13px; margin-right: 12px }
+  .cost-row .new { font-weight: 700; color: #1a1a1a }
+  .cost-row .note { font-size: 12px; color: #9CA3AF }
+  .cost-total { background: #F8FAFC; padding: 14px 20px; display: flex; justify-content: space-between; align-items: center }
+  .cost-total .label { font-size: 13px; font-weight: 700; color: #374151 }
+  .cost-total .saving { font-size: 15px; font-weight: 700; color: #059669 }
+
+  /* Final verdict */
+  .final { background: #1a1a1a; border-radius: 20px; padding: 28px; color: #fff; margin-top: 32px }
+  .final h3 { font-size: 18px; font-weight: 700; margin-bottom: 6px }
+  .final .sub { color: rgba(255,255,255,0.5); font-size: 13px; margin-bottom: 20px }
+  .final-points { display: flex; flex-direction: column; gap: 10px }
+  .final-point { display: flex; gap: 12px; align-items: flex-start }
+  .final-point .dot { width: 8px; height: 8px; border-radius: 50%; background: #fff; flex-shrink: 0; margin-top: 6px }
+  .final-point .text { font-size: 14px; color: rgba(255,255,255,0.8) }
+  .final-point .text strong { color: #fff }
+
+  .footer { background: #1a1a1a; color: rgba(255,255,255,0.35); font-size: 12px; padding: 20px 32px; text-align: center }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <h1>Stack-Diskussion: Expertenteam</h1>
+  <p>Fünf Experten bewerten den geplanten Umzug — ehrlich, kritisch, mit klarem Ergebnis.</p>
+</div>
+
+<div class="container">
+
+  <h2>Die Experten sprechen</h2>
+
+  <!-- DevOps -->
+  <div class="expert">
+    <div class="expert-header">
+      <div class="avatar" style="background:#EFF6FF">⚙️</div>
+      <div class="expert-meta">
+        <h3>DevOps-Experte</h3>
+        <div class="role">Server, Docker, Deployment, Betrieb</div>
+      </div>
+    </div>
+    <p class="opinion">
+      Coolify auf Hetzner ist eine solide Wahl für diese Größe — einfach zu bedienen, Git-Integration, automatisches SSL. Das passt.
+    </p>
+    <p class="opinion">
+      Das Problem ist <span class="danger">GoTrue selbst zu hosten</span>. GoTrue ist das Login-System von Supabase — Open Source, gut, aber komplex im Betrieb. Wenn Supabase eine Sicherheitslücke schließt, muss ich das manuell auf deinem Server einspielen. Passiert das nicht rechtzeitig, ist das ein ernstes Sicherheitsproblem. Supabase hat ein Team dafür. Wir sind zwei.
+    </p>
+    <p class="opinion">
+      Mein Vorschlag: <span class="good">BetterAuth</span> statt GoTrue. Modernes Open-Source-Projekt, läuft auf deiner eigenen Datenbank, hervorragende Next.js-Integration, aktiv gepflegt. Erfordert ca. 2–3 Tage Code-Anpassungen — aber dann haben wir ein wartbares System.
+    </p>
+    <div class="verdict">
+      <span class="verdict-label">Urteil</span>
+      <span class="verdict-text">GoTrue raus, BetterAuth rein. Coolify + Hetzner bleiben.</span>
+    </div>
+  </div>
+
+  <!-- Security -->
+  <div class="expert">
+    <div class="expert-header">
+      <div class="avatar" style="background:#FEF2F2">🔐</div>
+      <div class="expert-meta">
+        <h3>Security-Experte</h3>
+        <div class="role">Datensicherheit, Angriffsflächen, DSGVO</div>
+      </div>
+    </div>
+    <p class="opinion">
+      Ich stimme beim DevOps-Kollegen zu — GoTrue selbst hosten bedeutet, dass wir selbst für Sicherheits-Patches verantwortlich sind. Das ist kein theoretisches Risiko.
+    </p>
+    <p class="opinion">
+      Zusätzlich: <span class="danger">PostgREST ist gefährlich in falschen Händen.</span> PostgREST stellt die gesamte Datenbank als Web-API bereit. Die Sicherheit hängt an "Row Level Security"-Regeln — eine einzige falsch konfigurierte Regel bedeutet, dass Kundendaten für alle sichtbar sind. Supabase hat Experten, die das prüfen. Wir müssen das selbst richtig machen.
+    </p>
+    <p class="opinion">
+      Wenn wir sowieso Code anfassen: PostgREST raus, direkter Datenbankzugriff aus Next.js via <span class="good">Drizzle ORM</span>. Typsicher, keine versteckten Sicherheitslücken durch falsche Regeln, jeder Next.js-Entwickler versteht es sofort.
+    </p>
+    <p class="opinion">
+      Außerdem zwingend: <span class="highlight">Cloudflare Pro (20 $/Monat)</span> mit WAF einschalten. Schützt vor SQL-Injection, Brute-Force auf Login, DDoS. Für eine SaaS mit Zahlungen kein Luxus.
+    </p>
+    <div class="verdict">
+      <span class="verdict-label">Urteil</span>
+      <span class="verdict-text">PostgREST raus, Drizzle ORM rein. Cloudflare WAF ist Pflicht.</span>
+    </div>
+  </div>
+
+  <!-- Database -->
+  <div class="expert">
+    <div class="expert-header">
+      <div class="avatar" style="background:#FFF7ED">🐘</div>
+      <div class="expert-meta">
+        <h3>Datenbank-Experte</h3>
+        <div class="role">PostgreSQL, Performance, Backups, Skalierung</div>
+      </div>
+    </div>
+    <p class="opinion">
+      PostgreSQL ist die richtige Wahl — das ist klar. Die Frage ist: selbst hosten oder managed?
+    </p>
+    <p class="opinion">
+      Selbst hosten bedeutet: Ich bin verantwortlich für Autovacuum-Tuning, langsame Abfragen überwachen, Major-Versions-Updates (PostgreSQL 17 → 18), Backup-Tests. Das ist Fachwissen, das regelmäßig gebraucht wird.
+    </p>
+    <p class="opinion">
+      <span class="good">Hetzner Managed Databases</span> löst das: automatische Backups, automatische Sicherheitsupdates, optionales High-Availability-Failover (zweiter DB-Server übernimmt automatisch wenn der erste ausfällt). Kostet ~20–35 € statt ~8 €/Monat. Dafür: kein Datenbankadministrations-Aufwand.
+    </p>
+    <p class="opinion">
+      Für Skalierung wichtig: Managed Databases unterstützt <span class="highlight">Read Replicas</span> — wenn die App wächst, können Leseoperationen auf einen zweiten Datenbankserver ausgelagert werden. Bei self-hosted müsste ich das manuell einrichten.
+    </p>
+    <div class="verdict">
+      <span class="verdict-label">Urteil</span>
+      <span class="verdict-text">Hetzner Managed Databases statt self-hosted PostgreSQL. ~25 € mehr pro Monat, dafür professionell gewartet.</span>
+    </div>
+  </div>
+
+  <!-- Scalability -->
+  <div class="expert">
+    <div class="expert-header">
+      <div class="avatar" style="background:#F0FDF4">📈</div>
+      <div class="expert-meta">
+        <h3>Skalierungs-Experte</h3>
+        <div class="role">Architektur, Load Balancing, Wachstum</div>
+      </div>
+    </div>
+    <p class="opinion">
+      Kundenseiten laufen über Cloudflare Workers — die skalieren automatisch auf Millionen von Anfragen. Das ist perfekt und braucht nichts geändert zu werden.
+    </p>
+    <p class="opinion">
+      Das Dashboard (Next.js) läuft auf einem einzelnen App-Server. Wenn wir skalieren wollen, brauchen wir irgendwann mehrere App-Server hinter einem Load Balancer. Einen Load Balancer im Nachhinein einzubauen ist Arbeit und Downtime.
+    </p>
+    <p class="opinion">
+      <span class="good">Hetzner Load Balancer von Anfang an</span>: kostet 5 €/Monat. Dafür kann jederzeit ein zweiter App-Server hinzugefügt werden ohne die Architektur umzubauen. Das ist die günstigste Versicherung gegen Skalierungsprobleme.
+    </p>
+    <p class="opinion">
+      Next.js ist von Natur aus <span class="good">horizontal skalierbar</span> — jede Instanz ist unabhängig. Passt perfekt zu Load Balancer + mehrere Server.
+    </p>
+    <div class="verdict">
+      <span class="verdict-label">Urteil</span>
+      <span class="verdict-text">Hetzner Load Balancer (5 €/Monat) von Anfang an. Billigste Entscheidung mit dem größten Nutzen.</span>
+    </div>
+  </div>
+
+  <!-- SaaS -->
+  <div class="expert">
+    <div class="expert-header">
+      <div class="avatar" style="background:#F5F3FF">💼</div>
+      <div class="expert-meta">
+        <h3>SaaS-Experte</h3>
+        <div class="role">Kosten, Betrieb, Business-Realität</div>
+      </div>
+    </div>
+    <p class="opinion">
+      Ich will ehrlich sein: BetterAuth + Drizzle ORM einzuführen ist kein "Umzug" mehr — das ist eine Teilumschreibung des Backends. Rund 3 Tage Entwicklungsarbeit, in denen keine neuen Features entstehen. Das muss bewusst entschieden werden.
+    </p>
+    <p class="opinion">
+      <span class="highlight">Macht es sich bezahlt?</span> Ja — weil GoTrue + PostgREST langfristig mehr Kopfschmerzen verursachen als die 3 Tage jetzt kosten. Technische Schulden wachsen. Lieber jetzt den sauberen Schnitt.
+    </p>
+    <p class="opinion">
+      Die Kostenbilanz stimmt: Vercel (~20 $/Monat) und Supabase (free oder 25 $/Monat) fallen weg. Hetzner kostet ~25–35 €/Monat. Je nach aktuellem Plan sparst du sofort oder in Kürze. Bei 100+ zahlenden Kunden rechnet sich das deutlich.
+    </p>
+    <div class="verdict">
+      <span class="verdict-label">Urteil</span>
+      <span class="verdict-text">Den Schnitt jetzt machen. Technische Schulden heute sind morgen doppelt teuer.</span>
+    </div>
+  </div>
+
+  <!-- The two options -->
+  <h2>Zwei Wege, eine Entscheidung</h2>
+
+  <div class="alert alert-blue">
+    <div class="icon">💡</div>
+    <div class="body">
+      Das Team ist sich einig über Hetzner, Coolify, Load Balancer und Cloudflare WAF. Die einzige offene Frage: Wie gehen wir mit Auth und Datenbankzugriff um?
+    </div>
+  </div>
+
+  <div class="compare">
+
+    <div class="option-card alt">
+      <span class="option-badge badge-gray">Weg A — Schnell</span>
+      <h3>Pragmatisch</h3>
+      <div class="subtitle">Kein Code anfassen, schneller Umzug</div>
+      <div class="stack-row"><span class="what">App-Hosting</span><span class="how">Hetzner + Coolify</span></div>
+      <div class="stack-row"><span class="what">Datenbank</span><span class="how">Hetzner Managed DB</span></div>
+      <div class="stack-row"><span class="what">Login</span><span class="how">GoTrue (selbst-gehostet)</span></div>
+      <div class="stack-row"><span class="what">API-Zugriff</span><span class="how">PostgREST</span></div>
+      <div class="stack-row"><span class="what">Sicherheit</span><span class="how">Cloudflare Pro + WAF</span></div>
+      <div class="stack-row"><span class="what">Skalierung</span><span class="how">Hetzner Load Balancer</span></div>
+      <div class="pros-cons">
+        <div class="pro">Kein Code anfassen</div>
+        <div class="pro">Umzug in 1–2 Tagen fertig</div>
+        <div class="con">GoTrue-Wartung bleibt Risiko</div>
+        <div class="con">PostgREST-Sicherheit liegt bei uns</div>
+      </div>
+    </div>
+
+    <div class="option-card winner">
+      <span class="option-badge badge-dark">Weg B — Optimal</span>
+      <h3>Technisch sauber</h3>
+      <div class="subtitle">Empfehlung des gesamten Teams</div>
+      <div class="stack-row"><span class="what">App-Hosting</span><span class="how">Hetzner + Coolify</span></div>
+      <div class="stack-row"><span class="what">Datenbank</span><span class="how">Hetzner Managed DB</span></div>
+      <div class="stack-row"><span class="what">Login</span><span class="how">BetterAuth</span></div>
+      <div class="stack-row"><span class="what">API-Zugriff</span><span class="how">Drizzle ORM</span></div>
+      <div class="stack-row"><span class="what">Sicherheit</span><span class="how">Cloudflare Pro + WAF</span></div>
+      <div class="stack-row"><span class="what">Skalierung</span><span class="how">Hetzner Load Balancer</span></div>
+      <div class="pros-cons">
+        <div class="pro">Kein GoTrue-Wartungsrisiko</div>
+        <div class="pro">Typsicherer, sicherer DB-Zugriff</div>
+        <div class="pro">Skaliert sauber auf 10.000+ User</div>
+        <div class="con">~3 Tage Code-Anpassung vorher</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Costs -->
+  <h2>Kostenvergleich</h2>
+
+  <div class="costs">
+    <div class="cost-row">
+      <span class="item">App-Hosting</span>
+      <span>
+        <span class="old">~20 $/Mo Vercel</span>
+        <span class="new">~14 €/Mo Hetzner CX32</span>
+      </span>
+    </div>
+    <div class="cost-row">
+      <span class="item">Datenbank</span>
+      <span>
+        <span class="old">~25 $/Mo Supabase Pro</span>
+        <span class="new">~25 €/Mo Hetzner Managed</span>
+      </span>
+    </div>
+    <div class="cost-row">
+      <span class="item">Load Balancer</span>
+      <span>
+        <span class="old">—</span>
+        <span class="new">~5 €/Mo</span>
+      </span>
+    </div>
+    <div class="cost-row">
+      <span class="item">Cloudflare Pro + WAF</span>
+      <span>
+        <span class="old">—</span>
+        <span class="new">~20 $/Mo</span>
+      </span>
+    </div>
+    <div class="cost-row">
+      <span class="item">Backups (Object Storage)</span>
+      <span>
+        <span class="old">bei Supabase inklusive</span>
+        <span class="new">~5 €/Mo</span>
+      </span>
+    </div>
+    <div class="cost-total">
+      <span class="label">Gesamt pro Monat (nach Umzug)</span>
+      <span class="saving">~ 65–70 € · vorher bis ~95 $ · ähnliche Kosten, deutlich mehr Kontrolle</span>
+    </div>
+  </div>
+
+  <div class="alert alert-yellow">
+    <div class="icon">💡</div>
+    <div class="body">
+      <strong>Hinweis:</strong> Wenn Supabase bisher kostenlos genutzt wird, steigen die monatlichen Kosten durch Hetzner Managed Databases (~25 €). Dafür fällt Vercel weg. Die wichtigste Erkenntnis: Mit eigenem Server kaufst du dir <strong>Kontrolle und Skalierbarkeit</strong> — nicht primär niedrigere Kosten.
+    </div>
+  </div>
+
+  <!-- Final -->
+  <div class="final">
+    <h3>Einstimmiges Teamvotum: Weg B</h3>
+    <div class="sub">Was das konkret bedeutet, bevor wir mit dem Umzug beginnen</div>
+    <div class="final-points">
+      <div class="final-point">
+        <div class="dot"></div>
+        <div class="text"><strong>~3 Tage Entwicklung zuerst:</strong> Supabase-Client durch BetterAuth (Login) und Drizzle ORM (Datenbankzugriff) ersetzen. Das mache ich — du musst nichts coden.</div>
+      </div>
+      <div class="final-point">
+        <div class="dot"></div>
+        <div class="text"><strong>Dann der Umzug:</strong> Hetzner Server anlegen, Coolify installieren, Hetzner Managed Database einrichten, App deployen, DNS umstellen.</div>
+      </div>
+      <div class="final-point">
+        <div class="dot"></div>
+        <div class="text"><strong>Hetzner Load Balancer</strong> von Anfang an — 5 €/Monat, skalierbar auf mehrere App-Server ohne Umbau.</div>
+      </div>
+      <div class="final-point">
+        <div class="dot"></div>
+        <div class="text"><strong>Cloudflare Pro</strong> aktivieren — WAF schützt vor Angriffen, ohne dass wir selbst einen Firewall-Experten brauchen.</div>
+      </div>
+      <div class="final-point">
+        <div class="dot"></div>
+        <div class="text"><strong>Kundenseiten bleiben immer online</strong> — laufen unabhängig über Cloudflare Workers, unberührt vom gesamten Umzug.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  FinestSites · Stack-Diskussion · Expertenteam-Votum für Weg B: BetterAuth + Drizzle ORM + Hetzner Managed DB
+</div>
+
+</body>
+</html>

@@ -43,14 +43,33 @@ export const auth = betterAuth({
   session: {
     expiresIn: 60 * 60 * 24 * 30,  // 30 days
     updateAge: 60 * 60 * 24,        // refresh daily
+    // cookieCache disabled: Safari ITP can create split-brain state where the
+    // server cookie is valid but the cached client-side cookie is stale/missing,
+    // causing false "not authenticated" responses on iOS Safari.
     cookieCache: {
-      enabled: true,
-      maxAge: 5 * 60,               // 5 minute client-side cache
+      enabled: false,
     },
   },
 
   secret: process.env.BETTER_AUTH_SECRET!,
   baseURL: process.env.BETTER_AUTH_URL ?? process.env.NEXT_PUBLIC_APP_URL!,
+
+  // Explicitly trust all domains where the app is served.
+  // BetterAuth's CSRF middleware rejects requests from untrusted origins — on Safari iOS,
+  // the Origin header can be set to unexpected values (e.g. the bare domain instead of
+  // the scheme+host, or missing entirely). Listing all valid origins prevents 403 FORBIDDEN
+  // being thrown instead of returned as {error}, which manifests as "Verbindungsfehler".
+  trustedOrigins: [
+    'https://app.finestsites.io',
+    'https://finestsites.io',
+    'https://www.finestsites.io',
+    'https://finestsites.de',
+    'https://www.finestsites.de',
+    // Vercel canonical URL (used if NEXT_PUBLIC_APP_URL points here)
+    'https://finestsites.vercel.app',
+    'http://localhost:3000',
+    'http://localhost:3001',
+  ],
 
   advanced: {
     // users.id is uuid type — generate proper UUIDs app-side (not DB default)

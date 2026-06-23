@@ -2,8 +2,9 @@
 
 import { createAuthClient } from 'better-auth/react'
 
-export const authClient = createAuthClient({
-  baseURL: process.env.NEXT_PUBLIC_APP_URL!,
-})
+// Do NOT set baseURL here — BetterAuth derives it from window.location.origin automatically.
+// A hardcoded baseURL causes cross-origin requests on Safari iOS (ITP blocks credentialed
+// cross-origin fetch, and CSRF check rejects requests with origin: null).
+export const authClient = createAuthClient({})
 
 export const { signIn, signUp, signOut, useSession, getSession } = authClient

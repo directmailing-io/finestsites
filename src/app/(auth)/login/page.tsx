@@ -1,9 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
-import { signIn, authClient } from '@/lib/auth/client'
+import { authClient } from '@/lib/auth/client'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
@@ -14,7 +13,13 @@ export default function LoginPage() {
   const [needsConfirm, setNeedsConfirm] = useState(false)
   const [resending, setResending] = useState(false)
   const [resent, setResent] = useState(false)
-  const router = useRouter()
+
+  // Suppress Chrome's automatic credential manager prompt on load
+  useEffect(() => {
+    if (typeof navigator !== 'undefined' && navigator.credentials?.preventSilentAccess) {
+      navigator.credentials.preventSilentAccess()
+    }
+  }, [])
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -22,17 +27,50 @@ export default function LoginPage() {
     setError('')
     setNeedsConfirm(false)
 
-    const { error } = await signIn.email({ email, password, callbackURL: '/sites' })
-    if (error) {
-      if (error.message?.toLowerCase().includes('email not confirmed') || error.message?.toLowerCase().includes('email not verified')) {
-        setNeedsConfirm(true)
+    // Raw fetch instead of signIn.email() — eliminates BetterAuth client as a variable,
+    // handles non-JSON responses gracefully, and gives us explicit timeout control.
+    // signIn.email() uses better-fetch which throws (not returns error) on network-level
+    // failures, making it impossible to distinguish from JS errors. Raw fetch is reliable
+    // on all browsers including Safari iOS.
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 15000)
+
+    try {
+      const res = await fetch('/api/auth/sign-in/email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email.toLowerCase().trim(), password, rememberMe: true }),
+        credentials: 'include',
+        signal: controller.signal,
+      })
+      clearTimeout(timeoutId)
+
+      let data: { message?: string; code?: string } = {}
+      try { data = await res.json() } catch { /* non-JSON fallback — just use status code */ }
+
+      if (!res.ok) {
+        const msg = (data.message ?? '').toLowerCase()
+        const code = (data.code ?? '').toLowerCase()
+        if (code.includes('not_verified') || msg.includes('not confirmed') || msg.includes('not verified')) {
+          setNeedsConfirm(true)
+        } else if (res.status === 401) {
+          setError('E-Mail oder Passwort falsch.')
+        } else {
+          setError('Anmeldung fehlgeschlagen. Bitte versuche es erneut.')
+        }
+        setLoading(false)
+        return
+      }
+
+      window.location.href = '/sites'
+    } catch (err) {
+      clearTimeout(timeoutId)
+      if (err instanceof DOMException && err.name === 'AbortError') {
+        setError('Zeitüberschreitung — bitte versuche es erneut.')
       } else {
-        setError('E-Mail oder Passwort falsch.')
+        setError('Verbindungsfehler. Bitte prüfe deine Internetverbindung.')
       }
       setLoading(false)
-    } else {
-      router.refresh()
-      router.push('/sites')
     }
   }
 
@@ -53,7 +91,7 @@ export default function LoginPage() {
         </Link>
       </p>
 
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4" autoComplete="on">
         {error && (
           <p className="text-sm" style={{ color: '#DC2626' }}>{error}</p>
         )}

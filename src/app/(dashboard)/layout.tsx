@@ -25,8 +25,8 @@ export default async function DashboardLayout({ children }: { children: React.Re
     redirect('/onboarding/plan')
   }
 
-  // Must have completed username setup
-  if (!profile?.username) {
+  // Must have completed username setup (admin is exempt)
+  if (user.email !== ADMIN_EMAIL && !profile?.username) {
     redirect('/onboarding/username')
   }
 
