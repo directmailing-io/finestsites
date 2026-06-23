@@ -32,18 +32,61 @@ function usernameToUrl(username: string, prefix: string): string {
 }
 
 const COUNTRIES = [
-  { code: '+49', flag: '🇩🇪' }, { code: '+43', flag: '🇦🇹' }, { code: '+41', flag: '🇨🇭' },
-  { code: '+1',  flag: '🇺🇸' }, { code: '+44', flag: '🇬🇧' }, { code: '+33', flag: '🇫🇷' },
-  { code: '+39', flag: '🇮🇹' }, { code: '+34', flag: '🇪🇸' }, { code: '+31', flag: '🇳🇱' },
-  { code: '+32', flag: '🇧🇪' }, { code: '+48', flag: '🇵🇱' }, { code: '+90', flag: '🇹🇷' },
+  { code: '+49', flag: '🇩🇪', label: 'Deutschland' },
+  { code: '+43', flag: '🇦🇹', label: 'Österreich' },
+  { code: '+41', flag: '🇨🇭', label: 'Schweiz' },
+  { code: '+1',  flag: '🇺🇸', label: 'USA / Kanada' },
+  { code: '+44', flag: '🇬🇧', label: 'UK' },
+  { code: '+33', flag: '🇫🇷', label: 'Frankreich' },
+  { code: '+39', flag: '🇮🇹', label: 'Italien' },
+  { code: '+34', flag: '🇪🇸', label: 'Spanien' },
+  { code: '+31', flag: '🇳🇱', label: 'Niederlande' },
+  { code: '+32', flag: '🇧🇪', label: 'Belgien' },
+  { code: '+48', flag: '🇵🇱', label: 'Polen' },
+  { code: '+90', flag: '🇹🇷', label: 'Türkei' },
+  { code: '+7',  flag: '🇷🇺', label: 'Russland' },
+  { code: '+380', flag: '🇺🇦', label: 'Ukraine' },
+  { code: '+40', flag: '🇷🇴', label: 'Rumänien' },
+  { code: '+30', flag: '🇬🇷', label: 'Griechenland' },
+  { code: '+351', flag: '🇵🇹', label: 'Portugal' },
+  { code: '+46', flag: '🇸🇪', label: 'Schweden' },
+  { code: '+47', flag: '🇳🇴', label: 'Norwegen' },
+  { code: '+45', flag: '🇩🇰', label: 'Dänemark' },
+  { code: '+358', flag: '🇫🇮', label: 'Finnland' },
+  { code: '+420', flag: '🇨🇿', label: 'Tschechien' },
+  { code: '+36', flag: '🇭🇺', label: 'Ungarn' },
+  { code: '+385', flag: '🇭🇷', label: 'Kroatien' },
+  { code: '+371', flag: '🇱🇻', label: 'Lettland' },
+  { code: '+370', flag: '🇱🇹', label: 'Litauen' },
+  { code: '+372', flag: '🇪🇪', label: 'Estland' },
+  { code: '+86', flag: '🇨🇳', label: 'China' },
+  { code: '+81', flag: '🇯🇵', label: 'Japan' },
+  { code: '+82', flag: '🇰🇷', label: 'Südkorea' },
+  { code: '+91', flag: '🇮🇳', label: 'Indien' },
+  { code: '+55', flag: '🇧🇷', label: 'Brasilien' },
+  { code: '+52', flag: '🇲🇽', label: 'Mexiko' },
+  { code: '+54', flag: '🇦🇷', label: 'Argentinien' },
+  { code: '+27', flag: '🇿🇦', label: 'Südafrika' },
+  { code: '+20', flag: '🇪🇬', label: 'Ägypten' },
+  { code: '+966', flag: '🇸🇦', label: 'Saudi-Arabien' },
+  { code: '+971', flag: '🇦🇪', label: 'VAE' },
+  { code: '+972', flag: '🇮🇱', label: 'Israel' },
+  { code: '+61', flag: '🇦🇺', label: 'Australien' },
+  { code: '+64', flag: '🇳🇿', label: 'Neuseeland' },
+  { code: 'other', flag: '🌐', label: 'Andere…' },
 ]
 
+const COUNTRY_CODES = COUNTRIES.filter(c => c.code !== 'other')
+
 function parsePhone(full: string): { code: string; number: string } {
-  for (const c of COUNTRIES) {
+  for (const c of COUNTRY_CODES) {
     if (full.startsWith(c.code + ' ') || full.startsWith(c.code)) {
       return { code: c.code, number: full.slice(c.code.length).trim() }
     }
   }
+  // If no known code matched but starts with +, treat prefix as custom
+  const match = full.match(/^(\+\d{1,4})\s*(.*)$/)
+  if (match) return { code: match[1], number: match[2] }
   return { code: '+49', number: full }
 }
 
@@ -110,6 +153,8 @@ function SettingsContent() {
   // ── Profile state ──────────────────────────────────────────
   const [profileName, setProfileName] = useState({ first_name: '', last_name: '' })
   const [countryCode, setCountryCode] = useState('+49')
+  const [customCountryCode, setCustomCountryCode] = useState('')
+  const isCustomCode = countryCode === 'other'
   const [phoneNumber, setPhoneNumber] = useState('')
   const [socialUsernames, setSocialUsernames] = useState<Record<string, string>>({
     instagram: '', tiktok: '', facebook: '', linkedin: '', youtube: '',
@@ -154,7 +199,15 @@ function SettingsContent() {
       if (data.billing_interval) setBillingInterval(data.billing_interval)
       setProfileName({ first_name: data.first_name ?? '', last_name: data.last_name ?? '' })
       const parsed = parsePhone(data.phone ?? '')
-      setCountryCode(parsed.code)
+      const knownCode = COUNTRY_CODES.find(c => c.code === parsed.code)
+      if (knownCode) {
+        setCountryCode(parsed.code)
+      } else if (parsed.code.startsWith('+')) {
+        setCountryCode('other')
+        setCustomCountryCode(parsed.code)
+      } else {
+        setCountryCode('+49')
+      }
       setPhoneNumber(parsed.number)
       setSocialUsernames({
         instagram: urlToUsername(data.instagram ?? '', 'instagram.com/'),
@@ -232,7 +285,8 @@ function SettingsContent() {
   async function handleProfileSave(e: React.FormEvent) {
     e.preventDefault()
     setProfileSaving(true); setProfileError(''); setProfileSuccess('')
-    const phone = phoneNumber.trim() ? `${countryCode} ${phoneNumber.trim()}` : ''
+    const effectiveCode = countryCode === 'other' ? customCountryCode.trim() : countryCode
+    const phone = phoneNumber.trim() && effectiveCode ? `${effectiveCode} ${phoneNumber.trim()}` : ''
     const socialUrls: Record<string, string> = {}
     for (const s of SOCIALS) {
       socialUrls[s.key] = usernameToUrl(socialUsernames[s.key] ?? '', s.prefix)
@@ -435,14 +489,24 @@ function SettingsContent() {
             <div className="flex overflow-hidden rounded-2xl" style={{ border: '1.5px solid #E5E7EB' }}>
               <select
                 value={countryCode}
-                onChange={e => setCountryCode(e.target.value)}
+                onChange={e => { setCountryCode(e.target.value); if (e.target.value !== 'other') setCustomCountryCode('') }}
                 className="flex-shrink-0 px-3 py-3 text-sm outline-none"
                 style={{ background: '#FAFAFA', borderRight: '1px solid #F1F5F9', color: '#374151', minWidth: 80 }}
               >
                 {COUNTRIES.map(c => (
-                  <option key={c.code} value={c.code}>{c.flag} {c.code}</option>
+                  <option key={c.code + c.label} value={c.code}>{c.flag} {c.code === 'other' ? 'Andere…' : c.code}</option>
                 ))}
               </select>
+              {isCustomCode && (
+                <input
+                  type="text"
+                  value={customCountryCode}
+                  onChange={e => setCustomCountryCode(e.target.value)}
+                  placeholder="+XX"
+                  className="flex-shrink-0 px-2 py-3 text-sm outline-none"
+                  style={{ background: '#FAFAFA', borderRight: '1px solid #F1F5F9', color: '#374151', width: 64 }}
+                />
+              )}
               <input
                 type="tel"
                 value={phoneNumber}

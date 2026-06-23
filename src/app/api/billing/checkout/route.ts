@@ -77,7 +77,11 @@ export async function POST(req: NextRequest) {
       mode: 'subscription',
       payment_method_types: ['card', 'sepa_debit'],
       line_items: [{ price: priceId, quantity: 1 }],
-      ...(hasReferral ? { discounts: [{ coupon: affiliateCouponId!.trim() }] } : {}),
+      // Allow promo codes only when no affiliate discount is already applied
+      // (Stripe doesn't allow mixing discounts and allow_promotion_codes)
+      ...(hasReferral
+        ? { discounts: [{ coupon: affiliateCouponId!.trim() }] }
+        : { allow_promotion_codes: true }),
       success_url: successUrl,
       cancel_url: cancelUrl,
 

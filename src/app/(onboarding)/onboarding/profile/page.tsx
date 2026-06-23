@@ -22,19 +22,23 @@ function usernameToUrl(username: string, prefix: string): string {
 // ── Country codes ─────────────────────────────────────────────────────────────
 
 const COUNTRIES = [
-  { code: '+49', flag: '🇩🇪', name: 'DE' },
-  { code: '+43', flag: '🇦🇹', name: 'AT' },
-  { code: '+41', flag: '🇨🇭', name: 'CH' },
-  { code: '+1',  flag: '🇺🇸', name: 'US' },
-  { code: '+44', flag: '🇬🇧', name: 'GB' },
-  { code: '+33', flag: '🇫🇷', name: 'FR' },
-  { code: '+39', flag: '🇮🇹', name: 'IT' },
-  { code: '+34', flag: '🇪🇸', name: 'ES' },
-  { code: '+31', flag: '🇳🇱', name: 'NL' },
-  { code: '+32', flag: '🇧🇪', name: 'BE' },
-  { code: '+48', flag: '🇵🇱', name: 'PL' },
-  { code: '+90', flag: '🇹🇷', name: 'TR' },
+  { code: '+49', flag: '🇩🇪' }, { code: '+43', flag: '🇦🇹' }, { code: '+41', flag: '🇨🇭' },
+  { code: '+1',  flag: '🇺🇸' }, { code: '+44', flag: '🇬🇧' }, { code: '+33', flag: '🇫🇷' },
+  { code: '+39', flag: '🇮🇹' }, { code: '+34', flag: '🇪🇸' }, { code: '+31', flag: '🇳🇱' },
+  { code: '+32', flag: '🇧🇪' }, { code: '+48', flag: '🇵🇱' }, { code: '+90', flag: '🇹🇷' },
+  { code: '+7',  flag: '🇷🇺' }, { code: '+380', flag: '🇺🇦' }, { code: '+40', flag: '🇷🇴' },
+  { code: '+30', flag: '🇬🇷' }, { code: '+351', flag: '🇵🇹' }, { code: '+46', flag: '🇸🇪' },
+  { code: '+47', flag: '🇳🇴' }, { code: '+45', flag: '🇩🇰' }, { code: '+358', flag: '🇫🇮' },
+  { code: '+420', flag: '🇨🇿' }, { code: '+36', flag: '🇭🇺' }, { code: '+385', flag: '🇭🇷' },
+  { code: '+371', flag: '🇱🇻' }, { code: '+370', flag: '🇱🇹' }, { code: '+372', flag: '🇪🇪' },
+  { code: '+86', flag: '🇨🇳' }, { code: '+81', flag: '🇯🇵' }, { code: '+82', flag: '🇰🇷' },
+  { code: '+91', flag: '🇮🇳' }, { code: '+55', flag: '🇧🇷' }, { code: '+52', flag: '🇲🇽' },
+  { code: '+54', flag: '🇦🇷' }, { code: '+27', flag: '🇿🇦' }, { code: '+20', flag: '🇪🇬' },
+  { code: '+966', flag: '🇸🇦' }, { code: '+971', flag: '🇦🇪' }, { code: '+972', flag: '🇮🇱' },
+  { code: '+61', flag: '🇦🇺' }, { code: '+64', flag: '🇳🇿' },
+  { code: 'other', flag: '🌐' },
 ]
+const COUNTRY_CODES_OB = COUNTRIES.filter(c => c.code !== 'other')
 
 // ── Step indicator ────────────────────────────────────────────────────────────
 
@@ -73,7 +77,9 @@ export default function OnboardingProfilePage() {
 
   // Phone
   const [countryCode, setCountryCode] = useState('+49')
+  const [customCountryCode, setCustomCountryCode] = useState('')
   const [phoneNumber, setPhoneNumber] = useState('')
+  const isCustomCode = countryCode === 'other'
 
   const [saving, setSaving] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -106,7 +112,8 @@ export default function OnboardingProfilePage() {
 
   async function handleSave() {
     setSaving(true)
-    const phone = phoneNumber.trim() ? `${countryCode} ${phoneNumber.trim()}` : ''
+    const effectiveCode = countryCode === 'other' ? customCountryCode.trim() : countryCode
+    const phone = phoneNumber.trim() && effectiveCode ? `${effectiveCode} ${phoneNumber.trim()}` : ''
     const body: Record<string, string> = { phone }
     for (const s of SOCIALS) {
       body[s.key] = usernameToUrl(socials[s.key] ?? '', s.prefix)
@@ -244,14 +251,24 @@ export default function OnboardingProfilePage() {
             <div className="flex overflow-hidden rounded-2xl" style={{ border: '1.5px solid #E5E7EB' }}>
               <select
                 value={countryCode}
-                onChange={e => setCountryCode(e.target.value)}
+                onChange={e => { setCountryCode(e.target.value); if (e.target.value !== 'other') setCustomCountryCode('') }}
                 className="flex-shrink-0 px-3 py-3 text-sm outline-none"
                 style={{ background: '#FAFAFA', borderRight: '1px solid #F1F5F9', color: '#374151', minWidth: 80 }}
               >
                 {COUNTRIES.map(c => (
-                  <option key={c.code} value={c.code}>{c.flag} {c.code}</option>
+                  <option key={c.code} value={c.code}>{c.flag} {c.code === 'other' ? 'Andere…' : c.code}</option>
                 ))}
               </select>
+              {isCustomCode && (
+                <input
+                  type="text"
+                  value={customCountryCode}
+                  onChange={e => setCustomCountryCode(e.target.value)}
+                  placeholder="+XX"
+                  className="flex-shrink-0 px-2 py-3 text-sm outline-none"
+                  style={{ background: '#FAFAFA', borderRight: '1px solid #F1F5F9', color: '#374151', width: 64 }}
+                />
+              )}
               <input
                 type="tel"
                 value={phoneNumber}

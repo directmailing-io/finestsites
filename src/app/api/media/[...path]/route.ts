@@ -15,7 +15,7 @@ export async function GET(_: NextRequest, { params }: { params: Promise<{ path: 
   const key = path.join('/')
 
   // Only allow specific prefixes
-  if (!key.startsWith('user-images/') && !key.startsWith('template-images/')) {
+  if (!key.startsWith('user-images/') && !key.startsWith('template-images/') && !key.startsWith('profile-images/')) {
     return new NextResponse('Not found', { status: 404 })
   }
 
