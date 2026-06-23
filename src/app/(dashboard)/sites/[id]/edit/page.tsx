@@ -2043,15 +2043,19 @@ export default function SiteEditPage({ params }: { params: Promise<{ id: string 
     .filter(f => f.required)
     .filter(f => checkShowWhen(f as unknown as LoopSubField, values, fields as unknown as LoopSubField[]))
     .filter(f => !values[f.key])
-  // Fields with compliance_check that haven't been approved (or text changed since approval)
+  // Fields with compliance_check that haven't been approved (or text changed since approval).
+  // Strip HTML tags before comparing so that '<p>text</p>' and 'text' (plain
+  // default_value) are treated as equal — avoids permanently blocking publish
+  // when the field value is a plain-text default but the approval snapshot is HTML.
+  const stripHtmlInline = (s: string) => s.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim()
   const complianceBlockedFields = fields
     .filter(f => f.compliance_check === true)
     .filter(f => checkShowWhen(f as unknown as LoopSubField, values, fields as unknown as LoopSubField[]))
     .filter(f => {
       const approved = values[f.key + '__chk']
       const current = values[f.key]
-      // No approval at all, or approved text differs from current text
-      return !approved || approved.trim() !== (current ?? '').trim()
+      // No approval at all, or plain-text content differs from approved snapshot
+      return !approved || stripHtmlInline(approved) !== stripHtmlInline(current ?? '')
     })
   const allRequiredComplete = missingRequiredFields.length === 0 && complianceBlockedFields.length === 0
 

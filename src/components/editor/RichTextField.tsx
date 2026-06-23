@@ -42,6 +42,20 @@ function hash(s: string): string {
   return h.toString(36)
 }
 
+// Strip HTML tags and normalise whitespace so we can compare the plain-text
+// content of two strings regardless of whether they are wrapped in <p> tags.
+// e.g. stripHtml('<p>Hello world</p>') === stripHtml('Hello world') → true
+function stripHtml(s: string): string {
+  return s.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim()
+}
+
+// Hash the plain-text content (tag-agnostic), used for drift detection and
+// restoration matching so default_value plain text and its Tiptap-wrapped
+// HTML equivalent produce the same hash.
+function hashText(html: string): string {
+  return hash(stripHtml(html))
+}
+
 export function RichTextField({ value, onChange, placeholder, maxLength, complianceCheck, complianceApprovedText, onComplianceApproved }: Props) {
   const [linkUrl, setLinkUrl] = useState('')
   const [showLinkInput, setShowLinkInput] = useState(false)
@@ -113,13 +127,14 @@ export function RichTextField({ value, onChange, placeholder, maxLength, complia
   // Restore compliance approval state on mount (e.g. after section switch).
   // If the parent has a previously-approved text that matches the current value,
   // show the green "Geprüft" state without requiring a re-check.
+  // We compare PLAIN TEXT content (stripHtml) so that the case where the
+  // default_value is a plain string but the approved snapshot is Tiptap HTML
+  // ('<p>text</p>') still matches correctly.
   useEffect(() => {
     if (complianceRestoredRef.current) return
     if (!complianceCheck || !complianceApprovedText || !value) return
-    // Normalize: strip trailing newlines / whitespace so minor serialization
-    // differences don't cause a false mismatch.
-    if (complianceApprovedText.trim() === value.trim()) {
-      setCheckState({ status: 'ok', checkedHash: hash(complianceApprovedText) })
+    if (hashText(complianceApprovedText) === hashText(value)) {
+      setCheckState({ status: 'ok', checkedHash: hashText(complianceApprovedText) })
       complianceRestoredRef.current = true
     }
   }, [complianceCheck, complianceApprovedText, value])
@@ -154,7 +169,7 @@ export function RichTextField({ value, onChange, placeholder, maxLength, complia
         setCheckState({ status: 'error', message: data.error ?? 'Prüfung fehlgeschlagen' })
         return
       }
-      const h = hash(html)
+      const h = hashText(html)
       if (data.ok) {
         setCheckState({ status: 'ok', checkedHash: h })
         // Persist approval in parent so it survives section switches and reloads
@@ -170,7 +185,8 @@ export function RichTextField({ value, onChange, placeholder, maxLength, complia
     } catch (e) {
       setCheckState({ status: 'error', message: e instanceof Error ? e.message : 'Netzwerk-Fehler' })
     }
-  }, [editor])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [editor, onComplianceApproved])
 
   const applySuggestion = useCallback(() => {
     if (!editor) return
@@ -182,8 +198,12 @@ export function RichTextField({ value, onChange, placeholder, maxLength, complia
     setShowCheckPanel(false)
   }, [editor, checkState, onChange])
 
-  // Detect content drift since last check
-  const currentHash = editor ? hash(editor.getHTML()) : ''
+  // Detect content drift since last check.
+  // Use hashText (plain-text hash) so that '<p>text</p>' and 'text' produce
+  // the same hash — avoids spurious re-check requests when the editor wraps
+  // a plain-text default_value in a <p> tag on init.
+  // Fall back to the value prop when the editor isn't mounted yet.
+  const currentHash = editor ? hashText(editor.getHTML()) : hashText(value || '')
   const lastCheckedHash = checkState.status === 'ok' || checkState.status === 'issues' ? checkState.checkedHash : null
   const needsRecheck = lastCheckedHash !== null && lastCheckedHash !== currentHash
 
