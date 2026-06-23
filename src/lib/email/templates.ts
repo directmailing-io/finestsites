@@ -12,7 +12,7 @@ const base = {
   footer: '#9CA3AF',
 }
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://finestsites.vercel.app'
+const APP_URL = (process.env.NEXT_PUBLIC_APP_URL ?? 'https://app.finestsites.io').replace(/\/$/, '')
 
 function logoHeader(): string {
   return `<table cellpadding="0" cellspacing="0" role="presentation" width="100%">
