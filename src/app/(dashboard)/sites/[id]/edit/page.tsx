@@ -1692,6 +1692,17 @@ export default function SiteEditPage({ params }: { params: Promise<{ id: string 
             init[f.key] = getProfilePrefill(f.key, f.type, userProfile) ?? f.default_value ?? ''
           }
         }
+        // Restore compliance approval flags from DB (stored as fieldKey + '__chk').
+        // The init loop above only processes schema fields, so we restore __chk
+        // keys separately so the locked read-only view survives page reloads.
+        for (const f of fields) {
+          if ((f as any).compliance_check) {
+            const chkKey = f.key + '__chk'
+            if ((data.data as Record<string, string>)?.[chkKey]) {
+              init[chkKey] = (data.data as Record<string, string>)[chkKey]
+            }
+          }
+        }
         setValues(init)
         // Mark the initial-loaded state as already-saved so autosave doesn't
         // fire on the very first render.
@@ -2501,44 +2512,71 @@ export default function SiteEditPage({ params }: { params: Promise<{ id: string 
                     Dieses Template hat keine Felder.
                   </div>
                 )}
-                {sectionFields.map(field => (
-                  <div key={field.key} className="bg-white rounded-[20px] p-5"
-                    style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.05)', border: '1px solid #F0F0F0' }}>
-                    <div className="mb-3">
-                      <label className="text-base font-bold text-gray-900">
-                        {field.label}
-                        {field.required && <span className="text-red-500 ml-1">*</span>}
-                      </label>
-                      {field.type === 'loop' && (
-                        <p className="text-xs text-gray-400 mt-0.5">
-                          Wiederholbare Einträge — beliebig viele hinzufügen
-                        </p>
-                      )}
-                      {field.placeholder_text && field.type !== 'loop' && (
-                        <p className="text-sm text-gray-400 mt-0.5">{field.placeholder_text}</p>
-                      )}
-                    </div>
-                    <FieldRenderer
-                      field={field}
-                      value={values[field.key] ?? ''}
-                      onChange={v => handleChange(field.key, v)}
-                      complianceApprovedText={field.compliance_check ? (values[field.key + '__chk'] ?? '') : undefined}
-                      onComplianceApproved={field.compliance_check ? (approvedHtml) => handleChange(field.key + '__chk', approvedHtml) : undefined}
-                      onComplianceRevoked={field.compliance_check ? () => handleChange(field.key + '__chk', '') : undefined}
-                      onItemFocus={field.key === 'events'
-                        ? (item, idx) => {
-                            if (!item || idx < 0) { setPreviewHash(''); return }
-                            const slug = item.kuerzel ? String(item.kuerzel).trim() : ''
-                            // Synthetic identifier when the user has not given
-                            // the event a slug yet — keeps the preview locked
-                            // to the event landing in the iframe so per-event
-                            // modus & accent show through immediately.
-                            setPreviewHash(slug || `__pidx-${idx}__`)
-                          }
-                        : undefined}
-                    />
-                  </div>
-                ))}
+                {/* Compliance-check richtext fields are kept mounted even when in a
+                    different section so their locked/approved state survives
+                    section navigation. All other fields unmount normally. */}
+                {(() => {
+                  const sectionKeySet = new Set(sectionFields.map(f => f.key))
+                  // Hidden compliance fields: richtext + compliance_check, not in active section
+                  const hiddenComplianceFields = fields.filter(
+                    f => f.type === 'richtext' && f.compliance_check && !sectionKeySet.has(f.key)
+                  )
+                  return [...sectionFields, ...hiddenComplianceFields].map(field => {
+                    const visible = sectionKeySet.has(field.key)
+                    return (
+                      <div key={field.key}
+                        className={visible ? 'bg-white rounded-[20px] p-5' : ''}
+                        style={visible
+                          ? { boxShadow: '0 2px 8px rgba(0,0,0,0.05)', border: '1px solid #F0F0F0' }
+                          : { display: 'none' }}>
+                        {visible && (
+                          <div className="mb-3">
+                            <label className="text-base font-bold text-gray-900">
+                              {field.label}
+                              {field.required && <span className="text-red-500 ml-1">*</span>}
+                            </label>
+                            {field.type === 'loop' && (
+                              <p className="text-xs text-gray-400 mt-0.5">
+                                Wiederholbare Einträge — beliebig viele hinzufügen
+                              </p>
+                            )}
+                            {field.placeholder_text && field.type !== 'loop' && (
+                              <p className="text-sm text-gray-400 mt-0.5">{field.placeholder_text}</p>
+                            )}
+                          </div>
+                        )}
+                        <FieldRenderer
+                          field={field}
+                          value={values[field.key] ?? ''}
+                          onChange={v => handleChange(field.key, v)}
+                          complianceApprovedText={field.compliance_check ? (values[field.key + '__chk'] ?? '') : undefined}
+                          onComplianceApproved={field.compliance_check ? (approvedHtml) => {
+                            handleChange(field.key + '__chk', approvedHtml)
+                            // Immediately persist to DB — don't rely on autosave timer
+                            // so page reload also shows the locked view correctly
+                            fetch(`/api/sites/${id}`, {
+                              method: 'PATCH',
+                              headers: { 'Content-Type': 'application/json' },
+                              body: JSON.stringify({ [field.key + '__chk']: approvedHtml }),
+                            }).catch(() => {})
+                          } : undefined}
+                          onComplianceRevoked={field.compliance_check ? () => handleChange(field.key + '__chk', '') : undefined}
+                          onItemFocus={field.key === 'events'
+                            ? (item, idx) => {
+                                if (!item || idx < 0) { setPreviewHash(''); return }
+                                const slug = item.kuerzel ? String(item.kuerzel).trim() : ''
+                                // Synthetic identifier when the user has not given
+                                // the event a slug yet — keeps the preview locked
+                                // to the event landing in the iframe so per-event
+                                // modus & accent show through immediately.
+                                setPreviewHash(slug || `__pidx-${idx}__`)
+                              }
+                            : undefined}
+                        />
+                      </div>
+                    )
+                  })
+                })()}
               </div>
             )}
 
