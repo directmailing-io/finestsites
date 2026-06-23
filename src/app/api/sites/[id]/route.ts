@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getUserFromRequest } from '@/lib/auth/server'
 import { db } from '@/lib/db'
 import { users, userSites, templates, siteData } from '@/lib/db/schema'
-import { eq, and } from 'drizzle-orm'
+import { eq, and, sql } from 'drizzle-orm'
 import { markSiteOffline } from '@/lib/cloudflare/kv'
 
 async function getSiteForUser(siteId: string, userId: string) {
@@ -107,7 +107,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
         .values(upserts)
         .onConflictDoUpdate({
           target: [siteData.userSiteId, siteData.fieldKey],
-          set: { fieldValue: siteData.fieldValue, updatedAt: new Date() },
+          set: { fieldValue: sql`excluded.field_value`, updatedAt: new Date() },
         })
     } catch {
       return NextResponse.json({ error: 'Internal server error' }, { status: 500 })

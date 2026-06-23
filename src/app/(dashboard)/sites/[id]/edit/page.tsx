@@ -1683,7 +1683,7 @@ export default function SiteEditPage({ params }: { params: Promise<{ id: string 
           if (saved) {
             init[f.key] = saved
           } else {
-            init[f.key] = getProfilePrefill(f.key, f.type, userProfile) ?? ''
+            init[f.key] = getProfilePrefill(f.key, f.type, userProfile) ?? f.default_value ?? ''
           }
         }
         setValues(init)
