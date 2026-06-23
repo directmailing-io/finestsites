@@ -24,8 +24,8 @@ export async function POST(req: NextRequest) {
   const buffer = Buffer.from(await file.arrayBuffer())
   await uploadToR2(key, buffer, file.type)
 
-  const origin = new URL(req.url).origin
-  const url = `${origin}/api/media/${key}`
+  const appUrl = (process.env.NEXT_PUBLIC_APP_URL ?? 'https://app.finestsites.io').replace(/\/$/, '')
+  const url = `${appUrl}/api/media/${key}`
 
   // Save to user profile
   await db.update(users)

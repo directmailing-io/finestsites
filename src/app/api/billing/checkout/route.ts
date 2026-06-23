@@ -44,13 +44,11 @@ export async function POST(req: NextRequest) {
       await db.update(users).set({ stripeCustomerId: customerId }).where(eq(users.id, user.id))
     }
 
-    // Use request origin so Stripe redirects back to the correct host
-    const origin =
-      req.headers.get('origin') ??
-      req.headers.get('referer')?.replace(/\/[^/]*$/, '') ??
-      process.env.NEXT_PUBLIC_APP_URL ??
-      'http://localhost:3000'
-    const appUrl = origin.replace(/\/$/, '')
+    // Always use the canonical app URL for Stripe redirect URLs.
+    // Never use request origin/referer — the proxy chain (CF Worker → Caddy) means
+    // req.url / origin headers reflect the internal VPS address (0.0.0.0:3002),
+    // which would make Stripe redirect users to that address instead of the public URL.
+    const appUrl = (process.env.NEXT_PUBLIC_APP_URL ?? 'https://app.finestsites.io').replace(/\/$/, '')
 
     // Success always hits the server-side activate route, which verifies the
     // Stripe session, updates the DB, then redirects to /sites.

@@ -6,11 +6,12 @@ import { getStripe } from '@/lib/stripe/client'
 
 // GET /api/affiliate/connect/return — Stripe redirects here after onboarding
 export async function GET(req: NextRequest) {
+  const appUrl = (process.env.NEXT_PUBLIC_APP_URL ?? 'https://app.finestsites.io').replace(/\/$/, '')
   const accountId = req.nextUrl.searchParams.get('account')
   const userId = req.nextUrl.searchParams.get('user')
 
   if (!accountId || !userId) {
-    return NextResponse.redirect(new URL('/affiliate?connect=error', req.url))
+    return NextResponse.redirect(`${appUrl}/affiliate?connect=error`)
   }
 
   // Verify account is fully onboarded
@@ -23,5 +24,5 @@ export async function GET(req: NextRequest) {
     .where(eq(users.id, userId))
 
   const status = onboarded ? 'success' : 'pending'
-  return NextResponse.redirect(new URL(`/affiliate?connect=${status}`, req.url))
+  return NextResponse.redirect(`${appUrl}/affiliate?connect=${status}`)
 }

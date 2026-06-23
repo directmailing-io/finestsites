@@ -14,14 +14,19 @@ import { subscriptionConfirmationEmail } from '@/lib/email/templates'
 // 2. Updates the DB + logs subscription_events
 // 3. Redirects to /dashboard (middleware then handles username check)
 export async function GET(req: NextRequest) {
+  // Always use the canonical app URL for redirects.
+  // req.url reflects the internal VPS address (http://0.0.0.0:3002/...) through the
+  // CF Worker → Caddy proxy chain, which would send users to the wrong host.
+  const appUrl = (process.env.NEXT_PUBLIC_APP_URL ?? 'https://app.finestsites.io').replace(/\/$/, '')
+
   const sessionId = req.nextUrl.searchParams.get('session_id')
   if (!sessionId) {
-    return NextResponse.redirect(new URL('/onboarding/plan', req.url))
+    return NextResponse.redirect(`${appUrl}/onboarding/plan`)
   }
 
   const user = await getUserFromRequest(req)
   if (!user) {
-    return NextResponse.redirect(new URL('/login', req.url))
+    return NextResponse.redirect(`${appUrl}/login`)
   }
 
   try {
@@ -31,14 +36,14 @@ export async function GET(req: NextRequest) {
 
     if (session.status !== 'complete' || !session.subscription) {
       console.error('[billing/activate] session not complete:', session.status, sessionId)
-      return NextResponse.redirect(new URL('/onboarding/plan', req.url))
+      return NextResponse.redirect(`${appUrl}/onboarding/plan`)
     }
 
     // Guard: session must belong to this user
     const sessionUserId = session.metadata?.supabase_user_id ?? session.metadata?.user_id
     if (sessionUserId && sessionUserId !== user.id) {
       console.error('[billing/activate] user mismatch', sessionUserId, user.id)
-      return NextResponse.redirect(new URL('/onboarding/plan', req.url))
+      return NextResponse.redirect(`${appUrl}/onboarding/plan`)
     }
 
     const sub = session.subscription as Stripe.Subscription
@@ -85,9 +90,9 @@ export async function GET(req: NextRequest) {
 
     // Redirect to home.
     // Middleware will redirect to /onboarding/username if username is not yet set.
-    return NextResponse.redirect(new URL('/sites', req.url))
+    return NextResponse.redirect(`${appUrl}/sites`)
   } catch (err) {
     console.error('[billing/activate] error:', err instanceof Error ? err.message : err)
-    return NextResponse.redirect(new URL('/onboarding/plan', req.url))
+    return NextResponse.redirect(`${appUrl}/onboarding/plan`)
   }
 }
