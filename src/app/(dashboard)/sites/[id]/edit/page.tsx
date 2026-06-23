@@ -1532,11 +1532,12 @@ function LoopField({ field, value, onChange, onItemFocus }: {
 
 // ─── Field Renderer ───────────────────────────────────────────────────────────
 
-function FieldRenderer({ field, value, onChange, onItemFocus, complianceApprovedText, onComplianceApproved }: {
+function FieldRenderer({ field, value, onChange, onItemFocus, complianceApprovedText, onComplianceApproved, onComplianceRevoked }: {
   field: FieldSchema; value: string; onChange: (v: string) => void
   onItemFocus?: (item: Record<string, string> | null, idx: number) => void
   complianceApprovedText?: string
   onComplianceApproved?: (approvedHtml: string) => void
+  onComplianceRevoked?: () => void
 }) {
   switch (field.type) {
     case 'textarea':
@@ -1555,8 +1556,9 @@ function FieldRenderer({ field, value, onChange, onItemFocus, complianceApproved
           placeholder={field.placeholder_text || field.label}
           maxLength={field.max_length}
           complianceCheck={field.compliance_check === true}
-          complianceApprovedText={field.compliance_check ? (complianceApprovedText ?? '') : undefined}
+          complianceApproved={field.compliance_check ? !!complianceApprovedText : undefined}
           onComplianceApproved={field.compliance_check ? onComplianceApproved : undefined}
+          onComplianceRevoked={field.compliance_check ? onComplianceRevoked : undefined}
         />
       )
     case 'image':
@@ -2043,20 +2045,13 @@ export default function SiteEditPage({ params }: { params: Promise<{ id: string 
     .filter(f => f.required)
     .filter(f => checkShowWhen(f as unknown as LoopSubField, values, fields as unknown as LoopSubField[]))
     .filter(f => !values[f.key])
-  // Fields with compliance_check that haven't been approved (or text changed since approval).
-  // Strip HTML tags before comparing so that '<p>text</p>' and 'text' (plain
-  // default_value) are treated as equal — avoids permanently blocking publish
-  // when the field value is a plain-text default but the approval snapshot is HTML.
-  const stripHtmlInline = (s: string) => s.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim()
+  // Fields with compliance_check that haven't been approved.
+  // Approval is stored as a truthy value in values[key + '__chk'].
+  // When the user clicks "Bearbeiten" the parent clears this flag, requiring re-approval.
   const complianceBlockedFields = fields
     .filter(f => f.compliance_check === true)
     .filter(f => checkShowWhen(f as unknown as LoopSubField, values, fields as unknown as LoopSubField[]))
-    .filter(f => {
-      const approved = values[f.key + '__chk']
-      const current = values[f.key]
-      // No approval at all, or plain-text content differs from approved snapshot
-      return !approved || stripHtmlInline(approved) !== stripHtmlInline(current ?? '')
-    })
+    .filter(f => !values[f.key + '__chk'])
   const allRequiredComplete = missingRequiredFields.length === 0 && complianceBlockedFields.length === 0
 
   // Top-level show_when: hide fields whose visibility depends on another field
@@ -2529,6 +2524,7 @@ export default function SiteEditPage({ params }: { params: Promise<{ id: string 
                       onChange={v => handleChange(field.key, v)}
                       complianceApprovedText={field.compliance_check ? (values[field.key + '__chk'] ?? '') : undefined}
                       onComplianceApproved={field.compliance_check ? (approvedHtml) => handleChange(field.key + '__chk', approvedHtml) : undefined}
+                      onComplianceRevoked={field.compliance_check ? () => handleChange(field.key + '__chk', '') : undefined}
                       onItemFocus={field.key === 'events'
                         ? (item, idx) => {
                             if (!item || idx < 0) { setPreviewHash(''); return }

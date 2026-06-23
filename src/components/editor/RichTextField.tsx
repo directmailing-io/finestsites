@@ -22,10 +22,12 @@ interface Props {
   maxLength?: number | null
   /** Enable AI compliance check (EU Health Claims Regulation) */
   complianceCheck?: boolean
-  /** The approved HTML text from a previous check (stored in parent values as key+'__chk') */
-  complianceApprovedText?: string
-  /** Called when compliance check passes — parent should persist the approved text */
+  /** True when the text has been approved and should be shown as read-only */
+  complianceApproved?: boolean
+  /** Called when compliance check passes — parent should set the approved flag */
   onComplianceApproved?: (approvedHtml: string) => void
+  /** Called when user clicks "Bearbeiten" — parent should clear the approved flag */
+  onComplianceRevoked?: () => void
 }
 
 type CheckState =
@@ -56,13 +58,11 @@ function hashText(html: string): string {
   return hash(stripHtml(html))
 }
 
-export function RichTextField({ value, onChange, placeholder, maxLength, complianceCheck, complianceApprovedText, onComplianceApproved }: Props) {
+export function RichTextField({ value, onChange, placeholder, maxLength, complianceCheck, complianceApproved, onComplianceApproved, onComplianceRevoked }: Props) {
   const [linkUrl, setLinkUrl] = useState('')
   const [showLinkInput, setShowLinkInput] = useState(false)
   const [checkState, setCheckState] = useState<CheckState>({ status: 'idle' })
   const [showCheckPanel, setShowCheckPanel] = useState(false)
-  // Track whether we already restored the compliance state from props (run once per mount)
-  const complianceRestoredRef = useRef(false)
   // Guard: suppress onUpdate emissions during the initial mount/content-setting
   // phase. Tiptap fires onUpdate before the editor has rendered the initial
   // content, which would emit '' and overwrite the saved value in the parent.
@@ -123,21 +123,6 @@ export function RichTextField({ value, onChange, placeholder, maxLength, complia
     initializedRef.current = true
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value, editor])
-
-  // Restore compliance approval state on mount (e.g. after section switch).
-  // If the parent has a previously-approved text that matches the current value,
-  // show the green "Geprüft" state without requiring a re-check.
-  // We compare PLAIN TEXT content (stripHtml) so that the case where the
-  // default_value is a plain string but the approved snapshot is Tiptap HTML
-  // ('<p>text</p>') still matches correctly.
-  useEffect(() => {
-    if (complianceRestoredRef.current) return
-    if (!complianceCheck || !complianceApprovedText || !value) return
-    if (hashText(complianceApprovedText) === hashText(value)) {
-      setCheckState({ status: 'ok', checkedHash: hashText(complianceApprovedText) })
-      complianceRestoredRef.current = true
-    }
-  }, [complianceCheck, complianceApprovedText, value])
 
   const addLink = useCallback(() => {
     if (!editor) return
@@ -206,6 +191,60 @@ export function RichTextField({ value, onChange, placeholder, maxLength, complia
   const currentHash = editor ? hashText(editor.getHTML()) : hashText(value || '')
   const lastCheckedHash = checkState.status === 'ok' || checkState.status === 'issues' ? checkState.checkedHash : null
   const needsRecheck = lastCheckedHash !== null && lastCheckedHash !== currentHash
+
+  // ── Locked / approved view ─────────────────────────────────────────────────
+  // When compliance_check is enabled and the text has been approved, show a
+  // read-only view instead of the editor. The user must explicitly click
+  // "Bearbeiten" to unlock it, which clears the approval flag in the parent.
+  if (complianceCheck && complianceApproved) {
+    return (
+      <div>
+        {/* Green approval banner */}
+        <div style={{
+          background: '#F0FDF4', border: '1.5px solid #86EFAC', borderRadius: 16,
+          padding: '12px 16px', marginBottom: 10,
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12,
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <div style={{
+              width: 36, height: 36, borderRadius: 10, background: '#16A34A',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+            }}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5">
+                <path d="M20 6L9 17l-5-5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
+            <div>
+              <p style={{ fontSize: 13, fontWeight: 700, color: '#15803D', margin: 0 }}>
+                EU-Health-Claims-Check bestanden
+              </p>
+              <p style={{ fontSize: 11, color: '#166534', margin: '1px 0 0' }}>
+                Dieser Text ist geprüft und für die Veröffentlichung freigegeben.
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={onComplianceRevoked}
+            style={{
+              fontSize: 12, fontWeight: 600, padding: '7px 14px', borderRadius: 10,
+              border: '1.5px solid #D1D5DB', background: '#fff', color: '#374151',
+              cursor: 'pointer', whiteSpace: 'nowrap', flexShrink: 0,
+            }}
+          >
+            ✏ Bearbeiten
+          </button>
+        </div>
+        {/* Read-only text display */}
+        <div
+          style={{
+            border: '1.5px solid #E5E7EB', borderRadius: 16, padding: '12px 16px',
+            background: '#FAFAFA', minHeight: 80, fontSize: 14, color: '#374151', lineHeight: '1.6',
+          }}
+          dangerouslySetInnerHTML={{ __html: value || '' }}
+        />
+      </div>
+    )
+  }
 
   if (!editor) {
     return (
