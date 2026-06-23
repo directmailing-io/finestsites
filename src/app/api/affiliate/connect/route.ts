@@ -5,7 +5,7 @@ import { users } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
 import { getStripe } from '@/lib/stripe/client'
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://finestsites.vercel.app'
+const APP_URL = (process.env.NEXT_PUBLIC_APP_URL ?? 'https://app.finestsites.io').replace(/\/$/, '')
 
 // POST /api/affiliate/connect — creates or resumes Stripe Connect Express onboarding
 export async function POST(req: NextRequest) {

@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const stripe = getStripe()
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'
+    const appUrl = (process.env.NEXT_PUBLIC_APP_URL ?? 'https://app.finestsites.io').replace(/\/$/, '')
     const session = await stripe.billingPortal.sessions.create({
       customer: profile.stripeCustomerId,
       return_url: `${appUrl}/billing`,
