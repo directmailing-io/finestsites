@@ -1,4 +1,3 @@
-import Link from 'next/link'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -6,432 +5,280 @@ export const metadata: Metadata = {
   description: 'Erstelle deine professionelle Produktwebsite ohne Technik-Kenntnisse. Perfekt für Network-Marketing-Profis. Templates, KI-geprüfte Texte, eigene Domain.',
 }
 
-export default function MarketingPage() {
+export default function HomePage() {
   return (
-    <main style={{ fontFamily: 'var(--font-geist-sans), -apple-system, sans-serif' }}>
+    <div style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif', background: '#f0ede8', minHeight: '100vh' }}>
 
-      {/* ── NAV ──────────────────────────────────────────────────────────── */}
-      <nav style={{
-        position: 'fixed', top: 0, left: 0, right: 0, zIndex: 50,
-        background: 'rgba(10,10,10,0.85)', backdropFilter: 'blur(12px)',
-        borderBottom: '1px solid rgba(255,255,255,0.08)',
-      }}>
-        <div style={{ maxWidth: 1120, margin: '0 auto', padding: '0 24px', height: 60, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <span style={{ fontSize: 18, fontWeight: 700, color: '#fff', letterSpacing: '-0.5px' }}>FinestSites</span>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <Link href="/login" style={{ fontSize: 14, fontWeight: 500, color: 'rgba(255,255,255,0.6)', textDecoration: 'none', padding: '8px 16px' }}>
-              Anmelden
-            </Link>
-            <Link href="/register" style={{
-              fontSize: 14, fontWeight: 600, color: '#000', background: '#fff',
-              textDecoration: 'none', padding: '8px 20px', borderRadius: 100,
-              transition: 'opacity 0.15s',
-            }}>
-              Kostenlos starten
-            </Link>
+      {/* ── Floating Navbar ───────────────────────────────────────────── */}
+      <div style={{ padding: '20px 24px 0', position: 'sticky', top: 20, zIndex: 100 }}>
+        <nav style={{
+          background: '#fff',
+          borderRadius: 100,
+          padding: '12px 20px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          boxShadow: '0 2px 20px rgba(0,0,0,0.08)',
+          maxWidth: 1200,
+          margin: '0 auto',
+        }}>
+          <div style={{ fontWeight: 700, fontSize: 18, color: '#111', letterSpacing: '-0.03em' }}>FinestSites</div>
+          <div style={{ display: 'flex', gap: 32, alignItems: 'center' }}>
+            <a href="#features" style={{ color: '#555', fontSize: 14, textDecoration: 'none', fontWeight: 500 }}>Features</a>
+            <a href="#templates" style={{ color: '#555', fontSize: 14, textDecoration: 'none', fontWeight: 500 }}>Templates</a>
+            <a href="#preise" style={{ color: '#555', fontSize: 14, textDecoration: 'none', fontWeight: 500 }}>Preise</a>
           </div>
-        </div>
-      </nav>
+          <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+            <a href="/login" style={{ color: '#111', fontSize: 14, fontWeight: 500, textDecoration: 'none', padding: '8px 16px' }}>Anmelden</a>
+            <a href="/register" style={{
+              background: '#111',
+              color: '#fff',
+              fontSize: 14,
+              fontWeight: 600,
+              textDecoration: 'none',
+              padding: '9px 20px',
+              borderRadius: 100,
+            }}>Kostenlos starten</a>
+          </div>
+        </nav>
+      </div>
 
-      {/* ── SECTION 1: HERO ──────────────────────────────────────────────── */}
+      {/* ── Hero Section ──────────────────────────────────────────────── */}
       <section style={{
-        background: '#0A0A0A',
-        minHeight: '100vh',
-        display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-        padding: '120px 24px 80px',
-        position: 'relative', overflow: 'hidden',
+        background: '#B8CCDB',
+        margin: '20px 24px',
+        borderRadius: 28,
+        padding: '100px 40px 0',
+        textAlign: 'center',
+        overflow: 'hidden',
+        minHeight: 560,
       }}>
-        {/* Subtle radial glow */}
-        <div style={{
-          position: 'absolute', top: '20%', left: '50%', transform: 'translateX(-50%)',
-          width: 800, height: 500,
-          background: 'radial-gradient(ellipse at center, rgba(124,58,237,0.15) 0%, transparent 70%)',
-          pointerEvents: 'none',
-        }} />
-
-        {/* Badge */}
-        <div style={{
-          display: 'inline-flex', alignItems: 'center', gap: 8,
-          background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)',
-          borderRadius: 100, padding: '6px 16px', marginBottom: 40,
-        }}>
-          <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#22c55e', display: 'inline-block' }} />
-          <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.6)', fontWeight: 500 }}>
-            Speziell für Network-Marketing-Profis
-          </span>
-        </div>
-
-        {/* Headline */}
-        <h1 style={{
-          fontSize: 'clamp(42px, 7vw, 88px)',
-          fontWeight: 800,
-          color: '#fff',
-          textAlign: 'center',
-          lineHeight: 1.05,
-          letterSpacing: '-0.04em',
-          maxWidth: 900,
-          marginBottom: 24,
-        }}>
-          Deine professionelle
-          <br />
-          <span style={{
-            background: 'linear-gradient(135deg, #a78bfa 0%, #7c3aed 50%, #6d28d9 100%)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-          }}>Website in Minuten.</span>
-        </h1>
-
-        {/* Subline */}
-        <p style={{
-          fontSize: 'clamp(16px, 2vw, 20px)',
-          color: 'rgba(255,255,255,0.5)',
-          textAlign: 'center',
-          maxWidth: 560,
-          lineHeight: 1.6,
-          marginBottom: 48,
-        }}>
-          Wähle dein Template, passe deine Inhalte an — und deine Website ist live.
-          Ohne Technik-Kenntnisse, ohne Agentur, ohne Aufwand.
+        <p style={{ fontSize: 13, fontWeight: 600, color: '#3a4a58', letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: 32 }}>
+          Speziell für Network-Marketing-Profis
         </p>
-
-        {/* CTAs */}
-        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', justifyContent: 'center', marginBottom: 80 }}>
-          <Link href="/register" style={{
-            background: '#7c3aed', color: '#fff',
-            textDecoration: 'none', fontWeight: 700, fontSize: 16,
-            padding: '16px 36px', borderRadius: 100,
-            boxShadow: '0 8px 32px rgba(124,58,237,0.4)',
-          }}>
-            Jetzt kostenlos starten
-          </Link>
-          <Link href="#how-it-works" style={{
-            background: 'rgba(255,255,255,0.08)', color: '#fff',
-            textDecoration: 'none', fontWeight: 600, fontSize: 16,
-            padding: '16px 36px', borderRadius: 100,
-            border: '1px solid rgba(255,255,255,0.12)',
-          }}>
-            Wie es funktioniert →
-          </Link>
+        <h1 style={{
+          fontSize: 'clamp(56px, 9vw, 118px)',
+          fontWeight: 700,
+          color: '#1a2530',
+          lineHeight: 1.0,
+          letterSpacing: '-0.04em',
+          margin: '0 auto 32px',
+          maxWidth: 900,
+        }}>
+          Deine Website.<br />In Minuten. Fertig.
+        </h1>
+        <p style={{
+          fontSize: 18,
+          color: '#3a4a58',
+          lineHeight: 1.6,
+          maxWidth: 480,
+          margin: '0 auto 44px',
+          fontWeight: 400,
+        }}>
+          Wähle ein Template, fülle deine Inhalte ein — und deine professionelle Produktwebsite ist live.
+        </p>
+        <div style={{ display: 'flex', gap: 14, justifyContent: 'center', marginBottom: 60 }}>
+          <a href="/register" style={{
+            background: '#1a2530',
+            color: '#fff',
+            padding: '14px 32px',
+            borderRadius: 100,
+            fontSize: 15,
+            fontWeight: 600,
+            textDecoration: 'none',
+            display: 'inline-block',
+          }}>Jetzt kostenlos starten</a>
+          <a href="#features" style={{
+            background: 'rgba(255,255,255,0.55)',
+            color: '#1a2530',
+            padding: '14px 32px',
+            borderRadius: 100,
+            fontSize: 15,
+            fontWeight: 600,
+            textDecoration: 'none',
+            display: 'inline-block',
+            border: '1.5px solid rgba(26,37,48,0.18)',
+          }}>So funktioniert es</a>
         </div>
 
-        {/* Product mockup — browser window */}
+        {/* Product mockup */}
         <div style={{
-          width: '100%', maxWidth: 960,
-          background: '#1a1a1a',
-          borderRadius: 20,
-          border: '1px solid rgba(255,255,255,0.1)',
-          boxShadow: '0 40px 120px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.05)',
-          overflow: 'hidden',
+          background: '#1a2530',
+          borderRadius: '20px 20px 0 0',
+          padding: '16px 16px 0',
+          maxWidth: 860,
+          margin: '0 auto',
+          boxShadow: '0 -4px 60px rgba(0,0,0,0.2)',
         }}>
-          {/* Browser chrome */}
-          <div style={{
-            background: '#252525',
-            padding: '12px 16px',
-            display: 'flex', alignItems: 'center', gap: 10,
-            borderBottom: '1px solid rgba(255,255,255,0.07)',
-          }}>
-            <div style={{ display: 'flex', gap: 6 }}>
-              {['#ff5f57','#febc2e','#28c840'].map(c => (
-                <div key={c} style={{ width: 12, height: 12, borderRadius: '50%', background: c }} />
-              ))}
-            </div>
-            <div style={{
-              flex: 1, height: 28, background: 'rgba(255,255,255,0.05)',
-              borderRadius: 8, display: 'flex', alignItems: 'center',
-              justifyContent: 'center', maxWidth: 360, margin: '0 auto',
-            }}>
-              <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.3)' }}>maria-mueller.finestsites.io</span>
+          <div style={{ display: 'flex', gap: 5, marginBottom: 10, paddingLeft: 2 }}>
+            <div style={{ width: 9, height: 9, borderRadius: '50%', background: '#FF5F57' }} />
+            <div style={{ width: 9, height: 9, borderRadius: '50%', background: '#FFBD2E' }} />
+            <div style={{ width: 9, height: 9, borderRadius: '50%', background: '#28CA41' }} />
+            <div style={{ flex: 1, background: 'rgba(255,255,255,0.1)', borderRadius: 6, height: 18, marginLeft: 6, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <span style={{ fontSize: 9, color: 'rgba(255,255,255,0.4)' }}>maria-mueller.finestsites.io</span>
             </div>
           </div>
-
-          {/* Fake website preview */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', minHeight: 360 }}>
-            {/* Left: editor panel */}
-            <div style={{ background: '#141414', padding: 24, borderRight: '1px solid rgba(255,255,255,0.07)' }}>
-              <div style={{ marginBottom: 16 }}>
-                <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.3)', marginBottom: 8, textTransform: 'uppercase', letterSpacing: 1 }}>Inhalte</div>
+          <div style={{ background: '#fff', borderRadius: '10px 10px 0 0', overflow: 'hidden' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '220px 1fr', minHeight: 220 }}>
+              <div style={{ padding: 16, borderRight: '1px solid #f0f0f0', background: '#fafafa' }}>
+                <p style={{ fontSize: 8, fontWeight: 700, color: '#aaa', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 10 }}>INHALTE</p>
                 {['Dein Name', 'Über mich', 'Mein Produkt', 'Kontakt'].map((label, i) => (
                   <div key={i} style={{
-                    background: i === 1 ? 'rgba(124,58,237,0.2)' : 'rgba(255,255,255,0.04)',
-                    border: i === 1 ? '1px solid rgba(124,58,237,0.4)' : '1px solid rgba(255,255,255,0.06)',
-                    borderRadius: 10, padding: '10px 14px', marginBottom: 8,
-                    display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                    padding: '7px 9px',
+                    borderRadius: 7,
+                    marginBottom: 5,
+                    background: i === 1 ? '#7c3aed' : '#fff',
+                    border: i === 1 ? 'none' : '1px solid #ebebeb',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
                   }}>
-                    <span style={{ fontSize: 13, color: i === 1 ? 'rgba(167,139,250,0.9)' : 'rgba(255,255,255,0.5)' }}>{label}</span>
-                    {i === 1 && <span style={{ fontSize: 10, color: '#22c55e', fontWeight: 600 }}>✓ Fertig</span>}
+                    <span style={{ fontSize: 10, color: i === 1 ? '#fff' : '#333', fontWeight: i === 1 ? 600 : 400 }}>{label}</span>
+                    {i === 1 && <span style={{ fontSize: 8, color: 'rgba(255,255,255,0.85)', fontWeight: 600 }}>✓ Fertig</span>}
                   </div>
                 ))}
               </div>
-            </div>
-
-            {/* Right: website preview */}
-            <div style={{
-              background: 'linear-gradient(160deg, #f8f0ff 0%, #fdf4ff 100%)',
-              padding: '32px 28px',
-              display: 'flex', flexDirection: 'column', justifyContent: 'center',
-            }}>
-              <div style={{ width: 48, height: 48, borderRadius: 14, background: '#7c3aed', marginBottom: 16, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <span style={{ fontSize: 22 }}>✦</span>
-              </div>
-              <div style={{ fontSize: 22, fontWeight: 800, color: '#1a1a1a', marginBottom: 8, lineHeight: 1.2 }}>
-                Maria Müller
-                <br />
-                <span style={{ color: '#7c3aed' }}>FitLine Partnerin</span>
-              </div>
-              <p style={{ fontSize: 13, color: '#6b7280', marginBottom: 20, lineHeight: 1.5 }}>
-                Ich helfe dir, mehr Energie und Vitalität in deinen Alltag zu bringen.
-              </p>
-              <div style={{
-                display: 'inline-flex', alignItems: 'center', gap: 6,
-                background: '#7c3aed', color: '#fff', borderRadius: 100,
-                padding: '8px 18px', fontSize: 12, fontWeight: 600, width: 'fit-content',
-              }}>
-                Mehr erfahren →
+              <div style={{ padding: 24, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                <div style={{ width: 44, height: 44, borderRadius: 11, background: '#7c3aed', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 10 }}>
+                  <span style={{ color: '#fff', fontSize: 18 }}>✦</span>
+                </div>
+                <p style={{ fontWeight: 700, fontSize: 13, color: '#111', marginBottom: 3 }}>Maria Müller</p>
+                <p style={{ fontSize: 10, color: '#999' }}>Ernährungsberaterin · PM International</p>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ── SECTION 2: SOCIAL PROOF / ZAHLEN ────────────────────────────── */}
+      {/* ── Stats / Social Proof ──────────────────────────────────────── */}
       <section style={{
+        background: '#EDCBA8',
+        margin: '20px 24px',
+        borderRadius: 28,
+        padding: '56px 40px',
+      }}>
+        <p style={{ textAlign: 'center', fontSize: 12, fontWeight: 600, color: '#7a5035', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 40 }}>
+          Alles was du brauchst
+        </p>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, maxWidth: 880, margin: '0 auto' }}>
+          {[
+            { number: '< 5 Min', label: 'bis zur fertigen Website' },
+            { number: '12+', label: 'professionelle Templates' },
+            { number: '100%', label: 'EU-Compliance-geprüft' },
+            { number: 'Keine', label: 'Technik-Kenntnisse nötig' },
+          ].map((stat, i) => (
+            <div key={i} style={{
+              background: 'rgba(255,255,255,0.5)',
+              borderRadius: 20,
+              padding: '28px 20px',
+              textAlign: 'center',
+              border: '1px solid rgba(255,255,255,0.7)',
+            }}>
+              <p style={{ fontSize: 30, fontWeight: 800, color: '#3a1f00', letterSpacing: '-0.04em', marginBottom: 6 }}>{stat.number}</p>
+              <p style={{ fontSize: 13, color: '#7a5035', lineHeight: 1.4 }}>{stat.label}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ── Features ──────────────────────────────────────────────────── */}
+      <section id="features" style={{
         background: '#fff',
-        padding: '80px 24px',
-        borderBottom: '1px solid #f0f0f0',
+        margin: '20px 24px',
+        borderRadius: 28,
+        padding: '72px 40px',
       }}>
-        <div style={{ maxWidth: 1120, margin: '0 auto', textAlign: 'center' }}>
-          <p style={{ fontSize: 13, fontWeight: 600, color: '#9ca3af', letterSpacing: 2, textTransform: 'uppercase', marginBottom: 48 }}>
-            Vertrauen in Zahlen
-          </p>
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-            gap: 48,
-          }}>
-            {[
-              { number: '< 5 Min', label: 'Von Template zur fertigen Website', sub: 'Kein Code, kein Designer nötig' },
-              { number: '12+', label: 'Professionelle Templates', sub: 'Für jede Nische im Network Marketing' },
-              { number: '100%', label: 'EU-rechtskonform', sub: 'KI-geprüfte Texte nach HCVO 1924/2006' },
-              { number: '∞', label: 'Änderungen jederzeit', sub: 'Deine Website wächst mit dir' },
-            ].map(({ number, label, sub }) => (
-              <div key={number} style={{ padding: '24px 16px' }}>
-                <div style={{
-                  fontSize: 'clamp(36px, 5vw, 56px)',
-                  fontWeight: 800,
-                  color: '#0a0a0a',
-                  letterSpacing: '-0.04em',
-                  lineHeight: 1,
-                  marginBottom: 12,
-                }}>
-                  {number}
-                </div>
-                <div style={{ fontSize: 15, fontWeight: 600, color: '#111827', marginBottom: 6 }}>{label}</div>
-                <div style={{ fontSize: 13, color: '#9ca3af' }}>{sub}</div>
-              </div>
-            ))}
-          </div>
+        <p style={{ textAlign: 'center', fontSize: 12, fontWeight: 600, color: '#aaa', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 16 }}>
+          So einfach geht es
+        </p>
+        <h2 style={{
+          textAlign: 'center',
+          fontSize: 'clamp(32px, 5vw, 60px)',
+          fontWeight: 700,
+          color: '#111',
+          letterSpacing: '-0.04em',
+          lineHeight: 1.1,
+          maxWidth: 680,
+          margin: '0 auto 56px',
+        }}>
+          In 3 Schritten zur eigenen Website.
+        </h2>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16, maxWidth: 940, margin: '0 auto 56px' }}>
+          {[
+            { step: '01', title: 'Template wählen', desc: 'Wähle aus 12+ professionellen Templates für deine Branche und dein Produkt.', bg: '#B8CCDB' },
+            { step: '02', title: 'Inhalte anpassen', desc: 'Fülle deine Texte, Bilder und Kontaktdaten ein — kein Code, kein Designer nötig.', bg: '#EDCBA8' },
+            { step: '03', title: 'Veröffentlichen', desc: 'Mit einem Klick live — auf deiner Subdomain oder eigener Domain.', bg: '#C8D8B8' },
+          ].map((card) => (
+            <div key={card.step} style={{ background: card.bg, borderRadius: 20, padding: '36px 28px' }}>
+              <p style={{ fontSize: 11, fontWeight: 700, color: 'rgba(0,0,0,0.3)', letterSpacing: '0.06em', marginBottom: 20 }}>{card.step}</p>
+              <h3 style={{ fontSize: 20, fontWeight: 700, color: '#111', letterSpacing: '-0.02em', marginBottom: 10 }}>{card.title}</h3>
+              <p style={{ fontSize: 14, color: '#444', lineHeight: 1.65 }}>{card.desc}</p>
+            </div>
+          ))}
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16, maxWidth: 940, margin: '0 auto' }}>
+          {[
+            { icon: '⚡', title: 'Blitzschnell live', desc: 'Deine Website ist in unter 5 Minuten fertig und öffentlich erreichbar.' },
+            { icon: '✓', title: 'EU-Health-Claims-Check', desc: 'KI prüft deine Texte auf unzulässige Wirkaussagen. Kein Abmahnrisiko.' },
+            { icon: '🌐', title: 'Eigene Domain', desc: 'Verbinde deine eigene Domain oder nutze deine kostenlose Subdomain.' },
+            { icon: '📬', title: 'Kontaktformular', desc: 'Kundenanfragen landen direkt in deinem Postfach — vollautomatisch.' },
+            { icon: '📱', title: 'Mobil optimiert', desc: 'Alle Templates sehen auf Handy, Tablet und Desktop perfekt aus.' },
+            { icon: '✏️', title: 'Jederzeit änderbar', desc: 'Keine Agentur, kein Techniker. Änderungen in Sekunden selbst erledigt.' },
+          ].map((f, i) => (
+            <div key={i} style={{ background: '#fafafa', border: '1px solid #ebebeb', borderRadius: 16, padding: '24px 20px' }}>
+              <span style={{ fontSize: 20, display: 'block', marginBottom: 10 }}>{f.icon}</span>
+              <h4 style={{ fontSize: 15, fontWeight: 700, color: '#111', marginBottom: 6 }}>{f.title}</h4>
+              <p style={{ fontSize: 13, color: '#666', lineHeight: 1.6 }}>{f.desc}</p>
+            </div>
+          ))}
         </div>
       </section>
 
-      {/* ── SECTION 3: FEATURES ──────────────────────────────────────────── */}
+      {/* ── CTA ───────────────────────────────────────────────────────── */}
       <section style={{
-        background: '#F8FAFC',
-        padding: '100px 24px',
+        background: '#1a2530',
+        margin: '20px 24px',
+        borderRadius: 28,
+        padding: '88px 40px',
+        textAlign: 'center',
       }}>
-        <div style={{ maxWidth: 1120, margin: '0 auto' }}>
-          {/* Header */}
-          <div style={{ textAlign: 'center', marginBottom: 64 }}>
-            <p style={{ fontSize: 13, fontWeight: 600, color: '#7c3aed', letterSpacing: 2, textTransform: 'uppercase', marginBottom: 16 }}>
-              Was FinestSites besonders macht
-            </p>
-            <h2 style={{
-              fontSize: 'clamp(32px, 4vw, 52px)',
-              fontWeight: 800, color: '#0a0a0a',
-              letterSpacing: '-0.03em', lineHeight: 1.1,
-              marginBottom: 20,
-            }}>
-              Alles was du brauchst.
-              <br />Nichts was dich aufhält.
-            </h2>
-            <p style={{ fontSize: 17, color: '#6b7280', maxWidth: 480, margin: '0 auto', lineHeight: 1.6 }}>
-              Vom Template zur eigenen Domain — alles an einem Ort, in einer Oberfläche.
-            </p>
-          </div>
-
-          {/* Feature grid */}
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-            gap: 20,
-          }}>
-            {[
-              {
-                icon: '⚡',
-                iconBg: '#fef3c7',
-                title: 'Blitzschnell live',
-                desc: 'Wähle ein Template, trage deine Infos ein und veröffentliche mit einem Klick. Keine Technik-Vorkenntnisse nötig.',
-              },
-              {
-                icon: '🛡',
-                iconBg: '#f0fdf4',
-                title: 'KI-Compliance-Check',
-                desc: 'Vor der Veröffentlichung prüft unsere KI deinen Text automatisch auf verbotene Heil- und Wirkaussagen (HCVO).',
-              },
-              {
-                icon: '🌐',
-                iconBg: '#eff6ff',
-                title: 'Eigene Domain',
-                desc: 'Verbinde deine eigene Domain (z.B. maria-mueller.de) oder nutze deine kostenlose Subdomain auf finestsites.io.',
-              },
-              {
-                icon: '✉️',
-                iconBg: '#fdf4ff',
-                title: 'Kontaktformular',
-                desc: 'Eingehende Anfragen landen direkt in deiner Inbox. Alle Einreichungen übersichtlich im Dashboard.',
-              },
-              {
-                icon: '📱',
-                iconBg: '#fff1f2',
-                title: 'Mobil perfekt',
-                desc: 'Alle Templates sind responsiv und sehen auf Smartphone, Tablet und Desktop gleich professionell aus.',
-              },
-              {
-                icon: '✏️',
-                iconBg: '#f0fdf4',
-                title: 'Jederzeit anpassbar',
-                desc: 'Texte, Bilder, Farben — du kannst jederzeit alles ändern. Änderungen sind sofort live.',
-              },
-            ].map(({ icon, iconBg, title, desc }) => (
-              <div key={title} style={{
-                background: '#fff',
-                borderRadius: 20,
-                padding: '32px 28px',
-                border: '1px solid #f0f0f0',
-                boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
-              }}>
-                <div style={{
-                  width: 48, height: 48, borderRadius: 14,
-                  background: iconBg,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontSize: 22, marginBottom: 20,
-                }}>
-                  {icon}
-                </div>
-                <h3 style={{ fontSize: 18, fontWeight: 700, color: '#111827', marginBottom: 10, letterSpacing: '-0.02em' }}>
-                  {title}
-                </h3>
-                <p style={{ fontSize: 14, color: '#6b7280', lineHeight: 1.6, margin: 0 }}>
-                  {desc}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
+        <h2 style={{
+          fontSize: 'clamp(36px, 6vw, 72px)',
+          fontWeight: 700,
+          color: '#fff',
+          letterSpacing: '-0.04em',
+          lineHeight: 1.05,
+          maxWidth: 680,
+          margin: '0 auto 20px',
+        }}>
+          Bereit für deine Website?
+        </h2>
+        <p style={{ fontSize: 17, color: 'rgba(255,255,255,0.5)', marginBottom: 44, maxWidth: 420, margin: '0 auto 44px' }}>
+          Kostenlos starten. Kein Kreditkarte nötig.
+        </p>
+        <a href="/register" style={{
+          background: '#fff',
+          color: '#1a2530',
+          padding: '16px 44px',
+          borderRadius: 100,
+          fontSize: 16,
+          fontWeight: 700,
+          textDecoration: 'none',
+          display: 'inline-block',
+        }}>Jetzt kostenlos starten</a>
       </section>
 
-      {/* ── SECTION 4: HOW IT WORKS ──────────────────────────────────────── */}
-      <section id="how-it-works" style={{
-        background: '#0A0A0A',
-        padding: '100px 24px',
-      }}>
-        <div style={{ maxWidth: 1120, margin: '0 auto' }}>
-          {/* Header */}
-          <div style={{ textAlign: 'center', marginBottom: 72 }}>
-            <p style={{ fontSize: 13, fontWeight: 600, color: '#a78bfa', letterSpacing: 2, textTransform: 'uppercase', marginBottom: 16 }}>
-              So einfach geht&apos;s
-            </p>
-            <h2 style={{
-              fontSize: 'clamp(32px, 4vw, 52px)',
-              fontWeight: 800, color: '#fff',
-              letterSpacing: '-0.03em', lineHeight: 1.1,
-              marginBottom: 20,
-            }}>
-              In 3 Schritten zur
-              <br />eigenen Website.
-            </h2>
-            <p style={{ fontSize: 17, color: 'rgba(255,255,255,0.45)', maxWidth: 440, margin: '0 auto', lineHeight: 1.6 }}>
-              Kein Designer, keine Agentur, kein Technik-Stress.
-            </p>
-          </div>
-
-          {/* Steps */}
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-            gap: 2,
-          }}>
-            {[
-              {
-                step: '01',
-                title: 'Template wählen',
-                desc: 'Wähle aus unserer wachsenden Bibliothek das Template, das am besten zu deinem Produkt und deiner Marke passt.',
-                detail: 'FitLine, Herbalife, PM International, und mehr',
-              },
-              {
-                step: '02',
-                title: 'Inhalte anpassen',
-                desc: 'Trage deinen Namen, deine Story und deine Bilder ein. Unser Editor führt dich Schritt für Schritt durch.',
-                detail: 'Kein Code — alles mit Klick und Tippen',
-              },
-              {
-                step: '03',
-                title: 'Veröffentlichen',
-                desc: 'Mit einem Klick ist deine Website live. Optional: Verbinde deine eigene Domain für einen noch professionelleren Auftritt.',
-                detail: 'Live in unter 60 Sekunden',
-              },
-            ].map(({ step, title, desc, detail }, i) => (
-              <div key={step} style={{
-                background: i === 1 ? 'rgba(124,58,237,0.15)' : 'rgba(255,255,255,0.04)',
-                border: `1px solid ${i === 1 ? 'rgba(124,58,237,0.3)' : 'rgba(255,255,255,0.07)'}`,
-                borderRadius: i === 0 ? '20px 0 0 20px' : i === 2 ? '0 20px 20px 0' : 0,
-                padding: '40px 36px',
-                position: 'relative',
-              }}>
-                <div style={{
-                  fontSize: 13, fontWeight: 700, color: i === 1 ? '#a78bfa' : 'rgba(255,255,255,0.2)',
-                  letterSpacing: 2, marginBottom: 24,
-                }}>
-                  {step}
-                </div>
-                <h3 style={{
-                  fontSize: 24, fontWeight: 700, color: '#fff',
-                  letterSpacing: '-0.02em', marginBottom: 16, lineHeight: 1.2,
-                }}>
-                  {title}
-                </h3>
-                <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.5)', lineHeight: 1.7, marginBottom: 24 }}>
-                  {desc}
-                </p>
-                <div style={{
-                  display: 'inline-flex', alignItems: 'center', gap: 6,
-                  background: 'rgba(255,255,255,0.06)', borderRadius: 100,
-                  padding: '6px 14px',
-                }}>
-                  <span style={{ width: 5, height: 5, borderRadius: '50%', background: i === 1 ? '#a78bfa' : '#22c55e', display: 'inline-block' }} />
-                  <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)', fontWeight: 500 }}>{detail}</span>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* CTA below steps */}
-          <div style={{ textAlign: 'center', marginTop: 64 }}>
-            <Link href="/register" style={{
-              background: '#7c3aed', color: '#fff',
-              textDecoration: 'none', fontWeight: 700, fontSize: 17,
-              padding: '18px 48px', borderRadius: 100,
-              boxShadow: '0 8px 32px rgba(124,58,237,0.5)',
-              display: 'inline-block',
-            }}>
-              Jetzt kostenlos starten
-            </Link>
-            <p style={{ marginTop: 16, fontSize: 13, color: 'rgba(255,255,255,0.3)' }}>
-              Keine Kreditkarte nötig · Jederzeit kündbar
-            </p>
-          </div>
+      {/* ── Footer ────────────────────────────────────────────────────── */}
+      <footer style={{ padding: '28px 48px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <span style={{ fontSize: 13, fontWeight: 700, color: '#333' }}>FinestSites</span>
+        <div style={{ display: 'flex', gap: 24 }}>
+          <a href="/login" style={{ fontSize: 12, color: '#999', textDecoration: 'none' }}>Anmelden</a>
+          <a href="/register" style={{ fontSize: 12, color: '#999', textDecoration: 'none' }}>Registrieren</a>
         </div>
-      </section>
+        <span style={{ fontSize: 12, color: '#bbb' }}>© 2026 FinestSites</span>
+      </footer>
 
-    </main>
+    </div>
   )
 }
