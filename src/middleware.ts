@@ -20,6 +20,11 @@ function isOwnHost(host: string): boolean {
     host === 'finestsites.de' ||
     host.endsWith('.finestsites.io') ||
     host === 'finestsites.io' ||
+    // VPS hostnames — Cloudflare Workers cannot override the Host header in
+    // subrequests (it always reflects the URL hostname), so when the s3redirects
+    // CF Worker proxies app.finestsites.io → http://srv1554729.hstgr.cloud:3002
+    // the Next.js server sees Host: srv1554729.hstgr.cloud, not app.finestsites.io.
+    host.endsWith('.hstgr.cloud') ||
     host === 'localhost' ||
     host === '127.0.0.1' ||
     host === '0.0.0.0'
@@ -30,7 +35,14 @@ export async function middleware(request: NextRequest) {
   // Health check — always pass through regardless of host
   if (request.nextUrl.pathname === '/api/health') return NextResponse.next()
 
-  const host = (request.headers.get('host') ?? '').split(':')[0].toLowerCase()
+  // Cloudflare Workers cannot override the Host header in subrequests — the Host
+  // is always derived from the fetch() URL. Use X-Forwarded-Host (which our CF
+  // Worker explicitly sets) as the authoritative host for routing decisions.
+  const host = (
+    request.headers.get('x-forwarded-host') ??
+    request.headers.get('host') ??
+    ''
+  ).split(':')[0].toLowerCase()
 
   // Custom user domain (e.g. www.daniel-kurzeja.de) → proxy to Worker
   if (!isOwnHost(host)) {
