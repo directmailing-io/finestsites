@@ -2035,10 +2035,11 @@ export default function SiteEditPage({ params }: { params: Promise<{ id: string 
   const isFirst = activeIdx === 0
   const isLast  = activeIdx === sections.length - 1
   const isPublished = site.status === 'published'
-  const allRequiredComplete = fields
+  const missingRequiredFields = fields
     .filter(f => f.required)
     .filter(f => checkShowWhen(f as unknown as LoopSubField, values, fields as unknown as LoopSubField[]))
-    .every(f => !!values[f.key])
+    .filter(f => !values[f.key])
+  const allRequiredComplete = missingRequiredFields.length === 0
 
   // Top-level show_when: hide fields whose visibility depends on another field
   // whose current value doesn't match the gate. Cascades correctly via the
@@ -2556,21 +2557,28 @@ export default function SiteEditPage({ params }: { params: Promise<{ id: string 
                   </button>
                 ) : (
                   /* Last section: only allow publishing when all required fields are filled */
-                  <button onClick={handlePublish} disabled={publishing || !allRequiredComplete}
-                    className="flex items-center gap-2 px-6 py-3 text-sm font-bold text-white rounded-[16px]"
-                    style={{
-                      background: allRequiredComplete ? (isPublished ? '#16A34A' : '#1a1a1a') : '#9CA3AF',
-                      boxShadow: allRequiredComplete ? '0 4px 14px rgba(26,26,26,0.2)' : 'none',
-                      opacity: publishing ? 0.7 : 1,
-                      cursor: allRequiredComplete ? 'pointer' : 'not-allowed',
-                    }}>
-                    {publishing
-                      ? <span className="w-3.5 h-3.5 rounded-full border-2 border-white/30 border-t-white animate-spin" />
-                      : isPublished
-                        ? <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M20 6L9 17l-5-5"/></svg>
-                        : null}
-                    {publishing ? 'Bitte warten…' : isPublished ? 'Änderungen veröffentlichen' : '🚀 Jetzt veröffentlichen'}
-                  </button>
+                  <div className="flex flex-col items-end gap-1.5">
+                    {!allRequiredComplete && missingRequiredFields.length > 0 && (
+                      <p className="text-xs text-right" style={{ color: '#EF4444', maxWidth: 260 }}>
+                        Noch ausfüllen: {missingRequiredFields.map(f => f.label).join(', ')}
+                      </p>
+                    )}
+                    <button onClick={handlePublish} disabled={publishing || !allRequiredComplete}
+                      className="flex items-center gap-2 px-6 py-3 text-sm font-bold text-white rounded-[16px]"
+                      style={{
+                        background: allRequiredComplete ? (isPublished ? '#16A34A' : '#1a1a1a') : '#9CA3AF',
+                        boxShadow: allRequiredComplete ? '0 4px 14px rgba(26,26,26,0.2)' : 'none',
+                        opacity: publishing ? 0.7 : 1,
+                        cursor: allRequiredComplete ? 'pointer' : 'not-allowed',
+                      }}>
+                      {publishing
+                        ? <span className="w-3.5 h-3.5 rounded-full border-2 border-white/30 border-t-white animate-spin" />
+                        : isPublished
+                          ? <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+                          : null}
+                      {publishing ? 'Bitte warten…' : isPublished ? 'Änderungen veröffentlichen' : '🚀 Jetzt veröffentlichen'}
+                    </button>
+                  </div>
                 )}
               </div>
             )}
