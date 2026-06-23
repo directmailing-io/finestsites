@@ -13,7 +13,7 @@ import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import Link from '@tiptap/extension-link'
 import Placeholder from '@tiptap/extension-placeholder'
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, useRef } from 'react'
 
 interface Props {
   value: string
@@ -43,6 +43,10 @@ export function RichTextField({ value, onChange, placeholder, maxLength, complia
   const [showLinkInput, setShowLinkInput] = useState(false)
   const [checkState, setCheckState] = useState<CheckState>({ status: 'idle' })
   const [showCheckPanel, setShowCheckPanel] = useState(false)
+  // Guard: suppress onUpdate emissions during the initial mount/content-setting
+  // phase. Tiptap fires onUpdate before the editor has rendered the initial
+  // content, which would emit '' and overwrite the saved value in the parent.
+  const initializedRef = useRef(false)
 
   const editor = useEditor({
     extensions: [
@@ -73,6 +77,10 @@ export function RichTextField({ value, onChange, placeholder, maxLength, complia
       },
     },
     onUpdate: ({ editor }) => {
+      // Skip the first onUpdate that Tiptap fires during initialization —
+      // it can emit '<p></p>' before the content is set, which would wipe
+      // the saved value in the parent state.
+      if (!initializedRef.current) return
       const html = editor.getHTML()
       // Empty editor returns '<p></p>' — convert to empty string so required check works
       onChange(html === '<p></p>' ? '' : html)
@@ -81,7 +89,9 @@ export function RichTextField({ value, onChange, placeholder, maxLength, complia
     immediatelyRender: false,
   })
 
-  // Sync external value changes (e.g. reset)
+  // Sync external value changes and mark the editor as initialized.
+  // On first mount this ensures the saved content is set before we start
+  // forwarding onUpdate events (preventing the empty-emit on init bug).
   useEffect(() => {
     if (!editor) return
     const current = editor.getHTML()
@@ -89,6 +99,8 @@ export function RichTextField({ value, onChange, placeholder, maxLength, complia
     if (current !== incoming && current.replace(/<p><\/p>/g, '') !== incoming.replace(/<p><\/p>/g, '')) {
       editor.commands.setContent(incoming, { emitUpdate: false })
     }
+    // Mark initialized after the first sync so onUpdate can safely forward events
+    initializedRef.current = true
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value, editor])
 
