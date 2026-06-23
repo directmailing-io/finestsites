@@ -1,12 +1,13 @@
 import { NextResponse, type NextRequest } from 'next/server'
-import { auth } from '@/lib/auth'
-import { db } from '@/lib/db'
-import { users } from '@/lib/db/schema'
-import { eq } from 'drizzle-orm'
 
 const WORKER_URL = 'https://finestsites-worker.finestsites.workers.dev'
 const ACTIVE_STATUSES = ['active', 'trialing', 'past_due']
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL ?? 'info@daniel-kurzeja.de'
+
+// Internal address for the auth-check endpoint (Node.js runtime, where postgres works).
+// Middleware runs in Edge Runtime and cannot use the postgres driver directly.
+const INTERNAL_PORT = process.env.PORT ?? '3002'
+const AUTH_CHECK_URL = `http://127.0.0.1:${INTERNAL_PORT}/api/middleware/auth-check`
 
 // Hostnames that belong to us — let these pass through to the Next.js app normally
 function isOwnHost(host: string): boolean {
@@ -77,29 +78,34 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
   // Skip session check entirely for API routes — they handle their own auth.
-  // This prevents a redundant DB round-trip (and potential hang) in middleware
-  // for every POST to /api/auth/sign-in, /api/sites, etc.
+  // Also skip for the internal auth-check endpoint to avoid infinite loops.
   if (pathname.startsWith('/api/')) return NextResponse.next()
 
-  // BetterAuth session check — wrap in try/catch so a transient DB failure
-  // doesn't crash the middleware and cause a 524 timeout for every visitor.
-  // Also race against a 5-second timeout so a slow DB never blocks page loads.
-  let session: Awaited<ReturnType<typeof auth.api.getSession>> | null = null
+  // Fetch session + profile from internal Node.js endpoint.
+  // We cannot call auth.api.getSession() or db.query directly from middleware because
+  // middleware runs in Edge Runtime where the postgres driver cannot make TCP connections.
+  // Instead we delegate to the auth-check API route (Node.js runtime) via loopback HTTP.
+  let user: { id: string; email: string; [key: string]: unknown } | null = null
+  let profile: { username: string | null; subscriptionStatus: string | null; stripeSubscriptionId: string | null } | null = null
+
   try {
     const controller = new AbortController()
     const timeoutId = setTimeout(() => controller.abort(), 5000)
-    session = await Promise.race([
-      auth.api.getSession({ headers: request.headers }),
-      new Promise<null>((resolve) => {
-        controller.signal.addEventListener('abort', () => resolve(null))
-      }),
-    ])
+    const authRes = await fetch(AUTH_CHECK_URL, {
+      headers: request.headers,
+      signal: controller.signal,
+    })
     clearTimeout(timeoutId)
+    if (authRes.ok) {
+      const data = await authRes.json() as { user: typeof user; profile: typeof profile }
+      user = data.user
+      profile = data.profile
+    }
   } catch {
-    // DB temporarily unavailable — fail open for public routes, block protected
-    session = null
+    // Auth check unavailable (timeout or server error) — fail open for public routes,
+    // block access to protected routes to be safe.
+    user = null
   }
-  const user = session?.user ?? null
 
   // Logged-in + visiting auth pages → redirect to app
   if (user && (pathname === '/login' || pathname === '/register')) {
@@ -117,17 +123,6 @@ export async function middleware(request: NextRequest) {
   if (user && gatedPaths.some(p => pathname.startsWith(p))) {
     // Admin bypasses all checks
     if (user.email === ADMIN_EMAIL) return NextResponse.next()
-
-    let profile: { username: string | null; subscriptionStatus: string | null; stripeSubscriptionId: string | null } | null = null
-    try {
-      profile = await db.query.users.findFirst({
-        where: eq(users.id, user.id),
-        columns: { username: true, subscriptionStatus: true, stripeSubscriptionId: true },
-      }) ?? null
-    } catch {
-      // DB temporarily unavailable — let the request through, layout will re-check
-      return NextResponse.next()
-    }
 
     // Active subscription = valid status (no stripeSubscriptionId required for manual/admin activations)
     const hasActiveSubscription =

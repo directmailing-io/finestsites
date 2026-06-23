@@ -7,7 +7,7 @@ const nextConfig: NextConfig = {
   output: 'standalone',
 
   // Stripe SDK uses Node.js built-ins — keep as external so Node loads them natively
-  serverExternalPackages: ['stripe', 'postgres'],
+  serverExternalPackages: ['stripe', 'postgres', 'pg'],
 
   experimental: {
     // Set client-side router cache stale time to 0 for dynamic routes so
