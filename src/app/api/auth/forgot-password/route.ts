@@ -9,11 +9,12 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'E-Mail erforderlich.' }, { status: 400 })
   }
 
-  // Forward to BetterAuth's internal handler for forget-password
-  // Always return 200 — don't reveal whether the email exists
+  // Forward to BetterAuth's internal handler for password reset.
+  // BetterAuth v1 uses "request-password-reset" (not "forget-password").
+  // Always return 200 — don't reveal whether the email exists.
   try {
     const internalReq = new Request(
-      new URL('/api/auth/forget-password', APP_URL),
+      new URL('/api/auth/request-password-reset', APP_URL),
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
