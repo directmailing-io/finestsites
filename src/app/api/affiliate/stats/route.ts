@@ -15,13 +15,17 @@ export async function GET(req: Request) {
     columns: { username: true, stripeConnectId: true, affiliateOnboarded: true },
   })
 
+  // Each query is wrapped so a single failure doesn't crash the whole response.
+  // The username (profile) is fetched first and is never affected by these.
   const [commissions, payouts, referredUsers] = await Promise.all([
     db.select().from(affiliateCommissions)
       .where(eq(affiliateCommissions.referrerId, user.id))
-      .orderBy(desc(affiliateCommissions.createdAt)),
+      .orderBy(desc(affiliateCommissions.createdAt))
+      .catch(() => []),
     db.select().from(affiliatePayouts)
       .where(eq(affiliatePayouts.referrerId, user.id))
-      .orderBy(desc(affiliatePayouts.createdAt)),
+      .orderBy(desc(affiliatePayouts.createdAt))
+      .catch(() => []),
     db.select({
       id: users.id,
       email: users.email,
@@ -33,7 +37,8 @@ export async function GET(req: Request) {
     })
       .from(users)
       .where(eq(users.referredByUsername, profile?.username ?? ''))
-      .orderBy(desc(users.createdAt)),
+      .orderBy(desc(users.createdAt))
+      .catch(() => []),
   ])
 
   const pending = commissions.filter(c => c.status === 'pending' || c.status === 'available')
