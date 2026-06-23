@@ -202,7 +202,7 @@ export default function AffiliatePage() {
 
       {/* ── How it works ────────────────────────────────────────────────────── */}
       <section className="rounded-3xl p-6 mb-5" style={{ background: '#F8FAFC' }}>
-        <p className="text-xs font-semibold uppercase tracking-widest mb-5" style={{ color: '#94A3B8' }}>So einfach geht's</p>
+        <p className="text-xs font-semibold uppercase tracking-widest mb-5" style={{ color: '#94A3B8' }}>So einfach geht&apos;s</p>
         <div className="flex flex-col sm:flex-row gap-4">
           <HowStep icon="🔗" n={1} title="Link teilen" desc="Schicke deinen persönlichen Link an Freunde, Familie oder poste ihn online." />
           <div className="hidden sm:flex items-center justify-center flex-shrink-0 mt-6">
