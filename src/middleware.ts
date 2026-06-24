@@ -82,9 +82,14 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL('/dashboard', request.url))
   }
 
-  // finestsites.io is marketing only. Any non-root path → redirect to app subdomain.
-  // e.g. finestsites.io/login → app.finestsites.io/login
-  if ((host === 'finestsites.io' || host === 'www.finestsites.io') && pathname !== '/') {
+  // finestsites.io is marketing only.
+  // Legal/static pages stay on finestsites.io; everything else → app subdomain.
+  const LEGAL_PATHS = ['/impressum', '/datenschutz', '/agb', '/cookies']
+  if (
+    (host === 'finestsites.io' || host === 'www.finestsites.io') &&
+    pathname !== '/' &&
+    !LEGAL_PATHS.includes(pathname)
+  ) {
     return NextResponse.redirect(`https://app.finestsites.io${pathname}${request.nextUrl.search}`)
   }
 

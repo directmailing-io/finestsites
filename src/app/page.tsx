@@ -3,6 +3,7 @@ import { db } from '@/lib/db'
 import { templates } from '@/lib/db/schema'
 import { eq, and } from 'drizzle-orm'
 import PricingSection from './_components/PricingSection'
+import FeatureCardsAnimated from './_components/FeatureCardsAnimated'
 
 export const dynamic = 'force-dynamic'
 
@@ -69,10 +70,11 @@ export default async function HomePage() {
         .fs-template-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
         .fs-pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
         .fs-pricing-banner-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; align-items: stretch; }
-        .fs-footer { background: #f5f3f0; padding: 40px 48px 28px; border-top: 1px solid #eee; }
-        .fs-footer-top { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; }
-        .fs-footer-links { display: flex; gap: 24px; align-items: center; }
-        .fs-footer-payment-row { margin-top: 24px; padding-top: 20px; border-top: 1px solid #e8e8e8; display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap; }
+        /* ── Dark footer ─────────────────────────────────── */
+        .fs-footer-dark { background: #1a1530; color: #fff; padding: 64px 7vw 0; }
+        .fs-footer-grid { max-width: 1060px; margin: 0 auto; display: grid; grid-template-columns: 1.6fr 1fr 1fr; gap: 56px; padding-bottom: 56px; }
+        .fs-footer-brand {}
+        .fs-footer-bottom { max-width: 1060px; margin: 0 auto; padding: 24px 0 32px; border-top: 1px solid rgba(255,255,255,0.08); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
 
         /* ── Tablet (768–1023 px) ─────────────────────────── */
         @media (max-width: 1023px) {
@@ -95,16 +97,14 @@ export default async function HomePage() {
           .fs-pricing-banner-grid { grid-template-columns: 1fr; }
           .fs-pricing-banner-img { display: none !important; }
           .fs-pricing-mascot { display: none !important; }
-          .fs-footer { padding: 32px 22px 22px; }
-          .fs-footer-top { flex-direction: column; align-items: flex-start; gap: 14px; }
-          .fs-footer-links { flex-wrap: wrap; gap: 16px; }
+          .fs-footer-dark { padding: 48px 22px 0; }
+          .fs-footer-grid { grid-template-columns: 1fr; gap: 36px; padding-bottom: 40px; }
+          .fs-footer-bottom { flex-direction: column; align-items: flex-start; gap: 12px; }
         }
 
         /* ── Small mobile (< 480 px) ─────────────────────── */
         @media (max-width: 479px) {
           .fs-feature-grid { grid-template-columns: 1fr; }
-          .fs-footer-top { align-items: center; }
-          .fs-footer-links { justify-content: center; }
         }
       `}</style>
 
@@ -199,23 +199,8 @@ export default async function HomePage() {
             </p>
           </div>
 
-          {/* 2×2 feature grid — all cards same lavender colour */}
-          <div className="fs-feature-grid">
-            {[
-              { img: '/features/5min-live.png',            title: 'In unter 5 Minuten live',             desc: 'Template wählen, Inhalte einfügen, fertig. Kein Designer, kein Technik-Stress.' },
-              { img: '/features/kein-design.png',          title: 'Keine Texte, kein Design',             desc: 'Jede Vorlage ist professionell getextet, optimiert und rechtlich geprüft.' },
-              { img: '/features/templates-verbessert.png', title: 'Laufend verbessert',                   desc: 'Neue Funktionen, bessere Conversion, aktuelles Design. Automatisch.' },
-              { img: '/features/kein-hosting.png',         title: 'Kein Hosting, kein DSGVO-Stress',      desc: 'Hosting, Sicherheit, Datenschutz, Impressum. Alles inklusive.' },
-            ].map((item, i) => (
-              <div key={i} style={{ background: '#F5F0FB', border: '1px solid #D4C5E2', borderRadius: 20, padding: '24px 16px 20px', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: 14 }}>
-                <img src={item.img} alt="" style={{ width: 160, height: 160, objectFit: 'contain', display: 'block' }} />
-                <div>
-                  <h4 style={{ fontSize: 14, fontWeight: 600, color: '#111', marginBottom: 6, lineHeight: 1.3 }}>{item.title}</h4>
-                  <p style={{ fontSize: 13, color: '#777', lineHeight: 1.6 }}>{item.desc}</p>
-                </div>
-              </div>
-            ))}
-          </div>
+          {/* 2×2 feature grid — animated with GSAP */}
+          <FeatureCardsAnimated />
         </div>
       </section>
 
@@ -278,21 +263,60 @@ export default async function HomePage() {
       <PricingSection />
 
       {/* ══ FOOTER ═══════════════════════════════════════════════════════ */}
-      <footer className="fs-footer">
-        <div className="fs-footer-top">
-          <img src="/logos/logo-black.svg" alt="FinestSites" style={{ height: 18, opacity: 0.4 }} />
-          <div className="fs-footer-links">
-            <a href="https://app.finestsites.io/login" style={{ fontSize: 12, color: '#999' }}>Anmelden</a>
-            <a href="https://app.finestsites.io/register" style={{ fontSize: 12, color: '#999' }}>Registrieren</a>
+      <footer className="fs-footer-dark">
+        {/* ── Main grid ─── */}
+        <div className="fs-footer-grid">
+          {/* Brand column */}
+          <div className="fs-footer-brand">
+            <img src="/logos/logo-black.svg" alt="FinestSites" style={{ height: 22, display: 'block', filter: 'brightness(0) invert(1)', opacity: 0.85, marginBottom: 16 }} />
+            <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.45)', lineHeight: 1.7, marginBottom: 28, maxWidth: 260 }}>
+              Professionelle Websites für Network-Marketing-Profis. In 5 Minuten live.
+            </p>
+            <a href="https://app.finestsites.io/register" style={{ display: 'inline-block', background: '#D4C5E2', color: '#2d1a50', fontSize: 13, fontWeight: 700, padding: '11px 24px', borderRadius: 100 }}>
+              Kostenlos starten →
+            </a>
           </div>
-          <span style={{ fontSize: 12, color: '#bbb' }}>© 2026 FinestSites</span>
+
+          {/* Produkt column */}
+          <div>
+            <h5 style={{ fontSize: 11, fontWeight: 700, color: 'rgba(255,255,255,0.35)', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 18 }}>Produkt</h5>
+            <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 12 }}>
+              {[
+                { label: 'Templates ansehen', href: '#templates' },
+                { label: 'Preise',            href: '#preise' },
+                { label: 'Anmelden',          href: 'https://app.finestsites.io/login' },
+                { label: 'Konto erstellen',   href: 'https://app.finestsites.io/register' },
+              ].map(l => (
+                <li key={l.label}><a href={l.href} style={{ fontSize: 14, color: 'rgba(255,255,255,0.6)', textDecoration: 'none' }}>{l.label}</a></li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Rechtliches column */}
+          <div>
+            <h5 style={{ fontSize: 11, fontWeight: 700, color: 'rgba(255,255,255,0.35)', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 18 }}>Rechtliches</h5>
+            <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 12 }}>
+              {[
+                { label: 'Impressum',             href: '/impressum' },
+                { label: 'Datenschutzerklärung',  href: '/datenschutz' },
+                { label: 'AGB',                   href: '/agb' },
+              ].map(l => (
+                <li key={l.label}><a href={l.href} style={{ fontSize: 14, color: 'rgba(255,255,255,0.6)', textDecoration: 'none' }}>{l.label}</a></li>
+              ))}
+            </ul>
+          </div>
         </div>
-        <div className="fs-footer-payment-row">
-          <span style={{ fontSize: 11, color: '#bbb', fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', marginRight: 4 }}>Zahlungsarten</span>
-          <img src="/payment/visa.svg" alt="Visa" style={{ height: 24, opacity: 0.55 }} />
-          <img src="/payment/mastercard.svg" alt="Mastercard" style={{ height: 24, opacity: 0.55 }} />
-          <img src="/payment/amex.svg" alt="American Express" style={{ height: 24, opacity: 0.55 }} />
-          <img src="/payment/sepa.svg" alt="SEPA" style={{ height: 24, opacity: 0.55 }} />
+
+        {/* ── Bottom bar ─── */}
+        <div className="fs-footer-bottom">
+          <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.25)' }}>© 2026 FinestSites · Alle Rechte vorbehalten</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+            <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.25)', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', marginRight: 6 }}>Zahlungsarten</span>
+            <img src="/payment/visa.svg"       alt="Visa"             style={{ height: 20, filter: 'brightness(0) invert(1)', opacity: 0.5 }} />
+            <img src="/payment/mastercard.svg" alt="Mastercard"       style={{ height: 20, filter: 'brightness(0) invert(1)', opacity: 0.5 }} />
+            <img src="/payment/amex.svg"       alt="American Express" style={{ height: 20, filter: 'brightness(0) invert(1)', opacity: 0.5 }} />
+            <img src="/payment/sepa.svg"       alt="SEPA"             style={{ height: 20, filter: 'brightness(0) invert(1)', opacity: 0.5 }} />
+          </div>
         </div>
       </footer>
     </div>
