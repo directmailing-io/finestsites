@@ -77,6 +77,11 @@ export async function middleware(request: NextRequest) {
 
   const { pathname } = request.nextUrl
 
+  // app.finestsites.io root → redirect to dashboard (middleware will then send to /login if needed)
+  if (host === 'app.finestsites.io' && pathname === '/') {
+    return NextResponse.redirect(new URL('/dashboard', request.url))
+  }
+
   // Skip session check entirely for API routes — they handle their own auth.
   // Also skip for the internal auth-check endpoint to avoid infinite loops.
   if (pathname.startsWith('/api/')) return NextResponse.next()
