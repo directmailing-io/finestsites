@@ -82,6 +82,12 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL('/dashboard', request.url))
   }
 
+  // finestsites.io is marketing only. Any non-root path → redirect to app subdomain.
+  // e.g. finestsites.io/login → app.finestsites.io/login
+  if ((host === 'finestsites.io' || host === 'www.finestsites.io') && pathname !== '/') {
+    return NextResponse.redirect(`https://app.finestsites.io${pathname}${request.nextUrl.search}`)
+  }
+
   // Skip session check entirely for API routes — they handle their own auth.
   // Also skip for the internal auth-check endpoint to avoid infinite loops.
   if (pathname.startsWith('/api/')) return NextResponse.next()
