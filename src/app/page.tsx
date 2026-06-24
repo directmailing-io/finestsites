@@ -207,8 +207,10 @@ export default async function HomePage() {
                           </div>
                         </div>
                       )}
-                      {tpl.isFree && (
+                      {tpl.isFree ? (
                         <div style={{ position: 'absolute', top: 12, right: 12, background: '#16A34A', color: 'white', fontSize: 10, fontWeight: 700, padding: '3px 9px', borderRadius: 100 }}>KOSTENLOS</div>
+                      ) : (
+                        <div style={{ position: 'absolute', top: 12, right: 12, background: '#1a2530', color: '#D4C5E2', fontSize: 10, fontWeight: 700, padding: '3px 9px', borderRadius: 100 }}>PREMIUM</div>
                       )}
                     </div>
                     {/* Info */}
