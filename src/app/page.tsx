@@ -76,9 +76,9 @@ export default function HomePage() {
       `}</style>
 
       {/* ══════════════════════════════════════════════════════════════════
-          NAV — Floating white pill
+          NAV — Floating white pill (fixed so hero is truly fullbleed)
       ══════════════════════════════════════════════════════════════════ */}
-      <div style={{ padding: '20px 24px 0', position: 'sticky', top: 20, zIndex: 100 }}>
+      <div style={{ padding: '20px 24px 0', position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100 }}>
         <nav style={{
           background: '#fff',
           borderRadius: 100,
@@ -104,19 +104,18 @@ export default function HomePage() {
       </div>
 
       {/* ══════════════════════════════════════════════════════════════════
-          HERO — Links Text, rechts Hintergrundbild, weißer Gradient links
+          HERO — Vollbild, Links Text (max 3 Zeilen), rechts Bild
       ══════════════════════════════════════════════════════════════════ */}
       <section style={{
-        margin: '16px 24px',
-        borderRadius: 28,
-        overflow: 'hidden',
-        minHeight: 580,
+        width: '100%',
+        minHeight: '100vh',
         position: 'relative',
         display: 'flex',
         alignItems: 'center',
-        background: '#e8e4de',
+        background: '#f0ede8',
+        overflow: 'hidden',
       }}>
-        {/* Background image */}
+        {/* Background image — full cover */}
         <div style={{
           position: 'absolute',
           inset: 0,
@@ -125,49 +124,50 @@ export default function HomePage() {
           backgroundPosition: 'right center',
         }} />
 
-        {/* White gradient overlay — left side for text readability */}
+        {/* White gradient — strong left, fades to transparent ~55% */}
         <div style={{
           position: 'absolute',
           inset: 0,
-          background: 'linear-gradient(to right, #ffffff 38%, rgba(255,255,255,0.92) 52%, rgba(255,255,255,0.5) 65%, rgba(255,255,255,0) 80%)',
+          background: 'linear-gradient(to right, #ffffff 42%, rgba(255,255,255,0.88) 54%, rgba(255,255,255,0.3) 68%, rgba(255,255,255,0) 82%)',
         }} />
 
-        {/* Text content — left aligned */}
-        <div style={{ position: 'relative', zIndex: 2, padding: '80px 60px', maxWidth: 600 }}>
-          <p style={{ fontSize: 12, fontWeight: 600, color: '#888', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 24 }}>
+        {/* Text content */}
+        <div style={{ position: 'relative', zIndex: 2, padding: '120px 7vw 80px', maxWidth: '54vw' }}>
+          <p style={{ fontSize: 12, fontWeight: 600, color: '#888', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 28 }}>
             Für Network-Marketing-Profis
           </p>
 
           <h1 style={{
             fontFamily: '"Plein", sans-serif',
-            fontSize: 'clamp(40px, 5.5vw, 72px)',
+            fontSize: 'clamp(48px, 6.5vw, 90px)',
             fontWeight: 400,
             color: '#111',
-            lineHeight: 1.08,
-            letterSpacing: '-0.025em',
-            marginBottom: 24,
+            lineHeight: 1.05,
+            letterSpacing: '-0.03em',
+            marginBottom: 28,
+            whiteSpace: 'nowrap',
           }}>
-            Wenn Kunden auf<br />dich zukommen —<br />nicht umgekehrt.
+            Wenn Kunden auf dich<br />zukommen — nicht<br />umgekehrt.
           </h1>
 
-          <p style={{ fontSize: 17, color: '#444', lineHeight: 1.7, marginBottom: 40, maxWidth: 440 }}>
-            Mit einer professionellen Produktwebsite melden sich Interessenten bei <em>dir</em> — statt dass du jeden Tag neu akquirieren musst. FinestSites macht das in unter 5 Minuten möglich.
+          <p style={{ fontSize: 17, color: '#444', lineHeight: 1.7, marginBottom: 40, maxWidth: 480 }}>
+            Professionelle Produktwebsite in unter 5 Minuten live — und Interessenten melden sich bei <em>dir</em>.
           </p>
 
-          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', gap: 12 }}>
             <a href="/register" style={{
               background: '#111',
               color: '#fff',
-              padding: '14px 32px',
+              padding: '15px 36px',
               borderRadius: 100,
               fontSize: 15,
               fontWeight: 600,
               display: 'inline-block',
             }}>Kostenlos starten</a>
             <a href="#templates" style={{
-              background: 'rgba(255,255,255,0.7)',
+              background: 'rgba(255,255,255,0.75)',
               color: '#111',
-              padding: '14px 32px',
+              padding: '15px 36px',
               borderRadius: 100,
               fontSize: 15,
               fontWeight: 500,
@@ -177,8 +177,8 @@ export default function HomePage() {
             }}>Templates ansehen</a>
           </div>
 
-          <p style={{ marginTop: 24, fontSize: 13, color: '#888' }}>
-            Keine Kreditkarte nötig · In 5 Minuten live · Kostenlos ausprobieren
+          <p style={{ marginTop: 20, fontSize: 13, color: '#999' }}>
+            Keine Kreditkarte nötig · Kostenlos ausprobieren
           </p>
         </div>
       </section>
