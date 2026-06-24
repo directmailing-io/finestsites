@@ -138,11 +138,12 @@ export default async function HomePage() {
 
       {/* ══ WAS IST FINESTSITES ══════════════════════════════════════════ */}
       <section id="was-ist" style={{ background: '#fff', padding: '96px 7vw' }}>
-        <div style={{ maxWidth: 1060, margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 80, alignItems: 'center' }}>
+        <div style={{ maxWidth: 1060, margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 72, alignItems: 'center' }}>
           <div>
             <p style={{ fontSize: 11, fontWeight: 600, color: '#aaa', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 16 }}>Das Problem</p>
-            <h2 style={{ fontFamily: '"Plein", sans-serif', fontSize: 'clamp(28px, 3.5vw, 44px)', fontWeight: 400, color: '#111', letterSpacing: '-0.02em', lineHeight: 1.15, marginBottom: 24 }}>
-              Du hast ein tolles Produkt.<br />Aber niemand weiss davon.
+            <h2 style={{ fontFamily: '"Plein", sans-serif', fontSize: 'clamp(28px, 3.5vw, 44px)', fontWeight: 400, letterSpacing: '-0.02em', lineHeight: 1.15, marginBottom: 24 }}>
+              <span style={{ color: '#111' }}>Du hast ein tolles Produkt.</span><br />
+              <span style={{ color: '#8060b0' }}>Aber niemand weiss davon.</span>
             </h2>
             <p style={{ fontSize: 15, color: '#555', lineHeight: 1.75, marginBottom: 20 }}>
               Die meisten Network-Marketer kämpfen täglich darum, neue Interessenten zu finden. Du postest, chattest, rufst an und trotzdem bleibt der Durchbruch aus.
@@ -151,20 +152,20 @@ export default async function HomePage() {
               <strong style={{ color: '#111' }}>FinestSites ändert das.</strong> Du bekommst eine professionelle Produktwebsite, die für dich arbeitet. 24/7, auch wenn du schläfst.
             </p>
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+
+          {/* 2×2 feature grid — all cards same lavender colour */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
             {[
-              { img: '/features/5min-live.png',            bg: '#D4C5E2', title: 'In unter 5 Minuten live',             desc: 'Kein Designer, kein Entwickler, kein Technik-Stress. Template wählen, Inhalte einfügen, fertig.' },
-              { img: '/features/kein-design.png',          bg: '#EDCBA8', title: 'Keine Texte ausdenken, kein Design',   desc: 'Jede Vorlage ist professionell getextet, auf die Branche optimiert und rechtlich geprüft. Du musst nichts erfinden.' },
-              { img: '/features/templates-verbessert.png', bg: '#C8D8B8', title: 'Templates werden laufend verbessert',  desc: 'Wir optimieren deine Website kontinuierlich. Neue Funktionen, bessere Conversion, aktuelles Design. Ohne dass du etwas tun musst.' },
-              { img: '/features/kein-hosting.png',         bg: '#B8CCDB', title: 'Kein Hosting, kein DSGVO-Stress',      desc: 'Wir kümmern uns um alles: Hosting, Sicherheit, Datenschutz, Impressum. Du musst dich um nichts davon kümmern.' },
+              { img: '/features/5min-live.png',            title: 'In unter 5 Minuten live',             desc: 'Template wählen, Inhalte einfügen, fertig. Kein Designer, kein Technik-Stress.' },
+              { img: '/features/kein-design.png',          title: 'Keine Texte, kein Design',             desc: 'Jede Vorlage ist professionell getextet, optimiert und rechtlich geprüft.' },
+              { img: '/features/templates-verbessert.png', title: 'Laufend verbessert',                   desc: 'Neue Funktionen, bessere Conversion, aktuelles Design. Automatisch.' },
+              { img: '/features/kein-hosting.png',         title: 'Kein Hosting, kein DSGVO-Stress',      desc: 'Hosting, Sicherheit, Datenschutz, Impressum. Alles inklusive.' },
             ].map((item, i) => (
-              <div key={i} style={{ background: item.bg + '28', border: `1px solid ${item.bg}`, borderRadius: 20, padding: '20px 28px 20px 20px', display: 'flex', gap: 20, alignItems: 'center' }}>
-                <div style={{ width: 90, height: 90, flexShrink: 0 }}>
-                  <img src={item.img} alt="" style={{ width: 90, height: 90, objectFit: 'contain', display: 'block' }} />
-                </div>
+              <div key={i} style={{ background: '#F5F0FB', border: '1px solid #D4C5E2', borderRadius: 20, padding: '22px 18px 18px', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: 12 }}>
+                <img src={item.img} alt="" style={{ width: 100, height: 100, objectFit: 'contain', display: 'block' }} />
                 <div>
-                  <h4 style={{ fontSize: 16, fontWeight: 600, color: '#111', marginBottom: 6 }}>{item.title}</h4>
-                  <p style={{ fontSize: 14, color: '#666', lineHeight: 1.65 }}>{item.desc}</p>
+                  <h4 style={{ fontSize: 14, fontWeight: 600, color: '#111', marginBottom: 6, lineHeight: 1.3 }}>{item.title}</h4>
+                  <p style={{ fontSize: 13, color: '#777', lineHeight: 1.6 }}>{item.desc}</p>
                 </div>
               </div>
             ))}

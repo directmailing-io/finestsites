@@ -222,27 +222,27 @@ export default function PricingSection() {
         <div style={{ marginTop: 48, textAlign: 'center' }}>
           <p style={{ fontSize: 13, color: '#bbb', marginBottom: 32 }}>Alle Preise inkl. MwSt. · Monatlich kündbar · Keine versteckten Kosten</p>
 
-          <div style={{ background: '#FDF9F0', border: '1px solid #EDCBA8', borderRadius: 24, overflow: 'hidden', maxWidth: 860, margin: '0 auto' }}>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', alignItems: 'stretch' }}>
+          <div style={{ background: '#FDF9F0', border: '1px solid #EDCBA8', borderRadius: 24, overflow: 'hidden', maxWidth: 980, margin: '0 auto' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1.1fr 0.9fr', alignItems: 'stretch' }}>
               {/* Text side */}
-              <div style={{ padding: '44px 48px', textAlign: 'left', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                <p style={{ fontSize: 11, fontWeight: 700, color: '#c8a07a', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 16 }}>Zum Vergleich</p>
-                <h3 style={{ fontFamily: '"Plein", sans-serif', fontSize: 'clamp(22px, 2.8vw, 32px)', fontWeight: 400, color: '#111', lineHeight: 1.2, letterSpacing: '-0.02em', marginBottom: 20 }}>
+              <div style={{ padding: '40px 44px', textAlign: 'left', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                <p style={{ fontSize: 11, fontWeight: 700, color: '#c8a07a', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 14 }}>Zum Vergleich</p>
+                <h3 style={{ fontFamily: '"Plein", sans-serif', fontSize: 'clamp(22px, 2.4vw, 30px)', fontWeight: 400, color: '#111', lineHeight: 1.2, letterSpacing: '-0.02em', marginBottom: 18 }}>
                   2 Brötchen pro Tag.<br />Deine Website für immer.
                 </h3>
-                <p style={{ fontSize: 15, color: '#666', lineHeight: 1.75, marginBottom: 0 }}>
+                <p style={{ fontSize: 14.5, color: '#666', lineHeight: 1.75 }}>
                   Eine professionelle Website kostet bei einer Agentur typischerweise{' '}
-                  <strong style={{ color: '#111' }}>3.000 bis 15.000 Euro</strong> — einmalig, ohne laufende Pflege oder Optimierung.
+                  <strong style={{ color: '#111' }}>3.000 bis 15.000 Euro</strong>, einmalig, ohne laufende Pflege oder Optimierung.
                   Du bekommst das und mehr für ungefähr <strong style={{ color: '#111' }}>2 Brötchen am Tag</strong> (wenn überhaupt).
                   Wer sein Network Business ernst meint, erkennt: Das ist keine Ausgabe. Das ist eine Investition.
                 </p>
               </div>
               {/* Image side */}
-              <div style={{ position: 'relative', minHeight: 320 }}>
+              <div style={{ position: 'relative', minHeight: 280 }}>
                 <img
                   src="/bakery.png"
                   alt="Mascot beim Bäcker"
-                  style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center' }}
+                  style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center left' }}
                 />
               </div>
             </div>
