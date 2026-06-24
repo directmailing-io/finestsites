@@ -61,8 +61,9 @@ export default async function HomePage() {
       .from(templates)
       .where(and(eq(templates.status, 'published'), eq(templates.isTest, false)))
       .orderBy(templates.createdAt)
-  } catch {
-    // Fallback: show nothing if DB unavailable on marketing page
+    console.log('[HomePage] templates fetched:', templateList.length)
+  } catch (err) {
+    console.error('[HomePage] templates fetch error:', err)
   }
 
   return (
