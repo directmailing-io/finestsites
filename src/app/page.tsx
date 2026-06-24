@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { db } from '@/lib/db'
 import { templates } from '@/lib/db/schema'
 import { eq, and } from 'drizzle-orm'
+import PricingSection from './_components/PricingSection'
 
 export const dynamic = 'force-dynamic'
 
@@ -12,38 +13,6 @@ export const metadata: Metadata = {
 
 const PASTEL_COLORS = ['#D4C5E2', '#B8CCDB', '#EDCBA8', '#C8D8B8', '#F2C5C5', '#C5DFE0', '#EAD4B5', '#C5D4F2']
 
-const PLANS = [
-  {
-    key: 'starter',
-    name: 'Starter',
-    monthly: 20,
-    yearly: 200,
-    sites: '1 aktive Website',
-    features: ['Deine eigene Webadresse (z.B. barbaramueller.finestsites.io)', 'SSL-Verschlüsselung und rechtlich abgesichert', 'Kontaktformular inklusive', 'In unter 5 Minuten live', 'Alle Templates inklusive'],
-    popular: false,
-    cta: 'Jetzt starten',
-  },
-  {
-    key: 'pro',
-    name: 'Pro',
-    monthly: 30,
-    yearly: 300,
-    sites: '3 aktive Websites',
-    features: ['Alles aus Starter', 'EU-Health-Claims-Check (KI)', 'Deine eigene Wunsch-Adresse (z.B. www.barbaramueller.de)', 'Prioritäts-Support', '3 Websites gleichzeitig'],
-    popular: true,
-    cta: 'Beliebteste Wahl',
-  },
-  {
-    key: 'unlimited',
-    name: 'Unlimited',
-    monthly: 50,
-    yearly: 500,
-    sites: 'Unbegrenzt Websites',
-    features: ['Alles aus Pro', 'Unbegrenzt viele Websites', 'Frühzeitiger Template-Zugang', 'Persönlicher Onboarding-Call', 'Team-Verwaltung (bald)'],
-    popular: false,
-    cta: 'Jetzt starten',
-  },
-]
 
 export default async function HomePage() {
   // Fetch real published templates from DB
@@ -204,7 +173,9 @@ export default async function HomePage() {
       {/* ══ TEMPLATES ════════════════════════════════════════════════════ */}
       <section id="templates" style={{ background: '#F9F7FF', padding: '96px 7vw' }}>
         <div style={{ maxWidth: 1060, margin: '0 auto' }}>
-          <p style={{ fontSize: 11, fontWeight: 600, color: '#aaa', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 16, textAlign: 'center' }}>Vorlagen</p>
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 16 }}>
+            <img src="/mascot.png" alt="" style={{ height: 80, width: 'auto', display: 'block' }} />
+          </div>
           <h2 style={{ fontFamily: '"Plein", sans-serif', fontSize: 'clamp(32px, 4vw, 52px)', fontWeight: 400, color: '#111', letterSpacing: '-0.025em', textAlign: 'center', marginBottom: 16, lineHeight: 1.1 }}>
             Wähle dein Template.
           </h2>
@@ -253,56 +224,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ══ PREISE ═══════════════════════════════════════════════════════ */}
-      <section id="preise" style={{ background: '#fff', padding: '96px 7vw' }}>
-        <div style={{ maxWidth: 960, margin: '0 auto' }}>
-          <p style={{ fontSize: 11, fontWeight: 600, color: '#aaa', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 16, textAlign: 'center' }}>Preise</p>
-          <h2 style={{ fontFamily: '"Plein", sans-serif', fontSize: 'clamp(32px, 4.5vw, 56px)', fontWeight: 400, color: '#111', letterSpacing: '-0.025em', textAlign: 'center', marginBottom: 16, lineHeight: 1.1 }}>
-            Einfache Preise. Kein Kleingedrucktes.
-          </h2>
-          <p style={{ textAlign: 'center', fontSize: 15, color: '#777', marginBottom: 56 }}>
-            Registriere dich kostenlos und buche direkt den passenden Tarif.
-          </p>
-
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
-            {PLANS.map((plan) => (
-              <div key={plan.key} style={{
-                background: plan.popular ? '#1a2530' : '#fff',
-                borderRadius: 24,
-                padding: '36px 32px',
-                border: plan.popular ? 'none' : '1px solid #ebebeb',
-                position: 'relative',
-                boxShadow: plan.popular ? '0 8px 40px rgba(26,37,48,0.18)' : 'none',
-              }}>
-                {plan.popular && (
-                  <div style={{ position: 'absolute', top: -13, left: '50%', transform: 'translateX(-50%)', background: '#D4C5E2', color: '#4a3060', fontSize: 11, fontWeight: 700, padding: '4px 16px', borderRadius: 100, whiteSpace: 'nowrap' }}>
-                    BELIEBTESTE WAHL
-                  </div>
-                )}
-                <p style={{ fontSize: 13, fontWeight: 600, color: plan.popular ? 'rgba(255,255,255,0.45)' : '#888', marginBottom: 16 }}>{plan.name}</p>
-                <div style={{ display: 'flex', alignItems: 'baseline', gap: 4, marginBottom: 4 }}>
-                  <span style={{ fontFamily: '"Plein", sans-serif', fontSize: 52, fontWeight: 400, color: plan.popular ? '#fff' : '#111', letterSpacing: '-0.04em', lineHeight: 1 }}>€{plan.monthly}</span>
-                  <span style={{ fontSize: 13, color: plan.popular ? 'rgba(255,255,255,0.35)' : '#aaa' }}>/Monat</span>
-                </div>
-                <p style={{ fontSize: 12, color: plan.popular ? 'rgba(255,255,255,0.3)' : '#bbb', marginBottom: 24 }}>oder €{plan.yearly}/Jahr · 2 Monate gratis</p>
-                <p style={{ fontSize: 13, fontWeight: 600, color: plan.popular ? 'rgba(255,255,255,0.65)' : '#555', marginBottom: 20 }}>{plan.sites}</p>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 32 }}>
-                  {plan.features.map((f, fi) => (
-                    <div key={fi} style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={plan.popular ? '#D4C5E2' : '#16A34A'} strokeWidth="2.5" strokeLinecap="round" style={{ flexShrink: 0, marginTop: 1 }}><polyline points="20 6 9 17 4 12"/></svg>
-                      <span style={{ fontSize: 13, color: plan.popular ? 'rgba(255,255,255,0.6)' : '#555', lineHeight: 1.5 }}>{f}</span>
-                    </div>
-                  ))}
-                </div>
-                <a href="/register" style={{ display: 'block', textAlign: 'center', background: plan.popular ? '#D4C5E2' : '#111', color: plan.popular ? '#3a2060' : '#fff', padding: '13px 24px', borderRadius: 100, fontSize: 14, fontWeight: 600 }}>
-                  {plan.popular ? 'Pro wählen' : plan.cta}
-                </a>
-              </div>
-            ))}
-          </div>
-          <p style={{ textAlign: 'center', fontSize: 13, color: '#bbb', marginTop: 32 }}>Alle Preise inkl. MwSt. · Jederzeit kündbar · Keine versteckten Kosten</p>
-        </div>
-      </section>
+      <PricingSection />
 
       {/* ══ FOOTER ═══════════════════════════════════════════════════════ */}
       <footer style={{ background: '#f5f3f0', padding: '28px 48px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid #eee' }}>
