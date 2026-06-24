@@ -310,12 +310,28 @@ export default async function HomePage() {
         {/* ── Bottom bar ─── */}
         <div className="fs-footer-bottom">
           <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.25)' }}>© 2026 FinestSites · Alle Rechte vorbehalten</span>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
-            <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.25)', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', marginRight: 6 }}>Zahlungsarten</span>
-            <img src="/payment/visa.svg"       alt="Visa"             style={{ height: 20, filter: 'brightness(0) invert(1)', opacity: 0.5 }} />
-            <img src="/payment/mastercard.svg" alt="Mastercard"       style={{ height: 20, filter: 'brightness(0) invert(1)', opacity: 0.5 }} />
-            <img src="/payment/amex.svg"       alt="American Express" style={{ height: 20, filter: 'brightness(0) invert(1)', opacity: 0.5 }} />
-            <img src="/payment/sepa.svg"       alt="SEPA"             style={{ height: 20, filter: 'brightness(0) invert(1)', opacity: 0.5 }} />
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+            <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.3)', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', marginRight: 4 }}>Zahlungsarten</span>
+            {[
+              { src: '/payment/visa.svg',       alt: 'Visa' },
+              { src: '/payment/mastercard.svg', alt: 'Mastercard' },
+              { src: '/payment/amex.svg',       alt: 'American Express' },
+              { src: '/payment/sepa.svg',       alt: 'SEPA' },
+            ].map(p => (
+              <div key={p.alt} style={{
+                background: 'rgba(255,255,255,0.08)',
+                border: '1px solid rgba(255,255,255,0.12)',
+                borderRadius: 8,
+                padding: '8px 14px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                height: 40,
+                minWidth: 56,
+              }}>
+                <img src={p.src} alt={p.alt} style={{ height: 22, filter: 'brightness(0) invert(1)', opacity: 0.75 }} />
+              </div>
+            ))}
           </div>
         </div>
       </footer>
