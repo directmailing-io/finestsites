@@ -70,6 +70,9 @@ export default async function HomePage() {
         .fs-template-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
         .fs-pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
         .fs-pricing-banner-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; align-items: stretch; }
+        /* ── Hero mobile image ───────────────────────────── */
+        .fs-hero-mobile-img { display: none; }
+
         /* ── Dark footer ─────────────────────────────────── */
         .fs-footer-dark { background: #1a1530; color: #fff; padding: 64px 7vw 0; }
         .fs-footer-grid { max-width: 1060px; margin: 0 auto; display: grid; grid-template-columns: 1.6fr 1fr 1fr; gap: 56px; padding-bottom: 56px; }
@@ -88,14 +91,51 @@ export default async function HomePage() {
         /* ── Mobile (< 768 px) ───────────────────────────── */
         @media (max-width: 767px) {
           .fs-nav-links { display: none; }
-          .fs-hero-content { max-width: 100%; padding: 108px 22px 52px; }
+
+          /* Hero: stack image on top, then content */
+          .fs-hero-section {
+            flex-direction: column !important;
+            align-items: stretch !important;
+            min-height: 0 !important;
+          }
+          .fs-hero-bg { display: none; }
+          .fs-hero-gradient { display: none; }
+          .fs-hero-mobile-img {
+            display: block;
+            width: 100%;
+            height: 62vw;
+            max-height: 300px;
+            background-image: url(/hero-bg.png);
+            background-size: cover;
+            background-position: center top;
+            position: relative;
+            flex-shrink: 0;
+            margin-top: 60px; /* clear fixed nav */
+          }
+          .fs-hero-mobile-img::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            height: 65%;
+            background: linear-gradient(to bottom, transparent, #f5f3f0);
+          }
+          .fs-hero-content { max-width: 100%; padding: 12px 22px 52px; }
+
           .fs-section-pad { padding: 52px 22px; }
           .fs-was-ist-inner { grid-template-columns: 1fr; gap: 36px; }
           .fs-feature-grid { gap: 10px; }
           .fs-template-grid { grid-template-columns: 1fr; }
           .fs-pricing-grid { max-width: 100%; }
-          .fs-pricing-banner-grid { grid-template-columns: 1fr; }
-          .fs-pricing-banner-img { display: none !important; }
+
+          /* Pricing banner: image on top, text below */
+          .fs-pricing-banner-grid { display: flex; flex-direction: column; }
+          .fs-pricing-banner-img {
+            display: block !important;
+            order: -1;
+            min-height: 220px;
+            border-radius: 24px 24px 0 0;
+          }
+
           .fs-pricing-mascot { display: none !important; }
           .fs-footer-dark { padding: 48px 22px 0; }
           .fs-footer-grid { grid-template-columns: 1fr; gap: 36px; padding-bottom: 40px; }
@@ -135,7 +175,7 @@ export default async function HomePage() {
       </div>
 
       {/* ══ HERO ═════════════════════════════════════════════════════════ */}
-      <section style={{
+      <section className="fs-hero-section" style={{
         width: '100%',
         minHeight: '100vh',
         position: 'relative',
@@ -144,18 +184,22 @@ export default async function HomePage() {
         overflow: 'hidden',
         background: '#f5f3f0',
       }}>
-        <div style={{
+        {/* Desktop background image + gradient (hidden on mobile) */}
+        <div className="fs-hero-bg" style={{
           position: 'absolute',
           inset: 0,
           backgroundImage: 'url(/hero-bg.png)',
           backgroundSize: 'cover',
           backgroundPosition: 'right center',
         }} />
-        <div style={{
+        <div className="fs-hero-gradient" style={{
           position: 'absolute',
           inset: 0,
           background: 'linear-gradient(to right, #ffffff 30%, rgba(255,255,255,0.88) 42%, rgba(255,255,255,0.2) 58%, rgba(255,255,255,0) 70%)',
         }} />
+
+        {/* Mobile-only: full-width hero image at top with bottom fade */}
+        <div className="fs-hero-mobile-img" />
 
         <div className="fs-hero-content">
           <p style={{ fontSize: 12, fontWeight: 600, color: '#888', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 28 }}>
