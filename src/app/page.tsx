@@ -59,6 +59,53 @@ export default async function HomePage() {
         html { scroll-behavior: smooth; }
         a { text-decoration: none; }
         section[id] { scroll-margin-top: 90px; }
+
+        /* ── Layout helpers ───────────────────────────────── */
+        .fs-nav-links { display: flex; gap: 28px; align-items: center; }
+        .fs-hero-content { position: relative; z-index: 2; padding: 130px 7vw 90px; max-width: 56vw; }
+        .fs-section-pad { padding: 96px 7vw; }
+        .fs-was-ist-inner { max-width: 1060px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 72px; align-items: center; }
+        .fs-feature-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+        .fs-template-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        .fs-pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+        .fs-pricing-banner-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; align-items: stretch; }
+        .fs-footer { background: #f5f3f0; padding: 40px 48px 28px; border-top: 1px solid #eee; }
+        .fs-footer-top { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; }
+        .fs-footer-links { display: flex; gap: 24px; align-items: center; }
+        .fs-footer-payment-row { margin-top: 24px; padding-top: 20px; border-top: 1px solid #e8e8e8; display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap; }
+
+        /* ── Tablet (768–1023 px) ─────────────────────────── */
+        @media (max-width: 1023px) {
+          .fs-hero-content { max-width: 75vw; padding: 120px 5vw 72px; }
+          .fs-section-pad { padding: 72px 5vw; }
+          .fs-template-grid { grid-template-columns: repeat(2, 1fr); }
+          .fs-pricing-grid { grid-template-columns: 1fr; max-width: 440px; margin-left: auto; margin-right: auto; }
+          .fs-pricing-mascot { display: none !important; }
+        }
+
+        /* ── Mobile (< 768 px) ───────────────────────────── */
+        @media (max-width: 767px) {
+          .fs-nav-links { display: none; }
+          .fs-hero-content { max-width: 100%; padding: 108px 22px 52px; }
+          .fs-section-pad { padding: 52px 22px; }
+          .fs-was-ist-inner { grid-template-columns: 1fr; gap: 36px; }
+          .fs-feature-grid { gap: 10px; }
+          .fs-template-grid { grid-template-columns: 1fr; }
+          .fs-pricing-grid { max-width: 100%; }
+          .fs-pricing-banner-grid { grid-template-columns: 1fr; }
+          .fs-pricing-banner-img { display: none !important; }
+          .fs-pricing-mascot { display: none !important; }
+          .fs-footer { padding: 32px 22px 22px; }
+          .fs-footer-top { flex-direction: column; align-items: flex-start; gap: 14px; }
+          .fs-footer-links { flex-wrap: wrap; gap: 16px; }
+        }
+
+        /* ── Small mobile (< 480 px) ─────────────────────── */
+        @media (max-width: 479px) {
+          .fs-feature-grid { grid-template-columns: 1fr; }
+          .fs-footer-top { align-items: center; }
+          .fs-footer-links { justify-content: center; }
+        }
       `}</style>
 
       {/* ══ NAV ══════════════════════════════════════════════════════════ */}
@@ -75,7 +122,7 @@ export default async function HomePage() {
           margin: '0 auto',
         }}>
           <img src="/logos/logo-black.svg" alt="FinestSites" style={{ height: 22, display: 'block' }} />
-          <div style={{ display: 'flex', gap: 28, alignItems: 'center' }}>
+          <div className="fs-nav-links">
             <a href="#was-ist" style={{ color: '#555', fontSize: 14, fontWeight: 500 }}>Was ist FinestSites?</a>
             <a href="#templates" style={{ color: '#555', fontSize: 14, fontWeight: 500 }}>Templates</a>
             <a href="#preise" style={{ color: '#555', fontSize: 14, fontWeight: 500 }}>Preise</a>
@@ -110,7 +157,7 @@ export default async function HomePage() {
           background: 'linear-gradient(to right, #ffffff 30%, rgba(255,255,255,0.88) 42%, rgba(255,255,255,0.2) 58%, rgba(255,255,255,0) 70%)',
         }} />
 
-        <div style={{ position: 'relative', zIndex: 2, padding: '130px 7vw 90px', maxWidth: '56vw' }}>
+        <div className="fs-hero-content">
           <p style={{ fontSize: 12, fontWeight: 600, color: '#888', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 28 }}>
             Für Network-Marketing-Profis
           </p>
@@ -132,13 +179,12 @@ export default async function HomePage() {
             <a href="https://app.finestsites.io/register" style={{ background: '#111', color: '#fff', padding: '15px 36px', borderRadius: 100, fontSize: 15, fontWeight: 600, display: 'inline-block' }}>Kostenlos starten</a>
             <a href="#templates" style={{ background: 'rgba(255,255,255,0.8)', color: '#111', padding: '15px 36px', borderRadius: 100, fontSize: 15, fontWeight: 500, display: 'inline-block', border: '1.5px solid rgba(0,0,0,0.12)' }}>Templates ansehen</a>
           </div>
-          <p style={{ marginTop: 20, fontSize: 13, color: '#999' }}>Keine Kreditkarte nötig · In 5 Minuten live</p>
         </div>
       </section>
 
       {/* ══ WAS IST FINESTSITES ══════════════════════════════════════════ */}
-      <section id="was-ist" style={{ background: '#fff', padding: '96px 7vw' }}>
-        <div style={{ maxWidth: 1060, margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 72, alignItems: 'center' }}>
+      <section id="was-ist" style={{ background: '#fff' }} className="fs-section-pad">
+        <div className="fs-was-ist-inner">
           <div>
             <p style={{ fontSize: 11, fontWeight: 600, color: '#aaa', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 16 }}>Das Problem</p>
             <h2 style={{ fontFamily: '"Plein", sans-serif', fontSize: 'clamp(28px, 3.5vw, 44px)', fontWeight: 400, letterSpacing: '-0.02em', lineHeight: 1.15, marginBottom: 24 }}>
@@ -154,15 +200,15 @@ export default async function HomePage() {
           </div>
 
           {/* 2×2 feature grid — all cards same lavender colour */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+          <div className="fs-feature-grid">
             {[
               { img: '/features/5min-live.png',            title: 'In unter 5 Minuten live',             desc: 'Template wählen, Inhalte einfügen, fertig. Kein Designer, kein Technik-Stress.' },
               { img: '/features/kein-design.png',          title: 'Keine Texte, kein Design',             desc: 'Jede Vorlage ist professionell getextet, optimiert und rechtlich geprüft.' },
               { img: '/features/templates-verbessert.png', title: 'Laufend verbessert',                   desc: 'Neue Funktionen, bessere Conversion, aktuelles Design. Automatisch.' },
               { img: '/features/kein-hosting.png',         title: 'Kein Hosting, kein DSGVO-Stress',      desc: 'Hosting, Sicherheit, Datenschutz, Impressum. Alles inklusive.' },
             ].map((item, i) => (
-              <div key={i} style={{ background: '#F5F0FB', border: '1px solid #D4C5E2', borderRadius: 20, padding: '22px 18px 18px', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: 12 }}>
-                <img src={item.img} alt="" style={{ width: 100, height: 100, objectFit: 'contain', display: 'block' }} />
+              <div key={i} style={{ background: '#F5F0FB', border: '1px solid #D4C5E2', borderRadius: 20, padding: '24px 16px 20px', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: 14 }}>
+                <img src={item.img} alt="" style={{ width: 160, height: 160, objectFit: 'contain', display: 'block' }} />
                 <div>
                   <h4 style={{ fontSize: 14, fontWeight: 600, color: '#111', marginBottom: 6, lineHeight: 1.3 }}>{item.title}</h4>
                   <p style={{ fontSize: 13, color: '#777', lineHeight: 1.6 }}>{item.desc}</p>
@@ -174,7 +220,7 @@ export default async function HomePage() {
       </section>
 
       {/* ══ TEMPLATES ════════════════════════════════════════════════════ */}
-      <section id="templates" style={{ background: '#F9F7FF', padding: '96px 7vw' }}>
+      <section id="templates" style={{ background: '#F9F7FF' }} className="fs-section-pad">
         <div style={{ maxWidth: 1060, margin: '0 auto' }}>
           <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 16 }}>
             <img src="/mascot.png" alt="" style={{ height: 135, width: 'auto', display: 'block' }} />
@@ -189,7 +235,7 @@ export default async function HomePage() {
           {templateList.length === 0 ? (
             <p style={{ textAlign: 'center', color: '#aaa', fontSize: 14 }}>Bald verfügbar.</p>
           ) : (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20 }}>
+            <div className="fs-template-grid">
               {templateList.map((tpl, i) => {
                 const pastel = PASTEL_COLORS[i % PASTEL_COLORS.length]
                 const images = Array.isArray(tpl.previewImages) ? tpl.previewImages as string[] : []
@@ -197,7 +243,7 @@ export default async function HomePage() {
                 return (
                   <div key={tpl.id} style={{ background: '#fff', borderRadius: 20, overflow: 'hidden', border: '1px solid #ebebeb', boxShadow: '0 2px 16px rgba(0,0,0,0.04)' }}>
                     {/* Preview */}
-                    <div style={{ height: 180, background: pastel, position: 'relative', overflow: 'hidden' }}>
+                    <div style={{ height: 220, background: pastel, position: 'relative', overflow: 'hidden' }}>
                       {coverImg ? (
                         <img src={coverImg} alt={tpl.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                       ) : (
@@ -232,13 +278,22 @@ export default async function HomePage() {
       <PricingSection />
 
       {/* ══ FOOTER ═══════════════════════════════════════════════════════ */}
-      <footer style={{ background: '#f5f3f0', padding: '28px 48px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid #eee' }}>
-        <img src="/logos/logo-black.svg" alt="FinestSites" style={{ height: 18, opacity: 0.4 }} />
-        <div style={{ display: 'flex', gap: 24 }}>
-          <a href="https://app.finestsites.io/login" style={{ fontSize: 12, color: '#999' }}>Anmelden</a>
-          <a href="https://app.finestsites.io/register" style={{ fontSize: 12, color: '#999' }}>Registrieren</a>
+      <footer className="fs-footer">
+        <div className="fs-footer-top">
+          <img src="/logos/logo-black.svg" alt="FinestSites" style={{ height: 18, opacity: 0.4 }} />
+          <div className="fs-footer-links">
+            <a href="https://app.finestsites.io/login" style={{ fontSize: 12, color: '#999' }}>Anmelden</a>
+            <a href="https://app.finestsites.io/register" style={{ fontSize: 12, color: '#999' }}>Registrieren</a>
+          </div>
+          <span style={{ fontSize: 12, color: '#bbb' }}>© 2026 FinestSites</span>
         </div>
-        <span style={{ fontSize: 12, color: '#bbb' }}>© 2026 FinestSites</span>
+        <div className="fs-footer-payment-row">
+          <span style={{ fontSize: 11, color: '#bbb', fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', marginRight: 4 }}>Zahlungsarten</span>
+          <img src="/payment/visa.svg" alt="Visa" style={{ height: 24, opacity: 0.55 }} />
+          <img src="/payment/mastercard.svg" alt="Mastercard" style={{ height: 24, opacity: 0.55 }} />
+          <img src="/payment/amex.svg" alt="American Express" style={{ height: 24, opacity: 0.55 }} />
+          <img src="/payment/sepa.svg" alt="SEPA" style={{ height: 24, opacity: 0.55 }} />
+        </div>
       </footer>
     </div>
   )

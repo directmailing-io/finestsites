@@ -55,7 +55,7 @@ export default function PricingSection() {
   const [yearly, setYearly] = useState(false)
 
   return (
-    <section id="preise" style={{ background: '#fff', padding: '96px 7vw' }}>
+    <section id="preise" style={{ background: '#fff' }} className="fs-section-pad">
       <div style={{ maxWidth: 980, margin: '0 auto' }}>
         <p style={{ fontSize: 11, fontWeight: 600, color: '#aaa', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 16, textAlign: 'center' }}>Preise</p>
         <h2 style={{ fontFamily: '"Plein", sans-serif', fontSize: 'clamp(32px, 4.5vw, 52px)', fontWeight: 400, color: '#111', letterSpacing: '-0.025em', textAlign: 'center', marginBottom: 12, lineHeight: 1.1 }}>
@@ -114,7 +114,7 @@ export default function PricingSection() {
         </div>
 
         {/* ── Plan Cards ─────────────────────────────────────────── */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
+        <div className="fs-pricing-grid">
           {PLANS.map((plan) => {
             const price = yearly ? plan.yearlyMonthly : plan.monthly
             const dailyEuros = (price / 30).toFixed(2).replace('.', ',')
@@ -125,6 +125,7 @@ export default function PricingSection() {
                   <img
                     src="/mascot-v2.png"
                     alt=""
+                    className="fs-pricing-mascot"
                     style={{
                       position: 'absolute',
                       right: '100%',
@@ -223,7 +224,7 @@ export default function PricingSection() {
           <p style={{ fontSize: 13, color: '#bbb', marginBottom: 32 }}>Alle Preise inkl. MwSt. · Monatlich kündbar · Keine versteckten Kosten</p>
 
           <div style={{ background: '#FDF9F0', border: '1px solid #EDCBA8', borderRadius: 24, overflow: 'hidden', maxWidth: 980, margin: '0 auto' }}>
-            <div style={{ display: 'grid', gridTemplateColumns: '1.1fr 0.9fr', alignItems: 'stretch' }}>
+            <div className="fs-pricing-banner-grid">
               {/* Text side */}
               <div style={{ padding: '40px 44px', textAlign: 'left', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                 <p style={{ fontSize: 11, fontWeight: 700, color: '#c8a07a', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 14 }}>Zum Vergleich</p>
@@ -238,7 +239,7 @@ export default function PricingSection() {
                 </p>
               </div>
               {/* Image side */}
-              <div style={{ position: 'relative', minHeight: 280 }}>
+              <div className="fs-pricing-banner-img" style={{ position: 'relative', minHeight: 280 }}>
                 <img
                   src="/bakery.png"
                   alt="Mascot beim Bäcker"
