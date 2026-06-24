@@ -151,18 +151,20 @@ export default async function HomePage() {
               <strong style={{ color: '#111' }}>FinestSites ändert das.</strong> Du bekommst eine professionelle Produktwebsite, die für dich arbeitet. 24/7, auch wenn du schläfst.
             </p>
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             {[
-              { icon: '⚡', bg: '#D4C5E2', title: 'In unter 5 Minuten live', desc: 'Kein Designer, kein Entwickler, kein Technik-Stress. Template wählen, Inhalte einfügen, fertig.' },
-              { icon: '✏️', bg: '#EDCBA8', title: 'Keine Texte ausdenken, kein Design', desc: 'Jede Vorlage ist professionell getextet, auf die Branche optimiert und rechtlich geprüft. Du musst nichts erfinden.' },
-              { icon: '🔄', bg: '#C8D8B8', title: 'Templates werden laufend verbessert', desc: 'Wir optimieren deine Website kontinuierlich. Neue Funktionen, bessere Conversion, aktuelles Design. Ohne dass du etwas tun musst.' },
-              { icon: '✓', bg: '#B8CCDB', title: 'Kein Hosting, kein DSGVO-Stress', desc: 'Wir kümmern uns um alles: Hosting, Sicherheit, Datenschutz, Impressum. Du musst dich um nichts davon kümmern.' },
+              { img: '/features/5min-live.png',            bg: '#D4C5E2', title: 'In unter 5 Minuten live',             desc: 'Kein Designer, kein Entwickler, kein Technik-Stress. Template wählen, Inhalte einfügen, fertig.' },
+              { img: '/features/kein-design.png',          bg: '#EDCBA8', title: 'Keine Texte ausdenken, kein Design',   desc: 'Jede Vorlage ist professionell getextet, auf die Branche optimiert und rechtlich geprüft. Du musst nichts erfinden.' },
+              { img: '/features/templates-verbessert.png', bg: '#C8D8B8', title: 'Templates werden laufend verbessert',  desc: 'Wir optimieren deine Website kontinuierlich. Neue Funktionen, bessere Conversion, aktuelles Design. Ohne dass du etwas tun musst.' },
+              { img: '/features/kein-hosting.png',         bg: '#B8CCDB', title: 'Kein Hosting, kein DSGVO-Stress',      desc: 'Wir kümmern uns um alles: Hosting, Sicherheit, Datenschutz, Impressum. Du musst dich um nichts davon kümmern.' },
             ].map((item, i) => (
-              <div key={i} style={{ background: item.bg + '33', border: `1px solid ${item.bg}`, borderRadius: 16, padding: '20px 24px', display: 'flex', gap: 16, alignItems: 'flex-start' }}>
-                <div style={{ width: 36, height: 36, borderRadius: 10, background: item.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16, flexShrink: 0 }}>{item.icon}</div>
+              <div key={i} style={{ background: item.bg + '28', border: `1px solid ${item.bg}`, borderRadius: 20, padding: '20px 28px 20px 20px', display: 'flex', gap: 20, alignItems: 'center' }}>
+                <div style={{ width: 90, height: 90, flexShrink: 0 }}>
+                  <img src={item.img} alt="" style={{ width: 90, height: 90, objectFit: 'contain', display: 'block' }} />
+                </div>
                 <div>
-                  <h4 style={{ fontSize: 15, fontWeight: 600, color: '#111', marginBottom: 4 }}>{item.title}</h4>
-                  <p style={{ fontSize: 13, color: '#666', lineHeight: 1.6 }}>{item.desc}</p>
+                  <h4 style={{ fontSize: 16, fontWeight: 600, color: '#111', marginBottom: 6 }}>{item.title}</h4>
+                  <p style={{ fontSize: 14, color: '#666', lineHeight: 1.65 }}>{item.desc}</p>
                 </div>
               </div>
             ))}
