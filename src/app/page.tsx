@@ -3,6 +3,8 @@ import { db } from '@/lib/db'
 import { templates } from '@/lib/db/schema'
 import { eq, and } from 'drizzle-orm'
 
+export const dynamic = 'force-dynamic'
+
 export const metadata: Metadata = {
   title: 'FinestSites – Deine professionelle Website in Minuten',
   description: 'Professionelle Produktwebsite für Network-Marketing-Profis. In unter 5 Minuten live. Keine Technik, keine Agentur.',
@@ -17,7 +19,7 @@ const PLANS = [
     monthly: 20,
     yearly: 200,
     sites: '1 aktive Website',
-    features: ['Eigene Subdomain', 'SSL und DSGVO-konform', 'Kontaktformular', 'Online in unter 5 Min', 'Alle Templates inklusive'],
+    features: ['Deine eigene Webadresse (z.B. barbaramueller.finestsites.io)', 'SSL-Verschlüsselung und rechtlich abgesichert', 'Kontaktformular inklusive', 'In unter 5 Minuten live', 'Alle Templates inklusive'],
     popular: false,
     cta: 'Jetzt starten',
   },
@@ -27,7 +29,7 @@ const PLANS = [
     monthly: 30,
     yearly: 300,
     sites: '3 aktive Websites',
-    features: ['Alles aus Starter', 'EU-Health-Claims-Check (KI)', 'Eigene Domain verbinden', 'Prioritäts-Support', '3 Websites parallel'],
+    features: ['Alles aus Starter', 'EU-Health-Claims-Check (KI)', 'Deine eigene Wunsch-Adresse (z.B. www.barbaramueller.de)', 'Prioritäts-Support', '3 Websites gleichzeitig'],
     popular: true,
     cta: 'Beliebteste Wahl',
   },
@@ -37,7 +39,7 @@ const PLANS = [
     monthly: 50,
     yearly: 500,
     sites: 'Unbegrenzt Websites',
-    features: ['Alles aus Pro', 'Unbegrenzt Websites', 'Frühzeitiger Template-Zugang', 'Persönlicher Onboarding-Call', 'Team-Verwaltung (bald)'],
+    features: ['Alles aus Pro', 'Unbegrenzt viele Websites', 'Frühzeitiger Template-Zugang', 'Persönlicher Onboarding-Call', 'Team-Verwaltung (bald)'],
     popular: false,
     cta: 'Jetzt starten',
   },
@@ -135,7 +137,7 @@ export default async function HomePage() {
         <div style={{
           position: 'absolute',
           inset: 0,
-          background: 'linear-gradient(to right, #ffffff 40%, rgba(255,255,255,0.9) 52%, rgba(255,255,255,0.25) 68%, rgba(255,255,255,0) 82%)',
+          background: 'linear-gradient(to right, #ffffff 30%, rgba(255,255,255,0.88) 42%, rgba(255,255,255,0.2) 58%, rgba(255,255,255,0) 70%)',
         }} />
 
         <div style={{ position: 'relative', zIndex: 2, padding: '130px 7vw 90px', maxWidth: '56vw' }}>
@@ -144,17 +146,17 @@ export default async function HomePage() {
           </p>
           <h1 style={{
             fontFamily: '"Plein", sans-serif',
-            fontSize: 'clamp(44px, 5.8vw, 80px)',
+            fontSize: 'clamp(36px, 4.4vw, 62px)',
             fontWeight: 400,
             color: '#111',
-            lineHeight: 1.06,
+            lineHeight: 1.08,
             letterSpacing: '-0.028em',
             marginBottom: 28,
           }}>
             Wenn Kunden auf dich<br />zukommen, nicht<br />umgekehrt.
           </h1>
-          <p style={{ fontSize: 17, color: '#555', lineHeight: 1.7, marginBottom: 40, maxWidth: 460 }}>
-            Professionelle Produktwebsite in unter 5 Minuten live. Interessenten melden sich bei dir, nicht du bei ihnen.
+          <p style={{ fontSize: 16, color: '#555', lineHeight: 1.75, marginBottom: 40, maxWidth: 460 }}>
+            Erstklassige Webseite für dein Network Marketing in unter 5 Minuten live. Interessenten melden sich bei dir, nicht du bei ihnen. So einfach, dass es eine Oma hinbekommt.
           </p>
           <div style={{ display: 'flex', gap: 12 }}>
             <a href="/register" style={{ background: '#111', color: '#fff', padding: '15px 36px', borderRadius: 100, fontSize: 15, fontWeight: 600, display: 'inline-block' }}>Kostenlos starten</a>
@@ -182,8 +184,9 @@ export default async function HomePage() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
             {[
               { icon: '⚡', bg: '#D4C5E2', title: 'In unter 5 Minuten live', desc: 'Kein Designer, kein Entwickler, kein Technik-Stress. Template wählen, Inhalte einfügen, fertig.' },
-              { icon: '✓', bg: '#C8D8B8', title: 'KI-geprüfte Texte', desc: 'Automatische Prüfung auf unzulässige Health Claims. Du bist auf der sicheren Seite, rechtlich und inhaltlich.' },
-              { icon: '🌐', bg: '#EDCBA8', title: 'Eigene Domain oder Subdomain', desc: 'Präsentiere dich unter deiner eigenen Adresse oder nutze kostenlos deine FinestSites-Subdomain.' },
+              { icon: '✏️', bg: '#EDCBA8', title: 'Keine Texte ausdenken, kein Design', desc: 'Jede Vorlage ist professionell getextet, auf die Branche optimiert und rechtlich geprüft. Du musst nichts erfinden.' },
+              { icon: '🔄', bg: '#C8D8B8', title: 'Templates werden laufend verbessert', desc: 'Wir optimieren deine Website kontinuierlich. Neue Funktionen, bessere Conversion, aktuelles Design. Ohne dass du etwas tun musst.' },
+              { icon: '✓', bg: '#B8CCDB', title: 'Kein Hosting, kein DSGVO-Stress', desc: 'Wir kümmern uns um alles: Hosting, Sicherheit, Datenschutz, Impressum. Du musst dich um nichts davon kümmern.' },
             ].map((item, i) => (
               <div key={i} style={{ background: item.bg + '33', border: `1px solid ${item.bg}`, borderRadius: 16, padding: '20px 24px', display: 'flex', gap: 16, alignItems: 'flex-start' }}>
                 <div style={{ width: 36, height: 36, borderRadius: 10, background: item.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16, flexShrink: 0 }}>{item.icon}</div>
@@ -209,7 +212,7 @@ export default async function HomePage() {
           </p>
 
           {templateList.length === 0 ? (
-            <p style={{ textAlign: 'center', color: '#aaa', fontSize: 14 }}>Templates werden geladen...</p>
+            <p style={{ textAlign: 'center', color: '#aaa', fontSize: 14 }}>Bald verfügbar.</p>
           ) : (
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20 }}>
               {templateList.map((tpl, i) => {
