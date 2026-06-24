@@ -174,7 +174,7 @@ export default async function HomePage() {
       <section id="templates" style={{ background: '#F9F7FF', padding: '96px 7vw' }}>
         <div style={{ maxWidth: 1060, margin: '0 auto' }}>
           <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 16 }}>
-            <img src="/mascot.png" alt="" style={{ height: 80, width: 'auto', display: 'block' }} />
+            <img src="/mascot.png" alt="" style={{ height: 104, width: 'auto', display: 'block' }} />
           </div>
           <h2 style={{ fontFamily: '"Plein", sans-serif', fontSize: 'clamp(32px, 4vw, 52px)', fontWeight: 400, color: '#111', letterSpacing: '-0.025em', textAlign: 'center', marginBottom: 16, lineHeight: 1.1 }}>
             Wähle dein Template.

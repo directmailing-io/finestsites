@@ -120,7 +120,23 @@ export default function PricingSection() {
             const dailyEuros = (price / 30).toFixed(2).replace('.', ',')
 
             return (
-              <div key={plan.key} style={{
+              <div key={plan.key} style={{ position: plan.key === 'starter' ? 'relative' : undefined }}>
+                {plan.key === 'starter' && (
+                  <img
+                    src="/mascot-v2.png"
+                    alt=""
+                    style={{
+                      position: 'absolute',
+                      right: '100%',
+                      bottom: 0,
+                      height: 220,
+                      width: 'auto',
+                      display: 'block',
+                      pointerEvents: 'none',
+                    }}
+                  />
+                )}
+              <div style={{
                 background: plan.popular ? '#1a2530' : '#fff',
                 borderRadius: 24,
                 padding: '36px 28px',
@@ -196,6 +212,7 @@ export default function PricingSection() {
                 <a href="/register" style={{ display: 'block', textAlign: 'center', background: plan.popular ? '#D4C5E2' : '#111', color: plan.popular ? '#3a2060' : '#fff', padding: '13px 24px', borderRadius: 100, fontSize: 14, fontWeight: 600 }}>
                   {plan.cta}
                 </a>
+              </div>
               </div>
             )
           })}
