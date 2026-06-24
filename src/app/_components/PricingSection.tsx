@@ -209,7 +209,7 @@ export default function PricingSection() {
                   ))}
                 </div>
 
-                <a href="/register" style={{ display: 'block', textAlign: 'center', background: plan.popular ? '#D4C5E2' : '#111', color: plan.popular ? '#3a2060' : '#fff', padding: '13px 24px', borderRadius: 100, fontSize: 14, fontWeight: 600 }}>
+                <a href="https://app.finestsites.io/register" style={{ display: 'block', textAlign: 'center', background: plan.popular ? '#D4C5E2' : '#111', color: plan.popular ? '#3a2060' : '#fff', padding: '13px 24px', borderRadius: 100, fontSize: 14, fontWeight: 600 }}>
                   {plan.cta}
                 </a>
               </div>

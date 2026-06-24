@@ -81,8 +81,8 @@ export default async function HomePage() {
             <a href="#preise" style={{ color: '#555', fontSize: 14, fontWeight: 500 }}>Preise</a>
           </div>
           <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-            <a href="/login" style={{ color: '#111', fontSize: 14, fontWeight: 500, padding: '8px 18px', borderRadius: 100, border: '1.5px solid rgba(0,0,0,0.12)' }}>Anmelden</a>
-            <a href="/register" style={{ background: '#111', color: '#fff', fontSize: 14, fontWeight: 600, padding: '9px 20px', borderRadius: 100 }}>Kostenlos starten</a>
+            <a href="https://app.finestsites.io/login" style={{ color: '#111', fontSize: 14, fontWeight: 500, padding: '8px 18px', borderRadius: 100, border: '1.5px solid rgba(0,0,0,0.12)' }}>Anmelden</a>
+            <a href="https://app.finestsites.io/register" style={{ background: '#111', color: '#fff', fontSize: 14, fontWeight: 600, padding: '9px 20px', borderRadius: 100 }}>Kostenlos starten</a>
           </div>
         </nav>
       </div>
@@ -129,7 +129,7 @@ export default async function HomePage() {
             Erstklassige Webseite für dein Network Marketing in unter 5 Minuten live. Interessenten melden sich bei dir, nicht du bei ihnen. So einfach, dass es eine Oma hinbekommt.
           </p>
           <div style={{ display: 'flex', gap: 12 }}>
-            <a href="/register" style={{ background: '#111', color: '#fff', padding: '15px 36px', borderRadius: 100, fontSize: 15, fontWeight: 600, display: 'inline-block' }}>Kostenlos starten</a>
+            <a href="https://app.finestsites.io/register" style={{ background: '#111', color: '#fff', padding: '15px 36px', borderRadius: 100, fontSize: 15, fontWeight: 600, display: 'inline-block' }}>Kostenlos starten</a>
             <a href="#templates" style={{ background: 'rgba(255,255,255,0.8)', color: '#111', padding: '15px 36px', borderRadius: 100, fontSize: 15, fontWeight: 500, display: 'inline-block', border: '1.5px solid rgba(0,0,0,0.12)' }}>Templates ansehen</a>
           </div>
           <p style={{ marginTop: 20, fontSize: 13, color: '#999' }}>Keine Kreditkarte nötig · In 5 Minuten live</p>
@@ -177,7 +177,7 @@ export default async function HomePage() {
       <section id="templates" style={{ background: '#F9F7FF', padding: '96px 7vw' }}>
         <div style={{ maxWidth: 1060, margin: '0 auto' }}>
           <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 16 }}>
-            <img src="/mascot.png" alt="" style={{ height: 104, width: 'auto', display: 'block' }} />
+            <img src="/mascot.png" alt="" style={{ height: 135, width: 'auto', display: 'block' }} />
           </div>
           <h2 style={{ fontFamily: '"Plein", sans-serif', fontSize: 'clamp(32px, 4vw, 52px)', fontWeight: 400, color: '#111', letterSpacing: '-0.025em', textAlign: 'center', marginBottom: 16, lineHeight: 1.1 }}>
             Wähle dein Template.
@@ -217,7 +217,7 @@ export default async function HomePage() {
                     <div style={{ padding: '20px 22px' }}>
                       <h3 style={{ fontSize: 15, fontWeight: 600, color: '#111', marginBottom: 6 }}>{tpl.title}</h3>
                       {tpl.description && <p style={{ fontSize: 13, color: '#777', lineHeight: 1.6, marginBottom: 16 }}>{tpl.description}</p>}
-                      <a href="/register" style={{ display: 'inline-block', background: '#f5f3f0', color: '#333', fontSize: 12, fontWeight: 500, padding: '7px 16px', borderRadius: 100, border: '1px solid #e5e5e5' }}>
+                      <a href="https://app.finestsites.io/register" style={{ display: 'inline-block', background: '#f5f3f0', color: '#333', fontSize: 12, fontWeight: 500, padding: '7px 16px', borderRadius: 100, border: '1px solid #e5e5e5' }}>
                         Template nutzen
                       </a>
                     </div>
@@ -235,8 +235,8 @@ export default async function HomePage() {
       <footer style={{ background: '#f5f3f0', padding: '28px 48px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid #eee' }}>
         <img src="/logos/logo-black.svg" alt="FinestSites" style={{ height: 18, opacity: 0.4 }} />
         <div style={{ display: 'flex', gap: 24 }}>
-          <a href="/login" style={{ fontSize: 12, color: '#999' }}>Anmelden</a>
-          <a href="/register" style={{ fontSize: 12, color: '#999' }}>Registrieren</a>
+          <a href="https://app.finestsites.io/login" style={{ fontSize: 12, color: '#999' }}>Anmelden</a>
+          <a href="https://app.finestsites.io/register" style={{ fontSize: 12, color: '#999' }}>Registrieren</a>
         </div>
         <span style={{ fontSize: 12, color: '#bbb' }}>© 2026 FinestSites</span>
       </footer>
