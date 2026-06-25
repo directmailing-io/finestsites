@@ -83,12 +83,12 @@ export async function middleware(request: NextRequest) {
   }
 
   // finestsites.io is marketing only.
-  // Legal/static pages stay on finestsites.io; everything else → app subdomain.
-  const LEGAL_PATHS = ['/impressum', '/datenschutz', '/agb', '/cookies']
+  // Legal + marketing content stays on finestsites.io; app routes → app subdomain.
+  const FINESTSITES_IO_PATHS = ['/impressum', '/datenschutz', '/agb', '/cookies', '/vorlagen']
   if (
     (host === 'finestsites.io' || host === 'www.finestsites.io') &&
     pathname !== '/' &&
-    !LEGAL_PATHS.includes(pathname)
+    !FINESTSITES_IO_PATHS.some(p => pathname === p || pathname.startsWith(p + '/'))
   ) {
     return NextResponse.redirect(`https://app.finestsites.io${pathname}${request.nextUrl.search}`)
   }

@@ -214,7 +214,7 @@ export default async function HomePage() {
             Erstklassige Webseite für dein Network Marketing in unter 5 Minuten live. Interessenten melden sich bei dir, nicht du bei ihnen. So einfach, dass es eine Oma hinbekommt.
           </p>
           <div className="fs-hero-buttons">
-            <a href="https://app.finestsites.io/register" style={{ background: '#111', color: '#fff', padding: '15px 36px', borderRadius: 100, fontSize: 15, fontWeight: 600, display: 'inline-block', textDecoration: 'none', textAlign: 'center' }}>Kostenlos starten</a>
+            <a href="https://app.finestsites.io/register" style={{ background: '#111', color: '#fff', padding: '15px 36px', borderRadius: 100, fontSize: 15, fontWeight: 600, display: 'inline-block', textDecoration: 'none', textAlign: 'center' }}>Jetzt starten</a>
             <a href="#templates" style={{ background: 'rgba(255,255,255,0.8)', color: '#111', padding: '15px 36px', borderRadius: 100, fontSize: 15, fontWeight: 500, display: 'inline-block', border: '1.5px solid rgba(0,0,0,0.12)', textDecoration: 'none', textAlign: 'center' }}>Templates ansehen</a>
           </div>
         </div>
@@ -282,7 +282,7 @@ export default async function HomePage() {
               Professionelle Websites für Network-Marketing-Profis. In 5 Minuten live.
             </p>
             <a href="https://app.finestsites.io/register" style={{ display: 'inline-block', background: '#D4C5E2', color: '#2d1a50', fontSize: 13, fontWeight: 700, padding: '11px 24px', borderRadius: 100 }}>
-              Kostenlos starten →
+              Jetzt starten →
             </a>
           </div>
 

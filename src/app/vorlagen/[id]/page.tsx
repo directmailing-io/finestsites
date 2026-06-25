@@ -116,7 +116,7 @@ export default async function TemplateDetailPage({ params }: Props) {
 
           <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
             <a href="https://app.finestsites.io/register" style={{ background: '#111', color: '#fff', padding: '14px 32px', borderRadius: 100, fontSize: 15, fontWeight: 600, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 8 }}>
-              Jetzt kostenlos starten →
+              Jetzt starten →
             </a>
           </div>
         </div>
@@ -189,7 +189,7 @@ export default async function TemplateDetailPage({ params }: Props) {
               Bereit, loszulegen?
             </h2>
             <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.5)', lineHeight: 1.7 }}>
-              Kostenlos starten — in unter 5 Minuten live.
+              Ab €20/Monat — in unter 5 Minuten live.
             </p>
           </div>
           <a href="https://app.finestsites.io/register" style={{ flexShrink: 0, background: '#fff', color: '#111', padding: '16px 36px', borderRadius: 100, fontSize: 15, fontWeight: 700, textDecoration: 'none', whiteSpace: 'nowrap' }}>

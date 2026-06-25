@@ -2119,7 +2119,7 @@ export default function SiteEditPage({ params }: { params: Promise<{ id: string 
           <p className="text-sm font-bold text-gray-900 truncate leading-tight">{site.templates?.title}</p>
           <div className="flex items-center gap-1.5">
             <p className="text-xs truncate leading-tight" style={{ color: '#9CA3AF' }}>
-              {site.username}.{site.templates?.domain}
+              {site.username ? `${site.username}.${site.templates?.domain}` : site.templates?.domain}
             </p>
             {/* Autosave indicator — mobile */}
             {autosaveState !== 'idle' && (
@@ -2178,7 +2178,7 @@ export default function SiteEditPage({ params }: { params: Promise<{ id: string 
           <div className="min-w-0">
             <h1 className="text-sm font-bold text-gray-900 leading-tight truncate">{site.templates?.title}</h1>
             <p className="text-xs font-mono truncate" style={{ color: '#9CA3AF' }}>
-              {site.username}.{site.templates?.domain}
+              {site.username ? `${site.username}.${site.templates?.domain}` : site.templates?.domain}
             </p>
           </div>
           <span className="flex-shrink-0 text-xs px-2.5 py-1 rounded-full font-medium"
