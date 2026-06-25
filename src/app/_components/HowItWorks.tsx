@@ -76,13 +76,15 @@ function MockupTemplateSelect() {
   )
 }
 
-/* ── Mockup 2: Anpassen (Wizard) ── */
+/* ── Mockup 2: Anpassen — Design & Farben ── */
 function MockupEditor() {
-  const fields = [
-    { label: 'Dein Name', value: 'Sandra Müller', done: true },
-    { label: 'Telefon / WhatsApp', value: '+49 151 2349 0012', done: true },
-    { label: 'Kurztext über dich', value: 'Ich helfe Menschen dabei...', done: false },
+  const themes = [
+    { name: 'Lila',    hero: '#8060b0', btn: '#1a2530' },
+    { name: 'Ozean',   hero: '#2563EB', btn: '#0F766E' },
+    { name: 'Natur',   hero: '#16A34A', btn: '#713F12' },
+    { name: 'Warm',    hero: '#EA580C', btn: '#9F1239' },
   ]
+  const sel = 0
   return (
     <div style={{ borderRadius: 14, overflow: 'hidden', boxShadow: '0 12px 48px rgba(0,0,0,0.14)', border: '1px solid #ddd' }}>
       <BrowserChrome url="app.finestsites.io/sites/abc123/edit" />
@@ -96,27 +98,37 @@ function MockupEditor() {
               <div style={{ width: '66%', height: '100%', background: 'linear-gradient(to right, #8060b0, #D4C5E2)', borderRadius: 2 }} />
             </div>
           </div>
-          <div style={{ fontSize: 11, fontWeight: 700, color: '#222', marginBottom: 10 }}>Kontaktdaten</div>
-          {fields.map((f, i) => (
-            <div key={i} style={{ marginBottom: 8 }}>
-              <div style={{ fontSize: 8, color: '#888', marginBottom: 2 }}>{f.label}</div>
-              <div style={{ border: `1px solid ${f.done ? '#D4C5E2' : '#e5e5e5'}`, borderRadius: 6, padding: '5px 8px', fontSize: 9, color: f.done ? '#333' : '#bbb', background: f.done ? '#fdfbff' : '#fafafa', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span>{f.value}</span>
-                {f.done && <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#8060b0" strokeWidth="3" strokeLinecap="round"><polyline points="20 6 9 17 4 12" /></svg>}
+          <div style={{ fontSize: 11, fontWeight: 700, color: '#222', marginBottom: 8 }}>Design & Farben</div>
+          {/* Color theme picker */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 6, marginBottom: 12 }}>
+            {themes.map((t, i) => (
+              <div key={i} style={{ borderRadius: 8, overflow: 'hidden', border: i === sel ? '2px solid #8060b0' : '1.5px solid #e5e5e5', cursor: 'pointer' }}>
+                <div style={{ height: 24, background: `linear-gradient(135deg, ${t.hero} 55%, ${t.btn} 55%)` }} />
+                <div style={{ padding: '3px 0', fontSize: 7, color: i === sel ? '#8060b0' : '#888', fontWeight: i === sel ? 700 : 500, textAlign: 'center' }}>{t.name}</div>
               </div>
+            ))}
+          </div>
+          {/* One text field */}
+          <div style={{ marginBottom: 8 }}>
+            <div style={{ fontSize: 8, color: '#888', marginBottom: 2 }}>Dein Name</div>
+            <div style={{ border: '1px solid #D4C5E2', borderRadius: 6, padding: '5px 8px', fontSize: 9, color: '#333', background: '#fdfbff', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span>Sandra Müller</span>
+              <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#8060b0" strokeWidth="3" strokeLinecap="round"><polyline points="20 6 9 17 4 12" /></svg>
             </div>
-          ))}
+          </div>
           <div style={{ marginTop: 'auto', background: '#111', color: '#fff', borderRadius: 20, padding: '6px 14px', fontSize: 9, fontWeight: 600, display: 'inline-block', alignSelf: 'flex-start' }}>Weiter →</div>
         </div>
-        {/* Live preview panel */}
+        {/* Live preview with selected theme colors */}
         <div style={{ width: 110, background: '#f5f3f0', borderLeft: '1px solid #eee', padding: '10px 8px', flexShrink: 0, overflow: 'hidden' }}>
           <div style={{ fontSize: 7, fontWeight: 700, color: '#aaa', letterSpacing: '0.08em', marginBottom: 8 }}>VORSCHAU</div>
-          <div style={{ background: '#fff', borderRadius: 8, padding: '8px', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
-            <div style={{ height: 28, background: '#B8CCDB', borderRadius: 4, marginBottom: 6 }} />
-            <div style={{ fontSize: 8, fontWeight: 700, color: '#111', marginBottom: 2 }}>Sandra Müller</div>
-            <div style={{ fontSize: 7, color: '#777', marginBottom: 6 }}>+49 151 2349 0012</div>
-            <div style={{ height: 18, background: '#1a2530', borderRadius: 3, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <span style={{ fontSize: 6, color: '#D4C5E2', fontWeight: 700 }}>Jetzt Kontakt aufnehmen</span>
+          <div style={{ background: '#fff', borderRadius: 8, overflow: 'hidden', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
+            <div style={{ height: 30, background: `linear-gradient(135deg, ${themes[sel].hero}, ${themes[sel].btn})` }} />
+            <div style={{ padding: '6px 7px' }}>
+              <div style={{ fontSize: 8, fontWeight: 700, color: '#111', marginBottom: 2 }}>Sandra Müller</div>
+              <div style={{ fontSize: 7, color: '#777', marginBottom: 6 }}>+49 151 2349 0012</div>
+              <div style={{ height: 16, background: themes[sel].hero, borderRadius: 3, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <span style={{ fontSize: 6, color: '#fff', fontWeight: 700 }}>Kontakt aufnehmen</span>
+              </div>
             </div>
           </div>
         </div>
@@ -125,47 +137,80 @@ function MockupEditor() {
   )
 }
 
-/* ── Mockup 3: Live schalten ── */
+/* ── Mockup 3: Live schalten — mit Konfetti ── */
+const CONFETTI = [
+  { x: 12, y: 8,  c: '#8060b0', w: 5, h: 9,  r: -22, d: 0    },
+  { x: 82, y: 12, c: '#EA580C', w: 7, h: 4,  r:  48, d: 0.12 },
+  { x: 48, y: 5,  c: '#16A34A', w: 5, h: 5,  r:  12, d: 0.24 },
+  { x: 72, y: 28, c: '#2563EB', w: 4, h: 10, r: -50, d: 0.07 },
+  { x: 22, y: 62, c: '#D4C5E2', w: 7, h: 4,  r:  32, d: 0.35 },
+  { x: 91, y: 55, c: '#FEBC2E', w: 4, h: 8,  r: -14, d: 0.06 },
+  { x: 58, y: 72, c: '#FF5F57', w: 6, h: 5,  r:  65, d: 0.28 },
+  { x: 32, y: 82, c: '#8060b0', w: 4, h: 9,  r:  20, d: 0.42 },
+  { x: 78, y: 78, c: '#16A34A', w: 7, h: 4,  r: -30, d: 0.18 },
+  { x: 8,  y: 44, c: '#FEBC2E', w: 4, h: 7,  r:  16, d: 0.38 },
+  { x: 63, y: 38, c: '#EA580C', w: 6, h: 4,  r: -62, d: 0.09 },
+  { x: 95, y: 22, c: '#2563EB', w: 4, h: 9,  r:  42, d: 0.21 },
+]
+
 function MockupPublished() {
   return (
-    <div style={{ borderRadius: 14, overflow: 'hidden', boxShadow: '0 12px 48px rgba(0,0,0,0.14)', border: '1px solid #ddd' }}>
-      <BrowserChrome url="sandra-m.finestsites.io" />
-      <div style={{ display: 'flex', height: 210 }}>
-        <AppSidebar activeIdx={1} />
-        <div style={{ flex: 1, background: '#fff', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 16, gap: 10 }}>
-          {/* Success badge */}
-          <div style={{ width: 48, height: 48, background: '#edfaed', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px solid #C8D8B8' }}>
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#16A34A" strokeWidth="2.5" strokeLinecap="round"><polyline points="20 6 9 17 4 12" /></svg>
-          </div>
-          <div>
-            <div style={{ fontSize: 12, fontWeight: 700, color: '#111', textAlign: 'center', marginBottom: 3 }}>Deine Seite ist live!</div>
-            <div style={{ fontSize: 9, color: '#888', textAlign: 'center' }}>Sie läuft jetzt rund um die Uhr</div>
-          </div>
-          {/* URL chip */}
-          <div style={{ background: '#f5f3f0', borderRadius: 20, padding: '6px 14px', display: 'flex', alignItems: 'center', gap: 6 }}>
-            <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#16A34A', flexShrink: 0 }} />
-            <span style={{ fontSize: 10, color: '#555', fontWeight: 500 }}>sandra-m.finestsites.io</span>
-          </div>
-          {/* Stats strip */}
-          <div style={{ display: 'flex', gap: 8, width: '100%' }}>
-            {[
-              { label: 'Besucher', val: '0', icon: '👁' },
-              { label: 'Anfragen', val: '0', icon: '✉️' },
-            ].map(s => (
-              <div key={s.label} style={{ flex: 1, background: '#f8f9fb', borderRadius: 8, padding: '6px 8px', textAlign: 'center' }}>
-                <div style={{ fontSize: 13 }}>{s.icon}</div>
-                <div style={{ fontSize: 12, fontWeight: 700, color: '#111' }}>{s.val}</div>
-                <div style={{ fontSize: 7, color: '#aaa' }}>{s.label}</div>
-              </div>
-            ))}
-          </div>
-          <div style={{ display: 'flex', gap: 6 }}>
-            <div style={{ background: '#111', color: '#fff', borderRadius: 20, padding: '5px 12px', fontSize: 9, fontWeight: 600 }}>Seite besuchen →</div>
-            <div style={{ border: '1px solid #ddd', color: '#555', borderRadius: 20, padding: '5px 12px', fontSize: 9, fontWeight: 500 }}>Teilen</div>
+    <>
+      <style>{`
+        @keyframes fs-conf {
+          0%   { opacity: 1; transform: translateY(0px) rotate(var(--r0)); }
+          100% { opacity: 0; transform: translateY(38px) rotate(var(--r1)); }
+        }
+      `}</style>
+      <div style={{ borderRadius: 14, overflow: 'hidden', boxShadow: '0 12px 48px rgba(0,0,0,0.14)', border: '1px solid #ddd' }}>
+        <BrowserChrome url="sandra-m.finestsites.io" />
+        <div style={{ display: 'flex', height: 210, position: 'relative' }}>
+          {/* Confetti pieces */}
+          {CONFETTI.map((c, i) => (
+            <div key={i} style={{
+              position: 'absolute', left: `${c.x}%`, top: `${c.y}%`,
+              width: c.w, height: c.h, background: c.c, borderRadius: 1,
+              '--r0': `${c.r}deg`, '--r1': `${c.r + 200}deg`,
+              animation: `fs-conf 2.2s ease-in ${c.d}s infinite`,
+              zIndex: 1,
+            } as React.CSSProperties} />
+          ))}
+          <AppSidebar activeIdx={1} />
+          <div style={{ flex: 1, background: '#fff', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 16, gap: 10, position: 'relative', zIndex: 2 }}>
+            {/* Success badge */}
+            <div style={{ width: 48, height: 48, background: '#edfaed', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px solid #C8D8B8' }}>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#16A34A" strokeWidth="2.5" strokeLinecap="round"><polyline points="20 6 9 17 4 12" /></svg>
+            </div>
+            <div>
+              <div style={{ fontSize: 12, fontWeight: 700, color: '#111', textAlign: 'center', marginBottom: 3 }}>Deine Seite ist live!</div>
+              <div style={{ fontSize: 9, color: '#888', textAlign: 'center' }}>Sie läuft jetzt rund um die Uhr</div>
+            </div>
+            {/* URL chip */}
+            <div style={{ background: '#f5f3f0', borderRadius: 20, padding: '6px 14px', display: 'flex', alignItems: 'center', gap: 6 }}>
+              <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#16A34A', flexShrink: 0 }} />
+              <span style={{ fontSize: 10, color: '#555', fontWeight: 500 }}>sandra-m.finestsites.io</span>
+            </div>
+            {/* Stats strip */}
+            <div style={{ display: 'flex', gap: 8, width: '100%' }}>
+              {[
+                { label: 'Besucher', val: '249', icon: '👁' },
+                { label: 'Anfragen', val: '4',   icon: '✉️' },
+              ].map(s => (
+                <div key={s.label} style={{ flex: 1, background: '#f8f9fb', borderRadius: 8, padding: '6px 8px', textAlign: 'center' }}>
+                  <div style={{ fontSize: 13 }}>{s.icon}</div>
+                  <div style={{ fontSize: 12, fontWeight: 700, color: '#111' }}>{s.val}</div>
+                  <div style={{ fontSize: 7, color: '#aaa' }}>{s.label}</div>
+                </div>
+              ))}
+            </div>
+            <div style={{ display: 'flex', gap: 6 }}>
+              <div style={{ background: '#111', color: '#fff', borderRadius: 20, padding: '5px 12px', fontSize: 9, fontWeight: 600 }}>Seite besuchen →</div>
+              <div style={{ border: '1px solid #ddd', color: '#555', borderRadius: 20, padding: '5px 12px', fontSize: 9, fontWeight: 500 }}>Teilen</div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   )
 }
 
