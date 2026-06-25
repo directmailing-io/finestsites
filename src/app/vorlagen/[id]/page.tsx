@@ -3,6 +3,7 @@ import { templates } from '@/lib/db/schema'
 import { eq, and } from 'drizzle-orm'
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import NavBar from '@/app/_components/NavBar'
 
 export const dynamic = 'force-dynamic'
@@ -24,10 +25,6 @@ const BADGE_STYLES: Record<string, { bg: string; label: string }> = {
   brandneu: { bg: '#7C3AED', label: 'Brandneu' },
   beliebt:  { bg: '#EA580C', label: 'Sehr beliebt' },
 }
-
-const BENEFIT_ICONS = [
-  '<path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>',
-]
 
 const DEFAULT_BENEFITS = [
   'Alle Texte bereits professionell geschrieben',
@@ -124,9 +121,9 @@ export default async function TemplateDetailPage({ params }: Props) {
             <a href="https://app.finestsites.io/register" style={{ background: '#111', color: '#fff', padding: '14px 32px', borderRadius: 100, fontSize: 15, fontWeight: 600, textDecoration: 'none' }}>
               Jetzt kostenlos starten →
             </a>
-            <a href="/#templates" style={{ background: '#fff', color: '#555', padding: '14px 24px', borderRadius: 100, fontSize: 14, fontWeight: 500, textDecoration: 'none', border: '1.5px solid rgba(0,0,0,0.12)' }}>
+            <Link href="/#templates" style={{ background: '#fff', color: '#555', padding: '14px 24px', borderRadius: 100, fontSize: 14, fontWeight: 500, textDecoration: 'none', border: '1.5px solid rgba(0,0,0,0.12)' }}>
               Alle Templates
-            </a>
+            </Link>
           </div>
         </div>
 
