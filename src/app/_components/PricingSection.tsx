@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 const PLANS = [
   {
@@ -53,6 +53,20 @@ const COMMON_FEATURES = [
 
 export default function PricingSection() {
   const [yearly, setYearly] = useState(false)
+  const [refCode, setRefCode] = useState<string | null>(null)
+
+  // Read ?ref= from sessionStorage (set by the URL param persistence layer)
+  // or directly from URL on first load.
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const stored = sessionStorage.getItem('fs_ref')
+    if (stored) { setRefCode(stored); return }
+    const params = new URLSearchParams(window.location.search)
+    const ref = params.get('ref')
+    if (ref) setRefCode(ref)
+  }, [])
+
+  const DISCOUNT = 0.20 // 20 % affiliate discount
 
   return (
     <section id="preise" style={{ background: '#fff' }} className="fs-section-pad">
@@ -116,7 +130,8 @@ export default function PricingSection() {
         {/* ── Plan Cards ─────────────────────────────────────────── */}
         <div className="fs-pricing-grid">
           {PLANS.map((plan) => {
-            const price = yearly ? plan.yearlyMonthly : plan.monthly
+            const basePrice = yearly ? plan.yearlyMonthly : plan.monthly
+            const price = refCode ? Math.round(basePrice * (1 - DISCOUNT)) : basePrice
             const dailyEuros = (price / 30).toFixed(2).replace('.', ',')
 
             return (
@@ -169,9 +184,19 @@ export default function PricingSection() {
                 <p style={{ fontSize: 13, fontWeight: 600, color: plan.popular ? 'rgba(255,255,255,0.45)' : '#888', marginBottom: 12 }}>{plan.name}</p>
 
                 <div style={{ display: 'flex', alignItems: 'baseline', gap: 4, marginBottom: 4 }}>
+                  {refCode && (
+                    <span style={{ fontSize: 22, fontWeight: 400, color: plan.popular ? 'rgba(255,255,255,0.3)' : '#bbb', letterSpacing: '-0.02em', lineHeight: 1, textDecoration: 'line-through', marginRight: 4 }}>€{basePrice}</span>
+                  )}
                   <span style={{ fontFamily: '"Plein", sans-serif', fontSize: 50, fontWeight: 400, color: plan.popular ? '#fff' : '#111', letterSpacing: '-0.04em', lineHeight: 1 }}>€{price}</span>
                   <span style={{ fontSize: 13, color: plan.popular ? 'rgba(255,255,255,0.35)' : '#aaa' }}>/Monat</span>
                 </div>
+
+                {refCode && (
+                  <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: plan.popular ? 'rgba(200,216,184,0.2)' : '#F0FDF4', border: `1px solid ${plan.popular ? 'rgba(200,216,184,0.3)' : '#BBF7D0'}`, borderRadius: 100, padding: '3px 10px', marginBottom: 4 }}>
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke={plan.popular ? '#86efac' : '#16A34A'} strokeWidth="2.5" strokeLinecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    <span style={{ fontSize: 11, fontWeight: 700, color: plan.popular ? '#86efac' : '#16A34A' }}>20 % Rabatt mit deinem Code</span>
+                  </div>
+                )}
 
                 {yearly && (
                   <p style={{ fontSize: 12, color: plan.popular ? 'rgba(255,255,255,0.3)' : '#bbb', marginBottom: 4 }}>
@@ -210,7 +235,9 @@ export default function PricingSection() {
                   ))}
                 </div>
 
-                <a href="https://app.finestsites.io/register" style={{ display: 'block', textAlign: 'center', background: plan.popular ? '#D4C5E2' : '#111', color: plan.popular ? '#3a2060' : '#fff', padding: '13px 24px', borderRadius: 100, fontSize: 14, fontWeight: 600 }}>
+                <a
+                  href={`https://app.finestsites.io/register${refCode ? `?ref=${encodeURIComponent(refCode)}` : ''}`}
+                  style={{ display: 'block', textAlign: 'center', background: plan.popular ? '#D4C5E2' : '#111', color: plan.popular ? '#3a2060' : '#fff', padding: '13px 24px', borderRadius: 100, fontSize: 14, fontWeight: 600 }}>
                   {plan.cta}
                 </a>
               </div>

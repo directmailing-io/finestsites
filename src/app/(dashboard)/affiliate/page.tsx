@@ -143,7 +143,7 @@ export default function AffiliatePage() {
   const balanceSufficient = (stats?.stripe_balance_available_cents ?? 0) >= availableCents
   const canPayout      = availableCents > 0 && stats?.affiliate_onboarded && balanceSufficient
   const referralUrl    = stats?.username
-    ? `https://finestsites.de/register?ref=${stats.username}`
+    ? `https://finestsites.io/?ref=${stats.username}`
     : ''
 
   // ── No username yet ──────────────────────────────────────────────────────────
@@ -227,7 +227,7 @@ export default function AffiliatePage() {
             <path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/>
           </svg>
           <span className="text-sm font-mono text-gray-700 truncate flex-1">
-            finestsites.de/register?ref=<strong>{stats.username}</strong>
+            finestsites.io/?ref=<strong>{stats.username}</strong>
           </span>
         </div>
 
