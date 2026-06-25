@@ -124,24 +124,20 @@ function MockupEditor() {
 }
 
 /* ── Mockup 3: Live schalten — mit Konfetti ── */
-// br: borderRadius — string = circle ('50%'), number = px
-const CONFETTI: { x:number; y:number; c:string; w:number; h:number; r:number; d:number; br: string|number }[] = [
-  { x: 7,  y: 4,  c: '#8060b0', w: 5, h: 11, r: -22, d: 0,    br: 2 },
-  { x: 22, y: 2,  c: '#FEBC2E', w: 8, h: 8,  r:   0, d: 0.3,  br: '50%' },
-  { x: 38, y: 5,  c: '#FF5F57', w: 5, h: 5,  r:  45, d: 0.15, br: 1 },
-  { x: 55, y: 3,  c: '#16A34A', w: 6, h: 11, r: -35, d: 0.08, br: 2 },
-  { x: 72, y: 6,  c: '#2563EB', w: 7, h: 7,  r:  20, d: 0.22, br: '50%' },
-  { x: 87, y: 4,  c: '#EA580C', w: 5, h: 10, r:  55, d: 0.4,  br: 2 },
-  { x: 94, y: 18, c: '#8060b0', w: 7, h: 4,  r: -15, d: 0.12, br: 1 },
-  { x: 4,  y: 30, c: '#FEBC2E', w: 5, h: 9,  r:  18, d: 0.5,  br: 2 },
-  { x: 96, y: 42, c: '#FF5F57', w: 6, h: 6,  r:  60, d: 0.35, br: '50%' },
-  { x: 3,  y: 55, c: '#16A34A', w: 4, h: 9,  r: -40, d: 0.18, br: 2 },
-  { x: 93, y: 60, c: '#2563EB', w: 7, h: 4,  r:  30, d: 0.06, br: 1 },
-  { x: 10, y: 72, c: '#EA580C', w: 5, h: 5,  r: -55, d: 0.42, br: '50%' },
-  { x: 88, y: 75, c: '#8060b0', w: 4, h: 10, r:  40, d: 0.28, br: 2 },
-  { x: 28, y: 82, c: '#FEBC2E', w: 7, h: 4,  r: -20, d: 0.2,  br: 1 },
-  { x: 62, y: 80, c: '#FF5F57', w: 5, h: 8,  r:  35, d: 0.45, br: 2 },
-  { x: 48, y: 88, c: '#16A34A', w: 8, h: 8,  r:   0, d: 0.1,  br: '50%' },
+// Confetti falls from top, scattered x positions, staggered delays
+const CONFETTI: { x:number; c:string; w:number; h:number; r:number; d:number; br: string|number; spd:number }[] = [
+  { x:  6, c: '#8060b0', w: 5, h: 11, r: -22, d: 0,    br: 2,    spd: 1.9 },
+  { x: 16, c: '#FEBC2E', w: 8, h: 8,  r:   5, d: 0.55, br: '50%',spd: 2.3 },
+  { x: 27, c: '#FF5F57', w: 5, h: 12, r:  38, d: 0.15, br: 2,    spd: 2.0 },
+  { x: 38, c: '#16A34A', w: 7, h: 7,  r: -15, d: 0.7,  br: '50%',spd: 2.5 },
+  { x: 50, c: '#2563EB', w: 5, h: 11, r:  55, d: 0.08, br: 2,    spd: 1.8 },
+  { x: 62, c: '#EA580C', w: 8, h: 8,  r: -42, d: 0.4,  br: '50%',spd: 2.1 },
+  { x: 73, c: '#8060b0', w: 5, h: 12, r:  20, d: 0.25, br: 2,    spd: 2.4 },
+  { x: 84, c: '#FEBC2E', w: 7, h: 7,  r: -60, d: 0.62, br: '50%',spd: 1.95},
+  { x: 93, c: '#FF5F57', w: 5, h: 11, r:  45, d: 0.1,  br: 2,    spd: 2.2 },
+  { x: 11, c: '#16A34A', w: 6, h: 6,  r: -30, d: 0.85, br: '50%',spd: 2.6 },
+  { x: 45, c: '#EA580C', w: 5, h: 12, r:  10, d: 0.33, br: 2,    spd: 2.05},
+  { x: 78, c: '#2563EB', w: 6, h: 6,  r: -50, d: 0.48, br: '50%',spd: 1.85},
 ]
 
 function MockupPublished() {
@@ -149,8 +145,9 @@ function MockupPublished() {
     <>
       <style>{`
         @keyframes fs-conf {
-          0%   { opacity: 1; transform: translateY(0px) rotate(var(--r0)); }
-          100% { opacity: 0; transform: translateY(38px) rotate(var(--r1)); }
+          0%   { opacity: 0;   transform: translateY(-8px)   rotate(var(--r0)); }
+          15%  { opacity: 1; }
+          100% { opacity: 0;   transform: translateY(220px)  rotate(var(--r1)); }
         }
       `}</style>
       <div style={{ borderRadius: 14, overflow: 'hidden', boxShadow: '0 12px 48px rgba(0,0,0,0.14)', border: '1px solid #ddd' }}>
@@ -159,18 +156,18 @@ function MockupPublished() {
           {/* Confetti pieces */}
           {CONFETTI.map((c, i) => (
             <div key={i} style={{
-              position: 'absolute', left: `${c.x}%`, top: `${c.y}%`,
+              position: 'absolute', left: `${c.x}%`, top: 0,
               width: c.w, height: c.h, background: c.c,
-              borderRadius: typeof c.br === 'string' ? c.br : c.br,
-              '--r0': `${c.r}deg`, '--r1': `${c.r + 220}deg`,
-              animation: `fs-conf ${1.8 + (i % 3) * 0.4}s ease-in ${c.d}s infinite`,
+              borderRadius: c.br,
+              '--r0': `${c.r}deg`, '--r1': `${c.r + 240}deg`,
+              animation: `fs-conf ${c.spd}s linear ${c.d}s infinite`,
               zIndex: 1,
             } as React.CSSProperties} />
           ))}
           <AppSidebar activeIdx={1} />
           <div style={{ flex: 1, background: '#fff', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 16, gap: 10, position: 'relative', zIndex: 2 }}>
             {/* Celebration icon */}
-            <div style={{ fontSize: 44, lineHeight: 1 }}>🎉</div>
+            <div style={{ fontSize: 32, lineHeight: 1 }}>🎉</div>
             <div>
               <div style={{ fontSize: 12, fontWeight: 700, color: '#111', textAlign: 'center', marginBottom: 3 }}>Deine Seite ist live!</div>
               <div style={{ fontSize: 9, color: '#888', textAlign: 'center' }}>Sie läuft jetzt rund um die Uhr</div>
@@ -209,19 +206,19 @@ const STEPS = [
   {
     num: '01',
     title: 'Vorlage wählen',
-    text: 'Es gibt fertige Vorlagen für dein Unternehmen. FitLine, QNET, Herbalife und viele mehr. Texte, Design und Struktur sind bereits drin. Du klickst einmal auf die passende, fertig.',
+    text: 'Für FitLine, Ringana, doTERRA und viele mehr gibt es fertige Vorlagen. Texte, Design, alles drin. Du wählst einmal die passende aus.',
     visual: <MockupTemplateSelect />,
   },
   {
     num: '02',
     title: 'Ein paar Klicks',
-    text: 'Kein Designer. Kein Canva. Kein leeres Word-Dokument. Du gibst deinen Namen, deine Nummer und vielleicht ein Foto ein. Das ist buchstäblich alles. Drei Minuten, dann bist du durch.',
+    text: 'Name eingeben, Nummer eingeben, fertig. Vielleicht noch ein Foto. Du schreibst nichts, du designst nichts. Das dauert ein paar Minuten, nicht mehr.',
     visual: <MockupEditor />,
   },
   {
     num: '03',
     title: 'Teilen & wachsen',
-    text: 'Ein Klick und die Seite ist live. Den Link teilst du in der Story, auf dem Flyer oder im Chat. Ab jetzt erklärt sie dein Angebot, sammelt Anfragen und schläft nie.',
+    text: 'Ein Klick und deine Seite ist live. Den Link teilst du in der Story, auf dem Flyer oder im Chat. Sie erklärt dein Angebot und sammelt Anfragen, rund um die Uhr.',
     visual: <MockupPublished />,
   },
 ]
@@ -274,7 +271,7 @@ export default function HowItWorks() {
         <div style={{ marginTop: 56, background: '#F5F0FB', border: '1px solid #D4C5E2', borderRadius: 20, padding: '28px 36px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 20 }}>
           <div>
             <p style={{ fontSize: 15, fontWeight: 700, color: '#111', marginBottom: 4 }}>Probier&apos;s einfach aus. Es dauert keine 5 Minuten.</p>
-            <p style={{ fontSize: 13, color: '#888' }}>Keine Kreditkarte, keine Technik, kein Vorwissen nötig.</p>
+            <p style={{ fontSize: 13, color: '#888' }}>Kein Webdesigner, kein Texter, keine Agentur nötig.</p>
           </div>
           <a href="https://app.finestsites.io/register" style={{ background: '#111', color: '#fff', padding: '13px 28px', borderRadius: 100, fontSize: 14, fontWeight: 600, textDecoration: 'none', whiteSpace: 'nowrap' }}>
             Jetzt starten →
