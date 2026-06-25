@@ -277,15 +277,21 @@ export default function HowItWorks() {
           ))}
         </div>
 
-        {/* CTA strip */}
-        <div style={{ marginTop: 56, background: '#F5F0FB', border: '1px solid #D4C5E2', borderRadius: 20, padding: '28px 36px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 20 }}>
-          <div>
-            <p style={{ fontSize: 15, fontWeight: 700, color: '#111', marginBottom: 4 }}>Probier&apos;s einfach aus. Es dauert keine 5 Minuten.</p>
-            <p style={{ fontSize: 13, color: '#888' }}>Kein Webdesigner, kein Texter, keine Agentur nötig.</p>
+        {/* Combined image + CTA block */}
+        <div style={{ marginTop: 56, borderRadius: 20, overflow: 'hidden', border: '1px solid #D4C5E2' }}>
+          {/* Smartphone image — no bottom radius, flows into CTA */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/mascot-mobile.png" alt="Geht auch einfach vom Handy aus." style={{ width: '100%', height: 'auto', display: 'block' }} />
+          {/* CTA strip — attached directly below */}
+          <div style={{ background: '#F5F0FB', padding: '28px 36px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 20 }}>
+            <div>
+              <p style={{ fontSize: 15, fontWeight: 700, color: '#111', marginBottom: 4 }}>Probier&apos;s einfach aus. Es dauert keine 5 Minuten.</p>
+              <p style={{ fontSize: 13, color: '#888' }}>Kein Webdesigner, kein Texter, keine Agentur nötig.</p>
+            </div>
+            <a href="https://app.finestsites.io/register" style={{ background: '#111', color: '#fff', padding: '13px 28px', borderRadius: 100, fontSize: 14, fontWeight: 600, textDecoration: 'none', whiteSpace: 'nowrap' }}>
+              Jetzt starten →
+            </a>
           </div>
-          <a href="https://app.finestsites.io/register" style={{ background: '#111', color: '#fff', padding: '13px 28px', borderRadius: 100, fontSize: 14, fontWeight: 600, textDecoration: 'none', whiteSpace: 'nowrap' }}>
-            Jetzt starten →
-          </a>
         </div>
 
       </div>

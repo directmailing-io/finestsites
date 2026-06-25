@@ -241,15 +241,7 @@ export default async function HomePage() {
 
       <HowItWorks />
 
-      {/* ══ SMARTPHONE CARD ══════════════════════════════════════════════ */}
-      <section style={{ background: '#fff', padding: '0 24px 64px' }}>
-        <div style={{ maxWidth: 1060, margin: '0 auto', borderRadius: 20, overflow: 'hidden', lineHeight: 0 }}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/mascot-mobile.png" alt="Geht auch einfach vom Handy aus." style={{ width: '100%', height: 'auto', display: 'block' }} />
-        </div>
-      </section>
-
-      {/* ══ TEMPLATES ════════════════════════════════════════════════════ */}
+{/* ══ TEMPLATES ════════════════════════════════════════════════════ */}
       <section id="templates" style={{ background: '#F9F7FF' }} className="fs-section-pad">
         <div style={{ maxWidth: 1060, margin: '0 auto' }}>
           <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 16 }}>
