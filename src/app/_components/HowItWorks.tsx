@@ -27,7 +27,8 @@ function AppSidebar({ activeIdx = 0 }: { activeIdx?: number }) {
   ]
   return (
     <div style={{ width: 44, background: '#1a2530', display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '10px 0', gap: 2, flexShrink: 0 }}>
-      <div style={{ width: 24, height: 24, background: 'rgba(255,255,255,0.15)', borderRadius: 6, marginBottom: 10 }} />
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src="/logos/logo-black.svg" alt="" style={{ width: 26, height: 'auto', display: 'block', filter: 'brightness(0) invert(1)', opacity: 0.85, marginBottom: 10 }} />
       {icons.map((icon, i) => (
         <div key={i} style={{ width: 32, height: 30, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 6, background: i === activeIdx ? 'rgba(212,197,226,0.2)' : 'transparent', color: i === activeIdx ? '#D4C5E2' : 'rgba(255,255,255,0.35)' }}>
           {icon}
@@ -172,9 +173,9 @@ function MockupPublished() {
             {/* Content above confetti */}
             <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10, width: '100%' }}>
               {/* LIVE badge */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6, background: '#16A34A', borderRadius: 100, padding: '7px 16px', boxShadow: '0 4px 14px rgba(22,163,74,0.35)' }}>
-                <div style={{ width: 7, height: 7, borderRadius: '50%', background: '#fff', flexShrink: 0 }} />
-                <span style={{ fontSize: 12, fontWeight: 800, color: '#fff', letterSpacing: '0.08em' }}>LIVE</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 5, background: '#16A34A', borderRadius: 100, padding: '4px 10px', boxShadow: '0 3px 10px rgba(22,163,74,0.3)' }}>
+                <div style={{ width: 5, height: 5, borderRadius: '50%', background: '#fff', flexShrink: 0 }} />
+                <span style={{ fontSize: 9, fontWeight: 800, color: '#fff', letterSpacing: '0.08em' }}>LIVE</span>
               </div>
               <div>
                 <div style={{ fontSize: 12, fontWeight: 700, color: '#111', textAlign: 'center', marginBottom: 3 }}>Deine Seite ist live!</div>
