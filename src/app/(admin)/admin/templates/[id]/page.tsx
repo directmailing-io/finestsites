@@ -8,7 +8,7 @@ import FormSchemaEditor from '@/components/admin/FormSchemaEditor'
 import TemplateAccessPanel from '@/components/admin/TemplateAccessPanel'
 import ImageCropModal from '@/components/ImageCropModal'
 
-type Tab = 'info' | 'preview-settings' | 'placeholders' | 'forms' | 'access'
+type Tab = 'info' | 'preview-settings' | 'placeholders' | 'forms' | 'access' | 'detail'
 
 interface DomainSetup {
   status: string
@@ -17,6 +17,14 @@ interface DomainSetup {
   fallback_host?: string
   ownership_verification?: { type: string; name: string; value: string }
   ssl_records?: Array<{ type: string; name: string; value: string }>
+}
+
+interface DetailSection {
+  id: string
+  heading: string
+  text: string
+  imageUrl: string
+  imagePosition: 'left' | 'right'
 }
 
 export default function EditTemplatePage({ params }: { params: Promise<{ id: string }> }) {
@@ -56,6 +64,8 @@ export default function EditTemplatePage({ params }: { params: Promise<{ id: str
   const [badge, setBadge] = useState<string>('')
   const [slug, setSlug] = useState<string>('')
   const [detailColor, setDetailColor] = useState<string>('#8060b0')
+  const [detailSections, setDetailSections] = useState<DetailSection[]>([])
+  const [sectionUploading, setSectionUploading] = useState<string | null>(null)
 
   useEffect(() => {
     fetch(`/api/admin/templates/${id}`)
@@ -77,6 +87,7 @@ export default function EditTemplatePage({ params }: { params: Promise<{ id: str
         setBadge(data.badge ?? '')
         setSlug(data.slug ?? '')
         setDetailColor(data.detail_color ?? '#8060b0')
+        setDetailSections(Array.isArray(data.detail_content) ? data.detail_content : [])
         setLoading(false)
       })
   }, [id])
@@ -322,6 +333,7 @@ export default function EditTemplatePage({ params }: { params: Promise<{ id: str
         badge: badge || null,
         slug: slug || null,
         detail_color: detailColor || null,
+        detail_content: detailSections,
       }),
     })
 
@@ -462,11 +474,12 @@ export default function EditTemplatePage({ params }: { params: Promise<{ id: str
       <div className="flex gap-1 p-1 rounded-[16px] mb-6"
         style={{ background: '#F3F4F6' }}>
         {([
-          { key: 'info', label: 'Webseite Informationen' },
+          { key: 'info', label: 'Informationen' },
+          { key: 'detail', label: 'Detail-Seite' },
           { key: 'placeholders', label: 'Platzhalter' },
           { key: 'forms', label: 'Formulare' },
           { key: 'access', label: isTest ? '🔒 Zugang' : 'Zugang' },
-          { key: 'preview-settings', label: 'Vorschaueinstellungen' },
+          { key: 'preview-settings', label: 'Vorschau' },
         ] as { key: Tab; label: string }[]).map(tab => (
           <button key={tab.key} onClick={() => setActiveTab(tab.key)}
             className="flex-1 py-2 text-sm font-medium rounded-[12px] transition-all"
@@ -709,6 +722,206 @@ export default function EditTemplatePage({ params }: { params: Promise<{ id: str
                 {saving ? 'Speichert...' : 'Speichern'}
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Detail-Seite Tab */}
+      {activeTab === 'detail' && (
+        <div className="flex flex-col gap-6">
+          <div className="p-6 rounded-[24px] bg-white flex flex-col gap-2"
+            style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.08)', border: '1px solid var(--border)' }}>
+            <h2 className="font-medium text-gray-900">Detail-Seite Abschnitte</h2>
+            <p className="text-xs" style={{ color: 'var(--muted-foreground)' }}>
+              Wechselnde Bild/Text-Abschnitte für die öffentliche Template-Detailseite (<code className="bg-gray-100 px-1 rounded text-[11px]">/vorlagen/{id}</code>).
+              Abschnitte wechseln automatisch die Bildseite (links/rechts).
+            </p>
+          </div>
+
+          {/* Sections list */}
+          <div className="flex flex-col gap-4">
+            {detailSections.map((section, i) => (
+              <div key={section.id} className="p-5 rounded-[20px] bg-white flex flex-col gap-4"
+                style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.08)', border: '1px solid var(--border)' }}>
+                {/* Section header */}
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-semibold px-2.5 py-1 rounded-full"
+                    style={{ background: '#F3F4F6', color: '#6B7280' }}>
+                    Abschnitt {i + 1}
+                  </span>
+                  <div className="flex items-center gap-1">
+                    {/* Move up */}
+                    <button type="button" disabled={i === 0}
+                      onClick={() => {
+                        const arr = [...detailSections]
+                        ;[arr[i - 1], arr[i]] = [arr[i], arr[i - 1]]
+                        setDetailSections(arr)
+                      }}
+                      className="p-1.5 rounded-[8px] text-gray-400 disabled:opacity-30"
+                      style={{ background: '#F9FAFB' }}>
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+                    </button>
+                    {/* Move down */}
+                    <button type="button" disabled={i === detailSections.length - 1}
+                      onClick={() => {
+                        const arr = [...detailSections]
+                        ;[arr[i], arr[i + 1]] = [arr[i + 1], arr[i]]
+                        setDetailSections(arr)
+                      }}
+                      className="p-1.5 rounded-[8px] text-gray-400 disabled:opacity-30"
+                      style={{ background: '#F9FAFB' }}>
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>
+                    </button>
+                    {/* Remove */}
+                    <button type="button"
+                      onClick={() => setDetailSections(detailSections.filter((_, j) => j !== i))}
+                      className="p-1.5 rounded-[8px] text-red-400 ml-1"
+                      style={{ background: '#FEF2F2' }}>
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Heading */}
+                <div className="flex flex-col gap-1">
+                  <label className="text-xs font-medium text-gray-600">Überschrift</label>
+                  <input
+                    type="text"
+                    value={section.heading}
+                    onChange={e => {
+                      const arr = [...detailSections]
+                      arr[i] = { ...arr[i], heading: e.target.value }
+                      setDetailSections(arr)
+                    }}
+                    placeholder="z. B. Alles bereits fertig geschrieben"
+                    style={{ background: '#FAFAFA', border: '1.5px solid #E5E7EB', borderRadius: 12, padding: '9px 12px', fontSize: 14, outline: 'none', width: '100%' }}
+                    onFocus={e => (e.target.style.borderColor = '#1a1a1a')}
+                    onBlur={e => (e.target.style.borderColor = '#E5E7EB')}
+                  />
+                </div>
+
+                {/* Text */}
+                <div className="flex flex-col gap-1">
+                  <label className="text-xs font-medium text-gray-600">Text</label>
+                  <textarea
+                    value={section.text}
+                    onChange={e => {
+                      const arr = [...detailSections]
+                      arr[i] = { ...arr[i], text: e.target.value }
+                      setDetailSections(arr)
+                    }}
+                    rows={3}
+                    placeholder="Beschreibung dieses Abschnitts…"
+                    style={{ background: '#FAFAFA', border: '1.5px solid #E5E7EB', borderRadius: 12, padding: '9px 12px', fontSize: 14, outline: 'none', width: '100%', resize: 'vertical' }}
+                    onFocus={e => (e.target.style.borderColor = '#1a1a1a')}
+                    onBlur={e => (e.target.style.borderColor = '#E5E7EB')}
+                  />
+                </div>
+
+                {/* Image URL + upload */}
+                <div className="flex flex-col gap-1">
+                  <label className="text-xs font-medium text-gray-600">Bild</label>
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={section.imageUrl}
+                      onChange={e => {
+                        const arr = [...detailSections]
+                        arr[i] = { ...arr[i], imageUrl: e.target.value }
+                        setDetailSections(arr)
+                      }}
+                      placeholder="https://… oder Bild hochladen →"
+                      style={{ background: '#FAFAFA', border: '1.5px solid #E5E7EB', borderRadius: 12, padding: '9px 12px', fontSize: 13, outline: 'none', flex: 1 }}
+                      onFocus={e => (e.target.style.borderColor = '#1a1a1a')}
+                      onBlur={e => (e.target.style.borderColor = '#E5E7EB')}
+                    />
+                    <label className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium rounded-[10px] cursor-pointer flex-shrink-0"
+                      style={{ background: '#F3F4F6', color: '#374151', border: '1px solid #E5E7EB' }}>
+                      {sectionUploading === section.id ? (
+                        <div className="w-3 h-3 rounded-full border-2 border-gray-300 border-t-gray-700 animate-spin" />
+                      ) : (
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+                      )}
+                      Hochladen
+                      <input type="file" accept="image/jpeg,image/png,image/webp" className="hidden"
+                        onChange={async e => {
+                          const file = e.target.files?.[0]
+                          if (!file) return
+                          e.target.value = ''
+                          setSectionUploading(section.id)
+                          const fd = new FormData()
+                          fd.append('file', file)
+                          const res = await fetch(`/api/admin/templates/${id}/cover`, { method: 'POST', body: fd })
+                          setSectionUploading(null)
+                          if (res.ok) {
+                            const data = await res.json()
+                            const arr = [...detailSections]
+                            arr[i] = { ...arr[i], imageUrl: data.url }
+                            setDetailSections(arr)
+                          }
+                        }}
+                      />
+                    </label>
+                  </div>
+                  {section.imageUrl && (
+                    <div className="mt-2 rounded-[10px] overflow-hidden" style={{ maxWidth: 200, border: '1px solid #E5E7EB' }}>
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={section.imageUrl} alt="" style={{ width: '100%', height: 'auto', display: 'block' }} />
+                    </div>
+                  )}
+                </div>
+
+                {/* Image position */}
+                <div className="flex flex-col gap-1">
+                  <label className="text-xs font-medium text-gray-600">Bildseite</label>
+                  <div className="flex gap-2">
+                    {(['left', 'right'] as const).map(pos => (
+                      <button key={pos} type="button"
+                        onClick={() => {
+                          const arr = [...detailSections]
+                          arr[i] = { ...arr[i], imagePosition: pos }
+                          setDetailSections(arr)
+                        }}
+                        className="flex-1 py-2 text-xs font-medium rounded-[10px] transition-all"
+                        style={{
+                          background: section.imagePosition === pos ? '#1a1a1a' : '#F3F4F6',
+                          color: section.imagePosition === pos ? '#fff' : '#6B7280',
+                        }}>
+                        {pos === 'left' ? '← Bild links' : 'Bild rechts →'}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ))}
+
+            {/* Add section button */}
+            <button type="button"
+              onClick={() => setDetailSections([...detailSections, {
+                id: crypto.randomUUID(),
+                heading: '',
+                text: '',
+                imageUrl: '',
+                imagePosition: detailSections.length % 2 === 0 ? 'left' : 'right',
+              }])}
+              className="flex items-center justify-center gap-2 py-3.5 text-sm font-medium rounded-[16px] w-full transition-all"
+              style={{ border: '2px dashed #E5E7EB', color: '#6B7280', background: 'transparent' }}
+              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = '#1a1a1a'; (e.currentTarget as HTMLElement).style.color = '#1a1a1a' }}
+              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = '#E5E7EB'; (e.currentTarget as HTMLElement).style.color = '#6B7280' }}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M12 5v14M5 12h14"/></svg>
+              Abschnitt hinzufügen
+            </button>
+          </div>
+
+          {/* Save button */}
+          <div className="flex items-center gap-3 pb-4">
+            <button type="button" onClick={() => handleSave()} disabled={saving}
+              className="px-5 py-2.5 text-sm font-medium rounded-[16px]"
+              style={{ background: '#1a1a1a', color: 'white' }}>
+              {saving ? 'Speichert...' : 'Abschnitte speichern'}
+            </button>
+            {success && <span className="text-sm text-green-600">✓ {success}</span>}
+            {error && <span className="text-sm text-red-600">{error}</span>}
           </div>
         </div>
       )}
