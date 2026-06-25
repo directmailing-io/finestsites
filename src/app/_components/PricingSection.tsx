@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 
 const PLANS = [
   {
@@ -51,20 +51,17 @@ const COMMON_FEATURES = [
   'Deine eigene Webadresse',
 ]
 
+function getRefCode(): string | null {
+  if (typeof window === 'undefined') return null
+  const stored = sessionStorage.getItem('fs_ref')
+  if (stored) return stored
+  return new URLSearchParams(window.location.search).get('ref')
+}
+
 export default function PricingSection() {
   const [yearly, setYearly] = useState(false)
-  const [refCode, setRefCode] = useState<string | null>(null)
-
-  // Read ?ref= from sessionStorage (set by the URL param persistence layer)
-  // or directly from URL on first load.
-  useEffect(() => {
-    if (typeof window === 'undefined') return
-    const stored = sessionStorage.getItem('fs_ref')
-    if (stored) { setRefCode(stored); return }
-    const params = new URLSearchParams(window.location.search)
-    const ref = params.get('ref')
-    if (ref) setRefCode(ref)
-  }, [])
+  // Lazy initializer — runs once on mount, no extra render, no ESLint warning
+  const [refCode] = useState<string | null>(getRefCode)
 
   const DISCOUNT = 0.20 // 20 % affiliate discount
 
