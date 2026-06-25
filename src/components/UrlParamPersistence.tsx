@@ -25,6 +25,21 @@ const UTM_PARAMS = [
   ['utm_content',  'fs_utm_content'],
 ] as const
 
+/** Appends ?ref=<code> to all register links on the page that don't already have it. */
+function patchRegisterLinks(ref: string) {
+  document
+    .querySelectorAll<HTMLAnchorElement>('a[href*="app.finestsites.io/register"]')
+    .forEach(a => {
+      try {
+        const url = new URL(a.href)
+        if (!url.searchParams.has('ref')) {
+          url.searchParams.set('ref', ref)
+          a.href = url.toString()
+        }
+      } catch { /* ignore malformed hrefs */ }
+    })
+}
+
 export default function UrlParamPersistence() {
   useEffect(() => {
     if (typeof window === 'undefined') return
@@ -36,16 +51,25 @@ export default function UrlParamPersistence() {
       if (val) sessionStorage.setItem(key, val)
     }
 
-    // ref param — must be validated against DB before storing.
-    // We skip storing if the code is unknown, so invalid codes never trigger discounts.
-    // The homepage validates server-side (PricingSection gets validatedRef prop),
-    // so this path mainly covers direct navigation to non-homepage URLs with ?ref=.
-    const ref = params.get('ref')?.trim()
-    if (ref && !sessionStorage.getItem('fs_ref')) {
-      // Only validate if not already stored (avoid unnecessary API calls on every navigation)
-      fetch(`/api/affiliate/validate?code=${encodeURIComponent(ref)}`)
-        .then(r => { if (r.ok) sessionStorage.setItem('fs_ref', ref) })
-        .catch(() => { /* silently ignore — no discount on error */ })
+    // ref param — validate against DB before storing so invalid codes never trigger discounts.
+    // The homepage already validates server-side (PricingSection gets validatedRef prop directly).
+    // This path handles direct navigation to any other page with ?ref= in the URL.
+    const urlRef = params.get('ref')?.trim()
+    const storedRef = sessionStorage.getItem('fs_ref')
+
+    if (storedRef) {
+      // Already validated in this session — patch links immediately
+      patchRegisterLinks(storedRef)
+    } else if (urlRef) {
+      // New ref from URL — validate before storing or patching
+      fetch(`/api/affiliate/validate?code=${encodeURIComponent(urlRef)}`)
+        .then(r => {
+          if (r.ok) {
+            sessionStorage.setItem('fs_ref', urlRef)
+            patchRegisterLinks(urlRef)
+          }
+        })
+        .catch(() => { /* silently ignore — invalid/unknown codes get no discount */ })
     }
   }, [])
 

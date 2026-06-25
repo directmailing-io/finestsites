@@ -15,8 +15,10 @@ export default function TemplateStartCTA({ templateId, templateTitle, light }: P
     setLoading(true)
     // Store intent cookie on current domain (7 days)
     document.cookie = `fs_template_intent=${templateId}; path=/; max-age=604800; SameSite=Lax`
-    // Redirect to app with template params
-    window.location.href = `https://app.finestsites.io/register?template=${templateId}&tname=${encodeURIComponent(templateTitle)}`
+    // Carry validated ref from sessionStorage into the cross-domain redirect
+    const ref = sessionStorage.getItem('fs_ref')
+    const refParam = ref ? `&ref=${encodeURIComponent(ref)}` : ''
+    window.location.href = `https://app.finestsites.io/register?template=${templateId}&tname=${encodeURIComponent(templateTitle)}${refParam}`
   }
 
   const bg = loading
