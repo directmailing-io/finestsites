@@ -4,17 +4,18 @@
  * Routes:
  *   GET  /                          → render index.html with placeholder replacement
  *   GET  /path/to/asset.css         → serve static asset from R2
- *   POST /.finestsites/forms/{name} → save form submission to Supabase → redirect/JSON
+ *   POST /.finestsites/forms/{name} → save form submission via app API → redirect/JSON
  *   GET  /.finestsites/health       → health check
+ *
+ * All database lookups go through the FinestSites app API (APP_URL) — not Supabase.
  */
 
 export interface Env {
   R2_BUCKET: R2Bucket
-  SUPABASE_URL: string
-  SUPABASE_SERVICE_KEY: string
+  WORKER_SECRET: string  // shared secret for authenticating KV admin calls from the app
   KV_CACHE: KVNamespace
   RESEND_API_KEY: string
-  APP_URL: string  // e.g. https://app.finestsites.com — for notification links
+  APP_URL: string  // e.g. https://app.finestsites.io
 }
 
 // ─── Content-Type Map ─────────────────────────────────────────────────────────
@@ -225,22 +226,18 @@ async function getSiteMeta(username: string, domain: string, env: Env): Promise<
     try { return JSON.parse(cached) as SiteMeta } catch { /* stale/corrupt cache, fall through */ }
   }
 
+  // Fetch from the FinestSites app API (PostgreSQL-backed)
   const res = await fetch(
-    `${env.SUPABASE_URL}/rest/v1/user_sites?select=id,templates(id,r2_bundle_path,domain),users(username)&status=eq.published&limit=200`,
-    { headers: { apikey: env.SUPABASE_SERVICE_KEY, Authorization: `Bearer ${env.SUPABASE_SERVICE_KEY}` } }
+    `${env.APP_URL}/api/worker/site-meta?username=${encodeURIComponent(username)}&domain=${encodeURIComponent(domain)}`,
+    { headers: { 'x-worker-secret': env.WORKER_SECRET } }
   )
   if (!res.ok) return null
 
-  const sites = await res.json() as any[]
-  const site = sites.find((s: any) => s.users?.username === username && s.templates?.domain === domain)
-  if (!site?.templates?.r2_bundle_path) return null
+  const meta = await res.json() as SiteMeta
+  if (!meta.r2BasePath) return null
 
-  const meta: SiteMeta = {
-    siteId: site.id,
-    templateId: site.templates.id,
-    r2BasePath: site.templates.r2_bundle_path.replace('/index.html', ''),
-  }
-  await env.KV_CACHE.put(cacheKey, JSON.stringify(meta))
+  // Cache for 60 seconds so repeated requests are fast
+  await env.KV_CACHE.put(cacheKey, JSON.stringify(meta), { expirationTtl: 60 })
   return meta
 }
 
@@ -248,7 +245,7 @@ async function getSiteMeta(username: string, domain: string, env: Env): Promise<
 
 async function handleKvAdmin(request: Request, username: string, domain: string, env: Env): Promise<Response> {
   const auth = request.headers.get('Authorization') ?? ''
-  if (auth !== `Bearer ${env.SUPABASE_SERVICE_KEY}`) {
+  if (auth !== `Bearer ${env.WORKER_SECRET}`) {
     return new Response('Unauthorized', { status: 401 })
   }
 
@@ -295,22 +292,16 @@ async function sendSubmissionEmail(
   if (!env.RESEND_API_KEY) return
 
   try {
-    // Load user email + form schema in parallel.
-    // User email is the FALLBACK if the form's _recipient field is empty/invalid.
-    const [siteRes, schemaRes] = await Promise.all([
-      fetch(
-        `${env.SUPABASE_URL}/rest/v1/user_sites?id=eq.${meta.siteId}&select=user_id,users!inner(email)&limit=1`,
-        { headers: { apikey: env.SUPABASE_SERVICE_KEY, Authorization: `Bearer ${env.SUPABASE_SERVICE_KEY}` } }
-      ),
-      fetch(
-        `${env.SUPABASE_URL}/rest/v1/form_schemas?template_id=eq.${meta.templateId}&form_name=eq.${formName}&select=title,fields,email_notification_enabled&limit=1`,
-        { headers: { apikey: env.SUPABASE_SERVICE_KEY, Authorization: `Bearer ${env.SUPABASE_SERVICE_KEY}` } }
-      ),
-    ])
+    // Load user email + form schema from the FinestSites app API
+    const infoRes = await fetch(
+      `${env.APP_URL}/api/worker/site-info?siteId=${meta.siteId}&templateId=${meta.templateId}&formName=${encodeURIComponent(formName)}`,
+      { headers: { 'x-worker-secret': env.WORKER_SECRET } }
+    )
+    if (!infoRes.ok) return
+    const info = await infoRes.json() as { userEmail: string | null; formSchema: { title: string; fields: Array<{key:string;label:string}>; email_notification_enabled: boolean } | null }
 
-    if (!siteRes.ok) return
-    const sites = await siteRes.json() as Array<{ user_id: string; users: { email: string } }>
-    const accountEmail = sites[0]?.users?.email
+    const accountEmail = info.userEmail
+    const schema = info.formSchema
 
     // Prefer the form's _recipient (per-template config like {{email_benachrichtigung}})
     // when it's a valid email; otherwise fall back to the account email.
@@ -319,9 +310,6 @@ async function sendSubmissionEmail(
       ? formRecipient.trim()
       : accountEmail
     if (!recipient) return
-
-    const schemas = schemaRes.ok ? await schemaRes.json() as Array<{ title: string; fields: Array<{key:string;label:string}>; email_notification_enabled: boolean }> : []
-    const schema = schemas[0]
 
     if (schema && !schema.email_notification_enabled) return
 
@@ -412,21 +400,19 @@ async function handleFormSubmission(request: Request, pathname: string, meta: Si
 
   const ipHash = ip ? await hashIP(ip) : null
 
-  // Save to Supabase
-  const saveRes = await fetch(`${env.SUPABASE_URL}/rest/v1/form_submissions`, {
+  // Save to our PostgreSQL via the app API
+  const saveRes = await fetch(`${env.APP_URL}/api/worker/submit`, {
     method: 'POST',
     headers: {
-      apikey: env.SUPABASE_SERVICE_KEY,
-      Authorization: `Bearer ${env.SUPABASE_SERVICE_KEY}`,
       'Content-Type': 'application/json',
-      Prefer: 'return=representation',
+      'x-worker-secret': env.WORKER_SECRET,
     },
     body: JSON.stringify({
-      user_site_id: meta.siteId,
-      form_name: formName,
+      userSiteId: meta.siteId,
+      formName,
       data: formData,
-      submitter_ip_hash: ipHash,
-      is_spam: honeypot,
+      submitterIpHash: ipHash,
+      isSpam: honeypot,
     }),
   })
 
@@ -604,12 +590,12 @@ export default {
       const templateHtml = await r2Object.text()
 
       const dataRes = await fetch(
-        `${env.SUPABASE_URL}/rest/v1/site_data?user_site_id=eq.${meta.siteId}&select=field_key,field_value`,
-        { headers: { apikey: env.SUPABASE_SERVICE_KEY, Authorization: `Bearer ${env.SUPABASE_SERVICE_KEY}` } }
+        `${env.APP_URL}/api/worker/site-data?siteId=${meta.siteId}`,
+        { headers: { 'x-worker-secret': env.WORKER_SECRET } }
       )
-      const rows = dataRes.ok ? await dataRes.json() as { field_key: string; field_value: string }[] : []
+      const rows = dataRes.ok ? await dataRes.json() as { fieldKey: string; fieldValue: string | null }[] : []
       const dataMap: Data = {}
-      for (const r of rows) dataMap[r.field_key] = r.field_value ?? ''
+      for (const r of rows) dataMap[r.fieldKey] = r.fieldValue ?? ''
 
       const renderedHtml = render(templateHtml, dataMap)
       await env.KV_CACHE.put(renderCacheKey, renderedHtml, { expirationTtl: 60 })

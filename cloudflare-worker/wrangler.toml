@@ -40,4 +40,4 @@ binding = "KV_CACHE"
 id = "d59a4cba067147dc8db48fdd7b4d39e3"
 
 [vars]
-SUPABASE_URL = "https://blgxussxxziglevezzrk.supabase.co"
+APP_URL = "https://app.finestsites.io"
