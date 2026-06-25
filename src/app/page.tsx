@@ -151,6 +151,8 @@ export default async function HomePage() {
           }
 
           .fs-pricing-mascot { display: none !important; }
+          .fs-mobile-text { width: 100% !important; padding: 52px 22px !important; }
+          .fs-mascot-mobile-img { display: none !important; }
           .fs-footer-dark { padding: 48px 22px 0; }
           .fs-footer-grid { grid-template-columns: 1fr; gap: 36px; padding-bottom: 40px; }
           .fs-footer-bottom { flex-direction: column; align-items: flex-start; gap: 12px; }
@@ -240,6 +242,69 @@ export default async function HomePage() {
       </section>
 
       <HowItWorks />
+
+      {/* ══ SMARTPHONE SECTION ═══════════════════════════════════════════ */}
+      <section style={{ background: '#111', overflow: 'hidden', position: 'relative' }}>
+        <div style={{
+          maxWidth: 1200,
+          margin: '0 auto',
+          display: 'flex',
+          alignItems: 'center',
+          minHeight: 420,
+          position: 'relative',
+        }}>
+          {/* Text */}
+          <div style={{ flex: '0 0 auto', width: '48%', padding: '72px 0 72px 48px', position: 'relative', zIndex: 2 }} className="fs-mobile-text">
+            <p style={{ fontSize: 11, fontWeight: 700, color: '#8060b0', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 20 }}>
+              Kein PC nötig
+            </p>
+            <h2 style={{
+              fontFamily: '"Plein", sans-serif',
+              fontSize: 'clamp(30px, 3.2vw, 48px)',
+              fontWeight: 400,
+              color: '#fff',
+              lineHeight: 1.1,
+              letterSpacing: '-0.025em',
+              marginBottom: 24,
+            }}>
+              Vom Sofa aus.<br />In 5 Minuten live.
+            </h2>
+            <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.6)', lineHeight: 1.8, maxWidth: 380, marginBottom: 36 }}>
+              FinestSites läuft komplett im Browser — auf dem iPhone, Android oder Tablet. Kein Laptop, kein Einrichten, kein Herumtüfteln. Einfach öffnen, ausfüllen, fertig.
+            </p>
+            <a href="https://app.finestsites.io/register" style={{
+              display: 'inline-block',
+              background: '#fff',
+              color: '#111',
+              fontSize: 14,
+              fontWeight: 600,
+              padding: '13px 28px',
+              borderRadius: 100,
+              textDecoration: 'none',
+            }}>
+              Jetzt ausprobieren →
+            </a>
+          </div>
+
+          {/* Image — positioned to the right, slightly overflowing bottom */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/mascot-mobile.png"
+            alt=""
+            style={{
+              position: 'absolute',
+              right: -40,
+              bottom: 0,
+              height: '115%',
+              width: 'auto',
+              objectFit: 'contain',
+              objectPosition: 'right bottom',
+              pointerEvents: 'none',
+            }}
+            className="fs-mascot-mobile-img"
+          />
+        </div>
+      </section>
 
       {/* ══ TEMPLATES ════════════════════════════════════════════════════ */}
       <section id="templates" style={{ background: '#F9F7FF' }} className="fs-section-pad">
