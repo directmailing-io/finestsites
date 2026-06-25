@@ -118,39 +118,30 @@ function MockupEditor() {
           </div>
           <div style={{ marginTop: 'auto', background: '#111', color: '#fff', borderRadius: 20, padding: '6px 14px', fontSize: 9, fontWeight: 600, display: 'inline-block', alignSelf: 'flex-start' }}>Weiter →</div>
         </div>
-        {/* Live preview with selected theme colors */}
-        <div style={{ width: 110, background: '#f5f3f0', borderLeft: '1px solid #eee', padding: '10px 8px', flexShrink: 0, overflow: 'hidden' }}>
-          <div style={{ fontSize: 7, fontWeight: 700, color: '#aaa', letterSpacing: '0.08em', marginBottom: 8 }}>VORSCHAU</div>
-          <div style={{ background: '#fff', borderRadius: 8, overflow: 'hidden', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
-            <div style={{ height: 30, background: `linear-gradient(135deg, ${themes[sel].hero}, ${themes[sel].btn})` }} />
-            <div style={{ padding: '6px 7px' }}>
-              <div style={{ fontSize: 8, fontWeight: 700, color: '#111', marginBottom: 2 }}>Sandra Müller</div>
-              <div style={{ fontSize: 7, color: '#777', marginBottom: 6 }}>+49 151 2349 0012</div>
-              <div style={{ height: 16, background: themes[sel].hero, borderRadius: 3, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <span style={{ fontSize: 6, color: '#fff', fontWeight: 700 }}>Kontakt aufnehmen</span>
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   )
 }
 
 /* ── Mockup 3: Live schalten — mit Konfetti ── */
-const CONFETTI = [
-  { x: 12, y: 8,  c: '#8060b0', w: 5, h: 9,  r: -22, d: 0    },
-  { x: 82, y: 12, c: '#EA580C', w: 7, h: 4,  r:  48, d: 0.12 },
-  { x: 48, y: 5,  c: '#16A34A', w: 5, h: 5,  r:  12, d: 0.24 },
-  { x: 72, y: 28, c: '#2563EB', w: 4, h: 10, r: -50, d: 0.07 },
-  { x: 22, y: 62, c: '#D4C5E2', w: 7, h: 4,  r:  32, d: 0.35 },
-  { x: 91, y: 55, c: '#FEBC2E', w: 4, h: 8,  r: -14, d: 0.06 },
-  { x: 58, y: 72, c: '#FF5F57', w: 6, h: 5,  r:  65, d: 0.28 },
-  { x: 32, y: 82, c: '#8060b0', w: 4, h: 9,  r:  20, d: 0.42 },
-  { x: 78, y: 78, c: '#16A34A', w: 7, h: 4,  r: -30, d: 0.18 },
-  { x: 8,  y: 44, c: '#FEBC2E', w: 4, h: 7,  r:  16, d: 0.38 },
-  { x: 63, y: 38, c: '#EA580C', w: 6, h: 4,  r: -62, d: 0.09 },
-  { x: 95, y: 22, c: '#2563EB', w: 4, h: 9,  r:  42, d: 0.21 },
+// br: borderRadius — string = circle ('50%'), number = px
+const CONFETTI: { x:number; y:number; c:string; w:number; h:number; r:number; d:number; br: string|number }[] = [
+  { x: 7,  y: 4,  c: '#8060b0', w: 5, h: 11, r: -22, d: 0,    br: 2 },
+  { x: 22, y: 2,  c: '#FEBC2E', w: 8, h: 8,  r:   0, d: 0.3,  br: '50%' },
+  { x: 38, y: 5,  c: '#FF5F57', w: 5, h: 5,  r:  45, d: 0.15, br: 1 },
+  { x: 55, y: 3,  c: '#16A34A', w: 6, h: 11, r: -35, d: 0.08, br: 2 },
+  { x: 72, y: 6,  c: '#2563EB', w: 7, h: 7,  r:  20, d: 0.22, br: '50%' },
+  { x: 87, y: 4,  c: '#EA580C', w: 5, h: 10, r:  55, d: 0.4,  br: 2 },
+  { x: 94, y: 18, c: '#8060b0', w: 7, h: 4,  r: -15, d: 0.12, br: 1 },
+  { x: 4,  y: 30, c: '#FEBC2E', w: 5, h: 9,  r:  18, d: 0.5,  br: 2 },
+  { x: 96, y: 42, c: '#FF5F57', w: 6, h: 6,  r:  60, d: 0.35, br: '50%' },
+  { x: 3,  y: 55, c: '#16A34A', w: 4, h: 9,  r: -40, d: 0.18, br: 2 },
+  { x: 93, y: 60, c: '#2563EB', w: 7, h: 4,  r:  30, d: 0.06, br: 1 },
+  { x: 10, y: 72, c: '#EA580C', w: 5, h: 5,  r: -55, d: 0.42, br: '50%' },
+  { x: 88, y: 75, c: '#8060b0', w: 4, h: 10, r:  40, d: 0.28, br: 2 },
+  { x: 28, y: 82, c: '#FEBC2E', w: 7, h: 4,  r: -20, d: 0.2,  br: 1 },
+  { x: 62, y: 80, c: '#FF5F57', w: 5, h: 8,  r:  35, d: 0.45, br: 2 },
+  { x: 48, y: 88, c: '#16A34A', w: 8, h: 8,  r:   0, d: 0.1,  br: '50%' },
 ]
 
 function MockupPublished() {
@@ -169,18 +160,17 @@ function MockupPublished() {
           {CONFETTI.map((c, i) => (
             <div key={i} style={{
               position: 'absolute', left: `${c.x}%`, top: `${c.y}%`,
-              width: c.w, height: c.h, background: c.c, borderRadius: 1,
-              '--r0': `${c.r}deg`, '--r1': `${c.r + 200}deg`,
-              animation: `fs-conf 2.2s ease-in ${c.d}s infinite`,
+              width: c.w, height: c.h, background: c.c,
+              borderRadius: typeof c.br === 'string' ? c.br : c.br,
+              '--r0': `${c.r}deg`, '--r1': `${c.r + 220}deg`,
+              animation: `fs-conf ${1.8 + (i % 3) * 0.4}s ease-in ${c.d}s infinite`,
               zIndex: 1,
             } as React.CSSProperties} />
           ))}
           <AppSidebar activeIdx={1} />
           <div style={{ flex: 1, background: '#fff', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 16, gap: 10, position: 'relative', zIndex: 2 }}>
-            {/* Success badge */}
-            <div style={{ width: 48, height: 48, background: '#edfaed', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px solid #C8D8B8' }}>
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#16A34A" strokeWidth="2.5" strokeLinecap="round"><polyline points="20 6 9 17 4 12" /></svg>
-            </div>
+            {/* Celebration icon */}
+            <div style={{ fontSize: 44, lineHeight: 1 }}>🎉</div>
             <div>
               <div style={{ fontSize: 12, fontWeight: 700, color: '#111', textAlign: 'center', marginBottom: 3 }}>Deine Seite ist live!</div>
               <div style={{ fontSize: 9, color: '#888', textAlign: 'center' }}>Sie läuft jetzt rund um die Uhr</div>
@@ -219,39 +209,36 @@ const STEPS = [
   {
     num: '01',
     title: 'Vorlage wählen',
-    label: 'Wählen',
-    text: 'Nicht irgendeine. Jede Vorlage folgt einer klaren Strategie, die Besucher dazu bringt, sich bei dir zu melden. Texte, Struktur und Design sind bereits fertig und rechtlich geprüft. Du wählst einfach die, die zu deinem Produkt passt.',
+    text: 'Es gibt fertige Vorlagen für dein Unternehmen. FitLine, QNET, Herbalife und viele mehr. Texte, Design und Struktur sind bereits drin. Du klickst einmal auf die passende, fertig.',
     visual: <MockupTemplateSelect />,
   },
   {
     num: '02',
-    title: 'Anpassen',
-    label: 'Anpassen',
-    text: 'Dein Name, deine Nummer, dein Foto. Optional ein Erfahrungsbericht oder ein Produktbild. Du füllst ein paar Felder aus und siehst live, wie deine Seite aussieht. Kein Designer, keine Agentur, kein Stress.',
+    title: 'Ein paar Klicks',
+    text: 'Kein Designer. Kein Canva. Kein leeres Word-Dokument. Du gibst deinen Namen, deine Nummer und vielleicht ein Foto ein. Das ist buchstäblich alles. Drei Minuten, dann bist du durch.',
     visual: <MockupEditor />,
   },
   {
     num: '03',
-    title: 'Live schalten',
-    label: 'Live',
-    text: 'Ein Klick, deine Seite ist online. Mit einer eigenen Webadresse. Ab jetzt läuft sie rund um die Uhr, bringt dir Anfragen und stellt sich selbst vor. Du schläfst. Die Seite arbeitet.',
+    title: 'Teilen & wachsen',
+    text: 'Ein Klick und die Seite ist live. Den Link teilst du in der Story, auf dem Flyer oder im Chat. Ab jetzt erklärt sie dein Angebot, sammelt Anfragen und schläft nie.',
     visual: <MockupPublished />,
   },
 ]
 
 export default function HowItWorks() {
   return (
-    <section id="wie-es-geht" style={{ background: '#fff' }} className="fs-section-pad">
+    <section id="wie-es-geht" style={{ background: 'radial-gradient(ellipse 110% 55% at 50% 0%, rgba(128,96,176,0.07) 0%, #fff 65%)' }} className="fs-section-pad">
       <div style={{ maxWidth: 1060, margin: '0 auto' }}>
 
         {/* Header */}
         <div style={{ textAlign: 'center', marginBottom: 64 }}>
           <p style={{ fontSize: 11, fontWeight: 700, color: '#8060b0', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 14 }}>So funktioniert&apos;s</p>
           <h2 style={{ fontFamily: '"Plein", sans-serif', fontSize: 'clamp(28px, 3.8vw, 48px)', fontWeight: 400, color: '#111', letterSpacing: '-0.022em', lineHeight: 1.12, marginBottom: 20 }}>
-            In 3 Schritten online.<br />Wirklich.
+            Kein Design. Kein Code.<br />Kein Stress.
           </h2>
           <p style={{ fontSize: 16, color: '#666', lineHeight: 1.7, maxWidth: 520, margin: '0 auto' }}>
-            Diese Seiten wurden nicht einfach schön gemacht. Sie wurden so aufgebaut, dass aus Besuchern echte Anfragen werden. Kein Nachfassen, kein Kalt-Anschreiben.
+            Du musst kein kreativer Mensch sein. Kein Marketer, kein Webdesigner, nichts. Drei Schritte und du bist fertig.
           </p>
         </div>
 
@@ -286,8 +273,8 @@ export default function HowItWorks() {
         {/* CTA strip */}
         <div style={{ marginTop: 56, background: '#F5F0FB', border: '1px solid #D4C5E2', borderRadius: 20, padding: '28px 36px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 20 }}>
           <div>
-            <p style={{ fontSize: 15, fontWeight: 700, color: '#111', marginBottom: 4 }}>Bereit? Das dauert keine 5 Minuten.</p>
-            <p style={{ fontSize: 13, color: '#888' }}>Keine Kreditkarte, keine Technik, kein Designer nötig.</p>
+            <p style={{ fontSize: 15, fontWeight: 700, color: '#111', marginBottom: 4 }}>Probier&apos;s einfach aus. Es dauert keine 5 Minuten.</p>
+            <p style={{ fontSize: 13, color: '#888' }}>Keine Kreditkarte, keine Technik, kein Vorwissen nötig.</p>
           </div>
           <a href="https://app.finestsites.io/register" style={{ background: '#111', color: '#fff', padding: '13px 28px', borderRadius: 100, fontSize: 14, fontWeight: 600, textDecoration: 'none', whiteSpace: 'nowrap' }}>
             Jetzt starten →
