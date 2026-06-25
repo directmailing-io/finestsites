@@ -243,26 +243,9 @@ export default async function HomePage() {
 
       {/* ══ SMARTPHONE CARD ══════════════════════════════════════════════ */}
       <section style={{ background: '#fff', padding: '0 24px 64px' }}>
-        <div style={{ maxWidth: 980, margin: '0 auto', borderRadius: 24, overflow: 'hidden', position: 'relative', minHeight: 260 }}>
-          {/* Background image */}
+        <div style={{ maxWidth: 980, margin: '0 auto', borderRadius: 24, overflow: 'hidden', lineHeight: 0 }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/mascot-mobile.png" alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 30%' }} />
-          {/* Gradient overlay — dark on left, transparent right */}
-          <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to right, rgba(10,10,10,0.82) 0%, rgba(10,10,10,0.55) 45%, rgba(10,10,10,0.05) 75%, transparent 100%)' }} />
-          {/* Text */}
-          <div style={{ position: 'relative', zIndex: 1, padding: '52px 52px 52px 52px', maxWidth: 500 }}>
-            <p style={{ fontSize: 11, fontWeight: 700, color: 'rgba(255,255,255,0.5)', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 16 }}>Kein PC nötig</p>
-            <h2 style={{
-              fontFamily: '"Plein", sans-serif',
-              fontSize: 'clamp(28px, 3vw, 44px)',
-              fontWeight: 400,
-              color: '#fff',
-              lineHeight: 1.1,
-              letterSpacing: '-0.025em',
-            }}>
-              Geht auch einfach<br />vom Handy aus.
-            </h2>
-          </div>
+          <img src="/mascot-mobile.png" alt="Geht auch einfach vom Handy aus." style={{ width: '100%', height: 'auto', display: 'block' }} />
         </div>
       </section>
 
