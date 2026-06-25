@@ -53,6 +53,9 @@ export default function EditTemplatePage({ params }: { params: Promise<{ id: str
   const [importMode, setImportMode] = useState<'replace' | 'merge'>('merge')
   const [isTest, setIsTest] = useState(false)
   const [isFree, setIsFree] = useState(false)
+  const [badge, setBadge] = useState<string>('')
+  const [slug, setSlug] = useState<string>('')
+  const [detailColor, setDetailColor] = useState<string>('#8060b0')
 
   useEffect(() => {
     fetch(`/api/admin/templates/${id}`)
@@ -71,6 +74,9 @@ export default function EditTemplatePage({ params }: { params: Promise<{ id: str
         setCoverImage(data.preview_images?.[0] ?? null)
         setIsTest(data.is_test ?? false)
         setIsFree(data.is_free ?? false)
+        setBadge(data.badge ?? '')
+        setSlug(data.slug ?? '')
+        setDetailColor(data.detail_color ?? '#8060b0')
         setLoading(false)
       })
   }, [id])
@@ -313,6 +319,9 @@ export default function EditTemplatePage({ params }: { params: Promise<{ id: str
         tags,
         is_test: isTest,
         is_free: isFree,
+        badge: badge || null,
+        slug: slug || null,
+        detail_color: detailColor || null,
       }),
     })
 
@@ -795,18 +804,18 @@ export default function EditTemplatePage({ params }: { params: Promise<{ id: str
                 onKeyDown={e => {
                   if ((e.key === 'Enter' || e.key === ',') && tagInput.trim()) {
                     e.preventDefault()
-                    const newTag = tagInput.trim().toLowerCase()
+                    const newTag = tagInput.trim()
                     if (!tags.includes(newTag)) setTags([...tags, newTag])
                     setTagInput('')
                   }
                 }}
-                placeholder="Tag eingeben + Enter"
+                placeholder="z. B. PM-International + Enter"
                 style={{ ...inputStyle, flex: 1 }}
                 onFocus={e => (e.target.style.borderColor = '#1a1a1a')}
                 onBlur={e => (e.target.style.borderColor = '#E5E7EB')}
               />
               <button type="button" onClick={() => {
-                const newTag = tagInput.trim().toLowerCase()
+                const newTag = tagInput.trim()
                 if (newTag && !tags.includes(newTag)) setTags([...tags, newTag])
                 setTagInput('')
               }}
@@ -887,6 +896,38 @@ export default function EditTemplatePage({ params }: { params: Promise<{ id: str
                 <span className="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow-sm transition-transform duration-200"
                   style={{ transform: isFree ? 'translateX(20px)' : 'translateX(0)' }} />
               </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Marketing fields */}
+        <div className="p-6 rounded-[24px] bg-white flex flex-col gap-4"
+          style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.08)', border: '1px solid var(--border)' }}>
+          <h2 className="font-medium text-gray-900">Marketing</h2>
+          <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-1">
+              <label className="text-sm font-medium text-gray-700">Badge</label>
+              <select value={badge} onChange={e => setBadge(e.target.value)}
+                className="text-sm rounded-[10px] border px-3 py-2" style={{ borderColor: 'var(--border)' }}>
+                <option value="">Kein Badge</option>
+                <option value="brandneu">Brandneu</option>
+                <option value="beliebt">Sehr beliebt</option>
+              </select>
+            </div>
+            <div className="flex flex-col gap-1">
+              <label className="text-sm font-medium text-gray-700">Slug (URL)</label>
+              <input type="text" value={slug} onChange={e => setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '-'))}
+                placeholder="z. B. fitline-landing-page" className="text-sm rounded-[10px] border px-3 py-2" style={{ borderColor: 'var(--border)' }} />
+              <p className="text-xs text-gray-400">Wird als /vorlagen/{slug || 'id'} aufgerufen</p>
+            </div>
+            <div className="flex flex-col gap-1">
+              <label className="text-sm font-medium text-gray-700">Akzentfarbe (Detail-Seite)</label>
+              <div className="flex items-center gap-2">
+                <input type="color" value={detailColor} onChange={e => setDetailColor(e.target.value)}
+                  style={{ width: 40, height: 36, borderRadius: 8, border: '1px solid var(--border)', cursor: 'pointer', padding: 2 }} />
+                <input type="text" value={detailColor} onChange={e => setDetailColor(e.target.value)}
+                  className="text-sm rounded-[10px] border px-3 py-2 w-32" style={{ borderColor: 'var(--border)' }} />
+              </div>
             </div>
           </div>
         </div>

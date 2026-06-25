@@ -6,6 +6,7 @@ import PricingSection from './_components/PricingSection'
 import FeatureCardsAnimated from './_components/FeatureCardsAnimated'
 import NavBar from './_components/NavBar'
 import HowItWorks from './_components/HowItWorks'
+import TemplateGridSection, { type TemplateCardData } from './_components/TemplateGridSection'
 
 export const dynamic = 'force-dynamic'
 
@@ -14,25 +15,25 @@ export const metadata: Metadata = {
   description: 'Professionelle Produktwebsite für Network-Marketing-Profis. In unter 5 Minuten live. Keine Technik, keine Agentur.',
 }
 
-const PASTEL_COLORS = ['#D4C5E2', '#B8CCDB', '#EDCBA8', '#C8D8B8', '#F2C5C5', '#C5DFE0', '#EAD4B5', '#C5D4F2']
-
-
 export default async function HomePage() {
-  // Fetch real published templates from DB
-  let templateList: { id: string; title: string; description: string | null; domain: string; isFree: boolean; previewImages: unknown }[] = []
+  // Fetch published templates with new marketing fields
+  let templateList: TemplateCardData[] = []
   try {
-    templateList = await db
+    const rows = await db
       .select({
         id: templates.id,
         title: templates.title,
         description: templates.description,
         domain: templates.domain,
         isFree: templates.isFree,
+        badge: templates.badge,
+        tags: templates.tags,
         previewImages: templates.previewImages,
       })
       .from(templates)
       .where(and(eq(templates.status, 'published'), eq(templates.isTest, false)))
       .orderBy(templates.createdAt)
+    templateList = rows.map(r => ({ ...r, tags: (r.tags as string[] | null) ?? [] }))
     console.log('[HomePage] templates fetched:', templateList.length)
   } catch (err) {
     console.error('[HomePage] templates fetch error:', err)
@@ -72,7 +73,7 @@ export default async function HomePage() {
         .fs-section-pad { padding: 96px 7vw; }
         .fs-was-ist-inner { max-width: 1060px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 72px; align-items: center; }
         .fs-feature-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-        .fs-template-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        .fs-template-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
         .fs-pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
         .fs-pricing-banner-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; align-items: stretch; }
         /* ── Hero mobile image ───────────────────────────── */
@@ -136,7 +137,8 @@ export default async function HomePage() {
           .fs-section-pad { padding: 52px 22px; }
           .fs-was-ist-inner { grid-template-columns: 1fr; gap: 36px; }
           .fs-feature-grid { gap: 10px; }
-          .fs-template-grid { grid-template-columns: 1fr; }
+          .fs-template-grid { grid-template-columns: 1fr 1fr; gap: 14px; }
+          .fs-template-grid > * { min-width: 0; }
           .fs-pricing-grid { max-width: 100%; }
           .fs-how-grid { grid-template-columns: 1fr; gap: 48px; }
           .fs-how-connector { display: none; }
@@ -159,6 +161,7 @@ export default async function HomePage() {
         /* ── Small mobile (< 480 px) ─────────────────────── */
         @media (max-width: 479px) {
           .fs-feature-grid { grid-template-columns: 1fr; }
+          .fs-template-grid { grid-template-columns: 1fr; }
         }
       `}</style>
 
@@ -243,56 +246,25 @@ export default async function HomePage() {
 
 {/* ══ TEMPLATES ════════════════════════════════════════════════════ */}
       <section id="templates" style={{ background: '#F9F7FF' }} className="fs-section-pad">
-        <div style={{ maxWidth: 1060, margin: '0 auto' }}>
-          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 16 }}>
-            <img src="/mascot.png" alt="" style={{ height: 135, width: 'auto', display: 'block' }} />
+        <div style={{ maxWidth: 1200, margin: '0 auto' }}>
+          {/* Header */}
+          <div style={{ textAlign: 'center', marginBottom: 52 }}>
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 16 }}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/mascot.png" alt="" style={{ height: 100, width: 'auto', display: 'block' }} />
+            </div>
+            <h2 style={{ fontFamily: '"Plein", sans-serif', fontSize: 'clamp(30px, 4vw, 52px)', fontWeight: 400, color: '#111', letterSpacing: '-0.025em', textAlign: 'center', marginBottom: 16, lineHeight: 1.1 }}>
+              Wähle dein Template.
+            </h2>
+            <p style={{ textAlign: 'center', fontSize: 16, color: '#777', maxWidth: 500, margin: '0 auto' }}>
+              Jedes Template wurde speziell für ein Network-Marketing-Unternehmen entwickelt — fertige Texte, fertige Designs.
+            </p>
           </div>
-          <h2 style={{ fontFamily: '"Plein", sans-serif', fontSize: 'clamp(32px, 4vw, 52px)', fontWeight: 400, color: '#111', letterSpacing: '-0.025em', textAlign: 'center', marginBottom: 16, lineHeight: 1.1 }}>
-            Wähle dein Template.
-          </h2>
-          <p style={{ textAlign: 'center', fontSize: 16, color: '#777', marginBottom: 52, maxWidth: 480, margin: '0 auto 52px' }}>
-            Alle Templates entwickelt für Network-Marketing-Profis. Professionell, schnell und ohne technisches Vorwissen.
-          </p>
 
           {templateList.length === 0 ? (
-            <p style={{ textAlign: 'center', color: '#aaa', fontSize: 14 }}>Bald verfügbar.</p>
+            <p style={{ textAlign: 'center', color: '#aaa', fontSize: 14, padding: '60px 0' }}>Templates folgen in Kürze.</p>
           ) : (
-            <div className="fs-template-grid">
-              {templateList.map((tpl, i) => {
-                const pastel = PASTEL_COLORS[i % PASTEL_COLORS.length]
-                const images = Array.isArray(tpl.previewImages) ? tpl.previewImages as string[] : []
-                const coverImg = images[0] ?? null
-                return (
-                  <div key={tpl.id} style={{ background: '#fff', borderRadius: 20, overflow: 'hidden', border: '1px solid #ebebeb', boxShadow: '0 2px 16px rgba(0,0,0,0.04)' }}>
-                    {/* Preview */}
-                    <div style={{ height: 220, background: pastel, position: 'relative', overflow: 'hidden' }}>
-                      {coverImg ? (
-                        <img src={coverImg} alt={tpl.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                      ) : (
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
-                          <div style={{ textAlign: 'center' }}>
-                            <div style={{ fontSize: 11, fontWeight: 700, color: 'rgba(0,0,0,0.35)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>{tpl.domain}</div>
-                          </div>
-                        </div>
-                      )}
-                      {tpl.isFree ? (
-                        <div style={{ position: 'absolute', top: 12, right: 12, background: '#16A34A', color: 'white', fontSize: 10, fontWeight: 700, padding: '3px 9px', borderRadius: 100 }}>KOSTENLOS</div>
-                      ) : (
-                        <div style={{ position: 'absolute', top: 12, right: 12, background: '#1a2530', color: '#D4C5E2', fontSize: 10, fontWeight: 700, padding: '3px 9px', borderRadius: 100 }}>PREMIUM</div>
-                      )}
-                    </div>
-                    {/* Info */}
-                    <div style={{ padding: '20px 22px' }}>
-                      <h3 style={{ fontSize: 15, fontWeight: 600, color: '#111', marginBottom: 6 }}>{tpl.title}</h3>
-                      {tpl.description && <p style={{ fontSize: 13, color: '#777', lineHeight: 1.6, marginBottom: 16 }}>{tpl.description}</p>}
-                      <a href="https://app.finestsites.io/register" style={{ display: 'inline-block', background: '#f5f3f0', color: '#333', fontSize: 12, fontWeight: 500, padding: '7px 16px', borderRadius: 100, border: '1px solid #e5e5e5' }}>
-                        Template nutzen
-                      </a>
-                    </div>
-                  </div>
-                )
-              })}
-            </div>
+            <TemplateGridSection templates={templateList} />
           )}
         </div>
       </section>

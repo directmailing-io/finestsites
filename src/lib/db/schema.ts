@@ -124,6 +124,11 @@ export const templates = pgTable('templates', {
   schemaVersion: integer('schema_version').notNull().default(1),
   isTest: boolean('is_test').notNull().default(false),
   isFree: boolean('is_free').notNull().default(false),
+  // Marketing fields
+  tags: text('tags').array().default([]),
+  badge: text('badge'),        // 'brandneu' | 'beliebt' | null
+  slug: text('slug').unique(),
+  detailColor: text('detail_color'), // hex accent color for detail page
   // Cloudflare Worker Route setup (for template domain routing)
   cfHostnameId: text('cf_hostname_id'),
   cfHostnameStatus: text('cf_hostname_status'),
