@@ -28,7 +28,7 @@ function AppSidebar({ activeIdx = 0 }: { activeIdx?: number }) {
   return (
     <div style={{ width: 44, background: '#1a2530', display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '10px 0', gap: 2, flexShrink: 0 }}>
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src="/logos/logo-black.svg" alt="" style={{ width: 26, height: 'auto', display: 'block', filter: 'brightness(0) invert(1)', opacity: 0.85, marginBottom: 10 }} />
+      <img src="/logos/logo-white.png" alt="FinestSites" style={{ width: 32, height: 'auto', display: 'block', opacity: 0.9, marginBottom: 10 }} />
       {icons.map((icon, i) => (
         <div key={i} style={{ width: 32, height: 30, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 6, background: i === activeIdx ? 'rgba(212,197,226,0.2)' : 'transparent', color: i === activeIdx ? '#D4C5E2' : 'rgba(255,255,255,0.35)' }}>
           {icon}
