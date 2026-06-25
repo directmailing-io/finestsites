@@ -4,6 +4,7 @@ import { templates } from '@/lib/db/schema'
 import { eq, and } from 'drizzle-orm'
 import PricingSection from './_components/PricingSection'
 import FeatureCardsAnimated from './_components/FeatureCardsAnimated'
+import NavBar from './_components/NavBar'
 
 export const dynamic = 'force-dynamic'
 
@@ -63,6 +64,9 @@ export default async function HomePage() {
 
         /* ── Layout helpers ───────────────────────────────── */
         .fs-nav-links { display: flex; gap: 28px; align-items: center; }
+        .fs-nav-actions { display: flex; gap: 8px; align-items: center; }
+        .fs-hamburger { display: none !important; }
+        .fs-hero-buttons { display: flex; gap: 12px; flex-wrap: wrap; }
         .fs-hero-content { position: relative; z-index: 2; padding: 130px 7vw 90px; max-width: 56vw; }
         .fs-section-pad { padding: 96px 7vw; }
         .fs-was-ist-inner { max-width: 1060px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 72px; align-items: center; }
@@ -91,6 +95,9 @@ export default async function HomePage() {
         /* ── Mobile (< 768 px) ───────────────────────────── */
         @media (max-width: 767px) {
           .fs-nav-links { display: none; }
+          .fs-nav-actions { display: none !important; }
+          .fs-hamburger { display: flex !important; }
+          .fs-hero-buttons { flex-direction: column; }
 
           /* Hero: stack image on top, then content */
           .fs-hero-section {
@@ -149,30 +156,7 @@ export default async function HomePage() {
       `}</style>
 
       {/* ══ NAV ══════════════════════════════════════════════════════════ */}
-      <div style={{ padding: '20px 24px 0', position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100 }}>
-        <nav style={{
-          background: '#fff',
-          borderRadius: 100,
-          padding: '10px 14px 10px 20px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          boxShadow: '0 2px 24px rgba(0,0,0,0.07)',
-          maxWidth: 1200,
-          margin: '0 auto',
-        }}>
-          <img src="/logos/logo-black.svg" alt="FinestSites" style={{ height: 22, display: 'block' }} />
-          <div className="fs-nav-links">
-            <a href="#was-ist" style={{ color: '#555', fontSize: 14, fontWeight: 500 }}>Was ist FinestSites?</a>
-            <a href="#templates" style={{ color: '#555', fontSize: 14, fontWeight: 500 }}>Templates</a>
-            <a href="#preise" style={{ color: '#555', fontSize: 14, fontWeight: 500 }}>Preise</a>
-          </div>
-          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-            <a href="https://app.finestsites.io/login" style={{ color: '#111', fontSize: 14, fontWeight: 500, padding: '8px 18px', borderRadius: 100, border: '1.5px solid rgba(0,0,0,0.12)' }}>Anmelden</a>
-            <a href="https://app.finestsites.io/register" style={{ background: '#111', color: '#fff', fontSize: 14, fontWeight: 600, padding: '9px 20px', borderRadius: 100 }}>Kostenlos starten</a>
-          </div>
-        </nav>
-      </div>
+      <NavBar />
 
       {/* ══ HERO ═════════════════════════════════════════════════════════ */}
       <section className="fs-hero-section" style={{
@@ -219,9 +203,9 @@ export default async function HomePage() {
           <p style={{ fontSize: 16, color: '#555', lineHeight: 1.75, marginBottom: 40, maxWidth: 460 }}>
             Erstklassige Webseite für dein Network Marketing in unter 5 Minuten live. Interessenten melden sich bei dir, nicht du bei ihnen. So einfach, dass es eine Oma hinbekommt.
           </p>
-          <div style={{ display: 'flex', gap: 12 }}>
-            <a href="https://app.finestsites.io/register" style={{ background: '#111', color: '#fff', padding: '15px 36px', borderRadius: 100, fontSize: 15, fontWeight: 600, display: 'inline-block' }}>Kostenlos starten</a>
-            <a href="#templates" style={{ background: 'rgba(255,255,255,0.8)', color: '#111', padding: '15px 36px', borderRadius: 100, fontSize: 15, fontWeight: 500, display: 'inline-block', border: '1.5px solid rgba(0,0,0,0.12)' }}>Templates ansehen</a>
+          <div className="fs-hero-buttons">
+            <a href="https://app.finestsites.io/register" style={{ background: '#111', color: '#fff', padding: '15px 36px', borderRadius: 100, fontSize: 15, fontWeight: 600, display: 'inline-block', textDecoration: 'none', textAlign: 'center' }}>Kostenlos starten</a>
+            <a href="#templates" style={{ background: 'rgba(255,255,255,0.8)', color: '#111', padding: '15px 36px', borderRadius: 100, fontSize: 15, fontWeight: 500, display: 'inline-block', border: '1.5px solid rgba(0,0,0,0.12)', textDecoration: 'none', textAlign: 'center' }}>Templates ansehen</a>
           </div>
         </div>
       </section>
