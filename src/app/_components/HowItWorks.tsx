@@ -171,20 +171,11 @@ function MockupPublished() {
             ))}
             {/* Content above confetti */}
             <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10, width: '100%' }}>
-              {/* Success icon — SVG checkmark with sparkle rays */}
-              <svg width="42" height="42" viewBox="0 0 42 42" fill="none">
-                <circle cx="21" cy="21" r="18" fill="#EDFAED" stroke="#B8D8B8" strokeWidth="1.5"/>
-                <polyline points="12,21 18.5,27.5 30,14" stroke="#16A34A" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
-                {/* Sparkle rays */}
-                <line x1="21" y1="1"  x2="21" y2="5"  stroke="#FEBC2E" strokeWidth="2" strokeLinecap="round"/>
-                <line x1="21" y1="37" x2="21" y2="41" stroke="#FEBC2E" strokeWidth="2" strokeLinecap="round"/>
-                <line x1="1"  y1="21" x2="5"  y2="21" stroke="#8060b0" strokeWidth="2" strokeLinecap="round"/>
-                <line x1="37" y1="21" x2="41" y2="21" stroke="#8060b0" strokeWidth="2" strokeLinecap="round"/>
-                <line x1="5.5"  y1="5.5"  x2="8.3"  y2="8.3"  stroke="#EA580C" strokeWidth="2" strokeLinecap="round"/>
-                <line x1="33.7" y1="33.7" x2="36.5" y2="36.5" stroke="#EA580C" strokeWidth="2" strokeLinecap="round"/>
-                <line x1="36.5" y1="5.5"  x2="33.7" y2="8.3"  stroke="#2563EB" strokeWidth="2" strokeLinecap="round"/>
-                <line x1="8.3"  y1="33.7" x2="5.5"  y2="36.5" stroke="#2563EB" strokeWidth="2" strokeLinecap="round"/>
-              </svg>
+              {/* LIVE badge */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, background: '#16A34A', borderRadius: 100, padding: '7px 16px', boxShadow: '0 4px 14px rgba(22,163,74,0.35)' }}>
+                <div style={{ width: 7, height: 7, borderRadius: '50%', background: '#fff', flexShrink: 0 }} />
+                <span style={{ fontSize: 12, fontWeight: 800, color: '#fff', letterSpacing: '0.08em' }}>LIVE</span>
+              </div>
               <div>
                 <div style={{ fontSize: 12, fontWeight: 700, color: '#111', textAlign: 'center', marginBottom: 3 }}>Deine Seite ist live!</div>
                 <div style={{ fontSize: 9, color: '#888', textAlign: 'center' }}>Sie läuft jetzt rund um die Uhr</div>
