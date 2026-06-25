@@ -243,7 +243,7 @@ export default async function HomePage() {
 
       {/* ══ SMARTPHONE CARD ══════════════════════════════════════════════ */}
       <section style={{ background: '#fff', padding: '0 24px 64px' }}>
-        <div style={{ maxWidth: 980, margin: '0 auto', borderRadius: 24, overflow: 'hidden', lineHeight: 0 }}>
+        <div style={{ maxWidth: 1060, margin: '0 auto', borderRadius: 20, overflow: 'hidden', lineHeight: 0 }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/mascot-mobile.png" alt="Geht auch einfach vom Handy aus." style={{ width: '100%', height: 'auto', display: 'block' }} />
         </div>
