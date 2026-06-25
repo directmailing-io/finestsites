@@ -5,6 +5,7 @@ import { eq, and } from 'drizzle-orm'
 import PricingSection from './_components/PricingSection'
 import FeatureCardsAnimated from './_components/FeatureCardsAnimated'
 import NavBar from './_components/NavBar'
+import HowItWorks from './_components/HowItWorks'
 
 export const dynamic = 'force-dynamic'
 
@@ -77,6 +78,10 @@ export default async function HomePage() {
         /* ── Hero mobile image ───────────────────────────── */
         .fs-hero-mobile-img { display: none; }
 
+        /* ── How it works grid ───────────────────────────── */
+        .fs-how-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }
+        .fs-how-connector { display: block; }
+
         /* ── Dark footer ─────────────────────────────────── */
         .fs-footer-dark { background: #1a1530; color: #fff; padding: 64px 7vw 0; }
         .fs-footer-grid { max-width: 1060px; margin: 0 auto; display: grid; grid-template-columns: 1.6fr 1fr 1fr; gap: 56px; padding-bottom: 56px; }
@@ -133,6 +138,8 @@ export default async function HomePage() {
           .fs-feature-grid { gap: 10px; }
           .fs-template-grid { grid-template-columns: 1fr; }
           .fs-pricing-grid { max-width: 100%; }
+          .fs-how-grid { grid-template-columns: 1fr; gap: 48px; }
+          .fs-how-connector { display: none; }
 
           /* Pricing banner: image on top, text below */
           .fs-pricing-banner-grid { display: flex; flex-direction: column; }
@@ -231,6 +238,8 @@ export default async function HomePage() {
           <FeatureCardsAnimated />
         </div>
       </section>
+
+      <HowItWorks />
 
       {/* ══ TEMPLATES ════════════════════════════════════════════════════ */}
       <section id="templates" style={{ background: '#F9F7FF' }} className="fs-section-pad">
