@@ -145,54 +145,72 @@ function MockupPublished() {
     <>
       <style>{`
         @keyframes fs-conf {
-          0%   { opacity: 0;   transform: translateY(-8px)   rotate(var(--r0)); }
-          15%  { opacity: 1; }
-          100% { opacity: 0;   transform: translateY(220px)  rotate(var(--r1)); }
+          0%   { opacity: 0;   transform: translateY(-10px) rotate(var(--r0)); }
+          12%  { opacity: 1; }
+          88%  { opacity: 1; }
+          100% { opacity: 0;   transform: translateY(230px) rotate(var(--r1)); }
         }
       `}</style>
       <div style={{ borderRadius: 14, overflow: 'hidden', boxShadow: '0 12px 48px rgba(0,0,0,0.14)', border: '1px solid #ddd' }}>
         <BrowserChrome url="sandra-m.finestsites.io" />
-        <div style={{ display: 'flex', height: 210, position: 'relative' }}>
-          {/* Confetti pieces */}
-          {CONFETTI.map((c, i) => (
-            <div key={i} style={{
-              position: 'absolute', left: `${c.x}%`, top: 0,
-              width: c.w, height: c.h, background: c.c,
-              borderRadius: c.br,
-              '--r0': `${c.r}deg`, '--r1': `${c.r + 240}deg`,
-              animation: `fs-conf ${c.spd}s linear ${c.d}s infinite`,
-              zIndex: 1,
-            } as React.CSSProperties} />
-          ))}
+        <div style={{ display: 'flex', height: 210 }}>
           <AppSidebar activeIdx={1} />
-          <div style={{ flex: 1, background: '#fff', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 16, gap: 10, position: 'relative', zIndex: 2 }}>
-            {/* Celebration icon */}
-            <div style={{ fontSize: 32, lineHeight: 1 }}>🎉</div>
-            <div>
-              <div style={{ fontSize: 12, fontWeight: 700, color: '#111', textAlign: 'center', marginBottom: 3 }}>Deine Seite ist live!</div>
-              <div style={{ fontSize: 9, color: '#888', textAlign: 'center' }}>Sie läuft jetzt rund um die Uhr</div>
-            </div>
-            {/* URL chip */}
-            <div style={{ background: '#f5f3f0', borderRadius: 20, padding: '6px 14px', display: 'flex', alignItems: 'center', gap: 6 }}>
-              <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#16A34A', flexShrink: 0 }} />
-              <span style={{ fontSize: 10, color: '#555', fontWeight: 500 }}>sandra-m.finestsites.io</span>
-            </div>
-            {/* Stats strip */}
-            <div style={{ display: 'flex', gap: 8, width: '100%' }}>
-              {[
-                { label: 'Besucher', val: '249', icon: '👁' },
-                { label: 'Anfragen', val: '4',   icon: '✉️' },
-              ].map(s => (
-                <div key={s.label} style={{ flex: 1, background: '#f8f9fb', borderRadius: 8, padding: '6px 8px', textAlign: 'center' }}>
-                  <div style={{ fontSize: 13 }}>{s.icon}</div>
-                  <div style={{ fontSize: 12, fontWeight: 700, color: '#111' }}>{s.val}</div>
-                  <div style={{ fontSize: 7, color: '#aaa' }}>{s.label}</div>
-                </div>
-              ))}
-            </div>
-            <div style={{ display: 'flex', gap: 6 }}>
-              <div style={{ background: '#111', color: '#fff', borderRadius: 20, padding: '5px 12px', fontSize: 9, fontWeight: 600 }}>Seite besuchen →</div>
-              <div style={{ border: '1px solid #ddd', color: '#555', borderRadius: 20, padding: '5px 12px', fontSize: 9, fontWeight: 500 }}>Teilen</div>
+          {/* White content area — confetti lives here so it's visible on white */}
+          <div style={{ flex: 1, background: '#fff', position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 16, gap: 10 }}>
+            {/* Confetti inside the white area */}
+            {CONFETTI.map((c, i) => (
+              <div key={i} style={{
+                position: 'absolute', left: `${c.x}%`, top: 0,
+                width: c.w, height: c.h, background: c.c,
+                borderRadius: c.br,
+                '--r0': `${c.r}deg`, '--r1': `${c.r + 240}deg`,
+                animation: `fs-conf ${c.spd}s linear ${c.d}s infinite`,
+                pointerEvents: 'none',
+                zIndex: 0,
+              } as React.CSSProperties} />
+            ))}
+            {/* Content above confetti */}
+            <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10, width: '100%' }}>
+              {/* Success icon — SVG checkmark with sparkle rays */}
+              <svg width="42" height="42" viewBox="0 0 42 42" fill="none">
+                <circle cx="21" cy="21" r="18" fill="#EDFAED" stroke="#B8D8B8" strokeWidth="1.5"/>
+                <polyline points="12,21 18.5,27.5 30,14" stroke="#16A34A" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                {/* Sparkle rays */}
+                <line x1="21" y1="1"  x2="21" y2="5"  stroke="#FEBC2E" strokeWidth="2" strokeLinecap="round"/>
+                <line x1="21" y1="37" x2="21" y2="41" stroke="#FEBC2E" strokeWidth="2" strokeLinecap="round"/>
+                <line x1="1"  y1="21" x2="5"  y2="21" stroke="#8060b0" strokeWidth="2" strokeLinecap="round"/>
+                <line x1="37" y1="21" x2="41" y2="21" stroke="#8060b0" strokeWidth="2" strokeLinecap="round"/>
+                <line x1="5.5"  y1="5.5"  x2="8.3"  y2="8.3"  stroke="#EA580C" strokeWidth="2" strokeLinecap="round"/>
+                <line x1="33.7" y1="33.7" x2="36.5" y2="36.5" stroke="#EA580C" strokeWidth="2" strokeLinecap="round"/>
+                <line x1="36.5" y1="5.5"  x2="33.7" y2="8.3"  stroke="#2563EB" strokeWidth="2" strokeLinecap="round"/>
+                <line x1="8.3"  y1="33.7" x2="5.5"  y2="36.5" stroke="#2563EB" strokeWidth="2" strokeLinecap="round"/>
+              </svg>
+              <div>
+                <div style={{ fontSize: 12, fontWeight: 700, color: '#111', textAlign: 'center', marginBottom: 3 }}>Deine Seite ist live!</div>
+                <div style={{ fontSize: 9, color: '#888', textAlign: 'center' }}>Sie läuft jetzt rund um die Uhr</div>
+              </div>
+              {/* URL chip */}
+              <div style={{ background: '#f5f3f0', borderRadius: 20, padding: '6px 14px', display: 'flex', alignItems: 'center', gap: 6 }}>
+                <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#16A34A', flexShrink: 0 }} />
+                <span style={{ fontSize: 10, color: '#555', fontWeight: 500 }}>sandra-m.finestsites.io</span>
+              </div>
+              {/* Stats strip */}
+              <div style={{ display: 'flex', gap: 8, width: '100%' }}>
+                {[
+                  { label: 'Besucher', val: '249', svg: <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#555" strokeWidth="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> },
+                  { label: 'Anfragen', val: '4',   svg: <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#555" strokeWidth="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> },
+                ].map(s => (
+                  <div key={s.label} style={{ flex: 1, background: '#f8f9fb', borderRadius: 8, padding: '5px 8px', textAlign: 'center' }}>
+                    <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 2 }}>{s.svg}</div>
+                    <div style={{ fontSize: 12, fontWeight: 700, color: '#111' }}>{s.val}</div>
+                    <div style={{ fontSize: 7, color: '#aaa' }}>{s.label}</div>
+                  </div>
+                ))}
+              </div>
+              <div style={{ display: 'flex', gap: 6 }}>
+                <div style={{ background: '#111', color: '#fff', borderRadius: 20, padding: '5px 12px', fontSize: 9, fontWeight: 600 }}>Seite besuchen →</div>
+                <div style={{ border: '1px solid #ddd', color: '#555', borderRadius: 20, padding: '5px 12px', fontSize: 9, fontWeight: 500 }}>Teilen</div>
+              </div>
             </div>
           </div>
         </div>
