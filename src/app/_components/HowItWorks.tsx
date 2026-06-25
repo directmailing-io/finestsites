@@ -201,7 +201,7 @@ export default function HowItWorks() {
 
         {/* Header */}
         <div style={{ textAlign: 'center', marginBottom: 64 }}>
-          <p style={{ fontSize: 11, fontWeight: 700, color: '#8060b0', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 14 }}>So funktioniert's</p>
+          <p style={{ fontSize: 11, fontWeight: 700, color: '#8060b0', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 14 }}>So funktioniert&apos;s</p>
           <h2 style={{ fontFamily: '"Plein", sans-serif', fontSize: 'clamp(28px, 3.8vw, 48px)', fontWeight: 400, color: '#111', letterSpacing: '-0.022em', lineHeight: 1.12, marginBottom: 20 }}>
             In 3 Schritten online.<br />Wirklich.
           </h2>
