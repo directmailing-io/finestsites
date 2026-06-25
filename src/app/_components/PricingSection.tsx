@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 const PLANS = [
   {
@@ -51,17 +51,24 @@ const COMMON_FEATURES = [
   'Deine eigene Webadresse',
 ]
 
-function getRefCode(): string | null {
-  if (typeof window === 'undefined') return null
-  const stored = sessionStorage.getItem('fs_ref')
-  if (stored) return stored
-  return new URLSearchParams(window.location.search).get('ref')
-}
-
-export default function PricingSection() {
+export default function PricingSection({ validatedRef }: { validatedRef?: string | null }) {
   const [yearly, setYearly] = useState(false)
-  // Lazy initializer — runs once on mount, no extra render, no ESLint warning
-  const [refCode] = useState<string | null>(getRefCode)
+
+  // Primary source: server-validated prop from page.tsx (DB-checked, never spoofable).
+  // Fallback: sessionStorage — only ever populated from a previous server-validation
+  // or from UrlParamPersistence which also validates via API before storing.
+  // We deliberately do NOT read raw URL params here — unvalidated codes must not trigger discounts.
+  const [refCode] = useState<string | null>(() => {
+    if (validatedRef) return validatedRef
+    if (typeof window === 'undefined') return null
+    return sessionStorage.getItem('fs_ref')
+  })
+
+  // Persist server-validated ref to sessionStorage so it survives client-side navigation
+  // (e.g., user clicks to /vorlagen and comes back — discount persists for the session)
+  useEffect(() => {
+    if (validatedRef) sessionStorage.setItem('fs_ref', validatedRef)
+  }, [validatedRef])
 
   const DISCOUNT = 0.20 // 20 % affiliate discount
 

@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { db } from '@/lib/db'
-import { templates } from '@/lib/db/schema'
+import { templates, users } from '@/lib/db/schema'
 import { eq, and } from 'drizzle-orm'
 import PricingSection from './_components/PricingSection'
 import FeatureCardsAnimated from './_components/FeatureCardsAnimated'
@@ -15,7 +15,27 @@ export const metadata: Metadata = {
   description: 'Professionelle Produktwebsite für Network-Marketing-Profis. In unter 5 Minuten live. Keine Technik, keine Agentur.',
 }
 
-export default async function HomePage() {
+export default async function HomePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ ref?: string }>
+}) {
+  // Validate ?ref= against DB — never trust client-supplied codes without checking
+  const params = await searchParams
+  const refParam = params.ref?.trim().toLowerCase() ?? ''
+  let validatedRef: string | null = null
+  if (refParam) {
+    try {
+      const referrer = await db.query.users.findFirst({
+        where: eq(users.username, refParam),
+        columns: { username: true },
+      })
+      validatedRef = referrer?.username ?? null
+    } catch {
+      // DB error: fail safe — no discount shown
+    }
+  }
+
   // Fetch published templates with new marketing fields
   let templateList: TemplateCardData[] = []
   try {
@@ -269,7 +289,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <PricingSection />
+      <PricingSection validatedRef={validatedRef} />
 
       {/* ══ FOOTER ═══════════════════════════════════════════════════════ */}
       <footer className="fs-footer-dark">
