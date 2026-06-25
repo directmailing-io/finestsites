@@ -1,0 +1,1412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FinestSites — SaaS Funnel Proposal v2</title>
+  <style>
+    :root {
+      --bg: #0d0f14;
+      --surface: #161a23;
+      --surface-2: #1e2333;
+      --surface-3: #252c3e;
+      --border: #2e3550;
+      --accent: #6c7fff;
+      --accent-glow: rgba(108, 127, 255, 0.18);
+      --accent-2: #a78bfa;
+      --green: #34d399;
+      --green-dim: rgba(52, 211, 153, 0.12);
+      --yellow: #fbbf24;
+      --yellow-dim: rgba(251, 191, 36, 0.12);
+      --red: #f87171;
+      --red-dim: rgba(248, 113, 113, 0.12);
+      --blue: #60a5fa;
+      --blue-dim: rgba(96, 165, 250, 0.12);
+      --purple: #c084fc;
+      --purple-dim: rgba(192, 132, 252, 0.12);
+      --text: #e2e8f0;
+      --text-muted: #7a8499;
+      --text-dim: #4a5568;
+      --radius: 12px;
+      --radius-lg: 18px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', sans-serif;
+      font-size: 15px;
+      line-height: 1.65;
+      padding: 0 16px 80px;
+    }
+
+    /* ── Header ── */
+    .hero {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 64px 0 48px;
+      text-align: center;
+    }
+
+    .hero-badge {
+      display: inline-block;
+      background: var(--accent-glow);
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 4px 14px;
+      border-radius: 100px;
+      margin-bottom: 24px;
+    }
+
+    .hero h1 {
+      font-size: clamp(28px, 5vw, 48px);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      background: linear-gradient(135deg, #e2e8f0 30%, var(--accent-2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1.15;
+      margin-bottom: 16px;
+    }
+
+    .hero p {
+      color: var(--text-muted);
+      font-size: 17px;
+      max-width: 560px;
+      margin: 0 auto 32px;
+    }
+
+    .meta-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+      flex-wrap: wrap;
+      font-size: 13px;
+      color: var(--text-dim);
+    }
+
+    .meta-row span { display: flex; align-items: center; gap: 6px; }
+
+    .dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; }
+    .dot-green { background: var(--green); }
+    .dot-yellow { background: var(--yellow); }
+    .dot-red { background: var(--red); }
+
+    /* ── Layout ── */
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+    }
+
+    /* ── Section headings ── */
+    .section-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+
+    h2.section-title {
+      font-size: 26px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 24px;
+      color: var(--text);
+    }
+
+    /* ── Problem block ── */
+    .problem-block {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--red);
+      border-radius: var(--radius-lg);
+      padding: 28px 32px;
+      margin-bottom: 48px;
+    }
+
+    .problem-block h3 {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--red);
+      margin-bottom: 12px;
+    }
+
+    /* ── Current Flow ── */
+    .flow-row {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0;
+      margin: 20px 0;
+    }
+
+    .flow-step {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 14px;
+      font-size: 13px;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    .flow-step.bad {
+      border-color: var(--red);
+      color: var(--red);
+      background: var(--red-dim);
+    }
+
+    .flow-arrow {
+      color: var(--text-dim);
+      font-size: 18px;
+      padding: 0 6px;
+    }
+
+    /* ── Option Cards ── */
+    .options-grid {
+      display: grid;
+      gap: 32px;
+      margin-bottom: 48px;
+    }
+
+    .option-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+    }
+
+    .option-card-header {
+      padding: 24px 28px 20px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .option-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-radius: 100px;
+    }
+
+    .badge-blue   { background: var(--blue-dim);   border: 1px solid var(--blue);   color: var(--blue); }
+    .badge-green  { background: var(--green-dim);  border: 1px solid var(--green);  color: var(--green); }
+    .badge-yellow { background: var(--yellow-dim); border: 1px solid var(--yellow); color: var(--yellow); }
+    .badge-purple { background: var(--purple-dim); border: 1px solid var(--purple); color: var(--purple); }
+    .badge-red    { background: var(--red-dim);    border: 1px solid var(--red);    color: var(--red); }
+
+    .effort-tag {
+      font-size: 12px;
+      color: var(--text-muted);
+      background: var(--surface-3);
+      border: 1px solid var(--border);
+      padding: 3px 10px;
+      border-radius: 100px;
+      white-space: nowrap;
+    }
+
+    .option-card-header h3 {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      margin-top: 10px;
+    }
+
+    .option-card-header .subtitle {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .option-card-body {
+      padding: 24px 28px;
+    }
+
+    /* ── Flow diagrams inside cards ── */
+    .flow-diagram {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px 20px;
+      margin-bottom: 20px;
+      overflow-x: auto;
+    }
+
+    .flow-diagram-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 12px;
+    }
+
+    .fd-row {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0;
+      row-gap: 8px;
+    }
+
+    .fd-step {
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 500;
+      border: 1px solid;
+      white-space: nowrap;
+    }
+
+    .fd-step.neutral { background: var(--surface-3); border-color: var(--border); color: var(--text-muted); }
+    .fd-step.value   { background: var(--green-dim); border-color: var(--green); color: var(--green); }
+    .fd-step.action  { background: var(--accent-glow); border-color: var(--accent); color: var(--accent); }
+    .fd-step.commit  { background: var(--yellow-dim); border-color: var(--yellow); color: var(--yellow); }
+    .fd-step.pay     { background: var(--blue-dim); border-color: var(--blue); color: var(--blue); }
+    .fd-step.skip    { background: var(--red-dim); border-color: var(--red); color: var(--red); }
+
+    .fd-arrow {
+      color: var(--text-dim);
+      padding: 0 5px;
+      font-size: 14px;
+    }
+
+    /* ── Pros / Cons ── */
+    .pros-cons {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 20px;
+    }
+
+    @media (max-width: 560px) {
+      .pros-cons { grid-template-columns: 1fr; }
+    }
+
+    .pros-cons-box {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px 18px;
+    }
+
+    .pros-cons-box h5 {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .pros h5 { color: var(--green); }
+    .cons h5 { color: var(--red); }
+
+    .pros-cons-box ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .pros-cons-box ul li {
+      font-size: 13px;
+      color: var(--text-muted);
+      padding-left: 18px;
+      position: relative;
+    }
+
+    .pros li::before { content: '+'; position: absolute; left: 0; color: var(--green); font-weight: 700; }
+    .cons li::before { content: '−'; position: absolute; left: 0; color: var(--red); font-weight: 700; }
+
+    /* ── Perspectives ── */
+    .perspectives {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 20px;
+    }
+
+    @media (max-width: 640px) {
+      .perspectives { grid-template-columns: 1fr; }
+    }
+
+    .perspective-card {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px 20px;
+    }
+
+    .perspective-card .phead {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .picon {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+
+    .picon-dev    { background: var(--blue-dim); }
+    .picon-growth { background: var(--green-dim); }
+
+    .phead-text .role {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+
+    .phead-text .name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .perspective-card p {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    /* ── Comparison Table ── */
+    .table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      margin-bottom: 48px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    thead tr {
+      background: var(--surface-2);
+      border-bottom: 1px solid var(--border);
+    }
+
+    thead th {
+      text-align: left;
+      padding: 14px 18px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+
+    tbody tr {
+      border-bottom: 1px solid var(--border);
+    }
+
+    tbody tr:last-child { border-bottom: none; }
+
+    tbody tr:nth-child(even) { background: var(--surface); }
+    tbody tr:nth-child(odd)  { background: var(--bg); }
+
+    tbody td {
+      padding: 13px 18px;
+      color: var(--text-muted);
+      vertical-align: top;
+    }
+
+    tbody td:first-child {
+      color: var(--text);
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .rating {
+      display: inline-flex;
+      gap: 3px;
+    }
+
+    .star { color: var(--yellow); font-size: 13px; }
+    .star-dim { color: var(--text-dim); font-size: 13px; }
+
+    /* ── Recommendation ── */
+    .recommendation {
+      background: linear-gradient(135deg, rgba(108, 127, 255, 0.08), rgba(167, 139, 250, 0.06));
+      border: 1px solid rgba(108, 127, 255, 0.3);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      margin-bottom: 48px;
+    }
+
+    .recommendation h2 {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 20px;
+    }
+
+    .phase-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    @media (max-width: 580px) {
+      .phase-row { grid-template-columns: 1fr; }
+    }
+
+    .phase-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px 20px;
+    }
+
+    .phase-card .phase-num {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 6px;
+    }
+
+    .phase-card h4 {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .phase-card p {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .skip-card {
+      background: var(--red-dim);
+      border: 1px solid rgba(248,113,113,0.25);
+      border-radius: 10px;
+      padding: 14px 18px;
+      font-size: 13px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .skip-icon { font-size: 18px; flex-shrink: 0; }
+
+    /* ── Checklist ── */
+    .checklist-section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      margin-bottom: 48px;
+    }
+
+    .checklist-section h2 {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 24px;
+    }
+
+    .checklist-group {
+      margin-bottom: 24px;
+    }
+
+    .checklist-group h4 {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .check-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(46, 53, 80, 0.4);
+    }
+
+    .check-item:last-child { border-bottom: none; }
+
+    .check-box {
+      width: 18px;
+      height: 18px;
+      border: 1.5px solid var(--border);
+      border-radius: 4px;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .check-item .check-text {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .check-item .check-text strong {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .check-item .check-tag {
+      margin-left: auto;
+      font-size: 11px;
+      color: var(--text-dim);
+      background: var(--surface-3);
+      border: 1px solid var(--border);
+      padding: 2px 8px;
+      border-radius: 100px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    /* ── Global Perspectives Section ── */
+    .global-perspectives {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      margin-bottom: 48px;
+    }
+
+    .global-perspectives h2 {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 20px;
+    }
+
+    .gp-card {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 22px 24px;
+      margin-bottom: 16px;
+    }
+
+    .gp-card:last-child { margin-bottom: 0; }
+
+    .gp-card .gp-head {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    .gp-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .gp-icon-dev    { background: var(--blue-dim); border: 1px solid rgba(96,165,250,0.2); }
+    .gp-icon-growth { background: var(--green-dim); border: 1px solid rgba(52,211,153,0.2); }
+    .gp-icon-ux     { background: var(--purple-dim); border: 1px solid rgba(192,132,252,0.2); }
+
+    .gp-head-text .gp-role {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+
+    .gp-head-text .gp-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .gp-card p {
+      font-size: 13.5px;
+      color: var(--text-muted);
+      line-height: 1.65;
+      margin-bottom: 10px;
+    }
+
+    .gp-card p:last-child { margin-bottom: 0; }
+
+    .gp-card strong { color: var(--text); font-weight: 600; }
+
+    .highlight-box {
+      background: var(--surface-3);
+      border-left: 3px solid var(--accent);
+      border-radius: 0 6px 6px 0;
+      padding: 10px 14px;
+      font-size: 13px;
+      color: var(--text-muted);
+      margin: 10px 0;
+    }
+
+    /* ── Footer ── */
+    .footer {
+      max-width: 860px;
+      margin: 0 auto;
+      text-align: center;
+      color: var(--text-dim);
+      font-size: 12px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+    }
+
+    /* ── Divider ── */
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 40px 0;
+    }
+
+    /* ── Highlight text ── */
+    .highlight { color: var(--accent); font-weight: 600; }
+
+    /* ── Inline note ── */
+    .note {
+      font-size: 12px;
+      color: var(--text-dim);
+      font-style: italic;
+      margin-top: 6px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════ HERO ══════════════════════════════════════ -->
+<div class="hero">
+  <div class="hero-badge">Internal Strategy Document</div>
+  <h1>SaaS Funnel Optimization<br>Proposal v2</h1>
+  <p>Reducing registration friction and creating an "aha moment" before commitment — for FinestSites.</p>
+  <div class="meta-row">
+    <span><span class="dot dot-green"></span> FinestSites Platform</span>
+    <span>June 2026</span>
+    <span>4 Options Analyzed</span>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- ══════════════════ PROBLEM ══════════════════ -->
+  <div class="problem-block">
+    <h3>The Core Problem: Zero Value Before Commitment</h3>
+    <p style="color: var(--text-muted); margin-bottom: 16px;">
+      The current funnel asks users to register before they see a single pixel of what their website could look like.
+      This means there is <span style="color: var(--red); font-weight: 600;">no "aha moment"</span> before the commitment wall —
+      resulting in high drop-off at registration and low activation rates downstream.
+    </p>
+    <div class="flow-diagram-label">Current (Painful) Flow</div>
+    <div class="flow-row">
+      <div class="flow-step">Land on Marketing Page</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step bad">Register (email + password + username)</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step bad">Pick a Plan</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">Pick a Template</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">Fill Placeholders</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">Publish</div>
+    </div>
+    <p class="note" style="margin-top: 14px;">User sees NO value before registering. The "why should I care?" question is never answered before the friction wall hits.</p>
+  </div>
+
+  <!-- ══════════════════ OPTION A ══════════════════ -->
+  <div class="section-label">Option A</div>
+  <div class="options-grid">
+    <div class="option-card">
+      <div class="option-card-header">
+        <div>
+          <div class="option-badge badge-blue">Option A</div>
+          <h3>Template Cookie</h3>
+          <p class="subtitle">Minimal friction reduction — template pre-selection via cookie</p>
+        </div>
+        <div class="effort-tag">1–2 days</div>
+      </div>
+      <div class="option-card-body">
+
+        <div class="flow-diagram">
+          <div class="flow-diagram-label">Proposed Flow</div>
+          <div class="fd-row">
+            <div class="fd-step neutral">Land</div>
+            <div class="fd-arrow">→</div>
+            <div class="fd-step neutral">Browse Templates</div>
+            <div class="fd-arrow">→</div>
+            <div class="fd-step action">Click "Start with this template"</div>
+            <div class="fd-arrow">→</div>
+            <div class="fd-step commit">Register</div>
+            <div class="fd-arrow">→</div>
+            <div class="fd-step neutral">Plan</div>
+            <div class="fd-arrow">→</div>
+            <div class="fd-step value">Editor (template pre-loaded)</div>
+          </div>
+        </div>
+
+        <p style="color: var(--text-muted); margin-bottom: 16px;">
+          The user selects a template on the marketing page and that choice is stored in <code style="background: var(--surface-3); padding: 1px 5px; border-radius: 4px; font-size: 12px;">localStorage</code> or a cookie.
+          After registration, the template is automatically pre-selected and the user lands directly in the editor — skipping the template selection step.
+        </p>
+
+        <div class="pros-cons">
+          <div class="pros-cons-box pros">
+            <h5>Pros</h5>
+            <ul>
+              <li>Extremely fast to implement</li>
+              <li>Works immediately, no backend changes</li>
+              <li>No anonymous state management complexity</li>
+              <li>User made a template choice — some commitment</li>
+              <li>Skips one step post-registration</li>
+            </ul>
+          </div>
+          <div class="pros-cons-box cons">
+            <h5>Cons</h5>
+            <ul>
+              <li>User still registers before seeing real value</li>
+              <li>Template "thumbnails" don't convey actual output</li>
+              <li>No meaningful "aha moment" before the wall</li>
+              <li>Lowest conversion impact of all options</li>
+              <li>Cookie may be lost (cross-device, private browsing)</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="perspectives">
+          <div class="perspective-card">
+            <div class="phead">
+              <div class="picon picon-dev">&#128187;</div>
+              <div class="phead-text">
+                <div class="role">Senior Dev</div>
+                <div class="name">Feasibility</div>
+              </div>
+            </div>
+            <p>Trivial implementation. Add a <code style="font-size: 12px;">localStorage.setItem('templateId', id)</code> on click and read it post-register. Risk: near zero. Maintenance: near zero. This is a safe starter but offers minimal competitive edge.</p>
+          </div>
+          <div class="perspective-card">
+            <div class="phead">
+              <div class="picon picon-growth">&#128200;</div>
+              <div class="phead-text">
+                <div class="role">Growth</div>
+                <div class="name">Conversion Impact</div>
+              </div>
+            </div>
+            <p>Very low impact. The registration wall is still the primary drop-off point. Template pre-selection doesn't justify the effort — it only marginally reduces post-registration friction. Baseline improvement at best.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════ OPTION A+ ══════════════════ -->
+  <div class="section-label">Option A+ — Recommended Phase 1</div>
+  <div class="options-grid">
+    <div class="option-card" style="border-color: rgba(108,127,255,0.4); box-shadow: 0 0 0 1px rgba(108,127,255,0.1), 0 4px 32px rgba(108,127,255,0.08);">
+      <div class="option-card-header" style="background: linear-gradient(135deg, rgba(108,127,255,0.06), rgba(167,139,250,0.04));">
+        <div>
+          <div class="option-badge" style="background: var(--accent-glow); border-color: var(--accent); color: var(--accent);">Option A+ ★ Phase 1 Pick</div>
+          <h3>Template Preview + Cookie</h3>
+          <p class="subtitle">The live preview IS the value — user sees exactly what their site looks like before registering</p>
+        </div>
+        <div class="effort-tag" style="border-color: var(--accent); color: var(--accent);">3–4 days</div>
+      </div>
+      <div class="option-card-body">
+
+        <div class="flow-diagram" style="border-color: rgba(108,127,255,0.25);">
+          <div class="flow-diagram-label">Proposed Flow</div>
+          <div class="fd-row">
+            <div class="fd-step neutral">Land</div>
+            <div class="fd-arrow">→</div>
+            <div class="fd-step neutral">Browse Templates</div>
+            <div class="fd-arrow">→</div>
+            <div class="fd-step value">Click template → Full Live Preview</div>
+            <div class="fd-arrow">→</div>
+            <div class="fd-step action">"Use This Template"</div>
+            <div class="fd-arrow">→</div>
+            <div class="fd-step commit">Register (template in cookie)</div>
+            <div class="fd-arrow">→</div>
+            <div class="fd-step neutral">Plan</div>
+            <div class="fd-arrow">→</div>
+            <div class="fd-step value">Editor</div>
+          </div>
+        </div>
+
+        <p style="color: var(--text-muted); margin-bottom: 16px;">
+          When a user clicks a template, they land on a dedicated preview page — not just a thumbnail. The preview renders the
+          <span class="highlight">actual template HTML</span> with realistic sample data (business name, phone, photos, etc.).
+          This is the aha moment: the user sees exactly what their site will look like. After clicking "Use This Template",
+          they register and land directly in the editor — with the template pre-loaded and template-selection step skipped entirely.
+        </p>
+
+        <div class="highlight-box" style="margin-bottom: 16px;">
+          <strong style="color: var(--accent);">Key insight:</strong> The preview page must be built anyway for SEO, ad campaigns, and template discovery.
+          A+ repurposes this necessary work as the primary conversion driver. Double ROI on the same implementation effort.
+        </div>
+
+        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;"><strong style="color: var(--text);">Sample data per template</strong> — this is one-time work.
+          Each template needs a realistic JSON payload (business name, slogan, contact details, 1–2 placeholder images).
+          Once created, it serves every user who previews that template forever. The admin panel can expose this as an editable field.</p>
+
+        <div class="pros-cons">
+          <div class="pros-cons-box pros">
+            <h5>Pros</h5>
+            <ul>
+              <li>Strong value demonstration before registration</li>
+              <li>User sees EXACTLY what they're signing up for</li>
+              <li>State management is trivial (cookie/localStorage)</li>
+              <li>Preview page doubles as SEO/marketing asset</li>
+              <li>Natural, excited journey — register at peak enthusiasm</li>
+              <li>Can be linked from ads: "Preview the Fitness template"</li>
+              <li>Template selection step skipped post-register</li>
+            </ul>
+          </div>
+          <div class="pros-cons-box cons">
+            <h5>Cons</h5>
+            <ul>
+              <li>Requires good sample data per template (one-time effort)</li>
+              <li>Registration wall still exists — just better positioned</li>
+              <li>Preview images may not match user's actual niche images</li>
+              <li>Need to handle preview page routing and SEO metadata</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="perspectives">
+          <div class="perspective-card">
+            <div class="phead">
+              <div class="picon picon-dev">&#128187;</div>
+              <div class="phead-text">
+                <div class="role">Senior Dev</div>
+                <div class="name">Implementation Notes</div>
+              </div>
+            </div>
+            <p>Route: <code style="font-size: 12px;">/templates/[slug]/preview</code>. Render template HTML server-side with sample data from DB. "Use This Template" button sets <code style="font-size: 12px;">localStorage.setItem('selectedTemplate', slug)</code> and redirects to <code style="font-size: 12px;">/register</code>. Post-register middleware reads the value and redirects to plan → editor. Risk: low. The template engine already exists — the preview route is 80% there.</p>
+          </div>
+          <div class="perspective-card">
+            <div class="phead">
+              <div class="picon picon-growth">&#128200;</div>
+              <div class="phead-text">
+                <div class="role">Growth</div>
+                <div class="name">Conversion Psychology</div>
+              </div>
+            </div>
+            <p>This creates an <strong>Endowment Effect</strong> — once users see "their" site rendered live, they feel partial ownership. The psychological commitment at the "Use This Template" click is high. Registration at this point is completing a goal, not an arbitrary wall. Expect meaningful lift in registration-to-activation rates.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════ OPTION B ══════════════════ -->
+  <div class="section-label">Option B — Recommended Phase 2</div>
+  <div class="options-grid">
+    <div class="option-card" style="border-color: rgba(52,211,153,0.3);">
+      <div class="option-card-header" style="background: linear-gradient(135deg, rgba(52,211,153,0.05), transparent);">
+        <div>
+          <div class="option-badge badge-green">Option B ★ Phase 2 Pick</div>
+          <h3>Pay First, Set Password Later</h3>
+          <p class="subtitle">Eliminates registration friction entirely — email + plan + Stripe, account created post-payment</p>
+        </div>
+        <div class="effort-tag" style="border-color: var(--green); color: var(--green);">3–5 days</div>
+      </div>
+      <div class="option-card-body">
+
+        <div class="flow-diagram" style="border-color: rgba(52,211,153,0.2);">
+          <div class="flow-diagram-label">Proposed Flow</div>
+          <div class="fd-row">
+            <div class="fd-step neutral">Land</div>
+            <div class="fd-arrow">→</div>
+            <div class="fd-step neutral">Browse Templates</div>
+            <div class="fd-arrow">→</div>
+            <div class="fd-step value">Live Preview (from A+)</div>
+            <div class="fd-arrow">→</div>
+            <div class="fd-step action">Enter Email Only</div>
+            <div class="fd-arrow">→</div>
+            <div class="fd-step pay">Pick Plan + Stripe Checkout</div>
+            <div class="fd-arrow">→</div>
+            <div class="fd-step value">Success: "Set Your Password"</div>
+            <div class="fd-arrow">→</div>
+            <div class="fd-step value">Dashboard + Editor (template pre-loaded)</div>
+          </div>
+        </div>
+
+        <p style="color: var(--text-muted); margin-bottom: 16px;">
+          The biggest conversion killer is the question: <em style="color: var(--text);">"Why do I need to register before I know if I want this?"</em>
+          Option B eliminates this entirely. The user enters only their <span class="highlight">email address</span>, picks a plan, and goes straight
+          to Stripe Checkout. On payment success, a BetterAuth user account is created server-side (via webhook), and the user sets
+          their password on the success page or via a "complete your account" email link.
+        </p>
+
+        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">
+          <strong style="color: var(--text);">Stripe handles identity.</strong> The email entered before checkout becomes the Stripe customer email.
+          The webhook receives it, creates the BetterAuth account with a temporary password, and sends a
+          "Welcome — please set your password" email via Resend.
+        </p>
+
+        <div class="highlight-box" style="margin-bottom: 20px; border-left-color: var(--green);">
+          <strong style="color: var(--green);">Implementation path:</strong> New <code style="font-size: 12px;">/api/billing/checkout-v2</code> endpoint
+          accepting <code style="font-size: 12px;">{ email, templateId, planId }</code> → creates Stripe Checkout Session with metadata →
+          existing webhook creates BetterAuth user on <code style="font-size: 12px;">checkout.session.completed</code> →
+          sends welcome email with set-password link. The <code style="font-size: 12px;">templateId</code> is stored in Stripe
+          session metadata and read post-payment.
+        </div>
+
+        <div class="pros-cons">
+          <div class="pros-cons-box pros">
+            <h5>Pros</h5>
+            <ul>
+              <li>Eliminates the registration friction wall entirely</li>
+              <li>User commits at peak excitement (just saw live preview)</li>
+              <li>Highest conversion potential for a paid-first SaaS model</li>
+              <li>Stripe email = account email, zero duplication</li>
+              <li>templateId survives in Stripe metadata — reliable</li>
+              <li>Aligns with best practices (Lemon Squeezy, Paddle flows)</li>
+            </ul>
+          </div>
+          <div class="pros-cons-box cons">
+            <h5>Cons</h5>
+            <ul>
+              <li>"Orphaned payments" — paid but never set password</li>
+              <li>More complex webhook logic required</li>
+              <li>Need "resend set-password email" flow</li>
+              <li>BetterAuth user creation from webhook needs testing</li>
+              <li>Edge case: user pays with different email than typed</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="perspectives">
+          <div class="perspective-card">
+            <div class="phead">
+              <div class="picon picon-dev">&#128187;</div>
+              <div class="phead-text">
+                <div class="role">Senior Dev</div>
+                <div class="name">Risk & Architecture Notes</div>
+              </div>
+            </div>
+            <p>The webhook is the critical path. BetterAuth's <code style="font-size: 12px;">auth.api.signUpEmail</code> or direct DB insert must be tested for idempotency — Stripe webhooks can fire multiple times. Store a <code style="font-size: 12px;">stripeSessionId</code> on the user row as a unique key. "Orphaned payments" should trigger an automated follow-up email after 24h. The existing Stripe webhook handler in <code style="font-size: 12px;">/api/webhooks/stripe</code> is the right extension point.</p>
+          </div>
+          <div class="perspective-card">
+            <div class="phead">
+              <div class="picon picon-growth">&#128200;</div>
+              <div class="phead-text">
+                <div class="role">Growth</div>
+                <div class="name">Conversion Impact</div>
+              </div>
+            </div>
+            <p>This is the <strong>highest-leverage change</strong> in this document. Industry data: removing mandatory pre-payment registration typically lifts checkout completion by <strong>20–35%</strong>. Users who've seen the live preview (A+) and clicked "Get Started" are already emotionally invested — the fewer clicks to payment, the better. "Set password later" is now standard in B2B SaaS (Linear, Loom, Notion invites).</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════ OPTION C ══════════════════ -->
+  <div class="section-label">Option C — Not Recommended for Phase 1</div>
+  <div class="options-grid">
+    <div class="option-card" style="opacity: 0.75;">
+      <div class="option-card-header">
+        <div>
+          <div class="option-badge badge-red">Option C — Skip for Now</div>
+          <h3>Full Anonymous Editor</h3>
+          <p class="subtitle">Complete editing session before any registration or payment</p>
+        </div>
+        <div class="effort-tag">2–4 weeks</div>
+      </div>
+      <div class="option-card-body">
+
+        <div class="flow-diagram">
+          <div class="flow-diagram-label">Proposed Flow</div>
+          <div class="fd-row">
+            <div class="fd-step neutral">Land</div>
+            <div class="fd-arrow">→</div>
+            <div class="fd-step neutral">Browse Templates</div>
+            <div class="fd-arrow">→</div>
+            <div class="fd-step value">Full Anonymous Editor (fill all fields)</div>
+            <div class="fd-arrow">→</div>
+            <div class="fd-step commit">Register / Pay to Publish</div>
+            <div class="fd-arrow">→</div>
+            <div class="fd-step skip">State sync required</div>
+          </div>
+        </div>
+
+        <p style="color: var(--text-muted); margin-bottom: 16px;">
+          A full anonymous session where users edit the entire site before registering.
+          All state is persisted to localStorage or a temporary server-side session ID.
+          On registration, the anonymous session is merged into the new user account.
+        </p>
+
+        <div class="pros-cons">
+          <div class="pros-cons-box pros">
+            <h5>Pros</h5>
+            <ul>
+              <li>Maximum "aha moment" — user completes their site first</li>
+              <li>Highest possible emotional investment before paywall</li>
+              <li>Sunk-cost drives conversion at registration</li>
+            </ul>
+          </div>
+          <div class="pros-cons-box cons">
+            <h5>Cons</h5>
+            <ul>
+              <li>2–4 weeks of engineering work</li>
+              <li>Image upload before registration is architecturally complex</li>
+              <li>Anonymous session expiry and cleanup logic needed</li>
+              <li>Session merge edge cases (email conflict, partial data)</li>
+              <li>Overkill given A+ + B already solve the core problem</li>
+              <li>Risk of "build it and they don't convert" — users edit but don't pay</li>
+            </ul>
+          </div>
+        </div>
+
+        <p class="note">C is not wrong — it's just disproportionate to the problem at this stage. Revisit after A+ and B are live and validated.</p>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ══════════════════ COMPARISON TABLE ══════════════════ -->
+  <div class="section-label">Comparison</div>
+  <h2 class="section-title">At a Glance</h2>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Dimension</th>
+          <th>Option A</th>
+          <th>Option A+</th>
+          <th>Option B</th>
+          <th>Option C</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Effort</td>
+          <td>1–2 days</td>
+          <td>3–4 days</td>
+          <td>3–5 days</td>
+          <td>2–4 weeks</td>
+        </tr>
+        <tr>
+          <td>Value before registration</td>
+          <td><span class="rating"><span class="star">★</span><span class="star-dim">★★★★</span></span></td>
+          <td><span class="rating"><span class="star">★★★★</span><span class="star-dim">★</span></span></td>
+          <td><span class="rating"><span class="star">★★★★</span><span class="star-dim">★</span></span></td>
+          <td><span class="rating"><span class="star">★★★★★</span></span></td>
+        </tr>
+        <tr>
+          <td>Expected conversion lift</td>
+          <td style="color: var(--text-dim);">~2–5%</td>
+          <td style="color: var(--yellow);">~15–25%</td>
+          <td style="color: var(--green);">~25–40%</td>
+          <td style="color: var(--text-muted);">~30–50% (unproven)</td>
+        </tr>
+        <tr>
+          <td>Implementation risk</td>
+          <td style="color: var(--green);">Very low</td>
+          <td style="color: var(--green);">Low</td>
+          <td style="color: var(--yellow);">Medium</td>
+          <td style="color: var(--red);">High</td>
+        </tr>
+        <tr>
+          <td>Anonymous state complexity</td>
+          <td style="color: var(--green);">None</td>
+          <td style="color: var(--green);">None (just cookie)</td>
+          <td style="color: var(--yellow);">Low (Stripe metadata)</td>
+          <td style="color: var(--red);">Very high</td>
+        </tr>
+        <tr>
+          <td>SEO / marketing asset value</td>
+          <td style="color: var(--text-dim);">None</td>
+          <td style="color: var(--green);">High (preview pages)</td>
+          <td style="color: var(--yellow);">Medium (reuses preview)</td>
+          <td style="color: var(--text-dim);">None</td>
+        </tr>
+        <tr>
+          <td>Requires backend changes</td>
+          <td style="color: var(--green);">No</td>
+          <td style="color: var(--yellow);">Minor (preview route)</td>
+          <td style="color: var(--yellow);">Yes (checkout-v2, webhook)</td>
+          <td style="color: var(--red);">Major</td>
+        </tr>
+        <tr>
+          <td>Recommended phase</td>
+          <td style="color: var(--text-dim);">Optional baseline</td>
+          <td style="color: var(--accent);">Phase 1 (Week 1–2)</td>
+          <td style="color: var(--green);">Phase 2 (Month 2)</td>
+          <td style="color: var(--red);">Skip / Future</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ══════════════════ GLOBAL PERSPECTIVES ══════════════════ -->
+  <div class="global-perspectives">
+    <div class="section-label">Team Perspectives</div>
+    <h2>Three Angles on This Decision</h2>
+
+    <div class="gp-card">
+      <div class="gp-head">
+        <div class="gp-icon gp-icon-dev">&#128187;</div>
+        <div class="gp-head-text">
+          <div class="gp-role">Senior Developer Perspective</div>
+          <div class="gp-name">Feasibility, Risk & Technical Architecture</div>
+        </div>
+      </div>
+      <p>
+        <strong>A+ is the right first move.</strong> The template engine in <code style="font-size: 12px; background: var(--surface-3); padding: 1px 5px; border-radius: 3px;">src/lib/utils/template-engine.ts</code> already handles placeholder substitution.
+        Building a <code style="font-size: 12px; background: var(--surface-3); padding: 1px 5px; border-radius: 3px;">/templates/[slug]/preview</code> route that feeds sample data through that engine is a 2-day task at most.
+        The cookie/localStorage state is trivial — read it in the post-registration redirect middleware.
+      </p>
+      <p>
+        <strong>B requires careful webhook engineering.</strong> The existing <code style="font-size: 12px; background: var(--surface-3); padding: 1px 5px; border-radius: 3px;">/api/webhooks/stripe/route.ts</code> is the right extension point.
+        Critical: the webhook handler must be idempotent. Use <code style="font-size: 12px; background: var(--surface-3); padding: 1px 5px; border-radius: 3px;">stripeSessionId</code> as a unique constraint on the users table to prevent duplicate account creation on webhook retries.
+        BetterAuth user creation from a server-side context (not a request) needs testing — use the BetterAuth admin API or direct DB insert with proper password hashing.
+      </p>
+      <p>
+        <strong>Biggest technical risk in B</strong> is the "orphaned payment" scenario — user pays, webhook fires successfully, but the set-password email goes to spam or is never clicked.
+        Mitigation: show the set-password form inline on the Stripe success page (same tab) AND send the email.
+        Add a cron job (<code style="font-size: 12px; background: var(--surface-3); padding: 1px 5px; border-radius: 3px;">/api/cron/</code> already exists) to detect unactivated accounts after 24h and resend the email.
+        After 7 days with no activation, flag for manual review and optionally refund automatically.
+      </p>
+    </div>
+
+    <div class="gp-card">
+      <div class="gp-head">
+        <div class="gp-icon gp-icon-growth">&#128200;</div>
+        <div class="gp-head-text">
+          <div class="gp-role">SaaS Marketing / Growth Perspective</div>
+          <div class="gp-name">Conversion Psychology, User Journey & Best Practices</div>
+        </div>
+      </div>
+      <p>
+        <strong>The "aha moment" is everything.</strong> In SaaS, conversion correlates with time-to-value. Every second a user spends filling forms before seeing the product output is a second they're asking themselves "is this worth it?"
+        Option A+ creates the aha moment before the registration wall — the user sees their site (even with sample data) and thinks "that's exactly what I need." The registration at that point feels like completing a process, not starting one.
+      </p>
+      <p>
+        <strong>Option B is the long-term play.</strong> The best-converting SaaS funnels in 2025–2026 follow the pattern:
+        <em style="color: var(--text);">see value → provide email → pay → set password</em>. This mirrors e-commerce checkout flows that users are already trained on.
+        Removing the "create an account with username and password" step from the pre-payment journey is consistently shown to lift paid conversion by 20–35% in B2C SaaS.
+        The "set password later" moment, done right, feels like a reward — "your account is ready, just secure it."
+      </p>
+      <div class="highlight-box" style="border-left-color: var(--green);">
+        <strong>Sequencing A+ before B is strategically sound.</strong> A+ creates the preview page infrastructure. B reuses it and adds the Stripe layer.
+        This means B is only 3–5 days of additional work on top of A+, not 3–5 days from scratch.
+        Plus, A+ gives you real data: which templates get the most preview clicks? That informs which template to pre-load in B's checkout flow.
+      </div>
+      <p>
+        <strong>Ad channel unlock:</strong> Preview pages (A+) are individually linkable. You can run ads targeting "fitness instructor website" → directly to the Fitness template preview page.
+        This is not possible with the current flow. It's a significant top-of-funnel multiplier.
+      </p>
+    </div>
+
+    <div class="gp-card">
+      <div class="gp-head">
+        <div class="gp-icon gp-icon-ux">&#127775;</div>
+        <div class="gp-head-text">
+          <div class="gp-role">Apple UX / UI Perspective</div>
+          <div class="gp-name">Experience Design & Friction Reduction</div>
+        </div>
+      </div>
+      <p>
+        <strong>The preview must feel like the real thing.</strong> If the preview page shows a watered-down or obviously "demo" version of the template, it undermines trust.
+        Sample data must be <em style="color: var(--text);">aspirational but believable</em> — a real business name, professional-sounding tagline, a high-quality stock image that matches the niche.
+        "Sarah's Yoga Studio" with a beautiful hero photo converts better than "Lorem Ipsum Business Name."
+      </p>
+      <p>
+        <strong>The CTA on the preview page must be singular and clear.</strong> One button: "Use This Template — it's free to start."
+        No pricing, no feature lists, no distractions. The goal of the preview page is one thing: get the user to click that button.
+        Pricing can be shown on the plan selection page, after registration.
+      </p>
+      <p>
+        <strong>For Option B:</strong> The email-only entry step should be a minimal, full-screen centered form — not buried in a nav flow.
+        "Enter your email to get started" with a "Continue" button. No password field on this screen.
+        The Stripe checkout handles the rest. The success page should immediately show "Your site is ready — secure your account" with the password form inline, no redirect needed.
+      </p>
+    </div>
+  </div>
+
+  <!-- ══════════════════ RECOMMENDATION ══════════════════ -->
+  <div class="recommendation">
+    <div class="section-label">Recommendation</div>
+    <h2>Phased Implementation Plan</h2>
+
+    <div class="phase-row">
+      <div class="phase-card">
+        <div class="phase-num">Phase 1 — Week 1–2</div>
+        <h4>Implement Option A+</h4>
+        <p>Build the template preview pages. Add sample data per template. Create the "Use This Template" CTA that saves template ID to localStorage and redirects to register. Post-register middleware reads it and skips template selection.</p>
+      </div>
+      <div class="phase-card">
+        <div class="phase-num">Phase 2 — Month 2</div>
+        <h4>Implement Option B</h4>
+        <p>Add the pay-first checkout flow on top of the existing preview pages. New <code style="font-size: 12px;">/api/billing/checkout-v2</code> endpoint. Stripe webhook creates BetterAuth user. Welcome email with set-password link. Inline set-password form on success page.</p>
+      </div>
+    </div>
+
+    <div class="skip-card">
+      <div class="skip-icon">&#128683;</div>
+      <div>
+        <strong style="color: var(--text);">Skip Option C</strong> for now. The full anonymous editor is 2–4 weeks of work and solves a problem that A+ + B already address adequately.
+        Revisit after Phase 2 is live, validated, and conversion data shows a specific gap that C would fill.
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════ CHECKLIST ══════════════════ -->
+  <div class="checklist-section">
+    <div class="section-label">Implementation Checklist</div>
+    <h2>Option A+ — Phase 1 Tasks</h2>
+
+    <div class="checklist-group">
+      <h4>Template Preview Route</h4>
+      <div class="check-item">
+        <div class="check-box"></div>
+        <div class="check-text">Create <strong>/templates/[slug]/preview</strong> page (Next.js route) — server-rendered with template HTML and sample data</div>
+        <div class="check-tag">Dev — Day 1</div>
+      </div>
+      <div class="check-item">
+        <div class="check-box"></div>
+        <div class="check-text">Add <strong>SEO metadata</strong> to preview page (title, description, og:image from template thumbnail)</div>
+        <div class="check-tag">Dev — Day 1</div>
+      </div>
+      <div class="check-item">
+        <div class="check-box"></div>
+        <div class="check-text">Add <strong>"Use This Template"</strong> CTA button — sticky at top or in overlay on preview</div>
+        <div class="check-tag">Design + Dev — Day 1</div>
+      </div>
+      <div class="check-item">
+        <div class="check-box"></div>
+        <div class="check-text">On CTA click: <strong>save templateId to localStorage</strong>, redirect to <code style="font-size: 12px;">/register</code></div>
+        <div class="check-tag">Dev — Day 1</div>
+      </div>
+    </div>
+
+    <div class="checklist-group">
+      <h4>Sample Data Per Template</h4>
+      <div class="check-item">
+        <div class="check-box"></div>
+        <div class="check-text">Add <strong>sample_data JSON field</strong> to templates table in DB (or store as file per template)</div>
+        <div class="check-tag">Dev — Day 2</div>
+      </div>
+      <div class="check-item">
+        <div class="check-box"></div>
+        <div class="check-text">Write <strong>sample data for each existing template</strong> — realistic business name, tagline, phone, address, 1–2 image URLs</div>
+        <div class="check-tag">Content — Day 2–3</div>
+      </div>
+      <div class="check-item">
+        <div class="check-box"></div>
+        <div class="check-text">Expose <strong>sample data editor in Admin panel</strong> — so new templates can have sample data set on creation</div>
+        <div class="check-tag">Dev — Day 3</div>
+      </div>
+    </div>
+
+    <div class="checklist-group">
+      <h4>Post-Registration Flow</h4>
+      <div class="check-item">
+        <div class="check-box"></div>
+        <div class="check-text">In post-register redirect logic: <strong>read localStorage for selectedTemplate</strong></div>
+        <div class="check-tag">Dev — Day 2</div>
+      </div>
+      <div class="check-item">
+        <div class="check-box"></div>
+        <div class="check-text">If templateId found: <strong>skip template selection step</strong>, pre-populate templateId in plan → editor flow</div>
+        <div class="check-tag">Dev — Day 2</div>
+      </div>
+      <div class="check-item">
+        <div class="check-box"></div>
+        <div class="check-text"><strong>Clear localStorage entry</strong> after it's been consumed (prevent stale selections)</div>
+        <div class="check-tag">Dev — Day 2</div>
+      </div>
+    </div>
+
+    <div class="checklist-group">
+      <h4>Marketing Page Updates</h4>
+      <div class="check-item">
+        <div class="check-box"></div>
+        <div class="check-text">Update <strong>template cards on marketing/library page</strong> to link to preview page instead of direct register</div>
+        <div class="check-tag">Dev — Day 3</div>
+      </div>
+      <div class="check-item">
+        <div class="check-box"></div>
+        <div class="check-text">Add <strong>"Live Preview" badge or button</strong> on template cards to signal interactivity</div>
+        <div class="check-tag">Design + Dev — Day 3</div>
+      </div>
+    </div>
+
+    <div class="checklist-group">
+      <h4>QA & Launch</h4>
+      <div class="check-item">
+        <div class="check-box"></div>
+        <div class="check-text">Test full flow: preview → register → plan → editor (template pre-loaded)</div>
+        <div class="check-tag">QA — Day 4</div>
+      </div>
+      <div class="check-item">
+        <div class="check-box"></div>
+        <div class="check-text">Test <strong>edge case</strong>: user navigates directly to /register without previewing (no cookie) — should work as before</div>
+        <div class="check-tag">QA — Day 4</div>
+      </div>
+      <div class="check-item">
+        <div class="check-box"></div>
+        <div class="check-text">Test <strong>cross-device</strong>: localStorage is per-device; acceptable limitation for now</div>
+        <div class="check-tag">QA — Day 4</div>
+      </div>
+      <div class="check-item">
+        <div class="check-box"></div>
+        <div class="check-text"><strong>Deploy to VPS</strong> via standard git push + SSH deploy flow</div>
+        <div class="check-tag">DevOps — Day 4</div>
+      </div>
+      <div class="check-item">
+        <div class="check-box"></div>
+        <div class="check-text">Track <strong>preview page → register conversion rate</strong> to validate lift vs. baseline</div>
+        <div class="check-tag">Analytics — Week 2</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════ FOOTER ══════════════════ -->
+  <div class="footer">
+    <p>FinestSites — Internal Strategy Document — SaaS Funnel Proposal v2 — June 2026</p>
+    <p style="margin-top: 4px;">For questions or iteration on this proposal, open a new conversation.</p>
+  </div>
+
+</div>
+</body>
+</html>

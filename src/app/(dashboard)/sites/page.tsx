@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { getTemplateIntentCookie, clearTemplateIntentCookie, isValidTemplateId } from '@/lib/cookies/template-intent'
 
 // ── Types ───────────────────────────────────────────────────────────────────
 
@@ -111,20 +113,44 @@ function SiteCard({ site }: { site: Site }) {
 // ── Page ────────────────────────────────────────────────────────────────────
 
 export default function SitesPage() {
+  const router = useRouter()
   const [sites, setSites] = useState<Site[]>([])
   const [username, setUsername] = useState<string>('')
   const [loading, setLoading] = useState(true)
+  const [autoCreating, setAutoCreating] = useState(false)
 
   useEffect(() => {
     Promise.all([
       fetch('/api/sites').then(r => r.json()),
       fetch('/api/user/profile').then(r => r.json()),
     ]).then(([sitesData, profile]) => {
-      setSites(Array.isArray(sitesData) ? sitesData : [])
+      const loadedSites = Array.isArray(sitesData) ? sitesData : []
+      setSites(loadedSites)
       setUsername(profile?.username ?? '')
       setLoading(false)
+
+      // Check for template intent cookie — auto-create site if present
+      const intentId = getTemplateIntentCookie()
+      if (intentId && isValidTemplateId(intentId)) {
+        clearTemplateIntentCookie() // Clear immediately to prevent double-creation
+        setAutoCreating(true)
+        fetch('/api/sites', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ template_id: intentId }),
+        })
+          .then(r => r.json())
+          .then(data => {
+            if (data.id) {
+              router.push(`/sites/${data.id}/edit`)
+            } else {
+              setAutoCreating(false)
+            }
+          })
+          .catch(() => setAutoCreating(false))
+      }
     }).catch(() => setLoading(false))
-  }, [])
+  }, [router])
 
   const hasSites = sites.length > 0
 
@@ -135,6 +161,30 @@ export default function SitesPage() {
   }
 
   return (
+    <>
+    {autoCreating && (
+      <div className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-5"
+        style={{ background: 'rgba(255,255,255,0.95)', backdropFilter: 'blur(12px)' }}>
+        <div className="w-16 h-16 rounded-3xl flex items-center justify-center"
+          style={{ background: '#F5F0FB' }}>
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#7C3AED" strokeWidth="1.5">
+            <rect x="3" y="3" width="18" height="18" rx="2"/>
+            <line x1="3" y1="9" x2="21" y2="9"/>
+            <line x1="9" y1="9" x2="9" y2="21"/>
+          </svg>
+        </div>
+        <div className="text-center">
+          <h2 className="text-xl font-semibold text-gray-900 mb-1">Dein Template wird eingerichtet…</h2>
+          <p className="text-sm" style={{ color: '#9CA3AF' }}>Gleich geht es los!</p>
+        </div>
+        <div className="flex gap-1.5">
+          {[0, 1, 2].map(i => (
+            <div key={i} className="w-2 h-2 rounded-full animate-bounce"
+              style={{ background: '#7C3AED', animationDelay: `${i * 0.15}s` }} />
+          ))}
+        </div>
+      </div>
+    )}
     <div className="max-w-7xl mx-auto">
 
       {/* ── Hero / Greeting ── */}
@@ -212,5 +262,6 @@ export default function SitesPage() {
       )}
 
     </div>
+    </>
   )
 }

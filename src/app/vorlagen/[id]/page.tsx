@@ -5,6 +5,7 @@ import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import NavBar from '@/app/_components/NavBar'
+import TemplateStartCTA from '@/components/TemplateStartCTA'
 
 export const dynamic = 'force-dynamic'
 
@@ -71,6 +72,8 @@ export default async function TemplateDetailPage({ params }: Props) {
           .vd-hero-cover { margin: 0 22px !important; border-radius: 14px !important; }
           .vd-cta-inner { flex-direction: column !important; align-items: flex-start !important; }
           .vd-cta-pad { padding: 56px 22px !important; }
+          .vd-preview-pad { padding: 0 22px 56px !important; }
+          .vd-preview-iframe { height: 500px !important; }
         }
       `}</style>
 
@@ -115,9 +118,7 @@ export default async function TemplateDetailPage({ params }: Props) {
           )}
 
           <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-            <a href="https://app.finestsites.io/register" style={{ background: '#111', color: '#fff', padding: '14px 32px', borderRadius: 100, fontSize: 15, fontWeight: 600, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 8 }}>
-              Jetzt starten →
-            </a>
+            <TemplateStartCTA templateId={tpl.id} templateTitle={tpl.title} />
           </div>
         </div>
 
@@ -130,6 +131,53 @@ export default async function TemplateDetailPage({ params }: Props) {
             </div>
           </div>
         )}
+      </section>
+
+      {/* ── LIVE PREVIEW ── */}
+      <section className="vd-preview-pad" style={{ padding: '0 40px 80px', maxWidth: 1080, margin: '0 auto' }}>
+        <div style={{ marginBottom: 20, display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
+          <p style={{ fontSize: 13, fontWeight: 600, color: '#999', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Live-Vorschau</p>
+          <a
+            href={`/api/templates/${tpl.id}/public-preview`}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ fontSize: 13, color: '#8060b0', fontWeight: 600, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 5 }}
+          >
+            Vollbild öffnen
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/>
+            </svg>
+          </a>
+        </div>
+        <div style={{
+          position: 'relative',
+          borderRadius: 18,
+          overflow: 'hidden',
+          boxShadow: '0 8px 48px rgba(0,0,0,0.12)',
+          border: '1px solid rgba(0,0,0,0.08)',
+          background: '#fafafa',
+        }}>
+          {/* Browser chrome */}
+          <div style={{ background: '#f4f4f5', padding: '10px 14px', display: 'flex', alignItems: 'center', gap: 12, borderBottom: '1px solid rgba(0,0,0,0.07)' }}>
+            <div style={{ display: 'flex', gap: 6 }}>
+              {(['#FF5F57', '#FEBC2E', '#28C840'] as const).map(c => (
+                <div key={c} style={{ width: 11, height: 11, borderRadius: '50%', background: c }} />
+              ))}
+            </div>
+            <div style={{ flex: 1, background: '#fff', borderRadius: 6, padding: '5px 12px', fontSize: 12, color: '#999', textAlign: 'center', fontFamily: 'monospace', border: '1px solid rgba(0,0,0,0.08)' }}>
+              dein-name.{tpl.domain}
+            </div>
+          </div>
+          {/* Iframe */}
+          <iframe
+            className="vd-preview-iframe"
+            src={`/api/templates/${tpl.id}/public-preview`}
+            style={{ width: '100%', height: 700, border: 'none', display: 'block' }}
+            loading="lazy"
+            title={`${tpl.title} Vorschau`}
+            sandbox="allow-scripts allow-same-origin"
+          />
+        </div>
       </section>
 
       {/* ── CONTENT SECTIONS ── */}
@@ -192,9 +240,9 @@ export default async function TemplateDetailPage({ params }: Props) {
               Ab €20/Monat — in unter 5 Minuten live.
             </p>
           </div>
-          <a href="https://app.finestsites.io/register" style={{ flexShrink: 0, background: '#fff', color: '#111', padding: '16px 36px', borderRadius: 100, fontSize: 15, fontWeight: 700, textDecoration: 'none', whiteSpace: 'nowrap' }}>
-            Jetzt starten →
-          </a>
+          <div style={{ flexShrink: 0 }}>
+            <TemplateStartCTA templateId={tpl.id} templateTitle={tpl.title} light />
+          </div>
         </div>
       </section>
     </div>

@@ -1,12 +1,17 @@
 'use client'
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useState, useEffect, Suspense } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
+import { setTemplateIntentCookie, isValidTemplateId } from '@/lib/cookies/template-intent'
 // signIn removed — raw fetch is used instead for Safari iOS compatibility
 
-export default function RegisterPage() {
+function RegisterForm() {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const templateId = searchParams.get('template') ?? ''
+  const templateName = searchParams.get('tname') ? decodeURIComponent(searchParams.get('tname')!) : ''
+
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirm, setConfirm] = useState('')
@@ -20,6 +25,12 @@ export default function RegisterPage() {
 
   const passwordsMatch = confirm === '' || password === confirm
   const passwordStrong = password.length >= 8
+
+  useEffect(() => {
+    if (templateId && isValidTemplateId(templateId)) {
+      setTemplateIntentCookie(templateId)
+    }
+  }, [templateId])
 
   async function checkReferral(code: string) {
     if (!code.trim()) { setReferralValid(null); return }
@@ -104,6 +115,26 @@ export default function RegisterPage() {
           <div className="px-4 py-3 rounded-2xl text-sm"
             style={{ background: '#FEF2F2', border: '1px solid #FECACA', color: '#B91C1C' }}>
             {error}
+          </div>
+        )}
+
+        {templateId && isValidTemplateId(templateId) && (
+          <div className="flex items-center gap-3 px-4 py-3 rounded-2xl"
+            style={{ background: '#F5F0FB', border: '1.5px solid #D4B8F8' }}>
+            <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
+              style={{ background: '#7C3AED' }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2">
+                <rect x="3" y="3" width="18" height="18" rx="2"/>
+                <line x1="3" y1="9" x2="21" y2="9"/>
+                <line x1="9" y1="9" x2="9" y2="21"/>
+              </svg>
+            </div>
+            <div className="min-w-0">
+              <p className="text-xs font-semibold" style={{ color: '#5B21B6' }}>Template vorgewählt</p>
+              <p className="text-xs truncate" style={{ color: '#7C3AED' }}>
+                {templateName || 'Template wird nach der Registrierung eingerichtet'}
+              </p>
+            </div>
           </div>
         )}
 
@@ -225,6 +256,14 @@ export default function RegisterPage() {
         </p>
       </form>
     </>
+  )
+}
+
+export default function RegisterPage() {
+  return (
+    <Suspense fallback={null}>
+      <RegisterForm />
+    </Suspense>
   )
 }
 

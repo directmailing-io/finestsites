@@ -1,21 +1,52 @@
 /**
  * FinestSites Cloudflare Worker
  *
- * Routes:
- *   GET  /                          → render index.html with placeholder replacement
- *   GET  /path/to/asset.css         → serve static asset from R2
- *   POST /.finestsites/forms/{name} → save form submission via app API → redirect/JSON
- *   GET  /.finestsites/health       → health check
+ * This Worker is the public-facing edge layer that serves every user-created site.
+ * It runs at Cloudflare's edge globally, meaning zero cold-start latency compared
+ * to a Node.js server, and it never touches the database directly.
  *
- * All database lookups go through the FinestSites app API (APP_URL) — not Supabase.
+ * Architecture overview:
+ *   Browser → CF Worker → KV (cache hit: return immediately)
+ *                       → R2 (static assets: CSS, JS, images, fonts)
+ *                       → App API (cache miss: fetch meta + data, render, cache)
+ *                       → App API (form submissions: persist via PostgreSQL)
+ *
+ * Request routing:
+ *   GET  /                          → render index.html with placeholder substitution
+ *   GET  /path/to/asset.ext         → serve static asset from R2 (1-year immutable cache)
+ *   GET  /some/spa-route            → same rendered HTML (client-side router takes over)
+ *   POST /.finestsites/forms/{name} → accept form submission, persist, email notification
+ *   POST /.finestsites/kv           → internal cache management (purge / offline)
+ *   GET  /.finestsites/demo/{slug}  → serve pre-rendered admin preview from KV
+ *   GET  /.finestsites/health       → liveness check
+ *
+ * All database reads/writes go through the FinestSites app API (APP_URL), not directly
+ * to PostgreSQL. The Worker authenticates those calls with WORKER_SECRET.
+ *
+ * Hostname resolution:
+ *   Two patterns are supported:
+ *   1. Subdomain: {username}.{template-domain} (e.g. john.myevnt.io)
+ *   2. Custom domain: any hostname mapped in KV under key custom:{hostname}
+ *
+ * Deployment:
+ *   wrangler deploy --config cloudflare-worker/wrangler.toml
  */
 
 export interface Env {
+  /** R2 bucket holding all template bundles (HTML, CSS, JS, assets). */
   R2_BUCKET: R2Bucket
-  WORKER_SECRET: string  // shared secret for authenticating KV admin calls from the app
+  /**
+   * Shared secret between the Worker and the app API. The Worker sends this in
+   * the x-worker-secret request header; the app validates it before responding.
+   * Also used to authenticate inbound KV admin POSTs from the app.
+   */
+  WORKER_SECRET: string
+  /** KV namespace used for site meta cache, rendered HTML cache, custom domain map, rate limiting. */
   KV_CACHE: KVNamespace
+  /** Resend API key for sending form submission notification emails. */
   RESEND_API_KEY: string
-  APP_URL: string  // e.g. https://app.finestsites.io
+  /** Base URL of the FinestSites app (e.g. https://app.finestsites.io). */
+  APP_URL: string
 }
 
 // ─── Content-Type Map ─────────────────────────────────────────────────────────
