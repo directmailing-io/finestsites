@@ -217,7 +217,7 @@ export default async function HomePage({
 
         <div className="fs-hero-content">
           <p style={{ fontSize: 12, fontWeight: 600, color: '#888', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 28 }}>
-            Für Network-Marketing-Profis
+            Für Network-Marketer
           </p>
           <h1 style={{
             fontFamily: '"Plein", sans-serif',
@@ -228,10 +228,10 @@ export default async function HomePage({
             letterSpacing: '-0.028em',
             marginBottom: 28,
           }}>
-            Wenn Kunden auf dich<br />zukommen, nicht<br />umgekehrt.
+            Interessenten finden dich.<br />Nicht umgekehrt.
           </h1>
           <p style={{ fontSize: 16, color: '#555', lineHeight: 1.75, marginBottom: 40, maxWidth: 460 }}>
-            Erstklassige Webseite für dein Network Marketing in unter 5 Minuten live. Interessenten melden sich bei dir, nicht du bei ihnen. So einfach, dass es eine Oma hinbekommt.
+            Wähl ein Template. Trag deine Infos ein. Deine Website ist live. Ab dann bringt sie dir neue Anfragen. Automatisch, Tag und Nacht. Kein Vorwissen nötig.
           </p>
           <div className="fs-hero-buttons">
             <a href="https://app.finestsites.io/register" style={{ background: '#111', color: '#fff', padding: '15px 36px', borderRadius: 100, fontSize: 15, fontWeight: 600, display: 'inline-block', textDecoration: 'none', textAlign: 'center' }}>Jetzt starten</a>
