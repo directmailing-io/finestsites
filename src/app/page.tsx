@@ -50,12 +50,19 @@ export default async function HomePage({
         isFree: templates.isFree,
         badge: templates.badge,
         tags: templates.tags,
+        nmCompanies: templates.nmCompanies,
+        isAllrounder: templates.isAllrounder,
         previewImages: templates.previewImages,
       })
       .from(templates)
       .where(and(eq(templates.status, 'published'), eq(templates.isTest, false)))
       .orderBy(templates.createdAt)
-    templateList = rows.map(r => ({ ...r, tags: (r.tags as string[] | null) ?? [] }))
+    templateList = rows.map(r => ({
+      ...r,
+      tags: (r.tags as string[] | null) ?? [],
+      nmCompanies: (r.nmCompanies as string[] | null) ?? [],
+      isAllrounder: r.isAllrounder ?? false,
+    }))
     console.log('[HomePage] templates fetched:', templateList.length)
   } catch (err) {
     console.error('[HomePage] templates fetch error:', err)

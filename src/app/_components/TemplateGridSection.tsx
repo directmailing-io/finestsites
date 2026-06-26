@@ -10,6 +10,8 @@ export interface TemplateCardData {
   isFree: boolean
   badge: string | null
   tags: string[]
+  nmCompanies: string[]
+  isAllrounder: boolean
   previewImages: unknown
 }
 
@@ -59,11 +61,14 @@ function TemplateCard({ tpl, idx }: { tpl: TemplateCardData; idx: number }) {
 
       {/* Card body */}
       <div style={{ padding: '16px 18px 20px' }}>
-        {/* Company tags */}
-        {tpl.tags.length > 0 && (
+        {/* NM Company chips */}
+        {(tpl.isAllrounder || tpl.nmCompanies.length > 0) && (
           <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 10 }}>
-            {tpl.tags.map(tag => (
-              <span key={tag} style={{ fontSize: 11, fontWeight: 600, color: '#8060b0', background: '#F5F0FB', padding: '2px 9px', borderRadius: 100 }}>{tag}</span>
+            {tpl.isAllrounder && (
+              <span style={{ fontSize: 11, fontWeight: 600, color: '#2563EB', background: '#EFF6FF', padding: '2px 9px', borderRadius: 100 }}>Für alle Unternehmen</span>
+            )}
+            {!tpl.isAllrounder && tpl.nmCompanies.map(c => (
+              <span key={c} style={{ fontSize: 11, fontWeight: 600, color: '#8060b0', background: '#F5F0FB', padding: '2px 9px', borderRadius: 100 }}>{c}</span>
             ))}
           </div>
         )}
@@ -86,20 +91,22 @@ function TemplateCard({ tpl, idx }: { tpl: TemplateCardData; idx: number }) {
 }
 
 export default function TemplateGridSection({ templates }: { templates: TemplateCardData[] }) {
-  const [activeTag, setActiveTag] = useState<string>('Alle')
+  const [activeCompany, setActiveCompany] = useState<string>('Alle')
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE)
 
-  // Collect all unique tags
-  const allTags = useMemo(() => {
+  // Collect all unique NM companies across templates
+  const allCompanies = useMemo(() => {
     const set = new Set<string>()
-    templates.forEach(t => t.tags.forEach(tag => set.add(tag)))
+    templates.forEach(t => t.nmCompanies.forEach(c => set.add(c)))
     return Array.from(set).sort()
   }, [templates])
 
-  // Filter
+  // Filter: allrounder templates always match; otherwise filter by nmCompanies
   const filtered = useMemo(() =>
-    activeTag === 'Alle' ? templates : templates.filter(t => t.tags.includes(activeTag)),
-    [templates, activeTag]
+    activeCompany === 'Alle'
+      ? templates
+      : templates.filter(t => t.isAllrounder || t.nmCompanies.includes(activeCompany)),
+    [templates, activeCompany]
   )
 
   const visible = filtered.slice(0, visibleCount)
@@ -108,16 +115,16 @@ export default function TemplateGridSection({ templates }: { templates: Template
   return (
     <>
       {/* Filter chips */}
-      {allTags.length > 0 && (
+      {allCompanies.length > 0 && (
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', justifyContent: 'center', marginBottom: 40 }}>
-          {['Alle', ...allTags].map(tag => (
+          {['Alle', ...allCompanies].map(company => (
             <button
-              key={tag}
-              onClick={() => { setActiveTag(tag); setVisibleCount(PAGE_SIZE) }}
+              key={company}
+              onClick={() => { setActiveCompany(company); setVisibleCount(PAGE_SIZE) }}
               style={{
-                background: activeTag === tag ? '#111' : '#fff',
-                color: activeTag === tag ? '#fff' : '#555',
-                border: activeTag === tag ? '1.5px solid #111' : '1.5px solid #e0e0e0',
+                background: activeCompany === company ? '#111' : '#fff',
+                color: activeCompany === company ? '#fff' : '#555',
+                border: activeCompany === company ? '1.5px solid #111' : '1.5px solid #e0e0e0',
                 borderRadius: 100,
                 padding: '7px 18px',
                 fontSize: 13,
@@ -126,7 +133,7 @@ export default function TemplateGridSection({ templates }: { templates: Template
                 transition: 'all 0.15s ease',
               }}
             >
-              {tag}
+              {company}
             </button>
           ))}
         </div>

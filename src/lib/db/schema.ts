@@ -99,6 +99,8 @@ export const users = pgTable('users', {
   name: text('name').notNull().default(''),
   emailVerified: boolean('email_verified').notNull().default(false),
   image: text('image'),
+  // NM company preferences
+  nmCompanies: text('nm_companies').array().default([]),
   // Affiliate
   referredByUsername: text('referred_by_username'),
   stripeConnectId: text('stripe_connect_id').unique(),
@@ -130,6 +132,9 @@ export const templates = pgTable('templates', {
   slug: text('slug').unique(),
   detailColor: text('detail_color'), // hex accent color for detail page
   detailContent: jsonb('detail_content').default([]), // array of {heading, text, imageUrl, imagePosition}
+  // NM company targeting
+  nmCompanies: text('nm_companies').array().default([]),
+  isAllrounder: boolean('is_allrounder').default(false),
   // Cloudflare Worker Route setup (for template domain routing)
   cfHostnameId: text('cf_hostname_id'),
   cfHostnameStatus: text('cf_hostname_status'),

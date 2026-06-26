@@ -48,6 +48,8 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     slug: 'slug',
     detail_color: 'detailColor',
     detail_content: 'detailContent',
+    nm_companies: 'nmCompanies',
+    is_allrounder: 'isAllrounder',
   }
   for (const [snake, camel] of Object.entries(fieldMap)) {
     if (snake in body) updateValues[camel] = body[snake]

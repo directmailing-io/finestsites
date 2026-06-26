@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, use } from 'react'
 import { useRouter } from 'next/navigation'
 import { zipSync } from 'fflate'
+import { NM_COMPANIES } from '@/lib/constants/nm-companies'
 import { PlaceholderSchemaEditor, PlaceholderField } from '@/components/admin/PlaceholderSchemaEditor'
 import FormSchemaEditor from '@/components/admin/FormSchemaEditor'
 import TemplateAccessPanel from '@/components/admin/TemplateAccessPanel'
@@ -66,6 +67,8 @@ export default function EditTemplatePage({ params }: { params: Promise<{ id: str
   const [detailColor, setDetailColor] = useState<string>('#8060b0')
   const [detailSections, setDetailSections] = useState<DetailSection[]>([])
   const [sectionUploading, setSectionUploading] = useState<string | null>(null)
+  const [nmCompanies, setNmCompanies] = useState<string[]>([])
+  const [isAllrounder, setIsAllrounder] = useState(false)
 
   useEffect(() => {
     fetch(`/api/admin/templates/${id}`)
@@ -88,6 +91,8 @@ export default function EditTemplatePage({ params }: { params: Promise<{ id: str
         setSlug(data.slug ?? '')
         setDetailColor(data.detail_color ?? '#8060b0')
         setDetailSections(Array.isArray(data.detail_content) ? data.detail_content : [])
+        setNmCompanies(Array.isArray(data.nm_companies) ? data.nm_companies : [])
+        setIsAllrounder(data.is_allrounder ?? false)
         setLoading(false)
       })
   }, [id])
@@ -334,6 +339,8 @@ export default function EditTemplatePage({ params }: { params: Promise<{ id: str
         slug: slug || null,
         detail_color: detailColor || null,
         detail_content: detailSections,
+        nm_companies: isAllrounder ? [] : nmCompanies,
+        is_allrounder: isAllrounder,
       }),
     })
 
@@ -1143,6 +1150,67 @@ export default function EditTemplatePage({ params }: { params: Promise<{ id: str
               </div>
             </div>
           </div>
+        </div>
+
+        {/* NM Company Targeting */}
+        <div className="p-6 rounded-[24px] bg-white flex flex-col gap-4"
+          style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.08)', border: '1px solid var(--border)' }}>
+          <div>
+            <h2 className="font-medium text-gray-900">NM Unternehmen</h2>
+            <p className="text-xs mt-1" style={{ color: 'var(--muted-foreground)' }}>
+              Für welche Network-Marketing-Unternehmen ist dieses Template gedacht? Oder als Allrounder markieren.
+            </p>
+          </div>
+
+          {/* Allrounder toggle */}
+          <div className="flex items-center justify-between gap-4 px-4 py-3.5 rounded-[14px]"
+            style={{ background: isAllrounder ? '#EFF6FF' : '#FAFAFA', border: `1px solid ${isAllrounder ? '#BFDBFE' : '#F1F5F9'}`, transition: 'all 0.2s' }}>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 mb-0.5">
+                <span className="text-sm font-semibold text-gray-900">Allrounder</span>
+                {isAllrounder && (
+                  <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
+                    style={{ background: '#DBEAFE', color: '#1D4ED8' }}>Aktiv</span>
+                )}
+              </div>
+              <p className="text-xs" style={{ color: '#94A3B8' }}>
+                Für alle Unternehmen geeignet — wird bei jedem Unternehmens-Filter angezeigt.
+              </p>
+            </div>
+            <button type="button" onClick={() => setIsAllrounder(v => !v)}
+              className="relative flex-shrink-0 w-11 h-6 rounded-full transition-colors duration-200"
+              style={{ background: isAllrounder ? '#2563EB' : '#E2E8F0' }}
+              aria-label="Allrounder umschalten">
+              <span className="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow-sm transition-transform duration-200"
+                style={{ transform: isAllrounder ? 'translateX(20px)' : 'translateX(0)' }} />
+            </button>
+          </div>
+
+          {/* Company checkboxes */}
+          {!isAllrounder && (
+            <div className="flex flex-wrap gap-2">
+              {NM_COMPANIES.map(company => {
+                const isActive = nmCompanies.includes(company)
+                return (
+                  <button
+                    key={company}
+                    type="button"
+                    onClick={() => setNmCompanies(prev =>
+                      prev.includes(company) ? prev.filter(c => c !== company) : [...prev, company]
+                    )}
+                    className="px-3 py-1.5 rounded-[10px] text-xs font-semibold transition-all"
+                    style={{
+                      background: isActive ? '#111827' : '#F3F4F6',
+                      color: isActive ? '#fff' : '#374151',
+                      border: isActive ? '1.5px solid #111827' : '1.5px solid transparent',
+                    }}
+                  >
+                    {company}
+                  </button>
+                )
+              })}
+            </div>
+          )}
         </div>
 
         {/* Cover Image */}

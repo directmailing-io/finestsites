@@ -24,6 +24,10 @@ export async function GET(req: NextRequest) {
           placeholderSchema: templates.placeholderSchema,
           isTest: templates.isTest,
           isFree: templates.isFree,
+          nmCompanies: templates.nmCompanies,
+          isAllrounder: templates.isAllrounder,
+          tags: templates.tags,
+          badge: templates.badge,
         })
         .from(templates)
         .where(eq(templates.status, 'published'))
@@ -48,6 +52,10 @@ export async function GET(req: NextRequest) {
         placeholder_schema: t.placeholderSchema,
         is_test: t.isTest,
         is_free: t.isFree,
+        nm_companies: (t.nmCompanies as string[] | null) ?? [],
+        is_allrounder: t.isAllrounder ?? false,
+        tags: (t.tags as string[] | null) ?? [],
+        badge: t.badge ?? null,
       }))
 
     return NextResponse.json(visible)

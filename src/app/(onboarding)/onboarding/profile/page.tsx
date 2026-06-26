@@ -145,14 +145,16 @@ export default function OnboardingProfilePage() {
 
       <div className="w-full max-w-sm">
         {/* Step indicator */}
-        <div className="flex items-center justify-center gap-2 mb-10">
+        <div className="flex items-center justify-center gap-1 mb-10">
           <StepDot n={1} done label="Account" />
           <StepLine />
           <StepDot n={2} done label="Plan" />
           <StepLine />
           <StepDot n={3} done label="Username" />
           <StepLine />
-          <StepDot n={4} active label="Profil" />
+          <StepDot n={4} done label="Unternehmen" />
+          <StepLine />
+          <StepDot n={5} active label="Profil" />
         </div>
 
         <div className="text-center mb-8">

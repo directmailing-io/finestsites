@@ -33,6 +33,8 @@ export async function GET(req: NextRequest) {
     paid_sites_count,
     username: profile?.username ?? null,
     referred_by_username: profile?.referredByUsername ?? null,
+    // NM company preferences
+    nm_companies: profile?.nmCompanies ?? [],
     // Personal profile fields
     first_name: profile?.firstName ?? null,
     last_name: profile?.lastName ?? null,
@@ -63,6 +65,7 @@ export async function PATCH(req: NextRequest) {
     tiktok: 'tiktok',
     youtube: 'youtube',
     profile_image_url: 'profileImageUrl',
+    nm_companies: 'nmCompanies',
   }
 
   const updates: Partial<typeof users.$inferInsert> = {}

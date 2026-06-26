@@ -6,6 +6,7 @@ import { authClient } from '@/lib/auth/client'
 import { useRouter } from 'next/navigation'
 import { PLAN_LIST, PLAN_LABELS, COMMON_FEATURES, PLAN_ORDER, canUpgradeTo, type PlanKey } from '@/lib/plans'
 import ImageCropModal from '@/components/ImageCropModal'
+import { NM_COMPANIES } from '@/lib/constants/nm-companies'
 
 // ── Social media helpers ──────────────────────────────────────────────────────
 
@@ -167,6 +168,11 @@ function SettingsContent() {
   const [profileError, setProfileError] = useState('')
   const [avatarUploading, setAvatarUploading] = useState(false)
 
+  // ── NM company preferences ─────────────────────────────────
+  const [nmCompanies, setNmCompanies] = useState<string[]>([])
+  const [nmSaving, setNmSaving] = useState(false)
+  const [nmSuccess, setNmSuccess] = useState('')
+
   // ── Billing state ──────────────────────────────────────────
   const [subscription, setSubscription] = useState<SubscriptionInfo | null>(null)
   const [subLoading, setSubLoading] = useState(true)
@@ -217,6 +223,7 @@ function SettingsContent() {
         youtube:   urlToUsername(data.youtube   ?? '', 'youtube.com/@'),
       })
       setProfileImageUrl(data.profile_image_url ?? null)
+      setNmCompanies(Array.isArray(data.nm_companies) ? data.nm_companies : [])
     }).catch(() => {})
 
     fetch('/api/billing/invoices')
@@ -304,6 +311,19 @@ function SettingsContent() {
       setTimeout(() => setProfileSuccess(''), 3000)
     }
     setProfileSaving(false)
+  }
+
+  async function handleNmSave() {
+    setNmSaving(true)
+    setNmSuccess('')
+    await fetch('/api/user/profile', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ nm_companies: nmCompanies }),
+    })
+    setNmSuccess('Gespeichert.')
+    setTimeout(() => setNmSuccess(''), 3000)
+    setNmSaving(false)
   }
 
   function handleAvatarFileSelect(e: React.ChangeEvent<HTMLInputElement>) {
@@ -399,6 +419,50 @@ function SettingsContent() {
           Verwalte dein Abonnement, Zahlungen und Sicherheit.
         </p>
       </div>
+
+      {/* ════════════════════════════════════════════════════════════════
+          MEIN UNTERNEHMEN
+          ════════════════════════════════════════════════════════════════ */}
+      <Section title="Mein Network Marketing Unternehmen" subtitle="Wir zeigen dir passende Templates für dein Unternehmen. Du kannst mehrere auswählen.">
+        <div className="flex flex-wrap gap-2.5">
+          {NM_COMPANIES.map(company => {
+            const isActive = nmCompanies.includes(company)
+            return (
+              <button
+                key={company}
+                type="button"
+                onClick={() => setNmCompanies(prev =>
+                  prev.includes(company) ? prev.filter(c => c !== company) : [...prev, company]
+                )}
+                className="px-4 py-2 rounded-2xl text-sm font-semibold transition-all"
+                style={{
+                  background: isActive ? '#111827' : '#F9FAFB',
+                  color: isActive ? '#fff' : '#374151',
+                  border: isActive ? '1.5px solid #111827' : '1.5px solid #E5E7EB',
+                  boxShadow: isActive ? '0 4px 12px rgba(17,24,39,0.15)' : 'none',
+                }}
+              >
+                {company}
+              </button>
+            )
+          })}
+        </div>
+        <div className="flex items-center gap-3 pt-2">
+          <button
+            type="button"
+            onClick={handleNmSave}
+            disabled={nmSaving}
+            className="px-5 py-2.5 text-sm font-semibold rounded-2xl transition-all"
+            style={{
+              background: nmSaving ? '#E5E7EB' : '#111827',
+              color: nmSaving ? '#9CA3AF' : '#fff',
+            }}
+          >
+            {nmSaving ? 'Wird gespeichert…' : 'Speichern'}
+          </button>
+          {nmSuccess && <span className="text-sm text-green-600">{nmSuccess}</span>}
+        </div>
+      </Section>
 
       {/* ════════════════════════════════════════════════════════════════
           MEIN PROFIL

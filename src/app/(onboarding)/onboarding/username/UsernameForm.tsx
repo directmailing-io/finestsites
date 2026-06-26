@@ -129,7 +129,7 @@ export function UsernameForm() {
       return
     }
 
-    router.push('/onboarding/profile')
+    router.push('/onboarding/company')
   }
 
   const display = sanitize(username)
@@ -138,14 +138,16 @@ export function UsernameForm() {
   return (
     <div className="w-full max-w-sm">
       {/* Step indicator */}
-      <div className="flex items-center justify-center gap-2 mb-10">
+      <div className="flex items-center justify-center gap-1 mb-10">
         <StepDot n={1} done label="Account" />
         <StepLine />
         <StepDot n={2} done label="Plan" />
         <StepLine />
         <StepDot n={3} active label="Username" />
         <StepLine />
-        <StepDot n={4} label="Profil" />
+        <StepDot n={4} label="Unternehmen" />
+        <StepLine />
+        <StepDot n={5} label="Profil" />
       </div>
 
       <div className="text-center mb-8">

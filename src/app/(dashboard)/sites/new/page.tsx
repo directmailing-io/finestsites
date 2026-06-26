@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 
@@ -11,7 +11,10 @@ interface Template {
   domain: string
   preview_images: string[] | null
   tags: string[] | null
+  badge: string | null
   is_free?: boolean
+  nm_companies: string[]
+  is_allrounder: boolean
 }
 
 interface Site {
@@ -23,6 +26,8 @@ export default function NewSitePage() {
   const router = useRouter()
   const [templates, setTemplates] = useState<Template[]>([])
   const [activatedMap, setActivatedMap] = useState<Record<string, string>>({}) // templateId → siteId
+  const [userCompanies, setUserCompanies] = useState<string[]>([])
+  const [showAll, setShowAll] = useState(false)
   const [loading, setLoading] = useState(true)
   const [busy, setBusy] = useState<string | null>(null)
 
@@ -30,7 +35,8 @@ export default function NewSitePage() {
     Promise.all([
       fetch('/api/templates').then(r => r.json()),
       fetch('/api/sites').then(r => r.json()),
-    ]).then(([templatesData, sitesData]) => {
+      fetch('/api/user/profile').then(r => r.json()),
+    ]).then(([templatesData, sitesData, profileData]) => {
       setTemplates(Array.isArray(templatesData) ? templatesData : [])
       const map: Record<string, string> = {}
       if (Array.isArray(sitesData)) {
@@ -39,9 +45,26 @@ export default function NewSitePage() {
         }
       }
       setActivatedMap(map)
+      setUserCompanies(Array.isArray(profileData?.nm_companies) ? profileData.nm_companies : [])
       setLoading(false)
     }).catch(() => setLoading(false))
   }, [])
+
+  // Filter: if user has company prefs, show matching + allrounder first; otherwise show all
+  const hasPrefs = userCompanies.length > 0
+  const filteredTemplates = useMemo(() => {
+    const available = templates.filter(tpl => !activatedMap[tpl.id])
+    if (!hasPrefs || showAll) return available
+    const matched = available.filter(t => t.is_allrounder || t.nm_companies.some(c => userCompanies.includes(c)))
+    return matched.length > 0 ? matched : available // fallback: show all if no match
+  }, [templates, activatedMap, userCompanies, hasPrefs, showAll])
+
+  const hiddenCount = useMemo(() => {
+    if (!hasPrefs || showAll) return 0
+    const available = templates.filter(tpl => !activatedMap[tpl.id])
+    const matched = available.filter(t => t.is_allrounder || t.nm_companies.some(c => userCompanies.includes(c)))
+    return available.length - matched.length
+  }, [templates, activatedMap, userCompanies, hasPrefs, showAll])
 
   async function handleSelect(templateId: string) {
     if (busy) return
@@ -93,6 +116,36 @@ export default function NewSitePage() {
         </p>
       </div>
 
+      {/* ── Company filter hint ── */}
+      {!loading && hasPrefs && !showAll && filteredTemplates.length > 0 && (
+        <div className="flex items-center justify-between mb-5 px-1">
+          <p className="text-sm" style={{ color: '#64748B' }}>
+            Templates für: <span className="font-semibold text-gray-800">{userCompanies.join(', ')}</span>
+          </p>
+          {hiddenCount > 0 && (
+            <button
+              onClick={() => setShowAll(true)}
+              className="text-sm font-medium underline-offset-2"
+              style={{ color: '#8060b0', textDecoration: 'underline' }}
+            >
+              Alle {hiddenCount + filteredTemplates.length} anzeigen
+            </button>
+          )}
+        </div>
+      )}
+      {!loading && hasPrefs && showAll && (
+        <div className="flex items-center justify-between mb-5 px-1">
+          <p className="text-sm" style={{ color: '#64748B' }}>Alle verfügbaren Templates</p>
+          <button
+            onClick={() => setShowAll(false)}
+            className="text-sm font-medium underline-offset-2"
+            style={{ color: '#8060b0', textDecoration: 'underline' }}
+          >
+            Nur meine Unternehmen
+          </button>
+        </div>
+      )}
+
       {/* ── Template list ── */}
       {loading ? (
         <div className="flex flex-col gap-4">
@@ -109,14 +162,14 @@ export default function NewSitePage() {
             </div>
           ))}
         </div>
-      ) : templates.length === 0 ? (
+      ) : filteredTemplates.length === 0 ? (
         <div className="py-20 text-center rounded-3xl" style={{ background: '#FAFAFA', border: '1px solid #E5E7EB' }}>
           <p className="font-semibold text-gray-700 mb-1">Keine Vorlagen verfügbar</p>
           <p className="text-sm text-gray-400">Bitte versuche es später erneut.</p>
         </div>
       ) : (
         <div className="flex flex-col gap-4">
-          {templates.filter(tpl => !activatedMap[tpl.id]).map(tpl => {
+          {filteredTemplates.map(tpl => {
             const isBusy = busy === tpl.id
             const preview = tpl.preview_images?.[0] ?? null
 
@@ -157,6 +210,19 @@ export default function NewSitePage() {
                 {/* Content — right side */}
                 <div className="flex-1 flex flex-col gap-4 p-6 min-w-0">
                   <div className="flex-1">
+                    {/* NM company chips */}
+                    {(tpl.is_allrounder || tpl.nm_companies.length > 0) && (
+                      <div className="flex flex-wrap gap-1.5 mb-2">
+                        {tpl.is_allrounder && (
+                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full"
+                            style={{ background: '#EFF6FF', color: '#2563EB' }}>Für alle Unternehmen</span>
+                        )}
+                        {!tpl.is_allrounder && tpl.nm_companies.map(c => (
+                          <span key={c} className="text-[10px] font-bold px-2 py-0.5 rounded-full"
+                            style={{ background: '#F5F0FB', color: '#8060b0' }}>{c}</span>
+                        ))}
+                      </div>
+                    )}
                     <h3 className="font-bold text-gray-900 text-[17px] leading-snug mb-3">
                       {tpl.title}
                     </h3>
