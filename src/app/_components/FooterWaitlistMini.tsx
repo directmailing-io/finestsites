@@ -22,26 +22,23 @@ export default function FooterWaitlistMini() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: email.trim(), name: firstName.trim() || null, source: 'footer' }),
       })
-      setDone(true)
-    } catch {
-      setDone(true) // still show success — don't expose errors in footer
-    } finally {
-      setLoading(false)
-    }
+    } catch { /* ignore */ }
+    setLoading(false)
+    setDone(true)
   }
 
   if (done) {
     return (
       <div style={{
-        padding: '16px 20px',
+        padding: '14px 18px',
         background: 'rgba(128,96,176,0.15)',
         border: '1px solid rgba(128,96,176,0.25)',
-        borderRadius: 14,
+        borderRadius: 12,
         color: '#c4a8f0',
-        fontSize: 14,
-        fontWeight: 500,
+        fontSize: 13,
+        lineHeight: 1.6,
       }}>
-        Fast geschafft! Schau kurz in deine Mails und bestaetigue den Link.
+        Fast geschafft! Schau kurz in deine Mails und bestätige den Link.
       </div>
     )
   }
@@ -52,10 +49,10 @@ export default function FooterWaitlistMini() {
         .fwl:-webkit-autofill,
         .fwl:-webkit-autofill:focus {
           -webkit-box-shadow: 0 0 0 1000px #221a35 inset !important;
-          -webkit-text-fill-color: rgba(255,255,255,0.85) !important;
+          -webkit-text-fill-color: rgba(255,255,255,0.8) !important;
           transition: background-color 5000s ease-in-out 0s;
         }
-        .fwl::placeholder { color: rgba(255,255,255,0.25); }
+        .fwl::placeholder { color: rgba(255,255,255,0.22); }
       `}</style>
       <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
         <div style={{ display: 'flex', gap: 8 }}>
@@ -69,7 +66,7 @@ export default function FooterWaitlistMini() {
               flex: 1, minWidth: 0,
               background: 'rgba(255,255,255,0.07)',
               border: '1px solid rgba(255,255,255,0.1)',
-              borderRadius: 10, padding: '10px 14px',
+              borderRadius: 8, padding: '9px 12px',
               fontSize: 13, color: 'rgba(255,255,255,0.8)',
               outline: 'none', fontFamily: 'inherit',
             }}
@@ -82,10 +79,10 @@ export default function FooterWaitlistMini() {
             value={email}
             onChange={e => setEmail(e.target.value)}
             style={{
-              flex: 1.6, minWidth: 0,
+              flex: 1.5, minWidth: 0,
               background: 'rgba(255,255,255,0.07)',
               border: '1px solid rgba(255,255,255,0.1)',
-              borderRadius: 10, padding: '10px 14px',
+              borderRadius: 8, padding: '9px 12px',
               fontSize: 13, color: 'rgba(255,255,255,0.8)',
               outline: 'none', fontFamily: 'inherit',
             }}
@@ -98,7 +95,7 @@ export default function FooterWaitlistMini() {
             required
             checked={agreed}
             onChange={e => setAgreed(e.target.checked)}
-            style={{ marginTop: 2, flexShrink: 0 }}
+            style={{ marginTop: 2, flexShrink: 0, accentColor: '#8060b0' }}
           />
           <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.3)', lineHeight: 1.5 }}>
             Ich stimme zu, per E-Mail informiert zu werden.{' '}
@@ -113,10 +110,10 @@ export default function FooterWaitlistMini() {
           type="submit"
           disabled={loading || !email.trim() || !agreed}
           style={{
-            background: agreed && email.trim() ? '#8060b0' : 'rgba(128,96,176,0.25)',
-            color: agreed && email.trim() ? '#fff' : 'rgba(255,255,255,0.3)',
-            border: 'none', borderRadius: 10,
-            padding: '10px 20px', fontSize: 13, fontWeight: 600,
+            background: (agreed && email.trim()) ? '#8060b0' : 'rgba(128,96,176,0.2)',
+            color: (agreed && email.trim()) ? '#fff' : 'rgba(255,255,255,0.25)',
+            border: 'none', borderRadius: 8,
+            padding: '9px 18px', fontSize: 13, fontWeight: 600,
             cursor: (loading || !email.trim() || !agreed) ? 'default' : 'pointer',
             transition: 'background 0.2s, color 0.2s',
             fontFamily: 'inherit',

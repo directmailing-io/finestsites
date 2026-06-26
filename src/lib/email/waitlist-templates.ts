@@ -1,16 +1,16 @@
 /**
- * Wartelisten-E-Mail-Templates
+ * Waitlist-E-Mail-Templates
  * - Umgangssprachlich, "Hey [Vorname]," als Opener
- * - Keine Gedankenstriche (em-dash oder en-dash)
- * - HTML + Plaintext-Version für bessere Zustellbarkeit
- * - Unsubscribe-Link in jeder Mail (DSGVO + CAN-SPAM)
+ * - Echte Umlaute (UTF-8, Charset im HTML deklariert)
+ * - HTML + Plain-Text-Version für bessere Zustellbarkeit
+ * - Abmelde-Link in jeder Mail (DSGVO / CAN-SPAM)
  */
 
 const MARKETING_URL = 'https://finestsites.io'
 const LOGO_URL = `${MARKETING_URL}/logos/logo-black.svg`
 const FONT = `-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif`
 
-// ── Shared helpers ─────────────────────────────────────────────────────────────
+// ── Shared ─────────────────────────────────────────────────────────────────────
 
 function shell(body: string, unsubscribeUrl: string): string {
   return `<!DOCTYPE html>
@@ -51,9 +51,7 @@ function shell(body: string, unsubscribeUrl: string): string {
         <td style="padding:24px 0 0;text-align:center;">
           <p style="margin:0;font-size:12px;color:#B0A89E;line-height:1.7;font-family:${FONT};">
             Du bekommst diese Mail, weil du dich auf der FinestSites-Warteliste eingetragen hast.<br />
-            <a href="${unsubscribeUrl}" style="color:#B0A89E;text-decoration:underline;">
-              Abmelden
-            </a>
+            <a href="${unsubscribeUrl}" style="color:#B0A89E;text-decoration:underline;">Abmelden</a>
           </p>
         </td>
       </tr>
@@ -89,7 +87,7 @@ function divider(): string {
 function signoff(): string {
   return `${divider()}
   <p style="margin:0;font-size:14px;color:#6B6560;line-height:1.7;font-family:${FONT};">
-    Viele Gruesse,<br />
+    Viele Grüße,<br />
     <strong style="color:#111111;">Daniel von FinestSites</strong>
   </p>`
 }
@@ -98,7 +96,7 @@ function para(text: string): string {
   return `<p style="margin:14px 0 0;font-size:15px;color:#555047;line-height:1.75;font-family:${FONT};">${text}</p>`
 }
 
-// ── Template 1: Double-Opt-in Bestaetigung ─────────────────────────────────────
+// ── Template 1: Double-Opt-in Bestätigung ──────────────────────────────────────
 
 export function waitlistConfirmEmail({
   name,
@@ -115,42 +113,40 @@ export function waitlistConfirmEmail({
   const body = `
     <h1 style="margin:0;font-size:24px;font-weight:700;color:#111111;
       letter-spacing:-0.025em;line-height:1.25;font-family:${FONT};">
-      Kurz bestaetigen, dann bist du dabei!
+      Kurz bestätigen, dann bist du dabei!
     </h1>
     ${para(greeting)}
-    ${para(`Danke, dass du dich auf die FinestSites-Warteliste eingetragen hast. Klick kurz auf den Button unten, um deine E-Mail-Adresse zu bestaetigen. Das dauert nur eine Sekunde.`)}
-    ${button('Jetzt bestaetigen', confirmUrl)}
+    ${para(`danke, dass du dich auf der FinestSites-Warteliste eingetragen hast. Klick kurz auf den Button unten und bestätige deine E-Mail-Adresse. Das dauert nur eine Sekunde.`)}
+    ${button('Jetzt bestätigen', confirmUrl)}
     <p style="margin:20px 0 0;font-size:12px;color:#B0A89E;line-height:1.6;font-family:${FONT};">
-      Der Link ist 7 Tage gueltig. Falls du dich nicht angemeldet hast, kannst du diese Mail einfach ignorieren.
+      Der Link ist 7 Tage gültig. Falls du dich nicht angemeldet hast, kannst du diese Mail einfach ignorieren.
     </p>
     ${signoff()}
   `
 
-  const text = `
-Hey${first ? ` ${first}` : ''},
+  const text = `${greeting}
 
 danke, dass du dich auf der FinestSites-Warteliste eingetragen hast!
 
-Bitte bestaetigue kurz deine E-Mail-Adresse:
+Bitte bestätige kurz deine E-Mail-Adresse:
 ${confirmUrl}
 
-Der Link ist 7 Tage gueltig.
+Der Link ist 7 Tage gültig.
 
-Viele Gruesse,
+Viele Grüße,
 Daniel von FinestSites
 
 --
-Abmelden: ${unsubscribeUrl}
-  `.trim()
+Abmelden: ${unsubscribeUrl}`
 
   return {
-    subject: 'Kurz bestaetigen -- dann bist du auf der Liste!',
+    subject: 'Kurz bestätigen und du bist auf der Warteliste!',
     html: shell(body, unsubscribeUrl),
     text,
   }
 }
 
-// ── Template 2: Willkommen (nach Bestaetigung) ─────────────────────────────────
+// ── Template 2: Willkommen (nach Bestätigung) ──────────────────────────────────
 
 export function waitlistWelcomeEmail({
   name,
@@ -165,30 +161,37 @@ export function waitlistWelcomeEmail({
   const body = `
     <h1 style="margin:0;font-size:24px;font-weight:700;color:#111111;
       letter-spacing:-0.025em;line-height:1.25;font-family:${FONT};">
-      Du bist dabei! ✓
+      Du bist auf der Liste! ✓
     </h1>
     ${para(greeting)}
-    ${para(`du stehst jetzt auf unserer Warteliste. Sobald FinestSites live geht, bekommst du als Erste/r Bescheid, inklusive einem exklusiven Angebot fuer Fruehzugaenger.`)}
-    ${para(`Wir melden uns bald bei dir. Freu dich schon mal drauf!`)}
+    ${para(`du stehst jetzt auf unserer Warteliste. Als Mitglied bekommst du:`)}
+    <ul style="margin:14px 0 0;padding-left:20px;font-size:15px;color:#555047;line-height:1.8;font-family:${FONT};">
+      <li>Als Erste/r Bescheid, wenn FinestSites startet</li>
+      <li>Exklusive Angebote und Aktionen nur für Wartelisten-Mitglieder</li>
+      <li>Einen besonderen Willkommensbonus bei der Anmeldung</li>
+    </ul>
+    ${para(`Wir melden uns, sobald es losgeht. Freu dich schon mal!`)}
     ${signoff()}
   `
 
-  const text = `
-Hey${first ? ` ${first}` : ''},
+  const text = `${greeting}
 
-du stehst jetzt auf der FinestSites-Warteliste. Sobald wir live gehen, bekommst du als Erste/r Bescheid, inklusive einem exklusiven Angebot fuer Fruehzugaenger.
+du stehst jetzt auf der FinestSites-Warteliste! Als Mitglied bekommst du:
 
-Wir melden uns bald!
+- Als Erste/r Bescheid, wenn FinestSites startet
+- Exklusive Angebote und Aktionen nur für Wartelisten-Mitglieder
+- Einen besonderen Willkommensbonus bei der Anmeldung
 
-Viele Gruesse,
+Wir melden uns, sobald es losgeht!
+
+Viele Grüße,
 Daniel von FinestSites
 
 --
-Abmelden: ${unsubscribeUrl}
-  `.trim()
+Abmelden: ${unsubscribeUrl}`
 
   return {
-    subject: 'Du bist auf der Liste! Wir melden uns bald.',
+    subject: 'Du bist auf der Warteliste! Wir melden uns bald.',
     html: shell(body, unsubscribeUrl),
     text,
   }
@@ -214,7 +217,7 @@ export function waitlistBroadcastEmail({
     ${signoff()}
   `
 
-  const text = `${bodyText}\n\nViele Gruesse,\nDaniel von FinestSites\n\n--\nAbmelden: ${unsubscribeUrl}`
+  const text = `${bodyText}\n\nViele Grüße,\nDaniel von FinestSites\n\n--\nAbmelden: ${unsubscribeUrl}`
 
   return { subject, html: shell(body, unsubscribeUrl), text }
 }
