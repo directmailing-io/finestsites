@@ -7,6 +7,16 @@ import { waitlistConfirmEmail } from '@/lib/email/waitlist-templates'
 
 const MARKETING_URL = (process.env.NEXT_PUBLIC_MARKETING_URL ?? 'https://finestsites.io').replace(/\/$/, '')
 
+const CORS_HEADERS = {
+  'Access-Control-Allow-Origin': MARKETING_URL,
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type',
+}
+
+export async function OPTIONS() {
+  return new Response(null, { status: 204, headers: CORS_HEADERS })
+}
+
 export async function POST(req: NextRequest) {
   try {
     const { email, name, source } = await req.json() as {
@@ -53,10 +63,10 @@ export async function POST(req: NextRequest) {
 
     await sendConfirmEmail(entry.confirmToken!, trimmedName, trimmedEmail)
 
-    return NextResponse.json({ ok: true }, { status: 201 })
+    return NextResponse.json({ ok: true }, { status: 201, headers: CORS_HEADERS })
   } catch (err) {
     console.error('[waitlist POST]', err)
-    return NextResponse.json({ error: 'Interner Fehler.' }, { status: 500 })
+    return NextResponse.json({ error: 'Interner Fehler.' }, { status: 500, headers: CORS_HEADERS })
   }
 }
 
