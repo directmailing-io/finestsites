@@ -222,7 +222,7 @@ export default async function HomePage({
           </p>
           <h1 style={{
             fontFamily: '"Plein", sans-serif',
-            fontSize: 'clamp(36px, 4.4vw, 62px)',
+            fontSize: 'clamp(28px, 3.2vw, 48px)',
             fontWeight: 400,
             color: '#111',
             lineHeight: 1.08,
