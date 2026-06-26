@@ -31,10 +31,10 @@ export async function POST(req: NextRequest) {
     .where(and(eq(waitlist.confirmed, true), isNull(waitlist.unsubscribedAt)))
 
   if (recipients.length === 0) {
-    return NextResponse.json({ error: 'Keine bestätigten Empfänger vorhanden.' }, { status: 400 })
+    return NextResponse.json({ error: 'Keine bestaetigen Empfaenger vorhanden.' }, { status: 400 })
   }
 
-  // Convert plain-text body → simple HTML paragraphs
+  // Plain text → HTML paragraphs
   const bodyHtml = body
     .split(/\n\n+/)
     .map(p => `<p style="margin:0 0 16px;">${p.replace(/\n/g, '<br />')}</p>`)
@@ -44,15 +44,29 @@ export async function POST(req: NextRequest) {
   let sent = 0
   let failed = 0
 
-  // Resend limit: 50 requests/s — chunk to stay within rate limits
   const CHUNK = 50
   for (let i = 0; i < recipients.length; i += CHUNK) {
     await Promise.allSettled(
       recipients.slice(i, i + CHUNK).map(async (r) => {
         const unsubscribeUrl = `${MARKETING_URL}/api/waitlist/unsubscribe?token=${r.confirmToken}`
-        const { subject: s, html } = waitlistBroadcastEmail({ subject, bodyHtml, unsubscribeUrl })
+        const { subject: s, html, text } = waitlistBroadcastEmail({
+          subject,
+          bodyHtml,
+          bodyText: body,
+          unsubscribeUrl,
+        })
         try {
-          await resend.emails.send({ from: FROM_EMAIL, to: r.email, subject: s, html })
+          await resend.emails.send({
+            from: FROM_EMAIL,
+            to: r.email,
+            subject: s,
+            html,
+            text,
+            headers: {
+              'List-Unsubscribe': `<${unsubscribeUrl}>`,
+              'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+            },
+          })
           sent++
         } catch {
           failed++

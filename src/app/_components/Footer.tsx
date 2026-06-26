@@ -1,3 +1,5 @@
+import FooterWaitlistMini from './FooterWaitlistMini'
+
 export default function Footer() {
   return (
     <>
@@ -17,12 +19,14 @@ export default function Footer() {
           <div className="fs-footer-brand">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/logos/logo-black.svg" alt="FinestSites" style={{ height: 22, display: 'block', filter: 'brightness(0) invert(1)', opacity: 0.85, marginBottom: 16 }} />
-            <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.45)', lineHeight: 1.7, marginBottom: 28, maxWidth: 260 }}>
-              Professionelle Websites für Network-Marketing-Profis. In 5 Minuten live.
+            <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.45)', lineHeight: 1.7, marginBottom: 20, maxWidth: 260 }}>
+              Professionelle Websites fuer Network-Marketing-Profis. In 5 Minuten live.
             </p>
-            <a href="https://app.finestsites.io/register" style={{ display: 'inline-block', background: '#D4C5E2', color: '#2d1a50', fontSize: 13, fontWeight: 700, padding: '11px 24px', borderRadius: 100 }}>
-              Jetzt starten →
-            </a>
+            {/* Warteliste Mini-Formular */}
+            <p style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'rgba(196,168,240,0.7)', marginBottom: 12 }}>
+              Fruehzugang sichern
+            </p>
+            <FooterWaitlistMini />
           </div>
 
           {/* Produkt column */}

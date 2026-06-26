@@ -313,15 +313,14 @@ export default async function HomePage({
         </div>
       </section>
 
-      <PricingSection validatedRef={validatedRef} />
-
-      {/* ══ FOOTER ═══════════════════════════════════════════════════════ */}
-      {/* ══ FAQ ══════════════════════════════════════════════════════════ */}
-      <FAQSection />
-
       <Suspense fallback={null}>
         <WaitlistSection />
       </Suspense>
+
+      <PricingSection validatedRef={validatedRef} />
+
+      {/* ══ FAQ ══════════════════════════════════════════════════════════ */}
+      <FAQSection />
 
       <Footer />
     </div>

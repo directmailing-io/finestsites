@@ -24,38 +24,34 @@ export async function POST(req: NextRequest) {
     }
 
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      return NextResponse.json({ error: 'Ungültige E-Mail-Adresse.' }, { status: 400 })
+      return NextResponse.json({ error: 'Ungueltige E-Mail-Adresse.' }, { status: 400, headers: CORS_HEADERS })
     }
 
     const trimmedEmail = email.trim().toLowerCase()
     const trimmedName = name?.trim() || null
 
-    // Check for existing entry
     const existing = await db.query.waitlist.findFirst({
       where: eq(waitlist.email, trimmedEmail),
     })
 
     if (existing) {
       if (existing.unsubscribedAt) {
-        // Re-subscribe: reset unsubscribed, issue new token, send confirmation
         const [updated] = await db
           .update(waitlist)
           .set({ unsubscribedAt: null, confirmed: false, confirmedAt: null, name: trimmedName ?? existing.name })
           .where(eq(waitlist.email, trimmedEmail))
           .returning()
-        await sendConfirmEmail(updated.confirmToken!, trimmedName, trimmedEmail)
-        return NextResponse.json({ ok: true })
+        await sendConfirmEmail(updated.confirmToken!, trimmedName ?? updated.name, trimmedEmail)
+        return NextResponse.json({ ok: true }, { headers: CORS_HEADERS })
       }
       if (existing.confirmed) {
-        // Already confirmed — silently succeed (don't leak info)
-        return NextResponse.json({ ok: true })
+        return NextResponse.json({ ok: true }, { headers: CORS_HEADERS })
       }
-      // Pending — resend confirmation
-      await sendConfirmEmail(existing.confirmToken!, trimmedName, trimmedEmail)
-      return NextResponse.json({ ok: true })
+      // Ausstehend — erneut senden
+      await sendConfirmEmail(existing.confirmToken!, trimmedName ?? existing.name, trimmedEmail)
+      return NextResponse.json({ ok: true }, { headers: CORS_HEADERS })
     }
 
-    // New entry
     const [entry] = await db
       .insert(waitlist)
       .values({ email: trimmedEmail, name: trimmedName, source: source ?? 'homepage' })
@@ -73,6 +69,16 @@ export async function POST(req: NextRequest) {
 async function sendConfirmEmail(token: string, name: string | null, email: string) {
   const confirmUrl = `${MARKETING_URL}/api/waitlist/confirm?token=${token}`
   const unsubscribeUrl = `${MARKETING_URL}/api/waitlist/unsubscribe?token=${token}`
-  const { subject, html } = waitlistConfirmEmail({ name, confirmUrl, unsubscribeUrl })
-  await getResend().emails.send({ from: FROM_EMAIL, to: email, subject, html })
+  const { subject, html, text } = waitlistConfirmEmail({ name, confirmUrl, unsubscribeUrl })
+  await getResend().emails.send({
+    from: FROM_EMAIL,
+    to: email,
+    subject,
+    html,
+    text,
+    headers: {
+      'List-Unsubscribe': `<${unsubscribeUrl}>`,
+      'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+    },
+  })
 }
