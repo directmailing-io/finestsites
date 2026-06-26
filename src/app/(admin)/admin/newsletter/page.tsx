@@ -190,17 +190,50 @@ export default function NewsletterPage() {
   const canSend = subject.trim().length > 0 && body.trim().length > 0 && filteredRecipients.length > 0
 
   function previewHtml() {
-    const paragraphs = body.split('\n\n').map(p => p.trim()).filter(Boolean)
-      .map(p => `<p style="margin:0 0 16px;font-size:15px;color:#374151;line-height:1.7;">${p.replace(/\n/g, '<br/>')}</p>`).join('')
-    return `<!DOCTYPE html><html><body style="margin:0;padding:24px;background:#F4F4F5;font-family:-apple-system,sans-serif;">
-<table width="100%" style="max-width:560px;margin:0 auto;">
-  <tr><td style="padding-bottom:28px;text-align:center;"><img src="/logos/logo-black.svg" alt="FinestSites" height="22" style="height:22px;width:auto;display:block;margin:0 auto;" /></td></tr>
-  <tr><td style="background:#fff;border-radius:20px;padding:40px;border:1px solid #E5E7EB;">
-    <h2 style="margin:0 0 20px;font-size:20px;font-weight:700;color:#111827;">${subject || '(Kein Betreff)'}</h2>
-    ${paragraphs || '<p style="color:#9CA3AF;font-size:14px;">Inhalt hier…</p>'}
+    const FONT = `-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif`
+    const paragraphs = body.split(/\n\n+/).map(p => p.trim()).filter(Boolean)
+      .map(p => `<p style="margin:0 0 16px;font-size:15px;color:#555047;line-height:1.75;font-family:${FONT};">${p.replace(/\n/g, '<br/>')}</p>`).join('')
+    const bodyContent = paragraphs || `<p style="color:#B0A89E;font-size:15px;font-family:${FONT};">Inhalt hier…</p>`
+    return `<!DOCTYPE html>
+<html lang="de">
+<head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/></head>
+<body style="margin:0;padding:0;background:#F5F3F0;font-family:${FONT};">
+<table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="background:#F5F3F0;padding:48px 16px 56px;">
+  <tr><td align="center">
+    <table role="presentation" cellpadding="0" cellspacing="0" width="560" style="max-width:560px;width:100%;">
+      <tr>
+        <td align="center" style="padding-bottom:28px;">
+          <a href="https://finestsites.io" style="display:inline-block;text-decoration:none;">
+            <img src="https://finestsites.io/logos/logo-black.svg" alt="FinestSites" width="140" style="display:block;width:140px;height:auto;border:0;"/>
+          </a>
+        </td>
+      </tr>
+      <tr>
+        <td style="background:#ffffff;border-radius:20px;border:1px solid #E8E4DE;padding:44px;">
+          <div style="font-size:15px;color:#555047;line-height:1.8;font-family:${FONT};">
+            ${bodyContent}
+          </div>
+          <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="margin:28px 0;">
+            <tr><td style="border-top:1px solid #F0EDE8;height:1px;font-size:0;line-height:0;">&nbsp;</td></tr>
+          </table>
+          <p style="margin:0;font-size:14px;color:#6B6560;line-height:1.7;font-family:${FONT};">
+            Viele Grüße,<br/>
+            <strong style="color:#111111;">Daniel von FinestSites</strong>
+          </p>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:24px 0 0;text-align:center;">
+          <p style="margin:0;font-size:12px;color:#B0A89E;line-height:1.7;font-family:${FONT};">
+            Du bekommst diese Mail, weil du ein FinestSites-Konto hast.<br/>
+            <span style="color:#B0A89E;text-decoration:underline;">Abmelden</span>
+          </p>
+        </td>
+      </tr>
+    </table>
   </td></tr>
-  <tr><td style="padding:20px 0 0;text-align:center;"><p style="font-size:12px;color:#9CA3AF;">© ${new Date().getFullYear()} FinestSites</p></td></tr>
-</table></body></html>`
+</table>
+</body></html>`
   }
 
   const card = { background: '#fff', borderRadius: 20, padding: 20, border: '1px solid #F1F5F9', boxShadow: '0 1px 4px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04)' }

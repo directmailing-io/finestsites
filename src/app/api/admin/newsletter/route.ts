@@ -5,7 +5,7 @@ import { users, userSites, templates } from '@/lib/db/schema'
 import { eq, ne } from 'drizzle-orm'
 import { sql } from 'drizzle-orm'
 import { getResend, FROM_EMAIL } from '@/lib/resend'
-import { newsletterEmail, textToHtml } from '@/lib/email/templates'
+import { waitlistBroadcastEmail } from '@/lib/email/waitlist-templates'
 
 export const runtime = 'nodejs'
 
@@ -156,8 +156,12 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Keine Empfänger gefunden.' }, { status: 400 })
   }
 
-  const html = newsletterEmail({ subject: subject.trim(), bodyHtml: textToHtml(body.trim()) })
+  const bodyHtml = body.trim()
+    .split(/\n\n+/)
+    .map(p => `<p style="margin:0 0 16px;">${p.replace(/\n/g, '<br />')}</p>`)
+    .join('')
 
+  const UNSUBSCRIBE_BASE = (process.env.NEXT_PUBLIC_APP_URL ?? 'https://app.finestsites.io').replace(/\/$/, '')
   const BATCH_SIZE = 100
   let sent = 0, failed = 0
 
@@ -165,7 +169,26 @@ export async function POST(req: NextRequest) {
     const chunk = emails.slice(i, i + BATCH_SIZE)
     try {
       const result = await getResend().batch.send(
-        chunk.map(to => ({ from: FROM_EMAIL, to, subject: subject.trim(), html }))
+        chunk.map(to => {
+          const unsubscribeUrl = `${UNSUBSCRIBE_BASE}/unsubscribe?email=${encodeURIComponent(to)}`
+          const { subject: s, html, text } = waitlistBroadcastEmail({
+            subject: subject.trim(),
+            bodyHtml,
+            bodyText: body.trim(),
+            unsubscribeUrl,
+          })
+          return {
+            from: FROM_EMAIL,
+            to,
+            subject: s,
+            html,
+            text,
+            headers: {
+              'List-Unsubscribe': `<${unsubscribeUrl}>`,
+              'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+            },
+          }
+        })
       )
       if (result.error) {
         console.error('[newsletter] Resend error:', JSON.stringify(result.error))

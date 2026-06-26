@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { waitlist, users } from '@/lib/db/schema'
 import { desc, eq } from 'drizzle-orm'
+import { sql } from 'drizzle-orm'
 import { getUserFromRequest } from '@/lib/auth/server'
 
 async function assertAdmin(req: NextRequest) {
@@ -16,10 +17,17 @@ export async function GET(req: NextRequest) {
   const err = await assertAdmin(req)
   if (err) return err
 
-  const entries = await db.select().from(waitlist).orderBy(desc(waitlist.createdAt))
+  const [entries, broadcastResult] = await Promise.all([
+    db.select().from(waitlist).orderBy(desc(waitlist.createdAt)),
+    db.execute(sql`SELECT id, subject, body, sent_count, failed_count, recipients, sent_at FROM waitlist_broadcasts ORDER BY sent_at DESC LIMIT 50`)
+      .catch(() => ({ rows: [] })),
+  ])
+
   const total = entries.length
   const confirmed = entries.filter(e => e.confirmed && !e.unsubscribedAt).length
   const unsubscribed = entries.filter(e => !!e.unsubscribedAt).length
 
-  return NextResponse.json({ entries, stats: { total, confirmed, unsubscribed } })
+  const broadcasts = Array.isArray(broadcastResult) ? broadcastResult : (broadcastResult as { rows: unknown[] }).rows ?? []
+
+  return NextResponse.json({ entries, stats: { total, confirmed, unsubscribed }, broadcasts })
 }
