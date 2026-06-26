@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useMemo } from 'react'
+import { CompanyChip, BadgeChip, PriceChip } from '@/components/TemplateChips'
 
 export interface TemplateCardData {
   id: string
@@ -15,11 +16,6 @@ export interface TemplateCardData {
   previewImages: unknown
 }
 
-const BADGE_STYLES: Record<string, { bg: string; color: string; label: string }> = {
-  brandneu:  { bg: '#7C3AED', color: '#fff', label: 'Brandneu' },
-  beliebt:   { bg: '#EA580C', color: '#fff', label: 'Sehr beliebt' },
-}
-
 const PASTEL_COLORS = ['#DCD0ED', '#B8CCDB', '#EDCBA8', '#C8D8B8', '#F2C5C5', '#C5DFE0', '#EAD4B5', '#C5D4F2']
 const PAGE_SIZE = 8
 
@@ -27,7 +23,6 @@ function TemplateCard({ tpl, idx }: { tpl: TemplateCardData; idx: number }) {
   const images = Array.isArray(tpl.previewImages) ? tpl.previewImages as string[] : []
   const cover = images[0] ?? null
   const pastel = PASTEL_COLORS[idx % PASTEL_COLORS.length]
-  const badge = tpl.badge ? BADGE_STYLES[tpl.badge] ?? null : null
 
   return (
     <a
@@ -47,31 +42,20 @@ function TemplateCard({ tpl, idx }: { tpl: TemplateCardData; idx: number }) {
             <span style={{ fontSize: 11, fontWeight: 600, color: 'rgba(0,0,0,0.3)', letterSpacing: '0.06em', textTransform: 'uppercase' }}>{tpl.domain}</span>
           </div>
         )}
-
-        {/* Badges overlay */}
-        <div style={{ position: 'absolute', top: 12, left: 12, display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-          {tpl.isFree && (
-            <span style={{ background: '#16A34A', color: '#fff', fontSize: 10, fontWeight: 700, padding: '3px 10px', borderRadius: 100, letterSpacing: '0.04em' }}>KOSTENLOS</span>
-          )}
-          {badge && (
-            <span style={{ background: badge.bg, color: badge.color, fontSize: 10, fontWeight: 700, padding: '3px 10px', borderRadius: 100, letterSpacing: '0.04em' }}>{badge.label.toUpperCase()}</span>
-          )}
-        </div>
       </div>
 
       {/* Card body */}
       <div style={{ padding: '16px 18px 20px' }}>
-        {/* NM Company chips */}
-        {(tpl.isAllrounder || tpl.nmCompanies.length > 0) && (
-          <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 10 }}>
-            {tpl.isAllrounder && (
-              <span style={{ fontSize: 11, fontWeight: 600, color: '#2563EB', background: '#EFF6FF', padding: '2px 9px', borderRadius: 100 }}>Für alle Unternehmen</span>
-            )}
-            {!tpl.isAllrounder && tpl.nmCompanies.map(c => (
-              <span key={c} style={{ fontSize: 11, fontWeight: 600, color: '#8060b0', background: '#F5F0FB', padding: '2px 9px', borderRadius: 100 }}>{c}</span>
-            ))}
-          </div>
-        )}
+        {/* Chips */}
+        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 10 }}>
+          <CompanyChip
+            name={tpl.nmCompanies[0]}
+            isAllrounder={tpl.isAllrounder}
+            size="xs"
+          />
+          <BadgeChip badge={tpl.badge} size="xs" />
+          <PriceChip isFree={tpl.isFree} size="xs" />
+        </div>
 
         <h3 style={{ fontSize: 15, fontWeight: 700, color: '#111', marginBottom: 6, lineHeight: 1.3 }}>{tpl.title}</h3>
 
@@ -91,40 +75,46 @@ function TemplateCard({ tpl, idx }: { tpl: TemplateCardData; idx: number }) {
 }
 
 export default function TemplateGridSection({ templates }: { templates: TemplateCardData[] }) {
-  const [activeCompany, setActiveCompany] = useState<string>('Alle')
+  const [activeFilter, setActiveFilter] = useState<string>('Alle')
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE)
 
-  // Collect all unique NM companies across templates
-  const allCompanies = useMemo(() => {
-    const set = new Set<string>()
-    templates.forEach(t => t.nmCompanies.forEach(c => set.add(c)))
-    return Array.from(set).sort()
+  // Build filter list: Alle → Allgemein (if any allrounders) → per NM company
+  const filterOptions = useMemo(() => {
+    const companies = new Set<string>()
+    let hasAllrounder = false
+    templates.forEach(t => {
+      if (t.isAllrounder) hasAllrounder = true
+      else t.nmCompanies.forEach(c => companies.add(c))
+    })
+    const opts = ['Alle']
+    if (hasAllrounder) opts.push('Allgemein')
+    opts.push(...Array.from(companies).sort())
+    return opts
   }, [templates])
 
-  // Filter: allrounder templates always match; otherwise filter by nmCompanies
-  const filtered = useMemo(() =>
-    activeCompany === 'Alle'
-      ? templates
-      : templates.filter(t => t.isAllrounder || t.nmCompanies.includes(activeCompany)),
-    [templates, activeCompany]
-  )
+  // Filter logic
+  const filtered = useMemo(() => {
+    if (activeFilter === 'Alle') return templates
+    if (activeFilter === 'Allgemein') return templates.filter(t => t.isAllrounder)
+    return templates.filter(t => !t.isAllrounder && t.nmCompanies.includes(activeFilter))
+  }, [templates, activeFilter])
 
   const visible = filtered.slice(0, visibleCount)
   const hasMore = filtered.length > visibleCount
 
   return (
     <>
-      {/* Filter chips */}
-      {allCompanies.length > 0 && (
+      {/* Filter chips — only shown when there are multiple options */}
+      {filterOptions.length > 1 && (
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', justifyContent: 'center', marginBottom: 40 }}>
-          {['Alle', ...allCompanies].map(company => (
+          {filterOptions.map(opt => (
             <button
-              key={company}
-              onClick={() => { setActiveCompany(company); setVisibleCount(PAGE_SIZE) }}
+              key={opt}
+              onClick={() => { setActiveFilter(opt); setVisibleCount(PAGE_SIZE) }}
               style={{
-                background: activeCompany === company ? '#111' : '#fff',
-                color: activeCompany === company ? '#fff' : '#555',
-                border: activeCompany === company ? '1.5px solid #111' : '1.5px solid #e0e0e0',
+                background: activeFilter === opt ? '#111' : '#fff',
+                color: activeFilter === opt ? '#fff' : '#555',
+                border: activeFilter === opt ? '1.5px solid #111' : '1.5px solid #e0e0e0',
                 borderRadius: 100,
                 padding: '7px 18px',
                 fontSize: 13,
@@ -133,7 +123,7 @@ export default function TemplateGridSection({ templates }: { templates: Template
                 transition: 'all 0.15s ease',
               }}
             >
-              {company}
+              {opt}
             </button>
           ))}
         </div>

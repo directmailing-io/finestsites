@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { CompanyChip, BadgeChip, PriceChip } from '@/components/TemplateChips'
 
 interface Template {
   id: string
@@ -24,56 +25,7 @@ interface Site {
 
 type PriceFilter = 'all' | 'free' | 'premium'
 
-// ── Chip components ──────────────────────────────────────────────────────────
-
-function CompanyChip({ name, isAllrounder }: { name?: string; isAllrounder?: boolean }) {
-  if (isAllrounder) {
-    return (
-      <span style={{ fontSize: 10, fontWeight: 700, color: '#2563EB', background: '#EFF6FF', padding: '3px 9px', borderRadius: 100 }}>
-        Alle Unternehmen
-      </span>
-    )
-  }
-  if (!name) return null
-  return (
-    <span style={{ fontSize: 10, fontWeight: 700, color: '#8060b0', background: '#F5F0FB', padding: '3px 9px', borderRadius: 100 }}>
-      {name}
-    </span>
-  )
-}
-
-function BadgeChip({ badge }: { badge: string | null }) {
-  if (badge === 'brandneu') {
-    return (
-      <span style={{ fontSize: 10, fontWeight: 700, color: '#7C3AED', background: '#F5F3FF', padding: '3px 9px', borderRadius: 100 }}>
-        ✦ Neu
-      </span>
-    )
-  }
-  if (badge === 'beliebt') {
-    return (
-      <span style={{ fontSize: 10, fontWeight: 700, color: '#C2410C', background: '#FFF7ED', padding: '3px 9px', borderRadius: 100 }}>
-        🔥 Heiß beliebt
-      </span>
-    )
-  }
-  return null
-}
-
-function PriceChip({ isFree }: { isFree: boolean }) {
-  if (isFree) {
-    return (
-      <span style={{ fontSize: 10, fontWeight: 700, color: '#15803D', background: '#F0FDF4', padding: '3px 9px', borderRadius: 100 }}>
-        Gratis
-      </span>
-    )
-  }
-  return (
-    <span style={{ fontSize: 10, fontWeight: 700, color: '#78350F', background: '#FFFBEB', padding: '3px 9px', borderRadius: 100 }}>
-      Premium
-    </span>
-  )
-}
+// ── Filter chip ───────────────────────────────────────────────────────────────
 
 function FilterChip({ label, active, onClick }: { label: string; active: boolean; onClick: () => void }) {
   return (
@@ -97,7 +49,7 @@ function FilterChip({ label, active, onClick }: { label: string; active: boolean
   )
 }
 
-// ── Empty states ─────────────────────────────────────────────────────────────
+// ── Empty states ──────────────────────────────────────────────────────────────
 
 function EmptyState({ hasPrefs, search, priceFilter }: { hasPrefs: boolean; search: string; priceFilter: PriceFilter }) {
   if (search) {
@@ -153,7 +105,7 @@ function EmptyState({ hasPrefs, search, priceFilter }: { hasPrefs: boolean; sear
   )
 }
 
-// ── Page ─────────────────────────────────────────────────────────────────────
+// ── Page ──────────────────────────────────────────────────────────────────────
 
 export default function NewSitePage() {
   const router = useRouter()
@@ -185,19 +137,21 @@ export default function NewSitePage() {
   }, [])
 
   const hasPrefs = userCompanies.length > 0
+  // Show company sub-filter only when user has 2+ companies
   const showCompanyFilter = userCompanies.length > 1
 
-  // Step 1: filter by user's companies (strict — no "show all" escape hatch)
+  // Step 1: filter by user's companies (strict — allrounders always pass)
   const companyMatched = useMemo(() => {
     const available = templates.filter(tpl => !activatedMap[tpl.id])
     if (!hasPrefs) return available
     return available.filter(t => t.is_allrounder || t.nm_companies.some(c => userCompanies.includes(c)))
   }, [templates, activatedMap, userCompanies, hasPrefs])
 
-  // Step 2: sub-filter by specific company (when user has multiple companies)
+  // Step 2: sub-filter by specific company or "Allgemein"
   const companyFiltered = useMemo(() => {
     if (activeCompany === 'Alle') return companyMatched
-    return companyMatched.filter(t => t.is_allrounder || t.nm_companies.includes(activeCompany))
+    if (activeCompany === 'Allgemein') return companyMatched.filter(t => t.is_allrounder)
+    return companyMatched.filter(t => !t.is_allrounder && t.nm_companies.includes(activeCompany))
   }, [companyMatched, activeCompany])
 
   // Step 3: price filter
@@ -299,10 +253,12 @@ export default function NewSitePage() {
       {/* ── Filter chips ── */}
       {!loading && (
         <div className="flex gap-2 mb-6 overflow-x-auto pb-1" style={{ scrollbarWidth: 'none' }}>
-          {/* Company sub-filter (only shown when user has 2+ companies) */}
+
+          {/* Company sub-filter (only when user has 2+ companies) */}
           {showCompanyFilter && (
             <>
               <FilterChip label="Alle" active={activeCompany === 'Alle'} onClick={() => setActiveCompany('Alle')} />
+              <FilterChip label="Allgemein" active={activeCompany === 'Allgemein'} onClick={() => setActiveCompany('Allgemein')} />
               {userCompanies.map(c => (
                 <FilterChip key={c} label={c} active={activeCompany === c} onClick={() => setActiveCompany(c)} />
               ))}
@@ -311,17 +267,21 @@ export default function NewSitePage() {
             </>
           )}
 
-          {/* Price filter */}
-          <FilterChip label="Alle" active={!showCompanyFilter && priceFilter === 'all'} onClick={() => setPriceFilter('all')} />
+          {/* Price filter — order: Alle → ★ Premium → Gratis */}
           <FilterChip
-            label="✦ Gratis"
-            active={priceFilter === 'free'}
-            onClick={() => setPriceFilter(priceFilter === 'free' ? 'all' : 'free')}
+            label="Alle"
+            active={priceFilter === 'all'}
+            onClick={() => setPriceFilter('all')}
           />
           <FilterChip
-            label="Premium"
+            label="★ Premium"
             active={priceFilter === 'premium'}
             onClick={() => setPriceFilter(priceFilter === 'premium' ? 'all' : 'premium')}
+          />
+          <FilterChip
+            label="Gratis"
+            active={priceFilter === 'free'}
+            onClick={() => setPriceFilter(priceFilter === 'free' ? 'all' : 'free')}
           />
         </div>
       )}
@@ -357,7 +317,7 @@ export default function NewSitePage() {
           {visible.map(tpl => {
             const isBusy = busy === tpl.id
             const preview = tpl.preview_images?.[0] ?? null
-            // Prefer showing the company the user belongs to
+            // Show the company the user belongs to; fall back to first listed
             const matchedCompany = tpl.is_allrounder
               ? undefined
               : (tpl.nm_companies.find(c => userCompanies.includes(c)) ?? tpl.nm_companies[0])
@@ -394,9 +354,9 @@ export default function NewSitePage() {
 
                   {/* Chips */}
                   <div className="flex flex-wrap gap-1.5">
-                    <CompanyChip name={matchedCompany} isAllrounder={tpl.is_allrounder} />
-                    <BadgeChip badge={tpl.badge} />
-                    <PriceChip isFree={tpl.is_free ?? false} />
+                    <CompanyChip name={matchedCompany} isAllrounder={tpl.is_allrounder} size="xs" />
+                    <BadgeChip badge={tpl.badge} size="xs" />
+                    <PriceChip isFree={tpl.is_free ?? false} size="xs" />
                   </div>
 
                   {/* Title + description */}
@@ -435,7 +395,7 @@ export default function NewSitePage() {
         </div>
       )}
 
-      {/* ── Settings hint (when user has prefs) ── */}
+      {/* ── Settings hint ── */}
       {!loading && hasPrefs && visible.length > 0 && (
         <p className="text-xs text-center mt-8" style={{ color: '#C4B5C8' }}>
           Anderes Unternehmen?{' '}
