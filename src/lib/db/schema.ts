@@ -424,3 +424,18 @@ export type SubscriptionEvent = typeof subscriptionEvents.$inferSelect
 export type AffiliateCommission = typeof affiliateCommissions.$inferSelect
 export type AffiliatePayout = typeof affiliatePayouts.$inferSelect
 export type AffiliateClick = typeof affiliateClicks.$inferSelect
+
+// ─── Waitlist ──────────────────────────────────────────────────────────────────
+// REMOVAL: run `DROP TABLE waitlist;` + delete all waitlist files (see docs/waitlist-removal.md)
+export const waitlist = pgTable('waitlist', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  email: text('email').unique().notNull(),
+  name: text('name'),
+  source: text('source').default('homepage'),
+  confirmToken: uuid('confirm_token').unique().defaultRandom(),
+  confirmed: boolean('confirmed').notNull().default(false),
+  confirmedAt: timestamp('confirmed_at', { withTimezone: true }),
+  unsubscribedAt: timestamp('unsubscribed_at', { withTimezone: true }),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
+})
+export type WaitlistEntry = typeof waitlist.$inferSelect

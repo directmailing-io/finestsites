@@ -7,7 +7,9 @@ import FeatureCardsAnimated from './_components/FeatureCardsAnimated'
 import NavBar from './_components/NavBar'
 import HowItWorks from './_components/HowItWorks'
 import TemplateGridSection, { type TemplateCardData } from './_components/TemplateGridSection'
+import { Suspense } from 'react'
 import FAQSection from './_components/FAQSection'
+import WaitlistSection from './_components/WaitlistSection'
 import Footer from './_components/Footer'
 
 export const dynamic = 'force-dynamic'
@@ -316,6 +318,10 @@ export default async function HomePage({
       {/* ══ FOOTER ═══════════════════════════════════════════════════════ */}
       {/* ══ FAQ ══════════════════════════════════════════════════════════ */}
       <FAQSection />
+
+      <Suspense fallback={null}>
+        <WaitlistSection />
+      </Suspense>
 
       <Footer />
     </div>

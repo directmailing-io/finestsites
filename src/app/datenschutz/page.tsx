@@ -287,14 +287,44 @@ export default function DatenschutzPage() {
           </p>
         </Section>
 
-        {/* 11 — Newsletter placeholder */}
-        <Section title="11. Newsletter (geplant)">
+        {/* 11 */}
+        <Section title="11. Warteliste und E-Mail-Benachrichtigungen">
           <p>
-            Die Funktion eines Newsletters befindet sich derzeit in Planung und ist noch nicht
-            aktiv. Sobald wir einen Newsletter anbieten, werden wir diese Datenschutzerklärung
-            um die entsprechenden Angaben ergänzen und vor der ersten Versendung Ihre
-            ausdrückliche Einwilligung einholen. Ein Newsletter wird nur versendet, wenn Sie
-            sich aktiv dafür angemeldet haben (Double-Opt-in-Verfahren).
+            Vor dem offiziellen Launch von FinestSites bieten wir Interessenten die Möglichkeit,
+            sich in eine Warteliste einzutragen, um bevorzugt Informationen und Zugang zur
+            Plattform zu erhalten.
+          </p>
+          <p style={{ marginTop: 12 }}>
+            <strong>Erhobene Daten:</strong> E-Mail-Adresse (Pflichtfeld), Name (optional),
+            Herkunft der Anmeldung (technisches Merkmal). Es wird ein eindeutiges Token
+            gespeichert, das zur Bestätigung der E-Mail-Adresse und zur späteren Abmeldung
+            verwendet wird.
+          </p>
+          <p style={{ marginTop: 12 }}>
+            <strong>Double-Opt-in-Verfahren:</strong> Nach der Anmeldung erhalten Sie eine
+            Bestätigungs-E-Mail. Erst nach Klick auf den Bestätigungslink gilt die Anmeldung
+            als wirksam. Dies dient der Sicherstellung, dass die E-Mail-Adresse tatsächlich
+            Ihnen gehört (§ 7 Abs. 2 Nr. 3 UWG).
+          </p>
+          <p style={{ marginTop: 12 }}>
+            <strong>Zweck:</strong> Information über den Launch von FinestSites sowie
+            gelegentliche Vorab-Informationen zum Angebot.
+          </p>
+          <p style={{ marginTop: 12 }}>
+            <strong>Rechtsgrundlage:</strong> Art. 6 Abs. 1 lit. a DSGVO (Einwilligung). Die
+            Einwilligung kann jederzeit widerrufen werden, indem Sie auf den Abmeldelink in
+            jeder E-Mail klicken oder uns eine formlose E-Mail senden. Der Widerruf berührt
+            nicht die Rechtmäßigkeit der vor dem Widerruf erfolgten Verarbeitung.
+          </p>
+          <p style={{ marginTop: 12 }}>
+            <strong>Versanddienstleister:</strong> E-Mails werden über Resend, Inc. versendet
+            (siehe Ziffer 8). Die E-Mail-Adresse wird an Resend übermittelt. Es besteht ein
+            Auftragsverarbeitungsvertrag gemäß Art. 28 DSGVO.
+          </p>
+          <p style={{ marginTop: 12 }}>
+            <strong>Speicherdauer:</strong> Die Daten werden gespeichert, bis Sie sich abmelden
+            oder uns zur Löschung auffordern, spätestens jedoch 6 Monate nach dem offiziellen
+            Launch der Plattform.
           </p>
         </Section>
 
