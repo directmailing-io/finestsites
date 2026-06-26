@@ -4,32 +4,40 @@ import { useState } from 'react'
 
 const FAQS = [
   {
-    q: 'Wie schnell ist meine Website live?',
-    a: 'In der Regel unter 5 Minuten. Du wählst ein Template, trägst deine Infos ein und kannst deine Seite sofort veröffentlichen. Keine Installation, keine technischen Vorkenntnisse nötig.',
+    q: 'Wie schnell bin ich mit meiner Website online?',
+    a: 'In der Regel in unter 5 Minuten. Du suchst dir ein Template aus, nimmst ein paar persönliche Anpassungen vor — Profilbild, Farbthema, welche Bereiche du anzeigen möchtest — und deine Seite ist live. Das geht genauso gut vom Handy aus, du brauchst dafür keinen Laptop.',
   },
   {
-    q: 'Brauche ich eigene Domain oder Hosting?',
-    a: 'Nein. Hosting und SSL-Zertifikat sind inklusive. Du bekommst eine eigene Webadresse mit deinem Nutzernamen. Wenn du eine eigene Domain möchtest, kannst du diese jederzeit verknüpfen.',
+    q: 'Brauche ich technisches Wissen, Marketing-Kenntnisse oder kreatives Talent?',
+    a: 'Nein. Gar nicht. Die Templates sind schlüsselfertig. Texte, Design, Struktur, psychologische Überzeugungskraft — das alles ist bereits drin. Du musst nichts erfinden oder selbst ausdenken. Einfach Template wählen, ein paar Infos eintragen, fertig.',
   },
   {
-    q: 'Funktioniert FinestSites für jedes Network-Marketing-Unternehmen?',
-    a: 'Ja. Ob Herbalife, doTERRA, ZINZINO oder ein anderes Unternehmen — unsere Templates sind für Network-Marketer aller Art geeignet. Du passt Texte, Bilder und Farben einfach an deine Marke an.',
+    q: 'Was für Templates gibt es und wie unterscheiden sie sich?',
+    a: 'Es gibt mehrere Templates, die jeweils auf ein anderes Ziel optimiert sind. Eines ist z. B. auf die Produkte ausgerichtet, ein anderes auf die Geschäftsmöglichkeit, ein weiteres spricht gezielt Mütter an, die ein zweites Standbein aufbauen möchten. Jedes Template wurde gemeinsam mit Führungskräften aus Network-Marketing-Unternehmen, UX/UI-Designern und Marketing-Experten entwickelt. Nichts ist dem Zufall überlassen — für sowas zahlen Unternehmen mehrere tausend Euro.',
   },
   {
-    q: 'Was passiert, wenn ich kündigen möchte?',
-    a: 'Du kannst jederzeit monatlich kündigen, ohne Mindestlaufzeit oder Kündigungsfristen. Es gibt kein Kleingedrucktes. Nach der Kündigung bleibt dein Account bis zum Ende des bezahlten Zeitraums aktiv.',
+    q: 'Was kann ich an meiner Website anpassen?',
+    a: 'Du kannst ein Farbthema wählen, dein Profilbild hochladen, den Stil der Seite festlegen und einzelne Bereiche ein- oder ausblenden, die du nicht brauchst. Das sind keine großen Eingriffe — die Anpassung dauert meistens 5 Minuten. Alles andere, also Texte, Design und Struktur, ist bereits fertig.',
   },
   {
-    q: 'Kann ich die Texte und Bilder selbst anpassen?',
-    a: 'Ja, vollständig. Im Editor trägst du deine eigenen Texte, Fotos und Kontaktdaten ein. Das Template bildet nur den Rahmen — der Inhalt ist komplett deiner.',
+    q: 'Wofür kann ich meinen Website-Link nutzen?',
+    a: 'Für alles. Du kannst ihn in deine Social-Media-Biografie eintragen, in Stories teilen, auf Visitenkarten drucken, auf Flyern verteilen, sogar auf dein Auto kleben. Jeder, der deinen Link aufruft, landet auf einer professionellen Seite, die rund um die Uhr für dich arbeitet.',
   },
   {
-    q: 'Bekomme ich Benachrichtigungen, wenn jemand Kontakt aufnimmt?',
-    a: 'Ja. Sobald ein Interessent das Kontaktformular auf deiner Website ausfüllt, erhältst du eine E-Mail-Benachrichtigung. Alle Anfragen findest du zusätzlich übersichtlich in deinem Dashboard.',
+    q: 'Wie erhalte ich Anfragen von Interessenten?',
+    a: 'Über ein Kontaktformular auf deiner Website. Sobald jemand es ausfüllt, siehst du die Anfrage in deinem FinestSites-Dashboard. Du musst nicht aktiv suchen — die Interessenten melden sich bei dir.',
   },
   {
-    q: 'Ist FinestSites DSGVO-konform?',
-    a: 'Ja. Alle Websites werden DSGVO-konform ausgeliefert — inklusive Datenschutzerklärung, Impressum und SSL-Verschlüsselung. Außerdem prüft unsere KI automatisch, ob deine Texte den EU-Health-Claims entsprechen.',
+    q: 'Muss ich mich um Hosting, DSGVO oder Barrierefreiheit kümmern?',
+    a: 'Nein, das übernehmen wir komplett. Hosting, SSL-Verschlüsselung, Datenschutzerklärung, Impressum, Barrierefreiheit — alles inklusive. Du musst dich damit nie beschäftigen.',
+  },
+  {
+    q: 'Wird meine Website auch langfristig besser?',
+    a: 'Ja. Wir optimieren die Templates laufend weiter. Je mehr Nutzer FinestSites hat, desto mehr Daten und Erfahrungswerte haben wir — und desto besser können wir testen, was wirklich funktioniert. Diese Verbesserungen fließen automatisch in deine Website ein. Du merkst davon nichts, aber deine Ergebnisse werden besser.',
+  },
+  {
+    q: 'Ersetzt die Website meinen bisherigen Prozess im Network Marketing?',
+    a: 'Nein. Sie ergänzt ihn. Was du bisher gut machst, bleibt so. Aber viele Menschen beobachten dich still und melden sich nie — obwohl sie interessiert wären. Eine eigene Website gibt diesen Menschen die Möglichkeit, sich eigenständig zu informieren und dann aktiv auf dich zuzukommen. Sie schließt also eine Lücke, die ohne Website einfach bleibt.',
   },
 ]
 
