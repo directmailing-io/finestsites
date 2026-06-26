@@ -228,10 +228,10 @@ export default async function HomePage({
             letterSpacing: '-0.028em',
             marginBottom: 28,
           }}>
-            Interessenten finden dich.<br />Nicht umgekehrt.
+            Lass dich von Kunden und<br />Partnern über deine<br />Webseite finden.
           </h1>
           <p style={{ fontSize: 16, color: '#555', lineHeight: 1.75, marginBottom: 40, maxWidth: 460 }}>
-            Wähl ein Template. Trag deine Infos ein. Deine Website ist live. Ab dann bringt sie dir neue Anfragen. Automatisch, Tag und Nacht. Kein Vorwissen nötig.
+            Überzeuge Interessenten von deinen Produkten und deiner Geschäftsmöglichkeit, noch bevor sie mit dir gesprochen haben. Erhalte Anfragen und lass dein Network Marketing Business wachsen.
           </p>
           <div className="fs-hero-buttons">
             <a href="https://app.finestsites.io/register" style={{ background: '#111', color: '#fff', padding: '15px 36px', borderRadius: 100, fontSize: 15, fontWeight: 600, display: 'inline-block', textDecoration: 'none', textAlign: 'center' }}>Jetzt starten</a>
