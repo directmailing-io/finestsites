@@ -3,6 +3,7 @@ import { templates } from '@/lib/db/schema'
 import { eq, and, ne } from 'drizzle-orm'
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import NavBar from '@/app/_components/NavBar'
 import Footer from '@/app/_components/Footer'
 import TemplateStartCTA from '@/components/TemplateStartCTA'
@@ -159,10 +160,10 @@ export default async function TemplateDetailPage({ params }: Props) {
         <div style={{ maxWidth: 1080, margin: '0 auto' }}>
 
           {/* Back link */}
-          <a href="/#templates" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 13, color: '#999', textDecoration: 'none', marginBottom: 32, fontWeight: 500 }}>
+          <Link href="/#templates" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 13, color: '#999', textDecoration: 'none', marginBottom: 32, fontWeight: 500 }}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
             Alle Templates
-          </a>
+          </Link>
 
           {/* Tags */}
           {tags.length > 0 && (
