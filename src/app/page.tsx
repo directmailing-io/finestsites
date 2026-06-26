@@ -7,6 +7,7 @@ import FeatureCardsAnimated from './_components/FeatureCardsAnimated'
 import NavBar from './_components/NavBar'
 import HowItWorks from './_components/HowItWorks'
 import TemplateGridSection, { type TemplateCardData } from './_components/TemplateGridSection'
+import FAQSection from './_components/FAQSection'
 
 export const dynamic = 'force-dynamic'
 
@@ -228,7 +229,7 @@ export default async function HomePage({
             letterSpacing: '-0.028em',
             marginBottom: 28,
           }}>
-            Lass dich von Kunden und<br />Partnern über deine<br />Webseite finden.
+            Lass dich von Kunden und<br />Partnern über <span style={{ color: '#8060b0' }}>deine Webseite</span><br />finden.
           </h1>
           <p style={{ fontSize: 16, color: '#555', lineHeight: 1.75, marginBottom: 40, maxWidth: 460 }}>
             Überzeuge Interessenten von deinen Produkten und deiner Geschäftsmöglichkeit, noch bevor sie mit dir gesprochen haben. Erhalte Anfragen und lass dein Network Marketing Business wachsen.
@@ -292,6 +293,9 @@ export default async function HomePage({
       <PricingSection validatedRef={validatedRef} />
 
       {/* ══ FOOTER ═══════════════════════════════════════════════════════ */}
+      {/* ══ FAQ ══════════════════════════════════════════════════════════ */}
+      <FAQSection />
+
       <footer className="fs-footer-dark">
         {/* ── Main grid ─── */}
         <div className="fs-footer-grid">

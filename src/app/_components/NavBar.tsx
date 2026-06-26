@@ -3,9 +3,10 @@
 import { useState } from 'react'
 
 const NAV_LINKS = [
-  { label: 'Was ist FinestSites?', href: '#was-ist' },
-  { label: 'Templates',            href: '#templates' },
-  { label: 'Preise',               href: '#preise' },
+  { label: "So funktioniert's",          href: '#wie-es-geht' },
+  { label: 'Templates',                  href: '#templates' },
+  { label: 'Preise',                     href: '#preise' },
+  { label: 'Häufig gestellte Fragen',   href: '#faq' },
 ]
 
 export default function NavBar() {
