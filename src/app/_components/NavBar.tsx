@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
 interface NavBarProps {
@@ -35,10 +36,10 @@ export default function NavBar({ primaryCta }: NavBarProps = {}) {
         margin: '0 auto',
       }}>
         {/* Logo — always links to homepage */}
-        <a href="/" style={{ display: 'block', flexShrink: 0 }}>
+        <Link href="/" style={{ display: 'block', flexShrink: 0 }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/logos/logo-black.svg" alt="FinestSites" style={{ height: 22, display: 'block' }} />
-        </a>
+        </Link>
 
         {/* Desktop: nav links (home) or back link (subpages) */}
         <div className="fs-nav-links">
@@ -49,12 +50,12 @@ export default function NavBar({ primaryCta }: NavBarProps = {}) {
               </a>
             ))
           ) : (
-            <a href="/" style={{ color: '#555', fontSize: 14, fontWeight: 500, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 6 }}>
+            <Link href="/" style={{ color: '#555', fontSize: 14, fontWeight: 500, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 6 }}>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
                 <path d="M19 12H5M12 5l-7 7 7 7"/>
               </svg>
               Startseite
-            </a>
+            </Link>
           )}
         </div>
 
@@ -94,7 +95,7 @@ export default function NavBar({ primaryCta }: NavBarProps = {}) {
               </a>
             ))
           ) : (
-            <a
+            <Link
               href="/"
               onClick={close}
               style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 16, color: '#222', fontWeight: 500, padding: '14px 4px', textDecoration: 'none' }}
@@ -103,7 +104,7 @@ export default function NavBar({ primaryCta }: NavBarProps = {}) {
                 <path d="M19 12H5M12 5l-7 7 7 7"/>
               </svg>
               Zurück zur Startseite
-            </a>
+            </Link>
           )}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 16 }}>
             <a

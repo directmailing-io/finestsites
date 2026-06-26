@@ -183,7 +183,7 @@ export default function AdminWaitlistPage() {
             onBlur={e => (e.target.style.borderColor = '#E5E7EB')}
           />
           <div className="text-xs text-gray-400">
-            Signatur „Beste Grüße, Daniel von FinestSites" und Abmelde-Link werden automatisch angehängt.
+            {`Signatur „Beste Grüße, Daniel von FinestSites" und Abmelde-Link werden automatisch angehängt.`}
           </div>
           <button
             onClick={handleSend}

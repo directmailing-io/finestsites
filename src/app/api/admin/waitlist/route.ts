@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { waitlist, users } from '@/lib/db/schema'
-import { desc, isNull, eq } from 'drizzle-orm'
+import { desc, eq } from 'drizzle-orm'
 import { getUserFromRequest } from '@/lib/auth/server'
 
 async function assertAdmin(req: NextRequest) {

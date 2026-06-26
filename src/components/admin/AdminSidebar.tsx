@@ -8,7 +8,7 @@ const navItems = [
   {
     href: '/admin',
     label: 'Übersicht',
-    icon: (active: boolean) => (
+    icon: (_active: boolean) => (
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
         <rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/>
         <rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/>
@@ -18,7 +18,7 @@ const navItems = [
   {
     href: '/admin/templates',
     label: 'Templates',
-    icon: (active: boolean) => (
+    icon: (_active: boolean) => (
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
         <rect x="3" y="3" width="18" height="18" rx="3"/>
         <path d="M3 9h18M9 21V9"/>
@@ -28,7 +28,7 @@ const navItems = [
   {
     href: '/admin/users',
     label: 'Nutzer',
-    icon: (active: boolean) => (
+    icon: (_active: boolean) => (
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
         <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
         <circle cx="9" cy="7" r="4"/>
@@ -40,7 +40,7 @@ const navItems = [
   {
     href: '/admin/affiliate',
     label: 'Affiliate',
-    icon: (active: boolean) => (
+    icon: (_active: boolean) => (
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
         <path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>
       </svg>

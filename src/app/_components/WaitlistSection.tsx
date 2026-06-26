@@ -17,6 +17,7 @@ export default function WaitlistSection() {
   useEffect(() => {
     const wl = searchParams.get('waitlist')
     if (wl === 'confirmed' || wl === 'unsubscribed') {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setBanner(wl)
       // Remove query param from URL without reload
       const url = new URL(window.location.href)
