@@ -134,6 +134,8 @@ export default async function TemplateDetailPage({ params }: Props) {
         .vd-feature-inner.reverse > * { direction: ltr; }
         .vd-feature-img { border-radius: 20px; overflow: hidden; aspect-ratio: 4/3; display: flex; align-items: center; justify-content: center; }
         .vd-more-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+        .vd-more-card { display: block; text-decoration: none; background: #fff; border-radius: 20px; overflow: hidden; border: 1px solid rgba(0,0,0,0.07); box-shadow: 0 2px 12px rgba(0,0,0,0.04); transition: transform 0.2s, box-shadow 0.2s; }
+        .vd-more-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.10); }
 
         @media (max-width: 1023px) {
           .vd-more-grid { grid-template-columns: repeat(2, 1fr); }
@@ -281,9 +283,7 @@ export default async function TemplateDetailPage({ params }: Props) {
                   <a
                     key={t.id}
                     href={`/vorlagen/${t.id}`}
-                    style={{ display: 'block', textDecoration: 'none', background: '#fff', borderRadius: 20, overflow: 'hidden', border: '1px solid rgba(0,0,0,0.07)', transition: 'transform 0.2s, box-shadow 0.2s', boxShadow: '0 2px 12px rgba(0,0,0,0.04)' }}
-                    onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = 'translateY(-4px)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 12px 40px rgba(0,0,0,0.10)' }}
-                    onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = 'none'; (e.currentTarget as HTMLElement).style.boxShadow = '0 2px 12px rgba(0,0,0,0.04)' }}
+                    className="vd-more-card"
                   >
                     {/* Cover */}
                     <div style={{ aspectRatio: '16/9', background: `${tColor}14`, overflow: 'hidden' }}>
