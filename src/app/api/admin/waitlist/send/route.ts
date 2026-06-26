@@ -6,6 +6,7 @@ import { sql } from 'drizzle-orm'
 import { getResend, FROM_EMAIL } from '@/lib/resend'
 import { waitlistBroadcastEmail } from '@/lib/email/waitlist-templates'
 import { getUserFromRequest } from '@/lib/auth/server'
+import { markupToHtml } from '@/lib/email/markup'
 
 const MARKETING_URL = (process.env.NEXT_PUBLIC_MARKETING_URL ?? 'https://finestsites.io').replace(/\/$/, '')
 
@@ -51,10 +52,7 @@ export async function POST(req: NextRequest) {
       recipients.slice(i, i + CHUNK).map(async (r) => {
         const personalSubject = personalize(subject, r.name)
         const personalBody = personalize(body, r.name)
-        const bodyHtml = personalBody
-          .split(/\n\n+/)
-          .map(p => `<p style="margin:0 0 16px;">${p.replace(/\n/g, '<br />')}</p>`)
-          .join('')
+        const bodyHtml = markupToHtml(personalBody)
         const unsubscribeUrl = `${MARKETING_URL}/api/waitlist/unsubscribe?token=${r.confirmToken}`
         const { subject: s, html, text } = waitlistBroadcastEmail({
           subject: personalSubject,

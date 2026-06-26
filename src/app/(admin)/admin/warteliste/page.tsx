@@ -1,6 +1,11 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+'use client'
+
+import { useState, useEffect } from 'react'
+import RichTextarea from '@/components/admin/RichTextarea'
+import { markupToHtml } from '@/lib/email/markup'
+
 
 interface WaitlistEntry {
   id: string
@@ -44,7 +49,6 @@ export default function AdminWaitlistPage() {
   const [sending, setSending] = useState(false)
   const [sendResult, setSendResult] = useState<{ sent: number; failed: number } | null>(null)
   const [sendError, setSendError] = useState<string | null>(null)
-  const textareaRef = useRef<HTMLTextAreaElement>(null)
 
   // Verlauf: expanded broadcast
   const [expandedBroadcast, setExpandedBroadcast] = useState<string | null>(null)
@@ -233,16 +237,11 @@ export default function AdminWaitlistPage() {
               </span>
             </div>
 
-            <textarea
-              ref={textareaRef}
-              placeholder={"Hey {{vorname}},\n\nDein Nachrichtentext hier...\n\n(Leerzeile = neuer Absatz)"}
+            <RichTextarea
               value={body}
-              onChange={e => setBody(e.target.value)}
+              onChange={setBody}
+              placeholder={"Hey {{vorname}},\n\ndein Text hier...\n\n(Leerzeile = neuer Absatz, **fett**, [Text](URL))"}
               rows={10}
-              className="w-full text-sm px-4 py-3 rounded-xl outline-none resize-none font-mono"
-              style={{ border: '1.5px solid #E5E7EB', background: '#FAFAFA', lineHeight: 1.7 }}
-              onFocus={e => (e.target.style.borderColor = '#111')}
-              onBlur={e => (e.target.style.borderColor = '#E5E7EB')}
             />
             <div className="text-xs text-gray-400">
               {`Signatur „Viele Grüße, Daniel von FinestSites" und Abmelde-Link werden automatisch angehängt.`}
@@ -305,15 +304,28 @@ export default function AdminWaitlistPage() {
                     </tr>
                     {expandedBroadcast === b.id && (
                       <tr key={`${b.id}-detail`} style={{ borderBottom: '1px solid #FAFAFA' }}>
-                        <td colSpan={5} className="px-5 pb-4">
-                          <div className="rounded-xl p-4 text-xs" style={{ background: '#F9FAFB', border: '1px solid #F1F1F1' }}>
-                            <p className="font-semibold text-gray-700 mb-2">Empfänger</p>
-                            <div className="flex flex-wrap gap-1.5 max-h-40 overflow-y-auto">
-                              {(Array.isArray(b.recipients) ? b.recipients : []).map((r, i) => (
-                                <span key={i} className="px-2 py-1 rounded-lg text-gray-600" style={{ background: '#fff', border: '1px solid #E5E7EB' }}>
-                                  {r.name ? `${r.name} <${r.email}>` : r.email}
-                                </span>
-                              ))}
+                        <td colSpan={5} className="px-5 pb-5">
+                          <div className="flex flex-col gap-3">
+                            {/* Mail-Inhalt */}
+                            <div className="rounded-xl p-4" style={{ background: '#F9FAFB', border: '1px solid #F1F1F1' }}>
+                              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Inhalt</p>
+                              <div
+                                className="text-sm"
+                                dangerouslySetInnerHTML={{ __html: markupToHtml(b.body) }}
+                              />
+                            </div>
+                            {/* Empfänger */}
+                            <div className="rounded-xl p-4" style={{ background: '#F9FAFB', border: '1px solid #F1F1F1' }}>
+                              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+                                Empfänger ({Array.isArray(b.recipients) ? b.recipients.length : 0})
+                              </p>
+                              <div className="flex flex-wrap gap-1.5 max-h-40 overflow-y-auto">
+                                {(Array.isArray(b.recipients) ? b.recipients : []).map((r, i) => (
+                                  <span key={i} className="px-2 py-1 rounded-lg text-xs text-gray-600" style={{ background: '#fff', border: '1px solid #E5E7EB' }}>
+                                    {r.name ? `${r.name} <${r.email}>` : r.email}
+                                  </span>
+                                ))}
+                              </div>
                             </div>
                           </div>
                         </td>

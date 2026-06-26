@@ -2,6 +2,8 @@
 
 import { useState, useEffect, useRef, useMemo } from 'react'
 import Link from 'next/link'
+import RichTextarea from '@/components/admin/RichTextarea'
+import { markupToHtml } from '@/lib/email/markup'
 
 interface UserRow {
   id: string
@@ -140,7 +142,7 @@ export default function NewsletterPage() {
   const [result, setResult] = useState<{ sent: number; failed: number; total: number } | null>(null)
   const [error, setError] = useState('')
   const [confirm, setConfirm] = useState(false)
-  const iframeRef = useRef<HTMLIFrameElement>(null)
+  const iframeRef = useRef<HTMLIFrameElement | null>(null)
 
   useEffect(() => {
     fetch('/api/admin/newsletter').then(r => r.json()).then(d => !d.error && setData(d))
@@ -191,9 +193,9 @@ export default function NewsletterPage() {
 
   function previewHtml() {
     const FONT = `-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif`
-    const paragraphs = body.split(/\n\n+/).map(p => p.trim()).filter(Boolean)
-      .map(p => `<p style="margin:0 0 16px;font-size:15px;color:#555047;line-height:1.75;font-family:${FONT};">${p.replace(/\n/g, '<br/>')}</p>`).join('')
-    const bodyContent = paragraphs || `<p style="color:#B0A89E;font-size:15px;font-family:${FONT};">Inhalt hier…</p>`
+    const bodyContent = body.trim()
+      ? markupToHtml(body)
+      : `<p style="color:#B0A89E;font-size:15px;font-family:${FONT};">Inhalt hier…</p>`
     return `<!DOCTYPE html>
 <html lang="de">
 <head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/></head>
@@ -481,12 +483,12 @@ export default function NewsletterPage() {
                   </div>
                   <div className="flex flex-col gap-1.5">
                     <label className="text-xs font-semibold uppercase tracking-wider" style={{ color: '#94A3B8' }}>Inhalt</label>
-                    <p className="text-xs" style={{ color: '#94A3B8' }}>Leerzeile = neuer Absatz</p>
-                    <textarea value={body} onChange={e => setBody(e.target.value)} rows={12}
-                      className="w-full px-4 py-3 text-sm rounded-[12px] outline-none transition-all resize-none"
-                      style={{ background: '#F9FAFB', border: '1.5px solid #E5E7EB', color: '#111827', lineHeight: '1.6' }}
-                      onFocus={e => (e.target.style.borderColor = '#111827')}
-                      onBlur={e => (e.target.style.borderColor = '#E5E7EB')} />
+                    <RichTextarea
+                      value={body}
+                      onChange={setBody}
+                      placeholder={"Hallo,\n\ndein Text hier...\n\n(Leerzeile = neuer Absatz, **fett**, [Text](URL))"}
+                      rows={12}
+                    />
                   </div>
                 </div>
 

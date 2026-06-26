@@ -6,6 +6,7 @@ import { eq, ne } from 'drizzle-orm'
 import { sql } from 'drizzle-orm'
 import { getResend, FROM_EMAIL } from '@/lib/resend'
 import { waitlistBroadcastEmail } from '@/lib/email/waitlist-templates'
+import { markupToHtml } from '@/lib/email/markup'
 
 export const runtime = 'nodejs'
 
@@ -156,10 +157,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Keine Empfänger gefunden.' }, { status: 400 })
   }
 
-  const bodyHtml = body.trim()
-    .split(/\n\n+/)
-    .map(p => `<p style="margin:0 0 16px;">${p.replace(/\n/g, '<br />')}</p>`)
-    .join('')
+  const bodyHtml = markupToHtml(body.trim())
 
   const UNSUBSCRIBE_BASE = (process.env.NEXT_PUBLIC_APP_URL ?? 'https://app.finestsites.io').replace(/\/$/, '')
   const BATCH_SIZE = 100
