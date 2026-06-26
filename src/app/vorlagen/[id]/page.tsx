@@ -1,10 +1,10 @@
 import { db } from '@/lib/db'
 import { templates } from '@/lib/db/schema'
-import { eq, and } from 'drizzle-orm'
+import { eq, and, ne } from 'drizzle-orm'
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
-import Link from 'next/link'
 import NavBar from '@/app/_components/NavBar'
+import Footer from '@/app/_components/Footer'
 import TemplateStartCTA from '@/components/TemplateStartCTA'
 
 export const dynamic = 'force-dynamic'
@@ -30,6 +30,45 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 }
 
+const DEFAULT_SECTIONS: DetailSection[] = [
+  {
+    heading: 'Kein Aufwand. Wirklich keiner.',
+    text: 'Du brauchst kein technisches Wissen, kein Designtalent und keine Erfahrung im Marketing. Das Template ist fertig konzipiert — du trägst nur deine Infos ein und bist in unter 5 Minuten online. Alles andere ist schon erledigt.',
+    imagePosition: 'left',
+    imageUrl: '',
+  },
+  {
+    heading: 'Dein Link. Überall einsetzbar.',
+    text: 'In die Bio, in Stories, auf Visitenkarten, Flyern oder dem Auto. Wer deinen Link aufruft, landet auf einer professionellen Seite, die für dich spricht — rund um die Uhr, auch wenn du gerade schläfst.',
+    imagePosition: 'right',
+    imageUrl: '',
+  },
+  {
+    heading: 'Interessenten melden sich bei dir.',
+    text: 'Jeder, der das Kontaktformular ausfüllt, landet direkt in deinem Dashboard. Du siehst sofort, wer sich gemeldet hat, und antwortest wann du willst. Kein Hinterherlaufen, kein Kaltakquise.',
+    imagePosition: 'left',
+    imageUrl: '',
+  },
+  {
+    heading: 'Wird automatisch immer besser.',
+    text: 'Wir optimieren die Templates laufend — basierend auf echten Daten von tausenden Besuchern. Deine Website wird mit der Zeit besser, ohne dass du etwas tun musst. Wartung, Updates und Verbesserungen sind inklusive.',
+    imagePosition: 'right',
+    imageUrl: '',
+  },
+]
+
+// Icons for placeholder sections
+const SECTION_ICONS = [
+  // Rocket
+  <svg key="0" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"><path d="M4.5 16.5c-1.5 1.3-2 5-2 5s3.7-.5 5-2l9-9a3.5 3.5 0 00-5-5l-7 7z"/><path d="M12 15l-3-3"/></svg>,
+  // Link
+  <svg key="1" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>,
+  // Inbox
+  <svg key="2" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11L2 12v6a2 2 0 002 2h16a2 2 0 002-2v-6l-3.45-6.89A2 2 0 0016.76 4H7.24a2 2 0 00-1.79 1.11z"/></svg>,
+  // TrendingUp
+  <svg key="3" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>,
+]
+
 export default async function TemplateDetailPage({ params }: Props) {
   const { id } = await params
 
@@ -40,11 +79,32 @@ export default async function TemplateDetailPage({ params }: Props) {
 
   if (!tpl) notFound()
 
+  // Fetch up to 3 other published templates for "Weitere Templates"
+  const otherTemplates = await db.select({
+    id: templates.id,
+    title: templates.title,
+    description: templates.description,
+    previewImages: templates.previewImages,
+    tags: templates.tags,
+    detailColor: templates.detailColor,
+  })
+    .from(templates)
+    .where(and(eq(templates.status, 'published'), ne(templates.id, id)))
+    .limit(3)
+
   const images = Array.isArray(tpl.previewImages) ? tpl.previewImages as string[] : []
   const coverImg = images[0] ?? null
   const accentColor = tpl.detailColor ?? '#8060b0'
+  const accentBg = `${accentColor}12`
   const tags = Array.isArray(tpl.tags) ? tpl.tags as string[] : []
-  const sections = Array.isArray(tpl.detailContent) ? tpl.detailContent as DetailSection[] : []
+  const dbSections = Array.isArray(tpl.detailContent) ? tpl.detailContent as DetailSection[] : []
+
+  // Use DB sections if available, pad/replace with defaults
+  const sections: DetailSection[] = dbSections.length >= 4
+    ? dbSections.slice(0, 4)
+    : DEFAULT_SECTIONS.map((def, i) => dbSections[i] ?? def)
+
+  const registerUrl = `https://app.finestsites.io/register?template=${tpl.id}&tname=${encodeURIComponent(tpl.title)}`
 
   return (
     <div style={{ fontFamily: '"Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif', background: '#fff', minHeight: '100vh' }}>
@@ -58,155 +118,133 @@ export default async function TemplateDetailPage({ params }: Props) {
           font-weight: 400; font-display: swap;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        .vd-hero-img { object-fit: cover; width: 100%; height: 100%; display: block; }
-        .vd-section { padding: 80px 40px; }
-        .vd-section-inner { max-width: 1080px; margin: 0 auto; display: flex; align-items: center; gap: 64px; }
-        .vd-section-img { flex: 0 0 55%; border-radius: 14px; overflow: hidden; }
-        .vd-section-img img { width: 100%; height: auto; display: block; }
-        .vd-section-text { flex: 1; }
-        @media (max-width: 900px) {
-          .vd-section-inner { flex-direction: column !important; gap: 32px; }
-          .vd-section-img { flex: none; width: 100%; }
-          .vd-section { padding: 52px 22px; }
-          .vd-hero-pad { padding: 80px 22px 48px !important; }
-          .vd-hero-cover { margin: 0 22px !important; border-radius: 14px !important; }
-          .vd-cta-inner { flex-direction: column !important; align-items: flex-start !important; }
-          .vd-cta-pad { padding: 56px 22px !important; }
-          .vd-preview-pad { padding: 0 22px 56px !important; }
-          .vd-preview-iframe { height: 500px !important; }
+        section[id] { scroll-margin-top: 90px; }
+
+        /* Nav */
+        .fs-nav-links { display: flex; gap: 28px; align-items: center; }
+        .fs-nav-actions { display: flex; gap: 8px; align-items: center; }
+        .fs-hamburger { display: none !important; }
+
+        /* Template detail layout */
+        .vd-hero { padding: 108px 7vw 72px; }
+        .vd-feature-row { padding: 88px 7vw; }
+        .vd-feature-inner { max-width: 1080px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+        .vd-feature-inner.reverse { direction: rtl; }
+        .vd-feature-inner.reverse > * { direction: ltr; }
+        .vd-feature-img { border-radius: 20px; overflow: hidden; aspect-ratio: 4/3; display: flex; align-items: center; justify-content: center; }
+        .vd-more-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+
+        @media (max-width: 1023px) {
+          .vd-more-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 767px) {
+          .fs-nav-links { display: none; }
+          .fs-nav-actions { display: none !important; }
+          .fs-hamburger { display: flex !important; }
+          .vd-hero { padding: 96px 22px 56px; }
+          .vd-feature-row { padding: 56px 22px; }
+          .vd-feature-inner { grid-template-columns: 1fr; gap: 36px; }
+          .vd-feature-inner.reverse { direction: ltr; }
+          .vd-more-grid { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 479px) {
+          .vd-more-grid { grid-template-columns: 1fr; }
         }
       `}</style>
 
-      <NavBar />
+      <NavBar primaryCta={{ label: 'Template freischalten', href: registerUrl }} />
 
-      {/* ── HERO ── */}
-      <section style={{ paddingTop: 100, paddingBottom: 0, background: '#fff' }}>
-        <div className="vd-hero-pad" style={{ maxWidth: 1080, margin: '0 auto', padding: '64px 40px 56px' }}>
+      {/* ── HERO ─────────────────────────────────────────────────────── */}
+      <section className="vd-hero" style={{ background: '#fff' }}>
+        <div style={{ maxWidth: 1080, margin: '0 auto' }}>
+
           {/* Back link */}
-          <Link href="/#templates" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 13, color: '#999', textDecoration: 'none', marginBottom: 36 }}>
+          <a href="/#templates" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 13, color: '#999', textDecoration: 'none', marginBottom: 32, fontWeight: 500 }}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
             Alle Templates
-          </Link>
+          </a>
 
           {/* Tags */}
           {tags.length > 0 && (
             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 20 }}>
               {tags.map(tag => (
-                <span key={tag} style={{ fontSize: 11, fontWeight: 700, color: accentColor, background: `${accentColor}18`, padding: '4px 12px', borderRadius: 100, letterSpacing: '0.08em', textTransform: 'uppercase' }}>{tag}</span>
+                <span key={tag} style={{ fontSize: 11, fontWeight: 700, color: accentColor, background: accentBg, padding: '4px 12px', borderRadius: 100, letterSpacing: '0.08em', textTransform: 'uppercase' }}>{tag}</span>
               ))}
             </div>
           )}
 
-          {/* Title */}
-          <h1 style={{
-            fontFamily: '"Plein", sans-serif',
-            fontSize: 'clamp(36px, 5vw, 64px)',
-            fontWeight: 400,
-            color: '#111',
-            lineHeight: 1.08,
-            letterSpacing: '-0.03em',
-            maxWidth: 780,
-            marginBottom: tpl.description ? 24 : 40,
-          }}>
-            {tpl.title}
-          </h1>
-
-          {tpl.description && (
-            <p style={{ fontSize: 17, color: '#666', lineHeight: 1.7, maxWidth: 560, marginBottom: 40 }}>
-              {tpl.description}
-            </p>
-          )}
-
-          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-            <TemplateStartCTA templateId={tpl.id} templateTitle={tpl.title} />
+          {/* Title + description + CTA */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: 48, alignItems: 'flex-end' }}>
+            <div>
+              <h1 style={{
+                fontFamily: '"Plein", sans-serif',
+                fontSize: 'clamp(32px, 4.5vw, 60px)',
+                fontWeight: 400,
+                color: '#111',
+                lineHeight: 1.08,
+                letterSpacing: '-0.03em',
+                marginBottom: tpl.description ? 20 : 36,
+              }}>
+                {tpl.title}
+              </h1>
+              {tpl.description && (
+                <p style={{ fontSize: 17, color: '#666', lineHeight: 1.7, maxWidth: 600 }}>
+                  {tpl.description}
+                </p>
+              )}
+            </div>
+            <div style={{ flexShrink: 0, paddingBottom: 4 }}>
+              <TemplateStartCTA templateId={tpl.id} templateTitle={tpl.title} />
+            </div>
           </div>
         </div>
 
-        {/* Cover image */}
+        {/* Cover image — full width within max-width */}
         {coverImg && (
-          <div className="vd-hero-cover" style={{ maxWidth: 1080, margin: '0 auto 0', padding: '0 40px 0' }}>
-            <div style={{ borderRadius: 18, overflow: 'hidden', boxShadow: '0 8px 48px rgba(0,0,0,0.12)' }}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={coverImg} alt={tpl.title} style={{ width: '100%', height: 'auto', display: 'block' }} />
-            </div>
+          <div style={{ maxWidth: 1080, margin: '52px auto 0', borderRadius: 24, overflow: 'hidden', boxShadow: '0 16px 64px rgba(0,0,0,0.10)', border: '1px solid rgba(0,0,0,0.06)' }}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={coverImg} alt={tpl.title} style={{ width: '100%', height: 'auto', display: 'block' }} />
           </div>
         )}
       </section>
 
-      {/* ── LIVE PREVIEW ── */}
-      <section className="vd-preview-pad" style={{ padding: '0 40px 80px', maxWidth: 1080, margin: '0 auto' }}>
-        <div style={{ marginBottom: 20, display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
-          <p style={{ fontSize: 13, fontWeight: 600, color: '#999', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Live-Vorschau</p>
-          <a
-            href={`/api/templates/${tpl.id}/public-preview`}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ fontSize: 13, color: '#8060b0', fontWeight: 600, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 5 }}
-          >
-            Vollbild öffnen
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/>
-            </svg>
-          </a>
-        </div>
-        <div style={{
-          position: 'relative',
-          borderRadius: 18,
-          overflow: 'hidden',
-          boxShadow: '0 8px 48px rgba(0,0,0,0.12)',
-          border: '1px solid rgba(0,0,0,0.08)',
-          background: '#fafafa',
-        }}>
-          {/* Browser chrome */}
-          <div style={{ background: '#f4f4f5', padding: '10px 14px', display: 'flex', alignItems: 'center', gap: 12, borderBottom: '1px solid rgba(0,0,0,0.07)' }}>
-            <div style={{ display: 'flex', gap: 6 }}>
-              {(['#FF5F57', '#FEBC2E', '#28C840'] as const).map(c => (
-                <div key={c} style={{ width: 11, height: 11, borderRadius: '50%', background: c }} />
-              ))}
-            </div>
-            <div style={{ flex: 1, background: '#fff', borderRadius: 6, padding: '5px 12px', fontSize: 12, color: '#999', textAlign: 'center', fontFamily: 'monospace', border: '1px solid rgba(0,0,0,0.08)' }}>
-              dein-name.{tpl.domain}
-            </div>
-          </div>
-          {/* Iframe */}
-          <iframe
-            className="vd-preview-iframe"
-            src={`/api/templates/${tpl.id}/public-preview`}
-            style={{ width: '100%', height: 700, border: 'none', display: 'block' }}
-            loading="lazy"
-            title={`${tpl.title} Vorschau`}
-            sandbox="allow-scripts allow-same-origin"
-          />
-        </div>
-      </section>
-
-      {/* ── CONTENT SECTIONS ── */}
-      {sections.length > 0 && sections.map((section, i) => {
-        const isLeft = section.imagePosition === 'left'
-        const bg = i % 2 === 0 ? '#fff' : '#fafafa'
+      {/* ── 4 ALTERNATING FEATURE SECTIONS ───────────────────────────── */}
+      {sections.map((section, i) => {
+        const isReverse = section.imagePosition === 'right'
+        const sectionImg = section.imageUrl || images[i + 1] || null
+        const bg = i % 2 === 0 ? '#fff' : '#FAFAF9'
+        const num = String(i + 1).padStart(2, '0')
 
         return (
-          <section key={section.id ?? i} className="vd-section" style={{ background: bg }}>
-            <div
-              className="vd-section-inner"
-              style={{ flexDirection: isLeft ? 'row' : 'row-reverse' }}
-            >
-              {/* Image */}
-              {section.imageUrl && (
-                <div className="vd-section-img" style={{ background: `${accentColor}14` }}>
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={section.imageUrl} alt={section.heading} />
-                </div>
-              )}
+          <section key={i} className="vd-feature-row" style={{ background: bg }}>
+            <div className={`vd-feature-inner${isReverse ? ' reverse' : ''}`}>
+
+              {/* Image / Placeholder */}
+              <div
+                className="vd-feature-img"
+                style={{
+                  background: sectionImg ? 'transparent' : accentBg,
+                  border: sectionImg ? 'none' : `1px solid ${accentColor}22`,
+                }}
+              >
+                {sectionImg ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={sectionImg} alt={section.heading} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                ) : (
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16, padding: 48, color: accentColor, opacity: 0.5 }}>
+                    {SECTION_ICONS[i]}
+                  </div>
+                )}
+              </div>
 
               {/* Text */}
-              <div className="vd-section-text">
-                <p style={{ fontSize: 11, fontWeight: 700, color: accentColor, letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 16 }}>
-                  {String(i + 1).padStart(2, '0')}
+              <div>
+                <p style={{ fontSize: 11, fontWeight: 700, color: accentColor, letterSpacing: '0.14em', textTransform: 'uppercase', marginBottom: 16 }}>
+                  {num}
                 </p>
                 <h2 style={{
                   fontFamily: '"Plein", sans-serif',
-                  fontSize: 'clamp(26px, 3vw, 40px)',
+                  fontSize: 'clamp(24px, 2.8vw, 38px)',
                   fontWeight: 400,
                   color: '#111',
                   lineHeight: 1.15,
@@ -215,36 +253,87 @@ export default async function TemplateDetailPage({ params }: Props) {
                 }}>
                   {section.heading}
                 </h2>
-                {section.text && (
-                  <p style={{ fontSize: 16, color: '#555', lineHeight: 1.8 }}>
-                    {section.text}
-                  </p>
-                )}
+                <p style={{ fontSize: 16, color: '#555', lineHeight: 1.8 }}>
+                  {section.text}
+                </p>
               </div>
             </div>
           </section>
         )
       })}
 
-      {/* Divider before CTA */}
-      <div style={{ height: 1, background: 'rgba(0,0,0,0.07)' }} />
-
-      {/* ── FINAL CTA ── */}
-      <section className="vd-cta-pad" style={{ padding: '80px 40px', background: '#111' }}>
-        <div className="vd-cta-inner" style={{ maxWidth: 1080, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 32 }}>
-          <div>
-            <h2 style={{ fontFamily: '"Plein", sans-serif', fontSize: 'clamp(28px, 3.5vw, 46px)', fontWeight: 400, color: '#fff', lineHeight: 1.12, letterSpacing: '-0.025em', marginBottom: 12 }}>
-              Bereit, loszulegen?
+      {/* ── WEITERE TEMPLATES ────────────────────────────────────────── */}
+      {otherTemplates.length > 0 && (
+        <section style={{ background: '#F9F7FF', padding: '88px 7vw' }}>
+          <div style={{ maxWidth: 1080, margin: '0 auto' }}>
+            <p style={{ fontSize: 11, fontWeight: 600, color: '#aaa', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 12 }}>Mehr entdecken</p>
+            <h2 style={{ fontFamily: '"Plein", sans-serif', fontSize: 'clamp(26px, 3vw, 40px)', fontWeight: 400, color: '#111', letterSpacing: '-0.02em', marginBottom: 44 }}>
+              Weitere Templates
             </h2>
-            <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.5)', lineHeight: 1.7 }}>
-              Ab €20/Monat — in unter 5 Minuten live.
+
+            <div className="vd-more-grid">
+              {otherTemplates.map(t => {
+                const tImgs = Array.isArray(t.previewImages) ? t.previewImages as string[] : []
+                const tColor = t.detailColor ?? '#8060b0'
+                const tTags = Array.isArray(t.tags) ? t.tags as string[] : []
+                return (
+                  <a
+                    key={t.id}
+                    href={`/vorlagen/${t.id}`}
+                    style={{ display: 'block', textDecoration: 'none', background: '#fff', borderRadius: 20, overflow: 'hidden', border: '1px solid rgba(0,0,0,0.07)', transition: 'transform 0.2s, box-shadow 0.2s', boxShadow: '0 2px 12px rgba(0,0,0,0.04)' }}
+                    onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = 'translateY(-4px)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 12px 40px rgba(0,0,0,0.10)' }}
+                    onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = 'none'; (e.currentTarget as HTMLElement).style.boxShadow = '0 2px 12px rgba(0,0,0,0.04)' }}
+                  >
+                    {/* Cover */}
+                    <div style={{ aspectRatio: '16/9', background: `${tColor}14`, overflow: 'hidden' }}>
+                      {tImgs[0] ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={tImgs[0]} alt={t.title} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                      ) : (
+                        <div style={{ width: '100%', height: '100%', background: `linear-gradient(135deg, ${tColor}22, ${tColor}08)` }} />
+                      )}
+                    </div>
+                    {/* Info */}
+                    <div style={{ padding: '20px 22px 24px' }}>
+                      {tTags.length > 0 && (
+                        <span style={{ fontSize: 10, fontWeight: 700, color: tColor, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 8, display: 'block' }}>
+                          {tTags[0]}
+                        </span>
+                      )}
+                      <p style={{ fontSize: 16, fontWeight: 600, color: '#111', marginBottom: 6, lineHeight: 1.3 }}>{t.title}</p>
+                      {t.description && (
+                        <p style={{ fontSize: 13, color: '#888', lineHeight: 1.6, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                          {t.description}
+                        </p>
+                      )}
+                      <p style={{ fontSize: 13, fontWeight: 600, color: tColor, marginTop: 14 }}>Template ansehen →</p>
+                    </div>
+                  </a>
+                )
+              })}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ── FINAL CTA ────────────────────────────────────────────────── */}
+      <section style={{ background: '#111', padding: '96px 7vw' }}>
+        <div style={{ maxWidth: 1080, margin: '0 auto', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: 32 }}>
+          <div>
+            <p style={{ fontSize: 11, fontWeight: 700, color: 'rgba(255,255,255,0.3)', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 20 }}>Los geht&apos;s</p>
+            <h2 style={{ fontFamily: '"Plein", sans-serif', fontSize: 'clamp(28px, 3.8vw, 52px)', fontWeight: 400, color: '#fff', lineHeight: 1.1, letterSpacing: '-0.025em', marginBottom: 16 }}>
+              Dieses Template ist deins.<br />In 5 Minuten live.
+            </h2>
+            <p style={{ fontSize: 16, color: 'rgba(255,255,255,0.45)', lineHeight: 1.7, maxWidth: 480, margin: '0 auto' }}>
+              Kein Vorwissen, kein Designer, kein Aufwand. Einfach starten.
             </p>
           </div>
-          <div style={{ flexShrink: 0 }}>
-            <TemplateStartCTA templateId={tpl.id} templateTitle={tpl.title} light />
-          </div>
+          <TemplateStartCTA templateId={tpl.id} templateTitle={tpl.title} light />
+          <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.25)' }}>Ab €20/Monat · Jederzeit kündbar · Keine Einrichtungsgebühr</p>
         </div>
       </section>
+
+      <Footer />
     </div>
   )
 }

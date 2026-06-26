@@ -8,6 +8,7 @@ import NavBar from './_components/NavBar'
 import HowItWorks from './_components/HowItWorks'
 import TemplateGridSection, { type TemplateCardData } from './_components/TemplateGridSection'
 import FAQSection from './_components/FAQSection'
+import Footer from './_components/Footer'
 
 export const dynamic = 'force-dynamic'
 
@@ -296,78 +297,7 @@ export default async function HomePage({
       {/* ══ FAQ ══════════════════════════════════════════════════════════ */}
       <FAQSection />
 
-      <footer className="fs-footer-dark">
-        {/* ── Main grid ─── */}
-        <div className="fs-footer-grid">
-          {/* Brand column */}
-          <div className="fs-footer-brand">
-            <img src="/logos/logo-black.svg" alt="FinestSites" style={{ height: 22, display: 'block', filter: 'brightness(0) invert(1)', opacity: 0.85, marginBottom: 16 }} />
-            <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.45)', lineHeight: 1.7, marginBottom: 28, maxWidth: 260 }}>
-              Professionelle Websites für Network-Marketing-Profis. In 5 Minuten live.
-            </p>
-            <a href="https://app.finestsites.io/register" style={{ display: 'inline-block', background: '#D4C5E2', color: '#2d1a50', fontSize: 13, fontWeight: 700, padding: '11px 24px', borderRadius: 100 }}>
-              Jetzt starten →
-            </a>
-          </div>
-
-          {/* Produkt column */}
-          <div>
-            <h5 style={{ fontSize: 11, fontWeight: 700, color: 'rgba(255,255,255,0.35)', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 18 }}>Produkt</h5>
-            <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 12 }}>
-              {[
-                { label: 'Templates ansehen', href: '#templates' },
-                { label: 'Preise',            href: '#preise' },
-                { label: 'Anmelden',          href: 'https://app.finestsites.io/login' },
-                { label: 'Konto erstellen',   href: 'https://app.finestsites.io/register' },
-              ].map(l => (
-                <li key={l.label}><a href={l.href} style={{ fontSize: 14, color: 'rgba(255,255,255,0.6)', textDecoration: 'none' }}>{l.label}</a></li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Rechtliches column */}
-          <div>
-            <h5 style={{ fontSize: 11, fontWeight: 700, color: 'rgba(255,255,255,0.35)', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 18 }}>Rechtliches</h5>
-            <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 12 }}>
-              {[
-                { label: 'Impressum',             href: '/impressum' },
-                { label: 'Datenschutzerklärung',  href: '/datenschutz' },
-                { label: 'AGB',                   href: '/agb' },
-              ].map(l => (
-                <li key={l.label}><a href={l.href} style={{ fontSize: 14, color: 'rgba(255,255,255,0.6)', textDecoration: 'none' }}>{l.label}</a></li>
-              ))}
-            </ul>
-          </div>
-        </div>
-
-        {/* ── Bottom bar ─── */}
-        <div className="fs-footer-bottom">
-          <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.25)' }}>© 2026 FinestSites · Alle Rechte vorbehalten</span>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
-            <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.3)', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', marginRight: 4 }}>Zahlungsarten</span>
-            {[
-              { src: '/payment/visa.svg',       alt: 'Visa' },
-              { src: '/payment/mastercard.svg', alt: 'Mastercard' },
-              { src: '/payment/amex.svg',       alt: 'American Express' },
-              { src: '/payment/sepa.svg',       alt: 'SEPA' },
-            ].map(p => (
-              <div key={p.alt} style={{
-                background: 'rgba(255,255,255,0.08)',
-                border: '1px solid rgba(255,255,255,0.12)',
-                borderRadius: 8,
-                padding: '8px 14px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                height: 40,
-                minWidth: 56,
-              }}>
-                <img src={p.src} alt={p.alt} style={{ height: 22, filter: 'brightness(0) invert(1)', opacity: 0.75 }} />
-              </div>
-            ))}
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   )
 }
