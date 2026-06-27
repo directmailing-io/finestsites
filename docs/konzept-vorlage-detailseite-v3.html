@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Konzept v3 — Vorlage Detailseite</title>
+<style>
+/* ═══════════════════════════════════════════════════════════════════
+   DESIGN SYSTEM — exakt wie finestsites.io
+   Fonts: Plein (headings) + Plus Jakarta Sans (body)
+   NavBar: pill-style, fixed, white
+   Accent: #8060b0 (WomenPlus)
+═══════════════════════════════════════════════════════════════════ */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #fff;
+  color: #111;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Plein-like font simulation (serif) */
+.plein {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-weight: 400;
+  letter-spacing: -0.025em;
+}
+
+/* Accent */
+:root {
+  --accent: #8060b0;
+  --accent-bg: #8060b012;
+  --accent-light: #a07ad0;
+}
+
+/* ── KONZEPT HEADER ─────────────────────────────────────────────── */
+.concept-header {
+  background: #7C5CBF;
+  color: #fff;
+  padding: 12px 24px;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 9999;
+}
+.concept-header strong { font-size: 14px; }
+.concept-tag { background: rgba(255,255,255,0.2); border-radius: 100px; padding: 3px 12px; font-size: 11px; }
+
+/* Annotation labels between sections */
+.anno-wrap { padding: 20px 32px 4px; background: #FEFBFF; }
+.anno-label {
+  background: #7C5CBF; color: #fff;
+  font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+  padding: 4px 12px; border-radius: 100px; display: inline-block; margin-bottom: 6px;
+}
+.anno-note {
+  font-size: 12px; color: #666; line-height: 1.6;
+  border-left: 3px solid #7C5CBF;
+  padding: 8px 14px;
+  background: rgba(124,92,191,0.05);
+  border-radius: 0 8px 8px 0;
+}
+.anno-note strong { color: #7C5CBF; }
+
+/* ═══════════════════════════════════════════════════════════════════
+   1. NAV — exakt wie live
+═══════════════════════════════════════════════════════════════════ */
+.nav-outer {
+  padding: 20px 24px 0;
+  position: fixed; top: 28px; left: 0; right: 0; z-index: 100;
+}
+.nav-pill {
+  background: #fff;
+  border-radius: 100px;
+  padding: 10px 14px 10px 20px;
+  display: flex; align-items: center; justify-content: space-between;
+  box-shadow: 0 2px 24px rgba(0,0,0,0.07);
+  max-width: 1200px; margin: 0 auto;
+}
+.nav-logo img { height: 22px; display: block; }
+.nav-logo-text { font-size: 18px; font-weight: 800; letter-spacing: -0.04em; color: #111; }
+.nav-logo-text span { color: var(--accent); }
+.nav-back { display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 500; color: #555; text-decoration: none; }
+.nav-actions { display: flex; gap: 8px; align-items: center; }
+.nav-login { color: #111; font-size: 14px; font-weight: 500; padding: 8px 18px; border-radius: 100px; border: 1.5px solid rgba(0,0,0,0.12); text-decoration: none; cursor: pointer; background: none; }
+.nav-cta { background: #111; color: #fff; font-size: 14px; font-weight: 600; padding: 9px 20px; border-radius: 100px; text-decoration: none; border: none; cursor: pointer; white-space: nowrap; }
+.nav-mobile { display: none; }
+
+/* ═══════════════════════════════════════════════════════════════════
+   2. HERO SECTION
+═══════════════════════════════════════════════════════════════════ */
+.hero {
+  padding: 140px 7vw 72px;
+  background: #fff;
+}
+.hero-inner { max-width: 1080px; margin: 0 auto; }
+.hero-back {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 13px; color: #999; font-weight: 500;
+  margin-bottom: 32px; text-decoration: none;
+}
+.hero-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+.hero-tag {
+  font-size: 11px; font-weight: 700; color: var(--accent);
+  background: var(--accent-bg); padding: 4px 12px; border-radius: 100px;
+  letter-spacing: 0.08em; text-transform: uppercase;
+}
+.hero-grid {
+  display: grid; grid-template-columns: 1fr auto;
+  gap: 48px; align-items: flex-end;
+}
+.hero-title {
+  font-family: Georgia, serif;
+  font-size: clamp(36px, 5vw, 64px);
+  font-weight: 400; color: #111;
+  line-height: 1.06; letter-spacing: -0.03em;
+  margin-bottom: 20px;
+}
+.hero-desc { font-size: 17px; color: #666; line-height: 1.7; max-width: 600px; }
+.hero-cta {
+  background: #111; color: #fff;
+  padding: 14px 32px; border-radius: 100px;
+  font-size: 15px; font-weight: 600;
+  border: none; cursor: pointer;
+  display: inline-flex; align-items: center; gap: 8px;
+  white-space: nowrap; text-decoration: none;
+  transition: all 0.15s ease;
+}
+.hero-cta:hover { background: #333; transform: translateY(-1px); }
+
+/* ═══════════════════════════════════════════════════════════════════
+   3. INTERACTIVE EDITOR PREVIEW — DAS HERZSTÜCK
+═══════════════════════════════════════════════════════════════════ */
+.editor-section {
+  padding: 0 7vw 80px;
+  background: #fff;
+}
+.editor-section-inner { max-width: 1080px; margin: 0 auto; }
+
+/* Section intro */
+.editor-intro { margin-bottom: 32px; }
+.editor-intro-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; }
+.editor-intro-title { font-family: Georgia, serif; font-size: clamp(22px, 3vw, 36px); font-weight: 400; color: #111; letter-spacing: -0.025em; margin-bottom: 8px; }
+.editor-intro-sub { font-size: 15px; color: #888; line-height: 1.6; max-width: 480px; }
+
+/* Editor chrome */
+.editor-chrome {
+  border: 1px solid rgba(0,0,0,0.08);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 8px 48px rgba(0,0,0,0.09), 0 2px 12px rgba(0,0,0,0.05);
+}
+
+/* Editor top bar — like app.finestsites.io editor */
+.editor-topbar {
+  background: #FAFAFA;
+  border-bottom: 1px solid rgba(0,0,0,0.07);
+  padding: 0 16px;
+  height: 48px;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px;
+}
+.editor-topbar-left { display: flex; align-items: center; gap: 10px; }
+.editor-topbar-logo { font-size: 13px; font-weight: 800; letter-spacing: -0.04em; color: #111; }
+.editor-topbar-logo span { color: var(--accent); }
+.editor-topbar-sep { width: 1px; height: 16px; background: rgba(0,0,0,0.1); }
+.editor-topbar-site { font-size: 13px; color: #666; font-weight: 500; }
+.editor-topbar-right { display: flex; align-items: center; gap: 8px; }
+.editor-topbar-save {
+  background: #111; color: #fff; font-size: 12px; font-weight: 600;
+  padding: 6px 14px; border-radius: 8px; border: none; cursor: pointer;
+}
+.editor-topbar-preview-link { font-size: 12px; color: #888; display: flex; align-items: center; gap: 4px; text-decoration: none; }
+
+/* Editor body: sidebar + preview */
+.editor-body {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  height: 640px;
+}
+
+/* LEFT: sidebar controls */
+.editor-sidebar {
+  background: #fff;
+  border-right: 1px solid rgba(0,0,0,0.07);
+  overflow-y: auto;
+  display: flex; flex-direction: column;
+}
+.sidebar-section { border-bottom: 1px solid rgba(0,0,0,0.06); }
+.sidebar-section-header {
+  padding: 14px 16px;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+  color: #aaa; display: flex; align-items: center; justify-content: space-between;
+  cursor: pointer; user-select: none;
+}
+.sidebar-section-header:hover { background: rgba(0,0,0,0.02); }
+.sidebar-content { padding: 0 16px 16px; }
+
+/* Field label */
+.field-label { font-size: 11px; font-weight: 600; color: #666; margin-bottom: 6px; margin-top: 12px; }
+
+/* Text input field */
+.field-input {
+  width: 100%; border: 1.5px solid rgba(0,0,0,0.1); border-radius: 8px;
+  padding: 8px 10px; font-size: 13px; color: #111;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  outline: none; transition: border 0.15s;
+}
+.field-input:focus { border-color: var(--accent); }
+
+/* Color theme picker */
+.color-picker { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 6px; }
+.color-opt {
+  height: 40px; border-radius: 9px; border: 2px solid transparent;
+  cursor: pointer; transition: all 0.15s ease;
+  display: flex; align-items: flex-end; padding: 4px 6px;
+  font-size: 8px; color: rgba(255,255,255,0.8); font-weight: 700;
+}
+.color-opt:hover { transform: scale(1.05); }
+.color-opt.active { border-color: #111; box-shadow: 0 0 0 3px rgba(0,0,0,0.1); }
+.co-lila { background: linear-gradient(135deg, #8060b0, #4a2d8a); }
+.co-gruen { background: linear-gradient(135deg, #2F8650, #1a5c35); }
+.co-blau { background: linear-gradient(135deg, #2563EB, #1e40af); }
+.co-rose { background: linear-gradient(135deg, #E11D48, #9f1239); }
+.co-sand { background: linear-gradient(135deg, #a16207, #78350f); }
+.co-dark { background: linear-gradient(135deg, #27272a, #09090b); }
+
+/* Section toggle */
+.toggle-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 8px 0; border-bottom: 1px solid rgba(0,0,0,0.04);
+}
+.toggle-row:last-child { border-bottom: none; }
+.toggle-row-label { font-size: 12.5px; color: #333; font-weight: 500; }
+.toggle-sw {
+  width: 34px; height: 20px; border-radius: 100px;
+  background: #e0e0e0; position: relative; cursor: pointer;
+  transition: background 0.2s; flex-shrink: 0;
+}
+.toggle-sw.on { background: var(--accent); }
+.toggle-sw::after {
+  content: ''; position: absolute; top: 3px; left: 3px;
+  width: 14px; height: 14px; border-radius: 50%;
+  background: #fff; transition: transform 0.2s;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+}
+.toggle-sw.on::after { transform: translateX(14px); }
+
+/* Image upload thumb */
+.image-opts { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 6px; }
+.image-opt {
+  height: 52px; border-radius: 8px; border: 2px solid rgba(0,0,0,0.08);
+  cursor: pointer; overflow: hidden; position: relative; transition: all 0.15s;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; background: #F5F5F5;
+}
+.image-opt.active { border-color: var(--accent); }
+.image-opt:hover { border-color: rgba(128,96,176,0.4); }
+
+/* Sidebar bottom CTA */
+.sidebar-cta {
+  margin: 16px; padding: 14px; background: #111;
+  color: #fff; border-radius: 12px; text-align: center;
+  font-size: 13px; font-weight: 600; cursor: pointer;
+  border: none; display: block; transition: all 0.15s;
+  text-decoration: none;
+}
+.sidebar-cta:hover { background: #333; }
+
+/* RIGHT: preview pane */
+.editor-preview-pane {
+  background: #F5F4F0;
+  overflow-y: auto;
+  position: relative;
+}
+.editor-preview-pane-inner {
+  min-height: 100%;
+  transition: all 0.35s ease;
+}
+
+/* Simulated template: WomenPlus */
+.tpl-hero {
+  background: linear-gradient(145deg, #1a1a2e 0%, #2d1b5a 50%, #1a3040 100%);
+  padding: 48px 40px;
+  text-align: center;
+  position: relative; overflow: hidden;
+  transition: background 0.4s ease;
+}
+.tpl-hero::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(ellipse 70% 80% at 50% 50%, var(--tpl-glow, rgba(128,96,176,0.4)) 0%, transparent 70%);
+}
+.tpl-hero-eyebrow { font-size: 10px; color: rgba(255,255,255,0.4); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 10px; position: relative; }
+.tpl-hero-title { font-family: Georgia, serif; font-size: 32px; font-weight: 400; color: #fff; letter-spacing: -0.025em; line-height: 1.15; position: relative; margin-bottom: 10px; }
+.tpl-hero-title span { color: var(--tpl-accent, #c4a8f0); }
+.tpl-hero-sub { font-size: 13px; color: rgba(255,255,255,0.5); line-height: 1.6; position: relative; margin-bottom: 20px; max-width: 360px; margin-left: auto; margin-right: auto; }
+.tpl-hero-btn {
+  display: inline-block; background: var(--tpl-accent, #8060b0);
+  color: #fff; font-size: 13px; font-weight: 700; padding: 12px 28px;
+  border-radius: 10px; position: relative; transition: background 0.3s;
+}
+.tpl-section {
+  padding: 28px 36px;
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+  background: #F5F2EC;
+  transition: all 0.35s ease;
+  overflow: hidden;
+}
+.tpl-section.hidden { height: 0; padding-top: 0; padding-bottom: 0; border: none; }
+.tpl-section-eyebrow { font-size: 9px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--tpl-accent, #8060b0); margin-bottom: 6px; transition: color 0.3s; }
+.tpl-section-title { font-family: Georgia, serif; font-size: 20px; color: #1a1a2e; letter-spacing: -0.02em; margin-bottom: 12px; }
+.tpl-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.tpl-card { background: #fff; border-radius: 10px; padding: 14px; border: 1px solid rgba(0,0,0,0.06); }
+.tpl-card-icon { font-size: 18px; margin-bottom: 5px; }
+.tpl-card-name { font-size: 11px; font-weight: 700; color: #111; }
+.tpl-card-sub { font-size: 10px; color: #bbb; }
+
+/* Video section */
+.tpl-video-placeholder {
+  background: rgba(0,0,0,0.06); border-radius: 10px; height: 70px;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  font-size: 13px; color: #888;
+}
+.tpl-play-btn {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: var(--tpl-accent, #8060b0);
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.3s;
+}
+.tpl-play-btn::after { content: '▶'; font-size: 12px; color: #fff; padding-left: 2px; }
+
+/* Contact form sim */
+.tpl-form-fields { display: flex; flex-direction: column; gap: 8px; }
+.tpl-form-input { background: #fff; border: 1px solid rgba(0,0,0,0.1); border-radius: 8px; height: 36px; }
+.tpl-form-btn { background: var(--tpl-accent, #8060b0); border-radius: 8px; height: 36px; transition: background 0.3s; }
+
+/* Testimonial sim */
+.tpl-testimonial {
+  background: #fff; border-radius: 10px; padding: 14px 16px;
+  border: 1px solid rgba(0,0,0,0.06);
+  font-size: 12px; color: #555; font-style: italic; line-height: 1.6;
+}
+.tpl-testimonial-author { margin-top: 8px; font-style: normal; font-size: 11px; font-weight: 700; color: #333; }
+
+/* Preview change toast */
+.preview-toast {
+  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px);
+  background: #111; color: #fff; font-size: 12px; font-weight: 600;
+  padding: 10px 20px; border-radius: 100px;
+  display: flex; align-items: center; gap: 8px;
+  opacity: 0; transition: all 0.25s ease;
+  pointer-events: none; z-index: 500;
+  white-space: nowrap;
+}
+.preview-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* Mobile tabs for editor */
+.mobile-tabs { display: none; }
+.mobile-tab {
+  flex: 1; padding: 12px; text-align: center;
+  font-size: 13px; font-weight: 600; cursor: pointer;
+  border-bottom: 2px solid transparent; color: #888; transition: all 0.15s;
+}
+.mobile-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+/* ═══════════════════════════════════════════════════════════════════
+   4. FOUR FEATURE SECTIONS — exact replica of current code
+═══════════════════════════════════════════════════════════════════ */
+.feature-row { padding: 88px 7vw; }
+.feature-inner {
+  max-width: 1080px; margin: 0 auto;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center;
+}
+.feature-inner.reverse { direction: rtl; }
+.feature-inner.reverse > * { direction: ltr; }
+.feature-img {
+  border-radius: 20px; overflow: hidden; aspect-ratio: 4/3;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--accent-bg); border: 1px solid rgba(128,96,176,0.1);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+}
+.feature-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.feature-num { font-size: 11px; font-weight: 700; color: var(--accent); letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 16px; }
+.feature-title { font-family: Georgia, serif; font-size: clamp(24px, 2.8vw, 38px); font-weight: 400; color: #111; line-height: 1.15; letter-spacing: -0.025em; margin-bottom: 20px; }
+.feature-text { font-size: 16px; color: #555; line-height: 1.8; }
+
+/* Image placeholder icons */
+.feature-icon { color: var(--accent); opacity: 0.45; }
+
+/* ═══════════════════════════════════════════════════════════════════
+   5. WEITERE TEMPLATES — dark, exactly like current
+═══════════════════════════════════════════════════════════════════ */
+.more-section { background: #111; padding: 88px 7vw; }
+.more-inner { max-width: 1080px; margin: 0 auto; }
+.more-eyebrow { font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.28); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 12px; }
+.more-title { font-family: Georgia, serif; font-size: clamp(26px, 3vw, 40px); font-weight: 400; color: #fff; letter-spacing: -0.02em; margin-bottom: 12px; }
+.more-filter-hint { font-size: 13px; color: rgba(255,255,255,0.35); margin-bottom: 40px; }
+.more-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+.more-card {
+  display: block; text-decoration: none; background: #1c1c1e;
+  border-radius: 20px; overflow: hidden; border: 1px solid rgba(255,255,255,0.08);
+  box-shadow: 0 2px 16px rgba(0,0,0,0.3); transition: transform 0.2s, box-shadow 0.2s;
+}
+.more-card:hover { transform: translateY(-4px); box-shadow: 0 16px 48px rgba(0,0,0,0.5); }
+.more-card-img { aspect-ratio: 16/9; background: rgba(128,96,176,0.15); overflow: hidden; }
+.more-card-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.more-card-img-placeholder { width: 100%; height: 100%; background: linear-gradient(135deg, rgba(128,96,176,0.25), rgba(128,96,176,0.08)); }
+.more-card-body { padding: 20px 22px 24px; }
+.more-card-tag { font-size: 10px; font-weight: 700; color: var(--accent); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 8px; display: block; }
+.more-card-title { font-size: 16px; font-weight: 600; color: #fff; margin-bottom: 6px; line-height: 1.3; }
+.more-card-desc { font-size: 13px; color: rgba(255,255,255,0.45); line-height: 1.6; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.more-card-cta { font-size: 13px; font-weight: 600; color: var(--accent); margin-top: 14px; }
+
+/* ═══════════════════════════════════════════════════════════════════
+   6. FINAL CTA — dark, exactly like current
+═══════════════════════════════════════════════════════════════════ */
+.cta-section { background: #111; padding: 96px 7vw; }
+.cta-inner { max-width: 1080px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 32px; }
+.cta-eyebrow { font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.3); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 20px; }
+.cta-title { font-family: Georgia, serif; font-size: clamp(28px, 3.8vw, 52px); font-weight: 400; color: #fff; line-height: 1.1; letter-spacing: -0.025em; margin-bottom: 16px; }
+.cta-sub { font-size: 16px; color: rgba(255,255,255,0.45); line-height: 1.7; max-width: 480px; margin: 0 auto; }
+.cta-btn {
+  background: #fff; color: #111; padding: 14px 32px;
+  border-radius: 100px; font-size: 15px; font-weight: 600;
+  border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;
+  transition: all 0.15s; text-decoration: none;
+}
+.cta-btn:hover { background: #eee; transform: translateY(-1px); }
+.cta-fine { font-size: 12px; color: rgba(255,255,255,0.25); }
+
+/* ═══════════════════════════════════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  /* Nav */
+  .nav-back { display: none; }
+  .nav-login { display: none; }
+  .nav-mobile { display: flex; align-items: center; gap: 8px; }
+  .nav-mobile .nav-cta { font-size: 13px; padding: 8px 16px; }
+
+  /* Hero */
+  .hero { padding: 96px 22px 56px; }
+  .hero-grid { grid-template-columns: 1fr; gap: 24px; }
+  .hero-cta-wrap { order: -1; } /* CTA geht nach unten auf mobile? Nein: oben! */
+
+  /* Editor */
+  .editor-section { padding: 0 0 56px; }
+  .editor-section-inner { max-width: 100%; }
+  .editor-intro { padding: 0 22px; margin-bottom: 24px; }
+  .editor-chrome { border-radius: 0; border-left: none; border-right: none; }
+  .editor-topbar { display: none; }
+  .editor-body { grid-template-columns: 1fr; height: auto; }
+  .mobile-tabs { display: flex; background: #fff; border-bottom: 1px solid rgba(0,0,0,0.07); }
+  .editor-sidebar { border-right: none; border-bottom: 1px solid rgba(0,0,0,0.07); }
+  .editor-sidebar.hidden-mobile { display: none; }
+  .editor-preview-pane { height: 520px; }
+  .editor-preview-pane.hidden-mobile { display: none; }
+
+  /* Feature */
+  .feature-row { padding: 56px 22px; }
+  .feature-inner { grid-template-columns: 1fr; gap: 36px; }
+  .feature-inner.reverse { direction: ltr; }
+
+  /* More grid */
+  .more-section { padding: 64px 22px; }
+  .more-grid { grid-template-columns: 1fr; gap: 16px; }
+
+  /* CTA */
+  .cta-section { padding: 72px 22px; }
+}
+
+@media (max-width: 479px) {
+  .hero-title { font-size: 36px; }
+  .editor-preview-pane { height: 460px; }
+}
+</style>
+</head>
+<body>
+
+<!-- KONZEPT HEADER -->
+<div class="concept-header">
+  <strong>Konzept v3 — Vorlage Detailseite</strong>
+  <span class="concept-tag">Interaktiver Editor im Browser &middot; Mobile-first &middot; Apple-Level</span>
+</div>
+
+<!-- Spacer for fixed concept header -->
+<div style="height:40px;"></div>
+
+<!-- ════════════════════════════════════════════════════════════════
+     ANNOTATION 1: NAV
+════════════════════════════════════════════════════════════════ -->
+<div class="anno-wrap">
+  <div class="anno-label">1 &mdash; Navigation (unveraendert)</div>
+  <div class="anno-note">Exakt wie live: Pill-Nav, fixed, "Zurueck zur Startseite" statt Menu-Links, primary CTA = Template freischalten. Auf Mobile: nur Logo + CTA-Button.</div>
+</div>
+
+<!-- NAV -->
+<div class="nav-outer">
+  <nav class="nav-pill">
+    <div class="nav-logo-text">finest<span>sites</span></div>
+    <div class="nav-back">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+      Startseite
+    </div>
+    <div class="nav-actions">
+      <button class="nav-login">Anmelden</button>
+      <button class="nav-cta">Template freischalten</button>
+    </div>
+    <div class="nav-mobile">
+      <button class="nav-cta" style="font-size:13px; padding:8px 16px;">Starten &rarr;</button>
+    </div>
+  </nav>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════════
+     ANNOTATION 2: HERO
+════════════════════════════════════════════════════════════════ -->
+<div class="anno-wrap" style="margin-top:80px;">
+  <div class="anno-label">2 &mdash; Hero</div>
+  <div class="anno-note">
+    <strong>Unveraendert zum jetzigen Layout.</strong> Tags, Titel (Plein-Font), Beschreibung, CTA rechts daneben. Kein Cover-Bild mehr &mdash; das kommt direkt im Editor-Bereich darunter.
+    Auf Mobile: Titel + Beschreibung oben, CTA-Button darunter (full width).
+  </div>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <a href="#" class="hero-back">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+      Alle Templates
+    </a>
+
+    <div class="hero-tags">
+      <span class="hero-tag">Network Marketing</span>
+      <span class="hero-tag">PM International</span>
+    </div>
+
+    <div class="hero-grid">
+      <div>
+        <h1 class="hero-title plein">WomenPlus</h1>
+        <p class="hero-desc">Professionelle Empfehlungswebsite fuer FitLine-Beraterinnen. Erklaere deine Empfehlung, baue Vertrauen auf und gewinne neue Interessentinnen &mdash; ohne Technik-Kenntnisse.</p>
+      </div>
+      <div style="padding-bottom:4px; flex-shrink:0;">
+        <button class="hero-cta">Mit diesem Template starten &rarr;</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════════
+     ANNOTATION 3: INTERAKTIVER EDITOR PREVIEW
+════════════════════════════════════════════════════════════════ -->
+<div class="anno-wrap">
+  <div class="anno-label">3 &mdash; NEU: Interaktiver Editor-Preview (Herzstuck)</div>
+  <div class="anno-note">
+    <strong>Das ist der groesste Unterschied zur bisherigen Seite.</strong>
+    Statt eines statischen Cover-Bildes: der echte Editor-Chrome (wie app.finestsites.io/edit) &mdash; links die Steuerleiste (Farbe, Sektionen, Bild), rechts die scrollbare Template-Vorschau.<br><br>
+    <strong>Technisch:</strong> Im echten Code wird rechts ein &lt;iframe src="/api/templates/[id]/public-preview?data=base64json"&gt; eingebettet. Links senden Aenderungen per <code>postMessage</code> &rarr; iframe re-rendert sofort. Kein Reload.<br><br>
+    <strong>Mobile:</strong> Tabs "Vorschau" | "Anpassen" oben, darunter der jeweilige Bereich. Preview-Pane ist 460px hoch &mdash; scrollbar. Benutzer kann durch das Template scrollen.<br><br>
+    <strong>Apple-Idee:</strong> Sticky CTA-Banner erscheint, sobald man den Hero-Bereich scrollt ("Bereit? &rarr; Template starten") &mdash; wie Apples Sticky Checkout Bar.
+  </div>
+</div>
+
+<!-- INTERACTIVE EDITOR PREVIEW -->
+<section class="editor-section">
+  <div class="editor-section-inner">
+
+    <div class="editor-intro">
+      <div class="editor-intro-eyebrow">Live-Vorschau</div>
+      <h2 class="editor-intro-title plein">So sieht deine Seite aus &mdash; probier es direkt aus.</h2>
+      <p class="editor-intro-sub">Passe Farbe, Sektionen und mehr an. Die Vorschau reagiert sofort.</p>
+    </div>
+
+    <div class="editor-chrome">
+      <!-- Editor top bar -->
+      <div class="editor-topbar">
+        <div class="editor-topbar-left">
+          <span class="editor-topbar-logo">finest<span>sites</span></span>
+          <div class="editor-topbar-sep"></div>
+          <span class="editor-topbar-site">anna-mueller.finestsites.io</span>
+        </div>
+        <div class="editor-topbar-right">
+          <a href="#" class="editor-topbar-preview-link">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            Vorschau oeffnen
+          </a>
+          <button class="editor-topbar-save">Speichern</button>
+        </div>
+      </div>
+
+      <!-- Mobile tabs -->
+      <div class="mobile-tabs">
+        <div class="mobile-tab active" onclick="mobileTab('preview', this)">Vorschau</div>
+        <div class="mobile-tab" onclick="mobileTab('edit', this)">Anpassen</div>
+      </div>
+
+      <!-- Editor body -->
+      <div class="editor-body">
+
+        <!-- LEFT: Controls -->
+        <aside class="editor-sidebar" id="sidebar-panel">
+
+          <!-- Color -->
+          <div class="sidebar-section">
+            <div class="sidebar-section-header" onclick="toggleSidebarSection(this)">
+              Farbtheme
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m18 15-6-6-6 6"/></svg>
+            </div>
+            <div class="sidebar-content">
+              <div class="color-picker">
+                <div class="color-opt co-lila active" onclick="setTheme('lila',this)" title="Lila">Lila</div>
+                <div class="color-opt co-gruen" onclick="setTheme('gruen',this)" title="Gruen">Gruen</div>
+                <div class="color-opt co-blau" onclick="setTheme('blau',this)" title="Blau">Blau</div>
+                <div class="color-opt co-rose" onclick="setTheme('rose',this)" title="Rose">Rose</div>
+                <div class="color-opt co-sand" onclick="setTheme('sand',this)" title="Sand">Sand</div>
+                <div class="color-opt co-dark" onclick="setTheme('dark',this)" title="Dark">Dark</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sections -->
+          <div class="sidebar-section">
+            <div class="sidebar-section-header" onclick="toggleSidebarSection(this)">
+              Sektionen
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m18 15-6-6-6 6"/></svg>
+            </div>
+            <div class="sidebar-content">
+              <div class="toggle-row">
+                <span class="toggle-row-label">Erklaervideo</span>
+                <div class="toggle-sw on" id="sw-video" onclick="toggleSection('video', this)"></div>
+              </div>
+              <div class="toggle-row">
+                <span class="toggle-row-label">Warum ich das empfehle</span>
+                <div class="toggle-sw on" id="sw-benefits" onclick="toggleSection('benefits', this)"></div>
+              </div>
+              <div class="toggle-row">
+                <span class="toggle-row-label">Erfahrungsberichte</span>
+                <div class="toggle-sw on" id="sw-testimonial" onclick="toggleSection('testimonial', this)"></div>
+              </div>
+              <div class="toggle-row">
+                <span class="toggle-row-label">Kontaktformular</span>
+                <div class="toggle-sw on" id="sw-contact" onclick="toggleSection('contact', this)"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Header image -->
+          <div class="sidebar-section">
+            <div class="sidebar-section-header" onclick="toggleSidebarSection(this)">
+              Header-Hintergrund
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m18 15-6-6-6 6"/></svg>
+            </div>
+            <div class="sidebar-content">
+              <div class="image-opts">
+                <div class="image-opt active" onclick="selectImg(0,this)" title="Keins">&#x1F527;</div>
+                <div class="image-opt" onclick="selectImg(1,this)" title="Blumen">&#x1F338;</div>
+                <div class="image-opt" onclick="selectImg(2,this)" title="Natur">&#x1F33F;</div>
+                <div class="image-opt" onclick="selectImg(3,this)" style="font-size:13px; color:#aaa;">+ Eigenes</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Spacer + CTA -->
+          <div style="flex:1;"></div>
+          <div style="padding: 0 16px 16px;">
+            <p style="font-size:11px; color:#bbb; text-align:center; margin-bottom:12px; line-height:1.5;">Das sind nur Vorschau-Optionen.<br>Alle Texte traegs du nach der Registrierung ein.</p>
+            <a href="#" class="sidebar-cta" onclick="return false;">Mit diesem Template starten &rarr;</a>
+          </div>
+        </aside>
+
+        <!-- RIGHT: Preview -->
+        <div class="editor-preview-pane" id="preview-panel">
+          <div class="editor-preview-pane-inner" id="tpl-preview">
+
+            <!-- Hero -->
+            <div class="tpl-hero" id="tpl-hero">
+              <div class="tpl-hero-eyebrow">ANNA MUELLER &middot; NETWORK MARKETING</div>
+              <div class="tpl-hero-title">Dein Weg zu mehr<br><span>Energie &amp; Freiheit</span></div>
+              <div class="tpl-hero-sub">Ich zeige dir, wie du mit natuerlichen Produkten deinen Alltag veraenderst und nachhaltig mehr Energie gewinnst.</div>
+              <div class="tpl-hero-btn" id="tpl-btn">Mehr erfahren</div>
+            </div>
+
+            <!-- Video -->
+            <div class="tpl-section" id="tpl-video">
+              <div class="tpl-section-eyebrow" id="tpl-ey-video">Erklaervideo</div>
+              <div class="tpl-section-title plein">Sieh, wie es wirkt</div>
+              <div class="tpl-video-placeholder">
+                <div class="tpl-play-btn" id="tpl-play"></div>
+                Mein kurzes Erklaer-Video
+              </div>
+            </div>
+
+            <!-- Benefits -->
+            <div class="tpl-section" id="tpl-benefits">
+              <div class="tpl-section-eyebrow" id="tpl-ey-benefits">Warum ich das empfehle</div>
+              <div class="tpl-section-title plein">Ergebnisse, Qualitaet, Sicherheit.</div>
+              <div class="tpl-cards">
+                <div class="tpl-card"><div class="tpl-card-icon">&#x1F6E1;&#xFE0F;</div><div class="tpl-card-name">Koelner Liste</div><div class="tpl-card-sub">Geprueft</div></div>
+                <div class="tpl-card"><div class="tpl-card-icon">&#x1F3ED;</div><div class="tpl-card-name">Made in Germany</div><div class="tpl-card-sub">Eigene Produktion</div></div>
+                <div class="tpl-card"><div class="tpl-card-icon">&#x1F52C;</div><div class="tpl-card-name">70+ Patente</div><div class="tpl-card-sub">NTC Technologie</div></div>
+              </div>
+            </div>
+
+            <!-- Testimonial -->
+            <div class="tpl-section" id="tpl-testimonial">
+              <div class="tpl-section-eyebrow" id="tpl-ey-testimonial">Erfahrungsberichte</div>
+              <div class="tpl-section-title plein">Was andere sagen</div>
+              <div class="tpl-testimonial">
+                "Seit 3 Monaten bin ich dabei und fuehle mich fitter als je zuvor. Die Energie ist einfach da."
+                <div class="tpl-testimonial-author">&mdash; Laura K., Muenchen</div>
+              </div>
+            </div>
+
+            <!-- Contact -->
+            <div class="tpl-section" id="tpl-contact">
+              <div class="tpl-section-eyebrow" id="tpl-ey-contact">Kontakt</div>
+              <div class="tpl-section-title plein">Schreib mir direkt</div>
+              <div class="tpl-form-fields">
+                <div class="tpl-form-input"></div>
+                <div class="tpl-form-input"></div>
+                <div class="tpl-form-btn" id="tpl-form-btn"></div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div><!-- /editor-body -->
+    </div><!-- /editor-chrome -->
+
+  </div>
+</section>
+
+<!-- Change toast -->
+<div class="preview-toast" id="change-toast">
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+  Vorschau aktualisiert
+</div>
+
+<!-- ════════════════════════════════════════════════════════════════
+     ANNOTATION 4: VIER FEATURE-SEKTIONEN
+════════════════════════════════════════════════════════════════ -->
+<div class="anno-wrap">
+  <div class="anno-label">4 &mdash; Vier Feature-Sektionen (unveraenderte Struktur, poliert)</div>
+  <div class="anno-note">
+    <strong>Gleiche Struktur wie jetzt</strong>: Abwechselnd links/rechts, Bild + Text, Nummer oben.
+    Einzige Aenderung: die Bilder werden besser (gerenderte Template-Frames statt Platzhalter).
+    Auf Mobile: immer Bild oben, Text darunter. Gut lesbar, kein Platzverlust.
+  </div>
+</div>
+
+<!-- FEATURE SECTION 1 -->
+<section class="feature-row" style="background:#fff;">
+  <div class="feature-inner">
+    <div class="feature-img">
+      <div class="feature-icon">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.3-2 5-2 5s3.7-.5 5-2l9-9a3.5 3.5 0 00-5-5l-7 7z"/><path d="M12 15l-3-3"/></svg>
+      </div>
+    </div>
+    <div>
+      <p class="feature-num">01</p>
+      <h2 class="feature-title plein">Kein Aufwand. Wirklich keiner.</h2>
+      <p class="feature-text">Du brauchst kein technisches Wissen, kein Designtalent und keine Erfahrung im Marketing. Das Template ist fertig konzipiert &mdash; du traegst nur deine Infos ein und bist in unter 5 Minuten online. Alles andere ist schon erledigt.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURE SECTION 2 -->
+<section class="feature-row" style="background:#F9F7FF;">
+  <div class="feature-inner reverse">
+    <div class="feature-img">
+      <div class="feature-icon">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
+      </div>
+    </div>
+    <div>
+      <p class="feature-num">02</p>
+      <h2 class="feature-title plein">Dein Link. Ueberall einsetzbar.</h2>
+      <p class="feature-text">In die Bio, in Stories, auf Visitenkarten, Flyern oder dem Auto. Wer deinen Link aufruft, landet auf einer professionellen Seite, die fuer dich spricht &mdash; rund um die Uhr, auch wenn du gerade schlaefst.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURE SECTION 3 -->
+<section class="feature-row" style="background:#fff;">
+  <div class="feature-inner">
+    <div class="feature-img">
+      <div class="feature-icon">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11L2 12v6a2 2 0 002 2h16a2 2 0 002-2v-6l-3.45-6.89A2 2 0 0016.76 4H7.24a2 2 0 00-1.79 1.11z"/></svg>
+      </div>
+    </div>
+    <div>
+      <p class="feature-num">03</p>
+      <h2 class="feature-title plein">Interessenten melden sich bei dir.</h2>
+      <p class="feature-text">Jeder, der das Kontaktformular ausfuellt, landet direkt in deinem Dashboard. Du siehst sofort, wer sich gemeldet hat, und antwortest wann du willst. Kein Hinterherlaufen, kein Kaltakquise.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURE SECTION 4 -->
+<section class="feature-row" style="background:#F9F7FF;">
+  <div class="feature-inner reverse">
+    <div class="feature-img">
+      <div class="feature-icon">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+      </div>
+    </div>
+    <div>
+      <p class="feature-num">04</p>
+      <h2 class="feature-title plein">Wird automatisch immer besser.</h2>
+      <p class="feature-text">Wir optimieren die Templates laufend &mdash; basierend auf echten Daten von tausenden Besuchern. Deine Website wird mit der Zeit besser, ohne dass du etwas tun musst. Wartung, Updates und Verbesserungen sind inklusive.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════════
+     ANNOTATION 5: WEITERE TEMPLATES
+════════════════════════════════════════════════════════════════ -->
+<div class="anno-wrap" style="background:#111;">
+  <div class="anno-label" style="background: rgba(255,255,255,0.15); color:#fff;">5 &mdash; Weitere Templates (kategorisiert)</div>
+  <div class="anno-note" style="background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.2); color:rgba(255,255,255,0.6);">
+    <strong style="color:#fff;">NEU:</strong> Nicht mehr random andere Templates, sondern <strong style="color:#fff;">gefiltert nach demselben Netzwerk-Unternehmen</strong> (PM International, Lyconet, Herbalife...).
+    Technisch: DB-Query nach <code style="color:#a0a0ff;">tags</code>-Schnittmenge. Falls zu wenig: aufgefuellt mit anderen NM-Templates.
+    Headline veraendert je nach Kontext: "Weitere PM-International-Templates"
+  </div>
+</div>
+
+<!-- WEITERE TEMPLATES -->
+<section class="more-section">
+  <div class="more-inner">
+    <p class="more-eyebrow">Mehr entdecken</p>
+    <h2 class="more-title plein">Weitere PM-International-Templates</h2>
+    <p class="more-filter-hint">Passend fuer dein Netzwerk-Unternehmen</p>
+
+    <div class="more-grid">
+      <!-- Card 1 -->
+      <a href="#" class="more-card">
+        <div class="more-card-img"><div class="more-card-img-placeholder"></div></div>
+        <div class="more-card-body">
+          <span class="more-card-tag">PM International</span>
+          <p class="more-card-title">FitLine Sport</p>
+          <p class="more-card-desc">Fuer aktive Sportler und Fitness-Begeisterte. Fokus auf Performance und Regeneration.</p>
+          <p class="more-card-cta">Template ansehen &rarr;</p>
+        </div>
+      </a>
+      <!-- Card 2 -->
+      <a href="#" class="more-card">
+        <div class="more-card-img"><div class="more-card-img-placeholder" style="background: linear-gradient(135deg, rgba(47,134,80,0.3), rgba(47,134,80,0.08));"></div></div>
+        <div class="more-card-body">
+          <span class="more-card-tag" style="color:#2F8650;">PM International</span>
+          <p class="more-card-title">FitLine Family</p>
+          <p class="more-card-desc">Fuer Familien mit Kindern. Erklaert einfach und emotional, warum die ganze Familie profitiert.</p>
+          <p class="more-card-cta" style="color:#2F8650;">Template ansehen &rarr;</p>
+        </div>
+      </a>
+      <!-- Card 3 -->
+      <a href="#" class="more-card">
+        <div class="more-card-img"><div class="more-card-img-placeholder" style="background: linear-gradient(135deg, rgba(37,99,235,0.3), rgba(37,99,235,0.08));"></div></div>
+        <div class="more-card-body">
+          <span class="more-card-tag" style="color:#2563EB;">PM International</span>
+          <p class="more-card-title">FitLine Profi</p>
+          <p class="more-card-desc">Fuer erfahrene Berater die ihr Business professionell prasentieren moechten.</p>
+          <p class="more-card-cta" style="color:#2563EB;">Template ansehen &rarr;</p>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════════
+     ANNOTATION 6: FINAL CTA
+════════════════════════════════════════════════════════════════ -->
+<div style="background:#111; padding: 20px 32px 4px;">
+  <div class="anno-label" style="background: rgba(255,255,255,0.15); color:#fff;">6 &mdash; Final CTA (unveraendert, dunkel)</div>
+  <div class="anno-note" style="background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.2); color:rgba(255,255,255,0.6); margin-bottom:4px;">
+    Fliesst nahtlos aus dem "Weitere Templates"-Bereich (beide dunkel). Weisser Button auf dunklem Hintergrund. Exakt wie jetzt.
+  </div>
+</div>
+
+<!-- FINAL CTA -->
+<section class="cta-section">
+  <div class="cta-inner">
+    <div>
+      <p class="cta-eyebrow">Los geht&apos;s</p>
+      <h2 class="cta-title plein">Dieses Template ist deins.<br>In 5 Minuten live.</h2>
+      <p class="cta-sub">Kein Vorwissen, kein Designer, kein Aufwand. Einfach starten.</p>
+    </div>
+    <button class="cta-btn">Mit diesem Template starten &rarr;</button>
+    <p class="cta-fine">Ab 20 &euro;/Monat &middot; Jederzeit kuendbar &middot; Keine Einrichtungsgebuehr</p>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════════
+     NEUE FEATURES / IDEEN (Sticky Bar, etc.)
+════════════════════════════════════════════════════════════════ -->
+<div class="anno-wrap">
+  <div class="anno-label">Neue Features &mdash; Eigenstaendige Ideen</div>
+  <div class="anno-note" style="line-height:1.9;">
+    <strong>A) Sticky Purchase Bar (wie Apple):</strong>
+    Sobald der Hero aus dem Viewport scrollt, erscheint unten eine schmale Bar: Template-Name links, "Template starten &rarr;" rechts. Verschwindet wieder bei Bottom-CTA. &rarr; <em>Immer sichtbarer CTA.</em><br><br>
+
+    <strong>B) Editor: Vorschau-Tabs auf Mobile:</strong>
+    Oben zwei Tabs "Vorschau" | "Anpassen". Nutzer switcht zwischen scrollbarer Template-Ansicht und Editor-Controls. Beide Panes sind full-height. &rarr; <em>Kein Scrollen auf Mobile um zwischen Preview und Controls zu wechseln.</em><br><br>
+
+    <strong>C) "Weitere Templates" nach Netzwerk gefiltert:</strong>
+    Statt random 3 Templates: immer nach Tags gefiltert (gleiche Firma). Query: <code>WHERE tags &amp;&amp; ARRAY['{tag}'] AND id != current_id LIMIT 3</code>. Falls zu wenig: fallback auf allgemeine NM-Templates. &rarr; <em>Relevanz statt Zufall.</em><br><br>
+
+    <strong>D) Editor CTA unten in der Sidebar:</strong>
+    Nach den Controls direkt ein "Jetzt starten" Button innerhalb des Editors. Fuhlt sich natuerlich an nach dem Ausprobieren. &rarr; <em>Conversion im richtigen Moment.</em><br><br>
+
+    <strong>E) Hero: Cover-Bild entfernt &mdash; Editor IST das Cover:</strong>
+    Kein statisches Screenshot mehr nach dem Hero. Der Editor-Bereich (scrollbar, interaktiv) ist selbst der erste Eindruck vom Template. Das ist viel ueberzeugender als ein flaches Bild. &rarr; <em>Sehen = Kaufen.</em>
+  </div>
+</div>
+
+<!-- IMPLEMENTATION PLAN -->
+<div class="anno-wrap" style="margin-bottom:0;">
+  <div class="anno-label">Implementierungsplan &mdash; Praezise Schritte</div>
+  <div class="anno-note" style="line-height: 1.9;">
+
+    <strong>Phase 1 &mdash; Struktur (1 Tag):</strong><br>
+    &bull; Hero: Cover-Bild entfernen (war nur <code>coverImg</code> conditional block)<br>
+    &bull; Neue Section <code>InteractivePreview</code> als Client Component einfuegen<br>
+    &bull; Sticky Bar Component (IntersectionObserver auf Hero)<br>
+    &bull; "Weitere Templates" Query nach Tags filtern statt random<br><br>
+
+    <strong>Phase 2 &mdash; Editor UI (2 Tage):</strong><br>
+    &bull; Editor-Chrome HTML/CSS in Client Component<br>
+    &bull; Iframe einbetten: <code>/api/templates/[id]/public-preview?data=BASE64</code> (Route existiert schon!)<br>
+    &bull; Color-Picker + Section-Toggles senden postMessage (existiert schon!)<br>
+    &bull; Mobile Tabs (IntersectionObserver oder simpler State)<br><br>
+
+    <strong>Phase 3 &mdash; preview_config (1 Tag):</strong><br>
+    &bull; DB-Migration: <code>ALTER TABLE templates ADD COLUMN preview_config JSONB</code><br>
+    &bull; Admin-Panel: preview_config Editor (welche Farben/Sektionen sind editierbar?)<br>
+    &bull; Template-HTML: welche Sektionen haben <code>data-section</code> Attribute?<br><br>
+
+    <strong>Gesamt: ~4 Entwicklungstage</strong>
+
+  </div>
+</div>
+
+<div style="height:60px; background:#F8F7FF;"></div>
+
+<!-- ════════════════════════════════════════════════════════════════
+     STICKY PURCHASE BAR (Idee A — Demo)
+════════════════════════════════════════════════════════════════ -->
+<div id="sticky-bar" style="
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 200;
+  background: rgba(255,255,255,0.95); backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(0,0,0,0.08);
+  padding: 14px 7vw;
+  display: flex; align-items: center; justify-content: space-between;
+  box-shadow: 0 -4px 24px rgba(0,0,0,0.08);
+  transform: translateY(100%);
+  transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+">
+  <div>
+    <div style="font-size:13px; color:#888; margin-bottom:2px;">Template</div>
+    <div style="font-size:16px; font-weight:700; color:#111; letter-spacing:-0.02em;">WomenPlus</div>
+  </div>
+  <div style="display:flex; align-items:center; gap:12px;">
+    <div style="font-size:13px; color:#888;">Ab 20 &euro;/Monat</div>
+    <button class="hero-cta" style="font-size:13px; padding:10px 22px;">Jetzt starten &rarr;</button>
+  </div>
+</div>
+
+<script>
+/* ── Theme switcher ── */
+const themes = {
+  lila: { color: '#8060b0', accent: '#c4a8f0', glow: 'rgba(128,96,176,0.4)', bg: 'linear-gradient(145deg,#1a1a2e 0%,#2d1b5a 50%,#1a3040 100%)' },
+  gruen: { color: '#2F8650', accent: '#7fd0a0', glow: 'rgba(47,134,80,0.4)', bg: 'linear-gradient(145deg,#0d2416 0%,#1a4d2e 50%,#0d2010 100%)' },
+  blau: { color: '#2563EB', accent: '#93c5fd', glow: 'rgba(37,99,235,0.4)', bg: 'linear-gradient(145deg,#0d1a3e 0%,#1e3a8a 50%,#0d2040 100%)' },
+  rose: { color: '#E11D48', accent: '#fda4af', glow: 'rgba(225,29,72,0.4)', bg: 'linear-gradient(145deg,#2a0d15 0%,#881337 50%,#2a0d10 100%)' },
+  sand: { color: '#a16207', accent: '#fcd34d', glow: 'rgba(161,98,7,0.3)', bg: 'linear-gradient(145deg,#1c0f05 0%,#451a03 50%,#1c0f05 100%)' },
+  dark: { color: '#71717a', accent: '#d4d4d8', glow: 'rgba(113,113,122,0.2)', bg: 'linear-gradient(145deg,#09090b 0%,#18181b 50%,#09090b 100%)' },
+};
+
+function setTheme(name, el) {
+  document.querySelectorAll('.color-opt').forEach(s => s.classList.remove('active'));
+  el.classList.add('active');
+  const t = themes[name];
+  const hero = document.getElementById('tpl-hero');
+  hero.style.background = t.bg;
+  hero.style.setProperty('--tpl-glow', t.glow);
+
+  // Update accent elements
+  document.querySelectorAll('[id^="tpl-ey-"]').forEach(e => e.style.color = t.color);
+  document.getElementById('tpl-btn').style.background = t.color;
+  document.getElementById('tpl-play').style.background = t.color;
+  document.getElementById('tpl-form-btn').style.background = t.color;
+
+  // Title span color
+  const span = document.querySelector('.tpl-hero-title span');
+  if (span) span.style.color = t.accent;
+
+  showToast();
+}
+
+/* ── Section toggles ── */
+const sectionState = { video: true, benefits: true, testimonial: true, contact: true };
+
+function toggleSection(name, sw) {
+  sectionState[name] = !sectionState[name];
+  sw.classList.toggle('on');
+  const el = document.getElementById('tpl-' + name);
+  if (el) el.classList.toggle('hidden', !sectionState[name]);
+  showToast();
+}
+
+/* ── Image select ── */
+function selectImg(idx, el) {
+  document.querySelectorAll('.image-opt').forEach(o => o.classList.remove('active'));
+  el.classList.add('active');
+  showToast();
+}
+
+/* ── Sidebar section collapse ── */
+function toggleSidebarSection(header) {
+  const content = header.nextElementSibling;
+  if (content) {
+    const isOpen = content.style.display !== 'none';
+    content.style.display = isOpen ? 'none' : '';
+    header.querySelector('svg').style.transform = isOpen ? 'rotate(180deg)' : '';
+  }
+}
+
+/* ── Toast ── */
+let toastTimer;
+function showToast() {
+  const toast = document.getElementById('change-toast');
+  toast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove('show'), 2000);
+}
+
+/* ── Mobile tabs ── */
+function mobileTab(tab, el) {
+  document.querySelectorAll('.mobile-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  const sidebar = document.getElementById('sidebar-panel');
+  const preview = document.getElementById('preview-panel');
+  if (tab === 'preview') {
+    sidebar.classList.add('hidden-mobile');
+    preview.classList.remove('hidden-mobile');
+  } else {
+    preview.classList.add('hidden-mobile');
+    sidebar.classList.remove('hidden-mobile');
+  }
+}
+
+/* ── Sticky bar ── */
+const hero = document.querySelector('.hero');
+const bar = document.getElementById('sticky-bar');
+if (hero && bar) {
+  const obs = new IntersectionObserver(([entry]) => {
+    bar.style.transform = entry.isIntersecting ? 'translateY(100%)' : 'translateY(0)';
+  }, { threshold: 0 });
+  obs.observe(hero);
+}
+</script>
+
+</body>
+</html>

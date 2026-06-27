@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8"/>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  width: 1200px; height: 900px;
+  background: #F9F7FF;
+  display: flex; align-items: center; justify-content: center;
+  font-family: -apple-system, 'Helvetica Neue', sans-serif;
+  overflow: hidden;
+}
+
+/* Browser window wrapper */
+.browser {
+  width: 860px;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 8px 48px rgba(0,0,0,0.14), 0 2px 12px rgba(0,0,0,0.08);
+  border: 1px solid rgba(0,0,0,0.06);
+  position: relative;
+}
+
+.browser-bar {
+  background: #F4F2EE;
+  padding: 12px 18px;
+  display: flex; align-items: center; gap: 10px;
+  border-bottom: 1px solid #E8E6E2;
+}
+.dot { width: 11px; height: 11px; border-radius: 50%; }
+
+/* Page content */
+.page {
+  background: #F5F2EC;
+  padding: 40px 56px 0;
+  position: relative;
+}
+
+/* Section header */
+.eyebrow {
+  font-size: 10.5px; font-weight: 700; letter-spacing: 0.13em;
+  text-transform: uppercase; color: #2F8650;
+  text-align: center; margin-bottom: 14px;
+}
+.headline {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 36px; font-weight: 400; color: #1F1D1B;
+  text-align: center; line-height: 1.15; letter-spacing: -0.02em;
+  margin-bottom: 10px;
+}
+.subtext {
+  font-size: 13px; color: #888; text-align: center;
+  line-height: 1.6; max-width: 520px; margin: 0 auto 28px;
+}
+
+/* NTC dark card */
+.ntc-card {
+  background: #1A4D2E;
+  border-radius: 16px;
+  padding: 28px 32px;
+  text-align: center;
+  margin-bottom: 14px;
+  position: relative; overflow: hidden;
+}
+.ntc-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  border: 1px solid rgba(255,255,255,0.25);
+  border-radius: 100px; padding: 4px 12px;
+  font-size: 9px; font-weight: 700; letter-spacing: 0.1em;
+  text-transform: uppercase; color: rgba(255,255,255,0.7);
+  margin-bottom: 14px;
+}
+.ntc-title {
+  font-family: Georgia, serif;
+  font-size: 22px; font-weight: 400; color: #fff;
+  line-height: 1.25; margin-bottom: 8px;
+}
+.ntc-body {
+  font-size: 11.5px; color: rgba(255,255,255,0.6);
+  line-height: 1.6; max-width: 480px; margin: 0 auto;
+}
+
+/* 3 trust cards */
+.trust-row {
+  display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;
+}
+.trust-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 18px 16px 20px;
+  border: 1px solid rgba(0,0,0,0.06);
+}
+.trust-card.cream { background: #FAF7F2; }
+.trust-tag {
+  font-size: 8.5px; font-weight: 700; letter-spacing: 0.1em;
+  text-transform: uppercase; color: #999; margin-bottom: 8px;
+}
+.trust-heading {
+  font-family: Georgia, serif;
+  font-size: 15px; font-weight: 400; color: #1F1D1B;
+  line-height: 1.25; margin-bottom: 8px;
+}
+.trust-body {
+  font-size: 10.5px; color: #999; line-height: 1.6;
+}
+.check-list { list-style: none; margin-top: 8px; }
+.check-list li {
+  font-size: 10.5px; color: #2F8650; font-weight: 600;
+  padding: 2px 0; display: flex; align-items: center; gap: 5px;
+}
+.bar-row { margin-top: 8px; }
+.bar-label { display: flex; justify-content: space-between; font-size: 9px; color: #999; margin-bottom: 3px; }
+.bar-track { background: #EEE; border-radius: 100px; height: 4px; margin-bottom: 6px; }
+.bar-fill { height: 100%; border-radius: 100px; background: #2F8650; }
+
+/* Fade overlay */
+.fade {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  height: 120px;
+  background: linear-gradient(to bottom, rgba(249,247,255,0) 0%, #F9F7FF 100%);
+  pointer-events: none;
+}
+</style>
+</head>
+<body>
+<div class="browser">
+  <div class="browser-bar">
+    <div class="dot" style="background:#FF5F57;"></div>
+    <div class="dot" style="background:#FEBC2E;"></div>
+    <div class="dot" style="background:#28C840;"></div>
+  </div>
+
+  <div class="page">
+    <div class="eyebrow">Warum ich das empfehle</div>
+    <h2 class="headline">Ergebnisse, Qualität, Sicherheit.</h2>
+    <p class="subtext">Drei Dinge muss ein Produkt erfüllen, damit ich es empfehle: Es muss wirken, sauber hergestellt sein und sicher sein.</p>
+
+    <!-- NTC card -->
+    <div class="ntc-card">
+      <div class="ntc-badge">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><path d="M7 12l3 3 7-7"/></svg>
+        Patentierte Technologie
+      </div>
+      <div class="ntc-title">Das NTC. Damit Nährstoffe ankommen,<br>wo sie gebraucht werden.</div>
+      <div class="ntc-body">Zwischen Nährstoffe aufnehmen und Nährstoffe verwerten liegt ein langer Weg. Das NTC, das Nährstoff-Transport-Konzept von PM-International, ist darauf ausgelegt. 70+ Patente.</div>
+    </div>
+
+    <!-- 3 trust cards -->
+    <div class="trust-row">
+      <div class="trust-card cream">
+        <div class="trust-tag">Für Sportler geprüft</div>
+        <div class="trust-heading">Kölner Liste®.<br>Alle vier Produkte.<br>Ohne Beanstandung.</div>
+        <div class="trust-body">Unabhängig auf unerlaubte Substanzen geprüft. Für Profis Pflicht, für alle anderen eine starke Garantie.</div>
+        <ul class="check-list">
+          <li><svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>PowerCocktail</li>
+          <li><svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>Activize Oxyplus</li>
+          <li><svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>Restorate</li>
+        </ul>
+      </div>
+
+      <div class="trust-card">
+        <div class="trust-tag">Pharma-Standard, freiwillig</div>
+        <div class="trust-heading">Pharma-Standard.<br>Freiwillig.</div>
+        <div class="trust-body">GMP ist für Nahrungsergänzung nicht vorgeschrieben — wir halten uns trotzdem daran.</div>
+        <div class="bar-row">
+          <div class="bar-label"><span>GMP</span><span style="color:#2F8650;font-weight:700;">wie bei Medikamenten</span></div>
+          <div class="bar-track"><div class="bar-fill" style="width:94%;"></div></div>
+          <div class="bar-label"><span>Bio-Siegel</span></div>
+          <div class="bar-track"><div class="bar-fill" style="width:72%;"></div></div>
+          <div class="bar-label"><span>Standard NEM</span></div>
+          <div class="bar-track"><div class="bar-fill" style="width:55%;"></div></div>
+        </div>
+      </div>
+
+      <div class="trust-card cream">
+        <div class="trust-tag">Alles aus einer Hand</div>
+        <div class="trust-heading">Made in Germany.<br>Vom Labor bis<br>zur Abfüllung.</div>
+        <div class="trust-body">Von der Forschung bis zur Abfüllung passiert alles in Speyer. Kein Outsourcing.</div>
+        <ul class="check-list">
+          <li><svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>Forschung</li>
+          <li><svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>Entwicklung</li>
+          <li><svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>Produktion</li>
+          <li><svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>Qualitätskontrolle</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="fade"></div>
+</div>
+</body>
+</html>

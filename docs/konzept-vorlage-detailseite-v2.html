@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Konzept: Vorlage Detailseite — Conversion-optimiert</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    font-family: -apple-system, 'Helvetica Neue', Arial, sans-serif;
+    background: #F8F7FF;
+    color: #111;
+  }
+
+  /* KONZEPT-WRAPPER */
+  .concept-header {
+    background: #111;
+    color: #fff;
+    padding: 18px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 13px;
+    letter-spacing: 0.04em;
+  }
+  .concept-header strong { font-size: 15px; }
+  .concept-tag {
+    background: rgba(255,255,255,0.1);
+    border-radius: 100px;
+    padding: 4px 12px;
+    font-size: 11px;
+  }
+
+  .annotation {
+    background: #7C5CBF;
+    color: #fff;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 6px 14px;
+    border-radius: 100px;
+    display: inline-block;
+    margin-bottom: 10px;
+  }
+  .section-note {
+    background: rgba(124,92,191,0.08);
+    border-left: 3px solid #7C5CBF;
+    border-radius: 0 8px 8px 0;
+    padding: 10px 16px;
+    font-size: 12px;
+    color: #555;
+    line-height: 1.6;
+    margin-top: 8px;
+    margin-bottom: 24px;
+  }
+  .section-note strong { color: #7C5CBF; }
+
+  /* NAV */
+  .nav {
+    background: #fff;
+    border-bottom: 1px solid rgba(0,0,0,0.07);
+    padding: 0 48px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .nav-logo { font-weight: 800; font-size: 17px; letter-spacing: -0.04em; color: #111; }
+  .nav-logo span { color: #7C5CBF; }
+  .nav-cta {
+    background: #7C5CBF; color: #fff; padding: 8px 20px;
+    border-radius: 8px; font-size: 13px; font-weight: 600;
+    text-decoration: none; cursor: pointer; border: none;
+  }
+  .nav-links { display: flex; gap: 28px; font-size: 13.5px; color: #555; cursor: pointer; }
+
+  /* HERO SPLIT */
+  .hero {
+    display: grid;
+    grid-template-columns: 1fr 420px;
+    gap: 0;
+    min-height: calc(100vh - 56px);
+    background: #fff;
+  }
+
+  .hero-preview {
+    background: #F4F2FA;
+    padding: 40px 48px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .breadcrumb {
+    font-size: 12px; color: #aaa; margin-bottom: 18px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .breadcrumb span { color: #111; font-weight: 500; }
+
+  .browser-wrap {
+    flex: 1;
+    background: #fff;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow:
+      0 0 0 0.5px rgba(0,0,0,0.09),
+      0 4px 16px rgba(0,0,0,0.08),
+      0 20px 60px rgba(0,0,0,0.11);
+    position: relative;
+  }
+  .browser-bar {
+    height: 36px;
+    background: linear-gradient(180deg, #F2F0EC 0%, #ECEAE6 100%);
+    border-bottom: 1px solid #DDD;
+    display: flex; align-items: center; padding: 0 12px; gap: 7px;
+  }
+  .dot { width: 11px; height: 11px; border-radius: 50%; }
+  .url-pill {
+    flex: 1; margin: 0 10px; height: 20px;
+    background: rgba(0,0,0,0.06); border-radius: 5px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; color: #999; gap: 4px;
+  }
+
+  .preview-content { height: 560px; overflow: hidden; position: relative; background: #F5F2EC; }
+
+  .preview-hero-section {
+    background: linear-gradient(145deg, #1a1a2e 0%, #2d1b5a 50%, #1a3040 100%);
+    height: 230px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center; padding: 32px; position: relative; overflow: hidden;
+  }
+  .preview-hero-section::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(ellipse 60% 80% at 50% 50%, rgba(124,92,191,0.3) 0%, transparent 70%);
+  }
+  .preview-hero-name { font-size: 11px; color: rgba(255,255,255,0.5); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 8px; position: relative; }
+  .preview-hero-title { font-size: 28px; font-weight: 800; color: #fff; letter-spacing: -0.03em; line-height: 1.1; position: relative; margin-bottom: 12px; }
+  .preview-hero-sub { font-size: 12px; color: rgba(255,255,255,0.55); max-width: 320px; line-height: 1.5; position: relative; }
+  .preview-hero-btn {
+    margin-top: 16px; background: #7C5CBF; color: #fff;
+    font-size: 11px; font-weight: 700; padding: 8px 20px;
+    border-radius: 8px; position: relative; letter-spacing: 0.02em;
+  }
+
+  .preview-section {
+    padding: 20px 28px; background: #F5F2EC;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+  }
+  .preview-section-label { font-size: 8px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #7C5CBF; margin-bottom: 6px; }
+  .preview-section-title { font-size: 16px; font-weight: 700; color: #1a1a2e; margin-bottom: 8px; letter-spacing: -0.02em; }
+  .preview-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 8px; }
+  .preview-card { background: #fff; border-radius: 8px; padding: 12px; border: 1px solid rgba(0,0,0,0.06); }
+  .preview-card-icon { font-size: 16px; margin-bottom: 4px; }
+  .preview-card-name { font-size: 10px; font-weight: 700; color: #111; }
+  .preview-card-sub { font-size: 9px; color: #aaa; }
+
+  /* Annotation pins */
+  .pin {
+    position: absolute; z-index: 10;
+    display: flex; align-items: center; gap: 8px; cursor: pointer;
+  }
+  .pin-dot {
+    width: 26px; height: 26px; border-radius: 50%;
+    background: #7C5CBF; color: #fff;
+    font-size: 12px; font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 2px 8px rgba(124,92,191,0.5);
+    flex-shrink: 0;
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 2px 8px rgba(124,92,191,0.5), 0 0 0 0 rgba(124,92,191,0.3); }
+    50% { box-shadow: 0 2px 8px rgba(124,92,191,0.5), 0 0 0 8px rgba(124,92,191,0); }
+  }
+  .pin-label {
+    background: #fff; border-radius: 8px; padding: 8px 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.12);
+    font-size: 11px; font-weight: 600; color: #111;
+    max-width: 160px; line-height: 1.4;
+    opacity: 0; transform: translateX(-4px);
+    transition: all 0.2s ease;
+  }
+  .pin-label small { color: #888; font-weight: 400; display: block; margin-top: 2px; font-size: 10px; }
+  .pin:hover .pin-label { opacity: 1; transform: translateX(0); }
+
+  .preview-fade {
+    position: absolute; bottom: 0; left: 0; right: 0; height: 100px;
+    background: linear-gradient(to bottom, transparent, #F4F2FA);
+    pointer-events: none;
+  }
+
+  /* RIGHT INFO PANEL */
+  .hero-info {
+    padding: 48px 40px;
+    display: flex; flex-direction: column; gap: 0;
+    border-left: 1px solid rgba(0,0,0,0.07);
+    overflow-y: auto;
+    max-height: calc(100vh - 56px);
+  }
+
+  .template-category { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #7C5CBF; margin-bottom: 8px; }
+  .template-name { font-size: 30px; font-weight: 800; letter-spacing: -0.04em; color: #111; line-height: 1.1; margin-bottom: 10px; }
+  .template-desc { font-size: 14px; color: #666; line-height: 1.65; margin-bottom: 24px; }
+
+  .rating-row { display: flex; align-items: center; gap: 10px; margin-bottom: 24px; }
+  .stars { color: #F59E0B; font-size: 13px; }
+  .rating-text { font-size: 12.5px; color: #888; }
+  .rating-text strong { color: #111; }
+
+  .highlights-label { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #aaa; margin-bottom: 12px; }
+  .highlights { display: flex; flex-direction: column; gap: 10px; margin-bottom: 28px; }
+  .highlight-item {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 12px 14px; background: #F8F7FF;
+    border-radius: 10px; border: 1px solid rgba(124,92,191,0.1);
+    cursor: pointer; transition: all 0.15s ease;
+  }
+  .highlight-item:hover { background: #efe9fc; border-color: rgba(124,92,191,0.25); }
+  .highlight-item.active { background: #efe9fc; border-color: #7C5CBF; }
+  .highlight-num {
+    width: 24px; height: 24px; border-radius: 50%;
+    background: #7C5CBF; color: #fff;
+    font-size: 11px; font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; margin-top: 1px;
+  }
+  .highlight-text { flex: 1; }
+  .highlight-title { font-size: 13px; font-weight: 700; color: #111; margin-bottom: 2px; }
+  .highlight-sub { font-size: 11.5px; color: #777; line-height: 1.4; }
+
+  .divider { height: 1px; background: rgba(0,0,0,0.07); margin: 20px 0; }
+
+  .price-section { margin-bottom: 20px; }
+  .price-row { display: flex; align-items: baseline; gap: 8px; }
+  .price-main { font-size: 28px; font-weight: 800; color: #111; letter-spacing: -0.03em; }
+  .price-sub { font-size: 13px; color: #888; }
+  .price-note { font-size: 11.5px; color: #aaa; margin-top: 4px; }
+  .price-note span { color: #2F8650; font-weight: 600; }
+
+  .cta-btn {
+    width: 100%; background: #7C5CBF; color: #fff;
+    border: none; border-radius: 12px; padding: 16px 24px;
+    font-size: 15px; font-weight: 700; cursor: pointer;
+    letter-spacing: -0.01em; margin-bottom: 10px;
+    transition: all 0.15s ease;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .cta-btn:hover { background: #6a4dab; transform: translateY(-1px); box-shadow: 0 8px 24px rgba(124,92,191,0.3); }
+  .cta-btn-secondary {
+    width: 100%; background: transparent; color: #7C5CBF;
+    border: 1.5px solid rgba(124,92,191,0.3); border-radius: 12px;
+    padding: 14px 24px; font-size: 14px; font-weight: 600;
+    cursor: pointer; margin-bottom: 16px; transition: all 0.15s ease;
+  }
+  .cta-btn-secondary:hover { background: rgba(124,92,191,0.06); }
+
+  .trust-row { display: flex; gap: 14px; }
+  .trust-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: #888; }
+  .trust-icon { color: #2F8650; font-size: 13px; }
+
+  /* EDITOR SECTION */
+  .editor-section { background: #111; padding: 64px 80px; color: #fff; }
+  .editor-headline { font-size: 32px; font-weight: 800; letter-spacing: -0.04em; margin-bottom: 8px; color: #fff; }
+  .editor-sub { font-size: 15px; color: rgba(255,255,255,0.5); margin-bottom: 40px; line-height: 1.5; }
+
+  .editor-layout { display: grid; grid-template-columns: 280px 1fr; gap: 24px; align-items: start; }
+
+  .editor-controls {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px; overflow: hidden;
+  }
+  .editor-controls-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+    font-size: 11px; font-weight: 700; letter-spacing: 0.08em;
+    text-transform: uppercase; color: rgba(255,255,255,0.4);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .editor-controls-header::before {
+    content: ''; width: 6px; height: 6px; border-radius: 50%; background: #7C5CBF;
+  }
+
+  .control-group { padding: 16px 20px; border-bottom: 1px solid rgba(255,255,255,0.06); }
+  .control-label { font-size: 11px; color: rgba(255,255,255,0.4); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 10px; font-weight: 600; }
+  .control-label span { color: rgba(255,255,255,0.2); font-size: 10px; margin-left: 4px; }
+
+  .color-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .color-swatch {
+    height: 44px; border-radius: 10px; border: 2px solid transparent;
+    cursor: pointer; transition: all 0.15s ease;
+    display: flex; align-items: flex-end; padding: 4px 6px;
+    font-size: 8.5px; color: rgba(255,255,255,0.7); font-weight: 700;
+  }
+  .color-swatch:hover { transform: scale(1.04); }
+  .color-swatch.active { border-color: #fff; box-shadow: 0 0 0 3px rgba(255,255,255,0.2); }
+  .swatch-lila { background: linear-gradient(135deg, #7C5CBF, #4a2d8a); }
+  .swatch-gruen { background: linear-gradient(135deg, #2F8650, #1a5c35); }
+  .swatch-blau { background: linear-gradient(135deg, #2563EB, #1e40af); }
+  .swatch-rose { background: linear-gradient(135deg, #E11D48, #be123c); }
+  .swatch-sand { background: linear-gradient(135deg, #92400e, #78350f); }
+  .swatch-dark { background: linear-gradient(135deg, #18181b, #09090b); }
+
+  .toggle-list { display: flex; flex-direction: column; gap: 6px; }
+  .toggle-item {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 8px 10px; background: rgba(255,255,255,0.04);
+    border-radius: 8px; cursor: pointer; transition: background 0.1s;
+  }
+  .toggle-item:hover { background: rgba(255,255,255,0.07); }
+  .toggle-name { font-size: 12px; color: rgba(255,255,255,0.7); font-weight: 500; }
+  .toggle-switch {
+    width: 32px; height: 18px; border-radius: 100px;
+    background: rgba(255,255,255,0.12); position: relative;
+    flex-shrink: 0; transition: background 0.2s;
+  }
+  .toggle-switch.on { background: #7C5CBF; }
+  .toggle-switch::after {
+    content: ''; position: absolute; top: 3px; left: 3px;
+    width: 12px; height: 12px; border-radius: 50%;
+    background: #fff; transition: transform 0.2s;
+  }
+  .toggle-switch.on::after { transform: translateX(14px); }
+
+  .image-row { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+  .image-thumb {
+    height: 48px; border-radius: 8px; border: 2px solid transparent;
+    cursor: pointer; overflow: hidden; position: relative; transition: all 0.15s;
+  }
+  .image-thumb:hover { transform: scale(1.04); }
+  .image-thumb.active { border-color: #7C5CBF; }
+  .image-thumb-placeholder {
+    width: 100%; height: 100%; background: rgba(255,255,255,0.08);
+    display: flex; align-items: center; justify-content: center; font-size: 18px;
+  }
+
+  .editor-preview {
+    border-radius: 16px; overflow: hidden;
+    box-shadow: 0 8px 48px rgba(0,0,0,0.4);
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+  .editor-preview-bar {
+    height: 32px; background: #1a1a2e;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    display: flex; align-items: center; padding: 0 12px; gap: 6px;
+  }
+  .editor-preview-content {
+    height: 480px; overflow: hidden; background: #F5F2EC;
+    position: relative; transition: all 0.4s ease;
+  }
+
+  /* Live preview sections */
+  .lp-hero {
+    background: linear-gradient(145deg, #1a1a2e 0%, #2d1b5a 50%, #1a3040 100%);
+    padding: 36px 32px; text-align: center;
+    position: relative; overflow: hidden; transition: background 0.4s ease;
+  }
+  .lp-hero::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(ellipse 70% 80% at 50% 50%, var(--theme-glow, rgba(124,92,191,0.35)) 0%, transparent 70%);
+  }
+  .lp-hero-badge {
+    display: inline-block; background: rgba(255,255,255,0.1);
+    color: rgba(255,255,255,0.7); font-size: 9px; font-weight: 700;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 4px 12px; border-radius: 100px; margin-bottom: 12px; position: relative;
+  }
+  .lp-hero-name { font-size: 26px; font-weight: 800; color: #fff; letter-spacing: -0.04em; line-height: 1.1; position: relative; margin-bottom: 8px; }
+  .lp-hero-name span { color: var(--theme-color, #a78bfa); }
+  .lp-hero-sub { font-size: 11px; color: rgba(255,255,255,0.5); position: relative; line-height: 1.5; margin-bottom: 16px; }
+  .lp-btn {
+    display: inline-block; background: var(--theme-color, #7C5CBF);
+    color: #fff; font-size: 11px; font-weight: 700; padding: 9px 20px;
+    border-radius: 8px; position: relative; transition: background 0.3s ease;
+  }
+
+  .lp-section {
+    padding: 20px 28px; border-bottom: 1px solid rgba(0,0,0,0.06);
+    background: #F5F2EC; transition: all 0.3s ease;
+    overflow: hidden;
+  }
+  .lp-section-label {
+    font-size: 8px; font-weight: 700; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--theme-color, #7C5CBF);
+    margin-bottom: 4px; transition: color 0.3s ease;
+  }
+  .lp-section-title { font-size: 14px; font-weight: 800; color: #1a1a2e; letter-spacing: -0.02em; margin-bottom: 8px; }
+
+  .lp-video-placeholder {
+    background: rgba(0,0,0,0.06); border-radius: 8px; height: 60px;
+    display: flex; align-items: center; justify-content: center;
+    gap: 8px; font-size: 11px; color: #888;
+  }
+  .lp-play {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: var(--theme-color, #7C5CBF);
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.3s;
+  }
+  .lp-play::after { content: '▶'; font-size: 10px; color: #fff; padding-left: 2px; }
+
+  .lp-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .lp-card { background: #fff; border-radius: 8px; padding: 10px; border: 1px solid rgba(0,0,0,0.06); }
+  .lp-card-icon { font-size: 14px; margin-bottom: 3px; }
+  .lp-card-name { font-size: 9px; font-weight: 700; color: #111; }
+  .lp-card-sub { font-size: 8px; color: #aaa; }
+
+  .lp-section.lp-hidden { height: 0; padding-top: 0; padding-bottom: 0; border: none; }
+
+  .change-toast {
+    position: absolute; bottom: 16px; right: 16px;
+    background: #2F8650; color: #fff;
+    font-size: 11px; font-weight: 600; padding: 8px 14px;
+    border-radius: 8px; display: flex; align-items: center; gap: 6px;
+    opacity: 0; transform: translateY(8px); transition: all 0.2s ease;
+    pointer-events: none; z-index: 20;
+  }
+  .change-toast.show { opacity: 1; transform: translateY(0); }
+
+  /* HOW IT WORKS */
+  .how-section { padding: 80px 80px; background: #fff; }
+  .section-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #7C5CBF; margin-bottom: 10px; }
+  .section-headline { font-size: 36px; font-weight: 800; letter-spacing: -0.04em; color: #111; margin-bottom: 10px; line-height: 1.1; }
+  .section-sub { font-size: 15px; color: #777; line-height: 1.6; max-width: 520px; margin-bottom: 56px; }
+
+  .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; position: relative; }
+  .steps::before {
+    content: ''; position: absolute; top: 28px; left: 14%; right: 14%; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(124,92,191,0.3) 20%, rgba(124,92,191,0.3) 80%, transparent);
+  }
+
+  .step { display: flex; flex-direction: column; align-items: flex-start; }
+  .step-num {
+    width: 56px; height: 56px; border-radius: 16px;
+    background: linear-gradient(135deg, #7C5CBF, #5a3da0);
+    color: #fff; font-size: 22px; font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 20px; box-shadow: 0 8px 24px rgba(124,92,191,0.3);
+    letter-spacing: -0.02em;
+  }
+  .step-title { font-size: 18px; font-weight: 800; color: #111; letter-spacing: -0.03em; margin-bottom: 8px; }
+  .step-desc { font-size: 14px; color: #777; line-height: 1.6; }
+  .step-time {
+    margin-top: 12px; display: inline-flex; align-items: center; gap: 5px;
+    background: #F8F7FF; border: 1px solid rgba(124,92,191,0.15);
+    border-radius: 100px; padding: 4px 10px;
+    font-size: 11px; font-weight: 600; color: #7C5CBF;
+  }
+
+  /* SOCIAL PROOF */
+  .proof-section { padding: 64px 80px; background: #F8F7FF; }
+  .proof-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .proof-card { background: #fff; border-radius: 16px; padding: 24px; border: 1px solid rgba(0,0,0,0.06); }
+  .proof-stars { color: #F59E0B; font-size: 13px; margin-bottom: 10px; }
+  .proof-text { font-size: 14px; color: #333; line-height: 1.6; margin-bottom: 16px; font-style: italic; }
+  .proof-author { display: flex; align-items: center; gap: 10px; }
+  .proof-avatar {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: linear-gradient(135deg, #7C5CBF, #4a2d8a);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; color: #fff; font-weight: 700; flex-shrink: 0;
+  }
+  .proof-name { font-size: 13px; font-weight: 700; color: #111; }
+  .proof-role { font-size: 11.5px; color: #999; }
+
+  /* BOTTOM CTA */
+  .bottom-cta {
+    background: linear-gradient(135deg, #1a1a2e 0%, #2d1b5a 100%);
+    padding: 80px 80px; text-align: center; color: #fff;
+    position: relative; overflow: hidden;
+  }
+  .bottom-cta::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(ellipse 60% 80% at 50% 50%, rgba(124,92,191,0.25) 0%, transparent 70%);
+  }
+  .bottom-cta-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.4); margin-bottom: 12px; position: relative; }
+  .bottom-cta-headline { font-size: 48px; font-weight: 800; letter-spacing: -0.04em; line-height: 1.05; margin-bottom: 16px; position: relative; }
+  .bottom-cta-headline span { color: #a78bfa; }
+  .bottom-cta-sub { font-size: 16px; color: rgba(255,255,255,0.5); line-height: 1.6; max-width: 500px; margin: 0 auto 32px; position: relative; }
+  .bottom-cta-btn {
+    background: #7C5CBF; color: #fff; font-size: 16px; font-weight: 700;
+    padding: 18px 40px; border-radius: 14px; border: none; cursor: pointer;
+    position: relative; letter-spacing: -0.01em;
+    box-shadow: 0 8px 32px rgba(124,92,191,0.4); transition: all 0.15s ease;
+  }
+  .bottom-cta-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(124,92,191,0.5); }
+  .bottom-cta-note { margin-top: 14px; font-size: 12px; color: rgba(255,255,255,0.3); position: relative; }
+  .bottom-cta-note strong { color: rgba(255,255,255,0.5); }
+
+  /* CONCEPT NOTES */
+  .concept-notes { background: #fff; border-top: 4px solid #7C5CBF; padding: 60px 80px; }
+  .concept-notes h2 { font-size: 22px; font-weight: 800; letter-spacing: -0.03em; margin-bottom: 32px; color: #111; }
+  .notes-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+  .note-card { background: #F8F7FF; border-radius: 14px; padding: 24px; border: 1px solid rgba(124,92,191,0.12); }
+  .note-card h3 { font-size: 14px; font-weight: 700; color: #7C5CBF; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+  .note-card p, .note-card li { font-size: 13px; color: #555; line-height: 1.65; }
+  .note-card ul { padding-left: 16px; margin-top: 6px; }
+  .note-card li { margin-bottom: 4px; }
+  .note-card .tech-tag {
+    display: inline-block; background: rgba(124,92,191,0.1); color: #7C5CBF;
+    font-size: 10.5px; font-weight: 700; padding: 3px 8px;
+    border-radius: 4px; margin: 2px 2px 0 0;
+  }
+</style>
+</head>
+<body>
+
+<!-- KONZEPT HEADER -->
+<div class="concept-header">
+  <div>
+    <strong>Konzept: Vorlage Detailseite v2</strong>
+    &nbsp;&middot;&nbsp; Conversion-optimiert &middot; Senior Dev + UX/UI Designer
+  </div>
+  <div class="concept-tag">Ziel: Besucher zu Kunden</div>
+</div>
+
+<!-- NAVIGATION -->
+<div class="annotation" style="margin: 24px 40px 4px; display:block;">Nav (sticky)</div>
+<div class="section-note" style="margin: 0 40px 0;">Bleibt beim Scrollen sichtbar. CTA immer erreichbar. Kein Ablenkungsmenü.</div>
+
+<nav class="nav">
+  <div class="nav-logo">finest<span>sites</span></div>
+  <div class="nav-links">
+    <span>Vorlagen</span>
+    <span>Preise</span>
+    <span>Beispiele</span>
+  </div>
+  <button class="nav-cta">Kostenlos starten</button>
+</nav>
+
+<!-- HERO: SPLIT LAYOUT -->
+<div class="annotation" style="margin: 24px 40px 4px; display:block;">1 — Hero: Split-Layout (Vorschau + Info)</div>
+<div class="section-note" style="margin: 0 40px 16px;">
+  <strong>Links:</strong> Annotierte Live-Vorschau. Nummerierte Pins erklären bei Hover, was welche Sektion tut &mdash; macht das Template sofort greifbar.<br>
+  <strong>Rechts:</strong> Template-Info, klickbare Highlights (click = zugehoeriger Pin leuchtet auf), Preis + CTA direkt im Viewport.<br>
+  Kernfrage beantwortet: "Was bekomme ich?" und "Was kann ich damit machen?"
+</div>
+
+<div class="hero">
+  <!-- LEFT: Preview -->
+  <div class="hero-preview">
+    <div class="breadcrumb">
+      Vorlagen
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
+      Network Marketing
+      <span>WomenPlus</span>
+    </div>
+
+    <div class="browser-wrap">
+      <div class="browser-bar">
+        <div class="dot" style="background:#FF5F57;"></div>
+        <div class="dot" style="background:#FEBC2E;"></div>
+        <div class="dot" style="background:#28C840;"></div>
+        <div class="url-pill">
+          <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+          demo.womenplus.io
+        </div>
+      </div>
+
+      <div class="preview-content">
+        <div class="preview-hero-section">
+          <div class="preview-hero-name">ANNA MULLER &middot; NETWORK MARKETING</div>
+          <div class="preview-hero-title">Dein Weg zu mehr<br>Energie &amp; Freiheit</div>
+          <div class="preview-hero-sub">Ich zeige dir, wie du mit natuerlichen Produkten deinen Alltag veraenderst.</div>
+          <div class="preview-hero-btn">Mehr erfahren</div>
+        </div>
+
+        <div class="preview-section">
+          <div class="preview-section-label">Meine Empfehlung</div>
+          <div class="preview-section-title">Warum ich das empfehle</div>
+          <div class="preview-cards">
+            <div class="preview-card">
+              <div class="preview-card-icon">&#x1F6E1;&#xFE0F;</div>
+              <div class="preview-card-name">Koelner Liste</div>
+              <div class="preview-card-sub">Geprueft &amp; zertifiziert</div>
+            </div>
+            <div class="preview-card">
+              <div class="preview-card-icon">&#x1F3ED;</div>
+              <div class="preview-card-name">Made in Germany</div>
+              <div class="preview-card-sub">Speyer, eigene Produktion</div>
+            </div>
+            <div class="preview-card">
+              <div class="preview-card-icon">&#x1F52C;</div>
+              <div class="preview-card-name">70+ Patente</div>
+              <div class="preview-card-sub">NTC Technologie</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Annotation Pins -->
+        <div class="pin" style="top: 60px; right: -12px;">
+          <div class="pin-dot">1</div>
+          <div class="pin-label">Profilbild &amp; Name<small>Einmal eingeben, ueberall aktuell</small></div>
+        </div>
+        <div class="pin" style="top: 120px; right: -12px;">
+          <div class="pin-dot">2</div>
+          <div class="pin-label">Deine Headline<small>Kurzer Satz, grosse Wirkung</small></div>
+        </div>
+        <div class="pin" style="top: 310px; right: -12px;">
+          <div class="pin-dot">3</div>
+          <div class="pin-label">Vertrauens-Sektion<small>Qualitaets-Nachweise vorgefuellt</small></div>
+        </div>
+
+        <div class="preview-fade"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT: Info -->
+  <div class="hero-info">
+    <div class="template-category">Network Marketing &middot; PM-International</div>
+    <div class="template-name">WomenPlus</div>
+    <div class="template-desc">
+      Professionelle Empfehlungswebsite fuer FitLine-Beraterinnen. Erklaere deine Empfehlung, baue Vertrauen auf und gewinne neue Interessentinnen &mdash; ohne Technik-Kenntnisse.
+    </div>
+
+    <div class="rating-row">
+      <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+      <div class="rating-text"><strong>4.9</strong> &middot; 127 aktive Websites</div>
+    </div>
+
+    <div class="highlights-label">Was diese Vorlage enthaelt</div>
+    <div class="highlights">
+      <div class="highlight-item active" onclick="activateHighlight(1, this)">
+        <div class="highlight-num">1</div>
+        <div class="highlight-text">
+          <div class="highlight-title">Persoenliches Hero mit Bild</div>
+          <div class="highlight-sub">Dein Gesicht, dein Name, deine Worte. Sofort erkennbar und menschlich.</div>
+        </div>
+      </div>
+      <div class="highlight-item" onclick="activateHighlight(2, this)">
+        <div class="highlight-num">2</div>
+        <div class="highlight-text">
+          <div class="highlight-title">Deine Headline in 10 Sekunden</div>
+          <div class="highlight-sub">Einfach eingeben &mdash; fertig. Kein Design-Wissen noetig.</div>
+        </div>
+      </div>
+      <div class="highlight-item" onclick="activateHighlight(3, this)">
+        <div class="highlight-num">3</div>
+        <div class="highlight-text">
+          <div class="highlight-title">Vertrauens-Sektion (vorgefuellt)</div>
+          <div class="highlight-sub">Koelner Liste, Made in Germany, 70+ Patente &mdash; schon drin. Nichts recherchieren.</div>
+        </div>
+      </div>
+      <div class="highlight-item" onclick="activateHighlight(4, this)">
+        <div class="highlight-num">4</div>
+        <div class="highlight-text">
+          <div class="highlight-title">Kontaktformular + E-Mail-Weiterleitung</div>
+          <div class="highlight-sub">Interessenten schreiben direkt an dich &mdash; keine App, kein Tool noetig.</div>
+        </div>
+      </div>
+      <div class="highlight-item" onclick="activateHighlight(5, this)">
+        <div class="highlight-num">5</div>
+        <div class="highlight-text">
+          <div class="highlight-title">Rechtssicher &middot; EU-konforme Claims</div>
+          <div class="highlight-sub">Alle Aussagen geprueft. Kein Heilversprechen, keine Abmahngefahr.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="price-section">
+      <div class="price-row">
+        <div class="price-main">14,90 &euro;</div>
+        <div class="price-sub">/ Monat</div>
+      </div>
+      <div class="price-note"><span>14 Tage kostenlos testen</span> &middot; Kein Risiko &middot; Jederzeit kuendbar</div>
+    </div>
+
+    <button class="cta-btn" onclick="scrollToEditor()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      Jetzt anpassen &amp; starten
+    </button>
+    <button class="cta-btn-secondary">Demo live ansehen</button>
+
+    <div class="trust-row">
+      <div class="trust-item"><span class="trust-icon">&#10003;</span> Keine Kreditkarte</div>
+      <div class="trust-item"><span class="trust-icon">&#10003;</span> In 5 Min. online</div>
+      <div class="trust-item"><span class="trust-icon">&#10003;</span> Eigene Domain</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- INTERAKTIVER EDITOR -->
+<div class="annotation" style="margin: 32px 40px 4px; display:block;">2 &mdash; Interaktiver Preview-Editor</div>
+<div class="section-note" style="margin: 0 40px 16px;">
+  <strong>Das Herzstuck.</strong> Besucher erleben, wie einfach Anpassen ist &mdash; noch bevor sie sich registrieren. Aktivierung vor Commitment.<br>
+  Farbwahl, Sektionen ein/aus, Header-Bild &mdash; jede Aenderung aktualisiert die Vorschau sofort (kein Reload).<br>
+  <strong>Technisch:</strong> postMessage API (bereits implementiert!) + <code>?data=base64json</code> Query-Param. Sehen = Ueberzeugen.
+</div>
+
+<section class="editor-section" id="editor-section">
+  <div class="editor-headline">So einfach passt du deine Seite an.</div>
+  <div class="editor-sub">Probier es direkt aus &mdash; diese Vorschau reagiert live auf deine Eingaben.</div>
+
+  <div class="editor-layout">
+    <!-- Controls -->
+    <div class="editor-controls">
+      <div class="editor-controls-header">Deine Anpassungen</div>
+
+      <div class="control-group">
+        <div class="control-label">Farbtheme <span>6 Optionen</span></div>
+        <div class="color-grid">
+          <div class="color-swatch swatch-lila active" onclick="setTheme('lila', this)">Lila</div>
+          <div class="color-swatch swatch-gruen" onclick="setTheme('gruen', this)">Gruen</div>
+          <div class="color-swatch swatch-blau" onclick="setTheme('blau', this)">Blau</div>
+          <div class="color-swatch swatch-rose" onclick="setTheme('rose', this)">Rose</div>
+          <div class="color-swatch swatch-sand" onclick="setTheme('sand', this)">Sand</div>
+          <div class="color-swatch swatch-dark" onclick="setTheme('dark', this)">Dark</div>
+        </div>
+      </div>
+
+      <div class="control-group">
+        <div class="control-label">Sektionen <span>ein/aus</span></div>
+        <div class="toggle-list">
+          <div class="toggle-item" onclick="toggleSection('video', this)">
+            <span class="toggle-name">Erklaervideo</span>
+            <div class="toggle-switch on" id="ts-video"></div>
+          </div>
+          <div class="toggle-item" onclick="toggleSection('benefits', this)">
+            <span class="toggle-name">Warum ich das empfehle</span>
+            <div class="toggle-switch on" id="ts-benefits"></div>
+          </div>
+          <div class="toggle-item" onclick="toggleSection('testimonials', this)">
+            <span class="toggle-name">Erfahrungsberichte</span>
+            <div class="toggle-switch on" id="ts-testimonials"></div>
+          </div>
+          <div class="toggle-item" onclick="toggleSection('contact', this)">
+            <span class="toggle-name">Kontaktformular</span>
+            <div class="toggle-switch on" id="ts-contact"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="control-group">
+        <div class="control-label">Header-Hintergrundbild <span>optional</span></div>
+        <div class="image-row">
+          <div class="image-thumb active" onclick="selectImage(0, this)">
+            <div class="image-thumb-placeholder">&#x1F338;</div>
+          </div>
+          <div class="image-thumb" onclick="selectImage(1, this)">
+            <div class="image-thumb-placeholder">&#x1F306;</div>
+          </div>
+          <div class="image-thumb" onclick="selectImage(2, this)">
+            <div class="image-thumb-placeholder">&#x1F33F;</div>
+          </div>
+          <div class="image-thumb" onclick="selectImage(3, this)">
+            <div class="image-thumb-placeholder" style="font-size:13px; color: rgba(255,255,255,0.4);">+ Eigenes</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Live Preview -->
+    <div class="editor-preview">
+      <div class="editor-preview-bar">
+        <div class="dot" style="background:#FF5F57; opacity:0.6;"></div>
+        <div class="dot" style="background:#FEBC2E; opacity:0.6;"></div>
+        <div class="dot" style="background:#28C840; opacity:0.6;"></div>
+        <div style="flex:1; margin:0 10px; height:18px; background:rgba(255,255,255,0.06); border-radius:4px; display:flex; align-items:center; justify-content:center; font-size:9px; color:rgba(255,255,255,0.3);">demo.womenplus.io</div>
+      </div>
+
+      <div class="editor-preview-content" id="live-preview">
+        <div class="lp-hero" id="lp-hero" style="--theme-color: #7C5CBF; --theme-glow: rgba(124,92,191,0.35);">
+          <div class="lp-hero-badge">Anna Muller &middot; Network Marketing</div>
+          <div class="lp-hero-name">Dein Weg zu mehr<br><span>Energie &amp; Freiheit</span></div>
+          <div class="lp-hero-sub">Ich zeige dir, wie du mit natuerlichen Produkten deinen Alltag veraenderst.</div>
+          <div class="lp-btn" id="lp-btn">Mehr erfahren</div>
+        </div>
+
+        <div class="lp-section" id="lp-video">
+          <div class="lp-section-label" style="color: #7C5CBF;">Erklaervideo</div>
+          <div class="lp-section-title">Sieh, wie es wirkt</div>
+          <div class="lp-video-placeholder">
+            <div class="lp-play" id="lp-play"></div>
+            Mein kurzes Erklaer-Video
+          </div>
+        </div>
+
+        <div class="lp-section" id="lp-benefits">
+          <div class="lp-section-label" style="color: #7C5CBF;">Warum ich das empfehle</div>
+          <div class="lp-section-title">Ergebnisse, Qualitaet, Sicherheit.</div>
+          <div class="lp-cards">
+            <div class="lp-card"><div class="lp-card-icon">&#x1F6E1;&#xFE0F;</div><div class="lp-card-name">Koelner Liste</div><div class="lp-card-sub">Geprueft</div></div>
+            <div class="lp-card"><div class="lp-card-icon">&#x1F3ED;</div><div class="lp-card-name">Made in Germany</div><div class="lp-card-sub">Eigene Produktion</div></div>
+            <div class="lp-card"><div class="lp-card-icon">&#x1F52C;</div><div class="lp-card-name">70+ Patente</div><div class="lp-card-sub">NTC Technologie</div></div>
+          </div>
+        </div>
+
+        <div class="lp-section" id="lp-testimonials">
+          <div class="lp-section-label" style="color: #7C5CBF;">Erfahrungsberichte</div>
+          <div class="lp-section-title">Was andere sagen</div>
+          <div style="background:#fff; border-radius:8px; padding:10px 12px; font-size:11px; color:#555; font-style:italic; border:1px solid rgba(0,0,0,0.06);">
+            "Seit 3 Monaten bin ich dabei und fuehle mich fitter als je zuvor." &mdash; Laura K.
+          </div>
+        </div>
+
+        <div class="lp-section" id="lp-contact">
+          <div class="lp-section-label" style="color: #7C5CBF;">Kontakt</div>
+          <div class="lp-section-title">Schreib mir direkt</div>
+          <div style="display:grid; gap:6px;">
+            <div style="background:#fff; border-radius:6px; height:28px; border:1px solid rgba(0,0,0,0.1);"></div>
+            <div style="background:#fff; border-radius:6px; height:28px; border:1px solid rgba(0,0,0,0.1);"></div>
+            <div style="background:#7C5CBF; border-radius:6px; height:28px;" id="lp-contact-btn"></div>
+          </div>
+        </div>
+
+        <div class="change-toast" id="change-toast">&#10003; Vorschau aktualisiert</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- WIE ES FUNKTIONIERT -->
+<div class="annotation" style="margin: 32px 40px 4px; display:block;">3 &mdash; "Wie es funktioniert" (3 Schritte)</div>
+<div class="section-note" style="margin: 0 40px 16px;">
+  <strong>Einwand-Killer.</strong> Der groesste Konversions-Blocker: "Ist das kompliziert?" Drei klare Schritte mit Zeitangabe nehmen diese Angst weg. Konkret, nicht abstrakt.
+</div>
+
+<section class="how-section">
+  <div class="section-eyebrow">So einfach geht's</div>
+  <div class="section-headline">In 5 Minuten online.</div>
+  <div class="section-sub">Du brauchst keine Technik-Kenntnisse. Keine Domain-Verwaltung. Kein Webdesign. Nur du und deine Geschichte.</div>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-title">Vorlage waehlen</div>
+      <div class="step-desc">Waehle ein Template das zu dir passt. Alle Inhalte sind bereits professionell vorgefuellt.</div>
+      <div class="step-time">&#8987; 1 Minute</div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-title">Infos eingeben</div>
+      <div class="step-desc">Dein Name, ein Foto, deine Geschichte. Alles per Formular &mdash; kein Code, kein Design.</div>
+      <div class="step-time">&#8987; 3 Minuten</div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-title">Veroeffentlichen</div>
+      <div class="step-desc">Einmal klicken &mdash; deine Seite ist live. Mit eigener Domain oder unserem Link.</div>
+      <div class="step-time">&#8987; 1 Minute</div>
+    </div>
+  </div>
+</section>
+
+
+<!-- SOCIAL PROOF -->
+<div class="annotation" style="margin: 32px 40px 4px; display:block;">4 &mdash; Social Proof</div>
+<div class="section-note" style="margin: 0 40px 16px;">Echte Stimmen die gezielt den "Einfachheit"-Einwand adressieren &mdash; das ist was Zweifler ueberzeugt, nicht Features.</div>
+
+<section class="proof-section">
+  <div class="section-eyebrow" style="margin-bottom:10px;">Was unsere Nutzerinnen sagen</div>
+  <div class="section-headline" style="margin-bottom:40px; font-size:28px;">127 aktive Websites.<br>Hier sind drei davon.</div>
+
+  <div class="proof-grid">
+    <div class="proof-card">
+      <div class="proof-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+      <div class="proof-text">"Ich hab null Ahnung von Webseiten gehabt. War trotzdem in unter 10 Minuten live. Unglaublich."</div>
+      <div class="proof-author">
+        <div class="proof-avatar">S</div>
+        <div><div class="proof-name">Sandra K.</div><div class="proof-role">FitLine-Beraterin, 3 Jahre</div></div>
+      </div>
+    </div>
+    <div class="proof-card">
+      <div class="proof-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+      <div class="proof-text">"Endlich eine Seite die serioes aussieht. Meine Kundinnen fragen mich schon, wer das gemacht hat."</div>
+      <div class="proof-author">
+        <div class="proof-avatar">M</div>
+        <div><div class="proof-name">Monika R.</div><div class="proof-role">Teamleiterin, Muenchen</div></div>
+      </div>
+    </div>
+    <div class="proof-card">
+      <div class="proof-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+      <div class="proof-text">"Die rechtssicheren Texte haben mir so viel Stress genommen. Ich weiss, dass alles passt."</div>
+      <div class="proof-author">
+        <div class="proof-avatar">L</div>
+        <div><div class="proof-name">Lisa T.</div><div class="proof-role">Neueinsteigerin, Hamburg</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- BOTTOM CTA -->
+<div class="annotation" style="margin: 32px 40px 4px; display:block;">5 &mdash; Bottom CTA (letzter Schubs)</div>
+<div class="section-note" style="margin: 0 40px 16px;">Wer bis hierhin gescrollt hat, ist fast ueberzeugt. Klare Sprache, kein Druck, eindeutige Richtung.</div>
+
+<section class="bottom-cta">
+  <div class="bottom-cta-eyebrow">Bereit?</div>
+  <div class="bottom-cta-headline">Deine Webseite wartet.<br><span>Nur 5 Minuten.</span></div>
+  <div class="bottom-cta-sub">Starte heute kostenlos. Kein Abo, keine Kreditkarte, keine Ueberraschungen.</div>
+  <button class="bottom-cta-btn">Mit WomenPlus starten &rarr;</button>
+  <div class="bottom-cta-note">14 Tage kostenlos testen &middot; <strong>Kein Risiko</strong> &middot; Jederzeit kuendbar</div>
+</section>
+
+
+<!-- KONZEPT-NOTIZEN -->
+<div class="concept-notes">
+  <h2>Team-Anmerkungen: Was muss umgesetzt werden?</h2>
+  <div class="notes-grid">
+
+    <div class="note-card">
+      <h3>Conversion-Strategie</h3>
+      <ul>
+        <li><strong>3 CTA-Punkte:</strong> Sticky Nav, Hero rechts, Bottom &mdash; immer erreichbar</li>
+        <li><strong>Pins (1, 2, 3):</strong> Highlight-Klick = zugehoeriger Pin pulsiert &rarr; Aufmerksamkeit gelenkt</li>
+        <li><strong>Editor zuerst erleben,</strong> dann kaufen &mdash; Aktivierung vor Commitment</li>
+        <li><strong>Einwaende aktiv eliminieren:</strong> "5 Min.", "kein Code", "kostenlos testen"</li>
+        <li>Trust: Sterne, "127 aktive Websites", Testimonials mit konkreten Namen</li>
+      </ul>
+    </div>
+
+    <div class="note-card">
+      <h3>Technische Anforderungen</h3>
+      <ul>
+        <li>Interactive Preview: postMessage &rarr; iframe (bereits implementiert!)</li>
+        <li>Neues DB-Feld: <code>templates.preview_config</code> (JSONB)</li>
+        <li>Preview-URL: <code>/api/templates/[id]/public-preview?data=base64</code></li>
+        <li>Admin-Panel: preview_config Editor pro Template</li>
+        <li>Sections: data-section Attribute + Toggle-API</li>
+      </ul>
+      <div style="margin-top:8px;">
+        <span class="tech-tag">Next.js</span>
+        <span class="tech-tag">postMessage</span>
+        <span class="tech-tag">base64 JSON</span>
+        <span class="tech-tag">Cloudflare R2</span>
+      </div>
+    </div>
+
+    <div class="note-card">
+      <h3>Content pro Template (Admin pflegt)</h3>
+      <ul>
+        <li><strong>Highlights (1-5):</strong> 4-6 Bullet Points, was dieses Template besonders macht</li>
+        <li><strong>Demo-Daten:</strong> Beispiel-Name, Texte, vorgefuellte Felder</li>
+        <li><strong>Editierbare Felder:</strong> Welche zeigt der Editor? (Farbe, Bild, ...)</li>
+        <li><strong>Editierbare Sektionen:</strong> Welche sind toggle-bar?</li>
+        <li><strong>Testimonials:</strong> 3 Stimmen pro Template, zielgruppenspezifisch</li>
+      </ul>
+    </div>
+
+    <div class="note-card">
+      <h3>Umsetzungs-Reihenfolge</h3>
+      <ul>
+        <li><strong>Phase 1 (1 Woche):</strong> Neues Split-Hero-Layout + Highlights + "Wie es funktioniert" + Social Proof</li>
+        <li><strong>Phase 2 (1 Woche):</strong> Farbtheme-Picker live (postMessage)</li>
+        <li><strong>Phase 3 (1 Woche):</strong> Section-Toggles + Header-Bild-Auswahl</li>
+        <li><strong>Phase 4:</strong> Social Proof dynamisch aus DB + A/B-Test CTAs</li>
+      </ul>
+    </div>
+
+  </div>
+</div>
+
+
+<script>
+const themes = {
+  lila: { color: '#7C5CBF', glow: 'rgba(124,92,191,0.35)', bg: 'linear-gradient(145deg, #1a1a2e 0%, #2d1b5a 50%, #1a3040 100%)' },
+  gruen: { color: '#2F8650', glow: 'rgba(47,134,80,0.35)', bg: 'linear-gradient(145deg, #0d2416 0%, #1a4d2e 50%, #0d2010 100%)' },
+  blau: { color: '#2563EB', glow: 'rgba(37,99,235,0.35)', bg: 'linear-gradient(145deg, #0d1a3e 0%, #1e3a8a 50%, #0d2040 100%)' },
+  rose: { color: '#E11D48', glow: 'rgba(225,29,72,0.35)', bg: 'linear-gradient(145deg, #2a0d15 0%, #881337 50%, #2a0d10 100%)' },
+  sand: { color: '#92400e', glow: 'rgba(146,64,14,0.3)', bg: 'linear-gradient(145deg, #1c0f05 0%, #451a03 50%, #1c0f05 100%)' },
+  dark: { color: '#71717a', glow: 'rgba(113,113,122,0.2)', bg: 'linear-gradient(145deg, #09090b 0%, #18181b 50%, #09090b 100%)' },
+};
+
+function setTheme(name, el) {
+  document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('active'));
+  el.classList.add('active');
+  const t = themes[name];
+  const hero = document.getElementById('lp-hero');
+  hero.style.setProperty('--theme-color', t.color);
+  hero.style.setProperty('--theme-glow', t.glow);
+  hero.style.background = t.bg;
+  document.getElementById('lp-btn').style.background = t.color;
+  document.getElementById('lp-play').style.background = t.color;
+  document.getElementById('lp-contact-btn').style.background = t.color;
+  document.querySelectorAll('.lp-section-label').forEach(lbl => lbl.style.color = t.color);
+  showToast();
+}
+
+const sectionStates = { video: true, benefits: true, testimonials: true, contact: true };
+
+function toggleSection(name, item) {
+  sectionStates[name] = !sectionStates[name];
+  const sw = document.getElementById('ts-' + name);
+  const section = document.getElementById('lp-' + name);
+  if (sectionStates[name]) {
+    sw.classList.add('on');
+    section.classList.remove('lp-hidden');
+  } else {
+    sw.classList.remove('on');
+    section.classList.add('lp-hidden');
+  }
+  showToast();
+}
+
+function selectImage(idx, el) {
+  document.querySelectorAll('.image-thumb').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  showToast();
+}
+
+let toastTimer;
+function showToast() {
+  const toast = document.getElementById('change-toast');
+  toast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove('show'), 1800);
+}
+
+function scrollToEditor() {
+  document.getElementById('editor-section').scrollIntoView({ behavior: 'smooth' });
+}
+
+function activateHighlight(num, el) {
+  document.querySelectorAll('.highlight-item').forEach(h => h.classList.remove('active'));
+  el.classList.add('active');
+}
+</script>
+
+</body>
+</html>

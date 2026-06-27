@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8"/>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  width: 1200px; height: 800px;
+  background: linear-gradient(145deg, #F7F5F2 0%, #FAFAF8 60%, #F2F0EC 100%);
+  display: flex; align-items: center; justify-content: center;
+  font-family: -apple-system, 'Helvetica Neue', sans-serif;
+}
+.wrap {
+  display: flex; flex-direction: column; align-items: center; gap: 44px; width: 1060px;
+}
+.top-label {
+  font-size: 11px; font-weight: 700; letter-spacing: 0.14em;
+  text-transform: uppercase; color: #2F8650;
+}
+.headline {
+  font-size: 38px; font-weight: 800; color: #1F1D1B;
+  text-align: center; line-height: 1.15; letter-spacing: -0.02em;
+  margin-top: 6px;
+}
+.subline {
+  font-size: 15px; color: #777; margin-top: 10px; text-align: center;
+  line-height: 1.6;
+}
+.cards {
+  display: flex; gap: 28px; align-items: stretch;
+}
+.card {
+  width: 292px; border-radius: 18px; overflow: hidden;
+  box-shadow: 0 12px 50px rgba(0,0,0,0.13), 0 2px 10px rgba(0,0,0,0.06);
+  background: #fff; display: flex; flex-direction: column;
+}
+.card-top {
+  padding: 18px 20px 16px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.card-name {
+  font-size: 13px; font-weight: 700; color: white; letter-spacing: -0.01em;
+}
+.active-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: rgba(255,255,255,0.5); position: relative;
+}
+.active-dot.active { background: white; }
+.nav-dots { display: flex; gap: 5px; }
+.card-body {
+  flex: 1; padding: 18px 20px 22px; background: #FAFAF8;
+}
+.mock-headline {
+  font-size: 14px; font-weight: 700; color: #1F1D1B; line-height: 1.35; margin-bottom: 12px;
+}
+.mock-line {
+  height: 4px; border-radius: 2px; background: #EBEBEB; margin-bottom: 7px;
+}
+.mock-btn {
+  display: inline-block; padding: 9px 16px; border-radius: 100px;
+  font-size: 11.5px; font-weight: 700; color: white; margin-top: 14px;
+  letter-spacing: 0.01em;
+}
+.theme-name {
+  font-size: 12px; font-weight: 600; color: #555;
+  text-align: center; margin-top: 14px;
+}
+.badges {
+  display: flex; gap: 12px; flex-wrap: wrap; justify-content: center;
+}
+.badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: white; border: 1.5px solid #E5E7EB;
+  padding: 6px 14px; border-radius: 100px;
+  font-size: 12px; font-weight: 600; color: #444;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+.check { color: #2F8650; font-weight: 800; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div style="text-align:center;">
+    <div class="top-label">Anpassung im Editor</div>
+    <div class="headline">Dein Stil.<br/>Drei Farbthemen.</div>
+    <div class="subline">Wechsel das Farbthema in einem Klick. Sektionen ein- oder ausblenden.<br/>Fertig in Minuten.</div>
+  </div>
+  <div class="cards">
+    <!-- Naturgrün -->
+    <div>
+      <div class="card">
+        <div class="card-top" style="background:#2F8650;">
+          <span class="card-name">Anna Müller</span>
+          <div class="nav-dots">
+            <div class="active-dot active"></div>
+            <div class="active-dot"></div>
+            <div class="active-dot"></div>
+            <div class="active-dot"></div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="mock-headline">Täglich optimal versorgt. Und das in Minuten.</div>
+          <div class="mock-line" style="width:90%;background:#2F865020;"></div>
+          <div class="mock-line" style="width:75%;"></div>
+          <div class="mock-line" style="width:85%;"></div>
+          <div class="mock-line" style="width:60%;"></div>
+          <div class="mock-btn" style="background:#2F8650;">Lass dich beraten &rarr;</div>
+        </div>
+      </div>
+      <div class="theme-name">Naturgrün</div>
+    </div>
+    <!-- Ozeanblau -->
+    <div>
+      <div class="card" style="box-shadow:0 12px 50px rgba(0,60,120,0.15), 0 2px 10px rgba(0,0,0,0.06);">
+        <div class="card-top" style="background:#1B6B9E;">
+          <span class="card-name">Marie Schmidt</span>
+          <div class="nav-dots">
+            <div class="active-dot active"></div>
+            <div class="active-dot"></div>
+            <div class="active-dot"></div>
+            <div class="active-dot"></div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="mock-headline">Täglich optimal versorgt. Und das in Minuten.</div>
+          <div class="mock-line" style="width:90%;background:#1B6B9E20;"></div>
+          <div class="mock-line" style="width:75%;"></div>
+          <div class="mock-line" style="width:85%;"></div>
+          <div class="mock-line" style="width:60%;"></div>
+          <div class="mock-btn" style="background:#1B6B9E;">Lass dich beraten &rarr;</div>
+        </div>
+      </div>
+      <div class="theme-name">Ozeanblau</div>
+    </div>
+    <!-- Warm Plum -->
+    <div>
+      <div class="card" style="box-shadow:0 12px 50px rgba(100,30,70,0.15), 0 2px 10px rgba(0,0,0,0.06);">
+        <div class="card-top" style="background:#8B3D6B;">
+          <span class="card-name">Julia Weber</span>
+          <div class="nav-dots">
+            <div class="active-dot active"></div>
+            <div class="active-dot"></div>
+            <div class="active-dot"></div>
+            <div class="active-dot"></div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="mock-headline">Täglich optimal versorgt. Und das in Minuten.</div>
+          <div class="mock-line" style="width:90%;background:#8B3D6B20;"></div>
+          <div class="mock-line" style="width:75%;"></div>
+          <div class="mock-line" style="width:85%;"></div>
+          <div class="mock-line" style="width:60%;"></div>
+          <div class="mock-btn" style="background:#8B3D6B;">Lass dich beraten &rarr;</div>
+        </div>
+      </div>
+      <div class="theme-name">Warm Plum</div>
+    </div>
+  </div>
+  <div class="badges">
+    <div class="badge"><span class="check">✓</span> Sektionen ein/ausblenden</div>
+    <div class="badge"><span class="check">✓</span> Eigene Texte &amp; Fotos</div>
+    <div class="badge"><span class="check">✓</span> Kontaktformular inklusive</div>
+    <div class="badge"><span class="check">✓</span> In 5 Minuten live</div>
+  </div>
+</div>
+</body>
+</html>

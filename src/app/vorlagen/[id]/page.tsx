@@ -167,7 +167,7 @@ export default async function TemplateDetailPage({ params }: Props) {
         }
         @font-face {
           font-family: 'Plein';
-          src: url('/fonts/Plein-Regular.woff2') format('woff2');
+          src: url('/fonts/Plein-Regular.otf') format('opentype');
           font-weight: 400; font-display: swap;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }

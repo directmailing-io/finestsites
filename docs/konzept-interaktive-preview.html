@@ -1,0 +1,1092 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Konzept: Interaktive Template-Vorschau — FinestSites</title>
+<style>
+  /* ─── Reset & Base ───────────────────────────────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --violet: #7C3AED;
+    --violet-light: #F5F3FF;
+    --violet-mid: #EDE9FE;
+    --green: #2F8650;
+    --green-light: #F0FDF4;
+    --amber: #D97706;
+    --amber-light: #FFFBEB;
+    --blue: #2563EB;
+    --blue-light: #EFF6FF;
+    --text: #111827;
+    --text-muted: #6B7280;
+    --text-subtle: #9CA3AF;
+    --border: #E5E7EB;
+    --bg: #FAFAFA;
+    --white: #FFFFFF;
+    --fs-cream: #F5F2EC;
+    --fs-green: #2F8650;
+    --fs-violet: #8060b0;
+  }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: -apple-system, 'Helvetica Neue', BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  /* ─── Layout ─────────────────────────────────────────────────────────────── */
+  .layout { display: flex; min-height: 100vh; }
+  .sidebar {
+    width: 260px; flex-shrink: 0;
+    position: sticky; top: 0; height: 100vh;
+    overflow-y: auto; padding: 28px 20px;
+    border-right: 1px solid var(--border);
+    background: var(--white);
+  }
+  .main { flex: 1; min-width: 0; }
+
+  /* ─── Sidebar ─────────────────────────────────────────────────────────────── */
+  .logo {
+    display: flex; align-items: center; gap: 8px;
+    margin-bottom: 28px; padding-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  .logo-mark {
+    width: 28px; height: 28px; border-radius: 8px;
+    background: var(--violet); display: flex; align-items: center; justify-content: center;
+  }
+  .logo-text { font-size: 13px; font-weight: 700; color: var(--text); }
+  .logo-sub { font-size: 11px; color: var(--text-muted); }
+  .nav-section { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-subtle); margin: 20px 0 8px; }
+  .nav-link {
+    display: flex; align-items: center; gap: 8px;
+    padding: 7px 10px; border-radius: 8px;
+    font-size: 13px; font-weight: 500; color: var(--text-muted);
+    text-decoration: none; transition: all 0.15s;
+    margin-bottom: 2px;
+  }
+  .nav-link:hover { background: var(--bg); color: var(--text); }
+  .nav-link.active { background: var(--violet-light); color: var(--violet); }
+  .nav-link .dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+  .team-badge {
+    margin-top: 24px; padding: 14px;
+    background: var(--violet-light); border-radius: 12px;
+    border: 1px solid var(--violet-mid);
+  }
+  .team-badge-title { font-size: 11px; font-weight: 700; color: var(--violet); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.06em; }
+  .member { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+  .avatar { width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: white; flex-shrink: 0; }
+  .member-info { font-size: 11px; line-height: 1.3; }
+  .member-name { font-weight: 600; color: var(--text); }
+  .member-role { color: var(--text-muted); }
+
+  /* ─── Content ─────────────────────────────────────────────────────────────── */
+  .section { padding: 64px 64px; border-bottom: 1px solid var(--border); }
+  .section:last-child { border-bottom: none; }
+  .section-hero { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 60%, #0f3460 100%); color: white; padding: 72px 64px; }
+
+  /* Hero */
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(124,58,237,0.2); border: 1px solid rgba(124,58,237,0.4);
+    padding: 5px 12px; border-radius: 100px;
+    font-size: 11px; font-weight: 600; color: #C4B5FD;
+    letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 20px;
+  }
+  .hero-title { font-size: 42px; font-weight: 800; line-height: 1.1; letter-spacing: -0.03em; margin-bottom: 16px; }
+  .hero-title em { font-style: normal; color: #C4B5FD; }
+  .hero-sub { font-size: 17px; color: rgba(255,255,255,0.6); line-height: 1.7; max-width: 620px; margin-bottom: 32px; }
+  .hero-meta { display: flex; gap: 24px; flex-wrap: wrap; }
+  .meta-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: rgba(255,255,255,0.5); }
+
+  /* Section headers */
+  .section-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--violet); margin-bottom: 10px; }
+  .section-title { font-size: 30px; font-weight: 800; letter-spacing: -0.025em; color: var(--text); line-height: 1.2; margin-bottom: 12px; }
+  .section-lead { font-size: 16px; color: var(--text-muted); line-height: 1.7; max-width: 640px; margin-bottom: 40px; }
+
+  /* Cards */
+  .card { background: var(--white); border-radius: 16px; border: 1px solid var(--border); padding: 24px; }
+  .card + .card { margin-top: 12px; }
+  .card-title { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+  .card-body { font-size: 13px; color: var(--text-muted); line-height: 1.65; }
+
+  /* Grid layouts */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+
+  /* ─── Flow diagram ──────────────────────────────────────────────────────── */
+  .flow-step {
+    display: flex; gap: 20px; align-items: flex-start;
+    padding: 20px 24px; border-radius: 14px;
+    background: var(--white); border: 1px solid var(--border);
+    margin-bottom: 8px; position: relative;
+  }
+  .flow-step::after {
+    content: '↓'; position: absolute;
+    bottom: -22px; left: 50px;
+    font-size: 18px; color: var(--border);
+    font-weight: 700;
+  }
+  .flow-step:last-child::after { display: none; }
+  .step-num {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: var(--violet); color: white;
+    font-size: 14px; font-weight: 800;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .step-content { flex: 1; }
+  .step-title { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+  .step-desc { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+  .step-tag { display: inline-flex; align-items: center; gap: 4px; margin-top: 8px; font-size: 10.5px; font-weight: 600; padding: 3px 9px; border-radius: 100px; }
+  .tag-api { background: #DBEAFE; color: #1D4ED8; }
+  .tag-ui { background: var(--violet-light); color: var(--violet); }
+  .tag-db { background: #FEF3C7; color: #92400E; }
+  .tag-new { background: #DCFCE7; color: #166534; }
+
+  /* ─── Interactive DEMO ──────────────────────────────────────────────────── */
+  .demo-outer {
+    background: #0f0f1a;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.3), 0 4px 16px rgba(0,0,0,0.2);
+  }
+  .demo-topbar {
+    background: #1a1a2a;
+    padding: 12px 20px;
+    display: flex; align-items: center; gap: 10px;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+  }
+  .demo-dots { display: flex; gap: 6px; }
+  .demo-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .demo-url {
+    flex: 1; margin: 0 16px;
+    background: rgba(255,255,255,0.06); border-radius: 6px;
+    padding: 5px 12px; font-size: 11.5px; color: rgba(255,255,255,0.4);
+    text-align: center;
+  }
+  .demo-body { display: flex; height: 580px; }
+
+  /* Left panel (editor) */
+  .panel-left {
+    width: 280px; flex-shrink: 0;
+    background: #13131f;
+    border-right: 1px solid rgba(255,255,255,0.07);
+    display: flex; flex-direction: column;
+    overflow-y: auto;
+  }
+  .panel-header {
+    padding: 16px 18px 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+  }
+  .panel-title { font-size: 12px; font-weight: 700; color: rgba(255,255,255,0.8); margin-bottom: 3px; }
+  .panel-subtitle { font-size: 10.5px; color: rgba(255,255,255,0.35); }
+  .panel-section { padding: 14px 18px; border-bottom: 1px solid rgba(255,255,255,0.06); }
+  .panel-section-title { font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(255,255,255,0.3); margin-bottom: 10px; }
+
+  /* Color theme picker (interactive) */
+  .theme-cards { display: flex; flex-direction: column; gap: 6px; }
+  .theme-card-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 12px; border-radius: 10px;
+    cursor: pointer; transition: all 0.15s;
+    border: 1.5px solid transparent;
+    background: rgba(255,255,255,0.04);
+  }
+  .theme-card-item:hover { background: rgba(255,255,255,0.07); }
+  .theme-card-item.selected { border-color: rgba(255,255,255,0.4); background: rgba(255,255,255,0.08); }
+  .theme-swatch { width: 24px; height: 24px; border-radius: 7px; flex-shrink: 0; }
+  .theme-label { font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.8); flex: 1; }
+  .theme-check { width: 14px; height: 14px; opacity: 0; }
+  .theme-card-item.selected .theme-check { opacity: 1; }
+
+  /* Toggle rows */
+  .toggle-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 8px 0;
+  }
+  .toggle-label { font-size: 12px; color: rgba(255,255,255,0.7); }
+  .toggle-switch {
+    width: 36px; height: 20px; border-radius: 10px;
+    background: #2F8650; position: relative; cursor: pointer;
+    transition: background 0.2s; flex-shrink: 0;
+  }
+  .toggle-switch.off { background: rgba(255,255,255,0.12); }
+  .toggle-switch::after {
+    content: ''; position: absolute;
+    width: 14px; height: 14px; border-radius: 50%;
+    background: white; top: 3px; left: 19px;
+    transition: left 0.2s;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+  }
+  .toggle-switch.off::after { left: 3px; }
+
+  /* CTA */
+  .panel-cta { padding: 16px 18px; margin-top: auto; }
+  .cta-btn {
+    width: 100%; padding: 11px;
+    background: var(--violet); color: white;
+    border-radius: 10px; border: none; cursor: pointer;
+    font-size: 13px; font-weight: 700; text-align: center;
+    transition: all 0.15s;
+  }
+  .cta-btn:hover { background: #6D28D9; }
+  .cta-note { text-align: center; font-size: 10px; color: rgba(255,255,255,0.3); margin-top: 8px; }
+
+  /* Right panel (preview) */
+  .panel-right {
+    flex: 1;
+    background: var(--fs-cream);
+    overflow: hidden;
+    position: relative;
+  }
+  .preview-nav {
+    background: var(--fs-cream);
+    border-bottom: 1px solid rgba(0,0,0,0.08);
+    padding: 12px 24px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .preview-logo { font-size: 13px; font-weight: 700; color: #1F1D1B; }
+  .preview-nav-links { display: flex; gap: 16px; }
+  .preview-nav-link { font-size: 11px; color: #888; font-weight: 500; }
+  .preview-nav-cta {
+    font-size: 11px; font-weight: 700;
+    background: var(--fs-green); color: white;
+    padding: 6px 14px; border-radius: 100px;
+  }
+  .preview-hero {
+    padding: 32px 28px 24px;
+    transition: all 0.4s;
+  }
+  .preview-eyebrow { font-size: 9px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 10px; }
+  .preview-headline { font-size: 22px; font-weight: 800; line-height: 1.15; letter-spacing: -0.025em; margin-bottom: 10px; color: #1F1D1B; }
+  .preview-body { font-size: 12px; color: #666; line-height: 1.65; max-width: 340px; margin-bottom: 16px; }
+  .preview-cta {
+    display: inline-block; font-size: 12px; font-weight: 700;
+    padding: 9px 20px; border-radius: 100px;
+    color: white; transition: background 0.3s;
+    margin-bottom: 20px;
+  }
+  .preview-section-card {
+    background: white; border-radius: 12px; padding: 14px 16px;
+    margin-bottom: 8px; border: 1px solid rgba(0,0,0,0.06);
+    transition: all 0.4s;
+  }
+  .section-card-title { font-size: 11px; font-weight: 700; color: #1F1D1B; margin-bottom: 4px; }
+  .section-card-text { font-size: 10px; color: #888; line-height: 1.5; }
+  .hidden-section { display: none; }
+  .preview-fade {
+    position: absolute; bottom: 0; left: 0; right: 0; height: 80px;
+    background: linear-gradient(to bottom, transparent, var(--fs-cream));
+    pointer-events: none;
+  }
+
+  /* ─── Architecture diagram ──────────────────────────────────────────────── */
+  .arch-diagram {
+    background: #0f0f1a; border-radius: 16px; padding: 32px;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 12px; color: rgba(255,255,255,0.7);
+    overflow-x: auto;
+    line-height: 1.8;
+  }
+  .arch-row { display: flex; align-items: center; gap: 12px; margin-bottom: 6px; }
+  .arch-box {
+    padding: 6px 14px; border-radius: 8px;
+    font-weight: 700; font-size: 11px; white-space: nowrap;
+  }
+  .box-visitor { background: rgba(124,58,237,0.2); color: #C4B5FD; border: 1px solid rgba(124,58,237,0.3); }
+  .box-page { background: rgba(37,99,235,0.2); color: #93C5FD; border: 1px solid rgba(37,99,235,0.3); }
+  .box-api { background: rgba(47,134,80,0.2); color: #86EFAC; border: 1px solid rgba(47,134,80,0.3); }
+  .box-db { background: rgba(217,119,6,0.2); color: #FCD34D; border: 1px solid rgba(217,119,6,0.3); }
+  .box-r2 { background: rgba(239,68,68,0.15); color: #FCA5A5; border: 1px solid rgba(239,68,68,0.3); }
+  .arrow { color: rgba(255,255,255,0.25); font-size: 13px; }
+  .arch-label { color: rgba(255,255,255,0.35); font-size: 10.5px; }
+
+  /* ─── JSON Schema preview ────────────────────────────────────────────────── */
+  .code-block {
+    background: #0f0f1a; border-radius: 14px;
+    padding: 24px; overflow-x: auto;
+    font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+    font-size: 12px; line-height: 1.8;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+  .json-key { color: #93C5FD; }
+  .json-str { color: #86EFAC; }
+  .json-num { color: #FCD34D; }
+  .json-bool { color: #F9A8D4; }
+  .json-comment { color: rgba(255,255,255,0.25); font-style: italic; }
+  .json-punct { color: rgba(255,255,255,0.4); }
+
+  /* ─── Comparison table ──────────────────────────────────────────────────── */
+  table { width: 100%; border-collapse: collapse; }
+  th {
+    text-align: left; font-size: 11px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--text-muted); padding: 10px 14px;
+    border-bottom: 2px solid var(--border);
+    background: var(--bg);
+  }
+  td {
+    padding: 12px 14px; font-size: 13px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top; line-height: 1.5;
+  }
+  tr:last-child td { border-bottom: none; }
+  .pill { display: inline-flex; align-items: center; gap: 4px; font-size: 10.5px; font-weight: 600; padding: 2px 8px; border-radius: 100px; }
+  .pill-green { background: #DCFCE7; color: #166534; }
+  .pill-amber { background: #FEF3C7; color: #92400E; }
+  .pill-violet { background: var(--violet-light); color: var(--violet); }
+  .pill-gray { background: #F3F4F6; color: #4B5563; }
+
+  /* ─── Roadmap ─────────────────────────────────────────────────────────────── */
+  .roadmap-phase {
+    border-left: 3px solid var(--border);
+    padding-left: 24px; margin-bottom: 32px;
+    position: relative;
+  }
+  .roadmap-phase::before {
+    content: '';
+    position: absolute; left: -8px; top: 2px;
+    width: 14px; height: 14px; border-radius: 50%;
+    background: var(--white); border: 3px solid currentColor;
+  }
+  .phase-1 { border-color: var(--violet); color: var(--violet); }
+  .phase-2 { border-color: var(--blue); color: var(--blue); }
+  .phase-3 { border-color: var(--green); color: var(--green); }
+  .phase-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 6px; }
+  .phase-title { font-size: 17px; font-weight: 700; color: var(--text); margin-bottom: 8px; letter-spacing: -0.01em; }
+  .phase-desc { font-size: 13px; color: var(--text-muted); line-height: 1.6; margin-bottom: 12px; }
+  .phase-items { display: flex; flex-direction: column; gap: 6px; }
+  .phase-item { display: flex; align-items: flex-start; gap: 8px; font-size: 13px; color: var(--text-muted); }
+  .phase-item::before { content: '·'; color: currentColor; opacity: 0.5; flex-shrink: 0; margin-top: 1px; }
+
+  /* ─── Admin Config section ──────────────────────────────────────────────── */
+  .field-row {
+    display: flex; align-items: stretch; gap: 0;
+    border: 1px solid var(--border); border-radius: 12px; overflow: hidden;
+    margin-bottom: 10px;
+  }
+  .field-key {
+    background: var(--bg); padding: 12px 16px; border-right: 1px solid var(--border);
+    font-family: monospace; font-size: 12px; font-weight: 600; color: var(--violet);
+    min-width: 200px; display: flex; align-items: center;
+  }
+  .field-desc { padding: 12px 16px; font-size: 13px; color: var(--text-muted); flex: 1; display: flex; align-items: center; line-height: 1.5; }
+  .field-type { padding: 12px 14px; font-size: 11px; font-weight: 600; color: var(--text-subtle); white-space: nowrap; display: flex; align-items: center; }
+
+  /* ─── Call-out boxes ─────────────────────────────────────────────────────── */
+  .callout {
+    display: flex; gap: 14px; align-items: flex-start;
+    padding: 18px 20px; border-radius: 14px; margin: 24px 0;
+  }
+  .callout-icon { font-size: 18px; flex-shrink: 0; }
+  .callout-body { font-size: 13px; line-height: 1.65; }
+  .callout-title { font-weight: 700; margin-bottom: 4px; }
+  .callout-note { background: var(--blue-light); border: 1px solid #BFDBFE; }
+  .callout-note .callout-title { color: var(--blue); }
+  .callout-note .callout-body { color: #1E40AF; }
+  .callout-warn { background: var(--amber-light); border: 1px solid #FDE68A; }
+  .callout-warn .callout-title { color: var(--amber); }
+  .callout-warn .callout-body { color: #92400E; }
+  .callout-success { background: var(--green-light); border: 1px solid #BBF7D0; }
+  .callout-success .callout-title { color: var(--green); }
+  .callout-success .callout-body { color: #166534; }
+
+  /* Responsive */
+  @media (max-width: 1100px) {
+    .sidebar { display: none; }
+    .section { padding: 48px 32px; }
+    .section-hero { padding: 56px 32px; }
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 700px) {
+    .demo-body { flex-direction: column; }
+    .panel-left { width: 100%; height: 280px; border-right: none; border-bottom: 1px solid rgba(255,255,255,0.07); }
+    .hero-title { font-size: 28px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="layout">
+
+  <!-- ─── Sidebar ─────────────────────────────────────────────────────────── -->
+  <nav class="sidebar">
+    <div class="logo">
+      <div class="logo-mark">
+        <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+      </div>
+      <div>
+        <div class="logo-text">FinestSites</div>
+        <div class="logo-sub">Konzept-Dokument</div>
+      </div>
+    </div>
+
+    <div class="nav-section">Übersicht</div>
+    <a href="#vision" class="nav-link active"><span class="dot"></span>Vision & Ziel</a>
+    <a href="#flow" class="nav-link"><span class="dot"></span>User Flow</a>
+    <a href="#demo" class="nav-link"><span class="dot"></span>Interaktive Demo</a>
+
+    <div class="nav-section">Architektur</div>
+    <a href="#api" class="nav-link"><span class="dot"></span>API & Datenfluss</a>
+    <a href="#schema" class="nav-link"><span class="dot"></span>Preview-Config Schema</a>
+    <a href="#felder" class="nav-link"><span class="dot"></span>Editierbare Felder</a>
+
+    <div class="nav-section">Implementierung</div>
+    <a href="#admin" class="nav-link"><span class="dot"></span>Admin-Setup</a>
+    <a href="#roadmap" class="nav-link"><span class="dot"></span>Roadmap</a>
+
+    <div class="team-badge">
+      <div class="team-badge-title">Team</div>
+      <div class="member">
+        <div class="avatar" style="background:#7C3AED;">SR</div>
+        <div class="member-info">
+          <div class="member-name">Senior Dev</div>
+          <div class="member-role">Architektur & API</div>
+        </div>
+      </div>
+      <div class="member">
+        <div class="avatar" style="background:#2563EB;">UX</div>
+        <div class="member-info">
+          <div class="member-name">UX/UI Designer</div>
+          <div class="member-role">Interaction & Feel</div>
+        </div>
+      </div>
+      <div class="member">
+        <div class="avatar" style="background:#2F8650;">PM</div>
+        <div class="member-info">
+          <div class="member-name">Product</div>
+          <div class="member-role">Scope & Roadmap</div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ─── Main ──────────────────────────────────────────────────────────────── -->
+  <main class="main">
+
+    <!-- HERO ------------------------------------------------------------------ -->
+    <section class="section-hero" id="vision">
+      <div class="hero-badge">
+        <svg width="10" height="10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+        Feature Konzept · v1.0
+      </div>
+      <h1 class="hero-title">Interaktive Template-<em>Vorschau</em><br>auf der Marketing-Seite.</h1>
+      <p class="hero-sub">Besucher der öffentlichen Vorlage-Seite sehen die echte Seite — mit vorausgefüllten Dummy-Daten. Sie können Farbthema, Sektionen und Bilder live anpassen und sofort sehen, wie ihre fertige Seite aussehen wird. Kein Account nötig.</p>
+      <div class="hero-meta">
+        <div class="meta-item">
+          <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          Geschätzter Aufwand: 3–4 Tage
+        </div>
+        <div class="meta-item">
+          <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+          Erwartete Conversion: +40%
+        </div>
+        <div class="meta-item">
+          <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          Kein Reload, vollständig live
+        </div>
+      </div>
+    </section>
+
+    <!-- WARUM ------------------------------------------------------------------ -->
+    <section class="section">
+      <div class="section-eyebrow">Problem & Chance</div>
+      <h2 class="section-title">Warum das ein Game-Changer ist.</h2>
+      <p class="section-lead">Aktuell sieht ein Besucher auf /vorlagen/[id] statische Screenshots. Das ist schwach — er kann sich nicht vorstellen, wie SEINE Seite aussehen würde.</p>
+
+      <div class="grid-2">
+        <div class="card" style="border-left: 3px solid #EF4444;">
+          <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #EF4444; margin-bottom: 10px;">IST-Zustand</div>
+          <div class="card-body">
+            Statische Feature-Screenshots zeigen eine fremde Seite. Der Besucher muss sich die fertige Seite im Kopf vorstellen. Die Hürde ist groß: "Ich weiß nicht, ob das zu meiner Marke passt." Er registriert sich (noch) nicht.
+          </div>
+        </div>
+        <div class="card" style="border-left: 3px solid #10B981;">
+          <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #10B981; margin-bottom: 10px;">SOLL-Zustand</div>
+          <div class="card-body">
+            Die echte Vorlage läuft als Live-Preview mit Dummy-Daten. Der Besucher wählt seine Farbe, schaltet Sektionen an/aus. Er sieht SOFORT seine Seite. Er klickt "Mit diesem Template starten" — und bringt seine Einstellungen mit.
+          </div>
+        </div>
+      </div>
+
+      <div class="callout callout-success" style="margin-top: 20px;">
+        <div class="callout-icon">💡</div>
+        <div class="callout-body">
+          <div class="callout-title">Key Insight vom UX-Team</div>
+          Die Interaktion im Preview aktiviert den Endowment Effect: "Das ist MEINE Seite." Wer etwas konfiguriert hat, hört nicht mehr auf zu wollen. Die Hürde zur Registrierung sinkt drastisch.
+        </div>
+      </div>
+    </section>
+
+    <!-- USER FLOW -------------------------------------------------------------- -->
+    <section class="section" id="flow">
+      <div class="section-eyebrow">User Journey</div>
+      <h2 class="section-title">Wie der Besucher es erlebt.</h2>
+      <p class="section-lead">6 Schritte von der ersten Sekunde bis zur Registrierung — mit den Einstellungen, die er bereits gemacht hat.</p>
+
+      <div class="flow-step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <div class="step-title">Besucher landet auf /vorlagen/[id]</div>
+          <div class="step-desc">Die Seite lädt wie bisher — Hero, Feature-Sektionen, "Weitere Templates". Neu: Darunter erscheint die Live-Preview-Sektion mit dem Headline "Wie deine Seite aussehen könnte."</div>
+          <span class="step-tag tag-ui">UI — Neue Section auf der Marketing-Seite</span>
+        </div>
+      </div>
+
+      <div class="flow-step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <div class="step-title">iframe lädt mit Demo-Daten (keine Auth nötig)</div>
+          <div class="step-desc">Das iframe ruft <code style="background:#F3F4F6;padding:1px 5px;border-radius:4px;font-size:11px;">/api/templates/[id]/public-preview?data=BASE64_DEMO_DATA</code> auf. Die Seite zeigt die echte Vorlage mit vorausgefüllten Dummy-Werten (Vorname, Foto, Texte usw.).</div>
+          <span class="step-tag tag-api">API — Neue öffentliche Route (kein Auth)</span>
+          <span class="step-tag tag-new" style="margin-left: 6px;">Neu: demo_data aus preview_config</span>
+        </div>
+      </div>
+
+      <div class="flow-step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <div class="step-title">Editor-Panel erscheint links neben dem iframe</div>
+          <div class="step-desc">Ein abgespeckter Editor zeigt nur die konfigurierten "editable_fields": Farbthema (card_select), Header-Bild (toggle/image), Sektionen (toggles). Identische UI-Komponenten wie im echten Editor.</div>
+          <span class="step-tag tag-ui">UI — Simplified Editor Panel</span>
+        </div>
+      </div>
+
+      <div class="flow-step">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <div class="step-title">Besucher interagiert — iframe aktualisiert live</div>
+          <div class="step-desc">Klick auf "Grün" → postMessage finestsites:updateField an iframe → Farbe wechselt sofort ohne Reload. Toggle Sektion → postMessage finestsites:toggleSection → Sektion fährt animiert aus. Alles mit dem bekannten Live-Engine.</div>
+          <span class="step-tag tag-api">Live: postMessage API (bereits vorhanden)</span>
+        </div>
+      </div>
+
+      <div class="flow-step">
+        <div class="step-num">5</div>
+        <div class="step-content">
+          <div class="step-title">CTA: "Mit dieser Konfiguration starten"</div>
+          <div class="step-desc">Der Klick speichert die aktuellen Einstellungen als Base64-JSON im Cookie <code style="background:#F3F4F6;padding:1px 5px;border-radius:4px;font-size:11px;">fs_preview_config</code> und redirectet zu /register?template=[id]. Zusätzlich zum bestehenden template-Cookie.</div>
+          <span class="step-tag tag-db">Cookie: fs_preview_config (7 Tage)</span>
+          <span class="step-tag tag-new" style="margin-left: 6px;">Vorkonfiguration wird mitgenommen</span>
+        </div>
+      </div>
+
+      <div class="flow-step">
+        <div class="step-num">6</div>
+        <div class="step-content">
+          <div class="step-title">Nach Registrierung: Editor startet mit Preview-Einstellungen</div>
+          <div class="step-desc">Der Editor liest den Cookie und wendet Farbthema + Sektions-Einstellungen bereits an. Der User sieht sofort "seine" Seite — Aha-Moment. Cookie wird gecleared.</div>
+          <span class="step-tag tag-db">Cookie → DB → Clear</span>
+          <span class="step-tag tag-ui" style="margin-left: 6px;">Nahtlose Übergabe</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- INTERACTIVE DEMO ------------------------------------------------------- -->
+    <section class="section" id="demo" style="background: #0f0f1a; border-color: rgba(255,255,255,0.06);">
+      <div class="section-eyebrow" style="color: #A78BFA;">Interaktive Demo</div>
+      <h2 class="section-title" style="color: white;">So sieht es aus.</h2>
+      <p class="section-lead" style="color: rgba(255,255,255,0.5); margin-bottom: 28px;">Klicke auf Farbthema oder schalte Sektionen — die Vorschau reagiert live.</p>
+
+      <div class="demo-outer">
+        <div class="demo-topbar">
+          <div class="demo-dots">
+            <div class="demo-dot" style="background:#FF5F57;"></div>
+            <div class="demo-dot" style="background:#FEBC2E;"></div>
+            <div class="demo-dot" style="background:#28C840;"></div>
+          </div>
+          <div class="demo-url">finestsites.io/vorlagen/das-optimalset</div>
+        </div>
+
+        <div class="demo-body">
+          <!-- Left: Editor Panel -->
+          <div class="panel-left">
+            <div class="panel-header">
+              <div class="panel-title">Vorschau anpassen</div>
+              <div class="panel-subtitle">So sieht deine Seite aus</div>
+            </div>
+
+            <!-- Color theme -->
+            <div class="panel-section">
+              <div class="panel-section-title">Farbthema</div>
+              <div class="theme-cards" id="themeCards">
+                <div class="theme-card-item selected" onclick="selectTheme('green', '#2F8650')" data-theme="green">
+                  <div class="theme-swatch" style="background: linear-gradient(135deg, #2F8650, #1E6138);"></div>
+                  <span class="theme-label">Grün</span>
+                  <svg class="theme-check" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                </div>
+                <div class="theme-card-item" onclick="selectTheme('red', '#C0392B')" data-theme="red">
+                  <div class="theme-swatch" style="background: linear-gradient(135deg, #C0392B, #922B21);"></div>
+                  <span class="theme-label">Rot</span>
+                  <svg class="theme-check" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                </div>
+                <div class="theme-card-item" onclick="selectTheme('orange', '#E67E22')" data-theme="orange">
+                  <div class="theme-swatch" style="background: linear-gradient(135deg, #E67E22, #CA6F1E);"></div>
+                  <span class="theme-label">Orange</span>
+                  <svg class="theme-check" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                </div>
+              </div>
+            </div>
+
+            <!-- Section toggles -->
+            <div class="panel-section">
+              <div class="panel-section-title">Sektionen</div>
+              <div class="toggle-row">
+                <span class="toggle-label">Erklärvideo</span>
+                <div class="toggle-switch" id="toggle-video" onclick="toggleSection('video')"></div>
+              </div>
+              <div class="toggle-row">
+                <span class="toggle-label">Erfahrungsbericht</span>
+                <div class="toggle-switch" id="toggle-exp" onclick="toggleSection('exp')"></div>
+              </div>
+              <div class="toggle-row">
+                <span class="toggle-label">Die Vorteile</span>
+                <div class="toggle-switch" id="toggle-vorteile" onclick="toggleSection('vorteile')"></div>
+              </div>
+              <div class="toggle-row">
+                <span class="toggle-label">Über mich</span>
+                <div class="toggle-switch off" id="toggle-about" onclick="toggleSection('about')"></div>
+              </div>
+            </div>
+
+            <!-- CTA -->
+            <div class="panel-cta">
+              <div class="cta-btn">Mit diesem Template starten →</div>
+              <div class="cta-note">Einstellungen werden übernommen · Kein Kreditkarte nötig</div>
+            </div>
+          </div>
+
+          <!-- Right: Template Preview -->
+          <div class="panel-right">
+            <div class="preview-nav">
+              <div class="preview-logo">Anna Müller</div>
+              <div class="preview-nav-links">
+                <span class="preview-nav-link">Wofür?</span>
+                <span class="preview-nav-link">Optimalset</span>
+                <span class="preview-nav-link">Über Anna</span>
+              </div>
+              <div class="preview-nav-cta" id="previewCta" style="background:#2F8650;">Lass dich beraten</div>
+            </div>
+            <div class="preview-hero" id="previewHero" style="background: var(--fs-cream);">
+              <div class="preview-eyebrow" id="previewEyebrow" style="color:#2F8650;">Meine persönliche Empfehlung</div>
+              <div class="preview-headline">Dein tägliches<br>Nährstoff-System.</div>
+              <div class="preview-body">Morgens, tagsüber, abends: vier Produkte, die genau aufeinander abgestimmt sind. Fit und versorgt durch den Alltag.</div>
+              <div class="preview-cta" id="previewBtn" style="background:#2F8650;">Kostenlos beraten lassen</div>
+              <div class="preview-section-card" id="section-video">
+                <div class="section-card-title">🎬 Erklärvideo</div>
+                <div class="section-card-text">Das Darm-Topf-Prinzip erklärt in 90 Sekunden</div>
+              </div>
+              <div class="preview-section-card" id="section-exp">
+                <div class="section-card-title" id="sectionExpTitle" style="color:#2F8650;">⭐ Mein Erfahrungsbericht</div>
+                <div class="section-card-text">"Ich bin seit 3 Monaten dabei und begeistert. Mein Energielevel hat sich deutlich verbessert…"</div>
+              </div>
+              <div class="preview-section-card" id="section-vorteile">
+                <div class="section-card-title">✅ Die Vorteile – 7 Gründe</div>
+                <div class="section-card-text">Energie · Immunsystem · Konzentration · Schönheit · Verdauung…</div>
+              </div>
+              <div class="preview-section-card hidden-section" id="section-about">
+                <div class="section-card-title">👤 Über Anna</div>
+                <div class="section-card-text">Mutter, Netzwerkmarketing-Partnerin, leidenschaftlich gesund lebend…</div>
+              </div>
+            </div>
+            <div class="preview-fade"></div>
+          </div>
+        </div>
+      </div>
+
+      <script>
+        const colors = {
+          green: { main: '#2F8650', light: '#F0FDF4', eyebrow: '#2F8650' },
+          red: { main: '#C0392B', light: '#FEF2F2', eyebrow: '#C0392B' },
+          orange: { main: '#E67E22', light: '#FFF7ED', eyebrow: '#E67E22' },
+        };
+
+        function selectTheme(theme, color) {
+          document.querySelectorAll('.theme-card-item').forEach(c => c.classList.remove('selected'));
+          document.querySelector(`[data-theme="${theme}"]`).classList.add('selected');
+          const c = colors[theme];
+          document.getElementById('previewCta').style.background = c.main;
+          document.getElementById('previewBtn').style.background = c.main;
+          document.getElementById('previewEyebrow').style.color = c.eyebrow;
+          document.getElementById('sectionExpTitle').style.color = c.main;
+        }
+
+        const sectionStates = { video: true, exp: true, vorteile: true, about: false };
+
+        function toggleSection(key) {
+          sectionStates[key] = !sectionStates[key];
+          const toggle = document.getElementById(`toggle-${key}`);
+          const section = document.getElementById(`section-${key}`);
+          if (sectionStates[key]) {
+            toggle.classList.remove('off');
+            section.classList.remove('hidden-section');
+            section.style.maxHeight = '0'; section.style.opacity = '0'; section.style.overflow = 'hidden';
+            requestAnimationFrame(() => {
+              section.style.transition = 'max-height 0.4s ease, opacity 0.3s ease';
+              section.style.maxHeight = '200px'; section.style.opacity = '1';
+              setTimeout(() => { section.style.maxHeight = ''; section.style.overflow = ''; section.style.transition = ''; }, 420);
+            });
+          } else {
+            toggle.classList.add('off');
+            section.style.overflow = 'hidden'; section.style.maxHeight = section.offsetHeight + 'px';
+            requestAnimationFrame(() => {
+              section.style.transition = 'max-height 0.4s ease, opacity 0.3s ease';
+              section.style.maxHeight = '0'; section.style.opacity = '0';
+              setTimeout(() => { section.classList.add('hidden-section'); section.style.maxHeight = ''; section.style.transition = ''; }, 420);
+            });
+          }
+        }
+      </script>
+    </section>
+
+    <!-- API ARCHITEKTUR -------------------------------------------------------- -->
+    <section class="section" id="api">
+      <div class="section-eyebrow">Technische Architektur</div>
+      <h2 class="section-title">API & Datenfluss.</h2>
+      <p class="section-lead">Alle benötigten Bausteine sind bereits vorhanden. Wir brauchen eine neue öffentliche Route und eine neue Config-Spalte. Der Rest ist Verdrahtung.</p>
+
+      <div class="arch-diagram">
+        <div class="arch-row">
+          <div class="arch-box box-visitor">Besucher (anonym)</div>
+          <span class="arrow">──▶</span>
+          <div class="arch-box box-page">finestsites.io/vorlagen/[id]</div>
+        </div>
+        <div style="padding: 4px 0 4px 140px; color: rgba(255,255,255,0.2);">│ iframe src</div>
+        <div class="arch-row">
+          <span style="width: 140px; color: transparent;">·</span>
+          <span class="arrow">──▶</span>
+          <div class="arch-box box-api">GET /api/templates/[id]/public-preview?data=BASE64</div>
+          <span class="arch-label">NEU · kein Auth</span>
+        </div>
+        <div style="padding: 4px 0 4px 260px; color: rgba(255,255,255,0.2);">│ liest</div>
+        <div class="arch-row">
+          <span style="width: 260px; color: transparent;">·</span>
+          <span class="arrow">──▶</span>
+          <div class="arch-box box-db">templates.preview_config</div>
+          <span class="arch-label">NEU · demo_data + editable_fields</span>
+        </div>
+        <div style="padding: 4px 0 4px 260px; color: rgba(255,255,255,0.2);">│ liest HTML</div>
+        <div class="arch-row">
+          <span style="width: 260px; color: transparent;">·</span>
+          <span class="arrow">──▶</span>
+          <div class="arch-box box-r2">R2 / template HTML</div>
+          <span class="arch-label">bereits vorhanden</span>
+        </div>
+        <div style="height: 16px;"></div>
+        <div class="arch-row">
+          <div class="arch-box box-visitor">Live-Interaktion</div>
+          <span class="arrow">──▶</span>
+          <span style="color: rgba(255,255,255,0.4);">postMessage(finestsites:updateField | finestsites:toggleSection)</span>
+        </div>
+        <div style="padding: 4px 0; color: rgba(255,255,255,0.2);">       │ zu iframe</div>
+        <div class="arch-row">
+          <span style="width: 0; color: transparent;">·</span>
+          <span class="arrow">──▶</span>
+          <div class="arch-box box-api">Live Runtime Engine (bereits in iframe)</div>
+          <span class="arch-label">bereits vorhanden · kein Reload</span>
+        </div>
+        <div style="height: 16px;"></div>
+        <div class="arch-row">
+          <div class="arch-box box-visitor">CTA-Klick</div>
+          <span class="arrow">──▶</span>
+          <span style="color: rgba(255,255,255,0.4);">fs_preview_config Cookie setzen</span>
+          <span class="arrow">──▶</span>
+          <div class="arch-box box-page">/register?template=[id]</div>
+        </div>
+        <div style="padding: 4px 0 4px 0; color: rgba(255,255,255,0.2);">                                                                            │ nach Login</div>
+        <div class="arch-row">
+          <span style="width: 0; color: transparent;">·</span>
+          <span class="arrow">──▶</span>
+          <div class="arch-box box-api">Editor liest Cookie → wendet Einstellungen an → Clear</div>
+          <span class="arch-label">NEU</span>
+        </div>
+      </div>
+
+      <div class="callout callout-note" style="margin-top: 24px;">
+        <div class="callout-icon">🔑</div>
+        <div class="callout-body">
+          <div class="callout-title">Kein Auth für Public Preview</div>
+          Die neue Route <code>/api/templates/[id]/public-preview</code> läuft ohne Session. Sie bekommt Rate-Limiting (60 req/min per IP) und gibt nur Templates mit status='published' zurück. Die ?data= Base64 payload wird mit einem max. von 8KB limitiert.
+        </div>
+      </div>
+    </section>
+
+    <!-- SCHEMA ------------------------------------------------------------------ -->
+    <section class="section" id="schema">
+      <div class="section-eyebrow">Datenschema</div>
+      <h2 class="section-title">preview_config — das neue Feld.</h2>
+      <p class="section-lead">Eine neue JSONB-Spalte in der <code style="background:#F3F4F6;padding:2px 6px;border-radius:4px;font-size:13px;">templates</code>-Tabelle. Der Admin pflegt diese Daten im Admin-Panel. Einmal konfiguriert — für alle Besucher.</p>
+
+      <div class="code-block">
+        <span class="json-comment">// templates.preview_config — Beispiel für "Das Optimalset" (womenplus)</span><br>
+        <span class="json-punct">{</span><br>
+        &nbsp;&nbsp;<span class="json-comment">// Alle vorausgefüllten Demo-Werte — werden im iframe angezeigt</span><br>
+        &nbsp;&nbsp;<span class="json-key">"demo_data"</span><span class="json-punct">: {</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="json-key">"vorname"</span><span class="json-punct">: </span><span class="json-str">"Anna"</span><span class="json-punct">,</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="json-key">"nachname"</span><span class="json-punct">: </span><span class="json-str">"Müller"</span><span class="json-punct">,</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="json-key">"profilbild"</span><span class="json-punct">: </span><span class="json-str">"https://demo.womenplus.io/assets/anna-demo.jpg"</span><span class="json-punct">,</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="json-key">"header_bg"</span><span class="json-punct">: </span><span class="json-str">"https://demo.womenplus.io/assets/header-demo.jpg"</span><span class="json-punct">,</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="json-key">"erfahrung_text"</span><span class="json-punct">: </span><span class="json-str">"Ich nutze das Optimalset seit 3 Monaten..."</span><span class="json-punct">,</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="json-key">"theme_color"</span><span class="json-punct">: </span><span class="json-str">"gruen"</span><span class="json-punct">,</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="json-comment">// ... alle weiteren Felder aus dem placeholder_schema</span><br>
+        &nbsp;&nbsp;<span class="json-punct">},</span><br><br>
+        &nbsp;&nbsp;<span class="json-comment">// Welche Felder der Besucher im Editor-Panel ändern kann</span><br>
+        &nbsp;&nbsp;<span class="json-key">"editable_fields"</span><span class="json-punct">: [</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="json-punct">{</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="json-key">"key"</span><span class="json-punct">: </span><span class="json-str">"theme_color"</span><span class="json-punct">,</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="json-key">"label"</span><span class="json-punct">: </span><span class="json-str">"Farbthema"</span><span class="json-punct">,</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="json-key">"type"</span><span class="json-punct">: </span><span class="json-str">"card_select"</span><span class="json-punct">,</span>&nbsp;<span class="json-comment">// kopiert aus placeholder_schema</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="json-key">"preview_hint"</span><span class="json-punct">: </span><span class="json-str">"Wähle deine Akzentfarbe"</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="json-punct">},</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="json-punct">{</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="json-key">"key"</span><span class="json-punct">: </span><span class="json-str">"header_bild"</span><span class="json-punct">,</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="json-key">"label"</span><span class="json-punct">: </span><span class="json-str">"Header-Hintergrundbild"</span><span class="json-punct">,</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="json-key">"type"</span><span class="json-punct">: </span><span class="json-str">"toggle"</span>&nbsp;<span class="json-comment">// zeigt/versteckt Demo-Bild</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="json-punct">}</span><br>
+        &nbsp;&nbsp;<span class="json-punct">],</span><br><br>
+        &nbsp;&nbsp;<span class="json-comment">// Welche data-section Keys der Besucher an-/ausschalten kann</span><br>
+        &nbsp;&nbsp;<span class="json-key">"editable_sections"</span><span class="json-punct">: [</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="json-punct">{</span>&nbsp;<span class="json-key">"key"</span><span class="json-punct">: </span><span class="json-str">"video"</span><span class="json-punct">,</span>&nbsp;<span class="json-key">"label"</span><span class="json-punct">: </span><span class="json-str">"Erklärvideo"</span><span class="json-punct">,</span>&nbsp;<span class="json-key">"default_on"</span><span class="json-punct">: </span><span class="json-bool">true</span>&nbsp;<span class="json-punct">},</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="json-punct">{</span>&nbsp;<span class="json-key">"key"</span><span class="json-punct">: </span><span class="json-str">"erfahrung"</span><span class="json-punct">,</span>&nbsp;<span class="json-key">"label"</span><span class="json-punct">: </span><span class="json-str">"Erfahrungsbericht"</span><span class="json-punct">,</span>&nbsp;<span class="json-key">"default_on"</span><span class="json-punct">: </span><span class="json-bool">true</span>&nbsp;<span class="json-punct">},</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="json-punct">{</span>&nbsp;<span class="json-key">"key"</span><span class="json-punct">: </span><span class="json-str">"vorteile"</span><span class="json-punct">,</span>&nbsp;<span class="json-key">"label"</span><span class="json-punct">: </span><span class="json-str">"Die Vorteile"</span><span class="json-punct">,</span>&nbsp;<span class="json-key">"default_on"</span><span class="json-punct">: </span><span class="json-bool">true</span>&nbsp;<span class="json-punct">},</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="json-punct">{</span>&nbsp;<span class="json-key">"key"</span><span class="json-punct">: </span><span class="json-str">"ueber_mich"</span><span class="json-punct">,</span>&nbsp;<span class="json-key">"label"</span><span class="json-punct">: </span><span class="json-str">"Über mich"</span><span class="json-punct">,</span>&nbsp;<span class="json-key">"default_on"</span><span class="json-punct">: </span><span class="json-bool">false</span>&nbsp;<span class="json-punct">}</span><br>
+        &nbsp;&nbsp;<span class="json-punct">],</span><br><br>
+        &nbsp;&nbsp;<span class="json-comment">// Optionale Vorkonfiguration die nach Registration in den Editor übertragen wird</span><br>
+        &nbsp;&nbsp;<span class="json-key">"carry_over_fields"</span><span class="json-punct">: [</span><span class="json-str">"theme_color"</span><span class="json-punct">,</span>&nbsp;<span class="json-str">"editable_sections"</span><span class="json-punct">]</span><br>
+        <span class="json-punct">}</span>
+      </div>
+
+      <div class="callout callout-warn" style="margin-top: 24px;">
+        <div class="callout-icon">⚠️</div>
+        <div class="callout-body">
+          <div class="callout-title">Sicherheit: demo_data muss sauber sein</div>
+          Demo-Daten werden in der öffentlichen Preview gerendert. Sie dürfen kein XSS enthalten. Bei der Speicherung im Admin-Panel wird die preview_config durch denselben Sanitizer geleitet wie der Template-Engine-Input.
+        </div>
+      </div>
+    </section>
+
+    <!-- FELDER ------------------------------------------------------------------ -->
+    <section class="section" id="felder">
+      <div class="section-eyebrow">Feldtypen im Preview-Editor</div>
+      <h2 class="section-title">Was kann der Besucher editieren?</h2>
+      <p class="section-lead">Jeder Feldtyp aus dem placeholder_schema kann für die Preview-Konfiguration genutzt werden. Der Admin entscheidet pro Template, welche Felder sinnvoll sind.</p>
+
+      <div style="overflow-x: auto; margin-bottom: 24px;">
+        <table>
+          <thead>
+            <tr>
+              <th>Typ (aus Schema)</th>
+              <th>UI im Preview-Editor</th>
+              <th>Live-Update Methode</th>
+              <th>Empfohlen für</th>
+              <th>Aufwand</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code style="font-size:12px;">card_select</code></td>
+              <td>Farbige Karten (wie im Editor)</td>
+              <td>postMessage updateField → CSS-Variable</td>
+              <td>Farbthema, Stil-Variante</td>
+              <td><span class="pill pill-green">Niedrig</span></td>
+            </tr>
+            <tr>
+              <td><code style="font-size:12px;">toggle</code></td>
+              <td>On/Off Switch</td>
+              <td>postMessage toggleSection</td>
+              <td>Sektionen an/aus</td>
+              <td><span class="pill pill-green">Niedrig</span></td>
+            </tr>
+            <tr>
+              <td><code style="font-size:12px;">text</code></td>
+              <td>Inline-Textfeld (ein Zeile)</td>
+              <td>postMessage updateField → Live-Text</td>
+              <td>Name, Stadt, Slogan</td>
+              <td><span class="pill pill-green">Niedrig</span></td>
+            </tr>
+            <tr>
+              <td><code style="font-size:12px;">image</code></td>
+              <td>Demo-Bild Toggle / Beispiel-Galerie</td>
+              <td>postMessage updateField → img src</td>
+              <td>Header-Bild, Profilbild</td>
+              <td><span class="pill pill-amber">Mittel</span></td>
+            </tr>
+            <tr>
+              <td><code style="font-size:12px;">dropdown</code></td>
+              <td>Kleines Select-Menü</td>
+              <td>postMessage updateField</td>
+              <td>Branche, Region, Sprache</td>
+              <td><span class="pill pill-green">Niedrig</span></td>
+            </tr>
+            <tr>
+              <td><code style="font-size:12px;">textarea</code></td>
+              <td>Mehrzeiliges Textfeld</td>
+              <td>postMessage updateField → Live-Text</td>
+              <td>Kurzbeschreibung, Slogan</td>
+              <td><span class="pill pill-amber">Mittel</span></td>
+            </tr>
+            <tr>
+              <td><code style="font-size:12px;">loop</code></td>
+              <td>Nicht empfohlen für Preview</td>
+              <td>—</td>
+              <td>Zu komplex für Erstbesucher</td>
+              <td><span class="pill pill-gray">Nicht Phase 1</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout callout-success">
+        <div class="callout-icon">✅</div>
+        <div class="callout-body">
+          <div class="callout-title">Design-Entscheidung: Maximal 4–5 editierbare Optionen</div>
+          Wir empfehlen pro Template maximal 4–5 editierbare Controls. Mehr überfordert den Besucher. Das Ziel ist: schnell verstehen, schnell begeistert sein, schnell registrieren. Nicht: maximale Flexibilität.
+        </div>
+      </div>
+    </section>
+
+    <!-- ADMIN SETUP -------------------------------------------------------------- -->
+    <section class="section" id="admin">
+      <div class="section-eyebrow">Admin-Workflow</div>
+      <h2 class="section-title">So konfiguriert man ein neues Template.</h2>
+      <p class="section-lead">Einmal einrichten — dauerhaft für alle Besucher aktiv. Der Admin-Workflow für Template-Autoren.</p>
+
+      <div class="card" style="margin-bottom: 20px;">
+        <div class="card-title">Schritt 1 — Demo-Daten definieren</div>
+        <div class="card-body" style="margin-top: 8px;">
+          Im Admin-Panel bei Templates: <strong>Preview-Konfiguration</strong> öffnen. Dort alle Felder aus dem placeholder_schema mit Dummy-Werten befüllen. Das sind die Werte, die der Besucher als Startpunkt sieht. Tipp: Echte, ansprechende Demo-Daten nehmen (wie auf demo.womenplus.io).
+        </div>
+        <div style="margin-top: 12px; display: flex; flex-wrap: wrap; gap: 8px;">
+          <span class="pill pill-violet">vorname = "Anna"</span>
+          <span class="pill pill-violet">profilbild = demo-url</span>
+          <span class="pill pill-violet">theme_color = "gruen"</span>
+          <span class="pill pill-violet">erfahrung_text = "..."</span>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom: 20px;">
+        <div class="card-title">Schritt 2 — Editierbare Felder wählen</div>
+        <div class="card-body" style="margin-top: 8px;">
+          Aus dem placeholder_schema auswählen, welche 3–5 Felder der Besucher ändern kann. Empfehlung: immer Farbthema + 2–3 Sektions-Toggles. Optional: Textfeld für den Vornamen (macht es persönlich).
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom: 20px;">
+        <div class="card-title">Schritt 3 — Editierbare Sektionen definieren</div>
+        <div class="card-body" style="margin-top: 8px;">
+          Aus den <code style="font-size:12px;">data-section</code> Keys im Template HTML auswählen, welche Sektionen der Besucher an-/ausschalten kann. Default-Zustand (on/off) festlegen.
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Schritt 4 — Vorschau testen und veröffentlichen</div>
+        <div class="card-body" style="margin-top: 8px;">
+          Im Admin-Panel gibt es einen "Preview testen" Button, der die öffentliche Vorschau im neuen Tab öffnet. Nach Zufriedenheit: Status auf "published" → die interaktive Preview erscheint auf der Marketing-Seite.
+        </div>
+      </div>
+    </section>
+
+    <!-- ROADMAP ------------------------------------------------------------------ -->
+    <section class="section" id="roadmap">
+      <div class="section-eyebrow">Implementierung</div>
+      <h2 class="section-title">Roadmap in 3 Phasen.</h2>
+      <p class="section-lead">Schritt für Schritt vorgehen. Phase 1 ist MVP und bringt bereits messbaren Mehrwert.</p>
+
+      <div class="roadmap-phase phase-1">
+        <div class="phase-label">Phase 1 · ~2 Tage</div>
+        <div class="phase-title">MVP: Live-Preview mit Color-Picker & Sektions-Toggles</div>
+        <div class="phase-desc">Der schnellste Weg zum Mehrwert. Alles was funktionieren muss, damit ein Besucher die Seite als "seine" sieht.</div>
+        <div class="phase-items">
+          <div class="phase-item" style="color: var(--violet);">DB Migration: <code>preview_config</code> JSONB Spalte zu templates hinzufügen</div>
+          <div class="phase-item" style="color: var(--violet);">Neue API Route: <code>GET /api/templates/[id]/public-preview</code> (kein Auth, Rate-Limit)</div>
+          <div class="phase-item" style="color: var(--violet);">Neue Section auf /vorlagen/[id] Page: Split-Panel mit iframe + Editor-Panel</div>
+          <div class="phase-item" style="color: var(--violet);">Editor-Panel: card_select (Farb-Cards) + toggle (Sektionen) Komponenten</div>
+          <div class="phase-item" style="color: var(--violet);">postMessage Bridge: Editor → iframe (bereits vorhanden, nur verdrahten)</div>
+          <div class="phase-item" style="color: var(--violet);">CTA-Button: Einstellungen in Cookie speichern + redirect zu /register</div>
+          <div class="phase-item" style="color: var(--violet);">Admin-Panel: Neues "Preview-Konfiguration" Tab bei Template-Edit</div>
+          <div class="phase-item" style="color: var(--violet);">Das Optimalset (womenplus) als erstes Template konfigurieren</div>
+        </div>
+      </div>
+
+      <div class="roadmap-phase phase-2">
+        <div class="phase-label">Phase 2 · ~1 Tag</div>
+        <div class="phase-title">Cookie-Übernahme in den Editor nach Registration</div>
+        <div class="phase-desc">Der "Aha-Moment" nach dem Login: "Das ist schon genau meine Seite."</div>
+        <div class="phase-items">
+          <div class="phase-item" style="color: var(--blue);">Editor beim Laden: <code>fs_preview_config</code> Cookie lesen</div>
+          <div class="phase-item" style="color: var(--blue);">Konfigurierte Felder direkt in site_data schreiben</div>
+          <div class="phase-item" style="color: var(--blue);">Sektions-Toggles aus Cookie auf den initialen Preview-State anwenden</div>
+          <div class="phase-item" style="color: var(--blue);">Cookie clearen nach Anwendung</div>
+          <div class="phase-item" style="color: var(--blue);">Toast/Banner: "Wir haben deine Vorschau-Einstellungen übernommen ✓"</div>
+        </div>
+      </div>
+
+      <div class="roadmap-phase phase-3">
+        <div class="phase-label">Phase 3 · ~1 Tag (optional)</div>
+        <div class="phase-title">Erweiterte Personalisierung & Analytics</div>
+        <div class="phase-desc">Mehr Tiefe, mehr Conversion-Insights.</div>
+        <div class="phase-items">
+          <div class="phase-item" style="color: var(--green);">Text-Feld: Vorname eingeben → live im iframe anzeigen</div>
+          <div class="phase-item" style="color: var(--green);">Bild-Varianten: Vordefinierte Demo-Bilder auswählen (kein Upload)</div>
+          <div class="phase-item" style="color: var(--green);">Analytics: Wie lange interagiert? Welche Farbe gewählt? → Conversion-Rate per Theme</div>
+          <div class="phase-item" style="color: var(--green);">Mobile-optimiertes Layout: Tab "Editor" ↔ "Vorschau" statt Split-Screen</div>
+          <div class="phase-item" style="color: var(--green);">Share-Link: Konfiguration als URL-Hash teilen (z.B. für Social-Media-Posts)</div>
+        </div>
+      </div>
+
+      <div class="grid-2" style="margin-top: 32px;">
+        <div class="card" style="border-top: 3px solid var(--green);">
+          <div class="card-title">Was ist bereits vorhanden ✓</div>
+          <div class="card-body" style="margin-top: 8px;">
+            <div style="display: flex; flex-direction: column; gap: 6px;">
+              <div>✓ postMessage Live-Engine (updateField, toggleSection)</div>
+              <div>✓ Public Preview Route (basic) für asset serving</div>
+              <div>✓ Template HTML in R2 mit data-section Attributen</div>
+              <div>✓ placeholder_schema mit allen Feldtypen</div>
+              <div>✓ Card-Select UI Komponenten im Editor</div>
+              <div>✓ fs_template_intent Cookie-Mechanismus</div>
+            </div>
+          </div>
+        </div>
+        <div class="card" style="border-top: 3px solid var(--violet);">
+          <div class="card-title">Was neu gebaut wird</div>
+          <div class="card-body" style="margin-top: 8px;">
+            <div style="display: flex; flex-direction: column; gap: 6px;">
+              <div>→ templates.preview_config JSONB Spalte</div>
+              <div>→ /api/templates/[id]/public-preview Route (anonym)</div>
+              <div>→ Preview-Section auf vorlagen/[id] Page</div>
+              <div>→ Simplified Editor Panel (React Component)</div>
+              <div>→ fs_preview_config Cookie + Übergabe in Editor</div>
+              <div>→ Admin-Panel Tab "Preview-Konfiguration"</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER ------------------------------------------------------------------ -->
+    <section class="section" style="background: #0f0f1a; border-top: 1px solid rgba(255,255,255,0.06); padding: 48px 64px;">
+      <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 40px; flex-wrap: wrap;">
+        <div>
+          <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(255,255,255,0.3); margin-bottom: 10px;">Konzept-Dokument</div>
+          <div style="font-size: 22px; font-weight: 800; color: white; letter-spacing: -0.02em; margin-bottom: 8px;">Interaktive Template-Vorschau</div>
+          <div style="font-size: 13px; color: rgba(255,255,255,0.4);">FinestSites · Feature Design · v1.0 · Juni 2026</div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 6px; min-width: 200px;">
+          <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(255,255,255,0.3); margin-bottom: 6px;">Nächste Schritte</div>
+          <div style="font-size: 13px; color: rgba(255,255,255,0.5);">1. Phase 1 DB Migration</div>
+          <div style="font-size: 13px; color: rgba(255,255,255,0.5);">2. API Route implementieren</div>
+          <div style="font-size: 13px; color: rgba(255,255,255,0.5);">3. Editor Panel Component</div>
+          <div style="font-size: 13px; color: rgba(255,255,255,0.5);">4. Optimalset konfigurieren</div>
+          <div style="font-size: 13px; color: rgba(255,255,255,0.5);">5. Testen & Deployen</div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8"/>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  width: 1200px; height: 900px;
+  background: #fff;
+  overflow: hidden;
+  font-family: -apple-system, 'Helvetica Neue', sans-serif;
+}
+.section {
+  padding: 52px 60px 0;
+}
+.eyebrow {
+  font-size: 11px; font-weight: 700; letter-spacing: 0.13em; text-transform: uppercase;
+  color: #2F8650; margin-bottom: 14px;
+}
+.headline {
+  font-size: 36px; font-weight: 800; color: #1F1D1B;
+  line-height: 1.15; letter-spacing: -0.025em;
+  margin-bottom: 14px;
+}
+.headline em {
+  font-style: italic; color: #2F8650;
+}
+.intro {
+  font-size: 15px; color: #777; line-height: 1.65; max-width: 680px;
+  margin-bottom: 36px;
+}
+.cards {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
+}
+.card {
+  border-radius: 18px; overflow: hidden;
+  background: #fff;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08), 0 1px 4px rgba(0,0,0,0.04);
+  border: 1px solid #F0EEEA;
+}
+.card-img {
+  height: 160px; overflow: hidden; position: relative;
+}
+.card-img img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+}
+.card-body {
+  padding: 14px 16px 16px;
+}
+.card-body h3 {
+  font-size: 14px; font-weight: 700; color: #1F1D1B;
+  margin-bottom: 6px; letter-spacing: -0.01em;
+}
+.card-body p {
+  font-size: 11.5px; color: #888; line-height: 1.6;
+}
+.fade {
+  position: fixed; bottom: 0; left: 0; right: 0; height: 200px;
+  background: linear-gradient(to bottom, rgba(255,255,255,0) 0%, #ffffff 100%);
+  pointer-events: none;
+}
+</style>
+</head>
+<body>
+<div class="section">
+  <div class="eyebrow">Warum immer mehr Menschen gezielt ergänzen</div>
+  <h2 class="headline">Modernes Leben braucht <em>mehr als Essen</em>.</h2>
+  <p class="intro">Stress, Schlafmangel, wenig Sonnenlicht. Der Körper hat mehr Bedarf, als er durch normale Ernährung deckt. Das Optimalset liefert bioaktive Mikronährstoffe als tägliche Basis für 12 Bereiche.</p>
+
+  <div class="cards">
+    <div class="card">
+      <div class="card-img"><img src="https://demo.womenplus.io/assets/case-1-energie.webp" alt="Energie" /></div>
+      <div class="card-body"><h3>Energie</h3><p>B-Vitamine und Vitamin C tragen zu einem normalen Energiestoffwechsel bei und helfen, Müdigkeit zu reduzieren.</p></div>
+    </div>
+    <div class="card">
+      <div class="card-img"><img src="https://demo.womenplus.io/assets/case-2-immunsystem.webp" alt="Immunsystem" /></div>
+      <div class="card-body"><h3>Immunsystem</h3><p>Vitamin C, D, Zink und Selen tragen zur normalen Funktion des Immunsystems bei.</p></div>
+    </div>
+    <div class="card">
+      <div class="card-img"><img src="https://demo.womenplus.io/assets/case-3-konzentration.webp" alt="Konzentration" /></div>
+      <div class="card-body"><h3>Konzentration</h3><p>Pantothensäure trägt zur normalen geistigen Leistung bei, Zink zur normalen kognitiven Funktion.</p></div>
+    </div>
+    <div class="card">
+      <div class="card-img"><img src="https://demo.womenplus.io/assets/case-4-balance.webp" alt="Innere Balance" /></div>
+      <div class="card-body"><h3>Innere Balance</h3><p>Magnesium und die B-Vitamine tragen zur normalen Funktion des Nervensystems bei.</p></div>
+    </div>
+    <div class="card">
+      <div class="card-img"><img src="https://demo.womenplus.io/assets/case-5-verdauung.webp" alt="Verdauung" /></div>
+      <div class="card-body"><h3>Verdauung</h3><p>Calcium trägt zur normalen Funktion der Verdauungsenzyme bei.</p></div>
+    </div>
+    <div class="card">
+      <div class="card-img"><img src="https://demo.womenplus.io/assets/case-6-beauty.webp" alt="Beauty" /></div>
+      <div class="card-body"><h3>Haut, Haare &amp; Nägel</h3><p>Biotin und Zink tragen zur Erhaltung normaler Haut, Haare und Nägel bei.</p></div>
+    </div>
+    <div class="card">
+      <div class="card-img"><img src="https://demo.womenplus.io/assets/case-7-muskelkraft.webp" alt="Muskelkraft" /></div>
+      <div class="card-body"><h3>Muskelkraft</h3><p>Magnesium und Vitamin D tragen zur normalen Muskelfunktion bei.</p></div>
+    </div>
+    <div class="card">
+      <div class="card-img"><img src="https://demo.womenplus.io/assets/case-8-stoffwechsel.webp" alt="Stoffwechsel" /></div>
+      <div class="card-body"><h3>Stoffwechsel</h3><p>Chrom trägt zu einem normalen Makronährstoff-Stoffwechsel bei.</p></div>
+    </div>
+  </div>
+</div>
+<div class="fade"></div>
+</body>
+</html>

@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8"/>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  width: 1200px; height: 900px;
+  background: #F9F7FF;
+  display: flex; align-items: center; justify-content: center;
+  font-family: -apple-system, 'Helvetica Neue', sans-serif;
+  overflow: hidden;
+}
+.container {
+  width: 860px;
+  background: #fff;
+  border-radius: 24px;
+  padding: 36px 38px;
+  border: 1px solid #EDEAF8;
+  box-shadow: 0 4px 40px rgba(80,60,160,0.07);
+}
+.top-row {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  margin-bottom: 28px;
+}
+.section-title {
+  font-size: 18px; font-weight: 700; color: #111; letter-spacing: -0.02em;
+  margin-bottom: 3px;
+}
+.section-sub {
+  font-size: 12.5px; color: #aaa;
+}
+.eu-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: #ECFDF5; border: 1px solid #A7F3D0;
+  padding: 6px 14px; border-radius: 100px;
+  font-size: 11px; font-weight: 700; color: #166534;
+  letter-spacing: 0.04em; white-space: nowrap;
+}
+.grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;
+  margin-bottom: 16px;
+}
+.card {
+  border-radius: 14px;
+  border: 1px solid #F0EEF8;
+  padding: 16px 14px 14px;
+  background: #FAFAF9;
+}
+.icon-wrap {
+  width: 38px; height: 38px; border-radius: 11px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 19px; margin-bottom: 10px;
+}
+.card-name {
+  font-size: 13px; font-weight: 700; color: #111; margin-bottom: 3px;
+  letter-spacing: -0.01em;
+}
+.card-sub {
+  font-size: 11px; color: #bbb; line-height: 1.4;
+}
+.bottom-strip {
+  margin-top: 4px;
+  background: #F0FDF4;
+  border: 1px solid #BBF7D0;
+  border-radius: 14px;
+  padding: 14px 18px;
+  display: flex; align-items: center; gap: 14px;
+}
+.check-icon {
+  width: 34px; height: 34px; border-radius: 9px;
+  background: #2F8650;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.bottom-text {
+  font-size: 12.5px; color: #14532D; line-height: 1.6;
+}
+.bottom-text strong { font-weight: 700; }
+.pills {
+  display: flex; gap: 7px; margin-top: 7px; flex-wrap: wrap;
+}
+.pill {
+  display: inline-flex; align-items: center; gap: 4px;
+  background: #DCFCE7; border-radius: 100px;
+  padding: 3px 10px;
+  font-size: 10.5px; font-weight: 600; color: #166534;
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="top-row">
+    <div>
+      <div class="section-title">Warum ich das empfehle</div>
+      <div class="section-sub">12 Lebensbereiche · Alles in einer Seite erklärt</div>
+    </div>
+    <div class="eu-badge">
+      <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.745 3.745 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.745 3.745 0 013.296-1.043A3.745 3.745 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.745 3.745 0 013.296 1.043 3.745 3.745 0 011.043 3.296A3.745 3.745 0 0121 12z"/></svg>
+      EU-konforme Claims
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <div class="icon-wrap" style="background:#FEF9C3;">⚡</div>
+      <div class="card-name">Energie</div>
+      <div class="card-sub">B-Vitamine & Vitamin C</div>
+    </div>
+    <div class="card">
+      <div class="icon-wrap" style="background:#DCFCE7;">🛡️</div>
+      <div class="card-name">Immunsystem</div>
+      <div class="card-sub">Vitamin C, D, Zink</div>
+    </div>
+    <div class="card">
+      <div class="icon-wrap" style="background:#EDE9FE;">🧠</div>
+      <div class="card-name">Konzentration</div>
+      <div class="card-sub">Pantothensäure, Zink</div>
+    </div>
+    <div class="card">
+      <div class="icon-wrap" style="background:#FCE7F3;">🌸</div>
+      <div class="card-name">Innere Balance</div>
+      <div class="card-sub">Magnesium, B-Vitamine</div>
+    </div>
+    <div class="card">
+      <div class="icon-wrap" style="background:#DBEAFE;">💧</div>
+      <div class="card-name">Verdauung</div>
+      <div class="card-sub">Calcium</div>
+    </div>
+    <div class="card">
+      <div class="icon-wrap" style="background:#FDF4FF;">✨</div>
+      <div class="card-name">Haut & Haare</div>
+      <div class="card-sub">Biotin & Zink</div>
+    </div>
+    <div class="card">
+      <div class="icon-wrap" style="background:#ECFDF5;">💪</div>
+      <div class="card-name">Muskelkraft</div>
+      <div class="card-sub">Magnesium, Vitamin D</div>
+    </div>
+    <div class="card">
+      <div class="icon-wrap" style="background:#FFF7ED;">🔄</div>
+      <div class="card-name">Stoffwechsel</div>
+      <div class="card-sub">Chrom</div>
+    </div>
+  </div>
+
+  <div class="bottom-strip">
+    <div class="check-icon">
+      <svg width="16" height="16" fill="none" stroke="white" stroke-width="2.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+    </div>
+    <div>
+      <div class="bottom-text"><strong>Rechtssicher formuliert</strong> · Kein Heilversprechen · Direkt einsetzbar</div>
+      <div class="pills">
+        <span class="pill">✓ Keine Heilversprechen</span>
+        <span class="pill">✓ FTC-konform</span>
+        <span class="pill">✓ Keine Wirkaussagen</span>
+        <span class="pill">✓ Sofort verwendbar</span>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

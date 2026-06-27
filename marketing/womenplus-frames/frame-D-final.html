@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8"/>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  width: 1200px; height: 900px;
+  background: #F4F1FA;
+  display: flex; align-items: center; justify-content: center;
+  font-family: -apple-system, 'Helvetica Neue', sans-serif;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Ambient light — gives depth and personality */
+body::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 55% 60% at 72% 46%, rgba(180,165,230,0.22) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 40% at 20% 80%, rgba(160,200,170,0.08) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+/* Deep shadow behind browser — 3D lift illusion */
+.elevation {
+  position: absolute;
+  width: 720px; height: 680px;
+  left: 50%; top: 50%;
+  transform: translate(-50%, -50%) translateY(28px);
+  border-radius: 20px;
+  background: rgba(100,80,160,0.10);
+  filter: blur(40px);
+}
+
+/* macOS Browser chrome */
+.browser {
+  width: 720px;
+  border-radius: 14px;
+  overflow: hidden;
+  position: relative; z-index: 2;
+  box-shadow:
+    0 0 0 0.5px rgba(0,0,0,0.12),
+    0 2px 4px rgba(0,0,0,0.06),
+    0 8px 20px rgba(0,0,0,0.09),
+    0 24px 60px rgba(0,0,0,0.11);
+  display: flex;
+  flex-direction: column;
+}
+
+/* Titlebar */
+.titlebar {
+  flex-shrink: 0;
+  height: 38px;
+  background: linear-gradient(180deg, #F2EFEB 0%, #EAE7E2 100%);
+  display: flex;
+  align-items: center;
+  padding: 0 13px;
+  gap: 7px;
+  border-bottom: 1px solid #D8D4CD;
+}
+.dot { width: 11px; height: 11px; border-radius: 50%; flex-shrink: 0; }
+.url-bar {
+  flex: 1;
+  margin: 0 10px;
+  height: 20px;
+  background: rgba(0,0,0,0.06);
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  font-size: 10.5px;
+  color: #888;
+  letter-spacing: -0.01em;
+}
+
+/* Viewport — shows the real template screenshot */
+.viewport {
+  height: 646px;
+  overflow: hidden;
+  position: relative;
+  background: #F5F2EC;
+}
+
+/* The template screenshot (pre-cropped: dark section removed) */
+.screenshot {
+  width: 720px;
+  height: 612px;
+  object-fit: cover;
+  /* Cropped image is 1440x1325, scale=0.5 → 720x662
+     overflow: 662-612 = 50px, show from top (y=0) */
+  object-position: center 0%;
+  display: block;
+}
+
+/* Soft vignette bottom — seamless fade into feature section */
+.vignette {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 100px;
+  background: linear-gradient(to bottom,
+    rgba(245,242,236,0) 0%,
+    rgba(245,242,236,0.85) 70%,
+    rgba(245,242,236,1) 100%
+  );
+  pointer-events: none;
+}
+
+/* Subtle top reflection gloss on browser */
+.browser::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 38px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0) 100%);
+  pointer-events: none;
+  z-index: 10;
+  border-radius: 14px 14px 0 0;
+}
+</style>
+</head>
+<body>
+  <div class="elevation"></div>
+
+  <div class="browser">
+    <!-- macOS titlebar -->
+    <div class="titlebar">
+      <div class="dot" style="background:#FF5F57; box-shadow: 0 0 0 0.5px rgba(0,0,0,0.15);"></div>
+      <div class="dot" style="background:#FEBC2E; box-shadow: 0 0 0 0.5px rgba(0,0,0,0.12);"></div>
+      <div class="dot" style="background:#28C840; box-shadow: 0 0 0 0.5px rgba(0,0,0,0.12);"></div>
+      <div class="url-bar">
+        <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+        demo.womenplus.io
+      </div>
+    </div>
+
+    <!-- Template content -->
+    <div class="viewport">
+      <img class="screenshot"
+           src="file:///Users/kurzeja/new-finestsites/marketing/womenplus-frames/warum-cropped.png"
+           alt="Warum ich das empfehle" />
+      <div class="vignette"></div>
+    </div>
+  </div>
+</body>
+</html>

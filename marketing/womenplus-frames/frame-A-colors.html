@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8"/>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  width: 1200px; height: 900px;
+  background: #F7F5F2;
+  display: flex; align-items: center; justify-content: center;
+  font-family: -apple-system, 'Helvetica Neue', sans-serif;
+}
+.wrap {
+  display: flex; flex-direction: column; align-items: center; gap: 48px;
+  width: 1020px;
+}
+.cards {
+  display: flex; gap: 26px; align-items: stretch;
+}
+.col {
+  display: flex; flex-direction: column; align-items: center; gap: 14px;
+}
+.card {
+  width: 306px; border-radius: 18px; overflow: hidden;
+  background: #fff;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.07), 0 12px 40px rgba(0,0,0,0.08);
+}
+.card-nav {
+  padding: 12px 18px 10px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.nav-logo {
+  font-size: 11.5px; font-weight: 800; color: white; letter-spacing: -0.01em;
+}
+.nav-links {
+  display: flex; gap: 14px;
+}
+.nav-link {
+  width: 28px; height: 3.5px; border-radius: 2px; background: rgba(255,255,255,0.35);
+}
+.card-hero {
+  padding: 22px 18px 20px;
+}
+.hero-eyebrow {
+  font-size: 9px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+  color: white; opacity: 0.7; margin-bottom: 8px;
+}
+.hero-h1 {
+  font-size: 16px; font-weight: 800; color: white; line-height: 1.25; letter-spacing: -0.02em;
+  margin-bottom: 14px;
+}
+.hero-btn {
+  display: inline-block; padding: 7px 14px; border-radius: 100px;
+  background: rgba(255,255,255,0.2); font-size: 9.5px; font-weight: 700;
+  color: white; letter-spacing: 0.01em; border: 1px solid rgba(255,255,255,0.3);
+}
+.card-body {
+  padding: 16px 18px 20px; background: #FAFAF9;
+}
+.body-line {
+  height: 3.5px; border-radius: 2px; background: #EBEBEB; margin-bottom: 7px;
+}
+.color-tag {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: white; border: 1.5px solid #E5E7EB;
+  padding: 5px 11px 5px 8px; border-radius: 100px;
+  font-size: 11px; font-weight: 600; color: #555;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+}
+.color-dot {
+  width: 12px; height: 12px; border-radius: 50%;
+}
+.hex {
+  font-size: 10px; font-weight: 500; color: #999; letter-spacing: 0.04em;
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="cards">
+    <!-- Naturgrün -->
+    <div class="col">
+      <div class="card">
+        <div style="background: linear-gradient(160deg, #2F8650, #1E6138);">
+          <div class="card-nav">
+            <span class="nav-logo">Anna Müller</span>
+            <div class="nav-links">
+              <div class="nav-link"></div>
+              <div class="nav-link"></div>
+              <div class="nav-link"></div>
+            </div>
+          </div>
+          <div class="card-hero">
+            <div class="hero-eyebrow">FitLine Optimalset</div>
+            <div class="hero-h1">Täglich optimal versorgt.<br/>Und das in Minuten.</div>
+            <span class="hero-btn">Mehr erfahren →</span>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="body-line" style="width:90%;background:#2F865018;"></div>
+          <div class="body-line" style="width:76%;"></div>
+          <div class="body-line" style="width:82%;"></div>
+        </div>
+      </div>
+      <div class="color-tag">
+        <div class="color-dot" style="background:#2F8650;"></div>
+        Naturgrün
+        <span class="hex">#2F8650</span>
+      </div>
+    </div>
+
+    <!-- Ozeanblau -->
+    <div class="col">
+      <div class="card" style="box-shadow:0 2px 12px rgba(0,40,100,0.1),0 12px 40px rgba(0,40,100,0.12);">
+        <div style="background: linear-gradient(160deg, #1B6B9E, #0E4A72);">
+          <div class="card-nav">
+            <span class="nav-logo">Marie Schmidt</span>
+            <div class="nav-links">
+              <div class="nav-link"></div>
+              <div class="nav-link"></div>
+              <div class="nav-link"></div>
+            </div>
+          </div>
+          <div class="card-hero">
+            <div class="hero-eyebrow">FitLine Optimalset</div>
+            <div class="hero-h1">Täglich optimal versorgt.<br/>Und das in Minuten.</div>
+            <span class="hero-btn">Mehr erfahren →</span>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="body-line" style="width:90%;background:#1B6B9E18;"></div>
+          <div class="body-line" style="width:76%;"></div>
+          <div class="body-line" style="width:82%;"></div>
+        </div>
+      </div>
+      <div class="color-tag">
+        <div class="color-dot" style="background:#1B6B9E;"></div>
+        Ozeanblau
+        <span class="hex">#1B6B9E</span>
+      </div>
+    </div>
+
+    <!-- Warm Plum -->
+    <div class="col">
+      <div class="card" style="box-shadow:0 2px 12px rgba(80,20,55,0.10),0 12px 40px rgba(80,20,55,0.11);">
+        <div style="background: linear-gradient(160deg, #8B3D6B, #652D50);">
+          <div class="card-nav">
+            <span class="nav-logo">Julia Weber</span>
+            <div class="nav-links">
+              <div class="nav-link"></div>
+              <div class="nav-link"></div>
+              <div class="nav-link"></div>
+            </div>
+          </div>
+          <div class="card-hero">
+            <div class="hero-eyebrow">FitLine Optimalset</div>
+            <div class="hero-h1">Täglich optimal versorgt.<br/>Und das in Minuten.</div>
+            <span class="hero-btn">Mehr erfahren →</span>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="body-line" style="width:90%;background:#8B3D6B18;"></div>
+          <div class="body-line" style="width:76%;"></div>
+          <div class="body-line" style="width:82%;"></div>
+        </div>
+      </div>
+      <div class="color-tag">
+        <div class="color-dot" style="background:#8B3D6B;"></div>
+        Warm Plum
+        <span class="hex">#8B3D6B</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

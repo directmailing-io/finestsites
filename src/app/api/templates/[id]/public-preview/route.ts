@@ -210,18 +210,50 @@ const PREVIEW_GUARD = `
   }, true);
 
   /* ── 2. Section lookup ────────────────────────────────────────────── */
+  //
+  // PRIORITY: data-fs-section FIRST (our controlled wrapper div),
+  // then data-section (native template element).
+  //
+  // This matters because some templates have BOTH a native [data-section]
+  // inside a [data-fs-section] wrapper.  We must target the outermost
+  // element we own so that hiding it collapses all its content — including
+  // any native elements inside — and avoids fighting GSAP on inner nodes.
 
   function findSection(key) {
-    return document.querySelector('[data-section="' + key + '"]')
-        || document.querySelector('[data-fs-section="' + key + '"]');
+    return document.querySelector('[data-fs-section="' + key + '"]')
+        || document.querySelector('[data-section="' + key + '"]');
   }
 
   function findSectionNein(key) {
-    return document.querySelector('[data-section="' + key + '-nein"]')
-        || document.querySelector('[data-fs-section="' + key + '-nein"]');
+    return document.querySelector('[data-fs-section="' + key + '-nein"]')
+        || document.querySelector('[data-section="' + key + '-nein"]');
   }
 
-  /* ── 3. Scroll (GSAP-safe) ────────────────────────────────────────── */
+  /* ── 3. GSAP cleanup ──────────────────────────────────────────────── */
+  //
+  // Before hiding a section, kill every GSAP tween and ScrollTrigger that
+  // references an element inside it.  Without this, GSAP can re-apply
+  // transforms or opacity on the next tick, fighting our display:none.
+
+  function killGsapInside(elem) {
+    if (!window.gsap) return;
+    try {
+      gsap.killTweensOf(elem);
+      var children = Array.from(elem.querySelectorAll('*'));
+      for (var i = 0; i < children.length; i++) gsap.killTweensOf(children[i]);
+    } catch (_) {}
+    try {
+      if (window.ScrollTrigger) {
+        ScrollTrigger.getAll().forEach(function(st) {
+          if (st.trigger && (elem === st.trigger || elem.contains(st.trigger))) {
+            st.kill();
+          }
+        });
+      }
+    } catch (_) {}
+  }
+
+  /* ── 4. Scroll (GSAP-safe) ────────────────────────────────────────── */
   //
   // getBoundingClientRect() is NOT used for scroll calculation because GSAP
   // transforms and pins can make the visual position differ from layout.
@@ -237,29 +269,44 @@ const PREVIEW_GUARD = `
       el   = el.offsetParent;
     }
     var target = Math.max(0, top - 80); // 80 px clearance for sticky nav
-
-    // Kill any active GSAP scroll tweens so they don't fight the jump.
     if (window.gsap) { try { window.gsap.killTweensOf(window); } catch (_) {} }
-
-    // Direct scrollTop assignment — instant, bypasses smooth-scroll and GSAP.
     var root = document.scrollingElement || document.documentElement;
     root.scrollTop = target;
     document.body.scrollTop = target; // iOS Safari fallback
   }
 
-  /* ── 4. Highlight overlay ─────────────────────────────────────────── */
+  /* ── 5. Show / hide helpers ───────────────────────────────────────── */
+  //
+  // showEl: remove our inline display:none; if the element is still
+  //   hidden by template CSS, force display:block with !important.
+  // hideEl: kill GSAP first, then force display:none with !important
+  //   so neither template CSS nor GSAP can fight it.
+
+  function showEl(elem) {
+    elem.style.removeProperty('display');
+    void elem.offsetHeight; // force reflow
+    if (window.getComputedStyle(elem).display === 'none') {
+      elem.style.setProperty('display', 'block', 'important');
+    }
+  }
+
+  function hideEl(elem) {
+    killGsapInside(elem);
+    elem.style.setProperty('display', 'none', 'important');
+  }
+
+  /* ── 6. Highlight overlay ─────────────────────────────────────────── */
   //
   // Called AFTER scrollToSection() + two requestAnimationFrame ticks so
   // the viewport has settled and getBoundingClientRect() is accurate.
   // position:fixed keeps it above the template's own stacking contexts.
+  // All font properties are hard-reset so template fonts never bleed in.
 
   function showHighlight(elem, isShowing) {
-    // Clear any leftover overlay from a previous toggle.
     document.querySelectorAll('[data-fs-hl]').forEach(function(el) { el.remove(); });
     if (!elem) return;
-
     var rect = elem.getBoundingClientRect();
-    if (rect.width < 10 || rect.height < 10) return; // not measurable yet
+    if (rect.width < 10 || rect.height < 10) return;
 
     var rgb   = isShowing ? '34,197,94' : '239,68,68';
     var label = isShowing ? 'Sektion eingeblendet ✓' : 'Sektion ausgeblendet ✕';
@@ -283,7 +330,6 @@ const PREVIEW_GUARD = `
     ].join(';');
 
     var badge = document.createElement('span');
-    // Hard-reset every font property so the template's fonts never bleed in.
     badge.style.cssText = [
       'position:absolute',
       'top:12px',
@@ -311,14 +357,13 @@ const PREVIEW_GUARD = `
     ring.appendChild(badge);
     document.body.appendChild(ring);
 
-    // Auto-dismiss after 2 s.
     setTimeout(function() {
       ring.style.opacity = '0';
       setTimeout(function() { ring.remove(); }, 400);
-    }, 2000);
+    }, 2500);
   }
 
-  /* ── 5. Toggle handler ────────────────────────────────────────────── */
+  /* ── 7. Toggle handler ────────────────────────────────────────────── */
 
   window.addEventListener('message', function(e) {
     if (!e.data || e.data.type !== 'fs-toggle') return;
@@ -331,20 +376,16 @@ const PREVIEW_GUARD = `
     var toHide = show ? neinEl : jaEl;
 
     if (toShow) {
-      // Remove the inline display:none we set server-side so the element
-      // re-enters the layout (needed for accurate offsetTop measurement).
-      // We also set visibility:hidden + opacity:0 so it's layout-present
-      // but invisible until we trigger the fade-in after scroll.
-      toShow.style.removeProperty('display'); // clear inline display:none
+      // Make the element layout-present but invisible, then scroll to it,
+      // then fade it in.  Using showEl() guarantees it is visible even if
+      // template CSS tries to hide it.
+      showEl(toShow);
       toShow.style.visibility = 'hidden';
       toShow.style.opacity    = '0';
-      void toShow.offsetHeight; // synchronous reflow — offsetTop now valid
+      void toShow.offsetHeight; // reflow so offsetTop is valid
 
-      // Instant jump using layout position (GSAP-safe).
       scrollToSection(toShow);
 
-      // After two animation frames the viewport has settled and
-      // getBoundingClientRect() reflects the post-scroll position.
       requestAnimationFrame(function() {
         requestAnimationFrame(function() {
           toShow.style.visibility = '';
@@ -358,19 +399,19 @@ const PREVIEW_GUARD = `
         });
       });
 
-      // Immediately fade out + hide the opposite section (no scroll).
+      // Fade out and hide the opposite section without scrolling.
       if (toHide) {
         toHide.style.transition = 'opacity 0.25s ease';
         toHide.style.opacity    = '0';
         setTimeout(function() {
-          toHide.style.setProperty('display', 'none'); // inline hide
-          toHide.style.opacity    = '';
           toHide.style.transition = '';
+          toHide.style.opacity    = '';
+          hideEl(toHide);
         }, 280);
       }
 
     } else if (toHide) {
-      // Hiding only (no replacement to show): scroll to section, red ring, fade out.
+      // Hide-only path: scroll to section, show red ring, fade out, hide.
       scrollToSection(toHide);
 
       requestAnimationFrame(function() {
@@ -379,9 +420,9 @@ const PREVIEW_GUARD = `
           toHide.style.transition = 'opacity 0.45s ease';
           toHide.style.opacity    = '0';
           setTimeout(function() {
-            toHide.style.setProperty('display', 'none'); // inline hide
-            toHide.style.opacity    = '';
             toHide.style.transition = '';
+            toHide.style.opacity    = '';
+            hideEl(toHide);
           }, 480);
         });
       });
