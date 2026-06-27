@@ -90,6 +90,10 @@ export default function InteractiveEditorPreview({
   const paneRef = useRef<HTMLDivElement>(null)
   const iframeRef = useRef<HTMLIFrameElement>(null)
   const pendingScroll = useRef<number | null>(null)
+  // allValuesRef tracks ALL current field values (including toggle state)
+  // and is used when building the next iframe src on non-toggle changes.
+  // Toggle changes only update allValuesRef + postMessage; they don't reload.
+  const allValuesRef = useRef<Record<string, string> | null>(null)
   const [paneWidth, setPaneWidth] = useState(880)
   const [viewport, setViewport] = useState<Viewport>('desktop')
   const [isLoading, setIsLoading] = useState(false)
@@ -119,18 +123,27 @@ export default function InteractiveEditorPreview({
 
   // ─── State: one value per interactive field ───────────────────────────────
 
-  const [fieldValues, setFieldValues] = useState<Record<string, string>>(() => {
-    const init: Record<string, string> = {}
+  // Initialize allValuesRef once from schema (lazy pattern with null check)
+  if (!allValuesRef.current) {
+    allValuesRef.current = {}
     for (const f of interactiveFields) {
-      init[f.key] = f.preview_value ?? f.default_value ?? ''
+      allValuesRef.current[f.key] = f.preview_value ?? f.default_value ?? ''
     }
-    return init
-  })
+  }
+
+  const [fieldValues, setFieldValues] = useState<Record<string, string>>(
+    () => ({ ...allValuesRef.current! })
+  )
+
+  // previewSrc is STATE (not derived) so toggles can postMessage without reload.
+  // Non-toggle field changes update both fieldValues AND previewSrc.
+  const [previewSrc, setPreviewSrc] = useState(() =>
+    buildPreviewSrc(templateId, allValuesRef.current!)
+  )
 
   const demoUrl = `demo.${domain}`
-  const previewSrc = buildPreviewSrc(templateId, fieldValues)
 
-  // ─── Field update — capture scroll before src changes, restore after load ──
+  // ─── Field updates ─────────────────────────────────────────────────────────
 
   function captureScroll() {
     try {
@@ -139,18 +152,31 @@ export default function InteractiveEditorPreview({
     } catch { pendingScroll.current = null }
   }
 
+  /** Non-toggle field (color, hero variant, …): update allValuesRef + rebuild src → iframe reloads */
   const updateField = useCallback((key: string, value: string) => {
     captureScroll()
     setIsLoading(true)
+    allValuesRef.current = { ...allValuesRef.current!, [key]: value }
     setFieldValues(prev => ({ ...prev, [key]: value }))
-  }, [])
+    setPreviewSrc(buildPreviewSrc(templateId, allValuesRef.current!))
+  }, [templateId])
 
-  const toggleField = useCallback((key: string) => {
-    captureScroll()
-    setFieldValues(prev => ({
-      ...prev,
-      [key]: prev[key] === 'ja' ? 'nein' : 'ja',
-    }))
+  /**
+   * Toggle field (ja/nein section): update allValuesRef + fieldValues for UI,
+   * then postMessage the iframe to animate in-place — NO src change, NO reload.
+   * allValuesRef is kept up-to-date so the next non-toggle reload includes the
+   * current toggle state in the ?data= param.
+   */
+  const handleToggle = useCallback((key: string) => {
+    const newValue = (allValuesRef.current![key] ?? 'ja') === 'ja' ? 'nein' : 'ja'
+    allValuesRef.current = { ...allValuesRef.current!, [key]: newValue }
+    setFieldValues(prev => ({ ...prev, [key]: newValue }))
+    try {
+      iframeRef.current?.contentWindow?.postMessage(
+        { type: 'fs-toggle', key, value: newValue },
+        '*'
+      )
+    } catch { /* cross-origin guard */ }
   }, [])
 
   const handleIframeLoad = useCallback(() => {
@@ -158,7 +184,6 @@ export default function InteractiveEditorPreview({
     const target = pendingScroll.current
     pendingScroll.current = null
     if (target !== null) {
-      // rAF gives the iframe a frame to render before we scroll
       requestAnimationFrame(() => {
         try {
           iframeRef.current?.contentWindow?.scrollTo({ top: target, behavior: 'instant' })
@@ -375,7 +400,7 @@ export default function InteractiveEditorPreview({
                       return (
                         <div
                           key={field.key}
-                          onClick={() => toggleField(field.key)}
+                          onClick={() => handleToggle(field.key)}
                           style={{
                             display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                             padding: '9px 6px', borderRadius: 8, cursor: 'pointer', transition: 'background 0.1s',

@@ -30,16 +30,105 @@ import { renderTemplate } from '@/lib/utils/template-engine'
 // Types
 // ---------------------------------------------------------------------------
 
+interface CardOption { value: string }
+
 interface PlaceholderField {
   key: string
+  type?: string
   default_value?: string
   preview_value?: string
   preview_interactive?: boolean
+  card_options?: CardOption[]
 }
 
 interface PlaceholderSchema {
   fields?: PlaceholderField[]
   preview_values?: Record<string, string>
+}
+
+// ---------------------------------------------------------------------------
+// Toggle-section helpers
+// ---------------------------------------------------------------------------
+
+/** Returns true when a field is a ja/nein 2-option toggle. */
+function isToggleField(f: PlaceholderField): boolean {
+  if (f.type !== 'card_select' || !f.card_options) return false
+  const vals = f.card_options.map(o => o.value)
+  return vals.length === 2 && vals.includes('ja') && vals.includes('nein')
+}
+
+/**
+ * Balanced {{#if…}}…{{/if}} extractor.
+ * Returns { content, end } where end is the index AFTER the closing {{/if}}.
+ * Correctly handles nested {{#if}} blocks.
+ */
+function extractIfBlock(
+  html: string,
+  startPos: number,
+  openTag: string,
+): { content: string; end: number } | null {
+  const closeTag = '{{/if}}'
+  const anyOpen = '{{#if '
+  let depth = 1
+  let i = startPos + openTag.length
+  while (i < html.length) {
+    if (html.slice(i, i + anyOpen.length) === anyOpen) {
+      depth++
+      i += anyOpen.length
+      continue
+    }
+    if (html.slice(i, i + closeTag.length) === closeTag) {
+      depth--
+      if (depth === 0) {
+        return { content: html.slice(startPos + openTag.length, i), end: i + closeTag.length }
+      }
+      i += closeTag.length
+      continue
+    }
+    i++
+  }
+  return null
+}
+
+/**
+ * For every preview_interactive toggle field, replace all
+ *   {{#if KEY=ja}}…{{/if}}   and   {{#if KEY=nein}}…{{/if}}
+ * with wrapper divs that carry a data-fs-section attribute.
+ * The section content is ALWAYS rendered — visibility is set via inline style.
+ * This allows postMessage-based in-place show/hide without a full iframe reload.
+ */
+function wrapToggleSections(
+  html: string,
+  fields: PlaceholderField[],
+  dataMap: Record<string, string>,
+): string {
+  const toggleFields = fields.filter(f => f.preview_interactive && isToggleField(f))
+  let result = html
+
+  for (const field of toggleFields) {
+    const key = field.key
+    const isVisible = (dataMap[key] ?? 'ja') === 'ja'
+
+    for (const variant of ['ja', 'nein'] as const) {
+      const openTag = `{{#if ${key}=${variant}}}`
+      const sectionId = variant === 'ja' ? key : `${key}-nein`
+      const hidden = (variant === 'ja') !== isVisible   // hide if variant doesn't match current value
+
+      let pos = 0
+      while (true) {
+        const idx = result.indexOf(openTag, pos)
+        if (idx === -1) break
+        const block = extractIfBlock(result, idx, openTag)
+        if (!block) { pos = idx + openTag.length; continue }
+        const styleAttr = hidden ? ' style="display:none"' : ''
+        const replacement = `<div data-fs-section="${sectionId}"${styleAttr}>${block.content}</div>`
+        result = result.slice(0, idx) + replacement + result.slice(block.end)
+        pos = idx + replacement.length
+      }
+    }
+  }
+
+  return result
 }
 
 // ---------------------------------------------------------------------------
@@ -74,29 +163,73 @@ function getClientIp(req: NextRequest): string {
 // to fix JS-initiated asset loading (GSAP frame sequences, fetch(), etc.)
 
 const PREVIEW_GUARD = `
-<style>
-  .fs-preview-block { position:relative; pointer-events:none; }
-</style>
+<style>.fs-preview-block{position:relative;pointer-events:none}</style>
 <script>
 (function(){
-  // Block all form submissions
-  document.addEventListener('submit', function(e){
-    e.preventDefault(); e.stopImmediatePropagation(); return false;
-  }, true);
-  // Block external link navigation; handle #anchor links via scrollIntoView
-  document.addEventListener('click', function(e){
-    var el = e.target;
-    while(el && el.tagName !== 'A') el = el.parentElement;
-    if(!el) return;
-    var href = el.getAttribute('href') || '';
-    if(href === '' || href.startsWith('javascript')) return;
-    e.preventDefault(); e.stopImmediatePropagation();
-    if(href.startsWith('#')) {
-      var id = href.slice(1);
-      var target = document.getElementById(id) || document.querySelector('[name="'+id+'"]');
-      if(target) target.scrollIntoView({behavior:'smooth'});
+  /* ── Security ─────────────────────────────── */
+  document.addEventListener('submit',function(e){
+    e.preventDefault();e.stopImmediatePropagation();return false;
+  },true);
+  document.addEventListener('click',function(e){
+    var el=e.target;
+    while(el&&el.tagName!=='A')el=el.parentElement;
+    if(!el)return;
+    var href=el.getAttribute('href')||'';
+    if(href===''||href.startsWith('javascript'))return;
+    e.preventDefault();e.stopImmediatePropagation();
+    if(href.startsWith('#')){
+      var t=document.getElementById(href.slice(1))||document.querySelector('[name="'+href.slice(1)+'"]');
+      if(t)t.scrollIntoView({behavior:'smooth'});
     }
-  }, true);
+  },true);
+
+  /* ── In-place section toggle (postMessage from parent) ── */
+  window.addEventListener('message',function(e){
+    if(!e.data||e.data.type!=='fs-toggle')return;
+    var key=e.data.key;
+    var show=e.data.value==='ja';
+    var jaEl=document.querySelector('[data-fs-section="'+key+'"]');
+    var neinEl=document.querySelector('[data-fs-section="'+key+'-nein"]');
+    var toShow=show?jaEl:neinEl;
+    var toHide=show?neinEl:jaEl;
+
+    function fadeIn(elem){
+      if(!elem)return;
+      elem.style.transition='';
+      elem.style.visibility='hidden';
+      elem.style.display='';
+      /* force layout so scrollIntoView can measure position */
+      void elem.offsetHeight;
+      elem.scrollIntoView({behavior:'smooth',block:'start'});
+      setTimeout(function(){
+        elem.style.visibility='';
+        elem.style.opacity='0';
+        void elem.offsetHeight;
+        elem.style.transition='opacity 0.5s ease';
+        elem.style.opacity='1';
+      },480);
+    }
+    function fadeOut(elem,scrollFirst){
+      if(!elem)return;
+      if(scrollFirst){
+        elem.scrollIntoView({behavior:'smooth',block:'start'});
+        setTimeout(function(){doFade();},480);
+      } else { doFade(); }
+      function doFade(){
+        elem.style.transition='opacity 0.4s ease';
+        elem.style.opacity='0';
+        setTimeout(function(){elem.style.display='none';elem.style.opacity='';elem.style.transition='';},420);
+      }
+    }
+
+    if(toShow){
+      fadeIn(toShow);
+      /* hide the opposite section without scroll */
+      if(toHide){fadeOut(toHide,false);}
+    } else if(toHide){
+      fadeOut(toHide,true);
+    }
+  });
 })();
 </script>`
 
@@ -189,6 +322,15 @@ svg{opacity:0.4}p{font-size:14px;font-weight:500}</style></head>
       }
     } catch { /* ignore malformed param */ }
   }
+
+  // ---------------------------------------------------------------------------
+  // Wrap preview_interactive toggle sections with data-fs-section divs.
+  // This must happen BEFORE renderTemplate so the {{#if KEY=ja/nein}} blocks
+  // are replaced by always-present wrapper divs (initially visible or hidden).
+  // The PREVIEW_GUARD postMessage handler then toggles them in-place with
+  // smooth animations — no iframe reload needed.
+  // ---------------------------------------------------------------------------
+  html = wrapToggleSections(html, fields, dataMap)
 
   // ---------------------------------------------------------------------------
   // Rewrite relative asset paths → public-preview asset proxy
