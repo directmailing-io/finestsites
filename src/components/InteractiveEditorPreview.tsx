@@ -201,10 +201,13 @@ export default function InteractiveEditorPreview({
   // ─── Scaling ──────────────────────────────────────────────────────────────
 
   const targetWidth = VIEWPORT_CONFIG[viewport].width
-  const scale       = paneWidth > 0 ? Math.min(0.999, paneWidth / targetWidth) : 0.3
+  // Guard: if paneWidth hasn't been measured yet (SSR), use a safe fallback
+  // so scale doesn't stay at 0.999 (which would show template at full desktop size).
+  const safePaneWidth = paneWidth > 0 ? paneWidth : 320
+  const scale   = Math.min(0.999, safePaneWidth / targetWidth)
 
   const scaledW = targetWidth * scale
-  const leftPad = viewport !== 'desktop' ? Math.max(0, (paneWidth - scaledW) / 2) : 0
+  const leftPad = viewport !== 'desktop' ? Math.max(0, (safePaneWidth - scaledW) / 2) : 0
 
   // ─── Shared controls markup ───────────────────────────────────────────────
   // Rendered in both the desktop sidebar and the mobile inline controls section.
@@ -501,36 +504,34 @@ export default function InteractiveEditorPreview({
               </div>
             )}
 
-            {/*
-              In-flow clip container — sized to exactly the visual (scaled) iframe
-              dimensions. No position:absolute, no reliance on overflow:hidden to
-              clip transforms. This sidesteps the iOS Safari bug where
-              overflow:hidden fails to clip transformed children.
-            */}
+            {/* Scaled iframe — position:absolute keeps it out of layout flow so
+                it never affects pane/page width. The page-level overflow-x:hidden
+                (added to html/body in the page's style block) handles any visual
+                bleed on iOS Safari where overflow:hidden on this pane may not
+                clip transformed children reliably. */}
             <div style={{
-              width: Math.round(scaledW),
-              height: '100%',
-              overflow: 'hidden',
-              flexShrink: 0,
-              marginLeft: leftPad,
+              position: 'absolute',
+              top: 0,
+              left: leftPad,
             }}>
-              <div style={{
-                width: targetWidth,
-                height: scale > 0 ? Math.ceil(paneHeight / scale) : paneHeight,
-                transform: `scale(${scale})`,
-                transformOrigin: 'top left',
-              }}>
               <iframe
                 ref={iframeRef}
                 src={previewSrc}
                 onLoad={handleIframeLoad}
-                style={{ width: '100%', height: '100%', border: 'none', display: 'block' }}
+                style={{
+                  width: targetWidth,
+                  height: scale > 0 ? Math.ceil(paneHeight / scale) : paneHeight,
+                  border: 'none',
+                  display: 'block',
+                  transform: `scale(${scale})`,
+                  transformOrigin: 'top left',
+                  flexShrink: 0,
+                }}
                 title="Template Vorschau"
               />
-              </div>  {/* scale wrapper */}
-            </div>    {/* clip container */}
-          </div>      {/* pane */}
-        </div>        {/* body */}
+            </div>
+          </div>
+        </div>
 
         {/* ── Mobile inline controls (below preview) ───────────────────────── */}
         {/* Apple configurator pattern: options stack below the product preview   */}
@@ -544,6 +545,11 @@ export default function InteractiveEditorPreview({
 
       {/* ── Global styles ─────────────────────────────────────────────────── */}
       <style>{`
+        /* Prevent horizontal page scroll caused by the scaled iframe's
+           position:absolute layout footprint escaping overflow:hidden on iOS Safari.
+           This is the definitive page-level fix. */
+        html, body { overflow-x: hidden !important; max-width: 100%; }
+
         @keyframes fs-spin { to { transform: rotate(360deg); } }
 
         /* ── Shared toggle row ─────────────────────────────────────────────── */
