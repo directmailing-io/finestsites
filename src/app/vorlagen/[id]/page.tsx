@@ -229,10 +229,10 @@ export default async function TemplateDetailPage({ params }: Props) {
         const isReverse = section.imagePosition === 'right'
         const sectionImg = section.imageUrl || images[i + 1] || null
         const isDark = i % 2 !== 0
-        const bg = isDark ? '#8060b0' : '#fff'
-        const textColor = isDark ? 'rgba(255,255,255,0.85)' : '#555'
-        const headingColor = isDark ? '#fff' : '#111'
-        const numColor = isDark ? 'rgba(255,255,255,0.5)' : accentColor
+        const bg = isDark ? '#F9F7FF' : '#fff'
+        const textColor = '#555'
+        const headingColor = '#111'
+        const numColor = accentColor
         const num = String(i + 1).padStart(2, '0')
 
         return (
@@ -243,16 +243,16 @@ export default async function TemplateDetailPage({ params }: Props) {
               <div
                 className="vd-feature-img"
                 style={{
-                  background: sectionImg ? 'transparent' : (isDark ? 'rgba(255,255,255,0.1)' : accentBg),
-                  border: sectionImg ? 'none' : `1px solid ${isDark ? 'rgba(255,255,255,0.2)' : accentColor + '22'}`,
-                  boxShadow: isDark ? '0 8px 40px rgba(0,0,0,0.25)' : '0 4px 20px rgba(0,0,0,0.08)',
+                  background: sectionImg ? 'transparent' : accentBg,
+                  border: sectionImg ? 'none' : `1px solid ${accentColor}22`,
+                  boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
                 }}
               >
                 {sectionImg ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={sectionImg} alt={section.heading} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
                 ) : (
-                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16, padding: 48, color: isDark ? 'rgba(255,255,255,0.4)' : accentColor, opacity: 0.5 }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16, padding: 48, color: accentColor, opacity: 0.5 }}>
                     {SECTION_ICONS[i]}
                   </div>
                 )}
