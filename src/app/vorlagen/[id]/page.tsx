@@ -147,7 +147,7 @@ export default async function TemplateDetailPage({ params }: Props) {
     : 'Weitere Templates'
 
   return (
-    <div style={{ fontFamily: '"Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif', background: '#fff', minHeight: '100vh' }}>
+    <div style={{ fontFamily: '"Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif', background: '#fff', minHeight: '100vh', overflowX: 'hidden' }}>
       <style>{`
         @font-face {
           font-family: 'Plus Jakarta Sans';
@@ -214,7 +214,7 @@ export default async function TemplateDetailPage({ params }: Props) {
           .vd-hero-cta { display: none; } /* StickyPurchaseBar + NavBar handle CTA */
 
           /* Editor preview: edge-to-edge feel */
-          .vd-preview { padding: 0 0 48px; }
+          .vd-preview { padding: 0 0 48px; overflow: hidden; }
           .vd-preview-inner { max-width: 100%; }
           .vd-preview-text { padding: 0 20px; }
           .vd-preview-eyebrow { padding: 0 20px; }

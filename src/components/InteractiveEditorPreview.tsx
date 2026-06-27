@@ -201,17 +201,7 @@ export default function InteractiveEditorPreview({
   // ─── Scaling ──────────────────────────────────────────────────────────────
 
   const targetWidth = VIEWPORT_CONFIG[viewport].width
-  const scale       = Math.min(0.999, paneWidth / targetWidth)
-
-  const iframeStyle: React.CSSProperties = {
-    width: targetWidth,
-    height: Math.ceil(paneHeight / scale),
-    border: 'none',
-    display: 'block',
-    transform: `scale(${scale})`,
-    transformOrigin: 'top left',
-    flexShrink: 0,
-  }
+  const scale       = paneWidth > 0 ? Math.min(0.999, paneWidth / targetWidth) : 0.3
 
   const scaledW = targetWidth * scale
   const leftPad = viewport !== 'desktop' ? Math.max(0, (paneWidth - scaledW) / 2) : 0
@@ -489,13 +479,9 @@ export default function InteractiveEditorPreview({
             className="editor-preview-pane"
             style={{
               background: viewport === 'desktop' ? '#F5F4F0' : '#E0E0E0',
-              overflow: 'hidden',
               position: 'relative',
               minWidth: 0,
-              // iOS Safari: force GPU compositing so overflow:hidden properly
-              // clips scaled iframes (without this, transforms can escape the clip).
-              WebkitTransform: 'translateZ(0)',
-              transform: 'translateZ(0)',
+              overflow: 'hidden',
             }}
           >
             {/* Loading overlay */}
@@ -515,21 +501,36 @@ export default function InteractiveEditorPreview({
               </div>
             )}
 
+            {/*
+              In-flow clip container — sized to exactly the visual (scaled) iframe
+              dimensions. No position:absolute, no reliance on overflow:hidden to
+              clip transforms. This sidesteps the iOS Safari bug where
+              overflow:hidden fails to clip transformed children.
+            */}
             <div style={{
-              position: 'absolute',
-              top: 0,
-              left: leftPad,
+              width: Math.round(scaledW),
+              height: '100%',
+              overflow: 'hidden',
+              flexShrink: 0,
+              marginLeft: leftPad,
             }}>
+              <div style={{
+                width: targetWidth,
+                height: scale > 0 ? Math.ceil(paneHeight / scale) : paneHeight,
+                transform: `scale(${scale})`,
+                transformOrigin: 'top left',
+              }}>
               <iframe
                 ref={iframeRef}
                 src={previewSrc}
                 onLoad={handleIframeLoad}
-                style={iframeStyle}
+                style={{ width: '100%', height: '100%', border: 'none', display: 'block' }}
                 title="Template Vorschau"
               />
-            </div>
-          </div>
-        </div>
+              </div>  {/* scale wrapper */}
+            </div>    {/* clip container */}
+          </div>      {/* pane */}
+        </div>        {/* body */}
 
         {/* ── Mobile inline controls (below preview) ───────────────────────── */}
         {/* Apple configurator pattern: options stack below the product preview   */}
