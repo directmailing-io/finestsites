@@ -175,7 +175,7 @@ export default function InteractiveEditorPreview({
 
   // Reload iframe when viewport switcher changes (so correct ?vp= param is sent)
   useEffect(() => {
-    setIsLoading(true)
+    setIsLoading(true) // eslint-disable-line react-hooks/set-state-in-effect
     setPreviewSrc(buildPreviewSrc(templateId, allValuesRef.current, viewport))
   }, [viewport, templateId])
 
