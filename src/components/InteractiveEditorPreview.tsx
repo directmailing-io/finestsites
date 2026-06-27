@@ -88,10 +88,11 @@ export default function InteractiveEditorPreview({
   registerUrl,
 }: Props) {
   const paneRef = useRef<HTMLDivElement>(null)
+  const iframeRef = useRef<HTMLIFrameElement>(null)
+  const pendingScroll = useRef<number | null>(null)
   const [paneWidth, setPaneWidth] = useState(880)
   const [viewport, setViewport] = useState<Viewport>('desktop')
   const [isLoading, setIsLoading] = useState(false)
-  const loadTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   // ─── Measure preview pane width for CSS transform scaling ─────────────────
 
@@ -129,23 +130,42 @@ export default function InteractiveEditorPreview({
   const demoUrl = `demo.${domain}`
   const previewSrc = buildPreviewSrc(templateId, fieldValues)
 
-  // ─── Field update ─────────────────────────────────────────────────────────
+  // ─── Field update — capture scroll before src changes, restore after load ──
+
+  function captureScroll() {
+    try {
+      const y = iframeRef.current?.contentWindow?.scrollY
+      pendingScroll.current = typeof y === 'number' && y > 50 ? y : null
+    } catch { pendingScroll.current = null }
+  }
 
   const updateField = useCallback((key: string, value: string) => {
+    captureScroll()
     setIsLoading(true)
     setFieldValues(prev => ({ ...prev, [key]: value }))
-    if (loadTimer.current) clearTimeout(loadTimer.current)
-    loadTimer.current = setTimeout(() => setIsLoading(false), 2500)
   }, [])
 
   const toggleField = useCallback((key: string) => {
+    captureScroll()
     setFieldValues(prev => ({
       ...prev,
       [key]: prev[key] === 'ja' ? 'nein' : 'ja',
     }))
   }, [])
 
-  useEffect(() => () => { if (loadTimer.current) clearTimeout(loadTimer.current) }, [])
+  const handleIframeLoad = useCallback(() => {
+    setIsLoading(false)
+    const target = pendingScroll.current
+    pendingScroll.current = null
+    if (target !== null) {
+      // rAF gives the iframe a frame to render before we scroll
+      requestAnimationFrame(() => {
+        try {
+          iframeRef.current?.contentWindow?.scrollTo({ top: target, behavior: 'instant' })
+        } catch { /* cross-origin guard */ }
+      })
+    }
+  }, [])
 
   // ─── Viewport + iframe scaling ────────────────────────────────────────────
 
@@ -411,9 +431,9 @@ export default function InteractiveEditorPreview({
               left: leftPad,
             }}>
               <iframe
+                ref={iframeRef}
                 src={previewSrc}
-                key={`${previewSrc}::${viewport}`}
-                onLoad={() => setIsLoading(false)}
+                onLoad={handleIframeLoad}
                 style={iframeStyle}
                 title="Template Vorschau"
               />

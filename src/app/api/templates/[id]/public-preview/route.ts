@@ -70,9 +70,11 @@ function getClientIp(req: NextRequest): string {
 // ---------------------------------------------------------------------------
 // Preview-mode security injection
 // ---------------------------------------------------------------------------
+// Note: <base> element is injected separately into <head> (see below)
+// to fix JS-initiated asset loading (GSAP frame sequences, fetch(), etc.)
+
 const PREVIEW_GUARD = `
 <style>
-  /* Block all form interaction visually */
   .fs-preview-block { position:relative; pointer-events:none; }
 </style>
 <script>
@@ -81,14 +83,19 @@ const PREVIEW_GUARD = `
   document.addEventListener('submit', function(e){
     e.preventDefault(); e.stopImmediatePropagation(); return false;
   }, true);
-  // Block all link navigation except pure anchors
+  // Block external link navigation; handle #anchor links via scrollIntoView
   document.addEventListener('click', function(e){
     var el = e.target;
     while(el && el.tagName !== 'A') el = el.parentElement;
     if(!el) return;
     var href = el.getAttribute('href') || '';
-    if(href === '' || href.startsWith('#') || href.startsWith('javascript')) return;
+    if(href === '' || href.startsWith('javascript')) return;
     e.preventDefault(); e.stopImmediatePropagation();
+    if(href.startsWith('#')) {
+      var id = href.slice(1);
+      var target = document.getElementById(id) || document.querySelector('[name="'+id+'"]');
+      if(target) target.scrollIntoView({behavior:'smooth'});
+    }
   }, true);
 })();
 </script>`
@@ -135,6 +142,16 @@ svg{opacity:0.4}p{font-size:14px;font-weight:500}</style></head>
   } catch {
     return new NextResponse('Template file not found.', { status: 500 })
   }
+
+  // ---------------------------------------------------------------------------
+  // Inject <base> so ALL relative URLs (including JS fetch/Image/XHR) resolve
+  // through the asset proxy — critical for GSAP frame sequences, video, etc.
+  // ---------------------------------------------------------------------------
+  const assetOrigin = `/api/templates/${id}/public-preview/asset/`
+  const baseTag = `<base href="${assetOrigin}">`
+  html = html.includes('<head>')
+    ? html.replace('<head>', `<head>\n${baseTag}`)
+    : html.replace(/<html[^>]*>/i, m => `${m}\n${baseTag}`)
 
   // ---------------------------------------------------------------------------
   // Build preview data map
