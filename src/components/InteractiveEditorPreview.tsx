@@ -88,18 +88,16 @@ export default function InteractiveEditorPreview({
   const pendingScroll = useRef<number | null>(null)
 
   const [paneWidth, setPaneWidth] = useState(880)
-  const [viewport, setViewport]   = useState<Viewport>('desktop')
-  const [isLoading, setIsLoading] = useState(false)
-
-  // ─── Auto-detect viewport on mount ────────────────────────────────────────
-  // Sets mobile/tablet automatically so the preview matches the user's device.
-
-  useEffect(() => {
+  // Auto-detect viewport on first render using lazy initializer — avoids
+  // calling setState inside useEffect which triggers an extra render cycle.
+  const [viewport, setViewport] = useState<Viewport>(() => {
+    if (typeof window === 'undefined') return 'desktop'
     const w = window.innerWidth
-    if (w < 640)  setViewport('mobile')
-    else if (w < 1024) setViewport('tablet')
-    // > 1024 stays as 'desktop' (initial value)
-  }, [])
+    if (w < 640) return 'mobile'
+    if (w < 1024) return 'tablet'
+    return 'desktop'
+  })
+  const [isLoading, setIsLoading] = useState(false)
 
   // ─── Measure preview pane ─────────────────────────────────────────────────
 
