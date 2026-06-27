@@ -22,7 +22,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { templates } from '@/lib/db/schema'
-import { eq, and } from 'drizzle-orm'
+import { eq, and, or, sql } from 'drizzle-orm'
 import { getFromR2 } from '@/lib/r2/client'
 import { renderTemplate } from '@/lib/utils/template-engine'
 
@@ -448,7 +448,7 @@ export async function GET(
 
   const template = await db.query.templates.findFirst({
     where: and(
-      eq(templates.id, id),
+      or(eq(templates.slug, id), sql`${templates.id}::text = ${id}`),
       eq(templates.status, 'published'),
       eq(templates.isTest, false)
     ),
