@@ -147,8 +147,8 @@ export default async function TemplateDetailPage({ params }: Props) {
         .vd-feature-inner.reverse > * { direction: ltr; }
         .vd-feature-img { border-radius: 20px; overflow: hidden; aspect-ratio: 4/3; display: flex; align-items: center; justify-content: center; }
         .vd-more-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
-        .vd-more-card { display: block; text-decoration: none; background: #fff; border-radius: 20px; overflow: hidden; border: 1px solid rgba(0,0,0,0.07); box-shadow: 0 2px 12px rgba(0,0,0,0.04); transition: transform 0.2s, box-shadow 0.2s; }
-        .vd-more-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.10); }
+        .vd-more-card { display: block; text-decoration: none; background: #1c1c1e; border-radius: 20px; overflow: hidden; border: 1px solid rgba(255,255,255,0.08); box-shadow: 0 2px 16px rgba(0,0,0,0.3); transition: transform 0.2s, box-shadow 0.2s; }
+        .vd-more-card:hover { transform: translateY(-4px); box-shadow: 0 16px 48px rgba(0,0,0,0.5); }
 
         @media (max-width: 1023px) {
           .vd-more-grid { grid-template-columns: repeat(2, 1fr); }
@@ -285,10 +285,10 @@ export default async function TemplateDetailPage({ params }: Props) {
 
       {/* ── WEITERE TEMPLATES ────────────────────────────────────────── */}
       {otherTemplates.length > 0 && (
-        <section style={{ background: '#F9F7FF', padding: '88px 7vw' }}>
+        <section style={{ background: '#111', padding: '88px 7vw' }}>
           <div style={{ maxWidth: 1080, margin: '0 auto' }}>
-            <p style={{ fontSize: 11, fontWeight: 600, color: '#aaa', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 12 }}>Mehr entdecken</p>
-            <h2 style={{ fontFamily: '"Plein", sans-serif', fontSize: 'clamp(26px, 3vw, 40px)', fontWeight: 400, color: '#111', letterSpacing: '-0.02em', marginBottom: 44 }}>
+            <p style={{ fontSize: 11, fontWeight: 600, color: 'rgba(255,255,255,0.28)', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 12 }}>Mehr entdecken</p>
+            <h2 style={{ fontFamily: '"Plein", sans-serif', fontSize: 'clamp(26px, 3vw, 40px)', fontWeight: 400, color: '#fff', letterSpacing: '-0.02em', marginBottom: 44 }}>
               Weitere Templates
             </h2>
 
@@ -304,12 +304,12 @@ export default async function TemplateDetailPage({ params }: Props) {
                     className="vd-more-card"
                   >
                     {/* Cover */}
-                    <div style={{ aspectRatio: '16/9', background: `${tColor}14`, overflow: 'hidden' }}>
+                    <div style={{ aspectRatio: '16/9', background: `${tColor}22`, overflow: 'hidden' }}>
                       {tImgs[0] ? (
                         // eslint-disable-next-line @next/next/no-img-element
                         <img src={tImgs[0]} alt={t.title} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
                       ) : (
-                        <div style={{ width: '100%', height: '100%', background: `linear-gradient(135deg, ${tColor}22, ${tColor}08)` }} />
+                        <div style={{ width: '100%', height: '100%', background: `linear-gradient(135deg, ${tColor}33, ${tColor}11)` }} />
                       )}
                     </div>
                     {/* Info */}
@@ -319,9 +319,9 @@ export default async function TemplateDetailPage({ params }: Props) {
                           {tTags[0]}
                         </span>
                       )}
-                      <p style={{ fontSize: 16, fontWeight: 600, color: '#111', marginBottom: 6, lineHeight: 1.3 }}>{t.title}</p>
+                      <p style={{ fontSize: 16, fontWeight: 600, color: '#fff', marginBottom: 6, lineHeight: 1.3 }}>{t.title}</p>
                       {t.description && (
-                        <p style={{ fontSize: 13, color: '#888', lineHeight: 1.6, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                        <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.45)', lineHeight: 1.6, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                           {t.description}
                         </p>
                       )}
