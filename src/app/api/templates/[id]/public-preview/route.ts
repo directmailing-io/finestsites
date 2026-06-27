@@ -331,12 +331,14 @@ const PREVIEW_GUARD = `
     var toHide = show ? neinEl : jaEl;
 
     if (toShow) {
-      // Make the element occupy layout space so offsetTop is accurate,
-      // but keep it invisible during the scroll.
+      // Remove the inline display:none we set server-side so the element
+      // re-enters the layout (needed for accurate offsetTop measurement).
+      // We also set visibility:hidden + opacity:0 so it's layout-present
+      // but invisible until we trigger the fade-in after scroll.
+      toShow.style.removeProperty('display'); // clear inline display:none
       toShow.style.visibility = 'hidden';
       toShow.style.opacity    = '0';
-      toShow.style.display    = '';
-      void toShow.offsetHeight; // synchronous reflow
+      void toShow.offsetHeight; // synchronous reflow — offsetTop now valid
 
       // Instant jump using layout position (GSAP-safe).
       scrollToSection(toShow);
@@ -356,19 +358,19 @@ const PREVIEW_GUARD = `
         });
       });
 
-      // Immediately hide the opposite section (no scroll, no highlight).
+      // Immediately fade out + hide the opposite section (no scroll).
       if (toHide) {
         toHide.style.transition = 'opacity 0.25s ease';
         toHide.style.opacity    = '0';
         setTimeout(function() {
-          toHide.style.display    = 'none';
+          toHide.style.setProperty('display', 'none'); // inline hide
           toHide.style.opacity    = '';
           toHide.style.transition = '';
         }, 280);
       }
 
     } else if (toHide) {
-      // Hiding only: scroll to the section, show red ring, then fade out.
+      // Hiding only (no replacement to show): scroll to section, red ring, fade out.
       scrollToSection(toHide);
 
       requestAnimationFrame(function() {
@@ -377,7 +379,7 @@ const PREVIEW_GUARD = `
           toHide.style.transition = 'opacity 0.45s ease';
           toHide.style.opacity    = '0';
           setTimeout(function() {
-            toHide.style.display    = 'none';
+            toHide.style.setProperty('display', 'none'); // inline hide
             toHide.style.opacity    = '';
             toHide.style.transition = '';
           }, 480);
@@ -482,37 +484,58 @@ svg{opacity:0.4}p{font-size:14px;font-weight:500}</style></head>
   // ---------------------------------------------------------------------------
   // Wrap preview_interactive toggle sections with data-fs-section divs.
   // For templates using {{#if KEY=ja/nein}} blocks this replaces them with
-  // always-rendered wrapper divs (initially visible or hidden).
-  // Templates that already use native [data-section] attributes skip this step
-  // silently (no {{#if}} blocks found → no replacements made).
+  // always-rendered wrapper divs.  Templates with native [data-section]
+  // attributes skip this silently (no {{#if}} blocks found → no changes).
   // ---------------------------------------------------------------------------
   html = wrapToggleSections(html, fields, dataMap)
 
   // ---------------------------------------------------------------------------
-  // Initial visibility: inject CSS to hide [data-section] / [data-fs-section]
-  // elements whose current toggle value is 'nein'.
-  // This handles native-attribute templates (e.g. FitLine) where the section
-  // is always present in the DOM and visibility is controlled via CSS/JS only.
+  // Initial section visibility — inline style approach (CRITICAL).
+  //
+  // We add style="display:none" DIRECTLY to hidden section elements in the
+  // raw HTML rather than using a <style> block with !important.
+  //
+  // Why inline styles and NOT !important CSS:
+  //   CSS !important cannot be overridden by elem.style.display = '' in JS.
+  //   Inline styles (style="display:none") ARE cleared by elem.style.display=''
+  //   which is how the PREVIEW_GUARD shows sections on toggle.
+  //
+  // Rules:
+  //   • "nein"-variant sections  [data-section="KEY-nein"]  always start hidden
+  //     (shown only when the user toggles the field to 'nein')
+  //   • "ja"-variant sections    [data-section="KEY"]        start hidden only
+  //     when the admin's preview_value for that field is 'nein'
   // ---------------------------------------------------------------------------
   const toggleFields = fields.filter(f => f.preview_interactive && isToggleField(f))
-  const hiddenSectionRules = toggleFields
-    .filter(f => (dataMap[f.key] ?? 'ja') === 'nein')
-    .flatMap(f => [
-      `[data-section="${f.key}"]{display:none!important}`,
-      `[data-fs-section="${f.key}"]{display:none!important}`,
-    ])
-  const shownNeinRules = toggleFields
-    .filter(f => (dataMap[f.key] ?? 'ja') !== 'nein')
-    .flatMap(f => [
-      `[data-section="${f.key}-nein"]{display:none!important}`,
-      `[data-fs-section="${f.key}-nein"]{display:none!important}`,
-    ])
-  const allInitRules = [...hiddenSectionRules, ...shownNeinRules]
-  if (allInitRules.length > 0) {
-    const initStyle = `<style data-fs-init>${allInitRules.join('')}</style>`
-    html = html.includes('</head>')
-      ? html.replace('</head>', `${initStyle}\n</head>`)
-      : html.replace(/<body/i, `${initStyle}\n<body`)
+
+  /** Adds style="display:none" to every opening tag that carries `attr`. */
+  function inlineHide(h: string, attr: string): string {
+    // Escape the attr string for safe use in RegExp
+    const esc = attr.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+    return h.replace(
+      new RegExp(`(<[^>]*\\b${esc}[^>]*)(>)`, 'gi'),
+      (_, tagContent, gt) => {
+        if (/\bstyle="/.test(tagContent)) {
+          // Prepend to existing style value
+          return tagContent.replace(/\bstyle="/, 'style="display:none;') + gt
+        }
+        return `${tagContent} style="display:none"${gt}`
+      }
+    )
+  }
+
+  for (const f of toggleFields) {
+    const v = dataMap[f.key] ?? 'ja'
+
+    // "nein"-variant section: always hidden on load (shown when value === 'nein')
+    html = inlineHide(html, `data-section="${f.key}-nein"`)
+    html = inlineHide(html, `data-fs-section="${f.key}-nein"`)
+
+    // "ja"-variant section: hidden on load only when initial value is 'nein'
+    if (v === 'nein') {
+      html = inlineHide(html, `data-section="${f.key}"`)
+      html = inlineHide(html, `data-fs-section="${f.key}"`)
+    }
   }
 
   // ---------------------------------------------------------------------------
