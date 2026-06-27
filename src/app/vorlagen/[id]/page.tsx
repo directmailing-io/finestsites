@@ -150,6 +150,8 @@ export default async function TemplateDetailPage({ params }: Props) {
 
   return (
     <div style={{ fontFamily: '"Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif', background: '#fff', minHeight: '100vh', overflowX: 'hidden' }}>
+      {/* iOS Safari bfcache fix: force reload when navigating back so React re-mounts */}
+      <script dangerouslySetInnerHTML={{ __html: `window.addEventListener('pageshow',function(e){if(e.persisted)window.location.reload();});` }} />
       <style>{`
         @font-face {
           font-family: 'Plus Jakarta Sans';

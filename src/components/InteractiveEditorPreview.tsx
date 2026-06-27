@@ -48,13 +48,18 @@ const VIEWPORT_CONFIG: Record<Viewport, { width: number; label: string }> = {
 
 // ─── URL encoding ─────────────────────────────────────────────────────────────
 
-function buildPreviewSrc(templateId: string, overrides: Record<string, string>): string {
+function buildPreviewSrc(templateId: string, overrides: Record<string, string>, vp: Viewport = 'desktop'): string {
   const base = `/api/templates/${templateId}/public-preview`
-  if (Object.keys(overrides).length === 0) return base
-  const json = JSON.stringify(overrides)
-  const b64 = btoa(unescape(encodeURIComponent(json)))
-    .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
-  return `${base}?data=${b64}`
+  const params = new URLSearchParams()
+  if (vp !== 'desktop') params.set('vp', vp)
+  if (Object.keys(overrides).length > 0) {
+    const json = JSON.stringify(overrides)
+    const b64 = btoa(unescape(encodeURIComponent(json)))
+      .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
+    params.set('data', b64)
+  }
+  const qs = params.toString()
+  return qs ? `${base}?${qs}` : base
 }
 
 // ─── Control type detection ───────────────────────────────────────────────────
@@ -101,16 +106,15 @@ export default function InteractiveEditorPreview({
     if (w <= 1023) return 560
     return 620
   })
-  // Auto-detect viewport on first render using lazy initializer.
-  // On narrow panes (<640px, i.e. phones) we force 'desktop' so the user sees
-  // the full website miniaturized — the viewport switcher is hidden on mobile
-  // anyway, and a tiny full-site view is far more useful than a 1:1 crop.
+  // Auto-detect viewport based on device: phones see mobile template (390px),
+  // tablets see tablet template (768px), desktops see desktop template (1280px).
+  // This avoids extreme scale factors (like 0.29) that cause iOS Safari rendering bugs.
   const [viewport, setViewport] = useState<Viewport>(() => {
     if (typeof window === 'undefined') return 'desktop'
     const w = window.innerWidth
-    if (w < 640) return 'desktop'   // phones: show full desktop site scaled down
-    if (w < 1024) return 'tablet'
-    return 'desktop'
+    if (w < 768) return 'mobile'    // phones → mobile template layout
+    if (w < 1024) return 'tablet'   // tablets → tablet template layout
+    return 'desktop'                 // desktop → desktop template layout
   })
   const [isLoading, setIsLoading] = useState(false)
 
@@ -150,9 +154,10 @@ export default function InteractiveEditorPreview({
     return vals
   })
 
-  const allValuesRef = useRef<Record<string, string>>(initialValues)
+  const allValuesRef  = useRef<Record<string, string>>(initialValues)
+  const viewportRef   = useRef<Viewport>(viewport)
   const [fieldValues, setFieldValues] = useState<Record<string, string>>(initialValues)
-  const [previewSrc, setPreviewSrc]   = useState(() => buildPreviewSrc(templateId, initialValues))
+  const [previewSrc, setPreviewSrc]   = useState(() => buildPreviewSrc(templateId, initialValues, viewport))
 
   const demoUrl = `demo.${domain}`
 
@@ -165,12 +170,21 @@ export default function InteractiveEditorPreview({
     } catch { pendingScroll.current = null }
   }
 
+  // Keep viewportRef in sync so updateField always uses the current viewport
+  useEffect(() => { viewportRef.current = viewport }, [viewport])
+
+  // Reload iframe when viewport switcher changes (so correct ?vp= param is sent)
+  useEffect(() => {
+    setIsLoading(true)
+    setPreviewSrc(buildPreviewSrc(templateId, allValuesRef.current, viewport))
+  }, [viewport, templateId])
+
   const updateField = useCallback((key: string, value: string) => {
     captureScroll()
     setIsLoading(true)
     allValuesRef.current = { ...allValuesRef.current, [key]: value }
     setFieldValues(prev => ({ ...prev, [key]: value }))
-    setPreviewSrc(buildPreviewSrc(templateId, allValuesRef.current))
+    setPreviewSrc(buildPreviewSrc(templateId, allValuesRef.current, viewportRef.current))
   }, [templateId])
 
   const handleToggle = useCallback((key: string) => {

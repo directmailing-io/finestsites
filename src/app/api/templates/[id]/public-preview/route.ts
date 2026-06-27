@@ -476,18 +476,23 @@ svg{opacity:0.4}p{font-size:14px;font-weight:500}</style></head>
   }
 
   // ---------------------------------------------------------------------------
-  // Override viewport meta → force 1280px width so iOS Safari renders the
-  // iframe content at desktop width instead of device-width (~393px).
-  // Without this, iOS ignores our transform:scale and shows mobile layout.
+  // Override viewport meta width based on ?vp= param:
+  //   mobile  → width=390  (template renders its mobile responsive layout)
+  //   tablet  → width=768
+  //   desktop → width=1280 (default)
+  // This ensures iOS Safari renders the iframe content at the correct layout
+  // width rather than at the device's own screen width.
   // ---------------------------------------------------------------------------
+  const vpParam = req.nextUrl.searchParams.get('vp') ?? 'desktop'
+  const viewportWidth = vpParam === 'mobile' ? 390 : vpParam === 'tablet' ? 768 : 1280
   html = html.replace(
     /<meta\s+name=["']viewport["'][^>]*>/gi,
-    '<meta name="viewport" content="width=1280, initial-scale=1">'
+    `<meta name="viewport" content="width=${viewportWidth}, initial-scale=1">`
   )
   // If no viewport meta existed, inject one
   if (!/<meta\s+name=["']viewport["']/i.test(html)) {
     html = html.includes('<head>')
-      ? html.replace('<head>', '<head>\n<meta name="viewport" content="width=1280, initial-scale=1">')
+      ? html.replace('<head>', `<head>\n<meta name="viewport" content="width=${viewportWidth}, initial-scale=1">`)
       : html
   }
 
