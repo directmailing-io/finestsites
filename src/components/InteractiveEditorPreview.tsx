@@ -87,7 +87,12 @@ export default function InteractiveEditorPreview({
   const iframeRef  = useRef<HTMLIFrameElement>(null)
   const pendingScroll = useRef<number | null>(null)
 
-  const [paneWidth, setPaneWidth] = useState(880)
+  // Lazy-init with actual viewport width so the first render already has the
+  // correct scale — avoids the 880→actual jump that caused desktop overflow on mobile.
+  const [paneWidth, setPaneWidth] = useState<number>(() => {
+    if (typeof window === 'undefined') return 880
+    return window.innerWidth
+  })
   const [paneHeight, setPaneHeight] = useState<number>(() => {
     if (typeof window === 'undefined') return 620
     const w = window.innerWidth
@@ -193,7 +198,15 @@ export default function InteractiveEditorPreview({
 
   // ─── Scaling ──────────────────────────────────────────────────────────────
 
-  const targetWidth = VIEWPORT_CONFIG[viewport].width
+  // Force correct viewport tier based on actual pane width — this guards against
+  // the SSR/hydration window where `viewport` state might still be 'desktop'
+  // even though we're rendering on a phone (paneWidth < 640).
+  const effectiveViewport: Viewport =
+    paneWidth < 640 ? 'mobile' :
+    paneWidth < 900 ? 'tablet' :
+    viewport
+
+  const targetWidth = VIEWPORT_CONFIG[effectiveViewport].width
   const scale       = Math.min(0.999, paneWidth / targetWidth)
 
   const iframeStyle: React.CSSProperties = {
@@ -207,7 +220,7 @@ export default function InteractiveEditorPreview({
   }
 
   const scaledW = targetWidth * scale
-  const leftPad = viewport !== 'desktop' ? Math.max(0, (paneWidth - scaledW) / 2) : 0
+  const leftPad = effectiveViewport !== 'desktop' ? Math.max(0, (paneWidth - scaledW) / 2) : 0
 
   // ─── Shared controls markup ───────────────────────────────────────────────
   // Rendered in both the desktop sidebar and the mobile inline controls section.
@@ -657,11 +670,11 @@ export default function InteractiveEditorPreview({
         .fs-img-chip.active .fs-img-label { color: var(--accent); }
 
         /* ── Desktop layout ────────────────────────────────────────────────── */
-        .editor-frame { }
+        .editor-frame { overflow: hidden; }
         .editor-viewport-switcher { }
         .editor-topbar-actions { }
         .editor-sidebar { }
-        .editor-preview-pane { height: 620px; }
+        .editor-preview-pane { height: 620px; overflow: hidden; }
         .editor-body { }
 
         /* ── Tablet layout (768–1023px) ────────────────────────────────────── */
