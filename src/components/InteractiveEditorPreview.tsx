@@ -504,28 +504,32 @@ export default function InteractiveEditorPreview({
               </div>
             )}
 
-            {/* Scaled iframe — position:absolute keeps it out of layout flow so
-                it never affects pane/page width. The page-level overflow-x:hidden
-                (added to html/body in the page's style block) handles any visual
-                bleed on iOS Safari where overflow:hidden on this pane may not
-                clip transformed children reliably. */}
+            {/* Scaled iframe.
+                IMPORTANT: transform:scale is applied to the WRAPPER DIV, not
+                the iframe itself. iOS Safari has a known bug where transform
+                on <iframe> elements is not rendered correctly — the content
+                appears unscaled at full device viewport width.
+                Scaling a regular <div> that contains the iframe works correctly
+                on all browsers including iOS Safari. */}
             <div style={{
               position: 'absolute',
               top: 0,
               left: leftPad,
+              width: targetWidth,
+              height: scale > 0 ? Math.ceil(paneHeight / scale) : paneHeight,
+              transformOrigin: 'top left',
+              transform: `scale(${scale})`,
+              WebkitTransform: `scale(${scale})`,
             }}>
               <iframe
                 ref={iframeRef}
                 src={previewSrc}
                 onLoad={handleIframeLoad}
                 style={{
-                  width: targetWidth,
-                  height: scale > 0 ? Math.ceil(paneHeight / scale) : paneHeight,
+                  width: '100%',
+                  height: '100%',
                   border: 'none',
                   display: 'block',
-                  transform: `scale(${scale})`,
-                  transformOrigin: 'top left',
-                  flexShrink: 0,
                 }}
                 title="Template Vorschau"
               />
