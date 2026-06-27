@@ -189,7 +189,7 @@ const PREVIEW_GUARD = `
     }
   },true);
 
-  /* ── Helper: find section element by key, checking both conventions ── */
+  /* ── Helpers ─────────────────────────────── */
   function findSection(key){
     return document.querySelector('[data-section="'+key+'"]')
         || document.querySelector('[data-fs-section="'+key+'"]');
@@ -197,6 +197,85 @@ const PREVIEW_GUARD = `
   function findSectionNein(key){
     return document.querySelector('[data-section="'+key+'-nein"]')
         || document.querySelector('[data-fs-section="'+key+'-nein"]');
+  }
+
+  /**
+   * Scroll to elem using an instant jump so GSAP ScrollTrigger cannot
+   * intercept or fight against the scroll animation.
+   * We kill any active GSAP scroll tweens before jumping.
+   */
+  function jumpToElem(elem){
+    if(!elem)return;
+    var rect=elem.getBoundingClientRect();
+    /* already well-centered in the viewport → skip */
+    if(rect.top>60&&rect.top<window.innerHeight*0.55)return;
+    var targetY=Math.max(0,rect.top+window.pageYOffset-80);
+    /* stop any GSAP scroll tweens so they don't fight us */
+    if(window.gsap){try{window.gsap.killTweensOf(window);}catch(e){}}
+    /* instant jump — no smooth animation, avoids ScrollTrigger interference */
+    window.scrollTo(0,targetY);
+  }
+
+  /**
+   * Show a fixed-position highlight ring + label over the section.
+   * Uses position:fixed so it is not clipped by overflow:hidden parents
+   * and is not affected by GSAP transforms.
+   * @param {Element} elem  - section element
+   * @param {boolean} show  - true = green "eingeblendet", false = red "ausgeblendet"
+   */
+  function showHighlight(elem,show){
+    if(!elem)return;
+    /* remove any lingering highlights */
+    document.querySelectorAll('[data-fs-hl]').forEach(function(el){el.remove();});
+
+    var rect=elem.getBoundingClientRect();
+    /* don't show if element has no size (hidden or off-DOM) */
+    if(rect.width<10||rect.height<10)return;
+
+    var rgb=show?'34,197,94':'239,68,68';
+    var label=show?'Sektion eingeblendet ✓':'Sektion ausgeblendet ✕';
+
+    var hl=document.createElement('div');
+    hl.setAttribute('data-fs-hl','');
+    hl.style.cssText=[
+      'position:fixed',
+      'top:'+(rect.top-4)+'px',
+      'left:'+(rect.left-4)+'px',
+      'width:'+(rect.width+8)+'px',
+      'height:'+(rect.height+8)+'px',
+      'border:3px solid rgba('+rgb+',0.85)',
+      'border-radius:3px',
+      'background:rgba('+rgb+',0.06)',
+      'pointer-events:none',
+      'z-index:2147483647',
+      'box-shadow:0 0 0 1px rgba('+rgb+',0.25),0 0 24px rgba('+rgb+',0.18)',
+      'transition:opacity 0.5s ease',
+    ].join(';');
+
+    var badge=document.createElement('div');
+    badge.style.cssText=[
+      'position:absolute',
+      'top:14px',
+      'left:50%',
+      'transform:translateX(-50%)',
+      'background:rgba('+rgb+',0.95)',
+      'color:#fff',
+      'font:600 12px/1 -apple-system,BlinkMacSystemFont,sans-serif',
+      'padding:5px 16px',
+      'border-radius:20px',
+      'white-space:nowrap',
+      'box-shadow:0 2px 10px rgba(0,0,0,0.28)',
+      'letter-spacing:0.01em',
+    ].join(';');
+    badge.textContent=label;
+    hl.appendChild(badge);
+    document.body.appendChild(hl);
+
+    /* fade out after 2 s */
+    setTimeout(function(){
+      hl.style.opacity='0';
+      setTimeout(function(){hl.remove();},500);
+    },2000);
   }
 
   /* ── In-place section toggle (postMessage from parent) ── */
@@ -209,42 +288,55 @@ const PREVIEW_GUARD = `
     var toShow=show?jaEl:neinEl;
     var toHide=show?neinEl:jaEl;
 
-    function fadeIn(elem){
-      if(!elem)return;
-      elem.style.transition='';
-      elem.style.visibility='hidden';
-      elem.style.display='';
-      /* force layout so scrollIntoView can measure position */
-      void elem.offsetHeight;
-      elem.scrollIntoView({behavior:'smooth',block:'start'});
-      setTimeout(function(){
-        elem.style.visibility='';
-        elem.style.opacity='0';
-        void elem.offsetHeight;
-        elem.style.transition='opacity 0.5s ease';
-        elem.style.opacity='1';
-      },480);
-    }
-    function fadeOut(elem,scrollFirst){
-      if(!elem)return;
-      if(scrollFirst){
-        elem.scrollIntoView({behavior:'smooth',block:'start'});
-        setTimeout(function(){doFade();},480);
-      } else { doFade(); }
-      function doFade(){
-        elem.style.transition='opacity 0.4s ease';
-        elem.style.opacity='0';
-        setTimeout(function(){elem.style.display='none';elem.style.opacity='';elem.style.transition='';},420);
-      }
-    }
-
     if(toShow){
-      fadeIn(toShow);
-      /* hide the opposite section without scroll */
-      if(toHide){fadeOut(toHide,false);}
+      /* 1. Make it visible but transparent so we can measure its position */
+      toShow.style.visibility='hidden';
+      toShow.style.opacity='0';
+      toShow.style.display='';
+      void toShow.offsetHeight;          /* force reflow */
+
+      /* 2. Instant jump to the section */
+      jumpToElem(toShow);
+
+      /* 3. After a single frame (scroll + paint settled), show highlight + fade in */
+      requestAnimationFrame(function(){
+        requestAnimationFrame(function(){
+          toShow.style.visibility='';
+          showHighlight(toShow,true);
+          toShow.style.transition='opacity 0.55s ease';
+          toShow.style.opacity='1';
+          setTimeout(function(){
+            toShow.style.transition='';
+            toShow.style.opacity='';
+          },600);
+        });
+      });
+
+      /* hide the other side immediately, no scroll */
+      if(toHide){
+        toHide.style.transition='opacity 0.3s ease';
+        toHide.style.opacity='0';
+        setTimeout(function(){
+          toHide.style.display='none';
+          toHide.style.opacity='';
+          toHide.style.transition='';
+        },320);
+      }
     } else if(toHide){
-      /* nothing to show, just scroll to and hide the current section */
-      fadeOut(toHide,true);
+      /* Only hiding — scroll to section, show red highlight, then fade out */
+      jumpToElem(toHide);
+      requestAnimationFrame(function(){
+        requestAnimationFrame(function(){
+          showHighlight(toHide,false);
+          toHide.style.transition='opacity 0.45s ease';
+          toHide.style.opacity='0';
+          setTimeout(function(){
+            toHide.style.display='none';
+            toHide.style.opacity='';
+            toHide.style.transition='';
+          },500);
+        });
+      });
     }
   });
 })();
