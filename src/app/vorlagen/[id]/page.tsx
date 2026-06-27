@@ -1,6 +1,6 @@
 import { db } from '@/lib/db'
 import { templates } from '@/lib/db/schema'
-import { eq, and, ne, sql } from 'drizzle-orm'
+import { eq, and, ne, or, sql } from 'drizzle-orm'
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import Link from 'next/link'
@@ -25,7 +25,7 @@ interface DetailSection {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params
   const [tpl] = await db.select({ title: templates.title, description: templates.description })
-    .from(templates).where(eq(templates.slug, id)).limit(1)
+    .from(templates).where(or(eq(templates.slug, id), sql`${templates.id}::text = ${id}`)).limit(1)
   if (!tpl) return {}
   return {
     title: `${tpl.title} – Template | FinestSites`,
@@ -72,7 +72,7 @@ export default async function TemplateDetailPage({ params }: Props) {
 
   const [tpl] = await db.select()
     .from(templates)
-    .where(and(eq(templates.slug, id), eq(templates.status, 'published')))
+    .where(and(or(eq(templates.slug, id), sql`${templates.id}::text = ${id}`), eq(templates.status, 'published')))
     .limit(1)
 
   if (!tpl) notFound()
