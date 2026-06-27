@@ -31,6 +31,15 @@ const nextConfig: NextConfig = {
           },
         ],
       },
+      // CORS for static assets (fonts, images) so they work cross-origin.
+      // finestsites.io → app.finestsites.io redirect requires CORS or
+      // the browser blocks font/resource loading.
+      {
+        source: '/(fonts|logos|images|fav)/(.*)',
+        headers: [
+          { key: 'Access-Control-Allow-Origin', value: '*' },
+        ],
+      },
       // Prevent Cloudflare/CDNs from caching HTML pages.
       // Next.js sets s-maxage=31536000 for static pages, which means Cloudflare
       // caches them for 1 year — new deployments never reach users. Override this
