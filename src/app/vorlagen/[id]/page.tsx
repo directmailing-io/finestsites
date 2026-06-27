@@ -25,7 +25,7 @@ interface DetailSection {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params
   const [tpl] = await db.select({ title: templates.title, description: templates.description })
-    .from(templates).where(eq(templates.id, id)).limit(1)
+    .from(templates).where(eq(templates.slug, id)).limit(1)
   if (!tpl) return {}
   return {
     title: `${tpl.title} – Template | FinestSites`,
@@ -72,7 +72,7 @@ export default async function TemplateDetailPage({ params }: Props) {
 
   const [tpl] = await db.select()
     .from(templates)
-    .where(and(eq(templates.id, id), eq(templates.status, 'published')))
+    .where(and(eq(templates.slug, id), eq(templates.status, 'published')))
     .limit(1)
 
   if (!tpl) notFound()
@@ -83,6 +83,7 @@ export default async function TemplateDetailPage({ params }: Props) {
   let otherTemplates: typeof moreTemplatesQuery = []
   const moreTemplatesQuery = await db.select({
     id: templates.id,
+    slug: templates.slug,
     title: templates.title,
     description: templates.description,
     previewImages: templates.previewImages,
@@ -94,7 +95,7 @@ export default async function TemplateDetailPage({ params }: Props) {
     .from(templates)
     .where(and(
       eq(templates.status, 'published'),
-      ne(templates.id, id),
+      ne(templates.id, tpl.id),
       // overlap on nmCompanies array if available
       nmCompanies.length > 0
         ? sql`${templates.nmCompanies} && ARRAY[${sql.raw(nmCompanies.map(c => `'${c.replace(/'/g, "''")}'`).join(','))}]::text[]`
@@ -108,6 +109,7 @@ export default async function TemplateDetailPage({ params }: Props) {
   if (otherTemplates.length < 3) {
     const fallback = await db.select({
       id: templates.id,
+      slug: templates.slug,
       title: templates.title,
       description: templates.description,
       previewImages: templates.previewImages,
@@ -119,7 +121,7 @@ export default async function TemplateDetailPage({ params }: Props) {
       .from(templates)
       .where(and(
         eq(templates.status, 'published'),
-        ne(templates.id, id),
+        ne(templates.id, tpl.id),
         sql`${templates.id} != ALL(ARRAY[${sql.raw(otherTemplates.map(t => `'${t.id}'`).join(',') || "'00000000-0000-0000-0000-000000000000'")}]::uuid[])`,
       ))
       .limit(3 - otherTemplates.length)
@@ -394,7 +396,7 @@ export default async function TemplateDetailPage({ params }: Props) {
                 const tColor = t.detailColor ?? '#8060b0'
                 const tTags = Array.isArray(t.tags) ? t.tags as string[] : []
                 return (
-                  <a key={t.id} href={`/vorlagen/${t.id}`} className="vd-more-card">
+                  <a key={t.id} href={`/vorlagen/${t.slug ?? t.id}`} className="vd-more-card">
                     <div style={{ aspectRatio: '16/9', background: `${tColor}22`, overflow: 'hidden' }}>
                       {tImgs[0] ? (
                         // eslint-disable-next-line @next/next/no-img-element
