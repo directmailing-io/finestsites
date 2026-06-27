@@ -386,18 +386,18 @@ const PREVIEW_GUARD = `
 
       scrollToSection(toShow);
 
-      requestAnimationFrame(function() {
-        requestAnimationFrame(function() {
-          toShow.style.visibility = '';
-          showHighlight(toShow, true);
-          toShow.style.transition = 'opacity 0.5s ease';
-          toShow.style.opacity    = '1';
-          setTimeout(function() {
-            toShow.style.transition = '';
-            toShow.style.opacity    = '';
-          }, 560);
-        });
-      });
+      // setTimeout instead of rAF so this works in CDP/headless and
+      // in cross-origin iframes where rAF may be throttled.
+      setTimeout(function() {
+        toShow.style.visibility = '';
+        showHighlight(toShow, true);
+        toShow.style.transition = 'opacity 0.5s ease';
+        toShow.style.opacity    = '1';
+        setTimeout(function() {
+          toShow.style.transition = '';
+          toShow.style.opacity    = '';
+        }, 560);
+      }, 50);
 
       // Fade out and hide the opposite section without scrolling.
       if (toHide) {
@@ -414,18 +414,18 @@ const PREVIEW_GUARD = `
       // Hide-only path: scroll to section, show red ring, fade out, hide.
       scrollToSection(toHide);
 
-      requestAnimationFrame(function() {
-        requestAnimationFrame(function() {
-          showHighlight(toHide, false);
-          toHide.style.transition = 'opacity 0.45s ease';
-          toHide.style.opacity    = '0';
-          setTimeout(function() {
-            toHide.style.transition = '';
-            toHide.style.opacity    = '';
-            hideEl(toHide);
-          }, 480);
-        });
-      });
+      // setTimeout instead of rAF so this works in CDP/headless and
+      // in cross-origin iframes where rAF may be throttled.
+      setTimeout(function() {
+        showHighlight(toHide, false);
+        toHide.style.transition = 'opacity 0.45s ease';
+        toHide.style.opacity    = '0';
+        setTimeout(function() {
+          toHide.style.transition = '';
+          toHide.style.opacity    = '';
+          hideEl(toHide);
+        }, 480);
+      }, 50);
     }
   });
 
