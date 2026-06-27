@@ -101,12 +101,14 @@ export default function InteractiveEditorPreview({
     if (w <= 1023) return 560
     return 620
   })
-  // Auto-detect viewport on first render using lazy initializer — avoids
-  // calling setState inside useEffect which triggers an extra render cycle.
+  // Auto-detect viewport on first render using lazy initializer.
+  // On narrow panes (<640px, i.e. phones) we force 'desktop' so the user sees
+  // the full website miniaturized — the viewport switcher is hidden on mobile
+  // anyway, and a tiny full-site view is far more useful than a 1:1 crop.
   const [viewport, setViewport] = useState<Viewport>(() => {
     if (typeof window === 'undefined') return 'desktop'
     const w = window.innerWidth
-    if (w < 640) return 'mobile'
+    if (w < 640) return 'desktop'   // phones: show full desktop site scaled down
     if (w < 1024) return 'tablet'
     return 'desktop'
   })
@@ -198,15 +200,7 @@ export default function InteractiveEditorPreview({
 
   // ─── Scaling ──────────────────────────────────────────────────────────────
 
-  // Force correct viewport tier based on actual pane width — this guards against
-  // the SSR/hydration window where `viewport` state might still be 'desktop'
-  // even though we're rendering on a phone (paneWidth < 640).
-  const effectiveViewport: Viewport =
-    paneWidth < 640 ? 'mobile' :
-    paneWidth < 900 ? 'tablet' :
-    viewport
-
-  const targetWidth = VIEWPORT_CONFIG[effectiveViewport].width
+  const targetWidth = VIEWPORT_CONFIG[viewport].width
   const scale       = Math.min(0.999, paneWidth / targetWidth)
 
   const iframeStyle: React.CSSProperties = {
@@ -220,7 +214,7 @@ export default function InteractiveEditorPreview({
   }
 
   const scaledW = targetWidth * scale
-  const leftPad = effectiveViewport !== 'desktop' ? Math.max(0, (paneWidth - scaledW) / 2) : 0
+  const leftPad = viewport !== 'desktop' ? Math.max(0, (paneWidth - scaledW) / 2) : 0
 
   // ─── Shared controls markup ───────────────────────────────────────────────
   // Rendered in both the desktop sidebar and the mobile inline controls section.
@@ -498,6 +492,10 @@ export default function InteractiveEditorPreview({
               overflow: 'hidden',
               position: 'relative',
               minWidth: 0,
+              // iOS Safari: force GPU compositing so overflow:hidden properly
+              // clips scaled iframes (without this, transforms can escape the clip).
+              WebkitTransform: 'translateZ(0)',
+              transform: 'translateZ(0)',
             }}
           >
             {/* Loading overlay */}
@@ -670,7 +668,9 @@ export default function InteractiveEditorPreview({
         .fs-img-chip.active .fs-img-label { color: var(--accent); }
 
         /* ── Desktop layout ────────────────────────────────────────────────── */
-        .editor-frame { overflow: hidden; }
+        /* translateZ(0) forces GPU compositing: fixes iOS Safari overflow:hidden
+           not clipping scaled/transformed children (known webkit bug). */
+        .editor-frame { overflow: hidden; -webkit-transform: translateZ(0); transform: translateZ(0); }
         .editor-viewport-switcher { }
         .editor-topbar-actions { }
         .editor-sidebar { }
