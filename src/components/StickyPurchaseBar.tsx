@@ -35,17 +35,18 @@ export default function StickyPurchaseBar({ templateTitle, registerUrl }: Props)
         WebkitBackdropFilter: 'blur(20px)',
         borderTop: '1px solid rgba(0,0,0,0.07)',
         padding: '12px 7vw',
+        paddingBottom: 'max(12px, calc(12px + env(safe-area-inset-bottom)))',
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         boxShadow: '0 -4px 24px rgba(0,0,0,0.07)',
         transform: visible ? 'translateY(0)' : 'translateY(100%)',
         transition: 'transform 0.3s cubic-bezier(0.4,0,0.2,1)',
       }}>
-        <div>
+        <div className="sticky-bar-title">
           <div style={{ fontSize: 12, color: '#aaa', marginBottom: 1 }}>Template</div>
           <div style={{ fontSize: 15, fontWeight: 700, color: '#111', letterSpacing: '-0.02em' }}>{templateTitle}</div>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-          <span style={{ fontSize: 13, color: '#999' }}>Ab 20 €/Monat</span>
+        <div className="sticky-bar-inner" style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+          <span className="sticky-bar-price" style={{ fontSize: 13, color: '#999' }}>Ab 20 €/Monat</span>
           <a
             href={registerUrl}
             style={{
@@ -64,8 +65,11 @@ export default function StickyPurchaseBar({ templateTitle, registerUrl }: Props)
       </div>
 
       <style>{`
-        @media (max-width: 480px) {
+        @media (max-width: 767px) {
+          .sticky-bar-title { display: none; }
           .sticky-bar-price { display: none; }
+          .sticky-bar-inner { justify-content: center !important; padding: 10px 20px !important; }
+          .sticky-bar-inner a { flex: 1; text-align: center; }
         }
       `}</style>
     </>

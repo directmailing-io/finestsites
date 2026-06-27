@@ -207,21 +207,38 @@ export default async function TemplateDetailPage({ params }: Props) {
           .fs-nav-links { display: none; }
           .fs-nav-actions { display: none !important; }
           .fs-hamburger { display: flex !important; }
-          .vd-hero { padding: 96px 22px 48px; }
-          .vd-preview { padding: 0 0 56px; }
+
+          /* Hero: compact on mobile */
+          .vd-hero { padding: 88px 20px 36px; }
+          .vd-hero-grid { grid-template-columns: 1fr !important; gap: 20px !important; }
+          .vd-hero-cta { display: none; } /* StickyPurchaseBar + NavBar handle CTA */
+
+          /* Editor preview: edge-to-edge feel */
+          .vd-preview { padding: 0 0 48px; }
           .vd-preview-inner { max-width: 100%; }
-          .vd-preview-sub { padding: 0 22px; }
-          .vd-preview-eyebrow { padding: 0 22px; }
-          .vd-preview-title { padding: 0 22px; }
-          .vd-feature-row { padding: 56px 22px; }
-          .vd-feature-inner { grid-template-columns: 1fr; gap: 36px; }
+          .vd-preview-text { padding: 0 20px; }
+          .vd-preview-eyebrow { padding: 0 20px; }
+          .vd-preview-title { padding: 0 20px; }
+          .vd-preview-sub { padding: 0 20px; }
+          .vd-preview-editor { border-radius: 0 !important; margin: 0 !important; }
+
+          /* Features: single column */
+          .vd-feature-row { padding: 48px 20px; }
+          .vd-feature-inner { grid-template-columns: 1fr; gap: 28px; }
           .vd-feature-inner.reverse { direction: ltr; }
+
+          /* More templates: single column */
           .vd-more-grid { grid-template-columns: 1fr; }
-          .editor-preview-pane { height: 520px !important; }
+
+          /* Safe area bottom for phones with home indicator */
+          .vd-final-cta { padding-bottom: max(96px, calc(96px + env(safe-area-inset-bottom))) !important; }
         }
         @media (max-width: 479px) {
-          .vd-more-grid { grid-template-columns: 1fr; }
-          .editor-preview-pane { height: 460px !important; }
+          .vd-hero { padding: 80px 16px 28px; }
+          .vd-feature-row { padding: 40px 16px; }
+          .vd-preview-eyebrow { padding: 0 16px; }
+          .vd-preview-title { padding: 0 16px; }
+          .vd-preview-sub { padding: 0 16px; }
         }
       `}</style>
 
@@ -244,7 +261,7 @@ export default async function TemplateDetailPage({ params }: Props) {
             </div>
           )}
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: 48, alignItems: 'flex-end' }}>
+          <div className="vd-hero-grid" style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: 48, alignItems: 'flex-end' }}>
             <div>
               <h1 style={{
                 fontFamily: '"Plein", Georgia, serif',
@@ -263,7 +280,7 @@ export default async function TemplateDetailPage({ params }: Props) {
                 </p>
               )}
             </div>
-            <div style={{ flexShrink: 0, paddingBottom: 4 }}>
+            <div className="vd-hero-cta" style={{ flexShrink: 0, paddingBottom: 4 }}>
               <TemplateStartCTA templateId={tpl.id} templateTitle={tpl.title} />
             </div>
           </div>
@@ -409,7 +426,7 @@ export default async function TemplateDetailPage({ params }: Props) {
       )}
 
       {/* ── FINAL CTA ─────────────────────────────────────────────────────────── */}
-      <section style={{ background: '#111', padding: '96px 7vw' }}>
+      <section className="vd-final-cta" style={{ background: '#111', padding: '96px 7vw' }}>
         <div style={{ maxWidth: 1080, margin: '0 auto', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: 32 }}>
           <div>
             <p style={{ fontSize: 11, fontWeight: 700, color: 'rgba(255,255,255,0.3)', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 20 }}>Los geht&apos;s</p>

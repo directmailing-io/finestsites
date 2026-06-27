@@ -3,8 +3,6 @@
 import { useRef, useState, useEffect, useCallback } from 'react'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
-// These mirror the placeholderSchema field structure.
-// preview_interactive and preview_value are set by admin per field.
 
 interface CardOption {
   value: string
@@ -19,8 +17,8 @@ interface PlaceholderField {
   key: string
   label: string
   type: string
-  preview_interactive?: boolean   // can visitor change this in marketing preview?
-  preview_value?: string          // admin-set demo value
+  preview_interactive?: boolean
+  preview_value?: string
   default_value?: string
   card_options?: CardOption[]
 }
@@ -54,7 +52,6 @@ function buildPreviewSrc(templateId: string, overrides: Record<string, string>):
   const base = `/api/templates/${templateId}/public-preview`
   if (Object.keys(overrides).length === 0) return base
   const json = JSON.stringify(overrides)
-  // base64url: same as server's Buffer.from(str, 'base64url')
   const b64 = btoa(unescape(encodeURIComponent(json)))
     .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
   return `${base}?data=${b64}`
@@ -63,7 +60,6 @@ function buildPreviewSrc(templateId: string, overrides: Record<string, string>):
 // ─── Control type detection ───────────────────────────────────────────────────
 
 function isToggleField(f: PlaceholderField): boolean {
-  // ja/nein card_select → show as toggle
   const vals = (f.card_options ?? []).map(o => o.value)
   return f.type === 'card_select' && vals.includes('ja') && vals.includes('nein') && vals.length === 2
 }
@@ -87,17 +83,25 @@ export default function InteractiveEditorPreview({
   accentColor,
   registerUrl,
 }: Props) {
-  const paneRef = useRef<HTMLDivElement>(null)
-  const iframeRef = useRef<HTMLIFrameElement>(null)
+  const paneRef    = useRef<HTMLDivElement>(null)
+  const iframeRef  = useRef<HTMLIFrameElement>(null)
   const pendingScroll = useRef<number | null>(null)
-  // allValuesRef tracks ALL current field values (including toggle state)
-  // and is used when building the next iframe src on non-toggle changes.
-  // Toggle changes only update allValuesRef + postMessage; they don't reload.
+
   const [paneWidth, setPaneWidth] = useState(880)
-  const [viewport, setViewport] = useState<Viewport>('desktop')
+  const [viewport, setViewport]   = useState<Viewport>('desktop')
   const [isLoading, setIsLoading] = useState(false)
 
-  // ─── Measure preview pane width for CSS transform scaling ─────────────────
+  // ─── Auto-detect viewport on mount ────────────────────────────────────────
+  // Sets mobile/tablet automatically so the preview matches the user's device.
+
+  useEffect(() => {
+    const w = window.innerWidth
+    if (w < 640)  setViewport('mobile')
+    else if (w < 1024) setViewport('tablet')
+    // > 1024 stays as 'desktop' (initial value)
+  }, [])
+
+  // ─── Measure preview pane ─────────────────────────────────────────────────
 
   useEffect(() => {
     const update = () => {
@@ -109,9 +113,9 @@ export default function InteractiveEditorPreview({
     return () => ro.disconnect()
   }, [])
 
-  // ─── Derive interactive fields from schema ────────────────────────────────
+  // ─── Fields ───────────────────────────────────────────────────────────────
 
-  const allFields = placeholderSchema.fields ?? []
+  const allFields         = placeholderSchema.fields ?? []
   const interactiveFields = allFields.filter(f => f.preview_interactive)
 
   const colorFields  = interactiveFields.filter(isColorField)
@@ -120,10 +124,8 @@ export default function InteractiveEditorPreview({
 
   const hasControls = interactiveFields.length > 0
 
-  // ─── State: one value per interactive field ───────────────────────────────
+  // ─── State ────────────────────────────────────────────────────────────────
 
-  // Compute initial field values once via useState initializer (avoids ref
-  // access during render which the react-hooks/refs rule disallows).
   const [initialValues] = useState<Record<string, string>>(() => {
     const vals: Record<string, string> = {}
     for (const f of interactiveFields) {
@@ -132,22 +134,13 @@ export default function InteractiveEditorPreview({
     return vals
   })
 
-  // allValuesRef tracks ALL current field values (including toggle state).
-  // Toggle changes only update allValuesRef + postMessage; they don't reload.
-  // Non-toggle changes update allValuesRef AND rebuild previewSrc → reload.
   const allValuesRef = useRef<Record<string, string>>(initialValues)
-
   const [fieldValues, setFieldValues] = useState<Record<string, string>>(initialValues)
-
-  // previewSrc is STATE (not derived) so toggles can postMessage without reload.
-  // Non-toggle field changes update both fieldValues AND previewSrc.
-  const [previewSrc, setPreviewSrc] = useState(() =>
-    buildPreviewSrc(templateId, initialValues)
-  )
+  const [previewSrc, setPreviewSrc]   = useState(() => buildPreviewSrc(templateId, initialValues))
 
   const demoUrl = `demo.${domain}`
 
-  // ─── Field updates ─────────────────────────────────────────────────────────
+  // ─── Handlers ─────────────────────────────────────────────────────────────
 
   function captureScroll() {
     try {
@@ -156,24 +149,17 @@ export default function InteractiveEditorPreview({
     } catch { pendingScroll.current = null }
   }
 
-  /** Non-toggle field (color, hero variant, …): update allValuesRef + rebuild src → iframe reloads */
   const updateField = useCallback((key: string, value: string) => {
     captureScroll()
     setIsLoading(true)
-    allValuesRef.current = { ...allValuesRef.current!, [key]: value }
+    allValuesRef.current = { ...allValuesRef.current, [key]: value }
     setFieldValues(prev => ({ ...prev, [key]: value }))
-    setPreviewSrc(buildPreviewSrc(templateId, allValuesRef.current!))
+    setPreviewSrc(buildPreviewSrc(templateId, allValuesRef.current))
   }, [templateId])
 
-  /**
-   * Toggle field (ja/nein section): update allValuesRef + fieldValues for UI,
-   * then postMessage the iframe to animate in-place — NO src change, NO reload.
-   * allValuesRef is kept up-to-date so the next non-toggle reload includes the
-   * current toggle state in the ?data= param.
-   */
   const handleToggle = useCallback((key: string) => {
-    const newValue = (allValuesRef.current![key] ?? 'ja') === 'ja' ? 'nein' : 'ja'
-    allValuesRef.current = { ...allValuesRef.current!, [key]: newValue }
+    const newValue = (allValuesRef.current[key] ?? 'ja') === 'ja' ? 'nein' : 'ja'
+    allValuesRef.current = { ...allValuesRef.current, [key]: newValue }
     setFieldValues(prev => ({ ...prev, [key]: newValue }))
     try {
       iframeRef.current?.contentWindow?.postMessage(
@@ -188,19 +174,19 @@ export default function InteractiveEditorPreview({
     const target = pendingScroll.current
     pendingScroll.current = null
     if (target !== null) {
-      requestAnimationFrame(() => {
+      setTimeout(() => {
         try {
           iframeRef.current?.contentWindow?.scrollTo({ top: target, behavior: 'instant' })
         } catch { /* cross-origin guard */ }
-      })
+      }, 50)
     }
   }, [])
 
-  // ─── Viewport + iframe scaling ────────────────────────────────────────────
+  // ─── Scaling ──────────────────────────────────────────────────────────────
 
   const targetWidth = VIEWPORT_CONFIG[viewport].width
-  const scale = Math.min(0.999, paneWidth / targetWidth)
-  const PANE_H = 620
+  const scale       = Math.min(0.999, paneWidth / targetWidth)
+  const PANE_H      = 620
 
   const iframeStyle: React.CSSProperties = {
     width: targetWidth,
@@ -212,13 +198,183 @@ export default function InteractiveEditorPreview({
     flexShrink: 0,
   }
 
-  // For tablet/mobile: center horizontally
   const scaledW = targetWidth * scale
   const leftPad = viewport !== 'desktop' ? Math.max(0, (paneWidth - scaledW) / 2) : 0
 
+  // ─── Shared controls markup ───────────────────────────────────────────────
+  // Rendered in both the desktop sidebar and the mobile inline controls section.
+
+  function renderControls(variant: 'sidebar' | 'mobile') {
+    const isMobileVariant = variant === 'mobile'
+    return (
+      <>
+        {/* Color fields */}
+        {colorFields.map(field => (
+          <SidebarSection key={field.key} label={field.label} variant={variant}>
+            {isMobileVariant ? (
+              /* Mobile: horizontal scroll chips */
+              <div className="fs-mobile-scroll">
+                {(field.card_options ?? []).map(opt => {
+                  const isActive = fieldValues[field.key] === opt.value
+                  return (
+                    <button
+                      key={opt.value}
+                      onClick={() => updateField(field.key, opt.value)}
+                      className={`fs-color-chip${isActive ? ' active' : ''}`}
+                      style={{ '--chip-color': opt.color ?? accentColor, '--accent': accentColor } as React.CSSProperties}
+                    >
+                      <span className="fs-color-dot" style={{ background: opt.color ?? '#999' }} />
+                      <span className="fs-color-label">{opt.label}</span>
+                      {isActive && <CheckIcon color={accentColor} />}
+                    </button>
+                  )
+                })}
+              </div>
+            ) : (
+              /* Desktop: vertical list */
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
+                {(field.card_options ?? []).map(opt => {
+                  const isActive = fieldValues[field.key] === opt.value
+                  return (
+                    <button
+                      key={opt.value}
+                      onClick={() => updateField(field.key, opt.value)}
+                      style={{
+                        display: 'flex', alignItems: 'center', gap: 10,
+                        padding: '9px 11px', borderRadius: 9, width: '100%',
+                        border: `1.5px solid ${isActive ? accentColor : 'rgba(0,0,0,0.09)'}`,
+                        background: isActive ? `${accentColor}0d` : '#fff',
+                        cursor: 'pointer', textAlign: 'left', transition: 'all 0.12s',
+                        minHeight: 44,
+                      }}
+                    >
+                      <div style={{
+                        width: 26, height: 26, borderRadius: '50%', flexShrink: 0,
+                        background: opt.color ?? '#999',
+                        boxShadow: isActive
+                          ? `0 0 0 2px #fff, 0 0 0 3.5px ${opt.color ?? accentColor}`
+                          : 'inset 0 0 0 1px rgba(0,0,0,0.1)',
+                        transition: 'box-shadow 0.12s',
+                      }} />
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ fontSize: 12.5, fontWeight: 600, color: '#222', lineHeight: 1.25 }}>{opt.label}</div>
+                        {opt.description && (
+                          <div style={{ fontSize: 11, color: '#aaa', marginTop: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{opt.description}</div>
+                        )}
+                      </div>
+                      {isActive && <Checkmark color={accentColor} />}
+                    </button>
+                  )
+                })}
+              </div>
+            )}
+          </SidebarSection>
+        ))}
+
+        {/* Image fields */}
+        {imageFields.map(field => (
+          <SidebarSection key={field.key} label={field.label} variant={variant}>
+            {isMobileVariant ? (
+              /* Mobile: horizontal scroll image chips */
+              <div className="fs-mobile-scroll">
+                {(field.card_options ?? []).map(opt => {
+                  const isActive = fieldValues[field.key] === opt.value
+                  return (
+                    <button
+                      key={opt.value}
+                      onClick={() => updateField(field.key, opt.value)}
+                      className={`fs-img-chip${isActive ? ' active' : ''}`}
+                      style={{ '--accent': accentColor } as React.CSSProperties}
+                    >
+                      <div className="fs-img-thumb">
+                        {opt.image_url && (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img src={opt.image_url} alt={opt.label} />
+                        )}
+                        {isActive && (
+                          <div className="fs-img-check">
+                            <CheckIcon color="#fff" />
+                          </div>
+                        )}
+                      </div>
+                      <span className="fs-img-label">{opt.label}</span>
+                    </button>
+                  )
+                })}
+              </div>
+            ) : (
+              /* Desktop: vertical list with thumbnail */
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
+                {(field.card_options ?? []).map(opt => {
+                  const isActive = fieldValues[field.key] === opt.value
+                  return (
+                    <button
+                      key={opt.value}
+                      onClick={() => updateField(field.key, opt.value)}
+                      style={{
+                        display: 'flex', alignItems: 'center', gap: 10,
+                        padding: '7px 10px 7px 7px', borderRadius: 9, width: '100%',
+                        border: `1.5px solid ${isActive ? accentColor : 'rgba(0,0,0,0.09)'}`,
+                        background: isActive ? `${accentColor}0d` : '#fff',
+                        cursor: 'pointer', textAlign: 'left', transition: 'all 0.12s',
+                        minHeight: 44,
+                      }}
+                    >
+                      <div style={{
+                        width: 54, height: 34, borderRadius: 5, flexShrink: 0,
+                        background: '#F0F0F0', overflow: 'hidden',
+                        border: `1px solid ${isActive ? accentColor + '40' : 'rgba(0,0,0,0.06)'}`,
+                      }}>
+                        {opt.image_url && (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img src={opt.image_url} alt={opt.label} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                        )}
+                      </div>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ fontSize: 12.5, fontWeight: 600, color: '#222', lineHeight: 1.25 }}>{opt.label}</div>
+                        {opt.description && (
+                          <div style={{ fontSize: 11, color: '#aaa', marginTop: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{opt.description}</div>
+                        )}
+                      </div>
+                      {isActive && <Checkmark color={accentColor} />}
+                    </button>
+                  )
+                })}
+              </div>
+            )}
+          </SidebarSection>
+        ))}
+
+        {/* Toggle fields */}
+        {toggleFields.length > 0 && (
+          <SidebarSection label="Sektionen ein/aus" variant={variant}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: isMobileVariant ? 0 : 2 }}>
+              {toggleFields.map(field => {
+                const isOn = (fieldValues[field.key] ?? 'ja') === 'ja'
+                return (
+                  <div
+                    key={field.key}
+                    onClick={() => handleToggle(field.key)}
+                    className="fs-toggle-row"
+                    style={{ '--accent': accentColor } as React.CSSProperties}
+                  >
+                    <span className="fs-toggle-label">{field.label}</span>
+                    <ToggleSwitch isOn={isOn} color={accentColor} />
+                  </div>
+                )
+              })}
+            </div>
+          </SidebarSection>
+        )}
+      </>
+    )
+  }
+
+  // ─── Render ───────────────────────────────────────────────────────────────
+
   return (
     <div style={{ position: 'relative' }}>
-      <div style={{
+      <div className="editor-frame" style={{
         border: '1px solid rgba(0,0,0,0.08)',
         borderRadius: 20,
         overflow: 'hidden',
@@ -226,7 +382,7 @@ export default function InteractiveEditorPreview({
       }}>
 
         {/* ── Top bar ──────────────────────────────────────────────────────── */}
-        <div style={{
+        <div className="editor-topbar" style={{
           background: '#FAFAFA',
           borderBottom: '1px solid rgba(0,0,0,0.07)',
           padding: '0 16px',
@@ -235,7 +391,7 @@ export default function InteractiveEditorPreview({
           alignItems: 'center',
           justifyContent: 'space-between',
           gap: 12,
-        }} className="editor-topbar">
+        }}>
 
           {/* Logo + domain */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -245,8 +401,8 @@ export default function InteractiveEditorPreview({
             <span style={{ fontSize: 12, color: '#999', fontWeight: 500 }}>{demoUrl}</span>
           </div>
 
-          {/* Viewport switcher */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 1, background: '#EDEDED', borderRadius: 9, padding: 3 }} className="editor-viewport-switcher">
+          {/* Viewport switcher — hidden on mobile/tablet via CSS */}
+          <div className="editor-viewport-switcher" style={{ display: 'flex', alignItems: 'center', gap: 1, background: '#EDEDED', borderRadius: 9, padding: 3 }}>
             {(['desktop', 'tablet', 'mobile'] as Viewport[]).map(vp => (
               <button
                 key={vp}
@@ -266,8 +422,8 @@ export default function InteractiveEditorPreview({
             ))}
           </div>
 
-          {/* Actions */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          {/* Actions — hidden on mobile via CSS */}
+          <div className="editor-topbar-actions" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <a
               href={`https://${demoUrl}`}
               target="_blank"
@@ -292,18 +448,13 @@ export default function InteractiveEditorPreview({
           </div>
         </div>
 
-        {/* ── Mobile tabs ──────────────────────────────────────────────────── */}
-        {hasControls && (
-          <MobileTabs accentColor={accentColor} />
-        )}
-
         {/* ── Body: sidebar + preview ──────────────────────────────────────── */}
-        <div style={{
+        <div className="editor-body" style={{
           display: 'grid',
           gridTemplateColumns: hasControls ? '260px 1fr' : '1fr',
-        }} className="editor-body">
+        }}>
 
-          {/* ── LEFT: Sidebar ─────────────────────────────────────────────── */}
+          {/* ── LEFT: Sidebar (desktop + tablet) ──────────────────────────── */}
           {hasControls && (
             <aside className="editor-sidebar" style={{
               background: '#fff',
@@ -312,115 +463,7 @@ export default function InteractiveEditorPreview({
               display: 'flex',
               flexDirection: 'column',
             }}>
-
-              {/* Color fields */}
-              {colorFields.map(field => (
-                <SidebarSection key={field.key} label={field.label}>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
-                    {(field.card_options ?? []).map(opt => {
-                      const isActive = fieldValues[field.key] === opt.value
-                      return (
-                        <button
-                          key={opt.value}
-                          onClick={() => updateField(field.key, opt.value)}
-                          style={{
-                            display: 'flex', alignItems: 'center', gap: 10,
-                            padding: '9px 11px', borderRadius: 9, width: '100%',
-                            border: `1.5px solid ${isActive ? accentColor : 'rgba(0,0,0,0.09)'}`,
-                            background: isActive ? `${accentColor}0d` : '#fff',
-                            cursor: 'pointer', textAlign: 'left', transition: 'all 0.12s',
-                          }}
-                        >
-                          <div style={{
-                            width: 26, height: 26, borderRadius: '50%', flexShrink: 0,
-                            background: opt.color ?? '#999',
-                            boxShadow: isActive
-                              ? `0 0 0 2px #fff, 0 0 0 3.5px ${opt.color ?? accentColor}`
-                              : 'inset 0 0 0 1px rgba(0,0,0,0.1)',
-                            transition: 'box-shadow 0.12s',
-                          }} />
-                          <div style={{ flex: 1, minWidth: 0 }}>
-                            <div style={{ fontSize: 12.5, fontWeight: 600, color: '#222', lineHeight: 1.25 }}>{opt.label}</div>
-                            {opt.description && (
-                              <div style={{ fontSize: 11, color: '#aaa', marginTop: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{opt.description}</div>
-                            )}
-                          </div>
-                          {isActive && <Checkmark color={accentColor} />}
-                        </button>
-                      )
-                    })}
-                  </div>
-                </SidebarSection>
-              ))}
-
-              {/* Image selector fields (Hero variant etc.) */}
-              {imageFields.map(field => (
-                <SidebarSection key={field.key} label={field.label}>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
-                    {(field.card_options ?? []).map(opt => {
-                      const isActive = fieldValues[field.key] === opt.value
-                      return (
-                        <button
-                          key={opt.value}
-                          onClick={() => updateField(field.key, opt.value)}
-                          style={{
-                            display: 'flex', alignItems: 'center', gap: 10,
-                            padding: '7px 10px 7px 7px', borderRadius: 9, width: '100%',
-                            border: `1.5px solid ${isActive ? accentColor : 'rgba(0,0,0,0.09)'}`,
-                            background: isActive ? `${accentColor}0d` : '#fff',
-                            cursor: 'pointer', textAlign: 'left', transition: 'all 0.12s',
-                          }}
-                        >
-                          <div style={{
-                            width: 54, height: 34, borderRadius: 5, flexShrink: 0,
-                            background: '#F0F0F0', overflow: 'hidden',
-                            border: `1px solid ${isActive ? accentColor + '40' : 'rgba(0,0,0,0.06)'}`,
-                          }}>
-                            {opt.image_url && (
-                              // eslint-disable-next-line @next/next/no-img-element
-                              <img src={opt.image_url} alt={opt.label} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-                            )}
-                          </div>
-                          <div style={{ flex: 1, minWidth: 0 }}>
-                            <div style={{ fontSize: 12.5, fontWeight: 600, color: '#222', lineHeight: 1.25 }}>{opt.label}</div>
-                            {opt.description && (
-                              <div style={{ fontSize: 11, color: '#aaa', marginTop: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{opt.description}</div>
-                            )}
-                          </div>
-                          {isActive && <Checkmark color={accentColor} />}
-                        </button>
-                      )
-                    })}
-                  </div>
-                </SidebarSection>
-              ))}
-
-              {/* Toggle fields (Sektionen) */}
-              {toggleFields.length > 0 && (
-                <SidebarSection label="Sektionen ein/aus">
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                    {toggleFields.map(field => {
-                      const isOn = (fieldValues[field.key] ?? 'ja') === 'ja'
-                      return (
-                        <div
-                          key={field.key}
-                          onClick={() => handleToggle(field.key)}
-                          style={{
-                            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                            padding: '9px 6px', borderRadius: 8, cursor: 'pointer', transition: 'background 0.1s',
-                          }}
-                          onMouseEnter={e => (e.currentTarget.style.background = '#F7F7F7')}
-                          onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
-                        >
-                          <span style={{ fontSize: 12.5, color: '#333', fontWeight: 500 }}>{field.label}</span>
-                          <ToggleSwitch isOn={isOn} color={accentColor} />
-                        </div>
-                      )
-                    })}
-                  </div>
-                </SidebarSection>
-              )}
-
+              {renderControls('sidebar')}
               <div style={{ flex: 1 }} />
             </aside>
           )}
@@ -453,7 +496,6 @@ export default function InteractiveEditorPreview({
               </div>
             )}
 
-            {/* Scaled iframe — desktop flush left, tablet/mobile centered */}
             <div style={{
               position: 'absolute',
               top: viewport !== 'desktop' ? 12 : 0,
@@ -468,69 +510,234 @@ export default function InteractiveEditorPreview({
               />
             </div>
           </div>
-
         </div>
+
+        {/* ── Mobile inline controls (below preview) ───────────────────────── */}
+        {/* Apple configurator pattern: options stack below the product preview   */}
+        {hasControls && (
+          <div className="editor-mobile-controls">
+            {renderControls('mobile')}
+          </div>
+        )}
+
       </div>
 
+      {/* ── Global styles ─────────────────────────────────────────────────── */}
       <style>{`
         @keyframes fs-spin { to { transform: rotate(360deg); } }
 
-        @media (max-width: 768px) {
-          .editor-topbar { display: none !important; }
-          .editor-mobile-tabs { display: flex !important; }
-          .editor-body { grid-template-columns: 1fr !important; }
-          .editor-sidebar { border-right: none !important; border-bottom: 1px solid rgba(0,0,0,0.07); max-height: 340px; }
-          .editor-sidebar.mobile-hidden { display: none !important; }
-          .editor-preview-pane { height: 500px !important; }
-          .editor-preview-pane.mobile-hidden { display: none !important; }
-          .editor-viewport-switcher { display: none !important; }
+        /* ── Shared toggle row ─────────────────────────────────────────────── */
+        .fs-toggle-row {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 10px 6px;
+          border-radius: 10px;
+          cursor: pointer;
+          transition: background 0.12s;
+          min-height: 44px;
+          -webkit-tap-highlight-color: transparent;
         }
-        @media (max-width: 480px) {
-          .editor-preview-pane { height: 420px !important; }
+        .fs-toggle-row:hover { background: #F7F7F7; }
+        .fs-toggle-row:active { background: #EFEFEF; }
+        .fs-toggle-label {
+          font-size: 13px;
+          color: #333;
+          font-weight: 500;
+          user-select: none;
+          line-height: 1.3;
+        }
+
+        /* ── Mobile-only controls section ─────────────────────────────────── */
+        .editor-mobile-controls {
+          display: none;
+          background: #fff;
+          border-top: 1px solid rgba(0,0,0,0.08);
+        }
+
+        /* ── Mobile horizontal scroll strip ───────────────────────────────── */
+        .fs-mobile-scroll {
+          display: flex;
+          gap: 8px;
+          overflow-x: auto;
+          padding: 4px 2px 8px;
+          scroll-snap-type: x mandatory;
+          -webkit-overflow-scrolling: touch;
+          scrollbar-width: none;
+        }
+        .fs-mobile-scroll::-webkit-scrollbar { display: none; }
+
+        /* Color chip (mobile) */
+        .fs-color-chip {
+          display: flex;
+          align-items: center;
+          gap: 7px;
+          padding: 8px 14px 8px 10px;
+          border-radius: 100px;
+          border: 1.5px solid rgba(0,0,0,0.1);
+          background: #fff;
+          cursor: pointer;
+          white-space: nowrap;
+          min-height: 40px;
+          scroll-snap-align: start;
+          transition: border-color 0.12s, background 0.12s;
+          -webkit-tap-highlight-color: transparent;
+          flex-shrink: 0;
+        }
+        .fs-color-chip.active {
+          border-color: var(--accent);
+          background: color-mix(in srgb, var(--accent) 8%, #fff);
+        }
+        .fs-color-dot {
+          width: 16px; height: 16px;
+          border-radius: 50%;
+          flex-shrink: 0;
+          box-shadow: inset 0 0 0 1px rgba(0,0,0,0.08);
+        }
+        .fs-color-label {
+          font-size: 13px;
+          font-weight: 600;
+          color: #222;
+        }
+        .fs-color-chip.active .fs-color-label { color: var(--accent); }
+
+        /* Image chip (mobile) */
+        .fs-img-chip {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 6px;
+          padding: 0;
+          border: none;
+          background: none;
+          cursor: pointer;
+          scroll-snap-align: start;
+          flex-shrink: 0;
+          -webkit-tap-highlight-color: transparent;
+        }
+        .fs-img-thumb {
+          width: 72px; height: 46px;
+          border-radius: 8px;
+          overflow: hidden;
+          background: #F0F0F0;
+          border: 2px solid rgba(0,0,0,0.08);
+          transition: border-color 0.12s;
+          position: relative;
+          flex-shrink: 0;
+        }
+        .fs-img-chip.active .fs-img-thumb {
+          border-color: var(--accent);
+        }
+        .fs-img-thumb img {
+          width: 100%; height: 100%; object-fit: cover; display: block;
+        }
+        .fs-img-check {
+          position: absolute; inset: 0;
+          background: rgba(0,0,0,0.35);
+          display: flex; align-items: center; justify-content: center;
+        }
+        .fs-img-label {
+          font-size: 11px;
+          font-weight: 600;
+          color: #555;
+          text-align: center;
+          max-width: 72px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+        .fs-img-chip.active .fs-img-label { color: var(--accent); }
+
+        /* ── Desktop layout ────────────────────────────────────────────────── */
+        .editor-frame { }
+        .editor-viewport-switcher { }
+        .editor-topbar-actions { }
+        .editor-sidebar { }
+        .editor-preview-pane { height: 620px; }
+        .editor-body { }
+
+        /* ── Tablet layout (768–1023px) ────────────────────────────────────── */
+        @media (max-width: 1023px) {
+          .editor-viewport-switcher { display: none !important; }
+          .editor-topbar-actions a:first-child { display: none; } /* hide Live-Demo */
+          .editor-body { grid-template-columns: 220px 1fr !important; }
+          /* Touch-friendly sidebar items */
+          .fs-toggle-row { min-height: 48px; padding: 12px 6px; }
+          .fs-toggle-label { font-size: 13.5px; }
+          .editor-preview-pane { height: 560px !important; }
+        }
+
+        /* ── Mobile layout (<768px) ────────────────────────────────────────── */
+        @media (max-width: 767px) {
+          /* Frame: edge-to-edge, no rounded corners on mobile */
+          .editor-frame {
+            border-radius: 16px !important;
+            border-left: none !important;
+            border-right: none !important;
+            border-top: none !important;
+          }
+
+          /* Top bar: simplified */
+          .editor-topbar-actions { display: none !important; }
+          .editor-viewport-switcher { display: none !important; }
+
+          /* Body: preview only, no sidebar */
+          .editor-body { grid-template-columns: 1fr !important; }
+          .editor-sidebar { display: none !important; }
+
+          /* Preview: shorter, full-width */
+          .editor-preview-pane { height: 460px !important; }
+
+          /* Show mobile controls below preview */
+          .editor-mobile-controls { display: block !important; }
+        }
+
+        /* ── Very small phones (<480px) ────────────────────────────────────── */
+        @media (max-width: 479px) {
+          .editor-preview-pane { height: 400px !important; }
+          .editor-frame { border-radius: 12px !important; }
         }
       `}</style>
     </div>
   )
 }
 
-// ─── Mobile tabs ─────────────────────────────────────────────────────────────
-
-function MobileTabs({ accentColor }: { accentColor: string }) {
-  const [tab, setTab] = useState<'preview' | 'edit'>('preview')
-  return (
-    <div className="editor-mobile-tabs" style={{ display: 'none', background: '#fff', borderBottom: '1px solid rgba(0,0,0,0.07)' }}>
-      {(['preview', 'edit'] as const).map(t => (
-        <button
-          key={t}
-          onClick={() => setTab(t)}
-          style={{
-            flex: 1, padding: '11px 0', fontSize: 13, fontWeight: 600,
-            background: 'none', border: 'none', cursor: 'pointer',
-            color: tab === t ? accentColor : '#bbb',
-            borderBottom: `2px solid ${tab === t ? accentColor : 'transparent'}`,
-            transition: 'all 0.15s',
-          }}
-        >
-          {t === 'preview' ? 'Vorschau' : 'Anpassen'}
-        </button>
-      ))}
-    </div>
-  )
-}
-
 // ─── Sidebar section wrapper ─────────────────────────────────────────────────
 
-function SidebarSection({ label, children }: { label: string; children: React.ReactNode }) {
+function SidebarSection({
+  label,
+  children,
+  variant,
+}: {
+  label: string
+  children: React.ReactNode
+  variant?: 'sidebar' | 'mobile'
+}) {
+  const isMobile = variant === 'mobile'
   return (
-    <div style={{ borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
-      <div style={{
-        padding: '11px 16px 5px',
-        fontSize: 10, fontWeight: 700, letterSpacing: '0.08em',
-        textTransform: 'uppercase', color: '#bbb',
-      }}>
-        {label}
-      </div>
-      <div style={{ padding: '3px 16px 12px' }}>
+    <div style={{
+      borderBottom: '1px solid rgba(0,0,0,0.05)',
+      padding: isMobile ? '14px 16px 16px' : undefined,
+    }}>
+      {!isMobile && (
+        <div style={{
+          padding: '11px 16px 5px',
+          fontSize: 10, fontWeight: 700, letterSpacing: '0.08em',
+          textTransform: 'uppercase', color: '#bbb',
+        }}>
+          {label}
+        </div>
+      )}
+      {isMobile && (
+        <div style={{
+          fontSize: 11, fontWeight: 700, letterSpacing: '0.08em',
+          textTransform: 'uppercase', color: '#bbb',
+          marginBottom: 10,
+        }}>
+          {label}
+        </div>
+      )}
+      <div style={{ padding: isMobile ? undefined : '3px 16px 12px' }}>
         {children}
       </div>
     </div>
@@ -542,15 +749,19 @@ function SidebarSection({ label, children }: { label: string; children: React.Re
 function ToggleSwitch({ isOn, color }: { isOn: boolean; color: string }) {
   return (
     <div style={{
-      width: 34, height: 20, borderRadius: 100,
-      background: isOn ? color : '#E0E0E0',
-      position: 'relative', flexShrink: 0, transition: 'background 0.18s',
+      width: 38, height: 22, borderRadius: 100,
+      background: isOn ? color : '#D8D8D8',
+      position: 'relative', flexShrink: 0,
+      transition: 'background 0.2s cubic-bezier(0.4,0,0.2,1)',
     }}>
       <div style={{
-        position: 'absolute', top: 3, left: isOn ? 14 : 3,
-        width: 14, height: 14, borderRadius: '50%',
-        background: '#fff', transition: 'left 0.18s',
-        boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
+        position: 'absolute',
+        top: 3,
+        left: isOn ? 16 : 3,
+        width: 16, height: 16, borderRadius: '50%',
+        background: '#fff',
+        transition: 'left 0.2s cubic-bezier(0.4,0,0.2,1)',
+        boxShadow: '0 1px 4px rgba(0,0,0,0.25)',
       }} />
     </div>
   )
@@ -561,6 +772,14 @@ function ToggleSwitch({ isOn, color }: { isOn: boolean; color: string }) {
 function Checkmark({ color }: { color: string }) {
   return (
     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.5" style={{ flexShrink: 0 }}>
+      <path d="M20 6L9 17l-5-5"/>
+    </svg>
+  )
+}
+
+function CheckIcon({ color }: { color: string }) {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.5">
       <path d="M20 6L9 17l-5-5"/>
     </svg>
   )
