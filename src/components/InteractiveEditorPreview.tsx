@@ -93,7 +93,6 @@ export default function InteractiveEditorPreview({
   // allValuesRef tracks ALL current field values (including toggle state)
   // and is used when building the next iframe src on non-toggle changes.
   // Toggle changes only update allValuesRef + postMessage; they don't reload.
-  const allValuesRef = useRef<Record<string, string> | null>(null)
   const [paneWidth, setPaneWidth] = useState(880)
   const [viewport, setViewport] = useState<Viewport>('desktop')
   const [isLoading, setIsLoading] = useState(false)
@@ -123,22 +122,27 @@ export default function InteractiveEditorPreview({
 
   // ─── State: one value per interactive field ───────────────────────────────
 
-  // Initialize allValuesRef once from schema (lazy pattern with null check)
-  if (!allValuesRef.current) {
-    allValuesRef.current = {}
+  // Compute initial field values once via useState initializer (avoids ref
+  // access during render which the react-hooks/refs rule disallows).
+  const [initialValues] = useState<Record<string, string>>(() => {
+    const vals: Record<string, string> = {}
     for (const f of interactiveFields) {
-      allValuesRef.current[f.key] = f.preview_value ?? f.default_value ?? ''
+      vals[f.key] = f.preview_value ?? f.default_value ?? ''
     }
-  }
+    return vals
+  })
 
-  const [fieldValues, setFieldValues] = useState<Record<string, string>>(
-    () => ({ ...allValuesRef.current! })
-  )
+  // allValuesRef tracks ALL current field values (including toggle state).
+  // Toggle changes only update allValuesRef + postMessage; they don't reload.
+  // Non-toggle changes update allValuesRef AND rebuild previewSrc → reload.
+  const allValuesRef = useRef<Record<string, string>>(initialValues)
+
+  const [fieldValues, setFieldValues] = useState<Record<string, string>>(initialValues)
 
   // previewSrc is STATE (not derived) so toggles can postMessage without reload.
   // Non-toggle field changes update both fieldValues AND previewSrc.
   const [previewSrc, setPreviewSrc] = useState(() =>
-    buildPreviewSrc(templateId, allValuesRef.current!)
+    buildPreviewSrc(templateId, initialValues)
   )
 
   const demoUrl = `demo.${domain}`
