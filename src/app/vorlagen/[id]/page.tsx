@@ -276,9 +276,9 @@ export default async function TemplateDetailPage({ params }: Props) {
         <div className="vd-preview-inner">
           {previewConfig && (
             <>
-              <p className="vd-preview-eyebrow" style={{ color: accentColor }}>Live-Vorschau</p>
+              <p className="vd-preview-eyebrow" style={{ color: '#888' }}>Live-Vorschau</p>
               <h2 className="vd-preview-title" style={{ color: '#111' }}>
-                So sieht deine Seite aus — probier es direkt aus.
+                So sieht deine Seite aus. Probier es direkt aus.
               </h2>
               <p className="vd-preview-sub">
                 Passe Farbe, Sektionen und mehr an. Die Vorschau reagiert sofort.
