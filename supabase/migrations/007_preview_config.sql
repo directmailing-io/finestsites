@@ -18,9 +18,9 @@ SET preview_config = '{
     {"value": "v3", "label": "Frau mit PowerCocktail","description": "Fokus auf eine Person beim Genuss.",      "image_url": "/templates/fitline-optimalset/hero-previews/hero-v3.webp"}
   ],
   "editable_sections": [
-    {"field_key": "zeige_was_ersetzt",    "label": "Was das Optimalset ersetzt",  "emoji": "🔄", "default_value": "ja"},
-    {"field_key": "zeige_mit_optimalset", "label": "Mit dem Optimalset",          "emoji": "✅", "default_value": "ja"},
-    {"field_key": "zeige_vergleich",      "label": "Im direkten Vergleich",       "emoji": "📊", "default_value": "ja"}
+    {"field_key": "zeige_was_ersetzt",    "label": "Was das Optimalset ersetzt",  "default_value": "ja"},
+    {"field_key": "zeige_mit_optimalset", "label": "Mit dem Optimalset",          "default_value": "ja"},
+    {"field_key": "zeige_vergleich",      "label": "Im direkten Vergleich",       "default_value": "ja"}
   ],
   "default_values": {
     "farbthema": "gruen",

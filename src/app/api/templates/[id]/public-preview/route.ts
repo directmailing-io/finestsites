@@ -144,7 +144,6 @@ svg{opacity:0.4}p{font-size:14px;font-weight:500}</style></head>
   return new NextResponse(rendered, {
     headers: {
       'Content-Type': 'text/html; charset=utf-8',
-      'X-Frame-Options': 'SAMEORIGIN',
       'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300',
     },
   })

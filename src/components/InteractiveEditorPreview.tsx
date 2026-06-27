@@ -23,7 +23,6 @@ interface HeroVariantOption {
 interface SectionOption {
   field_key: string   // actual placeholder field key
   label: string
-  emoji?: string
   default_value?: string  // 'ja' (on) or 'nein' (off)
 }
 
@@ -142,9 +141,8 @@ export default function InteractiveEditorPreview({
           gap: 12,
         }} className="editor-topbar">
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <span style={{ fontSize: 13, fontWeight: 800, letterSpacing: '-0.04em', color: '#111' }}>
-              finest<span style={{ color: accentColor }}>sites</span>
-            </span>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/logos/logo-black.svg" alt="FinestSites" style={{ height: 16, width: 'auto', display: 'block' }} />
             <div style={{ width: 1, height: 16, background: 'rgba(0,0,0,0.1)' }} />
             <span style={{ fontSize: 13, color: '#888', fontWeight: 500 }}>{demoUrl}</span>
           </div>
@@ -329,10 +327,7 @@ export default function InteractiveEditorPreview({
                           onMouseEnter={e => (e.currentTarget.style.background = '#F5F5F5')}
                           onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
                         >
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
-                            {section.emoji && <span style={{ fontSize: 13 }}>{section.emoji}</span>}
-                            <span style={{ fontSize: 12.5, color: '#333', fontWeight: 500 }}>{section.label}</span>
-                          </div>
+                          <span style={{ fontSize: 12.5, color: '#333', fontWeight: 500 }}>{section.label}</span>
                           <div style={{
                             width: 34, height: 20, borderRadius: 100,
                             background: isOn ? accentColor : '#e0e0e0',
