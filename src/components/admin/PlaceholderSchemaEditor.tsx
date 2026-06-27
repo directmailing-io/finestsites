@@ -41,6 +41,9 @@ export interface PlaceholderField {
   sub_fields?: LoopSubField[]
   min_items?: number
   max_items?: number | null
+  // Marketing preview fields
+  preview_value?: string
+  preview_interactive?: boolean
 }
 
 // ─── Config ───────────────────────────────────────────────────────────────────
@@ -96,6 +99,7 @@ function newField(order: number): PlaceholderField {
     default_value: '', placeholder_text: '',
     max_length: null, options: [], card_options: [], section: '', order, aspect_ratio: 'free',
     sub_fields: [], min_items: 1, max_items: null,
+    preview_value: '', preview_interactive: false,
   }
 }
 
@@ -858,6 +862,70 @@ export function PlaceholderSchemaEditor({ fields, onChange }: Props) {
                           isLast={si === (field.sub_fields?.length ?? 0) - 1}
                         />
                       ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* ── Marketing-Vorschau ── */}
+                {field.type !== 'loop' && (
+                  <div className="mt-4 rounded-[14px] overflow-hidden"
+                    style={{ border: '1.5px solid #E0E7FF', background: '#F8F9FF' }}>
+                    <div className="px-3 py-2 flex items-center gap-2"
+                      style={{ borderBottom: '1px solid #E0E7FF' }}>
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#4338CA" strokeWidth="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+                      </svg>
+                      <span className="text-xs font-semibold" style={{ color: '#4338CA' }}>Marketing-Vorschau</span>
+                      <span className="text-xs ml-auto" style={{ color: '#818CF8' }}>Öffentliche Template-Seite</span>
+                    </div>
+
+                    <div className="px-3 py-3 flex flex-col gap-3">
+                      {/* preview_value */}
+                      <div className="flex flex-col gap-1">
+                        <label className="text-xs font-medium" style={{ color: '#4338CA' }}>
+                          Demo-Wert (preview_value)
+                        </label>
+                        <input
+                          value={field.preview_value ?? ''}
+                          onChange={e => updateField(idx, { preview_value: e.target.value })}
+                          placeholder={field.type === 'card_select'
+                            ? `z.B. ${field.card_options?.[0]?.value || 'gruen'}`
+                            : 'z.B. Anna Müller'}
+                          style={{ ...inputStyle, borderColor: '#C7D2FE' }}
+                          onFocus={e => (e.target.style.borderColor = '#4338CA')}
+                          onBlur={e => (e.target.style.borderColor = '#C7D2FE')}
+                        />
+                        <p className="text-xs" style={{ color: '#818CF8' }}>
+                          Dieser Wert wird in der öffentlichen Template-Vorschau angezeigt.
+                          {field.type === 'card_select' && ' Muss einem card_options-Value entsprechen.'}
+                        </p>
+                      </div>
+
+                      {/* preview_interactive */}
+                      <div className="flex flex-col gap-1">
+                        <label className="text-xs font-medium" style={{ color: '#4338CA' }}>Besucher kann dieses Feld anpassen</label>
+                        <button type="button"
+                          onClick={() => updateField(idx, { preview_interactive: !field.preview_interactive })}
+                          className="flex items-center gap-2 px-3 py-2 rounded-[12px] text-sm transition-all text-left"
+                          style={{
+                            background: field.preview_interactive ? '#EEF2FF' : '#F9FAFB',
+                            border: `1.5px solid ${field.preview_interactive ? '#A5B4FC' : '#E5E7EB'}`,
+                            color: field.preview_interactive ? '#4338CA' : '#6B7280',
+                          }}>
+                          <div className="w-4 h-4 rounded-[4px] flex items-center justify-center flex-shrink-0"
+                            style={{ background: field.preview_interactive ? '#4338CA' : '#E5E7EB' }}>
+                            {field.preview_interactive && (
+                              <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
+                                <path d="M1 4L3.5 6.5L9 1" stroke="white" strokeWidth="1.5" strokeLinecap="round"/>
+                              </svg>
+                            )}
+                          </div>
+                          {field.preview_interactive ? 'Ja — Besucher kann dieses Feld in der Vorschau ändern' : 'Nein — Wert ist fix (nur Admin)'}
+                        </button>
+                        <p className="text-xs" style={{ color: '#818CF8' }}>
+                          Bei &ldquo;Ja&rdquo; erscheint dieses Feld in der interaktiven Seitenleiste der Template-Vorschauseite.
+                        </p>
+                      </div>
                     </div>
                   </div>
                 )}

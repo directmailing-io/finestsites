@@ -7,7 +7,7 @@ import Link from 'next/link'
 import NavBar from '@/app/_components/NavBar'
 import Footer from '@/app/_components/Footer'
 import TemplateStartCTA from '@/components/TemplateStartCTA'
-import InteractiveEditorPreview, { type PreviewConfig } from '@/components/InteractiveEditorPreview'
+import InteractiveEditorPreview, { type PlaceholderSchema } from '@/components/InteractiveEditorPreview'
 import StickyPurchaseBar from '@/components/StickyPurchaseBar'
 
 export const dynamic = 'force-dynamic'
@@ -131,7 +131,9 @@ export default async function TemplateDetailPage({ params }: Props) {
   const accentBg = `${accentColor}12`
   const tags = Array.isArray(tpl.tags) ? tpl.tags as string[] : []
   const dbSections = Array.isArray(tpl.detailContent) ? tpl.detailContent as DetailSection[] : []
-  const previewConfig = (tpl.previewConfig ?? null) as PreviewConfig | null
+  // Derive interactivity directly from placeholderSchema (single source of truth)
+  const schema = (tpl.placeholderSchema ?? {}) as PlaceholderSchema
+  const hasInteractiveFields = (schema.fields ?? []).some(f => f.preview_interactive)
 
   const sections: DetailSection[] = dbSections.length >= 4
     ? dbSections.slice(0, 4)
@@ -274,7 +276,7 @@ export default async function TemplateDetailPage({ params }: Props) {
       {/* ── INTERACTIVE EDITOR PREVIEW ────────────────────────────────────────── */}
       <section className="vd-preview">
         <div className="vd-preview-inner">
-          {previewConfig && (
+          {hasInteractiveFields && (
             <>
               <p className="vd-preview-eyebrow" style={{ color: '#888' }}>Live-Vorschau</p>
               <h2 className="vd-preview-title" style={{ color: '#111' }}>
@@ -286,11 +288,11 @@ export default async function TemplateDetailPage({ params }: Props) {
             </>
           )}
 
-          {previewConfig ? (
+          {hasInteractiveFields ? (
             <InteractiveEditorPreview
               templateId={tpl.id}
               domain={tpl.domain}
-              previewConfig={previewConfig}
+              placeholderSchema={schema}
               accentColor={accentColor}
               registerUrl={registerUrl}
             />

@@ -1,8 +1,22 @@
 /**
  * Public (unauthenticated) template preview.
- * Serves rendered template HTML for the live preview iframe on marketing
- * template detail pages. Only published, non-test templates are served.
- * Assets are proxied through the sibling /public-preview/asset/[...path] route.
+ *
+ * Serves rendered template HTML for the live preview iframe on the marketing
+ * template detail page (/vorlagen/[id]).
+ *
+ * Preview data hierarchy (per field):
+ *   1. field.preview_value  — admin-set demo value (single source of truth)
+ *   2. schema.preview_values[key] — legacy fallback
+ *   3. field.default_value  — fallback
+ *
+ * ?data=<base64url JSON> can override fields that have preview_interactive: true.
+ * All other overrides are silently ignored (security: visitors can only change
+ * fields the admin explicitly marked as interactive).
+ *
+ * Preview-mode security is injected at the bottom of <body>:
+ *   - All form submissions are blocked
+ *   - All link navigation is blocked (only #anchor links pass through)
+ *   - A subtle visual overlay is added to forms
  */
 
 import { NextRequest, NextResponse } from 'next/server'
@@ -11,6 +25,22 @@ import { templates } from '@/lib/db/schema'
 import { eq, and } from 'drizzle-orm'
 import { getFromR2 } from '@/lib/r2/client'
 import { renderTemplate } from '@/lib/utils/template-engine'
+
+// ---------------------------------------------------------------------------
+// Types
+// ---------------------------------------------------------------------------
+
+interface PlaceholderField {
+  key: string
+  default_value?: string
+  preview_value?: string
+  preview_interactive?: boolean
+}
+
+interface PlaceholderSchema {
+  fields?: PlaceholderField[]
+  preview_values?: Record<string, string>
+}
 
 // ---------------------------------------------------------------------------
 // Rate limiter: max 60 requests per IP per minute
@@ -36,6 +66,32 @@ function getClientIp(req: NextRequest): string {
     'unknown'
   )
 }
+
+// ---------------------------------------------------------------------------
+// Preview-mode security injection
+// ---------------------------------------------------------------------------
+const PREVIEW_GUARD = `
+<style>
+  /* Block all form interaction visually */
+  .fs-preview-block { position:relative; pointer-events:none; }
+</style>
+<script>
+(function(){
+  // Block all form submissions
+  document.addEventListener('submit', function(e){
+    e.preventDefault(); e.stopImmediatePropagation(); return false;
+  }, true);
+  // Block all link navigation except pure anchors
+  document.addEventListener('click', function(e){
+    var el = e.target;
+    while(el && el.tagName !== 'A') el = el.parentElement;
+    if(!el) return;
+    var href = el.getAttribute('href') || '';
+    if(href === '' || href.startsWith('#') || href.startsWith('javascript')) return;
+    e.preventDefault(); e.stopImmediatePropagation();
+  }, true);
+})();
+</script>`
 
 // ---------------------------------------------------------------------------
 // Route handler
@@ -80,28 +136,46 @@ svg{opacity:0.4}p{font-size:14px;font-weight:500}</style></head>
     return new NextResponse('Template file not found.', { status: 500 })
   }
 
-  // Build preview data from schema.preview_values → field.default_value → ''
-  const schema = template.placeholderSchema as {
-    fields?: Array<{ key: string; label?: string; default_value?: string }>
-    preview_values?: Record<string, string>
-  } | null
-  const fields = schema?.fields ?? []
-  const previewValues: Record<string, string> = schema?.preview_values ?? {}
+  // ---------------------------------------------------------------------------
+  // Build preview data map
+  // Priority: field.preview_value > preview_values[key] > field.default_value
+  // ---------------------------------------------------------------------------
+  const schema = (template.placeholderSchema ?? {}) as PlaceholderSchema
+  const fields = schema.fields ?? []
+  const legacyPreviewValues: Record<string, string> = schema.preview_values ?? {}
+
   const dataMap: Record<string, string> = {}
   for (const f of fields) {
-    dataMap[f.key] = previewValues[f.key] ?? f.default_value ?? ''
+    dataMap[f.key] =
+      f.preview_value !== undefined && f.preview_value !== ''
+        ? f.preview_value
+        : (legacyPreviewValues[f.key] ?? f.default_value ?? '')
   }
 
-  // Allow ?data=base64json to override specific fields (used by interactive preview editor)
+  // ---------------------------------------------------------------------------
+  // Allow ?data=base64url overrides ONLY for preview_interactive fields
+  // ---------------------------------------------------------------------------
+  const interactiveKeys = new Set(
+    fields.filter(f => f.preview_interactive).map(f => f.key)
+  )
+
   const dataParam = req.nextUrl.searchParams.get('data')
   if (dataParam) {
     try {
-      const overrides = JSON.parse(Buffer.from(dataParam, 'base64url').toString('utf8')) as Record<string, string>
-      Object.assign(dataMap, overrides)
+      const overrides = JSON.parse(
+        Buffer.from(dataParam, 'base64url').toString('utf8')
+      ) as Record<string, string>
+      for (const [key, value] of Object.entries(overrides)) {
+        if (interactiveKeys.has(key) && typeof value === 'string') {
+          dataMap[key] = value
+        }
+      }
     } catch { /* ignore malformed param */ }
   }
 
+  // ---------------------------------------------------------------------------
   // Rewrite relative asset paths → public-preview asset proxy
+  // ---------------------------------------------------------------------------
   const assetBase = `/api/templates/${id}/public-preview/asset`
 
   // <link href="..."> (CSS)
@@ -139,7 +213,15 @@ svg{opacity:0.4}p{font-size:14px;font-weight:500}</style></head>
     (_m: string, path: string) => `url('${assetBase}/${path}')`
   )
 
-  const rendered = renderTemplate(html, dataMap)
+  // ---------------------------------------------------------------------------
+  // Render template + inject preview security guard
+  // ---------------------------------------------------------------------------
+  let rendered = renderTemplate(html, dataMap)
+
+  // Inject security guard before </body>
+  rendered = rendered.includes('</body>')
+    ? rendered.replace('</body>', `${PREVIEW_GUARD}\n</body>`)
+    : rendered + PREVIEW_GUARD
 
   return new NextResponse(rendered, {
     headers: {
