@@ -88,6 +88,14 @@ export default function InteractiveEditorPreview({
   const pendingScroll = useRef<number | null>(null)
 
   const [paneWidth, setPaneWidth] = useState(880)
+  const [paneHeight, setPaneHeight] = useState<number>(() => {
+    if (typeof window === 'undefined') return 620
+    const w = window.innerWidth
+    if (w <= 479) return 360
+    if (w <= 767) return 420
+    if (w <= 1023) return 560
+    return 620
+  })
   // Auto-detect viewport on first render using lazy initializer — avoids
   // calling setState inside useEffect which triggers an extra render cycle.
   const [viewport, setViewport] = useState<Viewport>(() => {
@@ -103,7 +111,10 @@ export default function InteractiveEditorPreview({
 
   useEffect(() => {
     const update = () => {
-      if (paneRef.current) setPaneWidth(paneRef.current.offsetWidth)
+      if (paneRef.current) {
+        setPaneWidth(paneRef.current.offsetWidth)
+        setPaneHeight(paneRef.current.offsetHeight)
+      }
     }
     update()
     const ro = new ResizeObserver(update)
@@ -184,11 +195,10 @@ export default function InteractiveEditorPreview({
 
   const targetWidth = VIEWPORT_CONFIG[viewport].width
   const scale       = Math.min(0.999, paneWidth / targetWidth)
-  const PANE_H      = 620
 
   const iframeStyle: React.CSSProperties = {
     width: targetWidth,
-    height: Math.ceil(PANE_H / scale),
+    height: Math.ceil(paneHeight / scale),
     border: 'none',
     display: 'block',
     transform: `scale(${scale})`,
@@ -474,7 +484,7 @@ export default function InteractiveEditorPreview({
               background: viewport === 'desktop' ? '#F5F4F0' : '#E0E0E0',
               overflow: 'hidden',
               position: 'relative',
-              height: PANE_H,
+              minWidth: 0,
             }}
           >
             {/* Loading overlay */}
@@ -496,7 +506,7 @@ export default function InteractiveEditorPreview({
 
             <div style={{
               position: 'absolute',
-              top: viewport !== 'desktop' ? 12 : 0,
+              top: 0,
               left: leftPad,
             }}>
               <iframe
@@ -684,7 +694,7 @@ export default function InteractiveEditorPreview({
           .editor-sidebar { display: none !important; }
 
           /* Preview: shorter, full-width */
-          .editor-preview-pane { height: 460px !important; }
+          .editor-preview-pane { height: 420px !important; }
 
           /* Show mobile controls below preview */
           .editor-mobile-controls { display: block !important; }
@@ -692,7 +702,7 @@ export default function InteractiveEditorPreview({
 
         /* ── Very small phones (<480px) ────────────────────────────────────── */
         @media (max-width: 479px) {
-          .editor-preview-pane { height: 400px !important; }
+          .editor-preview-pane { height: 360px !important; }
           .editor-frame { border-radius: 12px !important; }
         }
       `}</style>
