@@ -289,7 +289,6 @@ export default async function TemplateDetailPage({ params }: Props) {
           {previewConfig ? (
             <InteractiveEditorPreview
               templateId={tpl.id}
-              templateTitle={tpl.title}
               domain={tpl.domain}
               previewConfig={previewConfig}
               accentColor={accentColor}
