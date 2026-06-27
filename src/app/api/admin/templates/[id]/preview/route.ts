@@ -45,7 +45,13 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     dataMap[f.key] = previewValues[f.key] ?? f.default_value ?? `[${f.label ?? f.key}]`
   }
 
-  const rendered = renderTemplate(html, dataMap)
+  let rendered = renderTemplate(html, dataMap)
+
+  // Override viewport to force 1280px width (iOS Safari renders iframe at device-width otherwise)
+  rendered = rendered.replace(
+    /<meta\s+name=["']viewport["'][^>]*>/gi,
+    '<meta name="viewport" content="width=1280, initial-scale=1">'
+  )
 
   // Inject <base> tag so relative asset paths resolve to our asset-serving route
   const baseTag = `<base href="/api/admin/templates/${id}/asset/">`

@@ -476,6 +476,22 @@ svg{opacity:0.4}p{font-size:14px;font-weight:500}</style></head>
   }
 
   // ---------------------------------------------------------------------------
+  // Override viewport meta → force 1280px width so iOS Safari renders the
+  // iframe content at desktop width instead of device-width (~393px).
+  // Without this, iOS ignores our transform:scale and shows mobile layout.
+  // ---------------------------------------------------------------------------
+  html = html.replace(
+    /<meta\s+name=["']viewport["'][^>]*>/gi,
+    '<meta name="viewport" content="width=1280, initial-scale=1">'
+  )
+  // If no viewport meta existed, inject one
+  if (!/<meta\s+name=["']viewport["']/i.test(html)) {
+    html = html.includes('<head>')
+      ? html.replace('<head>', '<head>\n<meta name="viewport" content="width=1280, initial-scale=1">')
+      : html
+  }
+
+  // ---------------------------------------------------------------------------
   // Inject <base> so ALL relative URLs (including JS fetch/Image/XHR) resolve
   // through the asset proxy — critical for GSAP frame sequences, video, etc.
   // ---------------------------------------------------------------------------
