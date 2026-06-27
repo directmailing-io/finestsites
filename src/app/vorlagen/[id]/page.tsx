@@ -228,7 +228,11 @@ export default async function TemplateDetailPage({ params }: Props) {
       {sections.map((section, i) => {
         const isReverse = section.imagePosition === 'right'
         const sectionImg = section.imageUrl || images[i + 1] || null
-        const bg = i % 2 === 0 ? '#fff' : '#FAFAF9'
+        const isDark = i % 2 !== 0
+        const bg = isDark ? '#8060b0' : '#fff'
+        const textColor = isDark ? 'rgba(255,255,255,0.85)' : '#555'
+        const headingColor = isDark ? '#fff' : '#111'
+        const numColor = isDark ? 'rgba(255,255,255,0.5)' : accentColor
         const num = String(i + 1).padStart(2, '0')
 
         return (
@@ -239,15 +243,16 @@ export default async function TemplateDetailPage({ params }: Props) {
               <div
                 className="vd-feature-img"
                 style={{
-                  background: sectionImg ? 'transparent' : accentBg,
-                  border: sectionImg ? 'none' : `1px solid ${accentColor}22`,
+                  background: sectionImg ? 'transparent' : (isDark ? 'rgba(255,255,255,0.1)' : accentBg),
+                  border: sectionImg ? 'none' : `1px solid ${isDark ? 'rgba(255,255,255,0.2)' : accentColor + '22'}`,
+                  boxShadow: isDark ? '0 8px 40px rgba(0,0,0,0.25)' : '0 4px 20px rgba(0,0,0,0.08)',
                 }}
               >
                 {sectionImg ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={sectionImg} alt={section.heading} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
                 ) : (
-                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16, padding: 48, color: accentColor, opacity: 0.5 }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16, padding: 48, color: isDark ? 'rgba(255,255,255,0.4)' : accentColor, opacity: 0.5 }}>
                     {SECTION_ICONS[i]}
                   </div>
                 )}
@@ -255,21 +260,21 @@ export default async function TemplateDetailPage({ params }: Props) {
 
               {/* Text */}
               <div>
-                <p style={{ fontSize: 11, fontWeight: 700, color: accentColor, letterSpacing: '0.14em', textTransform: 'uppercase', marginBottom: 16 }}>
+                <p style={{ fontSize: 11, fontWeight: 700, color: numColor, letterSpacing: '0.14em', textTransform: 'uppercase', marginBottom: 16 }}>
                   {num}
                 </p>
                 <h2 style={{
                   fontFamily: '"Plein", sans-serif',
                   fontSize: 'clamp(24px, 2.8vw, 38px)',
                   fontWeight: 400,
-                  color: '#111',
+                  color: headingColor,
                   lineHeight: 1.15,
                   letterSpacing: '-0.025em',
                   marginBottom: 20,
                 }}>
                   {section.heading}
                 </h2>
-                <p style={{ fontSize: 16, color: '#555', lineHeight: 1.8 }}>
+                <p style={{ fontSize: 16, color: textColor, lineHeight: 1.8 }}>
                   {section.text}
                 </p>
               </div>
