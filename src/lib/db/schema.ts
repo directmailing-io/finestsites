@@ -135,6 +135,8 @@ export const templates = pgTable('templates', {
   // NM company targeting
   nmCompanies: text('nm_companies').array().default([]),
   isAllrounder: boolean('is_allrounder').default(false),
+  // Interactive preview editor config (for /vorlagen/[id] marketing page)
+  previewConfig: jsonb('preview_config'), // { editable_themes, editable_sections, editable_header_images }
   // Cloudflare Worker Route setup (for template domain routing)
   cfHostnameId: text('cf_hostname_id'),
   cfHostnameStatus: text('cf_hostname_status'),

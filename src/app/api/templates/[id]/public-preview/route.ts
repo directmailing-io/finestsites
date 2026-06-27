@@ -92,6 +92,15 @@ svg{opacity:0.4}p{font-size:14px;font-weight:500}</style></head>
     dataMap[f.key] = previewValues[f.key] ?? f.default_value ?? ''
   }
 
+  // Allow ?data=base64json to override specific fields (used by interactive preview editor)
+  const dataParam = req.nextUrl.searchParams.get('data')
+  if (dataParam) {
+    try {
+      const overrides = JSON.parse(Buffer.from(dataParam, 'base64url').toString('utf8')) as Record<string, string>
+      Object.assign(dataMap, overrides)
+    } catch { /* ignore malformed param */ }
+  }
+
   // Rewrite relative asset paths → public-preview asset proxy
   const assetBase = `/api/templates/${id}/public-preview/asset`
 

@@ -1,12 +1,14 @@
 import { db } from '@/lib/db'
 import { templates } from '@/lib/db/schema'
-import { eq, and, ne } from 'drizzle-orm'
+import { eq, and, ne, sql } from 'drizzle-orm'
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import NavBar from '@/app/_components/NavBar'
 import Footer from '@/app/_components/Footer'
 import TemplateStartCTA from '@/components/TemplateStartCTA'
+import InteractiveEditorPreview, { type PreviewConfig } from '@/components/InteractiveEditorPreview'
+import StickyPurchaseBar from '@/components/StickyPurchaseBar'
 
 export const dynamic = 'force-dynamic'
 
@@ -58,15 +60,10 @@ const DEFAULT_SECTIONS: DetailSection[] = [
   },
 ]
 
-// Icons for placeholder sections
 const SECTION_ICONS = [
-  // Rocket
   <svg key="0" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"><path d="M4.5 16.5c-1.5 1.3-2 5-2 5s3.7-.5 5-2l9-9a3.5 3.5 0 00-5-5l-7 7z"/><path d="M12 15l-3-3"/></svg>,
-  // Link
   <svg key="1" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>,
-  // Inbox
   <svg key="2" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11L2 12v6a2 2 0 002 2h16a2 2 0 002-2v-6l-3.45-6.89A2 2 0 0016.76 4H7.24a2 2 0 00-1.79 1.11z"/></svg>,
-  // TrendingUp
   <svg key="3" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>,
 ]
 
@@ -80,32 +77,72 @@ export default async function TemplateDetailPage({ params }: Props) {
 
   if (!tpl) notFound()
 
-  // Fetch up to 3 other published templates for "Weitere Templates"
-  const otherTemplates = await db.select({
+  const nmCompanies = Array.isArray(tpl.nmCompanies) ? tpl.nmCompanies as string[] : []
+
+  // Weitere Templates: prefer same NM company, fallback to any other published
+  let otherTemplates: typeof moreTemplatesQuery = []
+  const moreTemplatesQuery = await db.select({
     id: templates.id,
     title: templates.title,
     description: templates.description,
     previewImages: templates.previewImages,
     tags: templates.tags,
     detailColor: templates.detailColor,
+    nmCompanies: templates.nmCompanies,
+    domain: templates.domain,
   })
     .from(templates)
-    .where(and(eq(templates.status, 'published'), ne(templates.id, id)))
+    .where(and(
+      eq(templates.status, 'published'),
+      ne(templates.id, id),
+      // overlap on nmCompanies array if available
+      nmCompanies.length > 0
+        ? sql`${templates.nmCompanies} && ARRAY[${sql.raw(nmCompanies.map(c => `'${c.replace(/'/g, "''")}'`).join(','))}]::text[]`
+        : undefined,
+    ))
     .limit(3)
 
+  otherTemplates = moreTemplatesQuery
+
+  // Fallback: if not enough, grab any others
+  if (otherTemplates.length < 3) {
+    const fallback = await db.select({
+      id: templates.id,
+      title: templates.title,
+      description: templates.description,
+      previewImages: templates.previewImages,
+      tags: templates.tags,
+      detailColor: templates.detailColor,
+      nmCompanies: templates.nmCompanies,
+      domain: templates.domain,
+    })
+      .from(templates)
+      .where(and(
+        eq(templates.status, 'published'),
+        ne(templates.id, id),
+        sql`${templates.id} != ALL(ARRAY[${sql.raw(otherTemplates.map(t => `'${t.id}'`).join(',') || "'00000000-0000-0000-0000-000000000000'")}]::uuid[])`,
+      ))
+      .limit(3 - otherTemplates.length)
+    otherTemplates = [...otherTemplates, ...fallback]
+  }
+
   const images = Array.isArray(tpl.previewImages) ? tpl.previewImages as string[] : []
-  const coverImg = images[0] ?? null
   const accentColor = tpl.detailColor ?? '#8060b0'
   const accentBg = `${accentColor}12`
   const tags = Array.isArray(tpl.tags) ? tpl.tags as string[] : []
   const dbSections = Array.isArray(tpl.detailContent) ? tpl.detailContent as DetailSection[] : []
+  const previewConfig = (tpl.previewConfig ?? null) as PreviewConfig | null
 
-  // Use DB sections if available, pad/replace with defaults
   const sections: DetailSection[] = dbSections.length >= 4
     ? dbSections.slice(0, 4)
     : DEFAULT_SECTIONS.map((def, i) => dbSections[i] ?? def)
 
   const registerUrl = `https://app.finestsites.io/register?template=${tpl.id}&tname=${encodeURIComponent(tpl.title)}`
+
+  // Label for "Weitere Templates" heading
+  const moreLabel = nmCompanies.length > 0
+    ? `Weitere ${nmCompanies[0]}-Templates`
+    : 'Weitere Templates'
 
   return (
     <div style={{ fontFamily: '"Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif', background: '#fff', minHeight: '100vh' }}>
@@ -134,18 +171,29 @@ export default async function TemplateDetailPage({ params }: Props) {
         * { box-sizing: border-box; margin: 0; padding: 0; }
         section[id] { scroll-margin-top: 90px; }
 
-        /* Nav */
         .fs-nav-links { display: flex; gap: 28px; align-items: center; }
         .fs-nav-actions { display: flex; gap: 8px; align-items: center; }
         .fs-hamburger { display: none !important; }
 
-        /* Template detail layout */
+        /* Hero */
         .vd-hero { padding: 108px 7vw 72px; }
+
+        /* Preview section */
+        .vd-preview { padding: 0 7vw 80px; }
+        .vd-preview-inner { max-width: 1080px; margin: 0 auto; }
+        .vd-preview-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 10px; }
+        .vd-preview-title { font-family: 'Plein', Georgia, serif; font-size: clamp(22px, 3vw, 34px); font-weight: 400; letter-spacing: -0.025em; line-height: 1.15; margin-bottom: 8px; }
+        .vd-preview-sub { font-size: 15px; color: #888; line-height: 1.6; max-width: 480px; margin-bottom: 28px; }
+        .editor-preview-pane { height: 620px; }
+
+        /* Feature rows */
         .vd-feature-row { padding: 88px 7vw; }
         .vd-feature-inner { max-width: 1080px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
         .vd-feature-inner.reverse { direction: rtl; }
         .vd-feature-inner.reverse > * { direction: ltr; }
         .vd-feature-img { border-radius: 20px; overflow: hidden; aspect-ratio: 4/3; display: flex; align-items: center; justify-content: center; }
+
+        /* More templates */
         .vd-more-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
         .vd-more-card { display: block; text-decoration: none; background: #1c1c1e; border-radius: 20px; overflow: hidden; border: 1px solid rgba(255,255,255,0.08); box-shadow: 0 2px 16px rgba(0,0,0,0.3); transition: transform 0.2s, box-shadow 0.2s; }
         .vd-more-card:hover { transform: translateY(-4px); box-shadow: 0 16px 48px rgba(0,0,0,0.5); }
@@ -157,30 +205,35 @@ export default async function TemplateDetailPage({ params }: Props) {
           .fs-nav-links { display: none; }
           .fs-nav-actions { display: none !important; }
           .fs-hamburger { display: flex !important; }
-          .vd-hero { padding: 96px 22px 56px; }
+          .vd-hero { padding: 96px 22px 48px; }
+          .vd-preview { padding: 0 0 56px; }
+          .vd-preview-inner { max-width: 100%; }
+          .vd-preview-sub { padding: 0 22px; }
+          .vd-preview-eyebrow { padding: 0 22px; }
+          .vd-preview-title { padding: 0 22px; }
           .vd-feature-row { padding: 56px 22px; }
           .vd-feature-inner { grid-template-columns: 1fr; gap: 36px; }
           .vd-feature-inner.reverse { direction: ltr; }
           .vd-more-grid { grid-template-columns: 1fr; }
+          .editor-preview-pane { height: 520px !important; }
         }
         @media (max-width: 479px) {
           .vd-more-grid { grid-template-columns: 1fr; }
+          .editor-preview-pane { height: 460px !important; }
         }
       `}</style>
 
       <NavBar primaryCta={{ label: 'Template freischalten', href: registerUrl }} />
 
-      {/* ── HERO ─────────────────────────────────────────────────────── */}
-      <section className="vd-hero" style={{ background: '#fff' }}>
+      {/* ── HERO ─────────────────────────────────────────────────────────────── */}
+      <section className="vd-hero" style={{ background: '#fff' }} id="vd-hero">
         <div style={{ maxWidth: 1080, margin: '0 auto' }}>
 
-          {/* Back link */}
           <Link href="/#templates" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 13, color: '#999', textDecoration: 'none', marginBottom: 32, fontWeight: 500 }}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
             Alle Templates
           </Link>
 
-          {/* Tags */}
           {tags.length > 0 && (
             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 20 }}>
               {tags.map(tag => (
@@ -189,11 +242,10 @@ export default async function TemplateDetailPage({ params }: Props) {
             </div>
           )}
 
-          {/* Title + description + CTA */}
           <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: 48, alignItems: 'flex-end' }}>
             <div>
               <h1 style={{
-                fontFamily: '"Plein", sans-serif',
+                fontFamily: '"Plein", Georgia, serif',
                 fontSize: 'clamp(32px, 4.5vw, 60px)',
                 fontWeight: 400,
                 color: '#111',
@@ -214,32 +266,59 @@ export default async function TemplateDetailPage({ params }: Props) {
             </div>
           </div>
         </div>
-
-        {/* Cover image — full width within max-width */}
-        {coverImg && (
-          <div style={{ maxWidth: 1080, margin: '52px auto 0', borderRadius: 24, overflow: 'hidden', boxShadow: '0 16px 64px rgba(0,0,0,0.10)', border: '1px solid rgba(0,0,0,0.06)' }}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={coverImg} alt={tpl.title} style={{ width: '100%', height: 'auto', display: 'block' }} />
-          </div>
-        )}
       </section>
 
-      {/* ── 4 ALTERNATING FEATURE SECTIONS ───────────────────────────── */}
+      {/* Sentinel for sticky bar — placed right after hero */}
+      <StickyPurchaseBar templateTitle={tpl.title} registerUrl={registerUrl} />
+
+      {/* ── INTERACTIVE EDITOR PREVIEW ────────────────────────────────────────── */}
+      <section className="vd-preview">
+        <div className="vd-preview-inner">
+          {previewConfig && (
+            <>
+              <p className="vd-preview-eyebrow" style={{ color: accentColor }}>Live-Vorschau</p>
+              <h2 className="vd-preview-title" style={{ color: '#111' }}>
+                So sieht deine Seite aus — probier es direkt aus.
+              </h2>
+              <p className="vd-preview-sub">
+                Passe Farbe, Sektionen und mehr an. Die Vorschau reagiert sofort.
+              </p>
+            </>
+          )}
+
+          {previewConfig ? (
+            <InteractiveEditorPreview
+              templateId={tpl.id}
+              templateTitle={tpl.title}
+              domain={tpl.domain}
+              previewConfig={previewConfig}
+              accentColor={accentColor}
+              registerUrl={registerUrl}
+            />
+          ) : (
+            /* Fallback: static cover image if no previewConfig */
+            images[0] && (
+              <div style={{ borderRadius: 24, overflow: 'hidden', boxShadow: '0 16px 64px rgba(0,0,0,0.10)', border: '1px solid rgba(0,0,0,0.06)' }}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={images[0]} alt={tpl.title} style={{ width: '100%', height: 'auto', display: 'block' }} />
+              </div>
+            )
+          )}
+        </div>
+      </section>
+
+      {/* ── 4 ALTERNATING FEATURE SECTIONS ───────────────────────────────────── */}
       {sections.map((section, i) => {
         const isReverse = section.imagePosition === 'right'
         const sectionImg = section.imageUrl || images[i + 1] || null
         const isDark = i % 2 !== 0
         const bg = isDark ? '#F9F7FF' : '#fff'
-        const textColor = '#555'
-        const headingColor = '#111'
-        const numColor = accentColor
         const num = String(i + 1).padStart(2, '0')
 
         return (
           <section key={i} className="vd-feature-row" style={{ background: bg }}>
             <div className={`vd-feature-inner${isReverse ? ' reverse' : ''}`}>
 
-              {/* Image / Placeholder */}
               <div
                 className="vd-feature-img"
                 style={{
@@ -258,23 +337,22 @@ export default async function TemplateDetailPage({ params }: Props) {
                 )}
               </div>
 
-              {/* Text */}
               <div>
-                <p style={{ fontSize: 11, fontWeight: 700, color: numColor, letterSpacing: '0.14em', textTransform: 'uppercase', marginBottom: 16 }}>
+                <p style={{ fontSize: 11, fontWeight: 700, color: accentColor, letterSpacing: '0.14em', textTransform: 'uppercase', marginBottom: 16 }}>
                   {num}
                 </p>
                 <h2 style={{
-                  fontFamily: '"Plein", sans-serif',
+                  fontFamily: '"Plein", Georgia, serif',
                   fontSize: 'clamp(24px, 2.8vw, 38px)',
                   fontWeight: 400,
-                  color: headingColor,
+                  color: '#111',
                   lineHeight: 1.15,
                   letterSpacing: '-0.025em',
                   marginBottom: 20,
                 }}>
                   {section.heading}
                 </h2>
-                <p style={{ fontSize: 16, color: textColor, lineHeight: 1.8 }}>
+                <p style={{ fontSize: 16, color: '#555', lineHeight: 1.8 }}>
                   {section.text}
                 </p>
               </div>
@@ -283,13 +361,13 @@ export default async function TemplateDetailPage({ params }: Props) {
         )
       })}
 
-      {/* ── WEITERE TEMPLATES ────────────────────────────────────────── */}
+      {/* ── WEITERE TEMPLATES ─────────────────────────────────────────────────── */}
       {otherTemplates.length > 0 && (
         <section style={{ background: '#111', padding: '88px 7vw' }}>
           <div style={{ maxWidth: 1080, margin: '0 auto' }}>
             <p style={{ fontSize: 11, fontWeight: 600, color: 'rgba(255,255,255,0.28)', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 12 }}>Mehr entdecken</p>
-            <h2 style={{ fontFamily: '"Plein", sans-serif', fontSize: 'clamp(26px, 3vw, 40px)', fontWeight: 400, color: '#fff', letterSpacing: '-0.02em', marginBottom: 44 }}>
-              Weitere Templates
+            <h2 style={{ fontFamily: '"Plein", Georgia, serif', fontSize: 'clamp(26px, 3vw, 40px)', fontWeight: 400, color: '#fff', letterSpacing: '-0.02em', marginBottom: 44 }}>
+              {moreLabel}
             </h2>
 
             <div className="vd-more-grid">
@@ -298,12 +376,7 @@ export default async function TemplateDetailPage({ params }: Props) {
                 const tColor = t.detailColor ?? '#8060b0'
                 const tTags = Array.isArray(t.tags) ? t.tags as string[] : []
                 return (
-                  <a
-                    key={t.id}
-                    href={`/vorlagen/${t.id}`}
-                    className="vd-more-card"
-                  >
-                    {/* Cover */}
+                  <a key={t.id} href={`/vorlagen/${t.id}`} className="vd-more-card">
                     <div style={{ aspectRatio: '16/9', background: `${tColor}22`, overflow: 'hidden' }}>
                       {tImgs[0] ? (
                         // eslint-disable-next-line @next/next/no-img-element
@@ -312,7 +385,6 @@ export default async function TemplateDetailPage({ params }: Props) {
                         <div style={{ width: '100%', height: '100%', background: `linear-gradient(135deg, ${tColor}33, ${tColor}11)` }} />
                       )}
                     </div>
-                    {/* Info */}
                     <div style={{ padding: '20px 22px 24px' }}>
                       {tTags.length > 0 && (
                         <span style={{ fontSize: 10, fontWeight: 700, color: tColor, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 8, display: 'block' }}>
@@ -335,12 +407,12 @@ export default async function TemplateDetailPage({ params }: Props) {
         </section>
       )}
 
-      {/* ── FINAL CTA ────────────────────────────────────────────────── */}
+      {/* ── FINAL CTA ─────────────────────────────────────────────────────────── */}
       <section style={{ background: '#111', padding: '96px 7vw' }}>
         <div style={{ maxWidth: 1080, margin: '0 auto', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: 32 }}>
           <div>
             <p style={{ fontSize: 11, fontWeight: 700, color: 'rgba(255,255,255,0.3)', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 20 }}>Los geht&apos;s</p>
-            <h2 style={{ fontFamily: '"Plein", sans-serif', fontSize: 'clamp(28px, 3.8vw, 52px)', fontWeight: 400, color: '#fff', lineHeight: 1.1, letterSpacing: '-0.025em', marginBottom: 16 }}>
+            <h2 style={{ fontFamily: '"Plein", Georgia, serif', fontSize: 'clamp(28px, 3.8vw, 52px)', fontWeight: 400, color: '#fff', lineHeight: 1.1, letterSpacing: '-0.025em', marginBottom: 16 }}>
               Dieses Template ist deins.<br />In 5 Minuten live.
             </h2>
             <p style={{ fontSize: 16, color: 'rgba(255,255,255,0.45)', lineHeight: 1.7, maxWidth: 480, margin: '0 auto' }}>
