@@ -3,7 +3,7 @@ import { getUserFromRequest } from '@/lib/auth/server'
 import { db } from '@/lib/db'
 import { users, templates } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
-import { setupDomainRouting, findZone, deleteWorkerRoute } from '@/lib/cloudflare/worker-routes'
+import { setupDomainRouting, findZone, deleteWorkerRoute, createCFZone } from '@/lib/cloudflare/worker-routes'
 
 async function checkAdmin(req: NextRequest) {
   const user = await getUserFromRequest(req)
@@ -43,6 +43,29 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     return NextResponse.json({ status: 'active', domain: tpl.domain, ...(tpl.cfHostnameData as object) })
   }
 
+  // Zone was created but admin still needs to set nameservers at registrar
+  if (tpl.cfHostnameStatus === 'pending_ns') {
+    const saved = tpl.cfHostnameData as { nameservers?: string[]; zone_id?: string } | null
+    // Check whether NS have propagated — if zone is now findable, auto-activate
+    const zone = await findZone(tpl.domain).catch(() => null)
+    if (zone) {
+      try {
+        const result = await setupDomainRouting(tpl.domain)
+        const payload = { status: 'active', domain: tpl.domain, zone_id: result.zone.id, route_id: result.routeId }
+        await db.update(templates)
+          .set({ cfHostnameId: result.routeId, cfHostnameStatus: 'active', cfHostnameData: payload })
+          .where(eq(templates.id, id))
+        return NextResponse.json(payload)
+      } catch { /* NS not fully propagated yet — fall through */ }
+    }
+    return NextResponse.json({
+      status: 'pending_ns',
+      domain: tpl.domain,
+      nameservers: saved?.nameservers ?? [],
+      zone_id: saved?.zone_id ?? null,
+    })
+  }
+
   // Check if zone exists in Cloudflare
   const zone = await findZone(tpl.domain).catch(() => null)
   if (!zone) {
@@ -74,6 +97,27 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   }
 
   try {
+    // Check whether the zone already exists in the CF account
+    const zone = await findZone(tpl.domain)
+
+    if (!zone) {
+      // Zone not in CF yet — if we already created it before, return existing NS
+      if (tpl.cfHostnameStatus === 'pending_ns') {
+        const saved = tpl.cfHostnameData as { nameservers?: string[] } | null
+        return NextResponse.json({ status: 'pending_ns', domain: tpl.domain, nameservers: saved?.nameservers ?? [] })
+      }
+
+      // Create the zone automatically via CF API
+      const created = await createCFZone(tpl.domain)
+      const pendingPayload = { nameservers: created.nameservers, zone_id: created.zone.id }
+      await db.update(templates)
+        .set({ cfHostnameId: null, cfHostnameStatus: 'pending_ns', cfHostnameData: pendingPayload })
+        .where(eq(templates.id, id))
+
+      return NextResponse.json({ status: 'pending_ns', domain: tpl.domain, nameservers: created.nameservers })
+    }
+
+    // Zone exists — set up Wildcard DNS + Worker Route
     const result = await setupDomainRouting(tpl.domain)
     const payload = {
       status: 'active',
@@ -82,11 +126,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       route_id: result.routeId,
     }
     await db.update(templates)
-      .set({
-        cfHostnameId: result.routeId,
-        cfHostnameStatus: 'active',
-        cfHostnameData: payload,
-      })
+      .set({ cfHostnameId: result.routeId, cfHostnameStatus: 'active', cfHostnameData: payload })
       .where(eq(templates.id, id))
 
     return NextResponse.json(payload)

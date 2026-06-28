@@ -16,6 +16,8 @@ interface DomainSetup {
   ssl_status?: string
   configured?: boolean
   fallback_host?: string
+  nameservers?: string[]
+  zone_id?: string
   ownership_verification?: { type: string; name: string; value: string }
   ssl_records?: Array<{ type: string; name: string; value: string }>
 }
@@ -122,10 +124,13 @@ export default function EditTemplatePage({ params }: { params: Promise<{ id: str
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id])
 
-  // Poll every 10s when zone not yet found; stop when active
+  // Poll until active: every 15s while waiting for NS propagation, every 10s for zone_missing
   useEffect(() => {
     if (!domainSetup || domainSetup.status === 'active') return
-    const t = setInterval(loadDomainSetup, domainSetup.status === 'zone_missing' ? 10000 : 30000)
+    const interval = domainSetup.status === 'pending_ns' ? 15000
+      : domainSetup.status === 'zone_missing' ? 10000
+      : 30000
+    const t = setInterval(loadDomainSetup, interval)
     return () => clearInterval(t)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [domainSetup?.status])
@@ -1389,13 +1394,68 @@ export default function EditTemplatePage({ params }: { params: Promise<{ id: str
               {/* Status badge */}
               {domainSetup && domainSetup.status !== 'none' && (
                 <span className="text-xs px-2.5 py-1 rounded-full font-medium flex-shrink-0" style={{
-                  background: domainSetup.status === 'active' ? '#F0FDF4' : '#FFFBEB',
-                  color: domainSetup.status === 'active' ? '#16A34A' : '#92400E',
+                  background: domainSetup.status === 'active' ? '#F0FDF4' : domainSetup.status === 'pending_ns' ? '#EFF6FF' : '#FFFBEB',
+                  color: domainSetup.status === 'active' ? '#16A34A' : domainSetup.status === 'pending_ns' ? '#1D4ED8' : '#92400E',
                 }}>
-                  {domainSetup.status === 'active' ? '● SSL aktiv' : '○ Ausstehend'}
+                  {domainSetup.status === 'active' ? '● SSL aktiv' : domainSetup.status === 'pending_ns' ? '○ NS ausstehend' : '○ Ausstehend'}
                 </span>
               )}
             </div>
+
+            {/* Zone created — waiting for nameserver propagation */}
+            {domainSetup?.status === 'pending_ns' && (
+              <div className="flex flex-col gap-3">
+                <div className="px-4 py-4 rounded-[14px]"
+                  style={{ background: '#EFF6FF', border: '1px solid #BFDBFE' }}>
+                  <p className="font-semibold text-blue-800 mb-1 text-sm">Nameserver bei deinem Registrar eintragen</p>
+                  <p className="text-xs text-blue-700 mb-3">
+                    Die Cloudflare-Zone für <strong>{form.domain}</strong> wurde angelegt. Trage jetzt diese zwei Nameserver bei deinem Registrar ein (Checkdomain, INWX o.&nbsp;a.) — danach aktiviert sich alles automatisch.
+                  </p>
+                  <div className="flex flex-col gap-2 mb-3">
+                    {(domainSetup.nameservers ?? []).map((ns) => (
+                      <div key={ns} className="flex items-center gap-2">
+                        <code className="flex-1 text-xs bg-white border border-blue-200 rounded-[8px] px-3 py-2 font-mono text-blue-900">
+                          {ns}
+                        </code>
+                        <button
+                          onClick={() => navigator.clipboard.writeText(ns)}
+                          className="text-xs px-2.5 py-2 rounded-[8px] font-medium flex-shrink-0"
+                          style={{ background: '#DBEAFE', color: '#1D4ED8' }}
+                          title="Kopieren">
+                          Kopieren
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                  <p className="text-xs text-blue-600">
+                    Die Seite prüft alle 15 Sekunden ob die Nameserver propagiert sind und aktiviert sich dann automatisch. Propagation dauert typisch 5–30 Minuten.
+                  </p>
+                </div>
+                <div className="flex gap-2">
+                  <button onClick={setupDomain} disabled={settingUpDomain}
+                    className="px-4 py-2 text-sm font-medium text-white rounded-[12px] flex items-center gap-2 disabled:opacity-60"
+                    style={{ background: '#1a1a1a' }}>
+                    {settingUpDomain
+                      ? <><div className="w-3.5 h-3.5 rounded-full border-2 border-white/40 border-t-white animate-spin" />Prüfe…</>
+                      : 'Jetzt prüfen'}
+                  </button>
+                  <button onClick={async () => {
+                    setSettingUpDomain(true)
+                    await fetch(`/api/admin/templates/${id}/domain-setup`, {
+                      method: 'PATCH',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ forceActive: true }),
+                    })
+                    await loadDomainSetup()
+                    setSettingUpDomain(false)
+                  }} disabled={settingUpDomain}
+                    className="px-4 py-2 text-sm font-medium rounded-[12px] disabled:opacity-60"
+                    style={{ background: '#F0FDF4', color: '#16A34A', border: '1px solid #BBF7D0' }}>
+                    Manuell eingerichtet ✓
+                  </button>
+                </div>
+              </div>
+            )}
 
             {/* Domain not found in Cloudflare */}
             {domainSetup?.status === 'zone_missing' && (

@@ -3,8 +3,9 @@
  * Adds/removes zone-level worker routes for custom hostnames.
  *
  * Required env vars:
- *   CLOUDFLARE_API_TOKEN  — Zone:Workers Routes:Edit + Zone:DNS:Edit permissions
- *   CLOUDFLARE_ZONE_ID    — zone ID of the SaaS zone (e.g. womenplus.io)
+ *   CLOUDFLARE_API_TOKEN    — Zone:Workers Routes:Edit + Zone:DNS:Edit + Zone:Edit permissions
+ *   CLOUDFLARE_ACCOUNT_ID   — CF Account ID (for zone creation)
+ *   CLOUDFLARE_ZONE_ID      — zone ID of the SaaS zone (e.g. womenplus.io)
  */
 
 const CF_TOKEN = process.env.CLOUDFLARE_API_TOKEN!
@@ -123,6 +124,37 @@ async function ensureWildcardDns(zoneId: string): Promise<void> {
     // Log but don't throw — admin can fix DNS manually if needed
     console.warn('[worker-routes] Wildcard DNS create failed:', createData.errors)
   }
+}
+
+// ─── Zone creation ────────────────────────────────────────────────────────────
+
+/**
+ * Creates a new Cloudflare zone for a domain that is not yet in the account.
+ * The domain must subsequently have its nameservers updated to Cloudflare's
+ * at the registrar — after propagation, setupDomainRouting() can proceed.
+ *
+ * Returns the zone and the Cloudflare nameservers the admin must configure.
+ */
+export async function createCFZone(domain: string): Promise<{ zone: CfZone; nameservers: string[] }> {
+  const accountId = process.env.CLOUDFLARE_ACCOUNT_ID
+  if (!accountId) throw new Error('CLOUDFLARE_ACCOUNT_ID ist nicht konfiguriert.')
+
+  const res = await fetch('https://api.cloudflare.com/client/v4/zones', {
+    method: 'POST',
+    headers: headers(),
+    body: JSON.stringify({
+      name: domain,
+      account: { id: accountId },
+      jump_start: false,
+    }),
+  })
+  const data = await res.json() as {
+    success: boolean
+    result: CfZone & { name_servers: string[] }
+    errors: { message: string }[]
+  }
+  if (!data.success) throw new Error(data.errors?.[0]?.message ?? 'Zone konnte nicht erstellt werden.')
+  return { zone: data.result, nameservers: data.result.name_servers }
 }
 
 // ─── Full template domain setup ───────────────────────────────────────────────
