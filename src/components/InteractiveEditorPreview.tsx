@@ -174,9 +174,8 @@ export default function InteractiveEditorPreview({
   // After hydration, correct it to the actual device viewport.
   useEffect(() => {
     const w = window.innerWidth
-    if (w < 768) setViewport('mobile')
-    else if (w < 1024) setViewport('tablet')
-    // else: already 'desktop', no change needed
+    const vp: Viewport = w < 768 ? 'mobile' : w < 1024 ? 'tablet' : 'desktop'
+    setViewport(vp) // eslint-disable-line react-hooks/set-state-in-effect
   }, [])
 
   // Keep viewportRef in sync so updateField always uses the current viewport
