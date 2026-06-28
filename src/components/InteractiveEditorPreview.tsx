@@ -106,16 +106,8 @@ export default function InteractiveEditorPreview({
     if (w <= 1023) return 560
     return 620
   })
-  // Auto-detect viewport based on device: phones see mobile template (390px),
-  // tablets see tablet template (768px), desktops see desktop template (1280px).
-  // This avoids extreme scale factors (like 0.29) that cause iOS Safari rendering bugs.
-  const [viewport, setViewport] = useState<Viewport>(() => {
-    if (typeof window === 'undefined') return 'desktop'
-    const w = window.innerWidth
-    if (w < 768) return 'mobile'    // phones → mobile template layout
-    if (w < 1024) return 'tablet'   // tablets → tablet template layout
-    return 'desktop'                 // desktop → desktop template layout
-  })
+  // Always start as 'desktop' on SSR — corrected to actual device after mount.
+  const [viewport, setViewport] = useState<Viewport>('desktop')
   const [isLoading, setIsLoading] = useState(false)
 
   // ─── Measure preview pane ─────────────────────────────────────────────────
@@ -155,9 +147,12 @@ export default function InteractiveEditorPreview({
   })
 
   const allValuesRef  = useRef<Record<string, string>>(initialValues)
-  const viewportRef   = useRef<Viewport>(viewport)
+  const viewportRef   = useRef<Viewport>('desktop')
   const [fieldValues, setFieldValues] = useState<Record<string, string>>(initialValues)
-  const [previewSrc, setPreviewSrc]   = useState(() => buildPreviewSrc(templateId, initialValues, viewport))
+  // Start empty — set correctly after mount with actual window.innerWidth.
+  // This avoids SSR/hydration mismatch (server has no window, so viewport
+  // would always be 'desktop' without this pattern).
+  const [previewSrc, setPreviewSrc] = useState<string>('')
 
   const demoUrl = `demo.${domain}`
 
@@ -170,13 +165,16 @@ export default function InteractiveEditorPreview({
     } catch { pendingScroll.current = null }
   }
 
-  // Fix SSR mismatch: viewport initializes to 'desktop' on the server (no window).
-  // After hydration, correct it to the actual device viewport.
+  // After mount: detect actual device viewport and load correct preview URL.
+  // Runs once after hydration — this is the ONLY place where previewSrc gets
+  // its initial value, guaranteeing the correct ?vp= param for mobile/tablet.
   useEffect(() => {
     const w = window.innerWidth
     const vp: Viewport = w < 768 ? 'mobile' : w < 1024 ? 'tablet' : 'desktop'
     setViewport(vp) // eslint-disable-line react-hooks/set-state-in-effect
-  }, [])
+    viewportRef.current = vp
+    setPreviewSrc(buildPreviewSrc(templateId, allValuesRef.current, vp))
+  }, [templateId])
 
   // Keep viewportRef in sync so updateField always uses the current viewport
   useEffect(() => { viewportRef.current = viewport }, [viewport])
