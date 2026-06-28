@@ -170,6 +170,15 @@ export default function InteractiveEditorPreview({
     } catch { pendingScroll.current = null }
   }
 
+  // Fix SSR mismatch: viewport initializes to 'desktop' on the server (no window).
+  // After hydration, correct it to the actual device viewport.
+  useEffect(() => {
+    const w = window.innerWidth
+    if (w < 768) setViewport('mobile')
+    else if (w < 1024) setViewport('tablet')
+    // else: already 'desktop', no change needed
+  }, [])
+
   // Keep viewportRef in sync so updateField always uses the current viewport
   useEffect(() => { viewportRef.current = viewport }, [viewport])
 
