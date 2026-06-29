@@ -114,7 +114,7 @@ export function passwordResetEmail({ url }: { url: string }): string {
     </p>
     ${button(url, 'Neues Passwort festlegen')}
     <p style="margin:28px 0 0;font-size:13px;color:${base.muted};line-height:1.6;">
-      Dieser Link ist 1 Stunde gültig. Falls du kein neues Passwort angefordert hast, kannst du diese E-Mail ignorieren — dein Passwort bleibt unverändert.
+      Dieser Link ist 1 Stunde gültig. Falls du kein neues Passwort angefordert hast, kannst du diese E-Mail einfach ignorieren. Dein Passwort bleibt unverändert.
     </p>
     ${fallbackLink(url)}
   `)
@@ -333,6 +333,7 @@ export function paymentWarningEmail({ daysLeft, invoiceUrl }: { daysLeft: number
   `)
 }
 
+/** Sent when payment failure leads to deactivation after 14-day grace period */
 export function accountDeactivatedEmail(): string {
   const billingUrl = `${APP_URL}/billing`
   return layout(`
@@ -340,18 +341,48 @@ export function accountDeactivatedEmail(): string {
       Dein Konto wurde pausiert
     </h1>
     <p style="margin:0 0 16px;font-size:15px;color:${base.body};line-height:1.65;">
-      Die offene Zahlung ist leider immer noch nicht eingegangen, deshalb haben wir dein Konto jetzt pausiert. Deine Webseiten sind im Moment offline.
+      Die offene Zahlung ist leider nicht eingegangen, deshalb sind deine Webseiten jetzt offline. Deine Besucher sehen im Moment eine Fehlerseite.
     </p>
     <p style="margin:0 0 24px;font-size:15px;color:${base.body};line-height:1.65;">
-      Deine Daten und Inhalte sind noch 90 Tage gespeichert. Du kannst einfach zahlen und alles geht sofort wieder online, ohne dass du irgendetwas neu aufbauen musst.
+      Das Gute: Alle deine Inhalte, Texte und Bilder sind noch da. Wenn du jetzt zahlst, sind deine Seiten sofort wieder online. Du musst nichts neu aufbauen.
     </p>
+    <table cellpadding="0" cellspacing="0" role="presentation" width="100%" style="margin:0 0 28px;">
+      <tr>
+        <td style="background:#FEF2F2;border-radius:12px;padding:16px 20px;border:1px solid #FECACA;">
+          <p style="margin:0;font-size:13px;color:#7F1D1D;line-height:1.6;">
+            Deine Daten werden in <strong>90 Tagen</strong> endgültig gelöscht. Danach gibt es kein Zurück mehr.
+          </p>
+        </td>
+      </tr>
+    </table>
     ${button(billingUrl, 'Jetzt reaktivieren')}
     <p style="margin:28px 0 0;font-size:13px;color:${base.muted};line-height:1.6;">
-      Bei Fragen erreichst du uns unter <a href="mailto:support@finestsites.de" style="color:${base.muted};">support@finestsites.de</a>
+      Hast du ein Problem mit der Zahlung? Schreib uns einfach direkt: <a href="mailto:support@finestsites.de" style="color:${base.muted};">support@finestsites.de</a>. Wir finden eine Lösung.
     </p>
   `)
 }
 
+/** Sent when a voluntarily canceled subscription period ends (sites go offline) */
+export function accountExpiredEmail(): string {
+  const billingUrl = `${APP_URL}/billing`
+  return layout(`
+    <h1 style="margin:0 0 8px;font-size:22px;font-weight:700;color:#111827;letter-spacing:-0.02em;">
+      Dein Abo ist ausgelaufen
+    </h1>
+    <p style="margin:0 0 16px;font-size:15px;color:${base.body};line-height:1.65;">
+      Deine Abonnementlaufzeit ist jetzt abgelaufen. Deine Webseiten sind offline, aber alle deine Inhalte sind noch <strong>90 Tage</strong> bei uns gespeichert.
+    </p>
+    <p style="margin:0 0 24px;font-size:15px;color:${base.body};line-height:1.65;">
+      Falls du es dir anders überlegst: Ein Klick und alles ist sofort wieder da. Kein Neuanfang, keine Datenverluste.
+    </p>
+    ${button(billingUrl, 'Jetzt wieder loslegen')}
+    <p style="margin:28px 0 0;font-size:13px;color:${base.muted};line-height:1.6;">
+      War etwas nicht in Ordnung? Wir sind ehrlich interessiert, was wir besser machen können: <a href="mailto:support@finestsites.de" style="color:${base.muted};">support@finestsites.de</a>
+    </p>
+  `)
+}
+
+/** Sent when user schedules cancellation (cancel_at_period_end = true), sites still running */
 export function accountCanceledEmail({ periodEnd }: { periodEnd: string }): string {
   const billingUrl = `${APP_URL}/billing`
   return layout(`
@@ -359,14 +390,14 @@ export function accountCanceledEmail({ periodEnd }: { periodEnd: string }): stri
       Dein Abo wurde gekündigt
     </h1>
     <p style="margin:0 0 16px;font-size:15px;color:${base.body};line-height:1.65;">
-      Du hast dein FinestSites-Abo gekündigt. Bis zum <strong>${periodEnd}</strong> läuft aber alles ganz normal weiter, deine Seiten sind online und du hast vollen Zugriff.
+      Du hast dein FinestSites-Abo gekündigt. Bis zum <strong>${periodEnd}</strong> läuft aber alles ganz normal weiter. Deine Seiten sind online und du hast vollen Zugriff.
     </p>
     <p style="margin:0 0 24px;font-size:15px;color:${base.body};line-height:1.65;">
       Danach gehen deine Seiten offline. Deine Daten bleiben noch 90 Tage gespeichert, falls du es dir doch anders überlegst.
     </p>
-    ${button(billingUrl, 'Abo fortsetzen')}
+    ${button(billingUrl, 'Kündigung rueckgaengig machen')}
     <p style="margin:28px 0 0;font-size:13px;color:${base.muted};line-height:1.6;">
-      Schade, dass du gehst. Falls du Feedback hast oder wir was besser machen können, freuen wir uns: <a href="mailto:support@finestsites.de" style="color:${base.muted};">support@finestsites.de</a>
+      Schade, dass du gehst. Falls du Feedback hast oder wir was besser machen koennen: <a href="mailto:support@finestsites.de" style="color:${base.muted};">support@finestsites.de</a>
     </p>
   `)
 }

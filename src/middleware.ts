@@ -147,8 +147,11 @@ export async function middleware(request: NextRequest) {
       !!profile?.subscriptionStatus &&
       ACTIVE_STATUSES.includes(profile.subscriptionStatus)
 
-    // Allow fresh Stripe checkout sessions through before webhook fires
-    const hasSessionId = !!request.nextUrl.searchParams.get('session_id')
+    // Allow fresh Stripe checkout sessions through before webhook fires.
+    // Stripe checkout session IDs always start with 'cs_' — validate format
+    // to prevent casual bypass via ?session_id=anything.
+    const sessionId = request.nextUrl.searchParams.get('session_id')
+    const hasSessionId = typeof sessionId === 'string' && sessionId.startsWith('cs_')
 
     if (!hasActiveSubscription && !hasSessionId) {
       return NextResponse.redirect(new URL('/onboarding/plan', request.url))

@@ -9,6 +9,7 @@ import {
   affiliateNewReferralEmail,
   paymentFailedEmail,
   accountDeactivatedEmail,
+  accountExpiredEmail,
   accountCanceledEmail,
   accountReactivatedEmail,
 } from '@/lib/email/templates'
@@ -267,8 +268,13 @@ export async function POST(req: NextRequest) {
 
       const userRow = await db.query.users.findFirst({
         where: eq(users.id, userId),
-        columns: { email: true, deactivatedAt: true },
+        columns: { email: true, deactivatedAt: true, subscriptionStatus: true },
       })
+
+      // Was this a voluntary cancellation or a payment-failure termination?
+      // past_due/unpaid → Stripe gave up on retries → payment failure email
+      // active/trialing → period ended after cancel_at_period_end → expired email
+      const wasPaymentFailure = ['past_due', 'unpaid'].includes(userRow?.subscriptionStatus ?? '')
 
       // Deactivate user account
       await db.update(users).set({
@@ -315,13 +321,18 @@ export async function POST(req: NextRequest) {
         }
       }
 
-      // Send deactivation email (only if not already deactivated by cron)
+      // Send correct email based on why the subscription ended
+      // (only if not already deactivated by cron — cron sets deactivatedAt)
       if (!userRow?.deactivatedAt && userRow?.email) {
+        const emailHtml = wasPaymentFailure ? accountDeactivatedEmail() : accountExpiredEmail()
+        const emailSubject = wasPaymentFailure
+          ? 'Dein Konto wurde pausiert'
+          : 'Dein Abo ist ausgelaufen'
         getResend().emails.send({
           from: FROM_EMAIL,
           to: userRow.email,
-          subject: 'Dein FinestSites-Abo ist abgelaufen',
-          html: accountDeactivatedEmail(),
+          subject: emailSubject,
+          html: emailHtml,
         }).catch(err => console.error('[webhook] subscription_deleted email error:', err))
       }
 

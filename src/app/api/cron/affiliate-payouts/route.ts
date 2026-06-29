@@ -25,14 +25,9 @@ import { affiliatePayoutEmail } from '@/lib/email/templates'
 
 export async function POST(request: NextRequest) {
   const authHeader = request.headers.get('authorization')
-  const querySecret = request.nextUrl.searchParams.get('secret')
   const cronSecret = process.env.CRON_SECRET
 
-  const authorized =
-    (cronSecret && authHeader === `Bearer ${cronSecret}`) ||
-    (cronSecret && querySecret === cronSecret)
-
-  if (!authorized) {
+  if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
