@@ -137,18 +137,6 @@ export default async function TemplateDetailPage({ params }: Props) {
   const schema = (tpl.placeholderSchema ?? {}) as PlaceholderSchema
   const hasInteractiveFields = (schema.fields ?? []).some(f => f.preview_interactive)
 
-  // Build feature sections from schema for the feature showcase
-  type SchemaField = { key: string; label: string; type: string; section?: string; sub_fields?: unknown[] }
-  const schemaFields = (schema.fields ?? []) as SchemaField[]
-  const sectionMap = new Map<string, SchemaField[]>()
-  for (const f of schemaFields) {
-    const sec = f.section ?? 'Sonstiges'
-    if (!sectionMap.has(sec)) sectionMap.set(sec, [])
-    sectionMap.get(sec)!.push(f)
-  }
-  const loopFields = schemaFields.filter(f => f.type === 'loop')
-  const hasLoopField = loopFields.length > 0
-
   const sections: DetailSection[] = dbSections.length >= 4
     ? dbSections.slice(0, 4)
     : DEFAULT_SECTIONS.map((def, i) => dbSections[i] ?? def)
@@ -329,32 +317,23 @@ export default async function TemplateDetailPage({ params }: Props) {
               accentColor={accentColor}
               registerUrl={registerUrl}
               sidebarCallout={
-                <div style={{
-                  borderTop: '1px solid rgba(0,0,0,0.06)',
-                  padding: '14px 16px 16px',
-                  background: '#FAFAFA',
-                }}>
-                  <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#bbb', marginBottom: 10 }}>
-                    Im echten Editor außerdem
+                <div style={{ borderTop: '1px solid rgba(0,0,0,0.06)', padding: '12px 16px 14px', background: '#FAFAFA' }}>
+                  <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#bbb', marginBottom: 8 }}>
+                    Im echten Editor zusätzlich
                   </p>
                   {[
-                    'Profil­bild hochladen',
-                    'Bio & Social-Links',
-                    'Bis zu 50 Events',
-                    'Online & Vor-Ort-Events',
+                    'Profilbild & Bio hochladen',
+                    'Titelbild pro Event',
+                    'Highlights & Special Guests',
+                    'Richtext-Beschreibung',
                     'Eigene Domain',
                   ].map(item => (
-                    <div key={item} style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 6 }}>
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={accentColor} strokeWidth="2.5"><path d="M20 6L9 17l-5-5"/></svg>
-                      <span style={{ fontSize: 12, color: '#555', lineHeight: 1.3 }}>{item}</span>
+                    <div key={item} style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 5 }}>
+                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke={accentColor} strokeWidth="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+                      <span style={{ fontSize: 11.5, color: '#666' }}>{item}</span>
                     </div>
                   ))}
-                  <a href={registerUrl} style={{
-                    display: 'block', marginTop: 14, textAlign: 'center',
-                    background: accentColor, color: '#fff',
-                    fontSize: 11.5, fontWeight: 700, padding: '9px 12px',
-                    borderRadius: 8, textDecoration: 'none', letterSpacing: '0.02em',
-                  }}>
+                  <a href={registerUrl} style={{ display: 'block', marginTop: 12, textAlign: 'center', background: accentColor, color: '#fff', fontSize: 11.5, fontWeight: 700, padding: '8px 12px', borderRadius: 8, textDecoration: 'none' }}>
                     Alles freischalten →
                   </a>
                 </div>
@@ -371,145 +350,6 @@ export default async function TemplateDetailPage({ params }: Props) {
           )}
         </div>
       </section>
-
-      {/* ── FEATURE SHOWCASE: what the real editor offers ─────────────────────── */}
-      {sectionMap.size > 0 && (
-        <section style={{ padding: '72px 7vw 0', background: '#fff' }}>
-          <div style={{ maxWidth: 1080, margin: '0 auto' }}>
-            <p style={{ fontSize: 11, fontWeight: 700, color: accentColor, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 12 }}>
-              Was du alles einstellen kannst
-            </p>
-            <h2 style={{ fontFamily: '"Plein", Georgia, serif', fontSize: 'clamp(22px, 2.8vw, 36px)', fontWeight: 400, color: '#111', letterSpacing: '-0.025em', marginBottom: 40 }}>
-              Viel mehr als nur ein paar Farben.
-            </h2>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 16 }}>
-              {Array.from(sectionMap.entries()).map(([section, fields]) => {
-                const loopCount = fields.filter(f => f.type === 'loop').reduce((acc, f) => acc + (f.sub_fields?.length ?? 0), 0)
-                const fieldCount = fields.filter(f => f.type !== 'loop').length + loopCount
-                const icons: Record<string, React.ReactNode> = {
-                  'Profil': <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>,
-                  'Design': <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>,
-                  'Events': <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>,
-                }
-                const descriptions: Record<string, string> = {
-                  'Profil': 'Name, Foto, Bio und alle Infos zu dir als Person.',
-                  'Design': 'Dunkel oder hell, Akzentfarbe – dein Look.',
-                  'Events': 'Online-Events, Vor-Ort-Termine, wöchentlich oder einmalig.',
-                }
-                return (
-                  <div key={section} style={{
-                    background: '#F9F9F9',
-                    borderRadius: 16,
-                    padding: '22px 22px 20px',
-                    border: '1px solid rgba(0,0,0,0.06)',
-                  }}>
-                    <div style={{ color: accentColor, marginBottom: 14 }}>
-                      {icons[section] ?? <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>}
-                    </div>
-                    <p style={{ fontWeight: 700, fontSize: 15, color: '#111', marginBottom: 5 }}>{section}</p>
-                    <p style={{ fontSize: 13, color: '#777', lineHeight: 1.6, marginBottom: 12 }}>
-                      {descriptions[section] ?? `${fieldCount} Einstellungsoptionen`}
-                    </p>
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5 }}>
-                      {fields.filter(f => f.type !== 'loop').slice(0, 5).map(f => (
-                        <span key={f.key} style={{ fontSize: 11, fontWeight: 500, color: '#666', background: '#EFEFEF', padding: '3px 9px', borderRadius: 100 }}>
-                          {f.label}
-                        </span>
-                      ))}
-                      {fields.filter(f => f.type === 'loop').map(f => (
-                        <span key={f.key} style={{ fontSize: 11, fontWeight: 500, color: accentColor, background: accentBg, padding: '3px 9px', borderRadius: 100 }}>
-                          {f.label}
-                        </span>
-                      ))}
-                      {fields.filter(f => f.type !== 'loop').length > 5 && (
-                        <span style={{ fontSize: 11, color: '#aaa', padding: '3px 4px' }}>
-                          +{fields.filter(f => f.type !== 'loop').length - 5} weitere
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                )
-              })}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* ── EVENT CREATION STEPS (only for templates with loop fields) ─────────── */}
-      {hasLoopField && (
-        <section style={{ padding: '72px 7vw 0', background: '#fff' }}>
-          <div style={{ maxWidth: 1080, margin: '0 auto' }}>
-            <p style={{ fontSize: 11, fontWeight: 700, color: accentColor, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 12 }}>
-              So einfach geht&apos;s
-            </p>
-            <h2 style={{ fontFamily: '"Plein", Georgia, serif', fontSize: 'clamp(22px, 2.8vw, 36px)', fontWeight: 400, color: '#111', letterSpacing: '-0.025em', marginBottom: 48 }}>
-              Ein neues {loopFields[0]?.label ?? 'Event'} anlegen — in unter 2 Minuten.
-            </h2>
-            <div className="vd-steps-grid">
-              {[
-                {
-                  num: '01',
-                  title: '+ Event hinzufügen',
-                  desc: 'Im Editor auf „+ Event" klicken. Der Name, die Art (Online oder Vor Ort) und das Datum — das reicht schon.',
-                  detail: 'Eventname · Datum & Uhrzeit · Online oder Vor Ort',
-                },
-                {
-                  num: '02',
-                  title: 'Beschreibung & Details',
-                  desc: 'Ein kurzer Text, was die Teilnehmer erwartet. Optional: Highlights, Gäste, Wiederholungen.',
-                  detail: 'Beschreibung · Highlights · Wiederkehrend',
-                },
-                {
-                  num: '03',
-                  title: 'Sofort live',
-                  desc: 'Event auf „Veröffentlicht" setzen — fertig. Deine Seite zeigt den neuen Termin in Echtzeit.',
-                  detail: 'Entwurf oder sofort live · Countdown automatisch',
-                },
-              ].map((step, i) => (
-                <div key={i} className="vd-step-card">
-                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16, marginBottom: 16 }}>
-                    <span style={{
-                      fontFamily: '"Plein", Georgia, serif',
-                      fontSize: 32, fontWeight: 400, color: accentColor,
-                      opacity: 0.4, lineHeight: 1, flexShrink: 0,
-                      letterSpacing: '-0.04em',
-                    }}>{step.num}</span>
-                    <h3 style={{ fontSize: 16, fontWeight: 700, color: '#111', lineHeight: 1.3, paddingTop: 4 }}>{step.title}</h3>
-                  </div>
-                  <p style={{ fontSize: 14, color: '#555', lineHeight: 1.7, marginBottom: 16 }}>{step.desc}</p>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-                    {step.detail.split(' · ').map(d => (
-                      <span key={d} style={{ fontSize: 11, fontWeight: 500, color: '#888', background: '#F5F5F5', padding: '3px 9px', borderRadius: 100 }}>{d}</span>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-            <style>{`
-              .vd-steps-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
-              .vd-step-card {
-                background: #fff;
-                border: 1px solid rgba(0,0,0,0.08);
-                border-radius: 18px;
-                padding: 28px 24px 24px;
-                position: relative;
-              }
-              .vd-step-card::before {
-                content: '';
-                position: absolute;
-                top: 0; left: 28px; right: 28px;
-                height: 2px;
-                background: ${accentColor};
-                opacity: 0.18;
-                border-radius: 0 0 2px 2px;
-              }
-              @media (max-width: 767px) {
-                .vd-steps-grid { grid-template-columns: 1fr; }
-              }
-            `}</style>
-          </div>
-        </section>
-      )}
 
       {/* ── 4 ALTERNATING FEATURE SECTIONS ───────────────────────────────────── */}
       {sections.map((section, i) => {

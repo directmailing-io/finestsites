@@ -13,6 +13,22 @@ interface CardOption {
   image_url?: string
 }
 
+interface LoopSubField {
+  key: string
+  label: string
+  type: string
+  required?: boolean
+  card_options?: CardOption[]
+  options?: string[]
+  show_when?: { field: string; value: string | string[] }
+  placeholder_text?: string
+  max_length?: number
+  default_value?: string
+  toggle_on_value?: string
+  toggle_off_value?: string
+  display_mode?: string
+}
+
 interface PlaceholderField {
   key: string
   label: string
@@ -21,6 +37,8 @@ interface PlaceholderField {
   preview_value?: string
   default_value?: string
   card_options?: CardOption[]
+  sub_fields?: LoopSubField[]
+  max_items?: number
 }
 
 export interface PlaceholderSchema {
@@ -135,6 +153,7 @@ export default function InteractiveEditorPreview({
   const colorFields  = interactiveFields.filter(isColorField)
   const imageFields  = interactiveFields.filter(isImageField)
   const toggleFields = interactiveFields.filter(isToggleField)
+  const loopFields   = interactiveFields.filter(f => f.type === 'loop')
 
   const hasControls = interactiveFields.length > 0
 
@@ -396,6 +415,17 @@ export default function InteractiveEditorPreview({
             </div>
           </SidebarSection>
         )}
+
+        {/* Loop fields */}
+        {loopFields.map(field => (
+          <SidebarSection key={field.key} label={field.label} variant={variant}>
+            <LoopPreviewSection
+              field={field}
+              onUpdate={updateField}
+              accentColor={accentColor}
+            />
+          </SidebarSection>
+        ))}
       </>
     )
   }
@@ -481,7 +511,7 @@ export default function InteractiveEditorPreview({
         {/* ── Body: sidebar + preview ──────────────────────────────────────── */}
         <div className="editor-body" style={{
           display: 'grid',
-          gridTemplateColumns: hasControls ? '260px 1fr' : '1fr',
+          gridTemplateColumns: hasControls ? (loopFields.length > 0 ? '296px 1fr' : '260px 1fr') : '1fr',
         }}>
 
           {/* ── LEFT: Sidebar (desktop + tablet) ──────────────────────────── */}
@@ -715,7 +745,7 @@ export default function InteractiveEditorPreview({
         @media (max-width: 1023px) {
           .editor-viewport-switcher { display: none !important; }
           .editor-topbar-actions a:first-child { display: none; } /* hide Live-Demo */
-          .editor-body { grid-template-columns: 220px 1fr !important; }
+          .editor-body { grid-template-columns: ${loopFields.length > 0 ? '250px' : '220px'} 1fr !important; }
           /* Touch-friendly sidebar items */
           .fs-toggle-row { min-height: 48px; padding: 12px 6px; }
           .fs-toggle-label { font-size: 13.5px; }
@@ -755,6 +785,306 @@ export default function InteractiveEditorPreview({
       `}</style>
     </div>
   )
+}
+
+// ─── Loop preview section ─────────────────────────────────────────────────────
+
+// Sub-field types supported in the demo (skip image, loop, date_multi, color)
+const LOOP_DEMO_TYPES = new Set(['text', 'textarea', 'richtext', 'date', 'time', 'url', 'email', 'dropdown', 'card_select', 'toggle'])
+// Keys always hidden in demo (internal or complex)
+const LOOP_HIDDEN_KEYS = new Set(['kuerzel', 'akzentfarbe_event', 'titelbild'])
+
+function loopSubFieldVisible(sf: LoopSubField, item: Record<string, string>): boolean {
+  if (!LOOP_DEMO_TYPES.has(sf.type)) return false
+  if (LOOP_HIDDEN_KEYS.has(sf.key)) return false
+  if (!sf.show_when) return true
+  const v = item[sf.show_when.field] ?? ''
+  return Array.isArray(sf.show_when.value) ? sf.show_when.value.includes(v) : v === sf.show_when.value
+}
+
+function LoopPreviewSection({
+  field,
+  onUpdate,
+  accentColor,
+}: {
+  field: PlaceholderField
+  onUpdate: (key: string, value: string) => void
+  accentColor: string
+}) {
+  const subFields = field.sub_fields ?? []
+  const maxItems  = field.max_items ?? 50
+
+  const [items, setItems] = useState<Record<string, string>[]>(() => {
+    try { return JSON.parse(field.preview_value ?? '[]') } catch { return [] }
+  })
+  const [expandedIdx, setExpandedIdx] = useState<number | null>(null)
+
+  function commit(next: Record<string, string>[]) {
+    setItems(next)
+    onUpdate(field.key, JSON.stringify(next))
+  }
+
+  function addItem() {
+    const empty: Record<string, string> = {}
+    for (const sf of subFields) {
+      if (sf.default_value !== undefined) empty[sf.key] = sf.default_value
+    }
+    // sensible defaults for common keys
+    if (subFields.some(sf => sf.key === 'status')) empty['status'] = 'veroeffentlicht'
+    if (subFields.some(sf => sf.key === 'typ')) empty['typ'] = 'online'
+    if (subFields.some(sf => sf.key === 'wiederkehrung')) empty['wiederkehrung'] = 'einmalig'
+    const next = [...items, empty]
+    setItems(next)
+    onUpdate(field.key, JSON.stringify(next))
+    setExpandedIdx(next.length - 1)
+  }
+
+  function removeItem(idx: number) {
+    const next = items.filter((_, i) => i !== idx)
+    commit(next)
+    setExpandedIdx(prev => prev === idx ? null : prev !== null && prev > idx ? prev - 1 : prev)
+  }
+
+  function updateSub(itemIdx: number, sf: LoopSubField, val: string) {
+    let updated = { ...items[itemIdx], [sf.key]: val }
+    // auto-generate slug from name
+    if (sf.key === 'name') {
+      const slug = val.toLowerCase()
+        .replace(/[äöüß]/g, (c: string) => ({ ä: 'ae', ö: 'oe', ü: 'ue', ß: 'ss' }[c] ?? c))
+        .replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
+      updated = { ...updated, kuerzel: slug }
+    }
+    commit(items.map((item, i) => i === itemIdx ? updated : item))
+  }
+
+  const titleKey = subFields.find(sf => sf.type === 'text' || sf.type === 'textarea')?.key
+
+  const INPUT: React.CSSProperties = {
+    width: '100%', padding: '7px 9px', borderRadius: 8,
+    border: '1.5px solid #E5E7EB', fontSize: 12.5, color: '#111',
+    background: '#fff', outline: 'none', fontFamily: 'inherit',
+    transition: 'border-color 0.15s', boxSizing: 'border-box',
+  }
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+      {items.length === 0 && (
+        <div style={{ textAlign: 'center', padding: '18px 12px', border: '2px dashed #E5E7EB', borderRadius: 12, fontSize: 12, color: '#9CA3AF' }}>
+          Noch keine Einträge vorhanden.
+        </div>
+      )}
+
+      {items.map((item, idx) => {
+        const isOpen = expandedIdx === idx
+        const title = (titleKey && item[titleKey]) ? item[titleKey] : `${field.label} ${idx + 1}`
+        const visibleFields = subFields.filter(sf => loopSubFieldVisible(sf, item))
+
+        return (
+          <div key={idx} style={{
+            border: `1.5px solid ${isOpen ? '#1a1a1a' : '#E5E7EB'}`,
+            borderRadius: 12, background: '#fff', overflow: 'hidden',
+            transition: 'border-color 0.15s',
+          }}>
+            {/* Header */}
+            <div
+              onClick={() => setExpandedIdx(isOpen ? null : idx)}
+              style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '9px 11px', cursor: 'pointer', userSelect: 'none', minHeight: 42 }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, minWidth: 0, flex: 1 }}>
+                <span style={{
+                  width: 20, height: 20, borderRadius: '50%', flexShrink: 0,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontSize: 10, fontWeight: 700,
+                  background: isOpen ? '#1a1a1a' : '#F3F4F6',
+                  color: isOpen ? '#fff' : '#9CA3AF',
+                }}>{idx + 1}</span>
+                <span style={{ fontSize: 12.5, fontWeight: 600, color: '#111', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  {title}
+                </span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 2, flexShrink: 0 }}>
+                <button
+                  onClick={e => { e.stopPropagation(); removeItem(idx) }}
+                  style={{ width: 26, height: 26, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'none', border: 'none', cursor: 'pointer', color: '#D1D5DB', borderRadius: 6, transition: 'color 0.12s' }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = '#DC2626' }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = '#D1D5DB' }}
+                >
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/>
+                  </svg>
+                </button>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="2"
+                  style={{ transform: isOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s', flexShrink: 0 }}>
+                  <path d="M6 9l6 6 6-6"/>
+                </svg>
+              </div>
+            </div>
+
+            {/* Sub-fields */}
+            {isOpen && (
+              <div style={{ borderTop: '1px solid #F3F4F6', padding: '0 12px 12px', display: 'flex', flexDirection: 'column', gap: 0 }}>
+                {visibleFields.map(sf => (
+                  <div key={sf.key} style={{ paddingTop: 10 }}>
+                    <label style={{ display: 'block', fontSize: 10.5, fontWeight: 700, color: '#6B7280', marginBottom: 5, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+                      {sf.label}{sf.required && <span style={{ color: '#EF4444', marginLeft: 2 }}>*</span>}
+                    </label>
+                    <LoopSubFieldInput
+                      sf={sf}
+                      value={item[sf.key] ?? ''}
+                      onCommit={v => updateSub(idx, sf, v)}
+                      accentColor={accentColor}
+                      inputStyle={INPUT}
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )
+      })}
+
+      {items.length < maxItems && (
+        <button
+          onClick={addItem}
+          style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, padding: '10px 0', borderRadius: 12, width: '100%', border: '1.5px dashed #D1D5DB', color: '#374151', background: 'transparent', cursor: 'pointer', fontSize: 12.5, fontWeight: 600, transition: 'all 0.12s' }}
+          onMouseEnter={e => { const el = e.currentTarget as HTMLElement; el.style.borderColor = '#1a1a1a'; el.style.background = '#F9FAFB' }}
+          onMouseLeave={e => { const el = e.currentTarget as HTMLElement; el.style.borderColor = '#D1D5DB'; el.style.background = 'transparent' }}
+        >
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+          {field.label} hinzufügen
+        </button>
+      )}
+    </div>
+  )
+}
+
+// ─── Loop sub-field input ─────────────────────────────────────────────────────
+
+function LoopSubFieldInput({ sf, value, onCommit, accentColor, inputStyle }: {
+  sf: LoopSubField
+  value: string
+  onCommit: (v: string) => void
+  accentColor: string
+  inputStyle: React.CSSProperties
+}) {
+  // Text-like: local state + commit on blur to avoid iframe reload on every keystroke
+  const [local, setLocal] = useState(value)
+  useEffect(() => { setLocal(value) }, [value])
+
+  if (sf.type === 'textarea' || sf.type === 'richtext') {
+    return (
+      <textarea
+        value={local}
+        onChange={e => setLocal(e.target.value)}
+        onBlur={() => onCommit(local)}
+        placeholder={sf.placeholder_text ?? ''}
+        maxLength={sf.max_length ?? undefined}
+        rows={3}
+        style={{ ...inputStyle, resize: 'vertical' }}
+        onFocus={e => { (e.target as HTMLTextAreaElement).style.borderColor = accentColor }}
+      />
+    )
+  }
+
+  if (sf.type === 'text' || sf.type === 'url' || sf.type === 'email') {
+    return (
+      <input
+        type={sf.type === 'url' ? 'url' : sf.type === 'email' ? 'email' : 'text'}
+        value={local}
+        onChange={e => setLocal(e.target.value)}
+        onBlur={() => onCommit(local)}
+        placeholder={sf.placeholder_text ?? ''}
+        maxLength={sf.max_length ?? undefined}
+        style={inputStyle}
+        onFocus={e => { (e.target as HTMLInputElement).style.borderColor = accentColor }}
+      />
+    )
+  }
+
+  if (sf.type === 'date') {
+    return (
+      <input type="date" value={value} onChange={e => onCommit(e.target.value)}
+        style={inputStyle}
+        onFocus={e => { (e.target as HTMLInputElement).style.borderColor = accentColor }}
+        onBlur={e => { (e.target as HTMLInputElement).style.borderColor = '#E5E7EB' }}
+      />
+    )
+  }
+
+  if (sf.type === 'time') {
+    return (
+      <input type="time" value={value} onChange={e => onCommit(e.target.value)}
+        style={inputStyle}
+        onFocus={e => { (e.target as HTMLInputElement).style.borderColor = accentColor }}
+        onBlur={e => { (e.target as HTMLInputElement).style.borderColor = '#E5E7EB' }}
+      />
+    )
+  }
+
+  if (sf.type === 'dropdown') {
+    return (
+      <select value={value} onChange={e => onCommit(e.target.value)}
+        style={{ ...inputStyle, cursor: 'pointer' }}>
+        <option value="">— wählen —</option>
+        {(sf.options ?? []).map(opt => <option key={opt} value={opt}>{opt}</option>)}
+      </select>
+    )
+  }
+
+  if (sf.type === 'toggle') {
+    const isOn = value === (sf.toggle_on_value ?? 'ja')
+    return (
+      <div onClick={() => onCommit(isOn ? (sf.toggle_off_value ?? '') : (sf.toggle_on_value ?? 'ja'))}
+        style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', padding: '2px 0' }}>
+        <ToggleSwitch isOn={isOn} color={accentColor} />
+        <span style={{ fontSize: 12, color: '#888' }}>{isOn ? 'Aktiv' : 'Inaktiv'}</span>
+      </div>
+    )
+  }
+
+  if (sf.type === 'card_select') {
+    const options = sf.card_options ?? []
+    // Toggle-display mode (e.g. Sichtbarkeit field)
+    if (sf.display_mode === 'toggle' && sf.toggle_on_value !== undefined) {
+      const isOn = value === sf.toggle_on_value
+      const onLabel  = options.find(o => o.value === sf.toggle_on_value)?.label ?? 'An'
+      const offLabel = options.find(o => o.value === sf.toggle_off_value)?.label ?? 'Aus'
+      return (
+        <div onClick={() => onCommit(isOn ? (sf.toggle_off_value ?? '') : (sf.toggle_on_value ?? ''))}
+          style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', padding: '2px 0' }}>
+          <ToggleSwitch isOn={isOn} color={accentColor} />
+          <span style={{ fontSize: 12, color: '#555' }}>{isOn ? onLabel : offLabel}</span>
+        </div>
+      )
+    }
+    // Regular chips
+    return (
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5 }}>
+        {options.map(opt => {
+          const isActive = value === opt.value
+          return (
+            <button key={opt.value} onClick={() => onCommit(opt.value)} style={{
+              display: 'flex', alignItems: 'center', gap: 5,
+              padding: '5px 10px', borderRadius: 100,
+              border: `1.5px solid ${isActive ? accentColor : 'rgba(0,0,0,0.1)'}`,
+              background: isActive ? `${accentColor}12` : '#fff',
+              cursor: 'pointer', fontSize: 12, fontWeight: 600,
+              color: isActive ? accentColor : '#444',
+              transition: 'all 0.1s', WebkitTapHighlightColor: 'transparent',
+            }}>
+              {opt.color && <span style={{ width: 9, height: 9, borderRadius: '50%', background: opt.color, flexShrink: 0 }} />}
+              {opt.label}
+              {isActive && <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M20 6L9 17l-5-5"/></svg>}
+            </button>
+          )
+        })}
+      </div>
+    )
+  }
+
+  return null
 }
 
 // ─── Sidebar section wrapper ─────────────────────────────────────────────────
