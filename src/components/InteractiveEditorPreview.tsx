@@ -121,8 +121,8 @@ export default function InteractiveEditorPreview({
   const [paneHeight, setPaneHeight] = useState<number>(() => {
     if (typeof window === 'undefined') return 620
     const w = window.innerWidth
-    if (w <= 479) return 360
-    if (w <= 767) return 420
+    if (w <= 479) return Math.min(Math.round(window.innerHeight * 0.62), 580)
+    if (w <= 767) return Math.min(Math.round(window.innerHeight * 0.65), 600)
     if (w <= 1023) return 560
     return 620
   })
@@ -770,8 +770,8 @@ export default function InteractiveEditorPreview({
           .editor-body { grid-template-columns: 1fr !important; }
           .editor-sidebar { display: none !important; }
 
-          /* Preview: taller for better mobile experience — fills ~55vw height */
-          .editor-preview-pane { height: clamp(360px, 55vw, 480px) !important; }
+          /* Preview: taller for better mobile experience — uses vh (outer viewport) */
+          .editor-preview-pane { height: clamp(480px, 62vh, 600px) !important; }
 
           /* Show mobile controls below preview */
           .editor-mobile-controls { display: block !important; }
@@ -779,7 +779,7 @@ export default function InteractiveEditorPreview({
 
         /* ── Very small phones (<480px) ────────────────────────────────────── */
         @media (max-width: 479px) {
-          .editor-preview-pane { height: clamp(300px, 90vw, 380px) !important; }
+          .editor-preview-pane { height: clamp(460px, 60vh, 580px) !important; }
           .editor-frame { border-radius: 14px !important; }
         }
       `}</style>
