@@ -27,45 +27,68 @@ function TemplateCard({ tpl, idx }: { tpl: TemplateCardData; idx: number }) {
   const isComingSoon = tpl.isComingSoon ?? false
 
   if (isComingSoon) {
+    // Fake website preview — blurred to tease the design
+    const accent = pastel
     return (
-      <div style={{ display: 'block', borderRadius: 18, overflow: 'hidden', background: '#0e0e10', border: '1px solid rgba(255,255,255,0.07)', boxShadow: '0 4px 24px rgba(0,0,0,0.18)', cursor: 'default' }}>
-        {/* Cover — dark gradient with noise texture feel */}
-        <div style={{ height: 260, position: 'relative', overflow: 'hidden', background: `linear-gradient(135deg, ${pastel}22 0%, #0e0e10 60%)` }}>
-          {/* Subtle color glow in corner */}
-          <div style={{ position: 'absolute', top: -40, right: -40, width: 180, height: 180, borderRadius: '50%', background: pastel, opacity: 0.18, filter: 'blur(48px)' }} />
-          <div style={{ position: 'absolute', bottom: -20, left: -20, width: 120, height: 120, borderRadius: '50%', background: pastel, opacity: 0.12, filter: 'blur(36px)' }} />
-
-          {/* Grid pattern overlay */}
-          <div style={{ position: 'absolute', inset: 0, backgroundImage: 'linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)', backgroundSize: '32px 32px' }} />
-
-          {/* Coming soon pill */}
-          <div style={{ position: 'absolute', top: 14, left: 14, display: 'flex', alignItems: 'center', gap: 5, background: 'rgba(255,255,255,0.08)', backdropFilter: 'blur(12px)', border: '1px solid rgba(255,255,255,0.12)', color: 'rgba(255,255,255,0.7)', fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', padding: '5px 11px', borderRadius: 100 }}>
-            <span style={{ width: 5, height: 5, borderRadius: '50%', background: '#f59e0b', display: 'inline-block', flexShrink: 0 }} />
-            Coming Soon
+      <div style={{ display: 'block', borderRadius: 18, overflow: 'hidden', background: '#fff', border: '1px solid #ebebeb', boxShadow: '0 2px 12px rgba(0,0,0,0.05)', cursor: 'default' }}>
+        {/* Cover — blurred fake website preview */}
+        <div style={{ height: 260, background: '#f5f5f7', position: 'relative', overflow: 'hidden' }}>
+          {/* Fake site layout — blurred */}
+          <div style={{ position: 'absolute', inset: 0, filter: 'blur(7px)', transform: 'scale(1.05)', padding: '0' }}>
+            {/* Nav bar */}
+            <div style={{ height: 36, background: '#fff', borderBottom: '1px solid #eee', display: 'flex', alignItems: 'center', padding: '0 14px', gap: 8 }}>
+              <div style={{ width: 28, height: 28, borderRadius: '50%', background: accent }} />
+              <div style={{ flex: 1, display: 'flex', gap: 6, marginLeft: 8 }}>
+                <div style={{ width: 40, height: 8, borderRadius: 4, background: '#e0e0e0' }} />
+                <div style={{ width: 40, height: 8, borderRadius: 4, background: '#e0e0e0' }} />
+                <div style={{ width: 40, height: 8, borderRadius: 4, background: '#e0e0e0' }} />
+              </div>
+              <div style={{ width: 52, height: 22, borderRadius: 11, background: accent }} />
+            </div>
+            {/* Hero area */}
+            <div style={{ padding: '18px 14px 14px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, background: '#fff' }}>
+              <div style={{ width: 52, height: 52, borderRadius: '50%', background: accent }} />
+              <div style={{ width: 120, height: 11, borderRadius: 6, background: '#222' }} />
+              <div style={{ width: 80, height: 8, borderRadius: 4, background: '#bbb' }} />
+            </div>
+            {/* Link cards */}
+            <div style={{ padding: '0 10px', display: 'flex', flexDirection: 'column', gap: 7 }}>
+              {[1,2,3].map(i => (
+                <div key={i} style={{ height: 38, borderRadius: 10, background: i === 1 ? accent : '#fff', border: `1.5px solid ${i === 1 ? accent : '#e8e8e8'}`, display: 'flex', alignItems: 'center', padding: '0 12px', gap: 8 }}>
+                  <div style={{ width: 20, height: 20, borderRadius: 6, background: i === 1 ? 'rgba(255,255,255,0.3)' : accent + '33' }} />
+                  <div style={{ flex: 1, height: 8, borderRadius: 4, background: i === 1 ? 'rgba(255,255,255,0.5)' : '#ddd' }} />
+                </div>
+              ))}
+            </div>
           </div>
 
-          {/* Emoji + title hint */}
-          <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 10 }}>
-            <div style={{ fontSize: 52, lineHeight: 1 }}>🤫</div>
-            <div style={{ fontSize: 11, fontWeight: 700, color: 'rgba(255,255,255,0.25)', letterSpacing: '0.12em', textTransform: 'uppercase' }}>In Entwicklung</div>
+          {/* Coming soon overlay */}
+          <div style={{ position: 'absolute', inset: 0, background: 'rgba(255,255,255,0.35)' }} />
+
+          {/* Badge + emoji */}
+          <div style={{ position: 'absolute', top: 12, right: 12, background: '#111', color: '#fff', fontSize: 10, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', padding: '4px 10px', borderRadius: 100 }}>
+            Coming Soon
+          </div>
+          <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 52 }}>
+            🤫
           </div>
         </div>
 
-        {/* Card body */}
+        {/* Card body — identical to normal card */}
         <div style={{ padding: '16px 18px 20px' }}>
           <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 10 }}>
             <CompanyChip name={tpl.nmCompanies[0]} isAllrounder={tpl.isAllrounder} size="xs" />
             <PriceChip isFree={tpl.isFree} size="xs" />
           </div>
-          <h3 style={{ fontSize: 15, fontWeight: 700, color: '#f0f0f0', marginBottom: 6, lineHeight: 1.3 }}>{tpl.title}</h3>
+          <h3 style={{ fontSize: 15, fontWeight: 700, color: '#111', marginBottom: 6, lineHeight: 1.3 }}>{tpl.title}</h3>
           {tpl.description && (
-            <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.35)', lineHeight: 1.6, marginBottom: 14, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+            <p style={{ fontSize: 13, color: '#777', lineHeight: 1.6, marginBottom: 14, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
               {tpl.description}
             </p>
           )}
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 4 }}>
-            <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.15)', filter: 'blur(4px)', userSelect: 'none' }}>domain.de</span>
-            <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.3)', fontWeight: 600 }}>Demnächst →</span>
+            <span style={{ fontSize: 11, color: '#bbb', filter: 'blur(4px)', userSelect: 'none' }}>domain.de</span>
+            <span style={{ fontSize: 12, color: '#bbb', fontWeight: 600 }}>Demnächst verfügbar</span>
           </div>
         </div>
       </div>
