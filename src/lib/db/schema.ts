@@ -141,6 +141,7 @@ export const templates = pgTable('templates', {
   cfHostnameId: text('cf_hostname_id'),
   cfHostnameStatus: text('cf_hostname_status'),
   cfHostnameData: jsonb('cf_hostname_data'),
+  sortOrder: integer('sort_order').default(100),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 })

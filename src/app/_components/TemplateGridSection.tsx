@@ -28,24 +28,26 @@ function TemplateCard({ tpl, idx }: { tpl: TemplateCardData; idx: number }) {
 
   if (isComingSoon) {
     return (
-      <div style={{ display: 'block', borderRadius: 18, overflow: 'hidden', background: '#fff', border: '1px solid #ebebeb', boxShadow: '0 2px 12px rgba(0,0,0,0.04)', cursor: 'default', opacity: 0.9 }}>
-        {/* Cover — blurred with overlay */}
-        <div style={{ height: 260, background: pastel, position: 'relative', overflow: 'hidden' }}>
-          {cover ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={cover} alt={tpl.title} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', filter: 'blur(12px)', transform: 'scale(1.08)' }} />
-          ) : (
-            <div style={{ width: '100%', height: '100%', background: pastel }} />
-          )}
-          {/* Frosted overlay */}
-          <div style={{ position: 'absolute', inset: 0, background: 'rgba(255,255,255,0.55)', backdropFilter: 'blur(2px)' }} />
-          {/* Coming soon badge */}
-          <div style={{ position: 'absolute', top: 14, right: 14, background: '#111', color: '#fff', fontSize: 10, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', padding: '5px 11px', borderRadius: 100 }}>
+      <div style={{ display: 'block', borderRadius: 18, overflow: 'hidden', background: '#0e0e10', border: '1px solid rgba(255,255,255,0.07)', boxShadow: '0 4px 24px rgba(0,0,0,0.18)', cursor: 'default' }}>
+        {/* Cover — dark gradient with noise texture feel */}
+        <div style={{ height: 260, position: 'relative', overflow: 'hidden', background: `linear-gradient(135deg, ${pastel}22 0%, #0e0e10 60%)` }}>
+          {/* Subtle color glow in corner */}
+          <div style={{ position: 'absolute', top: -40, right: -40, width: 180, height: 180, borderRadius: '50%', background: pastel, opacity: 0.18, filter: 'blur(48px)' }} />
+          <div style={{ position: 'absolute', bottom: -20, left: -20, width: 120, height: 120, borderRadius: '50%', background: pastel, opacity: 0.12, filter: 'blur(36px)' }} />
+
+          {/* Grid pattern overlay */}
+          <div style={{ position: 'absolute', inset: 0, backgroundImage: 'linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)', backgroundSize: '32px 32px' }} />
+
+          {/* Coming soon pill */}
+          <div style={{ position: 'absolute', top: 14, left: 14, display: 'flex', alignItems: 'center', gap: 5, background: 'rgba(255,255,255,0.08)', backdropFilter: 'blur(12px)', border: '1px solid rgba(255,255,255,0.12)', color: 'rgba(255,255,255,0.7)', fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', padding: '5px 11px', borderRadius: 100 }}>
+            <span style={{ width: 5, height: 5, borderRadius: '50%', background: '#f59e0b', display: 'inline-block', flexShrink: 0 }} />
             Coming Soon
           </div>
-          {/* Emoji */}
-          <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 56 }}>
-            🤫
+
+          {/* Emoji + title hint */}
+          <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 10 }}>
+            <div style={{ fontSize: 52, lineHeight: 1 }}>🤫</div>
+            <div style={{ fontSize: 11, fontWeight: 700, color: 'rgba(255,255,255,0.25)', letterSpacing: '0.12em', textTransform: 'uppercase' }}>In Entwicklung</div>
           </div>
         </div>
 
@@ -55,15 +57,15 @@ function TemplateCard({ tpl, idx }: { tpl: TemplateCardData; idx: number }) {
             <CompanyChip name={tpl.nmCompanies[0]} isAllrounder={tpl.isAllrounder} size="xs" />
             <PriceChip isFree={tpl.isFree} size="xs" />
           </div>
-          <h3 style={{ fontSize: 15, fontWeight: 700, color: '#111', marginBottom: 6, lineHeight: 1.3 }}>{tpl.title}</h3>
+          <h3 style={{ fontSize: 15, fontWeight: 700, color: '#f0f0f0', marginBottom: 6, lineHeight: 1.3 }}>{tpl.title}</h3>
           {tpl.description && (
-            <p style={{ fontSize: 13, color: '#aaa', lineHeight: 1.6, marginBottom: 14, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+            <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.35)', lineHeight: 1.6, marginBottom: 14, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
               {tpl.description}
             </p>
           )}
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 4 }}>
-            <span style={{ fontSize: 11, color: '#ccc' }}>{tpl.domain}</span>
-            <span style={{ fontSize: 12, color: '#bbb', fontWeight: 600 }}>Demnächst verfügbar</span>
+            <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.15)', filter: 'blur(4px)', userSelect: 'none' }}>domain.de</span>
+            <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.3)', fontWeight: 600 }}>Demnächst →</span>
           </div>
         </div>
       </div>

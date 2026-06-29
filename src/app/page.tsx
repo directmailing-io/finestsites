@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { db } from '@/lib/db'
 import { templates, users } from '@/lib/db/schema'
-import { eq, and, inArray } from 'drizzle-orm'
+import { eq, and, inArray, asc, sql } from 'drizzle-orm'
 import PricingSection from './_components/PricingSection'
 import FeatureCardsAnimated from './_components/FeatureCardsAnimated'
 import NavBar from './_components/NavBar'
@@ -59,7 +59,7 @@ export default async function HomePage({
       })
       .from(templates)
       .where(and(inArray(templates.status, ['published', 'coming_soon']), eq(templates.isTest, false)))
-      .orderBy(templates.createdAt)
+      .orderBy(asc(sql`COALESCE(${templates.sortOrder}, 100)`), asc(templates.createdAt))
     templateList = rows.map(r => ({
       ...r,
       tags: (r.tags as string[] | null) ?? [],
