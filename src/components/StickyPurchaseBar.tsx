@@ -47,11 +47,11 @@ export default function StickyPurchaseBar({ templateTitle, registerUrl, isFree }
           <div style={{ fontSize: 15, fontWeight: 700, color: '#111', letterSpacing: '-0.02em' }}>{templateTitle}</div>
         </div>
         <div className="sticky-bar-inner" style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-          {/* Mobile only: template name + free badge */}
+          {/* Mobile only: template name + price */}
           <div className="sticky-bar-mobile-context" style={{ display: 'none', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
             <span style={{ fontSize: 13, fontWeight: 700, color: '#111', letterSpacing: '-0.01em' }}>{templateTitle}</span>
             {isFree ? (
-              <span style={{ fontSize: 10, fontWeight: 700, padding: '3px 9px', borderRadius: 100, background: '#ECFDF5', color: '#065F46' }}>Kostenlos</span>
+              <span style={{ fontSize: 11, fontWeight: 600, padding: '3px 9px', borderRadius: 100, background: '#F0FDF4', color: '#166534', border: '1px solid #BBF7D0' }}>Im Tarif inklusive</span>
             ) : (
               <span style={{ fontSize: 12, color: '#999' }}>Ab 20 €/Monat</span>
             )}
