@@ -395,7 +395,7 @@ export function accountCanceledEmail({ periodEnd }: { periodEnd: string }): stri
     <p style="margin:0 0 24px;font-size:15px;color:${base.body};line-height:1.65;">
       Danach gehen deine Seiten offline. Deine Daten bleiben noch 90 Tage gespeichert, falls du es dir doch anders überlegst.
     </p>
-    ${button(billingUrl, 'Kündigung rueckgaengig machen')}
+    ${button(billingUrl, 'Abo weiter nutzen')}
     <p style="margin:28px 0 0;font-size:13px;color:${base.muted};line-height:1.6;">
       Schade, dass du gehst. Falls du Feedback hast oder wir was besser machen koennen: <a href="mailto:support@finestsites.de" style="color:${base.muted};">support@finestsites.de</a>
     </p>
