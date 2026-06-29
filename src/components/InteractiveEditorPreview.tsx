@@ -828,6 +828,11 @@ function LoopPreviewSection({
     if (subFields.some(sf => sf.key === 'typ')) empty['typ'] = 'online'
     if (subFields.some(sf => sf.key === 'wiederkehrung')) empty['wiederkehrung'] = 'einmalig'
     if (subFields.some(sf => sf.key === 'uhrzeit_ende_aktiv')) empty['uhrzeit_ende_aktiv'] = 'ja'
+    // inherit titelbild from last existing event so new events get the generic banner
+    if (subFields.some(sf => sf.key === 'titelbild')) {
+      const fallback = [...items].reverse().find(it => it['titelbild'])?.['titelbild'] ?? ''
+      if (fallback) empty['titelbild'] = fallback
+    }
     const next = [...items, empty]
     setItems(next)
     onUpdate(field.key, JSON.stringify(next))
