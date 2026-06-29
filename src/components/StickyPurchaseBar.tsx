@@ -5,10 +5,11 @@ import { useEffect, useRef, useState } from 'react'
 interface Props {
   templateTitle: string
   registerUrl: string
+  isFree?: boolean
   heroRef?: React.RefObject<HTMLElement | null>
 }
 
-export default function StickyPurchaseBar({ templateTitle, registerUrl }: Props) {
+export default function StickyPurchaseBar({ templateTitle, registerUrl, isFree }: Props) {
   const [visible, setVisible] = useState(false)
   const sentinelRef = useRef<HTMLDivElement>(null)
 
@@ -46,15 +47,25 @@ export default function StickyPurchaseBar({ templateTitle, registerUrl }: Props)
           <div style={{ fontSize: 15, fontWeight: 700, color: '#111', letterSpacing: '-0.02em' }}>{templateTitle}</div>
         </div>
         <div className="sticky-bar-inner" style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+          {/* Mobile only: template name + free badge */}
+          <div className="sticky-bar-mobile-context" style={{ display: 'none', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+            <span style={{ fontSize: 13, fontWeight: 700, color: '#111', letterSpacing: '-0.01em' }}>{templateTitle}</span>
+            {isFree ? (
+              <span style={{ fontSize: 10, fontWeight: 700, padding: '3px 9px', borderRadius: 100, background: '#ECFDF5', color: '#065F46' }}>Kostenlos</span>
+            ) : (
+              <span style={{ fontSize: 12, color: '#999' }}>Ab 20 €/Monat</span>
+            )}
+          </div>
           <span className="sticky-bar-price" style={{ fontSize: 13, color: '#999' }}>Ab 20 €/Monat</span>
           <a
             href={registerUrl}
             style={{
               background: '#111', color: '#fff',
-              padding: '10px 22px', borderRadius: 100,
+              padding: '11px 22px', borderRadius: 100,
               fontSize: 14, fontWeight: 600,
               textDecoration: 'none', whiteSpace: 'nowrap',
-              transition: 'background 0.15s',
+              transition: 'background 0.15s', width: '100%', textAlign: 'center',
+              display: 'block',
             }}
             onMouseEnter={e => (e.currentTarget.style.background = '#333')}
             onMouseLeave={e => (e.currentTarget.style.background = '#111')}
@@ -68,8 +79,11 @@ export default function StickyPurchaseBar({ templateTitle, registerUrl }: Props)
         @media (max-width: 767px) {
           .sticky-bar-title { display: none; }
           .sticky-bar-price { display: none; }
-          .sticky-bar-inner { justify-content: center !important; padding: 10px 20px !important; }
-          .sticky-bar-inner a { flex: 1; text-align: center; }
+          .sticky-bar-inner { flex-direction: column; gap: 8px !important; width: 100%; }
+          .sticky-bar-mobile-context { display: flex !important; }
+        }
+        @media (min-width: 768px) {
+          .sticky-bar-mobile-context { display: none !important; }
         }
       `}</style>
     </>
