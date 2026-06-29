@@ -277,6 +277,25 @@ export default function TemplateDetailPage({ params }: { params: Promise<{ id: s
             <p className="text-sm font-mono text-gray-400">{previewDomain}</p>
           </div>
 
+          {/* Free template callout */}
+          {template.is_free && (
+            <div className="flex items-start gap-3 px-4 py-3.5 rounded-2xl"
+              style={{ background: '#F0FDF4', border: '1px solid #BBF7D0' }}>
+              <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5"
+                style={{ background: '#DCFCE7' }}>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#15803D" strokeWidth="2.5">
+                  <path d="M20 6L9 17l-5-5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </div>
+              <div>
+                <p className="text-sm font-bold" style={{ color: '#14532D' }}>Kein Kontingent verbraucht</p>
+                <p className="text-xs leading-relaxed mt-0.5" style={{ color: '#166534' }}>
+                  Dieses Template ist kostenlos und zählt in keinem bezahlten Tarif gegen dein Webseitenlimit. Du kannst es nutzen, ohne eine deiner Webseiten-Slots zu verbrauchen.
+                </p>
+              </div>
+            </div>
+          )}
+
           {/* Description */}
           {shortDesc && (
             <p className="text-sm sm:text-base text-gray-600 leading-relaxed">{shortDesc}</p>
@@ -551,28 +570,39 @@ export default function TemplateDetailPage({ params }: { params: Promise<{ id: s
 
       {/* ── Mobile sticky bottom bar ────────────────────────────── */}
       <div
-        className="lg:hidden fixed left-0 right-0 z-30 px-4 flex gap-3 items-center"
+        className="lg:hidden fixed left-0 right-0 z-30 px-4 flex flex-col gap-2"
         style={{
           bottom: 'calc(56px + env(safe-area-inset-bottom, 0px))',
-          background: 'rgba(250,250,250,0.95)',
-          backdropFilter: 'blur(16px)',
-          WebkitBackdropFilter: 'blur(16px)',
+          background: 'rgba(250,250,250,0.96)',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
           borderTop: '0.5px solid rgba(0,0,0,0.1)',
           paddingTop: 10,
-          paddingBottom: 10,
+          paddingBottom: 12,
         }}
       >
-        {mobileCta}
-        {!isActivated && true && (
-          <button
-            onClick={() => setShowPreview(true)}
-            className="flex-shrink-0 flex items-center justify-center w-12 h-12 rounded-xl transition-colors"
-            style={{ background: '#F3F4F6', color: '#374151' }}>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
-            </svg>
-          </button>
-        )}
+        {/* Context row */}
+        <div className="flex items-center justify-between px-0.5">
+          <span className="text-xs font-semibold text-gray-800 truncate mr-2">{template.title}</span>
+          <div className="flex items-center gap-2 flex-shrink-0">
+            {template.is_free && (
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full"
+                style={{ background: '#ECFDF5', color: '#065F46' }}>Kostenlos</span>
+            )}
+            {!isActivated && (
+              <button
+                onClick={() => setShowPreview(true)}
+                className="flex items-center gap-1 text-[11px] font-medium text-gray-400 hover:text-gray-700 transition-colors">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+                </svg>
+                Vorschau
+              </button>
+            )}
+          </div>
+        </div>
+        {/* CTA button */}
+        <div className="flex gap-2">{mobileCta}</div>
       </div>
 
       {/* ── Preview modal ──────────────────────────────────────── */}
