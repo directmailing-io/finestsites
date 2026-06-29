@@ -754,9 +754,9 @@ export default function InteractiveEditorPreview({
 
         /* ── Mobile layout (<768px) ────────────────────────────────────────── */
         @media (max-width: 767px) {
-          /* Frame: edge-to-edge, no rounded corners on mobile */
+          /* Frame: edge-to-edge, softer corners on mobile */
           .editor-frame {
-            border-radius: 16px !important;
+            border-radius: 20px !important;
             border-left: none !important;
             border-right: none !important;
             border-top: none !important;
@@ -770,8 +770,8 @@ export default function InteractiveEditorPreview({
           .editor-body { grid-template-columns: 1fr !important; }
           .editor-sidebar { display: none !important; }
 
-          /* Preview: shorter, full-width */
-          .editor-preview-pane { height: 420px !important; }
+          /* Preview: taller for better mobile experience — fills ~55vw height */
+          .editor-preview-pane { height: clamp(360px, 55vw, 480px) !important; }
 
           /* Show mobile controls below preview */
           .editor-mobile-controls { display: block !important; }
@@ -779,8 +779,8 @@ export default function InteractiveEditorPreview({
 
         /* ── Very small phones (<480px) ────────────────────────────────────── */
         @media (max-width: 479px) {
-          .editor-preview-pane { height: 360px !important; }
-          .editor-frame { border-radius: 12px !important; }
+          .editor-preview-pane { height: clamp(300px, 90vw, 380px) !important; }
+          .editor-frame { border-radius: 14px !important; }
         }
       `}</style>
     </div>
