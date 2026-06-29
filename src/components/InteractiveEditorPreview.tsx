@@ -34,6 +34,7 @@ interface Props {
   placeholderSchema: PlaceholderSchema
   accentColor: string
   registerUrl: string
+  sidebarCallout?: React.ReactNode
 }
 
 // ─── Viewport config ──────────────────────────────────────────────────────────
@@ -87,6 +88,7 @@ export default function InteractiveEditorPreview({
   placeholderSchema,
   accentColor,
   registerUrl,
+  sidebarCallout,
 }: Props) {
   const paneRef    = useRef<HTMLDivElement>(null)
   const iframeRef  = useRef<HTMLIFrameElement>(null)
@@ -493,6 +495,7 @@ export default function InteractiveEditorPreview({
             }}>
               {renderControls('sidebar')}
               <div style={{ flex: 1 }} />
+              {sidebarCallout}
             </aside>
           )}
 
