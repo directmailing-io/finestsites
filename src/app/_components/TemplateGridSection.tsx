@@ -14,6 +14,7 @@ export interface TemplateCardData {
   nmCompanies: string[]
   isAllrounder: boolean
   previewImages: unknown
+  isComingSoon?: boolean
 }
 
 const PASTEL_COLORS = ['#DCD0ED', '#B8CCDB', '#EDCBA8', '#C8D8B8', '#F2C5C5', '#C5DFE0', '#EAD4B5', '#C5D4F2']
@@ -23,6 +24,51 @@ function TemplateCard({ tpl, idx }: { tpl: TemplateCardData; idx: number }) {
   const images = Array.isArray(tpl.previewImages) ? tpl.previewImages as string[] : []
   const cover = images[0] ?? null
   const pastel = PASTEL_COLORS[idx % PASTEL_COLORS.length]
+  const isComingSoon = tpl.isComingSoon ?? false
+
+  if (isComingSoon) {
+    return (
+      <div style={{ display: 'block', borderRadius: 18, overflow: 'hidden', background: '#fff', border: '1px solid #ebebeb', boxShadow: '0 2px 12px rgba(0,0,0,0.04)', cursor: 'default', opacity: 0.9 }}>
+        {/* Cover — blurred with overlay */}
+        <div style={{ height: 260, background: pastel, position: 'relative', overflow: 'hidden' }}>
+          {cover ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={cover} alt={tpl.title} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', filter: 'blur(12px)', transform: 'scale(1.08)' }} />
+          ) : (
+            <div style={{ width: '100%', height: '100%', background: pastel }} />
+          )}
+          {/* Frosted overlay */}
+          <div style={{ position: 'absolute', inset: 0, background: 'rgba(255,255,255,0.55)', backdropFilter: 'blur(2px)' }} />
+          {/* Coming soon badge */}
+          <div style={{ position: 'absolute', top: 14, right: 14, background: '#111', color: '#fff', fontSize: 10, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', padding: '5px 11px', borderRadius: 100 }}>
+            Coming Soon
+          </div>
+          {/* Emoji */}
+          <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 56 }}>
+            🤫
+          </div>
+        </div>
+
+        {/* Card body */}
+        <div style={{ padding: '16px 18px 20px' }}>
+          <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 10 }}>
+            <CompanyChip name={tpl.nmCompanies[0]} isAllrounder={tpl.isAllrounder} size="xs" />
+            <PriceChip isFree={tpl.isFree} size="xs" />
+          </div>
+          <h3 style={{ fontSize: 15, fontWeight: 700, color: '#111', marginBottom: 6, lineHeight: 1.3 }}>{tpl.title}</h3>
+          {tpl.description && (
+            <p style={{ fontSize: 13, color: '#aaa', lineHeight: 1.6, marginBottom: 14, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+              {tpl.description}
+            </p>
+          )}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 4 }}>
+            <span style={{ fontSize: 11, color: '#ccc' }}>{tpl.domain}</span>
+            <span style={{ fontSize: 12, color: '#bbb', fontWeight: 600 }}>Demnächst verfügbar</span>
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <a
@@ -48,11 +94,7 @@ function TemplateCard({ tpl, idx }: { tpl: TemplateCardData; idx: number }) {
       <div style={{ padding: '16px 18px 20px' }}>
         {/* Chips */}
         <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 10 }}>
-          <CompanyChip
-            name={tpl.nmCompanies[0]}
-            isAllrounder={tpl.isAllrounder}
-            size="xs"
-          />
+          <CompanyChip name={tpl.nmCompanies[0]} isAllrounder={tpl.isAllrounder} size="xs" />
           <BadgeChip badge={tpl.badge} size="xs" />
           <PriceChip isFree={tpl.isFree} size="xs" />
         </div>

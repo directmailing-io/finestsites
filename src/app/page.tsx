@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { db } from '@/lib/db'
 import { templates, users } from '@/lib/db/schema'
-import { eq, and } from 'drizzle-orm'
+import { eq, and, inArray } from 'drizzle-orm'
 import PricingSection from './_components/PricingSection'
 import FeatureCardsAnimated from './_components/FeatureCardsAnimated'
 import NavBar from './_components/NavBar'
@@ -55,15 +55,17 @@ export default async function HomePage({
         nmCompanies: templates.nmCompanies,
         isAllrounder: templates.isAllrounder,
         previewImages: templates.previewImages,
+        status: templates.status,
       })
       .from(templates)
-      .where(and(eq(templates.status, 'published'), eq(templates.isTest, false)))
+      .where(and(inArray(templates.status, ['published', 'coming_soon']), eq(templates.isTest, false)))
       .orderBy(templates.createdAt)
     templateList = rows.map(r => ({
       ...r,
       tags: (r.tags as string[] | null) ?? [],
       nmCompanies: (r.nmCompanies as string[] | null) ?? [],
       isAllrounder: r.isAllrounder ?? false,
+      isComingSoon: r.status === 'coming_soon',
     }))
     console.log('[HomePage] templates fetched:', templateList.length)
   } catch (err) {
