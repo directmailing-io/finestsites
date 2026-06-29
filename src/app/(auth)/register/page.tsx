@@ -21,6 +21,7 @@ function RegisterForm() {
   const [loading, setLoading] = useState(false)
   const [referralCode, setReferralCode] = useState(urlRef)
   const [referralValid, setReferralValid] = useState<boolean | null>(null)
+  const [referrerName, setReferrerName] = useState<string | null>(null)
   // Auto-expand when ref is present in URL
   const [showReferral, setShowReferral] = useState(!!urlRef)
   const [error, setError] = useState('')
@@ -45,9 +46,16 @@ function RegisterForm() {
   }, [])
 
   async function checkReferral(code: string) {
-    if (!code.trim()) { setReferralValid(null); return }
+    if (!code.trim()) { setReferralValid(null); setReferrerName(null); return }
     const res = await fetch(`/api/affiliate/validate?code=${encodeURIComponent(code.trim())}`)
-    setReferralValid(res.ok)
+    if (res.ok) {
+      const data = await res.json()
+      setReferralValid(true)
+      setReferrerName(data.firstName ?? null)
+    } else {
+      setReferralValid(false)
+      setReferrerName(null)
+    }
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -136,14 +144,17 @@ function RegisterForm() {
             style={{ background: '#F0FDF4', border: '1.5px solid #BBF7D0' }}>
             <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
               style={{ background: '#16A34A' }}>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round">
-                <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
+              {/* Person-check icon — "jemand empfiehlt dich" */}
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                <circle cx="9" cy="7" r="4"/>
+                <polyline points="16 11 18 13 22 9"/>
               </svg>
             </div>
             <div className="min-w-0">
               <p className="text-xs font-semibold" style={{ color: '#15803D' }}>20% Rabatt — dauerhaft auf dein Abo</p>
               <p className="text-xs" style={{ color: '#166534' }}>
-                Empfohlen von <strong>{urlRef}</strong> · Rabatt wird automatisch beim Checkout angewendet
+                Empfohlen von <strong>{referrerName ?? `Benutzer ${urlRef}`}</strong> · Rabatt wird automatisch beim Checkout angewendet
               </p>
             </div>
           </div>

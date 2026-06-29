@@ -11,11 +11,11 @@ export async function GET(req: NextRequest) {
   try {
     const user = await db.query.users.findFirst({
       where: eq(users.username, code),
-      columns: { username: true },
+      columns: { username: true, firstName: true },
     })
 
     if (!user) return NextResponse.json({ error: 'Nicht gefunden' }, { status: 404 })
-    return NextResponse.json({ valid: true, username: user.username })
+    return NextResponse.json({ valid: true, username: user.username, firstName: user.firstName ?? null })
   } catch {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
