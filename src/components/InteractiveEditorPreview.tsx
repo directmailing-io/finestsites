@@ -98,6 +98,11 @@ function isImageField(f: PlaceholderField): boolean {
     (f.card_options ?? []).some(o => o.card_type === 'image')
 }
 
+function isChipField(f: PlaceholderField): boolean {
+  return f.type === 'card_select' && !isToggleField(f) &&
+    !isColorField(f) && !isImageField(f)
+}
+
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export default function InteractiveEditorPreview({
@@ -153,6 +158,7 @@ export default function InteractiveEditorPreview({
   const colorFields  = interactiveFields.filter(isColorField)
   const imageFields  = interactiveFields.filter(isImageField)
   const toggleFields = interactiveFields.filter(isToggleField)
+  const chipFields   = interactiveFields.filter(isChipField)
   const loopFields   = interactiveFields.filter(f => f.type === 'loop')
 
   const hasControls = interactiveFields.length > 0
@@ -424,6 +430,37 @@ export default function InteractiveEditorPreview({
               onUpdate={updateField}
               accentColor={accentColor}
             />
+          </SidebarSection>
+        ))}
+
+        {/* Chip fields (card_select with text options, e.g. card_radius) */}
+        {chipFields.map(field => (
+          <SidebarSection key={field.key} label={field.label} variant={variant}>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+              {(field.card_options ?? []).map(opt => {
+                const isActive = fieldValues[field.key] === opt.value
+                return (
+                  <button
+                    key={opt.value}
+                    onClick={() => updateField(field.key, opt.value)}
+                    style={{
+                      padding: '6px 13px',
+                      borderRadius: 20,
+                      border: `1.5px solid ${isActive ? accentColor : 'rgba(0,0,0,0.13)'}`,
+                      background: isActive ? `${accentColor}12` : '#fff',
+                      color: isActive ? accentColor : '#555',
+                      fontSize: 12,
+                      fontWeight: isActive ? 700 : 500,
+                      cursor: 'pointer',
+                      transition: 'all 0.12s',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    {opt.label}
+                  </button>
+                )
+              })}
+            </div>
           </SidebarSection>
         ))}
       </>
