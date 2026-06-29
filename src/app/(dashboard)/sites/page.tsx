@@ -62,21 +62,6 @@ function SiteCard({ site }: { site: Site }) {
           </div>
         )}
 
-        {/* Status badge */}
-        <div className="absolute top-3 left-3">
-          <span className="text-[11px] font-semibold px-2.5 py-1 rounded-full flex items-center gap-1.5"
-            style={{
-              background: 'rgba(255,255,255,0.96)',
-              color: isPublished ? '#15803D' : '#475569',
-              backdropFilter: 'blur(8px)',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
-            }}>
-            <span className="w-1.5 h-1.5 rounded-full inline-block"
-              style={{ background: isPublished ? '#16A34A' : '#94A3B8' }} />
-            {isPublished ? 'Live' : 'Entwurf'}
-          </span>
-        </div>
-
         {/* Unread badge */}
         {(site.unread_submissions ?? 0) > 0 && (
           <div className="absolute top-3 right-3">
@@ -88,11 +73,24 @@ function SiteCard({ site }: { site: Site }) {
         )}
       </div>
 
-      {/* Title + URL */}
+      {/* Title + Status + URL */}
       <div className="pt-3 px-1">
-        <p className="font-semibold text-gray-900 text-[15px] leading-tight truncate">
-          {site.templates?.title ?? 'Meine Webseite'}
-        </p>
+        <div className="flex items-center gap-2">
+          <p className="font-semibold text-gray-900 text-[15px] leading-tight truncate">
+            {site.templates?.title ?? 'Meine Webseite'}
+          </p>
+          <span
+            className="flex-shrink-0 text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1"
+            style={isPublished
+              ? { background: '#DCFCE7', color: '#15803D' }
+              : { background: '#F1F5F9', color: '#64748B' }
+            }
+          >
+            <span className="w-1.5 h-1.5 rounded-full inline-block flex-shrink-0"
+              style={{ background: isPublished ? '#16A34A' : '#94A3B8' }} />
+            {isPublished ? 'Live' : 'Entwurf'}
+          </span>
+        </div>
         {displayUrl && (
           <p className="text-sm mt-1 truncate flex items-center gap-1"
             style={{ color: hasCustomDomain ? '#16A34A' : '#94A3B8' }}>
@@ -116,6 +114,7 @@ export default function SitesPage() {
   const router = useRouter()
   const [sites, setSites] = useState<Site[]>([])
   const [username, setUsername] = useState<string>('')
+  const [firstName, setFirstName] = useState<string>('')
   const [loading, setLoading] = useState(true)
   const [autoCreating, setAutoCreating] = useState(false)
 
@@ -127,6 +126,7 @@ export default function SitesPage() {
       const loadedSites = Array.isArray(sitesData) ? sitesData : []
       setSites(loadedSites)
       setUsername(profile?.username ?? '')
+      setFirstName(profile?.first_name ?? '')
       setLoading(false)
 
       // Check for template intent cookie — auto-create site if present
@@ -157,7 +157,8 @@ export default function SitesPage() {
   function getGreeting() {
     const hour = new Date().getHours()
     const time = hour < 12 ? 'Guten Morgen' : hour < 18 ? 'Guten Tag' : 'Guten Abend'
-    return username ? `${time}, ${username}` : time
+    const name = firstName || username
+    return name ? `${time}, ${name}` : time
   }
 
   return (
