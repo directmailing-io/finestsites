@@ -790,7 +790,7 @@ export default function InteractiveEditorPreview({
 // ─── Loop preview section ─────────────────────────────────────────────────────
 
 // Only these sub-field keys are shown in the demo preview
-const LOOP_DEMO_KEYS = new Set(['name', 'datum', 'uhrzeit', 'uhrzeit_ende'])
+const LOOP_DEMO_KEYS = new Set(['name', 'datum', 'uhrzeit'])
 
 function loopSubFieldVisible(sf: LoopSubField, _item: Record<string, string>): boolean {
   return LOOP_DEMO_KEYS.has(sf.key)
