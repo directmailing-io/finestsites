@@ -298,26 +298,18 @@ export function affiliatePayoutEmail({
 export function paymentFailedEmail({ invoiceUrl }: { invoiceUrl?: string }): string {
   const billingUrl = invoiceUrl ?? `${APP_URL}/billing`
   return layout(`
-    <h1 style="margin:0 0 8px;font-size:22px;font-weight:700;color:#DC2626;letter-spacing:-0.02em;">
-      Zahlung fehlgeschlagen
+    <h1 style="margin:0 0 8px;font-size:22px;font-weight:700;color:#111827;letter-spacing:-0.02em;">
+      Kurze Info zu deiner Zahlung
     </h1>
-    <p style="margin:0 0 20px;font-size:15px;color:${base.body};line-height:1.65;">
-      Leider konnte deine letzte Zahlung nicht verarbeitet werden. Dein Konto und deine Webseiten bleiben vorerst aktiv — du hast <strong>14 Tage Zeit</strong>, die Zahlung zu klären.
+    <p style="margin:0 0 16px;font-size:15px;color:${base.body};line-height:1.65;">
+      Deine letzte Zahlung hat leider nicht geklappt. Keine Panik, deine Seiten laufen noch ganz normal und du hast <strong>14 Tage Zeit</strong>, das zu klären.
     </p>
-    <table cellpadding="0" cellspacing="0" role="presentation" width="100%" style="margin:0 0 24px;">
-      <tr>
-        <td style="background:#FEF2F2;border-radius:12px;padding:16px 20px;border:1px solid #FECACA;">
-          <p style="margin:0 0 4px;font-size:13px;font-weight:600;color:#DC2626;">Was jetzt zu tun ist</p>
-          <p style="margin:0;font-size:14px;color:#7F1D1D;line-height:1.6;">
-            Prüfe deine Zahlungsmethode und stelle sicher, dass ausreichend Guthaben vorhanden ist. Stripe versucht die Zahlung automatisch erneut.
-          </p>
-        </td>
-      </tr>
-    </table>
-    ${button(billingUrl, 'Zahlung klären →')}
+    <p style="margin:0 0 24px;font-size:15px;color:${base.body};line-height:1.65;">
+      Schau kurz nach, ob deine Karte noch gültig ist oder genug Guthaben drauf hat. Stripe versucht die Zahlung automatisch nochmal einzuziehen.
+    </p>
+    ${button(billingUrl, 'Zahlung klären')}
     <p style="margin:28px 0 0;font-size:13px;color:${base.muted};line-height:1.6;">
-      Wenn die Zahlung nach 14 Tagen noch aussteht, werden dein Konto und deine Webseiten deaktiviert.
-      Bei Fragen erreichst du uns unter <a href="mailto:support@finestsites.de" style="color:${base.muted};">support@finestsites.de</a>.
+      Wenn nach 14 Tagen noch nichts eingegangen ist, schalten wir dein Konto leider ab. Bei Fragen schreib uns einfach: <a href="mailto:support@finestsites.de" style="color:${base.muted};">support@finestsites.de</a>
     </p>
   `)
 }
@@ -325,26 +317,18 @@ export function paymentFailedEmail({ invoiceUrl }: { invoiceUrl?: string }): str
 export function paymentWarningEmail({ daysLeft, invoiceUrl }: { daysLeft: number; invoiceUrl?: string }): string {
   const billingUrl = invoiceUrl ?? `${APP_URL}/billing`
   return layout(`
-    <h1 style="margin:0 0 8px;font-size:22px;font-weight:700;color:#D97706;letter-spacing:-0.02em;">
-      Dein Konto wird in ${daysLeft} Tagen deaktiviert
+    <h1 style="margin:0 0 8px;font-size:22px;font-weight:700;color:#111827;letter-spacing:-0.02em;">
+      Noch ${daysLeft} Tage, dann schalten wir ab
     </h1>
-    <p style="margin:0 0 20px;font-size:15px;color:${base.body};line-height:1.65;">
-      Die ausstehende Zahlung konnte bislang nicht eingezogen werden. In <strong>${daysLeft} Tagen</strong> werden dein Konto und alle deine Webseiten deaktiviert und sind dann nicht mehr erreichbar.
+    <p style="margin:0 0 16px;font-size:15px;color:${base.body};line-height:1.65;">
+      Die offene Zahlung konnte bisher nicht eingezogen werden. In <strong>${daysLeft} Tagen</strong> gehen deine Webseiten leider offline, wenn das nicht geklärt ist.
     </p>
-    <table cellpadding="0" cellspacing="0" role="presentation" width="100%" style="margin:0 0 24px;">
-      <tr>
-        <td style="background:#FFFBEB;border-radius:12px;padding:16px 20px;border:1px solid #FDE68A;">
-          <p style="margin:0 0 4px;font-size:13px;font-weight:600;color:#92400E;">Jetzt handeln</p>
-          <p style="margin:0;font-size:14px;color:#78350F;line-height:1.6;">
-            Aktualisiere deine Zahlungsmethode oder stelle sicher, dass ausreichend Guthaben vorhanden ist, damit die Zahlung noch rechtzeitig eingezogen werden kann.
-          </p>
-        </td>
-      </tr>
-    </table>
-    ${button(billingUrl, 'Jetzt Zahlung klären →')}
+    <p style="margin:0 0 24px;font-size:15px;color:${base.body};line-height:1.65;">
+      Aktualisier kurz deine Zahlungsmethode oder stell sicher, dass genug auf dem Konto ist. Das reicht schon.
+    </p>
+    ${button(billingUrl, 'Jetzt klären')}
     <p style="margin:28px 0 0;font-size:13px;color:${base.muted};line-height:1.6;">
-      Sobald die Zahlung erfolgreich ist, bleibt alles wie gewohnt aktiv.
-      Bei Fragen: <a href="mailto:support@finestsites.de" style="color:${base.muted};">support@finestsites.de</a>.
+      Sobald die Zahlung klappt, bleibt alles wie gewohnt aktiv. Fragen? <a href="mailto:support@finestsites.de" style="color:${base.muted};">support@finestsites.de</a>
     </p>
   `)
 }
@@ -353,24 +337,36 @@ export function accountDeactivatedEmail(): string {
   const billingUrl = `${APP_URL}/billing`
   return layout(`
     <h1 style="margin:0 0 8px;font-size:22px;font-weight:700;color:#111827;letter-spacing:-0.02em;">
-      Dein Konto wurde deaktiviert
+      Dein Konto wurde pausiert
     </h1>
-    <p style="margin:0 0 20px;font-size:15px;color:${base.body};line-height:1.65;">
-      Da die ausstehende Zahlung nicht beglichen werden konnte, wurde dein Konto deaktiviert. Deine Webseiten sind jetzt offline und für Besucher nicht mehr erreichbar.
+    <p style="margin:0 0 16px;font-size:15px;color:${base.body};line-height:1.65;">
+      Die offene Zahlung ist leider immer noch nicht eingegangen, deshalb haben wir dein Konto jetzt pausiert. Deine Webseiten sind im Moment offline.
     </p>
-    <table cellpadding="0" cellspacing="0" role="presentation" width="100%" style="margin:0 0 24px;">
-      <tr>
-        <td style="background:#F9FAFB;border-radius:12px;padding:16px 20px;border:1px solid ${base.border};">
-          <p style="margin:0 0 4px;font-size:13px;font-weight:600;color:${base.muted};">Reaktivierung möglich</p>
-          <p style="margin:0;font-size:14px;color:${base.body};line-height:1.6;">
-            Du kannst dein Konto jederzeit reaktivieren, indem du deine Zahlung klärst. Deine Daten und Webseiten bleiben erhalten.
-          </p>
-        </td>
-      </tr>
-    </table>
-    ${button(billingUrl, 'Konto reaktivieren →')}
+    <p style="margin:0 0 24px;font-size:15px;color:${base.body};line-height:1.65;">
+      Deine Daten und Inhalte sind noch 90 Tage gespeichert. Du kannst einfach zahlen und alles geht sofort wieder online, ohne dass du irgendetwas neu aufbauen musst.
+    </p>
+    ${button(billingUrl, 'Jetzt reaktivieren')}
     <p style="margin:28px 0 0;font-size:13px;color:${base.muted};line-height:1.6;">
-      Bei Fragen erreichst du uns unter <a href="mailto:support@finestsites.de" style="color:${base.muted};">support@finestsites.de</a>.
+      Bei Fragen erreichst du uns unter <a href="mailto:support@finestsites.de" style="color:${base.muted};">support@finestsites.de</a>
+    </p>
+  `)
+}
+
+export function accountCanceledEmail({ periodEnd }: { periodEnd: string }): string {
+  const billingUrl = `${APP_URL}/billing`
+  return layout(`
+    <h1 style="margin:0 0 8px;font-size:22px;font-weight:700;color:#111827;letter-spacing:-0.02em;">
+      Dein Abo wurde gekündigt
+    </h1>
+    <p style="margin:0 0 16px;font-size:15px;color:${base.body};line-height:1.65;">
+      Du hast dein FinestSites-Abo gekündigt. Bis zum <strong>${periodEnd}</strong> läuft aber alles ganz normal weiter, deine Seiten sind online und du hast vollen Zugriff.
+    </p>
+    <p style="margin:0 0 24px;font-size:15px;color:${base.body};line-height:1.65;">
+      Danach gehen deine Seiten offline. Deine Daten bleiben noch 90 Tage gespeichert, falls du es dir doch anders überlegst.
+    </p>
+    ${button(billingUrl, 'Abo fortsetzen')}
+    <p style="margin:28px 0 0;font-size:13px;color:${base.muted};line-height:1.6;">
+      Schade, dass du gehst. Falls du Feedback hast oder wir was besser machen können, freuen wir uns: <a href="mailto:support@finestsites.de" style="color:${base.muted};">support@finestsites.de</a>
     </p>
   `)
 }
@@ -379,22 +375,15 @@ export function accountReactivatedEmail(): string {
   const dashboardUrl = `${APP_URL}/sites`
   return layout(`
     <h1 style="margin:0 0 8px;font-size:22px;font-weight:700;color:#15803D;letter-spacing:-0.02em;">
-      Dein Konto ist wieder aktiv!
+      Alles wieder online!
     </h1>
-    <p style="margin:0 0 20px;font-size:15px;color:${base.body};line-height:1.65;">
-      Deine Zahlung wurde erfolgreich verarbeitet. Dein Konto ist wieder vollständig aktiv und deine Webseiten sind ab sofort wieder online.
+    <p style="margin:0 0 16px;font-size:15px;color:${base.body};line-height:1.65;">
+      Deine Zahlung hat geklappt, alles ist wieder da. Deine Webseiten sind ab sofort wieder erreichbar und dein Abo läuft ganz normal weiter.
     </p>
-    <table cellpadding="0" cellspacing="0" role="presentation" width="100%" style="margin:0 0 24px;">
-      <tr>
-        <td style="background:#F0FDF4;border-radius:12px;padding:16px 20px;border:1px solid #BBF7D0;">
-          <p style="margin:0;font-size:14px;color:#15803D;line-height:1.6;">
-            ✓ Alle deine Webseiten sind wieder erreichbar.<br />
-            ✓ Dein Abo läuft ganz normal weiter.
-          </p>
-        </td>
-      </tr>
-    </table>
-    ${button(dashboardUrl, 'Zum Dashboard →')}
+    <p style="margin:0 0 24px;font-size:15px;color:${base.body};line-height:1.65;">
+      Du musst nichts weiter tun, das war alles automatisch.
+    </p>
+    ${button(dashboardUrl, 'Zum Dashboard')}
   `)
 }
 

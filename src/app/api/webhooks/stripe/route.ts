@@ -9,6 +9,7 @@ import {
   affiliateNewReferralEmail,
   paymentFailedEmail,
   accountDeactivatedEmail,
+  accountCanceledEmail,
   accountReactivatedEmail,
 } from '@/lib/email/templates'
 import { setSiteOfflineKV, deleteCustomDomainKV, clearSiteMetaKV, setCustomDomainKV } from '@/lib/cloudflare/kv-api'
@@ -104,6 +105,39 @@ export async function POST(req: NextRequest) {
         deactivatedAt: null,
       }).where(eq(users.id, userId))
 
+      // Reactivate previously deactivated/canceled sites (fix: includes scheduledDeletionAt sites)
+      const sitesToRestore = await db.query.userSites.findMany({
+        where: and(
+          eq(userSites.userId, userId),
+          eq(userSites.status, 'deactivated'),
+        ),
+        columns: { id: true, customDomain: true },
+        with: {
+          template: { columns: { domain: true } },
+          user: { columns: { username: true } },
+        },
+      })
+      if (sitesToRestore.length > 0) {
+        await db.update(userSites).set({
+          status: 'published',
+          deactivatedAt: null,
+          scheduledDeletionAt: null,
+        }).where(and(
+          eq(userSites.userId, userId),
+          eq(userSites.status, 'deactivated'),
+        ))
+        for (const site of sitesToRestore) {
+          const username       = (site as any).user?.username as string | null
+          const templateDomain = (site as any).template?.domain as string | null
+          if (username && templateDomain) {
+            await clearSiteMetaKV(username, templateDomain).catch(() => {})
+          }
+          if (site.customDomain && username && templateDomain) {
+            await setCustomDomainKV(site.customDomain, username, templateDomain).catch(() => {})
+          }
+        }
+      }
+
       await logEvent({
         userId,
         eventType: 'subscription_created',
@@ -173,6 +207,7 @@ export async function POST(req: NextRequest) {
     // ── Subscription updated (plan change, renewal, cancel_at_period_end) ───
     case 'customer.subscription.updated': {
       const sub = event.data.object as Stripe.Subscription
+      const prevSub = event.data.previous_attributes as Partial<Stripe.Subscription> | undefined
       const priceId = sub.items.data[0]?.price.id ?? ''
       const plan = getPlanByPriceId()[priceId] ?? 'starter'
       const interval = sub.items.data[0]?.price.recurring?.interval === 'year' ? 'yearly' : 'monthly'
@@ -186,6 +221,27 @@ export async function POST(req: NextRequest) {
         stripeSubscriptionId: sub.id,
         currentPeriodEnd: getPeriodEnd(sub),
       }).where(eq(users.id, userId))
+
+      // Send cancellation email when user schedules cancellation for end of period
+      const justCanceled = sub.cancel_at_period_end && !prevSub?.cancel_at_period_end
+      if (justCanceled) {
+        const periodEnd = getPeriodEnd(sub)
+        const periodEndStr = periodEnd
+          ? periodEnd.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' })
+          : 'Ende des Abrechnungszeitraums'
+        const userRow = await db.query.users.findFirst({
+          where: eq(users.id, userId),
+          columns: { email: true },
+        })
+        if (userRow?.email) {
+          getResend().emails.send({
+            from: FROM_EMAIL,
+            to: userRow.email,
+            subject: 'Dein Abo wurde gekündigt',
+            html: accountCanceledEmail({ periodEnd: periodEndStr }),
+          }).catch(err => console.error('[webhook] cancellation email error:', err))
+        }
+      }
 
       await logEvent({
         userId,
@@ -207,7 +263,7 @@ export async function POST(req: NextRequest) {
       if (!userId) break
 
       const now = new Date()
-      const deletionDate = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+      const deletionDate = new Date(Date.now() + 90 * 24 * 60 * 60 * 1000)
 
       const userRow = await db.query.users.findFirst({
         where: eq(users.id, userId),
