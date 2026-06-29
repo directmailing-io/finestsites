@@ -789,17 +789,11 @@ export default function InteractiveEditorPreview({
 
 // ─── Loop preview section ─────────────────────────────────────────────────────
 
-// Sub-field types supported in the demo (skip image, loop, date_multi, color)
-const LOOP_DEMO_TYPES = new Set(['text', 'textarea', 'richtext', 'date', 'time', 'url', 'email', 'dropdown', 'card_select', 'toggle'])
-// Keys always hidden in demo (internal or complex)
-const LOOP_HIDDEN_KEYS = new Set(['kuerzel', 'akzentfarbe_event', 'titelbild'])
+// Only these sub-field keys are shown in the demo preview
+const LOOP_DEMO_KEYS = new Set(['name', 'datum', 'uhrzeit', 'uhrzeit_ende'])
 
-function loopSubFieldVisible(sf: LoopSubField, item: Record<string, string>): boolean {
-  if (!LOOP_DEMO_TYPES.has(sf.type)) return false
-  if (LOOP_HIDDEN_KEYS.has(sf.key)) return false
-  if (!sf.show_when) return true
-  const v = item[sf.show_when.field] ?? ''
-  return Array.isArray(sf.show_when.value) ? sf.show_when.value.includes(v) : v === sf.show_when.value
+function loopSubFieldVisible(sf: LoopSubField, _item: Record<string, string>): boolean {
+  return LOOP_DEMO_KEYS.has(sf.key)
 }
 
 function LoopPreviewSection({
@@ -833,6 +827,7 @@ function LoopPreviewSection({
     if (subFields.some(sf => sf.key === 'status')) empty['status'] = 'veroeffentlicht'
     if (subFields.some(sf => sf.key === 'typ')) empty['typ'] = 'online'
     if (subFields.some(sf => sf.key === 'wiederkehrung')) empty['wiederkehrung'] = 'einmalig'
+    if (subFields.some(sf => sf.key === 'uhrzeit_ende_aktiv')) empty['uhrzeit_ende_aktiv'] = 'ja'
     const next = [...items, empty]
     setItems(next)
     onUpdate(field.key, JSON.stringify(next))
