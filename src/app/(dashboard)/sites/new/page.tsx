@@ -16,11 +16,13 @@ interface Template {
   is_free?: boolean
   nm_companies: string[]
   is_allrounder: boolean
+  is_coming_soon?: boolean
 }
 
 interface Site {
   template_id: string
   id: string
+  status: string
 }
 
 type PriceFilter = 'all' | 'free' | 'premium'
@@ -110,7 +112,8 @@ function EmptyState({ hasPrefs, search, priceFilter }: { hasPrefs: boolean; sear
 export default function NewSitePage() {
   const router = useRouter()
   const [templates, setTemplates] = useState<Template[]>([])
-  const [activatedMap, setActivatedMap] = useState<Record<string, string>>({})
+  // siteMap: template_id → { id, status }
+  const [siteMap, setSiteMap] = useState<Record<string, { id: string; status: string }>>({})
   const [userCompanies, setUserCompanies] = useState<string[]>([])
   const [activeCompany, setActiveCompany] = useState<string>('Alle')
   const [priceFilter, setPriceFilter] = useState<PriceFilter>('all')
@@ -125,11 +128,11 @@ export default function NewSitePage() {
       fetch('/api/user/profile').then(r => r.json()),
     ]).then(([templatesData, sitesData, profileData]) => {
       setTemplates(Array.isArray(templatesData) ? templatesData : [])
-      const map: Record<string, string> = {}
+      const map: Record<string, { id: string; status: string }> = {}
       if (Array.isArray(sitesData)) {
-        for (const s of sitesData as Site[]) map[s.template_id] = s.id
+        for (const s of sitesData as Site[]) map[s.template_id] = { id: s.id, status: s.status }
       }
-      setActivatedMap(map)
+      setSiteMap(map)
       const companies = Array.isArray(profileData?.nm_companies) ? profileData.nm_companies : []
       setUserCompanies(companies)
       setLoading(false)
@@ -141,11 +144,11 @@ export default function NewSitePage() {
   const showCompanyFilter = userCompanies.length > 1
 
   // Step 1: filter by user's companies (strict — allrounders always pass)
+  // Don't filter out templates with draft sites — those should remain visible
   const companyMatched = useMemo(() => {
-    const available = templates.filter(tpl => !activatedMap[tpl.id])
-    if (!hasPrefs) return available
-    return available.filter(t => t.is_allrounder || t.nm_companies.some(c => userCompanies.includes(c)))
-  }, [templates, activatedMap, userCompanies, hasPrefs])
+    if (!hasPrefs) return templates
+    return templates.filter(t => t.is_allrounder || t.nm_companies.some(c => userCompanies.includes(c)))
+  }, [templates, userCompanies, hasPrefs])
 
   // Step 2: sub-filter by specific company or "Allgemein"
   const companyFiltered = useMemo(() => {
@@ -173,8 +176,8 @@ export default function NewSitePage() {
 
   async function handleSelect(templateId: string) {
     if (busy) return
-    if (activatedMap[templateId]) {
-      router.push(`/sites/${activatedMap[templateId]}/edit`)
+    if (siteMap[templateId]) {
+      router.push(`/sites/${siteMap[templateId].id}/edit`)
       return
     }
     setBusy(templateId)
@@ -317,6 +320,10 @@ export default function NewSitePage() {
           {visible.map(tpl => {
             const isBusy = busy === tpl.id
             const preview = tpl.preview_images?.[0] ?? null
+            const isComingSoon = tpl.is_coming_soon ?? false
+            const existingSite = siteMap[tpl.id]
+            const isDraft = existingSite?.status === 'draft'
+            const isPublished = !!existingSite && !isDraft
             // Show the company the user belongs to; fall back to first listed
             const matchedCompany = tpl.is_allrounder
               ? undefined
@@ -327,16 +334,23 @@ export default function NewSitePage() {
                 className="flex rounded-2xl bg-white overflow-hidden"
                 style={{
                   boxShadow: '0 1px 4px rgba(0,0,0,0.06), 0 6px 24px rgba(0,0,0,0.06)',
-                  border: '1px solid #F1F5F9',
+                  border: isComingSoon ? '1px solid #F0EAF8' : '1px solid #F1F5F9',
                   minHeight: 190,
+                  opacity: isComingSoon ? 0.75 : 1,
                 }}>
 
                 {/* Image — left */}
                 <div className="flex-shrink-0 relative overflow-hidden" style={{ width: '40%', background: '#F1F5F9' }}>
+                  {isComingSoon && (
+                    <div className="absolute inset-0 z-10 flex items-center justify-center" style={{ background: 'rgba(255,255,255,0.5)', backdropFilter: 'blur(3px)' }}>
+                      <span style={{ fontSize: 28 }}>🤫</span>
+                    </div>
+                  )}
                   {preview ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img src={preview} alt={tpl.title}
-                      className="absolute inset-0 w-full h-full object-cover object-top" />
+                      className="absolute inset-0 w-full h-full object-cover object-top"
+                      style={{ filter: isComingSoon ? 'blur(4px)' : 'none' }} />
                   ) : (
                     <div className="absolute inset-0 flex items-center justify-center"
                       style={{ background: 'linear-gradient(160deg, #F8FAFC 0%, #F1F5F9 100%)' }}>
@@ -357,6 +371,21 @@ export default function NewSitePage() {
                     <CompanyChip name={matchedCompany} isAllrounder={tpl.is_allrounder} size="xs" />
                     <BadgeChip badge={tpl.badge} size="xs" />
                     <PriceChip isFree={tpl.is_free ?? false} size="xs" />
+                    {isDraft && (
+                      <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold" style={{ background: '#FFF7ED', color: '#C2410C', border: '1px solid #FED7AA' }}>
+                        Entwurf
+                      </span>
+                    )}
+                    {isPublished && (
+                      <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold" style={{ background: '#F0FDF4', color: '#15803D', border: '1px solid #BBF7D0' }}>
+                        Aktiv
+                      </span>
+                    )}
+                    {isComingSoon && (
+                      <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold" style={{ background: '#F5F3FF', color: '#7C3AED', border: '1px solid #DDD6FE' }}>
+                        Coming Soon
+                      </span>
+                    )}
                   </div>
 
                   {/* Title + description */}
@@ -372,22 +401,28 @@ export default function NewSitePage() {
                   </div>
 
                   {/* CTA */}
-                  <button
-                    onClick={() => handleSelect(tpl.id)}
-                    disabled={!!busy}
-                    className="w-full py-2.5 px-4 rounded-xl text-sm font-semibold transition-all active:scale-[0.97] flex items-center justify-center gap-2"
-                    style={{
-                      background: isBusy ? '#E5E7EB' : '#1a1a1a',
-                      color: isBusy ? '#9CA3AF' : '#fff',
-                    }}
-                  >
-                    {isBusy ? (
-                      <>
-                        <span className="w-3.5 h-3.5 rounded-full border-2 border-gray-300 border-t-gray-500 animate-spin" />
-                        Wird geöffnet…
-                      </>
-                    ) : 'Vorlage verwenden →'}
-                  </button>
+                  {isComingSoon ? (
+                    <div className="w-full py-2.5 px-4 rounded-xl text-sm font-semibold text-center" style={{ background: '#F5F3FF', color: '#7C3AED' }}>
+                      Demnächst verfügbar
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => handleSelect(tpl.id)}
+                      disabled={!!busy}
+                      className="w-full py-2.5 px-4 rounded-xl text-sm font-semibold transition-all active:scale-[0.97] flex items-center justify-center gap-2"
+                      style={{
+                        background: isBusy ? '#E5E7EB' : '#1a1a1a',
+                        color: isBusy ? '#9CA3AF' : '#fff',
+                      }}
+                    >
+                      {isBusy ? (
+                        <>
+                          <span className="w-3.5 h-3.5 rounded-full border-2 border-gray-300 border-t-gray-500 animate-spin" />
+                          Wird geöffnet…
+                        </>
+                      ) : isDraft ? 'Weiter bearbeiten →' : isPublished ? 'Website öffnen →' : 'Vorlage verwenden →'}
+                    </button>
+                  )}
                 </div>
               </div>
             )

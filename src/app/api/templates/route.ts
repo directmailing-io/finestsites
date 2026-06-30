@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getUserFromRequest } from '@/lib/auth/server'
 import { db } from '@/lib/db'
 import { templates, templateAccess } from '@/lib/db/schema'
-import { eq, desc } from 'drizzle-orm'
+import { eq, desc, inArray } from 'drizzle-orm'
 
 // GET /api/templates → published templates visible to the current user
 // - is_test=false templates: always visible
@@ -28,9 +28,10 @@ export async function GET(req: NextRequest) {
           isAllrounder: templates.isAllrounder,
           tags: templates.tags,
           badge: templates.badge,
+          status: templates.status,
         })
         .from(templates)
-        .where(eq(templates.status, 'published'))
+        .where(inArray(templates.status, ['published', 'coming_soon']))
         .orderBy(desc(templates.createdAt)),
       db
         .select({ templateId: templateAccess.templateId })
@@ -56,6 +57,7 @@ export async function GET(req: NextRequest) {
         is_allrounder: t.isAllrounder ?? false,
         tags: (t.tags as string[] | null) ?? [],
         badge: t.badge ?? null,
+        is_coming_soon: t.status === 'coming_soon',
       }))
 
     return NextResponse.json(visible)

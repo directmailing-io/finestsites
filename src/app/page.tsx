@@ -310,7 +310,17 @@ export default async function HomePage({
           {templateList.length === 0 ? (
             <p style={{ textAlign: 'center', color: '#aaa', fontSize: 14, padding: '60px 0' }}>Templates folgen in Kürze.</p>
           ) : (
-            <TemplateGridSection templates={templateList} />
+            <>
+              <TemplateGridSection templates={templateList.slice(0, 12)} />
+              <div style={{ textAlign: 'center', marginTop: 48 }}>
+                <a
+                  href="/vorlagen"
+                  style={{ display: 'inline-block', background: '#fff', color: '#111', border: '1.5px solid rgba(0,0,0,0.15)', borderRadius: 100, padding: '13px 36px', fontSize: 15, fontWeight: 600, textDecoration: 'none' }}
+                >
+                  Alle Vorlagen ansehen →
+                </a>
+              </div>
+            </>
           )}
         </div>
       </section>
