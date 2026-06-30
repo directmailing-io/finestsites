@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from 'react'
 import { CompanyChip, BadgeChip, PriceChip } from '@/components/TemplateChips'
+import { FakeWebsitePreview, COMING_SOON_PASTEL } from '@/components/FakeWebsitePreview'
 
 interface TemplateItem {
   id: string
@@ -17,127 +18,17 @@ interface TemplateItem {
   isComingSoon: boolean
 }
 
-const PASTEL_COLORS = ['#DCD0ED', '#B8CCDB', '#EDCBA8', '#C8D8B8', '#F2C5C5', '#C5DFE0', '#EAD4B5', '#C5D4F2']
+const PASTEL_COLORS = COMING_SOON_PASTEL
 
 type PriceFilter = 'all' | 'free' | 'premium'
 type AvailFilter = 'all' | 'available' | 'coming_soon'
 type SortOption = 'default' | 'az' | 'za'
 
 function ComingSoonCard({ tpl, idx }: { tpl: TemplateItem; idx: number }) {
-  const accent = PASTEL_COLORS[idx % PASTEL_COLORS.length]
-  const layoutType = idx % 4
-
-  const fakeContent = (() => {
-    switch (layoutType) {
-      case 1:
-        return (
-          <>
-            <div style={{ height: 70, background: accent, display: 'flex', alignItems: 'flex-end', padding: '0 14px 8px' }}>
-              <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'rgba(255,255,255,0.9)' }} />
-            </div>
-            <div style={{ background: '#fff', padding: '10px 14px', display: 'flex', flexDirection: 'column', gap: 6 }}>
-              <div style={{ width: 140, height: 11, borderRadius: 5, background: '#111' }} />
-              <div style={{ width: 90, height: 8, borderRadius: 4, background: '#ccc' }} />
-              <div style={{ marginTop: 4, height: 30, borderRadius: 7, background: accent }} />
-            </div>
-            <div style={{ padding: '6px 10px', display: 'flex', gap: 7 }}>
-              <div style={{ flex: 1, height: 40, borderRadius: 8, background: '#f5f5f7', border: '1px solid #eee' }} />
-              <div style={{ flex: 1, height: 40, borderRadius: 8, background: '#fff', border: '1px solid #eee' }} />
-            </div>
-          </>
-        )
-      case 2:
-        return (
-          <>
-            <div style={{ height: 30, background: '#fff', borderBottom: '1px solid #eee', display: 'flex', alignItems: 'center', padding: '0 12px', gap: 6 }}>
-              <div style={{ width: 60, height: 9, borderRadius: 4, background: '#222' }} />
-              <div style={{ flex: 1 }} />
-              <div style={{ width: 36, height: 18, borderRadius: 9, background: accent }} />
-            </div>
-            <div style={{ display: 'flex', padding: '12px', gap: 10, background: '#fff' }}>
-              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 5 }}>
-                <div style={{ width: '90%', height: 12, borderRadius: 5, background: '#111' }} />
-                <div style={{ width: '70%', height: 12, borderRadius: 5, background: '#111' }} />
-                <div style={{ width: '80%', height: 7, borderRadius: 3, background: '#ccc', marginTop: 3 }} />
-                <div style={{ marginTop: 6, width: 60, height: 22, borderRadius: 5, background: accent }} />
-              </div>
-              <div style={{ width: 65, height: 75, borderRadius: 9, background: accent + '55' }} />
-            </div>
-            <div style={{ padding: '4px 12px', display: 'flex', gap: 5 }}>
-              {[1,2,3].map(i => <div key={i} style={{ height: 20, width: i * 30 + 20, borderRadius: 10, background: i === 1 ? accent : '#f0f0f0' }} />)}
-            </div>
-          </>
-        )
-      case 3:
-        return (
-          <>
-            <div style={{ height: 40, background: '#1a1a2e', display: 'flex', alignItems: 'center', padding: '0 12px', gap: 8 }}>
-              <div style={{ width: 26, height: 26, borderRadius: 5, background: accent }} />
-              <div style={{ flex: 1, height: 8, borderRadius: 4, background: '#fff' }} />
-              <div style={{ width: 50, height: 18, borderRadius: 9, background: accent }} />
-            </div>
-            <div style={{ display: 'flex', background: '#fff', padding: '10px', gap: 9 }}>
-              <div style={{ width: 58, height: 58, borderRadius: 9, background: accent + '44', flexShrink: 0 }}>
-                <div style={{ width: 36, height: 36, borderRadius: '50%', background: accent, margin: '11px auto 0' }} />
-              </div>
-              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 4, paddingTop: 3 }}>
-                <div style={{ width: '75%', height: 9, borderRadius: 4, background: '#111' }} />
-                <div style={{ width: '55%', height: 7, borderRadius: 3, background: '#bbb' }} />
-                <div style={{ display: 'flex', gap: 6, marginTop: 4 }}>
-                  {[1,2,3].map(i => (
-                    <div key={i} style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                      <div style={{ width: 22, height: 9, borderRadius: 3, background: accent }} />
-                      <div style={{ width: 26, height: 5, borderRadius: 2, background: '#e0e0e0' }} />
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-            <div style={{ padding: '4px 10px 6px', display: 'flex', flexDirection: 'column', gap: 5 }}>
-              {[1,2].map(i => (
-                <div key={i} style={{ height: 24, borderRadius: 6, background: '#f5f5f7', display: 'flex', alignItems: 'center', padding: '0 9px', gap: 7 }}>
-                  <div style={{ width: 10, height: 10, borderRadius: '50%', background: accent }} />
-                  <div style={{ flex: 1, height: 6, borderRadius: 3, background: '#ddd' }} />
-                </div>
-              ))}
-            </div>
-          </>
-        )
-      default:
-        return (
-          <>
-            <div style={{ height: 34, background: '#fff', borderBottom: '1px solid #eee', display: 'flex', alignItems: 'center', padding: '0 13px', gap: 7 }}>
-              <div style={{ width: 26, height: 26, borderRadius: '50%', background: accent }} />
-              <div style={{ flex: 1, display: 'flex', gap: 5 }}>
-                <div style={{ width: 36, height: 7, borderRadius: 3, background: '#e0e0e0' }} />
-                <div style={{ width: 36, height: 7, borderRadius: 3, background: '#e0e0e0' }} />
-              </div>
-              <div style={{ width: 48, height: 20, borderRadius: 10, background: accent }} />
-            </div>
-            <div style={{ padding: '16px 13px 12px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 7, background: '#fff' }}>
-              <div style={{ width: 48, height: 48, borderRadius: '50%', background: accent }} />
-              <div style={{ width: 110, height: 10, borderRadius: 5, background: '#222' }} />
-              <div style={{ width: 74, height: 7, borderRadius: 3, background: '#bbb' }} />
-            </div>
-            <div style={{ padding: '0 9px', display: 'flex', flexDirection: 'column', gap: 6 }}>
-              {[1,2,3].map(i => (
-                <div key={i} style={{ height: 35, borderRadius: 9, background: i === 1 ? accent : '#fff', border: `1.5px solid ${i === 1 ? accent : '#e8e8e8'}`, display: 'flex', alignItems: 'center', padding: '0 11px', gap: 7 }}>
-                  <div style={{ width: 18, height: 18, borderRadius: 5, background: i === 1 ? 'rgba(255,255,255,0.3)' : accent + '33' }} />
-                  <div style={{ flex: 1, height: 7, borderRadius: 3, background: i === 1 ? 'rgba(255,255,255,0.5)' : '#ddd' }} />
-                </div>
-              ))}
-            </div>
-          </>
-        )
-    }
-  })()
-
   return (
     <div style={{ borderRadius: 18, overflow: 'hidden', background: '#fff', border: '1px solid #ebebeb', boxShadow: '0 2px 12px rgba(0,0,0,0.05)', cursor: 'default' }}>
       <div style={{ height: 240, background: '#f5f5f7', position: 'relative', overflow: 'hidden' }}>
-        <div style={{ position: 'absolute', inset: 0, filter: 'blur(7px)', transform: 'scale(1.05)' }}>
-          {fakeContent}
-        </div>
+        <FakeWebsitePreview idx={idx} />
         <div style={{ position: 'absolute', inset: 0, background: 'rgba(255,255,255,0.35)' }} />
         <div style={{ position: 'absolute', top: 12, right: 12, background: '#111', color: '#fff', fontSize: 10, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', padding: '4px 10px', borderRadius: 100 }}>
           Coming Soon

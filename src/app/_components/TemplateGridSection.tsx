@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from 'react'
 import { CompanyChip, BadgeChip, PriceChip } from '@/components/TemplateChips'
+import { FakeWebsitePreview, COMING_SOON_PASTEL } from '@/components/FakeWebsitePreview'
 
 export interface TemplateCardData {
   id: string
@@ -17,152 +18,8 @@ export interface TemplateCardData {
   isComingSoon?: boolean
 }
 
-const PASTEL_COLORS = ['#DCD0ED', '#B8CCDB', '#EDCBA8', '#C8D8B8', '#F2C5C5', '#C5DFE0', '#EAD4B5', '#C5D4F2']
+const PASTEL_COLORS = COMING_SOON_PASTEL
 const PAGE_SIZE = 12
-
-// ── Unique fake website preview layouts for coming-soon cards ──────────────
-
-function FakeLayoutLinkInBio({ accent }: { accent: string }) {
-  return (
-    <div style={{ padding: '0' }}>
-      {/* Nav */}
-      <div style={{ height: 36, background: '#fff', borderBottom: '1px solid #eee', display: 'flex', alignItems: 'center', padding: '0 14px', gap: 8 }}>
-        <div style={{ width: 28, height: 28, borderRadius: '50%', background: accent }} />
-        <div style={{ flex: 1, display: 'flex', gap: 6, marginLeft: 8 }}>
-          <div style={{ width: 40, height: 8, borderRadius: 4, background: '#e0e0e0' }} />
-          <div style={{ width: 40, height: 8, borderRadius: 4, background: '#e0e0e0' }} />
-        </div>
-        <div style={{ width: 52, height: 22, borderRadius: 11, background: accent }} />
-      </div>
-      {/* Hero */}
-      <div style={{ padding: '18px 14px 14px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, background: '#fff' }}>
-        <div style={{ width: 52, height: 52, borderRadius: '50%', background: accent }} />
-        <div style={{ width: 120, height: 11, borderRadius: 6, background: '#222' }} />
-        <div style={{ width: 80, height: 8, borderRadius: 4, background: '#bbb' }} />
-      </div>
-      {/* Link cards */}
-      <div style={{ padding: '0 10px', display: 'flex', flexDirection: 'column', gap: 7 }}>
-        {[1,2,3].map(i => (
-          <div key={i} style={{ height: 38, borderRadius: 10, background: i === 1 ? accent : '#fff', border: `1.5px solid ${i === 1 ? accent : '#e8e8e8'}`, display: 'flex', alignItems: 'center', padding: '0 12px', gap: 8 }}>
-            <div style={{ width: 20, height: 20, borderRadius: 6, background: i === 1 ? 'rgba(255,255,255,0.3)' : accent + '33' }} />
-            <div style={{ flex: 1, height: 8, borderRadius: 4, background: i === 1 ? 'rgba(255,255,255,0.5)' : '#ddd' }} />
-          </div>
-        ))}
-      </div>
-    </div>
-  )
-}
-
-function FakeLayoutEvent({ accent }: { accent: string }) {
-  return (
-    <div>
-      {/* Hero image area */}
-      <div style={{ height: 80, background: accent, display: 'flex', alignItems: 'flex-end', padding: '0 14px 10px', position: 'relative' }}>
-        <div style={{ position: 'absolute', top: 10, right: 12, background: '#fff', borderRadius: 6, padding: '4px 8px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
-          <div style={{ width: 20, height: 8, borderRadius: 3, background: accent }} />
-          <div style={{ width: 24, height: 12, borderRadius: 3, background: '#222' }} />
-        </div>
-        <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'rgba(255,255,255,0.9)' }} />
-      </div>
-      {/* Event info */}
-      <div style={{ background: '#fff', padding: '12px 14px', display: 'flex', flexDirection: 'column', gap: 7 }}>
-        <div style={{ width: 140, height: 12, borderRadius: 6, background: '#111' }} />
-        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-          <div style={{ width: 14, height: 14, borderRadius: '50%', background: accent }} />
-          <div style={{ width: 90, height: 8, borderRadius: 4, background: '#ccc' }} />
-        </div>
-        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-          <div style={{ width: 14, height: 14, borderRadius: 3, background: accent + '88' }} />
-          <div style={{ width: 110, height: 8, borderRadius: 4, background: '#ccc' }} />
-        </div>
-        <div style={{ marginTop: 4, height: 34, borderRadius: 8, background: accent, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <div style={{ width: 80, height: 10, borderRadius: 4, background: 'rgba(255,255,255,0.6)' }} />
-        </div>
-      </div>
-      {/* Two cards */}
-      <div style={{ padding: '0 10px', display: 'flex', gap: 7 }}>
-        {[1,2].map(i => (
-          <div key={i} style={{ flex: 1, height: 46, borderRadius: 8, background: i === 1 ? '#f5f5f7' : '#fff', border: '1px solid #eee' }} />
-        ))}
-      </div>
-    </div>
-  )
-}
-
-function FakeLayoutProduct({ accent }: { accent: string }) {
-  return (
-    <div>
-      {/* Nav */}
-      <div style={{ height: 32, background: '#fff', borderBottom: '1px solid #eee', display: 'flex', alignItems: 'center', padding: '0 12px', gap: 8 }}>
-        <div style={{ width: 70, height: 10, borderRadius: 4, background: '#222', fontWeight: 700 }} />
-        <div style={{ flex: 1 }} />
-        {[1,2,3].map(i => <div key={i} style={{ width: 28, height: 7, borderRadius: 3, background: '#e0e0e0' }} />)}
-        <div style={{ width: 40, height: 20, borderRadius: 10, background: accent }} />
-      </div>
-      {/* Hero: text left, image right */}
-      <div style={{ display: 'flex', padding: '14px 12px', gap: 10, background: '#fff' }}>
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 6 }}>
-          <div style={{ width: '90%', height: 13, borderRadius: 6, background: '#111' }} />
-          <div style={{ width: '75%', height: 13, borderRadius: 6, background: '#111' }} />
-          <div style={{ width: '85%', height: 8, borderRadius: 4, background: '#ccc', marginTop: 4 }} />
-          <div style={{ width: '70%', height: 8, borderRadius: 4, background: '#ccc' }} />
-          <div style={{ marginTop: 8, width: 70, height: 24, borderRadius: 6, background: accent }} />
-        </div>
-        <div style={{ width: 70, height: 80, borderRadius: 10, background: accent + '55', flexShrink: 0 }} />
-      </div>
-      {/* Feature chips */}
-      <div style={{ padding: '6px 12px', display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-        {[1,2,3].map(i => (
-          <div key={i} style={{ height: 22, width: i * 32 + 28, borderRadius: 12, background: i === 1 ? accent : '#f0f0f0' }} />
-        ))}
-      </div>
-    </div>
-  )
-}
-
-function FakeLayoutBusiness({ accent }: { accent: string }) {
-  return (
-    <div>
-      {/* Header bar */}
-      <div style={{ height: 44, background: '#1a1a2e', display: 'flex', alignItems: 'center', padding: '0 12px', gap: 8 }}>
-        <div style={{ width: 28, height: 28, borderRadius: 6, background: accent }} />
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 4 }}>
-          <div style={{ width: 80, height: 8, borderRadius: 4, background: '#fff' }} />
-          <div style={{ width: 50, height: 5, borderRadius: 3, background: 'rgba(255,255,255,0.3)' }} />
-        </div>
-        <div style={{ width: 60, height: 22, borderRadius: 11, background: accent }} />
-      </div>
-      {/* Two-col profile */}
-      <div style={{ display: 'flex', background: '#fff', padding: '12px', gap: 10 }}>
-        <div style={{ width: 64, height: 64, borderRadius: 10, background: accent + '44', flexShrink: 0, position: 'relative' }}>
-          <div style={{ position: 'absolute', bottom: 6, left: '50%', transform: 'translateX(-50%)', width: 40, height: 40, borderRadius: '50%', background: accent }} />
-        </div>
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 5, paddingTop: 4 }}>
-          <div style={{ width: '80%', height: 10, borderRadius: 5, background: '#111' }} />
-          <div style={{ width: '60%', height: 8, borderRadius: 4, background: '#bbb' }} />
-          {/* Stats */}
-          <div style={{ display: 'flex', gap: 8, marginTop: 6 }}>
-            {[1,2,3].map(i => (
-              <div key={i} style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                <div style={{ width: 24, height: 10, borderRadius: 4, background: accent }} />
-                <div style={{ width: 28, height: 6, borderRadius: 3, background: '#e0e0e0' }} />
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-      {/* About rows */}
-      <div style={{ padding: '4px 12px 8px', display: 'flex', flexDirection: 'column', gap: 6 }}>
-        {[1,2].map(i => (
-          <div key={i} style={{ height: 28, borderRadius: 7, background: '#f5f5f7', display: 'flex', alignItems: 'center', padding: '0 10px', gap: 8 }}>
-            <div style={{ width: 12, height: 12, borderRadius: '50%', background: accent }} />
-            <div style={{ flex: 1, height: 7, borderRadius: 3, background: '#ddd' }} />
-          </div>
-        ))}
-      </div>
-    </div>
-  )
-}
 
 function TemplateCard({ tpl, idx }: { tpl: TemplateCardData; idx: number }) {
   const images = Array.isArray(tpl.previewImages) ? tpl.previewImages as string[] : []
@@ -171,32 +28,12 @@ function TemplateCard({ tpl, idx }: { tpl: TemplateCardData; idx: number }) {
   const isComingSoon = tpl.isComingSoon ?? false
 
   if (isComingSoon) {
-    const accent = pastel
-    // Cycle through 4 unique layout types
-    const layoutType = idx % 4
-
-    const fakeLayout = (() => {
-      switch (layoutType) {
-        case 1: return <FakeLayoutEvent accent={accent} />
-        case 2: return <FakeLayoutProduct accent={accent} />
-        case 3: return <FakeLayoutBusiness accent={accent} />
-        default: return <FakeLayoutLinkInBio accent={accent} />
-      }
-    })()
-
     return (
       <div style={{ display: 'block', borderRadius: 18, overflow: 'hidden', background: '#fff', border: '1px solid #ebebeb', boxShadow: '0 2px 12px rgba(0,0,0,0.05)', cursor: 'default' }}>
         {/* Cover — blurred fake website preview */}
         <div style={{ height: 260, background: '#f5f5f7', position: 'relative', overflow: 'hidden' }}>
-          {/* Fake site layout — blurred */}
-          <div style={{ position: 'absolute', inset: 0, filter: 'blur(7px)', transform: 'scale(1.05)' }}>
-            {fakeLayout}
-          </div>
-
-          {/* Slight overlay */}
+          <FakeWebsitePreview idx={idx} />
           <div style={{ position: 'absolute', inset: 0, background: 'rgba(255,255,255,0.35)' }} />
-
-          {/* Badge */}
           <div style={{ position: 'absolute', top: 12, right: 12, background: '#111', color: '#fff', fontSize: 10, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', padding: '4px 10px', borderRadius: 100 }}>
             Coming Soon
           </div>

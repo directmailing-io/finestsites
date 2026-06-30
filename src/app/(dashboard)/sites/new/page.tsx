@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { CompanyChip, BadgeChip, PriceChip } from '@/components/TemplateChips'
+import { FakeWebsitePreview } from '@/components/FakeWebsitePreview'
 
 interface Template {
   id: string
@@ -355,17 +356,17 @@ export default function NewSitePage() {
                 }}>
 
                 {/* Image — left */}
-                <div className="flex-shrink-0 relative overflow-hidden" style={{ width: '40%', background: '#F1F5F9' }}>
-                  {isComingSoon && (
-                    <div className="absolute inset-0 z-10 flex items-center justify-center" style={{ background: 'rgba(255,255,255,0.5)', backdropFilter: 'blur(3px)' }}>
-                      <span style={{ fontSize: 28 }}>🤫</span>
-                    </div>
-                  )}
-                  {preview ? (
+                <div className="flex-shrink-0 relative overflow-hidden" style={{ width: '40%', background: '#f5f5f7' }}>
+                  {isComingSoon ? (
+                    <>
+                      <FakeWebsitePreview idx={visible.indexOf(tpl)} />
+                      <div className="absolute inset-0" style={{ background: 'rgba(255,255,255,0.35)' }} />
+                      <div className="absolute inset-0 flex items-center justify-center" style={{ fontSize: 28 }}>🤫</div>
+                    </>
+                  ) : preview ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img src={preview} alt={tpl.title}
-                      className="absolute inset-0 w-full h-full object-cover object-top"
-                      style={{ filter: isComingSoon ? 'blur(4px)' : 'none' }} />
+                      className="absolute inset-0 w-full h-full object-cover object-top" />
                   ) : (
                     <div className="absolute inset-0 flex items-center justify-center"
                       style={{ background: 'linear-gradient(160deg, #F8FAFC 0%, #F1F5F9 100%)' }}>
