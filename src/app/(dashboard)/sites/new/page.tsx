@@ -143,12 +143,17 @@ export default function NewSitePage() {
   // Show company sub-filter only when user has 2+ companies
   const showCompanyFilter = userCompanies.length > 1
 
-  // Step 1: filter by user's companies (strict — allrounders always pass)
-  // Don't filter out templates with draft sites — those should remain visible
+  // Step 1: filter by user's companies + exclude published/active sites
   const companyMatched = useMemo(() => {
-    if (!hasPrefs) return templates
-    return templates.filter(t => t.is_allrounder || t.nm_companies.some(c => userCompanies.includes(c)))
-  }, [templates, userCompanies, hasPrefs])
+    // Exclude templates where the user already has a live (non-draft) site
+    const base = templates.filter(t => {
+      const site = siteMap[t.id]
+      if (!site) return true          // no site → always show
+      return site.status === 'draft'  // draft → show; published/active → hide
+    })
+    if (!hasPrefs) return base
+    return base.filter(t => t.is_allrounder || t.nm_companies.some(c => userCompanies.includes(c)))
+  }, [templates, siteMap, userCompanies, hasPrefs])
 
   // Step 2: sub-filter by specific company or "Allgemein"
   const companyFiltered = useMemo(() => {
@@ -165,7 +170,7 @@ export default function NewSitePage() {
   }, [companyFiltered, priceFilter])
 
   // Step 4: search
-  const visible = useMemo(() => {
+  const searched = useMemo(() => {
     const q = search.trim().toLowerCase()
     if (!q) return priceFiltered
     return priceFiltered.filter(t =>
@@ -173,6 +178,16 @@ export default function NewSitePage() {
       (t.description ?? '').toLowerCase().includes(q)
     )
   }, [priceFiltered, search])
+
+  // Step 5: sort — drafts first, then coming soon, then rest
+  const visible = useMemo(() => {
+    const priority = (t: Template) => {
+      if (siteMap[t.id]?.status === 'draft') return 0
+      if (t.is_coming_soon) return 1
+      return 2
+    }
+    return [...searched].sort((a, b) => priority(a) - priority(b))
+  }, [searched, siteMap])
 
   async function handleSelect(templateId: string) {
     if (busy) return
