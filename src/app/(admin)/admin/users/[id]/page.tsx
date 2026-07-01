@@ -19,7 +19,7 @@ interface UserSite {
   customDomain: string | null
   customDomainStatus: string | null
   createdAt: string
-  templates: { title: string; domain: string } | null
+  template: { title: string; domain: string } | null
 }
 
 interface Invoice {
@@ -216,8 +216,8 @@ export default function AdminUserDetailPage({ params }: { params: Promise<{ id: 
           ) : (
             <div className="flex flex-col gap-2">
               {sites.map(site => {
-                const subdomain = profile.username && site.templates?.domain
-                  ? `${profile.username}.${site.templates.domain}`
+                const subdomain = profile.username && site.template?.domain
+                  ? `${profile.username}.${site.template.domain}`
                   : null
                 const hasCustomDomain = site.customDomainStatus === 'active' && !!site.customDomain
                 return (
@@ -225,7 +225,7 @@ export default function AdminUserDetailPage({ params }: { params: Promise<{ id: 
                     style={{ background: '#F9FAFB', border: '1px solid #F3F4F6' }}>
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2">
-                        <p className="text-sm font-medium text-gray-900">{site.templates?.title ?? 'Website'}</p>
+                        <p className="text-sm font-medium text-gray-900">{site.template?.title ?? 'Website'}</p>
                         <span className="text-[10px]" style={{ color: '#94A3B8' }}>
                           {new Date(site.createdAt).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: '2-digit' })}
                         </span>
