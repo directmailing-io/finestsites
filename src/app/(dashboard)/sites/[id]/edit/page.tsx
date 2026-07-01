@@ -1641,7 +1641,9 @@ export default function SiteEditPage({ params }: { params: Promise<{ id: string 
   const autosaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const [autosaveState, setAutosaveState] = useState<'idle' | 'pending' | 'saving' | 'saved' | 'error'>('idle')
   const [activeSection, setActiveSection] = useState<string | null>(null)
-  const [deviceView, setDeviceView] = useState<'desktop' | 'tablet' | 'mobile'>('desktop')
+  const [deviceView, setDeviceView] = useState<'desktop' | 'tablet' | 'mobile'>(
+    typeof window !== 'undefined' && window.innerWidth < 768 ? 'mobile' : 'desktop'
+  )
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [deletingSite, setDeletingSite] = useState(false)
   const [showFullPreview, setShowFullPreview] = useState(false)
@@ -3008,25 +3010,45 @@ export default function SiteEditPage({ params }: { params: Promise<{ id: string 
               Schließen
             </button>
           </div>
-          <div className="flex-1 overflow-auto flex justify-center items-start p-6">
-            {site.templates?.r2_bundle_path ? (
-              <div className="bg-white rounded-[12px] overflow-hidden transition-all duration-300"
-                style={{
-                  width: deviceView === 'desktop' ? '100%' : deviceView === 'tablet' ? '768px' : '390px',
-                  maxWidth: '100%',
-                  boxShadow: '0 8px 48px rgba(0,0,0,0.4)',
-                }}>
-                <iframe ref={iframeRef} key={previewKey} src={previewUrl}
-                  className="w-full border-0 block" style={{ height: '800px' }}
-                  title="Website-Vorschau" sandbox="allow-scripts allow-forms allow-same-origin" />
+          {site.templates?.r2_bundle_path ? (() => {
+            const FP_DEVICE_W = { desktop: 1280, tablet: 768, mobile: 390 } as const
+            const fpTargetW = FP_DEVICE_W[deviceView]
+            const fpAvailW = winW - 32 // 16px padding each side
+            const fpScale = Math.min(1, fpAvailW / fpTargetW)
+            const fpIframeH = 900
+            const fpScaledW = Math.round(fpTargetW * fpScale)
+            const fpScaledH = Math.round(fpIframeH * fpScale)
+            return (
+              <div className="flex-1 overflow-auto flex flex-col items-center py-5 gap-2 px-4">
+                {fpScale < 0.98 && (
+                  <span className="text-xs px-3 py-1 rounded-full flex-shrink-0"
+                    style={{ background: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.5)' }}>
+                    {Math.round(fpScale * 100)}% · {fpTargetW}px
+                  </span>
+                )}
+                <div style={{ width: fpScaledW, height: fpScaledH, position: 'relative', flexShrink: 0 }}>
+                  <div style={{
+                    width: fpTargetW,
+                    transform: `scale(${fpScale})`,
+                    transformOrigin: 'top left',
+                    borderRadius: 12,
+                    overflow: 'hidden',
+                    background: 'white',
+                    boxShadow: '0 8px 48px rgba(0,0,0,0.4)',
+                  }}>
+                    <iframe ref={iframeRef} key={previewKey} src={previewUrl}
+                      style={{ width: fpTargetW, height: fpIframeH, border: 'none', display: 'block' }}
+                      title="Website-Vorschau" sandbox="allow-scripts allow-forms allow-same-origin" />
+                  </div>
+                </div>
               </div>
-            ) : (
-              <div className="flex flex-col items-center justify-center gap-3 text-white text-center py-20">
+            )
+          })() : (
+              <div className="flex-1 flex flex-col items-center justify-center gap-3 text-white text-center py-20">
                 <p className="text-lg font-semibold">Noch keine Vorschau verfügbar</p>
                 <p className="text-sm opacity-60">Der Admin muss zuerst eine HTML-Datei hochladen.</p>
               </div>
             )}
-          </div>
         </div>
       )}
 

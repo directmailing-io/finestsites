@@ -695,6 +695,18 @@ function ComplianceBanner({
         }
         .rt-comp-banner-cta:hover { opacity: 0.9; }
         .rt-comp-banner-cta:active { transform: scale(0.97); }
+        @media (max-width: 520px) {
+          .rt-comp-banner {
+            flex-wrap: wrap;
+            align-items: flex-start;
+            gap: 10px;
+          }
+          .rt-comp-banner-cta {
+            width: 100%;
+            justify-content: center;
+            flex-shrink: unset;
+          }
+        }
       `}</style>
     </div>
   )
