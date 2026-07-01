@@ -70,15 +70,13 @@ export function MobileNav() {
       )}
 
       {/* More drawer */}
+      {showMore && (
       <div
-        className="lg:hidden fixed left-0 right-0 z-[46] rounded-t-3xl transition-transform duration-300 ease-out"
+        className="lg:hidden fixed left-0 right-0 z-[46] rounded-t-3xl"
         style={{
           bottom: 'calc(56px + env(safe-area-inset-bottom, 0px))',
           background: '#fff',
           boxShadow: '0 -4px 40px rgba(0,0,0,0.14)',
-          transform: showMore ? 'translateY(0)' : 'translateY(110vh)',
-        visibility: showMore ? 'visible' : 'hidden',
-        pointerEvents: showMore ? 'auto' : 'none',
         }}
       >
         {/* Handle */}
@@ -115,6 +113,7 @@ export function MobileNav() {
           </button>
         </div>
       </div>
+      )}
 
       {/* Bottom Tab Bar */}
       <nav
