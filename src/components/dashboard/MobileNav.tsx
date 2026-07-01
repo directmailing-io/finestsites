@@ -13,7 +13,7 @@ export function MobileNav() {
   const [chatUnread, setChatUnread] = useState(0)
 
   // Hide on editor pages — must be after all hooks
-  const isEditorPage = /^\/sites\/[^/]+\/edit/.test(pathname)
+  const isEditorPage = /^\/sites\/[^/]+\/edit/.test(pathname) || pathname === '/support'
 
   useEffect(() => {
     if (isEditorPage) return
@@ -159,12 +159,13 @@ export function MobileNav() {
           </span>
         </Link>
 
-        <button
-          onClick={() => { setShowMore(false); window.dispatchEvent(new CustomEvent('openSupportChat')) }}
+        <Link
+          href="/support"
+          onClick={() => setShowMore(false)}
           className="flex-1 flex flex-col items-center justify-center gap-0.5 active:opacity-60 transition-opacity relative"
         >
           <span className="relative">
-            <TabChatIcon />
+            <TabChatIcon active={pathname === '/support'} />
             {chatUnread > 0 && (
               <span
                 className="absolute -top-1 -right-2 min-w-[16px] h-4 px-1 rounded-full text-[10px] font-bold flex items-center justify-center"
@@ -174,10 +175,10 @@ export function MobileNav() {
               </span>
             )}
           </span>
-          <span className="text-[10px] font-medium" style={{ color: '#9CA3AF' }}>
+          <span className="text-[10px] font-medium" style={{ color: pathname === '/support' ? '#1a1a1a' : '#9CA3AF' }}>
             Support
           </span>
-        </button>
+        </Link>
 
         <button
           onClick={() => setShowMore(s => !s)}
@@ -214,9 +215,9 @@ function TabInboxIcon({ active }: { active: boolean }) {
   )
 }
 
-function TabChatIcon() {
+function TabChatIcon({ active }: { active: boolean }) {
   return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="1.75">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={active ? '#1a1a1a' : '#9CA3AF'} strokeWidth={active ? 2 : 1.75}>
       <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
     </svg>
   )
