@@ -21,7 +21,19 @@ export default function StickyPurchaseBar({ templateTitle, registerUrl, isFree }
       { threshold: 0 }
     )
     obs.observe(sentinel)
-    return () => obs.disconnect()
+
+    // Also hide when footer comes into view
+    const footerSentinel = document.getElementById('sticky-bar-footer-sentinel')
+    let obs2: IntersectionObserver | null = null
+    if (footerSentinel) {
+      obs2 = new IntersectionObserver(
+        ([entry]) => { if (entry.isIntersecting) setVisible(false) },
+        { threshold: 0 }
+      )
+      obs2.observe(footerSentinel)
+    }
+
+    return () => { obs.disconnect(); obs2?.disconnect() }
   }, [])
 
   return (

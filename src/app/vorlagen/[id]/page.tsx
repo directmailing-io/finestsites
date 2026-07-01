@@ -1,6 +1,6 @@
 import { db } from '@/lib/db'
 import { templates } from '@/lib/db/schema'
-import { eq, and, ne, or, sql } from 'drizzle-orm'
+import { eq, and, ne, or, sql, inArray } from 'drizzle-orm'
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import Link from 'next/link'
@@ -91,10 +91,11 @@ export default async function TemplateDetailPage({ params }: Props) {
     detailColor: templates.detailColor,
     nmCompanies: templates.nmCompanies,
     domain: templates.domain,
+    status: templates.status,
   })
     .from(templates)
     .where(and(
-      eq(templates.status, 'published'),
+      inArray(templates.status, ['published', 'coming_soon']),
       ne(templates.id, tpl.id),
       // overlap on nmCompanies array if available
       nmCompanies.length > 0
@@ -117,10 +118,11 @@ export default async function TemplateDetailPage({ params }: Props) {
       detailColor: templates.detailColor,
       nmCompanies: templates.nmCompanies,
       domain: templates.domain,
+      status: templates.status,
     })
       .from(templates)
       .where(and(
-        eq(templates.status, 'published'),
+        inArray(templates.status, ['published', 'coming_soon']),
         ne(templates.id, tpl.id),
         sql`${templates.id} != ALL(ARRAY[${sql.raw(otherTemplates.map(t => `'${t.id}'`).join(',') || "'00000000-0000-0000-0000-000000000000'")}]::uuid[])`,
       ))
@@ -425,14 +427,20 @@ export default async function TemplateDetailPage({ params }: Props) {
                 const tImgs = Array.isArray(t.previewImages) ? t.previewImages as string[] : []
                 const tColor = t.detailColor ?? '#8060b0'
                 const tTags = Array.isArray(t.tags) ? t.tags as string[] : []
-                return (
-                  <a key={t.id} href={`/vorlagen/${t.slug ?? t.id}`} className="vd-more-card">
-                    <div style={{ aspectRatio: '16/9', background: `${tColor}22`, overflow: 'hidden' }}>
+                const tIsComingSoon = t.status === 'coming_soon'
+                const card = (
+                  <div className="vd-more-card" style={{ display: 'block', textDecoration: 'none', background: '#1c1c1e', borderRadius: 20, overflow: 'hidden', border: '1px solid rgba(255,255,255,0.08)', boxShadow: '0 2px 16px rgba(0,0,0,0.3)', transition: 'transform 0.2s, box-shadow 0.2s', opacity: tIsComingSoon ? 0.75 : 1 }}>
+                    <div style={{ aspectRatio: '16/9', background: `${tColor}22`, overflow: 'hidden', position: 'relative' }}>
                       {tImgs[0] ? (
                         // eslint-disable-next-line @next/next/no-img-element
-                        <img src={tImgs[0]} alt={t.title} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                        <img src={tImgs[0]} alt={t.title} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', filter: tIsComingSoon ? 'blur(6px)' : 'none', transform: tIsComingSoon ? 'scale(1.05)' : 'none' }} />
                       ) : (
                         <div style={{ width: '100%', height: '100%', background: `linear-gradient(135deg, ${tColor}33, ${tColor}11)` }} />
+                      )}
+                      {tIsComingSoon && (
+                        <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+                          <span style={{ background: 'rgba(0,0,0,0.6)', color: '#fff', fontSize: 10, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', padding: '4px 10px', borderRadius: 100 }}>Coming Soon</span>
+                        </div>
                       )}
                     </div>
                     <div style={{ padding: '20px 22px 24px' }}>
@@ -447,10 +455,15 @@ export default async function TemplateDetailPage({ params }: Props) {
                           {t.description}
                         </p>
                       )}
-                      <p style={{ fontSize: 13, fontWeight: 600, color: tColor, marginTop: 14 }}>Template ansehen →</p>
+                      <p style={{ fontSize: 13, fontWeight: 600, color: tIsComingSoon ? 'rgba(255,255,255,0.3)' : tColor, marginTop: 14 }}>
+                        {tIsComingSoon ? 'Demnächst verfügbar' : 'Template ansehen →'}
+                      </p>
                     </div>
-                  </a>
+                  </div>
                 )
+                return tIsComingSoon
+                  ? <div key={t.id} style={{ cursor: 'default' }}>{card}</div>
+                  : <a key={t.id} href={`/vorlagen/${t.slug ?? t.id}`} style={{ textDecoration: 'none', display: 'block' }}>{card}</a>
               })}
             </div>
           </div>
@@ -474,6 +487,8 @@ export default async function TemplateDetailPage({ params }: Props) {
         </div>
       </section>
 
+      {/* Sentinel: sticky bar hides when footer becomes visible */}
+      <div id="sticky-bar-footer-sentinel" />
       <Footer />
     </div>
   )

@@ -4,7 +4,7 @@ export default function Footer() {
   return (
     <>
       <style>{`
-        .fs-footer-dark { background: #1a1530; color: #fff; padding: 64px 7vw 0; }
+        .fs-footer-dark { background: #0f0f0f; color: #fff; padding: 64px 7vw 0; }
         .fs-footer-grid { max-width: 1060px; margin: 0 auto; display: grid; grid-template-columns: 1.6fr 1fr 1fr; gap: 56px; padding-bottom: 56px; }
         .fs-footer-bottom { max-width: 1060px; margin: 0 auto; padding: 24px 0 32px; border-top: 1px solid rgba(255,255,255,0.08); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
         @media (max-width: 767px) {
