@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, use } from 'react'
+import { useState, useEffect, use, useCallback } from 'react'
 import Link from 'next/link'
 
 interface UserProfile {
@@ -50,6 +50,26 @@ interface UserDetail {
   events: SubscriptionEvent[]
 }
 
+interface SupportConv {
+  id: string
+  status: 'open' | 'closed' | 'waiting'
+  subject: string | null
+  lastMessageAt: string | null
+  unreadByAdmin: number
+  createdAt: string
+  lastMessage: { content: string; contentType?: string } | null
+}
+
+const STATUS_COLORS: Record<string, { bg: string; text: string }> = {
+  open: { bg: '#F0FDF4', text: '#16A34A' },
+  waiting: { bg: '#FFF7ED', text: '#C2410C' },
+  closed: { bg: '#F5F5F5', text: '#9CA3AF' },
+}
+
+const STATUS_LABEL: Record<string, string> = {
+  open: 'Offen', waiting: 'Wartend', closed: 'Geschlossen',
+}
+
 const PLAN_COLORS: Record<string, { bg: string; text: string }> = {
   starter: { bg: '#EFF6FF', text: '#1D4ED8' },
   pro: { bg: '#F5F3FF', text: '#7C3AED' },
@@ -69,6 +89,17 @@ export default function AdminUserDetailPage({ params }: { params: Promise<{ id: 
   const [data, setData] = useState<UserDetail | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [supportConvs, setSupportConvs] = useState<SupportConv[]>([])
+
+  const fetchSupportConvs = useCallback(async () => {
+    try {
+      const res = await fetch(`/api/admin/support/conversations?userId=${id}`)
+      if (res.ok) {
+        const d = await res.json()
+        setSupportConvs(d.conversations ?? [])
+      }
+    } catch { /* ignore */ }
+  }, [id])
 
   useEffect(() => {
     fetch(`/api/admin/users/${id}`)
@@ -79,7 +110,8 @@ export default function AdminUserDetailPage({ params }: { params: Promise<{ id: 
         setLoading(false)
       })
       .catch(() => { setError('Fehler beim Laden.'); setLoading(false) })
-  }, [id])
+    fetchSupportConvs()
+  }, [id, fetchSupportConvs])
 
   if (loading) {
     return (
@@ -356,6 +388,67 @@ export default function AdminUserDetailPage({ params }: { params: Promise<{ id: 
                       {detail && (
                         <p className="text-xs mt-0.5" style={{ color: '#64748B' }}>{detail}</p>
                       )}
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          )}
+        </div>
+
+        {/* Support-Gespräche */}
+        <div className="p-6 rounded-[24px] bg-white flex flex-col gap-3"
+          style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.08)', border: '1px solid var(--border)' }}>
+          <div className="flex items-center justify-between">
+            <h2 className="font-medium text-gray-900">Support-Gespräche ({supportConvs.length})</h2>
+            <Link href="/admin/support" className="text-xs font-medium" style={{ color: '#3B82F6' }}>
+              Alle anzeigen →
+            </Link>
+          </div>
+          {supportConvs.length === 0 ? (
+            <p className="text-sm" style={{ color: 'var(--muted-foreground)' }}>Keine Support-Gespräche vorhanden.</p>
+          ) : (
+            <div className="flex flex-col gap-2">
+              {supportConvs.map(conv => {
+                const months = ['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez']
+                const d = new Date(conv.createdAt)
+                const title = conv.subject ?? `Chat vom ${d.getDate()}. ${months[d.getMonth()]} ${d.getFullYear()}`
+                const statusStyle = STATUS_COLORS[conv.status] ?? STATUS_COLORS.closed
+
+                let preview = 'Noch keine Nachrichten'
+                if (conv.lastMessage) {
+                  if (conv.lastMessage.contentType === 'image') preview = '📷 Bild'
+                  else if (conv.lastMessage.contentType === 'gif') preview = '🎬 GIF'
+                  else {
+                    preview = conv.lastMessage.content.length > 60
+                      ? conv.lastMessage.content.slice(0, 60) + '…'
+                      : conv.lastMessage.content
+                  }
+                }
+
+                return (
+                  <div key={conv.id} className="flex items-start justify-between gap-3 p-3 rounded-[14px]"
+                    style={{ background: '#F9FAFB', border: '1px solid #F3F4F6' }}>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-semibold text-gray-900 truncate">{title}</span>
+                        {conv.unreadByAdmin > 0 && (
+                          <div className="flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center text-white"
+                            style={{ background: '#3B82F6', fontSize: 10, fontWeight: 700 }}>
+                            {conv.unreadByAdmin > 9 ? '9+' : conv.unreadByAdmin}
+                          </div>
+                        )}
+                      </div>
+                      <p className="text-xs mt-0.5 truncate" style={{ color: '#9CA3AF' }}>{preview}</p>
+                    </div>
+                    <div className="flex flex-col items-end gap-1.5 flex-shrink-0">
+                      <span className="text-xs font-semibold px-2 py-0.5 rounded-full"
+                        style={{ background: statusStyle.bg, color: statusStyle.text }}>
+                        {STATUS_LABEL[conv.status]}
+                      </span>
+                      <span className="text-xs" style={{ color: '#9CA3AF' }}>
+                        {new Date(conv.lastMessageAt ?? conv.createdAt).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: '2-digit' })}
+                      </span>
                     </div>
                   </div>
                 )

@@ -180,6 +180,8 @@ export default function SupportAdminPanel() {
   const [sending, setSending] = useState(false)
   const [loadingMessages, setLoadingMessages] = useState(false)
   const [hoveredId, setHoveredId] = useState<string | null>(null)
+  const [editingSubject, setEditingSubject] = useState<string | null>(null)
+  const [subjectDraft, setSubjectDraft] = useState('')
 
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
@@ -299,6 +301,26 @@ export default function SupportAdminPanel() {
     } catch {
       // ignore
     }
+  }
+
+  // ── Edit subject ─────────────────────────────────────────────────────────────
+
+  const startEditSubject = (conv: ConversationWithUser) => {
+    setEditingSubject(conv.id)
+    setSubjectDraft(conv.subject ?? '')
+  }
+
+  const saveSubject = async (convId: string) => {
+    const subject = subjectDraft.trim() || null
+    setConversations(prev => prev.map(c => c.id === convId ? { ...c, subject } : c))
+    setEditingSubject(null)
+    try {
+      await fetch(`/api/admin/support/conversations/${convId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ subject }),
+      })
+    } catch { /* ignore */ }
   }
 
   // ── Delete conversation ───────────────────────────────────────────────────────
@@ -703,6 +725,32 @@ export default function SupportAdminPanel() {
                 <strong style={{ color: '#444' }}>Seit:</strong>{' '}
                 {formatDate(selectedConversation.createdAt)}
               </span>
+              {/* Editable subject/title */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                <strong style={{ color: '#444' }}>Titel:</strong>
+                {editingSubject === selectedConversation.id ? (
+                  <input
+                    autoFocus
+                    value={subjectDraft}
+                    onChange={e => setSubjectDraft(e.target.value)}
+                    onBlur={() => saveSubject(selectedConversation.id)}
+                    onKeyDown={e => {
+                      if (e.key === 'Enter') saveSubject(selectedConversation.id)
+                      if (e.key === 'Escape') setEditingSubject(null)
+                    }}
+                    placeholder="Kein Titel"
+                    style={{ border: 'none', outline: 'none', fontSize: 12, color: '#111', background: 'transparent', borderBottom: '1px solid #999', minWidth: 80, maxWidth: 180 }}
+                  />
+                ) : (
+                  <button
+                    onClick={() => startEditSubject(selectedConversation)}
+                    title="Titel bearbeiten"
+                    style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', fontSize: 12, color: selectedConversation.subject ? '#444' : '#BBB', fontFamily: 'inherit', textDecoration: 'underline dotted' }}
+                  >
+                    {selectedConversation.subject ?? 'Kein Titel'}
+                  </button>
+                )}
+              </div>
               <Link
                 href={`/admin/users/${selectedConversation.userId}`}
                 style={{ color: '#3B82F6', textDecoration: 'none', fontWeight: 500 }}

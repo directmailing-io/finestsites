@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getUserFromRequest } from '@/lib/auth/server'
 import { db } from '@/lib/db'
 import { users, supportConversations, supportMessages } from '@/lib/db/schema'
-import { eq, desc, inArray } from 'drizzle-orm'
+import { eq, desc, inArray, and } from 'drizzle-orm'
 
 async function checkAdmin(req: Request) {
   const user = await getUserFromRequest(req)
@@ -21,6 +21,7 @@ export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url)
   const statusParam = searchParams.get('status')
   const q = searchParams.get('q')
+  const userIdParam = searchParams.get('userId')
 
   try {
     // Get conversations with user info
@@ -44,9 +45,16 @@ export async function GET(req: NextRequest) {
       .from(supportConversations)
       .leftJoin(users, eq(supportConversations.userId, users.id))
       .where(
-        statusParam && statusParam !== 'all'
-          ? inArray(supportConversations.status, statusParam.split(',') as string[])
-          : undefined
+        (() => {
+          const conditions = []
+          if (statusParam && statusParam !== 'all') {
+            conditions.push(inArray(supportConversations.status, statusParam.split(',') as string[]))
+          }
+          if (userIdParam) {
+            conditions.push(eq(supportConversations.userId, userIdParam))
+          }
+          return conditions.length === 0 ? undefined : conditions.length === 1 ? conditions[0] : and(...conditions)
+        })()
       )
       .orderBy(desc(supportConversations.lastMessageAt))
       .limit(100)

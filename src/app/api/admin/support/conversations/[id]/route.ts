@@ -33,16 +33,20 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   if (!admin) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const { id } = await params
-  const { status } = await req.json()
+  const body = await req.json()
 
-  if (!['open', 'closed', 'waiting'].includes(status)) {
+  if (body.status !== undefined && !['open', 'closed', 'waiting'].includes(body.status)) {
     return NextResponse.json({ error: 'Invalid status' }, { status: 400 })
   }
+
+  const set: { status?: string; subject?: string | null; updatedAt: Date } = { updatedAt: new Date() }
+  if (body.status !== undefined) set.status = body.status
+  if ('subject' in body) set.subject = body.subject ?? null
 
   try {
     await db
       .update(supportConversations)
-      .set({ status, updatedAt: new Date() })
+      .set(set)
       .where(eq(supportConversations.id, id))
 
     return NextResponse.json({ ok: true })

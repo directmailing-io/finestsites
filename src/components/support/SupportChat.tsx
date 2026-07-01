@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 
-// ─── Types ───────────────────────────────────────────────────────────────────
+// ─── Types ────────────────────────────────────────────────────────────────────
 
 interface Message {
   id: string
@@ -18,9 +18,11 @@ interface Message {
 interface ConversationSummary {
   id: string
   status: string
+  subject: string | null
   unreadByUser: number
   lastMessageAt: string | null
-  lastMessage: { content: string; contentType: string; senderType: string; createdAt?: string } | null
+  createdAt: string
+  lastMessage: { content: string; contentType: string; senderType: string } | null
 }
 
 interface GifResult {
@@ -30,14 +32,14 @@ interface GifResult {
   url: string
 }
 
-// ─── Constants ───────────────────────────────────────────────────────────────
+// ─── Constants ────────────────────────────────────────────────────────────────
 
 const EMOJI_GROUPS = [
-  { label: '😀 Gesichter', emojis: ['😀','😃','😄','😁','😆','😅','😂','🤣','😊','😇','🥰','😍','🤩','😘','😗','😙','😚','🙂','🤗','🤔','🤐','😐','😑','😶','😏','😒','🙄','😬','🤥','😌','😔','😪','🤤','😴'] },
-  { label: '👍 Gesten', emojis: ['👍','👎','👏','🙌','🤝','👊','✊','🤛','🤜','🤞','✌️','🤟','🤘','👌','🤌','🤏','👈','👉','👆','👇','☝️','✋','🤚','🖐','🖖','💪','🦾','🦿'] },
-  { label: '❤️ Herzen', emojis: ['❤️','🧡','💛','💚','💙','💜','🖤','🤍','🤎','💔','❤️‍🔥','❤️‍🩹','💕','💞','💓','💗','💖','💘','💝','💟','☮️','✝️','☯️','🕉️','🛐'] },
-  { label: '🎉 Feiern', emojis: ['🎉','🎊','🥳','🎈','🎁','🎀','🎗️','🎟️','🎫','🏆','🥇','🥈','🥉','🎖️','🏅','🎯','🎪','🤹','🎭','🎨','🎬','🎤','🎵','🎶','🎸','🎹','🎺','🎻'] },
-  { label: '✅ Symbole', emojis: ['✅','❌','⭕','🔴','🟠','🟡','🟢','🔵','🟣','⚫','⚪','🔶','🔷','🔸','🔹','🔺','🔻','💠','🔘','🔲','🔳','⬛','⬜','▪️','▫️','◾','◽'] },
+  { label: 'Gesichter', emojis: ['😀','😃','😄','😁','😆','😅','😂','🤣','😊','😇','🥰','😍','😘','🙂','🤗','🤔','😐','😶','😏','😒','🙄','😬','😌','😔','😴','🤤','😪','😵'] },
+  { label: 'Gesten', emojis: ['👍','👎','👏','🙌','🤝','👊','✊','🤞','✌️','🤟','👌','🤌','👈','👉','👆','👇','✋','🤚','🖐','💪','🦾'] },
+  { label: 'Herzen', emojis: ['❤️','🧡','💛','💚','💙','💜','🖤','🤍','🤎','💔','❤️‍🔥','💕','💞','💓','💗','💖','💘','💝'] },
+  { label: 'Feiern', emojis: ['🎉','🎊','🥳','🎈','🎁','🏆','🥇','🎯','🎨','🎤','🎵','🎶','✅','⭐','🔥','💯','🚀','🌟','💡','🎉'] },
+  { label: 'Symbole', emojis: ['✅','❌','⭕','🔴','🟠','🟡','🟢','🔵','🟣','⚫','⚪','💠','🔶','🔷','🔸','🔹','▪️','▫️','➡️','⬅️','⬆️','⬇️'] },
 ]
 
 const GLOBAL_STYLES = `
@@ -68,13 +70,22 @@ const GLOBAL_STYLES = `
   max-width: 80%; font-size: 14px; line-height: 1.5; word-break: break-word;
 }
 .fs-msg-bubble-admin {
-  align-self: flex-start; background: #F7F7F7; color: #111;
+  align-self: flex-start; background: #F0F0F0; color: #111;
   border-radius: 18px 18px 18px 4px; padding: 10px 14px;
   max-width: 80%; font-size: 14px; line-height: 1.5; word-break: break-word;
 }
+.fs-toolbar-btn {
+  width: 32px; height: 32px; border: none; border-radius: 8px;
+  background: transparent; cursor: pointer; display: flex;
+  align-items: center; justify-content: center; color: #888;
+  transition: background 0.12s, color 0.12s; flex-shrink: 0;
+}
+.fs-toolbar-btn:hover, .fs-toolbar-btn.active { background: #F0F0F0; color: #111; }
 .fs-support-messages::-webkit-scrollbar { width: 4px; }
 .fs-support-messages::-webkit-scrollbar-track { background: transparent; }
 .fs-support-messages::-webkit-scrollbar-thumb { background: #E0E0E0; border-radius: 4px; }
+.fs-conv-row { padding: 12px 16px; cursor: pointer; border-bottom: 1px solid #F5F5F5; border-radius: 8px; transition: background 0.1s; }
+.fs-conv-row:hover { background: #FAFAFA; }
 @media (max-width: 640px) {
   .fs-support-panel {
     bottom: 0; right: 0; left: 0; border-radius: 20px 20px 0 0;
@@ -83,7 +94,7 @@ const GLOBAL_STYLES = `
 }
 `
 
-// ─── Helpers ─────────────────────────────────────────────────────────────────
+// ─── Helpers ──────────────────────────────────────────────────────────────────
 
 function formatTime(iso: string): string {
   const d = new Date(iso)
@@ -98,7 +109,7 @@ function formatTime(iso: string): string {
 function truncatePreview(msg: ConversationSummary['lastMessage']): string {
   if (!msg) return 'Noch keine Nachrichten'
   if (msg.contentType === 'image') return '📷 Bild'
-  if (msg.contentType === 'gif') return 'GIF'
+  if (msg.contentType === 'gif') return '🎬 GIF'
   return msg.content.length > 45 ? msg.content.slice(0, 45) + '…' : msg.content
 }
 
@@ -114,41 +125,278 @@ function statusLabel(status: string): string {
   return 'Geschlossen'
 }
 
-// ─── SVG Icons ───────────────────────────────────────────────────────────────
+function convTitle(conv: ConversationSummary): string {
+  if (conv.subject) return conv.subject
+  const d = new Date(conv.createdAt)
+  const months = ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember']
+  return `Chat vom ${d.getDate()}. ${months[d.getMonth()]} ${d.getFullYear()}`
+}
 
-function ChatIcon() {
+// ─── SVG Icons ────────────────────────────────────────────────────────────────
+
+function ChatBubbleIcon() {
   return (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path d="M20 2H4C2.9 2 2 2.9 2 4V22L6 18H20C21.1 18 22 17.1 22 16V4C22 2.9 21.1 2 20 2Z" fill="white" />
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="white" aria-hidden="true">
+      <path d="M20 2H4C2.9 2 2 2.9 2 4v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/>
     </svg>
   )
 }
 
-function CloseIcon({ size = 14, color = 'white' }: { size?: number; color?: string }) {
+function XIcon({ size = 14, color = 'white' }: { size?: number; color?: string }) {
   return (
     <svg width={size} height={size} viewBox="0 0 14 14" fill="none" aria-hidden="true">
-      <path d="M1 1L13 13M13 1L1 13" stroke={color} strokeWidth="2" strokeLinecap="round" />
+      <path d="M1 1L13 13M13 1L1 13" stroke={color} strokeWidth="2" strokeLinecap="round"/>
     </svg>
   )
 }
 
-function SendIcon({ color = 'white' }: { color?: string }) {
+function ArrowUpIcon({ color = 'white' }: { color?: string }) {
   return (
     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-      <path d="M8 13V3M8 3L4 7M8 3L12 7" stroke={color} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M8 13V3M8 3L4 7M8 3L12 7" stroke={color} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"/>
     </svg>
   )
 }
 
-function BackIcon() {
+function ChevronLeftIcon() {
   return (
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-      <path d="M12 4L6 10L12 16" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+      <path d="M11 4L6 9L11 14" stroke="white" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"/>
     </svg>
   )
 }
 
-// ─── Main Component ───────────────────────────────────────────────────────────
+function SmileIcon({ active }: { active: boolean }) {
+  return (
+    <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke={active ? '#111' : '#888'} strokeWidth="1.75" aria-hidden="true">
+      <circle cx="12" cy="12" r="10"/>
+      <path d="M8 14s1.5 2 4 2 4-2 4-2" strokeLinecap="round"/>
+      <circle cx="9" cy="9.5" r="1" fill={active ? '#111' : '#888'} stroke="none"/>
+      <circle cx="15" cy="9.5" r="1" fill={active ? '#111' : '#888'} stroke="none"/>
+    </svg>
+  )
+}
+
+function ImageIcon({ active }: { active?: boolean }) {
+  const c = active ? '#111' : '#888'
+  return (
+    <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.75" aria-hidden="true">
+      <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+      <circle cx="8.5" cy="8.5" r="1.5" fill={c} stroke="none"/>
+      <polyline points="21 15 16 10 5 21" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  )
+}
+
+// ─── Standalone sub-components (OUTSIDE main component to preserve focus) ─────
+
+function EmojiPicker({ onSelect }: { onSelect: (emoji: string) => void }) {
+  const [activeTab, setActiveTab] = useState(0)
+  return (
+    <div style={{
+      position: 'absolute', bottom: 'calc(100% + 6px)', left: 8,
+      background: '#fff', border: '1px solid #E8E8E8',
+      borderRadius: 16, padding: '10px 10px 12px',
+      boxShadow: '0 8px 32px rgba(0,0,0,0.13)',
+      width: 288, zIndex: 200,
+    }}>
+      {/* Tab bar */}
+      <div style={{ display: 'flex', gap: 4, marginBottom: 10, overflowX: 'auto' }}>
+        {EMOJI_GROUPS.map((g, i) => (
+          <button
+            key={g.label}
+            onClick={() => setActiveTab(i)}
+            style={{
+              fontSize: 11, fontWeight: 600, whiteSpace: 'nowrap',
+              padding: '3px 9px', borderRadius: 100, border: 'none',
+              cursor: 'pointer', fontFamily: 'inherit',
+              background: activeTab === i ? '#111' : '#F0F0F0',
+              color: activeTab === i ? '#fff' : '#666',
+              transition: 'background 0.12s',
+            }}
+          >
+            {g.label}
+          </button>
+        ))}
+      </div>
+      {/* Emoji grid */}
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+        {EMOJI_GROUPS[activeTab].emojis.map(emoji => (
+          <button
+            key={emoji}
+            onMouseDown={e => { e.preventDefault(); onSelect(emoji) }}
+            style={{
+              width: 34, height: 34, border: 'none',
+              background: 'transparent', cursor: 'pointer',
+              fontSize: 20, display: 'flex', alignItems: 'center',
+              justifyContent: 'center', borderRadius: 6,
+              transition: 'background 0.1s',
+            }}
+            onMouseEnter={e => (e.currentTarget.style.background = '#F5F5F5')}
+            onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+          >
+            {emoji}
+          </button>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function GifSearchPanel({ onSelect }: { onSelect: (gif: GifResult) => void }) {
+  const [query, setQuery] = useState('')
+  const [gifs, setGifs] = useState<GifResult[]>([])
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(false)
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    // Small delay so panel animation finishes before focusing
+    const t = setTimeout(() => inputRef.current?.focus(), 50)
+    return () => clearTimeout(t)
+  }, [])
+
+  function handleChange(q: string) {
+    setQuery(q)
+    setError(false)
+    if (debounceRef.current) clearTimeout(debounceRef.current)
+    if (!q.trim()) { setGifs([]); return }
+    debounceRef.current = setTimeout(async () => {
+      setLoading(true)
+      try {
+        const res = await fetch(`/api/support/gifs?q=${encodeURIComponent(q.trim())}`)
+        if (!res.ok) throw new Error('failed')
+        const data = await res.json()
+        setGifs(data.gifs ?? [])
+        if (!data.gifs?.length) setError(false)
+      } catch {
+        setGifs([])
+        setError(true)
+      } finally {
+        setLoading(false)
+      }
+    }, 450)
+  }
+
+  return (
+    <div style={{
+      position: 'absolute', bottom: 'calc(100% + 6px)', left: 8,
+      background: '#fff', border: '1px solid #E8E8E8',
+      borderRadius: 16, padding: 12,
+      boxShadow: '0 8px 32px rgba(0,0,0,0.13)',
+      width: 300, zIndex: 200,
+    }}>
+      <input
+        ref={inputRef}
+        type="text"
+        value={query}
+        onChange={e => handleChange(e.target.value)}
+        placeholder="GIF suchen…"
+        style={{
+          width: '100%', border: '1.5px solid #E0E0E0', borderRadius: 10,
+          padding: '8px 12px', fontSize: 13, outline: 'none',
+          fontFamily: 'inherit', boxSizing: 'border-box', color: '#111',
+          transition: 'border-color 0.15s',
+        }}
+        onFocus={e => (e.currentTarget.style.borderColor = '#111')}
+        onBlur={e => (e.currentTarget.style.borderColor = '#E0E0E0')}
+      />
+      {loading && (
+        <div style={{ fontSize: 12, color: '#999', marginTop: 10, textAlign: 'center', padding: '8px 0' }}>
+          Suche nach GIFs…
+        </div>
+      )}
+      {!loading && error && (
+        <div style={{ fontSize: 12, color: '#EF4444', marginTop: 10, textAlign: 'center', padding: '8px 0' }}>
+          GIF-Suche nicht verfügbar
+        </div>
+      )}
+      {!loading && !error && query && gifs.length === 0 && (
+        <div style={{ fontSize: 12, color: '#999', marginTop: 10, textAlign: 'center', padding: '8px 0' }}>
+          Keine GIFs gefunden
+        </div>
+      )}
+      {!query && !loading && (
+        <div style={{ fontSize: 12, color: '#BBB', marginTop: 8, textAlign: 'center' }}>
+          Stichwort eingeben um GIFs zu suchen
+        </div>
+      )}
+      {gifs.length > 0 && (
+        <div style={{
+          display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)',
+          gap: 6, marginTop: 10, maxHeight: 220, overflowY: 'auto',
+        }}>
+          {gifs.map(gif => (
+            <div
+              key={gif.id}
+              onClick={() => onSelect(gif)}
+              style={{ cursor: 'pointer', borderRadius: 8, overflow: 'hidden', lineHeight: 0 }}
+            >
+              <img
+                src={gif.previewUrl}
+                alt={gif.title}
+                style={{ width: '100%', display: 'block', borderRadius: 8 }}
+                loading="lazy"
+              />
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
+function ConvRow({ conv, onClick }: { conv: ConversationSummary; onClick: () => void }) {
+  const [hovered, setHovered] = useState(false)
+  return (
+    <div
+      className="fs-conv-row"
+      onClick={onClick}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{ background: hovered ? '#FAFAFA' : 'transparent' }}
+    >
+      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
+        <div style={{
+          width: 8, height: 8, borderRadius: '50%',
+          background: statusColor(conv.status),
+          marginTop: 5, flexShrink: 0,
+        }} />
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
+            <span style={{ fontSize: 13, fontWeight: 600, color: '#111', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              {convTitle(conv)}
+            </span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 5, flexShrink: 0 }}>
+              {conv.lastMessageAt && (
+                <span style={{ fontSize: 11, color: '#999' }}>{formatTime(conv.lastMessageAt)}</span>
+              )}
+              {(conv.unreadByUser ?? 0) > 0 && (
+                <div style={{
+                  width: 18, height: 18, borderRadius: '50%',
+                  background: '#EF4444', color: '#fff',
+                  fontSize: 10, fontWeight: 700,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                }}>
+                  {conv.unreadByUser > 9 ? '9+' : conv.unreadByUser}
+                </div>
+              )}
+            </div>
+          </div>
+          <div style={{ fontSize: 12, color: '#888', marginTop: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            {truncatePreview(conv.lastMessage)}
+          </div>
+          <span style={{ fontSize: 10, color: statusColor(conv.status), fontWeight: 600, marginTop: 3, display: 'inline-block' }}>
+            {statusLabel(conv.status)}
+          </span>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ─── Main Component ────────────────────────────────────────────────────────────
 
 export default function SupportChat() {
   const [open, setOpen] = useState(false)
@@ -160,11 +408,8 @@ export default function SupportChat() {
   const [input, setInput] = useState('')
   const [sending, setSending] = useState(false)
   const [uploading, setUploading] = useState(false)
-  const [showEmojiPicker, setShowEmojiPicker] = useState(false)
-  const [showGifSearch, setShowGifSearch] = useState(false)
-  const [gifQuery, setGifQuery] = useState('')
-  const [gifs, setGifs] = useState<GifResult[]>([])
-  const [loadingGifs, setLoadingGifs] = useState(false)
+  const [showEmoji, setShowEmoji] = useState(false)
+  const [showGif, setShowGif] = useState(false)
   const [totalUnread, setTotalUnread] = useState(0)
 
   const messagesEndRef = useRef<HTMLDivElement>(null)
@@ -173,7 +418,6 @@ export default function SupportChat() {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const lastMsgTimeRef = useRef<string | null>(null)
   const isComposingRef = useRef(false)
-  const gifDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
   // ── Fetch conversations ──────────────────────────────────────────────────
@@ -184,13 +428,11 @@ export default function SupportChat() {
       const data = await res.json()
       const convs: ConversationSummary[] = data.conversations ?? []
       setConversations(convs)
-      setTotalUnread(convs.reduce((sum, c) => sum + (c.unreadByUser ?? 0), 0))
+      setTotalUnread(convs.reduce((s, c) => s + (c.unreadByUser ?? 0), 0))
     } catch { /* ignore */ }
   }, [])
 
-  useEffect(() => {
-    fetchConversations()
-  }, [fetchConversations])
+  useEffect(() => { fetchConversations() }, [fetchConversations])
 
   // ── Auto-scroll ──────────────────────────────────────────────────────────
 
@@ -198,14 +440,13 @@ export default function SupportChat() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
 
-  // ── Polling: messages ────────────────────────────────────────────────────
+  // ── Message polling ──────────────────────────────────────────────────────
 
   useEffect(() => {
     if (!open || screen !== 'chat' || !activeConvId) {
       if (pollRef.current) { clearInterval(pollRef.current); pollRef.current = null }
       return
     }
-
     pollRef.current = setInterval(async () => {
       try {
         const since = lastMsgTimeRef.current ? `&since=${encodeURIComponent(lastMsgTimeRef.current)}` : ''
@@ -214,10 +455,10 @@ export default function SupportChat() {
         if (data.messages?.length > 0) {
           setMessages(prev => {
             const ids = new Set(prev.map((m: Message) => m.id))
-            const newMsgs = (data.messages as Message[]).filter(m => !ids.has(m.id))
-            if (newMsgs.length === 0) return prev
+            const fresh = (data.messages as Message[]).filter(m => !ids.has(m.id))
+            if (!fresh.length) return prev
             lastMsgTimeRef.current = data.messages[data.messages.length - 1].createdAt
-            return [...prev, ...newMsgs]
+            return [...prev, ...fresh]
           })
         }
         if (data.conversationStatus && data.conversationStatus !== activeConvStatus) {
@@ -225,17 +466,13 @@ export default function SupportChat() {
         }
       } catch { /* ignore */ }
     }, 3000)
-
     return () => { if (pollRef.current) { clearInterval(pollRef.current); pollRef.current = null } }
   }, [open, screen, activeConvId, activeConvStatus])
 
-  // ── Polling: conversation list ───────────────────────────────────────────
+  // ── Conversation list polling ────────────────────────────────────────────
 
   useEffect(() => {
-    if (!open) {
-      if (convPollRef.current) { clearInterval(convPollRef.current); convPollRef.current = null }
-      return
-    }
+    if (!open) { if (convPollRef.current) { clearInterval(convPollRef.current); convPollRef.current = null } return }
     convPollRef.current = setInterval(fetchConversations, 10000)
     return () => { if (convPollRef.current) { clearInterval(convPollRef.current); convPollRef.current = null } }
   }, [open, fetchConversations])
@@ -245,24 +482,21 @@ export default function SupportChat() {
   async function openConversation(conv: ConversationSummary) {
     setConversations(prev => prev.map(c => c.id === conv.id ? { ...c, unreadByUser: 0 } : c))
     setTotalUnread(prev => Math.max(0, prev - (conv.unreadByUser ?? 0)))
-
     setActiveConvId(conv.id)
     setActiveConvStatus(conv.status)
     setScreen('chat')
     setMessages([])
     lastMsgTimeRef.current = null
-
+    setShowEmoji(false)
+    setShowGif(false)
     try {
       const res = await fetch(`/api/support/messages?conversationId=${conv.id}`)
       const data = await res.json()
       const msgs: Message[] = data.messages ?? []
       setMessages(msgs)
-      if (msgs.length > 0) {
-        lastMsgTimeRef.current = msgs[msgs.length - 1].createdAt
-      }
+      if (msgs.length > 0) lastMsgTimeRef.current = msgs[msgs.length - 1].createdAt
       if (data.conversationStatus) setActiveConvStatus(data.conversationStatus)
     } catch { /* ignore */ }
-
     fetch(`/api/support/conversation/${conv.id}/read`, { method: 'PATCH' }).catch(() => {})
   }
 
@@ -279,22 +513,16 @@ export default function SupportChat() {
     setSending(true)
     const tempId = `temp-${Date.now()}`
     const tempMsg: Message = {
-      id: tempId,
-      conversationId: activeConvId ?? '',
-      senderType: 'user',
-      senderId: null,
-      content,
-      contentType: contentType as Message['contentType'],
-      mediaUrl: mediaUrl ?? null,
-      createdAt: new Date().toISOString(),
+      id: tempId, conversationId: activeConvId ?? '',
+      senderType: 'user', senderId: null,
+      content, contentType: contentType as Message['contentType'],
+      mediaUrl: mediaUrl ?? null, createdAt: new Date().toISOString(),
     }
     setMessages(prev => [...prev, tempMsg])
-    if (contentType === 'text') setInput('')
-    if (textareaRef.current) { textareaRef.current.style.height = 'auto' }
+    if (contentType === 'text') { setInput(''); if (textareaRef.current) textareaRef.current.style.height = 'auto' }
 
     try {
-      let data: { message?: Message; conversation?: ConversationSummary }
-
+      let data: { message?: Message; conversation?: ConversationSummary & { status: string } }
       if (!activeConvId || screen === 'new') {
         const res = await fetch('/api/support/conversation', {
           method: 'POST',
@@ -303,13 +531,13 @@ export default function SupportChat() {
         })
         data = await res.json()
         if (data.conversation) {
-          const newConv = data.conversation
-          setActiveConvId(newConv.id)
-          setActiveConvStatus(newConv.status)
+          const c = data.conversation
+          setActiveConvId(c.id)
+          setActiveConvStatus(c.status)
           setScreen('chat')
           setConversations(prev => [{
-            ...newConv,
-            lastMessage: { content, contentType, senderType: 'user', createdAt: new Date().toISOString() },
+            ...c, unreadByUser: 0,
+            lastMessage: { content, contentType, senderType: 'user' },
           }, ...prev])
         }
       } else {
@@ -320,7 +548,6 @@ export default function SupportChat() {
         })
         data = await res.json()
       }
-
       if (data.message) {
         setMessages(prev => prev.map(m => m.id === tempId ? data.message! : m))
         lastMsgTimeRef.current = data.message.createdAt
@@ -338,12 +565,11 @@ export default function SupportChat() {
     const file = e.target.files?.[0]
     if (!file) return
     e.target.value = ''
-
     setUploading(true)
     try {
-      const formData = new FormData()
-      formData.append('file', file)
-      const res = await fetch('/api/support/upload', { method: 'POST', body: formData })
+      const fd = new FormData()
+      fd.append('file', file)
+      const res = await fetch('/api/support/upload', { method: 'POST', body: fd })
       if (!res.ok) { alert('Upload fehlgeschlagen'); return }
       const { url } = await res.json()
       await sendMessage({ contentType: 'image', mediaUrl: url, content: '' })
@@ -351,27 +577,8 @@ export default function SupportChat() {
     finally { setUploading(false) }
   }
 
-  // ── GIF search ───────────────────────────────────────────────────────────
-
-  function handleGifQueryChange(q: string) {
-    setGifQuery(q)
-    if (gifDebounceRef.current) clearTimeout(gifDebounceRef.current)
-    gifDebounceRef.current = setTimeout(async () => {
-      if (!q.trim()) { setGifs([]); return }
-      setLoadingGifs(true)
-      try {
-        const res = await fetch(`/api/support/gifs?q=${encodeURIComponent(q)}`)
-        const data = await res.json()
-        setGifs(data.gifs ?? [])
-      } catch { setGifs([]) }
-      finally { setLoadingGifs(false) }
-    }, 400)
-  }
-
-  async function sendGif(gif: GifResult) {
-    setShowGifSearch(false)
-    setGifQuery('')
-    setGifs([])
+  async function handleGifSelect(gif: GifResult) {
+    setShowGif(false)
     await sendMessage({ contentType: 'gif', mediaUrl: gif.url, content: '' })
   }
 
@@ -391,599 +598,26 @@ export default function SupportChat() {
     el.style.height = `${Math.min(el.scrollHeight, 90)}px`
   }
 
-  // ── Toggle panel ─────────────────────────────────────────────────────────
-
   function toggleOpen() {
-    if (open) {
-      setOpen(false)
-      setShowEmojiPicker(false)
-      setShowGifSearch(false)
-    } else {
-      setOpen(true)
-      setScreen('list')
-    }
+    if (open) { setOpen(false); setShowEmoji(false); setShowGif(false) }
+    else { setOpen(true); setScreen('list') }
   }
 
-  // ─── Render helpers ───────────────────────────────────────────────────────
+  // ── Derived ──────────────────────────────────────────────────────────────
 
-  const canSend = (input.trim().length > 0 || false) && !sending && !uploading
+  const canSend = input.trim().length > 0 && !sending && !uploading
   const isClosed = activeConvStatus === 'closed'
 
-  // ── Header ───────────────────────────────────────────────────────────────
-
-  function PanelHeader() {
-    const isChat = screen === 'chat'
-    const isNew = screen === 'new'
-
-    return (
-      <div style={{
-        minHeight: isChat ? 60 : 72,
-        background: '#111',
-        borderRadius: '20px 20px 0 0',
-        padding: isChat ? '0 16px' : '16px 20px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        flexShrink: 0,
-      }}>
-        {isChat || isNew ? (
-          /* Back button side */
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <button
-              onClick={() => {
-                setScreen('list')
-                fetchConversations()
-                setShowEmojiPicker(false)
-                setShowGifSearch(false)
-              }}
-              style={{
-                width: 32, height: 32, borderRadius: '50%',
-                background: 'rgba(255,255,255,0.1)', border: 'none',
-                cursor: 'pointer', display: 'flex', alignItems: 'center',
-                justifyContent: 'center', flexShrink: 0,
-              }}
-              aria-label="Zurück"
-            >
-              <BackIcon />
-            </button>
-            {isChat && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                <span style={{ color: '#fff', fontSize: 14, fontWeight: 600 }}>Gespräch</span>
-                <div style={{
-                  width: 8, height: 8, borderRadius: '50%',
-                  background: statusColor(activeConvStatus), flexShrink: 0,
-                }} />
-              </div>
-            )}
-            {isNew && (
-              <span style={{ color: '#fff', fontSize: 14, fontWeight: 600 }}>Neues Gespräch</span>
-            )}
-          </div>
-        ) : (
-          /* Logo side */
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <div style={{
-              width: 40, height: 40, borderRadius: '50%',
-              background: 'linear-gradient(135deg, #8060b0, #5a3d8a)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              color: '#fff', fontSize: 14, fontWeight: 700, flexShrink: 0,
-            }}>
-              FS
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-              <span style={{ color: '#fff', fontSize: 15, fontWeight: 600, lineHeight: 1 }}>Support</span>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#22C55E' }} />
-                <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.6)', lineHeight: 1 }}>Wir sind online</span>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Close button */}
-        <button
-          onClick={() => { setOpen(false); setShowEmojiPicker(false); setShowGifSearch(false) }}
-          style={{
-            width: 32, height: 32, borderRadius: '50%',
-            background: 'rgba(255,255,255,0.1)', border: 'none',
-            cursor: 'pointer', display: 'flex', alignItems: 'center',
-            justifyContent: 'center', flexShrink: 0,
-          }}
-          aria-label="Chat schließen"
-        >
-          <CloseIcon />
-        </button>
-      </div>
-    )
-  }
-
-  // ── Welcome card ─────────────────────────────────────────────────────────
-
-  function WelcomeCard() {
-    return (
-      <div style={{
-        flex: 1, display: 'flex', flexDirection: 'column',
-        alignItems: 'center', justifyContent: 'center',
-        textAlign: 'center', padding: '32px 24px',
-      }}>
-        <div style={{
-          width: 64, height: 64, borderRadius: '50%',
-          background: '#F5F0FF', display: 'flex',
-          alignItems: 'center', justifyContent: 'center',
-          fontSize: 28, userSelect: 'none',
-        }}>
-          👋
-        </div>
-        <p style={{ fontSize: 18, fontWeight: 700, color: '#111', margin: '12px 0 0 0', lineHeight: 1.3 }}>
-          Wie können wir dir helfen?
-        </p>
-        <p style={{ fontSize: 14, color: '#666', margin: '8px 0 0 0', maxWidth: 240, lineHeight: 1.5 }}>
-          Unser Team antwortet normalerweise in wenigen Stunden.
-        </p>
-      </div>
-    )
-  }
-
-  // ── Input bar (used in NEW and CHAT) ─────────────────────────────────────
-
-  function InputBar() {
-    return (
-      <div style={{ flexShrink: 0, borderTop: '1px solid #F0F0F0', position: 'relative' }}>
-        {/* Emoji picker */}
-        {showEmojiPicker && (
-          <div style={{
-            position: 'absolute', bottom: '100%', left: 0,
-            background: '#fff', border: '1px solid #E8E8E8',
-            borderRadius: 16, padding: 12,
-            boxShadow: '0 8px 32px rgba(0,0,0,0.12)',
-            width: 280, zIndex: 100, maxHeight: 280, overflowY: 'auto',
-          }}>
-            {EMOJI_GROUPS.map(group => (
-              <div key={group.label} style={{ marginBottom: 10 }}>
-                <div style={{ fontSize: 10, color: '#999', marginBottom: 4, fontWeight: 600 }}>{group.label}</div>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
-                  {group.emojis.map(emoji => (
-                    <button
-                      key={emoji}
-                      onClick={() => setInput(prev => prev + emoji)}
-                      style={{
-                        width: 28, height: 28, border: 'none',
-                        background: 'transparent', cursor: 'pointer',
-                        fontSize: 18, display: 'flex', alignItems: 'center',
-                        justifyContent: 'center', borderRadius: 6,
-                        padding: 0,
-                      }}
-                      title={emoji}
-                    >
-                      {emoji}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {/* GIF search panel */}
-        {showGifSearch && (
-          <div style={{
-            position: 'absolute', bottom: '100%', left: 0,
-            background: '#fff', border: '1px solid #E8E8E8',
-            borderRadius: 16, padding: 12,
-            boxShadow: '0 8px 32px rgba(0,0,0,0.12)',
-            width: 300, maxHeight: 320, overflowY: 'auto', zIndex: 100,
-          }}>
-            <input
-              type="text"
-              value={gifQuery}
-              onChange={e => handleGifQueryChange(e.target.value)}
-              placeholder="GIF suchen..."
-              style={{
-                width: '100%', border: '1px solid #E8E8E8',
-                borderRadius: 8, padding: '8px 10px',
-                fontSize: 13, outline: 'none',
-                fontFamily: 'inherit', boxSizing: 'border-box',
-              }}
-            />
-            {loadingGifs && (
-              <div style={{ fontSize: 13, color: '#999', marginTop: 8, textAlign: 'center' }}>Suche...</div>
-            )}
-            {!loadingGifs && gifQuery && gifs.length === 0 && (
-              <div style={{ fontSize: 13, color: '#999', marginTop: 8, textAlign: 'center' }}>Keine GIFs gefunden</div>
-            )}
-            {gifs.length > 0 && (
-              <div style={{
-                display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)',
-                gap: 6, marginTop: 8,
-              }}>
-                {gifs.map(gif => (
-                  <img
-                    key={gif.id}
-                    src={gif.previewUrl}
-                    alt={gif.title}
-                    style={{ width: '100%', borderRadius: 8, cursor: 'pointer', display: 'block' }}
-                    onClick={() => sendGif(gif)}
-                  />
-                ))}
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Toolbar */}
-        <div style={{
-          height: 40, padding: '0 12px',
-          display: 'flex', alignItems: 'center', gap: 8,
-          borderTop: 'none',
-        }}>
-          {/* Emoji button */}
-          <button
-            onClick={() => { setShowEmojiPicker(p => !p); setShowGifSearch(false) }}
-            title="Emoji"
-            style={{
-              width: 32, height: 32, border: 'none',
-              background: 'transparent', cursor: 'pointer',
-              fontSize: 18, display: 'flex', alignItems: 'center',
-              justifyContent: 'center', borderRadius: 6,
-              color: showEmojiPicker ? '#111' : '#666',
-            }}
-          >
-            😀
-          </button>
-
-          {/* Image upload button */}
-          <button
-            onClick={() => fileInputRef.current?.click()}
-            title="Bild hochladen"
-            disabled={uploading}
-            style={{
-              width: 32, height: 32, border: 'none',
-              background: 'transparent', cursor: uploading ? 'default' : 'pointer',
-              fontSize: 18, display: 'flex', alignItems: 'center',
-              justifyContent: 'center', borderRadius: 6, color: '#666',
-              opacity: uploading ? 0.5 : 1,
-            }}
-          >
-            📷
-          </button>
-
-          {/* GIF button */}
-          <button
-            onClick={() => { setShowGifSearch(p => !p); setShowEmojiPicker(false) }}
-            title="GIF senden"
-            style={{
-              height: 24, border: `1px solid ${showGifSearch ? '#888' : '#CCC'}`,
-              background: 'transparent', cursor: 'pointer',
-              fontSize: 11, fontWeight: 700, borderRadius: 6,
-              padding: '2px 5px', color: showGifSearch ? '#111' : '#666',
-              fontFamily: 'inherit', lineHeight: 1,
-            }}
-          >
-            GIF
-          </button>
-
-          {/* Upload indicator */}
-          {uploading && (
-            <span style={{ fontSize: 12, color: '#999', marginLeft: 4 }}>Lade hoch...</span>
-          )}
-        </div>
-
-        {/* Textarea + send */}
-        <div style={{
-          padding: '0 16px 10px',
-          display: 'flex', alignItems: 'flex-end', gap: 8,
-        }}>
-          <textarea
-            ref={textareaRef}
-            value={input}
-            onChange={handleInputChange}
-            onKeyDown={handleKeyDown}
-            onCompositionStart={() => { isComposingRef.current = true }}
-            onCompositionEnd={() => { isComposingRef.current = false }}
-            placeholder="Schreib uns eine Nachricht..."
-            rows={1}
-            disabled={sending || uploading || isClosed}
-            style={{
-              flex: 1,
-              border: '1px solid #E8E8E8',
-              borderRadius: 12,
-              padding: '8px 12px',
-              fontSize: 14,
-              fontFamily: 'inherit',
-              resize: 'none',
-              outline: 'none',
-              minHeight: 36,
-              maxHeight: 90,
-              overflowY: 'auto',
-              lineHeight: 1.5,
-              color: '#111',
-              background: isClosed ? '#F9F9F9' : '#fff',
-            }}
-          />
-          <button
-            onClick={() => sendMessage()}
-            disabled={!canSend}
-            aria-label="Nachricht senden"
-            style={{
-              width: 36, height: 36, borderRadius: '50%',
-              border: 'none', cursor: canSend ? 'pointer' : 'default',
-              background: canSend ? '#111' : '#E8E8E8',
-              display: 'flex', alignItems: 'center',
-              justifyContent: 'center', flexShrink: 0,
-              transition: 'background 0.15s',
-            }}
-          >
-            <SendIcon color={canSend ? 'white' : '#999'} />
-          </button>
-        </div>
-      </div>
-    )
-  }
-
-  // ── Message bubble ────────────────────────────────────────────────────────
-
-  function MessageBubble({ msg }: { msg: Message }) {
-    const isUser = msg.senderType === 'user'
-
-    function BubbleContent() {
-      if ((msg.contentType === 'image' || msg.contentType === 'gif') && msg.mediaUrl) {
-        return (
-          <img
-            src={msg.mediaUrl}
-            alt={msg.contentType === 'gif' ? 'GIF' : 'Bild'}
-            style={{ maxWidth: '100%', maxHeight: 200, borderRadius: 12, display: 'block' }}
-          />
-        )
-      }
-      return <>{msg.content}</>
-    }
-
-    if (isUser) {
-      return (
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
-          <div className="fs-msg-bubble-user">
-            <BubbleContent />
-          </div>
-          <span style={{ fontSize: 11, color: '#999', marginTop: 3 }}>
-            {formatTime(msg.createdAt)}
-          </span>
-        </div>
-      )
-    }
-
-    return (
-      <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'flex-end', gap: 8 }}>
-        <div style={{
-          width: 24, height: 24, borderRadius: '50%',
-          background: 'linear-gradient(135deg, #8060b0, #5a3d8a)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          color: '#fff', fontSize: 9, fontWeight: 700,
-          flexShrink: 0, userSelect: 'none',
-        }}>
-          FS
-        </div>
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-          <div className="fs-msg-bubble-admin">
-            <BubbleContent />
-          </div>
-          <span style={{ fontSize: 11, color: '#999', marginTop: 3 }}>
-            {formatTime(msg.createdAt)}
-          </span>
-        </div>
-      </div>
-    )
-  }
-
-  // ── LIST screen ───────────────────────────────────────────────────────────
-
-  function ListScreen() {
-    return (
-      <>
-        <PanelHeader />
-        <div style={{ flex: 1, overflowY: 'auto', padding: '12px 12px 16px' }} className="fs-support-messages">
-          {conversations.length === 0 ? (
-            <div style={{
-              display: 'flex', flexDirection: 'column',
-              alignItems: 'center', justifyContent: 'center',
-              height: '100%', padding: '32px 24px', textAlign: 'center',
-            }}>
-              <div style={{
-                width: 64, height: 64, borderRadius: '50%',
-                background: '#F5F0FF', display: 'flex',
-                alignItems: 'center', justifyContent: 'center',
-                fontSize: 28, userSelect: 'none', marginBottom: 16,
-              }}>
-                👋
-              </div>
-              <p style={{ fontSize: 18, fontWeight: 700, color: '#111', margin: '0 0 8px 0', lineHeight: 1.3 }}>
-                Wie können wir dir helfen?
-              </p>
-              <p style={{ fontSize: 14, color: '#666', margin: '0 0 24px 0', maxWidth: 240, lineHeight: 1.5 }}>
-                Unser Team antwortet normalerweise in wenigen Stunden.
-              </p>
-              <button
-                onClick={() => { setScreen('new'); setMessages([]); setActiveConvId(null) }}
-                style={{
-                  width: '100%', padding: '13px 20px',
-                  background: '#111', color: '#fff',
-                  border: 'none', borderRadius: 12,
-                  fontSize: 14, fontWeight: 600,
-                  cursor: 'pointer', fontFamily: 'inherit',
-                }}
-              >
-                Neues Gespräch starten →
-              </button>
-            </div>
-          ) : (
-            <>
-              {/* New conversation button */}
-              <button
-                onClick={() => { setScreen('new'); setMessages([]); setActiveConvId(null) }}
-                style={{
-                  width: '100%', textAlign: 'left',
-                  border: '1px solid #E0E0E0', borderRadius: 12,
-                  padding: '12px 16px', background: '#FAFAFA',
-                  color: '#111', fontSize: 14, fontWeight: 600,
-                  cursor: 'pointer', fontFamily: 'inherit',
-                  marginBottom: 8,
-                }}
-              >
-                + Neues Gespräch starten
-              </button>
-
-              {/* Conversation list */}
-              {conversations.map(conv => (
-                <ConvRow key={conv.id} conv={conv} />
-              ))}
-            </>
-          )}
-        </div>
-      </>
-    )
-  }
-
-  function ConvRow({ conv }: { conv: ConversationSummary }) {
-    const [hovered, setHovered] = useState(false)
-
-    return (
-      <div
-        onClick={() => openConversation(conv)}
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
-        style={{
-          padding: '12px 16px', cursor: 'pointer',
-          borderBottom: '1px solid #F5F5F5',
-          background: hovered ? '#FAFAFA' : 'transparent',
-          borderRadius: 8,
-          transition: 'background 0.1s',
-        }}
-      >
-        <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
-          {/* Status dot */}
-          <div style={{
-            width: 8, height: 8, borderRadius: '50%',
-            background: statusColor(conv.status),
-            marginTop: 5, flexShrink: 0,
-          }} />
-
-          <div style={{ flex: 1, minWidth: 0 }}>
-            {/* Row 1: title + time + unread */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
-              <span style={{ fontSize: 13, fontWeight: 600, color: '#111' }}>Gespräch</span>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
-                {conv.lastMessageAt && (
-                  <span style={{ fontSize: 11, color: '#999' }}>{formatTime(conv.lastMessageAt)}</span>
-                )}
-                {(conv.unreadByUser ?? 0) > 0 && (
-                  <div style={{
-                    width: 18, height: 18, borderRadius: '50%',
-                    background: '#EF4444', color: '#fff',
-                    fontSize: 10, fontWeight: 700,
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  }}>
-                    {conv.unreadByUser > 9 ? '9+' : conv.unreadByUser}
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Row 2: last message preview */}
-            <div style={{
-              fontSize: 13, color: '#666', marginTop: 2,
-              overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-            }}>
-              {truncatePreview(conv.lastMessage)}
-            </div>
-
-            {/* Row 3: status pill */}
-            <div style={{ marginTop: 4 }}>
-              <span style={{
-                fontSize: 10, color: statusColor(conv.status),
-                fontWeight: 600,
-              }}>
-                {statusLabel(conv.status)}
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-    )
-  }
-
-  // ── CHAT / NEW screen ─────────────────────────────────────────────────────
-
-  function ChatScreen() {
-    return (
-      <>
-        <PanelHeader />
-
-        {/* Messages */}
-        <div
-          className="fs-support-messages"
-          style={{
-            flex: 1, overflowY: 'auto',
-            padding: 16, gap: 8,
-            display: 'flex', flexDirection: 'column',
-            background: '#FAFAFA',
-          }}
-        >
-          {messages.length === 0 && screen === 'new' && <WelcomeCard />}
-
-          {messages.map(msg => (
-            <MessageBubble key={msg.id} msg={msg} />
-          ))}
-
-          {isClosed && screen === 'chat' && (
-            <div style={{ display: 'flex', justifyContent: 'center', marginTop: 12 }}>
-              <span style={{
-                fontSize: 12, color: '#999',
-                background: '#F0F0F0', borderRadius: 20,
-                padding: '4px 12px',
-              }}>
-                Gespräch geschlossen
-              </span>
-            </div>
-          )}
-
-          <div ref={messagesEndRef} style={{ height: 1, flexShrink: 0 }} />
-        </div>
-
-        {/* Input (hide when closed) */}
-        {!isClosed && <InputBar />}
-        {isClosed && (
-          <div style={{
-            padding: '12px 16px', borderTop: '1px solid #F0F0F0',
-            flexShrink: 0, textAlign: 'center',
-          }}>
-            <button
-              onClick={() => { setScreen('new'); setMessages([]); setActiveConvId(null); setActiveConvStatus('open') }}
-              style={{
-                background: '#111', color: '#fff',
-                border: 'none', borderRadius: 10,
-                padding: '8px 18px', fontSize: 13,
-                fontWeight: 600, cursor: 'pointer',
-                fontFamily: 'inherit',
-              }}
-            >
-              Neues Gespräch starten →
-            </button>
-          </div>
-        )}
-      </>
-    )
-  }
-
-  // ─── Main render ──────────────────────────────────────────────────────────
+  // ─── Render ───────────────────────────────────────────────────────────────
 
   return (
     <>
       <style dangerouslySetInnerHTML={{ __html: GLOBAL_STYLES }} />
 
-      {/* Hidden file input */}
       <input
         ref={fileInputRef}
         type="file"
-        accept="image/*,image/gif"
+        accept="image/jpeg,image/png,image/gif,image/webp"
         style={{ display: 'none' }}
         onChange={handleFileUpload}
       />
@@ -991,39 +625,269 @@ export default function SupportChat() {
       {/* Panel */}
       {open && (
         <div className="fs-support-panel">
-          {screen === 'list' && <ListScreen />}
-          {(screen === 'chat' || screen === 'new') && <ChatScreen />}
+
+          {/* ── LIST screen ─────────────────────────────────────────── */}
+          {screen === 'list' && (
+            <>
+              {/* Header */}
+              <div style={{
+                minHeight: 72, background: '#111', borderRadius: '20px 20px 0 0',
+                padding: '16px 20px', display: 'flex', alignItems: 'center',
+                justifyContent: 'space-between', flexShrink: 0,
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                  <img
+                    src="/support-avatar.jpg"
+                    alt="Support"
+                    width={40}
+                    height={40}
+                    style={{ width: 40, height: 40, borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }}
+                    onError={e => {
+                      const t = e.currentTarget
+                      t.style.display = 'none'
+                      const fb = t.nextElementSibling as HTMLElement | null
+                      if (fb) fb.style.display = 'flex'
+                    }}
+                  />
+                  <div style={{ width: 40, height: 40, borderRadius: '50%', background: 'linear-gradient(135deg, #8060b0, #5a3d8a)', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: 14, fontWeight: 700, flexShrink: 0, display: 'none' }}>FS</div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                    <span style={{ color: '#fff', fontSize: 15, fontWeight: 600, lineHeight: 1 }}>Support</span>
+                    <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.55)' }}>Wir antworten zeitnah</span>
+                  </div>
+                </div>
+                <button onClick={() => setOpen(false)} style={{
+                  width: 32, height: 32, borderRadius: '50%', background: 'rgba(255,255,255,0.1)',
+                  border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                }}>
+                  <XIcon />
+                </button>
+              </div>
+
+              {/* Conversation list body */}
+              <div style={{ flex: 1, overflowY: 'auto', padding: '10px 10px 14px' }} className="fs-support-messages">
+                {conversations.length === 0 ? (
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', padding: '32px 24px', textAlign: 'center' }}>
+                    <div style={{ width: 64, height: 64, borderRadius: '50%', background: '#F5F0FF', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 28, marginBottom: 16 }}>👋</div>
+                    <p style={{ fontSize: 18, fontWeight: 700, color: '#111', margin: '0 0 8px' }}>Wie können wir dir helfen?</p>
+                    <p style={{ fontSize: 14, color: '#777', margin: '0 0 24px', maxWidth: 240, lineHeight: 1.5 }}>Unser Team antwortet normalerweise in wenigen Stunden.</p>
+                    <button
+                      onClick={() => { setScreen('new'); setMessages([]); setActiveConvId(null) }}
+                      style={{ width: '100%', padding: '13px 20px', background: '#111', color: '#fff', border: 'none', borderRadius: 12, fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit' }}
+                    >
+                      Neues Gespräch starten →
+                    </button>
+                  </div>
+                ) : (
+                  <>
+                    <button
+                      onClick={() => { setScreen('new'); setMessages([]); setActiveConvId(null) }}
+                      style={{
+                        width: '100%', textAlign: 'left', border: '1.5px dashed #E0E0E0', borderRadius: 12,
+                        padding: '10px 16px', background: 'transparent', color: '#555', fontSize: 13,
+                        fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit', marginBottom: 6,
+                        display: 'flex', alignItems: 'center', gap: 8,
+                      }}
+                    >
+                      <span style={{ fontSize: 18, lineHeight: 1 }}>+</span> Neues Gespräch starten
+                    </button>
+                    {conversations.map(conv => (
+                      <ConvRow key={conv.id} conv={conv} onClick={() => openConversation(conv)} />
+                    ))}
+                  </>
+                )}
+              </div>
+            </>
+          )}
+
+          {/* ── CHAT / NEW screen ──────────────────────────────────── */}
+          {(screen === 'chat' || screen === 'new') && (
+            <>
+              {/* Header */}
+              <div style={{
+                height: 60, background: '#111', borderRadius: '20px 20px 0 0',
+                padding: '0 16px', display: 'flex', alignItems: 'center',
+                justifyContent: 'space-between', flexShrink: 0,
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <button
+                    onClick={() => { setScreen('list'); fetchConversations(); setShowEmoji(false); setShowGif(false) }}
+                    style={{ width: 32, height: 32, borderRadius: '50%', background: 'rgba(255,255,255,0.1)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}
+                  >
+                    <ChevronLeftIcon />
+                  </button>
+                  {screen === 'new' ? (
+                    <span style={{ color: '#fff', fontSize: 14, fontWeight: 600 }}>Neues Gespräch</span>
+                  ) : (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                      <span style={{ color: '#fff', fontSize: 14, fontWeight: 600, maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        {conversations.find(c => c.id === activeConvId) ? convTitle(conversations.find(c => c.id === activeConvId)!) : 'Chat'}
+                      </span>
+                      <div style={{ width: 7, height: 7, borderRadius: '50%', background: statusColor(activeConvStatus), flexShrink: 0 }} />
+                    </div>
+                  )}
+                </div>
+                <button onClick={() => { setOpen(false); setShowEmoji(false); setShowGif(false) }} style={{ width: 32, height: 32, borderRadius: '50%', background: 'rgba(255,255,255,0.1)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <XIcon />
+                </button>
+              </div>
+
+              {/* Messages */}
+              <div className="fs-support-messages" style={{ flex: 1, overflowY: 'auto', padding: 16, gap: 8, display: 'flex', flexDirection: 'column', background: '#F8F8F8' }}>
+                {messages.length === 0 && screen === 'new' && (
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', flex: 1, textAlign: 'center', padding: '0 24px' }}>
+                    <div style={{ width: 52, height: 52, borderRadius: '50%', background: '#F5F0FF', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24, marginBottom: 12 }}>💬</div>
+                    <p style={{ fontSize: 16, fontWeight: 700, color: '#111', margin: '0 0 6px' }}>Neues Gespräch</p>
+                    <p style={{ fontSize: 13, color: '#888', margin: 0, lineHeight: 1.5 }}>Schreib uns deine Frage — wir melden uns bald.</p>
+                  </div>
+                )}
+
+                {messages.map(msg => {
+                  const isUser = msg.senderType === 'user'
+                  const mediaEl = (msg.contentType === 'image' || msg.contentType === 'gif') && msg.mediaUrl
+                    ? <img src={msg.mediaUrl} alt={msg.contentType === 'gif' ? 'GIF' : 'Bild'} style={{ maxWidth: '100%', maxHeight: 200, borderRadius: 10, display: 'block' }} />
+                    : null
+
+                  if (isUser) return (
+                    <div key={msg.id} style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+                      <div className="fs-msg-bubble-user">{mediaEl ?? msg.content}</div>
+                      <span style={{ fontSize: 10, color: '#AAA', marginTop: 3 }}>{formatTime(msg.createdAt)}</span>
+                    </div>
+                  )
+                  return (
+                    <div key={msg.id} style={{ display: 'flex', alignItems: 'flex-end', gap: 7 }}>
+                      <img src="/support-avatar.jpg" alt="Support" width={22} height={22} style={{ width: 22, height: 22, borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} onError={e => { const t = e.currentTarget; t.style.display = 'none'; const fb = t.nextElementSibling as HTMLElement | null; if (fb) fb.style.display = 'flex' }} /><div style={{ width: 22, height: 22, borderRadius: '50%', background: 'linear-gradient(135deg, #8060b0, #5a3d8a)', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: 8, fontWeight: 700, flexShrink: 0, display: 'none' }}>FS</div>
+                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                        <div className="fs-msg-bubble-admin">{mediaEl ?? msg.content}</div>
+                        <span style={{ fontSize: 10, color: '#AAA', marginTop: 3 }}>{formatTime(msg.createdAt)}</span>
+                      </div>
+                    </div>
+                  )
+                })}
+
+                {isClosed && screen === 'chat' && (
+                  <div style={{ display: 'flex', justifyContent: 'center', marginTop: 8 }}>
+                    <span style={{ fontSize: 11, color: '#999', background: '#EBEBEB', borderRadius: 20, padding: '4px 12px' }}>
+                      Gespräch geschlossen
+                    </span>
+                  </div>
+                )}
+
+                <div ref={messagesEndRef} style={{ height: 1, flexShrink: 0 }} />
+              </div>
+
+              {/* Input area */}
+              {!isClosed ? (
+                <div style={{ flexShrink: 0, borderTop: '1px solid #EBEBEB', background: '#fff', position: 'relative' }}>
+                  {/* Popover panels */}
+                  {showEmoji && <EmojiPicker onSelect={emoji => { setInput(p => p + emoji); textareaRef.current?.focus() }} />}
+                  {showGif && <GifSearchPanel onSelect={handleGifSelect} />}
+
+                  {/* Toolbar */}
+                  <div style={{ height: 42, padding: '0 14px', display: 'flex', alignItems: 'center', gap: 4 }}>
+                    <button
+                      className={`fs-toolbar-btn${showEmoji ? ' active' : ''}`}
+                      onClick={() => { setShowEmoji(p => !p); setShowGif(false) }}
+                      title="Emoji"
+                    >
+                      <SmileIcon active={showEmoji} />
+                    </button>
+                    <button
+                      className="fs-toolbar-btn"
+                      onClick={() => { fileInputRef.current?.click(); setShowEmoji(false); setShowGif(false) }}
+                      disabled={uploading}
+                      title="Bild hochladen"
+                      style={{ opacity: uploading ? 0.4 : 1 }}
+                    >
+                      <ImageIcon active={false} />
+                    </button>
+                    <button
+                      onClick={() => { setShowGif(p => !p); setShowEmoji(false) }}
+                      title="GIF senden"
+                      style={{
+                        height: 26, border: `1.5px solid ${showGif ? '#333' : '#DEDEDE'}`,
+                        background: showGif ? '#F0F0F0' : 'transparent', cursor: 'pointer',
+                        fontSize: 10, fontWeight: 800, letterSpacing: '0.04em',
+                        borderRadius: 7, padding: '0 7px', color: showGif ? '#111' : '#888',
+                        fontFamily: 'inherit', lineHeight: '1',
+                        transition: 'all 0.12s',
+                      }}
+                    >
+                      GIF
+                    </button>
+                    {uploading && <span style={{ fontSize: 11, color: '#999', marginLeft: 6 }}>Lädt hoch…</span>}
+                  </div>
+
+                  {/* Textarea + send */}
+                  <div style={{ padding: '0 14px 12px', display: 'flex', alignItems: 'flex-end', gap: 8 }}>
+                    <textarea
+                      ref={textareaRef}
+                      value={input}
+                      onChange={handleInputChange}
+                      onKeyDown={handleKeyDown}
+                      onCompositionStart={() => { isComposingRef.current = true }}
+                      onCompositionEnd={() => { isComposingRef.current = false }}
+                      placeholder="Schreib uns eine Nachricht…"
+                      rows={1}
+                      disabled={sending || uploading}
+                      style={{
+                        flex: 1, border: '1.5px solid #E8E8E8', borderRadius: 12,
+                        padding: '8px 12px', fontSize: 14, fontFamily: 'inherit',
+                        resize: 'none', outline: 'none', minHeight: 36, maxHeight: 90,
+                        overflowY: 'auto', lineHeight: 1.5, color: '#111', background: '#fff',
+                        transition: 'border-color 0.15s',
+                      }}
+                      onFocus={e => (e.currentTarget.style.borderColor = '#111')}
+                      onBlur={e => (e.currentTarget.style.borderColor = '#E8E8E8')}
+                    />
+                    <button
+                      onClick={() => sendMessage()}
+                      disabled={!canSend}
+                      style={{
+                        width: 36, height: 36, borderRadius: '50%', border: 'none',
+                        cursor: canSend ? 'pointer' : 'default',
+                        background: canSend ? '#111' : '#E8E8E8',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+                        transition: 'background 0.15s',
+                      }}
+                    >
+                      <ArrowUpIcon color={canSend ? 'white' : '#AAA'} />
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div style={{ padding: '12px 16px', borderTop: '1px solid #EBEBEB', flexShrink: 0, textAlign: 'center', background: '#fff' }}>
+                  <button
+                    onClick={() => { setScreen('new'); setMessages([]); setActiveConvId(null); setActiveConvStatus('open') }}
+                    style={{ background: '#111', color: '#fff', border: 'none', borderRadius: 10, padding: '9px 20px', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit' }}
+                  >
+                    Neues Gespräch starten →
+                  </button>
+                </div>
+              )}
+            </>
+          )}
         </div>
       )}
 
-      {/* Launcher */}
+      {/* Launcher button */}
       <button
         className="fs-support-launcher"
         onClick={toggleOpen}
         aria-label={open ? 'Chat schließen' : 'Support Chat öffnen'}
-        aria-expanded={open}
         style={{ position: 'fixed' }}
       >
-        {open ? (
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-            <path d="M4 4L16 16M16 4L4 16" stroke="white" strokeWidth="2" strokeLinecap="round" />
-          </svg>
-        ) : (
-          <ChatIcon />
-        )}
-
-        {/* Unread badge */}
+        {open
+          ? <XIcon size={16} />
+          : <ChatBubbleIcon />
+        }
         {!open && totalUnread > 0 && (
-          <div
-            aria-label={`${totalUnread} ungelesene Nachricht${totalUnread !== 1 ? 'en' : ''}`}
-            style={{
-              position: 'absolute', top: -4, right: -4,
-              background: '#EF4444', color: '#fff', borderRadius: '50%',
-              width: 20, height: 20, fontSize: 11, fontWeight: 700,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              border: '2px solid #fff',
-            }}
-          >
+          <div style={{
+            position: 'absolute', top: -4, right: -4,
+            background: '#EF4444', color: '#fff', borderRadius: '50%',
+            width: 20, height: 20, fontSize: 11, fontWeight: 700,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            border: '2px solid #fff',
+          }}>
             {totalUnread > 9 ? '9+' : totalUnread}
           </div>
         )}
