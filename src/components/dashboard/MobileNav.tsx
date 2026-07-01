@@ -76,7 +76,7 @@ export function MobileNav() {
           bottom: 'calc(56px + env(safe-area-inset-bottom, 0px))',
           background: '#fff',
           boxShadow: '0 -4px 40px rgba(0,0,0,0.14)',
-          transform: showMore ? 'translateY(0)' : 'translateY(110%)',
+          transform: showMore ? 'translateY(0)' : 'translateY(110vh)',
         }}
       >
         {/* Handle */}
