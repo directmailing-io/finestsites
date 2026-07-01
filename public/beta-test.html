@@ -14,7 +14,7 @@
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif;
   background: var(--bg); color: var(--text);
-  min-height: 100vh; padding: 28px 16px 100px;
+  min-height: 100vh; padding: 28px 16px 60px;
   -webkit-font-smoothing: antialiased;
 }
 .container { max-width: 660px; margin: 0 auto; }
@@ -101,13 +101,17 @@ body {
 .item {
   display: flex; align-items: center;
   border-top: 1px solid #F3F4F6; min-height: 54px;
+  transition: background 0.2s;
 }
+/* Green tint when anyone has tested this item */
+.item.covered { background: #F0FDF4; }
 .item-left {
   display: flex; align-items: center; gap: 12px;
   flex: 1; padding: 11px 18px; cursor: pointer; min-width: 0;
   transition: background 0.1s;
 }
-.item-left:hover { background: #FAFAFA; }
+.item.covered .item-left:hover { background: rgba(0,0,0,0.03); }
+.item:not(.covered) .item-left:hover { background: #FAFAFA; }
 
 /* 3-state button */
 .status-btn {
@@ -128,42 +132,33 @@ body {
 /* Tester tags */
 .item-testers {
   display: flex; flex-direction: column; align-items: flex-end;
-  gap: 2px; padding: 8px 14px 8px 6px;
-  min-width: 90px; max-width: 120px; flex-shrink: 0;
+  gap: 3px; padding: 8px 14px 8px 6px;
+  min-width: 100px; max-width: 130px; flex-shrink: 0;
 }
 .ttag {
-  display: flex; align-items: center; gap: 4px;
-  font-size: 10px; font-weight: 600; padding: 2px 7px;
-  border-radius: 99px; max-width: 115px;
-  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  display: flex; align-items: center; gap: 5px;
+  font-size: 10px; font-weight: 600; padding: 3px 8px;
+  border-radius: 99px; max-width: 128px;
+  overflow: hidden; white-space: nowrap;
 }
-.ttag.ok { background: #F0FDF4; color: #16A34A; }
-.ttag.issue { background: #FFF7ED; color: #C2410C; }
-.tdot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
-.tdot.ok { background: #34C759; }
-.tdot.issue { background: #F97316; }
+.ttag .tname { overflow: hidden; text-overflow: ellipsis; }
+.ttag.ok { background: #DCFCE7; color: #16A34A; border: 1px solid #BBF7D0; }
+.ttag.issue { background: #FEF3C7; color: #B45309; border: 1px solid #FDE68A; }
+.ttag.me-ok { background: #16A34A; color: #fff; border: 1px solid #16A34A; }
+.ttag.me-issue { background: #F97316; color: #fff; border: 1px solid #F97316; }
 
-/* Sticky save bar */
-.save-bar {
-  position: fixed; bottom: 0; left: 0; right: 0;
-  background: #fff; border-top: 1px solid var(--border);
-  padding: 12px 20px; z-index: 50;
-  display: flex; align-items: center; justify-content: center; gap: 14px;
-  box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
+/* Auto-save pill (bottom center, unobtrusive) */
+.autosave-pill {
+  position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+  background: rgba(0,0,0,0.75); color: #fff;
+  padding: 7px 16px; border-radius: 99px;
+  font-size: 12px; font-weight: 500;
+  backdrop-filter: blur(8px);
+  opacity: 0; transition: opacity 0.3s; pointer-events: none;
+  z-index: 50; white-space: nowrap;
 }
-.save-status { font-size: 13px; color: var(--muted); min-width: 160px; text-align: right; }
-.save-status.saved { color: #16A34A; }
-.save-status.saving { color: #F97316; }
-.save-btn {
-  background: #1a1a1a; color: #fff;
-  border: none; border-radius: 12px;
-  padding: 13px 32px; font-size: 16px; font-weight: 700;
-  font-family: inherit; cursor: pointer;
-  transition: all 0.15s; letter-spacing: 0.01em;
-}
-.save-btn:hover { background: #333; transform: translateY(-1px); }
-.save-btn:active { transform: translateY(0); }
-.save-btn.saved-flash { background: #16A34A; }
+.autosave-pill.visible { opacity: 1; }
+.autosave-pill.ok { background: rgba(22,163,74,0.9); }
 
 /* ─── ADMIN VIEW ─────────────────────────────────────────────────── */
 .admin-wrap { display: none; }
@@ -230,10 +225,8 @@ body {
 }
 
 @media (max-width: 500px) {
-  .item-testers { min-width: 70px; max-width: 90px; }
+  .item-testers { min-width: 80px; max-width: 100px; }
   .name-card { flex-direction: column; align-items: stretch; }
-  .save-bar { padding: 10px 16px; }
-  .save-status { display: none; }
 }
 </style>
 </head>
@@ -304,11 +297,8 @@ body {
 
 </div>
 
-<!-- Sticky Save Bar (only in checklist mode) -->
-<div class="save-bar" id="saveBar">
-  <div class="save-status" id="saveStatus">Noch nicht gespeichert</div>
-  <button class="save-btn" id="saveBtn" onclick="manualSave()">SPEICHERN</button>
-</div>
+<!-- Auto-save pill -->
+<div class="autosave-pill" id="autosavePill"></div>
 
 <script>
 // ─── DATA ────────────────────────────────────────────────────────────────────
@@ -404,16 +394,36 @@ function render() {
   });
 }
 
+function buildTags(it) {
+  const myS = me.items[it.id] || null;
+  const myName = me.name.trim();
+  const tags = [];
+  // Own tag first (instant, based on local state)
+  if (myS && myName) {
+    const label = myS === 'ok' ? '✓ Du' : '! Du';
+    tags.push(`<div class="ttag ${myS==='ok'?'me-ok':'me-issue'}"><span class="tname">${label}</span></div>`);
+  }
+  // Other testers from server
+  allTesters.filter(t => t.name.toLowerCase() !== myName.toLowerCase()).forEach(t => {
+    const s = t.items[it.id];
+    if (!s) return;
+    const label = s === 'ok' ? `✓ ${esc(t.name)}` : `! ${esc(t.name)}`;
+    tags.push(`<div class="ttag ${s}"><span class="tname">${label}</span></div>`);
+  });
+  return tags.join('');
+}
+
+function isCovered(it) {
+  const myS = me.items[it.id];
+  if (myS) return true;
+  return allTesters.some(t => t.items[it.id]);
+}
+
 function itemHTML(it) {
   const s = me.items[it.id] || null;
-  const okT = allTesters.filter(t => t.name !== me.name && t.items[it.id]==='ok').map(t=>t.name);
-  const isT = allTesters.filter(t => t.name !== me.name && t.items[it.id]==='issue').map(t=>t.name);
-  const tags = [
-    ...okT.map(n=>`<div class="ttag ok"><div class="tdot ok"></div>${esc(n)}</div>`),
-    ...isT.map(n=>`<div class="ttag issue"><div class="tdot issue"></div>${esc(n)}</div>`),
-  ].join('');
+  const covered = isCovered(it) ? ' covered' : '';
   return `
-    <div class="item" id="item_${it.id}">
+    <div class="item${covered}" id="item_${it.id}">
       <div class="item-left" onclick="cycle('${it.id}')">
         <button class="status-btn ${s||''}" tabindex="-1">
           <svg class="s-check" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5"><polyline points="20 6 9 17 4 12"/></svg>
@@ -421,7 +431,7 @@ function itemHTML(it) {
         </button>
         <div class="item-title">${it.title}</div>
       </div>
-      <div class="item-testers" id="tt_${it.id}">${tags}</div>
+      <div class="item-testers" id="tt_${it.id}">${buildTags(it)}</div>
     </div>`;
 }
 
@@ -444,8 +454,15 @@ function refreshItem(id) {
   const el = document.getElementById('item_'+id);
   if (!el) return;
   const s = me.items[id]||null;
+  // Status button
   const btn = el.querySelector('.status-btn');
   if (btn) btn.className = 'status-btn '+(s||'');
+  // Covered background (instant, based on local state + known server data)
+  const it = CATS.flatMap(c=>c.items).find(i=>i.id===id);
+  if (it) el.className = 'item'+(isCovered(it)?' covered':'');
+  // Tags (instant — own name shows immediately)
+  const tt = document.getElementById('tt_'+id);
+  if (tt && it) tt.innerHTML = buildTags(it);
 }
 
 function refreshCatCount(itemId) {
@@ -461,39 +478,42 @@ function refreshCatCount(itemId) {
 function refreshTesterTags() {
   CATS.flatMap(c=>c.items).forEach(it=>{
     const el = document.getElementById('tt_'+it.id);
-    if (!el) return;
-    const okT = allTesters.filter(t=>t.name!==me.name&&t.items[it.id]==='ok').map(t=>t.name);
-    const isT = allTesters.filter(t=>t.name!==me.name&&t.items[it.id]==='issue').map(t=>t.name);
-    el.innerHTML = [
-      ...okT.map(n=>`<div class="ttag ok"><div class="tdot ok"></div>${esc(n)}</div>`),
-      ...isT.map(n=>`<div class="ttag issue"><div class="tdot issue"></div>${esc(n)}</div>`),
-    ].join('');
+    if (el) el.innerHTML = buildTags(it);
+    // Also update covered class
+    const row = document.getElementById('item_'+it.id);
+    if (row) row.className = 'item'+(isCovered(it)?' covered':'');
   });
 }
 
-// ─── SAVE / SYNC ─────────────────────────────────────────────────────────────
+// ─── AUTO-SAVE & SYNC ────────────────────────────────────────────────────────
 let saveTimer=null;
-function autoSave() { clearTimeout(saveTimer); saveTimer=setTimeout(pushData,800); }
+let pillTimer=null;
 
-async function manualSave() {
-  if (!me.name.trim()) { flashStatus('Bitte erst Namen eingeben!',''); return; }
-  await pushData();
+function autoSave() {
+  clearTimeout(saveTimer);
+  saveTimer=setTimeout(pushData,600);
+}
+
+function showPill(txt,ok) {
+  const el=document.getElementById('autosavePill');
+  el.textContent=txt;
+  el.className='autosave-pill visible'+(ok?' ok':'');
+  clearTimeout(pillTimer);
+  pillTimer=setTimeout(()=>el.className='autosave-pill',2000);
 }
 
 async function pushData() {
   if (!me.name.trim()) return;
-  flashStatus('Wird gespeichert…','saving');
   try {
     await fetch('/api/beta-test',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({name:me.name.trim(),items:me.items}),
     });
-    flashStatus('Gespeichert ✓','saved');
-    flashSaveBtn();
+    showPill('Automatisch gespeichert ✓',true);
     await fetchAll();
   } catch {
-    flashStatus('Fehler beim Speichern','');
+    showPill('Konnte nicht speichern',false);
   }
 }
 
@@ -505,16 +525,6 @@ async function fetchAll() {
     allTesters = data.testers||[];
     refreshTesterTags();
   } catch {}
-}
-
-function flashStatus(txt,cls) {
-  const el=document.getElementById('saveStatus');
-  el.textContent=txt; el.className='save-status '+cls;
-}
-function flashSaveBtn() {
-  const btn=document.getElementById('saveBtn');
-  btn.classList.add('saved-flash');
-  setTimeout(()=>btn.classList.remove('saved-flash'),1200);
 }
 
 // ─── NAME GATE ───────────────────────────────────────────────────────────────
@@ -592,7 +602,6 @@ document.addEventListener('DOMContentLoaded', ()=>{
   if (IS_ADMIN) {
     document.getElementById('checklistMain').classList.add('hidden');
     document.getElementById('adminWrap').classList.add('active');
-    document.getElementById('saveBar').style.display='none';
     loadAdmin();
     return;
   }
