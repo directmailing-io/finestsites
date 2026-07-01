@@ -117,6 +117,11 @@ function statusLabel(status: string): string {
   return 'Geschlossen'
 }
 
+function isLiveHours(): boolean {
+  const h = new Date().getHours()
+  return h >= 8 && h < 20
+}
+
 function convTitle(conv: ConversationSummary): string {
   if (conv.subject) return conv.subject
   const d = new Date(conv.createdAt)
@@ -235,17 +240,34 @@ function EmojiPicker({ onSelect }: { onSelect: (emoji: string) => void }) {
   )
 }
 
-function ConvRow({ conv, onClick }: { conv: ConversationSummary; onClick: () => void }) {
+function ConvRow({ conv, onClick, onDelete }: { conv: ConversationSummary; onClick: () => void; onDelete: () => void }) {
   const [hovered, setHovered] = useState(false)
+  const [confirmDelete, setConfirmDelete] = useState(false)
   return (
     <div
       className="fs-conv-row"
-      onClick={onClick}
       onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      style={{ background: hovered ? '#FAFAFA' : 'transparent' }}
+      onMouseLeave={() => { setHovered(false); setConfirmDelete(false) }}
+      style={{ background: hovered ? '#FAFAFA' : 'transparent', position: 'relative' }}
     >
-      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
+      {/* Delete confirmation overlay */}
+      {confirmDelete && (
+        <div style={{
+          position: 'absolute', inset: 0, background: '#FEF2F2', borderRadius: 8,
+          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, zIndex: 10, padding: '0 12px',
+        }}>
+          <span style={{ fontSize: 12, color: '#DC2626', fontWeight: 500 }}>Chat löschen?</span>
+          <button
+            onMouseDown={e => { e.stopPropagation(); onDelete() }}
+            style={{ fontSize: 11, fontWeight: 700, background: '#DC2626', color: '#fff', border: 'none', borderRadius: 6, padding: '4px 10px', cursor: 'pointer' }}
+          >Ja</button>
+          <button
+            onMouseDown={e => { e.stopPropagation(); setConfirmDelete(false) }}
+            style={{ fontSize: 11, fontWeight: 600, background: '#F1F5F9', color: '#555', border: 'none', borderRadius: 6, padding: '4px 10px', cursor: 'pointer' }}
+          >Nein</button>
+        </div>
+      )}
+      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }} onClick={onClick}>
         <div style={{
           width: 8, height: 8, borderRadius: '50%',
           background: statusColor(conv.status),
@@ -269,6 +291,25 @@ function ConvRow({ conv, onClick }: { conv: ConversationSummary; onClick: () => 
                 }}>
                   {conv.unreadByUser > 9 ? '9+' : conv.unreadByUser}
                 </div>
+              )}
+              {/* Delete button — shown on hover */}
+              {hovered && (
+                <button
+                  onMouseDown={e => { e.stopPropagation(); setConfirmDelete(true) }}
+                  title="Gespräch löschen"
+                  style={{
+                    width: 20, height: 20, border: 'none', background: 'transparent',
+                    cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    borderRadius: 4, color: '#CCC', padding: 0, flexShrink: 0,
+                  }}
+                  onMouseEnter={e => (e.currentTarget.style.color = '#EF4444')}
+                  onMouseLeave={e => (e.currentTarget.style.color = '#CCC')}
+                >
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                    <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/>
+                    <path d="M9 6V4h6v2"/>
+                  </svg>
+                </button>
               )}
             </div>
           </div>
@@ -321,6 +362,7 @@ export default function SupportChat() {
   const [uploading, setUploading] = useState(false)
   const [showEmoji, setShowEmoji] = useState(false)
   const [totalUnread, setTotalUnread] = useState(0)
+  const [live, setLive] = useState(isLiveHours())
 
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null)
@@ -343,6 +385,21 @@ export default function SupportChat() {
   }, [])
 
   useEffect(() => { fetchConversations() }, [fetchConversations])
+
+  // ── Open chat from outside (e.g. sidebar button) ─────────────────────────
+
+  useEffect(() => {
+    function handler() { setOpen(true); setScreen('list') }
+    window.addEventListener('openSupportChat', handler)
+    return () => window.removeEventListener('openSupportChat', handler)
+  }, [])
+
+  // ── Live hours indicator (refresh every minute) ───────────────────────────
+
+  useEffect(() => {
+    const t = setInterval(() => setLive(isLiveHours()), 60_000)
+    return () => clearInterval(t)
+  }, [])
 
   // ── Auto-scroll ──────────────────────────────────────────────────────────
 
@@ -502,6 +559,19 @@ export default function SupportChat() {
     el.style.height = `${Math.min(el.scrollHeight, 90)}px`
   }
 
+  async function deleteConversation(convId: string) {
+    // Optimistic remove
+    setConversations(prev => prev.filter(c => c.id !== convId))
+    setTotalUnread(prev => {
+      const conv = conversations.find(c => c.id === convId)
+      return Math.max(0, prev - (conv?.unreadByUser ?? 0))
+    })
+    if (activeConvId === convId) { setScreen('list'); setActiveConvId(null) }
+    try {
+      await fetch(`/api/support/conversation/${convId}`, { method: 'DELETE' })
+    } catch { /* ignore — will be hidden locally regardless */ }
+  }
+
   function toggleOpen() {
     if (open) { setOpen(false); setShowEmoji(false) }
     else { setOpen(true); setScreen('list') }
@@ -541,9 +611,19 @@ export default function SupportChat() {
               }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                   <SupportAvatar size={40} />
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
                     <span style={{ color: '#fff', fontSize: 15, fontWeight: 600, lineHeight: 1 }}>Support</span>
-                    <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.55)' }}>Wir antworten zeitnah</span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                      <div style={{
+                        width: 7, height: 7, borderRadius: '50%',
+                        background: live ? '#22C55E' : '#F97316',
+                        boxShadow: live ? '0 0 0 2px rgba(34,197,94,0.3)' : '0 0 0 2px rgba(249,115,22,0.3)',
+                        flexShrink: 0,
+                      }} />
+                      <span style={{ fontSize: 11, color: live ? '#86EFAC' : '#FED7AA' }}>
+                        {live ? 'Jetzt erreichbar' : 'Außerhalb der Zeiten'}
+                      </span>
+                    </div>
                   </div>
                 </div>
                 <button onClick={() => setOpen(false)} style={{
@@ -582,7 +662,7 @@ export default function SupportChat() {
                       <span style={{ fontSize: 18, lineHeight: 1 }}>+</span> Neues Gespräch starten
                     </button>
                     {conversations.map(conv => (
-                      <ConvRow key={conv.id} conv={conv} onClick={() => openConversation(conv)} />
+                      <ConvRow key={conv.id} conv={conv} onClick={() => openConversation(conv)} onDelete={() => deleteConversation(conv.id)} />
                     ))}
                   </>
                 )}

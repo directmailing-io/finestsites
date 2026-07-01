@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getUserFromRequest } from '@/lib/auth/server'
 import { db } from '@/lib/db'
 import { supportConversations, supportMessages } from '@/lib/db/schema'
-import { eq, desc } from 'drizzle-orm'
+import { eq, desc, and } from 'drizzle-orm'
 
 export async function GET(req: NextRequest) {
   const user = await getUserFromRequest(req)
@@ -12,7 +12,7 @@ export async function GET(req: NextRequest) {
     const convRows = await db
       .select()
       .from(supportConversations)
-      .where(eq(supportConversations.userId, user.id))
+      .where(and(eq(supportConversations.userId, user.id), eq(supportConversations.deletedByUser, false)))
       .orderBy(desc(supportConversations.lastMessageAt))
 
     // Fetch last message for each conversation
@@ -51,8 +51,8 @@ export async function POST(req: NextRequest) {
   if (contentType === 'text' && !content?.trim()) {
     return NextResponse.json({ error: 'content required' }, { status: 400 })
   }
-  if ((contentType === 'image' || contentType === 'gif') && !mediaUrl) {
-    return NextResponse.json({ error: 'mediaUrl required for image/gif' }, { status: 400 })
+  if (contentType === 'image' && !mediaUrl) {
+    return NextResponse.json({ error: 'mediaUrl required for image' }, { status: 400 })
   }
 
   try {

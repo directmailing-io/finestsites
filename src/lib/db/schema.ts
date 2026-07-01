@@ -453,6 +453,7 @@ export const supportConversations = pgTable('support_conversations', {
   lastMessageAt: timestamp('last_message_at', { withTimezone: true }),
   unreadByAdmin: integer('unread_by_admin').notNull().default(0),
   unreadByUser: integer('unread_by_user').notNull().default(0),
+  deletedByUser: boolean('deleted_by_user').notNull().default(false),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 }, (t) => [

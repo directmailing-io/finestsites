@@ -23,6 +23,7 @@ interface ConversationWithUser {
   subject: string | null
   lastMessageAt: string | null
   unreadByAdmin: number
+  deletedByUser: boolean
   createdAt: string
   user: {
     email: string
@@ -585,11 +586,18 @@ export default function SupportAdminPanel() {
                       >
                         {lastMsgPreview}
                       </div>
-                      {/* Row 3: status pill + started date */}
-                      <div style={{ marginTop: 4, display: 'flex', alignItems: 'center', gap: 8 }}>
+                      {/* Row 3: status pill + deleted badge + started date */}
+                      <div style={{ marginTop: 4, display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
                         <StatusPill status={conv.status} />
+                        {conv.deletedByUser && (
+                          <span style={{
+                            fontSize: 9, fontWeight: 700, letterSpacing: '0.04em',
+                            background: '#FEF3C7', color: '#92400E',
+                            borderRadius: 4, padding: '2px 6px',
+                          }}>VOM USER GELÖSCHT</span>
+                        )}
                         <span style={{ fontSize: 10, color: '#BBB' }}>
-                          Gestartet am {formatShortDate(conv.createdAt)}
+                          {formatShortDate(conv.createdAt)}
                         </span>
                       </div>
                     </div>

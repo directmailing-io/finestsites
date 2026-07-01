@@ -34,6 +34,7 @@ export async function GET(req: NextRequest) {
         lastMessageAt: supportConversations.lastMessageAt,
         unreadByAdmin: supportConversations.unreadByAdmin,
         unreadByUser: supportConversations.unreadByUser,
+        deletedByUser: supportConversations.deletedByUser,
         createdAt: supportConversations.createdAt,
         updatedAt: supportConversations.updatedAt,
         userEmail: users.email,
@@ -97,6 +98,7 @@ export async function GET(req: NextRequest) {
       subject: c.subject,
       lastMessageAt: c.lastMessageAt,
       unreadByAdmin: c.unreadByAdmin,
+      deletedByUser: c.deletedByUser,
       createdAt: c.createdAt,
       user: {
         email: c.userEmail ?? '',
