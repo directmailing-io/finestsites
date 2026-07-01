@@ -53,10 +53,11 @@ const GLOBAL_STYLES = `
   width: 56px; height: 56px; border-radius: 28px;
   background: #111; border: none; cursor: pointer;
   box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-  display: flex; align-items: center; justify-content: center;
+  align-items: center; justify-content: center;
   transition: background 0.15s, transform 0.15s;
 }
 .fs-support-launcher:hover { background: #333; transform: scale(1.05); }
+/* display is controlled by Tailwind (hidden lg:flex) */
 .fs-msg-bubble-user {
   align-self: flex-end; background: #111; color: #fff;
   border-radius: 18px 18px 4px 18px; padding: 10px 14px;
@@ -81,13 +82,11 @@ const GLOBAL_STYLES = `
 .fs-conv-row:hover { background: #FAFAFA; }
 @media (max-width: 640px) {
   .fs-support-panel {
+    bottom: 56px; /* fallback for browsers without env() */
     bottom: calc(56px + env(safe-area-inset-bottom, 0px));
     right: 0; left: 0; border-radius: 20px 20px 0 0;
-    width: 100%;
-    height: calc(100dvh - 56px - env(safe-area-inset-bottom, 0px) - 16px);
-    max-height: 85vh;
+    width: 100%; height: 72vh;
   }
-  .fs-support-launcher { display: none !important; }
 }
 `
 
@@ -835,12 +834,11 @@ export default function SupportChat() {
         </div>
       )}
 
-      {/* Launcher button */}
+      {/* Launcher button — hidden on mobile (chat is in bottom nav instead) */}
       <button
-        className="fs-support-launcher"
+        className="fs-support-launcher hidden lg:flex"
         onClick={toggleOpen}
         aria-label={open ? 'Chat schließen' : 'Support Chat öffnen'}
-        style={{ position: 'fixed' }}
       >
         {open
           ? <XIcon size={16} />
