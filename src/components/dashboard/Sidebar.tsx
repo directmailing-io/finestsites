@@ -123,15 +123,15 @@ export function DashboardSidebar() {
           onMouseEnter={e => { (e.currentTarget as HTMLElement).style.boxShadow = '0 4px 16px rgba(0,0,0,0.12)'; (e.currentTarget as HTMLElement).style.transform = 'translateY(-1px)' }}
           onMouseLeave={e => { (e.currentTarget as HTMLElement).style.boxShadow = '0 1px 4px rgba(0,0,0,0.06)'; (e.currentTarget as HTMLElement).style.transform = 'none' }}
         >
-          {/* Image — 4:3 crop, face + mascot centered */}
-          <div style={{ position: 'relative', aspectRatio: '4/3', overflow: 'hidden' }}>
+          {/* Image — 16:9 crop, wide scene */}
+          <div style={{ position: 'relative', aspectRatio: '16/9', overflow: 'hidden' }}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src="/support-team.jpg"
               alt="Support"
               style={{
                 width: '100%', height: '100%',
-                objectFit: 'cover', objectPosition: '50% 20%',
+                objectFit: 'cover', objectPosition: '50% 30%',
                 display: 'block',
               }}
             />

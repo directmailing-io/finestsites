@@ -48,14 +48,35 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
 
   if (!profile) return NextResponse.json({ error: 'Not found' }, { status: 404 })
 
-  // Stripe invoices if customer exists
+  // Stripe invoices + subscription discount if customer exists
   let invoices: Stripe.Invoice[] = []
+  let subscriptionDiscount: { couponName: string | null; promoCode: string | null } | null = null
   if (profile.stripeCustomerId) {
     try {
-      const result = await getStripe().invoices.list({ customer: profile.stripeCustomerId, limit: 10 })
-      invoices = result.data
+      const [invoiceResult, subsResult] = await Promise.all([
+        getStripe().invoices.list({
+          customer: profile.stripeCustomerId,
+          limit: 10,
+          expand: ['data.discounts', 'data.total_discount_amounts.discount'],
+        }),
+        profile.stripeSubscriptionId
+          ? getStripe().subscriptions.retrieve(profile.stripeSubscriptionId, {
+              expand: ['discount.promotion_code'],
+            })
+          : Promise.resolve(null),
+      ])
+      invoices = invoiceResult.data
+      if (subsResult && subsResult.discount) {
+        const disc = subsResult.discount as Stripe.Discount & { promotion_code?: Stripe.PromotionCode | string | null }
+        subscriptionDiscount = {
+          couponName: disc.coupon?.name ?? disc.coupon?.id ?? null,
+          promoCode: disc.promotion_code && typeof disc.promotion_code === 'object'
+            ? (disc.promotion_code as Stripe.PromotionCode).code ?? null
+            : null,
+        }
+      }
     } catch { /* ignore */ }
   }
 
-  return NextResponse.json({ profile, sites, invoices, events })
+  return NextResponse.json({ profile, sites, invoices, events, subscriptionDiscount })
 }

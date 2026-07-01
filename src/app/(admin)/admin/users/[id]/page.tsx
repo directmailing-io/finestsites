@@ -11,6 +11,7 @@ interface UserProfile {
   subscriptionStatus: string | null
   createdAt: string
   stripeCustomerId: string | null
+  stripeSubscriptionId: string | null
 }
 
 interface UserSite {
@@ -48,6 +49,7 @@ interface UserDetail {
   sites: UserSite[]
   invoices: Invoice[]
   events: SubscriptionEvent[]
+  subscriptionDiscount: { couponName: string | null; promoCode: string | null } | null
 }
 
 interface SupportConv {
@@ -144,7 +146,7 @@ export default function AdminUserDetailPage({ params }: { params: Promise<{ id: 
     )
   }
 
-  const { profile, sites, invoices, events } = data
+  const { profile, sites, invoices, events, subscriptionDiscount } = data
   const planColor = PLAN_COLORS[profile.plan] ?? PLAN_COLORS.starter
 
   return (
@@ -278,7 +280,21 @@ export default function AdminUserDetailPage({ params }: { params: Promise<{ id: 
         {/* Invoices */}
         <div className="p-6 rounded-[24px] bg-white flex flex-col gap-3"
           style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.08)', border: '1px solid var(--border)' }}>
-          <h2 className="font-medium text-gray-900">Zahlungen</h2>
+          <div className="flex items-center justify-between gap-3">
+            <h2 className="font-medium text-gray-900">Zahlungen</h2>
+            {subscriptionDiscount && (subscriptionDiscount.promoCode || subscriptionDiscount.couponName) && (
+              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full"
+                style={{ background: '#F0FDF4', border: '1px solid #BBF7D0' }}>
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#16A34A" strokeWidth="2.5">
+                  <path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/>
+                  <line x1="7" y1="7" x2="7.01" y2="7"/>
+                </svg>
+                <span className="text-xs font-semibold" style={{ color: '#16A34A' }}>
+                  {subscriptionDiscount.promoCode ?? subscriptionDiscount.couponName}
+                </span>
+              </div>
+            )}
+          </div>
           {!profile.stripeCustomerId ? (
             <div className="flex items-center gap-2 p-3 rounded-[12px]" style={{ background: '#FFF7ED', border: '1px solid #FED7AA' }}>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C2410C" strokeWidth="2">
