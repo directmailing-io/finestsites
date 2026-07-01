@@ -119,10 +119,14 @@ export default function SitesPage() {
   const [autoCreating, setAutoCreating] = useState(false)
 
   useEffect(() => {
+    const controller = new AbortController()
+    const timer = setTimeout(() => controller.abort(), 10000) // 10s timeout
+
     Promise.all([
-      fetch('/api/sites').then(r => r.json()),
-      fetch('/api/user/profile').then(r => r.json()),
+      fetch('/api/sites', { signal: controller.signal }).then(r => r.json()),
+      fetch('/api/user/profile', { signal: controller.signal }).then(r => r.json()),
     ]).then(([sitesData, profile]) => {
+      clearTimeout(timer)
       const loadedSites = Array.isArray(sitesData) ? sitesData : []
       setSites(loadedSites)
       setUsername(profile?.username ?? '')
@@ -149,7 +153,9 @@ export default function SitesPage() {
           })
           .catch(() => setAutoCreating(false))
       }
-    }).catch(() => setLoading(false))
+    }).catch(() => { clearTimeout(timer); setLoading(false) })
+
+    return () => { controller.abort(); clearTimeout(timer) }
   }, [router])
 
   const hasSites = sites.length > 0

@@ -398,6 +398,29 @@ function ConvRow({ conv, onClick }: { conv: ConversationSummary; onClick: () => 
 
 // ─── Main Component ────────────────────────────────────────────────────────────
 
+function SupportAvatar({ size }: { size: number }) {
+  const [imgError, setImgError] = useState(false)
+  const inner = imgError ? (
+    <div style={{
+      width: size, height: size, borderRadius: size / 2,
+      background: 'linear-gradient(135deg, #8060b0, #5a3d8a)',
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      color: '#fff', fontSize: size * 0.36, fontWeight: 700, flexShrink: 0,
+    }}>FS</div>
+  ) : (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src="/support-avatar.jpg"
+      alt="Support"
+      width={size}
+      height={size}
+      style={{ width: size, height: size, borderRadius: size / 2, objectFit: 'cover', flexShrink: 0 }}
+      onError={() => setImgError(true)}
+    />
+  )
+  return inner
+}
+
 export default function SupportChat() {
   const [open, setOpen] = useState(false)
   const [screen, setScreen] = useState<'list' | 'new' | 'chat'>('list')
@@ -636,20 +659,7 @@ export default function SupportChat() {
                 justifyContent: 'space-between', flexShrink: 0,
               }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                  <img
-                    src="/support-avatar.jpg"
-                    alt="Support"
-                    width={40}
-                    height={40}
-                    style={{ width: 40, height: 40, borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }}
-                    onError={e => {
-                      const t = e.currentTarget
-                      t.style.display = 'none'
-                      const fb = t.nextElementSibling as HTMLElement | null
-                      if (fb) fb.style.display = 'flex'
-                    }}
-                  />
-                  <div style={{ width: 40, height: 40, borderRadius: '50%', background: 'linear-gradient(135deg, #8060b0, #5a3d8a)', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: 14, fontWeight: 700, flexShrink: 0, display: 'none' }}>FS</div>
+                  <SupportAvatar size={40} />
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
                     <span style={{ color: '#fff', fontSize: 15, fontWeight: 600, lineHeight: 1 }}>Support</span>
                     <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.55)' }}>Wir antworten zeitnah</span>
@@ -755,7 +765,7 @@ export default function SupportChat() {
                   )
                   return (
                     <div key={msg.id} style={{ display: 'flex', alignItems: 'flex-end', gap: 7 }}>
-                      <img src="/support-avatar.jpg" alt="Support" width={22} height={22} style={{ width: 22, height: 22, borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} onError={e => { const t = e.currentTarget; t.style.display = 'none'; const fb = t.nextElementSibling as HTMLElement | null; if (fb) fb.style.display = 'flex' }} /><div style={{ width: 22, height: 22, borderRadius: '50%', background: 'linear-gradient(135deg, #8060b0, #5a3d8a)', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: 8, fontWeight: 700, flexShrink: 0, display: 'none' }}>FS</div>
+                      <SupportAvatar size={22} />
                       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
                         <div className="fs-msg-bubble-admin">{mediaEl ?? msg.content}</div>
                         <span style={{ fontSize: 10, color: '#AAA', marginTop: 3 }}>{formatTime(msg.createdAt)}</span>

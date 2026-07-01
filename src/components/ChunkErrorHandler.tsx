@@ -11,21 +11,25 @@ import { useEffect } from 'react'
 //   2. As an unhandled promise rejection (also caught below)
 export function ChunkErrorHandler() {
   useEffect(() => {
-    function isChunkError(err: unknown) {
+    function isStaleDeploymentError(err: unknown): boolean {
+      if (!err) return false
+      const msg = err instanceof Error ? err.message : String(err)
       return (
-        (err instanceof Error && err.name === 'ChunkLoadError') ||
-        (typeof err === 'string' && err.includes('ChunkLoadError'))
+        msg.includes('ChunkLoadError') ||
+        msg.includes('Loading chunk') ||
+        msg.includes('Failed to find Server Action') ||
+        (err instanceof Error && err.name === 'ChunkLoadError')
       )
     }
 
     function handleError(event: ErrorEvent) {
-      if (isChunkError(event.error)) {
+      if (isStaleDeploymentError(event.error)) {
         window.location.reload()
       }
     }
 
     function handleUnhandledRejection(event: PromiseRejectionEvent) {
-      if (isChunkError(event.reason)) {
+      if (isStaleDeploymentError(event.reason)) {
         event.preventDefault()
         window.location.reload()
       }
