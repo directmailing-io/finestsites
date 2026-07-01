@@ -81,9 +81,13 @@ const GLOBAL_STYLES = `
 .fs-conv-row:hover { background: #FAFAFA; }
 @media (max-width: 640px) {
   .fs-support-panel {
-    bottom: 0; right: 0; left: 0; border-radius: 20px 20px 0 0;
-    width: 100%; height: 75vh;
+    bottom: calc(56px + env(safe-area-inset-bottom, 0px));
+    right: 0; left: 0; border-radius: 20px 20px 0 0;
+    width: 100%;
+    height: calc(100dvh - 56px - env(safe-area-inset-bottom, 0px) - 16px);
+    max-height: 85vh;
   }
+  .fs-support-launcher { display: none !important; }
 }
 `
 
@@ -380,7 +384,9 @@ export default function SupportChat() {
       const data = await res.json()
       const convs: ConversationSummary[] = data.conversations ?? []
       setConversations(convs)
-      setTotalUnread(convs.reduce((s, c) => s + (c.unreadByUser ?? 0), 0))
+      const count = convs.reduce((s, c) => s + (c.unreadByUser ?? 0), 0)
+      setTotalUnread(count)
+      window.dispatchEvent(new CustomEvent('supportUnreadUpdate', { detail: { count } }))
     } catch { /* ignore */ }
   }, [])
 
@@ -448,7 +454,11 @@ export default function SupportChat() {
 
   async function openConversation(conv: ConversationSummary) {
     setConversations(prev => prev.map(c => c.id === conv.id ? { ...c, unreadByUser: 0 } : c))
-    setTotalUnread(prev => Math.max(0, prev - (conv.unreadByUser ?? 0)))
+    setTotalUnread(prev => {
+      const next = Math.max(0, prev - (conv.unreadByUser ?? 0))
+      window.dispatchEvent(new CustomEvent('supportUnreadUpdate', { detail: { count: next } }))
+      return next
+    })
     setActiveConvId(conv.id)
     setActiveConvStatus(conv.status)
     setScreen('chat')
@@ -787,7 +797,7 @@ export default function SupportChat() {
                       disabled={sending || uploading}
                       style={{
                         flex: 1, border: '1.5px solid #E8E8E8', borderRadius: 12,
-                        padding: '8px 12px', fontSize: 14, fontFamily: 'inherit',
+                        padding: '8px 12px', fontSize: 16, fontFamily: 'inherit',
                         resize: 'none', outline: 'none', minHeight: 36, maxHeight: 90,
                         overflowY: 'auto', lineHeight: 1.5, color: '#111', background: '#fff',
                         transition: 'border-color 0.15s',

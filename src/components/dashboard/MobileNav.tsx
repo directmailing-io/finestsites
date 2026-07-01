@@ -10,6 +10,7 @@ export function MobileNav() {
   const router = useRouter()
   const [showMore, setShowMore] = useState(false)
   const [unreadCount, setUnreadCount] = useState(0)
+  const [chatUnread, setChatUnread] = useState(0)
 
   // Hide on editor pages — must be after all hooks
   const isEditorPage = /^\/sites\/[^/]+\/edit/.test(pathname)
@@ -30,6 +31,16 @@ export function MobileNav() {
       return () => clearTimeout(id)
     }
   }, [pathname])
+
+  // Listen for unread count updates from SupportChat
+  useEffect(() => {
+    function handler(e: Event) {
+      const detail = (e as CustomEvent<{ count: number }>).detail
+      setChatUnread(detail?.count ?? 0)
+    }
+    window.addEventListener('supportUnreadUpdate', handler)
+    return () => window.removeEventListener('supportUnreadUpdate', handler)
+  }, [])
 
   if (isEditorPage) return null
 
@@ -148,6 +159,26 @@ export function MobileNav() {
         </Link>
 
         <button
+          onClick={() => { setShowMore(false); window.dispatchEvent(new CustomEvent('openSupportChat')) }}
+          className="flex-1 flex flex-col items-center justify-center gap-0.5 active:opacity-60 transition-opacity relative"
+        >
+          <span className="relative">
+            <TabChatIcon />
+            {chatUnread > 0 && (
+              <span
+                className="absolute -top-1 -right-2 min-w-[16px] h-4 px-1 rounded-full text-[10px] font-bold flex items-center justify-center"
+                style={{ background: '#DC2626', color: 'white' }}
+              >
+                {chatUnread > 99 ? '99+' : chatUnread}
+              </span>
+            )}
+          </span>
+          <span className="text-[10px] font-medium" style={{ color: '#9CA3AF' }}>
+            Support
+          </span>
+        </button>
+
+        <button
           onClick={() => setShowMore(s => !s)}
           className="flex-1 flex flex-col items-center justify-center gap-0.5 active:opacity-60 transition-opacity"
         >
@@ -178,6 +209,14 @@ function TabInboxIcon({ active }: { active: boolean }) {
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={active ? '#1a1a1a' : '#9CA3AF'} strokeWidth={active ? 2 : 1.75}>
       <polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/>
       <path d="M5.45 5.11L2 12v6a2 2 0 002 2h16a2 2 0 002-2v-6l-3.45-6.89A2 2 0 0016.76 4H7.24a2 2 0 00-1.79 1.11z"/>
+    </svg>
+  )
+}
+
+function TabChatIcon() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="1.75">
+      <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
     </svg>
   )
 }
