@@ -114,27 +114,51 @@ export function DashboardSidebar() {
         <button
           onClick={() => window.dispatchEvent(new CustomEvent('openSupportChat'))}
           className="w-full mb-2 group"
-          style={{ border: 'none', padding: 0, cursor: 'pointer', background: 'transparent', display: 'block' }}
+          style={{
+            border: '1px solid #E5E7EB', padding: 0, cursor: 'pointer',
+            background: '#fff', display: 'block', borderRadius: 14,
+            overflow: 'hidden', boxShadow: '0 1px 4px rgba(0,0,0,0.06)',
+            transition: 'box-shadow 0.15s, transform 0.15s',
+          }}
+          onMouseEnter={e => { (e.currentTarget as HTMLElement).style.boxShadow = '0 4px 16px rgba(0,0,0,0.12)'; (e.currentTarget as HTMLElement).style.transform = 'translateY(-1px)' }}
+          onMouseLeave={e => { (e.currentTarget as HTMLElement).style.boxShadow = '0 1px 4px rgba(0,0,0,0.06)'; (e.currentTarget as HTMLElement).style.transform = 'none' }}
         >
-          <div style={{ position: 'relative', borderRadius: 14, overflow: 'hidden', aspectRatio: '4/3' }}>
-            {/* Full-bleed image */}
+          {/* Image — 4:3 crop, face + mascot centered */}
+          <div style={{ position: 'relative', aspectRatio: '4/3', overflow: 'hidden' }}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src="/support-team.jpg"
-              alt="Support Team"
-              style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top', display: 'block', transition: 'transform 0.3s' }}
-              className="group-hover:scale-[1.03]"
+              alt="Support"
+              style={{
+                width: '100%', height: '100%',
+                objectFit: 'cover', objectPosition: '50% 20%',
+                display: 'block', transition: 'transform 0.35s ease',
+              }}
+              className="group-hover:scale-[1.04]"
             />
-            {/* Bottom gradient + text */}
+            {/* Live pill floating top-left */}
             <div style={{
-              position: 'absolute', bottom: 0, left: 0, right: 0,
-              background: 'linear-gradient(to top, rgba(0,0,0,0.72) 0%, transparent 100%)',
-              padding: '28px 12px 11px',
+              position: 'absolute', top: 9, left: 9,
+              display: 'flex', alignItems: 'center', gap: 5,
+              background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(6px)',
+              borderRadius: 20, padding: '4px 9px',
             }}>
-              <p style={{ margin: 0, fontSize: 12, fontWeight: 700, color: '#fff', lineHeight: 1.3 }}>
-                Fragen? Chat starten →
-              </p>
+              <div style={{
+                width: 6, height: 6, borderRadius: '50%', background: '#22C55E',
+                boxShadow: '0 0 0 2px rgba(34,197,94,0.4)', flexShrink: 0,
+              }} />
+              <span style={{ fontSize: 10, fontWeight: 700, color: '#fff', letterSpacing: '0.04em' }}>Live</span>
             </div>
+          </div>
+
+          {/* Text panel */}
+          <div style={{ padding: '10px 12px 11px', textAlign: 'left' }}>
+            <p style={{ margin: '0 0 2px', fontSize: 13, fontWeight: 700, color: '#111', lineHeight: 1.3 }}>
+              Hilfe benötigt?
+            </p>
+            <p style={{ margin: 0, fontSize: 11, color: '#6B7280', lineHeight: 1.4 }}>
+              Unser Team antwortet sofort →
+            </p>
           </div>
         </button>
 
