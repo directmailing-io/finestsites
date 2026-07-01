@@ -63,7 +63,7 @@ export async function GET(req: NextRequest) {
 
     // Get last message for each conversation
     const convIds = filtered.map(c => c.id)
-    let lastMessages: Array<{ conversationId: string; content: string; senderType: string; createdAt: Date }> = []
+    const lastMessages: Array<{ conversationId: string; content: string; senderType: string; createdAt: Date }> = []
     if (convIds.length > 0) {
       // Fetch last message per conversation
       const msgs = await db
