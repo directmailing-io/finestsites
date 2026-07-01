@@ -25,13 +25,6 @@ interface ConversationSummary {
   lastMessage: { content: string; contentType: string; senderType: string } | null
 }
 
-interface GifResult {
-  id: string
-  title: string
-  previewUrl: string
-  url: string
-}
-
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const EMOJI_GROUPS = [
@@ -109,7 +102,6 @@ function formatTime(iso: string): string {
 function truncatePreview(msg: ConversationSummary['lastMessage']): string {
   if (!msg) return 'Noch keine Nachrichten'
   if (msg.contentType === 'image') return '📷 Bild'
-  if (msg.contentType === 'gif') return '🎬 GIF'
   return msg.content.length > 45 ? msg.content.slice(0, 45) + '…' : msg.content
 }
 
@@ -243,110 +235,6 @@ function EmojiPicker({ onSelect }: { onSelect: (emoji: string) => void }) {
   )
 }
 
-function GifSearchPanel({ onSelect }: { onSelect: (gif: GifResult) => void }) {
-  const [query, setQuery] = useState('')
-  const [gifs, setGifs] = useState<GifResult[]>([])
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState(false)
-  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const inputRef = useRef<HTMLInputElement>(null)
-
-  useEffect(() => {
-    // Small delay so panel animation finishes before focusing
-    const t = setTimeout(() => inputRef.current?.focus(), 50)
-    return () => clearTimeout(t)
-  }, [])
-
-  function handleChange(q: string) {
-    setQuery(q)
-    setError(false)
-    if (debounceRef.current) clearTimeout(debounceRef.current)
-    if (!q.trim()) { setGifs([]); return }
-    debounceRef.current = setTimeout(async () => {
-      setLoading(true)
-      try {
-        const res = await fetch(`/api/support/gifs?q=${encodeURIComponent(q.trim())}`)
-        if (!res.ok) throw new Error('failed')
-        const data = await res.json()
-        setGifs(data.gifs ?? [])
-        if (!data.gifs?.length) setError(false)
-      } catch {
-        setGifs([])
-        setError(true)
-      } finally {
-        setLoading(false)
-      }
-    }, 450)
-  }
-
-  return (
-    <div style={{
-      position: 'absolute', bottom: 'calc(100% + 6px)', left: 8,
-      background: '#fff', border: '1px solid #E8E8E8',
-      borderRadius: 16, padding: 12,
-      boxShadow: '0 8px 32px rgba(0,0,0,0.13)',
-      width: 300, zIndex: 200,
-    }}>
-      <input
-        ref={inputRef}
-        type="text"
-        value={query}
-        onChange={e => handleChange(e.target.value)}
-        placeholder="GIF suchen…"
-        style={{
-          width: '100%', border: '1.5px solid #E0E0E0', borderRadius: 10,
-          padding: '8px 12px', fontSize: 13, outline: 'none',
-          fontFamily: 'inherit', boxSizing: 'border-box', color: '#111',
-          transition: 'border-color 0.15s',
-        }}
-        onFocus={e => (e.currentTarget.style.borderColor = '#111')}
-        onBlur={e => (e.currentTarget.style.borderColor = '#E0E0E0')}
-      />
-      {loading && (
-        <div style={{ fontSize: 12, color: '#999', marginTop: 10, textAlign: 'center', padding: '8px 0' }}>
-          Suche nach GIFs…
-        </div>
-      )}
-      {!loading && error && (
-        <div style={{ fontSize: 12, color: '#EF4444', marginTop: 10, textAlign: 'center', padding: '8px 0' }}>
-          GIF-Suche nicht verfügbar
-        </div>
-      )}
-      {!loading && !error && query && gifs.length === 0 && (
-        <div style={{ fontSize: 12, color: '#999', marginTop: 10, textAlign: 'center', padding: '8px 0' }}>
-          Keine GIFs gefunden
-        </div>
-      )}
-      {!query && !loading && (
-        <div style={{ fontSize: 12, color: '#BBB', marginTop: 8, textAlign: 'center' }}>
-          Stichwort eingeben um GIFs zu suchen
-        </div>
-      )}
-      {gifs.length > 0 && (
-        <div style={{
-          display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)',
-          gap: 6, marginTop: 10, maxHeight: 220, overflowY: 'auto',
-        }}>
-          {gifs.map(gif => (
-            <div
-              key={gif.id}
-              onClick={() => onSelect(gif)}
-              style={{ cursor: 'pointer', borderRadius: 8, overflow: 'hidden', lineHeight: 0 }}
-            >
-              <img
-                src={gif.previewUrl}
-                alt={gif.title}
-                style={{ width: '100%', display: 'block', borderRadius: 8 }}
-                loading="lazy"
-              />
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
-  )
-}
-
 function ConvRow({ conv, onClick }: { conv: ConversationSummary; onClick: () => void }) {
   const [hovered, setHovered] = useState(false)
   return (
@@ -432,7 +320,6 @@ export default function SupportChat() {
   const [sending, setSending] = useState(false)
   const [uploading, setUploading] = useState(false)
   const [showEmoji, setShowEmoji] = useState(false)
-  const [showGif, setShowGif] = useState(false)
   const [totalUnread, setTotalUnread] = useState(0)
 
   const messagesEndRef = useRef<HTMLDivElement>(null)
@@ -492,13 +379,13 @@ export default function SupportChat() {
     return () => { if (pollRef.current) { clearInterval(pollRef.current); pollRef.current = null } }
   }, [open, screen, activeConvId, activeConvStatus])
 
-  // ── Conversation list polling ────────────────────────────────────────────
+  // ── Conversation list polling (always active for unread badge) ───────────
 
   useEffect(() => {
-    if (!open) { if (convPollRef.current) { clearInterval(convPollRef.current); convPollRef.current = null } return }
-    convPollRef.current = setInterval(fetchConversations, 10000)
+    // Poll every 5s regardless of whether panel is open — keeps unread badge live
+    convPollRef.current = setInterval(fetchConversations, 5000)
     return () => { if (convPollRef.current) { clearInterval(convPollRef.current); convPollRef.current = null } }
-  }, [open, fetchConversations])
+  }, [fetchConversations])
 
   // ── Open conversation ────────────────────────────────────────────────────
 
@@ -511,7 +398,6 @@ export default function SupportChat() {
     setMessages([])
     lastMsgTimeRef.current = null
     setShowEmoji(false)
-    setShowGif(false)
     try {
       const res = await fetch(`/api/support/messages?conversationId=${conv.id}`)
       const data = await res.json()
@@ -600,11 +486,6 @@ export default function SupportChat() {
     finally { setUploading(false) }
   }
 
-  async function handleGifSelect(gif: GifResult) {
-    setShowGif(false)
-    await sendMessage({ contentType: 'gif', mediaUrl: gif.url, content: '' })
-  }
-
   // ── Keyboard ─────────────────────────────────────────────────────────────
 
   function handleKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
@@ -622,7 +503,7 @@ export default function SupportChat() {
   }
 
   function toggleOpen() {
-    if (open) { setOpen(false); setShowEmoji(false); setShowGif(false) }
+    if (open) { setOpen(false); setShowEmoji(false) }
     else { setOpen(true); setScreen('list') }
   }
 
@@ -720,7 +601,7 @@ export default function SupportChat() {
               }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                   <button
-                    onClick={() => { setScreen('list'); fetchConversations(); setShowEmoji(false); setShowGif(false) }}
+                    onClick={() => { setScreen('list'); fetchConversations(); setShowEmoji(false) }}
                     style={{ width: 32, height: 32, borderRadius: '50%', background: 'rgba(255,255,255,0.1)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}
                   >
                     <ChevronLeftIcon />
@@ -736,7 +617,7 @@ export default function SupportChat() {
                     </div>
                   )}
                 </div>
-                <button onClick={() => { setOpen(false); setShowEmoji(false); setShowGif(false) }} style={{ width: 32, height: 32, borderRadius: '50%', background: 'rgba(255,255,255,0.1)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <button onClick={() => { setOpen(false); setShowEmoji(false) }} style={{ width: 32, height: 32, borderRadius: '50%', background: 'rgba(255,255,255,0.1)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <XIcon />
                 </button>
               </div>
@@ -753,8 +634,8 @@ export default function SupportChat() {
 
                 {messages.map(msg => {
                   const isUser = msg.senderType === 'user'
-                  const mediaEl = (msg.contentType === 'image' || msg.contentType === 'gif') && msg.mediaUrl
-                    ? <img src={msg.mediaUrl} alt={msg.contentType === 'gif' ? 'GIF' : 'Bild'} style={{ maxWidth: '100%', maxHeight: 200, borderRadius: 10, display: 'block' }} />
+                  const mediaEl = msg.contentType === 'image' && msg.mediaUrl
+                    ? <img src={msg.mediaUrl} alt="Bild" style={{ maxWidth: '100%', maxHeight: 200, borderRadius: 10, display: 'block' }} />
                     : null
 
                   if (isUser) return (
@@ -790,39 +671,24 @@ export default function SupportChat() {
                 <div style={{ flexShrink: 0, borderTop: '1px solid #EBEBEB', background: '#fff', position: 'relative' }}>
                   {/* Popover panels */}
                   {showEmoji && <EmojiPicker onSelect={emoji => { setInput(p => p + emoji); textareaRef.current?.focus() }} />}
-                  {showGif && <GifSearchPanel onSelect={handleGifSelect} />}
 
                   {/* Toolbar */}
                   <div style={{ height: 42, padding: '0 14px', display: 'flex', alignItems: 'center', gap: 4 }}>
                     <button
                       className={`fs-toolbar-btn${showEmoji ? ' active' : ''}`}
-                      onClick={() => { setShowEmoji(p => !p); setShowGif(false) }}
+                      onClick={() => setShowEmoji(p => !p)}
                       title="Emoji"
                     >
                       <SmileIcon active={showEmoji} />
                     </button>
                     <button
                       className="fs-toolbar-btn"
-                      onClick={() => { fileInputRef.current?.click(); setShowEmoji(false); setShowGif(false) }}
+                      onClick={() => { fileInputRef.current?.click(); setShowEmoji(false) }}
                       disabled={uploading}
                       title="Bild hochladen"
                       style={{ opacity: uploading ? 0.4 : 1 }}
                     >
                       <ImageIcon active={false} />
-                    </button>
-                    <button
-                      onClick={() => { setShowGif(p => !p); setShowEmoji(false) }}
-                      title="GIF senden"
-                      style={{
-                        height: 26, border: `1.5px solid ${showGif ? '#333' : '#DEDEDE'}`,
-                        background: showGif ? '#F0F0F0' : 'transparent', cursor: 'pointer',
-                        fontSize: 10, fontWeight: 800, letterSpacing: '0.04em',
-                        borderRadius: 7, padding: '0 7px', color: showGif ? '#111' : '#888',
-                        fontFamily: 'inherit', lineHeight: '1',
-                        transition: 'all 0.12s',
-                      }}
-                    >
-                      GIF
                     </button>
                     {uploading && <span style={{ fontSize: 11, color: '#999', marginLeft: 6 }}>Lädt hoch…</span>}
                   </div>

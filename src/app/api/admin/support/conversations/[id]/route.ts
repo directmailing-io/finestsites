@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getUserFromRequest } from '@/lib/auth/server'
 import { db } from '@/lib/db'
-import { users, supportConversations } from '@/lib/db/schema'
-import { eq } from 'drizzle-orm'
+import { users, supportConversations, supportMessages } from '@/lib/db/schema'
+import { eq, and, isNotNull } from 'drizzle-orm'
+import { deleteFromR2 } from '@/lib/r2/client'
 
 async function checkAdmin(req: Request) {
   const user = await getUserFromRequest(req)
@@ -62,6 +63,28 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
   const { id } = await params
 
   try {
+    // Collect R2 keys from messages with uploaded images before cascade-delete
+    const mediaMessages = await db
+      .select({ mediaUrl: supportMessages.mediaUrl })
+      .from(supportMessages)
+      .where(and(
+        eq(supportMessages.conversationId, id),
+        eq(supportMessages.contentType, 'image'),
+        isNotNull(supportMessages.mediaUrl),
+      ))
+
+    // Delete R2 objects (fire-and-forget errors — don't block conversation delete)
+    const r2Deletions = mediaMessages
+      .map(m => m.mediaUrl!)
+      .filter(url => url.includes('key='))
+      .map(url => {
+        try {
+          const key = decodeURIComponent(url.split('key=')[1])
+          return deleteFromR2(key).catch(() => {})
+        } catch { return Promise.resolve() }
+      })
+    await Promise.allSettled(r2Deletions)
+
     // Messages cascade-delete via FK constraint
     await db.delete(supportConversations).where(eq(supportConversations.id, id))
     return NextResponse.json({ ok: true })

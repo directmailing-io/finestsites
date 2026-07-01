@@ -75,15 +75,6 @@ function renderMessageContent(msg: Message) {
       </div>
     )
   }
-  if (msg.contentType === 'gif' && msg.mediaUrl) {
-    return (
-      <img
-        src={msg.mediaUrl}
-        alt="GIF"
-        style={{ maxWidth: '100%', maxHeight: 200, borderRadius: 10, display: 'block' }}
-      />
-    )
-  }
   return <span>{msg.content}</span>
 }
 
@@ -498,8 +489,6 @@ export default function SupportAdminPanel() {
               if (conv.lastMessage) {
                 if (conv.lastMessage.contentType === 'image') {
                   lastMsgPreview = '📷 Bild'
-                } else if (conv.lastMessage.contentType === 'gif') {
-                  lastMsgPreview = '🎬 GIF'
                 } else {
                   const txt = conv.lastMessage.content ?? ''
                   lastMsgPreview = txt.length > 50 ? txt.slice(0, 50) + '…' : txt
