@@ -66,13 +66,17 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
           : Promise.resolve(null),
       ])
       invoices = invoiceResult.data
-      if (subsResult && subsResult.discount) {
-        const disc = subsResult.discount as Stripe.Discount & { promotion_code?: Stripe.PromotionCode | string | null }
-        subscriptionDiscount = {
-          couponName: disc.coupon?.name ?? disc.coupon?.id ?? null,
-          promoCode: disc.promotion_code && typeof disc.promotion_code === 'object'
+      if (subsResult && subsResult.discounts && subsResult.discounts.length > 0) {
+        const firstDisc = subsResult.discounts[0]
+        const disc = typeof firstDisc === 'object' ? firstDisc as Stripe.Discount : null
+        if (disc) {
+          const promoCode = disc.promotion_code && typeof disc.promotion_code === 'object'
             ? (disc.promotion_code as Stripe.PromotionCode).code ?? null
-            : null,
+            : null
+          subscriptionDiscount = {
+            couponName: disc.coupon?.name ?? disc.coupon?.id ?? null,
+            promoCode,
+          }
         }
       }
     } catch { /* ignore */ }
