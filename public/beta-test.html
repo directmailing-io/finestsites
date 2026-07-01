@@ -303,55 +303,67 @@ body {
 <script>
 // ─── DATA ────────────────────────────────────────────────────────────────────
 const CATS = [
-  { id: 'account', icon: '👤', color: '#EFF6FF', title: 'Anmelden & Account', desc: 'Registrieren, einloggen, Passwort', items: [
-    { id: 'reg', title: 'Konto erstellt (Registrierung abgeschlossen)' },
+  { id: 'account', icon: '👤', color: '#EFF6FF', title: 'Registrierung & Anmelden', desc: 'Konto erstellen, einloggen, Passwort', items: [
+    { id: 'reg', title: 'Konto erstellt – Registrierung hat geklappt' },
     { id: 'email_ok', title: 'Bestätigungs-E-Mail ist angekommen' },
     { id: 'username', title: 'Benutzernamen festgelegt (z. B. @lena)' },
     { id: 'relogin', title: 'Ausgeloggt und wieder eingeloggt' },
-    { id: 'pw_forgot', title: '"Passwort vergessen" genutzt – E-Mail kam an' },
-    { id: 'pw_reset', title: 'Neues Passwort gesetzt und danach eingeloggt' },
+    { id: 'pw_forgot', title: '"Passwort vergessen" genutzt – Reset-Mail kam an' },
+    { id: 'pw_reset', title: 'Neues Passwort gesetzt und danach erfolgreich eingeloggt' },
     { id: 'pw_change', title: 'Passwort in den Einstellungen geändert' },
   ]},
-  { id: 'plan', icon: '💳', color: '#F5F3FF', title: 'Tarif & Bezahlen', desc: 'Plan buchen, bezahlen, kündigen', items: [
-    { id: 'plan_seen', title: 'Planauswahl nach der Registrierung gesehen' },
+  { id: 'plan', icon: '💳', color: '#F5F3FF', title: 'Tarif buchen', desc: 'Tarif auswählen und bezahlen', items: [
+    { id: 'plan_seen', title: 'Tarifauswahl nach der Registrierung gesehen' },
     { id: 'plan_bought', title: 'Bezahlten Tarif gebucht (Karte oder SEPA)' },
     { id: 'plan_invoice', title: 'Rechnung per E-Mail erhalten' },
-    { id: 'plan_portal', title: '"Abo verwalten" geöffnet' },
-    { id: 'plan_cancel', title: 'Abo gekündigt – hat funktioniert' },
-    { id: 'plan_cancel_email', title: 'Kündigungsbestätigung per E-Mail erhalten' },
+    { id: 'plan_portal', title: '"Abo verwalten" geöffnet – Stripe-Portal hat funktioniert' },
   ]},
-  { id: 'website', icon: '🌐', color: '#F0FDF4', title: 'Webseite erstellen', desc: 'Vorlage wählen, bearbeiten, veröffentlichen', items: [
-    { id: 'tmpl_browse', title: 'Vorlagen angeschaut' },
-    { id: 'tmpl_preview', title: 'Vorschau einer Vorlage angesehen' },
-    { id: 'tmpl_create', title: 'Vorlage ausgewählt und Website angelegt' },
-    { id: 'editor_open', title: 'Editor geöffnet – alles war sichtbar und bearbeitbar' },
+  { id: 'template', icon: '🌐', color: '#F0FDF4', title: 'Template wählen & ausfüllen', desc: 'Vorlage auswählen, Inhalte eintragen', items: [
+    { id: 'tmpl_browse', title: 'Vorlagen auf der Seite angeschaut' },
+    { id: 'tmpl_preview', title: 'Vorschau einer Vorlage aufgerufen' },
+    { id: 'tmpl_create', title: 'Template ausgewählt und Website angelegt' },
+    { id: 'editor_open', title: 'Editor geöffnet – alles sichtbar und bedienbar' },
     { id: 'editor_text', title: 'Texte geändert und gespeichert' },
     { id: 'editor_img', title: 'Eigenes Bild hochgeladen' },
     { id: 'preview_ok', title: 'Vorschau der eigenen Seite angesehen' },
-    { id: 'published', title: 'Webseite veröffentlicht (Live geschaltet)' },
-    { id: 'live_open', title: 'Veröffentlichte Seite im Browser aufgerufen' },
-    { id: 'edit_live', title: 'Inhalte nach dem Veröffentlichen geändert – war sofort live' },
   ]},
-  { id: 'domain', icon: '🔗', color: '#FFF7ED', title: 'Eigene Domain', desc: 'Optional – nur wenn du eine Domain hast', items: [
+  { id: 'publish', icon: '🚀', color: '#FDF4FF', title: 'Aktivieren, bearbeiten, deaktivieren', desc: 'Template live schalten und verwalten', items: [
+    { id: 'published', title: 'Website aktiviert (Live geschaltet)' },
+    { id: 'live_open', title: 'Aktivierte Seite im Browser aufgerufen – war erreichbar' },
+    { id: 'edit_live', title: 'Inhalte nach dem Aktivieren geändert – Änderung war sofort live' },
+    { id: 'edit_again', title: 'Seite nochmal bearbeitet und erneut live gestellt' },
+    { id: 'deactivate', title: 'Website deaktiviert – war danach nicht mehr erreichbar' },
+    { id: 'reactivate', title: 'Website wieder aktiviert – war danach wieder erreichbar' },
+    { id: 'delete_site', title: 'Website gelöscht – aus der Übersicht verschwunden' },
+  ]},
+  { id: 'domain', icon: '🔗', color: '#FFF7ED', title: 'Eigene Domain verbinden', desc: 'Optional – nur wenn du eine Domain hast', items: [
     { id: 'dom_enter', title: 'Eigene Domain eingetragen' },
-    { id: 'dom_dns', title: 'DNS-Einstellungen gemacht (beim Domain-Anbieter)' },
+    { id: 'dom_dns', title: 'DNS-Einstellungen beim Domain-Anbieter gemacht' },
     { id: 'dom_ssl', title: 'HTTPS hat funktioniert (Schloss im Browser)' },
     { id: 'dom_live', title: 'Webseite über eigene Domain erreichbar' },
   ]},
   { id: 'form', icon: '📬', color: '#FEF9C3', title: 'Kontaktformular', desc: 'Anfrage abschicken und empfangen', items: [
-    { id: 'form_sent', title: 'Testanfrage über das Formular abgeschickt' },
+    { id: 'form_sent', title: 'Testanfrage über das Kontaktformular abgeschickt' },
     { id: 'form_inbox', title: 'Anfrage im Dashboard unter "Anfragen" gesehen' },
-    { id: 'form_notify', title: 'Benachrichtigungsmail erhalten' },
+    { id: 'form_notify', title: 'Benachrichtigungs-E-Mail dazu erhalten' },
   ]},
-  { id: 'support', icon: '💬', color: '#F0F9FF', title: 'Support-Chat', desc: 'Chatten, Antwort bekommen', items: [
+  { id: 'affiliate', icon: '🤝', color: '#F0FDF4', title: 'Partnerbereich', desc: 'Partnerkonto bei Stripe einrichten', items: [
+    { id: 'aff_open', title: 'Partnerbereich im Menü aufgerufen' },
+    { id: 'aff_stripe', title: 'Stripe-Konto verknüpft (Auszahlungskonto eingerichtet)' },
+    { id: 'aff_link', title: 'Persönlichen Partnerlink gesehen / kopiert' },
+  ]},
+  { id: 'support', icon: '💬', color: '#F0F9FF', title: 'Support-Anfragen', desc: 'Chat öffnen, Nachricht schreiben', items: [
     { id: 'chat_open', title: 'Support-Chat geöffnet' },
     { id: 'chat_msg', title: 'Nachricht geschrieben und abgeschickt' },
     { id: 'chat_reply', title: 'Antwort vom Support erhalten' },
-    { id: 'chat_badge', title: 'Neue-Nachricht-Anzeige hat funktioniert' },
+  ]},
+  { id: 'cancel', icon: '❌', color: '#FFF1F2', title: 'Tarif kündigen', desc: 'Abo beenden', items: [
+    { id: 'plan_cancel', title: '"Abo kündigen" aufgerufen – hat funktioniert' },
+    { id: 'plan_cancel_email', title: 'Kündigungsbestätigung per E-Mail erhalten' },
   ]},
   { id: 'misc', icon: '📱', color: '#F9FAFB', title: 'Sonstiges', desc: 'Handy, Einstellungen, Abmelden', items: [
     { id: 'mobile_app', title: 'Dashboard auf dem Handy geöffnet – sah gut aus' },
-    { id: 'mobile_site', title: 'Eigene Webseite auf dem Handy überprüft' },
+    { id: 'mobile_site', title: 'Eigene Webseite auf dem Handy gecheckt' },
     { id: 'settings', title: 'Einstellungen aufgerufen' },
     { id: 'logout', title: 'Erfolgreich abgemeldet' },
   ]},
