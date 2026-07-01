@@ -132,9 +132,8 @@ export function DashboardSidebar() {
               style={{
                 width: '100%', height: '100%',
                 objectFit: 'cover', objectPosition: '50% 20%',
-                display: 'block', transition: 'transform 0.35s ease',
+                display: 'block',
               }}
-              className="group-hover:scale-[1.04]"
             />
             {/* Live pill floating top-left */}
             <div style={{
@@ -147,7 +146,7 @@ export function DashboardSidebar() {
                 width: 6, height: 6, borderRadius: '50%', background: '#22C55E',
                 boxShadow: '0 0 0 2px rgba(34,197,94,0.4)', flexShrink: 0,
               }} />
-              <span style={{ fontSize: 10, fontWeight: 700, color: '#fff', letterSpacing: '0.04em' }}>Live</span>
+              <span style={{ fontSize: 10, fontWeight: 700, color: '#fff', letterSpacing: '0.04em' }}>Support</span>
             </div>
           </div>
 
@@ -157,7 +156,7 @@ export function DashboardSidebar() {
               Hilfe benötigt?
             </p>
             <p style={{ margin: 0, fontSize: 11, color: '#6B7280', lineHeight: 1.4 }}>
-              Unser Team antwortet sofort →
+              Jetzt Chat beginnen →
             </p>
           </div>
         </button>
