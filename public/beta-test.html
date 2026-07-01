@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FinestSites Beta-Test</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #F5F5F7;
+    --card: #ffffff;
+    --border: #E5E7EB;
+    --text: #1D1D1F;
+    --muted: #6E6E73;
+    --accent: #1a1a1a;
+    --green: #34C759;
+    --green-bg: #F0FDF4;
+    --green-text: #16A34A;
+    --blue: #0071E3;
+    --radius: 18px;
+    --shadow: 0 4px 24px rgba(0,0,0,0.07);
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 32px 16px 80px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .container {
+    max-width: 680px;
+    margin: 0 auto;
+  }
+
+  /* Header */
+  .header {
+    text-align: center;
+    margin-bottom: 36px;
+  }
+  .header .logo {
+    display: inline-block;
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+    color: var(--text);
+    margin-bottom: 16px;
+    background: #000;
+    color: #fff;
+    padding: 6px 14px;
+    border-radius: 8px;
+  }
+  .header h1 {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+  .header p {
+    font-size: 15px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  /* Name card */
+  .name-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 24px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    margin-bottom: 20px;
+  }
+  .name-card label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 8px;
+  }
+  .name-card input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    font-size: 16px;
+    font-family: inherit;
+    color: var(--text);
+    background: #FAFAFA;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .name-card input:focus {
+    border-color: var(--accent);
+    background: #fff;
+  }
+  .name-card input::placeholder { color: #C0C0C5; }
+
+  /* Progress bar */
+  .progress-wrap {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 18px 24px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .progress-bar-bg {
+    flex: 1;
+    height: 8px;
+    background: #E5E7EB;
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #34C759, #30D158);
+    border-radius: 99px;
+    transition: width 0.4s cubic-bezier(.4,0,.2,1);
+    width: 0%;
+  }
+  .progress-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    white-space: nowrap;
+  }
+
+  /* Category card */
+  .category {
+    background: var(--card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    margin-bottom: 16px;
+    overflow: hidden;
+  }
+  .category-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 18px 24px;
+    border-bottom: 1px solid #F3F4F6;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.1s;
+  }
+  .category-header:hover { background: #FAFAFA; }
+  .cat-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+  .cat-title {
+    flex: 1;
+  }
+  .cat-title h2 {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 1px;
+  }
+  .cat-title p {
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .cat-badge {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 9px;
+    border-radius: 99px;
+    background: #F3F4F6;
+    color: var(--muted);
+    transition: all 0.2s;
+  }
+  .cat-badge.complete {
+    background: var(--green-bg);
+    color: var(--green-text);
+  }
+  .cat-chevron {
+    color: var(--muted);
+    transition: transform 0.2s;
+    flex-shrink: 0;
+  }
+  .category.open .cat-chevron { transform: rotate(180deg); }
+
+  .cat-body {
+    display: none;
+    padding: 8px 0;
+  }
+  .category.open .cat-body { display: block; }
+
+  /* Checklist item */
+  .item {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 14px 24px;
+    transition: background 0.1s;
+    border-bottom: 1px solid #F9FAFB;
+  }
+  .item:last-child { border-bottom: none; }
+  .item:hover { background: #FAFAFA; }
+
+  .item-check {
+    width: 22px;
+    height: 22px;
+    border: 2px solid var(--border);
+    border-radius: 7px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+    margin-top: 1px;
+    transition: all 0.15s;
+    background: #fff;
+  }
+  .item.checked .item-check {
+    background: var(--green);
+    border-color: var(--green);
+  }
+  .item-check svg { display: none; }
+  .item.checked .item-check svg { display: block; }
+
+  .item-content { flex: 1; min-width: 0; cursor: pointer; }
+  .item-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+    line-height: 1.4;
+    transition: color 0.15s;
+  }
+  .item.checked .item-title {
+    color: var(--muted);
+    text-decoration: line-through;
+    text-decoration-color: #C0C0C5;
+  }
+  .item-hint {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 2px;
+    line-height: 1.4;
+  }
+
+  .item-note {
+    width: 100%;
+    margin-top: 8px;
+    padding: 8px 10px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 12px;
+    font-family: inherit;
+    color: var(--text);
+    background: #FAFAFA;
+    resize: vertical;
+    min-height: 52px;
+    outline: none;
+    transition: border-color 0.15s;
+    display: none;
+  }
+  .item-note:focus { border-color: #9CA3AF; background: #fff; }
+  .item.checked .item-note { display: block; }
+
+  .item-flag {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 6px;
+    cursor: pointer;
+    width: fit-content;
+  }
+  .item-flag input[type="checkbox"] { display: none; }
+  .flag-pill {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    padding: 2px 8px;
+    border-radius: 99px;
+    border: 1.5px solid #FCA5A5;
+    color: #DC2626;
+    background: #FEF2F2;
+    cursor: pointer;
+    transition: all 0.15s;
+    user-select: none;
+  }
+  .item-flag input:checked + .flag-pill {
+    background: #DC2626;
+    color: #fff;
+    border-color: #DC2626;
+  }
+  .item.checked .item-flag { display: flex; }
+  .item:not(.checked) .item-flag { display: none; }
+
+  /* Submit section */
+  .submit-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 28px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    margin-top: 24px;
+    text-align: center;
+  }
+  .submit-card h3 {
+    font-size: 17px;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .submit-card p {
+    font-size: 14px;
+    color: var(--muted);
+    margin-bottom: 20px;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 13px 24px;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    border: none;
+    transition: all 0.15s;
+    text-decoration: none;
+  }
+  .btn-primary {
+    background: #1a1a1a;
+    color: #fff;
+  }
+  .btn-primary:hover { background: #333; transform: translateY(-1px); }
+  .btn-secondary {
+    background: #F3F4F6;
+    color: var(--text);
+    margin-top: 10px;
+  }
+  .btn-secondary:hover { background: #E5E7EB; }
+
+  /* Result modal */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    backdrop-filter: blur(4px);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: #fff;
+    border-radius: 24px;
+    padding: 32px;
+    max-width: 540px;
+    width: 100%;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+    max-height: 80vh;
+    overflow-y: auto;
+  }
+  .modal h2 {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .modal .sub {
+    font-size: 14px;
+    color: var(--muted);
+    margin-bottom: 20px;
+  }
+  .result-text {
+    background: #F9FAFB;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    font-size: 12px;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    line-height: 1.6;
+    color: #374151;
+    white-space: pre-wrap;
+    word-break: break-word;
+    max-height: 240px;
+    overflow-y: auto;
+    margin-bottom: 16px;
+  }
+  .modal-btns {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .copy-feedback {
+    font-size: 13px;
+    color: var(--green-text);
+    font-weight: 500;
+    display: none;
+    margin-top: 8px;
+  }
+  .copy-feedback.show { display: block; }
+
+  /* Reset */
+  .reset-link {
+    display: block;
+    text-align: center;
+    font-size: 12px;
+    color: #C0C0C5;
+    margin-top: 20px;
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .reset-link:hover { color: var(--muted); }
+
+  @media (max-width: 500px) {
+    .header h1 { font-size: 22px; }
+    .item { padding: 12px 16px; }
+    .category-header { padding: 16px; }
+    .modal { padding: 24px 20px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="logo">FinestSites</div>
+    <h1>Beta-Test Checkliste</h1>
+    <p>Teste die Plattform und hake ab, was du ausprobiert hast.<br>Am Ende kannst du deine Ergebnisse mit einem Klick teilen.</p>
+  </div>
+
+  <!-- Name -->
+  <div class="name-card">
+    <label>Dein Name (damit ich weiß, wer was getestet hat)</label>
+    <input type="text" id="testerName" placeholder="z. B. Anna M." autocomplete="off" />
+  </div>
+
+  <!-- Progress -->
+  <div class="progress-wrap">
+    <div class="progress-bar-bg">
+      <div class="progress-bar-fill" id="progressFill"></div>
+    </div>
+    <div class="progress-label" id="progressLabel">0 / 0</div>
+  </div>
+
+  <!-- Categories -->
+  <div id="categories"></div>
+
+  <!-- Submit -->
+  <div class="submit-card">
+    <h3>Fertig mit dem Test?</h3>
+    <p>Teile deine Ergebnisse — kopiere den Text und schick ihn per WhatsApp, Telegram oder E-Mail.</p>
+    <button class="btn btn-primary" onclick="showResults()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/>
+      </svg>
+      Ergebnisse teilen
+    </button>
+  </div>
+
+  <span class="reset-link" onclick="resetAll()">Alle Daten zurücksetzen</span>
+
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal">
+    <h2>Deine Testergebnisse</h2>
+    <p class="sub" id="modalSub"></p>
+    <div class="result-text" id="resultText"></div>
+    <div class="copy-feedback" id="copyFeedback">Kopiert! Jetzt in WhatsApp/Telegram/Mail einfügen.</div>
+    <div class="modal-btns">
+      <button class="btn btn-primary" onclick="copyResults()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
+        </svg>
+        Kopieren
+      </button>
+      <button class="btn btn-secondary" onclick="closeModalBtn()">Schließen</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── DATA ────────────────────────────────────────────────────────────────────
+
+const CATEGORIES = [
+  {
+    id: 'account',
+    icon: '👤',
+    color: '#EFF6FF',
+    title: 'Account & Registrierung',
+    desc: 'Konto erstellen, anmelden, Passwort',
+    items: [
+      { id: 'reg_start', title: 'Registrierungsseite aufgerufen', hint: 'app.finestsites.io/register' },
+      { id: 'reg_done', title: 'Konto erfolgreich erstellt', hint: 'Mit Name, E-Mail und Passwort registriert' },
+      { id: 'reg_email', title: 'Bestätigungs-E-Mail erhalten', hint: 'E-Mail kam innerhalb weniger Sekunden an' },
+      { id: 'username', title: 'Benutzername (Username) eingerichtet', hint: 'z. B. @deinname — wird für die Webseiten-URL verwendet' },
+      { id: 'login', title: 'Abgemeldet und wieder eingeloggt', hint: 'Login mit E-Mail + Passwort funktioniert' },
+      { id: 'pw_forgot', title: '"Passwort vergessen" genutzt', hint: 'E-Mail zum Zurücksetzen kam an' },
+      { id: 'pw_reset', title: 'Passwort erfolgreich geändert', hint: 'Neues Passwort gesetzt und danach eingeloggt' },
+      { id: 'pw_change', title: 'Passwort in den Einstellungen geändert', hint: 'Unter Einstellungen → Passwort ändern' },
+    ]
+  },
+  {
+    id: 'onboarding',
+    icon: '🚀',
+    color: '#F5F3FF',
+    title: 'Onboarding & Plan',
+    desc: 'Erster Eindruck, Plan auswählen',
+    items: [
+      { id: 'ob_plan', title: 'Planauswahl-Seite angezeigt bekommen', hint: 'Nach der Registrierung erscheint die Planauswahl' },
+      { id: 'ob_free', title: 'Kostenlosen Starter-Plan getestet', hint: 'Oder: Plan übersprungen / kostenlos gestartet' },
+      { id: 'ob_upgrade', title: 'Auf einen bezahlten Plan gewechselt', hint: 'Pro oder Unlimited via Stripe Checkout' },
+      { id: 'ob_checkout', title: 'Stripe-Checkout durchlaufen', hint: 'Kreditkarte oder SEPA-Lastschrift eingegeben' },
+      { id: 'ob_invoice', title: 'Rechnung per E-Mail erhalten', hint: 'Stripe schickt automatisch eine Rechnung' },
+    ]
+  },
+  {
+    id: 'template',
+    icon: '🌐',
+    color: '#F0FDF4',
+    title: 'Template & Website-Editor',
+    desc: 'Vorlage auswählen, Inhalte bearbeiten',
+    items: [
+      { id: 'tmpl_browse', title: 'Template-Bibliothek (Vorlagen) durchgeschaut', hint: 'app.finestsites.io/sites/library' },
+      { id: 'tmpl_preview', title: 'Template-Vorschau angesehen', hint: 'Live-Preview des Templates vor dem Erstellen' },
+      { id: 'tmpl_create', title: 'Website aus einem Template erstellt', hint: 'Auf "Mit diesem Template starten" geklickt' },
+      { id: 'tmpl_editor', title: 'Editor geöffnet', hint: 'Inhalte/Platzhalter sind sichtbar und bearbeitbar' },
+      { id: 'tmpl_text', title: 'Texte im Editor bearbeitet und gespeichert', hint: 'Name, Beschreibung, etc. geändert' },
+      { id: 'tmpl_image', title: 'Bild hochgeladen', hint: 'Eigenes Foto oder Logo hochladen' },
+      { id: 'tmpl_preview2', title: 'Vorschau der eigenen Website angesehen', hint: 'Vorschau-Button zeigt die fertige Seite' },
+      { id: 'tmpl_publish', title: 'Website veröffentlicht (Live geschaltet)', hint: '"Veröffentlichen"-Button → Status wechselt zu Live' },
+      { id: 'tmpl_live', title: 'Veröffentlichte Website im Browser aufgerufen', hint: 'URL z. B. deinname.lnko.me im Browser geöffnet' },
+      { id: 'tmpl_edit_after', title: 'Inhalte nach Veröffentlichung geändert', hint: 'Änderungen erscheinen live auf der Website' },
+    ]
+  },
+  {
+    id: 'domain',
+    icon: '🔗',
+    color: '#FFF7ED',
+    title: 'Custom Domain',
+    desc: 'Eigene Domain verknüpfen (optional)',
+    items: [
+      { id: 'dom_section', title: 'Domain-Sektion in den Website-Einstellungen gefunden', hint: 'In der Site-Verwaltung unter "Domain"' },
+      { id: 'dom_enter', title: 'Eigene Domain eingetragen', hint: 'z. B. meinefirma.de' },
+      { id: 'dom_dns', title: 'DNS-Einstellungen vorgenommen', hint: 'CNAME oder A-Record beim Domain-Anbieter gesetzt' },
+      { id: 'dom_ssl', title: 'SSL-Zertifikat wurde ausgestellt', hint: 'Grünes Schloss / HTTPS funktioniert' },
+      { id: 'dom_live', title: 'Website über eigene Domain erreichbar', hint: 'meinefirma.de zeigt die FinestSites-Website' },
+    ]
+  },
+  {
+    id: 'submissions',
+    icon: '📬',
+    color: '#FEF9C3',
+    title: 'Kontaktformular & Anfragen',
+    desc: 'Formular absenden, Anfragen empfangen',
+    items: [
+      { id: 'form_send', title: 'Kontaktformular auf der veröffentlichten Website ausgefüllt', hint: 'Testanfrage mit eigenem Namen/E-Mail abgeschickt' },
+      { id: 'form_receive', title: 'Anfrage im Dashboard unter "Anfragen" gesehen', hint: 'app.finestsites.io/submissions' },
+      { id: 'form_notify', title: 'Benachrichtigungs-E-Mail erhalten', hint: 'E-Mail-Benachrichtigung nach neuer Anfrage' },
+    ]
+  },
+  {
+    id: 'billing',
+    icon: '💳',
+    color: '#FDF2F8',
+    title: 'Abonnement & Abrechnung',
+    desc: 'Abo verwalten, kündigen',
+    items: [
+      { id: 'bill_portal', title: 'Abrechnungsseite aufgerufen', hint: 'app.finestsites.io/billing' },
+      { id: 'bill_info', title: 'Aktueller Plan und nächste Zahlung angezeigt', hint: 'Datum + Betrag sichtbar' },
+      { id: 'bill_upgrade2', title: 'Abo-Upgrade durchgeführt (z. B. Starter → Pro)', hint: 'Plan gewechselt, neue Rechnung erscheint' },
+      { id: 'bill_portal2', title: 'Stripe-Kundenportal geöffnet', hint: '"Abo verwalten" öffnet Stripe-Portal' },
+      { id: 'bill_cancel', title: 'Abo gekündigt (zum Periodenende)', hint: 'Kündigung greift am Ende der Laufzeit' },
+      { id: 'bill_after', title: 'Bestätigung der Kündigung erhalten', hint: 'E-Mail von Stripe + Status im Dashboard geändert' },
+    ]
+  },
+  {
+    id: 'support',
+    icon: '💬',
+    color: '#F0F9FF',
+    title: 'Support & Chat',
+    desc: 'Support-Chat testen',
+    items: [
+      { id: 'sup_open', title: 'Support-Chat geöffnet', hint: 'Über den Button unten links in der Sidebar' },
+      { id: 'sup_msg', title: 'Nachricht an Support gesendet', hint: 'Erste Nachricht abgeschickt, Chat öffnet sich' },
+      { id: 'sup_reply', title: 'Antwort vom Support erhalten', hint: 'Antwort erscheint im Chat' },
+      { id: 'sup_img', title: 'Bild im Chat gesendet', hint: 'Anhang/Bild über den Chat-Button hochladen' },
+      { id: 'sup_badge', title: 'Ungelesen-Badge im Menü gesehen', hint: 'Rote Zahl erscheint wenn neue Nachricht da ist' },
+    ]
+  },
+  {
+    id: 'misc',
+    icon: '⚙️',
+    color: '#F9FAFB',
+    title: 'Sonstiges & Einstellungen',
+    desc: 'Einstellungen, Profil, Abmelden',
+    items: [
+      { id: 'settings', title: 'Einstellungen-Seite aufgerufen', hint: 'app.finestsites.io/settings' },
+      { id: 'profile_update', title: 'Profil-Informationen aktualisiert', hint: 'Name oder andere Daten geändert und gespeichert' },
+      { id: 'mobile', title: 'Seite auf dem Smartphone aufgerufen', hint: 'app.finestsites.io auf dem Handy — sieht es gut aus?' },
+      { id: 'mobile_site', title: 'Eigene veröffentlichte Website auf dem Handy geprüft', hint: 'Mobilansicht der Website gecheckt' },
+      { id: 'logout', title: 'Erfolgreich abgemeldet', hint: '"Abmelden" in der Sidebar → zurück zum Login' },
+    ]
+  },
+];
+
+// ─── STATE ───────────────────────────────────────────────────────────────────
+
+const KEY = 'fs_beta_v1';
+let state = { name: '', checked: {}, bugs: {}, notes: {} };
+
+function load() {
+  try {
+    const raw = localStorage.getItem(KEY);
+    if (raw) state = { ...state, ...JSON.parse(raw) };
+  } catch {}
+}
+
+function save() {
+  try { localStorage.setItem(KEY, JSON.stringify(state)); } catch {}
+}
+
+// ─── RENDER ──────────────────────────────────────────────────────────────────
+
+function render() {
+  const container = document.getElementById('categories');
+  container.innerHTML = '';
+
+  CATEGORIES.forEach((cat, ci) => {
+    const div = document.createElement('div');
+    div.className = 'category';
+    div.id = 'cat_' + cat.id;
+
+    const checkedCount = cat.items.filter(it => state.checked[it.id]).length;
+    const allDone = checkedCount === cat.items.length;
+
+    // Open first category by default, or if has checked items
+    if (ci === 0 || checkedCount > 0) div.classList.add('open');
+
+    div.innerHTML = `
+      <div class="category-header" onclick="toggleCat('${cat.id}')">
+        <div class="cat-icon" style="background:${cat.color}">${cat.icon}</div>
+        <div class="cat-title">
+          <h2>${cat.title}</h2>
+          <p>${cat.desc}</p>
+        </div>
+        <span class="cat-badge ${allDone ? 'complete' : ''}">${checkedCount}/${cat.items.length}</span>
+        <svg class="cat-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="6 9 12 15 18 9"/>
+        </svg>
+      </div>
+      <div class="cat-body">
+        ${cat.items.map(it => renderItem(it)).join('')}
+      </div>
+    `;
+
+    container.appendChild(div);
+  });
+
+  updateProgress();
+}
+
+function renderItem(it) {
+  const checked = state.checked[it.id] ? 'checked' : '';
+  const hasBug = state.bugs[it.id] ? 'checked' : '';
+  const noteVal = (state.notes[it.id] || '').replace(/"/g, '&quot;');
+
+  return `
+    <div class="item ${checked}" id="item_${it.id}">
+      <div class="item-check" onclick="toggleItem('${it.id}')">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+      </div>
+      <div class="item-content" onclick="toggleItem('${it.id}')">
+        <div class="item-title">${it.title}</div>
+        ${it.hint ? `<div class="item-hint">${it.hint}</div>` : ''}
+      </div>
+      <div style="width:100%;margin-left:36px;margin-top:-4px;" id="extras_${it.id}" class="${checked ? '' : 'hidden'}">
+        <label class="item-flag">
+          <input type="checkbox" id="bug_${it.id}" ${hasBug} onchange="toggleBug('${it.id}')">
+          <span class="flag-pill">Fehler gefunden</span>
+        </label>
+        <textarea class="item-note" id="note_${it.id}" placeholder="Optionale Notiz (z. B. was nicht funktioniert hat…)" oninput="saveNote('${it.id}')">${noteVal}</textarea>
+      </div>
+    </div>
+  `;
+}
+
+// Extras block hidden/shown via JS — rebuild simpler:
+function rebuildItem(itId) {
+  const allItems = CATEGORIES.flatMap(c => c.items);
+  const it = allItems.find(i => i.id === itId);
+  if (!it) return;
+
+  const el = document.getElementById('item_' + itId);
+  if (!el) return;
+
+  const checked = state.checked[itId];
+  el.className = 'item' + (checked ? ' checked' : '');
+
+  // Update checkbox visual
+  const check = el.querySelector('.item-check');
+  if (check) {
+    check.innerHTML = checked ? `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>` : '';
+  }
+
+  // Update title
+  const titleEl = el.querySelector('.item-title');
+  if (titleEl) titleEl.style.textDecoration = checked ? 'line-through' : '';
+
+  // Show/hide extras
+  const extras = el.querySelector(`[id^="extras_"]`);
+  if (extras) {
+    extras.style.display = checked ? 'block' : 'none';
+    const note = el.querySelector('.item-note');
+    if (note) note.style.display = checked ? 'block' : 'none';
+  }
+}
+
+// ─── ACTIONS ─────────────────────────────────────────────────────────────────
+
+function toggleCat(id) {
+  const el = document.getElementById('cat_' + id);
+  if (el) el.classList.toggle('open');
+}
+
+function toggleItem(id) {
+  state.checked[id] = !state.checked[id];
+  if (!state.checked[id]) {
+    delete state.bugs[id];
+    delete state.notes[id];
+  }
+  save();
+  rebuildItem(id);
+  updateProgress();
+  updateCatBadge(id);
+}
+
+function toggleBug(id) {
+  const el = document.getElementById('bug_' + id);
+  state.bugs[id] = el ? el.checked : false;
+  save();
+}
+
+function saveNote(id) {
+  const el = document.getElementById('note_' + id);
+  state.notes[id] = el ? el.value : '';
+  save();
+}
+
+function updateProgress() {
+  const total = CATEGORIES.flatMap(c => c.items).length;
+  const done = CATEGORIES.flatMap(c => c.items).filter(it => state.checked[it.id]).length;
+  const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressLabel').textContent = done + ' / ' + total;
+}
+
+function updateCatBadge(itemId) {
+  const cat = CATEGORIES.find(c => c.items.some(i => i.id === itemId));
+  if (!cat) return;
+  const el = document.getElementById('cat_' + cat.id);
+  if (!el) return;
+  const badge = el.querySelector('.cat-badge');
+  if (!badge) return;
+  const done = cat.items.filter(it => state.checked[it.id]).length;
+  badge.textContent = done + '/' + cat.items.length;
+  badge.className = 'cat-badge' + (done === cat.items.length ? ' complete' : '');
+}
+
+// ─── NAME ────────────────────────────────────────────────────────────────────
+
+document.addEventListener('DOMContentLoaded', () => {
+  load();
+  render();
+
+  const nameInput = document.getElementById('testerName');
+  nameInput.value = state.name || '';
+  nameInput.addEventListener('input', () => {
+    state.name = nameInput.value;
+    save();
+  });
+
+  // Restore extras visibility after render
+  CATEGORIES.flatMap(c => c.items).forEach(it => {
+    const el = document.getElementById('item_' + it.id);
+    if (!el) return;
+    const extras = el.querySelector('[id^="extras_"]');
+    if (extras) extras.style.display = state.checked[it.id] ? 'block' : 'none';
+    const note = el.querySelector('.item-note');
+    if (note) note.style.display = state.checked[it.id] ? 'block' : 'none';
+  });
+});
+
+// ─── RESULTS ─────────────────────────────────────────────────────────────────
+
+function showResults() {
+  const name = state.name.trim() || 'Unbekannt';
+  const total = CATEGORIES.flatMap(c => c.items).length;
+  const done = CATEGORIES.flatMap(c => c.items).filter(it => state.checked[it.id]).length;
+  const bugs = CATEGORIES.flatMap(c => c.items).filter(it => state.bugs[it.id]);
+  const date = new Date().toLocaleDateString('de-DE', { day: '2-digit', month: 'long', year: 'numeric' });
+
+  let text = `━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
+  text += `FinestSites Beta-Test\n`;
+  text += `Tester: ${name}\n`;
+  text += `Datum: ${date}\n`;
+  text += `Fortschritt: ${done}/${total} (${Math.round(done/total*100)}%)\n`;
+  text += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n`;
+
+  CATEGORIES.forEach(cat => {
+    const checkedItems = cat.items.filter(it => state.checked[it.id]);
+    if (checkedItems.length === 0) return;
+    text += `${cat.icon} ${cat.title}\n`;
+    checkedItems.forEach(it => {
+      const hasBug = state.bugs[it.id] ? ' ⚠️ FEHLER' : '';
+      const note = state.notes[it.id] ? `\n   → ${state.notes[it.id]}` : '';
+      text += `  ✓ ${it.title}${hasBug}${note}\n`;
+    });
+    text += '\n';
+  });
+
+  if (bugs.length > 0) {
+    text += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
+    text += `⚠️ Gefundene Fehler (${bugs.length}):\n`;
+    bugs.forEach(it => {
+      const note = state.notes[it.id] ? `: ${state.notes[it.id]}` : '';
+      text += `  • ${it.title}${note}\n`;
+    });
+  }
+
+  const notChecked = CATEGORIES.flatMap(c => c.items).filter(it => !state.checked[it.id]);
+  if (notChecked.length > 0) {
+    text += `\n─ Nicht getestet (${notChecked.length} Punkte) ─\n`;
+    notChecked.forEach(it => { text += `  ○ ${it.title}\n`; });
+  }
+
+  document.getElementById('resultText').textContent = text;
+  document.getElementById('modalSub').textContent =
+    `${name} · ${done} von ${total} Tests abgehakt${bugs.length > 0 ? ` · ${bugs.length} Fehler markiert` : ''}`;
+  document.getElementById('modalOverlay').classList.add('open');
+  document.getElementById('copyFeedback').classList.remove('show');
+  window._resultText = text;
+}
+
+function copyResults() {
+  const text = window._resultText || '';
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(text).then(() => {
+      document.getElementById('copyFeedback').classList.add('show');
+    });
+  } else {
+    // Fallback
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    document.getElementById('copyFeedback').classList.add('show');
+  }
+}
+
+function closeModal(e) {
+  if (e.target === document.getElementById('modalOverlay')) closeModalBtn();
+}
+function closeModalBtn() {
+  document.getElementById('modalOverlay').classList.remove('open');
+}
+
+function resetAll() {
+  if (!confirm('Wirklich alles zurücksetzen? Alle Häkchen gehen verloren.')) return;
+  localStorage.removeItem(KEY);
+  state = { name: '', checked: {}, bugs: {}, notes: {} };
+  document.getElementById('testerName').value = '';
+  render();
+}
+</script>
+</body>
+</html>
