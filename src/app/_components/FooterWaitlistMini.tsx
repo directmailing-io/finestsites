@@ -119,7 +119,7 @@ export default function FooterWaitlistMini() {
             fontFamily: 'inherit',
           }}
         >
-          {loading ? '...' : 'Auf die Warteliste'}
+          {loading ? '...' : 'In die Warteliste eintragen'}
         </button>
       </form>
     </>
