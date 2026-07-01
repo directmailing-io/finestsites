@@ -6,321 +6,234 @@
 <title>FinestSites – Beta-Test</title>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
 :root {
-  --bg: #F5F5F7;
-  --card: #fff;
-  --border: #E5E7EB;
-  --text: #1D1D1F;
-  --muted: #6E6E73;
-  --shadow: 0 2px 16px rgba(0,0,0,0.07);
-  --radius: 18px;
+  --bg: #F5F5F7; --card: #fff; --border: #E5E7EB;
+  --text: #1D1D1F; --muted: #6E6E73;
+  --shadow: 0 2px 16px rgba(0,0,0,0.07); --radius: 18px;
 }
-
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  min-height: 100vh;
-  padding: 28px 16px 80px;
+  background: var(--bg); color: var(--text);
+  min-height: 100vh; padding: 28px 16px 100px;
   -webkit-font-smoothing: antialiased;
 }
-
 .container { max-width: 660px; margin: 0 auto; }
 
 /* Header */
-.header {
-  text-align: center;
-  margin-bottom: 28px;
-}
-.logo-wrap { margin-bottom: 18px; }
-.logo-wrap img { height: 28px; }
-.header h1 {
-  font-size: 26px;
-  font-weight: 700;
-  letter-spacing: -0.5px;
-  margin-bottom: 6px;
-}
-.header p {
-  font-size: 15px;
-  color: var(--muted);
-  line-height: 1.5;
-  max-width: 440px;
-  margin: 0 auto;
-}
+.header { text-align: center; margin-bottom: 24px; }
+.logo-wrap { margin-bottom: 16px; }
+.logo-wrap img { height: 26px; }
+.header h1 { font-size: 24px; font-weight: 700; letter-spacing: -0.4px; margin-bottom: 8px; }
+.header p { font-size: 14px; color: var(--muted); line-height: 1.55; max-width: 460px; margin: 0 auto; }
+.header p strong { color: var(--text); }
 
-/* Name card */
+/* Name gate */
 .name-card {
-  background: var(--card);
-  border-radius: var(--radius);
-  padding: 20px 24px;
-  box-shadow: var(--shadow);
-  border: 1px solid var(--border);
-  margin-bottom: 16px;
-  display: flex;
-  align-items: center;
-  gap: 14px;
+  background: var(--card); border-radius: var(--radius);
+  padding: 18px 22px; box-shadow: var(--shadow);
+  border: 1px solid var(--border); margin-bottom: 16px;
+  display: flex; align-items: center; gap: 12px;
 }
-.name-card label {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--text);
-  white-space: nowrap;
-  flex-shrink: 0;
-}
+.name-card label { font-size: 14px; font-weight: 600; white-space: nowrap; flex-shrink: 0; }
 .name-card input {
-  flex: 1;
-  padding: 10px 14px;
-  border: 1.5px solid var(--border);
-  border-radius: 10px;
-  font-size: 15px;
-  font-family: inherit;
-  color: var(--text);
-  background: #FAFAFA;
-  outline: none;
-  transition: border-color 0.15s;
+  flex: 1; padding: 10px 14px; border: 1.5px solid var(--border);
+  border-radius: 10px; font-size: 15px; font-family: inherit;
+  outline: none; background: #FAFAFA; transition: border-color 0.15s;
 }
 .name-card input:focus { border-color: #1a1a1a; background: #fff; }
 .name-card input::placeholder { color: #C0C0C5; }
 
 /* Legend */
 .legend {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  justify-content: center;
-  margin-bottom: 20px;
-  flex-wrap: wrap;
+  display: flex; align-items: center; gap: 16px;
+  justify-content: center; margin-bottom: 20px;
+  font-size: 13px; color: var(--muted); flex-wrap: wrap;
 }
-.legend-item {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  font-size: 13px;
-  color: var(--muted);
+.legend-item { display: flex; align-items: center; gap: 7px; }
+
+/* Blur gate overlay */
+.checklist-wrap { position: relative; }
+.gate-overlay {
+  position: absolute; inset: 0; z-index: 10;
+  background: rgba(245,245,247,0.7);
+  backdrop-filter: blur(6px);
+  border-radius: var(--radius);
+  display: flex; align-items: center; justify-content: center;
+  flex-direction: column; gap: 10px;
+  transition: opacity 0.25s;
+}
+.gate-overlay.hidden { opacity: 0; pointer-events: none; }
+.gate-msg {
+  background: #fff; border: 1px solid var(--border);
+  border-radius: 14px; padding: 16px 24px;
+  font-size: 14px; font-weight: 500; color: var(--muted);
+  text-align: center; box-shadow: var(--shadow);
 }
 
 /* Category */
 .category {
-  background: var(--card);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  border: 1px solid var(--border);
-  margin-bottom: 12px;
-  overflow: hidden;
+  background: var(--card); border-radius: var(--radius);
+  box-shadow: var(--shadow); border: 1px solid var(--border);
+  margin-bottom: 10px; overflow: hidden;
 }
 .cat-header {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 16px 20px;
-  cursor: pointer;
-  user-select: none;
+  display: flex; align-items: center; gap: 11px;
+  padding: 14px 18px; cursor: pointer; user-select: none;
   transition: background 0.1s;
 }
 .cat-header:hover { background: #FAFAFA; }
 .cat-icon {
-  width: 34px; height: 34px;
-  border-radius: 9px;
+  width: 32px; height: 32px; border-radius: 9px;
   display: flex; align-items: center; justify-content: center;
-  font-size: 17px; flex-shrink: 0;
+  font-size: 16px; flex-shrink: 0;
 }
 .cat-title { flex: 1; }
 .cat-title h2 { font-size: 14px; font-weight: 600; }
-.cat-title p { font-size: 12px; color: var(--muted); margin-top: 1px; }
-.cat-stat {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--muted);
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-.cat-chevron {
-  color: #C0C0C5;
-  transition: transform 0.2s;
-  flex-shrink: 0;
-}
+.cat-title p { font-size: 11px; color: var(--muted); margin-top: 1px; }
+.cat-count { font-size: 12px; font-weight: 600; color: var(--muted); }
+.cat-count.done { color: #16A34A; }
+.cat-chevron { color: #C0C0C5; transition: transform 0.2s; flex-shrink: 0; }
 .category.open .cat-chevron { transform: rotate(180deg); }
-
 .cat-body { display: none; }
 .category.open .cat-body { display: block; }
 
 /* Item */
 .item {
-  display: flex;
-  align-items: center;
-  gap: 0;
-  padding: 0;
-  border-top: 1px solid #F3F4F6;
-  min-height: 56px;
+  display: flex; align-items: center;
+  border-top: 1px solid #F3F4F6; min-height: 54px;
 }
 .item-left {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex: 1;
-  padding: 12px 20px;
-  cursor: pointer;
-  min-width: 0;
+  display: flex; align-items: center; gap: 12px;
+  flex: 1; padding: 11px 18px; cursor: pointer; min-width: 0;
+  transition: background 0.1s;
 }
 .item-left:hover { background: #FAFAFA; }
 
-/* Status button — cycle through states */
+/* 3-state button */
 .status-btn {
-  width: 28px; height: 28px;
-  border-radius: 50%;
-  flex-shrink: 0;
-  border: 2px solid #D1D5DB;
-  background: transparent;
-  cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  transition: all 0.15s;
-  padding: 0;
+  width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0;
+  border: 2px solid #D1D5DB; background: transparent;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s; padding: 0; outline: none;
 }
-.status-btn.ok {
-  background: #34C759;
-  border-color: #34C759;
-}
-.status-btn.issue {
-  background: transparent;
-  border-color: #F97316;
-  border-width: 2.5px;
-}
-/* Inner dot for issue */
-.status-btn .dot {
-  width: 10px; height: 10px;
-  border-radius: 50%;
-  background: #F97316;
-  display: none;
-}
-.status-btn.issue .dot { display: block; }
-.status-btn .check { display: none; }
-.status-btn.ok .check { display: block; }
+.status-btn.ok { background: #34C759; border-color: #34C759; }
+.status-btn.issue { background: transparent; border-color: #F97316; border-width: 2.5px; }
+.status-btn .s-check { display: none; }
+.status-btn.ok .s-check { display: block; }
+.status-btn .s-dot { width: 9px; height: 9px; border-radius: 50%; background: #F97316; display: none; }
+.status-btn.issue .s-dot { display: block; }
 
-.item-text { flex: 1; min-width: 0; }
-.item-title {
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--text);
-  line-height: 1.4;
-}
+.item-title { font-size: 14px; font-weight: 400; color: var(--text); line-height: 1.35; }
 
-/* Testers sidebar */
+/* Tester tags */
 .item-testers {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 3px;
-  padding: 10px 16px 10px 8px;
-  flex-shrink: 0;
-  min-width: 110px;
-  max-width: 140px;
+  display: flex; flex-direction: column; align-items: flex-end;
+  gap: 2px; padding: 8px 14px 8px 6px;
+  min-width: 90px; max-width: 120px; flex-shrink: 0;
 }
-.tester-tag {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 11px;
-  font-weight: 500;
-  padding: 2px 8px;
-  border-radius: 99px;
-  white-space: nowrap;
-  max-width: 130px;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.ttag {
+  display: flex; align-items: center; gap: 4px;
+  font-size: 10px; font-weight: 600; padding: 2px 7px;
+  border-radius: 99px; max-width: 115px;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
-.tester-tag.ok {
-  background: #F0FDF4;
-  color: #16A34A;
-}
-.tester-tag.issue {
-  background: #FFF7ED;
-  color: #C2410C;
-}
+.ttag.ok { background: #F0FDF4; color: #16A34A; }
+.ttag.issue { background: #FFF7ED; color: #C2410C; }
+.tdot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
+.tdot.ok { background: #34C759; }
+.tdot.issue { background: #F97316; }
 
-/* Status dot inline */
-.dot-ok {
-  width: 7px; height: 7px; border-radius: 50%;
-  background: #34C759; flex-shrink: 0;
+/* Sticky save bar */
+.save-bar {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  background: #fff; border-top: 1px solid var(--border);
+  padding: 12px 20px; z-index: 50;
+  display: flex; align-items: center; justify-content: center; gap: 14px;
+  box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
 }
-.dot-issue {
-  width: 7px; height: 7px; border-radius: 50%;
-  background: #F97316; flex-shrink: 0;
-}
-
-/* Submit */
-.submit-card {
-  background: var(--card);
-  border-radius: var(--radius);
-  padding: 24px;
-  box-shadow: var(--shadow);
-  border: 1px solid var(--border);
-  margin-top: 20px;
-  text-align: center;
-}
-.submit-card h3 { font-size: 16px; font-weight: 600; margin-bottom: 5px; }
-.submit-card p { font-size: 14px; color: var(--muted); margin-bottom: 18px; }
-.btn {
-  display: inline-flex; align-items: center; gap: 8px;
-  padding: 12px 22px; border-radius: 12px;
-  font-size: 15px; font-weight: 600; font-family: inherit;
-  cursor: pointer; border: none; transition: all 0.15s;
-}
-.btn-primary { background: #1a1a1a; color: #fff; }
-.btn-primary:hover { background: #333; transform: translateY(-1px); }
-.btn-secondary { background: #F3F4F6; color: var(--text); margin-left: 8px; }
-.btn-secondary:hover { background: #E5E7EB; }
-
-/* Toast */
-.toast {
-  position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(80px);
+.save-status { font-size: 13px; color: var(--muted); min-width: 160px; text-align: right; }
+.save-status.saved { color: #16A34A; }
+.save-status.saving { color: #F97316; }
+.save-btn {
   background: #1a1a1a; color: #fff;
-  padding: 12px 20px; border-radius: 12px;
-  font-size: 14px; font-weight: 500;
-  box-shadow: 0 8px 30px rgba(0,0,0,0.2);
-  transition: transform 0.3s cubic-bezier(.4,0,.2,1);
-  z-index: 999; white-space: nowrap;
+  border: none; border-radius: 12px;
+  padding: 13px 32px; font-size: 16px; font-weight: 700;
+  font-family: inherit; cursor: pointer;
+  transition: all 0.15s; letter-spacing: 0.01em;
 }
-.toast.show { transform: translateX(-50%) translateY(0); }
+.save-btn:hover { background: #333; transform: translateY(-1px); }
+.save-btn:active { transform: translateY(0); }
+.save-btn.saved-flash { background: #16A34A; }
 
-/* Sync indicator */
-.sync {
-  text-align: center;
-  font-size: 12px;
-  color: #C0C0C5;
-  margin-top: 10px;
-}
-.sync.syncing { color: #F97316; }
-.sync.synced { color: #34C759; }
+/* ─── ADMIN VIEW ─────────────────────────────────────────────────── */
+.admin-wrap { display: none; }
+.admin-wrap.active { display: block; }
+.checklist-main { display: block; }
+.checklist-main.hidden { display: none; }
 
-/* Modal */
-.modal-overlay {
-  display: none; position: fixed; inset: 0;
-  background: rgba(0,0,0,0.45); backdrop-filter: blur(4px);
-  z-index: 100; align-items: center; justify-content: center; padding: 20px;
+.admin-header {
+  background: #1a1a1a; color: #fff;
+  border-radius: var(--radius); padding: 20px 24px;
+  margin-bottom: 16px;
+  display: flex; align-items: center; justify-content: space-between;
 }
-.modal-overlay.open { display: flex; }
-.modal {
-  background: #fff; border-radius: 20px; padding: 28px;
-  max-width: 500px; width: 100%; box-shadow: 0 20px 60px rgba(0,0,0,0.2);
-  max-height: 80vh; overflow-y: auto;
+.admin-header h2 { font-size: 18px; font-weight: 700; }
+.admin-header p { font-size: 13px; color: rgba(255,255,255,0.6); margin-top: 3px; }
+.admin-refresh {
+  background: rgba(255,255,255,0.15); border: none; color: #fff;
+  border-radius: 9px; padding: 8px 14px; font-size: 13px; font-weight: 600;
+  font-family: inherit; cursor: pointer; flex-shrink: 0;
 }
-.modal h2 { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
-.modal .sub { font-size: 13px; color: var(--muted); margin-bottom: 16px; }
-.result-box {
-  background: #F9FAFB; border: 1px solid var(--border); border-radius: 10px;
-  padding: 14px; font-size: 12px; font-family: monospace;
-  line-height: 1.7; color: #374151; white-space: pre-wrap;
-  max-height: 220px; overflow-y: auto; margin-bottom: 16px;
-}
-.modal-btns { display: flex; gap: 8px; flex-wrap: wrap; }
-.copy-ok { font-size: 13px; color: #16A34A; font-weight: 500; margin-top: 8px; display: none; }
-.copy-ok.show { display: block; }
+.admin-refresh:hover { background: rgba(255,255,255,0.25); }
 
-@media (max-width: 520px) {
-  .item-testers { min-width: 80px; max-width: 100px; }
+.admin-tester-card {
+  background: var(--card); border-radius: var(--radius);
+  box-shadow: var(--shadow); border: 1px solid var(--border);
+  margin-bottom: 12px; overflow: hidden;
+}
+.tester-card-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 20px; border-bottom: 1px solid #F3F4F6;
+}
+.tester-name { font-size: 16px; font-weight: 700; }
+.tester-meta { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.tester-stats { display: flex; gap: 12px; }
+.tstat {
+  display: flex; align-items: center; gap: 5px;
+  font-size: 13px; font-weight: 600;
+}
+.tstat.ok { color: #16A34A; }
+.tstat.issue { color: #C2410C; }
+
+.admin-items { padding: 8px 20px 12px; }
+.admin-item-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 6px 0; border-bottom: 1px solid #F9FAFB;
+  font-size: 13px;
+}
+.admin-item-row:last-child { border-bottom: none; }
+.ai-status { width: 20px; height: 20px; flex-shrink: 0; }
+.ai-title { flex: 1; color: var(--text); }
+.ai-cat { font-size: 11px; color: var(--muted); flex-shrink: 0; }
+
+/* Issues highlight */
+.admin-issues {
+  background: #FFF7ED; border: 1px solid #FED7AA;
+  border-radius: 12px; padding: 12px 16px; margin-top: 10px;
+}
+.admin-issues h4 { font-size: 12px; font-weight: 700; color: #C2410C; margin-bottom: 6px; }
+.admin-issues li { font-size: 12px; color: #92400E; margin-left: 14px; margin-bottom: 2px; }
+
+.no-data {
+  text-align: center; padding: 48px 20px;
+  color: var(--muted); font-size: 15px;
+}
+
+@media (max-width: 500px) {
+  .item-testers { min-width: 70px; max-width: 90px; }
   .name-card { flex-direction: column; align-items: stretch; }
+  .save-bar { padding: 10px 16px; }
+  .save-status { display: none; }
 }
 </style>
 </head>
@@ -331,358 +244,374 @@ body {
     <div class="logo-wrap">
       <img src="/logos/logo-black.svg" alt="FinestSites" />
     </div>
-    <h1>Beta-Test</h1>
-    <p>Hake ab, was du getestet hast. Alles geklappt? Grüner Haken. Hatte etwas komisch gewirkt? Orange. Mehr nicht.</p>
+    <h1>Beta-Test 🧪</h1>
+    <p>
+      Damit ich den Überblick behalte, <strong>was bereits getestet wurde und wo es hakte</strong> —
+      einfach deinen Namen eingeben und die Punkte abhaken.<br><br>
+      <strong>Einmal klicken</strong> = hat alles gepasst &nbsp;·&nbsp;
+      <strong>Zweimal klicken</strong> = gab Probleme oder du hast 'nen Verbesserungsvorschlag
+      (dann schick mir kurz eine WhatsApp dazu) &nbsp;·&nbsp;
+      <strong>Nochmal klicken</strong> = zurücksetzen.<br><br>
+      Rechts neben jedem Punkt siehst du, wer ihn schon getestet hat.
+    </p>
   </div>
 
-  <div class="name-card">
-    <label>Dein Name:</label>
-    <input type="text" id="testerName" placeholder="z. B. Lena" autocomplete="off" />
-  </div>
+  <!-- CHECKLIST MODE -->
+  <div class="checklist-main" id="checklistMain">
 
-  <div class="legend">
-    <div class="legend-item">
-      <div style="width:22px;height:22px;border-radius:50%;background:#34C759;display:flex;align-items:center;justify-content:center;">
-        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+    <div class="name-card">
+      <label>Dein Name:</label>
+      <input type="text" id="testerName" placeholder="z. B. Lena" autocomplete="off" />
+    </div>
+
+    <div class="legend">
+      <div class="legend-item">
+        <div style="width:20px;height:20px;border-radius:50%;background:#34C759;display:flex;align-items:center;justify-content:center;">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        Hat alles gepasst
       </div>
-      Hat geklappt
-    </div>
-    <div class="legend-item">
-      <div style="width:22px;height:22px;border-radius:50%;border:2.5px solid #F97316;display:flex;align-items:center;justify-content:center;">
-        <div style="width:8px;height:8px;border-radius:50%;background:#F97316;"></div>
+      <div class="legend-item">
+        <div style="width:20px;height:20px;border-radius:50%;border:2.5px solid #F97316;display:flex;align-items:center;justify-content:center;">
+          <div style="width:8px;height:8px;border-radius:50%;background:#F97316;"></div>
+        </div>
+        Gab Probleme / Anmerkung
       </div>
-      Gab Probleme / war komisch
     </div>
-    <div class="legend-item">
-      <div style="width:22px;height:22px;border-radius:50%;border:2px solid #D1D5DB;"></div>
-      Noch nicht getestet
+
+    <div class="checklist-wrap">
+      <div class="gate-overlay" id="gateOverlay">
+        <div class="gate-msg">
+          Bitte erst deinen Namen oben eingeben,<br>dann kann's losgehen 👆
+        </div>
+      </div>
+      <div id="categories"></div>
     </div>
+
   </div>
 
-  <div id="categories"></div>
-
-  <div class="submit-card">
-    <h3>Fertig?</h3>
-    <p>Klick auf Teilen, dann bekomme ich deine Ergebnisse.</p>
-    <button class="btn btn-primary" onclick="submitResults()">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-        <path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/>
-        <polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/>
-      </svg>
-      Meine Ergebnisse teilen
-    </button>
+  <!-- ADMIN MODE -->
+  <div class="admin-wrap" id="adminWrap">
+    <div class="admin-header">
+      <div>
+        <h2>Admin-Übersicht</h2>
+        <p id="adminMeta">Alle Testergebnisse auf einen Blick</p>
+      </div>
+      <button class="admin-refresh" onclick="loadAdmin()">↻ Aktualisieren</button>
+    </div>
+    <div id="adminContent"><div class="no-data">Wird geladen…</div></div>
   </div>
-
-  <div class="sync" id="syncStatus">Letzte Aktualisierung: —</div>
 
 </div>
 
-<!-- Toast -->
-<div class="toast" id="toast"></div>
+<!-- Sticky Save Bar (only in checklist mode) -->
+<div class="save-bar" id="saveBar">
+  <div class="save-status" id="saveStatus">Noch nicht gespeichert</div>
+  <button class="save-btn" id="saveBtn" onclick="manualSave()">SPEICHERN</button>
+</div>
 
 <script>
-// ─── CHECKLIST DATA ───────────────────────────────────────────────────────────
+// ─── DATA ────────────────────────────────────────────────────────────────────
 const CATS = [
-  {
-    id: 'account', icon: '👤', color: '#EFF6FF',
-    title: 'Anmelden & Account',
-    desc: 'Registrieren, einloggen, Passwort',
-    items: [
-      { id: 'reg', title: 'Konto erstellt (Registrierung abgeschlossen)' },
-      { id: 'email_confirm', title: 'Bestätigungs-E-Mail ist angekommen' },
-      { id: 'username', title: 'Benutzernamen gewählt (z. B. @deinname)' },
-      { id: 'logout_login', title: 'Ausgeloggt und wieder eingeloggt' },
-      { id: 'pw_forgot', title: '"Passwort vergessen" benutzt – E-Mail kam an' },
-      { id: 'pw_reset', title: 'Neues Passwort gesetzt und danach eingeloggt' },
-      { id: 'pw_change', title: 'Passwort in den Einstellungen geändert' },
-    ]
-  },
-  {
-    id: 'plan', icon: '💳', color: '#F5F3FF',
-    title: 'Plan & Bezahlen',
-    desc: 'Tarif buchen, bezahlen, kündigen',
-    items: [
-      { id: 'plan_seen', title: 'Planauswahl gesehen (nach der Registrierung)' },
-      { id: 'plan_bought', title: 'Bezahlten Tarif gebucht (mit Karte oder SEPA)' },
-      { id: 'plan_invoice', title: 'Rechnung per E-Mail erhalten' },
-      { id: 'plan_portal', title: '"Abo verwalten" geöffnet (Stripe-Seite)' },
-      { id: 'plan_cancel', title: 'Abo gekündigt – hat funktioniert' },
-      { id: 'plan_email_cancel', title: 'Kündigungsbestätigung per E-Mail erhalten' },
-    ]
-  },
-  {
-    id: 'website', icon: '🌐', color: '#F0FDF4',
-    title: 'Webseite erstellen',
-    desc: 'Vorlage wählen, bearbeiten, veröffentlichen',
-    items: [
-      { id: 'tmpl_browse', title: 'Vorlagen angeschaut (Template-Bibliothek)' },
-      { id: 'tmpl_preview', title: 'Vorschau einer Vorlage angesehen' },
-      { id: 'tmpl_pick', title: 'Eine Vorlage ausgewählt und Website erstellt' },
-      { id: 'editor_open', title: 'Editor geöffnet – Inhalte waren sichtbar' },
-      { id: 'editor_edit', title: 'Texte geändert und gespeichert' },
-      { id: 'editor_img', title: 'Eigenes Bild hochgeladen' },
-      { id: 'preview', title: 'Vorschau der eigenen Seite angesehen' },
-      { id: 'publish', title: 'Webseite veröffentlicht (Live geschaltet)' },
-      { id: 'live_open', title: 'Veröffentlichte Seite im Browser geöffnet' },
-      { id: 'edit_after', title: 'Inhalte nach dem Veröffentlichen geändert – Änderung war sofort live' },
-    ]
-  },
-  {
-    id: 'domain', icon: '🔗', color: '#FFF7ED',
-    title: 'Eigene Domain verknüpfen',
-    desc: 'Optional – nur wenn du eine Domain hast',
-    items: [
-      { id: 'dom_enter', title: 'Eigene Domain eingetragen' },
-      { id: 'dom_dns', title: 'DNS-Einstellungen gemacht (beim Domain-Anbieter)' },
-      { id: 'dom_ssl', title: 'HTTPS hat funktioniert (Schloss im Browser)' },
-      { id: 'dom_live', title: 'Webseite über eigene Domain erreichbar' },
-    ]
-  },
-  {
-    id: 'form', icon: '📬', color: '#FEF9C3',
-    title: 'Kontaktformular',
-    desc: 'Anfrage abschicken und empfangen',
-    items: [
-      { id: 'form_send', title: 'Testanfrage über das Formular auf der Webseite abgeschickt' },
-      { id: 'form_inbox', title: 'Anfrage im Dashboard unter "Anfragen" gesehen' },
-      { id: 'form_email', title: 'Benachrichtigung per E-Mail bekommen' },
-    ]
-  },
-  {
-    id: 'support', icon: '💬', color: '#F0F9FF',
-    title: 'Support-Chat',
-    desc: 'Chatten, Antwort bekommen',
-    items: [
-      { id: 'chat_open', title: 'Support-Chat geöffnet (über den Button links)' },
-      { id: 'chat_msg', title: 'Nachricht geschrieben und abgeschickt' },
-      { id: 'chat_reply', title: 'Antwort vom Support erhalten' },
-      { id: 'chat_badge', title: 'Neue-Nachricht-Anzeige (Zahl) ist erschienen' },
-    ]
-  },
-  {
-    id: 'misc', icon: '📱', color: '#F9FAFB',
-    title: 'Sonstiges',
-    desc: 'Handy, Einstellungen, Abmelden',
-    items: [
-      { id: 'mobile_app', title: 'Dashboard auf dem Handy aufgerufen – sah gut aus' },
-      { id: 'mobile_site', title: 'Eigene Webseite auf dem Handy geprüft' },
-      { id: 'settings', title: 'Einstellungen aufgerufen' },
-      { id: 'logout', title: 'Erfolgreich abgemeldet' },
-    ]
-  },
+  { id: 'account', icon: '👤', color: '#EFF6FF', title: 'Anmelden & Account', desc: 'Registrieren, einloggen, Passwort', items: [
+    { id: 'reg', title: 'Konto erstellt (Registrierung abgeschlossen)' },
+    { id: 'email_ok', title: 'Bestätigungs-E-Mail ist angekommen' },
+    { id: 'username', title: 'Benutzernamen festgelegt (z. B. @lena)' },
+    { id: 'relogin', title: 'Ausgeloggt und wieder eingeloggt' },
+    { id: 'pw_forgot', title: '"Passwort vergessen" genutzt – E-Mail kam an' },
+    { id: 'pw_reset', title: 'Neues Passwort gesetzt und danach eingeloggt' },
+    { id: 'pw_change', title: 'Passwort in den Einstellungen geändert' },
+  ]},
+  { id: 'plan', icon: '💳', color: '#F5F3FF', title: 'Tarif & Bezahlen', desc: 'Plan buchen, bezahlen, kündigen', items: [
+    { id: 'plan_seen', title: 'Planauswahl nach der Registrierung gesehen' },
+    { id: 'plan_bought', title: 'Bezahlten Tarif gebucht (Karte oder SEPA)' },
+    { id: 'plan_invoice', title: 'Rechnung per E-Mail erhalten' },
+    { id: 'plan_portal', title: '"Abo verwalten" geöffnet' },
+    { id: 'plan_cancel', title: 'Abo gekündigt – hat funktioniert' },
+    { id: 'plan_cancel_email', title: 'Kündigungsbestätigung per E-Mail erhalten' },
+  ]},
+  { id: 'website', icon: '🌐', color: '#F0FDF4', title: 'Webseite erstellen', desc: 'Vorlage wählen, bearbeiten, veröffentlichen', items: [
+    { id: 'tmpl_browse', title: 'Vorlagen angeschaut' },
+    { id: 'tmpl_preview', title: 'Vorschau einer Vorlage angesehen' },
+    { id: 'tmpl_create', title: 'Vorlage ausgewählt und Website angelegt' },
+    { id: 'editor_open', title: 'Editor geöffnet – alles war sichtbar und bearbeitbar' },
+    { id: 'editor_text', title: 'Texte geändert und gespeichert' },
+    { id: 'editor_img', title: 'Eigenes Bild hochgeladen' },
+    { id: 'preview_ok', title: 'Vorschau der eigenen Seite angesehen' },
+    { id: 'published', title: 'Webseite veröffentlicht (Live geschaltet)' },
+    { id: 'live_open', title: 'Veröffentlichte Seite im Browser aufgerufen' },
+    { id: 'edit_live', title: 'Inhalte nach dem Veröffentlichen geändert – war sofort live' },
+  ]},
+  { id: 'domain', icon: '🔗', color: '#FFF7ED', title: 'Eigene Domain', desc: 'Optional – nur wenn du eine Domain hast', items: [
+    { id: 'dom_enter', title: 'Eigene Domain eingetragen' },
+    { id: 'dom_dns', title: 'DNS-Einstellungen gemacht (beim Domain-Anbieter)' },
+    { id: 'dom_ssl', title: 'HTTPS hat funktioniert (Schloss im Browser)' },
+    { id: 'dom_live', title: 'Webseite über eigene Domain erreichbar' },
+  ]},
+  { id: 'form', icon: '📬', color: '#FEF9C3', title: 'Kontaktformular', desc: 'Anfrage abschicken und empfangen', items: [
+    { id: 'form_sent', title: 'Testanfrage über das Formular abgeschickt' },
+    { id: 'form_inbox', title: 'Anfrage im Dashboard unter "Anfragen" gesehen' },
+    { id: 'form_notify', title: 'Benachrichtigungsmail erhalten' },
+  ]},
+  { id: 'support', icon: '💬', color: '#F0F9FF', title: 'Support-Chat', desc: 'Chatten, Antwort bekommen', items: [
+    { id: 'chat_open', title: 'Support-Chat geöffnet' },
+    { id: 'chat_msg', title: 'Nachricht geschrieben und abgeschickt' },
+    { id: 'chat_reply', title: 'Antwort vom Support erhalten' },
+    { id: 'chat_badge', title: 'Neue-Nachricht-Anzeige hat funktioniert' },
+  ]},
+  { id: 'misc', icon: '📱', color: '#F9FAFB', title: 'Sonstiges', desc: 'Handy, Einstellungen, Abmelden', items: [
+    { id: 'mobile_app', title: 'Dashboard auf dem Handy geöffnet – sah gut aus' },
+    { id: 'mobile_site', title: 'Eigene Webseite auf dem Handy überprüft' },
+    { id: 'settings', title: 'Einstellungen aufgerufen' },
+    { id: 'logout', title: 'Erfolgreich abgemeldet' },
+  ]},
 ];
 
+const ALL_ITEMS = CATS.flatMap(c => c.items.map(it => ({ ...it, catTitle: c.title })));
+
 // ─── STATE ───────────────────────────────────────────────────────────────────
-const LS_KEY = 'fs_beta_v2';
-let myState = { name: '', items: {} }; // { [id]: 'ok' | 'issue' | null }
-let allTesters = []; // from server
+const LS = 'fs_beta_v3';
+let me = { name: '', items: {} };
+let allTesters = [];
 
 function loadLocal() {
-  try {
-    const raw = localStorage.getItem(LS_KEY);
-    if (raw) myState = { ...myState, ...JSON.parse(raw) };
-  } catch {}
+  try { const r = localStorage.getItem(LS); if (r) me = { ...me, ...JSON.parse(r) }; } catch {}
 }
 function saveLocal() {
-  try { localStorage.setItem(LS_KEY, JSON.stringify(myState)); } catch {}
+  try { localStorage.setItem(LS, JSON.stringify(me)); } catch {}
 }
 
-// ─── RENDER ──────────────────────────────────────────────────────────────────
+// ─── RENDER CHECKLIST ────────────────────────────────────────────────────────
 function render() {
   const el = document.getElementById('categories');
   el.innerHTML = '';
-  CATS.forEach((cat, ci) => {
+  CATS.forEach((cat, i) => {
     const div = document.createElement('div');
-    div.className = 'category' + (ci === 0 ? ' open' : '');
+    div.className = 'category' + (i === 0 ? ' open' : '');
     div.id = 'cat_' + cat.id;
-
-    const okCount = cat.items.filter(it => myState.items[it.id]).length;
-
+    const done = cat.items.filter(it => me.items[it.id]).length;
     div.innerHTML = `
       <div class="cat-header" onclick="toggleCat('${cat.id}')">
         <div class="cat-icon" style="background:${cat.color}">${cat.icon}</div>
-        <div class="cat-title">
-          <h2>${cat.title}</h2>
-          <p>${cat.desc}</p>
-        </div>
-        <div class="cat-stat">
-          <span style="color:${okCount===cat.items.length&&okCount>0?'#16A34A':'var(--muted)'}">${okCount}/${cat.items.length}</span>
-        </div>
-        <svg class="cat-chevron" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <div class="cat-title"><h2>${cat.title}</h2><p>${cat.desc}</p></div>
+        <span class="cat-count ${done===cat.items.length&&done>0?'done':''}">${done}/${cat.items.length}</span>
+        <svg class="cat-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <polyline points="6 9 12 15 18 9"/>
         </svg>
       </div>
-      <div class="cat-body">
-        ${cat.items.map(it => renderItem(it)).join('')}
-      </div>`;
+      <div class="cat-body">${cat.items.map(it => itemHTML(it)).join('')}</div>`;
     el.appendChild(div);
   });
 }
 
-function renderItem(it) {
-  const myStatus = myState.items[it.id] || null;
-
-  // Collect other testers for this item
-  const okTesters = allTesters
-    .filter(t => t.name !== myState.name && t.items[it.id] === 'ok')
-    .map(t => t.name);
-  const issueTesters = allTesters
-    .filter(t => t.name !== myState.name && t.items[it.id] === 'issue')
-    .map(t => t.name);
-
-  const testerHTML = [
-    ...okTesters.map(n => `<div class="tester-tag ok"><div class="dot-ok"></div>${esc(n)}</div>`),
-    ...issueTesters.map(n => `<div class="tester-tag issue"><div class="dot-issue"></div>${esc(n)}</div>`),
+function itemHTML(it) {
+  const s = me.items[it.id] || null;
+  const okT = allTesters.filter(t => t.name !== me.name && t.items[it.id]==='ok').map(t=>t.name);
+  const isT = allTesters.filter(t => t.name !== me.name && t.items[it.id]==='issue').map(t=>t.name);
+  const tags = [
+    ...okT.map(n=>`<div class="ttag ok"><div class="tdot ok"></div>${esc(n)}</div>`),
+    ...isT.map(n=>`<div class="ttag issue"><div class="tdot issue"></div>${esc(n)}</div>`),
   ].join('');
-
-  const btnClass = myStatus === 'ok' ? 'ok' : myStatus === 'issue' ? 'issue' : '';
-
   return `
     <div class="item" id="item_${it.id}">
-      <div class="item-left" onclick="cycleStatus('${it.id}')">
-        <button class="status-btn ${btnClass}" tabindex="-1">
-          <svg class="check" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3">
-            <polyline points="20 6 9 17 4 12"/>
-          </svg>
-          <div class="dot"></div>
+      <div class="item-left" onclick="cycle('${it.id}')">
+        <button class="status-btn ${s||''}" tabindex="-1">
+          <svg class="s-check" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5"><polyline points="20 6 9 17 4 12"/></svg>
+          <div class="s-dot"></div>
         </button>
-        <div class="item-text">
-          <div class="item-title">${it.title}</div>
-        </div>
+        <div class="item-title">${it.title}</div>
       </div>
-      <div class="item-testers" id="testers_${it.id}">${testerHTML}</div>
+      <div class="item-testers" id="tt_${it.id}">${tags}</div>
     </div>`;
 }
 
-function esc(s) {
-  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-}
+function toggleCat(id) { document.getElementById('cat_'+id)?.classList.toggle('open'); }
+function esc(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
-function toggleCat(id) {
-  document.getElementById('cat_' + id)?.classList.toggle('open');
-}
-
-// ─── CYCLE STATUS ─────────────────────────────────────────────────────────────
-// null → 'ok' → 'issue' → null
-function cycleStatus(id) {
-  const cur = myState.items[id] || null;
-  const next = cur === null ? 'ok' : cur === 'ok' ? 'issue' : null;
-  if (next === null) delete myState.items[id];
-  else myState.items[id] = next;
+// ─── 3-STATE CYCLE ───────────────────────────────────────────────────────────
+function cycle(id) {
+  if (!me.name.trim()) return;
+  const cur = me.items[id] || null;
+  const next = cur===null?'ok':cur==='ok'?'issue':null;
+  if (next===null) delete me.items[id]; else me.items[id]=next;
   saveLocal();
-
-  // Update item DOM without full re-render
-  updateItemDOM(id);
-  updateCatStat(id);
-  schedulePush();
+  refreshItem(id);
+  refreshCatCount(id);
+  autoSave();
 }
 
-function updateItemDOM(id) {
-  const el = document.getElementById('item_' + id);
+function refreshItem(id) {
+  const el = document.getElementById('item_'+id);
   if (!el) return;
+  const s = me.items[id]||null;
   const btn = el.querySelector('.status-btn');
-  if (!btn) return;
-  const status = myState.items[id] || null;
-  btn.className = 'status-btn' + (status === 'ok' ? ' ok' : status === 'issue' ? ' issue' : '');
+  if (btn) btn.className = 'status-btn '+(s||'');
 }
 
-function updateCatStat(itemId) {
-  const cat = CATS.find(c => c.items.some(i => i.id === itemId));
+function refreshCatCount(itemId) {
+  const cat = CATS.find(c=>c.items.some(i=>i.id===itemId));
   if (!cat) return;
-  const el = document.getElementById('cat_' + cat.id);
+  const el = document.getElementById('cat_'+cat.id);
   if (!el) return;
-  const stat = el.querySelector('.cat-stat span');
-  if (!stat) return;
-  const done = cat.items.filter(it => myState.items[it.id]).length;
-  stat.textContent = done + '/' + cat.items.length;
-  stat.style.color = done === cat.items.length && done > 0 ? '#16A34A' : 'var(--muted)';
+  const done = cat.items.filter(it=>me.items[it.id]).length;
+  const span = el.querySelector('.cat-count');
+  if (span) { span.textContent=done+'/'+cat.items.length; span.className='cat-count '+(done===cat.items.length&&done>0?'done':''); }
 }
 
-// ─── SYNC ────────────────────────────────────────────────────────────────────
-let pushTimer = null;
-function schedulePush() {
-  clearTimeout(pushTimer);
-  pushTimer = setTimeout(pushData, 1500);
+function refreshTesterTags() {
+  CATS.flatMap(c=>c.items).forEach(it=>{
+    const el = document.getElementById('tt_'+it.id);
+    if (!el) return;
+    const okT = allTesters.filter(t=>t.name!==me.name&&t.items[it.id]==='ok').map(t=>t.name);
+    const isT = allTesters.filter(t=>t.name!==me.name&&t.items[it.id]==='issue').map(t=>t.name);
+    el.innerHTML = [
+      ...okT.map(n=>`<div class="ttag ok"><div class="tdot ok"></div>${esc(n)}</div>`),
+      ...isT.map(n=>`<div class="ttag issue"><div class="tdot issue"></div>${esc(n)}</div>`),
+    ].join('');
+  });
+}
+
+// ─── SAVE / SYNC ─────────────────────────────────────────────────────────────
+let saveTimer=null;
+function autoSave() { clearTimeout(saveTimer); saveTimer=setTimeout(pushData,800); }
+
+async function manualSave() {
+  if (!me.name.trim()) { flashStatus('Bitte erst Namen eingeben!',''); return; }
+  await pushData();
 }
 
 async function pushData() {
-  const name = myState.name.trim();
-  if (!name) return;
-  setSyncStatus('syncing', 'Wird gespeichert…');
+  if (!me.name.trim()) return;
+  flashStatus('Wird gespeichert…','saving');
   try {
-    await fetch('/api/beta-test', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, items: myState.items }),
+    await fetch('/api/beta-test',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({name:me.name.trim(),items:me.items}),
     });
-    setSyncStatus('synced', 'Gespeichert ✓');
+    flashStatus('Gespeichert ✓','saved');
+    flashSaveBtn();
+    await fetchAll();
   } catch {
-    setSyncStatus('', 'Konnte nicht speichern');
+    flashStatus('Fehler beim Speichern','');
   }
 }
 
 async function fetchAll() {
   try {
-    const res = await fetch('/api/beta-test?_=' + Date.now());
+    const res = await fetch('/api/beta-test?_='+Date.now());
     if (!res.ok) return;
     const data = await res.json();
-    allTesters = data.testers || [];
-    // Update tester tags without full re-render
-    CATS.flatMap(c => c.items).forEach(it => {
-      const el = document.getElementById('testers_' + it.id);
-      if (!el) return;
-      const okTesters = allTesters.filter(t => t.name !== myState.name && t.items[it.id] === 'ok').map(t => t.name);
-      const issTesters = allTesters.filter(t => t.name !== myState.name && t.items[it.id] === 'issue').map(t => t.name);
-      el.innerHTML = [
-        ...okTesters.map(n => `<div class="tester-tag ok"><div class="dot-ok"></div>${esc(n)}</div>`),
-        ...issTesters.map(n => `<div class="tester-tag issue"><div class="dot-issue"></div>${esc(n)}</div>`),
-      ].join('');
-    });
-    const now = new Date().toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
-    setSyncStatus('synced', 'Aktualisiert um ' + now);
+    allTesters = data.testers||[];
+    refreshTesterTags();
   } catch {}
 }
 
-function setSyncStatus(cls, txt) {
-  const el = document.getElementById('syncStatus');
-  el.className = 'sync ' + cls;
-  el.textContent = txt;
+function flashStatus(txt,cls) {
+  const el=document.getElementById('saveStatus');
+  el.textContent=txt; el.className='save-status '+cls;
+}
+function flashSaveBtn() {
+  const btn=document.getElementById('saveBtn');
+  btn.classList.add('saved-flash');
+  setTimeout(()=>btn.classList.remove('saved-flash'),1200);
 }
 
-// ─── SUBMIT (manual) ─────────────────────────────────────────────────────────
-async function submitResults() {
-  const name = myState.name.trim();
-  if (!name) { showToast('Bitte erst deinen Namen eingeben!'); return; }
-  await pushData();
-  showToast('Ergebnisse übermittelt – danke! 🎉');
+// ─── NAME GATE ───────────────────────────────────────────────────────────────
+function updateGate() {
+  const hasName = me.name.trim().length > 0;
+  const overlay = document.getElementById('gateOverlay');
+  if (hasName) overlay.classList.add('hidden'); else overlay.classList.remove('hidden');
 }
 
-// ─── TOAST ───────────────────────────────────────────────────────────────────
-let toastTimer;
-function showToast(msg) {
-  const el = document.getElementById('toast');
-  el.textContent = msg;
-  el.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => el.classList.remove('show'), 3000);
+// ─── ADMIN VIEW ──────────────────────────────────────────────────────────────
+function renderAdmin(testers) {
+  const el = document.getElementById('adminContent');
+  const meta = document.getElementById('adminMeta');
+  if (!testers.length) {
+    el.innerHTML='<div class="no-data">Noch keine Einträge vorhanden.</div>';
+    return;
+  }
+  meta.textContent = testers.length+' Tester · Zuletzt aktualisiert: '+new Date().toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'});
+  el.innerHTML = testers.map(t => {
+    const okItems = ALL_ITEMS.filter(it=>t.items[it.id]==='ok');
+    const issueItems = ALL_ITEMS.filter(it=>t.items[it.id]==='issue');
+    const total = okItems.length+issueItems.length;
+    const issueHTML = issueItems.length ? `
+      <div class="admin-issues">
+        <h4>⚠ Anmerkungen / Probleme (${issueItems.length})</h4>
+        <ul>${issueItems.map(it=>`<li>${it.title}</li>`).join('')}</ul>
+      </div>` : '';
+    const allItemsHTML = [...okItems,...issueItems].map(it=>`
+      <div class="admin-item-row">
+        ${it.id in t.items&&t.items[it.id]==='ok'
+          ? `<svg class="ai-status" viewBox="0 0 24 24" fill="none" stroke="#34C759" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="9 12 11 14 15 10"/></svg>`
+          : `<svg class="ai-status" viewBox="0 0 24 24" fill="none" stroke="#F97316" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`}
+        <div class="ai-title">${it.title}</div>
+        <div class="ai-cat">${it.catTitle}</div>
+      </div>`).join('');
+    return `
+      <div class="admin-tester-card">
+        <div class="tester-card-header">
+          <div>
+            <div class="tester-name">${esc(t.name)}</div>
+            <div class="tester-meta">${total} von ${ALL_ITEMS.length} Punkten getestet</div>
+          </div>
+          <div class="tester-stats">
+            <div class="tstat ok">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              ${okItems.length}
+            </div>
+            <div class="tstat issue">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              ${issueItems.length}
+            </div>
+          </div>
+        </div>
+        ${issueHTML}
+        ${total>0?'<div class="admin-items">'+allItemsHTML+'</div>':''}
+      </div>`;
+  }).join('');
+}
+
+async function loadAdmin() {
+  document.getElementById('adminContent').innerHTML='<div class="no-data">Wird geladen…</div>';
+  try {
+    const res=await fetch('/api/beta-test?_='+Date.now());
+    const data=await res.json();
+    renderAdmin(data.testers||[]);
+  } catch {
+    document.getElementById('adminContent').innerHTML='<div class="no-data">Fehler beim Laden.</div>';
+  }
 }
 
 // ─── INIT ────────────────────────────────────────────────────────────────────
-document.addEventListener('DOMContentLoaded', () => {
+const IS_ADMIN = new URLSearchParams(location.search).has('admin');
+
+document.addEventListener('DOMContentLoaded', ()=>{
+  if (IS_ADMIN) {
+    document.getElementById('checklistMain').classList.add('hidden');
+    document.getElementById('adminWrap').classList.add('active');
+    document.getElementById('saveBar').style.display='none';
+    loadAdmin();
+    return;
+  }
+
   loadLocal();
   render();
   fetchAll();
+  updateGate();
 
-  const input = document.getElementById('testerName');
-  input.value = myState.name || '';
-  input.addEventListener('input', () => {
-    myState.name = input.value;
+  const input=document.getElementById('testerName');
+  input.value=me.name||'';
+  input.addEventListener('input',()=>{
+    me.name=input.value;
     saveLocal();
-    schedulePush();
+    updateGate();
+    autoSave();
   });
 
-  // Poll for updates every 30s
-  setInterval(fetchAll, 30000);
+  setInterval(fetchAll,30000);
 });
 </script>
 </body>
