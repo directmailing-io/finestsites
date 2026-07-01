@@ -35,7 +35,7 @@ export async function GET(req: NextRequest) {
   try {
     const { data, contentType } = await getRawFromR2(key)
 
-    return new NextResponse(data, {
+    return new NextResponse(data.buffer as ArrayBuffer, {
       headers: {
         'Content-Type': contentType ?? 'application/octet-stream',
         'Cache-Control': 'private, max-age=86400',
