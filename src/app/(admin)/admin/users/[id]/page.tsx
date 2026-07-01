@@ -8,17 +8,17 @@ interface UserProfile {
   email: string
   username: string | null
   plan: string
-  subscription_status: string | null
-  created_at: string
-  stripe_customer_id: string | null
+  subscriptionStatus: string | null
+  createdAt: string
+  stripeCustomerId: string | null
 }
 
 interface UserSite {
   id: string
   status: string
-  username: string | null
-  custom_domain: string | null
-  custom_domain_status: string | null
+  customDomain: string | null
+  customDomainStatus: string | null
+  createdAt: string
   templates: { title: string; domain: string } | null
 }
 
@@ -34,12 +34,12 @@ interface Invoice {
 
 interface SubscriptionEvent {
   id: string
-  event_type: string
+  eventType: string
   plan: string | null
-  billing_interval: string | null
-  amount_cents: number | null
-  created_at: string
-  stripe_invoice_id: string | null
+  billingInterval: string | null
+  amountCents: number | null
+  createdAt: string
+  stripeInvoiceId: string | null
   metadata: Record<string, unknown> | null
 }
 
@@ -176,13 +176,19 @@ export default function AdminUserDetailPage({ params }: { params: Promise<{ id: 
                 style={{ background: planColor.bg, color: planColor.text }}>
                 {profile.plan}
               </span>
-              {profile.subscription_status && (
+              {!profile.stripeCustomerId && profile.plan !== 'starter' && (
+                <span className="text-xs px-2.5 py-1 rounded-full"
+                  style={{ background: '#FFF7ED', color: '#C2410C' }}>
+                  Manuell gesetzt
+                </span>
+              )}
+              {profile.subscriptionStatus && (
                 <span className="text-xs px-2.5 py-1 rounded-full"
                   style={{
-                    background: profile.subscription_status === 'active' ? '#F0FDF4' : '#FEF2F2',
-                    color: profile.subscription_status === 'active' ? '#16A34A' : '#DC2626',
+                    background: profile.subscriptionStatus === 'active' ? '#F0FDF4' : '#FEF2F2',
+                    color: profile.subscriptionStatus === 'active' ? '#16A34A' : '#DC2626',
                   }}>
-                  {STATUS_LABELS[profile.subscription_status] ?? profile.subscription_status}
+                  {STATUS_LABELS[profile.subscriptionStatus] ?? profile.subscriptionStatus}
                 </span>
               )}
             </div>
@@ -190,12 +196,12 @@ export default function AdminUserDetailPage({ params }: { params: Promise<{ id: 
           <div className="grid grid-cols-2 gap-3 pt-2" style={{ borderTop: '1px solid #F3F4F6' }}>
             <div>
               <p className="text-xs font-medium mb-0.5" style={{ color: 'var(--muted-foreground)' }}>Registriert</p>
-              <p className="text-sm text-gray-900">{new Date(profile.created_at).toLocaleDateString('de-DE', { day: '2-digit', month: 'long', year: 'numeric' })}</p>
+              <p className="text-sm text-gray-900">{new Date(profile.createdAt).toLocaleDateString('de-DE', { day: '2-digit', month: 'long', year: 'numeric' })}</p>
             </div>
-            {profile.stripe_customer_id && (
+            {profile.stripeCustomerId && (
               <div>
                 <p className="text-xs font-medium mb-0.5" style={{ color: 'var(--muted-foreground)' }}>Stripe-ID</p>
-                <p className="text-sm font-mono text-gray-700">{profile.stripe_customer_id}</p>
+                <p className="text-sm font-mono text-gray-700">{profile.stripeCustomerId}</p>
               </div>
             )}
           </div>
@@ -213,50 +219,49 @@ export default function AdminUserDetailPage({ params }: { params: Promise<{ id: 
                 const subdomain = profile.username && site.templates?.domain
                   ? `${profile.username}.${site.templates.domain}`
                   : null
-                const hasCustomDomain = site.custom_domain_status === 'active' && !!site.custom_domain
-                const primaryUrl = hasCustomDomain
-                  ? `https://${site.custom_domain}`
-                  : subdomain ? `https://${subdomain}` : null
+                const hasCustomDomain = site.customDomainStatus === 'active' && !!site.customDomain
                 return (
                   <div key={site.id} className="flex items-center justify-between p-3 rounded-[14px]"
                     style={{ background: '#F9FAFB', border: '1px solid #F3F4F6' }}>
                     <div className="min-w-0 flex-1">
-                      <p className="text-sm font-medium text-gray-900">{site.templates?.title ?? 'Website'}</p>
-                      {/* Subdomain — always shown */}
+                      <div className="flex items-center gap-2">
+                        <p className="text-sm font-medium text-gray-900">{site.templates?.title ?? 'Website'}</p>
+                        <span className="text-[10px]" style={{ color: '#94A3B8' }}>
+                          {new Date(site.createdAt).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: '2-digit' })}
+                        </span>
+                      </div>
                       {subdomain && (
                         <a href={`https://${subdomain}`} target="_blank" rel="noopener noreferrer"
                           className="text-xs font-mono mt-0.5 flex items-center gap-1 hover:underline"
-                          style={{ color: '#94A3B8' }}
-                          onClick={e => e.stopPropagation()}>
+                          style={{ color: '#94A3B8' }}>
                           <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                             <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
                           </svg>
                           {subdomain}
                         </a>
                       )}
-                      {/* Custom domain — shown with icon when active */}
-                      {site.custom_domain && (
-                        <a href={hasCustomDomain ? `https://${site.custom_domain}` : undefined}
+                      {site.customDomain && (
+                        <a href={hasCustomDomain ? `https://${site.customDomain}` : undefined}
                           target={hasCustomDomain ? '_blank' : undefined}
                           rel="noopener noreferrer"
                           className="text-xs font-mono mt-0.5 flex items-center gap-1"
                           style={{ color: hasCustomDomain ? '#16A34A' : '#F59E0B', cursor: hasCustomDomain ? 'pointer' : 'default' }}
-                          onClick={e => { if (!hasCustomDomain) e.preventDefault(); else e.stopPropagation() }}>
+                          onClick={e => { if (!hasCustomDomain) e.preventDefault() }}>
                           <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                             <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/>
                             <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
                           </svg>
-                          {site.custom_domain}
+                          {site.customDomain}
                           {!hasCustomDomain && (
                             <span className="ml-1 text-[9px] font-semibold px-1 py-0.5 rounded"
                               style={{ background: '#FEF3C7', color: '#92400E' }}>
-                              {site.custom_domain_status === 'pending_ssl' ? 'SSL pending' : 'DNS ausstehend'}
+                              {site.customDomainStatus === 'pending_ssl' ? 'SSL pending' : 'DNS ausstehend'}
                             </span>
                           )}
                         </a>
                       )}
                     </div>
-                    <span className="text-xs px-2.5 py-0.5 rounded-full"
+                    <span className="text-xs px-2.5 py-0.5 rounded-full flex-shrink-0"
                       style={{
                         background: site.status === 'published' ? '#F0FDF4' : '#F3F4F6',
                         color: site.status === 'published' ? '#16A34A' : '#6B7280',
@@ -274,7 +279,16 @@ export default function AdminUserDetailPage({ params }: { params: Promise<{ id: 
         <div className="p-6 rounded-[24px] bg-white flex flex-col gap-3"
           style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.08)', border: '1px solid var(--border)' }}>
           <h2 className="font-medium text-gray-900">Zahlungen</h2>
-          {invoices.length === 0 ? (
+          {!profile.stripeCustomerId ? (
+            <div className="flex items-center gap-2 p-3 rounded-[12px]" style={{ background: '#FFF7ED', border: '1px solid #FED7AA' }}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C2410C" strokeWidth="2">
+                <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+              </svg>
+              <p className="text-xs" style={{ color: '#92400E' }}>
+                Kein Stripe-Kunde verknüpft – Plan wurde manuell gesetzt, keine Zahlungshistorie vorhanden.
+              </p>
+            </div>
+          ) : invoices.length === 0 ? (
             <p className="text-sm" style={{ color: 'var(--muted-foreground)' }}>Keine Zahlungen gefunden.</p>
           ) : (
             <div className="overflow-hidden rounded-[14px]" style={{ border: '1px solid #F3F4F6' }}>
@@ -320,14 +334,16 @@ export default function AdminUserDetailPage({ params }: { params: Promise<{ id: 
           <h2 className="font-medium text-gray-900">Abo-Verlauf</h2>
           {(!events || events.length === 0) ? (
             <p className="text-sm" style={{ color: 'var(--muted-foreground)' }}>
-              Noch keine Ereignisse aufgezeichnet.
+              {!profile.stripeCustomerId
+                ? 'Plan manuell gesetzt – kein Abo-Verlauf via Stripe vorhanden.'
+                : 'Noch keine Ereignisse aufgezeichnet.'}
             </p>
           ) : (
             <div className="relative flex flex-col gap-0 mt-1">
               <div className="absolute left-[9px] top-3 bottom-3 w-px" style={{ background: '#E5E7EB' }} />
               {events.map((ev, idx) => {
                 const isLast = idx === events.length - 1
-                const dt = new Date(ev.created_at)
+                const dt = new Date(ev.createdAt)
                 const dateStr = dt.toLocaleDateString('de-DE', { day: 'numeric', month: 'short', year: 'numeric' })
                   + ' · '
                   + dt.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })
@@ -343,7 +359,7 @@ export default function AdminUserDetailPage({ params }: { params: Promise<{ id: 
                   payment_succeeded: { dot: '#16A34A', bg: '#F0FDF4' },
                   account_deactivated: { dot: '#DC2626', bg: '#FEF2F2' },
                 }
-                const style = STYLE[ev.event_type] ?? { dot: '#9CA3AF', bg: '#F9FAFB' }
+                const style = STYLE[ev.eventType] ?? { dot: '#9CA3AF', bg: '#F9FAFB' }
 
                 const LABEL: Record<string, string> = {
                   subscription_created: 'Abo gestartet',
@@ -355,20 +371,20 @@ export default function AdminUserDetailPage({ params }: { params: Promise<{ id: 
                   payment_succeeded: 'Zahlung erfolgreich',
                   account_deactivated: 'Konto deaktiviert',
                 }
-                const label = LABEL[ev.event_type] ?? ev.event_type
+                const label = LABEL[ev.eventType] ?? ev.eventType
 
                 let detail: string | null = null
-                if (ev.event_type === 'subscription_created' && ev.plan) {
-                  detail = `${ev.plan}${ev.billing_interval ? ` · ${ev.billing_interval}` : ''}`
-                } else if (ev.event_type === 'subscription_renewed') {
+                if (ev.eventType === 'subscription_created' && ev.plan) {
+                  detail = `${ev.plan}${ev.billingInterval ? ` · ${ev.billingInterval}` : ''}`
+                } else if (ev.eventType === 'subscription_renewed') {
                   const parts: string[] = []
                   if (ev.plan) parts.push(ev.plan)
-                  if (ev.amount_cents != null) parts.push(`€ ${(ev.amount_cents / 100).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`)
+                  if (ev.amountCents != null) parts.push(`€ ${(ev.amountCents / 100).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`)
                   detail = parts.join(' · ') || null
-                } else if (ev.event_type === 'subscription_updated' && ev.plan) {
+                } else if (ev.eventType === 'subscription_updated' && ev.plan) {
                   detail = ev.plan
-                } else if (ev.event_type === 'payment_succeeded' && ev.amount_cents != null) {
-                  detail = `€ ${(ev.amount_cents / 100).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+                } else if (ev.eventType === 'payment_succeeded' && ev.amountCents != null) {
+                  detail = `€ ${(ev.amountCents / 100).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
                 }
 
                 return (
