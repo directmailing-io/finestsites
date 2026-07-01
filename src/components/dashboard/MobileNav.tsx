@@ -77,6 +77,8 @@ export function MobileNav() {
           background: '#fff',
           boxShadow: '0 -4px 40px rgba(0,0,0,0.14)',
           transform: showMore ? 'translateY(0)' : 'translateY(110vh)',
+        visibility: showMore ? 'visible' : 'hidden',
+        pointerEvents: showMore ? 'auto' : 'none',
         }}
       >
         {/* Handle */}
