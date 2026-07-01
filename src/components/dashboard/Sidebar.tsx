@@ -113,50 +113,28 @@ export function DashboardSidebar() {
         {/* Support Chat Card */}
         <button
           onClick={() => window.dispatchEvent(new CustomEvent('openSupportChat'))}
-          className="w-full text-left mb-2 rounded-2xl overflow-hidden relative group"
-          style={{ border: 'none', padding: 0, cursor: 'pointer', background: 'transparent' }}
+          className="w-full mb-2 group"
+          style={{ border: 'none', padding: 0, cursor: 'pointer', background: 'transparent', display: 'block' }}
         >
-          <div style={{
-            position: 'relative', borderRadius: 16, overflow: 'hidden',
-            background: 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)',
-            padding: '12px 14px 0',
-          }}>
-            {/* Text area */}
-            <div style={{ paddingBottom: 100 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
-                <div style={{
-                  width: 6, height: 6, borderRadius: '50%', background: '#22C55E',
-                  boxShadow: '0 0 0 2px rgba(34,197,94,0.3)',
-                }} />
-                <span style={{ fontSize: 9, fontWeight: 700, color: '#86EFAC', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Live Support</span>
-              </div>
-              <p style={{ fontSize: 13, fontWeight: 700, color: '#fff', margin: '0 0 2px', lineHeight: 1.3 }}>
-                Wir helfen dir gerne!
-              </p>
-              <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)', margin: 0, lineHeight: 1.4 }}>
-                Chat starten →
-              </p>
-            </div>
-            {/* Image absolutely positioned bottom-right */}
+          <div style={{ position: 'relative', borderRadius: 14, overflow: 'hidden', aspectRatio: '4/3' }}>
+            {/* Full-bleed image */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src="/support-team.jpg"
               alt="Support Team"
-              style={{
-                position: 'absolute', bottom: 0, right: 0,
-                width: 120, height: 90,
-                objectFit: 'cover', objectPosition: 'center top',
-                maskImage: 'linear-gradient(to left, rgba(0,0,0,1) 40%, transparent 100%)',
-                WebkitMaskImage: 'linear-gradient(to left, rgba(0,0,0,1) 40%, transparent 100%)',
-              }}
+              style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top', display: 'block', transition: 'transform 0.3s' }}
+              className="group-hover:scale-[1.03]"
             />
-            {/* Hover overlay */}
+            {/* Bottom gradient + text */}
             <div style={{
-              position: 'absolute', inset: 0, borderRadius: 16,
-              background: 'rgba(255,255,255,0)',
-              transition: 'background 0.15s',
-              pointerEvents: 'none',
-            }} className="group-hover:bg-white/5" />
+              position: 'absolute', bottom: 0, left: 0, right: 0,
+              background: 'linear-gradient(to top, rgba(0,0,0,0.72) 0%, transparent 100%)',
+              padding: '28px 12px 11px',
+            }}>
+              <p style={{ margin: 0, fontSize: 12, fontWeight: 700, color: '#fff', lineHeight: 1.3 }}>
+                Fragen? Chat starten →
+              </p>
+            </div>
           </div>
         </button>
 
