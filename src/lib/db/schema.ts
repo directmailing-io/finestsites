@@ -442,3 +442,46 @@ export const waitlist = pgTable('waitlist', {
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
 })
 export type WaitlistEntry = typeof waitlist.$inferSelect
+
+// ─── Support Chat ──────────────────────────────────────────────────────────────
+
+export const supportConversations = pgTable('support_conversations', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  userId: uuid('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  status: text('status').notNull().default('open'), // 'open' | 'closed' | 'waiting'
+  subject: text('subject'),
+  lastMessageAt: timestamp('last_message_at', { withTimezone: true }),
+  unreadByAdmin: integer('unread_by_admin').notNull().default(0),
+  unreadByUser: integer('unread_by_user').notNull().default(0),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [
+  index('idx_support_conv_user_id').on(t.userId),
+  index('idx_support_conv_status').on(t.status),
+  index('idx_support_conv_last_msg').on(t.lastMessageAt),
+])
+
+export const supportMessages = pgTable('support_messages', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  conversationId: uuid('conversation_id').notNull().references(() => supportConversations.id, { onDelete: 'cascade' }),
+  senderType: text('sender_type').notNull(), // 'user' | 'admin'
+  senderId: uuid('sender_id'),
+  content: text('content').notNull(),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [
+  index('idx_support_msg_conv_id').on(t.conversationId),
+  index('idx_support_msg_created').on(t.createdAt),
+])
+
+export const supportConversationsRelations = relations(supportConversations, ({ one, many }) => ({
+  user: one(users, { fields: [supportConversations.userId], references: [users.id] }),
+  messages: many(supportMessages),
+}))
+
+export const supportMessagesRelations = relations(supportMessages, ({ one }) => ({
+  conversation: one(supportConversations, { fields: [supportMessages.conversationId], references: [supportConversations.id] }),
+  sender: one(users, { fields: [supportMessages.senderId], references: [users.id] }),
+}))
+
+export type SupportConversation = typeof supportConversations.$inferSelect
+export type SupportMessage = typeof supportMessages.$inferSelect

@@ -6,6 +6,7 @@ import { eq } from 'drizzle-orm'
 import { DashboardSidebar } from '@/components/dashboard/Sidebar'
 import { MobileNav } from '@/components/dashboard/MobileNav'
 import { PlanQuotaProvider } from '@/components/dashboard/PlanQuotaContext'
+import SupportChat from '@/components/support/SupportChat'
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const user = await getServerUser()
@@ -38,6 +39,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
           {children}
         </main>
         <MobileNav />
+        <SupportChat />
       </div>
     </PlanQuotaProvider>
   )
