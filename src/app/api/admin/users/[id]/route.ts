@@ -53,27 +53,24 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
   let subscriptionDiscount: { couponName: string | null; promoCode: string | null } | null = null
   if (profile.stripeCustomerId) {
     try {
-      const [invoiceResult, subsResult] = await Promise.all([
-        getStripe().invoices.list({
-          customer: profile.stripeCustomerId,
-          limit: 10,
-          expand: ['data.discounts', 'data.total_discount_amounts.discount'],
-        }),
-        profile.stripeSubscriptionId
-          ? getStripe().subscriptions.retrieve(profile.stripeSubscriptionId, {
-              expand: ['discount.promotion_code'],
-            })
-          : Promise.resolve(null),
-      ])
+      const invoiceResult = await getStripe().invoices.list({
+        customer: profile.stripeCustomerId,
+        limit: 10,
+        expand: ['data.discounts', 'data.discounts.promotion_code'],
+      })
       invoices = invoiceResult.data
-      if (subsResult && subsResult.discounts && subsResult.discounts.length > 0) {
+
+      // Extract coupon/promo code from any invoice that has a discount
+      for (const inv of invoices) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const disc = subsResult.discounts[0] as any
-        if (disc && typeof disc === 'object') {
+        const discounts: any[] = (inv as any).discounts ?? []
+        if (discounts.length > 0) {
+          const disc = discounts[0]
           subscriptionDiscount = {
             couponName: disc.coupon?.name ?? disc.coupon?.id ?? null,
             promoCode: disc.promotion_code?.code ?? null,
           }
+          break
         }
       }
     } catch { /* ignore */ }
