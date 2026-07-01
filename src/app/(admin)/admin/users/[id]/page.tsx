@@ -110,6 +110,7 @@ export default function AdminUserDetailPage({ params }: { params: Promise<{ id: 
         setLoading(false)
       })
       .catch(() => { setError('Fehler beim Laden.'); setLoading(false) })
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchSupportConvs()
   }, [id, fetchSupportConvs])
 
