@@ -11,6 +11,8 @@ interface Message {
   senderType: 'user' | 'admin'
   senderId: string | null
   content: string
+  contentType: 'text' | 'image' | 'gif'
+  mediaUrl: string | null
   createdAt: string
 }
 
@@ -29,7 +31,7 @@ interface ConversationWithUser {
     lastName: string | null
     plan: string
   }
-  lastMessage: { content: string; senderType: string; createdAt: string } | null
+  lastMessage: { content: string; senderType: string; createdAt: string; contentType?: 'text' | 'image' | 'gif' } | null
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -49,6 +51,40 @@ function formatTime(iso: string): string {
 function formatDate(iso: string): string {
   const d = new Date(iso)
   return d.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' })
+}
+
+function formatShortDate(iso: string): string {
+  const d = new Date(iso)
+  const dd = d.getDate().toString().padStart(2, '0')
+  const mo = (d.getMonth() + 1).toString().padStart(2, '0')
+  const yy = d.getFullYear().toString().slice(2)
+  return `${dd}.${mo}.${yy}`
+}
+
+function renderMessageContent(msg: Message) {
+  if (msg.contentType === 'image' && msg.mediaUrl) {
+    return (
+      <div>
+        <img
+          src={msg.mediaUrl}
+          alt="Bild"
+          style={{ maxWidth: '100%', maxHeight: 200, borderRadius: 10, display: 'block', cursor: 'pointer' }}
+          onClick={() => window.open(msg.mediaUrl!, '_blank')}
+        />
+        {msg.content && <div style={{ marginTop: 6, fontSize: 13 }}>{msg.content}</div>}
+      </div>
+    )
+  }
+  if (msg.contentType === 'gif' && msg.mediaUrl) {
+    return (
+      <img
+        src={msg.mediaUrl}
+        alt="GIF"
+        style={{ maxWidth: '100%', maxHeight: 200, borderRadius: 10, display: 'block' }}
+      />
+    )
+  }
+  return <span>{msg.content}</span>
 }
 
 function getInitials(user: ConversationWithUser['user']): string {
@@ -265,6 +301,23 @@ export default function SupportAdminPanel() {
     }
   }
 
+  // ── Delete conversation ───────────────────────────────────────────────────────
+
+  const handleDeleteConversation = async (e: React.MouseEvent, convId: string) => {
+    e.stopPropagation()
+    if (!window.confirm('Gespräch wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.')) return
+    try {
+      await fetch(`/api/admin/support/conversations/${convId}`, { method: 'DELETE' })
+    } catch {
+      // ignore
+    }
+    setConversations(prev => prev.filter(c => c.id !== convId))
+    if (selectedId === convId) {
+      setSelectedId(null)
+      setMessages([])
+    }
+  }
+
   // ── Send message ─────────────────────────────────────────────────────────────
 
   const handleSend = async () => {
@@ -416,6 +469,19 @@ export default function SupportAdminPanel() {
             filteredConversations.map(conv => {
               const isSelected = conv.id === selectedId
               const isHovered = hoveredId === conv.id
+
+              let lastMsgPreview = conv.subject ?? '—'
+              if (conv.lastMessage) {
+                if (conv.lastMessage.contentType === 'image') {
+                  lastMsgPreview = '📷 Bild'
+                } else if (conv.lastMessage.contentType === 'gif') {
+                  lastMsgPreview = '🎬 GIF'
+                } else {
+                  const txt = conv.lastMessage.content ?? ''
+                  lastMsgPreview = txt.length > 50 ? txt.slice(0, 50) + '…' : txt
+                }
+              }
+
               return (
                 <div
                   key={conv.id}
@@ -428,8 +494,37 @@ export default function SupportAdminPanel() {
                     borderBottom: '1px solid #F5F5F5',
                     background: isSelected ? '#F7F7F7' : isHovered ? '#FAFAFA' : '#fff',
                     transition: 'background 0.1s',
+                    position: 'relative',
                   }}
                 >
+                  {isHovered && (
+                    <button
+                      onClick={e => handleDeleteConversation(e, conv.id)}
+                      title="Gespräch löschen"
+                      style={{
+                        position: 'absolute',
+                        top: 8,
+                        right: 8,
+                        width: 28,
+                        height: 28,
+                        background: 'rgba(239,68,68,0.08)',
+                        border: 'none',
+                        borderRadius: 6,
+                        cursor: 'pointer',
+                        color: '#EF4444',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        padding: 0,
+                        zIndex: 1,
+                      }}
+                    >
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <polyline points="3 6 5 6 21 6" />
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
+                      </svg>
+                    </button>
+                  )}
                   <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
                     <Avatar user={conv.user} size={38} />
                     <div style={{ flex: 1, minWidth: 0 }}>
@@ -475,11 +570,14 @@ export default function SupportAdminPanel() {
                           marginTop: 2,
                         }}
                       >
-                        {conv.lastMessage?.content ?? conv.subject ?? '—'}
+                        {lastMsgPreview}
                       </div>
-                      {/* Row 3: status pill */}
-                      <div style={{ marginTop: 4 }}>
+                      {/* Row 3: status pill + started date */}
+                      <div style={{ marginTop: 4, display: 'flex', alignItems: 'center', gap: 8 }}>
                         <StatusPill status={conv.status} />
+                        <span style={{ fontSize: 10, color: '#BBB' }}>
+                          Gestartet am {formatShortDate(conv.createdAt)}
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -623,6 +721,40 @@ export default function SupportAdminPanel() {
                 background: '#FAFAFA',
               }}
             >
+              {selectedConversation?.status === 'closed' && (
+                <div
+                  style={{
+                    background: '#FEF2F2',
+                    border: '1px solid #FECACA',
+                    borderRadius: 8,
+                    padding: '8px 16px',
+                    margin: '0 0 12px',
+                    fontSize: 13,
+                    color: '#DC2626',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 8,
+                  }}
+                >
+                  <span>🔒</span>
+                  <span>Dieses Gespräch ist geschlossen.</span>
+                  <button
+                    onClick={() => handleStatusChange(selectedId!, 'open')}
+                    style={{
+                      marginLeft: 'auto',
+                      background: 'none',
+                      border: '1px solid #DC2626',
+                      borderRadius: 6,
+                      padding: '2px 10px',
+                      fontSize: 12,
+                      color: '#DC2626',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    Wieder öffnen
+                  </button>
+                </div>
+              )}
               {loadingMessages ? (
                 <div
                   style={{
@@ -692,7 +824,7 @@ export default function SupportAdminPanel() {
                           fontSize: 14,
                         }}
                       >
-                        {msg.content}
+                        {renderMessageContent(msg)}
                         <div
                           style={{
                             fontSize: 11,

@@ -467,6 +467,8 @@ export const supportMessages = pgTable('support_messages', {
   senderType: text('sender_type').notNull(), // 'user' | 'admin'
   senderId: uuid('sender_id'),
   content: text('content').notNull(),
+  contentType: text('content_type').notNull().default('text'), // 'text' | 'image' | 'gif'
+  mediaUrl: text('media_url'),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
 }, (t) => [
   index('idx_support_msg_conv_id').on(t.conversationId),

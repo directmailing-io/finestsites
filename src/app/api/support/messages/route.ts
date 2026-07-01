@@ -40,8 +40,14 @@ export async function POST(req: NextRequest) {
   const user = await getUserFromRequest(req)
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const { conversationId, content } = await req.json()
-  if (!conversationId || !content?.trim()) return NextResponse.json({ error: 'conversationId and content required' }, { status: 400 })
+  const body = await req.json()
+  const { conversationId, content = '', contentType = 'text', mediaUrl } = body
+
+  if (!conversationId) return NextResponse.json({ error: 'conversationId required' }, { status: 400 })
+  if (contentType === 'text' && !content.trim()) return NextResponse.json({ error: 'content required' }, { status: 400 })
+  if ((contentType === 'image' || contentType === 'gif') && !mediaUrl) {
+    return NextResponse.json({ error: 'mediaUrl required' }, { status: 400 })
+  }
 
   try {
     const conv = await db.query.supportConversations.findFirst({
@@ -52,7 +58,14 @@ export async function POST(req: NextRequest) {
     const now = new Date()
     const [message] = await db
       .insert(supportMessages)
-      .values({ conversationId, senderType: 'user', senderId: user.id, content: content.trim() })
+      .values({
+        conversationId,
+        senderType: 'user',
+        senderId: user.id,
+        content: content.trim(),
+        contentType,
+        ...(mediaUrl ? { mediaUrl } : {}),
+      })
       .returning()
 
     await db
