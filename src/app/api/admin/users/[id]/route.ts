@@ -67,15 +67,12 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
       ])
       invoices = invoiceResult.data
       if (subsResult && subsResult.discounts && subsResult.discounts.length > 0) {
-        const firstDisc = subsResult.discounts[0]
-        const disc = typeof firstDisc === 'object' ? firstDisc as Stripe.Discount : null
-        if (disc) {
-          const promoCode = disc.promotion_code && typeof disc.promotion_code === 'object'
-            ? (disc.promotion_code as Stripe.PromotionCode).code ?? null
-            : null
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const disc = subsResult.discounts[0] as any
+        if (disc && typeof disc === 'object') {
           subscriptionDiscount = {
             couponName: disc.coupon?.name ?? disc.coupon?.id ?? null,
-            promoCode,
+            promoCode: disc.promotion_code?.code ?? null,
           }
         }
       }
