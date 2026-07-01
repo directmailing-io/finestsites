@@ -333,6 +333,8 @@ export default function SupportAdminPanel() {
       senderType: 'admin',
       senderId: null,
       content,
+      contentType: 'text',
+      mediaUrl: null,
       createdAt: new Date().toISOString(),
     }
     setMessages(prev => [...prev, optimistic])
