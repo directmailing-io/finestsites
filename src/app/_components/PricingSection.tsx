@@ -189,9 +189,9 @@ export default function PricingSection({ validatedRef }: { validatedRef?: string
 
                 <div style={{ display: 'flex', alignItems: 'baseline', gap: 4, marginBottom: 4 }}>
                   {refCode && (
-                    <span style={{ fontSize: 22, fontWeight: 400, color: plan.popular ? 'rgba(255,255,255,0.3)' : '#bbb', letterSpacing: '-0.02em', lineHeight: 1, textDecoration: 'line-through', marginRight: 4 }}>€{basePrice}</span>
+                    <span style={{ fontSize: 22, fontWeight: 400, color: plan.popular ? 'rgba(255,255,255,0.3)' : '#bbb', letterSpacing: '-0.02em', lineHeight: 1, textDecoration: 'line-through', marginRight: 4 }}>{basePrice} €</span>
                   )}
-                  <span style={{ fontFamily: '"Plein", sans-serif', fontSize: 50, fontWeight: 400, color: plan.popular ? '#fff' : '#111', letterSpacing: '-0.04em', lineHeight: 1 }}>€{price}</span>
+                  <span style={{ fontFamily: '"Plein", sans-serif', fontSize: 50, fontWeight: 400, color: plan.popular ? '#fff' : '#111', letterSpacing: '-0.04em', lineHeight: 1 }}>{price} €</span>
                   <span style={{ fontSize: 13, color: plan.popular ? 'rgba(255,255,255,0.35)' : '#aaa' }}>/Monat</span>
                 </div>
 
@@ -204,7 +204,7 @@ export default function PricingSection({ validatedRef }: { validatedRef?: string
 
                 {yearly && (
                   <p style={{ fontSize: 12, color: plan.popular ? 'rgba(255,255,255,0.3)' : '#bbb', marginBottom: 4 }}>
-                    €{plan.yearly}/Jahr · du sparst €{(plan.monthly * 12) - plan.yearly}
+                    {plan.yearly} €/Jahr · du sparst {(plan.monthly * 12) - plan.yearly} €
                   </p>
                 )}
 
