@@ -50,11 +50,8 @@ function statusColor(status: string) {
 
 function convTitle(conv: ConversationSummary): string {
   if (conv.subject) return conv.subject
-  if (conv.lastMessage?.content) {
-    const t = conv.lastMessage.content.trim()
-    return t.length > 40 ? t.slice(0, 40) + '…' : t
-  }
-  return 'Gespräch'
+  const d = new Date(conv.createdAt)
+  return `Gespräch vom ${d.getDate()}.${d.getMonth() + 1}.${d.getFullYear()}`
 }
 
 function isLiveHours(): boolean {
@@ -65,25 +62,18 @@ function isLiveHours(): boolean {
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
 function SupportAvatar({ size }: { size: number }) {
-  const [err, setErr] = useState(false)
-  if (!err) {
-    return (
-      <img
-        src="/support-avatar.png"
-        alt="Support"
-        width={size} height={size}
-        style={{ borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }}
-        onError={() => setErr(true)}
-      />
-    )
-  }
   return (
     <div style={{
       width: size, height: size, borderRadius: '50%',
       background: 'linear-gradient(135deg,#6366F1,#8B5CF6)',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
-      flexShrink: 0, color: '#fff', fontSize: size * 0.4, fontWeight: 700,
-    }}>S</div>
+      flexShrink: 0,
+    }}>
+      <svg width={size * 0.52} height={size * 0.52} viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M3 18v-6a9 9 0 0 1 18 0v6"/>
+        <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/>
+      </svg>
+    </div>
   )
 }
 
