@@ -363,114 +363,94 @@ export default function SupportPage() {
 
   // ─── Render ──────────────────────────────────────────────────────────────────
 
+  // Height of mobile bottom nav + safe area (matches MobileNav)
+  const NAV_H = 'calc(56px + env(safe-area-inset-bottom, 0px))'
+  // Input bar height (toolbar 44 + textarea row 66 ≈ 110px)
+  const INPUT_H = 'calc(110px + env(safe-area-inset-bottom, 0px))'
+
   return (
-    <div style={{
-      position: 'fixed', inset: 0, zIndex: 50,
-      background: '#F8F8F8',
-      display: 'flex', flexDirection: 'column',
-    }}>
+    <>
       <input ref={fileInputRef} type="file" accept="image/jpeg,image/png,image/gif,image/webp"
         style={{ display: 'none' }} onChange={handleFileUpload} />
 
-      {/* ── Top bar ── */}
-      <div style={{
-        background: '#111', flexShrink: 0,
-        paddingTop: 'env(safe-area-inset-top, 0px)',
-        display: 'flex', flexDirection: 'column',
-      }}>
-        <div style={{
-          height: 56, padding: '0 16px',
-          display: 'flex', alignItems: 'center', gap: 12,
-        }}>
-          {/* Back button */}
+      {/* ── Page header ── */}
+      <div style={{ marginBottom: 20 }}>
+        {screen !== 'list' && (
           <button
-            onClick={() => {
-              if (screen === 'list') router.back()
-              else { setScreen('list'); fetchConversations(); setShowEmoji(false) }
-            }}
-            style={{
-              width: 36, height: 36, borderRadius: '50%', flexShrink: 0,
-              background: 'rgba(255,255,255,0.12)', border: 'none', cursor: 'pointer',
-              display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff',
-            }}
+            onClick={() => { setScreen('list'); fetchConversations(); setShowEmoji(false) }}
+            className="flex items-center gap-2 mb-4 text-sm font-medium"
+            style={{ color: '#6B7280', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
           >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
               <path d="M19 12H5M12 5l-7 7 7 7"/>
             </svg>
+            Zurück
           </button>
+        )}
 
-          {screen === 'list' ? (
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, flex: 1 }}>
-              <SupportAvatar size={34} />
-              <div>
-                <p style={{ margin: 0, color: '#fff', fontSize: 15, fontWeight: 700, lineHeight: 1.2 }}>Support</p>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginTop: 2 }}>
-                  <div style={{
-                    width: 6, height: 6, borderRadius: '50%', flexShrink: 0,
-                    background: live ? '#22C55E' : '#F97316',
-                  }} />
-                  <span style={{ fontSize: 11, color: live ? '#86EFAC' : '#FED7AA' }}>
-                    {live ? 'Jetzt erreichbar' : 'Außerhalb der Zeiten'}
-                  </span>
-                </div>
+        <div className="flex items-center gap-3">
+          <SupportAvatar size={36} />
+          <div>
+            <h1 className="text-xl font-bold text-gray-900 leading-tight">
+              {screen === 'list' ? 'Support' : screen === 'new' ? 'Neues Gespräch' : (activeConv ? convTitle(activeConv) : 'Chat')}
+            </h1>
+            {screen === 'list' && (
+              <div className="flex items-center gap-1.5 mt-0.5">
+                <div style={{ width: 7, height: 7, borderRadius: '50%', background: live ? '#22C55E' : '#F97316', flexShrink: 0 }} />
+                <span style={{ fontSize: 12, color: live ? '#16A34A' : '#EA580C' }}>
+                  {live ? 'Jetzt erreichbar' : 'Außerhalb der Zeiten'}
+                </span>
               </div>
-            </div>
-          ) : screen === 'new' ? (
-            <p style={{ margin: 0, color: '#fff', fontSize: 15, fontWeight: 700, flex: 1 }}>Neues Gespräch</p>
-          ) : (
-            <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: 8, minWidth: 0 }}>
-              <p style={{ margin: 0, color: '#fff', fontSize: 15, fontWeight: 700, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                {activeConv ? convTitle(activeConv) : 'Chat'}
-              </p>
-              <div style={{
-                width: 7, height: 7, borderRadius: '50%', flexShrink: 0,
-                background: statusColor(activeConvStatus),
-              }} />
-            </div>
-          )}
+            )}
+            {screen === 'chat' && (
+              <div className="flex items-center gap-1.5 mt-0.5">
+                <div style={{ width: 7, height: 7, borderRadius: '50%', background: statusColor(activeConvStatus), flexShrink: 0 }} />
+                <span style={{ fontSize: 12, color: activeConvStatus === 'open' ? '#16A34A' : '#9CA3AF' }}>
+                  {activeConvStatus === 'open' ? 'Offen' : 'Geschlossen'}
+                </span>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
       {/* ── LIST screen ── */}
       {screen === 'list' && (
-        <div style={{ flex: 1, overflowY: 'auto', padding: '12px 12px 0' }}>
+        <div>
           {conversations.length === 0 ? (
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '60vh', padding: '32px 24px', textAlign: 'center' }}>
+            <div className="flex flex-col items-center justify-center py-20 text-center">
               <div style={{ width: 72, height: 72, borderRadius: '50%', background: '#F5F0FF', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 32, marginBottom: 20 }}>👋</div>
               <p style={{ fontSize: 20, fontWeight: 700, color: '#111', margin: '0 0 10px' }}>Wie können wir helfen?</p>
-              <p style={{ fontSize: 14, color: '#777', margin: '0 0 32px', maxWidth: 260, lineHeight: 1.55 }}>Unser Team antwortet normalerweise innerhalb weniger Stunden.</p>
+              <p style={{ fontSize: 14, color: '#777', margin: '0 0 32px', maxWidth: 280, lineHeight: 1.55 }}>Unser Team antwortet normalerweise innerhalb weniger Stunden.</p>
               <button
                 onClick={() => { setScreen('new'); setMessages([]); setActiveConvId(null) }}
-                style={{ width: '100%', maxWidth: 320, padding: '15px 20px', background: '#111', color: '#fff', border: 'none', borderRadius: 14, fontSize: 15, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit' }}
+                style={{ padding: '14px 28px', background: '#111', color: '#fff', border: 'none', borderRadius: 14, fontSize: 15, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit' }}
               >
                 Gespräch starten →
               </button>
             </div>
           ) : (
-            <>
+            <div className="flex flex-col gap-3">
               <button
                 onClick={() => { setScreen('new'); setMessages([]); setActiveConvId(null) }}
                 style={{
                   width: '100%', textAlign: 'left', border: '1.5px dashed #D1D5DB', borderRadius: 14,
                   padding: '12px 16px', background: '#fff', color: '#555', fontSize: 14,
-                  fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit', marginBottom: 8,
+                  fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit',
                   display: 'flex', alignItems: 'center', gap: 10,
                 }}
               >
                 <span style={{ fontSize: 20, lineHeight: 1 }}>+</span> Neues Gespräch starten
               </button>
-
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 6, paddingBottom: 24 }}>
-                {conversations.map(conv => (
-                  <ConvRow
-                    key={conv.id}
-                    conv={conv}
-                    onOpen={() => openConversation(conv)}
-                    onDelete={() => deleteConversation(conv.id)}
-                  />
-                ))}
-              </div>
-            </>
+              {conversations.map(conv => (
+                <ConvRow
+                  key={conv.id}
+                  conv={conv}
+                  onOpen={() => openConversation(conv)}
+                  onDelete={() => deleteConversation(conv.id)}
+                />
+              ))}
+            </div>
           )}
         </div>
       )}
@@ -478,10 +458,13 @@ export default function SupportPage() {
       {/* ── CHAT / NEW screen ── */}
       {(screen === 'chat' || screen === 'new') && (
         <>
-          {/* Messages area */}
-          <div style={{ flex: 1, overflowY: 'auto', padding: 16, display: 'flex', flexDirection: 'column', gap: 8 }}>
+          {/* Messages — padding-bottom reserves space for fixed input + nav */}
+          <div style={{
+            paddingBottom: `calc(${INPUT_H} + ${NAV_H} + 8px)`,
+            display: 'flex', flexDirection: 'column', gap: 8,
+          }}>
             {messages.length === 0 && screen === 'new' && (
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', flex: 1, textAlign: 'center', padding: '0 24px' }}>
+              <div className="flex flex-col items-center justify-center py-16 text-center">
                 <div style={{ width: 56, height: 56, borderRadius: '50%', background: '#F5F0FF', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 26, marginBottom: 14 }}>💬</div>
                 <p style={{ fontSize: 17, fontWeight: 700, color: '#111', margin: '0 0 6px' }}>Neues Gespräch</p>
                 <p style={{ fontSize: 14, color: '#888', margin: 0, lineHeight: 1.5 }}>Schreib uns deine Frage — wir melden uns bald.</p>
@@ -508,7 +491,6 @@ export default function SupportPage() {
               return (
                 <div key={msg.id} style={{ display: 'flex', alignItems: 'flex-end', gap: 8 }}>
                   <SupportAvatar size={26} />
-                  {/* flex:1 + minWidth:0 so max-width% resolves against remaining row width, not bubble content */}
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', flex: 1, minWidth: 0 }}>
                     <div style={{
                       background: '#fff', color: '#111',
@@ -534,101 +516,101 @@ export default function SupportPage() {
             <div ref={messagesEndRef} style={{ height: 1, flexShrink: 0 }} />
           </div>
 
-          {/* Input area */}
-          {!isClosed ? (
-            <div style={{
-              flexShrink: 0, borderTop: '1px solid #E5E7EB',
-              background: '#fff', position: 'relative',
-              paddingBottom: 'env(safe-area-inset-bottom, 0px)',
-            }}>
-              {showEmoji && <EmojiPicker onSelect={emoji => { setInput(p => p + emoji); textareaRef.current?.focus() }} />}
+          {/* Input bar — fixed above the mobile nav */}
+          <div style={{
+            position: 'fixed',
+            bottom: NAV_H,
+            left: 0, right: 0,
+            background: '#fff',
+            borderTop: '1px solid #E5E7EB',
+            zIndex: 30,
+          }}>
+            {!isClosed ? (
+              <div style={{ position: 'relative' }}>
+                {showEmoji && <EmojiPicker onSelect={emoji => { setInput(p => p + emoji); textareaRef.current?.focus() }} />}
 
-              {/* Toolbar */}
-              <div style={{ height: 44, padding: '0 14px', display: 'flex', alignItems: 'center', gap: 4 }}>
-                <button
-                  onClick={() => setShowEmoji(p => !p)}
-                  style={{
-                    width: 34, height: 34, border: 'none', borderRadius: 8,
-                    background: showEmoji ? '#F0F0F0' : 'transparent',
-                    cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  }}
-                >
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={showEmoji ? '#111' : '#888'} strokeWidth="1.75">
-                    <circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/>
-                  </svg>
-                </button>
-                <button
-                  onClick={() => { fileInputRef.current?.click(); setShowEmoji(false) }}
-                  disabled={uploading}
-                  style={{
-                    width: 34, height: 34, border: 'none', borderRadius: 8,
-                    background: 'transparent', cursor: uploading ? 'default' : 'pointer',
-                    opacity: uploading ? 0.4 : 1,
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  }}
-                >
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#888" strokeWidth="1.75">
-                    <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>
-                  </svg>
-                </button>
-                {uploading && <span style={{ fontSize: 12, color: '#999' }}>Lädt hoch…</span>}
-              </div>
+                {/* Toolbar */}
+                <div style={{ height: 44, padding: '0 14px', display: 'flex', alignItems: 'center', gap: 4 }}>
+                  <button
+                    onClick={() => setShowEmoji(p => !p)}
+                    style={{
+                      width: 34, height: 34, border: 'none', borderRadius: 8,
+                      background: showEmoji ? '#F0F0F0' : 'transparent',
+                      cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    }}
+                  >
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={showEmoji ? '#111' : '#888'} strokeWidth="1.75">
+                      <circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/>
+                    </svg>
+                  </button>
+                  <button
+                    onClick={() => { fileInputRef.current?.click(); setShowEmoji(false) }}
+                    disabled={uploading}
+                    style={{
+                      width: 34, height: 34, border: 'none', borderRadius: 8, background: 'transparent',
+                      cursor: uploading ? 'default' : 'pointer', opacity: uploading ? 0.4 : 1,
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    }}
+                  >
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#888" strokeWidth="1.75">
+                      <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>
+                    </svg>
+                  </button>
+                  {uploading && <span style={{ fontSize: 12, color: '#999' }}>Lädt hoch…</span>}
+                </div>
 
-              {/* Textarea + send */}
-              <div style={{ padding: '0 14px 12px', display: 'flex', alignItems: 'flex-end', gap: 8 }}>
-                <textarea
-                  ref={textareaRef}
-                  value={input}
-                  onChange={handleInputChange}
-                  onKeyDown={handleKeyDown}
-                  onCompositionStart={() => { isComposingRef.current = true }}
-                  onCompositionEnd={() => { isComposingRef.current = false }}
-                  placeholder="Schreib uns eine Nachricht…"
-                  rows={1}
-                  disabled={sending || uploading}
-                  style={{
-                    flex: 1, border: '1.5px solid #E5E7EB', borderRadius: 14,
-                    padding: '10px 14px', fontSize: 16, fontFamily: 'inherit',
-                    resize: 'none', outline: 'none', minHeight: 42, maxHeight: 90,
-                    overflowY: 'auto', lineHeight: 1.5, color: '#111', background: '#F9FAFB',
-                    transition: 'border-color 0.15s, background 0.15s',
-                  }}
-                  onFocus={e => { e.currentTarget.style.borderColor = '#111'; e.currentTarget.style.background = '#fff' }}
-                  onBlur={e => { e.currentTarget.style.borderColor = '#E5E7EB'; e.currentTarget.style.background = '#F9FAFB' }}
-                />
+                {/* Textarea + send */}
+                <div style={{ padding: '0 14px 12px', display: 'flex', alignItems: 'flex-end', gap: 8 }}>
+                  <textarea
+                    ref={textareaRef}
+                    value={input}
+                    onChange={handleInputChange}
+                    onKeyDown={handleKeyDown}
+                    onCompositionStart={() => { isComposingRef.current = true }}
+                    onCompositionEnd={() => { isComposingRef.current = false }}
+                    placeholder="Schreib uns eine Nachricht…"
+                    rows={1}
+                    disabled={sending || uploading}
+                    style={{
+                      flex: 1, border: '1.5px solid #E5E7EB', borderRadius: 14,
+                      padding: '10px 14px', fontSize: 16, fontFamily: 'inherit',
+                      resize: 'none', outline: 'none', minHeight: 42, maxHeight: 90,
+                      overflowY: 'auto', lineHeight: 1.5, color: '#111', background: '#F9FAFB',
+                      transition: 'border-color 0.15s, background 0.15s',
+                    }}
+                    onFocus={e => { e.currentTarget.style.borderColor = '#111'; e.currentTarget.style.background = '#fff' }}
+                    onBlur={e => { e.currentTarget.style.borderColor = '#E5E7EB'; e.currentTarget.style.background = '#F9FAFB' }}
+                  />
+                  <button
+                    onClick={() => sendMessage()}
+                    disabled={!canSend}
+                    style={{
+                      width: 42, height: 42, borderRadius: '50%', border: 'none', flexShrink: 0,
+                      cursor: canSend ? 'pointer' : 'default',
+                      background: canSend ? '#111' : '#E5E7EB',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      transition: 'background 0.15s',
+                    }}
+                  >
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                      <path d="M8 13V3M8 3L3 8M8 3l5 5" stroke={canSend ? '#fff' : '#9CA3AF'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div style={{ padding: '14px 16px', textAlign: 'center' }}>
                 <button
-                  onClick={() => sendMessage()}
-                  disabled={!canSend}
-                  style={{
-                    width: 42, height: 42, borderRadius: '50%', border: 'none', flexShrink: 0,
-                    cursor: canSend ? 'pointer' : 'default',
-                    background: canSend ? '#111' : '#E5E7EB',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    transition: 'background 0.15s',
-                  }}
+                  onClick={() => { setScreen('new'); setMessages([]); setActiveConvId(null); setActiveConvStatus('open') }}
+                  style={{ background: '#111', color: '#fff', border: 'none', borderRadius: 12, padding: '11px 24px', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit' }}
                 >
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                    <path d="M8 13V3M8 3L3 8M8 3l5 5" stroke={canSend ? '#fff' : '#9CA3AF'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
+                  Neues Gespräch starten →
                 </button>
               </div>
-            </div>
-          ) : (
-            <div style={{
-              padding: '14px 16px', borderTop: '1px solid #E5E7EB',
-              flexShrink: 0, textAlign: 'center', background: '#fff',
-              paddingBottom: 'env(safe-area-inset-bottom, 14px)',
-            }}>
-              <button
-                onClick={() => { setScreen('new'); setMessages([]); setActiveConvId(null); setActiveConvStatus('open') }}
-                style={{ background: '#111', color: '#fff', border: 'none', borderRadius: 12, padding: '11px 24px', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit' }}
-              >
-                Neues Gespräch starten →
-              </button>
-            </div>
-          )}
+            )}
+          </div>
         </>
       )}
-    </div>
+    </>
   )
 }

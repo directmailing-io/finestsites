@@ -13,7 +13,7 @@ export function MobileNav() {
   const [chatUnread, setChatUnread] = useState(0)
 
   // Hide on editor pages — must be after all hooks
-  const isEditorPage = /^\/sites\/[^/]+\/edit/.test(pathname) || pathname === '/support'
+  const isEditorPage = /^\/sites\/[^/]+\/edit/.test(pathname)
 
   useEffect(() => {
     if (isEditorPage) return
