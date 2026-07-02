@@ -42,13 +42,11 @@ const PLANS = [
 ]
 
 const COMMON_FEATURES = [
-  'Alle Templates inklusive',
-  'DSGVO, Hosting & SSL-Verschlüsselung',
-  'Kontaktformular für Interessenten',
-  'Laufende Updates & Optimierungen',
-  'Kein Design nötig, keine Texte ausdenken',
-  'EU-Health-Claims-Check (KI)',
-  'Deine eigene Webadresse',
+  'Alle Vorlagen frei wählbar — einfach aussuchen & loslegen',
+  'Kein Stress mit DSGVO, Hosting oder Datenschutz — das übernehmen wir',
+  'Kein Designen, kein Texten — alles ist schon fertig für dich',
+  'Deine Seite wird laufend verbessert — ohne dass du etwas tun musst',
+  'Du kannst deine eigene Domain nutzen, z.\u202fB. dein-name.de',
 ]
 
 export default function PricingSection({ validatedRef }: { validatedRef?: string | null }) {
