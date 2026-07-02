@@ -499,22 +499,25 @@ export default function SupportPage() {
                   <div style={{
                     background: '#111', color: '#fff',
                     borderRadius: '18px 18px 4px 18px', padding: '10px 14px',
-                    maxWidth: '80%', fontSize: 15, lineHeight: 1.5, wordBreak: 'break-word',
+                    maxWidth: '80%', fontSize: 15, lineHeight: 1.6, wordBreak: 'break-word',
+                    whiteSpace: 'pre-wrap',
                   }}>{mediaEl ?? msg.content}</div>
-                  <span style={{ fontSize: 11, color: '#9CA3AF', marginTop: 3 }}>{formatTime(msg.createdAt)}</span>
+                  <span style={{ fontSize: 11, color: '#9CA3AF', marginTop: 4 }}>{formatTime(msg.createdAt)}</span>
                 </div>
               )
               return (
                 <div key={msg.id} style={{ display: 'flex', alignItems: 'flex-end', gap: 8 }}>
                   <SupportAvatar size={26} />
-                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                  {/* flex:1 + minWidth:0 so max-width% resolves against remaining row width, not bubble content */}
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', flex: 1, minWidth: 0 }}>
                     <div style={{
                       background: '#fff', color: '#111',
                       borderRadius: '18px 18px 18px 4px', padding: '10px 14px',
-                      maxWidth: '80%', fontSize: 15, lineHeight: 1.5, wordBreak: 'break-word',
+                      maxWidth: '80%', fontSize: 15, lineHeight: 1.6, wordBreak: 'break-word',
+                      whiteSpace: 'pre-wrap',
                       boxShadow: '0 1px 4px rgba(0,0,0,0.08)',
                     }}>{mediaEl ?? msg.content}</div>
-                    <span style={{ fontSize: 11, color: '#9CA3AF', marginTop: 3 }}>{formatTime(msg.createdAt)}</span>
+                    <span style={{ fontSize: 11, color: '#9CA3AF', marginTop: 4 }}>{formatTime(msg.createdAt)}</span>
                   </div>
                 </div>
               )

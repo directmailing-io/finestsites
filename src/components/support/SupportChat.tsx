@@ -736,7 +736,7 @@ export default function SupportChat() {
                   return (
                     <div key={msg.id} style={{ display: 'flex', alignItems: 'flex-end', gap: 7 }}>
                       <SupportAvatar size={22} />
-                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', flex: 1, minWidth: 0 }}>
                         <div className="fs-msg-bubble-admin">{mediaEl ?? msg.content}</div>
                         <span style={{ fontSize: 10, color: '#AAA', marginTop: 3 }}>{formatTime(msg.createdAt)}</span>
                       </div>
