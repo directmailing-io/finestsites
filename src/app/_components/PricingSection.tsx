@@ -46,7 +46,7 @@ const COMMON_FEATURES = [
   'Kein Stress mit DSGVO, Hosting oder Datenschutz, das übernehmen wir',
   'Kein Designen, kein Texten, alles ist schon fertig für dich',
   'Deine Seite wird laufend verbessert, ohne dass du etwas tun musst',
-  'Eigene Domain anschließbar (separat bei einem Anbieter deiner Wahl registrieren)',
+  'Deine eigene Internetadresse nutzbar, z.\u202fB. mein-name.de (die Adresse selbst kaufst du separat)',
 ]
 
 export default function PricingSection({ validatedRef }: { validatedRef?: string | null }) {
