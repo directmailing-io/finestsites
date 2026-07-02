@@ -42,11 +42,11 @@ const PLANS = [
 ]
 
 const COMMON_FEATURES = [
-  'Alle Vorlagen frei wählbar — einfach aussuchen & loslegen',
-  'Kein Stress mit DSGVO, Hosting oder Datenschutz — das übernehmen wir',
-  'Kein Designen, kein Texten — alles ist schon fertig für dich',
-  'Deine Seite wird laufend verbessert — ohne dass du etwas tun musst',
-  'Du kannst deine eigene Domain nutzen, z.\u202fB. dein-name.de',
+  'Alle Vorlagen frei wählbar, einfach aussuchen und loslegen',
+  'Kein Stress mit DSGVO, Hosting oder Datenschutz, das übernehmen wir',
+  'Kein Designen, kein Texten, alles ist schon fertig für dich',
+  'Deine Seite wird laufend verbessert, ohne dass du etwas tun musst',
+  'Eigene Domain anschließbar (separat bei einem Anbieter deiner Wahl registrieren)',
 ]
 
 export default function PricingSection({ validatedRef }: { validatedRef?: string | null }) {
