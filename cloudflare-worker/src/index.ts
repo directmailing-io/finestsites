@@ -667,6 +667,24 @@ p{color:#6B7280;font-size:.85rem;line-height:1.65;margin-bottom:1.5rem}
 .cta:hover{background:#333}
 .footer{margin-top:1.5rem;font-size:.72rem;color:#CBD5E1}
 .footer a{color:#94A3B8;text-decoration:none}
+/* 404-specific */
+.card-nf{padding:0;overflow:hidden}
+.card-nf video{width:100%;display:block;max-height:220px;object-fit:cover}
+.card-nf .body{padding:1.75rem 1.75rem 1.75rem;text-align:center}
+.card-nf h1{font-size:1.25rem;font-weight:800;color:#111;margin-bottom:.6rem;letter-spacing:-0.025em}
+.card-nf p{color:#6B7280;font-size:.875rem;line-height:1.6;margin-bottom:1.5rem}
+.card-nf .cta{display:inline-flex;align-items:center;justify-content:center;width:100%;padding:.85rem 1.5rem;background:#1a1a1a;color:#fff;border-radius:14px;text-decoration:none;font-weight:700;font-size:.95rem;letter-spacing:-0.01em;transition:background .15s}
+.card-nf .cta:hover{background:#333}
+.card-nf .powered{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:1.5rem}
+.card-nf .powered span{font-size:.72rem;color:#9CA3AF;letter-spacing:.02em}
+.card-nf .powered a{display:flex;align-items:center;text-decoration:none}
+.card-nf .powered svg{height:16px;width:auto;display:block}
+@media(max-width:480px){
+  body{padding:1rem;align-items:flex-end;justify-content:flex-end;background:#fff}
+  .card-nf{border-radius:28px 28px 0 0;max-width:100%;box-shadow:none;border:none}
+  .card-nf video{max-height:52vw}
+  .card-nf .body{padding:1.5rem 1.25rem 2rem}
+}
 </style>`
 }
 
@@ -705,22 +723,21 @@ function offlinePage(username: string, domain: string): string {
 </body></html>`
 }
 
-function notFoundPage(username: string, domain: string): string {
+function notFoundPage(_username: string, _domain: string): string {
   return `<!DOCTYPE html><html lang="de"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Seite nicht gefunden – FinestSites</title>${sharedStyles()}</head><body>
-<div class="card">
-  <div class="logo-wrap"><a href="https://finestsites.com">${LOGO_BLACK}</a></div>
-  <div class="sep"></div>
-  <div class="icon-wrap" style="background:#F3F4F6">
-    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+<div class="card card-nf">
+  <video autoplay loop muted playsinline preload="auto">
+    <source src="https://app.finestsites.io/404-loop.mp4" type="video/mp4">
+  </video>
+  <div class="body">
+    <h1>Diese Seite wurde nicht gefunden</h1>
+    <p>Diese Webseite existiert noch nicht oder wurde deaktiviert.</p>
+    <a href="https://app.finestsites.io/register" class="cta">Eigene Webseite erstellen</a>
+    <div class="powered">
+      <span>Powered by</span>
+      <a href="https://finestsites.com" title="FinestSites">${LOGO_BLACK}</a>
+    </div>
   </div>
-  <h1>Seite nicht gefunden</h1>
-  <div class="url">${username}.${domain}</div>
-  <p>Diese Adresse existiert noch nicht oder wurde noch nicht veröffentlicht.</p>
-  <a href="https://finestsites.com" class="cta">
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
-    Eigene Webseite erstellen
-  </a>
-  <p class="footer">Powered by <a href="https://finestsites.com">FinestSites</a></p>
 </div>
 </body></html>`
 }
