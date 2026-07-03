@@ -273,12 +273,52 @@ export default async function HomePage({
 
       {/* ══ WAS FINESTSITES BIETET ═══════════════════════════════════════ */}
       <section id="was-ist" style={{ background: '#fff' }} className="fs-section-pad">
-        <div style={{ maxWidth: 960, margin: '0 auto', textAlign: 'center' }}>
-          <p style={{ fontSize: 11, fontWeight: 600, color: '#aaa', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 16 }}>Die Lösung</p>
-          <h2 style={{ fontFamily: '"Plein", sans-serif', fontSize: 'clamp(26px, 3.5vw, 42px)', fontWeight: 400, letterSpacing: '-0.02em', lineHeight: 1.15, marginBottom: 48, color: '#111' }}>
-            Deine Webseite arbeitet, während du schläfst.
-          </h2>
-          <FeatureCardsAnimated />
+        <div style={{ maxWidth: 960, margin: '0 auto' }}>
+          <div style={{ textAlign: 'center', marginBottom: 52 }}>
+            <p style={{ fontSize: 11, fontWeight: 700, color: '#aaa', letterSpacing: '0.14em', textTransform: 'uppercase', marginBottom: 18 }}>Die Lösung</p>
+            <h2 style={{ fontFamily: '"Plein", sans-serif', fontSize: 'clamp(28px, 4vw, 46px)', fontWeight: 400, letterSpacing: '-0.025em', lineHeight: 1.15, color: '#111', margin: '0 auto', maxWidth: 600 }}>
+              Deine Webseite arbeitet, während du schläfst.
+            </h2>
+            <p style={{ fontSize: 16, color: '#888', maxWidth: 480, margin: '16px auto 0' }}>
+              Du kümmerst dich ums Netzwerk. Den Rest übernehmen wir.
+            </p>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(420px, 1fr))', gap: 14 }}>
+            {([
+              { emoji: '⚡', bg: '#FFFBEB', border: '#FDE68A', iconBg: '#D97706', title: 'In unter 5 Minuten live', desc: 'Template wählen, Inhalte eintragen, fertig. Kein Designer, kein Technik-Stress.' },
+              { emoji: '✏️', bg: '#FAF5FF', border: '#E9D5FF', iconBg: '#7C3AED', title: 'Kein Texten, kein Designen', desc: 'Jede Vorlage ist professionell getextet, gestaltet und rechtlich geprüft.' },
+              { emoji: '🔄', bg: '#F0FDF4', border: '#BBF7D0', iconBg: '#16A34A', title: 'Laufend verbessert', desc: 'Neue Funktionen, bessere Conversion, aktuelles Design. Automatisch und ohne dein Zutun.' },
+              { emoji: '🔒', bg: '#EFF6FF', border: '#BFDBFE', iconBg: '#2563EB', title: 'Kein Hosting, kein DSGVO-Stress', desc: 'Hosting, Sicherheit, Datenschutz, Impressum. Alles inklusive.' },
+            ] as { emoji: string; bg: string; border: string; iconBg: string; title: string; desc: string }[]).map((f, i) => (
+              <div key={i} style={{
+                display: 'flex', alignItems: 'flex-start', gap: 16,
+                background: f.bg, border: `1px solid ${f.border}`,
+                borderRadius: 20, padding: '22px 24px',
+              }}>
+                <div style={{
+                  width: 48, height: 48, borderRadius: 14, background: f.iconBg,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  flexShrink: 0, fontSize: 22,
+                }}>
+                  {f.emoji}
+                </div>
+                <div>
+                  <h3 style={{ fontSize: 15, fontWeight: 700, color: '#111', marginBottom: 6, lineHeight: 1.3 }}>{f.title}</h3>
+                  <p style={{ fontSize: 13.5, color: '#555', lineHeight: 1.65, margin: 0 }}>{f.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div style={{ textAlign: 'center', marginTop: 48 }}>
+            <a
+              href="https://app.finestsites.io/register"
+              style={{ display: 'inline-block', background: '#111', color: '#fff', padding: '14px 32px', borderRadius: 100, fontSize: 15, fontWeight: 600, textDecoration: 'none' }}
+            >
+              Jetzt kostenlos starten
+            </a>
+          </div>
         </div>
       </section>
 

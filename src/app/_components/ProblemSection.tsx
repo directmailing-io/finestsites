@@ -15,17 +15,20 @@ function loadScript(src: string): Promise<void> {
 const PROBLEMS = [
   {
     img: '/problem-reichweite.png',
-    title: 'Du postest, alle schauen zu. Aber niemand meldet sich.',
-    text: 'Reichweite allein bringt keine Kunden. Deine Webseite gibt Interessenten einen Grund, sich zu melden.',
+    highlight: 'Du postest.',
+    rest: 'Keiner schreibt zurück.',
+    text: 'Reichweite allein bringt keine Kunden. Deine Webseite gibt Interessenten den letzten Anstoß, sich zu melden.',
   },
   {
     img: '/problem-schick.png',
-    title: '"Schick mir mal was zu" \u2014 kein Problem.',
-    text: 'Du schickst einfach den Link. Die Seite erklärt alles, du musst gar nichts mehr erklären.',
+    highlight: '"Schick mir mal was zu."',
+    rest: 'Kein Problem.',
+    text: 'Schick einfach den Link. Die Webseite erklärt alles. Du musst gar nichts mehr erklären.',
   },
   {
     img: '/problem-target.png',
-    title: 'Mit einer Botschaft für alle erreichst du niemanden richtig.',
+    highlight: 'Für alle gleich.',
+    rest: 'Für niemanden wirklich.',
     text: 'Mütter, Sportler, Berufstätige. Jede Gruppe braucht ihre eigene Ansprache. Du hast für jede Zielgruppe eine eigene Seite.',
   },
 ]
@@ -73,32 +76,21 @@ export default function ProblemSection() {
     }}>
       <div style={{ maxWidth: 960, margin: '0 auto' }}>
 
-        {/* Header */}
         <div style={{ textAlign: 'center', marginBottom: 52 }}>
-          <p style={{
-            fontSize: 11, fontWeight: 700,
-            color: '#aaa',
-            letterSpacing: '0.14em', textTransform: 'uppercase', marginBottom: 18,
-          }}>Das Problem</p>
+          <p style={{ fontSize: 11, fontWeight: 700, color: '#aaa', letterSpacing: '0.14em', textTransform: 'uppercase', marginBottom: 18 }}>Das Problem</p>
           <h2 style={{
             fontFamily: '"Plein", sans-serif',
             fontSize: 'clamp(28px, 4vw, 46px)',
             fontWeight: 400, color: '#111',
-            letterSpacing: '-0.025em', lineHeight: 1.15,
-            margin: 0,
+            letterSpacing: '-0.025em', lineHeight: 1.15, margin: 0,
           }}>
             Kommt dir das bekannt vor?
           </h2>
         </div>
 
-        {/* Problem cards */}
         <div
           ref={containerRef}
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
-            gap: 16,
-          }}
+          style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 16 }}
         >
           {PROBLEMS.map((p, i) => (
             <div
@@ -114,37 +106,22 @@ export default function ProblemSection() {
                 boxShadow: '0 2px 16px rgba(0,0,0,0.05)',
               }}
             >
-              {/* Image */}
               <div style={{ height: 220, overflow: 'hidden' }}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={p.img}
-                  alt=""
-                  style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top', display: 'block' }}
-                />
+                <img src={p.img} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top', display: 'block' }} />
               </div>
-
-              {/* Text */}
               <div style={{ padding: '20px 22px 26px' }}>
-                <h3 style={{
-                  fontSize: 16, fontWeight: 700, color: '#111',
-                  marginBottom: 8, letterSpacing: '-0.01em', lineHeight: 1.35,
-                }}>{p.title}</h3>
-                <p style={{
-                  fontSize: 14, color: '#777',
-                  lineHeight: 1.65, margin: 0,
-                }}>{p.text}</p>
+                <h3 style={{ fontSize: 16, fontWeight: 700, color: '#111', marginBottom: 8, letterSpacing: '-0.01em', lineHeight: 1.35 }}>
+                  <span style={{ color: '#C0392B' }}>{p.highlight}</span>{' '}
+                  <span style={{ color: '#555', fontWeight: 500 }}>{p.rest}</span>
+                </h3>
+                <p style={{ fontSize: 14, color: '#777', lineHeight: 1.65, margin: 0 }}>{p.text}</p>
               </div>
             </div>
           ))}
         </div>
 
-        {/* Bridge to solution */}
-        <p style={{
-          textAlign: 'center', fontSize: 15,
-          color: '#bbb',
-          marginTop: 48, fontWeight: 500, letterSpacing: '-0.01em',
-        }}>
+        <p style={{ textAlign: 'center', fontSize: 15, color: '#bbb', marginTop: 48, fontWeight: 500, letterSpacing: '-0.01em' }}>
           FinestSites löst genau das.
         </p>
       </div>
