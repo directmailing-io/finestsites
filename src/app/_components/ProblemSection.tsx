@@ -55,7 +55,7 @@ function ChatScene() {
         maxWidth: '86%',
       }}>
         <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.8)', margin: 0, lineHeight: 1.4 }}>
-          Schick mir mal was zu... 🤔
+          &ldquo;Schick mir mal was zu...&rdquo; 🤔
         </p>
       </div>
       <div style={{
