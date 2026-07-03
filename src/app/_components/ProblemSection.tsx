@@ -27,9 +27,9 @@ const PROBLEMS = [
   },
   {
     img: '/problem-target.png',
-    line1: 'Du versuchst jeden anzusprechen.',
-    line2: 'Deshalb fühlt sich keiner wirklich angesprochen.',
-    text: 'Mütter, Sportler, Berufstätige. Jede Gruppe braucht ihre eigene Ansprache. Du bekommst für jede Zielgruppe eine eigene Seite.',
+    line1: 'Du willst alle ansprechen.',
+    line2: 'Keiner fühlt sich gemeint.',
+    text: 'Mütter, Sportler, Berufstätige. Du bekommst für jede Zielgruppe eine eigene, überzeugende Seite.',
   },
 ]
 
