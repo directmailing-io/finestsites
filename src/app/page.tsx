@@ -5,6 +5,7 @@ import { templates, users } from '@/lib/db/schema'
 import { eq, and, inArray, asc, sql } from 'drizzle-orm'
 import PricingSection from './_components/PricingSection'
 import FeatureCardsAnimated from './_components/FeatureCardsAnimated'
+import ProblemSection from './_components/ProblemSection'
 import NavBar from './_components/NavBar'
 import HowItWorks from './_components/HowItWorks'
 import TemplateGridSection, { type TemplateCardData } from './_components/TemplateGridSection'
@@ -267,24 +268,16 @@ export default async function HomePage({
         </div>
       </section>
 
-      {/* ══ WAS IST FINESTSITES ══════════════════════════════════════════ */}
-      <section id="was-ist" style={{ background: '#fff' }} className="fs-section-pad">
-        <div className="fs-was-ist-inner">
-          <div>
-            <p style={{ fontSize: 11, fontWeight: 600, color: '#aaa', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 16 }}>Das Problem</p>
-            <h2 style={{ fontFamily: '"Plein", sans-serif', fontSize: 'clamp(28px, 3.5vw, 44px)', fontWeight: 400, letterSpacing: '-0.02em', lineHeight: 1.15, marginBottom: 24 }}>
-              <span style={{ color: '#111' }}>Du hast ein tolles Produkt.</span><br />
-              <span style={{ color: '#8060b0' }}>Aber niemand weiss davon.</span>
-            </h2>
-            <p style={{ fontSize: 15, color: '#555', lineHeight: 1.75, marginBottom: 20 }}>
-              Die meisten Network-Marketer kämpfen täglich darum, neue Interessenten zu finden. Du postest, chattest, rufst an und trotzdem bleibt der Durchbruch aus.
-            </p>
-            <p style={{ fontSize: 15, color: '#555', lineHeight: 1.75 }}>
-              <strong style={{ color: '#111' }}>FinestSites ändert das.</strong> Du bekommst eine professionelle Produktwebsite, die für dich arbeitet. 24/7, auch wenn du schläfst.
-            </p>
-          </div>
+      {/* ══ DAS PROBLEM ══════════════════════════════════════════════════ */}
+      <ProblemSection />
 
-          {/* 2×2 feature grid — animated with GSAP */}
+      {/* ══ WAS FINESTSITES BIETET ═══════════════════════════════════════ */}
+      <section id="was-ist" style={{ background: '#fff' }} className="fs-section-pad">
+        <div style={{ maxWidth: 960, margin: '0 auto', textAlign: 'center' }}>
+          <p style={{ fontSize: 11, fontWeight: 600, color: '#aaa', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 16 }}>Die Lösung</p>
+          <h2 style={{ fontFamily: '"Plein", sans-serif', fontSize: 'clamp(26px, 3.5vw, 42px)', fontWeight: 400, letterSpacing: '-0.02em', lineHeight: 1.15, marginBottom: 48, color: '#111' }}>
+            Deine Webseite arbeitet, während du schläfst.
+          </h2>
           <FeatureCardsAnimated />
         </div>
       </section>
