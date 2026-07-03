@@ -124,6 +124,9 @@ export default async function HomePage({
         .fs-prob-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
         .fs-solution-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
         .fs-solution-card { display: flex; align-items: flex-start; gap: 16px; border-radius: 20px; padding: 22px; }
+        .fs-solution-bg { position: absolute; bottom: 0; left: 0; right: 0; height: 400px; }
+        .fs-solution-bg img { width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block; }
+        .fs-solution-bg-fade { position: absolute; top: 0; left: 0; right: 0; height: 40%; background: linear-gradient(to bottom, #fff 0%, transparent 100%); }
         .fs-template-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
         .fs-pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
         .fs-pricing-banner-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; align-items: stretch; }
@@ -149,6 +152,7 @@ export default async function HomePage({
           .fs-pricing-mascot { display: none !important; }
           .fs-prob-grid { grid-template-columns: 1fr; max-width: 500px; margin-left: auto; margin-right: auto; }
           .fs-solution-grid { grid-template-columns: 1fr; }
+          .fs-solution-bg { height: 300px; }
         }
 
         /* ── Mobile (< 768 px) ───────────────────────────── */
@@ -193,6 +197,7 @@ export default async function HomePage({
           .fs-prob-grid { grid-template-columns: 1fr; max-width: 100%; }
           .fs-solution-grid { grid-template-columns: 1fr; }
           .fs-solution-card { flex-direction: column; align-items: center; text-align: center; }
+          .fs-solution-bg { height: 220px; }
           .fs-template-grid { grid-template-columns: 1fr 1fr; gap: 14px; }
           .fs-template-grid > * { min-width: 0; }
           .fs-pricing-grid { max-width: 100%; }
@@ -280,8 +285,8 @@ export default async function HomePage({
       <ProblemSection />
 
       {/* ══ WAS FINESTSITES BIETET ═══════════════════════════════════════ */}
-      <section id="was-ist" style={{ background: '#fff' }} className="fs-section-pad">
-        <div style={{ maxWidth: 960, margin: '0 auto' }}>
+      <section id="was-ist" style={{ background: '#fff', position: 'relative', overflow: 'hidden', paddingBottom: 420 }} className="fs-section-pad">
+        <div style={{ maxWidth: 960, margin: '0 auto', position: 'relative', zIndex: 1 }}>
           <div style={{ textAlign: 'center', marginBottom: 52 }}>
             <p style={{ fontSize: 11, fontWeight: 700, color: '#aaa', letterSpacing: '0.14em', textTransform: 'uppercase', marginBottom: 18 }}>Die Lösung</p>
             <h2 style={{ fontFamily: '"Plein", sans-serif', fontSize: 'clamp(28px, 4vw, 46px)', fontWeight: 400, letterSpacing: '-0.025em', lineHeight: 1.15, color: '#111', margin: '0 auto', maxWidth: 600 }}>
@@ -310,7 +315,7 @@ export default async function HomePage({
             ))}
           </div>
 
-          <div style={{ textAlign: 'center', marginTop: 48 }}>
+          <div style={{ textAlign: 'center', marginTop: 48, position: 'relative', zIndex: 1 }}>
             <a
               href="https://app.finestsites.io/register"
               style={{ display: 'inline-block', background: '#111', color: '#fff', padding: '14px 32px', borderRadius: 100, fontSize: 15, fontWeight: 600, textDecoration: 'none' }}
@@ -318,6 +323,13 @@ export default async function HomePage({
               Jetzt kostenlos starten
             </a>
           </div>
+        </div>
+
+        {/* Background image: fades in from bottom */}
+        <div className="fs-solution-bg">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/solution-bg.png" alt="" />
+          <div className="fs-solution-bg-fade" />
         </div>
       </section>
 
