@@ -121,6 +121,9 @@ export default async function HomePage({
         .fs-section-pad { padding: 96px 7vw; }
         .fs-was-ist-inner { max-width: 1060px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 72px; align-items: center; }
         .fs-feature-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+        .fs-prob-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+        .fs-solution-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+        .fs-solution-card { display: flex; align-items: flex-start; gap: 16px; border-radius: 20px; padding: 22px; }
         .fs-template-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
         .fs-pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
         .fs-pricing-banner-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; align-items: stretch; }
@@ -144,6 +147,8 @@ export default async function HomePage({
           .fs-template-grid { grid-template-columns: repeat(2, 1fr); }
           .fs-pricing-grid { grid-template-columns: 1fr; max-width: 440px; margin-left: auto; margin-right: auto; }
           .fs-pricing-mascot { display: none !important; }
+          .fs-prob-grid { grid-template-columns: 1fr; max-width: 500px; margin-left: auto; margin-right: auto; }
+          .fs-solution-grid { grid-template-columns: 1fr; }
         }
 
         /* ── Mobile (< 768 px) ───────────────────────────── */
@@ -185,6 +190,9 @@ export default async function HomePage({
           .fs-section-pad { padding: 52px 22px; }
           .fs-was-ist-inner { grid-template-columns: 1fr; gap: 36px; }
           .fs-feature-grid { gap: 10px; }
+          .fs-prob-grid { grid-template-columns: 1fr; max-width: 100%; }
+          .fs-solution-grid { grid-template-columns: 1fr; }
+          .fs-solution-card { flex-direction: column; align-items: center; text-align: center; }
           .fs-template-grid { grid-template-columns: 1fr 1fr; gap: 14px; }
           .fs-template-grid > * { min-width: 0; }
           .fs-pricing-grid { max-width: 100%; }
@@ -284,25 +292,16 @@ export default async function HomePage({
             </p>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(420px, 1fr))', gap: 14 }}>
+          <div className="fs-solution-grid">
             {([
-              { emoji: '⚡', bg: '#FFFBEB', border: '#FDE68A', iconBg: '#D97706', title: 'In unter 5 Minuten live', desc: 'Template wählen, Inhalte eintragen, fertig. Kein Designer, kein Technik-Stress.' },
-              { emoji: '✏️', bg: '#FAF5FF', border: '#E9D5FF', iconBg: '#7C3AED', title: 'Kein Texten, kein Designen', desc: 'Jede Vorlage ist professionell getextet, gestaltet und rechtlich geprüft.' },
-              { emoji: '🔄', bg: '#F0FDF4', border: '#BBF7D0', iconBg: '#16A34A', title: 'Laufend verbessert', desc: 'Neue Funktionen, bessere Conversion, aktuelles Design. Automatisch und ohne dein Zutun.' },
-              { emoji: '🔒', bg: '#EFF6FF', border: '#BFDBFE', iconBg: '#2563EB', title: 'Kein Hosting, kein DSGVO-Stress', desc: 'Hosting, Sicherheit, Datenschutz, Impressum. Alles inklusive.' },
-            ] as { emoji: string; bg: string; border: string; iconBg: string; title: string; desc: string }[]).map((f, i) => (
-              <div key={i} style={{
-                display: 'flex', alignItems: 'flex-start', gap: 16,
-                background: f.bg, border: `1px solid ${f.border}`,
-                borderRadius: 20, padding: '22px 24px',
-              }}>
-                <div style={{
-                  width: 48, height: 48, borderRadius: 14, background: f.iconBg,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  flexShrink: 0, fontSize: 22,
-                }}>
-                  {f.emoji}
-                </div>
+              { img: '/features/5min-live.png',            bg: '#FFFBEB', border: '#FDE68A', title: 'In unter 5 Minuten live',        desc: 'Template wählen, Inhalte eintragen, fertig. Kein Designer, kein Technik-Stress.' },
+              { img: '/features/kein-design.png',          bg: '#FAF5FF', border: '#E9D5FF', title: 'Kein Texten, kein Designen',      desc: 'Jede Vorlage ist professionell getextet, gestaltet und rechtlich geprüft.' },
+              { img: '/features/templates-verbessert.png', bg: '#F0FDF4', border: '#BBF7D0', title: 'Laufend verbessert',              desc: 'Neue Funktionen, bessere Conversion, aktuelles Design. Automatisch und ohne dein Zutun.' },
+              { img: '/features/kein-hosting.png',         bg: '#EFF6FF', border: '#BFDBFE', title: 'Kein Hosting, kein DSGVO-Stress', desc: 'Hosting, Sicherheit, Datenschutz, Impressum. Alles inklusive.' },
+            ] as { img: string; bg: string; border: string; title: string; desc: string }[]).map((f, i) => (
+              <div key={i} className="fs-solution-card" style={{ background: f.bg, border: `1px solid ${f.border}` }}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={f.img} alt="" style={{ width: 80, height: 80, objectFit: 'contain', flexShrink: 0 }} />
                 <div>
                   <h3 style={{ fontSize: 15, fontWeight: 700, color: '#111', marginBottom: 6, lineHeight: 1.3 }}>{f.title}</h3>
                   <p style={{ fontSize: 13.5, color: '#555', lineHeight: 1.65, margin: 0 }}>{f.desc}</p>

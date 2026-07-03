@@ -15,21 +15,18 @@ function loadScript(src: string): Promise<void> {
 const PROBLEMS = [
   {
     img: '/problem-reichweite.png',
-    highlight: 'Du postest.',
-    rest: 'Keiner schreibt zurück.',
-    text: 'Reichweite allein bringt keine Kunden. Deine Webseite gibt Interessenten den letzten Anstoß, sich zu melden.',
+    problem: 'Du postest täglich. Aber keiner schreibt dir.',
+    text: 'Dir schauen genug Leute zu. Schick sie auf deine Webseite. Die erklärt alles, und die Leute melden sich dann ganz von selbst.',
   },
   {
     img: '/problem-schick.png',
-    highlight: '"Schick mir mal was zu."',
-    rest: 'Kein Problem.',
+    problem: 'Jemand sagt "Schick mal was zu." Du tippst dir die Finger wund.',
     text: 'Schick einfach den Link. Die Webseite erklärt alles. Du musst gar nichts mehr erklären.',
   },
   {
     img: '/problem-target.png',
-    highlight: 'Für alle gleich.',
-    rest: 'Für niemanden wirklich.',
-    text: 'Mütter, Sportler, Berufstätige. Jede Gruppe braucht ihre eigene Ansprache. Du hast für jede Zielgruppe eine eigene Seite.',
+    problem: 'Du redest mit allen. Deshalb fühlt sich keiner wirklich angesprochen.',
+    text: 'Mütter, Sportler, Berufstätige. Jede Gruppe braucht ihre eigene Ansprache. Du bekommst für jede Zielgruppe eine eigene Seite.',
   },
 ]
 
@@ -90,7 +87,7 @@ export default function ProblemSection() {
 
         <div
           ref={containerRef}
-          style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 16 }}
+          className="fs-prob-grid"
         >
           {PROBLEMS.map((p, i) => (
             <div
@@ -106,16 +103,34 @@ export default function ProblemSection() {
                 boxShadow: '0 2px 16px rgba(0,0,0,0.05)',
               }}
             >
-              <div style={{ height: 220, overflow: 'hidden' }}>
+              {/* Image */}
+              <div style={{ height: 200, overflow: 'hidden', flexShrink: 0 }}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={p.img} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top', display: 'block' }} />
+                <img
+                  src={p.img}
+                  alt=""
+                  style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top', display: 'block' }}
+                />
               </div>
-              <div style={{ padding: '20px 22px 26px' }}>
-                <h3 style={{ fontSize: 16, fontWeight: 700, color: '#111', marginBottom: 8, letterSpacing: '-0.01em', lineHeight: 1.35 }}>
-                  <span style={{ color: '#C0392B' }}>{p.highlight}</span>{' '}
-                  <span style={{ color: '#555', fontWeight: 500 }}>{p.rest}</span>
-                </h3>
-                <p style={{ fontSize: 14, color: '#777', lineHeight: 1.65, margin: 0 }}>{p.text}</p>
+
+              {/* Red problem banner */}
+              <div style={{
+                background: '#C0392B',
+                padding: '14px 20px',
+              }}>
+                <p style={{
+                  color: '#fff',
+                  fontWeight: 700,
+                  fontSize: 15,
+                  lineHeight: 1.4,
+                  margin: 0,
+                  letterSpacing: '-0.01em',
+                }}>{p.problem}</p>
+              </div>
+
+              {/* Explanation */}
+              <div style={{ padding: '16px 20px 22px', flex: 1 }}>
+                <p style={{ fontSize: 14, color: '#666', lineHeight: 1.65, margin: 0 }}>{p.text}</p>
               </div>
             </div>
           ))}
