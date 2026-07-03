@@ -15,17 +15,20 @@ function loadScript(src: string): Promise<void> {
 const PROBLEMS = [
   {
     img: '/problem-reichweite.png',
-    problem: 'Du postest täglich. Aber keiner schreibt dir.',
+    line1: 'Du postest täglich.',
+    line2: 'Aber keiner schreibt dir.',
     text: 'Dir schauen genug Leute zu. Schick sie auf deine Webseite. Die erklärt alles, und die Leute melden sich dann ganz von selbst.',
   },
   {
     img: '/problem-schick.png',
-    problem: 'Jemand sagt "Schick mal was zu." Du tippst dir die Finger wund.',
-    text: 'Schick einfach den Link. Die Webseite erklärt alles. Du musst gar nichts mehr erklären.',
+    line1: '"Schick mal was zu."',
+    line2: 'Und du tippst dir die Finger wund.',
+    text: 'Schick einfach den Link. Die Webseite erklärt alles. So, dass die Interessenten unbedingt mit dir sprechen wollen.',
   },
   {
     img: '/problem-target.png',
-    problem: 'Du redest mit allen. Deshalb fühlt sich keiner wirklich angesprochen.',
+    line1: 'Du versuchst jeden anzusprechen.',
+    line2: 'Deshalb fühlt sich keiner wirklich angesprochen.',
     text: 'Mütter, Sportler, Berufstätige. Jede Gruppe braucht ihre eigene Ansprache. Du bekommst für jede Zielgruppe eine eigene Seite.',
   },
 ]
@@ -125,7 +128,9 @@ export default function ProblemSection() {
                   lineHeight: 1.4,
                   margin: 0,
                   letterSpacing: '-0.01em',
-                }}>{p.problem}</p>
+                }}>
+                  {p.line1}<br />{p.line2}
+                </p>
               </div>
 
               {/* Explanation */}

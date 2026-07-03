@@ -301,7 +301,7 @@ export default async function HomePage({
             ] as { img: string; bg: string; border: string; title: string; desc: string }[]).map((f, i) => (
               <div key={i} className="fs-solution-card" style={{ background: f.bg, border: `1px solid ${f.border}` }}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={f.img} alt="" style={{ width: 80, height: 80, objectFit: 'contain', flexShrink: 0 }} />
+                <img src={f.img} alt="" style={{ width: 120, height: 120, objectFit: 'contain', flexShrink: 0 }} />
                 <div>
                   <h3 style={{ fontSize: 15, fontWeight: 700, color: '#111', marginBottom: 6, lineHeight: 1.3 }}>{f.title}</h3>
                   <p style={{ fontSize: 13.5, color: '#555', lineHeight: 1.65, margin: 0 }}>{f.desc}</p>
