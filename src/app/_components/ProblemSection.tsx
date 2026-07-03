@@ -95,7 +95,7 @@ function TargetScene() {
         textAlign: 'center',
       }}>
         <p style={{ fontSize: 12, color: '#4A5568', margin: 0, fontStyle: 'italic' }}>
-          "Schau dir unser Produkt an!"
+          &ldquo;Schau dir unser Produkt an!&rdquo;
         </p>
       </div>
       <div style={{ display: 'flex', gap: 8 }}>
