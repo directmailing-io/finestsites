@@ -12,132 +12,21 @@ function loadScript(src: string): Promise<void> {
   })
 }
 
-// ── Scene 1: Social stats ─────────────────────────────────────────────────────
-function StatsScene() {
-  return (
-    <div style={{
-      background: '#111C26',
-      borderRadius: 14,
-      padding: '18px 20px',
-      border: '1px solid rgba(255,255,255,0.05)',
-    }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-        <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
-          <div style={{ width: 7, height: 7, borderRadius: '50%', background: '#E1306C' }} />
-          <span style={{ fontSize: 11, color: '#4A5568', fontWeight: 600 }}>Dein letzter Reel</span>
-        </div>
-        <span style={{ fontSize: 10, color: '#2D3A47' }}>vor 3 Std.</span>
-      </div>
-      <div style={{ display: 'flex', alignItems: 'flex-end', gap: 0 }}>
-        <div style={{ flex: 1 }}>
-          <p style={{ fontSize: 34, fontWeight: 800, color: '#fff', letterSpacing: '-0.04em', margin: 0, lineHeight: 1 }}>2.847</p>
-          <p style={{ fontSize: 11, color: '#3D5060', margin: '6px 0 0', fontWeight: 500 }}>Aufrufe</p>
-        </div>
-        <div style={{ width: 1, background: 'rgba(255,255,255,0.05)', margin: '0 20px', alignSelf: 'stretch' }} />
-        <div style={{ flex: 1 }}>
-          <p style={{ fontSize: 34, fontWeight: 800, color: '#EF4444', letterSpacing: '-0.04em', margin: 0, lineHeight: 1 }}>0</p>
-          <p style={{ fontSize: 11, color: '#3D5060', margin: '6px 0 0', fontWeight: 500 }}>Anfragen</p>
-        </div>
-      </div>
-    </div>
-  )
-}
-
-// ── Scene 2: "Schick mir was zu" ──────────────────────────────────────────────
-function ChatScene() {
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-      <div style={{
-        alignSelf: 'flex-start',
-        background: '#253040',
-        borderRadius: '16px 16px 16px 4px',
-        padding: '10px 14px',
-        maxWidth: '86%',
-      }}>
-        <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.8)', margin: 0, lineHeight: 1.4 }}>
-          &ldquo;Schick mir mal was zu...&rdquo; 🤔
-        </p>
-      </div>
-      <div style={{
-        alignSelf: 'flex-end',
-        background: '#111C26',
-        borderRadius: '16px 16px 4px 16px',
-        padding: '11px 16px',
-        border: '1px solid rgba(255,255,255,0.06)',
-        display: 'flex',
-        gap: 5,
-        alignItems: 'center',
-      }}>
-        {[0, 1, 2].map(i => (
-          <div key={i} style={{ width: 5, height: 5, borderRadius: '50%', background: '#2D3F4E' }} />
-        ))}
-      </div>
-      <p style={{ fontSize: 11, color: '#2D3A47', margin: 0, alignSelf: 'flex-end', fontWeight: 500 }}>
-        was schickst du eigentlich?
-      </p>
-    </div>
-  )
-}
-
-// ── Scene 3: Generic targeting ────────────────────────────────────────────────
-function TargetScene() {
-  const groups = [
-    { emoji: '👩', label: 'Mütter' },
-    { emoji: '🏋️', label: 'Sportler' },
-    { emoji: '💼', label: 'Berufstätige' },
-  ]
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-      <div style={{
-        background: '#253040',
-        borderRadius: 10,
-        padding: '8px 14px',
-        textAlign: 'center',
-      }}>
-        <p style={{ fontSize: 12, color: '#4A5568', margin: 0, fontStyle: 'italic' }}>
-          &ldquo;Schau dir unser Produkt an!&rdquo;
-        </p>
-      </div>
-      <div style={{ display: 'flex', gap: 8 }}>
-        {groups.map((g, i) => (
-          <div key={i} style={{
-            flex: 1,
-            background: '#111C26',
-            borderRadius: 12,
-            padding: '10px 4px',
-            border: '1px solid rgba(255,255,255,0.04)',
-            textAlign: 'center',
-          }}>
-            <span style={{ fontSize: 18 }}>{g.emoji}</span>
-            <p style={{ fontSize: 10, color: '#2D3A47', margin: '4px 0 0', fontWeight: 600 }}>{g.label}</p>
-            <p style={{ fontSize: 16, margin: '6px 0 0' }}>😐</p>
-          </div>
-        ))}
-      </div>
-    </div>
-  )
-}
-
-// ── Main component ────────────────────────────────────────────────────────────
-
 const PROBLEMS = [
   {
-    num: '01',
-    accent: '#EF4444',
-    title: 'Reichweite ohne Wirkung',
-    text: 'Du postest, die Leute schauen. Aber niemand schreibt.',
+    img: '/problem-reichweite.png',
+    title: 'Du postest, alle schauen zu. Aber niemand meldet sich.',
+    text: 'Reichweite allein bringt keine Kunden. Deine Webseite gibt Interessenten einen Grund, sich zu melden.',
   },
   {
-    num: '02',
-    accent: '#3B82F6',
-    title: '"Schick mir mal was zu"',
-    text: 'Jetzt schickst du einfach den Link. Die Seite erklärt alles.',
+    img: '/problem-schick.png',
+    title: '"Schick mir mal was zu" \u2014 kein Problem.',
+    text: 'Du schickst einfach den Link. Die Seite erklärt alles, du musst gar nichts mehr erklären.',
   },
   {
-    num: '03',
-    accent: '#A78BFA',
-    title: 'Eine Botschaft für alle',
-    text: 'Mütter, Sportler, Berufstätige. Jede Zielgruppe braucht ihre eigene Seite.',
+    img: '/problem-target.png',
+    title: 'Mit einer Botschaft für alle erreichst du niemanden richtig.',
+    text: 'Mütter, Sportler, Berufstätige. Jede Gruppe braucht ihre eigene Ansprache. Du hast für jede Zielgruppe eine eigene Seite.',
   },
 ]
 
@@ -163,11 +52,11 @@ export default function ProblemSection() {
       cards.forEach((card, i) => {
         gsap.fromTo(
           card,
-          { opacity: 0, y: 48, scale: 0.96 },
+          { opacity: 0, y: 40, scale: 0.97 },
           {
             opacity: 1, y: 0, scale: 1,
-            duration: 0.85,
-            delay: i * 0.14,
+            duration: 0.7,
+            delay: i * 0.12,
             ease: 'power3.out',
             scrollTrigger: { trigger: el, start: 'top 78%', once: true },
           }
@@ -177,11 +66,9 @@ export default function ProblemSection() {
     animate()
   }, [])
 
-  const scenes = [<StatsScene key={0} />, <ChatScene key={1} />, <TargetScene key={2} />]
-
   return (
     <section style={{
-      background: '#0F1A24',
+      background: '#FAFAF8',
       padding: 'clamp(64px, 8vw, 96px) clamp(20px, 5vw, 48px)',
     }}>
       <div style={{ maxWidth: 960, margin: '0 auto' }}>
@@ -190,13 +77,13 @@ export default function ProblemSection() {
         <div style={{ textAlign: 'center', marginBottom: 52 }}>
           <p style={{
             fontSize: 11, fontWeight: 700,
-            color: 'rgba(255,255,255,0.18)',
+            color: '#aaa',
             letterSpacing: '0.14em', textTransform: 'uppercase', marginBottom: 18,
           }}>Das Problem</p>
           <h2 style={{
             fontFamily: '"Plein", sans-serif',
             fontSize: 'clamp(28px, 4vw, 46px)',
-            fontWeight: 400, color: '#fff',
+            fontWeight: 400, color: '#111',
             letterSpacing: '-0.025em', lineHeight: 1.15,
             margin: 0,
           }}>
@@ -210,7 +97,7 @@ export default function ProblemSection() {
           style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
-            gap: 14,
+            gap: 16,
           }}
         >
           {PROBLEMS.map((p, i) => (
@@ -218,33 +105,34 @@ export default function ProblemSection() {
               key={i}
               className="prob-card"
               style={{
-                background: '#1A2530',
+                background: '#fff',
                 borderRadius: 22,
-                padding: '24px',
-                border: '1px solid rgba(255,255,255,0.055)',
+                border: '1px solid #EBEBEB',
+                overflow: 'hidden',
                 display: 'flex',
                 flexDirection: 'column',
-                gap: 22,
+                boxShadow: '0 2px 16px rgba(0,0,0,0.05)',
               }}
             >
-              {/* Illustrated scene */}
-              <div>{scenes[i]}</div>
+              {/* Image */}
+              <div style={{ height: 220, overflow: 'hidden' }}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={p.img}
+                  alt=""
+                  style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top', display: 'block' }}
+                />
+              </div>
 
               {/* Text */}
-              <div>
-                <p style={{
-                  fontSize: 11, fontWeight: 700,
-                  color: p.accent,
-                  letterSpacing: '0.1em', textTransform: 'uppercase',
-                  marginBottom: 8, opacity: 0.75,
-                }}>{p.num}</p>
+              <div style={{ padding: '20px 22px 26px' }}>
                 <h3 style={{
-                  fontSize: 17, fontWeight: 700, color: '#fff',
-                  marginBottom: 8, letterSpacing: '-0.01em', lineHeight: 1.3,
+                  fontSize: 16, fontWeight: 700, color: '#111',
+                  marginBottom: 8, letterSpacing: '-0.01em', lineHeight: 1.35,
                 }}>{p.title}</h3>
                 <p style={{
-                  fontSize: 14, color: 'rgba(255,255,255,0.38)',
-                  lineHeight: 1.6, margin: 0,
+                  fontSize: 14, color: '#777',
+                  lineHeight: 1.65, margin: 0,
                 }}>{p.text}</p>
               </div>
             </div>
@@ -254,8 +142,8 @@ export default function ProblemSection() {
         {/* Bridge to solution */}
         <p style={{
           textAlign: 'center', fontSize: 15,
-          color: 'rgba(255,255,255,0.2)',
-          marginTop: 52, fontWeight: 500, letterSpacing: '-0.01em',
+          color: '#bbb',
+          marginTop: 48, fontWeight: 500, letterSpacing: '-0.01em',
         }}>
           FinestSites löst genau das.
         </p>
