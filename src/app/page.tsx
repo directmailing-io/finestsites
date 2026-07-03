@@ -285,8 +285,8 @@ export default async function HomePage({
       <ProblemSection />
 
       {/* ══ WAS FINESTSITES BIETET ═══════════════════════════════════════ */}
-      <section id="was-ist" style={{ background: '#fff', position: 'relative', overflow: 'hidden', paddingBottom: 420 }} className="fs-section-pad">
-        <div style={{ maxWidth: 960, margin: '0 auto', position: 'relative', zIndex: 1 }}>
+      <section id="was-ist" style={{ background: '#fff' }} className="fs-section-pad">
+        <div style={{ maxWidth: 960, margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: 52 }}>
             <p style={{ fontSize: 11, fontWeight: 700, color: '#aaa', letterSpacing: '0.14em', textTransform: 'uppercase', marginBottom: 18 }}>Die Lösung</p>
             <h2 style={{ fontFamily: '"Plein", sans-serif', fontSize: 'clamp(28px, 4vw, 46px)', fontWeight: 400, letterSpacing: '-0.025em', lineHeight: 1.15, color: '#111', margin: '0 auto', maxWidth: 600 }}>
@@ -315,7 +315,7 @@ export default async function HomePage({
             ))}
           </div>
 
-          <div style={{ textAlign: 'center', marginTop: 48, position: 'relative', zIndex: 1 }}>
+          <div style={{ textAlign: 'center', marginTop: 48 }}>
             <a
               href="https://app.finestsites.io/register"
               style={{ display: 'inline-block', background: '#111', color: '#fff', padding: '14px 32px', borderRadius: 100, fontSize: 15, fontWeight: 600, textDecoration: 'none' }}
@@ -325,11 +325,22 @@ export default async function HomePage({
           </div>
         </div>
 
-        {/* Background image: fades in from bottom */}
-        <div className="fs-solution-bg">
+        {/* Full-width image below content, gradient fades top edge into white */}
+        <div style={{ position: 'relative', marginTop: 64 }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/solution-bg.png" alt="" />
-          <div className="fs-solution-bg-fade" />
+          <img
+            src="/solution-bg.png"
+            alt=""
+            style={{ width: '100%', display: 'block', objectFit: 'cover' }}
+          />
+          {/* Gradient overlay: white at top → transparent, reveals bottom 2/3 of image */}
+          <div style={{
+            position: 'absolute',
+            top: 0, left: 0, right: 0,
+            height: '38%',
+            background: 'linear-gradient(to bottom, #fff 0%, transparent 100%)',
+            pointerEvents: 'none',
+          }} />
         </div>
       </section>
 
