@@ -13,7 +13,7 @@ const PLANS = [
     premiumSites: '1 aktive Premium-Seite',
     value: '3.000 €',
     popular: false,
-    cta: 'Jetzt starten',
+    cta: 'Starter wählen',
   },
   {
     key: 'pro',
@@ -37,7 +37,7 @@ const PLANS = [
     premiumSites: 'Unbegrenzt Premium-Seiten',
     value: 'mehrere 10.000 €',
     popular: false,
-    cta: 'Jetzt starten',
+    cta: 'Unlimited wählen',
   },
 ]
 

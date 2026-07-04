@@ -288,9 +288,12 @@ export default function HowItWorks() {
               <p style={{ fontSize: 15, fontWeight: 700, color: '#111', marginBottom: 4 }}>Probier&apos;s einfach aus. Es dauert keine 5 Minuten.</p>
               <p style={{ fontSize: 13, color: '#888' }}>Kein Webdesigner, kein Texter, keine Agentur nötig.</p>
             </div>
-            <a href="https://app.finestsites.io/register" style={{ background: '#111', color: '#fff', padding: '13px 28px', borderRadius: 100, fontSize: 14, fontWeight: 600, textDecoration: 'none', whiteSpace: 'nowrap' }}>
-              Jetzt starten →
-            </a>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 6 }}>
+              <a href="https://app.finestsites.io/register" style={{ background: '#111', color: '#fff', padding: '13px 28px', borderRadius: 100, fontSize: 14, fontWeight: 600, textDecoration: 'none', whiteSpace: 'nowrap' }}>
+                Jetzt starten →
+              </a>
+              <span style={{ fontSize: 11, color: '#aaa' }}>Ab 20 € / Monat · Jederzeit kündbar</span>
+            </div>
           </div>
         </div>
 
