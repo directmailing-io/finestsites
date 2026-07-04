@@ -117,6 +117,7 @@ export default async function HomePage({
         .fs-nav-actions { display: flex; gap: 8px; align-items: center; }
         .fs-hamburger { display: none !important; }
         .fs-hero-buttons { display: flex; gap: 12px; flex-wrap: wrap; }
+        .fs-hero-subtext { font-size: 12px; color: #aaa; margin-top: 14px; }
         .fs-hero-content { position: relative; z-index: 2; padding: 130px 7vw 90px; max-width: 56vw; }
         .fs-section-pad { padding: 96px 7vw; }
         .fs-was-ist-inner { max-width: 1060px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 72px; align-items: center; }
@@ -190,6 +191,7 @@ export default async function HomePage({
             background: linear-gradient(to bottom, transparent, #f5f3f0);
           }
           .fs-hero-content { max-width: 100%; padding: 12px 22px 52px; }
+          .fs-hero-subtext { text-align: center; }
 
           .fs-section-pad { padding: 52px 22px; }
           .fs-was-ist-inner { grid-template-columns: 1fr; gap: 36px; }
@@ -278,7 +280,7 @@ export default async function HomePage({
             <a href="https://app.finestsites.io/register" style={{ background: '#111', color: '#fff', padding: '15px 36px', borderRadius: 100, fontSize: 15, fontWeight: 600, display: 'inline-block', textDecoration: 'none', textAlign: 'center' }}>Jetzt starten</a>
             <a href="#templates" style={{ background: 'rgba(255,255,255,0.8)', color: '#111', padding: '15px 36px', borderRadius: 100, fontSize: 15, fontWeight: 500, display: 'inline-block', border: '1.5px solid rgba(0,0,0,0.12)', textDecoration: 'none', textAlign: 'center' }}>Templates ansehen</a>
           </div>
-          <p style={{ fontSize: 12, color: '#aaa', marginTop: 14 }}>So günstig, dass es sich duplizieren lässt</p>
+          <p className="fs-hero-subtext">So günstig, dass es sich duplizieren lässt</p>
         </div>
       </section>
 
