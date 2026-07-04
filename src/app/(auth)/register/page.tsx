@@ -245,7 +245,7 @@ function RegisterForm() {
                 style={{ transform: showReferral ? 'rotate(90deg)' : 'rotate(0deg)', transition: 'transform 0.15s' }}>
                 <path d="M9 18l6-6-6-6"/>
               </svg>
-              Hast du einen Empfehlungscode?
+              Wurdest du von jemandem empfohlen?
             </button>
           )}
 
@@ -257,7 +257,7 @@ function RegisterForm() {
                     type="text" value={referralCode}
                     onChange={e => { setReferralCode(e.target.value); setReferralValid(null) }}
                     onBlur={() => checkReferral(referralCode)}
-                    placeholder="z.B. max_mustermann" autoComplete="off"
+                    placeholder="Benutzername deines Empfehlers" autoComplete="off"
                     // Read-only when pre-filled from URL — prevents accidental changes
                     readOnly={!!urlRef && referralValid !== false}
                     className="w-full px-4 py-3 pr-10 text-sm rounded-2xl outline-none transition-all"
@@ -279,8 +279,15 @@ function RegisterForm() {
                 {referralValid === true && !urlRef && (
                   <p className="text-xs px-1" style={{ color: '#16A34A' }}>✓ Code gültig — dauerhaft 20% Rabatt auf dein Abo!</p>
                 )}
-                {referralValid === false && (
-                  <p className="text-xs px-1" style={{ color: '#DC2626' }}>Code nicht gefunden. Bitte prüfe den Code und versuche es erneut.</p>
+                {referralValid === false && /^[A-Z0-9]+$/.test(referralCode.trim()) ? (
+                  <div className="px-3 py-2.5 rounded-xl text-xs" style={{ background: '#FFF7ED', border: '1px solid #FED7AA', color: '#92400E' }}>
+                    <span className="font-semibold">Das ist ein Gutschein-Code.</span> Gutschein-Codes wie <strong>{referralCode.trim()}</strong> gibst du direkt beim Bezahlvorgang ein — dort gibt es ein eigenes Feld dafür.
+                  </div>
+                ) : referralValid === false ? (
+                  <p className="text-xs px-1" style={{ color: '#DC2626' }}>Empfehler nicht gefunden. Bitte prüfe den Benutzernamen und versuche es erneut.</p>
+                ) : null}
+                {!urlRef && referralValid === null && (
+                  <p className="text-xs px-1" style={{ color: '#9CA3AF' }}>Das ist der Benutzername deines Empfehlers — nicht zu verwechseln mit Gutschein-Codes.</p>
                 )}
               </div>
             </div>
