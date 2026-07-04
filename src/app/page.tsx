@@ -326,7 +326,7 @@ export default async function HomePage({
             >
               Jetzt starten
             </a>
-            <p style={{ fontSize: 12, color: '#999', marginTop: 10 }}>Günstiger als ein Brötchen am Tag · Jederzeit kündbar</p>
+            <p style={{ fontSize: 12, color: '#555', marginTop: 10, fontWeight: 500 }}>Günstiger als ein Brötchen am Tag · Jederzeit kündbar</p>
           </div>
         </div>
 
