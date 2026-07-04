@@ -274,7 +274,17 @@ export default async function HomePage({
           <p style={{ fontSize: 16, color: '#555', lineHeight: 1.75, marginBottom: 28, maxWidth: 460 }}>
             Überzeuge Interessenten von deinen Produkten und deiner Geschäftsmöglichkeit, noch bevor sie mit dir gesprochen haben. Erhalte Anfragen und lass dein Network Marketing Business wachsen.
           </p>
-          <p style={{ fontSize: 12, color: '#aaa', marginBottom: 20, fontWeight: 500 }}>Jederzeit kündbar · Keine Mindestlaufzeit</p>
+          <div style={{ display: 'flex', gap: 8, marginBottom: 20, flexWrap: 'wrap' }}>
+            {[
+              { icon: 'M20 6 9 17 4 12', label: 'Jederzeit kündbar' },
+              { icon: 'M20 6 9 17 4 12', label: 'Keine Mindestlaufzeit' },
+            ].map((badge) => (
+              <span key={badge.label} style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: 'rgba(255,255,255,0.72)', backdropFilter: 'blur(6px)', border: '1px solid rgba(0,0,0,0.08)', borderRadius: 100, padding: '5px 13px', fontSize: 12, color: '#444', fontWeight: 500 }}>
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#16A34A" strokeWidth="2.8" strokeLinecap="round"><polyline points={badge.icon} /></svg>
+                {badge.label}
+              </span>
+            ))}
+          </div>
           <div className="fs-hero-buttons">
             <a href="https://app.finestsites.io/register" style={{ background: '#111', color: '#fff', padding: '15px 36px', borderRadius: 100, fontSize: 15, fontWeight: 600, display: 'inline-block', textDecoration: 'none', textAlign: 'center' }}>Jetzt starten</a>
             <a href="#templates" style={{ background: 'rgba(255,255,255,0.8)', color: '#111', padding: '15px 36px', borderRadius: 100, fontSize: 15, fontWeight: 500, display: 'inline-block', border: '1.5px solid rgba(0,0,0,0.12)', textDecoration: 'none', textAlign: 'center' }}>Templates ansehen</a>
@@ -326,7 +336,10 @@ export default async function HomePage({
             >
               Jetzt starten
             </a>
-            <p style={{ fontSize: 12, color: '#aaa', marginTop: 10, fontWeight: 500 }}>Günstiger als ein Brötchen am Tag · Jederzeit kündbar</p>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, marginTop: 14, background: 'rgba(255,255,255,0.82)', backdropFilter: 'blur(6px)', border: '1px solid rgba(0,0,0,0.08)', borderRadius: 100, padding: '6px 14px', fontSize: 12, color: '#444', fontWeight: 500 }}>
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#16A34A" strokeWidth="2.8" strokeLinecap="round"><polyline points="20 6 9 17 4 12" /></svg>
+              Günstiger als ein Brötchen am Tag · Jederzeit kündbar
+            </div>
           </div>
         </div>
 
