@@ -280,8 +280,8 @@ function RegisterForm() {
                   <p className="text-xs px-1" style={{ color: '#16A34A' }}>✓ Code gültig — dauerhaft 20% Rabatt auf dein Abo!</p>
                 )}
                 {referralValid === false && /^[A-Z0-9]+$/.test(referralCode.trim()) ? (
-                  <div className="px-3 py-2.5 rounded-xl text-xs" style={{ background: '#FFF7ED', border: '1px solid #FED7AA', color: '#92400E' }}>
-                    <span className="font-semibold">Das ist ein Gutschein-Code.</span> Gutschein-Codes wie <strong>{referralCode.trim()}</strong> gibst du direkt beim Bezahlvorgang ein — dort gibt es ein eigenes Feld dafür.
+                  <div className="px-3 py-2.5 text-xs" style={{ background: '#FFF7ED', border: '1px solid #FED7AA', borderRadius: 10, color: '#92400E' }}>
+                    <span className="font-semibold">Das ist ein Gutschein-Code.</span> Kein Problem! Im nächsten Schritt, beim Bezahlen, gibt es ein eigenes Feld wo du <strong>{referralCode.trim()}</strong> eingeben kannst.
                   </div>
                 ) : referralValid === false ? (
                   <p className="text-xs px-1" style={{ color: '#DC2626' }}>Empfehler nicht gefunden. Bitte prüfe den Benutzernamen und versuche es erneut.</p>
