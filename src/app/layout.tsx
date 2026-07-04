@@ -20,6 +20,7 @@ export const viewport: Viewport = {
 }
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://finestsites.io'),
   title: "FinestSites",
   description: "Deine professionelle Webseite – Online in unter 5 Minuten.",
   icons: {
