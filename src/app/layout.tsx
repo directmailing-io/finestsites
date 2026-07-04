@@ -29,6 +29,28 @@ export const metadata: Metadata = {
     ],
     apple: '/fav/apple-touch-icon.png',
   },
+  openGraph: {
+    title: 'FinestSites – Deine professionelle Website in Minuten',
+    description: 'Professionelle Produktwebsite für Network-Marketing-Profis. In unter 5 Minuten live. Ab 20 € / Monat, jederzeit kündbar.',
+    url: 'https://finestsites.io',
+    siteName: 'FinestSites',
+    images: [
+      {
+        url: '/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'FinestSites – Deine professionelle Website',
+      },
+    ],
+    locale: 'de_DE',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'FinestSites – Deine professionelle Website in Minuten',
+    description: 'Professionelle Produktwebsite für Network-Marketing-Profis. Ab 20 € / Monat.',
+    images: ['/og-image.png'],
+  },
 };
 
 export default function RootLayout({
