@@ -80,7 +80,7 @@ export default function AdminWaitlistPage() {
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
     const a = document.createElement('a')
     a.href = URL.createObjectURL(blob)
-    a.download = `warteliste-${new Date().toISOString().slice(0, 10)}.csv`
+    a.download = `insider-club-${new Date().toISOString().slice(0, 10)}.csv`
     a.click()
   }
 
@@ -113,8 +113,8 @@ export default function AdminWaitlistPage() {
   return (
     <div className="max-w-4xl mx-auto py-8 px-4">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Warteliste</h1>
-        <p className="text-sm text-gray-500 mt-1">Eingetragene Interessenten vor dem Launch</p>
+        <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Insider-Club</h1>
+        <p className="text-sm text-gray-500 mt-1">Mitglieder des Insider-Clubs</p>
       </div>
 
       {/* Stats */}
@@ -201,7 +201,7 @@ export default function AdminWaitlistPage() {
       {/* ── COMPOSE TAB ── */}
       {tab === 'compose' && (
         <div className="rounded-2xl p-6" style={{ background: '#fff', border: '1px solid #F1F1F1' }}>
-          <h2 className="text-base font-bold text-gray-900 mb-1">E-Mail an alle Bestätigten senden</h2>
+          <h2 className="text-base font-bold text-gray-900 mb-1">E-Mail an alle Insider senden</h2>
           <p className="text-xs text-gray-400 mb-5">{stats.confirmed} Empfänger · Abgemeldet werden automatisch ausgeschlossen</p>
 
           {sendResult && (

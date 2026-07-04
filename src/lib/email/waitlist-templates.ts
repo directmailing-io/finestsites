@@ -50,7 +50,7 @@ function shell(body: string, unsubscribeUrl: string): string {
       <tr>
         <td style="padding:24px 0 0;text-align:center;">
           <p style="margin:0;font-size:12px;color:#B0A89E;line-height:1.7;font-family:${FONT};">
-            Du bekommst diese Mail, weil du dich auf der FinestSites-Warteliste eingetragen hast.<br />
+            Du bekommst diese Mail, weil du dich im FinestSites Insider-Club eingetragen hast.<br />
             <a href="${unsubscribeUrl}" style="color:#B0A89E;text-decoration:underline;">Abmelden</a>
           </p>
         </td>
@@ -116,17 +116,17 @@ export function waitlistConfirmEmail({
       Kurz bestätigen, dann bist du dabei!
     </h1>
     ${para(greeting)}
-    ${para(`danke, dass du dich auf der FinestSites-Warteliste eingetragen hast. Klick kurz auf den Button unten und bestätige deine E-Mail-Adresse. Das dauert nur eine Sekunde.`)}
+    ${para(`du möchtest in den FinestSites Insider-Club. Sehr gut. Klick einmal auf den Button unten, damit wir wissen, dass die Adresse stimmt. Das dauert eine Sekunde.`)}
     ${button('Jetzt bestätigen', confirmUrl)}
     <p style="margin:20px 0 0;font-size:12px;color:#B0A89E;line-height:1.6;font-family:${FONT};">
-      Der Link ist 7 Tage gültig. Falls du dich nicht angemeldet hast, kannst du diese Mail einfach ignorieren.
+      Der Link ist 7 Tage gültig. Hast du dich nicht angemeldet? Dann einfach ignorieren.
     </p>
     ${signoff()}
   `
 
   const text = `${greeting}
 
-danke, dass du dich auf der FinestSites-Warteliste eingetragen hast!
+du möchtest in den FinestSites Insider-Club. Sehr gut.
 
 Bitte bestätige kurz deine E-Mail-Adresse:
 ${confirmUrl}
@@ -140,7 +140,7 @@ Daniel von FinestSites
 Abmelden: ${unsubscribeUrl}`
 
   return {
-    subject: 'Kurz bestätigen und du bist auf der Warteliste!',
+    subject: 'Kurz bestätigen, dann bist du Insider!',
     html: shell(body, unsubscribeUrl),
     text,
   }
@@ -161,37 +161,39 @@ export function waitlistWelcomeEmail({
   const body = `
     <h1 style="margin:0;font-size:24px;font-weight:700;color:#111111;
       letter-spacing:-0.025em;line-height:1.25;font-family:${FONT};">
-      Du bist auf der Liste! ✓
+      Du bist jetzt im Insider-Club!
     </h1>
     ${para(greeting)}
-    ${para(`du stehst jetzt auf unserer Warteliste. Als Mitglied bekommst du:`)}
+    ${para(`du bist dabei. Ab jetzt gehörst du zu den Ersten, die Bescheid bekommen, wenn es bei FinestSites etwas Neues gibt.`)}
+    ${para(`Das heisst konkret:`)}
     <ul style="margin:14px 0 0;padding-left:20px;font-size:15px;color:#555047;line-height:1.8;font-family:${FONT};">
-      <li>Als Erste/r Bescheid, wenn FinestSites startet</li>
-      <li>Exklusive Angebote und Aktionen nur für Wartelisten-Mitglieder</li>
-      <li>Einen besonderen Willkommensbonus bei der Anmeldung</li>
+      <li>Neue Vorlagen siehst du als Erster, bevor wir sie offiziell ankuendigen</li>
+      <li>Rabatte und Aktionen gibt es nur fuer Insider</li>
+      <li>Wir schreiben selten. Nur wenn es wirklich was zu sagen gibt.</li>
     </ul>
-    ${para(`Wir melden uns, sobald es losgeht. Freu dich schon mal!`)}
+    ${para(`Das wars schon. Keine wochentlichen Mails, kein Spam. Nur das Wichtigste, wenn es so weit ist.`)}
     ${signoff()}
   `
 
   const text = `${greeting}
 
-du stehst jetzt auf der FinestSites-Warteliste! Als Mitglied bekommst du:
+du bist jetzt im FinestSites Insider-Club!
 
-- Als Erste/r Bescheid, wenn FinestSites startet
-- Exklusive Angebote und Aktionen nur für Wartelisten-Mitglieder
-- Einen besonderen Willkommensbonus bei der Anmeldung
+Das heisst konkret:
+- Neue Vorlagen siehst du als Erster, bevor wir sie offiziell ankuendigen
+- Rabatte und Aktionen gibt es nur fuer Insider
+- Wir schreiben selten. Nur wenn es wirklich was zu sagen gibt.
 
-Wir melden uns, sobald es losgeht!
+Keine woechentlichen Mails, kein Spam. Nur das Wichtigste.
 
-Viele Grüße,
+Viele Gruesse,
 Daniel von FinestSites
 
 --
 Abmelden: ${unsubscribeUrl}`
 
   return {
-    subject: 'Du bist auf der Warteliste! Wir melden uns bald.',
+    subject: 'Willkommen im Insider-Club!',
     html: shell(body, unsubscribeUrl),
     text,
   }

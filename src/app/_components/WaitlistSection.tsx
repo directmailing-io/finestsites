@@ -11,9 +11,9 @@ const APP_URL = (process.env.NEXT_PUBLIC_APP_URL ?? '').replace(/\/$/, '')
 const WAITLIST_ENDPOINT = APP_URL ? `${APP_URL}/api/waitlist` : '/api/waitlist'
 
 const BENEFITS = [
-  'Du erfährst als Erste/r, wann FinestSites startet',
-  'Exklusive Angebote und Aktionen nur für Wartelisten-Mitglieder',
-  'Bevorzugte Informationen und ein besonderer Willkommensbonus',
+  'Neue Vorlagen als Erster ausprobieren, bevor sie alle sehen',
+  'Rabatte und Aktionen, die es nur für Insider gibt',
+  'Maximal eine Handvoll Mails pro Jahr. Kein Stress.',
 ]
 
 export default function WaitlistSection() {
@@ -93,7 +93,7 @@ export default function WaitlistSection() {
           fontSize: 14, fontWeight: 500,
         }}>
           {banner === 'confirmed'
-            ? 'E-Mail bestätigt! Du bist auf der Warteliste.'
+            ? 'Willkommen im Insider-Club! Du bist jetzt dabei.'
             : 'Erfolgreich abgemeldet.'}
           <button onClick={() => setBanner(null)} style={{
             marginLeft: 'auto', background: 'none', border: 'none', cursor: 'pointer',
@@ -102,8 +102,8 @@ export default function WaitlistSection() {
         </div>
       )}
 
-      {/* ── Wartelisten-Sektion ── */}
-      <section id="warteliste" style={{ background: '#F9F7FF', padding: '88px 7vw' }}>
+      {/* ── Insider-Club-Sektion ── */}
+      <section id="insider-club" style={{ background: '#F9F7FF', padding: '88px 7vw' }}>
         <div style={{ maxWidth: 960, margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 80, alignItems: 'center' }}>
 
           {/* Linke Seite — Erklärung */}
@@ -114,7 +114,7 @@ export default function WaitlistSection() {
               textTransform: 'uppercase', color: '#8060b0',
               marginBottom: 20,
             }}>
-              Warteliste
+              Insider-Club
             </span>
 
             <h2 style={{
@@ -126,11 +126,11 @@ export default function WaitlistSection() {
               lineHeight: 1.15,
               marginBottom: 20,
             }}>
-              Trag dich ein und sei<br />als Erste/r dabei.
+              Sei der Erste,<br />wenn etwas Neues kommt.
             </h2>
 
             <p style={{ fontSize: 15, color: '#666', lineHeight: 1.75, marginBottom: 28 }}>
-              Noch sind wir nicht live. Auf der Warteliste bleibst du auf dem Laufenden und profitierst als Erstes von unseren Aktionen.
+              Kein wöchentlicher Newsletter. Keine Werbemails. Nur eine kurze Nachricht, wenn es wirklich etwas gibt: neue Vorlagen, Rabatte oder besondere Aktionen. Und du kommst immer zuerst dran.
             </p>
 
             <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 12 }}>
@@ -170,7 +170,7 @@ export default function WaitlistSection() {
                   Fast geschafft!
                 </p>
                 <p style={{ color: '#555', fontSize: 14, lineHeight: 1.7, marginBottom: 14 }}>
-                  Wir haben dir eine Bestätigungs-Mail geschickt. Klick auf den Link darin, um deinen Platz zu sichern.
+                  Wir haben dir eine Bestätigungsmail geschickt. Klick einmal auf den Link darin und du bist dabei.
                 </p>
                 <div style={{
                   background: '#F9F7FF', borderRadius: 12,
@@ -183,7 +183,7 @@ export default function WaitlistSection() {
             ) : (
               <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                 <p style={{ fontSize: 15, fontWeight: 700, color: '#111', marginBottom: 4 }}>
-                  Auf die Warteliste eintragen
+                  Jetzt Insider werden
                 </p>
 
                 <input
@@ -260,7 +260,7 @@ export default function WaitlistSection() {
                     marginTop: 2,
                   }}
                 >
-                  {status === 'loading' ? 'Einen Moment...' : 'Jetzt auf die Warteliste'}
+                  {status === 'loading' ? 'Einen Moment...' : 'Insider werden'}
                 </button>
 
                 <p style={{ fontSize: 11, color: '#bbb', textAlign: 'center', marginTop: 2 }}>
@@ -274,7 +274,7 @@ export default function WaitlistSection() {
         {/* Mobile: stack vertically */}
         <style>{`
           @media (max-width: 767px) {
-            #warteliste > div {
+            #insider-club > div {
               grid-template-columns: 1fr !important;
               gap: 36px !important;
             }
