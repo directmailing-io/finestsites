@@ -4,6 +4,30 @@ import { db } from '@/lib/db'
 import { users, userSites, templates, siteData, formSubmissions, templateAccess } from '@/lib/db/schema'
 import { eq, ne, and, inArray, isNull } from 'drizzle-orm'
 
+/**
+ * Map user profile fields to common template placeholder keys.
+ * These keys match naming conventions used in FinestSites templates.
+ * Only non-empty values are included — nothing is overwritten with null/empty.
+ */
+function buildProfileSiteData(profile: typeof users.$inferSelect): Array<{ fieldKey: string; fieldValue: string }> {
+  const mappings: Array<[string | null | undefined, string]> = [
+    [profile.firstName,      'vorname'],
+    [profile.lastName,       'nachname'],
+    [profile.phone,          'phone'],
+    [profile.phone,          'telefon'],
+    [profile.instagram,      'instagram'],
+    [profile.facebook,       'facebook'],
+    [profile.linkedin,       'linkedin'],
+    [profile.tiktok,         'tiktok'],
+    [profile.youtube,        'youtube'],
+    [profile.websiteUrl,     'website'],
+    [profile.profileImageUrl,'profilbild'],
+  ]
+  return mappings
+    .filter(([val]) => val && val.trim() !== '')
+    .map(([val, key]) => ({ fieldKey: key, fieldValue: val as string }))
+}
+
 // GET /api/sites → list current user's sites with template info + username
 export async function GET(req: NextRequest) {
   const user = await getUserFromRequest(req)
@@ -102,7 +126,7 @@ export async function POST(req: NextRequest) {
   if (!template_id) return NextResponse.json({ error: 'template_id required' }, { status: 400 })
 
   try {
-    // Check plan (kept for downstream use)
+    // Check plan (kept for downstream use) — also used for auto-populating site_data
     const profile = await db.query.users.findFirst({ where: eq(users.id, user.id) })
     const plan = profile?.plan ?? 'starter'
 
@@ -138,6 +162,19 @@ export async function POST(req: NextRequest) {
         .set({ status: 'draft', deactivatedAt: null, publishedAt: null, updatedAt: new Date() })
         .where(eq(userSites.id, anyExisting.id))
         .returning()
+      // Auto-populate profile fields into site_data for the reactivated site
+      if (profile) {
+        const profileData = buildProfileSiteData(profile)
+        if (profileData.length > 0) {
+          await db.insert(siteData).values(
+            profileData.map(({ fieldKey, fieldValue }) => ({
+              userSiteId: anyExisting.id,
+              fieldKey,
+              fieldValue,
+            }))
+          ).onConflictDoNothing()
+        }
+      }
       return NextResponse.json(updated, { status: 201 })
     }
 
@@ -145,6 +182,20 @@ export async function POST(req: NextRequest) {
       .insert(userSites)
       .values({ userId: user.id, templateId: template_id, status: 'draft' })
       .returning()
+
+    // Auto-populate profile fields into site_data for the newly created site
+    if (profile) {
+      const profileData = buildProfileSiteData(profile)
+      if (profileData.length > 0) {
+        await db.insert(siteData).values(
+          profileData.map(({ fieldKey, fieldValue }) => ({
+            userSiteId: created.id,
+            fieldKey,
+            fieldValue,
+          }))
+        ).onConflictDoNothing()
+      }
+    }
 
     return NextResponse.json(created, { status: 201 })
   } catch {

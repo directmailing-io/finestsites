@@ -75,10 +75,10 @@ export default function PricingSection({ validatedRef }: { validatedRef?: string
       <div style={{ maxWidth: 980, margin: '0 auto' }}>
         <p style={{ fontSize: 11, fontWeight: 600, color: '#aaa', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 16, textAlign: 'center' }}>Preise</p>
         <h2 style={{ fontFamily: '"Plein", sans-serif', fontSize: 'clamp(32px, 4.5vw, 52px)', fontWeight: 400, color: '#111', letterSpacing: '-0.025em', textAlign: 'center', marginBottom: 12, lineHeight: 1.1 }}>
-          Kein Risiko. Jederzeit kündbar.
+          Günstiger als ein Brötchen am Tag.
         </h2>
         <p style={{ textAlign: 'center', fontSize: 15, color: '#777', marginBottom: 32, maxWidth: 500, margin: '0 auto 32px' }}>
-          Keine Mindestlaufzeit, kein Kleingedrucktes. Einfach loslegen, und wenn du nicht zufrieden bist, kannst du monatlich aufhören.
+          2 Brötchen am Tag — und deine Seite arbeitet 24 Stunden für dich. Keine Mindestlaufzeit, kein Kleingedrucktes. Jederzeit kündbar.
         </p>
 
         {/* ── Toggle ─────────────────────────────────────────────── */}

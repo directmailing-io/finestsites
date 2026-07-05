@@ -235,7 +235,7 @@ function PlanPageInner() {
 
       <div className="text-center mb-6">
         <p className="text-sm font-medium" style={{ color: '#6B7280' }}>
-          ☕ Günstiger als eine Tasse Kaffee täglich — ab €{(PLAN_LIST[0].monthly_eur / 30).toFixed(2).replace('.', ',')} / Tag
+          🥐 Günstiger als ein Brötchen täglich — ab €{(PLAN_LIST[0].monthly_eur / 30).toFixed(2).replace('.', ',')} / Tag
         </p>
       </div>
 

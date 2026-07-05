@@ -723,7 +723,7 @@ function SettingsContent() {
       {/* ════════════════════════════════════════════════════════════════
           PLAN WECHSELN
           ════════════════════════════════════════════════════════════════ */}
-      <Section title="Plan wählen" subtitle="Wechsle jederzeit. Wir verrechnen anteilig.">
+      <Section title="Plan wählen" subtitle="Upgrade jederzeit. Wir verrechnen anteilig.">
         {/* Secret plan — not self-service */}
         {currentPlan === 'secret' && (
           <div className="rounded-3xl p-6 sm:p-7" style={{ background: '#F8FAFC' }}>
@@ -783,8 +783,18 @@ function SettingsContent() {
                 style={{
                   background: plan.popular ? '#1a1a1a' : '#F8FAFC',
                   color: plan.popular ? '#fff' : '#1a1a1a',
-                  border: plan.popular ? 'none' : '1px solid #E5E7EB',
+                  border: isCurrent
+                    ? '2px solid #8060b0'
+                    : plan.popular ? 'none' : '1px solid #E5E7EB',
+                  boxShadow: isCurrent ? '0 0 0 4px rgba(128,96,176,0.12)' : undefined,
                 }}>
+
+                {isCurrent && (
+                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 text-[10px] font-bold px-3 py-1 rounded-full"
+                    style={{ background: '#8060b0', color: '#fff', whiteSpace: 'nowrap' }}>
+                    Aktueller Plan
+                  </span>
+                )}
 
                 {plan.popular && (
                   <span className="absolute top-5 right-5 text-[10px] font-bold px-2.5 py-1 rounded-full"

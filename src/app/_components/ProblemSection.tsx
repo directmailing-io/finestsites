@@ -17,19 +17,19 @@ const PROBLEMS = [
     img: '/problem-reichweite.png',
     line1: 'Du postest täglich.',
     line2: 'Aber keiner schreibt dir.',
-    text: 'Dir schauen genug Leute zu. Schick sie auf deine Webseite. Die erklärt alles, und die Leute melden sich dann ganz von selbst.',
+    text: 'Du hast die Reichweite. Aber irgendwie passiert... nichts. Die Leute schauen zu, liken vielleicht — und verschwinden wieder.',
   },
   {
     img: '/problem-schick.png',
     line1: '"Schick mal was zu."',
     line2: 'Und du tippst dir die Finger wund.',
-    text: 'Schick einfach den Link. Die Webseite erklärt alles. So, dass die Interessenten unbedingt mit dir sprechen wollen.',
+    text: 'Und dann steht man da. Was schickt man? Was erklärt man zuerst? Bis du fertig bist, ist das Interesse schon weg.',
   },
   {
     img: '/problem-target.png',
     line1: 'Du willst alle ansprechen.',
     line2: 'Keiner fühlt sich gemeint.',
-    text: 'Mütter, Sportler, Berufstätige. Du bekommst für jede Zielgruppe eine eigene, überzeugende Seite.',
+    text: 'Mütter, Sportler, Berufstätige — du versuchst allen gerecht zu werden. Und genau deshalb fühlt sich keiner wirklich angesprochen.',
   },
 ]
 
@@ -141,9 +141,6 @@ export default function ProblemSection() {
           ))}
         </div>
 
-        <p style={{ textAlign: 'center', fontSize: 15, color: '#bbb', marginTop: 48, fontWeight: 500, letterSpacing: '-0.01em' }}>
-          FinestSites löst genau das.
-        </p>
       </div>
     </section>
   )

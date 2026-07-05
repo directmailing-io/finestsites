@@ -226,6 +226,11 @@ export default async function HomePage({
           .fs-feature-grid { grid-template-columns: 1fr; }
           .fs-template-grid { grid-template-columns: 1fr; }
         }
+
+        /* ── PM-Produkte grid ────────────────────────────── */
+        @media (max-width: 1023px) {
+          .fs-pm-grid { grid-template-columns: 1fr !important; }
+        }
       `}</style>
 
       {/* ══ NAV ══════════════════════════════════════════════════════════ */}
@@ -271,16 +276,15 @@ export default async function HomePage({
             letterSpacing: '-0.028em',
             marginBottom: 28,
           }}>
-            Lass dich von Kunden und<br />Partnern über <span style={{ color: '#8060b0' }}>deine Webseite</span><br />finden.
+            Deine Network-Marketing<br />Website. <span style={{ color: '#8060b0' }}>Live in 10 Minuten.</span><br />Ohne Agentur, ohne Technik-Stress.
           </h1>
           <p style={{ fontSize: 16, color: '#555', lineHeight: 1.75, marginBottom: 28, maxWidth: 460 }}>
-            Überzeuge Interessenten von deinen Produkten und deiner Geschäftsmöglichkeit, noch bevor sie mit dir gesprochen haben. Erhalte Anfragen und lass dein Network Marketing Business wachsen.
+            Lass dich von Kunden und Partnern über deine Webseite finden — überzeuge Interessenten von deinen Produkten, noch bevor sie mit dir gesprochen haben.
           </p>
           <div className="fs-hero-buttons">
             <a href="https://app.finestsites.io/register" style={{ background: '#111', color: '#fff', padding: '15px 36px', borderRadius: 100, fontSize: 15, fontWeight: 600, display: 'inline-block', textDecoration: 'none', textAlign: 'center' }}>Jetzt starten</a>
             <a href="#templates" style={{ background: 'rgba(255,255,255,0.8)', color: '#111', padding: '15px 36px', borderRadius: 100, fontSize: 15, fontWeight: 500, display: 'inline-block', border: '1.5px solid rgba(0,0,0,0.12)', textDecoration: 'none', textAlign: 'center' }}>Templates ansehen</a>
           </div>
-          <p className="fs-hero-subtext">So günstig, dass es sich duplizieren lässt</p>
         </div>
       </section>
 
@@ -296,7 +300,7 @@ export default async function HomePage({
           <div style={{ textAlign: 'center', marginBottom: 52 }}>
             <p style={{ fontSize: 11, fontWeight: 700, color: '#aaa', letterSpacing: '0.14em', textTransform: 'uppercase', marginBottom: 18 }}>Die Lösung</p>
             <h2 style={{ fontFamily: '"Plein", sans-serif', fontSize: 'clamp(28px, 4vw, 46px)', fontWeight: 400, letterSpacing: '-0.025em', lineHeight: 1.15, color: '#111', margin: '0 auto', maxWidth: 600 }}>
-              Deine Webseite arbeitet, während du schläfst.
+              Einmal einrichten. Immer gefunden werden.
             </h2>
             <p style={{ fontSize: 16, color: '#888', maxWidth: 480, margin: '16px auto 0' }}>
               Du kümmerst dich ums Netzwerk. Den Rest übernehmen wir.
@@ -305,10 +309,9 @@ export default async function HomePage({
 
           <div className="fs-solution-grid">
             {([
-              { img: '/features/5min-live.png',            bg: '#FFFBEB', border: '#FDE68A', title: 'In unter 5 Minuten live',        desc: 'Template wählen, Inhalte eintragen, fertig. Kein Designer, kein Technik-Stress.' },
-              { img: '/features/kein-design.png',          bg: '#FAF5FF', border: '#E9D5FF', title: 'Kein Texten, kein Designen',      desc: 'Jede Vorlage ist professionell getextet, gestaltet und rechtlich geprüft.' },
-              { img: '/features/templates-verbessert.png', bg: '#F0FDF4', border: '#BBF7D0', title: 'Laufend verbessert',              desc: 'Neue Funktionen, bessere Conversion, aktuelles Design. Automatisch und ohne dein Zutun.' },
-              { img: '/features/kein-hosting.png',         bg: '#EFF6FF', border: '#BFDBFE', title: 'Kein Hosting, kein DSGVO-Stress', desc: 'Hosting, Sicherheit, Datenschutz, Impressum. Alles inklusive.' },
+              { img: '/features/5min-live.png',    bg: '#FFFBEB', border: '#FDE68A', title: 'In unter 10 Minuten live',       desc: 'Template wählen, Inhalte eintragen, fertig. Kein Designer, kein Technik-Stress.' },
+              { img: '/features/kein-design.png',  bg: '#FAF5FF', border: '#E9D5FF', title: 'Ohne Texten, ohne Designen',     desc: 'Jede Vorlage ist professionell getextet, gestaltet und rechtlich geprüft.' },
+              { img: '/features/kein-hosting.png', bg: '#EFF6FF', border: '#BFDBFE', title: 'Kein Hosting-Stress',            desc: 'Hosting, Sicherheit, Datenschutz, Impressum. Alles inklusive.' },
             ] as { img: string; bg: string; border: string; title: string; desc: string }[]).map((f, i) => (
               <div key={i} className="fs-solution-card" style={{ background: f.bg, border: `1px solid ${f.border}` }}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -347,6 +350,73 @@ export default async function HomePage({
       </section>
 
       <HowItWorks />
+
+      {/* ══ FÜR DEIN UNTERNEHMEN ═════════════════════════════════════════ */}
+      <section style={{ background: '#F9F7FF', padding: 'clamp(64px, 8vw, 96px) clamp(20px, 5vw, 48px)' }}>
+        <div style={{ maxWidth: 960, margin: '0 auto' }}>
+          <div style={{ textAlign: 'center', marginBottom: 52 }}>
+            <p style={{ fontSize: 11, fontWeight: 700, color: '#aaa', letterSpacing: '0.14em', textTransform: 'uppercase', marginBottom: 18 }}>
+              Unterstützte Produkte
+            </p>
+            <h2 style={{ fontFamily: '"Plein", sans-serif', fontSize: 'clamp(28px, 4vw, 46px)', fontWeight: 400, letterSpacing: '-0.025em', lineHeight: 1.15, color: '#111', margin: '0 auto', maxWidth: 640 }}>
+              Vorlagen für die führenden Network-Marketing-Marken.
+            </h2>
+            <p style={{ fontSize: 16, color: '#888', maxWidth: 520, margin: '16px auto 0', lineHeight: 1.7 }}>
+              Jede Vorlage wurde speziell für das jeweilige Produkt entwickelt — mit den richtigen Texten, der passenden Bildsprache und einer Struktur, die wirklich konvertiert.
+            </p>
+          </div>
+
+          <div className="fs-pm-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20 }}>
+            {[
+              { emoji: '💊', brand: 'PM International', product: 'FitLine OptimalSet', color: '#7C3AED', bg: '#F5F3FF', border: '#DDD6FE' },
+              { emoji: '🍳', brand: 'Vorwerk', product: 'Thermomix TM6', color: '#D97706', bg: '#FFFBEB', border: '#FDE68A' },
+              { emoji: '✨', brand: 'Nu Skin', product: 'ageLOC LumiSpa iO', color: '#DB2777', bg: '#FDF2F8', border: '#FBCFE8' },
+            ].map((item, i) => (
+              <div key={i} style={{
+                background: item.bg,
+                border: `1px solid ${item.border}`,
+                borderRadius: 20,
+                padding: '28px 24px',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 14,
+              }}>
+                <div style={{
+                  width: 52,
+                  height: 52,
+                  borderRadius: '50%',
+                  background: '#fff',
+                  border: `1.5px solid ${item.border}`,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: 24,
+                }}>
+                  {item.emoji}
+                </div>
+                <div>
+                  <p style={{ fontSize: 11, fontWeight: 700, color: item.color, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 4 }}>
+                    {item.brand}
+                  </p>
+                  <p style={{ fontSize: 16, fontWeight: 700, color: '#111', lineHeight: 1.3, margin: 0 }}>
+                    {item.product}
+                  </p>
+                </div>
+                <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: '#D1FAE5', borderRadius: 100, padding: '4px 12px', width: 'fit-content' }}>
+                  <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#10B981', display: 'inline-block', flexShrink: 0 }} />
+                  <span style={{ fontSize: 11, fontWeight: 700, color: '#065F46' }}>Verfügbar</span>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <p style={{ textAlign: 'center', fontSize: 14, color: '#aaa', marginTop: 36, lineHeight: 1.6 }}>
+            <strong style={{ color: '#888' }}>Weitere Marken folgen:</strong>{' '}
+            LR, Herbalife, Pampered Chef — und viele mehr kommen 2025.
+          </p>
+        </div>
+
+      </section>
 
 {/* ══ TEMPLATES ════════════════════════════════════════════════════ */}
       <section id="templates" style={{ background: '#F9F7FF' }} className="fs-section-pad">

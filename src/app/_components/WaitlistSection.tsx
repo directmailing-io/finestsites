@@ -126,7 +126,7 @@ export default function WaitlistSection() {
               lineHeight: 1.15,
               marginBottom: 20,
             }}>
-              Sei der Erste,<br />wenn etwas Neues kommt.
+              Als Erste wissen,<br />wenn etwas Neues kommt.
             </h2>
 
             <p style={{ fontSize: 15, color: '#666', lineHeight: 1.75, marginBottom: 28 }}>
