@@ -4,16 +4,26 @@ compatibility_date = "2025-01-01"
 account_id = "bc6cb133755178f3e44ca3e2662d1242"
 workers_dev = true
 
+# ──────────────────────────────────────────────────────────────────────────────
+# TEMPLATE DOMAINS — Worker Routes
+#
+# WICHTIG: Jede Template-Domain MUSS hier als Route eingetragen sein.
+# wrangler deploy überschreibt alle Worker Routes autoritativ — ein Eintrag
+# nur im CF Dashboard wird beim nächsten Deploy gelöscht!
+#
+# Checkliste für neue Template-Domain:
+#   1. DNS: Proxied Wildcard-A-Record  *.domain.tld → 192.0.2.1  im CF Dashboard
+#   2. Route hier hinzufügen (zone_id aus CF Dashboard → Overview → Zone ID)
+#   3. wrangler deploy ausführen
+#   4. Testen: curl https://test.domain.tld/.finestsites/health → 200
+# ──────────────────────────────────────────────────────────────────────────────
+
 # Subdomain traffic: username.womenplus.io
 [[routes]]
 pattern = "*.womenplus.io/*"
 zone_id = "6e299b7d60fc54649cc64f9106fe1d57"
 
 # Subdomain traffic: username.myevnt.io
-# The DNS has a proxied wildcard A *.myevnt.io → 192.0.2.1 (dummy). Without
-# this route the request would never hit the Worker and CF returns 522 trying
-# to reach the dummy origin. wrangler deploy authoritatively rewrites routes,
-# so any *.myevnt.io/* route must live here — never just in the UI.
 [[routes]]
 pattern = "*.myevnt.io/*"
 zone_id = "002cfbc8b4c01a51758357b3dfb1c123"
@@ -23,13 +33,23 @@ zone_id = "002cfbc8b4c01a51758357b3dfb1c123"
 pattern = "*.lnko.me/*"
 zone_id = "93a630fa5da1056d92657e2e35a6c8f1"
 
-# CF for SaaS Fallback Origin (custom user domains, e.g. www.daniel-kurzeja.de)
-# Architecture: www.custom.de → CF for SaaS (womenplus.io zone) → Fallback Origin: worker.finestsites.com
-# worker.finestsites.com is a Worker Custom Domain in the finestsites.com zone (different zone avoids
-# orange-to-orange routing loop that causes 522 when using same-zone records as Fallback Origin).
-# The Worker reads the Host header to identify the custom domain and looks up KV: custom:{hostname}.
-# Setup: CF Dashboard → Workers & Pages → finestsites-worker → Domains & Routes → Add Custom Domain → worker.finestsites.com
-#        CF Dashboard → womenplus.io → SSL/TLS → Custom Hostnames → Fallback Origin → worker.finestsites.com
+# Subdomain traffic: username.dailyoptimal.de
+# Zone: 90e5c504e63e834339109d3f19213bb0
+# DNS: *.dailyoptimal.de → 192.0.2.1 (proxied, Wildcard-A)
+[[routes]]
+pattern = "*.dailyoptimal.de/*"
+zone_id = "90e5c504e63e834339109d3f19213bb0"
+
+# ──────────────────────────────────────────────────────────────────────────────
+# CF for SaaS (custom user domains, z.B. www.kundenname.de)
+#
+# Architektur:
+#   www.kundenname.de  →  CNAME  →  custom.womenplus.io
+#   custom.womenplus.io  →  CF for SaaS (womenplus.io Zone)
+#   CF for SaaS Fallback Origin: custom.womenplus.io (A → 192.0.2.1, proxied)
+#   Worker Route *.womenplus.io/*  fängt den Request ab
+#   Worker liest Host-Header → schlägt KV nach custom:{hostname} auf
+# ──────────────────────────────────────────────────────────────────────────────
 
 [[r2_buckets]]
 binding = "R2_BUCKET"
