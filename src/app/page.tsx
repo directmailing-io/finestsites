@@ -7,6 +7,7 @@ import PricingSection from './_components/PricingSection'
 import FeatureCardsAnimated from './_components/FeatureCardsAnimated'
 import ProblemSection from './_components/ProblemSection'
 import NavBar from './_components/NavBar'
+import VorlagenSection from './_components/VorlagenSection'
 import HowItWorks from './_components/HowItWorks'
 import TemplateGridSection, { type TemplateCardData } from './_components/TemplateGridSection'
 import { Suspense } from 'react'
@@ -124,6 +125,7 @@ export default async function HomePage({
         .fs-feature-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
         .fs-prob-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
         .fs-solution-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+        .fs-solution-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
         .fs-solution-card { display: flex; align-items: flex-start; gap: 16px; border-radius: 20px; padding: 22px; }
         .fs-solution-bg { position: absolute; bottom: 0; left: 0; right: 0; height: 400px; }
         .fs-solution-bg img { width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block; }
@@ -153,6 +155,7 @@ export default async function HomePage({
           .fs-pricing-mascot { display: none !important; }
           .fs-prob-grid { grid-template-columns: 1fr; max-width: 500px; margin-left: auto; margin-right: auto; }
           .fs-solution-grid { grid-template-columns: 1fr; }
+          .fs-solution-cards { grid-template-columns: 1fr 1fr; }
           .fs-solution-bg { height: 300px; }
         }
 
@@ -199,6 +202,7 @@ export default async function HomePage({
           .fs-prob-grid { grid-template-columns: 1fr; max-width: 100%; }
           .fs-solution-grid { grid-template-columns: 1fr; }
           .fs-solution-card { flex-direction: column; align-items: center; text-align: center; }
+          .fs-solution-cards { grid-template-columns: 1fr; }
           .fs-solution-bg { height: 220px; }
           .fs-template-grid { grid-template-columns: 1fr 1fr; gap: 14px; }
           .fs-template-grid > * { min-width: 0; }
@@ -292,11 +296,8 @@ export default async function HomePage({
       <ProblemSection />
 
       {/* ══ WAS FINESTSITES BIETET ═══════════════════════════════════════ */}
-      {/* paddingBottom reserves space so the image (absolute, bottom:0) is visible */}
-      <section id="was-ist" style={{ background: '#fff', position: 'relative', paddingBottom: 'clamp(220px, 36vw, 520px)' }} className="fs-section-pad">
-
-        {/* Content sits above the image */}
-        <div style={{ maxWidth: 960, margin: '0 auto', position: 'relative', zIndex: 1 }}>
+      <section id="was-ist" style={{ background: '#fff' }} className="fs-section-pad">
+        <div style={{ maxWidth: 960, margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: 52 }}>
             <p style={{ fontSize: 11, fontWeight: 700, color: '#aaa', letterSpacing: '0.14em', textTransform: 'uppercase', marginBottom: 18 }}>Die Lösung</p>
             <h2 style={{ fontFamily: '"Plein", sans-serif', fontSize: 'clamp(28px, 4vw, 46px)', fontWeight: 400, letterSpacing: '-0.025em', lineHeight: 1.15, color: '#111', margin: '0 auto', maxWidth: 600 }}>
@@ -307,19 +308,25 @@ export default async function HomePage({
             </p>
           </div>
 
-          <div className="fs-solution-grid">
+          <div className="fs-solution-cards">
             {([
-              { img: '/features/5min-live.png',    bg: '#FFFBEB', border: '#FDE68A', title: 'In unter 10 Minuten live',       desc: 'Template wählen, deinen Namen eintragen, ein Foto hochladen. Fertig. Kein Designer, kein Entwickler, kein Stress.' },
-              { img: '/features/kein-design.png',  bg: '#FAF5FF', border: '#E9D5FF', title: 'Texte und Design sind fertig',   desc: 'Du schreibst nichts, du gestaltest nichts. Alles ist bereits drin. Professionell getextet, getestet und für dein Produkt optimiert.' },
-              { img: '/features/kein-hosting.png', bg: '#EFF6FF', border: '#BFDBFE', title: 'Um den Rest kümmerst du dich nie', desc: 'Hosting, SSL, DSGVO, Impressum, Barrierefreiheit. Alles läuft automatisch. Du musst dich damit nie beschäftigen.' },
-            ] as { img: string; bg: string; border: string; title: string; desc: string }[]).map((f, i) => (
-              <div key={i} className="fs-solution-card" style={{ background: f.bg, border: `1px solid ${f.border}` }}>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={f.img} alt="" style={{ width: 120, height: 120, objectFit: 'contain', flexShrink: 0 }} />
-                <div>
-                  <h3 style={{ fontSize: 15, fontWeight: 700, color: '#111', marginBottom: 6, lineHeight: 1.3 }}>{f.title}</h3>
-                  <p style={{ fontSize: 13.5, color: '#555', lineHeight: 1.65, margin: 0 }}>{f.desc}</p>
-                </div>
+              { label: 'Schnell',  title: 'In unter 10 Minuten live',          desc: 'Template wählen, deinen Namen eintragen, ein Foto hochladen. Fertig. Kein Designer, kein Entwickler, kein Stress.' },
+              { label: 'Einfach', title: 'Texte und Design sind fertig',         desc: 'Du schreibst nichts, du gestaltest nichts. Alles ist bereits drin. Professionell getextet, getestet und für dein Produkt optimiert.' },
+              { label: 'Sicher',  title: 'Um den Rest kümmerst du dich nie',     desc: 'Hosting, SSL, DSGVO, Impressum, Barrierefreiheit. Alles läuft automatisch. Du musst dich damit nie beschäftigen.' },
+            ] as { label: string; title: string; desc: string }[]).map((f, i) => (
+              <div key={i} style={{
+                background: '#fff',
+                border: '1px solid #F3F4F6',
+                borderRadius: 20,
+                padding: 32,
+                boxShadow: '0 2px 12px rgba(0,0,0,0.06)',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 12,
+              }}>
+                <span style={{ fontSize: 11, fontWeight: 700, color: '#D97706', letterSpacing: '0.1em', textTransform: 'uppercase' }}>{f.label}</span>
+                <h3 style={{ fontSize: 17, fontWeight: 700, color: '#111', lineHeight: 1.3, margin: 0 }}>{f.title}</h3>
+                <p style={{ fontSize: 14, color: '#555', lineHeight: 1.7, margin: 0 }}>{f.desc}</p>
               </div>
             ))}
           </div>
@@ -334,90 +341,12 @@ export default async function HomePage({
             <p style={{ fontSize: 12, color: '#555', marginTop: 10, fontWeight: 500 }}>Günstiger als ein Brötchen am Tag · Jederzeit kündbar</p>
           </div>
         </div>
-
-        {/* Full-width image, absolute behind content, starts where cards begin */}
-        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, zIndex: 0 }}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/solution-bg.png" alt="" style={{ width: '100%', display: 'block' }} />
-          {/* Gradient: white covers top 55% (sky/ceiling), fades out by 80% revealing figures */}
-          <div style={{
-            position: 'absolute',
-            top: 0, left: 0, right: 0, bottom: 0,
-            background: 'radial-gradient(ellipse 55% 85% at 50% 0%, #fff 0%, #fff 35%, rgba(255,255,255,0) 100%), linear-gradient(to bottom, #fff 0%, #fff 15%, rgba(255,255,255,0) 50%)',
-            pointerEvents: 'none',
-          }} />
-        </div>
       </section>
 
       <HowItWorks />
 
       {/* ══ FÜR DEIN UNTERNEHMEN ═════════════════════════════════════════ */}
-      <section style={{ background: '#F9F7FF', padding: 'clamp(64px, 8vw, 96px) clamp(20px, 5vw, 48px)' }}>
-        <div style={{ maxWidth: 960, margin: '0 auto' }}>
-          <div style={{ textAlign: 'center', marginBottom: 52 }}>
-            <p style={{ fontSize: 11, fontWeight: 700, color: '#aaa', letterSpacing: '0.14em', textTransform: 'uppercase', marginBottom: 18 }}>
-              Verfügbare Vorlagen
-            </p>
-            <h2 style={{ fontFamily: '"Plein", sans-serif', fontSize: 'clamp(28px, 4vw, 46px)', fontWeight: 400, letterSpacing: '-0.025em', lineHeight: 1.15, color: '#111', margin: '0 auto', maxWidth: 640 }}>
-              Speziell entwickelt für FitLine von PM International.
-            </h2>
-            <p style={{ fontSize: 16, color: '#888', maxWidth: 520, margin: '16px auto 0', lineHeight: 1.7 }}>
-              Die Vorlage wurde speziell für FitLine OptimalSet entwickelt. Mit den richtigen Texten, der passenden Bildsprache und einer Struktur, die Interessenten wirklich überzeugt.
-            </p>
-          </div>
-
-          <div className="fs-pm-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20 }}>
-            {([
-              { brand: 'PM International', product: 'FitLine OptimalSet', color: '#7C3AED', bg: '#F5F3FF', border: '#DDD6FE', available: true },
-              { brand: 'Vorwerk', product: 'Thermomix TM6', color: '#9CA3AF', bg: '#F9FAFB', border: '#E5E7EB', available: false },
-              { brand: 'Nu Skin', product: 'ageLOC LumiSpa iO', color: '#9CA3AF', bg: '#F9FAFB', border: '#E5E7EB', available: false },
-            ] as { brand: string; product: string; color: string; bg: string; border: string; available: boolean }[]).map((item, i) => (
-              <div key={i} style={{
-                background: item.bg,
-                border: `1px solid ${item.border}`,
-                borderRadius: 20,
-                padding: '28px 24px',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: 14,
-                opacity: item.available ? 1 : 0.6,
-              }}>
-                <div style={{
-                  width: 44,
-                  height: 44,
-                  borderRadius: 12,
-                  background: item.available ? item.color : '#E5E7EB',
-                  flexShrink: 0,
-                }} />
-                <div>
-                  <p style={{ fontSize: 11, fontWeight: 700, color: item.color, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 4 }}>
-                    {item.brand}
-                  </p>
-                  <p style={{ fontSize: 16, fontWeight: 700, color: item.available ? '#111' : '#9CA3AF', lineHeight: 1.3, margin: 0 }}>
-                    {item.product}
-                  </p>
-                </div>
-                {item.available ? (
-                  <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: '#D1FAE5', borderRadius: 100, padding: '4px 12px', width: 'fit-content' }}>
-                    <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#10B981', display: 'inline-block', flexShrink: 0 }} />
-                    <span style={{ fontSize: 11, fontWeight: 700, color: '#065F46' }}>Jetzt verfügbar</span>
-                  </div>
-                ) : (
-                  <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: '#F3F4F6', borderRadius: 100, padding: '4px 12px', width: 'fit-content' }}>
-                    <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#9CA3AF', display: 'inline-block', flexShrink: 0 }} />
-                    <span style={{ fontSize: 11, fontWeight: 600, color: '#6B7280' }}>Kommt bald</span>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-
-          <p style={{ textAlign: 'center', fontSize: 14, color: '#aaa', marginTop: 36, lineHeight: 1.6 }}>
-            Weitere Marken folgen. LR, Herbalife, Pampered Chef und viele mehr sind in Arbeit.
-          </p>
-        </div>
-
-      </section>
+      <VorlagenSection />
 
 {/* ══ TEMPLATES ════════════════════════════════════════════════════ */}
       <section id="templates" style={{ background: '#F9F7FF' }} className="fs-section-pad">

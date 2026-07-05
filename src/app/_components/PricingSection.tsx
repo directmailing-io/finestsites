@@ -223,7 +223,7 @@ export default function PricingSection({ validatedRef }: { validatedRef?: string
                 }}>
                   {plan.premiumSites}
                   <div style={{ fontSize: 11, fontWeight: 400, color: plan.popular ? 'rgba(255,255,255,0.45)' : '#888', marginTop: 2 }}>
-                    + unbegrenzt Standardseiten
+                    + unbegrenzt Standard-Seiten kostenlos dabei
                   </div>
                 </div>
 
@@ -235,6 +235,29 @@ export default function PricingSection({ validatedRef }: { validatedRef?: string
                       <span style={{ fontSize: 12.5, color: plan.popular ? 'rgba(255,255,255,0.6)' : '#555', lineHeight: 1.5 }}>{f}</span>
                     </div>
                   ))}
+                </div>
+
+                {/* Info box: Premium vs Standard */}
+                <div style={{
+                  background: plan.popular ? 'rgba(255,255,255,0.06)' : '#F9FAFB',
+                  border: `1px solid ${plan.popular ? 'rgba(255,255,255,0.1)' : '#E5E7EB'}`,
+                  borderRadius: 12,
+                  padding: '12px 14px',
+                  marginBottom: 20,
+                }}>
+                  <p style={{ fontSize: 11, fontWeight: 700, color: plan.popular ? 'rgba(255,255,255,0.5)' : '#6B7280', marginBottom: 8, letterSpacing: '0.04em', textTransform: 'uppercase' }}>
+                    Was ist der Unterschied?
+                  </p>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                    <div>
+                      <span style={{ fontSize: 11, fontWeight: 700, color: plan.popular ? 'rgba(255,255,255,0.7)' : '#111' }}>Premium-Seiten: </span>
+                      <span style={{ fontSize: 11, color: plan.popular ? 'rgba(255,255,255,0.45)' : '#6B7280', lineHeight: 1.5 }}>Professionelle Produkt-Seiten für FitLine, Thermomix & Co. Für dein Kerngeschäft.</span>
+                    </div>
+                    <div>
+                      <span style={{ fontSize: 11, fontWeight: 700, color: plan.popular ? 'rgba(255,255,255,0.7)' : '#111' }}>Standard-Seiten: </span>
+                      <span style={{ fontSize: 11, color: plan.popular ? 'rgba(255,255,255,0.45)' : '#6B7280', lineHeight: 1.5 }}>Link-in-Bio, Event-Einladungen und mehr. Immer unbegrenzt dabei.</span>
+                    </div>
+                  </div>
                 </div>
 
                 <a
