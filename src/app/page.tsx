@@ -279,7 +279,7 @@ export default async function HomePage({
             Deine Network-Marketing<br />Website. <span style={{ color: '#8060b0' }}>Live in 10 Minuten.</span><br />Ohne Agentur, ohne Technik-Stress.
           </h1>
           <p style={{ fontSize: 16, color: '#555', lineHeight: 1.75, marginBottom: 28, maxWidth: 460 }}>
-            Lass dich von Kunden und Partnern über deine Webseite finden — überzeuge Interessenten von deinen Produkten, noch bevor sie mit dir gesprochen haben.
+            Lass dich von Kunden und Partnern über deine Webseite finden und überzeuge Interessenten von deinen Produkten, noch bevor sie mit dir gesprochen haben.
           </p>
           <div className="fs-hero-buttons">
             <a href="https://app.finestsites.io/register" style={{ background: '#111', color: '#fff', padding: '15px 36px', borderRadius: 100, fontSize: 15, fontWeight: 600, display: 'inline-block', textDecoration: 'none', textAlign: 'center' }}>Jetzt starten</a>
@@ -309,9 +309,9 @@ export default async function HomePage({
 
           <div className="fs-solution-grid">
             {([
-              { img: '/features/5min-live.png',    bg: '#FFFBEB', border: '#FDE68A', title: 'In unter 10 Minuten live',       desc: 'Template wählen, Inhalte eintragen, fertig. Kein Designer, kein Technik-Stress.' },
-              { img: '/features/kein-design.png',  bg: '#FAF5FF', border: '#E9D5FF', title: 'Ohne Texten, ohne Designen',     desc: 'Jede Vorlage ist professionell getextet, gestaltet und rechtlich geprüft.' },
-              { img: '/features/kein-hosting.png', bg: '#EFF6FF', border: '#BFDBFE', title: 'Kein Hosting-Stress',            desc: 'Hosting, Sicherheit, Datenschutz, Impressum. Alles inklusive.' },
+              { img: '/features/5min-live.png',    bg: '#FFFBEB', border: '#FDE68A', title: 'In unter 10 Minuten live',       desc: 'Template wählen, deinen Namen eintragen, ein Foto hochladen. Fertig. Kein Designer, kein Entwickler, kein Stress.' },
+              { img: '/features/kein-design.png',  bg: '#FAF5FF', border: '#E9D5FF', title: 'Texte und Design sind fertig',   desc: 'Du schreibst nichts, du gestaltest nichts. Alles ist bereits drin. Professionell getextet, getestet und für dein Produkt optimiert.' },
+              { img: '/features/kein-hosting.png', bg: '#EFF6FF', border: '#BFDBFE', title: 'Um den Rest kümmerst du dich nie', desc: 'Hosting, SSL, DSGVO, Impressum, Barrierefreiheit. Alles läuft automatisch. Du musst dich damit nie beschäftigen.' },
             ] as { img: string; bg: string; border: string; title: string; desc: string }[]).map((f, i) => (
               <div key={i} className="fs-solution-card" style={{ background: f.bg, border: `1px solid ${f.border}` }}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -356,22 +356,22 @@ export default async function HomePage({
         <div style={{ maxWidth: 960, margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: 52 }}>
             <p style={{ fontSize: 11, fontWeight: 700, color: '#aaa', letterSpacing: '0.14em', textTransform: 'uppercase', marginBottom: 18 }}>
-              Unterstützte Produkte
+              Verfügbare Vorlagen
             </p>
             <h2 style={{ fontFamily: '"Plein", sans-serif', fontSize: 'clamp(28px, 4vw, 46px)', fontWeight: 400, letterSpacing: '-0.025em', lineHeight: 1.15, color: '#111', margin: '0 auto', maxWidth: 640 }}>
-              Vorlagen für die führenden Network-Marketing-Marken.
+              Speziell entwickelt für FitLine von PM International.
             </h2>
             <p style={{ fontSize: 16, color: '#888', maxWidth: 520, margin: '16px auto 0', lineHeight: 1.7 }}>
-              Jede Vorlage wurde speziell für das jeweilige Produkt entwickelt — mit den richtigen Texten, der passenden Bildsprache und einer Struktur, die wirklich konvertiert.
+              Die Vorlage wurde speziell für FitLine OptimalSet entwickelt. Mit den richtigen Texten, der passenden Bildsprache und einer Struktur, die Interessenten wirklich überzeugt.
             </p>
           </div>
 
           <div className="fs-pm-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20 }}>
-            {[
-              { emoji: '💊', brand: 'PM International', product: 'FitLine OptimalSet', color: '#7C3AED', bg: '#F5F3FF', border: '#DDD6FE' },
-              { emoji: '🍳', brand: 'Vorwerk', product: 'Thermomix TM6', color: '#D97706', bg: '#FFFBEB', border: '#FDE68A' },
-              { emoji: '✨', brand: 'Nu Skin', product: 'ageLOC LumiSpa iO', color: '#DB2777', bg: '#FDF2F8', border: '#FBCFE8' },
-            ].map((item, i) => (
+            {([
+              { brand: 'PM International', product: 'FitLine OptimalSet', color: '#7C3AED', bg: '#F5F3FF', border: '#DDD6FE', available: true },
+              { brand: 'Vorwerk', product: 'Thermomix TM6', color: '#9CA3AF', bg: '#F9FAFB', border: '#E5E7EB', available: false },
+              { brand: 'Nu Skin', product: 'ageLOC LumiSpa iO', color: '#9CA3AF', bg: '#F9FAFB', border: '#E5E7EB', available: false },
+            ] as { brand: string; product: string; color: string; bg: string; border: string; available: boolean }[]).map((item, i) => (
               <div key={i} style={{
                 background: item.bg,
                 border: `1px solid ${item.border}`,
@@ -380,39 +380,40 @@ export default async function HomePage({
                 display: 'flex',
                 flexDirection: 'column',
                 gap: 14,
+                opacity: item.available ? 1 : 0.6,
               }}>
                 <div style={{
-                  width: 52,
-                  height: 52,
-                  borderRadius: '50%',
-                  background: '#fff',
-                  border: `1.5px solid ${item.border}`,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: 24,
-                }}>
-                  {item.emoji}
-                </div>
+                  width: 44,
+                  height: 44,
+                  borderRadius: 12,
+                  background: item.available ? item.color : '#E5E7EB',
+                  flexShrink: 0,
+                }} />
                 <div>
                   <p style={{ fontSize: 11, fontWeight: 700, color: item.color, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 4 }}>
                     {item.brand}
                   </p>
-                  <p style={{ fontSize: 16, fontWeight: 700, color: '#111', lineHeight: 1.3, margin: 0 }}>
+                  <p style={{ fontSize: 16, fontWeight: 700, color: item.available ? '#111' : '#9CA3AF', lineHeight: 1.3, margin: 0 }}>
                     {item.product}
                   </p>
                 </div>
-                <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: '#D1FAE5', borderRadius: 100, padding: '4px 12px', width: 'fit-content' }}>
-                  <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#10B981', display: 'inline-block', flexShrink: 0 }} />
-                  <span style={{ fontSize: 11, fontWeight: 700, color: '#065F46' }}>Verfügbar</span>
-                </div>
+                {item.available ? (
+                  <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: '#D1FAE5', borderRadius: 100, padding: '4px 12px', width: 'fit-content' }}>
+                    <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#10B981', display: 'inline-block', flexShrink: 0 }} />
+                    <span style={{ fontSize: 11, fontWeight: 700, color: '#065F46' }}>Jetzt verfügbar</span>
+                  </div>
+                ) : (
+                  <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: '#F3F4F6', borderRadius: 100, padding: '4px 12px', width: 'fit-content' }}>
+                    <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#9CA3AF', display: 'inline-block', flexShrink: 0 }} />
+                    <span style={{ fontSize: 11, fontWeight: 600, color: '#6B7280' }}>Kommt bald</span>
+                  </div>
+                )}
               </div>
             ))}
           </div>
 
           <p style={{ textAlign: 'center', fontSize: 14, color: '#aaa', marginTop: 36, lineHeight: 1.6 }}>
-            <strong style={{ color: '#888' }}>Weitere Marken folgen:</strong>{' '}
-            LR, Herbalife, Pampered Chef — und viele mehr kommen 2025.
+            Weitere Marken folgen. LR, Herbalife, Pampered Chef und viele mehr sind in Arbeit.
           </p>
         </div>
 
@@ -431,7 +432,7 @@ export default async function HomePage({
               Wähle dein Template.
             </h2>
             <p style={{ textAlign: 'center', fontSize: 16, color: '#777', maxWidth: 500, margin: '0 auto' }}>
-              Jedes Template wurde speziell für ein Network-Marketing-Unternehmen entwickelt — fertige Texte, fertige Designs.
+              Jedes Template wurde speziell für ein Network-Marketing-Unternehmen entwickelt. Fertige Texte, fertige Designs.
             </p>
           </div>
 

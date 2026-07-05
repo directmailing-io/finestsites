@@ -352,7 +352,7 @@ export default function FormSchemaEditor({ templateId }: Props) {
         <div className="flex flex-col gap-1">
           <p className="text-xs font-semibold" style={{ color: '#3730A3' }}>Formulare in Templates einbinden</p>
           <p className="text-xs leading-relaxed" style={{ color: '#4338CA' }}>
-            Verwende im HTML-Template <code className="bg-indigo-100 px-1 rounded font-mono">{'<form action="/.finestsites/forms/FORM_NAME" method="POST">'}</code> — wobei <code className="bg-indigo-100 px-1 rounded font-mono">FORM_NAME</code> dem Slug des Formulars unten entspricht.
+            Verwende im HTML-Template <code className="bg-indigo-100 px-1 rounded font-mono">{'<form action="/.finestsites/forms/FORM_NAME" method="POST">'}</code>, wobei <code className="bg-indigo-100 px-1 rounded font-mono">FORM_NAME</code> dem Slug des Formulars unten entspricht.
             Verstecktes Honeypot-Feld empfohlen: <code className="bg-indigo-100 px-1 rounded font-mono">{'<input name="_honeypot" style="display:none">'}</code>
           </p>
         </div>
@@ -440,7 +440,7 @@ export default function FormSchemaEditor({ templateId }: Props) {
             {/* Fields */}
             <div className="p-4 flex flex-col gap-2">
               {schema.fields.length === 0 && (
-                <p className="text-xs text-gray-400 text-center py-4 italic">Noch keine Felder — füge das erste Feld hinzu.</p>
+                <p className="text-xs text-gray-400 text-center py-4 italic">Noch keine Felder. Füge das erste Feld hinzu.</p>
               )}
               {schema.fields.map((field, idx) => (
                 <FieldRow

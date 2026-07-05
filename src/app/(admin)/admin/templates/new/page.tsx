@@ -133,7 +133,7 @@ export default function NewTemplatePage() {
                 <li className="flex items-start gap-2">
                   <span className="flex-shrink-0 w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold mt-0.5"
                     style={{ background: '#0284C7', color: 'white' }}>2</span>
-                  <span>Nameserver beim Registrar auf Cloudflare umstellen — CF generiert die NS-Adressen automatisch nach Zone-Erstellung</span>
+                  <span>Nameserver beim Registrar auf Cloudflare umstellen. CF generiert die NS-Adressen automatisch nach Zone-Erstellung.</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="flex-shrink-0 w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold mt-0.5"

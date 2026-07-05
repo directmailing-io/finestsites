@@ -77,7 +77,7 @@ export default function OnboardingCompanyPage() {
         </div>
         <h1 className="text-2xl font-semibold text-gray-900 mb-2">Für welches Unternehmen?</h1>
         <p className="text-sm leading-relaxed" style={{ color: '#6B7280' }}>
-          Wähle dein Network-Marketing-Unternehmen aus. Wir zeigen dir dann die passenden Templates — du kannst auch mehrere wählen.
+          Wähle dein Network-Marketing-Unternehmen aus. Wir zeigen dir dann die passenden Templates. Du kannst auch mehrere wählen.
         </p>
       </div>
 

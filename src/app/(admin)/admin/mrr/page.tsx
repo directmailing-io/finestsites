@@ -214,8 +214,8 @@ export default async function MrrPage() {
       </div>
 
       <div className="flex flex-col gap-8">
-        {renderSection(currentGroups, `Fällig diesen Monat — ${currentMonthLabel}`, currentTotal)}
-        {renderSection(nextGroups, `Fällig nächsten Monat — ${nextMonthLabel}`, nextTotal)}
+        {renderSection(currentGroups, `Fällig diesen Monat: ${currentMonthLabel}`, currentTotal)}
+        {renderSection(nextGroups, `Fällig nächsten Monat: ${nextMonthLabel}`, nextTotal)}
       </div>
     </div>
   )

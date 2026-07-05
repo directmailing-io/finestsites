@@ -122,7 +122,7 @@ export default function TemplateAccessPanel({ templateId }: { templateId: string
         <div>
           <h3 className="text-sm font-semibold text-gray-900 mb-1">Nutzer freischalten</h3>
           <p className="text-xs mb-3" style={{ color: '#94A3B8' }}>
-            Suche nach E-Mail oder Benutzername — nur freigeschaltete Nutzer sehen dieses Template.
+            Suche nach E-Mail oder Benutzername. Nur freigeschaltete Nutzer sehen dieses Template.
           </p>
           <div className="relative">
             <svg className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" width="14" height="14"

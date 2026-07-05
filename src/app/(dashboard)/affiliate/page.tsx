@@ -181,7 +181,7 @@ export default function AffiliatePage() {
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-gray-900">Partnerprogramm</h1>
         <p className="text-sm mt-1" style={{ color: '#94A3B8' }}>
-          Empfehle FinestSites — du verdienst <strong className="text-gray-600">20%</strong> dauerhaft, dein Empfohlener spart <strong className="text-gray-600">20%</strong> dauerhaft.
+          Empfehle FinestSites. Du verdienst <strong className="text-gray-600">20%</strong> dauerhaft, dein Empfohlener spart <strong className="text-gray-600">20%</strong> dauerhaft.
         </p>
       </div>
 
@@ -189,10 +189,10 @@ export default function AffiliatePage() {
       {(connectStatus || payoutMsg) && (
         <div className="space-y-2 mb-6">
           {connectStatus === 'success' && (
-            <Banner type="success">Bankkonto eingerichtet — du wirst automatisch ausgezahlt.</Banner>
+            <Banner type="success">Bankkonto eingerichtet. Du wirst automatisch ausgezahlt.</Banner>
           )}
           {connectStatus === 'pending' && (
-            <Banner type="warning">Noch nicht fertig — bitte fahre mit der Einrichtung fort.</Banner>
+            <Banner type="warning">Noch nicht fertig. Bitte fahre mit der Einrichtung fort.</Banner>
           )}
           {payoutMsg && (
             <Banner type={payoutMsg.type === 'success' ? 'success' : 'error'}>{payoutMsg.text}</Banner>
@@ -208,11 +208,11 @@ export default function AffiliatePage() {
           <div className="hidden sm:flex items-center justify-center flex-shrink-0 mt-6">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#D1D5DB" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
           </div>
-          <HowStep icon="💳" n={2} title="Neukunde abonniert" desc="Dein Empfohlener bucht FinestSites und zahlt dauerhaft 20% weniger — egal welchen Tarif." />
+          <HowStep icon="💳" n={2} title="Neukunde abonniert" desc="Dein Empfohlener bucht FinestSites und zahlt dauerhaft 20% weniger, egal welchen Tarif." />
           <div className="hidden sm:flex items-center justify-center flex-shrink-0 mt-6">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#D1D5DB" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
           </div>
-          <HowStep icon="💰" n={3} title="Du bekommst Geld" desc="20% des Monatspreises landen automatisch auf deinem Konto — jeden Monat." highlight />
+          <HowStep icon="💰" n={3} title="Du bekommst Geld" desc="20% des Monatspreises landen automatisch auf deinem Konto, jeden Monat." highlight />
         </div>
       </section>
 
@@ -445,7 +445,7 @@ function BankSetupCard({ onStart, connecting, error }: { onStart: () => void; co
         </div>
         <p className="text-xs leading-relaxed" style={{ color: '#6B7280' }}>
           Damit deine Provisionen automatisch auf dein Konto überwiesen werden, musst du einmalig deine IBAN hinterlegen.
-          Das läuft sicher über <strong className="text-gray-800">Stripe</strong> — FinestSites sieht deine Bankdaten nicht.
+          Das läuft sicher über <strong className="text-gray-800">Stripe</strong>. FinestSites sieht deine Bankdaten nicht.
         </p>
       </div>
 
@@ -454,7 +454,7 @@ function BankSetupCard({ onStart, connecting, error }: { onStart: () => void; co
         <p className="text-[10px] font-bold uppercase tracking-widest mb-3" style={{ color: '#94A3B8' }}>So läuft die Einrichtung ab</p>
         <div className="space-y-3">
           <SetupStep n={1} title='Du klickst auf „Jetzt einrichten"'>
-            Du wirst sicher zu Stripe weitergeleitet — das ist der Dienst, der dein Geld für dich verwahrt und überweist (wie ein Treuhänder).
+            Du wirst sicher zu Stripe weitergeleitet. Das ist der Dienst, der dein Geld für dich verwahrt und überweist (wie ein Treuhänder).
           </SetupStep>
           <SetupStep n={2} title="Stripe fragt dich nach 3 Dingen">
             <span className="flex flex-wrap gap-x-3 gap-y-1 mt-1">
@@ -464,7 +464,7 @@ function BankSetupCard({ onStart, connecting, error }: { onStart: () => void; co
             </span>
             <span className="text-xs text-gray-400 block mt-1.5">Dauert ca. 3–5 Minuten. Ausweis wird in der Regel <em>nicht</em> benötigt.</span>
           </SetupStep>
-          <SetupStep n={3} title="Fertig — ab jetzt läuft alles automatisch">
+          <SetupStep n={3} title="Fertig. Ab jetzt läuft alles automatisch">
             Du wirst zurück zu FinestSites geleitet. Ab dem 1. des nächsten Monats wird dein Guthaben automatisch auf dein Konto überwiesen.
           </SetupStep>
         </div>
@@ -485,13 +485,13 @@ function BankSetupCard({ onStart, connecting, error }: { onStart: () => void; co
         {expanded && (
           <div className="px-6 pb-4 text-xs leading-relaxed text-gray-500 space-y-2">
             <p>
-              <strong className="text-gray-700">Stripe</strong> ist einer der weltweit größten Zahlungsdienstleister — dasselbe Unternehmen, das auch große Shops wie Amazon, Shopify oder Airbnb nutzen.
+              <strong className="text-gray-700">Stripe</strong> ist einer der weltweit größten Zahlungsdienstleister, dasselbe Unternehmen, das auch große Shops wie Amazon, Shopify oder Airbnb nutzen.
             </p>
             <p>
               Wir verwenden Stripe, damit wir deine sensiblen Bankdaten (IBAN etc.) <strong className="text-gray-700">niemals selbst speichern</strong> müssen. Stripe übernimmt das sicher und überwacht alle Transaktionen.
             </p>
             <p>
-              Du brauchst dafür <strong className="text-gray-700">kein Stripe-Konto</strong> zu erstellen — Stripe führt dich durch den Prozess und legt alles automatisch für dich an.
+              Du brauchst dafür <strong className="text-gray-700">kein Stripe-Konto</strong> zu erstellen. Stripe führt dich durch den Prozess und legt alles automatisch für dich an.
             </p>
           </div>
         )}

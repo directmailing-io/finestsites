@@ -710,7 +710,7 @@ export default function EditTemplatePage({ params }: { params: Promise<{ id: str
               </button>
               <p className="text-xs" style={{ color: '#9CA3AF' }}>
                 {importMode === 'merge'
-                  ? 'Vorhandene Felder bleiben erhalten — gleiche Keys werden überschrieben.'
+                  ? 'Vorhandene Felder bleiben erhalten. Gleiche Keys werden überschrieben.'
                   : 'Alle vorhandenen Felder werden durch den Import ersetzt.'}
               </p>
             </div>
@@ -969,7 +969,7 @@ export default function EditTemplatePage({ params }: { params: Promise<{ id: str
                 <circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/>
               </svg>
               <p className="text-xs text-green-700">
-                Test-Modus ist deaktiviert — dieses Template ist für alle Nutzer sichtbar. Aktiviere den Test-Modus im Tab &quot;Webseite Informationen&quot; um den Zugang zu steuern.
+                Test-Modus ist deaktiviert. Dieses Template ist für alle Nutzer sichtbar. Aktiviere den Test-Modus im Tab &quot;Webseite Informationen&quot; um den Zugang zu steuern.
               </p>
             </div>
           )}
@@ -1111,7 +1111,7 @@ export default function EditTemplatePage({ params }: { params: Promise<{ id: str
                   )}
                 </div>
                 <p className="text-xs" style={{ color: '#94A3B8' }}>
-                  Dieses Template zählt nicht gegen das Plan-Limit — auch Starter-Nutzer können es beliebig oft aktivieren.
+                  Dieses Template zählt nicht gegen das Plan-Limit. Auch Starter-Nutzer können es beliebig oft aktivieren.
                 </p>
               </div>
               <button type="button" onClick={() => setIsFree(v => !v)}
@@ -1179,7 +1179,7 @@ export default function EditTemplatePage({ params }: { params: Promise<{ id: str
                 )}
               </div>
               <p className="text-xs" style={{ color: '#94A3B8' }}>
-                Für alle Unternehmen geeignet — wird bei jedem Unternehmens-Filter angezeigt.
+                Für alle Unternehmen geeignet. Wird bei jedem Unternehmens-Filter angezeigt.
               </p>
             </div>
             <button type="button" onClick={() => setIsAllrounder(v => !v)}
@@ -1409,7 +1409,7 @@ export default function EditTemplatePage({ params }: { params: Promise<{ id: str
                   style={{ background: '#EFF6FF', border: '1px solid #BFDBFE' }}>
                   <p className="font-semibold text-blue-800 mb-1 text-sm">Nameserver bei deinem Registrar eintragen</p>
                   <p className="text-xs text-blue-700 mb-3">
-                    Die Cloudflare-Zone für <strong>{form.domain}</strong> wurde angelegt. Trage jetzt diese zwei Nameserver bei deinem Registrar ein (Checkdomain, INWX o.&nbsp;a.) — danach aktiviert sich alles automatisch.
+                    Die Cloudflare-Zone für <strong>{form.domain}</strong> wurde angelegt. Trage jetzt diese zwei Nameserver bei deinem Registrar ein (Checkdomain, INWX o.&nbsp;a.). Danach aktiviert sich alles automatisch.
                   </p>
                   <div className="flex flex-col gap-2 mb-3">
                     {(domainSetup.nameservers ?? []).map((ns) => (
@@ -1468,9 +1468,9 @@ export default function EditTemplatePage({ params }: { params: Promise<{ id: str
                   </p>
                   <ol className="text-xs text-red-700 flex flex-col gap-1 list-decimal list-inside">
                     <li>Öffne <strong>dash.cloudflare.com</strong> → &quot;Add a site&quot; → <code className="bg-red-100 px-1 rounded">{form.domain}</code></li>
-                    <li>Free Plan wählen — Cloudflare erkennt DNS-Einträge automatisch</li>
+                    <li>Free Plan wählen. Cloudflare erkennt DNS-Einträge automatisch.</li>
                     <li>Nameserver bei deinem Registrar auf die von Cloudflare umstellen</li>
-                    <li>Seite lädt sich alle 10 Sek. automatisch neu — oder manuell unten klicken</li>
+                    <li>Seite lädt sich alle 10 Sek. automatisch neu, oder manuell unten klicken.</li>
                   </ol>
                 </div>
                 <div className="flex gap-2">

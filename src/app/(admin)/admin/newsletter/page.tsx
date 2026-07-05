@@ -465,7 +465,7 @@ export default function NewsletterPage() {
                       {data ? `${filteredRecipients.length} Empfänger` : 'Wird geladen…'}
                     </p>
                     {mode === 'filtered' && hasActiveFilters && filteredRecipients.length === 0 && (
-                      <p className="text-xs" style={{ color: '#9CA3AF' }}>— kein Nutzer entspricht dieser Kombination</p>
+                      <p className="text-xs" style={{ color: '#9CA3AF' }}>Kein Nutzer entspricht dieser Kombination.</p>
                     )}
                   </div>
                 </div>

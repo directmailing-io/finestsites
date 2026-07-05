@@ -66,7 +66,7 @@ export default function LoginPage() {
     } catch (err) {
       clearTimeout(timeoutId)
       if (err instanceof DOMException && err.name === 'AbortError') {
-        setError('Zeitüberschreitung — bitte versuche es erneut.')
+        setError('Zeitüberschreitung. Bitte versuche es erneut.')
       } else {
         setError('Verbindungsfehler. Bitte prüfe deine Internetverbindung.')
       }

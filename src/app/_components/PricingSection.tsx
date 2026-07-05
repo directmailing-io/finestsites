@@ -78,7 +78,7 @@ export default function PricingSection({ validatedRef }: { validatedRef?: string
           Günstiger als ein Brötchen am Tag.
         </h2>
         <p style={{ textAlign: 'center', fontSize: 15, color: '#777', marginBottom: 32, maxWidth: 500, margin: '0 auto 32px' }}>
-          2 Brötchen am Tag — und deine Seite arbeitet 24 Stunden für dich. Keine Mindestlaufzeit, kein Kleingedrucktes. Jederzeit kündbar.
+          Ab 67 Cent täglich. Keine Mindestlaufzeit, kein Kleingedrucktes. Jederzeit kündbar.
         </p>
 
         {/* ── Toggle ─────────────────────────────────────────────── */}
@@ -256,15 +256,14 @@ export default function PricingSection({ validatedRef }: { validatedRef?: string
             <div className="fs-pricing-banner-grid">
               {/* Text side */}
               <div style={{ padding: '40px 44px', textAlign: 'left', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                <p style={{ fontSize: 11, fontWeight: 700, color: '#c8a07a', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 14 }}>Zum Vergleich</p>
+                <p style={{ fontSize: 11, fontWeight: 700, color: '#c8a07a', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 14 }}>Was du bekommst</p>
                 <h3 style={{ fontFamily: '"Plein", sans-serif', fontSize: 'clamp(22px, 2.4vw, 30px)', fontWeight: 400, color: '#111', lineHeight: 1.2, letterSpacing: '-0.02em', marginBottom: 18 }}>
-                  2 Brötchen pro Tag.<br />Deine Website für immer.
+                  Weniger als ein Brötchen am Tag.<br />Rund um die Uhr für dich online.
                 </h3>
                 <p style={{ fontSize: 14.5, color: '#666', lineHeight: 1.75 }}>
-                  Eine professionelle Website kostet bei einer Agentur typischerweise{' '}
-                  <strong style={{ color: '#111' }}>3.000 bis 15.000 Euro</strong>, einmalig, ohne laufende Pflege oder Optimierung.
-                  Du bekommst das und mehr für ungefähr <strong style={{ color: '#111' }}>2 Brötchen am Tag</strong> (wenn überhaupt).
-                  Wer sein Network Business ernst meint, erkennt: Das ist keine Ausgabe. Das ist eine Investition.
+                  Eine Agentur-Website kostet zwischen{' '}
+                  <strong style={{ color: '#111' }}>3.000 und 15.000 Euro</strong>. Einmalig, ohne Pflege, ohne Updates.
+                  Bei FinestSites zahlst du weniger als ein Brötchen am Tag. Dafür bekommst du eine Seite, die läuft, während du schläfst.
                 </p>
               </div>
               {/* Image side */}

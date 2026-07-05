@@ -36,13 +36,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 const DEFAULT_SECTIONS: DetailSection[] = [
   {
     heading: 'Kein Aufwand. Wirklich keiner.',
-    text: 'Du brauchst kein technisches Wissen, kein Designtalent und keine Erfahrung im Marketing. Das Template ist fertig konzipiert — du trägst nur deine Infos ein und bist in unter 5 Minuten online. Alles andere ist schon erledigt.',
+    text: 'Du brauchst kein technisches Wissen, kein Designtalent und keine Erfahrung im Marketing. Das Template ist fertig konzipiert. Du trägst nur deine Infos ein und bist in unter 5 Minuten online. Alles andere ist schon erledigt.',
     imagePosition: 'left',
     imageUrl: '',
   },
   {
     heading: 'Dein Link. Überall einsetzbar.',
-    text: 'In die Bio, in Stories, auf Visitenkarten, Flyern oder dem Auto. Wer deinen Link aufruft, landet auf einer professionellen Seite, die für dich spricht — rund um die Uhr, auch wenn du gerade schläfst.',
+    text: 'In die Bio, in Stories, auf Visitenkarten, Flyern oder dem Auto. Wer deinen Link aufruft, landet auf einer professionellen Seite, die für dich spricht. Rund um die Uhr, auch wenn du schläfst.',
     imagePosition: 'right',
     imageUrl: '',
   },
@@ -54,7 +54,7 @@ const DEFAULT_SECTIONS: DetailSection[] = [
   },
   {
     heading: 'Wird automatisch immer besser.',
-    text: 'Wir optimieren die Templates laufend — basierend auf echten Daten von tausenden Besuchern. Deine Website wird mit der Zeit besser, ohne dass du etwas tun musst. Wartung, Updates und Verbesserungen sind inklusive.',
+    text: 'Wir optimieren die Templates laufend basierend auf echten Daten von tausenden Besuchern. Deine Website wird mit der Zeit besser, ohne dass du etwas tun musst. Wartung, Updates und Verbesserungen sind inklusive.',
     imagePosition: 'right',
     imageUrl: '',
   },

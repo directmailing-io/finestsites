@@ -17,7 +17,7 @@ const PROBLEMS = [
     img: '/problem-reichweite.png',
     line1: 'Du postest täglich.',
     line2: 'Aber keiner schreibt dir.',
-    text: 'Du hast die Reichweite. Aber irgendwie passiert... nichts. Die Leute schauen zu, liken vielleicht — und verschwinden wieder.',
+    text: 'Du hast die Reichweite. Aber irgendwie passiert... nichts. Die Leute schauen zu, liken vielleicht. Und verschwinden wieder.',
   },
   {
     img: '/problem-schick.png',
@@ -29,7 +29,7 @@ const PROBLEMS = [
     img: '/problem-target.png',
     line1: 'Du willst alle ansprechen.',
     line2: 'Keiner fühlt sich gemeint.',
-    text: 'Mütter, Sportler, Berufstätige — du versuchst allen gerecht zu werden. Und genau deshalb fühlt sich keiner wirklich angesprochen.',
+    text: 'Mütter, Sportler, Berufstätige: Du versuchst allen gerecht zu werden. Und genau deshalb fühlt sich keiner wirklich angesprochen.',
   },
 ]
 

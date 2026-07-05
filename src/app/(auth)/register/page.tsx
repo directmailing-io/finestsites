@@ -152,7 +152,7 @@ function RegisterForm() {
               </svg>
             </div>
             <div className="min-w-0">
-              <p className="text-xs font-semibold" style={{ color: '#15803D' }}>20% Rabatt — dauerhaft auf dein Abo</p>
+              <p className="text-xs font-semibold" style={{ color: '#15803D' }}>20% Rabatt, dauerhaft auf dein Abo</p>
               <p className="text-xs" style={{ color: '#166534' }}>
                 Empfohlen von <strong>{referrerName ?? `Benutzer ${urlRef}`}</strong> · Rabatt wird automatisch beim Checkout angewendet
               </p>
@@ -277,7 +277,7 @@ function RegisterForm() {
                   )}
                 </div>
                 {referralValid === true && !urlRef && (
-                  <p className="text-xs px-1" style={{ color: '#16A34A' }}>✓ Code gültig — dauerhaft 20% Rabatt auf dein Abo!</p>
+                  <p className="text-xs px-1" style={{ color: '#16A34A' }}>✓ Code gültig. Dauerhaft 20% Rabatt auf dein Abo!</p>
                 )}
                 {referralValid === false && /^[A-Z0-9]+$/.test(referralCode.trim()) ? (
                   <div className="px-3 py-2.5 text-xs" style={{ background: '#FFF7ED', border: '1px solid #FED7AA', borderRadius: 10, color: '#92400E' }}>
@@ -287,7 +287,7 @@ function RegisterForm() {
                   <p className="text-xs px-1" style={{ color: '#DC2626' }}>Empfehler nicht gefunden. Bitte prüfe den Username oder Namen und versuche es erneut.</p>
                 ) : null}
                 {!urlRef && referralValid === null && (
-                  <p className="text-xs px-1" style={{ color: '#9CA3AF' }}>Username oder Name deines Empfehlers — nicht zu verwechseln mit Gutschein-Codes.</p>
+                  <p className="text-xs px-1" style={{ color: '#9CA3AF' }}>Username oder Name deines Empfehlers. Nicht zu verwechseln mit Gutschein-Codes.</p>
                 )}
               </div>
             </div>

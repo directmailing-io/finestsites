@@ -199,7 +199,7 @@ export default function TemplateDetailPage({ params }: { params: Promise<{ id: s
             </div>
             <div>
               <p className="text-sm font-semibold" style={{ color: isLive ? '#15803D' : '#92400E' }}>
-                {isLive ? 'Diese Webseite ist live' : 'Vorlage bereits aktiviert — Entwurf'}
+                {isLive ? 'Diese Webseite ist live' : 'Vorlage bereits aktiviert, Entwurf'}
               </p>
               <p className="text-xs mt-0.5 font-mono" style={{ color: isLive ? '#16A34A' : '#92400E', opacity: 0.8 }}>
                 {isLive ? previewDomain : 'Noch nicht veröffentlicht'}
@@ -387,7 +387,7 @@ export default function TemplateDetailPage({ params }: { params: Promise<{ id: s
                     Webseite konfigurieren
                   </p>
                   <p className="text-sm text-gray-500">
-                    Du kommst direkt in den Editor. Inhalte, Farbthema, Sektionen — alles personalisierbar. Plan-Limit wird erst beim Veröffentlichen verbraucht.
+                    Du kommst direkt in den Editor. Inhalte, Farbthema, Sektionen. Alles personalisierbar. Plan-Limit wird erst beim Veröffentlichen verbraucht.
                   </p>
                 </div>
 

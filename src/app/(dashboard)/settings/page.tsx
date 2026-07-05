@@ -729,7 +729,7 @@ function SettingsContent() {
           <div className="rounded-3xl p-6 sm:p-7" style={{ background: '#F8FAFC' }}>
             <p className="text-base font-semibold text-gray-900 mb-1">Secret-Tarif aktiv</p>
             <p className="text-sm" style={{ color: '#64748B' }}>
-              Du bist auf einem internen Sondertarif mit unlimitierten Premium-Webseiten. Kein Self-Service-Wechsel möglich — wende dich bei Fragen an den Support.
+              Du bist auf einem internen Sondertarif mit unlimitierten Premium-Webseiten. Kein Self-Service-Wechsel möglich. Wende dich bei Fragen an den Support.
             </p>
           </div>
         )}
@@ -884,7 +884,7 @@ function SettingsContent() {
       {/* ════════════════════════════════════════════════════════════════
           RECHNUNGEN
           ════════════════════════════════════════════════════════════════ */}
-      <Section title="Rechnungen" subtitle="Lade hier alle Rechnungen als PDF herunter — fertig für deine Buchhaltung.">
+      <Section title="Rechnungen" subtitle="Lade hier alle Rechnungen als PDF herunter. Fertig für deine Buchhaltung.">
         {invoicesLoading ? (
           <div className="flex flex-col gap-2">
             {[1, 2, 3].map(i => (

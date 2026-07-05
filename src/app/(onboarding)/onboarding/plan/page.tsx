@@ -67,7 +67,7 @@ function PlanPageInner() {
       <div className="text-center mb-8">
         <h1 className="text-2xl font-semibold text-gray-900 mb-2">Wähle deinen Plan</h1>
         <p className="text-sm" style={{ color: '#6B7280' }}>
-          Wähle und bezahle jetzt — danach richtest du deinen Username ein.
+          Wähle und bezahle jetzt. Danach richtest du deinen Username ein.
         </p>
       </div>
 
@@ -83,7 +83,7 @@ function PlanPageInner() {
               {COUPON_LABEL} wird automatisch angewendet
             </p>
             <p className="text-xs" style={{ color: '#166534' }}>
-              Dein Empfehlungscode gibt dir dauerhaft 20% Rabatt — auf jeden Monat / jedes Jahr.
+              Dein Empfehlungscode gibt dir dauerhaft 20% Rabatt. Gilt für jeden Monat und jedes Jahr.
             </p>
           </div>
         </div>
@@ -196,7 +196,7 @@ function PlanPageInner() {
               ) : (
                 <div className="mb-4">
                   {hasDiscount && (
-                    <p className="text-xs font-semibold" style={{ color: '#15803D' }}>20% Rabatt — dauerhaft</p>
+                    <p className="text-xs font-semibold" style={{ color: '#15803D' }}>20% Rabatt, dauerhaft</p>
                   )}
                 </div>
               )}
@@ -235,7 +235,7 @@ function PlanPageInner() {
 
       <div className="text-center mb-6">
         <p className="text-sm font-medium" style={{ color: '#6B7280' }}>
-          🥐 Günstiger als ein Brötchen täglich — ab €{(PLAN_LIST[0].monthly_eur / 30).toFixed(2).replace('.', ',')} / Tag
+          Günstiger als ein Brötchen täglich. Ab €{(PLAN_LIST[0].monthly_eur / 30).toFixed(2).replace('.', ',')} / Tag
         </p>
       </div>
 

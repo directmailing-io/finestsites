@@ -9,17 +9,17 @@ const steps = [
   {
     num: '01',
     title: 'Vorlage wählen',
-    desc: 'Such dir eine fertige Webseiten-Vorlage aus der Bibliothek — für jede Branche.',
+    desc: 'Such dir eine fertige Webseiten-Vorlage aus der Bibliothek. Für jede Branche.',
   },
   {
     num: '02',
     title: 'Personalisieren',
-    desc: 'Trag deine Texte, Bilder und Kontaktdaten ein — kein Code, keine Vorkenntnisse nötig.',
+    desc: 'Trag deine Texte, Bilder und Kontaktdaten ein. Kein Code, keine Vorkenntnisse nötig.',
   },
   {
     num: '03',
     title: 'Veröffentlichen',
-    desc: 'Einen Klick — und deine Seite ist sofort online. Teile sie und gewinne neue Kunden.',
+    desc: 'Einen Klick und deine Seite ist sofort online. Teile sie und gewinne neue Kunden.',
   },
 ]
 

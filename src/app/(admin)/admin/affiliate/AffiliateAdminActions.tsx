@@ -60,7 +60,7 @@ export function AffiliateAdminActions({ stripeBalanceCents, pendingCount, availa
       <div className="flex items-center justify-between mb-4">
         <div>
           <p className="text-sm font-semibold text-gray-900">Admin-Aktionen</p>
-          <p className="text-xs mt-0.5" style={{ color: '#94A3B8' }}>Manuelle Eingriffe — nur für Testzwecke und Sonderfälle</p>
+          <p className="text-xs mt-0.5" style={{ color: '#94A3B8' }}>Manuelle Eingriffe, nur für Testzwecke und Sonderfälle</p>
         </div>
         {/* Stripe balance indicator */}
         <div className="text-right">

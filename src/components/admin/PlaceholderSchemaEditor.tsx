@@ -790,7 +790,7 @@ export function PlaceholderSchemaEditor({ fields, onChange }: Props) {
                     {(field.card_options ?? []).length === 0 && (
                       <div className="text-center py-6 text-sm text-gray-400 rounded-[14px]"
                         style={{ border: '2px dashed #E5E7EB' }}>
-                        Noch keine Cards — klicke auf &ldquo;Card hinzufügen&rdquo;
+                        Noch keine Cards. Klicke auf &ldquo;Card hinzufügen&rdquo;
                       </div>
                     )}
 
@@ -845,7 +845,7 @@ export function PlaceholderSchemaEditor({ fields, onChange }: Props) {
                     {(field.sub_fields ?? []).length === 0 && (
                       <div className="text-center py-6 text-sm text-gray-400 rounded-[14px]"
                         style={{ border: '2px dashed #BAE6FD' }}>
-                        Noch keine Unterfelder — klicke auf &ldquo;Unterfeld hinzufügen&rdquo;
+                        Noch keine Unterfelder. Klicke auf &ldquo;Unterfeld hinzufügen&rdquo;
                       </div>
                     )}
 
@@ -920,7 +920,7 @@ export function PlaceholderSchemaEditor({ fields, onChange }: Props) {
                               </svg>
                             )}
                           </div>
-                          {field.preview_interactive ? 'Ja — Besucher kann dieses Feld in der Vorschau ändern' : 'Nein — Wert ist fix (nur Admin)'}
+                          {field.preview_interactive ? 'Ja: Besucher kann dieses Feld in der Vorschau ändern' : 'Nein: Wert ist fix (nur Admin)'}
                         </button>
                         <p className="text-xs" style={{ color: '#818CF8' }}>
                           Bei &ldquo;Ja&rdquo; erscheint dieses Feld in der interaktiven Seitenleiste der Template-Vorschauseite.

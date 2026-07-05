@@ -204,7 +204,7 @@ function DomainPanel({ siteId, subdomain, initialDomain, initialStatus }: {
             <div>
               <h3 className="text-base font-bold text-gray-900 mb-1">Eigene Domain verbinden</h3>
               <p className="text-sm leading-relaxed" style={{ color: '#6B7280' }}>
-                Statt <span className="font-mono text-xs bg-gray-100 px-1.5 py-0.5 rounded-md">{subdomain}</span> kannst du deine Website auch unter deiner eigenen Adresse erreichbar machen — z.B. <span className="font-mono text-xs bg-gray-100 px-1.5 py-0.5 rounded-md">www.meine-bäckerei.de</span>
+                Statt <span className="font-mono text-xs bg-gray-100 px-1.5 py-0.5 rounded-md">{subdomain}</span> kannst du deine Website auch unter deiner eigenen Adresse erreichbar machen, z.B. <span className="font-mono text-xs bg-gray-100 px-1.5 py-0.5 rounded-md">www.meine-bäckerei.de</span>
               </p>
             </div>
           </div>
@@ -245,7 +245,7 @@ function DomainPanel({ siteId, subdomain, initialDomain, initialStatus }: {
             <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>
           </svg>
           <p className="text-xs leading-relaxed" style={{ color: '#6B7280' }}>
-            Funktioniert mit allen Anbietern — GoDaddy, Strato, all-inkl, IONOS, checkdomain, Namecheap und mehr. Du musst nur einen DNS-Eintrag setzen, wir erklären dir genau wie.
+            Funktioniert mit allen Anbietern: GoDaddy, Strato, all-inkl, IONOS, checkdomain, Namecheap und mehr. Du musst nur einen DNS-Eintrag setzen, wir erklären dir genau wie.
           </p>
         </div>
       </div>
@@ -353,7 +353,7 @@ function DomainPanel({ siteId, subdomain, initialDomain, initialStatus }: {
               </p>
               {isApex && (
                 <p className="text-xs mb-2 px-3 py-2 rounded-[10px]" style={{ background: '#FFF7ED', color: '#92400E', border: '1px solid #FDE68A' }}>
-                  Hinweis: Für Haupt-Domains ohne Präfix brauchst du einen <strong>ALIAS</strong>- oder <strong>ANAME</strong>-Eintrag. Nicht alle Anbieter unterstützen das — falls es nicht klappt, empfehlen wir <strong>www.{domain}</strong> zu verwenden.
+                  Hinweis: Für Haupt-Domains ohne Präfix brauchst du einen <strong>ALIAS</strong>- oder <strong>ANAME</strong>-Eintrag. Nicht alle Anbieter unterstützen das. Falls es nicht klappt, empfehlen wir <strong>www.{domain}</strong> zu verwenden.
                 </p>
               )}
               {/* DNS record box — scrollable on mobile */}
@@ -408,7 +408,7 @@ function DomainPanel({ siteId, subdomain, initialDomain, initialStatus }: {
       {!isPendingDns && !isError && (
         <div className="bg-white rounded-[20px] p-5 text-center"
           style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.05)', border: '1px solid #F0F0F0' }}>
-          <p className="text-sm text-gray-600">DNS-Eintrag erkannt. Das SSL-Zertifikat wird gerade ausgestellt — das dauert meist nur wenige Minuten.</p>
+          <p className="text-sm text-gray-600">DNS-Eintrag erkannt. Das SSL-Zertifikat wird gerade ausgestellt. Das dauert meist nur wenige Minuten.</p>
         </div>
       )}
 
@@ -2541,7 +2541,7 @@ export default function SiteEditPage({ params }: { params: Promise<{ id: string 
                             </label>
                             {field.type === 'loop' && (
                               <p className="text-xs text-gray-400 mt-0.5">
-                                Wiederholbare Einträge — beliebig viele hinzufügen
+                                Wiederholbare Einträge, beliebig viele hinzufügen
                               </p>
                             )}
                             {field.placeholder_text && field.type !== 'loop' && (

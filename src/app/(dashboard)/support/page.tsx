@@ -465,7 +465,7 @@ export default function SupportPage() {
               <div className="flex flex-col items-center justify-center py-16 text-center">
                 <div style={{ width: 56, height: 56, borderRadius: '50%', background: '#F5F0FF', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 26, marginBottom: 14 }}>💬</div>
                 <p style={{ fontSize: 17, fontWeight: 700, color: '#111', margin: '0 0 6px' }}>Neues Gespräch</p>
-                <p style={{ fontSize: 14, color: '#888', margin: 0, lineHeight: 1.5 }}>Schreib uns deine Frage — wir melden uns bald.</p>
+                <p style={{ fontSize: 14, color: '#888', margin: 0, lineHeight: 1.5 }}>Schreib uns deine Frage. Wir melden uns bald.</p>
               </div>
             )}
 

@@ -233,7 +233,7 @@ export default function AdminWaitlistPage() {
               <span>
                 Personalisierung: Nutze{' '}
                 <code className="font-mono font-semibold bg-blue-100 px-1 rounded">{'{{vorname}}'}</code>
-                {' '}im Betreff oder Text — wird durch den Vornamen des Empfängers ersetzt (Fallback: &quot;du&quot;).
+                {' '}im Betreff oder Text. Wird durch den Vornamen des Empfängers ersetzt (Fallback: &quot;du&quot;).
               </span>
             </div>
 

@@ -79,7 +79,7 @@ export default async function VorlagenPage() {
             Finde das passende Template.
           </h1>
           <p style={{ fontSize: 16, color: '#777', maxWidth: 500, margin: '0 auto' }}>
-            Jedes Template wurde speziell für ein Network-Marketing-Unternehmen entwickelt — fertige Texte, fertige Designs.
+            Jedes Template wurde speziell für ein Network-Marketing-Unternehmen entwickelt. Fertige Texte, fertige Designs.
           </p>
         </div>
 

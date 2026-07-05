@@ -160,7 +160,7 @@ export function UsernameForm() {
         </div>
         <h1 className="text-2xl font-semibold text-gray-900 mb-2">Fast geschafft!</h1>
         <p className="text-sm leading-relaxed" style={{ color: '#6B7280' }}>
-          Gib deinen Namen ein und wähle deinen Username — er wird Teil deiner Website-Adresse.
+          Gib deinen Namen ein und wähle deinen Username. Er wird Teil deiner Website-Adresse.
         </p>
       </div>
 
