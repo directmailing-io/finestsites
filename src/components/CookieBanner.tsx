@@ -288,19 +288,25 @@ function SettingsView({ analytics, onChange, onSave, onBack }: {
 
 // ── Main component ──────────────────────────────────────────────────────────
 export default function CookieBanner() {
-  const [visible, setVisible] = useState(false)
+  // Lazy initializer avoids setState-in-effect lint error
+  const [visible, setVisible] = useState(() => {
+    if (typeof window === 'undefined') return false
+    return !readConsent()
+  })
   const [animated, setAnimated] = useState(false)
   const [view, setView] = useState<'banner' | 'settings'>('banner')
   const [analyticsVal, setAnalyticsVal] = useState(false)
 
   useEffect(() => {
-    const consent = readConsent()
-    if (!consent) {
-      setVisible(true)
-      // Small delay so the slide-up is visible on first render
-      setTimeout(() => setAnimated(true), 50)
+    // Trigger slide-up animation on initial mount if visible
+    if (visible) {
+      const t = setTimeout(() => setAnimated(true), 50)
+      return () => clearTimeout(t)
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
+  useEffect(() => {
     // Re-open via footer link
     function handleOpen() {
       const c = readConsent()
