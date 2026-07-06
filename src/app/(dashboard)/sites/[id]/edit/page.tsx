@@ -2519,6 +2519,11 @@ export default function SiteEditPage({ params }: { params: Promise<{ id: string 
                   Schritt {activeIdx + 1} von {sections.length}
                 </p>
                 <h2 className="text-2xl font-bold text-gray-900">{displaySection(activeSection)}</h2>
+                {/sektionen/i.test(activeSection) && (
+                  <p className="text-sm mt-2 leading-relaxed" style={{ color: '#6B7280' }}>
+                    Hier kannst du bestimmte Bereiche deiner Webseite <strong style={{ color: '#111' }}>ein- oder ausblenden</strong>. Was du ausblendest, sehen deine Besucher nicht.
+                  </p>
+                )}
               </div>
             )}
 
