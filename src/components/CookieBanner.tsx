@@ -85,100 +85,117 @@ function BannerView({ onAll, onEssential, onSettings }: {
   onSettings: () => void
 }) {
   return (
-    <div style={{ padding: '24px 24px 20px' }}>
-      {/* Title */}
-      <p style={{
-        fontSize: 18,
-        fontWeight: 800,
-        color: '#111',
-        marginBottom: 10,
-        letterSpacing: '-0.02em',
-        lineHeight: 1.25,
+    <>
+      {/* Header with mascot — mix-blend-mode:multiply makes white PNG bg transparent */}
+      <div style={{
+        background: 'linear-gradient(135deg, #ede0ff 0%, #d8c0ff 100%)',
+        padding: '20px 20px 16px 24px',
+        display: 'flex',
+        alignItems: 'flex-end',
+        gap: 8,
       }}>
-        Darf&apos;s ein Cookie sein?
-      </p>
-
-      {/* Body */}
-      <p style={{
-        fontSize: 13,
-        color: '#555',
-        lineHeight: 1.7,
-        marginBottom: 20,
-      }}>
-        Wir verwenden technisch notwendige Cookies, die den Betrieb dieser Seite ermöglichen
-        (z. B. Anmeldung, Sicherheit). Optionale Analyse-Cookies helfen uns,
-        FinestSites weiterzuentwickeln.
-      </p>
-
-      {/* Settings link */}
-      <button
-        onClick={onSettings}
-        style={{
-          background: 'none',
-          border: 'none',
-          padding: 0,
-          fontSize: 12,
-          fontWeight: 600,
-          color: '#8060b0',
-          cursor: 'pointer',
-          marginBottom: 16,
-          textDecoration: 'underline',
-          textDecorationColor: 'rgba(128,96,176,0.3)',
-          fontFamily: 'inherit',
-        }}
-      >
-        Einstellungen anpassen
-      </button>
-
-      {/* Action buttons — equal prominence, DSGVO-konform */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-        <button
-          onClick={onEssential}
+        <div style={{ flex: 1, paddingBottom: 4 }}>
+          <p style={{ fontSize: 11, fontWeight: 700, color: '#7c4dcc', letterSpacing: '0.1em', textTransform: 'uppercase', margin: '0 0 5px' }}>
+            Cookie-Hinweis
+          </p>
+          <p style={{ fontSize: 19, fontWeight: 800, color: '#1a0533', letterSpacing: '-0.02em', lineHeight: 1.25, margin: 0 }}>
+            Darf&apos;s ein Cookie sein?
+          </p>
+        </div>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/mascot-cookie.png"
+          alt=""
+          aria-hidden="true"
           style={{
-            padding: '12px 16px',
-            borderRadius: 12,
-            border: '1.5px solid #D1D5DB',
-            background: '#fff',
-            color: '#374151',
-            fontSize: 13,
-            fontWeight: 700,
-            cursor: 'pointer',
-            fontFamily: 'inherit',
-            transition: 'border-color 0.15s',
+            width: 88,
+            height: 88,
+            objectFit: 'contain',
+            flexShrink: 0,
+            mixBlendMode: 'multiply',
+            marginBottom: -4,
           }}
-          onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = '#9CA3AF' }}
-          onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = '#D1D5DB' }}
-        >
-          Nur Notwendige
-        </button>
-        <button
-          onClick={onAll}
-          style={{
-            padding: '12px 16px',
-            borderRadius: 12,
-            border: '1.5px solid #8060b0',
-            background: 'linear-gradient(135deg, #8060b0, #9d7ecc)',
-            color: '#fff',
-            fontSize: 13,
-            fontWeight: 700,
-            cursor: 'pointer',
-            fontFamily: 'inherit',
-            boxShadow: '0 2px 12px rgba(128,96,176,0.3)',
-          }}
-        >
-          Alle akzeptieren
-        </button>
+        />
       </div>
 
-      {/* Legal footnote */}
-      <p style={{ fontSize: 11, color: '#bbb', marginTop: 14, lineHeight: 1.5 }}>
-        Weitere Infos in unserer{' '}
-        <a href="/datenschutz" style={{ color: '#bbb', textDecoration: 'underline' }}>Datenschutzerklärung</a>
-        {' '}und den{' '}
-        <a href="/agb" style={{ color: '#bbb', textDecoration: 'underline' }}>AGB</a>.
-        {' '}Gemäß DSGVO &amp; TTDSG § 25.
-      </p>
-    </div>
+      {/* Body */}
+      <div style={{ padding: '18px 24px 20px' }}>
+        <p style={{ fontSize: 13, color: '#555', lineHeight: 1.7, marginBottom: 16 }}>
+          Wir setzen technisch notwendige Cookies ein, die den Betrieb dieser Seite ermöglichen
+          (z. B. Anmeldung, Sicherheit). Optionale Analyse-Cookies helfen uns,
+          FinestSites weiterzuentwickeln.
+        </p>
+
+        {/* Settings link */}
+        <button
+          onClick={onSettings}
+          style={{
+            background: 'none',
+            border: 'none',
+            padding: 0,
+            fontSize: 12,
+            fontWeight: 600,
+            color: '#8060b0',
+            cursor: 'pointer',
+            marginBottom: 16,
+            textDecoration: 'underline',
+            textDecorationColor: 'rgba(128,96,176,0.3)',
+            fontFamily: 'inherit',
+          }}
+        >
+          Einstellungen anpassen
+        </button>
+
+        {/* Action buttons — equal prominence, DSGVO-konform */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+          <button
+            onClick={onEssential}
+            style={{
+              padding: '12px 16px',
+              borderRadius: 12,
+              border: '1.5px solid #D1D5DB',
+              background: '#fff',
+              color: '#374151',
+              fontSize: 13,
+              fontWeight: 700,
+              cursor: 'pointer',
+              fontFamily: 'inherit',
+              transition: 'border-color 0.15s',
+            }}
+            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = '#9CA3AF' }}
+            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = '#D1D5DB' }}
+          >
+            Nur Notwendige
+          </button>
+          <button
+            onClick={onAll}
+            style={{
+              padding: '12px 16px',
+              borderRadius: 12,
+              border: '1.5px solid #8060b0',
+              background: 'linear-gradient(135deg, #8060b0, #9d7ecc)',
+              color: '#fff',
+              fontSize: 13,
+              fontWeight: 700,
+              cursor: 'pointer',
+              fontFamily: 'inherit',
+              boxShadow: '0 2px 12px rgba(128,96,176,0.3)',
+            }}
+          >
+            Alle akzeptieren
+          </button>
+        </div>
+
+        {/* Legal footnote */}
+        <p style={{ fontSize: 11, color: '#bbb', marginTop: 12, lineHeight: 1.5 }}>
+          Details in{' '}
+          <a href="/datenschutz" style={{ color: '#bbb', textDecoration: 'underline' }}>Datenschutzerklärung</a>
+          {' '}und{' '}
+          <a href="/agb" style={{ color: '#bbb', textDecoration: 'underline' }}>AGB</a>.
+          {' '}Gemäß DSGVO &amp; TTDSG § 25.
+        </p>
+      </div>
+    </>
   )
 }
 
@@ -360,68 +377,32 @@ export default function CookieBanner() {
           pointerEvents: 'none',
         }}
       >
-        {/* Positioning container — mascot pokes above */}
         <div style={{
-          position: 'relative',
           maxWidth: 460,
           width: '100%',
           pointerEvents: 'all',
+          background: '#fff',
+          borderRadius: 20,
+          boxShadow: '0 8px 48px rgba(0,0,0,0.18), 0 2px 8px rgba(0,0,0,0.06)',
+          border: '1px solid rgba(128,96,176,0.15)',
+          overflow: 'hidden',
+          transform: animated ? 'translateY(0)' : 'translateY(110%)',
+          transition: 'transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1)',
         }}>
-
-          {/* Mascot — peeks above the card */}
-          <div style={{
-            position: 'absolute',
-            top: -96,
-            right: 24,
-            width: 108,
-            height: 108,
-            zIndex: 2,
-            transform: animated ? 'translateY(0) rotate(-4deg)' : 'translateY(40px) rotate(-4deg)',
-            transition: 'transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)',
-            transitionDelay: '0.1s',
-          }}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/mascot-cookie.png"
-              alt=""
-              aria-hidden="true"
-              style={{
-                width: '100%',
-                height: '100%',
-                objectFit: 'contain',
-                filter: 'drop-shadow(0 6px 20px rgba(0,0,0,0.22))',
-              }}
+          {view === 'banner' ? (
+            <BannerView
+              onAll={() => dismiss(true)}
+              onEssential={() => dismiss(false)}
+              onSettings={() => setView('settings')}
             />
-          </div>
-
-          {/* Card */}
-          <div style={{
-            background: '#fff',
-            borderRadius: 20,
-            boxShadow: '0 8px 40px rgba(0,0,0,0.15), 0 2px 8px rgba(0,0,0,0.06)',
-            border: '1px solid rgba(0,0,0,0.07)',
-            overflow: 'hidden',
-            transform: animated ? 'translateY(0)' : 'translateY(100%)',
-            transition: 'transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)',
-          }}>
-            {/* Purple top accent stripe */}
-            <div style={{ height: 3, background: 'linear-gradient(90deg, #8060b0, #c084fc, #8060b0)', backgroundSize: '200%' }} />
-
-            {view === 'banner' ? (
-              <BannerView
-                onAll={() => dismiss(true)}
-                onEssential={() => dismiss(false)}
-                onSettings={() => setView('settings')}
-              />
-            ) : (
-              <SettingsView
-                analytics={analyticsVal}
-                onChange={setAnalyticsVal}
-                onSave={() => dismiss(analyticsVal)}
-                onBack={() => setView('banner')}
-              />
-            )}
-          </div>
+          ) : (
+            <SettingsView
+              analytics={analyticsVal}
+              onChange={setAnalyticsVal}
+              onSave={() => dismiss(analyticsVal)}
+              onBack={() => setView('banner')}
+            />
+          )}
         </div>
       </div>
     </>
