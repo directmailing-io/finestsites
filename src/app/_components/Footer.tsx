@@ -1,3 +1,5 @@
+'use client'
+
 import FooterWaitlistMini from './FooterWaitlistMini'
 
 export default function Footer() {
@@ -55,6 +57,14 @@ export default function Footer() {
               ].map(l => (
                 <li key={l.label}><a href={l.href} style={{ fontSize: 14, color: 'rgba(255,255,255,0.6)', textDecoration: 'none' }}>{l.label}</a></li>
               ))}
+              <li>
+                <button
+                  onClick={() => window.dispatchEvent(new CustomEvent('fs:openCookieSettings'))}
+                  style={{ background: 'none', border: 'none', padding: 0, fontSize: 14, color: 'rgba(255,255,255,0.6)', textDecoration: 'none', cursor: 'pointer', fontFamily: 'inherit' }}
+                >
+                  Cookie-Einstellungen
+                </button>
+              </li>
             </ul>
           </div>
         </div>
