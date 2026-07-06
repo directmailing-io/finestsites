@@ -376,7 +376,7 @@ export default async function HomePage({
             <span style={{ display: 'flex', alignItems: 'center', gap: 7, fontSize: 13, color: '#666' }}>
               <span style={{ width: 10, height: 10, borderRadius: 3, background: '#D1D5DB', flexShrink: 0, display: 'inline-block' }} />
               <strong style={{ color: '#374151', fontWeight: 700 }}>Standard</strong>
-              &mdash; Events, Link-in-Bio &amp; universelle Seiten
+              &mdash; Für Infoabende, Teamevents &amp; alle deine Links auf einer Seite
             </span>
           </div>
 
