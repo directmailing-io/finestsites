@@ -131,6 +131,7 @@ export default async function HomePage({
         .fs-solution-bg img { width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block; }
         .fs-solution-bg-fade { position: absolute; top: 0; left: 0; right: 0; height: 40%; background: linear-gradient(to bottom, #fff 0%, transparent 100%); }
         .fs-template-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+        .fs-type-explain { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; max-width: 720px; margin: 0 auto 44px; }
         .fs-pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
         .fs-pricing-banner-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; align-items: stretch; }
         /* ── Hero mobile image ───────────────────────────── */
@@ -206,6 +207,7 @@ export default async function HomePage({
           .fs-solution-bg { height: 220px; }
           .fs-template-grid { grid-template-columns: 1fr 1fr; gap: 14px; }
           .fs-template-grid > * { min-width: 0; }
+          .fs-type-explain { grid-template-columns: 1fr; max-width: 100%; }
           .fs-pricing-grid { max-width: 100%; }
           .fs-how-grid { grid-template-columns: 1fr; gap: 48px; }
           .fs-how-connector { display: none; }
@@ -363,6 +365,42 @@ export default async function HomePage({
             <p style={{ textAlign: 'center', fontSize: 16, color: '#777', maxWidth: 440, margin: '0 auto' }}>
               Fertige Designs. Fertige Texte. Deine Daten eintragen, live gehen.
             </p>
+          </div>
+
+          {/* Premium vs Standard explanation */}
+          <div className="fs-type-explain">
+            <div style={{
+              background: 'linear-gradient(135deg, #F0E8FF 0%, #E6D4FF 100%)',
+              border: '1.5px solid #D4B8F8',
+              borderRadius: 18,
+              padding: '20px 24px',
+            }}>
+              <p style={{ fontSize: 12, fontWeight: 800, color: '#7C3AED', letterSpacing: '0.08em', textTransform: 'uppercase', margin: '0 0 8px' }}>
+                ★ Premium-Seiten
+              </p>
+              <p style={{ fontSize: 14, fontWeight: 700, color: '#3B0764', margin: '0 0 6px', lineHeight: 1.3 }}>
+                Speziell für dein Unternehmen
+              </p>
+              <p style={{ fontSize: 13, color: '#6D28D9', lineHeight: 1.65, margin: 0 }}>
+                Produkt-Seiten für FitLine, Thermomix und Co. Fertige Texte und Designs, die genau zu deinem Produkt passen.
+              </p>
+            </div>
+            <div style={{
+              background: '#F7F7F9',
+              border: '1px solid #E5E7EB',
+              borderRadius: 18,
+              padding: '20px 24px',
+            }}>
+              <p style={{ fontSize: 12, fontWeight: 800, color: '#9CA3AF', letterSpacing: '0.08em', textTransform: 'uppercase', margin: '0 0 8px' }}>
+                Standard-Seiten
+              </p>
+              <p style={{ fontSize: 14, fontWeight: 700, color: '#111', margin: '0 0 6px', lineHeight: 1.3 }}>
+                Unterstützende Seiten
+              </p>
+              <p style={{ fontSize: 13, color: '#6B7280', lineHeight: 1.65, margin: 0 }}>
+                Event-Einladungen für Infoabende und Teamevents. Oder eine Link-in-Bio als persönliche Übersichtsseite für deine Bio.
+              </p>
+            </div>
           </div>
 
           <TemplateGridSection templates={templateList} />
