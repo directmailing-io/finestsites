@@ -360,8 +360,8 @@ export default async function HomePage({
             <h2 style={{ fontFamily: '"Plein", sans-serif', fontSize: 'clamp(30px, 4vw, 52px)', fontWeight: 400, color: '#111', letterSpacing: '-0.025em', textAlign: 'center', marginBottom: 16, lineHeight: 1.1 }}>
               Wähle dein Template.
             </h2>
-            <p style={{ textAlign: 'center', fontSize: 16, color: '#777', maxWidth: 500, margin: '0 auto' }}>
-              Jedes Template wurde speziell für ein Network-Marketing-Unternehmen entwickelt. Fertige Texte, fertige Designs.
+            <p style={{ textAlign: 'center', fontSize: 16, color: '#777', maxWidth: 560, margin: '0 auto' }}>
+              Premium-Seiten sind auf dein Network-Unternehmen zugeschnitten. Standard-Seiten wie Link-in-Bio oder Event-Einladungen sind immer dabei.
             </p>
           </div>
 

@@ -4,6 +4,39 @@ import { useState, useMemo } from 'react'
 import { CompanyChip, BadgeChip, PriceChip } from '@/components/TemplateChips'
 import { FakeWebsitePreview, COMING_SOON_PASTEL } from '@/components/FakeWebsitePreview'
 
+function TypeBadge({ isAllrounder }: { isAllrounder: boolean }) {
+  if (isAllrounder) {
+    return (
+      <span style={{
+        display: 'inline-block',
+        fontSize: 10,
+        fontWeight: 700,
+        color: '#1D4ED8',
+        background: '#EFF6FF',
+        padding: '2px 8px',
+        borderRadius: 100,
+        letterSpacing: '0.02em',
+      }}>
+        Standard-Seite
+      </span>
+    )
+  }
+  return (
+    <span style={{
+      display: 'inline-block',
+      fontSize: 10,
+      fontWeight: 700,
+      color: '#92400E',
+      background: '#FEF3C7',
+      padding: '2px 8px',
+      borderRadius: 100,
+      letterSpacing: '0.02em',
+    }}>
+      Premium-Seite
+    </span>
+  )
+}
+
 export interface TemplateCardData {
   id: string
   title: string
@@ -45,6 +78,7 @@ function TemplateCard({ tpl, idx }: { tpl: TemplateCardData; idx: number }) {
         {/* Card body */}
         <div style={{ padding: '16px 18px 20px' }}>
           <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 10 }}>
+            <TypeBadge isAllrounder={tpl.isAllrounder} />
             <CompanyChip name={tpl.nmCompanies[0]} isAllrounder={tpl.isAllrounder} size="xs" />
             <PriceChip isFree={tpl.isFree} size="xs" />
           </div>
@@ -87,6 +121,7 @@ function TemplateCard({ tpl, idx }: { tpl: TemplateCardData; idx: number }) {
       <div style={{ padding: '16px 18px 20px' }}>
         {/* Chips */}
         <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 10 }}>
+          <TypeBadge isAllrounder={tpl.isAllrounder} />
           <CompanyChip name={tpl.nmCompanies[0]} isAllrounder={tpl.isAllrounder} size="xs" />
           <BadgeChip badge={tpl.badge} size="xs" />
           <PriceChip isFree={tpl.isFree} size="xs" />
@@ -139,6 +174,18 @@ export default function TemplateGridSection({ templates }: { templates: Template
 
   return (
     <>
+      {/* Type legend */}
+      <div style={{ display: 'flex', gap: 24, justifyContent: 'center', flexWrap: 'wrap', marginBottom: 28 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <span style={{ display: 'inline-block', fontSize: 10, fontWeight: 700, color: '#92400E', background: '#FEF3C7', padding: '2px 8px', borderRadius: 100 }}>Premium-Seite</span>
+          <span style={{ fontSize: 12, color: '#6B7280' }}>Produkt-Seiten für dein Network-Unternehmen</span>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <span style={{ display: 'inline-block', fontSize: 10, fontWeight: 700, color: '#1D4ED8', background: '#EFF6FF', padding: '2px 8px', borderRadius: 100 }}>Standard-Seite</span>
+          <span style={{ fontSize: 12, color: '#6B7280' }}>Link-in-Bio, Events und mehr</span>
+        </div>
+      </div>
+
       {/* Filter chips — only shown when there are multiple options */}
       {filterOptions.length > 1 && (
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', justifyContent: 'center', marginBottom: 40 }}>

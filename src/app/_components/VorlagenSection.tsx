@@ -115,14 +115,14 @@ const companies: Company[] = [
     ],
   },
   {
-    id: 'pampered-chef',
-    label: 'Pampered Chef',
+    id: 'doterra',
+    label: 'doTERRA',
     products: [
-      { name: 'Küchengeräte-Party', available: false },
-      { name: 'Pampered Chef Business', available: false },
-      { name: 'Cooking Party Einladung', available: false },
-      { name: 'Rezepte & Genuss', available: false },
-      { name: 'Küchen-Lifestyle', available: false },
+      { name: 'Ätherische Öle Starter-Kit', available: false },
+      { name: 'doTERRA Business', available: false },
+      { name: 'Wellness Advocate', available: false },
+      { name: 'Home Essentials Kit', available: false },
+      { name: 'Lifelong Vitality', available: false },
     ],
   },
 ]
