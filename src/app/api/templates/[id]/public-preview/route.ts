@@ -309,7 +309,7 @@ const PREVIEW_GUARD = `
     if (rect.width < 10 || rect.height < 10) return;
 
     var rgb   = isShowing ? '34,197,94' : '239,68,68';
-    var label = isShowing ? 'Sektion eingeblendet ✓' : 'Sektion ausgeblendet ✕';
+    var label = isShowing ? 'Bereich eingeblendet ✓' : 'Bereich ausgeblendet ✕';
     var PAD   = 4;
 
     var ring = document.createElement('div');

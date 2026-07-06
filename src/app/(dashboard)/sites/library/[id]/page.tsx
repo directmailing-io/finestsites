@@ -387,7 +387,7 @@ export default function TemplateDetailPage({ params }: { params: Promise<{ id: s
                     Webseite konfigurieren
                   </p>
                   <p className="text-sm text-gray-500">
-                    Du kommst direkt in den Editor. Inhalte, Farbthema, Sektionen. Alles personalisierbar. Plan-Limit wird erst beim Veröffentlichen verbraucht.
+                    Du kommst direkt in den Editor. Inhalte, Farbthema, Bereiche. Alles personalisierbar. Plan-Limit wird erst beim Veröffentlichen verbraucht.
                   </p>
                 </div>
 
@@ -500,7 +500,7 @@ export default function TemplateDetailPage({ params }: { params: Promise<{ id: s
                     Webseite konfigurieren
                   </p>
                   <p className="text-sm text-gray-500 leading-relaxed">
-                    Du kommst direkt in den Editor. Drei Farbthemen, drei Hero-Varianten, optionale Sektionen, persönlicher Text. Plan-Limit wird erst beim Veröffentlichen verbraucht.
+                    Du kommst direkt in den Editor. Drei Farbthemen, drei Hero-Varianten, optionale Bereiche, persönlicher Text. Plan-Limit wird erst beim Veröffentlichen verbraucht.
                   </p>
                 </div>
                 {wouldExceedAtPublish && (

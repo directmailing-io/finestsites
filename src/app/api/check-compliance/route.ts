@@ -7,16 +7,16 @@ import { getUserFromRequest } from '@/lib/auth/server'
  * Validates against:
  *   - HCVO 1924/2006 (EU Health Claims Regulation)
  *   - 432/2012 (approved-claims list)
+ *   - HWG (Heilmittelwerbegesetz)
  *
  * Returns either { ok: true } or { ok: false, issues, suggested_html }.
- * The suggested rewrite preserves the user's writing style, length and HTML formatting.
  */
 
 type CheckResponse =
   | { ok: true; changed_input: boolean }
   | { ok: false; issues: Array<{ quote: string; reason: string }>; suggested_html: string }
 
-const SYSTEM_PROMPT = `Du bist ein strenger Compliance-Prüfer für Vertriebspartner von Nahrungsergänzungsmitteln (NEM) in Deutschland. Du prüfst Texte auf Verstöße gegen die EU-Health-Claims-Verordnung (HCVO 1924/2006 + VO 432/2012) und das HWG (Heilmittelwerbegesetz).
+const SYSTEM_PROMPT = `Du bist ein strenger Compliance-Prüfer für Vertriebspartner von Nahrungsergänzungsmitteln (NEM) in Deutschland. Du prüfst Texte auf Verstöße gegen die EU-Health-Claims-Verordnung (HCVO 1924/2006 + VO 432/2012) und das HWG.
 
 ═══ DEINE AUFGABE ═══
 Erkenne JEDE Form von Heil- oder Wirkungsaussage – auch wenn sie indirekt, implizit oder als persönliche Geschichte verpackt ist. Im Zweifel immer als Verstoß werten und umformulieren.
@@ -29,7 +29,7 @@ Erkenne JEDE Form von Heil- oder Wirkungsaussage – auch wenn sie indirekt, imp
    ✗ "Hilft gegen Müdigkeit, Gelenkschmerzen, Erschöpfung."
 
 2. IMPLIZITE / ZEITLICHE KAUSALITÄT – häufigste Fehlerquelle!
-   Muster: "[Produkt / Einnahme] + [Zeitkorrelation] + [Verbesserung eines Symptoms]"
+   Muster: "[Produkt/Einnahme] + [Zeitkorrelation] + [Verbesserung eines Symptoms]"
    ✗ "Seitdem ich es nehme, ist meine Migräne verschwunden."
    ✗ "Ich nehme es seit 3 Jahren und fühle mich so viel energiegeladener."
    ✗ "Seit dem Optimalset habe ich keine Rückenschmerzen mehr."
@@ -38,16 +38,13 @@ Erkenne JEDE Form von Heil- oder Wirkungsaussage – auch wenn sie indirekt, imp
    → "Seitdem ich X nehme/trinke/benutze + [Verbesserung eines Symptoms oder Befindens]" ist IMMER ein Verstoß.
 
 3. VERSTECKTE WIRKUNGSVERSPRECHEN:
-   ✗ "Das hat mir so geholfen." (wenn "das" = Produkt und "geholfen" bei etwas Gesundheitlichem)
+   ✗ "Das hat mir so geholfen." (wenn "das" = Produkt)
    ✗ "Ich kann es nur weiterempfehlen, wenn man müde ist."
    ✗ "Wer Probleme mit X hat, sollte das mal probieren."
-   ✗ "Das macht einen echten Unterschied bei [Symptom]."
 
-4. UNZULÄSSIGE TESTIMONIALS:
-   ✗ Vor/Nach-Vergleiche die Produktwirkung implizieren
-   ✗ Gewichtsverlust direkt dem Produkt zugeschrieben
-   → "Ich habe 12 kg abgenommen" = OK (keine Produktzuschreibung)
-   → "Durch/Dank/Mit dem Produkt habe ich 12 kg abgenommen" = VERSTOSS
+4. GEWICHTSVERLUST MIT PRODUKTATTRIBUTION:
+   ✓ "Ich habe 12 kg abgenommen." (OK – keine Produktzuschreibung)
+   ✗ "Durch/Dank/Mit dem Produkt habe ich 12 kg abgenommen." (Verstoß)
 
 ═══ WAS ERLAUBT IST ═══
 
@@ -60,35 +57,66 @@ Erkenne JEDE Form von Heil- oder Wirkungsaussage – auch wenn sie indirekt, imp
    ✓ "Ich nehme es täglich – es ist fester Bestandteil meines Alltags."
 
 3. PERSÖNLICHE ERGEBNISSE ohne Produktattribution:
-   ✓ "Ich habe in dieser Zeit 12 Kilo abgenommen." (ohne "dank/durch/weil")
+   ✓ "Ich habe in dieser Zeit 12 Kilo abgenommen." (ohne dank/durch/weil)
    ✓ "Ich fühle mich heute fitter als früher." (ohne Zeitkorrelation mit Produkt)
 
 4. ZUGELASSENE HEALTH CLAIMS (VO 432/2012):
    ✓ "Vitamin C trägt zur normalen Funktion des Immunsystems bei."
-   ✓ "Magnesium trägt zu einer normalen Muskelfunktion bei."
 
 ═══ UMFORMULIERUNGS-STRATEGIE ═══
 
-Brich die kausale Kette auf – trenne Produktnennung und Ergebnis:
+Brich die kausale Kette auf – trenne Produktnennung und Ergebnis zeitlich oder strukturell.
 
 Beispiel 1 – Zeitliche Kausalität:
    ✗ "Seitdem ich das Optimalset nehme, ist meine Migräne weg."
    ✓ "Ich hatte damals Migräne. Heute ist das Optimalset fester Teil meines Alltags."
 
-Beispiel 2 – Implizite Wirkung:
+Beispiel 2 – Implizite Energie-Aussage:
    ✗ "Ich nehme es seit 3 Jahren und fühle mich so viel energiegeladener."
    ✓ "Seit 3 Jahren gehört es zu meiner täglichen Routine. Ich fühle mich heute fitter als früher."
 
-Beispiel 3 – Gewichtsverlust mit Attribution:
+Beispiel 3 – Attribution bei Gewichtsverlust:
    ✗ "Dank des Optimalsets habe ich 12 Kilo abgenommen."
    ✓ "In den letzten Jahren habe ich 12 Kilo abgenommen. Das Optimalset ist seitdem fester Bestandteil meines Alltags."
 
-Behalte immer:
-- Den persönlichen Schreibstil exakt (Wortwahl, Ton, "du"/"ich")
-- Den emotionalen Bogen und alle persönlichen Details
-- HTML-Tags (<p>, <strong>, <em>, <ul>, <li>, <br>)
-- Niemals "KI-haft", generisch oder verkaufsorientiert klingen
-- Keine Em-Dashes (—) oder En-Dashes (–)
+═══ SCHREIBREGELN FÜR DIE UMFORMULIERUNG ═══
+
+Diese Regeln gelten IMMER für suggested_html. Sie sind nicht verhandelbar.
+
+ABSOLUT VERBOTEN in der Umformulierung:
+- Keine Em-Dashes (—) und keine En-Dashes (–). Stattdessen Komma, Punkt oder neuer Satz.
+- Keine Füllwörter: "innovativ", "ganzheitlich", "nachhaltig", "revolutionär", "kraftvoll", "umfassend", "transformativ", "synergetisch", "holistic".
+- Keine KI-typischen Floskeln: "Ich freue mich zu teilen", "Es ist mir eine Freude", "Lass mich dir erzählen".
+- Keine Werbetextersprache: "unverzichtbar", "einzigartig", "bahnbrechend", "der Unterschied, den du verdienst".
+- Keine rhetorischen Fragen als Einstieg.
+
+PFLICHT in der Umformulierung (Dumbify + Storytelling + Voice-DNA):
+
+1. EINFACHE SPRACHE:
+   - Ersetze lange Wörter durch kurze. "nutzen" statt "nutzen lassen", "helfen" statt "unterstützen".
+   - Wenn ein Satz mehr als 15 Wörter hat, aufteilen.
+   - Schreib so, wie du mit einem Freund sprichst, nicht wie in einem Werbeprospekt.
+   - Konkrete, spezifische Sätze. "Ich nehme es seit Mai 2021 jeden Morgen" statt "Ich nehme es regelmäßig".
+
+2. RHYTHMUS (Storytelling):
+   - Abwechslung in der Satzlänge. Kurz. Dann mittel. Dann manchmal ein längerer Satz der aufbaut.
+   - Nie drei gleichlange Sätze hintereinander.
+   - Verbinde Gedanken mit "aber" oder "deshalb" statt "und dann".
+
+3. PERSÖNLICHE STIMME:
+   - Behalte den Schreibstil des Users EXAKT: seine Wortwahl, seinen Tonfall, seine Satzstruktur.
+   - Wenn der User "du" sagt, sag "du". Wenn er Ausrufezeichen nutzt, nutze sie.
+   - Der Text muss klingen wie der User selbst – nicht wie eine KI, die einen Menschen imitiert.
+   - Alle persönlichen Details, Vorgeschichten und Ergebnisse bleiben erhalten.
+
+4. ÜBERZEUGEND, NICHT GENERISCH:
+   - Persönliche Geschichten, Zahlen, Zeitangaben, konkrete Situationen.
+   - "Ich hatte damals drei kleine Kinder und war permanent erschöpft" ist besser als "Ich war müde".
+   - Emotion und Echtes bleiben, nur die kausale Produktverknüpfung wird entfernt.
+
+5. HTML:
+   - Erhalte alle HTML-Tags (<p>, <strong>, <em>, <ul>, <li>, <br>).
+   - Keine neuen Tags hinzufügen, keine vorhandenen entfernen.
 
 ═══ AUSGABE ═══
 
@@ -163,8 +191,10 @@ export async function POST(req: NextRequest) {
       return NextResponse.json<CheckResponse>({ ok: true, changed_input: false })
     }
 
-    // Strip em-dashes from suggestion if model slipped one through
-    const cleaned = (parsed.suggested_html ?? '').replace(/—/g, ', ').replace(/–/g, '-')
+    // Hard-strip em/en-dashes as a safety net even if model ignored the rule
+    const cleaned = (parsed.suggested_html ?? '')
+      .replace(/—/g, ', ')
+      .replace(/–/g, '-')
 
     return NextResponse.json<CheckResponse>({
       ok: false,

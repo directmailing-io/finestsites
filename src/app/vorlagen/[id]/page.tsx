@@ -311,7 +311,7 @@ export default async function TemplateDetailPage({ params }: Props) {
                 So sieht deine Seite aus. Probier es direkt aus.
               </h2>
               <p className="vd-preview-sub">
-                Passe Farbe, Sektionen und mehr an. Die Vorschau reagiert sofort.
+                Passe Farbe, Bereiche und mehr an. Die Vorschau reagiert sofort.
               </p>
             </>
           )}
