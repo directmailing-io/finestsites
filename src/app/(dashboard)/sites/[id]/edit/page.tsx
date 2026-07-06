@@ -113,6 +113,20 @@ function getProfilePrefill(
 
 const DOMAIN_SECTION = '__domain__'
 
+/** Maps internal schema section names to layman-friendly display labels. */
+function displaySection(name: string): string {
+  return name
+    .replace(/^Sektionen$/i, 'Bereiche')
+    .replace(/^Sektion$/i, 'Bereich')
+    .replace(/^Sektion/g, 'Bereich')
+}
+
+/** Replaces 'Sektion' prefix in card/field labels. */
+function displayLabel(label: string): string {
+  return label.replace(/^Sektion/g, 'Bereich')
+}
+
+
 function DomainPanel({ siteId, subdomain, initialDomain, initialStatus }: {
   siteId: string
   subdomain: string
@@ -2427,7 +2441,7 @@ export default function SiteEditPage({ params }: { params: Promise<{ id: string 
                       : <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
                     }
                   </span>
-                  <span className="text-sm font-medium truncate">{sec}</span>
+                  <span className="text-sm font-medium truncate">{displaySection(sec)}</span>
                 </button>
               )
             })}
@@ -2504,7 +2518,7 @@ export default function SiteEditPage({ params }: { params: Promise<{ id: string 
                 <p className="text-xs font-medium mb-1" style={{ color: '#9CA3AF' }}>
                   Schritt {activeIdx + 1} von {sections.length}
                 </p>
-                <h2 className="text-2xl font-bold text-gray-900">{activeSection}</h2>
+                <h2 className="text-2xl font-bold text-gray-900">{displaySection(activeSection)}</h2>
               </div>
             )}
 
