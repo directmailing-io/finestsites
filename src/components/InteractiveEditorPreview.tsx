@@ -402,7 +402,7 @@ export default function InteractiveEditorPreview({
 
         {/* Toggle fields */}
         {toggleFields.length > 0 && (
-          <SidebarSection label="Sektionen ein/aus" variant={variant}>
+          <SidebarSection label="Bereiche anzeigen / verbergen" variant={variant}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: isMobileVariant ? 0 : 2 }}>
               {toggleFields.map(field => {
                 const isOn = (fieldValues[field.key] ?? 'ja') === 'ja'

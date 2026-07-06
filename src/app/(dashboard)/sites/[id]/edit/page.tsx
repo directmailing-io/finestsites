@@ -2398,7 +2398,7 @@ export default function SiteEditPage({ params }: { params: Promise<{ id: string 
             {sections.length > 0 && (
               <p className="text-xs font-semibold uppercase tracking-widest px-2 mb-2"
                 style={{ color: '#9CA3AF' }}>
-                Abschnitte
+                Seitenbereiche
               </p>
             )}
 
