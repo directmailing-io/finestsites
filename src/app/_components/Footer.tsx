@@ -24,9 +24,12 @@ export default function Footer() {
             <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.45)', lineHeight: 1.7, marginBottom: 20, maxWidth: 260 }}>
               Professionelle Websites fuer Network-Marketing-Profis. In 5 Minuten live.
             </p>
-            {/* Warteliste Mini-Formular */}
-            <p style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'rgba(196,168,240,0.7)', marginBottom: 12 }}>
-              Fruehzugang sichern
+            {/* Insider-Club Newsletter */}
+            <p style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'rgba(196,168,240,0.7)', marginBottom: 8 }}>
+              Insider-Club
+            </p>
+            <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.35)', lineHeight: 1.6, marginBottom: 12 }}>
+              Tipps, neue Templates und Neuigkeiten – direkt in dein Postfach.
             </p>
             <FooterWaitlistMini />
           </div>
