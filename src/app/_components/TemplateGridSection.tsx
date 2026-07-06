@@ -37,16 +37,16 @@ function TemplateCard({ tpl, idx }: { tpl: TemplateCardData; idx: number }) {
         borderRadius: 20,
         overflow: 'hidden',
         background: '#fff',
-        border: isPremium ? '1.5px solid #D4B8F8' : '1px solid #E5E7EB',
+        border: isPremium ? '1.5px solid #C4A0F0' : '1px solid #E5E7EB',
         boxShadow: isPremium
-          ? '0 4px 24px rgba(128,96,176,0.12)'
+          ? '0 4px 28px rgba(128,96,176,0.18), 0 1px 4px rgba(128,96,176,0.08)'
           : '0 2px 12px rgba(0,0,0,0.05)',
         transition: 'box-shadow 0.2s, transform 0.2s',
       }}
       onMouseEnter={e => {
         const el = e.currentTarget as HTMLElement
         el.style.boxShadow = isPremium
-          ? '0 14px 48px rgba(128,96,176,0.22)'
+          ? '0 16px 52px rgba(128,96,176,0.28), 0 2px 8px rgba(128,96,176,0.1)'
           : '0 10px 32px rgba(0,0,0,0.12)'
         el.style.transform = 'translateY(-4px)'
       }}
@@ -88,9 +88,9 @@ function TemplateCard({ tpl, idx }: { tpl: TemplateCardData; idx: number }) {
       <div style={{
         padding: '10px 20px 14px',
         background: isPremium
-          ? 'linear-gradient(135deg, #F0E8FF 0%, #E8D5FF 100%)'
+          ? 'linear-gradient(120deg, #7C3AED 0%, #9D5FEF 100%)'
           : '#F5F5F7',
-        borderTop: isPremium ? '1px solid #DFC8FF' : '1px solid #EBEBED',
+        borderTop: isPremium ? 'none' : '1px solid #EBEBED',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
@@ -98,16 +98,16 @@ function TemplateCard({ tpl, idx }: { tpl: TemplateCardData; idx: number }) {
         <span style={{
           fontSize: 11,
           fontWeight: 700,
-          color: isPremium ? '#7C3AED' : '#9CA3AF',
-          letterSpacing: '0.05em',
+          color: isPremium ? 'rgba(255,255,255,0.8)' : '#9CA3AF',
+          letterSpacing: '0.07em',
           textTransform: 'uppercase',
         }}>
-          {isPremium ? '★ Premium' : 'Standard'}
+          {isPremium ? 'Premium' : 'Standard'}
         </span>
         <span style={{
           fontSize: 13,
           fontWeight: 700,
-          color: isPremium ? '#7C3AED' : '#6B7280',
+          color: isPremium ? '#fff' : '#6B7280',
         }}>
           Ansehen →
         </span>

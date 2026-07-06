@@ -119,7 +119,7 @@ export default async function HomePage({
         .fs-hamburger { display: none !important; }
         .fs-hero-buttons { display: flex; gap: 12px; flex-wrap: wrap; }
         .fs-hero-subtext { font-size: 12px; color: #aaa; margin-top: 14px; }
-        .fs-hero-content { position: relative; z-index: 2; padding: 130px 7vw 90px; max-width: 56vw; }
+        .fs-hero-content { position: relative; z-index: 2; padding: 130px 0 90px 7vw; max-width: 58vw; }
         .fs-section-pad { padding: 96px 7vw; }
         .fs-was-ist-inner { max-width: 1060px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 72px; align-items: center; }
         .fs-feature-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
@@ -275,14 +275,14 @@ export default async function HomePage({
           </p>
           <h1 style={{
             fontFamily: '"Plein", sans-serif',
-            fontSize: 'clamp(28px, 3.2vw, 48px)',
+            fontSize: 'clamp(26px, 2.6vw, 42px)',
             fontWeight: 400,
             color: '#111',
-            lineHeight: 1.08,
+            lineHeight: 1.1,
             letterSpacing: '-0.028em',
             marginBottom: 28,
           }}>
-            Deine Network-Marketing<br />Website. <span style={{ color: '#8060b0' }}>Live in 10 Minuten.</span><br />Ohne Agentur, ohne Technik-Stress.
+            Deine Network-Marketing Website.<br /><span style={{ color: '#8060b0' }}>Live in 10 Minuten.</span><br />Ohne Agentur, ohne Technik-Stress.
           </h1>
           <p style={{ fontSize: 16, color: '#555', lineHeight: 1.75, marginBottom: 28, maxWidth: 460 }}>
             Lass dich von Kunden und Partnern über deine Webseite finden und überzeuge Interessenten von deinen Produkten, noch bevor sie mit dir gesprochen haben.
@@ -360,7 +360,7 @@ export default async function HomePage({
               <img src="/mascot.png" alt="" style={{ height: 100, width: 'auto', display: 'block' }} />
             </div>
             <h2 style={{ fontFamily: '"Plein", sans-serif', fontSize: 'clamp(30px, 4vw, 52px)', fontWeight: 400, color: '#111', letterSpacing: '-0.025em', textAlign: 'center', marginBottom: 16, lineHeight: 1.1 }}>
-              Wähle dein Template.
+              Diese Templates stehen dir zur Verfügung.
             </h2>
             <p style={{ textAlign: 'center', fontSize: 16, color: '#777', maxWidth: 440, margin: '0 auto' }}>
               Fertige Designs. Fertige Texte. Deine Daten eintragen, live gehen.
@@ -376,7 +376,7 @@ export default async function HomePage({
               padding: '20px 24px',
             }}>
               <p style={{ fontSize: 12, fontWeight: 800, color: '#7C3AED', letterSpacing: '0.08em', textTransform: 'uppercase', margin: '0 0 8px' }}>
-                ★ Premium-Seiten
+                Premium-Seiten
               </p>
               <p style={{ fontSize: 14, fontWeight: 700, color: '#3B0764', margin: '0 0 6px', lineHeight: 1.3 }}>
                 Speziell für dein Unternehmen
