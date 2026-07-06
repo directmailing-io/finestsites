@@ -360,9 +360,21 @@ export default async function HomePage({
             <h2 style={{ fontFamily: '"Plein", sans-serif', fontSize: 'clamp(30px, 4vw, 52px)', fontWeight: 400, color: '#111', letterSpacing: '-0.025em', textAlign: 'center', marginBottom: 16, lineHeight: 1.1 }}>
               Wähle dein Template.
             </h2>
-            <p style={{ textAlign: 'center', fontSize: 16, color: '#777', maxWidth: 560, margin: '0 auto' }}>
-              Premium-Seiten sind auf dein Network-Unternehmen zugeschnitten. Standard-Seiten wie Link-in-Bio oder Event-Einladungen sind immer dabei.
+            <p style={{ textAlign: 'center', fontSize: 16, color: '#777', maxWidth: 480, margin: '0 auto 24px' }}>
+              Fertige Designs. Fertige Texte. Einfach deine Daten eintragen und live gehen.
             </p>
+            {/* Type legend — simple, one line */}
+            <div style={{ display: 'inline-flex', gap: 20, background: '#fff', border: '1px solid #e8e8e8', borderRadius: 100, padding: '8px 20px', fontSize: 12, color: '#555' }}>
+              <span>
+                <span style={{ display: 'inline-block', width: 8, height: 8, borderRadius: '50%', background: '#F59E0B', marginRight: 6, verticalAlign: 'middle' }} />
+                <strong style={{ color: '#92400E' }}>Premium</strong> = für dein NM-Unternehmen
+              </span>
+              <span style={{ color: '#d0d0d0' }}>|</span>
+              <span>
+                <span style={{ display: 'inline-block', width: 8, height: 8, borderRadius: '50%', background: '#3B82F6', marginRight: 6, verticalAlign: 'middle' }} />
+                <strong style={{ color: '#1D4ED8' }}>Standard</strong> = Link-in-Bio, Events &amp; mehr
+              </span>
+            </div>
           </div>
 
           {templateList.length === 0 ? (
