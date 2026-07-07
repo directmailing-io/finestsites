@@ -7,94 +7,158 @@
   <meta name="robots" content="noindex, nofollow" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --bg: #0a0a0a;
-      --surface: #141414;
-      --border: rgba(255,255,255,0.08);
-      --text: #e8e8e8;
-      --muted: #888;
-      --accent: #5fcc8a;
-      --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      background: #fff;
+      color: #111;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
     }
-    html { background: var(--bg); color: var(--text); font-family: var(--font); -webkit-font-smoothing: antialiased; }
-    body { min-height: 100vh; display: flex; flex-direction: column; }
 
     /* ── Nav ── */
     nav {
-      position: sticky; top: 0; z-index: 10;
-      background: rgba(10,10,10,0.9); backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border);
-      padding: 0 24px; height: 60px;
-      display: flex; align-items: center; justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid #f0f0f0;
+      padding: 0 24px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
-    nav .logo { font-size: 15px; font-weight: 700; letter-spacing: -0.02em; color: #fff; text-decoration: none; }
-    nav .back {
-      font-size: 13px; color: var(--muted); text-decoration: none;
-      display: flex; align-items: center; gap: 6px;
+    .logo {
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: #111;
+      text-decoration: none;
+    }
+    .logo span {
+      color: #5fcc8a;
+    }
+    .back {
+      font-size: 13px;
+      color: #888;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 5px;
       transition: color 0.15s;
     }
-    nav .back:hover { color: var(--text); }
-    nav .back svg { flex-shrink: 0; }
+    .back:hover { color: #111; }
+    .back svg { flex-shrink: 0; }
 
     /* ── Main ── */
     main {
       flex: 1;
-      max-width: 720px; width: 100%;
+      max-width: 680px;
+      width: 100%;
       margin: 0 auto;
-      padding: 64px 24px 96px;
+      padding: 56px 24px 96px;
     }
 
-    .page-label {
-      font-size: 11px; font-weight: 700; letter-spacing: 0.12em;
-      text-transform: uppercase; color: var(--accent); margin-bottom: 12px;
+    .eyebrow {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #5fcc8a;
+      margin-bottom: 10px;
     }
     h1 {
-      font-size: clamp(28px, 4vw, 40px); font-weight: 800;
-      color: #fff; letter-spacing: -0.03em; line-height: 1.15; margin-bottom: 48px;
+      font-size: clamp(26px, 4vw, 36px);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: #111;
+      line-height: 1.15;
+      margin-bottom: 48px;
     }
 
-    section { margin-bottom: 40px; }
+    /* ── Sections ── */
+    .section {
+      margin-bottom: 36px;
+      padding-bottom: 36px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .section:last-of-type {
+      border-bottom: none;
+    }
     h2 {
-      font-size: 13px; font-weight: 700; letter-spacing: 0.08em;
-      text-transform: uppercase; color: var(--muted); margin-bottom: 14px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #999;
+      margin-bottom: 12px;
     }
-    .card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 20px 22px;
+    p, address {
+      font-size: 15px;
+      line-height: 1.75;
+      color: #333;
+      font-style: normal;
     }
-    p, address { font-size: 15px; line-height: 1.75; color: var(--text); font-style: normal; }
-    p + p { margin-top: 12px; }
-    a { color: var(--accent); text-decoration: none; }
+    p + p { margin-top: 10px; }
+    a { color: #5fcc8a; text-decoration: none; }
     a:hover { text-decoration: underline; }
-    strong { color: #fff; font-weight: 600; }
+    strong { color: #111; font-weight: 600; }
 
-    .divider { height: 1px; background: var(--border); margin: 40px 0; }
-    .footnote { font-size: 12px; color: var(--muted); margin-top: 48px; }
+    /* ── Highlight boxes ── */
+    .highlight {
+      background: #f8fdf9;
+      border: 1px solid #c8edd4;
+      border-radius: 12px;
+      padding: 16px 18px;
+      margin-bottom: 16px;
+    }
+    .highlight:last-child { margin-bottom: 0; }
+    .highlight address,
+    .highlight p {
+      font-size: 15px;
+      line-height: 1.75;
+      color: #333;
+    }
+
+    .footnote {
+      font-size: 12px;
+      color: #bbb;
+      margin-top: 48px;
+    }
 
     /* ── Footer ── */
     footer {
-      border-top: 1px solid var(--border);
-      padding: 24px;
-      display: flex; flex-wrap: wrap; gap: 16px;
-      justify-content: space-between; align-items: center;
+      border-top: 1px solid #f0f0f0;
+      padding: 20px 24px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: space-between;
+      align-items: center;
     }
-    footer .copy { font-size: 12px; color: var(--muted); }
-    footer nav.links { display: flex; gap: 20px; }
-    footer nav.links a { font-size: 12px; color: var(--muted); text-decoration: none; }
-    footer nav.links a:hover { color: var(--text); }
+    footer span,
+    footer a {
+      font-size: 12px;
+      color: #bbb;
+      text-decoration: none;
+    }
+    footer a:hover { color: #666; }
+    footer nav { display: flex; gap: 20px; }
 
     @media (max-width: 600px) {
       main { padding: 40px 20px 72px; }
-      footer { flex-direction: column; align-items: flex-start; gap: 12px; }
+      footer { flex-direction: column; align-items: flex-start; }
     }
   </style>
 </head>
 <body>
 
 <nav>
-  <a class="logo" href="/">DailyOptimal</a>
+  <a class="logo" href="/">Daily<span>Optimal</span></a>
   <a class="back" href="/">
     <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
       <path d="M10 3L5 8L10 13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
@@ -104,132 +168,111 @@
 </nav>
 
 <main>
-  <p class="page-label">Rechtliches</p>
+  <p class="eyebrow">Rechtliches</p>
   <h1>Impressum</h1>
 
-  <section>
+  <div class="section">
     <h2>Angaben gemäß § 5 TMG</h2>
-    <div class="card">
+    <p>
+      Diese Website wird technisch betrieben von <strong>FinestSites</strong> und inhaltlich
+      genutzt von <strong>{{impressum_name}}</strong>.
+    </p>
+  </div>
+
+  <div class="section">
+    <h2>FinestSites – technischer Betrieb</h2>
+    <div class="highlight">
+      <address>
+        <strong>Daniel Kurzeja</strong><br />
+        Herrleinstr. 39<br />
+        97437 Haßfurt<br />
+        Deutschland<br /><br />
+        Telefon: <a href="tel:+4915151005561">+49 151 51005561</a><br />
+        E-Mail: <a href="mailto:hello@finestsites.io">hello@finestsites.io</a><br />
+        USt-IdNr.: DE369220308
+      </address>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Inhaltlich verantwortlich (Nutzer dieser Website)</h2>
+    <div class="highlight">
       <address>
         <strong>{{impressum_name}}</strong><br />
         {{impressum_strasse}}<br />
         {{impressum_plz}} {{impressum_ort}}<br />
-        Deutschland
+        Deutschland<br /><br />
+        E-Mail: <a href="mailto:{{impressum_email}}">{{impressum_email}}</a><br />
+        {{#if impressum_telefon}}Telefon: <a href="tel:{{impressum_telefon}}">{{impressum_telefon}}</a>{{/if}}
       </address>
     </div>
-  </section>
+    <p style="margin-top: 14px;">
+      Inhaltlich verantwortlich gemäß § 18 Abs. 2 MStV: <strong>{{impressum_name}}</strong>,
+      {{impressum_strasse}}, {{impressum_plz}} {{impressum_ort}}.
+    </p>
+  </div>
 
-  <section>
-    <h2>Kontakt</h2>
-    <div class="card">
-      <p>
-        Telefon: <a href="tel:{{impressum_telefon}}">{{impressum_telefon}}</a><br />
-        E-Mail: <a href="mailto:{{impressum_email}}">{{impressum_email}}</a>
-      </p>
-    </div>
-  </section>
-
-  {{#if impressum_ustidnr}}
-  <section>
-    <h2>Umsatzsteuer-Identifikationsnummer</h2>
-    <div class="card">
-      <p>Gemäß § 27a Umsatzsteuergesetz: <strong>{{impressum_ustidnr}}</strong></p>
-    </div>
-  </section>
-  {{/if}}
-
-  <section>
-    <h2>Inhaltlich verantwortlich gemäß § 18 Abs. 2 MStV</h2>
-    <div class="card">
-      <address>
-        {{impressum_name}}<br />
-        {{impressum_strasse}}<br />
-        {{impressum_plz}} {{impressum_ort}}
-      </address>
-    </div>
-  </section>
-
-  <div class="divider"></div>
-
-  <section>
-    <h2>Technischer Betrieb</h2>
-    <div class="card">
-      <p>
-        Diese Website wird technisch betrieben durch:<br />
-        <strong>FinestSites – Daniel Kurzeja</strong><br />
-        Herrleinstr. 39, 97437 Haßfurt, Deutschland<br />
-        E-Mail: <a href="mailto:hello@finestsites.io">hello@finestsites.io</a>
-      </p>
-    </div>
-  </section>
-
-  <section>
+  <div class="section">
     <h2>EU-Streitschlichtung</h2>
-    <div class="card">
-      <p>
-        Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit:
-        <a href="https://ec.europa.eu/consumers/odr/" target="_blank" rel="noopener">
-          https://ec.europa.eu/consumers/odr/
-        </a>
-      </p>
-      <p>
-        Wir sind nicht bereit oder verpflichtet, an Streitbeilegungsverfahren vor einer
-        Verbraucherschlichtungsstelle teilzunehmen.
-      </p>
-    </div>
-  </section>
+    <p>
+      Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit:
+      <a href="https://ec.europa.eu/consumers/odr/" target="_blank" rel="noopener noreferrer">https://ec.europa.eu/consumers/odr/</a>
+    </p>
+    <p>
+      Wir sind nicht bereit oder verpflichtet, an Streitbeilegungsverfahren vor einer
+      Verbraucherschlichtungsstelle teilzunehmen.
+    </p>
+  </div>
 
-  <section>
+  <div class="section">
     <h2>Haftung für Inhalte</h2>
-    <div class="card">
-      <p>
-        Als Diensteanbieter sind wir gemäß § 7 Abs. 1 TMG für eigene Inhalte auf diesen Seiten
-        nach den allgemeinen Gesetzen verantwortlich. Nach §§ 8 bis 10 TMG sind wir als
-        Diensteanbieter jedoch nicht verpflichtet, übermittelte oder gespeicherte fremde
-        Informationen zu überwachen oder nach Umständen zu forschen, die auf eine rechtswidrige
-        Tätigkeit hinweisen.
-      </p>
-      <p>
-        Verpflichtungen zur Entfernung oder Sperrung der Nutzung von Informationen nach den
-        allgemeinen Gesetzen bleiben hiervon unberührt. Eine diesbezügliche Haftung ist jedoch
-        erst ab dem Zeitpunkt der Kenntnis einer konkreten Rechtsverletzung möglich. Bei
-        Bekanntwerden von entsprechenden Rechtsverletzungen werden wir diese Inhalte umgehend
-        entfernen.
-      </p>
-    </div>
-  </section>
+    <p>
+      Als Diensteanbieter sind wir gemäß § 7 Abs. 1 TMG für eigene Inhalte auf diesen Seiten
+      nach den allgemeinen Gesetzen verantwortlich. Nach §§ 8 bis 10 TMG sind wir als
+      Diensteanbieter jedoch nicht verpflichtet, übermittelte oder gespeicherte fremde
+      Informationen zu überwachen oder nach Umständen zu forschen, die auf eine rechtswidrige
+      Tätigkeit hinweisen.
+    </p>
+    <p>
+      Verpflichtungen zur Entfernung oder Sperrung der Nutzung von Informationen nach den
+      allgemeinen Gesetzen bleiben hiervon unberührt. Eine diesbezügliche Haftung ist jedoch
+      erst ab dem Zeitpunkt der Kenntnis einer konkreten Rechtsverletzung möglich. Bei
+      Bekanntwerden von entsprechenden Rechtsverletzungen werden wir diese Inhalte umgehend
+      entfernen.
+    </p>
+  </div>
 
-  <section>
+  <div class="section">
     <h2>Haftung für Links</h2>
-    <div class="card">
-      <p>
-        Unser Angebot enthält Links zu externen Websites Dritter, auf deren Inhalte wir keinen
-        Einfluss haben. Deshalb können wir für diese fremden Inhalte auch keine Gewähr übernehmen.
-        Für die Inhalte der verlinkten Seiten ist stets der jeweilige Anbieter oder Betreiber
-        verantwortlich. Bei Bekanntwerden von Rechtsverletzungen werden wir derartige Links
-        umgehend entfernen.
-      </p>
-    </div>
-  </section>
+    <p>
+      Unser Angebot enthält Links zu externen Websites Dritter, auf deren Inhalte wir keinen
+      Einfluss haben. Deshalb können wir für diese fremden Inhalte auch keine Gewähr übernehmen.
+      Für die Inhalte der verlinkten Seiten ist stets der jeweilige Anbieter oder Betreiber
+      der Seiten verantwortlich. Die verlinkten Seiten wurden zum Zeitpunkt der Verlinkung auf
+      mögliche Rechtsverstöße überprüft. Bei Bekanntwerden von Rechtsverletzungen werden wir
+      derartige Links umgehend entfernen.
+    </p>
+  </div>
 
-  <section>
+  <div class="section">
     <h2>Urheberrecht</h2>
-    <div class="card">
-      <p>
-        Die durch den Seitenbetreiber erstellten Inhalte und Werke auf diesen Seiten unterliegen
-        dem deutschen Urheberrecht. Downloads und Kopien dieser Seite sind nur für den privaten,
-        nicht kommerziellen Gebrauch gestattet. Soweit die Inhalte auf dieser Seite nicht vom
-        Betreiber erstellt wurden, werden die Urheberrechte Dritter beachtet.
-      </p>
-    </div>
-  </section>
+    <p>
+      Die durch den Seitenbetreiber erstellten Inhalte und Werke auf diesen Seiten unterliegen
+      dem deutschen Urheberrecht. Downloads und Kopien dieser Seite sind nur für den privaten,
+      nicht kommerziellen Gebrauch gestattet. Soweit die Inhalte auf dieser Seite nicht vom
+      Betreiber erstellt wurden, werden die Urheberrechte Dritter beachtet. Sollten Sie trotzdem
+      auf eine Urheberrechtsverletzung aufmerksam werden, bitten wir um einen entsprechenden
+      Hinweis. Bei Bekanntwerden von Rechtsverletzungen werden wir derartige Inhalte umgehend
+      entfernen.
+    </p>
+  </div>
 
   <p class="footnote">Stand: Juli 2026</p>
 </main>
 
 <footer>
-  <span class="copy">&copy; 2026 {{impressum_name}}</span>
-  <nav class="links">
+  <span>&copy; 2026 {{impressum_name}}</span>
+  <nav>
     <a href="/">Startseite</a>
     <a href="/datenschutz">Datenschutz</a>
     <a href="/impressum">Impressum</a>

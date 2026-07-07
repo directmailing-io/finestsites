@@ -7,95 +7,203 @@
   <meta name="robots" content="noindex, nofollow" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --bg: #0a0a0a;
-      --surface: #141414;
-      --border: rgba(255,255,255,0.08);
-      --text: #e8e8e8;
-      --muted: #888;
-      --accent: #5fcc8a;
-      --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      background: #fff;
+      color: #111;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
     }
-    html { background: var(--bg); color: var(--text); font-family: var(--font); -webkit-font-smoothing: antialiased; }
-    body { min-height: 100vh; display: flex; flex-direction: column; }
 
     /* ── Nav ── */
     nav {
-      position: sticky; top: 0; z-index: 10;
-      background: rgba(10,10,10,0.9); backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border);
-      padding: 0 24px; height: 60px;
-      display: flex; align-items: center; justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid #f0f0f0;
+      padding: 0 24px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
-    nav .logo { font-size: 15px; font-weight: 700; letter-spacing: -0.02em; color: #fff; text-decoration: none; }
-    nav .back {
-      font-size: 13px; color: var(--muted); text-decoration: none;
-      display: flex; align-items: center; gap: 6px;
+    .logo {
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: #111;
+      text-decoration: none;
+    }
+    .logo span {
+      color: #5fcc8a;
+    }
+    .back {
+      font-size: 13px;
+      color: #888;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 5px;
       transition: color 0.15s;
     }
-    nav .back:hover { color: var(--text); }
+    .back:hover { color: #111; }
+    .back svg { flex-shrink: 0; }
 
     /* ── Main ── */
     main {
       flex: 1;
-      max-width: 720px; width: 100%;
+      max-width: 680px;
+      width: 100%;
       margin: 0 auto;
-      padding: 64px 24px 96px;
+      padding: 56px 24px 96px;
     }
 
-    .page-label {
-      font-size: 11px; font-weight: 700; letter-spacing: 0.12em;
-      text-transform: uppercase; color: var(--accent); margin-bottom: 12px;
+    .eyebrow {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #5fcc8a;
+      margin-bottom: 10px;
     }
     h1 {
-      font-size: clamp(28px, 4vw, 40px); font-weight: 800;
-      color: #fff; letter-spacing: -0.03em; line-height: 1.15; margin-bottom: 48px;
+      font-size: clamp(26px, 4vw, 36px);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: #111;
+      line-height: 1.15;
+      margin-bottom: 48px;
     }
 
-    section { margin-bottom: 40px; }
+    /* ── Sections ── */
+    .section {
+      margin-bottom: 36px;
+      padding-bottom: 36px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .section:last-of-type {
+      border-bottom: none;
+    }
     h2 {
-      font-size: 13px; font-weight: 700; letter-spacing: 0.08em;
-      text-transform: uppercase; color: var(--muted); margin-bottom: 14px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #999;
+      margin-bottom: 12px;
     }
-    .card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 20px 22px;
+    p, address {
+      font-size: 15px;
+      line-height: 1.75;
+      color: #333;
+      font-style: normal;
     }
-    p, address { font-size: 15px; line-height: 1.75; color: var(--text); font-style: normal; }
-    p + p { margin-top: 12px; }
-    a { color: var(--accent); text-decoration: none; }
+    p + p { margin-top: 10px; }
+    a { color: #5fcc8a; text-decoration: none; }
     a:hover { text-decoration: underline; }
-    strong { color: #fff; font-weight: 600; }
-    ul { font-size: 15px; line-height: 1.75; color: var(--text); padding-left: 20px; }
-    li { margin-top: 6px; }
+    strong { color: #111; font-weight: 600; }
 
-    .divider { height: 1px; background: var(--border); margin: 40px 0; }
-    .footnote { font-size: 12px; color: var(--muted); margin-top: 48px; }
+    ul {
+      font-size: 15px;
+      line-height: 1.75;
+      color: #333;
+      padding-left: 20px;
+      margin-top: 10px;
+    }
+    li { margin-top: 8px; }
+    li strong { color: #111; }
+
+    /* ── Highlight boxes ── */
+    .highlight {
+      background: #f8fdf9;
+      border: 1px solid #c8edd4;
+      border-radius: 12px;
+      padding: 16px 18px;
+      margin-bottom: 16px;
+    }
+    .highlight:last-child { margin-bottom: 0; }
+    .highlight address,
+    .highlight p {
+      font-size: 15px;
+      line-height: 1.75;
+      color: #333;
+    }
+
+    /* ── Rights grid ── */
+    .rights-list {
+      list-style: none;
+      padding: 0;
+      margin-top: 14px;
+    }
+    .rights-list li {
+      display: flex;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid #f0f0f0;
+      margin-top: 0;
+    }
+    .rights-list li:last-child { border-bottom: none; }
+    .rights-list .art {
+      font-size: 11px;
+      font-weight: 700;
+      color: #5fcc8a;
+      white-space: nowrap;
+      padding-top: 2px;
+      min-width: 64px;
+    }
+    .rights-list .desc {
+      font-size: 15px;
+      line-height: 1.6;
+      color: #333;
+    }
+    .rights-list .desc strong {
+      display: block;
+      color: #111;
+      font-weight: 600;
+      margin-bottom: 1px;
+    }
+
+    .footnote {
+      font-size: 12px;
+      color: #bbb;
+      margin-top: 48px;
+    }
 
     /* ── Footer ── */
     footer {
-      border-top: 1px solid var(--border);
-      padding: 24px;
-      display: flex; flex-wrap: wrap; gap: 16px;
-      justify-content: space-between; align-items: center;
+      border-top: 1px solid #f0f0f0;
+      padding: 20px 24px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: space-between;
+      align-items: center;
     }
-    footer .copy { font-size: 12px; color: var(--muted); }
-    footer nav.links { display: flex; gap: 20px; }
-    footer nav.links a { font-size: 12px; color: var(--muted); text-decoration: none; }
-    footer nav.links a:hover { color: var(--text); }
+    footer span,
+    footer a {
+      font-size: 12px;
+      color: #bbb;
+      text-decoration: none;
+    }
+    footer a:hover { color: #666; }
+    footer nav { display: flex; gap: 20px; }
 
     @media (max-width: 600px) {
       main { padding: 40px 20px 72px; }
-      footer { flex-direction: column; align-items: flex-start; gap: 12px; }
+      footer { flex-direction: column; align-items: flex-start; }
+      .rights-list .art { min-width: 56px; }
     }
   </style>
 </head>
 <body>
 
 <nav>
-  <a class="logo" href="/">DailyOptimal</a>
+  <a class="logo" href="/">Daily<span>Optimal</span></a>
   <a class="back" href="/">
     <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
       <path d="M10 3L5 8L10 13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
@@ -105,131 +213,158 @@
 </nav>
 
 <main>
-  <p class="page-label">Rechtliches</p>
+  <p class="eyebrow">Rechtliches</p>
   <h1>Datenschutzerklärung</h1>
 
-  <section>
+  <!-- 1 Verantwortlicher -->
+  <div class="section">
     <h2>1. Verantwortlicher</h2>
-    <div class="card">
+    <p>
+      Für den technischen Betrieb dieser Website ist verantwortlich:
+    </p>
+    <div class="highlight" style="margin-top: 14px;">
+      <address>
+        <strong>FinestSites – Daniel Kurzeja</strong><br />
+        Herrleinstr. 39<br />
+        97437 Haßfurt<br />
+        Deutschland<br /><br />
+        E-Mail: <a href="mailto:hello@finestsites.io">hello@finestsites.io</a>
+      </address>
+    </div>
+    <p style="margin-top: 14px;">
+      Für die Inhalte dieser Website ist verantwortlich:
+    </p>
+    <div class="highlight" style="margin-top: 14px;">
       <address>
         <strong>{{impressum_name}}</strong><br />
         {{impressum_strasse}}<br />
         {{impressum_plz}} {{impressum_ort}}<br />
         Deutschland<br /><br />
-        E-Mail: <a href="mailto:{{impressum_email}}">{{impressum_email}}</a><br />
-        Telefon: <a href="tel:{{impressum_telefon}}">{{impressum_telefon}}</a>
+        E-Mail: <a href="mailto:{{impressum_email}}">{{impressum_email}}</a>
       </address>
     </div>
-  </section>
+  </div>
 
-  <section>
+  <!-- 2 Hosting -->
+  <div class="section">
     <h2>2. Hosting &amp; technischer Betrieb</h2>
-    <div class="card">
-      <p>
-        Diese Website wird technisch bereitgestellt durch:
-      </p>
-      <p>
-        <strong>FinestSites – Daniel Kurzeja</strong><br />
-        Herrleinstr. 39, 97437 Haßfurt<br />
-        E-Mail: <a href="mailto:hello@finestsites.io">hello@finestsites.io</a>
-      </p>
-      <p>
-        Die Bereitstellung erfolgt über Server von <strong>Hetzner Online GmbH</strong>
-        (Industriestr. 25, 91710 Gunzenhausen) sowie über das Netzwerk von
-        <strong>Cloudflare, Inc.</strong> (101 Townsend St, San Francisco, CA 94107, USA)
-        für Zwecke der Geschwindigkeit, Sicherheit und globalen Verfügbarkeit.
-      </p>
-      <p>
-        Mit Cloudflare besteht ein Auftragsverarbeitungsvertrag gemäß Art. 28 DSGVO.
-        Cloudflare ist unter dem EU-US Data Privacy Framework zertifiziert.
-      </p>
-      <p>
-        Beim Aufruf dieser Website werden durch den Hoster automatisch sogenannte
-        Server-Logfiles erfasst. Dazu gehören IP-Adresse (anonymisiert), Browser-Typ,
-        aufgerufene Seite sowie Datum und Uhrzeit des Zugriffs. Diese Daten werden
-        technisch benötigt und nicht mit anderen Datenquellen zusammengeführt.
-        Rechtsgrundlage: Art. 6 Abs. 1 lit. f DSGVO.
-      </p>
-    </div>
-  </section>
+    <p>
+      Diese Website wird technisch bereitgestellt durch <strong>FinestSites</strong>.
+      Die Infrastruktur basiert auf folgenden Dienstleistern:
+    </p>
+    <p>
+      <strong>Hetzner Online GmbH</strong>, Industriestr. 25, 91710 Gunzenhausen –
+      Hosting auf deutschen Rechenzentren. Rechtsgrundlage: Art. 6 Abs. 1 lit. f DSGVO,
+      berechtigtes Interesse an einem sicheren und stabilen Betrieb.
+    </p>
+    <p>
+      <strong>Cloudflare, Inc.</strong>, 101 Townsend St, San Francisco, CA 94107, USA –
+      CDN und DDoS-Schutz für Geschwindigkeit, Sicherheit und globale Verfügbarkeit.
+      Mit Cloudflare besteht ein Auftragsverarbeitungsvertrag gemäß Art. 28 DSGVO.
+      Cloudflare ist unter dem EU-US Data Privacy Framework zertifiziert.
+      Rechtsgrundlage: Art. 6 Abs. 1 lit. f DSGVO.
+    </p>
+    <p>
+      Beim Aufruf dieser Website werden serverseitig automatisch sogenannte Logfiles erfasst,
+      darunter anonymisierte IP-Adresse, Browser-Typ, aufgerufene Seite sowie Datum und Uhrzeit
+      des Zugriffs. Diese Daten sind technisch notwendig und werden nicht mit anderen
+      Datenquellen zusammengeführt. Sie werden nach spätestens 7 Tagen automatisch gelöscht.
+    </p>
+  </div>
 
-  <section>
+  <!-- 3 Kontaktformular -->
+  <div class="section">
     <h2>3. Kontaktformular</h2>
-    <div class="card">
-      <p>
-        Wenn du das Kontaktformular auf dieser Seite ausfüllst, werden die eingegebenen Daten
-        (z. B. Name, E-Mail-Adresse, Nachricht) verarbeitet, um deine Anfrage zu beantworten.
-        Diese Daten werden ausschließlich für diesen Zweck gespeichert und nicht an Dritte
-        weitergegeben.
-      </p>
-      <p>
-        Rechtsgrundlage: Art. 6 Abs. 1 lit. b DSGVO (Vertragsanbahnung) bzw.
-        Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an der Beantwortung von Anfragen).
-      </p>
-      <p>
-        Die übermittelten Formulardaten werden sicher über FinestSites verarbeitet und gespeichert.
-        Du kannst jederzeit die Löschung deiner übermittelten Daten verlangen.
-      </p>
-    </div>
-  </section>
+    <p>
+      Wenn du das Kontaktformular auf dieser Seite ausfüllst, werden die eingegebenen Daten
+      (z. B. Name, E-Mail-Adresse, Nachricht) verarbeitet, um deine Anfrage zu beantworten.
+      Die Daten werden ausschließlich zu diesem Zweck sicher über FinestSites gespeichert
+      und <strong>nicht an Dritte weitergegeben</strong>.
+    </p>
+    <p>
+      Rechtsgrundlage: Art. 6 Abs. 1 lit. b DSGVO (Vertragsanbahnung) bzw.
+      Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an der Beantwortung von Anfragen).
+    </p>
+    <p>
+      Du kannst jederzeit die Löschung deiner übermittelten Formulardaten verlangen.
+      Wende dich dazu an <a href="mailto:hello@finestsites.io">hello@finestsites.io</a>.
+    </p>
+  </div>
 
-  <section>
+  <!-- 4 Cookies -->
+  <div class="section">
     <h2>4. Cookies &amp; lokale Speicherung</h2>
-    <div class="card">
-      <p>
-        Diese Website setzt ausschließlich technisch notwendige Cookies ein, die für den
-        Betrieb der Seite erforderlich sind (z. B. Sitzungsverwaltung). Es werden
-        <strong>keine</strong> Tracking- oder Analyse-Cookies eingesetzt, und es erfolgt
-        keine Weitergabe von Daten an Werbenetzwerke.
-      </p>
-      <p>
-        Rechtsgrundlage: § 25 Abs. 2 TTDSG, Art. 6 Abs. 1 lit. f DSGVO.
-      </p>
-    </div>
-  </section>
+    <p>
+      Diese Website setzt ausschließlich technisch notwendige Cookies ein, die für den
+      ordnungsgemäßen Betrieb der Seite erforderlich sind (z. B. Sitzungsverwaltung).
+    </p>
+    <p>
+      Es werden <strong>keine</strong> Tracking-, Analyse- oder Werbe-Cookies eingesetzt.
+      Es erfolgt keine Weitergabe von Nutzerdaten an Werbenetzwerke oder Analysedienste.
+    </p>
+    <p>
+      Rechtsgrundlage: § 25 Abs. 2 TTDSG, Art. 6 Abs. 1 lit. f DSGVO.
+    </p>
+  </div>
 
-  <section>
-    <h2>5. Deine Rechte</h2>
-    <div class="card">
-      <p>Du hast nach DSGVO folgende Rechte:</p>
-      <ul>
-        <li><strong>Auskunft</strong> – Art. 15 DSGVO: du kannst erfragen, welche Daten von dir gespeichert sind.</li>
-        <li><strong>Berichtigung</strong> – Art. 16 DSGVO: fehlerhafte Daten werden auf Wunsch korrigiert.</li>
-        <li><strong>Löschung</strong> – Art. 17 DSGVO: du kannst die Löschung deiner Daten verlangen.</li>
-        <li><strong>Einschränkung</strong> – Art. 18 DSGVO: Verarbeitung kann eingeschränkt werden.</li>
-        <li><strong>Widerspruch</strong> – Art. 21 DSGVO: du kannst der Verarbeitung widersprechen.</li>
-        <li><strong>Datenübertragbarkeit</strong> – Art. 20 DSGVO: Herausgabe deiner Daten in maschinenlesbarem Format.</li>
-      </ul>
-      <p style="margin-top: 14px;">
-        Zur Ausübung deiner Rechte wende dich an:
-        <a href="mailto:{{impressum_email}}">{{impressum_email}}</a>
-      </p>
-      <p>
-        Du hast außerdem das Recht, dich bei einer Datenschutzaufsichtsbehörde zu beschweren.
-        Die zuständige Aufsichtsbehörde für Bayern ist das Bayerische Landesamt für
-        Datenschutzaufsicht (BayLDA), <a href="https://www.lda.bayern.de" target="_blank" rel="noopener">www.lda.bayern.de</a>.
-      </p>
-    </div>
-  </section>
+  <!-- 5 Deine Rechte -->
+  <div class="section">
+    <h2>5. Deine Rechte nach DSGVO</h2>
+    <p>Dir stehen gegenüber dem Verantwortlichen folgende Rechte zu:</p>
+    <ul class="rights-list">
+      <li>
+        <span class="art">Art. 15</span>
+        <span class="desc"><strong>Auskunft</strong>Du kannst erfragen, welche personenbezogenen Daten von dir gespeichert sind.</span>
+      </li>
+      <li>
+        <span class="art">Art. 16</span>
+        <span class="desc"><strong>Berichtigung</strong>Fehlerhafte oder unvollständige Daten werden auf Wunsch korrigiert.</span>
+      </li>
+      <li>
+        <span class="art">Art. 17</span>
+        <span class="desc"><strong>Löschung</strong>Du kannst die Löschung deiner gespeicherten Daten verlangen, soweit keine gesetzlichen Aufbewahrungspflichten entgegenstehen.</span>
+      </li>
+      <li>
+        <span class="art">Art. 18</span>
+        <span class="desc"><strong>Einschränkung</strong>Die Verarbeitung deiner Daten kann auf Wunsch eingeschränkt werden.</span>
+      </li>
+      <li>
+        <span class="art">Art. 20</span>
+        <span class="desc"><strong>Datenübertragbarkeit</strong>Du hast Anspruch auf Herausgabe deiner Daten in einem maschinenlesbaren Format.</span>
+      </li>
+      <li>
+        <span class="art">Art. 21</span>
+        <span class="desc"><strong>Widerspruch</strong>Du kannst der Verarbeitung deiner Daten auf Basis berechtigter Interessen jederzeit widersprechen.</span>
+      </li>
+    </ul>
+    <p style="margin-top: 20px;">
+      Zur Ausübung deiner Rechte wende dich an:
+      <a href="mailto:hello@finestsites.io">hello@finestsites.io</a>
+    </p>
+    <p>
+      Du hast zudem das Recht, dich bei einer Datenschutzaufsichtsbehörde zu beschweren.
+      Zuständig für Bayern ist das <strong>Bayerische Landesamt für Datenschutzaufsicht (BayLDA)</strong>,
+      Promenade 18, 91522 Ansbach –
+      <a href="https://www.lda.bayern.de" target="_blank" rel="noopener noreferrer">www.lda.bayern.de</a>.
+    </p>
+  </div>
 
-  <div class="divider"></div>
-
-  <section>
+  <!-- 6 Änderungen -->
+  <div class="section">
     <h2>6. Änderungen dieser Datenschutzerklärung</h2>
-    <div class="card">
-      <p>
-        Diese Datenschutzerklärung wird bei technischen oder rechtlichen Änderungen aktualisiert.
-        Wir empfehlen, diese Seite regelmäßig zu prüfen.
-      </p>
-    </div>
-  </section>
+    <p>
+      Diese Datenschutzerklärung wird bei technischen oder rechtlichen Änderungen aktualisiert.
+      Wir empfehlen, diese Seite regelmäßig auf Änderungen zu überprüfen. Der aktuelle
+      Stand ist unten angegeben.
+    </p>
+  </div>
 
-  <p class="footnote">Stand: Juli 2026 &nbsp;·&nbsp; Gemäß DSGVO &amp; TTDSG § 25</p>
+  <p class="footnote">Stand: Juli 2026 &nbsp;&middot;&nbsp; Gemäß DSGVO &amp; TTDSG § 25</p>
 </main>
 
 <footer>
-  <span class="copy">&copy; 2026 {{impressum_name}}</span>
-  <nav class="links">
+  <span>&copy; 2026 {{impressum_name}}</span>
+  <nav>
     <a href="/">Startseite</a>
     <a href="/datenschutz">Datenschutz</a>
     <a href="/impressum">Impressum</a>

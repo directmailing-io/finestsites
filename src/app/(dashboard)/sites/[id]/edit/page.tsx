@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback, useRef, use } from 'react'
+import React, { useState, useEffect, useCallback, useRef, use } from 'react'
 import { useRouter } from 'next/navigation'
 import ImageCropModal from '@/components/ImageCropModal'
 import { RichTextField } from '@/components/editor/RichTextField'
@@ -1660,6 +1660,7 @@ export default function SiteEditPage({ params }: { params: Promise<{ id: string 
   )
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [deletingSite, setDeletingSite] = useState(false)
+  const [showPublishCelebration, setShowPublishCelebration] = useState(false)
   const [showFullPreview, setShowFullPreview] = useState(false)
   const [showLivePreview, setShowLivePreview] = useState(true)
   const [livePreviewDevice, setLivePreviewDevice] = useState<'mobile' | 'tablet' | 'desktop'>('desktop')
@@ -1917,6 +1918,7 @@ export default function SiteEditPage({ params }: { params: Promise<{ id: string 
       setSuccess('Veröffentlicht!')
       setTimeout(() => setSuccess(''), 3000)
       showToast('Seite ist jetzt live!')
+      setShowPublishCelebration(true)
       quota.refetch()
     }
     setPublishing(false)
@@ -3104,6 +3106,251 @@ export default function SiteEditPage({ params }: { params: Promise<{ id: string 
         </div>
       )}
 
+      {/* ── Publish Celebration Modal ── */}
+      {showPublishCelebration && (() => {
+        const confettiColors = ['#8060b0', '#22c55e', '#fbbf24', '#f472b6', '#60a5fa', '#f87171', '#34d399']
+        const confettiPieces = Array.from({ length: 80 }, (_, i) => ({
+          id: i,
+          left: `${Math.random() * 100}%`,
+          size: `${6 + Math.random() * 8}px`,
+          color: confettiColors[Math.floor(Math.random() * confettiColors.length)],
+          duration: `${2 + Math.random() * 2}s`,
+          delay: `${Math.random() * 2}s`,
+          rotation: `${Math.random() * 720}deg`,
+          isCircle: Math.random() > 0.5,
+        }))
+        return <PublishCelebrationModal publishedUrl={publishedUrl} onClose={() => setShowPublishCelebration(false)} confettiPieces={confettiPieces} />
+      })()}
+
     </div>
+  )
+}
+
+function PublishCelebrationModal({ publishedUrl, onClose, confettiPieces }: {
+  publishedUrl: string
+  onClose: () => void
+  confettiPieces: Array<{ id: number; left: string; size: string; color: string; duration: string; delay: string; rotation: string; isCircle: boolean }>
+}) {
+  const [urlCopied, setUrlCopied] = React.useState(false)
+  return (
+    <>
+      <style>{`
+        @keyframes confetti-fall {
+          0%   { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+          80%  { opacity: 1; }
+          100% { transform: translateY(110vh) rotate(var(--rot)); opacity: 0; }
+        }
+        @keyframes celebration-scale-in {
+          0%   { opacity: 0; transform: scale(0.7) translateY(24px); }
+          60%  { transform: scale(1.04) translateY(-4px); }
+          100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        @keyframes check-pop {
+          0%   { opacity: 0; transform: scale(0.4); }
+          60%  { transform: scale(1.15); }
+          100% { opacity: 1; transform: scale(1); }
+        }
+      `}</style>
+
+      {/* Backdrop */}
+      <div
+        onClick={onClose}
+        style={{
+          position: 'fixed', inset: 0, zIndex: 9999,
+          background: 'rgba(0,0,0,0.6)',
+          backdropFilter: 'blur(4px)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          padding: '16px',
+        }}
+      >
+        {/* Confetti pieces */}
+        {confettiPieces.map(p => (
+          <div
+            key={p.id}
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: p.left,
+              width: p.size,
+              height: p.size,
+              background: p.color,
+              borderRadius: p.isCircle ? '50%' : '2px',
+              ['--rot' as string]: p.rotation,
+              animation: `confetti-fall ${p.duration} ${p.delay} ease-in forwards`,
+              pointerEvents: 'none',
+            }}
+          />
+        ))}
+
+        {/* Modal card */}
+        <div
+          onClick={e => e.stopPropagation()}
+          style={{
+            position: 'relative',
+            width: '100%',
+            maxWidth: '440px',
+            background: '#fff',
+            borderRadius: '24px',
+            padding: '40px 32px 32px',
+            boxShadow: '0 32px 80px rgba(0,0,0,0.28), 0 8px 24px rgba(0,0,0,0.12)',
+            animation: 'celebration-scale-in 0.45s cubic-bezier(0.34,1.56,0.64,1) both',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+          }}
+        >
+          {/* Close button */}
+          <button
+            onClick={onClose}
+            style={{
+              position: 'absolute', top: '16px', right: '16px',
+              width: '32px', height: '32px', borderRadius: '50%',
+              background: '#F3F4F6', border: 'none', cursor: 'pointer',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              color: '#6B7280', fontSize: '16px', lineHeight: 1,
+            }}
+          >
+            ✕
+          </button>
+
+          {/* Success icon */}
+          <div style={{
+            width: '64px', height: '64px', borderRadius: '50%',
+            background: 'linear-gradient(135deg, #22c55e, #16a34a)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            marginBottom: '20px',
+            boxShadow: '0 8px 24px rgba(34,197,94,0.35)',
+            animation: 'check-pop 0.5s 0.2s cubic-bezier(0.34,1.56,0.64,1) both',
+          }}>
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+              <path d="M8 16.5L13.5 22L24 11" stroke="white" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </div>
+
+          {/* Headline */}
+          <div style={{ fontSize: '24px', fontWeight: 800, color: '#111', textAlign: 'center', marginBottom: '6px', lineHeight: 1.2 }}>
+            Deine Webseite ist live! 🎉
+          </div>
+
+          {/* Subtext */}
+          <div style={{ fontSize: '14px', color: '#6B7280', textAlign: 'center', marginBottom: '24px' }}>
+            Teile deine Seite mit der Welt.
+          </div>
+
+          {/* URL box */}
+          <div style={{
+            width: '100%',
+            background: '#F3F4F6',
+            borderRadius: '12px',
+            padding: '12px 16px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            marginBottom: '16px',
+          }}>
+            <span style={{
+              flex: 1,
+              fontFamily: 'monospace',
+              fontSize: '13px',
+              color: '#374151',
+              wordBreak: 'break-all',
+              overflowWrap: 'anywhere',
+            }}>
+              {publishedUrl}
+            </span>
+            <button
+              onClick={() => {
+                navigator.clipboard.writeText(publishedUrl)
+                setUrlCopied(true)
+                setTimeout(() => setUrlCopied(false), 2000)
+              }}
+              title="URL kopieren"
+              style={{
+                flexShrink: 0,
+                width: '32px', height: '32px',
+                borderRadius: '8px',
+                background: urlCopied ? '#22c55e' : '#E5E7EB',
+                border: 'none', cursor: 'pointer',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                transition: 'background 0.2s',
+                color: urlCopied ? 'white' : '#6B7280',
+              }}
+            >
+              {urlCopied ? (
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <path d="M3 8.5L6.5 12L13 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              ) : (
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <rect x="5" y="1" width="9" height="11" rx="2" stroke="currentColor" strokeWidth="1.5"/>
+                  <path d="M2 5v8a2 2 0 002 2h7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                </svg>
+              )}
+            </button>
+          </div>
+
+          {/* QR Code */}
+          <img
+            src={`https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(publishedUrl ?? '')}&format=png&margin=2`}
+            alt="QR Code"
+            width={160}
+            height={160}
+            style={{
+              borderRadius: '12px',
+              border: '1px solid #E5E7EB',
+              marginBottom: '10px',
+            }}
+          />
+
+          {/* QR helper text */}
+          <div style={{ fontSize: '12px', color: '#9CA3AF', textAlign: 'center', marginBottom: '24px' }}>
+            QR-Code scannen oder Link teilen
+          </div>
+
+          {/* Buttons */}
+          <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            <a
+              href={publishedUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: 'block',
+                width: '100%',
+                padding: '14px',
+                background: '#111',
+                color: '#fff',
+                borderRadius: '12px',
+                fontWeight: 700,
+                fontSize: '15px',
+                textAlign: 'center',
+                textDecoration: 'none',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.18)',
+                transition: 'opacity 0.15s',
+                boxSizing: 'border-box',
+              }}
+              onMouseEnter={e => (e.currentTarget.style.opacity = '0.88')}
+              onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
+            >
+              Webseite öffnen →
+            </a>
+            <button
+              onClick={onClose}
+              style={{
+                width: '100%',
+                padding: '12px',
+                background: 'transparent',
+                border: 'none',
+                cursor: 'pointer',
+                color: '#6B7280',
+                fontSize: '14px',
+                fontWeight: 500,
+              }}
+            >
+              Schließen
+            </button>
+          </div>
+        </div>
+      </div>
+    </>
   )
 }

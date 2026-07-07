@@ -160,7 +160,7 @@ export function UsernameForm() {
         </div>
         <h1 className="text-2xl font-semibold text-gray-900 mb-2">Fast geschafft!</h1>
         <p className="text-sm leading-relaxed" style={{ color: '#6B7280' }}>
-          Gib deinen Namen ein und wähle deinen Username. Er wird Teil deiner Website-Adresse.
+          Dein Username wird Teil deiner Website-Adresse — wähle ihn sorgfältig.
         </p>
       </div>
 
@@ -186,7 +186,18 @@ export function UsernameForm() {
 
         {/* Username */}
         <div className="flex flex-col gap-1.5">
-          <label className="text-sm font-semibold text-gray-700">Username</label>
+          <div className="flex items-center gap-2">
+            <label className="text-sm font-semibold text-gray-700">Username</label>
+            {!usernameTouched && username !== '' && (
+              <span className="flex items-center gap-1 text-xs" style={{ color: '#6B7280' }}>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                  <circle cx="12" cy="7" r="4"/>
+                </svg>
+                Vorschlag aus deinem Namen
+              </span>
+            )}
+          </div>
 
           {/* Safari browser mockup */}
           <div
@@ -245,7 +256,7 @@ export function UsernameForm() {
             required
             maxLength={30}
             placeholder="dein-name"
-            autoComplete="username"
+            autoComplete="off"
             className="w-full px-4 py-3 text-sm rounded-2xl outline-none transition-all"
             style={{
               background: '#fff',
@@ -267,8 +278,8 @@ export function UsernameForm() {
           </p>
         </div>
 
-        <div className="px-4 py-3 rounded-xl text-xs" style={{ background: '#FEF9C3', border: '1px solid #FDE68A', color: '#92400E' }}>
-          ⚠️ Der Username kann nach dem Speichern <strong>nicht mehr geändert</strong> werden.
+        <div className="px-4 py-3 rounded-xl text-xs" style={{ background: '#EFF6FF', border: '1px solid #BFDBFE', color: '#1E40AF' }}>
+          ℹ️ Der Username kann nach dem Speichern <strong>nicht mehr geändert</strong> werden.
         </div>
 
         <button
