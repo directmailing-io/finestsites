@@ -582,6 +582,40 @@ export default {
         return handleFormSubmission(request, pathname, meta, env, ctx)
       }
 
+      // ── Dedicated static pages (impressum, datenschutz, agb …) ──────────
+      // Before SPA fallback: check R2 for a dedicated {page}.html.
+      // If found, render it with the same placeholder substitution as index.html.
+      // If not found, fall through to SPA routing so nothing breaks.
+      const STATIC_PAGES: Record<string, string> = {
+        '/impressum': 'impressum.html',
+        '/datenschutz': 'datenschutz.html',
+        '/agb': 'agb.html',
+      }
+      const dedicatedPageFile = STATIC_PAGES[pathname]
+      if (dedicatedPageFile) {
+        const pageObj = await env.R2_BUCKET.get(`${meta.r2BasePath}/${dedicatedPageFile}`)
+        if (pageObj) {
+          const pageHtml = await pageObj.text()
+          const pageDataRes = await fetch(
+            `${env.APP_URL}/api/worker/site-data?siteId=${meta.siteId}`,
+            { headers: { 'x-worker-secret': env.WORKER_SECRET } }
+          )
+          const pageRows = pageDataRes.ok
+            ? await pageDataRes.json() as { fieldKey: string; fieldValue: string | null }[]
+            : []
+          const pageDataMap: Data = {}
+          for (const r of pageRows) pageDataMap[r.fieldKey] = r.fieldValue ?? ''
+          return new Response(render(pageHtml, pageDataMap), {
+            headers: {
+              'Content-Type': 'text/html; charset=utf-8',
+              'Cache-Control': 'no-cache',
+              'X-Powered-By': 'FinestSites',
+            },
+          })
+        }
+        // No dedicated page found in R2 — fall through to SPA routing
+      }
+
       // ── Static assets ────────────────────────────────────────────────────
       // SPA routing: paths without a file extension (e.g. /testevent, /event-2)
       // fall through to the rendered HTML below — the template's JS handles the
