@@ -30,7 +30,14 @@ export default function ImpersonationBanner() {
     const t0 = setTimeout(() => { void poll() }, 0)
     const id = setInterval(() => { void poll() }, 5000)
     intervalRef.current = id
-    return () => { clearTimeout(t0); clearInterval(id) }
+    // Also poll immediately when the user switches back to this tab
+    const onVisible = () => { if (document.visibilityState === 'visible') void poll() }
+    document.addEventListener('visibilitychange', onVisible)
+    return () => {
+      clearTimeout(t0)
+      clearInterval(id)
+      document.removeEventListener('visibilitychange', onVisible)
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
