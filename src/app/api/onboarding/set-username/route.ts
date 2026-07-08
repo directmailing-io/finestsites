@@ -4,8 +4,6 @@ import { db } from '@/lib/db'
 import { users } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
 
-const ACTIVE_STATUSES = ['active', 'trialing', 'past_due']
-
 function sanitize(val: string) {
   return val
     .toLowerCase()
@@ -34,23 +32,8 @@ export async function POST(req: NextRequest) {
     )
   }
 
-  // ── Verify the user has an active subscription ────────────────────────
-  const profile = await db.query.users.findFirst({ where: eq(users.id, user.id) })
-
-  // Require both a valid status AND a real Stripe subscription ID
-  const hasRealSubscription =
-    !!profile?.subscriptionStatus &&
-    ACTIVE_STATUSES.includes(profile.subscriptionStatus) &&
-    !!profile?.stripeSubscriptionId
-
-  if (!hasRealSubscription) {
-    return NextResponse.json(
-      { error: 'Kein aktives Abonnement. Bitte wähle zuerst einen Tarif.', code: 'NO_SUBSCRIPTION' },
-      { status: 403 }
-    )
-  }
-
   // Username already set — idempotent (allow dashboard redirect)
+  const profile = await db.query.users.findFirst({ where: eq(users.id, user.id) })
   if (profile?.username) {
     return NextResponse.json({ ok: true })
   }

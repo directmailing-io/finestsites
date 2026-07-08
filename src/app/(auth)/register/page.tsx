@@ -95,7 +95,7 @@ function RegisterForm() {
       }
 
       // Full page navigation ensures session cookie is read correctly on all browsers
-      window.location.href = '/onboarding/plan'
+      window.location.href = '/onboarding/username'
     } catch {
       setError('Verbindungsfehler. Bitte versuche es erneut.')
       setLoading(false)
@@ -113,7 +113,7 @@ function RegisterForm() {
           </svg>
         </div>
         <h2 className="text-xl font-semibold text-gray-900 mb-2">Account erstellt!</h2>
-        <p className="text-sm" style={{ color: '#6B7280' }}>Du wirst gleich zum Plan-Auswahl weitergeleitet…</p>
+        <p className="text-sm" style={{ color: '#6B7280' }}>Du wirst gleich weitergeleitet…</p>
       </div>
     )
   }

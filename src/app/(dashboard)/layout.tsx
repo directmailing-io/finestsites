@@ -20,13 +20,10 @@ export default async function DashboardLayout({ children }: { children: React.Re
   })
 
   const ADMIN_EMAIL = 'info@daniel-kurzeja.de'
-  const ACTIVE_STATUSES = ['active', 'trialing', 'past_due']
 
-  // Impersonating admin bypasses all subscription checks
+  // Only enforce username setup — subscription is not required to use the dashboard.
+  // The payment wall is at publish time (enforced in /api/sites/[id]/publish).
   if (!impersonation) {
-    if (user.email !== ADMIN_EMAIL && (!profile?.subscriptionStatus || !ACTIVE_STATUSES.includes(profile.subscriptionStatus))) {
-      redirect('/onboarding/plan')
-    }
     if (user.email !== ADMIN_EMAIL && !profile?.username) {
       redirect('/onboarding/username')
     }
