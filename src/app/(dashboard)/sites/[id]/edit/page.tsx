@@ -3120,13 +3120,16 @@ function PublishCelebrationModal({ publishedUrl, onClose }: {
   onClose: () => void
 }) {
   const [urlCopied, setUrlCopied] = React.useState(false)
+  const [canShare, setCanShare] = React.useState(false)
+
+  React.useEffect(() => {
+    setCanShare(typeof navigator !== 'undefined' && !!navigator.share)
+  }, [])
 
   React.useEffect(() => {
     const colors = ['#8060b0', '#a78bfa', '#22c55e', '#fbbf24', '#f472b6', '#60a5fa', '#34d399']
     import('canvas-confetti').then(({ default: confetti }) => {
-      // Gentle burst from center
       confetti({ particleCount: 60, spread: 60, startVelocity: 35, origin: { x: 0.5, y: 0.65 }, colors, ticks: 180, scalar: 0.9, gravity: 1.2 })
-      // Small side accents after short delay
       setTimeout(() => {
         confetti({ particleCount: 20, angle: 70, spread: 40, startVelocity: 30, origin: { x: 0.1, y: 0.7 }, colors, ticks: 150, scalar: 0.8 })
         confetti({ particleCount: 20, angle: 110, spread: 40, startVelocity: 30, origin: { x: 0.9, y: 0.7 }, colors, ticks: 150, scalar: 0.8 })
@@ -3138,14 +3141,40 @@ function PublishCelebrationModal({ publishedUrl, onClose }: {
     <>
       <style>{`
         @keyframes celebration-scale-in {
-          0%   { opacity: 0; transform: scale(0.75) translateY(20px); }
-          65%  { transform: scale(1.03) translateY(-3px); }
+          0%   { opacity: 0; transform: scale(0.82) translateY(24px); }
+          65%  { transform: scale(1.02) translateY(-2px); }
           100% { opacity: 1; transform: scale(1) translateY(0); }
         }
         @keyframes check-pop {
           0%   { opacity: 0; transform: scale(0.3); }
           65%  { transform: scale(1.18); }
           100% { opacity: 1; transform: scale(1); }
+        }
+        .cel-modal {
+          position: relative;
+          width: 100%;
+          max-width: 420px;
+          background: #fff;
+          border-radius: 28px;
+          padding: 36px 28px 28px;
+          box-shadow: 0 32px 80px rgba(0,0,0,0.28), 0 8px 24px rgba(0,0,0,0.12);
+          animation: celebration-scale-in 0.45s cubic-bezier(0.34,1.56,0.64,1) both;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          max-height: calc(100svh - 32px);
+          overflow-y: auto;
+          overscroll-behavior: contain;
+        }
+        .cel-qr { width: 128px; height: 128px; display: block; }
+        .cel-qr-label { display: block; }
+        @media (max-height: 680px) {
+          .cel-modal { padding: 22px 20px 20px; }
+          .cel-qr { width: 96px; height: 96px; }
+          .cel-qr-label { display: none; }
+        }
+        @media (max-width: 390px) {
+          .cel-modal { border-radius: 22px; padding: 28px 18px 20px; }
         }
       `}</style>
 
@@ -3154,86 +3183,65 @@ function PublishCelebrationModal({ publishedUrl, onClose }: {
         onClick={onClose}
         style={{
           position: 'fixed', inset: 0, zIndex: 9999,
-          background: 'rgba(0,0,0,0.55)',
-          backdropFilter: 'blur(6px)',
+          background: 'rgba(0,0,0,0.6)',
+          backdropFilter: 'blur(8px)',
+          WebkitBackdropFilter: 'blur(8px)',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           padding: '16px',
+          paddingBottom: 'max(16px, env(safe-area-inset-bottom))',
         }}
       >
-
         {/* Modal card */}
-        <div
-          onClick={e => e.stopPropagation()}
-          style={{
-            position: 'relative',
-            width: '100%',
-            maxWidth: '440px',
-            background: '#fff',
-            borderRadius: '24px',
-            padding: '40px 32px 32px',
-            boxShadow: '0 32px 80px rgba(0,0,0,0.28), 0 8px 24px rgba(0,0,0,0.12)',
-            animation: 'celebration-scale-in 0.45s cubic-bezier(0.34,1.56,0.64,1) both',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-          }}
-        >
+        <div className="cel-modal" onClick={e => e.stopPropagation()}>
+
           {/* Close button */}
           <button
             onClick={onClose}
+            aria-label="Schließen"
             style={{
-              position: 'absolute', top: '16px', right: '16px',
-              width: '32px', height: '32px', borderRadius: '50%',
+              position: 'absolute', top: '14px', right: '14px',
+              width: '30px', height: '30px', borderRadius: '50%',
               background: '#F3F4F6', border: 'none', cursor: 'pointer',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              color: '#6B7280', fontSize: '16px', lineHeight: 1,
+              color: '#9CA3AF', flexShrink: 0,
             }}
           >
-            ✕
+            <svg width="11" height="11" viewBox="0 0 12 12" fill="none">
+              <path d="M1 1l10 10M11 1L1 11" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
+            </svg>
           </button>
 
           {/* Success icon */}
           <div style={{
-            width: '64px', height: '64px', borderRadius: '50%',
+            width: '60px', height: '60px', borderRadius: '50%',
             background: 'linear-gradient(135deg, #22c55e, #16a34a)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            marginBottom: '20px',
+            marginBottom: '16px', flexShrink: 0,
             boxShadow: '0 8px 24px rgba(34,197,94,0.35)',
             animation: 'check-pop 0.5s 0.2s cubic-bezier(0.34,1.56,0.64,1) both',
           }}>
-            <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+            <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
               <path d="M8 16.5L13.5 22L24 11" stroke="white" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </div>
 
           {/* Headline */}
-          <div style={{ fontSize: '24px', fontWeight: 800, color: '#111', textAlign: 'center', marginBottom: '6px', lineHeight: 1.2 }}>
+          <div style={{ fontSize: '22px', fontWeight: 800, color: '#111', textAlign: 'center', marginBottom: '4px', lineHeight: 1.2 }}>
             Deine Webseite ist live! 🎉
           </div>
-
-          {/* Subtext */}
-          <div style={{ fontSize: '14px', color: '#6B7280', textAlign: 'center', marginBottom: '24px' }}>
+          <div style={{ fontSize: '13px', color: '#6B7280', textAlign: 'center', marginBottom: '20px' }}>
             Teile deine Seite mit der Welt.
           </div>
 
           {/* URL box */}
           <div style={{
-            width: '100%',
-            background: '#F3F4F6',
-            borderRadius: '12px',
-            padding: '12px 16px',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            marginBottom: '16px',
+            width: '100%', background: '#F3F4F6', borderRadius: '14px',
+            padding: '11px 12px', display: 'flex', alignItems: 'center',
+            gap: '8px', marginBottom: '16px',
           }}>
             <span style={{
-              flex: 1,
-              fontFamily: 'monospace',
-              fontSize: '13px',
-              color: '#374151',
-              wordBreak: 'break-all',
-              overflowWrap: 'anywhere',
+              flex: 1, fontFamily: 'monospace', fontSize: '12px',
+              color: '#374151', wordBreak: 'break-all', overflowWrap: 'anywhere', lineHeight: 1.4,
             }}>
               {publishedUrl}
             </span>
@@ -3245,22 +3253,19 @@ function PublishCelebrationModal({ publishedUrl, onClose }: {
               }}
               title="URL kopieren"
               style={{
-                flexShrink: 0,
-                width: '32px', height: '32px',
-                borderRadius: '8px',
+                flexShrink: 0, width: '32px', height: '32px', borderRadius: '99px',
                 background: urlCopied ? '#22c55e' : '#E5E7EB',
                 border: 'none', cursor: 'pointer',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                transition: 'background 0.2s',
-                color: urlCopied ? 'white' : '#6B7280',
+                transition: 'background 0.2s', color: urlCopied ? 'white' : '#6B7280',
               }}
             >
               {urlCopied ? (
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
                   <path d="M3 8.5L6.5 12L13 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
               ) : (
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
                   <rect x="5" y="1" width="9" height="11" rx="2" stroke="currentColor" strokeWidth="1.5"/>
                   <path d="M2 5v8a2 2 0 002 2h7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
                 </svg>
@@ -3270,59 +3275,54 @@ function PublishCelebrationModal({ publishedUrl, onClose }: {
 
           {/* QR Code */}
           <img
-            src={`https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(publishedUrl ?? '')}&format=png&margin=2`}
+            src={`https://api.qrserver.com/v1/create-qr-code/?size=256x256&data=${encodeURIComponent(publishedUrl ?? '')}&format=png&margin=2`}
             alt="QR Code"
-            width={160}
-            height={160}
-            style={{
-              borderRadius: '12px',
-              border: '1px solid #E5E7EB',
-              marginBottom: '10px',
-            }}
+            className="cel-qr"
+            style={{ borderRadius: '12px', border: '1px solid #E5E7EB', marginBottom: '8px' }}
           />
-
-          {/* QR helper text */}
-          <div style={{ fontSize: '12px', color: '#9CA3AF', textAlign: 'center', marginBottom: '24px' }}>
+          <div className="cel-qr-label" style={{ fontSize: '11px', color: '#9CA3AF', textAlign: 'center', marginBottom: '20px' }}>
             QR-Code scannen oder Link teilen
           </div>
 
           {/* Buttons */}
-          <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+          <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '8px' }}>
             <a
               href={publishedUrl}
               target="_blank"
               rel="noopener noreferrer"
               style={{
-                display: 'block',
-                width: '100%',
-                padding: '14px',
-                background: '#111',
-                color: '#fff',
-                borderRadius: '12px',
-                fontWeight: 700,
-                fontSize: '15px',
-                textAlign: 'center',
-                textDecoration: 'none',
-                boxShadow: '0 4px 12px rgba(0,0,0,0.18)',
-                transition: 'opacity 0.15s',
-                boxSizing: 'border-box',
+                display: 'block', width: '100%', padding: '14px',
+                background: '#111', color: '#fff', borderRadius: '99px',
+                fontWeight: 700, fontSize: '15px', textAlign: 'center',
+                textDecoration: 'none', boxShadow: '0 4px 16px rgba(0,0,0,0.2)',
+                transition: 'opacity 0.15s', boxSizing: 'border-box',
               }}
               onMouseEnter={e => (e.currentTarget.style.opacity = '0.88')}
               onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
             >
               Webseite öffnen →
             </a>
+            {canShare && (
+              <button
+                onClick={() => navigator.share({ url: publishedUrl, title: 'Meine Website' })}
+                style={{
+                  width: '100%', padding: '13px', background: '#F3F4F6',
+                  border: 'none', borderRadius: '99px', fontWeight: 600,
+                  fontSize: '14px', color: '#374151', cursor: 'pointer',
+                  transition: 'background 0.15s',
+                }}
+                onMouseEnter={e => (e.currentTarget.style.background = '#E5E7EB')}
+                onMouseLeave={e => (e.currentTarget.style.background = '#F3F4F6')}
+              >
+                Teilen ↗
+              </button>
+            )}
             <button
               onClick={onClose}
               style={{
-                width: '100%',
-                padding: '12px',
-                background: 'transparent',
-                border: 'none',
-                cursor: 'pointer',
-                color: '#6B7280',
-                fontSize: '14px',
-                fontWeight: 500,
+                width: '100%', padding: '11px', background: 'transparent',
+                border: 'none', cursor: 'pointer', color: '#9CA3AF',
+                fontSize: '13px', fontWeight: 500,
               }}
             >
               Schließen
