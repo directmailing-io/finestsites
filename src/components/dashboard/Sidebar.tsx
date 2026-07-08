@@ -87,26 +87,45 @@ export function DashboardSidebar() {
       {/* ── Plan & Logout ─────────────────────────────────── */}
       <div className="px-3 pb-5 flex flex-col gap-1">
         {/* Plan hint */}
-        {quota.plan && quota.plan !== 'unlimited' && !quota.loading && (
+        {!quota.loading && (
           <div className="relative group mb-1">
-            <Link
-              href="/billing"
-              className="flex items-center justify-between px-3 py-2.5 rounded-xl transition-colors hover:bg-gray-100"
-              style={{ background: quota.atLimit ? '#FEF2F2' : '#F3F4F6' }}>
-              <span className="text-xs font-medium" style={{ color: quota.atLimit ? '#DC2626' : '#6B7280' }}>
-                {quota.atLimit ? 'Limit erreicht' : PLAN_LABELS[quota.plan]}
-              </span>
-              <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full"
-                style={{ background: quota.atLimit ? '#FCA5A5' : '#E5E7EB', color: quota.atLimit ? '#991B1B' : '#374151' }}>
-                {quota.atLimit ? 'Upgrade →' : `${quota.used} / ${quota.limit}`}
-              </span>
-            </Link>
-            {/* Tooltip */}
-            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 rounded-xl text-xs text-white whitespace-nowrap pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity z-50"
-              style={{ background: '#1a1a1a' }}>
-              {quota.used} von {quota.limit} {quota.used === 1 ? 'Webseite' : 'Webseiten'} aktiv
-              <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent" style={{ borderTopColor: '#1a1a1a' }} />
-            </div>
+            {quota.plan === null ? (
+              /* Free user — no active subscription */
+              <Link
+                href="/billing"
+                className="flex items-center justify-between px-3 py-2.5 rounded-xl transition-colors hover:bg-gray-100"
+                style={{ background: '#F3F4F6' }}>
+                <span className="text-xs font-medium" style={{ color: '#6B7280' }}>
+                  Kostenloser Modus
+                </span>
+                <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full"
+                  style={{ background: '#E5E7EB', color: '#374151' }}>
+                  Upgrade →
+                </span>
+              </Link>
+            ) : quota.plan !== 'unlimited' ? (
+              /* Paid plan with quota */
+              <>
+                <Link
+                  href="/billing"
+                  className="flex items-center justify-between px-3 py-2.5 rounded-xl transition-colors hover:bg-gray-100"
+                  style={{ background: quota.atLimit ? '#FEF2F2' : '#F3F4F6' }}>
+                  <span className="text-xs font-medium" style={{ color: quota.atLimit ? '#DC2626' : '#6B7280' }}>
+                    {quota.atLimit ? 'Limit erreicht' : PLAN_LABELS[quota.plan]}
+                  </span>
+                  <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full"
+                    style={{ background: quota.atLimit ? '#FCA5A5' : '#E5E7EB', color: quota.atLimit ? '#991B1B' : '#374151' }}>
+                    {quota.atLimit ? 'Upgrade →' : `${quota.used} / ${quota.limit}`}
+                  </span>
+                </Link>
+                {/* Tooltip */}
+                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 rounded-xl text-xs text-white whitespace-nowrap pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity z-50"
+                  style={{ background: '#1a1a1a' }}>
+                  {quota.used} von {quota.limit} {quota.used === 1 ? 'Webseite' : 'Webseiten'} aktiv
+                  <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent" style={{ borderTopColor: '#1a1a1a' }} />
+                </div>
+              </>
+            ) : null}
           </div>
         )}
 

@@ -1,7 +1,6 @@
 import { NextResponse, type NextRequest } from 'next/server'
 
 const WORKER_URL = 'https://finestsites-worker.finestsites.workers.dev'
-const ACTIVE_STATUSES = ['active', 'trialing', 'past_due']
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL ?? 'info@daniel-kurzeja.de'
 
 // Internal address for the auth-check endpoint (Node.js runtime, where postgres works).
@@ -136,26 +135,13 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL('/login', request.url))
   }
 
-  // Logged-in + product routes → enforce subscription + username
+  // Logged-in + product routes → enforce username setup only.
+  // Subscription is no longer a gate here — users can edit templates for free.
+  // The payment wall is at publish time (enforced in /api/sites/[id]/publish).
   const gatedPaths = ['/dashboard', '/sites', '/settings', '/billing', '/onboarding/username']
   if (user && gatedPaths.some(p => pathname.startsWith(p))) {
     // Admin bypasses all checks
     if (user.email === ADMIN_EMAIL) return NextResponse.next()
-
-    // Active subscription = valid status (no stripeSubscriptionId required for manual/admin activations)
-    const hasActiveSubscription =
-      !!profile?.subscriptionStatus &&
-      ACTIVE_STATUSES.includes(profile.subscriptionStatus)
-
-    // Allow fresh Stripe checkout sessions through before webhook fires.
-    // Stripe checkout session IDs always start with 'cs_' — validate format
-    // to prevent casual bypass via ?session_id=anything.
-    const sessionId = request.nextUrl.searchParams.get('session_id')
-    const hasSessionId = typeof sessionId === 'string' && sessionId.startsWith('cs_')
-
-    if (!hasActiveSubscription && !hasSessionId) {
-      return NextResponse.redirect(new URL('/onboarding/plan', request.url))
-    }
 
     if (!profile?.username && !pathname.startsWith('/onboarding/username')) {
       return NextResponse.redirect(new URL('/onboarding/username', request.url))

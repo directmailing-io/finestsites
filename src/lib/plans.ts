@@ -38,8 +38,8 @@ export const PLANS: Record<PlanKey, PlanDef> = {
   pro: {
     key: 'pro',
     name: 'Pro',
-    monthly_eur: 30,
-    yearly_eur: 300,
+    monthly_eur: 35,
+    yearly_eur: 350,
     max_sites: 3,
     popular: true,
     sites_label: '3 aktive Premium-Webseiten',
@@ -47,8 +47,8 @@ export const PLANS: Record<PlanKey, PlanDef> = {
   unlimited: {
     key: 'unlimited',
     name: 'Unlimited',
-    monthly_eur: 50,
-    yearly_eur: 500,
+    monthly_eur: 60,
+    yearly_eur: 600,
     max_sites: -1,
     sites_label: '∞ aktive Premium-Webseiten',
   },
@@ -67,10 +67,10 @@ export const PLAN_ORDER: PlanKey[] = ['starter', 'pro', 'unlimited']
 export const PLAN_LIST: PlanDef[] = PLAN_ORDER.map(k => PLANS[k])
 
 export const COMMON_FEATURES = [
-  '∞ kostenlose Webseiten',
+  'Kostenlos bearbeiten, zahlen bei Veröffentlichung',
   'Eigene Subdomain',
   'SSL & DSGVO-konform',
-  'Super einfache Bedienung',
+  'Einfache Bedienung, kein Technikwissen nötig',
   'Online in unter 5 Minuten',
 ] as const
 

@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useEffect, useCallback, useRef, use } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import ImageCropModal from '@/components/ImageCropModal'
 import { RichTextField } from '@/components/editor/RichTextField'
 import { usePlanQuota } from '@/components/dashboard/PlanQuotaContext'
@@ -1633,7 +1633,7 @@ function FieldRenderer({ field, value, onChange, onItemFocus, complianceApproved
 
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
-export default function SiteEditPage({ params }: { params: Promise<{ id: string }> }) {
+function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
   const router = useRouter()
   const quota = usePlanQuota()
@@ -1661,6 +1661,8 @@ export default function SiteEditPage({ params }: { params: Promise<{ id: string 
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [deletingSite, setDeletingSite] = useState(false)
   const [showPublishCelebration, setShowPublishCelebration] = useState(false)
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false)
+  const [justPaid, setJustPaid] = useState(false)
   const [showFullPreview, setShowFullPreview] = useState(false)
   const [showLivePreview, setShowLivePreview] = useState(true)
   const [livePreviewDevice, setLivePreviewDevice] = useState<'mobile' | 'tablet' | 'desktop'>('desktop')
@@ -1730,6 +1732,23 @@ export default function SiteEditPage({ params }: { params: Promise<{ id: string 
       })
       .catch(() => setLoading(false))
   }, [id])
+
+  // Handle post-payment redirect
+  const searchParams = useSearchParams()
+  useEffect(() => {
+    if (searchParams.get('just_paid') === '1') {
+      setJustPaid(true)
+      // Auto-trigger publish after payment
+      handlePublish()
+      // Clean URL
+      window.history.replaceState({}, '', `/sites/${id}/edit`)
+    }
+    if (searchParams.get('payment_canceled') === '1') {
+      showToast('Zahlung abgebrochen. Deine Inhalte wurden gespeichert.', 'error')
+      window.history.replaceState({}, '', `/sites/${id}/edit`)
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const updatePreview = useCallback((_vals: Record<string, string>) => {
     if (debounceRef.current) clearTimeout(debounceRef.current)
@@ -1909,8 +1928,12 @@ export default function SiteEditPage({ params }: { params: Promise<{ id: string 
     const res = await fetch(`/api/sites/${id}/publish`, { method: 'POST' })
     const data = await res.json()
     if (!res.ok) {
-      setError(data.error ?? 'Fehler beim Veröffentlichen.')
-      showToast(data.error ?? 'Fehler beim Veröffentlichen.', 'error')
+      if (data.code === 'SUBSCRIPTION_REQUIRED') {
+        setShowUpgradeModal(true)
+      } else {
+        setError(data.error ?? 'Fehler beim Veröffentlichen.')
+        showToast(data.error ?? 'Fehler beim Veröffentlichen.', 'error')
+      }
     } else {
       setPublishedUrl(data.url)
       setSite(prev => prev ? { ...prev, status: 'published' } : prev)
@@ -1944,7 +1967,11 @@ export default function SiteEditPage({ params }: { params: Promise<{ id: string 
     const res = await fetch(`/api/sites/${id}/publish`, { method: 'POST' })
     const data = await res.json()
     if (!res.ok) {
-      showToast(data.error ?? 'Fehler beim Veröffentlichen.', 'error')
+      if (data.code === 'SUBSCRIPTION_REQUIRED') {
+        setShowUpgradeModal(true)
+      } else {
+        showToast(data.error ?? 'Fehler beim Veröffentlichen.', 'error')
+      }
     } else {
       setPublishedUrl(data.url)
       setSite(prev => prev ? { ...prev, status: 'published' } : prev)
@@ -2093,6 +2120,21 @@ export default function SiteEditPage({ params }: { params: Promise<{ id: string 
 
   return (
     <div className="fixed inset-0 z-50 flex flex-col" style={{ background: '#F8FAFC' }}>
+
+      {/* Draft mode banner — shown only when site is not yet published */}
+      {site && site.status === 'draft' && !justPaid && (
+        <div
+          className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium"
+          style={{ background: '#F0FDF4', borderBottom: '1px solid #BBF7D0', color: '#15803D' }}
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="flex-shrink-0">
+            <circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/>
+          </svg>
+          <span>
+            Du bist im <strong>kostenlosen Entwurf-Modus</strong>. Wenn du fertig bist, klicke auf &ldquo;Veröffentlichen&rdquo; um deine Seite live zu schalten.
+          </span>
+        </div>
+      )}
 
       {/* ── Toast notification ── */}
       <div
@@ -3106,11 +3148,213 @@ export default function SiteEditPage({ params }: { params: Promise<{ id: string 
         </div>
       )}
 
+      {/* ── Upgrade Modal (Publish Gate) ── */}
+      {showUpgradeModal && (
+        <UpgradeModal
+          siteId={id}
+          onClose={() => setShowUpgradeModal(false)}
+        />
+      )}
+
       {/* ── Publish Celebration Modal ── */}
       {showPublishCelebration && (
         <PublishCelebrationModal publishedUrl={publishedUrl} onClose={() => setShowPublishCelebration(false)} />
       )}
 
+    </div>
+  )
+}
+
+export default function SiteEditPage({ params }: { params: Promise<{ id: string }> }) {
+  return (
+    <React.Suspense>
+      <SiteEditPageInner params={params} />
+    </React.Suspense>
+  )
+}
+
+// ─── Upgrade Modal (Publish Gate) ─────────────────────────────────────────────
+
+const UPGRADE_PLANS = [
+  {
+    key: 'starter' as const,
+    name: 'Starter',
+    price_monthly: 20,
+    price_yearly: 200,
+    sites: '1 Webseite',
+    desc: 'Perfekt für den Einstieg',
+  },
+  {
+    key: 'pro' as const,
+    name: 'Pro',
+    price_monthly: 35,
+    price_yearly: 350,
+    sites: '3 Webseiten',
+    desc: 'Ideal für aktive Vermarkter',
+    popular: true,
+  },
+  {
+    key: 'unlimited' as const,
+    name: 'Unlimited',
+    price_monthly: 60,
+    price_yearly: 600,
+    sites: 'Unbegrenzt',
+    desc: 'Für Teams und Agenturen',
+  },
+]
+
+function UpgradeModal({
+  siteId,
+  onClose,
+}: {
+  siteId: string
+  onClose: () => void
+}) {
+  const [intervalMode, setIntervalMode] = useState<'monthly' | 'yearly'>('monthly')
+  const [loading, setLoading] = useState<string | null>(null)
+  const [error, setError] = useState('')
+
+  async function selectPlan(planKey: string) {
+    setLoading(planKey)
+    setError('')
+    try {
+      const res = await fetch('/api/billing/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ plan: planKey, interval: intervalMode, site_id: siteId }),
+      })
+      const data = await res.json()
+      if (!res.ok || !data.url) throw new Error(data.error || 'Fehler beim Checkout.')
+      window.location.href = data.url
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : 'Checkout fehlgeschlagen.')
+      setLoading(null)
+    }
+  }
+
+  return (
+    <div
+      className="fixed inset-0 z-[200] flex items-end sm:items-center justify-center"
+      style={{ background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)' }}
+      onClick={e => { if (e.target === e.currentTarget) onClose() }}
+    >
+      <div
+        className="w-full sm:max-w-lg bg-white rounded-t-3xl sm:rounded-3xl overflow-y-auto"
+        style={{ maxHeight: '92vh', boxShadow: '0 32px 80px rgba(0,0,0,0.3)' }}
+      >
+        {/* Header */}
+        <div className="px-6 pt-6 pb-4 border-b" style={{ borderColor: '#F0F0F0' }}>
+          <div className="flex items-center justify-between mb-3">
+            <div className="w-10 h-10 rounded-2xl flex items-center justify-center" style={{ background: '#F0FDF4' }}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#16A34A" strokeWidth="2" strokeLinecap="round">
+                <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
+              </svg>
+            </div>
+            <button onClick={onClose} className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: '#F3F4F6' }}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6B7280" strokeWidth="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+            </button>
+          </div>
+          <h2 className="text-xl font-bold text-gray-900 mb-1">Fast fertig!</h2>
+          <p className="text-sm" style={{ color: '#6B7280' }}>
+            Deine Webseite ist bereit. Wähle einen Tarif um sie zu veröffentlichen. Keine versteckten Kosten.
+          </p>
+        </div>
+
+        <div className="px-6 py-5">
+          {/* Interval toggle */}
+          <div className="flex items-center gap-1 p-1 rounded-xl mb-5 self-start w-fit" style={{ background: '#F3F4F6' }}>
+            {(['monthly', 'yearly'] as const).map(iv => (
+              <button
+                key={iv}
+                onClick={() => setIntervalMode(iv)}
+                className="text-sm font-medium px-4 py-2 rounded-lg transition-all"
+                style={{
+                  background: intervalMode === iv ? '#fff' : 'transparent',
+                  color: intervalMode === iv ? '#111' : '#9CA3AF',
+                  boxShadow: intervalMode === iv ? '0 1px 4px rgba(0,0,0,0.08)' : 'none',
+                }}
+              >
+                {iv === 'monthly' ? 'Monatlich' : (
+                  <span className="flex items-center gap-1.5">
+                    Jährlich
+                    <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full" style={{ background: '#DCFCE7', color: '#16A34A' }}>
+                      2 Monate gratis
+                    </span>
+                  </span>
+                )}
+              </button>
+            ))}
+          </div>
+
+          {/* Plan cards */}
+          <div className="flex flex-col gap-3">
+            {UPGRADE_PLANS.map(plan => {
+              const price = intervalMode === 'monthly' ? plan.price_monthly : Math.round(plan.price_yearly / 12)
+              const isLoading = loading === plan.key
+              const isPopular = plan.popular
+
+              return (
+                <button
+                  key={plan.key}
+                  onClick={() => selectPlan(plan.key)}
+                  disabled={!!loading}
+                  className="flex items-center gap-4 p-4 rounded-2xl text-left transition-all"
+                  style={{
+                    border: isPopular ? '2px solid #7C3AED' : '1.5px solid #E5E7EB',
+                    background: isPopular ? '#F9F5FF' : '#FAFAFA',
+                    opacity: loading && !isLoading ? 0.5 : 1,
+                    cursor: loading ? 'not-allowed' : 'pointer',
+                  }}
+                >
+                  {/* Price */}
+                  <div className="flex-shrink-0 text-center w-16">
+                    <div className="text-2xl font-bold" style={{ color: isPopular ? '#7C3AED' : '#111' }}>
+                      &euro;{price}
+                    </div>
+                    <div className="text-[10px]" style={{ color: '#9CA3AF' }}>/Monat</div>
+                  </div>
+
+                  {/* Info */}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-0.5">
+                      <span className="font-bold text-gray-900">{plan.name}</span>
+                      {isPopular && (
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full text-white" style={{ background: '#7C3AED' }}>
+                          Empfohlen
+                        </span>
+                      )}
+                    </div>
+                    <div className="text-sm font-medium" style={{ color: isPopular ? '#7C3AED' : '#374151' }}>
+                      {plan.sites}
+                    </div>
+                    <div className="text-xs mt-0.5" style={{ color: '#9CA3AF' }}>{plan.desc}</div>
+                  </div>
+
+                  {/* CTA */}
+                  <div
+                    className="flex-shrink-0 w-9 h-9 rounded-xl flex items-center justify-center"
+                    style={{ background: isPopular ? '#7C3AED' : '#1a1a1a' }}
+                  >
+                    {isLoading ? (
+                      <span className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
+                    ) : (
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    )}
+                  </div>
+                </button>
+              )
+            })}
+          </div>
+
+          {error && (
+            <p className="mt-3 text-sm text-red-600 text-center">{error}</p>
+          )}
+
+          <p className="mt-4 text-xs text-center" style={{ color: '#9CA3AF' }}>
+            Sichere Zahlung via Stripe &middot; Jederzeit kündbar &middot; Keine versteckten Kosten
+          </p>
+        </div>
+      </div>
     </div>
   )
 }

@@ -283,6 +283,26 @@ export default function SitesPage() {
         </section>
       )}
 
+      {/* ── Welcome state for users with no sites ── */}
+      {!loading && !hasSites && (
+        <div className="text-center py-12 px-6">
+          <div className="w-16 h-16 rounded-3xl flex items-center justify-center mx-auto mb-4"
+            style={{ background: '#F5F3FF' }}>
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#7C3AED" strokeWidth="1.5">
+              <rect x="3" y="3" width="18" height="18" rx="2"/>
+              <line x1="3" y1="9" x2="21" y2="9"/>
+              <line x1="9" y1="9" x2="9" y2="21"/>
+            </svg>
+          </div>
+          <h2 className="text-xl font-bold text-gray-900 mb-2">
+            Deine erste Webseite wartet
+          </h2>
+          <p className="text-sm mb-6 max-w-xs mx-auto leading-relaxed" style={{ color: '#6B7280' }}>
+            Wähle ein Template, fülle deine Daten ein und schalte deine Seite online. Kostenlos ausprobieren, erst zahlen wenn du live gehst.
+          </p>
+        </div>
+      )}
+
       {/* ── Neue Webseite erstellen CTA ── */}
       {!loading && (
         <div className="mt-4">

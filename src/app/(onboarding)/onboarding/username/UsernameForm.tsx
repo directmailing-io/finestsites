@@ -141,13 +141,7 @@ export function UsernameForm() {
       <div className="flex items-center justify-center gap-1 mb-10">
         <StepDot n={1} done label="Account" />
         <StepLine />
-        <StepDot n={2} done label="Plan" />
-        <StepLine />
-        <StepDot n={3} active label="Username" />
-        <StepLine />
-        <StepDot n={4} label="Unternehmen" />
-        <StepLine />
-        <StepDot n={5} label="Profil" />
+        <StepDot n={2} active label="Username" />
       </div>
 
       <div className="text-center mb-8">
@@ -158,9 +152,9 @@ export function UsernameForm() {
             <circle cx="12" cy="7" r="4"/>
           </svg>
         </div>
-        <h1 className="text-2xl font-semibold text-gray-900 mb-2">Fast geschafft!</h1>
+        <h1 className="text-2xl font-semibold text-gray-900 mb-2">Wie soll deine Adresse lauten?</h1>
         <p className="text-sm leading-relaxed" style={{ color: '#6B7280' }}>
-          Dein Username wird Teil deiner Website-Adresse — wähle ihn sorgfältig.
+          Dein Username wird Teil deiner Website-Adresse. Wähle ihn sorgfältig.
         </p>
       </div>
 
@@ -293,7 +287,7 @@ export function UsernameForm() {
             boxShadow: (valid && !loading && firstName.trim() && lastName.trim()) ? '0 4px 14px rgba(17,24,39,0.2)' : 'none',
           }}
         >
-          {loading ? 'Wird gespeichert…' : 'Loslegen →'}
+          {loading ? 'Wird gespeichert…' : 'Los geht\'s →'}
         </button>
       </form>
     </div>

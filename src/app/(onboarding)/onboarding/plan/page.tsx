@@ -55,19 +55,10 @@ function PlanPageInner() {
 
   return (
     <div className="w-full max-w-3xl">
-      {/* Step indicator */}
-      <div className="flex items-center justify-center gap-2 mb-10">
-        <StepDot n={1} done label="Account" />
-        <StepLine />
-        <StepDot n={2} active label="Plan wählen" />
-        <StepLine />
-        <StepDot n={3} label="Username" />
-      </div>
-
       <div className="text-center mb-8">
-        <h1 className="text-2xl font-semibold text-gray-900 mb-2">Wähle deinen Plan</h1>
+        <h1 className="text-2xl font-semibold text-gray-900 mb-2">Wähle deinen Tarif</h1>
         <p className="text-sm" style={{ color: '#6B7280' }}>
-          Wähle und bezahle jetzt. Danach richtest du deinen Username ein.
+          Schalte deine Webseite online. Jederzeit kündbar.
         </p>
       </div>
 
@@ -226,7 +217,7 @@ function PlanPageInner() {
                   boxShadow: isPopular ? '0 4px 16px rgba(124,58,237,0.3)' : 'none',
                 }}
               >
-                {isLoading ? 'Weiter zu Stripe…' : 'Plan wählen'}
+                {isLoading ? 'Weiter zu Stripe…' : 'Jetzt freischalten'}
               </button>
             </div>
           )
@@ -242,6 +233,12 @@ function PlanPageInner() {
       <p className="text-xs text-center" style={{ color: '#9CA3AF' }}>
         Sichere Zahlung via Stripe · Karte oder SEPA-Lastschrift · Jederzeit kündbar
       </p>
+
+      <div className="mt-6 text-center">
+        <a href="/sites" className="text-sm" style={{ color: '#9CA3AF' }}>
+          Zurück zur Übersicht
+        </a>
+      </div>
     </div>
   )
 }

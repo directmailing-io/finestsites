@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
     const user = await getUserFromRequest(req)
     if (!user) return NextResponse.json({ error: 'Nicht angemeldet.' }, { status: 401 })
 
-    const { plan, interval = 'monthly' } = await req.json() as { plan: PlanKey; interval?: BillingInterval }
+    const { plan, interval = 'monthly', site_id } = await req.json() as { plan: PlanKey; interval?: BillingInterval; site_id?: string }
     const priceId = getPriceIdByPlan(plan, interval)
     if (!priceId) return NextResponse.json({ error: 'Ungültiger Plan.' }, { status: 400 })
 
@@ -67,12 +67,16 @@ export async function POST(req: NextRequest) {
     const appUrl = (process.env.NEXT_PUBLIC_APP_URL ?? 'https://app.finestsites.io').replace(/\/$/, '')
 
     // Success always hits the server-side activate route, which verifies the
-    // Stripe session, updates the DB, then redirects to /sites.
+    // Stripe session, updates the DB, then redirects to /sites (or back to the
+    // editor if site_id was passed — e.g. triggered from the publish gate).
     const isOnboarding = !profile?.username
-    const successUrl = `${appUrl}/api/billing/activate?session_id={CHECKOUT_SESSION_ID}`
-    const cancelUrl = isOnboarding
-      ? `${appUrl}/onboarding/plan?canceled=1`
-      : `${appUrl}/settings?canceled=1`
+    const siteParam = site_id ? `&site_id=${encodeURIComponent(site_id)}` : ''
+    const successUrl = `${appUrl}/api/billing/activate?session_id={CHECKOUT_SESSION_ID}${siteParam}`
+    const cancelUrl = site_id
+      ? `${appUrl}/sites/${site_id}/edit?payment_canceled=1`
+      : isOnboarding
+        ? `${appUrl}/onboarding/plan?canceled=1`
+        : `${appUrl}/settings?canceled=1`
 
     // Apply affiliate discount coupon if user was referred
     const affiliateCouponId = process.env.STRIPE_AFFILIATE_COUPON_ID

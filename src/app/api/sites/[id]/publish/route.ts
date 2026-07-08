@@ -75,12 +75,29 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     return NextResponse.json({ error: 'Kein Benutzername gesetzt. Bitte erst in Einstellungen setzen.' }, { status: 400 })
   }
 
-  // ── Plan-limit check ───────────────────────────────────────────────────
+  // ── Subscription + plan-limit check ────────────────────────────────────
+  // Free templates can always be published without a subscription.
+  // Premium templates require an active subscription AND must be within the plan's site limit.
   const tplIsFree = site.template.isFree ?? false
   if (!tplIsFree) {
+    const ACTIVE_STATUSES = ['active', 'trialing', 'past_due']
     const profile = await db.query.users.findFirst({
       where: eq(users.id, user.id),
     })
+
+    // Gate 1: Must have an active subscription
+    const hasActiveSub =
+      !!profile?.subscriptionStatus &&
+      ACTIVE_STATUSES.includes(profile.subscriptionStatus)
+
+    if (!hasActiveSub) {
+      return NextResponse.json({
+        error: 'Wähle einen Tarif, um deine Webseite zu veröffentlichen.',
+        code: 'SUBSCRIPTION_REQUIRED',
+      }, { status: 402 })
+    }
+
+    // Gate 2: Must be within the plan's site quota
     const plan = profile?.plan ?? 'starter'
     const PLAN_LIMITS: Record<string, number> = { starter: 1, pro: 3, unlimited: Infinity, secret: Infinity }
     const limit = PLAN_LIMITS[plan] ?? 1
@@ -99,6 +116,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     if (otherPaidCount >= limit) {
       return NextResponse.json({
         error: `Plan-Limit erreicht. Dein ${plan}-Plan erlaubt ${limit} ${limit === 1 ? 'aktive Premium-Webseite' : 'aktive Premium-Webseiten'}. Bitte upgrade oder nimm eine andere Seite offline.`,
+        code: 'PLAN_LIMIT_REACHED',
       }, { status: 403 })
     }
   }

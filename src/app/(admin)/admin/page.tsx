@@ -6,16 +6,16 @@ import Link from 'next/link'
 
 // ── MRR rates in Euro (monthly equivalent) ─────────────────────────────────
 const MRR_RATE: Record<string, Record<string, number>> = {
-  starter:   { monthly: 17,    yearly: +(170  / 12).toFixed(2) },
-  pro:       { monthly: 24,    yearly: +(240  / 12).toFixed(2) },
-  unlimited: { monthly: 36,    yearly: +(360  / 12).toFixed(2) },
+  starter:   { monthly: 20,    yearly: +(200  / 12).toFixed(2) },
+  pro:       { monthly: 35,    yearly: +(350  / 12).toFixed(2) },
+  unlimited: { monthly: 60,    yearly: +(600  / 12).toFixed(2) },
 }
 
 // ── Actual charge amounts in cents per plan+interval ────────────────────────
 const PRICE_CENTS: Record<string, Record<string, number>> = {
-  starter:   { monthly: 1700,  yearly: 17000 },
-  pro:       { monthly: 2400,  yearly: 24000 },
-  unlimited: { monthly: 3600,  yearly: 36000 },
+  starter:   { monthly: 2000,  yearly: 20000 },
+  pro:       { monthly: 3500,  yearly: 35000 },
+  unlimited: { monthly: 6000,  yearly: 60000 },
 }
 
 function mrrFor(plan: string, interval: string | null): number {

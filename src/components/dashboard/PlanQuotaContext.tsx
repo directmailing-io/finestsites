@@ -18,6 +18,8 @@ import { usePathname } from 'next/navigation'
 
 interface QuotaState {
   plan: string | null
+  /** True when the user has an active paid subscription. */
+  hasSub: boolean
   used: number
   limit: number  // Infinity for unlimited
   atLimit: boolean
@@ -26,11 +28,13 @@ interface QuotaState {
 }
 
 const PLAN_LIMITS: Record<string, number> = { starter: 1, pro: 3, unlimited: Infinity, secret: Infinity }
+const ACTIVE_SUB_STATUSES = ['active', 'trialing', 'past_due']
 
 const PlanQuotaContext = createContext<QuotaState | null>(null)
 
 export function PlanQuotaProvider({ children }: { children: ReactNode }) {
   const [plan, setPlan] = useState<string | null>(null)
+  const [hasSub, setHasSub] = useState(false)
   const [used, setUsed] = useState(0)
   const [limit, setLimit] = useState(1)
   const [loading, setLoading] = useState(true)
@@ -41,10 +45,15 @@ export function PlanQuotaProvider({ children }: { children: ReactNode }) {
       const res = await fetch('/api/user/profile', { cache: 'no-store' })
       if (!res.ok) return
       const data = await res.json()
-      const p = data.plan ?? 'starter'
+      const subStatus: string | null = data.subscription_status ?? null
+      const activeSub = !!subStatus && ACTIVE_SUB_STATUSES.includes(subStatus)
+      // Only treat the plan as set when the user actually has an active subscription.
+      // Free users (no subscription) get plan=null so the sidebar shows "Kostenloser Modus".
+      const p = activeSub ? (data.plan ?? null) : null
       const u = data.paid_sites_count ?? 0
-      const l = PLAN_LIMITS[p] ?? 1
+      const l = p ? (PLAN_LIMITS[p] ?? 1) : 0
       setPlan(p)
+      setHasSub(activeSub)
       setUsed(u)
       setLimit(l)
     } catch {
@@ -64,7 +73,7 @@ export function PlanQuotaProvider({ children }: { children: ReactNode }) {
 
   const atLimit = limit !== Infinity && used >= limit
 
-  const value: QuotaState = { plan, used, limit, atLimit, loading, refetch }
+  const value: QuotaState = { plan, hasSub, used, limit, atLimit, loading, refetch }
   return <PlanQuotaContext.Provider value={value}>{children}</PlanQuotaContext.Provider>
 }
 
@@ -73,7 +82,7 @@ export function usePlanQuota(): QuotaState {
   if (!ctx) {
     // Safe fallback so components don't crash if used outside provider.
     return {
-      plan: null, used: 0, limit: 1, atLimit: false, loading: false,
+      plan: null, hasSub: false, used: 0, limit: 0, atLimit: false, loading: false,
       refetch: async () => {},
     }
   }

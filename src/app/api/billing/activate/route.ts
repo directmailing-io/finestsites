@@ -88,9 +88,13 @@ export async function GET(req: NextRequest) {
       })
     }
 
-    // Redirect to home.
+    // Redirect to home, or back to the editor if site_id was passed (publish-gate flow).
     // Middleware will redirect to /onboarding/username if username is not yet set.
-    return NextResponse.redirect(`${appUrl}/sites`)
+    const siteId = req.nextUrl.searchParams.get('site_id')
+    const redirectTarget = siteId
+      ? `${appUrl}/sites/${siteId}/edit?just_paid=1`
+      : `${appUrl}/sites`
+    return NextResponse.redirect(redirectTarget)
   } catch (err) {
     console.error('[billing/activate] error:', err instanceof Error ? err.message : err)
     return NextResponse.redirect(`${appUrl}/onboarding/plan`)
