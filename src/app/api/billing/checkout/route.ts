@@ -30,18 +30,34 @@ export async function POST(req: NextRequest) {
     const stripe = getStripe()
     const profile = await db.query.users.findFirst({
       where: eq(users.id, user.id),
-      columns: { stripeCustomerId: true, email: true, username: true, referredByUsername: true },
+      columns: { stripeCustomerId: true, email: true, username: true, referredByUsername: true, firstName: true, lastName: true },
     })
 
-    // Create or reuse Stripe customer
+    // Build customer display name and metadata from current profile
+    const fullName = [profile?.firstName, profile?.lastName].filter(Boolean).join(' ').trim() || undefined
+    const customerMeta = {
+      user_id: user.id,
+      username: profile?.username ?? '',
+      first_name: profile?.firstName ?? '',
+      last_name: profile?.lastName ?? '',
+    }
+
+    // Create or reuse Stripe customer — always sync metadata so Stripe stays up-to-date
     let customerId = profile?.stripeCustomerId ?? undefined
     if (!customerId) {
       const customer = await stripe.customers.create({
         email: profile?.email ?? user.email ?? '',
-        metadata: { user_id: user.id },
+        ...(fullName ? { name: fullName } : {}),
+        metadata: customerMeta,
       })
       customerId = customer.id
       await db.update(users).set({ stripeCustomerId: customerId }).where(eq(users.id, user.id))
+    } else {
+      // Keep existing customer metadata in sync (fire-and-forget, non-blocking)
+      stripe.customers.update(customerId, {
+        ...(fullName ? { name: fullName } : {}),
+        metadata: customerMeta,
+      }).catch((e: Error) => console.error('[billing/checkout] customer update error:', e.message))
     }
 
     // Always use the canonical app URL for Stripe redirect URLs.

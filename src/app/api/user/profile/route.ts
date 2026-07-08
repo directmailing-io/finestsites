@@ -3,6 +3,7 @@ import { getUserFromRequest } from '@/lib/auth/server'
 import { db } from '@/lib/db'
 import { users, userSites, templates } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
+import { getStripe } from '@/lib/stripe/client'
 
 export async function GET(req: NextRequest) {
   const user = await getUserFromRequest(req)
@@ -82,6 +83,28 @@ export async function PATCH(req: NextRequest) {
 
   try {
     await db.update(users).set(updates).where(eq(users.id, user.id))
+
+    // Sync name changes to Stripe customer (fire-and-forget)
+    const nameChanged = 'firstName' in updates || 'lastName' in updates
+    if (nameChanged) {
+      const current = await db.query.users.findFirst({
+        where: eq(users.id, user.id),
+        columns: { stripeCustomerId: true, firstName: true, lastName: true, username: true },
+      })
+      if (current?.stripeCustomerId) {
+        const fullName = [current.firstName, current.lastName].filter(Boolean).join(' ').trim()
+        getStripe().customers.update(current.stripeCustomerId, {
+          ...(fullName ? { name: fullName } : {}),
+          metadata: {
+            user_id: user.id,
+            username: current.username ?? '',
+            first_name: current.firstName ?? '',
+            last_name: current.lastName ?? '',
+          },
+        }).catch((e: Error) => console.error('[profile/PATCH] Stripe sync error:', e.message))
+      }
+    }
+
     return NextResponse.json({ ok: true })
   } catch {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
