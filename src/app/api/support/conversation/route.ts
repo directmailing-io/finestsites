@@ -76,7 +76,7 @@ export async function POST(req: NextRequest) {
       .returning()
 
     // Automatic reply so the user knows we received their message
-    const autoReply = 'Danke! Deine Nachricht ist angekommen. Wir melden uns so bald wie möglich. Das kann manchmal auch ein paar Stunden dauern. Die Antwort bekommst du hier in diesem Chat.'
+    const autoReply = 'Hey! Deine Nachricht ist bei uns angekommen. Wir schauen so schnell wie möglich drüber. Manchmal dauert es ein paar Stunden. Du bekommst die Antwort direkt hier im Chat.'
     await db.insert(supportMessages).values({
       conversationId: conv.id,
       senderType: 'admin',
