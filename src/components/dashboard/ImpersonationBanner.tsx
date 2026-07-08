@@ -27,9 +27,11 @@ export default function ImpersonationBanner() {
   }
 
   useEffect(() => {
-    poll()
-    intervalRef.current = setInterval(poll, 5000)
-    return () => { if (intervalRef.current) clearInterval(intervalRef.current) }
+    const t0 = setTimeout(() => { void poll() }, 0)
+    const id = setInterval(() => { void poll() }, 5000)
+    intervalRef.current = id
+    return () => { clearTimeout(t0); clearInterval(id) }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const respond = async (action: 'approve' | 'reject') => {
