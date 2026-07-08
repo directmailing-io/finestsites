@@ -32,6 +32,7 @@ export async function GET(req: NextRequest) {
     stripe_customer_id: profile?.stripeCustomerId ?? null,
     sites_count,
     paid_sites_count,
+    email: user.email ?? null,
     username: profile?.username ?? null,
     referred_by_username: profile?.referredByUsername ?? null,
     // NM company preferences

@@ -106,6 +106,8 @@ interface UserProfile {
   subscription_status: string | null
   stripe_customer_id: string | null
   paid_sites_count: number
+  email: string | null
+  username: string | null
   first_name: string | null
   last_name: string | null
   phone: string | null
@@ -536,6 +538,24 @@ function SettingsContent() {
                 className="sr-only"
                 onChange={handleAvatarFileSelect}
               />
+            </div>
+          </div>
+
+          {/* ── Account info (read-only) ── */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="flex flex-col gap-1.5">
+              <label className="text-sm font-semibold text-gray-700">E-Mail-Adresse</label>
+              <div className="px-4 py-3 rounded-2xl text-sm text-gray-500 select-all"
+                style={{ background: '#F9FAFB', border: '1.5px solid #E5E7EB' }}>
+                {profile?.email ?? '–'}
+              </div>
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <label className="text-sm font-semibold text-gray-700">Benutzername</label>
+              <div className="px-4 py-3 rounded-2xl text-sm text-gray-500 select-all"
+                style={{ background: '#F9FAFB', border: '1.5px solid #E5E7EB' }}>
+                {profile?.username ? `@${profile.username}` : '–'}
+              </div>
             </div>
           </div>
 
