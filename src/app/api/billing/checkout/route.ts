@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
     if (!customerId) {
       const customer = await stripe.customers.create({
         email: profile?.email ?? user.email ?? '',
-        metadata: { supabase_user_id: user.id },
+        metadata: { user_id: user.id },
       })
       customerId = customer.id
       await db.update(users).set({ stripeCustomerId: customerId }).where(eq(users.id, user.id))
@@ -98,7 +98,7 @@ export async function POST(req: NextRequest) {
 
       subscription_data: {
         metadata: {
-          supabase_user_id: user.id,
+          user_id: user.id,
           plan,
           interval,
           referred_by: referredBy ?? '',
@@ -106,7 +106,7 @@ export async function POST(req: NextRequest) {
       },
 
       metadata: {
-        supabase_user_id: user.id,
+        user_id: user.id,
         plan,
         interval,
         referred_by: referredBy ?? '',
