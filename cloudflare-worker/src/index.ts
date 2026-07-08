@@ -582,15 +582,33 @@ export default {
         return handleFormSubmission(request, pathname, meta, env, ctx)
       }
 
-      // ── Dedicated static pages (impressum, datenschutz, agb …) ──────────
-      // Before SPA fallback: check R2 for a dedicated {page}.html.
-      // If found, render it with the same placeholder substitution as index.html.
-      // If not found, fall through to SPA routing so nothing breaks.
-      const STATIC_PAGES: Record<string, string> = {
-        '/impressum': 'impressum.html',
-        '/datenschutz': 'datenschutz.html',
-        '/agb': 'agb.html',
+      // ── Legal pages (impressum, datenschutz) ─────────────────────────────
+      // Rendered inline from Worker code — zero R2 files needed.
+      // Adding a new template = one line in LEGAL_DESIGNS. Legal text change = one wrangler deploy.
+      if (pathname === '/impressum' || pathname === '/datenschutz') {
+        const design = LEGAL_DESIGNS[domain] ?? DEFAULT_LEGAL_DESIGN
+        const legalHtml = pathname === '/impressum' ? renderImpressum(design) : renderDatenschutz(design)
+        const pageDataRes = await fetch(
+          `${env.APP_URL}/api/worker/site-data?siteId=${meta.siteId}`,
+          { headers: { 'x-worker-secret': env.WORKER_SECRET } }
+        )
+        const pageRows = pageDataRes.ok
+          ? await pageDataRes.json() as { fieldKey: string; fieldValue: string | null }[]
+          : []
+        const pageDataMap: Data = {}
+        for (const r of pageRows) pageDataMap[r.fieldKey] = r.fieldValue ?? ''
+        return new Response(render(legalHtml, pageDataMap), {
+          headers: {
+            'Content-Type': 'text/html; charset=utf-8',
+            'Cache-Control': 'no-cache',
+            'X-Powered-By': 'FinestSites',
+          },
+        })
       }
+
+      // ── Other dedicated static pages (agb …) ─────────────────────────────
+      // Still served from R2 for flexibility.
+      const STATIC_PAGES: Record<string, string> = { '/agb': 'agb.html' }
       const dedicatedPageFile = STATIC_PAGES[pathname]
       if (dedicatedPageFile) {
         const pageObj = await env.R2_BUCKET.get(`${meta.r2BasePath}/${dedicatedPageFile}`)
@@ -678,6 +696,298 @@ export default {
       return new Response('Internal Server Error', { status: 500 })
     }
   },
+}
+
+// ─── Legal Page System ────────────────────────────────────────────────────────
+// One entry per template domain. New template = add one object here.
+// Legal text change = update once, deploy once. Zero R2 files needed.
+
+interface LegalDesign {
+  accent: string
+  bg: string
+  text: string
+  muted: string
+  faint: string
+  divider: string
+  boxBg: string
+  boxBorder: string
+  navBg: string
+  font: string
+  fontUrl: string | null
+  logoHtml: string
+  navHeight: number
+}
+
+const DEFAULT_LEGAL_DESIGN: LegalDesign = {
+  accent: '#16a34a', bg: '#ffffff', text: '#111111', muted: '#444444',
+  faint: '#888888', divider: '#f0f0f0', boxBg: '#f8fdf9', boxBorder: '#c8edd4',
+  navBg: 'rgba(255,255,255,0.95)',
+  font: '-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif',
+  fontUrl: null, logoHtml: 'FinestSites', navHeight: 56,
+}
+
+const LEGAL_DESIGNS: Record<string, LegalDesign> = {
+  'dailyoptimal.de': {
+    accent: '#5fcc8a', bg: '#ffffff', text: '#111111', muted: '#333333',
+    faint: '#999999', divider: '#f0f0f0', boxBg: '#f8fdf9', boxBorder: '#c8edd4',
+    navBg: 'rgba(255,255,255,0.95)',
+    font: '-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif',
+    fontUrl: null,
+    logoHtml: 'Daily<span style="color:#5fcc8a">Optimal</span>', navHeight: 56,
+  },
+  'myevnt.io': {
+    accent: '#7C3AED', bg: '#0A0A0A', text: '#FFFFFF', muted: 'rgba(255,255,255,0.75)',
+    faint: 'rgba(255,255,255,0.35)', divider: 'rgba(255,255,255,0.07)',
+    boxBg: 'rgba(124,58,237,0.07)', boxBorder: 'rgba(124,58,237,0.22)',
+    navBg: 'rgba(10,10,10,0.85)',
+    font: "'Geist',system-ui,-apple-system,sans-serif",
+    fontUrl: 'https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&display=swap',
+    logoHtml: 'My<span style="color:#7C3AED">Evnt</span>', navHeight: 56,
+  },
+  'lnko.me': {
+    accent: '#0A0A0A', bg: '#ffffff', text: '#0A0A0A', muted: 'rgba(10,10,10,0.72)',
+    faint: 'rgba(10,10,10,0.35)', divider: 'rgba(10,10,10,0.07)',
+    boxBg: '#F7F7F7', boxBorder: 'rgba(10,10,10,0.09)',
+    navBg: 'rgba(255,255,255,0.92)',
+    font: "'Inter',system-ui,-apple-system,sans-serif",
+    fontUrl: 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap',
+    logoHtml: 'lnko<span style="color:rgba(10,10,10,0.35)">.me</span>', navHeight: 52,
+  },
+  'womenplus.io': {
+    accent: '#e11d48', bg: '#ffffff', text: '#111111', muted: '#444444',
+    faint: '#888888', divider: '#f0f0f0', boxBg: '#fff1f2', boxBorder: '#fecdd3',
+    navBg: 'rgba(255,255,255,0.95)',
+    font: "'Inter',system-ui,-apple-system,sans-serif",
+    fontUrl: 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap',
+    logoHtml: 'Women<span style="color:#e11d48">Plus</span>', navHeight: 56,
+  },
+}
+
+function legalStyles(d: LegalDesign): string {
+  return `<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:${d.bg};color:${d.text};font-family:${d.font};font-size:15px;line-height:1.75;min-height:100vh;display:flex;flex-direction:column;-webkit-font-smoothing:antialiased}
+nav.top-nav{position:sticky;top:0;z-index:100;height:${d.navHeight}px;background:${d.navBg};backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid ${d.divider};display:flex;align-items:center;padding:0 24px}
+.logo{font-size:17px;font-weight:700;color:${d.text};text-decoration:none;letter-spacing:-0.02em}
+main{flex:1;width:100%;max-width:680px;margin:0 auto;padding:48px 24px 80px}
+.back-link{display:inline-block;font-size:13px;color:${d.faint};text-decoration:none;margin-bottom:32px;transition:color 0.15s}
+.back-link:hover{color:${d.muted}}
+.eyebrow{font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:${d.accent};margin-bottom:12px}
+h1{font-size:clamp(24px,4vw,34px);font-weight:800;color:${d.text};line-height:1.15;margin-bottom:8px;letter-spacing:-0.02em}
+.page-subtitle{color:${d.muted};margin-bottom:48px}
+hr.divider{border:none;border-top:1px solid ${d.divider};margin:40px 0}
+h2{font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:${d.faint};margin-bottom:16px}
+p{color:${d.muted};margin-bottom:16px}
+p:last-child{margin-bottom:0}
+.highlight-box{background:${d.boxBg};border:1px solid ${d.boxBorder};border-radius:14px;padding:20px 24px;margin:16px 0 20px}
+.highlight-box p{margin-bottom:4px;color:${d.muted}}
+.highlight-box p:last-child{margin-bottom:0}
+a{color:${d.accent};text-decoration:none}
+a:hover{text-decoration:underline}
+strong{color:${d.text}}
+.footnote{font-size:13px;color:${d.faint};margin-top:48px}
+footer{border-top:1px solid ${d.divider};padding:20px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+footer .copyright{font-size:13px;color:${d.faint}}
+footer nav.foot-nav{display:flex;gap:20px}
+footer nav.foot-nav a{font-size:13px;color:${d.faint};text-decoration:none;transition:color 0.15s}
+footer nav.foot-nav a:hover{color:${d.muted}}
+@media(max-width:480px){main{padding:32px 16px 64px}nav.top-nav{padding:0 16px}footer{padding:20px 16px;flex-direction:column;align-items:flex-start}}
+</style>`
+}
+
+function legalHead(title: string, d: LegalDesign): string {
+  const fontLink = d.fontUrl
+    ? `<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="${d.fontUrl}" rel="stylesheet">`
+    : ''
+  return `<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>${title}</title>
+${fontLink}
+${legalStyles(d)}
+</head>`
+}
+
+function legalFooterHtml(): string {
+  return `<footer>
+<span class="copyright">&copy; ${new Date().getFullYear()} FinestSites</span>
+<nav class="foot-nav">
+<a href="/">Startseite</a>
+<a href="/datenschutz">Datenschutz</a>
+<a href="/impressum">Impressum</a>
+</nav>
+</footer>`
+}
+
+function renderImpressum(d: LegalDesign): string {
+  return `${legalHead('Impressum', d)}
+<body>
+<nav class="top-nav"><a class="logo" href="/">${d.logoHtml}</a></nav>
+<main>
+<a class="back-link" href="/">&#8592; Zur\u00FCck</a>
+<div class="eyebrow">Rechtliches</div>
+<h1>Impressum</h1>
+<p class="page-subtitle">Angaben gem\u00E4\u00DF \u00A7 5 TMG</p>
+
+<section>
+<h2>Betreiber und Diensteanbieter</h2>
+<p>Diese Website wird technisch betrieben und als Dienstleistung bereitgestellt durch:</p>
+<div class="highlight-box">
+<p><strong>Daniel Kurzeja &ndash; FinestSites</strong></p>
+<p>Herrleinstr. 39</p>
+<p>97437 Ha\u00DFfurt</p>
+<p>Deutschland</p>
+<p>Telefon: <a href="tel:+4915151005561">+49 151 51005561</a></p>
+<p>E-Mail: <a href="mailto:hello@finestsites.io">hello@finestsites.io</a></p>
+<p>USt-IdNr.: DE369220308</p>
+</div>
+<p>FinestSites stellt die technische Plattform bereit und ist Verantwortlicher im Sinne des \u00A7 5 TMG.</p>
+</section>
+
+<hr class="divider">
+
+<section>
+<h2>Inhaltlich verantwortlich (\u00A7 18 Abs. 2 MStV)</h2>
+<div class="highlight-box">
+<p><strong>Daniel Kurzeja &ndash; FinestSites</strong></p>
+<p>Herrleinstr. 39, 97437 Ha\u00DFfurt, Deutschland</p>
+</div>
+<p>FinestSites ist inhaltlich verantwortlich f\u00FCr die auf dieser Website bereitgestellten Plattforminhalte (Struktur, Design, Texte).</p>
+</section>
+
+<hr class="divider">
+
+<section>
+<h2>Nutzergenerierte Inhalte</h2>
+<p>Diese Website wird im Rahmen des FinestSites-Dienstleistungsangebots f\u00FCr folgende Person betrieben:</p>
+<div class="highlight-box">
+<p><strong>{{user_display_name}}</strong></p>
+</div>
+<p>F\u00FCr eigene nutzergenerierte Inhalte dieser Person &ndash; insbesondere pers\u00F6nliche Erfahrungsberichte, Fotos und selbst hochgeladene Medien &ndash; ist {{user_display_name}} gem\u00E4\u00DF \u00A7 7 Abs. 1 TMG selbst verantwortlich. FinestSites ist nicht verpflichtet, diese Inhalte vorab zu pr\u00FCfen.</p>
+</section>
+
+<hr class="divider">
+
+<section>
+<h2>Haftung f\u00FCr Inhalte</h2>
+<p>Als Diensteanbieter sind wir gem\u00E4\u00DF \u00A7 7 Abs. 1 TMG f\u00FCr eigene Inhalte auf diesen Seiten nach den allgemeinen Gesetzen verantwortlich. Nach \u00A7\u00A7 8 bis 10 TMG sind wir als Diensteanbieter jedoch nicht verpflichtet, \u00FCbermittelte oder gespeicherte fremde Informationen zu \u00FCberwachen. Verpflichtungen zur Entfernung oder Sperrung der Nutzung von Informationen nach den allgemeinen Gesetzen bleiben hiervon unber\u00FChrt. Eine diesbez\u00FCgliche Haftung ist jedoch erst ab dem Zeitpunkt der Kenntnis einer konkreten Rechtsverletzung m\u00F6glich. Bei Bekanntwerden von Rechtsverletzungen werden wir diese Inhalte umgehend entfernen.</p>
+</section>
+
+<hr class="divider">
+
+<section>
+<h2>Haftung f\u00FCr Links</h2>
+<p>Unser Angebot kann Links zu externen Websites Dritter enthalten, auf deren Inhalte wir keinen Einfluss haben. F\u00FCr die Inhalte der verlinkten Seiten ist stets der jeweilige Anbieter oder Betreiber verantwortlich. Die verlinkten Seiten wurden zum Zeitpunkt der Verlinkung auf m\u00F6gliche Rechtsverst\u00F6\u00DFe \u00FCberpr\u00FCft. Bei Bekanntwerden von Rechtsverletzungen werden wir derartige Links umgehend entfernen.</p>
+</section>
+
+<hr class="divider">
+
+<section>
+<h2>Urheberrecht</h2>
+<p>Die durch FinestSites / Daniel Kurzeja erstellten Inhalte und Werke auf diesen Seiten unterliegen dem deutschen Urheberrecht. Downloads und Kopien dieser Seite sind nur f\u00FCr den privaten, nicht kommerziellen Gebrauch gestattet. Soweit die Inhalte auf dieser Seite nicht vom Betreiber erstellt wurden, werden die Urheberrechte Dritter beachtet. Bei Bekanntwerden von Rechtsverletzungen werden wir derartige Inhalte umgehend entfernen.</p>
+</section>
+
+<hr class="divider">
+
+<section>
+<h2>EU-Streitschlichtung</h2>
+<p>Die Europ\u00E4ische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit: <a href="https://ec.europa.eu/consumers/odr/" target="_blank" rel="noopener noreferrer">https://ec.europa.eu/consumers/odr/</a>. Wir sind nicht bereit oder verpflichtet, an Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen.</p>
+</section>
+
+<p class="footnote">Stand: Juli 2026</p>
+</main>
+${legalFooterHtml()}
+</body>
+</html>`
+}
+
+function renderDatenschutz(d: LegalDesign): string {
+  return `${legalHead('Datenschutzerkl\u00E4rung', d)}
+<body>
+<nav class="top-nav"><a class="logo" href="/">${d.logoHtml}</a></nav>
+<main>
+<a class="back-link" href="/">&#8592; Zur\u00FCck</a>
+<div class="eyebrow">Rechtliches</div>
+<h1>Datenschutz&shy;erkl\u00E4rung</h1>
+<p class="page-subtitle">Informationen gem\u00E4\u00DF Art. 13 DSGVO</p>
+
+<section>
+<h2>Verantwortlicher (Art. 4 Nr. 7 DSGVO)</h2>
+<div class="highlight-box">
+<p><strong>Daniel Kurzeja &ndash; FinestSites</strong></p>
+<p>Herrleinstr. 39</p>
+<p>97437 Ha\u00DFfurt</p>
+<p>Deutschland</p>
+<p>E-Mail: <a href="mailto:hello@finestsites.io">hello@finestsites.io</a></p>
+<p>Telefon: <a href="tel:+4915151005561">+49 151 51005561</a></p>
+</div>
+</section>
+
+<hr class="divider">
+
+<section>
+<h2>Hosting &amp; Infrastruktur</h2>
+<p>Diese Website wird \u00FCber die FinestSites-Plattform betrieben. Die technische Infrastruktur liegt auf Servern in der EU (Hetzner Online GmbH, Deutschland). Beim Abruf der Website werden durch den Browser automatisch folgende Daten \u00FCbermittelt: IP-Adresse, Datum und Uhrzeit, aufgerufene URL, Browser und Betriebssystem. Diese Daten werden ausschlie\u00DFlich zur technischen Bereitstellung der Website verarbeitet und nicht dauerhaft gespeichert (Art. 6 Abs. 1 lit. f DSGVO).</p>
+</section>
+
+<hr class="divider">
+
+<section>
+<h2>Cookies &amp; Tracking (\u00A7 25 TTDSG)</h2>
+<p>Diese Website verwendet <strong>keine Cookies</strong> und kein Tracking. Es werden keine Daten f\u00FCr Werbezwecke erhoben, keine Analyse-Tools eingesetzt und keine Daten an Dritte weitergegeben. Ein Cookie-Banner ist daher nicht erforderlich.</p>
+</section>
+
+<hr class="divider">
+
+<section>
+<h2>Kontaktformular</h2>
+<p>Wenn Sie das Kontaktformular auf dieser Seite nutzen, werden Ihre Angaben (z.\u202FB. Name, E-Mail-Adresse, Nachricht) verschl\u00FCsselt an die FinestSites-Server \u00FCbertragen und in unserem gesicherten Dashboard gespeichert. Sie werden ausschlie\u00DFlich zur Bearbeitung Ihrer Anfrage verwendet und nicht an Dritte weitergegeben.</p>
+<p>Rechtsgrundlage: Art. 6 Abs. 1 lit. b DSGVO (Vertragsanbahnung) bzw. Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an der Beantwortung von Anfragen). Die Daten werden gel\u00F6scht, sobald Ihre Anfrage abschlie\u00DFend bearbeitet wurde und keine gesetzliche Aufbewahrungspflicht entgegensteht.</p>
+</section>
+
+<hr class="divider">
+
+<section>
+<h2>Eingebettete Inhalte</h2>
+<p>Diese Website kann eingebettete Inhalte (z.\u202FB. Schriftarten von Google Fonts) enthalten. Beim Laden dieser Inhalte wird Ihre IP-Adresse an den jeweiligen Anbieter \u00FCbertragen. Dies geschieht auf Basis von Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an einem einwandfrei funktionierenden Erscheinungsbild der Website).</p>
+</section>
+
+<hr class="divider">
+
+<section>
+<h2>Ihre Rechte</h2>
+<p><strong>Auskunft</strong> (Art. 15 DSGVO) &ndash; Sie k\u00F6nnen Auskunft \u00FCber die von uns verarbeiteten Daten verlangen.</p>
+<p><strong>Berichtigung</strong> (Art. 16 DSGVO) &ndash; Sie k\u00F6nnen die Berichtigung unrichtiger Daten verlangen.</p>
+<p><strong>L\u00F6schung</strong> (Art. 17 DSGVO) &ndash; Sie k\u00F6nnen die L\u00F6schung Ihrer Daten verlangen, sofern keine gesetzliche Aufbewahrungspflicht besteht.</p>
+<p><strong>Einschr\u00E4nkung</strong> (Art. 18 DSGVO) &ndash; Sie k\u00F6nnen die Einschr\u00E4nkung der Verarbeitung verlangen.</p>
+<p><strong>Widerspruch</strong> (Art. 21 DSGVO) &ndash; Sie k\u00F6nnen der Verarbeitung auf Basis berechtigter Interessen widersprechen.</p>
+<p><strong>Daten\u00FCbertragbarkeit</strong> (Art. 20 DSGVO) &ndash; Sie k\u00F6nnen Ihre Daten in einem strukturierten, maschinenlesbaren Format erhalten.</p>
+<p>Zur Aus\u00FCbung Ihrer Rechte wenden Sie sich an: <a href="mailto:hello@finestsites.io">hello@finestsites.io</a></p>
+</section>
+
+<hr class="divider">
+
+<section>
+<h2>Beschwerderecht</h2>
+<p>Sie haben das Recht, sich bei einer Datenschutz-Aufsichtsbeh\u00F6rde zu beschweren. Zust\u00E4ndig ist das Bayerische Landesamt f\u00FCr Datenschutzaufsicht (BayLDA), Promenade 18, 91522 Ansbach, <a href="https://www.lda.bayern.de" target="_blank" rel="noopener noreferrer">www.lda.bayern.de</a>.</p>
+</section>
+
+<hr class="divider">
+
+<section>
+<h2>EU-Streitschlichtung</h2>
+<p>Die Europ\u00E4ische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit: <a href="https://ec.europa.eu/consumers/odr/" target="_blank" rel="noopener noreferrer">https://ec.europa.eu/consumers/odr/</a>. Wir sind nicht bereit oder verpflichtet, an Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen.</p>
+</section>
+
+<p class="footnote">Stand: Juli 2026</p>
+</main>
+${legalFooterHtml()}
+</body>
+</html>`
 }
 
 // ─── HTML Templates ───────────────────────────────────────────────────────────
