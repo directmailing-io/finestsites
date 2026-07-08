@@ -22,7 +22,7 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
-import { siteData } from '@/lib/db/schema'
+import { siteData, userSites, users } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
 
 const WORKER_SECRET = process.env.WORKER_SECRET
@@ -41,12 +41,29 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    // Fetch all rows for the site — the Worker converts this flat array into a
-    // key→value map (Data = Record<string, string>) before passing it to render().
-    const rows = await db
+    // Fetch all placeholder key/value pairs for this site
+    const siteRows = await db
       .select({ fieldKey: siteData.fieldKey, fieldValue: siteData.fieldValue })
       .from(siteData)
       .where(eq(siteData.userSiteId, siteId))
+
+    // Fetch user profile for legal pages (impressum/datenschutz)
+    const [userInfo] = await db
+      .select({ firstName: users.firstName, lastName: users.lastName, username: users.username })
+      .from(userSites)
+      .innerJoin(users, eq(userSites.userId, users.id))
+      .where(eq(userSites.id, siteId))
+
+    const fullName = [userInfo?.firstName, userInfo?.lastName].filter(Boolean).join(' ').trim()
+    const displayName = fullName || (userInfo?.username ? `Benutzer ${userInfo.username}` : 'Benutzer')
+
+    const rows = [
+      ...siteRows,
+      { fieldKey: 'user_first_name', fieldValue: userInfo?.firstName ?? '' },
+      { fieldKey: 'user_last_name', fieldValue: userInfo?.lastName ?? '' },
+      { fieldKey: 'user_username', fieldValue: userInfo?.username ?? '' },
+      { fieldKey: 'user_display_name', fieldValue: displayName },
+    ]
 
     return NextResponse.json(rows)
   } catch {

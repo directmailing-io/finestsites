@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Impressum – DailyOptimal</title>
   <meta name="robots" content="noindex, nofollow" />
   <style>
@@ -20,89 +20,31 @@
 
     /* ── Nav ── */
     nav {
-      position: sticky;
-      top: 0;
-      z-index: 10;
-      background: rgba(255, 255, 255, 0.95);
+      position: sticky; top: 0; z-index: 10;
+      background: rgba(255,255,255,0.95);
       backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
       border-bottom: 1px solid #f0f0f0;
-      padding: 0 24px;
-      height: 56px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      padding: 0 24px; height: 56px;
+      display: flex; align-items: center; justify-content: space-between;
     }
-    .logo {
-      font-size: 15px;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      color: #111;
-      text-decoration: none;
-    }
-    .logo span {
-      color: #5fcc8a;
-    }
-    .back {
-      font-size: 13px;
-      color: #888;
-      text-decoration: none;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      transition: color 0.15s;
-    }
+    .logo { font-size: 15px; font-weight: 700; letter-spacing: -0.02em; color: #111; text-decoration: none; }
+    .logo span { color: #5fcc8a; }
+    .back { font-size: 13px; color: #888; text-decoration: none; display: flex; align-items: center; gap: 5px; transition: color 0.15s; }
     .back:hover { color: #111; }
     .back svg { flex-shrink: 0; }
 
     /* ── Main ── */
-    main {
-      flex: 1;
-      max-width: 680px;
-      width: 100%;
-      margin: 0 auto;
-      padding: 56px 24px 96px;
-    }
+    main { flex: 1; max-width: 680px; width: 100%; margin: 0 auto; padding: 56px 24px 96px; }
 
-    .eyebrow {
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: #5fcc8a;
-      margin-bottom: 10px;
-    }
-    h1 {
-      font-size: clamp(26px, 4vw, 36px);
-      font-weight: 800;
-      letter-spacing: -0.03em;
-      color: #111;
-      line-height: 1.15;
-      margin-bottom: 48px;
-    }
+    .eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #5fcc8a; margin-bottom: 10px; }
+    h1 { font-size: clamp(26px, 4vw, 36px); font-weight: 800; letter-spacing: -0.03em; color: #111; line-height: 1.15; margin-bottom: 48px; }
 
     /* ── Sections ── */
-    .section {
-      margin-bottom: 36px;
-      padding-bottom: 36px;
-      border-bottom: 1px solid #f0f0f0;
-    }
-    .section:last-of-type {
-      border-bottom: none;
-    }
-    h2 {
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: #999;
-      margin-bottom: 12px;
-    }
-    p, address {
-      font-size: 15px;
-      line-height: 1.75;
-      color: #333;
-      font-style: normal;
-    }
+    .section { margin-bottom: 36px; padding-bottom: 36px; border-bottom: 1px solid #f0f0f0; }
+    .section:last-of-type { border-bottom: none; }
+    h2 { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #999; margin-bottom: 12px; }
+    p, address { font-size: 15px; line-height: 1.75; color: #333; font-style: normal; }
     p + p { margin-top: 10px; }
     a { color: #5fcc8a; text-decoration: none; }
     a:hover { text-decoration: underline; }
@@ -110,42 +52,21 @@
 
     /* ── Highlight boxes ── */
     .highlight {
-      background: #f8fdf9;
-      border: 1px solid #c8edd4;
-      border-radius: 12px;
-      padding: 16px 18px;
-      margin-bottom: 16px;
+      background: #f8fdf9; border: 1px solid #c8edd4;
+      border-radius: 12px; padding: 16px 18px; margin-top: 14px;
     }
-    .highlight:last-child { margin-bottom: 0; }
-    .highlight address,
-    .highlight p {
-      font-size: 15px;
-      line-height: 1.75;
-      color: #333;
-    }
+    .highlight + .highlight { margin-top: 10px; }
+    .highlight address, .highlight p { font-size: 15px; line-height: 1.75; color: #333; }
 
-    .footnote {
-      font-size: 12px;
-      color: #bbb;
-      margin-top: 48px;
-    }
+    .footnote { font-size: 12px; color: #bbb; margin-top: 48px; }
 
     /* ── Footer ── */
     footer {
-      border-top: 1px solid #f0f0f0;
-      padding: 20px 24px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      justify-content: space-between;
-      align-items: center;
+      border-top: 1px solid #f0f0f0; padding: 20px 24px;
+      display: flex; flex-wrap: wrap; gap: 12px;
+      justify-content: space-between; align-items: center;
     }
-    footer span,
-    footer a {
-      font-size: 12px;
-      color: #bbb;
-      text-decoration: none;
-    }
+    footer span, footer a { font-size: 12px; color: #bbb; text-decoration: none; }
     footer a:hover { color: #666; }
     footer nav { display: flex; gap: 20px; }
 
@@ -171,16 +92,20 @@
   <p class="eyebrow">Rechtliches</p>
   <h1>Impressum</h1>
 
+  <!-- 1 TMG -->
   <div class="section">
     <h2>Angaben gemäß § 5 TMG</h2>
     <p>
-      Diese Website wird technisch betrieben von <strong>FinestSites</strong> und inhaltlich
-      genutzt von <strong>{{impressum_name}}</strong>.
+      Diese Website wird technisch betrieben und inhaltlich bereitgestellt durch
+      <strong>FinestSites – Daniel Kurzeja</strong> und im Rahmen des Dienstleistungsangebots
+      genutzt von <strong>{{user_display_name}}</strong>.
     </p>
   </div>
 
+  <!-- 2 Betreiber -->
   <div class="section">
-    <h2>FinestSites – technischer Betrieb</h2>
+    <h2>FinestSites – Betreiber und Inhaber</h2>
+    <p>Betreiber und technischer Inhaber dieser Website ist:</p>
     <div class="highlight">
       <address>
         <strong>Daniel Kurzeja</strong><br />
@@ -194,36 +119,26 @@
     </div>
   </div>
 
+  <!-- 3 Inhaltlich verantwortlich -->
   <div class="section">
-    <h2>Inhaltlich verantwortlich (Nutzer dieser Website)</h2>
+    <h2>Inhaltlich verantwortlich</h2>
+    <p>Diese Website wird inhaltlich genutzt von:</p>
     <div class="highlight">
-      <address>
-        <strong>{{impressum_name}}</strong><br />
-        {{impressum_strasse}}<br />
-        {{impressum_plz}} {{impressum_ort}}<br />
-        Deutschland<br /><br />
-        E-Mail: <a href="mailto:{{impressum_email}}">{{impressum_email}}</a><br />
-        {{#if impressum_telefon}}Telefon: <a href="tel:{{impressum_telefon}}">{{impressum_telefon}}</a>{{/if}}
-      </address>
+      <p><strong>{{user_display_name}}</strong></p>
     </div>
     <p style="margin-top: 14px;">
-      Inhaltlich verantwortlich gemäß § 18 Abs. 2 MStV: <strong>{{impressum_name}}</strong>,
-      {{impressum_strasse}}, {{impressum_plz}} {{impressum_ort}}.
+      Die inhaltliche Verantwortung für auf dieser Website dargestellte Inhalte –
+      insbesondere Produktbeschreibungen, Erfahrungsberichte, Bilder und sonstige individuelle
+      Angaben – liegt bei <strong>{{user_display_name}}</strong>. FinestSites stellt
+      ausschließlich die technische Infrastruktur bereit und kann nutzergenerierte Inhalte
+      nur eingeschränkt überprüfen.
+    </p>
+    <p>
+      Inhaltlich verantwortlich gemäß § 18 Abs. 2 MStV: <strong>{{user_display_name}}</strong>.
     </p>
   </div>
 
-  <div class="section">
-    <h2>EU-Streitschlichtung</h2>
-    <p>
-      Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit:
-      <a href="https://ec.europa.eu/consumers/odr/" target="_blank" rel="noopener noreferrer">https://ec.europa.eu/consumers/odr/</a>
-    </p>
-    <p>
-      Wir sind nicht bereit oder verpflichtet, an Streitbeilegungsverfahren vor einer
-      Verbraucherschlichtungsstelle teilzunehmen.
-    </p>
-  </div>
-
+  <!-- 4 Haftung Inhalte -->
   <div class="section">
     <h2>Haftung für Inhalte</h2>
     <p>
@@ -237,33 +152,46 @@
       Verpflichtungen zur Entfernung oder Sperrung der Nutzung von Informationen nach den
       allgemeinen Gesetzen bleiben hiervon unberührt. Eine diesbezügliche Haftung ist jedoch
       erst ab dem Zeitpunkt der Kenntnis einer konkreten Rechtsverletzung möglich. Bei
-      Bekanntwerden von entsprechenden Rechtsverletzungen werden wir diese Inhalte umgehend
-      entfernen.
+      Bekanntwerden von Rechtsverletzungen werden wir diese Inhalte umgehend entfernen.
     </p>
   </div>
 
+  <!-- 5 Haftung Links -->
   <div class="section">
     <h2>Haftung für Links</h2>
     <p>
-      Unser Angebot enthält Links zu externen Websites Dritter, auf deren Inhalte wir keinen
-      Einfluss haben. Deshalb können wir für diese fremden Inhalte auch keine Gewähr übernehmen.
-      Für die Inhalte der verlinkten Seiten ist stets der jeweilige Anbieter oder Betreiber
-      der Seiten verantwortlich. Die verlinkten Seiten wurden zum Zeitpunkt der Verlinkung auf
-      mögliche Rechtsverstöße überprüft. Bei Bekanntwerden von Rechtsverletzungen werden wir
-      derartige Links umgehend entfernen.
+      Unser Angebot kann Links zu externen Websites Dritter enthalten, auf deren Inhalte wir
+      keinen Einfluss haben. Für die Inhalte der verlinkten Seiten ist stets der jeweilige
+      Anbieter oder Betreiber der Seiten verantwortlich. Die verlinkten Seiten wurden zum
+      Zeitpunkt der Verlinkung auf mögliche Rechtsverstöße überprüft. Bei Bekanntwerden von
+      Rechtsverletzungen werden wir derartige Links umgehend entfernen.
     </p>
   </div>
 
+  <!-- 6 Urheberrecht -->
   <div class="section">
     <h2>Urheberrecht</h2>
     <p>
-      Die durch den Seitenbetreiber erstellten Inhalte und Werke auf diesen Seiten unterliegen
-      dem deutschen Urheberrecht. Downloads und Kopien dieser Seite sind nur für den privaten,
-      nicht kommerziellen Gebrauch gestattet. Soweit die Inhalte auf dieser Seite nicht vom
-      Betreiber erstellt wurden, werden die Urheberrechte Dritter beachtet. Sollten Sie trotzdem
-      auf eine Urheberrechtsverletzung aufmerksam werden, bitten wir um einen entsprechenden
-      Hinweis. Bei Bekanntwerden von Rechtsverletzungen werden wir derartige Inhalte umgehend
-      entfernen.
+      Die durch FinestSites / Daniel Kurzeja erstellten Inhalte und Werke auf diesen Seiten
+      unterliegen dem deutschen Urheberrecht. Downloads und Kopien dieser Seite sind nur für
+      den privaten, nicht kommerziellen Gebrauch gestattet. Soweit die Inhalte auf dieser
+      Seite nicht vom Betreiber erstellt wurden, werden die Urheberrechte Dritter beachtet.
+      Bei Bekanntwerden von Rechtsverletzungen werden wir derartige Inhalte umgehend entfernen.
+    </p>
+  </div>
+
+  <!-- 7 EU Streitschlichtung -->
+  <div class="section">
+    <h2>EU-Streitschlichtung</h2>
+    <p>
+      Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit:
+      <a href="https://ec.europa.eu/consumers/odr/" target="_blank" rel="noopener noreferrer">
+        https://ec.europa.eu/consumers/odr/
+      </a>
+    </p>
+    <p>
+      Wir sind nicht bereit oder verpflichtet, an Streitbeilegungsverfahren vor einer
+      Verbraucherschlichtungsstelle teilzunehmen.
     </p>
   </div>
 
@@ -271,7 +199,7 @@
 </main>
 
 <footer>
-  <span>&copy; 2026 {{impressum_name}}</span>
+  <span>&copy; 2026 {{user_display_name}}</span>
   <nav>
     <a href="/">Startseite</a>
     <a href="/datenschutz">Datenschutz</a>
