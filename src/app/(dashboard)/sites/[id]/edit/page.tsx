@@ -3122,48 +3122,16 @@ function PublishCelebrationModal({ publishedUrl, onClose }: {
   const [urlCopied, setUrlCopied] = React.useState(false)
 
   React.useEffect(() => {
-    const colors = ['#8060b0', '#a78bfa', '#22c55e', '#fbbf24', '#f472b6', '#60a5fa', '#34d399', '#fb923c']
-    let animationFrame: number
-    const end = Date.now() + 3500
-
-    const frame = () => {
-      import('canvas-confetti').then(({ default: confetti }) => {
-        // Left cannon
-        confetti({
-          particleCount: 4,
-          angle: 65,
-          spread: 52,
-          startVelocity: 58,
-          origin: { x: 0, y: 0.72 },
-          colors,
-          ticks: 220,
-          scalar: 1.1,
-          shapes: ['square', 'circle'],
-        })
-        // Right cannon
-        confetti({
-          particleCount: 4,
-          angle: 115,
-          spread: 52,
-          startVelocity: 58,
-          origin: { x: 1, y: 0.72 },
-          colors,
-          ticks: 220,
-          scalar: 1.1,
-          shapes: ['square', 'circle'],
-        })
-      })
-      if (Date.now() < end) animationFrame = requestAnimationFrame(frame)
-    }
-
-    // Initial bigger burst
+    const colors = ['#8060b0', '#a78bfa', '#22c55e', '#fbbf24', '#f472b6', '#60a5fa', '#34d399']
     import('canvas-confetti').then(({ default: confetti }) => {
-      confetti({ particleCount: 60, spread: 80, startVelocity: 55, origin: { x: 0.5, y: 0.6 }, colors, ticks: 260, scalar: 1.2 })
+      // Gentle burst from center
+      confetti({ particleCount: 60, spread: 60, startVelocity: 35, origin: { x: 0.5, y: 0.65 }, colors, ticks: 180, scalar: 0.9, gravity: 1.2 })
+      // Small side accents after short delay
+      setTimeout(() => {
+        confetti({ particleCount: 20, angle: 70, spread: 40, startVelocity: 30, origin: { x: 0.1, y: 0.7 }, colors, ticks: 150, scalar: 0.8 })
+        confetti({ particleCount: 20, angle: 110, spread: 40, startVelocity: 30, origin: { x: 0.9, y: 0.7 }, colors, ticks: 150, scalar: 0.8 })
+      }, 150)
     })
-    // Start cannon streams after short delay
-    const t = setTimeout(() => { animationFrame = requestAnimationFrame(frame) }, 200)
-
-    return () => { clearTimeout(t); cancelAnimationFrame(animationFrame) }
   }, [])
 
   return (
