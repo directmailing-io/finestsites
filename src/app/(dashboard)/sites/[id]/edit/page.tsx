@@ -3181,16 +3181,18 @@ const UPGRADE_PLANS = [
     name: 'Starter',
     price_monthly: 20,
     price_yearly: 200,
-    sites: '1 Webseite',
-    desc: 'Perfekt für den Einstieg',
+    sites: '1 aktive Webseite',
+    desc: 'Perfekt für den Start',
+    yearlyLabel: '200 €/Jahr',
   },
   {
     key: 'pro' as const,
     name: 'Pro',
     price_monthly: 35,
     price_yearly: 350,
-    sites: '3 Webseiten',
+    sites: '3 aktive Webseiten',
     desc: 'Ideal für aktive Vermarkter',
+    yearlyLabel: '350 €/Jahr',
     popular: true,
   },
   {
@@ -3198,10 +3200,13 @@ const UPGRADE_PLANS = [
     name: 'Unlimited',
     price_monthly: 60,
     price_yearly: 600,
-    sites: 'Unbegrenzt',
-    desc: 'Für Teams und Agenturen',
+    sites: 'Unbegrenzt Webseiten',
+    desc: 'Für Teams und Profis',
+    yearlyLabel: '600 €/Jahr',
   },
 ]
+
+const REFERRAL_DISCOUNT = 0.20
 
 function UpgradeModal({
   siteId,
@@ -3213,6 +3218,21 @@ function UpgradeModal({
   const [intervalMode, setIntervalMode] = useState<'monthly' | 'yearly'>('monthly')
   const [loading, setLoading] = useState<string | null>(null)
   const [error, setError] = useState('')
+  const [referredBy, setReferredBy] = useState<string | null>(null)
+
+  // Load referral info to show discount
+  useEffect(() => {
+    fetch('/api/user/profile', { cache: 'no-store' })
+      .then(r => r.json())
+      .then(d => setReferredBy(d.referred_by_username ?? null))
+      .catch(() => {})
+  }, [])
+
+  const hasDiscount = !!referredBy
+
+  function effectivePrice(base: number) {
+    return hasDiscount ? Math.round(base * (1 - REFERRAL_DISCOUNT)) : base
+  }
 
   async function selectPlan(planKey: string) {
     setLoading(planKey)
@@ -3232,52 +3252,115 @@ function UpgradeModal({
     }
   }
 
+  // Yearly savings calculation
+  const yearlySavings = {
+    starter: hasDiscount ? Math.round(20 * 12 * REFERRAL_DISCOUNT) + Math.round(20 * 2 * (1 - REFERRAL_DISCOUNT)) : 20 * 2,
+    pro:     hasDiscount ? Math.round(35 * 12 * REFERRAL_DISCOUNT) + Math.round(35 * 2 * (1 - REFERRAL_DISCOUNT)) : 35 * 2,
+    unlimited: hasDiscount ? Math.round(60 * 12 * REFERRAL_DISCOUNT) + Math.round(60 * 2 * (1 - REFERRAL_DISCOUNT)) : 60 * 2,
+  }
+
   return (
     <div
       className="fixed inset-0 z-[200] flex items-end sm:items-center justify-center"
-      style={{ background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)' }}
+      style={{ background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(6px)' }}
       onClick={e => { if (e.target === e.currentTarget) onClose() }}
     >
       <div
-        className="w-full sm:max-w-lg bg-white rounded-t-3xl sm:rounded-3xl overflow-y-auto"
-        style={{ maxHeight: '92vh', boxShadow: '0 32px 80px rgba(0,0,0,0.3)' }}
+        className="w-full sm:max-w-[480px] bg-white rounded-t-[28px] sm:rounded-[28px] overflow-hidden flex flex-col"
+        style={{ maxHeight: '96vh', boxShadow: '0 40px 120px rgba(0,0,0,0.4)' }}
       >
-        {/* Header */}
-        <div className="px-6 pt-6 pb-4 border-b" style={{ borderColor: '#F0F0F0' }}>
-          <div className="flex items-center justify-between mb-3">
-            <div className="w-10 h-10 rounded-2xl flex items-center justify-center" style={{ background: '#F0FDF4' }}>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#16A34A" strokeWidth="2" strokeLinecap="round">
-                <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
-              </svg>
-            </div>
-            <button onClick={onClose} className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: '#F3F4F6' }}>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6B7280" strokeWidth="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
-            </button>
-          </div>
-          <h2 className="text-xl font-bold text-gray-900 mb-1">Fast fertig!</h2>
-          <p className="text-sm" style={{ color: '#6B7280' }}>
-            Deine Webseite ist bereit. Wähle einen Tarif um sie zu veröffentlichen. Keine versteckten Kosten.
-          </p>
+        {/* Mobile drag handle */}
+        <div className="sm:hidden flex justify-center pt-3 pb-0 flex-shrink-0">
+          <div style={{ width: 36, height: 4, borderRadius: 2, background: '#D1D5DB' }} />
         </div>
 
-        <div className="px-6 py-5">
-          {/* Interval toggle */}
-          <div className="flex items-center gap-1 p-1 rounded-xl mb-5 self-start w-fit" style={{ background: '#F3F4F6' }}>
+        {/* ── Dark gradient header ─────────────────────────────── */}
+        <div
+          className="px-6 pt-5 pb-6 flex-shrink-0"
+          style={{ background: 'linear-gradient(135deg, #1a0533 0%, #2d1060 55%, #1a0533 100%)' }}
+        >
+          <div className="flex items-start justify-between mb-4">
+            {/* Rocket icon */}
+            <div
+              className="flex items-center justify-center w-11 h-11 rounded-2xl"
+              style={{ background: 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.15)' }}
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#C4B5FD" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/>
+                <path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/>
+                <path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/>
+                <path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/>
+              </svg>
+            </div>
+            {/* Close */}
+            <button
+              onClick={onClose}
+              className="flex items-center justify-center w-8 h-8 rounded-full transition-all"
+              style={{ background: 'rgba(255,255,255,0.1)' }}
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.6)" strokeWidth="2.5" strokeLinecap="round">
+                <path d="M18 6L6 18M6 6l12 12"/>
+              </svg>
+            </button>
+          </div>
+
+          <h2 className="text-[22px] font-bold text-white mb-1.5" style={{ letterSpacing: '-0.02em' }}>
+            Jetzt live gehen!
+          </h2>
+          <p className="text-sm leading-relaxed" style={{ color: 'rgba(196,181,253,0.8)' }}>
+            Deine Seite ist fertig. Wähle einen Tarif. Ein Klick, dann bist du online.
+          </p>
+
+          {/* Referral discount banner */}
+          {hasDiscount && (
+            <div
+              className="mt-4 flex items-center gap-3 px-3.5 py-3 rounded-2xl"
+              style={{ background: 'rgba(34,197,94,0.15)', border: '1px solid rgba(34,197,94,0.35)' }}
+            >
+              <div
+                className="flex items-center justify-center w-7 h-7 rounded-full flex-shrink-0"
+                style={{ background: '#16A34A' }}
+              >
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+              </div>
+              <div>
+                <p className="text-xs font-bold" style={{ color: '#4ADE80' }}>20 % Empfehlungsrabatt aktiv</p>
+                <p className="text-xs mt-0.5" style={{ color: 'rgba(255,255,255,0.5)' }}>
+                  Empfohlen von{' '}
+                  <span style={{ color: 'rgba(255,255,255,0.8)', fontWeight: 600 }}>@{referredBy}</span>
+                  {' '}&middot; dauerhaft auf dein Abo
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* ── Scrollable body ─────────────────────────────────── */}
+        <div className="overflow-y-auto flex-1 px-5 pt-5 pb-6">
+
+          {/* Billing toggle */}
+          <div className="flex items-center gap-1 p-1 rounded-xl mb-5 w-fit" style={{ background: '#F3F4F6' }}>
             {(['monthly', 'yearly'] as const).map(iv => (
               <button
                 key={iv}
                 onClick={() => setIntervalMode(iv)}
-                className="text-sm font-medium px-4 py-2 rounded-lg transition-all"
+                className="text-sm font-semibold px-4 py-2 rounded-lg transition-all"
                 style={{
                   background: intervalMode === iv ? '#fff' : 'transparent',
                   color: intervalMode === iv ? '#111' : '#9CA3AF',
-                  boxShadow: intervalMode === iv ? '0 1px 4px rgba(0,0,0,0.08)' : 'none',
+                  boxShadow: intervalMode === iv ? '0 1px 5px rgba(0,0,0,0.1)' : 'none',
+                  whiteSpace: 'nowrap',
                 }}
               >
                 {iv === 'monthly' ? 'Monatlich' : (
                   <span className="flex items-center gap-1.5">
                     Jährlich
-                    <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full" style={{ background: '#DCFCE7', color: '#16A34A' }}>
+                    <span
+                      className="text-[10px] font-bold px-1.5 py-0.5 rounded-full"
+                      style={{ background: '#DCFCE7', color: '#15803D' }}
+                    >
                       2 Monate gratis
                     </span>
                   </span>
@@ -3287,72 +3370,136 @@ function UpgradeModal({
           </div>
 
           {/* Plan cards */}
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-2.5 mb-5">
             {UPGRADE_PLANS.map(plan => {
-              const price = intervalMode === 'monthly' ? plan.price_monthly : Math.round(plan.price_yearly / 12)
+              const baseMonthly = intervalMode === 'monthly' ? plan.price_monthly : Math.round(plan.price_yearly / 12)
+              const price = effectivePrice(baseMonthly)
+              const originalPrice = baseMonthly
               const isLoading = loading === plan.key
-              const isPopular = plan.popular
+              const isPopular = !!plan.popular
+              const dailyCents = (price / 30).toFixed(2).replace('.', ',')
+              const savings = yearlySavings[plan.key as keyof typeof yearlySavings]
 
               return (
                 <button
                   key={plan.key}
                   onClick={() => selectPlan(plan.key)}
                   disabled={!!loading}
-                  className="flex items-center gap-4 p-4 rounded-2xl text-left transition-all"
+                  className="w-full text-left rounded-2xl transition-all relative"
                   style={{
                     border: isPopular ? '2px solid #7C3AED' : '1.5px solid #E5E7EB',
                     background: isPopular ? '#F9F5FF' : '#FAFAFA',
-                    opacity: loading && !isLoading ? 0.5 : 1,
+                    opacity: loading && !isLoading ? 0.45 : 1,
                     cursor: loading ? 'not-allowed' : 'pointer',
+                    padding: isPopular ? '14px 14px 14px 16px' : '12px 14px 12px 16px',
                   }}
                 >
-                  {/* Price */}
-                  <div className="flex-shrink-0 text-center w-16">
-                    <div className="text-2xl font-bold" style={{ color: isPopular ? '#7C3AED' : '#111' }}>
-                      &euro;{price}
-                    </div>
-                    <div className="text-[10px]" style={{ color: '#9CA3AF' }}>/Monat</div>
-                  </div>
+                  {/* Popular badge — absolute top */}
+                  {isPopular && (
+                    <span
+                      className="absolute -top-px left-5 text-[10px] font-bold px-2.5 py-1 rounded-b-lg text-white"
+                      style={{ background: '#7C3AED', letterSpacing: '0.04em' }}
+                    >
+                      BELIEBTESTE WAHL
+                    </span>
+                  )}
 
-                  {/* Info */}
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-0.5">
-                      <span className="font-bold text-gray-900">{plan.name}</span>
-                      {isPopular && (
-                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full text-white" style={{ background: '#7C3AED' }}>
-                          Empfohlen
-                        </span>
+                  <div className="flex items-center gap-3" style={{ marginTop: isPopular ? 8 : 0 }}>
+                    {/* Left: name + features */}
+                    <div className="flex-1 min-w-0">
+                      <p className="font-bold text-gray-900 text-sm mb-0.5">{plan.name}</p>
+                      <p className="text-xs font-medium" style={{ color: isPopular ? '#7C3AED' : '#6B7280' }}>
+                        {plan.sites}
+                      </p>
+                      {intervalMode === 'yearly' && (
+                        <p className="text-[10px] mt-0.5" style={{ color: '#9CA3AF' }}>
+                          Du sparst {savings} € im Jahr
+                        </p>
                       )}
                     </div>
-                    <div className="text-sm font-medium" style={{ color: isPopular ? '#7C3AED' : '#374151' }}>
-                      {plan.sites}
-                    </div>
-                    <div className="text-xs mt-0.5" style={{ color: '#9CA3AF' }}>{plan.desc}</div>
-                  </div>
 
-                  {/* CTA */}
-                  <div
-                    className="flex-shrink-0 w-9 h-9 rounded-xl flex items-center justify-center"
-                    style={{ background: isPopular ? '#7C3AED' : '#1a1a1a' }}
-                  >
-                    {isLoading ? (
-                      <span className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
-                    ) : (
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                    )}
+                    {/* Center: price */}
+                    <div className="text-right flex-shrink-0 mr-3">
+                      {hasDiscount && (
+                        <p className="text-xs line-through" style={{ color: '#D1D5DB' }}>€{originalPrice}/Mo</p>
+                      )}
+                      <p
+                        className="text-xl font-bold leading-none"
+                        style={{ color: isPopular ? '#7C3AED' : '#111' }}
+                      >
+                        €{price}
+                        <span className="text-[11px] font-normal ml-0.5" style={{ color: '#9CA3AF' }}>/Mo</span>
+                      </p>
+                      <p className="text-[10px] mt-0.5" style={{ color: '#9CA3AF' }}>
+                        {dailyCents} € täglich
+                      </p>
+                    </div>
+
+                    {/* Right: CTA button */}
+                    <div
+                      className="flex-shrink-0 w-9 h-9 rounded-xl flex items-center justify-center"
+                      style={{ background: isPopular ? '#7C3AED' : '#111827' }}
+                    >
+                      {isLoading ? (
+                        <span
+                          className="w-4 h-4 rounded-full border-2 border-t-transparent animate-spin"
+                          style={{ borderColor: 'rgba(255,255,255,0.3)', borderTopColor: '#fff' }}
+                        />
+                      ) : (
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round">
+                          <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                      )}
+                    </div>
                   </div>
                 </button>
               )
             })}
           </div>
 
+          {/* Key features */}
+          <div
+            className="flex flex-col gap-2 px-1 py-4 mb-4 rounded-2xl"
+            style={{ background: '#F9FAFB', border: '1px solid #F3F4F6' }}
+          >
+            {[
+              'Fertige Texte und Design — du tippst nur deinen Namen',
+              'SSL, DSGVO-konform und Hosting inklusive',
+              'Jederzeit kündbar — kein Risiko',
+            ].map((f, i) => (
+              <div key={i} className="flex items-start gap-2.5 px-3">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#16A34A" strokeWidth="2.5" strokeLinecap="round" style={{ flexShrink: 0, marginTop: 1 }}>
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+                <span className="text-xs leading-relaxed" style={{ color: '#6B7280' }}>{f}</span>
+              </div>
+            ))}
+          </div>
+
           {error && (
-            <p className="mt-3 text-sm text-red-600 text-center">{error}</p>
+            <p className="mb-3 text-sm text-red-600 text-center">{error}</p>
           )}
 
-          <p className="mt-4 text-xs text-center" style={{ color: '#9CA3AF' }}>
-            Sichere Zahlung via Stripe &middot; Jederzeit kündbar &middot; Keine versteckten Kosten
-          </p>
+          {/* Promo code hint — only if no referral discount (Stripe doesn't allow mixing) */}
+          {!hasDiscount && (
+            <p className="text-xs text-center mb-3" style={{ color: '#9CA3AF' }}>
+              Gutscheincode? Du kannst ihn beim Bezahlen eingeben.
+            </p>
+          )}
+
+          {/* Trust strip */}
+          <div
+            className="flex items-center justify-center gap-1.5 pt-3"
+            style={{ borderTop: '1px solid #F3F4F6' }}
+          >
+            <svg width="11" height="12" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="2" strokeLinecap="round">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+            <span className="text-[11px]" style={{ color: '#9CA3AF' }}>
+              Sichere Zahlung via Stripe &middot; Jederzeit kündbar &middot; Keine versteckten Kosten
+            </span>
+          </div>
         </div>
       </div>
     </div>
