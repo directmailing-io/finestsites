@@ -21,61 +21,68 @@ export default function ImpersonationBanner() {
   const [actionLoading, setActionLoading] = useState(false)
   const prevStateRef = useRef<string | null>(null)
   const endedTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-
-  const poll = async () => {
-    try {
-      const res = await fetch('/api/impersonate/pending', { cache: 'no-store' })
-      const data = await res.json() as { state: string | null; request: PendingRequest | null }
-
-      const prev = prevStateRef.current
-      const next = data.state
-
-      // Detect transition: active → nothing = session just ended
-      if (prev === 'active' && next === null) {
-        prevStateRef.current = 'ended'
-        setView('ended')
-        setRequest(null)
-        // Auto-dismiss after 6 seconds
-        if (endedTimerRef.current) clearTimeout(endedTimerRef.current)
-        endedTimerRef.current = setTimeout(() => {
-          setView(null)
-          prevStateRef.current = null
-        }, 6000)
-        return
-      }
-
-      // Don't overwrite the 'ended' state while the timer runs
-      if (prevStateRef.current === 'ended') return
-
-      prevStateRef.current = next
-
-      if (next === 'pending') {
-        setView('pending')
-        setRequest(data.request)
-      } else if (next === 'active') {
-        setView('active')
-        setRequest(data.request)
-      } else {
-        // null — nothing to show (unless we were in 'approved' state waiting for admin)
-        if (view !== 'approved') {
-          setView(null)
-          setRequest(null)
-        }
-      }
-    } catch {
-      // ignore network errors
-    }
-  }
+  const esRef = useRef<EventSource | null>(null)
 
   useEffect(() => {
-    const t0 = setTimeout(() => { void poll() }, 0)
-    const id = setInterval(() => { void poll() }, 4000)
-    const onVisible = () => { if (document.visibilityState === 'visible') void poll() }
-    document.addEventListener('visibilitychange', onVisible)
+    function connect() {
+      if (esRef.current) esRef.current.close()
+
+      const es = new EventSource('/api/impersonate/stream')
+      esRef.current = es
+
+      es.onmessage = (e) => {
+        try {
+          const data = JSON.parse(e.data) as { state: string | null; request: PendingRequest | null }
+          const prev = prevStateRef.current
+          const next = data.state
+
+          // Detect transition: active → nothing = session just ended
+          if (prev === 'active' && next === null) {
+            prevStateRef.current = 'ended'
+            setView('ended')
+            setRequest(null)
+            if (endedTimerRef.current) clearTimeout(endedTimerRef.current)
+            endedTimerRef.current = setTimeout(() => {
+              setView(null)
+              prevStateRef.current = null
+            }, 6000)
+            return
+          }
+
+          // Don't overwrite 'ended' while the timer runs
+          if (prevStateRef.current === 'ended') return
+
+          prevStateRef.current = next
+
+          if (next === 'pending') {
+            setView('pending')
+            setRequest(data.request)
+          } else if (next === 'active') {
+            setView('active')
+            setRequest(data.request)
+          } else if (next === 'approved') {
+            setView('approved')
+            setRequest(data.request)
+          } else {
+            if (view !== 'approved') {
+              setView(null)
+              setRequest(null)
+            }
+          }
+        } catch { /* ignore parse errors */ }
+      }
+
+      es.onerror = () => {
+        es.close()
+        // Reconnect after 5s on error
+        setTimeout(connect, 5000)
+      }
+    }
+
+    connect()
+
     return () => {
-      clearTimeout(t0)
-      clearInterval(id)
-      document.removeEventListener('visibilitychange', onVisible)
+      esRef.current?.close()
       if (endedTimerRef.current) clearTimeout(endedTimerRef.current)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -107,7 +114,6 @@ export default function ImpersonationBanner() {
 
   if (!view) return null
 
-  // ── Shared banner wrapper ──────────────────────────────────────────────────
   const bannerBase: React.CSSProperties = {
     color: '#fff',
     padding: '12px 20px',

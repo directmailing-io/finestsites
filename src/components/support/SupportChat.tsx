@@ -105,6 +105,13 @@ function formatTime(iso: string): string {
 function truncatePreview(msg: ConversationSummary['lastMessage']): string {
   if (!msg) return 'Noch keine Nachrichten'
   if (msg.contentType === 'image') return '📷 Bild'
+  if (msg.contentType === 'system') {
+    try {
+      const p = JSON.parse(msg.content)
+      if (p.type === 'impersonation_request') return '🔐 Zugriffsanfrage'
+    } catch { /* ignore */ }
+    return '📋 Systemnachricht'
+  }
   return msg.content.length > 45 ? msg.content.slice(0, 45) + '…' : msg.content
 }
 
@@ -245,89 +252,204 @@ function EmojiPicker({ onSelect }: { onSelect: (emoji: string) => void }) {
 
 // ─── Impersonation request card ───────────────────────────────────────────────
 
-type ImpersonationStatus = 'pending' | 'approved' | 'rejected' | 'loading'
+type ImpersonationStatus = 'loading' | 'pending' | 'approved' | 'active' | 'ended' | 'rejected' | 'expired'
 
 function ImpersonationCard({ token }: { token: string }) {
-  const [status, setStatus] = useState<ImpersonationStatus>('pending')
+  const [status, setStatus] = useState<ImpersonationStatus>('loading')
+  const [acting, setActing] = useState(false)
+
+  // Subscribe to SSE stream for real-time status
+  useEffect(() => {
+    let es: EventSource | null = null
+    let reconnectTimer: ReturnType<typeof setTimeout> | null = null
+    let mounted = true
+
+    function connect() {
+      if (!mounted) return
+      es = new EventSource('/api/impersonate/stream')
+
+      es.onmessage = (e) => {
+        if (!mounted) return
+        try {
+          const data = JSON.parse(e.data) as {
+            state: string | null
+            request: { token: string } | null
+          }
+          if (data.state === null || data.request === null) {
+            // No active request — check if this specific token was ended/rejected
+            setStatus(prev =>
+              prev === 'pending' || prev === 'loading' ? 'expired'
+              : prev === 'approved' ? 'ended'
+              : prev === 'active' ? 'ended'
+              : prev
+            )
+          } else if (data.request.token === token) {
+            // This card's token is the active one
+            const s = data.state as ImpersonationStatus
+            setStatus(s === 'approved' ? 'approved' : s)
+          } else {
+            // A different token is active — this one is expired
+            setStatus('expired')
+          }
+        } catch { /* ignore parse errors */ }
+      }
+
+      es.onerror = () => {
+        es?.close()
+        if (mounted) {
+          reconnectTimer = setTimeout(connect, 5000)
+        }
+      }
+    }
+
+    connect()
+
+    return () => {
+      mounted = false
+      es?.close()
+      if (reconnectTimer) clearTimeout(reconnectTimer)
+    }
+  }, [token])
 
   async function handleApprove() {
-    setStatus('loading')
+    setActing(true)
     try {
       const res = await fetch('/api/impersonate/approve', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ token }),
       })
-      setStatus(res.ok ? 'approved' : 'pending')
-    } catch {
-      setStatus('pending')
+      if (res.ok) setStatus('approved')
+    } catch { /* ignore */ } finally {
+      setActing(false)
     }
   }
 
   async function handleReject() {
-    setStatus('loading')
+    setActing(true)
     try {
       const res = await fetch('/api/impersonate/reject', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ token }),
       })
-      setStatus(res.ok ? 'rejected' : 'pending')
-    } catch {
-      setStatus('pending')
+      if (res.ok) setStatus('rejected')
+    } catch { /* ignore */ } finally {
+      setActing(false)
     }
   }
 
-  return (
-    <div style={{
-      background: '#F5F0FF', border: '1px solid #DDD6FE',
-      borderRadius: 14, padding: '14px 16px', maxWidth: '90%',
-    }}>
-      <p style={{ fontSize: 13, fontWeight: 600, color: '#5B21B6', marginBottom: 6 }}>
-        Zugriff auf deinen Account
-      </p>
-      {status === 'pending' && (
-        <>
-          <p style={{ fontSize: 13, color: '#374151', marginBottom: 12, lineHeight: 1.5 }}>
-            Der Support-Admin möchte kurz in deinen Account schauen, um dir zu helfen. Bist du damit einverstanden?
-          </p>
-          <div style={{ display: 'flex', gap: 8 }}>
-            <button
-              onClick={handleApprove}
-              style={{
-                background: '#5B21B6', color: '#fff', border: 'none',
-                borderRadius: 8, padding: '7px 14px', fontSize: 12,
-                fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit',
-              }}
-            >
-              Freigabe erteilen
-            </button>
-            <button
-              onClick={handleReject}
-              style={{
-                background: '#F1F5F9', color: '#374151', border: 'none',
-                borderRadius: 8, padding: '7px 14px', fontSize: 12,
-                fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit',
-              }}
-            >
-              Ablehnen
-            </button>
-          </div>
-        </>
-      )}
-      {status === 'loading' && (
-        <p style={{ fontSize: 13, color: '#6B7280' }}>Wird verarbeitet...</p>
-      )}
-      {status === 'approved' && (
-        <p style={{ fontSize: 13, color: '#059669', fontWeight: 600 }}>
-          Freigabe erteilt. Der Admin kann jetzt kurz helfen.
+  // ── Shared card wrapper ──
+  const cardStyle: React.CSSProperties = {
+    borderRadius: 12,
+    padding: '13px 15px',
+    maxWidth: '90%',
+    fontSize: 13,
+  }
+
+  if (status === 'loading') {
+    return (
+      <div style={{ ...cardStyle, background: '#F1F5F9', border: '1px solid #E2E8F0' }}>
+        <p style={{ color: '#94A3B8', margin: 0 }}>Lädt…</p>
+      </div>
+    )
+  }
+
+  if (status === 'pending') {
+    return (
+      <div style={{ ...cardStyle, background: '#F0F7FF', border: '1px solid #BAD4F5' }}>
+        <p style={{ fontWeight: 600, color: '#1E40AF', marginBottom: 5, display: 'flex', alignItems: 'center', gap: 5 }}>
+          <span>🔐</span> Zugriff auf deinen Account
         </p>
-      )}
-      {status === 'rejected' && (
-        <p style={{ fontSize: 13, color: '#DC2626', fontWeight: 600 }}>
+        <p style={{ color: '#374151', marginBottom: 12, lineHeight: 1.5 }}>
+          Der Support-Admin möchte kurz in deinen Account schauen, um dir zu helfen. Bist du damit einverstanden?
+        </p>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <button
+            onClick={handleApprove}
+            disabled={acting}
+            style={{
+              background: '#059669', color: '#fff', border: 'none',
+              borderRadius: 8, padding: '7px 14px', fontSize: 12,
+              fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit',
+              opacity: acting ? 0.6 : 1,
+            }}
+          >
+            {acting ? 'Bitte warten…' : 'Freigabe erteilen'}
+          </button>
+          <button
+            onClick={handleReject}
+            disabled={acting}
+            style={{
+              background: 'transparent', color: '#6B7280', border: '1px solid #D1D5DB',
+              borderRadius: 8, padding: '7px 14px', fontSize: 12,
+              fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit',
+              opacity: acting ? 0.6 : 1,
+            }}
+          >
+            Ablehnen
+          </button>
+        </div>
+      </div>
+    )
+  }
+
+  if (status === 'approved') {
+    return (
+      <div style={{ ...cardStyle, background: '#F0FDF4', border: '1px solid #BBF7D0' }}>
+        <p style={{ fontWeight: 600, color: '#15803D', marginBottom: 4, display: 'flex', alignItems: 'center', gap: 5 }}>
+          <span>✅</span> Freigabe erteilt
+        </p>
+        <p style={{ color: '#374151', margin: 0 }}>
+          Der Support-Admin tritt gleich ein.
+        </p>
+      </div>
+    )
+  }
+
+  if (status === 'active') {
+    return (
+      <div style={{ ...cardStyle, background: '#EFF6FF', border: '1px solid #BFDBFE' }}>
+        <p style={{ fontWeight: 600, color: '#1D4ED8', marginBottom: 4, display: 'flex', alignItems: 'center', gap: 5 }}>
+          <span style={{ display: 'inline-block', width: 8, height: 8, borderRadius: '50%', background: '#22C55E', marginRight: 2 }} />
+          Support-Session aktiv
+        </p>
+        <p style={{ color: '#374151', margin: 0 }}>
+          Ein Admin sieht deinen Account, um dir zu helfen.
+        </p>
+      </div>
+    )
+  }
+
+  if (status === 'ended') {
+    return (
+      <div style={{ ...cardStyle, background: '#F8FAFC', border: '1px solid #E2E8F0' }}>
+        <p style={{ fontWeight: 600, color: '#64748B', marginBottom: 4, display: 'flex', alignItems: 'center', gap: 5 }}>
+          <span>🔒</span> Session beendet
+        </p>
+        <p style={{ color: '#94A3B8', margin: 0 }}>
+          Dein Account ist wieder nur für dich zugänglich.
+        </p>
+      </div>
+    )
+  }
+
+  if (status === 'rejected') {
+    return (
+      <div style={{ ...cardStyle, background: '#F8FAFC', border: '1px solid #E2E8F0' }}>
+        <p style={{ color: '#94A3B8', margin: 0 }}>
           Zugriff abgelehnt.
         </p>
-      )}
+      </div>
+    )
+  }
+
+  // expired
+  return (
+    <div style={{ ...cardStyle, background: '#F8FAFC', border: '1px solid #E2E8F0' }}>
+      <p style={{ color: '#94A3B8', margin: 0 }}>
+        Diese Zugriffsanfrage ist abgelaufen.
+      </p>
     </div>
   )
 }
