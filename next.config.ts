@@ -17,6 +17,18 @@ const nextConfig: NextConfig = {
     },
   },
 
+  // www → apex redirect (www.finestsites.io → finestsites.io)
+  async redirects() {
+    return [
+      {
+        source: '/:path*',
+        has: [{ type: 'host', value: 'www.finestsites.io' }],
+        destination: 'https://finestsites.io/:path*',
+        permanent: true,
+      },
+    ]
+  },
+
   // Security headers applied to every response
   async headers() {
     return [
