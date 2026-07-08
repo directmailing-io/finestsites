@@ -134,7 +134,7 @@ export default function ImpersonationBanner() {
     return (
       <div style={{ ...bannerBase, background: '#1E3A5F' }}>
         <span style={{ lineHeight: 1.4 }}>
-          <strong>{request?.adminName}</strong> vom FinestSites-Support möchte deinen Account kurz ansehen, um dir zu helfen.
+          Ein Mitarbeiter vom FinestSites-Support möchte deinen Account kurz ansehen, um dir zu helfen.
         </span>
         <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
           <button
@@ -188,7 +188,7 @@ export default function ImpersonationBanner() {
     return (
       <div style={{ ...bannerBase, background: '#7C3AED' }}>
         <span>
-          <strong>{request?.adminName}</strong> sieht gerade deinen Account, um dir zu helfen.
+          Ein Mitarbeiter vom FinestSites-Support sieht gerade deinen Account, um dir zu helfen.
         </span>
       </div>
     )
