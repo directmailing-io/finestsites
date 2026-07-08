@@ -3107,47 +3107,76 @@ export default function SiteEditPage({ params }: { params: Promise<{ id: string 
       )}
 
       {/* ── Publish Celebration Modal ── */}
-      {showPublishCelebration && (() => {
-        const confettiColors = ['#8060b0', '#22c55e', '#fbbf24', '#f472b6', '#60a5fa', '#f87171', '#34d399']
-        const confettiPieces = Array.from({ length: 80 }, (_, i) => ({
-          id: i,
-          left: `${Math.random() * 100}%`,
-          size: `${6 + Math.random() * 8}px`,
-          color: confettiColors[Math.floor(Math.random() * confettiColors.length)],
-          duration: `${2 + Math.random() * 2}s`,
-          delay: `${Math.random() * 2}s`,
-          rotation: `${Math.random() * 720}deg`,
-          isCircle: Math.random() > 0.5,
-        }))
-        return <PublishCelebrationModal publishedUrl={publishedUrl} onClose={() => setShowPublishCelebration(false)} confettiPieces={confettiPieces} />
-      })()}
+      {showPublishCelebration && (
+        <PublishCelebrationModal publishedUrl={publishedUrl} onClose={() => setShowPublishCelebration(false)} />
+      )}
 
     </div>
   )
 }
 
-function PublishCelebrationModal({ publishedUrl, onClose, confettiPieces }: {
+function PublishCelebrationModal({ publishedUrl, onClose }: {
   publishedUrl: string
   onClose: () => void
-  confettiPieces: Array<{ id: number; left: string; size: string; color: string; duration: string; delay: string; rotation: string; isCircle: boolean }>
 }) {
   const [urlCopied, setUrlCopied] = React.useState(false)
+
+  React.useEffect(() => {
+    const colors = ['#8060b0', '#a78bfa', '#22c55e', '#fbbf24', '#f472b6', '#60a5fa', '#34d399', '#fb923c']
+    let animationFrame: number
+    const end = Date.now() + 3500
+
+    const frame = () => {
+      import('canvas-confetti').then(({ default: confetti }) => {
+        // Left cannon
+        confetti({
+          particleCount: 4,
+          angle: 65,
+          spread: 52,
+          startVelocity: 58,
+          origin: { x: 0, y: 0.72 },
+          colors,
+          ticks: 220,
+          scalar: 1.1,
+          shapes: ['square', 'circle'],
+        })
+        // Right cannon
+        confetti({
+          particleCount: 4,
+          angle: 115,
+          spread: 52,
+          startVelocity: 58,
+          origin: { x: 1, y: 0.72 },
+          colors,
+          ticks: 220,
+          scalar: 1.1,
+          shapes: ['square', 'circle'],
+        })
+      })
+      if (Date.now() < end) animationFrame = requestAnimationFrame(frame)
+    }
+
+    // Initial bigger burst
+    import('canvas-confetti').then(({ default: confetti }) => {
+      confetti({ particleCount: 60, spread: 80, startVelocity: 55, origin: { x: 0.5, y: 0.6 }, colors, ticks: 260, scalar: 1.2 })
+    })
+    // Start cannon streams after short delay
+    const t = setTimeout(() => { animationFrame = requestAnimationFrame(frame) }, 200)
+
+    return () => { clearTimeout(t); cancelAnimationFrame(animationFrame) }
+  }, [])
+
   return (
     <>
       <style>{`
-        @keyframes confetti-fall {
-          0%   { transform: translateY(-20px) rotate(0deg); opacity: 1; }
-          80%  { opacity: 1; }
-          100% { transform: translateY(110vh) rotate(var(--rot)); opacity: 0; }
-        }
         @keyframes celebration-scale-in {
-          0%   { opacity: 0; transform: scale(0.7) translateY(24px); }
-          60%  { transform: scale(1.04) translateY(-4px); }
+          0%   { opacity: 0; transform: scale(0.75) translateY(20px); }
+          65%  { transform: scale(1.03) translateY(-3px); }
           100% { opacity: 1; transform: scale(1) translateY(0); }
         }
         @keyframes check-pop {
-          0%   { opacity: 0; transform: scale(0.4); }
-          60%  { transform: scale(1.15); }
+          0%   { opacity: 0; transform: scale(0.3); }
+          65%  { transform: scale(1.18); }
           100% { opacity: 1; transform: scale(1); }
         }
       `}</style>
@@ -3157,30 +3186,12 @@ function PublishCelebrationModal({ publishedUrl, onClose, confettiPieces }: {
         onClick={onClose}
         style={{
           position: 'fixed', inset: 0, zIndex: 9999,
-          background: 'rgba(0,0,0,0.6)',
-          backdropFilter: 'blur(4px)',
+          background: 'rgba(0,0,0,0.55)',
+          backdropFilter: 'blur(6px)',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           padding: '16px',
         }}
       >
-        {/* Confetti pieces */}
-        {confettiPieces.map(p => (
-          <div
-            key={p.id}
-            style={{
-              position: 'absolute',
-              top: 0,
-              left: p.left,
-              width: p.size,
-              height: p.size,
-              background: p.color,
-              borderRadius: p.isCircle ? '50%' : '2px',
-              ['--rot' as string]: p.rotation,
-              animation: `confetti-fall ${p.duration} ${p.delay} ease-in forwards`,
-              pointerEvents: 'none',
-            }}
-          />
-        ))}
 
         {/* Modal card */}
         <div
