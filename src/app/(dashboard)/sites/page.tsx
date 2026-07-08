@@ -38,10 +38,13 @@ function SiteCard({ site }: { site: Site }) {
     ?? (siteUrl ? `https://image.thum.io/get/width/800/crop/500/${siteUrl}` : null)
 
   return (
-    <Link href={`/sites/${site.id}/edit`} className="group block">
-      {/* Photo */}
-      <div className="relative overflow-hidden rounded-2xl bg-gray-100"
-        style={{ aspectRatio: '4/3' }}>
+    <div className="group">
+      {/* Image — clicks to editor */}
+      <Link
+        href={`/sites/${site.id}/edit`}
+        className="block relative overflow-hidden rounded-2xl bg-gray-100"
+        style={{ aspectRatio: '4/3' }}
+      >
         {preview ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={preview} alt={site.templates?.title ?? ''}
@@ -64,16 +67,26 @@ function SiteCard({ site }: { site: Site }) {
 
         {/* Unread badge */}
         {(site.unread_submissions ?? 0) > 0 && (
-          <div className="absolute top-3 right-3">
+          <div className="absolute top-3 left-3">
             <span className="text-[11px] font-bold px-2.5 py-1 rounded-full text-white"
               style={{ background: '#EF4444', boxShadow: '0 2px 8px rgba(239,68,68,0.4)' }}>
               {site.unread_submissions} neue Anfrage{site.unread_submissions === 1 ? '' : 'n'}
             </span>
           </div>
         )}
-      </div>
 
-      {/* Title + Status + URL */}
+        {/* Hover: "Bearbeiten" pill */}
+        <div className="absolute inset-0 flex items-center justify-center
+          bg-black/0 group-hover:bg-black/15 transition-colors duration-300 pointer-events-none">
+          <span className="text-[12px] font-semibold text-white bg-black/55 backdrop-blur-sm
+            px-3.5 py-1.5 rounded-full opacity-0 group-hover:opacity-100
+            transition-all duration-200 translate-y-1 group-hover:translate-y-0">
+            ✏️ Bearbeiten
+          </span>
+        </div>
+      </Link>
+
+      {/* Info row — separate from <Link> so we can nest links freely */}
       <div className="pt-3 px-1">
         <div className="flex items-center gap-2">
           <p className="font-semibold text-gray-900 text-[15px] leading-tight truncate">
@@ -91,20 +104,50 @@ function SiteCard({ site }: { site: Site }) {
             {isPublished ? 'Live' : 'Entwurf'}
           </span>
         </div>
-        {displayUrl && (
-          <p className="text-sm mt-1 truncate flex items-center gap-1"
-            style={{ color: hasCustomDomain ? '#16A34A' : '#94A3B8' }}>
-            {hasCustomDomain && (
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="flex-shrink-0">
-                <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/>
-                <path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/>
+
+        <div className="flex items-center gap-2 mt-1">
+          {displayUrl && (
+            <p className="text-sm truncate flex-1 flex items-center gap-1 min-w-0"
+              style={{ color: hasCustomDomain ? '#16A34A' : '#94A3B8' }}>
+              {hasCustomDomain && (
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="flex-shrink-0">
+                  <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/>
+                  <path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/>
+                </svg>
+              )}
+              <span className="font-mono text-[12.5px] truncate">{displayUrl}</span>
+            </p>
+          )}
+
+          {siteUrl ? (
+            <a
+              href={siteUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex-shrink-0 flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1 rounded-full transition-colors"
+              style={{ color: '#6B7280', background: '#F3F4F6', whiteSpace: 'nowrap' }}
+              onMouseEnter={e => { e.currentTarget.style.background = '#E5E7EB'; e.currentTarget.style.color = '#111' }}
+              onMouseLeave={e => { e.currentTarget.style.background = '#F3F4F6'; e.currentTarget.style.color = '#6B7280' }}
+            >
+              Öffnen
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/>
+                <polyline points="15,3 21,3 21,9"/>
+                <line x1="10" y1="14" x2="21" y2="3"/>
               </svg>
-            )}
-            <span className="font-mono text-[12.5px]">{displayUrl}</span>
-          </p>
-        )}
+            </a>
+          ) : !displayUrl ? (
+            <Link
+              href={`/sites/${site.id}/edit`}
+              className="flex-shrink-0 text-[11px] font-semibold px-2.5 py-1 rounded-full transition-colors"
+              style={{ color: '#6B7280', background: '#F3F4F6', whiteSpace: 'nowrap' }}
+            >
+              Bearbeiten
+            </Link>
+          ) : null}
+        </div>
       </div>
-    </Link>
+    </div>
   )
 }
 
