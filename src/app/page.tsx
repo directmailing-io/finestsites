@@ -286,7 +286,7 @@ export default async function HomePage({
             Lass dich von Kunden und Partnern über deine Webseite finden und überzeuge Interessenten von deinen Produkten, noch bevor sie mit dir gesprochen haben.
           </p>
           <div className="fs-hero-buttons">
-            <a href="https://app.finestsites.io/register" style={{ background: '#111', color: '#fff', padding: '15px 36px', borderRadius: 100, fontSize: 15, fontWeight: 600, display: 'inline-block', textDecoration: 'none', textAlign: 'center' }}>Jetzt starten</a>
+            <a href="https://app.finestsites.io/register" style={{ background: '#111', color: '#fff', padding: '15px 36px', borderRadius: 100, fontSize: 15, fontWeight: 600, display: 'inline-block', textDecoration: 'none', textAlign: 'center' }}>Kostenlos starten</a>
             <a href="#templates" style={{ background: 'rgba(255,255,255,0.8)', color: '#111', padding: '15px 36px', borderRadius: 100, fontSize: 15, fontWeight: 500, display: 'inline-block', border: '1.5px solid rgba(0,0,0,0.12)', textDecoration: 'none', textAlign: 'center' }}>Templates ansehen</a>
           </div>
         </div>
@@ -336,9 +336,9 @@ export default async function HomePage({
               href="https://app.finestsites.io/register"
               style={{ display: 'inline-block', background: '#111', color: '#fff', padding: '14px 32px', borderRadius: 100, fontSize: 15, fontWeight: 600, textDecoration: 'none' }}
             >
-              Jetzt starten
+              Kostenlos starten
             </a>
-            <p style={{ fontSize: 12, color: '#555', marginTop: 10, fontWeight: 500 }}>Günstiger als ein Brötchen am Tag · Jederzeit kündbar</p>
+            <p style={{ fontSize: 12, color: '#555', marginTop: 10, fontWeight: 500 }}>Kostenlos bearbeiten. Erst zahlen wenn du live gehst.</p>
           </div>
         </div>
       </section>

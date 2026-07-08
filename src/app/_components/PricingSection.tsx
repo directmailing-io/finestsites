@@ -13,31 +13,31 @@ const PLANS = [
     premiumSites: '1 aktive Premium-Seite',
     value: '3.000 €',
     popular: false,
-    cta: 'Starter wählen',
+    cta: 'Kostenlos starten',
   },
   {
     key: 'pro',
     name: 'Pro',
-    monthly: 30,
-    yearly: 300,
-    yearlyMonthly: 25,
-    dailyCents: 100,
+    monthly: 35,
+    yearly: 350,
+    yearlyMonthly: 29,
+    dailyCents: Math.round((35 / 30) * 100),
     premiumSites: '3 aktive Premium-Seiten',
     value: '10.000 €',
     popular: true,
-    cta: 'Pro wählen',
+    cta: 'Kostenlos starten',
   },
   {
     key: 'unlimited',
     name: 'Unlimited',
-    monthly: 50,
-    yearly: 500,
-    yearlyMonthly: Math.round(500 / 12),
-    dailyCents: Math.round((50 / 30) * 100),
+    monthly: 60,
+    yearly: 600,
+    yearlyMonthly: 50,
+    dailyCents: Math.round((60 / 30) * 100),
     premiumSites: 'Unbegrenzt Premium-Seiten',
     value: 'mehrere 10.000 €',
     popular: false,
-    cta: 'Unlimited wählen',
+    cta: 'Kostenlos starten',
   },
 ]
 
@@ -77,9 +77,17 @@ export default function PricingSection({ validatedRef }: { validatedRef?: string
         <h2 style={{ fontFamily: '"Plein", sans-serif', fontSize: 'clamp(32px, 4.5vw, 52px)', fontWeight: 400, color: '#111', letterSpacing: '-0.025em', textAlign: 'center', marginBottom: 12, lineHeight: 1.1 }}>
           Günstiger als ein Brötchen am Tag.
         </h2>
-        <p style={{ textAlign: 'center', fontSize: 15, color: '#777', marginBottom: 32, maxWidth: 500, margin: '0 auto 32px' }}>
-          Ab 67 Cent täglich. Keine Mindestlaufzeit, kein Kleingedrucktes. Jederzeit kündbar.
+        <p style={{ textAlign: 'center', fontSize: 15, color: '#777', marginBottom: 32, maxWidth: 500, margin: '0 auto 20px' }}>
+          Bearbeiten ist immer kostenlos. Du zahlst erst wenn du live gehst.
         </p>
+
+        {/* Free-tier callout */}
+        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 32 }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 10, background: '#F0FDF4', border: '1px solid #BBF7D0', borderRadius: 100, padding: '10px 20px' }}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#16A34A" strokeWidth="2.5" strokeLinecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+            <span style={{ fontSize: 13, fontWeight: 600, color: '#16A34A' }}>Account anlegen ist kostenlos. Du kannst alles testen bevor du zahlst.</span>
+          </div>
+        </div>
 
         {/* ── Toggle ─────────────────────────────────────────────── */}
         <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 48 }}>
@@ -202,7 +210,7 @@ export default function PricingSection({ validatedRef }: { validatedRef?: string
 
                 {yearly && (
                   <p style={{ fontSize: 12, color: plan.popular ? 'rgba(255,255,255,0.3)' : '#bbb', marginBottom: 4 }}>
-                    {plan.yearly} €/Jahr · du sparst {(plan.monthly * 12) - plan.yearly} €
+                    {refCode ? Math.round(plan.yearly * (1 - DISCOUNT)) : plan.yearly} €/Jahr · du sparst {Math.round((plan.monthly * 12 - plan.yearly) * (refCode ? (1 - DISCOUNT) : 1))} €
                   </p>
                 )}
 
@@ -281,12 +289,12 @@ export default function PricingSection({ validatedRef }: { validatedRef?: string
               <div style={{ padding: '40px 44px', textAlign: 'left', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                 <p style={{ fontSize: 11, fontWeight: 700, color: '#c8a07a', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 14 }}>Was du bekommst</p>
                 <h3 style={{ fontFamily: '"Plein", sans-serif', fontSize: 'clamp(22px, 2.4vw, 30px)', fontWeight: 400, color: '#111', lineHeight: 1.2, letterSpacing: '-0.02em', marginBottom: 18 }}>
-                  Weniger als ein Brötchen am Tag.<br />Rund um die Uhr für dich online.
+                  Günstiger als ein Brötchen am Tag.<br />Rund um die Uhr für dich online.
                 </h3>
                 <p style={{ fontSize: 14.5, color: '#666', lineHeight: 1.75 }}>
                   Eine Agentur-Website kostet zwischen{' '}
                   <strong style={{ color: '#111' }}>3.000 und 15.000 Euro</strong>. Einmalig, ohne Pflege, ohne Updates.
-                  Bei FinestSites zahlst du weniger als ein Brötchen am Tag. Dafür bekommst du eine Seite, die läuft, während du schläfst.
+                  Beim Starter bist du für 67 Cent täglich dabei. Deine Seite läuft, während du schläfst.
                 </p>
               </div>
               {/* Image side */}

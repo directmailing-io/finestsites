@@ -290,9 +290,9 @@ export default function HowItWorks() {
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 6 }}>
               <a href="https://app.finestsites.io/register" style={{ background: '#111', color: '#fff', padding: '13px 28px', borderRadius: 100, fontSize: 14, fontWeight: 600, textDecoration: 'none', whiteSpace: 'nowrap' }}>
-                Jetzt starten →
+                Kostenlos starten
               </a>
-              <span style={{ fontSize: 11, color: '#aaa' }}>Ab 20 € / Monat · Jederzeit kündbar</span>
+              <span style={{ fontSize: 11, color: '#aaa' }}>Kostenlos loslegen. Erst zahlen wenn du live gehst.</span>
             </div>
           </div>
         </div>

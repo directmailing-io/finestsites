@@ -63,7 +63,7 @@ export default function NavBar({ primaryCta }: NavBarProps = {}) {
         <div className="fs-nav-actions" style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
           <a href="https://app.finestsites.io/login" style={{ color: '#111', fontSize: 14, fontWeight: 500, padding: '8px 18px', borderRadius: 100, border: '1.5px solid rgba(0,0,0,0.12)', textDecoration: 'none' }}>Anmelden</a>
           <a href={primaryCta?.href ?? 'https://app.finestsites.io/register'} style={{ background: '#111', color: '#fff', fontSize: 14, fontWeight: 600, padding: '9px 20px', borderRadius: 100, textDecoration: 'none', whiteSpace: 'nowrap' }}>
-            {primaryCta?.label ?? 'Jetzt starten'}
+            {primaryCta?.label ?? 'Kostenlos starten'}
           </a>
         </div>
 
@@ -119,7 +119,7 @@ export default function NavBar({ primaryCta }: NavBarProps = {}) {
               onClick={close}
               style={{ display: 'block', textAlign: 'center', background: '#111', color: '#fff', fontSize: 15, fontWeight: 600, padding: '14px', borderRadius: 100, textDecoration: 'none' }}
             >
-              {primaryCta?.label ?? 'Jetzt starten →'}
+              {primaryCta?.label ?? 'Kostenlos starten'}
             </a>
           </div>
         </div>
