@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation'
-import { getServerUser } from '@/lib/auth/server'
+import { getServerUser, getImpersonationState } from '@/lib/auth/server'
 import { db } from '@/lib/db'
 import { users } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
@@ -9,7 +9,7 @@ import { PlanQuotaProvider } from '@/components/dashboard/PlanQuotaContext'
 import SupportChat from '@/components/support/SupportChat'
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
-  const user = await getServerUser()
+  const [user, impersonation] = await Promise.all([getServerUser(), getImpersonationState()])
 
   if (!user) redirect('/login')
 
@@ -18,28 +18,67 @@ export default async function DashboardLayout({ children }: { children: React.Re
     columns: { username: true, subscriptionStatus: true },
   })
 
-  // Must have an active subscription before accessing dashboard
-  // Exception: the owner/admin account bypasses this check entirely
   const ADMIN_EMAIL = 'info@daniel-kurzeja.de'
   const ACTIVE_STATUSES = ['active', 'trialing', 'past_due']
-  if (user.email !== ADMIN_EMAIL && (!profile?.subscriptionStatus || !ACTIVE_STATUSES.includes(profile.subscriptionStatus))) {
-    redirect('/onboarding/plan')
-  }
 
-  // Must have completed username setup (admin is exempt)
-  if (user.email !== ADMIN_EMAIL && !profile?.username) {
-    redirect('/onboarding/username')
+  // Impersonating admin bypasses all subscription checks
+  if (!impersonation) {
+    if (user.email !== ADMIN_EMAIL && (!profile?.subscriptionStatus || !ACTIVE_STATUSES.includes(profile.subscriptionStatus))) {
+      redirect('/onboarding/plan')
+    }
+    if (user.email !== ADMIN_EMAIL && !profile?.username) {
+      redirect('/onboarding/username')
+    }
   }
 
   return (
     <PlanQuotaProvider>
       <div className="flex min-h-screen" style={{ background: 'var(--background)' }}>
         <DashboardSidebar />
-        <main className="flex-1 min-w-0 px-5 pt-6 pb-32 sm:px-8 sm:pt-8 sm:pb-32 lg:px-12 lg:py-10">
-          {children}
-        </main>
+        <div className="flex-1 min-w-0 flex flex-col">
+          {impersonation && (
+            <div style={{
+              background: '#7C3AED',
+              color: '#fff',
+              padding: '8px 20px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: 12,
+              fontSize: 13,
+              fontWeight: 500,
+              position: 'sticky',
+              top: 0,
+              zIndex: 100,
+            }}>
+              <span>
+                Du siehst den Account von{' '}
+                <strong>@{impersonation.username ?? impersonation.userId.slice(0, 8)}</strong>
+                {' '} als Admin.
+              </span>
+              <form action="/api/impersonate/exit" method="POST">
+                <button type="submit" style={{
+                  background: 'rgba(255,255,255,0.2)',
+                  color: '#fff',
+                  border: '1px solid rgba(255,255,255,0.4)',
+                  borderRadius: 8,
+                  padding: '4px 12px',
+                  fontSize: 12,
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  whiteSpace: 'nowrap',
+                }}>
+                  Sitzung beenden
+                </button>
+              </form>
+            </div>
+          )}
+          <main className="flex-1 px-5 pt-6 pb-32 sm:px-8 sm:pt-8 sm:pb-32 lg:px-12 lg:py-10">
+            {children}
+          </main>
+        </div>
         <MobileNav />
-        <SupportChat />
+        {!impersonation && <SupportChat />}
       </div>
     </PlanQuotaProvider>
   )

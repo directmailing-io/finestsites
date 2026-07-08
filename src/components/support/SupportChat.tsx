@@ -10,7 +10,7 @@ interface Message {
   senderType: 'user' | 'admin'
   senderId: string | null
   content: string
-  contentType: 'text' | 'image' | 'gif'
+  contentType: 'text' | 'image' | 'gif' | 'system'
   mediaUrl?: string | null
   createdAt: string
 }
@@ -239,6 +239,95 @@ function EmojiPicker({ onSelect }: { onSelect: (emoji: string) => void }) {
           </button>
         ))}
       </div>
+    </div>
+  )
+}
+
+// ─── Impersonation request card ───────────────────────────────────────────────
+
+type ImpersonationStatus = 'pending' | 'approved' | 'rejected' | 'loading'
+
+function ImpersonationCard({ token }: { token: string }) {
+  const [status, setStatus] = useState<ImpersonationStatus>('pending')
+
+  async function handleApprove() {
+    setStatus('loading')
+    try {
+      const res = await fetch('/api/impersonate/approve', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token }),
+      })
+      setStatus(res.ok ? 'approved' : 'pending')
+    } catch {
+      setStatus('pending')
+    }
+  }
+
+  async function handleReject() {
+    setStatus('loading')
+    try {
+      const res = await fetch('/api/impersonate/reject', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token }),
+      })
+      setStatus(res.ok ? 'rejected' : 'pending')
+    } catch {
+      setStatus('pending')
+    }
+  }
+
+  return (
+    <div style={{
+      background: '#F5F0FF', border: '1px solid #DDD6FE',
+      borderRadius: 14, padding: '14px 16px', maxWidth: '90%',
+    }}>
+      <p style={{ fontSize: 13, fontWeight: 600, color: '#5B21B6', marginBottom: 6 }}>
+        Zugriff auf deinen Account
+      </p>
+      {status === 'pending' && (
+        <>
+          <p style={{ fontSize: 13, color: '#374151', marginBottom: 12, lineHeight: 1.5 }}>
+            Der Support-Admin möchte kurz in deinen Account schauen, um dir zu helfen. Bist du damit einverstanden?
+          </p>
+          <div style={{ display: 'flex', gap: 8 }}>
+            <button
+              onClick={handleApprove}
+              style={{
+                background: '#5B21B6', color: '#fff', border: 'none',
+                borderRadius: 8, padding: '7px 14px', fontSize: 12,
+                fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit',
+              }}
+            >
+              Freigabe erteilen
+            </button>
+            <button
+              onClick={handleReject}
+              style={{
+                background: '#F1F5F9', color: '#374151', border: 'none',
+                borderRadius: 8, padding: '7px 14px', fontSize: 12,
+                fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit',
+              }}
+            >
+              Ablehnen
+            </button>
+          </div>
+        </>
+      )}
+      {status === 'loading' && (
+        <p style={{ fontSize: 13, color: '#6B7280' }}>Wird verarbeitet...</p>
+      )}
+      {status === 'approved' && (
+        <p style={{ fontSize: 13, color: '#059669', fontWeight: 600 }}>
+          Freigabe erteilt. Der Admin kann jetzt kurz helfen.
+        </p>
+      )}
+      {status === 'rejected' && (
+        <p style={{ fontSize: 13, color: '#DC2626', fontWeight: 600 }}>
+          Zugriff abgelehnt.
+        </p>
+      )}
     </div>
   )
 }
@@ -723,6 +812,25 @@ export default function SupportChat() {
 
                 {messages.map(msg => {
                   const isUser = msg.senderType === 'user'
+
+                  // System messages (e.g. impersonation request) — admin-side special cards
+                  if (msg.contentType === 'system' && !isUser) {
+                    let parsed: Record<string, string> = {}
+                    try { parsed = JSON.parse(msg.content) } catch { /* ignore */ }
+                    return (
+                      <div key={msg.id} style={{ display: 'flex', alignItems: 'flex-end', gap: 7 }}>
+                        <SupportAvatar size={22} />
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', flex: 1, minWidth: 0 }}>
+                          {parsed.type === 'impersonation_request'
+                            ? <ImpersonationCard token={parsed.token} />
+                            : <div className="fs-msg-bubble-admin">{msg.content}</div>
+                          }
+                          <span style={{ fontSize: 10, color: '#AAA', marginTop: 3 }}>{formatTime(msg.createdAt)}</span>
+                        </div>
+                      </div>
+                    )
+                  }
+
                   const mediaEl = msg.contentType === 'image' && msg.mediaUrl
                     ? <img src={msg.mediaUrl} alt="Bild" style={{ maxWidth: '100%', maxHeight: 200, borderRadius: 10, display: 'block' }} />
                     : null

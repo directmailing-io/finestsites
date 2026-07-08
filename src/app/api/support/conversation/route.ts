@@ -75,7 +75,22 @@ export async function POST(req: NextRequest) {
       })
       .returning()
 
-    return NextResponse.json({ conversation: conv, message }, { status: 201 })
+    // Automatic reply so the user knows we received their message
+    const autoReply = 'Danke! Deine Nachricht ist angekommen. Wir melden uns so bald wie möglich. Das kann manchmal auch ein paar Stunden dauern. Die Antwort bekommst du hier in diesem Chat.'
+    await db.insert(supportMessages).values({
+      conversationId: conv.id,
+      senderType: 'admin',
+      senderId: null,
+      content: autoReply,
+      contentType: 'text',
+    })
+
+    // Update conv: bump lastMessageAt and set unreadByUser=1 for the auto-reply
+    await db.update(supportConversations)
+      .set({ lastMessageAt: new Date(), unreadByUser: 1 })
+      .where(eq(supportConversations.id, conv.id))
+
+    return NextResponse.json({ conversation: { ...conv, unreadByUser: 1 }, message }, { status: 201 })
   } catch {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }

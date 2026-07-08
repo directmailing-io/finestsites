@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, use, useCallback } from 'react'
+import { useState, useEffect, use, useCallback, useRef } from 'react'
 import Link from 'next/link'
 
 interface UserProfile {
@@ -86,12 +86,22 @@ const STATUS_LABELS: Record<string, string> = {
   incomplete: 'Ausstehend',
 }
 
+type ImpersonateStep =
+  | { state: 'idle' }
+  | { state: 'requesting' }
+  | { state: 'waiting'; requestId: string; token: string }
+  | { state: 'approved'; token: string }
+  | { state: 'rejected' }
+  | { state: 'error'; message: string }
+
 export default function AdminUserDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
   const [data, setData] = useState<UserDetail | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [supportConvs, setSupportConvs] = useState<SupportConv[]>([])
+  const [impersonate, setImpersonate] = useState<ImpersonateStep>({ state: 'idle' })
+  const pollRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   const fetchSupportConvs = useCallback(async () => {
     try {
@@ -115,6 +125,39 @@ export default function AdminUserDetailPage({ params }: { params: Promise<{ id: 
     // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchSupportConvs()
   }, [id, fetchSupportConvs])
+
+  // Poll for impersonation approval
+  useEffect(() => {
+    if (impersonate.state !== 'waiting') {
+      if (pollRef.current) { clearInterval(pollRef.current); pollRef.current = null }
+      return
+    }
+    const { requestId, token } = impersonate
+    pollRef.current = setInterval(async () => {
+      try {
+        const res = await fetch(`/api/admin/users/${id}/impersonate?requestId=${requestId}`)
+        const data = await res.json()
+        if (data.status === 'approved') {
+          setImpersonate({ state: 'approved', token })
+        } else if (data.status === 'rejected') {
+          setImpersonate({ state: 'rejected' })
+        }
+      } catch { /* ignore */ }
+    }, 3000)
+    return () => { if (pollRef.current) { clearInterval(pollRef.current); pollRef.current = null } }
+  }, [impersonate, id])
+
+  async function requestImpersonation() {
+    setImpersonate({ state: 'requesting' })
+    try {
+      const res = await fetch(`/api/admin/users/${id}/impersonate`, { method: 'POST' })
+      const data = await res.json()
+      if (!res.ok) { setImpersonate({ state: 'error', message: data.error ?? 'Fehler' }); return }
+      setImpersonate({ state: 'waiting', requestId: data.requestId, token: data.token })
+    } catch {
+      setImpersonate({ state: 'error', message: 'Netzwerkfehler' })
+    }
+  }
 
   if (loading) {
     return (
@@ -273,6 +316,85 @@ export default function AdminUserDetailPage({ params }: { params: Promise<{ id: 
                   </div>
                 )
               })}
+            </div>
+          )}
+        </div>
+
+        {/* Impersonation */}
+        <div className="p-6 rounded-[24px] bg-white flex flex-col gap-3"
+          style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.08)', border: '1px solid var(--border)' }}>
+          <div className="flex items-center justify-between gap-3">
+            <h2 className="font-medium text-gray-900">Account-Zugriff</h2>
+            <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: '#F5F3FF', color: '#7C3AED' }}>
+              Nur mit Freigabe
+            </span>
+          </div>
+          <p className="text-sm" style={{ color: 'var(--muted-foreground)' }}>
+            Sende dem User eine Freigabeanfrage im Support-Chat. Wenn er zustimmt, kannst du dich in seinen Account einloggen.
+          </p>
+          {impersonate.state === 'idle' && (
+            <button
+              onClick={requestImpersonation}
+              className="self-start text-sm font-semibold px-4 py-2 rounded-[10px] border transition-colors"
+              style={{ background: '#F5F3FF', color: '#7C3AED', border: '1px solid #DDD6FE' }}
+            >
+              Freigabe anfordern
+            </button>
+          )}
+          {impersonate.state === 'requesting' && (
+            <p className="text-sm" style={{ color: '#7C3AED' }}>Anfrage wird gesendet...</p>
+          )}
+          {impersonate.state === 'waiting' && (
+            <div className="flex items-center gap-3 p-3 rounded-[12px]"
+              style={{ background: '#F5F3FF', border: '1px solid #DDD6FE' }}>
+              <div style={{
+                width: 16, height: 16, borderRadius: '50%',
+                border: '2.5px solid #7C3AED', borderTopColor: 'transparent',
+                animation: 'spin 0.8s linear infinite', flexShrink: 0,
+              }} />
+              <p className="text-sm font-medium" style={{ color: '#7C3AED' }}>
+                Warte auf Freigabe durch den User...
+              </p>
+            </div>
+          )}
+          {impersonate.state === 'approved' && (
+            <div className="flex items-center gap-3">
+              <span className="text-sm font-semibold" style={{ color: '#059669' }}>
+                Freigabe erteilt.
+              </span>
+              <a
+                href={`/api/admin/impersonate/enter?token=${impersonate.token}`}
+                className="text-sm font-semibold px-4 py-2 rounded-[10px] text-white"
+                style={{ background: '#7C3AED' }}
+              >
+                Als User einloggen →
+              </a>
+            </div>
+          )}
+          {impersonate.state === 'rejected' && (
+            <div className="flex items-center gap-3">
+              <span className="text-sm" style={{ color: '#DC2626' }}>
+                Der User hat die Anfrage abgelehnt.
+              </span>
+              <button
+                onClick={() => setImpersonate({ state: 'idle' })}
+                className="text-xs px-3 py-1.5 rounded-[8px]"
+                style={{ background: '#F3F4F6', color: '#374151' }}
+              >
+                Zurücksetzen
+              </button>
+            </div>
+          )}
+          {impersonate.state === 'error' && (
+            <div className="flex items-center gap-3">
+              <span className="text-sm" style={{ color: '#DC2626' }}>{impersonate.message}</span>
+              <button
+                onClick={() => setImpersonate({ state: 'idle' })}
+                className="text-xs px-3 py-1.5 rounded-[8px]"
+                style={{ background: '#F3F4F6', color: '#374151' }}
+              >
+                Erneut versuchen
+              </button>
             </div>
           )}
         </div>

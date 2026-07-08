@@ -488,3 +488,24 @@ export const supportMessagesRelations = relations(supportMessages, ({ one }) => 
 
 export type SupportConversation = typeof supportConversations.$inferSelect
 export type SupportMessage = typeof supportMessages.$inferSelect
+
+// ─── Impersonation ─────────────────────────────────────────────────────────────
+
+export const impersonationRequests = pgTable('impersonation_requests', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  adminId: uuid('admin_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  userId: uuid('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  token: text('token').notNull().unique(),
+  // pending → approved → active → ended | pending → rejected
+  status: text('status').notNull().default('pending'),
+  conversationId: uuid('conversation_id').references(() => supportConversations.id, { onDelete: 'set null' }),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(),
+  approvedAt: timestamp('approved_at', { withTimezone: true }),
+}, (t) => [
+  index('idx_impersonation_token').on(t.token),
+  index('idx_impersonation_admin').on(t.adminId),
+  index('idx_impersonation_user').on(t.userId),
+])
+
+export type ImpersonationRequest = typeof impersonationRequests.$inferSelect
