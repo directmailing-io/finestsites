@@ -398,7 +398,13 @@ function SettingsContent() {
     ? new Date(subscription.current_period_end * 1000).toLocaleDateString('de-DE', { day: '2-digit', month: 'long', year: 'numeric' })
     : null
 
-  const currentPlan = profile?.plan ?? subscription?.plan ?? 'starter'
+  // currentPlan is null for free users. Only set when there's a real active Stripe subscription.
+  // The DB column defaults to 'starter' for all users, so we cannot read it without verifying
+  // an active subscription exists.
+  const hasActiveSubscription = !!subscription && subscription.status === 'active'
+  const currentPlan: string | null = hasActiveSubscription
+    ? (profile?.plan ?? subscription?.plan ?? null)
+    : null
   const hasSubscription = !!profile?.stripe_customer_id
 
   return (
@@ -797,54 +803,51 @@ function SettingsContent() {
             const isUpgrade = canUpgradeTo(currentPlan, plan.key)
             const isLower = !isCurrent && !isUpgrade
 
+            // Light purple for popular, white for others
+            const cardBg = plan.popular ? '#f5f0fb' : '#FFFFFF'
+            const cardBorder = isCurrent
+              ? '2px solid #7C3AED'
+              : plan.popular
+                ? '1.5px solid #d8c5f5'
+                : '1px solid #E5E7EB'
+            const cardShadow = plan.popular
+              ? '0 4px 20px rgba(124,58,237,0.08)'
+              : '0 1px 4px rgba(0,0,0,0.04)'
+
             return (
               <div key={plan.key}
-                className="relative flex flex-col rounded-3xl p-6 sm:p-7 transition-transform"
-                style={{
-                  background: plan.popular ? '#1a1a1a' : '#F8FAFC',
-                  color: plan.popular ? '#fff' : '#1a1a1a',
-                  border: isCurrent
-                    ? '2px solid #8060b0'
-                    : plan.popular ? 'none' : '1px solid #E5E7EB',
-                  boxShadow: isCurrent ? '0 0 0 4px rgba(128,96,176,0.12)' : undefined,
-                }}>
+                className="relative flex flex-col p-6 sm:p-7"
+                style={{ background: cardBg, color: '#1a1a1a', border: cardBorder, borderRadius: 24, boxShadow: cardShadow }}>
 
                 {isCurrent && (
-                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 text-[10px] font-bold px-3 py-1 rounded-full"
-                    style={{ background: '#8060b0', color: '#fff', whiteSpace: 'nowrap' }}>
+                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 text-[10px] font-bold px-3 py-1 rounded-full whitespace-nowrap"
+                    style={{ background: '#7C3AED', color: '#fff' }}>
                     Aktueller Plan
                   </span>
                 )}
 
-                {plan.popular && (
+                {plan.popular && !isCurrent && (
                   <span className="absolute top-5 right-5 text-[10px] font-bold px-2.5 py-1 rounded-full"
-                    style={{ background: '#FBBF24', color: '#78350F' }}>
+                    style={{ background: '#7C3AED', color: '#fff' }}>
                     Beliebt
                   </span>
                 )}
 
-                <p className="text-sm font-semibold mb-2"
-                  style={{ color: plan.popular ? 'rgba(255,255,255,0.7)' : '#64748B' }}>
+                <p className="text-sm font-semibold mb-2" style={{ color: plan.popular ? '#7C3AED' : '#64748B' }}>
                   {plan.name}
                 </p>
 
                 <div className="flex items-baseline gap-1 mb-1">
-                  <span className="text-4xl font-bold tracking-tight">
+                  <span className="text-4xl font-bold tracking-tight text-gray-900">
                     €{billingInterval === 'yearly' ? perMonth : price}
                   </span>
-                  <span className="text-sm" style={{ color: plan.popular ? 'rgba(255,255,255,0.5)' : '#94A3B8' }}>
-                    /Monat
-                  </span>
+                  <span className="text-sm" style={{ color: '#94A3B8' }}>/Monat</span>
                 </div>
 
-                <p className="text-[11px] mb-1"
-                  style={{ color: plan.popular ? 'rgba(255,255,255,0.4)' : '#94A3B8' }}>
-                  inkl. ges. MwSt.
-                </p>
+                <p className="text-[11px] mb-1" style={{ color: '#94A3B8' }}>inkl. ges. MwSt.</p>
 
                 {billingInterval === 'yearly' ? (
-                  <p className="text-xs mb-5"
-                    style={{ color: plan.popular ? 'rgba(251,191,36,0.95)' : '#15803D' }}>
+                  <p className="text-xs mb-5" style={{ color: '#15803D' }}>
                     €{price}/Jahr · spare €{plan.monthly_eur * 12 - price}
                   </p>
                 ) : (
@@ -852,14 +855,13 @@ function SettingsContent() {
                 )}
 
                 <ul className="flex flex-col gap-2.5 flex-1 mb-6">
-                  <li className="flex items-start gap-2.5 text-sm font-semibold">
-                    <CheckIconForPlan dark={!!plan.popular} />
+                  <li className="flex items-start gap-2.5 text-sm font-semibold text-gray-900">
+                    <CheckIconForPlan popular={!!plan.popular} />
                     {plan.sites_label}
                   </li>
                   {COMMON_FEATURES.map(f => (
-                    <li key={f} className="flex items-start gap-2.5 text-sm"
-                      style={{ color: plan.popular ? 'rgba(255,255,255,0.8)' : '#475569' }}>
-                      <CheckIconForPlan dark={!!plan.popular} />
+                    <li key={f} className="flex items-start gap-2.5 text-sm" style={{ color: '#475569' }}>
+                      <CheckIconForPlan popular={!!plan.popular} />
                       {f}
                     </li>
                   ))}
@@ -867,28 +869,18 @@ function SettingsContent() {
 
                 {isCurrent ? (
                   <div className="w-full py-3 text-sm font-semibold text-center rounded-xl"
-                    style={{
-                      background: plan.popular ? 'rgba(255,255,255,0.10)' : '#E5E7EB',
-                      color: plan.popular ? 'rgba(255,255,255,0.6)' : '#6B7280',
-                    }}>
+                    style={{ background: 'rgba(124,58,237,0.08)', color: '#7C3AED' }}>
                     Aktueller Tarif
                   </div>
                 ) : isLower ? (
                   <div className="w-full py-3 text-sm font-medium text-center rounded-xl"
-                    style={{
-                      background: plan.popular ? 'rgba(255,255,255,0.10)' : 'transparent',
-                      color: plan.popular ? 'rgba(255,255,255,0.4)' : '#CBD5E1',
-                      border: plan.popular ? 'none' : '1px solid #E2E8F0',
-                    }}>
+                    style={{ background: 'transparent', color: '#CBD5E1', border: '1px solid #E2E8F0' }}>
                     Downgrade nicht möglich
                   </div>
                 ) : (
                   <button onClick={() => handleCheckout(plan.key)} disabled={checkoutLoading === plan.key}
-                    className="w-full py-3 text-sm font-bold rounded-xl transition-opacity hover:opacity-90 disabled:opacity-70 flex items-center justify-center gap-2"
-                    style={{
-                      background: plan.popular ? '#fff' : '#1a1a1a',
-                      color: plan.popular ? '#1a1a1a' : '#fff',
-                    }}>
+                    className="w-full py-3 text-sm font-bold rounded-xl transition-opacity hover:opacity-90 disabled:opacity-70 flex items-center justify-center gap-2 text-white"
+                    style={{ background: plan.popular ? '#7C3AED' : '#1a1a1a' }}>
                     {checkoutLoading === plan.key ? <Spinner /> : null}
                     {hasSubscription ? 'Upgraden' : 'Wählen'}
                   </button>
@@ -1250,10 +1242,10 @@ function YtIcon() {
   )
 }
 
-function CheckIconForPlan({ dark }: { dark?: boolean }) {
+function CheckIconForPlan({ popular }: { popular?: boolean }) {
   return (
     <svg className="flex-shrink-0 mt-0.5" width="16" height="16" viewBox="0 0 24 24" fill="none"
-      stroke={dark ? '#FBBF24' : '#16A34A'} strokeWidth="2.5">
+      stroke={popular ? '#7C3AED' : '#16A34A'} strokeWidth="2.5">
       <path d="M20 6L9 17l-5-5"/>
     </svg>
   )

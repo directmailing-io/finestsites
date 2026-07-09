@@ -86,9 +86,11 @@ export function getPlanMaxSites(plan: string): number {
 }
 
 /** True if targetPlan is strictly higher than currentPlan.
+ *  Pass null for free users (no active subscription) — all plans are upgradeable from free.
  *  'secret' is not part of PLAN_ORDER — it cannot be self-service upgraded to or from. */
-export function canUpgradeTo(currentPlan: string, targetPlan: string): boolean {
+export function canUpgradeTo(currentPlan: string | null, targetPlan: string): boolean {
   if (currentPlan === 'secret' || targetPlan === 'secret') return false
+  if (currentPlan === null) return true // free user: all paid plans are upgrades
   return PLAN_ORDER.indexOf(targetPlan as PlanKey) > PLAN_ORDER.indexOf(currentPlan as PlanKey)
 }
 
