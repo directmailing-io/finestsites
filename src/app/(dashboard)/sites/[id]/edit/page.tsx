@@ -575,8 +575,8 @@ function CardSelectField({ field, value, onChange, narrow }: {
                     </svg>
                   )}
                 </span>
-                {opt.description && (
-                  <span className="text-xs leading-snug truncate" style={{ color: '#6B7280' }}>
+                {opt.description && opts.length <= 2 && (
+                  <span className="text-xs leading-snug" style={{ color: '#6B7280' }}>
                     {opt.description}
                   </span>
                 )}
@@ -639,12 +639,13 @@ function CardSelectField({ field, value, onChange, narrow }: {
             )}
 
             {/* Label + description */}
-            <div className="flex-1 flex flex-col gap-1.5 p-4 sm:p-5">
-              <span className="text-base font-bold text-gray-900 leading-tight">
+            <div className="flex-1 flex flex-col gap-1 p-3 sm:p-4">
+              <span className="text-sm font-bold text-gray-900 leading-tight"
+                style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                 {opt.label}
               </span>
               {opt.description && (
-                <span className="text-sm leading-snug" style={{ color: '#6B7280' }}>
+                <span className="text-xs leading-snug" style={{ color: '#6B7280', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                   {opt.description}
                 </span>
               )}
@@ -1693,6 +1694,7 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
     if (livePreviewPanelW > maxW) setLivePreviewPanelW(maxW)
   }, [winW, livePreviewPanelW])
   const [hasChanges, setHasChanges] = useState(false)
+  const [collapsedOptionals, setCollapsedOptionals] = useState<Set<string>>(new Set())
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null)
   const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
@@ -1726,6 +1728,10 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
           }
         }
         setValues(init)
+        // Auto-collapse optional fields that have no value — user can expand as needed
+        setCollapsedOptionals(new Set(
+          fields.filter(f => !f.required && !init[f.key]).map(f => f.key)
+        ))
         // Mark the initial-loaded state as already-saved so autosave doesn't
         // fire on the very first render.
         lastAutosavedRef.current = JSON.stringify(init)
@@ -2583,6 +2589,8 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
                   )
                   return [...sectionFields, ...hiddenComplianceFields].map(field => {
                     const visible = sectionKeySet.has(field.key)
+                    const isOptional = visible && !field.required
+                    const isCollapsed = isOptional && collapsedOptionals.has(field.key)
                     return (
                       <div key={field.key}
                         className={visible ? 'bg-white rounded-[20px] p-5' : ''}
@@ -2590,22 +2598,46 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
                           ? { boxShadow: '0 2px 8px rgba(0,0,0,0.05)', border: '1px solid #F0F0F0' }
                           : { display: 'none' }}>
                         {visible && (
-                          <div className="mb-3">
-                            <label className="text-base font-bold text-gray-900">
-                              {field.label}
-                              {field.required && <span className="text-red-500 ml-1">*</span>}
-                            </label>
-                            {field.type === 'loop' && (
+                          <div className={isCollapsed ? '' : 'mb-3'}>
+                            <div className="flex items-start justify-between gap-2">
+                              <label className="text-base font-bold text-gray-900 flex items-center flex-wrap gap-x-1.5 gap-y-0.5">
+                                {field.label}
+                                {field.required && <span className="text-red-500">*</span>}
+                                {isOptional && (
+                                  <span className="text-[11px] font-medium px-1.5 py-0.5 rounded-full"
+                                    style={{ background: '#F3F4F6', color: '#9CA3AF', fontWeight: 500 }}>
+                                    Optional
+                                  </span>
+                                )}
+                              </label>
+                              {isOptional && (
+                                <button type="button"
+                                  onClick={() => setCollapsedOptionals(prev => {
+                                    const next = new Set(prev)
+                                    if (next.has(field.key)) next.delete(field.key)
+                                    else next.add(field.key)
+                                    return next
+                                  })}
+                                  className="flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center transition-colors mt-0.5"
+                                  style={{ background: '#F3F4F6', color: '#9CA3AF' }}>
+                                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"
+                                    style={{ transform: isCollapsed ? 'rotate(-90deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}>
+                                    <polyline points="6 9 12 15 18 9"/>
+                                  </svg>
+                                </button>
+                              )}
+                            </div>
+                            {!isCollapsed && field.type === 'loop' && (
                               <p className="text-xs text-gray-400 mt-0.5">
                                 Wiederholbare Einträge, beliebig viele hinzufügen
                               </p>
                             )}
-                            {field.placeholder_text && field.type !== 'loop' && (
+                            {!isCollapsed && field.placeholder_text && field.type !== 'loop' && (
                               <p className="text-sm text-gray-400 mt-0.5">{field.placeholder_text}</p>
                             )}
                           </div>
                         )}
-                        <FieldRenderer
+                        {!isCollapsed && <FieldRenderer
                           field={field}
                           value={values[field.key] ?? ''}
                           onChange={v => handleChange(field.key, v)}
@@ -2633,7 +2665,7 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
                                 setPreviewHash(slug || `__pidx-${idx}__`)
                               }
                             : undefined}
-                        />
+                        />}
                       </div>
                     )
                   })
