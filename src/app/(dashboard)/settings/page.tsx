@@ -442,7 +442,7 @@ function SettingsContent() {
                 onClick={() => setNmCompanies(prev =>
                   prev.includes(company) ? prev.filter(c => c !== company) : [...prev, company]
                 )}
-                className="px-4 py-2 rounded-2xl text-sm font-semibold transition-all"
+                className="flex items-center gap-1.5 px-4 py-2 rounded-2xl text-sm font-semibold transition-all"
                 style={{
                   background: isActive ? '#111827' : '#F9FAFB',
                   color: isActive ? '#fff' : '#374151',
@@ -450,6 +450,11 @@ function SettingsContent() {
                   boxShadow: isActive ? '0 4px 12px rgba(17,24,39,0.15)' : 'none',
                 }}
               >
+                {isActive && (
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+                    <polyline points="20 6 9 17 4 12"/>
+                  </svg>
+                )}
                 {company}
               </button>
             )
