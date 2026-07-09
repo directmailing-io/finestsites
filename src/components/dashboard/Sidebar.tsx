@@ -79,13 +79,20 @@ export function DashboardSidebar() {
             Partnerbereich
           </NavItem>
         ) : (
-          <div className="flex items-center gap-3 px-3 py-2.5 rounded-lg select-none cursor-default"
-            style={{ color: '#D1D5DB', fontSize: 13 }}>
-            <PartnerIcon />
-            <span>Partnerbereich</span>
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="ml-auto opacity-50">
-              <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-            </svg>
+          <div className="relative group">
+            <div className="flex items-center gap-3 px-3 py-2.5 rounded-lg select-none cursor-default"
+              style={{ color: '#C4C4C4', fontSize: 13 }}>
+              <span style={{ opacity: 0.5 }}><PartnerIcon /></span>
+              <span>Partnerbereich</span>
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="ml-auto" style={{ color: '#C4C4C4' }}>
+                <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+              </svg>
+            </div>
+            <div className="absolute left-full top-1/2 -translate-y-1/2 ml-2 px-2.5 py-1.5 rounded-lg text-xs text-white whitespace-nowrap pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity z-50"
+              style={{ background: '#1a1a1a' }}>
+              Nur für aktive Kunden
+              <div className="absolute right-full top-1/2 -translate-y-1/2 border-4 border-transparent" style={{ borderRightColor: '#1a1a1a' }} />
+            </div>
           </div>
         )}
         <NavItem href="/settings" active={isActive('/settings')} icon={<SettingsIcon />} secondary>
