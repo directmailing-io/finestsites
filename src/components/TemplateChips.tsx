@@ -75,8 +75,8 @@ export function PriceChip({ isFree, size = 'sm' }: { isFree: boolean; size?: 'sm
     )
   }
   return (
-    <span style={{ fontSize: fs, fontWeight: 700, color: '#92400E', background: '#FFFBEB', padding: pad, borderRadius: 100, display: 'inline-block' }}>
-      ★ Premium
+    <span style={{ fontSize: fs, fontWeight: 700, color: '#fff', background: 'linear-gradient(135deg, #7C3AED, #9333EA)', padding: pad, borderRadius: 100, display: 'inline-flex', alignItems: 'center', gap: 3 }}>
+      ⭐ Premium
     </span>
   )
 }

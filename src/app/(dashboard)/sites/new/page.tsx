@@ -144,10 +144,11 @@ export default function NewSitePage() {
   // Show company sub-filter only when user has 2+ companies
   const showCompanyFilter = userCompanies.length > 1
 
-  // Step 1: filter by user's companies + exclude published/active sites
+  // Step 1: filter by user's companies + exclude published/active sites + exclude coming soon
   const companyMatched = useMemo(() => {
-    // Exclude templates where the user already has a live (non-draft) site
+    // Exclude coming soon and templates where the user already has a live (non-draft) site
     const base = templates.filter(t => {
+      if (t.is_coming_soon) return false  // never show coming soon
       const site = siteMap[t.id]
       if (!site) return true          // no site → always show
       return site.status === 'draft'  // draft → show; published/active → hide
@@ -180,14 +181,13 @@ export default function NewSitePage() {
     )
   }, [priceFiltered, search])
 
-  // Step 5: sort — drafts first, then coming soon, then rest
+  // Step 5: sort — drafts first, then rest
   const visible = useMemo(() => {
-    const priority = (t: Template) => {
-      if (siteMap[t.id]?.status === 'draft') return 0
-      if (t.is_coming_soon) return 1
-      return 2
-    }
-    return [...searched].sort((a, b) => priority(a) - priority(b))
+    return [...searched].sort((a, b) => {
+      const pa = siteMap[a.id]?.status === 'draft' ? 0 : 1
+      const pb = siteMap[b.id]?.status === 'draft' ? 0 : 1
+      return pa - pb
+    })
   }, [searched, siteMap])
 
   async function handleSelect(templateId: string) {
@@ -336,10 +336,10 @@ export default function NewSitePage() {
           {visible.map(tpl => {
             const isBusy = busy === tpl.id
             const preview = tpl.preview_images?.[0] ?? null
-            const isComingSoon = tpl.is_coming_soon ?? false
             const existingSite = siteMap[tpl.id]
             const isDraft = existingSite?.status === 'draft'
             const isPublished = !!existingSite && !isDraft
+            const isPremium = !(tpl.is_free ?? false)
             // Show the company the user belongs to; fall back to first listed
             const matchedCompany = tpl.is_allrounder
               ? undefined
@@ -349,21 +349,16 @@ export default function NewSitePage() {
               <div key={tpl.id}
                 className="flex rounded-2xl bg-white overflow-hidden"
                 style={{
-                  boxShadow: '0 1px 4px rgba(0,0,0,0.06), 0 6px 24px rgba(0,0,0,0.06)',
-                  border: isComingSoon ? '1px solid #F0EAF8' : '1px solid #F1F5F9',
+                  boxShadow: isPremium
+                    ? '0 1px 4px rgba(124,58,237,0.08), 0 6px 24px rgba(124,58,237,0.10)'
+                    : '0 1px 4px rgba(0,0,0,0.06), 0 6px 24px rgba(0,0,0,0.06)',
+                  border: isPremium ? '1.5px solid #E8D8FB' : '1px solid #F1F5F9',
                   minHeight: 190,
-                  opacity: isComingSoon ? 0.75 : 1,
                 }}>
 
                 {/* Image — left */}
                 <div className="flex-shrink-0 relative overflow-hidden" style={{ width: '40%', background: '#f5f5f7' }}>
-                  {isComingSoon ? (
-                    <>
-                      <FakeWebsitePreview idx={visible.indexOf(tpl)} />
-                      <div className="absolute inset-0" style={{ background: 'rgba(255,255,255,0.35)' }} />
-                      <div className="absolute inset-0 flex items-center justify-center" style={{ fontSize: 28 }}>🤫</div>
-                    </>
-                  ) : preview ? (
+                  {preview ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img src={preview} alt={tpl.title}
                       className="absolute inset-0 w-full h-full object-cover object-top" />
@@ -377,6 +372,19 @@ export default function NewSitePage() {
                       </svg>
                     </div>
                   )}
+                  {/* Premium corner badge on preview image */}
+                  {isPremium && (
+                    <div className="absolute top-2 left-2"
+                      style={{
+                        background: 'linear-gradient(135deg, #7C3AED, #9333EA)',
+                        borderRadius: 6, padding: '2px 6px',
+                        fontSize: 9, fontWeight: 700, color: '#fff',
+                        boxShadow: '0 2px 6px rgba(124,58,237,0.35)',
+                        letterSpacing: '0.02em',
+                      }}>
+                      ⭐ PREMIUM
+                    </div>
+                  )}
                 </div>
 
                 {/* Content — right */}
@@ -386,7 +394,7 @@ export default function NewSitePage() {
                   <div className="flex flex-wrap gap-1.5">
                     <CompanyChip name={matchedCompany} isAllrounder={tpl.is_allrounder} size="xs" />
                     <BadgeChip badge={tpl.badge} size="xs" />
-                    <PriceChip isFree={tpl.is_free ?? false} size="xs" />
+                    {tpl.is_free && <PriceChip isFree={true} size="xs" />}
                     {isDraft && (
                       <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold" style={{ background: '#FFF7ED', color: '#C2410C', border: '1px solid #FED7AA' }}>
                         Entwurf
@@ -395,11 +403,6 @@ export default function NewSitePage() {
                     {isPublished && (
                       <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold" style={{ background: '#F0FDF4', color: '#15803D', border: '1px solid #BBF7D0' }}>
                         Aktiv
-                      </span>
-                    )}
-                    {isComingSoon && (
-                      <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold" style={{ background: '#F5F3FF', color: '#7C3AED', border: '1px solid #DDD6FE' }}>
-                        Coming Soon
                       </span>
                     )}
                   </div>
@@ -417,28 +420,23 @@ export default function NewSitePage() {
                   </div>
 
                   {/* CTA */}
-                  {isComingSoon ? (
-                    <div className="w-full py-2.5 px-4 rounded-xl text-sm font-semibold text-center" style={{ background: '#F5F3FF', color: '#7C3AED' }}>
-                      Demnächst verfügbar
-                    </div>
-                  ) : (
-                    <button
-                      onClick={() => handleSelect(tpl.id)}
-                      disabled={!!busy}
-                      className="w-full py-2.5 px-4 rounded-xl text-sm font-semibold transition-all active:scale-[0.97] flex items-center justify-center gap-2"
-                      style={{
-                        background: isBusy ? '#E5E7EB' : '#1a1a1a',
-                        color: isBusy ? '#9CA3AF' : '#fff',
-                      }}
-                    >
-                      {isBusy ? (
-                        <>
-                          <span className="w-3.5 h-3.5 rounded-full border-2 border-gray-300 border-t-gray-500 animate-spin" />
-                          Wird geöffnet…
-                        </>
-                      ) : isDraft ? 'Weiter bearbeiten →' : isPublished ? 'Website öffnen →' : 'Vorlage verwenden →'}
-                    </button>
-                  )}
+                  <button
+                    onClick={() => handleSelect(tpl.id)}
+                    disabled={!!busy}
+                    className="w-full py-2.5 px-4 rounded-xl text-sm font-semibold transition-all active:scale-[0.97] flex items-center justify-center gap-2"
+                    style={{
+                      background: isBusy ? '#E5E7EB' : isPremium ? 'linear-gradient(135deg, #7C3AED, #6D28D9)' : '#1a1a1a',
+                      color: isBusy ? '#9CA3AF' : '#fff',
+                      boxShadow: (!isBusy && isPremium) ? '0 4px 12px rgba(124,58,237,0.25)' : undefined,
+                    }}
+                  >
+                    {isBusy ? (
+                      <>
+                        <span className="w-3.5 h-3.5 rounded-full border-2 border-gray-300 border-t-gray-500 animate-spin" />
+                        Wird geöffnet…
+                      </>
+                    ) : isDraft ? 'Weiter bearbeiten →' : isPublished ? 'Website öffnen →' : 'Vorlage verwenden →'}
+                  </button>
                 </div>
               </div>
             )
