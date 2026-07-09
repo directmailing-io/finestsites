@@ -1664,6 +1664,7 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
   )
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [deletingSite, setDeletingSite] = useState(false)
+  const [showMobileMenu, setShowMobileMenu] = useState(false)
   const [showPublishCelebration, setShowPublishCelebration] = useState(false)
   const [showUpgradeModal, setShowUpgradeModal] = useState(false)
   const [justPaid, setJustPaid] = useState(false)
@@ -2218,6 +2219,44 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
               {publishing ? 'Warten…' : 'Veröffentlichen'}
             </button>
           )}
+
+          {/* ⋯ More actions — mobile only */}
+          <div className="relative flex-shrink-0">
+            <button
+              onClick={() => setShowMobileMenu(v => !v)}
+              className="w-9 h-9 flex items-center justify-center rounded-full"
+              style={{ background: '#F3F4F6', color: '#6B7280' }}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                <circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/>
+              </svg>
+            </button>
+            {showMobileMenu && (
+              <>
+                <div className="fixed inset-0 z-40" onClick={() => setShowMobileMenu(false)} />
+                <div className="absolute right-0 top-full mt-2 bg-white rounded-2xl z-50 overflow-hidden"
+                  style={{ minWidth: 190, border: '1px solid #E5E7EB', boxShadow: '0 8px 32px rgba(0,0,0,0.14)' }}>
+                  {isPublished && (
+                    <button onClick={() => { setShowMobileMenu(false); handleUnpublish() }}
+                      className="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-left"
+                      style={{ color: '#374151', borderBottom: '1px solid #F3F4F6' }}>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <circle cx="12" cy="12" r="10"/><rect x="9" y="9" width="6" height="6"/>
+                      </svg>
+                      Offline schalten
+                    </button>
+                  )}
+                  <button onClick={() => { setShowMobileMenu(false); setShowDeleteModal(true) }}
+                    className="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-left"
+                    style={{ color: '#DC2626' }}>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M3 6h18M19 6l-1 14H6L5 6M10 11v6M14 11v6M9 6V4h6v2"/>
+                    </svg>
+                    Website löschen
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
         </div>
       </div>
 
@@ -2343,22 +2382,22 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
             </button>
           )}
 
-          {/* Secondary action: Offline (when live) or Delete (when draft) */}
-          {isPublished ? (
+          {/* Secondary action: Offline (when live) + always show delete */}
+          {isPublished && (
             <button onClick={handleUnpublish} disabled={toggling}
               className="text-xs font-medium px-3 py-2 rounded-full transition-colors"
               style={{ background: '#F3F4F6', color: '#6B7280', opacity: toggling ? 0.5 : 1 }}>
               Offline
             </button>
-          ) : (
-            <button onClick={() => setShowDeleteModal(true)}
-              className="w-8 h-8 flex items-center justify-center rounded-full transition-colors flex-shrink-0"
-              style={{ background: '#FEF2F2', color: '#DC2626' }}>
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M3 6h18M19 6l-1 14H6L5 6M10 11v6M14 11v6M9 6V4h6v2"/>
-              </svg>
-            </button>
           )}
+          <button onClick={() => setShowDeleteModal(true)}
+            className="w-8 h-8 flex items-center justify-center rounded-full transition-colors flex-shrink-0"
+            title="Website löschen"
+            style={{ background: '#FEF2F2', color: '#DC2626' }}>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M3 6h18M19 6l-1 14H6L5 6M10 11v6M14 11v6M9 6V4h6v2"/>
+            </svg>
+          </button>
         </div>
       </div>
 
