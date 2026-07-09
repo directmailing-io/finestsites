@@ -3,8 +3,6 @@
 import { useState, useEffect, useMemo } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { CompanyChip, BadgeChip, PriceChip } from '@/components/TemplateChips'
-import { FakeWebsitePreview } from '@/components/FakeWebsitePreview'
 
 interface Template {
   id: string
@@ -314,25 +312,23 @@ export default function NewSitePage() {
 
       {/* ── Template list ── */}
       {loading ? (
-        <div className="flex flex-col gap-4">
-          {[1, 2, 3].map(i => (
-            <div key={i} className="animate-pulse flex gap-4 p-4 rounded-2xl bg-white"
-              style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04)', border: '1px solid #F1F5F9' }}>
-              <div className="flex-shrink-0 rounded-xl bg-gray-100" style={{ width: 140, aspectRatio: '4/3' }} />
-              <div className="flex-1 flex flex-col gap-3 py-1">
-                <div className="flex gap-1.5"><div className="h-5 rounded-full bg-gray-100 w-20" /><div className="h-5 rounded-full bg-gray-100 w-12" /></div>
-                <div className="h-4 rounded-full bg-gray-100 w-2/3" />
-                <div className="h-3 rounded-full bg-gray-100 w-full" />
-                <div className="h-3 rounded-full bg-gray-100 w-3/4" />
-                <div className="mt-auto h-9 rounded-xl bg-gray-100 w-full" />
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {[1, 2, 3, 4].map(i => (
+            <div key={i} className="animate-pulse flex flex-col rounded-2xl bg-white overflow-hidden"
+              style={{ boxShadow: '0 2px 12px rgba(0,0,0,0.05)', border: '1px solid #E5E7EB' }}>
+              <div className="bg-gray-100" style={{ height: 180 }} />
+              <div className="p-4 flex flex-col gap-3">
+                <div className="h-3 rounded-full bg-gray-100 w-1/3" />
+                <div className="h-5 rounded-full bg-gray-100 w-3/4" />
               </div>
+              <div className="h-11 bg-gray-100 mt-auto" />
             </div>
           ))}
         </div>
       ) : visible.length === 0 ? (
         <EmptyState hasPrefs={hasPrefs} search={search} priceFilter={priceFilter} />
       ) : (
-        <div className="flex flex-col gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {visible.map(tpl => {
             const isBusy = busy === tpl.id
             const preview = tpl.preview_images?.[0] ?? null
@@ -340,32 +336,24 @@ export default function NewSitePage() {
             const isDraft = existingSite?.status === 'draft'
             const isPublished = !!existingSite && !isDraft
             const isPremium = !(tpl.is_free ?? false)
-            // Show the company the user belongs to; fall back to first listed
-            const matchedCompany = tpl.is_allrounder
-              ? undefined
-              : (tpl.nm_companies.find(c => userCompanies.includes(c)) ?? tpl.nm_companies[0])
+            const companyLabel = tpl.is_allrounder
+              ? null
+              : (tpl.nm_companies.find(c => userCompanies.includes(c)) ?? tpl.nm_companies[0] ?? null)
+            const ctaLabel = isBusy ? 'Wird geöffnet…' : isDraft ? 'Bearbeiten →' : isPublished ? 'Öffnen →' : 'Verwenden →'
 
             return (
               <div key={tpl.id}
                 className="flex flex-col rounded-2xl overflow-hidden"
                 style={{
                   background: '#fff',
+                  border: isPremium ? '1.5px solid #C4A0F0' : '1px solid #E5E7EB',
                   boxShadow: isPremium
-                    ? '0 2px 8px rgba(124,58,237,0.10), 0 8px 28px rgba(124,58,237,0.12)'
-                    : '0 1px 4px rgba(0,0,0,0.06), 0 6px 24px rgba(0,0,0,0.06)',
-                  border: isPremium ? '1.5px solid #D4B8F9' : '1px solid #F1F5F9',
+                    ? '0 4px 28px rgba(128,96,176,0.18), 0 1px 4px rgba(128,96,176,0.08)'
+                    : '0 2px 12px rgba(0,0,0,0.05)',
                 }}>
 
-                {/* Premium accent bar — full-width gradient stripe */}
-                {isPremium && (
-                  <div style={{ height: 3, background: 'linear-gradient(90deg, #7C3AED 0%, #A78BFA 70%, #C4B5FD 100%)', flexShrink: 0 }} />
-                )}
-
-                {/* Card body */}
-                <div className="flex" style={{ minHeight: 190 }}>
-
-                {/* Image — left */}
-                <div className="flex-shrink-0 relative overflow-hidden" style={{ width: '40%', background: '#f5f5f7' }}>
+                {/* Image — top */}
+                <div className="relative overflow-hidden flex-shrink-0" style={{ height: 180, background: '#f5f5f7' }}>
                   {preview ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img src={preview} alt={tpl.title}
@@ -380,60 +368,72 @@ export default function NewSitePage() {
                       </svg>
                     </div>
                   )}
+                  {/* Status badge on image */}
+                  {(isDraft || isPublished) && (
+                    <div className="absolute top-2 right-2">
+                      <span className="text-xs font-semibold px-2 py-0.5 rounded-full"
+                        style={isDraft
+                          ? { background: 'rgba(255,247,237,0.95)', color: '#C2410C', border: '1px solid #FED7AA' }
+                          : { background: 'rgba(240,253,244,0.95)', color: '#15803D', border: '1px solid #BBF7D0' }}>
+                        {isDraft ? 'Entwurf' : 'Aktiv'}
+                      </span>
+                    </div>
+                  )}
+                  {/* New badge on image */}
+                  {tpl.badge === 'brandneu' && (
+                    <div className="absolute top-2 left-2">
+                      <span className="text-xs font-bold px-2 py-0.5 rounded-full"
+                        style={{ background: 'rgba(245,243,255,0.95)', color: '#7C3AED', border: '1px solid #DDD6FE' }}>
+                        ✦ Neu
+                      </span>
+                    </div>
+                  )}
                 </div>
 
-                {/* Content — right */}
-                <div className="flex-1 flex flex-col gap-2.5 p-4 sm:p-5 min-w-0">
-
-                  {/* Chips */}
-                  <div className="flex flex-wrap gap-1.5">
-                    <CompanyChip name={matchedCompany} isAllrounder={tpl.is_allrounder} size="xs" />
-                    <BadgeChip badge={tpl.badge} size="xs" />
-                    <PriceChip isFree={tpl.is_free ?? false} size="xs" />
-                    {isDraft && (
-                      <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold" style={{ background: '#FFF7ED', color: '#C2410C', border: '1px solid #FED7AA' }}>
-                        Entwurf
-                      </span>
-                    )}
-                    {isPublished && (
-                      <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold" style={{ background: '#F0FDF4', color: '#15803D', border: '1px solid #BBF7D0' }}>
-                        Aktiv
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Title + description */}
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-bold text-gray-900 text-[15px] sm:text-[16px] leading-snug mb-1.5">
-                      {tpl.title}
-                    </h3>
-                    {tpl.description && (
-                      <p className="text-sm leading-relaxed line-clamp-2" style={{ color: '#64748B' }}>
-                        {tpl.description}
-                      </p>
-                    )}
-                  </div>
-
-                  {/* CTA */}
-                  <button
-                    onClick={() => handleSelect(tpl.id)}
-                    disabled={!!busy}
-                    className="w-full py-2.5 px-4 rounded-xl text-sm font-semibold transition-all active:scale-[0.97] flex items-center justify-center gap-2"
-                    style={{
-                      background: isBusy ? '#E5E7EB' : isPremium ? 'linear-gradient(135deg, #7C3AED, #6D28D9)' : '#1a1a1a',
-                      color: isBusy ? '#9CA3AF' : '#fff',
-                      boxShadow: (!isBusy && isPremium) ? '0 4px 12px rgba(124,58,237,0.25)' : undefined,
-                    }}
-                  >
-                    {isBusy ? (
-                      <>
-                        <span className="w-3.5 h-3.5 rounded-full border-2 border-gray-300 border-t-gray-500 animate-spin" />
-                        Wird geöffnet…
-                      </>
-                    ) : isDraft ? 'Weiter bearbeiten →' : isPublished ? 'Website öffnen →' : 'Vorlage verwenden →'}
-                  </button>
+                {/* Card body */}
+                <div style={{ padding: '14px 16px 10px', flex: 1, display: 'flex', flexDirection: 'column', gap: 5 }}>
+                  <p style={{ fontSize: 11, fontWeight: 700, color: tpl.is_allrounder ? '#2563EB' : '#9d7ecc', letterSpacing: '0.07em', textTransform: 'uppercase', margin: 0 }}>
+                    {tpl.is_allrounder ? 'Allgemein' : (companyLabel ?? '')}
+                  </p>
+                  <h3 style={{ fontSize: 15, fontWeight: 700, color: '#111', lineHeight: 1.3, margin: 0 }}>
+                    {tpl.title}
+                  </h3>
                 </div>
-                </div>{/* end card body */}
+
+                {/* Footer bar — the visual differentiator */}
+                <button
+                  onClick={() => handleSelect(tpl.id)}
+                  disabled={!!busy}
+                  style={{
+                    padding: '11px 16px 13px',
+                    background: isBusy ? '#E5E7EB' : isPremium
+                      ? 'linear-gradient(120deg, #7C3AED 0%, #9D5FEF 100%)'
+                      : '#F5F5F7',
+                    borderTop: isPremium ? 'none' : '1px solid #EBEBED',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    border: 'none',
+                    cursor: isBusy ? 'default' : 'pointer',
+                    width: '100%',
+                    flexShrink: 0,
+                  }}>
+                  <span style={{
+                    fontSize: 11, fontWeight: 700,
+                    color: isBusy ? '#9CA3AF' : isPremium ? 'rgba(255,255,255,0.75)' : '#9CA3AF',
+                    letterSpacing: '0.07em', textTransform: 'uppercase',
+                  }}>
+                    {isPremium ? 'Premium' : 'Gratis'}
+                  </span>
+                  <span style={{
+                    fontSize: 13, fontWeight: 700,
+                    color: isBusy ? '#9CA3AF' : isPremium ? '#fff' : '#6B7280',
+                    display: 'flex', alignItems: 'center', gap: 5,
+                  }}>
+                    {isBusy && <span className="w-3 h-3 rounded-full border-2 border-gray-300 border-t-gray-500 animate-spin inline-block" />}
+                    {ctaLabel}
+                  </span>
+                </button>
               </div>
             )
           })}
