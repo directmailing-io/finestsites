@@ -2121,20 +2121,6 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
   return (
     <div className="fixed inset-0 z-50 flex flex-col" style={{ background: '#F8FAFC' }}>
 
-      {/* Draft mode banner — shown only when site is not yet published */}
-      {site && site.status === 'draft' && !justPaid && (
-        <div
-          className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium"
-          style={{ background: '#F0FDF4', borderBottom: '1px solid #BBF7D0', color: '#15803D' }}
-        >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="flex-shrink-0">
-            <circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/>
-          </svg>
-          <span>
-            Du bist im <strong>kostenlosen Entwurf-Modus</strong>. Wenn du fertig bist, klicke auf &ldquo;Veröffentlichen&rdquo; um deine Seite live zu schalten.
-          </span>
-        </div>
-      )}
 
       {/* ── Toast notification ── */}
       <div
@@ -2288,28 +2274,24 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
           </span>
         </div>
 
-        {/* Right: actions */}
+        {/* Right: actions — max 3 items in any state */}
         <div className="flex items-center gap-2 flex-shrink-0">
 
-          {/* Live-Preview Toggle — desktop only (XL+) */}
+          {/* Live-Vorschau panel toggle — icon only, xl+ */}
           <button onClick={() => setShowLivePreview(v => !v)}
-            className="hidden xl:flex items-center gap-1.5 text-xs font-medium px-3 py-2 rounded-[11px] transition-colors"
-            style={{
-              background: showLivePreview ? '#1a1a1a' : '#F3F4F6',
-              color: showLivePreview ? 'white' : '#374151',
-            }}
-            title={showLivePreview ? 'Live-Vorschau ausblenden' : 'Live-Vorschau einblenden'}>
+            className="hidden xl:flex w-8 h-8 items-center justify-center rounded-[10px] flex-shrink-0 transition-colors"
+            title={showLivePreview ? 'Live-Vorschau ausblenden' : 'Live-Vorschau einblenden'}
+            style={{ background: showLivePreview ? '#1a1a1a' : '#F3F4F6', color: showLivePreview ? 'white' : '#6B7280' }}>
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <rect x="2" y="3" width="20" height="14" rx="2"/>
               <line x1="8" y1="21" x2="16" y2="21"/>
               <line x1="12" y1="17" x2="12" y2="21"/>
             </svg>
-            <span>Live-Vorschau</span>
           </button>
 
-          {/* Fullscreen Preview button — neutral grey */}
+          {/* Fullscreen preview */}
           <button onClick={() => { setShowFullPreview(true); setPreviewKey(k => k + 1) }}
-            className="flex items-center gap-1.5 text-xs font-medium px-3 py-2 rounded-[11px] transition-colors"
+            className="flex items-center gap-1.5 text-xs font-medium px-3 py-2 rounded-[10px] transition-colors"
             style={{ background: '#F3F4F6', color: '#374151' }}>
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
@@ -2318,58 +2300,48 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
             <span className="hidden sm:inline">Vorschau</span>
           </button>
 
-          {/* Publish / Änderungen live */}
+          {/* Primary publish action */}
           {isPublished ? (
-            <button onClick={handlePublish} disabled={publishing || !hasChanges || !allRequiredComplete}
-              className="flex items-center gap-1.5 text-xs font-semibold px-4 py-2 rounded-[11px] transition-all"
-              style={{
-                background: hasChanges && allRequiredComplete ? '#16A34A' : '#E5E7EB',
-                color: hasChanges && allRequiredComplete ? 'white' : '#9CA3AF',
-                opacity: publishing ? 0.7 : 1,
-                cursor: hasChanges && allRequiredComplete ? 'pointer' : 'not-allowed',
-              }}>
-              {publishing
-                ? <span className="w-3 h-3 rounded-full border-2 border-current/40 border-t-current animate-spin" />
-                : <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M20 6L9 17l-5-5"/></svg>}
-              {publishing ? 'Bitte warten…' : 'Änderungen live'}
-            </button>
+            hasChanges && allRequiredComplete ? (
+              /* Changes to push live */
+              <button onClick={handlePublish} disabled={publishing}
+                className="flex items-center gap-1.5 text-xs font-semibold px-4 py-2 rounded-[10px] text-white transition-all"
+                style={{ background: '#16A34A', opacity: publishing ? 0.7 : 1 }}>
+                {publishing
+                  ? <span className="w-3 h-3 rounded-full border-2 border-white/40 border-t-white animate-spin" />
+                  : <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M20 6L9 17l-5-5"/></svg>}
+                {publishing ? 'Bitte warten…' : 'Änderungen live'}
+              </button>
+            ) : (
+              /* Already up to date — show status */
+              <span className="flex items-center gap-1.5 text-xs font-semibold px-3 py-2 rounded-[10px] select-none"
+                style={{ background: '#DCFCE7', color: '#16A34A' }}>
+                <span className="w-1.5 h-1.5 rounded-full bg-green-500 inline-block" />
+                Live
+              </span>
+            )
           ) : (
+            /* Not yet published */
             <button onClick={handlePublish} disabled={publishing || !allRequiredComplete}
-              className="flex items-center gap-1.5 text-xs font-semibold px-4 py-2 rounded-[11px] text-white transition-all"
-              style={{ background: allRequiredComplete ? '#1a1a1a' : '#9CA3AF', boxShadow: allRequiredComplete ? '0 4px 14px rgba(26,26,26,0.2)' : 'none', opacity: publishing ? 0.7 : 1, cursor: allRequiredComplete ? 'pointer' : 'not-allowed' }}>
-              {publishing
-                ? <span className="w-3 h-3 rounded-full border-2 border-white/40 border-t-white animate-spin" />
-                : null}
+              className="flex items-center gap-1.5 text-xs font-semibold px-4 py-2 rounded-[10px] text-white transition-all"
+              style={{ background: allRequiredComplete ? '#1a1a1a' : '#9CA3AF', opacity: publishing ? 0.7 : 1, cursor: allRequiredComplete ? 'pointer' : 'not-allowed' }}>
+              {publishing ? <span className="w-3 h-3 rounded-full border-2 border-white/40 border-t-white animate-spin" /> : null}
               {publishing ? 'Bitte warten…' : 'Veröffentlichen'}
             </button>
           )}
 
-          {/* Online / Offline Toggle */}
-          <button
-            onClick={isPublished ? handleUnpublish : handlePublishToggle}
-            disabled={toggling || (!isPublished && !allRequiredComplete)}
-            aria-label={isPublished ? 'Seite offline stellen' : 'Seite online stellen'}
-            className="flex items-center gap-2 px-2.5 py-1.5 rounded-[11px] transition-all select-none"
-            style={{ background: isPublished ? '#F0FDF4' : '#F3F4F6', opacity: toggling ? 0.6 : 1 }}>
-            {/* Toggle pill */}
-            <div className="relative w-9 h-5 rounded-full flex-shrink-0 transition-colors duration-200"
-              style={{ background: isPublished ? '#16A34A' : '#D1D5DB' }}>
-              <div
-                className="absolute top-0.5 w-4 h-4 rounded-full bg-white shadow-sm transition-transform duration-200"
-                style={{ transform: isPublished ? 'translateX(18px)' : 'translateX(2px)' }} />
-            </div>
-            <span className="text-xs font-semibold hidden sm:block"
-              style={{ color: isPublished ? '#16A34A' : '#6B7280' }}>
-              {isPublished ? 'Online' : 'Offline'}
-            </span>
-          </button>
-
-          {/* Delete — only visible when offline */}
-          {!isPublished && (
+          {/* Secondary action: Offline (when live) or Delete (when draft) */}
+          {isPublished ? (
+            <button onClick={handleUnpublish} disabled={toggling}
+              className="text-xs font-medium px-3 py-2 rounded-[10px] transition-colors"
+              style={{ background: '#F3F4F6', color: '#6B7280', opacity: toggling ? 0.5 : 1 }}>
+              Offline
+            </button>
+          ) : (
             <button onClick={() => setShowDeleteModal(true)}
-              className="w-9 h-9 flex items-center justify-center rounded-[11px] transition-colors"
+              className="w-8 h-8 flex items-center justify-center rounded-[10px] transition-colors flex-shrink-0"
               style={{ background: '#FEF2F2', color: '#DC2626' }}>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M3 6h18M19 6l-1 14H6L5 6M10 11v6M14 11v6M9 6V4h6v2"/>
               </svg>
             </button>
