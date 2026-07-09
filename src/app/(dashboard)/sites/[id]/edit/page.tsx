@@ -510,7 +510,7 @@ function CardSelectField({ field, value, onChange, narrow }: {
   const isCompact = opts.every(o => o.card_type !== 'image' || !o.image_url)
 
   const gridCls = isCompact ? (
-    (narrow && opts.length > 2) ? 'grid-cols-1' :
+    narrow ? 'grid-cols-1' :
     opts.length <= 2 ? 'grid-cols-2' :
     opts.length === 3 ? 'grid-cols-1 sm:grid-cols-3' :
     'grid-cols-1 sm:grid-cols-2'
@@ -576,7 +576,7 @@ function CardSelectField({ field, value, onChange, narrow }: {
                   )}
                 </span>
                 {opt.description && (
-                  <span className="text-xs leading-snug" style={{ color: '#6B7280' }}>
+                  <span className="text-xs leading-snug truncate" style={{ color: '#6B7280' }}>
                     {opt.description}
                   </span>
                 )}
@@ -770,7 +770,7 @@ function ImageField({ field, value, onChange }: {
           <div className="relative rounded-[16px] overflow-hidden bg-gray-100">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={value} alt="Hochgeladenes Bild" className="w-full object-cover rounded-[16px]"
-              style={{ aspectRatio: arStr !== 'free' ? arStr : undefined, maxHeight: '240px' }} />
+              style={{ aspectRatio: arStr !== 'free' ? arStr : undefined, maxHeight: '160px' }} />
           </div>
           <div className="flex items-center gap-2">
             <button type="button" onClick={() => fileInputRef.current?.click()}
@@ -791,7 +791,7 @@ function ImageField({ field, value, onChange }: {
       ) : (
         <div onClick={() => fileInputRef.current?.click()}
           className="flex flex-col items-center justify-center gap-3 rounded-[16px] cursor-pointer transition-all active:scale-[0.99] active:bg-gray-100"
-          style={{ border: '2px dashed #D1D5DB', background: '#FAFAFA', minHeight: '160px', padding: '28px' }}>
+          style={{ border: '2px dashed #D1D5DB', background: '#FAFAFA', minHeight: '110px', padding: '20px' }}>
           {uploading ? (
             <div className="w-7 h-7 rounded-full border-2 border-gray-300 border-t-gray-700 animate-spin" />
           ) : (
@@ -2459,13 +2459,13 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
                   onMouseEnter={e => { if (!isActive) (e.currentTarget as HTMLElement).style.background = '#F3F4F6' }}
                   onMouseLeave={e => { if (!isActive) (e.currentTarget as HTMLElement).style.background = 'transparent' }}>
 
-                  {/* Indicator */}
+                  {/* Indicator: in narrow mode show step number, otherwise check/warning icon */}
                   <span className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0"
                     style={{
                       background: isActive ? 'rgba(255,255,255,0.2)' : complete ? '#DCFCE7' : '#FFF7ED',
                       color: isActive ? 'white' : complete ? '#16A34A' : '#EA580C',
                     }}>
-                    {complete
+                    {narrowEditor ? (idx + 1) : complete
                       ? <svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/></svg>
                       : <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
                     }
@@ -2647,7 +2647,7 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
                 {!isFirst ? (
                   <button
                     onClick={() => { setActiveSection(sections[activeIdx - 1]); document.getElementById('editor-scroll')?.scrollTo({ top: 0, behavior: 'smooth' }) }}
-                    className="flex items-center gap-2 px-5 py-3 text-sm font-semibold rounded-[16px]"
+                    className="flex items-center gap-2 px-5 py-3 text-sm font-semibold rounded-full"
                     style={{ background: 'white', color: '#374151', border: '1.5px solid #E5E7EB' }}>
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <path d="M19 12H5M12 5l-7 7 7 7"/>
@@ -2663,7 +2663,7 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
                       setActiveSection(sections[activeIdx + 1])
                       document.getElementById('editor-scroll')?.scrollTo({ top: 0, behavior: 'smooth' })
                     }}
-                    className="flex items-center gap-2 px-6 py-3 text-sm font-bold text-white rounded-[16px]"
+                    className="flex items-center gap-2 px-6 py-3 text-sm font-bold text-white rounded-full"
                     style={{ background: '#1a1a1a', boxShadow: '0 4px 14px rgba(26,26,26,0.2)' }}>
                     Weiter
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -2684,7 +2684,7 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
                       </p>
                     )}
                     <button onClick={handlePublish} disabled={publishing || !allRequiredComplete}
-                      className="flex items-center gap-2 px-6 py-3 text-sm font-bold text-white rounded-[16px]"
+                      className="flex items-center gap-2 px-6 py-3 text-sm font-bold text-white rounded-full"
                       style={{
                         background: allRequiredComplete ? (isPublished ? '#16A34A' : '#1a1a1a') : '#9CA3AF',
                         boxShadow: allRequiredComplete ? '0 4px 14px rgba(26,26,26,0.2)' : 'none',
@@ -2707,12 +2707,12 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
             {!isDomainSection && sections.length <= 1 && (
               <div className="hidden lg:flex items-center gap-3 mt-8">
                 <button onClick={handleSave} disabled={saving}
-                  className="px-6 py-3 text-sm font-semibold rounded-[16px]"
+                  className="px-6 py-3 text-sm font-semibold rounded-full"
                   style={{ background: '#F3F4F6', color: '#374151' }}>
                   {saving ? 'Speichert…' : 'Speichern'}
                 </button>
                 <button onClick={handlePublish} disabled={publishing || !allRequiredComplete}
-                  className="flex items-center gap-2 px-6 py-3 text-sm font-bold text-white rounded-[16px]"
+                  className="flex items-center gap-2 px-6 py-3 text-sm font-bold text-white rounded-full"
                   style={{ background: allRequiredComplete ? (isPublished ? '#16A34A' : '#1a1a1a') : '#9CA3AF', opacity: publishing ? 0.7 : 1, cursor: allRequiredComplete ? 'pointer' : 'not-allowed' }}>
                   {publishing ? 'Bitte warten…' : isPublished ? 'Änderungen live' : '🚀 Veröffentlichen'}
                 </button>
@@ -2733,7 +2733,7 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
                   setActiveSection(sections[activeIdx - 1])
                   document.getElementById('editor-scroll')?.scrollTo({ top: 0, behavior: 'smooth' })
                 }}
-                className="flex items-center justify-center gap-1.5 px-5 py-3.5 rounded-2xl text-sm font-semibold flex-shrink-0"
+                className="flex items-center justify-center gap-1.5 px-5 py-3.5 rounded-full text-sm font-semibold flex-shrink-0"
                 style={{ background: '#F3F4F6', color: '#374151' }}>
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.25">
                   <path d="M19 12H5M12 5l-7 7 7 7"/>
@@ -2750,7 +2750,7 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
               ) : sections.length <= 1 ? (
                 /* Single section: Publish */
                 <button onClick={handlePublish} disabled={publishing || !allRequiredComplete}
-                  className="w-full flex items-center justify-center gap-2 py-3.5 text-sm font-bold text-white rounded-2xl"
+                  className="w-full flex items-center justify-center gap-2 py-3.5 text-sm font-bold text-white rounded-full"
                   style={{ background: allRequiredComplete ? (isPublished ? '#16A34A' : '#1a1a1a') : '#9CA3AF', opacity: publishing ? 0.7 : 1 }}>
                   {publishing ? <span className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" /> : null}
                   {publishing ? 'Bitte warten…' : isPublished ? '✓ Änderungen live stellen' : '🚀 Jetzt veröffentlichen'}
@@ -2764,7 +2764,7 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
                     document.getElementById('editor-scroll')?.scrollTo({ top: 0, behavior: 'smooth' })
                   }}
                   disabled={saving}
-                  className="w-full flex items-center justify-center gap-2 py-3.5 text-sm font-bold text-white rounded-2xl"
+                  className="w-full flex items-center justify-center gap-2 py-3.5 text-sm font-bold text-white rounded-full"
                   style={{ background: '#1a1a1a', boxShadow: '0 4px 14px rgba(26,26,26,0.2)', opacity: saving ? 0.7 : 1 }}>
                   {saving
                     ? <span className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
@@ -2779,7 +2779,7 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
               ) : (
                 /* Last section: Publish */
                 <button onClick={handlePublish} disabled={publishing || !allRequiredComplete}
-                  className="w-full flex items-center justify-center gap-2 py-3.5 text-sm font-bold text-white rounded-2xl"
+                  className="w-full flex items-center justify-center gap-2 py-3.5 text-sm font-bold text-white rounded-full"
                   style={{
                     background: allRequiredComplete ? (isPublished ? '#16A34A' : '#1a1a1a') : '#9CA3AF',
                     boxShadow: allRequiredComplete ? '0 4px 14px rgba(26,26,26,0.2)' : 'none',
