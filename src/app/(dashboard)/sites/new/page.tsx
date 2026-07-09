@@ -182,9 +182,14 @@ export default function NewSitePage() {
   // Step 5: sort — drafts first, then rest
   const visible = useMemo(() => {
     return [...searched].sort((a, b) => {
-      const pa = siteMap[a.id]?.status === 'draft' ? 0 : 1
-      const pb = siteMap[b.id]?.status === 'draft' ? 0 : 1
-      return pa - pb
+      // Primary: premium before free
+      const premA = (a.is_free ?? false) ? 1 : 0
+      const premB = (b.is_free ?? false) ? 1 : 0
+      if (premA !== premB) return premA - premB
+      // Secondary: drafts first within each group
+      const draftA = siteMap[a.id]?.status === 'draft' ? 0 : 1
+      const draftB = siteMap[b.id]?.status === 'draft' ? 0 : 1
+      return draftA - draftB
     })
   }, [searched, siteMap])
 
