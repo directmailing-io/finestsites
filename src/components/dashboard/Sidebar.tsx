@@ -150,8 +150,8 @@ export function DashboardSidebar() {
                   )}
                 </Link>
                 {/* Tooltip */}
-                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 text-xs text-white whitespace-nowrap pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity z-50" style={{ borderRadius: 8 }}
-                  style={{ background: '#1a1a1a' }}>
+                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 text-xs text-white whitespace-nowrap pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity z-50"
+                  style={{ background: '#1a1a1a', borderRadius: 8 }}>
                   {quota.used} von {quota.limit} {quota.used === 1 ? 'Webseite' : 'Webseiten'} aktiv
                   <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent" style={{ borderTopColor: '#1a1a1a' }} />
                 </div>
