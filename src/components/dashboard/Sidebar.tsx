@@ -88,10 +88,14 @@ export function DashboardSidebar() {
                 <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
               </svg>
             </div>
-            <div className="absolute left-full top-1/2 -translate-y-1/2 ml-2 px-2.5 py-1.5 rounded-lg text-xs text-white whitespace-nowrap pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity z-50"
-              style={{ background: '#1a1a1a' }}>
-              Nur für aktive Kunden
-              <div className="absolute right-full top-1/2 -translate-y-1/2 border-4 border-transparent" style={{ borderRightColor: '#1a1a1a' }} />
+            {/* Tooltip — appears above, fully within sidebar width */}
+            <div className="absolute bottom-full left-0 right-0 mb-2 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity z-50">
+              <div className="px-3 py-2 text-xs font-medium text-white text-center"
+                style={{ background: '#1a1a1a', borderRadius: 8, boxShadow: '0 4px 12px rgba(0,0,0,0.25)' }}>
+                Nur für aktive Kunden
+              </div>
+              <div className="absolute top-full left-1/2 -translate-x-1/2 border-[5px] border-transparent"
+                style={{ borderTopColor: '#1a1a1a' }} />
             </div>
           </div>
         )}
@@ -111,19 +115,19 @@ export function DashboardSidebar() {
             {quota.plan === null ? (
               /* Free user — prominent upgrade CTA */
               <Link href="/billing"
-                className="block transition-opacity hover:opacity-90 active:opacity-75"
+                className="block transition-all hover:brightness-95 active:scale-[0.98]"
                 style={{
-                  background: 'linear-gradient(145deg, #1a1a1a 0%, #2a2a2a 100%)',
+                  background: '#f5f0fb',
                   borderRadius: 12,
                   padding: '10px 12px 11px',
-                  boxShadow: '0 2px 8px rgba(0,0,0,0.18)',
+                  border: '1px solid #e8dcf7',
                 }}>
-                <p style={{ margin: '0 0 6px', fontSize: 11, color: '#6B7280', fontWeight: 500 }}>Kostenloser Modus</p>
+                <p style={{ margin: '0 0 5px', fontSize: 11, color: '#9B6FD4', fontWeight: 500 }}>Kostenloser Modus</p>
                 <div className="flex items-center justify-between gap-2">
-                  <span style={{ fontSize: 13, fontWeight: 700, color: '#fff', lineHeight: 1.2 }}>Jetzt upgraden</span>
+                  <span style={{ fontSize: 13, fontWeight: 700, color: '#3B0764', lineHeight: 1.2 }}>Jetzt upgraden</span>
                   <span style={{
-                    fontSize: 11, fontWeight: 600, color: '#fff',
-                    background: 'rgba(255,255,255,0.12)', borderRadius: 6,
+                    fontSize: 11, fontWeight: 600, color: '#7C3AED',
+                    background: 'rgba(124,58,237,0.1)', borderRadius: 6,
                     padding: '2px 7px', flexShrink: 0,
                   }}>→</span>
                 </div>
