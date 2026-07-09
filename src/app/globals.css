@@ -45,10 +45,3 @@ body {
 /* Hide scrollbar but keep scrolling (horizontal strips on mobile) */
 .scrollbar-none { scrollbar-width: none; -ms-overflow-style: none; }
 .scrollbar-none::-webkit-scrollbar { display: none; }
-
-/* Global pill buttons — consistent with landing page style */
-@layer base {
-  button {
-    border-radius: 9999px;
-  }
-}

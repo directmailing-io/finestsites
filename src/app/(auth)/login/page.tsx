@@ -97,7 +97,7 @@ export default function LoginPage() {
         )}
 
         {needsConfirm && (
-          <div className="px-4 py-3 rounded-full text-sm" style={{ background: '#FEF9C3', border: '1px solid #FDE68A', color: '#92400E' }}>
+          <div className="px-4 py-3 rounded-2xl text-sm" style={{ background: '#FEF9C3', border: '1px solid #FDE68A', color: '#92400E' }}>
             <p className="font-medium mb-1">E-Mail noch nicht bestätigt</p>
             <p className="text-xs mb-2">Bitte bestätige deine E-Mail-Adresse, um dich anzumelden.</p>
             {!resent ? (
@@ -124,7 +124,7 @@ export default function LoginPage() {
             required
             placeholder="deine@email.de"
             autoComplete="email"
-            className="w-full px-4 py-3 text-sm rounded-full outline-none transition-all"
+            className="w-full px-4 py-3 text-sm rounded-2xl outline-none transition-all"
             style={fieldStyle}
             onFocus={e => (e.target.style.borderColor = '#111827')}
             onBlur={e => (e.target.style.borderColor = '#E5E7EB')}
@@ -147,7 +147,7 @@ export default function LoginPage() {
               required
               placeholder="••••••••"
               autoComplete="current-password"
-              className="w-full px-4 py-3 pr-11 text-sm rounded-full outline-none transition-all"
+              className="w-full px-4 py-3 pr-11 text-sm rounded-2xl outline-none transition-all"
               style={fieldStyle}
               onFocus={e => (e.target.style.borderColor = '#111827')}
               onBlur={e => (e.target.style.borderColor = '#E5E7EB')}
@@ -167,7 +167,7 @@ export default function LoginPage() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full py-3 text-sm font-semibold rounded-full transition-all mt-1"
+          className="w-full py-3 text-sm font-semibold rounded-2xl transition-all mt-1"
           style={{
             background: loading ? '#E5E7EB' : '#111827',
             color: loading ? '#9CA3AF' : '#fff',

@@ -116,7 +116,7 @@ function RegisterForm() {
   if (sent) {
     return (
       <div className="text-center py-2">
-        <div className="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-5"
+        <div className="w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-5"
           style={{ background: '#F0FDF4' }}>
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#16A34A" strokeWidth="1.5">
             <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
@@ -143,7 +143,7 @@ function RegisterForm() {
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         {error && (
-          <div className="px-4 py-3 rounded-full text-sm"
+          <div className="px-4 py-3 rounded-2xl text-sm"
             style={{ background: '#FEF2F2', border: '1px solid #FECACA', color: '#B91C1C' }}>
             {error}
           </div>
@@ -151,9 +151,9 @@ function RegisterForm() {
 
         {/* Referral discount banner — shown when ?ref= is in URL */}
         {urlRef && (
-          <div className="flex items-center gap-3 px-4 py-3 rounded-full"
+          <div className="flex items-center gap-3 px-4 py-3 rounded-2xl"
             style={{ background: '#F0FDF4', border: '1.5px solid #BBF7D0' }}>
-            <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0"
+            <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
               style={{ background: '#16A34A' }}>
               {/* Person-check icon — "jemand empfiehlt dich" */}
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
@@ -172,9 +172,9 @@ function RegisterForm() {
         )}
 
         {templateId && isValidTemplateId(templateId) && (
-          <div className="flex items-center gap-3 px-4 py-3 rounded-full"
+          <div className="flex items-center gap-3 px-4 py-3 rounded-2xl"
             style={{ background: '#F5F0FB', border: '1.5px solid #D4B8F8' }}>
-            <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0"
+            <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
               style={{ background: '#7C3AED' }}>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2">
                 <rect x="3" y="3" width="18" height="18" rx="2"/>
@@ -196,7 +196,7 @@ function RegisterForm() {
           <input
             type="email" value={email} onChange={e => setEmail(e.target.value)}
             required placeholder="deine@email.de" autoComplete="email"
-            className="w-full px-4 py-3 text-sm rounded-full outline-none transition-all"
+            className="w-full px-4 py-3 text-sm rounded-2xl outline-none transition-all"
             style={fieldStyle}
             onFocus={e => (e.target.style.borderColor = '#111827')}
             onBlur={e => (e.target.style.borderColor = '#E5E7EB')}
@@ -210,7 +210,7 @@ function RegisterForm() {
               type={showPassword ? 'text' : 'password'} value={password}
               onChange={e => setPassword(e.target.value)}
               required placeholder="Mindestens 8 Zeichen" autoComplete="new-password"
-              className="w-full px-4 py-3 pr-11 text-sm rounded-full outline-none transition-all"
+              className="w-full px-4 py-3 pr-11 text-sm rounded-2xl outline-none transition-all"
               style={{ ...fieldStyle, borderColor: password && !passwordStrong ? '#F87171' : '#E5E7EB' }}
               onFocus={e => (e.target.style.borderColor = '#111827')}
               onBlur={e => (e.target.style.borderColor = password && !passwordStrong ? '#F87171' : '#E5E7EB')}
@@ -231,7 +231,7 @@ function RegisterForm() {
           <input
             type="password" value={confirm} onChange={e => setConfirm(e.target.value)}
             required placeholder="••••••••" autoComplete="new-password"
-            className="w-full px-4 py-3 text-sm rounded-full outline-none transition-all"
+            className="w-full px-4 py-3 text-sm rounded-2xl outline-none transition-all"
             style={{ ...fieldStyle, borderColor: !passwordsMatch ? '#F87171' : '#E5E7EB' }}
             onFocus={e => (e.target.style.borderColor = '#111827')}
             onBlur={e => (e.target.style.borderColor = !passwordsMatch ? '#F87171' : '#E5E7EB')}
@@ -271,7 +271,7 @@ function RegisterForm() {
                     placeholder="Username oder Name deines Empfehlers" autoComplete="off"
                     // Read-only when pre-filled from URL — prevents accidental changes
                     readOnly={!!urlRef && referralValid !== false}
-                    className="w-full px-4 py-3 pr-10 text-sm rounded-full outline-none transition-all"
+                    className="w-full px-4 py-3 pr-10 text-sm rounded-2xl outline-none transition-all"
                     style={{
                       ...fieldStyle,
                       borderColor: referralValid === true ? '#16A34A' : referralValid === false ? '#F87171' : '#E5E7EB',
@@ -307,7 +307,7 @@ function RegisterForm() {
 
         <button
           type="submit" disabled={loading}
-          className="w-full py-3 text-sm font-semibold rounded-full transition-all mt-1"
+          className="w-full py-3 text-sm font-semibold rounded-2xl transition-all mt-1"
           style={{
             background: loading ? '#E5E7EB' : '#111827',
             color: loading ? '#9CA3AF' : '#fff',
