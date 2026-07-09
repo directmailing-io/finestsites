@@ -81,13 +81,6 @@ export default function PricingSection({ validatedRef }: { validatedRef?: string
           Bearbeiten ist immer kostenlos. Du zahlst erst wenn du live gehst.
         </p>
 
-        {/* Free-tier callout */}
-        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 32 }}>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 10, background: '#F0FDF4', border: '1px solid #BBF7D0', borderRadius: 100, padding: '10px 20px' }}>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#16A34A" strokeWidth="2.5" strokeLinecap="round"><polyline points="20 6 9 17 4 12"/></svg>
-            <span style={{ fontSize: 13, fontWeight: 600, color: '#16A34A' }}>Account anlegen ist kostenlos. Du kannst alles testen bevor du zahlst.</span>
-          </div>
-        </div>
 
         {/* ── Toggle ─────────────────────────────────────────────── */}
         <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 48 }}>
