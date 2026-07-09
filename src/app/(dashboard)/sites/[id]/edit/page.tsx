@@ -3179,23 +3179,23 @@ const UPGRADE_PLANS = [
   {
     key: 'starter' as const,
     name: 'Starter',
-    price_monthly: 20,
-    price_yearly: 200,
+    price_monthly: 21,
+    price_yearly: 210,
     sites: '1 aktive Webseite',
   },
   {
     key: 'pro' as const,
     name: 'Pro',
-    price_monthly: 35,
-    price_yearly: 350,
+    price_monthly: 27,
+    price_yearly: 270,
     sites: '3 aktive Webseiten',
     popular: true,
   },
   {
     key: 'unlimited' as const,
     name: 'Unlimited',
-    price_monthly: 60,
-    price_yearly: 600,
+    price_monthly: 47,
+    price_yearly: 470,
     sites: 'Unbegrenzt Webseiten',
   },
 ]
@@ -3215,6 +3215,7 @@ function UpgradeModal({
   const [error, setError] = useState('')
   const [referredBy, setReferredBy] = useState<string | null>(null)
   const [promoCode, setPromoCode] = useState('')
+  const [showPromoInput, setShowPromoInput] = useState(false)
 
   useEffect(() => {
     fetch('/api/user/profile', { cache: 'no-store' })
@@ -3250,10 +3251,10 @@ function UpgradeModal({
   }
 
   const benefits = [
-    'Du wirkst professionell. Nicht wie alle anderen.',
-    'Kunden finden dich. Auch wenn du gerade nicht online bist.',
+    'Du wirkst sofort professionell. Nicht wie alle anderen.',
+    'Kunden finden dich rund um die Uhr. Auch wenn du schläfst.',
     intervalMode === 'yearly'
-      ? 'Mindestlaufzeit 12 Monate. Danach jährlich kündbar.'
+      ? 'Mindestlaufzeit 12 Monate, danach jährlich kündbar.'
       : 'Monatlich kündbar. Kein Risiko, kein Kleingedrucktes.',
   ]
 
@@ -3264,50 +3265,50 @@ function UpgradeModal({
   return (
     <div
       className="fixed inset-0 z-[200] flex items-end sm:items-center justify-center"
-      style={{ background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)' }}
+      style={{ background: 'rgba(0,0,0,0.45)', backdropFilter: 'blur(6px)' }}
       onClick={e => { if (e.target === e.currentTarget) onClose() }}
     >
       <div
-        className="w-full sm:max-w-[480px] bg-white rounded-t-[24px] sm:rounded-[24px] overflow-hidden flex flex-col"
-        style={{ maxHeight: '96vh', boxShadow: '0 24px 80px rgba(0,0,0,0.22)' }}
+        className="w-full sm:max-w-[460px] bg-white rounded-t-[28px] sm:rounded-[28px] flex flex-col"
+        style={{ maxHeight: '96vh', boxShadow: '0 32px 100px rgba(0,0,0,0.25)' }}
       >
         {/* Mobile drag handle */}
         <div className="sm:hidden flex justify-center pt-3 pb-0 flex-shrink-0">
-          <div style={{ width: 36, height: 4, borderRadius: 2, background: '#D4C5E2' }} />
+          <div style={{ width: 36, height: 4, borderRadius: 2, background: '#E5E7EB' }} />
         </div>
 
         {/* Header */}
-        <div className="px-6 pt-5 pb-5 flex-shrink-0" style={{ background: '#F5F0FB', borderBottom: '1px solid #E8DFFE' }}>
-          <div className="flex justify-end mb-4">
+        <div className="px-6 pt-6 pb-5 flex-shrink-0">
+          <div className="flex justify-end mb-5">
             <button
               onClick={onClose}
-              className="flex items-center justify-center w-8 h-8 rounded-full"
-              style={{ background: '#EDE5F8' }}
+              className="flex items-center justify-center w-8 h-8 rounded-full transition-colors"
+              style={{ background: '#F3F4F6' }}
             >
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#8060b0" strokeWidth="2.5" strokeLinecap="round">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#6B7280" strokeWidth="2.5" strokeLinecap="round">
                 <path d="M18 6L6 18M6 6l12 12"/>
               </svg>
             </button>
           </div>
 
-          <h2 className="text-2xl font-bold mb-1" style={{ color: '#1a2530', letterSpacing: '-0.02em' }}>
-            Fast fertig!
+          <h2 style={{ fontSize: 24, fontWeight: 700, color: '#111', letterSpacing: '-0.03em', marginBottom: 4 }}>
+            Fast fertig.
           </h2>
-          <p className="text-sm" style={{ color: '#6B7280' }}>
-            Wähle deinen Tarif. Deine Seite geht sofort live.
+          <p style={{ fontSize: 15, color: '#6B7280', lineHeight: 1.4 }}>
+            Wähle einen Tarif und geh live.
           </p>
 
           {hasDiscount && (
-            <div className="mt-3 flex items-center gap-2.5 px-3 py-2.5 rounded-xl" style={{ background: '#F0FDF4', border: '1px solid #BBF7D0' }}>
-              <div className="flex items-center justify-center w-6 h-6 rounded-full flex-shrink-0" style={{ background: '#16A34A' }}>
-                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round">
+            <div className="flex items-center gap-3 mt-4 px-4 py-3 rounded-2xl" style={{ background: '#F0FDF4', border: '1px solid #BBF7D0' }}>
+              <div className="flex items-center justify-center w-7 h-7 rounded-full flex-shrink-0" style={{ background: '#16A34A' }}>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round">
                   <polyline points="20 6 9 17 4 12"/>
                 </svg>
               </div>
               <div>
-                <p className="text-xs font-bold" style={{ color: '#15803D' }}>20 % Empfehlungsrabatt aktiv</p>
-                <p className="text-xs" style={{ color: '#166534' }}>
-                  Empfohlen von <span style={{ fontWeight: 600 }}>@{referredBy}</span> &middot; dauerhaft auf dein Abo
+                <p style={{ fontSize: 13, fontWeight: 700, color: '#15803D' }}>20 % Empfehlungsrabatt aktiv</p>
+                <p style={{ fontSize: 12, color: '#166534' }}>
+                  Empfohlen von <strong>@{referredBy}</strong> &middot; dauerhaft
                 </p>
               </div>
             </div>
@@ -3315,41 +3316,53 @@ function UpgradeModal({
         </div>
 
         {/* Scrollable body */}
-        <div className="overflow-y-auto flex-1 px-5 pt-5 pb-6">
+        <div className="overflow-y-auto flex-1 px-6 pb-7">
 
           {/* Billing toggle */}
-          <div className="flex items-center gap-1 p-1 rounded-xl mb-4 w-fit" style={{ background: '#F3F4F6' }}>
+          <div className="flex items-center gap-1 p-1 rounded-xl mb-5" style={{ background: '#F3F4F6', width: 'fit-content' }}>
             {(['monthly', 'yearly'] as const).map(iv => (
               <button
                 key={iv}
                 onClick={() => setIntervalMode(iv)}
-                className="text-sm font-semibold px-4 py-2 rounded-lg transition-all"
                 style={{
+                  padding: '7px 16px',
+                  borderRadius: 10,
+                  fontSize: 13,
+                  fontWeight: 600,
                   background: intervalMode === iv ? '#fff' : 'transparent',
                   color: intervalMode === iv ? '#111' : '#9CA3AF',
-                  boxShadow: intervalMode === iv ? '0 1px 4px rgba(0,0,0,0.08)' : 'none',
+                  boxShadow: intervalMode === iv ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
                   whiteSpace: 'nowrap',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 6,
                 }}
               >
                 {iv === 'monthly' ? 'Monatlich' : (
-                  <span className="flex items-center gap-1.5">
+                  <>
                     Jährlich
-                    <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full" style={{ background: '#C8D8B8', color: '#2d5a1b' }}>
+                    <span style={{
+                      fontSize: 10, fontWeight: 700,
+                      padding: '2px 6px', borderRadius: 99,
+                      background: '#C8D8B8', color: '#2d5a1b',
+                    }}>
                       2 Monate gratis
                     </span>
-                  </span>
+                  </>
                 )}
               </button>
             ))}
           </div>
 
-          {/* Selectable plan cards */}
-          <div className="flex flex-col gap-2 mb-5">
-            {UPGRADE_PLANS.map(plan => {
+          {/* Plan list — Apple settings-list style */}
+          <div style={{ border: '1px solid #E5E7EB', borderRadius: 18, overflow: 'hidden', marginBottom: 24 }}>
+            {UPGRADE_PLANS.map((plan, idx) => {
               const baseMonthly = intervalMode === 'monthly' ? plan.price_monthly : Math.round(plan.price_yearly / 12)
               const price = effectivePrice(baseMonthly)
               const isSelected = selectedPlan === plan.key
               const isPopular = !!plan.popular
+              const isLast = idx === UPGRADE_PLANS.length - 1
               const dailyCents = (price / 30).toFixed(2).replace('.', ',')
 
               return (
@@ -3357,124 +3370,155 @@ function UpgradeModal({
                   key={plan.key}
                   onClick={() => setSelectedPlan(plan.key)}
                   disabled={loading}
-                  className="w-full text-left rounded-2xl transition-all relative"
                   style={{
-                    border: isSelected ? '2px solid #8060b0' : '1.5px solid #E5E7EB',
-                    background: isSelected ? '#F5F0FB' : '#FAFAFA',
-                    padding: '13px 14px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    width: '100%',
+                    padding: '15px 16px',
+                    background: isSelected ? '#F5F0FB' : '#fff',
+                    borderBottom: isLast ? 'none' : '1px solid #F3F4F6',
+                    cursor: 'pointer',
+                    textAlign: 'left',
+                    transition: 'background 0.15s',
+                    gap: 12,
                   }}
                 >
-                  {/* Badge */}
-                  {(isPopular || isSelected) && (
-                    <span
-                      className="absolute -top-px right-4 text-[9px] font-bold px-2 py-0.5 rounded-b-md"
-                      style={{
-                        background: isSelected ? '#8060b0' : '#E5E7EB',
-                        color: isSelected ? '#fff' : '#6B7280',
-                        letterSpacing: '0.05em',
-                      }}
-                    >
-                      {isSelected && isPopular ? 'BELIEBTESTE WAHL' : isSelected ? 'AUSGEWÄHLT' : 'BELIEBT'}
-                    </span>
-                  )}
+                  {/* Radio */}
+                  <div style={{
+                    width: 20, height: 20, borderRadius: '50%', flexShrink: 0,
+                    border: `2px solid ${isSelected ? '#8060b0' : '#D1D5DB'}`,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    transition: 'border-color 0.15s',
+                  }}>
+                    {isSelected && (
+                      <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#8060b0' }} />
+                    )}
+                  </div>
 
-                  <div className="flex items-center gap-3">
-                    {/* Radio indicator */}
-                    <div
-                      className="flex-shrink-0 w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all"
-                      style={{ borderColor: isSelected ? '#8060b0' : '#D1D5DB', background: isSelected ? '#F5F0FB' : '#fff' }}
-                    >
-                      {isSelected && <div className="w-2.5 h-2.5 rounded-full" style={{ background: '#8060b0' }} />}
-                    </div>
-
-                    {/* Plan info */}
-                    <div className="flex-1 min-w-0">
-                      <p className="font-bold text-sm leading-tight" style={{ color: '#1a2530' }}>{plan.name}</p>
-                      <p className="text-xs leading-tight" style={{ color: isSelected ? '#8060b0' : '#9CA3AF' }}>{plan.sites}</p>
-                    </div>
-
-                    {/* Price */}
-                    <div className="text-right flex-shrink-0">
-                      {hasDiscount && (
-                        <p className="text-[10px] line-through leading-none mb-0.5" style={{ color: '#C4B5FD' }}>
-                          {baseMonthly} €
-                        </p>
+                  {/* Plan info */}
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                      <span style={{ fontSize: 15, fontWeight: 600, color: '#111' }}>{plan.name}</span>
+                      {isPopular && (
+                        <span style={{
+                          fontSize: 10, fontWeight: 700, padding: '2px 7px', borderRadius: 99,
+                          background: isSelected ? '#8060b0' : '#EDE5F8',
+                          color: isSelected ? '#fff' : '#8060b0',
+                          letterSpacing: '0.04em',
+                        }}>BELIEBT</span>
                       )}
-                      <p className="font-bold leading-tight" style={{ color: isSelected ? '#8060b0' : '#1a2530', fontSize: 17 }}>
-                        {price} <span className="text-xs font-normal" style={{ color: '#9CA3AF' }}>€/Mo</span>
-                      </p>
-                      <p className="text-[10px] mt-0.5" style={{ color: '#9CA3AF' }}>{dailyCents} € täglich</p>
                     </div>
+                    <p style={{ fontSize: 12, color: '#9CA3AF', marginTop: 1 }}>{plan.sites}</p>
+                  </div>
+
+                  {/* Price */}
+                  <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                    {hasDiscount && (
+                      <p style={{ fontSize: 11, color: '#C4B5FD', textDecoration: 'line-through', lineHeight: 1, marginBottom: 2 }}>
+                        {baseMonthly} €
+                      </p>
+                    )}
+                    <p style={{ fontSize: 18, fontWeight: 700, color: isSelected ? '#8060b0' : '#111', lineHeight: 1.1 }}>
+                      {price} <span style={{ fontSize: 11, fontWeight: 400, color: '#9CA3AF' }}>€/Mo</span>
+                    </p>
+                    <p style={{ fontSize: 11, color: '#9CA3AF', marginTop: 2 }}>{dailyCents} € tägl.</p>
                   </div>
                 </button>
               )
             })}
           </div>
 
-          {/* Benefits */}
-          <div className="flex flex-col gap-2 px-3 py-3 mb-4 rounded-xl" style={{ background: '#F9F7FF', border: '1px solid #EDE5F8' }}>
+          {/* Benefits — clean list, no card wrapper */}
+          <div style={{ borderTop: '1px solid #F3F4F6', paddingTop: 18, marginBottom: 20 }}>
             {benefits.map((b, i) => (
-              <div key={i} className="flex items-start gap-2.5">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#8060b0" strokeWidth="2.5" strokeLinecap="round" style={{ flexShrink: 0, marginTop: 1 }}>
+              <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 10, marginBottom: i < benefits.length - 1 ? 10 : 0 }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8060b0" strokeWidth="2.5" strokeLinecap="round" style={{ flexShrink: 0, marginTop: 1 }}>
                   <polyline points="20 6 9 17 4 12"/>
                 </svg>
-                <span className="text-xs leading-relaxed" style={{ color: '#555' }}>{b}</span>
+                <span style={{ fontSize: 13, color: '#4B5563', lineHeight: 1.5 }}>{b}</span>
               </div>
             ))}
           </div>
 
-          {/* Promo / referral code input — only when no auto-referral discount */}
+          {/* Promo / referral code — collapsed by default */}
           {!hasDiscount && (
-            <div className="mb-4">
-              <label className="block text-xs font-medium mb-1.5" style={{ color: '#6B7280' }}>
-                Empfehlungs- oder Gutscheincode
-              </label>
-              <input
-                type="text"
-                value={promoCode}
-                onChange={e => setPromoCode(e.target.value)}
-                placeholder="Code eingeben (optional)"
-                className="w-full text-sm px-3 py-2.5 rounded-xl border outline-none transition-colors"
-                style={{
-                  borderColor: promoCode ? '#8060b0' : '#E5E7EB',
-                  background: '#FAFAFA',
-                  color: '#1a2530',
-                }}
-              />
+            <div style={{ marginBottom: 20 }}>
+              {!showPromoInput ? (
+                <button
+                  onClick={() => setShowPromoInput(true)}
+                  style={{ fontSize: 13, fontWeight: 500, color: '#8060b0', cursor: 'pointer' }}
+                >
+                  + Hast du einen Code?
+                </button>
+              ) : (
+                <div>
+                  <p style={{ fontSize: 12, fontWeight: 500, color: '#6B7280', marginBottom: 6 }}>
+                    Empfehlungs- oder Gutscheincode
+                  </p>
+                  <div style={{ display: 'flex', gap: 8 }}>
+                    <input
+                      type="text"
+                      value={promoCode}
+                      onChange={e => setPromoCode(e.target.value)}
+                      placeholder="Code eingeben"
+                      autoFocus
+                      style={{
+                        flex: 1, fontSize: 14, padding: '10px 13px',
+                        border: `1px solid ${promoCode ? '#8060b0' : '#E5E7EB'}`,
+                        borderRadius: 12, background: '#FAFAFA',
+                        color: '#111', outline: 'none',
+                      }}
+                    />
+                    <button
+                      onClick={() => { setPromoCode(''); setShowPromoInput(false); }}
+                      style={{
+                        fontSize: 12, color: '#9CA3AF', background: '#F3F4F6',
+                        padding: '10px 12px', borderRadius: 12, cursor: 'pointer',
+                        whiteSpace: 'nowrap',
+                      }}
+                    >
+                      Entfernen
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
           {error && (
-            <p className="mb-3 text-sm text-red-600 text-center">{error}</p>
+            <p style={{ marginBottom: 12, fontSize: 13, color: '#DC2626', textAlign: 'center' }}>{error}</p>
           )}
 
-          {/* Main CTA */}
+          {/* CTA */}
           <button
             onClick={checkout}
             disabled={loading}
-            className="w-full py-3.5 rounded-2xl font-bold text-sm text-white transition-all mb-3"
             style={{
+              width: '100%', padding: '15px 0', borderRadius: 16,
+              fontSize: 15, fontWeight: 700, color: '#fff',
               background: loading ? '#C4B5FD' : '#8060b0',
               cursor: loading ? 'not-allowed' : 'pointer',
+              marginBottom: 14,
+              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
             }}
           >
             {loading ? (
-              <span className="flex items-center justify-center gap-2">
+              <>
                 <span className="w-4 h-4 rounded-full border-2 animate-spin" style={{ borderColor: 'rgba(255,255,255,0.3)', borderTopColor: '#fff' }} />
                 Wird geladen...
-              </span>
+              </>
             ) : (
-              `${activePlan.name} freischalten · ${activePrice} \u20ac/Mo`
+              `${activePlan.name} freischalten \u00b7 ${activePrice} \u20ac/Mo`
             )}
           </button>
 
           {/* Trust strip */}
-          <div className="flex items-center justify-center gap-1.5">
-            <svg width="10" height="12" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="2" strokeLinecap="round">
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+            <svg width="11" height="13" viewBox="0 0 24 24" fill="none" stroke="#D1D5DB" strokeWidth="2" strokeLinecap="round">
               <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
               <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
             </svg>
-            <span className="text-[11px]" style={{ color: '#9CA3AF' }}>
+            <span style={{ fontSize: 11, color: '#9CA3AF' }}>
               Stripe &middot; {intervalMode === 'yearly' ? 'Mindestlaufzeit 12 Monate' : 'Monatlich kündbar'} &middot; Keine versteckten Kosten
             </span>
           </div>
