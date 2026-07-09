@@ -42,7 +42,7 @@ function SiteCard({ site }: { site: Site }) {
       {/* Image — clicks to editor */}
       <Link
         href={`/sites/${site.id}/edit`}
-        className="block relative overflow-hidden rounded-2xl bg-gray-100"
+        className="block relative overflow-hidden rounded-full bg-gray-100"
         style={{ aspectRatio: '4/3' }}
       >
         {preview ? (
@@ -267,7 +267,7 @@ export default function SitesPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 sm:gap-6">
               {[1, 2].map(i => (
                 <div key={i} className="animate-pulse">
-                  <div className="rounded-2xl bg-gray-100" style={{ aspectRatio: '4/3' }} />
+                  <div className="rounded-full bg-gray-100" style={{ aspectRatio: '4/3' }} />
                   <div className="pt-3 px-1 flex flex-col gap-2">
                     <div className="h-3.5 rounded-full bg-gray-100 w-2/3" />
                     <div className="h-3 rounded-full bg-gray-100 w-1/2" />
@@ -308,7 +308,7 @@ export default function SitesPage() {
         <div className="mt-4">
           <Link
             href="/sites/new"
-            className="flex items-center justify-center gap-3 w-full py-4 rounded-2xl font-semibold text-[15px] transition-all active:scale-[0.98]"
+            className="flex items-center justify-center gap-3 w-full py-4 rounded-full font-semibold text-[15px] transition-all active:scale-[0.98]"
             style={{
               background: '#1a1a1a',
               color: '#fff',
@@ -327,7 +327,7 @@ export default function SitesPage() {
       {/* ── Empty state (loading placeholder) ── */}
       {loading && !hasSites && (
         <div className="animate-pulse">
-          <div className="h-14 rounded-2xl bg-gray-100 w-full" />
+          <div className="h-14 rounded-full bg-gray-100 w-full" />
         </div>
       )}
 

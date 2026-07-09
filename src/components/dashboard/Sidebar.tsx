@@ -93,7 +93,7 @@ export function DashboardSidebar() {
               /* Free user — no active subscription */
               <Link
                 href="/billing"
-                className="flex items-center justify-between px-3 py-2.5 rounded-xl transition-colors hover:bg-gray-100"
+                className="flex items-center justify-between px-3 py-2.5 rounded-full transition-colors hover:bg-gray-100"
                 style={{ background: '#F3F4F6' }}>
                 <span className="text-xs font-medium" style={{ color: '#6B7280' }}>
                   Kostenloser Modus
@@ -108,7 +108,7 @@ export function DashboardSidebar() {
               <>
                 <Link
                   href="/billing"
-                  className="flex items-center justify-between px-3 py-2.5 rounded-xl transition-colors hover:bg-gray-100"
+                  className="flex items-center justify-between px-3 py-2.5 rounded-full transition-colors hover:bg-gray-100"
                   style={{ background: quota.atLimit ? '#FEF2F2' : '#F3F4F6' }}>
                   <span className="text-xs font-medium" style={{ color: quota.atLimit ? '#DC2626' : '#6B7280' }}>
                     {quota.atLimit ? 'Limit erreicht' : PLAN_LABELS[quota.plan]}
@@ -119,7 +119,7 @@ export function DashboardSidebar() {
                   </span>
                 </Link>
                 {/* Tooltip */}
-                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 rounded-xl text-xs text-white whitespace-nowrap pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity z-50"
+                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 rounded-full text-xs text-white whitespace-nowrap pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity z-50"
                   style={{ background: '#1a1a1a' }}>
                   {quota.used} von {quota.limit} {quota.used === 1 ? 'Webseite' : 'Webseiten'} aktiv
                   <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent" style={{ borderTopColor: '#1a1a1a' }} />
@@ -183,7 +183,7 @@ export function DashboardSidebar() {
         {/* Logout */}
         <button
           onClick={handleLogout}
-          className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm w-full text-left transition-colors hover:bg-red-50"
+          className="flex items-center gap-3 px-3 py-2.5 rounded-full text-sm w-full text-left transition-colors hover:bg-red-50"
           style={{ color: '#9CA3AF' }}
           onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = '#DC2626'}
           onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = '#9CA3AF'}>
@@ -212,7 +212,7 @@ function NavItem({
   return (
     <Link
       href={href}
-      className="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors"
+      className="flex items-center gap-3 px-3 py-2.5 rounded-full transition-colors"
       style={{
         background: active ? '#1a1a1a' : 'transparent',
         color: active ? '#ffffff' : secondary ? '#9CA3AF' : '#374151',

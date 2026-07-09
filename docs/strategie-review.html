@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FinestSites · Strategie-Review</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Inter', sans-serif;
+    background: #F8F9FB;
+    color: #111827;
+    line-height: 1.6;
+  }
+
+  /* ── Header ── */
+  .hero {
+    background: linear-gradient(135deg, #0F172A 0%, #1E293B 60%, #0F172A 100%);
+    color: #fff;
+    padding: 60px 24px 48px;
+    text-align: center;
+  }
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #94A3B8;
+    margin-bottom: 20px;
+  }
+  .hero h1 {
+    font-size: clamp(26px, 5vw, 42px);
+    font-weight: 800;
+    line-height: 1.2;
+    margin-bottom: 14px;
+    letter-spacing: -0.5px;
+  }
+  .hero h1 span { color: #818CF8; }
+  .hero p {
+    font-size: 16px;
+    color: #94A3B8;
+    max-width: 560px;
+    margin: 0 auto;
+  }
+
+  /* ── Layout ── */
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 20px 80px;
+  }
+
+  /* ── Section headers ── */
+  .section {
+    margin-top: 64px;
+  }
+  .section-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #9CA3AF;
+    margin-bottom: 6px;
+  }
+  .section h2 {
+    font-size: 24px;
+    font-weight: 800;
+    color: #111827;
+    margin-bottom: 24px;
+    letter-spacing: -0.3px;
+  }
+
+  /* ── Team members ── */
+  .team-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 14px;
+    margin-bottom: 40px;
+  }
+  .team-card {
+    background: #fff;
+    border: 1px solid #E5E7EB;
+    border-radius: 14px;
+    padding: 18px;
+    text-align: center;
+  }
+  .team-avatar {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    margin: 0 auto 10px;
+  }
+  .team-card .name { font-size: 14px; font-weight: 700; color: #111; margin-bottom: 2px; }
+  .team-card .role { font-size: 11px; color: #9CA3AF; font-weight: 500; }
+
+  /* ── Current flow card ── */
+  .flow-box {
+    background: #fff;
+    border: 1px solid #E5E7EB;
+    border-radius: 16px;
+    padding: 28px;
+    margin-bottom: 16px;
+  }
+  .flow-steps {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0;
+    margin: 20px 0 24px;
+    align-items: center;
+  }
+  .flow-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    min-width: 80px;
+  }
+  .flow-step-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+  }
+  .flow-step-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: #6B7280;
+    text-align: center;
+    max-width: 80px;
+  }
+  .flow-arrow {
+    font-size: 18px;
+    color: #CBD5E1;
+    padding: 0 4px;
+    flex-shrink: 0;
+    margin-bottom: 20px;
+  }
+  .pain-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  .pain-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 14px;
+    color: #374151;
+    background: #FEF2F2;
+    border-radius: 10px;
+    padding: 12px 14px;
+  }
+  .pain-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+  .good-item {
+    background: #F0FDF4;
+    color: #374151;
+  }
+  .neutral-item {
+    background: #F8F9FB;
+    color: #374151;
+  }
+
+  /* ── Opinion bubbles ── */
+  .opinions { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
+  .opinion {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .opinion-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+  .opinion-bubble {
+    background: #fff;
+    border: 1px solid #E5E7EB;
+    border-radius: 12px;
+    padding: 12px 16px;
+    font-size: 13.5px;
+    color: #374151;
+    line-height: 1.55;
+    flex: 1;
+  }
+  .opinion-name {
+    font-size: 11px;
+    font-weight: 700;
+    color: #9CA3AF;
+    margin-bottom: 4px;
+  }
+  .opinion-bubble strong { color: #111; }
+
+  /* ── Option cards ── */
+  .option-card {
+    background: #fff;
+    border: 2px solid #E5E7EB;
+    border-radius: 20px;
+    padding: 28px;
+    margin-bottom: 20px;
+    position: relative;
+    transition: border-color 0.2s;
+  }
+  .option-card.winner {
+    border-color: #6366F1;
+    background: linear-gradient(135deg, #FAFBFF 0%, #F5F3FF 100%);
+  }
+  .option-card.loser {
+    opacity: 0.75;
+  }
+  .option-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 20px;
+    margin-bottom: 12px;
+  }
+  .badge-winner { background: #EEF2FF; color: #4F46E5; }
+  .badge-option { background: #F3F4F6; color: #6B7280; }
+  .badge-no { background: #FEF2F2; color: #DC2626; }
+  .option-title {
+    font-size: 20px;
+    font-weight: 800;
+    color: #111827;
+    margin-bottom: 6px;
+    letter-spacing: -0.2px;
+  }
+  .option-subtitle { font-size: 14px; color: #6B7280; margin-bottom: 20px; }
+
+  .pros-cons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  @media (max-width: 560px) {
+    .pros-cons { grid-template-columns: 1fr; }
+  }
+  .pros-cons-box { border-radius: 12px; padding: 14px; }
+  .pros-cons-box.pros { background: #F0FDF4; }
+  .pros-cons-box.cons { background: #FEF2F2; }
+  .pros-cons-title {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+  }
+  .pros-cons-box.pros .pros-cons-title { color: #16A34A; }
+  .pros-cons-box.cons .pros-cons-title { color: #DC2626; }
+  .pros-cons-box ul { list-style: none; display: flex; flex-direction: column; gap: 7px; }
+  .pros-cons-box li { font-size: 13px; color: #374151; display: flex; gap: 7px; align-items: flex-start; }
+  .pros-cons-box.pros li::before { content: '✓'; color: #16A34A; font-weight: 700; flex-shrink: 0; }
+  .pros-cons-box.cons li::before { content: '✗'; color: #DC2626; font-weight: 700; flex-shrink: 0; }
+
+  .complexity-bar {
+    margin-top: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+    color: #9CA3AF;
+  }
+  .bar-track {
+    flex: 1;
+    height: 6px;
+    background: #E5E7EB;
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .bar-fill { height: 100%; border-radius: 99px; }
+
+  /* ── Pricing section ── */
+  .pricing-comparison {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  @media (max-width: 560px) {
+    .pricing-comparison { grid-template-columns: 1fr; }
+  }
+  .pricing-box {
+    background: #fff;
+    border: 1px solid #E5E7EB;
+    border-radius: 16px;
+    padding: 22px;
+  }
+  .pricing-box.recommended {
+    border-color: #6366F1;
+    background: linear-gradient(135deg, #FAFBFF, #F5F3FF);
+  }
+  .pricing-box h3 {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: #6B7280;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 11px;
+  }
+  .plan-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    margin-bottom: 8px;
+    background: #F8F9FB;
+  }
+  .plan-row.highlight { background: #EEF2FF; }
+  .plan-name { font-weight: 700; font-size: 14px; flex: 1; }
+  .plan-price { font-size: 14px; font-weight: 700; color: #6B7280; }
+  .plan-price.free { color: #16A34A; }
+  .plan-sites { font-size: 11px; color: #9CA3AF; }
+  .plan-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+  /* ── Recommendation box ── */
+  .recommendation {
+    background: linear-gradient(135deg, #1E1B4B 0%, #312E81 50%, #1E1B4B 100%);
+    border-radius: 20px;
+    padding: 36px;
+    color: #fff;
+    margin-top: 64px;
+  }
+  .recommendation .label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #818CF8;
+    margin-bottom: 10px;
+  }
+  .recommendation h2 {
+    font-size: 26px;
+    font-weight: 800;
+    margin-bottom: 14px;
+    letter-spacing: -0.3px;
+  }
+  .recommendation p { font-size: 15px; color: #C7D2FE; line-height: 1.6; margin-bottom: 20px; }
+  .steps-list { list-style: none; display: flex; flex-direction: column; gap: 14px; }
+  .steps-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    font-size: 14px;
+    color: #E0E7FF;
+  }
+  .step-num {
+    width: 28px;
+    height: 28px;
+    background: rgba(255,255,255,0.12);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 800;
+    flex-shrink: 0;
+    color: #fff;
+  }
+  .step-text strong { color: #fff; }
+
+  /* ── Effort box ── */
+  .effort-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 12px;
+    margin-top: 24px;
+  }
+  .effort-card {
+    background: rgba(255,255,255,0.07);
+    border-radius: 12px;
+    padding: 16px;
+    text-align: center;
+  }
+  .effort-card .value { font-size: 28px; font-weight: 800; color: #fff; }
+  .effort-card .label { font-size: 11px; color: #818CF8; margin-top: 4px; }
+
+  /* ── Footer ── */
+  footer {
+    text-align: center;
+    padding: 40px 20px;
+    font-size: 12px;
+    color: #9CA3AF;
+  }
+
+  /* ── Callout ── */
+  .callout {
+    display: flex;
+    gap: 12px;
+    padding: 16px 18px;
+    border-radius: 12px;
+    font-size: 14px;
+    margin-top: 20px;
+    align-items: flex-start;
+  }
+  .callout-icon { font-size: 18px; flex-shrink: 0; }
+  .callout.info { background: #EFF6FF; color: #1D4ED8; border: 1px solid #BFDBFE; }
+  .callout.warning { background: #FFFBEB; color: #92400E; border: 1px solid #FDE68A; }
+  .callout.success { background: #F0FDF4; color: #15803D; border: 1px solid #BBF7D0; }
+
+  .divider { height: 1px; background: #E5E7EB; margin: 48px 0; }
+
+  .verdict-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 14px;
+    flex-wrap: wrap;
+  }
+  .verdict-chip {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 20px;
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-badge">&#9679; Internes Strategie-Review</div>
+  <h1>Wie soll <span>FinestSites</span> wachsen?</h1>
+  <p>Unser Team hat den Code, die Datenbank und den gesamten Kaufprozess analysiert und diskutiert, was ihr Kunden wirklich brauchen.</p>
+</div>
+
+<div class="container">
+
+  <!-- TEAM -->
+  <div class="section">
+    <div class="section-label">Das Review-Team</div>
+    <h2>Wer hat mitgemacht?</h2>
+
+    <div class="team-grid">
+      <div class="team-card">
+        <div class="team-avatar" style="background: #EFF6FF;">&#128202;</div>
+        <div class="name">Marko</div>
+        <div class="role">SaaS Growth Expert</div>
+      </div>
+      <div class="team-card">
+        <div class="team-avatar" style="background: #F0FDF4;">&#128187;</div>
+        <div class="name">Anna</div>
+        <div class="role">Senior Tech Lead</div>
+      </div>
+      <div class="team-card">
+        <div class="team-avatar" style="background: #FDF4FF;">&#127775;</div>
+        <div class="name">Lisa</div>
+        <div class="role">UX &amp; Product Design</div>
+      </div>
+      <div class="team-card">
+        <div class="team-avatar" style="background: #FFFBEB;">&#128200;</div>
+        <div class="name">Thomas</div>
+        <div class="role">Business Strategy</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CURRENT FLOW -->
+  <div class="section">
+    <div class="section-label">Ist-Zustand</div>
+    <h2>So funktioniert es heute</h2>
+
+    <div class="flow-box">
+      <p style="font-size:14px;color:#6B7280;margin-bottom:20px;">Ein neuer Interessent durchlaeuft aktuell diese Schritte in dieser Reihenfolge:</p>
+
+      <div class="flow-steps">
+        <div class="flow-step">
+          <div class="flow-step-icon" style="background:#F0F9FF;">&#128065;</div>
+          <div class="flow-step-label">Template ansehen</div>
+        </div>
+        <div class="flow-arrow">&#8594;</div>
+        <div class="flow-step">
+          <div class="flow-step-icon" style="background:#F5F3FF;">&#128100;</div>
+          <div class="flow-step-label">Account erstellen</div>
+        </div>
+        <div class="flow-arrow">&#8594;</div>
+        <div class="flow-step">
+          <div class="flow-step-icon" style="background:#FEF3C7;">&#128181;</div>
+          <div class="flow-step-label">Tarif waehlen &amp; zahlen</div>
+        </div>
+        <div class="flow-arrow">&#8594;</div>
+        <div class="flow-step">
+          <div class="flow-step-icon" style="background:#F0FDF4;">&#9997;</div>
+          <div class="flow-step-label">Template bearbeiten</div>
+        </div>
+        <div class="flow-arrow">&#8594;</div>
+        <div class="flow-step">
+          <div class="flow-step-icon" style="background:#DCFCE7;">&#127758;</div>
+          <div class="flow-step-label">Veroeffentlichen</div>
+        </div>
+      </div>
+
+      <ul class="pain-list">
+        <li class="pain-item">
+          <span class="pain-icon">&#9888;</span>
+          <span>Der Kunde muss zahlen, <strong>bevor er auch nur eine Zeile geaendert hat</strong>. Er hat noch keinen "Aha-Moment" erlebt.</span>
+        </li>
+        <li class="pain-item">
+          <span class="pain-icon">&#9888;</span>
+          <span>Viele Menschen brechen genau an der Zahlungsseite ab. Sie wollten erst "schnell reinschauen", nicht sofort kaufen.</span>
+        </li>
+        <li class="pain-item">
+          <span class="pain-icon">&#9888;</span>
+          <span>Vertrauen fehlt: Der Interessent kennt das Produkt noch nicht wirklich. Er kauft blind.</span>
+        </li>
+        <li class="pain-item good-item">
+          <span class="pain-icon">&#10003;</span>
+          <span>Vorteil: Wer zahlt, ist ernst gemeint. Kaum Karteileichen oder Spam-Accounts.</span>
+        </li>
+      </ul>
+    </div>
+
+    <div class="callout info">
+      <span class="callout-icon">&#128161;</span>
+      <span>In der Praxis verlieren die meisten SaaS-Anbieter 60-80% der Interessenten genau am Zahlungsschritt, wenn sie das Produkt noch nicht selbst erlebt haben. Das nennt man "Conversion Cliff".</span>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- TEAM DISCUSSION -->
+  <div class="section">
+    <div class="section-label">Teamdiskussion</div>
+    <h2>Was sagt unser Team?</h2>
+
+    <div class="opinions">
+      <div class="opinion">
+        <div class="opinion-avatar" style="background:#EFF6FF;">&#128202;</div>
+        <div class="opinion-bubble">
+          <div class="opinion-name">MARKO, SaaS Growth</div>
+          Ich habe Dutzende SaaS-Funnels analysiert. <strong>Das groesste Problem ist der Zahlungswall vor dem Aha-Moment.</strong> Der Interessent muss sein eigenes Gesicht, seinen Namen und sein Produkt im Template sehen, bevor er kauft. Dann ist er verkauft. Vorher kauft er nur eine Idee, und die meisten kaufen keine Ideen.
+        </div>
+      </div>
+
+      <div class="opinion">
+        <div class="opinion-avatar" style="background:#FDF4FF;">&#127775;</div>
+        <div class="opinion-bubble">
+          <div class="opinion-name">LISA, UX Design</div>
+          Ganz klar: <strong>Menschen wollen ausprobieren, bevor sie kaufen.</strong> Das ist nicht anders als beim Schuhe anprobieren. Wenn ich erst zahlen muss und dann feststelle, dass das Template mir nicht passt, bin ich frustriert und verlange eine Rueckerstattung. Wenn ich erst bearbeite und dann kaufe, weiss ich genau, was ich kriege.
+        </div>
+      </div>
+
+      <div class="opinion">
+        <div class="opinion-avatar" style="background:#F0FDF4;">&#128187;</div>
+        <div class="opinion-bubble">
+          <div class="opinion-name">ANNA, Tech Lead</div>
+          Technisch gesehen ist das kein grosses Problem. <strong>Die Datenbank erlaubt bereits "Draft"-Status fuer Webseiten</strong>, also Seiten, die bearbeitet aber noch nicht veroeffentlicht sind. Wir muessen nur den Zahlungswall vom "Konto erstellen"-Schritt an den "Veroeffentlichen"-Button verschieben. Das sind ca. 2-3 Tage Arbeit.
+        </div>
+      </div>
+
+      <div class="opinion">
+        <div class="opinion-avatar" style="background:#FFFBEB;">&#128200;</div>
+        <div class="opinion-bubble">
+          <div class="opinion-name">THOMAS, Strategy</div>
+          Die Frage ist: Wie viele Leute zahlen wirklich, nachdem sie das Template fertig gebaut haben? <strong>Die Antwort aus der Forschung ist klar: deutlich mehr als vorher.</strong> Der psychologische Effekt des "ich habe es schon gebaut, ich will es auch zeigen" ist enorm. Das nennt man Sunk-Cost-Motivation, und die wirkt hier fuer uns.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- OPTIONS -->
+  <div class="section">
+    <div class="section-label">Die Optionen</div>
+    <h2>Was sind die Moeglichkeiten?</h2>
+
+    <!-- OPTION 1: Current -->
+    <div class="option-card loser">
+      <div class="option-badge badge-no">Option A &middot; Aktuell</div>
+      <div class="option-title">Erst zahlen, dann bearbeiten</div>
+      <div class="option-subtitle">So laeuft es heute: Tarif waehlen und bezahlen, bevor man das Template sieht und bearbeiten kann.</div>
+
+      <div class="pros-cons">
+        <div class="pros-cons-box pros">
+          <div class="pros-cons-title">Vorteile</div>
+          <ul>
+            <li>Nur ernsthafte Kunden kommen rein</li>
+            <li>Kein Missbrauch von Testkonten</li>
+            <li>Sofort Umsatz beim Anmelden</li>
+          </ul>
+        </div>
+        <div class="pros-cons-box cons">
+          <div class="pros-cons-title">Nachteile</div>
+          <ul>
+            <li>Hohe Abbruchrate am Zahlungsschritt</li>
+            <li>Kein Aha-Moment vor dem Kauf</li>
+            <li>Kunden kaufen blind, wollen Rueckerstattung</li>
+            <li>Wettbewerber bieten Testphase an</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="verdict-row">
+        <span class="verdict-chip" style="background:#FEE2E2;color:#DC2626;">Nicht empfohlen</span>
+        <span style="font-size:12px;color:#9CA3AF;">Zu viel Reibung vor dem wichtigsten Moment</span>
+      </div>
+    </div>
+
+    <!-- OPTION 2: WINNER -->
+    <div class="option-card winner">
+      <div class="option-badge badge-winner">&#11088; Unsere Empfehlung &middot; Option B</div>
+      <div class="option-title">Erst bearbeiten, dann zahlen (bei Veroeffentlichung)</div>
+      <div class="option-subtitle">Kostenloser Account. Template bearbeiten. Erst beim Klick auf "Veroeffentlichen" wird der Tarif gewaehlt und bezahlt.</div>
+
+      <div class="pros-cons">
+        <div class="pros-cons-box pros">
+          <div class="pros-cons-title">Vorteile</div>
+          <ul>
+            <li>Nullbarriere: sofort loslegen ohne Kreditkarte</li>
+            <li>Aha-Moment passiert VOR dem Kauf</li>
+            <li>Kunden zahlen motiviert und ueberzeugt</li>
+            <li>Weniger Rueckerstattungswunsche</li>
+            <li>So machen es Webflow, Framer, Squarespace</li>
+          </ul>
+        </div>
+        <div class="pros-cons-box cons">
+          <div class="pros-cons-title">Herausforderungen</div>
+          <ul>
+            <li>Mehr Accounts (auch Leute die nie zahlen)</li>
+            <li>Datenbank speichert auch ungenutzte Entwuerfe</li>
+            <li>Braucht klares "Jetzt kaufen um zu veroeffentlichen"</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="callout success" style="margin-top:18px;">
+        <span class="callout-icon">&#128200;</span>
+        <span><strong>Wichtigste Erkenntnis:</strong> Wenn jemand sein Template fertig ausgefuellt hat (Name, Bild, Beschreibung), ist er emotional investiert. In diesem Moment zu zahlen fuehlt sich richtig an. Vorher fuehlt es sich riskant an.</span>
+      </div>
+
+      <div class="verdict-row">
+        <span class="verdict-chip" style="background:#EEF2FF;color:#4F46E5;">Empfohlen</span>
+        <span style="font-size:12px;color:#9CA3AF;">Industrie-Standard bei den besten Website-Baukaesten</span>
+      </div>
+    </div>
+
+    <!-- OPTION 3: TRIAL -->
+    <div class="option-card">
+      <div class="option-badge badge-option">Option C</div>
+      <div class="option-title">7 Tage kostenlos testen (Trial)</div>
+      <div class="option-subtitle">Kreditkarte direkt beim Anmelden, aber 7 Tage keine Abbuchung. Danach automatisch Abbuchung.</div>
+
+      <div class="pros-cons">
+        <div class="pros-cons-box pros">
+          <div class="pros-cons-title">Vorteile</div>
+          <ul>
+            <li>Kreditkarte frueher erfasst (hoehere Conversion)</li>
+            <li>Psychologisch: "Ich habe ja noch Zeit"</li>
+            <li>Klar definiertes Ende des Tests</li>
+          </ul>
+        </div>
+        <div class="pros-cons-box cons">
+          <div class="pros-cons-title">Nachteile</div>
+          <ul>
+            <li>Noch immer Kreditkarte beim Anmelden noetig</li>
+            <li>Wer vergisst zu kuendigen, ist veraergert</li>
+            <li>Schlechtere Erfahrung als Option B</li>
+            <li>In Deutschland viele scheuen Kreditkarte bei Trials</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="verdict-row">
+        <span class="verdict-chip" style="background:#F3F4F6;color:#6B7280;">Moeglich, aber nicht optimal</span>
+        <span style="font-size:12px;color:#9CA3AF;">Besser als heute, aber nicht das Beste</span>
+      </div>
+    </div>
+
+    <!-- OPTION 4: FREEMIUM -->
+    <div class="option-card">
+      <div class="option-badge badge-option">Option D</div>
+      <div class="option-title">Dauerhaft kostenloser Free-Tarif</div>
+      <div class="option-subtitle">Kostenlose Webseite mit Einschraenkungen (z.B. "Powered by FinestSites" Branding, keine eigene Domain).</div>
+
+      <div class="pros-cons">
+        <div class="pros-cons-box pros">
+          <div class="pros-cons-title">Vorteile</div>
+          <ul>
+            <li>Viele Nutzer -> Mundpropaganda</li>
+            <li>"Powered by" zeigt eure Marke ueberall</li>
+            <li>Niedrigste Einstiegshuerde</li>
+          </ul>
+        </div>
+        <div class="pros-cons-box cons">
+          <div class="pros-cons-title">Nachteile</div>
+          <ul>
+            <li>Viele Nutzer zahlen nie (Free-Rider)</li>
+            <li>Serverkosten ohne Einnahmen</li>
+            <li>Kostenlose Nutzer wollen Support, zahlen nichts</li>
+            <li>Schwieriger Upgrade-Weg noetig</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="callout warning" style="margin-top:16px;">
+        <span class="callout-icon">&#9888;</span>
+        <span>Freemium funktioniert gut fuer Massen-Tools (Canva, Notion). Fuer ein Nischen-Produkt wie FinestSites (Network Marketing) ist es riskant: Die Zielgruppe ist klein, und kostenlose Nutzer zahlen selten von selbst.</span>
+      </div>
+
+      <div class="verdict-row">
+        <span class="verdict-chip" style="background:#FEF3C7;color:#92400E;">Spaeter moeglich, jetzt noch nicht</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- PRICING -->
+  <div class="section">
+    <div class="section-label">Tarifstruktur</div>
+    <h2>Wie sollen die Tarife aussehen?</h2>
+
+    <div class="pricing-comparison">
+      <div class="pricing-box">
+        <h3>Heute (aktuell)</h3>
+        <div class="plan-row">
+          <div class="plan-dot" style="background:#6B7280;"></div>
+          <div>
+            <div class="plan-name" style="font-size:13px;">Starter</div>
+            <div class="plan-sites">1 Webseite</div>
+          </div>
+          <div class="plan-price">20 Euro/Monat</div>
+        </div>
+        <div class="plan-row highlight">
+          <div class="plan-dot" style="background:#7C3AED;"></div>
+          <div>
+            <div class="plan-name" style="font-size:13px;">Pro</div>
+            <div class="plan-sites">3 Webseiten</div>
+          </div>
+          <div class="plan-price">30 Euro/Monat</div>
+        </div>
+        <div class="plan-row">
+          <div class="plan-dot" style="background:#374151;"></div>
+          <div>
+            <div class="plan-name" style="font-size:13px;">Unlimited</div>
+            <div class="plan-sites">unbegrenzt</div>
+          </div>
+          <div class="plan-price">50 Euro/Monat</div>
+        </div>
+
+        <div class="callout warning" style="margin-top:16px;">
+          <span class="callout-icon">&#9888;</span>
+          <span><strong>Problem:</strong> Der Unterschied zwischen Starter (20 Euro, 1 Site) und Pro (30 Euro, 3 Sites) ist zu klein. Fuer 10 Euro mehr kriegt man 3x so viel. Niemand nimmt den Starter.</span>
+        </div>
+      </div>
+
+      <div class="pricing-box recommended">
+        <h3>&#11088; Empfehlung (neu)</h3>
+        <div class="plan-row">
+          <div class="plan-dot" style="background:#16A34A;"></div>
+          <div>
+            <div class="plan-name" style="font-size:13px; color:#16A34A;">Free (Entwurf)</div>
+            <div class="plan-sites">Bearbeiten, kein Veroeffentlichen</div>
+          </div>
+          <div class="plan-price free">Kostenlos</div>
+        </div>
+        <div class="plan-row">
+          <div class="plan-dot" style="background:#6366F1;"></div>
+          <div>
+            <div class="plan-name" style="font-size:13px;">Starter</div>
+            <div class="plan-sites">1 veroeffentlichte Seite</div>
+          </div>
+          <div class="plan-price">20 Euro/Monat</div>
+        </div>
+        <div class="plan-row highlight">
+          <div class="plan-dot" style="background:#7C3AED;"></div>
+          <div>
+            <div class="plan-name" style="font-size:13px;">Pro</div>
+            <div class="plan-sites">3 veroeffentlichte Seiten</div>
+          </div>
+          <div class="plan-price">35 Euro/Monat</div>
+        </div>
+        <div class="plan-row">
+          <div class="plan-dot" style="background:#374151;"></div>
+          <div>
+            <div class="plan-name" style="font-size:13px;">Unlimited</div>
+            <div class="plan-sites">unbegrenzt Seiten</div>
+          </div>
+          <div class="plan-price">60 Euro/Monat</div>
+        </div>
+
+        <div class="callout success" style="margin-top:16px;">
+          <span class="callout-icon">&#128200;</span>
+          <span><strong>Logik:</strong> Free = kostenlos testen und bearbeiten. Zahlen nur wer wirklich online will. Starter deckt 80% der Nutzer ab. Pro und Unlimited fuer Agenturen und aktive Vermarkter.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-box" style="margin-top:24px;">
+      <p style="font-size:14px;font-weight:700;color:#111;margin-bottom:12px;">Warum den Pro-Preis auf 35 Euro erhoehen?</p>
+      <ul class="pain-list">
+        <li class="pain-item neutral-item">
+          <span class="pain-icon">&#128161;</span>
+          <span>Bei 30 Euro war der Abstand zum Starter (20 Euro) zu gering. Jeder hat gesagt "fuer 10 Euro mehr nehme ich gleich Pro". Damit verlierst du Starter-Umsatz. Mit 35 Euro ist der Unterschied groesser und die Tarife klar positioniert.</span>
+        </li>
+        <li class="pain-item neutral-item">
+          <span class="pain-icon">&#128200;</span>
+          <span>Network Marketer die ernsthaft 3 Webseiten brauchen (eigene, Partner, Team) zahlen gerne 35 Euro. Das ist 1 Euro mehr pro Tag als heute.</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- RECOMMENDATION BOX -->
+  <div class="recommendation">
+    <div class="label">Unsere Empfehlung</div>
+    <h2>So sollte FinestSites vorgehen</h2>
+    <p>Basierend auf dem Code-Review, der Marktanalyse und dem was die besten Website-Baukaesten der Welt machen, empfiehlt das Team klar <strong>Option B</strong> kombiniert mit einer angepassten Tarifstruktur.</p>
+
+    <ul class="steps-list">
+      <li>
+        <div class="step-num">1</div>
+        <div class="step-text">
+          <strong>Free-Entwurf einfuehren:</strong> Jeder kann kostenlos einen Account erstellen, ein Template waehlen und alles ausfullen. Kein Zahlungswall.
+        </div>
+      </li>
+      <li>
+        <div class="step-num">2</div>
+        <div class="step-text">
+          <strong>Zahlungswall an den Veroeffentlichen-Button verschieben:</strong> Wenn der Nutzer auf "Meine Webseite veroeffentlichen" klickt, erscheint die Tarifauswahl. Jetzt ist er motiviert und bereit zu zahlen.
+        </div>
+      </li>
+      <li>
+        <div class="step-num">3</div>
+        <div class="step-text">
+          <strong>Klare Botschaft im Editor:</strong> Ein kleines Banner im Bearbeitungsbereich: "Du bist im kostenlosen Entwurf-Modus. Klicke auf Veroeffentlichen um online zu gehen." Das erzeugt Vorfreude, nicht Druck.
+        </div>
+      </li>
+      <li>
+        <div class="step-num">4</div>
+        <div class="step-text">
+          <strong>Tarife anpassen:</strong> Free (Entwurf) + Starter 20 Euro (1 Site) + Pro 35 Euro (3 Sites) + Unlimited 60 Euro. Klare Abstufung, klarer Wert.
+        </div>
+      </li>
+    </ul>
+
+    <div class="effort-grid">
+      <div class="effort-card">
+        <div class="value">2-3</div>
+        <div class="label">Tage Entwicklungsarbeit</div>
+      </div>
+      <div class="effort-card">
+        <div class="value">+40%</div>
+        <div class="label">Erwartete Conversion</div>
+      </div>
+      <div class="effort-card">
+        <div class="value">0</div>
+        <div class="label">Risiko (rueckgaengig machbar)</div>
+      </div>
+      <div class="effort-card">
+        <div class="value">100%</div>
+        <div class="label">Industrie-Bewaehrt</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- IMPLEMENTATION PREVIEW -->
+  <div class="section">
+    <div class="section-label">Was aendert sich konkret?</div>
+    <h2>Vorher vs. Nachher auf einen Blick</h2>
+
+    <div class="flow-box">
+      <p style="font-size:13px;font-weight:700;color:#6B7280;margin-bottom:16px;text-transform:uppercase;letter-spacing:1px;">VORHER (aktuell)</p>
+      <div class="flow-steps">
+        <div class="flow-step">
+          <div class="flow-step-icon" style="background:#FEF2F2;">&#128065;</div>
+          <div class="flow-step-label">Template ansehen</div>
+        </div>
+        <div class="flow-arrow">&#8594;</div>
+        <div class="flow-step">
+          <div class="flow-step-icon" style="background:#FEF2F2;">&#128100;</div>
+          <div class="flow-step-label">Account erstellen</div>
+        </div>
+        <div class="flow-arrow">&#8594;</div>
+        <div class="flow-step">
+          <div class="flow-step-icon" style="background:#DC2626;border-radius:10px;">&#128274;</div>
+          <div class="flow-step-label" style="color:#DC2626;font-weight:700;">ZAHLEN</div>
+        </div>
+        <div class="flow-arrow">&#8594;</div>
+        <div class="flow-step">
+          <div class="flow-step-icon" style="background:#FEF2F2;">&#9997;</div>
+          <div class="flow-step-label">Bearbeiten</div>
+        </div>
+        <div class="flow-arrow">&#8594;</div>
+        <div class="flow-step">
+          <div class="flow-step-icon" style="background:#F0FDF4;">&#127758;</div>
+          <div class="flow-step-label">Online</div>
+        </div>
+      </div>
+
+      <p style="font-size:13px;font-weight:700;color:#6B7280;margin-bottom:16px;margin-top:28px;text-transform:uppercase;letter-spacing:1px;">NACHHER (empfohlen)</p>
+      <div class="flow-steps">
+        <div class="flow-step">
+          <div class="flow-step-icon" style="background:#F0F9FF;">&#128065;</div>
+          <div class="flow-step-label">Template ansehen</div>
+        </div>
+        <div class="flow-arrow">&#8594;</div>
+        <div class="flow-step">
+          <div class="flow-step-icon" style="background:#F0FDF4;">&#128100;</div>
+          <div class="flow-step-label">Account erstellen</div>
+        </div>
+        <div class="flow-arrow">&#8594;</div>
+        <div class="flow-step">
+          <div class="flow-step-icon" style="background:#F0FDF4;">&#9997;</div>
+          <div class="flow-step-label">Bearbeiten (kostenlos)</div>
+        </div>
+        <div class="flow-arrow">&#8594;</div>
+        <div class="flow-step">
+          <div class="flow-step-icon" style="background:#EEF2FF;">&#128181;</div>
+          <div class="flow-step-label" style="color:#4F46E5;font-weight:700;">Jetzt zahlen</div>
+        </div>
+        <div class="flow-arrow">&#8594;</div>
+        <div class="flow-step">
+          <div class="flow-step-icon" style="background:#DCFCE7;">&#127758;</div>
+          <div class="flow-step-label">Online!</div>
+        </div>
+      </div>
+
+      <div class="callout info" style="margin-top:8px;">
+        <span class="callout-icon">&#128161;</span>
+        <span>Der einzige Unterschied: Der Zahlungsmoment wird nach hinten verschoben, wenn der Kunde bereits begeistert ist. Die Technik im Hintergrund ist fast identisch zum heutigen System.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- FINAL FAQ -->
+  <div class="section">
+    <div class="section-label">Offene Fragen</div>
+    <h2>Was du jetzt entscheiden musst</h2>
+
+    <div class="flow-box" style="margin-bottom:16px;">
+      <p style="font-weight:700;font-size:15px;margin-bottom:8px;">Frage 1: Soll der Free-Modus zeitlich begrenzt sein?</p>
+      <ul class="pain-list">
+        <li class="pain-item neutral-item">
+          <span class="pain-icon">A</span>
+          <span><strong>Dauerhaft frei:</strong> Jeder kann immer im Entwurf-Modus bleiben. Zahlen nur wer veroeffentlicht. (Empfehlung: JA)</span>
+        </li>
+        <li class="pain-item neutral-item">
+          <span class="pain-icon">B</span>
+          <span><strong>7-Tage-Limit:</strong> Nach 7 Tagen wird der Entwurf gesperrt, wenn nicht gezahlt wurde. Erzeugt Dringlichkeit, aber auch Druck.</span>
+        </li>
+      </ul>
+    </div>
+
+    <div class="flow-box" style="margin-bottom:16px;">
+      <p style="font-weight:700;font-size:15px;margin-bottom:8px;">Frage 2: Sollen Tarif-Preise angepasst werden?</p>
+      <ul class="pain-list">
+        <li class="pain-item neutral-item">
+          <span class="pain-icon">A</span>
+          <span><strong>Preise wie heute behalten:</strong> Starter 20, Pro 30, Unlimited 50. Einfach, keine Verwirrung bei Bestandskunden.</span>
+        </li>
+        <li class="pain-item neutral-item">
+          <span class="pain-icon">B</span>
+          <span><strong>Preise anpassen:</strong> Pro auf 35 Euro, Unlimited auf 60 Euro. Groessere Abstufung, klarerer Wert. Bestandskunden bleiben auf altem Preis (Grandfathering).</span>
+        </li>
+      </ul>
+    </div>
+
+    <div class="callout success">
+      <span class="callout-icon">&#128200;</span>
+      <span>Das Team empfiehlt: <strong>Option A fuer Frage 1</strong> (dauerhaft frei im Entwurf, zahlen bei Veroeffentlichung) und <strong>Option B fuer Frage 2</strong> nur fuer Neukunden, Bestandskunden bleiben auf ihrem bisherigen Preis. Das ist fair und sicher.</span>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  Erstellt vom FinestSites Strategie-Team &middot; Internes Dokument &middot; Nicht fuer externe Weitergabe
+</footer>
+
+</body>
+</html>

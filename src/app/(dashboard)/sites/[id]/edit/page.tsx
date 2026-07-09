@@ -297,7 +297,7 @@ function DomainPanel({ siteId, subdomain, initialDomain, initialStatus }: {
           <button
             onClick={handleRemove}
             disabled={removing}
-            className="mt-4 text-xs font-medium px-3 py-2 rounded-[10px] transition-colors"
+            className="mt-4 text-xs font-medium px-3 py-2 rounded-full transition-colors"
             style={{ background: '#FEF2F2', color: '#DC2626' }}>
             {removing ? 'Wird entfernt…' : 'Domain entfernen'}
           </button>
@@ -366,7 +366,7 @@ function DomainPanel({ siteId, subdomain, initialDomain, initialStatus }: {
                 Erstelle diesen DNS-Eintrag
               </p>
               {isApex && (
-                <p className="text-xs mb-2 px-3 py-2 rounded-[10px]" style={{ background: '#FFF7ED', color: '#92400E', border: '1px solid #FDE68A' }}>
+                <p className="text-xs mb-2 px-3 py-2 rounded-full" style={{ background: '#FFF7ED', color: '#92400E', border: '1px solid #FDE68A' }}>
                   Hinweis: Für Haupt-Domains ohne Präfix brauchst du einen <strong>ALIAS</strong>- oder <strong>ANAME</strong>-Eintrag. Nicht alle Anbieter unterstützen das. Falls es nicht klappt, empfehlen wir <strong>www.{domain}</strong> zu verwenden.
                 </p>
               )}
@@ -2184,27 +2184,28 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
         </div>
         <div className="flex items-center gap-2 flex-shrink-0">
           <button onClick={() => { setShowFullPreview(true); setPreviewKey(k => k + 1) }}
-            className="w-10 h-10 flex items-center justify-center rounded-2xl"
-            style={{ background: '#F3F4F6' }}>
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            className="flex items-center gap-1.5 px-3 py-2 rounded-full text-xs font-medium transition-colors"
+            style={{ background: '#F3F4F6', color: '#374151' }}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
               <circle cx="12" cy="12" r="3"/>
             </svg>
+            Vorschau
           </button>
-          <button
-            onClick={isPublished ? handleUnpublish : handlePublishToggle}
-            disabled={toggling || (!isPublished && !allRequiredComplete)}
-            className="flex items-center gap-2 px-3 py-2.5 rounded-2xl transition-all select-none"
-            style={{ background: isPublished ? '#F0FDF4' : '#F3F4F6', opacity: toggling ? 0.6 : 1 }}>
-            <div className="relative w-8 h-[18px] rounded-full flex-shrink-0 transition-colors duration-200"
-              style={{ background: isPublished ? '#16A34A' : '#D1D5DB' }}>
-              <div className="absolute top-0.5 w-[14px] h-[14px] rounded-full bg-white shadow-sm transition-transform duration-200"
-                style={{ transform: isPublished ? 'translateX(14px)' : 'translateX(2px)' }} />
-            </div>
-            <span className="text-xs font-semibold" style={{ color: isPublished ? '#16A34A' : '#6B7280' }}>
-              {isPublished ? 'Live' : 'Offline'}
+          {isPublished ? (
+            <span className="flex items-center gap-1.5 text-xs font-semibold px-3 py-2 rounded-full select-none"
+              style={{ background: '#DCFCE7', color: '#16A34A' }}>
+              <span className="w-1.5 h-1.5 rounded-full bg-green-500 flex-shrink-0" />
+              Live
             </span>
-          </button>
+          ) : (
+            <button onClick={handlePublish} disabled={publishing || !allRequiredComplete}
+              className="flex items-center gap-1 text-xs font-semibold px-3 py-2 rounded-full text-white transition-all"
+              style={{ background: allRequiredComplete ? '#1a1a1a' : '#9CA3AF', opacity: publishing ? 0.7 : 1, cursor: allRequiredComplete ? 'pointer' : 'not-allowed' }}>
+              {publishing ? <span className="w-3 h-3 rounded-full border-2 border-white/40 border-t-white animate-spin" /> : null}
+              {publishing ? 'Warten…' : 'Veröffentlichen'}
+            </button>
+          )}
         </div>
       </div>
 
@@ -2215,7 +2216,7 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
         {/* Left: back + title */}
         <div className="flex items-center gap-3 min-w-0">
           <button onClick={() => router.push('/sites')}
-            className="w-9 h-9 flex items-center justify-center rounded-[11px] flex-shrink-0"
+            className="w-9 h-9 flex items-center justify-center rounded-full flex-shrink-0"
             style={{ background: '#F3F4F6' }}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M19 12H5M12 5l-7 7 7 7"/>
@@ -2279,7 +2280,7 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
 
           {/* Live-Vorschau panel toggle — icon only, xl+ */}
           <button onClick={() => setShowLivePreview(v => !v)}
-            className="hidden xl:flex w-8 h-8 items-center justify-center rounded-[10px] flex-shrink-0 transition-colors"
+            className="hidden xl:flex w-8 h-8 items-center justify-center rounded-full flex-shrink-0 transition-colors"
             title={showLivePreview ? 'Live-Vorschau ausblenden' : 'Live-Vorschau einblenden'}
             style={{ background: showLivePreview ? '#1a1a1a' : '#F3F4F6', color: showLivePreview ? 'white' : '#6B7280' }}>
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -2291,7 +2292,7 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
 
           {/* Fullscreen preview */}
           <button onClick={() => { setShowFullPreview(true); setPreviewKey(k => k + 1) }}
-            className="flex items-center gap-1.5 text-xs font-medium px-3 py-2 rounded-[10px] transition-colors"
+            className="flex items-center gap-1.5 text-xs font-medium px-3 py-2 rounded-full transition-colors"
             style={{ background: '#F3F4F6', color: '#374151' }}>
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
@@ -2305,7 +2306,7 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
             hasChanges && allRequiredComplete ? (
               /* Changes to push live */
               <button onClick={handlePublish} disabled={publishing}
-                className="flex items-center gap-1.5 text-xs font-semibold px-4 py-2 rounded-[10px] text-white transition-all"
+                className="flex items-center gap-1.5 text-xs font-semibold px-4 py-2 rounded-full text-white transition-all"
                 style={{ background: '#16A34A', opacity: publishing ? 0.7 : 1 }}>
                 {publishing
                   ? <span className="w-3 h-3 rounded-full border-2 border-white/40 border-t-white animate-spin" />
@@ -2314,7 +2315,7 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
               </button>
             ) : (
               /* Already up to date — show status */
-              <span className="flex items-center gap-1.5 text-xs font-semibold px-3 py-2 rounded-[10px] select-none"
+              <span className="flex items-center gap-1.5 text-xs font-semibold px-3 py-2 rounded-full select-none"
                 style={{ background: '#DCFCE7', color: '#16A34A' }}>
                 <span className="w-1.5 h-1.5 rounded-full bg-green-500 inline-block" />
                 Live
@@ -2323,7 +2324,7 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
           ) : (
             /* Not yet published */
             <button onClick={handlePublish} disabled={publishing || !allRequiredComplete}
-              className="flex items-center gap-1.5 text-xs font-semibold px-4 py-2 rounded-[10px] text-white transition-all"
+              className="flex items-center gap-1.5 text-xs font-semibold px-4 py-2 rounded-full text-white transition-all"
               style={{ background: allRequiredComplete ? '#1a1a1a' : '#9CA3AF', opacity: publishing ? 0.7 : 1, cursor: allRequiredComplete ? 'pointer' : 'not-allowed' }}>
               {publishing ? <span className="w-3 h-3 rounded-full border-2 border-white/40 border-t-white animate-spin" /> : null}
               {publishing ? 'Bitte warten…' : 'Veröffentlichen'}
@@ -2333,13 +2334,13 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
           {/* Secondary action: Offline (when live) or Delete (when draft) */}
           {isPublished ? (
             <button onClick={handleUnpublish} disabled={toggling}
-              className="text-xs font-medium px-3 py-2 rounded-[10px] transition-colors"
+              className="text-xs font-medium px-3 py-2 rounded-full transition-colors"
               style={{ background: '#F3F4F6', color: '#6B7280', opacity: toggling ? 0.5 : 1 }}>
               Offline
             </button>
           ) : (
             <button onClick={() => setShowDeleteModal(true)}
-              className="w-8 h-8 flex items-center justify-center rounded-[10px] transition-colors flex-shrink-0"
+              className="w-8 h-8 flex items-center justify-center rounded-full transition-colors flex-shrink-0"
               style={{ background: '#FEF2F2', color: '#DC2626' }}>
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M3 6h18M19 6l-1 14H6L5 6M10 11v6M14 11v6M9 6V4h6v2"/>
@@ -2967,7 +2968,7 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
           <div className="flex items-center justify-between px-4 py-3 flex-shrink-0" style={{ background: '#1a1a1a' }}>
             <div className="flex items-center gap-3">
               <span className="text-sm font-semibold text-white">{site.templates?.title}</span>
-              <div className="flex items-center gap-1 p-0.5 rounded-[10px]" style={{ background: 'rgba(255,255,255,0.1)' }}>
+              <div className="flex items-center gap-1 p-0.5 rounded-full" style={{ background: 'rgba(255,255,255,0.1)' }}>
                 {([
                   { key: 'desktop' as const, icon: <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg> },
                   { key: 'tablet'  as const, icon: <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="4" y="2" width="16" height="20" rx="2"/><circle cx="12" cy="18" r="1"/></svg> },

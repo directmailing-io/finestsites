@@ -96,6 +96,41 @@ export async function POST(req: NextRequest) {
       const userId = session.metadata?.supabase_user_id ?? session.metadata?.user_id
       if (!userId) break
 
+      // ── Capture promo code / coupon used in checkout ──────────────────────
+      // When allow_promotion_codes:true, the discount is applied to the session/invoice
+      // but NOT automatically stored on the subscription object → Stripe shows
+      // "Kein Gutschein angewendet". Fix: fetch the discount and write it to
+      // subscription metadata so it's visible in Stripe and traceable.
+      try {
+        const sessionExpanded = await stripe.checkout.sessions.retrieve(session.id, {
+          expand: ['total_details.breakdown.discounts.discount.coupon'],
+        })
+        const appliedDiscount = sessionExpanded.total_details?.breakdown?.discounts?.[0]
+        const coupon = (appliedDiscount?.discount as any)?.coupon as Stripe.Coupon | undefined
+        const promoCodeId = (appliedDiscount?.discount as any)?.promotion_code as string | undefined
+
+        if (coupon?.id) {
+          let promoCodeStr = ''
+          if (promoCodeId) {
+            try {
+              const pc = await stripe.promotionCodes.retrieve(promoCodeId)
+              promoCodeStr = pc.code
+            } catch { /* ignore */ }
+          }
+          await stripe.subscriptions.update(subscription.id, {
+            metadata: {
+              ...subscription.metadata,
+              coupon_id: coupon.id,
+              coupon_name: coupon.name ?? coupon.id,
+              promo_code: promoCodeStr,
+              discount_amount_cents: String(appliedDiscount?.amount ?? 0),
+            },
+          })
+        }
+      } catch (e) {
+        console.error('[billing/webhook] failed to capture coupon info:', e)
+      }
+
       await db.update(users).set({
         plan,
         billingInterval: interval,

@@ -406,7 +406,7 @@ function SettingsContent() {
 
       {/* Toast */}
       {toast && (
-        <div className="fixed top-4 left-4 right-4 sm:left-auto sm:right-6 sm:top-6 z-50 px-5 py-3 rounded-2xl text-sm font-medium text-white text-center sm:text-left"
+        <div className="fixed top-4 left-4 right-4 sm:left-auto sm:right-6 sm:top-6 z-50 px-5 py-3 rounded-full text-sm font-medium text-white text-center sm:text-left"
           style={{ background: '#1a1a1a', boxShadow: '0 8px 30px rgba(0,0,0,0.25)' }}>
           {toast}
         </div>
@@ -436,7 +436,7 @@ function SettingsContent() {
                 onClick={() => setNmCompanies(prev =>
                   prev.includes(company) ? prev.filter(c => c !== company) : [...prev, company]
                 )}
-                className="px-4 py-2 rounded-2xl text-sm font-semibold transition-all"
+                className="px-4 py-2 rounded-full text-sm font-semibold transition-all"
                 style={{
                   background: isActive ? '#111827' : '#F9FAFB',
                   color: isActive ? '#fff' : '#374151',
@@ -454,7 +454,7 @@ function SettingsContent() {
             type="button"
             onClick={handleNmSave}
             disabled={nmSaving}
-            className="px-5 py-2.5 text-sm font-semibold rounded-2xl transition-all"
+            className="px-5 py-2.5 text-sm font-semibold rounded-full transition-all"
             style={{
               background: nmSaving ? '#E5E7EB' : '#111827',
               color: nmSaving ? '#9CA3AF' : '#fff',
@@ -519,7 +519,7 @@ function SettingsContent() {
                 type="button"
                 onClick={() => avatarInputRef.current?.click()}
                 disabled={avatarUploading}
-                className="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-xl transition-colors disabled:opacity-50"
+                className="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-full transition-colors disabled:opacity-50"
                 style={{ background: '#F3F4F6', color: '#374151' }}
                 onMouseEnter={e => (e.currentTarget.style.background = '#E5E7EB')}
                 onMouseLeave={e => (e.currentTarget.style.background = '#F3F4F6')}
@@ -545,14 +545,14 @@ function SettingsContent() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="flex flex-col gap-1.5">
               <label className="text-sm font-semibold text-gray-700">E-Mail-Adresse</label>
-              <div className="px-4 py-3 rounded-2xl text-sm text-gray-500 select-all"
+              <div className="px-4 py-3 rounded-full text-sm text-gray-500 select-all"
                 style={{ background: '#F9FAFB', border: '1.5px solid #E5E7EB' }}>
                 {profile?.email ?? '–'}
               </div>
             </div>
             <div className="flex flex-col gap-1.5">
               <label className="text-sm font-semibold text-gray-700">Benutzername</label>
-              <div className="px-4 py-3 rounded-2xl text-sm text-gray-500 select-all"
+              <div className="px-4 py-3 rounded-full text-sm text-gray-500 select-all"
                 style={{ background: '#F9FAFB', border: '1.5px solid #E5E7EB' }}>
                 {profile?.username ? `@${profile.username}` : '–'}
               </div>
@@ -570,7 +570,7 @@ function SettingsContent() {
           {/* ── Phone ── */}
           <div className="flex flex-col gap-1.5">
             <label className="text-sm font-semibold text-gray-700">Telefon / WhatsApp</label>
-            <div className="flex overflow-hidden rounded-2xl" style={{ border: '1.5px solid #E5E7EB' }}>
+            <div className="flex overflow-hidden rounded-full" style={{ border: '1.5px solid #E5E7EB' }}>
               <select
                 value={countryCode}
                 onChange={e => { setCountryCode(e.target.value); if (e.target.value !== 'other') setCustomCountryCode('') }}
@@ -609,7 +609,7 @@ function SettingsContent() {
             <p className="text-sm font-semibold text-gray-700 mb-1">Social Media</p>
             {SOCIALS.map(s => (
               <div key={s.key}
-                className="flex items-center overflow-hidden rounded-2xl transition-all"
+                className="flex items-center overflow-hidden rounded-full transition-all"
                 style={{ border: '1.5px solid #E5E7EB', background: '#fff' }}
                 onFocusCapture={e => (e.currentTarget.style.borderColor = '#1a1a1a')}
                 onBlurCapture={e => (e.currentTarget.style.borderColor = '#E5E7EB')}
@@ -636,13 +636,13 @@ function SettingsContent() {
           </div>
 
           {profileError && (
-            <p className="text-sm font-medium px-4 py-3 rounded-2xl"
+            <p className="text-sm font-medium px-4 py-3 rounded-full"
               style={{ background: '#FEF2F2', color: '#DC2626' }}>
               {profileError}
             </p>
           )}
           {profileSuccess && (
-            <p className="text-sm font-medium px-4 py-3 rounded-2xl flex items-center gap-2"
+            <p className="text-sm font-medium px-4 py-3 rounded-full flex items-center gap-2"
               style={{ background: '#F0FDF4', color: '#15803D' }}>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                 <path d="M20 6L9 17l-5-5"/>
@@ -652,7 +652,7 @@ function SettingsContent() {
           )}
 
           <button type="submit" disabled={profileSaving}
-            className="self-start flex items-center gap-2 px-5 py-3 text-sm font-bold text-white rounded-xl transition-opacity hover:opacity-90 disabled:opacity-70"
+            className="self-start flex items-center gap-2 px-5 py-3 text-sm font-bold text-white rounded-full transition-opacity hover:opacity-90 disabled:opacity-70"
             style={{ background: '#1a1a1a' }}>
             {profileSaving && <Spinner />}
             Profil speichern
@@ -702,7 +702,7 @@ function SettingsContent() {
             <div className="flex flex-wrap gap-2 mt-5">
               {hasSubscription && (
                 <button onClick={handlePortal} disabled={portalLoading}
-                  className="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-xl transition-opacity hover:opacity-90 disabled:opacity-70"
+                  className="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-full transition-opacity hover:opacity-90 disabled:opacity-70"
                   style={{ background: '#1a1a1a', color: '#fff' }}>
                   {portalLoading
                     ? <Spinner />
@@ -713,7 +713,7 @@ function SettingsContent() {
               )}
               {subscription && !subscription.cancel_at_period_end && (
                 <button onClick={() => setShowCancelConfirm(true)}
-                  className="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-xl transition-colors"
+                  className="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-full transition-colors"
                   style={{ color: '#DC2626', background: 'transparent' }}
                   onMouseEnter={e => (e.currentTarget.style.background = '#FEF2F2')}
                   onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
@@ -722,7 +722,7 @@ function SettingsContent() {
               )}
               {subscription?.cancel_at_period_end && (
                 <button onClick={handleReactivate} disabled={reactivateLoading}
-                  className="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-xl transition-opacity hover:opacity-90 disabled:opacity-70"
+                  className="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-full transition-opacity hover:opacity-90 disabled:opacity-70"
                   style={{ background: '#15803D', color: '#fff' }}>
                   {reactivateLoading ? <Spinner /> : null}
                   Kündigung zurückziehen
@@ -757,10 +757,10 @@ function SettingsContent() {
         <>
         {/* Interval toggle — segmented control */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-7">
-          <div className="inline-flex p-1 rounded-2xl self-start" style={{ background: '#F1F5F9' }}>
+          <div className="inline-flex p-1 rounded-full self-start" style={{ background: '#F1F5F9' }}>
             <button
               onClick={() => setBillingInterval('monthly')}
-              className="px-5 py-2 text-sm font-semibold rounded-xl transition-all"
+              className="px-5 py-2 text-sm font-semibold rounded-full transition-all"
               style={{
                 background: billingInterval === 'monthly' ? '#fff' : 'transparent',
                 color: billingInterval === 'monthly' ? '#1a1a1a' : '#94A3B8',
@@ -770,7 +770,7 @@ function SettingsContent() {
             </button>
             <button
               onClick={() => setBillingInterval('yearly')}
-              className="px-5 py-2 text-sm font-semibold rounded-xl transition-all flex items-center gap-2"
+              className="px-5 py-2 text-sm font-semibold rounded-full transition-all flex items-center gap-2"
               style={{
                 background: billingInterval === 'yearly' ? '#fff' : 'transparent',
                 color: billingInterval === 'yearly' ? '#1a1a1a' : '#94A3B8',
@@ -866,7 +866,7 @@ function SettingsContent() {
                 </ul>
 
                 {isCurrent ? (
-                  <div className="w-full py-3 text-sm font-semibold text-center rounded-xl"
+                  <div className="w-full py-3 text-sm font-semibold text-center rounded-full"
                     style={{
                       background: plan.popular ? 'rgba(255,255,255,0.10)' : '#E5E7EB',
                       color: plan.popular ? 'rgba(255,255,255,0.6)' : '#6B7280',
@@ -874,7 +874,7 @@ function SettingsContent() {
                     Aktueller Tarif
                   </div>
                 ) : isLower ? (
-                  <div className="w-full py-3 text-sm font-medium text-center rounded-xl"
+                  <div className="w-full py-3 text-sm font-medium text-center rounded-full"
                     style={{
                       background: plan.popular ? 'rgba(255,255,255,0.10)' : 'transparent',
                       color: plan.popular ? 'rgba(255,255,255,0.4)' : '#CBD5E1',
@@ -884,7 +884,7 @@ function SettingsContent() {
                   </div>
                 ) : (
                   <button onClick={() => handleCheckout(plan.key)} disabled={checkoutLoading === plan.key}
-                    className="w-full py-3 text-sm font-bold rounded-xl transition-opacity hover:opacity-90 disabled:opacity-70 flex items-center justify-center gap-2"
+                    className="w-full py-3 text-sm font-bold rounded-full transition-opacity hover:opacity-90 disabled:opacity-70 flex items-center justify-center gap-2"
                     style={{
                       background: plan.popular ? '#fff' : '#1a1a1a',
                       color: plan.popular ? '#1a1a1a' : '#fff',
@@ -908,7 +908,7 @@ function SettingsContent() {
         {invoicesLoading ? (
           <div className="flex flex-col gap-2">
             {[1, 2, 3].map(i => (
-              <div key={i} className="h-16 rounded-2xl bg-gray-100 animate-pulse" />
+              <div key={i} className="h-16 rounded-full bg-gray-100 animate-pulse" />
             ))}
           </div>
         ) : invoices.length === 0 ? (
@@ -940,7 +940,7 @@ function SettingsContent() {
 
               return (
                 <div key={inv.id}
-                  className="flex items-center gap-3 px-3 py-4 rounded-2xl transition-colors hover:bg-gray-50"
+                  className="flex items-center gap-3 px-3 py-4 rounded-full transition-colors hover:bg-gray-50"
                   style={{ borderBottom: isLast ? 'none' : '1px solid #F1F5F9' }}>
                   <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center flex-shrink-0"
                     style={{ background: '#F1F5F9' }}>
@@ -966,7 +966,7 @@ function SettingsContent() {
                   <div className="flex items-center gap-1.5 flex-shrink-0">
                     {inv.invoice_pdf && (
                       <a href={inv.invoice_pdf} target="_blank" rel="noopener noreferrer"
-                        className="flex items-center gap-1.5 text-xs font-semibold px-3 py-2 rounded-xl transition-colors"
+                        className="flex items-center gap-1.5 text-xs font-semibold px-3 py-2 rounded-full transition-colors"
                         style={{ background: '#1a1a1a', color: '#fff' }}
                         onMouseEnter={e => (e.currentTarget.style.background = '#333')}
                         onMouseLeave={e => (e.currentTarget.style.background = '#1a1a1a')}>
@@ -978,7 +978,7 @@ function SettingsContent() {
                     )}
                     {inv.hosted_invoice_url && (
                       <a href={inv.hosted_invoice_url} target="_blank" rel="noopener noreferrer"
-                        className="hidden sm:flex items-center justify-center w-9 h-9 rounded-xl transition-colors"
+                        className="hidden sm:flex items-center justify-center w-9 h-9 rounded-full transition-colors"
                         style={{ background: '#F3F4F6', color: '#374151' }}
                         onMouseEnter={e => (e.currentTarget.style.background = '#E5E7EB')}
                         onMouseLeave={e => (e.currentTarget.style.background = '#F3F4F6')}
@@ -1035,13 +1035,13 @@ function SettingsContent() {
           />
 
           {pwError && (
-            <p className="text-sm font-medium px-4 py-3 rounded-2xl"
+            <p className="text-sm font-medium px-4 py-3 rounded-full"
               style={{ background: '#FEF2F2', color: '#DC2626' }}>
               {pwError}
             </p>
           )}
           {pwSuccess && (
-            <p className="text-sm font-medium px-4 py-3 rounded-2xl flex items-center gap-2"
+            <p className="text-sm font-medium px-4 py-3 rounded-full flex items-center gap-2"
               style={{ background: '#F0FDF4', color: '#15803D' }}>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                 <path d="M20 6L9 17l-5-5"/>
@@ -1051,7 +1051,7 @@ function SettingsContent() {
           )}
 
           <button type="submit" disabled={pwLoading}
-            className="self-start flex items-center gap-2 px-5 py-3 text-sm font-bold text-white rounded-xl transition-opacity hover:opacity-90 disabled:opacity-70 mt-1"
+            className="self-start flex items-center gap-2 px-5 py-3 text-sm font-bold text-white rounded-full transition-opacity hover:opacity-90 disabled:opacity-70 mt-1"
             style={{ background: '#1a1a1a' }}>
             {pwLoading && <Spinner />}
             Passwort ändern
@@ -1095,7 +1095,7 @@ function SettingsContent() {
           <div className="bg-white rounded-3xl p-7 max-w-md w-full flex flex-col gap-5"
             style={{ boxShadow: '0 24px 64px rgba(0,0,0,0.20)' }}>
             <div className="flex items-start gap-4">
-              <div className="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0"
+              <div className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0"
                 style={{ background: '#FEF2F2' }}>
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#DC2626" strokeWidth="1.75">
                   <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
@@ -1113,7 +1113,7 @@ function SettingsContent() {
             </div>
 
             {cancelError && (
-              <p className="text-sm font-medium px-4 py-3 rounded-2xl"
+              <p className="text-sm font-medium px-4 py-3 rounded-full"
                 style={{ background: '#FEF2F2', color: '#DC2626' }}>
                 {cancelError}
               </p>
@@ -1121,12 +1121,12 @@ function SettingsContent() {
 
             <div className="flex gap-3">
               <button onClick={() => { setShowCancelConfirm(false); setCancelError('') }}
-                className="flex-1 px-4 py-3 text-sm font-semibold rounded-xl transition-colors hover:bg-gray-200"
+                className="flex-1 px-4 py-3 text-sm font-semibold rounded-full transition-colors hover:bg-gray-200"
                 style={{ background: '#F3F4F6', color: '#374151' }}>
                 Behalten
               </button>
               <button onClick={handleCancelSubscription} disabled={cancelLoading}
-                className="flex-1 flex items-center justify-center gap-2 px-4 py-3 text-sm font-semibold text-white rounded-xl transition-colors disabled:opacity-70"
+                className="flex-1 flex items-center justify-center gap-2 px-4 py-3 text-sm font-semibold text-white rounded-full transition-colors disabled:opacity-70"
                 style={{ background: '#DC2626' }}
                 onMouseEnter={e => { if (!cancelLoading) (e.currentTarget as HTMLElement).style.background = '#B91C1C' }}
                 onMouseLeave={e => { if (!cancelLoading) (e.currentTarget as HTMLElement).style.background = '#DC2626' }}>
@@ -1181,7 +1181,7 @@ function Field({
       <input
         type={type} value={value} onChange={e => onChange(e.target.value)}
         placeholder={placeholder} required
-        className="w-full px-4 py-3 text-[15px] rounded-2xl outline-none transition-all bg-white"
+        className="w-full px-4 py-3 text-[15px] rounded-full outline-none transition-all bg-white"
         style={{ border: '1.5px solid #E5E7EB' }}
         onFocus={e => (e.target.style.borderColor = '#1a1a1a')}
         onBlur={e => (e.target.style.borderColor = '#E5E7EB')}
@@ -1201,7 +1201,7 @@ function ProfileField({
       <input
         type="text" value={value} onChange={e => onChange(e.target.value)}
         placeholder={placeholder}
-        className="w-full px-4 py-3 text-[15px] rounded-2xl outline-none transition-all bg-white"
+        className="w-full px-4 py-3 text-[15px] rounded-full outline-none transition-all bg-white"
         style={{ border: '1.5px solid #E5E7EB' }}
         onFocus={e => (e.target.style.borderColor = '#1a1a1a')}
         onBlur={e => (e.target.style.borderColor = '#E5E7EB')}
