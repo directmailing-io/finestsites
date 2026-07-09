@@ -374,23 +374,19 @@ export default function NewSitePage() {
                   )}
                   {/* Premium label on preview image */}
                   {isPremium && (
-                    <div className="absolute top-2.5 left-2.5 flex items-center gap-1"
+                    <div className="absolute top-2.5 left-2.5"
                       style={{
-                        background: 'rgba(255,255,255,0.92)',
-                        backdropFilter: 'blur(6px)',
-                        borderRadius: 6, padding: '3px 7px',
-                        fontSize: 10, fontWeight: 700, color: '#7C3AED',
-                        boxShadow: '0 1px 4px rgba(0,0,0,0.12)',
-                        letterSpacing: '0.06em',
+                        background: 'rgba(255,255,255,0.96)',
+                        backdropFilter: 'blur(8px)',
+                        WebkitBackdropFilter: 'blur(8px)',
+                        borderRadius: 5, padding: '3px 8px',
+                        fontSize: 9, fontWeight: 800, color: '#5B21B6',
+                        boxShadow: '0 1px 6px rgba(0,0,0,0.14)',
+                        letterSpacing: '0.12em',
                         textTransform: 'uppercase',
+                        border: '1px solid rgba(200,180,240,0.5)',
                       }}>
-                      <svg width="9" height="9" viewBox="0 0 12 12" fill="none">
-                        <path d="M1 9L3 4.5L6 7L9 4.5L11 9H1Z" fill="#7C3AED" opacity="0.9"/>
-                        <circle cx="1" cy="9" r="1" fill="#7C3AED"/>
-                        <circle cx="11" cy="9" r="1" fill="#7C3AED"/>
-                        <circle cx="6" cy="2" r="1" fill="#7C3AED"/>
-                      </svg>
-                      Premium
+                      PREMIUM
                     </div>
                   )}
                 </div>

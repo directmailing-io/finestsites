@@ -61,7 +61,7 @@ export function BadgeChip({ badge, size = 'sm' }: { badge: string | null; size?:
 }
 
 // ── Price chip ───────────────────────────────────────────────────────────────
-// Free → green "Gratis", paid → amber "★ Premium"
+// Free → green "Gratis", paid → purple "Premium"
 
 export function PriceChip({ isFree, size = 'sm' }: { isFree: boolean; size?: 'sm' | 'xs' }) {
   const pad = size === 'xs' ? '2px 8px' : '3px 9px'
@@ -75,13 +75,7 @@ export function PriceChip({ isFree, size = 'sm' }: { isFree: boolean; size?: 'sm
     )
   }
   return (
-    <span style={{ fontSize: fs, fontWeight: 700, color: '#7C3AED', background: '#F3EEFF', padding: pad, borderRadius: 100, display: 'inline-flex', alignItems: 'center', gap: 3, border: '1px solid #DDD0F8', letterSpacing: '0.01em' }}>
-      <svg width={fs - 1} height={fs - 1} viewBox="0 0 12 12" fill="none" style={{ flexShrink: 0 }}>
-        <path d="M1 9L3 4.5L6 7L9 4.5L11 9H1Z" fill="#7C3AED" opacity="0.9"/>
-        <circle cx="1" cy="9" r="1" fill="#7C3AED"/>
-        <circle cx="11" cy="9" r="1" fill="#7C3AED"/>
-        <circle cx="6" cy="2" r="1" fill="#7C3AED"/>
-      </svg>
+    <span style={{ fontSize: fs, fontWeight: 700, color: '#6D28D9', background: '#EEE8FF', padding: pad, borderRadius: 100, display: 'inline-block', letterSpacing: '0.06em', textTransform: 'uppercase', border: '1px solid #D4C5FA' }}>
       Premium
     </span>
   )
