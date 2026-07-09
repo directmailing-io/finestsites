@@ -293,7 +293,7 @@ export default function NewSitePage() {
             onClick={() => setPriceFilter('all')}
           />
           <FilterChip
-            label="★ Premium"
+            label="Premium"
             active={priceFilter === 'premium'}
             onClick={() => setPriceFilter(priceFilter === 'premium' ? 'all' : 'premium')}
           />
@@ -372,17 +372,25 @@ export default function NewSitePage() {
                       </svg>
                     </div>
                   )}
-                  {/* Premium corner badge on preview image */}
+                  {/* Premium label on preview image */}
                   {isPremium && (
-                    <div className="absolute top-2 left-2"
+                    <div className="absolute top-2.5 left-2.5 flex items-center gap-1"
                       style={{
-                        background: 'linear-gradient(135deg, #7C3AED, #9333EA)',
-                        borderRadius: 6, padding: '2px 6px',
-                        fontSize: 9, fontWeight: 700, color: '#fff',
-                        boxShadow: '0 2px 6px rgba(124,58,237,0.35)',
-                        letterSpacing: '0.02em',
+                        background: 'rgba(255,255,255,0.92)',
+                        backdropFilter: 'blur(6px)',
+                        borderRadius: 6, padding: '3px 7px',
+                        fontSize: 10, fontWeight: 700, color: '#7C3AED',
+                        boxShadow: '0 1px 4px rgba(0,0,0,0.12)',
+                        letterSpacing: '0.06em',
+                        textTransform: 'uppercase',
                       }}>
-                      ⭐ PREMIUM
+                      <svg width="9" height="9" viewBox="0 0 12 12" fill="none">
+                        <path d="M1 9L3 4.5L6 7L9 4.5L11 9H1Z" fill="#7C3AED" opacity="0.9"/>
+                        <circle cx="1" cy="9" r="1" fill="#7C3AED"/>
+                        <circle cx="11" cy="9" r="1" fill="#7C3AED"/>
+                        <circle cx="6" cy="2" r="1" fill="#7C3AED"/>
+                      </svg>
+                      Premium
                     </div>
                   )}
                 </div>
