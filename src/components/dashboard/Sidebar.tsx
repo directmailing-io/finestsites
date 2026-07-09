@@ -111,20 +111,29 @@ export function DashboardSidebar() {
             {quota.plan === null ? (
               /* Free user — prominent upgrade CTA */
               <Link href="/billing"
-                className="block px-3 py-3 rounded-xl transition-colors"
-                style={{ background: '#1a1a1a' }}>
-                <p className="text-[11px] font-medium mb-1.5" style={{ color: '#9CA3AF' }}>Kostenloser Modus</p>
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-white">Jetzt upgraden</span>
-                  <span className="text-white opacity-60 text-sm">→</span>
+                className="block transition-opacity hover:opacity-90 active:opacity-75"
+                style={{
+                  background: 'linear-gradient(145deg, #1a1a1a 0%, #2a2a2a 100%)',
+                  borderRadius: 12,
+                  padding: '10px 12px 11px',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.18)',
+                }}>
+                <p style={{ margin: '0 0 6px', fontSize: 11, color: '#6B7280', fontWeight: 500 }}>Kostenloser Modus</p>
+                <div className="flex items-center justify-between gap-2">
+                  <span style={{ fontSize: 13, fontWeight: 700, color: '#fff', lineHeight: 1.2 }}>Jetzt upgraden</span>
+                  <span style={{
+                    fontSize: 11, fontWeight: 600, color: '#fff',
+                    background: 'rgba(255,255,255,0.12)', borderRadius: 6,
+                    padding: '2px 7px', flexShrink: 0,
+                  }}>→</span>
                 </div>
               </Link>
             ) : quota.plan !== 'unlimited' ? (
               /* Paid plan with quota */
               <>
                 <Link href="/billing"
-                  className="flex items-center justify-between px-3 py-2.5 rounded-xl transition-colors"
-                  style={{ background: quota.atLimit ? '#FEF2F2' : '#F3F4F6' }}>
+                  className="flex items-center justify-between px-3 py-2.5 transition-colors"
+                  style={{ background: quota.atLimit ? '#FEF2F2' : '#F3F4F6', borderRadius: 10 }}>
                   <div>
                     <p className="text-[11px] font-medium" style={{ color: quota.atLimit ? '#DC2626' : '#6B7280' }}>
                       {PLAN_LABELS[quota.plan]}
@@ -141,7 +150,7 @@ export function DashboardSidebar() {
                   )}
                 </Link>
                 {/* Tooltip */}
-                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 rounded-xl text-xs text-white whitespace-nowrap pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity z-50"
+                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 text-xs text-white whitespace-nowrap pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity z-50" style={{ borderRadius: 8 }}
                   style={{ background: '#1a1a1a' }}>
                   {quota.used} von {quota.limit} {quota.used === 1 ? 'Webseite' : 'Webseiten'} aktiv
                   <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent" style={{ borderTopColor: '#1a1a1a' }} />
