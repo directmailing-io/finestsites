@@ -3216,6 +3216,7 @@ function UpgradeModal({
   const [referredBy, setReferredBy] = useState<string | null>(null)
   const [promoCode, setPromoCode] = useState('')
   const [showPromoInput, setShowPromoInput] = useState(false)
+  const [promoStatus, setPromoStatus] = useState<null | 'validating' | { valid: true; percent_off: number | null; amount_off: number | null; name: string } | { valid: false }>(null)
 
   useEffect(() => {
     fetch('/api/user/profile', { cache: 'no-store' })
@@ -3224,10 +3225,34 @@ function UpgradeModal({
       .catch(() => {})
   }, [])
 
+  // Debounced promo code validation
+  useEffect(() => {
+    const trimmed = promoCode.trim()
+    if (!trimmed) { setPromoStatus(null); return }
+    setPromoStatus('validating')
+    const timer = setTimeout(async () => {
+      try {
+        const res = await fetch(`/api/billing/validate-promo?code=${encodeURIComponent(trimmed)}`)
+        const data = await res.json()
+        setPromoStatus(data.valid ? { valid: true, percent_off: data.percent_off, amount_off: data.amount_off, name: data.name } : { valid: false })
+      } catch {
+        setPromoStatus({ valid: false })
+      }
+    }, 500)
+    return () => clearTimeout(timer)
+  }, [promoCode])
+
   const hasDiscount = !!referredBy
+  const promoApplied = !hasDiscount && promoStatus !== null && promoStatus !== 'validating' && (promoStatus as { valid: boolean }).valid
 
   function effectivePrice(base: number) {
-    return hasDiscount ? Math.round(base * (1 - REFERRAL_DISCOUNT)) : base
+    if (hasDiscount) return Math.round(base * (1 - REFERRAL_DISCOUNT))
+    if (promoApplied) {
+      const p = promoStatus as { valid: true; percent_off: number | null; amount_off: number | null }
+      if (p.percent_off) return Math.round(base * (1 - p.percent_off / 100))
+      if (p.amount_off) return Math.max(0, base - Math.round(p.amount_off / 100))
+    }
+    return base
   }
 
   async function checkout() {
@@ -3440,7 +3465,7 @@ function UpgradeModal({
             ))}
           </div>
 
-          {/* Promo / referral code — collapsed by default */}
+          {/* Promo / partner code — collapsed by default, live validation */}
           {!hasDiscount && (
             <div style={{ marginBottom: 20 }}>
               {!showPromoInput ? (
@@ -3452,34 +3477,77 @@ function UpgradeModal({
                 </button>
               ) : (
                 <div>
-                  <p style={{ fontSize: 12, fontWeight: 500, color: '#6B7280', marginBottom: 6 }}>
-                    Empfehlungs- oder Gutscheincode
-                  </p>
-                  <div style={{ display: 'flex', gap: 8 }}>
+                  {/* Valid code banner */}
+                  {promoApplied && (
+                    <div className="flex items-center gap-3 mb-3 px-4 py-3 rounded-2xl" style={{ background: '#F0FDF4', border: '1px solid #BBF7D0' }}>
+                      <div className="flex items-center justify-center w-7 h-7 rounded-full flex-shrink-0" style={{ background: '#16A34A' }}>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round">
+                          <polyline points="20 6 9 17 4 12"/>
+                        </svg>
+                      </div>
+                      <div>
+                        <p style={{ fontSize: 13, fontWeight: 700, color: '#15803D' }}>
+                          {(() => {
+                            const p = promoStatus as { valid: true; percent_off: number | null; amount_off: number | null; name: string }
+                            if (p.percent_off) return `${p.percent_off} % Rabatt aktiv`
+                            if (p.amount_off) return `${Math.round(p.amount_off / 100)} € Rabatt aktiv`
+                            return 'Rabatt aktiv'
+                          })()}
+                        </p>
+                        <p style={{ fontSize: 12, color: '#166534' }}>Preise wurden aktualisiert</p>
+                      </div>
+                    </div>
+                  )}
+
+                  <div style={{ position: 'relative' }}>
                     <input
                       type="text"
                       value={promoCode}
-                      onChange={e => setPromoCode(e.target.value)}
+                      onChange={e => setPromoCode(e.target.value.toUpperCase())}
                       placeholder="Code eingeben"
                       autoFocus
                       style={{
-                        flex: 1, fontSize: 14, padding: '10px 13px',
-                        border: `1px solid ${promoCode ? '#8060b0' : '#E5E7EB'}`,
+                        width: '100%', fontSize: 14, padding: '11px 44px 11px 13px',
+                        border: `1.5px solid ${
+                          promoStatus === 'validating' ? '#D1D5DB'
+                          : promoApplied ? '#16A34A'
+                          : promoStatus && !(promoStatus as { valid: boolean }).valid ? '#EF4444'
+                          : promoCode ? '#8060b0' : '#E5E7EB'
+                        }`,
                         borderRadius: 12, background: '#FAFAFA',
-                        color: '#111', outline: 'none',
+                        color: '#111', outline: 'none', boxSizing: 'border-box',
+                        transition: 'border-color 0.2s',
                       }}
                     />
-                    <button
-                      onClick={() => { setPromoCode(''); setShowPromoInput(false); }}
-                      style={{
-                        fontSize: 12, color: '#9CA3AF', background: '#F3F4F6',
-                        padding: '10px 12px', borderRadius: 12, cursor: 'pointer',
-                        whiteSpace: 'nowrap',
-                      }}
-                    >
-                      Entfernen
-                    </button>
+                    {/* Status icon inside input */}
+                    <div style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }}>
+                      {promoStatus === 'validating' && (
+                        <span className="w-4 h-4 rounded-full border-2 animate-spin" style={{ borderColor: '#E5E7EB', borderTopColor: '#8060b0', display: 'block' }} />
+                      )}
+                      {promoApplied && (
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#16A34A" strokeWidth="2.5" strokeLinecap="round">
+                          <polyline points="20 6 9 17 4 12"/>
+                        </svg>
+                      )}
+                      {promoStatus !== null && promoStatus !== 'validating' && !(promoStatus as { valid: boolean }).valid && promoCode && (
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#EF4444" strokeWidth="2.5" strokeLinecap="round">
+                          <circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>
+                        </svg>
+                      )}
+                    </div>
                   </div>
+
+                  {/* Invalid hint */}
+                  {promoStatus !== null && promoStatus !== 'validating' && !(promoStatus as { valid: boolean }).valid && promoCode && (
+                    <p style={{ fontSize: 12, color: '#EF4444', marginTop: 5 }}>Code nicht gefunden oder abgelaufen.</p>
+                  )}
+
+                  <button
+                    onClick={() => { setPromoCode(''); setPromoStatus(null); setShowPromoInput(false); }}
+                    style={{ fontSize: 12, color: '#9CA3AF', marginTop: 8, cursor: 'pointer' }}
+                  >
+                    Code entfernen
+                  </button>
                 </div>
               )}
             </div>
