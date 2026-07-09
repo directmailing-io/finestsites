@@ -4,6 +4,7 @@ import "./globals.css";
 import { ChunkErrorHandler } from "@/components/ChunkErrorHandler";
 import UrlParamPersistence from "@/components/UrlParamPersistence";
 import CookieBanner from "@/components/CookieBanner";
+import RefCookieSetter from "@/components/RefCookieSetter";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -68,6 +69,7 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col">
         <ChunkErrorHandler />
         <UrlParamPersistence />
+        <RefCookieSetter />
         {children}
         <CookieBanner />
       </body>

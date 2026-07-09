@@ -3216,7 +3216,12 @@ function UpgradeModal({
   const [referredBy, setReferredBy] = useState<string | null>(null)
   const [promoCode, setPromoCode] = useState('')
   const [showPromoInput, setShowPromoInput] = useState(false)
-  const [promoStatus, setPromoStatus] = useState<null | 'validating' | { valid: true; percent_off: number | null; amount_off: number | null; name: string } | { valid: false }>(null)
+  type PromoResult =
+    | { valid: true; type: 'affiliate'; username: string; display_name: string; percent_off: 20; amount_off: null }
+    | { valid: true; type: 'promo'; percent_off: number | null; amount_off: number | null; name: string }
+    | { valid: false }
+
+  const [promoStatus, setPromoStatus] = useState<null | 'validating' | PromoResult>(null)
 
   useEffect(() => {
     fetch('/api/user/profile', { cache: 'no-store' })
@@ -3225,7 +3230,7 @@ function UpgradeModal({
       .catch(() => {})
   }, [])
 
-  // Debounced promo code validation
+  // Debounced live validation: affiliate username first, then Stripe promo code
   useEffect(() => {
     const trimmed = promoCode.trim()
     if (!trimmed) { setPromoStatus(null); return }
@@ -3234,7 +3239,7 @@ function UpgradeModal({
       try {
         const res = await fetch(`/api/billing/validate-promo?code=${encodeURIComponent(trimmed)}`)
         const data = await res.json()
-        setPromoStatus(data.valid ? { valid: true, percent_off: data.percent_off, amount_off: data.amount_off, name: data.name } : { valid: false })
+        setPromoStatus(data.valid ? data as PromoResult : { valid: false })
       } catch {
         setPromoStatus({ valid: false })
       }
@@ -3243,7 +3248,7 @@ function UpgradeModal({
   }, [promoCode])
 
   const hasDiscount = !!referredBy
-  const promoApplied = !hasDiscount && promoStatus !== null && promoStatus !== 'validating' && (promoStatus as { valid: boolean }).valid
+  const promoApplied = !hasDiscount && promoStatus !== null && promoStatus !== 'validating' && (promoStatus as PromoResult).valid
 
   function effectivePrice(base: number) {
     if (hasDiscount) return Math.round(base * (1 - REFERRAL_DISCOUNT))
@@ -3477,27 +3482,31 @@ function UpgradeModal({
                 </button>
               ) : (
                 <div>
-                  {/* Valid code banner */}
-                  {promoApplied && (
-                    <div className="flex items-center gap-3 mb-3 px-4 py-3 rounded-2xl" style={{ background: '#F0FDF4', border: '1px solid #BBF7D0' }}>
-                      <div className="flex items-center justify-center w-7 h-7 rounded-full flex-shrink-0" style={{ background: '#16A34A' }}>
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round">
-                          <polyline points="20 6 9 17 4 12"/>
-                        </svg>
+                  {/* Valid code banner — different message for affiliate vs. promo */}
+                  {promoApplied && (() => {
+                    const p = promoStatus as PromoResult & { valid: true }
+                    const headline = p.type === 'affiliate'
+                      ? `Partnercode von @${p.username} erkannt`
+                      : p.percent_off ? `${p.percent_off} % Aktionsrabatt aktiv`
+                      : p.amount_off ? `${Math.round(p.amount_off / 100)} € Rabatt aktiv`
+                      : 'Rabatt aktiv'
+                    const sub = p.type === 'affiliate'
+                      ? '20 % Rabatt dauerhaft auf dein Abo'
+                      : 'Preis wurde aktualisiert'
+                    return (
+                      <div className="flex items-center gap-3 mb-3 px-4 py-3 rounded-2xl" style={{ background: '#F0FDF4', border: '1px solid #BBF7D0' }}>
+                        <div className="flex items-center justify-center w-7 h-7 rounded-full flex-shrink-0" style={{ background: '#16A34A' }}>
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round">
+                            <polyline points="20 6 9 17 4 12"/>
+                          </svg>
+                        </div>
+                        <div>
+                          <p style={{ fontSize: 13, fontWeight: 700, color: '#15803D' }}>{headline}</p>
+                          <p style={{ fontSize: 12, color: '#166534' }}>{sub}</p>
+                        </div>
                       </div>
-                      <div>
-                        <p style={{ fontSize: 13, fontWeight: 700, color: '#15803D' }}>
-                          {(() => {
-                            const p = promoStatus as { valid: true; percent_off: number | null; amount_off: number | null; name: string }
-                            if (p.percent_off) return `${p.percent_off} % Rabatt aktiv`
-                            if (p.amount_off) return `${Math.round(p.amount_off / 100)} € Rabatt aktiv`
-                            return 'Rabatt aktiv'
-                          })()}
-                        </p>
-                        <p style={{ fontSize: 12, color: '#166534' }}>Preise wurden aktualisiert</p>
-                      </div>
-                    </div>
-                  )}
+                    )
+                  })()}
 
                   <div style={{ position: 'relative' }}>
                     <input

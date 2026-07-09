@@ -23,7 +23,9 @@ export async function POST(req: NextRequest) {
     const user = await getUserFromRequest(req)
     if (!user) return NextResponse.json({ error: 'Nicht angemeldet.' }, { status: 401 })
 
-    const { plan, interval = 'monthly', site_id, promo_code } = await req.json() as { plan: PlanKey; interval?: BillingInterval; site_id?: string; promo_code?: string }
+    const { plan, interval = 'monthly', site_id, promo_code } = await req.json() as {
+      plan: PlanKey; interval?: BillingInterval; site_id?: string; promo_code?: string
+    }
     const priceId = getPriceIdByPlan(plan, interval)
     if (!priceId) return NextResponse.json({ error: 'Ungültiger Plan.' }, { status: 400 })
 
@@ -84,14 +86,35 @@ export async function POST(req: NextRequest) {
     const referredBy = profile?.referredByUsername ?? null
     const hasReferral = !!referredBy && !!affiliateCouponId
 
-    // Resolve manually entered promo code to a Stripe promotion_code ID
+    // Resolve manually entered code: affiliate username OR Stripe promotion code.
+    // Affiliate takes priority — if the entered code matches a username in our DB,
+    // we track the referral and apply the affiliate coupon (same 20% as the auto-ref flow).
+    let affiliateApplied = false
     let promoCodeId: string | undefined
+
     if (promo_code && !hasReferral) {
-      try {
-        const codes = await stripe.promotionCodes.list({ code: promo_code, active: true, limit: 1 })
-        if (codes.data.length > 0) promoCodeId = codes.data[0].id
-      } catch {
-        // If lookup fails, proceed without — Stripe checkout will still accept codes inline
+      const { users: usersTable } = await import('@/lib/db/schema')
+      const { eq: eqFn } = await import('drizzle-orm')
+
+      const affiliateUser = await db.query.users.findFirst({
+        where: eqFn(usersTable.username, promo_code.toLowerCase().trim()),
+        columns: { username: true },
+      })
+
+      if (affiliateUser?.username) {
+        // It's an affiliate/partner code — track referral + apply coupon
+        affiliateApplied = true
+        if (!profile?.referredByUsername) {
+          await db.update(usersTable)
+            .set({ referredByUsername: affiliateUser.username })
+            .where(eqFn(usersTable.id, user.id))
+        }
+      } else {
+        // Try as Stripe promotion code (action codes: BLACKFRIDAY etc.)
+        try {
+          const codes = await stripe.promotionCodes.list({ code: promo_code.toUpperCase(), active: true, limit: 1 })
+          if (codes.data.length > 0) promoCodeId = codes.data[0].id
+        } catch { /* ignore: Stripe checkout still accepts codes inline */ }
       }
     }
 
@@ -109,9 +132,9 @@ export async function POST(req: NextRequest) {
       mode: 'subscription',
       payment_method_types: ['card', 'sepa_debit'],
       line_items: [{ price: priceId, quantity: 1 }],
-      // Discount priority: referral coupon > manually entered promo code > allow any promo code at checkout
-      // (Stripe doesn't allow mixing discounts[] with allow_promotion_codes)
-      ...(hasReferral
+      // Discount priority: (auto-referral OR affiliate code) > Stripe promo code > allow any code at checkout
+      // Stripe doesn't allow mixing discounts[] with allow_promotion_codes.
+      ...(hasReferral || affiliateApplied
         ? { discounts: [{ coupon: affiliateCouponId!.trim() }] }
         : promoCodeId
           ? { discounts: [{ promotion_code: promoCodeId }] }

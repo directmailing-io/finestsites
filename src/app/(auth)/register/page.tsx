@@ -36,12 +36,23 @@ function RegisterForm() {
     }
   }, [templateId])
 
-  // Auto-validate referral code that came in via ?ref= URL param
+  // Auto-validate referral code: from ?ref= URL param or fs_ref cookie fallback
   useEffect(() => {
     if (urlRef) {
       checkReferral(urlRef)
+    } else {
+      // Cookie fallback: user visited finestsites.io/?ref=X earlier but didn't register immediately
+      const match = document.cookie.match(/(?:^|;\s*)fs_ref=([^;]*)/)
+      if (match) {
+        const cookieRef = decodeURIComponent(match[1]).trim()
+        if (cookieRef) {
+          setReferralCode(cookieRef)
+          setShowReferral(true)
+          checkReferral(cookieRef)
+        }
+      }
     }
-    // Only run once on mount — urlRef doesn't change
+    // Only run once on mount
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
