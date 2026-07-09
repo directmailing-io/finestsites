@@ -836,12 +836,12 @@ export default function SupportChat() {
                     <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
                       <div style={{
                         width: 7, height: 7, borderRadius: '50%',
-                        background: live ? '#22C55E' : '#F97316',
-                        boxShadow: live ? '0 0 0 2px rgba(34,197,94,0.3)' : '0 0 0 2px rgba(249,115,22,0.3)',
+                        background: live ? '#FBBF24' : '#9CA3AF',
+                        boxShadow: live ? '0 0 0 2px rgba(251,191,36,0.3)' : '0 0 0 2px rgba(156,163,175,0.3)',
                         flexShrink: 0,
                       }} />
-                      <span style={{ fontSize: 11, color: live ? '#86EFAC' : '#FED7AA' }}>
-                        {live ? 'Jetzt erreichbar' : 'Außerhalb der Zeiten'}
+                      <span style={{ fontSize: 11, color: live ? '#FDE68A' : '#D1D5DB' }}>
+                        {live ? 'Antwortet meist am gleichen Tag' : 'Antwortet innerhalb von 24 Std.'}
                       </span>
                     </div>
                   </div>
