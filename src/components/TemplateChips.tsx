@@ -75,7 +75,7 @@ export function PriceChip({ isFree, size = 'sm' }: { isFree: boolean; size?: 'sm
     )
   }
   return (
-    <span style={{ fontSize: fs, fontWeight: 700, color: '#6D28D9', background: '#EEE8FF', padding: pad, borderRadius: 100, display: 'inline-block', letterSpacing: '0.06em', textTransform: 'uppercase', border: '1px solid #D4C5FA' }}>
+    <span style={{ fontSize: fs, fontWeight: 600, color: '#7C3AED', background: 'transparent', padding: pad, borderRadius: 100, display: 'inline-block', letterSpacing: '0.03em', border: '1px solid #C4A8F0' }}>
       Premium
     </span>
   )

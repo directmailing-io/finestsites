@@ -347,14 +347,22 @@ export default function NewSitePage() {
 
             return (
               <div key={tpl.id}
-                className="flex rounded-2xl bg-white overflow-hidden"
+                className="flex flex-col rounded-2xl overflow-hidden"
                 style={{
+                  background: '#fff',
                   boxShadow: isPremium
-                    ? '0 1px 4px rgba(124,58,237,0.08), 0 6px 24px rgba(124,58,237,0.10)'
+                    ? '0 2px 8px rgba(124,58,237,0.10), 0 8px 28px rgba(124,58,237,0.12)'
                     : '0 1px 4px rgba(0,0,0,0.06), 0 6px 24px rgba(0,0,0,0.06)',
-                  border: isPremium ? '1.5px solid #E8D8FB' : '1px solid #F1F5F9',
-                  minHeight: 190,
+                  border: isPremium ? '1.5px solid #D4B8F9' : '1px solid #F1F5F9',
                 }}>
+
+                {/* Premium accent bar — full-width gradient stripe */}
+                {isPremium && (
+                  <div style={{ height: 3, background: 'linear-gradient(90deg, #7C3AED 0%, #A78BFA 70%, #C4B5FD 100%)', flexShrink: 0 }} />
+                )}
+
+                {/* Card body */}
+                <div className="flex" style={{ minHeight: 190 }}>
 
                 {/* Image — left */}
                 <div className="flex-shrink-0 relative overflow-hidden" style={{ width: '40%', background: '#f5f5f7' }}>
@@ -372,23 +380,6 @@ export default function NewSitePage() {
                       </svg>
                     </div>
                   )}
-                  {/* Premium label on preview image */}
-                  {isPremium && (
-                    <div className="absolute top-2.5 left-2.5"
-                      style={{
-                        background: 'rgba(255,255,255,0.96)',
-                        backdropFilter: 'blur(8px)',
-                        WebkitBackdropFilter: 'blur(8px)',
-                        borderRadius: 5, padding: '3px 8px',
-                        fontSize: 9, fontWeight: 800, color: '#5B21B6',
-                        boxShadow: '0 1px 6px rgba(0,0,0,0.14)',
-                        letterSpacing: '0.12em',
-                        textTransform: 'uppercase',
-                        border: '1px solid rgba(200,180,240,0.5)',
-                      }}>
-                      PREMIUM
-                    </div>
-                  )}
                 </div>
 
                 {/* Content — right */}
@@ -398,7 +389,7 @@ export default function NewSitePage() {
                   <div className="flex flex-wrap gap-1.5">
                     <CompanyChip name={matchedCompany} isAllrounder={tpl.is_allrounder} size="xs" />
                     <BadgeChip badge={tpl.badge} size="xs" />
-                    {tpl.is_free && <PriceChip isFree={true} size="xs" />}
+                    <PriceChip isFree={tpl.is_free ?? false} size="xs" />
                     {isDraft && (
                       <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold" style={{ background: '#FFF7ED', color: '#C2410C', border: '1px solid #FED7AA' }}>
                         Entwurf
@@ -442,6 +433,7 @@ export default function NewSitePage() {
                     ) : isDraft ? 'Weiter bearbeiten →' : isPublished ? 'Website öffnen →' : 'Vorlage verwenden →'}
                   </button>
                 </div>
+                </div>{/* end card body */}
               </div>
             )
           })}
