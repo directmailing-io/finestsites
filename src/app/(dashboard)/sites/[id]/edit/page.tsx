@@ -3281,8 +3281,8 @@ function UpgradeModal({
   }
 
   const benefits = [
-    'Du wirkst sofort professionell. Nicht wie alle anderen.',
-    'Kunden finden dich rund um die Uhr. Auch wenn du schläfst.',
+    'Interessenten überzeugen sich selbst. Noch bevor sie mit dir sprechen.',
+    'Texte, Design und Hosting sind fertig. Du musst dich nie damit beschäftigen.',
     intervalMode === 'yearly'
       ? 'Mindestlaufzeit 12 Monate, danach jährlich kündbar.'
       : 'Monatlich kündbar. Kein Risiko, kein Kleingedrucktes.',
