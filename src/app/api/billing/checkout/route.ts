@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
     const user = await getUserFromRequest(req)
     if (!user) return NextResponse.json({ error: 'Nicht angemeldet.' }, { status: 401 })
 
-    const { plan, interval = 'monthly', site_id } = await req.json() as { plan: PlanKey; interval?: BillingInterval; site_id?: string }
+    const { plan, interval = 'monthly', site_id, promo_code } = await req.json() as { plan: PlanKey; interval?: BillingInterval; site_id?: string; promo_code?: string }
     const priceId = getPriceIdByPlan(plan, interval)
     if (!priceId) return NextResponse.json({ error: 'Ungültiger Plan.' }, { status: 400 })
 
@@ -78,10 +78,22 @@ export async function POST(req: NextRequest) {
         ? `${appUrl}/onboarding/plan?canceled=1`
         : `${appUrl}/settings?canceled=1`
 
-    // Apply affiliate discount coupon if user was referred
+    // Apply affiliate discount coupon if user was referred.
+    // If user manually entered a promo code and has no referral, look it up in Stripe.
     const affiliateCouponId = process.env.STRIPE_AFFILIATE_COUPON_ID
     const referredBy = profile?.referredByUsername ?? null
     const hasReferral = !!referredBy && !!affiliateCouponId
+
+    // Resolve manually entered promo code to a Stripe promotion_code ID
+    let promoCodeId: string | undefined
+    if (promo_code && !hasReferral) {
+      try {
+        const codes = await stripe.promotionCodes.list({ code: promo_code, active: true, limit: 1 })
+        if (codes.data.length > 0) promoCodeId = codes.data[0].id
+      } catch {
+        // If lookup fails, proceed without — Stripe checkout will still accept codes inline
+      }
+    }
 
     // Stripe Tax: enabled when STRIPE_AUTOMATIC_TAX=1 in env.
     // Requires:
@@ -97,11 +109,13 @@ export async function POST(req: NextRequest) {
       mode: 'subscription',
       payment_method_types: ['card', 'sepa_debit'],
       line_items: [{ price: priceId, quantity: 1 }],
-      // Allow promo codes only when no affiliate discount is already applied
-      // (Stripe doesn't allow mixing discounts and allow_promotion_codes)
+      // Discount priority: referral coupon > manually entered promo code > allow any promo code at checkout
+      // (Stripe doesn't allow mixing discounts[] with allow_promotion_codes)
       ...(hasReferral
         ? { discounts: [{ coupon: affiliateCouponId!.trim() }] }
-        : { allow_promotion_codes: true }),
+        : promoCodeId
+          ? { discounts: [{ promotion_code: promoCodeId }] }
+          : { allow_promotion_codes: true }),
       success_url: successUrl,
       cancel_url: cancelUrl,
 

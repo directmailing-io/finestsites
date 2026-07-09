@@ -3210,11 +3210,12 @@ function UpgradeModal({
   onClose: () => void
 }) {
   const [intervalMode, setIntervalMode] = useState<'monthly' | 'yearly'>('monthly')
-  const [loading, setLoading] = useState<string | null>(null)
+  const [selectedPlan, setSelectedPlan] = useState('pro')
+  const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [referredBy, setReferredBy] = useState<string | null>(null)
+  const [promoCode, setPromoCode] = useState('')
 
-  // Load referral info on mount
   useEffect(() => {
     fetch('/api/user/profile', { cache: 'no-store' })
       .then(r => r.json())
@@ -3228,35 +3229,37 @@ function UpgradeModal({
     return hasDiscount ? Math.round(base * (1 - REFERRAL_DISCOUNT)) : base
   }
 
-  async function selectPlan(planKey: string) {
-    setLoading(planKey)
+  async function checkout() {
+    setLoading(true)
     setError('')
     try {
+      const body: Record<string, string> = { plan: selectedPlan, interval: intervalMode, site_id: siteId }
+      if (promoCode.trim()) body.promo_code = promoCode.trim().toUpperCase()
       const res = await fetch('/api/billing/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ plan: planKey, interval: intervalMode, site_id: siteId }),
+        body: JSON.stringify(body),
       })
       const data = await res.json()
       if (!res.ok || !data.url) throw new Error(data.error || 'Fehler beim Checkout.')
       window.location.href = data.url
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : 'Checkout fehlgeschlagen.')
-      setLoading(null)
+      setLoading(false)
     }
   }
 
-  // Correct cancellation note depending on interval
-  const cancellationNote = intervalMode === 'yearly'
-    ? 'Mindestlaufzeit 12 Monate, danach jährlich kündbar'
-    : 'Monatlich kündbar, kein Risiko'
-
-  // Features that are accurate for the selected interval
-  const features = [
-    'Fertige Texte und Design, du tippst nur deinen Namen',
-    'SSL, DSGVO-konform und Hosting inklusive',
-    cancellationNote,
+  const benefits = [
+    'Du wirkst professionell. Nicht wie alle anderen.',
+    'Kunden finden dich. Auch wenn du gerade nicht online bist.',
+    intervalMode === 'yearly'
+      ? 'Mindestlaufzeit 12 Monate. Danach jährlich kündbar.'
+      : 'Monatlich kündbar. Kein Risiko, kein Kleingedrucktes.',
   ]
+
+  const activePlan = UPGRADE_PLANS.find(p => p.key === selectedPlan)!
+  const activeBaseMonthly = intervalMode === 'monthly' ? activePlan.price_monthly : Math.round(activePlan.price_yearly / 12)
+  const activePrice = effectivePrice(activeBaseMonthly)
 
   return (
     <div
@@ -3273,21 +3276,9 @@ function UpgradeModal({
           <div style={{ width: 36, height: 4, borderRadius: 2, background: '#D4C5E2' }} />
         </div>
 
-        {/* ── Pastel header — matches app style ───────────────── */}
-        <div
-          className="px-6 pt-5 pb-5 flex-shrink-0"
-          style={{ background: '#F5F0FB', borderBottom: '1px solid #E8DFFE' }}
-        >
-          <div className="flex items-start justify-between mb-3">
-            {/* Star icon — same pastel style as rest of app */}
-            <div
-              className="flex items-center justify-center w-10 h-10 rounded-2xl"
-              style={{ background: '#EDE5F8', border: '1.5px solid #D4C5E2' }}
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8060b0" strokeWidth="2" strokeLinecap="round">
-                <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
-              </svg>
-            </div>
+        {/* Header */}
+        <div className="px-6 pt-5 pb-5 flex-shrink-0" style={{ background: '#F5F0FB', borderBottom: '1px solid #E8DFFE' }}>
+          <div className="flex justify-end mb-4">
             <button
               onClick={onClose}
               className="flex items-center justify-center w-8 h-8 rounded-full"
@@ -3299,23 +3290,16 @@ function UpgradeModal({
             </button>
           </div>
 
-          <h2 className="text-xl font-bold mb-1" style={{ color: '#1a2530', letterSpacing: '-0.02em' }}>
+          <h2 className="text-2xl font-bold mb-1" style={{ color: '#1a2530', letterSpacing: '-0.02em' }}>
             Fast fertig!
           </h2>
           <p className="text-sm" style={{ color: '#6B7280' }}>
-            Deine Seite ist bereit. Wähle einen Tarif und geh live.
+            Wähle deinen Tarif. Deine Seite geht sofort live.
           </p>
 
-          {/* Referral discount banner — shown when user was referred */}
           {hasDiscount && (
-            <div
-              className="mt-3 flex items-center gap-2.5 px-3 py-2.5 rounded-xl"
-              style={{ background: '#F0FDF4', border: '1px solid #BBF7D0' }}
-            >
-              <div
-                className="flex items-center justify-center w-6 h-6 rounded-full flex-shrink-0"
-                style={{ background: '#16A34A' }}
-              >
+            <div className="mt-3 flex items-center gap-2.5 px-3 py-2.5 rounded-xl" style={{ background: '#F0FDF4', border: '1px solid #BBF7D0' }}>
+              <div className="flex items-center justify-center w-6 h-6 rounded-full flex-shrink-0" style={{ background: '#16A34A' }}>
                 <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round">
                   <polyline points="20 6 9 17 4 12"/>
                 </svg>
@@ -3330,7 +3314,7 @@ function UpgradeModal({
           )}
         </div>
 
-        {/* ── Scrollable body ─────────────────────────────────── */}
+        {/* Scrollable body */}
         <div className="overflow-y-auto flex-1 px-5 pt-5 pb-6">
 
           {/* Billing toggle */}
@@ -3350,10 +3334,7 @@ function UpgradeModal({
                 {iv === 'monthly' ? 'Monatlich' : (
                   <span className="flex items-center gap-1.5">
                     Jährlich
-                    <span
-                      className="text-[10px] font-bold px-1.5 py-0.5 rounded-full"
-                      style={{ background: '#C8D8B8', color: '#2d5a1b' }}
-                    >
+                    <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full" style={{ background: '#C8D8B8', color: '#2d5a1b' }}>
                       2 Monate gratis
                     </span>
                   </span>
@@ -3362,87 +3343,67 @@ function UpgradeModal({
             ))}
           </div>
 
-          {/* Plan cards */}
-          <div className="flex flex-col gap-2.5 mb-4">
+          {/* Selectable plan cards */}
+          <div className="flex flex-col gap-2 mb-5">
             {UPGRADE_PLANS.map(plan => {
               const baseMonthly = intervalMode === 'monthly' ? plan.price_monthly : Math.round(plan.price_yearly / 12)
               const price = effectivePrice(baseMonthly)
-              const isLoading = loading === plan.key
+              const isSelected = selectedPlan === plan.key
               const isPopular = !!plan.popular
               const dailyCents = (price / 30).toFixed(2).replace('.', ',')
-              const yearlySaving = intervalMode === 'yearly'
-                ? Math.round(plan.price_monthly * 12 - plan.price_yearly) * (hasDiscount ? (1 - REFERRAL_DISCOUNT) : 1)
-                : 0
 
               return (
                 <button
                   key={plan.key}
-                  onClick={() => selectPlan(plan.key)}
-                  disabled={!!loading}
+                  onClick={() => setSelectedPlan(plan.key)}
+                  disabled={loading}
                   className="w-full text-left rounded-2xl transition-all relative"
                   style={{
-                    border: isPopular ? '2px solid #8060b0' : '1.5px solid #E5E7EB',
-                    background: isPopular ? '#F5F0FB' : '#FAFAFA',
-                    opacity: loading && !isLoading ? 0.45 : 1,
-                    cursor: loading ? 'not-allowed' : 'pointer',
-                    padding: isPopular ? '14px 14px 12px 16px' : '12px 14px 12px 16px',
+                    border: isSelected ? '2px solid #8060b0' : '1.5px solid #E5E7EB',
+                    background: isSelected ? '#F5F0FB' : '#FAFAFA',
+                    padding: '13px 14px',
                   }}
                 >
-                  {/* Popular badge */}
-                  {isPopular && (
+                  {/* Badge */}
+                  {(isPopular || isSelected) && (
                     <span
-                      className="absolute -top-px left-5 text-[9px] font-bold px-2.5 py-1 rounded-b-lg text-white"
-                      style={{ background: '#8060b0', letterSpacing: '0.06em' }}
+                      className="absolute -top-px right-4 text-[9px] font-bold px-2 py-0.5 rounded-b-md"
+                      style={{
+                        background: isSelected ? '#8060b0' : '#E5E7EB',
+                        color: isSelected ? '#fff' : '#6B7280',
+                        letterSpacing: '0.05em',
+                      }}
                     >
-                      BELIEBTESTE WAHL
+                      {isSelected && isPopular ? 'BELIEBTESTE WAHL' : isSelected ? 'AUSGEWÄHLT' : 'BELIEBT'}
                     </span>
                   )}
 
-                  <div className="flex items-center gap-3" style={{ marginTop: isPopular ? 6 : 0 }}>
-                    {/* Left: plan name + sites */}
+                  <div className="flex items-center gap-3">
+                    {/* Radio indicator */}
+                    <div
+                      className="flex-shrink-0 w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all"
+                      style={{ borderColor: isSelected ? '#8060b0' : '#D1D5DB', background: isSelected ? '#F5F0FB' : '#fff' }}
+                    >
+                      {isSelected && <div className="w-2.5 h-2.5 rounded-full" style={{ background: '#8060b0' }} />}
+                    </div>
+
+                    {/* Plan info */}
                     <div className="flex-1 min-w-0">
-                      <p className="font-bold text-sm mb-0.5" style={{ color: '#1a2530' }}>{plan.name}</p>
-                      <p className="text-xs font-medium" style={{ color: isPopular ? '#8060b0' : '#6B7280' }}>
-                        {plan.sites}
-                      </p>
-                      {yearlySaving > 0 && (
-                        <p className="text-[10px] mt-0.5" style={{ color: '#9CA3AF' }}>
-                          Du sparst ca. {Math.round(yearlySaving)} € im Jahr
-                        </p>
-                      )}
+                      <p className="font-bold text-sm leading-tight" style={{ color: '#1a2530' }}>{plan.name}</p>
+                      <p className="text-xs leading-tight" style={{ color: isSelected ? '#8060b0' : '#9CA3AF' }}>{plan.sites}</p>
                     </div>
 
                     {/* Price */}
-                    <div className="text-right flex-shrink-0 mr-3">
+                    <div className="text-right flex-shrink-0">
                       {hasDiscount && (
-                        <p className="text-xs line-through leading-none" style={{ color: '#C4B5FD' }}>
+                        <p className="text-[10px] line-through leading-none mb-0.5" style={{ color: '#C4B5FD' }}>
                           {baseMonthly} €
                         </p>
                       )}
-                      <p className="text-xl font-bold leading-none" style={{ color: isPopular ? '#8060b0' : '#111' }}>
-                        {price} €
-                        <span className="text-[11px] font-normal" style={{ color: '#9CA3AF' }}>/Mo</span>
+                      <p className="font-bold leading-tight" style={{ color: isSelected ? '#8060b0' : '#1a2530', fontSize: 17 }}>
+                        {price} <span className="text-xs font-normal" style={{ color: '#9CA3AF' }}>€/Mo</span>
                       </p>
-                      <p className="text-[10px] mt-0.5" style={{ color: '#9CA3AF' }}>
-                        {dailyCents} € täglich
-                      </p>
-                    </div>
-
-                    {/* Arrow button */}
-                    <div
-                      className="flex-shrink-0 w-9 h-9 rounded-xl flex items-center justify-center"
-                      style={{ background: isPopular ? '#8060b0' : '#1a2530' }}
-                    >
-                      {isLoading ? (
-                        <span
-                          className="w-4 h-4 rounded-full border-2 animate-spin"
-                          style={{ borderColor: 'rgba(255,255,255,0.25)', borderTopColor: '#fff' }}
-                        />
-                      ) : (
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round">
-                          <path d="M5 12h14M12 5l7 7-7 7"/>
-                        </svg>
-                      )}
+                      <p className="text-[10px] mt-0.5" style={{ color: '#9CA3AF' }}>{dailyCents} € täglich</p>
                     </div>
                   </div>
                 </button>
@@ -3450,33 +3411,65 @@ function UpgradeModal({
             })}
           </div>
 
-          {/* Features — interval-accurate, no em-dashes */}
-          <div
-            className="flex flex-col gap-2 px-3 py-3 mb-4 rounded-xl"
-            style={{ background: '#F9F7FF', border: '1px solid #EDE5F8' }}
-          >
-            {features.map((f, i) => (
+          {/* Benefits */}
+          <div className="flex flex-col gap-2 px-3 py-3 mb-4 rounded-xl" style={{ background: '#F9F7FF', border: '1px solid #EDE5F8' }}>
+            {benefits.map((b, i) => (
               <div key={i} className="flex items-start gap-2.5">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#8060b0" strokeWidth="2.5" strokeLinecap="round" style={{ flexShrink: 0, marginTop: 1 }}>
                   <polyline points="20 6 9 17 4 12"/>
                 </svg>
-                <span className="text-xs leading-relaxed" style={{ color: '#555' }}>{f}</span>
+                <span className="text-xs leading-relaxed" style={{ color: '#555' }}>{b}</span>
               </div>
             ))}
           </div>
+
+          {/* Promo / referral code input — only when no auto-referral discount */}
+          {!hasDiscount && (
+            <div className="mb-4">
+              <label className="block text-xs font-medium mb-1.5" style={{ color: '#6B7280' }}>
+                Empfehlungs- oder Gutscheincode
+              </label>
+              <input
+                type="text"
+                value={promoCode}
+                onChange={e => setPromoCode(e.target.value)}
+                placeholder="Code eingeben (optional)"
+                className="w-full text-sm px-3 py-2.5 rounded-xl border outline-none transition-colors"
+                style={{
+                  borderColor: promoCode ? '#8060b0' : '#E5E7EB',
+                  background: '#FAFAFA',
+                  color: '#1a2530',
+                }}
+              />
+            </div>
+          )}
 
           {error && (
             <p className="mb-3 text-sm text-red-600 text-center">{error}</p>
           )}
 
-          {!hasDiscount && (
-            <p className="text-xs text-center mb-3" style={{ color: '#9CA3AF' }}>
-              Gutscheincode? Du kannst ihn beim Bezahlen eingeben.
-            </p>
-          )}
+          {/* Main CTA */}
+          <button
+            onClick={checkout}
+            disabled={loading}
+            className="w-full py-3.5 rounded-2xl font-bold text-sm text-white transition-all mb-3"
+            style={{
+              background: loading ? '#C4B5FD' : '#8060b0',
+              cursor: loading ? 'not-allowed' : 'pointer',
+            }}
+          >
+            {loading ? (
+              <span className="flex items-center justify-center gap-2">
+                <span className="w-4 h-4 rounded-full border-2 animate-spin" style={{ borderColor: 'rgba(255,255,255,0.3)', borderTopColor: '#fff' }} />
+                Wird geladen...
+              </span>
+            ) : (
+              `${activePlan.name} freischalten · ${activePrice} \u20ac/Mo`
+            )}
+          </button>
 
-          {/* Trust strip — cancellation text matches selected interval */}
-          <div className="flex items-center justify-center gap-1.5 pt-3" style={{ borderTop: '1px solid #F3F4F6' }}>
+          {/* Trust strip */}
+          <div className="flex items-center justify-center gap-1.5">
             <svg width="10" height="12" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="2" strokeLinecap="round">
               <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
               <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
