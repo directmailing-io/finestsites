@@ -463,8 +463,8 @@ const blurBorder  = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement 
 
 // ─── Card Select Field ────────────────────────────────────────────────────────
 
-function CardSelectField({ field, value, onChange }: {
-  field: FieldSchema; value: string; onChange: (v: string) => void
+function CardSelectField({ field, value, onChange, narrow }: {
+  field: FieldSchema; value: string; onChange: (v: string) => void; narrow?: boolean
 }) {
   const opts = field.card_options ?? []
   const [hovered, setHovered] = useState<{ opt: CardOption; rect: DOMRect } | null>(null)
@@ -510,10 +510,12 @@ function CardSelectField({ field, value, onChange }: {
   const isCompact = opts.every(o => o.card_type !== 'image' || !o.image_url)
 
   const gridCls = isCompact ? (
+    (narrow && opts.length > 2) ? 'grid-cols-1' :
     opts.length <= 2 ? 'grid-cols-2' :
     opts.length === 3 ? 'grid-cols-1 sm:grid-cols-3' :
     'grid-cols-1 sm:grid-cols-2'
   ) : (
+    narrow ? 'grid-cols-1' :
     opts.length === 2 ? 'grid-cols-1 sm:grid-cols-2' :
     opts.length === 3 ? 'grid-cols-1 sm:grid-cols-3' :
     'grid-cols-2 sm:grid-cols-3 lg:grid-cols-4'
@@ -1546,12 +1548,13 @@ function LoopField({ field, value, onChange, onItemFocus }: {
 
 // ─── Field Renderer ───────────────────────────────────────────────────────────
 
-function FieldRenderer({ field, value, onChange, onItemFocus, complianceApprovedText, onComplianceApproved, onComplianceRevoked }: {
+function FieldRenderer({ field, value, onChange, onItemFocus, complianceApprovedText, onComplianceApproved, onComplianceRevoked, narrow }: {
   field: FieldSchema; value: string; onChange: (v: string) => void
   onItemFocus?: (item: Record<string, string> | null, idx: number) => void
   complianceApprovedText?: string
   onComplianceApproved?: (approvedHtml: string) => void
   onComplianceRevoked?: () => void
+  narrow?: boolean
 }) {
   switch (field.type) {
     case 'textarea':
@@ -1589,7 +1592,7 @@ function FieldRenderer({ field, value, onChange, onItemFocus, complianceApproved
         </select>
       )
     case 'card_select':
-      return <CardSelectField field={field} value={value} onChange={onChange} />
+      return <CardSelectField field={field} value={value} onChange={onChange} narrow={narrow} />
     case 'url':
       return (
         <input type="url" value={value} onChange={e => onChange(e.target.value)}
@@ -2118,6 +2121,9 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
     .filter(f => checkShowWhen(f as unknown as LoopSubField, values, fields as unknown as LoopSubField[]))
     .sort((a, b) => ((a as any).order ?? 0) - ((b as any).order ?? 0))
 
+  // Collapse section nav to icon-only when the editor panel is squeezed by the preview
+  const narrowEditor = showLivePreview && (winW - livePreviewPanelW) < 520
+
   return (
     <div className="fixed inset-0 z-50 flex flex-col" style={{ background: '#F8FAFC' }}>
 
@@ -2419,14 +2425,16 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
       <div className="flex flex-1 overflow-hidden">
 
         {/* ── Left Sidebar: Section Navigation ── */}
-        <aside className="hidden lg:flex flex-shrink-0 overflow-y-auto border-r flex-col gap-1 py-4 px-3"
+        <aside className="hidden lg:flex flex-shrink-0 overflow-y-auto border-r flex-col gap-1 py-4 transition-all duration-200"
             style={{
-              width: '220px',
+              width: narrowEditor ? '52px' : '220px',
               borderColor: '#E5E7EB',
               background: 'white',
+              paddingLeft: narrowEditor ? '6px' : '12px',
+              paddingRight: narrowEditor ? '6px' : '12px',
             }}>
 
-            {sections.length > 0 && (
+            {!narrowEditor && sections.length > 0 && (
               <p className="text-xs font-semibold uppercase tracking-widest px-2 mb-2"
                 style={{ color: '#9CA3AF' }}>
                 Seitenbereiche
@@ -2439,8 +2447,12 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
               return (
                 <button key={sec} type="button"
                   onClick={() => setActiveSection(sec)}
-                  className="flex items-center gap-3 px-3 py-2.5 rounded-[12px] text-left transition-all w-full"
+                  title={narrowEditor ? displaySection(sec) : undefined}
+                  className="flex items-center rounded-[12px] text-left transition-all w-full"
                   style={{
+                    gap: narrowEditor ? 0 : 12,
+                    padding: narrowEditor ? '7px 0' : '10px 12px',
+                    justifyContent: narrowEditor ? 'center' : 'flex-start',
                     background: isActive ? '#1a1a1a' : 'transparent',
                     color: isActive ? 'white' : '#374151',
                   }}
@@ -2458,7 +2470,7 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
                       : <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
                     }
                   </span>
-                  <span className="text-sm font-medium truncate">{displaySection(sec)}</span>
+                  {!narrowEditor && <span className="text-sm font-medium truncate">{displaySection(sec)}</span>}
                 </button>
               )
             })}
@@ -2471,8 +2483,15 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
                 return (
                   <button type="button"
                     onClick={() => setActiveSection(DOMAIN_SECTION)}
-                    className="flex items-center gap-3 px-3 py-2.5 rounded-[12px] text-left transition-all w-full"
-                    style={{ background: isActive ? '#1a1a1a' : 'transparent', color: isActive ? 'white' : '#374151' }}
+                    title={narrowEditor ? 'Domain' : undefined}
+                    className="flex items-center rounded-[12px] text-left transition-all w-full"
+                    style={{
+                      gap: narrowEditor ? 0 : 12,
+                      padding: narrowEditor ? '7px 0' : '10px 12px',
+                      justifyContent: narrowEditor ? 'center' : 'flex-start',
+                      background: isActive ? '#1a1a1a' : 'transparent',
+                      color: isActive ? 'white' : '#374151',
+                    }}
                     onMouseEnter={e => { if (!isActive) (e.currentTarget as HTMLElement).style.background = '#F3F4F6' }}
                     onMouseLeave={e => { if (!isActive) (e.currentTarget as HTMLElement).style.background = 'transparent' }}>
                     <span className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0"
@@ -2486,7 +2505,7 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
                         </svg>
                       )}
                     </span>
-                    <span className="text-sm font-medium truncate">Domain</span>
+                    {!narrowEditor && <span className="text-sm font-medium truncate">Domain</span>}
                   </button>
                 )
               })()}
@@ -2495,13 +2514,14 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
             {/* Separator + save */}
             <div className="mt-auto pt-4 border-t" style={{ borderColor: '#F3F4F6' }}>
               <button onClick={handleSave} disabled={saving}
+                title={narrowEditor ? (saving ? 'Speichert…' : 'Speichern') : undefined}
                 className="w-full flex items-center justify-center gap-2 py-2.5 text-sm font-semibold rounded-[12px] transition-all"
                 style={{ background: '#F3F4F6', color: '#374151' }}>
                 {saving
                   ? <span className="w-3.5 h-3.5 rounded-full border-2 border-gray-300 border-t-gray-700 animate-spin" />
                   : <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
                 }
-                {saving ? 'Speichert…' : 'Speichern'}
+                {!narrowEditor && (saving ? 'Speichert…' : 'Speichern')}
               </button>
             </div>
         </aside>
@@ -2589,6 +2609,7 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
                           field={field}
                           value={values[field.key] ?? ''}
                           onChange={v => handleChange(field.key, v)}
+                          narrow={narrowEditor}
                           complianceApprovedText={field.compliance_check ? (values[field.key + '__chk'] ?? '') : undefined}
                           onComplianceApproved={field.compliance_check ? (approvedHtml) => {
                             handleChange(field.key + '__chk', approvedHtml)
