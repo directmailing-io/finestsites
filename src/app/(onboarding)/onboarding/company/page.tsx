@@ -116,18 +116,27 @@ export default function OnboardingCompanyPage() {
 
       {isPmSelected && (
         <div className="w-full mt-2 mb-2 flex flex-col gap-1.5">
-          <input
-            type="text"
-            inputMode="numeric"
-            pattern="[0-9]*"
-            value={teamPartnerNumber}
-            onChange={e => setTeamPartnerNumber(e.target.value.replace(/\D/g, ''))}
-            placeholder="Optional: Deine FitLine Teampartner-Nummer (z.B. 40237198)"
-            className="w-full px-4 py-3 text-sm rounded-2xl outline-none transition-all bg-white"
-            style={{ border: '1.5px solid #E5E7EB', color: '#111827' }}
-            onFocus={e => (e.target.style.borderColor = '#1a1a1a')}
-            onBlur={e => (e.target.style.borderColor = '#E5E7EB')}
-          />
+          <div className="relative">
+            <input
+              type="text"
+              inputMode="numeric"
+              pattern="[0-9]*"
+              value={teamPartnerNumber}
+              onChange={e => setTeamPartnerNumber(e.target.value.replace(/\D/g, ''))}
+              placeholder="Teampartner-Nr. (optional)"
+              className="w-full pl-4 pr-12 py-3 text-sm rounded-2xl outline-none transition-all bg-white"
+              style={{ border: '1.5px solid #E5E7EB', color: '#111827' }}
+              onFocus={e => (e.target.style.borderColor = '#1a1a1a')}
+              onBlur={e => (e.target.style.borderColor = '#E5E7EB')}
+            />
+            <span className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none"
+              style={{ color: '#D1D5DB' }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                <circle cx="12" cy="7" r="4"/>
+              </svg>
+            </span>
+          </div>
           <p className="text-xs px-1 text-center" style={{ color: '#9CA3AF' }}>
             Wird automatisch in deine Shop-Links eingebaut
           </p>
