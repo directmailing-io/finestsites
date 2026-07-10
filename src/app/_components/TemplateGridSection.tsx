@@ -1,7 +1,8 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState } from 'react'
 import { COMING_SOON_PASTEL } from '@/components/FakeWebsitePreview'
+import { NM_COMPANIES } from '@/lib/constants/nm-companies'
 
 export interface TemplateCardData {
   id: string
@@ -75,18 +76,18 @@ function TemplateCard({ tpl, idx }: { tpl: TemplateCardData; idx: number }) {
         borderRadius: 20,
         overflow: 'hidden',
         background: '#fff',
-        border: '1.5px solid #C4A0F0',
-        boxShadow: '0 4px 28px rgba(128,96,176,0.18), 0 1px 4px rgba(128,96,176,0.08)',
+        border: '1.5px solid #E5E7EB',
+        boxShadow: '0 2px 12px rgba(0,0,0,0.05)',
         transition: 'box-shadow 0.2s, transform 0.2s',
       }}
       onMouseEnter={e => {
         const el = e.currentTarget as HTMLElement
-        el.style.boxShadow = '0 16px 52px rgba(128,96,176,0.28), 0 2px 8px rgba(128,96,176,0.1)'
+        el.style.boxShadow = '0 8px 32px rgba(0,0,0,0.1)'
         el.style.transform = 'translateY(-4px)'
       }}
       onMouseLeave={e => {
         const el = e.currentTarget as HTMLElement
-        el.style.boxShadow = '0 4px 28px rgba(128,96,176,0.18), 0 1px 4px rgba(128,96,176,0.08)'
+        el.style.boxShadow = '0 2px 12px rgba(0,0,0,0.05)'
         el.style.transform = 'translateY(0)'
       }}
     >
@@ -114,29 +115,24 @@ function TemplateCard({ tpl, idx }: { tpl: TemplateCardData; idx: number }) {
           {tpl.title}
         </h3>
       </div>
-      {/* Colored footer */}
-      <div style={{ padding: '10px 20px 14px', background: 'linear-gradient(120deg, #7C3AED 0%, #9D5FEF 100%)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <span style={{ fontSize: 11, fontWeight: 700, color: 'rgba(255,255,255,0.8)', letterSpacing: '0.07em', textTransform: 'uppercase' }}>Premium</span>
-        <span style={{ fontSize: 13, fontWeight: 700, color: '#fff' }}>Ansehen →</span>
+      {/* Gray footer */}
+      <div style={{ padding: '10px 20px 14px', background: '#F5F5F7', borderTop: '1px solid #EBEBED', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <span style={{ fontSize: 11, fontWeight: 700, color: '#9CA3AF', letterSpacing: '0.07em', textTransform: 'uppercase' }}>Vorlage ansehen</span>
+        <span style={{ fontSize: 13, fontWeight: 700, color: '#374151' }}>→</span>
       </div>
     </a>
   )
 }
 
+// All supported NM companies as tabs (static list so every company always appears)
+const COMPANY_TABS = ['Alle', ...NM_COMPANIES]
+
 export default function TemplateGridSection({ templates }: { templates: TemplateCardData[] }) {
   const [activeFilter, setActiveFilter] = useState<string>('Alle')
 
-  // Build company tabs from ALL templates (including coming-soon)
-  const companyTabs = useMemo(() => {
-    const set = new Set<string>()
-    templates.forEach(t => t.nmCompanies.forEach(c => set.add(c)))
-    return ['Alle', ...Array.from(set).sort()]
-  }, [templates])
-
-  const filtered = useMemo(() => {
-    if (activeFilter === 'Alle') return templates
-    return templates.filter(t => t.nmCompanies.includes(activeFilter))
-  }, [templates, activeFilter])
+  const filtered = activeFilter === 'Alle'
+    ? templates
+    : templates.filter(t => t.nmCompanies.includes(activeFilter))
 
   if (templates.length === 0) {
     return (
@@ -149,9 +145,8 @@ export default function TemplateGridSection({ templates }: { templates: Template
   return (
     <>
       {/* Company tabs */}
-      {companyTabs.length > 1 && (
-        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', justifyContent: 'center', marginBottom: 36, overflowX: 'auto' }}>
-          {companyTabs.map(opt => (
+      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', justifyContent: 'center', marginBottom: 36, overflowX: 'auto' }}>
+          {COMPANY_TABS.map(opt => (
             <button
               key={opt}
               onClick={() => setActiveFilter(opt)}
@@ -172,9 +167,13 @@ export default function TemplateGridSection({ templates }: { templates: Template
               {opt}
             </button>
           ))}
-        </div>
-      )}
+      </div>
 
+      {filtered.length === 0 && (
+        <p style={{ textAlign: 'center', color: '#aaa', fontSize: 14, padding: '32px 0' }}>
+          Für {activeFilter} folgen Templates in Kürze.
+        </p>
+      )}
       <div className="fs-template-grid">
         {filtered.map((tpl, i) => (
           <TemplateCard key={tpl.id} tpl={tpl} idx={i} />

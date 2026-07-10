@@ -307,7 +307,7 @@ function SettingsContent() {
     const res = await fetch('/api/user/profile', {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ...profileName, phone, ...socialUrls, team_partner_number: teamPartnerNumber.trim() || null }),
+      body: JSON.stringify({ ...profileName, phone, ...socialUrls }),
     })
     const data = await res.json()
     if (data.error) {
@@ -325,7 +325,7 @@ function SettingsContent() {
     await fetch('/api/user/profile', {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ nm_companies: nmCompanies }),
+      body: JSON.stringify({ nm_companies: nmCompanies, team_partner_number: teamPartnerNumber.trim() || null }),
     })
     setNmSuccess('Gespeichert.')
     setTimeout(() => setNmSuccess(''), 3000)
@@ -464,6 +464,28 @@ function SettingsContent() {
             )
           })}
         </div>
+        {/* ── FitLine Teampartner-Nummer (nur für PM-International Nutzer) ── */}
+        {nmCompanies.includes('PM-International') && (
+          <div className="flex flex-col gap-1.5 pt-2">
+            <label className="text-sm font-semibold text-gray-700">FitLine Teampartner-Nummer</label>
+            <input
+              type="text"
+              inputMode="numeric"
+              pattern="[0-9]*"
+              value={teamPartnerNumber}
+              onChange={e => setTeamPartnerNumber(e.target.value.replace(/\D/g, ''))}
+              placeholder="z.B. 40237198"
+              className="w-full px-4 py-3 text-[15px] rounded-2xl outline-none transition-all bg-white"
+              style={{ border: '1.5px solid #E5E7EB' }}
+              onFocus={e => (e.target.style.borderColor = '#1a1a1a')}
+              onBlur={e => (e.target.style.borderColor = '#E5E7EB')}
+            />
+            <p className="text-xs px-1" style={{ color: '#94A3B8' }}>
+              Wird automatisch in deine FitLine Shop-Links eingefügt.
+            </p>
+          </div>
+        )}
+
         <div className="flex items-center gap-3 pt-2">
           <button
             type="button"
@@ -649,28 +671,6 @@ function SettingsContent() {
               </div>
             ))}
           </div>
-
-          {/* ── FitLine Teampartner-Nummer (nur für PM-International Nutzer) ── */}
-          {nmCompanies.includes('PM-International') && (
-            <div className="flex flex-col gap-1.5">
-              <label className="text-sm font-semibold text-gray-700">FitLine Teampartner-Nummer</label>
-              <input
-                type="text"
-                inputMode="numeric"
-                pattern="[0-9]*"
-                value={teamPartnerNumber}
-                onChange={e => setTeamPartnerNumber(e.target.value.replace(/\D/g, ''))}
-                placeholder="z.B. 40237198"
-                className="w-full px-4 py-3 text-[15px] rounded-2xl outline-none transition-all bg-white"
-                style={{ border: '1.5px solid #E5E7EB' }}
-                onFocus={e => (e.target.style.borderColor = '#1a1a1a')}
-                onBlur={e => (e.target.style.borderColor = '#E5E7EB')}
-              />
-              <p className="text-xs px-1" style={{ color: '#94A3B8' }}>
-                Deine PM-International Teampartner-Nummer. Wird automatisch in deine FitLine Shop-Links eingefügt.
-              </p>
-            </div>
-          )}
 
           {profileError && (
             <p className="text-sm font-medium px-4 py-3 rounded-2xl"

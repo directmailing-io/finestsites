@@ -51,6 +51,8 @@ interface FieldSchema {
   sub_fields?: LoopSubField[]
   min_items?: number
   max_items?: number
+  // auto-computed shop link: value = default_value + ?sponsor=TP_NUMBER
+  pm_sponsor_url?: boolean
 }
 
 interface SiteData {
@@ -1698,6 +1700,7 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
   const [hasChanges, setHasChanges] = useState(false)
   const [collapsedOptionals, setCollapsedOptionals] = useState<Set<string>>(new Set())
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null)
+  const [teamPartnerNumber, setTeamPartnerNumber] = useState<string>('')
   const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => {
@@ -1706,16 +1709,24 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
       fetch('/api/user/profile').then(r => r.json()).catch(() => ({})),
     ]).then(([data, userProfile]: [SiteData, Record<string, string | null>]) => {
         setSite(data)
+        const tp = userProfile.team_partner_number ?? ''
+        setTeamPartnerNumber(tp)
         const fields = data.templates?.placeholder_schema?.fields ?? []
         const init: Record<string, string> = {}
         for (const f of fields) {
-          // If the field has a saved value, use it.
-          // If it's empty, try to pre-fill from the user's profile.
-          const saved = data.data?.[f.key]
-          if (saved) {
-            init[f.key] = saved
+          if (f.pm_sponsor_url) {
+            // Auto-compute sponsor URL — always override saved value so it stays in sync with TP number
+            const base = f.default_value ?? ''
+            init[f.key] = base + (tp ? `?sponsor=${tp}` : '')
           } else {
-            init[f.key] = getProfilePrefill(f.key, f.type, userProfile) ?? f.default_value ?? ''
+            // If the field has a saved value, use it.
+            // If it's empty, try to pre-fill from the user's profile.
+            const saved = data.data?.[f.key]
+            if (saved) {
+              init[f.key] = saved
+            } else {
+              init[f.key] = getProfilePrefill(f.key, f.type, userProfile) ?? f.default_value ?? ''
+            }
           }
         }
         // Restore compliance approval flags from DB (stored as fieldKey + '__chk').
@@ -2622,6 +2633,32 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
                   )
                   return [...sectionFields, ...hiddenComplianceFields].map(field => {
                     const visible = sectionKeySet.has(field.key)
+
+                    // pm_sponsor_url: computed from base URL + Teampartner-Nummer, shown read-only
+                    if (visible && field.pm_sponsor_url) {
+                      const base = field.default_value ?? ''
+                      const computed = base + (teamPartnerNumber ? `?sponsor=${teamPartnerNumber}` : '')
+                      return (
+                        <div key={field.key} className="bg-white rounded-[20px] p-5"
+                          style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.05)', border: '1px solid #F0F0F0' }}>
+                          <label className="text-base font-bold text-gray-900 block mb-1">{field.label}</label>
+                          {field.placeholder_text && (
+                            <p className="text-sm text-gray-400 mb-3">{field.placeholder_text}</p>
+                          )}
+                          <div className="px-4 py-3 rounded-xl text-xs break-all"
+                            style={{ background: '#F9FAFB', border: '1.5px solid #E5E7EB', color: '#6B7280', fontFamily: 'monospace', lineHeight: 1.6 }}>
+                            {computed}
+                          </div>
+                          <p className="text-xs mt-2" style={{ color: '#9CA3AF' }}>
+                            {teamPartnerNumber
+                              ? `Teampartner-Nr. ${teamPartnerNumber} wird automatisch eingebaut.`
+                              : <><span>Keine Teampartner-Nummer hinterlegt. </span><a href="/settings" style={{ textDecoration: 'underline', color: '#6B7280' }}>In Einstellungen ergänzen →</a></>
+                            }
+                          </p>
+                        </div>
+                      )
+                    }
+
                     const isOptional = visible && !field.required
                     const isCollapsed = isOptional && collapsedOptionals.has(field.key)
                     return (
