@@ -191,6 +191,14 @@ export default function SupportAdminPanel() {
   const pollConvsRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const searchDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
+  const [isMobile, setIsMobile] = useState(false)
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768)
+    check()
+    window.addEventListener('resize', check)
+    return () => window.removeEventListener('resize', check)
+  }, [])
+
   // ── Fetch conversations ──────────────────────────────────────────────────────
 
   const fetchConversations = useCallback(async (filter: FilterTab) => {
@@ -409,8 +417,8 @@ export default function SupportAdminPanel() {
     <div
       style={{
         display: 'flex',
-        height: 'calc(100vh - 88px)',
-        borderRadius: 16,
+        height: isMobile ? 'calc(100dvh - 120px)' : 'calc(100vh - 88px)',
+        borderRadius: isMobile ? 12 : 16,
         overflow: 'hidden',
         border: '1px solid #EBEBEB',
         background: '#fff',
@@ -419,10 +427,10 @@ export default function SupportAdminPanel() {
       {/* ── LEFT COLUMN ── */}
       <div
         style={{
-          width: 320,
+          width: isMobile ? '100%' : 320,
           flexShrink: 0,
           borderRight: '1px solid #EBEBEB',
-          display: 'flex',
+          display: isMobile && selectedId ? 'none' : 'flex',
           flexDirection: 'column',
         }}
       >
@@ -622,7 +630,7 @@ export default function SupportAdminPanel() {
       </div>
 
       {/* ── RIGHT COLUMN ── */}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+      <div style={{ flex: 1, display: isMobile && !selectedId ? 'none' : 'flex', flexDirection: 'column', minWidth: 0 }}>
         {!selectedConversation ? (
           /* Empty state */
           <div
@@ -646,25 +654,46 @@ export default function SupportAdminPanel() {
             {/* Chat Header */}
             <div
               style={{
-                height: 60,
+                height: isMobile ? 56 : 60,
                 borderBottom: '1px solid #EBEBEB',
-                padding: '0 20px',
+                padding: isMobile ? '0 12px' : '0 20px',
                 display: 'flex',
                 alignItems: 'center',
-                gap: 12,
+                gap: isMobile ? 8 : 12,
                 flexShrink: 0,
               }}
             >
-              <Avatar user={selectedConversation.user} size={36} />
+              {isMobile && (
+                <button
+                  onClick={() => setSelectedId(null)}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
+                    padding: '6px 4px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    color: '#111',
+                    flexShrink: 0,
+                  }}
+                >
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="15 18 9 12 15 6" />
+                  </svg>
+                </button>
+              )}
+              <Avatar user={selectedConversation.user} size={isMobile ? 32 : 36} />
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontSize: 14, fontWeight: 700, color: '#111', lineHeight: 1.2 }}>
+                <div style={{ fontSize: isMobile ? 13 : 14, fontWeight: 700, color: '#111', lineHeight: 1.2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                   {getDisplayName(selectedConversation.user)}
                 </div>
-                <div style={{ fontSize: 12, color: '#999', lineHeight: 1.2 }}>
-                  {selectedConversation.user.email}
-                </div>
+                {!isMobile && (
+                  <div style={{ fontSize: 12, color: '#999', lineHeight: 1.2 }}>
+                    {selectedConversation.user.email}
+                  </div>
+                )}
               </div>
-              {selectedConversation.unreadByAdmin > 0 && (
+              {!isMobile && selectedConversation.unreadByAdmin > 0 && (
                 <span style={{ fontSize: 12, color: '#C2410C', fontWeight: 500 }}>
                   ({selectedConversation.unreadByAdmin} ungelesen)
                 </span>
@@ -680,12 +709,13 @@ export default function SupportAdminPanel() {
                 style={{
                   border: '1px solid #EBEBEB',
                   borderRadius: 8,
-                  padding: '5px 10px',
-                  fontSize: 13,
+                  padding: isMobile ? '6px 8px' : '5px 10px',
+                  fontSize: isMobile ? 12 : 13,
                   background: '#fff',
                   cursor: 'pointer',
                   outline: 'none',
                   color: '#111',
+                  flexShrink: 0,
                 }}
               >
                 <option value="open">Offen</option>
@@ -698,74 +728,107 @@ export default function SupportAdminPanel() {
             <div
               style={{
                 background: '#F7F7F7',
-                padding: '10px 20px',
+                padding: isMobile ? '8px 12px' : '10px 20px',
                 borderBottom: '1px solid #EBEBEB',
                 fontSize: 12,
                 color: '#666',
                 display: 'flex',
                 alignItems: 'center',
-                gap: 16,
-                flexWrap: 'wrap',
+                gap: isMobile ? 8 : 16,
+                flexWrap: isMobile ? 'nowrap' : 'wrap',
                 flexShrink: 0,
+                overflowX: isMobile ? 'auto' : 'visible',
               }}
             >
-              <span>
-                <strong style={{ color: '#444' }}>E-Mail:</strong> {selectedConversation.user.email}
-              </span>
-              <span
-                style={{
-                  background: selectedConversation.user.plan === 'pro' ? '#EFF6FF' : '#F5F5F5',
-                  color: selectedConversation.user.plan === 'pro' ? '#1D4ED8' : '#666',
-                  borderRadius: 100,
-                  padding: '2px 8px',
-                  fontSize: 11,
-                  fontWeight: 600,
-                }}
-              >
-                {selectedConversation.user.plan?.toUpperCase() ?? 'FREE'}
-              </span>
-              {selectedConversation.user.username && (
-                <span>
-                  <strong style={{ color: '#444' }}>@</strong>
-                  {selectedConversation.user.username}
-                </span>
-              )}
-              <span>
-                <strong style={{ color: '#444' }}>Seit:</strong>{' '}
-                {formatDate(selectedConversation.createdAt)}
-              </span>
-              {/* Editable subject/title */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                <strong style={{ color: '#444' }}>Titel:</strong>
-                {editingSubject === selectedConversation.id ? (
-                  <input
-                    autoFocus
-                    value={subjectDraft}
-                    onChange={e => setSubjectDraft(e.target.value)}
-                    onBlur={() => saveSubject(selectedConversation.id)}
-                    onKeyDown={e => {
-                      if (e.key === 'Enter') saveSubject(selectedConversation.id)
-                      if (e.key === 'Escape') setEditingSubject(null)
+              {isMobile ? (
+                // Mobile: compact single row
+                <>
+                  <span style={{ whiteSpace: 'nowrap', color: '#555', fontSize: 11 }}>{selectedConversation.user.email}</span>
+                  <span
+                    style={{
+                      background: selectedConversation.user.plan === 'pro' ? '#EFF6FF' : '#F5F5F5',
+                      color: selectedConversation.user.plan === 'pro' ? '#1D4ED8' : '#666',
+                      borderRadius: 100,
+                      padding: '2px 7px',
+                      fontSize: 10,
+                      fontWeight: 600,
+                      whiteSpace: 'nowrap',
+                      flexShrink: 0,
                     }}
-                    placeholder="Kein Titel"
-                    style={{ border: 'none', outline: 'none', fontSize: 12, color: '#111', background: 'transparent', borderBottom: '1px solid #999', minWidth: 80, maxWidth: 180 }}
-                  />
-                ) : (
-                  <button
-                    onClick={() => startEditSubject(selectedConversation)}
-                    title="Titel bearbeiten"
-                    style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', fontSize: 12, color: selectedConversation.subject ? '#444' : '#BBB', fontFamily: 'inherit', textDecoration: 'underline dotted' }}
                   >
-                    {selectedConversation.subject ?? 'Kein Titel'}
-                  </button>
-                )}
-              </div>
-              <Link
-                href={`/admin/users/${selectedConversation.userId}`}
-                style={{ color: '#3B82F6', textDecoration: 'none', fontWeight: 500 }}
-              >
-                Nutzerprofil →
-              </Link>
+                    {selectedConversation.user.plan?.toUpperCase() ?? 'FREE'}
+                  </span>
+                  {selectedConversation.user.username && (
+                    <span style={{ whiteSpace: 'nowrap', color: '#888', fontSize: 11 }}>@{selectedConversation.user.username}</span>
+                  )}
+                  <Link
+                    href={`/admin/users/${selectedConversation.userId}`}
+                    style={{ color: '#3B82F6', textDecoration: 'none', fontWeight: 500, whiteSpace: 'nowrap', fontSize: 11, marginLeft: 'auto', flexShrink: 0 }}
+                  >
+                    Profil →
+                  </Link>
+                </>
+              ) : (
+                // Desktop: full info row
+                <>
+                  <span>
+                    <strong style={{ color: '#444' }}>E-Mail:</strong> {selectedConversation.user.email}
+                  </span>
+                  <span
+                    style={{
+                      background: selectedConversation.user.plan === 'pro' ? '#EFF6FF' : '#F5F5F5',
+                      color: selectedConversation.user.plan === 'pro' ? '#1D4ED8' : '#666',
+                      borderRadius: 100,
+                      padding: '2px 8px',
+                      fontSize: 11,
+                      fontWeight: 600,
+                    }}
+                  >
+                    {selectedConversation.user.plan?.toUpperCase() ?? 'FREE'}
+                  </span>
+                  {selectedConversation.user.username && (
+                    <span>
+                      <strong style={{ color: '#444' }}>@</strong>
+                      {selectedConversation.user.username}
+                    </span>
+                  )}
+                  <span>
+                    <strong style={{ color: '#444' }}>Seit:</strong>{' '}
+                    {formatDate(selectedConversation.createdAt)}
+                  </span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                    <strong style={{ color: '#444' }}>Titel:</strong>
+                    {editingSubject === selectedConversation.id ? (
+                      <input
+                        autoFocus
+                        value={subjectDraft}
+                        onChange={e => setSubjectDraft(e.target.value)}
+                        onBlur={() => saveSubject(selectedConversation.id)}
+                        onKeyDown={e => {
+                          if (e.key === 'Enter') saveSubject(selectedConversation.id)
+                          if (e.key === 'Escape') setEditingSubject(null)
+                        }}
+                        placeholder="Kein Titel"
+                        style={{ border: 'none', outline: 'none', fontSize: 12, color: '#111', background: 'transparent', borderBottom: '1px solid #999', minWidth: 80, maxWidth: 180 }}
+                      />
+                    ) : (
+                      <button
+                        onClick={() => startEditSubject(selectedConversation)}
+                        title="Titel bearbeiten"
+                        style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', fontSize: 12, color: selectedConversation.subject ? '#444' : '#BBB', fontFamily: 'inherit', textDecoration: 'underline dotted' }}
+                      >
+                        {selectedConversation.subject ?? 'Kein Titel'}
+                      </button>
+                    )}
+                  </div>
+                  <Link
+                    href={`/admin/users/${selectedConversation.userId}`}
+                    style={{ color: '#3B82F6', textDecoration: 'none', fontWeight: 500 }}
+                  >
+                    Nutzerprofil →
+                  </Link>
+                </>
+              )}
             </div>
 
             {/* Messages area */}
@@ -907,65 +970,112 @@ export default function SupportAdminPanel() {
               <div
                 style={{
                   borderTop: '1px solid #EBEBEB',
-                  padding: '16px 20px',
+                  padding: isMobile ? '10px 12px' : '16px 20px',
                   background: '#fff',
                   flexShrink: 0,
                 }}
               >
-                <textarea
-                  ref={textareaRef}
-                  value={inputText}
-                  onChange={e => setInputText(e.target.value)}
-                  onKeyDown={handleKeyDown}
-                  placeholder="Antwort schreiben…"
-                  rows={3}
-                  style={{
-                    width: '100%',
-                    minHeight: 72,
-                    maxHeight: 144,
-                    border: '1px solid #EBEBEB',
-                    borderRadius: 12,
-                    padding: 12,
-                    fontSize: 14,
-                    fontFamily: 'inherit',
-                    resize: 'none',
-                    outline: 'none',
-                    boxSizing: 'border-box',
-                    color: '#111',
-                    background: '#fff',
-                    lineHeight: 1.5,
-                  }}
-                />
-                <div
-                  style={{
-                    marginTop: 10,
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                  }}
-                >
-                  <span style={{ fontSize: 11, color: '#BBB' }}>
-                    Enter zum Senden, Shift+Enter für Zeilenumbruch
-                  </span>
-                  <button
-                    onClick={handleSend}
-                    disabled={!inputText.trim() || sending}
-                    style={{
-                      background: '#111',
-                      color: '#fff',
-                      border: 'none',
-                      borderRadius: 8,
-                      padding: '8px 20px',
-                      fontSize: 13,
-                      fontWeight: 600,
-                      cursor: !inputText.trim() || sending ? 'not-allowed' : 'pointer',
-                      opacity: !inputText.trim() || sending ? 0.4 : 1,
-                      transition: 'opacity 0.15s',
-                    }}
-                  >
-                    {sending ? 'Sende…' : 'Antworten'}
-                  </button>
-                </div>
+                {isMobile ? (
+                  // Mobile: single-line input + send button side by side
+                  <div style={{ display: 'flex', gap: 8, alignItems: 'flex-end' }}>
+                    <textarea
+                      ref={textareaRef}
+                      value={inputText}
+                      onChange={e => setInputText(e.target.value)}
+                      onKeyDown={handleKeyDown}
+                      placeholder="Antwort schreiben…"
+                      rows={1}
+                      style={{
+                        flex: 1,
+                        minHeight: 44,
+                        maxHeight: 120,
+                        border: '1px solid #EBEBEB',
+                        borderRadius: 22,
+                        padding: '10px 16px',
+                        fontSize: 15,
+                        fontFamily: 'inherit',
+                        resize: 'none',
+                        outline: 'none',
+                        boxSizing: 'border-box',
+                        color: '#111',
+                        background: '#F7F7F7',
+                        lineHeight: 1.5,
+                      }}
+                    />
+                    <button
+                      onClick={handleSend}
+                      disabled={!inputText.trim() || sending}
+                      style={{
+                        background: '#111',
+                        color: '#fff',
+                        border: 'none',
+                        borderRadius: 22,
+                        width: 44,
+                        height: 44,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        flexShrink: 0,
+                        cursor: !inputText.trim() || sending ? 'not-allowed' : 'pointer',
+                        opacity: !inputText.trim() || sending ? 0.35 : 1,
+                        transition: 'opacity 0.15s',
+                      }}
+                    >
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <line x1="22" y1="2" x2="11" y2="13" /><polygon points="22 2 15 22 11 13 2 9 22 2" />
+                      </svg>
+                    </button>
+                  </div>
+                ) : (
+                  // Desktop: textarea + button below
+                  <>
+                    <textarea
+                      ref={textareaRef}
+                      value={inputText}
+                      onChange={e => setInputText(e.target.value)}
+                      onKeyDown={handleKeyDown}
+                      placeholder="Antwort schreiben…"
+                      rows={3}
+                      style={{
+                        width: '100%',
+                        minHeight: 72,
+                        maxHeight: 144,
+                        border: '1px solid #EBEBEB',
+                        borderRadius: 12,
+                        padding: 12,
+                        fontSize: 14,
+                        fontFamily: 'inherit',
+                        resize: 'none',
+                        outline: 'none',
+                        boxSizing: 'border-box',
+                        color: '#111',
+                        background: '#fff',
+                        lineHeight: 1.5,
+                      }}
+                    />
+                    <div style={{ marginTop: 10, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ fontSize: 11, color: '#BBB' }}>Enter zum Senden, Shift+Enter für Zeilenumbruch</span>
+                      <button
+                        onClick={handleSend}
+                        disabled={!inputText.trim() || sending}
+                        style={{
+                          background: '#111',
+                          color: '#fff',
+                          border: 'none',
+                          borderRadius: 8,
+                          padding: '8px 20px',
+                          fontSize: 13,
+                          fontWeight: 600,
+                          cursor: !inputText.trim() || sending ? 'not-allowed' : 'pointer',
+                          opacity: !inputText.trim() || sending ? 0.4 : 1,
+                          transition: 'opacity 0.15s',
+                        }}
+                      >
+                        {sending ? 'Sende…' : 'Antworten'}
+                      </button>
+                    </div>
+                  </>
+                )}
               </div>
             ) : (
               <div
