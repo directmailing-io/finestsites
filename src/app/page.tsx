@@ -61,7 +61,7 @@ export default async function HomePage({
         status: templates.status,
       })
       .from(templates)
-      .where(and(inArray(templates.status, ['published', 'coming_soon']), eq(templates.isTest, false)))
+      .where(and(inArray(templates.status, ['published', 'coming_soon']), eq(templates.isTest, false), eq(templates.isAllrounder, false)))
       .orderBy(asc(sql`COALESCE(${templates.sortOrder}, 100)`), asc(templates.createdAt))
     templateList = rows.map(r => ({
       ...r,
@@ -363,21 +363,6 @@ export default async function HomePage({
             <p style={{ textAlign: 'center', fontSize: 16, color: '#777', maxWidth: 440, margin: '0 auto' }}>
               Fertige Designs. Fertige Texte. Deine Daten eintragen, live gehen.
             </p>
-          </div>
-
-          {/* Premium vs Standard — minimal inline legend */}
-          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 24, flexWrap: 'wrap', marginBottom: 44 }}>
-            <span style={{ display: 'flex', alignItems: 'center', gap: 7, fontSize: 13, color: '#666' }}>
-              <span style={{ width: 10, height: 10, borderRadius: 3, background: 'linear-gradient(135deg, #7C3AED, #9D5FEF)', flexShrink: 0, display: 'inline-block' }} />
-              <strong style={{ color: '#3B0764', fontWeight: 700 }}>Premium</strong>
-              &mdash; Spezifisch für dein Network-Marketing-Unternehmen
-            </span>
-            <span style={{ width: 1, height: 14, background: '#D1D5DB', flexShrink: 0, display: 'inline-block' }} />
-            <span style={{ display: 'flex', alignItems: 'center', gap: 7, fontSize: 13, color: '#666' }}>
-              <span style={{ width: 10, height: 10, borderRadius: 3, background: '#D1D5DB', flexShrink: 0, display: 'inline-block' }} />
-              <strong style={{ color: '#374151', fontWeight: 700 }}>Standard</strong>
-              &mdash; Für Infoabende, Teamevents &amp; alle deine Links auf einer Seite
-            </span>
           </div>
 
           <TemplateGridSection templates={templateList} />
