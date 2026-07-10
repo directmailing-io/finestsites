@@ -23,8 +23,46 @@ function TemplateCard({ tpl, idx }: { tpl: TemplateCardData; idx: number }) {
   const images = Array.isArray(tpl.previewImages) ? tpl.previewImages as string[] : []
   const cover = images[0] ?? null
   const pastel = PASTEL_COLORS[idx % PASTEL_COLORS.length]
-  const isPremium = !tpl.isAllrounder
-  const companyLabel = tpl.isAllrounder ? null : (tpl.nmCompanies[0] ?? null)
+  const companyLabel = tpl.nmCompanies[0] ?? null
+
+  if (tpl.isComingSoon) {
+    return (
+      <div style={{
+        display: 'flex',
+        flexDirection: 'column',
+        borderRadius: 20,
+        overflow: 'hidden',
+        background: '#fff',
+        border: '1.5px solid #E5E7EB',
+        boxShadow: '0 2px 12px rgba(0,0,0,0.04)',
+      }}>
+        {/* Preview — same height as real card, blurred content */}
+        <div style={{ height: 240, background: pastel, position: 'relative', overflow: 'hidden', flexShrink: 0 }}>
+          <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 52 }}>🤫</div>
+          <div style={{ position: 'absolute', inset: 0, background: 'rgba(255,255,255,0.25)', backdropFilter: 'blur(2px)' }} />
+          <div style={{ position: 'absolute', top: 12, right: 12, background: '#111', color: '#fff', fontSize: 10, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', padding: '4px 10px', borderRadius: 100 }}>
+            Bald
+          </div>
+        </div>
+        {/* Body */}
+        <div style={{ padding: '16px 20px 12px', flex: 1, display: 'flex', flexDirection: 'column' }}>
+          {companyLabel && (
+            <p style={{ fontSize: 11, fontWeight: 700, color: '#9d7ecc', letterSpacing: '0.07em', textTransform: 'uppercase', margin: '0 0 5px' }}>
+              {companyLabel}
+            </p>
+          )}
+          <h3 style={{ fontSize: 15, fontWeight: 700, color: '#9CA3AF', lineHeight: 1.3, margin: 0, flex: 1 }}>
+            {tpl.title}
+          </h3>
+        </div>
+        {/* Footer */}
+        <div style={{ padding: '10px 20px 14px', background: '#F5F5F7', borderTop: '1px solid #EBEBED', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <span style={{ fontSize: 11, fontWeight: 700, color: '#9CA3AF', letterSpacing: '0.07em', textTransform: 'uppercase' }}>Bald verfügbar</span>
+          <span style={{ fontSize: 13, fontWeight: 600, color: '#CBD5E1' }}>···</span>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <a
@@ -37,24 +75,18 @@ function TemplateCard({ tpl, idx }: { tpl: TemplateCardData; idx: number }) {
         borderRadius: 20,
         overflow: 'hidden',
         background: '#fff',
-        border: isPremium ? '1.5px solid #C4A0F0' : '1px solid #E5E7EB',
-        boxShadow: isPremium
-          ? '0 4px 28px rgba(128,96,176,0.18), 0 1px 4px rgba(128,96,176,0.08)'
-          : '0 2px 12px rgba(0,0,0,0.05)',
+        border: '1.5px solid #C4A0F0',
+        boxShadow: '0 4px 28px rgba(128,96,176,0.18), 0 1px 4px rgba(128,96,176,0.08)',
         transition: 'box-shadow 0.2s, transform 0.2s',
       }}
       onMouseEnter={e => {
         const el = e.currentTarget as HTMLElement
-        el.style.boxShadow = isPremium
-          ? '0 16px 52px rgba(128,96,176,0.28), 0 2px 8px rgba(128,96,176,0.1)'
-          : '0 10px 32px rgba(0,0,0,0.12)'
+        el.style.boxShadow = '0 16px 52px rgba(128,96,176,0.28), 0 2px 8px rgba(128,96,176,0.1)'
         el.style.transform = 'translateY(-4px)'
       }}
       onMouseLeave={e => {
         const el = e.currentTarget as HTMLElement
-        el.style.boxShadow = isPremium
-          ? '0 4px 24px rgba(128,96,176,0.12)'
-          : '0 2px 12px rgba(0,0,0,0.05)'
+        el.style.boxShadow = '0 4px 28px rgba(128,96,176,0.18), 0 1px 4px rgba(128,96,176,0.08)'
         el.style.transform = 'translateY(0)'
       }}
     >
@@ -71,7 +103,6 @@ function TemplateCard({ tpl, idx }: { tpl: TemplateCardData; idx: number }) {
           </div>
         )}
       </div>
-
       {/* Card body */}
       <div style={{ padding: '16px 20px 12px', flex: 1, display: 'flex', flexDirection: 'column' }}>
         {companyLabel && (
@@ -83,34 +114,10 @@ function TemplateCard({ tpl, idx }: { tpl: TemplateCardData; idx: number }) {
           {tpl.title}
         </h3>
       </div>
-
-      {/* Colored footer — the key visual differentiator */}
-      <div style={{
-        padding: '10px 20px 14px',
-        background: isPremium
-          ? 'linear-gradient(120deg, #7C3AED 0%, #9D5FEF 100%)'
-          : '#F5F5F7',
-        borderTop: isPremium ? 'none' : '1px solid #EBEBED',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-      }}>
-        <span style={{
-          fontSize: 11,
-          fontWeight: 700,
-          color: isPremium ? 'rgba(255,255,255,0.8)' : '#9CA3AF',
-          letterSpacing: '0.07em',
-          textTransform: 'uppercase',
-        }}>
-          {isPremium ? 'Premium' : 'Standard'}
-        </span>
-        <span style={{
-          fontSize: 13,
-          fontWeight: 700,
-          color: isPremium ? '#fff' : '#6B7280',
-        }}>
-          Ansehen →
-        </span>
+      {/* Colored footer */}
+      <div style={{ padding: '10px 20px 14px', background: 'linear-gradient(120deg, #7C3AED 0%, #9D5FEF 100%)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <span style={{ fontSize: 11, fontWeight: 700, color: 'rgba(255,255,255,0.8)', letterSpacing: '0.07em', textTransform: 'uppercase' }}>Premium</span>
+        <span style={{ fontSize: 13, fontWeight: 700, color: '#fff' }}>Ansehen →</span>
       </div>
     </a>
   )
@@ -119,28 +126,19 @@ function TemplateCard({ tpl, idx }: { tpl: TemplateCardData; idx: number }) {
 export default function TemplateGridSection({ templates }: { templates: TemplateCardData[] }) {
   const [activeFilter, setActiveFilter] = useState<string>('Alle')
 
-  const available = useMemo(() => templates.filter(t => !t.isComingSoon), [templates])
-
-  const filterOptions = useMemo(() => {
-    const companies = new Set<string>()
-    let hasAllrounder = false
-    available.forEach(t => {
-      if (t.isAllrounder) hasAllrounder = true
-      else t.nmCompanies.forEach(c => companies.add(c))
-    })
-    if (companies.size + (hasAllrounder ? 1 : 0) <= 1) return []
-    const opts = ['Alle', ...Array.from(companies).sort()]
-    if (hasAllrounder) opts.push('Standard')
-    return opts
-  }, [available])
+  // Build company tabs from ALL templates (including coming-soon)
+  const companyTabs = useMemo(() => {
+    const set = new Set<string>()
+    templates.forEach(t => t.nmCompanies.forEach(c => set.add(c)))
+    return ['Alle', ...Array.from(set).sort()]
+  }, [templates])
 
   const filtered = useMemo(() => {
-    if (activeFilter === 'Alle') return available
-    if (activeFilter === 'Standard') return available.filter(t => t.isAllrounder)
-    return available.filter(t => !t.isAllrounder && t.nmCompanies.includes(activeFilter))
-  }, [available, activeFilter])
+    if (activeFilter === 'Alle') return templates
+    return templates.filter(t => t.nmCompanies.includes(activeFilter))
+  }, [templates, activeFilter])
 
-  if (available.length === 0) {
+  if (templates.length === 0) {
     return (
       <p style={{ textAlign: 'center', color: '#aaa', fontSize: 14, padding: '40px 0' }}>
         Templates folgen in Kürze.
@@ -150,9 +148,10 @@ export default function TemplateGridSection({ templates }: { templates: Template
 
   return (
     <>
-      {filterOptions.length > 0 && (
-        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', justifyContent: 'center', marginBottom: 36 }}>
-          {filterOptions.map(opt => (
+      {/* Company tabs */}
+      {companyTabs.length > 1 && (
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', justifyContent: 'center', marginBottom: 36, overflowX: 'auto' }}>
+          {companyTabs.map(opt => (
             <button
               key={opt}
               onClick={() => setActiveFilter(opt)}
@@ -166,6 +165,8 @@ export default function TemplateGridSection({ templates }: { templates: Template
                 fontWeight: 600,
                 cursor: 'pointer',
                 transition: 'all 0.15s',
+                whiteSpace: 'nowrap',
+                flexShrink: 0,
               }}
             >
               {opt}

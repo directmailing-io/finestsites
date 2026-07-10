@@ -345,10 +345,7 @@ export default async function HomePage({
 
       <HowItWorks />
 
-      {/* ══ FÜR DEIN UNTERNEHMEN ═════════════════════════════════════════ */}
-      <VorlagenSection />
-
-{/* ══ TEMPLATES ════════════════════════════════════════════════════ */}
+      {/* ══ TEMPLATES ════════════════════════════════════════════════════ */}
       <section id="templates" style={{ background: '#F9F7FF' }} className="fs-section-pad">
         <div style={{ maxWidth: 1200, margin: '0 auto' }}>
           {/* Header */}
