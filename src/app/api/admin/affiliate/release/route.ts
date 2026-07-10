@@ -7,7 +7,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
-import { getUserFromRequest } from '@/lib/auth/server'
+import { getRealUserFromRequest } from '@/lib/auth/server'
 import { db } from '@/lib/db'
 import { users, affiliateCommissions } from '@/lib/db/schema'
 import { eq, and } from 'drizzle-orm'
@@ -15,7 +15,7 @@ import { eq, and } from 'drizzle-orm'
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL ?? 'info@daniel-kurzeja.de'
 
 export async function POST(req: NextRequest) {
-  const user = await getUserFromRequest(req)
+  const user = await getRealUserFromRequest(req)
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   if (user.email !== ADMIN_EMAIL) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
 

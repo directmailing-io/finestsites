@@ -2,10 +2,10 @@ import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { users } from '@/lib/db/schema'
 import { eq, desc } from 'drizzle-orm'
-import { getUserFromRequest } from '@/lib/auth/server'
+import { getRealUserFromRequest } from '@/lib/auth/server'
 
 export async function GET(req: NextRequest) {
-  const user = await getUserFromRequest(req)
+  const user = await getRealUserFromRequest(req)
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const profile = await db.query.users.findFirst({

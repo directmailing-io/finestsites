@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getUserFromRequest } from '@/lib/auth/server'
+import { getRealUserFromRequest } from '@/lib/auth/server'
 import { db } from '@/lib/db'
 import { users, supportConversations, supportMessages } from '@/lib/db/schema'
 import { eq, and, isNotNull } from 'drizzle-orm'
 import { deleteFromR2 } from '@/lib/r2/client'
 
 async function checkAdmin(req: Request) {
-  const user = await getUserFromRequest(req)
+  const user = await getRealUserFromRequest(req)
   if (!user) return null
   const profile = await db.query.users.findFirst({ where: eq(users.id, user.id), columns: { isAdmin: true } })
   return profile?.isAdmin ? user : null

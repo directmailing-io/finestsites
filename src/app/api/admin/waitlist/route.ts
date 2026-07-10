@@ -3,10 +3,10 @@ import { db } from '@/lib/db'
 import { waitlist, users } from '@/lib/db/schema'
 import { desc, eq } from 'drizzle-orm'
 import { sql } from 'drizzle-orm'
-import { getUserFromRequest } from '@/lib/auth/server'
+import { getRealUserFromRequest } from '@/lib/auth/server'
 
 async function assertAdmin(req: NextRequest) {
-  const user = await getUserFromRequest(req)
+  const user = await getRealUserFromRequest(req)
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   const profile = await db.query.users.findFirst({ where: eq(users.id, user.id), columns: { isAdmin: true } })
   if (!profile?.isAdmin) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })

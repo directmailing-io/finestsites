@@ -2,10 +2,10 @@ import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { users, templates } from '@/lib/db/schema'
 import { eq, desc } from 'drizzle-orm'
-import { getUserFromRequest } from '@/lib/auth/server'
+import { getRealUserFromRequest } from '@/lib/auth/server'
 
 async function checkAdmin(req: Request) {
-  const user = await getUserFromRequest(req)
+  const user = await getRealUserFromRequest(req)
   if (!user) return null
   const profile = await db.query.users.findFirst({
     where: eq(users.id, user.id),

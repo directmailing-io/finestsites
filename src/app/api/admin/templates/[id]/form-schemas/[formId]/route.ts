@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getUserFromRequest } from '@/lib/auth/server'
+import { getRealUserFromRequest } from '@/lib/auth/server'
 import { db } from '@/lib/db'
 import { users, formSchemas } from '@/lib/db/schema'
 import { eq, and } from 'drizzle-orm'
 
 async function assertAdmin(req: NextRequest) {
-  const user = await getUserFromRequest(req)
+  const user = await getRealUserFromRequest(req)
   if (!user) return null
   const userRow = await db.query.users.findFirst({
     where: eq(users.id, user.id),

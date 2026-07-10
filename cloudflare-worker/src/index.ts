@@ -272,11 +272,28 @@ async function getSiteMeta(username: string, domain: string, env: Env): Promise<
   return meta
 }
 
+// ─── Timing-safe string comparison (Web Crypto HMAC, CF Worker compatible) ────
+
+async function timingSafeCompare(a: string, b: string): Promise<boolean> {
+  const enc = new TextEncoder()
+  const key = await crypto.subtle.importKey(
+    'raw', enc.encode('fs-timing-key'), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']
+  )
+  const [sigA, sigB] = await Promise.all([
+    crypto.subtle.sign('HMAC', key, enc.encode(a)),
+    crypto.subtle.sign('HMAC', key, enc.encode(b)),
+  ])
+  const a8 = new Uint8Array(sigA), b8 = new Uint8Array(sigB)
+  let diff = 0
+  for (let i = 0; i < a8.length; i++) diff |= a8[i] ^ b8[i]
+  return diff === 0
+}
+
 // ─── KV Admin Handler ─────────────────────────────────────────────────────────
 
 async function handleKvAdmin(request: Request, username: string, domain: string, env: Env): Promise<Response> {
   const auth = request.headers.get('Authorization') ?? ''
-  if (auth !== `Bearer ${env.WORKER_SECRET}`) {
+  if (!await timingSafeCompare(auth, `Bearer ${env.WORKER_SECRET}`)) {
     return new Response('Unauthorized', { status: 401 })
   }
 
@@ -349,14 +366,14 @@ async function sendSubmissionEmail(
     const appUrl = env.APP_URL ?? 'https://app.finestsites.com'
 
     const rows = Object.entries(formData)
-      .map(([k, v]) => `<tr><td style="padding:8px 12px;border-bottom:1px solid #f0f0f0;color:#6b7280;font-size:13px;white-space:nowrap">${fieldMap[k] ?? k}</td><td style="padding:8px 12px;border-bottom:1px solid #f0f0f0;color:#111;font-size:13px">${v || '—'}</td></tr>`)
+      .map(([k, v]) => `<tr><td style="padding:8px 12px;border-bottom:1px solid #f0f0f0;color:#6b7280;font-size:13px;white-space:nowrap">${htmlEscape(fieldMap[k] ?? k)}</td><td style="padding:8px 12px;border-bottom:1px solid #f0f0f0;color:#111;font-size:13px">${htmlEscape(v) || '—'}</td></tr>`)
       .join('')
 
     const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f5f7;margin:0;padding:32px 16px">
 <div style="max-width:520px;margin:0 auto;background:#fff;border-radius:20px;overflow:hidden;box-shadow:0 2px 20px rgba(0,0,0,0.07)">
   <div style="padding:28px 32px 20px;border-bottom:1px solid #f0f0f0">
     <p style="margin:0 0 4px;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#9ca3af">FinestSites · Neue Anfrage</p>
-    <h1 style="margin:0;font-size:20px;font-weight:700;color:#111;letter-spacing:-0.02em">${formTitle}</h1>
+    <h1 style="margin:0;font-size:20px;font-weight:700;color:#111;letter-spacing:-0.02em">${htmlEscape(formTitle)}</h1>
   </div>
   <table style="width:100%;border-collapse:collapse;margin:0">${rows}</table>
   <div style="padding:20px 32px 28px">
@@ -466,7 +483,8 @@ async function handleFormSubmission(request: Request, pathname: string, meta: Si
     })
   }
 
-  if (redirectUrl) return Response.redirect(redirectUrl, 302)
+  // Only allow relative redirects — block open redirect to external URLs
+  if (redirectUrl && redirectUrl.startsWith('/')) return Response.redirect(redirectUrl, 302)
 
   return new Response(successPage(), {
     headers: { 'Content-Type': 'text/html; charset=utf-8' },

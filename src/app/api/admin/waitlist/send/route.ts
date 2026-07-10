@@ -5,13 +5,13 @@ import { eq, and, isNull } from 'drizzle-orm'
 import { sql } from 'drizzle-orm'
 import { getResend, FROM_EMAIL } from '@/lib/resend'
 import { waitlistBroadcastEmail } from '@/lib/email/waitlist-templates'
-import { getUserFromRequest } from '@/lib/auth/server'
+import { getRealUserFromRequest } from '@/lib/auth/server'
 import { markupToHtml } from '@/lib/email/markup'
 
 const MARKETING_URL = (process.env.NEXT_PUBLIC_MARKETING_URL ?? 'https://finestsites.io').replace(/\/$/, '')
 
 async function assertAdmin(req: NextRequest) {
-  const user = await getUserFromRequest(req)
+  const user = await getRealUserFromRequest(req)
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   const profile = await db.query.users.findFirst({ where: eq(users.id, user.id), columns: { isAdmin: true } })
   if (!profile?.isAdmin) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })

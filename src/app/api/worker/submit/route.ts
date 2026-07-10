@@ -31,6 +31,7 @@
  * In development (WORKER_SECRET unset) all requests are allowed through.
  */
 
+import { timingSafeEqual } from 'crypto'
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { formSubmissions } from '@/lib/db/schema'
@@ -39,7 +40,11 @@ const WORKER_SECRET = process.env.WORKER_SECRET
 
 function checkSecret(req: NextRequest): boolean {
   if (!WORKER_SECRET) return true
-  return req.headers.get('x-worker-secret') === WORKER_SECRET
+  const incoming = req.headers.get('x-worker-secret') ?? ''
+  const a = Buffer.from(incoming)
+  const b = Buffer.from(WORKER_SECRET)
+  if (a.length !== b.length) return false
+  return timingSafeEqual(a, b)
 }
 
 export async function POST(req: NextRequest) {

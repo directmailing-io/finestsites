@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getUserFromRequest } from '@/lib/auth/server'
+import { getRealUserFromRequest } from '@/lib/auth/server'
 import { db } from '@/lib/db'
 import { users, templates } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
@@ -7,7 +7,7 @@ import { uploadToR2 } from '@/lib/r2/client'
 import crypto from 'crypto'
 
 async function checkAdmin(req: NextRequest) {
-  const user = await getUserFromRequest(req)
+  const user = await getRealUserFromRequest(req)
   if (!user) return null
   const userRow = await db.query.users.findFirst({
     where: eq(users.id, user.id),

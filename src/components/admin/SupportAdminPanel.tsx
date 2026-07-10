@@ -11,7 +11,7 @@ interface Message {
   senderType: 'user' | 'admin'
   senderId: string | null
   content: string
-  contentType: 'text' | 'image' | 'gif'
+  contentType: 'text' | 'image' | 'gif' | 'system'
   mediaUrl: string | null
   createdAt: string
 }
@@ -32,7 +32,7 @@ interface ConversationWithUser {
     lastName: string | null
     plan: string
   }
-  lastMessage: { content: string; senderType: string; createdAt: string; contentType?: 'text' | 'image' | 'gif' } | null
+  lastMessage: { content: string; senderType: string; createdAt: string; contentType?: 'text' | 'image' | 'gif' | 'system' } | null
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -63,6 +63,16 @@ function formatShortDate(iso: string): string {
 }
 
 function renderMessageContent(msg: Message) {
+  if (msg.contentType === 'system') {
+    let type = ''
+    try { type = JSON.parse(msg.content)?.type ?? '' } catch { /* ignore */ }
+    const label = type === 'impersonation_request' ? '🔐 Zugriffsanfrage gesendet' : 'Systemnachricht'
+    return (
+      <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.55)', fontStyle: 'italic' }}>
+        {label}
+      </span>
+    )
+  }
   if (msg.contentType === 'image' && msg.mediaUrl) {
     return (
       <div>
@@ -488,7 +498,9 @@ export default function SupportAdminPanel() {
 
               let lastMsgPreview = conv.subject ?? '—'
               if (conv.lastMessage) {
-                if (conv.lastMessage.contentType === 'image') {
+                if (conv.lastMessage.contentType === 'system') {
+                  lastMsgPreview = '🔐 Zugriffsanfrage'
+                } else if (conv.lastMessage.contentType === 'image') {
                   lastMsgPreview = '📷 Bild'
                 } else {
                   const txt = conv.lastMessage.content ?? ''

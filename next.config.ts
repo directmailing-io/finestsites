@@ -41,6 +41,14 @@ const nextConfig: NextConfig = {
             key: 'Permissions-Policy',
             value: 'identity-credentials-get=(), digital-credentials-get=()',
           },
+          // Prevent MIME-type sniffing (XSS via malicious uploads served as HTML)
+          { key: 'X-Content-Type-Options', value: 'nosniff' },
+          // Prevent this app from being embedded in iframes on other origins (clickjacking)
+          { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
+          // Enforce HTTPS for 2 years (only meaningful over TLS, harmless in dev)
+          { key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains; preload' },
+          // Limit referrer info sent to third parties
+          { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
         ],
       },
       // CORS for static assets (fonts, images) so they work cross-origin.
