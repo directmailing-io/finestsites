@@ -2199,15 +2199,6 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
           </div>
         </div>
         <div className="flex items-center gap-2 flex-shrink-0">
-          <button onClick={() => { setShowFullPreview(true); setPreviewKey(k => k + 1) }}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-full text-xs font-medium transition-colors"
-            style={{ background: '#F3F4F6', color: '#374151' }}>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-              <circle cx="12" cy="12" r="3"/>
-            </svg>
-            Vorschau
-          </button>
           {isPublished ? (
             <span className="flex items-center gap-1.5 text-xs font-semibold px-3 py-2 rounded-full select-none"
               style={{ background: '#DCFCE7', color: '#16A34A' }}>
@@ -2830,26 +2821,38 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
                   {publishing ? 'Bitte warten…' : isPublished ? '✓ Änderungen live stellen' : '🚀 Jetzt veröffentlichen'}
                 </button>
               ) : !isLast ? (
-                /* Not last: Weiter */
-                <button
-                  onClick={async () => {
-                    await handleSave()
-                    setActiveSection(sections[activeIdx + 1])
-                    document.getElementById('editor-scroll')?.scrollTo({ top: 0, behavior: 'smooth' })
-                  }}
-                  disabled={saving}
-                  className="w-full flex items-center justify-center gap-2 py-3.5 text-sm font-bold text-white rounded-full"
-                  style={{ background: '#1a1a1a', boxShadow: '0 4px 14px rgba(26,26,26,0.2)', opacity: saving ? 0.7 : 1 }}>
-                  {saving
-                    ? <span className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
-                    : <>
-                        Weiter
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.25">
-                          <path d="M5 12h14M12 5l7 7-7 7"/>
-                        </svg>
-                      </>
-                  }
-                </button>
+                /* Not last: Vorschau + Weiter */
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => { setShowFullPreview(true); setPreviewKey(k => k + 1) }}
+                    className="flex items-center justify-center gap-1.5 px-4 py-3.5 rounded-full text-sm font-semibold flex-shrink-0"
+                    style={{ background: '#F3F4F6', color: '#374151' }}>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                      <circle cx="12" cy="12" r="3"/>
+                    </svg>
+                    Vorschau
+                  </button>
+                  <button
+                    onClick={async () => {
+                      await handleSave()
+                      setActiveSection(sections[activeIdx + 1])
+                      document.getElementById('editor-scroll')?.scrollTo({ top: 0, behavior: 'smooth' })
+                    }}
+                    disabled={saving}
+                    className="flex-1 flex items-center justify-center gap-2 py-3.5 text-sm font-bold text-white rounded-full"
+                    style={{ background: '#1a1a1a', boxShadow: '0 4px 14px rgba(26,26,26,0.2)', opacity: saving ? 0.7 : 1 }}>
+                    {saving
+                      ? <span className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
+                      : <>
+                          Weiter
+                          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.25">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                          </svg>
+                        </>
+                    }
+                  </button>
+                </div>
               ) : (
                 /* Last section: Publish */
                 <button onClick={handlePublish} disabled={publishing || !allRequiredComplete}
@@ -3182,25 +3185,6 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
         <PublishCelebrationModal publishedUrl={publishedUrl} onClose={() => setShowPublishCelebration(false)} />
       )}
 
-      {/* ── Mobile Floating Preview Button (FAB) ── */}
-      <button
-        onClick={() => { setShowFullPreview(true); setPreviewKey(k => k + 1) }}
-        className={`lg:hidden fixed z-40 flex items-center justify-center rounded-full transition-transform active:scale-95${hasChanges ? ' animate-pulse' : ''}`}
-        style={{
-          bottom: 88,
-          right: 16,
-          width: 52,
-          height: 52,
-          background: 'linear-gradient(135deg, #7C3AED 0%, #9D5FEF 100%)',
-          boxShadow: '0 4px 20px rgba(124,58,237,0.4)',
-        }}
-        aria-label="Website-Vorschau"
-      >
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-          <circle cx="12" cy="12" r="3"/>
-        </svg>
-      </button>
 
     </div>
   )
