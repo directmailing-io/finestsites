@@ -72,11 +72,11 @@ export async function GET(req: NextRequest) {
 
     // Get last message for each conversation
     const convIds = filtered.map(c => c.id)
-    const lastMessages: Array<{ conversationId: string; content: string; senderType: string; createdAt: Date }> = []
+    const lastMessages: Array<{ conversationId: string; content: string; contentType: string; senderType: string; createdAt: Date }> = []
     if (convIds.length > 0) {
       // Fetch last message per conversation
       const msgs = await db
-        .select({ conversationId: supportMessages.conversationId, content: supportMessages.content, senderType: supportMessages.senderType, createdAt: supportMessages.createdAt })
+        .select({ conversationId: supportMessages.conversationId, content: supportMessages.content, contentType: supportMessages.contentType, senderType: supportMessages.senderType, createdAt: supportMessages.createdAt })
         .from(supportMessages)
         .where(inArray(supportMessages.conversationId, convIds))
         .orderBy(desc(supportMessages.createdAt))
