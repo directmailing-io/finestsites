@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useMemo } from 'react'
-import { CompanyChip, BadgeChip, PriceChip } from '@/components/TemplateChips'
+import { CompanyChip, BadgeChip } from '@/components/TemplateChips'
 import { FakeWebsitePreview, COMING_SOON_PASTEL } from '@/components/FakeWebsitePreview'
 
 interface TemplateItem {
@@ -20,7 +20,6 @@ interface TemplateItem {
 
 const PASTEL_COLORS = COMING_SOON_PASTEL
 
-type PriceFilter = 'all' | 'free' | 'premium'
 type AvailFilter = 'all' | 'available' | 'coming_soon'
 type SortOption = 'default' | 'az' | 'za'
 
@@ -38,7 +37,6 @@ function ComingSoonCard({ tpl, idx }: { tpl: TemplateItem; idx: number }) {
       <div style={{ padding: '14px 16px 18px' }}>
         <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 8 }}>
           <CompanyChip name={tpl.nmCompanies[0]} isAllrounder={tpl.isAllrounder} size="xs" />
-          <PriceChip isFree={tpl.isFree} size="xs" />
         </div>
         <h3 style={{ fontSize: 14, fontWeight: 700, color: '#111', marginBottom: 5, lineHeight: 1.3 }}>{tpl.title}</h3>
         {tpl.description && (
@@ -84,7 +82,6 @@ function TemplateCard({ tpl, idx }: { tpl: TemplateItem; idx: number }) {
         <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 8 }}>
           <CompanyChip name={tpl.nmCompanies[0]} isAllrounder={tpl.isAllrounder} size="xs" />
           <BadgeChip badge={tpl.badge} size="xs" />
-          <PriceChip isFree={tpl.isFree} size="xs" />
         </div>
         <h3 style={{ fontSize: 14, fontWeight: 700, color: '#111', marginBottom: 5, lineHeight: 1.3 }}>{tpl.title}</h3>
         {tpl.description && (
@@ -104,7 +101,6 @@ function TemplateCard({ tpl, idx }: { tpl: TemplateItem; idx: number }) {
 export default function VorlagenGrid({ templates }: { templates: TemplateItem[] }) {
   const [search, setSearch] = useState('')
   const [companyFilter, setCompanyFilter] = useState('Alle')
-  const [priceFilter, setPriceFilter] = useState<PriceFilter>('all')
   const [availFilter, setAvailFilter] = useState<AvailFilter>('all')
   const [sort, setSort] = useState<SortOption>('default')
 
@@ -133,10 +129,6 @@ export default function VorlagenGrid({ templates }: { templates: TemplateItem[] 
     if (companyFilter === 'Allgemein') list = list.filter(t => t.isAllrounder)
     else if (companyFilter !== 'Alle') list = list.filter(t => !t.isAllrounder && t.nmCompanies.includes(companyFilter))
 
-    // Price
-    if (priceFilter === 'free') list = list.filter(t => t.isFree)
-    else if (priceFilter === 'premium') list = list.filter(t => !t.isFree)
-
     // Search
     const q = search.trim().toLowerCase()
     if (q) list = list.filter(t =>
@@ -150,7 +142,7 @@ export default function VorlagenGrid({ templates }: { templates: TemplateItem[] 
     else if (sort === 'za') list = [...list].sort((a, b) => b.title.localeCompare(a.title, 'de'))
 
     return list
-  }, [templates, search, companyFilter, priceFilter, availFilter, sort])
+  }, [templates, search, companyFilter, availFilter, sort])
 
   const chipStyle = (active: boolean): React.CSSProperties => ({
     background: active ? '#111' : '#fff',
@@ -210,16 +202,6 @@ export default function VorlagenGrid({ templates }: { templates: TemplateItem[] 
             <button onClick={() => setAvailFilter('all')} style={chipStyle(availFilter === 'all')}>Alle</button>
             <button onClick={() => setAvailFilter('available')} style={chipStyle(availFilter === 'available')}>Verfügbar</button>
             <button onClick={() => setAvailFilter('coming_soon')} style={chipStyle(availFilter === 'coming_soon')}>Coming Soon</button>
-          </div>
-        </div>
-
-        {/* Price */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-          <span style={{ fontSize: 11, fontWeight: 600, color: '#aaa', letterSpacing: '0.06em', textTransform: 'uppercase' }}>Preis</span>
-          <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-            <button onClick={() => setPriceFilter('all')} style={chipStyle(priceFilter === 'all')}>Alle</button>
-            <button onClick={() => setPriceFilter('free')} style={chipStyle(priceFilter === 'free')}>Inklusive</button>
-            <button onClick={() => setPriceFilter('premium')} style={chipStyle(priceFilter === 'premium')}>Premium</button>
           </div>
         </div>
 

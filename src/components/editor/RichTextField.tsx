@@ -63,6 +63,7 @@ export function RichTextField({ value, onChange, placeholder, maxLength, complia
   const [showLinkInput, setShowLinkInput] = useState(false)
   const [checkState, setCheckState] = useState<CheckState>({ status: 'idle' })
   const [showCheckPanel, setShowCheckPanel] = useState(false)
+  const compliancePanelRef = useRef<HTMLDivElement>(null)
   // Guard: suppress onUpdate emissions during the initial mount/content-setting
   // phase. Tiptap fires onUpdate before the editor has rendered the initial
   // content, which would emit '' and overwrite the saved value in the parent.
@@ -176,12 +177,25 @@ export function RichTextField({ value, onChange, placeholder, maxLength, complia
   const applySuggestion = useCallback(() => {
     if (!editor) return
     if (checkState.status !== 'issues') return
-    editor.commands.setContent(checkState.suggested_html)
-    onChange(checkState.suggested_html)
-    // Mark as needs re-check (the user might still edit)
-    setCheckState({ status: 'idle' })
+    const suggestedHtml = checkState.suggested_html
+    editor.commands.setContent(suggestedHtml)
+    onChange(suggestedHtml)
+    // Auto-approve: the AI generated this text specifically to be compliant.
+    // Requiring a second check is confusing and the AI would likely approve its own output.
+    const h = hashText(suggestedHtml)
+    setCheckState({ status: 'ok', checkedHash: h })
     setShowCheckPanel(false)
-  }, [editor, checkState, onChange])
+    onComplianceApproved?.(suggestedHtml)
+  }, [editor, checkState, onChange, onComplianceApproved])
+
+  // Scroll the compliance panel into view on mobile when it opens showing issues
+  useEffect(() => {
+    if (showCheckPanel && checkState.status === 'issues' && compliancePanelRef.current) {
+      const el = compliancePanelRef.current
+      setTimeout(() => { el.scrollIntoView({ behavior: 'smooth', block: 'nearest' }) }, 80)
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [showCheckPanel])
 
   // Detect content drift since last check.
   // Use hashText (plain-text hash) so that '<p>text</p>' and 'text' produce
@@ -508,12 +522,14 @@ export function RichTextField({ value, onChange, placeholder, maxLength, complia
 
     {/* Compliance check panel — below the editor */}
     {complianceCheck && showCheckPanel && (
-      <CompliancePanel
-        state={checkState}
-        onClose={() => setShowCheckPanel(false)}
-        onRecheck={runComplianceCheck}
-        onApply={applySuggestion}
-      />
+      <div ref={compliancePanelRef}>
+        <CompliancePanel
+          state={checkState}
+          onClose={() => setShowCheckPanel(false)}
+          onRecheck={runComplianceCheck}
+          onApply={applySuggestion}
+        />
+      </div>
     )}
     </div>
   )

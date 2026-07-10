@@ -45,7 +45,7 @@ export default async function VorlagenPage() {
         createdAt: templates.createdAt,
       })
       .from(templates)
-      .where(and(inArray(templates.status, ['published', 'coming_soon']), eq(templates.isTest, false)))
+      .where(and(inArray(templates.status, ['published', 'coming_soon']), eq(templates.isTest, false), eq(templates.isFree, false)))
       .orderBy(asc(sql`COALESCE(${templates.sortOrder}, 100)`), asc(templates.createdAt))
 
     templateList = rows.map(r => ({

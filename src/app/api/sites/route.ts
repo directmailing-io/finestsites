@@ -23,9 +23,22 @@ function buildProfileSiteData(profile: typeof users.$inferSelect): Array<{ field
     [profile.websiteUrl,     'website'],
     [profile.profileImageUrl,'profilbild'],
   ]
-  return mappings
+  const result = mappings
     .filter(([val]) => val && val.trim() !== '')
     .map(([val, key]) => ({ fieldKey: key, fieldValue: val as string }))
+
+  // FitLine/PM-International: auto-compute shop URLs with sponsor parameter
+  if (profile.teamPartnerNumber) {
+    const sponsorNum = encodeURIComponent(profile.teamPartnerNumber)
+    result.push(
+      { fieldKey: 'teampartner_nummer', fieldValue: profile.teamPartnerNumber },
+      { fieldKey: 'shop_optimalset', fieldValue: `https://www.fitline.com/de/de-de/products/9700731?sponsor=${sponsorNum}` },
+      { fieldKey: 'shop_activize', fieldValue: `https://www.fitline.com/de/de-de/products/0708054?sponsor=${sponsorNum}` },
+      { fieldKey: 'shop_joghurt', fieldValue: `https://www.fitline.com/de/de-de/products/9709001?sponsor=${sponsorNum}` },
+    )
+  }
+
+  return result
 }
 
 // GET /api/sites → list current user's sites with template info + username

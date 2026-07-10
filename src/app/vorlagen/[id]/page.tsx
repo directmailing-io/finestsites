@@ -284,12 +284,6 @@ export default async function TemplateDetailPage({ params }: Props) {
                   {tpl.description}
                 </p>
               )}
-              {tpl.isFree && (
-                <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, marginTop: 20, background: '#F0FDF4', border: '1px solid #BBF7D0', borderRadius: 12, padding: '9px 14px' }}>
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#15803D" strokeWidth="2.5"><path d="M20 6L9 17l-5-5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                  <span style={{ fontSize: 13, color: '#14532D' }}>Im bezahlten Tarif inklusive <strong>ohne Kontingent zu verbrauchen.</strong></span>
-                </div>
-              )}
             </div>
             <div className="vd-hero-cta" style={{ flexShrink: 0, paddingBottom: 4 }}>
               <TemplateStartCTA templateId={tpl.id} templateTitle={tpl.title} />
@@ -299,7 +293,7 @@ export default async function TemplateDetailPage({ params }: Props) {
       </section>
 
       {/* Sentinel for sticky bar — placed right after hero */}
-      <StickyPurchaseBar templateTitle={tpl.title} registerUrl={registerUrl} isFree={tpl.isFree} />
+      <StickyPurchaseBar templateTitle={tpl.title} registerUrl={registerUrl} isFree={false} />
 
       {/* ── INTERACTIVE EDITOR PREVIEW ────────────────────────────────────────── */}
       <section className="vd-preview">

@@ -515,9 +515,10 @@ function CardSelectField({ field, value, onChange, narrow }: {
     opts.length === 3 ? 'grid-cols-1 sm:grid-cols-3' :
     'grid-cols-1 sm:grid-cols-2'
   ) : (
+    // Image cards: always at least 2 columns on mobile so previews aren't huge
     narrow ? 'grid-cols-1' :
-    opts.length === 2 ? 'grid-cols-1 sm:grid-cols-2' :
-    opts.length === 3 ? 'grid-cols-1 sm:grid-cols-3' :
+    opts.length === 2 ? 'grid-cols-2' :
+    opts.length === 3 ? 'grid-cols-2 sm:grid-cols-3' :
     'grid-cols-2 sm:grid-cols-3 lg:grid-cols-4'
   )
 
@@ -2098,8 +2099,10 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
 
   function getSectionCompletion(sec: string) {
     const sf = fields.filter(f => (f.section || 'Allgemein') === sec)
-    const complete = sf.filter(f => f.required).every(f => !!values[f.key])
-    return { complete, count: sf.length }
+    const requiredOk = sf.filter(f => f.required).every(f => !!values[f.key])
+    // A section with a compliance_check field is only "complete" once the check is approved
+    const complianceOk = sf.filter(f => f.compliance_check).every(f => !!values[f.key + '__chk'])
+    return { complete: requiredOk && complianceOk, count: sf.length }
   }
 
   const isDomainSection = activeSection === DOMAIN_SECTION
@@ -3178,6 +3181,26 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
       {showPublishCelebration && (
         <PublishCelebrationModal publishedUrl={publishedUrl} onClose={() => setShowPublishCelebration(false)} />
       )}
+
+      {/* ── Mobile Floating Preview Button (FAB) ── */}
+      <button
+        onClick={() => { setShowFullPreview(true); setPreviewKey(k => k + 1) }}
+        className={`lg:hidden fixed z-40 flex items-center justify-center rounded-full transition-transform active:scale-95${hasChanges ? ' animate-pulse' : ''}`}
+        style={{
+          bottom: 88,
+          right: 16,
+          width: 52,
+          height: 52,
+          background: 'linear-gradient(135deg, #7C3AED 0%, #9D5FEF 100%)',
+          boxShadow: '0 4px 20px rgba(124,58,237,0.4)',
+        }}
+        aria-label="Website-Vorschau"
+      >
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+          <circle cx="12" cy="12" r="3"/>
+        </svg>
+      </button>
 
     </div>
   )

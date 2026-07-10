@@ -32,7 +32,10 @@ function StepLine() {
 export default function OnboardingCompanyPage() {
   const router = useRouter()
   const [selected, setSelected] = useState<string[]>([])
+  const [teamPartnerNumber, setTeamPartnerNumber] = useState('')
   const [loading, setLoading] = useState(false)
+
+  const isPmSelected = selected.includes('PM-International')
 
   function toggle(company: string) {
     setSelected(prev =>
@@ -47,6 +50,14 @@ export default function OnboardingCompanyPage() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ nm_companies: selected }),
     }).catch(() => {})
+    // Save Teampartner-Nummer if PM-International is selected and the field is filled
+    if (isPmSelected && teamPartnerNumber.trim()) {
+      await fetch('/api/user/profile', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ team_partner_number: teamPartnerNumber.trim() }),
+      }).catch(() => {})
+    }
     router.push('/onboarding/profile')
   }
 
@@ -102,6 +113,26 @@ export default function OnboardingCompanyPage() {
           )
         })}
       </div>
+
+      {isPmSelected && (
+        <div className="w-full mt-2 mb-2 flex flex-col gap-1.5">
+          <input
+            type="text"
+            inputMode="numeric"
+            pattern="[0-9]*"
+            value={teamPartnerNumber}
+            onChange={e => setTeamPartnerNumber(e.target.value.replace(/\D/g, ''))}
+            placeholder="Optional: Deine FitLine Teampartner-Nummer (z.B. 40237198)"
+            className="w-full px-4 py-3 text-sm rounded-2xl outline-none transition-all bg-white"
+            style={{ border: '1.5px solid #E5E7EB', color: '#111827' }}
+            onFocus={e => (e.target.style.borderColor = '#1a1a1a')}
+            onBlur={e => (e.target.style.borderColor = '#E5E7EB')}
+          />
+          <p className="text-xs px-1 text-center" style={{ color: '#9CA3AF' }}>
+            Wird automatisch in deine Shop-Links eingebaut
+          </p>
+        </div>
+      )}
 
       {selected.length > 0 && (
         <p className="text-center text-xs mb-6" style={{ color: '#9CA3AF' }}>

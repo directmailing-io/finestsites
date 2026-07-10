@@ -118,6 +118,8 @@ interface UserProfile {
   tiktok: string | null
   youtube: string | null
   profile_image_url: string | null
+  team_partner_number: string | null
+  nm_companies: string[]
 }
 
 interface Invoice {
@@ -165,6 +167,7 @@ function SettingsContent() {
   const [profileImageUrl, setProfileImageUrl] = useState<string | null>(null)
   const [cropSrc, setCropSrc] = useState<string | null>(null)
   const avatarInputRef = useRef<HTMLInputElement>(null)
+  const [teamPartnerNumber, setTeamPartnerNumber] = useState('')
   const [profileSaving, setProfileSaving] = useState(false)
   const [profileSuccess, setProfileSuccess] = useState('')
   const [profileError, setProfileError] = useState('')
@@ -226,6 +229,7 @@ function SettingsContent() {
       })
       setProfileImageUrl(data.profile_image_url ?? null)
       setNmCompanies(Array.isArray(data.nm_companies) ? data.nm_companies : [])
+      setTeamPartnerNumber(data.team_partner_number ?? '')
     }).catch(() => {})
 
     fetch('/api/billing/invoices')
@@ -303,7 +307,7 @@ function SettingsContent() {
     const res = await fetch('/api/user/profile', {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ...profileName, phone, ...socialUrls }),
+      body: JSON.stringify({ ...profileName, phone, ...socialUrls, team_partner_number: teamPartnerNumber.trim() || null }),
     })
     const data = await res.json()
     if (data.error) {
@@ -645,6 +649,28 @@ function SettingsContent() {
               </div>
             ))}
           </div>
+
+          {/* ── FitLine Teampartner-Nummer (nur für PM-International Nutzer) ── */}
+          {nmCompanies.includes('PM-International') && (
+            <div className="flex flex-col gap-1.5">
+              <label className="text-sm font-semibold text-gray-700">FitLine Teampartner-Nummer</label>
+              <input
+                type="text"
+                inputMode="numeric"
+                pattern="[0-9]*"
+                value={teamPartnerNumber}
+                onChange={e => setTeamPartnerNumber(e.target.value.replace(/\D/g, ''))}
+                placeholder="z.B. 40237198"
+                className="w-full px-4 py-3 text-[15px] rounded-2xl outline-none transition-all bg-white"
+                style={{ border: '1.5px solid #E5E7EB' }}
+                onFocus={e => (e.target.style.borderColor = '#1a1a1a')}
+                onBlur={e => (e.target.style.borderColor = '#E5E7EB')}
+              />
+              <p className="text-xs px-1" style={{ color: '#94A3B8' }}>
+                Deine PM-International Teampartner-Nummer. Wird automatisch in deine FitLine Shop-Links eingefügt.
+              </p>
+            </div>
+          )}
 
           {profileError && (
             <p className="text-sm font-medium px-4 py-3 rounded-2xl"

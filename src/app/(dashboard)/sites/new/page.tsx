@@ -106,6 +106,137 @@ function EmptyState({ hasPrefs, search, priceFilter }: { hasPrefs: boolean; sear
   )
 }
 
+// ── Template grid ─────────────────────────────────────────────────────────────
+
+function TemplateGrid({
+  templates: list,
+  isFreeSection,
+  siteMap,
+  busy,
+  userCompanies,
+  onSelect,
+}: {
+  templates: Template[]
+  isFreeSection: boolean
+  siteMap: Record<string, { id: string; status: string }>
+  busy: string | null
+  userCompanies: string[]
+  onSelect: (id: string) => void
+}) {
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4" style={isFreeSection ? { opacity: 0.8 } : undefined}>
+      {list.map(tpl => {
+        const isBusy = busy === tpl.id
+        const preview = tpl.preview_images?.[0] ?? null
+        const existingSite = siteMap[tpl.id]
+        const isDraft = existingSite?.status === 'draft'
+        const isPublished = !!existingSite && !isDraft
+        const isPremium = !(tpl.is_free ?? false)
+        const companyLabel = tpl.is_allrounder
+          ? null
+          : (tpl.nm_companies.find(c => userCompanies.includes(c)) ?? tpl.nm_companies[0] ?? null)
+        const ctaLabel = isBusy ? 'Wird geöffnet…' : isDraft ? 'Bearbeiten →' : isPublished ? 'Öffnen →' : 'Verwenden →'
+
+        return (
+          <div key={tpl.id}
+            className="flex flex-col rounded-2xl overflow-hidden"
+            style={{
+              background: '#fff',
+              border: isFreeSection ? '1px solid #E5E7EB' : '1.5px solid #C4A0F0',
+              boxShadow: isFreeSection
+                ? 'none'
+                : '0 4px 28px rgba(128,96,176,0.18), 0 1px 4px rgba(128,96,176,0.08)',
+            }}>
+
+            {/* Image — top */}
+            <div className="relative overflow-hidden flex-shrink-0" style={{ height: 180, background: '#f5f5f7' }}>
+              {preview ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={preview} alt={tpl.title}
+                  className="absolute inset-0 w-full h-full object-cover object-top" />
+              ) : (
+                <div className="absolute inset-0 flex items-center justify-center"
+                  style={{ background: 'linear-gradient(160deg, #F8FAFC 0%, #F1F5F9 100%)' }}>
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#CBD5E1" strokeWidth="1.5">
+                    <rect x="3" y="3" width="18" height="18" rx="2"/>
+                    <line x1="3" y1="9" x2="21" y2="9"/>
+                    <line x1="9" y1="9" x2="9" y2="21"/>
+                  </svg>
+                </div>
+              )}
+              {/* Status badge on image */}
+              {(isDraft || isPublished) && (
+                <div className="absolute top-2 right-2">
+                  <span className="text-xs font-semibold px-2 py-0.5 rounded-full"
+                    style={isDraft
+                      ? { background: 'rgba(255,247,237,0.95)', color: '#C2410C', border: '1px solid #FED7AA' }
+                      : { background: 'rgba(240,253,244,0.95)', color: '#15803D', border: '1px solid #BBF7D0' }}>
+                    {isDraft ? 'Entwurf' : 'Aktiv'}
+                  </span>
+                </div>
+              )}
+              {/* New badge on image */}
+              {tpl.badge === 'brandneu' && (
+                <div className="absolute top-2 left-2">
+                  <span className="text-xs font-bold px-2 py-0.5 rounded-full"
+                    style={{ background: 'rgba(245,243,255,0.95)', color: '#7C3AED', border: '1px solid #DDD6FE' }}>
+                    Neu
+                  </span>
+                </div>
+              )}
+            </div>
+
+            {/* Card body */}
+            <div style={{ padding: '14px 16px 10px', flex: 1, display: 'flex', flexDirection: 'column', gap: 5 }}>
+              <p style={{ fontSize: 11, fontWeight: 700, color: tpl.is_allrounder ? '#2563EB' : '#9d7ecc', letterSpacing: '0.07em', textTransform: 'uppercase', margin: 0 }}>
+                {tpl.is_allrounder ? 'Allgemein' : (companyLabel ?? '')}
+              </p>
+              <h3 style={{ fontSize: isFreeSection ? 14 : 15, fontWeight: 700, color: '#111', lineHeight: 1.3, margin: 0 }}>
+                {tpl.title}
+              </h3>
+            </div>
+
+            {/* Footer bar */}
+            <button
+              onClick={() => onSelect(tpl.id)}
+              disabled={!!busy}
+              style={{
+                padding: '11px 16px 13px',
+                background: isBusy ? '#E5E7EB' : isPremium
+                  ? 'linear-gradient(120deg, #7C3AED 0%, #9D5FEF 100%)'
+                  : '#F5F5F7',
+                borderTop: isPremium ? 'none' : '1px solid #EBEBED',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                border: 'none',
+                cursor: isBusy ? 'default' : 'pointer',
+                width: '100%',
+                flexShrink: 0,
+              }}>
+              <span style={{
+                fontSize: 11, fontWeight: 700,
+                color: isBusy ? '#9CA3AF' : isPremium ? 'rgba(255,255,255,0.75)' : '#9CA3AF',
+                letterSpacing: '0.07em', textTransform: 'uppercase',
+              }}>
+                {isPremium ? 'Premium' : 'Gratis'}
+              </span>
+              <span style={{
+                fontSize: 13, fontWeight: 700,
+                color: isBusy ? '#9CA3AF' : isPremium ? '#fff' : '#6B7280',
+                display: 'flex', alignItems: 'center', gap: 5,
+              }}>
+                {isBusy && <span className="w-3 h-3 rounded-full border-2 border-gray-300 border-t-gray-500 animate-spin inline-block" />}
+                {ctaLabel}
+              </span>
+            </button>
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
 // ── Page ──────────────────────────────────────────────────────────────────────
 
 export default function NewSitePage() {
@@ -179,19 +310,28 @@ export default function NewSitePage() {
     )
   }, [priceFiltered, search])
 
-  // Step 5: sort — drafts first, then rest
-  const visible = useMemo(() => {
-    return [...searched].sort((a, b) => {
-      // Primary: premium before free
-      const premA = (a.is_free ?? false) ? 1 : 0
-      const premB = (b.is_free ?? false) ? 1 : 0
-      if (premA !== premB) return premA - premB
-      // Secondary: drafts first within each group
-      const draftA = siteMap[a.id]?.status === 'draft' ? 0 : 1
-      const draftB = siteMap[b.id]?.status === 'draft' ? 0 : 1
-      return draftA - draftB
-    })
+  // Step 5: sort — drafts first within each group
+  const sortByDraft = (list: Template[]) => [...list].sort((a, b) => {
+    const draftA = siteMap[a.id]?.status === 'draft' ? 0 : 1
+    const draftB = siteMap[b.id]?.status === 'draft' ? 0 : 1
+    return draftA - draftB
+  })
+
+  const premiumTemplates = useMemo(() => {
+    const list = searched.filter(t => !(t.is_free ?? false))
+    return sortByDraft(list)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searched, siteMap])
+
+  const freeTemplates = useMemo(() => {
+    const list = searched.filter(t => t.is_free ?? false)
+    return sortByDraft(list)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searched, siteMap])
+
+  const visible = useMemo(() => {
+    return [...premiumTemplates, ...freeTemplates]
+  }, [premiumTemplates, freeTemplates])
 
   async function handleSelect(templateId: string) {
     if (busy) return
@@ -333,116 +473,24 @@ export default function NewSitePage() {
       ) : visible.length === 0 ? (
         <EmptyState hasPrefs={hasPrefs} search={search} priceFilter={priceFilter} />
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {visible.map(tpl => {
-            const isBusy = busy === tpl.id
-            const preview = tpl.preview_images?.[0] ?? null
-            const existingSite = siteMap[tpl.id]
-            const isDraft = existingSite?.status === 'draft'
-            const isPublished = !!existingSite && !isDraft
-            const isPremium = !(tpl.is_free ?? false)
-            const companyLabel = tpl.is_allrounder
-              ? null
-              : (tpl.nm_companies.find(c => userCompanies.includes(c)) ?? tpl.nm_companies[0] ?? null)
-            const ctaLabel = isBusy ? 'Wird geöffnet…' : isDraft ? 'Bearbeiten →' : isPublished ? 'Öffnen →' : 'Verwenden →'
+        <>
+          {/* ── Premium templates ── */}
+          {priceFilter !== 'free' && premiumTemplates.length > 0 && (
+            <TemplateGrid templates={premiumTemplates} isFreeSection={false} siteMap={siteMap} busy={busy} userCompanies={userCompanies} onSelect={handleSelect} />
+          )}
 
-            return (
-              <div key={tpl.id}
-                className="flex flex-col rounded-2xl overflow-hidden"
-                style={{
-                  background: '#fff',
-                  border: isPremium ? '1.5px solid #C4A0F0' : '1px solid #E5E7EB',
-                  boxShadow: isPremium
-                    ? '0 4px 28px rgba(128,96,176,0.18), 0 1px 4px rgba(128,96,176,0.08)'
-                    : '0 2px 12px rgba(0,0,0,0.05)',
-                }}>
-
-                {/* Image — top */}
-                <div className="relative overflow-hidden flex-shrink-0" style={{ height: 180, background: '#f5f5f7' }}>
-                  {preview ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={preview} alt={tpl.title}
-                      className="absolute inset-0 w-full h-full object-cover object-top" />
-                  ) : (
-                    <div className="absolute inset-0 flex items-center justify-center"
-                      style={{ background: 'linear-gradient(160deg, #F8FAFC 0%, #F1F5F9 100%)' }}>
-                      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#CBD5E1" strokeWidth="1.5">
-                        <rect x="3" y="3" width="18" height="18" rx="2"/>
-                        <line x1="3" y1="9" x2="21" y2="9"/>
-                        <line x1="9" y1="9" x2="9" y2="21"/>
-                      </svg>
-                    </div>
-                  )}
-                  {/* Status badge on image */}
-                  {(isDraft || isPublished) && (
-                    <div className="absolute top-2 right-2">
-                      <span className="text-xs font-semibold px-2 py-0.5 rounded-full"
-                        style={isDraft
-                          ? { background: 'rgba(255,247,237,0.95)', color: '#C2410C', border: '1px solid #FED7AA' }
-                          : { background: 'rgba(240,253,244,0.95)', color: '#15803D', border: '1px solid #BBF7D0' }}>
-                        {isDraft ? 'Entwurf' : 'Aktiv'}
-                      </span>
-                    </div>
-                  )}
-                  {/* New badge on image */}
-                  {tpl.badge === 'brandneu' && (
-                    <div className="absolute top-2 left-2">
-                      <span className="text-xs font-bold px-2 py-0.5 rounded-full"
-                        style={{ background: 'rgba(245,243,255,0.95)', color: '#7C3AED', border: '1px solid #DDD6FE' }}>
-                        ✦ Neu
-                      </span>
-                    </div>
-                  )}
-                </div>
-
-                {/* Card body */}
-                <div style={{ padding: '14px 16px 10px', flex: 1, display: 'flex', flexDirection: 'column', gap: 5 }}>
-                  <p style={{ fontSize: 11, fontWeight: 700, color: tpl.is_allrounder ? '#2563EB' : '#9d7ecc', letterSpacing: '0.07em', textTransform: 'uppercase', margin: 0 }}>
-                    {tpl.is_allrounder ? 'Allgemein' : (companyLabel ?? '')}
-                  </p>
-                  <h3 style={{ fontSize: 15, fontWeight: 700, color: '#111', lineHeight: 1.3, margin: 0 }}>
-                    {tpl.title}
-                  </h3>
-                </div>
-
-                {/* Footer bar — the visual differentiator */}
-                <button
-                  onClick={() => handleSelect(tpl.id)}
-                  disabled={!!busy}
-                  style={{
-                    padding: '11px 16px 13px',
-                    background: isBusy ? '#E5E7EB' : isPremium
-                      ? 'linear-gradient(120deg, #7C3AED 0%, #9D5FEF 100%)'
-                      : '#F5F5F7',
-                    borderTop: isPremium ? 'none' : '1px solid #EBEBED',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    border: 'none',
-                    cursor: isBusy ? 'default' : 'pointer',
-                    width: '100%',
-                    flexShrink: 0,
-                  }}>
-                  <span style={{
-                    fontSize: 11, fontWeight: 700,
-                    color: isBusy ? '#9CA3AF' : isPremium ? 'rgba(255,255,255,0.75)' : '#9CA3AF',
-                    letterSpacing: '0.07em', textTransform: 'uppercase',
-                  }}>
-                    {isPremium ? 'Premium' : 'Gratis'}
-                  </span>
-                  <span style={{
-                    fontSize: 13, fontWeight: 700,
-                    color: isBusy ? '#9CA3AF' : isPremium ? '#fff' : '#6B7280',
-                    display: 'flex', alignItems: 'center', gap: 5,
-                  }}>
-                    {isBusy && <span className="w-3 h-3 rounded-full border-2 border-gray-300 border-t-gray-500 animate-spin inline-block" />}
-                    {ctaLabel}
-                  </span>
-                </button>
+          {/* ── Free templates (secondary section) ── */}
+          {priceFilter !== 'premium' && freeTemplates.length > 0 && (
+            <>
+              <div style={{ margin: '32px 0 16px', display: 'flex', alignItems: 'center', gap: 12 }}>
+                <div style={{ flex: 1, height: 1, background: '#E5E7EB' }} />
+                <span style={{ fontSize: 11, fontWeight: 600, color: '#9CA3AF', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Kostenlose Vorlagen</span>
+                <div style={{ flex: 1, height: 1, background: '#E5E7EB' }} />
               </div>
-            )
-          })}
-        </div>
+              <TemplateGrid templates={freeTemplates} isFreeSection={true} siteMap={siteMap} busy={busy} userCompanies={userCompanies} onSelect={handleSelect} />
+            </>
+          )}
+        </>
       )}
 
       {/* ── Settings hint ── */}

@@ -101,6 +101,8 @@ export const users = pgTable('users', {
   image: text('image'),
   // NM company preferences
   nmCompanies: text('nm_companies').array().default([]),
+  // PM-International / FitLine
+  teamPartnerNumber: text('team_partner_number'),
   // Affiliate
   referredByUsername: text('referred_by_username'),
   stripeConnectId: text('stripe_connect_id').unique(),

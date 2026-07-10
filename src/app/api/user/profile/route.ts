@@ -47,6 +47,7 @@ export async function GET(req: NextRequest) {
     tiktok: profile?.tiktok ?? null,
     youtube: profile?.youtube ?? null,
     profile_image_url: profile?.profileImageUrl ?? null,
+    team_partner_number: profile?.teamPartnerNumber ?? null,
   })
 }
 
@@ -68,6 +69,7 @@ export async function PATCH(req: NextRequest) {
     youtube: 'youtube',
     profile_image_url: 'profileImageUrl',
     nm_companies: 'nmCompanies',
+    team_partner_number: 'teamPartnerNumber',
   }
 
   const updates: Partial<typeof users.$inferInsert> = {}
