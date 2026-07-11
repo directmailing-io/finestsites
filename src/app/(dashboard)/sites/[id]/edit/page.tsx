@@ -2365,7 +2365,7 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
               Live
             </span>
           ) : (
-            <button onClick={handlePublish} disabled={publishing || !allRequiredComplete}
+            <button onClick={() => handlePublish()} disabled={publishing || !allRequiredComplete}
               className="flex items-center gap-1 text-xs font-semibold px-3 py-2 rounded-full text-white transition-all"
               style={{ background: allRequiredComplete ? '#1a1a1a' : '#9CA3AF', opacity: publishing ? 0.7 : 1, cursor: allRequiredComplete ? 'pointer' : 'not-allowed' }}>
               {publishing ? <span className="w-3 h-3 rounded-full border-2 border-white/40 border-t-white animate-spin" /> : null}
@@ -2509,7 +2509,7 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
           {isPublished ? (
             hasChanges && allRequiredComplete ? (
               /* Changes to push live */
-              <button onClick={handlePublish} disabled={publishing}
+              <button onClick={() => handlePublish()} disabled={publishing}
                 className="flex items-center gap-1.5 text-xs font-semibold px-4 py-2 rounded-full text-white transition-all"
                 style={{ background: '#16A34A', opacity: publishing ? 0.7 : 1 }}>
                 {publishing
@@ -2527,7 +2527,7 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
             )
           ) : (
             /* Not yet published */
-            <button onClick={handlePublish} disabled={publishing || !allRequiredComplete}
+            <button onClick={() => handlePublish()} disabled={publishing || !allRequiredComplete}
               className="flex items-center gap-1.5 text-xs font-semibold px-4 py-2 rounded-full text-white transition-all"
               style={{ background: allRequiredComplete ? '#1a1a1a' : '#9CA3AF', opacity: publishing ? 0.7 : 1, cursor: allRequiredComplete ? 'pointer' : 'not-allowed' }}>
               {publishing ? <span className="w-3 h-3 rounded-full border-2 border-white/40 border-t-white animate-spin" /> : null}
@@ -2907,7 +2907,7 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
                         Bitte EU-Health-Claims-Check durchführen: {complianceBlockedFields.map(f => f.label).join(', ')}
                       </p>
                     )}
-                    <button onClick={handlePublish} disabled={publishing || !allRequiredComplete}
+                    <button onClick={() => handlePublish()} disabled={publishing || !allRequiredComplete}
                       className="flex items-center gap-2 px-6 py-3 text-sm font-bold text-white rounded-full"
                       style={{
                         background: allRequiredComplete ? (isPublished ? '#16A34A' : '#1a1a1a') : '#9CA3AF',
@@ -2935,7 +2935,7 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
                   style={{ background: '#F3F4F6', color: '#374151' }}>
                   {saving ? 'Speichert…' : 'Speichern'}
                 </button>
-                <button onClick={handlePublish} disabled={publishing || !allRequiredComplete}
+                <button onClick={() => handlePublish()} disabled={publishing || !allRequiredComplete}
                   className="flex items-center gap-2 px-6 py-3 text-sm font-bold text-white rounded-full"
                   style={{ background: allRequiredComplete ? (isPublished ? '#16A34A' : '#1a1a1a') : '#9CA3AF', opacity: publishing ? 0.7 : 1, cursor: allRequiredComplete ? 'pointer' : 'not-allowed' }}>
                   {publishing ? 'Bitte warten…' : isPublished ? 'Änderungen live' : '🚀 Veröffentlichen'}
@@ -2973,7 +2973,7 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
                 <div />
               ) : sections.length <= 1 ? (
                 /* Single section: Publish */
-                <button onClick={handlePublish} disabled={publishing || !allRequiredComplete}
+                <button onClick={() => handlePublish()} disabled={publishing || !allRequiredComplete}
                   className="w-full flex items-center justify-center gap-2 py-3.5 text-sm font-bold text-white rounded-full"
                   style={{ background: allRequiredComplete ? (isPublished ? '#16A34A' : '#1a1a1a') : '#9CA3AF', opacity: publishing ? 0.7 : 1 }}>
                   {publishing ? <span className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" /> : null}
@@ -3014,7 +3014,7 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
                 </div>
               ) : (
                 /* Last section: Publish */
-                <button onClick={handlePublish} disabled={publishing || !allRequiredComplete}
+                <button onClick={() => handlePublish()} disabled={publishing || !allRequiredComplete}
                   className="w-full flex items-center justify-center gap-2 py-3.5 text-sm font-bold text-white rounded-full"
                   style={{
                     background: allRequiredComplete ? (isPublished ? '#16A34A' : '#1a1a1a') : '#9CA3AF',
