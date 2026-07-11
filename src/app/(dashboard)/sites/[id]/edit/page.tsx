@@ -1601,14 +1601,14 @@ function FieldRenderer({ field, value, onChange, onItemFocus, complianceApproved
     case 'url':
       return (
         <input type="url" value={value} onChange={e => onChange(e.target.value)}
-          placeholder={field.placeholder_text || 'https://'}
+          placeholder={field.input_placeholder || field.placeholder_text || 'https://'}
           maxLength={field.max_length ?? undefined}
           style={INPUT} onFocus={focusBorder} onBlur={blurBorder} />
       )
     case 'email':
       return (
         <input type="email" value={value} onChange={e => onChange(e.target.value)}
-          placeholder={field.placeholder_text || 'name@beispiel.de'}
+          placeholder={field.input_placeholder || field.placeholder_text || 'name@beispiel.de'}
           maxLength={field.max_length ?? undefined}
           style={INPUT} onFocus={focusBorder} onBlur={blurBorder} />
       )
