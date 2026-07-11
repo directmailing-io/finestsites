@@ -60,6 +60,7 @@ interface SiteData {
   username: string | null
   custom_domain: string | null
   custom_domain_status: string | null
+  content_consent_given_at: string | null
   templates: {
     id: string; title: string; domain: string
     r2_bundle_path: string | null
@@ -1551,6 +1552,91 @@ function LoopField({ field, value, onChange, onItemFocus }: {
   )
 }
 
+// ─── Content Consent Modal ────────────────────────────────────────────────────
+
+function ContentConsentModal({ onConfirm, onDismiss, loading }: { onConfirm: () => void; onDismiss?: () => void; loading: boolean }) {
+  const [checked, setChecked] = useState(false)
+  return (
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4"
+      style={{ background: 'rgba(0,0,0,0.45)', backdropFilter: 'blur(4px)' }}
+      onClick={e => { if (e.target === e.currentTarget && !loading) onDismiss?.() }}>
+      <div className="w-full max-w-md bg-white rounded-[28px] overflow-hidden"
+        style={{ boxShadow: '0 32px 80px rgba(0,0,0,0.25)' }}>
+
+        {/* Header */}
+        <div className="px-7 pt-7 pb-5">
+          <div className="w-12 h-12 rounded-2xl flex items-center justify-center mb-5"
+            style={{ background: '#F0FDF4' }}>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#15803D" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              <polyline points="9 12 11 14 15 10"/>
+            </svg>
+          </div>
+          <h2 className="text-[19px] font-bold text-gray-900 leading-snug mb-2">
+            Kurze Bestätigung vor dem Veröffentlichen
+          </h2>
+          <p className="text-[14px] leading-relaxed" style={{ color: '#6B7280' }}>
+            Deine Website geht gleich online. Bitte bestätige kurz, dass du folgende Punkte eingehalten hast.
+          </p>
+        </div>
+
+        {/* Rules list */}
+        <div className="mx-7 mb-5 rounded-2xl px-5 py-4 flex flex-col gap-3"
+          style={{ background: '#F9FAFB', border: '1px solid #F3F4F6' }}>
+          {[
+            'Alle Fotos, die ich hochgeladen habe, darf ich verwenden. Ich habe keine fremden Bilder ohne Erlaubnis eingesetzt.',
+            'Ich habe keine gesundheitlichen Versprechen gemacht, zum Beispiel dass ein Produkt Krankheiten heilt oder verhindert.',
+            'Alle Texte auf meiner Seite stammen von mir und sind wahrheitsgemäß.',
+          ].map((rule, i) => (
+            <div key={i} className="flex items-start gap-3">
+              <div className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"
+                style={{ background: '#DCFCE7' }}>
+                <svg width="10" height="10" viewBox="0 0 10 8" fill="none">
+                  <path d="M1 4L3.5 6.5L9 1" stroke="#15803D" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </div>
+              <p className="text-[13px] leading-snug" style={{ color: '#374151' }}>{rule}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* Checkbox */}
+        <label className="flex items-start gap-3 px-7 mb-6 cursor-pointer select-none">
+          <input
+            type="checkbox"
+            checked={checked}
+            onChange={e => setChecked(e.target.checked)}
+            className="mt-0.5 flex-shrink-0 w-5 h-5 rounded-md cursor-pointer accent-gray-900"
+          />
+          <span className="text-[13px] leading-snug" style={{ color: '#374151' }}>
+            Ja, ich bestätige das und übernehme die Verantwortung für meine Inhalte.
+            FinestSites prüft Inhalte soweit möglich, kann das aber nicht vollständig garantieren.
+          </span>
+        </label>
+
+        {/* Actions */}
+        <div className="px-7 pb-7 flex flex-col gap-2">
+          <button
+            onClick={onConfirm}
+            disabled={!checked || loading}
+            className="w-full py-3.5 rounded-2xl text-sm font-bold text-white transition-all"
+            style={{
+              background: checked && !loading ? '#1a1a1a' : '#D1D5DB',
+              cursor: checked && !loading ? 'pointer' : 'not-allowed',
+            }}>
+            {loading
+              ? <span className="flex items-center justify-center gap-2"><span className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />Wird veröffentlicht…</span>
+              : 'Jetzt veröffentlichen'}
+          </button>
+          <p className="text-center text-[11px]" style={{ color: '#9CA3AF' }}>
+            Diese Bestätigung wird mit Datum gespeichert.
+          </p>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 // ─── Social URL Field ─────────────────────────────────────────────────────────
 
 const SOCIAL_PLATFORMS: Record<string, { prefix: string; display: string; ph: string }> = {
@@ -1744,6 +1830,7 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
   const [deletingSite, setDeletingSite] = useState(false)
   const [showMobileMenu, setShowMobileMenu] = useState(false)
   const [showPublishCelebration, setShowPublishCelebration] = useState(false)
+  const [showConsentModal, setShowConsentModal] = useState(false)
   const [showUpgradeModal, setShowUpgradeModal] = useState(false)
   const [justPaid, setJustPaid] = useState(false)
   const [showFullPreview, setShowFullPreview] = useState(false)
@@ -2006,15 +2093,30 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
     setSaving(false)
   }
 
-  async function handlePublish() {
+  async function handlePublish(withConsent = false) {
+    // If the user hasn't given content consent yet, show the modal first
+    if (!withConsent && !site?.content_consent_given_at) {
+      setShowConsentModal(true)
+      return
+    }
     await fetch(`/api/sites/${id}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(values),
     })
-    setPublishing(true); setError('')
-    const res = await fetch(`/api/sites/${id}/publish`, { method: 'POST' })
+    setPublishing(true); setError(''); setShowConsentModal(false)
+    const res = await fetch(`/api/sites/${id}/publish`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ consent: withConsent || !!site?.content_consent_given_at }),
+    })
     const data = await res.json()
+    if (data.code === 'CONSENT_REQUIRED') {
+      // Shouldn't happen normally (modal guards this), but handle gracefully
+      setPublishing(false)
+      setShowConsentModal(true)
+      return
+    }
     if (!res.ok) {
       if (data.code === 'SUBSCRIPTION_REQUIRED') {
         setShowUpgradeModal(true)
@@ -2024,7 +2126,7 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
       }
     } else {
       setPublishedUrl(data.url)
-      setSite(prev => prev ? { ...prev, status: 'published' } : prev)
+      setSite(prev => prev ? { ...prev, status: 'published', content_consent_given_at: prev.content_consent_given_at ?? new Date().toISOString() } : prev)
       setHasChanges(false)
       setSuccess('Veröffentlicht!')
       setTimeout(() => setSuccess(''), 3000)
@@ -2046,28 +2148,8 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
   }
 
   async function handlePublishToggle() {
-    setToggling(true)
-    await fetch(`/api/sites/${id}`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(values),
-    })
-    const res = await fetch(`/api/sites/${id}/publish`, { method: 'POST' })
-    const data = await res.json()
-    if (!res.ok) {
-      if (data.code === 'SUBSCRIPTION_REQUIRED') {
-        setShowUpgradeModal(true)
-      } else {
-        showToast(data.error ?? 'Fehler beim Veröffentlichen.', 'error')
-      }
-    } else {
-      setPublishedUrl(data.url)
-      setSite(prev => prev ? { ...prev, status: 'published' } : prev)
-      setHasChanges(false)
-      showToast('Seite ist jetzt live!')
-      quota.refetch()
-    }
-    setToggling(false)
+    // Route through handlePublish so consent modal is shown if needed
+    await handlePublish(!!site?.content_consent_given_at)
   }
 
   async function handleDeleteSite() {
@@ -3214,6 +3296,15 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
               </div>
             )}
         </div>
+      )}
+
+      {/* ── Content Consent Modal ── */}
+      {showConsentModal && (
+        <ContentConsentModal
+          loading={publishing}
+          onConfirm={() => handlePublish(true)}
+          onDismiss={() => { if (!publishing) setShowConsentModal(false) }}
+        />
       )}
 
       {/* ── Delete Modal ── */}

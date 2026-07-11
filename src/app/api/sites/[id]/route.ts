@@ -16,6 +16,7 @@ async function getSiteForUser(siteId: string, userId: string) {
       deactivatedAt: userSites.deactivatedAt,
       customDomain: userSites.customDomain,
       customDomainStatus: userSites.customDomainStatus,
+      contentConsentGivenAt: userSites.contentConsentGivenAt,
       createdAt: userSites.createdAt,
       updatedAt: userSites.updatedAt,
       template: {
@@ -65,6 +66,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     deactivated_at: site.deactivatedAt,
     custom_domain: site.customDomain,
     custom_domain_status: site.customDomainStatus,
+    content_consent_given_at: site.contentConsentGivenAt,
     created_at: site.createdAt,
     updated_at: site.updatedAt,
     templates: site.template

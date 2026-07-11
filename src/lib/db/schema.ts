@@ -3,6 +3,7 @@ import {
   pgEnum,
   uuid,
   text,
+  varchar,
   boolean,
   timestamp,
   jsonb,
@@ -162,6 +163,11 @@ export const userSites = pgTable('user_sites', {
   customDomainStatus: text('custom_domain_status'),
   cfCustomHostnameId: text('cf_custom_hostname_id'),
   customDomainVerifiedAt: timestamp('custom_domain_verified_at', { withTimezone: true }),
+  // Content consent — legal proof captured before first publish
+  contentConsentGivenAt: timestamp('content_consent_given_at', { withTimezone: true }),
+  contentConsentIp: varchar('content_consent_ip', { length: 64 }),
+  contentConsentUa: text('content_consent_ua'),
+  contentConsentVersion: varchar('content_consent_version', { length: 20 }).default('v1'),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 }, (t) => [

@@ -49,11 +49,21 @@ async function preRenderAndPushToKV(
   }
 }
 
+// Current consent text version — bump when text changes so old consents can be distinguished
+const CONSENT_VERSION = 'v1'
+
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const user = await getUserFromRequest(req)
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const { id } = await params
+
+  // Parse optional consent flag from body
+  let consentGiven = false
+  try {
+    const body = await req.json()
+    consentGiven = body?.consent === true
+  } catch { /* no body or not JSON — that's fine */ }
 
   // Get site with template info
   const site = await db.query.userSites.findFirst({
@@ -119,6 +129,29 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
         code: 'PLAN_LIMIT_REACHED',
       }, { status: 403 })
     }
+  }
+
+  // ── Content consent gate ───────────────────────────────────────────────────
+  // If user has never consented, require explicit consent in this request.
+  if (!site.contentConsentGivenAt) {
+    if (!consentGiven) {
+      return NextResponse.json({ code: 'CONSENT_REQUIRED' }, { status: 200 })
+    }
+    // Record the consent for legal purposes
+    const ip =
+      req.headers.get('cf-connecting-ip') ??
+      req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ??
+      req.headers.get('x-real-ip') ??
+      'unknown'
+    const ua = req.headers.get('user-agent') ?? ''
+    await db.update(userSites)
+      .set({
+        contentConsentGivenAt: new Date(),
+        contentConsentIp: ip.slice(0, 64),
+        contentConsentUa: ua.slice(0, 512),
+        contentConsentVersion: CONSENT_VERSION,
+      })
+      .where(eq(userSites.id, id))
   }
 
   // Update to published

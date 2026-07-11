@@ -19,6 +19,8 @@ interface UserSite {
   status: string
   customDomain: string | null
   customDomainStatus: string | null
+  contentConsentGivenAt: string | null
+  contentConsentIp: string | null
   createdAt: string
   template: { title: string; domain: string } | null
 }
@@ -306,13 +308,26 @@ export default function AdminUserDetailPage({ params }: { params: Promise<{ id: 
                         </a>
                       )}
                     </div>
-                    <span className="text-xs px-2.5 py-0.5 rounded-full flex-shrink-0"
-                      style={{
-                        background: site.status === 'published' ? '#F0FDF4' : '#F3F4F6',
-                        color: site.status === 'published' ? '#16A34A' : '#6B7280',
-                      }}>
-                      {site.status === 'published' ? '● Live' : '○ Entwurf'}
-                    </span>
+                    <div className="flex flex-col items-end gap-1 flex-shrink-0">
+                      <span className="text-xs px-2.5 py-0.5 rounded-full"
+                        style={{
+                          background: site.status === 'published' ? '#F0FDF4' : '#F3F4F6',
+                          color: site.status === 'published' ? '#16A34A' : '#6B7280',
+                        }}>
+                        {site.status === 'published' ? '● Live' : '○ Entwurf'}
+                      </span>
+                      {site.contentConsentGivenAt ? (
+                        <span className="text-[10px] flex items-center gap-1" style={{ color: '#16A34A' }}
+                          title={`IP: ${site.contentConsentIp ?? 'unbekannt'}`}>
+                          <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/>
+                          </svg>
+                          Consent {new Date(site.contentConsentGivenAt).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: '2-digit' })}
+                        </span>
+                      ) : (
+                        <span className="text-[10px]" style={{ color: '#D1D5DB' }}>Kein Consent</span>
+                      )}
+                    </div>
                   </div>
                 )
               })}
