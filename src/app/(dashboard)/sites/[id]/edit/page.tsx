@@ -1551,6 +1551,79 @@ function LoopField({ field, value, onChange, onItemFocus }: {
   )
 }
 
+// ─── Social URL Field ─────────────────────────────────────────────────────────
+
+const SOCIAL_PLATFORMS: Record<string, { prefix: string; display: string; ph: string }> = {
+  instagram: { prefix: 'https://instagram.com/',   display: 'instagram.com/',   ph: 'deinname' },
+  facebook:  { prefix: 'https://facebook.com/',    display: 'facebook.com/',    ph: 'deinname' },
+  tiktok:    { prefix: 'https://tiktok.com/@',     display: 'tiktok.com/@',     ph: 'deinname' },
+  youtube:   { prefix: 'https://youtube.com/@',    display: 'youtube.com/@',    ph: 'deinkanal' },
+  linkedin:  { prefix: 'https://linkedin.com/in/', display: 'linkedin.com/in/', ph: 'dein-name' },
+}
+
+function getSocialPlatform(fieldKey: string) {
+  const k = fieldKey.toLowerCase()
+  for (const [platform, cfg] of Object.entries(SOCIAL_PLATFORMS)) {
+    if (k.includes(platform)) return cfg
+  }
+  return null
+}
+
+function urlToSocialHandle(url: string, prefix: string): string {
+  if (!url) return ''
+  const bare = prefix.replace(/^https?:\/\//i, '').replace(/^www\./, '')
+  return url
+    .replace(/^https?:\/\//i, '')
+    .replace(/^www\./, '')
+    .replace(new RegExp('^' + bare.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')), '')
+    .replace(/\/$/, '')
+    .replace(/^@/, '')
+}
+
+function SocialUrlField({ field, value, onChange }: {
+  field: FieldSchema; value: string; onChange: (v: string) => void
+}) {
+  const social = getSocialPlatform(field.key)!
+  const wrapRef = React.useRef<HTMLDivElement>(null)
+  const username = urlToSocialHandle(value, social.prefix)
+
+  function commit(input: string) {
+    const u = input.trim().replace(/^@/, '')
+    onChange(u ? social.prefix + u : '')
+  }
+
+  function handlePaste(e: React.ClipboardEvent<HTMLInputElement>) {
+    const text = e.clipboardData.getData('text')
+    if (text.includes('://') || text.includes('.com')) {
+      e.preventDefault()
+      commit(urlToSocialHandle(text, social.prefix))
+    }
+  }
+
+  return (
+    <div ref={wrapRef}
+      className="flex items-center overflow-hidden"
+      style={{ border: '1.5px solid #E5E7EB', borderRadius: 14, background: '#fff', transition: 'border-color 0.15s' }}>
+      <div className="px-3 py-3 text-xs flex-shrink-0"
+        style={{ color: '#9CA3AF', background: '#FAFAFA', borderRight: '1px solid #F1F5F9', whiteSpace: 'nowrap', userSelect: 'none', lineHeight: '1.5' }}>
+        {social.display}
+      </div>
+      <input
+        type="text"
+        value={username}
+        onChange={e => commit(e.target.value)}
+        onPaste={handlePaste}
+        placeholder={field.input_placeholder || field.placeholder_text || social.ph}
+        maxLength={field.max_length ?? undefined}
+        className="flex-1 min-w-0 px-3 text-sm outline-none bg-transparent"
+        style={{ color: '#111827', height: 48 }}
+        onFocus={() => { if (wrapRef.current) wrapRef.current.style.borderColor = '#1a1a1a' }}
+        onBlur={() => { if (wrapRef.current) wrapRef.current.style.borderColor = '#E5E7EB' }}
+      />
+    </div>
+  )
+}
+
 // ─── Field Renderer ───────────────────────────────────────────────────────────
 
 function FieldRenderer({ field, value, onChange, onItemFocus, complianceApprovedText, onComplianceApproved, onComplianceRevoked, narrow }: {
@@ -1599,6 +1672,7 @@ function FieldRenderer({ field, value, onChange, onItemFocus, complianceApproved
     case 'card_select':
       return <CardSelectField field={field} value={value} onChange={onChange} narrow={narrow} />
     case 'url':
+      if (getSocialPlatform(field.key)) return <SocialUrlField field={field} value={value} onChange={onChange} />
       return (
         <input type="url" value={value} onChange={e => onChange(e.target.value)}
           placeholder={field.input_placeholder || field.placeholder_text || 'https://'}
