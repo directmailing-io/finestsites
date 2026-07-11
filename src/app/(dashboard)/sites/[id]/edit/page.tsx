@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import ImageCropModal from '@/components/ImageCropModal'
 import { RichTextField } from '@/components/editor/RichTextField'
 import { usePlanQuota } from '@/components/dashboard/PlanQuotaContext'
+import { PHONE_COUNTRIES, parsePhoneValue, toWhatsAppDigits, toDisplayPhone } from '@/lib/constants/phone-countries'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -1552,6 +1553,184 @@ function LoopField({ field, value, onChange, onItemFocus }: {
   )
 }
 
+// ─── Phone Field ──────────────────────────────────────────────────────────────
+
+/** Detects phone field mode from field key */
+function getPhoneMode(key: string): 'whatsapp' | 'telefon' | null {
+  const k = key.toLowerCase()
+  if (k.includes('whatsapp')) return 'whatsapp'
+  if (k.includes('telefon') || k.includes('phone') || k.includes('tel')) return 'telefon'
+  return null
+}
+
+function PhoneField({ field, value, onChange }: {
+  field: FieldSchema; value: string; onChange: (v: string) => void
+}) {
+  const mode = getPhoneMode(field.key)!
+  const wrapRef = useRef<HTMLDivElement>(null)
+  const [open, setOpen] = useState(false)
+  const [search, setSearch] = useState('')
+  const dropdownRef = useRef<HTMLDivElement>(null)
+  const searchRef = useRef<HTMLInputElement>(null)
+
+  const { country, local } = parsePhoneValue(value, PHONE_COUNTRIES)
+  const [selectedCode, setSelectedCode] = useState(country.code)
+  const [localNum, setLocalNum] = useState(local)
+
+  // Sync when external value changes
+  useEffect(() => {
+    const parsed = parsePhoneValue(value, PHONE_COUNTRIES)
+    setSelectedCode(parsed.country.code)
+    setLocalNum(parsed.local)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const selectedCountry = PHONE_COUNTRIES.find(c => c.code === selectedCode) ?? PHONE_COUNTRIES[0]
+
+  const filtered = search
+    ? PHONE_COUNTRIES.filter(c =>
+        c.name.toLowerCase().includes(search.toLowerCase()) ||
+        c.code.includes(search) ||
+        c.iso.toLowerCase().includes(search.toLowerCase())
+      )
+    : PHONE_COUNTRIES
+
+  function commit(code: string, num: string) {
+    const c = PHONE_COUNTRIES.find(c2 => c2.code === code) ?? selectedCountry
+    if (mode === 'whatsapp') {
+      onChange(toWhatsAppDigits(c, num))
+    } else {
+      onChange(toDisplayPhone(c, num))
+    }
+  }
+
+  function handleCountrySelect(code: string) {
+    setSelectedCode(code)
+    setOpen(false)
+    setSearch('')
+    commit(code, localNum)
+  }
+
+  function handleLocalChange(num: string) {
+    setLocalNum(num)
+    commit(selectedCode, num)
+  }
+
+  // Close on outside click
+  useEffect(() => {
+    if (!open) return
+    function onDown(e: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setOpen(false); setSearch('')
+      }
+    }
+    document.addEventListener('mousedown', onDown)
+    return () => document.removeEventListener('mousedown', onDown)
+  }, [open])
+
+  useEffect(() => {
+    if (open) setTimeout(() => searchRef.current?.focus(), 50)
+  }, [open])
+
+  const ph = mode === 'whatsapp' ? '151 12345678' : '151 12345678'
+
+  return (
+    <div ref={wrapRef}
+      className="flex items-stretch overflow-visible"
+      style={{ border: '1.5px solid #E5E7EB', borderRadius: 14, background: '#fff', transition: 'border-color 0.15s', position: 'relative' }}
+      onFocusCapture={() => { if (wrapRef.current) wrapRef.current.style.borderColor = '#1a1a1a' }}
+      onBlurCapture={e => {
+        // Don't blur if focus moves within the component
+        if (wrapRef.current && !wrapRef.current.contains(e.relatedTarget as Node)) {
+          if (wrapRef.current) wrapRef.current.style.borderColor = '#E5E7EB'
+        }
+      }}>
+
+      {/* Country selector button */}
+      <button
+        type="button"
+        onClick={() => setOpen(o => !o)}
+        className="flex items-center gap-1.5 px-3 flex-shrink-0 outline-none"
+        style={{ borderRight: '1px solid #F1F5F9', background: '#FAFAFA', borderRadius: '12px 0 0 12px', minWidth: 88, height: 48 }}>
+        <span className="text-base leading-none">{selectedCountry.flag}</span>
+        <span className="text-xs font-medium" style={{ color: '#6B7280' }}>{selectedCountry.code}</span>
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="2.5">
+          <path d="M6 9l6 6 6-6"/>
+        </svg>
+      </button>
+
+      {/* Dropdown */}
+      {open && (
+        <div ref={dropdownRef}
+          className="absolute left-0 top-full mt-1 z-50 bg-white rounded-2xl overflow-hidden flex flex-col"
+          style={{ width: 280, maxHeight: 320, boxShadow: '0 12px 40px rgba(0,0,0,0.15)', border: '1px solid #F3F4F6' }}>
+          {/* Search */}
+          <div className="px-3 pt-3 pb-2 border-b" style={{ borderColor: '#F3F4F6' }}>
+            <div className="flex items-center gap-2 px-3 py-2 rounded-xl" style={{ background: '#F9FAFB', border: '1px solid #E5E7EB' }}>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="2">
+                <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+              </svg>
+              <input
+                ref={searchRef}
+                type="text"
+                value={search}
+                onChange={e => setSearch(e.target.value)}
+                placeholder="Land suchen…"
+                className="flex-1 text-sm outline-none bg-transparent"
+                style={{ color: '#111827' }}
+              />
+            </div>
+          </div>
+          {/* List */}
+          <div className="overflow-y-auto flex-1">
+            {filtered.length === 0 ? (
+              <p className="text-center text-xs py-4" style={{ color: '#9CA3AF' }}>Keine Treffer</p>
+            ) : filtered.map(c => (
+              <button
+                key={c.iso + c.code}
+                type="button"
+                onClick={() => handleCountrySelect(c.code)}
+                className="w-full flex items-center gap-3 px-4 py-2.5 text-left text-sm transition-colors"
+                style={{
+                  background: c.code === selectedCode ? '#F9FAFB' : 'transparent',
+                  color: '#111827',
+                }}
+                onMouseEnter={e => (e.currentTarget.style.background = '#F3F4F6')}
+                onMouseLeave={e => (e.currentTarget.style.background = c.code === selectedCode ? '#F9FAFB' : 'transparent')}>
+                <span className="text-base flex-shrink-0">{c.flag}</span>
+                <span className="flex-1 truncate">{c.name}</span>
+                <span className="text-xs flex-shrink-0" style={{ color: '#9CA3AF' }}>{c.code}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Number input */}
+      <input
+        type="tel"
+        value={localNum}
+        onChange={e => handleLocalChange(e.target.value)}
+        placeholder={ph}
+        maxLength={field.max_length ?? undefined}
+        className="flex-1 min-w-0 px-3 text-sm outline-none bg-transparent"
+        style={{ color: '#111827', height: 48, borderRadius: '0 12px 12px 0' }}
+      />
+
+      {/* WhatsApp hint */}
+      {mode === 'whatsapp' && localNum && (
+        <div className="absolute -bottom-5 left-0 right-0 flex items-center gap-1"
+          style={{ fontSize: 10, color: '#10B981' }}>
+          <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M20 6L9 17l-5-5"/>
+          </svg>
+          Gespeichert als: {toWhatsAppDigits(selectedCountry, localNum) || '…'}
+        </div>
+      )}
+    </div>
+  )
+}
+
 // ─── Content Consent Modal ────────────────────────────────────────────────────
 
 function ContentConsentModal({ onConfirm, onDismiss, loading }: { onConfirm: () => void; onDismiss?: () => void; loading: boolean }) {
@@ -1790,6 +1969,7 @@ function FieldRenderer({ field, value, onChange, onItemFocus, complianceApproved
     case 'range':
       return <RangeField field={field} value={value} onChange={onChange} />
     default:
+      if (getPhoneMode(field.key)) return <PhoneField field={field} value={value} onChange={onChange} />
       return (
         <input type="text" value={value} onChange={e => onChange(e.target.value)}
           placeholder={field.input_placeholder || field.placeholder_text || field.label}
