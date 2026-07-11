@@ -51,6 +51,8 @@ interface FieldSchema {
   sub_fields?: LoopSubField[]
   min_items?: number
   max_items?: number
+  // if set, used as input placeholder instead of placeholder_text (which becomes only the description)
+  input_placeholder?: string
 }
 
 interface SiteData {
@@ -1630,7 +1632,7 @@ function FieldRenderer({ field, value, onChange, onItemFocus, complianceApproved
     default:
       return (
         <input type="text" value={value} onChange={e => onChange(e.target.value)}
-          placeholder={field.placeholder_text || field.label}
+          placeholder={field.input_placeholder || field.placeholder_text || field.label}
           maxLength={field.max_length ?? undefined}
           style={INPUT} onFocus={focusBorder} onBlur={blurBorder} />
       )
