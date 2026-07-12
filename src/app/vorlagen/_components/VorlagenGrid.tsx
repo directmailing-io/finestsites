@@ -2,7 +2,6 @@
 
 import { useState, useMemo } from 'react'
 import { CompanyChip, BadgeChip } from '@/components/TemplateChips'
-import { COMING_SOON_PASTEL } from '@/components/FakeWebsitePreview'
 
 interface TemplateItem {
   id: string
@@ -18,7 +17,12 @@ interface TemplateItem {
   isComingSoon: boolean
 }
 
-const PASTEL_COLORS = COMING_SOON_PASTEL
+const APP_URL = (process.env.NEXT_PUBLIC_APP_URL ?? 'https://app.finestsites.io').replace(/\/$/, '')
+
+function startWithTemplate(templateId: string, templateTitle: string) {
+  document.cookie = `fs_template_intent=${templateId}; path=/; max-age=${7 * 24 * 60 * 60}; SameSite=Lax`
+  window.location.href = `${APP_URL}/register?template=${encodeURIComponent(templateId)}&tname=${encodeURIComponent(templateTitle)}`
+}
 
 type AvailFilter = 'all' | 'available' | 'coming_soon'
 type SortOption = 'default' | 'az' | 'za'
@@ -52,21 +56,15 @@ function ComingSoonCard({ tpl }: { tpl: TemplateItem }) {
   )
 }
 
-function TemplateCard({ tpl, idx }: { tpl: TemplateItem; idx: number }) {
+function TemplateCard({ tpl, onPreview }: { tpl: TemplateItem; onPreview: (id: string) => void }) {
   const images = Array.isArray(tpl.previewImages) ? tpl.previewImages as string[] : []
   const cover = images[0] ?? null
-  const pastel = PASTEL_COLORS[idx % PASTEL_COLORS.length]
 
   if (tpl.isComingSoon) return <ComingSoonCard tpl={tpl} />
 
   return (
-    <a
-      href={`/vorlagen/${tpl.id}`}
-      style={{ textDecoration: 'none', color: 'inherit', display: 'block', borderRadius: 18, overflow: 'hidden', background: '#fff', border: '1px solid #ebebeb', boxShadow: '0 2px 12px rgba(0,0,0,0.05)', transition: 'box-shadow 0.18s ease, transform 0.18s ease' }}
-      onMouseEnter={e => { (e.currentTarget as HTMLElement).style.boxShadow = '0 8px 32px rgba(0,0,0,0.12)'; (e.currentTarget as HTMLElement).style.transform = 'translateY(-3px)' }}
-      onMouseLeave={e => { (e.currentTarget as HTMLElement).style.boxShadow = '0 2px 12px rgba(0,0,0,0.05)'; (e.currentTarget as HTMLElement).style.transform = 'translateY(0)' }}
-    >
-      <div style={{ height: 240, background: pastel, position: 'relative', overflow: 'hidden' }}>
+    <div style={{ borderRadius: 18, overflow: 'hidden', background: '#fff', border: '1px solid #ebebeb', boxShadow: '0 2px 12px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column' }}>
+      <div style={{ height: 240, background: '#F3F4F6', position: 'relative', overflow: 'hidden' }}>
         {cover ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={cover} alt={tpl.title} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
@@ -77,23 +75,34 @@ function TemplateCard({ tpl, idx }: { tpl: TemplateItem; idx: number }) {
           </div>
         )}
       </div>
-      <div style={{ padding: '14px 16px 18px' }}>
+      <div style={{ padding: '14px 16px 12px', flex: 1 }}>
         <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 8 }}>
           <CompanyChip name={tpl.nmCompanies[0]} isAllrounder={tpl.isAllrounder} size="xs" />
           <BadgeChip badge={tpl.badge} size="xs" />
         </div>
         <h3 style={{ fontSize: 14, fontWeight: 700, color: '#111', marginBottom: 5, lineHeight: 1.3 }}>{tpl.title}</h3>
         {tpl.description && (
-          <p style={{ fontSize: 12, color: '#777', lineHeight: 1.6, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', marginBottom: 10 }}>
+          <p style={{ fontSize: 12, color: '#777', lineHeight: 1.6, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
             {tpl.description}
           </p>
         )}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <span style={{ fontSize: 10, color: '#bbb' }}>{tpl.domain}</span>
-          <span style={{ fontSize: 12, fontWeight: 600, color: '#8060b0' }}>Ansehen →</span>
-        </div>
       </div>
-    </a>
+      {/* Two action buttons */}
+      <div style={{ padding: '10px 16px 14px', background: '#F5F5F7', borderTop: '1px solid #EBEBED', display: 'flex', gap: 8 }}>
+        <button
+          onClick={() => startWithTemplate(tpl.id, tpl.title)}
+          style={{ flex: 1, background: '#8060b0', color: '#fff', border: 'none', borderRadius: 10, padding: '9px 10px', fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}
+        >
+          Jetzt bearbeiten
+        </button>
+        <button
+          onClick={() => onPreview(tpl.id)}
+          style={{ flex: 1, background: '#fff', color: '#374151', border: '1.5px solid #E5E7EB', borderRadius: 10, padding: '9px 10px', fontSize: 12, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit' }}
+        >
+          Vorschau ansehen
+        </button>
+      </div>
+    </div>
   )
 }
 
@@ -102,6 +111,7 @@ export default function VorlagenGrid({ templates }: { templates: TemplateItem[] 
   const [companyFilter, setCompanyFilter] = useState('Alle')
   const [availFilter, setAvailFilter] = useState<AvailFilter>('all')
   const [sort, setSort] = useState<SortOption>('default')
+  const [previewId, setPreviewId] = useState<string | null>(null)
 
   // Collect all companies
   const companies = useMemo(() => {
@@ -158,6 +168,25 @@ export default function VorlagenGrid({ templates }: { templates: TemplateItem[] 
 
   return (
     <>
+      {/* Preview modal */}
+      {previewId && (
+        <div
+          onClick={() => setPreviewId(null)}
+          style={{ position: 'fixed', inset: 0, zIndex: 9999, background: 'rgba(0,0,0,0.75)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}
+        >
+          <div
+            onClick={e => e.stopPropagation()}
+            style={{ width: '100%', maxWidth: 1100, height: '85vh', background: '#fff', borderRadius: 16, overflow: 'hidden', display: 'flex', flexDirection: 'column', boxShadow: '0 24px 80px rgba(0,0,0,0.35)' }}
+          >
+            <div style={{ padding: '12px 16px', borderBottom: '1px solid #E5E7EB', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexShrink: 0 }}>
+              <span style={{ fontSize: 13, fontWeight: 600, color: '#374151' }}>Vorschau</span>
+              <button onClick={() => setPreviewId(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 18, color: '#6B7280', padding: '2px 6px', lineHeight: 1 }}>✕</button>
+            </div>
+            <iframe src={`/api/templates/${previewId}/public-preview`} style={{ flex: 1, border: 'none', display: 'block' }} title="Template-Vorschau" />
+          </div>
+        </div>
+      )}
+
       {/* ── Search ── */}
       <div style={{ position: 'relative', marginBottom: 24 }}>
         <svg style={{ position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" strokeWidth="2">
@@ -237,8 +266,8 @@ export default function VorlagenGrid({ templates }: { templates: TemplateItem[] 
           gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
           gap: 24,
         }}>
-          {filtered.map((tpl, i) => (
-            <TemplateCard key={tpl.id} tpl={tpl} idx={i} />
+          {filtered.map((tpl) => (
+            <TemplateCard key={tpl.id} tpl={tpl} onPreview={setPreviewId} />
           ))}
         </div>
       )}
