@@ -46,11 +46,11 @@ function TemplateCard({ tpl }: { tpl: TemplateCardData }) {
         {/* Image — same structure as regular card */}
         <div style={{ position: 'relative', overflow: 'hidden', flexShrink: 0 }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/coming-soon.png" alt="Coming Soon" style={{ width: '100%', aspectRatio: '16/10', objectFit: 'cover', display: 'block', filter: 'brightness(0.88)' }} />
-          <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.5) 38%, rgba(0,0,0,0.1) 68%, transparent 100%)' }} />
+          <img src="/coming-soon.png" alt="Coming Soon" style={{ width: '100%', aspectRatio: '16/10', objectFit: 'cover', objectPosition: 'center', display: 'block' }} />
+          <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.2) 35%, transparent 60%)' }} />
           <div style={{ position: 'absolute', bottom: 14, left: 16, right: 16 }}>
-            {companyLabel && <p style={{ fontSize: 10, fontWeight: 600, color: 'rgba(255,255,255,0.8)', margin: '0 0 4px' }}>Geeignet für {companyLabel}</p>}
-            <h3 style={{ fontSize: 15, fontWeight: 700, color: '#fff', lineHeight: 1.2, margin: 0, textShadow: '0 1px 4px rgba(0,0,0,0.4)' }}>{tpl.title}</h3>
+            {companyLabel && <p style={{ fontSize: 10, fontWeight: 600, color: 'rgba(255,255,255,0.85)', margin: '0 0 4px' }}>Geeignet für {companyLabel}</p>}
+            <h3 style={{ fontSize: 15, fontWeight: 700, color: '#fff', lineHeight: 1.2, margin: 0, textShadow: '0 1px 6px rgba(0,0,0,0.6)' }}>{tpl.title}</h3>
           </div>
         </div>
         {/* White bar — same height as regular card bottom, blurred domain + coming soon badge */}
