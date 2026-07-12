@@ -262,7 +262,7 @@ export default function PricingSection({ validatedRef }: { validatedRef?: string
                 </div>
 
                 <a
-                  href={`https://app.finestsites.io/register${refCode ? `?ref=${encodeURIComponent(refCode)}` : ''}`}
+                  href={`${process.env.NEXT_PUBLIC_APP_URL ?? 'https://app.finestsites.io'}/register${refCode ? `?ref=${encodeURIComponent(refCode)}` : ''}`}
                   style={{ display: 'block', textAlign: 'center', background: plan.popular ? '#D4C5E2' : '#111', color: plan.popular ? '#3a2060' : '#fff', padding: '13px 24px', borderRadius: 100, fontSize: 14, fontWeight: 600 }}>
                   {plan.cta}
                 </a>

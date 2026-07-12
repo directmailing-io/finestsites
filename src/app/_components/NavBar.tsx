@@ -8,6 +8,8 @@ interface NavBarProps {
   primaryCta?: { label: string; href: string }
 }
 
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://app.finestsites.io'
+
 const NAV_LINKS = [
   { label: "So funktioniert's", href: '#wie-es-geht' },
   { label: 'Templates',         href: '#templates' },
@@ -61,8 +63,8 @@ export default function NavBar({ primaryCta }: NavBarProps = {}) {
 
         {/* Desktop: action buttons */}
         <div className="fs-nav-actions" style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-          <a href="https://app.finestsites.io/login" style={{ color: '#111', fontSize: 14, fontWeight: 500, padding: '8px 18px', borderRadius: 100, border: '1.5px solid rgba(0,0,0,0.12)', textDecoration: 'none' }}>Anmelden</a>
-          <a href={primaryCta?.href ?? 'https://app.finestsites.io/register'} style={{ background: '#111', color: '#fff', fontSize: 14, fontWeight: 600, padding: '9px 20px', borderRadius: 100, textDecoration: 'none', whiteSpace: 'nowrap' }}>
+          <a href={`${APP_URL}/login`} style={{ color: '#111', fontSize: 14, fontWeight: 500, padding: '8px 18px', borderRadius: 100, border: '1.5px solid rgba(0,0,0,0.12)', textDecoration: 'none' }}>Anmelden</a>
+          <a href={primaryCta?.href ?? `${APP_URL}/register`} style={{ background: '#111', color: '#fff', fontSize: 14, fontWeight: 600, padding: '9px 20px', borderRadius: 100, textDecoration: 'none', whiteSpace: 'nowrap' }}>
             {primaryCta?.label ?? 'Kostenlos starten'}
           </a>
         </div>
@@ -108,14 +110,14 @@ export default function NavBar({ primaryCta }: NavBarProps = {}) {
           )}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 16 }}>
             <a
-              href="https://app.finestsites.io/login"
+              href={`${APP_URL}/login`}
               onClick={close}
               style={{ display: 'block', textAlign: 'center', color: '#111', fontSize: 15, fontWeight: 500, padding: '13px', borderRadius: 100, border: '1.5px solid rgba(0,0,0,0.15)', textDecoration: 'none' }}
             >
               Anmelden
             </a>
             <a
-              href={primaryCta?.href ?? 'https://app.finestsites.io/register'}
+              href={primaryCta?.href ?? `${APP_URL}/register`}
               onClick={close}
               style={{ display: 'block', textAlign: 'center', background: '#111', color: '#fff', fontSize: 15, fontWeight: 600, padding: '14px', borderRadius: 100, textDecoration: 'none' }}
             >

@@ -28,7 +28,7 @@ const UTM_PARAMS = [
 /** Appends ?ref=<code> to all register links on the page that don't already have it. */
 function patchRegisterLinks(ref: string) {
   document
-    .querySelectorAll<HTMLAnchorElement>('a[href*="app.finestsites.io/register"]')
+    .querySelectorAll<HTMLAnchorElement>('a[href*="/register"]')
     .forEach(a => {
       try {
         const url = new URL(a.href)

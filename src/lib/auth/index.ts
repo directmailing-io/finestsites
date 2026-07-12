@@ -60,6 +60,8 @@ export const auth = betterAuth({
   // the scheme+host, or missing entirely). Listing all valid origins prevents 403 FORBIDDEN
   // being thrown instead of returned as {error}, which manifests as "Verbindungsfehler".
   trustedOrigins: [
+    // Dynamic app URL — covers staging.app.finestsites.io, localhost, and any future env
+    ...(process.env.BETTER_AUTH_URL ? [process.env.BETTER_AUTH_URL] : []),
     'https://app.finestsites.io',
     'https://finestsites.io',
     'https://www.finestsites.io',

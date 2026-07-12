@@ -286,7 +286,7 @@ export default async function HomePage({
             Lass dich von Kunden und Partnern über deine Webseite finden und überzeuge Interessenten von deinen Produkten, noch bevor sie mit dir gesprochen haben.
           </p>
           <div className="fs-hero-buttons">
-            <a href={`https://app.finestsites.io/register${validatedRef ? `?ref=${validatedRef}` : ''}`} style={{ background: '#111', color: '#fff', padding: '15px 36px', borderRadius: 100, fontSize: 15, fontWeight: 600, display: 'inline-block', textDecoration: 'none', textAlign: 'center' }}>Kostenlos starten</a>
+            <a href={`${process.env.NEXT_PUBLIC_APP_URL ?? 'https://app.finestsites.io'}/register${validatedRef ? `?ref=${validatedRef}` : ''}`} style={{ background: '#111', color: '#fff', padding: '15px 36px', borderRadius: 100, fontSize: 15, fontWeight: 600, display: 'inline-block', textDecoration: 'none', textAlign: 'center' }}>Kostenlos starten</a>
             <a href="#templates" style={{ background: 'rgba(255,255,255,0.8)', color: '#111', padding: '15px 36px', borderRadius: 100, fontSize: 15, fontWeight: 500, display: 'inline-block', border: '1.5px solid rgba(0,0,0,0.12)', textDecoration: 'none', textAlign: 'center' }}>Templates ansehen</a>
           </div>
         </div>
@@ -333,7 +333,7 @@ export default async function HomePage({
 
           <div style={{ textAlign: 'center', marginTop: 48 }}>
             <a
-              href={`https://app.finestsites.io/register${validatedRef ? `?ref=${validatedRef}` : ''}`}
+              href={`${process.env.NEXT_PUBLIC_APP_URL ?? 'https://app.finestsites.io'}/register${validatedRef ? `?ref=${validatedRef}` : ''}`}
               style={{ display: 'inline-block', background: '#111', color: '#fff', padding: '14px 32px', borderRadius: 100, fontSize: 15, fontWeight: 600, textDecoration: 'none' }}
             >
               Kostenlos starten

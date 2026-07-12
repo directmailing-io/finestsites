@@ -5,6 +5,8 @@ const ADMIN_EMAIL = process.env.ADMIN_EMAIL ?? 'info@daniel-kurzeja.de'
 
 // Internal address for the auth-check endpoint (Node.js runtime, where postgres works).
 // Middleware runs in Edge Runtime and cannot use the postgres driver directly.
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://app.finestsites.io'
+const APP_HOST = new URL(APP_URL).hostname
 const INTERNAL_PORT = process.env.PORT ?? '3002'
 const AUTH_CHECK_URL = `http://127.0.0.1:${INTERNAL_PORT}/api/middleware/auth-check`
 
@@ -77,7 +79,7 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
   // app.finestsites.io root → redirect to dashboard (middleware will then send to /login if needed)
-  if (host === 'app.finestsites.io' && pathname === '/') {
+  if (host === APP_HOST && pathname === '/') {
     return NextResponse.redirect(new URL('/dashboard', request.url))
   }
 
@@ -89,7 +91,7 @@ export async function middleware(request: NextRequest) {
     pathname !== '/' &&
     !FINESTSITES_IO_PATHS.some(p => pathname === p || pathname.startsWith(p + '/'))
   ) {
-    return NextResponse.redirect(`https://app.finestsites.io${pathname}${request.nextUrl.search}`)
+    return NextResponse.redirect(`${APP_URL}${pathname}${request.nextUrl.search}`)
   }
 
   // Skip session check entirely for API routes — they handle their own auth.

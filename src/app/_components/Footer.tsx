@@ -2,6 +2,8 @@
 
 import FooterWaitlistMini from './FooterWaitlistMini'
 
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://app.finestsites.io'
+
 export default function Footer() {
   return (
     <>
@@ -41,8 +43,8 @@ export default function Footer() {
               {[
                 { label: 'Templates ansehen', href: '/#templates' },
                 { label: 'Preise',            href: '/#preise' },
-                { label: 'Anmelden',          href: 'https://app.finestsites.io/login' },
-                { label: 'Konto erstellen',   href: 'https://app.finestsites.io/register' },
+                { label: 'Anmelden',          href: `${APP_URL}/login` },
+                { label: 'Konto erstellen',   href: `${APP_URL}/register` },
               ].map(l => (
                 <li key={l.label}><a href={l.href} style={{ fontSize: 14, color: 'rgba(255,255,255,0.6)', textDecoration: 'none' }}>{l.label}</a></li>
               ))}

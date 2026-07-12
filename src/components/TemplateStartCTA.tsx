@@ -18,7 +18,8 @@ export default function TemplateStartCTA({ templateId, templateTitle, light }: P
     // Carry validated ref from sessionStorage into the cross-domain redirect
     const ref = sessionStorage.getItem('fs_ref')
     const refParam = ref ? `&ref=${encodeURIComponent(ref)}` : ''
-    window.location.href = `https://app.finestsites.io/register?template=${templateId}&tname=${encodeURIComponent(templateTitle)}${refParam}`
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://app.finestsites.io'
+    window.location.href = `${appUrl}/register?template=${templateId}&tname=${encodeURIComponent(templateTitle)}${refParam}`
   }
 
   const bg = loading
