@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { getTemplateIntentCookie, clearTemplateIntentCookie, isValidTemplateId } from '@/lib/cookies/template-intent'
 
-// ── Types ────────────────────────────────────────────────────────────────────
+// ── Types ───────────────────────────────────────────────────────────────────
 
 interface Site {
   id: string
@@ -23,19 +23,7 @@ interface Site {
   } | null
 }
 
-interface Template {
-  id: string
-  title: string
-  domain: string
-  preview_images: string[] | null
-  badge: string | null
-  is_free?: boolean
-  nm_companies: string[]
-  is_allrounder: boolean
-  is_coming_soon?: boolean
-}
-
-// ── SiteCard ─────────────────────────────────────────────────────────────────
+// ── SiteCard ────────────────────────────────────────────────────────────────
 
 function SiteCard({ site }: { site: Site }) {
   const isPublished = site.status === 'published'
@@ -51,6 +39,7 @@ function SiteCard({ site }: { site: Site }) {
 
   return (
     <div className="group">
+      {/* Image — clicks to editor */}
       <Link
         href={`/sites/${site.id}/edit`}
         className="block relative overflow-hidden rounded-2xl bg-gray-100"
@@ -76,6 +65,7 @@ function SiteCard({ site }: { site: Site }) {
           </div>
         )}
 
+        {/* Unread badge */}
         {(site.unread_submissions ?? 0) > 0 && (
           <div className="absolute top-3 left-3">
             <span className="text-[11px] font-bold px-2.5 py-1 rounded-full text-white"
@@ -85,6 +75,7 @@ function SiteCard({ site }: { site: Site }) {
           </div>
         )}
 
+        {/* Hover: "Bearbeiten" pill */}
         <div className="absolute inset-0 flex items-center justify-center
           bg-black/0 group-hover:bg-black/15 transition-colors duration-300 pointer-events-none">
           <span className="text-[12px] font-semibold text-white bg-black/55 backdrop-blur-sm
@@ -95,6 +86,7 @@ function SiteCard({ site }: { site: Site }) {
         </div>
       </Link>
 
+      {/* Info row — separate from <Link> so we can nest links freely */}
       <div className="pt-3 px-1">
         <div className="flex items-center gap-2">
           <p className="font-semibold text-gray-900 text-[15px] leading-tight truncate">
@@ -159,153 +151,35 @@ function SiteCard({ site }: { site: Site }) {
   )
 }
 
-// ── TemplateCard ──────────────────────────────────────────────────────────────
-
-function TemplateCard({
-  template,
-  existingSiteId,
-  busy,
-  onEdit,
-  onPreview,
-}: {
-  template: Template
-  existingSiteId: string | null
-  busy: boolean
-  onEdit: () => void
-  onPreview: () => void
-}) {
-  const preview = template.preview_images?.[0] ?? null
-
-  return (
-    <div className="flex flex-col rounded-2xl overflow-hidden bg-white"
-      style={{ border: '1.5px solid #E5E7EB', boxShadow: '0 2px 12px rgba(0,0,0,0.04)' }}>
-
-      {/* Image */}
-      <div className="relative overflow-hidden flex-shrink-0" style={{ height: 170, background: '#F5F5F7' }}>
-        {preview ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={preview} alt={template.title}
-            className="absolute inset-0 w-full h-full object-cover object-top" />
-        ) : (
-          <div className="absolute inset-0 flex items-center justify-center"
-            style={{ background: 'linear-gradient(160deg, #F8FAFC 0%, #F1F5F9 100%)' }}>
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#CBD5E1" strokeWidth="1.5">
-              <rect x="3" y="3" width="18" height="18" rx="2"/>
-              <line x1="3" y1="9" x2="21" y2="9"/>
-              <line x1="9" y1="9" x2="9" y2="21"/>
-            </svg>
-          </div>
-        )}
-        {template.badge === 'brandneu' && (
-          <div className="absolute top-2 left-2">
-            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full"
-              style={{ background: 'rgba(245,243,255,0.95)', color: '#7C3AED', border: '1px solid #DDD6FE' }}>
-              Neu
-            </span>
-          </div>
-        )}
-        {existingSiteId && (
-          <div className="absolute top-2 right-2">
-            <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
-              style={{ background: 'rgba(240,253,244,0.95)', color: '#15803D', border: '1px solid #BBF7D0' }}>
-              Aktiviert
-            </span>
-          </div>
-        )}
-        {template.is_free && (
-          <div className="absolute bottom-2 left-2">
-            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full"
-              style={{ background: 'rgba(236,253,245,0.95)', color: '#065F46', border: '1px solid #A7F3D0' }}>
-              Kostenlos
-            </span>
-          </div>
-        )}
-      </div>
-
-      {/* Title */}
-      <div className="px-4 py-3 flex-1">
-        <p className="font-semibold text-gray-900 text-[14px] leading-snug">{template.title}</p>
-        <p className="text-[12px] mt-0.5 font-mono" style={{ color: '#94A3B8' }}>{template.domain}</p>
-      </div>
-
-      {/* Actions */}
-      <div className="px-4 pb-4 flex gap-2">
-        <button
-          onClick={onEdit}
-          disabled={busy}
-          className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-[13px] font-semibold text-white transition-opacity disabled:opacity-60"
-          style={{ background: '#111827' }}
-        >
-          {busy ? (
-            <span className="w-3.5 h-3.5 rounded-full border-2 border-white/30 border-t-white animate-spin" />
-          ) : (
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-              <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
-              <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
-            </svg>
-          )}
-          {busy ? 'Öffnet…' : 'Jetzt bearbeiten'}
-        </button>
-        <button
-          onClick={onPreview}
-          className="flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-xl text-[13px] font-medium transition-colors"
-          style={{ background: '#F3F4F6', color: '#374151' }}
-          onMouseEnter={e => { e.currentTarget.style.background = '#E5E7EB' }}
-          onMouseLeave={e => { e.currentTarget.style.background = '#F3F4F6' }}
-        >
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
-          </svg>
-          Vorschau
-        </button>
-      </div>
-    </div>
-  )
-}
-
-// ── Page ─────────────────────────────────────────────────────────────────────
+// ── Page ────────────────────────────────────────────────────────────────────
 
 export default function SitesPage() {
   const router = useRouter()
   const [sites, setSites] = useState<Site[]>([])
-  const [templates, setTemplates] = useState<Template[]>([])
-  const [userCompanies, setUserCompanies] = useState<string[]>([])
-  const [siteMap, setSiteMap] = useState<Record<string, string>>({}) // template_id → site_id
   const [username, setUsername] = useState<string>('')
   const [firstName, setFirstName] = useState<string>('')
   const [loading, setLoading] = useState(true)
   const [autoCreating, setAutoCreating] = useState(false)
-  const [busy, setBusy] = useState<string | null>(null)
-  const [previewTemplateId, setPreviewTemplateId] = useState<string | null>(null)
 
   useEffect(() => {
     const controller = new AbortController()
-    const timer = setTimeout(() => controller.abort(), 10000)
+    const timer = setTimeout(() => controller.abort(), 10000) // 10s timeout
 
     Promise.all([
       fetch('/api/sites', { signal: controller.signal }).then(r => r.json()),
       fetch('/api/user/profile', { signal: controller.signal }).then(r => r.json()),
-      fetch('/api/templates', { signal: controller.signal }).then(r => r.json()),
-    ]).then(([sitesData, profile, templatesData]) => {
+    ]).then(([sitesData, profile]) => {
       clearTimeout(timer)
       const loadedSites = Array.isArray(sitesData) ? sitesData : []
       setSites(loadedSites)
       setUsername(profile?.username ?? '')
       setFirstName(profile?.first_name ?? '')
-      setUserCompanies(Array.isArray(profile?.nm_companies) ? profile.nm_companies : [])
-
-      // Build siteMap: template_id → site_id
-      const map: Record<string, string> = {}
-      for (const s of loadedSites) map[s.template_id] = s.id
-      setSiteMap(map)
-
-      setTemplates(Array.isArray(templatesData) ? templatesData : [])
       setLoading(false)
 
-      // Check for template intent cookie
+      // Check for template intent cookie — auto-create site if present
       const intentId = getTemplateIntentCookie()
       if (intentId && isValidTemplateId(intentId)) {
-        clearTemplateIntentCookie()
+        clearTemplateIntentCookie() // Clear immediately to prevent double-creation
         setAutoCreating(true)
         fetch('/api/sites', {
           method: 'POST',
@@ -314,8 +188,11 @@ export default function SitesPage() {
         })
           .then(r => r.json())
           .then(data => {
-            if (data.id) router.push(`/sites/${data.id}/edit`)
-            else setAutoCreating(false)
+            if (data.id) {
+              router.push(`/sites/${data.id}/edit`)
+            } else {
+              setAutoCreating(false)
+            }
           })
           .catch(() => setAutoCreating(false))
       }
@@ -323,33 +200,6 @@ export default function SitesPage() {
 
     return () => { controller.abort(); clearTimeout(timer) }
   }, [router])
-
-  async function handleEdit(templateId: string) {
-    if (busy) return
-    const existingId = siteMap[templateId]
-    if (existingId) {
-      router.push(`/sites/${existingId}/edit`)
-      return
-    }
-    setBusy(templateId)
-    try {
-      const res = await fetch('/api/sites', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ template_id: templateId }),
-      })
-      const data = await res.json()
-      if (res.ok && data.id) {
-        router.push(`/sites/${data.id}/edit`)
-      } else {
-        setBusy(null)
-        alert(data.error ?? 'Konnte Vorlage nicht öffnen.')
-      }
-    } catch {
-      setBusy(null)
-      alert('Netzwerkfehler. Bitte erneut versuchen.')
-    }
-  }
 
   const hasSites = sites.length > 0
 
@@ -359,13 +209,6 @@ export default function SitesPage() {
     const name = firstName || username
     return name ? `${time}, ${name}` : time
   }
-
-  const visibleTemplates = templates.filter(t =>
-    !t.is_coming_soon &&
-    (userCompanies.length === 0 || t.is_allrounder || t.nm_companies.some(c => userCompanies.includes(c)))
-  )
-
-  const previewTemplate = previewTemplateId ? templates.find(t => t.id === previewTemplateId) : null
 
   return (
     <>
@@ -392,24 +235,23 @@ export default function SitesPage() {
         </div>
       </div>
     )}
-
     <div className="max-w-7xl mx-auto">
 
-      {/* ── Greeting ── */}
+      {/* ── Hero / Greeting ── */}
       <div className="mb-8 sm:mb-10">
         <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight">
           {loading ? '\u00A0' : getGreeting()}
         </h1>
         <p className="text-base mt-1.5" style={{ color: '#94A3B8' }}>
           {hasSites
-            ? 'Verwalte deine Webseite oder starte ein neues Template.'
-            : 'Wähle ein Template und starte deine erste Webseite.'}
+            ? 'Verwalte deine Webseite oder erstelle eine neue.'
+            : 'Erstelle jetzt deine erste Webseite.'}
         </p>
       </div>
 
       {/* ── Meine Webseiten ── */}
       {(loading || hasSites) && (
-        <section className="mb-10">
+        <section className="mb-8">
           <div className="flex items-baseline justify-between mb-5">
             <h2 className="text-lg sm:text-xl font-bold text-gray-900">
               Meine Webseite{sites.length > 1 ? 'n' : ''}
@@ -441,100 +283,55 @@ export default function SitesPage() {
         </section>
       )}
 
-      {/* ── Templates ── */}
-      <section>
-        <div className="flex items-baseline justify-between mb-5">
-          <h2 className="text-lg sm:text-xl font-bold text-gray-900">
-            Diese Templates stehen dir zur Verfügung.
+      {/* ── Welcome state for users with no sites ── */}
+      {!loading && !hasSites && (
+        <div className="text-center py-12 px-6">
+          <div className="w-16 h-16 rounded-3xl flex items-center justify-center mx-auto mb-4"
+            style={{ background: '#F5F3FF' }}>
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#7C3AED" strokeWidth="1.5">
+              <rect x="3" y="3" width="18" height="18" rx="2"/>
+              <line x1="3" y1="9" x2="21" y2="9"/>
+              <line x1="9" y1="9" x2="9" y2="21"/>
+            </svg>
+          </div>
+          <h2 className="text-xl font-bold text-gray-900 mb-2">
+            Deine erste Webseite wartet
           </h2>
+          <p className="text-sm mb-6 max-w-xs mx-auto leading-relaxed" style={{ color: '#6B7280' }}>
+            Wähle ein Template, fülle deine Daten ein und schalte deine Seite online. Kostenlos ausprobieren, erst zahlen wenn du live gehst.
+          </p>
         </div>
+      )}
 
-        {loading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {[1, 2, 3].map(i => (
-              <div key={i} className="animate-pulse rounded-2xl overflow-hidden bg-white"
-                style={{ border: '1.5px solid #E5E7EB' }}>
-                <div className="bg-gray-100" style={{ height: 170 }} />
-                <div className="p-4 flex flex-col gap-2">
-                  <div className="h-4 rounded-full bg-gray-100 w-3/4" />
-                  <div className="h-3 rounded-full bg-gray-100 w-1/2" />
-                </div>
-                <div className="px-4 pb-4">
-                  <div className="h-10 rounded-xl bg-gray-100" />
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : visibleTemplates.length === 0 ? (
-          <div className="py-14 text-center rounded-3xl" style={{ background: '#FAFAFA', border: '1px solid #E5E7EB' }}>
-            <p className="font-semibold text-gray-700 mb-1">Keine Vorlagen verfügbar</p>
-            <p className="text-sm" style={{ color: '#9CA3AF' }}>Bitte versuche es später erneut.</p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {visibleTemplates.map(tpl => (
-              <TemplateCard
-                key={tpl.id}
-                template={tpl}
-                existingSiteId={siteMap[tpl.id] ?? null}
-                busy={busy === tpl.id}
-                onEdit={() => handleEdit(tpl.id)}
-                onPreview={() => setPreviewTemplateId(tpl.id)}
-              />
-            ))}
-          </div>
-        )}
-      </section>
+      {/* ── Neue Webseite erstellen CTA ── */}
+      {!loading && (
+        <div className="mt-4">
+          <Link
+            href="/sites/new"
+            className="flex items-center justify-center gap-3 w-full py-4 rounded-2xl font-semibold text-[15px] transition-all active:scale-[0.98]"
+            style={{
+              background: '#1a1a1a',
+              color: '#fff',
+              boxShadow: '0 4px 20px rgba(0,0,0,0.18)',
+            }}
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" strokeWidth="2.5">
+              <path d="M12 5v14M5 12h14"/>
+            </svg>
+            Neue Webseite erstellen
+          </Link>
+        </div>
+      )}
+
+      {/* ── Empty state (loading placeholder) ── */}
+      {loading && !hasSites && (
+        <div className="animate-pulse">
+          <div className="h-14 rounded-2xl bg-gray-100 w-full" />
+        </div>
+      )}
 
     </div>
-
-    {/* ── Preview modal ── */}
-    {previewTemplateId && (
-      <div className="fixed inset-0 z-50 flex flex-col" style={{ background: 'rgba(0,0,0,0.85)' }}>
-        <div className="flex items-center justify-between px-4 sm:px-5 py-3 flex-shrink-0"
-          style={{ background: '#111', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
-          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-            <span className="text-sm font-semibold text-white truncate">
-              {previewTemplate?.title ?? 'Vorschau'}
-            </span>
-            {previewTemplate && (
-              <span className="text-xs px-2 py-0.5 rounded-full font-mono hidden sm:block"
-                style={{ background: 'rgba(255,255,255,0.08)', color: '#9CA3AF' }}>
-                {previewTemplate.domain}
-              </span>
-            )}
-          </div>
-          <div className="flex items-center gap-2 flex-shrink-0 ml-3">
-            <button
-              onClick={() => { setPreviewTemplateId(null); handleEdit(previewTemplateId) }}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-white transition-colors"
-              style={{ background: '#7C3AED' }}>
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
-                <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
-              </svg>
-              Jetzt bearbeiten
-            </button>
-            <button onClick={() => setPreviewTemplateId(null)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-white transition-colors"
-              style={{ background: 'rgba(255,255,255,0.1)' }}>
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                <path d="M18 6L6 18M6 6l12 12"/>
-              </svg>
-              Schließen
-            </button>
-          </div>
-        </div>
-        <div className="flex-1 overflow-hidden bg-white">
-          <iframe
-            src={`/api/templates/${previewTemplateId}/preview`}
-            className="w-full h-full border-0 block"
-            title="Vorschau"
-            sandbox="allow-scripts allow-same-origin"
-          />
-        </div>
-      </div>
-    )}
     </>
   )
 }
