@@ -2,6 +2,7 @@
 
 import { useState, useEffect, use, useCallback, useRef } from 'react'
 import Link from 'next/link'
+import { CONSENT_TEXTS, hashConsentText } from '@/lib/constants/consent'
 
 interface UserProfile {
   id: string
@@ -108,6 +109,8 @@ export default function AdminUserDetailPage({ params }: { params: Promise<{ id: 
   const [error, setError] = useState('')
   const [supportConvs, setSupportConvs] = useState<SupportConv[]>([])
   const [impersonate, setImpersonate] = useState<ImpersonateStep>({ state: 'idle' })
+  const [consentTextOpen, setConsentTextOpen] = useState(false)
+  const [hashStatus, setHashStatus] = useState<'checking' | 'ok' | 'mismatch' | null>(null)
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   const fetchSupportConvs = useCallback(async () => {
@@ -153,6 +156,20 @@ export default function AdminUserDetailPage({ params }: { params: Promise<{ id: 
     }, 3000)
     return () => { if (pollRef.current) { clearInterval(pollRef.current); pollRef.current = null } }
   }, [impersonate, id])
+
+  // Verify stored hash matches the canonical consent text for that version
+  useEffect(() => {
+    if (!data) return
+    const { contentConsentTextHash, contentConsentVersion } = data.profile
+    if (!contentConsentTextHash || !contentConsentVersion) return
+    if (contentConsentTextHash === 'migration-pre-consent-feature') return
+    const text = CONSENT_TEXTS[contentConsentVersion]
+    if (!text) return
+    setHashStatus('checking')
+    hashConsentText(text).then(computed => {
+      setHashStatus(computed === contentConsentTextHash ? 'ok' : 'mismatch')
+    })
+  }, [data])
 
   async function requestImpersonation() {
     setImpersonate({ state: 'requesting' })
@@ -281,35 +298,90 @@ export default function AdminUserDetailPage({ params }: { params: Promise<{ id: 
               )}
             </div>
             {profile.contentConsentAt ? (
-              <div className="rounded-xl p-3 flex flex-col gap-1.5 text-xs"
-                style={{ background: '#F9FAFB', border: '1px solid #E5E7EB' }}>
-                <div className="flex gap-2">
-                  <span className="font-medium text-gray-500 w-16 flex-shrink-0">Zeitpunkt</span>
-                  <span className="text-gray-800 font-mono">
-                    {new Date(profile.contentConsentAt).toLocaleString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' })} UTC
-                  </span>
+              <div className="rounded-xl flex flex-col gap-0 text-xs overflow-hidden"
+                style={{ border: '1px solid #E5E7EB' }}>
+
+                {/* Metadata rows */}
+                <div className="flex flex-col gap-0 p-3 pb-2" style={{ background: '#F9FAFB' }}>
+                  <div className="flex gap-2 py-1">
+                    <span className="font-medium text-gray-500 w-16 flex-shrink-0">Zeitpunkt</span>
+                    <span className="text-gray-800 font-mono">
+                      {new Date(profile.contentConsentAt).toLocaleString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' })} UTC
+                    </span>
+                  </div>
+                  <div className="flex gap-2 py-1">
+                    <span className="font-medium text-gray-500 w-16 flex-shrink-0">Version</span>
+                    <span className="text-gray-800 font-mono">{profile.contentConsentVersion ?? '—'}</span>
+                  </div>
+                  {profile.contentConsentIp && profile.contentConsentIp !== 'migration-pre-consent-feature' && (
+                    <div className="flex gap-2 py-1">
+                      <span className="font-medium text-gray-500 w-16 flex-shrink-0">IP</span>
+                      <span className="text-gray-800 font-mono">{profile.contentConsentIp}</span>
+                    </div>
+                  )}
+                  {profile.contentConsentTextHash && profile.contentConsentTextHash !== 'migration-pre-consent-feature' && (
+                    <div className="flex gap-2 py-1 items-start">
+                      <span className="font-medium text-gray-500 w-16 flex-shrink-0 mt-0.5">Hash</span>
+                      <div className="flex flex-col gap-1 min-w-0">
+                        <span className="text-gray-700 font-mono break-all" style={{ fontSize: 10 }}>{profile.contentConsentTextHash}</span>
+                        {hashStatus === 'ok' && (
+                          <span className="flex items-center gap-1 text-[10px] font-semibold" style={{ color: '#15803D' }}>
+                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>
+                            Hash verifiziert — stimmt mit Textversion überein
+                          </span>
+                        )}
+                        {hashStatus === 'mismatch' && (
+                          <span className="flex items-center gap-1 text-[10px] font-semibold" style={{ color: '#DC2626' }}>
+                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                            Hash stimmt NICHT überein — Text wurde möglicherweise verändert!
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                  {profile.contentConsentUa && profile.contentConsentUa !== 'migration-pre-consent-feature' && (
+                    <div className="flex gap-2 py-1">
+                      <span className="font-medium text-gray-500 w-16 flex-shrink-0">Browser</span>
+                      <span className="text-gray-600 break-all" style={{ fontSize: 10, lineHeight: '1.4' }}>{profile.contentConsentUa}</span>
+                    </div>
+                  )}
+                  {profile.contentConsentIp === 'migration-pre-consent-feature' && (
+                    <div className="mt-1 flex items-center gap-1.5 px-2 py-1 rounded-lg" style={{ background: '#FEF9C3', color: '#92400E' }}>
+                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                        <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+                        <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+                      </svg>
+                      <span className="text-[10px] font-semibold">Altbestand — vor Einführung der Consent-Protokollierung registriert. IP, Hash und Browser nicht verfügbar.</span>
+                    </div>
+                  )}
                 </div>
-                <div className="flex gap-2">
-                  <span className="font-medium text-gray-500 w-16 flex-shrink-0">Version</span>
-                  <span className="text-gray-800 font-mono">{profile.contentConsentVersion ?? '—'}</span>
-                </div>
-                {profile.contentConsentIp && (
-                  <div className="flex gap-2">
-                    <span className="font-medium text-gray-500 w-16 flex-shrink-0">IP</span>
-                    <span className="text-gray-800 font-mono">{profile.contentConsentIp}</span>
-                  </div>
-                )}
-                {profile.contentConsentTextHash && (
-                  <div className="flex gap-2">
-                    <span className="font-medium text-gray-500 w-16 flex-shrink-0">Hash</span>
-                    <span className="text-gray-700 font-mono break-all" style={{ fontSize: 10 }}>{profile.contentConsentTextHash}</span>
-                  </div>
-                )}
-                {profile.contentConsentUa && (
-                  <div className="flex gap-2">
-                    <span className="font-medium text-gray-500 w-16 flex-shrink-0">UA</span>
-                    <span className="text-gray-600 break-all" style={{ fontSize: 10, lineHeight: '1.4' }}>{profile.contentConsentUa}</span>
-                  </div>
+
+                {/* Consent text toggle */}
+                {profile.contentConsentVersion && CONSENT_TEXTS[profile.contentConsentVersion] && (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => setConsentTextOpen(v => !v)}
+                      className="w-full flex items-center justify-between px-3 py-2 text-xs font-medium transition-colors"
+                      style={{ background: '#F3F4F6', borderTop: '1px solid #E5E7EB', color: '#374151' }}>
+                      <span className="flex items-center gap-1.5">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/>
+                        </svg>
+                        Bestätigten Text anzeigen ({profile.contentConsentVersion})
+                      </span>
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
+                        style={{ transform: consentTextOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }}>
+                        <path d="M6 9l6 6 6-6"/>
+                      </svg>
+                    </button>
+                    {consentTextOpen && (
+                      <pre className="px-3 py-3 text-xs leading-relaxed whitespace-pre-wrap"
+                        style={{ color: '#374151', fontFamily: 'inherit', background: '#fff', borderTop: '1px solid #F3F4F6' }}>
+                        {CONSENT_TEXTS[profile.contentConsentVersion]}
+                      </pre>
+                    )}
+                  </>
                 )}
               </div>
             ) : (
