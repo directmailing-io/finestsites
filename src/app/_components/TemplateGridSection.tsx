@@ -42,20 +42,20 @@ function TemplateCard({ tpl, onPreview }: { tpl: TemplateCardData; onPreview: (i
 
   if (tpl.isComingSoon) {
     return (
-      <div style={{ ...CARD_BASE, opacity: 0.72 }}>
-        <div style={{ height: 220, overflow: 'hidden', flexShrink: 0, position: 'relative' }}>
+      <div style={CARD_BASE}>
+        <div style={{ position: 'relative', overflow: 'hidden', flexShrink: 0 }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/coming-soon.png" alt="Coming Soon" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-          <div style={{ position: 'absolute', top: 10, right: 10, background: 'rgba(17,17,17,0.72)', backdropFilter: 'blur(4px)', color: '#fff', fontSize: 10, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', padding: '3px 10px', borderRadius: 100 }}>
-            Bald
+          <img src="/coming-soon.png" alt="Coming Soon" style={{ width: '100%', aspectRatio: '16/10', objectFit: 'cover', display: 'block', filter: 'brightness(0.88)' }} />
+          <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.45) 0%, transparent 55%)' }} />
+          <div style={{ position: 'absolute', bottom: 14, left: 16, right: 16, display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: 8 }}>
+            <div>
+              {companyLabel && <p style={{ fontSize: 10, fontWeight: 600, color: 'rgba(255,255,255,0.8)', margin: '0 0 4px' }}>Geeignet für {companyLabel}</p>}
+              <h3 style={{ fontSize: 15, fontWeight: 700, color: '#fff', lineHeight: 1.2, margin: 0, textShadow: '0 1px 4px rgba(0,0,0,0.4)' }}>{tpl.title}</h3>
+            </div>
+            <span style={{ background: 'rgba(255,255,255,0.18)', backdropFilter: 'blur(8px)', border: '1px solid rgba(255,255,255,0.28)', color: '#fff', fontSize: 10, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', padding: '4px 10px', borderRadius: 100, whiteSpace: 'nowrap', flexShrink: 0 }}>
+              Bald
+            </span>
           </div>
-        </div>
-        <div style={{ padding: '14px 16px 18px', flex: 1, display: 'flex', flexDirection: 'column', gap: 5 }}>
-          {companyLabel && <p style={{ fontSize: 10, fontWeight: 600, color: '#9d7ecc', margin: 0 }}>Geeignet für {companyLabel}</p>}
-          <h3 style={{ fontSize: 14, fontWeight: 700, color: '#6B7280', lineHeight: 1.3, margin: 0 }}>{tpl.title}</h3>
-          <p style={{ fontSize: 11, color: '#C4B5FD', fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', margin: '6px 0 0' }}>
-            In Kürze verfügbar
-          </p>
         </div>
       </div>
     )
@@ -64,37 +64,43 @@ function TemplateCard({ tpl, onPreview }: { tpl: TemplateCardData; onPreview: (i
   return (
     <div
       style={CARD_BASE}
-      onMouseEnter={e => { (e.currentTarget as HTMLElement).style.boxShadow = '0 8px 28px rgba(0,0,0,0.12)'; (e.currentTarget as HTMLElement).style.transform = 'translateY(-2px)' }}
+      onMouseEnter={e => { (e.currentTarget as HTMLElement).style.boxShadow = '0 8px 28px rgba(0,0,0,0.13)'; (e.currentTarget as HTMLElement).style.transform = 'translateY(-3px)' }}
       onMouseLeave={e => { (e.currentTarget as HTMLElement).style.boxShadow = '0 2px 8px rgba(0,0,0,0.05)'; (e.currentTarget as HTMLElement).style.transform = 'translateY(0)' }}
     >
-      <div style={{ height: 220, background: '#F3F4F6', overflow: 'hidden', flexShrink: 0 }}>
+      <div style={{ position: 'relative', overflow: 'hidden', flexShrink: 0 }}>
         {cover ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={cover} alt={tpl.title} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+          <img src={cover} alt={tpl.title} style={{ width: '100%', aspectRatio: '16/10', objectFit: 'cover', display: 'block' }} />
         ) : (
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
+          <div style={{ width: '100%', aspectRatio: '16/10', background: '#F3F4F6', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="rgba(0,0,0,0.15)" strokeWidth="1.5">
               <rect x="3" y="3" width="18" height="18" rx="2" /><line x1="3" y1="9" x2="21" y2="9" /><line x1="9" y1="9" x2="9" y2="21" />
             </svg>
           </div>
         )}
+        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.52) 0%, transparent 60%)' }} />
+        <div style={{ position: 'absolute', bottom: 14, left: 16, right: 16 }}>
+          {companyLabel && <p style={{ fontSize: 10, fontWeight: 600, color: 'rgba(255,255,255,0.8)', margin: '0 0 4px' }}>Geeignet für {companyLabel}</p>}
+          <h3 style={{ fontSize: 15, fontWeight: 700, color: '#fff', lineHeight: 1.2, margin: 0, textShadow: '0 1px 4px rgba(0,0,0,0.35)' }}>{tpl.title}</h3>
+        </div>
       </div>
-      <div style={{ padding: '14px 16px 16px', flex: 1, display: 'flex', flexDirection: 'column', gap: 6 }}>
-        {companyLabel && <p style={{ fontSize: 10, fontWeight: 600, color: '#9d7ecc', margin: 0 }}>Geeignet für {companyLabel}</p>}
-        <h3 style={{ fontSize: 14, fontWeight: 700, color: '#111', lineHeight: 1.3, margin: 0 }}>{tpl.title}</h3>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 'auto', paddingTop: 10 }}>
-          <button
-            onClick={() => startWithTemplate(tpl.id, tpl.title)}
-            style={{ flex: 1, background: '#8060b0', color: '#fff', border: 'none', borderRadius: 8, padding: '10px 14px', fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}
-          >
-            Jetzt bearbeiten
-          </button>
-          <button
-            onClick={() => onPreview(tpl.id)}
-            style={{ background: 'none', border: 'none', color: '#8060b0', fontSize: 12, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit', padding: '10px 2px', whiteSpace: 'nowrap', flexShrink: 0 }}
-          >
-            Vorschau →
-          </button>
+      <div style={{ padding: '12px 16px 14px', flex: 1, display: 'flex', flexDirection: 'column', gap: 8 }}>
+<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <span style={{ fontSize: 11, color: '#C4B5FD', fontFamily: 'monospace' }}>{tpl.domain}</span>
+          <div style={{ display: 'flex', gap: 6 }}>
+            <button
+              onClick={() => onPreview(tpl.id)}
+              style={{ background: 'none', border: '1px solid #E5E7EB', borderRadius: 100, padding: '6px 14px', fontSize: 11, fontWeight: 600, color: '#6B7280', cursor: 'pointer', fontFamily: 'inherit' }}
+            >
+              Vorschau
+            </button>
+            <button
+              onClick={() => startWithTemplate(tpl.id, tpl.title)}
+              style={{ background: '#8060b0', border: 'none', borderRadius: 100, padding: '6px 16px', fontSize: 11, fontWeight: 700, color: '#fff', cursor: 'pointer', fontFamily: 'inherit' }}
+            >
+              Starten →
+            </button>
+          </div>
         </div>
       </div>
     </div>
