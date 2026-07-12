@@ -12,6 +12,11 @@ interface UserProfile {
   createdAt: string
   stripeCustomerId: string | null
   stripeSubscriptionId: string | null
+  contentConsentAt: string | null
+  contentConsentIp: string | null
+  contentConsentVersion: string | null
+  contentConsentTextHash: string | null
+  contentConsentUa: string | null
 }
 
 interface UserSite {
@@ -250,6 +255,67 @@ export default function AdminUserDetailPage({ params }: { params: Promise<{ id: 
                 <p className="text-xs font-medium mb-0.5" style={{ color: 'var(--muted-foreground)' }}>Stripe-ID</p>
                 <p className="text-sm font-mono text-gray-700">{profile.stripeCustomerId}</p>
               </div>
+            )}
+          </div>
+
+          {/* Consent Audit */}
+          <div className="pt-3 flex flex-col gap-2" style={{ borderTop: '1px solid #F3F4F6' }}>
+            <div className="flex items-center justify-between">
+              <p className="text-xs font-semibold text-gray-700">Content-Einwilligung</p>
+              {profile.contentConsentAt ? (
+                <span className="text-xs px-2.5 py-1 rounded-full flex items-center gap-1"
+                  style={{ background: '#F0FDF4', color: '#15803D' }}>
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                    <polyline points="20 6 9 17 4 12"/>
+                  </svg>
+                  Erteilt
+                </span>
+              ) : (
+                <span className="text-xs px-2.5 py-1 rounded-full flex items-center gap-1"
+                  style={{ background: '#FEF2F2', color: '#DC2626' }}>
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                    <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                  </svg>
+                  Nicht erteilt
+                </span>
+              )}
+            </div>
+            {profile.contentConsentAt ? (
+              <div className="rounded-xl p-3 flex flex-col gap-1.5 text-xs"
+                style={{ background: '#F9FAFB', border: '1px solid #E5E7EB' }}>
+                <div className="flex gap-2">
+                  <span className="font-medium text-gray-500 w-16 flex-shrink-0">Zeitpunkt</span>
+                  <span className="text-gray-800 font-mono">
+                    {new Date(profile.contentConsentAt).toLocaleString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' })} UTC
+                  </span>
+                </div>
+                <div className="flex gap-2">
+                  <span className="font-medium text-gray-500 w-16 flex-shrink-0">Version</span>
+                  <span className="text-gray-800 font-mono">{profile.contentConsentVersion ?? '—'}</span>
+                </div>
+                {profile.contentConsentIp && (
+                  <div className="flex gap-2">
+                    <span className="font-medium text-gray-500 w-16 flex-shrink-0">IP</span>
+                    <span className="text-gray-800 font-mono">{profile.contentConsentIp}</span>
+                  </div>
+                )}
+                {profile.contentConsentTextHash && (
+                  <div className="flex gap-2">
+                    <span className="font-medium text-gray-500 w-16 flex-shrink-0">Hash</span>
+                    <span className="text-gray-700 font-mono break-all" style={{ fontSize: 10 }}>{profile.contentConsentTextHash}</span>
+                  </div>
+                )}
+                {profile.contentConsentUa && (
+                  <div className="flex gap-2">
+                    <span className="font-medium text-gray-500 w-16 flex-shrink-0">UA</span>
+                    <span className="text-gray-600 break-all" style={{ fontSize: 10, lineHeight: '1.4' }}>{profile.contentConsentUa}</span>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <p className="text-xs" style={{ color: '#9CA3AF' }}>
+                User hat noch keine Inhalts-Einwilligung erteilt. Er wird beim nächsten Login auf /onboarding/consent geleitet.
+              </p>
             )}
           </div>
         </div>

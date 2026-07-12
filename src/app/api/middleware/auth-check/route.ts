@@ -27,11 +27,11 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ user: null, profile: null })
   }
 
-  let profile: { username: string | null; subscriptionStatus: string | null; stripeSubscriptionId: string | null } | null = null
+  let profile: { username: string | null; subscriptionStatus: string | null; stripeSubscriptionId: string | null; contentConsentAt: Date | null } | null = null
   try {
     profile = await db.query.users.findFirst({
       where: eq(users.id, session.user.id),
-      columns: { username: true, subscriptionStatus: true, stripeSubscriptionId: true },
+      columns: { username: true, subscriptionStatus: true, stripeSubscriptionId: true, contentConsentAt: true },
     }) ?? null
   } catch {
     // DB error getting profile — return user without profile; middleware will fail-open

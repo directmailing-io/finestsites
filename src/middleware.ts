@@ -101,7 +101,7 @@ export async function middleware(request: NextRequest) {
   // middleware runs in Edge Runtime where the postgres driver cannot make TCP connections.
   // Instead we delegate to the auth-check API route (Node.js runtime) via loopback HTTP.
   type AuthUser = { id: string; email: string }
-  type AuthProfile = { username: string | null; subscriptionStatus: string | null; stripeSubscriptionId: string | null }
+  type AuthProfile = { username: string | null; subscriptionStatus: string | null; stripeSubscriptionId: string | null; contentConsentAt: string | null }
   let user: AuthUser | null = null
   let profile: AuthProfile | null = null
 
@@ -135,16 +135,22 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL('/login', request.url))
   }
 
-  // Logged-in + product routes → enforce username setup only.
+  // Logged-in + product routes → enforce username → consent → dashboard.
   // Subscription is no longer a gate here — users can edit templates for free.
   // The payment wall is at publish time (enforced in /api/sites/[id]/publish).
-  const gatedPaths = ['/dashboard', '/sites', '/settings', '/billing', '/onboarding/username']
+  const gatedPaths = ['/dashboard', '/sites', '/settings', '/billing', '/onboarding/username', '/onboarding/consent']
   if (user && gatedPaths.some(p => pathname.startsWith(p))) {
     // Admin bypasses all checks
     if (user.email === ADMIN_EMAIL) return NextResponse.next()
 
+    // Step 1: Username must be set first
     if (!profile?.username && !pathname.startsWith('/onboarding/username')) {
       return NextResponse.redirect(new URL('/onboarding/username', request.url))
+    }
+
+    // Step 2: Content consent must be given (only after username is set)
+    if (profile?.username && !profile?.contentConsentAt && !pathname.startsWith('/onboarding/consent')) {
+      return NextResponse.redirect(new URL('/onboarding/consent', request.url))
     }
   }
 

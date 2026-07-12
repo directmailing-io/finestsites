@@ -109,6 +109,12 @@ export const users = pgTable('users', {
   stripeConnectId: text('stripe_connect_id').unique(),
   affiliateOnboarded: boolean('affiliate_onboarded').default(false),
   affiliatePayoutEmail: text('affiliate_payout_email'),
+  // Global content consent (legal proof — stored once at onboarding)
+  contentConsentAt: timestamp('content_consent_at', { withTimezone: true }),
+  contentConsentIp: varchar('content_consent_ip', { length: 64 }),
+  contentConsentUa: text('content_consent_ua'),
+  contentConsentVersion: varchar('content_consent_version', { length: 20 }),
+  contentConsentTextHash: varchar('content_consent_text_hash', { length: 64 }),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 }, (t) => [
