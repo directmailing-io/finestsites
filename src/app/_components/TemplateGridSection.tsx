@@ -43,17 +43,24 @@ function TemplateCard({ tpl }: { tpl: TemplateCardData }) {
   if (tpl.isComingSoon) {
     return (
       <div style={CARD_BASE}>
+        {/* Image — same structure as regular card */}
         <div style={{ position: 'relative', overflow: 'hidden', flexShrink: 0 }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/coming-soon.png" alt="Coming Soon" style={{ width: '100%', aspectRatio: '16/10', objectFit: 'cover', display: 'block', filter: 'brightness(0.88)' }} />
           <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.5) 38%, rgba(0,0,0,0.1) 68%, transparent 100%)' }} />
-          <div style={{ position: 'absolute', bottom: 14, left: 16, right: 16, display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: 8 }}>
-            <div>
-              {companyLabel && <p style={{ fontSize: 10, fontWeight: 600, color: 'rgba(255,255,255,0.8)', margin: '0 0 4px' }}>Geeignet für {companyLabel}</p>}
-              <h3 style={{ fontSize: 15, fontWeight: 700, color: '#fff', lineHeight: 1.2, margin: 0, textShadow: '0 1px 4px rgba(0,0,0,0.4)' }}>{tpl.title}</h3>
-            </div>
-            <span style={{ background: 'rgba(255,255,255,0.18)', backdropFilter: 'blur(8px)', border: '1px solid rgba(255,255,255,0.28)', color: '#fff', fontSize: 10, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', padding: '4px 10px', borderRadius: 100, whiteSpace: 'nowrap', flexShrink: 0 }}>
-              Bald
+          <div style={{ position: 'absolute', bottom: 14, left: 16, right: 16 }}>
+            {companyLabel && <p style={{ fontSize: 10, fontWeight: 600, color: 'rgba(255,255,255,0.8)', margin: '0 0 4px' }}>Geeignet für {companyLabel}</p>}
+            <h3 style={{ fontSize: 15, fontWeight: 700, color: '#fff', lineHeight: 1.2, margin: 0, textShadow: '0 1px 4px rgba(0,0,0,0.4)' }}>{tpl.title}</h3>
+          </div>
+        </div>
+        {/* White bar — same height as regular card bottom, blurred domain + coming soon badge */}
+        <div style={{ padding: '12px 16px 14px', flex: 1, display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <span style={{ fontSize: 11, color: '#9CA3AF', fontFamily: 'monospace', filter: 'blur(4px)', userSelect: 'none', pointerEvents: 'none' }}>
+              {tpl.domain}
+            </span>
+            <span style={{ background: '#111827', color: '#fff', fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', padding: '5px 12px', borderRadius: 100, whiteSpace: 'nowrap', flexShrink: 0 }}>
+              Coming Soon
             </span>
           </div>
         </div>
