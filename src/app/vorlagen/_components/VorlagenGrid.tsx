@@ -68,7 +68,7 @@ function ComingSoonCard({ tpl }: { tpl: TemplateItem }) {
   )
 }
 
-function TemplateCard({ tpl, onPreview }: { tpl: TemplateItem; onPreview: (id: string) => void }) {
+function TemplateCard({ tpl }: { tpl: TemplateItem }) {
   const images = Array.isArray(tpl.previewImages) ? tpl.previewImages as string[] : []
   const cover = images[0] ?? null
 
@@ -116,7 +116,7 @@ function TemplateCard({ tpl, onPreview }: { tpl: TemplateItem; onPreview: (id: s
           <span style={{ fontSize: 11, color: '#9CA3AF', fontFamily: 'monospace', letterSpacing: '0.02em' }}>{tpl.domain}</span>
           <div style={{ display: 'flex', gap: 6 }}>
             <button
-              onClick={() => onPreview(tpl.id)}
+              onClick={() => window.open(`https://demo.${tpl.domain}`, '_blank')}
               style={{ background: 'none', border: '1px solid #E5E7EB', borderRadius: 100, padding: '6px 14px', fontSize: 11, fontWeight: 600, color: '#6B7280', cursor: 'pointer', fontFamily: 'inherit' }}
             >
               Vorschau
@@ -139,7 +139,6 @@ export default function VorlagenGrid({ templates }: { templates: TemplateItem[] 
   const [companyFilter, setCompanyFilter] = useState('Alle')
   const [availFilter, setAvailFilter] = useState<AvailFilter>('all')
   const [sort, setSort] = useState<SortOption>('default')
-  const [previewId, setPreviewId] = useState<string | null>(null)
 
   // Collect all companies
   const companies = useMemo(() => {
@@ -196,25 +195,6 @@ export default function VorlagenGrid({ templates }: { templates: TemplateItem[] 
 
   return (
     <>
-      {/* Preview modal */}
-      {previewId && (
-        <div
-          onClick={() => setPreviewId(null)}
-          style={{ position: 'fixed', inset: 0, zIndex: 9999, background: 'rgba(0,0,0,0.75)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}
-        >
-          <div
-            onClick={e => e.stopPropagation()}
-            style={{ width: '100%', maxWidth: 1100, height: '85vh', background: '#fff', borderRadius: 16, overflow: 'hidden', display: 'flex', flexDirection: 'column', boxShadow: '0 24px 80px rgba(0,0,0,0.35)' }}
-          >
-            <div style={{ padding: '12px 16px', borderBottom: '1px solid #E5E7EB', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexShrink: 0 }}>
-              <span style={{ fontSize: 13, fontWeight: 600, color: '#374151' }}>Vorschau</span>
-              <button onClick={() => setPreviewId(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 18, color: '#6B7280', padding: '2px 6px', lineHeight: 1 }}>✕</button>
-            </div>
-            <iframe src={`/api/templates/${previewId}/public-preview`} style={{ flex: 1, border: 'none', display: 'block' }} title="Template-Vorschau" />
-          </div>
-        </div>
-      )}
-
       {/* ── Search ── */}
       <div style={{ position: 'relative', marginBottom: 24 }}>
         <svg style={{ position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" strokeWidth="2">
@@ -295,7 +275,7 @@ export default function VorlagenGrid({ templates }: { templates: TemplateItem[] 
           gap: 24,
         }}>
           {filtered.map((tpl) => (
-            <TemplateCard key={tpl.id} tpl={tpl} onPreview={setPreviewId} />
+            <TemplateCard key={tpl.id} tpl={tpl} />
           ))}
         </div>
       )}
