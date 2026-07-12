@@ -112,6 +112,7 @@ function TemplateCard({ tpl, onPreview }: { tpl: TemplateItem; onPreview: (id: s
           >
             Vorschau →
           </button>
+        </div>
       </div>
     </div>
   )
