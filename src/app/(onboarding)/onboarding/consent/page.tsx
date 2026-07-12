@@ -90,7 +90,7 @@ export default function ConsentPage() {
 
       {/* Rules */}
       <div className="bg-white rounded-[24px] flex flex-col divide-y"
-        style={{ border: '1.5px solid #E5E7EB', divideColor: '#F3F4F6' }}>
+        style={{ border: '1.5px solid #E5E7EB' }}>
         {RULES.map((rule, i) => (
           <div key={i} className="flex items-start gap-4 px-5 py-4">
             <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5"
