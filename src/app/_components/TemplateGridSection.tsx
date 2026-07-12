@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { COMING_SOON_PASTEL } from '@/components/FakeWebsitePreview'
 import { NM_COMPANIES } from '@/lib/constants/nm-companies'
 
 export interface TemplateCardData {
@@ -18,12 +17,16 @@ export interface TemplateCardData {
   isComingSoon?: boolean
 }
 
-const PASTEL_COLORS = COMING_SOON_PASTEL
+const APP_URL = (process.env.NEXT_PUBLIC_APP_URL ?? 'https://app.finestsites.io').replace(/\/$/, '')
 
-function TemplateCard({ tpl, idx }: { tpl: TemplateCardData; idx: number }) {
+function startWithTemplate(templateId: string, templateTitle: string) {
+  document.cookie = `fs_template_intent=${templateId}; path=/; max-age=${7 * 24 * 60 * 60}; SameSite=Lax`
+  window.location.href = `${APP_URL}/register?template=${encodeURIComponent(templateId)}&tname=${encodeURIComponent(templateTitle)}`
+}
+
+function TemplateCard({ tpl, onPreview }: { tpl: TemplateCardData; onPreview: (id: string) => void }) {
   const images = Array.isArray(tpl.previewImages) ? tpl.previewImages as string[] : []
   const cover = images[0] ?? null
-  const pastel = PASTEL_COLORS[idx % PASTEL_COLORS.length]
   const companyLabel = tpl.nmCompanies[0] ?? null
 
   if (tpl.isComingSoon) {
@@ -37,10 +40,10 @@ function TemplateCard({ tpl, idx }: { tpl: TemplateCardData; idx: number }) {
         border: '1.5px solid #E5E7EB',
         boxShadow: '0 2px 12px rgba(0,0,0,0.04)',
       }}>
-        {/* Preview — same height as real card, blurred content */}
-        <div style={{ height: 240, background: pastel, position: 'relative', overflow: 'hidden', flexShrink: 0 }}>
-          <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 52 }}>🤫</div>
-          <div style={{ position: 'absolute', inset: 0, background: 'rgba(255,255,255,0.25)', backdropFilter: 'blur(2px)' }} />
+        {/* Preview — coming soon image */}
+        <div style={{ height: 240, position: 'relative', overflow: 'hidden', flexShrink: 0 }}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/coming-soon.png" alt="Coming Soon" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
           <div style={{ position: 'absolute', top: 12, right: 12, background: '#111', color: '#fff', fontSize: 10, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', padding: '4px 10px', borderRadius: 100 }}>
             Bald
           </div>
@@ -48,8 +51,8 @@ function TemplateCard({ tpl, idx }: { tpl: TemplateCardData; idx: number }) {
         {/* Body */}
         <div style={{ padding: '16px 20px 12px', flex: 1, display: 'flex', flexDirection: 'column' }}>
           {companyLabel && (
-            <p style={{ fontSize: 11, fontWeight: 700, color: '#9d7ecc', letterSpacing: '0.07em', textTransform: 'uppercase', margin: '0 0 5px' }}>
-              {companyLabel}
+            <p style={{ fontSize: 10, fontWeight: 600, color: '#9d7ecc', margin: '0 0 5px' }}>
+              Geeignet für {companyLabel}
             </p>
           )}
           <h3 style={{ fontSize: 15, fontWeight: 700, color: '#9CA3AF', lineHeight: 1.3, margin: 0, flex: 1 }}>
@@ -66,33 +69,17 @@ function TemplateCard({ tpl, idx }: { tpl: TemplateCardData; idx: number }) {
   }
 
   return (
-    <a
-      href={`/vorlagen/${tpl.id}`}
-      style={{
-        textDecoration: 'none',
-        color: 'inherit',
-        display: 'flex',
-        flexDirection: 'column',
-        borderRadius: 20,
-        overflow: 'hidden',
-        background: '#fff',
-        border: '1.5px solid #E5E7EB',
-        boxShadow: '0 2px 12px rgba(0,0,0,0.05)',
-        transition: 'box-shadow 0.2s, transform 0.2s',
-      }}
-      onMouseEnter={e => {
-        const el = e.currentTarget as HTMLElement
-        el.style.boxShadow = '0 8px 32px rgba(0,0,0,0.1)'
-        el.style.transform = 'translateY(-4px)'
-      }}
-      onMouseLeave={e => {
-        const el = e.currentTarget as HTMLElement
-        el.style.boxShadow = '0 2px 12px rgba(0,0,0,0.05)'
-        el.style.transform = 'translateY(0)'
-      }}
-    >
+    <div style={{
+      display: 'flex',
+      flexDirection: 'column',
+      borderRadius: 20,
+      overflow: 'hidden',
+      background: '#fff',
+      border: '1.5px solid #E5E7EB',
+      boxShadow: '0 2px 12px rgba(0,0,0,0.05)',
+    }}>
       {/* Preview image */}
-      <div style={{ height: 240, background: pastel, position: 'relative', overflow: 'hidden', flexShrink: 0 }}>
+      <div style={{ height: 240, background: '#F3F4F6', position: 'relative', overflow: 'hidden', flexShrink: 0 }}>
         {cover ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={cover} alt={tpl.title} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
@@ -107,20 +94,38 @@ function TemplateCard({ tpl, idx }: { tpl: TemplateCardData; idx: number }) {
       {/* Card body */}
       <div style={{ padding: '16px 20px 12px', flex: 1, display: 'flex', flexDirection: 'column' }}>
         {companyLabel && (
-          <p style={{ fontSize: 11, fontWeight: 700, color: '#9d7ecc', letterSpacing: '0.07em', textTransform: 'uppercase', margin: '0 0 5px' }}>
-            {companyLabel}
+          <p style={{ fontSize: 10, fontWeight: 600, color: '#9d7ecc', margin: '0 0 5px' }}>
+            Geeignet für {companyLabel}
           </p>
         )}
         <h3 style={{ fontSize: 15, fontWeight: 700, color: '#111', lineHeight: 1.3, margin: 0, flex: 1 }}>
           {tpl.title}
         </h3>
       </div>
-      {/* Gray footer */}
-      <div style={{ padding: '10px 20px 14px', background: '#F5F5F7', borderTop: '1px solid #EBEBED', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <span style={{ fontSize: 11, fontWeight: 700, color: '#9CA3AF', letterSpacing: '0.07em', textTransform: 'uppercase' }}>Vorlage ansehen</span>
-        <span style={{ fontSize: 13, fontWeight: 700, color: '#374151' }}>→</span>
+      {/* Footer with two action buttons */}
+      <div style={{ padding: '10px 20px 14px', background: '#F5F5F7', borderTop: '1px solid #EBEBED', display: 'flex', gap: 8 }}>
+        <button
+          onClick={() => startWithTemplate(tpl.id, tpl.title)}
+          style={{
+            flex: 1, background: '#8060b0', color: '#fff', border: 'none',
+            borderRadius: 10, padding: '9px 10px', fontSize: 12, fontWeight: 700,
+            cursor: 'pointer', fontFamily: 'inherit',
+          }}
+        >
+          Jetzt bearbeiten
+        </button>
+        <button
+          onClick={() => onPreview(tpl.id)}
+          style={{
+            flex: 1, background: '#fff', color: '#374151',
+            border: '1.5px solid #E5E7EB', borderRadius: 10, padding: '9px 10px',
+            fontSize: 12, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit',
+          }}
+        >
+          Vorschau ansehen
+        </button>
       </div>
-    </a>
+    </div>
   )
 }
 
@@ -129,6 +134,7 @@ const COMPANY_TABS = ['Alle', ...NM_COMPANIES]
 
 export default function TemplateGridSection({ templates }: { templates: TemplateCardData[] }) {
   const [activeFilter, setActiveFilter] = useState<string>('Alle')
+  const [previewId, setPreviewId] = useState<string | null>(null)
 
   const filtered = activeFilter === 'Alle'
     ? templates
@@ -144,6 +150,45 @@ export default function TemplateGridSection({ templates }: { templates: Template
 
   return (
     <>
+      {/* Preview modal */}
+      {previewId && (
+        <div
+          onClick={() => setPreviewId(null)}
+          style={{
+            position: 'fixed', inset: 0, zIndex: 9999,
+            background: 'rgba(0,0,0,0.75)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            padding: '24px',
+          }}
+        >
+          <div
+            onClick={e => e.stopPropagation()}
+            style={{
+              width: '100%', maxWidth: 1100, height: '85vh',
+              background: '#fff', borderRadius: 16, overflow: 'hidden',
+              display: 'flex', flexDirection: 'column',
+              boxShadow: '0 24px 80px rgba(0,0,0,0.35)',
+            }}
+          >
+            {/* Modal header */}
+            <div style={{ padding: '12px 16px', borderBottom: '1px solid #E5E7EB', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexShrink: 0 }}>
+              <span style={{ fontSize: 13, fontWeight: 600, color: '#374151' }}>Vorschau</span>
+              <button
+                onClick={() => setPreviewId(null)}
+                style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 18, color: '#6B7280', padding: '2px 6px', lineHeight: 1 }}
+              >
+                ✕
+              </button>
+            </div>
+            <iframe
+              src={`/api/templates/${previewId}/public-preview`}
+              style={{ flex: 1, border: 'none', display: 'block' }}
+              title="Template-Vorschau"
+            />
+          </div>
+        </div>
+      )}
+
       {/* Company tabs */}
       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', justifyContent: 'center', marginBottom: 36, overflowX: 'auto' }}>
           {COMPANY_TABS.map(opt => (
@@ -175,8 +220,8 @@ export default function TemplateGridSection({ templates }: { templates: Template
         </p>
       )}
       <div className="fs-template-grid">
-        {filtered.map((tpl, i) => (
-          <TemplateCard key={tpl.id} tpl={tpl} idx={i} />
+        {filtered.map((tpl) => (
+          <TemplateCard key={tpl.id} tpl={tpl} onPreview={setPreviewId} />
         ))}
       </div>
     </>
