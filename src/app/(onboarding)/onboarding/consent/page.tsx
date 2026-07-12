@@ -59,8 +59,14 @@ export default function ConsentPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ consent: true, version: CONSENT_CURRENT_VERSION }),
       })
-      if (!res.ok) { setError('Ein Fehler ist aufgetreten. Bitte versuche es erneut.'); setLoading(false); return }
-      router.push('/sites')
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({})) as { error?: string }
+        setError(data.error ?? 'Ein Fehler ist aufgetreten. Bitte versuche es erneut.')
+        setLoading(false)
+        return
+      }
+      // Use hard navigation so middleware re-reads the fresh session from DB
+      window.location.href = '/sites'
     } catch {
       setError('Ein Fehler ist aufgetreten. Bitte versuche es erneut.')
       setLoading(false)
