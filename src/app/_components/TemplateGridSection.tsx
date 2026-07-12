@@ -46,7 +46,7 @@ function TemplateCard({ tpl, onPreview }: { tpl: TemplateCardData; onPreview: (i
         <div style={{ position: 'relative', overflow: 'hidden', flexShrink: 0 }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/coming-soon.png" alt="Coming Soon" style={{ width: '100%', aspectRatio: '16/10', objectFit: 'cover', display: 'block', filter: 'brightness(0.88)' }} />
-          <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.45) 0%, transparent 55%)' }} />
+          <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.5) 38%, rgba(0,0,0,0.1) 68%, transparent 100%)' }} />
           <div style={{ position: 'absolute', bottom: 14, left: 16, right: 16, display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: 8 }}>
             <div>
               {companyLabel && <p style={{ fontSize: 10, fontWeight: 600, color: 'rgba(255,255,255,0.8)', margin: '0 0 4px' }}>Geeignet für {companyLabel}</p>}
@@ -78,7 +78,7 @@ function TemplateCard({ tpl, onPreview }: { tpl: TemplateCardData; onPreview: (i
             </svg>
           </div>
         )}
-        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.52) 0%, transparent 60%)' }} />
+        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.5) 38%, rgba(0,0,0,0.1) 68%, transparent 100%)' }} />
         <div style={{ position: 'absolute', bottom: 14, left: 16, right: 16 }}>
           {companyLabel && <p style={{ fontSize: 10, fontWeight: 600, color: 'rgba(255,255,255,0.8)', margin: '0 0 4px' }}>Geeignet für {companyLabel}</p>}
           <h3 style={{ fontSize: 15, fontWeight: 700, color: '#fff', lineHeight: 1.2, margin: 0, textShadow: '0 1px 4px rgba(0,0,0,0.35)' }}>{tpl.title}</h3>
@@ -86,7 +86,7 @@ function TemplateCard({ tpl, onPreview }: { tpl: TemplateCardData; onPreview: (i
       </div>
       <div style={{ padding: '12px 16px 14px', flex: 1, display: 'flex', flexDirection: 'column', gap: 8 }}>
 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <span style={{ fontSize: 11, color: '#C4B5FD', fontFamily: 'monospace' }}>{tpl.domain}</span>
+          <span style={{ fontSize: 11, color: '#9CA3AF', fontFamily: 'monospace' }}>{tpl.domain}</span>
           <div style={{ display: 'flex', gap: 6 }}>
             <button
               onClick={() => onPreview(tpl.id)}
