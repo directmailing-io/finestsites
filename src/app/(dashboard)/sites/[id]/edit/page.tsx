@@ -61,7 +61,6 @@ interface SiteData {
   username: string | null
   custom_domain: string | null
   custom_domain_status: string | null
-  content_consent_given_at: string | null
   templates: {
     id: string; title: string; domain: string
     r2_bundle_path: string | null

@@ -169,7 +169,8 @@ export const userSites = pgTable('user_sites', {
   customDomainStatus: text('custom_domain_status'),
   cfCustomHostnameId: text('cf_custom_hostname_id'),
   customDomainVerifiedAt: timestamp('custom_domain_verified_at', { withTimezone: true }),
-  // Content consent — legal proof captured before first publish
+  // @deprecated — per-site consent fields (replaced by users.content_consent_at onboarding step)
+  // Kept for historical data; no longer written by the publish flow. Admin panel still reads them.
   contentConsentGivenAt: timestamp('content_consent_given_at', { withTimezone: true }),
   contentConsentIp: varchar('content_consent_ip', { length: 64 }),
   contentConsentUa: text('content_consent_ua'),

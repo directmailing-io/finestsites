@@ -1,8 +1,25 @@
+/**
+ * POST /api/sites/[id]/publish   — publishes a user site (renders HTML → KV, sets status=published)
+ * DELETE /api/sites/[id]/publish — takes a site offline (sets status=draft, purges KV cache)
+ *
+ * Publish gates (checked in order):
+ *   1. Auth:         valid session required
+ *   2. Ownership:    site must belong to the authenticated user
+ *   3. Template:     template must have an R2 HTML bundle
+ *   4. Subscription: premium templates require an active subscription within the plan quota
+ *   5. Consent:      user must have completed the onboarding content-consent step
+ *
+ * After all gates pass, the route:
+ *   a. Marks the site as published in the DB
+ *   b. Purges the Cloudflare Worker KV cache for the affected domain
+ *   c. Pre-renders the template with the user's placeholder data and writes
+ *      the rendered HTML back to Worker KV so the first request is instant
+ */
 import { NextRequest, NextResponse } from 'next/server'
 import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3'
 import { getUserFromRequest } from '@/lib/auth/server'
 import { db } from '@/lib/db'
-import { userSites, siteData, users, templates } from '@/lib/db/schema'
+import { userSites, siteData, users } from '@/lib/db/schema'
 import { eq, and, ne } from 'drizzle-orm'
 import { purgeSiteCache, markSiteOffline } from '@/lib/cloudflare/kv'
 import { writeRenderedHtmlKV } from '@/lib/cloudflare/kv-api'
@@ -49,8 +66,8 @@ async function preRenderAndPushToKV(
   }
 }
 
-// Current consent text version — bump when text changes so old consents can be distinguished
-const CONSENT_VERSION = 'v1'
+// Plan quotas: how many published premium sites each plan allows
+const PLAN_LIMITS: Record<string, number> = { starter: 1, pro: 3, unlimited: Infinity, secret: Infinity }
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const user = await getUserFromRequest(req)
@@ -58,14 +75,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
 
   const { id } = await params
 
-  // Parse optional consent flag from body
-  let consentGiven = false
-  try {
-    const body = await req.json()
-    consentGiven = body?.consent === true
-  } catch { /* no body or not JSON — that's fine */ }
-
-  // Get site with template info
+  // Load site + template in one query
   const site = await db.query.userSites.findFirst({
     where: and(eq(userSites.id, id), eq(userSites.userId, user.id)),
     with: { template: true },
@@ -85,20 +95,15 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     return NextResponse.json({ error: 'Kein Benutzername gesetzt. Bitte erst in Einstellungen setzen.' }, { status: 400 })
   }
 
-  // ── Subscription + plan-limit check ────────────────────────────────────
-  // Free templates can always be published without a subscription.
-  // Premium templates require an active subscription AND must be within the plan's site limit.
+  // ── Gate 3: Subscription + plan-limit ─────────────────────────────────────
+  // Free templates are always publishable. Premium templates need an active
+  // subscription AND must not exceed the plan's concurrent-site quota.
   const tplIsFree = site.template.isFree ?? false
   if (!tplIsFree) {
     const ACTIVE_STATUSES = ['active', 'trialing', 'past_due']
-    const profile = await db.query.users.findFirst({
-      where: eq(users.id, user.id),
-    })
-
-    // Gate 1: Must have an active subscription
     const hasActiveSub =
-      !!profile?.subscriptionStatus &&
-      ACTIVE_STATUSES.includes(profile.subscriptionStatus)
+      !!userRow.subscriptionStatus &&
+      ACTIVE_STATUSES.includes(userRow.subscriptionStatus)
 
     if (!hasActiveSub) {
       return NextResponse.json({
@@ -107,11 +112,10 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       }, { status: 402 })
     }
 
-    // Gate 2: Must be within the plan's site quota
-    const plan = profile?.plan ?? 'starter'
-    const PLAN_LIMITS: Record<string, number> = { starter: 1, pro: 3, unlimited: Infinity, secret: Infinity }
+    const plan = userRow.plan ?? 'starter'
     const limit = PLAN_LIMITS[plan] ?? 1
 
+    // Count other published premium sites (not this one)
     const otherPublished = await db.query.userSites.findMany({
       where: and(
         eq(userSites.userId, user.id),
@@ -120,7 +124,6 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       ),
       with: { template: true },
     })
-
     const otherPaidCount = otherPublished.filter(s => !s.template?.isFree).length
 
     if (otherPaidCount >= limit) {
@@ -131,14 +134,18 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     }
   }
 
-  // ── Content consent gate ───────────────────────────────────────────────────
-  // User must have completed the onboarding consent step (users.content_consent_at).
-  // This replaces the old per-site consent modal — consent is now collected once at onboarding.
+  // ── Gate 4: Content consent ────────────────────────────────────────────────
+  // Consent is collected once during onboarding (users.content_consent_at).
+  // Previously this was also checked per-site, but that caused a duplicate
+  // modal. Now a single onboarding step covers all publishes for that user.
   if (!userRow.contentConsentAt) {
-    return NextResponse.json({ code: 'CONSENT_REQUIRED', error: 'Bitte bestätige zuerst die Nutzungsbedingungen unter Einstellungen.' }, { status: 403 })
+    return NextResponse.json({
+      code: 'CONSENT_REQUIRED',
+      error: 'Bitte bestätige zuerst die Nutzungsbedingungen unter Einstellungen.',
+    }, { status: 403 })
   }
 
-  // Update to published
+  // ── Publish ────────────────────────────────────────────────────────────────
   await db.update(userSites)
     .set({ status: 'published', publishedAt: new Date() })
     .where(eq(userSites.id, id))
