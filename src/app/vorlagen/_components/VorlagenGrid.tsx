@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react'
 import { CompanyChip, BadgeChip } from '@/components/TemplateChips'
-import { FakeWebsitePreview, COMING_SOON_PASTEL } from '@/components/FakeWebsitePreview'
+import { COMING_SOON_PASTEL } from '@/components/FakeWebsitePreview'
 
 interface TemplateItem {
   id: string
@@ -23,16 +23,15 @@ const PASTEL_COLORS = COMING_SOON_PASTEL
 type AvailFilter = 'all' | 'available' | 'coming_soon'
 type SortOption = 'default' | 'az' | 'za'
 
-function ComingSoonCard({ tpl, idx }: { tpl: TemplateItem; idx: number }) {
+function ComingSoonCard({ tpl }: { tpl: TemplateItem }) {
   return (
     <div style={{ borderRadius: 18, overflow: 'hidden', background: '#fff', border: '1px solid #ebebeb', boxShadow: '0 2px 12px rgba(0,0,0,0.05)', cursor: 'default' }}>
       <div style={{ height: 240, background: '#f5f5f7', position: 'relative', overflow: 'hidden' }}>
-        <FakeWebsitePreview idx={idx} />
-        <div style={{ position: 'absolute', inset: 0, background: 'rgba(255,255,255,0.35)' }} />
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/coming-soon.png" alt="Coming Soon" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
         <div style={{ position: 'absolute', top: 12, right: 12, background: '#111', color: '#fff', fontSize: 10, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', padding: '4px 10px', borderRadius: 100 }}>
           Coming Soon
         </div>
-        <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 48 }}>🤫</div>
       </div>
       <div style={{ padding: '14px 16px 18px' }}>
         <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 8 }}>
@@ -58,7 +57,7 @@ function TemplateCard({ tpl, idx }: { tpl: TemplateItem; idx: number }) {
   const cover = images[0] ?? null
   const pastel = PASTEL_COLORS[idx % PASTEL_COLORS.length]
 
-  if (tpl.isComingSoon) return <ComingSoonCard tpl={tpl} idx={idx} />
+  if (tpl.isComingSoon) return <ComingSoonCard tpl={tpl} />
 
   return (
     <a

@@ -11,7 +11,7 @@ const APP_URL = (process.env.NEXT_PUBLIC_APP_URL ?? '').replace(/\/$/, '')
 const WAITLIST_ENDPOINT = APP_URL ? `${APP_URL}/api/waitlist` : '/api/waitlist'
 
 const BENEFITS = [
-  'Neue Vorlagen als Erster ausprobieren, bevor sie alle sehen',
+  'Neue Vorlagen als Erste/r ausprobieren, bevor sie alle sehen',
   'Rabatte und Aktionen, die es nur für Insider gibt',
   'Maximal eine Handvoll Mails pro Jahr. Kein Stress.',
 ]
@@ -126,7 +126,7 @@ export default function WaitlistSection() {
               lineHeight: 1.15,
               marginBottom: 20,
             }}>
-              Als Erste wissen,<br />wenn etwas Neues kommt.
+              Zuerst wissen,<br />wenn etwas Neues kommt.
             </h2>
 
             <p style={{ fontSize: 15, color: '#666', lineHeight: 1.75, marginBottom: 28 }}>

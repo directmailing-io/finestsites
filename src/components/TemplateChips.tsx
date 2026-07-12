@@ -30,8 +30,8 @@ export function CompanyChip({
   }
   if (!name) return null
   return (
-    <span style={{ fontSize: fs, fontWeight: 700, color: '#8060b0', background: '#F5F0FB', padding: pad, borderRadius: 100, display: 'inline-block' }}>
-      {name}
+    <span style={{ fontSize: fs - 1, fontWeight: 600, color: '#8060b0', background: '#F5F0FB', padding: pad, borderRadius: 100, display: 'inline-block' }}>
+      Geeignet für {name}
     </span>
   )
 }
