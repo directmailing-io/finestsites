@@ -19,105 +19,99 @@ interface TemplateItem {
 
 const APP_URL = (process.env.NEXT_PUBLIC_APP_URL ?? 'https://app.finestsites.io').replace(/\/$/, '')
 
-const GRADIENTS = [
-  'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-  'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
-  'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
-  'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
-  'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
-  'linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%)',
-  'linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)',
-  'linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%)',
-]
-
 function startWithTemplate(templateId: string, templateTitle: string) {
   document.cookie = `fs_template_intent=${templateId}; path=/; max-age=${7 * 24 * 60 * 60}; SameSite=Lax`
   window.location.href = `${APP_URL}/register?template=${encodeURIComponent(templateId)}&tname=${encodeURIComponent(templateTitle)}`
 }
 
+const CARD_STYLE: React.CSSProperties = {
+  borderRadius: 16,
+  overflow: 'hidden',
+  background: '#fff',
+  border: '1px solid rgba(0,0,0,0.08)',
+  boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
+  display: 'flex',
+  flexDirection: 'column',
+  transition: 'box-shadow 0.18s, transform 0.18s',
+}
+
 type AvailFilter = 'all' | 'available' | 'coming_soon'
 type SortOption = 'default' | 'az' | 'za'
 
-function ComingSoonCard({ tpl, idx }: { tpl: TemplateItem; idx: number }) {
-  const gradient = GRADIENTS[idx % GRADIENTS.length]
+function ComingSoonCard({ tpl }: { tpl: TemplateItem }) {
   return (
-    <div style={{ borderRadius: 18, overflow: 'hidden', background: '#fff', border: '1px solid #ebebeb', boxShadow: '0 2px 16px rgba(0,0,0,0.06)', display: 'flex', flexDirection: 'column' }}>
-      <div style={{ height: 240, background: gradient, position: 'relative', overflow: 'hidden', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        {/* Big blurred title as background texture */}
-        <span style={{ fontSize: 56, fontWeight: 900, color: 'rgba(255,255,255,0.18)', textAlign: 'center', padding: '0 20px', lineHeight: 1.1, userSelect: 'none', letterSpacing: '-0.02em' }}>
-          {tpl.title}
-        </span>
-        {/* Frosted overlay at bottom */}
-        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 64, background: 'linear-gradient(to top, rgba(0,0,0,0.22), transparent)' }} />
-        <div style={{ position: 'absolute', top: 12, right: 12, background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(6px)', color: '#fff', fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', padding: '4px 11px', borderRadius: 100 }}>
+    <div style={{ ...CARD_STYLE, opacity: 0.72 }}>
+      <div style={{ height: 220, background: '#F3F4F6', position: 'relative', overflow: 'hidden', flexShrink: 0 }}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/coming-soon.png" alt="Coming Soon" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+        <div style={{ position: 'absolute', top: 10, right: 10, background: 'rgba(17,17,17,0.72)', backdropFilter: 'blur(4px)', color: '#fff', fontSize: 10, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', padding: '3px 10px', borderRadius: 100 }}>
           Bald
         </div>
       </div>
-      <div style={{ padding: '14px 16px 12px', flex: 1 }}>
-        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 8 }}>
+      <div style={{ padding: '14px 16px 18px', flex: 1, display: 'flex', flexDirection: 'column', gap: 6 }}>
+        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
           <CompanyChip name={tpl.nmCompanies[0]} isAllrounder={tpl.isAllrounder} size="xs" />
         </div>
-        <h3 style={{ fontSize: 14, fontWeight: 700, color: '#374151', marginBottom: 5, lineHeight: 1.3 }}>{tpl.title}</h3>
+        <h3 style={{ fontSize: 14, fontWeight: 700, color: '#6B7280', lineHeight: 1.3, margin: 0 }}>{tpl.title}</h3>
         {tpl.description && (
-          <p style={{ fontSize: 12, color: '#9CA3AF', lineHeight: 1.6, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+          <p style={{ fontSize: 12, color: '#9CA3AF', lineHeight: 1.6, margin: 0, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
             {tpl.description}
           </p>
         )}
-      </div>
-      <div style={{ padding: '10px 16px 14px', background: '#FAFAFA', borderTop: '1px solid #F0F0F0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <span style={{ fontSize: 11, fontWeight: 600, color: '#C4B5FD', letterSpacing: '0.06em', textTransform: 'uppercase' }}>In Kürze verfügbar</span>
+        <p style={{ fontSize: 11, color: '#C4B5FD', fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', margin: '8px 0 0' }}>
+          In Kürze verfügbar
+        </p>
       </div>
     </div>
   )
 }
 
-function TemplateCard({ tpl, idx, onPreview }: { tpl: TemplateItem; idx: number; onPreview: (id: string) => void }) {
+function TemplateCard({ tpl, onPreview }: { tpl: TemplateItem; onPreview: (id: string) => void }) {
   const images = Array.isArray(tpl.previewImages) ? tpl.previewImages as string[] : []
   const cover = images[0] ?? null
 
-  if (tpl.isComingSoon) return <ComingSoonCard tpl={tpl} idx={idx} />
+  if (tpl.isComingSoon) return <ComingSoonCard tpl={tpl} />
 
   return (
-    <div style={{ borderRadius: 18, overflow: 'hidden', background: '#fff', border: '1px solid #e8e3f0', boxShadow: '0 2px 16px rgba(128,96,176,0.08)', display: 'flex', flexDirection: 'column', transition: 'box-shadow 0.2s, transform 0.2s' }}
-      onMouseEnter={e => { (e.currentTarget as HTMLElement).style.boxShadow = '0 8px 36px rgba(128,96,176,0.16)'; (e.currentTarget as HTMLElement).style.transform = 'translateY(-3px)' }}
-      onMouseLeave={e => { (e.currentTarget as HTMLElement).style.boxShadow = '0 2px 16px rgba(128,96,176,0.08)'; (e.currentTarget as HTMLElement).style.transform = 'translateY(0)' }}
+    <div
+      style={CARD_STYLE}
+      onMouseEnter={e => { (e.currentTarget as HTMLElement).style.boxShadow = '0 8px 28px rgba(0,0,0,0.12)'; (e.currentTarget as HTMLElement).style.transform = 'translateY(-2px)' }}
+      onMouseLeave={e => { (e.currentTarget as HTMLElement).style.boxShadow = '0 2px 8px rgba(0,0,0,0.05)'; (e.currentTarget as HTMLElement).style.transform = 'translateY(0)' }}
     >
-      <div style={{ height: 240, background: '#F3F4F6', position: 'relative', overflow: 'hidden', flexShrink: 0 }}>
+      <div style={{ height: 220, background: '#F3F4F6', overflow: 'hidden', flexShrink: 0 }}>
         {cover ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={cover} alt={tpl.title} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
         ) : (
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', flexDirection: 'column', gap: 8 }}>
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="rgba(0,0,0,0.2)" strokeWidth="1.5"><rect x="3" y="3" width="18" height="18" rx="2" /><line x1="3" y1="9" x2="21" y2="9" /><line x1="9" y1="9" x2="9" y2="21" /></svg>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="rgba(0,0,0,0.18)" strokeWidth="1.5"><rect x="3" y="3" width="18" height="18" rx="2" /><line x1="3" y1="9" x2="21" y2="9" /><line x1="9" y1="9" x2="9" y2="21" /></svg>
           </div>
         )}
       </div>
-      <div style={{ padding: '14px 16px 12px', flex: 1 }}>
-        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 8 }}>
+      <div style={{ padding: '14px 16px 16px', flex: 1, display: 'flex', flexDirection: 'column', gap: 6 }}>
+        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
           <CompanyChip name={tpl.nmCompanies[0]} isAllrounder={tpl.isAllrounder} size="xs" />
           <BadgeChip badge={tpl.badge} size="xs" />
         </div>
-        <h3 style={{ fontSize: 15, fontWeight: 700, color: '#111', marginBottom: 5, lineHeight: 1.3 }}>{tpl.title}</h3>
+        <h3 style={{ fontSize: 14, fontWeight: 700, color: '#111', lineHeight: 1.3, margin: 0 }}>{tpl.title}</h3>
         {tpl.description && (
-          <p style={{ fontSize: 12, color: '#777', lineHeight: 1.65, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+          <p style={{ fontSize: 12, color: '#6B7280', lineHeight: 1.65, margin: 0, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', flex: 1 }}>
             {tpl.description}
           </p>
         )}
-      </div>
-      {/* Two action buttons */}
-      <div style={{ padding: '10px 16px 14px', display: 'flex', gap: 8 }}>
-        <button
-          onClick={() => startWithTemplate(tpl.id, tpl.title)}
-          style={{ flex: 1, background: '#8060b0', color: '#fff', border: 'none', borderRadius: 10, padding: '10px 10px', fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', letterSpacing: '0.01em' }}
-        >
-          Jetzt bearbeiten
-        </button>
-        <button
-          onClick={() => onPreview(tpl.id)}
-          style={{ flex: 1, background: 'transparent', color: '#6B7280', border: '1.5px solid #E5E7EB', borderRadius: 10, padding: '10px 10px', fontSize: 12, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit' }}
-        >
-          Vorschau
-        </button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 8 }}>
+          <button
+            onClick={() => startWithTemplate(tpl.id, tpl.title)}
+            style={{ flex: 1, background: '#8060b0', color: '#fff', border: 'none', borderRadius: 8, padding: '10px 14px', fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}
+          >
+            Jetzt bearbeiten
+          </button>
+          <button
+            onClick={() => onPreview(tpl.id)}
+            style={{ background: 'none', border: 'none', color: '#8060b0', fontSize: 12, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit', padding: '10px 4px', whiteSpace: 'nowrap', flexShrink: 0 }}
+          >
+            Vorschau →
+          </button>
       </div>
     </div>
   )
@@ -283,8 +277,8 @@ export default function VorlagenGrid({ templates }: { templates: TemplateItem[] 
           gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
           gap: 24,
         }}>
-          {filtered.map((tpl, i) => (
-            <TemplateCard key={tpl.id} tpl={tpl} idx={i} onPreview={setPreviewId} />
+          {filtered.map((tpl) => (
+            <TemplateCard key={tpl.id} tpl={tpl} onPreview={setPreviewId} />
           ))}
         </div>
       )}
