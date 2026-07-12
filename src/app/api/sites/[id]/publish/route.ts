@@ -132,26 +132,10 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   }
 
   // ── Content consent gate ───────────────────────────────────────────────────
-  // If user has never consented, require explicit consent in this request.
-  if (!site.contentConsentGivenAt) {
-    if (!consentGiven) {
-      return NextResponse.json({ code: 'CONSENT_REQUIRED' }, { status: 200 })
-    }
-    // Record the consent for legal purposes
-    const ip =
-      req.headers.get('cf-connecting-ip') ??
-      req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ??
-      req.headers.get('x-real-ip') ??
-      'unknown'
-    const ua = req.headers.get('user-agent') ?? ''
-    await db.update(userSites)
-      .set({
-        contentConsentGivenAt: new Date(),
-        contentConsentIp: ip.slice(0, 64),
-        contentConsentUa: ua.slice(0, 512),
-        contentConsentVersion: CONSENT_VERSION,
-      })
-      .where(eq(userSites.id, id))
+  // User must have completed the onboarding consent step (users.content_consent_at).
+  // This replaces the old per-site consent modal — consent is now collected once at onboarding.
+  if (!userRow.contentConsentAt) {
+    return NextResponse.json({ code: 'CONSENT_REQUIRED', error: 'Bitte bestätige zuerst die Nutzungsbedingungen unter Einstellungen.' }, { status: 403 })
   }
 
   // Update to published
