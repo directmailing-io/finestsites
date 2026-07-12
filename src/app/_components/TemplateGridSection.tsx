@@ -59,10 +59,9 @@ function TemplateCard({ tpl, onPreview }: { tpl: TemplateCardData; onPreview: (i
             {tpl.title}
           </h3>
         </div>
-        {/* Footer */}
-        <div style={{ padding: '10px 20px 14px', background: '#F5F5F7', borderTop: '1px solid #EBEBED', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <span style={{ fontSize: 11, fontWeight: 700, color: '#9CA3AF', letterSpacing: '0.07em', textTransform: 'uppercase' }}>Bald verfügbar</span>
-          <span style={{ fontSize: 13, fontWeight: 600, color: '#CBD5E1' }}>···</span>
+        {/* Footer — same height as regular card footer */}
+        <div style={{ padding: '10px 20px 14px', background: '#F5F5F7', borderTop: '1px solid #EBEBED', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <span style={{ fontSize: 12, fontWeight: 600, color: '#9CA3AF', letterSpacing: '0.03em' }}>Bald verfügbar</span>
         </div>
       </div>
     )

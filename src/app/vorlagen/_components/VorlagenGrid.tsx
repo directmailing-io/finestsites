@@ -29,28 +29,27 @@ type SortOption = 'default' | 'az' | 'za'
 
 function ComingSoonCard({ tpl }: { tpl: TemplateItem }) {
   return (
-    <div style={{ borderRadius: 18, overflow: 'hidden', background: '#fff', border: '1px solid #ebebeb', boxShadow: '0 2px 12px rgba(0,0,0,0.05)', cursor: 'default' }}>
-      <div style={{ height: 240, background: '#f5f5f7', position: 'relative', overflow: 'hidden' }}>
+    <div style={{ borderRadius: 18, overflow: 'hidden', background: '#fff', border: '1px solid #ebebeb', boxShadow: '0 2px 12px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column' }}>
+      <div style={{ height: 240, background: '#f5f5f7', position: 'relative', overflow: 'hidden', flexShrink: 0 }}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/coming-soon.png" alt="Coming Soon" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
         <div style={{ position: 'absolute', top: 12, right: 12, background: '#111', color: '#fff', fontSize: 10, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', padding: '4px 10px', borderRadius: 100 }}>
           Coming Soon
         </div>
       </div>
-      <div style={{ padding: '14px 16px 18px' }}>
+      <div style={{ padding: '14px 16px 12px', flex: 1 }}>
         <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 8 }}>
           <CompanyChip name={tpl.nmCompanies[0]} isAllrounder={tpl.isAllrounder} size="xs" />
         </div>
-        <h3 style={{ fontSize: 14, fontWeight: 700, color: '#111', marginBottom: 5, lineHeight: 1.3 }}>{tpl.title}</h3>
+        <h3 style={{ fontSize: 14, fontWeight: 700, color: '#9CA3AF', marginBottom: 5, lineHeight: 1.3 }}>{tpl.title}</h3>
         {tpl.description && (
-          <p style={{ fontSize: 12, color: '#777', lineHeight: 1.6, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', marginBottom: 10 }}>
+          <p style={{ fontSize: 12, color: '#bbb', lineHeight: 1.6, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
             {tpl.description}
           </p>
         )}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <span style={{ fontSize: 10, color: '#bbb', filter: 'blur(4px)', userSelect: 'none' }}>domain.de</span>
-          <span style={{ fontSize: 11, color: '#bbb', fontWeight: 600 }}>Demnächst</span>
-        </div>
+      </div>
+      <div style={{ padding: '10px 16px 14px', background: '#F5F5F7', borderTop: '1px solid #EBEBED', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <span style={{ fontSize: 12, fontWeight: 600, color: '#9CA3AF', letterSpacing: '0.03em' }}>Bald verfügbar</span>
       </div>
     </div>
   )
