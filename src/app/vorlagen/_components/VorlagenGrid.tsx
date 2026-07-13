@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from 'react'
 import { CompanyChip, BadgeChip } from '@/components/TemplateChips'
+import { NM_COMPANIES } from '@/lib/constants/nm-companies'
 
 interface TemplateItem {
   id: string
@@ -43,27 +44,26 @@ function ComingSoonCard({ tpl }: { tpl: TemplateItem }) {
     <div style={CARD_STYLE}>
       <div style={{ position: 'relative', overflow: 'hidden', flexShrink: 0 }}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/coming-soon.png" alt="Coming Soon" style={{ width: '100%', aspectRatio: '16/10', objectFit: 'cover', display: 'block', filter: 'brightness(0.88)' }} />
-        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.5) 38%, rgba(0,0,0,0.1) 68%, transparent 100%)' }} />
-        <div style={{ position: 'absolute', bottom: 14, left: 16, right: 16, display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: 8 }}>
-          <div>
-            <div style={{ marginBottom: 4 }}>
-              <CompanyChip name={tpl.nmCompanies[0]} isAllrounder={tpl.isAllrounder} size="xs" />
-            </div>
-            <h3 style={{ fontSize: 15, fontWeight: 700, color: '#fff', lineHeight: 1.2, margin: 0, textShadow: '0 1px 4px rgba(0,0,0,0.4)' }}>{tpl.title}</h3>
+        <img src="/coming-soon.png" alt="Coming Soon" style={{ width: '100%', aspectRatio: '16/10', objectFit: 'cover', objectPosition: 'center', display: 'block' }} />
+        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.2) 35%, transparent 60%)' }} />
+        <div style={{ position: 'absolute', bottom: 14, left: 16, right: 16 }}>
+          <div style={{ marginBottom: 4 }}>
+            <CompanyChip name={tpl.nmCompanies[0]} isAllrounder={tpl.isAllrounder} size="xs" />
           </div>
-          <span style={{ background: 'rgba(255,255,255,0.18)', backdropFilter: 'blur(8px)', border: '1px solid rgba(255,255,255,0.28)', color: '#fff', fontSize: 10, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', padding: '4px 10px', borderRadius: 100, whiteSpace: 'nowrap', flexShrink: 0 }}>
-            Bald
+          <h3 style={{ fontSize: 15, fontWeight: 700, color: '#fff', lineHeight: 1.2, margin: 0, textShadow: '0 1px 6px rgba(0,0,0,0.6)' }}>{tpl.title}</h3>
+        </div>
+      </div>
+      {/* White bar — same height as regular card, blurred domain + coming soon badge */}
+      <div style={{ padding: '12px 16px 14px', flex: 1, display: 'flex', flexDirection: 'column', gap: 10 }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 'auto' }}>
+          <span style={{ fontSize: 11, color: '#9CA3AF', fontFamily: 'monospace', filter: 'blur(4px)', userSelect: 'none', pointerEvents: 'none' }}>
+            {tpl.domain}
+          </span>
+          <span style={{ background: '#111827', color: '#fff', fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', padding: '5px 12px', borderRadius: 100, whiteSpace: 'nowrap', flexShrink: 0 }}>
+            Coming Soon
           </span>
         </div>
       </div>
-      {tpl.description && (
-        <div style={{ padding: '12px 16px 16px' }}>
-          <p style={{ fontSize: 11, color: '#9CA3AF', lineHeight: 1.5, margin: 0, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-            {tpl.description}
-          </p>
-        </div>
-      )}
     </div>
   )
 }
@@ -140,19 +140,8 @@ export default function VorlagenGrid({ templates }: { templates: TemplateItem[] 
   const [availFilter, setAvailFilter] = useState<AvailFilter>('all')
   const [sort, setSort] = useState<SortOption>('default')
 
-  // Collect all companies
-  const companies = useMemo(() => {
-    const set = new Set<string>()
-    let hasAllrounder = false
-    templates.forEach(t => {
-      if (t.isAllrounder) hasAllrounder = true
-      else t.nmCompanies.forEach(c => set.add(c))
-    })
-    const opts: string[] = ['Alle']
-    if (hasAllrounder) opts.push('Allgemein')
-    opts.push(...Array.from(set).sort())
-    return opts
-  }, [templates])
+  // Static company list — always show all NM companies regardless of template availability
+  const companies = useMemo(() => ['Alle', ...NM_COMPANIES], [])
 
   const filtered = useMemo(() => {
     let list = templates
