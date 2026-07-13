@@ -123,8 +123,8 @@ export function UsernameForm() {
     if (!res.ok) {
       const isDuplicate = data.code === 'DUPLICATE' || data.code === '23505'
       setError(isDuplicate
-        ? 'Dieser Username ist bereits vergeben. Bitte wähle einen anderen.'
-        : data.error ?? 'Fehler beim Speichern. Bitte versuche es erneut.')
+        ? 'Dieser Username ist leider schon vergeben. Füge zum Beispiel eine Zahl hinzu, etwa "daniel2" oder "daniel-k".'
+        : 'Das hat leider nicht geklappt. Bitte versuche es nochmal.')
       setLoading(false)
       return
     }

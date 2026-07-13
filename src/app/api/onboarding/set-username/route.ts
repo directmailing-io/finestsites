@@ -38,6 +38,12 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: true })
   }
 
+  // Check if username is already taken
+  const existing = await db.query.users.findFirst({ where: eq(users.username, clean) })
+  if (existing) {
+    return NextResponse.json({ error: 'Username bereits vergeben.', code: 'DUPLICATE' }, { status: 409 })
+  }
+
   // ── Save username + profile name ─────────────────────────────────────
   const updates: Partial<typeof users.$inferInsert> = {
     username: clean,
