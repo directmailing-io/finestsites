@@ -83,7 +83,7 @@ const PROFILE_KEY_MAP: Record<string, string[]> = {
   linkedin:          ['linkedin', 'linkedin_url', 'linkedin_link'],
   tiktok:            ['tiktok', 'tiktok_url', 'tiktok_link'],
   youtube:           ['youtube', 'youtube_url', 'youtube_link', 'youtube_kanal'],
-  profile_image_url:   ['profilbild', 'profile_image', 'avatar', 'foto', 'photo', 'bild'],
+  profile_image_url:   ['profilbild', 'profile_image', 'avatar', 'foto', 'photo'],
   team_partner_number: ['team_partner_number', 'teampartner_nummer', 'teampartnernummer'],
 }
 
