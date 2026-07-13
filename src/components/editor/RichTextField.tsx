@@ -763,7 +763,7 @@ function CompliancePanel({
             <ul className="rt-sugg-issues">
               {state.issues.map((issue, i) => (
                 <li key={i}>
-                  <span className="rt-sugg-issue-quote">„{issue.quote}"</span>
+                  <span className="rt-sugg-issue-quote">„{issue.quote}&quot;</span>
                   <span className="rt-sugg-issue-reason">{issue.reason}</span>
                 </li>
               ))}
