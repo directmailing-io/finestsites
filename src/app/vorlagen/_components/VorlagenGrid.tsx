@@ -105,13 +105,8 @@ function TemplateCard({ tpl }: { tpl: TemplateItem }) {
         </div>
       </div>
 
-      {/* Card body: description + action row */}
+      {/* Card body: action row */}
       <div style={{ padding: '12px 16px 14px', flex: 1, display: 'flex', flexDirection: 'column', gap: 10 }}>
-        {tpl.description && (
-          <p style={{ fontSize: 11, color: '#6B7280', lineHeight: 1.5, margin: 0, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-            {tpl.description}
-          </p>
-        )}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 'auto' }}>
           <span style={{ fontSize: 11, color: '#9CA3AF', fontFamily: 'monospace', letterSpacing: '0.02em' }}>{tpl.domain}</span>
           <div style={{ display: 'flex', gap: 6 }}>
