@@ -179,7 +179,8 @@ export async function POST(req: NextRequest) {
         eventType: 'subscription_created',
         plan,
         billingInterval: interval,
-        amountCents: planCents(plan as PlanKey, interval as BillingInterval),
+        // Use actual amount_total from Stripe checkout (after coupons/discounts)
+        amountCents: session.amount_total ?? planCents(plan as PlanKey, interval as BillingInterval),
         stripeEventId: event.id,
         stripeSubscriptionId: subscription.id,
       })
@@ -511,7 +512,8 @@ export async function POST(req: NextRequest) {
         eventType: 'subscription_renewed',
         plan,
         billingInterval: interval,
-        amountCents: planCents(plan as PlanKey, interval as BillingInterval),
+        // Use actual amount_paid from Stripe invoice (after coupons/discounts)
+        amountCents: (invoice as any).amount_paid ?? planCents(plan as PlanKey, interval as BillingInterval),
         stripeEventId: event.id,
         stripeSubscriptionId: sub.id,
         stripeInvoiceId: invoice.id,
