@@ -290,8 +290,8 @@ export default function AdminUsersTable({ users }: { users: UserRow[] }) {
               </span>
 
               {/* MRR */}
-              <span className="tabular-nums text-sm font-semibold" style={{ color: user.mrrCents > 0 ? '#16A34A' : '#CBD5E1' }}>
-                {fmtEur(user.mrrCents)}
+              <span className="tabular-nums text-sm font-semibold" style={{ color: user.mrrCents > 0 ? '#16A34A' : user.subscriptionStatus === 'active' ? '#94A3B8' : '#CBD5E1' }}>
+                {user.subscriptionStatus === 'active' && user.mrrCents === 0 ? '0 €' : fmtEur(user.mrrCents)}
               </span>
 
               {/* Total Revenue */}

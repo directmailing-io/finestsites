@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -483,6 +483,13 @@ interface Props {
 
 export function PlaceholderSchemaEditor({ fields, onChange, templateId }: Props) {
   const [expandedSet, setExpandedSet] = useState<Set<number>>(() => new Set(fields.map((_, i) => i)))
+
+  // When fields load async (initially empty → then populated), expand all
+  useEffect(() => {
+    if (fields.length > 0 && expandedSet.size === 0) {
+      setExpandedSet(new Set(fields.map((_, i) => i)))
+    }
+  }, [fields.length]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // Keep expanded set in sync when fields are added/removed
   const toggle = (idx: number) =>
