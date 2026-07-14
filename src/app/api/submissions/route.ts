@@ -91,9 +91,16 @@ export async function GET(req: NextRequest) {
       )
     }
 
-    // Enrich with site metadata
+    // Enrich with site metadata, mapping camelCase Drizzle keys to snake_case for the client
     const enriched = submissions.map(s => ({
-      ...s,
+      id: s.id,
+      user_site_id: s.userSiteId,
+      form_name: s.formName,
+      data: s.data as Record<string, unknown>,
+      read_at: s.readAt?.toISOString() ?? null,
+      archived_at: s.archivedAt?.toISOString() ?? null,
+      created_at: s.createdAt.toISOString(),
+      is_spam: s.isSpam,
       site: siteMap[s.userSiteId] ?? null,
     }))
 
