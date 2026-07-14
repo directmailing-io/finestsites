@@ -467,8 +467,8 @@ const blurBorder  = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement 
 
 // ─── Card Select Field ────────────────────────────────────────────────────────
 
-function CardSelectField({ field, value, onChange, narrow }: {
-  field: FieldSchema; value: string; onChange: (v: string) => void; narrow?: boolean
+function CardSelectField({ field, value, onChange, narrow, onMobileSelect }: {
+  field: FieldSchema; value: string; onChange: (v: string) => void; narrow?: boolean; onMobileSelect?: () => void
 }) {
   const opts = field.card_options ?? []
   const [hovered, setHovered] = useState<{ opt: CardOption; rect: DOMRect } | null>(null)
@@ -528,6 +528,8 @@ function CardSelectField({ field, value, onChange, narrow }: {
 
   function showPreview(opt: CardOption, e: React.MouseEvent<HTMLButtonElement>) {
     if (opt.card_type !== 'image' || !opt.image_url) return
+    // On touch devices, suppress the floating preview — a tooltip near the Vorschau button is shown instead
+    if (window.matchMedia('(pointer: coarse)').matches) return
     setHovered({ opt, rect: e.currentTarget.getBoundingClientRect() })
   }
 
@@ -540,7 +542,10 @@ function CardSelectField({ field, value, onChange, narrow }: {
         if (isCompact) {
           const hasIcon = !!opt.icon
           return (
-            <button key={opt.value} type="button" onClick={() => onChange(opt.value)}
+            <button key={opt.value} type="button" onClick={() => {
+                onChange(opt.value)
+                if (window.matchMedia('(pointer: coarse)').matches) onMobileSelect?.()
+              }}
               className="group flex items-start gap-2.5 text-left px-3 py-2.5 transition-all"
               style={{
                 border: `1.5px solid ${selected ? '#1a1a1a' : '#E5E7EB'}`,
@@ -593,7 +598,10 @@ function CardSelectField({ field, value, onChange, narrow }: {
         const isImage = opt.card_type === 'image'
         const canZoom = isImage && !!opt.image_url
         return (
-          <button key={opt.value} type="button" onClick={() => onChange(opt.value)}
+          <button key={opt.value} type="button" onClick={() => {
+              onChange(opt.value)
+              if (window.matchMedia('(pointer: coarse)').matches) onMobileSelect?.()
+            }}
             onMouseEnter={(e) => canZoom && showPreview(opt, e)}
             onMouseLeave={() => canZoom && setHovered(null)}
             className="group relative flex flex-col text-left rounded-2xl overflow-hidden transition-all"
@@ -1805,13 +1813,14 @@ function SocialUrlField({ field, value, onChange }: {
 
 // ─── Field Renderer ───────────────────────────────────────────────────────────
 
-function FieldRenderer({ field, value, onChange, onItemFocus, complianceApprovedText, onComplianceApproved, onComplianceRevoked, narrow }: {
+function FieldRenderer({ field, value, onChange, onItemFocus, complianceApprovedText, onComplianceApproved, onComplianceRevoked, narrow, onMobileSelect }: {
   field: FieldSchema; value: string; onChange: (v: string) => void
   onItemFocus?: (item: Record<string, string> | null, idx: number) => void
   complianceApprovedText?: string
   onComplianceApproved?: (approvedHtml: string) => void
   onComplianceRevoked?: () => void
   narrow?: boolean
+  onMobileSelect?: () => void
 }) {
   switch (field.type) {
     case 'textarea':
@@ -1849,7 +1858,7 @@ function FieldRenderer({ field, value, onChange, onItemFocus, complianceApproved
         </select>
       )
     case 'card_select':
-      return <CardSelectField field={field} value={value} onChange={onChange} narrow={narrow} />
+      return <CardSelectField field={field} value={value} onChange={onChange} narrow={narrow} onMobileSelect={onMobileSelect} />
     case 'url':
       if (getSocialPlatform(field.key)) return <SocialUrlField field={field} value={value} onChange={onChange} />
       return (
@@ -1927,6 +1936,8 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
   const [showUpgradeModal, setShowUpgradeModal] = useState(false)
   const [justPaid, setJustPaid] = useState(false)
   const [showFullPreview, setShowFullPreview] = useState(false)
+  const [showPreviewTooltip, setShowPreviewTooltip] = useState(false)
+  const previewTooltipTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const [showLivePreview, setShowLivePreview] = useState(true)
   const [livePreviewDevice, setLivePreviewDevice] = useState<'mobile' | 'tablet' | 'desktop'>('desktop')
   const [livePreviewPanelW, setLivePreviewPanelW] = useState<number>(560)
@@ -2914,6 +2925,11 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
                           value={values[field.key] ?? ''}
                           onChange={v => handleChange(field.key, v)}
                           narrow={narrowEditor}
+                          onMobileSelect={() => {
+                            if (previewTooltipTimerRef.current) clearTimeout(previewTooltipTimerRef.current)
+                            setShowPreviewTooltip(true)
+                            previewTooltipTimerRef.current = setTimeout(() => setShowPreviewTooltip(false), 3000)
+                          }}
                           complianceApprovedText={field.compliance_check ? (values[field.key + '__chk'] ?? '') : undefined}
                           onComplianceApproved={field.compliance_check ? (approvedHtml) => {
                             handleChange(field.key + '__chk', approvedHtml)
@@ -3062,16 +3078,47 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
               ) : !isLast ? (
                 /* Not last: Vorschau + Weiter */
                 <div className="flex gap-2">
-                  <button
-                    onClick={() => { setShowFullPreview(true); setPreviewKey(k => k + 1) }}
-                    className="flex items-center justify-center gap-1.5 px-4 py-3.5 rounded-full text-sm font-semibold flex-shrink-0"
-                    style={{ background: '#F3F4F6', color: '#374151' }}>
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                      <circle cx="12" cy="12" r="3"/>
-                    </svg>
-                    Vorschau
-                  </button>
+                  <div style={{ position: 'relative', flexShrink: 0 }}>
+                    {showPreviewTooltip && (
+                      <div
+                        style={{
+                          position: 'absolute', bottom: 'calc(100% + 8px)', left: '50%',
+                          transform: 'translateX(-50%)',
+                          background: '#1a1a1a', color: '#fff',
+                          fontSize: 12, fontWeight: 600, whiteSpace: 'nowrap',
+                          padding: '6px 12px', borderRadius: 8,
+                          boxShadow: '0 4px 16px rgba(0,0,0,0.18)',
+                          animation: showPreviewTooltip ? 'ptt-in 0.2s cubic-bezier(0.34,1.56,0.64,1) forwards' : 'ptt-out 0.3s ease forwards',
+                          pointerEvents: 'none', zIndex: 60,
+                        }}>
+                        Schau dir die Änderung an
+                        <span style={{
+                          position: 'absolute', top: '100%', left: '50%',
+                          transform: 'translateX(-50%)',
+                          width: 0, height: 0,
+                          borderLeft: '5px solid transparent',
+                          borderRight: '5px solid transparent',
+                          borderTop: '5px solid #1a1a1a',
+                        }} />
+                      </div>
+                    )}
+                    <button
+                      onClick={() => { setShowFullPreview(true); setPreviewKey(k => k + 1) }}
+                      className="flex items-center justify-center gap-1.5 px-4 py-3.5 rounded-full text-sm font-semibold"
+                      style={{ background: '#F3F4F6', color: '#374151' }}>
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                        <circle cx="12" cy="12" r="3"/>
+                      </svg>
+                      Vorschau
+                    </button>
+                    <style jsx>{`
+                      @keyframes ptt-in {
+                        from { opacity: 0; transform: translateX(-50%) translateY(4px) scale(0.92); }
+                        to   { opacity: 1; transform: translateX(-50%) translateY(0)   scale(1); }
+                      }
+                    `}</style>
+                  </div>
                   <button
                     onClick={async () => {
                       await handleSave()
