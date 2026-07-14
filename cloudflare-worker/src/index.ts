@@ -336,6 +336,7 @@ async function sendSubmissionEmail(
   formName: string,
   formData: Record<string, string>,
   formRecipient: string | null,
+  siteUrl: string | null,
 ): Promise<void> {
   if (!env.RESEND_API_KEY) return
 
@@ -411,12 +412,13 @@ async function sendSubmissionEmail(
         <tr>
           <td style="background:#FFFFFF;border-radius:20px;padding:40px;border:1px solid #E5E7EB;">
             <h1 style="margin:0 0 8px;font-size:22px;font-weight:700;color:#111827;letter-spacing:-0.02em;">Neue Anfrage erhalten</h1>
-            <p style="margin:0 0 24px;font-size:15px;color:#374151;line-height:1.65;">Über dein Formular <strong>${htmlEscape(formTitle)}</strong> ist eine neue Anfrage eingegangen.</p>
+            <p style="margin:0 0 6px;font-size:15px;color:#374151;line-height:1.65;">Über dein Formular <strong>${htmlEscape(formTitle)}</strong> ist eine neue Anfrage eingegangen.</p>
+            ${siteUrl ? `<p style="margin:0 0 24px;font-size:13px;color:#6B7280;"><a href="${siteUrl}" style="color:#6B7280;text-decoration:underline;">${siteUrl.replace(/^https?:\/\//, '')}</a></p>` : '<p style="margin:0 0 24px;"></p>'}
             <table cellpadding="0" cellspacing="0" width="100%" style="margin:0 0 28px;background:#F9FAFB;border-radius:12px;border:1px solid #E5E7EB;border-collapse:separate;border-spacing:0;">${rows}</table>
             <table cellpadding="0" cellspacing="0">
               <tr>
-                <td style="background:#111827;border-radius:12px;">
-                  <a href="${appUrl}/submissions" style="display:inline-block;padding:14px 28px;font-size:14px;font-weight:600;color:#FFFFFF;text-decoration:none;border-radius:12px;">Alle Anfragen ansehen →</a>
+                <td style="background:#111827;border-radius:99px;">
+                  <a href="${appUrl}/submissions" style="display:inline-block;padding:14px 28px;font-size:14px;font-weight:600;color:#FFFFFF;text-decoration:none;border-radius:99px;">Alle Anfragen ansehen →</a>
                 </td>
               </tr>
             </table>
@@ -450,7 +452,7 @@ async function sendSubmissionEmail(
 
 // ─── Form Submission Handler ──────────────────────────────────────────────────
 
-async function handleFormSubmission(request: Request, pathname: string, meta: SiteMeta, env: Env, ctx: ExecutionContext): Promise<Response> {
+async function handleFormSubmission(request: Request, pathname: string, meta: SiteMeta, env: Env, ctx: ExecutionContext, hostname: string): Promise<Response> {
   const formName = pathname.split('/').filter(Boolean).pop() ?? 'default'
 
   let formData: Record<string, string> = {}
@@ -521,7 +523,8 @@ async function handleFormSubmission(request: Request, pathname: string, meta: Si
 
   // Fire-and-forget email notification (only for non-spam)
   if (!honeypot) {
-    ctx.waitUntil(sendSubmissionEmail(env, meta, formName, formData, formRecipient))
+    const siteUrl = `https://${hostname}`
+    ctx.waitUntil(sendSubmissionEmail(env, meta, formName, formData, formRecipient, siteUrl))
   }
 
   // Response
@@ -646,7 +649,7 @@ export default {
 
       // ── Form submission ──────────────────────────────────────────────────
       if (request.method === 'POST' && pathname.startsWith('/.finestsites/forms/')) {
-        return handleFormSubmission(request, pathname, meta, env, ctx)
+        return handleFormSubmission(request, pathname, meta, env, ctx, hostname)
       }
 
       // ── Legal pages (impressum, datenschutz) ─────────────────────────────
@@ -747,7 +750,40 @@ export default {
       const dataMap: Data = {}
       for (const r of rows) dataMap[r.fieldKey] = r.fieldValue ?? ''
 
-      const renderedHtml = render(templateHtml, dataMap)
+      let renderedHtml = render(templateHtml, dataMap)
+
+      // Link the "Made with FinestSites" credit in template footers
+      renderedHtml = renderedHtml.replace(
+        />Made with FinestSites</g,
+        '>Made with <a href="https://finestsites.io" target="_blank" rel="noopener noreferrer" style="color:inherit;text-decoration:none;">FinestSites</a><'
+      )
+
+      // Inject hero image as og:image when the template has no og:image set.
+      // Prefers data keys containing "hero", "bg", "bild", or "background".
+      const ogMatch = renderedHtml.match(/<meta\s+property="og:image"\s+content="([^"]*)"/i)
+      if (!ogMatch || !ogMatch[1]) {
+        const imageKeys = Object.keys(dataMap).filter(k => {
+          const v = dataMap[k]
+          return v && /^https?:\/\/.+\.(jpg|jpeg|png|webp|gif)(\?|$)/i.test(v)
+        })
+        const heroKey = imageKeys.find(k => /hero|bg|bild|background|header/i.test(k)) ?? imageKeys[0]
+        const heroImageUrl = heroKey ? dataMap[heroKey] : null
+        if (heroImageUrl) {
+          const safeUrl = heroImageUrl.replace(/"/g, '&quot;')
+          if (ogMatch) {
+            renderedHtml = renderedHtml.replace(
+              ogMatch[0],
+              `<meta property="og:image" content="${safeUrl}"`
+            )
+          } else {
+            renderedHtml = renderedHtml.replace(
+              /<head>/i,
+              `<head><meta property="og:image" content="${safeUrl}" />`
+            )
+          }
+        }
+      }
+
       await env.KV_CACHE.put(renderCacheKey, renderedHtml, { expirationTtl: 60 })
 
       return new Response(renderedHtml, {
