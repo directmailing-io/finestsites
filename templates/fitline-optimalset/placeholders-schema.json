@@ -181,7 +181,7 @@
     {
       "key": "eigenes_zitat",
       "label": "Dein persönliches Zitat (Signatur am Seitenende)",
-      "type": "text",
+      "type": "textarea",
       "required": true,
       "placeholder_text": "Ein kurzer Satz, der dich und deine Empfehlung beschreibt.",
       "default_value": "Ich freue mich, dir das Optimalset und weitere Produkte vorzustellen.",
