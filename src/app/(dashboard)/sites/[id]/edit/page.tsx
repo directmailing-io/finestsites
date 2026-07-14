@@ -3229,50 +3229,16 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
               ) : !isLast ? (
                 /* Not last: Vorschau + Weiter */
                 <div className="flex gap-2">
-                  <div style={{ position: 'relative', flexShrink: 0 }}>
-                    {showPreviewTooltip && (
-                      <div key={previewTooltipKey}
-                        style={{
-                          position: 'absolute', bottom: 'calc(100% + 10px)', left: '50%',
-                          background: '#FF6B2C', color: '#fff',
-                          fontSize: 12, fontWeight: 700, whiteSpace: 'nowrap',
-                          padding: '7px 13px', borderRadius: 10,
-                          boxShadow: '0 6px 20px rgba(255,107,44,0.35)',
-                          animation: 'ptt-life 3.2s cubic-bezier(0.34,1.56,0.64,1) forwards',
-                          pointerEvents: 'none', zIndex: 60,
-                        }}>
-                        Schau dir die Änderung an
-                        <span style={{
-                          position: 'absolute', top: '100%', left: '50%',
-                          transform: 'translateX(-50%)',
-                          width: 0, height: 0,
-                          borderLeft: '5px solid transparent',
-                          borderRight: '5px solid transparent',
-                          borderTop: '5px solid #FF6B2C',
-                        }} />
-                      </div>
-                    )}
-                    <button
-                      onClick={() => { setShowFullPreview(true); setPreviewKey(k => k + 1) }}
-                      className="flex items-center justify-center gap-1.5 px-4 py-3.5 rounded-full text-sm font-semibold"
-                      style={{ background: '#F3F4F6', color: '#374151' }}>
-                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                        <circle cx="12" cy="12" r="3"/>
-                      </svg>
-                      Vorschau
-                    </button>
-                    <style jsx>{`
-                      @keyframes ptt-life {
-                        0%   { opacity: 0; transform: translateX(-50%) translateY(8px) scale(0.82); }
-                        10%  { opacity: 1; transform: translateX(-50%) translateY(-3px) scale(1.06); }
-                        16%  { opacity: 1; transform: translateX(-50%) translateY(0px) scale(0.98); }
-                        20%  { opacity: 1; transform: translateX(-50%) translateY(0px) scale(1); }
-                        80%  { opacity: 1; transform: translateX(-50%) translateY(0px) scale(1); }
-                        100% { opacity: 0; transform: translateX(-50%) translateY(-5px) scale(0.94); }
-                      }
-                    `}</style>
-                  </div>
+                  <button
+                    onClick={() => { setShowFullPreview(true); setPreviewKey(k => k + 1) }}
+                    className="flex items-center justify-center gap-1.5 px-4 py-3.5 rounded-full text-sm font-semibold flex-shrink-0"
+                    style={{ background: '#F3F4F6', color: '#374151' }}>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                      <circle cx="12" cy="12" r="3"/>
+                    </svg>
+                    Vorschau
+                  </button>
                   <button
                     onClick={async () => {
                       await handleSave()
@@ -3296,40 +3262,16 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
               ) : (
                 /* Last section: Vorschau + Publish */
                 <div className="flex gap-2">
-                  <div style={{ position: 'relative', flexShrink: 0 }}>
-                    {showPreviewTooltip && (
-                      <div key={previewTooltipKey}
-                        style={{
-                          position: 'absolute', bottom: 'calc(100% + 10px)', left: '50%',
-                          background: '#FF6B2C', color: '#fff',
-                          fontSize: 12, fontWeight: 700, whiteSpace: 'nowrap',
-                          padding: '7px 13px', borderRadius: 10,
-                          boxShadow: '0 6px 20px rgba(255,107,44,0.35)',
-                          animation: 'ptt-life 3.2s cubic-bezier(0.34,1.56,0.64,1) forwards',
-                          pointerEvents: 'none', zIndex: 60,
-                        }}>
-                        Schau dir die Änderung an
-                        <span style={{
-                          position: 'absolute', top: '100%', left: '50%',
-                          transform: 'translateX(-50%)',
-                          width: 0, height: 0,
-                          borderLeft: '5px solid transparent',
-                          borderRight: '5px solid transparent',
-                          borderTop: '5px solid #FF6B2C',
-                        }} />
-                      </div>
-                    )}
-                    <button
-                      onClick={() => { setShowFullPreview(true); setPreviewKey(k => k + 1) }}
-                      className="flex items-center justify-center gap-1.5 px-4 py-3.5 rounded-full text-sm font-semibold"
-                      style={{ background: '#F3F4F6', color: '#374151' }}>
-                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                        <circle cx="12" cy="12" r="3"/>
-                      </svg>
-                      Vorschau
-                    </button>
-                  </div>
+                  <button
+                    onClick={() => { setShowFullPreview(true); setPreviewKey(k => k + 1) }}
+                    className="flex items-center justify-center gap-1.5 px-4 py-3.5 rounded-full text-sm font-semibold flex-shrink-0"
+                    style={{ background: '#F3F4F6', color: '#374151' }}>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                      <circle cx="12" cy="12" r="3"/>
+                    </svg>
+                    Vorschau
+                  </button>
                   <button onClick={() => handlePublish()} disabled={publishing || !allRequiredComplete}
                     className="flex-1 flex items-center justify-center gap-2 py-3.5 text-sm font-bold text-white rounded-full"
                     style={{
@@ -3345,6 +3287,46 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
             </div>
           </div>
         </main>
+
+        {/* ── Mobile preview tooltip — fixed above bottom bar, avoids stacking-context issues ── */}
+        {showPreviewTooltip && typeof document !== 'undefined' && createPortal(
+          <div key={previewTooltipKey} className="lg:hidden pointer-events-none"
+            style={{
+              position: 'fixed',
+              bottom: 'calc(env(safe-area-inset-bottom, 0px) + 84px)',
+              left: '50%', transform: 'translateX(-50%)',
+              zIndex: 9998,
+              animation: 'ptt-life 3.2s cubic-bezier(0.34,1.56,0.64,1) forwards',
+            }}>
+            <div style={{
+              background: '#FF6B2C', color: '#fff',
+              fontSize: 13, fontWeight: 700, whiteSpace: 'nowrap',
+              padding: '8px 16px', borderRadius: 12,
+              boxShadow: '0 6px 24px rgba(255,107,44,0.40)',
+            }}>
+              Schau dir die Änderung an
+              <span style={{
+                position: 'absolute', top: '100%', left: '50%',
+                transform: 'translateX(-50%)',
+                width: 0, height: 0,
+                borderLeft: '6px solid transparent',
+                borderRight: '6px solid transparent',
+                borderTop: '6px solid #FF6B2C',
+              }} />
+            </div>
+            <style>{`
+              @keyframes ptt-life {
+                0%   { opacity: 0; transform: translateX(-50%) translateY(6px) scale(0.84); }
+                10%  { opacity: 1; transform: translateX(-50%) translateY(-3px) scale(1.05); }
+                17%  { opacity: 1; transform: translateX(-50%) translateY(0px) scale(0.99); }
+                22%  { opacity: 1; transform: translateX(-50%) translateY(0px) scale(1); }
+                78%  { opacity: 1; transform: translateX(-50%) translateY(0px) scale(1); }
+                100% { opacity: 0; transform: translateX(-50%) translateY(-5px) scale(0.95); }
+              }
+            `}</style>
+          </div>,
+          document.body
+        )}
 
         {/* ── Live-Preview Panel (XL+ only) ──
              - Iframe is rendered at the actual device viewport size (mobile/tablet/desktop)
