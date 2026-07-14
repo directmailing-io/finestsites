@@ -726,7 +726,7 @@ export default function EditTemplatePage({ params }: { params: Promise<{ id: str
                 Felder die der Nutzer ausfüllt. Eingebettet als <code className="bg-gray-100 px-1 rounded font-mono text-[11px]">{'{{key}}'}</code>
               </p>
             </div>
-            <PlaceholderSchemaEditor fields={fields} onChange={setFields} />
+            <PlaceholderSchemaEditor fields={fields} onChange={setFields} templateId={id} />
             <div className="flex items-center gap-3 pt-2 border-t" style={{ borderColor: '#F1F5F9' }}>
               <button type="button" onClick={() => handleSave()} disabled={saving}
                 className="px-5 py-2.5 text-sm font-medium rounded-[16px]"

@@ -114,13 +114,15 @@ function newSubField(): LoopSubField {
 // ─── Card Option Editor ───────────────────────────────────────────────────────
 
 function CardOptionEditor({
-  option, index, onUpdate, onRemove,
+  option, index, onUpdate, onRemove, templateId,
 }: {
   option: CardOption
   index: number
   onUpdate: (patch: Partial<CardOption>) => void
   onRemove: () => void
+  templateId?: string
 }) {
+  const [imgUploading, setImgUploading] = useState(false)
   const inputStyle = {
     background: '#F9FAFB', border: '1px solid #E5E7EB',
     borderRadius: '10px', padding: '7px 10px',
@@ -181,13 +183,51 @@ function CardOptionEditor({
         </div>
 
         {option.card_type === 'image' && (
-          <div className="flex flex-col gap-1 col-span-2">
-            <label className="text-xs text-gray-500">Bild-URL</label>
-            <input value={option.image_url}
-              onChange={e => onUpdate({ image_url: e.target.value })}
-              placeholder="https://..." style={inputStyle}
-              onFocus={e => (e.target.style.borderColor = '#1a1a1a')}
-              onBlur={e => (e.target.style.borderColor = '#E5E7EB')} />
+          <div className="flex flex-col gap-1.5 col-span-2">
+            <label className="text-xs text-gray-500">Vorschaubild</label>
+            <div className="flex gap-2">
+              <input value={option.image_url}
+                onChange={e => onUpdate({ image_url: e.target.value })}
+                placeholder="https://… oder Bild hochladen →"
+                style={{ ...inputStyle, flex: 1 }}
+                onFocus={e => (e.target.style.borderColor = '#1a1a1a')}
+                onBlur={e => (e.target.style.borderColor = '#E5E7EB')} />
+              {templateId && (
+                <label className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-[10px] cursor-pointer flex-shrink-0 transition-all"
+                  style={{ background: imgUploading ? '#F3F4F6' : '#1a1a1a', color: imgUploading ? '#9CA3AF' : '#fff', pointerEvents: imgUploading ? 'none' : 'auto' }}>
+                  {imgUploading
+                    ? <div className="w-3 h-3 rounded-full border-2 border-gray-300 border-t-gray-600 animate-spin" />
+                    : <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+                  }
+                  {imgUploading ? 'Lädt…' : 'Hochladen'}
+                  <input type="file" accept="image/jpeg,image/png,image/webp" className="hidden"
+                    onChange={async e => {
+                      const file = e.target.files?.[0]
+                      if (!file) return
+                      e.target.value = ''
+                      setImgUploading(true)
+                      try {
+                        const fd = new FormData()
+                        fd.append('file', file)
+                        const res = await fetch(`/api/admin/templates/${templateId}/cover`, { method: 'POST', body: fd })
+                        if (res.ok) {
+                          const data = await res.json()
+                          onUpdate({ image_url: data.url })
+                        }
+                      } finally {
+                        setImgUploading(false)
+                      }
+                    }}
+                  />
+                </label>
+              )}
+            </div>
+            {option.image_url && (
+              <div className="rounded-[10px] overflow-hidden" style={{ maxWidth: '100%', border: '1px solid #E5E7EB', aspectRatio: '16/9' }}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={option.image_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+              </div>
+            )}
           </div>
         )}
 
@@ -434,9 +474,10 @@ function SubFieldEditor({
 interface Props {
   fields: PlaceholderField[]
   onChange: (fields: PlaceholderField[]) => void
+  templateId?: string
 }
 
-export function PlaceholderSchemaEditor({ fields, onChange }: Props) {
+export function PlaceholderSchemaEditor({ fields, onChange, templateId }: Props) {
   const [expandedIdx, setExpandedIdx] = useState<number | null>(null)
 
   function addField() {
@@ -801,6 +842,7 @@ export function PlaceholderSchemaEditor({ fields, onChange }: Props) {
                         index={oi}
                         onUpdate={patch => updateCardOption(idx, oi, patch)}
                         onRemove={() => removeCardOption(idx, oi)}
+                        templateId={templateId}
                       />
                     ))}
 

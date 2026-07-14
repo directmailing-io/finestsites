@@ -471,8 +471,8 @@ const blurBorder  = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement 
 // preview image + iOS toggle in one card. Tapping the image opens a fullscreen
 // lightbox so the user can clearly see what the section contains before deciding.
 
-function SectionToggleCard({ field, value, onChange }: {
-  field: FieldSchema; value: string; onChange: (v: string) => void
+function SectionToggleCard({ field, value, onChange, onMobileSelect }: {
+  field: FieldSchema; value: string; onChange: (v: string) => void; onMobileSelect?: () => void
 }) {
   const opts = field.card_options ?? []
   const onOpt  = opts.find(o => o.image_url) ?? opts[0]
@@ -545,7 +545,12 @@ function SectionToggleCard({ field, value, onChange }: {
           </div>
           {/* iOS-style toggle */}
           <button type="button"
-            onClick={() => onChange(isOn ? (offOpt?.value ?? 'nein') : (onOpt?.value ?? 'ja'))}
+            onClick={() => {
+              const newVal = isOn ? (offOpt?.value ?? 'nein') : (onOpt?.value ?? 'ja')
+              onChange(newVal)
+              // Trigger "Schau dir die Änderung an" tooltip when activating on touch
+              if (!isOn && window.matchMedia('(pointer: coarse)').matches) onMobileSelect?.()
+            }}
             aria-pressed={isOn}
             style={{
               flexShrink: 0, position: 'relative',
@@ -614,7 +619,7 @@ function CardSelectField({ field, value, onChange, narrow, onMobileSelect }: {
 
   // ── Section visibility toggle (display_mode: 'section_toggle') ──
   if (field.display_mode === 'section_toggle') {
-    return <SectionToggleCard field={field} value={value} onChange={onChange} />
+    return <SectionToggleCard field={field} value={value} onChange={onChange} onMobileSelect={onMobileSelect} />
   }
 
   // ── iOS-style toggle (2 binary options, opt-in via display_mode) ──
@@ -3289,17 +3294,53 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
                   </button>
                 </div>
               ) : (
-                /* Last section: Publish */
-                <button onClick={() => handlePublish()} disabled={publishing || !allRequiredComplete}
-                  className="w-full flex items-center justify-center gap-2 py-3.5 text-sm font-bold text-white rounded-full"
-                  style={{
-                    background: allRequiredComplete ? (isPublished ? '#16A34A' : '#1a1a1a') : '#9CA3AF',
-                    boxShadow: allRequiredComplete ? '0 4px 14px rgba(26,26,26,0.2)' : 'none',
-                    opacity: publishing ? 0.7 : 1,
-                  }}>
-                  {publishing ? <span className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" /> : null}
-                  {publishing ? 'Bitte warten…' : isPublished ? '✓ Änderungen live stellen' : '🚀 Jetzt veröffentlichen'}
-                </button>
+                /* Last section: Vorschau + Publish */
+                <div className="flex gap-2">
+                  <div style={{ position: 'relative', flexShrink: 0 }}>
+                    {showPreviewTooltip && (
+                      <div key={previewTooltipKey}
+                        style={{
+                          position: 'absolute', bottom: 'calc(100% + 10px)', left: '50%',
+                          background: '#FF6B2C', color: '#fff',
+                          fontSize: 12, fontWeight: 700, whiteSpace: 'nowrap',
+                          padding: '7px 13px', borderRadius: 10,
+                          boxShadow: '0 6px 20px rgba(255,107,44,0.35)',
+                          animation: 'ptt-life 3.2s cubic-bezier(0.34,1.56,0.64,1) forwards',
+                          pointerEvents: 'none', zIndex: 60,
+                        }}>
+                        Schau dir die Änderung an
+                        <span style={{
+                          position: 'absolute', top: '100%', left: '50%',
+                          transform: 'translateX(-50%)',
+                          width: 0, height: 0,
+                          borderLeft: '5px solid transparent',
+                          borderRight: '5px solid transparent',
+                          borderTop: '5px solid #FF6B2C',
+                        }} />
+                      </div>
+                    )}
+                    <button
+                      onClick={() => { setShowFullPreview(true); setPreviewKey(k => k + 1) }}
+                      className="flex items-center justify-center gap-1.5 px-4 py-3.5 rounded-full text-sm font-semibold"
+                      style={{ background: '#F3F4F6', color: '#374151' }}>
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                        <circle cx="12" cy="12" r="3"/>
+                      </svg>
+                      Vorschau
+                    </button>
+                  </div>
+                  <button onClick={() => handlePublish()} disabled={publishing || !allRequiredComplete}
+                    className="flex-1 flex items-center justify-center gap-2 py-3.5 text-sm font-bold text-white rounded-full"
+                    style={{
+                      background: allRequiredComplete ? (isPublished ? '#16A34A' : '#1a1a1a') : '#9CA3AF',
+                      boxShadow: allRequiredComplete ? '0 4px 14px rgba(26,26,26,0.2)' : 'none',
+                      opacity: publishing ? 0.7 : 1,
+                    }}>
+                    {publishing ? <span className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" /> : null}
+                    {publishing ? 'Bitte warten…' : isPublished ? '✓ Live stellen' : '🚀 Veröffentlichen'}
+                  </button>
+                </div>
               )}
             </div>
           </div>
