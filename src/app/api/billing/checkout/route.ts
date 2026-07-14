@@ -87,34 +87,39 @@ export async function POST(req: NextRequest) {
     const hasReferral = !!referredBy && !!affiliateCouponId
 
     // Resolve manually entered code: affiliate username OR Stripe promotion code.
-    // Affiliate takes priority — if the entered code matches a username in our DB,
-    // we track the referral and apply the affiliate coupon (same 20% as the auto-ref flow).
+    // Priority: explicit Stripe promo code > referral affiliate coupon > allow_promotion_codes.
+    // An explicitly entered Stripe promo code (e.g. ADMIN100, SUMMER50) always wins —
+    // the user may have received a better deal than their referral discount.
     let affiliateApplied = false
     let promoCodeId: string | undefined
 
-    if (promo_code && !hasReferral) {
+    if (promo_code) {
       const { users: usersTable } = await import('@/lib/db/schema')
       const { eq: eqFn } = await import('drizzle-orm')
 
-      const affiliateUser = await db.query.users.findFirst({
-        where: eqFn(usersTable.username, promo_code.toLowerCase().trim()),
-        columns: { username: true },
-      })
+      // First check if code is a Stripe promotion code (action codes: ADMIN100, BLACKFRIDAY etc.)
+      // Stripe promo codes take priority — they may offer a better deal than referral.
+      try {
+        const codes = await stripe.promotionCodes.list({ code: promo_code.toUpperCase(), active: true, limit: 1 })
+        if (codes.data.length > 0) promoCodeId = codes.data[0].id
+      } catch { /* ignore: fall through to affiliate check */ }
 
-      if (affiliateUser?.username) {
-        // It's an affiliate/partner code — track referral + apply coupon
-        affiliateApplied = true
-        if (!profile?.referredByUsername) {
-          await db.update(usersTable)
-            .set({ referredByUsername: affiliateUser.username })
-            .where(eqFn(usersTable.id, user.id))
+      // Only check for affiliate username if no Stripe promo code matched AND user has no existing referral
+      if (!promoCodeId && !hasReferral) {
+        const affiliateUser = await db.query.users.findFirst({
+          where: eqFn(usersTable.username, promo_code.toLowerCase().trim()),
+          columns: { username: true },
+        })
+
+        if (affiliateUser?.username) {
+          // It's an affiliate/partner code — track referral + apply coupon
+          affiliateApplied = true
+          if (!profile?.referredByUsername) {
+            await db.update(usersTable)
+              .set({ referredByUsername: affiliateUser.username })
+              .where(eqFn(usersTable.id, user.id))
+          }
         }
-      } else {
-        // Try as Stripe promotion code (action codes: BLACKFRIDAY etc.)
-        try {
-          const codes = await stripe.promotionCodes.list({ code: promo_code.toUpperCase(), active: true, limit: 1 })
-          if (codes.data.length > 0) promoCodeId = codes.data[0].id
-        } catch { /* ignore: Stripe checkout still accepts codes inline */ }
       }
     }
 
@@ -132,12 +137,14 @@ export async function POST(req: NextRequest) {
       mode: 'subscription',
       payment_method_types: ['card', 'sepa_debit'],
       line_items: [{ price: priceId, quantity: 1 }],
-      // Discount priority: (auto-referral OR affiliate code) > Stripe promo code > allow any code at checkout
+      // Discount priority: explicit Stripe promo code > (auto-referral OR affiliate code) > allow any code.
+      // An explicitly entered Stripe promo code wins over the referral coupon so users can
+      // always use a better admin/action code even if they have a referral on file.
       // Stripe doesn't allow mixing discounts[] with allow_promotion_codes.
-      ...(hasReferral || affiliateApplied
-        ? { discounts: [{ coupon: affiliateCouponId!.trim() }] }
-        : promoCodeId
-          ? { discounts: [{ promotion_code: promoCodeId }] }
+      ...(promoCodeId
+        ? { discounts: [{ promotion_code: promoCodeId }] }
+        : hasReferral || affiliateApplied
+          ? { discounts: [{ coupon: affiliateCouponId!.trim() }] }
           : { allow_promotion_codes: true }),
       success_url: successUrl,
       cancel_url: cancelUrl,

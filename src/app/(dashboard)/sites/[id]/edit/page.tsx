@@ -3731,15 +3731,17 @@ function UpgradeModal({
   }, [promoCode])
 
   const hasDiscount = !!referredBy
-  const promoApplied = !hasDiscount && promoStatus !== null && promoStatus !== 'validating' && (promoStatus as PromoResult).valid
+  // Promo code can override referral — if user explicitly enters a code it takes priority
+  const promoApplied = promoStatus !== null && promoStatus !== 'validating' && (promoStatus as PromoResult).valid
 
   function effectivePrice(base: number) {
-    if (hasDiscount) return Math.round(base * (1 - REFERRAL_DISCOUNT))
+    // Explicit promo code wins over referral discount
     if (promoApplied) {
       const p = promoStatus as { valid: true; percent_off: number | null; amount_off: number | null }
       if (p.percent_off) return Math.round(base * (1 - p.percent_off / 100))
       if (p.amount_off) return Math.max(0, base - Math.round(p.amount_off / 100))
     }
+    if (hasDiscount) return Math.round(base * (1 - REFERRAL_DISCOUNT))
     return base
   }
 

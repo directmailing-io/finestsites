@@ -5,12 +5,12 @@ import { useSearchParams } from 'next/navigation'
 import { Suspense } from 'react'
 import { PLAN_LIST, COMMON_FEATURES, type PlanDef } from '@/lib/plans'
 
-const DISCOUNT = 0.20
-const COUPON_LABEL = '20% Partner-Rabatt (dauerhaft)'
+const REFERRAL_DISCOUNT = 0.20
 
-function discounted(price: number) {
-  return Math.round(price * (1 - DISCOUNT) * 100) / 100
-}
+type PromoResult =
+  | { valid: true; type: 'affiliate'; username: string; display_name: string; percent_off: 20; amount_off: null }
+  | { valid: true; type: 'promo'; percent_off: number | null; amount_off: number | null; name: string }
+  | { valid: false }
 
 function PlanPageInner() {
   const searchParams = useSearchParams()
@@ -18,23 +18,69 @@ function PlanPageInner() {
   const [interval, setInterval] = useState<'monthly' | 'yearly'>('monthly')
   const [loading, setLoading] = useState<string | null>(null)
   const [error, setError] = useState('')
-  const [hasDiscount, setHasDiscount] = useState(false)
+  const [referredBy, setReferredBy] = useState<string | null>(null)
+  const [promoCode, setPromoCode] = useState('')
+  const [showPromoInput, setShowPromoInput] = useState(false)
+  const [promoStatus, setPromoStatus] = useState<null | 'validating' | PromoResult>(null)
 
   useEffect(() => {
     fetch('/api/user/profile')
       .then(r => r.json())
-      .then(d => { if (d.referred_by_username) setHasDiscount(true) })
+      .then(d => { if (d.referred_by_username) setReferredBy(d.referred_by_username) })
       .catch(() => {})
   }, [])
+
+  // Debounced live validation
+  useEffect(() => {
+    const trimmed = promoCode.trim()
+    if (!trimmed) { setPromoStatus(null); return }
+    setPromoStatus('validating')
+    const timer = setTimeout(async () => {
+      try {
+        const res = await fetch(`/api/billing/validate-promo?code=${encodeURIComponent(trimmed)}`)
+        const data = await res.json()
+        setPromoStatus(data.valid ? data as PromoResult : { valid: false })
+      } catch {
+        setPromoStatus({ valid: false })
+      }
+    }, 500)
+    return () => clearTimeout(timer)
+  }, [promoCode])
+
+  const hasDiscount = !!referredBy
+  // Explicit promo code overrides referral discount
+  const promoApplied = promoStatus !== null && promoStatus !== 'validating' && (promoStatus as PromoResult).valid
+
+  function effectiveMonthly(base: number): number {
+    if (promoApplied) {
+      const p = promoStatus as { valid: true; percent_off: number | null; amount_off: number | null }
+      if (p.percent_off) return Math.round(base * (1 - p.percent_off / 100) * 100) / 100
+      if (p.amount_off) return Math.max(0, base - Math.round(p.amount_off / 100))
+    }
+    if (hasDiscount) return Math.round(base * (1 - REFERRAL_DISCOUNT) * 100) / 100
+    return base
+  }
+
+  function effectiveYearly(base: number): number {
+    if (promoApplied) {
+      const p = promoStatus as { valid: true; percent_off: number | null; amount_off: number | null }
+      if (p.percent_off) return Math.round(base * (1 - p.percent_off / 100) * 100) / 100
+      if (p.amount_off) return Math.max(0, base - Math.round(p.amount_off / 100))
+    }
+    if (hasDiscount) return Math.round(base * (1 - REFERRAL_DISCOUNT) * 100) / 100
+    return base
+  }
 
   async function selectPlan(planKey: string) {
     setLoading(planKey)
     setError('')
     try {
+      const body: Record<string, string> = { plan: planKey, interval }
+      if (promoCode.trim()) body.promo_code = promoCode.trim().toUpperCase()
       const res = await fetch('/api/billing/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ plan: planKey, interval }),
+        body: JSON.stringify(body),
       })
       const data = await res.json()
       if (!res.ok || !data.url) throw new Error(data.error || 'Fehler beim Checkout.')
@@ -48,9 +94,9 @@ function PlanPageInner() {
   }
 
   const yearlySavings = (plan: PlanDef) => {
-    const base = hasDiscount ? discounted(plan.monthly_eur) : plan.monthly_eur
-    const yearly = hasDiscount ? discounted(plan.yearly_eur) : plan.yearly_eur
-    return Math.round(base * 12 - yearly)
+    const baseMonthly = effectiveMonthly(plan.monthly_eur)
+    const baseYearly = effectiveYearly(plan.yearly_eur)
+    return Math.round(baseMonthly * 12 - baseYearly)
   }
 
   return (
@@ -62,23 +108,80 @@ function PlanPageInner() {
         </p>
       </div>
 
-      {/* Discount banner */}
-      {hasDiscount && (
-        <div className="mb-6 px-4 py-3 rounded-xl flex items-center gap-3"
+      {/* Discount banner — referral (only shown when no promo code is overriding) */}
+      {hasDiscount && !promoApplied && (
+        <div className="mb-4 px-4 py-3 rounded-xl flex items-center gap-3"
           style={{ background: '#F0FDF4', border: '1px solid #BBF7D0' }}>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#16A34A" strokeWidth="2">
             <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
           </svg>
           <div>
             <p className="text-sm font-semibold" style={{ color: '#15803D' }}>
-              {COUPON_LABEL} wird automatisch angewendet
+              20% Partner-Rabatt (dauerhaft) wird automatisch angewendet
             </p>
             <p className="text-xs" style={{ color: '#166534' }}>
-              Dein Empfehlungscode gibt dir dauerhaft 20% Rabatt. Gilt für jeden Monat und jedes Jahr.
+              Dein Empfehlungscode gibt dir dauerhaft 20% Rabatt auf jeden Monat und jedes Jahr.
             </p>
           </div>
         </div>
       )}
+
+      {/* Promo code section */}
+      <div className="mb-6">
+        {!showPromoInput ? (
+          <button
+            onClick={() => setShowPromoInput(true)}
+            className="text-sm underline underline-offset-2"
+            style={{ color: '#9CA3AF' }}
+          >
+            Hast du einen Gutschein-Code?
+          </button>
+        ) : (
+          <div className="flex flex-col gap-2">
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={promoCode}
+                onChange={e => setPromoCode(e.target.value.toUpperCase())}
+                placeholder="CODE EINGEBEN"
+                className="flex-1 px-3 py-2 text-sm font-mono rounded-xl outline-none"
+                style={{
+                  border: promoStatus === null || promoStatus === 'validating'
+                    ? '1.5px solid #E5E7EB'
+                    : promoApplied ? '1.5px solid #16A34A' : '1.5px solid #EF4444',
+                  background: '#FAFAFA',
+                  letterSpacing: '0.06em',
+                }}
+                autoFocus
+              />
+              <button
+                onClick={() => { setShowPromoInput(false); setPromoCode(''); setPromoStatus(null) }}
+                className="px-3 py-2 text-sm rounded-xl"
+                style={{ background: '#F3F4F6', color: '#6B7280' }}
+              >
+                ✕
+              </button>
+            </div>
+            {promoStatus === 'validating' && (
+              <p className="text-xs" style={{ color: '#9CA3AF' }}>Wird geprüft…</p>
+            )}
+            {promoApplied && (() => {
+              const p = promoStatus as { valid: true; type: string; percent_off: number | null; amount_off: number | null; name?: string; display_name?: string }
+              const label = p.type === 'affiliate' ? `${p.percent_off}% Partner-Rabatt (dauerhaft)` : p.name ?? 'Aktionscode'
+              const discountText = p.percent_off ? `${p.percent_off}% Rabatt` : p.amount_off ? `${(p.amount_off / 100).toFixed(2).replace('.', ',')} € Rabatt` : 'Rabatt'
+              return (
+                <div className="flex items-center gap-2 px-3 py-2 rounded-xl" style={{ background: '#F0FDF4', border: '1px solid #BBF7D0' }}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#16A34A" strokeWidth="2.5" strokeLinecap="round"><path d="M20 6L9 17l-5-5"/></svg>
+                  <span className="text-xs font-semibold" style={{ color: '#15803D' }}>{label} — {discountText} angewendet</span>
+                </div>
+              )
+            })()}
+            {promoStatus !== null && promoStatus !== 'validating' && !(promoStatus as PromoResult).valid && promoCode.trim() && (
+              <p className="text-xs" style={{ color: '#EF4444' }}>Ungültiger oder abgelaufener Code.</p>
+            )}
+          </div>
+        )}
+      </div>
 
       {canceled && (
         <div className="mb-6 px-4 py-3 rounded-xl text-sm text-center" style={{ background: '#FEF9C3', border: '1px solid #FDE68A', color: '#92400E' }}>
@@ -128,9 +231,9 @@ function PlanPageInner() {
         {PLAN_LIST.map(plan => {
           const baseMonthly = interval === 'monthly' ? plan.monthly_eur : Math.round(plan.yearly_eur / 12)
           const baseYearly = plan.yearly_eur
-          const discountedMonthly = discounted(baseMonthly)
-          const discountedYearly = discounted(baseYearly)
-          const showMonthly = hasDiscount ? discountedMonthly : baseMonthly
+          const showMonthly = effectiveMonthly(baseMonthly)
+          const showYearly = effectiveYearly(baseYearly)
+          const anyDiscount = hasDiscount || promoApplied
           const isLoading = loading === plan.key
           const savings = yearlySavings(plan)
           const isPopular = plan.popular
@@ -156,7 +259,7 @@ function PlanPageInner() {
               <p className="text-sm font-semibold mb-1" style={{ color: isPopular ? '#6D28D9' : '#6B7280' }}>{plan.name}</p>
 
               <div className="flex items-baseline gap-1 mb-1">
-                {hasDiscount && (
+                {anyDiscount && showMonthly !== baseMonthly && (
                   <span className="text-base line-through mr-1" style={{ color: '#9CA3AF' }}>
                     €{baseMonthly}
                   </span>
@@ -173,10 +276,10 @@ function PlanPageInner() {
 
               {interval === 'yearly' ? (
                 <div className="mb-4">
-                  {hasDiscount ? (
+                  {anyDiscount && showYearly !== baseYearly ? (
                     <p className="text-xs font-semibold" style={{ color: '#15803D' }}>
                       <span className="line-through mr-1" style={{ color: '#9CA3AF' }}>€{baseYearly}</span>
-                      €{discountedYearly.toFixed(2).replace('.', ',')}/Jahr · du sparst €{savings}
+                      €{showYearly.toFixed(2).replace('.', ',')}/Jahr · du sparst €{savings}
                     </p>
                   ) : (
                     <p className="text-xs font-semibold" style={{ color: '#15803D' }}>
@@ -186,9 +289,10 @@ function PlanPageInner() {
                 </div>
               ) : (
                 <div className="mb-4">
-                  {hasDiscount && (
-                    <p className="text-xs font-semibold" style={{ color: '#15803D' }}>20% Rabatt, dauerhaft</p>
-                  )}
+                  {anyDiscount && showMonthly !== baseMonthly && (() => {
+                    const p = promoApplied ? promoStatus as { valid: true; percent_off: number | null } : null
+                    return <p className="text-xs font-semibold" style={{ color: '#15803D' }}>{p?.percent_off ?? 20}% Rabatt, dauerhaft</p>
+                  })()}
                 </div>
               )}
 
