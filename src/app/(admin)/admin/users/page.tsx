@@ -7,7 +7,7 @@ import type { PlanKey, BillingInterval } from '@/lib/plans'
 import AdminUsersTable from './AdminUsersTable'
 import type { UserRow } from './AdminUsersTable'
 
-/** Monthly-equivalent revenue in cents for an active subscription. */
+/** Monthly-equivalent revenue in cents for an active subscription (plan-price fallback). */
 function mrrCentsFallback(plan: string, interval: string): number {
   const p = PLANS[plan as PlanKey]
   if (!p) return 0
@@ -15,25 +15,13 @@ function mrrCentsFallback(plan: string, interval: string): number {
   return p.monthly_eur * 100
 }
 
-/** Calculate MRR in cents from a Stripe subscription (accounts for discounts at sub AND customer level). */
-function stripeMrrCents(sub: {
-  items: { data: Array<{ price: { unit_amount: number | null; recurring?: { interval: string } | null } }> }
-  discount?: { coupon?: { percent_off?: number | null; amount_off?: number | null } | null } | null
-  customer?: { discount?: { coupon?: { percent_off?: number | null; amount_off?: number | null } | null } | null } | null
-}): number {
-  const item = sub.items.data[0]
-  if (!item) return 0
-  const baseAmount = item.price.unit_amount ?? 0
-  // Subscription-level discount takes precedence; fall back to customer-level
-  const coupon = sub.discount?.coupon ?? (sub.customer as any)?.discount?.coupon ?? null
-  let discounted = baseAmount
-  if (coupon?.percent_off) {
-    discounted = Math.round(baseAmount * (1 - coupon.percent_off / 100))
-  } else if (coupon?.amount_off) {
-    discounted = Math.max(0, baseAmount - coupon.amount_off)
-  }
-  const interval = item.price.recurring?.interval
-  return interval === 'year' ? Math.round(discounted / 12) : discounted
+/**
+ * Calculate true MRR from a Stripe invoice (most recent paid invoice = ground truth).
+ * Handles one-time coupons, promotional codes, and customer/subscription discounts
+ * because it uses the actual charged amount, not the catalog price.
+ */
+function invoiceMrrCents(amountPaid: number, interval: 'month' | 'year' | string): number {
+  return interval === 'year' ? Math.round(amountPaid / 12) : amountPaid
 }
 
 export default async function AdminUsersPage() {
@@ -71,7 +59,8 @@ export default async function AdminUsersPage() {
       .groupBy(subscriptionEvents.userId),
   ])
 
-  // Fetch real MRR from Stripe for active subscribers (parallel, best-effort)
+  // Fetch true MRR from the most recent paid Stripe invoice (ground truth — reflects
+  // all discounts including one-time promo codes, even after subscription.discount expires).
   const activeWithStripe = allUsers.filter(
     u => u.subscriptionStatus === 'active' && u.stripeSubscriptionId
   )
@@ -79,15 +68,27 @@ export default async function AdminUsersPage() {
   if (activeWithStripe.length > 0) {
     const stripe = getStripe()
     const results = await Promise.allSettled(
-      activeWithStripe.map(u =>
-        stripe.subscriptions.retrieve(u.stripeSubscriptionId!, {
-          expand: ['discount.coupon', 'customer', 'customer.discount.coupon'],
-        })
-      )
+      activeWithStripe.map(async u => {
+        // Fetch the subscription (for billing interval) + latest paid invoice in parallel
+        const [sub, invoices] = await Promise.all([
+          stripe.subscriptions.retrieve(u.stripeSubscriptionId!),
+          stripe.invoices.list({
+            subscription: u.stripeSubscriptionId!,
+            limit: 1,
+            status: 'paid',
+          }),
+        ])
+        const interval = sub.items.data[0]?.price?.recurring?.interval ?? 'month'
+        const amountPaid = invoices.data[0]?.amount_paid ?? null
+        return { userId: u.id, amountPaid, interval }
+      })
     )
-    results.forEach((result, i) => {
-      if (result.status === 'fulfilled') {
-        stripeMrrByUser[activeWithStripe[i].id] = stripeMrrCents(result.value as any)
+    results.forEach(result => {
+      if (result.status === 'fulfilled' && result.value.amountPaid !== null) {
+        stripeMrrByUser[result.value.userId] = invoiceMrrCents(
+          result.value.amountPaid,
+          result.value.interval,
+        )
       }
     })
   }
