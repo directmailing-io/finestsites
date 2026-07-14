@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState, useEffect, useCallback, useRef, use } from 'react'
+import { createPortal } from 'react-dom'
 import { useRouter, useSearchParams } from 'next/navigation'
 import ImageCropModal from '@/components/ImageCropModal'
 import { RichTextField } from '@/components/editor/RichTextField'
@@ -22,7 +23,7 @@ interface LoopSubField {
   max_length?: number | null; default_value?: string
   aspect_ratio?: string; options?: string[]
   card_options?: CardOption[]
-  display_mode?: 'chips' | 'toggle'
+  display_mode?: 'chips' | 'toggle' | 'section_toggle'
   toggle_on_value?: string
   toggle_off_value?: string
   show_when?: { field: string; value: string | string[] }
@@ -44,7 +45,7 @@ interface FieldSchema {
   aspect_ratio?: string
   /** Enables AI compliance check (EU Health Claims Regulation) for richtext fields */
   compliance_check?: boolean
-  display_mode?: 'chips' | 'toggle'
+  display_mode?: 'chips' | 'toggle' | 'section_toggle'
   toggle_on_value?: string
   toggle_off_value?: string
   show_when?: { field: string; value: string | string[] }
@@ -465,6 +466,144 @@ const focusBorder = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement 
 const blurBorder  = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
   (e.target.style.borderColor = '#E5E7EB')
 
+// ─── Section Toggle Card ──────────────────────────────────────────────────────
+// Used for `zeige_` fields (display_mode: 'section_toggle'): large section
+// preview image + iOS toggle in one card. Tapping the image opens a fullscreen
+// lightbox so the user can clearly see what the section contains before deciding.
+
+function SectionToggleCard({ field, value, onChange }: {
+  field: FieldSchema; value: string; onChange: (v: string) => void
+}) {
+  const opts = field.card_options ?? []
+  const onOpt  = opts.find(o => o.image_url) ?? opts[0]
+  const offOpt = opts.find(o => !o.image_url) ?? opts[1]
+  const isOn = value === (onOpt?.value ?? 'ja')
+  const [lightbox, setLightbox] = useState(false)
+
+  // Strip „…" wrapper quotes from field label: "Sektion „Was das Optimalset ersetzt\""
+  const cleanLabel = field.label
+    .replace(/^Sektion\s*[„"]/i, '')
+    .replace(/["\u201c\u201d]$/, '')
+    .trim()
+
+  return (
+    <>
+      <div className="rounded-2xl overflow-hidden bg-white"
+        style={{
+          border: `2px solid ${isOn ? '#10B981' : '#E5E7EB'}`,
+          boxShadow: isOn ? '0 0 0 4px rgba(16,185,129,0.07)' : '0 1px 4px rgba(0,0,0,0.04)',
+          transition: 'border-color 0.25s, box-shadow 0.25s',
+        }}>
+
+        {/* Preview image */}
+        {onOpt?.image_url && (
+          <div className="relative"
+            style={{ aspectRatio: '16/9', overflow: 'hidden', background: '#F8FAFC', cursor: 'pointer' }}
+            onClick={() => setLightbox(true)}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={onOpt.image_url} alt={cleanLabel}
+              className="w-full h-full object-cover"
+              style={{
+                filter: isOn ? 'none' : 'grayscale(100%)',
+                opacity: isOn ? 1 : 0.3,
+                transition: 'filter 0.3s, opacity 0.3s',
+              }} />
+
+            {/* "Ausgeblendet" overlay */}
+            {!isOn && (
+              <div className="absolute inset-0 flex items-center justify-center">
+                <span className="px-3 py-1.5 rounded-full text-sm font-semibold"
+                  style={{ background: 'rgba(0,0,0,0.5)', color: '#fff', backdropFilter: 'blur(8px)' }}>
+                  Ausgeblendet
+                </span>
+              </div>
+            )}
+
+            {/* Zoom hint (only when active) */}
+            {isOn && (
+              <div className="absolute top-2.5 right-2.5 w-8 h-8 rounded-full flex items-center justify-center"
+                style={{ background: 'rgba(15,23,42,0.65)', backdropFilter: 'blur(8px)' }}>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.3" strokeLinecap="round">
+                  <circle cx="11" cy="11" r="8"/>
+                  <path d="M21 21l-4.35-4.35"/>
+                  <path d="M11 8v6M8 11h6"/>
+                </svg>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Label row + toggle */}
+        <div className="flex items-center gap-3 px-4 py-3.5">
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-bold text-gray-900 leading-tight">{cleanLabel}</p>
+            {onOpt?.description && (
+              <p className="text-xs leading-snug mt-0.5" style={{ color: '#6B7280' }}>
+                {onOpt.description}
+              </p>
+            )}
+          </div>
+          {/* iOS-style toggle */}
+          <button type="button"
+            onClick={() => onChange(isOn ? (offOpt?.value ?? 'nein') : (onOpt?.value ?? 'ja'))}
+            aria-pressed={isOn}
+            style={{
+              flexShrink: 0, position: 'relative',
+              width: 48, height: 28, borderRadius: 999,
+              background: isOn ? '#10B981' : '#D1D5DB',
+              border: 0, cursor: 'pointer', padding: 0,
+              transition: 'background 0.25s ease',
+            }}>
+            <span style={{
+              position: 'absolute', top: 3,
+              left: isOn ? 23 : 3,
+              width: 22, height: 22, borderRadius: '50%',
+              background: '#fff',
+              boxShadow: '0 2px 5px rgba(0,0,0,0.2)',
+              transition: 'left 0.25s ease',
+            }} />
+          </button>
+        </div>
+      </div>
+
+      {/* Fullscreen lightbox */}
+      {lightbox && typeof document !== 'undefined' && createPortal(
+        <div
+          className="fixed inset-0 flex items-center justify-center"
+          style={{ zIndex: 9999, background: 'rgba(0,0,0,0.92)', backdropFilter: 'blur(12px)' }}
+          onClick={() => setLightbox(false)}>
+          <div className="relative" style={{ maxWidth: '95vw', maxHeight: '90vh' }}
+            onClick={e => e.stopPropagation()}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={onOpt?.image_url} alt={cleanLabel}
+              className="rounded-xl object-contain"
+              style={{ maxWidth: '95vw', maxHeight: '85vh', boxShadow: '0 32px 80px rgba(0,0,0,0.5)' }} />
+            {/* Caption */}
+            <div className="absolute bottom-0 left-0 right-0 px-4 py-3 rounded-b-xl"
+              style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 100%)' }}>
+              <p className="text-white font-bold text-base leading-tight">{cleanLabel}</p>
+              {onOpt?.description && (
+                <p className="text-sm mt-0.5" style={{ color: 'rgba(255,255,255,0.75)' }}>
+                  {onOpt.description}
+                </p>
+              )}
+            </div>
+          </div>
+          {/* Close */}
+          <button onClick={() => setLightbox(false)}
+            className="absolute top-4 right-4 w-11 h-11 rounded-full flex items-center justify-center"
+            style={{ background: 'rgba(255,255,255,0.14)', backdropFilter: 'blur(8px)' }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round">
+              <path d="M18 6L6 18M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>,
+        document.body
+      )}
+    </>
+  )
+}
+
 // ─── Card Select Field ────────────────────────────────────────────────────────
 
 function CardSelectField({ field, value, onChange, narrow, onMobileSelect }: {
@@ -472,6 +611,11 @@ function CardSelectField({ field, value, onChange, narrow, onMobileSelect }: {
 }) {
   const opts = field.card_options ?? []
   const [hovered, setHovered] = useState<{ opt: CardOption; rect: DOMRect } | null>(null)
+
+  // ── Section visibility toggle (display_mode: 'section_toggle') ──
+  if (field.display_mode === 'section_toggle') {
+    return <SectionToggleCard field={field} value={value} onChange={onChange} />
+  }
 
   // ── iOS-style toggle (2 binary options, opt-in via display_mode) ──
   if (field.display_mode === 'toggle' && opts.length === 2) {
