@@ -8,6 +8,9 @@ import { markupToHtml } from '@/lib/email/markup'
 interface UserRow {
   id: string
   email: string
+  firstName: string | null
+  lastName: string | null
+  username: string | null
   plan: string
   subscription_status: string | null
   publishedTemplateIds: string[]
@@ -191,10 +194,26 @@ export default function NewsletterPage() {
 
   const canSend = subject.trim().length > 0 && body.trim().length > 0 && filteredRecipients.length > 0
 
+  function interpolatePreview(text: string): string {
+    // Use first recipient for preview, or mock data
+    const sample = filteredRecipients[0]
+    return text.replace(/\{\{(\w+)(?:\|([^}]*))?\}\}/g, (_match, field: string, fallback: string | undefined) => {
+      const fb = fallback ?? ''
+      switch (field) {
+        case 'vorname':  return sample?.firstName?.trim() || fb || 'du'
+        case 'nachname': return sample?.lastName?.trim()  || fb || ''
+        case 'username': return sample?.username?.trim()  || fb || ''
+        case 'email':    return sample?.email || fb || 'nutzer@beispiel.de'
+        default:         return _match
+      }
+    })
+  }
+
   function previewHtml() {
     const FONT = `-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif`
-    const bodyContent = body.trim()
-      ? markupToHtml(body)
+    const previewBody = interpolatePreview(body)
+    const bodyContent = previewBody.trim()
+      ? markupToHtml(previewBody)
       : `<p style="color:#B0A89E;font-size:15px;font-family:${FONT};">Inhalt hier…</p>`
     return `<!DOCTYPE html>
 <html lang="de">
@@ -412,15 +431,20 @@ export default function NewsletterPage() {
                     <div className="flex flex-col gap-3 mb-4 pt-4" style={{ borderTop: '1px solid #F1F5F9' }}>
                       {selectedUsers.length > 0 && (
                         <div className="flex flex-wrap gap-2">
-                          {selectedUsers.map(u => (
-                            <span key={u.id} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium"
-                              style={{ background: '#F1F5F9', color: '#374151' }}>
-                              {u.email}
-                              <button onClick={() => setSelectedUsers(p => p.filter(x => x.id !== u.id))} style={{ color: '#9CA3AF' }}>
-                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
-                              </button>
-                            </span>
-                          ))}
+                          {selectedUsers.map(u => {
+                            const name = [u.firstName, u.lastName].filter(Boolean).join(' ')
+                            return (
+                              <span key={u.id} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium"
+                                style={{ background: '#F1F5F9', color: '#374151' }}>
+                                {name || u.email}
+                                {name && <span style={{ color: '#9CA3AF' }}>·</span>}
+                                {name && <span style={{ color: '#9CA3AF' }}>{u.email}</span>}
+                                <button onClick={() => setSelectedUsers(p => p.filter(x => x.id !== u.id))} style={{ color: '#9CA3AF' }}>
+                                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                                </button>
+                              </span>
+                            )
+                          })}
                         </div>
                       )}
                       <div className="relative">
@@ -428,30 +452,41 @@ export default function NewsletterPage() {
                           <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
                         </svg>
                         <input type="text" value={userSearch} onChange={e => setUserSearch(e.target.value)}
-                          placeholder="E-Mail suchen…"
+                          placeholder="Name, E-Mail oder Username suchen…"
                           className="w-full pl-9 pr-4 py-2.5 text-sm rounded-[12px] outline-none"
                           style={{ background: '#F9FAFB', border: '1.5px solid #E5E7EB', color: '#111827' }}
                           onFocus={e => (e.target.style.borderColor = '#111827')}
                           onBlur={e => (e.target.style.borderColor = '#E5E7EB')} />
                       </div>
                       {userSearch && (() => {
+                        const q = userSearch.toLowerCase()
                         const hits = (data?.users ?? []).filter(u =>
-                          !selectedUsers.find(s => s.id === u.id) &&
-                          u.email.toLowerCase().includes(userSearch.toLowerCase())
+                          !selectedUsers.find(s => s.id === u.id) && (
+                            u.email.toLowerCase().includes(q) ||
+                            (u.firstName ?? '').toLowerCase().includes(q) ||
+                            (u.lastName ?? '').toLowerCase().includes(q) ||
+                            (u.username ?? '').toLowerCase().includes(q)
+                          )
                         ).slice(0, 50)
                         return hits.length > 0 ? (
                           <div className="rounded-[12px] overflow-hidden" style={{ border: '1px solid #E5E7EB', maxHeight: 200, overflowY: 'auto' }}>
-                            {hits.map((u, i) => (
-                              <button key={u.id}
-                                onClick={() => { setSelectedUsers(p => [...p, u]); setUserSearch('') }}
-                                className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-left"
-                                style={{ color: '#374151', borderTop: i > 0 ? '1px solid #F1F5F9' : 'none', background: '#fff' }}
-                                onMouseEnter={e => (e.currentTarget.style.background = '#F9FAFB')}
-                                onMouseLeave={e => (e.currentTarget.style.background = '#fff')}>
-                                <span className="flex-1 truncate">{u.email}</span>
-                                <span className="text-xs px-2 py-0.5 rounded-full flex-shrink-0" style={{ background: '#F1F5F9', color: '#6B7280' }}>{u.plan}</span>
-                              </button>
-                            ))}
+                            {hits.map((u, i) => {
+                              const name = [u.firstName, u.lastName].filter(Boolean).join(' ')
+                              return (
+                                <button key={u.id}
+                                  onClick={() => { setSelectedUsers(p => [...p, u]); setUserSearch('') }}
+                                  className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-left"
+                                  style={{ color: '#374151', borderTop: i > 0 ? '1px solid #F1F5F9' : 'none', background: '#fff' }}
+                                  onMouseEnter={e => (e.currentTarget.style.background = '#F9FAFB')}
+                                  onMouseLeave={e => (e.currentTarget.style.background = '#fff')}>
+                                  <span className="flex-1 min-w-0">
+                                    {name && <span className="block text-xs font-medium text-gray-900 truncate">{name}</span>}
+                                    <span className="block truncate" style={{ color: name ? '#6B7280' : '#374151', fontSize: name ? 11 : 13 }}>{u.email}</span>
+                                  </span>
+                                  <span className="text-xs px-2 py-0.5 rounded-full flex-shrink-0" style={{ background: '#F1F5F9', color: '#6B7280' }}>{u.plan}</span>
+                                </button>
+                              )
+                            })}
                           </div>
                         ) : null
                       })()}
@@ -482,13 +517,35 @@ export default function NewsletterPage() {
                       onBlur={e => (e.target.style.borderColor = '#E5E7EB')} />
                   </div>
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-xs font-semibold uppercase tracking-wider" style={{ color: '#94A3B8' }}>Inhalt</label>
+                    <div className="flex items-center justify-between">
+                      <label className="text-xs font-semibold uppercase tracking-wider" style={{ color: '#94A3B8' }}>Inhalt</label>
+                      <div className="flex items-center gap-1.5 flex-wrap justify-end">
+                        <span className="text-xs" style={{ color: '#CBD5E1' }}>Platzhalter:</span>
+                        {[
+                          { label: '{{vorname}}', title: 'Vorname (Fallback: "du")' },
+                          { label: '{{nachname}}', title: 'Nachname' },
+                          { label: '{{email}}', title: 'E-Mail-Adresse' },
+                        ].map(p => (
+                          <button key={p.label} title={p.title}
+                            onClick={() => setBody(b => b + p.label)}
+                            className="text-xs px-2 py-0.5 rounded-md font-mono transition-all"
+                            style={{ background: '#F1F5F9', color: '#6366F1', border: '1px solid #E0E7FF' }}
+                            onMouseEnter={e => (e.currentTarget.style.background = '#E0E7FF')}
+                            onMouseLeave={e => (e.currentTarget.style.background = '#F1F5F9')}>
+                            {p.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
                     <RichTextarea
                       value={body}
                       onChange={setBody}
-                      placeholder={"Hallo,\n\ndein Text hier...\n\n(Leerzeile = neuer Absatz, **fett**, [Text](URL))"}
+                      placeholder={"Hey {{vorname}},\n\ndein Text hier...\n\n(Leerzeile = neuer Absatz, **fett**, [Text](URL))"}
                       rows={12}
                     />
+                    <p className="text-xs" style={{ color: '#CBD5E1' }}>
+                      Platzhalter werden pro Nutzer ersetzt. <span className="font-mono">&#123;&#123;vorname&#125;&#125;</span> → Vorname, falls vorhanden, sonst <em>"du"</em>. Fallback anpassen: <span className="font-mono">&#123;&#123;vorname|Hallo&#125;&#125;</span>
+                    </p>
                   </div>
                 </div>
 

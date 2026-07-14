@@ -13,6 +13,9 @@ export const runtime = 'nodejs'
 interface UserRow {
   id: string
   email: string
+  firstName: string | null
+  lastName: string | null
+  username: string | null
   plan: string
   subscription_status: string | null
   publishedTemplateIds: string[]
@@ -47,7 +50,7 @@ async function checkAdmin() {
 
 async function getEnrichedUsers(): Promise<{ users: UserRow[]; templates: TemplateRow[] }> {
   const [rawUsers, publishedSites, anySites, tplRows] = await Promise.all([
-    db.select({ id: users.id, email: users.email, plan: users.plan, subscriptionStatus: users.subscriptionStatus })
+    db.select({ id: users.id, email: users.email, firstName: users.firstName, lastName: users.lastName, username: users.username, plan: users.plan, subscriptionStatus: users.subscriptionStatus })
       .from(users)
       .orderBy(users.email),
     db.select({ userId: userSites.userId, templateId: userSites.templateId })
@@ -73,6 +76,9 @@ async function getEnrichedUsers(): Promise<{ users: UserRow[]; templates: Templa
   const enrichedUsers: UserRow[] = rawUsers.map(u => ({
     id: u.id,
     email: u.email,
+    firstName: u.firstName,
+    lastName: u.lastName,
+    username: u.username,
     plan: u.plan,
     subscription_status: u.subscriptionStatus,
     publishedTemplateIds: [...(publishedMap.get(u.id) ?? [])],
@@ -88,9 +94,27 @@ async function getEnrichedUsers(): Promise<{ users: UserRow[]; templates: Templa
   return { users: enrichedUsers, templates: tpl }
 }
 
-function filterEmails(users: UserRow[], templates: TemplateRow[], filters: Filters): string[] {
+/**
+ * Replace placeholders in text. Syntax: {{field}} or {{field|fallback}}
+ * Supported fields: vorname, nachname, username, email
+ */
+function interpolate(text: string, user: UserRow): string {
+  return text.replace(/\{\{(\w+)(?:\|([^}]*))?\}\}/g, (_match, field: string, fallback: string | undefined) => {
+    const fb = fallback ?? ''
+    switch (field) {
+      case 'vorname':   return user.firstName?.trim() || fb || 'du'
+      case 'nachname':  return user.lastName?.trim()  || fb || ''
+      case 'username':  return user.username?.trim()  || fb || ''
+      case 'email':     return user.email
+      default:          return _match
+    }
+  })
+}
+
+function filterUsers(users: UserRow[], templates: TemplateRow[], filters: Filters): UserRow[] {
   if (filters.mode === 'specific') {
-    return (filters.specificEmails ?? []).filter(e => e?.includes('@'))
+    const specificSet = new Set((filters.specificEmails ?? []).filter(e => e?.includes('@')))
+    return users.filter(u => specificSet.has(u.email))
   }
 
   // Build tag→templateId map for fast lookup
@@ -102,42 +126,38 @@ function filterEmails(users: UserRow[], templates: TemplateRow[], filters: Filte
     }
   }
 
-  return users
-    .filter(u => {
-      if (filters.plans?.length) {
-        if (!filters.plans.includes(u.plan)) return false
-      }
-      if (filters.subscriptionStatus?.length) {
-        const isActive = u.subscription_status === 'active'
-        const match =
-          (filters.subscriptionStatus.includes('active') && isActive) ||
-          (filters.subscriptionStatus.includes('inactive') && !isActive)
-        if (!match) return false
-      }
-      if (filters.siteStatus?.length) {
-        const hasPublished = u.publishedTemplateIds.length > 0
-        const match =
-          (filters.siteStatus.includes('published') && hasPublished) ||
-          (filters.siteStatus.includes('any') && u.has_any_site) ||
-          (filters.siteStatus.includes('none') && !u.has_any_site)
-        if (!match) return false
-      }
-      if (filters.templateIds?.length) {
-        const match = filters.templateIds.some(tid => u.publishedTemplateIds.includes(tid))
-        if (!match) return false
-      }
-      if (filters.templateTags?.length) {
-        // User must have published a site with at least one of the selected tags
-        const matchingTplIds = new Set(
-          filters.templateTags.flatMap(tag => [...(tagTemplateIds.get(tag) ?? [])])
-        )
-        const match = u.publishedTemplateIds.some(tid => matchingTplIds.has(tid))
-        if (!match) return false
-      }
-      return true
-    })
-    .map(u => u.email)
-    .filter(Boolean)
+  return users.filter(u => {
+    if (filters.plans?.length) {
+      if (!filters.plans.includes(u.plan)) return false
+    }
+    if (filters.subscriptionStatus?.length) {
+      const isActive = u.subscription_status === 'active'
+      const match =
+        (filters.subscriptionStatus.includes('active') && isActive) ||
+        (filters.subscriptionStatus.includes('inactive') && !isActive)
+      if (!match) return false
+    }
+    if (filters.siteStatus?.length) {
+      const hasPublished = u.publishedTemplateIds.length > 0
+      const match =
+        (filters.siteStatus.includes('published') && hasPublished) ||
+        (filters.siteStatus.includes('any') && u.has_any_site) ||
+        (filters.siteStatus.includes('none') && !u.has_any_site)
+      if (!match) return false
+    }
+    if (filters.templateIds?.length) {
+      const match = filters.templateIds.some(tid => u.publishedTemplateIds.includes(tid))
+      if (!match) return false
+    }
+    if (filters.templateTags?.length) {
+      const matchingTplIds = new Set(
+        filters.templateTags.flatMap(tag => [...(tagTemplateIds.get(tag) ?? [])])
+      )
+      const match = u.publishedTemplateIds.some(tid => matchingTplIds.has(tid))
+      if (!match) return false
+    }
+    return true
+  })
 }
 
 export async function POST(req: NextRequest) {
@@ -151,33 +171,34 @@ export async function POST(req: NextRequest) {
   }
 
   const { users: enrichedUsers, templates } = await getEnrichedUsers()
-  const emails = filterEmails(enrichedUsers, templates, filters ?? { mode: 'all' })
+  const recipients = filterUsers(enrichedUsers, templates, filters ?? { mode: 'all' })
 
-  if (emails.length === 0) {
+  if (recipients.length === 0) {
     return NextResponse.json({ error: 'Keine Empfänger gefunden.' }, { status: 400 })
   }
-
-  const bodyHtml = markupToHtml(body.trim())
 
   const UNSUBSCRIBE_BASE = (process.env.NEXT_PUBLIC_APP_URL ?? 'https://app.finestsites.io').replace(/\/$/, '')
   const BATCH_SIZE = 100
   let sent = 0, failed = 0
 
-  for (let i = 0; i < emails.length; i += BATCH_SIZE) {
-    const chunk = emails.slice(i, i + BATCH_SIZE)
+  for (let i = 0; i < recipients.length; i += BATCH_SIZE) {
+    const chunk = recipients.slice(i, i + BATCH_SIZE)
     try {
       const result = await getResend().batch.send(
-        chunk.map(to => {
-          const unsubscribeUrl = `${UNSUBSCRIBE_BASE}/unsubscribe?email=${encodeURIComponent(to)}`
+        chunk.map(user => {
+          const personalSubject = interpolate(subject.trim(), user)
+          const personalBody = interpolate(body.trim(), user)
+          const bodyHtml = markupToHtml(personalBody)
+          const unsubscribeUrl = `${UNSUBSCRIBE_BASE}/unsubscribe?email=${encodeURIComponent(user.email)}`
           const { subject: s, html, text } = waitlistBroadcastEmail({
-            subject: subject.trim(),
+            subject: personalSubject,
             bodyHtml,
-            bodyText: body.trim(),
+            bodyText: personalBody,
             unsubscribeUrl,
           })
           return {
             from: FROM_EMAIL,
-            to,
+            to: user.email,
             subject: s,
             html,
             text,
@@ -210,15 +231,15 @@ export async function POST(req: NextRequest) {
         ${subject.trim()},
         ${body.trim()},
         ${JSON.stringify(filters ?? { mode: 'all' })},
-        ${filters?.mode === 'specific' ? JSON.stringify(emails) : null},
-        ${sent}, ${failed}, ${emails.length}
+        ${filters?.mode === 'specific' ? JSON.stringify(recipients.map(u => u.email)) : null},
+        ${sent}, ${failed}, ${recipients.length}
       )
     `)
   } catch (err) {
     console.error('[newsletter] failed to record send:', err)
   }
 
-  return NextResponse.json({ sent, failed, total: emails.length })
+  return NextResponse.json({ sent, failed, total: recipients.length })
 }
 
 export async function GET() {
