@@ -7,6 +7,10 @@ import type { PlanKey, BillingInterval } from '@/lib/plans'
 import AdminUsersTable from './AdminUsersTable'
 import type { UserRow } from './AdminUsersTable'
 
+// Always fetch fresh data — never serve a cached version.
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 /** Monthly-equivalent revenue in cents for an active subscription (plan-price fallback). */
 function mrrCentsFallback(plan: string, interval: string): number {
   const p = PLANS[plan as PlanKey]
@@ -61,10 +65,13 @@ export default async function AdminUsersPage() {
 
   // Fetch true MRR from the most recent paid Stripe invoice (ground truth — reflects
   // all discounts including one-time promo codes, even after subscription.discount expires).
+  // We store results as `number | null`:
+  //   number  = Stripe returned an invoice → use it (even if 0 = 100% discounted)
+  //   null    = Stripe call failed / no invoice → use plan-price fallback
   const activeWithStripe = allUsers.filter(
     u => u.subscriptionStatus === 'active' && u.stripeSubscriptionId
   )
-  const stripeMrrByUser: Record<string, number> = {}
+  const stripeMrrByUser: Record<string, number | null> = {}
   if (activeWithStripe.length > 0) {
     const stripe = getStripe()
     const results = await Promise.allSettled(
@@ -79,16 +86,24 @@ export default async function AdminUsersPage() {
           }),
         ])
         const interval = sub.items.data[0]?.price?.recurring?.interval ?? 'month'
-        const amountPaid = invoices.data[0]?.amount_paid ?? null
+        // amount_paid can legitimately be 0 (100% coupon). Keep it as-is.
+        // Only return null when there is truly no invoice to read from.
+        const amountPaid = invoices.data.length > 0 ? (invoices.data[0].amount_paid ?? 0) : null
         return { userId: u.id, amountPaid, interval }
       })
     )
     results.forEach(result => {
-      if (result.status === 'fulfilled' && result.value.amountPaid !== null) {
-        stripeMrrByUser[result.value.userId] = invoiceMrrCents(
-          result.value.amountPaid,
-          result.value.interval,
-        )
+      if (result.status === 'fulfilled') {
+        // null means "no invoice found" → leave entry absent so fallback applies
+        // number (including 0) means "Stripe told us exactly this amount"
+        if (result.value.amountPaid !== null) {
+          stripeMrrByUser[result.value.userId] = invoiceMrrCents(
+            result.value.amountPaid,
+            result.value.interval,
+          )
+        }
+      } else {
+        console.error('[admin/users] Stripe MRR fetch failed:', result.reason?.message ?? result.reason)
       }
     })
   }
