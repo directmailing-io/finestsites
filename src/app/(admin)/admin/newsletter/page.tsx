@@ -544,7 +544,7 @@ export default function NewsletterPage() {
                       rows={12}
                     />
                     <p className="text-xs" style={{ color: '#CBD5E1' }}>
-                      Platzhalter werden pro Nutzer ersetzt. <span className="font-mono">&#123;&#123;vorname&#125;&#125;</span> → Vorname, falls vorhanden, sonst <em>"du"</em>. Fallback anpassen: <span className="font-mono">&#123;&#123;vorname|Hallo&#125;&#125;</span>
+                      Platzhalter werden pro Nutzer ersetzt. <span className="font-mono">&#123;&#123;vorname&#125;&#125;</span> → Vorname, falls vorhanden, sonst <em>&bdquo;du&ldquo;</em>. Fallback anpassen: <span className="font-mono">&#123;&#123;vorname|Hallo&#125;&#125;</span>
                     </p>
                   </div>
                 </div>
