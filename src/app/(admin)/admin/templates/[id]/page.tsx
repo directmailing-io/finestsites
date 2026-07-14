@@ -573,12 +573,51 @@ export default function EditTemplatePage({ params }: { params: Promise<{ id: str
                           <option key={opt} value={opt}>{opt}</option>
                         ))}
                       </select>
+                    ) : field.type === 'image' ? (
+                      <div className="flex flex-col gap-2">
+                        <div className="flex gap-2">
+                          <input
+                            type="url"
+                            value={previewValues[field.key] ?? ''}
+                            onChange={e => setPreviewValues(prev => ({ ...prev, [field.key]: e.target.value }))}
+                            placeholder="https://… oder Bild hochladen →"
+                            style={{ background: '#FFFFFF', border: '1.5px solid #E5E7EB', borderRadius: '14px', padding: '10px 14px', fontSize: '14px', outline: 'none', flex: 1 }}
+                            onFocus={e => (e.target.style.borderColor = '#1a1a1a')}
+                            onBlur={e => (e.target.style.borderColor = '#E5E7EB')}
+                          />
+                          <label className="flex items-center gap-1.5 px-4 py-2.5 text-sm font-semibold text-white rounded-[14px] cursor-pointer flex-shrink-0"
+                            style={{ background: '#1a1a1a' }}>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+                            Hochladen
+                            <input type="file" accept="image/jpeg,image/png,image/webp" className="hidden"
+                              onChange={async e => {
+                                const file = e.target.files?.[0]
+                                if (!file) return
+                                e.target.value = ''
+                                const fd = new FormData()
+                                fd.append('file', file)
+                                const res = await fetch(`/api/admin/templates/${id}/cover`, { method: 'POST', body: fd })
+                                if (res.ok) {
+                                  const data = await res.json()
+                                  setPreviewValues(prev => ({ ...prev, [field.key]: data.url }))
+                                }
+                              }}
+                            />
+                          </label>
+                        </div>
+                        {previewValues[field.key] && (
+                          <div className="rounded-[12px] overflow-hidden" style={{ aspectRatio: field.aspect_ratio ?? '16/9', maxWidth: 320, border: '1px solid #E5E7EB' }}>
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img src={previewValues[field.key]} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                          </div>
+                        )}
+                      </div>
                     ) : (
                       <input
-                        type={field.type === 'url' ? 'url' : field.type === 'email' ? 'email' : field.type === 'image' ? 'url' : 'text'}
+                        type={field.type === 'url' ? 'url' : field.type === 'email' ? 'email' : 'text'}
                         value={previewValues[field.key] ?? ''}
                         onChange={e => setPreviewValues(prev => ({ ...prev, [field.key]: e.target.value }))}
-                        placeholder={field.type === 'image' ? 'Bild-URL eingeben' : (field.default_value ?? field.placeholder_text ?? `Vorschau-Wert für ${field.label || field.key}`)}
+                        placeholder={field.default_value ?? field.placeholder_text ?? `Vorschau-Wert für ${field.label || field.key}`}
                         style={{ background: '#FFFFFF', border: '1.5px solid #E5E7EB', borderRadius: '14px', padding: '10px 14px', fontSize: '14px', outline: 'none', width: '100%' }}
                         onFocus={e => (e.target.style.borderColor = '#1a1a1a')}
                         onBlur={e => (e.target.style.borderColor = '#E5E7EB')}

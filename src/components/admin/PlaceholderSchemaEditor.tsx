@@ -41,6 +41,9 @@ export interface PlaceholderField {
   sub_fields?: LoopSubField[]
   min_items?: number
   max_items?: number | null
+  display_mode?: 'chips' | 'toggle' | 'section_toggle'
+  toggle_on_value?: string
+  toggle_off_value?: string
   // Marketing preview fields
   preview_value?: string
   preview_interactive?: boolean
@@ -98,7 +101,7 @@ function newField(order: number): PlaceholderField {
     key: '', label: '', type: 'text', required: false,
     default_value: '', placeholder_text: '',
     max_length: null, options: [], card_options: [], section: '', order, aspect_ratio: 'free',
-    sub_fields: [], min_items: 1, max_items: null,
+    sub_fields: [], min_items: 1, max_items: null, display_mode: undefined,
     preview_value: '', preview_interactive: false,
   }
 }
@@ -114,13 +117,14 @@ function newSubField(): LoopSubField {
 // ─── Card Option Editor ───────────────────────────────────────────────────────
 
 function CardOptionEditor({
-  option, index, onUpdate, onRemove, templateId,
+  option, index, onUpdate, onRemove, templateId, isSectionToggle,
 }: {
   option: CardOption
   index: number
   onUpdate: (patch: Partial<CardOption>) => void
   onRemove: () => void
   templateId?: string
+  isSectionToggle?: boolean
 }) {
   const [imgUploading, setImgUploading] = useState(false)
   const inputStyle = {
@@ -182,9 +186,9 @@ function CardOptionEditor({
             onBlur={e => (e.target.style.borderColor = '#E5E7EB')} />
         </div>
 
-        {option.card_type === 'image' && (
+        {(option.card_type === 'image' || isSectionToggle) && (
           <div className="flex flex-col gap-1.5 col-span-2">
-            <label className="text-xs text-gray-500">Vorschaubild</label>
+            <label className="text-xs text-gray-500">{isSectionToggle ? 'Vorschaubild der Sektion' : 'Vorschaubild'}</label>
             <div className="flex gap-2">
               <input value={option.image_url}
                 onChange={e => onUpdate({ image_url: e.target.value })}
@@ -797,7 +801,7 @@ export function PlaceholderSchemaEditor({ fields, onChange, templateId }: Props)
                 </div>
 
                 {/* ── Dropdown options ── */}
-                {field.type === 'dropdown' && (
+                {field.type === 'dropdown' && field.display_mode !== 'section_toggle' && (
                   <div className="mt-4 flex flex-col gap-2">
                     <label className="text-xs font-medium text-gray-600">Auswahloptionen (eine pro Zeile)</label>
                     <textarea
@@ -814,12 +818,41 @@ export function PlaceholderSchemaEditor({ fields, onChange, templateId }: Props)
                   </div>
                 )}
 
+                {/* ── Display mode (dropdown / section_toggle) ── */}
+                {(field.type === 'dropdown' || field.type === 'card_select') && (
+                  <div className="mt-3 flex flex-col gap-1.5">
+                    <label className="text-xs font-medium text-gray-600">Anzeige-Modus</label>
+                    <div className="flex gap-2 flex-wrap">
+                      {([
+                        { value: undefined, label: 'Standard' },
+                        { value: 'toggle', label: 'iOS Toggle' },
+                        { value: 'section_toggle', label: 'Sektions-Bild Toggle' },
+                      ] as const).map(opt => (
+                        <button key={String(opt.value)} type="button"
+                          onClick={() => updateField(idx, { display_mode: opt.value })}
+                          className="px-3 py-1.5 text-xs font-medium rounded-[10px] transition-all"
+                          style={{
+                            background: (field.display_mode ?? undefined) === opt.value ? '#8060b0' : '#F3F4F6',
+                            color: (field.display_mode ?? undefined) === opt.value ? 'white' : '#6B7280',
+                          }}>
+                          {opt.label}
+                        </button>
+                      ))}
+                    </div>
+                    {field.display_mode === 'section_toggle' && (
+                      <p className="text-xs text-gray-400">
+                        Zeigt ein großes Vorschaubild mit iOS-Toggle. Das erste Card-Option-Bild wird als Preview verwendet.
+                      </p>
+                    )}
+                  </div>
+                )}
+
                 {/* ── Card options ── */}
-                {field.type === 'card_select' && (
+                {(field.type === 'card_select' || field.display_mode === 'section_toggle') && (
                   <div className="mt-4 flex flex-col gap-3">
                     <div className="flex items-center justify-between">
                       <label className="text-xs font-medium text-gray-600">
-                        Cards ({field.card_options?.length ?? 0})
+                        {field.display_mode === 'section_toggle' ? 'Sektions-Optionen (mit Vorschaubildern)' : `Cards (${field.card_options?.length ?? 0})`}
                       </label>
                       <button type="button" onClick={() => addCardOption(idx)}
                         className="text-xs px-3 py-1.5 rounded-[10px] font-medium transition-all"
@@ -827,6 +860,13 @@ export function PlaceholderSchemaEditor({ fields, onChange, templateId }: Props)
                         + Card hinzufügen
                       </button>
                     </div>
+
+                    {field.display_mode === 'section_toggle' && (
+                      <div className="px-3 py-2 rounded-[10px] text-xs"
+                        style={{ background: '#F5F0FB', color: '#6030a0', border: '1px solid #DDD0F5' }}>
+                        Lege 2 Optionen an: eine <strong>mit Bild</strong> (Sektion sichtbar) und eine <strong>ohne Bild</strong> (Sektion versteckt).
+                      </div>
+                    )}
 
                     {(field.card_options ?? []).length === 0 && (
                       <div className="text-center py-6 text-sm text-gray-400 rounded-[14px]"
@@ -843,6 +883,7 @@ export function PlaceholderSchemaEditor({ fields, onChange, templateId }: Props)
                         onUpdate={patch => updateCardOption(idx, oi, patch)}
                         onRemove={() => removeCardOption(idx, oi)}
                         templateId={templateId}
+                        isSectionToggle={field.display_mode === 'section_toggle'}
                       />
                     ))}
 

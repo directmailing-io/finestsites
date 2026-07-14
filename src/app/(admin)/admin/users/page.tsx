@@ -15,15 +15,17 @@ function mrrCentsFallback(plan: string, interval: string): number {
   return p.monthly_eur * 100
 }
 
-/** Calculate MRR in cents from a Stripe subscription (accounts for discounts). */
+/** Calculate MRR in cents from a Stripe subscription (accounts for discounts at sub AND customer level). */
 function stripeMrrCents(sub: {
   items: { data: Array<{ price: { unit_amount: number | null; recurring?: { interval: string } | null } }> }
   discount?: { coupon?: { percent_off?: number | null; amount_off?: number | null } | null } | null
+  customer?: { discount?: { coupon?: { percent_off?: number | null; amount_off?: number | null } | null } | null } | null
 }): number {
   const item = sub.items.data[0]
   if (!item) return 0
   const baseAmount = item.price.unit_amount ?? 0
-  const coupon = sub.discount?.coupon
+  // Subscription-level discount takes precedence; fall back to customer-level
+  const coupon = sub.discount?.coupon ?? (sub.customer as any)?.discount?.coupon ?? null
   let discounted = baseAmount
   if (coupon?.percent_off) {
     discounted = Math.round(baseAmount * (1 - coupon.percent_off / 100))
@@ -79,7 +81,7 @@ export default async function AdminUsersPage() {
     const results = await Promise.allSettled(
       activeWithStripe.map(u =>
         stripe.subscriptions.retrieve(u.stripeSubscriptionId!, {
-          expand: ['discount.coupon'],
+          expand: ['discount.coupon', 'customer', 'customer.discount.coupon'],
         })
       )
     )
