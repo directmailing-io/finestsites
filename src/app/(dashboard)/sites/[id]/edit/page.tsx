@@ -3813,7 +3813,7 @@ function UpgradeModal({
             Wähle einen Tarif und geh live.
           </p>
 
-          {hasDiscount && (
+          {hasDiscount && !promoApplied && (
             <div className="flex items-center gap-3 mt-4 px-4 py-3 rounded-2xl" style={{ background: '#F0FDF4', border: '1px solid #BBF7D0' }}>
               <div className="flex items-center justify-center w-7 h-7 rounded-full flex-shrink-0" style={{ background: '#16A34A' }}>
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round">
@@ -3956,14 +3956,14 @@ function UpgradeModal({
           </div>
 
           {/* Promo / partner code — collapsed by default, live validation */}
-          {!hasDiscount && (
-            <div style={{ marginBottom: 20 }}>
+          {/* Always shown — even when user has a referral discount (they may have a better code) */}
+          <div style={{ marginBottom: 20 }}>
               {!showPromoInput ? (
                 <button
                   onClick={() => setShowPromoInput(true)}
                   style={{ fontSize: 13, fontWeight: 500, color: '#8060b0', cursor: 'pointer' }}
                 >
-                  + Hast du einen Code?
+                  {hasDiscount ? '+ Hast du einen besseren Code?' : '+ Hast du einen Code?'}
                 </button>
               ) : (
                 <div>
@@ -4045,7 +4045,6 @@ function UpgradeModal({
                 </div>
               )}
             </div>
-          )}
 
           {error && (
             <p style={{ marginBottom: 12, fontSize: 13, color: '#DC2626', textAlign: 'center' }}>{error}</p>
