@@ -10,10 +10,8 @@ const SIDEBAR_ICONS = [
 function AppSidebar({ activeIdx = 0 }: { activeIdx?: number }) {
   return (
     <div style={{ width: 42, background: '#F5F0FB', display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '10px 0 8px', gap: 2, flexShrink: 0, borderRight: '1px solid #EAE4F5' }}>
-      {/* Logo mark */}
-      <div style={{ width: 22, height: 22, marginBottom: 10, background: '#8060b0', borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-        <span style={{ color: '#fff', fontSize: 11, fontWeight: 800, lineHeight: 1 }}>f</span>
-      </div>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src="/logos/logo-black.svg" alt="FinestSites" style={{ width: 28, height: 'auto', display: 'block', marginBottom: 10, filter: 'brightness(0) saturate(100%) invert(26%) sepia(55%) saturate(600%) hue-rotate(240deg) brightness(85%)' }} />
       {SIDEBAR_ICONS.map((icon, i) => (
         <div key={i} style={{ width: 32, height: 26, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 6, background: i === activeIdx ? '#EAE4F5' : 'transparent', color: i === activeIdx ? '#8060b0' : 'rgba(128,96,176,0.3)' }}>
           {icon}
