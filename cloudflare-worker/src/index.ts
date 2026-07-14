@@ -388,7 +388,7 @@ async function sendSubmissionEmail(
       method: 'POST',
       headers: { Authorization: `Bearer ${env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        from: 'FinestSites <anfragen@finestsites.com>',
+        from: 'FinestSites <anfragen@finestsites.io>',
         to: [recipient],
         subject: `Neue Anfrage: ${formTitle}`,
         html,
