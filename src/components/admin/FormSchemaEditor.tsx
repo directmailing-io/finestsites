@@ -56,7 +56,7 @@ function FieldRow({
   onRemove: () => void
   onMove: (dir: -1 | 1) => void
 }) {
-  const [expanded, setExpanded] = useState(false)
+  const [expanded, setExpanded] = useState(true)
   const colors = FIELD_TYPE_COLORS[field.type]
 
   return (

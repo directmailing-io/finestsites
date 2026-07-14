@@ -482,17 +482,23 @@ interface Props {
 }
 
 export function PlaceholderSchemaEditor({ fields, onChange, templateId }: Props) {
-  const [expandedIdx, setExpandedIdx] = useState<number | null>(null)
+  const [expandedSet, setExpandedSet] = useState<Set<number>>(() => new Set(fields.map((_, i) => i)))
+
+  // Keep expanded set in sync when fields are added/removed
+  const toggle = (idx: number) =>
+    setExpandedSet(prev => { const s = new Set(prev); s.has(idx) ? s.delete(idx) : s.add(idx); return s })
+  const expandAll = () => setExpandedSet(new Set(fields.map((_, i) => i)))
+  const collapseAll = () => setExpandedSet(new Set())
 
   function addField() {
     const updated = [...fields, newField(fields.length)]
     onChange(updated)
-    setExpandedIdx(updated.length - 1)
+    setExpandedSet(prev => new Set([...prev, updated.length - 1]))
   }
 
   function removeField(idx: number) {
     onChange(fields.filter((_, i) => i !== idx))
-    if (expandedIdx === idx) setExpandedIdx(null)
+    setExpandedSet(prev => { const s = new Set(prev); s.delete(idx); return s })
   }
 
   function updateField(idx: number, patch: Partial<PlaceholderField>) {
@@ -557,17 +563,33 @@ export function PlaceholderSchemaEditor({ fields, onChange, templateId }: Props)
   return (
     <div className="flex flex-col gap-3">
 
-      {/* Syntax hint */}
-      <div className="px-3 py-2.5 rounded-[12px] text-xs"
-        style={{ background: '#F8F9FF', border: '1px solid #E0E7FF', color: '#4338CA' }}>
-        <span className="font-semibold">Template-Syntax:</span>
-        {' '}<code className="bg-indigo-100 px-1 rounded">{'{{key}}'}</code> → Wert,{' '}
-        <code className="bg-indigo-100 px-1 rounded">{'{{#if key=wert}}'}</code>…<code className="bg-indigo-100 px-1 rounded">{'{{/if}}'}</code> → bedingt,{' '}
-        <code className="bg-indigo-100 px-1 rounded">{'{{#each key}}'}</code>…<code className="bg-indigo-100 px-1 rounded">{'{{this.feld}}'}</code>…<code className="bg-indigo-100 px-1 rounded">{'{{/each}}'}</code> → Loop
+      {/* Syntax hint + collapse controls */}
+      <div className="flex items-center gap-3">
+        <div className="flex-1 px-3 py-2.5 rounded-[12px] text-xs"
+          style={{ background: '#F8F9FF', border: '1px solid #E0E7FF', color: '#4338CA' }}>
+          <span className="font-semibold">Template-Syntax:</span>
+          {' '}<code className="bg-indigo-100 px-1 rounded">{'{{key}}'}</code> → Wert,{' '}
+          <code className="bg-indigo-100 px-1 rounded">{'{{#if key=wert}}'}</code>…<code className="bg-indigo-100 px-1 rounded">{'{{/if}}'}</code> → bedingt,{' '}
+          <code className="bg-indigo-100 px-1 rounded">{'{{#each key}}'}</code>…<code className="bg-indigo-100 px-1 rounded">{'{{this.feld}}'}</code>…<code className="bg-indigo-100 px-1 rounded">{'{{/each}}'}</code> → Loop
+        </div>
+        {fields.length > 1 && (
+          <div className="flex gap-1 flex-shrink-0">
+            <button type="button" onClick={expandAll}
+              className="text-xs px-2.5 py-1.5 rounded-[8px] font-medium"
+              style={{ background: '#F3F4F6', color: '#374151' }}>
+              Alle ↓
+            </button>
+            <button type="button" onClick={collapseAll}
+              className="text-xs px-2.5 py-1.5 rounded-[8px] font-medium"
+              style={{ background: '#F3F4F6', color: '#374151' }}>
+              Alle ↑
+            </button>
+          </div>
+        )}
       </div>
 
       {fields.map((field, idx) => {
-        const isExpanded = expandedIdx === idx
+        const isExpanded = expandedSet.has(idx)
         const color = TYPE_COLORS[field.type]
         const isValid = field.key && field.label
 
@@ -577,7 +599,7 @@ export function PlaceholderSchemaEditor({ fields, onChange, templateId }: Props)
 
             {/* ── Header row ── */}
             <div className="flex items-center gap-3 px-4 py-3 cursor-pointer select-none"
-              onClick={() => setExpandedIdx(isExpanded ? null : idx)}>
+              onClick={() => toggle(idx)}>
 
               <span className="w-7 h-7 rounded-[8px] flex items-center justify-center text-sm flex-shrink-0"
                 style={{ background: color.bg, color: color.text }}>
@@ -626,7 +648,7 @@ export function PlaceholderSchemaEditor({ fields, onChange, templateId }: Props)
                   onMouseLeave={e => ((e.target as HTMLElement).style.color = '#9CA3AF')}>
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 6h18M19 6l-1 14H6L5 6M10 11v6M14 11v6M9 6V4h6v2"/></svg>
                 </button>
-                <button onClick={() => setExpandedIdx(isExpanded ? null : idx)}
+                <button onClick={() => toggle(idx)}
                   className="p-1.5 rounded-[8px]" style={{ color: '#9CA3AF' }}>
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
                     style={{ transform: isExpanded ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }}>
