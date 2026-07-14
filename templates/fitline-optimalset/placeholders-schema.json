@@ -184,7 +184,7 @@
       "type": "text",
       "required": true,
       "placeholder_text": "Ein kurzer Satz, der dich und deine Empfehlung beschreibt.",
-      "default_value": "Dein persönliches Zitat.",
+      "default_value": "Ich freue mich, dir das Optimalset und weitere Produkte vorzustellen.",
       "max_length": 220,
       "options": [],
       "card_options": [],
