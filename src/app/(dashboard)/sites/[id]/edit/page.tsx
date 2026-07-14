@@ -1937,6 +1937,7 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
   const [justPaid, setJustPaid] = useState(false)
   const [showFullPreview, setShowFullPreview] = useState(false)
   const [showPreviewTooltip, setShowPreviewTooltip] = useState(false)
+  const [previewTooltipKey, setPreviewTooltipKey] = useState(0)
   const previewTooltipTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const [showLivePreview, setShowLivePreview] = useState(true)
   const [livePreviewDevice, setLivePreviewDevice] = useState<'mobile' | 'tablet' | 'desktop'>('desktop')
@@ -2927,8 +2928,9 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
                           narrow={narrowEditor}
                           onMobileSelect={() => {
                             if (previewTooltipTimerRef.current) clearTimeout(previewTooltipTimerRef.current)
+                            setPreviewTooltipKey(k => k + 1)
                             setShowPreviewTooltip(true)
-                            previewTooltipTimerRef.current = setTimeout(() => setShowPreviewTooltip(false), 3000)
+                            previewTooltipTimerRef.current = setTimeout(() => setShowPreviewTooltip(false), 3200)
                           }}
                           complianceApprovedText={field.compliance_check ? (values[field.key + '__chk'] ?? '') : undefined}
                           onComplianceApproved={field.compliance_check ? (approvedHtml) => {
@@ -3080,15 +3082,14 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
                 <div className="flex gap-2">
                   <div style={{ position: 'relative', flexShrink: 0 }}>
                     {showPreviewTooltip && (
-                      <div
+                      <div key={previewTooltipKey}
                         style={{
-                          position: 'absolute', bottom: 'calc(100% + 8px)', left: '50%',
-                          transform: 'translateX(-50%)',
-                          background: '#1a1a1a', color: '#fff',
-                          fontSize: 12, fontWeight: 600, whiteSpace: 'nowrap',
-                          padding: '6px 12px', borderRadius: 8,
-                          boxShadow: '0 4px 16px rgba(0,0,0,0.18)',
-                          animation: showPreviewTooltip ? 'ptt-in 0.2s cubic-bezier(0.34,1.56,0.64,1) forwards' : 'ptt-out 0.3s ease forwards',
+                          position: 'absolute', bottom: 'calc(100% + 10px)', left: '50%',
+                          background: '#FF6B2C', color: '#fff',
+                          fontSize: 12, fontWeight: 700, whiteSpace: 'nowrap',
+                          padding: '7px 13px', borderRadius: 10,
+                          boxShadow: '0 6px 20px rgba(255,107,44,0.35)',
+                          animation: 'ptt-life 3.2s cubic-bezier(0.34,1.56,0.64,1) forwards',
                           pointerEvents: 'none', zIndex: 60,
                         }}>
                         Schau dir die Änderung an
@@ -3098,7 +3099,7 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
                           width: 0, height: 0,
                           borderLeft: '5px solid transparent',
                           borderRight: '5px solid transparent',
-                          borderTop: '5px solid #1a1a1a',
+                          borderTop: '5px solid #FF6B2C',
                         }} />
                       </div>
                     )}
@@ -3113,9 +3114,13 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
                       Vorschau
                     </button>
                     <style jsx>{`
-                      @keyframes ptt-in {
-                        from { opacity: 0; transform: translateX(-50%) translateY(4px) scale(0.92); }
-                        to   { opacity: 1; transform: translateX(-50%) translateY(0)   scale(1); }
+                      @keyframes ptt-life {
+                        0%   { opacity: 0; transform: translateX(-50%) translateY(8px) scale(0.82); }
+                        10%  { opacity: 1; transform: translateX(-50%) translateY(-3px) scale(1.06); }
+                        16%  { opacity: 1; transform: translateX(-50%) translateY(0px) scale(0.98); }
+                        20%  { opacity: 1; transform: translateX(-50%) translateY(0px) scale(1); }
+                        80%  { opacity: 1; transform: translateX(-50%) translateY(0px) scale(1); }
+                        100% { opacity: 0; transform: translateX(-50%) translateY(-5px) scale(0.94); }
                       }
                     `}</style>
                   </div>
