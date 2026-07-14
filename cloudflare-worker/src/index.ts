@@ -363,26 +363,75 @@ async function sendSubmissionEmail(
 
     const formTitle = schema?.title ?? formName
     const fieldMap = Object.fromEntries((schema?.fields ?? []).map(f => [f.key, f.label]))
-    const appUrl = env.APP_URL ?? 'https://app.finestsites.com'
+    const appUrl = (env.APP_URL ?? 'https://app.finestsites.io').replace(/\/$/, '')
+    const year = new Date().getFullYear()
 
-    const rows = Object.entries(formData)
-      .map(([k, v]) => `<tr><td style="padding:8px 12px;border-bottom:1px solid #f0f0f0;color:#6b7280;font-size:13px;white-space:nowrap">${htmlEscape(fieldMap[k] ?? k)}</td><td style="padding:8px 12px;border-bottom:1px solid #f0f0f0;color:#111;font-size:13px">${htmlEscape(v) || '—'}</td></tr>`)
+    // Prettify raw field keys when no schema label is available
+    const prettyKey = (key: string): string => {
+      const map: Record<string, string> = {
+        name: 'Name', email: 'E-Mail', telefon: 'Telefon', phone: 'Telefon',
+        nachricht: 'Nachricht', message: 'Nachricht', betreff: 'Betreff',
+        subject: 'Betreff', hintergrund: 'Hintergrund', ziele: 'Ziele',
+        kontaktweg: 'Bevorzugter Kontaktweg', laendervorwahl: 'Ländervorwahl',
+        vorwahl: 'Ländervorwahl', unternehmen: 'Unternehmen', firma: 'Firma',
+        company: 'Unternehmen', website: 'Website', adresse: 'Adresse',
+        address: 'Adresse', stadt: 'Stadt', city: 'Stadt', plz: 'PLZ',
+        land: 'Land', country: 'Land', kommentar: 'Kommentar', comment: 'Kommentar',
+      }
+      return map[key.toLowerCase()] ?? key.replace(/[_-]+/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
+    }
+
+    const entries = Object.entries(formData)
+    const rows = entries
+      .map(([k, v], i) => {
+        const isLast = i === entries.length - 1
+        const label = htmlEscape(fieldMap[k] ?? prettyKey(k))
+        const value = htmlEscape(v) || '—'
+        const border = isLast ? '' : 'border-bottom:1px solid #E5E7EB;'
+        return `<tr><td style="padding:10px 16px;${border}width:40%;font-size:12px;font-weight:600;color:#6B7280;text-transform:uppercase;letter-spacing:0.05em;white-space:nowrap;vertical-align:top;">${label}</td><td style="padding:10px 16px;${border}font-size:14px;color:#111827;line-height:1.5;vertical-align:top;">${value}</td></tr>`
+      })
       .join('')
 
-    const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f5f7;margin:0;padding:32px 16px">
-<div style="max-width:520px;margin:0 auto;background:#fff;border-radius:20px;overflow:hidden;box-shadow:0 2px 20px rgba(0,0,0,0.07)">
-  <div style="padding:28px 32px 20px;border-bottom:1px solid #f0f0f0">
-    <p style="margin:0 0 4px;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#9ca3af">FinestSites · Neue Anfrage</p>
-    <h1 style="margin:0;font-size:20px;font-weight:700;color:#111;letter-spacing:-0.02em">${htmlEscape(formTitle)}</h1>
-  </div>
-  <table style="width:100%;border-collapse:collapse;margin:0">${rows}</table>
-  <div style="padding:20px 32px 28px">
-    <a href="${appUrl}/submissions" style="display:inline-block;padding:10px 20px;background:#1a1a1a;color:#fff;border-radius:10px;text-decoration:none;font-size:13px;font-weight:600">Alle Anfragen ansehen →</a>
-  </div>
-  <div style="padding:16px 32px;border-top:1px solid #f0f0f0;background:#fafafa">
-    <p style="margin:0;font-size:11px;color:#9ca3af">Gesendet von <a href="https://finestsites.com" style="color:#6b7280;text-decoration:none">FinestSites</a></p>
-  </div>
-</div></body></html>`
+    const html = `<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Neue Anfrage: ${htmlEscape(formTitle)}</title>
+</head>
+<body style="margin:0;padding:0;background:#F4F4F5;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#F4F4F5;padding:40px 16px;">
+    <tr><td align="center">
+      <table width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;width:100%;">
+        <tr>
+          <td align="center" style="padding-bottom:28px;">
+            <img src="${appUrl}/logos/logo-black.svg" alt="FinestSites" height="22" style="height:22px;width:auto;display:block;"/>
+          </td>
+        </tr>
+        <tr>
+          <td style="background:#FFFFFF;border-radius:20px;padding:40px;border:1px solid #E5E7EB;">
+            <h1 style="margin:0 0 8px;font-size:22px;font-weight:700;color:#111827;letter-spacing:-0.02em;">Neue Anfrage erhalten</h1>
+            <p style="margin:0 0 24px;font-size:15px;color:#374151;line-height:1.65;">Über dein Formular <strong>${htmlEscape(formTitle)}</strong> ist eine neue Anfrage eingegangen.</p>
+            <table cellpadding="0" cellspacing="0" width="100%" style="margin:0 0 28px;background:#F9FAFB;border-radius:12px;border:1px solid #E5E7EB;border-collapse:separate;border-spacing:0;">${rows}</table>
+            <table cellpadding="0" cellspacing="0">
+              <tr>
+                <td style="background:#111827;border-radius:12px;">
+                  <a href="${appUrl}/submissions" style="display:inline-block;padding:14px 28px;font-size:14px;font-weight:600;color:#FFFFFF;text-decoration:none;border-radius:12px;">Alle Anfragen ansehen →</a>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:24px 0 0;text-align:center;">
+            <p style="margin:0;font-size:12px;color:#9CA3AF;line-height:1.6;">© ${year} FinestSites &nbsp;·&nbsp; <a href="mailto:support@finestsites.de" style="color:#9CA3AF;text-decoration:underline;">Support</a></p>
+          </td>
+        </tr>
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>`
 
     await fetch('https://api.resend.com/emails', {
       method: 'POST',
