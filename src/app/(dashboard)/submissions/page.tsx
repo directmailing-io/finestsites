@@ -14,7 +14,7 @@ interface Submission {
   id: string
   user_site_id: string
   form_name: string
-  data: Record<string, string>
+  data: Record<string, unknown>
   read_at: string | null
   archived_at: string | null
   created_at: string
@@ -42,12 +42,18 @@ function avatarColor(seed: string) {
   return AVATAR_PALETTE[Math.abs(h) % AVATAR_PALETTE.length]
 }
 
-function displayName(data: Record<string, string>): string {
+function displayName(data: Record<string, unknown>): string {
   const candidates = ['name', 'Name', 'vorname', 'Vorname', 'firstname', 'fullname']
-  for (const k of candidates) if (data[k]?.trim()) return data[k].trim()
-  const email = data.email ?? data.Email ?? data.mail
+  for (const k of candidates) {
+    const v = typeof data[k] === 'string' ? (data[k] as string) : null
+    if (v?.trim()) return v.trim()
+  }
+  const email = typeof data.email === 'string' ? data.email : typeof data.Email === 'string' ? data.Email : typeof data.mail === 'string' ? data.mail : null
   if (email?.trim()) return email.split('@')[0]
-  for (const v of Object.values(data)) if (v?.trim()) return v.trim()
+  for (const v of Object.values(data)) {
+    const s = typeof v === 'string' ? v : v != null ? String(v) : null
+    if (s?.trim()) return s.trim()
+  }
   return 'Anonym'
 }
 
@@ -58,11 +64,11 @@ function initials(name: string): string {
   return (parts[0][0] + parts[1][0]).toUpperCase()
 }
 
-function previewText(data: Record<string, string>): string {
+function previewText(data: Record<string, unknown>): string {
   const skip = new Set(['name', 'Name', 'vorname', 'Vorname', 'firstname', 'fullname'])
   const vals = Object.entries(data)
-    .filter(([k, v]) => !skip.has(k) && v?.trim())
-    .map(([, v]) => v.trim())
+    .filter(([k, v]) => !skip.has(k) && typeof v === 'string' && v.trim())
+    .map(([, v]) => (v as string).trim())
   return vals.join(' · ')
 }
 
@@ -98,7 +104,7 @@ function csvExport(submissions: Submission[]) {
   const header = ['Datum', 'Website', 'Formular', ...allKeys].join(',')
   const rows = submissions.map(s => {
     const base = [fullDate(s.created_at), s.site?.title ?? s.user_site_id, s.form_name]
-    const vals = allKeys.map(k => `"${(s.data[k] ?? '').replace(/"/g, '""')}"`)
+    const vals = allKeys.map(k => `"${String(s.data[k] ?? '').replace(/"/g, '""')}"`)
     return [...base, ...vals].join(',')
   })
   const blob = new Blob([[header, ...rows].join('\n')], { type: 'text/csv;charset=utf-8' })
@@ -182,8 +188,11 @@ function prettyKey(key: string): string {
  * (vorwahl, telefon) into a single "Telefon" row with full international format.
  * Also: sort fields by importance (Name → E-Mail → Telefon → rest).
  */
-function processSubmissionFields(data: Record<string, string>): Array<{ key: string; label: string; value: string }> {
-  const map = { ...data }
+function processSubmissionFields(data: Record<string, unknown>): Array<{ key: string; label: string; value: string }> {
+  // Normalize all values to strings upfront
+  const map: Record<string, string> = Object.fromEntries(
+    Object.entries(data).map(([k, v]) => [k, v != null ? String(v) : ''])
+  )
 
   // Phone pairs to merge: [vorwahl_key, number_key, output_label]
   const PHONE_PAIRS: Array<[string, string, string]> = [
