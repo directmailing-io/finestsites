@@ -5,7 +5,7 @@ import NavBar from '@/app/_components/NavBar'
 import Footer from '@/app/_components/Footer'
 
 const ZOOM_LINK = 'https://us06web.zoom.us/j/8811338936?pwd=TktDYUNZYWY3eFZXbkdGSlQrV0pmdz09&omn=83712840373'
-const EVENT_UTC = '2026-07-21T18:00:00Z' // 20:00 Uhr DE (CEST = UTC+2)
+const EVENT_UTC = '2026-07-21T18:00:00Z'
 
 function useCountdown() {
   const target = new Date(EVENT_UTC)
@@ -39,6 +39,17 @@ function useCountdown() {
 
 export default function WebinarPage() {
   const { days, hours, minutes, isLive } = useCountdown()
+  const [copied, setCopied] = useState(false)
+
+  async function handleCopy() {
+    try {
+      await navigator.clipboard.writeText(ZOOM_LINK)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2500)
+    } catch {
+      window.open(ZOOM_LINK, '_blank')
+    }
+  }
 
   const calDetails = encodeURIComponent(
     `Exklusiver Live-Call nur für ausgewählte Teams.\n\nZoom Link: ${ZOOM_LINK}\nMeeting-ID: 881 133 8936\nKenncode: 100`
@@ -137,7 +148,22 @@ export default function WebinarPage() {
           font-variant-numeric: tabular-nums;
         }
         .wbr-cal-row { display: flex; flex-wrap: wrap; gap: 8px; }
-        .wbr-zoom-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+
+        /* Sticky bottom bar */
+        .wbr-sticky {
+          position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
+          background: rgba(255,255,255,0.97);
+          backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+          border-top: 1px solid rgba(0,0,0,0.09);
+          box-shadow: 0 -8px 40px rgba(0,0,0,0.10);
+        }
+        .wbr-sticky-inner {
+          max-width: 1120px; margin: 0 auto;
+          padding: 14px 7vw;
+          display: flex; align-items: center; justify-content: space-between; gap: 20px;
+        }
+        .wbr-sticky-info { display: flex; flex-direction: column; gap: 3px; }
+        .wbr-sticky-btns { display: flex; gap: 10px; align-items: center; flex-shrink: 0; }
 
         /* ── Mobile ── */
         @media (max-width: 767px) {
@@ -173,21 +199,25 @@ export default function WebinarPage() {
           .wbr-content {
             width: 100%;
             max-width: 100%;
-            padding: 24px 20px 56px;
+            padding: 24px 20px 40px;
           }
-          .wbr-h1 { font-size: 28px !important; }
+          .wbr-h1 { font-size: 26px !important; }
           .wbr-countdown { gap: 8px; }
           .wbr-countdown-box { padding: 12px 16px; min-width: 68px; }
           .wbr-countdown-num { font-size: 26px !important; }
-          .wbr-zoom-grid { grid-template-columns: 1fr 1fr; }
           .wbr-cal-row { gap: 7px; }
           .wbr-cal-row a { font-size: 13px !important; padding: 10px 14px !important; }
+
+          .wbr-sticky-inner { padding: 12px 18px; flex-direction: column; gap: 10px; align-items: stretch; }
+          .wbr-sticky-info { gap: 2px; }
+          .wbr-sticky-btns { flex-direction: row; }
+          .wbr-sticky-btns a, .wbr-sticky-btns button { flex: 1; justify-content: center; }
+          .wbr-sticky-meta { display: none !important; }
         }
         @media (max-width: 420px) {
-          .wbr-h1 { font-size: 24px !important; }
+          .wbr-h1 { font-size: 22px !important; }
           .wbr-cal-row { flex-direction: column; }
           .wbr-cal-row a { width: 100%; justify-content: center; }
-          .wbr-zoom-grid { grid-template-columns: 1fr; }
         }
       `}</style>
 
@@ -215,8 +245,8 @@ export default function WebinarPage() {
             ) : (
               <span style={{ display: 'inline-flex', alignItems: 'center', gap: 7 }}>
                 <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#22C55E', display: 'inline-block', flexShrink: 0 }} />
-                <span style={{ fontSize: 12, fontWeight: 700, color: '#555', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
-                  Nur für ausgewählte PM-International Partner
+                <span style={{ fontSize: 12, fontWeight: 700, color: '#555', letterSpacing: '0.09em', textTransform: 'uppercase' }}>
+                  Nur für ausgewählte Teams
                 </span>
               </span>
             )}
@@ -224,19 +254,16 @@ export default function WebinarPage() {
 
           {/* H1 */}
           <h1 className="wbr-h1">
-            Du siehst FinestSites als Erster.<br />
-            Deine eigene Website.<br />
-            <span style={{ color: '#8060b0' }}>In Minuten fertig. Ganz ohne Technik.</span>
+            Du siehst FinestSites als Erste/r<br />
+            <span style={{ color: '#8060b0' }}>und wie du deine eigene Webseite<br />für FitLine kinderleicht erstellst.</span>
           </h1>
 
           {/* Body */}
-          <p style={{ fontSize: 16, color: '#444', lineHeight: 1.7, marginBottom: 8, maxWidth: 460 }}>
-            Wir zeigen dir live, wie das geht. 30 Minuten Zoom. Kostenlos.
+          <p style={{ fontSize: 16, color: '#444', lineHeight: 1.75, marginBottom: 10, maxWidth: 460 }}>
+            In diesem Zoom-Call wird FinestSites zum ersten Mal vorgestellt, noch vor dem richtigen Launch.
           </p>
-
-          {/* FOMO */}
-          <p style={{ fontSize: 15, color: '#6040a0', fontWeight: 600, lineHeight: 1.6, marginBottom: 28, maxWidth: 460 }}>
-            Wer dabei ist, bekommt als Erster Zugang und ein Startangebot, das es danach so nicht gibt.
+          <p style={{ fontSize: 16, color: '#6040a0', fontWeight: 600, lineHeight: 1.7, marginBottom: 32, maxWidth: 460 }}>
+            Du kannst dir also noch vor all den anderen einen Zugang sichern.
           </p>
 
           {/* Datum */}
@@ -262,63 +289,24 @@ export default function WebinarPage() {
 
           {isLive && (
             <div style={{
-              marginBottom: 32, padding: '16px 20px',
-              background: '#FEF2F2', border: '1px solid #FCA5A5', borderRadius: 16,
+              marginBottom: 28, padding: '14px 18px',
+              background: '#FEF2F2', border: '1px solid #FCA5A5', borderRadius: 14,
             }}>
-              <div style={{ color: '#DC2626', fontWeight: 700, fontSize: 16, marginBottom: 4 }}>Der Call läuft gerade!</div>
-              <div style={{ color: '#EF4444', fontSize: 14 }}>Tritt jetzt dem Zoom Meeting bei.</div>
+              <div style={{ color: '#DC2626', fontWeight: 700, fontSize: 15, marginBottom: 3 }}>Der Call läuft gerade!</div>
+              <div style={{ color: '#EF4444', fontSize: 13 }}>Tritt jetzt dem Zoom Meeting bei.</div>
             </div>
           )}
 
-          {/* Zoom Card */}
-          <div style={{
-            background: '#fff', border: '1px solid #E5E7EB', borderRadius: 20,
-            padding: '20px 22px', marginBottom: 20,
-            boxShadow: '0 2px 12px rgba(0,0,0,0.06)', maxWidth: 440,
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 14 }}>
-              <svg width="14" height="14" viewBox="0 0 32 32" fill="none" style={{ opacity: 0.35 }}>
-                <rect width="32" height="32" rx="6" fill="#111"/>
-                <path d="M6 11.5C6 10.12 7.12 9 8.5 9h11C20.88 9 22 10.12 22 11.5v9C22 21.88 20.88 23 19.5 23h-11C7.12 23 6 21.88 6 20.5v-9zM24 13l4-2.5v11L24 19v-6z" fill="#fff"/>
-              </svg>
-              <span style={{ fontSize: 11, fontWeight: 700, color: '#bbb', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Zoom Meeting · Di. 21. Juli · 20:00 Uhr</span>
-            </div>
-
-            <div className="wbr-zoom-grid">
-              {[{ label: 'Meeting-ID', value: '881 133 8936' }, { label: 'Kenncode', value: '100' }].map(({ label, value }) => (
-                <div key={label}>
-                  <div style={{ fontSize: 10, fontWeight: 700, color: '#bbb', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 3 }}>{label}</div>
-                  <div style={{ fontSize: 15, fontWeight: 700, color: '#111', letterSpacing: '0.02em', fontVariantNumeric: 'tabular-nums' }}>{value}</div>
-                </div>
-              ))}
-            </div>
-
-            <a
-              href={ZOOM_LINK}
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                width: '100%', padding: '14px 24px',
-                background: isLive ? '#DC2626' : '#111',
-                color: '#fff', borderRadius: 100,
-                fontSize: 15, fontWeight: 600, textDecoration: 'none',
-              }}
-            >
-              {isLive ? 'Jetzt beitreten' : 'Zoom-Link speichern'}
-            </a>
-          </div>
-
           {/* Kalender */}
-          <div>
+          <div style={{ paddingBottom: 100 }}>
             <p style={{ fontSize: 12, fontWeight: 700, color: '#bbb', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 10 }}>
-              Termin in Kalender eintragen — damit du es nicht vergisst
+              Termin eintragen, damit du es nicht vergisst
             </p>
             <div className="wbr-cal-row">
               {([
                 { label: 'Google Kalender', href: googleUrl },
-                { label: 'Apple / iCal',   href: '/api/webinar/ical', download: true },
-                { label: 'Outlook',         href: outlookUrl },
+                { label: 'Apple / iCal',    href: '/api/webinar/ical', download: true },
+                { label: 'Outlook',          href: outlookUrl },
               ] as { label: string; href: string; download?: boolean }[]).map(({ label, href, download }) => (
                 <a
                   key={label}
@@ -344,6 +332,70 @@ export default function WebinarPage() {
       </div>
 
       <Footer />
+
+      {/* Sticky bottom bar */}
+      <div className="wbr-sticky">
+        <div className="wbr-sticky-inner">
+
+          {/* Info */}
+          <div className="wbr-sticky-info">
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <svg width="13" height="13" viewBox="0 0 32 32" fill="none" style={{ opacity: 0.4, flexShrink: 0 }}>
+                <rect width="32" height="32" rx="6" fill="#111"/>
+                <path d="M6 11.5C6 10.12 7.12 9 8.5 9h11C20.88 9 22 10.12 22 11.5v9C22 21.88 20.88 23 19.5 23h-11C7.12 23 6 21.88 6 20.5v-9zM24 13l4-2.5v11L24 19v-6z" fill="#fff"/>
+              </svg>
+              <span style={{ fontSize: 11, fontWeight: 700, color: '#999', letterSpacing: '0.09em', textTransform: 'uppercase' }}>
+                Zoom-Call · Di. 21. Juli · 20:00 Uhr
+              </span>
+            </div>
+            <div className="wbr-sticky-meta" style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+              <span style={{ fontSize: 13, color: '#555' }}>
+                Meeting-ID: <strong style={{ color: '#111' }}>881 133 8936</strong>
+              </span>
+              <span style={{ fontSize: 13, color: '#555' }}>
+                Kenncode: <strong style={{ color: '#111' }}>100</strong>
+              </span>
+            </div>
+          </div>
+
+          {/* Buttons */}
+          <div className="wbr-sticky-btns">
+            <button
+              onClick={handleCopy}
+              style={{
+                display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                padding: '13px 20px',
+                background: copied ? '#F0FDF4' : 'transparent',
+                border: `1.5px solid ${copied ? '#86EFAC' : 'rgba(0,0,0,0.15)'}`,
+                borderRadius: 100,
+                color: copied ? '#15803D' : '#111',
+                fontSize: 14, fontWeight: 600,
+                cursor: 'pointer', whiteSpace: 'nowrap',
+                transition: 'all 0.2s',
+              }}
+            >
+              {copied ? 'Link kopiert!' : 'Zoom-Link kopieren'}
+            </button>
+            <a
+              href={ZOOM_LINK}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                padding: '13px 24px',
+                background: isLive ? '#DC2626' : '#111',
+                color: '#fff', borderRadius: 100,
+                fontSize: 14, fontWeight: 600,
+                textDecoration: 'none', whiteSpace: 'nowrap',
+                boxShadow: isLive ? '0 4px 16px rgba(220,38,38,0.3)' : '0 4px 16px rgba(0,0,0,0.18)',
+              }}
+            >
+              {isLive ? 'Jetzt beitreten' : 'Zum Zoom-Meeting'}
+            </a>
+          </div>
+
+        </div>
+      </div>
     </div>
   )
 }
