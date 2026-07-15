@@ -41,7 +41,7 @@ export async function POST(req: NextRequest) {
       email: email.toLowerCase().trim(),
       password,
       name: '',
-      callbackURL: `${APP_URL}/onboarding/username`,
+      callbackURL: `${APP_URL}/onboarding/username?verified=1`,
     },
   })
 

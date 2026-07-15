@@ -5,7 +5,11 @@ import { users } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
 import { UsernameForm } from './UsernameForm'
 
-export default async function OnboardingUsernamePage() {
+export default async function OnboardingUsernamePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ verified?: string }>
+}) {
   const user = await getServerUser()
   if (!user) redirect('/login')
 
@@ -16,5 +20,8 @@ export default async function OnboardingUsernamePage() {
   // Username already set — send to dashboard
   if (profile?.username) redirect('/sites')
 
-  return <UsernameForm />
+  const params = await searchParams
+  const showVerifiedBanner = params.verified === '1'
+
+  return <UsernameForm showVerifiedBanner={showVerifiedBanner} />
 }

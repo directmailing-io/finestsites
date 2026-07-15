@@ -16,6 +16,23 @@ function VerifyEmailContent() {
   const [sending, setSending] = useState(false)
   const [sent, setSent] = useState(false)
   const [error, setError] = useState('')
+  const [alreadyVerified, setAlreadyVerified] = useState(false)
+  const [checking, setChecking] = useState(true)
+
+  // Check if the current session user is already verified
+  useEffect(() => {
+    let cancelled = false
+    authClient.getSession().then(result => {
+      if (cancelled) return
+      if (result?.data?.user?.emailVerified) {
+        setAlreadyVerified(true)
+      }
+      setChecking(false)
+    }).catch(() => {
+      if (!cancelled) setChecking(false)
+    })
+    return () => { cancelled = true }
+  }, [])
 
   // Tick down the cooldown timer
   useEffect(() => {
@@ -31,7 +48,7 @@ function VerifyEmailContent() {
     try {
       await authClient.sendVerificationEmail({
         email,
-        callbackURL: `${APP_URL}/onboarding/username`,
+        callbackURL: `${APP_URL}/onboarding/username?verified=1`,
       })
       setSent(true)
       setCooldown(60)
@@ -40,6 +57,57 @@ function VerifyEmailContent() {
     } finally {
       setSending(false)
     }
+  }
+
+  // Show nothing while checking session to avoid flash
+  if (checking) {
+    return (
+      <div className="text-center py-8">
+        <div style={{
+          width: 32, height: 32, borderRadius: '50%',
+          border: '2.5px solid #E5E7EB', borderTopColor: '#111827',
+          animation: 'spin 0.8s linear infinite', margin: '0 auto',
+        }} />
+        <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+      </div>
+    )
+  }
+
+  // User is already verified — show a friendly confirmation instead of the resend form
+  if (alreadyVerified) {
+    return (
+      <div className="text-center">
+        <div className="flex justify-center mb-6">
+          <div className="w-16 h-16 rounded-2xl flex items-center justify-center"
+            style={{ background: '#F0FDF4' }}>
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#16A34A" strokeWidth="1.5">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+              <polyline points="22 4 12 14.01 9 11.01"/>
+            </svg>
+          </div>
+        </div>
+
+        <h1 className="text-xl font-semibold text-gray-900 mb-2">
+          E-Mail bereits bestätigt
+        </h1>
+        <p className="text-sm leading-relaxed mb-6" style={{ color: '#6B7280' }}>
+          Deine E-Mail-Adresse ist bereits verifiziert. Du kannst direkt loslegen.
+        </p>
+
+        <Link
+          href="/dashboard"
+          className="block w-full py-3 text-sm font-semibold rounded-2xl text-center transition-all"
+          style={{
+            background: '#111827',
+            color: '#fff',
+            boxShadow: '0 4px 14px rgba(17,24,39,0.2)',
+            textDecoration: 'none',
+          }}
+        >
+          Zum Dashboard
+        </Link>
+      </div>
+    )
   }
 
   return (

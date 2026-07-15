@@ -82,7 +82,7 @@ function InputField({
   )
 }
 
-export function UsernameForm() {
+export function UsernameForm({ showVerifiedBanner = false }: { showVerifiedBanner?: boolean }) {
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
   const [username, setUsername] = useState('')
@@ -137,6 +137,24 @@ export function UsernameForm() {
 
   return (
     <div className="w-full max-w-sm">
+      {/* E-Mail verified success banner */}
+      {showVerifiedBanner && (
+        <div className="flex items-center gap-3 px-4 py-3 rounded-2xl mb-6"
+          style={{ background: '#F0FDF4', border: '1.5px solid #BBF7D0' }}>
+          <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
+            style={{ background: '#16A34A' }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+              <polyline points="22 4 12 14.01 9 11.01"/>
+            </svg>
+          </div>
+          <div className="min-w-0">
+            <p className="text-xs font-semibold" style={{ color: '#15803D' }}>E-Mail erfolgreich bestätigt!</p>
+            <p className="text-xs" style={{ color: '#166534' }}>Dein Account ist jetzt aktiv. Wähle noch einen Username.</p>
+          </div>
+        </div>
+      )}
+
       {/* Step indicator */}
       <div className="flex items-center justify-center gap-1 mb-10">
         <StepDot n={1} done label="Account" />
