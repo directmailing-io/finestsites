@@ -5,7 +5,7 @@ import { users, userSites, templates } from '@/lib/db/schema'
 import { eq, ne } from 'drizzle-orm'
 import { sql } from 'drizzle-orm'
 import { getResend, FROM_EMAIL } from '@/lib/resend'
-import { waitlistBroadcastEmail } from '@/lib/email/waitlist-templates'
+import { newsletterEmail } from '@/lib/email/templates'
 import { markupToHtml } from '@/lib/email/markup'
 
 export const runtime = 'nodejs'
@@ -177,7 +177,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Keine Empfänger gefunden.' }, { status: 400 })
   }
 
-  const UNSUBSCRIBE_BASE = (process.env.NEXT_PUBLIC_APP_URL ?? 'https://app.finestsites.io').replace(/\/$/, '')
   const BATCH_SIZE = 100
   let sent = 0, failed = 0
 
@@ -189,23 +188,13 @@ export async function POST(req: NextRequest) {
           const personalSubject = interpolate(subject.trim(), user)
           const personalBody = interpolate(body.trim(), user)
           const bodyHtml = markupToHtml(personalBody)
-          const unsubscribeUrl = `${UNSUBSCRIBE_BASE}/unsubscribe?email=${encodeURIComponent(user.email)}`
-          const { subject: s, html, text } = waitlistBroadcastEmail({
-            subject: personalSubject,
-            bodyHtml,
-            bodyText: personalBody,
-            unsubscribeUrl,
-          })
+          const html = newsletterEmail({ subject: personalSubject, bodyHtml })
           return {
             from: FROM_EMAIL,
             to: user.email,
-            subject: s,
+            subject: personalSubject,
             html,
-            text,
-            headers: {
-              'List-Unsubscribe': `<${unsubscribeUrl}>`,
-              'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
-            },
+            text: personalBody,
           }
         })
       )
