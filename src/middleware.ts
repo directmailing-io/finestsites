@@ -83,6 +83,11 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL('/dashboard', request.url))
   }
 
+  // /webinar belongs on finestsites.io, not the app subdomain
+  if (host === APP_HOST && pathname === '/webinar') {
+    return NextResponse.redirect('https://finestsites.io/webinar', { status: 301 })
+  }
+
   // finestsites.io is marketing only.
   // Legal + marketing content stays on finestsites.io; app routes → app subdomain.
   const FINESTSITES_IO_PATHS = ['/impressum', '/datenschutz', '/agb', '/cookies', '/vorlagen', '/webinar']
