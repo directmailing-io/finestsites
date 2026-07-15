@@ -220,7 +220,7 @@ export default function WebinarPage() {
         }
       `}</style>
 
-      <NavBar />
+      <NavBar minimal />
 
       <div className="wbr-layout">
         <div className="wbr-img-col" />
@@ -254,7 +254,7 @@ export default function WebinarPage() {
           {/* H1 */}
           <h1 className="wbr-h1">
             Du siehst FinestSites als Erste/r<br />
-            <span style={{ color: '#8060b0' }}>und erstellst deine eigene FitLine-Webseite kinderleicht.</span>
+            <span style={{ color: '#8060b0' }}>und erstellst deine eigene<br />FitLine-Webseite kinderleicht.</span>
           </h1>
 
           {/* Body */}
