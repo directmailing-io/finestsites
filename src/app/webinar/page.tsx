@@ -93,8 +93,9 @@ export default function WebinarPage() {
 
         /* ── Desktop ── */
         .wbr-layout {
-          display: grid;
-          align-items: center;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
           min-height: calc(100vh - 72px);
           position: relative;
           overflow: hidden;
@@ -109,20 +110,20 @@ export default function WebinarPage() {
         .wbr-img-gradient {
           position: absolute;
           inset: 0;
-          background: linear-gradient(to right, #f5f3f0 40%, rgba(245,243,240,0.95) 54%, rgba(245,243,240,0.5) 68%, rgba(245,243,240,0) 82%);
+          background: linear-gradient(to right, #f5f3f0 44%, rgba(245,243,240,0.96) 57%, rgba(245,243,240,0.5) 70%, rgba(245,243,240,0) 84%);
         }
         .wbr-content {
           position: relative;
           z-index: 2;
-          padding: 40px 0 40px 7vw;
-          width: 65vw;
-          max-width: 860px;
+          margin-left: 7vw;
+          max-width: 720px;
+          padding: 48px 0;
         }
         .wbr-mobile-img { display: none; }
 
         .wbr-h1 {
           font-family: 'Plein', sans-serif;
-          font-size: clamp(26px, 2.6vw, 42px);
+          font-size: clamp(26px, 2.5vw, 36px);
           font-weight: 400;
           color: #111;
           line-height: 1.1;
@@ -171,7 +172,7 @@ export default function WebinarPage() {
           .fs-footer-grid { grid-template-columns: 1fr; gap: 36px; padding-bottom: 40px; }
           .fs-footer-bottom { flex-direction: column; align-items: flex-start; gap: 12px; }
 
-          .wbr-layout { flex-direction: column; min-height: 0; }
+          .wbr-layout { justify-content: flex-start; min-height: 0; }
           .wbr-img-col { display: none; }
           .wbr-img-gradient { display: none; }
           .wbr-mobile-img {
@@ -194,6 +195,7 @@ export default function WebinarPage() {
             background: linear-gradient(to bottom, transparent, #f5f3f0);
           }
           .wbr-content {
+            margin-left: 0;
             width: 100%;
             max-width: 100%;
             padding: 24px 20px 40px;
@@ -295,7 +297,7 @@ export default function WebinarPage() {
           )}
 
           {/* Kalender */}
-          <div style={{ paddingBottom: 100 }}>
+          <div>
             <p style={{ fontSize: 12, fontWeight: 700, color: '#bbb', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 10 }}>
               Termin eintragen, damit du es nicht vergisst
             </p>
