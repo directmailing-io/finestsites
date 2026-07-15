@@ -18,7 +18,7 @@ export const auth = betterAuth({
 
   emailAndPassword: {
     enabled: true,
-    requireEmailVerification: false, // false for easier migration — can be toggled later
+    requireEmailVerification: true, // Hard DOI -- required before dashboard access
     sendResetPassword: async ({ user, url }: { user: { email: string; name?: string }; url: string }) => {
       await getResend().emails.send({
         from: FROM_EMAIL,

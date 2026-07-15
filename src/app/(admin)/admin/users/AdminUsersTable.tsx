@@ -28,6 +28,7 @@ export interface UserRow {
   siteCount: number
   totalRevenueCents: number
   mrrCents: number
+  emailVerified: boolean
 }
 
 type SortKey = 'email' | 'createdAt' | 'mrr' | 'revenue' | 'plan' | 'status'
@@ -54,6 +55,7 @@ export default function AdminUsersTable({ users }: { users: UserRow[] }) {
   const [search, setSearch]         = useState('')
   const [planFilter, setPlanFilter] = useState('all')
   const [statusFilter, setStatusFilter] = useState('all')
+  const [verifiedFilter, setVerifiedFilter] = useState<'all' | 'verified' | 'unverified'>('all')
   const [sortKey, setSortKey]       = useState<SortKey>('createdAt')
   const [sortDir, setSortDir]       = useState<SortDir>('desc')
 
@@ -71,6 +73,8 @@ export default function AdminUsersTable({ users }: { users: UserRow[] }) {
         const s = u.subscriptionStatus ?? 'none'
         if (statusFilter === 'none' ? s !== 'none' : s !== statusFilter) return false
       }
+      if (verifiedFilter === 'verified' && !u.emailVerified) return false
+      if (verifiedFilter === 'unverified' && u.emailVerified) return false
       return true
     })
     rows = [...rows].sort((a, b) => {
@@ -84,11 +88,12 @@ export default function AdminUsersTable({ users }: { users: UserRow[] }) {
       return sortDir === 'asc' ? v : -v
     })
     return rows
-  }, [users, search, planFilter, statusFilter, sortKey, sortDir])
+  }, [users, search, planFilter, statusFilter, verifiedFilter, sortKey, sortDir])
 
-  const totalMrr     = users.filter(u => u.subscriptionStatus === 'active').reduce((s, u) => s + u.mrrCents, 0)
-  const totalRevenue = users.reduce((s, u) => s + u.totalRevenueCents, 0)
-  const activeCount  = users.filter(u => u.subscriptionStatus === 'active').length
+  const totalMrr       = users.filter(u => u.subscriptionStatus === 'active').reduce((s, u) => s + u.mrrCents, 0)
+  const totalRevenue   = users.reduce((s, u) => s + u.totalRevenueCents, 0)
+  const activeCount    = users.filter(u => u.subscriptionStatus === 'active').length
+  const unverifiedCount = users.filter(u => !u.emailVerified).length
 
   const thStyle = (key: SortKey): React.CSSProperties => ({
     cursor: 'pointer', userSelect: 'none', whiteSpace: 'nowrap',
@@ -100,10 +105,11 @@ export default function AdminUsersTable({ users }: { users: UserRow[] }) {
       {/* ── KPI strip ── */}
       <div style={{ display: 'flex', gap: 12, marginBottom: 20, flexWrap: 'wrap' }}>
         {[
-          { label: 'Registriert', value: String(users.length) },
+          { label: 'Registriert',  value: String(users.length) },
           { label: 'Aktive Abos', value: String(activeCount) },
           { label: 'MRR gesamt',  value: fmtEur(totalMrr) },
           { label: 'Gesamtumsatz', value: fmtEur(totalRevenue) },
+          { label: 'Unbestätigt', value: String(unverifiedCount) },
         ].map(kpi => (
           <div key={kpi.label} style={{
             flex: '1 1 130px', background: '#fff', borderRadius: 14, padding: '14px 18px',
@@ -163,6 +169,14 @@ export default function AdminUsersTable({ users }: { users: UserRow[] }) {
           <option value="none">Kein Abo</option>
         </select>
 
+        {/* Email verification filter */}
+        <select value={verifiedFilter} onChange={e => setVerifiedFilter(e.target.value as 'all' | 'verified' | 'unverified')}
+          style={{ height: 36, borderRadius: 10, border: '1px solid #E2E8F0', fontSize: 13, padding: '0 10px', background: '#fff', color: '#374151', cursor: 'pointer' }}>
+          <option value="all">Alle E-Mails</option>
+          <option value="verified">Bestätigt</option>
+          <option value="unverified">Unbestätigt</option>
+        </select>
+
         <span style={{ marginLeft: 'auto', fontSize: 12, color: '#94A3B8', whiteSpace: 'nowrap' }}>
           {filtered.length} von {users.length}
         </span>
@@ -198,6 +212,12 @@ export default function AdminUsersTable({ users }: { users: UserRow[] }) {
                   <span className="flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-full" style={{ background: statusMeta.bg, color: statusMeta.text }}>
                     <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: statusMeta.dot }} />
                     {statusMeta.label}
+                  </span>
+                )}
+                {!user.emailVerified && (
+                  <span className="text-xs font-medium px-2 py-0.5 rounded-full"
+                    style={{ background: '#FFF7ED', color: '#C2410C', border: '1px solid #FED7AA' }}>
+                    E-Mail unbestätigt
                   </span>
                 )}
                 {user.mrrCents > 0 && (
@@ -259,11 +279,24 @@ export default function AdminUsersTable({ users }: { users: UserRow[] }) {
               <span className="flex items-center gap-2.5 min-w-0">
                 <span className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0"
                   style={{ background: planMeta.bg, color: planMeta.text }}>{initials}</span>
-                <span className="min-w-0">
-                  <span className="block truncate text-sm font-medium text-gray-900">{user.email}</span>
-                  <span className="block text-[11px] font-mono truncate" style={{ color: '#94A3B8' }}>
-                    {user.username ? `@${user.username}` : <span className="italic" style={{ color: '#CBD5E1' }}>—</span>}
+                <span className="min-w-0 flex items-center gap-1">
+                  <span className="min-w-0">
+                    <span className="block truncate text-sm font-medium text-gray-900">{user.email}</span>
+                    <span className="block text-[11px] font-mono truncate" style={{ color: '#94A3B8' }}>
+                      {user.username ? `@${user.username}` : <span className="italic" style={{ color: '#CBD5E1' }}>—</span>}
+                    </span>
                   </span>
+                  {!user.emailVerified && (
+                    <span
+                      className="inline-flex items-center justify-center w-4 h-4 rounded-full flex-shrink-0"
+                      style={{ background: '#FED7AA' }}
+                      title="E-Mail nicht bestätigt"
+                    >
+                      <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="#C2410C" strokeWidth="3">
+                        <path d="M12 9v4M12 17h.01"/>
+                      </svg>
+                    </span>
+                  )}
                 </span>
               </span>
 

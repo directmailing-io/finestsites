@@ -90,23 +90,8 @@ function RegisterForm() {
         return
       }
 
-      // Sign in immediately so the session cookie is set in the browser.
-      // Raw fetch instead of signIn.email() to avoid BetterAuth client issues on Safari iOS.
-      const signInRes = await fetch('/api/auth/sign-in/email', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: email.toLowerCase().trim(), password, rememberMe: true }),
-        credentials: 'include',
-      })
-
-      if (!signInRes.ok) {
-        // Registration succeeded but auto-login failed — redirect to login
-        window.location.href = '/login?registered=1'
-        return
-      }
-
-      // Full page navigation ensures session cookie is read correctly on all browsers
-      window.location.href = '/onboarding/username'
+      // Email verification required -- redirect to "check your inbox" page
+      window.location.href = '/verify-email?email=' + encodeURIComponent(email.toLowerCase().trim())
     } catch {
       setError('Verbindungsfehler. Bitte versuche es erneut.')
       setLoading(false)

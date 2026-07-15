@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { authClient } from '@/lib/auth/client'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
@@ -10,9 +9,6 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-  const [needsConfirm, setNeedsConfirm] = useState(false)
-  const [resending, setResending] = useState(false)
-  const [resent, setResent] = useState(false)
 
   // Suppress Chrome's automatic credential manager prompt on load
   useEffect(() => {
@@ -25,8 +21,6 @@ export default function LoginPage() {
     e.preventDefault()
     setLoading(true)
     setError('')
-    setNeedsConfirm(false)
-
     // Raw fetch instead of signIn.email() — eliminates BetterAuth client as a variable,
     // handles non-JSON responses gracefully, and gives us explicit timeout control.
     // signIn.email() uses better-fetch which throws (not returns error) on network-level
@@ -52,7 +46,8 @@ export default function LoginPage() {
         const msg = (data.message ?? '').toLowerCase()
         const code = (data.code ?? '').toLowerCase()
         if (code.includes('not_verified') || msg.includes('not confirmed') || msg.includes('not verified')) {
-          setNeedsConfirm(true)
+          window.location.href = '/verify-email?email=' + encodeURIComponent(email.toLowerCase().trim())
+          return
         } else if (res.status === 401) {
           setError('E-Mail oder Passwort falsch.')
         } else {
@@ -74,13 +69,6 @@ export default function LoginPage() {
     }
   }
 
-  async function resendConfirmation() {
-    setResending(true)
-    await authClient.sendVerificationEmail({ email, callbackURL: '/sites' })
-    setResent(true)
-    setResending(false)
-  }
-
   return (
     <>
       <h1 className="text-xl font-semibold text-gray-900 mb-1">Willkommen zurück</h1>
@@ -94,26 +82,6 @@ export default function LoginPage() {
       <form onSubmit={handleSubmit} className="flex flex-col gap-4" autoComplete="on">
         {error && (
           <p className="text-sm" style={{ color: '#DC2626' }}>{error}</p>
-        )}
-
-        {needsConfirm && (
-          <div className="px-4 py-3 rounded-2xl text-sm" style={{ background: '#FEF9C3', border: '1px solid #FDE68A', color: '#92400E' }}>
-            <p className="font-medium mb-1">E-Mail noch nicht bestätigt</p>
-            <p className="text-xs mb-2">Bitte bestätige deine E-Mail-Adresse, um dich anzumelden.</p>
-            {!resent ? (
-              <button
-                type="button"
-                onClick={resendConfirmation}
-                disabled={resending}
-                className="text-xs font-semibold underline underline-offset-2"
-                style={{ color: '#92400E' }}
-              >
-                {resending ? 'Wird gesendet…' : 'Bestätigungslink erneut senden'}
-              </button>
-            ) : (
-              <p className="text-xs font-medium" style={{ color: '#065F46' }}>✓ E-Mail gesendet – bitte prüfe deinen Posteingang.</p>
-            )}
-          </div>
         )}
 
         <AuthField label="E-Mail">

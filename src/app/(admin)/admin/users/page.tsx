@@ -40,6 +40,7 @@ export default async function AdminUsersPage() {
         subscriptionStatus: users.subscriptionStatus,
         createdAt: users.createdAt,
         stripeSubscriptionId: users.stripeSubscriptionId,
+        emailVerified: users.emailVerified,
       })
       .from(users)
       .orderBy(desc(users.createdAt)),
@@ -135,6 +136,7 @@ export default async function AdminUsersPage() {
     mrrCents: u.subscriptionStatus === 'active'
       ? (stripeMrrByUser[u.id] ?? mrrCentsFallback(u.plan, u.billingInterval))
       : 0,
+    emailVerified: u.emailVerified,
   }))
 
   return (
