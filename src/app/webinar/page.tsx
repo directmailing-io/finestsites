@@ -93,7 +93,7 @@ export default function WebinarPage() {
 
         /* ── Desktop ── */
         .wbr-layout {
-          display: flex;
+          display: grid;
           align-items: center;
           min-height: calc(100vh - 72px);
           position: relative;
@@ -109,27 +109,27 @@ export default function WebinarPage() {
         .wbr-img-gradient {
           position: absolute;
           inset: 0;
-          background: linear-gradient(to right, #f5f3f0 32%, rgba(245,243,240,0.93) 44%, rgba(245,243,240,0.45) 62%, rgba(245,243,240,0) 75%);
+          background: linear-gradient(to right, #f5f3f0 40%, rgba(245,243,240,0.95) 54%, rgba(245,243,240,0.5) 68%, rgba(245,243,240,0) 82%);
         }
         .wbr-content {
           position: relative;
           z-index: 2;
-          padding: 60px 0 60px 7vw;
-          width: 56vw;
-          max-width: 680px;
+          padding: 40px 0 40px 7vw;
+          width: 65vw;
+          max-width: 860px;
         }
         .wbr-mobile-img { display: none; }
 
         .wbr-h1 {
           font-family: 'Plein', sans-serif;
-          font-size: clamp(28px, 2.8vw, 46px);
+          font-size: clamp(26px, 2.6vw, 42px);
           font-weight: 400;
           color: #111;
-          line-height: 1.08;
+          line-height: 1.1;
           letter-spacing: -0.03em;
-          margin-bottom: 24px;
+          margin-bottom: 18px;
         }
-        .wbr-countdown { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 32px; }
+        .wbr-countdown { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 24px; }
         .wbr-countdown-box {
           text-align: center;
           background: #fff;
@@ -228,7 +228,7 @@ export default function WebinarPage() {
         <div className="wbr-content">
 
           {/* Eyebrow */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 22 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
             {isLive ? (
               <span style={{ display: 'inline-flex', alignItems: 'center', gap: 7 }}>
                 <span style={{
@@ -256,15 +256,15 @@ export default function WebinarPage() {
           </h1>
 
           {/* Body */}
-          <p style={{ fontSize: 16, color: '#444', lineHeight: 1.75, marginBottom: 10, maxWidth: 460 }}>
+          <p style={{ fontSize: 16, color: '#444', lineHeight: 1.7, marginBottom: 8, maxWidth: 520 }}>
             In diesem Zoom-Call wird FinestSites zum ersten Mal vorgestellt, noch vor dem richtigen Launch.
           </p>
-          <p style={{ fontSize: 16, color: '#6040a0', fontWeight: 600, lineHeight: 1.7, marginBottom: 32, maxWidth: 460 }}>
+          <p style={{ fontSize: 16, color: '#6040a0', fontWeight: 600, lineHeight: 1.6, marginBottom: 24, maxWidth: 520 }}>
             Du kannst dir also noch vor all den anderen einen Zugang sichern.
           </p>
 
           {/* Datum */}
-          <p style={{ fontSize: 12, fontWeight: 700, color: '#999', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 14 }}>
+          <p style={{ fontSize: 12, fontWeight: 700, color: '#999', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 10 }}>
             Di., 21. Juli 2026 · 20:00 Uhr · 30 Minuten
           </p>
 
