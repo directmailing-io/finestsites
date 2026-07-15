@@ -202,9 +202,9 @@ export default function WebinarPage() {
             padding: 24px 20px 40px;
           }
           .wbr-h1 { font-size: 26px !important; }
-          .wbr-countdown { gap: 8px; }
-          .wbr-countdown-box { padding: 12px 16px; min-width: 68px; }
-          .wbr-countdown-num { font-size: 26px !important; }
+          .wbr-countdown { gap: 10px; }
+          .wbr-countdown-box { padding: 18px 22px; min-width: 82px; }
+          .wbr-countdown-num { font-size: 36px !important; }
           .wbr-cal-row { gap: 7px; }
           .wbr-cal-row a { font-size: 13px !important; padding: 10px 14px !important; }
 
@@ -255,7 +255,7 @@ export default function WebinarPage() {
           {/* H1 */}
           <h1 className="wbr-h1">
             Du siehst FinestSites als Erste/r<br />
-            <span style={{ color: '#8060b0' }}>und wie du deine eigene Webseite<br />für FitLine kinderleicht erstellst.</span>
+            <span style={{ color: '#8060b0' }}>und erstellst deine eigene FitLine-Webseite kinderleicht.</span>
           </h1>
 
           {/* Body */}
