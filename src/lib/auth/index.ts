@@ -30,6 +30,8 @@ export const auth = betterAuth({
   },
 
   emailVerification: {
+    expiresIn: 60 * 60 * 24,           // 24 hours — matches the email copy
+    autoSignInAfterVerification: true,  // creates session on click → redirects to callbackURL (onboarding)
     sendVerificationEmail: async ({ user, url }: { user: { email: string; name?: string }; url: string }) => {
       await getResend().emails.send({
         from: FROM_EMAIL,

@@ -46,10 +46,15 @@ function VerifyEmailContent() {
     setSending(true)
     setError('')
     try {
-      await authClient.sendVerificationEmail({
+      const result = await authClient.sendVerificationEmail({
         email,
         callbackURL: `${APP_URL}/onboarding/username?verified=1`,
       })
+      // BetterAuth returns an error object (not a thrown exception) for EMAIL_ALREADY_VERIFIED
+      if ((result as { error?: { code?: string } })?.error?.code === 'EMAIL_ALREADY_VERIFIED') {
+        setAlreadyVerified(true)
+        return
+      }
       setSent(true)
       setCooldown(60)
     } catch {
