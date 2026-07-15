@@ -51,6 +51,14 @@ export interface PlaceholderField {
 
 // ─── Config ───────────────────────────────────────────────────────────────────
 
+const KNOWN_FIELD_TYPES: PlaceholderField['type'][] = [
+  'text', 'textarea', 'richtext', 'image', 'url', 'email', 'dropdown', 'card_select', 'loop',
+]
+
+const DEFAULT_COLOR = { bg: '#F3F4F6', text: '#374151' }
+const DEFAULT_ICON  = '?'
+const DEFAULT_LABEL = 'Unbekannt'
+
 const TYPE_LABELS: Record<PlaceholderField['type'], string> = {
   text:        'Text (einzeilig)',
   textarea:    'Text (mehrzeilig)',
@@ -85,6 +93,47 @@ const TYPE_ICONS: Record<PlaceholderField['type'], string> = {
   dropdown:    '▾',
   card_select: '◫',
   loop:        '↻',
+}
+
+function getTypeColor(type: string): { bg: string; text: string } {
+  return TYPE_COLORS[type as PlaceholderField['type']] ?? DEFAULT_COLOR
+}
+
+function getTypeIcon(type: string): string {
+  return TYPE_ICONS[type as PlaceholderField['type']] ?? DEFAULT_ICON
+}
+
+function getTypeLabel(type: string): string {
+  return TYPE_LABELS[type as PlaceholderField['type']] ?? DEFAULT_LABEL
+}
+
+/** Sanitise a field coming from the DB — unknown types fall back to 'text' */
+function normalizeField(raw: Record<string, unknown>): PlaceholderField {
+  const type = KNOWN_FIELD_TYPES.includes(raw.type as PlaceholderField['type'])
+    ? (raw.type as PlaceholderField['type'])
+    : 'text'
+  return {
+    key:               typeof raw.key === 'string'            ? raw.key               : '',
+    label:             typeof raw.label === 'string'          ? raw.label             : '',
+    type,
+    required:          typeof raw.required === 'boolean'      ? raw.required          : false,
+    default_value:     typeof raw.default_value === 'string'  ? raw.default_value     : '',
+    placeholder_text:  typeof raw.placeholder_text === 'string' ? raw.placeholder_text : '',
+    max_length:        typeof raw.max_length === 'number'     ? raw.max_length        : null,
+    options:           Array.isArray(raw.options)             ? raw.options as string[] : [],
+    card_options:      Array.isArray(raw.card_options)        ? raw.card_options as CardOption[] : [],
+    section:           typeof raw.section === 'string'        ? raw.section           : '',
+    order:             typeof raw.order === 'number'          ? raw.order             : 0,
+    aspect_ratio:      typeof raw.aspect_ratio === 'string'   ? raw.aspect_ratio      : 'free',
+    sub_fields:        Array.isArray(raw.sub_fields)          ? raw.sub_fields as LoopSubField[] : [],
+    min_items:         typeof raw.min_items === 'number'      ? raw.min_items         : 1,
+    max_items:         typeof raw.max_items === 'number'      ? raw.max_items         : null,
+    display_mode:      raw.display_mode as PlaceholderField['display_mode'] ?? undefined,
+    toggle_on_value:   typeof raw.toggle_on_value === 'string'  ? raw.toggle_on_value  : undefined,
+    toggle_off_value:  typeof raw.toggle_off_value === 'string' ? raw.toggle_off_value : undefined,
+    preview_value:     typeof raw.preview_value === 'string'  ? raw.preview_value     : '',
+    preview_interactive: typeof raw.preview_interactive === 'boolean' ? raw.preview_interactive : false,
+  }
 }
 
 const SUB_TYPE_LABELS: Record<LoopSubField['type'], string> = {
@@ -481,7 +530,10 @@ interface Props {
   templateId?: string
 }
 
-export function PlaceholderSchemaEditor({ fields, onChange, templateId }: Props) {
+export function PlaceholderSchemaEditor({ fields: rawFields, onChange, templateId }: Props) {
+  // Normalize all incoming fields so unknown/legacy types from the DB don't crash the editor
+  const fields: PlaceholderField[] = rawFields.map(f => normalizeField(f as unknown as Record<string, unknown>))
+
   const [expandedSet, setExpandedSet] = useState<Set<number>>(() => new Set(fields.map((_, i) => i)))
 
   // When fields load async (initially empty → then populated), expand all
@@ -597,7 +649,7 @@ export function PlaceholderSchemaEditor({ fields, onChange, templateId }: Props)
 
       {fields.map((field, idx) => {
         const isExpanded = expandedSet.has(idx)
-        const color = TYPE_COLORS[field.type]
+        const color = getTypeColor(field.type)
         const isValid = field.key && field.label
 
         return (
@@ -610,7 +662,7 @@ export function PlaceholderSchemaEditor({ fields, onChange, templateId }: Props)
 
               <span className="w-7 h-7 rounded-[8px] flex items-center justify-center text-sm flex-shrink-0"
                 style={{ background: color.bg, color: color.text }}>
-                {TYPE_ICONS[field.type]}
+                {getTypeIcon(field.type)}
               </span>
 
               <div className="flex-1 min-w-0">
@@ -622,7 +674,7 @@ export function PlaceholderSchemaEditor({ fields, onChange, templateId }: Props)
                     {field.label && <span className="text-sm text-gray-700 font-medium">{field.label}</span>}
                     <span className="text-xs px-2 py-0.5 rounded-full"
                       style={{ background: color.bg, color: color.text }}>
-                      {TYPE_LABELS[field.type]}
+                      {getTypeLabel(field.type)}
                     </span>
                     {field.type === 'loop' && (field.sub_fields?.length ?? 0) > 0 && (
                       <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: '#E0F2FE', color: '#0369A1' }}>
