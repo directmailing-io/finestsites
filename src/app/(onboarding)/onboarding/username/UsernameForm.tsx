@@ -113,23 +113,28 @@ export function UsernameForm({ showVerifiedBanner = false }: { showVerifiedBanne
     setLoading(true)
     setError('')
 
-    const res = await fetch('/api/onboarding/set-username', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username: clean, first_name: firstName.trim(), last_name: lastName.trim() }),
-    })
-    const data = await res.json()
+    try {
+      const res = await fetch('/api/onboarding/set-username', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: clean, first_name: firstName.trim(), last_name: lastName.trim() }),
+      })
+      const data = await res.json()
 
-    if (!res.ok) {
-      const isDuplicate = data.code === 'DUPLICATE' || data.code === '23505'
-      setError(isDuplicate
-        ? 'Dieser Username ist leider schon vergeben. Probiere eine andere Kombination, z.\u202fB. mit einem Buchstaben oder Bindestrich.'
-        : 'Das hat leider nicht geklappt. Bitte versuche es nochmal.')
+      if (!res.ok) {
+        const isDuplicate = data.code === 'DUPLICATE' || data.code === '23505'
+        setError(isDuplicate
+          ? 'Dieser Username ist leider schon vergeben. Probiere eine andere Kombination, z.\u202fB. mit einem Buchstaben oder Bindestrich.'
+          : 'Das hat leider nicht geklappt. Bitte versuche es nochmal.')
+        setLoading(false)
+        return
+      }
+
+      router.push('/onboarding/company')
+    } catch {
+      setError('Verbindungsfehler. Bitte prüfe deine Internetverbindung und versuche es nochmal.')
       setLoading(false)
-      return
     }
-
-    router.push('/onboarding/company')
   }
 
   const display = sanitize(username)

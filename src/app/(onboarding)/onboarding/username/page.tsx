@@ -21,7 +21,7 @@ export default async function OnboardingUsernamePage({
   if (profile?.username) redirect('/sites')
 
   const params = await searchParams
-  const showVerifiedBanner = params.verified === '1'
+  const showVerifiedBanner = params.verified === '1' && profile?.emailVerified === true
 
   return <UsernameForm showVerifiedBanner={showVerifiedBanner} />
 }

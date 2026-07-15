@@ -5,7 +5,15 @@ import { users } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
 
 export async function POST(req: NextRequest) {
-  const { email, password, referral_code } = await req.json()
+  let email: string, password: string, referral_code: string | undefined
+  try {
+    const body = await req.json()
+    email = body.email
+    password = body.password
+    referral_code = body.referral_code
+  } catch {
+    return NextResponse.json({ error: 'Ungültige Anfrage.' }, { status: 400 })
+  }
 
   if (!email || !password) {
     return NextResponse.json({ error: 'E-Mail und Passwort erforderlich.' }, { status: 400 })
