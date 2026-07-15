@@ -36,13 +36,6 @@ function useCountdown() {
   return state
 }
 
-const BENEFITS = [
-  'Deine eigene Website — fertig in unter 10 Minuten',
-  'Fertige Designs speziell für Network Marketing. Kein Basteln.',
-  'Dein Name. Deine URL. Deine Marke. Sofort live.',
-  'Kein Techniker. Kein Designer. Kein Monatstarif für eine Agentur.',
-  'Launch-Preis: nur für Teilnehmer dieses Calls verfügbar',
-]
 
 export default function WebinarPage() {
   const { days, hours, minutes, isLive } = useCountdown()
@@ -223,7 +216,7 @@ export default function WebinarPage() {
               <span style={{ display: 'inline-flex', alignItems: 'center', gap: 7 }}>
                 <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#22C55E', display: 'inline-block', flexShrink: 0 }} />
                 <span style={{ fontSize: 12, fontWeight: 700, color: '#555', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
-                  Kein Replay · Nur ausgewählte Teams · 21. Juli 2026
+                  Nur für ausgewählte PM-International Partner
                 </span>
               </span>
             )}
@@ -231,35 +224,20 @@ export default function WebinarPage() {
 
           {/* H1 */}
           <h1 className="wbr-h1">
-            Dein Team bekommt eine professionelle Website.<br />
-            <span style={{ color: '#8060b0' }}>Fertig in 10 Minuten. Ohne Technik.</span><br />
-            Nur heute Abend. Kein Replay.
+            Du siehst FinestSites als Erster.<br />
+            Deine eigene Website.<br />
+            <span style={{ color: '#8060b0' }}>In Minuten fertig. Ganz ohne Technik.</span>
           </h1>
 
-          {/* Intro */}
-          <p style={{ fontSize: 16, color: '#444', lineHeight: 1.7, marginBottom: 8, maxWidth: 480 }}>
-            Du bist im Network Marketing. Du weißt: wer professioneller wirkt, gewinnt. In diesem 30-Minuten-Call zeigen wir live, wie dein gesamtes Team in weniger als einer Stunde eine eigene Website hat.
-          </p>
-          <p style={{ fontSize: 14, color: '#888', lineHeight: 1.65, marginBottom: 24, maxWidth: 480 }}>
-            Kein Replay. Wer nicht dabei ist, sieht es nicht — und zahlt später den vollen Preis.
+          {/* Body */}
+          <p style={{ fontSize: 16, color: '#444', lineHeight: 1.7, marginBottom: 8, maxWidth: 460 }}>
+            Wir zeigen dir live, wie das geht. 30 Minuten Zoom. Kostenlos.
           </p>
 
-          {/* Benefit bullets */}
-          <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 28px', display: 'flex', flexDirection: 'column', gap: 9 }}>
-            {BENEFITS.map(b => (
-              <li key={b} style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
-                <span style={{
-                  width: 20, height: 20, borderRadius: '50%', background: '#8060b0',
-                  display: 'inline-flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, marginTop: 1,
-                }}>
-                  <svg width="10" height="10" viewBox="0 0 12 12" fill="none">
-                    <path d="M2 6l3 3 5-5" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                </span>
-                <span style={{ fontSize: 14, color: '#333', lineHeight: 1.5 }}>{b}</span>
-              </li>
-            ))}
-          </ul>
+          {/* FOMO */}
+          <p style={{ fontSize: 15, color: '#6040a0', fontWeight: 600, lineHeight: 1.6, marginBottom: 28, maxWidth: 460 }}>
+            Wer dabei ist, bekommt als Erster Zugang und ein Startangebot, das es danach so nicht gibt.
+          </p>
 
           {/* Datum */}
           <p style={{ fontSize: 12, fontWeight: 700, color: '#999', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 14 }}>
@@ -289,18 +267,6 @@ export default function WebinarPage() {
             }}>
               <div style={{ color: '#DC2626', fontWeight: 700, fontSize: 16, marginBottom: 4 }}>Der Call läuft gerade!</div>
               <div style={{ color: '#EF4444', fontSize: 14 }}>Tritt jetzt dem Zoom Meeting bei.</div>
-            </div>
-          )}
-
-          {/* FOMO note */}
-          {!isLive && (
-            <div style={{
-              background: 'rgba(128,96,176,0.07)', border: '1px solid rgba(128,96,176,0.18)',
-              borderRadius: 14, padding: '12px 16px', marginBottom: 28, maxWidth: 460,
-            }}>
-              <p style={{ fontSize: 13, color: '#6040a0', lineHeight: 1.55, fontWeight: 500 }}>
-                Deine Konkurrenten haben noch keine professionelle Website. Du könntest der Erste sein — oder derjenige, der zuschaut wie andere es nutzen.
-              </p>
             </div>
           )}
 
