@@ -12,8 +12,12 @@ export async function GET(req: Request) {
 
   const profile = await db.query.users.findFirst({
     where: eq(users.id, user.id),
-    columns: { username: true, stripeConnectId: true, affiliateOnboarded: true },
+    columns: { username: true, stripeConnectId: true, affiliateOnboarded: true, plan: true },
   })
+
+  if (!profile?.plan || profile.plan === 'free') {
+    return NextResponse.json({ error: 'Nur für aktive Kunden.' }, { status: 403 })
+  }
 
   // Each query is wrapped so a single failure doesn't crash the whole response.
   // The username (profile) is fetched first and is never affected by these.

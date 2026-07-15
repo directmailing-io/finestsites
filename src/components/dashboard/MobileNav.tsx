@@ -4,10 +4,12 @@ import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import { signOut } from '@/lib/auth/client'
+import { usePlanQuota } from '@/components/dashboard/PlanQuotaContext'
 
 export function MobileNav() {
   const pathname = usePathname()
   const router = useRouter()
+  const quota = usePlanQuota()
   const [showMore, setShowMore] = useState(false)
   const [unreadCount, setUnreadCount] = useState(0)
   const [chatUnread, setChatUnread] = useState(0)
@@ -85,22 +87,38 @@ export function MobileNav() {
         </div>
 
         <div className="px-3 pb-3">
-          {[
-            { href: '/affiliate', label: 'Partnerbereich', icon: <DrawerPartnerIcon /> },
-            { href: '/settings', label: 'Einstellungen', icon: <DrawerSettingsIcon /> },
-          ].map(item => (
+          {/* Partnerbereich — locked for free users */}
+          {quota.plan !== null ? (
             <Link
-              key={item.href}
-              href={item.href}
+              href="/affiliate"
               className="flex items-center gap-4 px-4 py-4 rounded-2xl active:bg-gray-50"
             >
-              <span style={{ color: '#6B7280' }}>{item.icon}</span>
-              <span className="text-base font-medium text-gray-800 flex-1">{item.label}</span>
+              <span style={{ color: '#6B7280' }}><DrawerPartnerIcon /></span>
+              <span className="text-base font-medium text-gray-800 flex-1">Partnerbereich</span>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#D1D5DB" strokeWidth="2.5">
                 <path d="M9 18l6-6-6-6"/>
               </svg>
             </Link>
-          ))}
+          ) : (
+            <div className="flex items-center gap-4 px-4 py-4 rounded-2xl" style={{ opacity: 0.45 }}>
+              <span style={{ color: '#6B7280' }}><DrawerPartnerIcon /></span>
+              <span className="text-base font-medium text-gray-500 flex-1">Partnerbereich</span>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="2">
+                <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/>
+              </svg>
+            </div>
+          )}
+
+          <Link
+            href="/settings"
+            className="flex items-center gap-4 px-4 py-4 rounded-2xl active:bg-gray-50"
+          >
+            <span style={{ color: '#6B7280' }}><DrawerSettingsIcon /></span>
+            <span className="text-base font-medium text-gray-800 flex-1">Einstellungen</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#D1D5DB" strokeWidth="2.5">
+              <path d="M9 18l6-6-6-6"/>
+            </svg>
+          </Link>
 
           <div className="h-px mx-4 my-1" style={{ background: '#F3F4F6' }} />
 
