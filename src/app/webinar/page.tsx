@@ -94,7 +94,7 @@ export default function WebinarPage() {
         /* ── Desktop ── */
         .wbr-layout {
           display: flex;
-          align-items: stretch;
+          align-items: center;
           min-height: calc(100vh - 72px);
           position: relative;
           overflow: hidden;
@@ -114,12 +114,9 @@ export default function WebinarPage() {
         .wbr-content {
           position: relative;
           z-index: 2;
-          padding: 80px 0 80px 7vw;
+          padding: 60px 0 60px 7vw;
           width: 56vw;
           max-width: 680px;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
         }
         .wbr-mobile-img { display: none; }
 
