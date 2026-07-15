@@ -9435,5 +9435,94 @@ function switchKontaktTab(tab) {
 })();
 </script>
 
+<script>
+/* ── Anchor-Hash Scroll Fix ──────────────────────────────────────────────────
+   Problem: In-page hash navigation can land at the wrong position because:
+   1. scroll-behavior:smooth races with late-loading images/fonts on direct URL load
+   2. The cocktail section is 400vh in DOM height — layout must be fully settled
+   3. switchKontaktTab() calls scrollIntoView() which ignores scroll-margin-top on Safari
+
+   Solution:
+   - Intercept all internal #section clicks → use window.scrollTo with live offsetTop
+   - On direct URL load with hash → clear hash before paint, scroll after full 'load'
+   - Override switchKontaktTab() to use the same reliable method
+   ─────────────────────────────────────────────────────────────────────────── */
+(function () {
+  'use strict';
+
+  // Only intercept these navigable section IDs.
+  // SVG textPath hrefs like #garantie-circle-top are NOT in this list → untouched.
+  var SECTION_IDS = new Set(['warum','routine','cocktail','besonders','zutaten','about','kontakt']);
+
+  function getNavOffset() {
+    var nav = document.querySelector('.nav');
+    return nav ? nav.offsetHeight + 8 : 88;
+  }
+
+  function scrollToSection(el) {
+    var top = el.getBoundingClientRect().top + window.scrollY - getNavOffset();
+    window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+  }
+
+  // Intercept #section anchor clicks — useCapture fires before bubble-phase handlers
+  // (e.g. mobile menu closeMenu) so preventDefault blocks native hash scroll,
+  // but not stopping propagation means the menu still closes normally.
+  document.addEventListener('click', function (e) {
+    var anchor = e.target.closest('a[href]');
+    if (!anchor) return;
+    var href = anchor.getAttribute('href');
+    if (!href || href.charAt(0) !== '#' || href.length < 2) return;
+    var id = href.slice(1);
+    if (!SECTION_IDS.has(id)) return;
+    var target = document.getElementById(id);
+    if (!target) return;
+    e.preventDefault();
+    if (history.pushState) history.pushState(null, '', href);
+    scrollToSection(target);
+  }, true);
+
+  // Handle direct URL load with hash (e.g. user arrives at /#kontakt).
+  // Strip the hash immediately (before first paint) to prevent the browser's
+  // pre-layout scroll, then scroll accurately after full 'load'.
+  if (window.location.hash) {
+    var initialId = window.location.hash.slice(1);
+    if (SECTION_IDS.has(initialId)) {
+      if (history.replaceState) {
+        history.replaceState(null, '', window.location.pathname + window.location.search);
+      }
+      window.addEventListener('load', function () {
+        var target = document.getElementById(initialId);
+        if (!target) return;
+        // Small delay: ensures ScrollTrigger.refresh() (registered earlier on 'load')
+        // has already run, giving us accurate element positions.
+        setTimeout(function () { scrollToSection(target); }, 120);
+      }, { once: true });
+    }
+  }
+
+  // Fix switchKontaktTab() which calls scrollIntoView({ block:'start' }) —
+  // that method ignores scroll-margin-top on Safari and old iOS.
+  // Override after startApp() has defined it as a global.
+  var _origSwitch = window.switchKontaktTab;
+  window.switchKontaktTab = function (tab) {
+    if (_origSwitch) {
+      // Patch scrollIntoView to no-op while the original runs (only the scroll call)
+      var section = document.getElementById('kontakt');
+      if (section) {
+        var orig = section.scrollIntoView;
+        section.scrollIntoView = function () {};
+        _origSwitch(tab);
+        section.scrollIntoView = orig;
+      } else {
+        _origSwitch(tab);
+      }
+    }
+    var kontakt = document.getElementById('kontakt');
+    if (kontakt) scrollToSection(kontakt);
+  };
+
+})();
+</script>
+
 </body>
 </html>
