@@ -313,35 +313,4 @@ export default function WebinarPage() {
   )
 }
 
-function CalBtn({ href, label, download }: { href: string; label: string; download?: boolean }) {
-  return (
-    <a
-      href={href}
-      {...(download ? { download: 'finestsites-webinar.ics' } : { target: '_blank', rel: 'noopener noreferrer' })}
-      style={{
-        display: 'inline-flex', alignItems: 'center',
-        padding: '9px 14px',
-        background: 'rgba(255,255,255,0.08)',
-        border: '1px solid rgba(255,255,255,0.13)',
-        borderRadius: '11px',
-        color: 'rgba(255,255,255,0.7)',
-        fontSize: '13px', fontWeight: 600,
-        textDecoration: 'none',
-        whiteSpace: 'nowrap',
-        transition: 'background .15s, border-color .15s',
-      }}
-      onMouseEnter={e => {
-        const el = e.currentTarget as HTMLAnchorElement
-        el.style.background = 'rgba(255,255,255,0.14)'
-        el.style.borderColor = 'rgba(255,255,255,0.25)'
-      }}
-      onMouseLeave={e => {
-        const el = e.currentTarget as HTMLAnchorElement
-        el.style.background = 'rgba(255,255,255,0.08)'
-        el.style.borderColor = 'rgba(255,255,255,0.13)'
-      }}
-    >
-      {label}
-    </a>
-  )
-}
+
