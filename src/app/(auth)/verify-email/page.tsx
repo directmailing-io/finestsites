@@ -57,7 +57,7 @@ function VerifyEmailContent() {
       </div>
 
       <h1 className="text-xl font-semibold text-gray-900 mb-2">
-        Bitte bestatige deine E-Mail
+        Bitte bestätige deine E-Mail
       </h1>
       <p className="text-sm leading-relaxed mb-1" style={{ color: '#6B7280' }}>
         Wir haben eine E-Mail an
@@ -74,7 +74,7 @@ function VerifyEmailContent() {
         {sent ? (
           <div className="px-4 py-3 rounded-2xl text-sm mb-3"
             style={{ background: '#F0FDF4', border: '1px solid #BBF7D0', color: '#15803D' }}>
-            E-Mail erneut gesendet. Bitte prufe deinen Posteingang.
+            E-Mail erneut gesendet. Bitte prüfe deinen Posteingang.
           </div>
         ) : null}
 
@@ -107,7 +107,7 @@ function VerifyEmailContent() {
       {/* Spam hint */}
       <div className="px-4 py-3 rounded-xl text-xs text-left mb-5"
         style={{ background: '#FFF7ED', border: '1px solid #FED7AA', color: '#92400E' }}>
-        <strong>Keine E-Mail erhalten?</strong> Bitte prufe auch deinen Spam-Ordner. Manchmal landet die E-Mail dort.
+        <strong>Keine E-Mail erhalten?</strong> Bitte prüfe auch deinen Spam-Ordner. Manchmal landet die E-Mail dort.
       </div>
 
       {/* Back to login */}
