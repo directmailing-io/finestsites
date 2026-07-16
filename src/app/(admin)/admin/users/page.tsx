@@ -42,6 +42,7 @@ export default async function AdminUsersPage() {
 
   // Per-user data fetched live from Stripe (single source of truth).
   const stripePlanPriceByUser: Record<string, number> = {}   // catalog monthly price (no discounts)
+  const stripeBilledPriceByUser: Record<string, number> = {} // effective monthly price after active discounts
   const stripeRevenueByUser: Record<string, number> = {}     // total cash actually received
   const cancelAtPeriodEndByUser: Record<string, boolean> = {}
   const stripePromoByUser: Record<string, string | null> = {} // promo code used at checkout
@@ -56,11 +57,15 @@ export default async function AdminUsersPage() {
         const [allInvoices, sub] = await Promise.all([
           stripe.invoices.list({ customer: u.stripeCustomerId!, status: 'paid', limit: 100 }),
           isActive
-            ? stripe.subscriptions.retrieve(u.stripeSubscriptionId!)
+            // Expand discounts so we can read coupon details for the "Abgerechnet" column
+            ? stripe.subscriptions.retrieve(
+                u.stripeSubscriptionId!,
+                { expand: ['discounts', 'discounts.coupon'] } as Parameters<typeof stripe.subscriptions.retrieve>[1],
+              )
             : Promise.resolve(null),
         ])
 
-        // Gesamtumsatz = all cash actually received (invoices with amount_paid > 0)
+        // Eingenommen = all cash actually received (invoices with amount_paid > 0)
         stripeRevenueByUser[u.id] = allInvoices.data.reduce(
           (s, inv) => s + (inv.amount_paid > 0 ? inv.amount_paid : 0),
           0,
@@ -71,9 +76,21 @@ export default async function AdminUsersPage() {
           const interval = sub.items.data[0]?.price?.recurring?.interval ?? 'month'
           const catalogPrice = sub.items.data[0]?.price?.unit_amount ?? 0
 
-          // Planpreis = catalog monthly price (what the plan costs, before any discounts).
-          // For yearly plans, divide by 12 to get monthly equivalent.
+          // Planpreis = catalog monthly price before any discounts
           stripePlanPriceByUser[u.id] = monthlyEquiv(catalogPrice, interval)
+
+          // Abgerechnet = what will actually be charged (catalog minus active permanent discount).
+          // 'once' coupons are consumed after first invoice → next charge = full catalog price.
+          // 'forever'/'repeating' coupons apply every cycle → reduce accordingly.
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const subAny = sub as any
+          const disc = subAny.discounts?.[0] ?? subAny.discount ?? null
+          const couponDuration: string = disc?.coupon?.duration ?? 'once'
+          const applyDiscount = couponDuration === 'forever' || couponDuration === 'repeating'
+          const percentOff: number = applyDiscount ? (disc?.coupon?.percent_off ?? 0) : 0
+          const amountOff: number = applyDiscount ? (disc?.coupon?.amount_off ?? 0) : 0
+          const billedCents = Math.max(0, Math.round(catalogPrice * (1 - percentOff / 100)) - amountOff)
+          stripeBilledPriceByUser[u.id] = monthlyEquiv(billedCents, interval)
 
           // Promo code used at checkout — stored in subscription metadata by the webhook handler.
           stripePromoByUser[u.id] = sub.metadata?.promo_code || null
@@ -102,6 +119,8 @@ export default async function AdminUsersPage() {
     siteCount: siteCountByUser[u.id] ?? 0,
     // Catalog monthly price — what this plan costs without discounts (direct from Stripe)
     planPriceCents: stripePlanPriceByUser[u.id] ?? 0,
+    // Effective monthly charge after active permanent discounts (0 for 100% forever coupons)
+    billedPriceCents: stripeBilledPriceByUser[u.id] ?? stripePlanPriceByUser[u.id] ?? 0,
     // Total cash received from this customer across all time (direct from Stripe invoices)
     totalRevenueCents: stripeRevenueByUser[u.id] ?? 0,
     // Promo code applied at checkout (e.g. "ADMIN100")

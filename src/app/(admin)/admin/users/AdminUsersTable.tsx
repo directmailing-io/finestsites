@@ -30,6 +30,8 @@ export interface UserRow {
   siteCount: number
   /** Monthly catalog price from Stripe (no discounts). 0 = no active subscription. */
   planPriceCents: number
+  /** Effective monthly charge after active permanent discounts (0 for 100% forever coupons). */
+  billedPriceCents: number
   /** Total cash actually received from this customer across all time. */
   totalRevenueCents: number
   /** Promo code used at checkout (e.g. "ADMIN100"), or null. */
@@ -37,11 +39,11 @@ export interface UserRow {
   emailVerified: boolean
 }
 
-type SortKey = 'email' | 'createdAt' | 'planPrice' | 'revenue' | 'plan' | 'status'
+type SortKey = 'email' | 'createdAt' | 'planPrice' | 'billed' | 'revenue' | 'plan' | 'status'
 type SortDir = 'asc' | 'desc'
 
-function fmtEur(cents: number): string {
-  if (cents === 0) return '—'
+function fmtEur(cents: number, showZero = false): string {
+  if (cents === 0) return showZero ? '0 €' : '—'
   return (cents / 100).toLocaleString('de-DE', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 })
 }
 
@@ -93,6 +95,7 @@ export default function AdminUsersTable({ users }: { users: UserRow[] }) {
       if (sortKey === 'email')     v = a.email.localeCompare(b.email)
       if (sortKey === 'createdAt') v = new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
       if (sortKey === 'planPrice') v = a.planPriceCents - b.planPriceCents
+      if (sortKey === 'billed')    v = a.billedPriceCents - b.billedPriceCents
       if (sortKey === 'revenue')   v = a.totalRevenueCents - b.totalRevenueCents
       if (sortKey === 'plan')      v = a.plan.localeCompare(b.plan)
       if (sortKey === 'status')    v = (a.subscriptionStatus ?? '').localeCompare(b.subscriptionStatus ?? '')
@@ -265,7 +268,7 @@ export default function AdminUsersTable({ users }: { users: UserRow[] }) {
         style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04)', border: '1px solid #F1F5F9' }}>
 
         <div className="grid px-5 py-3 text-[11px] font-semibold uppercase tracking-wide"
-          style={{ gridTemplateColumns: '2fr 1fr 1fr 1fr 0.9fr 0.5fr 0.55fr 28px', background: '#F8FAFC', borderBottom: '1px solid #F1F5F9' }}>
+          style={{ gridTemplateColumns: '2fr 1fr 1fr 0.85fr 0.85fr 0.9fr 0.5fr 0.55fr 28px', background: '#F8FAFC', borderBottom: '1px solid #F1F5F9' }}>
           <span style={thStyle('email')} onClick={() => toggleSort('email')}>
             Nutzer <SortIcon active={sortKey === 'email'} dir={sortDir} />
           </span>
@@ -275,10 +278,13 @@ export default function AdminUsersTable({ users }: { users: UserRow[] }) {
           <span style={thStyle('status')} onClick={() => toggleSort('status')}>
             Status <SortIcon active={sortKey === 'status'} dir={sortDir} />
           </span>
-          <span style={thStyle('planPrice')} onClick={() => toggleSort('planPrice')}>
+          <span style={thStyle('planPrice')} onClick={() => toggleSort('planPrice')} title="Katalogpreis ohne Rabatt">
             Planpreis <SortIcon active={sortKey === 'planPrice'} dir={sortDir} />
           </span>
-          <span style={thStyle('revenue')} onClick={() => toggleSort('revenue')}>
+          <span style={thStyle('billed')} onClick={() => toggleSort('billed')} title="Tatsächlich abgerechnet nach Rabatt">
+            Abgerechnet <SortIcon active={sortKey === 'billed'} dir={sortDir} />
+          </span>
+          <span style={thStyle('revenue')} onClick={() => toggleSort('revenue')} title="Gesamtsumme tatsächlich eingegangener Zahlungen">
             Eingenommen <SortIcon active={sortKey === 'revenue'} dir={sortDir} />
           </span>
           <span className="text-center" style={{ color: '#94A3B8' }}>Seiten</span>
@@ -292,10 +298,11 @@ export default function AdminUsersTable({ users }: { users: UserRow[] }) {
           const planMeta   = PLAN_META[user.plan] ?? PLAN_META.starter
           const statusMeta = STATUS_META[user.subscriptionStatus ?? ''] ?? null
           const initials   = user.email.slice(0, 2).toUpperCase()
+          const hasActiveSub = ['active', 'trialing', 'past_due'].includes(user.subscriptionStatus ?? '')
           return (
             <Link key={user.id} href={`/admin/users/${user.id}`}
               className="grid px-5 py-3.5 text-sm items-center transition-colors hover:bg-gray-50 group"
-              style={{ gridTemplateColumns: '2fr 1fr 1fr 1fr 0.9fr 0.5fr 0.55fr 28px', borderBottom: '1px solid #F8FAFC' }}>
+              style={{ gridTemplateColumns: '2fr 1fr 1fr 0.85fr 0.85fr 0.9fr 0.5fr 0.55fr 28px', borderBottom: '1px solid #F8FAFC' }}>
 
               {/* Email + avatar */}
               <span className="flex items-center gap-2.5 min-w-0">
@@ -363,10 +370,16 @@ export default function AdminUsersTable({ users }: { users: UserRow[] }) {
                 )}
               </span>
 
-              {/* Planpreis + Promo Code */}
+              {/* Planpreis (Katalog, ohne Rabatt) */}
+              <span className="tabular-nums text-sm" style={{ color: hasActiveSub ? '#374151' : '#CBD5E1' }}>
+                {hasActiveSub ? `${fmtEur(user.planPriceCents, true)}/Mo` : '—'}
+              </span>
+
+              {/* Abgerechnet (nach Rabatt) + Promo Code */}
               <span className="flex flex-col gap-0.5">
-                <span className="tabular-nums text-sm font-semibold" style={{ color: user.planPriceCents > 0 ? '#374151' : '#CBD5E1' }}>
-                  {user.planPriceCents > 0 ? `${fmtEur(user.planPriceCents)}/Mo` : '—'}
+                <span className="tabular-nums text-sm font-semibold"
+                  style={{ color: hasActiveSub ? (user.billedPriceCents > 0 ? '#16A34A' : '#94A3B8') : '#CBD5E1' }}>
+                  {hasActiveSub ? `${fmtEur(user.billedPriceCents, true)}/Mo` : '—'}
                 </span>
                 {user.activePromoCode && (
                   <span className="text-[10px] font-mono px-1.5 py-0.5 rounded w-fit"
@@ -376,9 +389,10 @@ export default function AdminUsersTable({ users }: { users: UserRow[] }) {
                 )}
               </span>
 
-              {/* Eingenommen (Gesamtumsatz) */}
-              <span className="tabular-nums text-sm font-semibold" style={{ color: user.totalRevenueCents > 0 ? '#16A34A' : '#CBD5E1' }}>
-                {fmtEur(user.totalRevenueCents)}
+              {/* Eingenommen (Gesamtsumme tatsächlich erhalten) */}
+              <span className="tabular-nums text-sm font-semibold"
+                style={{ color: user.totalRevenueCents > 0 ? '#16A34A' : (hasActiveSub ? '#94A3B8' : '#CBD5E1') }}>
+                {hasActiveSub ? fmtEur(user.totalRevenueCents, true) : fmtEur(user.totalRevenueCents)}
               </span>
 
               {/* Sites count */}
