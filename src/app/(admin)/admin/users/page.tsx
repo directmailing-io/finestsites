@@ -98,8 +98,11 @@ export default async function AdminUsersPage() {
           // Promo code: prefer human-entered code from checkout metadata; fall back to coupon ID
           // when a discount is active but no metadata was captured (e.g. applied via script).
           const hasDiscount = billedCents < catalogPrice
-          stripePromoByUser[u.id] = sub.metadata?.promo_code
-            || (hasDiscount ? (coupon?.id ?? null) : null)
+          // Prefer coupon.id (ground truth — what Stripe actually applies every cycle).
+          // Fall back to checkout metadata only if no coupon is present.
+          stripePromoByUser[u.id] = hasDiscount
+            ? (coupon?.id ?? sub.metadata?.promo_code ?? null)
+            : null
         }
       })
     )
