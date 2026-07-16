@@ -228,7 +228,7 @@ export async function POST(req: NextRequest) {
         ${subject.trim()},
         ${body.trim()},
         ${JSON.stringify(filters ?? { mode: 'all' })},
-        ${filters?.mode === 'specific' ? JSON.stringify(recipients.map(u => u.email)) : null},
+        ${JSON.stringify(recipients.map(u => u.email))},
         ${sent}, ${failed}, ${recipients.length}
       )
     `)

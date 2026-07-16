@@ -22,6 +22,58 @@ interface HistoryEntry {
   recipient_filter: string; specific_emails: string[] | null
   sent: number; failed: number; total: number; sent_at: string
 }
+
+function HistoryCard({ entry }: { entry: HistoryEntry }) {
+  const [open, setOpen] = useState(false)
+  const emails: string[] = entry.specific_emails ?? []
+
+  return (
+    <div className="rounded-[20px] p-5 bg-white" style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.06)', border: '1px solid #F1F5F9' }}>
+      <div className="flex items-start justify-between gap-4">
+        <div className="flex-1 min-w-0">
+          <p className="font-semibold text-gray-900 text-sm truncate">{entry.subject}</p>
+          <p className="text-xs mt-1" style={{ color: '#94A3B8' }}>
+            {historyFilterLabel(entry.recipient_filter, entry.specific_emails, entry.total)} · {formatDate(entry.sent_at)}
+          </p>
+        </div>
+        <span className="text-xs px-2.5 py-1 rounded-full font-medium flex-shrink-0"
+          style={{ background: entry.failed > 0 ? '#FEF2F2' : '#F0FDF4', color: entry.failed > 0 ? '#DC2626' : '#16A34A' }}>
+          {entry.failed > 0 ? `${entry.sent}/${entry.total} gesendet` : `${entry.sent} gesendet`}
+        </span>
+      </div>
+      <p className="text-sm mt-3" style={{ color: '#6B7280', whiteSpace: 'pre-line', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+        {entry.body}
+      </p>
+      {emails.length > 0 && (
+        <div className="mt-3 pt-3" style={{ borderTop: '1px solid #F1F5F9' }}>
+          <button
+            onClick={() => setOpen(o => !o)}
+            className="flex items-center gap-1.5 text-xs font-medium transition-colors"
+            style={{ color: '#6B7280' }}
+            onMouseEnter={e => (e.currentTarget.style.color = '#111827')}
+            onMouseLeave={e => (e.currentTarget.style.color = '#6B7280')}
+          >
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"
+              style={{ transform: open ? 'rotate(90deg)' : 'none', transition: 'transform 0.15s' }}>
+              <path d="M9 18l6-6-6-6"/>
+            </svg>
+            {emails.length} Empfänger {open ? 'ausblenden' : 'anzeigen'}
+          </button>
+          {open && (
+            <div className="mt-2 rounded-[12px] overflow-hidden" style={{ border: '1px solid #E5E7EB', maxHeight: 220, overflowY: 'auto' }}>
+              {emails.map((email, i) => (
+                <div key={email} className="px-3 py-2 text-xs font-mono"
+                  style={{ color: '#374151', background: i % 2 === 0 ? '#F9FAFB' : '#fff', borderTop: i > 0 ? '1px solid #F1F5F9' : 'none' }}>
+                  {email}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  )
+}
 interface ApiData { users: UserRow[]; templates: TemplateRow[]; history: HistoryEntry[] }
 
 interface ActiveFilters {
@@ -593,23 +645,7 @@ export default function NewsletterPage() {
               <p className="text-sm" style={{ color: '#94A3B8' }}>Noch keine Newsletter gesendet.</p>
             </div>
           ) : data.history.map(entry => (
-            <div key={entry.id} className="rounded-[20px] p-5 bg-white" style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.06)', border: '1px solid #F1F5F9' }}>
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-gray-900 text-sm truncate">{entry.subject}</p>
-                  <p className="text-xs mt-1" style={{ color: '#94A3B8' }}>
-                    {historyFilterLabel(entry.recipient_filter, entry.specific_emails, entry.total)} · {formatDate(entry.sent_at)}
-                  </p>
-                </div>
-                <span className="text-xs px-2.5 py-1 rounded-full font-medium flex-shrink-0"
-                  style={{ background: entry.failed > 0 ? '#FEF2F2' : '#F0FDF4', color: entry.failed > 0 ? '#DC2626' : '#16A34A' }}>
-                  {entry.failed > 0 ? `${entry.sent}/${entry.total} gesendet` : `${entry.sent} gesendet`}
-                </span>
-              </div>
-              <p className="text-sm mt-3" style={{ color: '#6B7280', whiteSpace: 'pre-line', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-                {entry.body}
-              </p>
-            </div>
+            <HistoryCard key={entry.id} entry={entry} />
           ))}
         </div>
       )}
