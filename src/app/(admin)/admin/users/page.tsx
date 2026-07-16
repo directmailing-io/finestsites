@@ -67,7 +67,10 @@ export default async function AdminUsersPage() {
         const [allInvoices, sub] = await Promise.all([
           stripe.invoices.list({ customer: u.stripeCustomerId!, status: 'paid', limit: 100 }),
           isActive
-            ? stripe.subscriptions.retrieve(u.stripeSubscriptionId!)
+            ? stripe.subscriptions.retrieve(u.stripeSubscriptionId!, {
+                // Stripe new API: discount lives in discounts[] not legacy discount field
+                expand: ['discounts', 'discounts.coupon'],
+              } as Parameters<typeof stripe.subscriptions.retrieve>[1])
             : Promise.resolve(null),
         ])
 
@@ -82,13 +85,16 @@ export default async function AdminUsersPage() {
           const interval = sub.items.data[0]?.price?.recurring?.interval ?? 'month'
           const catalogPrice = sub.items.data[0]?.price?.unit_amount ?? 0
 
-          // Determine recurring price for MRR — coupon duration is critical:
-          // - 'once':      one-time promo (e.g. first month free). After it, full price resumes.
-          //                → ignore the discount for MRR; use catalogPrice from Stripe.
-          // - 'forever':   discount applies every cycle → reduce catalogPrice accordingly.
-          // - 'repeating': applies for N months; treated like forever (conservative estimate).
+          // Read discount from new Stripe API (discounts array) with fallback to legacy field.
+          // Stripe API 2023+: discounts[] is the canonical source; sub.discount is deprecated.
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const disc = (sub as any).discount
+          const subAny = sub as any
+          const disc = subAny.discounts?.[0] ?? subAny.discount ?? null
+
+          // Coupon duration determines whether the discount is permanent or one-time:
+          // - 'once':      promo already consumed after first invoice → next charge = catalogPrice
+          // - 'forever':   applied every cycle → effectivePrice = catalogPrice − discount
+          // - 'repeating': same as forever (conservative)
           const couponDuration: string = disc?.coupon?.duration ?? 'once'
           const applyDiscount = couponDuration === 'forever' || couponDuration === 'repeating'
           const percentOff: number = applyDiscount ? (disc?.coupon?.percent_off ?? 0) : 0
@@ -98,15 +104,17 @@ export default async function AdminUsersPage() {
             Math.round(catalogPrice * (1 - percentOff / 100)) - amountOff,
           )
 
-          // MRR: actual cash from last invoice if available; otherwise what next invoice charges.
-          // Always set stripeMrrByUser so we never fall through to the PLANS-constant fallback.
+          // MRR logic:
+          // - forever 100% discount → effectivePrice = 0 → MRR = 0, ALWAYS (even if latestPaid > 0
+          //   from before the discount was applied). This is the true recurring revenue going forward.
+          // - otherwise: use last paid invoice if > 0 (real cash), else effectivePrice (next charge).
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const subInvoice = allInvoices.data.find(inv => (inv as any).subscription === u.stripeSubscriptionId)
           const latestPaid = subInvoice?.amount_paid ?? 0
-          stripeMrrByUser[u.id] = invoiceMrrCents(
-            latestPaid > 0 ? latestPaid : effectivePrice,
-            interval,
-          )
+          const mrrBasis = effectivePrice === 0
+            ? 0
+            : latestPaid > 0 ? latestPaid : effectivePrice
+          stripeMrrByUser[u.id] = invoiceMrrCents(mrrBasis, interval)
         }
       })
     )

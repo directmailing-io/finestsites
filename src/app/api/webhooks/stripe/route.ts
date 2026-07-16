@@ -260,8 +260,11 @@ export async function POST(req: NextRequest) {
         cancelAtPeriodEnd: sub.cancel_at_period_end,
       }).where(eq(users.id, userId))
 
-      // Send cancellation email when user schedules cancellation for end of period
-      const justCanceled = sub.cancel_at_period_end && !prevSub?.cancel_at_period_end
+      // Send cancellation email ONLY when cancel_at_period_end just flipped false → true.
+      // Stripe's previous_attributes only includes fields that CHANGED — if absent, the field
+      // did not change. Treating undefined as false causes re-sends on unrelated sub updates.
+      const cancelJustChanged = prevSub !== undefined && 'cancel_at_period_end' in (prevSub as object)
+      const justCanceled = cancelJustChanged && sub.cancel_at_period_end === true && prevSub?.cancel_at_period_end === false
       if (justCanceled) {
         const periodEnd = getPeriodEnd(sub)
         const periodEndStr = periodEnd
