@@ -80,15 +80,28 @@ export default async function AdminUsersPage() {
         if (isActive && sub) {
           cancelAtPeriodEndByUser[u.id] = sub.cancel_at_period_end
           const interval = sub.items.data[0]?.price?.recurring?.interval ?? 'month'
+          const catalogPrice = sub.items.data[0]?.price?.unit_amount ?? 0
 
-          // MRR: prefer the latest paid invoice for this subscription.
-          // If 0 (first-month-free promo), fall back to the Stripe catalog price —
-          // that IS what will be charged at next renewal (no active discount remaining).
+          // Apply any ACTIVE discount still on the subscription.
+          // Permanent coupons (e.g. 20% forever) stay on sub.discount after the first invoice.
+          // One-time promos (first month free) are consumed and gone → 0 % applied here.
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const disc = (sub as any).discount
+          const percentOff: number = disc?.coupon?.percent_off ?? 0
+          const amountOff: number = disc?.coupon?.amount_off ?? 0
+          const effectivePrice = Math.max(
+            0,
+            Math.round(catalogPrice * (1 - percentOff / 100)) - amountOff,
+          )
+
+          // MRR priority:
+          // 1. Latest paid invoice for this sub (real cash, all discounts already applied)
+          // 2. effectivePrice = catalog − active discount (what next invoice will charge)
+          // 3. null → omit from MRR
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const subInvoice = allInvoices.data.find(inv => (inv as any).subscription === u.stripeSubscriptionId)
           const latestPaid = subInvoice?.amount_paid ?? 0
-          const catalogPrice = sub.items.data[0]?.price?.unit_amount ?? 0
-          const mrr = latestPaid > 0 ? latestPaid : catalogPrice > 0 ? catalogPrice : null
+          const mrr = latestPaid > 0 ? latestPaid : effectivePrice > 0 ? effectivePrice : null
 
           if (mrr !== null) {
             stripeMrrByUser[u.id] = invoiceMrrCents(mrr, interval)
