@@ -1,6 +1,6 @@
 import { db } from '@/lib/db'
-import { users, userSites, subscriptionEvents } from '@/lib/db/schema'
-import { desc, inArray, gt, sum } from 'drizzle-orm'
+import { users, userSites } from '@/lib/db/schema'
+import { desc, inArray } from 'drizzle-orm'
 import { PLANS } from '@/lib/plans'
 import { getStripe } from '@/lib/stripe/client'
 import type { PlanKey, BillingInterval } from '@/lib/plans'
@@ -19,17 +19,12 @@ function mrrCentsFallback(plan: string, interval: string): number {
   return p.monthly_eur * 100
 }
 
-/**
- * Calculate true MRR from a Stripe invoice (most recent paid invoice = ground truth).
- * Handles one-time coupons, promotional codes, and customer/subscription discounts
- * because it uses the actual charged amount, not the catalog price.
- */
-function invoiceMrrCents(amountPaid: number, interval: 'month' | 'year' | string): number {
+function invoiceMrrCents(amountPaid: number, interval: string): number {
   return interval === 'year' ? Math.round(amountPaid / 12) : amountPaid
 }
 
 export default async function AdminUsersPage() {
-  const [allUsers, allSites, revenueTotals] = await Promise.all([
+  const [allUsers, allSites] = await Promise.all([
     db
       .select({
         id: users.id,
@@ -40,6 +35,7 @@ export default async function AdminUsersPage() {
         subscriptionStatus: users.subscriptionStatus,
         currentPeriodEnd: users.currentPeriodEnd,
         createdAt: users.createdAt,
+        stripeCustomerId: users.stripeCustomerId,
         stripeSubscriptionId: users.stripeSubscriptionId,
         emailVerified: users.emailVerified,
       })
@@ -47,76 +43,58 @@ export default async function AdminUsersPage() {
       .orderBy(desc(users.createdAt)),
 
     db
-      .select({
-        userId: userSites.userId,
-        status: userSites.status,
-      })
+      .select({ userId: userSites.userId, status: userSites.status })
       .from(userSites)
       .where(inArray(userSites.status, ['draft', 'published'])),
-
-    // Sum all recorded payment amounts per user from subscription events
-    db
-      .select({
-        userId: subscriptionEvents.userId,
-        totalCents: sum(subscriptionEvents.amountCents),
-      })
-      .from(subscriptionEvents)
-      .where(gt(subscriptionEvents.amountCents, 0))
-      .groupBy(subscriptionEvents.userId),
   ])
 
-  // Fetch true MRR from the most recent paid Stripe invoice (ground truth — reflects
-  // all discounts including one-time promo codes, even after subscription.discount expires).
-  // We store results as `number | null`:
-  //   number  = Stripe returned an invoice → use it (even if 0 = 100% discounted)
-  //   null    = Stripe call failed / no invoice → use plan-price fallback
-  const activeWithStripe = allUsers.filter(
-    u => u.subscriptionStatus === 'active' && u.stripeSubscriptionId
-  )
-  const stripeMrrByUser: Record<string, number | null> = {}
+  // Single Stripe pass per customer — fetches both revenue AND MRR/subscription data.
+  // Stripe is the single source of truth; the local subscriptionEvents table is NOT used
+  // because it has been found to contain data that does not match actual Stripe invoices.
+  const stripeMrrByUser: Record<string, number> = {}
+  const stripeRevenueByUser: Record<string, number> = {}
   const cancelAtPeriodEndByUser: Record<string, boolean> = {}
-  if (activeWithStripe.length > 0) {
+
+  const usersWithStripe = allUsers.filter(u => u.stripeCustomerId)
+  if (usersWithStripe.length > 0) {
     const stripe = getStripe()
-    const results = await Promise.allSettled(
-      activeWithStripe.map(async u => {
-        // Fetch the subscription (for billing interval + cancel_at_period_end) + latest paid invoice in parallel
-        const [sub, invoices] = await Promise.all([
-          stripe.subscriptions.retrieve(u.stripeSubscriptionId!),
-          stripe.invoices.list({
-            subscription: u.stripeSubscriptionId!,
-            limit: 1,
-            status: 'paid',
-          }),
+    await Promise.allSettled(
+      usersWithStripe.map(async u => {
+        const isActive = u.subscriptionStatus === 'active' && u.stripeSubscriptionId
+
+        // Fetch ALL paid invoices for this customer (revenue ground truth) and,
+        // for active subscribers, also the subscription object for MRR + cancellation.
+        const [allInvoices, sub] = await Promise.all([
+          stripe.invoices.list({ customer: u.stripeCustomerId!, status: 'paid', limit: 100 }),
+          isActive
+            ? stripe.subscriptions.retrieve(u.stripeSubscriptionId!)
+            : Promise.resolve(null),
         ])
-        const interval = sub.items.data[0]?.price?.recurring?.interval ?? 'month'
 
-        // Best MRR source: latest paid invoice amount (actual cash received, includes discounts).
-        // If 0 (proration credits, setup invoice, or 100 % coupon) we fall back to
-        // the Stripe catalog price so the admin at least sees the list price.
-        // Callers that want "real cash MRR" can exclude users where amountPaid is
-        // based on the price (identified by stripePriceAmount below).
-        const latestInvoiceAmount = invoices.data[0]?.amount_paid ?? 0
-        const stripePriceAmount = sub.items.data[0]?.price?.unit_amount ?? 0
-        const amountPaid = latestInvoiceAmount > 0
-          ? latestInvoiceAmount
-          : stripePriceAmount > 0 ? stripePriceAmount : null
+        // Real total revenue = cash actually received (all time, all subscriptions)
+        stripeRevenueByUser[u.id] = allInvoices.data.reduce(
+          (s, inv) => s + (inv.amount_paid > 0 ? inv.amount_paid : 0),
+          0,
+        )
 
-        return { userId: u.id, amountPaid, interval, cancelAtPeriodEnd: sub.cancel_at_period_end }
+        if (isActive && sub) {
+          cancelAtPeriodEndByUser[u.id] = sub.cancel_at_period_end
+          const interval = sub.items.data[0]?.price?.recurring?.interval ?? 'month'
+
+          // MRR: prefer the latest paid invoice for this subscription.
+          // If 0 (first-month-free promo), fall back to the Stripe catalog price —
+          // that IS what will be charged at next renewal (no active discount remaining).
+          const subInvoice = allInvoices.data.find(inv => inv.subscription === u.stripeSubscriptionId)
+          const latestPaid = subInvoice?.amount_paid ?? 0
+          const catalogPrice = sub.items.data[0]?.price?.unit_amount ?? 0
+          const mrr = latestPaid > 0 ? latestPaid : catalogPrice > 0 ? catalogPrice : null
+
+          if (mrr !== null) {
+            stripeMrrByUser[u.id] = invoiceMrrCents(mrr, interval)
+          }
+        }
       })
     )
-    results.forEach(result => {
-      if (result.status === 'fulfilled') {
-        if (result.value.amountPaid !== null) {
-          stripeMrrByUser[result.value.userId] = invoiceMrrCents(
-            result.value.amountPaid,
-            result.value.interval,
-          )
-        }
-        cancelAtPeriodEndByUser[result.value.userId] = result.value.cancelAtPeriodEnd
-      } else {
-        console.error('[admin/users] Stripe MRR fetch failed:', result.reason?.message ?? result.reason)
-      }
-    })
   }
 
   // Published site count per user
@@ -125,12 +103,6 @@ export default async function AdminUsersPage() {
     if (site.status === 'published') {
       siteCountByUser[site.userId] = (siteCountByUser[site.userId] ?? 0) + 1
     }
-  }
-
-  // Revenue total per user
-  const revenueByUser: Record<string, number> = {}
-  for (const r of revenueTotals) {
-    revenueByUser[r.userId] = Number(r.totalCents ?? 0)
   }
 
   const rows: UserRow[] = allUsers.map(u => ({
@@ -144,10 +116,10 @@ export default async function AdminUsersPage() {
     cancelAtPeriodEnd: cancelAtPeriodEndByUser[u.id] ?? false,
     createdAt: u.createdAt,
     siteCount: siteCountByUser[u.id] ?? 0,
-    totalRevenueCents: revenueByUser[u.id] ?? 0,
-    // Only count MRR for truly active subscriptions that will renew.
-    // Exclude cancel_at_period_end = true: those are churning, not recurring revenue.
-    mrrCents: u.subscriptionStatus === 'active' && !(cancelAtPeriodEndByUser[u.id])
+    // Real cash received — direct from Stripe, not from the local events journal
+    totalRevenueCents: stripeRevenueByUser[u.id] ?? 0,
+    // MRR only for subscriptions that will actually renew (cancel_at_period_end excluded)
+    mrrCents: u.subscriptionStatus === 'active' && !cancelAtPeriodEndByUser[u.id]
       ? (stripeMrrByUser[u.id] ?? mrrCentsFallback(u.plan, u.billingInterval))
       : 0,
     emailVerified: u.emailVerified,
@@ -158,7 +130,7 @@ export default async function AdminUsersPage() {
       <div className="mb-6">
         <h1 className="text-2xl font-semibold text-gray-900 tracking-tight">Nutzer</h1>
         <p className="text-sm mt-1" style={{ color: '#94A3B8' }}>
-          Tarif, Status und Umsatz auf einen Blick
+          Tarif, Status und Umsatz auf einen Blick · Alle Zahlen direkt aus Stripe
         </p>
       </div>
 
