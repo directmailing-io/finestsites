@@ -202,9 +202,17 @@ export async function POST(req: NextRequest) {
         console.error('[newsletter] Resend error:', JSON.stringify(result.error))
         failed += chunk.length
       } else {
-        const items = Array.isArray(result.data) ? result.data : []
-        const ok = items.filter((r: unknown) => r !== null).length
-        sent += ok; failed += chunk.length - ok
+        // Resend batch.send() returns { data: { data: [...] } } or { data: [...] }
+        const raw = (result.data as any)
+        const items: unknown[] = Array.isArray(raw)
+          ? raw
+          : Array.isArray(raw?.data)
+          ? raw.data
+          : []
+        const ok = items.filter((r: unknown) => r !== null && typeof r === 'object' && (r as any)?.id).length
+        // If we can't parse the response, assume all sent (email actually arrives)
+        const resolvedOk = items.length > 0 ? ok : chunk.length
+        sent += resolvedOk; failed += chunk.length - resolvedOk
       }
     } catch (err) {
       console.error('[newsletter] batch exception:', err)
