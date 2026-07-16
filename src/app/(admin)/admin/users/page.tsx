@@ -89,7 +89,11 @@ export default async function AdminUsersPage() {
           }),
         ])
         const interval = sub.items.data[0]?.price?.recurring?.interval ?? 'month'
-        const amountPaid = invoices.data.length > 0 ? (invoices.data[0].amount_paid ?? 0) : null
+        // Only use invoice amount when it's actually > 0.
+        // A $0 invoice can appear after e.g. tax-rate updates or proration credits —
+        // those should NOT reset MRR to 0. Fall back to plan-price in that case.
+        const latestInvoiceAmount = invoices.data[0]?.amount_paid ?? 0
+        const amountPaid = latestInvoiceAmount > 0 ? latestInvoiceAmount : null
         return { userId: u.id, amountPaid, interval, cancelAtPeriodEnd: sub.cancel_at_period_end }
       })
     )

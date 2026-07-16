@@ -9,7 +9,10 @@ interface UserProfile {
   email: string
   username: string | null
   plan: string
+  billingInterval: string | null
   subscriptionStatus: string | null
+  currentPeriodEnd: string | null
+  cancelAtPeriodEnd: boolean
   createdAt: string
   stripeCustomerId: string | null
   stripeSubscriptionId: string | null
@@ -240,10 +243,10 @@ export default function AdminUserDetailPage({ params }: { params: Promise<{ id: 
                 </p>
               )}
             </div>
-            <div className="flex items-center gap-2 flex-shrink-0">
+            <div className="flex items-center gap-2 flex-shrink-0 flex-wrap justify-end">
               <span className="text-xs font-medium px-2.5 py-1 rounded-full"
                 style={{ background: planColor.bg, color: planColor.text }}>
-                {profile.plan}
+                {profile.plan}{profile.billingInterval ? ` · ${profile.billingInterval === 'yearly' ? 'Jährlich' : 'Monatlich'}` : ''}
               </span>
               {!profile.stripeCustomerId && profile.plan !== 'starter' && (
                 <span className="text-xs px-2.5 py-1 rounded-full"
@@ -251,13 +254,19 @@ export default function AdminUserDetailPage({ params }: { params: Promise<{ id: 
                   Manuell gesetzt
                 </span>
               )}
-              {profile.subscriptionStatus && (
+              {profile.subscriptionStatus && !profile.cancelAtPeriodEnd && (
                 <span className="text-xs px-2.5 py-1 rounded-full"
                   style={{
                     background: profile.subscriptionStatus === 'active' ? '#F0FDF4' : '#FEF2F2',
                     color: profile.subscriptionStatus === 'active' ? '#16A34A' : '#DC2626',
                   }}>
                   {STATUS_LABELS[profile.subscriptionStatus] ?? profile.subscriptionStatus}
+                </span>
+              )}
+              {profile.cancelAtPeriodEnd && (
+                <span className="text-xs font-semibold px-2.5 py-1 rounded-full"
+                  style={{ background: '#FFF7ED', color: '#C2410C', border: '1px solid #FED7AA' }}>
+                  Kündigt{profile.currentPeriodEnd ? ` zum ${new Date(profile.currentPeriodEnd).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' })}` : ''}
                 </span>
               )}
             </div>
@@ -267,10 +276,48 @@ export default function AdminUserDetailPage({ params }: { params: Promise<{ id: 
               <p className="text-xs font-medium mb-0.5" style={{ color: 'var(--muted-foreground)' }}>Registriert</p>
               <p className="text-sm text-gray-900">{new Date(profile.createdAt).toLocaleDateString('de-DE', { day: '2-digit', month: 'long', year: 'numeric' })}</p>
             </div>
+            {profile.currentPeriodEnd && profile.subscriptionStatus && (
+              <div>
+                <p className="text-xs font-medium mb-0.5" style={{ color: 'var(--muted-foreground)' }}>
+                  {profile.cancelAtPeriodEnd ? 'Zugang bis' : 'Nächste Verlängerung'}
+                </p>
+                <p className="text-sm font-medium" style={{ color: profile.cancelAtPeriodEnd ? '#C2410C' : '#374151' }}>
+                  {new Date(profile.currentPeriodEnd).toLocaleDateString('de-DE', { day: '2-digit', month: 'long', year: 'numeric' })}
+                </p>
+              </div>
+            )}
             {profile.stripeCustomerId && (
               <div>
-                <p className="text-xs font-medium mb-0.5" style={{ color: 'var(--muted-foreground)' }}>Stripe-ID</p>
-                <p className="text-sm font-mono text-gray-700">{profile.stripeCustomerId}</p>
+                <p className="text-xs font-medium mb-0.5" style={{ color: 'var(--muted-foreground)' }}>Stripe-Kunde</p>
+                <a
+                  href={`https://dashboard.stripe.com/customers/${profile.stripeCustomerId}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm font-mono flex items-center gap-1 hover:underline"
+                  style={{ color: '#6D28D9' }}
+                >
+                  {profile.stripeCustomerId}
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
+                  </svg>
+                </a>
+              </div>
+            )}
+            {profile.stripeSubscriptionId && (
+              <div>
+                <p className="text-xs font-medium mb-0.5" style={{ color: 'var(--muted-foreground)' }}>Stripe-Abo</p>
+                <a
+                  href={`https://dashboard.stripe.com/subscriptions/${profile.stripeSubscriptionId}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm font-mono flex items-center gap-1 hover:underline"
+                  style={{ color: '#6D28D9' }}
+                >
+                  {profile.stripeSubscriptionId}
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
+                  </svg>
+                </a>
               </div>
             )}
           </div>
