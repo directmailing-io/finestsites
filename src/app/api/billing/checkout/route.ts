@@ -123,14 +123,10 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // Stripe Tax: enabled when STRIPE_AUTOMATIC_TAX=1 in env.
-    // Requires:
-    //  - Stripe Tax activated in Dashboard (Settings → Tax)
-    //  - Origin address set
-    //  - Prices have tax_behavior set (we use 'inclusive')
-    //  - Product has tax_code set
-    //  - Customer has billing address (we collect it below)
-    const automaticTaxEnabled = process.env.STRIPE_AUTOMATIC_TAX === '1'
+    // MwSt.: inclusive 19% tax rate applied to all subscriptions.
+    // Prices are stored gross (inkl. MwSt.), the tax rate makes Stripe
+    // break out the MwSt. amount on every invoice automatically.
+    const MWST_TAX_RATE = 'txr_1TtjFpGWVCygqvfcuF1utKUc' // 19% MwSt., inclusive, DE
 
     const sessionParams: Stripe.Checkout.SessionCreateParams = {
       customer: customerId,
@@ -149,18 +145,15 @@ export async function POST(req: NextRequest) {
       success_url: successUrl,
       cancel_url: cancelUrl,
 
-      // Collect billing address — required for Stripe Tax and for proper invoices
+      // Collect billing address for proper invoices
       billing_address_collection: 'required',
-      // Sync address + name from checkout back to the customer object so
-      // future renewal invoices keep the same data
+      // Sync address + name from checkout back to the customer object
       customer_update: { address: 'auto', name: 'auto' },
-      // Allow B2B customers to enter their VAT ID (Stripe verifies it via VIES)
+      // Allow B2B customers to enter their VAT ID
       tax_id_collection: { enabled: true },
 
-      // Stripe Tax: opt-in via env flag (requires Stripe Tax activated in Dashboard)
-      ...(automaticTaxEnabled ? { automatic_tax: { enabled: true } } : {}),
-
       subscription_data: {
+        default_tax_rates: [MWST_TAX_RATE],
         metadata: {
           user_id: user.id,
           plan,
