@@ -97,7 +97,8 @@ export default function AdminUsersTable({ users }: { users: UserRow[] }) {
     return rows
   }, [users, search, planFilter, statusFilter, verifiedFilter, sortKey, sortDir])
 
-  const totalMrr       = users.filter(u => u.subscriptionStatus === 'active').reduce((s, u) => s + u.mrrCents, 0)
+  // Only sum users whose sub will actually renew (cancelAtPeriodEnd excluded in mrrCents already)
+  const totalMrr       = users.reduce((s, u) => s + u.mrrCents, 0)
   const totalRevenue   = users.reduce((s, u) => s + u.totalRevenueCents, 0)
   const activeCount    = users.filter(u => u.subscriptionStatus === 'active').length
   const unverifiedCount = users.filter(u => !u.emailVerified).length
