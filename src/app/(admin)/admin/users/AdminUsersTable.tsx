@@ -212,9 +212,11 @@ export default function AdminUsersTable({ users }: { users: UserRow[] }) {
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#CBD5E1" strokeWidth="2.5" className="flex-shrink-0"><path d="M9 18l6-6-6-6"/></svg>
               </div>
               <div className="flex items-center gap-2 flex-wrap">
-                <span className="text-xs font-semibold px-2.5 py-1 rounded-full" style={{ background: planMeta.bg, color: planMeta.text }}>
-                  {planMeta.label}{user.subscriptionStatus === 'active' ? (user.billingInterval === 'yearly' ? ' · jährl.' : ' · monatl.') : ''}
-                </span>
+                {['active', 'trialing', 'past_due', 'canceled'].includes(user.subscriptionStatus ?? '') && (
+                  <span className="text-xs font-semibold px-2.5 py-1 rounded-full" style={{ background: planMeta.bg, color: planMeta.text }}>
+                    {planMeta.label}{['active', 'trialing', 'past_due'].includes(user.subscriptionStatus ?? '') ? (user.billingInterval === 'yearly' ? ' · jährl.' : ' · monatl.') : ''}
+                  </span>
+                )}
                 {statusMeta && (
                   <span className="flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-full"
                     style={{ background: user.cancelAtPeriodEnd ? '#FFF7ED' : statusMeta.bg, color: user.cancelAtPeriodEnd ? '#C2410C' : statusMeta.text }}>
@@ -314,11 +316,15 @@ export default function AdminUsersTable({ users }: { users: UserRow[] }) {
 
               {/* Plan */}
               <span className="flex flex-col gap-0.5">
-                <span className="text-xs font-semibold px-2.5 py-1 rounded-full inline-block w-fit"
-                  style={{ background: planMeta.bg, color: planMeta.text }}>
-                  {planMeta.label}
-                </span>
-                {user.subscriptionStatus === 'active' && (
+                {['active', 'trialing', 'past_due', 'canceled'].includes(user.subscriptionStatus ?? '') ? (
+                  <span className="text-xs font-semibold px-2.5 py-1 rounded-full inline-block w-fit"
+                    style={{ background: planMeta.bg, color: planMeta.text }}>
+                    {planMeta.label}
+                  </span>
+                ) : (
+                  <span className="text-xs" style={{ color: '#CBD5E1' }}>—</span>
+                )}
+                {['active', 'trialing', 'past_due'].includes(user.subscriptionStatus ?? '') && (
                   <span className="text-[11px] px-0.5" style={{ color: '#94A3B8' }}>
                     {user.billingInterval === 'yearly' ? 'Jährlich' : 'Monatlich'}
                   </span>
