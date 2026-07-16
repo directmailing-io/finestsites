@@ -28,12 +28,16 @@ export interface UserRow {
   cancelAtPeriodEnd: boolean
   createdAt: Date
   siteCount: number
+  /** Monthly catalog price from Stripe (no discounts). 0 = no active subscription. */
+  planPriceCents: number
+  /** Total cash actually received from this customer across all time. */
   totalRevenueCents: number
-  mrrCents: number
+  /** Promo code used at checkout (e.g. "ADMIN100"), or null. */
+  activePromoCode: string | null
   emailVerified: boolean
 }
 
-type SortKey = 'email' | 'createdAt' | 'mrr' | 'revenue' | 'plan' | 'status'
+type SortKey = 'email' | 'createdAt' | 'planPrice' | 'revenue' | 'plan' | 'status'
 type SortDir = 'asc' | 'desc'
 
 function fmtEur(cents: number): string {
@@ -88,7 +92,7 @@ export default function AdminUsersTable({ users }: { users: UserRow[] }) {
       let v = 0
       if (sortKey === 'email')     v = a.email.localeCompare(b.email)
       if (sortKey === 'createdAt') v = new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-      if (sortKey === 'mrr')       v = a.mrrCents - b.mrrCents
+      if (sortKey === 'planPrice') v = a.planPriceCents - b.planPriceCents
       if (sortKey === 'revenue')   v = a.totalRevenueCents - b.totalRevenueCents
       if (sortKey === 'plan')      v = a.plan.localeCompare(b.plan)
       if (sortKey === 'status')    v = (a.subscriptionStatus ?? '').localeCompare(b.subscriptionStatus ?? '')
@@ -97,10 +101,11 @@ export default function AdminUsersTable({ users }: { users: UserRow[] }) {
     return rows
   }, [users, search, planFilter, statusFilter, verifiedFilter, sortKey, sortDir])
 
-  // Only sum users whose sub will actually renew (cancelAtPeriodEnd excluded in mrrCents already)
-  const totalMrr       = users.reduce((s, u) => s + u.mrrCents, 0)
-  const totalRevenue   = users.reduce((s, u) => s + u.totalRevenueCents, 0)
-  const activeCount    = users.filter(u => u.subscriptionStatus === 'active').length
+  // Sum of catalog prices for all active subs = what they'd pay without discounts
+  const totalPlanValue  = users.filter(u => u.subscriptionStatus === 'active' && !u.cancelAtPeriodEnd)
+                               .reduce((s, u) => s + u.planPriceCents, 0)
+  const totalRevenue    = users.reduce((s, u) => s + u.totalRevenueCents, 0)
+  const activeCount     = users.filter(u => u.subscriptionStatus === 'active').length
   const unverifiedCount = users.filter(u => !u.emailVerified).length
 
   const thStyle = (key: SortKey): React.CSSProperties => ({
@@ -113,11 +118,11 @@ export default function AdminUsersTable({ users }: { users: UserRow[] }) {
       {/* ── KPI strip ── */}
       <div style={{ display: 'flex', gap: 12, marginBottom: 20, flexWrap: 'wrap' }}>
         {[
-          { label: 'Registriert',  value: String(users.length) },
-          { label: 'Aktive Abos', value: String(activeCount) },
-          { label: 'MRR gesamt',  value: fmtEur(totalMrr) },
-          { label: 'Gesamtumsatz', value: fmtEur(totalRevenue) },
-          { label: 'Unbestätigt', value: String(unverifiedCount) },
+          { label: 'Registriert',    value: String(users.length) },
+          { label: 'Aktive Abos',    value: String(activeCount) },
+          { label: 'Eingenommen',    value: fmtEur(totalRevenue),   note: 'Gesamtumsatz' },
+          { label: 'Abo-Wert/Mon',   value: fmtEur(totalPlanValue), note: 'Katalogpreis, ohne Rabatt' },
+          { label: 'Unbestätigt',    value: String(unverifiedCount) },
         ].map(kpi => (
           <div key={kpi.label} style={{
             flex: '1 1 130px', background: '#fff', borderRadius: 14, padding: '14px 18px',
@@ -125,13 +130,13 @@ export default function AdminUsersTable({ users }: { users: UserRow[] }) {
           }}>
             <div style={{ fontSize: 11, color: '#94A3B8', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4 }}>{kpi.label}</div>
             <div style={{ fontSize: 20, fontWeight: 700, color: '#111827', letterSpacing: '-0.02em' }}>{kpi.value}</div>
+            {kpi.note && <div style={{ fontSize: 10, color: '#CBD5E1', marginTop: 2 }}>{kpi.note}</div>}
           </div>
         ))}
       </div>
 
       {/* ── Filters / Search ── */}
       <div style={{ display: 'flex', gap: 10, marginBottom: 16, flexWrap: 'wrap', alignItems: 'center' }}>
-        {/* Search */}
         <div style={{ position: 'relative', flex: '1 1 220px', minWidth: 180 }}>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" strokeWidth="2"
             style={{ position: 'absolute', left: 11, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }}>
@@ -156,7 +161,6 @@ export default function AdminUsersTable({ users }: { users: UserRow[] }) {
           )}
         </div>
 
-        {/* Plan filter */}
         <select value={planFilter} onChange={e => setPlanFilter(e.target.value)}
           style={{ height: 36, borderRadius: 10, border: '1px solid #E2E8F0', fontSize: 13, padding: '0 10px', background: '#fff', color: '#374151', cursor: 'pointer' }}>
           <option value="all">Alle Tarife</option>
@@ -166,7 +170,6 @@ export default function AdminUsersTable({ users }: { users: UserRow[] }) {
           <option value="secret">Secret</option>
         </select>
 
-        {/* Status filter */}
         <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)}
           style={{ height: 36, borderRadius: 10, border: '1px solid #E2E8F0', fontSize: 13, padding: '0 10px', background: '#fff', color: '#374151', cursor: 'pointer' }}>
           <option value="all">Alle Status</option>
@@ -177,7 +180,6 @@ export default function AdminUsersTable({ users }: { users: UserRow[] }) {
           <option value="none">Kein Abo</option>
         </select>
 
-        {/* Email verification filter */}
         <select value={verifiedFilter} onChange={e => setVerifiedFilter(e.target.value as 'all' | 'verified' | 'unverified')}
           style={{ height: 36, borderRadius: 10, border: '1px solid #E2E8F0', fontSize: 13, padding: '0 10px', background: '#fff', color: '#374151', cursor: 'pointer' }}>
           <option value="all">Alle E-Mails</option>
@@ -235,13 +237,18 @@ export default function AdminUsersTable({ users }: { users: UserRow[] }) {
                     E-Mail unbestätigt
                   </span>
                 )}
-                {user.mrrCents > 0 && (
-                  <span className="text-xs font-semibold px-2 py-1 rounded-full" style={{ background: '#F0FDF4', color: '#16A34A' }}>
-                    {fmtEur(user.mrrCents)}/Mo
+                {user.planPriceCents > 0 && (
+                  <span className="text-xs font-semibold px-2 py-1 rounded-full" style={{ background: '#F8FAFC', color: '#374151' }}>
+                    {fmtEur(user.planPriceCents)}/Mo
+                  </span>
+                )}
+                {user.activePromoCode && (
+                  <span className="text-xs font-mono px-2 py-0.5 rounded" style={{ background: '#FFF7ED', color: '#C2410C' }}>
+                    {user.activePromoCode}
                   </span>
                 )}
                 {user.totalRevenueCents > 0 && (
-                  <span className="text-xs" style={{ color: '#6B7280' }}>Σ {fmtEur(user.totalRevenueCents)}</span>
+                  <span className="text-xs" style={{ color: '#16A34A', fontWeight: 600 }}>Σ {fmtEur(user.totalRevenueCents)}</span>
                 )}
                 <span className="ml-auto text-xs tabular-nums" style={{ color: '#CBD5E1' }}>{dateStr}</span>
               </div>
@@ -258,7 +265,7 @@ export default function AdminUsersTable({ users }: { users: UserRow[] }) {
         style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04)', border: '1px solid #F1F5F9' }}>
 
         <div className="grid px-5 py-3 text-[11px] font-semibold uppercase tracking-wide"
-          style={{ gridTemplateColumns: '2fr 1fr 1fr 0.85fr 0.9fr 0.5fr 0.55fr 28px', background: '#F8FAFC', borderBottom: '1px solid #F1F5F9' }}>
+          style={{ gridTemplateColumns: '2fr 1fr 1fr 1fr 0.9fr 0.5fr 0.55fr 28px', background: '#F8FAFC', borderBottom: '1px solid #F1F5F9' }}>
           <span style={thStyle('email')} onClick={() => toggleSort('email')}>
             Nutzer <SortIcon active={sortKey === 'email'} dir={sortDir} />
           </span>
@@ -268,11 +275,11 @@ export default function AdminUsersTable({ users }: { users: UserRow[] }) {
           <span style={thStyle('status')} onClick={() => toggleSort('status')}>
             Status <SortIcon active={sortKey === 'status'} dir={sortDir} />
           </span>
-          <span style={thStyle('mrr')} onClick={() => toggleSort('mrr')}>
-            MRR <SortIcon active={sortKey === 'mrr'} dir={sortDir} />
+          <span style={thStyle('planPrice')} onClick={() => toggleSort('planPrice')}>
+            Planpreis <SortIcon active={sortKey === 'planPrice'} dir={sortDir} />
           </span>
           <span style={thStyle('revenue')} onClick={() => toggleSort('revenue')}>
-            Gesamtumsatz <SortIcon active={sortKey === 'revenue'} dir={sortDir} />
+            Eingenommen <SortIcon active={sortKey === 'revenue'} dir={sortDir} />
           </span>
           <span className="text-center" style={{ color: '#94A3B8' }}>Seiten</span>
           <span style={thStyle('createdAt')} onClick={() => toggleSort('createdAt')}>
@@ -288,7 +295,7 @@ export default function AdminUsersTable({ users }: { users: UserRow[] }) {
           return (
             <Link key={user.id} href={`/admin/users/${user.id}`}
               className="grid px-5 py-3.5 text-sm items-center transition-colors hover:bg-gray-50 group"
-              style={{ gridTemplateColumns: '2fr 1fr 1fr 0.85fr 0.9fr 0.5fr 0.55fr 28px', borderBottom: '1px solid #F8FAFC' }}>
+              style={{ gridTemplateColumns: '2fr 1fr 1fr 1fr 0.9fr 0.5fr 0.55fr 28px', borderBottom: '1px solid #F8FAFC' }}>
 
               {/* Email + avatar */}
               <span className="flex items-center gap-2.5 min-w-0">
@@ -356,13 +363,21 @@ export default function AdminUsersTable({ users }: { users: UserRow[] }) {
                 )}
               </span>
 
-              {/* MRR */}
-              <span className="tabular-nums text-sm font-semibold" style={{ color: user.mrrCents > 0 ? '#16A34A' : user.subscriptionStatus === 'active' ? '#94A3B8' : '#CBD5E1' }}>
-                {user.subscriptionStatus === 'active' && user.mrrCents === 0 ? '0 €' : fmtEur(user.mrrCents)}
+              {/* Planpreis + Promo Code */}
+              <span className="flex flex-col gap-0.5">
+                <span className="tabular-nums text-sm font-semibold" style={{ color: user.planPriceCents > 0 ? '#374151' : '#CBD5E1' }}>
+                  {user.planPriceCents > 0 ? `${fmtEur(user.planPriceCents)}/Mo` : '—'}
+                </span>
+                {user.activePromoCode && (
+                  <span className="text-[10px] font-mono px-1.5 py-0.5 rounded w-fit"
+                    style={{ background: '#FFF7ED', color: '#C2410C', border: '1px solid #FED7AA' }}>
+                    {user.activePromoCode}
+                  </span>
+                )}
               </span>
 
-              {/* Total Revenue */}
-              <span className="tabular-nums text-sm font-medium" style={{ color: user.totalRevenueCents > 0 ? '#374151' : '#CBD5E1' }}>
+              {/* Eingenommen (Gesamtumsatz) */}
+              <span className="tabular-nums text-sm font-semibold" style={{ color: user.totalRevenueCents > 0 ? '#16A34A' : '#CBD5E1' }}>
                 {fmtEur(user.totalRevenueCents)}
               </span>
 
