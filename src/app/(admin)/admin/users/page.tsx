@@ -38,6 +38,7 @@ export default async function AdminUsersPage() {
         plan: users.plan,
         billingInterval: users.billingInterval,
         subscriptionStatus: users.subscriptionStatus,
+        currentPeriodEnd: users.currentPeriodEnd,
         createdAt: users.createdAt,
         stripeSubscriptionId: users.stripeSubscriptionId,
         emailVerified: users.emailVerified,
@@ -73,11 +74,12 @@ export default async function AdminUsersPage() {
     u => u.subscriptionStatus === 'active' && u.stripeSubscriptionId
   )
   const stripeMrrByUser: Record<string, number | null> = {}
+  const cancelAtPeriodEndByUser: Record<string, boolean> = {}
   if (activeWithStripe.length > 0) {
     const stripe = getStripe()
     const results = await Promise.allSettled(
       activeWithStripe.map(async u => {
-        // Fetch the subscription (for billing interval) + latest paid invoice in parallel
+        // Fetch the subscription (for billing interval + cancel_at_period_end) + latest paid invoice in parallel
         const [sub, invoices] = await Promise.all([
           stripe.subscriptions.retrieve(u.stripeSubscriptionId!),
           stripe.invoices.list({
@@ -87,22 +89,19 @@ export default async function AdminUsersPage() {
           }),
         ])
         const interval = sub.items.data[0]?.price?.recurring?.interval ?? 'month'
-        // amount_paid can legitimately be 0 (100% coupon). Keep it as-is.
-        // Only return null when there is truly no invoice to read from.
         const amountPaid = invoices.data.length > 0 ? (invoices.data[0].amount_paid ?? 0) : null
-        return { userId: u.id, amountPaid, interval }
+        return { userId: u.id, amountPaid, interval, cancelAtPeriodEnd: sub.cancel_at_period_end }
       })
     )
     results.forEach(result => {
       if (result.status === 'fulfilled') {
-        // null means "no invoice found" → leave entry absent so fallback applies
-        // number (including 0) means "Stripe told us exactly this amount"
         if (result.value.amountPaid !== null) {
           stripeMrrByUser[result.value.userId] = invoiceMrrCents(
             result.value.amountPaid,
             result.value.interval,
           )
         }
+        cancelAtPeriodEndByUser[result.value.userId] = result.value.cancelAtPeriodEnd
       } else {
         console.error('[admin/users] Stripe MRR fetch failed:', result.reason?.message ?? result.reason)
       }
@@ -130,6 +129,8 @@ export default async function AdminUsersPage() {
     plan: u.plan,
     billingInterval: u.billingInterval as BillingInterval,
     subscriptionStatus: u.subscriptionStatus,
+    currentPeriodEnd: u.currentPeriodEnd,
+    cancelAtPeriodEnd: cancelAtPeriodEndByUser[u.id] ?? false,
     createdAt: u.createdAt,
     siteCount: siteCountByUser[u.id] ?? 0,
     totalRevenueCents: revenueByUser[u.id] ?? 0,

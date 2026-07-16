@@ -24,6 +24,8 @@ export interface UserRow {
   plan: string
   billingInterval: string
   subscriptionStatus: string | null
+  currentPeriodEnd: Date | null
+  cancelAtPeriodEnd: boolean
   createdAt: Date
   siteCount: number
   totalRevenueCents: number
@@ -37,6 +39,11 @@ type SortDir = 'asc' | 'desc'
 function fmtEur(cents: number): string {
   if (cents === 0) return '—'
   return (cents / 100).toLocaleString('de-DE', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 })
+}
+
+function fmtDate(d: Date | null | undefined): string {
+  if (!d) return ''
+  return new Date(d).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: '2-digit' })
 }
 
 function SortIcon({ active, dir }: { active: boolean; dir: SortDir }) {
@@ -206,13 +213,18 @@ export default function AdminUsersTable({ users }: { users: UserRow[] }) {
               </div>
               <div className="flex items-center gap-2 flex-wrap">
                 <span className="text-xs font-semibold px-2.5 py-1 rounded-full" style={{ background: planMeta.bg, color: planMeta.text }}>
-                  {planMeta.label}{user.billingInterval === 'yearly' ? ' · j' : ''}
+                  {planMeta.label}{user.subscriptionStatus === 'active' ? (user.billingInterval === 'yearly' ? ' · jährl.' : ' · monatl.') : ''}
                 </span>
                 {statusMeta && (
-                  <span className="flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-full" style={{ background: statusMeta.bg, color: statusMeta.text }}>
-                    <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: statusMeta.dot }} />
-                    {statusMeta.label}
+                  <span className="flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-full"
+                    style={{ background: user.cancelAtPeriodEnd ? '#FFF7ED' : statusMeta.bg, color: user.cancelAtPeriodEnd ? '#C2410C' : statusMeta.text }}>
+                    <span className="w-1.5 h-1.5 rounded-full flex-shrink-0"
+                      style={{ background: user.cancelAtPeriodEnd ? '#F97316' : statusMeta.dot }} />
+                    {user.cancelAtPeriodEnd ? `Kündigt ${user.currentPeriodEnd ? `bis ${fmtDate(user.currentPeriodEnd)}` : ''}` : statusMeta.label}
                   </span>
+                )}
+                {!user.cancelAtPeriodEnd && user.currentPeriodEnd && (user.subscriptionStatus === 'active' || user.subscriptionStatus === 'trialing') && (
+                  <span className="text-xs" style={{ color: '#94A3B8' }}>↻ {fmtDate(user.currentPeriodEnd)}</span>
                 )}
                 {!user.emailVerified && (
                   <span className="text-xs font-medium px-2 py-0.5 rounded-full"
@@ -301,24 +313,39 @@ export default function AdminUsersTable({ users }: { users: UserRow[] }) {
               </span>
 
               {/* Plan */}
-              <span>
-                <span className="text-xs font-semibold px-2.5 py-1 rounded-full inline-block"
+              <span className="flex flex-col gap-0.5">
+                <span className="text-xs font-semibold px-2.5 py-1 rounded-full inline-block w-fit"
                   style={{ background: planMeta.bg, color: planMeta.text }}>
                   {planMeta.label}
-                  {user.billingInterval === 'yearly' && <span style={{ opacity: 0.6 }}> · j</span>}
                 </span>
+                {user.subscriptionStatus === 'active' && (
+                  <span className="text-[11px] px-0.5" style={{ color: '#94A3B8' }}>
+                    {user.billingInterval === 'yearly' ? 'Jährlich' : 'Monatlich'}
+                  </span>
+                )}
               </span>
 
               {/* Status */}
-              <span>
+              <span className="flex flex-col gap-0.5">
                 {statusMeta ? (
                   <span className="flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full w-fit"
-                    style={{ background: statusMeta.bg, color: statusMeta.text }}>
-                    <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: statusMeta.dot }} />
-                    {statusMeta.label}
+                    style={{ background: user.cancelAtPeriodEnd ? '#FFF7ED' : statusMeta.bg, color: user.cancelAtPeriodEnd ? '#C2410C' : statusMeta.text }}>
+                    <span className="w-1.5 h-1.5 rounded-full flex-shrink-0"
+                      style={{ background: user.cancelAtPeriodEnd ? '#F97316' : statusMeta.dot }} />
+                    {user.cancelAtPeriodEnd ? 'Kündigt' : statusMeta.label}
                   </span>
                 ) : (
                   <span className="text-xs" style={{ color: '#CBD5E1' }}>—</span>
+                )}
+                {user.currentPeriodEnd && (user.subscriptionStatus === 'active' || user.subscriptionStatus === 'trialing') && (
+                  <span className="text-[11px] px-0.5" style={{ color: user.cancelAtPeriodEnd ? '#F97316' : '#94A3B8' }}>
+                    {user.cancelAtPeriodEnd ? `bis ${fmtDate(user.currentPeriodEnd)}` : `↻ ${fmtDate(user.currentPeriodEnd)}`}
+                  </span>
+                )}
+                {user.currentPeriodEnd && user.subscriptionStatus === 'canceled' && (
+                  <span className="text-[11px] px-0.5" style={{ color: '#CBD5E1' }}>
+                    abgel. {fmtDate(user.currentPeriodEnd)}
+                  </span>
                 )}
               </span>
 
