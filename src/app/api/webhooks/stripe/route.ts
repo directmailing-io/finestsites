@@ -257,6 +257,7 @@ export async function POST(req: NextRequest) {
         subscriptionStatus: sub.status,
         stripeSubscriptionId: sub.id,
         currentPeriodEnd: getPeriodEnd(sub),
+        cancelAtPeriodEnd: sub.cancel_at_period_end,
       }).where(eq(users.id, userId))
 
       // Send cancellation email when user schedules cancellation for end of period
@@ -317,6 +318,7 @@ export async function POST(req: NextRequest) {
         plan: 'starter',
         subscriptionStatus: 'canceled',
         stripeSubscriptionId: null,
+        cancelAtPeriodEnd: false,
         deactivatedAt: now,
       }).where(eq(users.id, userId))
 

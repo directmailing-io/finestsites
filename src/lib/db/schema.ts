@@ -82,6 +82,7 @@ export const users = pgTable('users', {
   stripeSubscriptionId: text('stripe_subscription_id').unique(),
   subscriptionStatus: text('subscription_status'),
   currentPeriodEnd: timestamp('current_period_end', { withTimezone: true }),
+  cancelAtPeriodEnd: boolean('cancel_at_period_end').notNull().default(false),
   paymentFailedAt: timestamp('payment_failed_at', { withTimezone: true }),
   deactivatedAt: timestamp('deactivated_at', { withTimezone: true }),
   isAdmin: boolean('is_admin').notNull().default(false),

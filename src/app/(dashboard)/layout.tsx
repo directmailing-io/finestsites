@@ -8,6 +8,7 @@ import { MobileNav } from '@/components/dashboard/MobileNav'
 import { PlanQuotaProvider } from '@/components/dashboard/PlanQuotaContext'
 import SupportChat from '@/components/support/SupportChat'
 import ImpersonationBanner from '@/components/dashboard/ImpersonationBanner'
+import CancellationBanner from '@/components/dashboard/CancellationBanner'
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const [user, impersonation] = await Promise.all([getServerUser(), getImpersonationState()])
@@ -16,7 +17,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   const profile = await db.query.users.findFirst({
     where: eq(users.id, user.id),
-    columns: { username: true, subscriptionStatus: true },
+    columns: { username: true, subscriptionStatus: true, cancelAtPeriodEnd: true, currentPeriodEnd: true },
   })
 
   const ADMIN_EMAIL = 'info@daniel-kurzeja.de'
@@ -35,6 +36,13 @@ export default async function DashboardLayout({ children }: { children: React.Re
         <DashboardSidebar />
         <div className="flex-1 min-w-0 flex flex-col">
           {!impersonation && <ImpersonationBanner />}
+          {!impersonation && (
+            <CancellationBanner
+              subscriptionStatus={profile?.subscriptionStatus ?? null}
+              cancelAtPeriodEnd={profile?.cancelAtPeriodEnd ?? false}
+              currentPeriodEnd={profile?.currentPeriodEnd ?? null}
+            />
+          )}
           {impersonation && (
             <div style={{
               background: '#7C3AED',
