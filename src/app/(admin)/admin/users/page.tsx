@@ -95,8 +95,11 @@ export default async function AdminUsersPage() {
           const billedCents = Math.max(0, Math.round(catalogPrice * (1 - percentOff / 100)) - amountOff)
           stripeBilledPriceByUser[u.id] = monthlyEquiv(billedCents, interval)
 
-          // Promo code used at checkout — stored in subscription metadata by the webhook handler.
-          stripePromoByUser[u.id] = sub.metadata?.promo_code || null
+          // Promo code: prefer human-entered code from checkout metadata; fall back to coupon ID
+          // when a discount is active but no metadata was captured (e.g. applied via script).
+          const hasDiscount = billedCents < catalogPrice
+          stripePromoByUser[u.id] = sub.metadata?.promo_code
+            || (hasDiscount ? (coupon?.id ?? null) : null)
         }
       })
     )
