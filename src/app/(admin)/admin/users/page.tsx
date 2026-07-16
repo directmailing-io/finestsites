@@ -84,7 +84,8 @@ export default async function AdminUsersPage() {
           // MRR: prefer the latest paid invoice for this subscription.
           // If 0 (first-month-free promo), fall back to the Stripe catalog price —
           // that IS what will be charged at next renewal (no active discount remaining).
-          const subInvoice = allInvoices.data.find(inv => inv.subscription === u.stripeSubscriptionId)
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const subInvoice = allInvoices.data.find(inv => (inv as any).subscription === u.stripeSubscriptionId)
           const latestPaid = subInvoice?.amount_paid ?? 0
           const catalogPrice = sub.items.data[0]?.price?.unit_amount ?? 0
           const mrr = latestPaid > 0 ? latestPaid : catalogPrice > 0 ? catalogPrice : null
