@@ -57,10 +57,10 @@ export default async function AdminUsersPage() {
         const [allInvoices, sub] = await Promise.all([
           stripe.invoices.list({ customer: u.stripeCustomerId!, status: 'paid', limit: 100 }),
           isActive
-            // Expand discounts so we can read coupon details for the "Abgerechnet" column
+            // Stripe API 2024+: coupon lives at discounts[].source.coupon (not discounts[].coupon)
             ? stripe.subscriptions.retrieve(
                 u.stripeSubscriptionId!,
-                { expand: ['discounts', 'discounts.coupon'] } as Parameters<typeof stripe.subscriptions.retrieve>[1],
+                { expand: ['discounts.source.coupon'] } as Parameters<typeof stripe.subscriptions.retrieve>[1],
               )
             : Promise.resolve(null),
         ])
@@ -80,15 +80,18 @@ export default async function AdminUsersPage() {
           stripePlanPriceByUser[u.id] = monthlyEquiv(catalogPrice, interval)
 
           // Abgerechnet = what will actually be charged (catalog minus active permanent discount).
+          // Stripe API 2024+: coupon is at discounts[].source.coupon (not discounts[].coupon).
           // 'once' coupons are consumed after first invoice → next charge = full catalog price.
           // 'forever'/'repeating' coupons apply every cycle → reduce accordingly.
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const subAny = sub as any
           const disc = subAny.discounts?.[0] ?? subAny.discount ?? null
-          const couponDuration: string = disc?.coupon?.duration ?? 'once'
+          // New API: coupon at disc.source.coupon. Old/legacy API: disc.coupon.
+          const coupon = disc?.source?.coupon ?? disc?.coupon ?? null
+          const couponDuration: string = coupon?.duration ?? 'once'
           const applyDiscount = couponDuration === 'forever' || couponDuration === 'repeating'
-          const percentOff: number = applyDiscount ? (disc?.coupon?.percent_off ?? 0) : 0
-          const amountOff: number = applyDiscount ? (disc?.coupon?.amount_off ?? 0) : 0
+          const percentOff: number = applyDiscount ? (coupon?.percent_off ?? 0) : 0
+          const amountOff: number = applyDiscount ? (coupon?.amount_off ?? 0) : 0
           const billedCents = Math.max(0, Math.round(catalogPrice * (1 - percentOff / 100)) - amountOff)
           stripeBilledPriceByUser[u.id] = monthlyEquiv(billedCents, interval)
 
