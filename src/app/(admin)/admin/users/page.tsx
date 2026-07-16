@@ -82,30 +82,31 @@ export default async function AdminUsersPage() {
           const interval = sub.items.data[0]?.price?.recurring?.interval ?? 'month'
           const catalogPrice = sub.items.data[0]?.price?.unit_amount ?? 0
 
-          // Apply any ACTIVE discount still on the subscription.
-          // Permanent coupons (e.g. 20% forever) stay on sub.discount after the first invoice.
-          // One-time promos (first month free) are consumed and gone → 0 % applied here.
+          // Determine recurring price for MRR — coupon duration is critical:
+          // - 'once':      one-time promo (e.g. first month free). After it, full price resumes.
+          //                → ignore the discount for MRR; use catalogPrice from Stripe.
+          // - 'forever':   discount applies every cycle → reduce catalogPrice accordingly.
+          // - 'repeating': applies for N months; treated like forever (conservative estimate).
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const disc = (sub as any).discount
-          const percentOff: number = disc?.coupon?.percent_off ?? 0
-          const amountOff: number = disc?.coupon?.amount_off ?? 0
+          const couponDuration: string = disc?.coupon?.duration ?? 'once'
+          const applyDiscount = couponDuration === 'forever' || couponDuration === 'repeating'
+          const percentOff: number = applyDiscount ? (disc?.coupon?.percent_off ?? 0) : 0
+          const amountOff: number = applyDiscount ? (disc?.coupon?.amount_off ?? 0) : 0
           const effectivePrice = Math.max(
             0,
             Math.round(catalogPrice * (1 - percentOff / 100)) - amountOff,
           )
 
-          // MRR priority:
-          // 1. Latest paid invoice for this sub (real cash, all discounts already applied)
-          // 2. effectivePrice = catalog − active discount (what next invoice will charge)
-          // 3. null → omit from MRR
+          // MRR: actual cash from last invoice if available; otherwise what next invoice charges.
+          // Always set stripeMrrByUser so we never fall through to the PLANS-constant fallback.
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const subInvoice = allInvoices.data.find(inv => (inv as any).subscription === u.stripeSubscriptionId)
           const latestPaid = subInvoice?.amount_paid ?? 0
-          const mrr = latestPaid > 0 ? latestPaid : effectivePrice > 0 ? effectivePrice : null
-
-          if (mrr !== null) {
-            stripeMrrByUser[u.id] = invoiceMrrCents(mrr, interval)
-          }
+          stripeMrrByUser[u.id] = invoiceMrrCents(
+            latestPaid > 0 ? latestPaid : effectivePrice,
+            interval,
+          )
         }
       })
     )
