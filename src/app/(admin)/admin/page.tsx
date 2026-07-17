@@ -349,7 +349,7 @@ export default async function AdminPage({
           return subEffectiveCents.get(u.stripeSubscriptionId)!
         }
         try {
-          const upcoming = await getStripe().invoices.retrieveUpcoming({ subscription: u.stripeSubscriptionId })
+          const upcoming = await getStripe().invoices.createPreview({ subscription: u.stripeSubscriptionId })
           return upcoming.amount_due ?? 0
         } catch {
           return (PLAN_FULL_PRICE[u.plan]?.[u.billingInterval ?? 'monthly'] ?? 0) * 100
