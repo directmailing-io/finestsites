@@ -8,16 +8,16 @@ import MonthSelector from './MonthSelector'
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
-// ── Plan-Preise (monatliches Äquivalent) ─────────────────────────────────────
+// ── Plan-Preise (aus plans.ts — Single Source of Truth) ──────────────────────
 const MRR_RATE: Record<string, Record<string, number>> = {
-  starter:   { monthly: 14,    yearly: 11.67 },
-  pro:       { monthly: 21,    yearly: 17.50 },
-  unlimited: { monthly: 39,    yearly: 32.50 },
+  starter:   { monthly: 21,    yearly: 17.50 },  // 210/12
+  pro:       { monthly: 27,    yearly: 22.50 },  // 270/12
+  unlimited: { monthly: 47,    yearly: 39.17 },  // 470/12
 }
 const PLAN_FULL_PRICE: Record<string, Record<string, number>> = {
-  starter:   { monthly: 14,   yearly: 140 },
-  pro:       { monthly: 21,   yearly: 210 },
-  unlimited: { monthly: 39,   yearly: 390 },
+  starter:   { monthly: 21,   yearly: 210 },
+  pro:       { monthly: 27,   yearly: 270 },
+  unlimited: { monthly: 47,   yearly: 470 },
 }
 const PLAN_META = {
   starter:   { label: 'Starter',   color: '#3B82F6', bg: '#EFF6FF', text: '#1D4ED8' },
@@ -248,6 +248,26 @@ export default async function AdminPage({
     for (const s of cancelling) mrrAtRisk += subIdToMrr.get(s.id) ?? 0
   } catch { /* Stripe unavailable */ }
 
+  // ── Stripe invoices: actual revenue (post-coupon, post-discount) ─────────
+  // Source of truth for "Eingegangen" figures — never uses planCents() fallback
+  const stripeRevByMonth = new Map<string, number>()
+  try {
+    const twelveMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 11, 1)
+    const invoices = await getStripe().invoices.list({
+      status: 'paid',
+      created: { gte: Math.floor(twelveMonthsAgo.getTime() / 1000) },
+      limit: 100,
+    })
+    for (const inv of invoices.data) {
+      const paidTs = (inv as any).status_transitions?.paid_at ?? inv.created
+      const d = new Date(paidTs * 1000)
+      const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
+      stripeRevByMonth.set(key, (stripeRevByMonth.get(key) ?? 0) + (inv.amount_paid ?? 0))
+    }
+  } catch { /* Stripe unavailable — fall back to DB data below */ }
+
+  const useStripeRev = stripeRevByMonth.size > 0
+
   // ── Plan breakdown ───────────────────────────────────────────────────────
   const planCounts: Record<string, number> = {}
   for (const u of activeUsersRaw) {
@@ -260,7 +280,10 @@ export default async function AdminPage({
   // ── Current month calcs ──────────────────────────────────────────────────
   const curNewSubs    = curMonthEvents.filter(e => e.eventType === 'subscription_created').length
   const curRenewals   = curMonthEvents.filter(e => e.eventType === 'subscription_renewed').length
-  const curRevCents   = curMonthEvents.reduce((s, e) => s + (e.amountCents ?? 0), 0)
+  // Use Stripe-sourced revenue (actual amount_paid post-coupon); fall back to DB if Stripe unavailable
+  const curRevCents   = useStripeRev
+    ? (stripeRevByMonth.get(currentMonthKey) ?? 0)
+    : curMonthEvents.reduce((s, e) => s + (e.amountCents ?? 0), 0)
   const stillDueCents = dueThisMonth.reduce((s, u) => {
     return s + (PLAN_FULL_PRICE[u.plan]?.[u.billingInterval ?? 'monthly'] ?? 0) * 100
   }, 0)
@@ -271,13 +294,20 @@ export default async function AdminPage({
   // ── Selected month calcs ─────────────────────────────────────────────────
   const selNewSubs  = selMonthEvents.filter(e => e.eventType === 'subscription_created').length
   const selRenewals = selMonthEvents.filter(e => e.eventType === 'subscription_renewed').length
-  const selRevCents = selMonthEvents.reduce((s, e) => s + (e.amountCents ?? 0), 0)
+  // Stripe revenue for selected month (may fall back to DB for months > 12 months ago)
+  const selRevCents = useStripeRev
+    ? (stripeRevByMonth.get(selectedMonth) ?? selMonthEvents.reduce((s, e) => s + (e.amountCents ?? 0), 0))
+    : selMonthEvents.reduce((s, e) => s + (e.amountCents ?? 0), 0)
   const selCanceled = selMonthCanceled[0]?.total ?? 0
   const selChurnPct = activeSubsCount > 0 ? (selCanceled / activeSubsCount * 100).toFixed(1) : '0.0'
   const isCurrentMonth = selectedMonth === currentMonthKey
 
   // ── Year-to-date calcs ───────────────────────────────────────────────────
-  const ytdRevCents  = ytdEvents.reduce((s, e) => s + (e.amountCents ?? 0), 0)
+  const ytdRevCents = useStripeRev
+    ? Array.from(stripeRevByMonth.entries())
+        .filter(([k]) => k >= `${now.getFullYear()}-01`)
+        .reduce((s, [, v]) => s + v, 0)
+    : ytdEvents.reduce((s, e) => s + (e.amountCents ?? 0), 0)
   const ytdNewSubs   = ytdEvents.filter(e => e.eventType === 'subscription_created').length
   const ytdRenewals  = ytdEvents.filter(e => e.eventType === 'subscription_renewed').length
   const monthsElapsed = now.getMonth() + 1 // Jan = 1
@@ -292,10 +322,16 @@ export default async function AdminPage({
       cents: 0,
     }
   })
-  for (const e of historicalEvents) {
-    const k = (e.createdAt as Date).toISOString().slice(0, 7)
-    const m = chartMonths.find(m => m.key === k)
-    if (m) m.cents += e.amountCents ?? 0
+  if (useStripeRev) {
+    for (const m of chartMonths) {
+      m.cents = stripeRevByMonth.get(m.key) ?? 0
+    }
+  } else {
+    for (const e of historicalEvents) {
+      const k = (e.createdAt as Date).toISOString().slice(0, 7)
+      const m = chartMonths.find(m => m.key === k)
+      if (m) m.cents += e.amountCents ?? 0
+    }
   }
   const maxCents = Math.max(...chartMonths.map(m => m.cents), 1)
 
