@@ -1,6 +1,6 @@
 import { db } from '@/lib/db'
 import { emailLogs } from '@/lib/db/schema'
-import { desc, gte, and, sql } from 'drizzle-orm'
+import { desc, gte } from 'drizzle-orm'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
@@ -43,7 +43,7 @@ export default async function AdminEmailsPage() {
     db.select()
       .from(emailLogs)
       .orderBy(desc(emailLogs.sentAt))
-      .limit(200),
+      .limit(1000),
   ])
 
   const totalThisMonth = thisMonthLogs.length
@@ -132,7 +132,7 @@ export default async function AdminEmailsPage() {
       {/* Log table */}
       <div className="rounded-xl border" style={{ borderColor: '#E5E7EB', background: '#fff' }}>
         <div className="px-6 py-4 flex items-center justify-between" style={{ borderBottom: '1px solid #F3F4F6' }}>
-          <h2 className="text-sm font-semibold" style={{ color: '#1a1a1a' }}>Letzte 200 E-Mails</h2>
+          <h2 className="text-sm font-semibold" style={{ color: '#1a1a1a' }}>Letzte 1.000 E-Mails</h2>
         </div>
         {recentLogs.length === 0 ? (
           <div className="px-6 py-12 text-center text-sm" style={{ color: '#9CA3AF' }}>
