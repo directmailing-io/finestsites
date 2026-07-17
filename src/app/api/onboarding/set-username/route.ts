@@ -3,6 +3,8 @@ import { getUserFromRequest } from '@/lib/auth/server'
 import { db } from '@/lib/db'
 import { users } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
+import { getResend, FROM_EMAIL } from '@/lib/resend'
+import { welcomeEmail } from '@/lib/email/templates'
 
 function sanitize(val: string) {
   return val
@@ -54,6 +56,19 @@ export async function POST(req: NextRequest) {
 
   try {
     await db.update(users).set(updates).where(eq(users.id, user.id))
+
+    // Send welcome email (fire-and-forget — never block the response)
+    const emailTo = profile?.email ?? user.email ?? ''
+    if (emailTo) {
+      const firstName = updates.firstName ?? profile?.firstName ?? undefined
+      getResend().emails.send({
+        from: FROM_EMAIL,
+        to: emailTo,
+        subject: 'Willkommen bei FinestSites!',
+        html: welcomeEmail({ firstName }),
+      }).catch((e: Error) => console.error('[onboarding/set-username] welcome email error:', e.message))
+    }
+
     return NextResponse.json({ ok: true })
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : ''
