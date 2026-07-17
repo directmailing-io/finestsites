@@ -422,25 +422,16 @@ export function welcomeEmail({ firstName }: { firstName?: string }): string {
   const greeting = firstName ? `Hey ${firstName},` : 'Hey,'
   const dashboardUrl = `${APP_URL}/sites`
   return layout(`
-    <h1 style="margin:0 0 8px;font-size:22px;font-weight:700;color:${base.heading};letter-spacing:-0.02em;">
-      Willkommen bei FinestSites!
+    <h1 style="margin:0 0 20px;font-size:22px;font-weight:700;color:${base.heading};letter-spacing:-0.02em;">
+      ${greeting} herzlich Willkommen bei FinestSites.
     </h1>
-    <p style="margin:0 0 16px;font-size:15px;color:${base.body};line-height:1.65;">
-      ${greeting} schön, dass du da bist.
-    </p>
-    <p style="margin:0 0 16px;font-size:15px;color:${base.body};line-height:1.65;">
-      Dein Account ist fertig eingerichtet. Du kannst jetzt deine erste Website erstellen, mit deinem eigenen Template starten und sie in wenigen Minuten live schalten.
+    <p style="margin:0 0 20px;font-size:15px;color:${base.body};line-height:1.65;">
+      Dein Account ist freigeschaltet. Du kannst jetzt deine erste Website erstellen und sie in nur wenigen Minuten live schalten. Bei Fragen schreib uns jederzeit <a href="mailto:support@finestsites.de" style="color:${base.body};">support@finestsites.de</a>
     </p>
     <p style="margin:0 0 0;font-size:15px;color:${base.body};line-height:1.65;">
-      Keine technischen Kenntnisse nötig. Einfach loslegen.
-    </p>
-    ${button(dashboardUrl, 'Website erstellen')}
-    <p style="margin:28px 0 0;font-size:13px;color:${base.muted};line-height:1.6;">
-      Fragen? Schreib uns jederzeit: <a href="mailto:support@finestsites.de" style="color:${base.muted};">support@finestsites.de</a>
-    </p>
-    <p style="margin:16px 0 0;font-size:13px;color:${base.muted};line-height:1.6;">
       PS: Wer aus deinem Team sollte auch FinestSites nutzen?
     </p>
+    ${button(dashboardUrl, 'Website erstellen')}
   `)
 }
 
