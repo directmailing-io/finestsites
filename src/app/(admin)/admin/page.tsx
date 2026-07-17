@@ -1,6 +1,6 @@
 import { db } from '@/lib/db'
 import { users, userSites, templates, subscriptionEvents, affiliateCommissions } from '@/lib/db/schema'
-import { eq, gte, lte, gt, and, desc, count, sql, inArray } from 'drizzle-orm'
+import { eq, gte, lte, gt, and, desc, count, sql, inArray, isNotNull } from 'drizzle-orm'
 import { getStripe, getPlanByPriceId } from '@/lib/stripe/client'
 import Link from 'next/link'
 import MonthSelector from './MonthSelector'
@@ -109,12 +109,15 @@ export default async function AdminPage({
     // Last 12 months revenue (for mini chart)
     historicalEvents,
   ] = await Promise.all([
-    // Active users with plan+interval for MRR
+    // Active users with plan+interval for MRR (only real Stripe subscribers)
     db.select({
       plan: users.plan,
       billingInterval: users.billingInterval,
       stripeSubscriptionId: users.stripeSubscriptionId,
-    }).from(users).where(eq(users.subscriptionStatus, 'active')),
+    }).from(users).where(and(
+      eq(users.subscriptionStatus, 'active'),
+      isNotNull(users.stripeSubscriptionId)  // NUR echte Stripe-Subscriber
+    )),
 
     db.select({ total: count() }).from(userSites).where(eq(userSites.status, 'published')),
 
@@ -135,7 +138,7 @@ export default async function AdminPage({
     )),
 
     // Due this month (haven't renewed yet = period still in future but ends this month)
-    db.select({ plan: users.plan, billingInterval: users.billingInterval })
+    db.select({ plan: users.plan, billingInterval: users.billingInterval, stripeSubscriptionId: users.stripeSubscriptionId })
       .from(users).where(and(
         eq(users.subscriptionStatus, 'active'),
         gt(users.currentPeriodEnd, now),
@@ -241,30 +244,54 @@ export default async function AdminPage({
   const yearlyPct  = activeSubsCount > 0 ? Math.round(yearlyCount  / activeSubsCount * 100) : 0
 
   let pendingCancelCount = 0, mrrAtRisk = 0
-  // subId → effective cents (after any forever/repeating discount on the subscription)
   const subEffectiveCents = new Map<string, number>()
+  let actualMrr = 0
+
   try {
-    const subs = await getStripe().subscriptions.list({
-      status: 'active', limit: 100,
-      expand: ['data.discount.coupon'],
-    })
+    // Parallel: subscriptions + coupons holen
+    const [subs, couponsResult] = await Promise.all([
+      getStripe().subscriptions.list({ status: 'active', limit: 100, expand: ['data.discounts'] }),
+      getStripe().coupons.list({ limit: 100 }),
+    ])
+
+    // Coupon-Lookup-Map aufbauen (ID → percent_off, amount_off, duration)
+    const couponsMap = new Map<string, { percent_off: number | null; amount_off: number | null; duration: string }>()
+    for (const c of couponsResult.data) {
+      couponsMap.set(c.id, { percent_off: c.percent_off, amount_off: c.amount_off, duration: c.duration })
+    }
+
     const cancelling = subs.data.filter(s => s.cancel_at_period_end)
     pendingCancelCount = cancelling.length
     for (const s of cancelling) mrrAtRisk += subIdToMrr.get(s.id) ?? 0
 
-    // Build effective-amount map (base plan price minus any active discount)
+    // subEffectiveCents: Discount aus discounts[] Array lesen (flexible billing)
     for (const s of subs.data) {
       const priceId = s.items.data[0]?.price.id ?? ''
-      const planKey = (s.items.data[0]?.price.recurring?.interval === 'year' ? 'yearly' : 'monthly')
-      const plan = (getPlanByPriceId() as Record<string, string>)[priceId] ?? 'starter'
+      const planKey = s.items.data[0]?.price.recurring?.interval === 'year' ? 'yearly' : 'monthly'
+      const plan = getPlanByPriceId()[priceId] ?? 'starter'
       const fullCents = (PLAN_FULL_PRICE[plan]?.[planKey] ?? 0) * 100
-      const coupon = (s as any).discount?.coupon as { percent_off?: number; amount_off?: number; duration?: string } | undefined
+
+      // Flexible billing: discounts ist Array (nicht discount singular)
+      const discounts: any[] = (s as any).discounts ?? []
       let effective = fullCents
-      if (coupon && (coupon.duration === 'forever' || coupon.duration === 'repeating')) {
+      for (const d of discounts) {
+        // coupon ID steht in d.source.coupon (string) oder d.coupon.id (object)
+        const couponId: string | undefined =
+          typeof d?.source?.coupon === 'string' ? d.source.coupon
+          : typeof d?.coupon === 'string' ? d.coupon
+          : d?.coupon?.id
+        if (!couponId) continue
+        const coupon = couponsMap.get(couponId)
+        if (!coupon || (coupon.duration !== 'forever' && coupon.duration !== 'repeating')) continue
         if (coupon.percent_off) effective = Math.round(fullCents * (1 - coupon.percent_off / 100))
         else if (coupon.amount_off) effective = Math.max(0, fullCents - coupon.amount_off)
+        break
       }
       subEffectiveCents.set(s.id, effective)
+
+      // Actual MRR berechnen (monatliches Äquivalent nach Rabatten)
+      const interval = s.items.data[0]?.price.recurring?.interval
+      actualMrr += interval === 'year' ? effective / 12 / 100 : effective / 100
     }
   } catch { /* Stripe unavailable */ }
 
@@ -305,15 +332,34 @@ export default async function AdminPage({
     ? (stripeRevByMonth.get(currentMonthKey) ?? 0)
     : curMonthEvents.reduce((s, e) => s + (e.amountCents ?? 0), 0)
   const stillDueCents = dueThisMonth.reduce((s, u) => {
-    return s + (PLAN_FULL_PRICE[u.plan]?.[u.billingInterval ?? 'monthly'] ?? 0) * 100
-  }, 0)
-  const nextMonthRevCents = dueNextMonth.reduce((s, u) => {
-    // Use Stripe's effective amount (after lifetime/repeating discounts) if available
     if (u.stripeSubscriptionId && subEffectiveCents.has(u.stripeSubscriptionId)) {
       return s + subEffectiveCents.get(u.stripeSubscriptionId)!
     }
     return s + (PLAN_FULL_PRICE[u.plan]?.[u.billingInterval ?? 'monthly'] ?? 0) * 100
   }, 0)
+
+  let nextMonthRevCents = 0
+  try {
+    const upcomingAmounts = await Promise.all(
+      dueNextMonth.map(async u => {
+        if (!u.stripeSubscriptionId) {
+          return (PLAN_FULL_PRICE[u.plan]?.[u.billingInterval ?? 'monthly'] ?? 0) * 100
+        }
+        if (subEffectiveCents.has(u.stripeSubscriptionId)) {
+          return subEffectiveCents.get(u.stripeSubscriptionId)!
+        }
+        try {
+          const upcoming = await getStripe().invoices.retrieveUpcoming({ subscription: u.stripeSubscriptionId })
+          return upcoming.amount_due ?? 0
+        } catch {
+          return (PLAN_FULL_PRICE[u.plan]?.[u.billingInterval ?? 'monthly'] ?? 0) * 100
+        }
+      })
+    )
+    nextMonthRevCents = upcomingAmounts.reduce((s, a) => s + a, 0)
+  } catch {
+    nextMonthRevCents = dueNextMonth.reduce((s, u) => s + (PLAN_FULL_PRICE[u.plan]?.[u.billingInterval ?? 'monthly'] ?? 0) * 100, 0)
+  }
 
   // ── Selected month calcs ─────────────────────────────────────────────────
   const selNewSubs  = selMonthEvents.filter(e => e.eventType === 'subscription_created').length
@@ -418,12 +464,12 @@ export default async function AdminPage({
         <Link href="/admin/mrr" className="rounded-[20px] bg-white p-5 block hover:bg-gray-50 transition-colors" style={cardStyle}>
           <p className="text-[11px] font-medium uppercase tracking-wide mb-3" style={{ color: '#94A3B8' }}>MRR (nominell)</p>
           <p className="text-3xl font-bold text-gray-900 tracking-tight">€ {fmtEur(currentMrr)}</p>
-          <p className="text-xs mt-1.5" style={{ color: '#94A3B8' }}>
-            {mrrAtRisk > 0
-              ? <span style={{ color: '#F97316' }}>− € {fmtEur(mrrAtRisk)} gefährdet</span>
-              : `Proj. nächster Monat € ${fmtEur(currentMrr - mrrAtRisk)}`
-            }
+          <p className="text-xs mt-1" style={{ color: actualMrr < currentMrr * 0.99 ? '#F97316' : '#94A3B8' }}>
+            Effektiv: € {fmtEur(actualMrr)}{actualMrr === 0 && currentMrr > 0 ? ' (alle Rabatt-Nutzer)' : ''}
           </p>
+          {mrrAtRisk > 0 && (
+            <p className="text-xs mt-0.5" style={{ color: '#F97316' }}>− € {fmtEur(mrrAtRisk)} gefährdet</p>
+          )}
         </Link>
 
         {/* Billing Split */}

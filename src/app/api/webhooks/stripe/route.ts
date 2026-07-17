@@ -276,7 +276,7 @@ export async function POST(req: NextRequest) {
         eventType: 'subscription_updated',
         plan,
         billingInterval: interval,
-        amountCents: planCents(plan as PlanKey, interval as BillingInterval),
+        amountCents: 0,  // Not a payment event — no money exchanged
         stripeEventId: event.id,
         stripeSubscriptionId: sub.id,
         metadata: { cancel_at_period_end: sub.cancel_at_period_end },
