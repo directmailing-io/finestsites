@@ -423,8 +423,11 @@ export function welcomeEmail({ firstName }: { firstName?: string }): string {
   const dashboardUrl = `${APP_URL}/sites`
   return layout(`
     <h1 style="margin:0 0 20px;font-size:22px;font-weight:700;color:${base.heading};letter-spacing:-0.02em;">
-      ${greeting} herzlich Willkommen bei FinestSites.
+      Willkommen bei FinestSites!
     </h1>
+    <p style="margin:0 0 20px;font-size:15px;color:${base.body};line-height:1.65;">
+      ${greeting} herzlich Willkommen bei FinestSites.
+    </p>
     <p style="margin:0 0 20px;font-size:15px;color:${base.body};line-height:1.65;">
       Dein Account ist freigeschaltet. Du kannst jetzt deine erste Website erstellen und sie in nur wenigen Minuten live schalten. Bei Fragen schreib uns jederzeit <a href="mailto:support@finestsites.de" style="color:${base.body};">support@finestsites.de</a>
     </p>
