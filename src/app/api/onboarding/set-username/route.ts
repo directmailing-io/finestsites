@@ -3,7 +3,7 @@ import { getUserFromRequest } from '@/lib/auth/server'
 import { db } from '@/lib/db'
 import { users } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
-import { getResend, FROM_EMAIL } from '@/lib/resend'
+import { sendEmail } from '@/lib/resend'
 import { welcomeEmail } from '@/lib/email/templates'
 
 function sanitize(val: string) {
@@ -61,12 +61,7 @@ export async function POST(req: NextRequest) {
     const emailTo = profile?.email ?? user.email ?? ''
     if (emailTo) {
       const firstName = updates.firstName ?? profile?.firstName ?? undefined
-      getResend().emails.send({
-        from: FROM_EMAIL,
-        to: emailTo,
-        subject: 'Willkommen bei FinestSites!',
-        html: welcomeEmail({ firstName }),
-      }).catch((e: Error) => console.error('[onboarding/set-username] welcome email error:', e.message))
+      sendEmail({ to: emailTo, subject: 'Willkommen bei FinestSites!', html: welcomeEmail({ firstName }), type: 'welcome' }).catch(() => {})
     }
 
     return NextResponse.json({ ok: true })

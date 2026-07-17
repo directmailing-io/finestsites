@@ -4,7 +4,7 @@ import { db } from '@/lib/db'
 import { users, userSites, subscriptionEvents, affiliateCommissions } from '@/lib/db/schema'
 import { eq, and, inArray, isNull } from 'drizzle-orm'
 import { getStripe, getPlanByPriceId, planCents, type PlanKey, type BillingInterval } from '@/lib/stripe/client'
-import { getResend, FROM_EMAIL } from '@/lib/resend'
+import { sendEmail } from '@/lib/resend'
 import {
   affiliateNewReferralEmail,
   paymentFailedEmail,
@@ -226,15 +226,7 @@ export async function POST(req: NextRequest) {
           // Notify referrer by email (fire-and-forget)
           if (referrer.email) {
             const planLabel: Record<string, string> = { starter: 'Starter', pro: 'Pro', unlimited: 'Unlimited' }
-            getResend().emails.send({
-              from: FROM_EMAIL,
-              to: referrer.email,
-              subject: 'Neuer Partner über deinen Empfehlungslink – FinestSites',
-              html: affiliateNewReferralEmail({
-                refereeEmail: session.customer_email ?? session.customer_details?.email ?? '–',
-                planLabel: planLabel[plan] ?? plan,
-              }),
-            }).catch(err => console.error('[webhook] affiliate referral email error:', err))
+            sendEmail({ to: referrer.email, subject: 'Neuer Partner über deinen Empfehlungslink – FinestSites', html: affiliateNewReferralEmail({ refereeEmail: session.customer_email ?? session.customer_details?.email ?? '–', planLabel: planLabel[plan] ?? plan }), type: 'affiliate_referral' }).catch(() => {})
           }
         }
       }
@@ -275,12 +267,7 @@ export async function POST(req: NextRequest) {
           columns: { email: true },
         })
         if (userRow?.email) {
-          getResend().emails.send({
-            from: FROM_EMAIL,
-            to: userRow.email,
-            subject: 'Dein Abo wurde gekündigt',
-            html: accountCanceledEmail({ periodEnd: periodEndStr }),
-          }).catch(err => console.error('[webhook] cancellation email error:', err))
+          sendEmail({ to: userRow.email, subject: 'Dein Abo wurde gekündigt', html: accountCanceledEmail({ periodEnd: periodEndStr }), type: 'account_canceled' }).catch(() => {})
         }
       }
 
@@ -369,12 +356,7 @@ export async function POST(req: NextRequest) {
         const emailSubject = wasPaymentFailure
           ? 'Dein Konto wurde pausiert'
           : 'Dein Abo ist ausgelaufen'
-        getResend().emails.send({
-          from: FROM_EMAIL,
-          to: userRow.email,
-          subject: emailSubject,
-          html: emailHtml,
-        }).catch(err => console.error('[webhook] subscription_deleted email error:', err))
+        sendEmail({ to: userRow.email, subject: emailSubject, html: emailHtml, type: wasPaymentFailure ? 'account_deactivated' : 'account_expired' }).catch(() => {})
       }
 
       await logEvent({
@@ -409,12 +391,7 @@ export async function POST(req: NextRequest) {
       if (isFirstFailure && existing?.email) {
         const inv1 = invoice as any
         const invoiceUrl = inv1.hosted_invoice_url ?? undefined
-        getResend().emails.send({
-          from: FROM_EMAIL,
-          to: existing.email,
-          subject: 'Zahlung fehlgeschlagen – bitte jetzt klären',
-          html: paymentFailedEmail({ invoiceUrl }),
-        }).catch(err => console.error('[webhook] payment_failed email error:', err))
+        sendEmail({ to: existing.email, subject: 'Zahlung fehlgeschlagen – bitte jetzt klären', html: paymentFailedEmail({ invoiceUrl }), type: 'payment_failed' }).catch(() => {})
       }
 
       const inv1 = invoice as any
@@ -503,12 +480,7 @@ export async function POST(req: NextRequest) {
 
         // Send reactivation email
         if (userBefore?.email) {
-          getResend().emails.send({
-            from: FROM_EMAIL,
-            to: userBefore.email,
-            subject: 'Dein Konto ist wieder aktiv!',
-            html: accountReactivatedEmail(),
-          }).catch(err => console.error('[webhook] reactivation email error:', err))
+          sendEmail({ to: userBefore.email, subject: 'Dein Konto ist wieder aktiv!', html: accountReactivatedEmail(), type: 'account_reactivated' }).catch(() => {})
         }
       }
 

@@ -18,7 +18,7 @@ import { userSites, users as usersTable, templates as templatesTable } from '@/l
 import { inArray, eq } from 'drizzle-orm'
 import { getCustomHostname } from '@/lib/cloudflare/custom-hostnames'
 import { setCustomDomainKV } from '@/lib/cloudflare/kv-api'
-import { getResend, FROM_EMAIL } from '@/lib/resend'
+import { sendEmail } from '@/lib/resend'
 import { domainActiveEmail } from '@/lib/email/templates'
 
 export const runtime = 'nodejs'
@@ -107,13 +107,7 @@ export async function GET(request: NextRequest) {
 
         // Notify user — fire and forget, never block the loop
         if (userEmail && site.customDomain) {
-          getResend()
-            .emails.send({
-              from: FROM_EMAIL,
-              to: userEmail,
-              subject: `Deine Domain ${site.customDomain} ist jetzt live!`,
-              html: domainActiveEmail({ domain: site.customDomain }),
-            })
+          sendEmail({ to: userEmail, subject: `Deine Domain ${site.customDomain} ist jetzt live!`, html: domainActiveEmail({ domain: site.customDomain }), type: 'domain_active' })
             .catch(err => console.error('[cron/check-domains] Email send error:', err))
         }
 

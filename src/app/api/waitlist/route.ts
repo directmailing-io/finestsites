@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { waitlist } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
-import { getResend, FROM_EMAIL } from '@/lib/resend'
+import { sendEmail } from '@/lib/resend'
 import { waitlistConfirmEmail } from '@/lib/email/waitlist-templates'
 
 const MARKETING_URL = (process.env.NEXT_PUBLIC_MARKETING_URL ?? 'https://finestsites.io').replace(/\/$/, '')
@@ -70,15 +70,5 @@ async function sendConfirmEmail(token: string, name: string | null, email: strin
   const confirmUrl = `${MARKETING_URL}/api/waitlist/confirm?token=${token}`
   const unsubscribeUrl = `${MARKETING_URL}/api/waitlist/unsubscribe?token=${token}`
   const { subject, html, text } = waitlistConfirmEmail({ name, confirmUrl, unsubscribeUrl })
-  await getResend().emails.send({
-    from: FROM_EMAIL,
-    to: email,
-    subject,
-    html,
-    text,
-    headers: {
-      'List-Unsubscribe': `<${unsubscribeUrl}>`,
-      'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
-    },
-  })
+  await sendEmail({ to: email, subject, html, type: 'waitlist_confirm' })
 }

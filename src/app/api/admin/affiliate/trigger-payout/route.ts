@@ -10,7 +10,7 @@ import { db } from '@/lib/db'
 import { users, affiliateCommissions, affiliatePayouts } from '@/lib/db/schema'
 import { eq, and, lte, inArray } from 'drizzle-orm'
 import { getStripe } from '@/lib/stripe/client'
-import { getResend, FROM_EMAIL } from '@/lib/resend'
+import { sendEmail } from '@/lib/resend'
 import { affiliatePayoutEmail } from '@/lib/email/templates'
 
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL ?? 'info@daniel-kurzeja.de'
@@ -113,11 +113,11 @@ export async function POST(req: Request) {
       results.push({ referrer: referrer.username ?? referrerId, status: 'paid', amount: totalAmount })
 
       if (referrer.email) {
-        getResend().emails.send({
-          from: FROM_EMAIL,
+        sendEmail({
           to: referrer.email,
-          subject: `Deine Provision wurde ausgezahlt – FinestSites`,
+          subject: 'Deine Provision wurde ausgezahlt – FinestSites',
           html: affiliatePayoutEmail({ amountCents: totalAmount, commissionCount: commissionIds.length }),
+          type: 'affiliate_payout',
         }).catch(err => console.error('[trigger-payout] payout email error:', err))
       }
     } catch (err: unknown) {

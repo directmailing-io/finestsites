@@ -5,7 +5,7 @@ import { users } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
 import { getUserFromRequest } from '@/lib/auth/server'
 import { getStripe, getPlanByPriceId } from '@/lib/stripe/client'
-import { getResend, FROM_EMAIL } from '@/lib/resend'
+import { sendEmail } from '@/lib/resend'
 import { subscriptionConfirmationEmail } from '@/lib/email/templates'
 
 // Stripe success-URL handler.
@@ -78,14 +78,7 @@ export async function GET(req: NextRequest) {
     // Send confirmation email (fire-and-forget, don't block redirect)
     const emailAddress = user.email
     if (emailAddress) {
-      getResend().emails.send({
-        from: FROM_EMAIL,
-        to: emailAddress,
-        subject: `Buchung bestätigt – ${plan.charAt(0).toUpperCase() + plan.slice(1)}-Plan · FinestSites`,
-        html: subscriptionConfirmationEmail({ plan, interval }),
-      }).catch((e: unknown) => {
-        console.error('[billing/activate] confirmation email error:', e instanceof Error ? e.message : e)
-      })
+      sendEmail({ to: emailAddress, subject: `Buchung bestätigt – ${plan.charAt(0).toUpperCase() + plan.slice(1)}-Plan · FinestSites`, html: subscriptionConfirmationEmail({ plan, interval }), type: 'subscription_confirmation' }).catch(() => {})
     }
 
     // Redirect to home, or back to the editor if site_id was passed (publish-gate flow).

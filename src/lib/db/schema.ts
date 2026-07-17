@@ -525,3 +525,25 @@ export const impersonationRequests = pgTable('impersonation_requests', {
 ])
 
 export type ImpersonationRequest = typeof impersonationRequests.$inferSelect
+
+// ─── Email Logs ────────────────────────────────────────────────────────────────
+
+export const emailLogs = pgTable('email_logs', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  // 'welcome' | 'verification' | 'password_reset' | 'subscription_confirmation' |
+  // 'payment_failed' | 'payment_warning' | 'account_deactivated' | 'account_expired' |
+  // 'account_canceled' | 'account_reactivated' | 'domain_active' |
+  // 'affiliate_referral' | 'affiliate_payout' | 'newsletter' | 'waitlist' | 'other'
+  type: text('type').notNull(),
+  to: text('to').notNull(),
+  subject: text('subject').notNull(),
+  resendId: text('resend_id'),
+  status: text('status').notNull().default('sent'), // 'sent' | 'error'
+  errorMessage: text('error_message'),
+  sentAt: timestamp('sent_at', { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [
+  index('idx_email_logs_sent_at').on(t.sentAt),
+  index('idx_email_logs_type').on(t.type),
+])
+
+export type EmailLog = typeof emailLogs.$inferSelect

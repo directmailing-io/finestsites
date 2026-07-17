@@ -7,6 +7,7 @@ import { sql } from 'drizzle-orm'
 import { getResend, FROM_EMAIL } from '@/lib/resend'
 import { newsletterEmail } from '@/lib/email/templates'
 import { markupToHtml } from '@/lib/email/markup'
+import { emailLogs } from '@/lib/db/schema'
 
 export const runtime = 'nodejs'
 
@@ -182,37 +183,55 @@ export async function POST(req: NextRequest) {
 
   for (let i = 0; i < recipients.length; i += BATCH_SIZE) {
     const chunk = recipients.slice(i, i + BATCH_SIZE)
+    const chunkPayloads = chunk.map(user => {
+      const personalSubject = interpolate(subject.trim(), user)
+      const personalBody = interpolate(body.trim(), user)
+      const bodyHtml = markupToHtml(personalBody)
+      const html = newsletterEmail({ subject: personalSubject, bodyHtml })
+      return { user, personalSubject, html }
+    })
     try {
       const result = await getResend().batch.send(
-        chunk.map(user => {
-          const personalSubject = interpolate(subject.trim(), user)
-          const personalBody = interpolate(body.trim(), user)
-          const bodyHtml = markupToHtml(personalBody)
-          const html = newsletterEmail({ subject: personalSubject, bodyHtml })
-          return {
-            from: FROM_EMAIL,
-            to: user.email,
-            subject: personalSubject,
-            html,
-            text: personalBody,
-          }
-        })
+        chunkPayloads.map(({ user, personalSubject, html }) => ({
+          from: FROM_EMAIL,
+          to: user.email,
+          subject: personalSubject,
+          html,
+        }))
       )
       if (result.error) {
         console.error('[newsletter] Resend error:', JSON.stringify(result.error))
         failed += chunk.length
+        // Log failures
+        db.insert(emailLogs).values(
+          chunkPayloads.map(({ user, personalSubject }) => ({
+            type: 'newsletter',
+            to: user.email,
+            subject: personalSubject,
+            status: 'error' as const,
+            errorMessage: result.error?.message ?? 'Batch error',
+          }))
+        ).catch(e => console.error('[newsletter] log error:', e.message))
       } else {
         // Resend batch.send() returns { data: { data: [...] } } or { data: [...] }
         const raw = (result.data as any)
-        const items: unknown[] = Array.isArray(raw)
-          ? raw
-          : Array.isArray(raw?.data)
-          ? raw.data
-          : []
+        const items: unknown[] = Array.isArray(raw) ? raw : Array.isArray(raw?.data) ? raw.data : []
         const ok = items.filter((r: unknown) => r !== null && typeof r === 'object' && (r as any)?.id).length
-        // If we can't parse the response, assume all sent (email actually arrives)
         const resolvedOk = items.length > 0 ? ok : chunk.length
         sent += resolvedOk; failed += chunk.length - resolvedOk
+        // Bulk log each send
+        db.insert(emailLogs).values(
+          chunkPayloads.map(({ user, personalSubject }, idx) => {
+            const item = items[idx] as any
+            return {
+              type: 'newsletter',
+              to: user.email,
+              subject: personalSubject,
+              resendId: item?.id ?? undefined,
+              status: item?.id ? 'sent' as const : 'error' as const,
+            }
+          })
+        ).catch(e => console.error('[newsletter] log error:', e.message))
       }
     } catch (err) {
       console.error('[newsletter] batch exception:', err)

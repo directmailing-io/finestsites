@@ -24,7 +24,7 @@ import { users, userSites } from '@/lib/db/schema'
 import { eq, isNull, isNotNull, lte, gte, and, inArray, or } from 'drizzle-orm'
 import { setSiteOfflineKV, deleteCustomDomainKV } from '@/lib/cloudflare/kv-api'
 import { deleteFromR2 } from '@/lib/r2/client'
-import { getResend, FROM_EMAIL } from '@/lib/resend'
+import { sendEmail } from '@/lib/resend'
 import { paymentWarningEmail, accountDeactivatedEmail } from '@/lib/email/templates'
 
 export const runtime = 'nodejs'
@@ -39,7 +39,6 @@ export async function GET(request: NextRequest) {
   }
 
   const now = new Date()
-  const resend = getResend()
   const stats = { warned: 0, deactivated: 0, deleted: 0, errors: 0 }
 
   // ── 1. Send 7-day warning ──────────────────────────────────────────────────
@@ -60,12 +59,7 @@ export async function GET(request: NextRequest) {
 
   for (const user of warnCandidates) {
     try {
-      await resend.emails.send({
-        from: FROM_EMAIL,
-        to: user.email,
-        subject: 'Zahlung ausstehend – dein Konto wird in 7 Tagen deaktiviert',
-        html: paymentWarningEmail({ daysLeft: 7 }),
-      })
+      await sendEmail({ to: user.email, subject: 'Zahlung ausstehend – dein Konto wird in 7 Tagen deaktiviert', html: paymentWarningEmail({ daysLeft: 7 }), type: 'payment_warning' })
       stats.warned++
     } catch (err) {
       console.error(`[billing-enforcement] warning email error for ${user.id}:`, err)
@@ -148,12 +142,7 @@ export async function GET(request: NextRequest) {
       }
 
       // Send deactivation email (fire-and-forget)
-      resend.emails.send({
-        from: FROM_EMAIL,
-        to: user.email,
-        subject: 'Dein FinestSites-Konto wurde deaktiviert',
-        html: accountDeactivatedEmail(),
-      }).catch(err => console.error(`[billing-enforcement] deactivation email error for ${user.id}:`, err))
+      sendEmail({ to: user.email, subject: 'Dein FinestSites-Konto wurde deaktiviert', html: accountDeactivatedEmail(), type: 'account_deactivated' }).catch(() => {})
 
       stats.deactivated++
       console.log(`[billing-enforcement] Deactivated user ${user.id} (${user.email})`)

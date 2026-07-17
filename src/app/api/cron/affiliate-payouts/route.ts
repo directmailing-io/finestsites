@@ -20,7 +20,7 @@ import { db } from '@/lib/db'
 import { affiliateCommissions, affiliatePayouts, users } from '@/lib/db/schema'
 import { eq, lte, inArray, and } from 'drizzle-orm'
 import { getStripe } from '@/lib/stripe/client'
-import { getResend, FROM_EMAIL } from '@/lib/resend'
+import { sendEmail } from '@/lib/resend'
 import { affiliatePayoutEmail } from '@/lib/email/templates'
 
 export async function POST(request: NextRequest) {
@@ -145,12 +145,7 @@ export async function POST(request: NextRequest) {
 
       // Notify affiliate by email (fire-and-forget)
       if (referrer.email) {
-        getResend().emails.send({
-          from: FROM_EMAIL,
-          to: referrer.email,
-          subject: `Deine Provision wurde ausgezahlt – FinestSites`,
-          html: affiliatePayoutEmail({ amountCents: totalAmount, commissionCount: commissionIds.length }),
-        }).catch(err => console.error(`[affiliate-payouts] payout email error for ${referrer.username}:`, err))
+        sendEmail({ to: referrer.email, subject: 'Deine Provision wurde ausgezahlt – FinestSites', html: affiliatePayoutEmail({ amountCents: totalAmount, commissionCount: commissionIds.length }), type: 'affiliate_payout' }).catch(() => {})
       }
 
     } catch (err: unknown) {

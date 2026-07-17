@@ -2,7 +2,7 @@ import { betterAuth } from 'better-auth'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
 import { db } from '@/lib/db'
 import * as schema from '@/lib/db/schema'
-import { getResend, FROM_EMAIL } from '@/lib/resend'
+import { sendEmail } from '@/lib/resend'
 import { verificationEmail, passwordResetEmail } from '@/lib/email/templates'
 
 export const auth = betterAuth({
@@ -20,12 +20,7 @@ export const auth = betterAuth({
     enabled: true,
     requireEmailVerification: true, // Hard DOI -- required before dashboard access
     sendResetPassword: async ({ user, url }: { user: { email: string; name?: string }; url: string }) => {
-      await getResend().emails.send({
-        from: FROM_EMAIL,
-        to: user.email,
-        subject: 'Passwort zurücksetzen – FinestSites',
-        html: passwordResetEmail({ url }),
-      })
+      await sendEmail({ to: user.email, subject: 'Passwort zurücksetzen – FinestSites', html: passwordResetEmail({ url }), type: 'password_reset' })
     },
   },
 
@@ -33,12 +28,7 @@ export const auth = betterAuth({
     expiresIn: 60 * 60 * 24,           // 24 hours — matches the email copy
     autoSignInAfterVerification: true,  // creates session on click → redirects to callbackURL (onboarding)
     sendVerificationEmail: async ({ user, url }: { user: { email: string; name?: string }; url: string }) => {
-      await getResend().emails.send({
-        from: FROM_EMAIL,
-        to: user.email,
-        subject: 'Bitte bestätige deine E-Mail-Adresse – FinestSites',
-        html: verificationEmail({ url }),
-      })
+      await sendEmail({ to: user.email, subject: 'Bitte bestätige deine E-Mail-Adresse – FinestSites', html: verificationEmail({ url }), type: 'verification' })
     },
   },
 

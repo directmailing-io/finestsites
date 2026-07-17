@@ -3,7 +3,7 @@ import { db } from '@/lib/db'
 import { waitlist, users } from '@/lib/db/schema'
 import { eq, and, isNull } from 'drizzle-orm'
 import { sql } from 'drizzle-orm'
-import { getResend, FROM_EMAIL } from '@/lib/resend'
+import { sendEmail, FROM_EMAIL } from '@/lib/resend'
 import { waitlistBroadcastEmail } from '@/lib/email/waitlist-templates'
 import { getRealUserFromRequest } from '@/lib/auth/server'
 import { markupToHtml } from '@/lib/email/markup'
@@ -41,7 +41,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Keine bestätigten Empfänger vorhanden.' }, { status: 400 })
   }
 
-  const resend = getResend()
   let sent = 0
   let failed = 0
   const recipientLog: { email: string; name: string | null }[] = []
@@ -54,19 +53,18 @@ export async function POST(req: NextRequest) {
         const personalBody = personalize(body, r.name)
         const bodyHtml = markupToHtml(personalBody)
         const unsubscribeUrl = `${MARKETING_URL}/api/waitlist/unsubscribe?token=${r.confirmToken}`
-        const { subject: s, html, text } = waitlistBroadcastEmail({
+        const { subject: s, html } = waitlistBroadcastEmail({
           subject: personalSubject,
           bodyHtml,
           bodyText: personalBody,
           unsubscribeUrl,
         })
         try {
-          await resend.emails.send({
-            from: FROM_EMAIL,
+          await sendEmail({
             to: r.email,
             subject: s,
             html,
-            text,
+            type: 'waitlist_broadcast',
             headers: {
               'List-Unsubscribe': `<${unsubscribeUrl}>`,
               'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
