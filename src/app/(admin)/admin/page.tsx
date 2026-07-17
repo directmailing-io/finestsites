@@ -1,7 +1,7 @@
 import { db } from '@/lib/db'
 import { users, userSites, templates, subscriptionEvents, affiliateCommissions } from '@/lib/db/schema'
 import { eq, gte, lte, gt, and, desc, count, sql, inArray } from 'drizzle-orm'
-import { getStripe } from '@/lib/stripe/client'
+import { getStripe, getPlanByPriceId } from '@/lib/stripe/client'
 import Link from 'next/link'
 import MonthSelector from './MonthSelector'
 
@@ -143,7 +143,7 @@ export default async function AdminPage({
       )),
 
     // Due next month
-    db.select({ plan: users.plan, billingInterval: users.billingInterval })
+    db.select({ plan: users.plan, billingInterval: users.billingInterval, stripeSubscriptionId: users.stripeSubscriptionId })
       .from(users).where(and(
         eq(users.subscriptionStatus, 'active'),
         gte(users.currentPeriodEnd, nextMStart),
@@ -241,11 +241,31 @@ export default async function AdminPage({
   const yearlyPct  = activeSubsCount > 0 ? Math.round(yearlyCount  / activeSubsCount * 100) : 0
 
   let pendingCancelCount = 0, mrrAtRisk = 0
+  // subId → effective cents (after any forever/repeating discount on the subscription)
+  const subEffectiveCents = new Map<string, number>()
   try {
-    const subs = await getStripe().subscriptions.list({ status: 'active', limit: 100 })
+    const subs = await getStripe().subscriptions.list({
+      status: 'active', limit: 100,
+      expand: ['data.discount.coupon'],
+    })
     const cancelling = subs.data.filter(s => s.cancel_at_period_end)
     pendingCancelCount = cancelling.length
     for (const s of cancelling) mrrAtRisk += subIdToMrr.get(s.id) ?? 0
+
+    // Build effective-amount map (base plan price minus any active discount)
+    for (const s of subs.data) {
+      const priceId = s.items.data[0]?.price.id ?? ''
+      const planKey = (s.items.data[0]?.price.recurring?.interval === 'year' ? 'yearly' : 'monthly')
+      const plan = (getPlanByPriceId() as Record<string, string>)[priceId] ?? 'starter'
+      const fullCents = (PLAN_FULL_PRICE[plan]?.[planKey] ?? 0) * 100
+      const coupon = (s as any).discount?.coupon as { percent_off?: number; amount_off?: number; duration?: string } | undefined
+      let effective = fullCents
+      if (coupon && (coupon.duration === 'forever' || coupon.duration === 'repeating')) {
+        if (coupon.percent_off) effective = Math.round(fullCents * (1 - coupon.percent_off / 100))
+        else if (coupon.amount_off) effective = Math.max(0, fullCents - coupon.amount_off)
+      }
+      subEffectiveCents.set(s.id, effective)
+    }
   } catch { /* Stripe unavailable */ }
 
   // ── Stripe invoices: actual revenue (post-coupon, post-discount) ─────────
@@ -288,6 +308,10 @@ export default async function AdminPage({
     return s + (PLAN_FULL_PRICE[u.plan]?.[u.billingInterval ?? 'monthly'] ?? 0) * 100
   }, 0)
   const nextMonthRevCents = dueNextMonth.reduce((s, u) => {
+    // Use Stripe's effective amount (after lifetime/repeating discounts) if available
+    if (u.stripeSubscriptionId && subEffectiveCents.has(u.stripeSubscriptionId)) {
+      return s + subEffectiveCents.get(u.stripeSubscriptionId)!
+    }
     return s + (PLAN_FULL_PRICE[u.plan]?.[u.billingInterval ?? 'monthly'] ?? 0) * 100
   }, 0)
 
