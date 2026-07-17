@@ -426,17 +426,20 @@ export function welcomeEmail({ firstName }: { firstName?: string }): string {
       Willkommen bei FinestSites!
     </h1>
     <p style="margin:0 0 16px;font-size:15px;color:${base.body};line-height:1.65;">
-      ${greeting} schoen, dass du da bist.
+      ${greeting} schön, dass du da bist.
     </p>
     <p style="margin:0 0 16px;font-size:15px;color:${base.body};line-height:1.65;">
       Dein Account ist fertig eingerichtet. Du kannst jetzt deine erste Website erstellen, mit deinem eigenen Template starten und sie in wenigen Minuten live schalten.
     </p>
     <p style="margin:0 0 0;font-size:15px;color:${base.body};line-height:1.65;">
-      Keine technischen Kenntnisse noetig. Einfach loslegen.
+      Keine technischen Kenntnisse nötig. Einfach loslegen.
     </p>
     ${button(dashboardUrl, 'Website erstellen')}
     <p style="margin:28px 0 0;font-size:13px;color:${base.muted};line-height:1.6;">
       Fragen? Schreib uns jederzeit: <a href="mailto:support@finestsites.de" style="color:${base.muted};">support@finestsites.de</a>
+    </p>
+    <p style="margin:16px 0 0;font-size:13px;color:${base.muted};line-height:1.6;">
+      PS: Wer aus deinem Team sollte auch FinestSites nutzen?
     </p>
   `)
 }
