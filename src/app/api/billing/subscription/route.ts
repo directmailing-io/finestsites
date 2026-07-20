@@ -65,8 +65,15 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ subscription: getSubInfo(allSubs.data[0], profile.plan, profile.billingInterval) })
     }
 
+    const sub0 = subscriptions.data[0]
+    const _dbg = {
+      sub_discounts: (sub0 as any).discounts,
+      customer_discount: (sub0 as any).customer?.discount,
+      customer_type: typeof (sub0 as any).customer,
+    }
+    console.log('[billing/subscription DEBUG]', JSON.stringify(_dbg))
     return NextResponse.json({
-      subscription: getSubInfo(subscriptions.data[0], profile.plan, profile.billingInterval)
+      subscription: getSubInfo(sub0, profile.plan, profile.billingInterval)
     })
   } catch {
     return NextResponse.json({ subscription: null })
