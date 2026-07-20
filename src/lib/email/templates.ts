@@ -299,17 +299,29 @@ export function paymentFailedEmail({ invoiceUrl }: { invoiceUrl?: string }): str
   const billingUrl = invoiceUrl ?? `${APP_URL}/billing`
   return layout(`
     <h1 style="margin:0 0 8px;font-size:22px;font-weight:700;color:#111827;letter-spacing:-0.02em;">
-      Kurze Info zu deiner Zahlung
+      Deine Zahlung hat nicht geklappt
     </h1>
     <p style="margin:0 0 16px;font-size:15px;color:${base.body};line-height:1.65;">
-      Deine letzte Zahlung hat leider nicht geklappt. Keine Panik, deine Seiten laufen noch ganz normal und du hast <strong>14 Tage Zeit</strong>, das zu klären.
+      Beim Einzug per SEPA gab es ein Problem. Passiert manchmal, kein Stress.
     </p>
+    <table cellpadding="0" cellspacing="0" role="presentation" width="100%" style="margin:0 0 24px;">
+      <tr>
+        <td style="background:#FEF2F2;border-radius:12px;padding:16px 20px;border:1px solid #FECACA;">
+          <p style="margin:0;font-size:14px;color:#7F1D1D;line-height:1.6;">
+            <strong>Deine Seite ist gerade offline.</strong> Deine Besucher können sie im Moment nicht aufrufen.
+          </p>
+        </td>
+      </tr>
+    </table>
     <p style="margin:0 0 24px;font-size:15px;color:${base.body};line-height:1.65;">
-      Schau kurz nach, ob deine Karte noch gültig ist oder genug Guthaben drauf hat. Stripe versucht die Zahlung automatisch nochmal einzuziehen.
+      Klick auf den Button und aktualisier deine Zahlungsmethode. Das dauert eine Minute.
     </p>
-    ${button(billingUrl, 'Zahlung klären')}
-    <p style="margin:28px 0 0;font-size:13px;color:${base.muted};line-height:1.6;">
-      Wenn nach 14 Tagen noch nichts eingegangen ist, schalten wir dein Konto leider ab. Bei Fragen schreib uns einfach: <a href="mailto:support@finestsites.de" style="color:${base.muted};">support@finestsites.de</a>
+    ${button(billingUrl, 'Jetzt Zahlung klären')}
+    <p style="margin:28px 0 16px;font-size:13px;color:${base.muted};line-height:1.6;">
+      <strong style="color:${base.body};">Tipp:</strong> Mit Kreditkarte klappt es sofort. Mit SEPA kann es wieder ein paar Tage dauern.
+    </p>
+    <p style="margin:0;font-size:13px;color:${base.muted};line-height:1.6;">
+      Sobald die Zahlung durch ist, geht deine Seite automatisch wieder online. Du musst nichts weiter tun. Bei Fragen: <a href="mailto:support@finestsites.de" style="color:${base.muted};">support@finestsites.de</a>
     </p>
   `)
 }

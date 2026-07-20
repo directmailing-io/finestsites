@@ -387,11 +387,45 @@ export async function POST(req: NextRequest) {
         ...(isFirstFailure ? { paymentFailedAt: new Date() } : {}),
       }).where(eq(users.id, userId))
 
+      // Take sites offline immediately on payment failure — no grace period.
+      // Sites are reactivated automatically by invoice.payment_succeeded.
+      // scheduledDeletionAt is NOT set here — this state is recoverable.
+      const failedSites = await db.query.userSites.findMany({
+        where: and(
+          eq(userSites.userId, userId),
+          inArray(userSites.status, ['published', 'draft']),
+        ),
+        columns: { id: true, customDomain: true },
+        with: {
+          template: { columns: { domain: true } },
+          user: { columns: { username: true } },
+        },
+      })
+      if (failedSites.length > 0) {
+        await db.update(userSites).set({
+          status: 'deactivated',
+          deactivatedAt: new Date(),
+        }).where(and(
+          eq(userSites.userId, userId),
+          inArray(userSites.status, ['published', 'draft'])
+        ))
+        for (const site of failedSites) {
+          const username       = (site as any).user?.username as string | null
+          const templateDomain = (site as any).template?.domain as string | null
+          if (username && templateDomain) {
+            await setSiteOfflineKV(username, templateDomain).catch(() => {})
+          }
+          if (site.customDomain) {
+            await deleteCustomDomainKV(site.customDomain).catch(() => {})
+          }
+        }
+      }
+
       // Send email only on first failure
       if (isFirstFailure && existing?.email) {
         const inv1 = invoice as any
         const invoiceUrl = inv1.hosted_invoice_url ?? undefined
-        sendEmail({ to: existing.email, subject: 'Zahlung fehlgeschlagen – bitte jetzt klären', html: paymentFailedEmail({ invoiceUrl }), type: 'payment_failed' }).catch(() => {})
+        sendEmail({ to: existing.email, subject: 'Deine Seite ist gerade offline', html: paymentFailedEmail({ invoiceUrl }), type: 'payment_failed' }).catch(() => {})
       }
 
       const inv1 = invoice as any
