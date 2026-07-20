@@ -11,9 +11,12 @@ function getSubInfo(sub: Stripe.Subscription, plan: string, billingInterval: str
   const item = sub.items?.data?.[0]
   const currentPeriodEnd = (item as any)?.current_period_end ?? null
 
-  // Discount on the subscription (e.g. ADMIN100 promo code)
+  // Discount: check subscription-level first, then customer-level
   // Stripe API v22+: discounts is an array; first entry is the active discount
-  const firstDiscount = (sub as any).discounts?.[0] ?? (sub as any).discount ?? null
+  const subDiscount = (sub as any).discounts?.[0] ?? (sub as any).discount ?? null
+  // Customer-level discount (common when coupon is applied via admin/API)
+  const custDiscount = (sub as any).customer?.discount ?? null
+  const firstDiscount = subDiscount ?? custDiscount
   const coupon = firstDiscount?.coupon ?? null
   const discountPercent: number | null = coupon?.percent_off ?? null
   const discountName: string | null = coupon?.name ?? coupon?.id ?? null
@@ -49,14 +52,14 @@ export async function GET(req: NextRequest) {
       customer: profile.stripeCustomerId,
       status: 'active',
       limit: 1,
-      expand: ['data.items', 'data.discounts'],
+      expand: ['data.items', 'data.discounts', 'data.customer.discount', 'data.customer.discount.coupon'],
     })
 
     if (!subscriptions.data.length) {
       const allSubs = await stripe.subscriptions.list({
         customer: profile.stripeCustomerId,
         limit: 1,
-        expand: ['data.items', 'data.discounts'],
+        expand: ['data.items', 'data.discounts', 'data.customer.discount', 'data.customer.discount.coupon'],
       })
       if (!allSubs.data.length) return NextResponse.json({ subscription: null })
       return NextResponse.json({ subscription: getSubInfo(allSubs.data[0], profile.plan, profile.billingInterval) })
