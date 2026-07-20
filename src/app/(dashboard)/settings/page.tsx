@@ -96,6 +96,7 @@ const TABS = [
   { id: 'unternehmen', label: 'Unternehmen' },
   { id: 'profil',      label: 'Profil'       },
   { id: 'zahlung',     label: 'Zahlung & Plan' },
+  { id: 'rechnungen',  label: 'Rechnungen'   },
   { id: 'sicherheit',  label: 'Passwort & FAQ' },
 ] as const
 type TabId = typeof TABS[number]['id']
@@ -134,6 +135,8 @@ interface SubscriptionInfo {
   cancel_at: number | null
   plan: string
   billing_interval: string | null
+  discount_percent: number | null
+  discount_name: string | null
 }
 
 interface UserProfile {
@@ -909,18 +912,46 @@ function SettingsContent() {
 
                         {/* Price */}
                         <div className="flex-1 min-w-0">
-                          <div className="flex items-baseline gap-0.5">
-                            <span className="text-2xl font-bold tracking-tight text-gray-900">
-                              €{billingInterval === 'yearly' ? perMonth : price}
-                            </span>
-                            <span className="text-xs ml-0.5" style={{ color: '#94A3B8' }}>/Mo.</span>
-                          </div>
-                          {billingInterval === 'yearly' ? (
-                            <p className="text-[11px]" style={{ color: '#15803D' }}>
-                              €{price}/Jahr · spare €{plan.monthly_eur * 12 - price}
-                            </p>
+                          {isCurrent && subscription?.discount_percent === 100 ? (
+                            <>
+                              <div className="flex items-baseline gap-1.5">
+                                <span className="text-2xl font-bold tracking-tight text-gray-900">€0</span>
+                                <span className="text-xs line-through" style={{ color: '#CBD5E1' }}>
+                                  €{billingInterval === 'yearly' ? perMonth : price}
+                                </span>
+                                <span className="text-xs ml-0.5" style={{ color: '#94A3B8' }}>/Mo.</span>
+                              </div>
+                              <p className="text-[11px]" style={{ color: '#15803D' }}>100% Rabatt aktiv</p>
+                            </>
+                          ) : isCurrent && subscription?.discount_percent != null ? (
+                            <>
+                              <div className="flex items-baseline gap-1.5">
+                                <span className="text-2xl font-bold tracking-tight text-gray-900">
+                                  €{Math.round((billingInterval === 'yearly' ? Number(perMonth) : price) * (1 - subscription.discount_percent / 100))}
+                                </span>
+                                <span className="text-xs line-through" style={{ color: '#CBD5E1' }}>
+                                  €{billingInterval === 'yearly' ? perMonth : price}
+                                </span>
+                                <span className="text-xs ml-0.5" style={{ color: '#94A3B8' }}>/Mo.</span>
+                              </div>
+                              <p className="text-[11px]" style={{ color: '#15803D' }}>-{subscription.discount_percent}% Rabatt aktiv</p>
+                            </>
                           ) : (
-                            <p className="text-[11px]" style={{ color: '#94A3B8' }}>inkl. MwSt.</p>
+                            <>
+                              <div className="flex items-baseline gap-0.5">
+                                <span className="text-2xl font-bold tracking-tight text-gray-900">
+                                  €{billingInterval === 'yearly' ? perMonth : price}
+                                </span>
+                                <span className="text-xs ml-0.5" style={{ color: '#94A3B8' }}>/Mo.</span>
+                              </div>
+                              {billingInterval === 'yearly' ? (
+                                <p className="text-[11px]" style={{ color: '#15803D' }}>
+                                  €{price}/Jahr · spare €{plan.monthly_eur * 12 - price}
+                                </p>
+                              ) : (
+                                <p className="text-[11px]" style={{ color: '#94A3B8' }}>inkl. MwSt.</p>
+                              )}
+                            </>
                           )}
                         </div>
 
@@ -997,6 +1028,15 @@ function SettingsContent() {
                       {subscription.cancel_at_period_end ? 'Wird beendet' : 'Aktiv'}
                     </StatusBadge>
                   )}
+                  {subscription.discount_percent != null && (
+                    <span className="text-xs font-semibold px-2 py-0.5 rounded-full"
+                      style={{ background: '#F0FDF4', color: '#15803D', border: '1px solid #BBF7D0' }}>
+                      {subscription.discount_percent === 100
+                        ? 'Kostenlos (100% Rabatt)'
+                        : `-${subscription.discount_percent}% Rabatt`}
+                      {subscription.discount_name ? ` · ${subscription.discount_name}` : ''}
+                    </span>
+                  )}
                 </div>
 
                 {subscription.status === 'past_due' ? (
@@ -1031,7 +1071,29 @@ function SettingsContent() {
             )}
           </TabSection>
 
-          {/* ── Rechnungen ── */}
+          {/* ── Kündigung — dezenter Link ganz unten ── */}
+          {subscription && !subscription.cancel_at_period_end && subscription.status !== 'past_due' && (
+            <div className="pb-2 flex items-center justify-center gap-2">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#6B7280" strokeWidth="2" className="flex-shrink-0"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+              <button
+                onClick={() => setShowCancelConfirm(true)}
+                className="text-sm underline underline-offset-2 transition-colors"
+                style={{ color: '#6B7280' }}
+                onMouseEnter={e => (e.currentTarget.style.color = '#374151')}
+                onMouseLeave={e => (e.currentTarget.style.color = '#6B7280')}
+              >
+                Abonnement kündigen
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ════════════════════════════════════════════════════════════════
+          TAB: RECHNUNGEN
+          ════════════════════════════════════════════════════════════════ */}
+      {activeTab === 'rechnungen' && (
+        <div className="flex flex-col gap-10">
           <TabSection title="Rechnungen" subtitle="PDFs für deine Buchhaltung. Direkt zum Download.">
             {invoicesLoading ? (
               <div className="flex flex-col gap-2">
@@ -1118,22 +1180,6 @@ function SettingsContent() {
               </div>
             )}
           </TabSection>
-
-          {/* ── Kündigung — dezenter Link ganz unten ── */}
-          {subscription && !subscription.cancel_at_period_end && subscription.status !== 'past_due' && (
-            <div className="pb-2 flex items-center justify-center gap-2">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
-              <button
-                onClick={() => setShowCancelConfirm(true)}
-                className="text-xs transition-colors"
-                style={{ color: '#9CA3AF' }}
-                onMouseEnter={e => (e.currentTarget.style.color = '#6B7280')}
-                onMouseLeave={e => (e.currentTarget.style.color = '#9CA3AF')}
-              >
-                Abonnement kündigen
-              </button>
-            </div>
-          )}
         </div>
       )}
 

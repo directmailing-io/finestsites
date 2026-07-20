@@ -11,6 +11,11 @@ function getSubInfo(sub: Stripe.Subscription, plan: string, billingInterval: str
   const item = sub.items?.data?.[0]
   const currentPeriodEnd = (item as any)?.current_period_end ?? null
 
+  // Discount on the subscription (e.g. ADMIN100 promo code)
+  const coupon = sub.discount?.coupon
+  const discountPercent = coupon?.percent_off ?? null
+  const discountName = coupon?.name ?? coupon?.id ?? null
+
   return {
     status: sub.status,
     current_period_end: currentPeriodEnd,
@@ -18,6 +23,8 @@ function getSubInfo(sub: Stripe.Subscription, plan: string, billingInterval: str
     cancel_at: sub.cancel_at,
     plan,
     billing_interval: billingInterval,
+    discount_percent: discountPercent,
+    discount_name: discountName,
   }
 }
 
