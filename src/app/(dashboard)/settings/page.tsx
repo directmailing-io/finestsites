@@ -797,7 +797,34 @@ function SettingsContent() {
       {activeTab === 'zahlung' && (
         <div className="flex flex-col gap-10">
 
-          {/* ── Plan wählen — ZUERST (Upgrade-Psychologie) ── */}
+          {/* ── Zahlung verwalten — GANZ OBEN ── */}
+          {hasSubscription && (
+            <button
+              onClick={handlePortal}
+              disabled={portalLoading}
+              className="flex items-center gap-4 px-5 py-4 rounded-2xl text-left transition-all"
+              style={{ background: '#F8FAFC', border: '1.5px solid #E5E7EB' }}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = '#1a1a1a'; e.currentTarget.style.background = '#fff' }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = '#E5E7EB'; e.currentTarget.style.background = '#F8FAFC' }}
+            >
+              <div className="flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center"
+                style={{ background: '#111827' }}>
+                {portalLoading
+                  ? <Spinner />
+                  : <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="1.75" strokeLinecap="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                }
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-bold text-gray-900">Zahlung verwalten</p>
+                <p className="text-xs mt-0.5" style={{ color: '#94A3B8' }}>
+                  Karte oder Bankverbindung ändern · Stripe-Portal öffnen
+                </p>
+              </div>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="2" className="flex-shrink-0"><path d="M9 18l6-6-6-6"/></svg>
+            </button>
+          )}
+
+          {/* ── Plan wählen ── */}
           <TabSection title="Plan wählen" subtitle="Upgrade jederzeit. Wir verrechnen anteilig.">
             {currentPlan === 'secret' ? (
               <div className="rounded-3xl p-6 sm:p-7" style={{ background: '#F8FAFC' }}>
@@ -809,8 +836,8 @@ function SettingsContent() {
             ) : (
               <>
                 {/* Interval toggle */}
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-7">
-                  <div className="inline-flex p-1 rounded-2xl self-start" style={{ background: '#F1F5F9' }}>
+                <div className="flex items-center justify-between gap-3 mb-6">
+                  <div className="inline-flex p-1 rounded-2xl" style={{ background: '#F1F5F9' }}>
                     <button
                       onClick={() => setBillingInterval('monthly')}
                       className="px-5 py-2 text-sm font-semibold rounded-xl transition-all"
@@ -836,185 +863,167 @@ function SettingsContent() {
                       </span>
                     </button>
                   </div>
-                  <p className="text-xs" style={{ color: '#94A3B8' }}>
-                    {billingInterval === 'monthly' ? 'Mindestlaufzeit 1 Monat' : 'Jahresrechnung · spare 2 Monate'}
+                  <p className="text-xs hidden sm:block" style={{ color: '#94A3B8' }}>
+                    {billingInterval === 'monthly' ? 'Mindestlaufzeit 1 Monat' : 'spare 2 Monate'}
                   </p>
                 </div>
 
-                {/* Plan cards */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-5">
-                  {PLAN_LIST.map(plan => {
+                {/* Plan rows — horizontal list */}
+                <div className="rounded-2xl overflow-hidden" style={{ border: '1.5px solid #E5E7EB' }}>
+                  {PLAN_LIST.map((plan, idx) => {
                     const isCurrent = currentPlan === plan.key
                     const price = billingInterval === 'monthly' ? plan.monthly_eur : plan.yearly_eur
                     const perMonth = billingInterval === 'yearly' ? (plan.yearly_eur / 12).toFixed(0) : plan.monthly_eur
                     const isUpgrade = canUpgradeTo(currentPlan, plan.key)
                     const isLower = !isCurrent && !isUpgrade
-                    const cardBg = plan.popular ? '#f5f0fb' : '#FFFFFF'
-                    const cardBorder = isCurrent
-                      ? '2px solid #7C3AED'
-                      : plan.popular ? '1.5px solid #d8c5f5' : '1px solid #E5E7EB'
-                    const cardShadow = plan.popular ? '0 4px 20px rgba(124,58,237,0.08)' : '0 1px 4px rgba(0,0,0,0.04)'
-
+                    const isLast = idx === PLAN_LIST.length - 1
                     return (
                       <div key={plan.key}
-                        className="relative flex flex-col p-6 sm:p-7"
-                        style={{ background: cardBg, color: '#1a1a1a', border: cardBorder, borderRadius: 24, boxShadow: cardShadow }}>
+                        className="flex items-center gap-4 sm:gap-6 px-5 py-5"
+                        style={{
+                          borderBottom: isLast ? 'none' : '1px solid #F1F5F9',
+                          background: isCurrent ? 'rgba(124,58,237,0.03)' : plan.popular ? 'rgba(124,58,237,0.015)' : '#fff',
+                        }}>
 
-                        {isCurrent && (
-                          <span className="absolute -top-3 left-1/2 -translate-x-1/2 text-[10px] font-bold px-3 py-1 rounded-full whitespace-nowrap"
-                            style={{ background: '#7C3AED', color: '#fff' }}>
-                            Aktueller Plan
-                          </span>
-                        )}
-                        {plan.popular && !isCurrent && (
-                          <span className="absolute top-5 right-5 text-[10px] font-bold px-2.5 py-1 rounded-full"
-                            style={{ background: '#7C3AED', color: '#fff' }}>
-                            Beliebt
-                          </span>
-                        )}
-
-                        <p className="text-sm font-semibold mb-2" style={{ color: plan.popular ? '#7C3AED' : '#64748B' }}>
-                          {plan.name}
-                        </p>
-                        <div className="flex items-baseline gap-1 mb-1">
-                          <span className="text-4xl font-bold tracking-tight text-gray-900">
-                            €{billingInterval === 'yearly' ? perMonth : price}
-                          </span>
-                          <span className="text-sm" style={{ color: '#94A3B8' }}>/Monat</span>
-                        </div>
-                        <p className="text-[11px] mb-1" style={{ color: '#94A3B8' }}>inkl. ges. MwSt.</p>
-                        {billingInterval === 'yearly' ? (
-                          <p className="text-xs mb-5" style={{ color: '#15803D' }}>
-                            €{price}/Jahr · spare €{plan.monthly_eur * 12 - price}
-                          </p>
-                        ) : (
-                          <div className="mb-5" />
-                        )}
-
-                        <ul className="flex flex-col gap-2.5 flex-1 mb-6">
-                          <li className="flex items-start gap-2.5 text-sm font-semibold text-gray-900">
-                            <CheckIconForPlan popular={!!plan.popular} />
+                        {/* Name + sites */}
+                        <div className="w-28 sm:w-36 flex-shrink-0">
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            <span className="text-sm font-bold text-gray-900">{plan.name}</span>
+                            {plan.popular && (
+                              <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full leading-none"
+                                style={{ background: '#7C3AED', color: '#fff' }}>
+                                Beliebt
+                              </span>
+                            )}
+                            {isCurrent && (
+                              <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full leading-none"
+                                style={{ background: '#EDE9FE', color: '#7C3AED' }}>
+                                Aktuell
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-xs mt-0.5 leading-snug" style={{ color: '#64748B' }}>
                             {plan.sites_label}
-                          </li>
-                          {COMMON_FEATURES.map(f => (
-                            <li key={f} className="flex items-start gap-2.5 text-sm" style={{ color: '#475569' }}>
-                              <CheckIconForPlan popular={!!plan.popular} />
-                              {f}
-                            </li>
-                          ))}
-                        </ul>
+                          </p>
+                        </div>
 
-                        {isCurrent ? (
-                          <div className="w-full py-3 text-sm font-semibold text-center rounded-xl"
-                            style={{ background: 'rgba(124,58,237,0.08)', color: '#7C3AED' }}>
-                            Aktueller Tarif
+                        {/* Price */}
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-baseline gap-0.5">
+                            <span className="text-2xl font-bold tracking-tight text-gray-900">
+                              €{billingInterval === 'yearly' ? perMonth : price}
+                            </span>
+                            <span className="text-xs ml-0.5" style={{ color: '#94A3B8' }}>/Mo.</span>
                           </div>
-                        ) : isLower ? (
-                          <div className="w-full py-3 text-sm font-medium text-center rounded-xl"
-                            style={{ background: 'transparent', color: '#CBD5E1', border: '1px solid #E2E8F0' }}>
-                            Downgrade nicht möglich
-                          </div>
-                        ) : (
-                          <button onClick={() => handleCheckout(plan.key)} disabled={checkoutLoading === plan.key}
-                            className="w-full py-3 text-sm font-bold rounded-xl transition-opacity hover:opacity-90 disabled:opacity-70 flex items-center justify-center gap-2 text-white"
-                            style={{ background: plan.popular ? '#7C3AED' : '#1a1a1a' }}>
-                            {checkoutLoading === plan.key ? <Spinner /> : null}
-                            {hasSubscription ? 'Upgraden' : 'Wählen'}
-                          </button>
-                        )}
+                          {billingInterval === 'yearly' ? (
+                            <p className="text-[11px]" style={{ color: '#15803D' }}>
+                              €{price}/Jahr · spare €{plan.monthly_eur * 12 - price}
+                            </p>
+                          ) : (
+                            <p className="text-[11px]" style={{ color: '#94A3B8' }}>inkl. MwSt.</p>
+                          )}
+                        </div>
+
+                        {/* CTA */}
+                        <div className="flex-shrink-0">
+                          {isCurrent ? (
+                            <div className="text-xs font-semibold px-3 py-2 rounded-xl text-center"
+                              style={{ background: 'rgba(124,58,237,0.08)', color: '#7C3AED' }}>
+                              Aktuell
+                            </div>
+                          ) : isLower ? (
+                            <div className="text-xs font-medium px-3 py-2 rounded-xl text-center hidden sm:block"
+                              style={{ color: '#CBD5E1' }}>
+                              Downgrade n. mgl.
+                            </div>
+                          ) : (
+                            <button onClick={() => handleCheckout(plan.key)} disabled={checkoutLoading === plan.key}
+                              className="flex items-center gap-1.5 px-4 py-2.5 text-sm font-bold rounded-xl transition-opacity hover:opacity-90 disabled:opacity-70 text-white whitespace-nowrap"
+                              style={{ background: plan.popular ? '#7C3AED' : '#1a1a1a' }}>
+                              {checkoutLoading === plan.key ? <Spinner /> : null}
+                              {hasSubscription ? 'Upgraden' : 'Wählen'}
+                            </button>
+                          )}
+                        </div>
                       </div>
                     )
                   })}
+                </div>
+
+                {/* Common features — once, below plans */}
+                <div className="mt-4 flex flex-wrap gap-x-5 gap-y-1.5 px-1">
+                  {COMMON_FEATURES.map(f => (
+                    <div key={f} className="flex items-center gap-1.5">
+                      <svg className="flex-shrink-0" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#16A34A" strokeWidth="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+                      <span className="text-xs" style={{ color: '#64748B' }}>{f}</span>
+                    </div>
+                  ))}
                 </div>
               </>
             )}
           </TabSection>
 
           {/* ── Aktuelles Abonnement ── */}
-          <TabSection title="Abonnement" subtitle="Dein aktueller Tarif und deine Zahlungsmethode.">
+          <TabSection title="Abonnement" subtitle="Dein aktueller Tarif auf einen Blick.">
             {subLoading ? (
-              <div className="h-24 rounded-3xl bg-gray-100 animate-pulse" />
+              <div className="h-20 rounded-2xl bg-gray-100 animate-pulse" />
             ) : subscription ? (
-              <div className="flex flex-col gap-3">
-                <div className="rounded-3xl p-6 sm:p-7"
-                  style={{
-                    background: subscription.status === 'past_due' ? '#FEF2F2'
-                      : subscription.cancel_at_period_end ? '#FFF7ED'
-                      : '#F0FDF4',
-                  }}>
-                  <div className="flex flex-wrap items-center gap-2 mb-2">
-                    <span className="text-base font-bold text-gray-900">
-                      {PLAN_LABELS[subscription.plan] ?? subscription.plan}
+              <div className="rounded-2xl p-5 sm:p-6"
+                style={{
+                  background: subscription.status === 'past_due' ? '#FEF2F2'
+                    : subscription.cancel_at_period_end ? '#FFF7ED'
+                    : '#F0FDF4',
+                  border: subscription.status === 'past_due' ? '1px solid #FECACA'
+                    : subscription.cancel_at_period_end ? '1px solid #FED7AA'
+                    : '1px solid #BBF7D0',
+                }}>
+                <div className="flex flex-wrap items-center gap-2 mb-1.5">
+                  <span className="text-base font-bold text-gray-900">
+                    {PLAN_LABELS[subscription.plan] ?? subscription.plan}
+                  </span>
+                  {subscription.billing_interval && (
+                    <span className="text-xs font-medium px-2 py-0.5 rounded-full"
+                      style={{ background: 'rgba(255,255,255,0.65)', color: '#374151' }}>
+                      {subscription.billing_interval === 'year' ? 'Jährlich' : 'Monatlich'}
                     </span>
-                    {subscription.billing_interval && (
-                      <span className="text-xs font-medium px-2 py-0.5 rounded-full"
-                        style={{ background: 'rgba(255,255,255,0.7)', color: '#374151' }}>
-                        {subscription.billing_interval === 'year' ? 'Jährlich' : 'Monatlich'}
-                      </span>
-                    )}
-                    {subscription.status === 'past_due' ? (
-                      <span className="text-xs font-semibold px-2 py-0.5 rounded-full"
-                        style={{ background: '#FEE2E2', color: '#DC2626' }}>
-                        Zahlung fehlgeschlagen
-                      </span>
-                    ) : (
-                      <StatusBadge cancelling={subscription.cancel_at_period_end}>
-                        {subscription.cancel_at_period_end ? 'Wird beendet' : 'Aktiv'}
-                      </StatusBadge>
-                    )}
-                  </div>
-
+                  )}
                   {subscription.status === 'past_due' ? (
-                    <p className="text-sm" style={{ color: '#DC2626' }}>
-                      Deine Seiten sind offline. Klicke unten auf &quot;Zahlung verwalten&quot;, um deine Zahlungsmethode zu aktualisieren.
-                    </p>
-                  ) : subscription.cancel_at_period_end ? (
-                    <div>
-                      <p className="text-sm" style={{ color: '#C2410C' }}>
-                        Dein Abo läuft am <strong>{periodEnd}</strong> aus. Danach werden Premium-Webseiten deaktiviert.
-                      </p>
-                      <button onClick={handleReactivate} disabled={reactivateLoading}
-                        className="mt-4 flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-xl transition-opacity hover:opacity-90 disabled:opacity-70"
-                        style={{ background: '#15803D', color: '#fff' }}>
-                        {reactivateLoading ? <Spinner /> : null}
-                        Kündigung zurückziehen
-                      </button>
-                    </div>
+                    <span className="text-xs font-semibold px-2 py-0.5 rounded-full"
+                      style={{ background: '#FEE2E2', color: '#DC2626' }}>
+                      Zahlung fehlgeschlagen
+                    </span>
                   ) : (
-                    <p className="text-sm" style={{ color: '#15803D' }}>
-                      Nächste Abrechnung am <strong>{periodEnd}</strong>.
-                    </p>
+                    <StatusBadge cancelling={subscription.cancel_at_period_end}>
+                      {subscription.cancel_at_period_end ? 'Wird beendet' : 'Aktiv'}
+                    </StatusBadge>
                   )}
                 </div>
 
-                {/* Stripe portal button — compact row */}
-                {hasSubscription && (
-                  <button
-                    onClick={handlePortal}
-                    disabled={portalLoading}
-                    className="flex items-center gap-3 px-5 py-4 rounded-2xl text-left transition-colors"
-                    style={{ background: '#F8FAFC', border: '1.5px solid #E5E7EB' }}
-                    onMouseEnter={e => (e.currentTarget.style.borderColor = '#CBD5E1')}
-                    onMouseLeave={e => (e.currentTarget.style.borderColor = '#E5E7EB')}
-                  >
-                    <div className="flex-shrink-0 w-9 h-9 rounded-xl flex items-center justify-center"
-                      style={{ background: '#F1F5F9' }}>
-                      {portalLoading
-                        ? <Spinner />
-                        : <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#374151" strokeWidth="1.75" strokeLinecap="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
-                      }
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold text-gray-900">Zahlung verwalten</p>
-                      <p className="text-xs mt-0.5" style={{ color: '#94A3B8' }}>Karte oder Bankverbindung ändern</p>
-                    </div>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="2"><path d="M9 18l6-6-6-6"/></svg>
-                  </button>
+                {subscription.status === 'past_due' ? (
+                  <p className="text-sm" style={{ color: '#DC2626' }}>
+                    Deine Seiten sind offline. Klicke oben auf &quot;Zahlung verwalten&quot;, um deine Zahlungsmethode zu aktualisieren.
+                  </p>
+                ) : subscription.cancel_at_period_end ? (
+                  <div>
+                    <p className="text-sm" style={{ color: '#C2410C' }}>
+                      Dein Abo läuft am <strong>{periodEnd}</strong> aus. Danach werden Premium-Webseiten deaktiviert.
+                    </p>
+                    <button onClick={handleReactivate} disabled={reactivateLoading}
+                      className="mt-4 flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-xl transition-opacity hover:opacity-90 disabled:opacity-70"
+                      style={{ background: '#15803D', color: '#fff' }}>
+                      {reactivateLoading ? <Spinner /> : null}
+                      Kündigung zurückziehen
+                    </button>
+                  </div>
+                ) : (
+                  <p className="text-sm" style={{ color: '#15803D' }}>
+                    Nächste Abrechnung am <strong>{periodEnd}</strong>.
+                  </p>
                 )}
               </div>
             ) : (
-              <div className="rounded-3xl p-6 sm:p-7" style={{ background: '#F8FAFC' }}>
-                <p className="text-base font-semibold text-gray-900 mb-1">Kein aktives Abonnement</p>
+              <div className="rounded-2xl p-5 sm:p-6" style={{ background: '#F8FAFC', border: '1px solid #E5E7EB' }}>
+                <p className="text-sm font-semibold text-gray-900 mb-1">Kein aktives Abonnement</p>
                 <p className="text-sm" style={{ color: '#64748B' }}>
                   Wähle oben einen Tarif, um Premium-Webseiten zu veröffentlichen.
                 </p>
@@ -1112,13 +1121,14 @@ function SettingsContent() {
 
           {/* ── Kündigung — dezenter Link ganz unten ── */}
           {subscription && !subscription.cancel_at_period_end && subscription.status !== 'past_due' && (
-            <div className="pb-2 text-center">
+            <div className="pb-2 flex items-center justify-center gap-2">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
               <button
                 onClick={() => setShowCancelConfirm(true)}
-                className="text-xs underline underline-offset-2 transition-colors"
-                style={{ color: '#CBD5E1' }}
-                onMouseEnter={e => (e.currentTarget.style.color = '#94A3B8')}
-                onMouseLeave={e => (e.currentTarget.style.color = '#CBD5E1')}
+                className="text-xs transition-colors"
+                style={{ color: '#9CA3AF' }}
+                onMouseEnter={e => (e.currentTarget.style.color = '#6B7280')}
+                onMouseLeave={e => (e.currentTarget.style.color = '#9CA3AF')}
               >
                 Abonnement kündigen
               </button>
