@@ -3523,7 +3523,6 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
         <div className="fixed inset-0 z-50 flex flex-col" style={{ background: 'rgba(0,0,0,0.92)' }}>
           <div className="flex items-center justify-between px-4 py-3 flex-shrink-0" style={{ background: '#1a1a1a' }}>
             <div className="flex items-center gap-3">
-              <span className="text-sm font-semibold text-white">{site.templates?.title}</span>
               <div className="flex items-center gap-1 p-0.5 rounded-full" style={{ background: 'rgba(255,255,255,0.1)' }}>
                 {([
                   { key: 'desktop' as const, icon: <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg> },

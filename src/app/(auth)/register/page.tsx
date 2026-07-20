@@ -253,7 +253,7 @@ function RegisterForm() {
                     type="text" value={referralCode}
                     onChange={e => { setReferralCode(e.target.value); setReferralValid(null) }}
                     onBlur={() => checkReferral(referralCode)}
-                    placeholder="Username oder Name deines Empfehlers" autoComplete="off"
+                    placeholder="Partnercode" autoComplete="off"
                     // Read-only when pre-filled from URL — prevents accidental changes
                     readOnly={!!urlRef && referralValid !== false}
                     className="w-full px-4 py-3 pr-10 text-sm rounded-2xl outline-none transition-all"
@@ -280,10 +280,10 @@ function RegisterForm() {
                     Das sieht aus wie ein Gutschein-Code. Gutschein-Codes werden erst beim Bezahlen geprüft. Gib <strong>{referralCode.trim()}</strong> einfach dort ein. Ob er gültig ist, siehst du dann direkt.
                   </div>
                 ) : referralValid === false ? (
-                  <p className="text-xs px-1" style={{ color: '#DC2626' }}>Empfehler nicht gefunden. Bitte prüfe den Username oder Namen und versuche es erneut.</p>
+                  <p className="text-xs px-1" style={{ color: '#DC2626' }}>Partnercode nicht gefunden. Bitte prüfe den Code und versuche es erneut.</p>
                 ) : null}
                 {!urlRef && referralValid === null && (
-                  <p className="text-xs px-1" style={{ color: '#9CA3AF' }}>Username oder Name deines Empfehlers. Nicht zu verwechseln mit Gutschein-Codes.</p>
+                  <p className="text-xs px-1" style={{ color: '#9CA3AF' }}>Partnercode deines Empfehlers (nicht zu verwechseln mit Gutschein-Codes).</p>
                 )}
               </div>
             </div>
