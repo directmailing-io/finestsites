@@ -15,10 +15,18 @@ const base = {
 const APP_URL = (process.env.NEXT_PUBLIC_APP_URL ?? 'https://app.finestsites.io').replace(/\/$/, '')
 
 function logoHeader(): string {
+  // Use PNG (not SVG) — SVG is not supported in most email clients.
+  // White logo on a dark (#111827) pill — works reliably in all email clients.
   return `<table cellpadding="0" cellspacing="0" role="presentation" width="100%">
               <tr>
                 <td align="center" style="padding-bottom:28px;">
-                  <img src="${APP_URL}/logos/logo-black.svg" alt="FinestSites" height="22" style="height:22px;width:auto;display:block;" />
+                  <table cellpadding="0" cellspacing="0" role="presentation">
+                    <tr>
+                      <td style="background:#111827;border-radius:12px;padding:10px 20px;">
+                        <img src="https://app.finestsites.io/logos/logo-white.png" alt="FinestSites" height="18" style="height:18px;width:auto;display:block;" />
+                      </td>
+                    </tr>
+                  </table>
                 </td>
               </tr>
             </table>`
@@ -296,7 +304,10 @@ export function affiliatePayoutEmail({
 // ─── Billing lifecycle emails ──────────────────────────────────────────────────
 
 export function paymentFailedEmail({ invoiceUrl }: { invoiceUrl?: string }): string {
-  const billingUrl = invoiceUrl ?? `${APP_URL}/billing`
+  // Always link to the billing portal (GET redirect) — user can update payment
+  // method directly in Stripe. invoiceUrl kept as secondary fallback context.
+  const billingUrl = `${APP_URL}/api/billing/portal`
+  void invoiceUrl // available for future use (e.g. direct invoice link)
   return layout(`
     <h1 style="margin:0 0 8px;font-size:22px;font-weight:700;color:#111827;letter-spacing:-0.02em;">
       Deine Zahlung hat nicht geklappt

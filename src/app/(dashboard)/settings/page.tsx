@@ -432,6 +432,38 @@ function SettingsContent() {
         </p>
       </div>
 
+      {/* ── Past-due payment failure banner ───────────────────────── */}
+      {subscription?.status === 'past_due' && (
+        <div className="mb-8 rounded-3xl p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
+          style={{ background: '#FEF2F2', border: '1.5px solid #FECACA' }}>
+          <div className="flex items-start gap-3">
+            <div className="flex-shrink-0 mt-0.5">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#DC2626" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+              </svg>
+            </div>
+            <div>
+              <p className="text-sm font-bold" style={{ color: '#991B1B' }}>Zahlung fehlgeschlagen — deine Seiten sind offline</p>
+              <p className="text-sm mt-0.5" style={{ color: '#DC2626' }}>
+                Bitte aktualisiere deine Zahlungsmethode. Sobald die Zahlung klappt, sind deine Seiten automatisch wieder live.
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={handlePortal}
+            disabled={portalLoading}
+            className="flex-shrink-0 flex items-center gap-2 px-5 py-2.5 text-sm font-semibold rounded-xl transition-opacity hover:opacity-90 disabled:opacity-70"
+            style={{ background: '#DC2626', color: '#fff', whiteSpace: 'nowrap' }}
+          >
+            {portalLoading
+              ? <Spinner />
+              : <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+            }
+            Jetzt Zahlung klären
+          </button>
+        </div>
+      )}
+
       {/* ════════════════════════════════════════════════════════════════
           MEIN UNTERNEHMEN
           ════════════════════════════════════════════════════════════════ */}
@@ -706,7 +738,9 @@ function SettingsContent() {
         ) : subscription ? (
           <div className="rounded-3xl p-6 sm:p-7"
             style={{
-              background: subscription.cancel_at_period_end ? '#FFF7ED' : '#F0FDF4',
+              background: subscription.status === 'past_due' ? '#FEF2F2'
+                : subscription.cancel_at_period_end ? '#FFF7ED'
+                : '#F0FDF4',
             }}>
             <div className="flex items-start justify-between gap-4">
               <div className="flex-1 min-w-0">
@@ -720,11 +754,22 @@ function SettingsContent() {
                       {subscription.billing_interval === 'year' ? 'Jährlich' : 'Monatlich'}
                     </span>
                   )}
-                  <StatusBadge cancelling={subscription.cancel_at_period_end}>
-                    {subscription.cancel_at_period_end ? 'Wird beendet' : 'Aktiv'}
-                  </StatusBadge>
+                  {subscription.status === 'past_due' ? (
+                    <span className="text-xs font-semibold px-2 py-0.5 rounded-full"
+                      style={{ background: '#FEE2E2', color: '#DC2626' }}>
+                      Zahlung fehlgeschlagen
+                    </span>
+                  ) : (
+                    <StatusBadge cancelling={subscription.cancel_at_period_end}>
+                      {subscription.cancel_at_period_end ? 'Wird beendet' : 'Aktiv'}
+                    </StatusBadge>
+                  )}
                 </div>
-                {subscription.cancel_at_period_end ? (
+                {subscription.status === 'past_due' ? (
+                  <p className="text-sm" style={{ color: '#DC2626' }}>
+                    Deine Seiten sind offline. Bitte aktualisiere deine Zahlungsmethode, damit sie automatisch wieder live gehen.
+                  </p>
+                ) : subscription.cancel_at_period_end ? (
                   <p className="text-sm" style={{ color: '#C2410C' }}>
                     Dein Abo läuft am <strong>{periodEnd}</strong> aus. Danach werden Premium-Webseiten deaktiviert.
                   </p>
