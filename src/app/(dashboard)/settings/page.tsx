@@ -966,7 +966,7 @@ function SettingsContent() {
 
                   {subscription.status === 'past_due' ? (
                     <p className="text-sm" style={{ color: '#DC2626' }}>
-                      Deine Seiten sind offline. Klicke unten auf "Zahlung verwalten", um deine Zahlungsmethode zu aktualisieren.
+                      Deine Seiten sind offline. Klicke unten auf &quot;Zahlung verwalten&quot;, um deine Zahlungsmethode zu aktualisieren.
                     </p>
                   ) : subscription.cancel_at_period_end ? (
                     <div>
