@@ -15,18 +15,12 @@ const base = {
 const APP_URL = (process.env.NEXT_PUBLIC_APP_URL ?? 'https://app.finestsites.io').replace(/\/$/, '')
 
 function logoHeader(): string {
-  // Use PNG (not SVG) — SVG is not supported in most email clients.
-  // White logo on a dark (#111827) pill — works reliably in all email clients.
+  // SVG wordmark — renders in Apple Mail, Gmail, and most modern clients.
+  // Displayed above the card on the gray background, no wrapper/pill.
   return `<table cellpadding="0" cellspacing="0" role="presentation" width="100%">
               <tr>
-                <td align="center" style="padding-bottom:28px;">
-                  <table cellpadding="0" cellspacing="0" role="presentation">
-                    <tr>
-                      <td style="background:#111827;border-radius:12px;padding:10px 20px;">
-                        <img src="https://app.finestsites.io/logos/logo-white.png" alt="FinestSites" height="18" style="height:18px;width:auto;display:block;" />
-                      </td>
-                    </tr>
-                  </table>
+                <td align="center" style="padding-bottom:24px;">
+                  <img src="https://app.finestsites.io/logos/logo-black.svg" alt="FinestSites" height="28" style="height:28px;width:auto;display:block;" />
                 </td>
               </tr>
             </table>`
