@@ -4,7 +4,7 @@ import { useState, useEffect, Suspense, useRef } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { authClient } from '@/lib/auth/client'
 import { useRouter } from 'next/navigation'
-import { PLAN_LIST, PLAN_LABELS, COMMON_FEATURES, PLAN_ORDER, canUpgradeTo, type PlanKey } from '@/lib/plans'
+import { PLAN_LIST, PLAN_LABELS, COMMON_FEATURES, canUpgradeTo } from '@/lib/plans'
 import ImageCropModal from '@/components/ImageCropModal'
 import { NM_COMPANIES } from '@/lib/constants/nm-companies'
 
@@ -85,11 +85,47 @@ function parsePhone(full: string): { code: string; number: string } {
       return { code: c.code, number: full.slice(c.code.length).trim() }
     }
   }
-  // If no known code matched but starts with +, treat prefix as custom
   const match = full.match(/^(\+\d{1,4})\s*(.*)$/)
   if (match) return { code: match[1], number: match[2] }
   return { code: '+49', number: full }
 }
+
+// ── Tabs ─────────────────────────────────────────────────────────────────────
+
+const TABS = [
+  { id: 'unternehmen', label: 'Unternehmen' },
+  { id: 'profil',      label: 'Profil'       },
+  { id: 'zahlung',     label: 'Zahlung & Plan' },
+  { id: 'sicherheit',  label: 'Passwort & FAQ' },
+] as const
+type TabId = typeof TABS[number]['id']
+
+// ── FAQ (dumbified — kurze Sätze, keine em-Dashes) ───────────────────────────
+
+const FAQ = [
+  [
+    'Kann ich auf einen höheren Plan wechseln?',
+    'Ja, jederzeit. Der Wechsel ist sofort aktiv. Du zahlst nur den Rest des Monats anteilig.',
+  ],
+  [
+    'Was passiert, wenn ich kündige?',
+    'Deine Seiten laufen noch bis zum Ende des bezahlten Zeitraums. Danach gehen sie offline.',
+  ],
+  [
+    'Wie ändere ich meine Zahlungsmethode?',
+    'Klicke auf "Stripe-Portal öffnen". Dort kannst du Karte oder Bankverbindung direkt ändern.',
+  ],
+  [
+    'Kann ich auf einen kleineren Plan wechseln?',
+    'Nein, das geht aktuell nicht. Du kannst dein Abo kündigen und danach einen neuen, kleineren Plan buchen.',
+  ],
+  [
+    'Wie lange dauert eine SEPA-Lastschrift?',
+    'SEPA-Zahlungen dauern 2 bis 5 Werktage. Mit Kreditkarte geht es sofort.',
+  ],
+]
+
+// ── Interfaces ───────────────────────────────────────────────────────────────
 
 interface SubscriptionInfo {
   status: string
@@ -136,18 +172,16 @@ interface Invoice {
   period_end: number
 }
 
-const FAQ = [
-  ['Kann ich jederzeit upgraden?',     'Ja. Der Wechsel ist sofort aktiv und die Kosten werden anteilig verrechnet.'],
-  ['Was passiert bei Kündigung?',      'Deine Webseiten bleiben bis zum Ende des Abrechnungszeitraums aktiv. Danach werden aktive Premium-Webseiten deaktiviert.'],
-  ['Wie ändere ich meine Zahlungsmethode?', 'Klicke auf "Zahlung & Rechnungen" – du wirst zum sicheren Stripe-Kundenportal weitergeleitet.'],
-  ['Kann ich auch einen niedrigeren Tarif wählen?', 'Ein Downgrade auf einen kleineren Tarif ist aktuell nicht möglich. Du kannst dein Abo aber jederzeit kündigen und neu abschließen.'],
-]
+// ── Main component ────────────────────────────────────────────────────────────
 
 function SettingsContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
 
-  // ── Password state ─────────────────────────────────────────
+  // ── Tab state ──────────────────────────────────────────────────
+  const [activeTab, setActiveTab] = useState<TabId>('unternehmen')
+
+  // ── Password state ─────────────────────────────────────────────
   const [currentPassword, setCurrentPassword] = useState('')
   const [newPassword, setNewPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
@@ -155,7 +189,7 @@ function SettingsContent() {
   const [pwError, setPwError] = useState('')
   const [pwSuccess, setPwSuccess] = useState('')
 
-  // ── Profile state ──────────────────────────────────────────
+  // ── Profile state ──────────────────────────────────────────────
   const [profileName, setProfileName] = useState({ first_name: '', last_name: '' })
   const [countryCode, setCountryCode] = useState('+49')
   const [customCountryCode, setCustomCountryCode] = useState('')
@@ -173,12 +207,12 @@ function SettingsContent() {
   const [profileError, setProfileError] = useState('')
   const [avatarUploading, setAvatarUploading] = useState(false)
 
-  // ── NM company preferences ─────────────────────────────────
+  // ── NM company preferences ─────────────────────────────────────
   const [nmCompanies, setNmCompanies] = useState<string[]>([])
   const [nmSaving, setNmSaving] = useState(false)
   const [nmSuccess, setNmSuccess] = useState('')
 
-  // ── Billing state ──────────────────────────────────────────
+  // ── Billing state ──────────────────────────────────────────────
   const [subscription, setSubscription] = useState<SubscriptionInfo | null>(null)
   const [subLoading, setSubLoading] = useState(true)
   const [portalLoading, setPortalLoading] = useState(false)
@@ -192,11 +226,11 @@ function SettingsContent() {
   const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null)
   const [toast, setToast] = useState('')
 
-  // ── Invoices state ─────────────────────────────────────────
+  // ── Invoices state ─────────────────────────────────────────────
   const [invoices, setInvoices] = useState<Invoice[]>([])
   const [invoicesLoading, setInvoicesLoading] = useState(true)
 
-  // ── FAQ accordion state ────────────────────────────────────
+  // ── FAQ accordion state ────────────────────────────────────────
   const [openFaq, setOpenFaq] = useState<number | null>(null)
 
   useEffect(() => {
@@ -259,6 +293,11 @@ function SettingsContent() {
         .catch(() => {})
     }
 
+    // After checkout flow, land on Zahlung tab
+    if (success === '1' || canceled === '1' || sessionId) {
+      setActiveTab('zahlung')
+    }
+
     if (success === '1') {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setToast('Abonnement erfolgreich abgeschlossen!')
@@ -275,10 +314,8 @@ function SettingsContent() {
   async function handlePasswordChange(e: React.FormEvent) {
     e.preventDefault()
     setPwError(''); setPwSuccess('')
-
     if (newPassword.length < 6) { setPwError('Das neue Passwort muss mindestens 6 Zeichen lang sein.'); return }
     if (newPassword !== confirmPassword) { setPwError('Die Passwörter stimmen nicht überein.'); return }
-
     setPwLoading(true)
     const { error } = await authClient.changePassword({
       currentPassword,
@@ -320,8 +357,7 @@ function SettingsContent() {
   }
 
   async function handleNmSave() {
-    setNmSaving(true)
-    setNmSuccess('')
+    setNmSaving(true); setNmSuccess('')
     await fetch('/api/user/profile', {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
@@ -402,17 +438,26 @@ function SettingsContent() {
     ? new Date(subscription.current_period_end * 1000).toLocaleDateString('de-DE', { day: '2-digit', month: 'long', year: 'numeric' })
     : null
 
-  // currentPlan is null for free users. Only set when there's a real active Stripe subscription.
-  // The DB column defaults to 'starter' for all users, so we cannot read it without verifying
-  // an active subscription exists.
   const hasActiveSubscription = !!subscription && subscription.status === 'active'
   const currentPlan: string | null = hasActiveSubscription
     ? (profile?.plan ?? subscription?.plan ?? null)
     : null
   const hasSubscription = !!profile?.stripe_customer_id
 
+  // ── Render ─────────────────────────────────────────────────────
   return (
-    <div className="max-w-5xl mx-auto">
+    <div className="max-w-3xl mx-auto">
+
+      {/* Image crop modal — always outside tabs */}
+      {cropSrc && (
+        <ImageCropModal
+          imageUrl={cropSrc}
+          aspectRatio={1}
+          outputWidth={400}
+          onConfirm={handleCropConfirm}
+          onCancel={() => { if (cropSrc) URL.revokeObjectURL(cropSrc); setCropSrc(null) }}
+        />
+      )}
 
       {/* Toast */}
       {toast && (
@@ -423,18 +468,16 @@ function SettingsContent() {
       )}
 
       {/* ── Hero ─────────────────────────────────────────────────────── */}
-      <div className="mb-10">
-        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight">
-          Einstellungen
-        </h1>
+      <div className="mb-6">
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight">Einstellungen</h1>
         <p className="text-base mt-1.5" style={{ color: '#94A3B8' }}>
-          Verwalte dein Abonnement, Zahlungen und Sicherheit.
+          Profil, Unternehmen, Zahlung und Sicherheit.
         </p>
       </div>
 
-      {/* ── Past-due payment failure banner ───────────────────────── */}
+      {/* ── Past-due banner — immer sichtbar, egal welcher Tab aktiv ist ── */}
       {subscription?.status === 'past_due' && (
-        <div className="mb-8 rounded-3xl p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
+        <div className="mb-6 rounded-3xl p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
           style={{ background: '#FEF2F2', border: '1.5px solid #FECACA' }}>
           <div className="flex items-start gap-3">
             <div className="flex-shrink-0 mt-0.5">
@@ -443,9 +486,9 @@ function SettingsContent() {
               </svg>
             </div>
             <div>
-              <p className="text-sm font-bold" style={{ color: '#991B1B' }}>Zahlung fehlgeschlagen — deine Seiten sind offline</p>
+              <p className="text-sm font-bold" style={{ color: '#991B1B' }}>Zahlung fehlgeschlagen. Deine Seiten sind offline.</p>
               <p className="text-sm mt-0.5" style={{ color: '#DC2626' }}>
-                Bitte aktualisiere deine Zahlungsmethode. Sobald die Zahlung klappt, sind deine Seiten automatisch wieder live.
+                Aktualisiere deine Zahlungsmethode. Sobald die Zahlung klappt, sind deine Seiten automatisch wieder live.
               </p>
             </div>
           </div>
@@ -464,286 +507,339 @@ function SettingsContent() {
         </div>
       )}
 
+      {/* ── Tab-Leiste ──────────────────────────────────────────────────── */}
+      <div className="-mx-4 sm:mx-0 mb-8">
+        <div className="flex overflow-x-auto px-4 sm:px-0" style={{ borderBottom: '1.5px solid #F1F5F9' }}>
+          {TABS.map(tab => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className="flex-shrink-0 px-1 mr-7 pb-3 pt-1 text-sm font-semibold relative whitespace-nowrap transition-colors"
+              style={{ color: activeTab === tab.id ? '#111827' : '#94A3B8' }}
+            >
+              {tab.label}
+              {activeTab === tab.id && (
+                <span className="absolute bottom-0 left-0 right-0 rounded-full"
+                  style={{ height: 2, background: '#111827' }} />
+              )}
+            </button>
+          ))}
+        </div>
+      </div>
+
       {/* ════════════════════════════════════════════════════════════════
-          MEIN UNTERNEHMEN
+          TAB: UNTERNEHMEN
           ════════════════════════════════════════════════════════════════ */}
-      <Section title="Mein Network Marketing Unternehmen" subtitle="Wir zeigen dir passende Templates für dein Unternehmen. Du kannst mehrere auswählen.">
-        <div className="flex flex-wrap gap-2.5">
-          {NM_COMPANIES.map(company => {
-            const isActive = nmCompanies.includes(company)
-            return (
+      {activeTab === 'unternehmen' && (
+        <div className="flex flex-col gap-10">
+          <TabSection title="Mein Network Marketing Unternehmen" subtitle="Wir zeigen dir passende Templates für dein Unternehmen. Du kannst mehrere auswählen.">
+            <div className="flex flex-wrap gap-2.5">
+              {NM_COMPANIES.map(company => {
+                const isActive = nmCompanies.includes(company)
+                return (
+                  <button
+                    key={company}
+                    type="button"
+                    onClick={() => setNmCompanies(prev =>
+                      prev.includes(company) ? prev.filter(c => c !== company) : [...prev, company]
+                    )}
+                    className="flex items-center gap-1.5 px-4 py-2 rounded-2xl text-sm font-semibold transition-all"
+                    style={{
+                      background: isActive ? '#111827' : '#F9FAFB',
+                      color: isActive ? '#fff' : '#374151',
+                      border: isActive ? '1.5px solid #111827' : '1.5px solid #E5E7EB',
+                      boxShadow: isActive ? '0 4px 12px rgba(17,24,39,0.15)' : 'none',
+                    }}
+                  >
+                    {isActive && (
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+                        <polyline points="20 6 9 17 4 12"/>
+                      </svg>
+                    )}
+                    {company}
+                  </button>
+                )
+              })}
+            </div>
+
+            {nmCompanies.includes('PM-International') && (
+              <div className="flex flex-col gap-1.5 pt-2">
+                <label className="text-sm font-semibold text-gray-700">FitLine Teampartner-Nummer</label>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  value={teamPartnerNumber}
+                  onChange={e => setTeamPartnerNumber(e.target.value.replace(/\D/g, ''))}
+                  placeholder="z.B. 40237198"
+                  className="w-full px-4 py-3 text-[15px] rounded-2xl outline-none transition-all bg-white"
+                  style={{ border: '1.5px solid #E5E7EB' }}
+                  onFocus={e => (e.target.style.borderColor = '#1a1a1a')}
+                  onBlur={e => (e.target.style.borderColor = '#E5E7EB')}
+                />
+                <p className="text-xs px-1" style={{ color: '#94A3B8' }}>
+                  Wird automatisch in deine FitLine Shop-Links eingefügt.
+                </p>
+              </div>
+            )}
+
+            <div className="flex items-center gap-3 pt-1">
               <button
-                key={company}
                 type="button"
-                onClick={() => setNmCompanies(prev =>
-                  prev.includes(company) ? prev.filter(c => c !== company) : [...prev, company]
-                )}
-                className="flex items-center gap-1.5 px-4 py-2 rounded-2xl text-sm font-semibold transition-all"
+                onClick={handleNmSave}
+                disabled={nmSaving}
+                className="px-5 py-2.5 text-sm font-semibold rounded-2xl transition-all"
                 style={{
-                  background: isActive ? '#111827' : '#F9FAFB',
-                  color: isActive ? '#fff' : '#374151',
-                  border: isActive ? '1.5px solid #111827' : '1.5px solid #E5E7EB',
-                  boxShadow: isActive ? '0 4px 12px rgba(17,24,39,0.15)' : 'none',
+                  background: nmSaving ? '#E5E7EB' : '#111827',
+                  color: nmSaving ? '#9CA3AF' : '#fff',
                 }}
               >
-                {isActive && (
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
-                    <polyline points="20 6 9 17 4 12"/>
-                  </svg>
-                )}
-                {company}
+                {nmSaving ? 'Wird gespeichert…' : 'Speichern'}
               </button>
-            )
-          })}
+              {nmSuccess && <span className="text-sm text-green-600">{nmSuccess}</span>}
+            </div>
+          </TabSection>
         </div>
-        {/* ── FitLine Teampartner-Nummer (nur für PM-International Nutzer) ── */}
-        {nmCompanies.includes('PM-International') && (
-          <div className="flex flex-col gap-1.5 pt-2">
-            <label className="text-sm font-semibold text-gray-700">FitLine Teampartner-Nummer</label>
-            <input
-              type="text"
-              inputMode="numeric"
-              pattern="[0-9]*"
-              value={teamPartnerNumber}
-              onChange={e => setTeamPartnerNumber(e.target.value.replace(/\D/g, ''))}
-              placeholder="z.B. 40237198"
-              className="w-full px-4 py-3 text-[15px] rounded-2xl outline-none transition-all bg-white"
-              style={{ border: '1.5px solid #E5E7EB' }}
-              onFocus={e => (e.target.style.borderColor = '#1a1a1a')}
-              onBlur={e => (e.target.style.borderColor = '#E5E7EB')}
-            />
-            <p className="text-xs px-1" style={{ color: '#94A3B8' }}>
-              Wird automatisch in deine FitLine Shop-Links eingefügt.
-            </p>
-          </div>
-        )}
-
-        <div className="flex items-center gap-3 pt-2">
-          <button
-            type="button"
-            onClick={handleNmSave}
-            disabled={nmSaving}
-            className="px-5 py-2.5 text-sm font-semibold rounded-2xl transition-all"
-            style={{
-              background: nmSaving ? '#E5E7EB' : '#111827',
-              color: nmSaving ? '#9CA3AF' : '#fff',
-            }}
-          >
-            {nmSaving ? 'Wird gespeichert…' : 'Speichern'}
-          </button>
-          {nmSuccess && <span className="text-sm text-green-600">{nmSuccess}</span>}
-        </div>
-      </Section>
-
-      {/* ════════════════════════════════════════════════════════════════
-          MEIN PROFIL
-          ════════════════════════════════════════════════════════════════ */}
-      {cropSrc && (
-        <ImageCropModal
-          imageUrl={cropSrc}
-          aspectRatio={1}
-          outputWidth={400}
-          onConfirm={handleCropConfirm}
-          onCancel={() => { if (cropSrc) URL.revokeObjectURL(cropSrc); setCropSrc(null) }}
-        />
       )}
 
-      <Section title="Mein Profil" subtitle="Diese Angaben werden beim Bearbeiten deiner Webseiten automatisch vorausgefüllt.">
-        <form onSubmit={handleProfileSave} className="flex flex-col gap-7">
+      {/* ════════════════════════════════════════════════════════════════
+          TAB: PROFIL
+          ════════════════════════════════════════════════════════════════ */}
+      {activeTab === 'profil' && (
+        <div className="flex flex-col gap-10">
+          <TabSection title="Mein Profil" subtitle="Diese Angaben werden beim Bearbeiten deiner Webseiten automatisch vorausgefüllt.">
+            <form onSubmit={handleProfileSave} className="flex flex-col gap-7">
 
-          {/* ── Avatar ── */}
-          <div className="flex items-center gap-5">
-            <div
-              className="relative flex-shrink-0 w-20 h-20 rounded-full overflow-hidden cursor-pointer group"
-              style={{ background: '#F1F5F9', border: '2px solid #E5E7EB' }}
-              onClick={() => avatarInputRef.current?.click()}
-            >
-              {profileImageUrl ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={profileImageUrl} alt="Profilbild" className="w-full h-full object-cover" />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center">
-                  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#CBD5E1" strokeWidth="1.5">
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                    <circle cx="12" cy="7" r="4"/>
-                  </svg>
+              {/* Avatar */}
+              <div className="flex items-center gap-5">
+                <div
+                  className="relative flex-shrink-0 w-20 h-20 rounded-full overflow-hidden cursor-pointer group"
+                  style={{ background: '#F1F5F9', border: '2px solid #E5E7EB' }}
+                  onClick={() => avatarInputRef.current?.click()}
+                >
+                  {profileImageUrl ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={profileImageUrl} alt="Profilbild" className="w-full h-full object-cover" />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center">
+                      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#CBD5E1" strokeWidth="1.5">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                        <circle cx="12" cy="7" r="4"/>
+                      </svg>
+                    </div>
+                  )}
+                  <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                    style={{ background: 'rgba(0,0,0,0.4)' }}>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2">
+                      <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/>
+                      <circle cx="12" cy="13" r="4"/>
+                    </svg>
+                  </div>
+                  {avatarUploading && (
+                    <div className="absolute inset-0 flex items-center justify-center rounded-full"
+                      style={{ background: 'rgba(255,255,255,0.8)' }}>
+                      <span className="w-5 h-5 rounded-full border-2 border-gray-300 border-t-gray-800 animate-spin" />
+                    </div>
+                  )}
                 </div>
-              )}
-              <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                style={{ background: 'rgba(0,0,0,0.4)' }}>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2">
-                  <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/>
-                  <circle cx="12" cy="13" r="4"/>
-                </svg>
-              </div>
-              {avatarUploading && (
-                <div className="absolute inset-0 flex items-center justify-center rounded-full"
-                  style={{ background: 'rgba(255,255,255,0.8)' }}>
-                  <span className="w-5 h-5 rounded-full border-2 border-gray-300 border-t-gray-800 animate-spin" />
+                <div className="flex flex-col gap-1.5">
+                  <button
+                    type="button"
+                    onClick={() => avatarInputRef.current?.click()}
+                    disabled={avatarUploading}
+                    className="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-xl transition-colors disabled:opacity-50"
+                    style={{ background: '#F3F4F6', color: '#374151' }}
+                    onMouseEnter={e => (e.currentTarget.style.background = '#E5E7EB')}
+                    onMouseLeave={e => (e.currentTarget.style.background = '#F3F4F6')}
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/>
+                      <circle cx="12" cy="13" r="4"/>
+                    </svg>
+                    {profileImageUrl ? 'Foto ändern' : 'Foto hochladen'}
+                  </button>
+                  <p className="text-xs px-1" style={{ color: '#94A3B8' }}>JPG, PNG, WebP · max. 5 MB · wird zugeschnitten</p>
+                  <input
+                    ref={avatarInputRef}
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp"
+                    className="sr-only"
+                    onChange={handleAvatarFileSelect}
+                  />
                 </div>
-              )}
-            </div>
-            <div className="flex flex-col gap-1.5">
-              <button
-                type="button"
-                onClick={() => avatarInputRef.current?.click()}
-                disabled={avatarUploading}
-                className="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-xl transition-colors disabled:opacity-50"
-                style={{ background: '#F3F4F6', color: '#374151' }}
-                onMouseEnter={e => (e.currentTarget.style.background = '#E5E7EB')}
-                onMouseLeave={e => (e.currentTarget.style.background = '#F3F4F6')}
-              >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/>
-                  <circle cx="12" cy="13" r="4"/>
-                </svg>
-                {profileImageUrl ? 'Foto ändern' : 'Foto hochladen'}
-              </button>
-              <p className="text-xs px-1" style={{ color: '#94A3B8' }}>JPG, PNG, WebP · max. 5 MB · wird zugeschnitten</p>
-              <input
-                ref={avatarInputRef}
-                type="file"
-                accept="image/jpeg,image/png,image/webp"
-                className="sr-only"
-                onChange={handleAvatarFileSelect}
-              />
-            </div>
-          </div>
-
-          {/* ── Account info (read-only) ── */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="flex flex-col gap-1.5">
-              <label className="text-sm font-semibold text-gray-700">E-Mail-Adresse</label>
-              <div className="px-4 py-3 rounded-2xl text-sm text-gray-500 select-all"
-                style={{ background: '#F9FAFB', border: '1.5px solid #E5E7EB' }}>
-                {profile?.email ?? '–'}
               </div>
-            </div>
-            <div className="flex flex-col gap-1.5">
-              <label className="text-sm font-semibold text-gray-700">Benutzername</label>
-              <div className="px-4 py-3 rounded-2xl text-sm text-gray-500 select-all"
-                style={{ background: '#F9FAFB', border: '1.5px solid #E5E7EB' }}>
-                {profile?.username ? `@${profile.username}` : '–'}
+
+              {/* Account info (read-only) */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-sm font-semibold text-gray-700">E-Mail-Adresse</label>
+                  <div className="px-4 py-3 rounded-2xl text-sm text-gray-500 select-all"
+                    style={{ background: '#F9FAFB', border: '1.5px solid #E5E7EB' }}>
+                    {profile?.email ?? '–'}
+                  </div>
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-sm font-semibold text-gray-700">Benutzername</label>
+                  <div className="px-4 py-3 rounded-2xl text-sm text-gray-500 select-all"
+                    style={{ background: '#F9FAFB', border: '1.5px solid #E5E7EB' }}>
+                    {profile?.username ? `@${profile.username}` : '–'}
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
 
-          {/* ── Name ── */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <ProfileField label="Vorname" value={profileName.first_name}
-              onChange={v => setProfileName(p => ({ ...p, first_name: v }))} placeholder="Max" />
-            <ProfileField label="Nachname" value={profileName.last_name}
-              onChange={v => setProfileName(p => ({ ...p, last_name: v }))} placeholder="Mustermann" />
-          </div>
+              {/* Name */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <ProfileField label="Vorname" value={profileName.first_name}
+                  onChange={v => setProfileName(p => ({ ...p, first_name: v }))} placeholder="Max" />
+                <ProfileField label="Nachname" value={profileName.last_name}
+                  onChange={v => setProfileName(p => ({ ...p, last_name: v }))} placeholder="Mustermann" />
+              </div>
 
-          {/* ── Phone ── */}
-          <div className="flex flex-col gap-1.5">
-            <label className="text-sm font-semibold text-gray-700">Telefon / WhatsApp</label>
-            <div className="flex overflow-hidden rounded-2xl" style={{ border: '1.5px solid #E5E7EB' }}>
-              <select
-                value={countryCode}
-                onChange={e => { setCountryCode(e.target.value); if (e.target.value !== 'other') setCustomCountryCode('') }}
-                className="flex-shrink-0 px-3 py-3 text-sm outline-none"
-                style={{ background: '#FAFAFA', borderRight: '1px solid #F1F5F9', color: '#374151', minWidth: 80 }}
-              >
-                {COUNTRIES.map(c => (
-                  <option key={c.code + c.label} value={c.code}>{c.flag} {c.code === 'other' ? 'Andere…' : c.code}</option>
+              {/* Phone */}
+              <div className="flex flex-col gap-1.5">
+                <label className="text-sm font-semibold text-gray-700">Telefon / WhatsApp</label>
+                <div className="flex overflow-hidden rounded-2xl" style={{ border: '1.5px solid #E5E7EB' }}>
+                  <select
+                    value={countryCode}
+                    onChange={e => { setCountryCode(e.target.value); if (e.target.value !== 'other') setCustomCountryCode('') }}
+                    className="flex-shrink-0 px-3 py-3 text-sm outline-none"
+                    style={{ background: '#FAFAFA', borderRight: '1px solid #F1F5F9', color: '#374151', minWidth: 80 }}
+                  >
+                    {COUNTRIES.map(c => (
+                      <option key={c.code + c.label} value={c.code}>{c.flag} {c.code === 'other' ? 'Andere…' : c.code}</option>
+                    ))}
+                  </select>
+                  {isCustomCode && (
+                    <input
+                      type="text"
+                      value={customCountryCode}
+                      onChange={e => setCustomCountryCode(e.target.value)}
+                      placeholder="+XX"
+                      className="flex-shrink-0 px-2 py-3 text-sm outline-none"
+                      style={{ background: '#FAFAFA', borderRight: '1px solid #F1F5F9', color: '#374151', width: 64 }}
+                    />
+                  )}
+                  <input
+                    type="tel"
+                    value={phoneNumber}
+                    onChange={e => setPhoneNumber(e.target.value)}
+                    placeholder="151 12345678"
+                    className="flex-1 min-w-0 px-4 py-3 text-sm outline-none bg-white"
+                    style={{ color: '#111827' }}
+                    onFocus={e => (e.currentTarget.closest('div')!.style.borderColor = '#1a1a1a')}
+                    onBlur={e => (e.currentTarget.closest('div')!.style.borderColor = '#E5E7EB')}
+                  />
+                </div>
+              </div>
+
+              {/* Social Media */}
+              <div className="flex flex-col gap-2">
+                <p className="text-sm font-semibold text-gray-700 mb-1">Social Media</p>
+                {SOCIALS.map(s => (
+                  <div key={s.key}
+                    className="flex items-center overflow-hidden rounded-2xl transition-all"
+                    style={{ border: '1.5px solid #E5E7EB', background: '#fff' }}
+                    onFocusCapture={e => (e.currentTarget.style.borderColor = '#1a1a1a')}
+                    onBlurCapture={e => (e.currentTarget.style.borderColor = '#E5E7EB')}
+                  >
+                    <div className="flex items-center gap-2 px-3 py-3 border-r flex-shrink-0"
+                      style={{ borderColor: '#F1F5F9', background: '#FAFAFA', minWidth: 44 }}>
+                      {s.icon}
+                    </div>
+                    <div className="px-2 py-3 text-xs flex-shrink-0"
+                      style={{ color: '#9CA3AF', borderRight: '1px solid #F1F5F9', whiteSpace: 'nowrap', userSelect: 'none' }}>
+                      {s.prefix}
+                    </div>
+                    <input
+                      type="text"
+                      value={socialUsernames[s.key] ?? ''}
+                      onChange={e => setSocialUsernames(prev => ({ ...prev, [s.key]: e.target.value }))}
+                      placeholder={s.ph}
+                      autoComplete="off"
+                      className="flex-1 min-w-0 px-3 py-3 text-sm outline-none bg-transparent"
+                      style={{ color: '#111827' }}
+                    />
+                  </div>
                 ))}
-              </select>
-              {isCustomCode && (
-                <input
-                  type="text"
-                  value={customCountryCode}
-                  onChange={e => setCustomCountryCode(e.target.value)}
-                  placeholder="+XX"
-                  className="flex-shrink-0 px-2 py-3 text-sm outline-none"
-                  style={{ background: '#FAFAFA', borderRight: '1px solid #F1F5F9', color: '#374151', width: 64 }}
-                />
-              )}
-              <input
-                type="tel"
-                value={phoneNumber}
-                onChange={e => setPhoneNumber(e.target.value)}
-                placeholder="151 12345678"
-                className="flex-1 min-w-0 px-4 py-3 text-sm outline-none bg-white"
-                style={{ color: '#111827' }}
-                onFocus={e => (e.currentTarget.closest('div')!.style.borderColor = '#1a1a1a')}
-                onBlur={e => (e.currentTarget.closest('div')!.style.borderColor = '#E5E7EB')}
-              />
-            </div>
-          </div>
-
-          {/* ── Social Media ── */}
-          <div className="flex flex-col gap-2">
-            <p className="text-sm font-semibold text-gray-700 mb-1">Social Media</p>
-            {SOCIALS.map(s => (
-              <div key={s.key}
-                className="flex items-center overflow-hidden rounded-2xl transition-all"
-                style={{ border: '1.5px solid #E5E7EB', background: '#fff' }}
-                onFocusCapture={e => (e.currentTarget.style.borderColor = '#1a1a1a')}
-                onBlurCapture={e => (e.currentTarget.style.borderColor = '#E5E7EB')}
-              >
-                <div className="flex items-center gap-2 px-3 py-3 border-r flex-shrink-0"
-                  style={{ borderColor: '#F1F5F9', background: '#FAFAFA', minWidth: 44 }}>
-                  {s.icon}
-                </div>
-                <div className="px-2 py-3 text-xs flex-shrink-0"
-                  style={{ color: '#9CA3AF', borderRight: '1px solid #F1F5F9', whiteSpace: 'nowrap', userSelect: 'none' }}>
-                  {s.prefix}
-                </div>
-                <input
-                  type="text"
-                  value={socialUsernames[s.key] ?? ''}
-                  onChange={e => setSocialUsernames(prev => ({ ...prev, [s.key]: e.target.value }))}
-                  placeholder={s.ph}
-                  autoComplete="off"
-                  className="flex-1 min-w-0 px-3 py-3 text-sm outline-none bg-transparent"
-                  style={{ color: '#111827' }}
-                />
               </div>
-            ))}
-          </div>
 
-          {profileError && (
-            <p className="text-sm font-medium px-4 py-3 rounded-2xl"
-              style={{ background: '#FEF2F2', color: '#DC2626' }}>
-              {profileError}
-            </p>
-          )}
-          {profileSuccess && (
-            <p className="text-sm font-medium px-4 py-3 rounded-2xl flex items-center gap-2"
-              style={{ background: '#F0FDF4', color: '#15803D' }}>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                <path d="M20 6L9 17l-5-5"/>
-              </svg>
-              {profileSuccess}
-            </p>
-          )}
+              {profileError && (
+                <p className="text-sm font-medium px-4 py-3 rounded-2xl"
+                  style={{ background: '#FEF2F2', color: '#DC2626' }}>
+                  {profileError}
+                </p>
+              )}
+              {profileSuccess && (
+                <p className="text-sm font-medium px-4 py-3 rounded-2xl flex items-center gap-2"
+                  style={{ background: '#F0FDF4', color: '#15803D' }}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                    <path d="M20 6L9 17l-5-5"/>
+                  </svg>
+                  {profileSuccess}
+                </p>
+              )}
 
-          <button type="submit" disabled={profileSaving}
-            className="self-start flex items-center gap-2 px-5 py-3 text-sm font-bold text-white rounded-xl transition-opacity hover:opacity-90 disabled:opacity-70"
-            style={{ background: '#1a1a1a' }}>
-            {profileSaving && <Spinner />}
-            Profil speichern
-          </button>
-        </form>
-      </Section>
+              <button type="submit" disabled={profileSaving}
+                className="self-start flex items-center gap-2 px-5 py-3 text-sm font-bold text-white rounded-xl transition-opacity hover:opacity-90 disabled:opacity-70"
+                style={{ background: '#1a1a1a' }}>
+                {profileSaving && <Spinner />}
+                Profil speichern
+              </button>
+            </form>
+          </TabSection>
+        </div>
+      )}
 
       {/* ════════════════════════════════════════════════════════════════
-          ABONNEMENT
+          TAB: ZAHLUNG & PLAN
           ════════════════════════════════════════════════════════════════ */}
-      <Section title="Abonnement" subtitle="Aktueller Tarif und Abrechnung">
-        {subLoading ? (
-          <div className="h-24 rounded-3xl bg-gray-100 animate-pulse" />
-        ) : subscription ? (
-          <div className="rounded-3xl p-6 sm:p-7"
-            style={{
-              background: subscription.status === 'past_due' ? '#FEF2F2'
-                : subscription.cancel_at_period_end ? '#FFF7ED'
-                : '#F0FDF4',
-            }}>
-            <div className="flex items-start justify-between gap-4">
-              <div className="flex-1 min-w-0">
+      {activeTab === 'zahlung' && (
+        <div className="flex flex-col gap-10">
+
+          {/* ── Stripe Portal — ERSTER und PROMINENTESTER Block ── */}
+          {hasSubscription && (
+            <div className="rounded-3xl p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
+              style={{ background: '#F8FAFC', border: '1.5px solid #E5E7EB' }}>
+              <div className="flex items-center gap-4">
+                <div className="flex-shrink-0 w-10 h-10 rounded-2xl flex items-center justify-center"
+                  style={{ background: '#F1F5F9' }}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#374151" strokeWidth="1.75" strokeLinecap="round">
+                    <rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/>
+                  </svg>
+                </div>
+                <div>
+                  <p className="text-sm font-bold text-gray-900">Zahlung & Rechnungen verwalten</p>
+                  <p className="text-xs mt-0.5" style={{ color: '#64748B' }}>
+                    Karte oder Bankverbindung ändern. Rechnungen herunterladen.
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={handlePortal}
+                disabled={portalLoading}
+                className="flex-shrink-0 flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-xl transition-opacity hover:opacity-90 disabled:opacity-70 self-start sm:self-auto"
+                style={{ background: '#111827', color: '#fff' }}
+              >
+                {portalLoading
+                  ? <Spinner />
+                  : <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+                }
+                Stripe-Portal öffnen
+              </button>
+            </div>
+          )}
+
+          {/* ── Aktuelles Abonnement ── */}
+          <TabSection title="Abonnement" subtitle="Dein aktueller Tarif.">
+            {subLoading ? (
+              <div className="h-24 rounded-3xl bg-gray-100 animate-pulse" />
+            ) : subscription ? (
+              <div className="rounded-3xl p-6 sm:p-7"
+                style={{
+                  background: subscription.status === 'past_due' ? '#FEF2F2'
+                    : subscription.cancel_at_period_end ? '#FFF7ED'
+                    : '#F0FDF4',
+                }}>
                 <div className="flex flex-wrap items-center gap-2 mb-2">
                   <span className="text-base font-bold text-gray-900">
                     {PLAN_LABELS[subscription.plan] ?? subscription.plan}
@@ -765,9 +861,10 @@ function SettingsContent() {
                     </StatusBadge>
                   )}
                 </div>
+
                 {subscription.status === 'past_due' ? (
                   <p className="text-sm" style={{ color: '#DC2626' }}>
-                    Deine Seiten sind offline. Bitte aktualisiere deine Zahlungsmethode, damit sie automatisch wieder live gehen.
+                    Deine Seiten sind offline. Aktualisiere deine Zahlungsmethode oben.
                   </p>
                 ) : subscription.cancel_at_period_end ? (
                   <p className="text-sm" style={{ color: '#C2410C' }}>
@@ -778,385 +875,344 @@ function SettingsContent() {
                     Nächste Abrechnung am <strong>{periodEnd}</strong>.
                   </p>
                 )}
+
+                <div className="flex flex-wrap gap-2 mt-5">
+                  {subscription && !subscription.cancel_at_period_end && subscription.status !== 'past_due' && (
+                    <button onClick={() => setShowCancelConfirm(true)}
+                      className="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-xl transition-colors"
+                      style={{ color: '#DC2626', background: 'transparent' }}
+                      onMouseEnter={e => (e.currentTarget.style.background = '#FEF2F2')}
+                      onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
+                      Abonnement kündigen
+                    </button>
+                  )}
+                  {subscription?.cancel_at_period_end && (
+                    <button onClick={handleReactivate} disabled={reactivateLoading}
+                      className="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-xl transition-opacity hover:opacity-90 disabled:opacity-70"
+                      style={{ background: '#15803D', color: '#fff' }}>
+                      {reactivateLoading ? <Spinner /> : null}
+                      Kündigung zurückziehen
+                    </button>
+                  )}
+                </div>
               </div>
-            </div>
-
-            <div className="flex flex-wrap gap-2 mt-5">
-              {hasSubscription && (
-                <button onClick={handlePortal} disabled={portalLoading}
-                  className="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-xl transition-opacity hover:opacity-90 disabled:opacity-70"
-                  style={{ background: '#1a1a1a', color: '#fff' }}>
-                  {portalLoading
-                    ? <Spinner />
-                    : <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
-                  }
-                  Zahlung & Rechnungen
-                </button>
-              )}
-              {subscription && !subscription.cancel_at_period_end && (
-                <button onClick={() => setShowCancelConfirm(true)}
-                  className="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-xl transition-colors"
-                  style={{ color: '#DC2626', background: 'transparent' }}
-                  onMouseEnter={e => (e.currentTarget.style.background = '#FEF2F2')}
-                  onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
-                  Abonnement kündigen
-                </button>
-              )}
-              {subscription?.cancel_at_period_end && (
-                <button onClick={handleReactivate} disabled={reactivateLoading}
-                  className="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-xl transition-opacity hover:opacity-90 disabled:opacity-70"
-                  style={{ background: '#15803D', color: '#fff' }}>
-                  {reactivateLoading ? <Spinner /> : null}
-                  Kündigung zurückziehen
-                </button>
-              )}
-            </div>
-          </div>
-        ) : (
-          <div className="rounded-3xl p-6 sm:p-7" style={{ background: '#F8FAFC' }}>
-            <p className="text-base font-semibold text-gray-900 mb-1">Kein aktives Abonnement</p>
-            <p className="text-sm" style={{ color: '#64748B' }}>
-              Wähle unten einen Tarif, um Premium-Webseiten zu veröffentlichen.
-            </p>
-          </div>
-        )}
-      </Section>
-
-      {/* ════════════════════════════════════════════════════════════════
-          PLAN WECHSELN
-          ════════════════════════════════════════════════════════════════ */}
-      <Section title="Plan wählen" subtitle="Upgrade jederzeit. Wir verrechnen anteilig.">
-        {/* Secret plan — not self-service */}
-        {currentPlan === 'secret' && (
-          <div className="rounded-3xl p-6 sm:p-7" style={{ background: '#F8FAFC' }}>
-            <p className="text-base font-semibold text-gray-900 mb-1">Secret-Tarif aktiv</p>
-            <p className="text-sm" style={{ color: '#64748B' }}>
-              Du bist auf einem internen Sondertarif mit unlimitierten Premium-Webseiten. Kein Self-Service-Wechsel möglich. Wende dich bei Fragen an den Support.
-            </p>
-          </div>
-        )}
-        {currentPlan === 'secret' ? null : (
-        <>
-        {/* Interval toggle — segmented control */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-7">
-          <div className="inline-flex p-1 rounded-2xl self-start" style={{ background: '#F1F5F9' }}>
-            <button
-              onClick={() => setBillingInterval('monthly')}
-              className="px-5 py-2 text-sm font-semibold rounded-xl transition-all"
-              style={{
-                background: billingInterval === 'monthly' ? '#fff' : 'transparent',
-                color: billingInterval === 'monthly' ? '#1a1a1a' : '#94A3B8',
-                boxShadow: billingInterval === 'monthly' ? '0 1px 4px rgba(0,0,0,0.06)' : 'none',
-              }}>
-              Monatlich
-            </button>
-            <button
-              onClick={() => setBillingInterval('yearly')}
-              className="px-5 py-2 text-sm font-semibold rounded-xl transition-all flex items-center gap-2"
-              style={{
-                background: billingInterval === 'yearly' ? '#fff' : 'transparent',
-                color: billingInterval === 'yearly' ? '#1a1a1a' : '#94A3B8',
-                boxShadow: billingInterval === 'yearly' ? '0 1px 4px rgba(0,0,0,0.06)' : 'none',
-              }}>
-              Jährlich
-              <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full"
-                style={{ background: '#DCFCE7', color: '#15803D' }}>
-                −17%
-              </span>
-            </button>
-          </div>
-          <p className="text-xs" style={{ color: '#94A3B8' }}>
-            {billingInterval === 'monthly' ? 'Mindestlaufzeit 1 Monat' : 'Jahresrechnung · spare 2 Monate'}
-          </p>
-        </div>
-
-        {/* Plan cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-5">
-          {PLAN_LIST.map(plan => {
-            const isCurrent = currentPlan === plan.key
-            const price = billingInterval === 'monthly' ? plan.monthly_eur : plan.yearly_eur
-            const perMonth = billingInterval === 'yearly' ? (plan.yearly_eur / 12).toFixed(0) : plan.monthly_eur
-            const isUpgrade = canUpgradeTo(currentPlan, plan.key)
-            const isLower = !isCurrent && !isUpgrade
-
-            // Light purple for popular, white for others
-            const cardBg = plan.popular ? '#f5f0fb' : '#FFFFFF'
-            const cardBorder = isCurrent
-              ? '2px solid #7C3AED'
-              : plan.popular
-                ? '1.5px solid #d8c5f5'
-                : '1px solid #E5E7EB'
-            const cardShadow = plan.popular
-              ? '0 4px 20px rgba(124,58,237,0.08)'
-              : '0 1px 4px rgba(0,0,0,0.04)'
-
-            return (
-              <div key={plan.key}
-                className="relative flex flex-col p-6 sm:p-7"
-                style={{ background: cardBg, color: '#1a1a1a', border: cardBorder, borderRadius: 24, boxShadow: cardShadow }}>
-
-                {isCurrent && (
-                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 text-[10px] font-bold px-3 py-1 rounded-full whitespace-nowrap"
-                    style={{ background: '#7C3AED', color: '#fff' }}>
-                    Aktueller Plan
-                  </span>
-                )}
-
-                {plan.popular && !isCurrent && (
-                  <span className="absolute top-5 right-5 text-[10px] font-bold px-2.5 py-1 rounded-full"
-                    style={{ background: '#7C3AED', color: '#fff' }}>
-                    Beliebt
-                  </span>
-                )}
-
-                <p className="text-sm font-semibold mb-2" style={{ color: plan.popular ? '#7C3AED' : '#64748B' }}>
-                  {plan.name}
+            ) : (
+              <div className="rounded-3xl p-6 sm:p-7" style={{ background: '#F8FAFC' }}>
+                <p className="text-base font-semibold text-gray-900 mb-1">Kein aktives Abonnement</p>
+                <p className="text-sm" style={{ color: '#64748B' }}>
+                  Wähle unten einen Tarif, um Premium-Webseiten zu veröffentlichen.
                 </p>
-
-                <div className="flex items-baseline gap-1 mb-1">
-                  <span className="text-4xl font-bold tracking-tight text-gray-900">
-                    €{billingInterval === 'yearly' ? perMonth : price}
-                  </span>
-                  <span className="text-sm" style={{ color: '#94A3B8' }}>/Monat</span>
-                </div>
-
-                <p className="text-[11px] mb-1" style={{ color: '#94A3B8' }}>inkl. ges. MwSt.</p>
-
-                {billingInterval === 'yearly' ? (
-                  <p className="text-xs mb-5" style={{ color: '#15803D' }}>
-                    €{price}/Jahr · spare €{plan.monthly_eur * 12 - price}
-                  </p>
-                ) : (
-                  <div className="mb-5" />
-                )}
-
-                <ul className="flex flex-col gap-2.5 flex-1 mb-6">
-                  <li className="flex items-start gap-2.5 text-sm font-semibold text-gray-900">
-                    <CheckIconForPlan popular={!!plan.popular} />
-                    {plan.sites_label}
-                  </li>
-                  {COMMON_FEATURES.map(f => (
-                    <li key={f} className="flex items-start gap-2.5 text-sm" style={{ color: '#475569' }}>
-                      <CheckIconForPlan popular={!!plan.popular} />
-                      {f}
-                    </li>
-                  ))}
-                </ul>
-
-                {isCurrent ? (
-                  <div className="w-full py-3 text-sm font-semibold text-center rounded-xl"
-                    style={{ background: 'rgba(124,58,237,0.08)', color: '#7C3AED' }}>
-                    Aktueller Tarif
-                  </div>
-                ) : isLower ? (
-                  <div className="w-full py-3 text-sm font-medium text-center rounded-xl"
-                    style={{ background: 'transparent', color: '#CBD5E1', border: '1px solid #E2E8F0' }}>
-                    Downgrade nicht möglich
-                  </div>
-                ) : (
-                  <button onClick={() => handleCheckout(plan.key)} disabled={checkoutLoading === plan.key}
-                    className="w-full py-3 text-sm font-bold rounded-xl transition-opacity hover:opacity-90 disabled:opacity-70 flex items-center justify-center gap-2 text-white"
-                    style={{ background: plan.popular ? '#7C3AED' : '#1a1a1a' }}>
-                    {checkoutLoading === plan.key ? <Spinner /> : null}
-                    {hasSubscription ? 'Upgraden' : 'Wählen'}
-                  </button>
-                )}
-              </div>
-            )
-          })}
-        </div>
-        </>
-        )}
-      </Section>
-
-      {/* ════════════════════════════════════════════════════════════════
-          RECHNUNGEN
-          ════════════════════════════════════════════════════════════════ */}
-      <Section title="Rechnungen" subtitle="Lade hier alle Rechnungen als PDF herunter. Fertig für deine Buchhaltung.">
-        {invoicesLoading ? (
-          <div className="flex flex-col gap-2">
-            {[1, 2, 3].map(i => (
-              <div key={i} className="h-16 rounded-2xl bg-gray-100 animate-pulse" />
-            ))}
-          </div>
-        ) : invoices.length === 0 ? (
-          <div className="rounded-3xl p-6 sm:p-7" style={{ background: '#F8FAFC' }}>
-            <p className="text-sm font-medium text-gray-700">Noch keine Rechnungen</p>
-            <p className="text-sm mt-1" style={{ color: '#94A3B8' }}>
-              Rechnungen erscheinen hier, sobald deine erste Zahlung verbucht ist.
-            </p>
-          </div>
-        ) : (
-          <div className="flex flex-col">
-            {invoices.map((inv, i) => {
-              const date = new Date(inv.created * 1000).toLocaleDateString('de-DE', {
-                day: '2-digit', month: 'short', year: 'numeric',
-              })
-              const amount = (inv.amount_paid > 0 ? inv.amount_paid : inv.amount_due) / 100
-              const amountStr = amount.toLocaleString('de-DE', {
-                style: 'currency',
-                currency: inv.currency.toUpperCase(),
-              })
-              const statusLabel: Record<string, { text: string; bg: string; color: string }> = {
-                paid:           { text: 'Bezahlt',       bg: '#ECFDF5', color: '#15803D' },
-                open:           { text: 'Offen',         bg: '#FFF7ED', color: '#B45309' },
-                uncollectible:  { text: 'Uneinbringlich', bg: '#FEF2F2', color: '#B91C1C' },
-                void:           { text: 'Storniert',     bg: '#F3F4F6', color: '#6B7280' },
-              }
-              const s = statusLabel[inv.status ?? 'paid'] ?? statusLabel.paid
-              const isLast = i === invoices.length - 1
-
-              return (
-                <div key={inv.id}
-                  className="flex items-center gap-3 px-3 py-4 rounded-2xl transition-colors hover:bg-gray-50"
-                  style={{ borderBottom: isLast ? 'none' : '1px solid #F1F5F9' }}>
-                  <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center flex-shrink-0"
-                    style={{ background: '#F1F5F9' }}>
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#475569" strokeWidth="2">
-                      <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
-                      <polyline points="14 2 14 8 20 8"/>
-                    </svg>
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <p className="text-sm font-semibold text-gray-900 truncate">
-                        {inv.number ?? `Rechnung ${inv.id.slice(-8)}`}
-                      </p>
-                      <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full flex-shrink-0"
-                        style={{ background: s.bg, color: s.color }}>
-                        {s.text}
-                      </span>
-                    </div>
-                    <p className="text-xs mt-0.5 break-words" style={{ color: '#94A3B8' }}>
-                      {date} · {amountStr} inkl. MwSt.
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-1.5 flex-shrink-0">
-                    {inv.invoice_pdf && (
-                      <a href={inv.invoice_pdf} target="_blank" rel="noopener noreferrer"
-                        className="flex items-center gap-1.5 text-xs font-semibold px-3 py-2 rounded-xl transition-colors"
-                        style={{ background: '#1a1a1a', color: '#fff' }}
-                        onMouseEnter={e => (e.currentTarget.style.background = '#333')}
-                        onMouseLeave={e => (e.currentTarget.style.background = '#1a1a1a')}>
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                          <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/>
-                        </svg>
-                        PDF
-                      </a>
-                    )}
-                    {inv.hosted_invoice_url && (
-                      <a href={inv.hosted_invoice_url} target="_blank" rel="noopener noreferrer"
-                        className="hidden sm:flex items-center justify-center w-9 h-9 rounded-xl transition-colors"
-                        style={{ background: '#F3F4F6', color: '#374151' }}
-                        onMouseEnter={e => (e.currentTarget.style.background = '#E5E7EB')}
-                        onMouseLeave={e => (e.currentTarget.style.background = '#F3F4F6')}
-                        title="Online ansehen">
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                          <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/>
-                        </svg>
-                      </a>
-                    )}
-                  </div>
-                </div>
-              )
-            })}
-            {hasSubscription && (
-              <div className="mt-4 pt-4" style={{ borderTop: '1px solid #F1F5F9' }}>
-                <button onClick={handlePortal} disabled={portalLoading}
-                  className="text-sm font-medium transition-colors disabled:opacity-50"
-                  style={{ color: '#6B7280' }}
-                  onMouseEnter={e => (e.currentTarget.style.color = '#1a1a1a')}
-                  onMouseLeave={e => (e.currentTarget.style.color = '#6B7280')}>
-                  {portalLoading ? 'Öffnet…' : 'Alle Rechnungen & Zahlungsmethoden im Stripe-Portal verwalten →'}
-                </button>
               </div>
             )}
-          </div>
-        )}
-      </Section>
+          </TabSection>
 
-      {/* ════════════════════════════════════════════════════════════════
-          SICHERHEIT (Passwort)
-          ════════════════════════════════════════════════════════════════ */}
-      <Section title="Sicherheit" subtitle="Aktualisiere dein Passwort regelmäßig.">
-        <form onSubmit={handlePasswordChange} className="w-full sm:max-w-md flex flex-col gap-4">
-          <Field
-            label="Aktuelles Passwort"
-            value={currentPassword}
-            onChange={setCurrentPassword}
-            type="password"
-            placeholder="••••••••"
-          />
-          <Field
-            label="Neues Passwort"
-            value={newPassword}
-            onChange={setNewPassword}
-            type="password"
-            placeholder="Mindestens 6 Zeichen"
-          />
-          <Field
-            label="Neues Passwort bestätigen"
-            value={confirmPassword}
-            onChange={setConfirmPassword}
-            type="password"
-            placeholder="••••••••"
-          />
-
-          {pwError && (
-            <p className="text-sm font-medium px-4 py-3 rounded-2xl"
-              style={{ background: '#FEF2F2', color: '#DC2626' }}>
-              {pwError}
-            </p>
-          )}
-          {pwSuccess && (
-            <p className="text-sm font-medium px-4 py-3 rounded-2xl flex items-center gap-2"
-              style={{ background: '#F0FDF4', color: '#15803D' }}>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                <path d="M20 6L9 17l-5-5"/>
-              </svg>
-              {pwSuccess}
-            </p>
-          )}
-
-          <button type="submit" disabled={pwLoading}
-            className="self-start flex items-center gap-2 px-5 py-3 text-sm font-bold text-white rounded-xl transition-opacity hover:opacity-90 disabled:opacity-70 mt-1"
-            style={{ background: '#1a1a1a' }}>
-            {pwLoading && <Spinner />}
-            Passwort ändern
-          </button>
-        </form>
-      </Section>
-
-      {/* ════════════════════════════════════════════════════════════════
-          HÄUFIGE FRAGEN
-          ════════════════════════════════════════════════════════════════ */}
-      <Section title="Häufige Fragen" subtitle="Antworten auf typische Fragen rund um dein Abo.">
-        <div className="flex flex-col">
-          {FAQ.map(([q, a], i) => {
-            const open = openFaq === i
-            return (
-              <div key={i} className="border-b border-gray-100">
-                <button onClick={() => setOpenFaq(open ? null : i)}
-                  className="w-full flex items-center justify-between gap-4 py-5 text-left transition-colors hover:bg-gray-50 px-1"
-                  aria-expanded={open}>
-                  <span className="text-[15px] font-semibold text-gray-900">{q}</span>
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="2"
-                    style={{ transform: open ? 'rotate(45deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}>
-                    <path d="M12 5v14M5 12h14" strokeLinecap="round"/>
-                  </svg>
-                </button>
-                {open && (
-                  <p className="text-sm pb-5 px-1 leading-relaxed" style={{ color: '#64748B' }}>
-                    {a}
-                  </p>
-                )}
+          {/* ── Plan wählen ── */}
+          <TabSection title="Plan wählen" subtitle="Upgrade jederzeit. Wir verrechnen anteilig.">
+            {currentPlan === 'secret' ? (
+              <div className="rounded-3xl p-6 sm:p-7" style={{ background: '#F8FAFC' }}>
+                <p className="text-base font-semibold text-gray-900 mb-1">Secret-Tarif aktiv</p>
+                <p className="text-sm" style={{ color: '#64748B' }}>
+                  Du bist auf einem internen Sondertarif mit unlimitierten Premium-Webseiten. Kein Self-Service-Wechsel möglich. Wende dich bei Fragen an den Support.
+                </p>
               </div>
-            )
-          })}
-        </div>
-      </Section>
+            ) : (
+              <>
+                {/* Interval toggle */}
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-7">
+                  <div className="inline-flex p-1 rounded-2xl self-start" style={{ background: '#F1F5F9' }}>
+                    <button
+                      onClick={() => setBillingInterval('monthly')}
+                      className="px-5 py-2 text-sm font-semibold rounded-xl transition-all"
+                      style={{
+                        background: billingInterval === 'monthly' ? '#fff' : 'transparent',
+                        color: billingInterval === 'monthly' ? '#1a1a1a' : '#94A3B8',
+                        boxShadow: billingInterval === 'monthly' ? '0 1px 4px rgba(0,0,0,0.06)' : 'none',
+                      }}>
+                      Monatlich
+                    </button>
+                    <button
+                      onClick={() => setBillingInterval('yearly')}
+                      className="px-5 py-2 text-sm font-semibold rounded-xl transition-all flex items-center gap-2"
+                      style={{
+                        background: billingInterval === 'yearly' ? '#fff' : 'transparent',
+                        color: billingInterval === 'yearly' ? '#1a1a1a' : '#94A3B8',
+                        boxShadow: billingInterval === 'yearly' ? '0 1px 4px rgba(0,0,0,0.06)' : 'none',
+                      }}>
+                      Jährlich
+                      <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full"
+                        style={{ background: '#DCFCE7', color: '#15803D' }}>
+                        −17%
+                      </span>
+                    </button>
+                  </div>
+                  <p className="text-xs" style={{ color: '#94A3B8' }}>
+                    {billingInterval === 'monthly' ? 'Mindestlaufzeit 1 Monat' : 'Jahresrechnung · spare 2 Monate'}
+                  </p>
+                </div>
 
-      {/* Cancel confirmation modal */}
+                {/* Plan cards */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-5">
+                  {PLAN_LIST.map(plan => {
+                    const isCurrent = currentPlan === plan.key
+                    const price = billingInterval === 'monthly' ? plan.monthly_eur : plan.yearly_eur
+                    const perMonth = billingInterval === 'yearly' ? (plan.yearly_eur / 12).toFixed(0) : plan.monthly_eur
+                    const isUpgrade = canUpgradeTo(currentPlan, plan.key)
+                    const isLower = !isCurrent && !isUpgrade
+                    const cardBg = plan.popular ? '#f5f0fb' : '#FFFFFF'
+                    const cardBorder = isCurrent
+                      ? '2px solid #7C3AED'
+                      : plan.popular ? '1.5px solid #d8c5f5' : '1px solid #E5E7EB'
+                    const cardShadow = plan.popular ? '0 4px 20px rgba(124,58,237,0.08)' : '0 1px 4px rgba(0,0,0,0.04)'
+
+                    return (
+                      <div key={plan.key}
+                        className="relative flex flex-col p-6 sm:p-7"
+                        style={{ background: cardBg, color: '#1a1a1a', border: cardBorder, borderRadius: 24, boxShadow: cardShadow }}>
+
+                        {isCurrent && (
+                          <span className="absolute -top-3 left-1/2 -translate-x-1/2 text-[10px] font-bold px-3 py-1 rounded-full whitespace-nowrap"
+                            style={{ background: '#7C3AED', color: '#fff' }}>
+                            Aktueller Plan
+                          </span>
+                        )}
+                        {plan.popular && !isCurrent && (
+                          <span className="absolute top-5 right-5 text-[10px] font-bold px-2.5 py-1 rounded-full"
+                            style={{ background: '#7C3AED', color: '#fff' }}>
+                            Beliebt
+                          </span>
+                        )}
+
+                        <p className="text-sm font-semibold mb-2" style={{ color: plan.popular ? '#7C3AED' : '#64748B' }}>
+                          {plan.name}
+                        </p>
+                        <div className="flex items-baseline gap-1 mb-1">
+                          <span className="text-4xl font-bold tracking-tight text-gray-900">
+                            €{billingInterval === 'yearly' ? perMonth : price}
+                          </span>
+                          <span className="text-sm" style={{ color: '#94A3B8' }}>/Monat</span>
+                        </div>
+                        <p className="text-[11px] mb-1" style={{ color: '#94A3B8' }}>inkl. ges. MwSt.</p>
+                        {billingInterval === 'yearly' ? (
+                          <p className="text-xs mb-5" style={{ color: '#15803D' }}>
+                            €{price}/Jahr · spare €{plan.monthly_eur * 12 - price}
+                          </p>
+                        ) : (
+                          <div className="mb-5" />
+                        )}
+
+                        <ul className="flex flex-col gap-2.5 flex-1 mb-6">
+                          <li className="flex items-start gap-2.5 text-sm font-semibold text-gray-900">
+                            <CheckIconForPlan popular={!!plan.popular} />
+                            {plan.sites_label}
+                          </li>
+                          {COMMON_FEATURES.map(f => (
+                            <li key={f} className="flex items-start gap-2.5 text-sm" style={{ color: '#475569' }}>
+                              <CheckIconForPlan popular={!!plan.popular} />
+                              {f}
+                            </li>
+                          ))}
+                        </ul>
+
+                        {isCurrent ? (
+                          <div className="w-full py-3 text-sm font-semibold text-center rounded-xl"
+                            style={{ background: 'rgba(124,58,237,0.08)', color: '#7C3AED' }}>
+                            Aktueller Tarif
+                          </div>
+                        ) : isLower ? (
+                          <div className="w-full py-3 text-sm font-medium text-center rounded-xl"
+                            style={{ background: 'transparent', color: '#CBD5E1', border: '1px solid #E2E8F0' }}>
+                            Downgrade nicht möglich
+                          </div>
+                        ) : (
+                          <button onClick={() => handleCheckout(plan.key)} disabled={checkoutLoading === plan.key}
+                            className="w-full py-3 text-sm font-bold rounded-xl transition-opacity hover:opacity-90 disabled:opacity-70 flex items-center justify-center gap-2 text-white"
+                            style={{ background: plan.popular ? '#7C3AED' : '#1a1a1a' }}>
+                            {checkoutLoading === plan.key ? <Spinner /> : null}
+                            {hasSubscription ? 'Upgraden' : 'Wählen'}
+                          </button>
+                        )}
+                      </div>
+                    )
+                  })}
+                </div>
+              </>
+            )}
+          </TabSection>
+
+          {/* ── Rechnungen ── */}
+          <TabSection title="Rechnungen" subtitle="PDFs für deine Buchhaltung. Direkt zum Download.">
+            {invoicesLoading ? (
+              <div className="flex flex-col gap-2">
+                {[1, 2, 3].map(i => <div key={i} className="h-16 rounded-2xl bg-gray-100 animate-pulse" />)}
+              </div>
+            ) : invoices.length === 0 ? (
+              <div className="rounded-3xl p-6 sm:p-7" style={{ background: '#F8FAFC' }}>
+                <p className="text-sm font-medium text-gray-700">Noch keine Rechnungen</p>
+                <p className="text-sm mt-1" style={{ color: '#94A3B8' }}>
+                  Rechnungen erscheinen hier, sobald deine erste Zahlung verbucht ist.
+                </p>
+              </div>
+            ) : (
+              <div className="flex flex-col">
+                {invoices.map((inv, i) => {
+                  const date = new Date(inv.created * 1000).toLocaleDateString('de-DE', {
+                    day: '2-digit', month: 'short', year: 'numeric',
+                  })
+                  const amount = (inv.amount_paid > 0 ? inv.amount_paid : inv.amount_due) / 100
+                  const amountStr = amount.toLocaleString('de-DE', { style: 'currency', currency: inv.currency.toUpperCase() })
+                  const statusLabel: Record<string, { text: string; bg: string; color: string }> = {
+                    paid:          { text: 'Bezahlt',        bg: '#ECFDF5', color: '#15803D' },
+                    open:          { text: 'Offen',          bg: '#FFF7ED', color: '#B45309' },
+                    uncollectible: { text: 'Uneinbringlich', bg: '#FEF2F2', color: '#B91C1C' },
+                    void:          { text: 'Storniert',      bg: '#F3F4F6', color: '#6B7280' },
+                  }
+                  const s = statusLabel[inv.status ?? 'paid'] ?? statusLabel.paid
+                  const isLast = i === invoices.length - 1
+
+                  return (
+                    <div key={inv.id}
+                      className="flex items-center gap-3 px-3 py-4 rounded-2xl transition-colors hover:bg-gray-50"
+                      style={{ borderBottom: isLast ? 'none' : '1px solid #F1F5F9' }}>
+                      <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center flex-shrink-0"
+                        style={{ background: '#F1F5F9' }}>
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#475569" strokeWidth="2">
+                          <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                          <polyline points="14 2 14 8 20 8"/>
+                        </svg>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <p className="text-sm font-semibold text-gray-900 truncate">
+                            {inv.number ?? `Rechnung ${inv.id.slice(-8)}`}
+                          </p>
+                          <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full flex-shrink-0"
+                            style={{ background: s.bg, color: s.color }}>
+                            {s.text}
+                          </span>
+                        </div>
+                        <p className="text-xs mt-0.5 break-words" style={{ color: '#94A3B8' }}>
+                          {date} · {amountStr} inkl. MwSt.
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-1.5 flex-shrink-0">
+                        {inv.invoice_pdf && (
+                          <a href={inv.invoice_pdf} target="_blank" rel="noopener noreferrer"
+                            className="flex items-center gap-1.5 text-xs font-semibold px-3 py-2 rounded-xl transition-colors"
+                            style={{ background: '#1a1a1a', color: '#fff' }}
+                            onMouseEnter={e => (e.currentTarget.style.background = '#333')}
+                            onMouseLeave={e => (e.currentTarget.style.background = '#1a1a1a')}>
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                              <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+                            </svg>
+                            PDF
+                          </a>
+                        )}
+                        {inv.hosted_invoice_url && (
+                          <a href={inv.hosted_invoice_url} target="_blank" rel="noopener noreferrer"
+                            className="hidden sm:flex items-center justify-center w-9 h-9 rounded-xl transition-colors"
+                            style={{ background: '#F3F4F6', color: '#374151' }}
+                            onMouseEnter={e => (e.currentTarget.style.background = '#E5E7EB')}
+                            onMouseLeave={e => (e.currentTarget.style.background = '#F3F4F6')}
+                            title="Online ansehen">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                              <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/>
+                            </svg>
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            )}
+          </TabSection>
+        </div>
+      )}
+
+      {/* ════════════════════════════════════════════════════════════════
+          TAB: PASSWORT & FAQ
+          ════════════════════════════════════════════════════════════════ */}
+      {activeTab === 'sicherheit' && (
+        <div className="flex flex-col gap-10">
+
+          <TabSection title="Passwort ändern" subtitle="Wähle ein starkes Passwort mit mindestens 6 Zeichen.">
+            <form onSubmit={handlePasswordChange} className="w-full sm:max-w-md flex flex-col gap-4">
+              <Field
+                label="Aktuelles Passwort"
+                value={currentPassword}
+                onChange={setCurrentPassword}
+                type="password"
+                placeholder="••••••••"
+              />
+              <Field
+                label="Neues Passwort"
+                value={newPassword}
+                onChange={setNewPassword}
+                type="password"
+                placeholder="Mindestens 6 Zeichen"
+              />
+              <Field
+                label="Neues Passwort bestätigen"
+                value={confirmPassword}
+                onChange={setConfirmPassword}
+                type="password"
+                placeholder="••••••••"
+              />
+
+              {pwError && (
+                <p className="text-sm font-medium px-4 py-3 rounded-2xl"
+                  style={{ background: '#FEF2F2', color: '#DC2626' }}>
+                  {pwError}
+                </p>
+              )}
+              {pwSuccess && (
+                <p className="text-sm font-medium px-4 py-3 rounded-2xl flex items-center gap-2"
+                  style={{ background: '#F0FDF4', color: '#15803D' }}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                    <path d="M20 6L9 17l-5-5"/>
+                  </svg>
+                  {pwSuccess}
+                </p>
+              )}
+
+              <button type="submit" disabled={pwLoading}
+                className="self-start flex items-center gap-2 px-5 py-3 text-sm font-bold text-white rounded-xl transition-opacity hover:opacity-90 disabled:opacity-70 mt-1"
+                style={{ background: '#1a1a1a' }}>
+                {pwLoading && <Spinner />}
+                Passwort ändern
+              </button>
+            </form>
+          </TabSection>
+
+          <TabSection title="Häufige Fragen" subtitle="Schnelle Antworten auf die wichtigsten Fragen.">
+            <div className="flex flex-col">
+              {FAQ.map(([q, a], i) => {
+                const open = openFaq === i
+                return (
+                  <div key={i} style={{ borderBottom: i < FAQ.length - 1 ? '1px solid #F1F5F9' : 'none' }}>
+                    <button onClick={() => setOpenFaq(open ? null : i)}
+                      className="w-full flex items-center justify-between gap-4 py-5 text-left transition-colors hover:bg-gray-50 px-1 rounded-xl"
+                      aria-expanded={open}>
+                      <span className="text-[15px] font-semibold text-gray-900">{q}</span>
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="2"
+                        style={{ flexShrink: 0, transform: open ? 'rotate(45deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}>
+                        <path d="M12 5v14M5 12h14" strokeLinecap="round"/>
+                      </svg>
+                    </button>
+                    {open && (
+                      <p className="text-sm pb-5 px-1 leading-relaxed" style={{ color: '#64748B' }}>
+                        {a}
+                      </p>
+                    )}
+                  </div>
+                )
+              })}
+            </div>
+          </TabSection>
+        </div>
+      )}
+
+      {/* ── Cancel confirmation modal ───────────────────────────────────────── */}
       {showCancelConfirm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4"
           style={{ background: 'rgba(15,23,42,0.5)', backdropFilter: 'blur(4px)' }}>
@@ -1211,16 +1267,15 @@ function SettingsContent() {
 
 // ── Sub-components ─────────────────────────────────────────────────────────────
 
-function Section({ title, subtitle, children }: { title: string; subtitle: string; children: React.ReactNode }) {
+function TabSection({ title, subtitle, children }: { title: string; subtitle?: string; children: React.ReactNode }) {
   return (
-    <section className="mb-12 sm:mb-14 pb-12 sm:pb-14"
-      style={{ borderBottom: '1px solid #F1F5F9' }}>
-      <div className="mb-6">
-        <h2 className="text-xl sm:text-2xl font-bold text-gray-900 tracking-tight">{title}</h2>
-        <p className="text-sm mt-1" style={{ color: '#94A3B8' }}>{subtitle}</p>
+    <div>
+      <div className="mb-5">
+        <h2 className="text-lg sm:text-xl font-bold text-gray-900 tracking-tight">{title}</h2>
+        {subtitle && <p className="text-sm mt-1" style={{ color: '#94A3B8' }}>{subtitle}</p>}
       </div>
       {children}
-    </section>
+    </div>
   )
 }
 
@@ -1333,7 +1388,7 @@ function Spinner() {
   )
 }
 
-// ── Page entry with Suspense ─────────────────────────────────────────────────
+// ── Page entry with Suspense ──────────────────────────────────────────────────
 
 export default function SettingsPage() {
   return (
