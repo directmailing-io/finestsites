@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>E-Mail-Verifizierung — Team-Pitch · FinestSites</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --text:     #111827;
+    --muted:    #6B7280;
+    --border:   #E5E7EB;
+    --bg:       #F9FAFB;
+    --green:    #16A34A;
+    --green-bg: #F0FDF4;
+    --red:      #DC2626;
+    --red-bg:   #FEF2F2;
+    --yellow:   #D97706;
+    --yellow-bg:#FFFBEB;
+    --blue:     #2563EB;
+    --blue-bg:  #EFF6FF;
+    --purple:   #7C3AED;
+    --purple-bg:#F5F0FB;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  /* ── Layout ── */
+  .page { max-width: 860px; margin: 0 auto; padding: 48px 24px 80px; }
+
+  /* ── Header ── */
+  .header { margin-bottom: 52px; }
+  .tag {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
+    color: var(--purple); background: var(--purple-bg);
+    border: 1px solid #D4B8F8; border-radius: 20px; padding: 4px 12px;
+    margin-bottom: 18px;
+  }
+  h1 { font-size: 34px; font-weight: 800; line-height: 1.2; letter-spacing: -.02em; margin-bottom: 10px; }
+  .subtitle { font-size: 16px; color: var(--muted); max-width: 600px; }
+  .meta { margin-top: 18px; font-size: 12px; color: #9CA3AF; display: flex; gap: 20px; flex-wrap: wrap; }
+  .meta span { display: flex; align-items: center; gap: 5px; }
+
+  /* ── Sections ── */
+  section { margin-bottom: 48px; }
+  h2 {
+    font-size: 13px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 20px; display: flex; align-items: center; gap: 8px;
+  }
+  h2::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+  h3 { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+
+  /* ── Cards ── */
+  .card {
+    background: #fff; border: 1px solid var(--border);
+    border-radius: 16px; padding: 24px;
+    box-shadow: 0 1px 4px rgba(0,0,0,.05);
+  }
+  .card + .card { margin-top: 14px; }
+
+  /* ── Status boxes ── */
+  .status-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 32px; }
+  .status-box {
+    border-radius: 12px; padding: 16px 18px;
+    border: 1px solid transparent;
+  }
+  .status-box .label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; margin-bottom: 4px; }
+  .status-box .value { font-size: 17px; font-weight: 700; }
+  .status-box .sub { font-size: 12px; margin-top: 2px; opacity: .7; }
+  .s-red    { background: var(--red-bg);    border-color: #FECACA; color: var(--red); }
+  .s-yellow { background: var(--yellow-bg); border-color: #FDE68A; color: var(--yellow); }
+  .s-green  { background: var(--green-bg);  border-color: #BBF7D0; color: var(--green); }
+  .s-blue   { background: var(--blue-bg);   border-color: #BFDBFE; color: var(--blue); }
+
+  /* ── Code block ── */
+  .code-block {
+    background: #1a1a1a; color: #e2e8f0;
+    border-radius: 12px; padding: 18px 20px;
+    font-family: 'SF Mono', 'Fira Code', monospace; font-size: 13px;
+    line-height: 1.7; overflow-x: auto;
+  }
+  .code-block .comment { color: #6B7280; }
+  .code-block .key { color: #93C5FD; }
+  .code-block .val-green { color: #86EFAC; }
+  .code-block .val-red   { color: #FCA5A5; }
+  .code-block .val-str   { color: #FDE68A; }
+  .code-block .fn        { color: #C4B5FD; }
+
+  /* ── Team bubble ── */
+  .team-grid { display: flex; flex-direction: column; gap: 20px; }
+  .bubble {
+    display: flex; gap: 14px; align-items: flex-start;
+  }
+  .bubble.right { flex-direction: row-reverse; }
+  .avatar {
+    width: 38px; height: 38px; border-radius: 50%; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; font-weight: 700; color: #fff;
+  }
+  .av-dev    { background: #374151; }
+  .av-ux     { background: #7C3AED; }
+  .av-legal  { background: #0891B2; }
+  .av-growth { background: #16A34A; }
+  .av-ceo    { background: #D97706; }
+  .bubble-body { max-width: 85%; }
+  .bubble-name { font-size: 11px; font-weight: 700; color: var(--muted); margin-bottom: 5px; letter-spacing: .02em; }
+  .bubble.right .bubble-name { text-align: right; }
+  .bubble-msg {
+    background: #fff; border: 1px solid var(--border);
+    border-radius: 14px; padding: 12px 16px;
+    font-size: 14px; line-height: 1.55;
+    box-shadow: 0 1px 3px rgba(0,0,0,.06);
+  }
+  .bubble.right .bubble-msg { background: #1a1a1a; color: #fff; border-color: #333; }
+  .bubble-msg strong { font-weight: 700; }
+  .bubble-msg .tag-inline {
+    display: inline-block; font-size: 10px; font-weight: 700;
+    padding: 1px 7px; border-radius: 20px; vertical-align: middle; margin: 0 2px;
+  }
+  .t-red    { background: #FEE2E2; color: #DC2626; }
+  .t-green  { background: #DCFCE7; color: #16A34A; }
+  .t-yellow { background: #FEF3C7; color: #D97706; }
+  .t-blue   { background: #DBEAFE; color: #2563EB; }
+  .t-purple { background: #EDE9FE; color: #7C3AED; }
+
+  /* ── Option cards ── */
+  .options-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+  .option-card {
+    background: #fff; border: 2px solid var(--border); border-radius: 16px;
+    padding: 22px; position: relative; transition: box-shadow .15s;
+  }
+  .option-card.winner { border-color: #16A34A; }
+  .option-card.loser  { opacity: .7; }
+  .winner-badge {
+    position: absolute; top: -12px; left: 20px;
+    background: #16A34A; color: #fff;
+    font-size: 10px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase;
+    padding: 3px 12px; border-radius: 20px;
+  }
+  .option-card h4 { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+  .option-card .option-desc { font-size: 13px; color: var(--muted); margin-bottom: 14px; }
+  .pros-cons { display: flex; flex-direction: column; gap: 5px; }
+  .pros-cons li {
+    font-size: 12px; list-style: none; padding-left: 18px; position: relative;
+  }
+  .pros-cons li::before {
+    content: attr(data-icon);
+    position: absolute; left: 0;
+  }
+
+  /* ── Flow diagram ── */
+  .flow { display: flex; align-items: center; gap: 0; flex-wrap: wrap; }
+  .flow-step {
+    background: #fff; border: 1.5px solid var(--border); border-radius: 10px;
+    padding: 10px 14px; font-size: 12px; font-weight: 600; text-align: center;
+    white-space: nowrap;
+  }
+  .flow-step.highlight { border-color: #16A34A; background: var(--green-bg); color: var(--green); }
+  .flow-step.new { border-color: var(--purple); background: var(--purple-bg); color: var(--purple); }
+  .flow-arrow { font-size: 16px; color: var(--border); padding: 0 6px; flex-shrink: 0; }
+
+  /* ── Legal table ── */
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { text-align: left; padding: 10px 14px; background: var(--bg); font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); border-bottom: 1px solid var(--border); }
+  td { padding: 11px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  .check { color: var(--green); font-weight: 700; }
+  .cross { color: var(--red); font-weight: 700; }
+  .neutral { color: var(--yellow); font-weight: 700; }
+
+  /* ── Effort estimate ── */
+  .effort-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
+  .effort-item {
+    background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 16px;
+  }
+  .effort-item .e-label { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 6px; }
+  .effort-item .e-val { font-size: 22px; font-weight: 800; }
+  .effort-item .e-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .e-green { color: var(--green); }
+  .e-yellow { color: var(--yellow); }
+
+  /* ── Recommendation box ── */
+  .rec-box {
+    background: #111827; color: #fff;
+    border-radius: 20px; padding: 32px 36px;
+  }
+  .rec-box h3 { font-size: 22px; font-weight: 800; margin-bottom: 12px; }
+  .rec-box p { font-size: 15px; color: #D1D5DB; line-height: 1.65; margin-bottom: 0; }
+  .rec-box p + p { margin-top: 10px; }
+  .rec-steps { margin-top: 22px; display: flex; flex-direction: column; gap: 10px; }
+  .rec-step {
+    display: flex; align-items: flex-start; gap: 14px;
+    background: rgba(255,255,255,.07); border-radius: 12px; padding: 14px 16px;
+  }
+  .rec-step-num {
+    width: 26px; height: 26px; border-radius: 50%; background: #fff; color: #111;
+    font-size: 12px; font-weight: 800; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .rec-step-text { font-size: 14px; color: #E5E7EB; line-height: 1.5; }
+  .rec-step-text strong { color: #fff; }
+
+  /* ── Footer ── */
+  .footer { text-align: center; font-size: 12px; color: #9CA3AF; margin-top: 60px; padding-top: 24px; border-top: 1px solid var(--border); }
+
+  @media (max-width: 600px) {
+    h1 { font-size: 26px; }
+    .flow { flex-direction: column; align-items: flex-start; }
+    .flow-arrow { transform: rotate(90deg); }
+    .rec-box { padding: 24px 20px; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="tag">
+      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      Security &amp; Compliance · FinestSites Team
+    </div>
+    <h1>Brauchen wir E-Mail-Verifikation?</h1>
+    <p class="subtitle">Team-Diskussion, Codebase-Analyse und Entscheidungsempfehlung für den Gründer</p>
+    <div class="meta">
+      <span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> 15. Juli 2026</span>
+      <span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg> Dev · UX · Legal · Growth · CEO</span>
+      <span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg> BetterAuth · Resend · Drizzle ORM</span>
+    </div>
+  </div>
+
+  <!-- IST-Stand -->
+  <section>
+    <h2>Aktueller Stand im Code</h2>
+    <div class="status-row">
+      <div class="status-box s-red">
+        <div class="label">E-Mail-Pflicht</div>
+        <div class="value">Kein DOI</div>
+        <div class="sub">requireEmailVerification: false</div>
+      </div>
+      <div class="status-box s-yellow">
+        <div class="label">Infrastruktur</div>
+        <div class="value">Bereit</div>
+        <div class="sub">sendVerificationEmail konfiguriert</div>
+      </div>
+      <div class="status-box s-green">
+        <div class="label">Passwort-Reset</div>
+        <div class="value">Aktiv</div>
+        <div class="sub">sendResetPassword via Resend</div>
+      </div>
+      <div class="status-box s-blue">
+        <div class="label">SMS / OTP</div>
+        <div class="value">Nicht vorhanden</div>
+        <div class="sub">Kein Twilio, kein TOTP</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="font-size:12px;font-weight:700;color:var(--muted);margin-bottom:10px;text-transform:uppercase;letter-spacing:.05em;">src/lib/auth/index.ts — relevante Zeilen</div>
+      <div class="code-block">
+<span class="key">emailAndPassword</span>: {<br>
+&nbsp;&nbsp;<span class="key">enabled</span>: <span class="val-green">true</span>,<br>
+&nbsp;&nbsp;<span class="key">requireEmailVerification</span>: <span class="val-red">false</span>, <span class="comment">// ← das ist der Schalter</span><br>
+&nbsp;&nbsp;<span class="comment">// Kommentar im Code: "false for easier migration — can be toggled later"</span><br>
+},<br><br>
+<span class="key">emailVerification</span>: {<br>
+&nbsp;&nbsp;<span class="fn">sendVerificationEmail</span>: <span class="fn">async</span> ({ user, url }) =&gt; {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Resend ist konfiguriert — E-Mails könnten morgen rausgehen</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;await <span class="fn">getResend</span>().<span class="fn">emails.send</span>({ ... })<br>
+&nbsp;&nbsp;},<br>
+},
+      </div>
+    </div>
+
+    <div style="margin-top:16px;padding:14px 18px;background:#FFF7ED;border:1px solid #FED7AA;border-radius:12px;font-size:13px;color:#92400E;">
+      <strong>Aktueller Flow:</strong> Register → sofort einloggen → Onboarding → Dashboard — ohne jede E-Mail-Verifikation.
+    </div>
+  </section>
+
+  <!-- Team-Diskussion -->
+  <section>
+    <h2>Team-Diskussion</h2>
+    <div class="team-grid">
+
+      <div class="bubble">
+        <div class="avatar av-dev">Dev</div>
+        <div class="bubble-body">
+          <div class="bubble-name">Backend-Dev</div>
+          <div class="bubble-msg">
+            Ich starte mit dem technischen IST-Stand. Wir nutzen <strong>BetterAuth</strong> — der Hat <code>requireEmailVerification</code> als Konfigurationsflag. Das Ding ist: wenn wir es auf <code>true</code> setzen, bricht der aktuelle Flow sofort. User registrieren sich, versuchen sich einzuloggen — BetterAuth gibt 403 zurück solange die E-Mail unverifiziert ist. Das bedeutet: wir brauchen eine neue Seite "Bitte E-Mail bestätigen" plus Resend-Button. Technischer Aufwand ist aber <span class="tag-inline t-green">gering</span> — Infra steht, Resend ist konfiguriert.
+          </div>
+        </div>
+      </div>
+
+      <div class="bubble right">
+        <div class="avatar av-ux">UX</div>
+        <div class="bubble-body">
+          <div class="bubble-name">UX / Product</div>
+          <div class="bubble-msg">
+            Moment — ich muss hier bremsen. Unser Funnel ist: Vorlagen-Seite → Template-Auswahl → Cookie wird gesetzt → Register. Der User ist <strong>kaufbereit</strong>. Wenn wir dann sagen "erst E-Mail bestätigen bevor du irgendwas sehen kannst" — verlieren wir einen erheblichen Teil. Studien zeigen <span class="tag-inline t-red">15–25% Drop</span> bei Hard-DOI nach Registration. Für uns mit der NM-Zielgruppe (40–60 Jahre, weniger technikaffin) könnte das noch mehr sein.
+          </div>
+        </div>
+      </div>
+
+      <div class="bubble">
+        <div class="avatar av-legal">§</div>
+        <div class="bubble-body">
+          <div class="bubble-name">Legal (Deutschland / DSGVO)</div>
+          <div class="bubble-msg">
+            Lasst mich das klarstellen: <strong>E-Mail-Verifizierung ist für die Registrierung bei einem SaaS NICHT gesetzlich vorgeschrieben.</strong> Die DSGVO verlangt das nicht. Es geht ums Datenschutzrecht — und das erlaubt die Speicherung einer E-Mail zur Vertragserfüllung ohne Verifikation. <br><br>
+            Was es gibt: §7 UWG verlangt <strong>Double-Opt-in für Marketing-E-Mails</strong> (Newsletter etc). Das ist aber ein separates Opt-in — nicht die Account-Registrierung. Transaktionale E-Mails (Rechnungen, Onboarding, Passwort-Reset) sind immer erlaubt.<br><br>
+            <span class="tag-inline t-yellow">Aber:</span> Ohne Verifikation können wir nicht nachweisen, dass der Nutzer wirklich Inhaber dieser E-Mail-Adresse ist. Das wird relevant wenn jemand eine fremde E-Mail eingibt und dann Marketing bekommt — das wäre ein DSGVO-Problem.
+          </div>
+        </div>
+      </div>
+
+      <div class="bubble right">
+        <div class="avatar av-growth">MRR</div>
+        <div class="bubble-body">
+          <div class="bubble-name">Growth / Revenue</div>
+          <div class="bubble-msg">
+            Aus Growth-Sicht: Fake-E-Mails kosten uns. Resend-Credits für unzustellbare E-Mails, schlechtere Sender-Reputation (Bounce-Rate steigt), und im schlimmsten Fall werden unsere Transaktions-E-Mails als Spam markiert. Das trifft dann <strong>alle</strong> Nutzer — auch die zahlenden. Außerdem: Ein User ohne echte E-Mail kann später nicht sein Passwort zurücksetzen — frustriert sich und churnt. Verifizierte E-Mails = sauberere Daten = bessere Deliverability für alle.
+          </div>
+        </div>
+      </div>
+
+      <div class="bubble">
+        <div class="avatar av-ux">UX</div>
+        <div class="bubble-body">
+          <div class="bubble-name">UX / Product</div>
+          <div class="bubble-msg">
+            OK, ich sehe die Argumente. Mein Kompromissvorschlag: <strong>Soft-Verifikation</strong>. Der User kann sofort ins Dashboard — aber bekommt ein Banner "E-Mail noch nicht bestätigt. Bitte prüfe dein Postfach." Kein Blocker, keine Konversionskiller. Wir setzen einen <span class="tag-inline t-yellow">7-Tage-Reminder</span> und könnten langfristig bestimmte Features (z.B. Custom Domain) erst nach Verifikation freischalten.
+          </div>
+        </div>
+      </div>
+
+      <div class="bubble right">
+        <div class="avatar av-legal">§</div>
+        <div class="bubble-body">
+          <div class="bubble-name">Legal</div>
+          <div class="bubble-msg">
+            Soft-Verifikation löst das DSGVO-Risiko nicht vollständig — wir können immer noch Marketing an unverifizierte Adressen schicken. Aber für <strong>transaktionale E-Mails</strong> (Onboarding, Willkommen, Billing) ist das akzeptabel, weil die im Rahmen des Vertragsverhältnisses stehen. <br>Mein Rat: <strong>Newsletter-Versand nur an verifizierte Adressen</strong> — das schützt uns und ist auch schon im Newsletter-Tool filterbar.
+          </div>
+        </div>
+      </div>
+
+      <div class="bubble">
+        <div class="avatar av-dev">Dev</div>
+        <div class="bubble-body">
+          <div class="bubble-name">Backend-Dev</div>
+          <div class="bubble-msg">
+            SMS-OTP als Alternative? Technisch: wir bräuchten Twilio oder AWS SNS. Kosten ca. <strong>0,08–0,12€ pro SMS</strong>. Bei 200 Registrierungen/Monat = ~20€ — überschaubar. Aber: Telefonnummer wird ein Pflichtfeld, was Friction erhöht. Und unser BetterAuth-Setup muss komplett umgebaut werden — BetterAuth hat kein SMS-Plugin out-of-the-box. Das wären deutlich mehr Tage Entwicklungszeit als E-Mail-Verifikation. Für unseren Use-Case überdimensioniert.
+          </div>
+        </div>
+      </div>
+
+      <div class="bubble right">
+        <div class="avatar av-growth">MRR</div>
+        <div class="bubble-body">
+          <div class="bubble-name">Growth</div>
+          <div class="bubble-msg">
+            SMS-OTP lehne ich ab. Unsere Zielgruppe sind NM-Berater, oft 40+. Die haben Angst ihre Handynummer einzugeben — die denken sofort an Spam-Anrufe. Das würde die Conversion massiv killen. E-Mail ist vertraut, sicher, kostet uns nichts extra. <span class="tag-inline t-green">E-Mail-Verifikation gewinnt.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="bubble">
+        <div class="avatar av-ceo">CEO</div>
+        <div class="bubble-body">
+          <div class="bubble-name">Gründer-Perspektive</div>
+          <div class="bubble-msg">
+            Ich höre: Soft-DOI mit E-Mail ist der Konsens. Aber ich frage nochmal kritisch: Verlieren wir wirklich User wenn wir Hard-DOI machen? Unsere User haben gerade ein Template ausgesucht — die sind motiviert. Und die E-Mail kommt sofort (Resend ist schnell). Die Frage ist: wie hoch ist die Wahrscheinlichkeit dass jemand registriert, direkt ins Dashboard will und den Verifizierungs-Schritt als Deal-Breaker sieht?
+          </div>
+        </div>
+      </div>
+
+      <div class="bubble right">
+        <div class="avatar av-ux">UX</div>
+        <div class="bubble-body">
+          <div class="bubble-name">UX / Product</div>
+          <div class="bubble-msg">
+            Gute Frage. Ich ändere meine Position teilweise: Wenn die "Bitte bestätige deine E-Mail"-Seite <strong>gut designed</strong> ist — klarer Call-to-Action, Live-Preview des nächsten Schritts, Resend-Button prominent — dann ist Hard-DOI zumutbar. Entscheidend: die Seite darf nicht wie ein Dead-End wirken. Der User muss das Gefühl haben: <em>"Ein Klick in meiner Inbox und ich bin drin."</em> Dann ist der Drop deutlich geringer.
+          </div>
+        </div>
+      </div>
+
+      <div class="bubble">
+        <div class="avatar av-legal">§</div>
+        <div class="bubble-body">
+          <div class="bubble-name">Legal — Abschlussstatement</div>
+          <div class="bubble-msg">
+            Hard-DOI hat einen weiteren Vorteil, den wir nicht unterschätzen sollten: <strong>Nachweispflicht bei DSGVO-Beschwerden</strong>. Wenn ein User behauptet, er habe sich nie angemeldet — mit Hard-DOI haben wir den Nachweis: "Du hast auf den Link in deiner E-Mail geklickt." Ohne DOI haben wir nur ein Formular-Submission, das jeder in ihrem Namen hätte ausfüllen können. Außerdem: Hard-DOI schützt vor Account-Hijacking durch Typos — z.B. max@gmial.com statt gmail.com.
+          </div>
+        </div>
+      </div>
+
+      <div class="bubble right">
+        <div class="avatar av-ceo">CEO</div>
+        <div class="bubble-body">
+          <div class="bubble-name">Gründer-Entscheidung</div>
+          <div class="bubble-msg">
+            Team-Konsens: <strong>Hard-DOI mit sehr guter UX auf der "Warte-Seite".</strong> Keine SMS. Verifizierungslink-E-Mail sofort via Resend, 24h gültig. Resend-Button auf der Warte-Seite. Dashboard erst nach Verifikation. Custom-Domain-Feature sowieso erst nach Verifikation sinnvoll. Newsletter nur an verifizierte E-Mails. Umsetzung in einer Sprint-Iteration möglich.
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Optionen -->
+  <section>
+    <h2>Die 3 Optionen im Vergleich</h2>
+    <div class="options-grid">
+
+      <div class="option-card loser">
+        <h4>Option A — Kein DOI</h4>
+        <p class="option-desc">Status quo. Register → sofort eingeloggt. Keine E-Mail-Bestätigung.</p>
+        <ul class="pros-cons">
+          <li data-icon="✓" style="color:var(--green)">Maximale Conversion</li>
+          <li data-icon="✓" style="color:var(--green)">Kein Entwicklungsaufwand</li>
+          <li data-icon="✗" style="color:var(--red)">Fake E-Mails möglich</li>
+          <li data-icon="✗" style="color:var(--red)">Bounce-Rate schadet Deliverability</li>
+          <li data-icon="✗" style="color:var(--red)">Kein DSGVO-Nachweis</li>
+          <li data-icon="✗" style="color:var(--red)">Kein Schutz vor Typos</li>
+        </ul>
+      </div>
+
+      <div class="option-card winner">
+        <div class="winner-badge">Empfehlung</div>
+        <h4>Option B — Hard-DOI</h4>
+        <p class="option-desc">Register → "Bitte bestätige deine E-Mail"-Seite → Klick im Postfach → Dashboard.</p>
+        <ul class="pros-cons">
+          <li data-icon="✓" style="color:var(--green)">Nur echte E-Mails in DB</li>
+          <li data-icon="✓" style="color:var(--green)">DSGVO-Nachweis vorhanden</li>
+          <li data-icon="✓" style="color:var(--green)">Bessere Deliverability</li>
+          <li data-icon="✓" style="color:var(--green)">Infra bereits vorhanden</li>
+          <li data-icon="✓" style="color:var(--green)">Schutz vor Typos</li>
+          <li data-icon="~" style="color:var(--yellow)">Minimale Extra-Friction</li>
+          <li data-icon="~" style="color:var(--yellow)">Gute UX nötig auf Warteseite</li>
+        </ul>
+      </div>
+
+      <div class="option-card loser">
+        <h4>Option C — SMS OTP</h4>
+        <p class="option-desc">Register → Handy-Nr. eingeben → 6-stelliger Code per SMS.</p>
+        <ul class="pros-cons">
+          <li data-icon="✓" style="color:var(--green)">Stärkste Verifikation</li>
+          <li data-icon="✓" style="color:var(--green)">Kein Postfach nötig</li>
+          <li data-icon="✗" style="color:var(--red)">Hohe Friction (Telefonnr.)</li>
+          <li data-icon="✗" style="color:var(--red)">~0,10€ pro SMS Kosten</li>
+          <li data-icon="✗" style="color:var(--red)">Keine BetterAuth-Integration</li>
+          <li data-icon="✗" style="color:var(--red)">Zielgruppe skeptisch</li>
+          <li data-icon="✗" style="color:var(--red)">Hoher Entwicklungsaufwand</li>
+        </ul>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Legal-Tabelle -->
+  <section>
+    <h2>Rechtliche Bewertung (Deutschland / EU)</h2>
+    <div class="card" style="padding:0;overflow:hidden;">
+      <table>
+        <thead>
+          <tr>
+            <th>Thema</th>
+            <th>Anforderung</th>
+            <th>Kein DOI</th>
+            <th>Hard-DOI</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>DSGVO Art. 6</strong><br><span style="font-size:11px;color:var(--muted)">Rechtmäßigkeit der Verarbeitung</span></td>
+            <td>Vertragserfüllung als Grundlage reicht für Account-E-Mail</td>
+            <td class="neutral">~ OK</td>
+            <td class="check">✓ Besser</td>
+          </tr>
+          <tr>
+            <td><strong>DSGVO Rechenschaftspflicht</strong><br><span style="font-size:11px;color:var(--muted)">Nachweis bei Beschwerden</span></td>
+            <td>Nachweisen dass Nutzer die E-Mail wirklich kontrolliert</td>
+            <td class="cross">✗ Kein Nachweis</td>
+            <td class="check">✓ Klick-Log vorhanden</td>
+          </tr>
+          <tr>
+            <td><strong>§7 UWG</strong><br><span style="font-size:11px;color:var(--muted)">Gesetz gegen unlauteren Wettbewerb</span></td>
+            <td>DOI für <em>Marketing</em>-E-Mails (Newsletter)</td>
+            <td class="cross">✗ Newsletter-Versand riskant</td>
+            <td class="check">✓ Nachweis erbracht</td>
+          </tr>
+          <tr>
+            <td><strong>Transaktionale E-Mails</strong><br><span style="font-size:11px;color:var(--muted)">Billing, Onboarding, Passwort-Reset</span></td>
+            <td>Immer erlaubt im Rahmen des Vertragsverhältnisses</td>
+            <td class="neutral">~ OK (aber unzustellbar bei Fake-E-Mail)</td>
+            <td class="check">✓ Garantiert zustellbar</td>
+          </tr>
+          <tr>
+            <td><strong>Account-Sicherheit</strong><br><span style="font-size:11px;color:var(--muted)">Schutz vor Fremdregistrierung</span></td>
+            <td>BSI-Empfehlung: E-Mail-Inhaberschaft prüfen</td>
+            <td class="cross">✗ Fremdregistrierung möglich</td>
+            <td class="check">✓ Verhindert</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Neuer Flow -->
+  <section>
+    <h2>Vorgeschlagener neuer Registrierungs-Flow</h2>
+    <div class="card">
+      <div style="margin-bottom:16px;">
+        <div class="flow">
+          <div class="flow-step">Template wählen</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step">Register-Formular</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step new">E-Mail senden<br><span style="font-size:10px;font-weight:400">(neu / Resend, sofort)</span></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step new">"Postfach prüfen"-Seite<br><span style="font-size:10px;font-weight:400">(neu / mit Resend-Button)</span></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step highlight">E-Mail-Link klicken</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step">Onboarding Username</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step">Dashboard</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:6px;">
+        <div style="display:flex;align-items:center;gap:6px;font-size:12px;"><span style="width:12px;height:12px;border-radius:3px;background:var(--purple-bg);border:1px solid var(--purple);display:inline-block;"></span> Neue Schritte</div>
+        <div style="display:flex;align-items:center;gap:6px;font-size:12px;"><span style="width:12px;height:12px;border-radius:3px;background:var(--green-bg);border:1px solid var(--green);display:inline-block;"></span> Bestehend bleibt</div>
+      </div>
+    </div>
+
+    <div style="margin-top:14px;" class="card">
+      <h3 style="font-size:15px;margin-bottom:12px;">UX-Anforderungen an die "Postfach prüfen"-Seite</h3>
+      <div style="display:grid;gap:10px;">
+        <div style="display:flex;gap:12px;align-items:flex-start;">
+          <div style="width:28px;height:28px;border-radius:8px;background:#F0FDF4;border:1px solid #BBF7D0;flex-shrink:0;display:flex;align-items:center;justify-content:center;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#16A34A" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          </div>
+          <div style="font-size:13px;"><strong>Positives Framing:</strong> "Fast geschafft! Wir haben dir eine E-Mail geschickt." — nicht "Fehler" oder "Zugang verweigert"</div>
+        </div>
+        <div style="display:flex;gap:12px;align-items:flex-start;">
+          <div style="width:28px;height:28px;border-radius:8px;background:#EFF6FF;border:1px solid #BFDBFE;flex-shrink:0;display:flex;align-items:center;justify-content:center;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          </div>
+          <div style="font-size:13px;"><strong>E-Mail-Adresse anzeigen:</strong> "Wir haben eine E-Mail an <em>max@beispiel.de</em> geschickt" — damit der User weiß wohin er schauen soll</div>
+        </div>
+        <div style="display:flex;gap:12px;align-items:flex-start;">
+          <div style="width:28px;height:28px;border-radius:8px;background:#FFFBEB;border:1px solid #FDE68A;flex-shrink:0;display:flex;align-items:center;justify-content:center;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#D97706" stroke-width="2.5"><path d="M23 7l-7 5-9-7"/><polygon points="1 6 8.86 11.5 23 1.27 23 20 1 20 1 6"/></svg>
+          </div>
+          <div style="font-size:13px;"><strong>Resend-Button mit Cooldown:</strong> "E-Mail erneut senden" nach 60 Sekunden Wartezeit (Rate-Limiting via Resend/BetterAuth)</div>
+        </div>
+        <div style="display:flex;gap:12px;align-items:flex-start;">
+          <div style="width:28px;height:28px;border-radius:8px;background:#F5F0FB;border:1px solid #D4B8F8;flex-shrink:0;display:flex;align-items:center;justify-content:center;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#7C3AED" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          </div>
+          <div style="font-size:13px;"><strong>Spam-Hinweis:</strong> "Nicht angekommen? Prüfe auch deinen Spam-Ordner. Absender: info@finestsites.io"</div>
+        </div>
+        <div style="display:flex;gap:12px;align-items:flex-start;">
+          <div style="width:28px;height:28px;border-radius:8px;background:#F9FAFB;border:1px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#374151" stroke-width="2.5"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          </div>
+          <div style="font-size:13px;"><strong>E-Mail-Adresse ändern:</strong> Link "Andere E-Mail-Adresse nutzen" → zurück zum Formular (User kann sich neu registrieren)</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Technischer Aufwand -->
+  <section>
+    <h2>Technischer Aufwand</h2>
+    <div class="effort-grid">
+      <div class="effort-item">
+        <div class="e-label">Config-Änderung</div>
+        <div class="e-val e-green">5 Min</div>
+        <div class="e-sub">requireEmailVerification: true in auth/index.ts</div>
+      </div>
+      <div class="effort-item">
+        <div class="e-label">Warte-Seite UI</div>
+        <div class="e-val e-yellow">2–3 Std</div>
+        <div class="e-sub">Neue Page + Resend-Button + Styling</div>
+      </div>
+      <div class="effort-item">
+        <div class="e-label">E-Mail-Template</div>
+        <div class="e-val e-green">30 Min</div>
+        <div class="e-sub">verificationEmail() in templates.ts bereits vorhanden</div>
+      </div>
+      <div class="effort-item">
+        <div class="e-label">Newsletter-Filter</div>
+        <div class="e-val e-green">15 Min</div>
+        <div class="e-sub">emailVerified-Check in Admin-Newsletter-API hinzufügen</div>
+      </div>
+      <div class="effort-item">
+        <div class="e-label">Testing</div>
+        <div class="e-val e-yellow">1–2 Std</div>
+        <div class="e-sub">Flow auf Desktop + iOS Safari + Resend-Rate-Limit</div>
+      </div>
+      <div class="effort-item">
+        <div class="e-label">Gesamt</div>
+        <div class="e-val e-green">1 Tag</div>
+        <div class="e-sub">Vollständige Umsetzung inkl. Tests</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Code-Änderung -->
+  <section>
+    <h2>Die entscheidende Code-Änderung</h2>
+    <div class="card">
+      <div style="font-size:12px;font-weight:700;color:var(--muted);margin-bottom:10px;text-transform:uppercase;letter-spacing:.05em;">src/lib/auth/index.ts — eine Zeile</div>
+      <div class="code-block">
+<span class="comment">// Vorher:</span><br>
+<span class="key">requireEmailVerification</span>: <span class="val-red">false</span>,<br><br>
+<span class="comment">// Nachher:</span><br>
+<span class="key">requireEmailVerification</span>: <span class="val-green">true</span>,
+      </div>
+      <div style="margin-top:14px;font-size:13px;color:var(--muted);">
+        BetterAuth gibt dann bei Login ohne verifizierte E-Mail automatisch <code>403 EMAIL_NOT_VERIFIED</code> zurück. Wir fangen das im Login-Handler ab und leiten auf die neue Warte-Seite weiter.
+      </div>
+    </div>
+  </section>
+
+  <!-- Empfehlung -->
+  <section>
+    <h2>Empfehlung an dich als Gründer</h2>
+    <div class="rec-box">
+      <h3>Jetzt einführen: Hard-DOI via E-Mail</h3>
+      <p>Die Infrastruktur steht bereits — BetterAuth, Resend, E-Mail-Templates sind alle konfiguriert. Ein einzelnes Flag und eine neue UX-Seite genügen. Der Aufwand ist ein Tag.</p>
+      <p>SMS-OTP ist für diese Zielgruppe und diesen Entwicklungsstand überdimensioniert. E-Mail ist vertraut, kostenlos, und löst alle relevanten Probleme.</p>
+      <div class="rec-steps">
+        <div class="rec-step">
+          <div class="rec-step-num">1</div>
+          <div class="rec-step-text"><strong>requireEmailVerification: true</strong> setzen in auth/index.ts (5 Minuten)</div>
+        </div>
+        <div class="rec-step">
+          <div class="rec-step-num">2</div>
+          <div class="rec-step-text"><strong>Neue Warte-Seite</strong> /auth/verify-email mit positivem Framing, Resend-Button, Spam-Hinweis (2–3 Stunden)</div>
+        </div>
+        <div class="rec-step">
+          <div class="rec-step-num">3</div>
+          <div class="rec-step-text"><strong>Login-Handler</strong> fängt EMAIL_NOT_VERIFIED ab → redirect auf Warte-Seite statt Fehlermeldung (30 Minuten)</div>
+        </div>
+        <div class="rec-step">
+          <div class="rec-step-num">4</div>
+          <div class="rec-step-text"><strong>Newsletter-API</strong>: emailVerified-Filter hinzufügen — kein Marketing an unverifizierte Adressen (15 Minuten)</div>
+        </div>
+        <div class="rec-step">
+          <div class="rec-step-num">5</div>
+          <div class="rec-step-text"><strong>Bestehende User</strong>: Werden nicht blockiert — BetterAuth setzt emailVerified nur für neue Registrierungen als Pflicht</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="footer">
+    Erstellt vom FinestSites Team · Juli 2026 · Technische Basis: BetterAuth + Resend + Drizzle ORM
+  </div>
+
+</div>
+</body>
+</html>

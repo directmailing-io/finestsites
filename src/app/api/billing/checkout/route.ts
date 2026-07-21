@@ -104,6 +104,19 @@ export async function POST(req: NextRequest) {
         if (codes.data.length > 0) promoCodeId = codes.data[0].id
       } catch { /* ignore: fall through to affiliate check */ }
 
+      // If a Stripe promo code was found, check its interval restriction (stored in coupon metadata)
+      if (promoCodeId) {
+        try {
+          const pc = await stripe.promotionCodes.retrieve(promoCodeId, { expand: ['promotion.coupon'] })
+          const pcCoupon = pc.promotion.coupon as any
+          const intervalRestriction: string = pcCoupon?.metadata?.interval ?? 'both'
+          if (intervalRestriction !== 'both' && intervalRestriction !== interval) {
+            const label = intervalRestriction === 'yearly' ? 'Jahresabonnements' : 'Monatsabonnements'
+            return NextResponse.json({ error: `Dieser Gutschein gilt nur für ${label}.` }, { status: 400 })
+          }
+        } catch { /* ignore fetch errors — Stripe already validated the code above */ }
+      }
+
       // Only check for affiliate username if no Stripe promo code matched AND user has no existing referral
       if (!promoCodeId && !hasReferral) {
         const affiliateUser = await db.query.users.findFirst({

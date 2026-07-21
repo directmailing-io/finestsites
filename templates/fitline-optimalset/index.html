@@ -9436,37 +9436,89 @@ function switchKontaktTab(tab) {
 </script>
 
 <script>
-/* ── Anchor-Hash Scroll Fix ──────────────────────────────────────────────────
-   Problem: In-page hash navigation can land at the wrong position because:
-   1. scroll-behavior:smooth races with late-loading images/fonts on direct URL load
-   2. The cocktail section is 400vh in DOM height — layout must be fully settled
-   3. switchKontaktTab() calls scrollIntoView() which ignores scroll-margin-top on Safari
+/* ── Anchor-Hash Scroll Fix v2 ───────────────────────────────────────────────
+   Problem: Clicking #kontakt (or any section anchor) lands at the wrong
+   position. Root causes:
+   1. window.scrollTo({ behavior:'smooth' }) combined with CSS scroll-behavior:smooth
+      on <html> causes double-smoothing and can stop at the wrong position,
+      especially when scrolling past the 400vh cocktail sticky section.
+   2. Position calculated once at click time can be stale if layout shifts
+      occur during the animation (lazy images, IntersectionObserver reveals, etc).
+   3. switchKontaktTab() calls scrollIntoView() which ignores scroll-margin-top
+      on Safari/iOS.
 
-   Solution:
-   - Intercept all internal #section clicks → use window.scrollTo with live offsetTop
-   - On direct URL load with hash → clear hash before paint, scroll after full 'load'
-   - Override switchKontaktTab() to use the same reliable method
+   Solution: custom rAF scroll animation that:
+   - Disables CSS scroll-behavior during the animation (no double-smooth)
+   - Recomputes the target element's offsetTop on EVERY frame (layout-shift safe)
+   - Uses a standard ease-in-out curve for a smooth, native-feeling scroll
+   - Cancels cleanly if the user interrupts (touch/wheel)
    ─────────────────────────────────────────────────────────────────────────── */
 (function () {
   'use strict';
 
-  // Only intercept these navigable section IDs.
-  // SVG textPath hrefs like #garantie-circle-top are NOT in this list → untouched.
   var SECTION_IDS = new Set(['warum','routine','cocktail','besonders','zutaten','about','kontakt']);
+  var rafId = null;
 
   function getNavOffset() {
     var nav = document.querySelector('.nav');
     return nav ? nav.offsetHeight + 8 : 88;
   }
 
-  function scrollToSection(el) {
-    var top = el.getBoundingClientRect().top + window.scrollY - getNavOffset();
-    window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+  // offsetTop chain: distance from document top, independent of viewport/scroll.
+  function getDocTop(el) {
+    var top = 0, node = el;
+    while (node) { top += node.offsetTop; node = node.offsetParent; }
+    return top;
   }
 
-  // Intercept #section anchor clicks — useCapture fires before bubble-phase handlers
-  // (e.g. mobile menu closeMenu) so preventDefault blocks native hash scroll,
-  // but not stopping propagation means the menu still closes normally.
+  // Ease-in-out cubic
+  function easeInOut(t) {
+    return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2;
+  }
+
+  function scrollToSection(el) {
+    // Cancel any in-progress animation
+    if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
+
+    var html = document.documentElement;
+    var DURATION = 550; // ms
+    var startY   = window.scrollY;
+    var startTime = null;
+
+    // Disable CSS smooth-scroll for the duration so window.scrollTo is instant
+    html.style.scrollBehavior = 'auto';
+
+    function frame(ts) {
+      if (!startTime) startTime = ts;
+      var elapsed  = ts - startTime;
+      var progress = Math.min(elapsed / DURATION, 1);
+
+      // Recompute target every frame — handles layout shifts during animation
+      var targetY = Math.max(0, getDocTop(el) - getNavOffset());
+      var y = startY + (targetY - startY) * easeInOut(progress);
+      window.scrollTo(0, y);
+
+      if (progress < 1) {
+        rafId = requestAnimationFrame(frame);
+      } else {
+        rafId = null;
+        html.style.scrollBehavior = '';
+      }
+    }
+
+    rafId = requestAnimationFrame(frame);
+
+    // If user interrupts with touch or wheel, stop our animation
+    function cancel() {
+      if (rafId) { cancelAnimationFrame(rafId); rafId = null; html.style.scrollBehavior = ''; }
+      window.removeEventListener('wheel',      cancel, { passive: true });
+      window.removeEventListener('touchstart', cancel, { passive: true });
+    }
+    window.addEventListener('wheel',      cancel, { passive: true });
+    window.addEventListener('touchstart', cancel, { passive: true });
+  }
+
+  // Intercept #section clicks in capture phase so preventDefault fires first
   document.addEventListener('click', function (e) {
     var anchor = e.target.closest('a[href]');
     if (!anchor) return;
@@ -9481,9 +9533,7 @@ function switchKontaktTab(tab) {
     scrollToSection(target);
   }, true);
 
-  // Handle direct URL load with hash (e.g. user arrives at /#kontakt).
-  // Strip the hash immediately (before first paint) to prevent the browser's
-  // pre-layout scroll, then scroll accurately after full 'load'.
+  // Direct URL load with hash: strip hash before paint, scroll after 'load'
   if (window.location.hash) {
     var initialId = window.location.hash.slice(1);
     if (SECTION_IDS.has(initialId)) {
@@ -9493,20 +9543,16 @@ function switchKontaktTab(tab) {
       window.addEventListener('load', function () {
         var target = document.getElementById(initialId);
         if (!target) return;
-        // Small delay: ensures ScrollTrigger.refresh() (registered earlier on 'load')
-        // has already run, giving us accurate element positions.
-        setTimeout(function () { scrollToSection(target); }, 120);
+        // Delay so ScrollTrigger.refresh() (registered on 'load') runs first
+        setTimeout(function () { scrollToSection(target); }, 150);
       }, { once: true });
     }
   }
 
-  // Fix switchKontaktTab() which calls scrollIntoView({ block:'start' }) —
-  // that method ignores scroll-margin-top on Safari and old iOS.
-  // Override after startApp() has defined it as a global.
+  // Fix switchKontaktTab() which calls scrollIntoView — ignored scroll-margin on Safari
   var _origSwitch = window.switchKontaktTab;
   window.switchKontaktTab = function (tab) {
     if (_origSwitch) {
-      // Patch scrollIntoView to no-op while the original runs (only the scroll call)
       var section = document.getElementById('kontakt');
       if (section) {
         var orig = section.scrollIntoView;

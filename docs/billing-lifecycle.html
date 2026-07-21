@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FinestSites – Billing Lifecycle</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    background: #F4F4F5;
+    color: #111827;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  .page { max-width: 960px; margin: 0 auto; padding: 40px 20px 80px; }
+
+  h1 { font-size: 26px; font-weight: 800; letter-spacing: -0.03em; margin: 0 0 4px; }
+  h2 { font-size: 17px; font-weight: 700; letter-spacing: -0.02em; margin: 0 0 16px; }
+  h3 { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; margin: 0 0 10px; color: #6B7280; }
+  p { margin: 0 0 12px; }
+  p:last-child { margin: 0; }
+
+  .subtitle { color: #6B7280; font-size: 15px; margin: 0 0 40px; }
+
+  /* Cards */
+  .card {
+    background: #fff;
+    border: 1px solid #E5E7EB;
+    border-radius: 20px;
+    padding: 28px 32px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  }
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .card-icon {
+    width: 44px; height: 44px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    font-size: 20px;
+  }
+
+  /* Timeline */
+  .timeline { position: relative; padding-left: 28px; }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 8px; top: 4px; bottom: 4px;
+    width: 2px;
+    background: #E5E7EB;
+    border-radius: 2px;
+  }
+  .timeline-item {
+    position: relative;
+    margin-bottom: 20px;
+  }
+  .timeline-item:last-child { margin-bottom: 0; }
+  .timeline-dot {
+    position: absolute;
+    left: -24px;
+    top: 3px;
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    border: 2.5px solid #fff;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .timeline-title {
+    font-weight: 700;
+    font-size: 14px;
+    margin-bottom: 4px;
+  }
+  .timeline-body {
+    font-size: 13px;
+    color: #374151;
+  }
+
+  /* Tags */
+  .tag {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 11px; font-weight: 600;
+    padding: 3px 9px;
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+  .tag-green  { background: #F0FDF4; color: #16A34A; border: 1px solid #BBF7D0; }
+  .tag-red    { background: #FEF2F2; color: #DC2626; border: 1px solid #FECACA; }
+  .tag-orange { background: #FFF7ED; color: #C2410C; border: 1px solid #FED7AA; }
+  .tag-blue   { background: #EFF6FF; color: #1D4ED8; border: 1px solid #BFDBFE; }
+  .tag-gray   { background: #F9FAFB; color: #6B7280; border: 1px solid #E5E7EB; }
+  .tag-purple { background: #F5F3FF; color: #6D28D9; border: 1px solid #DDD6FE; }
+
+  /* Info boxes */
+  .info { padding: 14px 18px; border-radius: 12px; font-size: 13px; margin-bottom: 12px; }
+  .info:last-child { margin-bottom: 0; }
+  .info-green  { background: #F0FDF4; border: 1px solid #BBF7D0; color: #15803D; }
+  .info-red    { background: #FEF2F2; border: 1px solid #FECACA; color: #991B1B; }
+  .info-orange { background: #FFF7ED; border: 1px solid #FED7AA; color: #92400E; }
+  .info-blue   { background: #EFF6FF; border: 1px solid #BFDBFE; color: #1E40AF; }
+  .info-gray   { background: #F9FAFB; border: 1px solid #E5E7EB; color: #374151; }
+  .info-yellow { background: #FEFCE8; border: 1px solid #FEF08A; color: #92400E; }
+
+  /* Grid */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 680px) { .grid-2 { grid-template-columns: 1fr; } }
+
+  /* Email preview */
+  .email-card {
+    background: #F9FAFB;
+    border: 1px solid #E5E7EB;
+    border-radius: 14px;
+    padding: 18px 20px;
+    margin-bottom: 12px;
+  }
+  .email-card:last-child { margin-bottom: 0; }
+  .email-subject { font-weight: 700; font-size: 13px; margin-bottom: 4px; color: #111827; }
+  .email-trigger { font-size: 12px; color: #6B7280; margin-bottom: 8px; }
+  .email-preview { font-size: 12px; color: #374151; line-height: 1.5; }
+
+  /* Status pill */
+  .status-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+  .status-label { font-size: 12px; color: #6B7280; width: 110px; flex-shrink: 0; }
+  .status-val { font-size: 13px; font-weight: 600; }
+
+  /* Table */
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { text-align: left; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #6B7280; padding: 8px 12px; background: #F9FAFB; border-bottom: 1px solid #E5E7EB; }
+  td { padding: 10px 12px; border-bottom: 1px solid #F3F4F6; vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+
+  /* Section separator */
+  .section-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #9CA3AF;
+    margin: 40px 0 12px;
+  }
+
+  /* Dot */
+  .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; display: inline-block; }
+  .dot-green  { background: #22C55E; }
+  .dot-red    { background: #EF4444; }
+  .dot-orange { background: #F97316; }
+  .dot-gray   { background: #D1D5DB; }
+  .dot-blue   { background: #60A5FA; }
+
+  code { background: #F3F4F6; border-radius: 4px; padding: 1px 5px; font-size: 11px; font-family: 'SF Mono', Menlo, monospace; color: #6D28D9; }
+
+  strong { color: #111827; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <h1>Billing Lifecycle</h1>
+  <p class="subtitle">Vollständige Dokumentation aller Abo-Zustände, Fristen, Seiten-Logik und E-Mails</p>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="section-label">1 &mdash; Abo läuft normal</div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon" style="background:#F0FDF4;">✅</div>
+      <div>
+        <h2 style="margin:0;">Normaler Verlauf (keine Kündigung)</h2>
+        <p style="margin:0;color:#6B7280;font-size:13px;">Stripe zieht automatisch ab. Kein Handlungsbedarf.</p>
+      </div>
+    </div>
+
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-dot" style="background:#22C55E;"></div>
+        <div class="timeline-title">Checkout abgeschlossen &mdash; Stripe Webhook: <code>checkout.session.completed</code></div>
+        <div class="timeline-body">
+          User zahlt. Stripe feuert Webhook. Datenbank wird aktualisiert:<br>
+          <code>plan</code>, <code>billingInterval</code>, <code>subscriptionStatus = 'active'</code>, <code>currentPeriodEnd</code>.<br>
+          Falls User zuvor deaktivierte Seiten hatte, werden diese sofort reaktiviert (KV-Cache gecleared, Custom-Domain-KV wiederhergestellt).
+          <div style="margin-top:8px;">
+            <span class="tag tag-blue">subscriptionStatus: active</span>
+            <span class="tag tag-green" style="margin-left:4px;">Seiten: online</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot" style="background:#22C55E;"></div>
+        <div class="timeline-title">Automatische Verlängerung &mdash; Stripe Webhook: <code>invoice.payment_succeeded</code></div>
+        <div class="timeline-body">
+          Jeden Monat (oder jedes Jahr) zieht Stripe erneut ab. Webhook aktualisiert <code>currentPeriodEnd</code> und speichert Affiliate-Provision (falls User über Empfehlung kam).<br>
+          <strong>Kein E-Mail</strong> bei erfolgreicher Verlängerung.
+          <div style="margin-top:8px;">
+            <span class="tag tag-green">Seiten: weiter online</span>
+            <span class="tag tag-gray" style="margin-left:4px;">kein E-Mail</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="info info-blue" style="margin-top:20px;">
+      <strong>Zusammenfassung:</strong> Läuft alles, passiert nichts Besonderes. Stripe verwaltet die Verlängerung vollautomatisch. Seiten bleiben dauerhaft online, solange der Zahlungseingang klappt.
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="section-label">2 &mdash; Zahlungsproblem</div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon" style="background:#FFF7ED;">⚠️</div>
+      <div>
+        <h2 style="margin:0;">Zahlung schlägt fehl</h2>
+        <p style="margin:0;color:#6B7280;font-size:13px;">z.B. Kreditkarte abgelaufen, kein Guthaben, SEPA-Rückbuchung</p>
+      </div>
+    </div>
+
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-dot" style="background:#F97316;"></div>
+        <div class="timeline-title">Tag 0 &mdash; Erste Fehler-Meldung &mdash; <code>invoice.payment_failed</code></div>
+        <div class="timeline-body">
+          Stripe feuert Webhook bei erstem Fehlschlag:<br>
+          <code>subscriptionStatus = 'past_due'</code>, <code>paymentFailedAt = jetzt</code> (nur beim ersten Fehler gesetzt, bei Retry-Fehlern nicht überschrieben).<br>
+          <strong>Seiten bleiben online.</strong> User merkt erstmal nichts am Frontend.<br>
+          Stripe versucht die Zahlung automatisch erneut (Smart Retries: typisch nach 3, 5, 7 Tagen).
+          <div style="margin-top:8px;">
+            <span class="tag tag-orange">subscriptionStatus: past_due</span>
+            <span class="tag tag-green" style="margin-left:4px;">Seiten: noch online</span>
+          </div>
+          <div style="margin-top:8px;" class="email-card">
+            <div class="email-subject">✉️ "Kurze Info zu deiner Zahlung"</div>
+            <div class="email-trigger">Nur beim ersten Fehler. Bei Retry-Fehlern kein weiteres E-Mail.</div>
+            <div class="email-preview">"Deine letzte Zahlung hat leider nicht geklappt. Keine Panik, deine Seiten laufen noch ganz normal und du hast 14 Tage Zeit, das zu klären."</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot" style="background:#F97316;"></div>
+        <div class="timeline-title">Tag 7 &mdash; Warnungs-E-Mail &mdash; Cron täglich 06:00 UTC</div>
+        <div class="timeline-body">
+          Cron-Job (<code>/api/cron/billing-enforcement</code>) läuft täglich.<br>
+          Bedingung: <code>paymentFailedAt</code> liegt 6–8 Tage zurück (Zeitfenster für Drift) UND <code>deactivatedAt = null</code>.<br>
+          <strong>Seiten bleiben weiter online.</strong>
+          <div style="margin-top:8px;" class="email-card">
+            <div class="email-subject">✉️ "Zahlung ausstehend – dein Konto wird in 7 Tagen deaktiviert"</div>
+            <div class="email-trigger">Cron, einmalig ca. Tag 7 nach Erstzahlfehler</div>
+            <div class="email-preview">"Die offene Zahlung konnte bisher nicht eingezogen werden. In 7 Tagen gehen deine Webseiten leider offline, wenn das nicht geklärt ist."</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot" style="background:#EF4444;"></div>
+        <div class="timeline-title">Tag 14 &mdash; Deaktivierung &mdash; Cron täglich 06:00 UTC</div>
+        <div class="timeline-body">
+          Bedingung: <code>paymentFailedAt</code> älter als 14 Tage, <code>subscriptionStatus = 'past_due'</code>, <code>deactivatedAt = null</code>.<br>
+          Was passiert:
+          <ul style="margin:8px 0 0;padding-left:16px;font-size:13px;">
+            <li>User: <code>deactivatedAt = jetzt</code></li>
+            <li>Alle published Seiten: <code>status = 'deactivated'</code></li>
+            <li>KV-Cache: Seiten gehen offline (<code>setSiteOfflineKV</code>)</li>
+            <li>Custom-Domain-KV: wird gelöscht (<code>deleteCustomDomainKV</code>) &rarr; Domain zeigt 404</li>
+            <li><strong>scheduledDeletionAt wird vom Cron NICHT gesetzt</strong> (das macht erst der Stripe-Webhook)</li>
+          </ul>
+          <div style="margin-top:8px;">
+            <span class="tag tag-red">subscriptionStatus: past_due</span>
+            <span class="tag tag-red" style="margin-left:4px;">Seiten: offline</span>
+          </div>
+          <div style="margin-top:8px;" class="email-card">
+            <div class="email-subject">✉️ "Dein FinestSites-Konto wurde deaktiviert"</div>
+            <div class="email-trigger">Cron-E-Mail (accountDeactivatedEmail)</div>
+            <div class="email-preview">"Die offene Zahlung ist leider nicht eingegangen, deshalb sind deine Webseiten jetzt offline. Das Gute: Alle deine Inhalte sind noch da. Deine Daten werden in 90 Tagen endgültig gelöscht."</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot" style="background:#EF4444;"></div>
+        <div class="timeline-title">Stripe gibt auf &mdash; <code>customer.subscription.deleted</code></div>
+        <div class="timeline-body">
+          Wenn Stripe nach allen Retries aufgibt (Zeitpunkt hängt von Stripe Smart Retries ab, typisch 30+ Tage):<br>
+          <ul style="margin:8px 0 0;padding-left:16px;font-size:13px;">
+            <li>User: <code>plan = 'starter'</code>, <code>subscriptionStatus = 'canceled'</code>, <code>stripeSubscriptionId = null</code></li>
+            <li>Alle noch published/draft Seiten: <code>status = 'deactivated'</code>, <code>scheduledDeletionAt = jetzt + 90 Tage</code></li>
+            <li>KV + Custom-Domain-KV werden ebenfalls geleert</li>
+            <li>E-Mail wird nur gesendet, wenn <code>deactivatedAt</code> noch nicht gesetzt war (verhindert Doppel-E-Mail, falls Cron schon vorher deaktiviert hat)</li>
+          </ul>
+          <div class="info info-orange" style="margin-top:12px;">
+            <strong>90-Tage-Löschfrist startet ab Stripe-Kündigung</strong> &mdash; nicht ab der Cron-Deaktivierung (Tag 14). Der Cron setzt kein <code>scheduledDeletionAt</code>, der Webhook schon.
+          </div>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot" style="background:#6B7280;"></div>
+        <div class="timeline-title">Tag 90 (nach Stripe-Kündigung) &mdash; Endgültige Löschung</div>
+        <div class="timeline-body">
+          Cron-Job prüft: <code>status = 'deactivated'</code> UND <code>scheduledDeletionAt &le; jetzt</code>.<br>
+          Was gelöscht wird:
+          <ul style="margin:8px 0 0;padding-left:16px;font-size:13px;">
+            <li>Alle hochgeladenen Bilder aus R2 (Cloudflare Storage)</li>
+            <li>Published R2-Pfad der Seite (falls vorhanden)</li>
+            <li>Site-Datenbankzeile (Cascade: siteData + siteImages mitgelöscht)</li>
+          </ul>
+          <strong>Kein E-Mail</strong> bei Datenlöschung.
+          <div style="margin-top:8px;">
+            <span class="tag tag-gray">Seiten: permanent gelöscht</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="info info-green" style="margin-top:20px;">
+      <strong>Reaktivierung jederzeit möglich:</strong> Wenn der User die Zahlung klärt und Stripe erfolgreich abbucht (<code>invoice.payment_succeeded</code>), werden alle Seiten ohne <code>scheduledDeletionAt</code> sofort reaktiviert. E-Mail: "Alles wieder online!" Kein Neuaufbau nötig.
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="section-label">3 &mdash; Freiwillige Kündigung</div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon" style="background:#FEF2F2;">🔚</div>
+      <div>
+        <h2 style="margin:0;">User kündigt selbst</h2>
+        <p style="margin:0;color:#6B7280;font-size:13px;">Kündigung zum Ende der Laufzeit, kein sofortiger Abbruch</p>
+      </div>
+    </div>
+
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-dot" style="background:#6B7280;"></div>
+        <div class="timeline-title">User klickt auf "Kündigen" in den Einstellungen</div>
+        <div class="timeline-body">
+          API: <code>DELETE /api/billing/subscription</code><br>
+          Stripe: <code>cancel_at_period_end = true</code> wird gesetzt.<br>
+          Webhook: <code>customer.subscription.updated</code> feuert.<br>
+          <strong>Status bleibt 'active'</strong> &mdash; Abo läuft bis zum Perioden-Ende voll weiter.<br>
+          <strong>Seiten bleiben online.</strong>
+          <div style="margin-top:8px;">
+            <span class="tag tag-green">subscriptionStatus: active (cancel_at_period_end: true)</span>
+          </div>
+          <div style="margin-top:8px;" class="email-card">
+            <div class="email-subject">✉️ "Dein Abo wurde gekündigt"</div>
+            <div class="email-trigger">Sofort beim Kündigen (accountCanceledEmail)</div>
+            <div class="email-preview">"Du hast dein FinestSites-Abo gekündigt. Bis zum [Datum] läuft aber alles ganz normal weiter. Danach gehen deine Seiten offline. Deine Daten bleiben noch 90 Tage gespeichert."</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot" style="background:#6B7280;"></div>
+        <div class="timeline-title">Kündigung rückgängig machen (bis Laufzeitende)</div>
+        <div class="timeline-body">
+          API: <code>PATCH /api/billing/subscription</code><br>
+          Stripe: <code>cancel_at_period_end = false</code> wird gesetzt.<br>
+          Abo läuft normal weiter. Kein E-Mail.
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot" style="background:#EF4444;"></div>
+        <div class="timeline-title">Laufzeit-Ende &mdash; <code>customer.subscription.deleted</code></div>
+        <div class="timeline-body">
+          Stripe feuert Webhook wenn die bezahlte Periode abläuft:<br>
+          <ul style="margin:8px 0 0;padding-left:16px;font-size:13px;">
+            <li>User: <code>plan = 'starter'</code>, <code>subscriptionStatus = 'canceled'</code>, <code>deactivatedAt = jetzt</code>, <code>stripeSubscriptionId = null</code></li>
+            <li>Alle published/draft Seiten: <code>status = 'deactivated'</code>, <code>scheduledDeletionAt = jetzt + 90 Tage</code></li>
+            <li>KV-Cache: Seiten gehen offline</li>
+            <li>Custom-Domain-KV: wird gelöscht &rarr; Domain zeigt 404</li>
+          </ul>
+          <div style="margin-top:8px;">
+            <span class="tag tag-red">Seiten: sofort offline</span>
+            <span class="tag tag-gray" style="margin-left:4px;">90-Tage-Löschfrist startet</span>
+          </div>
+          <div style="margin-top:8px;" class="email-card">
+            <div class="email-subject">✉️ "Dein Abo ist ausgelaufen"</div>
+            <div class="email-trigger">Beim Laufzeit-Ende (accountExpiredEmail)</div>
+            <div class="email-preview">"Deine Abonnementlaufzeit ist jetzt abgelaufen. Deine Webseiten sind offline, aber alle deine Inhalte sind noch 90 Tage bei uns gespeichert. Falls du es dir anders überlegst: Ein Klick und alles ist sofort wieder da."</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot" style="background:#6B7280;"></div>
+        <div class="timeline-title">90 Tage später &mdash; Endgültige Löschung</div>
+        <div class="timeline-body">
+          Cron-Job löscht Seiten mit abgelaufenem <code>scheduledDeletionAt</code>:<br>
+          R2-Bilder + Datenbankzeilen (Cascade: siteData + siteImages). Kein E-Mail.
+        </div>
+      </div>
+    </div>
+
+    <div class="info info-blue" style="margin-top:20px;">
+      <strong>Reaktivierung nach Kündigung:</strong> User bucht einfach neu über Stripe Checkout (<code>checkout.session.completed</code>). Alle noch vorhandenen deaktivierten Seiten werden sofort reaktiviert. E-Mail: "Alles wieder online!"
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="section-label">4 &mdash; Was mit den Seiten passiert</div>
+
+  <div class="card">
+    <h2>Seiten-Lebenszyklus</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Status</th>
+          <th>Sichtbar?</th>
+          <th>KV / Custom Domain</th>
+          <th>scheduledDeletionAt</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="tag tag-blue">draft</span></td>
+          <td>Nein (nur Vorschau im Editor)</td>
+          <td>Kein KV-Eintrag</td>
+          <td>Nein (Cron löscht Drafts nach 30d ohne Abo, nach 90d generell)</td>
+        </tr>
+        <tr>
+          <td><span class="tag tag-green">published</span></td>
+          <td>Ja, öffentlich</td>
+          <td>KV-Eintrag vorhanden. Custom Domain KV aktiv.</td>
+          <td>Nein</td>
+        </tr>
+        <tr>
+          <td><span class="tag tag-orange">deactivated (Cron)</span></td>
+          <td>Nein &mdash; Worker zeigt Offline-Seite</td>
+          <td>KV: offline-Marker gesetzt. Custom Domain KV: gelöscht (Domain 404)</td>
+          <td><strong>Nein</strong> &mdash; Cron setzt das nicht!</td>
+        </tr>
+        <tr>
+          <td><span class="tag tag-red">deactivated (Webhook)</span></td>
+          <td>Nein &mdash; Worker zeigt Offline-Seite</td>
+          <td>KV: offline-Marker gesetzt. Custom Domain KV: gelöscht (Domain 404)</td>
+          <td><strong>Ja</strong> &mdash; Webhook setzt jetzt + 90 Tage</td>
+        </tr>
+        <tr>
+          <td><span class="tag tag-gray">deleted</span></td>
+          <td>Nein &mdash; nicht mehr existent</td>
+          <td>Kein Eintrag</td>
+          <td>&mdash;</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="info info-yellow" style="margin-top:20px;">
+      <strong>Wichtiger Unterschied:</strong> Cron-deaktivierte Seiten (Tag 14 Zahlungsfehler) haben <strong>kein</strong> <code>scheduledDeletionAt</code>. Sie können bei Reaktivierung (<code>invoice.payment_succeeded</code>) sofort wiederhergestellt werden. Erst wenn Stripe die Subscription endgültig löscht (<code>customer.subscription.deleted</code>), setzt der Webhook das 90-Tage-Löschdatum.
+    </div>
+
+    <div class="info info-orange" style="margin-top:12px;">
+      <strong>Reaktivierung nach Zahlung:</strong> <code>invoice.payment_succeeded</code> reaktiviert nur Seiten, bei denen <code>scheduledDeletionAt IS NULL</code>. Seiten, bei denen Stripe die Subscription schon gelöscht hat (<code>scheduledDeletionAt</code> gesetzt), werden nicht mehr reaktiviert &mdash; sie laufen in die 90-Tage-Löschung.
+    </div>
+
+    <div class="info info-blue" style="margin-top:12px;">
+      <strong>Reaktivierung nach Neubuchung (checkout):</strong> <code>checkout.session.completed</code> reaktiviert <strong>alle</strong> <code>deactivated</code>-Seiten ohne Rücksicht auf <code>scheduledDeletionAt</code>.
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="section-label">5 &mdash; Draft-Seiten Cleanup</div>
+
+  <div class="card">
+    <h2>Automatische Bereinigung von Entwürfen</h2>
+    <p>Separater Cron-Job (<code>/api/cron/cleanup-drafts</code>) aus DSGVO-Gründen.</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Situation</th>
+          <th>Frist</th>
+          <th>Was passiert</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Draft-Seite &mdash; User <strong>ohne</strong> aktives Abo (null, canceled, etc.)</td>
+          <td><strong>30 Tage</strong> nach letzter Änderung</td>
+          <td>Hard-Delete aus DB (Cascade: siteData + siteImages)</td>
+        </tr>
+        <tr>
+          <td>Draft-Seite &mdash; <strong>alle</strong> User (auch zahlende)</td>
+          <td><strong>90 Tage</strong> nach letzter Änderung</td>
+          <td>Hard-Delete aus DB (DSGVO-Datensparsamkeit)</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="info info-gray" style="margin-top:16px;">
+      Dieser Cron läuft unabhängig vom Billing-Cron. Kein E-Mail wird gesendet.
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="section-label">6 &mdash; Alle E-Mails im Überblick</div>
+
+  <div class="card">
+    <h2>Wann welches E-Mail gesendet wird</h2>
+
+    <table style="margin-bottom:0;">
+      <thead>
+        <tr>
+          <th style="width:28%;">Betreff</th>
+          <th style="width:30%;">Auslöser</th>
+          <th style="width:22%;">Wann</th>
+          <th style="width:20%;">Absender</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>E-Mail-Adresse bestätigen</strong></td>
+          <td>Registrierung</td>
+          <td>Sofort nach Signup</td>
+          <td>BetterAuth Hook</td>
+        </tr>
+        <tr>
+          <td><strong>Passwort zurücksetzen</strong></td>
+          <td>Passwort-Reset-Anfrage</td>
+          <td>Sofort, Link 1h gültig</td>
+          <td>BetterAuth Hook</td>
+        </tr>
+        <tr>
+          <td><strong>Kurze Info zu deiner Zahlung</strong></td>
+          <td><code>invoice.payment_failed</code></td>
+          <td>Nur beim <strong>ersten</strong> Fehlschlag</td>
+          <td>Stripe Webhook</td>
+        </tr>
+        <tr>
+          <td><strong>Zahlung ausstehend &ndash; 7 Tage</strong></td>
+          <td>Cron (billing-enforcement)</td>
+          <td>Ca. Tag 7 nach Erstzahlfehler</td>
+          <td>Cron-Job</td>
+        </tr>
+        <tr>
+          <td><strong>Dein Abo wurde gekündigt</strong></td>
+          <td><code>customer.subscription.updated</code></td>
+          <td>Sofort bei Kündigung durch User</td>
+          <td>Stripe Webhook</td>
+        </tr>
+        <tr>
+          <td><strong>Dein FinestSites-Konto wurde deaktiviert</strong></td>
+          <td>Cron (billing-enforcement)</td>
+          <td>Tag 14 nach Erstzahlfehler</td>
+          <td>Cron-Job</td>
+        </tr>
+        <tr>
+          <td><strong>Dein Konto wurde pausiert</strong></td>
+          <td><code>customer.subscription.deleted</code></td>
+          <td>Wenn Stripe aufgibt &mdash; nur wenn Cron noch nicht deaktiviert hatte</td>
+          <td>Stripe Webhook</td>
+        </tr>
+        <tr>
+          <td><strong>Dein Abo ist ausgelaufen</strong></td>
+          <td><code>customer.subscription.deleted</code></td>
+          <td>Nach freiwilliger Kündigung &amp; Laufzeitende</td>
+          <td>Stripe Webhook</td>
+        </tr>
+        <tr>
+          <td><strong>Alles wieder online!</strong></td>
+          <td><code>invoice.payment_succeeded</code></td>
+          <td>Wenn Zahlung nach Deaktivierung klappt</td>
+          <td>Stripe Webhook</td>
+        </tr>
+        <tr>
+          <td><strong>Neuer Partner über deinen Link</strong></td>
+          <td><code>checkout.session.completed</code></td>
+          <td>Wenn ein geworbener User seinen ersten Checkout abschließt</td>
+          <td>Stripe Webhook &rarr; Referrer</td>
+        </tr>
+        <tr>
+          <td><strong>Deine Provision wurde ausgezahlt</strong></td>
+          <td>Affiliate-Payout-Cron</td>
+          <td>Monatlich bei Stripe Transfer</td>
+          <td>Affiliate Cron</td>
+        </tr>
+        <tr>
+          <td><strong>Deine Domain ist live!</strong></td>
+          <td>Domain-Check-Cron</td>
+          <td>Wenn Custom-Domain-Verifizierung abgeschlossen</td>
+          <td>Domain Cron</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="section-label">7 &mdash; Was E-Mails NICHT gesendet werden</div>
+
+  <div class="card">
+    <h2>Fehlende E-Mails (bewusst oder Lücken)</h2>
+    <div class="grid-2">
+      <div class="info info-gray">
+        <strong>Kein E-Mail bei erfolgreicher Verlängerung</strong><br>
+        <code>invoice.payment_succeeded</code> mit <code>billing_reason = subscription_cycle</code> &rarr; kein "Danke, Zahlung eingegangen"-Mail. Stripe sendet Rechnungen per Default separat.
+      </div>
+      <div class="info info-gray">
+        <strong>Kein E-Mail bei Datenlöschung nach 90 Tagen</strong><br>
+        Der Cron-Job löscht stillschweigend. Kein Hinweis kurz vor der Löschung.
+      </div>
+      <div class="info info-gray">
+        <strong>Kein E-Mail bei Entwurf-Löschung</strong><br>
+        cleanup-drafts löscht alte Entwürfe ohne Benachrichtigung.
+      </div>
+      <div class="info info-gray">
+        <strong>Kein E-Mail beim Reaktivieren per Neubuchung</strong><br>
+        <code>checkout.session.completed</code> &rarr; kein separates "Willkommen zurück"-Mail. Der User landet nach Checkout auf der Seiten-Übersicht.
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="section-label">8 &mdash; Mitteilung für User im Dashboard</div>
+
+  <div class="card">
+    <h2>Middleware &amp; Zugangssteuerung</h2>
+    <p>Die Middleware (<code>src/middleware.ts</code>) sperrt das Dashboard <strong>nicht</strong> bei deaktiviertem Abo. Der User kann sich einloggen und seinen Account sehen. Die Sperre passiert an diesen Stellen:</p>
+
+    <table>
+      <thead>
+        <tr><th>Aktion</th><th>Wo gesperrt</th><th>Was der User sieht</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Seite veröffentlichen</td>
+          <td><code>/api/sites/[id]/publish</code></td>
+          <td>Paywall / Upgrade-Hinweis</td>
+        </tr>
+        <tr>
+          <td>Dashboard, Einstellungen</td>
+          <td><strong>Nicht gesperrt</strong></td>
+          <td>Normaler Zugang, Seiten als "deaktiviert" sichtbar</td>
+        </tr>
+        <tr>
+          <td>Affiliate-Bereich</td>
+          <td>Sidebar + MobileNav (plan-check)</td>
+          <td>Gesperrt mit Schloss-Icon für Free-User</td>
+        </tr>
+        <tr>
+          <td>Login vor E-Mail-Bestätigung</td>
+          <td>BetterAuth (<code>requireEmailVerification: true</code>)</td>
+          <td>Redirect zu <code>/verify-email</code></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="info info-blue" style="margin-top:16px;">
+      <strong>Plan-Quota-Context:</strong> Die Billing-Seite (<code>/billing</code>) zeigt den Abo-Status und ermöglicht Kündigung, Reaktivierung und Plan-Upgrade. Payments-Status kommt direkt von Stripe über <code>GET /api/billing/subscription</code>.
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="section-label">9 &mdash; Gesamt-Übersicht aller Fristen</div>
+
+  <div class="card">
+    <h2>Alle Fristen auf einen Blick</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Ereignis</th>
+          <th>Frist</th>
+          <th>Auslöser</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>E-Mail-Bestätigungslink</td>
+          <td><strong>24 Stunden</strong></td>
+          <td>BetterAuth-Einstellung (verificationEmail)</td>
+        </tr>
+        <tr>
+          <td>Passwort-Reset-Link</td>
+          <td><strong>1 Stunde</strong></td>
+          <td>BetterAuth-Einstellung (passwordResetEmail)</td>
+        </tr>
+        <tr>
+          <td>Zahlung kläre-Zeitfenster (vor Deaktivierung)</td>
+          <td><strong>14 Tage</strong> nach erstem Fehlschlag</td>
+          <td>paymentFailedAt + Cron-Job</td>
+        </tr>
+        <tr>
+          <td>Warnungs-E-Mail vor Deaktivierung</td>
+          <td>Ca. <strong>Tag 7</strong> nach erstem Fehlschlag</td>
+          <td>Cron-Job (Fenster: Tag 6–8)</td>
+        </tr>
+        <tr>
+          <td>Seiten offline nach Abo-Ende</td>
+          <td><strong>Sofort</strong> (Webhook-Verarbeitung)</td>
+          <td><code>customer.subscription.deleted</code></td>
+        </tr>
+        <tr>
+          <td>Affiliate-Provision freigegeben</td>
+          <td><strong>14 Tage</strong> nach Zahlung</td>
+          <td>availableAt = createdAt + 14d</td>
+        </tr>
+        <tr>
+          <td>Daten-Löschung nach Abo-Ende</td>
+          <td><strong>90 Tage</strong> nach <code>customer.subscription.deleted</code></td>
+          <td>scheduledDeletionAt (Webhook) + Cron</td>
+        </tr>
+        <tr>
+          <td>Draft-Seiten ohne Abo gelöscht</td>
+          <td><strong>30 Tage</strong> nach letzter Änderung</td>
+          <td>cleanup-drafts Cron</td>
+        </tr>
+        <tr>
+          <td>Draft-Seiten generell gelöscht</td>
+          <td><strong>90 Tage</strong> nach letzter Änderung</td>
+          <td>cleanup-drafts Cron</td>
+        </tr>
+        <tr>
+          <td>Session-Gültigkeit</td>
+          <td><strong>30 Tage</strong> (Rolling)</td>
+          <td>BetterAuth-Session-Config</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="section-label">10 &mdash; Stripe-Events Referenz</div>
+
+  <div class="card">
+    <h2>Stripe Webhooks und was sie auslösen</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Stripe Event</th>
+          <th>Wann</th>
+          <th>Was passiert in unserer App</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>checkout.session.completed</code></td>
+          <td>Checkout erfolgreich</td>
+          <td>User aktivieren, Plan setzen, deaktivierte Seiten reaktivieren, Affiliate-Provision anlegen, Coupon-Daten in Subscription-Metadata schreiben</td>
+        </tr>
+        <tr>
+          <td><code>customer.subscription.updated</code></td>
+          <td>Plan-Änderung, Verlängerung, cancel_at_period_end</td>
+          <td>User-Plan + Status aktualisieren. Wenn erstmals <code>cancel_at_period_end = true</code>: Kündigungs-E-Mail senden.</td>
+        </tr>
+        <tr>
+          <td><code>customer.subscription.deleted</code></td>
+          <td>Abo endgültig beendet (nach Kündigung oder Stripe-Aufgabe)</td>
+          <td>Plan = starter, Seiten deaktivieren, scheduledDeletionAt = +90d, KV leeren, E-Mail senden (nur wenn nicht schon vom Cron deaktiviert)</td>
+        </tr>
+        <tr>
+          <td><code>invoice.payment_failed</code></td>
+          <td>Zahlung fehlgeschlagen</td>
+          <td>subscriptionStatus = past_due, paymentFailedAt setzen (nur einmalig), Fehler-E-Mail senden (nur beim ersten Mal)</td>
+        </tr>
+        <tr>
+          <td><code>invoice.payment_succeeded</code></td>
+          <td>Zahlung erfolgreich (Verlängerung oder nach Fehler)</td>
+          <td>paymentFailedAt clearen, deactivatedAt clearen, deaktivierte Seiten reaktivieren (ohne scheduledDeletionAt), Affiliate-Provision anlegen</td>
+        </tr>
+        <tr>
+          <td><code>charge.refunded</code></td>
+          <td>Rückerstattung</td>
+          <td>Zugehörige Affiliate-Provision auf <code>reversed</code> setzen</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div style="text-align:center;margin-top:40px;font-size:12px;color:#9CA3AF;">
+    FinestSites Billing Lifecycle &mdash; generiert aus Code-Audit &mdash; Stand: Juli 2026
+  </div>
+
+</div>
+</body>
+</html>

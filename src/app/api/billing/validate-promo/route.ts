@@ -49,8 +49,9 @@ export async function GET(req: NextRequest) {
     const percentOff = typeof coupon === 'object' && coupon ? coupon.percent_off ?? null : null
     const amountOff = typeof coupon === 'object' && coupon ? coupon.amount_off ?? null : null
     const name = typeof coupon === 'object' && coupon ? (coupon.name ?? code.toUpperCase()) : code.toUpperCase()
+    const intervalRestriction = typeof coupon === 'object' && coupon ? ((coupon as any).metadata?.interval ?? 'both') : 'both'
 
-    return NextResponse.json({ valid: true, type: 'promo', percent_off: percentOff, amount_off: amountOff, name })
+    return NextResponse.json({ valid: true, type: 'promo', percent_off: percentOff, amount_off: amountOff, name, interval_restriction: intervalRestriction })
   } catch {
     return NextResponse.json({ valid: false })
   }

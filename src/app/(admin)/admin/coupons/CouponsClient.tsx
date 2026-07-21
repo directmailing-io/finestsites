@@ -9,6 +9,7 @@ interface CreateForm {
   discountType: 'percent' | 'fixed'
   amount: string
   plans: string[] // 'starter' | 'pro' | 'unlimited'
+  interval: 'both' | 'monthly' | 'yearly'
   duration: 'once' | 'forever' | 'repeating'
   durationMonths: string
   maxRedemptions: string
@@ -49,6 +50,12 @@ function formatPlans(plans: string): string {
   return plans.split(',').map(p => p.charAt(0).toUpperCase() + p.slice(1)).join(', ')
 }
 
+function formatInterval(interval: string): string {
+  if (interval === 'monthly') return 'Nur Monatlich'
+  if (interval === 'yearly') return 'Nur Jährlich'
+  return 'Alle'
+}
+
 function formatDate(ts: number | null): string {
   if (!ts) return '—'
   return new Date(ts * 1000).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' })
@@ -60,6 +67,7 @@ const defaultForm: CreateForm = {
   discountType: 'percent',
   amount: '',
   plans: [],
+  interval: 'both',
   duration: 'once',
   durationMonths: '',
   maxRedemptions: '',
@@ -113,6 +121,7 @@ export function CouponsClient({ initialCodes }: { initialCodes: SerializedPromoC
           discountType: form.discountType,
           amount: Number(form.amount),
           plans: form.plans,
+          interval: form.interval,
           duration: form.duration,
           durationMonths: form.durationMonths ? Number(form.durationMonths) : undefined,
           maxRedemptions: form.maxRedemptions ? Number(form.maxRedemptions) : undefined,
@@ -172,6 +181,7 @@ export function CouponsClient({ initialCodes }: { initialCodes: SerializedPromoC
                 <th className="text-left px-5 py-3 font-medium text-gray-500">Code</th>
                 <th className="text-left px-5 py-3 font-medium text-gray-500">Rabatt</th>
                 <th className="text-left px-5 py-3 font-medium text-gray-500">Tarife</th>
+                <th className="text-left px-5 py-3 font-medium text-gray-500">Laufzeit</th>
                 <th className="text-left px-5 py-3 font-medium text-gray-500">Dauer</th>
                 <th className="text-left px-5 py-3 font-medium text-gray-500">Eingelöst</th>
                 <th className="text-left px-5 py-3 font-medium text-gray-500">Gültig bis</th>
@@ -191,6 +201,7 @@ export function CouponsClient({ initialCodes }: { initialCodes: SerializedPromoC
                   </td>
                   <td className="px-5 py-3.5 font-medium text-gray-900">{formatDiscount(pc)}</td>
                   <td className="px-5 py-3.5 text-gray-600">{formatPlans(pc.coupon.plans)}</td>
+                  <td className="px-5 py-3.5 text-gray-600">{formatInterval(pc.coupon.interval)}</td>
                   <td className="px-5 py-3.5 text-gray-600">{formatDuration(pc)}</td>
                   <td className="px-5 py-3.5 text-gray-600">
                     {pc.times_redeemed}{pc.max_redemptions ? ` / ${pc.max_redemptions}` : ''}
@@ -302,7 +313,7 @@ export function CouponsClient({ initialCodes }: { initialCodes: SerializedPromoC
                     value={form.amount}
                     onChange={e => setForm(f => ({ ...f, amount: e.target.value }))}
                     placeholder={form.discountType === 'percent' ? '20' : '5.00'}
-                    min="0.01"
+                    min={form.discountType === 'percent' ? '1' : '0.01'}
                     step={form.discountType === 'percent' ? '1' : '0.01'}
                     max={form.discountType === 'percent' ? '100' : undefined}
                     className="w-full px-3 py-2 text-sm rounded-[10px]"
@@ -332,6 +343,33 @@ export function CouponsClient({ initialCodes }: { initialCodes: SerializedPromoC
                       }}
                     >
                       {p.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Billing interval */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Laufzeit</label>
+                <div className="flex gap-2">
+                  {([
+                    { key: 'both', label: 'Alle' },
+                    { key: 'monthly', label: 'Nur Monatlich' },
+                    { key: 'yearly', label: 'Nur Jährlich' },
+                  ] as const).map(opt => (
+                    <button
+                      key={opt.key}
+                      type="button"
+                      onClick={() => setForm(f => ({ ...f, interval: opt.key }))}
+                      className="px-3 py-1.5 text-sm rounded-[8px] transition-all"
+                      style={{
+                        border: '1px solid',
+                        borderColor: form.interval === opt.key ? '#111' : 'var(--border)',
+                        background: form.interval === opt.key ? '#111' : '#fff',
+                        color: form.interval === opt.key ? '#fff' : '#374151',
+                      }}
+                    >
+                      {opt.label}
                     </button>
                   ))}
                 </div>

@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Deploy-Workflow — FinestSites</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #F9FAFB; color: #111827; line-height: 1.6; }
+
+  .hero { background: #111827; color: white; padding: 48px 40px; text-align: center; }
+  .hero .badge { display: inline-block; background: #DC2626; color: white; font-size: 11px; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; padding: 4px 12px; border-radius: 100px; margin-bottom: 16px; }
+  .hero h1 { font-size: 34px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 10px; }
+  .hero p { font-size: 17px; color: #9CA3AF; max-width: 480px; margin: 0 auto; }
+
+  .container { max-width: 820px; margin: 0 auto; padding: 48px 24px; }
+
+  /* Rule card */
+  .rule-card { border-radius: 20px; padding: 28px 32px; margin-bottom: 20px; }
+  .rule-card.danger { background: #FEF2F2; border: 2px solid #FCA5A5; }
+  .rule-card.success { background: #F0FDF4; border: 2px solid #6EE7B7; }
+  .rule-card.info { background: white; border: 1.5px solid #E5E7EB; }
+  .rule-card.stripe { background: #FFF7ED; border: 2px solid #FCD34D; }
+  .rule-card h3 { font-size: 17px; font-weight: 800; margin-bottom: 10px; display: flex; align-items: center; gap-10px; }
+  .rule-card h3 .icon { margin-right: 10px; font-size: 20px; }
+  .rule-card p { font-size: 15px; color: #374151; line-height: 1.65; }
+  .rule-card p + p { margin-top: 8px; }
+
+  h2 { font-size: 22px; font-weight: 800; margin: 40px 0 16px; color: #111827; }
+  h2 .sub { font-size: 13px; font-weight: 500; color: #9CA3AF; margin-left: 8px; }
+
+  /* Flow diagram */
+  .flow { display: flex; flex-direction: column; gap: 0; }
+  .flow-step { display: flex; gap: 16px; align-items: flex-start; }
+  .flow-left { display: flex; flex-direction: column; align-items: center; }
+  .flow-num { width: 36px; height: 36px; border-radius: 50%; background: #111827; color: white; font-size: 14px; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .flow-num.wait { background: #F59E0B; }
+  .flow-num.go { background: #10B981; }
+  .flow-num.stop { background: #EF4444; }
+  .flow-line { width: 2px; background: #E5E7EB; flex: 1; min-height: 20px; margin: 4px 0; }
+  .flow-body { background: white; border: 1.5px solid #E5E7EB; border-radius: 16px; padding: 16px 20px; margin-bottom: 8px; flex: 1; }
+  .flow-body h4 { font-size: 15px; font-weight: 700; color: #111827; margin-bottom: 4px; }
+  .flow-body p { font-size: 14px; color: #6B7280; }
+  .flow-body code { font-family: 'SF Mono', monospace; font-size: 12px; background: #F3F4F6; padding: 2px 6px; border-radius: 4px; color: #374151; }
+  .flow-body .tag { display: inline-block; margin-top: 8px; font-size: 11px; font-weight: 700; padding: 2px 10px; border-radius: 100px; }
+  .tag.claude { background: #EDE9FE; color: #7C3AED; }
+  .tag.you { background: #DBEAFE; color: #1D4ED8; }
+  .tag.system { background: #D1FAE5; color: #065F46; }
+  .tag.warning { background: #FEE2E2; color: #991B1B; }
+
+  /* Comparison table */
+  .comp-table { background: white; border: 1.5px solid #E5E7EB; border-radius: 20px; overflow: hidden; margin-bottom: 20px; }
+  .comp-table table { width: 100%; border-collapse: collapse; }
+  .comp-table th { padding: 14px 20px; font-size: 12px; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase; color: #6B7280; text-align: left; border-bottom: 1px solid #E5E7EB; }
+  .comp-table th.staging-h { background: #EFF6FF; color: #1D4ED8; }
+  .comp-table th.prod-h { background: #F0FDF4; color: #065F46; }
+  .comp-table td { padding: 13px 20px; font-size: 14px; color: #374151; border-bottom: 1px solid #F3F4F6; }
+  .comp-table tr:last-child td { border-bottom: none; }
+  .comp-table .label { font-weight: 600; color: #111827; }
+  .comp-table .mono { font-family: 'SF Mono', monospace; font-size: 12px; }
+
+  /* Stripe section */
+  .stripe-steps { display: flex; flex-direction: column; gap: 12px; }
+  .stripe-step { background: white; border: 1.5px solid #E5E7EB; border-radius: 14px; padding: 16px 20px; display: flex; gap: 14px; align-items: flex-start; }
+  .stripe-step .num { width: 28px; height: 28px; border-radius: 50%; background: #6366F1; color: white; font-size: 12px; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+  .stripe-step h4 { font-size: 14px; font-weight: 700; color: #111827; margin-bottom: 3px; }
+  .stripe-step p { font-size: 13px; color: #6B7280; line-height: 1.5; }
+
+  /* Do/Don't */
+  .do-dont { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+  @media (max-width: 600px) { .do-dont { grid-template-columns: 1fr; } }
+  .do-dont-card { border-radius: 16px; padding: 20px; }
+  .do-dont-card.do { background: #F0FDF4; border: 1.5px solid #6EE7B7; }
+  .do-dont-card.dont { background: #FEF2F2; border: 1.5px solid #FCA5A5; }
+  .do-dont-card h4 { font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; }
+  .do-dont-card.do h4 { color: #065F46; }
+  .do-dont-card.dont h4 { color: #991B1B; }
+  .do-dont-card ul { list-style: none; }
+  .do-dont-card ul li { font-size: 13px; color: #374151; padding: 4px 0; display: flex; align-items: flex-start; gap: 8px; }
+  .do-dont-card ul li::before { flex-shrink: 0; margin-top: 1px; }
+  .do-dont-card.do ul li::before { content: '✓'; color: #10B981; font-weight: 700; }
+  .do-dont-card.dont ul li::before { content: '✗'; color: #EF4444; font-weight: 700; }
+
+  /* Memory section */
+  .memory-card { background: #1E1B4B; color: white; border-radius: 20px; padding: 28px 32px; margin-bottom: 20px; }
+  .memory-card h3 { font-size: 16px; font-weight: 700; color: #A5B4FC; margin-bottom: 8px; }
+  .memory-card p { font-size: 14px; color: #C7D2FE; line-height: 1.6; }
+  .memory-card .files { display: flex; flex-direction: column; gap: 8px; margin-top: 14px; }
+  .memory-card .file { background: rgba(255,255,255,0.08); border-radius: 10px; padding: 10px 14px; font-size: 13px; font-family: 'SF Mono', monospace; color: #E0E7FF; }
+  .memory-card .file span { color: #818CF8; }
+
+  .footer { background: #111827; color: #6B7280; text-align: center; padding: 28px; font-size: 13px; }
+  .footer strong { color: #E5E7EB; }
+
+  hr { border: none; border-top: 1px solid #E5E7EB; margin: 40px 0; }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="badge">Pflichtlektüre</div>
+  <h1>Deploy-Workflow</h1>
+  <p>Wie Features sicher von der Idee zum Live-System kommen — mit 100+ zahlenden Kunden</p>
+</div>
+
+<div class="container">
+
+  <!-- GRUNDREGEL -->
+  <div class="rule-card danger">
+    <h3><span class="icon">🚨</span>Die eine Regel die alles bestimmt</h3>
+    <p><strong>Jede Änderung geht zuerst auf Staging. Dann testest du. Dann sagst du "freigegeben". Erst dann kommt es auf Production.</strong></p>
+    <p>Das gilt für Code-Änderungen, Preisänderungen, Datenbankänderungen, Konfigurationsänderungen — ausnahmslos.</p>
+  </div>
+
+  <!-- DIE ZWEI UMGEBUNGEN -->
+  <h2>Die zwei Umgebungen</h2>
+
+  <div class="comp-table">
+    <table>
+      <tr>
+        <th>Komponente</th>
+        <th class="staging-h">Staging (Test)</th>
+        <th class="prod-h">Production (Live)</th>
+      </tr>
+      <tr>
+        <td class="label">URL</td>
+        <td class="mono">staging.app.finestsites.io</td>
+        <td class="mono">app.finestsites.io</td>
+      </tr>
+      <tr>
+        <td class="label">Wer sieht es</td>
+        <td>Nur du + Claude</td>
+        <td>Alle Kunden</td>
+      </tr>
+      <tr>
+        <td class="label">Datenbank</td>
+        <td>finestsites_staging (leer)</td>
+        <td>finestsites (echte Daten)</td>
+      </tr>
+      <tr>
+        <td class="label">Stripe</td>
+        <td>Sandbox (kein echtes Geld)</td>
+        <td>Live (echtes Geld)</td>
+      </tr>
+      <tr>
+        <td class="label">Port</td>
+        <td class="mono">3003</td>
+        <td class="mono">3002</td>
+      </tr>
+      <tr>
+        <td class="label">PM2-Prozess</td>
+        <td class="mono">finestsites-staging</td>
+        <td class="mono">finestsites</td>
+      </tr>
+      <tr>
+        <td class="label">Fehler-Folgen</td>
+        <td>Nichts passiert</td>
+        <td>Kunden betroffen</td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- DEPLOY-FLOW -->
+  <h2>Der Ablauf — Schritt für Schritt</h2>
+
+  <div class="flow">
+    <div class="flow-step">
+      <div class="flow-left">
+        <div class="flow-num">1</div>
+        <div class="flow-line"></div>
+      </div>
+      <div class="flow-body">
+        <h4>Du beschreibst das Feature</h4>
+        <p>"Ich will eine Übersicht aller Kunden die gekündigt haben" — Claude entwickelt den Code.</p>
+        <span class="tag claude">Claude schreibt Code</span>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-left">
+        <div class="flow-num">2</div>
+        <div class="flow-line"></div>
+      </div>
+      <div class="flow-body">
+        <h4>Automatisch auf Staging deployen</h4>
+        <p>Claude pusht zu GitHub und deployt auf <code>staging.app.finestsites.io</code>. Kein Risiko für Kunden.</p>
+        <span class="tag claude">Claude deployt</span>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-left">
+        <div class="flow-num wait">3</div>
+        <div class="flow-line"></div>
+      </div>
+      <div class="flow-body">
+        <h4>Du testest auf Staging</h4>
+        <p>Geh auf <code>staging.app.finestsites.io</code> → melde dich an → schau ob alles funktioniert. Claude wartet.</p>
+        <span class="tag you">Du testest</span>
+        <span class="tag warning">Claude wartet — ohne dein "okay" geht nichts weiter</span>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-left">
+        <div class="flow-num go">4</div>
+        <div class="flow-line"></div>
+      </div>
+      <div class="flow-body">
+        <h4>Du gibst frei</h4>
+        <p>Schreib: <strong>"freigegeben"</strong>, <strong>"sieht gut aus"</strong> oder <strong>"deploy auf Production"</strong>.</p>
+        <span class="tag you">Deine Freigabe</span>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-left">
+        <div class="flow-num go">5</div>
+      </div>
+      <div class="flow-body">
+        <h4>Production deployen</h4>
+        <p>Claude deployt auf <code>app.finestsites.io</code>. Deine Kunden sehen die Änderung sofort.</p>
+        <span class="tag claude">Claude deployt</span>
+        <span class="tag system">Nur nach Schritt 4 möglich</span>
+      </div>
+    </div>
+  </div>
+
+  <hr>
+
+  <!-- STRIPE -->
+  <h2>Stripe Sandbox einrichten <span class="sub">einmalig, dauert 5 Minuten</span></h2>
+
+  <div class="rule-card stripe">
+    <h3><span class="icon">💡</span>Sandbox = Test-Modus</h3>
+    <p>Stripe hat 2024 "Test-Modus" in "Sandbox" umbenannt — es ist dasselbe. Im Sandbox-Modus passiert kein echtes Geld, du kannst Checkouts beliebig oft testen.</p>
+  </div>
+
+  <div class="stripe-steps">
+    <div class="stripe-step">
+      <div class="num">1</div>
+      <div>
+        <h4>Stripe Dashboard öffnen</h4>
+        <p>Geh zu dashboard.stripe.com → oben links auf "<strong>Sandbox</strong>" klicken (Toggle)</p>
+      </div>
+    </div>
+    <div class="stripe-step">
+      <div class="num">2</div>
+      <div>
+        <h4>API-Keys kopieren</h4>
+        <p>Entwickler → API-Schlüssel → <strong>Geheimen Schlüssel anzeigen</strong> → beide Keys kopieren (<code>pk_test_...</code> und <code>sk_test_...</code>)</p>
+      </div>
+    </div>
+    <div class="stripe-step">
+      <div class="num">3</div>
+      <div>
+        <h4>Claude die Keys geben</h4>
+        <p>Schreib mir die zwei Keys — ich trage sie in die Staging-Konfiguration ein und starte Staging neu. Dauert 2 Minuten.</p>
+      </div>
+    </div>
+    <div class="stripe-step">
+      <div class="num">4</div>
+      <div>
+        <h4>Webhook für Staging registrieren</h4>
+        <p>Stripe Sandbox → Entwickler → Webhooks → Endpunkt hinzufügen: <code>https://staging.app.finestsites.io/api/webhooks/stripe</code> → alle Events → Signing Secret kopieren → mir geben</p>
+      </div>
+    </div>
+  </div>
+
+  <hr>
+
+  <!-- PREISAENDERUNGEN -->
+  <h2>Preisänderungen — der sichere Weg</h2>
+
+  <div class="rule-card info">
+    <h3><span class="icon">💶</span>Warum Preise besonders heikel sind</h3>
+    <p>Preise in Stripe können nicht geändert werden, nur neue angelegt. Jeder Preis bekommt eine einmalige ID. Staging und Production brauchen deshalb eigene Preise im jeweiligen Stripe-Modus.</p>
+  </div>
+
+  <div class="stripe-steps">
+    <div class="stripe-step">
+      <div class="num" style="background:#F59E0B">1</div>
+      <div>
+        <h4>Stripe Sandbox: neuen Preis anlegen</h4>
+        <p>Sandbox-Modus → Produkte → Preis hinzufügen → <code>price_test_...</code> ID notieren</p>
+      </div>
+    </div>
+    <div class="stripe-step">
+      <div class="num" style="background:#F59E0B">2</div>
+      <div>
+        <h4>Staging-Env updaten + testen</h4>
+        <p>Claude trägt die Test-Price-ID in Staging ein → du testest den Checkout → Kreditkarte <code>4242 4242 4242 4242</code> funktioniert im Sandbox-Modus immer</p>
+      </div>
+    </div>
+    <div class="stripe-step">
+      <div class="num" style="background:#10B981">3</div>
+      <div>
+        <h4>Stripe Live: gleichen Preis anlegen</h4>
+        <p>Live-Modus → gleiche Einstellungen → <code>price_...</code> ID notieren</p>
+      </div>
+    </div>
+    <div class="stripe-step">
+      <div class="num" style="background:#10B981">4</div>
+      <div>
+        <h4>Production-Env updaten + deployen</h4>
+        <p>Nach deiner Freigabe → Live-Price-ID in Production → deployen</p>
+      </div>
+    </div>
+  </div>
+
+  <hr>
+
+  <!-- DO / DON'T -->
+  <h2>Do's und Don'ts</h2>
+
+  <div class="do-dont">
+    <div class="do-dont-card do">
+      <h4>Richtig</h4>
+      <ul>
+        <li>Immer auf Staging deployen zuerst</li>
+        <li>Selbst auf Staging testen bevor Freigabe</li>
+        <li>Stripe Sandbox für alle Payment-Tests</li>
+        <li>DB-Migrations zuerst auf finestsites_staging</li>
+        <li>Explizit "freigegeben" sagen für Production</li>
+        <li>Stripe Restricted Key für Admin-Lesezugriff</li>
+      </ul>
+    </div>
+    <div class="do-dont-card dont">
+      <h4>Falsch</h4>
+      <ul>
+        <li>Direkt auf Production deployen</li>
+        <li>Live-Stripe-Keys in Staging eintragen</li>
+        <li>Production-DB für Tests nutzen</li>
+        <li>Migrations direkt auf Production laufen lassen</li>
+        <li>Annahmen treffen ohne zu testen</li>
+        <li>Staging überspringen weil "nur ein kleiner Fix"</li>
+      </ul>
+    </div>
+  </div>
+
+  <hr>
+
+  <!-- CLAUDE'S MEMORY -->
+  <h2>Wie Claude sich das merkt</h2>
+
+  <div class="memory-card">
+    <h3>Drei Ebenen des Gedächtnisses</h3>
+    <p>Diese Regeln sind an drei Stellen gespeichert, die Claude bei jedem neuen Chat automatisch lädt — egal wie viel Zeit vergangen ist.</p>
+    <div class="files">
+      <div class="file"><span>MEMORY.md</span> — Immer geladen, erste Zeilen: "STAGING-FIRST — ABSOLUTE PFLICHT"</div>
+      <div class="file"><span>AGENTS.md</span> — Projektregeln, bei jedem Task geladen</div>
+      <div class="file"><span>memory/deploy_rules.md</span> — Detailregeln, alle Deploy-Befehle</div>
+    </div>
+  </div>
+
+  <div class="rule-card success">
+    <h3><span class="icon">✅</span>Was das in der Praxis bedeutet</h3>
+    <p>Selbst wenn wir monatelang nicht gesprochen haben und du sagst "Füge eine neue Funktion hinzu" — Claude wird automatisch auf Staging deployen, warten, und erst nach deinem "freigegeben" auf Production gehen. Die Regeln sind dauerhaft eingebettet.</p>
+    <p><strong>Wenn Claude das nicht tut oder direkt auf Production gehen will — sage "Stop, erst Staging" und ich korrigiere mich sofort.</strong></p>
+  </div>
+
+</div>
+
+<div class="footer">
+  <strong>FinestSites — Deploy-Workflow Leitfaden</strong><br>
+  Staging: staging.app.finestsites.io (Port 3003) — Production: app.finestsites.io (Port 3002)<br>
+  Regeln gespeichert in MEMORY.md, AGENTS.md, memory/deploy_rules.md
+</div>
+
+</body>
+</html>

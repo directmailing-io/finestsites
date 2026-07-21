@@ -35,13 +35,14 @@ export async function POST(req: NextRequest) {
   if (!admin) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   try {
     const {
-      code, discountType, amount, plans, duration,
+      code, discountType, amount, plans, interval, duration,
       durationMonths, maxRedemptions, expiresAt, firstTimeOnly, name,
     } = await req.json() as {
       code: string
       discountType: 'percent' | 'fixed'
       amount: number
       plans: PlanKey[]
+      interval?: 'both' | 'monthly' | 'yearly'
       duration: 'once' | 'forever' | 'repeating'
       durationMonths?: number
       maxRedemptions?: number
@@ -77,6 +78,7 @@ export async function POST(req: NextRequest) {
       ...(productIds ? { applies_to: { products: productIds } } : {}),
       metadata: {
         plans: selectedPlans.length ? selectedPlans.join(',') : 'all',
+        interval: interval ?? 'both',
         created_by: 'admin',
       },
     }

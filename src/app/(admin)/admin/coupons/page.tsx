@@ -17,6 +17,7 @@ export interface SerializedCoupon {
   duration: string
   duration_in_months: number | null
   plans: string
+  interval: string
   valid: boolean
 }
 
@@ -40,6 +41,7 @@ function serializeCoupon(coupon: Stripe.Coupon): SerializedCoupon {
     duration: coupon.duration,
     duration_in_months: coupon.duration_in_months ?? null,
     plans: (coupon.metadata as any)?.plans ?? 'all',
+    interval: (coupon.metadata as any)?.interval ?? 'both',
     valid: coupon.valid,
   }
 }

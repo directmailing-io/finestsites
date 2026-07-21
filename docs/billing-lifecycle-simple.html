@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FinestSites – Abo-Logik</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    background: #F4F4F5;
+    color: #111827;
+    font-size: 15px;
+    line-height: 1.65;
+  }
+  .page { max-width: 820px; margin: 0 auto; padding: 48px 20px 80px; }
+
+  h1 { font-size: 28px; font-weight: 800; letter-spacing: -0.03em; margin: 0 0 6px; }
+  .subtitle { color: #6B7280; font-size: 15px; margin: 0 0 48px; }
+
+  .section { margin-bottom: 36px; }
+  .section-title {
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.1em; color: #9CA3AF; margin: 0 0 12px;
+  }
+
+  .card {
+    background: #fff;
+    border: 1px solid #E5E7EB;
+    border-radius: 20px;
+    padding: 28px 32px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  }
+  .card + .card { margin-top: 12px; }
+
+  .card-title {
+    font-size: 17px; font-weight: 700; margin: 0 0 6px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .card-sub { font-size: 14px; color: #6B7280; margin: 0 0 20px; }
+
+  /* Timeline steps */
+  .steps { display: flex; flex-direction: column; gap: 0; }
+  .step {
+    display: grid;
+    grid-template-columns: 100px 1fr;
+    gap: 0 20px;
+    position: relative;
+  }
+  .step:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    left: 49px; top: 32px; bottom: -1px;
+    width: 2px;
+    background: #E5E7EB;
+  }
+  .step-when {
+    padding-top: 8px;
+    text-align: right;
+    font-size: 12px;
+    font-weight: 700;
+    color: #6B7280;
+    padding-right: 20px;
+  }
+  .step-right {
+    padding: 8px 0 24px;
+    border-left: 2px solid transparent;
+    padding-left: 20px;
+    position: relative;
+  }
+  .step-right::before {
+    content: '';
+    position: absolute;
+    left: -7px; top: 14px;
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    background: #E5E7EB;
+    border: 2px solid #fff;
+  }
+  .step:last-child .step-right { padding-bottom: 0; }
+
+  .step-green .step-right::before  { background: #22C55E; }
+  .step-orange .step-right::before { background: #F97316; }
+  .step-red .step-right::before    { background: #EF4444; }
+  .step-gray .step-right::before   { background: #9CA3AF; }
+
+  .step-label { font-weight: 700; font-size: 15px; margin-bottom: 4px; }
+  .step-body  { font-size: 14px; color: #374151; }
+
+  /* Email pill */
+  .email-pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: #EFF6FF; border: 1px solid #BFDBFE; color: #1E40AF;
+    border-radius: 8px; padding: 6px 12px;
+    font-size: 13px; font-weight: 500;
+    margin-top: 8px;
+  }
+
+  /* Info box */
+  .note {
+    background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 12px;
+    padding: 14px 18px; font-size: 14px; color: #374151; margin-top: 16px;
+  }
+  .note strong { color: #111827; }
+  .note-green { background: #F0FDF4; border-color: #BBF7D0; color: #15803D; }
+  .note-orange { background: #FFF7ED; border-color: #FED7AA; color: #92400E; }
+
+  /* Email table */
+  .email-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  .email-table th {
+    text-align: left; font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.06em; color: #9CA3AF; padding: 8px 12px;
+    border-bottom: 1px solid #E5E7EB; background: #F9FAFB;
+  }
+  .email-table td { padding: 12px 12px; border-bottom: 1px solid #F3F4F6; vertical-align: top; }
+  .email-table tr:last-child td { border-bottom: none; }
+
+  /* Frist table */
+  .frist-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  .frist-table th {
+    text-align: left; font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.06em; color: #9CA3AF; padding: 8px 12px;
+    border-bottom: 1px solid #E5E7EB; background: #F9FAFB;
+  }
+  .frist-table td { padding: 11px 12px; border-bottom: 1px solid #F3F4F6; }
+  .frist-table tr:last-child td { border-bottom: none; }
+  .frist { font-weight: 700; color: #111827; white-space: nowrap; }
+
+  .badge {
+    display: inline-block; font-size: 11px; font-weight: 700;
+    padding: 2px 8px; border-radius: 999px;
+  }
+  .badge-green  { background: #F0FDF4; color: #16A34A; }
+  .badge-red    { background: #FEF2F2; color: #DC2626; }
+  .badge-orange { background: #FFF7ED; color: #C2410C; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <h1>Wie läuft das Abo ab?</h1>
+  <p class="subtitle">Alles was du als Inhaber wissen musst &mdash; ohne Technik</p>
+
+  <!-- SZENARIO 1 -->
+  <div class="section">
+    <div class="section-title">Szenario 1</div>
+    <div class="card">
+      <div class="card-title">✅ Alles läuft gut &mdash; kein Kündigen</div>
+      <div class="card-sub">Stripe zieht jeden Monat (oder jedes Jahr) automatisch ab. Du musst nichts tun.</div>
+      <div class="steps">
+        <div class="step step-green">
+          <div class="step-when">Jeden Monat</div>
+          <div class="step-right">
+            <div class="step-label">Automatische Abbuchung</div>
+            <div class="step-body">Stripe bucht stillschweigend ab. Der User merkt nichts, seine Seite bleibt online. Kein E-Mail von uns bei erfolgreicher Zahlung.</div>
+          </div>
+        </div>
+        <div class="step step-green">
+          <div class="step-when">Immer</div>
+          <div class="step-right">
+            <div class="step-label">Seite bleibt online</div>
+            <div class="step-body">Solange gezahlt wird, ist die Website dauerhaft erreichbar. Keine Einschränkungen.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SZENARIO 2 -->
+  <div class="section">
+    <div class="section-title">Szenario 2</div>
+    <div class="card">
+      <div class="card-title">⚠️ Zahlung schlägt fehl</div>
+      <div class="card-sub">Karte abgelaufen, kein Guthaben, SEPA-Rückbuchung &mdash; der User hat 14 Tage Zeit zu reagieren.</div>
+
+      <div class="steps">
+        <div class="step step-orange">
+          <div class="step-when">Tag 0</div>
+          <div class="step-right">
+            <div class="step-label">Zahlung schlägt fehl</div>
+            <div class="step-body">
+              Stripe versucht es automatisch in den nächsten Tagen nochmals. Die Seite des Users bleibt online. Er merkt es nur am E-Mail.
+              <div class="email-pill">✉️ "Kurze Info zu deiner Zahlung" &mdash; du hast 14 Tage Zeit</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step step-orange">
+          <div class="step-when">Tag 7</div>
+          <div class="step-right">
+            <div class="step-label">Erinnerung</div>
+            <div class="step-body">
+              Unsere App schickt automatisch eine Warnung. Seite ist immer noch online.
+              <div class="email-pill">✉️ "Dein Konto wird in 7 Tagen deaktiviert"</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step step-red">
+          <div class="step-when">Tag 14</div>
+          <div class="step-right">
+            <div class="step-label">Seite geht offline</div>
+            <div class="step-body">
+              Wenn bis jetzt nichts bezahlt wurde, schaltet unser System die Website ab. Besucher sehen eine Fehlerseite. Die Daten bleiben erhalten.
+              <div class="email-pill">✉️ "Dein Konto wurde deaktiviert"</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step step-red">
+          <div class="step-when">+90 Tage</div>
+          <div class="step-right">
+            <div class="step-label">Daten werden gelöscht</div>
+            <div class="step-body">
+              Erst 90 Tage nach der endgültigen Stripe-Kündigung werden alle Seiten-Daten und Bilder unwiderruflich gelöscht. Kein E-Mail vorher.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="note note-green" style="margin-top:20px;">
+        <strong>Zahlt der User noch rechtzeitig?</strong> Dann geht die Seite sofort wieder online &mdash; automatisch, ohne dass er irgendetwas neu aufbauen muss. E-Mail: "Alles wieder online!"
+      </div>
+    </div>
+  </div>
+
+  <!-- SZENARIO 3 -->
+  <div class="section">
+    <div class="section-title">Szenario 3</div>
+    <div class="card">
+      <div class="card-title">🔚 User kündigt selbst</div>
+      <div class="card-sub">Keine sofortige Abschaltung. Der User zahlt bis zum Ende seiner Laufzeit &mdash; und hat dann 90 Tage Bedenkzeit.</div>
+
+      <div class="steps">
+        <div class="step step-gray">
+          <div class="step-when">Sofort</div>
+          <div class="step-right">
+            <div class="step-label">User klickt auf "Kündigen"</div>
+            <div class="step-body">
+              Die Kündigung wird zum Ende der aktuellen Laufzeit wirksam. Die Seite läuft normal weiter, der volle Zugriff bleibt. Er kann die Kündigung bis dahin jederzeit rückgängig machen.
+              <div class="email-pill">✉️ "Dein Abo wurde gekündigt" &mdash; mit genauem Enddatum</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step step-red">
+          <div class="step-when">Laufzeitende</div>
+          <div class="step-right">
+            <div class="step-label">Seite geht offline</div>
+            <div class="step-body">
+              Am letzten Tag der bezahlten Laufzeit schaltet Stripe das Abo ab. Seite geht sofort offline. Alle Daten bleiben 90 Tage gespeichert.
+              <div class="email-pill">✉️ "Dein Abo ist ausgelaufen" &mdash; mit Hinweis auf 90 Tage</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step step-red">
+          <div class="step-when">+90 Tage</div>
+          <div class="step-right">
+            <div class="step-label">Daten gelöscht</div>
+            <div class="step-body">Alle Inhalte und Bilder werden endgültig gelöscht. Kein E-Mail vorher.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="note note-green" style="margin-top:20px;">
+        <strong>Kommt der User zurück?</strong> Bucht er innerhalb der 90 Tage neu, ist die Seite sofort wieder da &mdash; kein Neuaufbau nötig.
+      </div>
+    </div>
+  </div>
+
+  <!-- ALLE E-MAILS -->
+  <div class="section">
+    <div class="section-title">Alle E-Mails</div>
+    <div class="card">
+      <table class="email-table">
+        <thead>
+          <tr>
+            <th>Betreff</th>
+            <th>Wann</th>
+            <th>Seite online?</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>E-Mail bestätigen</strong></td>
+            <td>Nach Registrierung</td>
+            <td><span class="badge badge-orange">noch kein Zugang</span></td>
+          </tr>
+          <tr>
+            <td><strong>Kurze Info zu deiner Zahlung</strong></td>
+            <td>Erste fehlgeschlagene Abbuchung</td>
+            <td><span class="badge badge-green">noch online</span></td>
+          </tr>
+          <tr>
+            <td><strong>Konto wird in 7 Tagen deaktiviert</strong></td>
+            <td>7 Tage nach Zahlungsausfall</td>
+            <td><span class="badge badge-green">noch online</span></td>
+          </tr>
+          <tr>
+            <td><strong>Dein Abo wurde gekündigt</strong></td>
+            <td>Sofort bei Kündigung durch User</td>
+            <td><span class="badge badge-green">noch online</span></td>
+          </tr>
+          <tr>
+            <td><strong>Konto wurde deaktiviert</strong></td>
+            <td>14 Tage nach Zahlungsausfall</td>
+            <td><span class="badge badge-red">offline</span></td>
+          </tr>
+          <tr>
+            <td><strong>Dein Abo ist ausgelaufen</strong></td>
+            <td>Am Ende der gekündigten Laufzeit</td>
+            <td><span class="badge badge-red">offline</span></td>
+          </tr>
+          <tr>
+            <td><strong>Alles wieder online!</strong></td>
+            <td>Wenn Zahlung nach Deaktivierung klappt</td>
+            <td><span class="badge badge-green">wieder online</span></td>
+          </tr>
+          <tr>
+            <td><strong>Neuer Partner gewonnen</strong></td>
+            <td>Wenn ein geworbener User zahlt</td>
+            <td>An den Werber, nicht den User</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ALLE FRISTEN -->
+  <div class="section">
+    <div class="section-title">Alle Fristen</div>
+    <div class="card">
+      <table class="frist-table">
+        <thead>
+          <tr><th>Was</th><th>Frist</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>User hat Zeit, Zahlung zu klären bevor Seite offline geht</td>
+            <td class="frist">14 Tage</td>
+          </tr>
+          <tr>
+            <td>Daten bleiben nach Abschaltung gespeichert (Wiederkehr möglich)</td>
+            <td class="frist">90 Tage</td>
+          </tr>
+          <tr>
+            <td>Warnungs-E-Mail vor Deaktivierung</td>
+            <td class="frist">Tag 7</td>
+          </tr>
+          <tr>
+            <td>E-Mail-Bestätigungslink gültig</td>
+            <td class="frist">24 Stunden</td>
+          </tr>
+          <tr>
+            <td>Passwort-Reset-Link gültig</td>
+            <td class="frist">1 Stunde</td>
+          </tr>
+          <tr>
+            <td>Login-Session bleibt bestehen</td>
+            <td class="frist">30 Tage</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
