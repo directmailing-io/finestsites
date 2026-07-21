@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getServerUser } from '@/lib/auth/server'
 import { db } from '@/lib/db'
 import { users } from '@/lib/db/schema'
-import { eq, or, ilike } from 'drizzle-orm'
+import { eq, or, ilike, and } from 'drizzle-orm'
 
 async function checkAdmin() {
   const user = await getServerUser()
@@ -20,16 +20,22 @@ export async function GET(req: NextRequest) {
   if (!adminUser) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const q = req.nextUrl.searchParams.get('q') ?? ''
+  const affiliateOnly = req.nextUrl.searchParams.get('affiliate') === 'true'
   if (q.length < 2) return NextResponse.json([])
 
   try {
+    const textFilter = or(
+      ilike(users.email, `%${q}%`),
+      ilike(users.username, `%${q}%`)
+    )
+    const whereClause = affiliateOnly
+      ? and(textFilter, eq(users.affiliateOnboarded, true))
+      : textFilter
+
     const results = await db
       .select({ id: users.id, email: users.email, username: users.username })
       .from(users)
-      .where(or(
-        ilike(users.email, `%${q}%`),
-        ilike(users.username, `%${q}%`)
-      ))
+      .where(whereClause)
       .orderBy(users.email)
       .limit(20)
 

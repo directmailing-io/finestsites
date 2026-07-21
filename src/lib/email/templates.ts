@@ -260,6 +260,40 @@ export function affiliateNewReferralEmail({
   `)
 }
 
+export function affiliateAdminAssignEmail({
+  refereeEmail,
+  planLabel,
+  affiliateName,
+}: {
+  refereeEmail: string
+  planLabel: string
+  affiliateName: string
+}): string {
+  const affiliateUrl = `${APP_URL}/affiliate`
+  return layout(`
+    <h1 style="margin:0 0 8px;font-size:22px;font-weight:700;color:${base.heading};letter-spacing:-0.02em;">
+      Neuer Partner zugeordnet
+    </h1>
+    <p style="margin:0 0 20px;font-size:15px;color:${base.body};line-height:1.65;">
+      Hey ${affiliateName}, ein bestehender FinestSites-Nutzer wurde dir als Partner zugeordnet. Du erhältst ab sofort Provision auf alle zukünftigen Zahlungen dieses Nutzers.
+    </p>
+    <table cellpadding="0" cellspacing="0" role="presentation" width="100%" style="margin:0 0 24px;">
+      <tr>
+        <td style="background:#F9FAFB;border-radius:12px;padding:16px 20px;border:1px solid ${base.border};">
+          <p style="margin:0 0 4px;font-size:12px;font-weight:600;color:${base.muted};text-transform:uppercase;letter-spacing:0.06em;">Zugeordneter Nutzer</p>
+          <p style="margin:0 0 12px;font-size:15px;font-weight:600;color:${base.heading};">${refereeEmail}</p>
+          <p style="margin:0 0 4px;font-size:12px;font-weight:600;color:${base.muted};text-transform:uppercase;letter-spacing:0.06em;">Aktueller Plan</p>
+          <p style="margin:0;font-size:15px;font-weight:600;color:${base.heading};">${planLabel}</p>
+        </td>
+      </tr>
+    </table>
+    <p style="margin:0;font-size:14px;color:${base.muted};line-height:1.65;">
+      Provision wird nach der 14-tägigen Wartefrist freigegeben und monatlich ausgezahlt. Bereits geleistete Zahlungen vor dieser Zuordnung sind nicht enthalten.
+    </p>
+    ${button(affiliateUrl, 'Zur Partnerplattform')}
+  `)
+}
+
 export function affiliatePayoutEmail({
   amountCents,
   commissionCount,

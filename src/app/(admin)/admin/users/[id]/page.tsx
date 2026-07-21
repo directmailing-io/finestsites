@@ -21,7 +21,19 @@ interface UserProfile {
   contentConsentVersion: string | null
   contentConsentTextHash: string | null
   contentConsentUa: string | null
+  referredByUsername: string | null
 }
+
+interface AffiliateSearchResult {
+  id: string
+  email: string
+  username: string | null
+}
+
+type AffiliateCardState =
+  | { mode: 'view' }
+  | { mode: 'search'; query: string; results: AffiliateSearchResult[]; selected: AffiliateSearchResult | null; saving: boolean }
+  | { mode: 'removing' }
 
 interface UserSite {
   id: string
@@ -115,6 +127,8 @@ export default function AdminUserDetailPage({ params }: { params: Promise<{ id: 
   const [consentTextOpen, setConsentTextOpen] = useState(false)
   const [hashStatus, setHashStatus] = useState<'checking' | 'ok' | 'mismatch' | null>(null)
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const [affiliateCard, setAffiliateCard] = useState<AffiliateCardState>({ mode: 'view' })
+  const affiliateSearchRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const fetchSupportConvs = useCallback(async () => {
     try {
@@ -173,6 +187,54 @@ export default function AdminUserDetailPage({ params }: { params: Promise<{ id: 
       setHashStatus(computed === contentConsentTextHash ? 'ok' : 'mismatch')
     })
   }, [data])
+
+  function handleAffiliateSearch(query: string) {
+    setAffiliateCard({ mode: 'search', query, results: [], selected: null, saving: false })
+    if (affiliateSearchRef.current) clearTimeout(affiliateSearchRef.current)
+    if (query.length < 2) return
+    affiliateSearchRef.current = setTimeout(async () => {
+      try {
+        const res = await fetch(`/api/admin/users/search?q=${encodeURIComponent(query)}&affiliate=true`)
+        const results = await res.json()
+        setAffiliateCard(prev => prev.mode === 'search' ? { ...prev, results: Array.isArray(results) ? results : [] } : prev)
+      } catch { /* ignore */ }
+    }, 300)
+  }
+
+  async function assignAffiliate(selected: AffiliateSearchResult) {
+    setAffiliateCard({ mode: 'search', query: selected.username ?? selected.email, results: [], selected, saving: true })
+    try {
+      const res = await fetch(`/api/admin/users/${id}/affiliate`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ affiliateUsername: selected.username }),
+      })
+      if (!res.ok) {
+        const d = await res.json()
+        alert(d.error ?? 'Fehler beim Speichern.')
+        setAffiliateCard({ mode: 'search', query: selected.username ?? selected.email, results: [], selected, saving: false })
+        return
+      }
+      setData(prev => prev ? { ...prev, profile: { ...prev.profile, referredByUsername: selected.username } } : prev)
+      setAffiliateCard({ mode: 'view' })
+    } catch {
+      alert('Netzwerkfehler.')
+      setAffiliateCard({ mode: 'search', query: selected.username ?? selected.email, results: [], selected, saving: false })
+    }
+  }
+
+  async function removeAffiliate() {
+    setAffiliateCard({ mode: 'removing' })
+    try {
+      await fetch(`/api/admin/users/${id}/affiliate`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ affiliateUsername: null }),
+      })
+      setData(prev => prev ? { ...prev, profile: { ...prev.profile, referredByUsername: null } } : prev)
+    } catch { /* ignore */ }
+    setAffiliateCard({ mode: 'view' })
+  }
 
   async function requestImpersonation() {
     setImpersonate({ state: 'requesting' })
@@ -516,6 +578,152 @@ export default function AdminUserDetailPage({ params }: { params: Promise<{ id: 
                   </div>
                 )
               })}
+            </div>
+          )}
+        </div>
+
+        {/* Affiliate Partner */}
+        <div className="p-6 rounded-[24px] bg-white flex flex-col gap-4"
+          style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.08)', border: '1px solid var(--border)' }}>
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <h2 className="font-medium text-gray-900">Partner-Zuordnung</h2>
+              <p className="text-xs mt-0.5" style={{ color: '#9CA3AF' }}>
+                Der zugeordnete Partner erhält ab diesem Zeitpunkt Provision auf alle zukünftigen Zahlungen.
+              </p>
+            </div>
+            {profile.referredByUsername && affiliateCard.mode === 'view' && (
+              <button
+                onClick={() => setAffiliateCard({ mode: 'search', query: '', results: [], selected: null, saving: false })}
+                className="text-xs px-3 py-1.5 rounded-[8px] font-medium"
+                style={{ background: '#F3F4F6', color: '#374151' }}
+              >
+                Ändern
+              </button>
+            )}
+          </div>
+
+          {/* State: assigned + view */}
+          {profile.referredByUsername && affiliateCard.mode === 'view' && (
+            <div className="flex items-center justify-between gap-3 px-4 py-3 rounded-[14px]"
+              style={{ background: '#F0FDF4', border: '1px solid #BBF7D0' }}>
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0"
+                  style={{ background: '#DCFCE7', border: '1.5px solid #86EFAC' }}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#16A34A" strokeWidth="2">
+                    <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/>
+                    <path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/>
+                  </svg>
+                </div>
+                <div>
+                  <p className="text-sm font-semibold" style={{ color: '#15803D' }}>@{profile.referredByUsername}</p>
+                  <p className="text-xs" style={{ color: '#16A34A' }}>Aktiver Partner — erhält Provision</p>
+                </div>
+              </div>
+              <button
+                onClick={removeAffiliate}
+                className="text-xs px-3 py-1.5 rounded-[8px]"
+                style={{ background: '#FEF2F2', color: '#DC2626', border: '1px solid #FECACA' }}
+              >
+                Aufheben
+              </button>
+            </div>
+          )}
+
+          {/* State: removing */}
+          {affiliateCard.mode === 'removing' && (
+            <div className="flex items-center gap-2 p-3 rounded-[12px]" style={{ background: '#F9FAFB' }}>
+              <div style={{ width: 14, height: 14, borderRadius: '50%', border: '2px solid #9CA3AF', borderTopColor: 'transparent', animation: 'spin 0.8s linear infinite', flexShrink: 0 }} />
+              <span className="text-sm" style={{ color: '#6B7280' }}>Zuordnung wird aufgehoben…</span>
+            </div>
+          )}
+
+          {/* State: no affiliate assigned + view */}
+          {!profile.referredByUsername && affiliateCard.mode === 'view' && (
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0"
+                style={{ background: '#F3F4F6', border: '1.5px solid #E5E7EB' }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="2">
+                  <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/>
+                  <path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/>
+                </svg>
+              </div>
+              <div className="flex-1">
+                <p className="text-sm" style={{ color: '#6B7280' }}>Kein Partner zugeordnet</p>
+              </div>
+              <button
+                onClick={() => setAffiliateCard({ mode: 'search', query: '', results: [], selected: null, saving: false })}
+                className="text-sm font-semibold px-4 py-2 rounded-[10px] text-white"
+                style={{ background: '#111827' }}
+              >
+                Partner zuordnen
+              </button>
+            </div>
+          )}
+
+          {/* State: search / confirm */}
+          {affiliateCard.mode === 'search' && (
+            <div className="flex flex-col gap-3">
+              <div className="relative">
+                <input
+                  type="text"
+                  value={affiliateCard.query}
+                  onChange={e => handleAffiliateSearch(e.target.value)}
+                  placeholder="Partner suchen (E-Mail oder @username)…"
+                  autoFocus
+                  className="w-full px-4 py-2.5 text-sm rounded-[12px] outline-none"
+                  style={{ background: '#F9FAFB', border: '1.5px solid #E5E7EB' }}
+                  onFocus={e => (e.target.style.borderColor = '#111827')}
+                  onBlur={e => (e.target.style.borderColor = '#E5E7EB')}
+                />
+                {affiliateCard.results.length > 0 && !affiliateCard.selected && (
+                  <div className="absolute top-full left-0 right-0 z-10 mt-1 rounded-[12px] overflow-hidden"
+                    style={{ background: '#fff', border: '1px solid #E5E7EB', boxShadow: '0 8px 24px rgba(0,0,0,0.12)' }}>
+                    {affiliateCard.results.map(r => (
+                      <button
+                        key={r.id}
+                        onClick={() => assignAffiliate(r)}
+                        className="w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-gray-50 transition-colors"
+                        style={{ borderBottom: '1px solid #F3F4F6' }}
+                      >
+                        <div>
+                          <p className="text-sm font-medium text-gray-900">{r.username ? `@${r.username}` : r.email}</p>
+                          {r.username && <p className="text-xs" style={{ color: '#9CA3AF' }}>{r.email}</p>}
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {affiliateCard.selected && (
+                <div className="flex items-center gap-3 px-4 py-3 rounded-[12px]"
+                  style={{ background: '#EFF6FF', border: '1px solid #BFDBFE' }}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2563EB" strokeWidth="2">
+                    <circle cx="12" cy="12" r="10"/><polyline points="12 8 12 12 14 14"/>
+                  </svg>
+                  <p className="text-sm flex-1" style={{ color: '#1D4ED8' }}>
+                    Wird zugeordnet: <strong>@{affiliateCard.selected.username}</strong>
+                  </p>
+                  {affiliateCard.saving && (
+                    <div style={{ width: 14, height: 14, borderRadius: '50%', border: '2px solid #2563EB', borderTopColor: 'transparent', animation: 'spin 0.8s linear infinite', flexShrink: 0 }} />
+                  )}
+                </div>
+              )}
+
+              {affiliateCard.query.length >= 2 && affiliateCard.results.length === 0 && !affiliateCard.selected && (
+                <p className="text-xs px-1" style={{ color: '#9CA3AF' }}>Kein aktiver Partner mit diesem Namen gefunden.</p>
+              )}
+
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setAffiliateCard({ mode: 'view' })}
+                  className="text-sm px-4 py-2 rounded-[10px]"
+                  style={{ background: '#F3F4F6', color: '#374151' }}
+                >
+                  Abbrechen
+                </button>
+              </div>
             </div>
           )}
         </div>
