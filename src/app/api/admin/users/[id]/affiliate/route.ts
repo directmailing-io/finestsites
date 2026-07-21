@@ -41,7 +41,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   // Validate that the affiliate partner exists
   const affiliate = await db.query.users.findFirst({
     where: eq(users.username, affiliateUsername),
-    columns: { id: true, email: true, username: true, affiliateOnboarded: true, affiliatePayoutEmail: true },
+    columns: { id: true, email: true, username: true, firstName: true, affiliateOnboarded: true, affiliatePayoutEmail: true },
   })
 
   if (!affiliate) return NextResponse.json({ error: 'Partner nicht gefunden.' }, { status: 404 })
@@ -58,7 +58,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     html: affiliateAdminAssignEmail({
       refereeEmail: targetUser.email,
       planLabel,
-      affiliateName: affiliate.username ?? affiliate.email,
+      firstName: affiliate.firstName ?? null,
     }),
     type: 'transactional',
   }).catch(() => { /* ignore send errors */ })

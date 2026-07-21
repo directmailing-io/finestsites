@@ -263,19 +263,20 @@ export function affiliateNewReferralEmail({
 export function affiliateAdminAssignEmail({
   refereeEmail,
   planLabel,
-  affiliateName,
+  firstName,
 }: {
   refereeEmail: string
   planLabel: string
-  affiliateName: string
+  firstName?: string | null
 }): string {
+  const greeting = firstName ? `Hey ${firstName},` : 'Hey,'
   const affiliateUrl = `${APP_URL}/affiliate`
   return layout(`
     <h1 style="margin:0 0 8px;font-size:22px;font-weight:700;color:${base.heading};letter-spacing:-0.02em;">
       Neuer Partner zugeordnet
     </h1>
     <p style="margin:0 0 20px;font-size:15px;color:${base.body};line-height:1.65;">
-      Hey ${affiliateName}, ein bestehender FinestSites-Nutzer wurde dir als Partner zugeordnet. Du erhältst ab sofort Provision auf alle zukünftigen Zahlungen dieses Nutzers.
+      ${greeting} ein bestehender FinestSites-Nutzer wurde dir als Partner zugeordnet. Du erhältst ab sofort Provision auf alle zukünftigen Zahlungen dieses Nutzers.
     </p>
     <table cellpadding="0" cellspacing="0" role="presentation" width="100%" style="margin:0 0 24px;">
       <tr>
