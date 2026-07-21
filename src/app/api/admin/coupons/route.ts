@@ -85,9 +85,9 @@ export async function POST(req: NextRequest) {
 
     const coupon = await stripe.coupons.create(couponParams)
 
-    // Create promotion code pointing to coupon
+    // Create promotion code pointing to coupon — Stripe v22+: use promotion.{type,coupon} instead of top-level coupon
     const promoParams: any = {
-      coupon: coupon.id,
+      promotion: { type: 'coupon', coupon: coupon.id },
       code: code.toUpperCase().trim(),
       ...(maxRedemptions ? { max_redemptions: Number(maxRedemptions) } : {}),
       ...(expiresAt ? { expires_at: Math.floor(new Date(expiresAt).getTime() / 1000) } : {}),
