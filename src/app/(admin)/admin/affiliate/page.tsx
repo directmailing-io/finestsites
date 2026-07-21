@@ -3,6 +3,7 @@ import { affiliateCommissions, users } from '@/lib/db/schema'
 import { desc, eq, isNotNull } from 'drizzle-orm'
 import { getStripe } from '@/lib/stripe/client'
 import { AffiliateAdminActions } from './AffiliateAdminActions'
+import { AffiliatePartnersPanel } from './AffiliatePartnersPanel'
 
 function euros(cents: number) {
   return (cents / 100).toLocaleString('de-DE', { style: 'currency', currency: 'EUR' })
@@ -23,6 +24,7 @@ export default async function AdminAffiliatePage() {
     .select({
       id: affiliateCommissions.id,
       referrerId: affiliateCommissions.referrerId,
+      refereeId: affiliateCommissions.refereeId,
       commissionAmount: affiliateCommissions.commissionAmount,
       grossAmount: affiliateCommissions.grossAmount,
       status: affiliateCommissions.status,
@@ -92,6 +94,114 @@ export default async function AdminAffiliatePage() {
 
   const referrers = Object.values(referrerMap).sort((a, b) => b.total - a.total)
 
+  // ── Partner & zugeordnete Nutzer ──────────────────────────────────────────
+
+  // All onboarded affiliate users
+  const onboardedAffiliates = await db
+    .select({ id: users.id, username: users.username, email: users.email, affiliateOnboarded: users.affiliateOnboarded })
+    .from(users)
+    .where(eq(users.affiliateOnboarded, true))
+
+  // All users who have been referred by someone (includes plan, subscriptionStatus, createdAt)
+  const allReferredUsers = await db
+    .select({
+      id: users.id,
+      email: users.email,
+      plan: users.plan,
+      subscriptionStatus: users.subscriptionStatus,
+      createdAt: users.createdAt,
+      referredByUsername: users.referredByUsername,
+    })
+    .from(users)
+    .where(isNotNull(users.referredByUsername))
+
+  // Build partner map: username -> partner data
+  const partnerMap = new Map<string, {
+    id: string
+    username: string | null
+    email: string
+    affiliateOnboarded: boolean
+    referredUsers: Array<{
+      id: string; email: string; plan: string; subscriptionStatus: string | null
+      createdAt: string; commissionEarnedCents: number
+    }>
+    commissions: { pending: number; available: number; paid: number; total: number }
+  }>()
+
+  // Add onboarded affiliates first
+  for (const aff of onboardedAffiliates) {
+    const key = aff.username ?? aff.email
+    partnerMap.set(key, {
+      id: aff.id,
+      username: aff.username,
+      email: aff.email,
+      affiliateOnboarded: true,
+      referredUsers: [],
+      commissions: { pending: 0, available: 0, paid: 0, total: 0 },
+    })
+  }
+
+  // Add partners who appear as referredByUsername but might not be in partnerMap yet
+  for (const u of allReferredUsers) {
+    if (!u.referredByUsername) continue
+    if (!partnerMap.has(u.referredByUsername)) {
+      const partnerRow = await db.query.users.findFirst({
+        where: eq(users.username, u.referredByUsername),
+        columns: { id: true, username: true, email: true, affiliateOnboarded: true },
+      })
+      if (partnerRow) {
+        partnerMap.set(u.referredByUsername, {
+          id: partnerRow.id,
+          username: partnerRow.username,
+          email: partnerRow.email,
+          affiliateOnboarded: partnerRow.affiliateOnboarded ?? false,
+          referredUsers: [],
+          commissions: { pending: 0, available: 0, paid: 0, total: 0 },
+        })
+      }
+    }
+    const partner = partnerMap.get(u.referredByUsername)
+    if (partner) {
+      partner.referredUsers.push({
+        id: u.id,
+        email: u.email,
+        plan: u.plan ?? 'starter',
+        subscriptionStatus: u.subscriptionStatus,
+        createdAt: u.createdAt ? u.createdAt.toISOString() : new Date().toISOString(),
+        commissionEarnedCents: 0, // filled below
+      })
+    }
+  }
+
+  // Aggregate commissions by referrer and referee
+  const commissionsByReferrer = new Map<string, { pending: number; available: number; paid: number; total: number }>()
+  const commissionsByReferee = new Map<string, number>() // refereeId -> total commission earned
+
+  for (const c of commissionsRaw) {
+    if (c.referrerId) {
+      const existing = commissionsByReferrer.get(c.referrerId) ?? { pending: 0, available: 0, paid: 0, total: 0 }
+      existing.total += c.commissionAmount
+      if (c.status === 'pending') existing.pending += c.commissionAmount
+      if (c.status === 'available') existing.available += c.commissionAmount
+      if (c.status === 'paid') existing.paid += c.commissionAmount
+      commissionsByReferrer.set(c.referrerId, existing)
+    }
+    if (c.refereeId) {
+      commissionsByReferee.set(c.refereeId, (commissionsByReferee.get(c.refereeId) ?? 0) + c.commissionAmount)
+    }
+  }
+
+  // Assign commission totals to each partner and their referred users
+  for (const partner of partnerMap.values()) {
+    partner.commissions = commissionsByReferrer.get(partner.id) ?? { pending: 0, available: 0, paid: 0, total: 0 }
+    for (const u of partner.referredUsers) {
+      u.commissionEarnedCents = commissionsByReferee.get(u.id) ?? 0
+    }
+  }
+
+  const affiliatePartners = Array.from(partnerMap.values())
+    .sort((a, b) => b.referredUsers.length - a.referredUsers.length || b.commissions.total - a.commissions.total)
+
   // Global stats
   const pendingCount    = commissions.filter(c => c.status === 'pending').length
   const availableCount  = commissions.filter(c => c.status === 'available').length
@@ -143,6 +253,11 @@ export default async function AdminAffiliatePage() {
             <p className="text-xs font-semibold mt-1" style={{ color: card.num }}>{card.label}</p>
           </div>
         ))}
+      </div>
+
+      {/* ── Partner & zugeordnete Nutzer ── */}
+      <div className="mb-8">
+        <AffiliatePartnersPanel partners={affiliatePartners} />
       </div>
 
       {/* ── Affiliates Table ── */}
