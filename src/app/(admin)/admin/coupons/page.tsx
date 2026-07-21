@@ -28,6 +28,7 @@ export interface SerializedPromoCode {
   times_redeemed: number
   max_redemptions: number | null
   expires_at: number | null
+  starts_at: string | null   // stored in promo code metadata.starts_at (ISO date)
   first_time_only: boolean
   coupon: SerializedCoupon
 }
@@ -57,6 +58,7 @@ function serializePromoCode(pc: Stripe.PromotionCode): SerializedPromoCode {
     max_redemptions: pc.max_redemptions ?? null,
     expires_at: pc.expires_at ?? null,
     first_time_only: pc.restrictions?.first_time_transaction ?? false,
+    starts_at: (pc.metadata as any)?.starts_at ?? null,
     coupon: serializeCoupon(coupon),
   }
 }

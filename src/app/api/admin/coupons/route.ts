@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
   try {
     const {
       code, discountType, amount, plans, interval, duration,
-      durationMonths, maxRedemptions, expiresAt, firstTimeOnly, name,
+      durationMonths, maxRedemptions, startsAt, expiresAt, firstTimeOnly, name,
     } = await req.json() as {
       code: string
       discountType: 'percent' | 'fixed'
@@ -46,7 +46,8 @@ export async function POST(req: NextRequest) {
       duration: 'once' | 'forever' | 'repeating'
       durationMonths?: number
       maxRedemptions?: number
-      expiresAt?: string
+      startsAt?: string  // ISO date — if in future, create as inactive
+      expiresAt?: string // ISO date — expires at 23:59:59 UTC on that day
       firstTimeOnly?: boolean
       name?: string
     }
@@ -85,13 +86,31 @@ export async function POST(req: NextRequest) {
 
     const coupon = await stripe.coupons.create(couponParams)
 
+    // "Gültig bis" date should include the full selected day.
+    // The input is a date string (e.g. "2026-07-26"). We set expiry to 23:59:59 UTC
+    // on that day so the code remains valid until the very end of the date (in UTC).
+    // In German time (UTC+1/+2) that means the code works until 01:59 or 00:59 next morning.
+    const expiresAtTimestamp = expiresAt
+      ? Math.floor(new Date(expiresAt + 'T23:59:59Z').getTime() / 1000)
+      : undefined
+
+    // If startsAt is set and is in the future, create the code as inactive.
+    // The admin can manually activate it later (or a future cron job can do it).
+    const nowTs = Date.now()
+    const startsAtMs = startsAt ? new Date(startsAt + 'T00:00:00Z').getTime() : 0
+    const shouldStartInactive = startsAt && startsAtMs > nowTs
+
     // Create promotion code pointing to coupon — Stripe v22+: use promotion.{type,coupon} instead of top-level coupon
     const promoParams: any = {
       promotion: { type: 'coupon', coupon: coupon.id },
       code: code.toUpperCase().trim(),
+      active: !shouldStartInactive,
       ...(maxRedemptions ? { max_redemptions: Number(maxRedemptions) } : {}),
-      ...(expiresAt ? { expires_at: Math.floor(new Date(expiresAt).getTime() / 1000) } : {}),
+      ...(expiresAtTimestamp ? { expires_at: expiresAtTimestamp } : {}),
       restrictions: { first_time_transaction: !!firstTimeOnly },
+      metadata: {
+        ...(startsAt ? { starts_at: startsAt } : {}),
+      },
     }
 
     const promoCode = await stripe.promotionCodes.create(promoParams)

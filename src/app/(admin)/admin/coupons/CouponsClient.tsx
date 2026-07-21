@@ -13,6 +13,7 @@ interface CreateForm {
   duration: 'once' | 'forever' | 'repeating'
   durationMonths: string
   maxRedemptions: string
+  startsAt: string
   expiresAt: string
   firstTimeOnly: boolean
 }
@@ -71,6 +72,7 @@ const defaultForm: CreateForm = {
   duration: 'once',
   durationMonths: '',
   maxRedemptions: '',
+  startsAt: '',
   expiresAt: '',
   firstTimeOnly: false,
 }
@@ -104,10 +106,14 @@ export function CouponsClient({ initialCodes }: { initialCodes: SerializedPromoC
     e.preventDefault()
     setCreateError(null)
     if (!form.code.trim()) { setCreateError('Code ist erforderlich.'); return }
+    if (form.name.trim().length > 40) { setCreateError('Name darf maximal 40 Zeichen haben (Stripe-Limit).'); return }
     if (!form.amount || Number(form.amount) <= 0) { setCreateError('Betrag muss größer als 0 sein.'); return }
     if (form.discountType === 'percent' && Number(form.amount) > 100) { setCreateError('Prozent darf maximal 100 sein.'); return }
     if (form.duration === 'repeating' && (!form.durationMonths || Number(form.durationMonths) < 1)) {
       setCreateError('Bitte Anzahl Monate angeben.'); return
+    }
+    if (form.startsAt && form.expiresAt && form.startsAt >= form.expiresAt) {
+      setCreateError('"Gültig ab" muss vor "Gültig bis" liegen.'); return
     }
 
     setCreating(true)
@@ -125,6 +131,7 @@ export function CouponsClient({ initialCodes }: { initialCodes: SerializedPromoC
           duration: form.duration,
           durationMonths: form.durationMonths ? Number(form.durationMonths) : undefined,
           maxRedemptions: form.maxRedemptions ? Number(form.maxRedemptions) : undefined,
+          startsAt: form.startsAt || undefined,
           expiresAt: form.expiresAt || undefined,
           firstTimeOnly: form.firstTimeOnly,
         }),
@@ -213,13 +220,20 @@ export function CouponsClient({ initialCodes }: { initialCodes: SerializedPromoC
                       : <span className="text-gray-400 text-xs">—</span>}
                   </td>
                   <td className="px-5 py-3.5">
-                    <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${
-                      pc.active
-                        ? 'bg-green-50 text-green-700'
-                        : 'bg-gray-100 text-gray-500'
-                    }`}>
-                      {pc.active ? 'Aktiv' : 'Inaktiv'}
-                    </span>
+                    {(() => {
+                      const isScheduled = !pc.active && pc.starts_at && new Date(pc.starts_at + 'T00:00:00Z') > new Date()
+                      return (
+                        <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${
+                          isScheduled
+                            ? 'bg-amber-50 text-amber-700'
+                            : pc.active
+                              ? 'bg-green-50 text-green-700'
+                              : 'bg-gray-100 text-gray-500'
+                        }`}>
+                          {isScheduled ? `Geplant ab ${new Date(pc.starts_at! + 'T00:00:00Z').toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' })}` : pc.active ? 'Aktiv' : 'Inaktiv'}
+                        </span>
+                      )
+                    })()}
                   </td>
                   <td className="px-5 py-3.5 text-right">
                     <button
@@ -247,7 +261,6 @@ export function CouponsClient({ initialCodes }: { initialCodes: SerializedPromoC
         <div
           className="fixed inset-0 z-50 flex items-center justify-center p-4"
           style={{ background: 'rgba(0,0,0,0.4)' }}
-          onClick={e => { if (e.target === e.currentTarget) setShowModal(false) }}
         >
           <div
             className="w-full max-w-lg max-h-[90vh] overflow-y-auto"
@@ -279,14 +292,20 @@ export function CouponsClient({ initialCodes }: { initialCodes: SerializedPromoC
 
               {/* Name (optional) */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Name <span className="text-gray-400 font-normal">(optional)</span></label>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="text-sm font-medium text-gray-700">Name <span className="text-gray-400 font-normal">(optional)</span></label>
+                  <span className={`text-xs ${form.name.length > 40 ? 'text-red-500 font-medium' : 'text-gray-400'}`}>
+                    {form.name.length}/40
+                  </span>
+                </div>
                 <input
                   type="text"
                   value={form.name}
                   onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
                   placeholder="z. B. Sommeraktion 2025"
+                  maxLength={40}
                   className="w-full px-3 py-2 text-sm rounded-[10px]"
-                  style={{ border: '1px solid var(--border)', outline: 'none' }}
+                  style={{ border: `1px solid ${form.name.length > 40 ? '#ef4444' : 'var(--border)'}`, outline: 'none' }}
                 />
               </div>
 
@@ -406,21 +425,38 @@ export function CouponsClient({ initialCodes }: { initialCodes: SerializedPromoC
                 )}
               </div>
 
-              {/* Max redemptions + expiry */}
+              {/* Max redemptions */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Max. Einlösungen <span className="text-gray-400 font-normal">(optional)</span>
+                </label>
+                <input
+                  type="number"
+                  value={form.maxRedemptions}
+                  onChange={e => setForm(f => ({ ...f, maxRedemptions: e.target.value }))}
+                  placeholder="unbegrenzt"
+                  min="1"
+                  className="w-full px-3 py-2 text-sm rounded-[10px]"
+                  style={{ border: '1px solid var(--border)', outline: 'none' }}
+                />
+              </div>
+
+              {/* Gültig ab + Gültig bis */}
               <div className="flex gap-3">
                 <div className="flex-1">
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Max. Einlösungen <span className="text-gray-400 font-normal">(optional)</span>
+                    Gültig ab <span className="text-gray-400 font-normal">(optional)</span>
                   </label>
                   <input
-                    type="number"
-                    value={form.maxRedemptions}
-                    onChange={e => setForm(f => ({ ...f, maxRedemptions: e.target.value }))}
-                    placeholder="∞"
-                    min="1"
+                    type="date"
+                    value={form.startsAt}
+                    onChange={e => setForm(f => ({ ...f, startsAt: e.target.value }))}
                     className="w-full px-3 py-2 text-sm rounded-[10px]"
                     style={{ border: '1px solid var(--border)', outline: 'none' }}
                   />
+                  {form.startsAt && new Date(form.startsAt) > new Date() && (
+                    <p className="text-xs text-amber-600 mt-1">Code wird inaktiv angelegt und am {new Date(form.startsAt).toLocaleDateString('de-DE')} aktivierbar.</p>
+                  )}
                 </div>
                 <div className="flex-1">
                   <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -433,6 +469,9 @@ export function CouponsClient({ initialCodes }: { initialCodes: SerializedPromoC
                     className="w-full px-3 py-2 text-sm rounded-[10px]"
                     style={{ border: '1px solid var(--border)', outline: 'none' }}
                   />
+                  {form.expiresAt && (
+                    <p className="text-xs text-gray-400 mt-1">Läuft ab am {new Date(form.expiresAt + 'T23:59:59Z').toLocaleDateString('de-DE')} um 23:59 Uhr (UTC).</p>
+                  )}
                 </div>
               </div>
 
