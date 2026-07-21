@@ -94,6 +94,18 @@ interface SupportConv {
   lastMessage: { content: string; contentType?: string } | null
 }
 
+/** Extracts a clean username/handle from any social value.
+ * Handles full URLs (https://instagram.com/handle), @-prefixed, or plain. */
+function extractSocialHandle(value: string): string {
+  const v = value.trim().replace(/\/$/, '')
+  try {
+    const url = new URL(v)
+    const parts = url.pathname.split('/').filter(Boolean)
+    if (parts.length > 0) return parts[parts.length - 1].replace(/^@/, '')
+  } catch { /* not a URL — treat as plain handle */ }
+  return v.replace(/^@/, '')
+}
+
 const STATUS_COLORS: Record<string, { bg: string; text: string }> = {
   open: { bg: '#F0FDF4', text: '#16A34A' },
   waiting: { bg: '#FFF7ED', text: '#C2410C' },
@@ -553,61 +565,76 @@ export default function AdminUserDetailPage({ params }: { params: Promise<{ id: 
               <div className="flex flex-col gap-2 pt-2" style={{ borderTop: '1px solid #F3F4F6' }}>
                 <p className="text-xs font-medium" style={{ color: '#94A3B8' }}>Social Media</p>
                 <div className="flex flex-wrap gap-2">
-                  {profile.instagram && (
-                    <a href={`https://instagram.com/${profile.instagram.replace('@','')}`}
-                      target="_blank" rel="noopener noreferrer"
-                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium"
-                      style={{ background: '#FDF2F8', color: '#9D174D', border: '1px solid #FBCFE8' }}>
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
-                      </svg>
-                      @{profile.instagram.replace('@','')}
-                    </a>
-                  )}
-                  {profile.tiktok && (
-                    <a href={`https://tiktok.com/@${profile.tiktok.replace('@','')}`}
-                      target="_blank" rel="noopener noreferrer"
-                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium"
-                      style={{ background: '#F0FDF4', color: '#166534', border: '1px solid #BBF7D0' }}>
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.77 1.52V6.76a4.85 4.85 0 01-1-.07z"/>
-                      </svg>
-                      @{profile.tiktok.replace('@','')}
-                    </a>
-                  )}
-                  {profile.facebook && (
-                    <a href={profile.facebook.startsWith('http') ? profile.facebook : `https://facebook.com/${profile.facebook}`}
-                      target="_blank" rel="noopener noreferrer"
-                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium"
-                      style={{ background: '#EFF6FF', color: '#1D4ED8', border: '1px solid #BFDBFE' }}>
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/>
-                      </svg>
-                      {profile.facebook}
-                    </a>
-                  )}
-                  {profile.linkedin && (
-                    <a href={profile.linkedin.startsWith('http') ? profile.linkedin : `https://linkedin.com/in/${profile.linkedin}`}
-                      target="_blank" rel="noopener noreferrer"
-                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium"
-                      style={{ background: '#F0F9FF', color: '#0369A1', border: '1px solid #BAE6FD' }}>
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/>
-                      </svg>
-                      {profile.linkedin}
-                    </a>
-                  )}
-                  {profile.youtube && (
-                    <a href={profile.youtube.startsWith('http') ? profile.youtube : `https://youtube.com/@${profile.youtube.replace('@','')}`}
-                      target="_blank" rel="noopener noreferrer"
-                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium"
-                      style={{ background: '#FEF2F2', color: '#DC2626', border: '1px solid #FECACA' }}>
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 00-1.95 1.96A29 29 0 001 12a29 29 0 00.46 5.58A2.78 2.78 0 003.41 19.6C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 001.95-1.95A29 29 0 0023 12a29 29 0 00-.46-5.58z"/><polygon fill="white" points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02"/>
-                      </svg>
-                      {profile.youtube}
-                    </a>
-                  )}
+                  {profile.instagram && (() => {
+                    const handle = extractSocialHandle(profile.instagram)
+                    return (
+                      <a href={`https://instagram.com/${handle}`}
+                        target="_blank" rel="noopener noreferrer"
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium"
+                        style={{ background: '#FDF2F8', color: '#9D174D', border: '1px solid #FBCFE8' }}>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+                        </svg>
+                        @{handle}
+                      </a>
+                    )
+                  })()}
+                  {profile.tiktok && (() => {
+                    const handle = extractSocialHandle(profile.tiktok)
+                    return (
+                      <a href={`https://tiktok.com/@${handle}`}
+                        target="_blank" rel="noopener noreferrer"
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium"
+                        style={{ background: '#F0FDF4', color: '#166534', border: '1px solid #BBF7D0' }}>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.77 1.52V6.76a4.85 4.85 0 01-1-.07z"/>
+                        </svg>
+                        @{handle}
+                      </a>
+                    )
+                  })()}
+                  {profile.facebook && (() => {
+                    const handle = extractSocialHandle(profile.facebook)
+                    return (
+                      <a href={profile.facebook.startsWith('http') ? profile.facebook : `https://facebook.com/${handle}`}
+                        target="_blank" rel="noopener noreferrer"
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium"
+                        style={{ background: '#EFF6FF', color: '#1D4ED8', border: '1px solid #BFDBFE' }}>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/>
+                        </svg>
+                        {handle}
+                      </a>
+                    )
+                  })()}
+                  {profile.linkedin && (() => {
+                    const handle = extractSocialHandle(profile.linkedin)
+                    return (
+                      <a href={profile.linkedin.startsWith('http') ? profile.linkedin : `https://linkedin.com/in/${handle}`}
+                        target="_blank" rel="noopener noreferrer"
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium"
+                        style={{ background: '#F0F9FF', color: '#0369A1', border: '1px solid #BAE6FD' }}>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/>
+                        </svg>
+                        {handle}
+                      </a>
+                    )
+                  })()}
+                  {profile.youtube && (() => {
+                    const handle = extractSocialHandle(profile.youtube)
+                    return (
+                      <a href={profile.youtube.startsWith('http') ? profile.youtube : `https://youtube.com/@${handle}`}
+                        target="_blank" rel="noopener noreferrer"
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium"
+                        style={{ background: '#FEF2F2', color: '#DC2626', border: '1px solid #FECACA' }}>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 00-1.95 1.96A29 29 0 001 12a29 29 0 00.46 5.58A2.78 2.78 0 003.41 19.6C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 001.95-1.95A29 29 0 0023 12a29 29 0 00-.46-5.58z"/><polygon fill="white" points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02"/>
+                        </svg>
+                        {handle}
+                      </a>
+                    )
+                  })()}
                 </div>
               </div>
             )}
