@@ -6,20 +6,13 @@ import { eq } from 'drizzle-orm'
 import { getUserFromRequest } from '@/lib/auth/server'
 import { getStripe } from '@/lib/stripe/client'
 
-function getSubInfo(sub: Stripe.Subscription, plan: string, billingInterval: string | null) {
+function getSubInfo(sub: Stripe.Subscription, plan: string, billingInterval: string | null, couponObj?: { percent_off?: number | null; name?: string | null; id?: string } | null) {
   // In Stripe v22+, current_period_end is per subscription item
   const item = sub.items?.data?.[0]
   const currentPeriodEnd = (item as any)?.current_period_end ?? null
 
-  // Discount: check subscription-level first, then customer-level
-  // Stripe API v22+: discounts is an array; first entry is the active discount
-  const subDiscount = (sub as any).discounts?.[0] ?? (sub as any).discount ?? null
-  // Customer-level discount (common when coupon is applied via admin/API)
-  const custDiscount = (sub as any).customer?.discount ?? null
-  const firstDiscount = subDiscount ?? custDiscount
-  const coupon = firstDiscount?.coupon ?? null
-  const discountPercent: number | null = coupon?.percent_off ?? null
-  const discountName: string | null = coupon?.name ?? coupon?.id ?? null
+  const discountPercent: number | null = couponObj?.percent_off ?? null
+  const discountName: string | null = couponObj?.name ?? couponObj?.id ?? null
 
   return {
     status: sub.status,
@@ -48,32 +41,42 @@ export async function GET(req: NextRequest) {
 
   try {
     const stripe = getStripe()
+
+    async function resolveCoupon(sub: Stripe.Subscription) {
+      // Stripe v22+: discount coupon lives in discounts[0].source.coupon (string ID)
+      // Older API: discounts[0].coupon (object) or discount.coupon (object)
+      const disc = (sub as any).discounts?.[0] ?? (sub as any).discount ?? null
+      if (!disc) return null
+      // source.coupon is a string ID in v22+
+      const raw = disc?.source?.coupon ?? disc?.coupon ?? null
+      if (!raw) return null
+      if (typeof raw === 'object') return raw
+      // raw is a coupon ID string — fetch the full coupon object
+      try { return await stripe.coupons.retrieve(raw as string) } catch { return null }
+    }
+
     const subscriptions = await stripe.subscriptions.list({
       customer: profile.stripeCustomerId,
       status: 'active',
       limit: 1,
-      expand: ['data.items', 'data.discounts', 'data.customer.discount', 'data.customer.discount.coupon'],
+      expand: ['data.items', 'data.discounts'],
     })
 
     if (!subscriptions.data.length) {
       const allSubs = await stripe.subscriptions.list({
         customer: profile.stripeCustomerId,
         limit: 1,
-        expand: ['data.items', 'data.discounts', 'data.customer.discount', 'data.customer.discount.coupon'],
+        expand: ['data.items', 'data.discounts'],
       })
       if (!allSubs.data.length) return NextResponse.json({ subscription: null })
-      return NextResponse.json({ subscription: getSubInfo(allSubs.data[0], profile.plan, profile.billingInterval) })
+      const coupon = await resolveCoupon(allSubs.data[0])
+      return NextResponse.json({ subscription: getSubInfo(allSubs.data[0], profile.plan, profile.billingInterval, coupon) })
     }
 
     const sub0 = subscriptions.data[0]
-    const _dbg = {
-      sub_discounts: (sub0 as any).discounts,
-      customer_discount: (sub0 as any).customer?.discount,
-      customer_type: typeof (sub0 as any).customer,
-    }
-    console.log('[billing/subscription DEBUG]', JSON.stringify(_dbg))
+    const coupon = await resolveCoupon(sub0)
     return NextResponse.json({
-      subscription: getSubInfo(sub0, profile.plan, profile.billingInterval)
+      subscription: getSubInfo(sub0, profile.plan, profile.billingInterval, coupon)
     })
   } catch {
     return NextResponse.json({ subscription: null })
