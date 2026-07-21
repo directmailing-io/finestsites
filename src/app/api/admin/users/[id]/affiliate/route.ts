@@ -38,16 +38,13 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     return NextResponse.json({ success: true, referredByUsername: null })
   }
 
-  // Validate that the affiliate partner exists and is onboarded
+  // Validate that the affiliate partner exists
   const affiliate = await db.query.users.findFirst({
     where: eq(users.username, affiliateUsername),
     columns: { id: true, email: true, username: true, affiliateOnboarded: true, affiliatePayoutEmail: true },
   })
 
   if (!affiliate) return NextResponse.json({ error: 'Partner nicht gefunden.' }, { status: 404 })
-  if (!affiliate.affiliateOnboarded) {
-    return NextResponse.json({ error: 'Dieser User ist kein aktiver Partner.' }, { status: 400 })
-  }
 
   // Update the referral
   await db.update(users).set({ referredByUsername: affiliateUsername }).where(eq(users.id, id))

@@ -28,9 +28,9 @@ export async function GET(req: NextRequest) {
       ilike(users.email, `%${q}%`),
       ilike(users.username, `%${q}%`)
     )
-    const whereClause = affiliateOnly
-      ? and(textFilter, eq(users.affiliateOnboarded, true))
-      : textFilter
+    // affiliateOnly is no longer used — admin can assign any user as a partner
+    void affiliateOnly
+    const whereClause = textFilter
 
     const results = await db
       .select({ id: users.id, email: users.email, username: users.username })
