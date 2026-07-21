@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import type { SerializedPromoCode } from './page'
+import type { RedemptionEntry } from '@/app/api/admin/coupons/[id]/redemptions/route'
 
 interface CreateForm {
   code: string
@@ -23,12 +24,6 @@ const PLAN_OPTIONS = [
   { key: 'pro', label: 'Pro' },
   { key: 'unlimited', label: 'Unlimited' },
 ]
-
-const DURATION_LABELS: Record<string, string> = {
-  once: 'Einmalig',
-  forever: 'Dauerhaft',
-  repeating: 'Wiederkehrend',
-}
 
 function formatDiscount(code: SerializedPromoCode): string {
   if (code.coupon.percent_off != null) return `${code.coupon.percent_off}%`
@@ -84,6 +79,13 @@ export function CouponsClient({ initialCodes }: { initialCodes: SerializedPromoC
   const [creating, setCreating] = useState(false)
   const [createError, setCreateError] = useState<string | null>(null)
   const [togglingId, setTogglingId] = useState<string | null>(null)
+  const [deletingId, setDeletingId] = useState<string | null>(null)
+
+  // Redemption drawer state
+  const [redemptionCode, setRedemptionCode] = useState<SerializedPromoCode | null>(null)
+  const [redemptions, setRedemptions] = useState<RedemptionEntry[]>([])
+  const [redemptionsLoading, setRedemptionsLoading] = useState(false)
+  const [redemptionsError, setRedemptionsError] = useState<string | null>(null)
 
   async function handleToggle(id: string, currentActive: boolean) {
     setTogglingId(id)
@@ -99,6 +101,41 @@ export function CouponsClient({ initialCodes }: { initialCodes: SerializedPromoC
       alert('Status konnte nicht geändert werden.')
     } finally {
       setTogglingId(null)
+    }
+  }
+
+  async function handleDelete(id: string, code: string) {
+    if (!confirm(`"${code}" wirklich deaktivieren und archivieren? Der Code kann danach neu angelegt werden.`)) return
+    setDeletingId(id)
+    try {
+      const res = await fetch(`/api/admin/coupons/${id}`, { method: 'DELETE' })
+      if (!res.ok) {
+        const data = await res.json()
+        alert(data.error ?? 'Fehler beim Löschen.')
+        return
+      }
+      setCodes(prev => prev.filter(c => c.id !== id))
+    } catch {
+      alert('Netzwerkfehler.')
+    } finally {
+      setDeletingId(null)
+    }
+  }
+
+  async function openRedemptions(pc: SerializedPromoCode) {
+    setRedemptionCode(pc)
+    setRedemptions([])
+    setRedemptionsError(null)
+    setRedemptionsLoading(true)
+    try {
+      const res = await fetch(`/api/admin/coupons/${pc.id}/redemptions`)
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error ?? 'Fehler')
+      setRedemptions(data)
+    } catch (e: any) {
+      setRedemptionsError(e.message)
+    } finally {
+      setRedemptionsLoading(false)
     }
   }
 
@@ -175,6 +212,17 @@ export function CouponsClient({ initialCodes }: { initialCodes: SerializedPromoC
         </button>
       </div>
 
+      {/* Info box about deactivation behavior */}
+      <div className="mb-6 flex items-start gap-3 px-4 py-3 rounded-[12px] bg-blue-50 text-blue-800 text-xs">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="mt-0.5 shrink-0">
+          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+        <span>
+          <strong>Deaktivieren ist sicher:</strong> Bestehende Abos behalten ihren Rabatt. Nur neue Einlösungen werden verhindert.
+          Beim Archivieren (Löschen) wird der Code deaktiviert — und der zugrundeliegende Coupon gelöscht, wenn er noch nie eingelöst wurde.
+        </span>
+      </div>
+
       {/* Table */}
       <div style={{ border: '1px solid var(--border)', borderRadius: 16, background: '#fff', overflow: 'hidden' }}>
         {codes.length === 0 ? (
@@ -210,8 +258,19 @@ export function CouponsClient({ initialCodes }: { initialCodes: SerializedPromoC
                   <td className="px-5 py-3.5 text-gray-600">{formatPlans(pc.coupon.plans)}</td>
                   <td className="px-5 py-3.5 text-gray-600">{formatInterval(pc.coupon.interval)}</td>
                   <td className="px-5 py-3.5 text-gray-600">{formatDuration(pc)}</td>
-                  <td className="px-5 py-3.5 text-gray-600">
-                    {pc.times_redeemed}{pc.max_redemptions ? ` / ${pc.max_redemptions}` : ''}
+                  <td className="px-5 py-3.5">
+                    {pc.times_redeemed > 0 ? (
+                      <button
+                        onClick={() => openRedemptions(pc)}
+                        className="font-medium text-blue-600 hover:underline"
+                      >
+                        {pc.times_redeemed}{pc.max_redemptions ? ` / ${pc.max_redemptions}` : ''}
+                      </button>
+                    ) : (
+                      <span className="text-gray-400">
+                        0{pc.max_redemptions ? ` / ${pc.max_redemptions}` : ''}
+                      </span>
+                    )}
                   </td>
                   <td className="px-5 py-3.5 text-gray-600">{formatDate(pc.expires_at)}</td>
                   <td className="px-5 py-3.5">
@@ -236,18 +295,33 @@ export function CouponsClient({ initialCodes }: { initialCodes: SerializedPromoC
                     })()}
                   </td>
                   <td className="px-5 py-3.5 text-right">
-                    <button
-                      onClick={() => handleToggle(pc.id, pc.active)}
-                      disabled={togglingId === pc.id}
-                      className="text-xs px-3 py-1.5 rounded-[8px] font-medium transition-all disabled:opacity-50"
-                      style={{
-                        border: '1px solid var(--border)',
-                        background: '#fff',
-                        color: '#374151',
-                      }}
-                    >
-                      {togglingId === pc.id ? '…' : pc.active ? 'Deaktivieren' : 'Aktivieren'}
-                    </button>
+                    <div className="flex items-center justify-end gap-2">
+                      <button
+                        onClick={() => handleToggle(pc.id, pc.active)}
+                        disabled={togglingId === pc.id || deletingId === pc.id}
+                        className="text-xs px-3 py-1.5 rounded-[8px] font-medium transition-all disabled:opacity-50"
+                        style={{
+                          border: '1px solid var(--border)',
+                          background: '#fff',
+                          color: '#374151',
+                        }}
+                      >
+                        {togglingId === pc.id ? '…' : pc.active ? 'Deaktivieren' : 'Aktivieren'}
+                      </button>
+                      <button
+                        onClick={() => handleDelete(pc.id, pc.code)}
+                        disabled={deletingId === pc.id || togglingId === pc.id}
+                        title="Archivieren (deaktiviert und Code-String freigeben)"
+                        className="text-xs px-2 py-1.5 rounded-[8px] transition-all disabled:opacity-50 text-gray-400 hover:text-red-600 hover:bg-red-50"
+                        style={{ border: '1px solid var(--border)', background: '#fff' }}
+                      >
+                        {deletingId === pc.id ? '…' : (
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/>
+                          </svg>
+                        )}
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -255,6 +329,95 @@ export function CouponsClient({ initialCodes }: { initialCodes: SerializedPromoC
           </table>
         )}
       </div>
+
+      {/* Redemption Detail Modal */}
+      {redemptionCode && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          style={{ background: 'rgba(0,0,0,0.4)' }}
+        >
+          <div
+            className="w-full max-w-xl max-h-[80vh] flex flex-col"
+            style={{ background: '#fff', borderRadius: 20 }}
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between px-6 py-5 border-b" style={{ borderColor: 'var(--border)' }}>
+              <div>
+                <h2 className="text-base font-semibold text-gray-900">
+                  Einlösungen: <span className="font-mono">{redemptionCode.code}</span>
+                </h2>
+                <p className="text-xs text-gray-400 mt-0.5">{redemptionCode.times_redeemed}× eingelöst</p>
+              </div>
+              <button onClick={() => setRedemptionCode(null)} className="text-gray-400 hover:text-gray-600">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+              </button>
+            </div>
+
+            {/* Body */}
+            <div className="flex-1 overflow-y-auto p-6">
+              {redemptionsLoading && (
+                <div className="flex items-center justify-center py-12 text-gray-400 text-sm gap-2">
+                  <svg className="animate-spin" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+                  </svg>
+                  Lade Einlösungen…
+                </div>
+              )}
+
+              {redemptionsError && (
+                <div className="text-sm text-red-600 px-3 py-2 rounded-[8px] bg-red-50">
+                  {redemptionsError}
+                </div>
+              )}
+
+              {!redemptionsLoading && !redemptionsError && redemptions.length === 0 && (
+                <div className="py-12 text-center text-gray-400 text-sm">
+                  Keine aktiven Einlösungen gefunden.
+                  <p className="mt-1 text-xs text-gray-300">Hinweis: Nur Abos mit aktivem Rabatt-Objekt werden angezeigt.</p>
+                </div>
+              )}
+
+              {!redemptionsLoading && !redemptionsError && redemptions.length > 0 && (
+                <div className="flex flex-col gap-2">
+                  {redemptions.map(r => (
+                    <div
+                      key={r.subscription_id}
+                      className="flex items-start justify-between px-4 py-3 rounded-[10px]"
+                      style={{ border: '1px solid var(--border)' }}
+                    >
+                      <div>
+                        <div className="font-medium text-gray-900 text-sm">
+                          {r.customer_name ?? r.customer_email ?? r.customer_id}
+                        </div>
+                        {r.customer_name && r.customer_email && (
+                          <div className="text-xs text-gray-400">{r.customer_email}</div>
+                        )}
+                        <div className="text-xs text-gray-400 mt-0.5">
+                          {r.plan ? `${r.plan} · ` : ''}{new Date(r.created * 1000).toLocaleDateString('de-DE')}
+                          {r.discount_end ? ` · Rabatt bis ${new Date(r.discount_end * 1000).toLocaleDateString('de-DE')}` : ''}
+                        </div>
+                      </div>
+                      <span className={`text-xs font-medium px-2 py-0.5 rounded-full shrink-0 ${
+                        r.status === 'active' ? 'bg-green-50 text-green-700' :
+                        r.status === 'trialing' ? 'bg-blue-50 text-blue-700' :
+                        r.status === 'canceled' ? 'bg-gray-100 text-gray-500' :
+                        'bg-amber-50 text-amber-700'
+                      }`}>
+                        {r.status === 'active' ? 'Aktiv' :
+                         r.status === 'trialing' ? 'Testphase' :
+                         r.status === 'canceled' ? 'Gekündigt' :
+                         r.status === 'past_due' ? 'Überfällig' : r.status}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Create Modal */}
       {showModal && (
