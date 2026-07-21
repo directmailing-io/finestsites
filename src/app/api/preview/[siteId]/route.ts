@@ -614,8 +614,20 @@ function annotateLiveBindings(html: string): string {
     prev = html
     html = html.replace(
       /\{\{#if\s+(\w+)\}\}([\s\S]*?)\{\{\/if\}\}/g,
-      (_match: string, key: string, content: string) =>
-        `<!--fs-cond:${key}-->${content}<!--/fs-cond:${key}-->`
+      (_match: string, key: string, content: string) => {
+        // Skip conditionals that wrap <style> blocks. These control CSS rules
+        // (background colour, background image, theme effects) that must only
+        // be emitted when the condition is TRUE. If we convert them to
+        // always-render comment ranges the template engine replaces {{key}}
+        // with an empty string, producing invalid CSS like
+        //   background: url('') center/cover no-repeat fixed !important
+        // which (because of !important) overrides any colour the user picked.
+        // Since colour/image fields are "structural" and always trigger a full
+        // iframe reload, the template engine re-evaluates them on every render
+        // anyway — live-range toggling adds no benefit here.
+        if (/<style\b/i.test(content)) return _match
+        return `<!--fs-cond:${key}-->${content}<!--/fs-cond:${key}-->`
+      }
     )
   }
   // Same for {{#unless key}}…{{/unless}} (inverse — wrap with fs-uncond:)
@@ -624,8 +636,10 @@ function annotateLiveBindings(html: string): string {
     prev = html
     html = html.replace(
       /\{\{#unless\s+(\w+)\}\}([\s\S]*?)\{\{\/unless\}\}/g,
-      (_match: string, key: string, content: string) =>
-        `<!--fs-uncond:${key}-->${content}<!--/fs-uncond:${key}-->`
+      (_match: string, key: string, content: string) => {
+        if (/<style\b/i.test(content)) return _match
+        return `<!--fs-uncond:${key}-->${content}<!--/fs-uncond:${key}-->`
+      }
     )
   }
 
