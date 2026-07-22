@@ -370,37 +370,100 @@ function DomainPanel({ siteId, subdomain, initialDomain, initialStatus }: {
               <p className="text-sm font-semibold text-gray-900 mb-2">
                 Erstelle diesen DNS-Eintrag
               </p>
-              {isApex && (
-                <p className="text-xs mb-2 px-3 py-2 rounded-full" style={{ background: '#FFF7ED', color: '#92400E', border: '1px solid #FDE68A' }}>
-                  Hinweis: Für Haupt-Domains ohne Präfix brauchst du einen <strong>ALIAS</strong>- oder <strong>ANAME</strong>-Eintrag. Nicht alle Anbieter unterstützen das. Falls es nicht klappt, empfehlen wir <strong>www.{domain}</strong> zu verwenden.
-                </p>
-              )}
               {/* DNS record box — scrollable on mobile */}
-              <div className="rounded-[12px] overflow-hidden overflow-x-auto" style={{ border: '1.5px solid #E5E7EB' }}>
-                <div style={{ minWidth: '320px' }}>
-                  <div className="grid grid-cols-3 text-xs font-semibold uppercase tracking-wider px-3 py-2"
-                    style={{ background: '#F8FAFC', color: '#9CA3AF', borderBottom: '1px solid #E5E7EB' }}>
-                    <span>Typ</span><span>Name</span><span>Ziel (Wert)</span>
+              {isApex ? (
+                /* Apex domain: show two options — CNAME for www (recommended) + ALIAS/ANAME */
+                <div className="flex flex-col gap-3">
+                  {/* Option A — recommended */}
+                  <div className="rounded-[12px] overflow-hidden" style={{ border: '2px solid #D1FAE5' }}>
+                    <div className="px-3 py-1.5 flex items-center justify-between"
+                      style={{ background: '#ECFDF5', borderBottom: '1px solid #D1FAE5' }}>
+                      <span className="text-xs font-semibold" style={{ color: '#065F46' }}>✓ Option A — Empfohlen (funktioniert bei allen Anbietern)</span>
+                    </div>
+                    <div className="overflow-x-auto">
+                      <div style={{ minWidth: '340px' }}>
+                        <div className="grid text-xs font-semibold uppercase tracking-wider px-3 py-2"
+                          style={{ gridTemplateColumns: '80px 100px 1fr', background: '#F8FAFC', color: '#9CA3AF', borderBottom: '1px solid #E5E7EB' }}>
+                          <span>Typ</span><span>Name</span><span>Ziel (Wert)</span>
+                        </div>
+                        <div className="grid items-center px-3 py-3 gap-2 bg-white"
+                          style={{ gridTemplateColumns: '80px 100px 1fr' }}>
+                          <span className="text-xs font-bold text-gray-700">CNAME</span>
+                          <span className="text-xs font-mono text-gray-700">www</span>
+                          <div className="flex items-center gap-2 min-w-0">
+                            <span className="text-xs font-mono text-gray-700 break-all flex-1">{fallbackHost}</span>
+                            <button onClick={copyFallback}
+                              className="flex-shrink-0 flex items-center gap-1 text-xs px-2 py-1.5 rounded-[8px] font-medium transition-colors min-h-[32px]"
+                              style={{ background: copied ? '#DCFCE7' : '#F3F4F6', color: copied ? '#16A34A' : '#374151' }}>
+                              {copied ? (
+                                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+                              ) : (
+                                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                              )}
+                              {copied ? 'Kopiert!' : 'Kopieren'}
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <p className="text-xs px-3 pb-2.5" style={{ color: '#6B7280' }}>
+                      Gib als Name <strong>www</strong> ein. Deine Seite ist dann unter <strong>www.{domain}</strong> erreichbar. Leite zusätzlich {domain} per Redirect auf www.{domain} weiter (fast alle Anbieter bieten das an).
+                    </p>
                   </div>
-                  <div className="grid grid-cols-3 items-center px-3 py-3 gap-2 bg-white">
-                    <span className="text-xs font-bold text-gray-700">{isApex ? 'ALIAS / ANAME' : 'CNAME'}</span>
-                    <span className="text-xs font-mono text-gray-700 truncate">{isApex ? '@' : hostPart}</span>
-                    <div className="flex items-center gap-2 min-w-0">
-                      <span className="text-xs font-mono text-gray-700 truncate flex-1">{fallbackHost}</span>
-                      <button onClick={copyFallback}
-                        className="flex-shrink-0 flex items-center gap-1 text-xs px-2 py-1.5 rounded-[8px] font-medium transition-colors min-h-[32px]"
-                        style={{ background: copied ? '#DCFCE7' : '#F3F4F6', color: copied ? '#16A34A' : '#374151' }}>
-                        {copied ? (
-                          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M20 6L9 17l-5-5"/></svg>
-                        ) : (
-                          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-                        )}
-                        {copied ? 'Kopiert!' : 'Kopieren'}
-                      </button>
+
+                  {/* Option B — ALIAS/ANAME */}
+                  <div className="rounded-[12px] overflow-hidden" style={{ border: '1.5px solid #E5E7EB' }}>
+                    <div className="px-3 py-1.5" style={{ background: '#F8FAFC', borderBottom: '1px solid #E5E7EB' }}>
+                      <span className="text-xs font-semibold text-gray-500">Option B — Nur wenn dein Anbieter ALIAS oder ANAME anbietet</span>
+                    </div>
+                    <div className="overflow-x-auto">
+                      <div style={{ minWidth: '340px' }}>
+                        <div className="grid text-xs font-semibold uppercase tracking-wider px-3 py-2"
+                          style={{ gridTemplateColumns: '100px 80px 1fr', background: '#F8FAFC', color: '#9CA3AF', borderBottom: '1px solid #E5E7EB' }}>
+                          <span>Typ</span><span>Name</span><span>Ziel (Wert)</span>
+                        </div>
+                        <div className="grid items-center px-3 py-3 gap-2 bg-white"
+                          style={{ gridTemplateColumns: '100px 80px 1fr' }}>
+                          <span className="text-xs font-bold text-gray-700">ALIAS / ANAME</span>
+                          <span className="text-xs font-mono text-gray-700">@</span>
+                          <span className="text-xs font-mono text-gray-700 break-all">{fallbackHost}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <p className="text-xs px-3 pb-2.5" style={{ color: '#9CA3AF' }}>
+                      Unterstützt u.a. Cloudflare, Route 53, DNSimple. Bei checkdomain, all-inkl, Strato, IONOS → Option A verwenden.
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                /* Subdomain (www etc.): simple CNAME */
+                <div className="rounded-[12px] overflow-hidden overflow-x-auto" style={{ border: '1.5px solid #E5E7EB' }}>
+                  <div style={{ minWidth: '340px' }}>
+                    <div className="grid text-xs font-semibold uppercase tracking-wider px-3 py-2"
+                      style={{ gridTemplateColumns: '80px 100px 1fr', background: '#F8FAFC', color: '#9CA3AF', borderBottom: '1px solid #E5E7EB' }}>
+                      <span>Typ</span><span>Name</span><span>Ziel (Wert)</span>
+                    </div>
+                    <div className="grid items-center px-3 py-3 gap-2 bg-white"
+                      style={{ gridTemplateColumns: '80px 100px 1fr' }}>
+                      <span className="text-xs font-bold text-gray-700">CNAME</span>
+                      <span className="text-xs font-mono text-gray-700">{hostPart}</span>
+                      <div className="flex items-center gap-2 min-w-0">
+                        <span className="text-xs font-mono text-gray-700 break-all flex-1">{fallbackHost}</span>
+                        <button onClick={copyFallback}
+                          className="flex-shrink-0 flex items-center gap-1 text-xs px-2 py-1.5 rounded-[8px] font-medium transition-colors min-h-[32px]"
+                          style={{ background: copied ? '#DCFCE7' : '#F3F4F6', color: copied ? '#16A34A' : '#374151' }}>
+                          {copied ? (
+                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+                          ) : (
+                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                          )}
+                          {copied ? 'Kopiert!' : 'Kopieren'}
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
+              )}
               <p className="mt-2 text-xs" style={{ color: '#9CA3AF' }}>
                 Tipp: TTL kannst du auf &ldquo;Auto&rdquo; oder &ldquo;1 Stunde&rdquo; lassen.
               </p>
