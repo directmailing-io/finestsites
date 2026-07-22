@@ -125,7 +125,10 @@ export async function GET(req: NextRequest) {
       // grossCents: actual money collected (or expected for open invoices)
       const grossCents = status === 'paid' ? (inv.amount_paid || 0) : (inv.amount_due || 0)
       // taxCents: MwSt (already included in gross, shown separately)
-      const taxCents = (inv as any).tax || 0
+      // Stripe may return null for .tax on older invoices — fall back to total_tax_amounts sum
+      const taxCents = (inv as any).tax
+        || (inv as any).total_tax_amounts?.reduce((s: number, t: any) => s + (t?.amount ?? 0), 0)
+        || 0
       // stripFeeCents: from balance_transaction (only available after successful charge)
       const balanceTx = charge?.balance_transaction as Stripe.BalanceTransaction | null
       const stripFeeCents = balanceTx?.fee || 0
@@ -214,7 +217,8 @@ export async function GET(req: NextRequest) {
         email: customer?.email || '',
         plan: sub.metadata?.plan || userInfo?.plan || '',
         billingInterval: interval as 'monthly' | 'yearly',
-        nextPaymentDate: (sub as any).current_period_end as number,
+        // Stripe API 2025+: current_period_end moved from sub root → sub.items.data[0]
+        nextPaymentDate: ((sub.items.data[0] as any)?.current_period_end ?? (sub as any).current_period_end ?? null) as number | null,
         expectedGrossCents,
         estimatedTaxCents,
         couponCode: promoCode?.code || coupon?.name || null,
