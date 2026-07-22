@@ -154,7 +154,7 @@ export async function POST(req: NextRequest) {
         ? { discounts: [{ promotion_code: promoCodeId }] }
         : hasReferral || affiliateApplied
           ? { discounts: [{ coupon: affiliateCouponId!.trim() }] }
-          : {}),
+          : { allow_promotion_codes: true }),
       success_url: successUrl,
       cancel_url: cancelUrl,
 
