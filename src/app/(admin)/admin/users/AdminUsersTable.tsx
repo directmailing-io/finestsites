@@ -1,7 +1,7 @@
 'use client'
 
-import { useState, useMemo } from 'react'
-import Link from 'next/link'
+import { useState, useMemo, useCallback } from 'react'
+import { useRouter } from 'next/navigation'
 
 const PLAN_META: Record<string, { label: string; bg: string; text: string }> = {
   starter:   { label: 'Starter',   bg: '#EFF6FF', text: '#1D4ED8' },
@@ -28,13 +28,9 @@ export interface UserRow {
   cancelAtPeriodEnd: boolean
   createdAt: Date
   siteCount: number
-  /** Monthly catalog price from Stripe (no discounts). 0 = no active subscription. */
   planPriceCents: number
-  /** Effective monthly charge after active permanent discounts (0 for 100% forever coupons). */
   billedPriceCents: number
-  /** Total cash actually received from this customer across all time. */
   totalRevenueCents: number
-  /** Promo code used at checkout (e.g. "ADMIN100"), or null. */
   activePromoCode: string | null
   emailVerified: boolean
 }
@@ -64,13 +60,193 @@ function SortIcon({ active, dir }: { active: boolean; dir: SortDir }) {
   )
 }
 
+// ── Newsletter Modal ──────────────────────────────────────────────────────────
+
+function NewsletterModal({
+  recipients,
+  onClose,
+}: {
+  recipients: UserRow[]
+  onClose: () => void
+}) {
+  const [subject, setSubject] = useState('')
+  const [body, setBody] = useState('')
+  const [sending, setSending] = useState(false)
+  const [result, setResult] = useState<{ sent: number; failed: number; total: number } | null>(null)
+  const [error, setError] = useState('')
+
+  async function handleSend() {
+    if (!subject.trim() || !body.trim()) { setError('Betreff und Text sind Pflichtfelder.'); return }
+    setSending(true); setError('')
+    try {
+      const res = await fetch('/api/admin/newsletter', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          subject: subject.trim(),
+          body: body.trim(),
+          filters: {
+            mode: 'specific',
+            specificEmails: recipients.map(u => u.email),
+          },
+        }),
+      })
+      const data = await res.json()
+      if (!res.ok) { setError(data.error ?? 'Fehler beim Senden.'); return }
+      setResult(data)
+    } catch { setError('Netzwerkfehler.') }
+    finally { setSending(false) }
+  }
+
+  return (
+    <div
+      style={{
+        position: 'fixed', inset: 0, zIndex: 1000,
+        background: 'rgba(0,0,0,0.45)', backdropFilter: 'blur(4px)',
+        display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16,
+      }}
+      onClick={e => { if (e.target === e.currentTarget) onClose() }}
+    >
+      <div style={{
+        background: '#fff', borderRadius: 24, width: '100%', maxWidth: 560,
+        boxShadow: '0 24px 64px rgba(0,0,0,0.18)', overflow: 'hidden',
+      }}>
+        {/* Header */}
+        <div style={{ padding: '20px 24px 16px', borderBottom: '1px solid #F1F5F9', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div>
+            <div style={{ fontSize: 15, fontWeight: 700, color: '#111827' }}>Newsletter verfassen</div>
+            <div style={{ fontSize: 12, color: '#94A3B8', marginTop: 2 }}>
+              {recipients.length} Empfänger ausgewählt
+            </div>
+          </div>
+          <button onClick={onClose} style={{ background: '#F1F5F9', border: 'none', borderRadius: 8, width: 32, height: 32, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6B7280" strokeWidth="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+          </button>
+        </div>
+
+        {result ? (
+          /* Success state */
+          <div style={{ padding: 32, textAlign: 'center' }}>
+            <div style={{ width: 52, height: 52, borderRadius: '50%', background: '#F0FDF4', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#16A34A" strokeWidth="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+            </div>
+            <div style={{ fontSize: 17, fontWeight: 700, color: '#111827', marginBottom: 6 }}>Newsletter gesendet!</div>
+            <div style={{ fontSize: 14, color: '#6B7280' }}>
+              {result.sent} von {result.total} erfolgreich gesendet
+              {result.failed > 0 && ` · ${result.failed} fehlgeschlagen`}
+            </div>
+            <button onClick={onClose} style={{
+              marginTop: 24, padding: '10px 24px', borderRadius: 10,
+              background: '#111827', color: '#fff', border: 'none', cursor: 'pointer', fontWeight: 600, fontSize: 14,
+            }}>Schließen</button>
+          </div>
+        ) : (
+          /* Compose form */
+          <div style={{ padding: 24 }}>
+            {/* Recipient preview */}
+            <div style={{
+              background: '#F8FAFC', borderRadius: 12, padding: '10px 14px',
+              marginBottom: 16, maxHeight: 80, overflowY: 'auto',
+              fontSize: 11, fontFamily: 'monospace', color: '#6B7280',
+              lineHeight: 1.8, border: '1px solid #E2E8F0',
+            }}>
+              {recipients.slice(0, 8).map(u => u.email).join(' · ')}
+              {recipients.length > 8 && ` · +${recipients.length - 8} weitere`}
+            </div>
+
+            {/* Subject */}
+            <div style={{ marginBottom: 14 }}>
+              <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#374151', marginBottom: 6 }}>Betreff</label>
+              <input
+                value={subject}
+                onChange={e => setSubject(e.target.value)}
+                placeholder="Betreff der E-Mail..."
+                style={{
+                  width: '100%', height: 40, borderRadius: 10,
+                  border: '1px solid #E2E8F0', padding: '0 12px',
+                  fontSize: 14, color: '#111827', outline: 'none', boxSizing: 'border-box',
+                }}
+              />
+            </div>
+
+            {/* Body */}
+            <div style={{ marginBottom: 14 }}>
+              <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#374151', marginBottom: 6 }}>
+                Text
+                <span style={{ fontWeight: 400, color: '#94A3B8', marginLeft: 8 }}>{'**fett**, [Link](url), {{vorname}}'}</span>
+              </label>
+              <textarea
+                value={body}
+                onChange={e => setBody(e.target.value)}
+                placeholder="Hallo {{vorname}},&#10;&#10;dein Text hier..."
+                rows={7}
+                style={{
+                  width: '100%', borderRadius: 10, border: '1px solid #E2E8F0',
+                  padding: '10px 12px', fontSize: 14, color: '#111827', lineHeight: 1.6,
+                  resize: 'vertical', outline: 'none', fontFamily: 'inherit', boxSizing: 'border-box',
+                }}
+              />
+            </div>
+
+            {error && (
+              <div style={{ marginBottom: 14, padding: '10px 14px', borderRadius: 10, background: '#FEF2F2', color: '#DC2626', fontSize: 13 }}>
+                {error}
+              </div>
+            )}
+
+            <div style={{ display: 'flex', gap: 10 }}>
+              <button onClick={onClose} style={{
+                flex: 1, height: 42, borderRadius: 10, border: '1px solid #E2E8F0',
+                background: '#fff', color: '#374151', cursor: 'pointer', fontWeight: 600, fontSize: 14,
+              }}>Abbrechen</button>
+              <button
+                onClick={handleSend}
+                disabled={sending}
+                style={{
+                  flex: 2, height: 42, borderRadius: 10, border: 'none',
+                  background: sending ? '#94A3B8' : '#111827', color: '#fff',
+                  cursor: sending ? 'not-allowed' : 'pointer', fontWeight: 700, fontSize: 14,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+                }}
+              >
+                {sending ? (
+                  <>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ animation: 'spin 1s linear infinite' }}>
+                      <path d="M21 12a9 9 0 11-6.219-8.56"/>
+                    </svg>
+                    Wird gesendet...
+                  </>
+                ) : (
+                  <>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+                    An {recipients.length} senden
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+    </div>
+  )
+}
+
+// ── Main Table ────────────────────────────────────────────────────────────────
+
 export default function AdminUsersTable({ users }: { users: UserRow[] }) {
+  const router = useRouter()
+
   const [search, setSearch]         = useState('')
   const [planFilter, setPlanFilter] = useState('all')
   const [statusFilter, setStatusFilter] = useState('all')
   const [verifiedFilter, setVerifiedFilter] = useState<'all' | 'verified' | 'unverified'>('all')
   const [sortKey, setSortKey]       = useState<SortKey>('createdAt')
   const [sortDir, setSortDir]       = useState<SortDir>('desc')
+
+  // Selection state
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
+  const [showModal, setShowModal]     = useState(false)
 
   function toggleSort(key: SortKey) {
     if (sortKey === key) setSortDir(d => d === 'asc' ? 'desc' : 'asc')
@@ -104,7 +280,25 @@ export default function AdminUsersTable({ users }: { users: UserRow[] }) {
     return rows
   }, [users, search, planFilter, statusFilter, verifiedFilter, sortKey, sortDir])
 
-  // Sum of catalog prices for all active subs = what they'd pay without discounts
+  const filteredIds = useMemo(() => new Set(filtered.map(u => u.id)), [filtered])
+  const allFilteredSelected = filtered.length > 0 && filtered.every(u => selectedIds.has(u.id))
+  const someFilteredSelected = filtered.some(u => selectedIds.has(u.id))
+
+  const toggleAll = useCallback(() => {
+    if (allFilteredSelected) {
+      setSelectedIds(prev => { const next = new Set(prev); filteredIds.forEach(id => next.delete(id)); return next })
+    } else {
+      setSelectedIds(prev => { const next = new Set(prev); filteredIds.forEach(id => next.add(id)); return next })
+    }
+  }, [allFilteredSelected, filteredIds])
+
+  const toggleOne = useCallback((id: string, e: React.MouseEvent) => {
+    e.preventDefault(); e.stopPropagation()
+    setSelectedIds(prev => { const next = new Set(prev); next.has(id) ? next.delete(id) : next.add(id); return next })
+  }, [])
+
+  const selectedUsers = useMemo(() => users.filter(u => selectedIds.has(u.id)), [users, selectedIds])
+
   const totalPlanValue  = users.filter(u => u.subscriptionStatus === 'active' && !u.cancelAtPeriodEnd)
                                .reduce((s, u) => s + u.planPriceCents, 0)
   const totalRevenue    = users.reduce((s, u) => s + u.totalRevenueCents, 0)
@@ -115,6 +309,8 @@ export default function AdminUsersTable({ users }: { users: UserRow[] }) {
     cursor: 'pointer', userSelect: 'none', whiteSpace: 'nowrap',
     color: sortKey === key ? '#1D4ED8' : '#94A3B8',
   })
+
+  const GRID = '28px 2fr 1fr 1fr 0.85fr 0.85fr 0.9fr 0.5fr 0.55fr 28px'
 
   return (
     <>
@@ -146,9 +342,7 @@ export default function AdminUsersTable({ users }: { users: UserRow[] }) {
             <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
           </svg>
           <input
-            type="text"
-            placeholder="E-Mail oder Username..."
-            value={search}
+            type="text" placeholder="E-Mail oder Username..." value={search}
             onChange={e => setSearch(e.target.value)}
             style={{
               width: '100%', paddingLeft: 32, paddingRight: 32, height: 36,
@@ -197,16 +391,53 @@ export default function AdminUsersTable({ users }: { users: UserRow[] }) {
 
       {/* ── Mobile Cards ── */}
       <div className="block lg:hidden">
+        {/* Mobile select-all bar */}
+        {filtered.length > 0 && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10, padding: '8px 12px', background: '#F8FAFC', borderRadius: 12, border: '1px solid #E2E8F0' }}>
+            <input
+              type="checkbox"
+              checked={allFilteredSelected}
+              ref={el => { if (el) el.indeterminate = someFilteredSelected && !allFilteredSelected }}
+              onChange={toggleAll}
+              style={{ width: 16, height: 16, cursor: 'pointer', accentColor: '#111827' }}
+            />
+            <span style={{ fontSize: 12, color: '#6B7280', flex: 1 }}>
+              {allFilteredSelected ? 'Alle abwählen' : `Alle ${filtered.length} auswählen`}
+            </span>
+            {selectedIds.size > 0 && (
+              <span style={{ fontSize: 12, fontWeight: 600, color: '#111827' }}>
+                {selectedIds.size} gewählt
+              </span>
+            )}
+          </div>
+        )}
+
         {filtered.map(user => {
           const planMeta   = PLAN_META[user.plan] ?? PLAN_META.starter
           const statusMeta = STATUS_META[user.subscriptionStatus ?? ''] ?? null
           const initials   = user.email.slice(0, 2).toUpperCase()
           const dateStr    = new Date(user.createdAt).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: '2-digit' })
+          const isSelected = selectedIds.has(user.id)
           return (
-            <Link key={user.id} href={`/admin/users/${user.id}`}
+            <div
+              key={user.id}
+              onClick={() => router.push(`/admin/users/${user.id}`)}
               className="flex flex-col gap-3 p-4 mb-3 rounded-2xl bg-white active:bg-gray-50"
-              style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04)', border: '1px solid #F1F5F9' }}>
+              style={{
+                boxShadow: isSelected ? '0 0 0 2px #111827' : '0 1px 4px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04)',
+                border: isSelected ? '1px solid #111827' : '1px solid #F1F5F9',
+                cursor: 'pointer',
+              }}>
               <div className="flex items-center gap-3">
+                {/* Checkbox */}
+                <div onClick={e => toggleOne(user.id, e)} style={{ flexShrink: 0 }}>
+                  <input
+                    type="checkbox"
+                    checked={isSelected}
+                    onChange={() => {}}
+                    style={{ width: 16, height: 16, cursor: 'pointer', accentColor: '#111827', pointerEvents: 'none' }}
+                  />
+                </div>
                 <span className="w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0"
                   style={{ background: planMeta.bg, color: planMeta.text }}>{initials}</span>
                 <span className="flex-1 min-w-0">
@@ -231,9 +462,6 @@ export default function AdminUsersTable({ users }: { users: UserRow[] }) {
                     {user.cancelAtPeriodEnd ? `Kündigt ${user.currentPeriodEnd ? `bis ${fmtDate(user.currentPeriodEnd)}` : ''}` : statusMeta.label}
                   </span>
                 )}
-                {!user.cancelAtPeriodEnd && user.currentPeriodEnd && (user.subscriptionStatus === 'active' || user.subscriptionStatus === 'trialing') && (
-                  <span className="text-xs" style={{ color: '#94A3B8' }}>↻ {fmtDate(user.currentPeriodEnd)}</span>
-                )}
                 {!user.emailVerified && (
                   <span className="text-xs font-medium px-2 py-0.5 rounded-full"
                     style={{ background: '#FFF7ED', color: '#C2410C', border: '1px solid #FED7AA' }}>
@@ -245,17 +473,12 @@ export default function AdminUsersTable({ users }: { users: UserRow[] }) {
                     {fmtEur(user.planPriceCents)}/Mo
                   </span>
                 )}
-                {user.activePromoCode && (
-                  <span className="text-xs font-mono px-2 py-0.5 rounded" style={{ background: '#FFF7ED', color: '#C2410C' }}>
-                    {user.activePromoCode}
-                  </span>
-                )}
                 {user.totalRevenueCents > 0 && (
                   <span className="text-xs" style={{ color: '#16A34A', fontWeight: 600 }}>Σ {fmtEur(user.totalRevenueCents)}</span>
                 )}
                 <span className="ml-auto text-xs tabular-nums" style={{ color: '#CBD5E1' }}>{dateStr}</span>
               </div>
-            </Link>
+            </div>
           )
         })}
         {filtered.length === 0 && (
@@ -267,8 +490,20 @@ export default function AdminUsersTable({ users }: { users: UserRow[] }) {
       <div className="hidden lg:block rounded-[20px] bg-white overflow-hidden"
         style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04)', border: '1px solid #F1F5F9' }}>
 
+        {/* Header */}
         <div className="grid px-5 py-3 text-[11px] font-semibold uppercase tracking-wide"
-          style={{ gridTemplateColumns: '2fr 1fr 1fr 0.85fr 0.85fr 0.9fr 0.5fr 0.55fr 28px', background: '#F8FAFC', borderBottom: '1px solid #F1F5F9' }}>
+          style={{ gridTemplateColumns: GRID, background: '#F8FAFC', borderBottom: '1px solid #F1F5F9', alignItems: 'center' }}>
+          {/* Select-all checkbox */}
+          <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <input
+              type="checkbox"
+              checked={allFilteredSelected}
+              ref={el => { if (el) el.indeterminate = someFilteredSelected && !allFilteredSelected }}
+              onChange={toggleAll}
+              title={allFilteredSelected ? 'Alle abwählen' : 'Alle auswählen'}
+              style={{ width: 15, height: 15, cursor: 'pointer', accentColor: '#111827' }}
+            />
+          </span>
           <span style={thStyle('email')} onClick={() => toggleSort('email')}>
             Nutzer <SortIcon active={sortKey === 'email'} dir={sortDir} />
           </span>
@@ -299,13 +534,33 @@ export default function AdminUsersTable({ users }: { users: UserRow[] }) {
           const statusMeta = STATUS_META[user.subscriptionStatus ?? ''] ?? null
           const initials   = user.email.slice(0, 2).toUpperCase()
           const hasActiveSub = ['active', 'trialing', 'past_due'].includes(user.subscriptionStatus ?? '')
+          const isSelected = selectedIds.has(user.id)
           return (
-            <Link key={user.id} href={`/admin/users/${user.id}`}
+            <div
+              key={user.id}
               className="grid px-5 py-3.5 text-sm items-center transition-colors hover:bg-gray-50 group"
-              style={{ gridTemplateColumns: '2fr 1fr 1fr 0.85fr 0.85fr 0.9fr 0.5fr 0.55fr 28px', borderBottom: '1px solid #F8FAFC' }}>
+              style={{
+                gridTemplateColumns: GRID,
+                borderBottom: '1px solid #F8FAFC',
+                background: isSelected ? '#F8FAFC' : undefined,
+                cursor: 'pointer',
+              }}
+            >
+              {/* Checkbox — intercepts click, doesn't navigate */}
+              <span
+                style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                onClick={e => toggleOne(user.id, e)}
+              >
+                <input
+                  type="checkbox"
+                  checked={isSelected}
+                  onChange={() => {}}
+                  style={{ width: 15, height: 15, cursor: 'pointer', accentColor: '#111827', pointerEvents: 'none' }}
+                />
+              </span>
 
-              {/* Email + avatar */}
-              <span className="flex items-center gap-2.5 min-w-0">
+              {/* Rest of row navigates to user detail */}
+              <span className="flex items-center gap-2.5 min-w-0" onClick={() => router.push(`/admin/users/${user.id}`)}>
                 <span className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0"
                   style={{ background: planMeta.bg, color: planMeta.text }}>{initials}</span>
                 <span className="min-w-0 flex items-center gap-1">
@@ -316,11 +571,8 @@ export default function AdminUsersTable({ users }: { users: UserRow[] }) {
                     </span>
                   </span>
                   {!user.emailVerified && (
-                    <span
-                      className="inline-flex items-center justify-center w-4 h-4 rounded-full flex-shrink-0"
-                      style={{ background: '#FED7AA' }}
-                      title="E-Mail nicht bestätigt"
-                    >
+                    <span className="inline-flex items-center justify-center w-4 h-4 rounded-full flex-shrink-0"
+                      style={{ background: '#FED7AA' }} title="E-Mail nicht bestätigt">
                       <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="#C2410C" strokeWidth="3">
                         <path d="M12 9v4M12 17h.01"/>
                       </svg>
@@ -329,13 +581,10 @@ export default function AdminUsersTable({ users }: { users: UserRow[] }) {
                 </span>
               </span>
 
-              {/* Plan */}
-              <span className="flex flex-col gap-0.5">
+              <span className="flex flex-col gap-0.5" onClick={() => router.push(`/admin/users/${user.id}`)}>
                 {['active', 'trialing', 'past_due', 'canceled'].includes(user.subscriptionStatus ?? '') ? (
                   <span className="text-xs font-semibold px-2.5 py-1 rounded-full inline-block w-fit"
-                    style={{ background: planMeta.bg, color: planMeta.text }}>
-                    {planMeta.label}
-                  </span>
+                    style={{ background: planMeta.bg, color: planMeta.text }}>{planMeta.label}</span>
                 ) : (
                   <span className="text-xs" style={{ color: '#CBD5E1' }}>—</span>
                 )}
@@ -346,8 +595,7 @@ export default function AdminUsersTable({ users }: { users: UserRow[] }) {
                 )}
               </span>
 
-              {/* Status */}
-              <span className="flex flex-col gap-0.5">
+              <span className="flex flex-col gap-0.5" onClick={() => router.push(`/admin/users/${user.id}`)}>
                 {statusMeta ? (
                   <span className="flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full w-fit"
                     style={{ background: user.cancelAtPeriodEnd ? '#FFF7ED' : statusMeta.bg, color: user.cancelAtPeriodEnd ? '#C2410C' : statusMeta.text }}>
@@ -364,19 +612,16 @@ export default function AdminUsersTable({ users }: { users: UserRow[] }) {
                   </span>
                 )}
                 {user.currentPeriodEnd && user.subscriptionStatus === 'canceled' && (
-                  <span className="text-[11px] px-0.5" style={{ color: '#CBD5E1' }}>
-                    abgel. {fmtDate(user.currentPeriodEnd)}
-                  </span>
+                  <span className="text-[11px] px-0.5" style={{ color: '#CBD5E1' }}>abgel. {fmtDate(user.currentPeriodEnd)}</span>
                 )}
               </span>
 
-              {/* Planpreis (Katalog, ohne Rabatt) */}
-              <span className="tabular-nums text-sm" style={{ color: hasActiveSub ? '#374151' : '#CBD5E1' }}>
+              <span className="tabular-nums text-sm" style={{ color: hasActiveSub ? '#374151' : '#CBD5E1' }}
+                onClick={() => router.push(`/admin/users/${user.id}`)}>
                 {hasActiveSub ? `${fmtEur(user.planPriceCents, true)}/Mo` : '—'}
               </span>
 
-              {/* Abgerechnet (nach Rabatt) + Promo Code */}
-              <span className="flex flex-col gap-0.5">
+              <span className="flex flex-col gap-0.5" onClick={() => router.push(`/admin/users/${user.id}`)}>
                 <span className="tabular-nums text-sm font-semibold"
                   style={{ color: hasActiveSub ? (user.billedPriceCents > 0 ? '#16A34A' : '#94A3B8') : '#CBD5E1' }}>
                   {hasActiveSub ? `${fmtEur(user.billedPriceCents, true)}/Mo` : '—'}
@@ -389,14 +634,13 @@ export default function AdminUsersTable({ users }: { users: UserRow[] }) {
                 )}
               </span>
 
-              {/* Eingenommen (Gesamtsumme tatsächlich erhalten) */}
               <span className="tabular-nums text-sm font-semibold"
-                style={{ color: user.totalRevenueCents > 0 ? '#16A34A' : (hasActiveSub ? '#94A3B8' : '#CBD5E1') }}>
+                style={{ color: user.totalRevenueCents > 0 ? '#16A34A' : (hasActiveSub ? '#94A3B8' : '#CBD5E1') }}
+                onClick={() => router.push(`/admin/users/${user.id}`)}>
                 {hasActiveSub ? fmtEur(user.totalRevenueCents, true) : fmtEur(user.totalRevenueCents)}
               </span>
 
-              {/* Sites count */}
-              <span className="flex justify-center">
+              <span className="flex justify-center" onClick={() => router.push(`/admin/users/${user.id}`)}>
                 {user.siteCount > 0 ? (
                   <span className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold"
                     style={{ background: '#F0FDF4', color: '#16A34A' }}>{user.siteCount}</span>
@@ -405,17 +649,17 @@ export default function AdminUsersTable({ users }: { users: UserRow[] }) {
                 )}
               </span>
 
-              {/* Date */}
-              <span className="text-xs tabular-nums" style={{ color: '#94A3B8' }}>
+              <span className="text-xs tabular-nums" style={{ color: '#94A3B8' }}
+                onClick={() => router.push(`/admin/users/${user.id}`)}>
                 {new Date(user.createdAt).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: '2-digit' })}
               </span>
 
-              {/* Arrow */}
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
-                stroke="#CBD5E1" strokeWidth="2" className="transition-colors group-hover:stroke-gray-400">
+                stroke="#CBD5E1" strokeWidth="2" className="transition-colors group-hover:stroke-gray-400"
+                onClick={() => router.push(`/admin/users/${user.id}`)}>
                 <path d="M9 18l6-6-6-6"/>
               </svg>
-            </Link>
+            </div>
           )
         })}
 
@@ -425,6 +669,54 @@ export default function AdminUsersTable({ users }: { users: UserRow[] }) {
           </div>
         )}
       </div>
+
+      {/* ── Sticky Selection Action Bar ── */}
+      {selectedIds.size > 0 && (
+        <div style={{
+          position: 'fixed', bottom: 24, left: '50%', transform: 'translateX(-50%)',
+          zIndex: 100, display: 'flex', alignItems: 'center', gap: 12,
+          background: '#111827', color: '#fff', borderRadius: 16,
+          padding: '12px 20px', boxShadow: '0 8px 32px rgba(0,0,0,0.28)',
+          whiteSpace: 'nowrap',
+        }}>
+          <span style={{ fontSize: 14, fontWeight: 600 }}>
+            {selectedIds.size} {selectedIds.size === 1 ? 'Nutzer' : 'Nutzer'} ausgewählt
+          </span>
+          <div style={{ width: 1, height: 20, background: 'rgba(255,255,255,0.2)' }} />
+          <button
+            onClick={() => setShowModal(true)}
+            style={{
+              display: 'flex', alignItems: 'center', gap: 7,
+              background: '#fff', color: '#111827',
+              border: 'none', borderRadius: 10, padding: '7px 14px',
+              fontWeight: 700, fontSize: 13, cursor: 'pointer',
+            }}
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+              <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/>
+            </svg>
+            Newsletter senden
+          </button>
+          <button
+            onClick={() => setSelectedIds(new Set())}
+            style={{
+              background: 'rgba(255,255,255,0.12)', border: 'none', borderRadius: 8,
+              width: 30, height: 30, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+            }}
+            title="Auswahl aufheben"
+          >
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+          </button>
+        </div>
+      )}
+
+      {/* ── Newsletter Modal ── */}
+      {showModal && (
+        <NewsletterModal
+          recipients={selectedUsers}
+          onClose={() => setShowModal(false)}
+        />
+      )}
     </>
   )
 }
