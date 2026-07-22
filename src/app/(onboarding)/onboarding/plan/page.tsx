@@ -5,10 +5,10 @@ import { useSearchParams } from 'next/navigation'
 import { Suspense } from 'react'
 import { PLAN_LIST, COMMON_FEATURES, type PlanDef } from '@/lib/plans'
 
-const REFERRAL_DISCOUNT = 0.20
+const REFERRAL_DISCOUNT = 0.10
 
 type PromoResult =
-  | { valid: true; type: 'affiliate'; username: string; display_name: string; percent_off: 20; amount_off: null }
+  | { valid: true; type: 'affiliate'; username: string; display_name: string; percent_off: 10; amount_off: null }
   | { valid: true; type: 'promo'; percent_off: number | null; amount_off: number | null; name: string }
   | { valid: false }
 
@@ -117,10 +117,10 @@ function PlanPageInner() {
           </svg>
           <div>
             <p className="text-sm font-semibold" style={{ color: '#15803D' }}>
-              20% Partner-Rabatt (dauerhaft) wird automatisch angewendet
+              10% Partner-Rabatt (dauerhaft) wird automatisch angewendet
             </p>
             <p className="text-xs" style={{ color: '#166534' }}>
-              Dein Empfehlungscode gibt dir dauerhaft 20% Rabatt auf jeden Monat und jedes Jahr.
+              Dein Empfehlungscode gibt dir dauerhaft 10% Rabatt auf jeden Monat und jedes Jahr.
             </p>
           </div>
         </div>
@@ -291,7 +291,7 @@ function PlanPageInner() {
                 <div className="mb-4">
                   {anyDiscount && showMonthly !== baseMonthly && (() => {
                     const p = promoApplied ? promoStatus as { valid: true; percent_off: number | null } : null
-                    return <p className="text-xs font-semibold" style={{ color: '#15803D' }}>{p?.percent_off ?? 20}% Rabatt, dauerhaft</p>
+                    return <p className="text-xs font-semibold" style={{ color: '#15803D' }}>{p?.percent_off ?? 10}% Rabatt, dauerhaft</p>
                   })()}
                 </div>
               )}

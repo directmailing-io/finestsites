@@ -148,7 +148,7 @@ function RegisterForm() {
               </svg>
             </div>
             <div className="min-w-0">
-              <p className="text-xs font-semibold" style={{ color: '#15803D' }}>20% Rabatt, dauerhaft auf dein Abo</p>
+              <p className="text-xs font-semibold" style={{ color: '#15803D' }}>10% Rabatt, dauerhaft auf dein Abo</p>
               <p className="text-xs" style={{ color: '#166534' }}>
                 Empfohlen von <strong>{referrerName ?? `Benutzer ${urlRef}`}</strong> · Rabatt wird automatisch beim Checkout angewendet
               </p>
@@ -273,7 +273,7 @@ function RegisterForm() {
                   )}
                 </div>
                 {referralValid === true && !urlRef && (
-                  <p className="text-xs px-1" style={{ color: '#16A34A' }}>✓ Code gültig. Dauerhaft 20% Rabatt auf dein Abo!</p>
+                  <p className="text-xs px-1" style={{ color: '#16A34A' }}>✓ Code gültig. Dauerhaft 10% Rabatt auf dein Abo!</p>
                 )}
                 {referralValid === false && /^[A-Z0-9]+$/.test(referralCode.trim()) ? (
                   <div className="px-3 py-2.5 text-xs" style={{ background: '#FFF7ED', border: '1px solid #FED7AA', borderRadius: 10, color: '#92400E' }}>

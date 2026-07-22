@@ -181,7 +181,7 @@ export default function AffiliatePage() {
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-gray-900">Partnerprogramm</h1>
         <p className="text-sm mt-1" style={{ color: '#94A3B8' }}>
-          Empfehle FinestSites. Du verdienst <strong className="text-gray-600">20%</strong> dauerhaft, dein Empfohlener spart <strong className="text-gray-600">20%</strong> dauerhaft.
+          Empfehle FinestSites. Du verdienst <strong className="text-gray-600">10%</strong> dauerhaft, dein Empfohlener spart <strong className="text-gray-600">10%</strong> dauerhaft.
         </p>
       </div>
 
@@ -208,11 +208,11 @@ export default function AffiliatePage() {
           <div className="hidden sm:flex items-center justify-center flex-shrink-0 mt-6">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#D1D5DB" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
           </div>
-          <HowStep icon="💳" n={2} title="Neukunde abonniert" desc="Dein Empfohlener bucht FinestSites und zahlt dauerhaft 20% weniger, egal welchen Tarif." />
+          <HowStep icon="💳" n={2} title="Neukunde abonniert" desc="Dein Empfohlener bucht FinestSites und zahlt dauerhaft 10% weniger, egal welchen Tarif." />
           <div className="hidden sm:flex items-center justify-center flex-shrink-0 mt-6">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#D1D5DB" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
           </div>
-          <HowStep icon="💰" n={3} title="Du bekommst Geld" desc="20% des Monatspreises landen automatisch auf deinem Konto, jeden Monat." highlight />
+          <HowStep icon="💰" n={3} title="Du bekommst Geld" desc="10% des Monatspreises landen automatisch auf deinem Konto, jeden Monat." highlight />
         </div>
       </section>
 

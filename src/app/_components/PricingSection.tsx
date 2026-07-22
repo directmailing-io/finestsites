@@ -68,7 +68,7 @@ export default function PricingSection({ validatedRef }: { validatedRef?: string
     if (validatedRef) sessionStorage.setItem('fs_ref', validatedRef)
   }, [validatedRef])
 
-  const DISCOUNT = 0.20 // 20 % affiliate discount
+  const DISCOUNT = 0.10 // 10 % affiliate discount
 
   return (
     <section id="preise" style={{ background: '#fff' }} className="fs-section-pad">
@@ -197,7 +197,7 @@ export default function PricingSection({ validatedRef }: { validatedRef?: string
                 {refCode && (
                   <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: plan.popular ? 'rgba(200,216,184,0.2)' : '#F0FDF4', border: `1px solid ${plan.popular ? 'rgba(200,216,184,0.3)' : '#BBF7D0'}`, borderRadius: 100, padding: '3px 10px', marginBottom: 4 }}>
                     <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke={plan.popular ? '#86efac' : '#16A34A'} strokeWidth="2.5" strokeLinecap="round"><polyline points="20 6 9 17 4 12"/></svg>
-                    <span style={{ fontSize: 11, fontWeight: 700, color: plan.popular ? '#86efac' : '#16A34A' }}>20 % Rabatt mit deinem Code</span>
+                    <span style={{ fontSize: 11, fontWeight: 700, color: plan.popular ? '#86efac' : '#16A34A' }}>10 % Rabatt mit deinem Code</span>
                   </div>
                 )}
 

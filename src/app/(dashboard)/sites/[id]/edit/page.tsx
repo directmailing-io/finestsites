@@ -3762,7 +3762,7 @@ function UpgradeModal({
   const [promoCode, setPromoCode] = useState('')
   const [showPromoInput, setShowPromoInput] = useState(false)
   type PromoResult =
-    | { valid: true; type: 'affiliate'; username: string; display_name: string; percent_off: 20; amount_off: null }
+    | { valid: true; type: 'affiliate'; username: string; display_name: string; percent_off: 10; amount_off: null }
     | { valid: true; type: 'promo'; percent_off: number | null; amount_off: number | null; name: string }
     | { valid: false }
 
@@ -3883,7 +3883,7 @@ function UpgradeModal({
                 </svg>
               </div>
               <div>
-                <p style={{ fontSize: 13, fontWeight: 700, color: '#15803D' }}>20 % Empfehlungsrabatt aktiv</p>
+                <p style={{ fontSize: 13, fontWeight: 700, color: '#15803D' }}>10 % Empfehlungsrabatt aktiv</p>
                 <p style={{ fontSize: 12, color: '#166534' }}>
                   Empfohlen von <strong>@{referredBy}</strong> &middot; dauerhaft
                 </p>
@@ -4038,7 +4038,7 @@ function UpgradeModal({
                       : p.amount_off ? `${Math.round(p.amount_off / 100)} € Rabatt aktiv`
                       : 'Rabatt aktiv'
                     const sub = p.type === 'affiliate'
-                      ? '20 % Rabatt dauerhaft auf dein Abo'
+                      ? '10 % Rabatt dauerhaft auf dein Abo'
                       : 'Preis wurde aktualisiert'
                     return (
                       <div className="flex items-center gap-3 mb-3 px-4 py-3 rounded-2xl" style={{ background: '#F0FDF4', border: '1px solid #BBF7D0' }}>

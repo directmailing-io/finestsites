@@ -7,7 +7,7 @@ import { eq } from 'drizzle-orm'
 
 /**
  * Validates a partner/affiliate or promo code in two phases:
- * 1. Check if code matches a username in our DB (affiliate/partner code) → 20% lifetime discount
+ * 1. Check if code matches a username in our DB (affiliate/partner code) → 10% lifetime discount
  * 2. If not, check Stripe promotion codes (action codes like BLACKFRIDAY)
  */
 export async function GET(req: NextRequest) {
@@ -26,7 +26,7 @@ export async function GET(req: NextRequest) {
         type: 'affiliate',
         username: affiliateUser.username,
         display_name: affiliateUser.firstName ?? affiliateUser.username,
-        percent_off: 20,
+        percent_off: 10,
         amount_off: null,
       })
     }
