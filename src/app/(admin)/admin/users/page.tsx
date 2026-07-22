@@ -45,7 +45,8 @@ export default async function AdminUsersPage() {
   const stripeBilledPriceByUser: Record<string, number> = {} // effective monthly price after active discounts
   const stripeRevenueByUser: Record<string, number> = {}     // total cash actually received
   const cancelAtPeriodEndByUser: Record<string, boolean> = {}
-  const stripePromoByUser: Record<string, string | null> = {} // promo code used at checkout
+  const stripePromoByUser: Record<string, string | null> = {}      // human-readable promo code string (e.g. "ADMIN100")
+  const stripeCouponNameByUser: Record<string, string | null> = {} // coupon name/label (e.g. "Admin 100% Rabatt")
 
   const usersWithStripe = allUsers.filter(u => u.stripeCustomerId)
   if (usersWithStripe.length > 0) {
@@ -95,14 +96,16 @@ export default async function AdminUsersPage() {
           const billedCents = Math.max(0, Math.round(catalogPrice * (1 - percentOff / 100)) - amountOff)
           stripeBilledPriceByUser[u.id] = monthlyEquiv(billedCents, interval)
 
-          // Promo code: prefer human-entered code from checkout metadata; fall back to coupon ID
-          // when a discount is active but no metadata was captured (e.g. applied via script).
+          // Promo code: disc.source is the PromotionCode object (expanded via discounts.source.coupon).
+          // disc.source.code = human-readable string like "ADMIN100".
+          // Fall back to coupon.name, then coupon.id as last resort.
           const hasDiscount = billedCents < catalogPrice
-          // Prefer coupon.id (ground truth — what Stripe actually applies every cycle).
-          // Fall back to checkout metadata only if no coupon is present.
+          const promoCodeStr: string | null = (disc?.source as any)?.code ?? null
+          const couponName: string | null = coupon?.name ?? null
           stripePromoByUser[u.id] = hasDiscount
-            ? (coupon?.id ?? sub.metadata?.promo_code ?? null)
+            ? (promoCodeStr ?? couponName ?? coupon?.id ?? null)
             : null
+          stripeCouponNameByUser[u.id] = hasDiscount ? couponName : null
         }
       })
     )
@@ -132,8 +135,9 @@ export default async function AdminUsersPage() {
     billedPriceCents: stripeBilledPriceByUser[u.id] ?? stripePlanPriceByUser[u.id] ?? 0,
     // Total cash received from this customer across all time (direct from Stripe invoices)
     totalRevenueCents: stripeRevenueByUser[u.id] ?? 0,
-    // Promo code applied at checkout (e.g. "ADMIN100")
+    // Human-readable promo code string (e.g. "ADMIN100") and coupon label (e.g. "Admin 100% Rabatt")
     activePromoCode: stripePromoByUser[u.id] ?? null,
+    activeCouponName: stripeCouponNameByUser[u.id] ?? null,
     emailVerified: u.emailVerified,
   }))
 

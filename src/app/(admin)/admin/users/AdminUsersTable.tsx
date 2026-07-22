@@ -32,6 +32,7 @@ export interface UserRow {
   billedPriceCents: number
   totalRevenueCents: number
   activePromoCode: string | null
+  activeCouponName: string | null
   emailVerified: boolean
 }
 
@@ -627,9 +628,17 @@ export default function AdminUsersTable({ users }: { users: UserRow[] }) {
                   {hasActiveSub ? `${fmtEur(user.billedPriceCents, true)}/Mo` : '—'}
                 </span>
                 {user.activePromoCode && (
-                  <span className="text-[10px] font-mono px-1.5 py-0.5 rounded w-fit"
-                    style={{ background: '#FFF7ED', color: '#C2410C', border: '1px solid #FED7AA' }}>
+                  <span
+                    className="text-[10px] font-mono px-1.5 py-0.5 rounded w-fit cursor-default"
+                    style={{ background: '#FFF7ED', color: '#C2410C', border: '1px solid #FED7AA' }}
+                    title={user.activeCouponName
+                      ? `${user.activePromoCode} · ${user.activeCouponName}`
+                      : user.activePromoCode}
+                  >
                     {user.activePromoCode}
+                    {user.activeCouponName && user.activeCouponName !== user.activePromoCode && (
+                      <span className="ml-1 font-sans not-italic opacity-70">· {user.activeCouponName}</span>
+                    )}
                   </span>
                 )}
               </span>
