@@ -101,6 +101,9 @@ export async function POST(req: NextRequest) {
       // but NOT automatically stored on the subscription object → Stripe shows
       // "Kein Gutschein angewendet". Fix: fetch the discount and write it to
       // subscription metadata so it's visible in Stripe and traceable.
+      // affiliateOverrideDetected: true if user applied a non-affiliate Stripe code →
+      // this ends the affiliate relationship and suppresses the first-payment commission.
+      let affiliateOverrideDetected = false
       try {
         const sessionExpanded = await stripe.checkout.sessions.retrieve(session.id, {
           expand: ['total_details.breakdown.discounts.discount.coupon'],
@@ -126,6 +129,37 @@ export async function POST(req: NextRequest) {
               discount_amount_cents: String(appliedDiscount?.amount ?? 0),
             },
           })
+
+          // ── Affiliate override detection ──────────────────────────────────
+          // If the user had a partner referral but explicitly applied a different
+          // Stripe promo code (e.g. ADMIN100), the affiliate relationship ends here:
+          // we clear referredByUsername and reverse any pending/available commissions.
+          // Future renewals will no longer generate commissions for the old referrer.
+          const affiliateCouponId = process.env.STRIPE_AFFILIATE_COUPON_ID?.trim()
+          if (affiliateCouponId && coupon.id !== affiliateCouponId) {
+            const currentUser = await db.query.users.findFirst({
+              where: eq(users.id, userId),
+              columns: { referredByUsername: true },
+            })
+            if (currentUser?.referredByUsername) {
+              affiliateOverrideDetected = true
+              // End the affiliate link
+              await db.update(users)
+                .set({ referredByUsername: null })
+                .where(eq(users.id, userId))
+              // Reverse any commissions that haven't been paid out yet
+              await db.update(affiliateCommissions).set({
+                status: 'reversed',
+                reversalReason: 'promo_code_override',
+                updatedAt: new Date(),
+              }).where(
+                and(
+                  eq(affiliateCommissions.refereeId, userId),
+                  inArray(affiliateCommissions.status, ['pending', 'available'])
+                )
+              )
+            }
+          }
         }
       } catch (e) {
         console.error('[billing/webhook] failed to capture coupon info:', e)
@@ -186,8 +220,9 @@ export async function POST(req: NextRequest) {
       })
 
       // ── Affiliate commission for first payment ────────────────────────────
+      // Skip if the user overrode their affiliate code with a different Stripe promo code.
       const referredBy = session.metadata?.referred_by
-      if (referredBy) {
+      if (referredBy && !affiliateOverrideDetected) {
         const referrer = await db.query.users.findFirst({
           where: eq(users.username, referredBy),
           columns: { id: true, email: true },
