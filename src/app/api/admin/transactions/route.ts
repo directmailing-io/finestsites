@@ -47,7 +47,7 @@ export async function GET(req: NextRequest) {
       limit: 100,
       expand: [
         'data.charge.balance_transaction',
-        'data.payment_intent',
+        'data.payment_intent.latest_charge.balance_transaction',
         'data.subscription',
         'data.discount.promotion_code',
       ],
@@ -124,13 +124,17 @@ export async function GET(req: NextRequest) {
       // ── Amounts ─────────────────────────────────────────────────────────
       // grossCents: actual money collected (or expected for open invoices)
       const grossCents = status === 'paid' ? (inv.amount_paid || 0) : (inv.amount_due || 0)
-      // taxCents: MwSt (already included in gross, shown separately)
-      // Stripe may return null for .tax on older invoices — fall back to total_tax_amounts sum
-      const taxCents = (inv as any).tax
-        || (inv as any).total_tax_amounts?.reduce((s: number, t: any) => s + (t?.amount ?? 0), 0)
-        || 0
-      // stripFeeCents: from balance_transaction (only available after successful charge)
-      const balanceTx = charge?.balance_transaction as Stripe.BalanceTransaction | null
+
+      // taxCents: MwSt — Stripe only populates invoice.tax when Tax Rates are configured in Stripe.
+      // Since we don't use Stripe Tax, we calculate it from gross: German 19% VAT inclusive formula.
+      // (Don't try to read from Stripe — it will always be 0 without Tax Rate configuration.)
+      const taxCents = grossCents > 0 ? Math.round(grossCents * 19 / 119) : 0
+
+      // stripFeeCents: Stripe processing fee from balance_transaction.
+      // Newer Stripe API: fee lives on payment_intent.latest_charge.balance_transaction, not invoice.charge.
+      const latestCharge = (paymentIntent as any)?.latest_charge as Stripe.Charge | null
+      const balanceTx = (charge?.balance_transaction as Stripe.BalanceTransaction | null)
+        ?? (latestCharge?.balance_transaction as Stripe.BalanceTransaction | null)
       const stripFeeCents = balanceTx?.fee || 0
       // affiliate commission
       const commission = commissionByInvoiceId.get(inv.id)
