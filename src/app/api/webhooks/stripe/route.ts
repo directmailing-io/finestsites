@@ -359,6 +359,18 @@ export async function POST(req: NextRequest) {
         sendEmail({ to: userRow.email, subject: emailSubject, html: emailHtml, type: wasPaymentFailure ? 'account_deactivated' : 'account_expired' }).catch(() => {})
       }
 
+      // Reverse pending/available affiliate commissions — no real money will flow anymore
+      await db.update(affiliateCommissions).set({
+        status: 'reversed',
+        reversalReason: 'subscription_canceled',
+        updatedAt: new Date(),
+      }).where(
+        and(
+          eq(affiliateCommissions.refereeId, userId),
+          inArray(affiliateCommissions.status, ['pending', 'available'])
+        )
+      )
+
       await logEvent({
         userId,
         eventType: 'subscription_deleted',

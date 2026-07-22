@@ -87,7 +87,7 @@ export async function POST(req: NextRequest) {
     const hasReferral = !!referredBy && !!affiliateCouponId
 
     // Resolve manually entered code: affiliate username OR Stripe promotion code.
-    // Priority: explicit Stripe promo code > referral affiliate coupon > allow_promotion_codes.
+    // Priority: explicit Stripe promo code > referral affiliate coupon > nothing (codes are entered in our UI, not Stripe's).
     // An explicitly entered Stripe promo code (e.g. ADMIN100, SUMMER50) always wins —
     // the user may have received a better deal than their referral discount.
     let affiliateApplied = false
@@ -154,7 +154,7 @@ export async function POST(req: NextRequest) {
         ? { discounts: [{ promotion_code: promoCodeId }] }
         : hasReferral || affiliateApplied
           ? { discounts: [{ coupon: affiliateCouponId!.trim() }] }
-          : { allow_promotion_codes: true }),
+          : {}),
       success_url: successUrl,
       cancel_url: cancelUrl,
 

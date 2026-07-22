@@ -227,6 +227,8 @@ function SettingsContent() {
   const [profile, setProfile] = useState<UserProfile | null>(null)
   const [billingInterval, setBillingInterval] = useState<'monthly' | 'yearly'>('monthly')
   const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null)
+  const [settingsPromoCode, setSettingsPromoCode] = useState("")
+  const [settingsPromoStatus, setSettingsPromoStatus] = useState<null | "validating" | { valid: boolean; type?: string; percent_off?: number | null; name?: string; display_name?: string }>(null)
   const [toast, setToast] = useState('')
 
   // ── Invoices state ─────────────────────────────────────────────
@@ -313,6 +315,19 @@ function SettingsContent() {
       return () => clearTimeout(t)
     }
   }, [searchParams])
+
+  // Validate promo code entered on settings page (debounced)
+  useEffect(() => {
+    const trimmed = settingsPromoCode.trim()
+    if (!trimmed) { setSettingsPromoStatus(null); return }
+    setSettingsPromoStatus('validating')
+    const t = setTimeout(async () => {
+      const res = await fetch(`/api/billing/validate-promo?code=${encodeURIComponent(trimmed)}`)
+      const data = await res.json()
+      setSettingsPromoStatus(data)
+    }, 500)
+    return () => clearTimeout(t)
+  }, [settingsPromoCode])
 
   async function handlePasswordChange(e: React.FormEvent) {
     e.preventDefault()
@@ -430,7 +445,7 @@ function SettingsContent() {
     const res = await fetch('/api/billing/checkout', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ plan, interval: billingInterval }),
+      body: JSON.stringify({ plan, interval: billingInterval, ...(settingsPromoCode.trim() ? { promo_code: settingsPromoCode.trim() } : {}) }),
     })
     const data = await res.json()
     if (data.url) router.push(data.url)
@@ -980,6 +995,39 @@ function SettingsContent() {
                     )
                   })}
                 </div>
+
+                {/* Promo code input — below plan cards */}
+                {!subscription?.discount_percent && (
+                  <div className="mt-4 px-1">
+                    <div className="flex gap-2 items-center">
+                      <input
+                        type="text"
+                        placeholder="Partner- oder Aktionscode"
+                        value={settingsPromoCode}
+                        onChange={e => setSettingsPromoCode(e.target.value)}
+                        className="flex-1 px-3 py-2 text-sm rounded-xl border outline-none"
+                        style={{
+                          border: settingsPromoStatus === null || settingsPromoStatus === 'validating'
+                            ? '1.5px solid #E2E8F0'
+                            : settingsPromoStatus && (settingsPromoStatus as any).valid
+                              ? '1.5px solid #16A34A'
+                              : '1.5px solid #EF4444',
+                          background: '#FAFAFA',
+                        }}
+                      />
+                    </div>
+                    {settingsPromoStatus && settingsPromoStatus !== 'validating' && (settingsPromoStatus as any).valid && (
+                      <p className="text-xs mt-1.5 font-medium" style={{ color: '#16A34A' }}>
+                        {(settingsPromoStatus as any).type === 'affiliate'
+                          ? `✓ ${(settingsPromoStatus as any).percent_off}% Partner-Rabatt von ${(settingsPromoStatus as any).display_name ?? settingsPromoCode} — dauerhaft aktiv`
+                          : `✓ ${(settingsPromoStatus as any).name ?? settingsPromoCode} wird angewendet`}
+                      </p>
+                    )}
+                    {settingsPromoStatus && settingsPromoStatus !== 'validating' && !(settingsPromoStatus as any).valid && settingsPromoCode.trim() && (
+                      <p className="text-xs mt-1.5" style={{ color: '#EF4444' }}>Ungültiger Code.</p>
+                    )}
+                  </div>
+                )}
 
                 {/* Common features — once, below plans */}
                 <div className="mt-4 flex flex-wrap gap-x-5 gap-y-1.5 px-1">
