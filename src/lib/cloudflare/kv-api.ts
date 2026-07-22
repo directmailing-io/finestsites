@@ -91,6 +91,59 @@ export async function clearSiteMetaKV(username: string, templateDomain: string):
   })
 }
 
+/**
+ * List all KV keys matching a given prefix (paginates automatically).
+ */
+async function listKVKeysByPrefix(prefix: string): Promise<string[]> {
+  const base = `https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT_ID}/storage/kv/namespaces/${CF_KV_NAMESPACE_ID}/keys`
+  const keys: string[] = []
+  let cursor: string | undefined
+
+  do {
+    const url = new URL(base)
+    url.searchParams.set('prefix', prefix)
+    url.searchParams.set('limit', '1000')
+    if (cursor) url.searchParams.set('cursor', cursor)
+
+    const res = await fetch(url.toString(), { headers: headers() })
+    const json = await res.json() as { success: boolean; result: { name: string }[]; result_info: { cursor?: string; count: number } }
+    if (!json.success) break
+    for (const k of json.result) keys.push(k.name)
+    cursor = json.result_info?.cursor
+  } while (cursor)
+
+  return keys
+}
+
+/**
+ * Bulk-delete an array of KV keys (max 10,000 per call — batched if needed).
+ */
+async function deleteKVKeys(keys: string[]): Promise<void> {
+  if (keys.length === 0) return
+  const base = `https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT_ID}/storage/kv/namespaces/${CF_KV_NAMESPACE_ID}/bulk`
+  const BATCH = 10_000
+  for (let i = 0; i < keys.length; i += BATCH) {
+    const batch = keys.slice(i, i + BATCH)
+    await fetch(base, {
+      method: 'DELETE',
+      headers: { ...headers(), 'Content-Type': 'application/json' },
+      body: JSON.stringify(batch),
+    })
+  }
+}
+
+/**
+ * Purge all cached KV entries for a username: meta:{username}:* and rendered:{username}:*.
+ * Call this after a username change so stale caches don't linger.
+ */
+export async function purgeUsernameKV(username: string): Promise<void> {
+  const [metaKeys, renderedKeys] = await Promise.all([
+    listKVKeysByPrefix(`meta:${username}:`),
+    listKVKeysByPrefix(`rendered:${username}:`),
+  ])
+  await deleteKVKeys([...metaKeys, ...renderedKeys])
+}
+
 export async function writeRenderedHtmlKV(
   username: string,
   templateDomain: string,

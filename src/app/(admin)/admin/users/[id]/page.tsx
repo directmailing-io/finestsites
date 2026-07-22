@@ -150,6 +150,28 @@ export default function AdminUserDetailPage({ params }: { params: Promise<{ id: 
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const [affiliateCard, setAffiliateCard] = useState<AffiliateCardState>({ mode: 'view' })
   const affiliateSearchRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const [usernameEdit, setUsernameEdit] = useState<{ value: string; saving: boolean; error: string } | null>(null)
+
+  async function saveUsername() {
+    if (!usernameEdit || !data) return
+    setUsernameEdit(prev => prev ? { ...prev, saving: true, error: '' } : prev)
+    try {
+      const res = await fetch(`/api/admin/users/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: usernameEdit.value }),
+      })
+      const json = await res.json()
+      if (!res.ok) {
+        setUsernameEdit(prev => prev ? { ...prev, saving: false, error: json.error ?? 'Fehler beim Speichern.' } : prev)
+        return
+      }
+      setData(prev => prev ? { ...prev, profile: { ...prev.profile, username: json.username } } : prev)
+      setUsernameEdit(null)
+    } catch {
+      setUsernameEdit(prev => prev ? { ...prev, saving: false, error: 'Netzwerkfehler.' } : prev)
+    }
+  }
 
   const fetchSupportConvs = useCallback(async () => {
     try {
@@ -320,10 +342,57 @@ export default function AdminUserDetailPage({ params }: { params: Promise<{ id: 
           <div className="flex items-start justify-between gap-4">
             <div>
               <h1 className="text-lg font-semibold text-gray-900">{profile.email}</h1>
-              {profile.username && (
-                <p className="text-sm font-mono mt-0.5" style={{ color: 'var(--muted-foreground)' }}>
-                  @{profile.username}
-                </p>
+              {usernameEdit ? (
+                <div className="flex items-center gap-2 mt-1.5">
+                  <span className="text-sm font-mono" style={{ color: 'var(--muted-foreground)' }}>@</span>
+                  <input
+                    autoFocus
+                    value={usernameEdit.value}
+                    onChange={e => setUsernameEdit(prev => prev ? { ...prev, value: e.target.value, error: '' } : prev)}
+                    onKeyDown={e => { if (e.key === 'Enter') saveUsername(); if (e.key === 'Escape') setUsernameEdit(null) }}
+                    disabled={usernameEdit.saving}
+                    className="text-sm font-mono rounded-lg px-2 py-0.5 border outline-none"
+                    style={{ borderColor: usernameEdit.error ? '#EF4444' : '#D1D5DB', width: 160 }}
+                    placeholder="username"
+                  />
+                  <button
+                    onClick={saveUsername}
+                    disabled={usernameEdit.saving}
+                    className="text-xs font-medium px-2.5 py-1 rounded-lg"
+                    style={{ background: '#111827', color: '#fff', opacity: usernameEdit.saving ? 0.6 : 1 }}
+                  >
+                    {usernameEdit.saving ? '…' : 'Speichern'}
+                  </button>
+                  <button
+                    onClick={() => setUsernameEdit(null)}
+                    disabled={usernameEdit.saving}
+                    className="text-xs px-2 py-1 rounded-lg"
+                    style={{ color: 'var(--muted-foreground)' }}
+                  >
+                    Abbrechen
+                  </button>
+                  {usernameEdit.error && (
+                    <span className="text-xs" style={{ color: '#EF4444' }}>{usernameEdit.error}</span>
+                  )}
+                </div>
+              ) : (
+                <div className="flex items-center gap-1.5 mt-0.5">
+                  {profile.username && (
+                    <p className="text-sm font-mono" style={{ color: 'var(--muted-foreground)' }}>
+                      @{profile.username}
+                    </p>
+                  )}
+                  <button
+                    onClick={() => setUsernameEdit({ value: profile.username ?? '', saving: false, error: '' })}
+                    className="p-0.5 rounded hover:bg-gray-100 transition-colors"
+                    title="Benutzername ändern"
+                  >
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" strokeWidth="2">
+                      <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
+                      <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                    </svg>
+                  </button>
+                </div>
               )}
             </div>
             <div className="flex items-center gap-2 flex-shrink-0 flex-wrap justify-end">
