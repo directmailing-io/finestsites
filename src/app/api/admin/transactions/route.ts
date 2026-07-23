@@ -96,6 +96,17 @@ export async function GET(req: NextRequest) {
   const referrerUsernameById = new Map<string, string>()
   for (const r of allReferrers) referrerUsernameById.set(r.id, r.username ?? '')
 
+  // ── DEBUG: log first paid invoice's charge/PI structure ─────────────────────────────────────
+  const firstPaid = invoicesList.data.find(i => i.status === 'paid' && (i as any).amount_paid > 0)
+  if (firstPaid) {
+    const fp = firstPaid as any
+    console.log('[transactions-debug] invoice.charge type:', typeof fp.charge, '| value:', typeof fp.charge === 'string' ? fp.charge : JSON.stringify(fp.charge)?.slice(0, 200))
+    console.log('[transactions-debug] invoice.payment_intent.latest_charge type:', typeof fp.payment_intent?.latest_charge, '| value:', typeof fp.payment_intent?.latest_charge === 'string' ? fp.payment_intent?.latest_charge : JSON.stringify(fp.payment_intent?.latest_charge)?.slice(0, 200))
+    console.log('[transactions-debug] balance_transaction on charge:', JSON.stringify(fp.charge?.balance_transaction)?.slice(0, 200))
+    console.log('[transactions-debug] balance_transaction on latest_charge:', JSON.stringify(fp.payment_intent?.latest_charge?.balance_transaction)?.slice(0, 200))
+    console.log('[transactions-debug] payment_method_types:', fp.payment_intent?.payment_method_types)
+  }
+
   // ── Process invoices → transactions ─────────────────────────────────────────────────────────
   const transactions = invoicesList.data
     .filter(inv => inv.status !== 'draft')
