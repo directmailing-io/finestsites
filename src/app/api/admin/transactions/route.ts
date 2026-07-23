@@ -41,17 +41,25 @@ export async function GET(req: NextRequest) {
   const stripe = getStripe()
   const { gte, lte } = getPeriodRange(period)
 
-  // ── Parallel fetches: Stripe invoices, Stripe active subscriptions, DB users, DB commissions ──
-  const [invoicesList, subscriptionsList, allDbUsers, allCommissions] = await Promise.all([
+  // ── Parallel fetches ─────────────────────────────────────────────────────────────────────────
+  // Note: We fetch charges separately (not via invoice expand) because invoice.charge is often
+  // null in newer Stripe API versions (PaymentIntent-based flow). Charges have an `invoice` field
+  // for reliable matching, and their balance_transaction is straightforward to expand at 1 level.
+  const dateFilter = gte || lte ? { created: { ...(gte ? { gte } : {}), ...(lte ? { lte } : {}) } } : {}
+  const [invoicesList, chargesList, subscriptionsList, allDbUsers, allCommissions] = await Promise.all([
     stripe.invoices.list({
       limit: 100,
       expand: [
-        'data.charge.balance_transaction',
-        'data.payment_intent.latest_charge.balance_transaction',
+        'data.payment_intent',
         'data.subscription',
         'data.discount.promotion_code',
       ],
-      ...(gte || lte ? { created: { ...(gte ? { gte } : {}), ...(lte ? { lte } : {}) } } : {}),
+      ...dateFilter,
+    }),
+    stripe.charges.list({
+      limit: 100,
+      expand: ['data.balance_transaction'],
+      ...dateFilter,
     }),
     stripe.subscriptions.list({
       status: 'active',
@@ -73,6 +81,16 @@ export async function GET(req: NextRequest) {
       referrerId: affiliateCommissions.referrerId,
     }).from(affiliateCommissions),
   ])
+
+  // ── Charge lookup: match charges → invoices via charge.invoice ───────────────────────────────
+  // Each Stripe Charge has an `invoice` field (invoice ID string). This is the reliable way to
+  // find the fee and payment method for an invoice regardless of API version.
+  const chargeByInvoiceId = new Map<string, Stripe.Charge>()
+  for (const charge of chargesList.data) {
+    const rawInv = (charge as any).invoice
+    const invId = typeof rawInv === 'string' ? rawInv : rawInv?.id
+    if (invId) chargeByInvoiceId.set(invId, charge)
+  }
 
   // ── Lookup maps ──────────────────────────────────────────────────────────────────────────────
   const userByCustomerId = new Map<string, typeof allDbUsers[0]>()
@@ -96,23 +114,13 @@ export async function GET(req: NextRequest) {
   const referrerUsernameById = new Map<string, string>()
   for (const r of allReferrers) referrerUsernameById.set(r.id, r.username ?? '')
 
-  // ── DEBUG: log first paid invoice's charge/PI structure ─────────────────────────────────────
-  const firstPaid = invoicesList.data.find(i => i.status === 'paid' && (i as any).amount_paid > 0)
-  if (firstPaid) {
-    const fp = firstPaid as any
-    console.log('[transactions-debug] invoice.charge type:', typeof fp.charge, '| value:', typeof fp.charge === 'string' ? fp.charge : JSON.stringify(fp.charge)?.slice(0, 200))
-    console.log('[transactions-debug] invoice.payment_intent.latest_charge type:', typeof fp.payment_intent?.latest_charge, '| value:', typeof fp.payment_intent?.latest_charge === 'string' ? fp.payment_intent?.latest_charge : JSON.stringify(fp.payment_intent?.latest_charge)?.slice(0, 200))
-    console.log('[transactions-debug] balance_transaction on charge:', JSON.stringify(fp.charge?.balance_transaction)?.slice(0, 200))
-    console.log('[transactions-debug] balance_transaction on latest_charge:', JSON.stringify(fp.payment_intent?.latest_charge?.balance_transaction)?.slice(0, 200))
-    console.log('[transactions-debug] payment_method_types:', fp.payment_intent?.payment_method_types)
-  }
-
   // ── Process invoices → transactions ─────────────────────────────────────────────────────────
   const transactions = invoicesList.data
     .filter(inv => inv.status !== 'draft')
     .map(inv => {
       const inv_ = inv as any
-      const charge = inv_.charge as Stripe.Charge | null
+      // Charge from separate charges.list (matched via charge.invoice ID)
+      const charge = chargeByInvoiceId.get(inv.id) || null
       const paymentIntent = inv_.payment_intent as Stripe.PaymentIntent | null
       const discount = inv_.discount as Stripe.Discount | null
       const sub = inv_.subscription as Stripe.Subscription | null
@@ -141,11 +149,9 @@ export async function GET(req: NextRequest) {
       // (Don't try to read from Stripe — it will always be 0 without Tax Rate configuration.)
       const taxCents = grossCents > 0 ? Math.round(grossCents * 19 / 119) : 0
 
-      // stripFeeCents: Stripe processing fee from balance_transaction.
-      // Newer Stripe API: fee lives on payment_intent.latest_charge.balance_transaction, not invoice.charge.
-      const latestCharge = (paymentIntent as any)?.latest_charge as Stripe.Charge | null
-      const balanceTx = (charge?.balance_transaction as Stripe.BalanceTransaction | null)
-        ?? (latestCharge?.balance_transaction as Stripe.BalanceTransaction | null)
+      // stripFeeCents: from balance_transaction on the matched charge (expanded at fetch time).
+      // For SEPA not yet settled: balance_transaction is null → fee correctly 0 until settled.
+      const balanceTx = charge?.balance_transaction as Stripe.BalanceTransaction | null
       const stripFeeCents = balanceTx?.fee || 0
       // affiliate commission
       const commission = commissionByInvoiceId.get(inv.id)
@@ -168,11 +174,19 @@ export async function GET(req: NextRequest) {
       }
 
       // ── Payment method ──────────────────────────────────────────────────
+      // payment_method_details lives on the Charge object (from chargeByInvoiceId map).
+      // Fallback: read payment_method_types from payment_intent (no last4, but gives type).
       let paymentMethod: 'card' | 'sepa_debit' | null = null
       let paymentMethodLast4: string | null = null
       const pmd = charge?.payment_method_details as any
       if (pmd?.type === 'card') { paymentMethod = 'card'; paymentMethodLast4 = pmd.card?.last4 || null }
       else if (pmd?.type === 'sepa_debit') { paymentMethod = 'sepa_debit'; paymentMethodLast4 = pmd.sepa_debit?.last4 || null }
+      else {
+        // Fallback: payment_intent.payment_method_types when charge pmd is unavailable
+        const pmType = paymentIntent?.payment_method_types?.[0]
+        if (pmType === 'card') paymentMethod = 'card'
+        else if (pmType === 'sepa_debit') paymentMethod = 'sepa_debit'
+      }
 
       // ── Plan info ───────────────────────────────────────────────────────
       const plan = sub?.metadata?.plan || userInfo?.plan || ''
