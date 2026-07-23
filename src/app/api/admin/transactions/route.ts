@@ -64,7 +64,8 @@ export async function GET(req: NextRequest) {
     stripe.subscriptions.list({
       status: 'active',
       limit: 100,
-      expand: ['data.customer', 'data.discount.promotion_code', 'data.items.data.price'],
+      // Stripe 2025: discount → discounts (array); expand promotion_code for display
+      expand: ['data.customer', 'data.discounts.promotion_code', 'data.items.data.price'],
     }),
     db.select({
       id: users.id,
@@ -232,6 +233,23 @@ export async function GET(req: NextRequest) {
       }
     })
 
+  // ── Coupon lookup for planned payments ──────────────────────────────────────────────────────
+  // Stripe 2025: sub.discount → undefined; coupons live in sub.discounts[0].source.coupon (string ID).
+  // percent_off is not inlined — fetch coupon objects separately.
+  const subCouponIdSet = new Set<string>()
+  for (const sub of subscriptionsList.data) {
+    const discArr = (sub as any).discounts as any[] | null
+    const couponId = discArr?.[0]?.source?.coupon
+    if (couponId && typeof couponId === 'string') subCouponIdSet.add(couponId)
+  }
+  const subCouponById = new Map<string, { percentOff: number; name: string | null }>()
+  await Promise.all([...subCouponIdSet].map(async id => {
+    try {
+      const c = await stripe.coupons.retrieve(id)
+      subCouponById.set(id, { percentOff: c.percent_off || 0, name: c.name || null })
+    } catch {}
+  }))
+
   // ── Planned payments (active subscriptions, not canceling at period end) ─────────────────────
   const plannedPayments = subscriptionsList.data
     .filter(sub => !sub.cancel_at_period_end)
@@ -246,10 +264,14 @@ export async function GET(req: NextRequest) {
       const unitAmount = price?.unit_amount || 0
       const interval = price?.recurring?.interval === 'year' ? 'yearly' : 'monthly'
 
-      const discount = sub_.discount as Stripe.Discount | null
-      const coupon = (discount as any)?.coupon as Stripe.Coupon | undefined
-      const percentOff = coupon?.percent_off || 0
-      const promoCode = (discount as any)?.promotion_code as Stripe.PromotionCode | null
+      // Stripe 2025: discounts[] array; coupon ID in discounts[0].source.coupon
+      const discountsArr = sub_.discounts as any[] | null
+      const firstDiscount = discountsArr?.[0] ?? null
+      const couponId = firstDiscount?.source?.coupon
+      const couponInfo = couponId ? subCouponById.get(couponId) : null
+      const percentOff = couponInfo?.percentOff || 0
+      // promotion_code expanded in list call → has .code field
+      const promoCode = firstDiscount?.promotion_code as Stripe.PromotionCode | null
 
       // Expected gross after coupon discount
       const expectedGrossCents = Math.round(unitAmount * (1 - percentOff / 100))
@@ -268,7 +290,7 @@ export async function GET(req: NextRequest) {
         nextPaymentDate: ((sub.items.data[0] as any)?.current_period_end ?? (sub as any).current_period_end ?? null) as number | null,
         expectedGrossCents,
         estimatedTaxCents,
-        couponCode: promoCode?.code || coupon?.name || null,
+        couponCode: (typeof promoCode === 'object' ? promoCode?.code : null) || couponInfo?.name || null,
         couponLabel: percentOff ? `−${percentOff}%` : null,
         affiliatePartner,
         estimatedAffiliateCents,
