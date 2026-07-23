@@ -59,6 +59,7 @@ export default function Footer() {
                 { label: 'Impressum',             href: '/impressum' },
                 { label: 'Datenschutzerklärung',  href: '/datenschutz' },
                 { label: 'AGB',                   href: '/agb' },
+                { label: 'Widerrufsbelehrung',    href: '/widerruf' },
               ].map(l => (
                 <li key={l.label}><a href={l.href} style={{ fontSize: 14, color: 'rgba(255,255,255,0.6)', textDecoration: 'none' }}>{l.label}</a></li>
               ))}

@@ -89,11 +89,14 @@ export default function AgbPage() {
           </p>
           <p style={{ marginTop: 12 }}>
             (4) <strong>Widerrufsrecht für Verbraucher:</strong> Verbraucher haben grundsätzlich das Recht, innerhalb
-            von 14 Tagen ohne Angabe von Gründen zu widerrufen. Stimmt der Verbraucher ausdrücklich zu, dass die
-            Vertragserfüllung vor Ablauf der Widerrufsfrist beginnt, und bestätigt er seine Kenntnis davon, dass er
-            mit Beginn der Vertragserfüllung sein Widerrufsrecht verliert, erlischt das Widerrufsrecht gemäß
-            § 356 Abs. 5 BGB mit Beginn der Dienstleistungserbringung. Der Nutzer erklärt durch Abschluss des
-            Abonnements, dass er der sofortigen Leistungserbringung zustimmt und sein Widerrufsrecht damit erlischt.
+            von 14 Tagen ohne Angabe von Gründen zu widerrufen. Die vollständige Widerrufsbelehrung sowie das
+            Muster-Widerrufsformular sind unter{' '}
+            <a href="/widerruf" style={{ color: '#8060b0' }}>finestsites.io/widerruf</a>{' '}
+            abrufbar. Stimmt der Verbraucher ausdrücklich zu, dass die Vertragserfüllung vor Ablauf der
+            Widerrufsfrist beginnt, und bestätigt er seine Kenntnis davon, dass er mit Beginn der Vertragserfüllung
+            sein Widerrufsrecht verliert, erlischt das Widerrufsrecht gemäß § 356 Abs. 5 BGB mit Beginn der
+            Dienstleistungserbringung. Der Nutzer erklärt durch Abschluss des Abonnements, dass er der sofortigen
+            Leistungserbringung zustimmt und sein Widerrufsrecht damit erlischt.
           </p>
         </Section>
 
@@ -230,7 +233,10 @@ export default function AgbPage() {
           </p>
           <p style={{ marginTop: 12 }}>
             (3) Das Abonnement verlängert sich automatisch um den jeweils gewählten Abrechnungszeitraum
-            (Monat oder Jahr), sofern es nicht fristgerecht gekündigt wird (vgl. § 10).
+            (Monat oder Jahr), sofern der Nutzer es nicht vor Beginn des nächsten Abrechnungszeitraums
+            kündigt. Eine Kündigung ist jederzeit während des laufenden Abrechnungszeitraums möglich und
+            wird zum Ende der laufenden Periode wirksam (vgl. § 10 Abs. 2). Es gibt keine gesonderte
+            Kündigungsfrist, die vor dem jeweiligen Verlängerungsdatum eingehalten werden müsste.
           </p>
           <p style={{ marginTop: 12 }}>
             (4) Bei Zahlungsverzug oder fehlgeschlagenem Zahlungseinzug ist der Anbieter berechtigt, den
