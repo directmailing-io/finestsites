@@ -155,9 +155,21 @@ export default function TransactionsPage() {
   const filtAffl  = filtered.reduce((s, t) => s + t.affiliateCommissionCents, 0)
   const filtNet   = filtered.reduce((s, t) => s + t.netCents, 0)
 
-  const plannedGross = planned.reduce((s, p) => s + p.expectedGrossCents, 0)
-  const plannedAffl  = planned.reduce((s, p) => s + p.estimatedAffiliateCents, 0)
-  const plannedTax   = planned.reduce((s, p) => s + p.estimatedTaxCents, 0)
+  // Filter planned payments to next calendar month only
+  const now = new Date()
+  const nextMonthStart = new Date(now.getFullYear(), now.getMonth() + 1, 1)
+  const nextMonthEnd   = new Date(now.getFullYear(), now.getMonth() + 2, 1)
+  const nextMonthStartUnix = Math.floor(nextMonthStart.getTime() / 1000)
+  const nextMonthEndUnix   = Math.floor(nextMonthEnd.getTime() / 1000)
+  const nextMonthLabel = nextMonthStart.toLocaleDateString('de-DE', { month: 'long', year: 'numeric' })
+
+  const plannedNextMonth = planned.filter(
+    p => p.nextPaymentDate >= nextMonthStartUnix && p.nextPaymentDate < nextMonthEndUnix
+  )
+
+  const plannedGross = plannedNextMonth.reduce((s, p) => s + p.expectedGrossCents, 0)
+  const plannedAffl  = plannedNextMonth.reduce((s, p) => s + p.estimatedAffiliateCents, 0)
+  const plannedTax   = plannedNextMonth.reduce((s, p) => s + p.estimatedTaxCents, 0)
 
   return (
     <div className="p-6 max-w-[1400px]">
@@ -195,9 +207,9 @@ export default function TransactionsPage() {
           color="#15803D"
         />
         <SummaryCard
-          label="Geplant (nächste Periode)"
+          label={`Geplant (${nextMonthLabel})`}
           value={eur(plannedGross - plannedTax - plannedAffl)}
-          sub={`${planned.length} aktive Abos`}
+          sub={`${plannedNextMonth.length} Zahlungen nächsten Monat`}
           secondLine={`Brutto erw.: ${eur(plannedGross)}`}
           color="#1D4ED8"
         />
@@ -448,14 +460,14 @@ export default function TransactionsPage() {
             <polyline points="9 18 15 12 9 6"/>
           </svg>
           <h2 className="text-base font-bold text-gray-900">
-            Geplante Zahlungen
+            Geplante Zahlungen — {nextMonthLabel}
           </h2>
           <span className="text-sm font-medium px-2 py-0.5 rounded-lg" style={{ background: '#EFF6FF', color: '#1D4ED8' }}>
-            {planned.length} Abos · erw. {eur(plannedGross)}
+            {plannedNextMonth.length} Zahlungen · erw. {eur(plannedGross)}
           </span>
         </button>
 
-        {showPlanned && planned.length > 0 && (
+        {showPlanned && plannedNextMonth.length > 0 && (
           <div className="rounded-2xl overflow-hidden" style={{ border: '1px solid #F1F5F9' }}>
             {/* Planned summary strip */}
             <div className="flex flex-wrap gap-4 px-4 py-3 text-sm" style={{ background: '#F0F9FF', borderBottom: '1px solid #BFDBFE' }}>
@@ -492,7 +504,7 @@ export default function TransactionsPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {planned
+                  {plannedNextMonth
                     .sort((a, b) => a.nextPaymentDate - b.nextPaymentDate)
                     .map((p, i) => {
                       const planStyle = PLAN_STYLE[p.plan] ?? { bg: '#F3F4F6', color: '#6B7280', label: p.plan }
@@ -558,7 +570,7 @@ export default function TransactionsPage() {
                 <tfoot>
                   <tr style={{ borderTop: '2px solid #E2E8F0', background: '#F0F9FF' }}>
                     <td colSpan={3} className="px-4 py-3 text-xs font-bold uppercase tracking-wide" style={{ color: '#1e40af' }}>
-                      Gesamt ({planned.length} Abos)
+                      Gesamt ({plannedNextMonth.length} Zahlungen im {nextMonthLabel})
                     </td>
                     <td className="px-4 py-3 text-right tabular-nums font-bold text-sm" style={{ color: '#1a1a1a' }}>{eur(plannedGross)}</td>
                     <td className="px-4 py-3 text-right tabular-nums text-sm" style={{ color: '#94A3B8' }}>−{eur(plannedTax)}</td>
@@ -572,8 +584,8 @@ export default function TransactionsPage() {
           </div>
         )}
 
-        {showPlanned && planned.length === 0 && !loading && (
-          <p className="text-sm" style={{ color: '#94A3B8' }}>Keine aktiven Abonnements gefunden.</p>
+        {showPlanned && plannedNextMonth.length === 0 && !loading && (
+          <p className="text-sm" style={{ color: '#94A3B8' }}>Keine Zahlungen im {nextMonthLabel} geplant.</p>
         )}
       </div>
     </div>
