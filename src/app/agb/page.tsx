@@ -310,10 +310,12 @@ export default function AgbPage() {
             eingebunden hatte, liegt die Verantwortung für die Anpassung der DNS-Einstellungen beim Nutzer.
           </p>
           <p style={{ marginTop: 12 }}>
-            (2) Der Anbieter bewahrt die Nutzerdaten (Inhalte, hochgeladene Dateien, Einstellungen) nach
-            Vertragsbeendigung für einen Zeitraum von <strong>30 Tagen</strong> auf. In diesem Zeitraum kann
-            der Nutzer seine Daten exportieren oder das Abonnement reaktivieren. Nach Ablauf dieser Frist
-            werden sämtliche Nutzerdaten unwiderruflich gelöscht.
+            (2) Der Anbieter bewahrt die Website-Daten des Nutzers (veröffentlichte Inhalte, hochgeladene
+            Dateien, Einstellungen) nach Vertragsbeendigung für einen Zeitraum von <strong>90 Tagen</strong> auf.
+            In diesem Zeitraum kann der Nutzer das Abonnement reaktivieren und seine Daten sichern. Nach Ablauf
+            dieser Frist werden die Website-Inhalte unwiderruflich gelöscht. Das Nutzerkonto selbst (E-Mail-Adresse,
+            Zugangsdaten) bleibt davon unberührt und kann jederzeit über hello@finestsites.io zur Löschung
+            beantragt werden.
           </p>
           <p style={{ marginTop: 12 }}>
             (3) Der Anbieter übernimmt keine Pflicht zur Datensicherung nach Vertragsbeendigung. Der Nutzer
