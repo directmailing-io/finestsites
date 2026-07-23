@@ -50,9 +50,9 @@ export async function GET(req: NextRequest) {
     stripe.invoices.list({
       limit: 100,
       expand: [
-        'data.payment_intent',
-        'data.subscription',
-        'data.discount.promotion_code',
+        // Stripe 2025: discount → discounts (array), subscription → parent.subscription_details
+        'data.discounts.promotion_code',
+        'data.discounts.coupon',
       ],
       ...dateFilter,
     }),
@@ -82,14 +82,28 @@ export async function GET(req: NextRequest) {
     }).from(affiliateCommissions),
   ])
 
-  // ── Charge lookup: match charges → invoices via charge.invoice ───────────────────────────────
-  // Each Stripe Charge has an `invoice` field (invoice ID string). This is the reliable way to
-  // find the fee and payment method for an invoice regardless of API version.
-  const chargeByInvoiceId = new Map<string, Stripe.Charge>()
-  for (const charge of chargesList.data) {
-    const rawInv = (charge as any).invoice
-    const invId = typeof rawInv === 'string' ? rawInv : rawInv?.id
-    if (invId) chargeByInvoiceId.set(invId, charge)
+  // ── Charge matching: Stripe 2025 API removed invoice/payment_intent cross-refs ──────────────
+  // invoice.charge, invoice.payment_intent, charge.invoice, pi.invoice are all gone.
+  // We match charges to invoices by: customer ID + amount + closest timestamp.
+  const chargesByCustomer = new Map<string, Stripe.Charge[]>()
+  for (const c of chargesList.data) {
+    const custId = typeof c.customer === 'string' ? c.customer : (c.customer as any)?.id
+    if (!custId) continue
+    if (!chargesByCustomer.has(custId)) chargesByCustomer.set(custId, [])
+    chargesByCustomer.get(custId)!.push(c)
+  }
+
+  function findChargeForInvoice(inv: Stripe.Invoice): Stripe.Charge | null {
+    const custId = typeof inv.customer === 'string' ? inv.customer : (inv.customer as any)?.id
+    if (!custId) return null
+    const invAmount = (inv as any).amount_paid || (inv as any).amount_due || 0
+    if (invAmount === 0) return null
+    const candidates = (chargesByCustomer.get(custId) || []).filter(c => c.amount === invAmount)
+    if (candidates.length === 0) return null
+    // Tie-break by closest creation timestamp (charges are created at invoice payment time)
+    return candidates.reduce((best, c) =>
+      Math.abs(c.created - inv.created) < Math.abs(best.created - inv.created) ? c : best
+    )
   }
 
   // ── Lookup maps ──────────────────────────────────────────────────────────────────────────────
@@ -119,11 +133,12 @@ export async function GET(req: NextRequest) {
     .filter(inv => inv.status !== 'draft')
     .map(inv => {
       const inv_ = inv as any
-      // Charge from separate charges.list (matched via charge.invoice ID)
-      const charge = chargeByInvoiceId.get(inv.id) || null
-      const paymentIntent = inv_.payment_intent as Stripe.PaymentIntent | null
-      const discount = inv_.discount as Stripe.Discount | null
-      const sub = inv_.subscription as Stripe.Subscription | null
+      // Charge matched by customer + amount + timestamp (Stripe 2025: no cross-ref IDs)
+      const charge = findChargeForInvoice(inv)
+      // Stripe 2025: invoice.discount → invoice.discounts (array); invoice.subscription → parent
+      const discountArr = (inv_.discounts as any[] | null) ?? null
+      const discount = discountArr?.[0] ?? null
+      const parentSub = inv_.parent?.subscription_details?.subscription as string | null
 
       // ── Status ──────────────────────────────────────────────────────────
       let status: 'paid' | 'pending' | 'failed' | 'void' | 'uncollectible'
@@ -131,9 +146,8 @@ export async function GET(req: NextRequest) {
       else if (inv.status === 'void') status = 'void'
       else if (inv.status === 'uncollectible') status = 'uncollectible'
       else {
-        // 'open' — distinguish between failed payment attempt and awaiting debit
-        const piStatus = paymentIntent?.status
-        status = (piStatus === 'requires_payment_method' || piStatus === 'canceled') ? 'failed' : 'pending'
+        // 'open' — use matched charge status (SEPA = pending, failed card = failed)
+        status = charge?.status === 'failed' ? 'failed' : 'pending'
       }
 
       // ── User ────────────────────────────────────────────────────────────
@@ -163,14 +177,16 @@ export async function GET(req: NextRequest) {
       const netCents = grossCents - taxCents - stripFeeCents - affiliateCommissionCents
 
       // ── Discount/Coupon ─────────────────────────────────────────────────
+      // Stripe 2025: discounts is an array; each element may have coupon/promotion_code
       let couponCode: string | null = null
       let couponLabel: string | null = null
       if (discount) {
-        const coupon = (discount as any).coupon as Stripe.Coupon | undefined
-        const promoCode = (discount as any).promotion_code as Stripe.PromotionCode | null
-        couponCode = promoCode?.code || coupon?.name || null
-        if (coupon?.percent_off) couponLabel = `−${coupon.percent_off}%`
-        else if (coupon?.amount_off) couponLabel = `−${(coupon.amount_off / 100).toFixed(2)} €`
+        const coupon = discount.coupon as Stripe.Coupon | undefined
+        const promoCode = discount.promotion_code as Stripe.PromotionCode | null
+        couponCode = (typeof promoCode === 'object' ? promoCode?.code : null)
+          || (typeof coupon === 'object' ? (coupon?.name || null) : null)
+        if (coupon && typeof coupon === 'object' && coupon.percent_off) couponLabel = `−${coupon.percent_off}%`
+        else if (coupon && typeof coupon === 'object' && coupon.amount_off) couponLabel = `−${(coupon.amount_off / 100).toFixed(2)} €`
       }
 
       // ── Payment method ──────────────────────────────────────────────────
@@ -182,15 +198,17 @@ export async function GET(req: NextRequest) {
       if (pmd?.type === 'card') { paymentMethod = 'card'; paymentMethodLast4 = pmd.card?.last4 || null }
       else if (pmd?.type === 'sepa_debit') { paymentMethod = 'sepa_debit'; paymentMethodLast4 = pmd.sepa_debit?.last4 || null }
       else {
-        // Fallback: payment_intent.payment_method_types when charge pmd is unavailable
-        const pmType = paymentIntent?.payment_method_types?.[0]
+        // Fallback: infer type from charge payment_method field (exists even without pmd)
+        const pmType = (charge as any)?.payment_method_types?.[0]
         if (pmType === 'card') paymentMethod = 'card'
         else if (pmType === 'sepa_debit') paymentMethod = 'sepa_debit'
       }
 
       // ── Plan info ───────────────────────────────────────────────────────
-      const plan = sub?.metadata?.plan || userInfo?.plan || ''
-      const billingInterval = (sub?.metadata?.interval || userInfo?.billingInterval || 'monthly') as 'monthly' | 'yearly'
+      // Stripe 2025: invoice.subscription moved to invoice.parent.subscription_details.subscription
+      // We fall back to DB userInfo which always has current plan/interval
+      const plan = userInfo?.plan || ''
+      const billingInterval = (userInfo?.billingInterval || 'monthly') as 'monthly' | 'yearly'
 
       return {
         id: inv.id,
