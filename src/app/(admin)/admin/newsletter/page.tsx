@@ -23,7 +23,18 @@ interface HistoryEntry {
   sent: number; failed: number; total: number; sent_at: string
 }
 
-function HistoryCard({ entry }: { entry: HistoryEntry }) {
+// ── Saved templates (localStorage) ────────────────────────────────────────────
+interface SavedTemplate { id: string; name: string; subject: string; body: string }
+const LS_KEY = 'fs_email_templates'
+function lsLoad(): SavedTemplate[] {
+  if (typeof window === 'undefined') return []
+  try { return JSON.parse(localStorage.getItem(LS_KEY) ?? '[]') } catch { return [] }
+}
+function lsSave(templates: SavedTemplate[]) {
+  localStorage.setItem(LS_KEY, JSON.stringify(templates))
+}
+
+function HistoryCard({ entry, onLoad }: { entry: HistoryEntry; onLoad: (subject: string, body: string) => void }) {
   const [open, setOpen] = useState(false)
   const emails: string[] = entry.specific_emails ?? []
 
@@ -36,10 +47,22 @@ function HistoryCard({ entry }: { entry: HistoryEntry }) {
             {historyFilterLabel(entry.recipient_filter, entry.specific_emails, entry.total)} · {formatDate(entry.sent_at)}
           </p>
         </div>
-        <span className="text-xs px-2.5 py-1 rounded-full font-medium flex-shrink-0"
-          style={{ background: entry.failed > 0 ? '#FEF2F2' : '#F0FDF4', color: entry.failed > 0 ? '#DC2626' : '#16A34A' }}>
-          {entry.failed > 0 ? `${entry.sent}/${entry.total} gesendet` : `${entry.sent} gesendet`}
-        </span>
+        <div className="flex items-center gap-2 flex-shrink-0">
+          <button
+            onClick={() => onLoad(entry.subject, entry.body)}
+            className="flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-lg transition-all"
+            style={{ background: '#F1F5F9', color: '#374151', border: '1px solid #E5E7EB' }}
+            onMouseEnter={e => (e.currentTarget.style.background = '#E5E7EB')}
+            onMouseLeave={e => (e.currentTarget.style.background = '#F1F5F9')}
+            title="Als Vorlage in Erstellen laden">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            Laden
+          </button>
+          <span className="text-xs px-2.5 py-1 rounded-full font-medium"
+            style={{ background: entry.failed > 0 ? '#FEF2F2' : '#F0FDF4', color: entry.failed > 0 ? '#DC2626' : '#16A34A' }}>
+            {entry.failed > 0 ? `${entry.sent}/${entry.total} gesendet` : `${entry.sent} gesendet`}
+          </span>
+        </div>
       </div>
       <p className="text-sm mt-3" style={{ color: '#6B7280', whiteSpace: 'pre-line', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
         {entry.body}
@@ -197,11 +220,43 @@ export default function NewsletterPage() {
   const [result, setResult] = useState<{ sent: number; failed: number; total: number } | null>(null)
   const [error, setError] = useState('')
   const [confirm, setConfirm] = useState(false)
+  const [savedTemplates, setSavedTemplates] = useState<SavedTemplate[]>([])
+  const [saveNameInput, setSaveNameInput] = useState('')
+  const [showSaveRow, setShowSaveRow] = useState(false)
   const iframeRef = useRef<HTMLIFrameElement | null>(null)
 
   useEffect(() => {
     fetch('/api/admin/newsletter').then(r => r.json()).then(d => !d.error && setData(d))
+    setSavedTemplates(lsLoad())
   }, [])
+
+  function handleLoadTemplate(tpl: SavedTemplate) {
+    setSubject(tpl.subject)
+    setBody(tpl.body)
+    setTab('compose')
+  }
+
+  function handleSaveTemplate() {
+    const name = saveNameInput.trim()
+    if (!name) return
+    const next = [...savedTemplates, { id: Date.now().toString(), name, subject, body }]
+    setSavedTemplates(next)
+    lsSave(next)
+    setSaveNameInput('')
+    setShowSaveRow(false)
+  }
+
+  function handleDeleteTemplate(id: string) {
+    const next = savedTemplates.filter(t => t.id !== id)
+    setSavedTemplates(next)
+    lsSave(next)
+  }
+
+  function handleLoadFromHistory(subject: string, body: string) {
+    setSubject(subject)
+    setBody(body)
+    setTab('compose')
+  }
 
   const allTags = useMemo(() => {
     const tags = new Set<string>()
@@ -557,6 +612,40 @@ export default function NewsletterPage() {
                   </div>
                 </div>
 
+                {/* Saved templates */}
+                {savedTemplates.length > 0 && (
+                  <div style={card}>
+                    <p className="text-xs font-semibold uppercase tracking-wider mb-3" style={{ color: '#94A3B8' }}>Gespeicherte Vorlagen</p>
+                    <div className="flex flex-col gap-2">
+                      {savedTemplates.map(tpl => (
+                        <div key={tpl.id} className="flex items-center gap-2 p-3 rounded-[12px]" style={{ background: '#F9FAFB', border: '1px solid #E5E7EB' }}>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium text-gray-900 truncate">{tpl.name}</p>
+                            <p className="text-xs truncate mt-0.5" style={{ color: '#94A3B8' }}>{tpl.subject}</p>
+                          </div>
+                          <button
+                            onClick={() => handleLoadTemplate(tpl)}
+                            className="flex-shrink-0 text-xs font-medium px-3 py-1.5 rounded-lg transition-all"
+                            style={{ background: '#111827', color: '#fff' }}
+                            onMouseEnter={e => (e.currentTarget.style.background = '#374151')}
+                            onMouseLeave={e => (e.currentTarget.style.background = '#111827')}>
+                            Laden
+                          </button>
+                          <button
+                            onClick={() => handleDeleteTemplate(tpl.id)}
+                            className="flex-shrink-0 p-1.5 rounded-lg transition-all"
+                            style={{ color: '#9CA3AF' }}
+                            onMouseEnter={e => (e.currentTarget.style.color = '#DC2626')}
+                            onMouseLeave={e => (e.currentTarget.style.color = '#9CA3AF')}
+                            title="Vorlage löschen">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
                 {/* Subject + body */}
                 <div style={card} className="flex flex-col gap-4">
                   <div className="flex flex-col gap-1.5">
@@ -602,7 +691,7 @@ export default function NewsletterPage() {
                 </div>
 
                 {/* Actions */}
-                <div className="flex items-center gap-3">
+                <div className="flex flex-wrap items-center gap-3">
                   <button onClick={() => setPreview(v => !v)}
                     className="flex items-center gap-2 px-4 py-2.5 rounded-[12px] text-sm font-medium transition-all"
                     style={{ background: preview ? '#F0FDF4' : '#F9FAFB', color: preview ? '#16A34A' : '#374151', border: `1px solid ${preview ? '#D1FAE5' : '#E5E7EB'}` }}>
@@ -610,6 +699,14 @@ export default function NewsletterPage() {
                       <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
                     </svg>
                     {preview ? 'Vorschau ausblenden' : 'Vorschau anzeigen'}
+                  </button>
+                  <button onClick={() => { setShowSaveRow(v => !v); setSaveNameInput('') }}
+                    className="flex items-center gap-2 px-4 py-2.5 rounded-[12px] text-sm font-medium transition-all"
+                    style={{ background: '#F9FAFB', color: '#374151', border: '1px solid #E5E7EB' }}
+                    onMouseEnter={e => (e.currentTarget.style.background = '#F1F5F9')}
+                    onMouseLeave={e => (e.currentTarget.style.background = '#F9FAFB')}>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                    Als Vorlage speichern
                   </button>
                   <button onClick={() => { if (canSend) setConfirm(true) }} disabled={!canSend || sending}
                     className="flex items-center gap-2 px-5 py-2.5 rounded-[12px] text-sm font-semibold transition-all"
@@ -621,6 +718,25 @@ export default function NewsletterPage() {
                     )}
                   </button>
                 </div>
+                {showSaveRow && (
+                  <div className="flex items-center gap-2">
+                    <input
+                      autoFocus
+                      type="text"
+                      value={saveNameInput}
+                      onChange={e => setSaveNameInput(e.target.value)}
+                      onKeyDown={e => { if (e.key === 'Enter') handleSaveTemplate(); if (e.key === 'Escape') setShowSaveRow(false) }}
+                      placeholder="Vorlagen-Name, z. B. WhatsApp Fokusgruppe"
+                      className="flex-1 px-4 py-2.5 text-sm rounded-[12px] outline-none"
+                      style={{ background: '#F9FAFB', border: '1.5px solid #111827', color: '#111827' }} />
+                    <button onClick={handleSaveTemplate} disabled={!saveNameInput.trim()}
+                      className="px-4 py-2.5 rounded-[12px] text-sm font-semibold transition-all"
+                      style={{ background: saveNameInput.trim() ? '#111827' : '#E5E7EB', color: saveNameInput.trim() ? '#fff' : '#9CA3AF' }}>
+                      Speichern
+                    </button>
+                    <button onClick={() => setShowSaveRow(false)} className="px-3 py-2.5 rounded-[12px] text-sm" style={{ color: '#94A3B8' }}>Abbrechen</button>
+                  </div>
+                )}
                 {error && <p className="text-sm px-1" style={{ color: '#DC2626' }}>{error}</p>}
               </div>
 
@@ -645,7 +761,7 @@ export default function NewsletterPage() {
               <p className="text-sm" style={{ color: '#94A3B8' }}>Noch keine Newsletter gesendet.</p>
             </div>
           ) : data.history.map(entry => (
-            <HistoryCard key={entry.id} entry={entry} />
+            <HistoryCard key={entry.id} entry={entry} onLoad={handleLoadFromHistory} />
           ))}
         </div>
       )}
