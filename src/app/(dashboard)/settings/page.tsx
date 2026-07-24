@@ -427,6 +427,37 @@ function SettingsContent() {
 
   async function handleCheckout(plan: string) {
     setCheckoutLoading(plan)
+
+    // Existing active subscription → in-place upgrade with proration (pay only the difference).
+    // Discounts (AKTION25, affiliate coupons) are preserved automatically by Stripe
+    // because the upgrade route does NOT pass a discounts parameter.
+    if (subscription?.status === 'active') {
+      const res = await fetch('/api/billing/upgrade', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ plan, interval: billingInterval }),
+      })
+      const data = await res.json()
+      if (data.error) {
+        setToast(data.error)
+        setTimeout(() => setToast(''), 5000)
+      } else {
+        setToast('Plan erfolgreich geändert! Du wirst nur die anteiligen Kosten für die restlichen Tage berechnet.')
+        setTimeout(() => setToast(''), 6000)
+        // Refresh subscription state to reflect new plan
+        fetch('/api/billing/subscription')
+          .then(r => r.json())
+          .then(d => setSubscription(d.subscription ?? null))
+        fetch('/api/user/profile').then(r => r.json()).then(d => {
+          setProfile(d)
+          if (d.billing_interval) setBillingInterval(d.billing_interval)
+        })
+      }
+      setCheckoutLoading(null)
+      return
+    }
+
+    // No active subscription → create new Stripe Checkout session
     const res = await fetch('/api/billing/checkout', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
