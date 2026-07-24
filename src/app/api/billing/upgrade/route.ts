@@ -5,6 +5,8 @@ import { eq } from 'drizzle-orm'
 import { getUserFromRequest } from '@/lib/auth/server'
 import { getStripe, getPriceIdByPlan, type PlanKey, type BillingInterval } from '@/lib/stripe/client'
 import { canUpgradeTo } from '@/lib/plans'
+import { sendEmail } from '@/lib/resend'
+import { subscriptionConfirmationEmail } from '@/lib/email/templates'
 
 /**
  * In-place subscription upgrade with proration.
@@ -66,15 +68,14 @@ export async function POST(req: NextRequest) {
     const updated = await stripe.subscriptions.update(sub.id, {
       items: [{ id: existingItem.id, price: newPriceId }],
 
-      // always_invoice: Stripe sofort eine Rechnung für die Differenz erstellt
-      // und den anteiligen Betrag (verbleibende Tage im aktuellen Abrechnungszeitraum)
-      // unmittelbar einzieht. Beim nächsten normalen Verlängerungstermin zahlt
-      // der User dann den vollen neuen Preis.
+      // always_invoice: Stripe erstellt sofort eine Rechnung für die Differenz
+      // (verbleibende Tage im aktuellen Abrechnungszeitraum). Beim nächsten
+      // Verlängerungstermin zahlt der User den vollen neuen Preis.
       proration_behavior: 'always_invoice',
 
-      // pending_if_incomplete: Wenn die sofortige Zahlung fehlschlägt (z.B. SEPA läuft
-      // noch), bleibt das Abonnement aktiv und die Rechnung offen — kein harter Fehler.
-      payment_behavior: 'pending_if_incomplete',
+      // payment_behavior absichtlich weggelassen: Stripe wählt den richtigen
+      // Default je nach Zahlungsmethode. pending_if_incomplete ist bei SEPA
+      // nicht erlaubt — daher kein fester Wert hier.
 
       // WICHTIG: discounts NICHT mitschicken → Stripe behält alle bestehenden
       // Rabatte (AKTION25, Affiliate-Gutscheine etc.) automatisch bei.
@@ -90,14 +91,25 @@ export async function POST(req: NextRequest) {
     const rootTs = (updated as any).current_period_end
     const currentPeriodEnd = (itemTs ?? rootTs) ? new Date((itemTs ?? rootTs) * 1000) : null
 
-    await db.update(users).set({
+    const updatedUser = await db.update(users).set({
       plan,
       billingInterval: interval,
       subscriptionStatus: updated.status,
       stripeSubscriptionId: updated.id,
       ...(currentPeriodEnd ? { currentPeriodEnd } : {}),
       ...(sub.cancel_at_period_end ? { deactivatedAt: null } : {}),
-    }).where(eq(users.id, user.id))
+    }).where(eq(users.id, user.id)).returning({ email: users.email })
+
+    // Upgrade-Bestätigung per E-Mail (fire-and-forget)
+    const emailAddress = updatedUser[0]?.email ?? user.email
+    if (emailAddress) {
+      sendEmail({
+        to: emailAddress,
+        subject: `Dein Upgrade war erfolgreich – ${plan.charAt(0).toUpperCase() + plan.slice(1)}-Plan · FinestSites`,
+        html: subscriptionConfirmationEmail({ plan, interval }),
+        type: 'subscription_confirmation',
+      }).catch(() => {})
+    }
 
     return NextResponse.json({ success: true, plan, interval })
   } catch (err: any) {
