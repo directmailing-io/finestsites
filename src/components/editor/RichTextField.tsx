@@ -71,7 +71,7 @@ export function RichTextField({
     const current = editor.getHTML()
     const incoming = value || '<p></p>'
     if (current !== incoming && current.replace(/<p><\/p>/g, '') !== incoming.replace(/<p><\/p>/g, '')) {
-      editor.commands.setContent(incoming, false)
+      editor.commands.setContent(incoming, { emitUpdate: false })
     }
     initializedRef.current = true
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -118,10 +118,10 @@ export function RichTextField({
   const applySuggestion = useCallback(() => {
     if (!editor || checkState.status !== 'issues') return
     const suggestedHtml = checkState.suggested_html
-    // emitUpdate=false: prevents onUpdate from firing (which would call onChange a second time).
+    // emitUpdate:false prevents onUpdate from firing (which would call onChange a second time).
     // Then we call onChange exactly once ourselves. This prevents a double-update race
     // condition that breaks the apply on mobile (slow state batching + scroll animation).
-    editor.commands.setContent(suggestedHtml, false)
+    editor.commands.setContent(suggestedHtml, { emitUpdate: false })
     onChange(suggestedHtml)
     setCheckState({ status: 'ok', checkedHash: hashText(suggestedHtml) })
     onComplianceApproved?.(suggestedHtml)
