@@ -53,7 +53,7 @@ export default async function AdminUsersPage() {
     const stripe = getStripe()
     await Promise.allSettled(
       usersWithStripe.map(async u => {
-        const isActive = u.subscriptionStatus === 'active' && u.stripeSubscriptionId
+        const isActive = ['active', 'trialing', 'past_due'].includes(u.subscriptionStatus ?? '') && !!u.stripeSubscriptionId
 
         const [allInvoices, sub] = await Promise.all([
           stripe.invoices.list({ customer: u.stripeCustomerId!, status: 'paid', limit: 100 }),
