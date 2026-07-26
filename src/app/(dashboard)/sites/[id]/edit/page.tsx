@@ -3088,11 +3088,23 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
                     const visible = sectionKeySet.has(field.key)
                     const isOptional = visible && !field.required
                     const isCollapsed = isOptional && collapsedOptionals.has(field.key)
+                    // Partner field: show_when targets team_modus=team and team mode is active
+                    const isPartnerField = visible
+                      && field.show_when?.field === 'team_modus'
+                      && field.show_when?.value === 'team'
+                      && values['team_modus'] === 'team'
                     return (
                       <div key={field.key}
-                        className={visible ? 'bg-white rounded-[20px] p-5' : ''}
+                        className={visible ? 'rounded-[20px] p-5' : ''}
                         style={visible
-                          ? { boxShadow: '0 2px 8px rgba(0,0,0,0.05)', border: '1px solid #F0F0F0' }
+                          ? isPartnerField
+                            ? {
+                                background: '#F0FDF4',
+                                border: '1.5px solid #A7F3D0',
+                                boxShadow: '0 2px 8px rgba(16,185,129,0.06)',
+                                borderLeft: '4px solid #10B981',
+                              }
+                            : { background: '#fff', boxShadow: '0 2px 8px rgba(0,0,0,0.05)', border: '1px solid #F0F0F0' }
                           : { display: 'none' }}>
                         {visible && (
                           <div className={isCollapsed ? '' : 'mb-3'}>
@@ -3102,7 +3114,12 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
                                   ? field.label_when.label
                                   : field.label}
                                 {field.required && <span className="text-red-500">*</span>}
-                                {isOptional && (
+                                {isPartnerField ? (
+                                  <span className="text-[11px] font-semibold px-1.5 py-0.5 rounded-full"
+                                    style={{ background: '#D1FAE5', color: '#059669' }}>
+                                    Person 2
+                                  </span>
+                                ) : isOptional && (
                                   <span className="text-[11px] font-medium px-1.5 py-0.5 rounded-full"
                                     style={{ background: '#F3F4F6', color: '#9CA3AF', fontWeight: 500 }}>
                                     Optional
