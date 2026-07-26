@@ -49,6 +49,7 @@ interface FieldSchema {
   toggle_on_value?: string
   toggle_off_value?: string
   show_when?: { field: string; value: string | string[] }
+  label_when?: { field: string; value: string; label: string }
   // loop fields
   sub_fields?: LoopSubField[]
   min_items?: number
@@ -3097,7 +3098,9 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
                           <div className={isCollapsed ? '' : 'mb-3'}>
                             <div className="flex items-start justify-between gap-2">
                               <label className="text-base font-bold text-gray-900 flex items-center flex-wrap gap-x-1.5 gap-y-0.5">
-                                {field.label}
+                                {field.label_when && values[field.label_when.field] === field.label_when.value
+                                  ? field.label_when.label
+                                  : field.label}
                                 {field.required && <span className="text-red-500">*</span>}
                                 {isOptional && (
                                   <span className="text-[11px] font-medium px-1.5 py-0.5 rounded-full"
