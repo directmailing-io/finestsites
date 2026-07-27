@@ -864,6 +864,14 @@ const LEGAL_DESIGNS: Record<string, LegalDesign> = {
     fontUrl: 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap',
     logoHtml: 'Women<span style="color:#e11d48">Plus</span>', navHeight: 56,
   },
+  'wellpreneur.io': {
+    accent: '#2563EB', bg: '#ffffff', text: '#0A1120', muted: '#374151',
+    faint: '#9CA3AF', divider: '#E5E7EB', boxBg: '#EFF6FF', boxBorder: '#BFDBFE',
+    navBg: 'rgba(255,255,255,0.95)',
+    font: "'Manrope',system-ui,-apple-system,sans-serif",
+    fontUrl: 'https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap',
+    logoHtml: 'Well<span style="color:#2563EB">preneur</span>', navHeight: 56,
+  },
 }
 
 function legalStyles(d: LegalDesign): string {

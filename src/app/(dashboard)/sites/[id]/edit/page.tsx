@@ -729,9 +729,8 @@ function CardSelectField({ field, value, onChange, narrow, onMobileSelect }: {
     )
   }
 
-  // Compact mode: when no option has an actual image preview, render slim
-  // button-like chips instead of the large cards.
-  const isCompact = opts.every(o => o.card_type !== 'image' || !o.image_url)
+  // Compact mode: when no option has an actual image preview AND no color mockup, render slim chips.
+  const isCompact = opts.every(o => (o.card_type !== 'image' || !o.image_url) && o.card_type !== 'color')
 
   const gridCls = isCompact ? (
     narrow ? 'grid-cols-1' :
