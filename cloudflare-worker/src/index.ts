@@ -715,12 +715,39 @@ export default {
 
       if (!isHtml && assetPath) {
         const r2Key = `${meta.r2BasePath}/${assetPath}`
-        const asset = await env.R2_BUCKET.get(r2Key)
-        if (asset) {
-          const body = await asset.arrayBuffer()
-          return new Response(body, {
+        const rangeHeader = request.headers.get('Range')
+
+        if (rangeHeader && rangeHeader.startsWith('bytes=')) {
+          // Range request — required for MP4 video seeking in browsers
+          const head = await env.R2_BUCKET.head(r2Key)
+          if (!head) return new Response('Asset not found', { status: 404 })
+          const size = head.size
+          const [startStr, endStr] = rangeHeader.slice(6).split('-')
+          const start = Math.max(0, parseInt(startStr, 10) || 0)
+          const end = Math.min(size - 1, endStr ? parseInt(endStr, 10) : size - 1)
+          const length = end - start + 1
+          const rangeAsset = await env.R2_BUCKET.get(r2Key, { range: { offset: start, length } })
+          if (!rangeAsset) return new Response('Asset not found', { status: 404 })
+          return new Response(rangeAsset.body, {
+            status: 206,
             headers: {
               'Content-Type': ct(assetPath),
+              'Content-Range': `bytes ${start}-${end}/${size}`,
+              'Content-Length': String(length),
+              'Accept-Ranges': 'bytes',
+              'Cache-Control': 'public, max-age=31536000, immutable',
+              'Access-Control-Allow-Origin': '*',
+            },
+          })
+        }
+
+        const asset = await env.R2_BUCKET.get(r2Key)
+        if (asset) {
+          return new Response(asset.body, {
+            headers: {
+              'Content-Type': ct(assetPath),
+              'Content-Length': String(asset.size),
+              'Accept-Ranges': 'bytes',
               'Cache-Control': 'public, max-age=31536000, immutable',
               'Access-Control-Allow-Origin': '*',
             },
