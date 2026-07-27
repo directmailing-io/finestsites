@@ -2300,9 +2300,15 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
     setHasChanges(true)
 
     // ── Section-toggle fast path ─────────────────────────────────────────
-    // Convention: any field starting with `zeige_` is a section toggle.
+    // Triggers for fields starting with `zeige_` OR with display_mode: 'section_toggle'.
     // Try to animate the change inside the iframe WITHOUT reloading it.
-    if (/^zeige_/.test(key)) {
+    const fieldDef = fields.find(f => f.key === key)
+    const isSectionToggle = /^zeige_/.test(key) || fieldDef?.display_mode === 'section_toggle'
+    if (isSectionToggle) {
+      // Determine the "on" value: prefer card_option with image_url, then toggle_on_value, then 'ja'
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const onValue = fieldDef?.card_options?.find((o: any) => o.image_url)?.value ?? (fieldDef as any)?.toggle_on_value ?? 'ja'
+      const mode: 'on' | 'off' = val === onValue ? 'on' : 'off'
       const iframe = livePreviewIframeRef.current
       let sectionInDom = false
       try {
@@ -2312,13 +2318,13 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
       if (sectionInDom) {
         // Section currently rendered → live-animate, no reload
         iframe?.contentWindow?.postMessage(
-          { type: 'finestsites:toggleSection', section: key, mode: val === 'ja' ? 'on' : 'off' },
+          { type: 'finestsites:toggleSection', section: key, mode },
           '*'
         )
         return
       }
       // Section not in DOM → need a reload; queue scroll for after-load
-      setPendingScrollSection({ key, mode: val === 'ja' ? 'on' : 'off' })
+      setPendingScrollSection({ key, mode })
       updatePreview(next)
       return
     }
@@ -2330,7 +2336,6 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
     // re-apply those, so an in-place update would leave a half-styled DOM
     // (the bug where switching theme leaves the preview black). For these
     // we skip the live update and reload directly, with scroll preserved.
-    const fieldDef = fields.find(f => f.key === key)
     const structural = fieldDef && ['card_select', 'color', 'toggle', 'range', 'image'].includes(fieldDef.type)
     if (structural) {
       try {
