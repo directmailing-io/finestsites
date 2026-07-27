@@ -109,7 +109,14 @@ function getProfilePrefill(
         return null
       }
       const val = profile[profileField]
-      return val?.trim() || null
+      if (!val?.trim()) return null
+      // For social media URL fields, extract handle from full URL so templates
+      // that store just the handle (e.g. "deinname") get the right value.
+      // Profile DB stores full URLs like "https://instagram.com/daniel.kurzeja".
+      if (fieldType === 'url' && ['instagram', 'facebook', 'linkedin', 'tiktok', 'youtube'].includes(profileField)) {
+        return val.trim().replace(/^https?:\/\/(www\.)?(instagram|tiktok|facebook|linkedin|youtube)\.com\/(in\/|@)?/, '').replace(/\/$/, '') || null
+      }
+      return val.trim() || null
     }
   }
   return null
@@ -853,8 +860,35 @@ function CardSelectField({ field, value, onChange, narrow, onMobileSelect }: {
                 </svg>
               </div>
             ) : opt.card_type === 'color' && opt.color ? (
-              <div className="w-full flex items-center justify-center"
-                style={{ aspectRatio: '4 / 3', background: opt.color }} />
+              <div className="w-full overflow-hidden relative"
+                style={{ aspectRatio: '4 / 3', background: opt.color }}>
+                {/* Mini website mockup — nav skeleton */}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '9px 12px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                    <div style={{ width: 14, height: 14, borderRadius: '50%', background: 'rgba(255,255,255,0.55)' }} />
+                    <div style={{ width: 38, height: 5, borderRadius: 3, background: 'rgba(255,255,255,0.45)' }} />
+                  </div>
+                  <div style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
+                    <div style={{ width: 20, height: 4, borderRadius: 3, background: 'rgba(255,255,255,0.28)' }} />
+                    <div style={{ width: 20, height: 4, borderRadius: 3, background: 'rgba(255,255,255,0.28)' }} />
+                    <div style={{ width: 28, height: 18, borderRadius: 999, background: 'rgba(255,255,255,0.88)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <div style={{ width: 14, height: 3, borderRadius: 2, background: opt.color }} />
+                    </div>
+                  </div>
+                </div>
+                {/* Hero text skeleton */}
+                <div style={{ padding: '6px 12px 10px' }}>
+                  <div style={{ width: '78%', height: 7, borderRadius: 4, background: 'rgba(255,255,255,0.92)', marginBottom: 5 }} />
+                  <div style={{ width: '58%', height: 7, borderRadius: 4, background: 'rgba(255,255,255,0.7)', marginBottom: 5 }} />
+                  <div style={{ width: '44%', height: 4, borderRadius: 3, background: 'rgba(255,255,255,0.38)', marginBottom: 10 }} />
+                  <div style={{ display: 'inline-flex', padding: '5px 14px', borderRadius: 999, background: 'rgba(255,255,255,0.9)' }}>
+                    <div style={{ width: 36, height: 4, borderRadius: 2, background: opt.color }} />
+                  </div>
+                </div>
+                {/* Decorative orbs */}
+                <div style={{ position: 'absolute', bottom: -16, right: -16, width: 72, height: 72, borderRadius: '50%', background: 'rgba(255,255,255,0.12)' }} />
+                <div style={{ position: 'absolute', top: '50%', right: '18%', width: 40, height: 40, borderRadius: '50%', background: 'rgba(255,255,255,0.07)' }} />
+              </div>
             ) : (
               <div className="w-full flex items-center justify-center"
                 style={{ aspectRatio: '4 / 3', background: '#F8FAFC' }}>
