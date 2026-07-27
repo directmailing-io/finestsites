@@ -61,3 +61,9 @@ id = "d59a4cba067147dc8db48fdd7b4d39e3"
 
 [vars]
 APP_URL = "https://app.finestsites.io"
+
+# Subdomain traffic: username.wellpreneur.io
+# Zone: 7d59763ba878ba1f36f05787fb4c3ee4
+[[routes]]
+pattern = "*.wellpreneur.io/*"
+zone_id = "7d59763ba878ba1f36f05787fb4c3ee4"
