@@ -656,8 +656,6 @@ export default {
       // Rendered inline from Worker code — zero R2 files needed.
       // Adding a new template = one line in LEGAL_DESIGNS. Legal text change = one wrangler deploy.
       if (pathname === '/impressum' || pathname === '/datenschutz') {
-        const design = LEGAL_DESIGNS[domain] ?? DEFAULT_LEGAL_DESIGN
-        const legalHtml = pathname === '/impressum' ? renderImpressum(design) : renderDatenschutz(design)
         const pageDataRes = await fetch(
           `${env.APP_URL}/api/worker/site-data?siteId=${meta.siteId}`,
           { headers: { 'x-worker-secret': env.WORKER_SECRET } }
@@ -667,6 +665,24 @@ export default {
           : []
         const pageDataMap: Data = {}
         for (const r of pageRows) pageDataMap[r.fieldKey] = r.fieldValue ?? ''
+        // Make impressum/datenschutz theme-aware based on site's farbthema placeholder
+        const baseDesign = LEGAL_DESIGNS[domain] ?? DEFAULT_LEGAL_DESIGN
+        const farbthema = (pageDataMap['farbthema'] as string) || 'blau'
+        const themeAccents: Record<string, { accent: string; boxBg: string; boxBorder: string; logo: string }> = {
+          blau:    { accent: '#2563EB', boxBg: '#EFF6FF', boxBorder: '#BFDBFE', logo: '#2563EB' },
+          gruen:   { accent: '#1F5138', boxBg: '#E8F0EB', boxBorder: '#A5C4B0', logo: '#4A8564' },
+          orange:  { accent: '#C2410C', boxBg: '#FFF1E0', boxBorder: '#FDBA74', logo: '#F97316' },
+          skyblau: { accent: '#0284C7', boxBg: '#E0F2FE', boxBorder: '#BAE6FD', logo: '#38BDF8' },
+        }
+        const ta = themeAccents[farbthema] ?? themeAccents.blau
+        const design = {
+          ...baseDesign,
+          accent: ta.accent,
+          boxBg: ta.boxBg,
+          boxBorder: ta.boxBorder,
+          logoHtml: baseDesign.logoHtml.replace(/#[0-9A-Fa-f]{6}/g, ta.logo),
+        }
+        const legalHtml = pathname === '/impressum' ? renderImpressum(design) : renderDatenschutz(design)
         return new Response(render(legalHtml, pageDataMap), {
           headers: {
             'Content-Type': 'text/html; charset=utf-8',
