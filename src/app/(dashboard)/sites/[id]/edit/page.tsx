@@ -731,12 +731,16 @@ function CardSelectField({ field, value, onChange, narrow, onMobileSelect }: {
 
   // Compact mode: when no option has an actual image preview AND no color mockup, render slim chips.
   const isCompact = opts.every(o => (o.card_type !== 'image' || !o.image_url) && o.card_type !== 'color')
+  const isAllColor = opts.every(o => o.card_type === 'color')
 
   const gridCls = isCompact ? (
     narrow ? 'grid-cols-1' :
     opts.length <= 2 ? 'grid-cols-2' :
     opts.length === 3 ? 'grid-cols-1 sm:grid-cols-3' :
     'grid-cols-1 sm:grid-cols-2'
+  ) : isAllColor ? (
+    // Color theme cards: always 2 columns for clean 2×2 look
+    'grid-cols-2'
   ) : (
     // Image cards: always at least 2 columns on mobile so previews aren't huge
     narrow ? 'grid-cols-1' :
@@ -859,34 +863,14 @@ function CardSelectField({ field, value, onChange, narrow, onMobileSelect }: {
                 </svg>
               </div>
             ) : opt.card_type === 'color' && opt.color ? (
-              <div className="w-full overflow-hidden relative"
-                style={{ aspectRatio: '4 / 3', background: opt.color }}>
-                {/* Mini website mockup — nav skeleton */}
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '9px 12px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                    <div style={{ width: 14, height: 14, borderRadius: '50%', background: 'rgba(255,255,255,0.55)' }} />
-                    <div style={{ width: 38, height: 5, borderRadius: 3, background: 'rgba(255,255,255,0.45)' }} />
-                  </div>
-                  <div style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
-                    <div style={{ width: 20, height: 4, borderRadius: 3, background: 'rgba(255,255,255,0.28)' }} />
-                    <div style={{ width: 20, height: 4, borderRadius: 3, background: 'rgba(255,255,255,0.28)' }} />
-                    <div style={{ width: 28, height: 18, borderRadius: 999, background: 'rgba(255,255,255,0.88)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <div style={{ width: 14, height: 3, borderRadius: 2, background: opt.color }} />
-                    </div>
-                  </div>
-                </div>
-                {/* Hero text skeleton */}
-                <div style={{ padding: '6px 12px 10px' }}>
-                  <div style={{ width: '78%', height: 7, borderRadius: 4, background: 'rgba(255,255,255,0.92)', marginBottom: 5 }} />
-                  <div style={{ width: '58%', height: 7, borderRadius: 4, background: 'rgba(255,255,255,0.7)', marginBottom: 5 }} />
-                  <div style={{ width: '44%', height: 4, borderRadius: 3, background: 'rgba(255,255,255,0.38)', marginBottom: 10 }} />
-                  <div style={{ display: 'inline-flex', padding: '5px 14px', borderRadius: 999, background: 'rgba(255,255,255,0.9)' }}>
-                    <div style={{ width: 36, height: 4, borderRadius: 2, background: opt.color }} />
-                  </div>
-                </div>
-                {/* Decorative orbs */}
-                <div style={{ position: 'absolute', bottom: -16, right: -16, width: 72, height: 72, borderRadius: '50%', background: 'rgba(255,255,255,0.12)' }} />
-                <div style={{ position: 'absolute', top: '50%', right: '18%', width: 40, height: 40, borderRadius: '50%', background: 'rgba(255,255,255,0.07)' }} />
+              /* Color strip — 1/3 of card height; label+description take the remaining 2/3 */
+              <div className="w-full flex-shrink-0 relative overflow-hidden"
+                style={{ height: 72, background: opt.color }}>
+                <div style={{
+                  position: 'absolute', inset: 0,
+                  background: 'linear-gradient(135deg, rgba(255,255,255,0.20) 0%, rgba(255,255,255,0) 55%, rgba(0,0,0,0.10) 100%)',
+                }} />
+                <div style={{ position: 'absolute', bottom: -24, right: -24, width: 88, height: 88, borderRadius: '50%', background: 'rgba(255,255,255,0.13)' }} />
               </div>
             ) : (
               <div className="w-full flex items-center justify-center"
