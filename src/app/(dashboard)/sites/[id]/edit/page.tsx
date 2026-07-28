@@ -50,6 +50,7 @@ interface FieldSchema {
   toggle_off_value?: string
   show_when?: { field: string; value: string | string[] }
   label_when?: { field: string; value: string; label: string }
+  color_tag?: string
   // loop fields
   sub_fields?: LoopSubField[]
   min_items?: number
@@ -3127,16 +3128,27 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
                       && field.show_when?.field === 'team_modus'
                       && field.show_when?.value === 'team'
                       && values['team_modus'] === 'team'
+                    // color_tag: person1 / person2 — highlight when duo/team mode active
+                    const duoActive = values['partner_modus'] === 'duo' || values['team_modus'] === 'team'
+                    const isPerson1Tag = visible && duoActive && field.color_tag === 'person1'
+                    const isPerson2Tag = visible && duoActive && field.color_tag === 'person2'
                     return (
                       <div key={field.key}
                         className={visible ? 'rounded-[20px] p-5' : ''}
                         style={visible
-                          ? isPartnerField
+                          ? isPartnerField || isPerson2Tag
                             ? {
                                 background: '#F0FDF4',
                                 border: '1.5px solid #A7F3D0',
                                 boxShadow: '0 2px 8px rgba(16,185,129,0.06)',
                                 borderLeft: '4px solid #10B981',
+                              }
+                            : isPerson1Tag
+                            ? {
+                                background: '#EFF6FF',
+                                border: '1.5px solid #BFDBFE',
+                                boxShadow: '0 2px 8px rgba(59,130,246,0.06)',
+                                borderLeft: '4px solid #3B82F6',
                               }
                             : { background: '#fff', boxShadow: '0 2px 8px rgba(0,0,0,0.05)', border: '1px solid #F0F0F0' }
                           : { display: 'none' }}>
@@ -3148,10 +3160,15 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
                                   ? field.label_when.label
                                   : field.label}
                                 {field.required && <span className="text-red-500">*</span>}
-                                {isPartnerField ? (
+                                {(isPartnerField || isPerson2Tag) ? (
                                   <span className="text-[11px] font-semibold px-1.5 py-0.5 rounded-full"
                                     style={{ background: '#D1FAE5', color: '#059669' }}>
                                     Person 2
+                                  </span>
+                                ) : isPerson1Tag ? (
+                                  <span className="text-[11px] font-semibold px-1.5 py-0.5 rounded-full"
+                                    style={{ background: '#DBEAFE', color: '#1D4ED8' }}>
+                                    Person 1
                                   </span>
                                 ) : isOptional && (
                                   <span className="text-[11px] font-medium px-1.5 py-0.5 rounded-full"
