@@ -1017,11 +1017,11 @@ function renderImpressum(d: LegalDesign): string {
 
 <section>
 <h2>Nutzergenerierte Inhalte</h2>
-<p>Diese Website wird im Rahmen des FinestSites-Dienstleistungsangebots f\u00FCr folgende Person betrieben:</p>
+{{#unless partner_modus=duo}}<p>Diese Website wird im Rahmen des FinestSites-Dienstleistungsangebots f\u00FCr folgende Person betrieben:</p>{{/unless}}{{#if partner_modus=duo}}<p>Diese Website wird im Rahmen des FinestSites-Dienstleistungsangebots f\u00FCr folgende Personen betrieben:</p>{{/if}}
 <div class="highlight-box">
-<p><strong>{{user_display_name}}</strong></p>
+{{#unless partner_modus=duo}}<p><strong>{{vorname}} {{nachname}}</strong></p>{{/unless}}{{#if partner_modus=duo}}<p><strong>{{vorname}} {{nachname}} &amp; {{vorname2}} {{nachname2}}</strong></p>{{/if}}
 </div>
-<p>F\u00FCr eigene nutzergenerierte Inhalte dieser Person &ndash; insbesondere pers\u00F6nliche Erfahrungsberichte, Fotos und selbst hochgeladene Medien &ndash; ist {{user_display_name}} gem\u00E4\u00DF \u00A7 7 Abs. 1 TMG selbst verantwortlich. FinestSites ist nicht verpflichtet, diese Inhalte vorab zu pr\u00FCfen.</p>
+{{#unless partner_modus=duo}}<p>F\u00FCr eigene nutzergenerierte Inhalte dieser Person &ndash; insbesondere pers\u00F6nliche Erfahrungsberichte, Fotos und selbst hochgeladene Medien &ndash; ist {{vorname}} {{nachname}} gem\u00E4\u00DF \u00A7 7 Abs. 1 TMG selbst verantwortlich. FinestSites ist nicht verpflichtet, diese Inhalte vorab zu pr\u00FCfen.</p>{{/unless}}{{#if partner_modus=duo}}<p>F\u00FCr eigene nutzergenerierte Inhalte dieser Personen &ndash; insbesondere pers\u00F6nliche Erfahrungsberichte, Fotos und selbst hochgeladene Medien &ndash; sind {{vorname}} {{nachname}} und {{vorname2}} {{nachname2}} gem\u00E4\u00DF \u00A7 7 Abs. 1 TMG selbst verantwortlich. FinestSites ist nicht verpflichtet, diese Inhalte vorab zu pr\u00FCfen.</p>{{/if}}
 </section>
 
 <hr class="divider">
