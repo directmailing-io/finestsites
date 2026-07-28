@@ -82,9 +82,22 @@ export function isConfigured(): boolean {
 }
 
 /**
+ * Look up an existing Custom Hostname by the hostname string (search by filter).
+ */
+export async function findCustomHostnameByName(hostname: string): Promise<CfCustomHostname | null> {
+  const res = await fetch(`${cfBase()}?hostname=${encodeURIComponent(hostname)}`, { headers: headers() })
+  const data = await res.json() as { success: boolean; result: CfCustomHostname[]; errors: { message: string }[] }
+  if (!data.success) return null
+  return data.result?.[0] ?? null
+}
+
+/**
  * Create a Custom Hostname for a user-provided domain (e.g. www.example.com).
  * Uses HTTP validation — once the user sets the CNAME, Cloudflare validates
  * and issues the SSL certificate automatically (no TXT record needed).
+ *
+ * If CF already has this hostname registered (e.g. from a previous failed attempt),
+ * we look it up and return it rather than failing with a "Duplicate" error.
  */
 export async function createUserCustomHostname(hostname: string): Promise<CfCustomHostname> {
   const res = await fetch(cfBase(), {
@@ -100,7 +113,15 @@ export async function createUserCustomHostname(hostname: string): Promise<CfCust
       },
     }),
   })
-  const data = await res.json() as { success: boolean; result: CfCustomHostname; errors: { message: string }[] }
-  if (!data.success) throw new Error(data.errors?.[0]?.message ?? 'Cloudflare API error')
+  const data = await res.json() as { success: boolean; result: CfCustomHostname; errors: { message: string; code?: number }[] }
+  if (!data.success) {
+    const msg = data.errors?.[0]?.message ?? ''
+    // CF error 45 = "Duplicate custom hostname found" — hostname already exists in this zone
+    if (msg.toLowerCase().includes('duplicate')) {
+      const existing = await findCustomHostnameByName(hostname)
+      if (existing) return existing
+    }
+    throw new Error(msg || 'Cloudflare API error')
+  }
   return data.result
 }
