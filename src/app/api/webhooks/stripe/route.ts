@@ -509,12 +509,15 @@ export async function POST(req: NextRequest) {
       const plan = getPlanByPriceId()[priceId] ?? 'starter'
       const interval = sub.items.data[0]?.price.recurring?.interval === 'year' ? 'yearly' : 'monthly'
 
-      // Check if account was deactivated — need to reactivate
+      // Check if account needs reactivation:
+      // - deactivatedAt set → full cancellation via subscription.deleted
+      // - subscriptionStatus === 'past_due' → payment_failed deactivated sites
+      //   but did NOT set users.deactivatedAt (only userSites.deactivatedAt was set)
       const userBefore = await db.query.users.findFirst({
         where: eq(users.id, userId),
-        columns: { email: true, deactivatedAt: true },
+        columns: { email: true, deactivatedAt: true, subscriptionStatus: true },
       })
-      const wasDeactivated = !!userBefore?.deactivatedAt
+      const wasDeactivated = !!userBefore?.deactivatedAt || userBefore?.subscriptionStatus === 'past_due'
 
       await db.update(users).set({
         subscriptionStatus: sub.status,
