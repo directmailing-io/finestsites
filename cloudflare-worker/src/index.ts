@@ -370,16 +370,20 @@ async function sendSubmissionEmail(
     // Prettify raw field keys when no schema label is available
     const prettyKey = (key: string): string => {
       const map: Record<string, string> = {
-        name: 'Name', email: 'E-Mail', telefon: 'Telefon', phone: 'Telefon',
+        name: 'Name', fullname: 'Name', vorname: 'Vorname', nachname: 'Nachname',
+        email: 'E-Mail', telefon: 'Telefon', phone: 'Telefon',
         nachricht: 'Nachricht', message: 'Nachricht', betreff: 'Betreff',
         subject: 'Betreff', hintergrund: 'Hintergrund', ziele: 'Ziele',
+        interesse: 'Interesse', zeit: 'Verfügbare Zeit',
         kontaktweg: 'Bevorzugter Kontaktweg', laendervorwahl: 'Ländervorwahl',
         vorwahl: 'Ländervorwahl', unternehmen: 'Unternehmen', firma: 'Firma',
         company: 'Unternehmen', website: 'Website', adresse: 'Adresse',
         address: 'Adresse', stadt: 'Stadt', city: 'Stadt', plz: 'PLZ',
         land: 'Land', country: 'Land', kommentar: 'Kommentar', comment: 'Kommentar',
+        anrede: 'Anrede', geburtsdatum: 'Geburtsdatum', geburtstag: 'Geburtstag',
+        beruf: 'Beruf', branche: 'Branche', erfahrung: 'Erfahrung', motivation: 'Motivation',
       }
-      return map[key.toLowerCase()] ?? key.replace(/[_-]+/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
+      return map[key.toLowerCase()] ?? key.replace(/[_-]+/g, ' ')
     }
 
     const entries = Object.entries(formData)
