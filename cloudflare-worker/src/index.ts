@@ -347,7 +347,7 @@ async function sendSubmissionEmail(
       { headers: { 'x-worker-secret': env.WORKER_SECRET } }
     )
     if (!infoRes.ok) return
-    const info = await infoRes.json() as { userEmail: string | null; formSchema: { title: string; fields: Array<{key:string;label:string}>; email_notification_enabled: boolean } | null }
+    const info = await infoRes.json() as { userEmail: string | null; formSchema: { title: string; fields: Array<{key:string;label:string}>; emailNotificationEnabled: boolean } | null }
 
     const accountEmail = info.userEmail
     const schema = info.formSchema
@@ -360,7 +360,7 @@ async function sendSubmissionEmail(
       : accountEmail
     if (!recipient) return
 
-    if (schema && !schema.email_notification_enabled) return
+    if (schema && !schema.emailNotificationEnabled) return
 
     const formTitle = schema?.title ?? formName
     const fieldMap = Object.fromEntries((schema?.fields ?? []).map(f => [f.key, f.label]))
