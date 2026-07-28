@@ -278,6 +278,15 @@ export async function POST(req: NextRequest) {
       const userId = await getUserIdByCustomer(sub.customer as string)
       if (!userId) break
 
+      // Check if account needs reactivation: user was deactivated (subscription_deleted
+      // previously) but the subscription is now active again (e.g. new subscription via
+      // Stripe dashboard, admin action, or fallback when checkout.session.completed missed).
+      const userBeforeUpdate = await db.query.users.findFirst({
+        where: eq(users.id, userId),
+        columns: { deactivatedAt: true, subscriptionStatus: true },
+      })
+      const wasDeactivated = !!userBeforeUpdate?.deactivatedAt
+
       await db.update(users).set({
         plan,
         billingInterval: interval,
@@ -285,7 +294,37 @@ export async function POST(req: NextRequest) {
         stripeSubscriptionId: sub.id,
         currentPeriodEnd: getPeriodEnd(sub),
         cancelAtPeriodEnd: sub.cancel_at_period_end,
+        ...(wasDeactivated && sub.status === 'active' ? { deactivatedAt: null, paymentFailedAt: null } : {}),
       }).where(eq(users.id, userId))
+
+      // Reactivate sites if user was fully deactivated and subscription is now active again
+      if (wasDeactivated && sub.status === 'active') {
+        const sitesToRestore = await db.query.userSites.findMany({
+          where: and(eq(userSites.userId, userId), eq(userSites.status, 'deactivated')),
+          columns: { id: true, customDomain: true },
+          with: {
+            template: { columns: { domain: true } },
+            user: { columns: { username: true } },
+          },
+        })
+        if (sitesToRestore.length > 0) {
+          await db.update(userSites).set({
+            status: 'published',
+            deactivatedAt: null,
+            scheduledDeletionAt: null,
+          }).where(and(eq(userSites.userId, userId), eq(userSites.status, 'deactivated')))
+          for (const site of sitesToRestore) {
+            const username       = (site as any).user?.username as string | null
+            const templateDomain = (site as any).template?.domain as string | null
+            if (username && templateDomain) {
+              await clearSiteMetaKV(username, templateDomain).catch(() => {})
+            }
+            if (site.customDomain && username && templateDomain) {
+              await setCustomDomainKV(site.customDomain, username, templateDomain).catch(() => {})
+            }
+          }
+        }
+      }
 
       // Send cancellation email ONLY when cancel_at_period_end just flipped false → true.
       // Stripe's previous_attributes only includes fields that CHANGED — if absent, the field
