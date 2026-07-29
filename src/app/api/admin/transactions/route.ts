@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import type Stripe from 'stripe'
 import { getStripe } from '@/lib/stripe/client'
 import { db } from '@/lib/db'
-import { users, affiliateCommissions } from '@/lib/db/schema'
-import { eq, isNotNull } from 'drizzle-orm'
+import { users, affiliateCommissions, subscriptionEvents } from '@/lib/db/schema'
+import { eq, isNotNull, and, inArray } from 'drizzle-orm'
 import { getRealUserFromRequest } from '@/lib/auth/server'
 
 async function checkAdmin(req: Request) {
@@ -46,7 +46,7 @@ export async function GET(req: NextRequest) {
   // null in newer Stripe API versions (PaymentIntent-based flow). Charges have an `invoice` field
   // for reliable matching, and their balance_transaction is straightforward to expand at 1 level.
   const dateFilter = gte || lte ? { created: { ...(gte ? { gte } : {}), ...(lte ? { lte } : {}) } } : {}
-  const [invoicesList, chargesList, subscriptionsList, allDbUsers, allCommissions] = await Promise.all([
+  const [invoicesList, chargesList, subscriptionsList, allDbUsers, allCommissions, subEventPmRows] = await Promise.all([
     stripe.invoices.list({
       limit: 100,
       expand: [
@@ -81,7 +81,31 @@ export async function GET(req: NextRequest) {
       status: affiliateCommissions.status,
       referrerId: affiliateCommissions.referrerId,
     }).from(affiliateCommissions),
+    // Payment method stored at payment time via webhook — source of truth for PM display.
+    // Covers subscription_created (first checkout) and subscription_renewed (renewals).
+    db.select({
+      stripeInvoiceId: subscriptionEvents.stripeInvoiceId,
+      metadata: subscriptionEvents.metadata,
+    }).from(subscriptionEvents).where(
+      and(
+        isNotNull(subscriptionEvents.stripeInvoiceId),
+        inArray(subscriptionEvents.eventType, ['subscription_created', 'subscription_renewed']),
+      )
+    ),
   ])
+
+  // ── DB-stored payment methods (captured by webhook at payment time) ──────────────────────────
+  // This is the source of truth. Falls back to charge matching for historical invoices.
+  const pmByInvoiceId = new Map<string, { type: string; last4: string | null }>()
+  for (const ev of subEventPmRows) {
+    const meta = ev.metadata as any
+    if (ev.stripeInvoiceId && meta?.payment_method_type) {
+      pmByInvoiceId.set(ev.stripeInvoiceId, {
+        type: meta.payment_method_type,
+        last4: meta.payment_method_last4 ?? null,
+      })
+    }
+  }
 
   // ── Charge matching: Stripe 2025 API removed invoice/payment_intent cross-refs ──────────────
   // invoice.charge, invoice.payment_intent, charge.invoice, pi.invoice are all gone.
@@ -199,18 +223,23 @@ export async function GET(req: NextRequest) {
       }
 
       // ── Payment method ──────────────────────────────────────────────────
-      // payment_method_details lives on the Charge object (from chargeByInvoiceId map).
-      // Fallback: read payment_method_types from payment_intent (no last4, but gives type).
+      // Priority 1: stored in DB via webhook (captured at exact payment time — always correct).
+      // Priority 2: fuzzy-matched charge (fallback for invoices predating webhook storage).
       let paymentMethod: 'card' | 'sepa_debit' | null = null
       let paymentMethodLast4: string | null = null
-      const pmd = charge?.payment_method_details as any
-      if (pmd?.type === 'card') { paymentMethod = 'card'; paymentMethodLast4 = pmd.card?.last4 || null }
-      else if (pmd?.type === 'sepa_debit') { paymentMethod = 'sepa_debit'; paymentMethodLast4 = pmd.sepa_debit?.last4 || null }
-      else {
-        // Fallback: infer type from charge payment_method field (exists even without pmd)
-        const pmType = (charge as any)?.payment_method_types?.[0]
-        if (pmType === 'card') paymentMethod = 'card'
-        else if (pmType === 'sepa_debit') paymentMethod = 'sepa_debit'
+      const storedPm = pmByInvoiceId.get(inv.id)
+      if (storedPm) {
+        paymentMethod = storedPm.type === 'card' ? 'card' : storedPm.type === 'sepa_debit' ? 'sepa_debit' : null
+        paymentMethodLast4 = storedPm.last4
+      } else {
+        const pmd = charge?.payment_method_details as any
+        if (pmd?.type === 'card') { paymentMethod = 'card'; paymentMethodLast4 = pmd.card?.last4 || null }
+        else if (pmd?.type === 'sepa_debit') { paymentMethod = 'sepa_debit'; paymentMethodLast4 = pmd.sepa_debit?.last4 || null }
+        else {
+          const pmType = (charge as any)?.payment_method_types?.[0]
+          if (pmType === 'card') paymentMethod = 'card'
+          else if (pmType === 'sepa_debit') paymentMethod = 'sepa_debit'
+        }
       }
 
       // ── Plan info ───────────────────────────────────────────────────────

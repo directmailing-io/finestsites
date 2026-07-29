@@ -80,6 +80,28 @@ export async function POST(req: NextRequest) {
     }
   }
 
+  // Extract payment method type + last4 from any Stripe object that carries
+  // a charge or payment_intent ID (invoices, checkout sessions, etc.).
+  // Tries invoice.charge first (older API), then payment_intent → latest_charge.
+  // Never throws — PM info is an optional enhancement, never blocking.
+  async function extractPaymentMethod(inv: any): Promise<{ pmType: string | null; pmLast4: string | null }> {
+    try {
+      const chargeId = typeof inv.charge === 'string' ? inv.charge : null
+      const piId = typeof inv.payment_intent === 'string' ? inv.payment_intent : null
+      if (chargeId) {
+        const ch = await stripe.charges.retrieve(chargeId, { expand: ['payment_method_details'] })
+        const pmd = (ch as any).payment_method_details
+        if (pmd?.type) return { pmType: pmd.type, pmLast4: pmd.card?.last4 || pmd.sepa_debit?.last4 || null }
+      }
+      if (piId) {
+        const pi = await stripe.paymentIntents.retrieve(piId, { expand: ['latest_charge.payment_method_details'] })
+        const pmd = (pi as any).latest_charge?.payment_method_details
+        if (pmd?.type) return { pmType: pmd.type, pmLast4: pmd.card?.last4 || pmd.sepa_debit?.last4 || null }
+      }
+    } catch { /* PM info is optional */ }
+    return { pmType: null, pmLast4: null }
+  }
+
   // ── event handlers ─────────────────────────────────────────────────────────
 
   switch (event.type) {
@@ -95,6 +117,11 @@ export async function POST(req: NextRequest) {
       const interval = subscription.items.data[0]?.price.recurring?.interval === 'year' ? 'yearly' : 'monthly'
       const userId = session.metadata?.supabase_user_id ?? session.metadata?.user_id
       if (!userId) break
+
+      // Invoice ID — needed for payment method tracking and affiliate commission
+      const latestInvoiceId = typeof subscription.latest_invoice === 'string'
+        ? subscription.latest_invoice
+        : (subscription.latest_invoice as any)?.id ?? null
 
       // ── Capture promo code / coupon used in checkout ──────────────────────
       // When allow_promotion_codes:true, the discount is applied to the session/invoice
@@ -208,6 +235,7 @@ export async function POST(req: NextRequest) {
         }
       }
 
+      const { pmType: checkoutPmType, pmLast4: checkoutPmLast4 } = await extractPaymentMethod({ payment_intent: session.payment_intent })
       await logEvent({
         userId,
         eventType: 'subscription_created',
@@ -217,6 +245,8 @@ export async function POST(req: NextRequest) {
         amountCents: session.amount_total ?? planCents(plan as PlanKey, interval as BillingInterval),
         stripeEventId: event.id,
         stripeSubscriptionId: subscription.id,
+        stripeInvoiceId: latestInvoiceId ?? undefined,
+        metadata: { payment_method_type: checkoutPmType, payment_method_last4: checkoutPmLast4 },
       })
 
       // ── Affiliate commission for first payment ────────────────────────────
@@ -232,11 +262,6 @@ export async function POST(req: NextRequest) {
           const grossPaid = session.amount_total ?? 0  // cents, after coupon
           const commissionAmount = Math.floor(grossPaid * 0.10)
           const availableAt = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000)
-
-          // Retrieve the invoice ID from the subscription's latest invoice
-          const latestInvoiceId = typeof subscription.latest_invoice === 'string'
-            ? subscription.latest_invoice
-            : (subscription.latest_invoice as any)?.id ?? null
 
           if (latestInvoiceId) {
             try {
@@ -607,6 +632,7 @@ export async function POST(req: NextRequest) {
         }
       }
 
+      const { pmType: renewedPmType, pmLast4: renewedPmLast4 } = await extractPaymentMethod(invoice)
       await logEvent({
         userId,
         eventType: 'subscription_renewed',
@@ -617,6 +643,7 @@ export async function POST(req: NextRequest) {
         stripeEventId: event.id,
         stripeSubscriptionId: sub.id,
         stripeInvoiceId: invoice.id,
+        metadata: { payment_method_type: renewedPmType, payment_method_last4: renewedPmLast4 },
       })
 
       // ── Affiliate commission ──────────────────────────────────────────────
