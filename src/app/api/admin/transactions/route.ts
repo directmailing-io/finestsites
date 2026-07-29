@@ -101,8 +101,16 @@ export async function GET(req: NextRequest) {
     if (invAmount === 0) return null
     const candidates = (chargesByCustomer.get(custId) || []).filter(c => c.amount === invAmount)
     if (candidates.length === 0) return null
+
+    // For paid invoices, prefer succeeded charges over failed/pending ones.
+    // This handles the case where SEPA failed and the user switched to card:
+    // the SEPA charge was created closer to the invoice, but the card charge actually paid it.
+    const pool = (inv.status === 'paid' && candidates.some(c => c.status === 'succeeded'))
+      ? candidates.filter(c => c.status === 'succeeded')
+      : candidates
+
     // Tie-break by closest creation timestamp (charges are created at invoice payment time)
-    return candidates.reduce((best, c) =>
+    return pool.reduce((best, c) =>
       Math.abs(c.created - inv.created) < Math.abs(best.created - inv.created) ? c : best
     )
   }
