@@ -1822,73 +1822,86 @@ function LoopField({ field, value, onChange, onItemFocus }: {
                         ))}
                       </select>
                     ) : sf.type === 'url' && sf.site_picker ? (
-                      // URL field with "pick from my sites" button
-                      <div style={{ position: 'relative' }} data-site-picker="">
+                      // URL field with "pick from my sites" — clean button below the input
+                      <div data-site-picker="">
                         <input
                           type="url"
                           value={item[sf.key] ?? ''}
                           onChange={e => updateSubField(idx, sf.key, e.target.value)}
                           placeholder={sf.placeholder_text || sf.label}
                           maxLength={sf.max_length ?? undefined}
-                          style={{ ...INPUT, paddingRight: 40 }}
+                          style={INPUT}
                           onFocus={focusBorder} onBlur={blurBorder}
                         />
-                        {/* Picker trigger button */}
+                        {/* "Aus meinen Seiten" trigger */}
                         <button
                           type="button"
-                          title="Von meinen Seiten auswählen"
-                          onClick={() => openPicker(idx)}
+                          onClick={() => pickerForIdx === idx ? setPickerForIdx(null) : openPicker(idx)}
                           style={{
-                            position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)',
-                            width: 26, height: 26, borderRadius: 6, border: 'none',
-                            background: pickerForIdx === idx ? '#1a1a1a' : '#F3F4F6',
-                            color: pickerForIdx === idx ? '#fff' : '#6B7280',
-                            cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                            transition: 'background 150ms, color 150ms', flexShrink: 0,
+                            display: 'inline-flex', alignItems: 'center', gap: 5, marginTop: 7,
+                            padding: '4px 10px 4px 8px', borderRadius: 8,
+                            border: `1.5px solid ${pickerForIdx === idx ? '#1a1a1a' : '#E5E7EB'}`,
+                            background: pickerForIdx === idx ? '#1a1a1a' : '#FAFAFA',
+                            color: pickerForIdx === idx ? '#fff' : '#374151',
+                            cursor: 'pointer', fontSize: 12, fontWeight: 600,
+                            transition: 'all 150ms',
                           }}
-                          onMouseEnter={e => { if (pickerForIdx !== idx) { (e.currentTarget as HTMLElement).style.background = '#E5E7EB'; (e.currentTarget as HTMLElement).style.color = '#111' } }}
-                          onMouseLeave={e => { if (pickerForIdx !== idx) { (e.currentTarget as HTMLElement).style.background = '#F3F4F6'; (e.currentTarget as HTMLElement).style.color = '#6B7280' } }}>
-                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                            <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
-                            <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
+                          onMouseEnter={e => { if (pickerForIdx !== idx) { const el = e.currentTarget as HTMLElement; el.style.borderColor = '#1a1a1a'; el.style.background = '#F3F4F6' } }}
+                          onMouseLeave={e => { if (pickerForIdx !== idx) { const el = e.currentTarget as HTMLElement; el.style.borderColor = '#E5E7EB'; el.style.background = '#FAFAFA' } }}>
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+                            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+                          </svg>
+                          Aus meinen Seiten wählen
+                          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"
+                            style={{ transform: pickerForIdx === idx ? 'rotate(180deg)' : 'none', transition: 'transform 150ms' }}>
+                            <path d="M6 9l6 6 6-6"/>
                           </svg>
                         </button>
-                        {/* Picker popover */}
+                        {/* Picker dropdown */}
                         {pickerForIdx === idx && (
                           <div style={{
-                            position: 'absolute', top: 'calc(100% + 6px)', left: 0, right: 0, zIndex: 50,
-                            background: '#fff', borderRadius: 12, boxShadow: '0 4px 24px rgba(0,0,0,0.13), 0 0 0 1px rgba(0,0,0,0.07)',
+                            marginTop: 6, borderRadius: 12,
+                            border: '1px solid #E5E7EB',
+                            background: '#fff',
+                            boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
                             overflow: 'hidden',
                           }}>
-                            <div style={{ padding: '10px 12px 8px', borderBottom: '1px solid #F3F4F6', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                              <span style={{ fontSize: 12, fontWeight: 600, color: '#6B7280', letterSpacing: '0.04em', textTransform: 'uppercase' }}>
-                                Meine aktiven Seiten
-                              </span>
-                              <button type="button" onClick={() => setPickerForIdx(null)}
-                                style={{ border: 'none', background: 'none', cursor: 'pointer', color: '#9CA3AF', padding: 2, lineHeight: 1 }}>
-                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 6 6 18M6 6l12 12"/></svg>
-                              </button>
-                            </div>
                             {pickerLoading && (
-                              <div style={{ padding: '16px 12px', textAlign: 'center', fontSize: 13, color: '#9CA3AF' }}>Laden…</div>
+                              <div style={{ padding: '14px 14px', fontSize: 13, color: '#9CA3AF' }}>Laden…</div>
                             )}
                             {!pickerLoading && pickerSites !== null && pickerSites.length === 0 && (
-                              <div style={{ padding: '16px 12px', textAlign: 'center', fontSize: 13, color: '#9CA3AF' }}>
-                                Noch keine veröffentlichten Seiten.
+                              <div style={{ padding: '14px 14px', fontSize: 13, color: '#9CA3AF' }}>
+                                Noch keine veröffentlichten Seiten vorhanden.
                               </div>
                             )}
                             {!pickerLoading && pickerSites !== null && pickerSites.map((entry, ei) => (
                               <button key={ei} type="button" onClick={() => pickSite(idx, entry)}
                                 style={{
-                                  display: 'flex', flexDirection: 'column', alignItems: 'flex-start',
-                                  width: '100%', padding: '10px 12px', border: 'none', background: 'none',
-                                  cursor: 'pointer', textAlign: 'left', borderBottom: ei < pickerSites.length - 1 ? '1px solid #F9FAFB' : 'none',
+                                  display: 'flex', alignItems: 'center', gap: 10,
+                                  width: '100%', padding: '10px 14px', border: 'none', background: 'none',
+                                  cursor: 'pointer', textAlign: 'left',
+                                  borderBottom: ei < pickerSites.length - 1 ? '1px solid #F3F4F6' : 'none',
                                   transition: 'background 100ms',
                                 }}
                                 onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = '#F9FAFB'}
                                 onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = 'none'}>
-                                <span style={{ fontSize: 13, fontWeight: 600, color: '#111', lineHeight: 1.3 }}>{entry.label}</span>
-                                <span style={{ fontSize: 11, color: '#9CA3AF', marginTop: 2, fontFamily: 'ui-monospace,monospace' }}>{entry.url}</span>
+                                {/* Colored dot = domain */}
+                                <span style={{
+                                  width: 8, height: 8, borderRadius: '50%', flexShrink: 0,
+                                  background: entry.domain === 'lnko.me' ? '#8B5CF6'
+                                    : entry.domain === 'wellpreneur.io' ? '#3B82F6'
+                                    : entry.domain === 'dailyoptimal.de' ? '#10B981'
+                                    : entry.domain === 'myevnt.io' ? '#F59E0B'
+                                    : '#6B7280',
+                                }} />
+                                <span style={{ flex: 1, minWidth: 0 }}>
+                                  <span style={{ display: 'block', fontSize: 13, fontWeight: 600, color: '#111', lineHeight: 1.3 }}>{entry.label}</span>
+                                  <span style={{ display: 'block', fontSize: 11, color: '#9CA3AF', fontFamily: 'ui-monospace,monospace', marginTop: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{entry.url}</span>
+                                </span>
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#D1D5DB" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+                                  <path d="M5 12h14M12 5l7 7-7 7"/>
+                                </svg>
                               </button>
                             ))}
                           </div>
