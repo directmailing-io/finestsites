@@ -2251,7 +2251,11 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
         lastAutosavedRef.current = JSON.stringify(init)
         setLoading(false)
         const sections = [...new Set(fields.map(f => f.section || 'Allgemein').filter(Boolean))]
-        if (sections.length > 0) setActiveSection(sections[0])
+        if (sections.length > 0) {
+          // Restore the section the user was last on (survives tab-switching to copy links)
+          const saved = sessionStorage.getItem(`fs-section-${id}`)
+          setActiveSection((saved && sections.includes(saved)) ? saved : sections[0])
+        }
       })
       .catch(() => setLoading(false))
   }, [id])
@@ -2523,6 +2527,11 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
       return () => clearTimeout(tid)
     }
   }, [previewHash])
+
+  // Persist active section to sessionStorage so tab-switching (to copy links) doesn't lose position
+  useEffect(() => {
+    if (activeSection) sessionStorage.setItem(`fs-section-${id}`, activeSection)
+  }, [activeSection, id])
 
   // Reset the focused event when the user switches away from the Events section
   useEffect(() => {
