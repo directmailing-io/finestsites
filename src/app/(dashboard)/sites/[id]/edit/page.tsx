@@ -36,6 +36,8 @@ interface LoopSubField {
   sub_fields?: LoopSubField[]
   min_items?: number
   max_items?: number
+  /** When true, shows a "pick from your sites" button next to this URL field */
+  site_picker?: boolean
 }
 
 interface FieldSchema {
@@ -1584,6 +1586,69 @@ function LoopField({ field, value, onChange, onItemFocus }: {
     save(items.map((item, i) => i === itemIdx ? { ...item, [key]: val } : item))
   }
 
+  function updateItem(itemIdx: number, updates: Record<string, string>) {
+    save(items.map((item, i) => i === itemIdx ? { ...item, ...updates } : item))
+  }
+
+  // ── Site picker state (lazy-loaded when user first clicks) ─────────────────
+  type SitePickerEntry = { url: string; label: string; domain: string }
+  const [pickerForIdx, setPickerForIdx] = useState<number | null>(null)
+  const [pickerSites, setPickerSites] = useState<SitePickerEntry[] | null>(null)
+  const [pickerLoading, setPickerLoading] = useState(false)
+  const hasSitePicker = subFields.some(sf => sf.site_picker)
+
+  // Close picker when clicking outside
+  useEffect(() => {
+    if (pickerForIdx === null) return
+    const handler = (e: MouseEvent) => {
+      const target = e.target as HTMLElement
+      if (!target.closest('[data-site-picker]')) setPickerForIdx(null)
+    }
+    document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
+  }, [pickerForIdx])
+
+  async function openPicker(itemIdx: number) {
+    setPickerForIdx(itemIdx)
+    if (pickerSites !== null) return          // already loaded
+    setPickerLoading(true)
+    try {
+      const res = await fetch('/api/sites')
+      const all = await res.json() as Array<{
+        status: string; username: string | null; custom_domain: string | null
+        custom_domain_status: string | null
+        templates: { title: string; domain: string } | null
+      }>
+      const entries: SitePickerEntry[] = []
+      for (const s of all) {
+        if (s.status !== 'published') continue
+        let url = ''
+        if (s.custom_domain && s.custom_domain_status === 'active') {
+          url = `https://${s.custom_domain}`
+        } else if (s.username && s.templates?.domain) {
+          url = `https://${s.username}.${s.templates.domain}`
+        }
+        if (!url) continue
+        entries.push({ url, label: s.templates?.title ?? 'Meine Seite', domain: s.templates?.domain ?? '' })
+      }
+      setPickerSites(entries)
+    } catch { setPickerSites([]) }
+    finally { setPickerLoading(false) }
+  }
+
+  function pickSite(itemIdx: number, entry: SitePickerEntry) {
+    const item = items[itemIdx] ?? {}
+    const updates: Record<string, string> = {}
+    // Fill URL field
+    const urlFieldKey = subFields.find(sf => sf.site_picker)?.key ?? 'url'
+    updates[urlFieldKey] = entry.url
+    // Auto-fill title field if currently empty
+    const titleKey2 = subFields.find(sf => sf.type === 'text' && sf.key !== urlFieldKey)?.key
+    if (titleKey2 && !item[titleKey2]) updates[titleKey2] = entry.label
+    updateItem(itemIdx, updates)
+    setPickerForIdx(null)
+  }
+
   function moveItem(from: number, to: number) {
     if (from === to || from < 0 || to < 0 || from >= items.length || to >= items.length) return
     const next = items.slice()
@@ -1756,6 +1821,79 @@ function LoopField({ field, value, onChange, onItemFocus }: {
                           <option key={opt} value={opt}>{opt}</option>
                         ))}
                       </select>
+                    ) : sf.type === 'url' && sf.site_picker ? (
+                      // URL field with "pick from my sites" button
+                      <div style={{ position: 'relative' }} data-site-picker="">
+                        <input
+                          type="url"
+                          value={item[sf.key] ?? ''}
+                          onChange={e => updateSubField(idx, sf.key, e.target.value)}
+                          placeholder={sf.placeholder_text || sf.label}
+                          maxLength={sf.max_length ?? undefined}
+                          style={{ ...INPUT, paddingRight: 40 }}
+                          onFocus={focusBorder} onBlur={blurBorder}
+                        />
+                        {/* Picker trigger button */}
+                        <button
+                          type="button"
+                          title="Von meinen Seiten auswählen"
+                          onClick={() => openPicker(idx)}
+                          style={{
+                            position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)',
+                            width: 26, height: 26, borderRadius: 6, border: 'none',
+                            background: pickerForIdx === idx ? '#1a1a1a' : '#F3F4F6',
+                            color: pickerForIdx === idx ? '#fff' : '#6B7280',
+                            cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            transition: 'background 150ms, color 150ms', flexShrink: 0,
+                          }}
+                          onMouseEnter={e => { if (pickerForIdx !== idx) { (e.currentTarget as HTMLElement).style.background = '#E5E7EB'; (e.currentTarget as HTMLElement).style.color = '#111' } }}
+                          onMouseLeave={e => { if (pickerForIdx !== idx) { (e.currentTarget as HTMLElement).style.background = '#F3F4F6'; (e.currentTarget as HTMLElement).style.color = '#6B7280' } }}>
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                            <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
+                            <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
+                          </svg>
+                        </button>
+                        {/* Picker popover */}
+                        {pickerForIdx === idx && (
+                          <div style={{
+                            position: 'absolute', top: 'calc(100% + 6px)', left: 0, right: 0, zIndex: 50,
+                            background: '#fff', borderRadius: 12, boxShadow: '0 4px 24px rgba(0,0,0,0.13), 0 0 0 1px rgba(0,0,0,0.07)',
+                            overflow: 'hidden',
+                          }}>
+                            <div style={{ padding: '10px 12px 8px', borderBottom: '1px solid #F3F4F6', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                              <span style={{ fontSize: 12, fontWeight: 600, color: '#6B7280', letterSpacing: '0.04em', textTransform: 'uppercase' }}>
+                                Meine aktiven Seiten
+                              </span>
+                              <button type="button" onClick={() => setPickerForIdx(null)}
+                                style={{ border: 'none', background: 'none', cursor: 'pointer', color: '#9CA3AF', padding: 2, lineHeight: 1 }}>
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 6 6 18M6 6l12 12"/></svg>
+                              </button>
+                            </div>
+                            {pickerLoading && (
+                              <div style={{ padding: '16px 12px', textAlign: 'center', fontSize: 13, color: '#9CA3AF' }}>Laden…</div>
+                            )}
+                            {!pickerLoading && pickerSites !== null && pickerSites.length === 0 && (
+                              <div style={{ padding: '16px 12px', textAlign: 'center', fontSize: 13, color: '#9CA3AF' }}>
+                                Noch keine veröffentlichten Seiten.
+                              </div>
+                            )}
+                            {!pickerLoading && pickerSites !== null && pickerSites.map((entry, ei) => (
+                              <button key={ei} type="button" onClick={() => pickSite(idx, entry)}
+                                style={{
+                                  display: 'flex', flexDirection: 'column', alignItems: 'flex-start',
+                                  width: '100%', padding: '10px 12px', border: 'none', background: 'none',
+                                  cursor: 'pointer', textAlign: 'left', borderBottom: ei < pickerSites.length - 1 ? '1px solid #F9FAFB' : 'none',
+                                  transition: 'background 100ms',
+                                }}
+                                onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = '#F9FAFB'}
+                                onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = 'none'}>
+                                <span style={{ fontSize: 13, fontWeight: 600, color: '#111', lineHeight: 1.3 }}>{entry.label}</span>
+                                <span style={{ fontSize: 11, color: '#9CA3AF', marginTop: 2, fontFamily: 'ui-monospace,monospace' }}>{entry.url}</span>
+                              </button>
+                            ))}
+                          </div>
+                        )}
+                      </div>
                     ) : (
                       <input
                         type={sf.type === 'email' ? 'email' : sf.type === 'url' ? 'url' : 'text'}
