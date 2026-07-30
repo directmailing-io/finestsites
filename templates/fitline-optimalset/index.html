@@ -848,16 +848,20 @@ button { font: inherit; cursor: pointer; border: none; background: none; color: 
   max-width: 920px;
   margin: 0 auto;
   padding: 0 24px;
+  flex-wrap: wrap;
 }
 .owner-avatar {
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  overflow: hidden;
-  background: var(--surface-warm);
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
 }
-.owner-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.owner-avatar > img {
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+  background: var(--surface-warm);
+}
 .owner-text { flex: 1; min-width: 0; }
 .owner-line1 {
   font-size: var(--text-sm);
@@ -872,10 +876,9 @@ button { font: inherit; cursor: pointer; border: none; background: none; color: 
   margin-top: 4px;
 }
 @media (max-width: 600px) {
-  .owner-strip-inner { gap: 14px; }
-  .owner-avatar { width: 48px; height: 48px; }
-  .owner-line1 { font-size: var(--text-xs); }
-  .owner-disclaimer { font-size: var(--text-xxs); }
+  .owner-strip-inner { gap: 12px; }
+  .owner-line1 { font-size: 12px; line-height: 1.45; }
+  .owner-disclaimer { font-size: 10px; }
 }
 
 /* ============ TRUST STRIP ============ */
@@ -1973,7 +1976,7 @@ button { font: inherit; cursor: pointer; border: none; background: none; color: 
 .gmp-bar-row.in-view .gmp-bar-fill { transform: scaleX(1); }
 .gmp-bar-row--gmp .gmp-bar-fill {
   width: 100%;
-  background-image: linear-gradient(90deg, var(--primary-deep), var(--primary), #5BB07A, var(--primary), var(--primary-deep));
+  background-image: linear-gradient(90deg, var(--primary-deep), var(--primary), var(--primary-soft), var(--primary), var(--primary-deep));
   background-size: 50% 100%;
   background-repeat: repeat-x;
   transition-delay: 0.3s;
@@ -2539,7 +2542,7 @@ button { font: inherit; cursor: pointer; border: none; background: none; color: 
   letter-spacing: -0.035em;
   line-height: 0.95;
   color: var(--primary-deep);
-  background: linear-gradient(135deg, var(--primary-deep) 0%, var(--primary) 60%, #5BB07A 100%);
+  background: linear-gradient(135deg, var(--primary-deep) 0%, var(--primary) 60%, rgba(var(--primary-soft-rgb), 0.9) 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -3633,14 +3636,14 @@ html.js .food-card { opacity: 1; }
 
 /* Variante 3 RIGHT: Rhythm-Card (Morgens/Abends getrennt) */
 .replacement-side--rhythm {
-  background: linear-gradient(155deg, #F2FAF3 0%, #DDF0E0 100%);
+  background: linear-gradient(155deg, rgba(var(--primary-soft-rgb), 0.12) 0%, rgba(var(--primary-soft-rgb), 0.28) 100%);
   overflow: visible;
   display: flex;
   flex-direction: column;
 }
 .replacement-side--rhythm .replacement-label {
-  background: rgba(31, 75, 41, 0.08);
-  color: #1F4B29;
+  background: rgba(var(--primary-deep-rgb), 0.08);
+  color: var(--primary-deep);
 }
 .rhythm-card {
   margin-top: 28px;
@@ -3650,7 +3653,7 @@ html.js .food-card { opacity: 1; }
 }
 .rhythm-row {
   background: rgba(255, 255, 255, 0.7);
-  border: 1px solid rgba(31, 75, 41, 0.12);
+  border: 1px solid rgba(var(--primary-deep-rgb), 0.12);
   border-radius: 18px;
   padding: 18px 18px 16px;
   backdrop-filter: blur(10px) saturate(140%);
@@ -3661,7 +3664,7 @@ html.js .food-card { opacity: 1; }
   align-items: center;
   gap: 8px;
   margin-bottom: 12px;
-  color: #1F4B29;
+  color: var(--primary-deep);
 }
 .rhythm-icon { width: 18px; height: 18px; flex-shrink: 0; }
 .rhythm-row--morning .rhythm-icon { color: #C77B2A; }
@@ -3672,7 +3675,7 @@ html.js .food-card { opacity: 1; }
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: #1F4B29;
+  color: var(--primary-deep);
 }
 .rhythm-tags {
   display: flex;
@@ -3685,10 +3688,10 @@ html.js .food-card { opacity: 1; }
   padding: 5px 11px;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.85);
-  border: 1px solid rgba(31, 75, 41, 0.14);
+  border: 1px solid rgba(var(--primary-deep-rgb), 0.14);
   font-family: var(--font-body);
   font-size: 11.5px;
-  color: #1F4B29;
+  color: var(--primary-deep);
   letter-spacing: -0.005em;
   white-space: nowrap;
 }
@@ -3696,7 +3699,7 @@ html.js .food-card { opacity: 1; }
   font-family: var(--font-body);
   font-size: 11px;
   letter-spacing: 0.04em;
-  color: rgba(31, 75, 41, 0.65);
+  color: rgba(var(--primary-deep-rgb), 0.65);
   font-weight: 500;
 }
 .rhythm-divider {
@@ -3708,14 +3711,14 @@ html.js .food-card { opacity: 1; }
 .rhythm-divider-line {
   flex: 1;
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(31, 75, 41, 0.3), transparent);
+  background: linear-gradient(90deg, transparent, rgba(var(--primary-deep-rgb), 0.3), transparent);
 }
 .rhythm-divider-text {
   font-family: var(--font-body);
   font-size: 10.5px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: rgba(31, 75, 41, 0.6);
+  color: rgba(var(--primary-deep-rgb), 0.6);
   white-space: nowrap;
 }
 .rhythm-explain {
@@ -3723,7 +3726,7 @@ html.js .food-card { opacity: 1; }
   font-family: var(--font-body);
   font-size: 13.5px;
   line-height: 1.55;
-  color: rgba(31, 75, 41, 0.85);
+  color: rgba(var(--primary-deep-rgb), 0.85);
   letter-spacing: -0.008em;
   text-align: center;
   max-width: 38ch;
@@ -3874,12 +3877,12 @@ html.js .food-card { opacity: 1; }
   margin-top: 14px;
   padding: 24px 26px;
   border-radius: 18px;
-  background: linear-gradient(135deg, #F2FAF3 0%, #DDF0E0 60%, #C5E6CB 100%);
-  border: 1px solid rgba(31, 75, 41, 0.15);
+  background: linear-gradient(135deg, rgba(var(--primary-soft-rgb), 0.1) 0%, rgba(var(--primary-soft-rgb), 0.3) 60%, rgba(var(--primary-soft-rgb), 0.5) 100%);
+  border: 1px solid rgba(var(--primary-deep-rgb), 0.15);
   overflow: hidden;
   box-shadow:
-    0 14px 32px -10px rgba(31, 75, 41, 0.18),
-    0 4px 12px rgba(31, 75, 41, 0.06);
+    0 14px 32px -10px rgba(var(--primary-deep-rgb), 0.18),
+    0 4px 12px rgba(var(--primary-deep-rgb), 0.06);
 }
 .optimalset-card-glow {
   position: absolute;
@@ -3902,8 +3905,8 @@ html.js .food-card { opacity: 1; }
   display: inline-block;
   padding: 4px 10px;
   border-radius: 999px;
-  background: #1F4B29;
-  color: #F2FAF3;
+  background: var(--primary-deep);
+  color: #FFFFFF;
   font-family: var(--font-body);
   font-size: 11px;
   font-weight: 600;
@@ -3915,13 +3918,13 @@ html.js .food-card { opacity: 1; }
   font-size: 20px;
   font-weight: 600;
   letter-spacing: -0.01em;
-  color: #1F4B29;
+  color: var(--primary-deep);
 }
 .optimalset-card-tagline {
   font-family: var(--font-body);
   font-size: 13.5px;
   line-height: 1.45;
-  color: rgba(31, 75, 41, 0.78);
+  color: rgba(var(--primary-deep-rgb), 0.78);
   letter-spacing: -0.005em;
 }
 .optimalset-card-price {
@@ -3935,24 +3938,24 @@ html.js .food-card { opacity: 1; }
   font-size: 26px;
   font-weight: 600;
   letter-spacing: -0.02em;
-  color: rgba(31, 75, 41, 0.55);
+  color: rgba(var(--primary-deep-rgb), 0.55);
   font-variant-numeric: tabular-nums;
 }
 .optimalset-card-price-value s {
   text-decoration: line-through;
   text-decoration-thickness: 2px;
-  text-decoration-color: rgba(31, 75, 41, 0.6);
+  text-decoration-color: rgba(var(--primary-deep-rgb), 0.6);
 }
 .optimalset-card-price-unit {
   font-family: var(--font-body);
   font-size: 11.5px;
-  color: rgba(31, 75, 41, 0.55);
+  color: rgba(var(--primary-deep-rgb), 0.55);
   letter-spacing: 0.02em;
 }
 .optimalset-card-offer {
   margin-top: 12px;
   padding-top: 14px;
-  border-top: 1px solid rgba(31, 75, 41, 0.15);
+  border-top: 1px solid rgba(var(--primary-deep-rgb), 0.15);
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -3961,7 +3964,7 @@ html.js .food-card { opacity: 1; }
   font-family: var(--font-body);
   font-size: 13px;
   line-height: 1.4;
-  color: #1F4B29;
+  color: var(--primary-deep);
   letter-spacing: -0.005em;
   font-weight: 500;
 }
@@ -3973,20 +3976,20 @@ html.js .food-card { opacity: 1; }
   align-self: flex-start;
   padding: 10px 18px;
   border-radius: 999px;
-  background: #1F4B29;
-  color: #F2FAF3;
+  background: var(--primary-deep);
+  color: #FFFFFF;
   font-family: var(--font-body);
   font-size: 13px;
   font-weight: 600;
   letter-spacing: 0.005em;
   text-decoration: none;
   transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
-  box-shadow: 0 6px 16px -4px rgba(31, 75, 41, 0.35);
+  box-shadow: 0 6px 16px -4px rgba(var(--primary-deep-rgb), 0.35);
 }
 .optimalset-card-cta:hover {
-  background: #163A1F;
+  background: var(--primary-dark-1);
   transform: translateY(-1px);
-  box-shadow: 0 10px 22px -4px rgba(31, 75, 41, 0.4);
+  box-shadow: 0 10px 22px -4px rgba(var(--primary-deep-rgb), 0.4);
 }
 .optimalset-card-cta svg {
   width: 14px;
@@ -4383,7 +4386,7 @@ html.js .food-card { opacity: 1; }
   font-weight: 500;
   letter-spacing: -0.035em;
   line-height: 0.95;
-  background: linear-gradient(135deg, var(--primary-deep) 0%, var(--primary) 50%, #5BB07A 100%);
+  background: linear-gradient(135deg, var(--primary-deep) 0%, var(--primary) 50%, rgba(var(--primary-soft-rgb), 0.9) 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -5239,13 +5242,12 @@ html.js .food-card { opacity: 1; }
 }
 @media (min-width: 900px) { .about { grid-template-columns: 5fr 7fr; gap: 80px; } }
 .about-photo {
-  aspect-ratio: 4/5;
   border-radius: var(--radius-lg);
   overflow: hidden;
   background: var(--surface-warm);
   max-width: 500px;
 }
-.about-photo img { width: 100%; height: 100%; object-fit: cover; }
+.about-photo img { width: 100%; height: auto; display: block; }
 .about-content h2 { margin-bottom: 24px; max-width: 18ch; }
 .about-content p { font-size: var(--text-lead); line-height: 1.7; margin-bottom: 14px; color: var(--text); }
 .about-meta { margin-top: 28px; display: flex; gap: 24px; flex-wrap: wrap; font-size: var(--text-sm); }
@@ -5348,6 +5350,9 @@ html.js .food-card { opacity: 1; }
   margin-bottom: 18px;
   text-align: left;
 }
+/* .form-section p forces white text (dark section bg) — restore readable
+   color inside the light form-card, which would otherwise win on specificity */
+.form-section .form-card .shop-inline-intro { color: var(--text-muted); opacity: 1; }
 .shop-inline-products {
   display: flex;
   flex-direction: column;
@@ -5532,6 +5537,160 @@ html.js .food-card { opacity: 1; }
   .anna-sig-photo { width: 52px; height: 52px; }
   .anna-sig-quote { font-size: 0.82rem; margin-bottom: 8px; }
   .anna-sig-name { font-size: 0.84rem; }
+}
+
+/* ── Team-Modus: Unified Signature Card ── */
+.tsig-card {
+  max-width: 560px;
+  margin: 44px auto 0;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(245,239,227,0.12);
+  border-radius: 18px;
+  padding: 22px 24px 24px;
+  text-align: left;
+}
+.tsig-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.tsig-avatars { display: flex; flex-shrink: 0; }
+.tsig-av {
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(245,239,227,0.2);
+  background: rgba(245,239,227,0.08);
+  display: block;
+}
+.tsig-av-2 { margin-left: -14px; }
+.tsig-av-init {
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.78rem; font-weight: 700;
+  color: rgba(245,239,227,0.55);
+  background: rgba(245,239,227,0.1);
+  overflow: hidden;
+}
+.tsig-role-label {
+  font-size: 0.78rem;
+  color: rgba(245,239,227,0.45);
+}
+.tsig-cols {
+  display: grid;
+  grid-template-columns: 1fr 1px 1fr;
+  gap: 18px;
+  align-items: start;
+}
+.tsig-sep { background: rgba(245,239,227,0.12); align-self: stretch; }
+.tsig-col { display: flex; flex-direction: column; gap: 5px; }
+.tsig-name { font-size: 0.88rem; font-weight: 700; color: #fff; }
+.tsig-quote {
+  font-size: 0.78rem; line-height: 1.5;
+  color: rgba(245,239,227,0.6); font-style: italic; margin: 0 0 4px;
+}
+.tsig-links { display: flex; flex-direction: column; gap: 3px; margin-top: 4px; }
+.tsig-link {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 0.78rem; color: rgba(245,239,227,0.65);
+  text-decoration: none; padding: 4px 8px;
+  border-radius: 8px; background: rgba(245,239,227,0.06);
+  transition: background 0.18s, color 0.18s; align-self: flex-start;
+}
+.tsig-link:hover { background: rgba(86,168,109,0.18); color: #fff; }
+
+/* ── Team-Modus: Avatar-Stacks (Nav, Mobile Menu, Owner Strip) ── */
+/* Nav duo: two overlapping circles, positioned absolutely → reliable across all layouts */
+.nav-av-duo {
+  position: relative;
+  width: 50px;   /* 34px avatar + 16px visible portion of P2 */
+  height: 34px;
+  flex-shrink: 0;
+  align-self: center;
+}
+.nav-av-p1, .nav-av-p2, .nav-av-p2-init {
+  position: absolute;
+  top: 0;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+  overflow: hidden;
+}
+.nav-av-p1 { left: 0; z-index: 2; border: 2px solid rgba(255,255,255,0.35); transition: border-color 0.32s var(--ease); }
+.nav-av-p2, .nav-av-p2-init { left: 18px; z-index: 1; border: 2px solid rgba(255,255,255,0.25); transition: border-color 0.32s var(--ease); }
+.nav-av-p2-init {
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.68rem; font-weight: 700;
+  color: rgba(255,255,255,0.8);
+  background: rgba(255,255,255,0.18);
+  overflow: hidden;
+}
+.nav.scrolled .nav-av-p1 { border-color: rgba(0,0,0,0.12); }
+.nav.scrolled .nav-av-p2, .nav.scrolled .nav-av-p2-init { border-color: rgba(0,0,0,0.08); }
+.nav.scrolled .nav-av-p2-init { color: var(--text-muted); background: var(--surface-warm); }
+/* Mobile menu duo */
+.mm-av-duo {
+  position: relative;
+  width: 62px;   /* 42px + 20px visible portion of P2 */
+  height: 42px;
+  flex-shrink: 0;
+  align-self: center;
+}
+.mm-av-p1, .mm-av-p2, .mm-av-p2-init {
+  position: absolute;
+  top: 0;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+  overflow: hidden;
+}
+.mm-av-p1 { left: 0; z-index: 2; border: 2px solid rgba(86,168,109,0.45); }
+.mm-av-p2, .mm-av-p2-init { left: 22px; z-index: 1; border: 2px solid rgba(86,168,109,0.35); }
+.mm-av-p2-init {
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.72rem; font-weight: 700;
+  color: rgba(86,168,109,0.9);
+  background: var(--surface-warm);
+}
+/* Owner strip duo */
+.ow-av-duo {
+  position: relative;
+  width: 80px;   /* 56px + 24px visible portion of P2 */
+  height: 56px;
+  flex-shrink: 0;
+}
+.ow-av-p1, .ow-av-p2, .ow-av-p2-init {
+  position: absolute;
+  top: 0;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+  overflow: hidden;
+  background: var(--surface-warm);
+}
+.ow-av-p1 { left: 0; z-index: 2; border: 2px solid var(--bg); }
+.ow-av-p2, .ow-av-p2-init { left: 32px; z-index: 1; border: 2px solid var(--bg); }
+.ow-av-p2-init {
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.85rem; font-weight: 700;
+  color: var(--text-muted);
+}
+@media (max-width: 600px) {
+  .owner-avatar > img { width: 48px; height: 48px; }
+  .ow-av-duo { width: 68px; height: 48px; }
+  .ow-av-p1, .ow-av-p2, .ow-av-p2-init { width: 48px; height: 48px; }
+  .ow-av-p2, .ow-av-p2-init { left: 28px; }
+}
+@media (max-width: 520px) {
+  .tsig-card { padding: 18px 16px 20px; }
+  .tsig-cols { grid-template-columns: 1fr; gap: 14px; }
+  .tsig-sep { height: 1px; width: 100%; }
 }
 
 /* Very small (max 380px) */
@@ -5931,8 +6090,8 @@ section.section.reviews {
   .routine-card { min-height: auto; padding: 20px; }
   .routine-card .routine-visual { margin: -20px -20px 18px; }
 
-  /* About-Photo: volle Breite, kürzere Proportion */
-  .about-photo { max-width: 100%; aspect-ratio: 3/2; }
+  /* About-Photo: volle Breite, natürliche Proportion beibehalten */
+  .about-photo { max-width: 100%; }
 
   /* FAQ: angepasst für Tablet */
   .faq-question { font-size: 1rem; padding: 18px 20px; }
@@ -5998,7 +6157,7 @@ section.section.reviews {
   .faq-icon { width: 18px; height: 18px; }
 
   /* About Foto */
-  .about-photo { aspect-ratio: 4/3; }
+  .about-photo { aspect-ratio: unset; }
 
   /* Footer */
   .footer-legal { flex-direction: column; gap: 6px; text-align: center; }
@@ -6133,10 +6292,17 @@ section.section.reviews {
 /* --- Owner Strip --- */
 @media (max-width: 700px) {
   .owner-strip { padding: 20px 0; }
-  .owner-strip-inner { gap: 14px; flex-wrap: nowrap; }
-  .owner-avatar { width: 52px; height: 52px; flex: 0 0 52px; }
+  .owner-strip-inner { gap: 12px; }
   .owner-text { font-size: 13px; }
   .owner-name { font-size: 15px; }
+  .owner-line1 { font-size: 12px; }
+  .owner-disclaimer { font-size: 10px; }
+}
+@media (max-width: 440px) {
+  /* Stack duo above text on tiny screens so the full name always has room */
+  .owner-strip-inner { flex-direction: column; align-items: flex-start; gap: 10px; }
+  .owner-avatar { width: 100%; }
+  .owner-text { font-size: 12px; width: 100%; }
 }
 
 /* --- Routine --- */
@@ -6246,6 +6412,7 @@ section.section.reviews {
   .ntc-headline { font-size: clamp(1.4rem, 7.5vw, 1.8rem); }
   .routine-card { padding: 16px; }
 }
+
 </style>
 </head>
 <body data-style="weiss">
@@ -6253,15 +6420,15 @@ section.section.reviews {
 <header class="nav">
   <div class="container nav-inner">
     <div class="nav-name">
-      <img src="{{profilbild}}" alt="{{vorname}} {{nachname}}" class="nav-avatar">
-      {{vorname}} {{nachname}}
+      {{#unless team_modus=team}}<img src="{{profilbild}}" alt="{{vorname}}" class="nav-avatar">{{/unless}}{{#if team_modus=team}}<div style="display:inline-flex;align-items:center;flex-shrink:0;line-height:0;"><img src="{{profilbild}}" alt="{{vorname}}" style="width:34px;height:34px;min-width:34px;max-width:34px;min-height:34px;max-height:34px;border-radius:50%;object-fit:cover;display:block;flex-shrink:0;border:2px solid rgba(255,255,255,0.35);">{{#if partner_profilbild}}<img src="{{partner_profilbild}}" alt="{{partner_vorname}}" style="width:34px;height:34px;min-width:34px;max-width:34px;min-height:34px;max-height:34px;border-radius:50%;object-fit:cover;display:block;flex-shrink:0;border:2px solid rgba(255,255,255,0.25);margin-left:-10px;">{{/if}}{{#unless partner_profilbild}}<div style="width:34px;height:34px;min-width:34px;max-width:34px;border-radius:50%;flex-shrink:0;border:2px solid rgba(255,255,255,0.25);margin-left:-10px;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:white;letter-spacing:0.5px;">{{partner_vorname}}</div>{{/unless}}</div>{{/if}}
+      {{#unless team_modus=team}}{{vorname}} {{nachname}}{{/unless}}{{#if team_modus=team}}{{vorname}}{{#if partner_vorname}} & {{partner_vorname}}{{/if}}{{/if}}
     </div>
     <nav class="nav-links">
       <a href="#warum">Wofür?</a>
       <a href="#routine">Optimalset</a>
       <a href="#besonders">Die Vorteile <span class="nav-chip">7 Gründe</span></a>
       <a href="#zutaten">Was steckt drinnen?</a>
-      <a href="#about">Über {{vorname}}</a>
+      <a href="#about">{{#unless team_modus=team}}Über {{vorname}}{{/unless}}{{#if team_modus=team}}Über uns{{/if}}</a>
     </nav>
     <a href="#kontakt" class="nav-cta">Lass dich beraten</a>
     <button class="nav-hamburger" id="navHamburger" aria-label="Menü öffnen" aria-expanded="false">
@@ -6278,10 +6445,10 @@ section.section.reviews {
 
   <div class="mm-header">
     <div class="mm-profile">
-      <img src="{{profilbild}}" alt="{{vorname}} {{nachname}}" class="mm-avatar">
+      {{#unless team_modus=team}}<img src="{{profilbild}}" alt="{{vorname}}" class="mm-avatar">{{/unless}}{{#if team_modus=team}}<div style="display:inline-flex;align-items:center;flex-shrink:0;line-height:0;"><img src="{{profilbild}}" alt="{{vorname}}" style="width:42px;height:42px;min-width:42px;max-width:42px;min-height:42px;max-height:42px;border-radius:50%;object-fit:cover;display:block;flex-shrink:0;border:2px solid rgba(86,168,109,0.45);">{{#if partner_profilbild}}<img src="{{partner_profilbild}}" alt="{{partner_vorname}}" style="width:42px;height:42px;min-width:42px;max-width:42px;min-height:42px;max-height:42px;border-radius:50%;object-fit:cover;display:block;flex-shrink:0;border:2px solid rgba(86,168,109,0.35);margin-left:-14px;">{{/if}}{{#unless partner_profilbild}}<div style="width:42px;height:42px;min-width:42px;max-width:42px;border-radius:50%;flex-shrink:0;border:2px solid rgba(86,168,109,0.35);margin-left:-14px;background:rgba(86,168,109,0.15);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#56a86d;letter-spacing:0.5px;">{{partner_vorname}}</div>{{/unless}}</div>{{/if}}
       <div>
-        <span class="mm-name">{{vorname}} {{nachname}}</span>
-        <span class="mm-role">FitLine {{#if geschlecht=weiblich}}Beraterin{{/if}}{{#if geschlecht=maennlich}}Berater{{/if}}</span>
+        <span class="mm-name">{{#unless team_modus=team}}{{vorname}} {{nachname}}{{/unless}}{{#if team_modus=team}}{{vorname}}{{#if partner_vorname}} & {{partner_vorname}}{{/if}}{{/if}}</span>
+        <span class="mm-role">{{#unless team_modus=team}}FitLine {{#if geschlecht=weiblich}}Beraterin{{/if}}{{#if geschlecht=maennlich}}Berater{{/if}}{{/unless}}{{#if team_modus=team}}FitLine Berater/in{{/if}}</span>
       </div>
     </div>
     <button class="mm-close" id="mobileMenuClose" aria-label="Menü schließen">
@@ -6308,7 +6475,7 @@ section.section.reviews {
     </a>
     <div class="mm-divider"></div>
     <a href="#about" class="mm-link">
-      Über {{vorname}}
+      {{#unless team_modus=team}}Über {{vorname}}{{/unless}}{{#if team_modus=team}}Über uns{{/if}}
       <svg class="mm-link-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
     </a>
   </nav>
@@ -6352,7 +6519,7 @@ section.section.reviews {
       <span class="hero-tooltip-chip">Für die Nacht</span>
       <span class="hero-tooltip-chip">Erholung</span>
     </div>
-    <h4>Dein Gute-Nacht-Drink</h4>
+    <h4>Dein Abend-Drink</h4>
     <p>Kurz vor dem Schlafen für eine bessere Regeneration. Mit Magnesium, Kalzium und neun Vitaminen für die Nacht.</p>
   </div>
 
@@ -6394,9 +6561,9 @@ section.section.reviews {
 
   <div class="hero-content">
     <div class="hero-text">
-      <span class="hero-eyebrow">Meine persönliche Empfehlung</span>
+      <span class="hero-eyebrow">{{#unless team_modus=team}}Meine{{/unless}}{{#if team_modus=team}}Unsere{{/if}} persönliche Empfehlung</span>
       <h1>Dein tägliches Nährstoff-System.</h1>
-      <p class="hero-sub">Morgens, tagsüber, abends: vier Produkte, die genau aufeinander abgestimmt sind. Fit und versorgt durch den Alltag, entwickelt von einem Hersteller mit 70+ Patenten, der offiziell für Profisportler aus 40 Ländern produziert. Ich nutze es selbst, jeden Tag.</p>
+      <p class="hero-sub">Morgens, tagsüber, abends: vier Produkte, die genau aufeinander abgestimmt sind. Fit und versorgt durch den Alltag, entwickelt von einem Hersteller mit 70+ Patenten, der offiziell für Profisportler aus 40 Ländern produziert. {{#unless team_modus=team}}Ich nutze es selbst{{/unless}}{{#if team_modus=team}}Wir nutzen es selbst{{/if}}, jeden Tag.</p>
       <div class="hero-ctas">
         <a href="#kontakt" class="btn btn-primary">Kostenlos beraten lassen</a>
         <a href="#warum" class="btn btn-ghost">↓ Wofür brauche ich das?</a>
@@ -6409,11 +6576,11 @@ section.section.reviews {
 <section class="owner-strip">
   <div class="owner-strip-inner">
     <div class="owner-avatar">
-      <img src="{{profilbild}}" alt="{{vorname}} {{nachname}}">
+      {{#unless team_modus=team}}<img src="{{profilbild}}" alt="{{vorname}}">{{/unless}}{{#if team_modus=team}}<div style="display:inline-flex;align-items:center;flex-shrink:0;line-height:0;"><img src="{{profilbild}}" alt="{{vorname}}" style="width:48px;height:48px;min-width:48px;max-width:48px;min-height:48px;max-height:48px;border-radius:50%;object-fit:cover;display:block;flex-shrink:0;border:2px solid rgba(255,255,255,0.6);">{{#if partner_profilbild}}<img src="{{partner_profilbild}}" alt="{{partner_vorname}}" style="width:48px;height:48px;min-width:48px;max-width:48px;min-height:48px;max-height:48px;border-radius:50%;object-fit:cover;display:block;flex-shrink:0;border:2px solid rgba(255,255,255,0.6);margin-left:-16px;">{{/if}}{{#unless partner_profilbild}}<div style="width:48px;height:48px;min-width:48px;max-width:48px;border-radius:50%;flex-shrink:0;border:2px solid rgba(255,255,255,0.6);margin-left:-16px;background:rgba(255,255,255,0.25);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:white;letter-spacing:0.5px;">{{partner_vorname}}</div>{{/unless}}</div>{{/if}}
     </div>
     <div class="owner-text">
-      <div class="owner-line1">Diese Seite wird betrieben von <strong>{{vorname}} {{nachname}}</strong></div>
-      <div class="owner-disclaimer">{{#if geschlecht=weiblich}}Unabhängige Vertriebspartnerin{{/if}}{{#if geschlecht=maennlich}}Unabhängiger Vertriebspartner{{/if}} der PM-International (FitLine®). Diese Seite ist keine offizielle Website der PM-International AG.</div>
+      <div class="owner-line1">Diese Seite wird betrieben von <strong>{{#unless team_modus=team}}{{vorname}} {{nachname}}{{/unless}}{{#if team_modus=team}}{{vorname}} {{nachname}} &amp; {{partner_vorname}} {{partner_nachname}}{{/if}}</strong></div>
+      <div class="owner-disclaimer">{{#unless team_modus=team}}{{#if geschlecht=weiblich}}Unabhängige Vertriebspartnerin{{/if}}{{#if geschlecht=maennlich}}Unabhängiger Vertriebspartner{{/if}}{{/unless}}{{#if team_modus=team}}Unabhängige Vertriebspartner{{/if}} der PM-International (FitLine®). Diese Seite ist keine offizielle Website der PM-International AG.</div>
     </div>
   </div>
 </section>
@@ -6650,14 +6817,14 @@ section.section.reviews {
 
       <article class="routine-card reveal">
         <div class="routine-visual">
-          <img src="assets/prod-gutenacht.webp" alt="Gute-Nacht-Drink" loading="lazy">
+          <img src="assets/prod-gutenacht.webp" alt="Abend-Drink" loading="lazy">
           <span class="routine-time">Abends</span>
         </div>
-        <h3>Gute-Nacht-Drink</h3>
+        <h3>Abend-Drink</h3>
         <span class="routine-name">FitLine Restorate</span>
         <div class="routine-section">
           <span class="routine-label">Wofür</span>
-          <p>Das ideale Gute-Nacht-Getränk für deine Regeneration — mit hochwertigem Calcium, Magnesium, Selen, Kupfer, Mangan, Chrom und Vitamin D, einfach gerührt und getrunken.</p>
+          <p>Das basische Pulver für deinen Abend. Mit Magnesium, Zink, B-Vitaminen und Kräutern.</p>
         </div>
         <div class="routine-section routine-fakten">
           <span class="routine-label">Was drin steckt</span>
@@ -6762,9 +6929,9 @@ section.section.reviews {
 <section id="besonders" class="section">
   <div class="container">
     <div class="section-header center">
-      <span class="section-eyebrow reveal">Warum ich das empfehle</span>
+      <span class="section-eyebrow reveal">{{#unless team_modus=team}}Warum ich das empfehle{{/unless}}{{#if team_modus=team}}Warum wir das empfehlen{{/if}}</span>
       <h2 class="section-headline reveal">Ergebnisse, Qualität, Sicherheit.</h2>
-      <p class="section-intro reveal">Drei Dinge muss ein Produkt erfüllen, damit ich es empfehle: Es muss wirken, sauber hergestellt sein und sicher sein. Hier ist, warum das Optimalset alle drei Punkte erfüllt.</p>
+      <p class="section-intro reveal">Drei Dinge muss ein Produkt erfüllen, {{#unless team_modus=team}}damit ich es empfehle{{/unless}}{{#if team_modus=team}}damit wir es empfehlen{{/if}}: Es muss wirken, sauber hergestellt sein und sicher sein. Hier ist, warum das Optimalset alle drei Punkte erfüllt.</p>
     </div>
 
     <div class="bento-grid">
@@ -7509,7 +7676,7 @@ section.section.reviews {
   <div class="container">
     <div class="section-header center">
       <span class="section-eyebrow reveal">Erfahrungen</span>
-      <h2 class="section-headline reveal">Echte Stimmen aus meinem Umfeld.</h2>
+      <h2 class="section-headline reveal">Echte Stimmen aus {{#unless team_modus=team}}meinem{{/unless}}{{#if team_modus=team}}unserem{{/if}} Umfeld.</h2>
       <p class="section-intro reveal">Drei kurze Videos, drei Sprachnachrichten, drei Momente und drei geschriebene Eindrücke. Tipp auf eine Karte und schau rein.</p>
     </div>
 
@@ -7709,9 +7876,10 @@ section.section.reviews {
       <img src="{{about_bild}}" alt="{{vorname}} {{nachname}}" loading="lazy">
     </div>
     <div class="about-content">
-      <span class="section-eyebrow reveal">Wer ich bin</span>
-      <h2 class="reveal">Hi, ich bin {{vorname}}.</h2>
+      <span class="section-eyebrow reveal">{{#unless team_modus=team}}Wer ich bin{{/unless}}{{#if team_modus=team}}Wer wir sind{{/if}}</span>
+      <h2 class="reveal">{{#unless team_modus=team}}Hi, ich bin {{vorname}}.{{/unless}}{{#if team_modus=team}}Hi, wir sind {{vorname}}{{#if partner_vorname}} & {{partner_vorname}}{{/if}}.{{/if}}</h2>
       <div class="about-me-richtext reveal">{{about_me_html}}</div>
+{{#unless team_modus=team}}
       <div class="about-meta reveal">
 {{#if instagram_url}}
         <a href="{{instagram_url}}" target="_blank" rel="noopener" class="about-meta-item" style="color:inherit;text-decoration:none;display:flex;align-items:center;gap:6px;">
@@ -7738,6 +7906,7 @@ section.section.reviews {
         </a>
 {{/if}}
       </div>
+{{/unless}}
     </div>
   </div>
 </section>
@@ -7748,7 +7917,7 @@ section.section.reviews {
 
     <div class="form-center-header reveal">
       <span class="section-eyebrow" style="display:block;margin-bottom:14px;">Persönliche Beratung</span>
-      <h2>Wie kann ich dir am besten helfen?</h2>
+      <h2>{{#unless team_modus=team}}Wie kann ich dir am besten helfen?{{/unless}}{{#if team_modus=team}}Wie können wir dir am besten helfen?{{/if}}</h2>
     </div>
 
     <!-- Toggle Cards -->
@@ -7922,13 +8091,14 @@ section.section.reviews {
           <span class="shop-inline-hint-icon">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
           </span>
-          <span>Noch unsicher, was du brauchst? <button onclick="switchKontaktTab('beratung')">Lass dich kostenlos beraten</button> — ich helfe dir persönlich.</span>
+          <span>Noch unsicher, was du brauchst? <button onclick="switchKontaktTab('beratung')">Lass dich kostenlos beraten</button> — {{#unless team_modus=team}}ich helfe{{/unless}}{{#if team_modus=team}}wir helfen{{/if}} dir persönlich.</span>
         </div>
 
       </div>
     </div>
 
-    <!-- Anna Signatur -->
+    <!-- Signatur -->
+{{#unless team_modus=team}}
     <div class="anna-sig reveal">
       <div class="anna-sig-photo">
         <img src="{{profilbild}}" alt="{{vorname}} {{nachname}}" loading="lazy">
@@ -7959,6 +8129,67 @@ section.section.reviews {
         </div>
       </div>
     </div>
+{{/unless}}
+{{#if team_modus=team}}
+    <div class="tsig-card reveal">
+      <div class="tsig-header">
+        <div class="tsig-avatars">
+{{#if profilbild}}          <img class="tsig-av tsig-av-1" src="{{profilbild}}" alt="{{vorname}}" loading="lazy">
+{{/if}}{{#unless profilbild}}          <div class="tsig-av tsig-av-1 tsig-av-init">{{vorname}}</div>
+{{/unless}}{{#if partner_profilbild}}          <img class="tsig-av tsig-av-2" src="{{partner_profilbild}}" alt="{{partner_vorname}}" loading="lazy">
+{{/if}}{{#unless partner_profilbild}}          <div class="tsig-av tsig-av-2 tsig-av-init">{{partner_vorname}}</div>
+{{/unless}}        </div>
+        <span class="tsig-role-label">Eure persönlichen Berater</span>
+      </div>
+      <div class="tsig-cols">
+        <div class="tsig-col">
+          <span class="tsig-name">{{vorname}} {{nachname}}</span>
+{{#if eigenes_zitat}}          <p class="tsig-quote">{{eigenes_zitat}}</p>
+{{/if}}          <div class="tsig-links">
+{{#if instagram_url}}            <a href="{{instagram_url}}" target="_blank" rel="noopener" class="tsig-link">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+              Instagram
+            </a>
+{{/if}}{{#if facebook_url}}            <a href="{{facebook_url}}" target="_blank" rel="noopener" class="tsig-link">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+              Facebook
+            </a>
+{{/if}}{{#if whatsapp_number}}            <a href="https://wa.me/{{whatsapp_number}}" target="_blank" rel="noopener" class="tsig-link">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21l1.65-3.8a9 9 0 1 1 3.4 2.9z"/></svg>
+              WhatsApp
+            </a>
+{{/if}}{{#if telefon}}            <a href="tel:{{telefon}}" class="tsig-link">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+              Anrufen
+            </a>
+{{/if}}          </div>
+        </div>
+        <div class="tsig-sep"></div>
+        <div class="tsig-col">
+          <span class="tsig-name">{{partner_vorname}} {{partner_nachname}}</span>
+{{#if partner_zitat}}          <p class="tsig-quote">{{partner_zitat}}</p>
+{{/if}}          <div class="tsig-links">
+{{#if partner_instagram_url}}            <a href="{{partner_instagram_url}}" target="_blank" rel="noopener" class="tsig-link">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+              Instagram
+            </a>
+{{/if}}{{#if partner_facebook_url}}            <a href="{{partner_facebook_url}}" target="_blank" rel="noopener" class="tsig-link">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+              Facebook
+            </a>
+{{/if}}{{#if partner_whatsapp_number}}            <a href="https://wa.me/{{partner_whatsapp_number}}" target="_blank" rel="noopener" class="tsig-link">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21l1.65-3.8a9 9 0 1 1 3.4 2.9z"/></svg>
+              WhatsApp
+            </a>
+{{/if}}{{#if partner_telefon}}            <a href="tel:{{partner_telefon}}" class="tsig-link">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+              Anrufen
+            </a>
+{{/if}}          </div>
+        </div>
+      </div>
+    </div>
+{{/if}}
 
   </div>
 </section>
@@ -7968,8 +8199,8 @@ section.section.reviews {
   <div class="container-narrow">
     <div class="section-header center">
       <span class="section-eyebrow reveal">Häufige Fragen</span>
-      <h2 class="section-headline reveal">Die Fragen, die ich am häufigsten bekomme.</h2>
-      <p class="section-intro reveal" style="max-width:52ch;margin:0 auto;">Ich versuche so direkt und ehrlich wie möglich zu antworten. Wenn noch etwas fehlt, schreib mir einfach.</p>
+      <h2 class="section-headline reveal">{{#unless team_modus=team}}Die Fragen, die ich am häufigsten bekomme.{{/unless}}{{#if team_modus=team}}Die Fragen, die wir am häufigsten bekommen.{{/if}}</h2>
+      <p class="section-intro reveal" style="max-width:52ch;margin:0 auto;">{{#unless team_modus=team}}Ich versuche so direkt und ehrlich wie möglich zu antworten. Wenn noch etwas fehlt, schreib mir einfach.{{/unless}}{{#if team_modus=team}}Wir versuchen so direkt und ehrlich wie möglich zu antworten. Wenn noch etwas fehlt, schreibt uns einfach.{{/if}}</p>
     </div>
 
     <div class="faq-list">
@@ -8082,7 +8313,7 @@ section.section.reviews {
           <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
         </button>
         <div class="faq-answer">
-          <div class="faq-answer-inner">Ja, als {{#if geschlecht=weiblich}}unabhängige Vertriebspartnerin{{/if}}{{#if geschlecht=maennlich}}unabhängiger Vertriebspartner{{/if}} werde ich am Umsatz beteiligt, wenn du über mich bestellst. So funktioniert Direktvertrieb. Mir ist Transparenz dabei wichtig: Mein Ziel ist deine Zufriedenheit, nicht der schnelle Abschluss.</div>
+          <div class="faq-answer-inner">Ja, als {{#unless team_modus=team}}{{#if geschlecht=weiblich}}unabhängige Vertriebspartnerin{{/if}}{{#if geschlecht=maennlich}}unabhängiger Vertriebspartner{{/if}} werde ich{{/unless}}{{#if team_modus=team}}unabhängige Vertriebspartner werden wir{{/if}} am Umsatz beteiligt, wenn du über {{#unless team_modus=team}}mich{{/unless}}{{#if team_modus=team}}uns{{/if}} bestellst. So funktioniert Direktvertrieb. {{#unless team_modus=team}}Mir ist Transparenz dabei wichtig: Mein Ziel ist deine Zufriedenheit{{/unless}}{{#if team_modus=team}}Uns ist Transparenz dabei wichtig: Unser Ziel ist deine Zufriedenheit{{/if}}, nicht der schnelle Abschluss.</div>
         </div>
       </div>
 
@@ -8092,7 +8323,7 @@ section.section.reviews {
           <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
         </button>
         <div class="faq-answer">
-          <div class="faq-answer-inner">Ja, das geht. Was ich anbiete: persönliche Beratung davor, damit du weißt was du bestellst, und {{#if geschlecht=weiblich}}eine Ansprechpartnerin{{/if}}{{#if geschlecht=maennlich}}einen Ansprechpartner{{/if}} danach, falls Fragen auftauchen. Kein Druck.</div>
+          <div class="faq-answer-inner">Ja, das geht. Was {{#unless team_modus=team}}ich anbiete{{/unless}}{{#if team_modus=team}}wir anbieten{{/if}}: persönliche Beratung davor, damit du weißt was du bestellst, und {{#unless team_modus=team}}{{#if geschlecht=weiblich}}eine Ansprechpartnerin{{/if}}{{#if geschlecht=maennlich}}einen Ansprechpartner{{/if}}{{/unless}}{{#if team_modus=team}}Ansprechpartner{{/if}} danach, falls Fragen auftauchen. Kein Druck.</div>
         </div>
       </div>
 
@@ -8364,7 +8595,7 @@ section.section.reviews {
           <li><a href="#routine">So funktioniert das Optimalset</a></li>
           <li><a href="#besonders">Warum ich das empfehle</a></li>
           <li><a href="#zutaten">Was steckt drin?</a></li>
-          <li><a href="#about">Über {{vorname}}</a></li>
+          <li><a href="#about">{{#unless team_modus=team}}Über {{vorname}}{{/unless}}{{#if team_modus=team}}Über uns{{/if}}</a></li>
           <li><a href="#kontakt">Kostenlos beraten lassen</a></li>
         </ul>
       </div>
@@ -8387,14 +8618,14 @@ section.section.reviews {
 
     <div class="footer-disclaimer">
       <strong>Wichtige Hinweise</strong>
-      <p>{{#if geschlecht=weiblich}}Unabhängige Vertriebspartnerin{{/if}}{{#if geschlecht=maennlich}}Unabhängiger Vertriebspartner{{/if}} der PM-International (FitLine®). Diese Seite ist keine offizielle Website der PM-International AG.</p>
+      <p>{{#unless team_modus=team}}{{#if geschlecht=weiblich}}Unabhängige Vertriebspartnerin{{/if}}{{#if geschlecht=maennlich}}Unabhängiger Vertriebspartner{{/if}}{{/unless}}{{#if team_modus=team}}Unabhängige Vertriebspartner{{/if}} der PM-International (FitLine®). Diese Seite ist keine offizielle Website der PM-International AG.</p>
       <p>Alle Produkte sind Nahrungsergänzungsmittel und keine Arzneimittel. Sie können Krankheiten weder heilen, lindern noch verhindern. Bei gesundheitlichen Beschwerden wenden Sie sich bitte an einen Arzt oder Apotheker.</p>
       <p>Alle Nährwertangaben basieren auf zugelassenen EU-Health-Claims. Individuelle Ergebnisse können variieren.</p>
       <p>FitLine® ist eine eingetragene Marke der PM-International AG.</p>
     </div>
 
     <div class="footer-legal">
-      <span>© 2026 {{vorname}} {{nachname}}</span>
+      <span>© 2026 {{#unless team_modus=team}}{{vorname}} {{nachname}}{{/unless}}{{#if team_modus=team}}{{vorname}}{{#if partner_vorname}} & {{partner_vorname}}{{/if}}{{/if}}</span>
       <span style="display:flex;align-items:center;gap:6px;opacity:0.55;">Made with ♥ <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620.04 126" style="height:13px;width:auto;display:block;"><defs><style>.cls-1{fill:#fff;}</style></defs><g><g><path class="cls-1" d="M82.71,34.42A9.75,9.75,0,0,1,73,24.7a9.5,9.5,0,0,1,2.85-6.91,9.56,9.56,0,0,1,11.77-1.54,10.79,10.79,0,0,1,3.63,3.54A9.13,9.13,0,0,1,92.6,24.7a9.29,9.29,0,0,1-2.9,6.86A9.57,9.57,0,0,1,82.71,34.42Z"/><rect class="cls-1" x="75.12" y="45.18" width="14.84" height="70.01"/><path class="cls-1" d="M137.84,43.13A32.81,32.81,0,0,1,151.27,46,25.08,25.08,0,0,1,162,55.2q4.22,6.25,4.22,16.33v43.66h-15V74.43q0-10.41-4.86-15.14a17.19,17.19,0,0,0-12.53-4.73,18.25,18.25,0,0,0-9.68,2.85,22.7,22.7,0,0,0-7.63,7.85,21.56,21.56,0,0,0-3,11.3v38.63H98.7v-70h14.83V57.63c.51-1.94,1.91-4,4.18-6.31a28.8,28.8,0,0,1,8.7-5.8A27.44,27.44,0,0,1,137.84,43.13Z"/><path class="cls-1" d="M238.89,59.59A29.91,29.91,0,0,0,227,47.44a35.87,35.87,0,0,0-17.94-4.31q-11.26,0-19.23,4.78a31.45,31.45,0,0,0-12.15,13,40.18,40.18,0,0,0-4.18,18.46A42,42,0,0,0,178,99a32.52,32.52,0,0,0,12.66,13.4q8.22,4.8,19.48,4.81a51.58,51.58,0,0,0,14.16-1.67,29.31,29.31,0,0,0,9.85-4.73,31.05,31.05,0,0,0,6.86-7.16l-7.25-9a23.13,23.13,0,0,1-4.18,4.81,25.1,25.1,0,0,1-7.46,4.61A28.43,28.43,0,0,1,211,106.06,25.23,25.23,0,0,1,198.13,103a20.07,20.07,0,0,1-7.89-8.28,25.9,25.9,0,0,1-2.73-11.52h55.34c.06-.45.11-1.25.18-2.42s.08-2,.08-2.43Q243.11,67.44,238.89,59.59ZM188,72a21.81,21.81,0,0,1,2.47-7.89,18.34,18.34,0,0,1,6.71-7c3-1.93,7.06-2.91,12.05-2.91,4.84,0,8.68,1,11.52,3A17.79,17.79,0,0,1,227,64.36,20,20,0,0,1,229,72Z"/><path class="cls-1" d="M276.91,43.13a44.51,44.51,0,0,1,10.19,1.11,46.45,46.45,0,0,1,8.19,2.64,23.35,23.35,0,0,1,4.9,2.73L294.31,59a24.36,24.36,0,0,0-6.14-3.45,24.68,24.68,0,0,0-9.89-1.92A20.48,20.48,0,0,0,268.13,56,7.4,7.4,0,0,0,264,62.74c0,3,1.44,5.3,4.31,7a40.47,40.47,0,0,0,11.55,4.3,59.08,59.08,0,0,1,10.87,3.67,21.42,21.42,0,0,1,8.23,6.35q3.15,4.05,3.16,10.79a20.09,20.09,0,0,1-2.56,10.45,19.6,19.6,0,0,1-6.91,6.9,32.52,32.52,0,0,1-9.72,3.8A50.51,50.51,0,0,1,272,117.23a47.64,47.64,0,0,1-11.69-1.32,41.43,41.43,0,0,1-8.74-3.15,29.86,29.86,0,0,1-5.16-3.2L252.27,99a28.16,28.16,0,0,0,7.29,4.52,26.68,26.68,0,0,0,11.55,2.39q7.17,0,11.6-3A9.15,9.15,0,0,0,287.14,95,8.15,8.15,0,0,0,285,89.09a15.43,15.43,0,0,0-5.71-3.58,65.15,65.15,0,0,0-7.85-2.39,55.26,55.26,0,0,1-8-2.47,29.65,29.65,0,0,1-7.08-4,18.1,18.1,0,0,1-5.07-6,17.52,17.52,0,0,1-1.88-8.32A15,15,0,0,1,253.29,52a24.68,24.68,0,0,1,10.06-6.61A38.91,38.91,0,0,1,276.91,43.13Z"/><path class="cls-1" d="M305.46,45.18h13.73V15.06H334V45.18h18v12.7H334V92.5q0,6.15,2.17,9a6.94,6.94,0,0,0,5.84,2.9,9.06,9.06,0,0,0,5-1.19c1.2-.8,3.64-2.31,3.87-2.6l5.52,11c-.34.28-2.62,1.68-4.1,2.47a26.45,26.45,0,0,1-5.71,2.13,31.64,31.64,0,0,1-8.19.94,19.6,19.6,0,0,1-13.69-5q-5.49-5-5.5-15.81V57.88H305.46Z"/><path class="cls-1" d="M391.62,43.13a44.58,44.58,0,0,1,10.19,1.11A46.6,46.6,0,0,1,410,46.88a23.22,23.22,0,0,1,4.91,2.73L409,59a24,24,0,0,0-6.14-3.45A24.61,24.61,0,0,0,393,53.62,20.44,20.44,0,0,0,382.84,56a7.4,7.4,0,0,0-4.18,6.78c0,3,1.43,5.3,4.3,7a40.55,40.55,0,0,0,11.56,4.3,59.34,59.34,0,0,1,10.87,3.67,21.49,21.49,0,0,1,8.23,6.35q3.15,4.05,3.15,10.79a20.18,20.18,0,0,1-2.55,10.45,19.6,19.6,0,0,1-6.91,6.9,32.52,32.52,0,0,1-9.72,3.8,50.53,50.53,0,0,1-10.92,1.19A47.56,47.56,0,0,1,375,115.91a41.22,41.22,0,0,1-8.74-3.15,29.86,29.86,0,0,1-5.16-3.2L367,99a27.81,27.81,0,0,0,7.29,4.52,26.68,26.68,0,0,0,11.55,2.39q7.17,0,11.6-3A9.17,9.17,0,0,0,401.85,95a8.15,8.15,0,0,0-2.13-5.89A15.52,15.52,0,0,0,394,85.51a65.71,65.71,0,0,0-7.85-2.39,54.5,54.5,0,0,1-8-2.47,29.46,29.46,0,0,1-7.08-4,18.1,18.1,0,0,1-5.07-6,17.52,17.52,0,0,1-1.88-8.32A15,15,0,0,1,368,52a24.68,24.68,0,0,1,10.06-6.61A38.91,38.91,0,0,1,391.62,43.13Z"/><path class="cls-1" d="M430.83,34.42a9.75,9.75,0,0,1-9.72-9.72A9.5,9.5,0,0,1,424,17.79a9.56,9.56,0,0,1,11.77-1.54,10.79,10.79,0,0,1,3.63,3.54,9.13,9.13,0,0,1,1.36,4.91,9.29,9.29,0,0,1-2.9,6.86A9.57,9.57,0,0,1,430.83,34.42Z"/><rect class="cls-1" x="423.24" y="45.18" width="14.84" height="70.01"/><path class="cls-1" d="M444.58,45.18h13.73V15.06h14.75V45.18h18v12.7h-18V92.5q0,6.15,2.17,9a6.94,6.94,0,0,0,5.84,2.9,9.06,9.06,0,0,0,5-1.19,12.8,12.8,0,0,0,2.14-1.62l5.88,10.91a20.28,20.28,0,0,1-2.73,1.62,26.45,26.45,0,0,1-5.71,2.13,31.59,31.59,0,0,1-8.19.94,19.56,19.56,0,0,1-13.68-5q-5.51-5-5.5-15.81V57.88H444.58Z"/><path class="cls-1" d="M557.46,59.59A29.91,29.91,0,0,0,545.6,47.44a35.89,35.89,0,0,0-18-4.31q-11.25,0-19.23,4.78a31.52,31.52,0,0,0-12.15,13,40.3,40.3,0,0,0-4.18,18.46A42.09,42.09,0,0,0,496.53,99a32.61,32.61,0,0,0,12.67,13.4q8.2,4.8,19.47,4.81a51.4,51.4,0,0,0,14.15-1.67,29,29,0,0,0,9.85-4.73,30.48,30.48,0,0,0,6.87-7.16l-7.24-9a23.44,23.44,0,0,1-4.18,4.81,25.23,25.23,0,0,1-7.46,4.61,28.5,28.5,0,0,1-11,1.92A25.2,25.2,0,0,1,516.7,103a20.07,20.07,0,0,1-7.89-8.28,25.64,25.64,0,0,1-2.73-11.52h55.34c.05-.45.11-1.25.18-2.42s.08-2,.08-2.43Q561.68,67.44,557.46,59.59ZM506.59,72a21.42,21.42,0,0,1,2.47-7.89,18.31,18.31,0,0,1,6.7-7c3-1.93,7.06-2.91,12.06-2.91,4.84,0,8.67,1,11.52,3a17.84,17.84,0,0,1,6.17,7.16,19.88,19.88,0,0,1,2,7.68Z"/><path class="cls-1" d="M594.89,43.13a44.64,44.64,0,0,1,10.19,1.11,46.6,46.6,0,0,1,8.18,2.64,23.09,23.09,0,0,1,4.9,2.73L612.28,59a24.17,24.17,0,0,0-6.14-3.45,24.64,24.64,0,0,0-9.89-1.92A20.5,20.5,0,0,0,586.1,56a7.42,7.42,0,0,0-4.18,6.78c0,3,1.44,5.3,4.31,7a40.47,40.47,0,0,0,11.55,4.3,59.44,59.44,0,0,1,10.88,3.67,21.57,21.57,0,0,1,8.23,6.35Q620,88.15,620,94.89a20.09,20.09,0,0,1-2.56,10.45,19.57,19.57,0,0,1-6.9,6.9,32.48,32.48,0,0,1-9.73,3.8,50.51,50.51,0,0,1-10.91,1.19,47.5,47.5,0,0,1-11.68-1.32,41.22,41.22,0,0,1-8.74-3.15,29.86,29.86,0,0,1-5.16-3.2L570.24,99a28.16,28.16,0,0,0,7.29,4.52,26.73,26.73,0,0,0,11.56,2.39q7.15,0,11.59-3A9.16,9.16,0,0,0,605.12,95,8.15,8.15,0,0,0,603,89.09a15.48,15.48,0,0,0-5.72-3.58,65,65,0,0,0-7.84-2.39,55,55,0,0,1-8-2.47,29.58,29.58,0,0,1-7.07-4,18.13,18.13,0,0,1-5.08-6,17.52,17.52,0,0,1-1.87-8.32A15.08,15.08,0,0,1,571.26,52a24.71,24.71,0,0,1,10.07-6.61A38.91,38.91,0,0,1,594.89,43.13Z"/><path class="cls-1" d="M18.33,126a18.31,18.31,0,0,1-9.26-2.58c-6.17-3.73-9.36-10.86-9-17.94C.87,85.92,14.13,77.23,28.63,71.84c-.06-2.72-.13-5.61-.21-8.9A59.28,59.28,0,0,1,1,64.07L3.75,50.56a46.28,46.28,0,0,0,24.32-2c-.07-3.32-.14-6.67-.19-10,0-1.3-.07-2.62-.12-4-.23-6.6-.49-14.08,2-21.06C32.77,5,40.25-.32,48.8,0S64.16,6.18,66.48,14.88c2.45,9.17-1,17.83-4.32,23.48a52.69,52.69,0,0,1-20.09,19c.09,3.38.17,6.76.26,10.14a88,88,0,0,0,14.31-5.26q2.56-1.24,5-2.69,2.59,4.47,5.21,8.9l1.76,3a84.83,84.83,0,0,1-21.4,9c-1.57.45-3.09.89-4.56,1.33.09,3.45.19,7.11.32,11.45.31,10.12-2.9,22.3-11.48,28.5A22.28,22.28,0,0,1,18.33,126ZM29,86.59c-9.35,4.18-14.77,9.59-15.2,19.49-.1,2.34.65,4.53,1.88,5.42a4.81,4.81,0,0,0,3.19.72c8.6-.72,10.52-12.46,10.33-18.56C29.13,91.1,29.06,88.78,29,86.59Zm19.08-72.8c-1.87,0-4.2,1.14-5.34,4.37-1.6,4.51-1.39,10.33-1.19,16,.05,1.43.1,2.84.12,4.22,0,.91,0,1.83,0,2.74a36.14,36.14,0,0,0,8.55-9.72c1.63-2.77,4.17-8.12,2.89-12.91-.77-2.86-2.55-4.56-4.9-4.65Z"/></g></g></svg></span>
     </div>
   </div>

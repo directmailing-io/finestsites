@@ -3,6 +3,7 @@ import { getUserFromRequest } from '@/lib/auth/server'
 import { db } from '@/lib/db'
 import { users, userSites, templates, siteData, formSubmissions, templateAccess } from '@/lib/db/schema'
 import { eq, ne, and, inArray, isNull } from 'drizzle-orm'
+import { FITLINE_SHOP_PRODUCTS, buildFitlineShopLink } from '@/lib/utils/fitline-shop-links'
 
 /**
  * Map user profile fields to common template placeholder keys.
@@ -29,13 +30,10 @@ function buildProfileSiteData(profile: typeof users.$inferSelect): Array<{ field
 
   // FitLine/PM-International: auto-compute shop URLs with sponsor parameter
   if (profile.teamPartnerNumber) {
-    const sponsorNum = encodeURIComponent(profile.teamPartnerNumber)
-    result.push(
-      { fieldKey: 'teampartner_nummer', fieldValue: profile.teamPartnerNumber },
-      { fieldKey: 'shop_optimalset', fieldValue: `https://www.fitline.com/de/de-de/products/9700731?sponsor=${sponsorNum}` },
-      { fieldKey: 'shop_activize', fieldValue: `https://www.fitline.com/de/de-de/products/0708054?sponsor=${sponsorNum}` },
-      { fieldKey: 'shop_joghurt', fieldValue: `https://www.fitline.com/de/de-de/products/9709001?sponsor=${sponsorNum}` },
-    )
+    result.push({ fieldKey: 'teampartner_nummer', fieldValue: profile.teamPartnerNumber })
+    for (const [fieldKey, productId] of Object.entries(FITLINE_SHOP_PRODUCTS)) {
+      result.push({ fieldKey, fieldValue: buildFitlineShopLink(productId, profile.teamPartnerNumber) })
+    }
   }
 
   return result

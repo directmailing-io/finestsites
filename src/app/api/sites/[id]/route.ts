@@ -2,8 +2,9 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getUserFromRequest } from '@/lib/auth/server'
 import { db } from '@/lib/db'
 import { users, userSites, templates, siteData } from '@/lib/db/schema'
-import { eq, and, sql } from 'drizzle-orm'
+import { eq, and, sql, inArray } from 'drizzle-orm'
 import { markSiteOffline } from '@/lib/cloudflare/kv'
+import { FITLINE_SHOP_PRODUCTS, FITLINE_AUTO_LINK_RE, buildFitlineShopLink } from '@/lib/utils/fitline-shop-links'
 
 async function getSiteForUser(siteId: string, userId: string) {
   const rows = await db
@@ -101,6 +102,31 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     fieldValue: fieldValue ?? '',
     updatedAt: new Date(),
   }))
+
+  // FitLine: shop links are derived from the partner number, not edited directly
+  // (shop_* is not in the placeholder schema). Sync them whenever the partner
+  // number is saved, so users who fill it in via the editor — instead of their
+  // profile before site creation — still get working links. Hand-edited links
+  // (not matching our generated pattern) are left untouched.
+  const partnerNumber = typeof (body as Record<string, unknown>).team_partner_number === 'string'
+    ? ((body as Record<string, string>).team_partner_number).trim()
+    : ''
+  if (partnerNumber) {
+    const shopKeys = Object.keys(FITLINE_SHOP_PRODUCTS)
+    const existingRows = await db
+      .select({ fieldKey: siteData.fieldKey, fieldValue: siteData.fieldValue })
+      .from(siteData)
+      .where(and(eq(siteData.userSiteId, id), inArray(siteData.fieldKey, shopKeys)))
+    const existing: Record<string, string> = {}
+    for (const r of existingRows) existing[r.fieldKey] = r.fieldValue ?? ''
+    for (const [fieldKey, productId] of Object.entries(FITLINE_SHOP_PRODUCTS)) {
+      const current = existing[fieldKey] ?? ''
+      const generated = buildFitlineShopLink(productId, partnerNumber)
+      if ((current === '' || FITLINE_AUTO_LINK_RE.test(current)) && current !== generated) {
+        upserts.push({ userSiteId: id, fieldKey, fieldValue: generated, updatedAt: new Date() })
+      }
+    }
+  }
 
   if (upserts.length > 0) {
     try {
