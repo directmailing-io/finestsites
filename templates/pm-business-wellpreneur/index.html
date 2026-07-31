@@ -4637,8 +4637,10 @@
         const t = vid.currentTime || 0;
         const wasPlaying = !vid.paused && !vid.ended;
         srcEl.setAttribute('src', want);
-        if (vid.readyState > 0 || t > 0 || wasPlaying) {
-          vid.load();
+        // load() is required even before first play: the browser latches onto
+        // the source at insertion time and ignores later src attribute changes.
+        vid.load();
+        if (t > 0 || wasPlaying) {
           vid.addEventListener('loadedmetadata', function onMeta() {
             vid.removeEventListener('loadedmetadata', onMeta);
             if (t > 0) vid.currentTime = t;
