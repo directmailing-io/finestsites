@@ -5652,6 +5652,7 @@ html.js .food-card { opacity: 1; }
   justify-content: center;
   flex-shrink: 0;
 }
+.shop-inline-num-extra svg { display: block; opacity: 0.85; }
 .shop-inline-info { flex: 1; min-width: 0; }
 .shop-inline-name { font-size: 0.88rem; font-weight: 700; color: var(--text); display: block; margin-bottom: 2px; }
 .shop-inline-sub { font-size: 0.76rem; color: var(--text-muted); }
@@ -5728,23 +5729,22 @@ html.js .food-card { opacity: 1; }
   box-shadow: 0 0 0 4px rgba(86,168,109,0.14);
 }
 .anna-sig-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.anna-sig-body { flex: 1; min-width: 0; }
-.anna-sig-quote {
-  font-size: 0.85rem;
-  line-height: 1.55;
-  color: rgba(245,239,227,0.78);
-  margin-bottom: 10px;
-  font-style: italic;
+.anna-sig-id {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
 }
-.anna-sig-meta {
+.anna-sig-name { font-size: 1rem; font-weight: 700; color: #fff; line-height: 1.2; }
+.anna-sig-role { font-size: 0.78rem; color: rgba(245,239,227,0.55); }
+.anna-sig-actions {
+  margin-left: auto;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   flex-wrap: wrap;
+  justify-content: flex-end;
 }
-.anna-sig-name { font-size: 0.88rem; font-weight: 700; color: #fff; }
-.anna-sig-dot { color: rgba(245,239,227,0.35); font-size: 0.7rem; }
-.anna-sig-role { font-size: 0.78rem; color: rgba(245,239,227,0.5); }
 .anna-sig-ig {
   display: inline-flex;
   align-items: center;
@@ -5753,18 +5753,17 @@ html.js .food-card { opacity: 1; }
   font-weight: 600;
   color: var(--primary-soft);
   text-decoration: none;
-  margin-left: auto;
   flex-shrink: 0;
-  padding: 5px 12px;
+  padding: 6px 13px;
   border-radius: 99px;
   border: 1px solid rgba(86,168,109,0.35);
   transition: background 0.2s, color 0.2s;
 }
 .anna-sig-ig:hover { background: rgba(86,168,109,0.18); color: #fff; }
 @media (max-width: 500px) {
-  .anna-sig { flex-direction: column; text-align: center; padding: 20px 18px; }
-  .anna-sig-meta { justify-content: center; }
-  .anna-sig-ig { margin-left: 0; }
+  .anna-sig { flex-direction: column; text-align: center; padding: 20px 18px; gap: 12px; }
+  .anna-sig-id { align-items: center; }
+  .anna-sig-actions { margin-left: 0; justify-content: center; }
 }
 
 /* ---- Kontakt Sektion: Tablet & Mobile ---- */
@@ -5804,8 +5803,7 @@ html.js .food-card { opacity: 1; }
   /* Anna sig card */
   .anna-sig { margin-top: 28px; gap: 14px; padding: 16px 16px; }
   .anna-sig-photo { width: 52px; height: 52px; }
-  .anna-sig-quote { font-size: 0.82rem; margin-bottom: 8px; }
-  .anna-sig-name { font-size: 0.84rem; }
+  .anna-sig-name { font-size: 0.92rem; }
 }
 
 /* ── Team-Modus: Unified Signature Card ── */
@@ -5854,10 +5852,6 @@ html.js .food-card { opacity: 1; }
 .tsig-sep { background: rgba(245,239,227,0.12); align-self: stretch; }
 .tsig-col { display: flex; flex-direction: column; gap: 5px; }
 .tsig-name { font-size: 0.88rem; font-weight: 700; color: #fff; }
-.tsig-quote {
-  font-size: 0.78rem; line-height: 1.5;
-  color: rgba(245,239,227,0.6); font-style: italic; margin: 0 0 4px;
-}
 .tsig-links { display: flex; flex-direction: column; gap: 3px; margin-top: 4px; }
 .tsig-link {
   display: inline-flex; align-items: center; gap: 5px;
@@ -8399,6 +8393,21 @@ section.section.reviews {
             </a>
           </div>
 {{/unless}}
+{{#each shop_extra}}
+          <div class="shop-inline-row">
+            <div class="shop-inline-num shop-inline-num-extra">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            </div>
+            <div class="shop-inline-info">
+              <span class="shop-inline-name">{{this.produktname}}</span>
+{{#if this.beschreibung}}              <span class="shop-inline-sub">{{this.beschreibung}}</span>
+{{/if}}            </div>
+            <a href="{{this.link}}" target="_blank" rel="noopener" class="shop-inline-link">
+              <span class="l-de">Zum Shop</span><span class="l-en">Shop now</span>
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            </a>
+          </div>
+{{/each}}
         </div>
 
         <div class="shop-inline-divider"></div>
@@ -8419,12 +8428,11 @@ section.section.reviews {
       <div class="anna-sig-photo">
         <img src="{{profilbild}}" alt="{{vorname}} {{nachname}}" loading="lazy">
       </div>
-      <div class="anna-sig-body">
-        <p class="anna-sig-quote">{{eigenes_zitat}}</p>
-        <div class="anna-sig-meta">
-          <span class="anna-sig-name">{{vorname}} {{nachname}}</span>
-          <span class="anna-sig-dot">·</span>
-          <span class="anna-sig-role"><span class="l-de">{{#if geschlecht=weiblich}}Deine persönliche Beraterin{{/if}}{{#if geschlecht=maennlich}}Dein persönlicher Berater{{/if}}</span><span class="l-en">Your personal consultant</span></span>
+      <div class="anna-sig-id">
+        <span class="anna-sig-name">{{vorname}} {{nachname}}</span>
+        <span class="anna-sig-role"><span class="l-de">{{#if geschlecht=weiblich}}Deine persönliche Beraterin{{/if}}{{#if geschlecht=maennlich}}Dein persönlicher Berater{{/if}}</span><span class="l-en">Your personal consultant</span></span>
+      </div>
+      <div class="anna-sig-actions">
 {{#if instagram_url}}          <a href="{{instagram_url}}" target="_blank" rel="noopener" class="anna-sig-ig">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
             Instagram
@@ -8442,7 +8450,6 @@ section.section.reviews {
             <span class="l-de">Anrufen</span><span class="l-en">Call</span>
           </a>
 {{/if}}
-        </div>
       </div>
     </div>
 {{/unless}}
@@ -8460,8 +8467,7 @@ section.section.reviews {
       <div class="tsig-cols">
         <div class="tsig-col">
           <span class="tsig-name">{{vorname}} {{nachname}}</span>
-{{#if eigenes_zitat}}          <p class="tsig-quote">{{eigenes_zitat}}</p>
-{{/if}}          <div class="tsig-links">
+          <div class="tsig-links">
 {{#if instagram_url}}            <a href="{{instagram_url}}" target="_blank" rel="noopener" class="tsig-link">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
               Instagram
@@ -8483,8 +8489,7 @@ section.section.reviews {
         <div class="tsig-sep"></div>
         <div class="tsig-col">
           <span class="tsig-name">{{partner_vorname}} {{partner_nachname}}</span>
-{{#if partner_zitat}}          <p class="tsig-quote">{{partner_zitat}}</p>
-{{/if}}          <div class="tsig-links">
+          <div class="tsig-links">
 {{#if partner_instagram_url}}            <a href="{{partner_instagram_url}}" target="_blank" rel="noopener" class="tsig-link">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
               Instagram

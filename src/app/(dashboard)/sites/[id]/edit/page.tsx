@@ -7,6 +7,7 @@ import ImageCropModal from '@/components/ImageCropModal'
 import { RichTextField } from '@/components/editor/RichTextField'
 import { usePlanQuota } from '@/components/dashboard/PlanQuotaContext'
 import { PHONE_COUNTRIES, parsePhoneValue, toWhatsAppDigits, toDisplayPhone } from '@/lib/constants/phone-countries'
+import { FITLINE_SHOP_PRODUCTS, FITLINE_AUTO_LINK_RE, buildFitlineShopLink } from '@/lib/utils/fitline-shop-links'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -1491,6 +1492,91 @@ function ToggleField({ field, value, onChange }: {
   )
 }
 
+// ─── FitLine Shop-Links (kombinierte Karte) ──────────────────────────────────
+// Die Links werden automatisch aus der TeamPartner-Nummer erzeugt und sind
+// bewusst "eingerastet" — kein Eingabezwang. Wer will, kann pro Produkt auf
+// einen eigenen Link wechseln und jederzeit zurück auf automatisch.
+
+const FITLINE_PRODUCT_LABELS: Record<string, string> = {
+  shop_optimalset: 'Optimal-Set',
+  shop_activize: 'Activize Oxyplus',
+  shop_joghurt: 'Feel-Good Yoghurt Drink',
+}
+
+function FitlineShopLinksCard({ values, onChange, hideJoghurt }: {
+  values: Record<string, string>
+  onChange: (key: string, val: string) => void
+  hideJoghurt: boolean
+}) {
+  const partner = (values['team_partner_number'] ?? '').trim()
+  const [editing, setEditing] = useState<Set<string>>(new Set())
+  const entries = Object.entries(FITLINE_SHOP_PRODUCTS).filter(([k]) => !(hideJoghurt && k === 'shop_joghurt'))
+  return (
+    <div className="flex flex-col" style={{ gap: 10 }}>
+      {entries.map(([key, productId]) => {
+        const value = values[key] ?? ''
+        const generated = partner ? buildFitlineShopLink(productId, partner) : ''
+        const isAuto = value !== '' && FITLINE_AUTO_LINK_RE.test(value)
+        const isEditing = editing.has(key)
+        return (
+          <div key={key} className="px-3.5 py-3"
+            style={{ background: '#FAFAFA', border: '1px solid #E5E7EB', borderRadius: 12 }}>
+            <div className="flex items-center justify-between gap-2 flex-wrap">
+              <span className="text-sm font-semibold" style={{ color: '#1a1a1a' }}>{FITLINE_PRODUCT_LABELS[key] ?? key}</span>
+              <div className="flex items-center gap-2">
+                {value !== '' && (
+                  <span className="inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-full"
+                    style={isAuto
+                      ? { background: '#D1FAE5', color: '#059669' }
+                      : { background: '#F3F4F6', color: '#6B7280' }}>
+                    {isAuto && (
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    )}
+                    {isAuto ? 'Automatisch verknüpft' : 'Eigener Link'}
+                  </span>
+                )}
+                <button type="button"
+                  onClick={() => setEditing(prev => {
+                    const nxt = new Set(prev)
+                    if (nxt.has(key)) nxt.delete(key)
+                    else nxt.add(key)
+                    return nxt
+                  })}
+                  className="text-[12px] font-medium"
+                  style={{ color: '#9CA3AF', background: 'none', border: 0, cursor: 'pointer', padding: 0 }}>
+                  {isEditing ? 'Fertig' : 'Ändern'}
+                </button>
+              </div>
+            </div>
+            {!isEditing ? (
+              <div className="text-xs mt-1" style={{ color: '#9CA3AF', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                {value || (partner
+                  ? ''
+                  : 'Wird automatisch erstellt, sobald deine TeamPartner-Nummer eingetragen ist.')}
+              </div>
+            ) : (
+              <div className="mt-2 flex flex-col gap-1.5">
+                <input type="url" value={value}
+                  onChange={e => onChange(key, e.target.value)}
+                  placeholder="https://www.fitline.com/…"
+                  style={INPUT} onFocus={focusBorder} onBlur={blurBorder} />
+                {partner !== '' && value !== generated && (
+                  <button type="button"
+                    onClick={() => onChange(key, generated)}
+                    className="self-start text-[12px] font-semibold"
+                    style={{ color: '#059669', background: 'none', border: 0, cursor: 'pointer', padding: 0 }}>
+                    ↺ Automatisch aus TeamPartner-Nummer erstellen
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
 function RangeField({ field, value, onChange }: {
   field: { min?: number; max?: number; step?: number; unit?: string; default_value?: string; placeholder_text?: string }
   value: string
@@ -2385,6 +2471,8 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
         setCollapsedOptionals(new Set(
           fields.filter(f => {
             if (f.required || init[f.key]) return false
+            // Toggles are their own compact control — collapsing them just adds a click
+            if (f.type === 'toggle') return false
             // Don't collapse when the show_when condition is currently active
             // (e.g. partner fields should be expanded when team mode is on)
             if (f.show_when) {
@@ -2469,6 +2557,15 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
 
   function handleChange(key: string, val: string) {
     const next = { ...values, [key]: val }
+    // FitLine: Shoplinks live aus der TeamPartner-Nummer ableiten (Spiegel der
+    // Server-Logik in PATCH /api/sites/[id]). Eigene Links bleiben unberührt.
+    if (key === 'team_partner_number' && val.trim()) {
+      for (const [fk, productId] of Object.entries(FITLINE_SHOP_PRODUCTS)) {
+        if (!fields.some(f => f.key === fk)) continue
+        const cur = next[fk] ?? ''
+        if (cur === '' || FITLINE_AUTO_LINK_RE.test(cur)) next[fk] = buildFitlineShopLink(productId, val.trim())
+      }
+    }
     setValues(next)
     setHasChanges(true)
 
@@ -3279,9 +3376,32 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
                   const hiddenComplianceFields = fields.filter(
                     f => f.type === 'richtext' && f.compliance_check && !sectionKeySet.has(f.key)
                   )
+                  // FitLine: die drei Shoplink-Felder als EINE ruhige Karte rendern,
+                  // sobald das Template eine TeamPartner-Nummer im Schema hat.
+                  const fitlineGrouped = fields.some(f => f.key === 'team_partner_number')
                   return [...sectionFields, ...hiddenComplianceFields].map(field => {
+                    if (fitlineGrouped && field.key in FITLINE_SHOP_PRODUCTS) {
+                      if (field.key !== 'shop_optimalset') return null
+                      return (
+                        <div key="fitline-shop-links" className="rounded-[20px] p-5"
+                          style={{ background: '#fff', boxShadow: '0 2px 8px rgba(0,0,0,0.05)', border: '1px solid #F0F0F0' }}>
+                          <div className="mb-3">
+                            <label className="text-base font-bold text-gray-900">Deine Shop-Links</label>
+                            <p className="text-sm text-gray-400 mt-0.5">
+                              Fertig eingerichtet: Alle Links führen in den offiziellen FitLine-Shop und sind automatisch mit deiner TeamPartner-Nummer verknüpft.
+                            </p>
+                          </div>
+                          <FitlineShopLinksCard
+                            values={values}
+                            onChange={handleChange}
+                            hideJoghurt={values['joghurt_anzeigen'] === 'nein'}
+                          />
+                        </div>
+                      )
+                    }
                     const visible = sectionKeySet.has(field.key)
-                    const isOptional = visible && !field.required
+                    // Toggles: no Optional badge, no collapse chevron — the switch itself is the whole UI
+                    const isOptional = visible && !field.required && field.type !== 'toggle'
                     const isCollapsed = isOptional && collapsedOptionals.has(field.key)
                     // Partner field: show_when targets team_modus=team and team mode is active
                     const isPartnerField = visible
@@ -3359,7 +3479,8 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
                                 Wiederholbare Einträge, beliebig viele hinzufügen
                               </p>
                             )}
-                            {!isCollapsed && field.placeholder_text && field.type !== 'loop' && (
+                            {/* Toggles show their description inside the control — avoid doubling it */}
+                            {!isCollapsed && field.placeholder_text && field.type !== 'loop' && field.type !== 'toggle' && (
                               <p className="text-sm text-gray-400 mt-0.5">{field.placeholder_text}</p>
                             )}
                           </div>

@@ -128,11 +128,15 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     }
   }
 
-  if (upserts.length > 0) {
+  // Dedup by fieldKey (generated shop links win over body values) — Postgres
+  // rejects ON CONFLICT upserts that touch the same row twice in one insert.
+  const dedupedUpserts = [...new Map(upserts.map(u => [u.fieldKey, u])).values()]
+
+  if (dedupedUpserts.length > 0) {
     try {
       await db
         .insert(siteData)
-        .values(upserts)
+        .values(dedupedUpserts)
         .onConflictDoUpdate({
           target: [siteData.userSiteId, siteData.fieldKey],
           set: { fieldValue: sql`excluded.field_value`, updatedAt: new Date() },

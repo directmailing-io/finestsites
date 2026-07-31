@@ -191,16 +191,16 @@
       "section": "Inhalte"
     },
     {
-      "key": "eigenes_zitat",
-      "label": "Dein persönliches Zitat (Signatur am Seitenende)",
-      "type": "textarea",
+      "key": "team_partner_number",
+      "label": "Deine TeamPartner-Nummer",
+      "type": "text",
       "required": true,
-      "placeholder_text": "Ein kurzer Satz, der dich und deine Empfehlung beschreibt.",
-      "default_value": "Ich freue mich, dir das Optimalset und weitere Produkte vorzustellen.",
-      "max_length": 220,
+      "placeholder_text": "Deine persönlichen Shoplinks werden automatisch daraus erstellt — du musst nichts weiter tun.",
+      "input_placeholder": "z. B. 40237198",
+      "max_length": 20,
       "options": [],
       "card_options": [],
-      "section": "Inhalte"
+      "section": "Shop"
     },
     {
       "key": "shop_optimalset",
@@ -212,7 +212,7 @@
       "max_length": null,
       "options": [],
       "card_options": [],
-      "section": "Inhalte"
+      "section": "Shop"
     },
     {
       "key": "shop_activize",
@@ -224,7 +224,7 @@
       "max_length": null,
       "options": [],
       "card_options": [],
-      "section": "Inhalte"
+      "section": "Shop"
     },
     {
       "key": "shop_joghurt",
@@ -236,7 +236,46 @@
       "max_length": null,
       "options": [],
       "card_options": [],
-      "section": "Inhalte"
+      "section": "Shop"
+    },
+    {
+      "key": "shop_extra",
+      "label": "Weitere Produkte",
+      "type": "loop",
+      "required": false,
+      "placeholder_text": "Du empfiehlst noch weitere FitLine-Produkte? Füge sie hier hinzu — sie erscheinen zusätzlich in deiner Bestellliste.",
+      "default_value": "",
+      "max_length": null,
+      "min_items": 0,
+      "max_items": 10,
+      "sub_fields": [
+        {
+          "key": "produktname",
+          "label": "Produktname",
+          "type": "text",
+          "required": true,
+          "max_length": 60,
+          "placeholder_text": "z. B. ProShape 2 go"
+        },
+        {
+          "key": "beschreibung",
+          "label": "Kurzbeschreibung",
+          "type": "text",
+          "required": false,
+          "max_length": 90,
+          "placeholder_text": "z. B. Der leckere Mahlzeitenersatz für unterwegs"
+        },
+        {
+          "key": "link",
+          "label": "Shop-Link",
+          "type": "url",
+          "required": true,
+          "placeholder_text": "Link zum Produkt im FitLine-Shop"
+        }
+      ],
+      "options": [],
+      "card_options": [],
+      "section": "Shop"
     },
     {
       "key": "instagram_url",
@@ -386,7 +425,6 @@
     "email_benachrichtigung": "anna@example.com",
     "hero_variant": "v2",
     "about_me_html": "<p>Ende 2019 hat mich mein Schwager auf das Optimalset aufmerksam gemacht. Ich war ehrlich gesagt skeptisch, aber ich hatte zwei Sachen, die mich schon eine Weile genervt haben: Ich brauchte jeden Mittag einen Schläfchen, weil mir sonst die Energie komplett gefehlt hat. Und meine Haut war trotz allem, was ich ausprobiert habe, Cremes, Behandlungen, alles Mögliche, einfach nicht gut.</p><p>Also habe ich es einfach mal probiert. Drei Monate lang, täglich und konsequent. Was mich wirklich überzeugt hat? Das erzähle ich dir lieber in einem persönlichen Gespräch, als es hier in drei Sätze zu quetschen.</p><p>Weil ich so begeistert war, haben Familie und Freunde automatisch angefangen zu fragen. So bin ich dazu gekommen, das Optimalset weiterzuempfehlen.</p><p>Ob das auch was für dich sein könnte, das schauen wir gerne gemeinsam an. Kein Druck, kein Verkaufsgespräch.</p>",
-    "eigenes_zitat": "Seit 2019 Teil meines Alltags. Meine Empfehlung kommt aus Überzeugung, nicht aus dem Hochglanzprospekt.",
     "shop_optimalset": "https://www.fitline.com/de/de-de/products/9700731",
     "shop_activize": "https://www.fitline.com/de/de-de/products/0708054",
     "shop_joghurt": "https://www.fitline.com/de/de-de/products/9709001",
