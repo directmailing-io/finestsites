@@ -142,11 +142,22 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     }
   }
 
-  // If the site is already published, refresh the Worker's pre-rendered KV
+  // Fire-and-forget: translate the about text (Wellpreneur EN mode), then —
+  // if the site is already published — refresh the Worker's pre-rendered KV
   // entry so visitors see edits without waiting for the next publish click.
-  // Non-blocking — autosave succeeds even if the KV write fails.
-  if (site.status === 'published') {
+  // Non-blocking — autosave succeeds even if translation or KV write fails.
+  const aboutMeChanged = typeof (body as Record<string, unknown>).about_me_html === 'string'
+  if (aboutMeChanged || site.status === 'published') {
     ;(async () => {
+      if (aboutMeChanged) {
+        try {
+          const { ensureAboutMeTranslation } = await import('@/lib/utils/translate')
+          await ensureAboutMeTranslation(id)
+        } catch (err) {
+          console.error('[PATCH] about_me translation failed:', err)
+        }
+      }
+      if (site.status !== 'published') return
       try {
         const profile = await db.query.users.findFirst({ where: eq(users.id, user.id) })
         const username = profile?.username

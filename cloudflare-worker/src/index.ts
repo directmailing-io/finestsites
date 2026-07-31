@@ -945,6 +945,14 @@ a{color:${d.accent};text-decoration:none}
 a:hover{text-decoration:underline}
 strong{color:${d.text}}
 .footnote{font-size:13px;color:${d.faint};margin-top:48px}
+html[data-lang="en"] .l-de,html[data-lang="de"] .l-en{display:none!important}
+.legal-topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:32px}
+.legal-topbar .back-link{margin-bottom:0}
+.lang-switch{display:inline-flex;align-items:center;gap:2px;padding:3px;border-radius:9999px;background:${d.boxBg};border:1px solid ${d.boxBorder};flex-shrink:0}
+.lang-opt{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border:none;border-radius:9999px;background:transparent;color:${d.faint};font-family:inherit;font-size:12px;font-weight:700;letter-spacing:0.04em;cursor:pointer;transition:background 0.2s,color 0.2s}
+.lang-opt svg{width:14px;height:14px;border-radius:50%;display:block;flex-shrink:0}
+html[data-lang="de"] .lang-opt[data-lang="de"],html[data-lang="en"] .lang-opt[data-lang="en"]{background:${d.accent};color:#fff}
+.binding-note{background:${d.boxBg};border:1px solid ${d.boxBorder};border-left:3px solid ${d.accent};border-radius:10px;padding:14px 18px;margin-bottom:40px;font-size:13px;color:${d.muted}}
 footer{border-top:1px solid ${d.divider};padding:20px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
 footer .copyright{font-size:13px;color:${d.faint}}
 footer nav.foot-nav{display:flex;gap:20px}
@@ -965,18 +973,37 @@ function legalHead(title: string, d: LegalDesign): string {
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <meta name="robots" content="noindex,nofollow">
 <title>${title}</title>
+<script>(function(){var l;try{l=localStorage.getItem('fs-lang')}catch(e){}if(l!=='de'&&l!=='en'){l=(navigator.language||'de').toLowerCase().indexOf('de')===0?'de':'en'}document.documentElement.setAttribute('data-lang',l);document.documentElement.setAttribute('lang',l)})();</script>
 ${fontLink}
 ${legalStyles(d)}
 </head>`
+}
+
+const FLAG_DE_SVG = `<svg viewBox="0 0 20 20" aria-hidden="true"><rect width="20" height="6.67" y="0" fill="#000"/><rect width="20" height="6.67" y="6.67" fill="#DD0000"/><rect width="20" height="6.66" y="13.34" fill="#FFCE00"/></svg>`
+const FLAG_EN_SVG = `<svg viewBox="0 0 20 20" aria-hidden="true"><rect width="20" height="20" fill="#012169"/><path d="M0 0 L20 20 M20 0 L0 20" stroke="#fff" stroke-width="4"/><path d="M0 0 L20 20 M20 0 L0 20" stroke="#C8102E" stroke-width="2"/><path d="M10 0 V20 M0 10 H20" stroke="#fff" stroke-width="6"/><path d="M10 0 V20 M0 10 H20" stroke="#C8102E" stroke-width="3.5"/></svg>`
+
+function legalTopbarHtml(): string {
+  return `<div class="legal-topbar">
+<a class="back-link" href="/">&#8592; <span class="l-de">Zurück</span><span class="l-en">Back</span></a>
+<div class="lang-switch" role="group" aria-label="Sprache / Language">
+<button type="button" class="lang-opt" data-lang="de" onclick="fsSetLang('de')" aria-label="Deutsch">${FLAG_DE_SVG}<span>DE</span></button>
+<button type="button" class="lang-opt" data-lang="en" onclick="fsSetLang('en')" aria-label="English">${FLAG_EN_SVG}<span>EN</span></button>
+</div>
+</div>`
+}
+
+function legalLangScript(titleDe: string, titleEn: string): string {
+  return `<script>function fsSetLang(l){try{localStorage.setItem('fs-lang',l)}catch(e){}document.documentElement.setAttribute('data-lang',l);document.documentElement.setAttribute('lang',l);document.title=l==='en'?'${titleEn}':'${titleDe}'}
+if(document.documentElement.getAttribute('data-lang')==='en'){document.title='${titleEn}'}</script>`
 }
 
 function legalFooterHtml(): string {
   return `<footer>
 <span class="copyright">&copy; ${new Date().getFullYear()} FinestSites</span>
 <nav class="foot-nav">
-<a href="/">Startseite</a>
-<a href="/datenschutz">Datenschutz</a>
-<a href="/impressum">Impressum</a>
+<a href="/"><span class="l-de">Startseite</span><span class="l-en">Home</span></a>
+<a href="/datenschutz"><span class="l-de">Datenschutz</span><span class="l-en">Privacy</span></a>
+<a href="/impressum"><span class="l-de">Impressum</span><span class="l-en">Legal notice</span></a>
 </nav>
 </footer>`
 }
@@ -986,7 +1013,8 @@ function renderImpressum(d: LegalDesign): string {
 <body>
 <nav class="top-nav"><a class="logo" href="/">${d.logoHtml}</a></nav>
 <main>
-<a class="back-link" href="/">&#8592; Zur\u00FCck</a>
+${legalTopbarHtml()}
+<div class="l-de">
 <div class="eyebrow">Rechtliches</div>
 <h1>Impressum</h1>
 <p class="page-subtitle">Angaben gem\u00E4\u00DF \u00A7 5 TMG</p>
@@ -1057,6 +1085,82 @@ function renderImpressum(d: LegalDesign): string {
 </section>
 
 <p class="footnote">Stand: Juli 2026</p>
+</div>
+
+<div class="l-en">
+<div class="eyebrow">Legal</div>
+<h1>Legal Notice</h1>
+<p class="page-subtitle">Information pursuant to Section 5 of the German Telemedia Act (TMG)</p>
+<div class="binding-note">This is a courtesy translation. The German version is legally binding.</div>
+
+<section>
+<h2>Operator and service provider</h2>
+<p>This website is technically operated and provided as a service by:</p>
+<div class="highlight-box">
+<p><strong>Daniel Kurzeja &ndash; FinestSites</strong></p>
+<p>Herrleinstr. 39</p>
+<p>97437 Haßfurt</p>
+<p>Germany</p>
+<p>Phone: <a href="tel:+4915151005561">+49 151 51005561</a></p>
+<p>Email: <a href="mailto:hello@finestsites.io">hello@finestsites.io</a></p>
+<p>VAT ID: DE369220308</p>
+</div>
+<p>FinestSites provides the technical platform and is the responsible party within the meaning of Section 5 TMG.</p>
+</section>
+
+<hr class="divider">
+
+<section>
+<h2>Editorially responsible (Section 18 (2) MStV)</h2>
+<div class="highlight-box">
+<p><strong>Daniel Kurzeja &ndash; FinestSites</strong></p>
+<p>Herrleinstr. 39, 97437 Haßfurt, Germany</p>
+</div>
+<p>FinestSites is editorially responsible for the platform content provided on this website (structure, design, texts).</p>
+</section>
+
+<hr class="divider">
+
+<section>
+<h2>User-generated content</h2>
+{{#unless partner_modus=duo}}<p>This website is operated as part of the FinestSites service offering for the following person:</p>{{/unless}}{{#if partner_modus=duo}}<p>This website is operated as part of the FinestSites service offering for the following persons:</p>{{/if}}
+<div class="highlight-box">
+{{#unless partner_modus=duo}}<p><strong>{{vorname}} {{nachname}}</strong></p>{{/unless}}{{#if partner_modus=duo}}<p><strong>{{vorname}} {{nachname}} &amp; {{vorname2}} {{nachname2}}</strong></p>{{/if}}
+</div>
+{{#unless partner_modus=duo}}<p>For their own user-generated content, in particular personal testimonials, photos and self-uploaded media, {{vorname}} {{nachname}} is personally responsible in accordance with Section 7 (1) TMG. FinestSites is not obliged to review this content in advance.</p>{{/unless}}{{#if partner_modus=duo}}<p>For their own user-generated content, in particular personal testimonials, photos and self-uploaded media, {{vorname}} {{nachname}} and {{vorname2}} {{nachname2}} are personally responsible in accordance with Section 7 (1) TMG. FinestSites is not obliged to review this content in advance.</p>{{/if}}
+</section>
+
+<hr class="divider">
+
+<section>
+<h2>Liability for content</h2>
+<p>As a service provider, we are responsible for our own content on these pages under general law in accordance with Section 7 (1) TMG. However, under Sections 8 to 10 TMG we are not obliged to monitor transmitted or stored third-party information. Obligations to remove or block the use of information under general law remain unaffected. Any such liability only arises from the moment we become aware of a specific legal violation. Upon becoming aware of such violations, we will remove the content in question immediately.</p>
+</section>
+
+<hr class="divider">
+
+<section>
+<h2>Liability for links</h2>
+<p>Our website may contain links to external third-party websites over whose content we have no control. The respective provider or operator is always responsible for the content of linked pages. The linked pages were checked for possible legal violations at the time of linking. Upon becoming aware of legal violations, we will remove such links immediately.</p>
+</section>
+
+<hr class="divider">
+
+<section>
+<h2>Copyright</h2>
+<p>The content and works created by FinestSites / Daniel Kurzeja on these pages are subject to German copyright law. Downloads and copies of this page are only permitted for private, non-commercial use. Where content on this page was not created by the operator, third-party copyrights are respected. Upon becoming aware of legal violations, we will remove such content immediately.</p>
+</section>
+
+<hr class="divider">
+
+<section>
+<h2>EU dispute resolution</h2>
+<p>The European Commission provides a platform for online dispute resolution (ODR): <a href="https://ec.europa.eu/consumers/odr/" target="_blank" rel="noopener noreferrer">https://ec.europa.eu/consumers/odr/</a>. We are neither willing nor obliged to participate in dispute resolution proceedings before a consumer arbitration board.</p>
+</section>
+
+<p class="footnote">Last updated: July 2026</p>
+</div>
+${legalLangScript('Impressum', 'Legal Notice')}
 </main>
 ${legalFooterHtml()}
 </body>
@@ -1068,7 +1172,8 @@ function renderDatenschutz(d: LegalDesign): string {
 <body>
 <nav class="top-nav"><a class="logo" href="/">${d.logoHtml}</a></nav>
 <main>
-<a class="back-link" href="/">&#8592; Zur\u00FCck</a>
+${legalTopbarHtml()}
+<div class="l-de">
 <div class="eyebrow">Rechtliches</div>
 <h1>Datenschutz&shy;erkl\u00E4rung</h1>
 <p class="page-subtitle">Informationen gem\u00E4\u00DF Art. 13 DSGVO</p>
@@ -1142,6 +1247,85 @@ function renderDatenschutz(d: LegalDesign): string {
 </section>
 
 <p class="footnote">Stand: Juli 2026</p>
+</div>
+
+<div class="l-en">
+<div class="eyebrow">Legal</div>
+<h1>Privacy Policy</h1>
+<p class="page-subtitle">Information pursuant to Art. 13 GDPR</p>
+<div class="binding-note">This is a courtesy translation. The German version is legally binding.</div>
+
+<section>
+<h2>Controller (Art. 4 No. 7 GDPR)</h2>
+<div class="highlight-box">
+<p><strong>Daniel Kurzeja &ndash; FinestSites</strong></p>
+<p>Herrleinstr. 39</p>
+<p>97437 Haßfurt</p>
+<p>Germany</p>
+<p>Email: <a href="mailto:hello@finestsites.io">hello@finestsites.io</a></p>
+<p>Phone: <a href="tel:+4915151005561">+49 151 51005561</a></p>
+</div>
+</section>
+
+<hr class="divider">
+
+<section>
+<h2>Hosting &amp; infrastructure</h2>
+<p>This website is operated on the FinestSites platform. The technical infrastructure runs on servers within the EU (Hetzner Online GmbH, Germany). When you visit the website, your browser automatically transmits the following data: IP address, date and time, requested URL, browser and operating system. This data is processed solely to technically deliver the website and is not stored permanently (Art. 6 (1) (f) GDPR).</p>
+</section>
+
+<hr class="divider">
+
+<section>
+<h2>Cookies &amp; tracking (Section 25 TTDSG)</h2>
+<p>This website uses <strong>no cookies</strong> and no tracking. No data is collected for advertising purposes, no analytics tools are used, and no data is shared with third parties. A cookie banner is therefore not required.</p>
+</section>
+
+<hr class="divider">
+
+<section>
+<h2>Contact form</h2>
+<p>If you use the contact form on this site, your details (e.g. name, email address, message) are transmitted to the FinestSites servers in encrypted form and stored in our secured dashboard. They are used exclusively to process your inquiry and are not shared with third parties.</p>
+<p>Legal basis: Art. 6 (1) (b) GDPR (steps prior to entering into a contract) or Art. 6 (1) (f) GDPR (legitimate interest in responding to inquiries). The data is deleted once your inquiry has been fully processed and no statutory retention obligation applies.</p>
+</section>
+
+<hr class="divider">
+
+<section>
+<h2>Embedded content</h2>
+<p>This website may contain embedded content (e.g. fonts from Google Fonts). When this content is loaded, your IP address is transmitted to the respective provider. This is done on the basis of Art. 6 (1) (f) GDPR (legitimate interest in a properly functioning appearance of the website).</p>
+</section>
+
+<hr class="divider">
+
+<section>
+<h2>Your rights</h2>
+<p><strong>Access</strong> (Art. 15 GDPR): you can request information about the data we process.</p>
+<p><strong>Rectification</strong> (Art. 16 GDPR): you can request the correction of inaccurate data.</p>
+<p><strong>Erasure</strong> (Art. 17 GDPR): you can request the deletion of your data, provided no statutory retention obligation applies.</p>
+<p><strong>Restriction</strong> (Art. 18 GDPR): you can request that processing be restricted.</p>
+<p><strong>Objection</strong> (Art. 21 GDPR): you can object to processing based on legitimate interests.</p>
+<p><strong>Data portability</strong> (Art. 20 GDPR): you can receive your data in a structured, machine-readable format.</p>
+<p>To exercise your rights, contact: <a href="mailto:hello@finestsites.io">hello@finestsites.io</a></p>
+</section>
+
+<hr class="divider">
+
+<section>
+<h2>Right to lodge a complaint</h2>
+<p>You have the right to lodge a complaint with a data protection supervisory authority. The competent authority is the Bavarian State Office for Data Protection Supervision (BayLDA), Promenade 18, 91522 Ansbach, Germany, <a href="https://www.lda.bayern.de" target="_blank" rel="noopener noreferrer">www.lda.bayern.de</a>.</p>
+</section>
+
+<hr class="divider">
+
+<section>
+<h2>EU dispute resolution</h2>
+<p>The European Commission provides a platform for online dispute resolution (ODR): <a href="https://ec.europa.eu/consumers/odr/" target="_blank" rel="noopener noreferrer">https://ec.europa.eu/consumers/odr/</a>. We are neither willing nor obliged to participate in dispute resolution proceedings before a consumer arbitration board.</p>
+</section>
+
+<p class="footnote">Last updated: July 2026</p>
+</div>
+${legalLangScript('Datenschutzerklärung', 'Privacy Policy')}
 </main>
 ${legalFooterHtml()}
 </body>

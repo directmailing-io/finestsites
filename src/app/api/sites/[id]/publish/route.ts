@@ -153,6 +153,16 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   // Purge KV cache so the Worker picks up the new status immediately
   await purgeSiteCache(username, site.template.domain)
 
+  // Make sure the EN translation of the about text exists before rendering
+  // (Wellpreneur dual-language template). Blocking on purpose: the published
+  // page must never go live with an empty EN about section.
+  try {
+    const { ensureAboutMeTranslation } = await import('@/lib/utils/translate')
+    await ensureAboutMeTranslation(id)
+  } catch (err) {
+    console.error('[publish] about_me translation failed:', err)
+  }
+
   // Pre-render the page with the canonical Vercel engine and write it
   // directly to Worker KV — bypasses the Worker's own rendering pass.
   const dataRows = await db.query.siteData.findMany({
