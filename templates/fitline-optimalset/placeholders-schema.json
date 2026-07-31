@@ -262,7 +262,7 @@
           "label": "Kurzbeschreibung",
           "type": "text",
           "required": false,
-          "max_length": 90,
+          "max_length": 60,
           "placeholder_text": "z. B. Der leckere Mahlzeitenersatz für unterwegs"
         },
         {

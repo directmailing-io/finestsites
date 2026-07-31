@@ -5622,6 +5622,7 @@ html.js .food-card { opacity: 1; }
 /* .form-section p forces white text (dark section bg) — restore readable
    color inside the light form-card, which would otherwise win on specificity */
 .form-section .form-card .shop-inline-intro { color: var(--text-muted); opacity: 1; }
+.form-section .form-card .form-step-hint { color: var(--text-soft); opacity: 1; }
 .shop-inline-products {
   display: flex;
   flex-direction: column;
@@ -5653,6 +5654,21 @@ html.js .food-card { opacity: 1; }
   flex-shrink: 0;
 }
 .shop-inline-num-extra svg { display: block; opacity: 0.85; }
+.shop-inline-extra-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 12px 0 4px;
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-soft);
+}
+.shop-inline-extra-head::before,
+.shop-inline-extra-head::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+/* No extra products rendered after it → the head is the last child → hide */
+.shop-inline-extra-head:last-child { display: none; }
 .shop-inline-info { flex: 1; min-width: 0; }
 .shop-inline-name { font-size: 0.88rem; font-weight: 700; color: var(--text); display: block; margin-bottom: 2px; }
 .shop-inline-sub { font-size: 0.76rem; color: var(--text-muted); }
@@ -5960,15 +5976,10 @@ html.js .food-card { opacity: 1; }
 @media (max-width: 380px) {
   .form-center-header h2 { font-size: 1.55rem; }
   .ktab-title { font-size: 0.78rem; }
-  .shop-inline-link { display: none; }
-  .shop-inline-row::after {
-    content: '→ Zum Shop';
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: var(--primary);
-    white-space: nowrap;
-  }
-  html[data-lang="en"] .shop-inline-row::after { content: '→ Shop now'; }
+  /* Compact but still tappable: strip the pill styles instead of hiding the link */
+  .shop-inline-link { padding: 0; border: none; background: none; font-size: 0.75rem; white-space: nowrap; }
+  .shop-inline-link:hover { background: none; }
+  .shop-inline-link svg { display: none; }
 }
 
 
@@ -8393,6 +8404,7 @@ section.section.reviews {
             </a>
           </div>
 {{/unless}}
+          <div class="shop-inline-extra-head"><span class="l-de">Weitere Empfehlungen</span><span class="l-en">More recommendations</span></div>
 {{#each shop_extra}}
           <div class="shop-inline-row">
             <div class="shop-inline-num shop-inline-num-extra">

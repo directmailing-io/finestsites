@@ -4,7 +4,7 @@ import { db } from '@/lib/db'
 import { users, userSites, templates, siteData } from '@/lib/db/schema'
 import { eq, and, sql, inArray } from 'drizzle-orm'
 import { markSiteOffline } from '@/lib/cloudflare/kv'
-import { FITLINE_SHOP_PRODUCTS, FITLINE_AUTO_LINK_RE, buildFitlineShopLink } from '@/lib/utils/fitline-shop-links'
+import { FITLINE_SHOP_PRODUCTS, FITLINE_AUTO_LINK_RE, buildFitlineShopLink, ensureSponsorParam } from '@/lib/utils/fitline-shop-links'
 
 async function getSiteForUser(siteId: string, userId: string) {
   const rows = await db
@@ -125,6 +125,27 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
       if ((current === '' || FITLINE_AUTO_LINK_RE.test(current)) && current !== generated) {
         upserts.push({ userSiteId: id, fieldKey, fieldValue: generated, updatedAt: new Date() })
       }
+    }
+
+    // Laymen protection: users paste extra product links without ?sponsor=…
+    // (or with a foreign one). Force the partner number onto fitline.com URLs.
+    const shopExtraIdx = upserts.findIndex(u => u.fieldKey === 'shop_extra' && u.fieldValue)
+    if (shopExtraIdx >= 0) {
+      try {
+        const items = JSON.parse(upserts[shopExtraIdx].fieldValue) as Array<Record<string, string>>
+        if (Array.isArray(items)) {
+          let changed = false
+          for (const item of items) {
+            if (item && typeof item.link === 'string' && item.link.trim()) {
+              const fixed = ensureSponsorParam(item.link, partnerNumber)
+              if (fixed !== item.link) { item.link = fixed; changed = true }
+            }
+          }
+          if (changed) {
+            upserts[shopExtraIdx] = { ...upserts[shopExtraIdx], fieldValue: JSON.stringify(items) }
+          }
+        }
+      } catch { /* invalid JSON — store as sent */ }
     }
   }
 

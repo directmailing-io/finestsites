@@ -7,7 +7,7 @@ import ImageCropModal from '@/components/ImageCropModal'
 import { RichTextField } from '@/components/editor/RichTextField'
 import { usePlanQuota } from '@/components/dashboard/PlanQuotaContext'
 import { PHONE_COUNTRIES, parsePhoneValue, toWhatsAppDigits, toDisplayPhone } from '@/lib/constants/phone-countries'
-import { FITLINE_SHOP_PRODUCTS, FITLINE_AUTO_LINK_RE, buildFitlineShopLink } from '@/lib/utils/fitline-shop-links'
+import { FITLINE_SHOP_PRODUCTS, FITLINE_AUTO_LINK_RE, buildFitlineShopLink, ensureSponsorParam } from '@/lib/utils/fitline-shop-links'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -528,6 +528,32 @@ function DomainPanel({ siteId, subdomain, initialDomain, initialStatus }: {
 }
 
 // ─── Shared input style ───────────────────────────────────────────────────────
+
+/**
+ * FitLine laymen protection (mirror of the PATCH route): pasted extra-product
+ * links get the partner's ?sponsor=… forced onto fitline.com URLs. Returns the
+ * fixed values object, or null when nothing changed.
+ */
+function normalizeShopExtraLinks(vals: Record<string, string>): Record<string, string> | null {
+  const partner = (vals['team_partner_number'] ?? '').trim()
+  const raw = vals['shop_extra']
+  if (!partner || !raw) return null
+  try {
+    const items = JSON.parse(raw) as Array<Record<string, string>>
+    if (!Array.isArray(items)) return null
+    let changed = false
+    const next = items.map(item => {
+      if (item && typeof item.link === 'string' && item.link.trim()) {
+        const fixed = ensureSponsorParam(item.link, partner)
+        if (fixed !== item.link) { changed = true; return { ...item, link: fixed } }
+      }
+      return item
+    })
+    return changed ? { ...vals, shop_extra: JSON.stringify(next) } : null
+  } catch {
+    return null
+  }
+}
 
 const INPUT = {
   background: '#FFFFFF', border: '1.5px solid #E5E7EB',
@@ -1543,7 +1569,7 @@ function FitlineShopLinksCard({ values, onChange, hideJoghurt }: {
                     return nxt
                   })}
                   className="text-[12px] font-medium"
-                  style={{ color: '#9CA3AF', background: 'none', border: 0, cursor: 'pointer', padding: 0 }}>
+                  style={{ color: '#9CA3AF', background: 'none', border: 0, cursor: 'pointer', padding: '8px 10px', margin: '-8px -10px' }}>
                   {isEditing ? 'Fertig' : 'Ändern'}
                 </button>
               </div>
@@ -1564,7 +1590,7 @@ function FitlineShopLinksCard({ values, onChange, hideJoghurt }: {
                   <button type="button"
                     onClick={() => onChange(key, generated)}
                     className="self-start text-[12px] font-semibold"
-                    style={{ color: '#059669', background: 'none', border: 0, cursor: 'pointer', padding: 0 }}>
+                    style={{ color: '#059669', background: 'none', border: 0, cursor: 'pointer', padding: '8px 0', margin: '-4px 0', textAlign: 'left' }}>
                     ↺ Automatisch aus TeamPartner-Nummer erstellen
                   </button>
                 )}
@@ -2565,6 +2591,8 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
         const cur = next[fk] ?? ''
         if (cur === '' || FITLINE_AUTO_LINK_RE.test(cur)) next[fk] = buildFitlineShopLink(productId, val.trim())
       }
+      const fixed = normalizeShopExtraLinks(next)
+      if (fixed) next['shop_extra'] = fixed['shop_extra']
     }
     setValues(next)
     setHasChanges(true)
@@ -2800,6 +2828,11 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
     setAutosaveState('pending')
     if (autosaveTimerRef.current) clearTimeout(autosaveTimerRef.current)
     autosaveTimerRef.current = setTimeout(async () => {
+      // Fix pasted FitLine links (sponsor param) once typing has settled —
+      // the state update re-triggers this effect, which then saves the
+      // corrected values.
+      const fixed = normalizeShopExtraLinks(values)
+      if (fixed) { setValues(fixed); return }
       setAutosaveState('saving')
       try {
         const res = await fetch(`/api/sites/${id}`, {
@@ -2921,7 +2954,13 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
           </div>
         )}
       </div>
-      <style>{`@keyframes slideInToast { from { opacity: 0; transform: translateY(-8px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }`}</style>
+      <style>{`
+        @keyframes slideInToast { from { opacity: 0; transform: translateY(-8px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
+        /* iOS zooms into inputs with font-size < 16px — force 16px on touch layouts */
+        @media (max-width: 1023px) {
+          input:not([type=range]):not([type=checkbox]):not([type=color]), textarea, select { font-size: 16px !important; }
+        }
+      `}</style>
 
       {/* ── Mobile Header ── */}
       <div className="lg:hidden flex-shrink-0 flex items-center gap-3 px-4 py-3 bg-white border-b"
