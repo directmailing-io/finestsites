@@ -7,12 +7,14 @@ import { sql } from 'drizzle-orm'
 
 const TARIF_VALUES = ['starter', 'pro', 'unlimited', 'unbekannt']
 const TEMPLATE_OPTIONS = [
-  'Mama-Business',
-  'Stoffwechselkur',
-  'ProShape (Abnehmen)',
-  'Sportler',
-  'Beauty & Pflege',
-  'Team-Aufbau',
+  'Mama-Business-Seite',
+  'Stoffwechselkur-Seite',
+  'ProShape-Seite',
+  'Sportler-Seite',
+  'Beauty & Pflege-Seite',
+  'Vitalcheck-Seite',
+  'Gesund im Alter-Seite',
+  'Muskelaufbau-Seite',
 ]
 const PREIS_VALUES = ['zu_teuer', 'geht_so', 'fair', 'guenstig']
 const GRUND_VALUES = ['zu_teuer', 'nicht_ueberzeugt', 'anderer']
@@ -66,15 +68,19 @@ export async function POST(req: NextRequest) {
   }
 
   const clean = {
-    note_webseite: cleanNote(body.note_webseite),
-    text_webseite: cleanText(body.text_webseite),
+    note_optimalset: cleanNote(body.note_optimalset),
+    text_optimalset: cleanText(body.text_optimalset),
+    note_business: cleanNote(body.note_business),
+    text_business: cleanText(body.text_business),
     template_wuensche: Array.isArray(body.template_wuensche)
-      ? body.template_wuensche.filter((t): t is string => typeof t === 'string' && TEMPLATE_OPTIONS.includes(t))
+      ? body.template_wuensche
+          .filter((t): t is string => typeof t === 'string' && TEMPLATE_OPTIONS.includes(t))
+          .slice(0, 3)
       : [],
     text_templates: cleanText(body.text_templates),
+    tarif: cleanEnum(body.tarif, TARIF_VALUES),
     preis_meinung: cleanEnum(body.preis_meinung, PREIS_VALUES),
     text_preise: cleanText(body.text_preise),
-    tarif: cleanEnum(body.tarif, TARIF_VALUES),
     upgrade_grund: cleanEnum(body.upgrade_grund, GRUND_VALUES),
     text_upgrade: cleanText(body.text_upgrade),
     empfehlung: cleanEnum(body.empfehlung, EMPFEHLUNG_VALUES),
@@ -83,13 +89,14 @@ export async function POST(req: NextRequest) {
   }
 
   const hasContent =
-    clean.note_webseite !== null ||
+    clean.note_optimalset !== null ||
+    clean.note_business !== null ||
     clean.preis_meinung !== null ||
     clean.tarif !== null ||
     clean.upgrade_grund !== null ||
     clean.empfehlung !== null ||
     clean.template_wuensche.length > 0 ||
-    [clean.text_webseite, clean.text_templates, clean.text_preise, clean.text_upgrade, clean.text_empfehlung, clean.text_chef]
+    [clean.text_optimalset, clean.text_business, clean.text_templates, clean.text_preise, clean.text_upgrade, clean.text_empfehlung, clean.text_chef]
       .some(t => t.length > 0)
 
   if (!hasContent) {

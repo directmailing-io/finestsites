@@ -54,8 +54,18 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Aufnahme zu groß' }, { status: 413 })
   }
 
+  // Endung aus dem tatsächlichen Typ ableiten — Whisper braucht eine passende Endung
+  const type = (audio.type || '').toLowerCase()
+  const ext =
+    type.includes('webm') ? 'webm' :
+    type.includes('ogg') ? 'ogg' :
+    type.includes('wav') ? 'wav' :
+    type.includes('mpeg') || type.includes('mp3') ? 'mp3' :
+    type.includes('mp4') || type.includes('m4a') || type.includes('aac') ? 'm4a' :
+    'webm'
+
   const openaiForm = new FormData()
-  openaiForm.append('file', audio, audio.name || 'aufnahme.webm')
+  openaiForm.append('file', audio, `aufnahme.${ext}`)
   openaiForm.append('model', 'whisper-1')
   openaiForm.append('language', 'de')
 

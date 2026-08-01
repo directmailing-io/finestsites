@@ -9,13 +9,15 @@ import { DeleteAllButton } from './DeleteAllButton'
 export const dynamic = 'force-dynamic'
 
 type Answers = {
-  note_webseite: number | null
-  text_webseite: string
+  note_optimalset: number | null
+  text_optimalset: string
+  note_business: number | null
+  text_business: string
   template_wuensche: string[]
   text_templates: string
+  tarif: string | null
   preis_meinung: string | null
   text_preise: string
-  tarif: string | null
   upgrade_grund: string | null
   text_upgrade: string
   empfehlung: string | null
@@ -61,13 +63,17 @@ function noteColor(avg: number | null): string {
   return '#DC2626'
 }
 
+function avgOf(notes: number[]): number | null {
+  return notes.length ? notes.reduce((a, b) => a + b, 0) / notes.length : null
+}
+
 function fmtDate(d: Date) {
   return new Date(d).toLocaleDateString('de-DE', { day: '2-digit', month: 'short' }) + ', ' +
     new Date(d).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })
 }
 
 function NoteDistribution({ title, notes }: { title: string; notes: number[] }) {
-  const avg = notes.length ? notes.reduce((a, b) => a + b, 0) / notes.length : null
+  const avg = avgOf(notes)
   const counts = [1, 2, 3, 4, 5, 6].map(n => notes.filter(x => x === n).length)
   const max = Math.max(...counts, 1)
 
@@ -167,7 +173,8 @@ export default async function FeedbackAdminPage() {
 
   const total = responses.length
 
-  const notesWebseite = responses.map(r => r.a.note_webseite).filter((n): n is number => typeof n === 'number')
+  const notesOptimalset = responses.map(r => r.a.note_optimalset).filter((n): n is number => typeof n === 'number')
+  const notesBusiness = responses.map(r => r.a.note_business).filter((n): n is number => typeof n === 'number')
 
   const count = (fn: (a: Answers) => string | null | undefined) => {
     const m = new Map<string, number>()
@@ -192,7 +199,8 @@ export default async function FeedbackAdminPage() {
   const nein = empfehlungCounts.get('nein') ?? 0
   const empfehlungQuote = ja + nein > 0 ? Math.round((ja / (ja + nein)) * 100) : null
 
-  const avgNote = notesWebseite.length ? notesWebseite.reduce((a, b) => a + b, 0) / notesWebseite.length : null
+  const avgOptimalset = avgOf(notesOptimalset)
+  const avgBusiness = avgOf(notesBusiness)
 
   const texts = (key: keyof Answers) =>
     responses
@@ -232,15 +240,21 @@ export default async function FeedbackAdminPage() {
       ) : (
         <>
           {/* Kopfzahlen */}
-          <div className="grid grid-cols-3 gap-3 mb-6">
+          <div className="grid grid-cols-4 gap-3 mb-6">
             <div className="rounded-[20px] p-5 bg-white flex flex-col gap-1" style={cardStyle}>
               <span className="text-xs font-medium" style={{ color: '#64748B' }}>Antworten</span>
               <span className="text-3xl font-bold tracking-tight" style={{ color: '#1D4ED8' }}>{total}</span>
             </div>
             <div className="rounded-[20px] p-5 bg-white flex flex-col gap-1" style={cardStyle}>
-              <span className="text-xs font-medium" style={{ color: '#64748B' }}>Ø Note Webseite</span>
-              <span className="text-3xl font-bold tracking-tight" style={{ color: noteColor(avgNote) }}>
-                {avgNote !== null ? avgNote.toFixed(1) : '—'}
+              <span className="text-xs font-medium" style={{ color: '#64748B' }}>Ø Optimalset-Seite</span>
+              <span className="text-3xl font-bold tracking-tight" style={{ color: noteColor(avgOptimalset) }}>
+                {avgOptimalset !== null ? avgOptimalset.toFixed(1) : '—'}
+              </span>
+            </div>
+            <div className="rounded-[20px] p-5 bg-white flex flex-col gap-1" style={cardStyle}>
+              <span className="text-xs font-medium" style={{ color: '#64748B' }}>Ø Business-Seite</span>
+              <span className="text-3xl font-bold tracking-tight" style={{ color: noteColor(avgBusiness) }}>
+                {avgBusiness !== null ? avgBusiness.toFixed(1) : '—'}
               </span>
             </div>
             <div className="rounded-[20px] p-5 bg-white flex flex-col gap-1" style={cardStyle}>
@@ -253,11 +267,21 @@ export default async function FeedbackAdminPage() {
             </div>
           </div>
 
-          {/* Note + Preis-Meinung */}
+          {/* Notenverteilungen */}
           <div className="grid grid-cols-2 gap-3 mb-6">
-            <NoteDistribution title="Note für die eigene Webseite" notes={notesWebseite} />
+            <NoteDistribution title="Optimalset-Seite" notes={notesOptimalset} />
+            <NoteDistribution title="Business-Seite" notes={notesBusiness} />
+          </div>
+
+          {/* Wünsche + Preis */}
+          <div className="grid grid-cols-2 gap-3 mb-6">
             <CountList
-              title="Was denken sie über die Preise?"
+              title="Wunsch-Seiten (max. 3 pro Person)"
+              total={total}
+              entries={[...templateCounts.entries()].sort((a, b) => b[1] - a[1])}
+            />
+            <CountList
+              title="Wie finden sie den Preis?"
               total={total}
               colors={preisColorMap}
               entries={Object.entries(PREIS_LABELS)
@@ -266,13 +290,8 @@ export default async function FeedbackAdminPage() {
             />
           </div>
 
-          {/* Templates + Tarif + Upgrade-Grund */}
-          <div className="grid grid-cols-3 gap-3 mb-6">
-            <CountList
-              title="Template-Wünsche"
-              total={total}
-              entries={[...templateCounts.entries()].sort((a, b) => b[1] - a[1])}
-            />
+          {/* Tarif + Upgrade-Grund */}
+          <div className="grid grid-cols-2 gap-3 mb-6">
             <CountList
               title="Aktueller Tarif"
               total={total}
@@ -291,8 +310,9 @@ export default async function FeedbackAdminPage() {
 
           {/* Freitexte */}
           <div className="flex flex-col gap-3">
-            <TextAnswers title="Was stört an der eigenen Webseite?" items={texts('text_webseite')} />
-            <TextAnswers title="Weitere Template-Ideen" items={texts('text_templates')} />
+            <TextAnswers title="Optimalset-Seite: Was fehlt? Was soll anders werden?" items={texts('text_optimalset')} />
+            <TextAnswers title="Business-Seite: Was fehlt? Was soll anders werden?" items={texts('text_business')} />
+            <TextAnswers title="Eigene Template-Ideen" items={texts('text_templates')} />
             <TextAnswers title="Was wäre ein fairer Preis?" items={texts('text_preise')} />
             <TextAnswers title="Upgrade: Warum nicht? (Freitext)" items={texts('text_upgrade')} />
             <TextAnswers title="Was muss anders sein für eine Empfehlung?" items={texts('text_empfehlung')} />

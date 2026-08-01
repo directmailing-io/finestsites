@@ -17,13 +17,16 @@ const TARIF_OPTIONS = [
 ]
 
 const TEMPLATE_OPTIONS = [
-  'Mama-Business',
-  'Stoffwechselkur',
-  'ProShape (Abnehmen)',
-  'Sportler',
-  'Beauty & Pflege',
-  'Team-Aufbau',
+  'Mama-Business-Seite',
+  'Stoffwechselkur-Seite',
+  'ProShape-Seite',
+  'Sportler-Seite',
+  'Beauty & Pflege-Seite',
+  'Vitalcheck-Seite',
+  'Gesund im Alter-Seite',
+  'Muskelaufbau-Seite',
 ]
+const MAX_WUENSCHE = 3
 
 const PREIS_OPTIONS = [
   { value: 'zu_teuer', label: 'Zu teuer', color: '#DC2626', bg: '#FEF2F2' },
@@ -47,13 +50,15 @@ const GRUND_FOLLOWUP: Record<string, { label: string; placeholder: string }> = {
 const GRADE_COLORS = ['#22C55E', '#84CC16', '#EAB308', '#F97316', '#EF4444', '#B91C1C']
 
 type Answers = {
-  note_webseite: number | null
-  text_webseite: string
+  note_optimalset: number | null
+  text_optimalset: string
+  note_business: number | null
+  text_business: string
   template_wuensche: string[]
   text_templates: string
+  tarif: string | null
   preis_meinung: string | null
   text_preise: string
-  tarif: string | null
   upgrade_grund: string | null
   text_upgrade: string
   empfehlung: string | null
@@ -62,17 +67,37 @@ type Answers = {
 }
 
 const EMPTY: Answers = {
-  note_webseite: null, text_webseite: '',
+  note_optimalset: null, text_optimalset: '',
+  note_business: null, text_business: '',
   template_wuensche: [], text_templates: '',
+  tarif: null,
   preis_meinung: null, text_preise: '',
-  tarif: null, upgrade_grund: null, text_upgrade: '',
+  upgrade_grund: null, text_upgrade: '',
   empfehlung: null, text_empfehlung: '',
   text_chef: '',
 }
 
-const TOTAL_STEPS = 6
+// ── Voice + Text Eingabe (robust auf allen Geräten) ───────────────────────────
 
-// ── Voice + Text Eingabe ──────────────────────────────────────────────────────
+const MIME_CANDIDATES = [
+  'audio/webm;codecs=opus',
+  'audio/webm',
+  'audio/mp4;codecs=mp4a.40.2',
+  'audio/mp4',
+  'audio/ogg;codecs=opus',
+]
+
+function pickMime(): string | null {
+  if (typeof MediaRecorder === 'undefined') return null
+  if (typeof MediaRecorder.isTypeSupported !== 'function') return ''
+  return MIME_CANDIDATES.find(c => MediaRecorder.isTypeSupported(c)) ?? ''
+}
+
+function voiceSupported(): boolean {
+  return typeof navigator !== 'undefined'
+    && !!navigator.mediaDevices?.getUserMedia
+    && typeof MediaRecorder !== 'undefined'
+}
 
 function VoiceTextInput({ value, onChange, placeholder, rows = 3 }: {
   value: string
@@ -80,6 +105,7 @@ function VoiceTextInput({ value, onChange, placeholder, rows = 3 }: {
   placeholder: string
   rows?: number
 }) {
+  const [supported, setSupported] = useState(false)
   const [recording, setRecording] = useState(false)
   const [transcribing, setTranscribing] = useState(false)
   const [seconds, setSeconds] = useState(0)
@@ -88,42 +114,56 @@ function VoiceTextInput({ value, onChange, placeholder, rows = 3 }: {
   const chunksRef = useRef<Blob[]>([])
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
+  useEffect(() => { setSupported(voiceSupported()) }, [])
+
   const stopTimer = () => { if (timerRef.current) { clearInterval(timerRef.current); timerRef.current = null } }
 
   const stopRecording = useCallback(() => {
-    recorderRef.current?.stop()
+    try { recorderRef.current?.stop() } catch { /* schon gestoppt */ }
     setRecording(false)
     stopTimer()
   }, [])
 
   const startRecording = useCallback(async () => {
     setError('')
+    let stream: MediaStream
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
-      const mime = MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' : 'audio/mp4'
-      const rec = new MediaRecorder(stream, { mimeType: mime })
+      stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+    } catch {
+      setError('Mikrofon blockiert. Öffne die Seite direkt in Safari oder Chrome oder tipp deine Antwort ein.')
+      return
+    }
+    try {
+      const mime = pickMime()
+      const rec = mime ? new MediaRecorder(stream, { mimeType: mime }) : new MediaRecorder(stream)
       chunksRef.current = []
-      rec.ondataavailable = e => { if (e.data.size > 0) chunksRef.current.push(e.data) }
+      rec.ondataavailable = e => { if (e.data && e.data.size > 0) chunksRef.current.push(e.data) }
       rec.onstop = async () => {
         stream.getTracks().forEach(t => t.stop())
-        const blob = new Blob(chunksRef.current, { type: mime })
-        if (blob.size < 1000) return
+        const type = rec.mimeType || chunksRef.current[0]?.type || 'audio/webm'
+        const blob = new Blob(chunksRef.current, { type })
+        if (blob.size < 500) {
+          setError('Die Aufnahme war zu kurz. Versuch es nochmal.')
+          return
+        }
         setTranscribing(true)
         try {
           const fd = new FormData()
-          fd.append('audio', blob, mime === 'audio/webm' ? 'aufnahme.webm' : 'aufnahme.mp4')
+          fd.append('audio', blob, 'aufnahme')
           const res = await fetch('/api/feedback/transcribe', { method: 'POST', body: fd })
           const data = await res.json()
           if (!res.ok) throw new Error(data.error ?? 'Fehler')
           const text = (data.text ?? '').trim()
           if (text) onChange(value ? value.trimEnd() + ' ' + text : text)
+          else setError('Wir konnten nichts verstehen. Versuch es nochmal oder tipp deine Antwort ein.')
         } catch {
-          setError('Hat nicht geklappt. Tipp deine Antwort einfach ein.')
+          setError('Hat gerade nicht geklappt. Tipp deine Antwort einfach ein.')
         } finally {
           setTranscribing(false)
         }
       }
-      rec.start()
+      // Timeslice: zuverlässige Chunks auch auf iOS Safari
+      rec.start(1000)
       recorderRef.current = rec
       setRecording(true)
       setSeconds(0)
@@ -134,7 +174,8 @@ function VoiceTextInput({ value, onChange, placeholder, rows = 3 }: {
         })
       }, 1000)
     } catch {
-      setError('Mikro klappt nicht. Tipp deine Antwort einfach ein.')
+      stream.getTracks().forEach(t => t.stop())
+      setError('Einsprechen klappt in diesem Browser nicht. Tipp deine Antwort einfach ein.')
     }
   }, [onChange, value, stopRecording])
 
@@ -149,7 +190,7 @@ function VoiceTextInput({ value, onChange, placeholder, rows = 3 }: {
           placeholder={placeholder}
           rows={rows}
           style={{
-            width: '100%', padding: '14px 16px', paddingBottom: 52,
+            width: '100%', padding: '14px 16px', paddingBottom: supported ? 56 : 14,
             border: '1.5px solid #E5E7EB', borderRadius: 16, fontSize: 16,
             lineHeight: 1.55, color: '#1a1a1a', background: '#fff',
             resize: 'vertical', outline: 'none', fontFamily: 'inherit',
@@ -157,42 +198,44 @@ function VoiceTextInput({ value, onChange, placeholder, rows = 3 }: {
           onFocus={e => (e.target.style.borderColor = '#1a1a1a')}
           onBlur={e => (e.target.style.borderColor = '#E5E7EB')}
         />
-        <button
-          type="button"
-          onClick={recording ? stopRecording : startRecording}
-          disabled={transcribing}
-          style={{
-            position: 'absolute', left: 10, bottom: 14,
-            display: 'flex', alignItems: 'center', gap: 8,
-            padding: '8px 14px', borderRadius: 999, border: 'none', cursor: 'pointer',
-            fontSize: 13.5, fontWeight: 600, fontFamily: 'inherit',
-            background: recording ? '#DC2626' : '#F3F4F6',
-            color: recording ? '#fff' : '#374151',
-            opacity: transcribing ? 0.6 : 1,
-            transition: 'background 0.2s',
-          }}
-        >
-          {recording ? (
-            <>
-              <span style={{
-                width: 8, height: 8, borderRadius: 999, background: '#fff',
-                animation: 'fs-pulse 1s infinite',
-              }} />
-              Stopp · {String(Math.floor(seconds / 60))}:{String(seconds % 60).padStart(2, '0')}
-            </>
-          ) : transcribing ? (
-            'Wird zu Text…'
-          ) : (
-            <>
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
-                <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
-                <line x1="12" y1="19" x2="12" y2="23" />
-              </svg>
-              Einsprechen
-            </>
-          )}
-        </button>
+        {supported && (
+          <button
+            type="button"
+            onClick={recording ? stopRecording : startRecording}
+            disabled={transcribing}
+            style={{
+              position: 'absolute', left: 10, bottom: 14,
+              display: 'flex', alignItems: 'center', gap: 8,
+              padding: '9px 16px', borderRadius: 999, border: 'none', cursor: 'pointer',
+              fontSize: 14, fontWeight: 600, fontFamily: 'inherit',
+              background: recording ? '#DC2626' : '#1a1a1a',
+              color: '#fff',
+              opacity: transcribing ? 0.6 : 1,
+              transition: 'background 0.2s',
+            }}
+          >
+            {recording ? (
+              <>
+                <span style={{
+                  width: 8, height: 8, borderRadius: 999, background: '#fff',
+                  animation: 'fs-pulse 1s infinite',
+                }} />
+                Fertig · {String(Math.floor(seconds / 60))}:{String(seconds % 60).padStart(2, '0')}
+              </>
+            ) : transcribing ? (
+              'Wird zu Text…'
+            ) : (
+              <>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
+                  <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+                  <line x1="12" y1="19" x2="12" y2="23" />
+                </svg>
+                Einsprechen
+              </>
+            )}
+          </button>
+        )}
       </div>
       {error && <p style={{ margin: '8px 2px 0', fontSize: 13, color: '#B45309' }}>{error}</p>}
       <style jsx global>{`
@@ -202,7 +245,7 @@ function VoiceTextInput({ value, onChange, placeholder, rows = 3 }: {
   )
 }
 
-// ── Schulnoten-Auswahl (farbig) ───────────────────────────────────────────────
+// ── Schulnoten (farbig) ───────────────────────────────────────────────────────
 
 function GradePicker({ value, onChange }: { value: number | null; onChange: (n: number) => void }) {
   return (
@@ -240,34 +283,54 @@ function GradePicker({ value, onChange }: { value: number | null; onChange: (n: 
   )
 }
 
-// ── Chips ─────────────────────────────────────────────────────────────────────
+// ── Auswahl-Karten ────────────────────────────────────────────────────────────
 
-function Chip({ label, active, onClick, color, bg }: {
+function SelectCard({ label, active, onClick, disabled, color, bg }: {
   label: string
   active: boolean
   onClick: () => void
+  disabled?: boolean
   color?: string
   bg?: string
 }) {
   const activeColor = color ?? '#1a1a1a'
+  const activeBg = bg ?? '#FAFAFA'
   return (
     <button
       type="button"
       onClick={onClick}
+      disabled={disabled}
       style={{
-        padding: '11px 18px', borderRadius: 999, cursor: 'pointer', fontFamily: 'inherit',
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10,
+        width: '100%', padding: '16px 18px', borderRadius: 16, cursor: disabled ? 'default' : 'pointer',
+        fontFamily: 'inherit', textAlign: 'left',
         border: active ? `2px solid ${activeColor}` : '1.5px solid #E5E7EB',
-        background: active ? (bg ?? '#1a1a1a') : '#fff',
-        color: active ? (bg ? activeColor : '#fff') : '#374151',
-        fontSize: 15, fontWeight: active ? 700 : 600, transition: 'all 0.15s',
+        background: active ? activeBg : '#fff',
+        color: active ? (color ?? '#1a1a1a') : '#374151',
+        fontSize: 15.5, fontWeight: active ? 700 : 500,
+        opacity: disabled ? 0.4 : 1,
+        transition: 'all 0.15s',
       }}
     >
-      {label}
+      <span>{label}</span>
+      <span style={{
+        width: 22, height: 22, borderRadius: 999, flexShrink: 0,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        border: active ? 'none' : '1.5px solid #D1D5DB',
+        background: active ? activeColor : 'transparent',
+        transition: 'all 0.15s',
+      }}>
+        {active && (
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M4 12l5 5 11-11" />
+          </svg>
+        )}
+      </span>
     </button>
   )
 }
 
-// ── Ja/Nein Buttons ───────────────────────────────────────────────────────────
+// ── Ja/Nein ───────────────────────────────────────────────────────────────────
 
 function YesNo({ value, onChange }: { value: string | null; onChange: (v: string) => void }) {
   const options = [
@@ -284,16 +347,16 @@ function YesNo({ value, onChange }: { value: string | null; onChange: (v: string
             type="button"
             onClick={() => onChange(o.value)}
             style={{
-              flex: 1, padding: '20px 12px', borderRadius: 18, cursor: 'pointer', fontFamily: 'inherit',
-              display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8,
+              flex: 1, padding: '24px 12px', borderRadius: 18, cursor: 'pointer', fontFamily: 'inherit',
+              display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10,
               border: active ? `2px solid ${o.color}` : '1.5px solid #E5E7EB',
               background: active ? o.bg : '#fff',
               color: active ? o.color : '#6B7280',
-              fontSize: 16, fontWeight: 700, transition: 'all 0.15s',
+              fontSize: 17, fontWeight: 700, transition: 'all 0.15s',
               transform: active ? 'scale(1.03)' : 'scale(1)',
             }}
           >
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
               style={{ transform: o.up ? 'none' : 'rotate(180deg)' }}>
               <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3" />
             </svg>
@@ -352,20 +415,32 @@ function launchConfetti(canvas: HTMLCanvasElement) {
 
 // ── Seite ─────────────────────────────────────────────────────────────────────
 
+type StepId = 'optimalset' | 'business' | 'wunsch' | 'tarif' | 'preis' | 'upgrade' | 'empfehlung' | 'chef'
+
 export default function FeedbackPage() {
-  const [step, setStep] = useState(1) // 1..6 = Fragen, 7 = Danke
   const [answers, setAnswers] = useState<Answers>(EMPTY)
+  const [stepIndex, setStepIndex] = useState(0)
+  const [done, setDone] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState('')
   const confettiRef = useRef<HTMLCanvasElement>(null)
+
+  const showUpgrade = answers.tarif !== null && answers.tarif !== 'unlimited'
+  const steps: StepId[] = [
+    'optimalset', 'business', 'wunsch', 'tarif', 'preis',
+    ...(showUpgrade ? ['upgrade' as const] : []),
+    'empfehlung', 'chef',
+  ]
+  const step = steps[Math.min(stepIndex, steps.length - 1)]
+  const isLast = stepIndex >= steps.length - 1
 
   const set = <K extends keyof Answers>(key: K, val: Answers[K]) =>
     setAnswers(a => ({ ...a, [key]: val }))
 
   useEffect(() => {
     window.scrollTo({ top: 0 })
-    if (step === 7 && confettiRef.current) launchConfetti(confettiRef.current)
-  }, [step])
+    if (done && confettiRef.current) launchConfetti(confettiRef.current)
+  }, [stepIndex, done])
 
   async function submit() {
     setSubmitting(true)
@@ -380,7 +455,7 @@ export default function FeedbackPage() {
         const data = await res.json().catch(() => ({}))
         throw new Error(data.error ?? 'Fehler beim Senden')
       }
-      setStep(7)
+      setDone(true)
     } catch (e) {
       setSubmitError(e instanceof Error ? e.message : 'Fehler beim Senden. Bitte versuch es nochmal.')
     } finally {
@@ -388,262 +463,274 @@ export default function FeedbackPage() {
     }
   }
 
-  const showUpgradeQuestion = answers.tarif !== null && answers.tarif !== 'unlimited'
+  const toggleWunsch = (t: string) =>
+    set('template_wuensche',
+      answers.template_wuensche.includes(t)
+        ? answers.template_wuensche.filter(x => x !== t)
+        : answers.template_wuensche.length >= MAX_WUENSCHE
+          ? answers.template_wuensche
+          : [...answers.template_wuensche, t]
+    )
+
   const grundFollowup = answers.upgrade_grund ? GRUND_FOLLOWUP[answers.upgrade_grund] : null
 
   return (
-    <div style={{
-      minHeight: '100vh', background: '#FAFAFA', display: 'flex', flexDirection: 'column',
-      alignItems: 'center', padding: '0 20px',
-      fontFamily: 'inherit',
-    }}>
+    <div style={{ minHeight: '100vh', background: '#fff', fontFamily: 'inherit' }}>
       <canvas ref={confettiRef} style={{
         position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 50,
-        width: '100vw', height: '100vh', display: step === 7 ? 'block' : 'none',
+        width: '100vw', height: '100vh', display: done ? 'block' : 'none',
       }} />
 
-      <div style={{ width: '100%', maxWidth: 560, padding: '40px 0 60px' }}>
-
-        {/* Fortschritt */}
-        {step <= TOTAL_STEPS && (
-          <div style={{ marginBottom: 24 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
-              <span style={{ fontSize: 13, fontWeight: 600, color: '#6B7280' }}>{step} von {TOTAL_STEPS}</span>
-              <span style={{
-                fontSize: 12, fontWeight: 700, color: '#065F46', background: '#ECFDF5',
-                padding: '3px 10px', borderRadius: 999,
-              }}>
-                100 % anonym
-              </span>
-            </div>
-            <div style={{ height: 6, background: '#E5E7EB', borderRadius: 999 }}>
-              <div style={{
-                height: '100%', width: `${(step / TOTAL_STEPS) * 100}%`,
-                background: '#1a1a1a', borderRadius: 999, transition: 'width 0.35s ease',
-              }} />
-            </div>
-          </div>
-        )}
-
-        <div style={{
-          background: '#fff', borderRadius: 24, padding: '32px 28px',
-          border: '1px solid #F1F5F9',
-          boxShadow: '0 1px 4px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04)',
+      {/* Top-Leiste */}
+      <div style={{
+        position: 'fixed', top: 0, left: 0, right: 0, zIndex: 20,
+        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+        padding: '14px 20px', background: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(8px)',
+      }}>
+        <span style={{ fontSize: 15, fontWeight: 800, letterSpacing: '-0.02em', color: '#1a1a1a' }}>FinestSites</span>
+        <span style={{
+          fontSize: 12, fontWeight: 700, color: '#065F46', background: '#ECFDF5',
+          padding: '4px 12px', borderRadius: 999,
         }}>
+          100 % anonym
+        </span>
+      </div>
 
-          {/* ── 1: Deine Webseite ── */}
-          {step === 1 && (
-            <StepShell
-              title="Wie gefällt dir deine Webseite?"
-              sub="Also die Seite, die du mit FinestSites gebaut hast."
-            >
-              <GradePicker value={answers.note_webseite} onChange={n => set('note_webseite', n)} />
-              <FieldLabel>Was stört dich daran?</FieldLabel>
-              <VoiceTextInput
-                value={answers.text_webseite}
-                onChange={v => set('text_webseite', v)}
-                placeholder="Sag es ganz ehrlich…"
-              />
-            </StepShell>
-          )}
-
-          {/* ── 2: Templates ── */}
-          {step === 2 && (
-            <StepShell
-              title="Welche Templates fehlen dir?"
-              sub="Tippe alles an, was du dir wünschst."
-            >
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
-                {TEMPLATE_OPTIONS.map(t => (
-                  <Chip key={t} label={t} active={answers.template_wuensche.includes(t)}
-                    onClick={() => set('template_wuensche',
-                      answers.template_wuensche.includes(t)
-                        ? answers.template_wuensche.filter(x => x !== t)
-                        : [...answers.template_wuensche, t]
-                    )} />
-                ))}
-              </div>
-              <FieldLabel>Noch andere Ideen?</FieldLabel>
-              <VoiceTextInput
-                value={answers.text_templates}
-                onChange={v => set('text_templates', v)}
-                placeholder="Z. B. für Events, Kunden-Betreuung…"
-                rows={2}
-              />
-            </StepShell>
-          )}
-
-          {/* ── 3: Preise ── */}
-          {step === 3 && (
-            <StepShell title="Was denkst du über unsere Preise?">
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
-                {PREIS_OPTIONS.map(o => (
-                  <Chip key={o.value} label={o.label} color={o.color} bg={o.bg}
-                    active={answers.preis_meinung === o.value}
-                    onClick={() => set('preis_meinung', answers.preis_meinung === o.value ? null : o.value)} />
-                ))}
-              </div>
-              <FieldLabel>Was wäre für dich ein fairer Preis?</FieldLabel>
-              <VoiceTextInput
-                value={answers.text_preise}
-                onChange={v => set('text_preise', v)}
-                placeholder="Z. B. 10 Euro im Monat, weil…"
-                rows={2}
-              />
-            </StepShell>
-          )}
-
-          {/* ── 4: Tarif + Upgrade ── */}
-          {step === 4 && (
-            <StepShell title="Welchen Tarif hast du gerade?">
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
-                {TARIF_OPTIONS.map(o => (
-                  <Chip key={o.value} label={o.label} active={answers.tarif === o.value}
-                    onClick={() => {
-                      const next = answers.tarif === o.value ? null : o.value
-                      setAnswers(a => ({
-                        ...a,
-                        tarif: next,
-                        ...(next === 'unlimited' ? { upgrade_grund: null, text_upgrade: '' } : {}),
-                      }))
-                    }} />
-                ))}
-              </div>
-              {showUpgradeQuestion && (
-                <>
-                  <FieldLabel>Warum kein größeres Paket?</FieldLabel>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
-                    {GRUND_OPTIONS.map(g => (
-                      <Chip key={g.value} label={g.label} active={answers.upgrade_grund === g.value}
-                        onClick={() => set('upgrade_grund', answers.upgrade_grund === g.value ? null : g.value)} />
-                    ))}
-                  </div>
-                  {grundFollowup && (
-                    <>
-                      <FieldLabel>{grundFollowup.label}</FieldLabel>
-                      <VoiceTextInput
-                        value={answers.text_upgrade}
-                        onChange={v => set('text_upgrade', v)}
-                        placeholder={grundFollowup.placeholder}
-                        rows={2}
-                      />
-                    </>
-                  )}
-                </>
-              )}
-            </StepShell>
-          )}
-
-          {/* ── 5: Weiterempfehlung ── */}
-          {step === 5 && (
-            <StepShell title="Wirst du FinestSites deinen Partnern empfehlen?">
-              <YesNo value={answers.empfehlung} onChange={v => {
-                setAnswers(a => ({
-                  ...a,
-                  empfehlung: a.empfehlung === v ? null : v,
-                  ...(v === 'ja' ? { text_empfehlung: '' } : {}),
-                }))
-              }} />
-              {answers.empfehlung === 'nein' && (
-                <>
-                  <FieldLabel>Was muss anders sein, damit du uns empfiehlst?</FieldLabel>
-                  <VoiceTextInput
-                    value={answers.text_empfehlung}
-                    onChange={v => set('text_empfehlung', v)}
-                    placeholder="Ganz ehrlich…"
-                  />
-                </>
-              )}
-            </StepShell>
-          )}
-
-          {/* ── 6: Chef-Frage ── */}
-          {step === 6 && (
-            <StepShell
-              title="Wenn du hier Chef wärst: Was würdest du zuerst ändern?"
-              sub="Alles erlaubt: Preise, Templates, Bedienung."
-            >
-              <VoiceTextInput
-                value={answers.text_chef}
-                onChange={v => set('text_chef', v)}
-                placeholder="Als Erstes würde ich…"
-                rows={4}
-              />
-              {submitError && (
-                <p style={{ margin: '14px 2px 0', fontSize: 14, color: '#DC2626' }}>{submitError}</p>
-              )}
-            </StepShell>
-          )}
-
-          {/* ── Danke ── */}
-          {step === 7 && (
-            <div style={{ textAlign: 'center', padding: '20px 0' }}>
-              <div style={{
-                width: 64, height: 64, borderRadius: 999, background: '#10B981',
-                display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px',
-              }}>
-                <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M4 12l5 5 11-11" />
-                </svg>
-              </div>
-              <h1 style={{ fontSize: 24, fontWeight: 800, color: '#1a1a1a', margin: '0 0 12px' }}>
-                Danke dir!
-              </h1>
-              <p style={{ fontSize: 16, lineHeight: 1.6, color: '#4B5563', margin: 0 }}>
-                Alles anonym gespeichert. Du hilfst uns damit richtig.
-              </p>
+      {/* Inhalt */}
+      <div style={{
+        maxWidth: 600, margin: '0 auto',
+        padding: done ? '120px 24px 60px' : '92px 24px 170px',
+      }}>
+        {done ? (
+          <div style={{ textAlign: 'center' }}>
+            <div style={{
+              width: 72, height: 72, borderRadius: 999, background: '#10B981',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px',
+            }}>
+              <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M4 12l5 5 11-11" />
+              </svg>
             </div>
-          )}
+            <h1 style={{ fontSize: 28, fontWeight: 800, color: '#1a1a1a', margin: '0 0 12px', letterSpacing: '-0.02em' }}>
+              Danke dir!
+            </h1>
+            <p style={{ fontSize: 16.5, lineHeight: 1.6, color: '#6B7280', margin: 0 }}>
+              Alles anonym gespeichert. Du hilfst uns damit richtig.
+            </p>
+          </div>
+        ) : (
+          <>
+            <p style={{ fontSize: 13, fontWeight: 600, color: '#9CA3AF', margin: '0 0 10px' }}>
+              {stepIndex + 1} von {steps.length}
+            </p>
 
-          {/* ── Navigation ── */}
-          {step <= TOTAL_STEPS && (
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 28 }}>
-              {step > 1 ? (
-                <button
-                  onClick={() => setStep(s => s - 1)}
-                  style={{
-                    padding: '12px 20px', borderRadius: 999, border: '1.5px solid #E5E7EB',
-                    background: '#fff', color: '#374151', fontSize: 15, fontWeight: 600,
-                    cursor: 'pointer', fontFamily: 'inherit',
-                  }}
-                >
-                  Zurück
-                </button>
-              ) : <span />}
-              {step < TOTAL_STEPS ? (
-                <button onClick={() => setStep(s => s + 1)} style={primaryBtn}>Weiter</button>
-              ) : (
-                <button onClick={submit} disabled={submitting} style={{ ...primaryBtn, opacity: submitting ? 0.6 : 1 }}>
-                  {submitting ? 'Wird gesendet…' : 'Absenden'}
-                </button>
-              )}
-            </div>
-          )}
-        </div>
+            {step === 'optimalset' && (
+              <StepShell title="Wie gefällt dir die Optimalset-Seite?">
+                <GradePicker value={answers.note_optimalset} onChange={n => set('note_optimalset', n)} />
+                <FieldLabel>Was fehlt dir dort? Was würdest du dir anders wünschen?</FieldLabel>
+                <VoiceTextInput
+                  value={answers.text_optimalset}
+                  onChange={v => set('text_optimalset', v)}
+                  placeholder="Sag es ganz ehrlich…"
+                />
+              </StepShell>
+            )}
 
-        {step <= TOTAL_STEPS && (
-          <p style={{ textAlign: 'center', fontSize: 12.5, color: '#9CA3AF', marginTop: 16 }}>
-            Alles freiwillig. Tippen oder einsprechen, wie du magst.
-          </p>
+            {step === 'business' && (
+              <StepShell title="Wie gefällt dir die Business-Seite?">
+                <GradePicker value={answers.note_business} onChange={n => set('note_business', n)} />
+                <FieldLabel>Was fehlt dir dort? Was würdest du dir anders wünschen?</FieldLabel>
+                <VoiceTextInput
+                  value={answers.text_business}
+                  onChange={v => set('text_business', v)}
+                  placeholder="Sag es ganz ehrlich…"
+                />
+              </StepShell>
+            )}
+
+            {step === 'wunsch' && (
+              <StepShell title="Welche 3 Seiten wünschst du dir am meisten?" sub="Wähle bis zu 3 aus.">
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+                  {TEMPLATE_OPTIONS.map(t => {
+                    const active = answers.template_wuensche.includes(t)
+                    return (
+                      <SelectCard key={t} label={t.replace('-Seite', '')} active={active}
+                        disabled={!active && answers.template_wuensche.length >= MAX_WUENSCHE}
+                        onClick={() => toggleWunsch(t)} />
+                    )
+                  })}
+                </div>
+                <FieldLabel>Deine eigene Idee?</FieldLabel>
+                <VoiceTextInput
+                  value={answers.text_templates}
+                  onChange={v => set('text_templates', v)}
+                  placeholder="Deine Idee…"
+                  rows={2}
+                />
+              </StepShell>
+            )}
+
+            {step === 'tarif' && (
+              <StepShell title="Welchen Tarif hast du gerade?">
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+                  {TARIF_OPTIONS.map(o => (
+                    <SelectCard key={o.value} label={o.label} active={answers.tarif === o.value}
+                      onClick={() => {
+                        const next = answers.tarif === o.value ? null : o.value
+                        setAnswers(a => ({
+                          ...a,
+                          tarif: next,
+                          ...(next === 'unlimited' || next === null ? { upgrade_grund: null, text_upgrade: '' } : {}),
+                        }))
+                      }} />
+                  ))}
+                </div>
+              </StepShell>
+            )}
+
+            {step === 'preis' && (
+              <StepShell title="Wie findest du den Preis?" sub="Für das, was du dafür bekommst.">
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                  {PREIS_OPTIONS.map(o => (
+                    <SelectCard key={o.value} label={o.label} color={o.color} bg={o.bg}
+                      active={answers.preis_meinung === o.value}
+                      onClick={() => set('preis_meinung', answers.preis_meinung === o.value ? null : o.value)} />
+                  ))}
+                </div>
+                <FieldLabel>Was wäre für dich ein fairer Preis?</FieldLabel>
+                <VoiceTextInput
+                  value={answers.text_preise}
+                  onChange={v => set('text_preise', v)}
+                  placeholder="Z. B. 10 Euro im Monat, weil…"
+                  rows={2}
+                />
+              </StepShell>
+            )}
+
+            {step === 'upgrade' && (
+              <StepShell title="Warum kein größeres Paket?" sub="Ganz ehrlich, es gibt keine falsche Antwort.">
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                  {GRUND_OPTIONS.map(g => (
+                    <SelectCard key={g.value} label={g.label} active={answers.upgrade_grund === g.value}
+                      onClick={() => set('upgrade_grund', answers.upgrade_grund === g.value ? null : g.value)} />
+                  ))}
+                </div>
+                {grundFollowup && (
+                  <>
+                    <FieldLabel>{grundFollowup.label}</FieldLabel>
+                    <VoiceTextInput
+                      value={answers.text_upgrade}
+                      onChange={v => set('text_upgrade', v)}
+                      placeholder={grundFollowup.placeholder}
+                      rows={2}
+                    />
+                  </>
+                )}
+              </StepShell>
+            )}
+
+            {step === 'empfehlung' && (
+              <StepShell title="Wirst du FinestSites deinen Partnern empfehlen?">
+                <YesNo value={answers.empfehlung} onChange={v => {
+                  setAnswers(a => ({
+                    ...a,
+                    empfehlung: a.empfehlung === v ? null : v,
+                    ...(v === 'ja' ? { text_empfehlung: '' } : {}),
+                  }))
+                }} />
+                {answers.empfehlung === 'nein' && (
+                  <>
+                    <FieldLabel>Was muss anders sein, damit du uns empfiehlst?</FieldLabel>
+                    <VoiceTextInput
+                      value={answers.text_empfehlung}
+                      onChange={v => set('text_empfehlung', v)}
+                      placeholder="Ganz ehrlich…"
+                    />
+                  </>
+                )}
+              </StepShell>
+            )}
+
+            {step === 'chef' && (
+              <StepShell
+                title="Wenn du hier Chef wärst: Was würdest du zuerst ändern?"
+                sub="Alles erlaubt: Preise, Seiten, Bedienung."
+              >
+                <VoiceTextInput
+                  value={answers.text_chef}
+                  onChange={v => set('text_chef', v)}
+                  placeholder="Als Erstes würde ich…"
+                  rows={4}
+                />
+                {submitError && (
+                  <p style={{ margin: '14px 2px 0', fontSize: 14, color: '#DC2626' }}>{submitError}</p>
+                )}
+              </StepShell>
+            )}
+          </>
         )}
       </div>
+
+      {/* Bottom-Bar */}
+      {!done && (
+        <div style={{
+          position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 20,
+          background: '#fff', borderTop: '1px solid #F1F5F9',
+        }}>
+          <div style={{ height: 4, background: '#F1F5F9' }}>
+            <div style={{
+              height: '100%', width: `${((stepIndex + 1) / steps.length) * 100}%`,
+              background: '#1a1a1a', transition: 'width 0.35s ease',
+            }} />
+          </div>
+          <div style={{
+            maxWidth: 600, margin: '0 auto', padding: '14px 24px',
+            display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+            paddingBottom: 'max(14px, env(safe-area-inset-bottom))',
+          }}>
+            {stepIndex > 0 ? (
+              <button
+                onClick={() => setStepIndex(i => i - 1)}
+                style={{
+                  padding: '10px 4px', border: 'none', background: 'none',
+                  color: '#1a1a1a', fontSize: 15.5, fontWeight: 600, cursor: 'pointer',
+                  textDecoration: 'underline', textUnderlineOffset: 4, fontFamily: 'inherit',
+                }}
+              >
+                Zurück
+              </button>
+            ) : <span />}
+            {isLast ? (
+              <button onClick={submit} disabled={submitting}
+                style={{ ...primaryBtn, opacity: submitting ? 0.6 : 1 }}>
+                {submitting ? 'Wird gesendet…' : 'Absenden'}
+              </button>
+            ) : (
+              <button onClick={() => setStepIndex(i => i + 1)} style={primaryBtn}>Weiter</button>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   )
 }
 
 const primaryBtn: React.CSSProperties = {
-  padding: '13px 28px', borderRadius: 999, border: 'none',
-  background: '#1a1a1a', color: '#fff', fontSize: 15.5, fontWeight: 700,
+  padding: '14px 34px', borderRadius: 14, border: 'none',
+  background: '#1a1a1a', color: '#fff', fontSize: 16, fontWeight: 700,
   cursor: 'pointer', fontFamily: 'inherit',
 }
 
 function StepShell({ title, sub, children }: { title: string; sub?: string; children: React.ReactNode }) {
   return (
     <div>
-      <h1 style={{ fontSize: 21, fontWeight: 800, color: '#1a1a1a', margin: sub ? '0 0 6px' : '0 0 22px', lineHeight: 1.3 }}>
+      <h1 style={{
+        fontSize: 25, fontWeight: 800, color: '#1a1a1a', letterSpacing: '-0.02em',
+        margin: sub ? '0 0 8px' : '0 0 26px', lineHeight: 1.25,
+      }}>
         {title}
       </h1>
-      {sub && <p style={{ fontSize: 14.5, lineHeight: 1.5, color: '#9CA3AF', margin: '0 0 22px' }}>{sub}</p>}
+      {sub && <p style={{ fontSize: 15.5, lineHeight: 1.5, color: '#9CA3AF', margin: '0 0 26px' }}>{sub}</p>}
       {children}
     </div>
   )
@@ -651,7 +738,7 @@ function StepShell({ title, sub, children }: { title: string; sub?: string; chil
 
 function FieldLabel({ children }: { children: React.ReactNode }) {
   return (
-    <p style={{ fontSize: 15, fontWeight: 600, color: '#374151', margin: '22px 0 10px', lineHeight: 1.45 }}>
+    <p style={{ fontSize: 15.5, fontWeight: 600, color: '#374151', margin: '26px 0 10px', lineHeight: 1.45 }}>
       {children}
     </p>
   )
