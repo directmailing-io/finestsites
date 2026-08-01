@@ -2307,6 +2307,13 @@ function SocialUrlField({ field, value, onChange }: {
 
 // ─── Field Renderer ───────────────────────────────────────────────────────────
 
+// Compares compliance-checked texts ignoring markup/whitespace differences.
+function complianceTextsMatch(a?: string, b?: string): boolean {
+  if (!a || !b) return false
+  const norm = (s: string) => s.replace(/<[^>]*>/g, ' ').replace(/&nbsp;/gi, ' ').replace(/\s+/g, ' ').trim()
+  return norm(a) === norm(b)
+}
+
 function FieldRenderer({ field, value, onChange, onItemFocus, complianceApprovedText, complianceBaseText, onComplianceApproved, onComplianceRevoked, narrow, onMobileSelect }: {
   field: FieldSchema; value: string; onChange: (v: string) => void
   onItemFocus?: (item: Record<string, string> | null, idx: number) => void
@@ -2494,6 +2501,12 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
               if ((data.data as Record<string, string>)?.[chkKey]) {
                 init[chkKey] = (data.data as Record<string, string>)[chkKey]
               }
+            }
+            // Self-heal: text still matches the approved baseline → approved,
+            // even if __chk got lost (e.g. revoke without any actual edit).
+            const base = init[f.key + '__chkbase']
+            if (!init[f.key + '__chk'] && base && complianceTextsMatch(init[f.key], base)) {
+              init[f.key + '__chk'] = base
             }
           }
         }
@@ -2873,11 +2886,17 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
   const previewDataB64 = Buffer.from(JSON.stringify(values)).toString('base64')
   const previewUrl = `/api/preview/${id}?data=${encodeURIComponent(previewDataB64)}${previewHash ? '#' + encodeURIComponent(previewHash) : ''}`
 
+  // Approved = explicitly approved (__chk) OR the text still matches the last
+  // approved baseline (__chkbase). The latter keeps green check UI and publish
+  // gate consistent when a user unlocks via "Bearbeiten" but changes nothing.
+  const isComplianceApproved = (key: string) =>
+    !!values[key + '__chk'] || complianceTextsMatch(values[key], values[key + '__chkbase'])
+
   function getSectionCompletion(sec: string) {
     const sf = fields.filter(f => (f.section || 'Allgemein') === sec)
     const requiredOk = sf.filter(f => f.required).every(f => !!values[f.key])
     // A section with a compliance_check field is only "complete" once the check is approved
-    const complianceOk = sf.filter(f => f.compliance_check).every(f => !!values[f.key + '__chk'])
+    const complianceOk = sf.filter(f => f.compliance_check).every(f => isComplianceApproved(f.key))
     return { complete: requiredOk && complianceOk, count: sf.length }
   }
 
@@ -2896,7 +2915,7 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
   const complianceBlockedFields = fields
     .filter(f => f.compliance_check === true)
     .filter(f => checkShowWhen(f as unknown as LoopSubField, values, fields as unknown as LoopSubField[]))
-    .filter(f => !values[f.key + '__chk'])
+    .filter(f => !isComplianceApproved(f.key))
   const allRequiredComplete = missingRequiredFields.length === 0 && complianceBlockedFields.length === 0
 
   // Top-level show_when: hide fields whose visibility depends on another field
@@ -3525,8 +3544,10 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
                           complianceApprovedText={field.compliance_check ? (values[field.key + '__chk'] ?? '') : undefined}
                           complianceBaseText={field.compliance_check ? (values[field.key + '__chkbase'] ?? '') : undefined}
                           onComplianceApproved={field.compliance_check ? (approvedHtml) => {
-                            handleChange(field.key + '__chk', approvedHtml)
-                            handleChange(field.key + '__chkbase', approvedHtml)
+                            // One atomic update — two handleChange calls in a row would
+                            // both build on the same stale closure and lose the first key.
+                            setValues(v => ({ ...v, [field.key + '__chk']: approvedHtml, [field.key + '__chkbase']: approvedHtml }))
+                            setHasChanges(true)
                             // Immediately persist to DB — don't rely on autosave timer
                             // so page reload also shows the locked view correctly
                             fetch(`/api/sites/${id}`, {
