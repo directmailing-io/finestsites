@@ -166,18 +166,6 @@
       "section": "Design"
     },
     {
-      "key": "joghurt_anzeigen",
-      "label": "Probiotischen Joghurt bewerben",
-      "type": "toggle",
-      "required": false,
-      "toggle_on_value": "",
-      "toggle_off_value": "nein",
-      "placeholder_text": "Der Feel-Good Yoghurt Drink ist nicht in allen Ländern verfügbar. Deaktiviere die Option, wenn er in deinem Markt nicht angeboten wird — die Seite passt sich automatisch an.",
-      "options": [],
-      "card_options": [],
-      "section": "Inhalte"
-    },
-    {
       "key": "about_me_html",
       "label": "„Über mich\"-Text",
       "type": "richtext",
@@ -198,6 +186,18 @@
       "placeholder_text": "Deine persönlichen Shoplinks werden automatisch daraus erstellt — du musst nichts weiter tun.",
       "input_placeholder": "z. B. 40237198",
       "max_length": 20,
+      "options": [],
+      "card_options": [],
+      "section": "Shop"
+    },
+    {
+      "key": "joghurt_anzeigen",
+      "label": "Probiotischen Joghurt bewerben",
+      "type": "toggle",
+      "required": false,
+      "toggle_on_value": "",
+      "toggle_off_value": "nein",
+      "placeholder_text": "Der Feel-Good Yoghurt Drink ist nicht in allen Ländern verfügbar. Deaktiviere die Option, wenn er in deinem Markt nicht angeboten wird — die Seite passt sich automatisch an.",
       "options": [],
       "card_options": [],
       "section": "Shop"

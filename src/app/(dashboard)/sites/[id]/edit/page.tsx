@@ -2493,24 +2493,6 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
           }
         }
         setValues(init)
-        // Auto-collapse optional fields that have no value — user can expand as needed
-        setCollapsedOptionals(new Set(
-          fields.filter(f => {
-            if (f.required || init[f.key]) return false
-            // Toggles are their own compact control — collapsing them just adds a click
-            if (f.type === 'toggle') return false
-            // Don't collapse when the show_when condition is currently active
-            // (e.g. partner fields should be expanded when team mode is on)
-            if (f.show_when) {
-              const swVal = init[f.show_when.field] ?? ''
-              const match = Array.isArray(f.show_when.value)
-                ? f.show_when.value.includes(swVal)
-                : swVal === f.show_when.value
-              if (match) return false
-            }
-            return true
-          }).map(f => f.key)
-        ))
         // Mark the initial-loaded state as already-saved so autosave doesn't
         // fire on the very first render.
         lastAutosavedRef.current = JSON.stringify(init)
