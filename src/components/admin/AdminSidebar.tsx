@@ -110,6 +110,16 @@ const navItems = [
     ),
   },
   {
+    // Temporäre Feedback-Kampagne — zum Entfernen siehe docs/feedback-aktion-entfernen.md
+    href: '/admin/feedback',
+    label: 'Feedback-Aktion',
+    icon: (_active: boolean) => (
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+        <path d="M3 11l18-8-8 18-2.5-7.5L3 11z"/>
+      </svg>
+    ),
+  },
+  {
     href: '/admin/emails',
     label: 'E-Mail Log',
     icon: (_active: boolean) => (
