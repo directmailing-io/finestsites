@@ -10,10 +10,9 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 // ── Fragen-Konfiguration ──────────────────────────────────────────────────────
 
 const TARIF_OPTIONS = [
-  { value: 'starter', label: 'Starter' },
-  { value: 'pro', label: 'Pro' },
-  { value: 'unlimited', label: 'Unlimited' },
-  { value: 'unbekannt', label: 'Weiß nicht' },
+  { value: 'starter', label: 'Starter', sub: '1 Seite · 21 € im Monat' },
+  { value: 'pro', label: 'Pro', sub: '3 Seiten · 27 € im Monat' },
+  { value: 'unlimited', label: 'Unlimited', sub: 'Unbegrenzt Seiten · 47 € im Monat' },
 ]
 
 const TEMPLATE_OPTIONS = [
@@ -28,26 +27,40 @@ const TEMPLATE_OPTIONS = [
 ]
 const MAX_WUENSCHE = 3
 
-const PREIS_OPTIONS = [
-  { value: 'zu_teuer', label: 'Zu teuer', color: '#DC2626', bg: '#FEF2F2' },
-  { value: 'geht_so', label: 'Geht so', color: '#CA8A04', bg: '#FEFCE8' },
+const PREIS_TARIFE = [
+  { key: 'preis_starter' as const, name: 'Starter', info: '1 Seite · 21 € im Monat' },
+  { key: 'preis_pro' as const, name: 'Pro', info: '3 Seiten · 27 € im Monat' },
+  { key: 'preis_unlimited' as const, name: 'Unlimited', info: 'Unbegrenzt Seiten · 47 € im Monat' },
+]
+
+const PREIS_SEGMENTE = [
   { value: 'fair', label: 'Fair', color: '#16A34A', bg: '#F0FDF4' },
-  { value: 'guenstig', label: 'Richtig günstig', color: '#059669', bg: '#ECFDF5' },
+  { value: 'okay', label: 'Gerade so okay', color: '#CA8A04', bg: '#FEFCE8' },
+  { value: 'zu_teuer', label: 'Zu teuer', color: '#DC2626', bg: '#FEF2F2' },
 ]
 
 const GRUND_OPTIONS = [
-  { value: 'zu_teuer', label: 'Für mich ist das zu teuer' },
-  { value: 'nicht_ueberzeugt', label: 'Die Seiten überzeugen mich noch nicht' },
+  { value: 'zu_teuer', label: 'Das größere Paket ist mir zu teuer' },
+  { value: 'brauche_nicht', label: 'Ich brauche nicht mehr Seiten' },
+  { value: 'nicht_ueberzeugt', label: 'Die anderen Seiten überzeugen mich noch nicht' },
   { value: 'anderer', label: 'Anderer Grund' },
 ]
 
-const GRUND_FOLLOWUP: Record<string, { label: string; placeholder: string }> = {
-  zu_teuer: { label: 'Welcher Preis wäre für dich okay?', placeholder: 'Sag es ganz offen…' },
-  nicht_ueberzeugt: { label: 'Was fehlt dir noch?', placeholder: 'Sag es ganz direkt…' },
-  anderer: { label: 'Magst du kurz sagen, warum?', placeholder: 'Einfach kurz erklären…' },
+const GRUND_FOLLOWUP: Record<string, { label: string; placeholder: string; voice: boolean }> = {
+  zu_teuer: { label: 'Bei welchem Preis würdest du upgraden?', placeholder: 'Sag es ganz offen…', voice: false },
+  brauche_nicht: { label: 'Was müsste dabei sein, damit sich mehr Seiten für dich lohnen?', placeholder: 'Sag es ganz ehrlich…', voice: true },
+  nicht_ueberzeugt: { label: 'Was fehlt dir noch?', placeholder: 'Sag es ganz direkt…', voice: true },
+  anderer: { label: 'Magst du kurz sagen, warum?', placeholder: 'Einfach kurz erklären…', voice: true },
 }
 
+const PARTNER_OPTIONS = [
+  { value: 'provision', label: '10 % Provision für dich, jeden Monat', sub: 'Und wer über dich kommt, zahlt dauerhaft 10 % weniger.' },
+  { value: 'rabatt', label: '20 % Rabatt für deine Empfehlung', sub: 'Du bekommst nichts, dafür zahlt die Person dauerhaft 20 % weniger.' },
+  { value: 'anderes', label: 'Ich hätte eine andere Idee', sub: 'Erzähl uns, wie es für dich perfekt wäre.' },
+]
+
 const GRADE_COLORS = ['#22C55E', '#84CC16', '#EAB308', '#F97316', '#EF4444', '#B91C1C']
+const GRADE_EMOJIS = ['🤩', '😊', '🙂', '😕', '😖', '😫']
 
 type Answers = {
   note_optimalset: number | null
@@ -55,25 +68,30 @@ type Answers = {
   note_business: number | null
   text_business: string
   template_wuensche: string[]
-  text_templates: string
   tarif: string | null
-  preis_meinung: string | null
-  text_preise: string
   upgrade_grund: string | null
   text_upgrade: string
+  preis_starter: string | null
+  preis_pro: string | null
+  preis_unlimited: string | null
+  text_preis_jetzt: string
   empfehlung: string | null
   text_empfehlung: string
+  partner_modell: string | null
+  text_partner: string
   text_chef: string
 }
 
 const EMPTY: Answers = {
   note_optimalset: null, text_optimalset: '',
   note_business: null, text_business: '',
-  template_wuensche: [], text_templates: '',
+  template_wuensche: [],
   tarif: null,
-  preis_meinung: null, text_preise: '',
   upgrade_grund: null, text_upgrade: '',
+  preis_starter: null, preis_pro: null, preis_unlimited: null,
+  text_preis_jetzt: '',
   empfehlung: null, text_empfehlung: '',
+  partner_modell: null, text_partner: '',
   text_chef: '',
 }
 
@@ -99,11 +117,12 @@ function voiceSupported(): boolean {
     && typeof MediaRecorder !== 'undefined'
 }
 
-function VoiceTextInput({ value, onChange, placeholder, rows = 3 }: {
+function VoiceTextInput({ value, onChange, placeholder, rows = 3, voice = true }: {
   value: string
   onChange: (v: string) => void
   placeholder: string
   rows?: number
+  voice?: boolean
 }) {
   const [supported, setSupported] = useState(false)
   const [recording, setRecording] = useState(false)
@@ -114,7 +133,7 @@ function VoiceTextInput({ value, onChange, placeholder, rows = 3 }: {
   const chunksRef = useRef<Blob[]>([])
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
-  useEffect(() => { setSupported(voiceSupported()) }, [])
+  useEffect(() => { if (voice) setSupported(voiceSupported()) }, [voice])
 
   const stopTimer = () => { if (timerRef.current) { clearInterval(timerRef.current); timerRef.current = null } }
 
@@ -201,6 +220,7 @@ function VoiceTextInput({ value, onChange, placeholder, rows = 3 }: {
         {supported && (
           <button
             type="button"
+            className="fs-press"
             onClick={recording ? stopRecording : startRecording}
             disabled={transcribing}
             style={{
@@ -238,14 +258,11 @@ function VoiceTextInput({ value, onChange, placeholder, rows = 3 }: {
         )}
       </div>
       {error && <p style={{ margin: '8px 2px 0', fontSize: 13, color: '#B45309' }}>{error}</p>}
-      <style jsx global>{`
-        @keyframes fs-pulse { 0%,100% { opacity: 1 } 50% { opacity: 0.35 } }
-      `}</style>
     </div>
   )
 }
 
-// ── Schulnoten (farbig) ───────────────────────────────────────────────────────
+// ── Schulnoten (farbig, mit Emojis) ───────────────────────────────────────────
 
 function GradePicker({ value, onChange }: { value: number | null; onChange: (n: number) => void }) {
   return (
@@ -260,17 +277,21 @@ function GradePicker({ value, onChange }: { value: number | null; onChange: (n: 
               type="button"
               onClick={() => onChange(n)}
               style={{
-                flex: 1, maxWidth: 64, aspectRatio: '1', borderRadius: 18,
+                flex: 1, maxWidth: 68, padding: '12px 0 10px', borderRadius: 18,
+                display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4,
                 border: active ? `2px solid ${color}` : '1.5px solid #E5E7EB',
                 background: active ? color : '#fff',
                 color: active ? '#fff' : color,
-                fontSize: 22, fontWeight: 800, cursor: 'pointer', fontFamily: 'inherit',
+                cursor: 'pointer', fontFamily: 'inherit',
                 transition: 'all 0.15s',
                 transform: active ? 'scale(1.08)' : 'scale(1)',
                 boxShadow: active ? `0 4px 14px ${color}55` : 'none',
               }}
             >
-              {n}
+              <span style={{ fontSize: 22, lineHeight: 1, filter: active ? 'none' : 'grayscale(0.15)' }}>
+                {GRADE_EMOJIS[n - 1]}
+              </span>
+              <span style={{ fontSize: 15, fontWeight: 800 }}>{n}</span>
             </button>
           )
         })}
@@ -285,8 +306,9 @@ function GradePicker({ value, onChange }: { value: number | null; onChange: (n: 
 
 // ── Auswahl-Karten ────────────────────────────────────────────────────────────
 
-function SelectCard({ label, active, onClick, disabled, color, bg }: {
+function SelectCard({ label, sub, active, onClick, disabled, color, bg }: {
   label: string
+  sub?: string
   active: boolean
   onClick: () => void
   disabled?: boolean
@@ -298,11 +320,13 @@ function SelectCard({ label, active, onClick, disabled, color, bg }: {
   return (
     <button
       type="button"
+      className="fs-press"
       onClick={onClick}
       disabled={disabled}
       style={{
         display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10,
-        width: '100%', padding: '16px 18px', borderRadius: 20, cursor: disabled ? 'default' : 'pointer',
+        width: '100%', padding: sub ? '15px 18px' : '16px 18px', borderRadius: 20,
+        cursor: disabled ? 'default' : 'pointer',
         fontFamily: 'inherit', textAlign: 'left',
         border: active ? `2px solid ${activeColor}` : '1.5px solid #E5E7EB',
         background: active ? activeBg : '#fff',
@@ -312,7 +336,10 @@ function SelectCard({ label, active, onClick, disabled, color, bg }: {
         transition: 'all 0.15s',
       }}
     >
-      <span>{label}</span>
+      <span style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+        <span>{label}</span>
+        {sub && <span style={{ fontSize: 13.5, fontWeight: 500, color: active ? '#4B5563' : '#9CA3AF' }}>{sub}</span>}
+      </span>
       <span style={{
         width: 22, height: 22, borderRadius: 999, flexShrink: 0,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -327,6 +354,50 @@ function SelectCard({ label, active, onClick, disabled, color, bg }: {
         )}
       </span>
     </button>
+  )
+}
+
+// ── Preisbewertung pro Tarif ──────────────────────────────────────────────────
+
+function PriceRow({ name, info, value, onChange }: {
+  name: string
+  info: string
+  value: string | null
+  onChange: (v: string) => void
+}) {
+  return (
+    <div style={{
+      border: '1.5px solid #E5E7EB', borderRadius: 22, padding: '16px 16px 14px',
+      background: '#fff',
+    }}>
+      <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginBottom: 12 }}>
+        <span style={{ fontSize: 16, fontWeight: 800, color: '#1a1a1a' }}>{name}</span>
+        <span style={{ fontSize: 13.5, fontWeight: 500, color: '#9CA3AF' }}>{info}</span>
+      </div>
+      <div style={{ display: 'flex', gap: 8 }}>
+        {PREIS_SEGMENTE.map(s => {
+          const active = value === s.value
+          return (
+            <button
+              key={s.value}
+              type="button"
+              className="fs-press"
+              onClick={() => onChange(s.value)}
+              style={{
+                flex: 1, padding: '11px 4px', borderRadius: 999, cursor: 'pointer', fontFamily: 'inherit',
+                border: active ? `2px solid ${s.color}` : '1.5px solid #E5E7EB',
+                background: active ? s.bg : '#fff',
+                color: active ? s.color : '#6B7280',
+                fontSize: 13.5, fontWeight: active ? 700 : 500,
+                transition: 'all 0.15s', whiteSpace: 'nowrap',
+              }}
+            >
+              {s.label}
+            </button>
+          )
+        })}
+      </div>
+    </div>
   )
 }
 
@@ -415,7 +486,7 @@ function launchConfetti(canvas: HTMLCanvasElement) {
 
 // ── Seite ─────────────────────────────────────────────────────────────────────
 
-type StepId = 'optimalset' | 'business' | 'wunsch' | 'tarif' | 'preis' | 'upgrade' | 'empfehlung' | 'chef'
+type StepId = 'optimalset' | 'business' | 'wunsch' | 'tarif' | 'upgrade' | 'preis' | 'empfehlung' | 'partner' | 'chef'
 
 export default function FeedbackPage() {
   const [answers, setAnswers] = useState<Answers>(EMPTY)
@@ -423,13 +494,17 @@ export default function FeedbackPage() {
   const [done, setDone] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState('')
+  const [customIdea, setCustomIdea] = useState('')
   const confettiRef = useRef<HTMLCanvasElement>(null)
 
   const showUpgrade = answers.tarif !== null && answers.tarif !== 'unlimited'
+  const showPartner = answers.empfehlung === 'ja'
   const steps: StepId[] = [
-    'optimalset', 'business', 'wunsch', 'tarif', 'preis',
+    'optimalset', 'business', 'wunsch', 'tarif',
     ...(showUpgrade ? ['upgrade' as const] : []),
-    'empfehlung', 'chef',
+    'preis', 'empfehlung',
+    ...(showPartner ? ['partner' as const] : []),
+    'chef',
   ]
   const step = steps[Math.min(stepIndex, steps.length - 1)]
   const isLast = stepIndex >= steps.length - 1
@@ -463,6 +538,10 @@ export default function FeedbackPage() {
     }
   }
 
+  // Note setzen: bei Note 1 gibt es keine Folgefrage, Text dann verwerfen
+  const setNote = (noteKey: 'note_optimalset' | 'note_business', textKey: 'text_optimalset' | 'text_business', n: number) =>
+    setAnswers(a => ({ ...a, [noteKey]: n, [textKey]: n === 1 ? '' : a[textKey] }))
+
   const toggleWunsch = (t: string) =>
     set('template_wuensche',
       answers.template_wuensche.includes(t)
@@ -471,6 +550,34 @@ export default function FeedbackPage() {
           ? answers.template_wuensche
           : [...answers.template_wuensche, t]
     )
+
+  const addCustomIdea = () => {
+    const t = customIdea.trim().slice(0, 60)
+    if (!t) return
+    if (!answers.template_wuensche.includes(t) && answers.template_wuensche.length < MAX_WUENSCHE) {
+      set('template_wuensche', [...answers.template_wuensche, t])
+    }
+    setCustomIdea('')
+  }
+
+  const customChips = answers.template_wuensche.filter(t => !TEMPLATE_OPTIONS.includes(t))
+
+  const setPreis = (key: 'preis_starter' | 'preis_pro' | 'preis_unlimited', v: string) =>
+    setAnswers(a => {
+      const next = { ...a, [key]: a[key] === v ? null : v }
+      return jetztPreisSichtbar(next) ? next : { ...next, text_preis_jetzt: '' }
+    })
+
+  // "Welchen Preis wärst du bereit, jetzt zu zahlen?" — wenn der eigene Tarif
+  // als zu teuer markiert ist (ohne Tarifangabe: irgendein Tarif)
+  function jetztPreisSichtbar(a: Answers): boolean {
+    const own = a.tarif === 'starter' ? a.preis_starter
+      : a.tarif === 'pro' ? a.preis_pro
+      : a.tarif === 'unlimited' ? a.preis_unlimited
+      : null
+    if (a.tarif) return own === 'zu_teuer'
+    return [a.preis_starter, a.preis_pro, a.preis_unlimited].includes('zu_teuer')
+  }
 
   const grundFollowup = answers.upgrade_grund ? GRUND_FOLLOWUP[answers.upgrade_grund] : null
 
@@ -501,7 +608,7 @@ export default function FeedbackPage() {
         padding: done ? '120px 24px 60px' : '92px 24px 170px',
       }}>
         {done ? (
-          <div style={{ textAlign: 'center' }}>
+          <div style={{ textAlign: 'center', animation: 'fs-step-in 0.45s cubic-bezier(0.16,1,0.3,1)' }}>
             <div style={{
               width: 72, height: 72, borderRadius: 999, background: '#10B981',
               display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px',
@@ -518,32 +625,40 @@ export default function FeedbackPage() {
             </p>
           </div>
         ) : (
-          <>
+          <div key={step} style={{ animation: 'fs-step-in 0.4s cubic-bezier(0.16,1,0.3,1)' }}>
             <p style={{ fontSize: 13, fontWeight: 600, color: '#9CA3AF', margin: '0 0 10px' }}>
               {stepIndex + 1} von {steps.length}
             </p>
 
             {step === 'optimalset' && (
-              <StepShell title="Wie gefällt dir die Optimalset-Seite?">
-                <GradePicker value={answers.note_optimalset} onChange={n => set('note_optimalset', n)} />
-                <FieldLabel>Was fehlt dir dort? Was würdest du dir anders wünschen?</FieldLabel>
-                <VoiceTextInput
-                  value={answers.text_optimalset}
-                  onChange={v => set('text_optimalset', v)}
-                  placeholder="Sag es ganz ehrlich…"
-                />
+              <StepShell title="Wie gefällt dir die Optimalset-Seite?" demoUrl="https://demo.dailyoptimal.de/">
+                <GradePicker value={answers.note_optimalset} onChange={n => setNote('note_optimalset', 'text_optimalset', n)} />
+                {answers.note_optimalset !== null && answers.note_optimalset >= 2 && (
+                  <>
+                    <FieldLabel>Was fehlt dir dort? Was würdest du dir anders wünschen?</FieldLabel>
+                    <VoiceTextInput
+                      value={answers.text_optimalset}
+                      onChange={v => set('text_optimalset', v)}
+                      placeholder="Sag es ganz ehrlich…"
+                    />
+                  </>
+                )}
               </StepShell>
             )}
 
             {step === 'business' && (
-              <StepShell title="Wie gefällt dir die Business-Seite?">
-                <GradePicker value={answers.note_business} onChange={n => set('note_business', n)} />
-                <FieldLabel>Was fehlt dir dort? Was würdest du dir anders wünschen?</FieldLabel>
-                <VoiceTextInput
-                  value={answers.text_business}
-                  onChange={v => set('text_business', v)}
-                  placeholder="Sag es ganz ehrlich…"
-                />
+              <StepShell title="Wie gefällt dir die Business-Seite?" demoUrl="https://demo.wellpreneur.io/">
+                <GradePicker value={answers.note_business} onChange={n => setNote('note_business', 'text_business', n)} />
+                {answers.note_business !== null && answers.note_business >= 2 && (
+                  <>
+                    <FieldLabel>Was fehlt dir dort? Was würdest du dir anders wünschen?</FieldLabel>
+                    <VoiceTextInput
+                      value={answers.text_business}
+                      onChange={v => set('text_business', v)}
+                      placeholder="Sag es ganz ehrlich…"
+                    />
+                  </>
+                )}
               </StepShell>
             )}
 
@@ -559,21 +674,67 @@ export default function FeedbackPage() {
                     )
                   })}
                 </div>
-                <FieldLabel>Deine eigene Idee?</FieldLabel>
-                <VoiceTextInput
-                  value={answers.text_templates}
-                  onChange={v => set('text_templates', v)}
-                  placeholder="Deine Idee…"
-                  rows={2}
-                />
+                <FieldLabel>Deine eigene Idee? Zählt mit zu deinen 3.</FieldLabel>
+                <div style={{ display: 'flex', gap: 8 }}>
+                  <input
+                    type="text"
+                    value={customIdea}
+                    onChange={e => setCustomIdea(e.target.value.slice(0, 60))}
+                    onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); addCustomIdea() } }}
+                    placeholder="Deine Idee…"
+                    disabled={answers.template_wuensche.length >= MAX_WUENSCHE}
+                    style={{
+                      flex: 1, padding: '13px 16px', border: '1.5px solid #E5E7EB', borderRadius: 999,
+                      fontSize: 16, color: '#1a1a1a', outline: 'none', fontFamily: 'inherit',
+                      opacity: answers.template_wuensche.length >= MAX_WUENSCHE ? 0.4 : 1,
+                    }}
+                    onFocus={e => (e.target.style.borderColor = '#1a1a1a')}
+                    onBlur={e => (e.target.style.borderColor = '#E5E7EB')}
+                  />
+                  <button
+                    type="button"
+                    className="fs-press"
+                    onClick={addCustomIdea}
+                    disabled={!customIdea.trim() || answers.template_wuensche.length >= MAX_WUENSCHE}
+                    style={{
+                      padding: '13px 20px', borderRadius: 999, border: 'none', cursor: 'pointer',
+                      background: '#1a1a1a', color: '#fff', fontSize: 15, fontWeight: 700, fontFamily: 'inherit',
+                      opacity: !customIdea.trim() || answers.template_wuensche.length >= MAX_WUENSCHE ? 0.35 : 1,
+                    }}
+                  >
+                    Hinzufügen
+                  </button>
+                </div>
+                {customChips.length > 0 && (
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 12 }}>
+                    {customChips.map(t => (
+                      <button
+                        key={t}
+                        type="button"
+                        onClick={() => toggleWunsch(t)}
+                        style={{
+                          display: 'inline-flex', alignItems: 'center', gap: 7,
+                          padding: '9px 14px', borderRadius: 999, border: '2px solid #1a1a1a',
+                          background: '#FAFAFA', color: '#1a1a1a', fontSize: 14.5, fontWeight: 700,
+                          cursor: 'pointer', fontFamily: 'inherit',
+                        }}
+                      >
+                        {t}
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round">
+                          <path d="M18 6L6 18M6 6l12 12" />
+                        </svg>
+                      </button>
+                    ))}
+                  </div>
+                )}
               </StepShell>
             )}
 
             {step === 'tarif' && (
               <StepShell title="Welchen Tarif hast du gerade?">
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                   {TARIF_OPTIONS.map(o => (
-                    <SelectCard key={o.value} label={o.label} active={answers.tarif === o.value}
+                    <SelectCard key={o.value} label={o.label} sub={o.sub} active={answers.tarif === o.value}
                       onClick={() => {
                         const next = answers.tarif === o.value ? null : o.value
                         setAnswers(a => ({
@@ -584,25 +745,6 @@ export default function FeedbackPage() {
                       }} />
                   ))}
                 </div>
-              </StepShell>
-            )}
-
-            {step === 'preis' && (
-              <StepShell title="Wie findest du den Preis?" sub="Für das, was du dafür bekommst.">
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                  {PREIS_OPTIONS.map(o => (
-                    <SelectCard key={o.value} label={o.label} color={o.color} bg={o.bg}
-                      active={answers.preis_meinung === o.value}
-                      onClick={() => set('preis_meinung', answers.preis_meinung === o.value ? null : o.value)} />
-                  ))}
-                </div>
-                <FieldLabel>Was wäre für dich ein fairer Preis?</FieldLabel>
-                <VoiceTextInput
-                  value={answers.text_preise}
-                  onChange={v => set('text_preise', v)}
-                  placeholder="Sag einfach, was du denkst…"
-                  rows={2}
-                />
               </StepShell>
             )}
 
@@ -622,6 +764,31 @@ export default function FeedbackPage() {
                       onChange={v => set('text_upgrade', v)}
                       placeholder={grundFollowup.placeholder}
                       rows={2}
+                      voice={grundFollowup.voice}
+                    />
+                  </>
+                )}
+              </StepShell>
+            )}
+
+            {step === 'preis' && (
+              <StepShell title="Wie findest du unsere Preise?" sub="Sag es pro Tarif, ganz ehrlich.">
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                  {PREIS_TARIFE.map(t => (
+                    <PriceRow key={t.key} name={t.name} info={t.info}
+                      value={answers[t.key]}
+                      onChange={v => setPreis(t.key, v)} />
+                  ))}
+                </div>
+                {jetztPreisSichtbar(answers) && (
+                  <>
+                    <FieldLabel>Welchen Preis wärst du bereit, JETZT zu zahlen?</FieldLabel>
+                    <VoiceTextInput
+                      value={answers.text_preis_jetzt}
+                      onChange={v => set('text_preis_jetzt', v)}
+                      placeholder="Sag es ganz ehrlich…"
+                      rows={2}
+                      voice={false}
                     />
                   </>
                 )}
@@ -631,11 +798,16 @@ export default function FeedbackPage() {
             {step === 'empfehlung' && (
               <StepShell title="Wirst du FinestSites deinen Partnern empfehlen?">
                 <YesNo value={answers.empfehlung} onChange={v => {
-                  setAnswers(a => ({
-                    ...a,
-                    empfehlung: a.empfehlung === v ? null : v,
-                    ...(v === 'ja' ? { text_empfehlung: '' } : {}),
-                  }))
+                  setAnswers(a => {
+                    const next = a.empfehlung === v ? null : v
+                    return {
+                      ...a,
+                      empfehlung: next,
+                      text_empfehlung: next === 'nein' ? a.text_empfehlung : '',
+                      partner_modell: next === 'ja' ? a.partner_modell : null,
+                      text_partner: next === 'ja' ? a.text_partner : '',
+                    }
+                  })
                 }} />
                 {answers.empfehlung === 'nein' && (
                   <>
@@ -644,6 +816,33 @@ export default function FeedbackPage() {
                       value={answers.text_empfehlung}
                       onChange={v => set('text_empfehlung', v)}
                       placeholder="Ganz ehrlich…"
+                    />
+                  </>
+                )}
+              </StepShell>
+            )}
+
+            {step === 'partner' && (
+              <StepShell
+                title="Wie soll unser Partnerprogramm aussehen?"
+                sub="Du empfiehlst FinestSites. Welches Modell wäre dir am liebsten?"
+              >
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                  {PARTNER_OPTIONS.map(o => (
+                    <SelectCard key={o.value} label={o.label} sub={o.sub} active={answers.partner_modell === o.value}
+                      onClick={() => setAnswers(a => {
+                        const next = a.partner_modell === o.value ? null : o.value
+                        return { ...a, partner_modell: next, text_partner: next === 'anderes' ? a.text_partner : '' }
+                      })} />
+                  ))}
+                </div>
+                {answers.partner_modell === 'anderes' && (
+                  <>
+                    <FieldLabel>Wie sähe dein perfektes Partnerprogramm aus?</FieldLabel>
+                    <VoiceTextInput
+                      value={answers.text_partner}
+                      onChange={v => set('text_partner', v)}
+                      placeholder="Erzähl einfach…"
                     />
                   </>
                 )}
@@ -666,7 +865,7 @@ export default function FeedbackPage() {
                 )}
               </StepShell>
             )}
-          </>
+          </div>
         )}
       </div>
 
@@ -700,16 +899,25 @@ export default function FeedbackPage() {
               </button>
             ) : <span />}
             {isLast ? (
-              <button onClick={submit} disabled={submitting}
+              <button onClick={submit} disabled={submitting} className="fs-press"
                 style={{ ...primaryBtn, opacity: submitting ? 0.6 : 1 }}>
                 {submitting ? 'Wird gesendet…' : 'Absenden'}
               </button>
             ) : (
-              <button onClick={() => setStepIndex(i => i + 1)} style={primaryBtn}>Weiter</button>
+              <button onClick={() => setStepIndex(i => i + 1)} className="fs-press" style={primaryBtn}>Weiter</button>
             )}
           </div>
         </div>
       )}
+
+      <style jsx global>{`
+        @keyframes fs-pulse { 0%,100% { opacity: 1 } 50% { opacity: 0.35 } }
+        @keyframes fs-step-in {
+          from { opacity: 0; transform: translateY(14px) }
+          to { opacity: 1; transform: translateY(0) }
+        }
+        .fs-press:not(:disabled):active { transform: scale(0.97) }
+      `}</style>
     </div>
   )
 }
@@ -720,16 +928,39 @@ const primaryBtn: React.CSSProperties = {
   cursor: 'pointer', fontFamily: 'inherit',
 }
 
-function StepShell({ title, sub, children }: { title: string; sub?: string; children: React.ReactNode }) {
+function StepShell({ title, sub, demoUrl, children }: {
+  title: string
+  sub?: string
+  demoUrl?: string
+  children: React.ReactNode
+}) {
   return (
     <div>
       <h1 style={{
         fontSize: 25, fontWeight: 800, color: '#1a1a1a', letterSpacing: '-0.02em',
-        margin: sub ? '0 0 8px' : '0 0 26px', lineHeight: 1.25,
+        margin: sub || demoUrl ? '0 0 8px' : '0 0 26px', lineHeight: 1.25,
       }}>
         {title}
       </h1>
-      {sub && <p style={{ fontSize: 15.5, lineHeight: 1.5, color: '#9CA3AF', margin: '0 0 26px' }}>{sub}</p>}
+      {sub && <p style={{ fontSize: 15.5, lineHeight: 1.5, color: '#9CA3AF', margin: demoUrl ? '0 0 14px' : '0 0 26px' }}>{sub}</p>}
+      {demoUrl && (
+        <a
+          href={demoUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{
+            display: 'inline-flex', alignItems: 'center', gap: 7,
+            padding: '10px 18px', borderRadius: 999, border: '1.5px solid #E5E7EB',
+            fontSize: 14, fontWeight: 600, color: '#1a1a1a', textDecoration: 'none',
+            margin: '4px 0 26px', background: '#fff',
+          }}
+        >
+          Beispielseite ansehen
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M7 17L17 7M8 7h9v9" />
+          </svg>
+        </a>
+      )}
       {children}
     </div>
   )

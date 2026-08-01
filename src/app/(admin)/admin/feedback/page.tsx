@@ -14,14 +14,17 @@ type Answers = {
   note_business: number | null
   text_business: string
   template_wuensche: string[]
-  text_templates: string
   tarif: string | null
-  preis_meinung: string | null
-  text_preise: string
   upgrade_grund: string | null
   text_upgrade: string
+  preis_starter: string | null
+  preis_pro: string | null
+  preis_unlimited: string | null
+  text_preis_jetzt: string
   empfehlung: string | null
   text_empfehlung: string
+  partner_modell: string | null
+  text_partner: string
   text_chef: string
 }
 
@@ -35,20 +38,25 @@ const TARIF_LABELS: Record<string, string> = {
   starter: 'Starter',
   pro: 'Pro',
   unlimited: 'Unlimited',
-  unbekannt: 'Weiß nicht',
 }
 
 const PREIS_LABELS: Record<string, { label: string; color: string }> = {
-  zu_teuer: { label: 'Zu teuer', color: '#DC2626' },
-  geht_so: { label: 'Geht so', color: '#CA8A04' },
   fair: { label: 'Fair', color: '#16A34A' },
-  guenstig: { label: 'Richtig günstig', color: '#059669' },
+  okay: { label: 'Gerade so okay', color: '#CA8A04' },
+  zu_teuer: { label: 'Zu teuer', color: '#DC2626' },
 }
 
 const GRUND_LABELS: Record<string, string> = {
-  zu_teuer: 'Für mich ist das zu teuer',
-  nicht_ueberzeugt: 'Die Seiten überzeugen mich noch nicht',
+  zu_teuer: 'Größeres Paket zu teuer',
+  brauche_nicht: 'Braucht nicht mehr Seiten',
+  nicht_ueberzeugt: 'Seiten überzeugen noch nicht',
   anderer: 'Anderer Grund',
+}
+
+const PARTNER_LABELS: Record<string, string> = {
+  provision: '10 % Provision + 10 % Rabatt',
+  rabatt: '0 % Provision + 20 % Rabatt',
+  anderes: 'Eigene Idee',
 }
 
 const cardStyle = {
@@ -185,10 +193,15 @@ export default async function FeedbackAdminPage() {
     return m
   }
 
-  const preisCounts = count(a => a.preis_meinung)
   const tarifCounts = count(a => a.tarif)
   const grundCounts = count(a => a.upgrade_grund)
   const empfehlungCounts = count(a => a.empfehlung)
+  const partnerCounts = count(a => a.partner_modell)
+  const preisCounts = {
+    starter: count(a => a.preis_starter),
+    pro: count(a => a.preis_pro),
+    unlimited: count(a => a.preis_unlimited),
+  }
 
   const templateCounts = new Map<string, number>()
   for (const r of responses) {
@@ -209,6 +222,11 @@ export default async function FeedbackAdminPage() {
 
   const preisColorMap: Record<string, string> = {}
   for (const v of Object.values(PREIS_LABELS)) preisColorMap[v.label] = v.color
+
+  const preisEntries = (m: Map<string, number>): [string, number][] =>
+    Object.entries(PREIS_LABELS)
+      .filter(([k]) => m.has(k))
+      .map(([k, v]) => [v.label, m.get(k)!] as [string, number])
 
   return (
     <div style={{ maxWidth: 1100 }}>
@@ -273,25 +291,20 @@ export default async function FeedbackAdminPage() {
             <NoteDistribution title="Business-Seite" notes={notesBusiness} />
           </div>
 
-          {/* Wünsche + Preis */}
+          {/* Preisbewertung pro Tarif */}
+          <div className="grid grid-cols-3 gap-3 mb-6">
+            <CountList title="Starter (21 €)" total={total} colors={preisColorMap} entries={preisEntries(preisCounts.starter)} />
+            <CountList title="Pro (27 €)" total={total} colors={preisColorMap} entries={preisEntries(preisCounts.pro)} />
+            <CountList title="Unlimited (47 €)" total={total} colors={preisColorMap} entries={preisEntries(preisCounts.unlimited)} />
+          </div>
+
+          {/* Wünsche + Tarif */}
           <div className="grid grid-cols-2 gap-3 mb-6">
             <CountList
-              title="Wunsch-Seiten (max. 3 pro Person)"
+              title="Wunsch-Seiten (max. 3 pro Person, inkl. eigene Ideen)"
               total={total}
               entries={[...templateCounts.entries()].sort((a, b) => b[1] - a[1])}
             />
-            <CountList
-              title="Wie finden sie den Preis?"
-              total={total}
-              colors={preisColorMap}
-              entries={Object.entries(PREIS_LABELS)
-                .filter(([k]) => preisCounts.has(k))
-                .map(([k, v]) => [v.label, preisCounts.get(k)!] as [string, number])}
-            />
-          </div>
-
-          {/* Tarif + Upgrade-Grund */}
-          <div className="grid grid-cols-2 gap-3 mb-6">
             <CountList
               title="Aktueller Tarif"
               total={total}
@@ -299,6 +312,10 @@ export default async function FeedbackAdminPage() {
                 .filter(k => tarifCounts.has(k))
                 .map(k => [TARIF_LABELS[k], tarifCounts.get(k)!] as [string, number])}
             />
+          </div>
+
+          {/* Upgrade-Grund + Partnerprogramm */}
+          <div className="grid grid-cols-2 gap-3 mb-6">
             <CountList
               title="Warum kein größeres Paket?"
               total={total}
@@ -306,16 +323,23 @@ export default async function FeedbackAdminPage() {
                 .filter(k => grundCounts.has(k))
                 .map(k => [GRUND_LABELS[k], grundCounts.get(k)!] as [string, number])}
             />
+            <CountList
+              title="Partnerprogramm-Wunsch"
+              total={total}
+              entries={Object.keys(PARTNER_LABELS)
+                .filter(k => partnerCounts.has(k))
+                .map(k => [PARTNER_LABELS[k], partnerCounts.get(k)!] as [string, number])}
+            />
           </div>
 
           {/* Freitexte */}
           <div className="flex flex-col gap-3">
             <TextAnswers title="Optimalset-Seite: Was fehlt? Was soll anders werden?" items={texts('text_optimalset')} />
             <TextAnswers title="Business-Seite: Was fehlt? Was soll anders werden?" items={texts('text_business')} />
-            <TextAnswers title="Eigene Template-Ideen" items={texts('text_templates')} />
-            <TextAnswers title="Was wäre ein fairer Preis?" items={texts('text_preise')} />
+            <TextAnswers title="Preis, den sie JETZT zahlen würden" items={texts('text_preis_jetzt')} />
             <TextAnswers title="Upgrade: Warum nicht? (Freitext)" items={texts('text_upgrade')} />
             <TextAnswers title="Was muss anders sein für eine Empfehlung?" items={texts('text_empfehlung')} />
+            <TextAnswers title="Partnerprogramm: eigene Ideen" items={texts('text_partner')} />
             <TextAnswers title="„Wenn ich Chef wäre…“" items={texts('text_chef')} />
           </div>
         </>
