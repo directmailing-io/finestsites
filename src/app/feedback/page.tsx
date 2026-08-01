@@ -267,7 +267,7 @@ function VoiceTextInput({ value, onChange, placeholder, rows = 3, voice = true }
 function GradePicker({ value, onChange }: { value: number | null; onChange: (n: number) => void }) {
   return (
     <div>
-      <div style={{ display: 'flex', gap: 8, justifyContent: 'center' }}>
+      <div style={{ display: 'flex', gap: 8 }}>
         {[1, 2, 3, 4, 5, 6].map(n => {
           const active = value === n
           const color = GRADE_COLORS[n - 1]
@@ -277,28 +277,28 @@ function GradePicker({ value, onChange }: { value: number | null; onChange: (n: 
               type="button"
               onClick={() => onChange(n)}
               style={{
-                flex: 1, maxWidth: 68, padding: '12px 0 10px', borderRadius: 18,
-                display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4,
+                flex: 1, padding: '13px 0 11px', borderRadius: 16,
+                display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 5,
                 border: active ? `2px solid ${color}` : '1.5px solid #E5E7EB',
                 background: active ? color : '#fff',
-                color: active ? '#fff' : color,
+                color: active ? '#fff' : '#374151',
                 cursor: 'pointer', fontFamily: 'inherit',
                 transition: 'all 0.15s',
-                transform: active ? 'scale(1.08)' : 'scale(1)',
-                boxShadow: active ? `0 4px 14px ${color}55` : 'none',
+                transform: active ? 'scale(1.05)' : 'scale(1)',
+                boxShadow: active ? `0 4px 12px ${color}45` : 'none',
               }}
             >
-              <span style={{ fontSize: 22, lineHeight: 1, filter: active ? 'none' : 'grayscale(0.15)' }}>
+              <span style={{ fontSize: 21, lineHeight: 1 }}>
                 {GRADE_EMOJIS[n - 1]}
               </span>
-              <span style={{ fontSize: 15, fontWeight: 800 }}>{n}</span>
+              <span style={{ fontSize: 14.5, fontWeight: 700 }}>{n}</span>
             </button>
           )
         })}
       </div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 8, padding: '0 4px' }}>
-        <span style={{ fontSize: 12.5, fontWeight: 600, color: '#22C55E' }}>sehr gut</span>
-        <span style={{ fontSize: 12.5, fontWeight: 600, color: '#B91C1C' }}>ungenügend</span>
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 10, padding: '0 2px' }}>
+        <span style={{ fontSize: 12.5, fontWeight: 600, color: '#16A34A' }}>1 = sehr gut</span>
+        <span style={{ fontSize: 12.5, fontWeight: 600, color: '#B91C1C' }}>6 = ungenügend</span>
       </div>
     </div>
   )
@@ -950,9 +950,9 @@ function StepShell({ title, sub, demoUrl, children }: {
           rel="noopener noreferrer"
           style={{
             display: 'inline-flex', alignItems: 'center', gap: 7,
-            padding: '10px 18px', borderRadius: 999, border: '1.5px solid #E5E7EB',
-            fontSize: 14, fontWeight: 600, color: '#1a1a1a', textDecoration: 'none',
-            margin: '4px 0 26px', background: '#fff',
+            padding: '9px 16px', borderRadius: 999, border: '1px solid #E5E7EB',
+            fontSize: 13.5, fontWeight: 600, color: '#374151', textDecoration: 'none',
+            margin: '2px 0 30px', background: '#F9FAFB',
           }}
         >
           Beispielseite ansehen
