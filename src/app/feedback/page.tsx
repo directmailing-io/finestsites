@@ -42,7 +42,7 @@ const GRUND_OPTIONS = [
 ]
 
 const GRUND_FOLLOWUP: Record<string, { label: string; placeholder: string }> = {
-  zu_teuer: { label: 'Welcher Preis wäre für dich okay?', placeholder: 'Z. B. 15 Euro im Monat, weil…' },
+  zu_teuer: { label: 'Welcher Preis wäre für dich okay?', placeholder: 'Sag es ganz offen…' },
   nicht_ueberzeugt: { label: 'Was fehlt dir noch?', placeholder: 'Sag es ganz direkt…' },
   anderer: { label: 'Magst du kurz sagen, warum?', placeholder: 'Einfach kurz erklären…' },
 }
@@ -191,7 +191,7 @@ function VoiceTextInput({ value, onChange, placeholder, rows = 3 }: {
           rows={rows}
           style={{
             width: '100%', padding: '14px 16px', paddingBottom: supported ? 56 : 14,
-            border: '1.5px solid #E5E7EB', borderRadius: 16, fontSize: 16,
+            border: '1.5px solid #E5E7EB', borderRadius: 20, fontSize: 16,
             lineHeight: 1.55, color: '#1a1a1a', background: '#fff',
             resize: 'vertical', outline: 'none', fontFamily: 'inherit',
           }}
@@ -260,7 +260,7 @@ function GradePicker({ value, onChange }: { value: number | null; onChange: (n: 
               type="button"
               onClick={() => onChange(n)}
               style={{
-                flex: 1, maxWidth: 64, aspectRatio: '1', borderRadius: 16,
+                flex: 1, maxWidth: 64, aspectRatio: '1', borderRadius: 18,
                 border: active ? `2px solid ${color}` : '1.5px solid #E5E7EB',
                 background: active ? color : '#fff',
                 color: active ? '#fff' : color,
@@ -302,7 +302,7 @@ function SelectCard({ label, active, onClick, disabled, color, bg }: {
       disabled={disabled}
       style={{
         display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10,
-        width: '100%', padding: '16px 18px', borderRadius: 16, cursor: disabled ? 'default' : 'pointer',
+        width: '100%', padding: '16px 18px', borderRadius: 20, cursor: disabled ? 'default' : 'pointer',
         fontFamily: 'inherit', textAlign: 'left',
         border: active ? `2px solid ${activeColor}` : '1.5px solid #E5E7EB',
         background: active ? activeBg : '#fff',
@@ -347,7 +347,7 @@ function YesNo({ value, onChange }: { value: string | null; onChange: (v: string
             type="button"
             onClick={() => onChange(o.value)}
             style={{
-              flex: 1, padding: '24px 12px', borderRadius: 18, cursor: 'pointer', fontFamily: 'inherit',
+              flex: 1, padding: '24px 12px', borderRadius: 24, cursor: 'pointer', fontFamily: 'inherit',
               display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10,
               border: active ? `2px solid ${o.color}` : '1.5px solid #E5E7EB',
               background: active ? o.bg : '#fff',
@@ -484,10 +484,9 @@ export default function FeedbackPage() {
       {/* Top-Leiste */}
       <div style={{
         position: 'fixed', top: 0, left: 0, right: 0, zIndex: 20,
-        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+        display: 'flex', justifyContent: 'center', alignItems: 'center',
         padding: '14px 20px', background: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(8px)',
       }}>
-        <span style={{ fontSize: 15, fontWeight: 800, letterSpacing: '-0.02em', color: '#1a1a1a' }}>FinestSites</span>
         <span style={{
           fontSize: 12, fontWeight: 700, color: '#065F46', background: '#ECFDF5',
           padding: '4px 12px', borderRadius: 999,
@@ -601,7 +600,7 @@ export default function FeedbackPage() {
                 <VoiceTextInput
                   value={answers.text_preise}
                   onChange={v => set('text_preise', v)}
-                  placeholder="Z. B. 10 Euro im Monat, weil…"
+                  placeholder="Sag einfach, was du denkst…"
                   rows={2}
                 />
               </StepShell>
@@ -716,7 +715,7 @@ export default function FeedbackPage() {
 }
 
 const primaryBtn: React.CSSProperties = {
-  padding: '14px 34px', borderRadius: 14, border: 'none',
+  padding: '14px 34px', borderRadius: 999, border: 'none',
   background: '#1a1a1a', color: '#fff', fontSize: 16, fontWeight: 700,
   cursor: 'pointer', fontFamily: 'inherit',
 }
