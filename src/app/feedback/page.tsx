@@ -2,7 +2,7 @@
 
 /**
  * Anonyme Feedback-Kampagne (temporär).
- * Komplett isoliert — zum Entfernen siehe docs/feedback-aktion-entfernen.md
+ * Komplett isoliert. Zum Entfernen siehe docs/feedback-aktion-entfernen.md
  */
 
 import { useCallback, useEffect, useRef, useState } from 'react'
@@ -13,47 +13,72 @@ const TARIF_OPTIONS = [
   { value: 'starter', label: 'Starter' },
   { value: 'pro', label: 'Pro' },
   { value: 'unlimited', label: 'Unlimited' },
-  { value: 'unbekannt', label: 'Weiß ich gerade nicht' },
+  { value: 'unbekannt', label: 'Weiß nicht' },
 ]
 
-const BLOCKER_OPTIONS = [
-  'Zu teuer',
-  'Mein Tarif reicht mir',
-  'Brauche die Extras nicht',
-  'Weiß nicht, was drin wäre',
-  'Hab nie drüber nachgedacht',
+const TEMPLATE_OPTIONS = [
+  'Mama-Business',
+  'Stoffwechselkur',
+  'ProShape (Abnehmen)',
+  'Sportler',
+  'Beauty & Pflege',
+  'Team-Aufbau',
 ]
+
+const PREIS_OPTIONS = [
+  { value: 'zu_teuer', label: 'Zu teuer', color: '#DC2626', bg: '#FEF2F2' },
+  { value: 'geht_so', label: 'Geht so', color: '#CA8A04', bg: '#FEFCE8' },
+  { value: 'fair', label: 'Fair', color: '#16A34A', bg: '#F0FDF4' },
+  { value: 'guenstig', label: 'Richtig günstig', color: '#059669', bg: '#ECFDF5' },
+]
+
+const GRUND_OPTIONS = [
+  { value: 'zu_teuer', label: 'Für mich ist das zu teuer' },
+  { value: 'nicht_ueberzeugt', label: 'Die Seiten überzeugen mich noch nicht' },
+  { value: 'anderer', label: 'Anderer Grund' },
+]
+
+const GRUND_FOLLOWUP: Record<string, { label: string; placeholder: string }> = {
+  zu_teuer: { label: 'Welcher Preis wäre für dich okay?', placeholder: 'Z. B. 15 Euro im Monat, weil…' },
+  nicht_ueberzeugt: { label: 'Was fehlt dir noch?', placeholder: 'Sag es ganz direkt…' },
+  anderer: { label: 'Magst du kurz sagen, warum?', placeholder: 'Einfach kurz erklären…' },
+}
+
+const GRADE_COLORS = ['#22C55E', '#84CC16', '#EAB308', '#F97316', '#EF4444', '#B91C1C']
 
 type Answers = {
   note_webseite: number | null
   text_webseite: string
+  template_wuensche: string[]
   text_templates: string
-  note_preise: number | null
+  preis_meinung: string | null
   text_preise: string
   tarif: string | null
-  upgrade_blocker: string[]
+  upgrade_grund: string | null
   text_upgrade: string
+  empfehlung: string | null
+  text_empfehlung: string
   text_chef: string
-  text_offen: string
 }
 
 const EMPTY: Answers = {
   note_webseite: null, text_webseite: '',
-  text_templates: '',
-  note_preise: null, text_preise: '',
-  tarif: null, upgrade_blocker: [], text_upgrade: '',
+  template_wuensche: [], text_templates: '',
+  preis_meinung: null, text_preise: '',
+  tarif: null, upgrade_grund: null, text_upgrade: '',
+  empfehlung: null, text_empfehlung: '',
   text_chef: '',
-  text_offen: '',
 }
 
 const TOTAL_STEPS = 6
 
 // ── Voice + Text Eingabe ──────────────────────────────────────────────────────
 
-function VoiceTextInput({ value, onChange, placeholder }: {
+function VoiceTextInput({ value, onChange, placeholder, rows = 3 }: {
   value: string
   onChange: (v: string) => void
   placeholder: string
+  rows?: number
 }) {
   const [recording, setRecording] = useState(false)
   const [transcribing, setTranscribing] = useState(false)
@@ -93,7 +118,7 @@ function VoiceTextInput({ value, onChange, placeholder }: {
           const text = (data.text ?? '').trim()
           if (text) onChange(value ? value.trimEnd() + ' ' + text : text)
         } catch {
-          setError('Transkription fehlgeschlagen. Tipp deine Antwort einfach ein.')
+          setError('Hat nicht geklappt. Tipp deine Antwort einfach ein.')
         } finally {
           setTranscribing(false)
         }
@@ -109,7 +134,7 @@ function VoiceTextInput({ value, onChange, placeholder }: {
         })
       }, 1000)
     } catch {
-      setError('Mikrofon nicht verfügbar. Tipp deine Antwort einfach ein.')
+      setError('Mikro klappt nicht. Tipp deine Antwort einfach ein.')
     }
   }, [onChange, value, stopRecording])
 
@@ -122,7 +147,7 @@ function VoiceTextInput({ value, onChange, placeholder }: {
           value={value}
           onChange={e => onChange(e.target.value.slice(0, 3000))}
           placeholder={placeholder}
-          rows={4}
+          rows={rows}
           style={{
             width: '100%', padding: '14px 16px', paddingBottom: 52,
             border: '1.5px solid #E5E7EB', borderRadius: 16, fontSize: 16,
@@ -156,7 +181,7 @@ function VoiceTextInput({ value, onChange, placeholder }: {
               Stopp · {String(Math.floor(seconds / 60))}:{String(seconds % 60).padStart(2, '0')}
             </>
           ) : transcribing ? (
-            'Wird transkribiert…'
+            'Wird zu Text…'
           ) : (
             <>
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -177,7 +202,7 @@ function VoiceTextInput({ value, onChange, placeholder }: {
   )
 }
 
-// ── Schulnoten-Auswahl ────────────────────────────────────────────────────────
+// ── Schulnoten-Auswahl (farbig) ───────────────────────────────────────────────
 
 function GradePicker({ value, onChange }: { value: number | null; onChange: (n: number) => void }) {
   return (
@@ -185,6 +210,7 @@ function GradePicker({ value, onChange }: { value: number | null; onChange: (n: 
       <div style={{ display: 'flex', gap: 8, justifyContent: 'center' }}>
         {[1, 2, 3, 4, 5, 6].map(n => {
           const active = value === n
+          const color = GRADE_COLORS[n - 1]
           return (
             <button
               key={n}
@@ -192,11 +218,13 @@ function GradePicker({ value, onChange }: { value: number | null; onChange: (n: 
               onClick={() => onChange(n)}
               style={{
                 flex: 1, maxWidth: 64, aspectRatio: '1', borderRadius: 16,
-                border: active ? '2px solid #1a1a1a' : '1.5px solid #E5E7EB',
-                background: active ? '#1a1a1a' : '#fff',
-                color: active ? '#fff' : '#1a1a1a',
-                fontSize: 20, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit',
+                border: active ? `2px solid ${color}` : '1.5px solid #E5E7EB',
+                background: active ? color : '#fff',
+                color: active ? '#fff' : color,
+                fontSize: 22, fontWeight: 800, cursor: 'pointer', fontFamily: 'inherit',
                 transition: 'all 0.15s',
+                transform: active ? 'scale(1.08)' : 'scale(1)',
+                boxShadow: active ? `0 4px 14px ${color}55` : 'none',
               }}
             >
               {n}
@@ -205,8 +233,8 @@ function GradePicker({ value, onChange }: { value: number | null; onChange: (n: 
         })}
       </div>
       <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 8, padding: '0 4px' }}>
-        <span style={{ fontSize: 12.5, color: '#9CA3AF' }}>1 = sehr gut</span>
-        <span style={{ fontSize: 12.5, color: '#9CA3AF' }}>6 = ungenügend</span>
+        <span style={{ fontSize: 12.5, fontWeight: 600, color: '#22C55E' }}>sehr gut</span>
+        <span style={{ fontSize: 12.5, fontWeight: 600, color: '#B91C1C' }}>ungenügend</span>
       </div>
     </div>
   )
@@ -214,21 +242,66 @@ function GradePicker({ value, onChange }: { value: number | null; onChange: (n: 
 
 // ── Chips ─────────────────────────────────────────────────────────────────────
 
-function Chip({ label, active, onClick }: { label: string; active: boolean; onClick: () => void }) {
+function Chip({ label, active, onClick, color, bg }: {
+  label: string
+  active: boolean
+  onClick: () => void
+  color?: string
+  bg?: string
+}) {
+  const activeColor = color ?? '#1a1a1a'
   return (
     <button
       type="button"
       onClick={onClick}
       style={{
         padding: '11px 18px', borderRadius: 999, cursor: 'pointer', fontFamily: 'inherit',
-        border: active ? '2px solid #1a1a1a' : '1.5px solid #E5E7EB',
-        background: active ? '#1a1a1a' : '#fff',
-        color: active ? '#fff' : '#374151',
-        fontSize: 15, fontWeight: 600, transition: 'all 0.15s',
+        border: active ? `2px solid ${activeColor}` : '1.5px solid #E5E7EB',
+        background: active ? (bg ?? '#1a1a1a') : '#fff',
+        color: active ? (bg ? activeColor : '#fff') : '#374151',
+        fontSize: 15, fontWeight: active ? 700 : 600, transition: 'all 0.15s',
       }}
     >
       {label}
     </button>
+  )
+}
+
+// ── Ja/Nein Buttons ───────────────────────────────────────────────────────────
+
+function YesNo({ value, onChange }: { value: string | null; onChange: (v: string) => void }) {
+  const options = [
+    { value: 'ja', label: 'Ja', color: '#16A34A', bg: '#F0FDF4', up: true },
+    { value: 'nein', label: 'Nein', color: '#DC2626', bg: '#FEF2F2', up: false },
+  ]
+  return (
+    <div style={{ display: 'flex', gap: 12 }}>
+      {options.map(o => {
+        const active = value === o.value
+        return (
+          <button
+            key={o.value}
+            type="button"
+            onClick={() => onChange(o.value)}
+            style={{
+              flex: 1, padding: '20px 12px', borderRadius: 18, cursor: 'pointer', fontFamily: 'inherit',
+              display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8,
+              border: active ? `2px solid ${o.color}` : '1.5px solid #E5E7EB',
+              background: active ? o.bg : '#fff',
+              color: active ? o.color : '#6B7280',
+              fontSize: 16, fontWeight: 700, transition: 'all 0.15s',
+              transform: active ? 'scale(1.03)' : 'scale(1)',
+            }}
+          >
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+              style={{ transform: o.up ? 'none' : 'rotate(180deg)' }}>
+              <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3" />
+            </svg>
+            {o.label}
+          </button>
+        )
+      })}
+    </div>
   )
 }
 
@@ -280,7 +353,7 @@ function launchConfetti(canvas: HTMLCanvasElement) {
 // ── Seite ─────────────────────────────────────────────────────────────────────
 
 export default function FeedbackPage() {
-  const [step, setStep] = useState(0) // 0 = Intro, 1..6 = Fragen, 7 = Danke
+  const [step, setStep] = useState(1) // 1..6 = Fragen, 7 = Danke
   const [answers, setAnswers] = useState<Answers>(EMPTY)
   const [submitting, setSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState('')
@@ -315,7 +388,8 @@ export default function FeedbackPage() {
     }
   }
 
-  const showUpgradeQuestion = answers.tarif !== 'unlimited'
+  const showUpgradeQuestion = answers.tarif !== null && answers.tarif !== 'unlimited'
+  const grundFollowup = answers.upgrade_grund ? GRUND_FOLLOWUP[answers.upgrade_grund] : null
 
   return (
     <div style={{
@@ -331,11 +405,16 @@ export default function FeedbackPage() {
       <div style={{ width: '100%', maxWidth: 560, padding: '40px 0 60px' }}>
 
         {/* Fortschritt */}
-        {step >= 1 && step <= TOTAL_STEPS && (
-          <div style={{ marginBottom: 28 }}>
+        {step <= TOTAL_STEPS && (
+          <div style={{ marginBottom: 24 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
-              <span style={{ fontSize: 13, fontWeight: 600, color: '#6B7280' }}>Frage {step} von {TOTAL_STEPS}</span>
-              <span style={{ fontSize: 13, color: '#9CA3AF' }}>100 % anonym</span>
+              <span style={{ fontSize: 13, fontWeight: 600, color: '#6B7280' }}>{step} von {TOTAL_STEPS}</span>
+              <span style={{
+                fontSize: 12, fontWeight: 700, color: '#065F46', background: '#ECFDF5',
+                padding: '3px 10px', borderRadius: 999,
+              }}>
+                100 % anonym
+              </span>
             </div>
             <div style={{ height: 6, background: '#E5E7EB', borderRadius: 999 }}>
               <div style={{
@@ -352,42 +431,18 @@ export default function FeedbackPage() {
           boxShadow: '0 1px 4px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04)',
         }}>
 
-          {/* ── Intro ── */}
-          {step === 0 && (
-            <div style={{ textAlign: 'center' }}>
-              <span style={{
-                display: 'inline-block', padding: '6px 14px', borderRadius: 999,
-                background: '#ECFDF5', color: '#065F46', fontSize: 13, fontWeight: 700,
-                marginBottom: 20,
-              }}>
-                100 % anonym
-              </span>
-              <h1 style={{ fontSize: 26, fontWeight: 800, color: '#1a1a1a', margin: '0 0 14px', lineHeight: 1.25 }}>
-                Sag uns ehrlich deine Meinung
-              </h1>
-              <p style={{ fontSize: 16, lineHeight: 1.6, color: '#4B5563', margin: '0 0 8px' }}>
-                6 kurze Fragen, 2 Minuten. Wir können nicht sehen, wer geantwortet hat —
-                deshalb: Sei schonungslos ehrlich. Kritik bringt uns weiter als Lob.
-              </p>
-              <p style={{ fontSize: 14.5, lineHeight: 1.6, color: '#9CA3AF', margin: '0 0 28px' }}>
-                Du kannst tippen oder deine Antwort einfach einsprechen.
-              </p>
-              <button onClick={() => setStep(1)} style={primaryBtn}>Los geht&apos;s</button>
-            </div>
-          )}
-
-          {/* ── 1: Webseite ── */}
+          {/* ── 1: Deine Webseite ── */}
           {step === 1 && (
             <StepShell
-              title="Welche Schulnote gibst du deiner FinestSites-Webseite?"
-              sub="So wie sie heute ist: Design, Bearbeitung, Ergebnis."
+              title="Wie gefällt dir deine Webseite?"
+              sub="Also die Seite, die du mit FinestSites gebaut hast."
             >
               <GradePicker value={answers.note_webseite} onChange={n => set('note_webseite', n)} />
-              <FieldLabel>Was nervt dich oder fehlt dir? Auch Kleinigkeiten zählen.</FieldLabel>
+              <FieldLabel>Was stört dich daran?</FieldLabel>
               <VoiceTextInput
                 value={answers.text_webseite}
                 onChange={v => set('text_webseite', v)}
-                placeholder="Ganz ehrlich: Was würdest du sofort ändern?"
+                placeholder="Sag es ganz ehrlich…"
               />
             </StepShell>
           )}
@@ -395,97 +450,124 @@ export default function FeedbackPage() {
           {/* ── 2: Templates ── */}
           {step === 2 && (
             <StepShell
-              title="Welche Templates wünschst du dir?"
-              sub="Für welche Branche, welchen Zweck oder Anlass würdest du sofort eine Seite bauen, wenn es das Template gäbe?"
+              title="Welche Templates fehlen dir?"
+              sub="Tippe alles an, was du dir wünschst."
             >
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
+                {TEMPLATE_OPTIONS.map(t => (
+                  <Chip key={t} label={t} active={answers.template_wuensche.includes(t)}
+                    onClick={() => set('template_wuensche',
+                      answers.template_wuensche.includes(t)
+                        ? answers.template_wuensche.filter(x => x !== t)
+                        : [...answers.template_wuensche, t]
+                    )} />
+                ))}
+              </div>
+              <FieldLabel>Noch andere Ideen?</FieldLabel>
               <VoiceTextInput
                 value={answers.text_templates}
                 onChange={v => set('text_templates', v)}
-                placeholder="Z. B. Handwerker, Coaches, Events, Restaurants…"
+                placeholder="Z. B. für Events, Kunden-Betreuung…"
+                rows={2}
               />
             </StepShell>
           )}
 
           {/* ── 3: Preise ── */}
           {step === 3 && (
-            <StepShell
-              title="Wie fair findest du unsere Preise?"
-              sub="Schulnote für das Preis-Leistungs-Verhältnis von FinestSites."
-            >
-              <GradePicker value={answers.note_preise} onChange={n => set('note_preise', n)} />
-              <FieldLabel>
-                Stell dir vor, du dürftest die Preise selbst festlegen. Wie sähen sie aus, und warum?
-              </FieldLabel>
+            <StepShell title="Was denkst du über unsere Preise?">
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
+                {PREIS_OPTIONS.map(o => (
+                  <Chip key={o.value} label={o.label} color={o.color} bg={o.bg}
+                    active={answers.preis_meinung === o.value}
+                    onClick={() => set('preis_meinung', answers.preis_meinung === o.value ? null : o.value)} />
+                ))}
+              </div>
+              <FieldLabel>Was wäre für dich ein fairer Preis?</FieldLabel>
               <VoiceTextInput
                 value={answers.text_preise}
                 onChange={v => set('text_preise', v)}
-                placeholder="Z. B. Was wäre für dich ein fairer Preis pro Monat?"
+                placeholder="Z. B. 10 Euro im Monat, weil…"
+                rows={2}
               />
             </StepShell>
           )}
 
           {/* ── 4: Tarif + Upgrade ── */}
           {step === 4 && (
-            <StepShell
-              title="Welchen Tarif nutzt du gerade?"
-              sub="Nur zur Einordnung — wir sehen trotzdem nicht, wer du bist."
-            >
+            <StepShell title="Welchen Tarif hast du gerade?">
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
                 {TARIF_OPTIONS.map(o => (
                   <Chip key={o.value} label={o.label} active={answers.tarif === o.value}
-                    onClick={() => set('tarif', answers.tarif === o.value ? null : o.value)} />
+                    onClick={() => {
+                      const next = answers.tarif === o.value ? null : o.value
+                      setAnswers(a => ({
+                        ...a,
+                        tarif: next,
+                        ...(next === 'unlimited' ? { upgrade_grund: null, text_upgrade: '' } : {}),
+                      }))
+                    }} />
                 ))}
               </div>
               {showUpgradeQuestion && (
                 <>
-                  <FieldLabel>
-                    Ganz ehrlich: Was hat dich bisher von einem größeren Tarif abgehalten?
-                    Es gibt keine falsche Antwort — genau das wollen wir wissen.
-                  </FieldLabel>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, marginBottom: 16 }}>
-                    {BLOCKER_OPTIONS.map(b => (
-                      <Chip key={b} label={b} active={answers.upgrade_blocker.includes(b)}
-                        onClick={() => set('upgrade_blocker',
-                          answers.upgrade_blocker.includes(b)
-                            ? answers.upgrade_blocker.filter(x => x !== b)
-                            : [...answers.upgrade_blocker, b]
-                        )} />
+                  <FieldLabel>Warum kein größeres Paket?</FieldLabel>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
+                    {GRUND_OPTIONS.map(g => (
+                      <Chip key={g.value} label={g.label} active={answers.upgrade_grund === g.value}
+                        onClick={() => set('upgrade_grund', answers.upgrade_grund === g.value ? null : g.value)} />
                     ))}
                   </div>
+                  {grundFollowup && (
+                    <>
+                      <FieldLabel>{grundFollowup.label}</FieldLabel>
+                      <VoiceTextInput
+                        value={answers.text_upgrade}
+                        onChange={v => set('text_upgrade', v)}
+                        placeholder={grundFollowup.placeholder}
+                        rows={2}
+                      />
+                    </>
+                  )}
+                </>
+              )}
+            </StepShell>
+          )}
+
+          {/* ── 5: Weiterempfehlung ── */}
+          {step === 5 && (
+            <StepShell title="Wirst du FinestSites deinen Partnern empfehlen?">
+              <YesNo value={answers.empfehlung} onChange={v => {
+                setAnswers(a => ({
+                  ...a,
+                  empfehlung: a.empfehlung === v ? null : v,
+                  ...(v === 'ja' ? { text_empfehlung: '' } : {}),
+                }))
+              }} />
+              {answers.empfehlung === 'nein' && (
+                <>
+                  <FieldLabel>Was muss anders sein, damit du uns empfiehlst?</FieldLabel>
                   <VoiceTextInput
-                    value={answers.text_upgrade}
-                    onChange={v => set('text_upgrade', v)}
-                    placeholder="Magst du das kurz erklären? (optional)"
+                    value={answers.text_empfehlung}
+                    onChange={v => set('text_empfehlung', v)}
+                    placeholder="Ganz ehrlich…"
                   />
                 </>
               )}
             </StepShell>
           )}
 
-          {/* ── 5: Chef-Frage ── */}
-          {step === 5 && (
+          {/* ── 6: Chef-Frage ── */}
+          {step === 6 && (
             <StepShell
-              title="Wenn du morgen Chef von FinestSites wärst: Was würdest du als Erstes ändern?"
-              sub="Features, Preise, Templates, Bedienung — alles ist erlaubt."
+              title="Wenn du hier Chef wärst: Was würdest du zuerst ändern?"
+              sub="Alles erlaubt: Preise, Templates, Bedienung."
             >
               <VoiceTextInput
                 value={answers.text_chef}
                 onChange={v => set('text_chef', v)}
                 placeholder="Als Erstes würde ich…"
-              />
-            </StepShell>
-          )}
-
-          {/* ── 6: Offen ── */}
-          {step === 6 && (
-            <StepShell
-              title="Was wolltest du uns schon immer mal sagen?"
-              sub="Lob, Frust, Ideen, Wünsche — alles landet anonym bei uns."
-            >
-              <VoiceTextInput
-                value={answers.text_offen}
-                onChange={v => set('text_offen', v)}
-                placeholder="Schieß los…"
+                rows={4}
               />
               {submitError && (
                 <p style={{ margin: '14px 2px 0', fontSize: 14, color: '#DC2626' }}>{submitError}</p>
@@ -508,25 +590,26 @@ export default function FeedbackPage() {
                 Danke dir!
               </h1>
               <p style={{ fontSize: 16, lineHeight: 1.6, color: '#4B5563', margin: 0 }}>
-                Deine Antworten wurden anonym gespeichert.
-                Du hilfst uns damit mehr, als du denkst.
+                Alles anonym gespeichert. Du hilfst uns damit richtig.
               </p>
             </div>
           )}
 
           {/* ── Navigation ── */}
-          {step >= 1 && step <= TOTAL_STEPS && (
+          {step <= TOTAL_STEPS && (
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 28 }}>
-              <button
-                onClick={() => setStep(s => s - 1)}
-                style={{
-                  padding: '12px 20px', borderRadius: 999, border: '1.5px solid #E5E7EB',
-                  background: '#fff', color: '#374151', fontSize: 15, fontWeight: 600,
-                  cursor: 'pointer', fontFamily: 'inherit',
-                }}
-              >
-                Zurück
-              </button>
+              {step > 1 ? (
+                <button
+                  onClick={() => setStep(s => s - 1)}
+                  style={{
+                    padding: '12px 20px', borderRadius: 999, border: '1.5px solid #E5E7EB',
+                    background: '#fff', color: '#374151', fontSize: 15, fontWeight: 600,
+                    cursor: 'pointer', fontFamily: 'inherit',
+                  }}
+                >
+                  Zurück
+                </button>
+              ) : <span />}
               {step < TOTAL_STEPS ? (
                 <button onClick={() => setStep(s => s + 1)} style={primaryBtn}>Weiter</button>
               ) : (
@@ -538,9 +621,9 @@ export default function FeedbackPage() {
           )}
         </div>
 
-        {step >= 1 && step <= TOTAL_STEPS && (
+        {step <= TOTAL_STEPS && (
           <p style={{ textAlign: 'center', fontSize: 12.5, color: '#9CA3AF', marginTop: 16 }}>
-            Alle Fragen sind freiwillig — du kannst jede überspringen.
+            Alles freiwillig. Tippen oder einsprechen, wie du magst.
           </p>
         )}
       </div>
@@ -554,13 +637,13 @@ const primaryBtn: React.CSSProperties = {
   cursor: 'pointer', fontFamily: 'inherit',
 }
 
-function StepShell({ title, sub, children }: { title: string; sub: string; children: React.ReactNode }) {
+function StepShell({ title, sub, children }: { title: string; sub?: string; children: React.ReactNode }) {
   return (
     <div>
-      <h1 style={{ fontSize: 21, fontWeight: 800, color: '#1a1a1a', margin: '0 0 8px', lineHeight: 1.3 }}>
+      <h1 style={{ fontSize: 21, fontWeight: 800, color: '#1a1a1a', margin: sub ? '0 0 6px' : '0 0 22px', lineHeight: 1.3 }}>
         {title}
       </h1>
-      <p style={{ fontSize: 15, lineHeight: 1.55, color: '#6B7280', margin: '0 0 24px' }}>{sub}</p>
+      {sub && <p style={{ fontSize: 14.5, lineHeight: 1.5, color: '#9CA3AF', margin: '0 0 22px' }}>{sub}</p>}
       {children}
     </div>
   )
@@ -568,7 +651,7 @@ function StepShell({ title, sub, children }: { title: string; sub: string; child
 
 function FieldLabel({ children }: { children: React.ReactNode }) {
   return (
-    <p style={{ fontSize: 15, fontWeight: 600, color: '#374151', margin: '24px 0 10px', lineHeight: 1.45 }}>
+    <p style={{ fontSize: 15, fontWeight: 600, color: '#374151', margin: '22px 0 10px', lineHeight: 1.45 }}>
       {children}
     </p>
   )

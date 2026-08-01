@@ -6,13 +6,17 @@ import { sql } from 'drizzle-orm'
 // siehe docs/feedback-aktion-entfernen.md
 
 const TARIF_VALUES = ['starter', 'pro', 'unlimited', 'unbekannt']
-const BLOCKER_OPTIONS = [
-  'Zu teuer',
-  'Mein Tarif reicht mir',
-  'Brauche die Extras nicht',
-  'Weiß nicht, was drin wäre',
-  'Hab nie drüber nachgedacht',
+const TEMPLATE_OPTIONS = [
+  'Mama-Business',
+  'Stoffwechselkur',
+  'ProShape (Abnehmen)',
+  'Sportler',
+  'Beauty & Pflege',
+  'Team-Aufbau',
 ]
+const PREIS_VALUES = ['zu_teuer', 'geht_so', 'fair', 'guenstig']
+const GRUND_VALUES = ['zu_teuer', 'nicht_ueberzeugt', 'anderer']
+const EMPFEHLUNG_VALUES = ['ja', 'nein']
 
 // Rate limiter: max 5 Submissions pro IP pro 10 Minuten
 const rateLimiter = new Map<string, { count: number; resetAt: number }>()
@@ -45,6 +49,10 @@ function cleanText(v: unknown): string {
   return typeof v === 'string' ? v.trim().slice(0, 3000) : ''
 }
 
+function cleanEnum(v: unknown, allowed: string[]): string | null {
+  return typeof v === 'string' && allowed.includes(v) ? v : null
+}
+
 export async function POST(req: NextRequest) {
   if (!checkRateLimit(getClientIp(req))) {
     return NextResponse.json({ error: 'Zu viele Anfragen. Bitte versuch es später nochmal.' }, { status: 429 })
@@ -60,24 +68,28 @@ export async function POST(req: NextRequest) {
   const clean = {
     note_webseite: cleanNote(body.note_webseite),
     text_webseite: cleanText(body.text_webseite),
-    text_templates: cleanText(body.text_templates),
-    note_preise: cleanNote(body.note_preise),
-    text_preise: cleanText(body.text_preise),
-    tarif: typeof body.tarif === 'string' && TARIF_VALUES.includes(body.tarif) ? body.tarif : null,
-    upgrade_blocker: Array.isArray(body.upgrade_blocker)
-      ? body.upgrade_blocker.filter((b): b is string => typeof b === 'string' && BLOCKER_OPTIONS.includes(b))
+    template_wuensche: Array.isArray(body.template_wuensche)
+      ? body.template_wuensche.filter((t): t is string => typeof t === 'string' && TEMPLATE_OPTIONS.includes(t))
       : [],
+    text_templates: cleanText(body.text_templates),
+    preis_meinung: cleanEnum(body.preis_meinung, PREIS_VALUES),
+    text_preise: cleanText(body.text_preise),
+    tarif: cleanEnum(body.tarif, TARIF_VALUES),
+    upgrade_grund: cleanEnum(body.upgrade_grund, GRUND_VALUES),
     text_upgrade: cleanText(body.text_upgrade),
+    empfehlung: cleanEnum(body.empfehlung, EMPFEHLUNG_VALUES),
+    text_empfehlung: cleanText(body.text_empfehlung),
     text_chef: cleanText(body.text_chef),
-    text_offen: cleanText(body.text_offen),
   }
 
   const hasContent =
     clean.note_webseite !== null ||
-    clean.note_preise !== null ||
+    clean.preis_meinung !== null ||
     clean.tarif !== null ||
-    clean.upgrade_blocker.length > 0 ||
-    [clean.text_webseite, clean.text_templates, clean.text_preise, clean.text_upgrade, clean.text_chef, clean.text_offen]
+    clean.upgrade_grund !== null ||
+    clean.empfehlung !== null ||
+    clean.template_wuensche.length > 0 ||
+    [clean.text_webseite, clean.text_templates, clean.text_preise, clean.text_upgrade, clean.text_empfehlung, clean.text_chef]
       .some(t => t.length > 0)
 
   if (!hasContent) {
