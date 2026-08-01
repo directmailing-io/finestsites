@@ -28,9 +28,9 @@ const TEMPLATE_OPTIONS = [
 const MAX_WUENSCHE = 3
 
 const PREIS_TARIFE = [
-  { key: 'preis_starter' as const, name: 'Starter', info: '1 Seite · 21 € im Monat' },
-  { key: 'preis_pro' as const, name: 'Pro', info: '3 Seiten · 27 € im Monat' },
-  { key: 'preis_unlimited' as const, name: 'Unlimited', info: 'Unbegrenzt Seiten · 47 € im Monat' },
+  { key: 'preis_starter' as const, wunschKey: 'wunschpreis_starter' as const, name: 'Starter', info: '1 Seite · 21 € im Monat', max: 21 },
+  { key: 'preis_pro' as const, wunschKey: 'wunschpreis_pro' as const, name: 'Pro', info: '3 Seiten · 27 € im Monat', max: 27 },
+  { key: 'preis_unlimited' as const, wunschKey: 'wunschpreis_unlimited' as const, name: 'Unlimited', info: 'Unbegrenzt Seiten · 47 € im Monat', max: 47 },
 ]
 
 const PREIS_SEGMENTE = [
@@ -74,7 +74,9 @@ type Answers = {
   preis_starter: string | null
   preis_pro: string | null
   preis_unlimited: string | null
-  text_preis_jetzt: string
+  wunschpreis_starter: number | null
+  wunschpreis_pro: number | null
+  wunschpreis_unlimited: number | null
   empfehlung: string | null
   text_empfehlung: string
   partner_modell: string | null
@@ -89,7 +91,7 @@ const EMPTY: Answers = {
   tarif: null,
   upgrade_grund: null, text_upgrade: '',
   preis_starter: null, preis_pro: null, preis_unlimited: null,
-  text_preis_jetzt: '',
+  wunschpreis_starter: null, wunschpreis_pro: null, wunschpreis_unlimited: null,
   empfehlung: null, text_empfehlung: '',
   partner_modell: null, text_partner: '',
   text_chef: '',
@@ -306,9 +308,10 @@ function GradePicker({ value, onChange }: { value: number | null; onChange: (n: 
 
 // ── Auswahl-Karten ────────────────────────────────────────────────────────────
 
-function SelectCard({ label, sub, active, onClick, disabled, color, bg }: {
+function SelectCard({ label, sub, badge, active, onClick, disabled, color, bg }: {
   label: string
   sub?: string
+  badge?: string
   active: boolean
   onClick: () => void
   disabled?: boolean
@@ -337,7 +340,17 @@ function SelectCard({ label, sub, active, onClick, disabled, color, bg }: {
       }}
     >
       <span style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-        <span>{label}</span>
+        <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          {label}
+          {badge && (
+            <span style={{
+              fontSize: 11.5, fontWeight: 800, color: '#065F46', background: '#D1FAE5',
+              padding: '2px 8px', borderRadius: 999, whiteSpace: 'nowrap',
+            }}>
+              {badge}
+            </span>
+          )}
+        </span>
         {sub && <span style={{ fontSize: 13.5, fontWeight: 500, color: active ? '#4B5563' : '#9CA3AF' }}>{sub}</span>}
       </span>
       <span style={{
@@ -359,11 +372,14 @@ function SelectCard({ label, sub, active, onClick, disabled, color, bg }: {
 
 // ── Preisbewertung pro Tarif ──────────────────────────────────────────────────
 
-function PriceRow({ name, info, value, onChange }: {
+function PriceRow({ name, info, value, onChange, maxPreis, wunschpreis, onWunschpreis }: {
   name: string
   info: string
   value: string | null
   onChange: (v: string) => void
+  maxPreis: number
+  wunschpreis: number | null
+  onWunschpreis: (n: number) => void
 }) {
   return (
     <div style={{
@@ -397,6 +413,32 @@ function PriceRow({ name, info, value, onChange }: {
           )
         })}
       </div>
+      {value === 'zu_teuer' && (
+        <div style={{
+          marginTop: 14, paddingTop: 14, borderTop: '1px solid #F3F4F6',
+          animation: 'fs-step-in 0.3s cubic-bezier(0.16,1,0.3,1)',
+        }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 8 }}>
+            <span style={{ fontSize: 14, fontWeight: 600, color: '#374151' }}>Was wäre dein Wunschpreis?</span>
+            <span style={{ fontSize: 19, fontWeight: 800, color: wunschpreis !== null ? '#1a1a1a' : '#9CA3AF' }}>
+              {wunschpreis ?? maxPreis} €
+            </span>
+          </div>
+          <input
+            type="range"
+            min={10}
+            max={maxPreis}
+            step={1}
+            value={wunschpreis ?? maxPreis}
+            onChange={e => onWunschpreis(Number(e.target.value))}
+            style={{ width: '100%', accentColor: '#1a1a1a', cursor: 'pointer' }}
+          />
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 2 }}>
+            <span style={{ fontSize: 12, fontWeight: 500, color: '#9CA3AF' }}>10 €</span>
+            <span style={{ fontSize: 12, fontWeight: 500, color: '#9CA3AF' }}>{maxPreis} €</span>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
@@ -562,22 +604,15 @@ export default function FeedbackPage() {
 
   const customChips = answers.template_wuensche.filter(t => !TEMPLATE_OPTIONS.includes(t))
 
-  const setPreis = (key: 'preis_starter' | 'preis_pro' | 'preis_unlimited', v: string) =>
+  const setPreis = (
+    key: 'preis_starter' | 'preis_pro' | 'preis_unlimited',
+    wunschKey: 'wunschpreis_starter' | 'wunschpreis_pro' | 'wunschpreis_unlimited',
+    v: string,
+  ) =>
     setAnswers(a => {
-      const next = { ...a, [key]: a[key] === v ? null : v }
-      return jetztPreisSichtbar(next) ? next : { ...next, text_preis_jetzt: '' }
+      const nextVal = a[key] === v ? null : v
+      return { ...a, [key]: nextVal, ...(nextVal !== 'zu_teuer' ? { [wunschKey]: null } : {}) }
     })
-
-  // "Welchen Preis wärst du bereit, jetzt zu zahlen?" — wenn der eigene Tarif
-  // als zu teuer markiert ist (ohne Tarifangabe: irgendein Tarif)
-  function jetztPreisSichtbar(a: Answers): boolean {
-    const own = a.tarif === 'starter' ? a.preis_starter
-      : a.tarif === 'pro' ? a.preis_pro
-      : a.tarif === 'unlimited' ? a.preis_unlimited
-      : null
-    if (a.tarif) return own === 'zu_teuer'
-    return [a.preis_starter, a.preis_pro, a.preis_unlimited].includes('zu_teuer')
-  }
 
   const grundFollowup = answers.upgrade_grund ? GRUND_FOLLOWUP[answers.upgrade_grund] : null
 
@@ -731,10 +766,10 @@ export default function FeedbackPage() {
             )}
 
             {step === 'tarif' && (
-              <StepShell title="Welchen Tarif hast du gerade?">
+              <StepShell title="Welchen Tarif hast du gerade?" sub="Als bestehender Nutzer hast du dauerhaft 25 % Rabatt.">
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                   {TARIF_OPTIONS.map(o => (
-                    <SelectCard key={o.value} label={o.label} sub={o.sub} active={answers.tarif === o.value}
+                    <SelectCard key={o.value} label={o.label} sub={o.sub} badge="-25 % Rabatt" active={answers.tarif === o.value}
                       onClick={() => {
                         const next = answers.tarif === o.value ? null : o.value
                         setAnswers(a => ({
@@ -777,21 +812,12 @@ export default function FeedbackPage() {
                   {PREIS_TARIFE.map(t => (
                     <PriceRow key={t.key} name={t.name} info={t.info}
                       value={answers[t.key]}
-                      onChange={v => setPreis(t.key, v)} />
+                      onChange={v => setPreis(t.key, t.wunschKey, v)}
+                      maxPreis={t.max}
+                      wunschpreis={answers[t.wunschKey]}
+                      onWunschpreis={n => set(t.wunschKey, n)} />
                   ))}
                 </div>
-                {jetztPreisSichtbar(answers) && (
-                  <>
-                    <FieldLabel>Welchen Preis wärst du bereit, JETZT zu zahlen?</FieldLabel>
-                    <VoiceTextInput
-                      value={answers.text_preis_jetzt}
-                      onChange={v => set('text_preis_jetzt', v)}
-                      placeholder="Sag es ganz ehrlich…"
-                      rows={2}
-                      voice={false}
-                    />
-                  </>
-                )}
               </StepShell>
             )}
 
@@ -900,7 +926,11 @@ export default function FeedbackPage() {
             ) : <span />}
             {isLast ? (
               <button onClick={submit} disabled={submitting} className="fs-press"
-                style={{ ...primaryBtn, opacity: submitting ? 0.6 : 1 }}>
+                style={{
+                  ...primaryBtn, padding: '17px 48px', fontSize: 17.5,
+                  background: '#059669', boxShadow: '0 6px 20px rgba(5,150,105,0.35)',
+                  opacity: submitting ? 0.6 : 1,
+                }}>
                 {submitting ? 'Wird gesendet…' : 'Absenden'}
               </button>
             ) : (

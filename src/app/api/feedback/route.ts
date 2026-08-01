@@ -46,6 +46,11 @@ function cleanEnum(v: unknown, allowed: string[]): string | null {
   return typeof v === 'string' && allowed.includes(v) ? v : null
 }
 
+// Wunschpreis-Slider: 10 € bis zum aktuellen Tarifpreis
+function cleanWunschpreis(v: unknown, max: number): number | null {
+  return typeof v === 'number' && Number.isInteger(v) && v >= 10 && v <= max ? v : null
+}
+
 export async function POST(req: NextRequest) {
   if (!checkRateLimit(getClientIp(req))) {
     return NextResponse.json({ error: 'Zu viele Anfragen. Bitte versuch es später nochmal.' }, { status: 429 })
@@ -76,7 +81,9 @@ export async function POST(req: NextRequest) {
     preis_starter: cleanEnum(body.preis_starter, PREIS_VALUES),
     preis_pro: cleanEnum(body.preis_pro, PREIS_VALUES),
     preis_unlimited: cleanEnum(body.preis_unlimited, PREIS_VALUES),
-    text_preis_jetzt: cleanText(body.text_preis_jetzt),
+    wunschpreis_starter: cleanWunschpreis(body.wunschpreis_starter, 21),
+    wunschpreis_pro: cleanWunschpreis(body.wunschpreis_pro, 27),
+    wunschpreis_unlimited: cleanWunschpreis(body.wunschpreis_unlimited, 47),
     empfehlung: cleanEnum(body.empfehlung, EMPFEHLUNG_VALUES),
     text_empfehlung: cleanText(body.text_empfehlung),
     partner_modell: cleanEnum(body.partner_modell, PARTNER_VALUES),
@@ -95,7 +102,7 @@ export async function POST(req: NextRequest) {
     clean.empfehlung !== null ||
     clean.partner_modell !== null ||
     clean.template_wuensche.length > 0 ||
-    [clean.text_optimalset, clean.text_business, clean.text_upgrade, clean.text_preis_jetzt, clean.text_empfehlung, clean.text_partner, clean.text_chef]
+    [clean.text_optimalset, clean.text_business, clean.text_upgrade, clean.text_empfehlung, clean.text_partner, clean.text_chef]
       .some(t => t.length > 0)
 
   if (!hasContent) {

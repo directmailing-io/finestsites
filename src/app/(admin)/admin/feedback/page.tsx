@@ -20,7 +20,9 @@ type Answers = {
   preis_starter: string | null
   preis_pro: string | null
   preis_unlimited: string | null
-  text_preis_jetzt: string
+  wunschpreis_starter: number | null
+  wunschpreis_pro: number | null
+  wunschpreis_unlimited: number | null
   empfehlung: string | null
   text_empfehlung: string
   partner_modell: string | null
@@ -110,11 +112,12 @@ function NoteDistribution({ title, notes }: { title: string; notes: number[] }) 
   )
 }
 
-function CountList({ title, entries, total, colors }: {
+function CountList({ title, entries, total, colors, footer }: {
   title: string
   entries: [string, number][]
   total: number
   colors?: Record<string, string>
+  footer?: string
 }) {
   const max = Math.max(...entries.map(([, c]) => c), 1)
   return (
@@ -138,6 +141,9 @@ function CountList({ title, entries, total, colors }: {
             </div>
           ))}
         </div>
+      )}
+      {footer && (
+        <p className="text-xs font-semibold mt-4 pt-3" style={{ color: '#1D4ED8', borderTop: '1px solid #F1F5F9' }}>{footer}</p>
       )}
     </div>
   )
@@ -228,6 +234,13 @@ export default async function FeedbackAdminPage() {
       .filter(([k]) => m.has(k))
       .map(([k, v]) => [v.label, m.get(k)!] as [string, number])
 
+  const wunschpreisFooter = (key: 'wunschpreis_starter' | 'wunschpreis_pro' | 'wunschpreis_unlimited') => {
+    const vals = responses.map(r => r.a[key]).filter((n): n is number => typeof n === 'number')
+    if (vals.length === 0) return undefined
+    const avg = vals.reduce((a, b) => a + b, 0) / vals.length
+    return `Ø Wunschpreis: ${avg.toFixed(0)} € (${vals.length} Angaben)`
+  }
+
   return (
     <div style={{ maxWidth: 1100 }}>
       <div className="mb-6">
@@ -293,9 +306,9 @@ export default async function FeedbackAdminPage() {
 
           {/* Preisbewertung pro Tarif */}
           <div className="grid grid-cols-3 gap-3 mb-6">
-            <CountList title="Starter (21 €)" total={total} colors={preisColorMap} entries={preisEntries(preisCounts.starter)} />
-            <CountList title="Pro (27 €)" total={total} colors={preisColorMap} entries={preisEntries(preisCounts.pro)} />
-            <CountList title="Unlimited (47 €)" total={total} colors={preisColorMap} entries={preisEntries(preisCounts.unlimited)} />
+            <CountList title="Starter (21 €)" total={total} colors={preisColorMap} entries={preisEntries(preisCounts.starter)} footer={wunschpreisFooter('wunschpreis_starter')} />
+            <CountList title="Pro (27 €)" total={total} colors={preisColorMap} entries={preisEntries(preisCounts.pro)} footer={wunschpreisFooter('wunschpreis_pro')} />
+            <CountList title="Unlimited (47 €)" total={total} colors={preisColorMap} entries={preisEntries(preisCounts.unlimited)} footer={wunschpreisFooter('wunschpreis_unlimited')} />
           </div>
 
           {/* Wünsche + Tarif */}
@@ -336,7 +349,6 @@ export default async function FeedbackAdminPage() {
           <div className="flex flex-col gap-3">
             <TextAnswers title="Optimalset-Seite: Was fehlt? Was soll anders werden?" items={texts('text_optimalset')} />
             <TextAnswers title="Business-Seite: Was fehlt? Was soll anders werden?" items={texts('text_business')} />
-            <TextAnswers title="Preis, den sie JETZT zahlen würden" items={texts('text_preis_jetzt')} />
             <TextAnswers title="Upgrade: Warum nicht? (Freitext)" items={texts('text_upgrade')} />
             <TextAnswers title="Was muss anders sein für eine Empfehlung?" items={texts('text_empfehlung')} />
             <TextAnswers title="Partnerprogramm: eigene Ideen" items={texts('text_partner')} />
