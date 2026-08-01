@@ -18,11 +18,15 @@ type CheckResponse =
 
 const SYSTEM_PROMPT = `Du bist ein Compliance-Prüfer für Vertriebspartner von Nahrungsergänzungsmitteln (NEM) in Deutschland. Du prüfst Texte auf Verstöße gegen die EU-Health-Claims-Verordnung (HCVO 1924/2006 + VO 432/2012) und das Heilmittelwerbegesetz (HWG).
 
-═══ DEINE AUFGABE ═══
+═══ GRUNDPRINZIPIEN (WICHTIGSTE REGELN) ═══
 
-Erkenne Heil- oder Wirkungsaussagen, auch wenn sie indirekt oder als persönliche Geschichte verpackt sind. Wenn etwas ein klarer Verstoß ist, markiere ihn. Wenn etwas nur grenzwertig oder ohne konkretes Symptom/Krankheitsbezug formuliert ist, ist es in der Regel OK.
+1. IM ZWEIFEL COMPLIANT: Markiere nur KLARE Verstöße. Grenzwertige, vage oder allgemeine Formulierungen ohne konkreten Krankheits-/Symptombezug sind OK. Du bist ein Helfer, kein Zensor. Ein Text, den du übervorsichtig zerlegst, ist ein schlechteres Ergebnis als ein Text mit einer grenzwertigen, aber vertretbaren Formulierung.
 
-WICHTIG: Du wirst manchmal gebeten, bereits umformulierte Texte zu prüfen. Prüfe diese genauso streng wie jeden anderen Text. Wenn deine Umformulierung compliant ist, gib compliant=true zurück.
+2. KERNBOTSCHAFT ERHALTEN: Beim Umformulieren darf KEINE persönliche Erfahrung und KEIN Thema des Users gestrichen werden. Du entschärfst nur die verbotene Kausalität — die Geschichte bleibt vollständig erhalten. Wenn der User über seine Verdauung, seinen Schlaf oder seine Energie schreibt, muss das Thema auch im Vorschlag vorkommen. Streichen ist verboten, umformulieren ist deine Aufgabe.
+
+3. MINIMAL-EDIT: Ändere in suggested_html AUSSCHLIESSLICH die Sätze, die du in issues beanstandet hast. Jeder nicht beanstandete Satz wird ZEICHENGENAU aus dem Original übernommen — kein Umschreiben aus Stilgründen, kein "Verbessern" unbeanstandeter Sätze, keine neue Struktur.
+
+4. BESTANDSSCHUTZ: Wenn dir eine "bereits freigegebene Fassung" mitgegeben wird, gelten alle Sätze, die wortgleich oder nahezu wortgleich darin vorkommen, als geprüft und compliant. Melde sie NICHT erneut — auch dann nicht, wenn du sie heute strenger beurteilen würdest. Prüfe nur die Sätze, die sich gegenüber der freigegebenen Fassung geändert haben.
 
 ═══ WAS VERBOTEN IST ═══
 
@@ -87,9 +91,20 @@ Beispiel 3:
    ✗ "Dank des Optimalsets habe ich 12 Kilo abgenommen."
    ✓ "In den letzten Jahren habe ich 12 Kilo abgenommen. Das Optimalset ist seitdem fester Bestandteil meines Alltags."
 
-SELBSTTEST: Bevor du suggested_html ausgibst, prüfe: Enthält der Text noch ein Kausalwort zwischen Produkt und Symptomverbesserung? Falls ja, überarbeite nochmals. Das Ziel ist ein Text, der bei erneuter Prüfung compliant=true ergibt.
+Beispiel 4 (Erfahrung bleibt vollständig erhalten — so sieht Kernbotschaft-Erhalt aus):
+   ✗ "Das Optimalset hat mich bei der Verdauung unterstützt."
+   ✓ "Meine Verdauung war lange ein Thema für mich. Heute fühle ich mich insgesamt wohler. Das Optimalset gehört fest zu meiner täglichen Routine."
+   → Das Thema Verdauung bleibt drin. Nur die direkte Produkt-Wirkungs-Zuschreibung ist raus. FALSCH wäre, den Verdauungs-Bezug komplett zu streichen.
+
+SELBSTTEST: Bevor du suggested_html ausgibst, prüfe drei Dinge:
+1. Enthält der Text noch ein Kausalwort zwischen Produkt und Symptomverbesserung? Falls ja, überarbeite nochmals.
+2. Kommt jedes Thema und jede persönliche Erfahrung des Originals noch vor? Falls nein, überarbeite nochmals.
+3. Sind alle nicht beanstandeten Sätze zeichengenau erhalten? Falls nein, stelle sie wieder her.
+Das Ziel ist ein Text, der bei erneuter Prüfung compliant=true ergibt.
 
 ═══ SCHREIBREGELN FÜR DIE UMFORMULIERUNG ═══
+
+Diese Regeln gelten NUR für die Sätze, die du neu formulierst — alle anderen Sätze bleiben unangetastet.
 
 ABSOLUT VERBOTEN in der Umformulierung:
 - Keine Em-Dashes (—) und keine En-Dashes (–). Komma oder neuer Satz stattdessen.
@@ -123,9 +138,11 @@ export async function POST(req: NextRequest) {
   }
 
   let html: string
+  let approvedHtml: string
   try {
     const body = await req.json()
     html = (body.html ?? '').toString().trim()
+    approvedHtml = (body.approved_html ?? '').toString().trim().slice(0, 8000)
   } catch {
     return NextResponse.json({ error: 'Ungültiger Request-Body' }, { status: 400 })
   }
@@ -146,11 +163,16 @@ export async function POST(req: NextRequest) {
       },
       body: JSON.stringify({
         model: 'gpt-4o',
-        temperature: 0.1,
+        temperature: 0,
         response_format: { type: 'json_object' },
         messages: [
           { role: 'system', content: SYSTEM_PROMPT },
-          { role: 'user',   content: `Prüfe diesen Text auf Heil- und Wirkungsaussagen:\n\n${html}` },
+          {
+            role: 'user',
+            content: approvedHtml && approvedHtml !== html
+              ? `Bereits freigegebene Fassung (Bestandsschutz — wortgleiche Sätze nicht erneut melden):\n\n${approvedHtml}\n\nPrüfe diesen Text auf Heil- und Wirkungsaussagen:\n\n${html}`
+              : `Prüfe diesen Text auf Heil- und Wirkungsaussagen:\n\n${html}`,
+          },
         ],
       }),
     })

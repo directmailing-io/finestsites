@@ -2334,6 +2334,7 @@ function FieldRenderer({ field, value, onChange, onItemFocus, complianceApproved
           maxLength={field.max_length}
           complianceCheck={field.compliance_check === true}
           complianceApproved={field.compliance_check ? !!complianceApprovedText : undefined}
+          approvedHtml={field.compliance_check ? complianceApprovedText : undefined}
           onComplianceApproved={field.compliance_check ? onComplianceApproved : undefined}
           onComplianceRevoked={field.compliance_check ? onComplianceRevoked : undefined}
         />

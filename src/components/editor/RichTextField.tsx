@@ -19,6 +19,7 @@ interface Props {
   maxLength?: number | null
   complianceCheck?: boolean
   complianceApproved?: boolean
+  approvedHtml?: string
   onComplianceApproved?: (approvedHtml: string) => void
   onComplianceRevoked?: () => void
 }
@@ -42,13 +43,20 @@ function hashText(html: string): string { return hash(stripHtml(html)) }
 
 export function RichTextField({
   value, onChange, placeholder, maxLength,
-  complianceCheck, complianceApproved, onComplianceApproved, onComplianceRevoked,
+  complianceCheck, complianceApproved, approvedHtml, onComplianceApproved, onComplianceRevoked,
 }: Props) {
   const [linkUrl, setLinkUrl] = useState('')
   const [showLinkInput, setShowLinkInput] = useState(false)
   const [checkState, setCheckState] = useState<CheckState>({ status: 'idle' })
   const resultRef = useRef<HTMLDivElement>(null)
   const initializedRef = useRef(false)
+  // Survives the "Bearbeiten"-revoke (which clears the __chk value): the last
+  // approved text is sent as Bestandsschutz so the AI only judges what changed.
+  const lastApprovedRef = useRef('')
+
+  useEffect(() => {
+    if (approvedHtml) lastApprovedRef.current = approvedHtml
+  }, [approvedHtml])
 
   const editor = useEditor({
     extensions: [
@@ -98,12 +106,13 @@ export function RichTextField({
       const res = await fetch('/api/check-compliance', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ html }),
+        body: JSON.stringify({ html, approved_html: lastApprovedRef.current || undefined }),
       })
       const data = await res.json()
       if (!res.ok) { setCheckState({ status: 'error', message: data.error ?? 'Prüfung fehlgeschlagen' }); return }
       const h = hashText(html)
       if (data.ok) {
+        lastApprovedRef.current = html
         setCheckState({ status: 'ok', checkedHash: h })
         onComplianceApproved?.(html)
       } else {
@@ -123,6 +132,7 @@ export function RichTextField({
     // condition that breaks the apply on mobile (slow state batching + scroll animation).
     editor.commands.setContent(suggestedHtml, { emitUpdate: false })
     onChange(suggestedHtml)
+    lastApprovedRef.current = suggestedHtml
     setCheckState({ status: 'ok', checkedHash: hashText(suggestedHtml) })
     onComplianceApproved?.(suggestedHtml)
   }, [editor, checkState, onChange, onComplianceApproved])
@@ -178,6 +188,7 @@ export function RichTextField({
         </div>
         <div style={{ border: '1px solid #E5E7EB', borderRadius: 14, padding: '14px 16px', background: '#FAFAFA', fontSize: 14, color: '#374151', lineHeight: '1.6' }}
           dangerouslySetInnerHTML={{ __html: value || '' }} />
+        <ComplianceDisclaimer />
       </div>
     )
   }
@@ -317,15 +328,26 @@ export function RichTextField({
 
       {/* ── Compliance section — below editor ── */}
       {complianceCheck && (
-        <ComplianceSection
-          state={checkState}
-          needsRecheck={needsRecheck}
-          onCheck={runComplianceCheck}
-          onApply={applySuggestion}
-          resultRef={resultRef}
-        />
+        <>
+          <ComplianceSection
+            state={checkState}
+            needsRecheck={needsRecheck}
+            onCheck={runComplianceCheck}
+            onApply={applySuggestion}
+            resultRef={resultRef}
+          />
+          <ComplianceDisclaimer />
+        </>
       )}
     </div>
+  )
+}
+
+function ComplianceDisclaimer() {
+  return (
+    <p style={{ margin: '8px 4px 0', fontSize: 11.5, lineHeight: 1.5, color: '#9CA3AF' }}>
+      Die KI-Prüfung ist eine Hilfestellung und kann Fehler machen. Für die Inhalte deiner Seite bist du selbst verantwortlich.
+    </p>
   )
 }
 
@@ -455,8 +477,8 @@ function ComplianceSection({
           </svg>
         </div>
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div className="cmp-ok-title">Kein Verstoß gefunden</div>
-          <div className="cmp-ok-sub">Dein Text ist EU-konform und bereit zur Veröffentlichung.</div>
+          <div className="cmp-ok-title">Keine Auffälligkeiten gefunden</div>
+          <div className="cmp-ok-sub">Die KI hat keine problematischen Aussagen erkannt. Bereit zur Veröffentlichung.</div>
         </div>
         <button type="button" onClick={onCheck} className="cmp-ok-retry">Erneut prüfen</button>
         <style jsx>{`
