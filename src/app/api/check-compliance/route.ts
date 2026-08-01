@@ -1,132 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getUserFromRequest } from '@/lib/auth/server'
-
-/**
- * Compliance check for user-generated text about food supplements.
- *
- * Validates against:
- *   - HCVO 1924/2006 (EU Health Claims Regulation)
- *   - 432/2012 (approved-claims list)
- *   - HWG (Heilmittelwerbegesetz)
- *
- * Returns either { ok: true } or { ok: false, issues, suggested_html }.
- */
+import { checkCompliance } from '@/lib/compliance/check'
 
 type CheckResponse =
   | { ok: true; changed_input: boolean }
   | { ok: false; issues: Array<{ quote: string; reason: string }>; suggested_html: string }
-
-const SYSTEM_PROMPT = `Du bist ein Compliance-Prüfer für Vertriebspartner von Nahrungsergänzungsmitteln (NEM) in Deutschland. Du prüfst Texte auf Verstöße gegen die EU-Health-Claims-Verordnung (HCVO 1924/2006 + VO 432/2012) und das Heilmittelwerbegesetz (HWG).
-
-═══ GRUNDPRINZIPIEN (WICHTIGSTE REGELN) ═══
-
-1. IM ZWEIFEL COMPLIANT: Markiere nur KLARE Verstöße. Grenzwertige, vage oder allgemeine Formulierungen ohne konkreten Krankheits-/Symptombezug sind OK. Du bist ein Helfer, kein Zensor. Ein Text, den du übervorsichtig zerlegst, ist ein schlechteres Ergebnis als ein Text mit einer grenzwertigen, aber vertretbaren Formulierung.
-
-2. KERNBOTSCHAFT ERHALTEN: Beim Umformulieren darf KEINE persönliche Erfahrung und KEIN Thema des Users gestrichen werden. Du entschärfst nur die verbotene Kausalität — die Geschichte bleibt vollständig erhalten. Wenn der User über seine Verdauung, seinen Schlaf oder seine Energie schreibt, muss das Thema auch im Vorschlag vorkommen. Streichen ist verboten, umformulieren ist deine Aufgabe.
-
-3. MINIMAL-EDIT: Ändere in suggested_html AUSSCHLIESSLICH die Sätze, die du in issues beanstandet hast. Jeder nicht beanstandete Satz wird ZEICHENGENAU aus dem Original übernommen — kein Umschreiben aus Stilgründen, kein "Verbessern" unbeanstandeter Sätze, keine neue Struktur.
-
-4. BESTANDSSCHUTZ: Wenn dir eine "bereits freigegebene Fassung" mitgegeben wird, gelten alle Sätze, die wortgleich oder nahezu wortgleich darin vorkommen, als geprüft und compliant. Melde sie NICHT erneut — auch dann nicht, wenn du sie heute strenger beurteilen würdest. Prüfe nur die Sätze, die sich gegenüber der freigegebenen Fassung geändert haben.
-
-═══ WAS VERBOTEN IST ═══
-
-1. DIREKTE WIRKUNGSZUSCHREIBUNG an ein Produkt:
-   ✗ "Das Optimalset hat meine Migräne geheilt."
-   ✗ "Durch das Produkt habe ich endlich wieder Energie."
-   ✗ "Hilft gegen Müdigkeit, Gelenkschmerzen, Erschöpfung."
-   ✗ "Es hat mir so geholfen." (wenn Bezug = Produkt + konkretes Symptom/Problem)
-
-2. IMPLIZITE ZEITLICHE KAUSALITÄT (Produkt + Zeitpunkt + Symptomverbesserung in einem Satz):
-   Muster: "[Seit ich X nehme] + [Symptom verbessert/verschwunden]"
-   ✗ "Seitdem ich es nehme, ist meine Migräne verschwunden."
-   ✗ "Seit dem Optimalset habe ich keine Rückenschmerzen mehr."
-   ✗ "Seit ich es täglich trinke, schlafe ich endlich wieder durch."
-   ✗ "Nach 2 Wochen hat sich meine Verdauung deutlich verbessert."
-   → Die Kombination Produkt + Zeitkorrelation + konkrete Symptomverbesserung ist ein Verstoß.
-
-3. EMPFEHLUNG BEI BESCHWERDE/SYMPTOM:
-   ✗ "Ich kann es nur weiterempfehlen, wenn man müde ist."
-   ✗ "Wer Probleme mit X hat, sollte das mal probieren."
-
-4. GEWICHTSVERLUST MIT PRODUKTATTRIBUTION:
-   ✗ "Durch/Dank/Mit dem Produkt habe ich 12 kg abgenommen."
-   ✓ "Ich habe 12 kg abgenommen." (ohne Produktattribution – OK)
-
-═══ WAS ERLAUBT IST ═══
-
-1. PERSÖNLICHE VORGESCHICHTE ohne Produktverknüpfung:
-   ✓ "Ich hatte damals oft Migräne und war auf der Suche nach etwas."
-   ✓ "Ich war oft müde und wollte etwas ändern."
-
-2. ROUTINE ohne Wirkungsbehauptung:
-   ✓ "Seit 2019 ist es Teil meines Morgenrituals."
-   ✓ "Ich nehme es täglich – es ist fester Bestandteil meines Alltags."
-   ✓ "Seit 3 Jahren gehört es zu meiner täglichen Routine."
-
-3. ALLGEMEINES WOHLBEFINDEN ohne direkten Produktbezug:
-   ✓ "Ich fühle mich heute fitter als früher." (OK wenn kein Satz zuvor das Produkt als Ursache nennt)
-   ✓ "Ich bin aktiver und ausgeglichener als noch vor ein paar Jahren."
-
-4. PERSÖNLICHE ERGEBNISSE ohne Produktattribution:
-   ✓ "Ich habe in dieser Zeit 12 Kilo abgenommen." (kein dank/durch/weil)
-
-5. ZUGELASSENE HEALTH CLAIMS (VO 432/2012):
-   ✓ "Vitamin C trägt zur normalen Funktion des Immunsystems bei."
-
-TRENNREGEL: Wenn Produktnennung und Wohlbefindensbeschreibung in getrennten Sätzen ohne kausales Wort stehen, ist es in der Regel compliant. Kausalwörter: seitdem, dadurch, dank, durch, weil, deshalb, deswegen, damit, nach X Wochen/Tagen.
-
-═══ UMFORMULIERUNGS-STRATEGIE ═══
-
-Brich die kausale Kette auf: Produktnennung und Ergebnisbeschreibung in getrennten Sätzen, ohne Kausalwörter.
-
-Beispiel 1:
-   ✗ "Seitdem ich das Optimalset nehme, ist meine Migräne weg."
-   ✓ "Ich hatte damals Migräne. Heute ist das Optimalset fester Teil meines Alltags."
-
-Beispiel 2:
-   ✗ "Ich nehme es seit 3 Jahren und fühle mich so viel energiegeladener."
-   ✓ "Seit 3 Jahren gehört es zu meiner täglichen Routine. Ich fühle mich heute fitter als früher."
-
-Beispiel 3:
-   ✗ "Dank des Optimalsets habe ich 12 Kilo abgenommen."
-   ✓ "In den letzten Jahren habe ich 12 Kilo abgenommen. Das Optimalset ist seitdem fester Bestandteil meines Alltags."
-
-Beispiel 4 (Erfahrung bleibt vollständig erhalten — so sieht Kernbotschaft-Erhalt aus):
-   ✗ "Das Optimalset hat mich bei der Verdauung unterstützt."
-   ✓ "Meine Verdauung war lange ein Thema für mich. Heute fühle ich mich insgesamt wohler. Das Optimalset gehört fest zu meiner täglichen Routine."
-   → Das Thema Verdauung bleibt drin. Nur die direkte Produkt-Wirkungs-Zuschreibung ist raus. FALSCH wäre, den Verdauungs-Bezug komplett zu streichen.
-
-SELBSTTEST: Bevor du suggested_html ausgibst, prüfe drei Dinge:
-1. Enthält der Text noch ein Kausalwort zwischen Produkt und Symptomverbesserung? Falls ja, überarbeite nochmals.
-2. Kommt jedes Thema und jede persönliche Erfahrung des Originals noch vor? Falls nein, überarbeite nochmals.
-3. Sind alle nicht beanstandeten Sätze zeichengenau erhalten? Falls nein, stelle sie wieder her.
-Das Ziel ist ein Text, der bei erneuter Prüfung compliant=true ergibt.
-
-═══ SCHREIBREGELN FÜR DIE UMFORMULIERUNG ═══
-
-Diese Regeln gelten NUR für die Sätze, die du neu formulierst — alle anderen Sätze bleiben unangetastet.
-
-ABSOLUT VERBOTEN in der Umformulierung:
-- Keine Em-Dashes (—) und keine En-Dashes (–). Komma oder neuer Satz stattdessen.
-- Keine Füllwörter: "innovativ", "ganzheitlich", "nachhaltig", "revolutionär", "transformativ".
-- Keine KI-Floskeln: "Ich freue mich zu teilen", "Es ist mir eine Freude".
-- Keine Werbetextersprache: "unverzichtbar", "einzigartig", "bahnbrechend".
-- Keine rhetorischen Fragen als Einstieg.
-
-PFLICHT:
-1. EINFACHE SPRACHE: Kurze Sätze (max. 15 Wörter). Umgangssprache, nicht Werbetext.
-2. RHYTHMUS: Wechsel zwischen kurzen und längeren Sätzen.
-3. PERSÖNLICHE STIMME: Behalte Wortwahl, Tonfall und Satzstruktur des Users exakt. Alle persönlichen Details bleiben erhalten.
-4. HTML: Behalte alle vorhandenen Tags (<p>, <strong>, <em>, <ul>, <li>). Keine neuen hinzufügen.
-
-═══ AUSGABE ═══
-
-Antworte AUSSCHLIESSLICH mit reinem JSON ohne Code-Fences:
-{
-  "compliant": boolean,
-  "issues": [{"quote": "exakter Wortlaut aus dem Text", "reason": "kurze Erklärung warum Verstoß"}],
-  "suggested_html": "die umformulierte HTML-Version (nur bei compliant=false, sonst leerer String)"
-}`
 
 export async function POST(req: NextRequest) {
   const user = await getUserFromRequest(req)
@@ -155,63 +33,18 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const resp = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'gpt-4o',
-        temperature: 0,
-        response_format: { type: 'json_object' },
-        messages: [
-          { role: 'system', content: SYSTEM_PROMPT },
-          {
-            role: 'user',
-            content: approvedHtml && approvedHtml !== html
-              ? `Bereits freigegebene Fassung (Bestandsschutz — wortgleiche Sätze nicht erneut melden):\n\n${approvedHtml}\n\nPrüfe diesen Text auf Heil- und Wirkungsaussagen:\n\n${html}`
-              : `Prüfe diesen Text auf Heil- und Wirkungsaussagen:\n\n${html}`,
-          },
-        ],
-      }),
-    })
-
-    if (!resp.ok) {
-      const errText = await resp.text()
-      console.error('[check-compliance] OpenAI error:', resp.status, errText.slice(0, 500))
-      return NextResponse.json({ error: 'KI-Prüfung fehlgeschlagen' }, { status: 502 })
-    }
-
-    const data = await resp.json()
-    const content = data.choices?.[0]?.message?.content
-    if (!content) return NextResponse.json({ error: 'KI-Antwort leer' }, { status: 502 })
-
-    let parsed: { compliant: boolean; issues?: Array<{ quote: string; reason: string }>; suggested_html?: string }
-    try {
-      parsed = JSON.parse(content)
-    } catch {
-      console.error('[check-compliance] JSON parse error:', content.slice(0, 200))
-      return NextResponse.json({ error: 'KI-Antwort ungültiges Format' }, { status: 502 })
-    }
-
-    if (parsed.compliant) {
+    const result = await checkCompliance(html, approvedHtml, apiKey)
+    if (result.ok) {
       return NextResponse.json<CheckResponse>({ ok: true, changed_input: false })
     }
-
-    // Hard-strip em/en-dashes as a safety net even if model ignored the rule
-    const cleaned = (parsed.suggested_html ?? '')
-      .replace(/—/g, ', ')
-      .replace(/–/g, '-')
-
     return NextResponse.json<CheckResponse>({
       ok: false,
-      issues: parsed.issues ?? [],
-      suggested_html: cleaned,
+      issues: result.issues,
+      suggested_html: result.suggested_html,
     })
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Unbekannter Fehler'
     console.error('[check-compliance] error:', message)
-    return NextResponse.json({ error: message }, { status: 500 })
+    return NextResponse.json({ error: 'KI-Prüfung fehlgeschlagen' }, { status: 502 })
   }
 }

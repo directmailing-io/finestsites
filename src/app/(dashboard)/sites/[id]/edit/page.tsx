@@ -2307,10 +2307,11 @@ function SocialUrlField({ field, value, onChange }: {
 
 // ─── Field Renderer ───────────────────────────────────────────────────────────
 
-function FieldRenderer({ field, value, onChange, onItemFocus, complianceApprovedText, onComplianceApproved, onComplianceRevoked, narrow, onMobileSelect }: {
+function FieldRenderer({ field, value, onChange, onItemFocus, complianceApprovedText, complianceBaseText, onComplianceApproved, onComplianceRevoked, narrow, onMobileSelect }: {
   field: FieldSchema; value: string; onChange: (v: string) => void
   onItemFocus?: (item: Record<string, string> | null, idx: number) => void
   complianceApprovedText?: string
+  complianceBaseText?: string
   onComplianceApproved?: (approvedHtml: string) => void
   onComplianceRevoked?: () => void
   narrow?: boolean
@@ -2334,7 +2335,7 @@ function FieldRenderer({ field, value, onChange, onItemFocus, complianceApproved
           maxLength={field.max_length}
           complianceCheck={field.compliance_check === true}
           complianceApproved={field.compliance_check ? !!complianceApprovedText : undefined}
-          approvedHtml={field.compliance_check ? complianceApprovedText : undefined}
+          approvedHtml={field.compliance_check ? (complianceApprovedText || complianceBaseText) : undefined}
           onComplianceApproved={field.compliance_check ? onComplianceApproved : undefined}
           onComplianceRevoked={field.compliance_check ? onComplianceRevoked : undefined}
         />
@@ -2487,9 +2488,12 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
         // keys separately so the locked read-only view survives page reloads.
         for (const f of fields) {
           if ((f as any).compliance_check) {
-            const chkKey = f.key + '__chk'
-            if ((data.data as Record<string, string>)?.[chkKey]) {
-              init[chkKey] = (data.data as Record<string, string>)[chkKey]
+            // __chkbase = last approved text, survives the "Bearbeiten"-revoke
+            // (which only clears __chk) and feeds the Bestandsschutz on recheck.
+            for (const chkKey of [f.key + '__chk', f.key + '__chkbase']) {
+              if ((data.data as Record<string, string>)?.[chkKey]) {
+                init[chkKey] = (data.data as Record<string, string>)[chkKey]
+              }
             }
           }
         }
@@ -3519,14 +3523,16 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
                             previewTooltipTimerRef.current = setTimeout(() => setShowPreviewTooltip(false), 3200)
                           }}
                           complianceApprovedText={field.compliance_check ? (values[field.key + '__chk'] ?? '') : undefined}
+                          complianceBaseText={field.compliance_check ? (values[field.key + '__chkbase'] ?? '') : undefined}
                           onComplianceApproved={field.compliance_check ? (approvedHtml) => {
                             handleChange(field.key + '__chk', approvedHtml)
+                            handleChange(field.key + '__chkbase', approvedHtml)
                             // Immediately persist to DB — don't rely on autosave timer
                             // so page reload also shows the locked view correctly
                             fetch(`/api/sites/${id}`, {
                               method: 'PATCH',
                               headers: { 'Content-Type': 'application/json' },
-                              body: JSON.stringify({ [field.key + '__chk']: approvedHtml }),
+                              body: JSON.stringify({ [field.key + '__chk']: approvedHtml, [field.key + '__chkbase']: approvedHtml }),
                             }).catch(() => {})
                           } : undefined}
                           onComplianceRevoked={field.compliance_check ? () => handleChange(field.key + '__chk', '') : undefined}
