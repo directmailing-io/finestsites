@@ -6553,7 +6553,13 @@ section.section.reviews {
   .nav { padding: 14px 0; }
   .nav.scrolled { padding: 10px 0; }
   .nav-cta { padding: 10px 16px; font-size: 13px; }
-  .nav-name { font-size: 1.05rem; }
+  .nav-inner { gap: 10px; }
+  .nav-name { font-size: 1rem; line-height: 1.25; gap: 8px; min-width: 0; }
+  /* Sprachschalter kompakt: nur Flaggen, kein DE/EN-Label */
+  .lang-switch-mobile { margin-right: 8px; }
+  .lang-switch-mobile .lang-opt { padding: 6px 9px; gap: 0; }
+  .lang-switch-mobile .lang-opt span { display: none; }
+  .lang-switch-mobile .lang-opt svg { width: 17px; height: 17px; }
 }
 
 /* --- Benefit Strip --- */
