@@ -2,6 +2,7 @@ import { db } from '@/lib/db'
 import { sql } from 'drizzle-orm'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { AutoRefresh } from '../../AutoRefresh'
 import {
   BreakdownCard, cardStyle, countryName, deviceLabel, fmtNum, parseRange, pct, perDay,
   RangePills, sinceSql, sourceLabel, StatTile,
@@ -74,7 +75,7 @@ export default async function SiteAnalyticsPage({ params, searchParams }: {
       LIMIT ${limit}
     `)
 
-  const [siteInfoRows, latestEventRows, totalsRows, dayRows, sources, devices, browsers, countries, paths] =
+  const [siteInfoRows, latestEventRows, totalsRows, dayRows, liveRows, sources, devices, browsers, countries, paths] =
     await Promise.all([
       db.execute<SiteInfoRow>(sql`
         SELECT u.email, t.title AS template_title
@@ -108,6 +109,12 @@ export default async function SiteAnalyticsPage({ params, searchParams }: {
         GROUP BY 1
         ORDER BY 1
       `),
+      db.execute<{ visitors: number }>(sql`
+        SELECT COUNT(DISTINCT visitor_hash)::int AS visitors
+        FROM site_events
+        WHERE event_type = 'pageview' AND site_id = ${siteId}
+          AND occurred_at >= now() - interval '5 minutes'
+      `),
       breakdown('source', 13),
       breakdown('device', 4),
       breakdown('browser', 8),
@@ -120,6 +127,7 @@ export default async function SiteAnalyticsPage({ params, searchParams }: {
   if (!siteInfo && !latestEvent) notFound()
 
   const totals = totalsRows[0] ?? { views: 0, visitors: 0, mobile_views: 0 }
+  const liveVisitors = liveRows[0]?.visitors ?? 0
   const host = latestEvent?.host ?? 'Unbekannter Host'
   const templateTitle = siteInfo?.template_title ?? latestEvent?.template_title ?? 'Unbekanntes Template'
 
@@ -133,6 +141,7 @@ export default async function SiteAnalyticsPage({ params, searchParams }: {
 
   return (
     <div style={{ maxWidth: 1100 }}>
+      <AutoRefresh />
       <div className="mb-6">
         <Link href={`/admin/analytics?range=${range}`}
           className="flex items-center gap-2 text-sm mb-5" style={{ color: '#94A3B8' }}>
@@ -154,7 +163,9 @@ export default async function SiteAnalyticsPage({ params, searchParams }: {
       </div>
 
       {/* Kennzahlen */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
+        <StatTile label="Jetzt online" value={fmtNum(liveVisitors)} sub="letzte 5 Minuten"
+          color={liveVisitors > 0 ? '#15803D' : '#94A3B8'} />
         <StatTile label="Aufrufe" value={fmtNum(totals.views)} sub={`letzte ${range} Tage`} color="#1D4ED8" />
         <StatTile label="Besucher" value={fmtNum(totals.visitors)} sub={`letzte ${range} Tage`} />
         <StatTile label="Ø Aufrufe/Tag" value={perDay(totals.views, range)} sub="im Zeitraum" />

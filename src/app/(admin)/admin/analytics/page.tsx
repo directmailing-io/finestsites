@@ -1,6 +1,7 @@
 import { db } from '@/lib/db'
 import { sql } from 'drizzle-orm'
 import Link from 'next/link'
+import { AutoRefresh } from './AutoRefresh'
 import {
   cardStyle, fmtNum, parseRange, pct, perDay, RangePills, relTime, sinceSql, sourceLabel, StatTile,
 } from './shared'
@@ -39,13 +40,23 @@ type SiteRow = {
   last_view: Date
 }
 
+type LiveRow = {
+  site_id: string
+  host: string
+  visitors: number
+}
+
+type LiveTotalRow = {
+  visitors: number
+}
+
 export default async function AnalyticsPage({ searchParams }: {
   searchParams: Promise<{ range?: string }>
 }) {
   const range = parseRange((await searchParams).range)
   const since = sinceSql(range)
 
-  const [totalsRows, templateRows, sourceRows, siteRows] = await Promise.all([
+  const [totalsRows, templateRows, sourceRows, siteRows, liveRows, liveTotalRows] = await Promise.all([
     db.execute<TotalsRow>(sql`
       SELECT
         COUNT(*)::int AS views,
@@ -97,9 +108,23 @@ export default async function AnalyticsPage({ searchParams }: {
       GROUP BY e.site_id, e.template_id, u.email
       ORDER BY views DESC
     `),
+    db.execute<LiveRow>(sql`
+      SELECT site_id, MAX(host) AS host, COUNT(DISTINCT visitor_hash)::int AS visitors
+      FROM site_events
+      WHERE event_type = 'pageview' AND occurred_at >= now() - interval '5 minutes'
+      GROUP BY site_id
+      ORDER BY visitors DESC
+      LIMIT 20
+    `),
+    db.execute<LiveTotalRow>(sql`
+      SELECT COUNT(DISTINCT visitor_hash)::int AS visitors
+      FROM site_events
+      WHERE event_type = 'pageview' AND occurred_at >= now() - interval '5 minutes'
+    `),
   ])
 
   const totals = totalsRows[0] ?? { views: 0, visitors: 0, mobile_views: 0 }
+  const liveTotal = liveTotalRows[0]?.visitors ?? 0
 
   // Top-Quelle global (aus den Template-Top-Quellen aggregiert)
   const globalSources = new Map<string, number>()
@@ -125,6 +150,7 @@ export default async function AnalyticsPage({ searchParams }: {
 
   return (
     <div style={{ maxWidth: 1100 }}>
+      <AutoRefresh />
       <div className="mb-6">
         <Link href="/admin" className="flex items-center gap-2 text-sm mb-5" style={{ color: '#94A3B8' }}>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -141,6 +167,37 @@ export default async function AnalyticsPage({ searchParams }: {
           </div>
           <RangePills current={range} basePath="/admin/analytics" />
         </div>
+      </div>
+
+      {/* Live-Besucher (letzte 5 Minuten, Auto-Refresh alle 30 s) */}
+      <div className="rounded-[20px] bg-white p-5 mb-6 flex items-center gap-4 flex-wrap" style={cardStyle}>
+        <div className="flex items-center gap-3 flex-shrink-0">
+          <span className="relative flex h-2.5 w-2.5">
+            {liveTotal > 0 && (
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-60"
+                style={{ background: '#22C55E' }} />
+            )}
+            <span className="relative inline-flex rounded-full h-2.5 w-2.5"
+              style={{ background: liveTotal > 0 ? '#22C55E' : '#CBD5E1' }} />
+          </span>
+          <span className="text-2xl font-bold tracking-tight" style={{ color: liveTotal > 0 ? '#15803D' : '#94A3B8' }}>
+            {fmtNum(liveTotal)}
+          </span>
+          <span className="text-sm font-medium" style={{ color: '#64748B' }}>
+            Besucher jetzt online
+          </span>
+        </div>
+        {liveRows.length > 0 && (
+          <div className="flex items-center gap-1.5 flex-wrap">
+            {liveRows.map(l => (
+              <Link key={l.site_id} href={`/admin/analytics/site/${l.site_id}?range=${range}`}
+                className="text-[11px] font-semibold px-2.5 py-1 rounded-full hover:opacity-80 transition-opacity"
+                style={{ background: '#F0FDF4', color: '#15803D' }}>
+                {l.host} · {fmtNum(l.visitors)}
+              </Link>
+            ))}
+          </div>
+        )}
       </div>
 
       {totals.views === 0 ? (
