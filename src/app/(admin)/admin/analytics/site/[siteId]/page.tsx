@@ -4,8 +4,8 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { AutoRefresh } from '../../AutoRefresh'
 import {
-  BreakdownCard, cardStyle, countryName, deviceLabel, fmtNum, parseRange, pct, perDay,
-  RangePills, sinceSql, sourceLabel, StatTile,
+  BreakdownCard, countryName, DailyChart, deviceLabel, fmtDuration, fmtNum, parseRange, pct,
+  perDay, RangePills, sinceSql, sourceLabel, StatTile,
 } from '../../shared'
 
 export const dynamic = 'force-dynamic'
@@ -38,23 +38,6 @@ type BreakdownRow = {
   cnt: number
 }
 
-/** Letzte `days` Kalendertage (Europe/Berlin) als YYYY-MM-DD, aufsteigend. */
-function dayKeys(days: number): string[] {
-  const today = new Date().toLocaleDateString('sv-SE', { timeZone: 'Europe/Berlin' })
-  const base = new Date(`${today}T00:00:00Z`).getTime()
-  const keys: string[] = []
-  for (let i = days - 1; i >= 0; i--) {
-    keys.push(new Date(base - i * 86_400_000).toISOString().slice(0, 10))
-  }
-  return keys
-}
-
-function dayLabel(key: string): string {
-  return new Date(`${key}T12:00:00Z`).toLocaleDateString('de-DE', {
-    weekday: 'short', day: 'numeric', month: 'short', timeZone: 'UTC',
-  })
-}
-
 export default async function SiteAnalyticsPage({ params, searchParams }: {
   params: Promise<{ siteId: string }>
   searchParams: Promise<{ range?: string }>
@@ -75,7 +58,7 @@ export default async function SiteAnalyticsPage({ params, searchParams }: {
       LIMIT ${limit}
     `)
 
-  const [siteInfoRows, latestEventRows, totalsRows, dayRows, liveRows, sources, devices, browsers, countries, paths] =
+  const [siteInfoRows, latestEventRows, totalsRows, dayRows, liveRows, durationRows, sources, devices, browsers, countries, paths] =
     await Promise.all([
       db.execute<SiteInfoRow>(sql`
         SELECT u.email, t.title AS template_title
@@ -115,6 +98,11 @@ export default async function SiteAnalyticsPage({ params, searchParams }: {
         WHERE event_type = 'pageview' AND site_id = ${siteId}
           AND occurred_at >= now() - interval '5 minutes'
       `),
+      db.execute<{ avg_seconds: number | null }>(sql`
+        SELECT AVG((meta->>'seconds')::numeric)::float AS avg_seconds
+        FROM site_events
+        WHERE event_type = 'duration' AND site_id = ${siteId} AND occurred_at >= ${since}
+      `),
       breakdown('source', 13),
       breakdown('device', 4),
       breakdown('browser', 8),
@@ -128,19 +116,15 @@ export default async function SiteAnalyticsPage({ params, searchParams }: {
 
   const totals = totalsRows[0] ?? { views: 0, visitors: 0, mobile_views: 0 }
   const liveVisitors = liveRows[0]?.visitors ?? 0
+  const avgDuration = durationRows[0]?.avg_seconds ?? null
   const host = latestEvent?.host ?? 'Unbekannter Host'
   const templateTitle = siteInfo?.template_title ?? latestEvent?.template_title ?? 'Unbekanntes Template'
-
-  // Tagesreihe auffüllen (Tage ohne Events = 0)
-  const viewsByDay = new Map(dayRows.map(r => [r.day, r.views]))
-  const series = dayKeys(range).map(key => ({ key, views: viewsByDay.get(key) ?? 0 }))
-  const maxDay = Math.max(...series.map(s => s.views), 1)
 
   const toEntries = (rows: BreakdownRow[], label: (key: string | null) => string) =>
     rows.map(r => ({ label: label(r.key), count: r.cnt }))
 
   return (
-    <div style={{ maxWidth: 1100 }}>
+    <div style={{ maxWidth: 1180 }}>
       <AutoRefresh />
       <div className="mb-6">
         <Link href={`/admin/analytics?range=${range}`}
@@ -163,43 +147,19 @@ export default async function SiteAnalyticsPage({ params, searchParams }: {
       </div>
 
       {/* Kennzahlen */}
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
+      <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3 mb-6">
         <StatTile label="Jetzt online" value={fmtNum(liveVisitors)} sub="letzte 5 Minuten"
           color={liveVisitors > 0 ? '#15803D' : '#94A3B8'} />
         <StatTile label="Aufrufe" value={fmtNum(totals.views)} sub={`letzte ${range} Tage`} color="#1D4ED8" />
         <StatTile label="Besucher" value={fmtNum(totals.visitors)} sub={`letzte ${range} Tage`} />
+        <StatTile label="Ø Verweildauer" value={fmtDuration(avgDuration)} sub="pro Besuch" />
         <StatTile label="Ø Aufrufe/Tag" value={perDay(totals.views, range)} sub="im Zeitraum" />
         <StatTile label="Mobile-Anteil" value={`${pct(totals.mobile_views, totals.views)} %`} sub="der Aufrufe" />
       </div>
 
       {/* Tagesverlauf */}
-      <div className="rounded-[20px] p-5 bg-white mb-6" style={cardStyle}>
-        <span className="text-sm font-semibold text-gray-900 block mb-4">Aufrufe pro Tag</span>
-        {totals.views === 0 ? (
-          <p className="text-xs" style={{ color: '#94A3B8' }}>Keine Aufrufe im Zeitraum</p>
-        ) : (
-          <>
-            <div className="flex items-end gap-px h-40">
-              {series.map(s => (
-                <div key={s.key}
-                  className="flex-1 flex flex-col justify-end h-full"
-                  title={`${dayLabel(s.key)}: ${fmtNum(s.views)} ${s.views === 1 ? 'Aufruf' : 'Aufrufe'}`}>
-                  <div
-                    className="w-full rounded-t-[3px]"
-                    style={{
-                      height: s.views > 0 ? `${Math.max((s.views / maxDay) * 100, 3)}%` : 2,
-                      background: s.views > 0 ? '#3B82F6' : '#F1F5F9',
-                    }}
-                  />
-                </div>
-              ))}
-            </div>
-            <div className="flex justify-between mt-2">
-              <span className="text-[11px]" style={{ color: '#94A3B8' }}>{dayLabel(series[0].key)}</span>
-              <span className="text-[11px]" style={{ color: '#94A3B8' }}>{dayLabel(series[series.length - 1].key)}</span>
-            </div>
-          </>
-        )}
+      <div className="mb-6">
+        <DailyChart dayRows={dayRows} range={range} />
       </div>
 
       {/* Aufschlüsselungen */}

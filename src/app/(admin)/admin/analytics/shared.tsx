@@ -79,6 +79,73 @@ export function perDay(views: number, days: number): string {
   return (views / days).toLocaleString('de-DE', { maximumFractionDigits: 1 })
 }
 
+export function fmtDuration(seconds: number | null): string {
+  if (seconds === null || seconds <= 0) return '—'
+  const s = Math.round(seconds)
+  if (s < 60) return `${s} Sek.`
+  return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')} Min.`
+}
+
+// ─── Tagesverlauf ──────────────────────────────────────────────────────────────
+
+/** Letzte `days` Kalendertage (Europe/Berlin) als YYYY-MM-DD, aufsteigend. */
+function dayKeys(days: number): string[] {
+  const today = new Date().toLocaleDateString('sv-SE', { timeZone: 'Europe/Berlin' })
+  const base = new Date(`${today}T00:00:00Z`).getTime()
+  const keys: string[] = []
+  for (let i = days - 1; i >= 0; i--) {
+    keys.push(new Date(base - i * 86_400_000).toISOString().slice(0, 10))
+  }
+  return keys
+}
+
+function dayLabel(key: string): string {
+  return new Date(`${key}T12:00:00Z`).toLocaleDateString('de-DE', {
+    weekday: 'short', day: 'numeric', month: 'short', timeZone: 'UTC',
+  })
+}
+
+export function DailyChart({ dayRows, range }: {
+  dayRows: { day: string; views: number }[]
+  range: Range
+}) {
+  const viewsByDay = new Map(dayRows.map(r => [r.day, r.views]))
+  const series = dayKeys(range).map(key => ({ key, views: viewsByDay.get(key) ?? 0 }))
+  const maxDay = Math.max(...series.map(s => s.views), 1)
+  const total = series.reduce((sum, s) => sum + s.views, 0)
+
+  return (
+    <div className="rounded-[20px] p-5 bg-white" style={cardStyle}>
+      <span className="text-sm font-semibold text-gray-900 block mb-4">Aufrufe pro Tag</span>
+      {total === 0 ? (
+        <p className="text-xs" style={{ color: '#94A3B8' }}>Keine Aufrufe im Zeitraum</p>
+      ) : (
+        <>
+          <div className="flex items-end gap-px h-40">
+            {series.map(s => (
+              <div key={s.key}
+                className="flex-1 flex flex-col justify-end h-full"
+                title={`${dayLabel(s.key)}: ${fmtNum(s.views)} ${s.views === 1 ? 'Aufruf' : 'Aufrufe'}`}>
+                <div
+                  className="w-full rounded-t-[3px]"
+                  style={{
+                    height: s.views > 0 ? `${Math.max((s.views / maxDay) * 100, 3)}%` : 2,
+                    background: s.views > 0 ? '#3B82F6' : '#F1F5F9',
+                  }}
+                />
+              </div>
+            ))}
+          </div>
+          <div className="flex justify-between mt-2">
+            <span className="text-[11px]" style={{ color: '#94A3B8' }}>{dayLabel(series[0].key)}</span>
+            <span className="text-[11px]" style={{ color: '#94A3B8' }}>{dayLabel(series[series.length - 1].key)}</span>
+          </div>
+        </>
+      )}
+    </div>
+  )
+}
+
 // ─── Shared UI ─────────────────────────────────────────────────────────────────
 
 export const cardStyle = {

@@ -467,6 +467,76 @@ async function trackPageview(
   }
 }
 
+// Injected into every delivered HTML page. Measures time until the page is
+// first hidden (tab switch, navigation, close) and reports it once via
+// sendBeacon — the only reliable delivery on unload, especially mobile.
+const BEACON_SNIPPET = `<script data-fs-beacon>(function(){var t0=Date.now(),sent=0;function send(){if(sent)return;sent=1;var d=Math.round((Date.now()-t0)/1e3);if(d<3||d>1800)return;try{navigator.sendBeacon('/.finestsites/e',JSON.stringify({d:d,p:location.pathname}))}catch(e){}}document.addEventListener('visibilitychange',function(){if(document.visibilityState==='hidden')send()});addEventListener('pagehide',send)})();</script>`
+
+function injectBeacon(html: string): string {
+  if (html.includes('data-fs-beacon')) return html
+  return html.includes('</body>')
+    ? html.replace('</body>', `${BEACON_SNIPPET}</body>`)
+    : html + BEACON_SNIPPET
+}
+
+/**
+ * Fire-and-forget duration event sent by the beacon on page hide. Same
+ * visitor hash recipe as trackPageview so events can be correlated per
+ * visitor and day. Seconds live in meta. Never throws.
+ */
+async function trackDuration(
+  request: Request,
+  hostname: string,
+  meta: SiteMeta,
+  env: Env
+): Promise<void> {
+  try {
+    const ua = request.headers.get('user-agent')
+    if (!ua || BOT_UA_RE.test(ua)) return
+
+    const body = await request.json().catch(() => null) as { d?: unknown; p?: unknown } | null
+    const seconds = typeof body?.d === 'number' ? Math.round(body.d) : NaN
+    if (!Number.isFinite(seconds) || seconds < 3 || seconds > 1800) return
+    const path = typeof body?.p === 'string' && body.p.startsWith('/') ? body.p.slice(0, 200) : '/'
+
+    const ip = request.headers.get('cf-connecting-ip') ?? ''
+    const day = new Date().toISOString().slice(0, 10)
+    const visitorHash = await sha256Hex(`${env.WORKER_SECRET}|${day}|${ip}|${ua}|${hostname}`)
+    const { device, browser, os } = parseUserAgent(ua)
+    const country = (request as Request & { cf?: { country?: string } }).cf?.country ?? null
+
+    const event = {
+      siteId: meta.siteId,
+      templateId: meta.templateId,
+      eventType: 'duration',
+      visitorHash,
+      host: hostname,
+      path,
+      source: null,
+      referrerHost: null,
+      utmSource: null,
+      utmMedium: null,
+      utmCampaign: null,
+      device,
+      browser,
+      os,
+      country,
+      meta: { seconds },
+    }
+
+    await fetch(`${env.APP_URL}/api/worker/track`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-worker-secret': env.WORKER_SECRET,
+      },
+      body: JSON.stringify({ events: [event] }),
+    })
+  } catch (err) {
+    console.error('trackDuration error:', err)
+  }
+}
+
 // ─── Email Notification (fire-and-forget) ─────────────────────────────────────
 
 async function sendSubmissionEmail(
@@ -795,6 +865,12 @@ export default {
         return handleFormSubmission(request, pathname, meta, env, ctx, hostname)
       }
 
+      // ── Duration beacon (sendBeacon on page hide) ────────────────────────
+      if (request.method === 'POST' && pathname === '/.finestsites/e') {
+        ctx.waitUntil(trackDuration(request, hostname, meta, env))
+        return new Response(null, { status: 204 })
+      }
+
       // ── Legal pages (impressum, datenschutz) ─────────────────────────────
       // Rendered inline from Worker code — zero R2 files needed.
       // Adding a new template = one line in LEGAL_DESIGNS. Legal text change = one wrangler deploy.
@@ -827,7 +903,7 @@ export default {
         }
         const legalHtml = pathname === '/impressum' ? renderImpressum(design) : renderDatenschutz(design)
         ctx.waitUntil(trackPageview(request, url, hostname, pathname, meta, env))
-        return new Response(render(legalHtml, pageDataMap), {
+        return new Response(injectBeacon(render(legalHtml, pageDataMap)), {
           headers: {
             'Content-Type': 'text/html; charset=utf-8',
             'Cache-Control': 'no-cache',
@@ -854,7 +930,7 @@ export default {
           const pageDataMap: Data = {}
           for (const r of pageRows) pageDataMap[r.fieldKey] = r.fieldValue ?? ''
           ctx.waitUntil(trackPageview(request, url, hostname, pathname, meta, env))
-          return new Response(render(pageHtml, pageDataMap), {
+          return new Response(injectBeacon(render(pageHtml, pageDataMap)), {
             headers: {
               'Content-Type': 'text/html; charset=utf-8',
               'Cache-Control': 'no-cache',
@@ -922,7 +998,7 @@ export default {
       const cachedHtml = await env.KV_CACHE.get(renderCacheKey)
       if (cachedHtml) {
         ctx.waitUntil(trackPageview(request, url, hostname, pathname, meta, env))
-        return new Response(cachedHtml, {
+        return new Response(injectBeacon(cachedHtml), {
           headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-cache', 'X-Cache': 'HIT' },
         })
       }
@@ -973,6 +1049,7 @@ export default {
         }
       }
 
+      renderedHtml = injectBeacon(renderedHtml)
       await env.KV_CACHE.put(renderCacheKey, renderedHtml, { expirationTtl: 60 })
 
       ctx.waitUntil(trackPageview(request, url, hostname, pathname, meta, env))
