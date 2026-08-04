@@ -79,17 +79,6 @@ export function perDay(views: number, days: number): string {
   return (views / days).toLocaleString('de-DE', { maximumFractionDigits: 1 })
 }
 
-export function relTime(date: Date): string {
-  const diffMin = Math.floor((Date.now() - date.getTime()) / 60_000)
-  if (diffMin < 1) return 'gerade eben'
-  if (diffMin < 60) return `vor ${diffMin} Min.`
-  const h = Math.floor(diffMin / 60)
-  if (h < 24) return h === 1 ? 'vor 1 Std.' : `vor ${h} Std.`
-  const d = Math.floor(h / 24)
-  if (d === 1) return 'gestern'
-  return `vor ${d} Tagen`
-}
-
 // ─── Shared UI ─────────────────────────────────────────────────────────────────
 
 export const cardStyle = {
