@@ -8,6 +8,7 @@ import {
   timestamp,
   jsonb,
   integer,
+  bigint,
   numeric,
   date,
   index,
@@ -547,3 +548,36 @@ export const emailLogs = pgTable('email_logs', {
 ])
 
 export type EmailLog = typeof emailLogs.$inferSelect
+
+// ─── Site Analytics ────────────────────────────────────────────────────────────
+
+export const siteEvents = pgTable('site_events', {
+  id: bigint('id', { mode: 'number' }).generatedAlwaysAsIdentity().primaryKey(),
+  occurredAt: timestamp('occurred_at', { withTimezone: true }).notNull().defaultNow(),
+  // Deliberately no FK: events must survive site deletion so template-level
+  // aggregates stay complete
+  siteId: uuid('site_id').notNull(),
+  templateId: uuid('template_id').notNull(),
+  eventType: text('event_type').notNull(), // 'pageview' | 'click' | 'duration'
+  visitorHash: varchar('visitor_hash', { length: 64 }),
+  host: text('host').notNull(),
+  path: text('path').notNull().default('/'),
+  // 'instagram' | 'facebook' | 'whatsapp' | 'tiktok' | 'youtube' | 'google' |
+  // 'bing' | 'linktree' | 'lnko' | 'twitter' | 'telegram' | 'direct' | 'other'
+  source: text('source'),
+  referrerHost: text('referrer_host'),
+  utmSource: text('utm_source'),
+  utmMedium: text('utm_medium'),
+  utmCampaign: text('utm_campaign'),
+  device: varchar('device', { length: 16 }), // 'mobile' | 'tablet' | 'desktop'
+  browser: varchar('browser', { length: 32 }),
+  os: varchar('os', { length: 32 }),
+  country: varchar('country', { length: 8 }),
+  meta: jsonb('meta'),
+}, (t) => [
+  index('idx_site_events_site_occurred').on(t.siteId, t.occurredAt),
+  index('idx_site_events_template_occurred').on(t.templateId, t.occurredAt),
+  index('idx_site_events_occurred').on(t.occurredAt),
+])
+
+export type SiteEvent = typeof siteEvents.$inferSelect

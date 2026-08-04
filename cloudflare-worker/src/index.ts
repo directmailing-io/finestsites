@@ -328,6 +328,145 @@ async function hashIP(ip: string): Promise<string> {
   return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('')
 }
 
+// ─── Pageview Tracking (fire-and-forget, Plausible-style) ─────────────────────
+// Server-side analytics: every delivered HTML page fires one event to the app
+// API via ctx.waitUntil(). Never blocks or breaks delivery — all errors are
+// swallowed. The visitor is identified by a daily-rotating keyed hash; the raw
+// IP is never sent or stored.
+
+// Link-preview crawlers (WhatsApp, Telegram, Facebook external hit …) are bots.
+// The Instagram IN-APP browser is a real visitor — its UA contains 'Instagram'
+// but none of these patterns.
+const BOT_UA_RE = /bot|crawl|spider|slurp|preview|scan|fetch|monitor|lighthouse|headless|curl|wget|python|node-fetch|axios|facebookexternalhit|whatsapp|telegrambot|twitterbot|linkedinbot|pinterest|vkshare|skypeuripreview/i
+
+// Pure, CF-runtime-free — unit-testable in plain Node.
+export function parseUserAgent(ua: string): { device: string; browser: string; os: string | null } {
+  const device = /iPad|Android(?!.*Mobile)/.test(ua) ? 'tablet'
+    : /Mobi|iPhone|Android/.test(ua) ? 'mobile'
+    : 'desktop'
+  // Order matters: in-app browsers embed Chrome/Safari tokens, so check them first.
+  const browser =
+    ua.includes('Instagram') ? 'Instagram'
+    : /FBAN|FBAV|FB_IAB/.test(ua) ? 'Facebook'
+    : /TikTok|musical_ly|Bytedance/i.test(ua) ? 'TikTok'
+    : /Edg\//.test(ua) ? 'Edge'
+    : /SamsungBrowser/.test(ua) ? 'Samsung Internet'
+    : /OPR|Opera/.test(ua) ? 'Opera'
+    : /FxiOS|Firefox/.test(ua) ? 'Firefox'
+    : /CriOS|Chrome/.test(ua) ? 'Chrome'
+    : /Safari/.test(ua) ? 'Safari'
+    : 'Sonstige'
+  const os =
+    /iPhone|iPad|iPod/.test(ua) ? 'iOS'
+    : /Android/.test(ua) ? 'Android'
+    : /Windows/.test(ua) ? 'Windows'
+    : /Mac OS/.test(ua) ? 'macOS'
+    : /Linux/.test(ua) ? 'Linux'
+    : null
+  return { device, browser, os }
+}
+
+// Pure, CF-runtime-free — unit-testable in plain Node.
+export function parseReferrer(referer: string | null, ownHost: string): { source: string | null; referrerHost: string | null } {
+  if (!referer) return { source: 'direct', referrerHost: null }
+  let refHost: string
+  try {
+    refHost = new URL(referer).hostname.toLowerCase()
+  } catch {
+    return { source: 'direct', referrerHost: null }
+  }
+  // Internal navigation (same host as the site itself) → no source
+  if (refHost === ownHost.toLowerCase()) return { source: null, referrerHost: refHost }
+
+  const is = (domain: string) => refHost === domain || refHost.endsWith(`.${domain}`)
+  const source =
+    is('instagram.com') ? 'instagram'
+    : (is('facebook.com') || is('fb.com') || is('fb.me')) ? 'facebook'
+    : (is('whatsapp.com') || is('wa.me')) ? 'whatsapp'
+    : is('tiktok.com') ? 'tiktok'
+    : (is('youtube.com') || is('youtu.be')) ? 'youtube'
+    : /(^|\.)google\.[a-z]{2,3}(\.[a-z]{2})?$/.test(refHost) ? 'google'
+    : is('bing.com') ? 'bing'
+    : is('linktr.ee') ? 'linktree'
+    : is('lnko.me') ? 'lnko'
+    : (is('twitter.com') || is('x.com') || is('t.co')) ? 'twitter'
+    : (is('t.me') || is('telegram.org') || is('telegram.me') || is('telegram.dog')) ? 'telegram'
+    : 'other'
+  return { source, referrerHost: refHost }
+}
+
+async function sha256Hex(input: string): Promise<string> {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(input))
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('')
+}
+
+/**
+ * Fire-and-forget pageview event. Only ever invoked from HTML delivery paths
+ * (never for assets, /.finestsites/*, form posts, or error pages). Must be
+ * wrapped in ctx.waitUntil() by the caller. Never throws.
+ */
+async function trackPageview(
+  request: Request,
+  url: URL,
+  hostname: string,
+  pathname: string,
+  meta: SiteMeta,
+  env: Env
+): Promise<void> {
+  try {
+    if (request.method !== 'GET') return
+
+    const ua = request.headers.get('user-agent')
+    if (!ua || BOT_UA_RE.test(ua)) return
+
+    // Skip browser prefetch/preview fetches — not real pageviews
+    const purpose = `${request.headers.get('sec-purpose') ?? ''} ${request.headers.get('purpose') ?? ''}`.toLowerCase()
+    if (purpose.includes('prefetch') || purpose.includes('preview')) return
+
+    // Daily-rotating keyed visitor hash (Plausible principle) — the IP itself
+    // is never sent anywhere.
+    const ip = request.headers.get('cf-connecting-ip') ?? ''
+    const day = new Date().toISOString().slice(0, 10) // YYYY-MM-DD (UTC)
+    const visitorHash = await sha256Hex(`${env.WORKER_SECRET}|${day}|${ip}|${ua}|${hostname}`)
+
+    const { device, browser, os } = parseUserAgent(ua)
+    const { source, referrerHost } = parseReferrer(request.headers.get('referer'), hostname)
+    const trim200 = (v: string | null): string | null => (v ? v.slice(0, 200) : null)
+    const country = (request as Request & { cf?: { country?: string } }).cf?.country ?? null
+
+    const event = {
+      siteId: meta.siteId,
+      templateId: meta.templateId,
+      eventType: 'pageview',
+      visitorHash,
+      host: hostname,
+      path: pathname,
+      source,
+      referrerHost,
+      utmSource: trim200(url.searchParams.get('utm_source')),
+      utmMedium: trim200(url.searchParams.get('utm_medium')),
+      utmCampaign: trim200(url.searchParams.get('utm_campaign')),
+      device,
+      browser,
+      os,
+      country,
+      meta: null,
+    }
+
+    await fetch(`${env.APP_URL}/api/worker/track`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-worker-secret': env.WORKER_SECRET,
+      },
+      body: JSON.stringify({ events: [event] }),
+    })
+  } catch (err) {
+    // Tracking must never break delivery — swallow everything.
+    console.error('trackPageview error:', err)
+  }
+}
+
 // ─── Email Notification (fire-and-forget) ─────────────────────────────────────
 
 async function sendSubmissionEmail(
@@ -687,6 +826,7 @@ export default {
           logoHtml: baseDesign.logoHtml.replace(/#[0-9A-Fa-f]{6}/g, ta.logo),
         }
         const legalHtml = pathname === '/impressum' ? renderImpressum(design) : renderDatenschutz(design)
+        ctx.waitUntil(trackPageview(request, url, hostname, pathname, meta, env))
         return new Response(render(legalHtml, pageDataMap), {
           headers: {
             'Content-Type': 'text/html; charset=utf-8',
@@ -713,6 +853,7 @@ export default {
             : []
           const pageDataMap: Data = {}
           for (const r of pageRows) pageDataMap[r.fieldKey] = r.fieldValue ?? ''
+          ctx.waitUntil(trackPageview(request, url, hostname, pathname, meta, env))
           return new Response(render(pageHtml, pageDataMap), {
             headers: {
               'Content-Type': 'text/html; charset=utf-8',
@@ -780,6 +921,7 @@ export default {
       const renderCacheKey = `rendered:${username}:${domain}`
       const cachedHtml = await env.KV_CACHE.get(renderCacheKey)
       if (cachedHtml) {
+        ctx.waitUntil(trackPageview(request, url, hostname, pathname, meta, env))
         return new Response(cachedHtml, {
           headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-cache', 'X-Cache': 'HIT' },
         })
@@ -833,6 +975,7 @@ export default {
 
       await env.KV_CACHE.put(renderCacheKey, renderedHtml, { expirationTtl: 60 })
 
+      ctx.waitUntil(trackPageview(request, url, hostname, pathname, meta, env))
       return new Response(renderedHtml, {
         headers: {
           'Content-Type': 'text/html; charset=utf-8',
