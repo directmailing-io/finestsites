@@ -485,6 +485,7 @@ function injectBeacon(html: string): string {
  * visitor and day. Seconds live in meta. Never throws.
  */
 async function trackDuration(
+  rawBody: string,
   request: Request,
   hostname: string,
   meta: SiteMeta,
@@ -494,7 +495,12 @@ async function trackDuration(
     const ua = request.headers.get('user-agent')
     if (!ua || BOT_UA_RE.test(ua)) return
 
-    const body = await request.json().catch(() => null) as { d?: unknown; p?: unknown } | null
+    let body: { d?: unknown; p?: unknown } | null = null
+    try {
+      body = JSON.parse(rawBody)
+    } catch {
+      return
+    }
     const seconds = typeof body?.d === 'number' ? Math.round(body.d) : NaN
     if (!Number.isFinite(seconds) || seconds < 3 || seconds > 1800) return
     const path = typeof body?.p === 'string' && body.p.startsWith('/') ? body.p.slice(0, 200) : '/'
@@ -867,7 +873,10 @@ export default {
 
       // ── Duration beacon (sendBeacon on page hide) ────────────────────────
       if (request.method === 'POST' && pathname === '/.finestsites/e') {
-        ctx.waitUntil(trackDuration(request, hostname, meta, env))
+        // Body must be read before the response is returned — afterwards the
+        // request stream is no longer readable inside waitUntil.
+        const beaconBody = await request.text().catch(() => '')
+        ctx.waitUntil(trackDuration(beaconBody, request, hostname, meta, env))
         return new Response(null, { status: 204 })
       }
 
