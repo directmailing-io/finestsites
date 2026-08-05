@@ -51,7 +51,7 @@ export default async function TemplateAnalyticsPage({ params, searchParams }: {
   const since = sinceSql(range)
   const prevSince = prevSinceSql(range)
 
-  const breakdown = (column: 'source' | 'device' | 'browser' | 'country' | 'path' | 'referrer_host', limit: number) =>
+  const breakdown = (column: 'source' | 'device' | 'browser' | 'country' | 'path', limit: number) =>
     db.execute<BreakdownRow>(sql`
       SELECT ${sql.raw(column)} AS key, COUNT(*)::int AS cnt
       FROM site_events
@@ -142,7 +142,15 @@ export default async function TemplateAnalyticsPage({ params, searchParams }: {
       breakdown('browser', 8),
       breakdown('country', 10),
       breakdown('path', 10),
-      breakdown('referrer_host', 10),
+      db.execute<BreakdownRow>(sql`
+        SELECT referrer_host AS key, COUNT(*)::int AS cnt
+        FROM site_events
+        WHERE event_type = 'pageview' AND template_id = ${templateId} AND occurred_at >= ${since}
+          AND (referrer_host IS NULL OR referrer_host <> host)
+        GROUP BY 1
+        ORDER BY cnt DESC
+        LIMIT 10
+      `),
       db.execute<{ utm_source: string | null; utm_medium: string | null; utm_campaign: string | null; cnt: number }>(sql`
         SELECT utm_source, utm_medium, utm_campaign, COUNT(*)::int AS cnt
         FROM site_events
