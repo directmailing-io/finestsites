@@ -67,3 +67,10 @@ APP_URL = "https://app.finestsites.io"
 [[routes]]
 pattern = "*.wellpreneur.io/*"
 zone_id = "7d59763ba878ba1f36f05787fb4c3ee4"
+
+# Subdomain traffic: username.cellrestart.net
+# Zone: 0166791ea674db271b3eb58ff083a058
+# DNS: *.cellrestart.net → 192.0.2.1 (proxied, Wildcard-A)
+[[routes]]
+pattern = "*.cellrestart.net/*"
+zone_id = "0166791ea674db271b3eb58ff083a058"
