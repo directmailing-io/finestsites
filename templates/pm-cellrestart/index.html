@@ -24,7 +24,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://images.unsplash.com">
-<link rel="preload" as="image" href="{{hero_bild}}" fetchpriority="high" type="image/webp">
+<link rel="preload" as="image" href="assets/hero-transformation.webp" fetchpriority="high" type="image/webp">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
 
 <style>
@@ -102,6 +102,13 @@ html[data-lang="en"] .l-de, html[data-lang="de"] .l-en { display: none !importan
 .lang-switch:hover { background: var(--paper); border-color: var(--line-2); }
 .lang-switch svg { width: 16px; height: 12px; border-radius: 2px; display: block; }
 .lang-switch .lang-code { text-transform: uppercase; }
+
+/* ============ DUO-MODUS: Zwei überlappende Avatare ============ */
+
+.brand-avatars-duo { display: inline-flex; align-items: center; flex-shrink: 0; }
+.brand-avatars-duo .brand-avatar-2 { margin-left: -12px; border: 2px solid var(--paper); box-sizing: border-box; }
+.pm-disclaimer-avatars-duo { display: inline-flex; align-items: center; flex-shrink: 0; }
+.pm-disclaimer-avatars-duo .pm-disclaimer-avatar-2 { margin-left: -10px; border: 2px solid var(--paper); box-sizing: border-box; }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
@@ -4318,7 +4325,11 @@ img {
 <nav class="nav">
   <div class="nav-inner">
     <a href="#" class="brand">
-      <img loading="eager" decoding="async" class="brand-avatar" src="{{profilbild}}" alt="{{vorname}} {{nachname}}">
+      {{#unless partner_modus=duo}}<img loading="eager" decoding="async" class="brand-avatar" src="{{profilbild}}" alt="{{vorname}} {{nachname}}">{{/unless}}
+      {{#if partner_modus=duo}}<span class="brand-avatars-duo">
+        <img loading="eager" decoding="async" class="brand-avatar" src="{{profilbild}}" alt="{{vorname}} {{nachname}}">
+        <img loading="eager" decoding="async" class="brand-avatar brand-avatar-2" src="{{profilbild2}}" alt="{{vorname2}} {{nachname2}}">
+      </span>{{/if}}
       <span class="brand-text">{{#unless partner_modus=duo}}{{vorname}} {{nachname}}{{/unless}}{{#if partner_modus=duo}}{{vorname}} &amp; {{vorname2}}{{/if}}</span>
     </a>
     <div class="nav-links">
@@ -4353,7 +4364,11 @@ img {
   <div class="nav-mobile-inner">
     <div class="nav-mobile-head">
       <div class="brand">
-        <img loading="lazy" decoding="async" class="brand-avatar" src="{{profilbild}}" alt="{{vorname}} {{nachname}}">
+        {{#unless partner_modus=duo}}<img loading="lazy" decoding="async" class="brand-avatar" src="{{profilbild}}" alt="{{vorname}} {{nachname}}">{{/unless}}
+        {{#if partner_modus=duo}}<span class="brand-avatars-duo">
+          <img loading="lazy" decoding="async" class="brand-avatar" src="{{profilbild}}" alt="{{vorname}} {{nachname}}">
+          <img loading="lazy" decoding="async" class="brand-avatar brand-avatar-2" src="{{profilbild2}}" alt="{{vorname2}} {{nachname2}}">
+        </span>{{/if}}
         <span class="brand-text">{{#unless partner_modus=duo}}{{vorname}} {{nachname}}{{/unless}}{{#if partner_modus=duo}}{{vorname}} &amp; {{vorname2}}{{/if}}</span>
       </div>
       <button type="button" class="nav-mobile-close" id="navMobileClose" aria-label="Menü schließen">
@@ -4374,7 +4389,7 @@ img {
 <!-- HERO -->
 <section class="hero">
   <div class="hero-bg-image">
-    <img loading="eager" fetchpriority="high" decoding="async" src="{{hero_bild}}" alt="" width="1672" height="941">
+    <img loading="eager" fetchpriority="high" decoding="async" src="assets/hero-transformation.webp" alt="" width="1672" height="941">
     <div class="ai-badge" title="Dieses Bild wurde mit KI erstellt (EU Kennzeichnung)">
       <img loading="lazy" decoding="async" src="assets/ai-label.svg" alt="AI generated">
     </div>
@@ -4418,9 +4433,13 @@ img {
 <!-- PM-International Disclaimer -->
 <div class="pm-disclaimer">
   <div class="pm-disclaimer-inner">
-    <img loading="eager" decoding="async" class="pm-disclaimer-avatar" src="{{profilbild}}" alt="{{vorname}} {{nachname}}">
+    {{#unless partner_modus=duo}}<img loading="eager" decoding="async" class="pm-disclaimer-avatar" src="{{profilbild}}" alt="{{vorname}} {{nachname}}">{{/unless}}
+    {{#if partner_modus=duo}}<span class="pm-disclaimer-avatars-duo">
+      <img loading="eager" decoding="async" class="pm-disclaimer-avatar" src="{{profilbild}}" alt="{{vorname}} {{nachname}}">
+      <img loading="eager" decoding="async" class="pm-disclaimer-avatar pm-disclaimer-avatar-2" src="{{profilbild2}}" alt="{{vorname2}} {{nachname2}}">
+    </span>{{/if}}
     <div>
-      <span class="l-de">{{#unless partner_modus=duo}}Diese Seite wird betrieben von <b>{{vorname}} {{nachname}}</b>, {{#if geschlecht=weiblich}}unabhängige Vertriebspartnerin{{/if}}{{#if geschlecht=maennlich}}unabhängiger Vertriebspartner{{/if}} der PM-International (FitLine®). Keine offizielle Website der PM-International AG.{{/unless}}{{#if partner_modus=duo}}Diese Seite wird betrieben von <b>{{vorname}} {{nachname}} &amp; {{vorname2}} {{nachname2}}</b>, unabhängige Vertriebspartner der PM-International (FitLine®). Keine offizielle Website der PM-International AG.{{/if}}</span>
+      <span class="l-de">{{#unless partner_modus=duo}}Diese Seite wird betrieben von <b>{{vorname}} {{nachname}}</b>, {{#if geschlecht=weiblich}}unabhängige Vertriebspartnerin{{/if}}{{#if geschlecht=maennlich}}unabhängiger Vertriebspartner{{/if}} der PM-International (FitLine®). Keine offizielle Website der PM-International AG.{{/unless}}{{#if partner_modus=duo}}Diese Seite wird betrieben von <b>{{vorname}} {{nachname}} &amp; {{vorname2}} {{nachname2}}</b>, {{#if geschlecht=weiblich}}{{#if geschlecht2=weiblich}}unabhängige Vertriebspartnerinnen{{/if}}{{#unless geschlecht2=weiblich}}unabhängige Vertriebspartner{{/unless}}{{/if}}{{#unless geschlecht=weiblich}}unabhängige Vertriebspartner{{/unless}} der PM-International (FitLine®). Keine offizielle Website der PM-International AG.{{/if}}</span>
       <span class="l-en">{{#unless partner_modus=duo}}This site is operated by <b>{{vorname}} {{nachname}}</b>, independent distributor of PM-International (FitLine®). Not an official website of PM-International AG.{{/unless}}{{#if partner_modus=duo}}This site is operated by <b>{{vorname}} {{nachname}} &amp; {{vorname2}} {{nachname2}}</b>, independent distributors of PM-International (FitLine®). Not an official website of PM-International AG.{{/if}}</span>
     </div>
   </div>

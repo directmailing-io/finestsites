@@ -10,7 +10,7 @@
       "required": false,
       "default_value": "solo",
       "preview_value": "solo",
-      "placeholder_text": "Betreibst du die Website allein oder zusammen mit deinem Partner / deiner Partnerin? Im Duo-Modus erscheinen zwei Namen und alle Texte werden auf \"wir\" umgestellt.",
+      "placeholder_text": "Betreibst du die Website allein oder zusammen mit deinem Partner / deiner Partnerin? Im Duo-Modus erscheinen zwei Fotos, zwei Namen und alle Texte werden auf \"wir\" umgestellt.",
       "card_options": [
         {
           "value": "solo",
@@ -24,7 +24,7 @@
           "label": "Wir zu zweit",
           "card_type": "color",
           "color": "#EEF4FF",
-          "description": "Für Paare oder Partner-Teams — zwei Fotos, zwei Namen."
+          "description": "Für Paare oder Partner-Teams: zwei Fotos, zwei Namen."
         }
       ]
     },
@@ -75,14 +75,14 @@
     {
       "key": "geschlecht",
       "type": "card_select",
-      "label": "Anrede auf der Website",
+      "label": "Anrede",
       "section": "Profil",
       "order": 4,
       "required": true,
+      "color_tag": "person1",
       "default_value": "weiblich",
       "preview_value": "weiblich",
-      "show_when": { "field": "partner_modus", "value": ["solo", ""] },
-      "placeholder_text": "Damit die Bezeichnungen auf deiner Website korrekt sind (z. B. \"Vertriebspartnerin\" vs. \"Vertriebspartner\").",
+      "placeholder_text": "Damit die Bezeichnungen auf deiner Website korrekt sind: \"unabhängige Vertriebspartnerin\" (weiblich) oder \"unabhängiger Vertriebspartner\" (männlich).",
       "card_options": [
         {
           "value": "weiblich",
@@ -142,26 +142,55 @@
       "default_value": "https://app.finestsites.io/placeholders/profilbild.webp",
       "preview_value": "",
       "show_when": { "field": "partner_modus", "value": "duo" },
-      "placeholder_text": "Profilbild deiner Partnerin / deines Partners — quadratisch (1:1), mindestens 400×400 px."
+      "placeholder_text": "Profilbild deiner Partnerin / deines Partners — quadratisch (1:1), mindestens 400×400 px. Erscheint neben deinem Foto in Navigation und Disclaimer."
+    },
+    {
+      "key": "geschlecht2",
+      "type": "card_select",
+      "label": "Anrede Partner/in",
+      "section": "Profil",
+      "order": 8,
+      "required": false,
+      "color_tag": "person2",
+      "default_value": "maennlich",
+      "preview_value": "maennlich",
+      "show_when": { "field": "partner_modus", "value": "duo" },
+      "placeholder_text": "Damit der Disclaimer bei zwei Frauen \"unabhängige Vertriebspartnerinnen\" statt \"…partner\" schreibt.",
+      "card_options": [
+        {
+          "value": "weiblich",
+          "label": "Weiblich",
+          "card_type": "color",
+          "color": "#FDF2F8",
+          "description": "Vertriebspartnerin"
+        },
+        {
+          "value": "maennlich",
+          "label": "Männlich",
+          "card_type": "color",
+          "color": "#EFF6FF",
+          "description": "Vertriebspartner"
+        }
+      ]
     },
     {
       "key": "about_bild",
       "type": "image",
-      "label": "Foto für \"Über mich\"",
+      "label": "Foto für „Über mich\"",
       "section": "Profil",
-      "order": 8,
+      "order": 9,
       "required": true,
       "aspect_ratio": "4/5",
       "default_value": "https://app.finestsites.io/placeholders/about-bild.webp",
       "preview_value": "",
-      "placeholder_text": "Persönliches Foto — ideal im Hochformat (4:5). Im Duo-Modus gerne ein gemeinsames Foto von euch beiden."
+      "placeholder_text": "Persönliches Foto für die „Über mich\"-Sektion — ideal im Hochformat (4:5). Im Duo-Modus gerne ein gemeinsames Foto von euch beiden."
     },
     {
       "key": "email_benachrichtigung",
       "type": "email",
       "label": "E-Mail für Kontaktanfragen",
       "section": "Profil",
-      "order": 9,
+      "order": 10,
       "required": true,
       "profile_key": "email",
       "default_value": "",
@@ -174,100 +203,121 @@
       "type": "text",
       "label": "Telefonnummer",
       "section": "Kontakt",
-      "order": 10,
+      "order": 11,
       "required": false,
       "max_length": 40,
       "default_value": "",
       "preview_value": "+49 176 12345678",
       "input_placeholder": "+49 176 12345678",
-      "placeholder_text": "Deine Telefonnummer inkl. Ländervorwahl. Erscheint nur intern in E-Mails, wenn ein Interessent per Telefon zurückgerufen werden möchte."
+      "placeholder_text": "Deine Telefonnummer inkl. Ländervorwahl. Erscheint in E-Mails an dich, wenn ein Interessent per Telefon zurückgerufen werden möchte."
     },
     {
       "key": "whatsapp_nummer",
       "type": "text",
       "label": "WhatsApp-Nummer (optional)",
       "section": "Kontakt",
-      "order": 11,
+      "order": 12,
       "required": false,
       "max_length": 20,
       "default_value": "",
       "preview_value": "491761234567",
       "input_placeholder": "491761234567",
-      "placeholder_text": "Nur Ziffern, keine Leerzeichen, keine + oder 00. Beispiel: statt \"+49 176 1234567\" nur \"491761234567\" eintragen. Wenn du dieses Feld leer lässt, verschwinden alle WhatsApp-Buttons von der Seite."
+      "placeholder_text": "Nur Ziffern, keine Leerzeichen, kein + oder 00. Beispiel: statt „+49 176 1234567\" nur „491761234567\" eintragen. Wenn du dieses Feld leer lässt, verschwinden alle WhatsApp-Buttons von deiner Seite."
     },
     {
       "key": "farbthema",
       "type": "card_select",
       "label": "Farbthema",
       "section": "Design",
-      "order": 12,
+      "order": 13,
       "required": true,
       "default_value": "mint",
       "preview_value": "mint",
       "placeholder_text": "Wähle das Farbthema deiner Website. Die Farben wirken sich auf alle Buttons, Akzente und Illustrationen aus.",
       "card_options": [
-        { "value": "mint",   "label": "Fresh Mint",       "card_type": "color", "color": "#5EBFA0", "description": "Vitalisierend, frisch, energetisch." },
-        { "value": "lime",   "label": "Wellness-Lime",    "card_type": "color", "color": "#7DB93B", "description": "Frisch, natürlich, klassisch." },
-        { "value": "sage",   "label": "Sage & Terracotta","card_type": "color", "color": "#8CA47A", "description": "Editorial, ruhig, warm." },
-        { "value": "amber",  "label": "Warm Amber",       "card_type": "color", "color": "#D4A94E", "description": "Sonnig, honigfarben, südlich." },
-        { "value": "ocean",  "label": "Deep Ocean",       "card_type": "color", "color": "#4C86A8", "description": "Premium, kühl, ruhig." },
-        { "value": "ziegel", "label": "Warmes Rot",       "card_type": "color", "color": "#C63A2E", "description": "Erdig, kraftvoll, edel." }
+        { "value": "mint",   "label": "Fresh Mint",         "card_type": "color", "color": "#5EBFA0", "description": "Vitalisierend, frisch, energetisch." },
+        { "value": "lime",   "label": "Wellness-Lime",      "card_type": "color", "color": "#7DB93B", "description": "Frisch, natürlich, klassisch." },
+        { "value": "sage",   "label": "Sage & Terracotta",  "card_type": "color", "color": "#8CA47A", "description": "Editorial, ruhig, warm." },
+        { "value": "amber",  "label": "Warm Amber",         "card_type": "color", "color": "#D4A94E", "description": "Sonnig, honigfarben, südlich." },
+        { "value": "ocean",  "label": "Deep Ocean",         "card_type": "color", "color": "#4C86A8", "description": "Premium, kühl, ruhig." },
+        { "value": "ziegel", "label": "Warmes Rot",         "card_type": "color", "color": "#C63A2E", "description": "Erdig, kraftvoll, edel." }
       ]
     },
     {
       "key": "ziel_sektion",
       "type": "card_select",
-      "label": "Sektion \"Das Ziel: Ketose\" anzeigen?",
-      "section": "Design",
-      "order": 13,
+      "label": "Sektion „Das Ziel: Ketose\" anzeigen?",
+      "section": "Sektionen",
+      "order": 14,
       "required": true,
       "default_value": "an",
       "preview_value": "an",
-      "placeholder_text": "Der Vorher-Nachher-Vergleich zur Ketose. Blende ihn aus, wenn du das Thema \"ketogene Ernährung\" auf deiner Seite lieber vermeiden möchtest.",
+      "display_mode": "section_toggle",
+      "toggle_on_value": "an",
+      "toggle_off_value": "aus",
+      "preview_interactive": true,
+      "placeholder_text": "Der Vorher-Nachher-Vergleich zur Ketose. Blende ihn aus, wenn du das Thema „ketogene Ernährung\" auf deiner Seite lieber vermeiden möchtest.",
       "card_options": [
-        { "value": "an",  "label": "Anzeigen",   "card_type": "color", "color": "#DCFCE7", "description": "Der Ketose-Vergleich ist sichtbar." },
-        { "value": "aus", "label": "Ausblenden", "card_type": "color", "color": "#F1F5F9", "description": "Die Sektion verschwindet komplett." }
+        {
+          "value": "an",
+          "label": "Anzeigen",
+          "card_type": "image",
+          "image_url": "/templates/pm-cellrestart/section-previews/section-ziel.webp",
+          "description": "Der Ketose-Vergleich ist sichtbar."
+        },
+        {
+          "value": "aus",
+          "label": "Ausblenden",
+          "card_type": "color",
+          "color": "#F1F5F9",
+          "image_url": "",
+          "description": "Die Sektion verschwindet komplett."
+        }
       ]
     },
     {
       "key": "preis_anzeigen",
       "type": "card_select",
-      "label": "Preis-Card \"~5 € am Tag\" anzeigen?",
-      "section": "Design",
-      "order": 14,
+      "label": "Preis-Card „~5 € am Tag\" anzeigen?",
+      "section": "Sektionen",
+      "order": 15,
       "required": true,
       "default_value": "an",
       "preview_value": "an",
+      "display_mode": "section_toggle",
+      "toggle_on_value": "an",
+      "toggle_off_value": "aus",
+      "preview_interactive": true,
       "placeholder_text": "Die Preis-Card direkt beim Kontaktformular. Blende sie aus, wenn du nicht offen mit einem Preis werben möchtest.",
       "card_options": [
-        { "value": "an",  "label": "Anzeigen",   "card_type": "color", "color": "#DCFCE7", "description": "Die \"~5 € am Tag\"-Card ist sichtbar." },
-        { "value": "aus", "label": "Ausblenden", "card_type": "color", "color": "#F1F5F9", "description": "Nur das Kontaktformular bleibt." }
+        {
+          "value": "an",
+          "label": "Anzeigen",
+          "card_type": "image",
+          "image_url": "/templates/pm-cellrestart/section-previews/section-preis.webp",
+          "description": "Die „~5 € am Tag\"-Card ist sichtbar."
+        },
+        {
+          "value": "aus",
+          "label": "Ausblenden",
+          "card_type": "color",
+          "color": "#F1F5F9",
+          "image_url": "",
+          "description": "Nur das Kontaktformular bleibt."
+        }
       ]
     },
     {
-      "key": "hero_bild",
-      "type": "image",
-      "label": "Hero-Hintergrundbild",
-      "section": "Inhalte",
-      "order": 15,
-      "required": true,
-      "aspect_ratio": "16/9",
-      "default_value": "assets/hero-transformation.webp",
-      "preview_value": "assets/hero-transformation.webp",
-      "placeholder_text": "Das große Bild ganz oben auf der Startseite. Ideal im Querformat (16:9), mindestens 1600 px breit. Ein Motiv, das \"Vorher / Nachher\" oder \"Transformation\" andeutet, funktioniert besonders gut."
-    },
-    {
       "key": "about_me_html",
-      "type": "textarea",
-      "label": "Über mich / Über uns — persönlicher Text",
+      "type": "richtext",
+      "label": "Über mich-Text",
       "section": "Inhalte",
       "order": 16,
       "required": true,
       "max_length": 1500,
-      "default_value": "",
-      "preview_value": "Ich glaube: Wenn dein Körper das bekommt, was er braucht, ändert sich alles andere von selbst. Weniger Grübeln, mehr Energie, klare Entscheidungen.\n\nIch bin unabhängige Vertriebspartnerin von PM-International und arbeite seit einigen Jahren mit dem FitLine-Konzept. Nicht weil es das \"perfekte Wundermittel\" wäre, sondern weil es einfach funktioniert.\n\nMein Weg zu dir: unaufgeregt, ehrlich, ohne Verkaufsdruck.",
-      "input_placeholder": "Deine Geschichte, kurz und persönlich — 3 bis 5 Absätze.",
-      "placeholder_text": "Wer bist du, wie kamst du zu dem Konzept, was ist deine Haltung? Umgangssprachlich, keine Marketing-Floskeln. Die englische Übersetzung erstellen wir automatisch beim Speichern."
+      "default_value": "<p>Kurz zu mir: Ich komme aus [Ort] und bin seit [Zeitraum] mit dem cellRESET-Konzept unterwegs. Ich kenne die Produkte selbst und helfe dir, deinen eigenen Weg zu finden — ohne Druck.</p>",
+      "preview_value": "<p>Ich bin Julia, Mama von zwei Kindern und seit 3 Jahren mit dem Konzept unterwegs. Ich weiß, wie es sich anfühlt, wieder mehr Energie zu wollen ohne alles auf den Kopf zu stellen.</p><p>Genau deshalb mache ich das: unaufgeregt, ehrlich, ohne Verkaufsdruck.</p>",
+      "placeholder_text": "Stell dich vor: Wer bist du, was treibt dich an, wie kamst du zum cellRESET-Konzept? Locker und persönlich. Max. 1.500 Zeichen. Die englische Fassung erstellen wir automatisch beim Speichern."
     }
   ],
   "preview_values": {
