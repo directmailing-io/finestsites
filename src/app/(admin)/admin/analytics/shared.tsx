@@ -122,19 +122,30 @@ export function DailyChart({ dayRows, range }: {
       ) : (
         <>
           <div className="flex items-end gap-px h-40">
-            {series.map(s => (
-              <div key={s.key}
-                className="flex-1 flex flex-col justify-end h-full"
-                title={`${dayLabel(s.key)}: ${fmtNum(s.views)} ${s.views === 1 ? 'Aufruf' : 'Aufrufe'}`}>
-                <div
-                  className="w-full rounded-t-[3px]"
-                  style={{
-                    height: s.views > 0 ? `${Math.max((s.views / maxDay) * 100, 3)}%` : 2,
-                    background: s.views > 0 ? '#3B82F6' : '#F1F5F9',
-                  }}
-                />
-              </div>
-            ))}
+            {series.map((s, i) => {
+              const align = i < series.length * 0.15
+                ? { left: 0 }
+                : i > series.length * 0.85
+                  ? { right: 0 }
+                  : { left: '50%', transform: 'translateX(-50%)' }
+              return (
+                <div key={s.key}
+                  className="group relative flex-1 flex flex-col justify-end h-full rounded-t-[3px] hover:bg-blue-50/60 transition-colors">
+                  <div
+                    className="pointer-events-none absolute bottom-full mb-1.5 z-10 hidden group-hover:block whitespace-nowrap rounded-lg px-2.5 py-1.5 text-[11px] font-medium text-white shadow-lg"
+                    style={{ background: '#1E293B', ...align }}>
+                    {dayLabel(s.key)} · <span className="font-bold">{fmtNum(s.views)}</span> {s.views === 1 ? 'Aufruf' : 'Aufrufe'}
+                  </div>
+                  <div
+                    className="w-full rounded-t-[3px] group-hover:opacity-80"
+                    style={{
+                      height: s.views > 0 ? `${Math.max((s.views / maxDay) * 100, 3)}%` : 2,
+                      background: s.views > 0 ? '#3B82F6' : '#F1F5F9',
+                    }}
+                  />
+                </div>
+              )
+            })}
           </div>
           <div className="flex justify-between mt-2">
             <span className="text-[11px]" style={{ color: '#94A3B8' }}>{dayLabel(series[0].key)}</span>
