@@ -145,35 +145,6 @@
       "placeholder_text": "Profilbild deiner Partnerin / deines Partners — quadratisch (1:1), mindestens 400×400 px. Erscheint neben deinem Foto in Navigation und Disclaimer."
     },
     {
-      "key": "geschlecht2",
-      "type": "card_select",
-      "label": "Anrede Partner/in",
-      "section": "Profil",
-      "order": 8,
-      "required": false,
-      "color_tag": "person2",
-      "default_value": "maennlich",
-      "preview_value": "maennlich",
-      "show_when": { "field": "partner_modus", "value": "duo" },
-      "placeholder_text": "Damit der Disclaimer bei zwei Frauen \"unabhängige Vertriebspartnerinnen\" statt \"…partner\" schreibt.",
-      "card_options": [
-        {
-          "value": "weiblich",
-          "label": "Weiblich",
-          "card_type": "color",
-          "color": "#FDF2F8",
-          "description": "Vertriebspartnerin"
-        },
-        {
-          "value": "maennlich",
-          "label": "Männlich",
-          "card_type": "color",
-          "color": "#EFF6FF",
-          "description": "Vertriebspartner"
-        }
-      ]
-    },
-    {
       "key": "email_benachrichtigung",
       "type": "email",
       "label": "E-Mail für Kontaktanfragen",

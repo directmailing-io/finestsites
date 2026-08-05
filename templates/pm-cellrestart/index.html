@@ -91,17 +91,35 @@ html[data-theme="mint"], html:not([data-theme]), html[data-theme=""] {
 html[data-lang="en"] .l-de, html[data-lang="de"] .l-en { display: none !important; }
 
 .lang-switch {
-  display: inline-flex; align-items: center; gap: 6px;
-  padding: 6px 10px; border-radius: 100px;
+  display: inline-flex; align-items: center; gap: 2px;
+  padding: 3px; border-radius: 9999px;
   background: rgba(255,255,255,0.55); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
   border: 1px solid var(--line);
-  font-size: 12px; font-weight: 600; letter-spacing: 0.02em; color: var(--ink);
-  transition: background .2s, border-color .2s;
-  cursor: pointer;
+  flex-shrink: 0;
 }
-.lang-switch:hover { background: var(--paper); border-color: var(--line-2); }
-.lang-switch svg { width: 16px; height: 12px; border-radius: 2px; display: block; }
-.lang-switch .lang-code { text-transform: uppercase; }
+.lang-opt {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 5px 10px;
+  border: none; border-radius: 9999px;
+  background: transparent;
+  color: var(--ink-3);
+  font-family: inherit; font-size: 12px; font-weight: 700; letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+.lang-opt svg { width: 16px; height: 16px; border-radius: 50%; display: block; flex-shrink: 0; }
+.lang-opt:hover { color: var(--ink); }
+html[data-lang="de"] .lang-opt[data-lang="de"],
+html[data-lang="en"] .lang-opt[data-lang="en"] {
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+}
+.lang-switch-mobile { display: none; }
+@media (max-width: 960px) {
+  .nav-links .lang-switch { display: none; }
+  .lang-switch-mobile { display: inline-flex; }
+}
 
 /* ============ DUO-MODUS: Zwei überlappende Avatare ============ */
 
@@ -411,7 +429,7 @@ h3 { font-size: 20px; font-weight: 600; letter-spacing: -0.02em; color: var(--in
   min-height: 90vh;
   display: flex;
   align-items: center;
-  background: linear-gradient(180deg, #FFFFFF 0%, #F7F2EA 35%, #EFE7E0 100%);
+  background: linear-gradient(180deg, var(--paper) 0%, var(--bg) 35%, var(--bg-2) 100%);
 }
 
 .hero-bg-image {
@@ -430,11 +448,11 @@ h3 { font-size: 20px; font-weight: 600; letter-spacing: -0.02em; color: var(--in
   position: absolute;
   inset: 0;
   background: linear-gradient(90deg,
-    #EFE7E0 0%,
-    #EFE7E0 25%,
-    rgba(239, 231, 224, 0.85) 45%,
-    rgba(239, 231, 224, 0.4) 65%,
-    rgba(239, 231, 224, 0) 85%);
+    var(--bg-2) 0%,
+    var(--bg-2) 25%,
+    color-mix(in oklab, var(--bg-2) 85%, transparent) 45%,
+    color-mix(in oklab, var(--bg-2) 40%, transparent) 65%,
+    color-mix(in oklab, var(--bg-2) 0%, transparent) 85%);
   z-index: 1;
   pointer-events: none;
 }
@@ -579,9 +597,9 @@ section { padding: clamp(80px, 12vh, 140px) var(--pad-x); position: relative; }
   box-shadow: 0 -4px 16px -8px rgba(29, 36, 25, 0.08);
 }
 
-/* was-section — Weiß-zu-Grün Verlauf, unten abgerundet */
+/* was-section — Weiß-zu-Themenfarbe Verlauf, unten abgerundet */
 .was-section {
-  background: linear-gradient(180deg, #FFFFFF 0%, #C6E6D8 100%);
+  background: linear-gradient(180deg, var(--paper) 0%, var(--green-soft) 100%);
   border-top-left-radius: 0 !important;
   border-top-right-radius: 0 !important;
   border-bottom-left-radius: clamp(24px, 3.5vw, 40px);
@@ -4339,19 +4357,16 @@ img {
       <a href="#ueber"><span class="l-de">{{#unless partner_modus=duo}}Über mich{{/unless}}{{#if partner_modus=duo}}Über uns{{/if}}</span><span class="l-en">{{#unless partner_modus=duo}}About me{{/unless}}{{#if partner_modus=duo}}About us{{/if}}</span></a>
       <a href="#faq"><span class="l-de">Fragen</span><span class="l-en">FAQ</span></a>
     </div>
-    <button type="button" class="lang-switch" id="langSwitch" aria-label="Sprache wechseln">
-      <svg viewBox="0 0 5 3" xmlns="http://www.w3.org/2000/svg" class="lang-flag lang-flag-de">
-        <rect width="5" height="1" y="0" fill="#000"/><rect width="5" height="1" y="1" fill="#D00"/><rect width="5" height="1" y="2" fill="#FFCE00"/>
-      </svg>
-      <svg viewBox="0 0 60 30" xmlns="http://www.w3.org/2000/svg" class="lang-flag lang-flag-en" style="display:none">
-        <clipPath id="s"><path d="M0,0 v30 h60 v-30 z"/></clipPath>
-        <path d="M0,0 v30 h60 v-30 z" fill="#012169"/>
-        <path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" stroke-width="6" clip-path="url(#s)"/>
-        <path d="M30,0 v30 M0,15 h60" stroke="#fff" stroke-width="10" clip-path="url(#s)"/>
-        <path d="M30,0 v30 M0,15 h60" stroke="#C8102E" stroke-width="6" clip-path="url(#s)"/>
-      </svg>
-      <span class="lang-code" id="langCode">DE</span>
-    </button>
+    <div class="lang-switch" role="group" aria-label="Sprache / Language">
+      <button type="button" class="lang-opt" data-lang="de" onclick="fsSetLang('de')" aria-label="Deutsch">
+        <svg viewBox="0 0 20 20" aria-hidden="true"><rect width="20" height="6.67" y="0" fill="#000"/><rect width="20" height="6.67" y="6.67" fill="#DD0000"/><rect width="20" height="6.66" y="13.34" fill="#FFCE00"/></svg>
+        <span>DE</span>
+      </button>
+      <button type="button" class="lang-opt" data-lang="en" onclick="fsSetLang('en')" aria-label="English">
+        <svg viewBox="0 0 20 20" aria-hidden="true"><rect width="20" height="20" fill="#012169"/><path d="M0 0 L20 20 M20 0 L0 20" stroke="#fff" stroke-width="4"/><path d="M0 0 L20 20 M20 0 L0 20" stroke="#C8102E" stroke-width="2"/><path d="M10 0 V20 M0 10 H20" stroke="#fff" stroke-width="6"/><path d="M10 0 V20 M0 10 H20" stroke="#C8102E" stroke-width="3.5"/></svg>
+        <span>EN</span>
+      </button>
+    </div>
     <a href="#kontakt" class="nav-cta"><span class="l-de">Kontakt aufnehmen</span><span class="l-en">Get in touch</span></a>
     <button type="button" class="nav-burger" id="navBurger" aria-label="Menü öffnen" aria-expanded="false">
       <span></span><span></span><span></span>
@@ -4439,7 +4454,7 @@ img {
       <img loading="eager" decoding="async" class="pm-disclaimer-avatar pm-disclaimer-avatar-2" src="{{profilbild2}}" alt="{{vorname2}} {{nachname2}}">
     </span>{{/if}}
     <div>
-      <span class="l-de">{{#unless partner_modus=duo}}Diese Seite wird betrieben von <b>{{vorname}} {{nachname}}</b>, {{#if geschlecht=weiblich}}unabhängige Vertriebspartnerin{{/if}}{{#if geschlecht=maennlich}}unabhängiger Vertriebspartner{{/if}} der PM-International (FitLine®). Keine offizielle Website der PM-International AG.{{/unless}}{{#if partner_modus=duo}}Diese Seite wird betrieben von <b>{{vorname}} {{nachname}} &amp; {{vorname2}} {{nachname2}}</b>, {{#if geschlecht=weiblich}}{{#if geschlecht2=weiblich}}unabhängige Vertriebspartnerinnen{{/if}}{{#unless geschlecht2=weiblich}}unabhängige Vertriebspartner{{/unless}}{{/if}}{{#unless geschlecht=weiblich}}unabhängige Vertriebspartner{{/unless}} der PM-International (FitLine®). Keine offizielle Website der PM-International AG.{{/if}}</span>
+      <span class="l-de">{{#unless partner_modus=duo}}Diese Seite wird betrieben von <b>{{vorname}} {{nachname}}</b>, {{#if geschlecht=weiblich}}unabhängige Vertriebspartnerin{{/if}}{{#if geschlecht=maennlich}}unabhängiger Vertriebspartner{{/if}} der PM-International (FitLine®). Keine offizielle Website der PM-International AG.{{/unless}}{{#if partner_modus=duo}}Diese Seite wird betrieben von <b>{{vorname}} {{nachname}} &amp; {{vorname2}} {{nachname2}}</b>, unabhängige Vertriebspartner der PM-International (FitLine®). Keine offizielle Website der PM-International AG.{{/if}}</span>
       <span class="l-en">{{#unless partner_modus=duo}}This site is operated by <b>{{vorname}} {{nachname}}</b>, independent distributor of PM-International (FitLine®). Not an official website of PM-International AG.{{/unless}}{{#if partner_modus=duo}}This site is operated by <b>{{vorname}} {{nachname}} &amp; {{vorname2}} {{nachname2}}</b>, independent distributors of PM-International (FitLine®). Not an official website of PM-International AG.{{/if}}</span>
     </div>
   </div>
@@ -4986,41 +5001,41 @@ img {
     <div class="recipes-marquee">
       <div class="rm-col up">
         <div class="rm-col-inner">
-          <div class="rm-card"><img loading="lazy" decoding="async" src="images/rezepte/1.webp" alt="" width="400" height="300"></div>
-          <div class="rm-card"><img loading="lazy" decoding="async" src="images/rezepte/2.webp" alt="" width="400" height="300"></div>
-          <div class="rm-card"><img loading="lazy" decoding="async" src="images/rezepte/3.webp" alt="" width="400" height="300"></div>
-          <div class="rm-card"><img loading="lazy" decoding="async" src="images/rezepte/4.webp" alt="" width="400" height="300"></div>
-          <div class="rm-card"><img loading="lazy" decoding="async" src="images/rezepte/5.webp" alt="" width="400" height="300"></div>
-          <div class="rm-card"><img loading="lazy" decoding="async" src="images/rezepte/6.webp" alt="" width="400" height="300"></div>
-          <div class="rm-card"><img loading="lazy" decoding="async" src="images/rezepte/7.webp" alt="" width="400" height="300"></div>
-          <div class="rm-card"><img loading="lazy" decoding="async" src="images/rezepte/8.webp" alt="" width="400" height="300"></div>
-          <div class="rm-card"><img loading="lazy" decoding="async" src="images/rezepte/1.webp" alt="" width="400" height="300"></div>
-          <div class="rm-card"><img loading="lazy" decoding="async" src="images/rezepte/2.webp" alt="" width="400" height="300"></div>
-          <div class="rm-card"><img loading="lazy" decoding="async" src="images/rezepte/3.webp" alt="" width="400" height="300"></div>
-          <div class="rm-card"><img loading="lazy" decoding="async" src="images/rezepte/4.webp" alt="" width="400" height="300"></div>
-          <div class="rm-card"><img loading="lazy" decoding="async" src="images/rezepte/5.webp" alt="" width="400" height="300"></div>
-          <div class="rm-card"><img loading="lazy" decoding="async" src="images/rezepte/6.webp" alt="" width="400" height="300"></div>
-          <div class="rm-card"><img loading="lazy" decoding="async" src="images/rezepte/7.webp" alt="" width="400" height="300"></div>
-          <div class="rm-card"><img loading="lazy" decoding="async" src="images/rezepte/8.webp" alt="" width="400" height="300"></div>
+          <div class="rm-card"><img loading="lazy" decoding="async" src="assets/rezepte/1.webp" alt="" width="400" height="300"></div>
+          <div class="rm-card"><img loading="lazy" decoding="async" src="assets/rezepte/2.webp" alt="" width="400" height="300"></div>
+          <div class="rm-card"><img loading="lazy" decoding="async" src="assets/rezepte/3.webp" alt="" width="400" height="300"></div>
+          <div class="rm-card"><img loading="lazy" decoding="async" src="assets/rezepte/4.webp" alt="" width="400" height="300"></div>
+          <div class="rm-card"><img loading="lazy" decoding="async" src="assets/rezepte/5.webp" alt="" width="400" height="300"></div>
+          <div class="rm-card"><img loading="lazy" decoding="async" src="assets/rezepte/6.webp" alt="" width="400" height="300"></div>
+          <div class="rm-card"><img loading="lazy" decoding="async" src="assets/rezepte/7.webp" alt="" width="400" height="300"></div>
+          <div class="rm-card"><img loading="lazy" decoding="async" src="assets/rezepte/8.webp" alt="" width="400" height="300"></div>
+          <div class="rm-card"><img loading="lazy" decoding="async" src="assets/rezepte/1.webp" alt="" width="400" height="300"></div>
+          <div class="rm-card"><img loading="lazy" decoding="async" src="assets/rezepte/2.webp" alt="" width="400" height="300"></div>
+          <div class="rm-card"><img loading="lazy" decoding="async" src="assets/rezepte/3.webp" alt="" width="400" height="300"></div>
+          <div class="rm-card"><img loading="lazy" decoding="async" src="assets/rezepte/4.webp" alt="" width="400" height="300"></div>
+          <div class="rm-card"><img loading="lazy" decoding="async" src="assets/rezepte/5.webp" alt="" width="400" height="300"></div>
+          <div class="rm-card"><img loading="lazy" decoding="async" src="assets/rezepte/6.webp" alt="" width="400" height="300"></div>
+          <div class="rm-card"><img loading="lazy" decoding="async" src="assets/rezepte/7.webp" alt="" width="400" height="300"></div>
+          <div class="rm-card"><img loading="lazy" decoding="async" src="assets/rezepte/8.webp" alt="" width="400" height="300"></div>
         </div>
       </div>
 
       <div class="rm-col down">
         <div class="rm-col-inner">
-          <div class="rm-card"><img loading="lazy" decoding="async" src="images/rezepte/9.webp" alt="" width="400" height="300"></div>
-          <div class="rm-card"><img loading="lazy" decoding="async" src="images/rezepte/10.webp" alt="" width="400" height="300"></div>
-          <div class="rm-card"><img loading="lazy" decoding="async" src="images/rezepte/11.webp" alt="" width="400" height="300"></div>
-          <div class="rm-card"><img loading="lazy" decoding="async" src="images/rezepte/12.webp" alt="" width="400" height="300"></div>
-          <div class="rm-card"><img loading="lazy" decoding="async" src="images/rezepte/13.webp" alt="" width="400" height="300"></div>
-          <div class="rm-card"><img loading="lazy" decoding="async" src="images/rezepte/14.webp" alt="" width="400" height="300"></div>
-          <div class="rm-card"><img loading="lazy" decoding="async" src="images/rezepte/15.webp" alt="" width="400" height="300"></div>
-          <div class="rm-card"><img loading="lazy" decoding="async" src="images/rezepte/9.webp" alt="" width="400" height="300"></div>
-          <div class="rm-card"><img loading="lazy" decoding="async" src="images/rezepte/10.webp" alt="" width="400" height="300"></div>
-          <div class="rm-card"><img loading="lazy" decoding="async" src="images/rezepte/11.webp" alt="" width="400" height="300"></div>
-          <div class="rm-card"><img loading="lazy" decoding="async" src="images/rezepte/12.webp" alt="" width="400" height="300"></div>
-          <div class="rm-card"><img loading="lazy" decoding="async" src="images/rezepte/13.webp" alt="" width="400" height="300"></div>
-          <div class="rm-card"><img loading="lazy" decoding="async" src="images/rezepte/14.webp" alt="" width="400" height="300"></div>
-          <div class="rm-card"><img loading="lazy" decoding="async" src="images/rezepte/15.webp" alt="" width="400" height="300"></div>
+          <div class="rm-card"><img loading="lazy" decoding="async" src="assets/rezepte/9.webp" alt="" width="400" height="300"></div>
+          <div class="rm-card"><img loading="lazy" decoding="async" src="assets/rezepte/10.webp" alt="" width="400" height="300"></div>
+          <div class="rm-card"><img loading="lazy" decoding="async" src="assets/rezepte/11.webp" alt="" width="400" height="300"></div>
+          <div class="rm-card"><img loading="lazy" decoding="async" src="assets/rezepte/12.webp" alt="" width="400" height="300"></div>
+          <div class="rm-card"><img loading="lazy" decoding="async" src="assets/rezepte/13.webp" alt="" width="400" height="300"></div>
+          <div class="rm-card"><img loading="lazy" decoding="async" src="assets/rezepte/14.webp" alt="" width="400" height="300"></div>
+          <div class="rm-card"><img loading="lazy" decoding="async" src="assets/rezepte/15.webp" alt="" width="400" height="300"></div>
+          <div class="rm-card"><img loading="lazy" decoding="async" src="assets/rezepte/9.webp" alt="" width="400" height="300"></div>
+          <div class="rm-card"><img loading="lazy" decoding="async" src="assets/rezepte/10.webp" alt="" width="400" height="300"></div>
+          <div class="rm-card"><img loading="lazy" decoding="async" src="assets/rezepte/11.webp" alt="" width="400" height="300"></div>
+          <div class="rm-card"><img loading="lazy" decoding="async" src="assets/rezepte/12.webp" alt="" width="400" height="300"></div>
+          <div class="rm-card"><img loading="lazy" decoding="async" src="assets/rezepte/13.webp" alt="" width="400" height="300"></div>
+          <div class="rm-card"><img loading="lazy" decoding="async" src="assets/rezepte/14.webp" alt="" width="400" height="300"></div>
+          <div class="rm-card"><img loading="lazy" decoding="async" src="assets/rezepte/15.webp" alt="" width="400" height="300"></div>
         </div>
       </div>
     </div>
@@ -5805,48 +5820,23 @@ document.getElementById('contactForm')?.addEventListener('submit', (e) => {
 // ============ Service Worker (Caching für schnellere Wiederbesuche) ============
 // Kein ServiceWorker auf finestsites — vom Worker-Level gehandhabt.
 
-// ============ Sprachschalter ============
-(function(){
-  var btn = document.getElementById('langSwitch');
-  var code = document.getElementById('langCode');
-  var flagDe = document.querySelector('.lang-flag-de');
-  var flagEn = document.querySelector('.lang-flag-en');
-  if (!btn || !code) return;
-
-  function applyPlaceholders(lang) {
-    document.querySelectorAll('[data-de-placeholder]').forEach(function(el){
-      var v = lang === 'en' ? el.getAttribute('data-en-placeholder') : el.getAttribute('data-de-placeholder');
-      if (v) el.setAttribute('placeholder', v);
-    });
-  }
-
-  function updateSwitchLabel(lang) {
-    // Schalter zeigt die ANDERE Sprache (das, worauf man wechseln würde)
-    var other = lang === 'de' ? 'EN' : 'DE';
-    code.textContent = other;
-    if (flagDe && flagEn) {
-      flagDe.style.display = other === 'DE' ? 'block' : 'none';
-      flagEn.style.display = other === 'EN' ? 'block' : 'none';
-    }
-    btn.setAttribute('aria-label', other === 'DE' ? 'Sprache auf Deutsch wechseln' : 'Switch to English');
-  }
-
-  function setLang(lang) {
-    document.documentElement.setAttribute('data-lang', lang);
-    document.documentElement.setAttribute('lang', lang);
-    try { localStorage.setItem('fs-lang', lang); } catch(e){}
-    applyPlaceholders(lang);
-    updateSwitchLabel(lang);
-    if (window.ScrollTrigger) { try { window.ScrollTrigger.refresh(); } catch(e){} }
-  }
-
-  var current = document.documentElement.getAttribute('data-lang') || 'de';
-  applyPlaceholders(current);
-  updateSwitchLabel(current);
-
-  btn.addEventListener('click', function(){
-    var now = document.documentElement.getAttribute('data-lang') || 'de';
-    setLang(now === 'de' ? 'en' : 'de');
+// ============ Sprachschalter — global fsSetLang(lang) ============
+function fsSetLang(lang) {
+  if (lang !== 'de' && lang !== 'en') return;
+  document.documentElement.setAttribute('data-lang', lang);
+  document.documentElement.setAttribute('lang', lang);
+  try { localStorage.setItem('fs-lang', lang); } catch(e){}
+  document.querySelectorAll('[data-de-placeholder]').forEach(function(el){
+    var v = lang === 'en' ? el.getAttribute('data-en-placeholder') : el.getAttribute('data-de-placeholder');
+    if (v) el.setAttribute('placeholder', v);
+  });
+  if (window.ScrollTrigger) { try { window.ScrollTrigger.refresh(); } catch(e){} }
+}
+(function initLang(){
+  var lang = document.documentElement.getAttribute('data-lang') || 'de';
+  document.querySelectorAll('[data-de-placeholder]').forEach(function(el){
+    var v = lang === 'en' ? el.getAttribute('data-en-placeholder') : el.getAttribute('data-de-placeholder');
+    if (v) el.setAttribute('placeholder', v);
   });
 })();
 </script>

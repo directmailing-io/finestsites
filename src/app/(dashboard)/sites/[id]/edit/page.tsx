@@ -776,6 +776,7 @@ function CardSelectField({ field, value, onChange, narrow, onMobileSelect }: {
     narrow ? 'grid-cols-1' :
     opts.length === 2 ? 'grid-cols-2' :
     opts.length === 3 ? 'grid-cols-2 sm:grid-cols-3' :
+    opts.length === 4 ? 'grid-cols-2' :
     'grid-cols-2 sm:grid-cols-3 lg:grid-cols-4'
   )
 
