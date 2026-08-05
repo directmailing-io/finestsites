@@ -3,7 +3,7 @@ import { sql } from 'drizzle-orm'
 import Link from 'next/link'
 import { AutoRefresh } from './AutoRefresh'
 import { SitesTable, type SiteTableRow } from './SitesTable'
-import { cardStyle, fmtDuration, fmtNum, parseRange, pct, perDay, RangePills, sinceSql, sourceLabel, StatTile } from './shared'
+import { cardStyle, fmtDuration, fmtNum, parseRange, pct, perDay, prevSinceSql, RangePills, sinceSql, sourceLabel, StatTile, trendPct } from './shared'
 
 export const dynamic = 'force-dynamic'
 
@@ -59,8 +59,9 @@ export default async function AnalyticsPage({ searchParams }: {
 }) {
   const range = parseRange((await searchParams).range)
   const since = sinceSql(range)
+  const prevSince = prevSinceSql(range)
 
-  const [totalsRows, liveTotalRows, submissionRows, topSourceRows, templateRows, siteRows, siteSourceRows, siteSubmissionRows, avgDurationRows, templateDurationRows] =
+  const [totalsRows, prevTotalsRows, liveTotalRows, submissionRows, topSourceRows, templateRows, siteRows, siteSourceRows, siteSubmissionRows, avgDurationRows, templateDurationRows] =
     await Promise.all([
       db.execute<TotalsRow>(sql`
         SELECT
@@ -69,6 +70,13 @@ export default async function AnalyticsPage({ searchParams }: {
           COUNT(*) FILTER (WHERE device = 'mobile')::int AS mobile_views
         FROM site_events
         WHERE event_type = 'pageview' AND occurred_at >= ${since}
+      `),
+      db.execute<{ views: number; visitors: number }>(sql`
+        SELECT
+          COUNT(*)::int AS views,
+          COUNT(DISTINCT visitor_hash)::int AS visitors
+        FROM site_events
+        WHERE event_type = 'pageview' AND occurred_at >= ${prevSince} AND occurred_at < ${since}
       `),
       db.execute<CountRow>(sql`
         SELECT COUNT(DISTINCT visitor_hash)::int AS n
@@ -152,6 +160,7 @@ export default async function AnalyticsPage({ searchParams }: {
     ])
 
   const totals = totalsRows[0] ?? { views: 0, visitors: 0, mobile_views: 0 }
+  const prevTotals = prevTotalsRows[0] ?? { views: 0, visitors: 0 }
   const liveTotal = liveTotalRows[0]?.n ?? 0
   const submissionsTotal = submissionRows[0]?.n ?? 0
   const topSource = topSourceRows[0]?.source ?? null
@@ -201,8 +210,10 @@ export default async function AnalyticsPage({ searchParams }: {
       <div className="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-7 gap-3 mb-6">
         <StatTile label="Jetzt online" value={fmtNum(liveTotal)} sub="letzte 5 Minuten"
           color={liveTotal > 0 ? '#15803D' : '#94A3B8'} />
-        <StatTile label="Aufrufe" value={fmtNum(totals.views)} sub={`letzte ${range} Tage`} color="#1D4ED8" />
-        <StatTile label="Besucher" value={fmtNum(totals.visitors)} sub={`letzte ${range} Tage`} />
+        <StatTile label="Aufrufe" value={fmtNum(totals.views)} sub={`letzte ${range} Tage`} color="#1D4ED8"
+          trend={trendPct(totals.views, prevTotals.views)} />
+        <StatTile label="Besucher" value={fmtNum(totals.visitors)} sub={`letzte ${range} Tage`}
+          trend={trendPct(totals.visitors, prevTotals.visitors)} />
         <StatTile label="Formulare" value={fmtNum(submissionsTotal)} sub={`letzte ${range} Tage`} />
         <StatTile label="Ø Verweildauer" value={fmtDuration(avgDuration)} sub="pro Besuch" />
         <StatTile label="Mobile-Anteil" value={`${pct(totals.mobile_views, totals.views)} %`} sub="der Aufrufe" />

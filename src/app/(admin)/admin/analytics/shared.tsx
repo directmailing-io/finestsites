@@ -20,6 +20,17 @@ export function sinceSql(days: Range): SQL {
   return sql`(date_trunc('day', now() AT TIME ZONE 'Europe/Berlin') - make_interval(days => ${days - 1})) AT TIME ZONE 'Europe/Berlin'`
 }
 
+/** Beginn des Vorzeitraums — die `days` Tage direkt vor `sinceSql(days)`. */
+export function prevSinceSql(days: Range): SQL {
+  return sql`(date_trunc('day', now() AT TIME ZONE 'Europe/Berlin') - make_interval(days => ${2 * days - 1})) AT TIME ZONE 'Europe/Berlin'`
+}
+
+/** Prozentuale Veränderung ggü. Vorperiode; null wenn Vorperiode leer. */
+export function trendPct(current: number, previous: number): number | null {
+  if (previous <= 0) return null
+  return Math.round(((current - previous) / previous) * 100)
+}
+
 // ─── Labels ────────────────────────────────────────────────────────────────────
 
 const SOURCE_LABELS: Record<string, string> = {
@@ -41,6 +52,11 @@ const SOURCE_LABELS: Record<string, string> = {
 export function sourceLabel(source: string | null): string {
   if (!source) return 'Unbekannt'
   return SOURCE_LABELS[source] ?? source
+}
+
+export function utmLabel(source: string | null, medium: string | null, campaign: string | null): string {
+  const base = [source, medium].filter(Boolean).join(' / ')
+  return campaign ? `${base} · ${campaign}` : base || 'Unbekannt'
 }
 
 const DEVICE_LABELS: Record<string, string> = {
@@ -184,16 +200,33 @@ export function RangePills({ current, basePath }: { current: Range; basePath: st
   )
 }
 
-export function StatTile({ label, value, sub, color }: {
+export function StatTile({ label, value, sub, color, trend }: {
   label: string
   value: string
   sub?: string
   color?: string
+  trend?: number | null
 }) {
   return (
     <div className="rounded-[20px] p-5 bg-white flex flex-col gap-1" style={cardStyle}>
       <span className="text-xs font-medium" style={{ color: '#64748B' }}>{label}</span>
-      <span className="text-3xl font-bold tracking-tight truncate" style={{ color: color ?? '#111827' }}>{value}</span>
+      <div className="flex items-baseline gap-1.5 min-w-0">
+        <span className="text-3xl font-bold tracking-tight truncate" style={{ color: color ?? '#111827' }}>{value}</span>
+        {typeof trend === 'number' && (
+          <span
+            className="flex-shrink-0 text-[11px] font-bold px-1.5 py-0.5 rounded-full"
+            title={`Veränderung zur Vorperiode`}
+            style={
+              trend > 0
+                ? { color: '#15803D', background: '#DCFCE7' }
+                : trend < 0
+                  ? { color: '#B91C1C', background: '#FEE2E2' }
+                  : { color: '#64748B', background: '#F1F5F9' }
+            }>
+            {trend > 0 ? '+' : ''}{fmtNum(trend)} %
+          </span>
+        )}
+      </div>
       {sub && <span className="text-[11px]" style={{ color: '#94A3B8' }}>{sub}</span>}
     </div>
   )

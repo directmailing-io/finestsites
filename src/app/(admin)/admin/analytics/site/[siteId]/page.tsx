@@ -5,7 +5,7 @@ import { notFound } from 'next/navigation'
 import { AutoRefresh } from '../../AutoRefresh'
 import {
   BreakdownCard, countryName, DailyChart, deviceLabel, fmtDuration, fmtNum, parseRange, pct,
-  perDay, RangePills, sinceSql, sourceLabel, StatTile,
+  perDay, prevSinceSql, RangePills, sinceSql, sourceLabel, StatTile, trendPct, utmLabel,
 } from '../../shared'
 
 export const dynamic = 'force-dynamic'
@@ -47,8 +47,9 @@ export default async function SiteAnalyticsPage({ params, searchParams }: {
 
   const range = parseRange((await searchParams).range)
   const since = sinceSql(range)
+  const prevSince = prevSinceSql(range)
 
-  const breakdown = (column: 'source' | 'device' | 'browser' | 'country' | 'path', limit: number) =>
+  const breakdown = (column: 'source' | 'device' | 'browser' | 'country' | 'path' | 'referrer_host', limit: number) =>
     db.execute<BreakdownRow>(sql`
       SELECT ${sql.raw(column)} AS key, COUNT(*)::int AS cnt
       FROM site_events
@@ -58,7 +59,7 @@ export default async function SiteAnalyticsPage({ params, searchParams }: {
       LIMIT ${limit}
     `)
 
-  const [siteInfoRows, latestEventRows, totalsRows, dayRows, liveRows, durationRows, sources, devices, browsers, countries, paths] =
+  const [siteInfoRows, latestEventRows, totalsRows, prevTotalsRows, dayRows, liveRows, durationRows, sources, devices, browsers, countries, paths, referrers, utmRows] =
     await Promise.all([
       db.execute<SiteInfoRow>(sql`
         SELECT u.email, t.title AS template_title
@@ -82,6 +83,14 @@ export default async function SiteAnalyticsPage({ params, searchParams }: {
           COUNT(*) FILTER (WHERE device = 'mobile')::int AS mobile_views
         FROM site_events
         WHERE event_type = 'pageview' AND site_id = ${siteId} AND occurred_at >= ${since}
+      `),
+      db.execute<{ views: number; visitors: number }>(sql`
+        SELECT
+          COUNT(*)::int AS views,
+          COUNT(DISTINCT visitor_hash)::int AS visitors
+        FROM site_events
+        WHERE event_type = 'pageview' AND site_id = ${siteId}
+          AND occurred_at >= ${prevSince} AND occurred_at < ${since}
       `),
       db.execute<DayRow>(sql`
         SELECT
@@ -108,6 +117,16 @@ export default async function SiteAnalyticsPage({ params, searchParams }: {
       breakdown('browser', 8),
       breakdown('country', 10),
       breakdown('path', 10),
+      breakdown('referrer_host', 10),
+      db.execute<{ utm_source: string | null; utm_medium: string | null; utm_campaign: string | null; cnt: number }>(sql`
+        SELECT utm_source, utm_medium, utm_campaign, COUNT(*)::int AS cnt
+        FROM site_events
+        WHERE event_type = 'pageview' AND site_id = ${siteId}
+          AND occurred_at >= ${since} AND utm_source IS NOT NULL
+        GROUP BY 1, 2, 3
+        ORDER BY cnt DESC
+        LIMIT 10
+      `),
     ])
 
   const siteInfo = siteInfoRows[0]
@@ -115,6 +134,7 @@ export default async function SiteAnalyticsPage({ params, searchParams }: {
   if (!siteInfo && !latestEvent) notFound()
 
   const totals = totalsRows[0] ?? { views: 0, visitors: 0, mobile_views: 0 }
+  const prevTotals = prevTotalsRows[0] ?? { views: 0, visitors: 0 }
   const liveVisitors = liveRows[0]?.visitors ?? 0
   const avgDuration = durationRows[0]?.avg_seconds ?? null
   const host = latestEvent?.host ?? 'Unbekannter Host'
@@ -150,8 +170,10 @@ export default async function SiteAnalyticsPage({ params, searchParams }: {
       <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3 mb-6">
         <StatTile label="Jetzt online" value={fmtNum(liveVisitors)} sub="letzte 5 Minuten"
           color={liveVisitors > 0 ? '#15803D' : '#94A3B8'} />
-        <StatTile label="Aufrufe" value={fmtNum(totals.views)} sub={`letzte ${range} Tage`} color="#1D4ED8" />
-        <StatTile label="Besucher" value={fmtNum(totals.visitors)} sub={`letzte ${range} Tage`} />
+        <StatTile label="Aufrufe" value={fmtNum(totals.views)} sub={`letzte ${range} Tage`} color="#1D4ED8"
+          trend={trendPct(totals.views, prevTotals.views)} />
+        <StatTile label="Besucher" value={fmtNum(totals.visitors)} sub={`letzte ${range} Tage`}
+          trend={trendPct(totals.visitors, prevTotals.visitors)} />
         <StatTile label="Ø Verweildauer" value={fmtDuration(avgDuration)} sub="pro Besuch" />
         <StatTile label="Ø Aufrufe/Tag" value={perDay(totals.views, range)} sub="im Zeitraum" />
         <StatTile label="Mobile-Anteil" value={`${pct(totals.mobile_views, totals.views)} %`} sub="der Aufrufe" />
@@ -169,6 +191,9 @@ export default async function SiteAnalyticsPage({ params, searchParams }: {
         <BreakdownCard title="Browser" total={totals.views} entries={toEntries(browsers, k => k ?? 'Unbekannt')} />
         <BreakdownCard title="Länder" total={totals.views} entries={toEntries(countries, countryName)} />
         <BreakdownCard title="Seiten" total={totals.views} entries={toEntries(paths, k => k ?? '/')} />
+        <BreakdownCard title="Referrer-Domains" total={totals.views} entries={toEntries(referrers, k => k ?? 'Direkt')} />
+        <BreakdownCard title="Kampagnen (UTM)" total={totals.views}
+          entries={utmRows.map(r => ({ label: utmLabel(r.utm_source, r.utm_medium, r.utm_campaign), count: r.cnt }))} />
       </div>
     </div>
   )
