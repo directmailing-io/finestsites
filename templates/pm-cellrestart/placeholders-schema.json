@@ -174,18 +174,6 @@
       ]
     },
     {
-      "key": "about_bild",
-      "type": "image",
-      "label": "Foto für „Über mich\"",
-      "section": "Profil",
-      "order": 9,
-      "required": true,
-      "aspect_ratio": "4/5",
-      "default_value": "https://app.finestsites.io/placeholders/about-bild.webp",
-      "preview_value": "",
-      "placeholder_text": "Persönliches Foto für die „Über mich\"-Sektion — ideal im Hochformat (4:5). Im Duo-Modus gerne ein gemeinsames Foto von euch beiden."
-    },
-    {
       "key": "email_benachrichtigung",
       "type": "email",
       "label": "E-Mail für Kontaktanfragen",
@@ -225,11 +213,52 @@
       "placeholder_text": "Nur Ziffern, keine Leerzeichen, kein + oder 00. Beispiel: statt „+49 176 1234567\" nur „491761234567\" eintragen. Wenn du dieses Feld leer lässt, verschwinden alle WhatsApp-Buttons von deiner Seite."
     },
     {
+      "key": "hero_variante",
+      "type": "card_select",
+      "label": "Hero-Hintergrundbild",
+      "section": "Design",
+      "order": 13,
+      "required": true,
+      "default_value": "junge-frau",
+      "preview_value": "junge-frau",
+      "placeholder_text": "Das große Bild ganz oben. Wähle die Person, die zu deiner Zielgruppe passt.",
+      "card_options": [
+        {
+          "value": "junge-frau",
+          "label": "Junge Frau",
+          "card_type": "image",
+          "image_url": "/templates/pm-cellrestart/hero-previews/junge-frau.webp",
+          "description": "Sportlich, aktiv, Ende 20 bis Mitte 30."
+        },
+        {
+          "value": "aeltere-frau",
+          "label": "Ältere Frau",
+          "card_type": "image",
+          "image_url": "/templates/pm-cellrestart/hero-previews/aeltere-frau.webp",
+          "description": "Elegant, entspannt, um die 50 plus."
+        },
+        {
+          "value": "junger-mann",
+          "label": "Junger Mann",
+          "card_type": "image",
+          "image_url": "/templates/pm-cellrestart/hero-previews/junger-mann.webp",
+          "description": "Locker, Ende 20 bis Mitte 30."
+        },
+        {
+          "value": "aelterer-mann",
+          "label": "Älterer Mann",
+          "card_type": "image",
+          "image_url": "/templates/pm-cellrestart/hero-previews/aelterer-mann.webp",
+          "description": "Souverän, entspannt, um die 50 plus."
+        }
+      ]
+    },
+    {
       "key": "farbthema",
       "type": "card_select",
       "label": "Farbthema",
       "section": "Design",
-      "order": 13,
+      "order": 14,
       "required": true,
       "default_value": "mint",
       "preview_value": "mint",
@@ -248,7 +277,7 @@
       "type": "card_select",
       "label": "Sektion „Das Ziel: Ketose\" anzeigen?",
       "section": "Sektionen",
-      "order": 14,
+      "order": 15,
       "required": true,
       "default_value": "an",
       "preview_value": "an",
@@ -280,7 +309,7 @@
       "type": "card_select",
       "label": "Preis-Card „~5 € am Tag\" anzeigen?",
       "section": "Sektionen",
-      "order": 15,
+      "order": 16,
       "required": true,
       "default_value": "an",
       "preview_value": "an",
@@ -308,11 +337,23 @@
       ]
     },
     {
+      "key": "about_bild",
+      "type": "image",
+      "label": "Foto für „Über mich\"",
+      "section": "Inhalte",
+      "order": 17,
+      "required": true,
+      "aspect_ratio": "4/5",
+      "default_value": "https://app.finestsites.io/placeholders/about-bild.webp",
+      "preview_value": "",
+      "placeholder_text": "Persönliches Foto für die „Über mich\"-Sektion — ideal im Hochformat (4:5). Im Duo-Modus gerne ein gemeinsames Foto von euch beiden."
+    },
+    {
       "key": "about_me_html",
       "type": "richtext",
       "label": "Über mich-Text",
       "section": "Inhalte",
-      "order": 16,
+      "order": 18,
       "required": true,
       "max_length": 1500,
       "default_value": "<p>Kurz zu mir: Ich komme aus [Ort] und bin seit [Zeitraum] mit dem cellRESET-Konzept unterwegs. Ich kenne die Produkte selbst und helfe dir, deinen eigenen Weg zu finden — ohne Druck.</p>",
@@ -324,6 +365,7 @@
     "vorname": "Julia",
     "nachname": "Becker",
     "email_benachrichtigung": "julia@example.com",
+    "hero_variante": "junge-frau",
     "farbthema": "mint",
     "ziel_sektion": "an",
     "preis_anzeigen": "an",
