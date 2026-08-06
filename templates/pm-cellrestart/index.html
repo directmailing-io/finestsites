@@ -5405,6 +5405,7 @@ img {
         <div class="step-summary" id="stepSummary" hidden></div>
 
         <form class="contact-form" id="contactForm" action="/.finestsites/forms/kontakt" method="POST">
+          <input type="hidden" name="_recipient" value="{{email_benachrichtigung}}">
           <input type="text" name="_honeypot" style="position:absolute;left:-9999px;opacity:0" tabindex="-1" autocomplete="off">
           <div class="form-row">
             <label class="form-label" for="cf-name"><span class="l-de">Dein Name</span><span class="l-en">Your name</span></label>
