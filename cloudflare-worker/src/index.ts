@@ -219,7 +219,32 @@ function processLoops(html: string, data: Data, stack: Item[]): string {
   return out
 }
 
+/**
+ * Wraps the last content-carrying token of a user-typed intro line in an accent span,
+ * so the greeting keeps its Apple-style emphasized final word (matches the default
+ * template greeting where "Daniel." is highlighted). Handles trailing punctuation
+ * (., !, ?, …) so "Willkommen!" renders as <accent>Willkommen!</accent> and
+ * "Hey, ich bin Daniel." highlights "Daniel." not just "Daniel".
+ */
+function wrapAccentLastWord(text: string): string {
+  const trimmed = text.trim()
+  if (!trimmed) return ''
+  const safe = htmlEscape(trimmed)
+  const m = safe.match(/^(.*?)(\s+)(\S+)$/)
+  if (!m) return `<span class="accent">${safe}</span>`
+  return `${m[1]}${m[2]}<span class="accent">${m[3]}</span>`
+}
+
 function render(html: string, data: Data): string {
+  // Derive about_intro_html from user-typed about_intro (accent on last word).
+  // Empty/missing about_intro leaves about_intro_html empty, so the template's
+  // {{#unless about_intro}}...{{/unless}} fallback (personalized default) renders.
+  if (typeof data.about_intro === 'string' && data.about_intro.trim()) {
+    data.about_intro_html = wrapAccentLastWord(data.about_intro)
+  } else {
+    data.about_intro_html = ''
+  }
+
   html = processLoops(html, data, [])
   html = evalConditionalBlocks(html, data, [])
   // {{{key}}} triple-brace raw substitution (for stored HTML, e.g. richtext)

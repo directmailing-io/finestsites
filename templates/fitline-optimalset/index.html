@@ -5518,6 +5518,7 @@ html.js .food-card { opacity: 1; }
 }
 .about-photo img { width: 100%; height: auto; display: block; }
 .about-content h2 { margin-bottom: 24px; max-width: 18ch; }
+.about-content h2 .accent { color: var(--accent); }
 .about-content p { font-size: var(--text-lead); line-height: 1.7; margin-bottom: 14px; color: var(--text); }
 .about-meta { margin-top: 28px; display: flex; gap: 24px; flex-wrap: wrap; font-size: var(--text-sm); }
 .about-meta-item { display: flex; align-items: center; gap: 8px; color: var(--text-muted); }
@@ -8202,7 +8203,7 @@ section.section.reviews {
     </div>
     <div class="about-content">
       <span class="section-eyebrow reveal"><span class="l-de">{{#unless team_modus=team}}Wer ich bin{{/unless}}{{#if team_modus=team}}Wer wir sind{{/if}}</span><span class="l-en">{{#unless team_modus=team}}Who I am{{/unless}}{{#if team_modus=team}}Who we are{{/if}}</span></span>
-      <h2 class="reveal"><span class="l-de">{{#unless team_modus=team}}Hi, ich bin {{vorname}}.{{/unless}}{{#if team_modus=team}}Hi, wir sind {{vorname}}{{#if partner_vorname}} & {{partner_vorname}}{{/if}}.{{/if}}</span><span class="l-en">{{#unless team_modus=team}}Hi, I'm {{vorname}}.{{/unless}}{{#if team_modus=team}}Hi, we're {{vorname}}{{#if partner_vorname}} & {{partner_vorname}}{{/if}}.{{/if}}</span></h2>
+      <h2 class="reveal">{{#if about_intro}}{{{about_intro_html}}}{{/if}}{{#unless about_intro}}<span class="l-de">{{#unless team_modus=team}}Hi, ich bin <span class="accent">{{vorname}}.</span>{{/unless}}{{#if team_modus=team}}Hi, wir sind <span class="accent">{{vorname}}{{#if partner_vorname}} & {{partner_vorname}}{{/if}}.</span>{{/if}}</span><span class="l-en">{{#unless team_modus=team}}Hi, I'm <span class="accent">{{vorname}}.</span>{{/unless}}{{#if team_modus=team}}Hi, we're <span class="accent">{{vorname}}{{#if partner_vorname}} & {{partner_vorname}}{{/if}}.</span>{{/if}}</span>{{/unless}}</h2>
       <div class="about-me-richtext reveal"><div class="l-de">{{about_me_html}}</div><div class="l-en">{{about_me_html_en}}</div></div>
 {{#unless team_modus=team}}
       <div class="about-meta reveal">

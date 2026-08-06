@@ -2306,6 +2306,157 @@ function SocialUrlField({ field, value, onChange }: {
   )
 }
 
+// ─── About-Me Intro Field ─────────────────────────────────────────────────────
+
+// Splits the last whitespace-separated token so we can visually highlight it —
+// mirrors the worker's wrapAccentLastWord() so the editor preview matches
+// what visitors see on the published site.
+function splitLastToken(text: string): { head: string; tail: string } {
+  const trimmed = text.trim()
+  if (!trimmed) return { head: '', tail: '' }
+  const m = trimmed.match(/^(.*?)(\s+)(\S+)$/)
+  if (!m) return { head: '', tail: trimmed }
+  return { head: m[1] + m[2], tail: m[3] }
+}
+
+function AboutIntroField({ field, value, onChange, siblings }: {
+  field: FieldSchema
+  value: string
+  onChange: (v: string) => void
+  siblings: Record<string, string>
+}) {
+  const [editing, setEditing] = useState(false)
+  const [draft, setDraft] = useState(value)
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => { setDraft(value) }, [value])
+  useEffect(() => { if (editing) inputRef.current?.focus() }, [editing])
+
+  const vorname = (siblings['vorname'] || '').trim() || 'Daniel'
+  const vorname2 = (siblings['vorname2'] || '').trim()
+  const partnerVorname = (siblings['partner_vorname'] || '').trim()
+  const isDuo = siblings['partner_modus'] === 'duo' || siblings['team_modus'] === 'team'
+  const duoName = vorname2 || partnerVorname
+  const personalizedDefault = isDuo && duoName
+    ? `Hi, wir sind ${vorname} & ${duoName}.`
+    : `Hi, ich bin ${vorname}.`
+
+  const hasCustom = !!value.trim()
+  const displayText = hasCustom ? value : personalizedDefault
+  const { head, tail } = splitLastToken(displayText)
+  const maxLength = field.max_length ?? 60
+  const draftLen = draft.trim().length
+  const overLimit = draftLen > maxLength
+  const canSave = draft.trim() !== value.trim() && !overLimit
+
+  function commit() {
+    if (overLimit) return
+    onChange(draft.trim())
+    setEditing(false)
+  }
+  function reset() {
+    setDraft('')
+    onChange('')
+    setEditing(false)
+  }
+  function cancel() {
+    setDraft(value)
+    setEditing(false)
+  }
+
+  if (!editing) {
+    return (
+      <div>
+        <button type="button"
+          onClick={() => setEditing(true)}
+          className="group w-full text-left flex items-start justify-between gap-3 rounded-2xl border transition-colors"
+          style={{
+            padding: '18px 20px',
+            background: '#fff',
+            borderColor: '#E5E7EB',
+          }}
+          onMouseEnter={e => (e.currentTarget.style.borderColor = '#111827')}
+          onMouseLeave={e => (e.currentTarget.style.borderColor = '#E5E7EB')}>
+          <span className="flex-1 min-w-0 text-[17px] leading-snug" style={{ color: hasCustom ? '#111827' : '#6B7280' }}>
+            {head}<span style={{ color: '#1F7A3D', fontWeight: 600 }}>{tail}</span>
+          </span>
+          <span className="flex-shrink-0 flex items-center gap-1.5 text-xs font-medium" style={{ color: '#6B7280' }}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/>
+            </svg>
+            Bearbeiten
+          </span>
+        </button>
+        {!hasCustom ? (
+          <p className="text-xs mt-2" style={{ color: '#9CA3AF' }}>
+            Automatisch mit deinem Vornamen personalisiert.
+          </p>
+        ) : (
+          <div className="flex items-center gap-3 mt-2">
+            <span className="text-xs" style={{ color: '#9CA3AF' }}>Eigene Begrüßung</span>
+            <button type="button" onClick={reset} className="text-xs underline" style={{ color: '#6B7280' }}>
+              Standard wiederherstellen
+            </button>
+          </div>
+        )}
+      </div>
+    )
+  }
+
+  return (
+    <div>
+      <div className="rounded-2xl border" style={{ background: '#fff', borderColor: '#111827', padding: '14px 16px' }}>
+        <input
+          ref={inputRef}
+          type="text"
+          value={draft}
+          onChange={e => setDraft(e.target.value)}
+          onKeyDown={e => {
+            if (e.key === 'Enter') { e.preventDefault(); commit() }
+            if (e.key === 'Escape') cancel()
+          }}
+          maxLength={maxLength + 10}
+          placeholder={personalizedDefault}
+          className="w-full text-[17px] leading-snug outline-none bg-transparent"
+          style={{ color: '#111827' }}
+        />
+      </div>
+      <div className="flex items-center justify-between mt-2">
+        <span className="text-xs" style={{ color: overLimit ? '#DC2626' : '#9CA3AF' }}>
+          {draftLen} / {maxLength}
+        </span>
+        <div className="flex items-center gap-2">
+          <button type="button" onClick={cancel}
+            className="text-xs px-3 py-1.5 rounded-full transition-colors"
+            style={{ color: '#6B7280', background: 'transparent' }}
+            onMouseEnter={e => (e.currentTarget.style.background = '#F3F4F6')}
+            onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
+            Abbrechen
+          </button>
+          {value.trim() && (
+            <button type="button" onClick={reset}
+              className="text-xs px-3 py-1.5 rounded-full transition-colors"
+              style={{ color: '#6B7280', background: 'transparent' }}
+              onMouseEnter={e => (e.currentTarget.style.background = '#F3F4F6')}
+              onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
+              Auf Standard zurücksetzen
+            </button>
+          )}
+          <button type="button" onClick={commit} disabled={!canSave}
+            className="text-xs font-semibold px-4 py-1.5 rounded-full transition-colors"
+            style={{
+              color: '#fff',
+              background: canSave ? '#111827' : '#D1D5DB',
+              cursor: canSave ? 'pointer' : 'not-allowed',
+            }}>
+            Fertig
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 // ─── Field Renderer ───────────────────────────────────────────────────────────
 
 // Compares compliance-checked texts ignoring markup/whitespace differences.
@@ -2315,7 +2466,7 @@ function complianceTextsMatch(a?: string, b?: string): boolean {
   return norm(a) === norm(b)
 }
 
-function FieldRenderer({ field, value, onChange, onItemFocus, complianceApprovedText, complianceBaseText, onComplianceApproved, onComplianceRevoked, narrow, onMobileSelect }: {
+function FieldRenderer({ field, value, onChange, onItemFocus, complianceApprovedText, complianceBaseText, onComplianceApproved, onComplianceRevoked, narrow, onMobileSelect, siblings }: {
   field: FieldSchema; value: string; onChange: (v: string) => void
   onItemFocus?: (item: Record<string, string> | null, idx: number) => void
   complianceApprovedText?: string
@@ -2324,6 +2475,7 @@ function FieldRenderer({ field, value, onChange, onItemFocus, complianceApproved
   onComplianceRevoked?: () => void
   narrow?: boolean
   onMobileSelect?: () => void
+  siblings?: Record<string, string>
 }) {
   switch (field.type) {
     case 'textarea':
@@ -2395,6 +2547,8 @@ function FieldRenderer({ field, value, onChange, onItemFocus, complianceApproved
       return <ToggleField field={field} value={value} onChange={onChange} />
     case 'range':
       return <RangeField field={field} value={value} onChange={onChange} />
+    case 'intro':
+      return <AboutIntroField field={field} value={value} onChange={onChange} siblings={siblings ?? {}} />
     default:
       if (getPhoneMode(field.key)) return <PhoneField field={field} value={value} onChange={onChange} />
       return (
@@ -3525,8 +3679,9 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
                                 Wiederholbare Einträge, beliebig viele hinzufügen
                               </p>
                             )}
-                            {/* Toggles show their description inside the control — avoid doubling it */}
-                            {!isCollapsed && field.placeholder_text && field.type !== 'loop' && field.type !== 'toggle' && (
+                            {/* Toggles show their description inside the control — avoid doubling it.
+                                Intro rolls its own helper text ("Automatisch personalisiert" vs "Eigene Begrüßung"). */}
+                            {!isCollapsed && field.placeholder_text && field.type !== 'loop' && field.type !== 'toggle' && field.type !== 'intro' && (
                               <p className="text-sm text-gray-400 mt-0.5">{field.placeholder_text}</p>
                             )}
                           </div>
@@ -3535,6 +3690,7 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
                           field={field}
                           value={values[field.key] ?? ''}
                           onChange={v => handleChange(field.key, v)}
+                          siblings={values}
                           narrow={narrowEditor}
                           onMobileSelect={() => {
                             if (previewTooltipTimerRef.current) clearTimeout(previewTooltipTimerRef.current)

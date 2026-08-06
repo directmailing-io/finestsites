@@ -320,6 +320,18 @@
       "placeholder_text": "Persönliches Foto für die „Über mich\"-Sektion — ideal im Hochformat (4:5). Im Duo-Modus gerne ein gemeinsames Foto von euch beiden."
     },
     {
+      "key": "about_intro",
+      "type": "intro",
+      "label": "Begrüßung",
+      "section": "Inhalte",
+      "order": 17.5,
+      "required": false,
+      "max_length": 60,
+      "default_value": "",
+      "preview_value": "",
+      "placeholder_text": "Standard: Hey, ich bin {vorname}. Klick auf Bearbeiten, wenn du eine eigene Begrüßung willst."
+    },
+    {
       "key": "about_me_html",
       "type": "richtext",
       "label": "Über mich-Text",
