@@ -337,6 +337,7 @@
       "label": "Über mich-Text",
       "section": "Inhalte",
       "order": 18,
+      "compliance_check": true,
       "required": true,
       "max_length": 1500,
       "default_value": "<p>Kurz zu mir: Ich komme aus [Ort] und bin seit [Zeitraum] mit dem cellRESET-Konzept unterwegs. Ich kenne die Produkte selbst und helfe dir, deinen eigenen Weg zu finden — ohne Druck.</p>",
