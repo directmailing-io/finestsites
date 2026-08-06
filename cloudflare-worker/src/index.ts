@@ -1077,7 +1077,7 @@ export default {
       // Look for a marker in the RAW template around the about-h2
       const aboutRawIdx = templateHtml.indexOf('<div class="about-content">')
       const rawSnippet = aboutRawIdx >= 0
-        ? templateHtml.substring(aboutRawIdx, Math.min(aboutRawIdx + 500, templateHtml.length))
+        ? templateHtml.substring(aboutRawIdx, Math.min(aboutRawIdx + 900, templateHtml.length))
         : 'no about-content marker in template'
       const aboutRenderedIdx = renderedHtml.indexOf('<div class="about-content">')
       const renderedSnippet = aboutRenderedIdx >= 0
@@ -1088,8 +1088,8 @@ export default {
         de: dataMap.about_intro_de_html ?? null,
         en: dataMap.about_intro_en_html ?? null,
         keys: Object.keys(dataMap).length,
-        rawTpl: rawSnippet.replace(/\s+/g, ' ').slice(0, 200),
-        rendered: renderedSnippet.replace(/\s+/g, ' ').slice(0, 200),
+        rawTpl: rawSnippet.replace(/\s+/g, ' ').slice(0, 600),
+        rendered: renderedSnippet.replace(/\s+/g, ' ').slice(0, 300),
       })
 
       // Link the "Made with FinestSites" credit in template footers
@@ -1133,7 +1133,7 @@ export default {
           'Content-Type': 'text/html; charset=utf-8',
           'Cache-Control': 'no-cache',
           'X-Powered-By': 'FinestSites',
-          'X-FS-Debug-Intro': _debugIntro.slice(0, 900),
+          'X-FS-Debug-Intro': _debugIntro.slice(0, 1500),
         },
       })
 
