@@ -2342,14 +2342,17 @@ function buildIntroValue(words: string[], accentSet: Set<number>): string {
 }
 
 // Theme accent colors so the editor preview + chips match the live site color.
-// Kept intentionally small; unknown themes fall back to the neutral green.
+// Values mirror each template's --green-dark (cellrestart) / --blue (wellpreneur) /
+// --accent (fitline) — the actual CSS variable each template's .accent rule uses.
 const THEME_ACCENT: Record<string, string> = {
-  // pm-cellrestart (theme-lime, theme-sage, theme-amber, theme-ocean, theme-ziegel, theme-mint)
-  lime: '#D14A3C', sage: '#C97D5D', amber: '#8CA47A', ocean: '#D89B62', ziegel: '#D8A868', mint: '#F4C22F',
-  // fitline-optimalset (farbthema: gruen/blau/rot/orange)
-  gruen: '#338950', blau: '#2C5A8C', rot: '#C0392B', orange: '#D4851C',
-  // pm-business-wellpreneur (farbthema: blau/gruen/orange/skyblau — uses --blue accent)
-  skyblau: '#0EA5E9',
+  // pm-cellrestart — --green-dark per theme
+  lime: '#5F9C1F', sage: '#6D8259', amber: '#B88530', ocean: '#3A6F8C', ziegel: '#A22A20', mint: '#3E9E80',
+  // fitline-optimalset — --accent per theme
+  gruen: '#338950', rot: '#C0392B', orange: '#D4851C',
+  // pm-business-wellpreneur — --blue per theme (blau shares gruen/rot spelling with fitline;
+  // fitline names win when the same key means different colors — both live sites use their own CSS
+  // so the chip color is a UI-only preview and the live render always uses the correct theme.)
+  blau: '#2563EB', skyblau: '#0284C7',
 }
 
 function AboutIntroField({ field, value, onChange, siblings }: {
