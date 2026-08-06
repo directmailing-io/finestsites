@@ -3172,6 +3172,25 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
     .filter(f => checkShowWhen(f as unknown as LoopSubField, values, fields as unknown as LoopSubField[]))
     .filter(f => !isComplianceApproved(f.key))
   const allRequiredComplete = missingRequiredFields.length === 0 && complianceBlockedFields.length === 0
+  // One canonical reason string, used by the mobile bottom bar hint and the
+  // tap-toast fallback (so users on small screens who tap the greyed-out
+  // publish button always learn WHY it's greyed out).
+  const publishBlockReason: { text: string; color: string } | null = missingRequiredFields.length > 0
+    ? { text: `Noch ausfüllen: ${missingRequiredFields.map(f => f.label).join(', ')}`, color: '#DC2626' }
+    : complianceBlockedFields.length > 0
+      ? { text: `EU-Check fehlt: ${complianceBlockedFields.map(f => f.label).join(', ')}. Öffne den Text und tipp auf „Text prüfen".`, color: '#D97706' }
+      : null
+  const handleBlockedPublishTap = () => {
+    if (!publishBlockReason) return
+    showToast(publishBlockReason.text, 'error')
+    // Jump to the first blocking field's section so users can fix it in one tap.
+    const firstBlocker = missingRequiredFields[0] ?? complianceBlockedFields[0]
+    const targetSection = firstBlocker?.section
+    if (targetSection && sections.includes(targetSection) && targetSection !== activeSection) {
+      setActiveSection(targetSection)
+      document.getElementById('editor-scroll')?.scrollTo({ top: 0, behavior: 'smooth' })
+    }
+  }
 
   // Top-level show_when: hide fields whose visibility depends on another field
   // whose current value doesn't match the gate. Cascades correctly via the
@@ -3915,8 +3934,27 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
           </div>{/* end editor-scroll */}
 
           {/* ── Mobile Bottom Action Bar ── */}
-          <div className="lg:hidden flex-shrink-0 bg-white border-t flex items-center gap-3 px-4 pt-3 shadow-[0_-1px_0_0_#E5E7EB]"
+          <div className="lg:hidden flex-shrink-0 bg-white border-t flex flex-col shadow-[0_-1px_0_0_#E5E7EB]"
             style={{ borderColor: '#E5E7EB', paddingBottom: 'max(env(safe-area-inset-bottom, 16px), 16px)' }}>
+          {/* Publish-blocked hint — shown above the button row so users on
+              small screens see WHY the CTA is greyed out (desktop already
+              has this hint next to the last-section publish button). */}
+          {!isDomainSection && publishBlockReason && (isLast || sections.length <= 1) && (
+            <div className="px-4 pt-2.5 pb-1.5">
+              <div
+                onClick={handleBlockedPublishTap}
+                className="flex items-start gap-2 rounded-xl px-3 py-2.5 cursor-pointer"
+                style={{ background: publishBlockReason.color === '#DC2626' ? '#FEF2F2' : '#FFF7ED', border: `1px solid ${publishBlockReason.color === '#DC2626' ? '#FECACA' : '#FED7AA'}` }}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={publishBlockReason.color} strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginTop: 1 }}>
+                  <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+                </svg>
+                <p className="text-xs leading-snug" style={{ color: publishBlockReason.color, fontWeight: 500 }}>
+                  {publishBlockReason.text}
+                </p>
+              </div>
+            </div>
+          )}
+          <div className="flex items-center gap-3 px-4 pt-3">
 
             {/* Zurück */}
             {!isDomainSection && sections.length > 1 && !isFirst && (
@@ -3941,7 +3979,10 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
                 <div />
               ) : sections.length <= 1 ? (
                 /* Single section: Publish */
-                <button onClick={() => handlePublish()} disabled={publishing || !allRequiredComplete}
+                <button
+                  onClick={() => allRequiredComplete ? handlePublish() : handleBlockedPublishTap()}
+                  disabled={publishing}
+                  aria-disabled={!allRequiredComplete}
                   className="w-full flex items-center justify-center gap-2 py-3.5 text-sm font-bold text-white rounded-full"
                   style={{ background: allRequiredComplete ? (isPublished ? '#16A34A' : '#1a1a1a') : '#9CA3AF', opacity: publishing ? 0.7 : 1 }}>
                   {publishing ? <span className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" /> : null}
@@ -3993,7 +4034,10 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
                     </svg>
                     Vorschau
                   </button>
-                  <button onClick={() => handlePublish()} disabled={publishing || !allRequiredComplete}
+                  <button
+                    onClick={() => allRequiredComplete ? handlePublish() : handleBlockedPublishTap()}
+                    disabled={publishing}
+                    aria-disabled={!allRequiredComplete}
                     className="flex-1 flex items-center justify-center gap-2 py-3.5 text-sm font-bold text-white rounded-full"
                     style={{
                       background: allRequiredComplete ? (isPublished ? '#16A34A' : '#1a1a1a') : '#9CA3AF',
@@ -4006,6 +4050,7 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
                 </div>
               )}
             </div>
+          </div>
           </div>
         </main>
 
