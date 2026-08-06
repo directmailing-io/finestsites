@@ -169,6 +169,7 @@
       "key": "about_me_html",
       "label": "„Über mich\"-Text",
       "type": "richtext",
+      "order": 18,
       "compliance_check": true,
       "required": true,
       "placeholder_text": "Wie bist du zum Optimalset gekommen? Was überzeugt dich? Nutze die Buttons oben für Fettdruck, kursive Schrift und Listen.",
