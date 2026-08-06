@@ -1074,24 +1074,6 @@ export default {
       for (const r of rows) dataMap[r.fieldKey] = r.fieldValue ?? ''
 
       let renderedHtml = render(templateHtml, dataMap)
-      // Look for a marker in the RAW template around the about-h2
-      const aboutRawIdx = templateHtml.indexOf('<div class="about-content">')
-      const rawSnippet = aboutRawIdx >= 0
-        ? templateHtml.substring(aboutRawIdx, Math.min(aboutRawIdx + 900, templateHtml.length))
-        : 'no about-content marker in template'
-      const aboutRenderedIdx = renderedHtml.indexOf('<div class="about-content">')
-      const renderedSnippet = aboutRenderedIdx >= 0
-        ? renderedHtml.substring(aboutRenderedIdx, Math.min(aboutRenderedIdx + 400, renderedHtml.length))
-        : 'no about-content in output'
-      const _debugIntro = JSON.stringify({
-        raw: dataMap.about_intro ?? null,
-        de: dataMap.about_intro_de_html ?? null,
-        en: dataMap.about_intro_en_html ?? null,
-        keys: Object.keys(dataMap).length,
-        tplLen: templateHtml.length,
-        tplHas_new: templateHtml.includes('about_intro_de_html'),
-        tplHas_old: templateHtml.includes('about_intro_html'),
-      })
 
       // Link the "Made with FinestSites" credit in template footers
       renderedHtml = renderedHtml.replace(
@@ -1134,7 +1116,6 @@ export default {
           'Content-Type': 'text/html; charset=utf-8',
           'Cache-Control': 'no-cache',
           'X-Powered-By': 'FinestSites',
-          'X-FS-Debug-Intro': _debugIntro.slice(0, 1500),
         },
       })
 
