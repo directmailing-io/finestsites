@@ -1088,8 +1088,9 @@ export default {
         de: dataMap.about_intro_de_html ?? null,
         en: dataMap.about_intro_en_html ?? null,
         keys: Object.keys(dataMap).length,
-        rawTpl: rawSnippet.replace(/\s+/g, ' ').slice(0, 600),
-        rendered: renderedSnippet.replace(/\s+/g, ' ').slice(0, 300),
+        tplLen: templateHtml.length,
+        tplHas_new: templateHtml.includes('about_intro_de_html'),
+        tplHas_old: templateHtml.includes('about_intro_html'),
       })
 
       // Link the "Made with FinestSites" credit in template footers
