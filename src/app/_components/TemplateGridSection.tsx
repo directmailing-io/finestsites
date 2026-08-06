@@ -35,10 +35,36 @@ const CARD_BASE: React.CSSProperties = {
   transition: 'box-shadow 0.18s, transform 0.18s',
 }
 
+// Compact DE + GB flag SVGs (12x12) — surfaced on template cards so users see
+// at a glance which templates ship with both German and English content.
+function LanguageFlags() {
+  return (
+    <span
+      title="Verfügbar auf Deutsch und Englisch"
+      aria-label="Verfügbar auf Deutsch und Englisch"
+      style={{ display: 'inline-flex', alignItems: 'center', gap: 4, marginLeft: 6, verticalAlign: 'middle' }}
+    >
+      <svg width="14" height="14" viewBox="0 0 20 20" aria-hidden="true" style={{ borderRadius: '50%', boxShadow: '0 0 0 1px rgba(255,255,255,0.6)' }}>
+        <rect width="20" height="6.67" y="0" fill="#000" />
+        <rect width="20" height="6.67" y="6.67" fill="#DD0000" />
+        <rect width="20" height="6.66" y="13.34" fill="#FFCE00" />
+      </svg>
+      <svg width="14" height="14" viewBox="0 0 20 20" aria-hidden="true" style={{ borderRadius: '50%', boxShadow: '0 0 0 1px rgba(255,255,255,0.6)' }}>
+        <rect width="20" height="20" fill="#012169" />
+        <path d="M0 0 L20 20 M20 0 L0 20" stroke="#fff" strokeWidth="4" />
+        <path d="M0 0 L20 20 M20 0 L0 20" stroke="#C8102E" strokeWidth="2" />
+        <path d="M10 0 V20 M0 10 H20" stroke="#fff" strokeWidth="6" />
+        <path d="M10 0 V20 M0 10 H20" stroke="#C8102E" strokeWidth="3.5" />
+      </svg>
+    </span>
+  )
+}
+
 function TemplateCard({ tpl }: { tpl: TemplateCardData }) {
   const images = Array.isArray(tpl.previewImages) ? tpl.previewImages as string[] : []
   const cover = images[0] ?? null
   const companyLabel = tpl.nmCompanies[0] ?? null
+  const isMultilingual = tpl.tags.includes('multilingual')
 
   if (tpl.isComingSoon) {
     return (
@@ -88,7 +114,10 @@ function TemplateCard({ tpl }: { tpl: TemplateCardData }) {
         <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.5) 38%, rgba(0,0,0,0.1) 68%, transparent 100%)' }} />
         <div style={{ position: 'absolute', bottom: 14, left: 16, right: 16 }}>
           {companyLabel && <p style={{ fontSize: 10, fontWeight: 600, color: 'rgba(255,255,255,0.8)', margin: '0 0 4px' }}>Geeignet für {companyLabel}</p>}
-          <h3 style={{ fontSize: 15, fontWeight: 700, color: '#fff', lineHeight: 1.2, margin: 0, textShadow: '0 1px 4px rgba(0,0,0,0.35)' }}>{tpl.title}</h3>
+          <h3 style={{ fontSize: 15, fontWeight: 700, color: '#fff', lineHeight: 1.2, margin: 0, textShadow: '0 1px 4px rgba(0,0,0,0.35)' }}>
+            {tpl.title}
+            {isMultilingual && <LanguageFlags />}
+          </h3>
         </div>
       </div>
       <div style={{ padding: '12px 16px 14px', flex: 1, display: 'flex', flexDirection: 'column', gap: 8 }}>
