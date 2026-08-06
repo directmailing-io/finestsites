@@ -2308,15 +2308,33 @@ function SocialUrlField({ field, value, onChange }: {
 
 // ─── About-Me Intro Field ─────────────────────────────────────────────────────
 
-// Splits the last whitespace-separated token so we can visually highlight it —
-// mirrors the worker's wrapAccentLastWord() so the editor preview matches
-// what visitors see on the published site.
-function splitLastToken(text: string): { head: string; tail: string } {
-  const trimmed = text.trim()
-  if (!trimmed) return { head: '', tail: '' }
-  const m = trimmed.match(/^(.*?)(\s+)(\S+)$/)
-  if (!m) return { head: '', tail: trimmed }
-  return { head: m[1] + m[2], tail: m[3] }
+// Storage format: the accent word is wrapped in *asterisks* so the worker can
+// find it (e.g. "Willkommen auf meiner *Reise*"). This helper turns the raw
+// stored value into { plainText, accentIndex } for rendering and picking —
+// falls back to the last token when no marker is present so old values and
+// free-form typing still highlight sensibly.
+function parseIntroValue(raw: string): { plain: string; words: string[]; accentIdx: number } {
+  const trimmed = (raw || '').trim()
+  if (!trimmed) return { plain: '', words: [], accentIdx: -1 }
+  // Strip asterisks for the plain display / editing text
+  const markerMatch = trimmed.match(/^(.*?)\*([^*\s][^*]*?)\*(.*)$/)
+  const plain = markerMatch
+    ? (markerMatch[1] + markerMatch[2] + markerMatch[3]).replace(/\s+/g, ' ').trim()
+    : trimmed
+  const words = plain.split(/\s+/).filter(Boolean)
+  let accentIdx = words.length - 1
+  if (markerMatch) {
+    const beforeWords = markerMatch[1].trim().split(/\s+/).filter(Boolean).length
+    accentIdx = beforeWords
+  }
+  return { plain, words, accentIdx }
+}
+
+// Rebuild the stored value with *asterisks* around the chosen word.
+function buildIntroValue(words: string[], accentIdx: number): string {
+  if (!words.length) return ''
+  const clamped = Math.min(Math.max(accentIdx, 0), words.length - 1)
+  return words.map((w, i) => i === clamped ? `*${w}*` : w).join(' ')
 }
 
 function AboutIntroField({ field, value, onChange, siblings }: {
@@ -2326,10 +2344,19 @@ function AboutIntroField({ field, value, onChange, siblings }: {
   siblings: Record<string, string>
 }) {
   const [editing, setEditing] = useState(false)
-  const [draft, setDraft] = useState(value)
+  // Draft holds the *plain* text (without asterisks) — much friendlier to type
+  // than seeing markers on screen. The accent word is picked separately via
+  // clickable chips below the input.
+  const initial = parseIntroValue(value)
+  const [draft, setDraft] = useState(initial.plain)
+  const [draftAccent, setDraftAccent] = useState(initial.accentIdx)
   const inputRef = useRef<HTMLInputElement>(null)
 
-  useEffect(() => { setDraft(value) }, [value])
+  useEffect(() => {
+    const parsed = parseIntroValue(value)
+    setDraft(parsed.plain)
+    setDraftAccent(parsed.accentIdx)
+  }, [value])
   useEffect(() => { if (editing) inputRef.current?.focus() }, [editing])
 
   const vorname = (siblings['vorname'] || '').trim() || 'Daniel'
@@ -2340,27 +2367,35 @@ function AboutIntroField({ field, value, onChange, siblings }: {
   const personalizedDefault = isDuo && duoName
     ? `Hi, wir sind ${vorname} & ${duoName}.`
     : `Hi, ich bin ${vorname}.`
+  const defaultParsed = parseIntroValue(personalizedDefault)
 
   const hasCustom = !!value.trim()
-  const displayText = hasCustom ? value : personalizedDefault
-  const { head, tail } = splitLastToken(displayText)
+  const displayParsed = hasCustom ? parseIntroValue(value) : defaultParsed
   const maxLength = field.max_length ?? 60
+  const draftWords = draft.trim().split(/\s+/).filter(Boolean)
+  // Keep draft accent in bounds as user types
+  const effectiveAccent = draftWords.length
+    ? Math.min(Math.max(draftAccent < 0 ? draftWords.length - 1 : draftAccent, 0), draftWords.length - 1)
+    : -1
   const draftLen = draft.trim().length
   const overLimit = draftLen > maxLength
-  const canSave = draft.trim() !== value.trim() && !overLimit
+  const draftValue = buildIntroValue(draftWords, effectiveAccent)
+  const canSave = draftValue !== value && !overLimit && draftWords.length > 0
 
   function commit() {
-    if (overLimit) return
-    onChange(draft.trim())
+    if (overLimit || !draftWords.length) return
+    onChange(draftValue)
     setEditing(false)
   }
   function reset() {
     setDraft('')
+    setDraftAccent(-1)
     onChange('')
     setEditing(false)
   }
   function cancel() {
-    setDraft(value)
+    setDraft(initial.plain)
+    setDraftAccent(initial.accentIdx)
     setEditing(false)
   }
 
@@ -2378,7 +2413,12 @@ function AboutIntroField({ field, value, onChange, siblings }: {
           onMouseEnter={e => (e.currentTarget.style.borderColor = '#111827')}
           onMouseLeave={e => (e.currentTarget.style.borderColor = '#E5E7EB')}>
           <span className="flex-1 min-w-0 text-[17px] leading-snug" style={{ color: hasCustom ? '#111827' : '#6B7280' }}>
-            {head}<span style={{ color: '#1F7A3D', fontWeight: 600 }}>{tail}</span>
+            {displayParsed.words.map((w, i) => (
+              <span key={i}>
+                {i > 0 && ' '}
+                <span style={i === displayParsed.accentIdx ? { color: '#1F7A3D', fontWeight: 600 } : undefined}>{w}</span>
+              </span>
+            ))}
           </span>
           <span className="flex-shrink-0 flex items-center gap-1.5 text-xs font-medium" style={{ color: '#6B7280' }}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -2421,7 +2461,33 @@ function AboutIntroField({ field, value, onChange, siblings }: {
           style={{ color: '#111827' }}
         />
       </div>
-      <div className="flex items-center justify-between mt-2">
+
+      {draftWords.length >= 2 && (
+        <div className="mt-3">
+          <p className="text-xs mb-2" style={{ color: '#6B7280' }}>
+            Welches Wort soll farbig hervorgehoben werden?
+          </p>
+          <div className="flex flex-wrap gap-1.5">
+            {draftWords.map((w, i) => {
+              const isSel = i === effectiveAccent
+              return (
+                <button key={i} type="button"
+                  onClick={() => setDraftAccent(i)}
+                  className="text-sm px-2.5 py-1 rounded-full transition-colors"
+                  style={{
+                    background: isSel ? '#1F7A3D' : '#F3F4F6',
+                    color: isSel ? '#fff' : '#374151',
+                    fontWeight: isSel ? 600 : 400,
+                  }}>
+                  {w}
+                </button>
+              )
+            })}
+          </div>
+        </div>
+      )}
+
+      <div className="flex items-center justify-between mt-3">
         <span className="text-xs" style={{ color: overLimit ? '#DC2626' : '#9CA3AF' }}>
           {draftLen} / {maxLength}
         </span>
@@ -2789,7 +2855,7 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
     // re-apply those, so an in-place update would leave a half-styled DOM
     // (the bug where switching theme leaves the preview black). For these
     // we skip the live update and reload directly, with scroll preserved.
-    const structural = fieldDef && ['card_select', 'color', 'toggle', 'range', 'image'].includes(fieldDef.type)
+    const structural = fieldDef && ['card_select', 'color', 'toggle', 'range', 'image', 'intro'].includes(fieldDef.type)
     if (structural) {
       try {
         const iframe = livePreviewIframeRef.current

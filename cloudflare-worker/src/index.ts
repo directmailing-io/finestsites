@@ -220,19 +220,28 @@ function processLoops(html: string, data: Data, stack: Item[]): string {
 }
 
 /**
- * Wraps the last content-carrying token of a user-typed intro line in an accent span,
- * so the greeting keeps its Apple-style emphasized final word (matches the default
- * template greeting where "Daniel." is highlighted). Handles trailing punctuation
- * (., !, ?, …) so "Willkommen!" renders as <accent>Willkommen!</accent> and
- * "Hey, ich bin Daniel." highlights "Daniel." not just "Daniel".
+ * Renders a user-typed greeting with exactly one accent-highlighted word.
+ * Users mark the highlight by wrapping the target token in *asterisks*
+ * ("Willkommen auf meiner *Reise*") — the editor's word-picker writes those
+ * markers under the hood. If no marker is present we fall back to the last
+ * whitespace-separated token so existing values (and free-form typing without
+ * the picker) still get a sensible highlight. Trailing punctuation stays with
+ * the highlighted word so "Daniel." highlights the whole "Daniel." token.
  */
-function wrapAccentLastWord(text: string): string {
+function renderIntroWithAccent(text: string): string {
   const trimmed = text.trim()
   if (!trimmed) return ''
+
+  const markerMatch = trimmed.match(/^(.*?)\*([^*\s][^*]*?)\*(.*)$/)
+  if (markerMatch) {
+    const [, before, accent, after] = markerMatch
+    return `${htmlEscape(before)}<span class="accent">${htmlEscape(accent)}</span>${htmlEscape(after)}`
+  }
+
   const safe = htmlEscape(trimmed)
-  const m = safe.match(/^(.*?)(\s+)(\S+)$/)
-  if (!m) return `<span class="accent">${safe}</span>`
-  return `${m[1]}${m[2]}<span class="accent">${m[3]}</span>`
+  const lastWord = safe.match(/^(.*?)(\s+)(\S+)$/)
+  if (!lastWord) return `<span class="accent">${safe}</span>`
+  return `${lastWord[1]}${lastWord[2]}<span class="accent">${lastWord[3]}</span>`
 }
 
 function render(html: string, data: Data): string {
@@ -240,7 +249,7 @@ function render(html: string, data: Data): string {
   // Empty/missing about_intro leaves about_intro_html empty, so the template's
   // {{#unless about_intro}}...{{/unless}} fallback (personalized default) renders.
   if (typeof data.about_intro === 'string' && data.about_intro.trim()) {
-    data.about_intro_html = wrapAccentLastWord(data.about_intro)
+    data.about_intro_html = renderIntroWithAccent(data.about_intro)
   } else {
     data.about_intro_html = ''
   }
