@@ -1074,6 +1074,12 @@ export default {
       for (const r of rows) dataMap[r.fieldKey] = r.fieldValue ?? ''
 
       let renderedHtml = render(templateHtml, dataMap)
+      const _debugIntro = JSON.stringify({
+        raw: dataMap.about_intro ?? null,
+        de: dataMap.about_intro_de_html ?? null,
+        en: dataMap.about_intro_en_html ?? null,
+        keys: Object.keys(dataMap).length,
+      })
 
       // Link the "Made with FinestSites" credit in template footers
       renderedHtml = renderedHtml.replace(
@@ -1116,6 +1122,7 @@ export default {
           'Content-Type': 'text/html; charset=utf-8',
           'Cache-Control': 'no-cache',
           'X-Powered-By': 'FinestSites',
+          'X-FS-Debug-Intro': _debugIntro.slice(0, 400),
         },
       })
 
