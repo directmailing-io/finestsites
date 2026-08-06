@@ -8203,7 +8203,7 @@ section.section.reviews {
     </div>
     <div class="about-content">
       <span class="section-eyebrow reveal"><span class="l-de">{{#unless team_modus=team}}Wer ich bin{{/unless}}{{#if team_modus=team}}Wer wir sind{{/if}}</span><span class="l-en">{{#unless team_modus=team}}Who I am{{/unless}}{{#if team_modus=team}}Who we are{{/if}}</span></span>
-      <h2 class="reveal">{{#if about_intro}}{{{about_intro_html}}}{{/if}}{{#unless about_intro}}<span class="l-de">{{#unless team_modus=team}}Hi, ich bin <span class="accent">{{vorname}}.</span>{{/unless}}{{#if team_modus=team}}Hi, wir sind <span class="accent">{{vorname}}{{#if partner_vorname}} & {{partner_vorname}}{{/if}}.</span>{{/if}}</span><span class="l-en">{{#unless team_modus=team}}Hi, I'm <span class="accent">{{vorname}}.</span>{{/unless}}{{#if team_modus=team}}Hi, we're <span class="accent">{{vorname}}{{#if partner_vorname}} & {{partner_vorname}}{{/if}}.</span>{{/if}}</span>{{/unless}}</h2>
+      <h2 class="reveal"><span class="l-de">{{{about_intro_de_html}}}</span><span class="l-en">{{{about_intro_en_html}}}</span></h2>
       <div class="about-me-richtext reveal"><div class="l-de">{{about_me_html}}</div><div class="l-en">{{about_me_html_en}}</div></div>
 {{#unless team_modus=team}}
       <div class="about-meta reveal">

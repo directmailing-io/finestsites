@@ -2308,33 +2308,48 @@ function SocialUrlField({ field, value, onChange }: {
 
 // ─── About-Me Intro Field ─────────────────────────────────────────────────────
 
-// Storage format: the accent word is wrapped in *asterisks* so the worker can
-// find it (e.g. "Willkommen auf meiner *Reise*"). This helper turns the raw
-// stored value into { plainText, accentIndex } for rendering and picking —
-// falls back to the last token when no marker is present so old values and
-// free-form typing still highlight sensibly.
-function parseIntroValue(raw: string): { plain: string; words: string[]; accentIdx: number } {
+// Storage format: accented words are wrapped in *asterisks* so the renderer
+// can find them (e.g. "*Willkommen* auf meiner *Reise*"). Multiple markers
+// are supported so users can highlight several words. This helper strips
+// markers for editing/display and returns the indexes of highlighted words.
+// Falls back to the last token when no marker is present so pre-existing
+// values still look intentional.
+function parseIntroValue(raw: string): { plain: string; words: string[]; accentSet: Set<number> } {
   const trimmed = (raw || '').trim()
-  if (!trimmed) return { plain: '', words: [], accentIdx: -1 }
-  // Strip asterisks for the plain display / editing text
-  const markerMatch = trimmed.match(/^(.*?)\*([^*\s][^*]*?)\*(.*)$/)
-  const plain = markerMatch
-    ? (markerMatch[1] + markerMatch[2] + markerMatch[3]).replace(/\s+/g, ' ').trim()
-    : trimmed
-  const words = plain.split(/\s+/).filter(Boolean)
-  let accentIdx = words.length - 1
-  if (markerMatch) {
-    const beforeWords = markerMatch[1].trim().split(/\s+/).filter(Boolean).length
-    accentIdx = beforeWords
+  if (!trimmed) return { plain: '', words: [], accentSet: new Set() }
+  // Tokenize on whitespace, keeping punctuation attached to each token.
+  const tokens = trimmed.split(/\s+/).filter(Boolean)
+  const words: string[] = []
+  const accentSet = new Set<number>()
+  for (const t of tokens) {
+    const m = t.match(/^\*([^*].*?)\*([^*\s]*)$/)
+    if (m) {
+      // *word* or *word*trailingPunct (e.g. "*Reise*.") — merge back to a plain word
+      accentSet.add(words.length)
+      words.push(m[1] + m[2])
+    } else {
+      words.push(t)
+    }
   }
-  return { plain, words, accentIdx }
+  if (accentSet.size === 0 && words.length) accentSet.add(words.length - 1)
+  return { plain: words.join(' '), words, accentSet }
 }
 
-// Rebuild the stored value with *asterisks* around the chosen word.
-function buildIntroValue(words: string[], accentIdx: number): string {
+// Rebuild the stored value with *asterisks* around the accented words.
+function buildIntroValue(words: string[], accentSet: Set<number>): string {
   if (!words.length) return ''
-  const clamped = Math.min(Math.max(accentIdx, 0), words.length - 1)
-  return words.map((w, i) => i === clamped ? `*${w}*` : w).join(' ')
+  return words.map((w, i) => (accentSet.has(i) ? `*${w}*` : w)).join(' ')
+}
+
+// Theme accent colors so the editor preview + chips match the live site color.
+// Kept intentionally small; unknown themes fall back to the neutral green.
+const THEME_ACCENT: Record<string, string> = {
+  // pm-cellrestart (theme-lime, theme-sage, theme-amber, theme-ocean, theme-ziegel, theme-mint)
+  lime: '#D14A3C', sage: '#C97D5D', amber: '#8CA47A', ocean: '#D89B62', ziegel: '#D8A868', mint: '#F4C22F',
+  // fitline-optimalset (farbthema: gruen/blau/rot/orange)
+  gruen: '#338950', blau: '#2C5A8C', rot: '#C0392B', orange: '#D4851C',
+  // pm-business-wellpreneur (farbthema: blau/gruen/orange/skyblau — uses --blue accent)
+  skyblau: '#0EA5E9',
 }
 
 function AboutIntroField({ field, value, onChange, siblings }: {
@@ -2344,18 +2359,15 @@ function AboutIntroField({ field, value, onChange, siblings }: {
   siblings: Record<string, string>
 }) {
   const [editing, setEditing] = useState(false)
-  // Draft holds the *plain* text (without asterisks) — much friendlier to type
-  // than seeing markers on screen. The accent word is picked separately via
-  // clickable chips below the input.
   const initial = parseIntroValue(value)
   const [draft, setDraft] = useState(initial.plain)
-  const [draftAccent, setDraftAccent] = useState(initial.accentIdx)
+  const [draftAccent, setDraftAccent] = useState<Set<number>>(initial.accentSet)
   const inputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     const parsed = parseIntroValue(value)
     setDraft(parsed.plain)
-    setDraftAccent(parsed.accentIdx)
+    setDraftAccent(parsed.accentSet)
   }, [value])
   useEffect(() => { if (editing) inputRef.current?.focus() }, [editing])
 
@@ -2371,17 +2383,36 @@ function AboutIntroField({ field, value, onChange, siblings }: {
 
   const hasCustom = !!value.trim()
   const displayParsed = hasCustom ? parseIntroValue(value) : defaultParsed
+
+  // Match the live-site accent color to the user's chosen theme.
+  const themeKey = (siblings['farbthema'] || '').trim()
+  const accentColor = THEME_ACCENT[themeKey] || '#1F7A3D'
+
   const maxLength = field.max_length ?? 60
   const draftWords = draft.trim().split(/\s+/).filter(Boolean)
-  // Keep draft accent in bounds as user types
-  const effectiveAccent = draftWords.length
-    ? Math.min(Math.max(draftAccent < 0 ? draftWords.length - 1 : draftAccent, 0), draftWords.length - 1)
-    : -1
+  // Keep accent indexes in bounds as the user types.
+  const effectiveAccent = new Set<number>()
+  for (const i of draftAccent) if (i >= 0 && i < draftWords.length) effectiveAccent.add(i)
+  // Default to last word if user has typed but not picked anything yet.
+  if (draftWords.length > 0 && effectiveAccent.size === 0) effectiveAccent.add(draftWords.length - 1)
   const draftLen = draft.trim().length
   const overLimit = draftLen > maxLength
   const draftValue = buildIntroValue(draftWords, effectiveAccent)
   const canSave = draftValue !== value && !overLimit && draftWords.length > 0
 
+  function toggleWord(i: number) {
+    setDraftAccent(prev => {
+      const next = new Set(prev)
+      if (next.has(i)) {
+        // Keep at least one word highlighted so the greeting always has an accent.
+        if (next.size <= 1) return prev
+        next.delete(i)
+      } else {
+        next.add(i)
+      }
+      return next
+    })
+  }
   function commit() {
     if (overLimit || !draftWords.length) return
     onChange(draftValue)
@@ -2389,13 +2420,13 @@ function AboutIntroField({ field, value, onChange, siblings }: {
   }
   function reset() {
     setDraft('')
-    setDraftAccent(-1)
+    setDraftAccent(new Set())
     onChange('')
     setEditing(false)
   }
   function cancel() {
     setDraft(initial.plain)
-    setDraftAccent(initial.accentIdx)
+    setDraftAccent(initial.accentSet)
     setEditing(false)
   }
 
@@ -2416,7 +2447,7 @@ function AboutIntroField({ field, value, onChange, siblings }: {
             {displayParsed.words.map((w, i) => (
               <span key={i}>
                 {i > 0 && ' '}
-                <span style={i === displayParsed.accentIdx ? { color: '#1F7A3D', fontWeight: 600 } : undefined}>{w}</span>
+                <span style={displayParsed.accentSet.has(i) ? { color: accentColor, fontWeight: 600 } : undefined}>{w}</span>
               </span>
             ))}
           </span>
@@ -2465,17 +2496,17 @@ function AboutIntroField({ field, value, onChange, siblings }: {
       {draftWords.length >= 2 && (
         <div className="mt-3">
           <p className="text-xs mb-2" style={{ color: '#6B7280' }}>
-            Welches Wort soll farbig hervorgehoben werden?
+            Welche Wörter sollen farbig hervorgehoben werden? Tippe zum An-/Abwählen.
           </p>
           <div className="flex flex-wrap gap-1.5">
             {draftWords.map((w, i) => {
-              const isSel = i === effectiveAccent
+              const isSel = effectiveAccent.has(i)
               return (
                 <button key={i} type="button"
-                  onClick={() => setDraftAccent(i)}
+                  onClick={() => toggleWord(i)}
                   className="text-sm px-2.5 py-1 rounded-full transition-colors"
                   style={{
-                    background: isSel ? '#1F7A3D' : '#F3F4F6',
+                    background: isSel ? accentColor : '#F3F4F6',
                     color: isSel ? '#fff' : '#374151',
                     fontWeight: isSel ? 600 : 400,
                   }}>

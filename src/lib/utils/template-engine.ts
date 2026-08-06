@@ -28,9 +28,10 @@ function htmlEscape(s: string): string {
 }
 
 export function renderTemplate(html: string, data: SiteData): string {
-  html = processLoops(html, data, [])
-  html = evalConditionalBlocks(html, data, [])
-  html = replaceSimplePlaceholders(html, data)
+  const enriched = { ...data, ...computeAboutIntro(data) }
+  html = processLoops(html, enriched, [])
+  html = evalConditionalBlocks(html, enriched, [])
+  html = replaceSimplePlaceholders(html, enriched)
   // Safety net: drop any leftover control tokens (orphaned closers, unmatched
   // openers) that would otherwise leak into the final HTML as literal text.
   html = html
@@ -41,6 +42,53 @@ export function renderTemplate(html: string, data: SiteData): string {
     // this catches typos / removed schema fields).
     .replace(/\{\{\s*this\.[^}]*\}\}/g, '')
   return html
+}
+
+/**
+ * Compute the flat DE + EN HTML for the About-me greeting. Templates render
+ * `{{{about_intro_de_html}}}` / `{{{about_intro_en_html}}}` with zero
+ * conditionals — this function owns the personalization/language/duo logic so
+ * templates stay dumb and the parser never has to walk nested {{#unless}}.
+ *
+ * Storage format for user-typed intros: any word wrapped in *asterisks*
+ * becomes an accent-highlighted span. Multiple markers are supported
+ * ("Hi, *ich* bin *Daniel*"). Free-form text without markers falls back to
+ * highlighting the last whitespace-separated token so old values still look
+ * intentional.
+ */
+function computeAboutIntro(data: SiteData): { about_intro_de_html: string; about_intro_en_html: string } {
+  const raw = (data.about_intro || '').trim()
+  const isDuo = (data.partner_modus || '').trim() === 'duo' || (data.team_modus || '').trim() === 'team'
+  const vorname = (data.vorname || '').trim() || 'Daniel'
+  const vorname2 = ((data.vorname2 || '').trim() || (data.partner_vorname || '').trim())
+
+  if (raw) {
+    const html = wrapAccentMarkers(raw)
+    return { about_intro_de_html: html, about_intro_en_html: html }
+  }
+
+  if (isDuo && vorname2) {
+    const nameHtml = `${htmlEscape(vorname)} &amp; ${htmlEscape(vorname2)}`
+    return {
+      about_intro_de_html: `Hi, wir sind <span class="accent">${nameHtml}.</span>`,
+      about_intro_en_html: `Hi, we're <span class="accent">${nameHtml}.</span>`,
+    }
+  }
+
+  const nameHtml = `<span class="accent">${htmlEscape(vorname)}.</span>`
+  return {
+    about_intro_de_html: `Hi, ich bin ${nameHtml}`,
+    about_intro_en_html: `Hi, I'm ${nameHtml}`,
+  }
+}
+
+function wrapAccentMarkers(text: string): string {
+  const escaped = htmlEscape(text)
+  const marked = escaped.replace(/\*([^*\s][^*]*?)\*/g, '<span class="accent">$1</span>')
+  if (marked !== escaped) return marked
+  const m = escaped.match(/^(.*?)(\s+)(\S+)$/)
+  if (!m) return `<span class="accent">${escaped}</span>`
+  return `${m[1]}${m[2]}<span class="accent">${m[3]}</span>`
 }
 
 function evalCondition(tag: 'if' | 'unless', cond: string, data: SiteData, stack: Item[]): boolean {

@@ -3851,9 +3851,7 @@
         {{#unless partner_modus=duo}}<div class="eyebrow"><span class="l-de">Wer dich begleitet</span><span class="l-en">Who's got your back</span></div>{{/unless}}
         {{#if partner_modus=duo}}<div class="eyebrow"><span class="l-de">Wer euch begleitet</span><span class="l-en">Who's got your back</span></div>{{/if}}
         <h2>
-          {{#if about_intro}}{{{about_intro_html}}}{{/if}}
-          {{#unless about_intro}}{{#unless partner_modus=duo}}<span class="l-de">Hi, {{#if geschlecht=weiblich}}ich bin{{/if}}{{#if geschlecht=maennlich}}ich bin{{/if}} <span class="accent">{{vorname}}.</span></span><span class="l-en">Hi, I'm <span class="accent">{{vorname}}.</span></span>{{/unless}}
-          {{#if partner_modus=duo}}<span class="l-de">Hi, wir sind <span class="accent">{{vorname}} &amp; {{vorname2}}.</span></span><span class="l-en">Hi, we're <span class="accent">{{vorname}} &amp; {{vorname2}}.</span></span>{{/if}}{{/unless}}
+          <span class="l-de">{{{about_intro_de_html}}}</span><span class="l-en">{{{about_intro_en_html}}}</span>
         </h2>
 
         <div class="about-me-richtext l-de">{{{about_me_html}}}</div>

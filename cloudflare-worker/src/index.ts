@@ -220,39 +220,54 @@ function processLoops(html: string, data: Data, stack: Item[]): string {
 }
 
 /**
- * Renders a user-typed greeting with exactly one accent-highlighted word.
- * Users mark the highlight by wrapping the target token in *asterisks*
- * ("Willkommen auf meiner *Reise*") — the editor's word-picker writes those
- * markers under the hood. If no marker is present we fall back to the last
- * whitespace-separated token so existing values (and free-form typing without
- * the picker) still get a sensible highlight. Trailing punctuation stays with
- * the highlighted word so "Daniel." highlights the whole "Daniel." token.
+ * Compute the flat DE + EN HTML for the About-me greeting. Templates render
+ * `{{{about_intro_de_html}}}` / `{{{about_intro_en_html}}}` with zero
+ * conditionals so the parser never has to walk deeply nested {{#unless}}.
+ *
+ * Storage format for user-typed intros: every word wrapped in *asterisks*
+ * becomes an accent-highlighted span. Free-form text without markers falls
+ * back to the last whitespace-separated token so pre-existing values still
+ * look intentional.
  */
-function renderIntroWithAccent(text: string): string {
-  const trimmed = text.trim()
-  if (!trimmed) return ''
+function computeAboutIntro(data: Data): { about_intro_de_html: string; about_intro_en_html: string } {
+  const raw = (data.about_intro || '').trim()
+  const isDuo = (data.partner_modus || '').trim() === 'duo' || (data.team_modus || '').trim() === 'team'
+  const vorname = (data.vorname || '').trim() || 'Daniel'
+  const vorname2 = ((data.vorname2 || '').trim() || (data.partner_vorname || '').trim())
 
-  const markerMatch = trimmed.match(/^(.*?)\*([^*\s][^*]*?)\*(.*)$/)
-  if (markerMatch) {
-    const [, before, accent, after] = markerMatch
-    return `${htmlEscape(before)}<span class="accent">${htmlEscape(accent)}</span>${htmlEscape(after)}`
+  if (raw) {
+    const html = wrapAccentMarkers(raw)
+    return { about_intro_de_html: html, about_intro_en_html: html }
   }
 
-  const safe = htmlEscape(trimmed)
-  const lastWord = safe.match(/^(.*?)(\s+)(\S+)$/)
-  if (!lastWord) return `<span class="accent">${safe}</span>`
-  return `${lastWord[1]}${lastWord[2]}<span class="accent">${lastWord[3]}</span>`
+  if (isDuo && vorname2) {
+    const nameHtml = `${htmlEscape(vorname)} &amp; ${htmlEscape(vorname2)}`
+    return {
+      about_intro_de_html: `Hi, wir sind <span class="accent">${nameHtml}.</span>`,
+      about_intro_en_html: `Hi, we're <span class="accent">${nameHtml}.</span>`,
+    }
+  }
+
+  const nameHtml = `<span class="accent">${htmlEscape(vorname)}.</span>`
+  return {
+    about_intro_de_html: `Hi, ich bin ${nameHtml}`,
+    about_intro_en_html: `Hi, I'm ${nameHtml}`,
+  }
+}
+
+function wrapAccentMarkers(text: string): string {
+  const escaped = htmlEscape(text)
+  const marked = escaped.replace(/\*([^*\s][^*]*?)\*/g, '<span class="accent">$1</span>')
+  if (marked !== escaped) return marked
+  const m = escaped.match(/^(.*?)(\s+)(\S+)$/)
+  if (!m) return `<span class="accent">${escaped}</span>`
+  return `${m[1]}${m[2]}<span class="accent">${m[3]}</span>`
 }
 
 function render(html: string, data: Data): string {
-  // Derive about_intro_html from user-typed about_intro (accent on last word).
-  // Empty/missing about_intro leaves about_intro_html empty, so the template's
-  // {{#unless about_intro}}...{{/unless}} fallback (personalized default) renders.
-  if (typeof data.about_intro === 'string' && data.about_intro.trim()) {
-    data.about_intro_html = renderIntroWithAccent(data.about_intro)
-  } else {
-    data.about_intro_html = ''
-  }
+  const intros = computeAboutIntro(data)
+  data.about_intro_de_html = intros.about_intro_de_html
+  data.about_intro_en_html = intros.about_intro_en_html
 
   html = processLoops(html, data, [])
   html = evalConditionalBlocks(html, data, [])
