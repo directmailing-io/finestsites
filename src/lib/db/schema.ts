@@ -299,6 +299,8 @@ export const affiliateCommissions = pgTable('affiliate_commissions', {
   stripeInvoiceId: text('stripe_invoice_id').notNull().unique(),
   stripeCustomerId: text('stripe_customer_id'),
   grossAmount: integer('gross_amount').notNull(),
+  // Tax-free net amount from the Stripe invoice (commission base). Nullable for legacy rows.
+  netAmount: integer('net_amount'),
   commissionRate: numeric('commission_rate', { precision: 5, scale: 4 }).notNull().default('0.15'),
   commissionAmount: integer('commission_amount').notNull(),
   status: text('status').notNull().default('pending'),

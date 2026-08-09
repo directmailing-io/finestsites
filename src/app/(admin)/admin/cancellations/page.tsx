@@ -5,9 +5,9 @@ import { getStripe } from '@/lib/stripe/client'
 import Link from 'next/link'
 
 const MRR_RATE: Record<string, Record<string, number>> = {
-  starter:   { monthly: 14,    yearly: 11.67 },
-  pro:       { monthly: 21,    yearly: 17.50 },
-  unlimited: { monthly: 39,    yearly: 32.50 },
+  starter:   { monthly: 17,    yearly: 14.17 },  // 170/12
+  pro:       { monthly: 27,    yearly: 22.50 },  // 270/12
+  unlimited: { monthly: 37,    yearly: 30.83 },  // 370/12
 }
 
 function mrrFor(plan: string, interval: string | null): number {

@@ -125,12 +125,30 @@ export async function POST(req: NextRequest) {
         })
 
         if (affiliateUser?.username) {
-          // It's an affiliate/partner code — track referral + apply coupon
+          // It's an affiliate/partner code — track referral + apply coupon.
+          // Only sets a FIRST assignment; an existing affiliate is never overwritten.
           affiliateApplied = true
           if (!profile?.referredByUsername) {
             await db.update(usersTable)
               .set({ referredByUsername: affiliateUser.username })
               .where(eqFn(usersTable.id, user.id))
+            // Audit log: every affiliate assignment change is recorded
+            try {
+              const { subscriptionEvents } = await import('@/lib/db/schema')
+              const { randomUUID } = await import('crypto')
+              await db.insert(subscriptionEvents).values({
+                userId: user.id,
+                eventType: 'affiliate_assignment_changed',
+                stripeEventId: `checkout-affiliate-${randomUUID()}`,
+                metadata: {
+                  old_affiliate: null,
+                  new_affiliate: affiliateUser.username,
+                  changed_by: 'user_checkout_code',
+                },
+              })
+            } catch (err) {
+              console.error('[billing/checkout] affiliate audit log error:', err)
+            }
           }
         }
       }

@@ -6,10 +6,10 @@ const PLANS = [
   {
     key: 'starter',
     name: 'Starter',
-    monthly: 21,
-    yearly: 210,
-    yearlyMonthly: Math.round(210 / 12),
-    dailyCents: Math.round((21 / 30) * 100),
+    monthly: 17,
+    yearly: 170,
+    yearlyMonthly: Math.round(170 / 12),
+    dailyCents: Math.round((17 / 30) * 100),
     premiumSites: '1 aktive Premium-Seite',
     value: '3.000 €',
     popular: false,
@@ -30,10 +30,10 @@ const PLANS = [
   {
     key: 'unlimited',
     name: 'Unlimited',
-    monthly: 47,
-    yearly: 470,
-    yearlyMonthly: Math.round(470 / 12),
-    dailyCents: Math.round((47 / 30) * 100),
+    monthly: 37,
+    yearly: 370,
+    yearlyMonthly: Math.round(370 / 12),
+    dailyCents: Math.round((37 / 30) * 100),
     premiumSites: 'Unbegrenzt Premium-Seiten',
     value: 'mehrere 10.000 €',
     popular: false,
@@ -287,7 +287,7 @@ export default function PricingSection({ validatedRef }: { validatedRef?: string
                 <p style={{ fontSize: 14.5, color: '#666', lineHeight: 1.75 }}>
                   Eine Agentur-Website kostet zwischen{' '}
                   <strong style={{ color: '#111' }}>3.000 und 15.000 Euro</strong>. Einmalig, ohne Pflege, ohne Updates.
-                  Beim Starter bist du für 67 Cent täglich dabei. Deine Seite läuft, während du schläfst.
+                  Beim Starter bist du für 57 Cent täglich dabei. Deine Seite läuft, während du schläfst.
                 </p>
               </div>
               {/* Image side */}

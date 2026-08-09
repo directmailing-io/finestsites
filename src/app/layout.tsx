@@ -34,7 +34,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: 'FinestSites - Deine Network Marketing Webseiten',
-    description: 'Professionelle Produktwebsite für Network-Marketing-Profis. In unter 5 Minuten live. Ab 20 € / Monat, jederzeit kündbar.',
+    description: 'Professionelle Produktwebsite für Network-Marketing-Profis. In unter 5 Minuten live. Ab 17 € / Monat, jederzeit kündbar.',
     url: 'https://finestsites.io',
     siteName: 'FinestSites',
     images: [
@@ -51,7 +51,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'FinestSites - Deine Network Marketing Webseiten',
-    description: 'Professionelle Produktwebsite für Network-Marketing-Profis. Ab 20 € / Monat.',
+    description: 'Professionelle Produktwebsite für Network-Marketing-Profis. Ab 17 € / Monat.',
     images: ['/og-image.png'],
   },
 };

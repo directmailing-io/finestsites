@@ -85,8 +85,34 @@ export async function GET(req: Request) {
     referral_count: referredUsers.length,
     total_pending_cents: totalPending,
     total_paid_cents: totalPaid,
-    commissions,
-    payouts,
-    referred_users: referredUsers,
+    // Explicit snake_case mapping — the dashboard UI consumes these keys
+    commissions: commissions.map(c => ({
+      id: c.id,
+      gross_amount: c.grossAmount,
+      net_amount: c.netAmount,
+      commission_amount: c.commissionAmount,
+      status: c.status,
+      available_at: c.availableAt,
+      paid_at: c.paidAt,
+      created_at: c.createdAt,
+    })),
+    payouts: payouts.map(p => ({
+      id: p.id,
+      total_amount: p.totalAmount,
+      commission_count: p.commissionCount,
+      period_start: p.periodStart,
+      period_end: p.periodEnd,
+      status: p.status,
+      paid_at: p.paidAt,
+    })),
+    referred_users: referredUsers.map(u => ({
+      id: u.id,
+      email: u.email,
+      username: u.username,
+      plan: u.plan,
+      billing_interval: u.billingInterval,
+      subscription_status: u.subscriptionStatus,
+      created_at: u.createdAt,
+    })),
   })
 }

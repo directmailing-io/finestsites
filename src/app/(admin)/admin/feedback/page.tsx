@@ -306,9 +306,9 @@ export default async function FeedbackAdminPage() {
 
           {/* Preisbewertung pro Tarif */}
           <div className="grid grid-cols-3 gap-3 mb-6">
-            <CountList title="Starter (21 €)" total={total} colors={preisColorMap} entries={preisEntries(preisCounts.starter)} footer={wunschpreisFooter('wunschpreis_starter')} />
+            <CountList title="Starter (17 €)" total={total} colors={preisColorMap} entries={preisEntries(preisCounts.starter)} footer={wunschpreisFooter('wunschpreis_starter')} />
             <CountList title="Pro (27 €)" total={total} colors={preisColorMap} entries={preisEntries(preisCounts.pro)} footer={wunschpreisFooter('wunschpreis_pro')} />
-            <CountList title="Unlimited (47 €)" total={total} colors={preisColorMap} entries={preisEntries(preisCounts.unlimited)} footer={wunschpreisFooter('wunschpreis_unlimited')} />
+            <CountList title="Unlimited (37 €)" total={total} colors={preisColorMap} entries={preisEntries(preisCounts.unlimited)} footer={wunschpreisFooter('wunschpreis_unlimited')} />
           </div>
 
           {/* Wünsche + Tarif */}

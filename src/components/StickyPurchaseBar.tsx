@@ -65,10 +65,10 @@ export default function StickyPurchaseBar({ templateTitle, registerUrl, isFree }
             {isFree ? (
               <span style={{ fontSize: 11, fontWeight: 600, padding: '3px 9px', borderRadius: 100, background: '#F0FDF4', color: '#166534', border: '1px solid #BBF7D0' }}>Im Tarif inklusive</span>
             ) : (
-              <span style={{ fontSize: 12, color: '#999' }}>Ab 20 €/Monat</span>
+              <span style={{ fontSize: 12, color: '#999' }}>Ab 17 €/Monat</span>
             )}
           </div>
-          <span className="sticky-bar-price" style={{ fontSize: 13, color: '#999' }}>Ab 20 €/Monat</span>
+          <span className="sticky-bar-price" style={{ fontSize: 13, color: '#999' }}>Ab 17 €/Monat</span>
           <a
             href={registerUrl}
             style={{

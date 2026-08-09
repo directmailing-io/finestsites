@@ -14,6 +14,7 @@ const STATUS_META: Record<string, { label: string; bg: string; text: string; dot
   available: { label: 'Verfügbar',  bg: '#F0FDF4', text: '#15803D', dot: '#22C55E' },
   paid:      { label: 'Ausgezahlt', bg: '#EFF6FF', text: '#1D4ED8', dot: '#3B82F6' },
   reversed:  { label: 'Storniert',  bg: '#F9FAFB', text: '#6B7280', dot: '#D1D5DB' },
+  cancelled: { label: 'Storniert',  bg: '#F9FAFB', text: '#6B7280', dot: '#D1D5DB' },
   failed:    { label: 'Fehler',     bg: '#FEF2F2', text: '#DC2626', dot: '#EF4444' },
 }
 

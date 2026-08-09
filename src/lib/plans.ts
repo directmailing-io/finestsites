@@ -30,8 +30,8 @@ export const PLANS: Record<PlanKey, PlanDef> = {
   starter: {
     key: 'starter',
     name: 'Starter',
-    monthly_eur: 21,
-    yearly_eur: 210,
+    monthly_eur: 17,
+    yearly_eur: 170,
     max_sites: 1,
     sites_label: '1 aktive Premium-Webseite',
   },
@@ -47,8 +47,8 @@ export const PLANS: Record<PlanKey, PlanDef> = {
   unlimited: {
     key: 'unlimited',
     name: 'Unlimited',
-    monthly_eur: 47,
-    yearly_eur: 470,
+    monthly_eur: 37,
+    yearly_eur: 370,
     max_sites: -1,
     sites_label: '∞ aktive Premium-Webseiten',
   },
@@ -128,5 +128,12 @@ export function getPlanByPriceId(): Record<string, PlanKey> {
     [process.env.STRIPE_PRICE_UNLIMITED_MONTHLY ?? '']: 'unlimited',
     [process.env.STRIPE_PRICE_UNLIMITED_YEARLY ?? '']:  'unlimited',
     [process.env.STRIPE_PRICE_SECRET_MONTHLY ?? '']:    'secret',
+    // Legacy (archived) prices from before the Aug 2026 price change.
+    // Existing subscriptions may still reference them until migrated —
+    // webhooks must keep resolving these to the correct plan.
+    [process.env.STRIPE_PRICE_STARTER_MONTHLY_LEGACY ?? '']:   'starter',
+    [process.env.STRIPE_PRICE_STARTER_YEARLY_LEGACY ?? '']:    'starter',
+    [process.env.STRIPE_PRICE_UNLIMITED_MONTHLY_LEGACY ?? '']: 'unlimited',
+    [process.env.STRIPE_PRICE_UNLIMITED_YEARLY_LEGACY ?? '']:  'unlimited',
   }
 }

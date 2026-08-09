@@ -4427,8 +4427,8 @@ const UPGRADE_PLANS = [
   {
     key: 'starter' as const,
     name: 'Starter',
-    price_monthly: 21,
-    price_yearly: 210,
+    price_monthly: 17,
+    price_yearly: 170,
     sites: '1 aktive Webseite',
   },
   {
@@ -4442,8 +4442,8 @@ const UPGRADE_PLANS = [
   {
     key: 'unlimited' as const,
     name: 'Unlimited',
-    price_monthly: 47,
-    price_yearly: 470,
+    price_monthly: 37,
+    price_yearly: 370,
     sites: 'Unbegrenzt Webseiten',
   },
 ]

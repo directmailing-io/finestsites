@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
-import { users } from '@/lib/db/schema'
+import { users, subscriptionEvents } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
+import { randomUUID } from 'crypto'
 import { getRealUserFromRequest } from '@/lib/auth/server'
 import { sendEmail } from '@/lib/resend'
 import { affiliateAdminAssignEmail } from '@/lib/email/templates'
@@ -32,9 +33,30 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   })
   if (!targetUser) return NextResponse.json({ error: 'User not found' }, { status: 404 })
 
+  // Mandatory audit log for every affiliate assignment change (spec requirement)
+  async function logAssignmentChange(newAffiliate: string | null) {
+    try {
+      await db.insert(subscriptionEvents).values({
+        userId: id,
+        eventType: 'affiliate_assignment_changed',
+        stripeEventId: `admin-affiliate-${randomUUID()}`,
+        metadata: {
+          old_affiliate: targetUser!.referredByUsername,
+          new_affiliate: newAffiliate,
+          changed_by: 'admin',
+          admin_id: adminUser!.id,
+          admin_email: adminUser!.email ?? null,
+        },
+      })
+    } catch (err) {
+      console.error('[admin/affiliate] audit log error:', err)
+    }
+  }
+
   if (affiliateUsername === null) {
     // Remove affiliate assignment
     await db.update(users).set({ referredByUsername: null }).where(eq(users.id, id))
+    await logAssignmentChange(null)
     return NextResponse.json({ success: true, referredByUsername: null })
   }
 
@@ -48,6 +70,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
 
   // Update the referral
   await db.update(users).set({ referredByUsername: affiliateUsername }).where(eq(users.id, id))
+  await logAssignmentChange(affiliateUsername)
 
   // Notify the affiliate partner (fire-and-forget)
   const notifyEmail = affiliate.affiliatePayoutEmail ?? affiliate.email

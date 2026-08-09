@@ -10,14 +10,14 @@ export const revalidate = 0
 
 // ── Plan-Preise (aus plans.ts — Single Source of Truth) ──────────────────────
 const MRR_RATE: Record<string, Record<string, number>> = {
-  starter:   { monthly: 21,    yearly: 17.50 },  // 210/12
+  starter:   { monthly: 17,    yearly: 14.17 },  // 170/12
   pro:       { monthly: 27,    yearly: 22.50 },  // 270/12
-  unlimited: { monthly: 47,    yearly: 39.17 },  // 470/12
+  unlimited: { monthly: 37,    yearly: 30.83 },  // 370/12
 }
 const PLAN_FULL_PRICE: Record<string, Record<string, number>> = {
-  starter:   { monthly: 21,   yearly: 210 },
+  starter:   { monthly: 17,   yearly: 170 },
   pro:       { monthly: 27,   yearly: 270 },
-  unlimited: { monthly: 47,   yearly: 470 },
+  unlimited: { monthly: 37,   yearly: 370 },
 }
 const PLAN_META = {
   starter:   { label: 'Starter',   color: '#3B82F6', bg: '#EFF6FF', text: '#1D4ED8' },

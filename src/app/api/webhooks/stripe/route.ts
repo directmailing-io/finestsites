@@ -102,6 +102,74 @@ export async function POST(req: NextRequest) {
     return { pmType: null, pmLast4: null }
   }
 
+  // Commission base = the tax-free net amount the customer actually paid,
+  // taken from the real Stripe invoice (NOT a hardcoded VAT rate).
+  // Uses total_excluding_tax when present, otherwise total minus invoice tax.
+  // Partial payments scale the net proportionally. Pure integer math (cents).
+  function computeInvoiceNet(inv: any): number {
+    const paid = inv.amount_paid ?? 0
+    if (paid <= 0) return 0
+    const total = inv.total ?? paid
+    let netTotal: number
+    if (typeof inv.total_excluding_tax === 'number') {
+      netTotal = inv.total_excluding_tax
+    } else {
+      const taxCents = typeof inv.tax === 'number'
+        ? inv.tax
+        : Array.isArray(inv.total_taxes)
+          ? inv.total_taxes.reduce((s: number, t: any) => s + (t.amount ?? 0), 0)
+          : 0
+      netTotal = total - taxCents
+    }
+    if (netTotal <= 0) return 0
+    if (paid >= total || total === 0) return netTotal
+    return Math.floor((netTotal * paid) / total)
+  }
+
+  // 10% commission on the net base — integer division, no floats.
+  function commissionFromNet(netCents: number): number {
+    return netCents > 0 ? Math.floor(netCents / 10) : 0
+  }
+
+  // Refund/chargeback handling per spec:
+  // - commissions not yet paid out → status 'cancelled'
+  // - commissions already paid out → negative balancing entry that offsets
+  //   future commissions in the next payout run (idempotent via unique invoice key)
+  async function reverseCommissionsForInvoice(invoiceId: string, reason: string) {
+    const rows = await db.query.affiliateCommissions.findMany({
+      where: eq(affiliateCommissions.stripeInvoiceId, invoiceId),
+    })
+    for (const row of rows) {
+      if (row.status === 'pending' || row.status === 'available') {
+        await db.update(affiliateCommissions).set({
+          status: 'cancelled',
+          reversalReason: reason,
+          updatedAt: new Date(),
+        }).where(eq(affiliateCommissions.id, row.id))
+      } else if (row.status === 'paid' && row.commissionAmount > 0) {
+        try {
+          await db.insert(affiliateCommissions).values({
+            referrerId: row.referrerId,
+            refereeId: row.refereeId,
+            stripeInvoiceId: `${invoiceId}:chargeback`,
+            stripeCustomerId: row.stripeCustomerId,
+            grossAmount: -row.grossAmount,
+            netAmount: row.netAmount == null ? null : -row.netAmount,
+            commissionRate: row.commissionRate,
+            commissionAmount: -row.commissionAmount,
+            status: 'available',
+            availableAt: new Date(),
+            reversalReason: `${reason}_after_payout`,
+          })
+        } catch (err: any) {
+          if (err?.code !== '23505') {
+            console.error('[webhook] chargeback booking error:', err?.message ?? err)
+          }
+        }
+      }
+    }
+  }
+
   // ── event handlers ─────────────────────────────────────────────────────────
 
   switch (event.type) {
@@ -174,9 +242,9 @@ export async function POST(req: NextRequest) {
               await db.update(users)
                 .set({ referredByUsername: null })
                 .where(eq(users.id, userId))
-              // Reverse any commissions that haven't been paid out yet
+              // Cancel any commissions that haven't been paid out yet
               await db.update(affiliateCommissions).set({
-                status: 'reversed',
+                status: 'cancelled',
                 reversalReason: 'promo_code_override',
                 updatedAt: new Date(),
               }).where(
@@ -185,6 +253,18 @@ export async function POST(req: NextRequest) {
                   inArray(affiliateCommissions.status, ['pending', 'available'])
                 )
               )
+              // Mandatory audit log for every affiliate assignment change
+              await logEvent({
+                userId,
+                eventType: 'affiliate_assignment_changed',
+                stripeEventId: `${event.id}:affiliate-override`,
+                metadata: {
+                  old_affiliate: currentUser.referredByUsername,
+                  new_affiliate: null,
+                  changed_by: 'system_promo_override',
+                  coupon_id: coupon.id,
+                },
+              })
             }
           }
         }
@@ -259,23 +339,30 @@ export async function POST(req: NextRequest) {
         })
 
         if (referrer) {
-          const grossPaid = session.amount_total ?? 0  // cents, after coupon
-          const commissionAmount = Math.floor(grossPaid * 0.10)
-          const availableAt = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000)
-
+          // Commission only if the first invoice is actually paid.
+          // Base = tax-free net from the real invoice (after discount, before VAT).
           if (latestInvoiceId) {
             try {
-              await db.insert(affiliateCommissions).values({
-                referrerId: referrer.id,
-                refereeId: userId,
-                stripeInvoiceId: latestInvoiceId,
-                stripeCustomerId: session.customer as string,
-                grossAmount: grossPaid,
-                commissionRate: '0.10',
-                commissionAmount,
-                status: 'pending',
-                availableAt,
-              })
+              const firstInvoice = await stripe.invoices.retrieve(latestInvoiceId)
+              if (firstInvoice.status === 'paid') {
+                const netPaid = computeInvoiceNet(firstInvoice)
+                const commissionAmount = commissionFromNet(netPaid)
+                if (commissionAmount > 0) {
+                  const availableAt = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000)
+                  await db.insert(affiliateCommissions).values({
+                    referrerId: referrer.id,
+                    refereeId: userId,
+                    stripeInvoiceId: latestInvoiceId,
+                    stripeCustomerId: session.customer as string,
+                    grossAmount: (firstInvoice as any).amount_paid ?? session.amount_total ?? 0,
+                    netAmount: netPaid,
+                    commissionRate: '0.10',
+                    commissionAmount,
+                    status: 'pending',
+                    availableAt,
+                  })
+                }
+              }
             } catch (err: any) {
               if (err?.code !== '23505') {
                 console.error('[webhook] first-payment commission error:', err?.message ?? err)
@@ -458,17 +545,8 @@ export async function POST(req: NextRequest) {
         sendEmail({ to: userRow.email, subject: emailSubject, html: emailHtml, type: wasPaymentFailure ? 'account_deactivated' : 'account_expired' }).catch(() => {})
       }
 
-      // Reverse pending/available affiliate commissions — no real money will flow anymore
-      await db.update(affiliateCommissions).set({
-        status: 'reversed',
-        reversalReason: 'subscription_canceled',
-        updatedAt: new Date(),
-      }).where(
-        and(
-          eq(affiliateCommissions.refereeId, userId),
-          inArray(affiliateCommissions.status, ['pending', 'available'])
-        )
-      )
+      // Note: existing commissions stay valid — they belong to invoices that were
+      // actually paid and kept. Only refunds/chargebacks reverse commissions.
 
       await logEvent({
         userId,
@@ -659,27 +737,31 @@ export async function POST(req: NextRequest) {
           columns: { id: true },
         })
 
-        if (referrer) {
-          const grossPaid = invoice.amount_paid  // in cents, after coupon
-          const commissionAmount = Math.floor(grossPaid * 0.10)
+        if (referrer && invoice.id) {
+          // Base = tax-free net from the real invoice (after discount, before VAT).
+          const netPaid = computeInvoiceNet(invoice)
+          const commissionAmount = commissionFromNet(netPaid)
           const availableAt = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000)
 
           // Idempotent: unique on stripe_invoice_id
-          try {
-            await db.insert(affiliateCommissions).values({
-              referrerId: referrer.id,
-              refereeId: userId,
-              stripeInvoiceId: invoice.id,
-              stripeCustomerId: invoice.customer as string,
-              grossAmount: grossPaid,
-              commissionRate: '0.10',
-              commissionAmount,
-              status: 'pending',
-              availableAt,
-            })
-          } catch (err: any) {
-            if (err?.code !== '23505') {
-              console.error('[webhook] commission insert error:', err?.message ?? err)
+          if (commissionAmount > 0) {
+            try {
+              await db.insert(affiliateCommissions).values({
+                referrerId: referrer.id,
+                refereeId: userId,
+                stripeInvoiceId: invoice.id,
+                stripeCustomerId: invoice.customer as string,
+                grossAmount: invoice.amount_paid,
+                netAmount: netPaid,
+                commissionRate: '0.10',
+                commissionAmount,
+                status: 'pending',
+                availableAt,
+              })
+            } catch (err: any) {
+              if (err?.code !== '23505') {
+                console.error('[webhook] commission insert error:', err?.message ?? err)
+              }
             }
           }
         }
@@ -687,22 +769,30 @@ export async function POST(req: NextRequest) {
       break
     }
 
-    // ── Refund → reverse pending commission ──────────────────────────────────
+    // ── Refund → cancel unpaid commission / negative booking if already paid ──
     case 'charge.refunded': {
       const charge = event.data.object as any
       const invoiceId = charge.invoice
       if (!invoiceId) break
 
-      await db.update(affiliateCommissions).set({
-        status: 'reversed',
-        reversalReason: 'charge_refunded',
-        updatedAt: new Date(),
-      }).where(
-        and(
-          eq(affiliateCommissions.stripeInvoiceId, invoiceId),
-          inArray(affiliateCommissions.status, ['pending', 'available'])
-        )
-      )
+      await reverseCommissionsForInvoice(invoiceId, 'charge_refunded')
+      break
+    }
+
+    // ── Chargeback (dispute lost, funds pulled) → same reversal rules ─────────
+    case 'charge.dispute.funds_withdrawn': {
+      const dispute = event.data.object as Stripe.Dispute
+      const chargeId = typeof dispute.charge === 'string' ? dispute.charge : dispute.charge?.id
+      if (!chargeId) break
+
+      try {
+        const charge = await stripe.charges.retrieve(chargeId) as any
+        if (charge.invoice) {
+          await reverseCommissionsForInvoice(charge.invoice, 'chargeback')
+        }
+      } catch (err) {
+        console.error('[webhook] dispute charge lookup error:', err)
+      }
       break
     }
   }

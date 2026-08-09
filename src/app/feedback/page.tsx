@@ -10,9 +10,9 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 // ── Fragen-Konfiguration ──────────────────────────────────────────────────────
 
 const TARIF_OPTIONS = [
-  { value: 'starter', label: 'Starter', sub: '1 Seite · 21 € im Monat' },
+  { value: 'starter', label: 'Starter', sub: '1 Seite · 17 € im Monat' },
   { value: 'pro', label: 'Pro', sub: '3 Seiten · 27 € im Monat' },
-  { value: 'unlimited', label: 'Unlimited', sub: 'Unbegrenzt Seiten · 47 € im Monat' },
+  { value: 'unlimited', label: 'Unlimited', sub: 'Unbegrenzt Seiten · 37 € im Monat' },
 ]
 
 const TEMPLATE_OPTIONS = [
@@ -28,9 +28,9 @@ const TEMPLATE_OPTIONS = [
 const MAX_WUENSCHE = 3
 
 const PREIS_TARIFE = [
-  { key: 'preis_starter' as const, wunschKey: 'wunschpreis_starter' as const, name: 'Starter', info: '1 Seite · 21 € im Monat', max: 21 },
+  { key: 'preis_starter' as const, wunschKey: 'wunschpreis_starter' as const, name: 'Starter', info: '1 Seite · 17 € im Monat', max: 17 },
   { key: 'preis_pro' as const, wunschKey: 'wunschpreis_pro' as const, name: 'Pro', info: '3 Seiten · 27 € im Monat', max: 27 },
-  { key: 'preis_unlimited' as const, wunschKey: 'wunschpreis_unlimited' as const, name: 'Unlimited', info: 'Unbegrenzt Seiten · 47 € im Monat', max: 47 },
+  { key: 'preis_unlimited' as const, wunschKey: 'wunschpreis_unlimited' as const, name: 'Unlimited', info: 'Unbegrenzt Seiten · 37 € im Monat', max: 37 },
 ]
 
 const PREIS_SEGMENTE = [

@@ -136,12 +136,15 @@ export default function AffiliatePage() {
     </div>
   )
 
+  const PAYOUT_MIN_CENTS = 1000
   const availableCents = stats?.commissions?.filter(c => c.status === 'available').reduce((s, c) => s + c.commission_amount, 0) ?? 0
   const pendingCents   = stats?.commissions?.filter(c => c.status === 'pending').reduce((s, c) => s + c.commission_amount, 0) ?? 0
   const paidCents      = stats?.total_paid_cents ?? 0
   const totalEarned    = availableCents + pendingCents + paidCents
   const balanceSufficient = (stats?.stripe_balance_available_cents ?? 0) >= availableCents
-  const canPayout      = availableCents > 0 && stats?.affiliate_onboarded && balanceSufficient
+  const canPayout      = availableCents >= PAYOUT_MIN_CENTS && stats?.affiliate_onboarded && balanceSufficient
+  const belowMinimum   = availableCents > 0 && availableCents < PAYOUT_MIN_CENTS
+  const negativeBalance = availableCents < 0
   const referralUrl    = stats?.username
     ? `https://finestsites.io/?ref=${stats.username}`
     : ''
@@ -212,7 +215,7 @@ export default function AffiliatePage() {
           <div className="hidden sm:flex items-center justify-center flex-shrink-0 mt-6">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#D1D5DB" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
           </div>
-          <HowStep icon="💰" n={3} title="Du bekommst Geld" desc="10% des Monatspreises landen automatisch auf deinem Konto, jeden Monat." highlight />
+          <HowStep icon="💰" n={3} title="Du bekommst Geld" desc="10% vom Nettobetrag jeder Zahlung wandern als Guthaben zu dir, jeden Monat aufs Neue. Ab 10 € wird ausgezahlt." highlight />
         </div>
       </section>
 
@@ -280,6 +283,37 @@ export default function AffiliatePage() {
             </button>
           </div>
         )}
+
+        {belowMinimum && (
+          <div className="mt-5 pt-5" style={{ borderTop: totalEarned > 0 ? '1px solid rgba(255,255,255,0.1)' : '1px solid #E5E7EB' }}>
+            <div className="mb-2 h-2 rounded-full overflow-hidden" style={{ background: totalEarned > 0 ? 'rgba(255,255,255,0.15)' : '#E5E7EB' }}>
+              <div className="h-full rounded-full" style={{ width: `${Math.min(100, Math.round((availableCents * 100) / PAYOUT_MIN_CENTS))}%`, background: '#34D399' }} />
+            </div>
+            <p className="text-xs" style={{ color: totalEarned > 0 ? 'rgba(255,255,255,0.6)' : '#6B7280' }}>
+              Noch {euros(PAYOUT_MIN_CENTS - availableCents)} bis zur Auszahlung. Ausgezahlt wird ab 10 €, dein Guthaben verfällt nicht und wandert einfach in den nächsten Monat.
+            </p>
+          </div>
+        )}
+
+        {negativeBalance && (
+          <div className="mt-5 pt-5" style={{ borderTop: totalEarned > 0 ? '1px solid rgba(255,255,255,0.1)' : '1px solid #E5E7EB' }}>
+            <p className="text-xs" style={{ color: totalEarned > 0 ? 'rgba(255,255,255,0.6)' : '#6B7280' }}>
+              Dein Guthaben ist gerade im Minus, weil eine Zahlung zurückgebucht wurde. Neue Provisionen gleichen das automatisch wieder aus.
+            </p>
+          </div>
+        )}
+      </section>
+
+      {/* ── Payout rules, plain and simple ──────────────────────────────────── */}
+      <section className="rounded-3xl p-6 mb-5" style={{ background: '#fff', border: '1.5px solid #E5E7EB' }}>
+        <p className="text-xs font-semibold uppercase tracking-widest mb-4" style={{ color: '#94A3B8' }}>Gut zu wissen</p>
+        <ul className="space-y-2.5 text-sm text-gray-600">
+          <RuleItem>Du bekommst <strong className="text-gray-800">10% Provision</strong> auf jede Zahlung deiner Empfehlungen. Monat für Monat, solange sie dabei sind.</RuleItem>
+          <RuleItem>Ausgezahlt wird <strong className="text-gray-800">ab 10 €</strong> Guthaben. Bist du drunter, verfällt nichts. Dein Guthaben sammelt sich einfach weiter an.</RuleItem>
+          <RuleItem>Pro Monat gibt es <strong className="text-gray-800">eine Auszahlung</strong>. Die läuft automatisch, du musst nichts tun.</RuleItem>
+          <RuleItem>Neue Provisionen haben eine <strong className="text-gray-800">Schutzfrist von 14 Tagen</strong>. So können wir Rückerstattungen sauber verrechnen, danach ist das Geld fest für dich reserviert.</RuleItem>
+          <RuleItem>Auszahlungen gehen nur auf ein <strong className="text-gray-800">verifiziertes Bankkonto</strong>. Solange die Verifizierung läuft, bleibt dein Guthaben sicher stehen.</RuleItem>
+        </ul>
       </section>
 
       {/* ── Referred users (only if any) ────────────────────────────────────── */}
@@ -358,18 +392,23 @@ export default function AffiliatePage() {
                 available:  { label: 'Auszahlbar',       color: '#065F46', bg: '#ECFDF5' },
                 paid:       { label: 'Ausgezahlt',       color: '#1D4ED8', bg: '#EFF6FF' },
                 reversed:   { label: 'Storniert',        color: '#6B7280', bg: '#F3F4F6' },
+                cancelled:  { label: 'Storniert',        color: '#6B7280', bg: '#F3F4F6' },
               }
-              const s = statusMap[c.status] ?? statusMap.pending
+              const isNegative = c.commission_amount < 0
+              const s = isNegative
+                ? { label: 'Rückbuchung', color: '#991B1B', bg: '#FEF2F2' }
+                : statusMap[c.status] ?? statusMap.pending
               return (
                 <div key={c.id} className="flex items-center gap-3 px-3 py-2.5 rounded-2xl hover:bg-gray-50">
                   <div className="flex-1 min-w-0">
                     <p className="text-sm text-gray-700">{fmtDate(c.created_at)}</p>
                     <p className="text-xs text-gray-400">
-                      {c.status === 'pending' && c.available_at ? `Verfügbar ab ${fmtDate(c.available_at)}` : ''}
-                      {c.status === 'paid' && c.paid_at ? `Ausgezahlt am ${fmtDate(c.paid_at)}` : ''}
+                      {isNegative ? 'Wird mit neuen Provisionen verrechnet' : ''}
+                      {!isNegative && c.status === 'pending' && c.available_at ? `Verfügbar ab ${fmtDate(c.available_at)}` : ''}
+                      {!isNegative && c.status === 'paid' && c.paid_at ? `Ausgezahlt am ${fmtDate(c.paid_at)}` : ''}
                     </p>
                   </div>
-                  <p className="text-sm font-bold text-gray-900 tabular-nums">+{euros(c.commission_amount)}</p>
+                  <p className="text-sm font-bold tabular-nums" style={{ color: isNegative ? '#991B1B' : '#111827' }}>{isNegative ? '' : '+'}{euros(c.commission_amount)}</p>
                   <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
                     style={{ background: s.bg, color: s.color }}>
                     {s.label}
@@ -420,6 +459,15 @@ function EarningBox({ label, value, highlight, muted, dark, tooltip }: { label: 
       </p>
       <p className="text-xs" style={{ color: dark ? 'rgba(255,255,255,0.4)' : '#9CA3AF' }}>{label}</p>
     </div>
+  )
+}
+
+function RuleItem({ children }: { children: React.ReactNode }) {
+  return (
+    <li className="flex items-start gap-2.5">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#16A34A" strokeWidth="2.5" className="flex-shrink-0 mt-0.5"><path d="M20 6 9 17l-5-5"/></svg>
+      <span className="leading-relaxed">{children}</span>
+    </li>
   )
 }
 
