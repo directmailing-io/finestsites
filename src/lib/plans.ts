@@ -8,7 +8,7 @@
  *   Server-side code can still use process.env.* directly.
  */
 
-export type PlanKey = 'starter' | 'pro' | 'unlimited' | 'secret'
+export type PlanKey = 'starter' | 'pro' | 'unlimited'
 export type BillingInterval = 'monthly' | 'yearly'
 
 export interface PlanDef {
@@ -52,14 +52,6 @@ export const PLANS: Record<PlanKey, PlanDef> = {
     max_sites: -1,
     sites_label: '∞ aktive Premium-Webseiten',
   },
-  secret: {
-    key: 'secret',
-    name: 'Secret',
-    monthly_eur: 17,
-    yearly_eur: 17, // no yearly option
-    max_sites: -1,
-    sites_label: '∞ aktive Premium-Webseiten',
-  },
 }
 
 export const PLAN_ORDER: PlanKey[] = ['starter', 'pro', 'unlimited']
@@ -86,10 +78,8 @@ export function getPlanMaxSites(plan: string): number {
 }
 
 /** True if targetPlan is strictly higher than currentPlan.
- *  Pass null for free users (no active subscription) — all plans are upgradeable from free.
- *  'secret' is not part of PLAN_ORDER — it cannot be self-service upgraded to or from. */
+ *  Pass null for free users (no active subscription) — all plans are upgradeable from free. */
 export function canUpgradeTo(currentPlan: string | null, targetPlan: string): boolean {
-  if (currentPlan === 'secret' || targetPlan === 'secret') return false
   if (currentPlan === null) return true // free user: all paid plans are upgrades
   return PLAN_ORDER.indexOf(targetPlan as PlanKey) > PLAN_ORDER.indexOf(currentPlan as PlanKey)
 }
@@ -98,7 +88,6 @@ export const PLAN_LABELS: Record<string, string> = {
   starter: PLANS.starter.name,
   pro: PLANS.pro.name,
   unlimited: PLANS.unlimited.name,
-  secret: PLANS.secret.name,
 }
 
 /**
@@ -110,7 +99,6 @@ export function getPriceIdByPlan(plan: PlanKey, interval: BillingInterval): stri
     starter:   { monthly: process.env.STRIPE_PRICE_STARTER_MONTHLY,   yearly: process.env.STRIPE_PRICE_STARTER_YEARLY },
     pro:       { monthly: process.env.STRIPE_PRICE_PRO_MONTHLY,       yearly: process.env.STRIPE_PRICE_PRO_YEARLY },
     unlimited: { monthly: process.env.STRIPE_PRICE_UNLIMITED_MONTHLY, yearly: process.env.STRIPE_PRICE_UNLIMITED_YEARLY },
-    secret:    { monthly: process.env.STRIPE_PRICE_SECRET_MONTHLY,    yearly: process.env.STRIPE_PRICE_SECRET_MONTHLY },
   }
   return map[plan][interval] ?? ''
 }
@@ -127,7 +115,6 @@ export function getPlanByPriceId(): Record<string, PlanKey> {
     [process.env.STRIPE_PRICE_PRO_YEARLY ?? '']:      'pro',
     [process.env.STRIPE_PRICE_UNLIMITED_MONTHLY ?? '']: 'unlimited',
     [process.env.STRIPE_PRICE_UNLIMITED_YEARLY ?? '']:  'unlimited',
-    [process.env.STRIPE_PRICE_SECRET_MONTHLY ?? '']:    'secret',
     // Legacy (archived) prices from before the Aug 2026 price change.
     // Existing subscriptions may still reference them until migrated —
     // webhooks must keep resolving these to the correct plan.

@@ -365,7 +365,6 @@ export default function AdminUsersTable({ users }: { users: UserRow[] }) {
           <option value="starter">Starter</option>
           <option value="pro">Pro</option>
           <option value="unlimited">Unlimited</option>
-          <option value="secret">Secret</option>
         </select>
 
         <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)}

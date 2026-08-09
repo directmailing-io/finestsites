@@ -860,15 +860,7 @@ function SettingsContent() {
 
           {/* ── Plan wählen ── */}
           <TabSection title="Plan wählen" subtitle="Upgrade jederzeit. Wir verrechnen anteilig.">
-            {currentPlan === 'secret' ? (
-              <div className="rounded-3xl p-6 sm:p-7" style={{ background: '#F8FAFC' }}>
-                <p className="text-base font-semibold text-gray-900 mb-1">Secret-Tarif aktiv</p>
-                <p className="text-sm" style={{ color: '#64748B' }}>
-                  Du bist auf einem internen Sondertarif mit unlimitierten Premium-Webseiten. Kein Self-Service-Wechsel möglich. Wende dich bei Fragen an den Support.
-                </p>
-              </div>
-            ) : (
-              <>
+            <>
                 {/* Interval toggle */}
                 <div className="flex items-center justify-between gap-3 mb-6">
                   <div className="inline-flex p-1 rounded-2xl" style={{ background: '#F1F5F9' }}>
@@ -1021,8 +1013,7 @@ function SettingsContent() {
                     </div>
                   ))}
                 </div>
-              </>
-            )}
+            </>
           </TabSection>
 
           {/* ── Aktuelles Abonnement ── */}
