@@ -175,6 +175,20 @@ interface Invoice {
   period_end: number
 }
 
+interface UpgradePreview {
+  due_cents: number
+  charge_cents: number
+  credit_cents: number
+  next_amount_cents: number
+  renewal_date: number | null
+  interval: 'monthly' | 'yearly'
+  plan: string
+}
+
+function fmtCents(cents: number) {
+  return (cents / 100).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €'
+}
+
 // ── Main component ────────────────────────────────────────────────────────────
 
 function SettingsContent() {
@@ -227,6 +241,10 @@ function SettingsContent() {
   const [profile, setProfile] = useState<UserProfile | null>(null)
   const [billingInterval, setBillingInterval] = useState<'monthly' | 'yearly'>('monthly')
   const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null)
+  const [upgradeTarget, setUpgradeTarget] = useState<string | null>(null)
+  const [upgradePreview, setUpgradePreview] = useState<UpgradePreview | null>(null)
+  const [upgradePreviewError, setUpgradePreviewError] = useState('')
+  const [upgradeLoading, setUpgradeLoading] = useState(false)
   const [toast, setToast] = useState('')
 
   // ── Invoices state ─────────────────────────────────────────────
@@ -426,38 +444,29 @@ function SettingsContent() {
   }
 
   async function handleCheckout(plan: string) {
-    setCheckoutLoading(plan)
-
-    // Existing active subscription → in-place upgrade with proration (pay only the difference).
-    // Discounts (AKTION25, affiliate coupons) are preserved automatically by Stripe
-    // because the upgrade route does NOT pass a discounts parameter.
+    // Existing active subscription → show the exact prorated amount FIRST.
+    // The actual upgrade only happens in confirmUpgrade() after the user confirms.
     if (subscription?.status === 'active') {
-      const res = await fetch('/api/billing/upgrade', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ plan, interval: billingInterval }),
-      })
-      const data = await res.json()
-      if (data.error) {
-        setToast(data.error)
-        setTimeout(() => setToast(''), 5000)
-      } else {
-        setToast('Plan erfolgreich geändert! Du wirst nur die anteiligen Kosten für die restlichen Tage berechnet.')
-        setTimeout(() => setToast(''), 6000)
-        // Refresh subscription state to reflect new plan
-        fetch('/api/billing/subscription')
-          .then(r => r.json())
-          .then(d => setSubscription(d.subscription ?? null))
-        fetch('/api/user/profile').then(r => r.json()).then(d => {
-          setProfile(d)
-          if (d.billing_interval) setBillingInterval(d.billing_interval)
+      setUpgradeTarget(plan)
+      setUpgradePreview(null)
+      setUpgradePreviewError('')
+      try {
+        const res = await fetch('/api/billing/upgrade/preview', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ plan, interval: billingInterval }),
         })
+        const data = await res.json()
+        if (!res.ok || data.error) throw new Error(data.error || 'Vorschau konnte nicht geladen werden.')
+        setUpgradePreview(data)
+      } catch (e) {
+        setUpgradePreviewError(e instanceof Error ? e.message : 'Vorschau konnte nicht geladen werden.')
       }
-      setCheckoutLoading(null)
       return
     }
 
     // No active subscription → create new Stripe Checkout session
+    setCheckoutLoading(plan)
     const res = await fetch('/api/billing/checkout', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -466,6 +475,44 @@ function SettingsContent() {
     const data = await res.json()
     if (data.url) router.push(data.url)
     else setCheckoutLoading(null)
+  }
+
+  // In-place upgrade with proration (pay only the difference). Discounts
+  // (AKTION25, affiliate coupons) are preserved automatically by Stripe
+  // because the upgrade route does NOT pass a discounts parameter.
+  async function confirmUpgrade() {
+    if (!upgradeTarget) return
+    setUpgradeLoading(true)
+    const res = await fetch('/api/billing/upgrade', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ plan: upgradeTarget, interval: billingInterval }),
+    })
+    const data = await res.json()
+    if (data.error) {
+      setUpgradePreviewError(data.error)
+    } else {
+      const amount = typeof data.invoice_total_cents === 'number' ? fmtCents(data.invoice_total_cents) : null
+      setToast(
+        amount
+          ? data.invoice_status === 'paid'
+            ? `Upgrade erfolgreich! Für die restlichen Tage wurden ${amount} berechnet.`
+            : `Upgrade erfolgreich! ${amount} werden über deine Zahlungsmethode eingezogen.`
+          : 'Plan erfolgreich geändert! Berechnet werden nur die anteiligen Kosten für die restlichen Tage.'
+      )
+      setTimeout(() => setToast(''), 8000)
+      setUpgradeTarget(null)
+      setUpgradePreview(null)
+      // Refresh subscription state to reflect new plan
+      fetch('/api/billing/subscription')
+        .then(r => r.json())
+        .then(d => setSubscription(d.subscription ?? null))
+      fetch('/api/user/profile').then(r => r.json()).then(d => {
+        setProfile(d)
+        if (d.billing_interval) setBillingInterval(d.billing_interval)
+      })
+    }
+    setUpgradeLoading(false)
   }
 
   const periodEnd = subscription?.current_period_end
@@ -1289,6 +1336,88 @@ function SettingsContent() {
       )}
 
       {/* ── Cancel confirmation modal ───────────────────────────────────────── */}
+      {upgradeTarget && (() => {
+        const renewalDateStr = upgradePreview?.renewal_date
+          ? new Date(upgradePreview.renewal_date * 1000).toLocaleDateString('de-DE', { day: '2-digit', month: 'long', year: 'numeric' })
+          : null
+        return (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4"
+            style={{ background: 'rgba(15,23,42,0.5)', backdropFilter: 'blur(4px)' }}>
+            <div className="bg-white rounded-3xl p-7 max-w-md w-full flex flex-col gap-5"
+              style={{ boxShadow: '0 24px 64px rgba(0,0,0,0.20)' }}>
+              <div>
+                <h3 className="font-bold text-gray-900 text-lg tracking-tight">
+                  Upgrade auf {PLAN_LABELS[upgradeTarget] ?? upgradeTarget}
+                </h3>
+                <p className="text-sm mt-1.5 leading-relaxed" style={{ color: '#64748B' }}>
+                  Du zahlst jetzt nur die Differenz für die restlichen Tage deines aktuellen Abrechnungszeitraums.
+                </p>
+              </div>
+
+              {upgradePreviewError ? (
+                <p className="text-sm font-medium px-4 py-3 rounded-2xl"
+                  style={{ background: '#FEF2F2', color: '#DC2626' }}>
+                  {upgradePreviewError}
+                </p>
+              ) : !upgradePreview ? (
+                <div className="h-32 rounded-2xl bg-gray-100 animate-pulse" />
+              ) : (
+                <>
+                  <div className="rounded-2xl p-5" style={{ background: '#F8FAFC', border: '1px solid #E5E7EB' }}>
+                    <div className="flex items-baseline justify-between gap-3">
+                      <span className="text-sm font-semibold text-gray-900">Heute fällig</span>
+                      <span className="text-2xl font-bold tracking-tight text-gray-900">
+                        {fmtCents(upgradePreview.due_cents)}
+                      </span>
+                    </div>
+                    <div className="mt-3 pt-3 flex flex-col gap-1.5" style={{ borderTop: '1px solid #E5E7EB' }}>
+                      <div className="flex justify-between gap-3 text-xs" style={{ color: '#64748B' }}>
+                        <span>Neuer Tarif, anteilig{renewalDateStr ? ` bis zum ${renewalDateStr}` : ''}</span>
+                        <span className="flex-shrink-0">{fmtCents(upgradePreview.charge_cents)}</span>
+                      </div>
+                      {upgradePreview.credit_cents < 0 && (
+                        <div className="flex justify-between gap-3 text-xs" style={{ color: '#15803D' }}>
+                          <span>Gutschrift für ungenutzte Zeit im alten Tarif</span>
+                          <span className="flex-shrink-0">−{fmtCents(-upgradePreview.credit_cents)}</span>
+                        </div>
+                      )}
+                      <p className="text-[11px] mt-1" style={{ color: '#94A3B8' }}>
+                        Inkl. MwSt. Dein Rabatt ist bereits eingerechnet.
+                      </p>
+                    </div>
+                  </div>
+                  {renewalDateStr && (
+                    <p className="text-sm leading-relaxed" style={{ color: '#64748B' }}>
+                      Ab dem <strong className="text-gray-900">{renewalDateStr}</strong> zahlst du dann regulär{' '}
+                      <strong className="text-gray-900">{fmtCents(upgradePreview.next_amount_cents)}</strong>
+                      {upgradePreview.interval === 'yearly' ? ' pro Jahr' : ' pro Monat'}.
+                    </p>
+                  )}
+                </>
+              )}
+
+              <div className="flex gap-3">
+                <button
+                  onClick={() => { setUpgradeTarget(null); setUpgradePreview(null); setUpgradePreviewError('') }}
+                  disabled={upgradeLoading}
+                  className="flex-1 px-4 py-3 text-sm font-semibold rounded-xl transition-colors hover:bg-gray-200 disabled:opacity-60"
+                  style={{ background: '#F3F4F6', color: '#374151' }}>
+                  Abbrechen
+                </button>
+                <button
+                  onClick={confirmUpgrade}
+                  disabled={upgradeLoading || !upgradePreview || !!upgradePreviewError}
+                  className="flex-1 flex items-center justify-center gap-2 px-4 py-3 text-sm font-semibold text-white rounded-xl transition-opacity hover:opacity-90 disabled:opacity-60"
+                  style={{ background: '#7C3AED' }}>
+                  {upgradeLoading && <Spinner />}
+                  {upgradePreview ? `Für ${fmtCents(upgradePreview.due_cents)} upgraden` : 'Jetzt upgraden'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )
+      })()}
+
       {showCancelConfirm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4"
           style={{ background: 'rgba(15,23,42,0.5)', backdropFilter: 'blur(4px)' }}>

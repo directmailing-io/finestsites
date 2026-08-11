@@ -83,6 +83,9 @@ export async function POST(req: NextRequest) {
       // Falls der User zuvor gekündigt hatte (cancel_at_period_end), gleichzeitig
       // reaktivieren — Upgrade impliziert Weitermachen.
       ...(sub.cancel_at_period_end ? { cancel_at_period_end: false } : {}),
+
+      // Proration-Rechnung mitliefern, damit die UI den echten Betrag anzeigen kann
+      expand: ['latest_invoice'],
     })
 
     // DB sofort aktualisieren; Stripe-Webhook ist Safety-Net für den Fall,
@@ -111,7 +114,19 @@ export async function POST(req: NextRequest) {
       }).catch(() => {})
     }
 
-    return NextResponse.json({ success: true, plan, interval })
+    // Tatsächlich berechneter Betrag der Proration-Rechnung für die Erfolgsmeldung.
+    // Bei SEPA bleibt die Rechnung "open" bis die Lastschrift durch ist.
+    const invoice = updated.latest_invoice as import('stripe').Stripe.Invoice | null
+    const invoiceTotal = typeof invoice === 'object' && invoice ? invoice.total : null
+    const invoiceStatus = typeof invoice === 'object' && invoice ? invoice.status : null
+
+    return NextResponse.json({
+      success: true,
+      plan,
+      interval,
+      invoice_total_cents: invoiceTotal,
+      invoice_status: invoiceStatus,
+    })
   } catch (err: any) {
     console.error('[billing/upgrade] stripe error:', err?.message)
     return NextResponse.json(
