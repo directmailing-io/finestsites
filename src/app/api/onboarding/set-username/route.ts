@@ -20,6 +20,19 @@ function isValid(u: string) {
   return /^[a-z][a-z-]*[a-z]$/.test(u) && u.length >= 3
 }
 
+// Blocked as subdomains: infrastructure hosts (custom = CF-for-SaaS fallback
+// origin!) and names that would look official enough for phishing.
+const RESERVED_USERNAMES = new Set([
+  'admin', 'administrator', 'www', 'api', 'app', 'mail', 'email', 'smtp',
+  'imap', 'pop', 'ftp', 'custom', 'cdn', 'assets', 'static', 'login',
+  'signin', 'signup', 'register', 'auth', 'account', 'accounts', 'dashboard',
+  'console', 'portal', 'manage', 'support', 'help', 'hilfe', 'info', 'kontakt',
+  'contact', 'billing', 'payment', 'pay', 'checkout', 'shop', 'store',
+  'status', 'blog', 'news', 'dev', 'staging', 'test', 'beta', 'preview',
+  'root', 'system', 'security', 'abuse', 'postmaster', 'webmaster', 'noreply',
+  'no-reply', 'finestsites', 'official', 'verify', 'verification',
+])
+
 export async function POST(req: NextRequest) {
   const user = await getUserFromRequest(req)
   if (!user) return NextResponse.json({ error: 'Nicht eingeloggt.' }, { status: 401 })
@@ -31,6 +44,13 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(
       { error: 'Ungültiger Username. Mindestens 3 Buchstaben a–z, Bindestriche erlaubt.' },
       { status: 400 }
+    )
+  }
+
+  if (RESERVED_USERNAMES.has(clean)) {
+    return NextResponse.json(
+      { error: 'Dieser Username ist reserviert. Bitte wähle einen anderen.', code: 'DUPLICATE' },
+      { status: 409 }
     )
   }
 
