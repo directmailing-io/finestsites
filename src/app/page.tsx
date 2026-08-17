@@ -118,7 +118,7 @@ export default async function HomePage({
         .fs-nav-actions { display: flex; gap: 8px; align-items: center; }
         .fs-hamburger { display: none !important; }
         .fs-hero-buttons { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
-        .fs-hero-content { position: relative; z-index: 2; padding: 170px 24px 110px; max-width: 900px; margin: 0 auto; text-align: center; }
+        .fs-hero-content { position: relative; z-index: 2; padding: 170px 24px 190px; max-width: 900px; margin: 0 auto; text-align: center; }
         .fs-section-pad { padding: 96px 7vw; }
         .fs-was-ist-inner { max-width: 1060px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 72px; align-items: center; }
         .fs-feature-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
@@ -144,7 +144,7 @@ export default async function HomePage({
 
         /* ── Tablet (768–1023 px) ─────────────────────────── */
         @media (max-width: 1023px) {
-          .fs-hero-content { padding: 150px 5vw 90px; }
+          .fs-hero-content { padding: 150px 5vw 160px; }
           .fs-section-pad { padding: 72px 5vw; }
           .fs-template-grid { grid-template-columns: repeat(2, 1fr); }
           .fs-pricing-grid { grid-template-columns: 1fr; max-width: 440px; margin-left: auto; margin-right: auto; }
@@ -162,8 +162,7 @@ export default async function HomePage({
           .fs-hamburger { display: flex !important; }
           .fs-hero-buttons { flex-direction: column; align-items: stretch; }
 
-          .fs-hero-section { min-height: 0 !important; }
-          .fs-hero-content { padding: 130px 22px 72px; }
+          .fs-hero-content { padding: 130px 22px 120px; }
 
           .fs-section-pad { padding: 52px 22px; }
           .fs-was-ist-inner { grid-template-columns: 1fr; gap: 36px; }
@@ -212,13 +211,9 @@ export default async function HomePage({
       {/* ══ HERO ═════════════════════════════════════════════════════════ */}
       <section className="fs-hero-section" style={{
         width: '100%',
-        minHeight: '92vh',
         position: 'relative',
-        display: 'flex',
-        alignItems: 'flex-start',
-        justifyContent: 'center',
         overflow: 'hidden',
-        background: 'linear-gradient(180deg, #1B1140 0%, #3E2B85 38%, #7C5FC0 68%, #CDBBEB 86%, #FFFFFF 100%)',
+        background: 'linear-gradient(180deg, #201245 0%, #3D2A87 38%, #6247AF 60%, #8E6FD0 74%, #BCA7E6 85%, #E3DAF4 93%, #FAFAF8 100%)',
       }}>
 
         <div className="fs-hero-content">
