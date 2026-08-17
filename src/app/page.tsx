@@ -118,7 +118,6 @@ export default async function HomePage({
         .fs-nav-actions { display: flex; gap: 8px; align-items: center; }
         .fs-hamburger { display: none !important; }
         .fs-hero-buttons { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
-        .fs-hero-subtext { font-size: 12px; color: rgba(255,255,255,0.55); margin-top: 16px; text-align: center; }
         .fs-hero-content { position: relative; z-index: 2; padding: 170px 24px 110px; max-width: 900px; margin: 0 auto; text-align: center; }
         .fs-section-pad { padding: 96px 7vw; }
         .fs-was-ist-inner { max-width: 1060px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 72px; align-items: center; }
@@ -216,18 +215,11 @@ export default async function HomePage({
         minHeight: '92vh',
         position: 'relative',
         display: 'flex',
-        alignItems: 'center',
+        alignItems: 'flex-start',
         justifyContent: 'center',
         overflow: 'hidden',
-        background: 'linear-gradient(-81.05deg, #B15DD1 0%, #6B3FA8 52%, #3E2B85 100%)',
+        background: 'linear-gradient(180deg, #1B1140 0%, #3E2B85 38%, #7C5FC0 68%, #CDBBEB 86%, #FFFFFF 100%)',
       }}>
-        {/* Soft radial glow, Zoom-style depth */}
-        <div style={{
-          position: 'absolute',
-          inset: 0,
-          background: 'radial-gradient(ellipse 70% 55% at 50% 38%, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0) 70%)',
-          pointerEvents: 'none',
-        }} />
 
         <div className="fs-hero-content">
           <p style={{ fontSize: 13, fontWeight: 600, color: 'rgba(255,255,255,0.75)', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 28 }}>
