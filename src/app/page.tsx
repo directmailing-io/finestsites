@@ -229,10 +229,10 @@ export default async function HomePage({
             letterSpacing: '-0.028em',
             marginBottom: 28,
           }}>
-            Deine Network-Marketing Website.<br /><span style={{ color: '#FFCF8C' }}>Live in 10 Minuten.</span>
+            Deine eigene Webseite.<br /><span style={{ color: '#FFCF8C' }}>Live in 3 Minuten.</span>
           </h1>
           <p style={{ fontSize: 17, color: 'rgba(255,255,255,0.85)', lineHeight: 1.75, marginBottom: 36, maxWidth: 560, marginLeft: 'auto', marginRight: 'auto' }}>
-            Ohne Agentur, ohne Technik-Stress. Lass dich von Kunden und Partnern über deine Webseite finden und überzeuge Interessenten von deinen Produkten, noch bevor sie mit dir gesprochen haben.
+            Terminiere Kunden & Teampartner jetzt noch viel einfacher. Überzeuge sie von deinen Produkten mit deiner eigenen Network-Marketing-Webseite, noch bevor sie mit dir gesprochen haben.
           </p>
           <div className="fs-hero-buttons">
             <a href={`${process.env.NEXT_PUBLIC_APP_URL ?? 'https://app.finestsites.io'}/register${validatedRef ? `?ref=${validatedRef}` : ''}`} style={{ background: '#fff', color: '#3E2B85', padding: '16px 38px', borderRadius: 100, fontSize: 15, fontWeight: 700, display: 'inline-block', textDecoration: 'none', textAlign: 'center', boxShadow: '0 4px 24px rgba(0,0,0,0.18)' }}>Kostenlos starten</a>
