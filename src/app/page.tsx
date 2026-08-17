@@ -117,9 +117,9 @@ export default async function HomePage({
         .fs-nav-links { display: flex; gap: 28px; align-items: center; }
         .fs-nav-actions { display: flex; gap: 8px; align-items: center; }
         .fs-hamburger { display: none !important; }
-        .fs-hero-buttons { display: flex; gap: 12px; flex-wrap: wrap; }
-        .fs-hero-subtext { font-size: 12px; color: #aaa; margin-top: 14px; }
-        .fs-hero-content { position: relative; z-index: 2; padding: 130px 0 90px 7vw; max-width: 58vw; }
+        .fs-hero-buttons { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+        .fs-hero-subtext { font-size: 12px; color: rgba(255,255,255,0.55); margin-top: 16px; text-align: center; }
+        .fs-hero-content { position: relative; z-index: 2; padding: 170px 24px 110px; max-width: 900px; margin: 0 auto; text-align: center; }
         .fs-section-pad { padding: 96px 7vw; }
         .fs-was-ist-inner { max-width: 1060px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 72px; align-items: center; }
         .fs-feature-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
@@ -133,9 +133,6 @@ export default async function HomePage({
         .fs-template-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
         .fs-pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
         .fs-pricing-banner-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; align-items: stretch; }
-        /* ── Hero mobile image ───────────────────────────── */
-        .fs-hero-mobile-img { display: none; }
-
         /* ── How it works grid ───────────────────────────── */
         .fs-how-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }
         .fs-how-connector { display: block; }
@@ -148,7 +145,7 @@ export default async function HomePage({
 
         /* ── Tablet (768–1023 px) ─────────────────────────── */
         @media (max-width: 1023px) {
-          .fs-hero-content { max-width: 75vw; padding: 120px 5vw 72px; }
+          .fs-hero-content { padding: 150px 5vw 90px; }
           .fs-section-pad { padding: 72px 5vw; }
           .fs-template-grid { grid-template-columns: repeat(2, 1fr); }
           .fs-pricing-grid { grid-template-columns: 1fr; max-width: 440px; margin-left: auto; margin-right: auto; }
@@ -164,37 +161,10 @@ export default async function HomePage({
           .fs-nav-links { display: none; }
           .fs-nav-actions { display: none !important; }
           .fs-hamburger { display: flex !important; }
-          .fs-hero-buttons { flex-direction: column; }
+          .fs-hero-buttons { flex-direction: column; align-items: stretch; }
 
-          /* Hero: stack image on top, then content */
-          .fs-hero-section {
-            flex-direction: column !important;
-            align-items: stretch !important;
-            min-height: 0 !important;
-          }
-          .fs-hero-bg { display: none; }
-          .fs-hero-gradient { display: none; }
-          .fs-hero-mobile-img {
-            display: block;
-            width: 100%;
-            height: 62vw;
-            max-height: 300px;
-            background-image: url(/hero-bg.png);
-            background-size: cover;
-            background-position: center top;
-            position: relative;
-            flex-shrink: 0;
-            margin-top: 60px; /* clear fixed nav */
-          }
-          .fs-hero-mobile-img::after {
-            content: '';
-            position: absolute;
-            bottom: 0; left: 0; right: 0;
-            height: 65%;
-            background: linear-gradient(to bottom, transparent, #f5f3f0);
-          }
-          .fs-hero-content { max-width: 100%; padding: 12px 22px 52px; }
-          .fs-hero-subtext { text-align: center; }
+          .fs-hero-section { min-height: 0 !important; }
+          .fs-hero-content { padding: 130px 22px 72px; }
 
           .fs-section-pad { padding: 52px 22px; }
           .fs-was-ist-inner { grid-template-columns: 1fr; gap: 36px; }
@@ -243,51 +213,43 @@ export default async function HomePage({
       {/* ══ HERO ═════════════════════════════════════════════════════════ */}
       <section className="fs-hero-section" style={{
         width: '100%',
-        minHeight: '100vh',
+        minHeight: '92vh',
         position: 'relative',
         display: 'flex',
         alignItems: 'center',
+        justifyContent: 'center',
         overflow: 'hidden',
-        background: '#f5f3f0',
+        background: 'linear-gradient(-81.05deg, #B15DD1 0%, #6B3FA8 52%, #3E2B85 100%)',
       }}>
-        {/* Desktop background image + gradient (hidden on mobile) */}
-        <div className="fs-hero-bg" style={{
+        {/* Soft radial glow, Zoom-style depth */}
+        <div style={{
           position: 'absolute',
           inset: 0,
-          backgroundImage: 'url(/hero-bg.png)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'right center',
+          background: 'radial-gradient(ellipse 70% 55% at 50% 38%, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0) 70%)',
+          pointerEvents: 'none',
         }} />
-        <div className="fs-hero-gradient" style={{
-          position: 'absolute',
-          inset: 0,
-          background: 'linear-gradient(to right, #ffffff 30%, rgba(255,255,255,0.88) 42%, rgba(255,255,255,0.2) 58%, rgba(255,255,255,0) 70%)',
-        }} />
-
-        {/* Mobile-only: full-width hero image at top with bottom fade */}
-        <div className="fs-hero-mobile-img" />
 
         <div className="fs-hero-content">
-          <p style={{ fontSize: 12, fontWeight: 600, color: '#888', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 28 }}>
+          <p style={{ fontSize: 13, fontWeight: 600, color: 'rgba(255,255,255,0.75)', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 28 }}>
             Für Network-Marketer
           </p>
           <h1 style={{
             fontFamily: '"Plein", sans-serif',
-            fontSize: 'clamp(26px, 2.6vw, 42px)',
+            fontSize: 'clamp(34px, 5.2vw, 68px)',
             fontWeight: 400,
-            color: '#111',
-            lineHeight: 1.1,
+            color: '#fff',
+            lineHeight: 1.08,
             letterSpacing: '-0.028em',
             marginBottom: 28,
           }}>
-            Deine Network-Marketing Website.<br /><span style={{ color: '#8060b0' }}>Live in 10 Minuten.</span><br />Ohne Agentur, ohne Technik-Stress.
+            Deine Network-Marketing Website.<br /><span style={{ color: '#FFCF8C' }}>Live in 10 Minuten.</span>
           </h1>
-          <p style={{ fontSize: 16, color: '#555', lineHeight: 1.75, marginBottom: 28, maxWidth: 460 }}>
-            Lass dich von Kunden und Partnern über deine Webseite finden und überzeuge Interessenten von deinen Produkten, noch bevor sie mit dir gesprochen haben.
+          <p style={{ fontSize: 17, color: 'rgba(255,255,255,0.85)', lineHeight: 1.75, marginBottom: 36, maxWidth: 560, marginLeft: 'auto', marginRight: 'auto' }}>
+            Ohne Agentur, ohne Technik-Stress. Lass dich von Kunden und Partnern über deine Webseite finden und überzeuge Interessenten von deinen Produkten, noch bevor sie mit dir gesprochen haben.
           </p>
           <div className="fs-hero-buttons">
-            <a href={`${process.env.NEXT_PUBLIC_APP_URL ?? 'https://app.finestsites.io'}/register${validatedRef ? `?ref=${validatedRef}` : ''}`} style={{ background: '#111', color: '#fff', padding: '15px 36px', borderRadius: 100, fontSize: 15, fontWeight: 600, display: 'inline-block', textDecoration: 'none', textAlign: 'center' }}>Kostenlos starten</a>
-            <a href="#templates" style={{ background: 'rgba(255,255,255,0.8)', color: '#111', padding: '15px 36px', borderRadius: 100, fontSize: 15, fontWeight: 500, display: 'inline-block', border: '1.5px solid rgba(0,0,0,0.12)', textDecoration: 'none', textAlign: 'center' }}>Templates ansehen</a>
+            <a href={`${process.env.NEXT_PUBLIC_APP_URL ?? 'https://app.finestsites.io'}/register${validatedRef ? `?ref=${validatedRef}` : ''}`} style={{ background: '#fff', color: '#3E2B85', padding: '16px 38px', borderRadius: 100, fontSize: 15, fontWeight: 700, display: 'inline-block', textDecoration: 'none', textAlign: 'center', boxShadow: '0 4px 24px rgba(0,0,0,0.18)' }}>Kostenlos starten</a>
+            <a href="#templates" style={{ background: 'rgba(255,255,255,0.08)', color: '#fff', padding: '16px 38px', borderRadius: 100, fontSize: 15, fontWeight: 500, display: 'inline-block', border: '1.5px solid rgba(255,255,255,0.45)', textDecoration: 'none', textAlign: 'center' }}>Templates ansehen</a>
           </div>
         </div>
       </section>
