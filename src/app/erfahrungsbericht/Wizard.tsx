@@ -1527,6 +1527,12 @@ export default function Wizard() {
                     <p style={{ margin: '0 0 12px', fontSize: 13, lineHeight: 1.5, color: '#1E3A8A' }}>
                       Sag am besten einfach das, was du geschrieben hast. Das ist schon geprüft.
                     </p>
+                    <div style={{ marginBottom: 12 }}>
+                      <p style={{ margin: '0 0 3px', fontSize: 12.5, fontWeight: 700, color: '#1E40AF' }}>Stell dich kurz vor</p>
+                      <p style={{ margin: 0, fontSize: 13.5, lineHeight: 1.55, color: '#374151' }}>
+                        {`Zum Beispiel: „Hi, ich bin ${firstName}!“`}
+                      </p>
+                    </div>
                     {questions.map((q, i) => {
                       const a = (answers[i] ?? '').trim()
                       if (!a) return null
