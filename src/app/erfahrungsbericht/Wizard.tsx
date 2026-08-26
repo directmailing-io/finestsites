@@ -804,8 +804,13 @@ export default function Wizard() {
   const [checks, setChecks] = useState<CheckState[]>([{ status: 'idle' }, { status: 'idle' }, { status: 'idle' }])
   const approvedRef = useRef<string[]>(['', '', ''])    // zuletzt akzeptierte Fassung (Bestandsschutz)
   const checkedTextRef = useRef<string[]>(['', '', '']) // Text zum Zeitpunkt der letzten Prüfung
+  const checkedCtxRef = useRef<string[]>(['', '', ''])  // andere Antworten zum Zeitpunkt der Prüfung
   const answersRef = useRef(answers)
   useEffect(() => { answersRef.current = answers }, [answers])
+
+  // Kausalität entsteht oft erst im Zusammenspiel der Antworten ("seitdem" in
+  // Antwort 3 meint das Produkt aus Antwort 2) → Kontext gehört zum Prüfstand
+  const ctxFor = (all: string[], i: number) => all.filter((_, j) => j !== i).map(a => a.trim()).join('\n')
 
   const [beforePhotos, setBeforePhotos] = useState<PhotoItem[]>([])
   const [afterPhotos, setAfterPhotos] = useState<PhotoItem[]>([])
@@ -864,22 +869,23 @@ export default function Wizard() {
 
   // ── Live-KI-Check auf Heil- und Wirkaussagen ────────────────────────────────
 
-  const runCheck = useCallback(async (i: number, text: string) => {
+  const runCheck = useCallback(async (i: number, text: string, ctx: string) => {
     if (!session) return
     checkedTextRef.current[i] = text
+    checkedCtxRef.current[i] = ctx
     setChecks(c => c.map((x, j) => (j === i ? { status: 'checking' as const } : x)))
     try {
       const res = await postJson<{ ok: boolean; issues?: { quote: string; reason: string }[]; suggestion?: string }>(
         '/api/erfahrungsbericht/check-text',
         {
           submissionId: session.submissionId, uploadToken: session.uploadToken,
-          text, approvedText: approvedRef.current[i],
+          answers: answersRef.current.map(a => a.trim()), questionIndex: i,
+          approvedText: approvedRef.current[i],
         },
       )
       // Antwort wurde inzwischen weitergetippt → Ergebnis verwerfen, neuer Check folgt
       if (answersRef.current[i].trim() !== text) return
       if (res.ok || !res.suggestion) {
-        approvedRef.current[i] = text
         setChecks(c => c.map((x, j) => (j === i ? { status: 'ok' as const } : x)))
       } else {
         setChecks(c => c.map((x, j) => (j === i
@@ -898,8 +904,11 @@ export default function Wizard() {
     const timers = answers.map((raw, i) => {
       const text = raw.trim()
       if (text.length < 25) return null
-      if (text === checkedTextRef.current[i]) return null
-      return setTimeout(() => runCheck(i, text), 2500)
+      const ctx = ctxFor(answers, i)
+      // Auch bei unverändertem Text neu prüfen, wenn sich Nachbar-Antworten
+      // geändert haben — Kausalität entsteht erst im Zusammenspiel
+      if (text === checkedTextRef.current[i] && ctx === checkedCtxRef.current[i]) return null
+      return setTimeout(() => runCheck(i, text, ctx), 2500)
     })
     return () => timers.forEach(t => { if (t) clearTimeout(t) })
   }, [answers, step, session, runCheck])
@@ -909,6 +918,7 @@ export default function Wizard() {
     if (c.status !== 'issues') return
     approvedRef.current[i] = c.suggestion
     checkedTextRef.current[i] = c.suggestion
+    checkedCtxRef.current[i] = ctxFor(answersRef.current, i)
     setAnswers(a => a.map((x, j) => (j === i ? c.suggestion : x)))
     setChecks(cs => cs.map((x, j) => (j === i ? { status: 'ok' as const } : x)))
     setHasTyped(true)

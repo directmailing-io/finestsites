@@ -40,8 +40,8 @@ const PRODUKTE_QUESTIONS: GuidedQuestion[] = [
   },
   {
     key: 'weg',
-    label: 'Was genau hast du unternommen und was begeistert dich daran?',
-    placeholder: 'Welche Produkte oder welche Kur? Wie sieht deine Routine aus? Was macht dir daran am meisten Spaß?',
+    label: 'Was genau hat dir geholfen und wie kamst du dazu?',
+    placeholder: 'Welche Produkte oder welche Kur nutzt du? Was begeistert dich an den Produkten? Und wie bist du dazu gekommen?',
   },
   {
     key: 'ergebnis',
