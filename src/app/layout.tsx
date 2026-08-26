@@ -24,7 +24,7 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL('https://finestsites.io'),
   title: "FinestSites",
-  description: "Deine professionelle Webseite – Online in unter 5 Minuten.",
+  description: "Deine professionelle Webseite – Online in unter 3 Minuten.",
   icons: {
     icon: [
       { url: '/fav/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
@@ -34,7 +34,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: 'FinestSites - Deine Network Marketing Webseiten',
-    description: 'Professionelle Produktwebsite für Network-Marketing-Profis. In unter 5 Minuten live. Ab 17 € / Monat, jederzeit kündbar.',
+    description: 'Professionelle Produktwebsite für Network-Marketing-Profis. In unter 3 Minuten live. Ab 17 € / Monat, jederzeit kündbar.',
     url: 'https://finestsites.io',
     siteName: 'FinestSites',
     images: [

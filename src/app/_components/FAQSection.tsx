@@ -5,7 +5,7 @@ import { useState } from 'react'
 const FAQS = [
   {
     q: 'Wie schnell bin ich mit meiner Website online?',
-    a: 'In der Regel in unter 5 Minuten. Du suchst dir ein Template aus, nimmst ein paar persönliche Anpassungen vor: Profilbild, Farbthema, welche Bereiche du anzeigen möchtest. Dann ist deine Seite live. Das geht genauso gut vom Handy aus, du brauchst dafür keinen Laptop.',
+    a: 'In der Regel in unter 3 Minuten. Du suchst dir ein Template aus, nimmst ein paar persönliche Anpassungen vor: Profilbild, Farbthema, welche Bereiche du anzeigen möchtest. Dann ist deine Seite live. Das geht genauso gut vom Handy aus, du brauchst dafür keinen Laptop.',
   },
   {
     q: 'Brauche ich technisches Wissen, Marketing-Kenntnisse oder kreatives Talent?',

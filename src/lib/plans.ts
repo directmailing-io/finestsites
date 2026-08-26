@@ -63,7 +63,7 @@ export const COMMON_FEATURES = [
   'Eigene Subdomain',
   'SSL & DSGVO-konform',
   'Einfache Bedienung, kein Technikwissen nötig',
-  'Online in unter 5 Minuten',
+  'Online in unter 3 Minuten',
 ] as const
 
 /** Cents amount (for Stripe API, analytics, internal logs). */

@@ -3,7 +3,7 @@
 import { useEffect, useRef } from 'react'
 
 const CARDS = [
-  { img: '/features/5min-live.png',            title: 'In unter 5 Minuten live',        desc: 'Template wählen, Inhalte einfügen, fertig. Kein Designer, kein Technik-Stress.' },
+  { img: '/features/5min-live.png',            title: 'In unter 3 Minuten live',        desc: 'Template wählen, Inhalte einfügen, fertig. Kein Designer, kein Technik-Stress.' },
   { img: '/features/kein-design.png',          title: 'Keine Texte, kein Design',        desc: 'Jede Vorlage ist professionell getextet, optimiert und rechtlich geprüft.' },
   { img: '/features/templates-verbessert.png', title: 'Laufend verbessert',              desc: 'Neue Funktionen, bessere Conversion, aktuelles Design. Automatisch.' },
   { img: '/features/kein-hosting.png',         title: 'Kein Hosting, kein DSGVO-Stress', desc: 'Hosting, Sicherheit, Datenschutz, Impressum. Alles inklusive.' },

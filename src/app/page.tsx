@@ -19,7 +19,7 @@ export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
   title: 'FinestSites – Deine professionelle Website in Minuten',
-  description: 'Professionelle Produktwebsite für Network-Marketing-Profis. In unter 5 Minuten live. Keine Technik, keine Agentur.',
+  description: 'Professionelle Produktwebsite für Network-Marketing-Profis. In unter 3 Minuten live. Keine Technik, keine Agentur.',
 }
 
 export default async function HomePage({
@@ -259,7 +259,7 @@ export default async function HomePage({
 
           <div className="fs-solution-cards">
             {([
-              { label: 'Schnell',  title: 'In unter 10 Minuten live',          desc: 'Template wählen, deinen Namen eintragen, ein Foto hochladen. Fertig. Kein Designer, kein Entwickler, kein Stress.' },
+              { label: 'Schnell',  title: 'In unter 3 Minuten live',          desc: 'Template wählen, deinen Namen eintragen, ein Foto hochladen. Fertig. Kein Designer, kein Entwickler, kein Stress.' },
               { label: 'Einfach', title: 'Texte und Design sind fertig',         desc: 'Du schreibst nichts, du gestaltest nichts. Alles ist bereits drin. Professionell getextet, getestet und für dein Produkt optimiert.' },
               { label: 'Sicher',  title: 'Um den Rest kümmerst du dich nie',     desc: 'Hosting, SSL, DSGVO, Impressum, Barrierefreiheit. Alles läuft automatisch. Du musst dich damit nie beschäftigen.' },
             ] as { label: string; title: string; desc: string }[]).map((f, i) => (
