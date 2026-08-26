@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
   TESTIMONIAL_CATEGORIES, TestimonialCategoryKey, HEALTH_CLAIM_GUIDE,
-  REWARD_MESSAGE, WHATSAPP_SHARE_TEXT, guidedQuestionsFor,
+  REWARD_MESSAGE, WHATSAPP_SHARE_TEXT, guidedQuestionsFor, CONSENT_BONUS,
 } from '@/lib/constants/testimonial-content'
 import { getCurrentTestimonialConsentText } from '@/lib/constants/testimonial-consent'
 import { compressImage } from './lib/compress-image'
@@ -739,7 +739,7 @@ function PhotoGrid({ items, max, onAdd, onRemove }: {
 
 // ── Wizard ────────────────────────────────────────────────────────────────────
 
-type StepId = 'intro' | 'category' | 'text' | 'before' | 'after' | 'video' | 'personal' | 'consent'
+type StepId = 'intro' | 'name' | 'category' | 'text' | 'before' | 'after' | 'video' | 'personal' | 'consent'
 
 type Session = { submissionId: string; uploadToken: string; startedAt: number }
 
@@ -755,8 +755,23 @@ type StatusResponse = {
   assets: { assetId: string; kind: string; sortOrder: number; previewUrl: string | null }[]
 }
 
+// Live-KI-Prüfung je Antwort auf Heil- und Wirkaussagen
+type CheckState =
+  | { status: 'idle' }
+  | { status: 'checking' }
+  | { status: 'ok' }
+  | { status: 'issues'; issues: { quote: string; reason: string }[]; suggestion: string }
+  | { status: 'error' }
+
+// Dezente Farbwelten für die drei Fragen: vorher (rot), Weg (gelb), Ergebnis (grün)
+const QUESTION_COLORS = [
+  { bg: '#FEF6F5', border: '#FBDAD5', badge: '#DC2626' },
+  { bg: '#FFFDF2', border: '#F5E6A8', badge: '#D97706' },
+  { bg: '#F3FCF7', border: '#BBE9D0', badge: '#059669' },
+]
+
 function stepsForCategory(category: TestimonialCategoryKey | null): StepId[] {
-  const base: StepId[] = ['intro', 'category', 'text']
+  const base: StepId[] = ['intro', 'name', 'category', 'text']
   if (category !== 'business') base.push('before', 'after')
   base.push('video', 'personal', 'consent')
   return base
@@ -786,11 +801,17 @@ export default function Wizard() {
   const [hasDictated, setHasDictated] = useState(false)
   const audioAssetIdRef = useRef<string | null>(null)
 
+  const [checks, setChecks] = useState<CheckState[]>([{ status: 'idle' }, { status: 'idle' }, { status: 'idle' }])
+  const approvedRef = useRef<string[]>(['', '', ''])    // zuletzt akzeptierte Fassung (Bestandsschutz)
+  const checkedTextRef = useRef<string[]>(['', '', '']) // Text zum Zeitpunkt der letzten Prüfung
+  const answersRef = useRef(answers)
+  useEffect(() => { answersRef.current = answers }, [answers])
+
   const [beforePhotos, setBeforePhotos] = useState<PhotoItem[]>([])
   const [afterPhotos, setAfterPhotos] = useState<PhotoItem[]>([])
   const [video, setVideo] = useState<VideoState>({ phase: 'none' })
   const [showRecorder, setShowRecorder] = useState(false)
-  const [showGuide, setShowGuide] = useState(true)
+  const [showVideoRules, setShowVideoRules] = useState(false)
   const videoCancelledRef = useRef(false)
   const videoInputRef = useRef<HTMLInputElement>(null)
 
@@ -801,6 +822,7 @@ export default function Wizard() {
   const [instagram, setInstagram] = useState('')
   const [tiktok, setTiktok] = useState('')
   const [facebook, setFacebook] = useState('')
+  const [showOptional, setShowOptional] = useState(false)
 
   const [consentAccepted, setConsentAccepted] = useState(false)
   const [showConsentText, setShowConsentText] = useState(false)
@@ -839,6 +861,58 @@ export default function Wizard() {
       .filter(Boolean)
       .join('\n\n'),
   [questions, answers])
+
+  // ── Live-KI-Check auf Heil- und Wirkaussagen ────────────────────────────────
+
+  const runCheck = useCallback(async (i: number, text: string) => {
+    if (!session) return
+    checkedTextRef.current[i] = text
+    setChecks(c => c.map((x, j) => (j === i ? { status: 'checking' as const } : x)))
+    try {
+      const res = await postJson<{ ok: boolean; issues?: { quote: string; reason: string }[]; suggestion?: string }>(
+        '/api/erfahrungsbericht/check-text',
+        {
+          submissionId: session.submissionId, uploadToken: session.uploadToken,
+          text, approvedText: approvedRef.current[i],
+        },
+      )
+      // Antwort wurde inzwischen weitergetippt → Ergebnis verwerfen, neuer Check folgt
+      if (answersRef.current[i].trim() !== text) return
+      if (res.ok || !res.suggestion) {
+        approvedRef.current[i] = text
+        setChecks(c => c.map((x, j) => (j === i ? { status: 'ok' as const } : x)))
+      } else {
+        setChecks(c => c.map((x, j) => (j === i
+          ? { status: 'issues' as const, issues: res.issues ?? [], suggestion: res.suggestion! }
+          : x)))
+      }
+    } catch {
+      if (answersRef.current[i].trim() !== text) return
+      // Check ist ein Bonus und blockiert nie. Kein erneuter Versuch bis der Text sich ändert.
+      setChecks(c => c.map((x, j) => (j === i ? { status: 'error' as const } : x)))
+    }
+  }, [session])
+
+  useEffect(() => {
+    if (step !== 'text' || !session) return
+    const timers = answers.map((raw, i) => {
+      const text = raw.trim()
+      if (text.length < 25) return null
+      if (text === checkedTextRef.current[i]) return null
+      return setTimeout(() => runCheck(i, text), 2500)
+    })
+    return () => timers.forEach(t => { if (t) clearTimeout(t) })
+  }, [answers, step, session, runCheck])
+
+  function acceptSuggestion(i: number) {
+    const c = checks[i]
+    if (c.status !== 'issues') return
+    approvedRef.current[i] = c.suggestion
+    checkedTextRef.current[i] = c.suggestion
+    setAnswers(a => a.map((x, j) => (j === i ? c.suggestion : x)))
+    setChecks(cs => cs.map((x, j) => (j === i ? { status: 'ok' as const } : x)))
+    setHasTyped(true)
+  }
 
   // Zwischenstand lokal sichern, damit ein unterbrochener Durchlauf fortsetzbar ist
   useEffect(() => {
@@ -882,7 +956,7 @@ export default function Wizard() {
       setBeforePhotos(toItems('before_image'))
       setAfterPhotos(toItems('after_image'))
       const vid = status.assets.find(a => a.kind === 'video')
-      if (vid) { setVideo({ phase: 'done', assetId: vid.assetId }); setShowGuide(false) }
+      if (vid) setVideo({ phase: 'done', assetId: vid.assetId })
       const aud = status.assets.find(a => a.kind === 'audio')
       audioAssetIdRef.current = aud?.assetId ?? null
 
@@ -913,7 +987,6 @@ export default function Wizard() {
       setBeforePhotos([])
       setAfterPhotos([])
       setVideo({ phase: 'none' })
-      setShowGuide(true)
       audioAssetIdRef.current = null
       setCategory(key)
       setSession({ submissionId: res.submissionId, uploadToken: res.uploadToken, startedAt: Date.now() })
@@ -1084,6 +1157,10 @@ export default function Wizard() {
   const canProceed = (() => {
     switch (step) {
       case 'intro': return true
+      case 'name': {
+        const name = fullName.trim()
+        return name.length >= 3 && name.includes(' ')
+      }
       case 'category': return !!session && !!category && !starting
       case 'text': return combinedText.length > 0
       case 'before': return !photosBusy(beforePhotos)
@@ -1247,9 +1324,26 @@ export default function Wizard() {
               </StepShell>
             )}
 
+            {step === 'name' && (
+              <StepShell
+                title="Hi! Wie heißt du?"
+                sub="Dein Vor- und Nachname. So können wir dich persönlich ansprechen."
+              >
+                <TextInput
+                  value={fullName}
+                  onChange={e => setFullName(e.target.value.slice(0, 200))}
+                  placeholder="z. B. Sandra Kaiser"
+                  autoComplete="name"
+                />
+                <p style={{ margin: '10px 2px 0', fontSize: 13, lineHeight: 1.5, color: '#9CA3AF' }}>
+                  Ob dein voller Name oder nur „{fullName.trim().includes(' ') ? formatDisplayName(fullName, 'abbreviated') : 'Sandra K.'}“ angezeigt wird, entscheidest du am Ende selbst.
+                </p>
+              </StepShell>
+            )}
+
             {step === 'category' && (
               <StepShell
-                title="Worum geht es in deinem Bericht?"
+                title={`Hey ${firstName}! Worum geht es in deinem Bericht?`}
                 sub="Wähl die Kategorie, die am besten passt."
               >
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
@@ -1280,35 +1374,97 @@ export default function Wizard() {
                 sub="3 kurze Fragen. Tipp einfach los oder sprich deine Antwort ein, wir schreiben sie für dich auf."
               >
                 <HealthClaimCard />
-                {questions.map((q, i) => (
-                  <div key={q.key} style={{ marginBottom: i < questions.length - 1 ? 24 : 0 }}>
-                    <p style={{
-                      display: 'flex', alignItems: 'flex-start', gap: 10,
-                      margin: '0 0 10px', fontSize: 15.5, fontWeight: 700, color: '#1a1a1a', lineHeight: 1.4,
+                {questions.map((q, i) => {
+                  const colors = QUESTION_COLORS[i] ?? QUESTION_COLORS[0]
+                  const check = checks[i] ?? { status: 'idle' as const }
+                  return (
+                    <div key={q.key} style={{
+                      marginBottom: i < questions.length - 1 ? 16 : 0,
+                      padding: '16px 14px 14px', borderRadius: 22,
+                      background: colors.bg, border: `1.5px solid ${colors.border}`,
                     }}>
-                      <span style={{
-                        width: 24, height: 24, borderRadius: 999, flexShrink: 0, marginTop: 0,
-                        background: '#1a1a1a', color: '#fff', fontSize: 13, fontWeight: 700,
-                        display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                      <p style={{
+                        display: 'flex', alignItems: 'flex-start', gap: 10,
+                        margin: '0 0 10px', fontSize: 15.5, fontWeight: 700, color: '#1a1a1a', lineHeight: 1.4,
                       }}>
-                        {i + 1}
-                      </span>
-                      {q.label}
-                    </p>
-                    <VoiceTextInput
-                      value={answers[i] ?? ''}
-                      onChange={(v, source) => {
-                        setAnswers(a => a.map((x, j) => (j === i ? v : x)))
-                        if (source === 'typed') setHasTyped(true)
-                        else setHasDictated(true)
-                      }}
-                      onAudio={handleDictationAudio}
-                      placeholder={q.placeholder}
-                      rows={3}
-                      maxLength={1800}
-                    />
-                  </div>
-                ))}
+                        <span style={{
+                          width: 24, height: 24, borderRadius: 999, flexShrink: 0, marginTop: 0,
+                          background: colors.badge, color: '#fff', fontSize: 13, fontWeight: 700,
+                          display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                        }}>
+                          {i + 1}
+                        </span>
+                        {q.label}
+                      </p>
+                      <VoiceTextInput
+                        value={answers[i] ?? ''}
+                        onChange={(v, source) => {
+                          setAnswers(a => a.map((x, j) => (j === i ? v : x)))
+                          if (source === 'typed') setHasTyped(true)
+                          else setHasDictated(true)
+                          if (v.trim() !== checkedTextRef.current[i]) {
+                            setChecks(c => (c[i].status === 'idle' ? c : c.map((x, j) => (j === i ? { status: 'idle' as const } : x))))
+                          }
+                        }}
+                        onAudio={handleDictationAudio}
+                        placeholder={q.placeholder}
+                        rows={3}
+                        maxLength={1800}
+                      />
+                      {check.status === 'checking' && (
+                        <p style={{
+                          display: 'flex', alignItems: 'center', gap: 8,
+                          margin: '10px 2px 0', fontSize: 13, fontWeight: 600, color: '#6B7280',
+                        }}>
+                          <Spinner size={13} color="#9CA3AF" /> KI prüft kurz auf Heil- und Wirkaussagen…
+                        </p>
+                      )}
+                      {check.status === 'ok' && (
+                        <p style={{ margin: '10px 2px 0', fontSize: 13, fontWeight: 700, color: '#059669' }}>
+                          ✓ Alles gut, keine Heil- oder Wirkaussagen gefunden.
+                        </p>
+                      )}
+                      {check.status === 'issues' && (
+                        <div style={{
+                          marginTop: 12, padding: '14px 14px 12px', borderRadius: 16,
+                          background: '#fff', border: '1.5px solid #FDE68A',
+                        }}>
+                          <p style={{ margin: '0 0 8px', fontSize: 13.5, fontWeight: 800, color: '#92400E' }}>
+                            ⚠️ Kurzer Hinweis von unserer KI
+                          </p>
+                          {check.issues.slice(0, 3).map(issue => (
+                            <p key={issue.quote} style={{ margin: '0 0 8px', fontSize: 13, lineHeight: 1.5, color: '#78350F' }}>
+                              „{issue.quote}“ – {issue.reason}
+                            </p>
+                          ))}
+                          {check.suggestion && (
+                            <>
+                              <p style={{
+                                margin: '10px 0 0', padding: '10px 12px', borderRadius: 12,
+                                background: '#F3FCF7', border: '1px solid #BBE9D0',
+                                fontSize: 13.5, lineHeight: 1.55, color: '#065F46',
+                              }}>
+                                {check.suggestion}
+                              </p>
+                              <button
+                                type="button"
+                                className="fs-press"
+                                onClick={() => acceptSuggestion(i)}
+                                style={{
+                                  marginTop: 10, width: '100%', padding: '11px 0', borderRadius: 999,
+                                  border: 'none', background: '#059669', color: '#fff',
+                                  fontSize: 14, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit',
+                                }}
+                              >
+                                Vorschlag übernehmen
+                              </button>
+                            </>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  )
+                })}
                 {hasDictated && combinedText && (
                   <p style={{ margin: '14px 2px 0', fontSize: 13.5, color: '#059669', fontWeight: 600 }}>
                     Wir haben das mal aufgeschrieben. Passt das so? Du kannst alles direkt im Text ändern.
@@ -1347,10 +1503,48 @@ export default function Wizard() {
 
             {step === 'video' && (
               <StepShell
-                title="Magst du ein kurzes Video dazu machen?"
+                title={`Magst du ein kurzes Video machen, ${firstName}?`}
                 sub="Optional, wirkt aber am stärksten. Bitte im Hochkant-Format. 30 bis 60 Sekunden sind ideal, maximal 2 Minuten."
               >
-                {showGuide && video.phase === 'none' && <HealthClaimCard />}
+                {video.phase === 'none' && combinedText && (
+                  <div style={{
+                    padding: '16px 16px 6px', borderRadius: 20, background: '#EFF6FF',
+                    border: '1.5px solid #BFDBFE', marginBottom: 16,
+                  }}>
+                    <p style={{ margin: '0 0 4px', fontSize: 14.5, fontWeight: 800, color: '#1E40AF' }}>
+                      📝 Dein Spickzettel
+                    </p>
+                    <p style={{ margin: '0 0 12px', fontSize: 13, lineHeight: 1.5, color: '#1E3A8A' }}>
+                      Sag am besten einfach das, was du geschrieben hast. Das ist schon geprüft.
+                    </p>
+                    {questions.map((q, i) => {
+                      const a = (answers[i] ?? '').trim()
+                      if (!a) return null
+                      return (
+                        <div key={q.key} style={{ marginBottom: 12 }}>
+                          <p style={{ margin: '0 0 3px', fontSize: 12.5, fontWeight: 700, color: '#1E40AF' }}>{q.label}</p>
+                          <p style={{ margin: 0, fontSize: 13.5, lineHeight: 1.55, color: '#374151', whiteSpace: 'pre-wrap' }}>{a}</p>
+                        </div>
+                      )
+                    })}
+                  </div>
+                )}
+
+                {video.phase === 'none' && !showRecorder && (
+                  showVideoRules ? <HealthClaimCard /> : (
+                    <button
+                      type="button"
+                      onClick={() => setShowVideoRules(true)}
+                      style={{
+                        marginBottom: 16, padding: '8px 2px', border: 'none', background: 'none',
+                        color: '#92400E', fontSize: 13.5, fontWeight: 600, cursor: 'pointer',
+                        textDecoration: 'underline', textUnderlineOffset: 3, fontFamily: 'inherit',
+                      }}
+                    >
+                      ⚠️ Regeln zu Heil- und Wirkaussagen nochmal ansehen
+                    </button>
+                  )
+                )}
 
                 {showRecorder ? (
                   <VideoRecorder
@@ -1362,7 +1556,7 @@ export default function Wizard() {
                     <button
                       type="button"
                       className="fs-press"
-                      onClick={() => { setShowGuide(false); setShowRecorder(true) }}
+                      onClick={() => setShowRecorder(true)}
                       style={{
                         display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10,
                         width: '100%', padding: '17px 0', borderRadius: 20, border: 'none',
@@ -1396,7 +1590,7 @@ export default function Wizard() {
                       onChange={e => {
                         const file = e.target.files?.[0]
                         e.target.value = ''
-                        if (file) { setShowGuide(false); handleVideoBlob(file) }
+                        if (file) handleVideoBlob(file)
                       }}
                     />
                   </div>
@@ -1485,17 +1679,9 @@ export default function Wizard() {
 
             {step === 'personal' && (
               <StepShell
-                title="Fast geschafft! Wer bist du?"
-                sub="Damit dein Bericht ein Gesicht bekommt."
+                title={`Fast geschafft, ${firstName}!`}
+                sub="Nur noch zwei Dinge, dann bist du durch."
               >
-                <FieldLabel>Dein Vor- und Nachname</FieldLabel>
-                <TextInput
-                  value={fullName}
-                  onChange={e => setFullName(e.target.value.slice(0, 200))}
-                  placeholder="z. B. Sandra Kaiser"
-                  autoComplete="name"
-                />
-
                 <FieldLabel>Wie soll dein Name angezeigt werden?</FieldLabel>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                   <SelectCard
@@ -1526,32 +1712,60 @@ export default function Wizard() {
                   Kein Spam, wird nicht veröffentlicht.
                 </p>
 
-                <FieldLabel>Dein Alter (optional)</FieldLabel>
-                <TextInput
-                  type="number"
-                  value={age}
-                  onChange={e => setAge(e.target.value.slice(0, 3))}
-                  placeholder="z. B. 42"
-                  inputMode="numeric"
-                  min={16}
-                  max={120}
-                  style={{ maxWidth: 140 }}
-                />
+                {showOptional ? (
+                  <>
+                    <FieldLabel>Dein Alter (optional)</FieldLabel>
+                    <TextInput
+                      type="number"
+                      value={age}
+                      onChange={e => setAge(e.target.value.slice(0, 3))}
+                      placeholder="z. B. 42"
+                      inputMode="numeric"
+                      min={16}
+                      max={120}
+                      style={{ maxWidth: 140 }}
+                    />
 
-                <FieldLabel>Deine Social-Media-Profile (optional)</FieldLabel>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                  <TextInput value={instagram} onChange={e => setInstagram(e.target.value.slice(0, 300))} placeholder="Instagram, z. B. @sandra.kaiser" />
-                  <TextInput value={tiktok} onChange={e => setTiktok(e.target.value.slice(0, 300))} placeholder="TikTok" />
-                  <TextInput value={facebook} onChange={e => setFacebook(e.target.value.slice(0, 300))} placeholder="Facebook" />
-                </div>
+                    <FieldLabel>Deine Social-Media-Profile (optional)</FieldLabel>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                      <TextInput value={instagram} onChange={e => setInstagram(e.target.value.slice(0, 300))} placeholder="Instagram, z. B. @sandra.kaiser" />
+                      <TextInput value={tiktok} onChange={e => setTiktok(e.target.value.slice(0, 300))} placeholder="TikTok" />
+                      <TextInput value={facebook} onChange={e => setFacebook(e.target.value.slice(0, 300))} placeholder="Facebook" />
+                    </div>
+                  </>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => setShowOptional(true)}
+                    style={{
+                      marginTop: 22, padding: '8px 2px', border: 'none', background: 'none',
+                      color: '#6B7280', fontSize: 14, fontWeight: 600, cursor: 'pointer',
+                      textDecoration: 'underline', textUnderlineOffset: 3, fontFamily: 'inherit',
+                    }}
+                  >
+                    + Alter oder Social Media ergänzen (optional)
+                  </button>
+                )}
               </StepShell>
             )}
 
             {step === 'consent' && (
               <StepShell
-                title="Ein letzter Klick"
+                title={`Ein letzter Klick, ${firstName}`}
                 sub="Damit wir deinen Bericht auch wirklich zeigen dürfen."
               >
+                <div style={{
+                  padding: '16px 16px 14px', borderRadius: 20, background: '#ECFDF5',
+                  border: '1.5px solid #A7F3D0', marginBottom: 20,
+                }}>
+                  <p style={{ margin: '0 0 6px', fontSize: 14.5, fontWeight: 800, color: '#065F46' }}>
+                    🎁 {CONSENT_BONUS.title}
+                  </p>
+                  <p style={{ margin: 0, fontSize: 13.5, lineHeight: 1.55, color: '#047857' }}>
+                    {CONSENT_BONUS.text}
+                  </p>
+                </div>
+
                 {/* Honeypot: für Menschen unsichtbar, Bots füllen es aus */}
                 <input
                   type="text"

@@ -194,7 +194,8 @@ export function isGrandfathered(quote: string, approvedHtml: string): boolean {
 export async function checkCompliance(
   html: string,
   approvedHtml: string,
-  apiKey: string
+  apiKey: string,
+  extraRules?: string
 ): Promise<CheckResult> {
   const userContent =
     approvedHtml && approvedHtml !== html
@@ -212,7 +213,7 @@ export async function checkCompliance(
       temperature: 0,
       response_format: { type: 'json_object' },
       messages: [
-        { role: 'system', content: SYSTEM_PROMPT },
+        { role: 'system', content: extraRules ? `${SYSTEM_PROMPT}\n\n${extraRules}` : SYSTEM_PROMPT },
         { role: 'user', content: userContent },
       ],
     }),

@@ -84,15 +84,21 @@ export const HEALTH_CLAIM_GUIDE = {
     'Keine Wirkversprechen wie "hilft gegen", "heilt" oder "stärkt das Immunsystem"',
   ],
   goodExamples: [
-    'Seit ich morgens meinen PowerCocktail trinke, starte ich viel wacher und besser gelaunt in den Tag.',
+    'Mein PowerCocktail gehört bei mir fest zum Morgen dazu. Ich starte heute richtig gern und gut gelaunt in den Tag.',
     'Die Stoffwechselkur war für mich der Anstoß, meine Ernährung komplett umzustellen. Ich fühle mich heute richtig wohl in meinem Körper.',
-    'Activize gehört bei mir fest vor jedes Training dazu. Damit fühle ich mich einfach fitter.',
+    'Activize gehört bei mir fest vor jedes Training dazu. Ich fühle mich heute fitter als früher.',
   ],
   badExamples: [
     'Ich habe mit der Kur 8 Kilo in 3 Wochen abgenommen. (Abnehm-Zahlen sind verboten)',
     'Seit ich Restorate nehme, sind meine Gelenkschmerzen weg. (Krankheitsbezug ist verboten)',
     'Der PowerCocktail stärkt das Immunsystem und beugt Erkältungen vor. (Wirkversprechen sind verboten)',
   ],
+}
+
+// Geschenk-Hinweis auf dem Consent-Step: was es fürs Mitmachen gibt.
+export const CONSENT_BONUS = {
+  title: 'Dein Dankeschön',
+  text: 'Als Geschenk bekommst du die Fallstudien-Seite: ganz viele geprüfte und kontrollierte Erfahrungsberichte, die du kostenlos für deine Seiten verwenden darfst. Veröffentlicht wird sie, sobald genug Berichte zusammen sind. Wir melden uns dann per E-Mail bei dir.',
 }
 
 export const REWARD_MESSAGE = {
