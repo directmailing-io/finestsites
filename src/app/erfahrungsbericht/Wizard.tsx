@@ -48,7 +48,7 @@ function putWithProgress(url: string, blob: Blob, contentType: string, onProgres
   })
 }
 
-// ── Sprach- und Texteingabe (aus dem Feedback-Wizard übernommen) ──────────────
+// ── Sprach- und Texteingabe ───────────────────────────────────────────────────
 
 const AUDIO_MIME_CANDIDATES = [
   'audio/webm;codecs=opus',
@@ -123,7 +123,7 @@ function VoiceTextInput({ value, onChange, onAudio, placeholder, rows = 6, maxLe
         try {
           const fd = new FormData()
           fd.append('audio', blob, 'aufnahme')
-          const res = await fetch('/api/feedback/transcribe', { method: 'POST', body: fd })
+          const res = await fetch('/api/erfahrungsbericht/transcribe', { method: 'POST', body: fd })
           const data = await res.json()
           if (!res.ok) throw new Error(data.error ?? 'Fehler')
           const text = (data.text ?? '').trim()

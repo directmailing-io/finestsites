@@ -1,35 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { createRateLimiter, getClientIp } from '@/lib/testimonials/server'
 
-// Temporäre Feedback-Kampagne (anonym). Zum vollständigen Entfernen:
-// siehe docs/feedback-aktion-entfernen.md
+// Whisper-Transkription für die "Einsprechen"-Funktion im Erfahrungsbericht-Wizard.
 
 const MAX_AUDIO_BYTES = 15 * 1024 * 1024
 
-// Rate limiter: max 12 Transkriptionen pro IP pro Minute
-const rateLimiter = new Map<string, { count: number; resetAt: number }>()
-
-function checkRateLimit(ip: string): boolean {
-  const now = Date.now()
-  const entry = rateLimiter.get(ip)
-  if (!entry || now > entry.resetAt) {
-    rateLimiter.set(ip, { count: 1, resetAt: now + 60_000 })
-    return true
-  }
-  if (entry.count >= 12) return false
-  entry.count++
-  return true
-}
-
-function getClientIp(req: NextRequest): string {
-  return (
-    req.headers.get('x-forwarded-for')?.split(',')[0].trim() ??
-    req.headers.get('x-real-ip') ??
-    'unknown'
-  )
-}
+const rateLimit = createRateLimiter(12, 60_000)
 
 export async function POST(req: NextRequest) {
-  if (!checkRateLimit(getClientIp(req))) {
+  if (!rateLimit(getClientIp(req))) {
     return NextResponse.json({ error: 'Zu viele Anfragen. Bitte versuch es später nochmal.' }, { status: 429 })
   }
 
@@ -77,13 +56,13 @@ export async function POST(req: NextRequest) {
     })
     if (!res.ok) {
       const detail = await res.text().catch(() => '')
-      console.error('[feedback/transcribe] OpenAI error:', res.status, detail.slice(0, 500))
+      console.error('[erfahrungsbericht/transcribe] OpenAI error:', res.status, detail.slice(0, 500))
       return NextResponse.json({ error: 'Transkription fehlgeschlagen' }, { status: 502 })
     }
     const data = (await res.json()) as { text?: string }
     return NextResponse.json({ text: (data.text ?? '').trim() })
   } catch (e) {
-    console.error('[feedback/transcribe] request failed:', e)
+    console.error('[erfahrungsbericht/transcribe] request failed:', e)
     return NextResponse.json({ error: 'Transkription fehlgeschlagen' }, { status: 502 })
   }
 }
