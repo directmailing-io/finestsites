@@ -583,3 +583,75 @@ export const siteEvents = pgTable('site_events', {
 ])
 
 export type SiteEvent = typeof siteEvents.$inferSelect
+
+// ─── Erfahrungsberichte (öffentliche Testimonial-Sammlung) ────────────────────
+
+export const testimonialStatusEnum = pgEnum('testimonial_status', [
+  'draft', 'new', 'reviewed', 'published', 'rejected',
+])
+export const testimonialCategoryEnum = pgEnum('testimonial_category', [
+  'produkte', 'stoffwechselkur', 'business',
+])
+export const testimonialAssetKindEnum = pgEnum('testimonial_asset_kind', [
+  'before_image', 'after_image', 'video', 'audio',
+])
+export const testimonialAssetStatusEnum = pgEnum('testimonial_asset_status', [
+  'pending', 'verified', 'rejected',
+])
+
+export const testimonials = pgTable('testimonials', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  status: testimonialStatusEnum('status').notNull().default('draft'),
+  category: testimonialCategoryEnum('category').notNull(),
+  text: text('text'),
+  textSource: varchar('text_source', { length: 16 }), // 'typed' | 'dictated' | 'mixed'
+  fullName: varchar('full_name', { length: 200 }),
+  displayNameMode: varchar('display_name_mode', { length: 16 }), // 'full' | 'abbreviated'
+  age: integer('age'),
+  email: varchar('email', { length: 320 }),
+  instagram: varchar('instagram', { length: 300 }),
+  tiktok: varchar('tiktok', { length: 300 }),
+  facebook: varchar('facebook', { length: 300 }),
+  // Autorisiert alle Folge-Requests des anonymen Absenders (Upload, Submit)
+  uploadToken: varchar('upload_token', { length: 64 }).notNull(),
+  consentVersion: varchar('consent_version', { length: 16 }),
+  consentHash: varchar('consent_hash', { length: 64 }),
+  consentIp: varchar('consent_ip', { length: 64 }),
+  consentUa: text('consent_ua'),
+  consentedAt: timestamp('consented_at', { withTimezone: true }),
+  submittedAt: timestamp('submitted_at', { withTimezone: true }),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [
+  index('idx_testimonials_status_created').on(t.status, t.createdAt),
+])
+
+export const testimonialAssets = pgTable('testimonial_assets', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  testimonialId: uuid('testimonial_id').notNull()
+    .references(() => testimonials.id, { onDelete: 'cascade' }),
+  kind: testimonialAssetKindEnum('kind').notNull(),
+  status: testimonialAssetStatusEnum('status').notNull().default('pending'),
+  r2Key: text('r2_key').notNull(),
+  contentType: varchar('content_type', { length: 100 }).notNull(),
+  sizeBytes: bigint('size_bytes', { mode: 'number' }),
+  durationSeconds: integer('duration_seconds'),
+  sortOrder: integer('sort_order').notNull().default(0),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [
+  index('idx_testimonial_assets_testimonial').on(t.testimonialId),
+])
+
+export const testimonialsRelations = relations(testimonials, ({ many }) => ({
+  assets: many(testimonialAssets),
+}))
+
+export const testimonialAssetsRelations = relations(testimonialAssets, ({ one }) => ({
+  testimonial: one(testimonials, {
+    fields: [testimonialAssets.testimonialId],
+    references: [testimonials.id],
+  }),
+}))
+
+export type Testimonial = typeof testimonials.$inferSelect
+export type TestimonialAsset = typeof testimonialAssets.$inferSelect

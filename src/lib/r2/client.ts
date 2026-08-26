@@ -62,3 +62,38 @@ export async function getPresignedUploadUrl(key: string, contentType: string, ex
   })
   return getSignedUrl(r2Client, command, { expiresIn })
 }
+
+export async function getPresignedDownloadUrl(key: string, expiresIn = 900, downloadFilename?: string) {
+  const command = new GetObjectCommand({
+    Bucket: BUCKET,
+    Key: key,
+    ...(downloadFilename
+      ? { ResponseContentDisposition: `attachment; filename="${downloadFilename.replace(/[^\w.\- ]/g, '_')}"` }
+      : {}),
+  })
+  return getSignedUrl(r2Client, command, { expiresIn })
+}
+
+export async function getRangeFromR2(key: string, start: number, end: number): Promise<{ data: Buffer; totalSize: number | undefined }> {
+  const command = new GetObjectCommand({
+    Bucket: BUCKET,
+    Key: key,
+    Range: `bytes=${start}-${end}`,
+  })
+  const response = await r2Client.send(command)
+  const bytes = await response.Body?.transformToByteArray()
+  // ContentRange: "bytes 0-63/12345678" — hinterer Teil ist die Gesamtgröße
+  const totalSize = response.ContentRange
+    ? parseInt(response.ContentRange.split('/')[1], 10) || undefined
+    : undefined
+  return { data: Buffer.from(bytes ?? []), totalSize }
+}
+
+export async function getStreamFromR2(key: string): Promise<NodeJS.ReadableStream | null> {
+  const command = new GetObjectCommand({
+    Bucket: BUCKET,
+    Key: key,
+  })
+  const response = await r2Client.send(command)
+  return (response.Body as NodeJS.ReadableStream | undefined) ?? null
+}

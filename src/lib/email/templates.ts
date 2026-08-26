@@ -493,6 +493,46 @@ export function welcomeEmail({ firstName }: { firstName?: string }): string {
 // ─── Helpers ───────────────────────────────────────────────────────────────────
 
 /** Convert plain text with line breaks to email-safe HTML paragraphs */
+function escapeHtml(s: string): string {
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+}
+
+export function testimonialThanksEmail({ firstName }: { firstName?: string }): string {
+  firstName = firstName ? escapeHtml(firstName) : firstName
+  return layout(`
+    <h1 style="margin:0 0 8px;font-size:22px;font-weight:700;color:${base.heading};letter-spacing:-0.02em;">
+      Danke für deinen Erfahrungsbericht${firstName ? `, ${firstName}` : ''}!
+    </h1>
+    <p style="margin:0 0 16px;font-size:15px;color:${base.body};line-height:1.65;">
+      Dein Bericht ist bei uns angekommen. Richtig stark, dass du deine Geschichte teilst!
+    </p>
+    <p style="margin:0 0 16px;font-size:15px;color:${base.body};line-height:1.65;">
+      So geht es jetzt weiter: Wir schauen uns deinen Bericht an und bereiten ihn für die Fallstudien-Seite vor. Sobald genug Berichte aus der Community zusammen sind, melden wir uns bei dir. Dann kannst du deine kostenlose Fallstudien-Seite freischalten.
+    </p>
+    <p style="margin:0 0 16px;font-size:15px;color:${base.body};line-height:1.65;">
+      Kennst du Teampartner, die auch eine Geschichte zu erzählen haben? Schick ihnen gern den Link weiter: <a href="https://app.finestsites.io/erfahrungsbericht" style="color:${base.heading};">app.finestsites.io/erfahrungsbericht</a>
+    </p>
+    <p style="margin:28px 0 0;font-size:13px;color:${base.muted};line-height:1.6;">
+      Du kannst deine Einwilligung jederzeit widerrufen. Schreib uns dafür einfach eine E-Mail an hello@finestsites.io und wir nehmen deinen Bericht von allen Seiten runter.
+    </p>
+  `)
+}
+
+export function testimonialAdminNotifyEmail({ name, category, assetCount }: {
+  name: string; category: string; assetCount: number
+}): string {
+  name = escapeHtml(name)
+  return layout(`
+    <h1 style="margin:0 0 8px;font-size:22px;font-weight:700;color:${base.heading};letter-spacing:-0.02em;">
+      Neuer Erfahrungsbericht
+    </h1>
+    <p style="margin:0 0 0;font-size:15px;color:${base.body};line-height:1.65;">
+      ${name} hat einen Bericht in der Kategorie ${category} eingereicht (${assetCount} Datei${assetCount === 1 ? '' : 'en'}).
+    </p>
+    ${button('https://app.finestsites.io/admin/erfahrungsberichte', 'Im Admin ansehen')}
+  `)
+}
+
 export function textToHtml(text: string): string {
   return text
     .split('\n\n')
