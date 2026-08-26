@@ -36,10 +36,18 @@ export function compressVideo(file: Blob, onProgress: (p: number) => void): Vide
     const target = new BufferTarget()
     const output = new Output({ format: new Mp4OutputFormat(), target })
 
+    // Lange Seite auf 1280 begrenzen, Hochkant-Videos nicht auf 1280 Breite hochskalieren
+    const track = await input.getPrimaryVideoTrack()
+    const w = track?.displayWidth ?? TARGET_WIDTH
+    const h = track?.displayHeight ?? TARGET_WIDTH
+    const size = h > w
+      ? { height: Math.min(TARGET_WIDTH, h) }
+      : { width: Math.min(TARGET_WIDTH, w) }
+
     const conversion = await Conversion.init({
       input,
       output,
-      video: { codec: 'avc', width: TARGET_WIDTH, bitrate: TARGET_VIDEO_BITRATE },
+      video: { codec: 'avc', ...size, bitrate: TARGET_VIDEO_BITRATE },
       audio: { codec: 'aac', bitrate: TARGET_AUDIO_BITRATE },
     })
 

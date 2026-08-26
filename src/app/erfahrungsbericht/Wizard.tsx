@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
   TESTIMONIAL_CATEGORIES, TestimonialCategoryKey, HEALTH_CLAIM_GUIDE,
-  REWARD_MESSAGE, WHATSAPP_SHARE_TEXT,
+  REWARD_MESSAGE, WHATSAPP_SHARE_TEXT, guidedQuestionsFor,
 } from '@/lib/constants/testimonial-content'
 import { getCurrentTestimonialConsentText } from '@/lib/constants/testimonial-consent'
 import { compressImage } from './lib/compress-image'
@@ -70,12 +70,13 @@ function voiceSupported(): boolean {
     && typeof MediaRecorder !== 'undefined'
 }
 
-function VoiceTextInput({ value, onChange, onAudio, placeholder, rows = 6 }: {
+function VoiceTextInput({ value, onChange, onAudio, placeholder, rows = 6, maxLength = 6000 }: {
   value: string
   onChange: (v: string, source: 'typed' | 'dictated') => void
   onAudio?: (blob: Blob) => void
   placeholder: string
   rows?: number
+  maxLength?: number
 }) {
   const [supported, setSupported] = useState(false)
   const [recording, setRecording] = useState(false)
@@ -127,7 +128,7 @@ function VoiceTextInput({ value, onChange, onAudio, placeholder, rows = 6 }: {
           if (!res.ok) throw new Error(data.error ?? 'Fehler')
           const text = (data.text ?? '').trim()
           if (text) {
-            onChange(value ? value.trimEnd() + ' ' + text : text, 'dictated')
+            onChange((value ? value.trimEnd() + ' ' + text : text).slice(0, maxLength), 'dictated')
             onAudio?.(blob)
           } else {
             setError('Wir konnten nichts verstehen. Versuch es nochmal oder tipp deine Antwort ein.')
@@ -153,7 +154,7 @@ function VoiceTextInput({ value, onChange, onAudio, placeholder, rows = 6 }: {
       stream.getTracks().forEach(t => t.stop())
       setError('Einsprechen klappt in diesem Browser nicht. Tipp deine Antwort einfach ein.')
     }
-  }, [onChange, onAudio, value, stopRecording])
+  }, [onChange, onAudio, value, stopRecording, maxLength])
 
   useEffect(() => () => { stopTimer(); recorderRef.current?.stream?.getTracks().forEach(t => t.stop()) }, [])
 
@@ -162,7 +163,7 @@ function VoiceTextInput({ value, onChange, onAudio, placeholder, rows = 6 }: {
       <div style={{ position: 'relative' }}>
         <textarea
           value={value}
-          onChange={e => onChange(e.target.value.slice(0, 6000), 'typed')}
+          onChange={e => onChange(e.target.value.slice(0, maxLength), 'typed')}
           placeholder={placeholder}
           rows={rows}
           style={{
@@ -234,7 +235,7 @@ function pickVideoMime(): string {
   return VIDEO_MIME_CANDIDATES.find(c => MediaRecorder.isTypeSupported(c)) ?? ''
 }
 
-const MAX_RECORD_SECONDS = 180
+const MAX_RECORD_SECONDS = 120
 
 function VideoRecorder({ onFinish, onClose }: {
   onFinish: (blob: Blob) => void
@@ -249,13 +250,19 @@ function VideoRecorder({ onFinish, onClose }: {
   const [recording, setRecording] = useState(false)
   const [seconds, setSeconds] = useState(0)
   const [error, setError] = useState('')
+  const [preview, setPreview] = useState<{ blob: Blob; url: string } | null>(null)
+  const previewUrlRef = useRef<string | null>(null)
 
   useEffect(() => {
     let cancelled = false
     ;(async () => {
       try {
+        // Hochkant (9:16) ist gewollt: so passen die Videos später in die Fallstudien-Seite
         const stream = await navigator.mediaDevices.getUserMedia({
-          video: { width: { ideal: 1280 }, facingMode: 'user' },
+          video: {
+            width: { ideal: 720 }, height: { ideal: 1280 },
+            aspectRatio: { ideal: 9 / 16 }, facingMode: 'user',
+          },
           audio: true,
         })
         if (cancelled) { stream.getTracks().forEach(t => t.stop()); return }
@@ -274,6 +281,7 @@ function VideoRecorder({ onFinish, onClose }: {
       if (timerRef.current) clearInterval(timerRef.current)
       try { recorderRef.current?.stop() } catch { /* egal */ }
       streamRef.current?.getTracks().forEach(t => t.stop())
+      if (previewUrlRef.current) URL.revokeObjectURL(previewUrlRef.current)
     }
   }, [])
 
@@ -303,7 +311,10 @@ function VideoRecorder({ onFinish, onClose }: {
           setError('Die Aufnahme war zu kurz. Versuch es nochmal.')
           return
         }
-        onFinish(blob)
+        // Erst anschauen, dann entscheiden: hochladen oder neu aufnehmen
+        const url = URL.createObjectURL(blob)
+        previewUrlRef.current = url
+        setPreview({ blob, url })
       }
       rec.start(1000)
       recorderRef.current = rec
@@ -318,20 +329,40 @@ function VideoRecorder({ onFinish, onClose }: {
     } catch {
       setError('Aufnehmen klappt in diesem Browser nicht. Lade stattdessen ein Video hoch.')
     }
-  }, [onFinish, stop])
+  }, [stop])
+
+  const retake = useCallback(() => {
+    if (previewUrlRef.current) { URL.revokeObjectURL(previewUrlRef.current); previewUrlRef.current = null }
+    setPreview(null)
+    setError('')
+    if (videoRef.current && streamRef.current) {
+      videoRef.current.srcObject = streamRef.current
+      videoRef.current.play().catch(() => {})
+    }
+  }, [])
 
   return (
     <div style={{ animation: 'fs-step-in 0.35s cubic-bezier(0.16,1,0.3,1)' }}>
       <div style={{
         position: 'relative', borderRadius: 22, overflow: 'hidden', background: '#111',
-        aspectRatio: '3 / 4', maxHeight: 420,
+        aspectRatio: '9 / 16', width: 'min(100%, 280px)', margin: '0 auto',
       }}>
-        <video
-          ref={videoRef}
-          muted
-          playsInline
-          style={{ width: '100%', height: '100%', objectFit: 'cover', transform: 'scaleX(-1)' }}
-        />
+        {preview ? (
+          <video
+            key={preview.url}
+            src={preview.url}
+            controls
+            playsInline
+            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+          />
+        ) : (
+          <video
+            ref={videoRef}
+            muted
+            playsInline
+            style={{ width: '100%', height: '100%', objectFit: 'cover', transform: 'scaleX(-1)' }}
+          />
+        )}
         {recording && (
           <span style={{
             position: 'absolute', top: 14, left: 14, display: 'flex', alignItems: 'center', gap: 7,
@@ -339,38 +370,110 @@ function VideoRecorder({ onFinish, onClose }: {
             color: '#fff', fontSize: 13.5, fontWeight: 700,
           }}>
             <span style={{ width: 8, height: 8, borderRadius: 999, background: '#EF4444', animation: 'fs-pulse 1s infinite' }} />
-            {String(Math.floor(seconds / 60))}:{String(seconds % 60).padStart(2, '0')} / 3:00
+            {String(Math.floor(seconds / 60))}:{String(seconds % 60).padStart(2, '0')} / 2:00
           </span>
         )}
       </div>
+      {!recording && !preview && (
+        <p style={{ margin: '10px 2px 0', fontSize: 13, color: '#9CA3AF', textAlign: 'center' }}>
+          30 bis 60 Sekunden reichen völlig. Maximal 2 Minuten.
+        </p>
+      )}
       {error && <p style={{ margin: '10px 2px 0', fontSize: 13.5, color: '#B45309' }}>{error}</p>}
-      <div style={{ display: 'flex', gap: 10, marginTop: 14 }}>
-        <button
-          type="button"
-          className="fs-press"
-          onClick={() => { stop(); onClose() }}
-          style={{
-            flex: 1, padding: '14px 0', borderRadius: 999, border: '1.5px solid #E5E7EB',
-            background: '#fff', color: '#374151', fontSize: 15.5, fontWeight: 600,
-            cursor: 'pointer', fontFamily: 'inherit',
-          }}
-        >
-          Abbrechen
-        </button>
-        <button
-          type="button"
-          className="fs-press"
-          onClick={recording ? stop : start}
-          disabled={!ready}
-          style={{
-            flex: 2, padding: '14px 0', borderRadius: 999, border: 'none',
-            background: recording ? '#DC2626' : '#1a1a1a', color: '#fff',
-            fontSize: 15.5, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit',
-            opacity: ready ? 1 : 0.5,
-          }}
-        >
-          {recording ? 'Aufnahme beenden' : 'Aufnahme starten'}
-        </button>
+      {preview ? (
+        <>
+          <p style={{ margin: '12px 2px 0', fontSize: 14, fontWeight: 600, color: '#374151', textAlign: 'center' }}>
+            Schau es dir kurz an. Zufrieden?
+          </p>
+          <div style={{ display: 'flex', gap: 10, marginTop: 12 }}>
+            <button
+              type="button"
+              className="fs-press"
+              onClick={retake}
+              style={{
+                flex: 1, padding: '14px 0', borderRadius: 999, border: '1.5px solid #E5E7EB',
+                background: '#fff', color: '#374151', fontSize: 15.5, fontWeight: 600,
+                cursor: 'pointer', fontFamily: 'inherit',
+              }}
+            >
+              Neu aufnehmen
+            </button>
+            <button
+              type="button"
+              className="fs-press"
+              onClick={() => onFinish(preview.blob)}
+              style={{
+                flex: 1, padding: '14px 0', borderRadius: 999, border: 'none',
+                background: '#059669', color: '#fff', fontSize: 15.5, fontWeight: 700,
+                cursor: 'pointer', fontFamily: 'inherit',
+              }}
+            >
+              Video verwenden
+            </button>
+          </div>
+        </>
+      ) : (
+        <div style={{ display: 'flex', gap: 10, marginTop: 14 }}>
+          <button
+            type="button"
+            className="fs-press"
+            onClick={() => { stop(); onClose() }}
+            style={{
+              flex: 1, padding: '14px 0', borderRadius: 999, border: '1.5px solid #E5E7EB',
+              background: '#fff', color: '#374151', fontSize: 15.5, fontWeight: 600,
+              cursor: 'pointer', fontFamily: 'inherit',
+            }}
+          >
+            Abbrechen
+          </button>
+          <button
+            type="button"
+            className="fs-press"
+            onClick={recording ? stop : start}
+            disabled={!ready}
+            style={{
+              flex: 2, padding: '14px 0', borderRadius: 999, border: 'none',
+              background: recording ? '#DC2626' : '#1a1a1a', color: '#fff',
+              fontSize: 15.5, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit',
+              opacity: ready ? 1 : 0.5,
+            }}
+          >
+            {recording ? 'Aufnahme beenden' : 'Aufnahme starten'}
+          </button>
+        </div>
+      )}
+    </div>
+  )
+}
+
+// ── Heilaussagen-Hinweis (streng, bei Text- und Video-Step) ───────────────────
+
+function HealthClaimCard() {
+  return (
+    <div style={{
+      padding: '16px 16px 14px', borderRadius: 20, background: '#FFFBEB',
+      border: '1.5px solid #FDE68A', marginBottom: 20,
+    }}>
+      <p style={{
+        margin: '0 0 6px', fontSize: 14.5, fontWeight: 800, color: '#92400E',
+        display: 'flex', alignItems: 'center', gap: 8,
+      }}>
+        <span style={{ fontSize: 16 }}>⚠️</span> {HEALTH_CLAIM_GUIDE.title}
+      </p>
+      <p style={{ margin: '0 0 12px', fontSize: 13.5, lineHeight: 1.55, color: '#78350F' }}>
+        {HEALTH_CLAIM_GUIDE.intro}
+      </p>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
+        {HEALTH_CLAIM_GUIDE.badExamples.map(t => (
+          <p key={t} style={{ margin: 0, fontSize: 13, lineHeight: 1.5, color: '#991B1B' }}>
+            ❌ {t}
+          </p>
+        ))}
+        {HEALTH_CLAIM_GUIDE.goodExamples.map(t => (
+          <p key={t} style={{ margin: 0, fontSize: 13, lineHeight: 1.5, color: '#065F46' }}>
+            ✅ „{t}“
+          </p>
+        ))}
       </div>
     </div>
   )
@@ -678,7 +781,7 @@ export default function Wizard() {
   const [starting, setStarting] = useState(false)
   const [startError, setStartError] = useState('')
 
-  const [text, setText] = useState('')
+  const [answers, setAnswers] = useState<string[]>(['', '', ''])
   const [hasTyped, setHasTyped] = useState(false)
   const [hasDictated, setHasDictated] = useState(false)
   const audioAssetIdRef = useRef<string | null>(null)
@@ -724,19 +827,32 @@ export default function Wizard() {
 
   const textSource = hasDictated && hasTyped ? 'mixed' : hasDictated ? 'dictated' : 'typed'
 
+  const questions = useMemo(() => guidedQuestionsFor(category), [category])
+
+  // Die drei Antworten werden mit ihrer Frage als Überschrift zu einem Text kombiniert
+  const combinedText = useMemo(() =>
+    questions
+      .map((q, i) => {
+        const a = (answers[i] ?? '').trim()
+        return a ? `${q.label}\n${a}` : ''
+      })
+      .filter(Boolean)
+      .join('\n\n'),
+  [questions, answers])
+
   // Zwischenstand lokal sichern, damit ein unterbrochener Durchlauf fortsetzbar ist
   useEffect(() => {
     if (!session || done) return
     saveDraft({
       submissionId: session.submissionId, uploadToken: session.uploadToken,
-      category: category ?? '', stepIndex, text, textSource,
+      category: category ?? '', stepIndex, answers, textSource,
       fullName, displayNameMode, age, email, instagram, tiktok, facebook,
       startedAt: session.startedAt,
     })
-  }, [session, done, category, stepIndex, text, textSource, fullName, displayNameMode, age, email, instagram, tiktok, facebook])
+  }, [session, done, category, stepIndex, answers, textSource, fullName, displayNameMode, age, email, instagram, tiktok, facebook])
 
   function restoreFields(d: DraftData) {
-    setText(d.text ?? '')
+    setAnswers([d.answers?.[0] ?? '', d.answers?.[1] ?? '', d.answers?.[2] ?? ''])
     setHasTyped(d.textSource === 'typed' || d.textSource === 'mixed')
     setHasDictated(d.textSource === 'dictated' || d.textSource === 'mixed')
     setFullName(d.fullName ?? '')
@@ -941,7 +1057,7 @@ export default function Wizard() {
       await postJson('/api/erfahrungsbericht/submit', {
         submissionId: session.submissionId,
         uploadToken: session.uploadToken,
-        text: text.trim(),
+        text: combinedText,
         textSource,
         fullName: fullName.trim(),
         displayNameMode,
@@ -969,7 +1085,7 @@ export default function Wizard() {
     switch (step) {
       case 'intro': return true
       case 'category': return !!session && !!category && !starting
-      case 'text': return text.trim().length > 0
+      case 'text': return combinedText.length > 0
       case 'before': return !photosBusy(beforePhotos)
       case 'after': return !photosBusy(afterPhotos)
       case 'video': return !videoBusy && !showRecorder
@@ -1067,9 +1183,9 @@ export default function Wizard() {
                 </p>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                   {[
-                    ['✍️', 'Erzähl deine Erfahrung, getippt oder einfach eingesprochen'],
-                    ['📸', 'Fotos und Video sind optional, machen deinen Bericht aber stärker'],
-                    ['⏱️', 'Dauert nur ein paar Minuten, Zwischenstand wird gespeichert'],
+                    ['💬', '3 kurze Fragen, tippen oder einfach einsprechen'],
+                    ['📸', 'Fotos und Video nur, wenn du magst'],
+                    ['🎁', 'Als Dankeschön: deine Fallstudien-Seite gratis'],
                   ].map(([emoji, label]) => (
                     <div key={label} style={{
                       display: 'flex', alignItems: 'center', gap: 12,
@@ -1161,20 +1277,40 @@ export default function Wizard() {
             {step === 'text' && (
               <StepShell
                 title="Erzähl uns deine Erfahrung"
-                sub="Tipp einfach los oder sprich es ein, wir schreiben es für dich auf. Du kannst den Text danach noch anpassen."
+                sub="3 kurze Fragen. Tipp einfach los oder sprich deine Antwort ein, wir schreiben sie für dich auf."
               >
-                <VoiceTextInput
-                  value={text}
-                  onChange={(v, source) => {
-                    setText(v)
-                    if (source === 'typed') setHasTyped(true)
-                    else setHasDictated(true)
-                  }}
-                  onAudio={handleDictationAudio}
-                  placeholder="Wie war deine Situation vorher? Was hat sich verändert? Was würdest du anderen sagen?"
-                />
-                {hasDictated && text && (
-                  <p style={{ margin: '10px 2px 0', fontSize: 13.5, color: '#059669', fontWeight: 600 }}>
+                <HealthClaimCard />
+                {questions.map((q, i) => (
+                  <div key={q.key} style={{ marginBottom: i < questions.length - 1 ? 24 : 0 }}>
+                    <p style={{
+                      display: 'flex', alignItems: 'flex-start', gap: 10,
+                      margin: '0 0 10px', fontSize: 15.5, fontWeight: 700, color: '#1a1a1a', lineHeight: 1.4,
+                    }}>
+                      <span style={{
+                        width: 24, height: 24, borderRadius: 999, flexShrink: 0, marginTop: 0,
+                        background: '#1a1a1a', color: '#fff', fontSize: 13, fontWeight: 700,
+                        display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                      }}>
+                        {i + 1}
+                      </span>
+                      {q.label}
+                    </p>
+                    <VoiceTextInput
+                      value={answers[i] ?? ''}
+                      onChange={(v, source) => {
+                        setAnswers(a => a.map((x, j) => (j === i ? v : x)))
+                        if (source === 'typed') setHasTyped(true)
+                        else setHasDictated(true)
+                      }}
+                      onAudio={handleDictationAudio}
+                      placeholder={q.placeholder}
+                      rows={3}
+                      maxLength={1800}
+                    />
+                  </div>
+                ))}
+                {hasDictated && combinedText && (
+                  <p style={{ margin: '14px 2px 0', fontSize: 13.5, color: '#059669', fontWeight: 600 }}>
                     Wir haben das mal aufgeschrieben. Passt das so? Du kannst alles direkt im Text ändern.
                   </p>
                 )}
@@ -1212,33 +1348,9 @@ export default function Wizard() {
             {step === 'video' && (
               <StepShell
                 title="Magst du ein kurzes Video dazu machen?"
-                sub="Ein ehrliches Video wirkt am stärksten. 30 bis 90 Sekunden reichen völlig. Optional."
+                sub="Optional, wirkt aber am stärksten. Bitte im Hochkant-Format. 30 bis 60 Sekunden sind ideal, maximal 2 Minuten."
               >
-                {showGuide && video.phase === 'none' && (
-                  <div style={{
-                    padding: '18px 18px 16px', borderRadius: 22, background: '#F9FAFB',
-                    border: '1.5px solid #E5E7EB', marginBottom: 18,
-                  }}>
-                    <p style={{ margin: '0 0 14px', fontSize: 14.5, lineHeight: 1.55, color: '#374151' }}>
-                      {HEALTH_CLAIM_GUIDE.intro}
-                    </p>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 14 }}>
-                      {HEALTH_CLAIM_GUIDE.goodExamples.map(t => (
-                        <p key={t} style={{ margin: 0, fontSize: 13.5, lineHeight: 1.5, color: '#065F46' }}>
-                          ✅ „{t}“
-                        </p>
-                      ))}
-                      {HEALTH_CLAIM_GUIDE.badExamples.map(t => (
-                        <p key={t} style={{ margin: 0, fontSize: 13.5, lineHeight: 1.5, color: '#991B1B' }}>
-                          ❌ „{t}“
-                        </p>
-                      ))}
-                    </div>
-                    <p style={{ margin: 0, fontSize: 13.5, lineHeight: 1.55, color: '#6B7280' }}>
-                      {HEALTH_CLAIM_GUIDE.outro}
-                    </p>
-                  </div>
-                )}
+                {showGuide && video.phase === 'none' && <HealthClaimCard />}
 
                 {showRecorder ? (
                   <VideoRecorder

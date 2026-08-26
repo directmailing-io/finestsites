@@ -17,7 +17,7 @@ const STATUS_META: Record<string, { label: string; color: string; bg: string }> 
 }
 
 const CATEGORY_LABELS: Record<string, string> = {
-  produkte: '💊 Produkte',
+  produkte: '🍊 Produkte',
   stoffwechselkur: '🔄 Stoffwechselkur',
   business: '🚀 Business',
 }

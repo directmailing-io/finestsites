@@ -1,18 +1,21 @@
 // Zentrale Copy für den Erfahrungsbericht-Wizard.
 // Ton: umgangssprachlich, transparent, sympathisch. Keine Gedankenstriche.
 
-export const TESTIMONIAL_CATEGORIES = [
+// Der DB-Enum kennt weiterhin 'stoffwechselkur' (Altdaten), im Wizard gibt es
+// aber nur noch zwei Kategorien: Produkte (inkl. Kur) und Business.
+export type TestimonialCategoryKey = 'produkte' | 'stoffwechselkur' | 'business'
+
+export const TESTIMONIAL_CATEGORIES: {
+  key: TestimonialCategoryKey
+  emoji: string
+  title: string
+  subtitle: string
+}[] = [
   {
     key: 'produkte',
-    emoji: '💊',
+    emoji: '🍊',
     title: 'Produkte',
-    subtitle: 'Deine Erfahrung mit FitLine Produkten im Alltag',
-  },
-  {
-    key: 'stoffwechselkur',
-    emoji: '🔄',
-    title: 'Stoffwechselkur',
-    subtitle: 'Dein Weg mit der Kur, gern mit Vorher-Nachher-Fotos',
+    subtitle: 'FitLine Produkte oder Stoffwechselkur',
   },
   {
     key: 'business',
@@ -20,31 +23,81 @@ export const TESTIMONIAL_CATEGORIES = [
     title: 'Business',
     subtitle: 'Deine Geschichte als Teampartner',
   },
-] as const
+]
 
-export type TestimonialCategoryKey = (typeof TESTIMONIAL_CATEGORIES)[number]['key']
+// Drei geführte Fragen statt einem leeren Textfeld: Vorher, Weg, Ergebnis.
+export type GuidedQuestion = {
+  key: string
+  label: string
+  placeholder: string
+}
 
-// Hinweis vor Video-Aufnahme/-Upload: was gesagt werden darf und was nicht.
+const PRODUKTE_QUESTIONS: GuidedQuestion[] = [
+  {
+    key: 'vorher',
+    label: 'Wie war deine Situation vorher?',
+    placeholder: 'Wie ging es dir, bevor du gestartet bist? Was wolltest du für dich verändern?',
+  },
+  {
+    key: 'weg',
+    label: 'Was genau hast du unternommen und was begeistert dich daran?',
+    placeholder: 'Welche Produkte oder welche Kur? Wie sieht deine Routine aus? Was macht dir daran am meisten Spaß?',
+  },
+  {
+    key: 'ergebnis',
+    label: 'Was ist das Ergebnis? Warum empfiehlst du es weiter?',
+    placeholder: 'Was hat sich für dich verändert? Und wem würdest du es empfehlen?',
+  },
+]
+
+const BUSINESS_QUESTIONS: GuidedQuestion[] = [
+  {
+    key: 'vorher',
+    label: 'Wie bist du zur Businesschance gekommen?',
+    placeholder: 'Wie hast du davon erfahren? Und was waren deine ersten Gedanken dazu?',
+  },
+  {
+    key: 'weg',
+    label: 'Was hast du in der Zeit gelernt und was begeistert dich daran?',
+    placeholder: 'Was hast du über dich, Menschen oder das Business gelernt? Was motiviert dich jeden Tag?',
+  },
+  {
+    key: 'ergebnis',
+    label: 'Was hat sich für dich seitdem verändert?',
+    placeholder: 'Finanziell, persönlich oder im Alltag. Warum würdest du die Businesschance weiterempfehlen?',
+  },
+]
+
+export function guidedQuestionsFor(category: TestimonialCategoryKey | null): GuidedQuestion[] {
+  return category === 'business' ? BUSINESS_QUESTIONS : PRODUKTE_QUESTIONS
+}
+
+// Strenger Hinweis zu Heil- und Wirkaussagen, wird beim Text- UND Video-Step gezeigt.
 // Rechtlicher Hintergrund: Health-Claims-VO verbietet Aussagen über Ausmaß und
 // Tempo einer Gewichtsabnahme bei Lebensmitteln; LMIV verbietet Krankheitsbezug.
 export const HEALTH_CLAIM_GUIDE = {
-  intro: 'Kurz bevor du loslegst: Bei Nahrungsergänzungsmitteln gibt es klare Regeln, was man öffentlich sagen darf. Damit dein Video verwendet werden kann, halt dich einfach an diese Faustregel: Erzähl von dir und deinem Gefühl, versprich nichts.',
+  title: 'Wichtig: Keine Heil- und Wirkaussagen',
+  intro: 'Das ist gesetzlich streng geregelt. Berichte mit solchen Aussagen dürfen wir nicht veröffentlichen. Die Regel ist einfach: Erzähl, wie du dich fühlst. Versprich nichts.',
+  rules: [
+    'Keine Krankheiten oder Beschwerden nennen (auch nicht Migräne, Schmerzen, Blutdruck)',
+    'Keine Abnehm-Zahlen oder Zeiträume nennen',
+    'Keine Wirkversprechen wie "hilft gegen", "heilt" oder "stärkt das Immunsystem"',
+  ],
   goodExamples: [
-    'Seit ich morgens den PowerCocktail nehme, fühle ich mich fitter und starte besser in den Tag.',
-    'Mit dem Optimalset habe ich für mich eine Routine gefunden, die ich easy durchhalte.',
-    'Activize gehört bei mir vor dem Sport einfach dazu, ich fühle mich damit wacher.',
+    'Seit ich morgens meinen PowerCocktail trinke, starte ich viel wacher und besser gelaunt in den Tag.',
+    'Die Stoffwechselkur war für mich der Anstoß, meine Ernährung komplett umzustellen. Ich fühle mich heute richtig wohl in meinem Körper.',
+    'Activize gehört bei mir fest vor jedes Training dazu. Damit fühle ich mich einfach fitter.',
   ],
   badExamples: [
-    'Mit dem PowerCocktail habe ich 5 Kilo in 2 Wochen abgenommen.',
-    'Das Optimalset hat meine Migräne geheilt.',
-    'Activize hilft gegen Diabetes und senkt den Blutdruck.',
+    'Ich habe mit der Kur 8 Kilo in 3 Wochen abgenommen. (Abnehm-Zahlen sind verboten)',
+    'Seit ich Restorate nehme, sind meine Gelenkschmerzen weg. (Krankheitsbezug ist verboten)',
+    'Der PowerCocktail stärkt das Immunsystem und beugt Erkältungen vor. (Wirkversprechen sind verboten)',
   ],
-  outro: 'Also: keine Zahlen zum Abnehmen, keine Krankheiten, keine Heilversprechen. Deine ehrliche, persönliche Erfahrung reicht völlig. Die ist eh am überzeugendsten.',
 }
 
 export const REWARD_MESSAGE = {
-  title: 'Deine Geschichte. Deine kostenlose Fallstudien-Seite.',
-  text: 'Wir sammeln gerade echte Erfahrungen aus der Community. Sobald genug zusammenkommen, bauen wir daraus eine Fallstudien-Seite mit vielen Berichten, sortiert nach Kategorien. Und die kannst du dann kostenlos für dich freischalten. Wir melden uns dazu in den nächsten Tagen und Wochen per E-Mail bei dir.',
+  title: 'Erzähl kurz deine Geschichte.',
+  text: 'Drei kurze Fragen, fertig. Als Dankeschön schalten wir dir später deine kostenlose Fallstudien-Seite mit echten Berichten aus der Community frei.',
   shareText: 'Je mehr mitmachen, desto stärker wird die Seite für alle. Schick den Link gern an deine Teampartner weiter.',
 }
 
