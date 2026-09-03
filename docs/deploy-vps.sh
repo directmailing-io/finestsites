@@ -1,6 +1,6 @@
 #!/bin/bash
 # FinestSites VPS Deployment Script
-# Run as root on the Hostinger VPS (187.124.187.228)
+# Run as root on the Hetzner app server (188.245.35.52) — initial server setup only
 # Usage: bash deploy-vps.sh
 
 set -e

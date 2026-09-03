@@ -26,13 +26,22 @@
 ```
 User browser
     │
-    ├─ finestsites.io   (marketing site, Next.js, same VPS)
-    │
-    └─ app.finestsites.io  (app, Next.js, Hetzner VPS)
+    ├─ finestsites.io      ─┐  Cloudflare (Account 6d5e22b7…, Zone finestsites.io)
+    │                       │  Worker "finestsites-marketing" (finestsites.io/*)
+    └─ app.finestsites.io  ─┘  Worker "s3redirects"          (*.finestsites.io/*)
+            │                  → proxy to https://origin.womenplus.io
+            │                    with X-Forwarded-Host / X-Forwarded-Proto
+            ▼
+    Hetzner app server 188.245.35.52  (ssh -i ~/.ssh/finestsites_hetzner root@…)
+            ├─ Caddy (TLS for origin.womenplus.io, → localhost:3002)
+            ├─ PM2 cluster "finestsites" ×2 (Next.js standalone, port 3002)
+            └─ cron: billing-enforcement, affiliate-payouts, check-domains, cleanup-testimonials
             │
-            ├─ Caddy (reverse proxy, port 80 → 3002)
-            ├─ PM2 process: "finestsites" (Next.js standalone, port 3002)
-            └─ PostgreSQL (via DATABASE_URL in .env.production)
+            ▼
+    Hetzner DB server 142.132.174.86  (PostgreSQL 16, SSL, firewall: only 22 + 5432 from app IP)
+            └─ daily pg_dump 03:00 UTC → /var/backups/finestsites (14 days)
+
+(Hostinger VPS 187.124.187.228 was decommissioned on 2026-09-03 — nothing may be deployed there.)
 
 User-created sites:
     {username}.{template-domain}  →  Cloudflare Worker  →  KV cache / R2
@@ -44,7 +53,7 @@ User-created sites:
 - `finestsites.io` — marketing/landing page only (middleware blocks app routes)
 - `*.myevnt.io`, `*.womenplus.io`, `*.lnko.me`, `*.dailyoptimal.de` — template domains for user sites
 
-**Cloudflare Worker** sits in front of all template domains. The Next.js app itself is NOT on Cloudflare — it lives behind Caddy on the VPS.
+**Cloudflare Worker** sits in front of all template domains. The Next.js app itself is NOT on Cloudflare — it lives behind Caddy on the Hetzner app server. Note: the template domains (`womenplus.io` etc.) live in CF account `bc6cb133…`, while `finestsites.io` lives in a second CF account `6d5e22b7…` (token `CLOUDFLARE_FINESTSITES_TOKEN`, no DNS-edit permission).
 
 ---
 
@@ -174,15 +183,15 @@ See `docs/cloudflare-worker-architecture.md` for the full Worker design.
 
 **Deploying the Worker:**
 ```bash
-# Must be done FROM THE VPS (not locally — wrangler.jsonc in root interferes)
-ssh root@187.124.187.228 "cd /var/www/finestsites/cloudflare-worker && \
+# Must be done FROM THE HETZNER APP SERVER (not locally — wrangler.jsonc in root interferes)
+ssh -i ~/.ssh/finestsites_hetzner root@188.245.35.52 "cd /var/www/finestsites/cloudflare-worker && \
   CLOUDFLARE_API_TOKEN=... npx wrangler deploy"
 ```
 
 **Adding a new template domain:**
 1. CF Dashboard: add proxied wildcard A record `*.newdomain.tld → 192.0.2.1` in the zone
 2. `cloudflare-worker/wrangler.toml`: add `[[routes]]` entry + `zone_id`
-3. Deploy Worker from VPS
+3. Deploy Worker from the Hetzner app server
 4. Test: `curl https://test.newdomain.tld/.finestsites/health`
 
 ---
@@ -357,32 +366,25 @@ Affiliate tracking tables. See `supabase/migrations/006_affiliate_system.sql`.
 
 ## 11. Deployment
 
-### App (Next.js on VPS)
+### App (Next.js on Hetzner)
 
 ```bash
-# Full deploy sequence
+# Full deploy sequence (rolling reload, no downtime)
 git push origin main
-ssh root@187.124.187.228 "
-  cd /var/www/finestsites &&
-  git pull origin main &&
-  npm run build &&
-  cp -r public .next/standalone/ &&
-  cp -r .next/static .next/standalone/.next/ &&
-  pm2 restart finestsites --update-env
-"
+ssh -i ~/.ssh/finestsites_hetzner root@188.245.35.52 "/usr/local/bin/finestsites-deploy.sh"
 ```
 
-The app runs as `pm2` process `finestsites` in cluster mode (port 3002). Caddy proxies `app.finestsites.io` → port 3002.
+The server script is a copy of `deploy.sh` in the repo root. It does NOT install dependencies — after adding packages run `npm install --no-audit --no-fund` in `/var/www/finestsites` on the server first. The app runs as `pm2` cluster `finestsites` (2 instances, port 3002). Caddy terminates TLS for `origin.womenplus.io` and proxies to port 3002; the CF Workers in the finestsites.io account send `app.finestsites.io` / `finestsites.io` traffic there.
 
 ### Worker (Cloudflare)
 
 ```bash
-# MUST be run from VPS, not local machine
-ssh root@187.124.187.228 "
+# MUST be run from the Hetzner app server, not local machine
+ssh -i ~/.ssh/finestsites_hetzner root@188.245.35.52 "
   cd /var/www/finestsites &&
   git pull origin main &&
   cd cloudflare-worker &&
-  CLOUDFLARE_API_TOKEN=... npx wrangler deploy
+  CLOUDFLARE_API_TOKEN=... npx wrangler deploy --config wrangler.toml
 "
 ```
 
@@ -390,7 +392,7 @@ The `wrangler.jsonc` in the project root is for OpenNext and must NOT be committ
 
 ### Environment Variables
 
-Key variables in `/var/www/finestsites/.env.production` on VPS:
+Key variables in `/var/www/finestsites/.env.production` on the Hetzner app server:
 - `DATABASE_URL` — PostgreSQL connection string
 - `WORKER_SECRET` — shared secret for `/api/worker/*` endpoints
 - `CLOUDFLARE_API_TOKEN` — scoped to Zone/KV/SSL

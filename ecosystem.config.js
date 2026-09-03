@@ -1,6 +1,6 @@
-// PM2 ecosystem config for FinestSites on Hostinger VPS
-// Usage: pm2 start ecosystem.config.js
-// Port: 3002 (directmailing.io uses 3000)
+// PM2 ecosystem config for FinestSites on the Hetzner app server (188.245.35.52)
+// Usage: pm2 start ecosystem.config.js && pm2 save
+// Port: 3002 (Caddy proxies origin.womenplus.io → 3002)
 
 module.exports = {
   apps: [
@@ -8,7 +8,7 @@ module.exports = {
       name: 'finestsites',
       script: '.next/standalone/server.js',
       cwd: '/var/www/finestsites',
-      instances: 1,
+      instances: 2,
       autorestart: true,
       watch: false,
       max_memory_restart: '1G',

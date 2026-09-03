@@ -22,11 +22,11 @@ function isOwnHost(host: string): boolean {
     host === 'finestsites.de' ||
     host.endsWith('.finestsites.io') ||
     host === 'finestsites.io' ||
-    // VPS hostnames — Cloudflare Workers cannot override the Host header in
-    // subrequests (it always reflects the URL hostname), so when the s3redirects
-    // CF Worker proxies app.finestsites.io → http://srv1554729.hstgr.cloud:3002
-    // the Next.js server sees Host: srv1554729.hstgr.cloud, not app.finestsites.io.
-    host.endsWith('.hstgr.cloud') ||
+    // Origin-Hostname des Hetzner App-Servers — die CF Worker (s3redirects /
+    // finestsites-marketing) proxen app.finestsites.io und finestsites.io nach
+    // https://origin.womenplus.io und setzen X-Forwarded-Host. Falls der Header
+    // einmal fehlt, darf der Origin-Host trotzdem nicht als "unbekannt" gelten.
+    host === 'origin.womenplus.io' ||
     host === 'localhost' ||
     host === '127.0.0.1' ||
     host === '0.0.0.0'

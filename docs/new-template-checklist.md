@@ -76,7 +76,7 @@ Wichtig: **`wrangler r2 object put` ohne `--remote` schreibt in einen lokalen
 Dev-Bucket und meldet „Upload complete" — der echte R2-Bucket bleibt leer.**
 
 ```bash
-ssh root@187.124.187.228 "cd /var/www/finestsites/cloudflare-worker && CLOUDFLARE_API_TOKEN=... npx wrangler r2 object put finestsites-templates/templates/{ID}/index.html --file=/var/www/finestsites/templates/{slug}/index.html --content-type='text/html; charset=utf-8' --remote"
+ssh -i ~/.ssh/finestsites_hetzner root@188.245.35.52 "cd /var/www/finestsites/cloudflare-worker && CLOUDFLARE_API_TOKEN=... npx wrangler r2 object put finestsites-templates/templates/{ID}/index.html --file=/var/www/finestsites/templates/{slug}/index.html --content-type='text/html; charset=utf-8' --remote"
 ```
 
 - [ ] `templates/{templateId}/index.html` hochgeladen
@@ -101,7 +101,7 @@ Nur nötig wenn eine **neue Template-Domain** ins Spiel kommt.
 ## 8. Deploy-Reihenfolge (Kritisch!)
 
 1. `git push origin main`
-2. `ssh root@187.124.187.228 "/usr/local/bin/finestsites-deploy.sh"`
+2. `ssh -i ~/.ssh/finestsites_hetzner root@188.245.35.52 "/usr/local/bin/finestsites-deploy.sh"`
 3. R2-Upload mit `--remote` (VPS git-pull ist automatisch im Deploy-Skript)
 4. Worker-Deploy nur wenn Worker-Code geändert wurde
 5. KV purge für alle Demo/Test-Hosts: `POST /.finestsites/kv {"action":"purge"}` mit `Authorization: Bearer {WORKER_SECRET}`
