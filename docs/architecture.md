@@ -38,7 +38,7 @@ User browser
             └─ cron: billing-enforcement, affiliate-payouts, check-domains, cleanup-testimonials
             │
             ▼
-    Hetzner DB server 142.132.174.86  (PostgreSQL 16, SSL, firewall: only 22 + 5432 from app IP)
+    Hetzner DB server 142.132.174.86 / privat 10.10.0.3  (PostgreSQL 16, SSL, port 5432 only via private network finestsites-net)
             └─ daily pg_dump 03:00 UTC → /var/backups/finestsites (14 days)
 
 (Hostinger VPS 187.124.187.228 was decommissioned on 2026-09-03 — nothing may be deployed there.)
