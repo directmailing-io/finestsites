@@ -2,14 +2,13 @@
  * KV cache utilities — calls the Worker's /.finestsites/kv admin endpoint.
  * The Worker has native KV binding access, so no Cloudflare API token is needed.
  *
- * The Worker authenticates the call using the SUPABASE_SERVICE_KEY (same JWT
- * that both sides already have).
+ * The Worker authenticates the call with `Bearer ${WORKER_SECRET}`.
  */
 
 async function callWorkerKv(username: string, domain: string, action: 'purge' | 'offline'): Promise<void> {
-  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
-  if (!serviceKey) {
-    console.warn('[kv] SUPABASE_SERVICE_ROLE_KEY not set — skipping KV invalidation')
+  const workerSecret = process.env.WORKER_SECRET
+  if (!workerSecret) {
+    console.warn('[kv] WORKER_SECRET not set — skipping KV invalidation')
     return
   }
 
@@ -19,7 +18,7 @@ async function callWorkerKv(username: string, domain: string, action: 'purge' | 
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${serviceKey}`,
+        'Authorization': `Bearer ${workerSecret}`,
       },
       body: JSON.stringify({ action }),
     })

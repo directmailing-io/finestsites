@@ -653,13 +653,17 @@ export async function POST(req: NextRequest) {
 
       // Check if account needs reactivation:
       // - deactivatedAt set → full cancellation via subscription.deleted
-      // - subscriptionStatus === 'past_due' → payment_failed deactivated sites
-      //   but did NOT set users.deactivatedAt (only userSites.deactivatedAt was set)
+      // - paymentFailedAt set → payment_failed deactivated sites. Don't rely on
+      //   subscriptionStatus === 'past_due' alone: Stripe sends
+      //   customer.subscription.updated (status → active) BEFORE this event,
+      //   so the status is already 'active' by the time we get here.
       const userBefore = await db.query.users.findFirst({
         where: eq(users.id, userId),
-        columns: { email: true, deactivatedAt: true, subscriptionStatus: true },
+        columns: { email: true, deactivatedAt: true, subscriptionStatus: true, paymentFailedAt: true },
       })
-      const wasDeactivated = !!userBefore?.deactivatedAt || userBefore?.subscriptionStatus === 'past_due'
+      const wasDeactivated = !!userBefore?.deactivatedAt
+        || !!userBefore?.paymentFailedAt
+        || userBefore?.subscriptionStatus === 'past_due'
 
       await db.update(users).set({
         subscriptionStatus: sub.status,
@@ -678,7 +682,7 @@ export async function POST(req: NextRequest) {
             // by subscription.deleted — those are permanent)
             isNull(userSites.scheduledDeletionAt),
           ),
-          columns: { id: true, customDomain: true },
+          columns: { id: true, customDomain: true, publishedAt: true },
           with: {
             template: { columns: { domain: true } },
             user: { columns: { username: true } },
@@ -686,8 +690,9 @@ export async function POST(req: NextRequest) {
         })
 
         for (const site of deactivatedSites) {
+          // Never-published sites were drafts before the payment failure — restore them as drafts
           await db.update(userSites)
-            .set({ status: 'published', deactivatedAt: null })
+            .set({ status: site.publishedAt ? 'published' : 'draft', deactivatedAt: null })
             .where(eq(userSites.id, site.id))
 
           const username       = (site as any).user?.username as string | null
