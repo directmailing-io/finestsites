@@ -64,14 +64,18 @@ export async function deleteCustomDomainKV(hostname: string): Promise<void> {
  * user re-publishes or edits the underlying data.
  */
 /**
- * Mark a site as offline in KV. The Worker serves an offline/410 page
- * instead of the real site. Used when a user's account is deactivated
- * due to payment failure or subscription cancellation.
+ * Mark a site as offline in KV so the Worker serves the offline/410 page on
+ * the very next request. Used when a site is unpublished or the account is
+ * suspended (payment failure) / cancelled.
  * Key format: meta:{username}:{templateDomain}
  */
+export const OFFLINE_TTL_SECONDS = 300
+
 export async function setSiteOfflineKV(username: string, templateDomain: string): Promise<void> {
   const key = `meta:${username}:${templateDomain}`
-  await fetch(`${kvBase()}/${encodeURIComponent(key)}`, {
+  // TTL-bound: the Worker re-asks the app (DB = source of truth) after expiry,
+  // so a stale marker can never keep a paid-up site offline for good.
+  await fetch(`${kvBase()}/${encodeURIComponent(key)}?expiration_ttl=${OFFLINE_TTL_SECONDS}`, {
     method: 'PUT',
     headers: { ...headers(), 'Content-Type': 'text/plain' },
     body: '__offline__',

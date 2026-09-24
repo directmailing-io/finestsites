@@ -5,6 +5,9 @@
  * Also callable manually via GET with CRON_SECRET for testing.
  *
  * Rules:
+ *  0. Reconcile — sites of active users are online, sites of past_due/unpaid
+ *     users are offline (safety net for missed/out-of-order Stripe webhooks).
+ *     Also runs hourly via `?only=reconcile`.
  *  1. 7-day warning — users with paymentFailedAt between 6-8 days ago
  *  2. 14-day deactivation — users with paymentFailedAt older than 14 days:
  *     - Set deactivatedAt on user
@@ -26,6 +29,7 @@ import { setSiteOfflineKV, deleteCustomDomainKV } from '@/lib/cloudflare/kv-api'
 import { deleteFromR2 } from '@/lib/r2/client'
 import { sendEmail } from '@/lib/resend'
 import { paymentWarningEmail, accountDeactivatedEmail } from '@/lib/email/templates'
+import { reconcileAllSiteAccess } from '@/lib/billing/site-access'
 
 export const runtime = 'nodejs'
 export const maxDuration = 60
@@ -39,7 +43,13 @@ export async function GET(request: NextRequest) {
   }
 
   const now = new Date()
-  const stats = { warned: 0, deactivated: 0, deleted: 0, errors: 0 }
+  const stats = { reconciled: { restored: 0, suspended: 0, errors: 0 }, warned: 0, deactivated: 0, deleted: 0, errors: 0 }
+
+  // ── 0. Reconcile site access with subscription status ─────────────────────
+  stats.reconciled = await reconcileAllSiteAccess()
+  if (request.nextUrl.searchParams.get('only') === 'reconcile') {
+    return NextResponse.json(stats)
+  }
 
   // ── 1. Send 7-day warning ──────────────────────────────────────────────────
   // Window: 6–8 days after paymentFailedAt to handle slight cron drift.

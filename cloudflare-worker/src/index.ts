@@ -294,7 +294,7 @@ interface SiteMeta {
   r2BasePath: string
 }
 
-// Returns null if not found/not published, or the string '__offline__' if explicitly offline
+// Returns null if the site doesn't exist, or '__offline__' if it exists but isn't published
 async function getSiteMeta(username: string, domain: string, env: Env): Promise<SiteMeta | '__offline__' | null> {
   const cacheKey = `meta:${username}:${domain}`
   const cached = await env.KV_CACHE.get(cacheKey)
@@ -313,7 +313,13 @@ async function getSiteMeta(username: string, domain: string, env: Env): Promise<
   )
   if (!res.ok) return null
 
-  const meta = await res.json() as SiteMeta
+  const meta = await res.json() as SiteMeta & { offline?: boolean }
+  // Site exists but is not published (unpublished, or suspended for an open
+  // payment) → cache the offline state briefly and show the offline page.
+  if (meta.offline) {
+    await env.KV_CACHE.put(cacheKey, '__offline__', { expirationTtl: 60 })
+    return '__offline__'
+  }
   if (!meta.r2BasePath) return null
 
   // Cache for 60 seconds so repeated requests are fast
@@ -360,7 +366,8 @@ async function handleKvAdmin(request: Request, username: string, domain: string,
 
   if (body.action === 'offline') {
     await Promise.allSettled([
-      env.KV_CACHE.put(metaKey, '__offline__'),
+      // TTL-bound: the DB is the source of truth, KV only caches it
+      env.KV_CACHE.put(metaKey, '__offline__', { expirationTtl: 300 }),
       env.KV_CACHE.delete(renderedKey),
     ])
     return new Response(JSON.stringify({ ok: true }), { headers: { 'Content-Type': 'application/json' } })

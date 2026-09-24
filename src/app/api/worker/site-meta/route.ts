@@ -14,6 +14,7 @@
  *
  * Response (200):
  *   { siteId: string, templateId: string, r2BasePath: string }
+ *   { offline: true }   — site exists but is not published
  *
  * Security: requests without the correct x-worker-secret header are rejected.
  * In development (WORKER_SECRET unset) all requests are allowed through.
@@ -23,7 +24,7 @@ import { timingSafeEqual } from 'crypto'
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { users, userSites, templates } from '@/lib/db/schema'
-import { eq, and } from 'drizzle-orm'
+import { eq, and, inArray } from 'drizzle-orm'
 
 const WORKER_SECRET = process.env.WORKER_SECRET
 
@@ -70,6 +71,21 @@ export async function GET(req: NextRequest) {
       .limit(1)
 
     if (!row || !row.r2BundlePath) {
+      // Site row exists but isn't published (draft / suspended for an open
+      // payment)? Tell the Worker so it shows the offline page instead of 404.
+      // KV offline markers are only a TTL cache — THIS is the source of truth.
+      const [offlineRow] = await db
+        .select({ id: userSites.id })
+        .from(userSites)
+        .innerJoin(users, eq(userSites.userId, users.id))
+        .innerJoin(templates, eq(userSites.templateId, templates.id))
+        .where(and(
+          eq(users.username, username),
+          eq(templates.domain, domain),
+          inArray(userSites.status, ['draft', 'deactivated']),
+        ))
+        .limit(1)
+      if (offlineRow) return NextResponse.json({ offline: true })
       return NextResponse.json({ error: 'not found' }, { status: 404 })
     }
 

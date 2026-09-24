@@ -100,10 +100,17 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   // subscription AND must not exceed the plan's concurrent-site quota.
   const tplIsFree = site.template.isFree ?? false
   if (!tplIsFree) {
-    const ACTIVE_STATUSES = ['active', 'trialing', 'past_due']
-    const hasActiveSub =
-      !!userRow.subscriptionStatus &&
-      ACTIVE_STATUSES.includes(userRow.subscriptionStatus)
+    // past_due/unpaid users are NOT allowed to publish: their sites were taken
+    // offline for the open payment and come back automatically once it's paid.
+    // Letting them republish here would silently undo that.
+    const status = userRow.subscriptionStatus ?? ''
+    if (status === 'past_due' || status === 'unpaid') {
+      return NextResponse.json({
+        error: 'Deine letzte Zahlung ist noch offen. Sobald sie eingegangen ist, gehen deine Webseiten automatisch wieder online.',
+        code: 'PAYMENT_PENDING',
+      }, { status: 402 })
+    }
+    const hasActiveSub = status === 'active' || status === 'trialing'
 
     if (!hasActiveSub) {
       return NextResponse.json({

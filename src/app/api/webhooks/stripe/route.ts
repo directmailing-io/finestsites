@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import type Stripe from 'stripe'
 import { db } from '@/lib/db'
-import { users, userSites, subscriptionEvents, affiliateCommissions } from '@/lib/db/schema'
-import { eq, and, inArray, isNull } from 'drizzle-orm'
+import { users, subscriptionEvents, affiliateCommissions } from '@/lib/db/schema'
+import { eq, and, inArray } from 'drizzle-orm'
 import { getStripe, getPlanByPriceId, planCents, type PlanKey, type BillingInterval } from '@/lib/stripe/client'
 import { sendEmail } from '@/lib/resend'
 import {
@@ -13,7 +13,7 @@ import {
   accountCanceledEmail,
   accountReactivatedEmail,
 } from '@/lib/email/templates'
-import { setSiteOfflineKV, deleteCustomDomainKV, clearSiteMetaKV, setCustomDomainKV } from '@/lib/cloudflare/kv-api'
+import { suspendSites, restoreSites, reconcileSiteAccess } from '@/lib/billing/site-access'
 
 export async function POST(req: NextRequest) {
   if (!process.env.STRIPE_WEBHOOK_SECRET) throw new Error('Missing STRIPE_WEBHOOK_SECRET')
@@ -282,38 +282,9 @@ export async function POST(req: NextRequest) {
         deactivatedAt: null,
       }).where(eq(users.id, userId))
 
-      // Reactivate previously deactivated/canceled sites (fix: includes scheduledDeletionAt sites)
-      const sitesToRestore = await db.query.userSites.findMany({
-        where: and(
-          eq(userSites.userId, userId),
-          eq(userSites.status, 'deactivated'),
-        ),
-        columns: { id: true, customDomain: true },
-        with: {
-          template: { columns: { domain: true } },
-          user: { columns: { username: true } },
-        },
-      })
-      if (sitesToRestore.length > 0) {
-        await db.update(userSites).set({
-          status: 'published',
-          deactivatedAt: null,
-          scheduledDeletionAt: null,
-        }).where(and(
-          eq(userSites.userId, userId),
-          eq(userSites.status, 'deactivated'),
-        ))
-        for (const site of sitesToRestore) {
-          const username       = (site as any).user?.username as string | null
-          const templateDomain = (site as any).template?.domain as string | null
-          if (username && templateDomain) {
-            await clearSiteMetaKV(username, templateDomain).catch(() => {})
-          }
-          if (site.customDomain && username && templateDomain) {
-            await setCustomDomainKV(site.customDomain, username, templateDomain).catch(() => {})
-          }
-        }
-      }
+      // Reactivate previously deactivated/canceled sites — a new subscription
+      // brings everything back, including sites that had a deletion timer.
+      await restoreSites(userId, { includeScheduledDeletion: true })
 
       const { pmType: checkoutPmType, pmLast4: checkoutPmLast4 } = await extractPaymentMethod({ payment_intent: session.payment_intent })
       await logEvent({
@@ -390,14 +361,15 @@ export async function POST(req: NextRequest) {
       const userId = await getUserIdByCustomer(sub.customer as string)
       if (!userId) break
 
-      // Check if account needs reactivation: user was deactivated (subscription_deleted
-      // previously) but the subscription is now active again (e.g. new subscription via
-      // Stripe dashboard, admin action, or fallback when checkout.session.completed missed).
+      // A fully deactivated account (subscription.deleted earlier) whose subscription
+      // is active again (new subscription via Stripe dashboard, admin action, or
+      // fallback when checkout.session.completed was missed) comes back completely —
+      // including sites that already had a deletion timer.
       const userBeforeUpdate = await db.query.users.findFirst({
         where: eq(users.id, userId),
-        columns: { deactivatedAt: true, subscriptionStatus: true },
+        columns: { deactivatedAt: true },
       })
-      const wasDeactivated = !!userBeforeUpdate?.deactivatedAt
+      const fullReactivation = !!userBeforeUpdate?.deactivatedAt && sub.status === 'active'
 
       await db.update(users).set({
         plan,
@@ -406,35 +378,21 @@ export async function POST(req: NextRequest) {
         stripeSubscriptionId: sub.id,
         currentPeriodEnd: getPeriodEnd(sub),
         cancelAtPeriodEnd: sub.cancel_at_period_end,
-        ...(wasDeactivated && sub.status === 'active' ? { deactivatedAt: null, paymentFailedAt: null } : {}),
+        ...(fullReactivation ? { deactivatedAt: null, paymentFailedAt: null } : {}),
       }).where(eq(users.id, userId))
 
-      // Reactivate sites if user was fully deactivated and subscription is now active again
-      if (wasDeactivated && sub.status === 'active') {
-        const sitesToRestore = await db.query.userSites.findMany({
-          where: and(eq(userSites.userId, userId), eq(userSites.status, 'deactivated')),
-          columns: { id: true, customDomain: true },
-          with: {
-            template: { columns: { domain: true } },
-            user: { columns: { username: true } },
-          },
-        })
-        if (sitesToRestore.length > 0) {
-          await db.update(userSites).set({
-            status: 'published',
-            deactivatedAt: null,
-            scheduledDeletionAt: null,
-          }).where(and(eq(userSites.userId, userId), eq(userSites.status, 'deactivated')))
-          for (const site of sitesToRestore) {
-            const username       = (site as any).user?.username as string | null
-            const templateDomain = (site as any).template?.domain as string | null
-            if (username && templateDomain) {
-              await clearSiteMetaKV(username, templateDomain).catch(() => {})
-            }
-            if (site.customDomain && username && templateDomain) {
-              await setCustomDomainKV(site.customDomain, username, templateDomain).catch(() => {})
-            }
-          }
+      if (fullReactivation) {
+        await restoreSites(userId, { includeScheduledDeletion: true })
+      }
+
+      // Sites follow the subscription status — idempotent, order-independent.
+      // Stripe delivers this event BEFORE invoice.payment_succeeded, so after a
+      // recovered payment this is usually where the sites come back online.
+      const reconciled = await reconcileSiteAccess(userId)
+      if (reconciled.action === 'restored') {
+        const userRow = await db.query.users.findFirst({ where: eq(users.id, userId), columns: { email: true } })
+        if (userRow?.email) {
+          sendEmail({ to: userRow.email, subject: 'Dein Konto ist wieder aktiv!', html: accountReactivatedEmail(), type: 'account_reactivated' }).catch(() => {})
         }
       }
 
@@ -498,42 +456,8 @@ export async function POST(req: NextRequest) {
         deactivatedAt: now,
       }).where(eq(users.id, userId))
 
-      // Find published/draft sites to deactivate
-      const liveSites = await db.query.userSites.findMany({
-        where: and(
-          eq(userSites.userId, userId),
-          inArray(userSites.status, ['published', 'draft']),
-        ),
-        columns: { id: true, customDomain: true },
-        with: {
-          template: { columns: { domain: true } },
-          user: { columns: { username: true } },
-        },
-      })
-
-      // Deactivate all published/draft sites and schedule deletion in 30 days
-      await db.update(userSites).set({
-        status: 'deactivated',
-        deactivatedAt: now,
-        scheduledDeletionAt: deletionDate,
-      }).where(
-        and(
-          eq(userSites.userId, userId),
-          inArray(userSites.status, ['published', 'draft'])
-        )
-      )
-
-      // Take sites offline in KV
-      for (const site of liveSites) {
-        const username       = (site as any).user?.username as string | null
-        const templateDomain = (site as any).template?.domain as string | null
-        if (username && templateDomain) {
-          await setSiteOfflineKV(username, templateDomain).catch(() => {})
-        }
-        if (site.customDomain) {
-          await deleteCustomDomainKV(site.customDomain).catch(() => {})
-        }
-      }
+      // Take all live sites offline and start the 90-day deletion timer
+      const sitesDeactivated = await suspendSites(userId, { scheduleDeletionAt: deletionDate })
 
       // Send correct email based on why the subscription ended
       // (only if not already deactivated by cron — cron sets deactivatedAt)
@@ -553,7 +477,7 @@ export async function POST(req: NextRequest) {
         eventType: 'subscription_deleted',
         stripeEventId: event.id,
         stripeSubscriptionId: sub.id,
-        metadata: { sites_deactivated: liveSites.length, scheduled_deletion_at: deletionDate.toISOString() },
+        metadata: { sites_deactivated: sitesDeactivated, scheduled_deletion_at: deletionDate.toISOString() },
       })
       break
     }
@@ -577,38 +501,10 @@ export async function POST(req: NextRequest) {
       }).where(eq(users.id, userId))
 
       // Take sites offline immediately on payment failure — no grace period.
-      // Sites are reactivated automatically by invoice.payment_succeeded.
-      // scheduledDeletionAt is NOT set here — this state is recoverable.
-      const failedSites = await db.query.userSites.findMany({
-        where: and(
-          eq(userSites.userId, userId),
-          inArray(userSites.status, ['published', 'draft']),
-        ),
-        columns: { id: true, customDomain: true },
-        with: {
-          template: { columns: { domain: true } },
-          user: { columns: { username: true } },
-        },
-      })
-      if (failedSites.length > 0) {
-        await db.update(userSites).set({
-          status: 'deactivated',
-          deactivatedAt: new Date(),
-        }).where(and(
-          eq(userSites.userId, userId),
-          inArray(userSites.status, ['published', 'draft'])
-        ))
-        for (const site of failedSites) {
-          const username       = (site as any).user?.username as string | null
-          const templateDomain = (site as any).template?.domain as string | null
-          if (username && templateDomain) {
-            await setSiteOfflineKV(username, templateDomain).catch(() => {})
-          }
-          if (site.customDomain) {
-            await deleteCustomDomainKV(site.customDomain).catch(() => {})
-          }
-        }
-      }
+      // Sites are reactivated automatically as soon as the subscription is
+      // active again (see reconcileSiteAccess). scheduledDeletionAt is NOT set
+      // here — this state is recoverable.
+      await reconcileSiteAccess(userId)
 
       // Send email only on first failure
       if (isFirstFailure && existing?.email) {
@@ -651,19 +547,10 @@ export async function POST(req: NextRequest) {
       const plan = getPlanByPriceId()[priceId] ?? 'starter'
       const interval = sub.items.data[0]?.price.recurring?.interval === 'year' ? 'yearly' : 'monthly'
 
-      // Check if account needs reactivation:
-      // - deactivatedAt set → full cancellation via subscription.deleted
-      // - paymentFailedAt set → payment_failed deactivated sites. Don't rely on
-      //   subscriptionStatus === 'past_due' alone: Stripe sends
-      //   customer.subscription.updated (status → active) BEFORE this event,
-      //   so the status is already 'active' by the time we get here.
       const userBefore = await db.query.users.findFirst({
         where: eq(users.id, userId),
-        columns: { email: true, deactivatedAt: true, subscriptionStatus: true, paymentFailedAt: true },
+        columns: { email: true, deactivatedAt: true },
       })
-      const wasDeactivated = !!userBefore?.deactivatedAt
-        || !!userBefore?.paymentFailedAt
-        || userBefore?.subscriptionStatus === 'past_due'
 
       await db.update(users).set({
         subscriptionStatus: sub.status,
@@ -672,47 +559,18 @@ export async function POST(req: NextRequest) {
         deactivatedAt: null,
       }).where(eq(users.id, userId))
 
-      // Reactivate deactivated sites and restore KV entries
-      if (wasDeactivated) {
-        const deactivatedSites = await db.query.userSites.findMany({
-          where: and(
-            eq(userSites.userId, userId),
-            eq(userSites.status, 'deactivated'),
-            // Only reactivate sites deactivated due to billing (no scheduledDeletionAt set
-            // by subscription.deleted — those are permanent)
-            isNull(userSites.scheduledDeletionAt),
-          ),
-          columns: { id: true, customDomain: true, publishedAt: true },
-          with: {
-            template: { columns: { domain: true } },
-            user: { columns: { username: true } },
-          },
-        })
+      // A fully deactivated account that pays again comes back completely
+      if (userBefore?.deactivatedAt) {
+        await restoreSites(userId, { includeScheduledDeletion: true })
+      }
 
-        for (const site of deactivatedSites) {
-          // Never-published sites were drafts before the payment failure — restore them as drafts
-          await db.update(userSites)
-            .set({ status: site.publishedAt ? 'published' : 'draft', deactivatedAt: null })
-            .where(eq(userSites.id, site.id))
-
-          const username       = (site as any).user?.username as string | null
-          const templateDomain = (site as any).template?.domain as string | null
-
-          // Remove offline marker so Worker falls back to DB (now published)
-          if (username && templateDomain) {
-            await clearSiteMetaKV(username, templateDomain).catch(() => {})
-          }
-
-          // Restore custom domain KV entry
-          if (site.customDomain && username && templateDomain) {
-            await setCustomDomainKV(site.customDomain, username, templateDomain).catch(() => {})
-          }
-        }
-
-        // Send reactivation email
-        if (userBefore?.email) {
-          sendEmail({ to: userBefore.email, subject: 'Dein Konto ist wieder aktiv!', html: accountReactivatedEmail(), type: 'account_reactivated' }).catch(() => {})
-        }
+      // Sites follow the (fresh, from Stripe) subscription status. Usually
+      // customer.subscription.updated already restored them — then this is a no-op
+      // and no second email goes out. If that event was missed or arrives later,
+      // this is the path that brings the sites back.
+      const reconciled = await reconcileSiteAccess(userId)
+      if (reconciled.action === 'restored' && userBefore?.email) {
+        sendEmail({ to: userBefore.email, subject: 'Dein Konto ist wieder aktiv!', html: accountReactivatedEmail(), type: 'account_reactivated' }).catch(() => {})
       }
 
       const { pmType: renewedPmType, pmLast4: renewedPmLast4 } = await extractPaymentMethod(invoice)
