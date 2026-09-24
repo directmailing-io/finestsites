@@ -2982,6 +2982,8 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
   }
 
   async function handlePublish() {
+    const wasPublished = site?.status === 'published'
+    if (autosaveTimerRef.current) { clearTimeout(autosaveTimerRef.current); autosaveTimerRef.current = null }
     await fetch(`/api/sites/${id}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
@@ -3003,11 +3005,18 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
     } else {
       setPublishedUrl(data.url)
       setSite(prev => prev ? { ...prev, status: 'published' } : prev)
+      lastAutosavedRef.current = JSON.stringify(values)
+      setAutosaveState('idle')
       setHasChanges(false)
-      setSuccess('Veröffentlicht!')
+      setSuccess(wasPublished ? 'Änderungen sind live!' : 'Veröffentlicht!')
       setTimeout(() => setSuccess(''), 3000)
-      showToast('Seite ist jetzt live!')
-      setShowPublishCelebration(true)
+      if (wasPublished) {
+        // Re-publish of a live site: confirm quietly, no confetti
+        showToast('Deine Änderungen sind live ✓')
+      } else {
+        showToast('Seite ist jetzt live!')
+        setShowPublishCelebration(true)
+      }
       quota.refetch()
     }
     setPublishing(false)
@@ -3275,11 +3284,24 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
         </div>
         <div className="flex items-center gap-2 flex-shrink-0">
           {isPublished ? (
-            <span className="flex items-center gap-1.5 text-xs font-semibold px-3 py-2 rounded-full select-none"
-              style={{ background: '#DCFCE7', color: '#16A34A' }}>
-              <span className="w-1.5 h-1.5 rounded-full bg-green-500 flex-shrink-0" />
-              Live
-            </span>
+            hasChanges && allRequiredComplete ? (
+              /* Changes since the last publish: one tap makes them live —
+                 no need to walk through every section with "Weiter" */
+              <button onClick={() => handlePublish()} disabled={publishing}
+                className="flex items-center gap-1.5 text-xs font-semibold px-3 py-2 rounded-full text-white transition-all"
+                style={{ background: '#16A34A', opacity: publishing ? 0.7 : 1 }}>
+                {publishing
+                  ? <span className="w-3 h-3 rounded-full border-2 border-white/40 border-t-white animate-spin" />
+                  : <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M20 6L9 17l-5-5"/></svg>}
+                {publishing ? 'Warten…' : 'Änderungen live'}
+              </button>
+            ) : (
+              <span className="flex items-center gap-1.5 text-xs font-semibold px-3 py-2 rounded-full select-none"
+                style={{ background: '#DCFCE7', color: '#16A34A' }}>
+                <span className="w-1.5 h-1.5 rounded-full bg-green-500 flex-shrink-0" />
+                Live
+              </span>
+            )
           ) : (
             <button onClick={() => handlePublish()} disabled={publishing || !allRequiredComplete}
               className="flex items-center gap-1 text-xs font-semibold px-3 py-2 rounded-full text-white transition-all"
@@ -3988,6 +4010,38 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
                   {publishing ? <span className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" /> : null}
                   {publishing ? 'Bitte warten…' : isPublished ? '✓ Änderungen live stellen' : '🚀 Jetzt veröffentlichen'}
                 </button>
+              ) : !isLast && isPublished && hasChanges && allRequiredComplete ? (
+                /* Live site with unsaved-to-live changes: save right here, then
+                   optionally continue — no need to reach the last section */
+                <div className="flex gap-2">
+                  <button
+                    onClick={async () => {
+                      await handleSave()
+                      setActiveSection(sections[activeIdx + 1])
+                      document.getElementById('editor-scroll')?.scrollTo({ top: 0, behavior: 'smooth' })
+                    }}
+                    disabled={saving}
+                    className="flex items-center justify-center gap-1.5 px-4 py-3.5 rounded-full text-sm font-semibold flex-shrink-0"
+                    style={{ background: '#F3F4F6', color: '#374151', opacity: saving ? 0.7 : 1 }}>
+                    Weiter
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.25">
+                      <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                  </button>
+                  <button
+                    onClick={() => handlePublish()}
+                    disabled={publishing}
+                    className="flex-1 flex items-center justify-center gap-2 py-3.5 text-sm font-bold text-white rounded-full"
+                    style={{ background: '#16A34A', boxShadow: '0 4px 14px rgba(22,163,74,0.25)', opacity: publishing ? 0.7 : 1 }}>
+                    {publishing
+                      ? <span className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
+                      : <>
+                          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+                          Änderungen live stellen
+                        </>
+                    }
+                  </button>
+                </div>
               ) : !isLast ? (
                 /* Not last: Vorschau + Weiter */
                 <div className="flex gap-2">
@@ -4860,6 +4914,37 @@ function PublishCelebrationModal({ publishedUrl, onClose }: {
 }) {
   const [urlCopied, setUrlCopied] = React.useState(false)
   const [canShare, setCanShare] = React.useState(false)
+  const [qrDataUrl, setQrDataUrl] = React.useState('')
+  const [qrDownloading, setQrDownloading] = React.useState(false)
+
+  // QR code is generated in the browser (no third-party request, no tracking)
+  React.useEffect(() => {
+    if (!publishedUrl) return
+    let cancelled = false
+    import('qrcode').then(QRCode =>
+      QRCode.toDataURL(publishedUrl, { width: 512, margin: 2, errorCorrectionLevel: 'M' })
+    ).then(url => { if (!cancelled) setQrDataUrl(url) }).catch(() => {})
+    return () => { cancelled = true }
+  }, [publishedUrl])
+
+  // 2048 px PNG — sharp enough for flyers, roll-ups and print
+  async function downloadQr() {
+    if (!publishedUrl || qrDownloading) return
+    setQrDownloading(true)
+    try {
+      const QRCode = await import('qrcode')
+      const png = await QRCode.toDataURL(publishedUrl, { width: 2048, margin: 4, errorCorrectionLevel: 'H' })
+      const host = publishedUrl.replace(/^https?:\/\//, '').replace(/\/.*$/, '')
+      const a = document.createElement('a')
+      a.href = png
+      a.download = `qr-code-${host}.png`
+      document.body.appendChild(a)
+      a.click()
+      a.remove()
+    } finally {
+      setQrDownloading(false)
+    }
+  }
 
   React.useEffect(() => {
     setCanShare(typeof navigator !== 'undefined' && !!navigator.share)
@@ -5013,15 +5098,32 @@ function PublishCelebrationModal({ publishedUrl, onClose }: {
           </div>
 
           {/* QR Code */}
-          <img
-            src={`https://api.qrserver.com/v1/create-qr-code/?size=256x256&data=${encodeURIComponent(publishedUrl ?? '')}&format=png&margin=2`}
-            alt="QR Code"
-            className="cel-qr"
-            style={{ borderRadius: '12px', border: '1px solid #E5E7EB', marginBottom: '8px' }}
-          />
-          <div className="cel-qr-label" style={{ fontSize: '11px', color: '#9CA3AF', textAlign: 'center', marginBottom: '20px' }}>
-            QR-Code scannen oder Link teilen
-          </div>
+          {qrDataUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={qrDataUrl}
+              alt="QR Code"
+              className="cel-qr"
+              style={{ borderRadius: '12px', border: '1px solid #E5E7EB', marginBottom: '8px' }}
+            />
+          ) : (
+            <div className="cel-qr" style={{ borderRadius: '12px', border: '1px solid #E5E7EB', marginBottom: '8px', background: '#F9FAFB' }} />
+          )}
+          <button
+            onClick={downloadQr}
+            disabled={!qrDataUrl || qrDownloading}
+            className="cel-qr-download"
+            style={{
+              display: 'inline-flex', alignItems: 'center', gap: '6px',
+              background: 'none', border: 'none', cursor: qrDataUrl ? 'pointer' : 'default',
+              fontSize: '12px', fontWeight: 600, color: '#6B46C1', padding: '4px 8px',
+              marginBottom: '16px', opacity: qrDownloading ? 0.6 : 1,
+            }}>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 3v12M6 11l6 6 6-6M4 21h16"/>
+            </svg>
+            {qrDownloading ? 'Wird erstellt…' : 'QR-Code als Bild herunterladen'}
+          </button>
 
           {/* Buttons */}
           <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '8px' }}>

@@ -117,8 +117,24 @@ export default async function HomePage({
         .fs-nav-links { display: flex; gap: 28px; align-items: center; }
         .fs-nav-actions { display: flex; gap: 8px; align-items: center; }
         .fs-hamburger { display: none !important; }
-        .fs-hero-buttons { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
-        .fs-hero-content { position: relative; z-index: 2; padding: 170px 24px 190px; max-width: 900px; margin: 0 auto; text-align: center; }
+        /* ── Hero ────────────────────────────────────────── */
+        .fs-hero-content { position: relative; z-index: 2; padding: 150px 24px 0; max-width: 1180px; margin: 0 auto; }
+        .fs-hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 32px; align-items: center; }
+        .fs-hero-copy { padding-bottom: 96px; }
+        .fs-hero-eyebrow { display: inline-flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.8); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 24px; }
+        .fs-hero-eyebrow-dot { width: 8px; height: 8px; border-radius: 50%; background: #FFCF8C; box-shadow: 0 0 0 4px rgba(255,207,140,0.22); }
+        .fs-hero-h1 { font-family: "Plein", sans-serif; font-size: clamp(36px, 4.1vw, 58px); font-weight: 400; color: #fff; line-height: 1.06; letter-spacing: -0.028em; margin-bottom: 22px; white-space: nowrap; }
+        .fs-hero-sub { font-size: 17px; color: rgba(255,255,255,0.82); line-height: 1.7; margin-bottom: 30px; max-width: 520px; }
+        .fs-hero-benefits { list-style: none; display: flex; flex-direction: column; gap: 14px; margin: 0 0 34px; padding: 0; max-width: 540px; }
+        .fs-hero-benefit { display: flex; gap: 14px; align-items: flex-start; font-size: 15px; line-height: 1.5; color: rgba(255,255,255,0.78); }
+        .fs-hero-benefit strong { display: block; color: #fff; font-weight: 700; margin-bottom: 2px; }
+        .fs-hero-benefit-desc { display: block; font-size: 14px; }
+        .fs-hero-check { flex: none; width: 24px; height: 24px; border-radius: 50%; background: #FFCF8C; display: inline-flex; align-items: center; justify-content: center; margin-top: 1px; }
+        .fs-hero-buttons { display: flex; gap: 12px; flex-wrap: wrap; }
+        .fs-hero-trust { font-size: 13px; color: rgba(255,255,255,0.6); margin-top: 14px; font-weight: 500; }
+        .fs-hero-visual { position: relative; align-self: center; display: flex; justify-content: center; padding-bottom: 48px; }
+        .fs-hero-glow { position: absolute; inset: 10% 5% 5%; border-radius: 50%; background: radial-gradient(closest-side, rgba(255,207,140,0.32), rgba(142,111,208,0.25) 55%, transparent 100%); filter: blur(40px); }
+        .fs-hero-phones { position: relative; width: 100%; max-width: 640px; height: auto; display: block; filter: drop-shadow(0 30px 60px rgba(20,10,60,0.45)); }
         .fs-section-pad { padding: 96px 7vw; }
         .fs-was-ist-inner { max-width: 1060px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 72px; align-items: center; }
         .fs-feature-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
@@ -144,7 +160,15 @@ export default async function HomePage({
 
         /* ── Tablet (768–1023 px) ─────────────────────────── */
         @media (max-width: 1023px) {
-          .fs-hero-content { padding: 150px 5vw 160px; }
+          .fs-hero-content { padding: 140px 5vw 0; }
+          .fs-hero-grid { grid-template-columns: 1fr; gap: 24px; }
+          .fs-hero-copy { padding-bottom: 0; text-align: center; }
+          .fs-hero-sub, .fs-hero-benefits { margin-left: auto; margin-right: auto; }
+          .fs-hero-visual { padding-bottom: 12px; }
+          .fs-hero-benefits { text-align: left; }
+          .fs-hero-buttons { justify-content: center; }
+          .fs-hero-visual { margin-top: 24px; }
+          .fs-hero-phones { max-width: 520px; }
           .fs-section-pad { padding: 72px 5vw; }
           .fs-template-grid { grid-template-columns: repeat(2, 1fr); }
           .fs-pricing-grid { grid-template-columns: 1fr; max-width: 440px; margin-left: auto; margin-right: auto; }
@@ -162,7 +186,11 @@ export default async function HomePage({
           .fs-hamburger { display: flex !important; }
           .fs-hero-buttons { flex-direction: column; align-items: stretch; }
 
-          .fs-hero-content { padding: 130px 22px 120px; }
+          .fs-hero-content { padding: 120px 22px 0; }
+          .fs-hero-h1 { font-size: clamp(30px, 8.6vw, 40px); }
+          .fs-hero-sub { font-size: 16px; }
+          .fs-hero-visual { margin-top: 12px; }
+          .fs-hero-phones { max-width: 400px; }
 
           .fs-section-pad { padding: 52px 22px; }
           .fs-was-ist-inner { grid-template-columns: 1fr; gap: 36px; }
@@ -213,30 +241,60 @@ export default async function HomePage({
         width: '100%',
         position: 'relative',
         overflow: 'hidden',
-        background: 'linear-gradient(180deg, #201245 0%, #3D2A87 38%, #6247AF 60%, #8E6FD0 74%, #BCA7E6 85%, #E3DAF4 93%, #FAFAF8 100%)',
+        background: 'linear-gradient(180deg, #201245 0%, #3D2A87 42%, #6247AF 66%, #8E6FD0 80%, #BCA7E6 90%, #E3DAF4 96%, #FAFAF8 100%)',
       }}>
+        <div className="fs-hero-content fs-hero-grid">
 
-        <div className="fs-hero-content">
-          <p style={{ fontSize: 13, fontWeight: 600, color: 'rgba(255,255,255,0.75)', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 28 }}>
-            Für Network-Marketer
-          </p>
-          <h1 style={{
-            fontFamily: '"Plein", sans-serif',
-            fontSize: 'clamp(34px, 5.2vw, 68px)',
-            fontWeight: 400,
-            color: '#fff',
-            lineHeight: 1.08,
-            letterSpacing: '-0.028em',
-            marginBottom: 28,
-          }}>
-            Deine eigene Webseite.<br /><span style={{ color: '#FFCF8C' }}>Live in 3 Minuten.</span>
-          </h1>
-          <p style={{ fontSize: 17, color: 'rgba(255,255,255,0.85)', lineHeight: 1.75, marginBottom: 36, maxWidth: 560, marginLeft: 'auto', marginRight: 'auto' }}>
-            Terminiere Kunden & Teampartner jetzt noch viel einfacher. Überzeuge sie von deinen Produkten mit deiner eigenen Network-Marketing-Webseite, noch bevor sie mit dir gesprochen haben.
-          </p>
-          <div className="fs-hero-buttons">
-            <a href={`${process.env.NEXT_PUBLIC_APP_URL ?? 'https://app.finestsites.io'}/register${validatedRef ? `?ref=${validatedRef}` : ''}`} style={{ background: '#fff', color: '#3E2B85', padding: '16px 38px', borderRadius: 100, fontSize: 15, fontWeight: 700, display: 'inline-block', textDecoration: 'none', textAlign: 'center', boxShadow: '0 4px 24px rgba(0,0,0,0.18)' }}>Kostenlos starten</a>
-            <a href="#templates" style={{ background: 'rgba(255,255,255,0.08)', color: '#fff', padding: '16px 38px', borderRadius: 100, fontSize: 15, fontWeight: 500, display: 'inline-block', border: '1.5px solid rgba(255,255,255,0.45)', textDecoration: 'none', textAlign: 'center' }}>Templates ansehen</a>
+          {/* ── Copy ── */}
+          <div className="fs-hero-copy">
+            <p className="fs-hero-eyebrow">
+              <span className="fs-hero-eyebrow-dot" aria-hidden="true" />
+              Für Networker
+            </p>
+            <h1 className="fs-hero-h1">
+              Deine Website<br />fürs <span style={{ color: '#FFCF8C' }}>Network-<br />Marketing-Business.</span>
+            </h1>
+            <p className="fs-hero-sub">
+              Vorlage wählen, Name und Foto eintragen, live gehen. Deine Kunden und Teampartner informieren sich auf deiner Seite, noch bevor ihr miteinander sprecht.
+            </p>
+
+            <ul className="fs-hero-benefits">
+              {([
+                { title: 'Mehrsprachig für internationale Kontakte', desc: 'Deine Seite spricht die Sprache deiner Kunden und Teampartner. Ein Klick, und alles ist auf Deutsch oder Englisch.' },
+                { title: 'Richtlinienkonform und automatisch aktuell', desc: 'Alle Texte sind nach den Vorgaben deines Unternehmens erstellt. Ändert sich etwas, passen wir es für dich an.' },
+                { title: 'In wenigen Minuten fertig, kinderleicht zu bedienen', desc: 'Kein technisches Vorwissen nötig. Wenn du eine Nachricht schreiben kannst, kannst du auch deine Website erstellen.' },
+              ] as { title: string; desc: string }[]).map((b, i) => (
+                <li key={i} className="fs-hero-benefit">
+                  <span className="fs-hero-check" aria-hidden="true">
+                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2.5 6.2 5 8.6l4.5-5" stroke="#201245" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                  </span>
+                  <span>
+                    <strong>{b.title}</strong>
+                    <span className="fs-hero-benefit-desc">{b.desc}</span>
+                  </span>
+                </li>
+              ))}
+            </ul>
+
+            <div className="fs-hero-buttons">
+              <a href={`${process.env.NEXT_PUBLIC_APP_URL ?? 'https://app.finestsites.io'}/register${validatedRef ? `?ref=${validatedRef}` : ''}`} style={{ background: '#fff', color: '#3E2B85', padding: '17px 38px', borderRadius: 100, fontSize: 15, fontWeight: 700, display: 'inline-block', textDecoration: 'none', textAlign: 'center', boxShadow: '0 4px 24px rgba(0,0,0,0.18)' }}>Kostenlos starten</a>
+              <a href="#templates" style={{ background: 'rgba(255,255,255,0.08)', color: '#fff', padding: '17px 38px', borderRadius: 100, fontSize: 15, fontWeight: 500, display: 'inline-block', border: '1.5px solid rgba(255,255,255,0.45)', textDecoration: 'none', textAlign: 'center' }}>Templates ansehen</a>
+            </div>
+            <p className="fs-hero-trust">Kostenlos bearbeiten. Erst zahlen, wenn du live gehst.</p>
+          </div>
+
+          {/* ── Phone mockups ── */}
+          <div className="fs-hero-visual">
+            <div className="fs-hero-glow" aria-hidden="true" />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/hero-phones.webp"
+              alt="Drei Beispiel-Websites von FinestSites auf dem Smartphone"
+              width={1421}
+              height={1072}
+              fetchPriority="high"
+              className="fs-hero-phones"
+            />
           </div>
         </div>
       </section>
