@@ -142,10 +142,11 @@ export default async function HomePage({
         .fs-hero-visual { position: relative; width: 122%; max-width: none; transform: translateY(110px); }
         .fs-hero-glow { position: absolute; left: 8%; right: 8%; top: 12%; bottom: 14%; border-radius: 50%; background: radial-gradient(closest-side, rgba(255,207,140,0.38), rgba(142,111,208,0.3) 60%, transparent 100%); filter: blur(46px); }
         .fs-hero-phones { position: relative; width: 100%; height: auto; display: block; filter: drop-shadow(0 40px 70px rgba(15,8,50,0.55)); }
-        .fs-hero-chip { position: absolute; display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.94); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-radius: 16px; padding: 10px 14px 10px 12px; font-size: 12.5px; font-weight: 700; line-height: 1.25; color: #1a1530; box-shadow: 0 14px 34px rgba(15,8,50,0.35), 0 0 0 1px rgba(255,255,255,0.6) inset; animation: fs-hero-float 6s ease-in-out infinite; }
-        .fs-hero-chip-icon { flex: none; width: 28px; height: 28px; border-radius: 9px; display: inline-flex; align-items: center; justify-content: center; }
-        .fs-hero-chip-lang { flex: none; display: inline-flex; align-items: center; gap: 6px; background: #F3F0FA; border-radius: 99px; padding: 5px 9px; font-size: 11px; letter-spacing: 0.04em; color: #4A35A0; }
-        .fs-hero-chip-lang i { width: 1px; height: 10px; background: rgba(74,53,160,0.3); }
+        .fs-hero-chip { position: absolute; display: flex; align-items: center; gap: 12px; background: rgba(255,255,255,0.95); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-radius: 18px; padding: 13px 18px 13px 14px; font-size: 14.5px; font-weight: 700; line-height: 1.25; color: #1a1530; box-shadow: 0 14px 34px rgba(15,8,50,0.35), 0 0 0 1px rgba(255,255,255,0.6) inset; animation: fs-hero-float 6s ease-in-out infinite; }
+        .fs-hero-chip-icon { flex: none; width: 34px; height: 34px; border-radius: 11px; display: inline-flex; align-items: center; justify-content: center; }
+        .fs-hero-chip-flags { flex: none; display: inline-flex; align-items: center; }
+        .fs-hero-chip-flags svg { border-radius: 50%; box-shadow: 0 0 0 2px #fff; }
+        .fs-hero-chip-flags svg + svg { margin-left: -8px; }
         .fs-hero-chip-1 { left: 0; top: 10%; animation-delay: 0s; }
         .fs-hero-chip-2 { right: 6%; top: 24%; animation-delay: -2s; }
         .fs-hero-chip-3 { left: 4%; bottom: 20%; animation-delay: -4s; }
@@ -210,7 +211,9 @@ export default async function HomePage({
           .fs-hero-cta, .fs-hero-cta-ghost { justify-content: center; }
           .fs-hero-visual { margin: 28px -8px -60px; }
           .fs-hero-spacer { height: 52px; }
-          .fs-hero-chip { font-size: 11.5px; padding: 8px 11px 8px 9px; border-radius: 13px; }
+          .fs-hero-chip { font-size: 12.5px; padding: 10px 13px 10px 11px; border-radius: 14px; gap: 9px; }
+          .fs-hero-chip-icon { width: 28px; height: 28px; border-radius: 9px; }
+          .fs-hero-chip-flags svg { width: 22px; height: 22px; }
           .fs-hero-chip-1 { top: 6%; }
           .fs-hero-chip-2 { right: 0; top: 20%; }
           .fs-hero-visual { width: auto; }
@@ -275,24 +278,24 @@ export default async function HomePage({
             {/* ── Copy ── */}
             <div className="fs-hero-copy">
               <p className="fs-hero-sub">
-                Nicht jeder will sofort in ein Zoom-Meeting oder einen Info-Call. Die meisten schauen sich erst mal in Ruhe an, worum es geht. Genau dafür ist deine Seite da: Kunden und Teampartner informieren sich rund um die Uhr selbst, überzeugen sich in ihrem Tempo und buchen dann einen Termin bei dir.
+                Nicht jeder will sofort in ein Zoom-Meeting oder einen Info-Call. Auf deiner Seite informieren sich Kunden und Teampartner rund um die Uhr selbst und buchen dann einen Termin bei dir.
               </p>
 
               <ul className="fs-hero-benefits">
                 {([
                   {
-                    title: 'Fertige Seiten für dein Produkt und deine Zielgruppe',
-                    desc: 'Such dir aus der Bibliothek die passende Seite aus, zum Beispiel fürs Optimalset, die Stoffwechselkur, für Mütter oder Sportler. Jede ist genau darauf zugeschnitten.',
+                    title: 'Fertige Seiten für Produkt und Zielgruppe',
+                    desc: 'Optimalset, Stoffwechselkur, Mütter, Sportler: In der Bibliothek ist die passende Seite schon fertig.',
                     icon: <><rect width="7" height="7" x="3" y="3" rx="1.5"/><rect width="7" height="7" x="14" y="3" rx="1.5"/><rect width="7" height="7" x="14" y="14" rx="1.5"/><rect width="7" height="7" x="3" y="14" rx="1.5"/></>,
                   },
                   {
                     title: 'Kein Texten, kein Designen',
-                    desc: 'Alles ist schon drin. Du passt ein paar Sachen an, Name, Foto, Kontakt, und in wenigen Minuten ist deine Seite live.',
+                    desc: 'Name, Foto, Kontakt anpassen. In wenigen Minuten ist deine Seite live.',
                     icon: <><path d="M9.94 14.54 12 21l2.06-6.46L20 12l-5.94-2.54L12 3 9.94 9.46 4 12z"/><path d="M5 3v4M3 5h4"/><path d="M19 17v4M17 19h4"/></>,
                   },
                   {
                     title: 'Einmal erstellt, überall geteilt',
-                    desc: 'In der Story, in der Social-Media-Bio, auf der Visitenkarte oder dem Flyer. Ein Link, und deine Kontakte sind rund um die Uhr informiert.',
+                    desc: 'Story, Bio, Visitenkarte, Flyer. Ein Link reicht.',
                     icon: <><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.59 13.51 6.83 3.98M15.41 6.51l-6.82 3.98"/></>,
                   },
                 ] as { title: string; desc: string; icon: ReactNode }[]).map((b, i) => (
@@ -331,18 +334,33 @@ export default async function HomePage({
                 className="fs-hero-phones"
               />
               <div className="fs-hero-chip fs-hero-chip-1" aria-hidden="true">
-                <span className="fs-hero-chip-lang"><b>DE</b><i /><b>EN</b></span>
-                <span>Zwei Sprachen,<br />ein Klick</span>
+                <span className="fs-hero-chip-flags">
+                  <svg viewBox="0 0 30 30" width="26" height="26" aria-hidden="true">
+                    <clipPath id="fs-flag-de"><circle cx="15" cy="15" r="15" /></clipPath>
+                    <g clipPath="url(#fs-flag-de)"><rect width="30" height="10" fill="#000" /><rect y="10" width="30" height="10" fill="#DD0000" /><rect y="20" width="30" height="10" fill="#FFCE00" /></g>
+                  </svg>
+                  <svg viewBox="0 0 30 30" width="26" height="26" aria-hidden="true">
+                    <clipPath id="fs-flag-uk"><circle cx="15" cy="15" r="15" /></clipPath>
+                    <g clipPath="url(#fs-flag-uk)">
+                      <rect width="30" height="30" fill="#012169" />
+                      <path d="M0 0 30 30M30 0 0 30" stroke="#fff" strokeWidth="6" />
+                      <path d="M0 0 30 30M30 0 0 30" stroke="#C8102E" strokeWidth="2" />
+                      <path d="M15 0v30M0 15h30" stroke="#fff" strokeWidth="10" />
+                      <path d="M15 0v30M0 15h30" stroke="#C8102E" strokeWidth="6" />
+                    </g>
+                  </svg>
+                </span>
+                <span>Mehrsprachig<br />mit einem Klick</span>
               </div>
               <div className="fs-hero-chip fs-hero-chip-2" aria-hidden="true">
                 <span className="fs-hero-chip-icon" style={{ background: '#ECFDF5', color: '#059669' }}>
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>
                 </span>
                 <span>Richtlinien<br />geprüft</span>
               </div>
               <div className="fs-hero-chip fs-hero-chip-3" aria-hidden="true">
                 <span className="fs-hero-chip-icon" style={{ background: '#FFF4E5', color: '#D97706' }}>
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg>
                 </span>
                 <span>Live in<br />3 Minuten</span>
               </div>
