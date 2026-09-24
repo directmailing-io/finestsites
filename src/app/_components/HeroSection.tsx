@@ -29,11 +29,99 @@ export type HeroTheme = {
   chipText: string
   /** Light area the phones overlap into (must match the following section) */
   after: string
+  /** Shadow color of the floating chips (lighter on light backgrounds) */
+  chipShadow?: string
+  /** 'card': hero sits in a rounded card on `after`; default: full-bleed */
+  layout?: 'card'
+  /** 'fade': bottom of the hero dissolves into `after` instead of a hard edge */
+  edge?: 'fade'
+  /** Eyebrow as a small pill (like the badges further down the page) */
+  eyebrowPill?: { bg: string; color: string }
+  /** Rounded panel behind the phones */
+  panel?: string
 }
 
 export const heroThemes: Record<string, { label: string; note: string; theme: HeroTheme }> = {
+  studio: {
+    label: 'Studio Weiß',
+    note: 'Weiß wie der Rest der Seite, dahinter eine weiche Lavendel-Wolke. Schwarzer CTA und Lila-Akzent wie bei den Preisen und Vorlagen. Unten löst sich der Hero in die nächste Sektion auf.',
+    theme: {
+      bg: '#FFFFFF',
+      spots: 'radial-gradient(48% 60% at 80% 58%, rgba(196,181,253,0.55), transparent 70%), radial-gradient(30% 35% at 60% 30%, rgba(255,214,170,0.45), transparent 70%), radial-gradient(35% 40% at 8% 20%, rgba(233,228,255,0.9), transparent 70%)',
+      text: '#111', muted: '#555', eyebrow: '#6B4FD8', accent: '#6B4FD8',
+      eyebrowPill: { bg: '#EFE9FF', color: '#6B4FD8' },
+      iconBg: '#F5F3FF', iconBorder: 'rgba(107,79,216,0.14)', iconColor: '#6B4FD8',
+      ctaBg: '#111', ctaColor: '#fff', ctaRing: 'rgba(17,17,17,0.06)',
+      ghostColor: '#111', ghostBorder: 'rgba(0,0,0,0.16)', trust: '#888',
+      glow: 'radial-gradient(closest-side, rgba(196,181,253,0.7), rgba(255,214,170,0.35) 60%, transparent 100%)',
+      phoneShadow: 'rgba(60,40,120,0.28)', chipBg: 'rgba(255,255,255,0.98)', chipText: '#111', chipShadow: 'rgba(60,40,120,0.16)',
+      after: '#FAFAF8', edge: 'fade',
+    },
+  },
+  karte: {
+    label: 'Creme-Karte',
+    note: 'Der Hero liegt als große abgerundete Karte auf Weiß, in dem warmen Creme der „Brötchen“-Box. Akzent in Terrakotta, wie die orangen Labels der Seite. Die Handys ragen unten aus der Karte heraus.',
+    theme: {
+      bg: 'linear-gradient(180deg, #FBF6EE 0%, #F6EEE1 100%)',
+      spots: 'radial-gradient(50% 55% at 80% 60%, rgba(255,200,150,0.5), transparent 70%), radial-gradient(35% 40% at 10% 15%, rgba(255,255,255,0.9), transparent 70%)',
+      text: '#1A1510', muted: '#5C5347', eyebrow: '#B45309', accent: '#C05621',
+      eyebrowPill: { bg: '#FBE7D3', color: '#B45309' },
+      iconBg: '#FFFFFF', iconBorder: 'rgba(26,21,16,0.08)', iconColor: '#C05621',
+      ctaBg: '#111', ctaColor: '#fff', ctaRing: 'rgba(17,17,17,0.06)',
+      ghostColor: '#1A1510', ghostBorder: 'rgba(26,21,16,0.2)', trust: '#8A8074',
+      glow: 'radial-gradient(closest-side, rgba(255,200,150,0.7), rgba(255,235,210,0.4) 60%, transparent 100%)',
+      phoneShadow: 'rgba(90,60,30,0.3)', chipBg: 'rgba(255,255,255,0.98)', chipText: '#1A1510', chipShadow: 'rgba(90,60,30,0.16)',
+      after: '#FFFFFF', layout: 'card',
+    },
+  },
+  panel: {
+    label: 'Lavendel-Panel',
+    note: 'Text auf Weiß, die Handys stehen in einem abgerundeten Lavendel-Panel wie die Insider-Box weiter unten und ragen über dessen Rand hinaus. Ruhig, aufgeräumt, viel Weißraum.',
+    theme: {
+      bg: '#FFFFFF',
+      spots: 'none',
+      text: '#111', muted: '#555', eyebrow: '#6B4FD8', accent: '#6B4FD8',
+      eyebrowPill: { bg: '#EFE9FF', color: '#6B4FD8' },
+      iconBg: '#F5F3FF', iconBorder: 'rgba(107,79,216,0.14)', iconColor: '#6B4FD8',
+      ctaBg: '#111', ctaColor: '#fff', ctaRing: 'rgba(17,17,17,0.06)',
+      ghostColor: '#111', ghostBorder: 'rgba(0,0,0,0.16)', trust: '#888',
+      glow: 'radial-gradient(closest-side, rgba(255,214,170,0.55), rgba(196,181,253,0.3) 60%, transparent 100%)',
+      phoneShadow: 'rgba(60,40,120,0.28)', chipBg: 'rgba(255,255,255,0.98)', chipText: '#111', chipShadow: 'rgba(60,40,120,0.16)',
+      after: '#FAFAF8', panel: 'linear-gradient(160deg, #F3EEFF 0%, #EDE6FF 100%)',
+    },
+  },
+  mesh: {
+    label: 'Pastell-Mesh',
+    note: 'Sanfter Farbverlauf aus Lila, Pfirsich und Mint, der nach unten in Weiß ausläuft. Nimmt den Lila-zu-Weiß-Verlauf der Sektion „So funktioniert’s“ auf.',
+    theme: {
+      bg: 'linear-gradient(180deg, #F4EFFF 0%, #FAF7FF 55%, #FFFFFF 100%)',
+      spots: 'radial-gradient(40% 45% at 82% 55%, rgba(255,214,170,0.6), transparent 70%), radial-gradient(35% 40% at 55% 25%, rgba(196,181,253,0.5), transparent 70%), radial-gradient(30% 35% at 8% 30%, rgba(167,243,208,0.45), transparent 70%)',
+      text: '#111', muted: '#555', eyebrow: '#7C5CBF', accent: '#6B4FD8',
+      iconBg: 'rgba(255,255,255,0.9)', iconBorder: 'rgba(107,79,216,0.14)', iconColor: '#6B4FD8',
+      ctaBg: '#111', ctaColor: '#fff', ctaRing: 'rgba(17,17,17,0.06)',
+      ghostColor: '#111', ghostBorder: 'rgba(0,0,0,0.16)', trust: '#888',
+      glow: 'radial-gradient(closest-side, rgba(255,214,170,0.6), rgba(196,181,253,0.45) 60%, transparent 100%)',
+      phoneShadow: 'rgba(60,40,120,0.28)', chipBg: 'rgba(255,255,255,0.98)', chipText: '#111', chipShadow: 'rgba(60,40,120,0.16)',
+      after: '#FFFFFF', edge: 'fade',
+    },
+  },
+  creme: {
+    label: 'Hell & Creme (Variante 3 von vorhin)',
+    note: 'Warmer heller Hintergrund, dunkle Schrift, Akzent in Violett. Jetzt mit weichem Auslauf nach unten statt harter Kante.',
+    theme: {
+      bg: 'linear-gradient(180deg, #FFFDF9 0%, #FAF5EC 55%, #F3ECE0 100%)',
+      spots: 'radial-gradient(55% 45% at 78% 60%, rgba(255,190,120,0.35), transparent 70%), radial-gradient(45% 40% at 12% 18%, rgba(160,130,240,0.18), transparent 70%)',
+      text: '#1A1530', muted: '#4B4660', eyebrow: '#8A6BD6', accent: '#5B3FC4',
+      iconBg: '#fff', iconBorder: 'rgba(26,21,48,0.08)', iconColor: '#5B3FC4',
+      ctaBg: '#1A1530', ctaColor: '#fff', ctaRing: 'rgba(26,21,48,0.08)',
+      ghostColor: '#1A1530', ghostBorder: 'rgba(26,21,48,0.22)', trust: '#7A7590',
+      glow: 'radial-gradient(closest-side, rgba(255,190,120,0.55), rgba(160,130,240,0.28) 60%, transparent 100%)',
+      phoneShadow: 'rgba(60,40,20,0.35)', chipBg: 'rgba(255,255,255,0.98)', chipText: '#1A1530', chipShadow: 'rgba(60,40,20,0.16)',
+      after: '#FFFFFF', edge: 'fade',
+    },
+  },
   violett: {
-    label: 'Violett (aktuell)',
+    label: 'Violett (aktuell live, als Referenz)',
     note: 'Der bisherige Look: satter Lila-Verlauf, Akzent in warmem Apricot.',
     theme: {
       bg: 'linear-gradient(180deg, #1B0F3F 0%, #2E1D6E 30%, #4A35A0 60%, #6247AF 100%)',
@@ -44,66 +132,6 @@ export const heroThemes: Record<string, { label: string; note: string; theme: He
       ghostColor: '#fff', ghostBorder: 'rgba(255,255,255,0.35)', trust: 'rgba(255,255,255,0.6)',
       glow: 'radial-gradient(closest-side, rgba(255,207,140,0.38), rgba(142,111,208,0.3) 60%, transparent 100%)',
       phoneShadow: 'rgba(15,8,50,0.55)', chipBg: 'rgba(255,255,255,0.95)', chipText: '#1a1530',
-      after: '#FAFAF8',
-    },
-  },
-  mitternacht: {
-    label: 'Mitternachtsblau',
-    note: 'Tiefes Navy wie das mittlere Handy, Akzent in Gold. Wirkt seriös und hochwertig, klassischer SaaS-Look.',
-    theme: {
-      bg: 'linear-gradient(180deg, #070D24 0%, #0C1A4A 40%, #12296F 75%, #1B3A8F 100%)',
-      spots: 'radial-gradient(55% 45% at 78% 60%, rgba(255,196,110,0.16), transparent 70%), radial-gradient(40% 40% at 10% 15%, rgba(96,165,250,0.14), transparent 70%)',
-      text: '#fff', muted: 'rgba(226,232,255,0.82)', eyebrow: 'rgba(191,205,255,0.8)', accent: '#FFC46E',
-      iconBg: 'rgba(255,255,255,0.08)', iconBorder: 'rgba(255,255,255,0.14)', iconColor: '#FFC46E',
-      ctaBg: '#FFC46E', ctaColor: '#0C1A4A', ctaRing: 'rgba(255,196,110,0.18)',
-      ghostColor: '#fff', ghostBorder: 'rgba(255,255,255,0.3)', trust: 'rgba(226,232,255,0.55)',
-      glow: 'radial-gradient(closest-side, rgba(255,196,110,0.32), rgba(59,91,219,0.35) 60%, transparent 100%)',
-      phoneShadow: 'rgba(2,6,30,0.6)', chipBg: 'rgba(255,255,255,0.96)', chipText: '#0C1A4A',
-      after: '#FAFAF8',
-    },
-  },
-  creme: {
-    label: 'Hell & Creme',
-    note: 'Warmer heller Hintergrund, dunkle Schrift, Akzent in tiefem Violett. Frisch, Apple-artig, die dunklen Handys stechen hervor.',
-    theme: {
-      bg: 'linear-gradient(180deg, #FFFDF9 0%, #FAF5EC 55%, #F3ECE0 100%)',
-      spots: 'radial-gradient(55% 45% at 78% 60%, rgba(255,190,120,0.35), transparent 70%), radial-gradient(45% 40% at 12% 18%, rgba(160,130,240,0.18), transparent 70%)',
-      text: '#1A1530', muted: '#4B4660', eyebrow: '#8A6BD6', accent: '#5B3FC4',
-      iconBg: '#fff', iconBorder: 'rgba(26,21,48,0.08)', iconColor: '#5B3FC4',
-      ctaBg: '#1A1530', ctaColor: '#fff', ctaRing: 'rgba(26,21,48,0.08)',
-      ghostColor: '#1A1530', ghostBorder: 'rgba(26,21,48,0.22)', trust: '#7A7590',
-      glow: 'radial-gradient(closest-side, rgba(255,190,120,0.55), rgba(160,130,240,0.28) 60%, transparent 100%)',
-      phoneShadow: 'rgba(60,40,20,0.35)', chipBg: 'rgba(255,255,255,0.98)', chipText: '#1A1530',
-      after: '#FFFFFF',
-    },
-  },
-  wellness: {
-    label: 'Wellness-Grün',
-    note: 'Dunkles Tannengrün mit Mint-Akzent. Passt zu Gesundheit, Ernährung und Wellness-Produkten, wirkt ruhig und vertrauensvoll.',
-    theme: {
-      bg: 'linear-gradient(180deg, #0B1F1A 0%, #10302A 40%, #164A3F 75%, #1D5C4E 100%)',
-      spots: 'radial-gradient(55% 45% at 78% 60%, rgba(185,243,214,0.14), transparent 70%), radial-gradient(40% 40% at 10% 15%, rgba(255,214,150,0.12), transparent 70%)',
-      text: '#fff', muted: 'rgba(226,245,238,0.84)', eyebrow: 'rgba(185,243,214,0.85)', accent: '#B9F3D6',
-      iconBg: 'rgba(255,255,255,0.08)', iconBorder: 'rgba(255,255,255,0.14)', iconColor: '#B9F3D6',
-      ctaBg: '#B9F3D6', ctaColor: '#0B1F1A', ctaRing: 'rgba(185,243,214,0.16)',
-      ghostColor: '#fff', ghostBorder: 'rgba(255,255,255,0.3)', trust: 'rgba(226,245,238,0.55)',
-      glow: 'radial-gradient(closest-side, rgba(185,243,214,0.3), rgba(255,214,150,0.22) 60%, transparent 100%)',
-      phoneShadow: 'rgba(2,20,14,0.6)', chipBg: 'rgba(255,255,255,0.96)', chipText: '#0B1F1A',
-      after: '#FAFAF8',
-    },
-  },
-  aurora: {
-    label: 'Aurora Dark',
-    note: 'Fast schwarz mit weichen Farbwolken in Lila, Koralle und Petrol. Modern und auffällig, sehr viel Tiefe hinter den Handys.',
-    theme: {
-      bg: 'linear-gradient(180deg, #0B0716 0%, #120C24 60%, #1A1233 100%)',
-      spots: 'radial-gradient(45% 55% at 80% 55%, rgba(255,120,110,0.28), transparent 70%), radial-gradient(40% 45% at 62% 35%, rgba(120,80,255,0.35), transparent 70%), radial-gradient(35% 40% at 15% 25%, rgba(20,184,166,0.22), transparent 70%)',
-      text: '#fff', muted: 'rgba(235,230,255,0.82)', eyebrow: 'rgba(255,170,150,0.9)', accent: '#FFB69B',
-      iconBg: 'rgba(255,255,255,0.07)', iconBorder: 'rgba(255,255,255,0.14)', iconColor: '#FFB69B',
-      ctaBg: '#fff', ctaColor: '#120C24', ctaRing: 'rgba(255,255,255,0.08)',
-      ghostColor: '#fff', ghostBorder: 'rgba(255,255,255,0.3)', trust: 'rgba(235,230,255,0.55)',
-      glow: 'radial-gradient(closest-side, rgba(255,150,120,0.35), rgba(120,80,255,0.35) 60%, transparent 100%)',
-      phoneShadow: 'rgba(0,0,0,0.7)', chipBg: 'rgba(255,255,255,0.95)', chipText: '#120C24',
       after: '#FAFAF8',
     },
   },
@@ -146,16 +174,26 @@ export default function HeroSection({
     '--h-cta-bg': t.ctaBg, '--h-cta': t.ctaColor, '--h-cta-ring': t.ctaRing, '--h-ghost': t.ghostColor,
     '--h-ghost-border': t.ghostBorder, '--h-trust': t.trust, '--h-glow': t.glow, '--h-phone-shadow': t.phoneShadow,
     '--h-chip-bg': t.chipBg, '--h-chip-text': t.chipText, '--h-after': t.after,
+    '--h-chip-shadow': t.chipShadow ?? 'rgba(15,8,50,0.35)',
+    '--h-eyebrow-bg': t.eyebrowPill?.bg ?? 'transparent',
+    '--h-panel': t.panel ?? 'transparent',
   } as CSSProperties
+  const sectionClass = [
+    'fs-hero-section',
+    t.layout === 'card' ? 'is-card' : '',
+    t.edge === 'fade' ? 'is-fade' : '',
+    t.panel ? 'has-panel' : '',
+  ].filter(Boolean).join(' ')
 
   return (
     <>
       <style>{heroCss}</style>
-      <section className="fs-hero-section" style={vars}>
+      <section className={sectionClass} style={vars}>
+        <div className="fs-hero-card">
         <div className="fs-hero-content">
 
           <div className="fs-hero-head">
-            <p className="fs-hero-eyebrow">Für Network Marketer</p>
+            <p className={`fs-hero-eyebrow${t.eyebrowPill ? ' is-pill' : ''}`}>Für Network Marketer</p>
             <h1 className="fs-hero-h1">
               Deine Website fürs<br /><span className="fs-hero-h1-accent">Network-Marketing-Business.</span>
             </h1>
@@ -192,6 +230,7 @@ export default function HeroSection({
             </div>
 
             <div className="fs-hero-visual">
+              <div className="fs-hero-panel" aria-hidden="true" />
               <div className="fs-hero-glow" aria-hidden="true" />
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
@@ -236,6 +275,7 @@ export default function HeroSection({
             </div>
           </div>
         </div>
+        </div>
       </section>
 
       {/* Spacer: the hero phones overlap into this light area */}
@@ -247,9 +287,23 @@ export default function HeroSection({
 const heroCss = `
   .fs-hero-section { width: 100%; position: relative; z-index: 2; overflow-x: clip; background: var(--h-bg); }
   .fs-hero-section::before { content: ""; position: absolute; inset: 0; background: var(--h-spots); pointer-events: none; }
+  .fs-hero-card { position: relative; }
+  /* card layout: hero in a rounded card on the page background */
+  .fs-hero-section.is-card { background: var(--h-after); padding: 104px 24px 0; }
+  .fs-hero-section.is-card::before { display: none; }
+  .fs-hero-section.is-card .fs-hero-card { max-width: 1320px; margin: 0 auto; border-radius: 40px; background: var(--h-bg); overflow-x: clip; }
+  .fs-hero-section.is-card .fs-hero-card::before { content: ""; position: absolute; inset: 0; border-radius: inherit; background: var(--h-spots); pointer-events: none; }
+  .fs-hero-section.is-card .fs-hero-content { padding-top: 72px; }
+  /* fade edge: bottom dissolves into the next section */
+  .fs-hero-section.is-fade::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 260px; background: linear-gradient(to bottom, transparent, var(--h-after)); pointer-events: none; }
+  /* panel behind the phones */
+  .fs-hero-panel { display: none; }
+  .has-panel .fs-hero-panel { display: block; position: absolute; left: -9%; right: -7%; top: 16%; bottom: -6%; border-radius: 44px; background: var(--h-panel); }
+  .has-panel .fs-hero-glow { display: none; }
   .fs-hero-content { position: relative; z-index: 2; padding: 150px 24px 0; max-width: 1180px; margin: 0 auto; }
   .fs-hero-head { max-width: 980px; margin-bottom: 36px; }
   .fs-hero-eyebrow { display: inline-flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 600; color: var(--h-eyebrow); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 22px; }
+  .fs-hero-eyebrow.is-pill { background: var(--h-eyebrow-bg); padding: 8px 14px; border-radius: 99px; font-size: 12px; letter-spacing: 0.08em; }
   .fs-hero-h1 { font-family: "Plein", sans-serif; font-size: clamp(38px, 5.2vw, 72px); font-weight: 400; color: var(--h-text); line-height: 1.02; letter-spacing: -0.03em; white-space: nowrap; }
   .fs-hero-h1-accent { color: var(--h-accent); }
   .fs-hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); gap: 40px; align-items: center; }
@@ -269,7 +323,7 @@ const heroCss = `
   .fs-hero-visual { position: relative; width: 122%; max-width: none; transform: translateY(110px); }
   .fs-hero-glow { position: absolute; left: 8%; right: 8%; top: 12%; bottom: 14%; border-radius: 50%; background: var(--h-glow); filter: blur(46px); }
   .fs-hero-phones { position: relative; width: 100%; height: auto; display: block; filter: drop-shadow(0 40px 70px var(--h-phone-shadow)); }
-  .fs-hero-chip { position: absolute; display: flex; align-items: center; gap: 12px; background: var(--h-chip-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-radius: 18px; padding: 13px 18px 13px 14px; font-size: 14.5px; font-weight: 700; line-height: 1.25; color: var(--h-chip-text); box-shadow: 0 14px 34px rgba(15,8,50,0.35), 0 0 0 1px rgba(255,255,255,0.6) inset; animation: fs-hero-float 6s ease-in-out infinite; }
+  .fs-hero-chip { position: absolute; display: flex; align-items: center; gap: 12px; background: var(--h-chip-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-radius: 18px; padding: 13px 18px 13px 14px; font-size: 14.5px; font-weight: 700; line-height: 1.25; color: var(--h-chip-text); box-shadow: 0 14px 34px var(--h-chip-shadow), 0 0 0 1px rgba(255,255,255,0.6) inset; animation: fs-hero-float 6s ease-in-out infinite; }
   .fs-hero-chip-icon { flex: none; width: 34px; height: 34px; border-radius: 11px; display: inline-flex; align-items: center; justify-content: center; }
   .fs-hero-chip-flags { flex: none; display: inline-flex; align-items: center; }
   .fs-hero-chip-flags svg { border-radius: 50%; box-shadow: 0 0 0 2px #fff; }
@@ -283,6 +337,10 @@ const heroCss = `
 
   @media (max-width: 1023px) {
     .fs-hero-content { padding: 140px 5vw 0; }
+    .fs-hero-section.is-card { padding: 96px 16px 0; }
+    .fs-hero-section.is-card .fs-hero-card { border-radius: 28px; }
+    .fs-hero-section.is-card .fs-hero-content { padding-top: 56px; }
+    .has-panel .fs-hero-panel { left: -4%; right: -4%; top: 14%; bottom: 0; border-radius: 32px; }
     .fs-hero-head { text-align: center; margin: 0 auto 28px; }
     .fs-hero-h1 { font-size: clamp(36px, 6.4vw, 60px); }
     .fs-hero-grid { grid-template-columns: 1fr; gap: 28px; }

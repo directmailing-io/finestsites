@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import NavBar from '../_components/NavBar'
 import HeroSection, { heroThemes } from '../_components/HeroSection'
+import ProblemSection from '../_components/ProblemSection'
 
 // Internal design preview: the hero with the same content in several color
 // schemes. Not linked anywhere, not indexed.
@@ -50,7 +51,7 @@ export default function HeroVariantenPage() {
 
       <div className="hv-intro">
         <h1>Hero-Varianten</h1>
-        <p>Gleicher Inhalt, andere Farbwelt. Scroll durch und schau, welche Stimmung zu FinestSites passt. Der Wechsel auf der Startseite ist danach eine Zeile Code.</p>
+        <p>Gleicher Inhalt, andere Anmutung. Alle Varianten sind hell und nehmen die Farben der restlichen Seite auf (Weiß, Lavendel, Creme, schwarzer CTA). Unter jedem Hero folgt die echte nächste Sektion, damit du den Übergang siehst.</p>
         <ol>
           {entries.map(([key, v]) => <li key={key}><b>{v.label}</b>: {v.note}</li>)}
         </ol>
@@ -64,8 +65,8 @@ export default function HeroVariantenPage() {
             <code>themeKey=&quot;{key}&quot;</code>
           </div>
           <HeroSection registerHref={registerHref} themeKey={key} idPrefix={`hv-${key}`} />
-          <div className="hv-after" style={{ background: v.theme.after }}>
-            Hier würde der nächste Abschnitt („Kommt dir das bekannt vor?“) beginnen.
+          <div style={{ background: v.theme.after }}>
+            <ProblemSection />
           </div>
         </div>
       ))}
