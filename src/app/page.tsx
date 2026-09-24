@@ -118,23 +118,41 @@ export default async function HomePage({
         .fs-nav-actions { display: flex; gap: 8px; align-items: center; }
         .fs-hamburger { display: none !important; }
         /* ── Hero ────────────────────────────────────────── */
+        .fs-hero-section { width: 100%; position: relative; z-index: 2; overflow-x: clip; background: linear-gradient(180deg, #1B0F3F 0%, #2E1D6E 30%, #4A35A0 60%, #6247AF 100%); }
+        .fs-hero-section::before { content: ""; position: absolute; inset: 0; background: radial-gradient(60% 50% at 78% 62%, rgba(255,207,140,0.18), transparent 70%), radial-gradient(45% 40% at 15% 20%, rgba(255,255,255,0.07), transparent 70%); pointer-events: none; }
         .fs-hero-content { position: relative; z-index: 2; padding: 150px 24px 0; max-width: 1180px; margin: 0 auto; }
-        .fs-hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 32px; align-items: center; }
-        .fs-hero-copy { padding-bottom: 96px; }
-        .fs-hero-eyebrow { display: inline-flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.8); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 24px; }
+        .fs-hero-head { max-width: 980px; margin-bottom: 36px; }
+        .fs-hero-eyebrow { display: inline-flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.8); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 22px; }
         .fs-hero-eyebrow-dot { width: 8px; height: 8px; border-radius: 50%; background: #FFCF8C; box-shadow: 0 0 0 4px rgba(255,207,140,0.22); }
-        .fs-hero-h1 { font-family: "Plein", sans-serif; font-size: clamp(36px, 4.1vw, 58px); font-weight: 400; color: #fff; line-height: 1.06; letter-spacing: -0.028em; margin-bottom: 22px; white-space: nowrap; }
-        .fs-hero-sub { font-size: 17px; color: rgba(255,255,255,0.82); line-height: 1.7; margin-bottom: 30px; max-width: 520px; }
-        .fs-hero-benefits { list-style: none; display: flex; flex-direction: column; gap: 14px; margin: 0 0 34px; padding: 0; max-width: 540px; }
-        .fs-hero-benefit { display: flex; gap: 14px; align-items: flex-start; font-size: 15px; line-height: 1.5; color: rgba(255,255,255,0.78); }
-        .fs-hero-benefit strong { display: block; color: #fff; font-weight: 700; margin-bottom: 2px; }
+        .fs-hero-h1 { font-family: "Plein", sans-serif; font-size: clamp(38px, 5.2vw, 72px); font-weight: 400; color: #fff; line-height: 1.02; letter-spacing: -0.03em; white-space: nowrap; }
+        .fs-hero-h1-accent { color: #FFCF8C; }
+        .fs-hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); gap: 40px; align-items: center; }
+        .fs-hero-copy { padding-bottom: 80px; }
+        .fs-hero-sub { font-size: 17px; color: rgba(255,255,255,0.84); line-height: 1.7; margin-bottom: 30px; max-width: 520px; }
+        .fs-hero-benefits { list-style: none; display: flex; flex-direction: column; gap: 16px; margin: 0 0 36px; padding: 0; max-width: 520px; }
+        .fs-hero-benefit { display: flex; gap: 14px; align-items: flex-start; font-size: 15px; line-height: 1.5; color: rgba(255,255,255,0.75); }
+        .fs-hero-benefit strong { display: block; color: #fff; font-weight: 700; margin-bottom: 3px; font-size: 16px; }
         .fs-hero-benefit-desc { display: block; font-size: 14px; }
-        .fs-hero-check { flex: none; width: 24px; height: 24px; border-radius: 50%; background: #FFCF8C; display: inline-flex; align-items: center; justify-content: center; margin-top: 1px; }
-        .fs-hero-buttons { display: flex; gap: 12px; flex-wrap: wrap; }
-        .fs-hero-trust { font-size: 13px; color: rgba(255,255,255,0.6); margin-top: 14px; font-weight: 500; }
-        .fs-hero-visual { position: relative; align-self: center; display: flex; justify-content: center; padding-bottom: 48px; }
-        .fs-hero-glow { position: absolute; inset: 10% 5% 5%; border-radius: 50%; background: radial-gradient(closest-side, rgba(255,207,140,0.32), rgba(142,111,208,0.25) 55%, transparent 100%); filter: blur(40px); }
-        .fs-hero-phones { position: relative; width: 100%; max-width: 640px; height: auto; display: block; filter: drop-shadow(0 30px 60px rgba(20,10,60,0.45)); }
+        .fs-hero-check { flex: none; width: 24px; height: 24px; border-radius: 50%; background: #FFCF8C; display: inline-flex; align-items: center; justify-content: center; margin-top: 2px; }
+        .fs-hero-buttons { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+        .fs-hero-cta { display: inline-flex; align-items: center; gap: 10px; background: #fff; color: #2A1A6E; padding: 17px 30px 17px 34px; border-radius: 100px; font-size: 15px; font-weight: 700; text-decoration: none; box-shadow: 0 8px 30px rgba(0,0,0,0.25), 0 0 0 6px rgba(255,255,255,0.08); transition: transform 0.15s ease, box-shadow 0.15s ease; }
+        .fs-hero-cta:hover { transform: translateY(-1px); box-shadow: 0 12px 34px rgba(0,0,0,0.3), 0 0 0 6px rgba(255,255,255,0.12); }
+        .fs-hero-cta-ghost { display: inline-flex; align-items: center; color: #fff; padding: 17px 28px; border-radius: 100px; font-size: 15px; font-weight: 600; border: 1.5px solid rgba(255,255,255,0.35); text-decoration: none; transition: background 0.15s ease; }
+        .fs-hero-cta-ghost:hover { background: rgba(255,255,255,0.08); }
+        .fs-hero-trust { font-size: 13px; color: rgba(255,255,255,0.6); margin-top: 16px; font-weight: 500; }
+        .fs-hero-visual { position: relative; width: 122%; max-width: none; transform: translateY(110px); }
+        .fs-hero-glow { position: absolute; left: 8%; right: 8%; top: 12%; bottom: 14%; border-radius: 50%; background: radial-gradient(closest-side, rgba(255,207,140,0.38), rgba(142,111,208,0.3) 60%, transparent 100%); filter: blur(46px); }
+        .fs-hero-phones { position: relative; width: 100%; height: auto; display: block; filter: drop-shadow(0 40px 70px rgba(15,8,50,0.55)); }
+        .fs-hero-chip { position: absolute; display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.94); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-radius: 16px; padding: 10px 14px 10px 12px; font-size: 12.5px; font-weight: 700; line-height: 1.25; color: #1a1530; box-shadow: 0 14px 34px rgba(15,8,50,0.35), 0 0 0 1px rgba(255,255,255,0.6) inset; animation: fs-hero-float 6s ease-in-out infinite; }
+        .fs-hero-chip-icon { flex: none; width: 26px; height: 26px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; }
+        .fs-hero-chip-lang { flex: none; display: inline-flex; align-items: center; gap: 6px; background: #F3F0FA; border-radius: 99px; padding: 5px 9px; font-size: 11px; letter-spacing: 0.04em; color: #4A35A0; }
+        .fs-hero-chip-lang i { width: 1px; height: 10px; background: rgba(74,53,160,0.3); }
+        .fs-hero-chip-1 { left: 0; top: 10%; animation-delay: 0s; }
+        .fs-hero-chip-2 { right: 6%; top: 24%; animation-delay: -2s; }
+        .fs-hero-chip-3 { left: 4%; bottom: 20%; animation-delay: -4s; }
+        .fs-hero-spacer { height: 72px; background: #FAFAF8; }
+        @keyframes fs-hero-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
+        @media (prefers-reduced-motion: reduce) { .fs-hero-chip { animation: none; } }
         .fs-section-pad { padding: 96px 7vw; }
         .fs-was-ist-inner { max-width: 1060px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 72px; align-items: center; }
         .fs-feature-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
@@ -161,14 +179,15 @@ export default async function HomePage({
         /* ── Tablet (768–1023 px) ─────────────────────────── */
         @media (max-width: 1023px) {
           .fs-hero-content { padding: 140px 5vw 0; }
-          .fs-hero-grid { grid-template-columns: 1fr; gap: 24px; }
+          .fs-hero-head { text-align: center; margin: 0 auto 28px; }
+          .fs-hero-h1 { font-size: clamp(36px, 6.4vw, 60px); }
+          .fs-hero-grid { grid-template-columns: 1fr; gap: 28px; }
           .fs-hero-copy { padding-bottom: 0; text-align: center; }
           .fs-hero-sub, .fs-hero-benefits { margin-left: auto; margin-right: auto; }
-          .fs-hero-visual { padding-bottom: 12px; }
           .fs-hero-benefits { text-align: left; }
           .fs-hero-buttons { justify-content: center; }
-          .fs-hero-visual { margin-top: 24px; }
-          .fs-hero-phones { max-width: 520px; }
+          .fs-hero-visual { width: 100%; max-width: 560px; margin: 32px auto -90px; transform: none; }
+          .fs-hero-spacer { height: 56px; }
           .fs-section-pad { padding: 72px 5vw; }
           .fs-template-grid { grid-template-columns: repeat(2, 1fr); }
           .fs-pricing-grid { grid-template-columns: 1fr; max-width: 440px; margin-left: auto; margin-right: auto; }
@@ -186,12 +205,17 @@ export default async function HomePage({
           .fs-hamburger { display: flex !important; }
           .fs-hero-buttons { flex-direction: column; align-items: stretch; }
 
-          .fs-hero-content { padding: 120px 22px 0; }
-          .fs-hero-h1 { font-size: clamp(30px, 8.6vw, 40px); }
+          .fs-hero-content { padding: 116px 22px 0; }
+          .fs-hero-h1 { font-size: clamp(30px, 8.4vw, 40px); white-space: normal; overflow-wrap: anywhere; }
           .fs-hero-sub { font-size: 16px; }
-          .fs-hero-visual { margin-top: 12px; }
-          .fs-hero-phones { max-width: 400px; }
-
+          .fs-hero-cta, .fs-hero-cta-ghost { justify-content: center; }
+          .fs-hero-visual { margin: 28px -8px -60px; }
+          .fs-hero-spacer { height: 52px; }
+          .fs-hero-chip { font-size: 11.5px; padding: 8px 11px 8px 9px; border-radius: 13px; }
+          .fs-hero-chip-1 { top: 6%; }
+          .fs-hero-chip-2 { right: 0; top: 20%; }
+          .fs-hero-visual { width: auto; }
+          .fs-hero-chip-3 { bottom: 18%; }
           .fs-section-pad { padding: 52px 22px; }
           .fs-was-ist-inner { grid-template-columns: 1fr; gap: 36px; }
           .fs-feature-grid { gap: 10px; }
@@ -237,67 +261,90 @@ export default async function HomePage({
       <NavBar />
 
       {/* ══ HERO ═════════════════════════════════════════════════════════ */}
-      <section className="fs-hero-section" style={{
-        width: '100%',
-        position: 'relative',
-        overflow: 'hidden',
-        background: 'linear-gradient(180deg, #201245 0%, #3D2A87 42%, #6247AF 66%, #8E6FD0 80%, #BCA7E6 90%, #E3DAF4 96%, #FAFAF8 100%)',
-      }}>
-        <div className="fs-hero-content fs-hero-grid">
+      <section className="fs-hero-section">
+        <div className="fs-hero-content">
 
-          {/* ── Copy ── */}
-          <div className="fs-hero-copy">
+          {/* ── Headline across the full width ── */}
+          <div className="fs-hero-head">
             <p className="fs-hero-eyebrow">
               <span className="fs-hero-eyebrow-dot" aria-hidden="true" />
               Für Networker
             </p>
             <h1 className="fs-hero-h1">
-              Deine Website<br />fürs <span style={{ color: '#FFCF8C' }}>Network-<br />Marketing-Business.</span>
+              Deine Website fürs<br /><span className="fs-hero-h1-accent">Network-Marketing-Business.</span>
             </h1>
-            <p className="fs-hero-sub">
-              Vorlage wählen, Name und Foto eintragen, live gehen. Deine Kunden und Teampartner informieren sich auf deiner Seite, noch bevor ihr miteinander sprecht.
-            </p>
-
-            <ul className="fs-hero-benefits">
-              {([
-                { title: 'Mehrsprachig für internationale Kontakte', desc: 'Deine Seite spricht die Sprache deiner Kunden und Teampartner. Ein Klick, und alles ist auf Deutsch oder Englisch.' },
-                { title: 'Richtlinienkonform und automatisch aktuell', desc: 'Alle Texte sind nach den Vorgaben deines Unternehmens erstellt. Ändert sich etwas, passen wir es für dich an.' },
-                { title: 'In wenigen Minuten fertig, kinderleicht zu bedienen', desc: 'Kein technisches Vorwissen nötig. Wenn du eine Nachricht schreiben kannst, kannst du auch deine Website erstellen.' },
-              ] as { title: string; desc: string }[]).map((b, i) => (
-                <li key={i} className="fs-hero-benefit">
-                  <span className="fs-hero-check" aria-hidden="true">
-                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2.5 6.2 5 8.6l4.5-5" stroke="#201245" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" /></svg>
-                  </span>
-                  <span>
-                    <strong>{b.title}</strong>
-                    <span className="fs-hero-benefit-desc">{b.desc}</span>
-                  </span>
-                </li>
-              ))}
-            </ul>
-
-            <div className="fs-hero-buttons">
-              <a href={`${process.env.NEXT_PUBLIC_APP_URL ?? 'https://app.finestsites.io'}/register${validatedRef ? `?ref=${validatedRef}` : ''}`} style={{ background: '#fff', color: '#3E2B85', padding: '17px 38px', borderRadius: 100, fontSize: 15, fontWeight: 700, display: 'inline-block', textDecoration: 'none', textAlign: 'center', boxShadow: '0 4px 24px rgba(0,0,0,0.18)' }}>Kostenlos starten</a>
-              <a href="#templates" style={{ background: 'rgba(255,255,255,0.08)', color: '#fff', padding: '17px 38px', borderRadius: 100, fontSize: 15, fontWeight: 500, display: 'inline-block', border: '1.5px solid rgba(255,255,255,0.45)', textDecoration: 'none', textAlign: 'center' }}>Templates ansehen</a>
-            </div>
-            <p className="fs-hero-trust">Kostenlos bearbeiten. Erst zahlen, wenn du live gehst.</p>
           </div>
 
-          {/* ── Phone mockups ── */}
-          <div className="fs-hero-visual">
-            <div className="fs-hero-glow" aria-hidden="true" />
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/hero-phones.webp"
-              alt="Drei Beispiel-Websites von FinestSites auf dem Smartphone"
-              width={1421}
-              height={1072}
-              fetchPriority="high"
-              className="fs-hero-phones"
-            />
+          <div className="fs-hero-grid">
+            {/* ── Copy ── */}
+            <div className="fs-hero-copy">
+              <p className="fs-hero-sub">
+                Du hast genug damit zu tun, Menschen zu erreichen. Deine Website soll dir dabei helfen und nicht noch mehr Arbeit machen. Deshalb ist bei FinestSites schon alles drin: Texte, Design, Rechtliches. Du trägst nur noch dich ein.
+              </p>
+
+              <ul className="fs-hero-benefits">
+                {([
+                  { title: 'Spricht die Sprache deiner Kontakte', desc: 'Deutsch und Englisch mit einem Klick. So verstehen dich auch Kunden und Teampartner im Ausland sofort.' },
+                  { title: 'Richtliniengerecht, ohne dass du dich kümmern musst', desc: 'Alle Texte sind nach den Vorgaben deiner Firma geschrieben. Ändert sich was, passen wir es automatisch an.' },
+                  { title: 'Fertig, bevor der Kaffee kalt ist', desc: 'Vorlage wählen, Name und Foto rein, live. Wer WhatsApp bedienen kann, kann das auch.' },
+                ] as { title: string; desc: string }[]).map((b, i) => (
+                  <li key={i} className="fs-hero-benefit">
+                    <span className="fs-hero-check" aria-hidden="true">
+                      <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2.5 6.2 5 8.6l4.5-5" stroke="#201245" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                    </span>
+                    <span>
+                      <strong>{b.title}</strong>
+                      <span className="fs-hero-benefit-desc">{b.desc}</span>
+                    </span>
+                  </li>
+                ))}
+              </ul>
+
+              <div className="fs-hero-buttons">
+                <a href={`${process.env.NEXT_PUBLIC_APP_URL ?? 'https://app.finestsites.io'}/register${validatedRef ? `?ref=${validatedRef}` : ''}`} className="fs-hero-cta">
+                  Jetzt kostenlos starten
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                </a>
+                <a href="#templates" className="fs-hero-cta-ghost">Vorlagen anschauen</a>
+              </div>
+              <p className="fs-hero-trust">Kostenlos ausprobieren. Bezahlt wird erst, wenn deine Seite online geht.</p>
+            </div>
+
+            {/* ── Phones with floating proof chips ── */}
+            <div className="fs-hero-visual">
+              <div className="fs-hero-glow" aria-hidden="true" />
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/hero-phones.webp"
+                alt="Drei Beispiel-Websites von FinestSites auf dem Smartphone"
+                width={1421}
+                height={1072}
+                fetchPriority="high"
+                className="fs-hero-phones"
+              />
+              <div className="fs-hero-chip fs-hero-chip-1" aria-hidden="true">
+                <span className="fs-hero-chip-lang"><b>DE</b><i /><b>EN</b></span>
+                <span>Zwei Sprachen,<br />ein Klick</span>
+              </div>
+              <div className="fs-hero-chip fs-hero-chip-2" aria-hidden="true">
+                <span className="fs-hero-chip-icon" style={{ background: '#DCFCE7', color: '#16A34A' }}>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+                </span>
+                <span>Richtlinien<br />geprüft</span>
+              </div>
+              <div className="fs-hero-chip fs-hero-chip-3" aria-hidden="true">
+                <span className="fs-hero-chip-icon" style={{ background: '#FEF3C7', color: '#D97706' }}>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2 4 14h6l-1 8 9-12h-6z"/></svg>
+                </span>
+                <span>Live in<br />3 Minuten</span>
+              </div>
+            </div>
           </div>
         </div>
       </section>
+
+      {/* Spacer: the hero phones overlap into this light area */}
+      <div className="fs-hero-spacer" aria-hidden="true" />
 
       {/* ══ DAS PROBLEM ══════════════════════════════════════════════════ */}
       <ProblemSection />
