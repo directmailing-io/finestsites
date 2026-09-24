@@ -294,8 +294,8 @@ export default async function HomePage({
                     icon: <><path d="M9.94 14.54 12 21l2.06-6.46L20 12l-5.94-2.54L12 3 9.94 9.46 4 12z"/><path d="M5 3v4M3 5h4"/><path d="M19 17v4M17 19h4"/></>,
                   },
                   {
-                    title: 'Einmal erstellt, überall geteilt',
-                    desc: 'Story, Bio, Visitenkarte, Flyer. Ein Link reicht.',
+                    title: 'Teil den Link, die Seite macht den Rest',
+                    desc: 'Instagram-Bio, Story, WhatsApp, Visitenkarte: Schick die Leute auf deine Seite. Sie überzeugt Kunden und Teampartner für dich, auch wenn du gerade keine Zeit hast.',
                     icon: <><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.59 13.51 6.83 3.98M15.41 6.51l-6.82 3.98"/></>,
                   },
                 ] as { title: string; desc: string; icon: ReactNode }[]).map((b, i) => (
