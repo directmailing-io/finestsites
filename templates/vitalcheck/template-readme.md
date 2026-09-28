@@ -10,22 +10,22 @@ Die Seite **ist** der Check. Ein 3-Minuten-Check mit **20 reinen Verhaltens-Auss
 
 Konzept, Psychologie, Rechtsgrundlagen und Fragen-Mapping: `docs/konzept-vitalcheck.html`
 
-## Aufbau (App-Karte, max. 720 px)
+## Aufbau (Bühne statt Karte, max. 820 px)
 
-1. Leiste: Avatar + Name, Sprachschalter mit Flaggen (DE/EN)
-2. Bereichs-Fortschritt: 5 Icons (Ernährung, Tagesstruktur, Schlaf, Bewegung, Ausgleich) mit Füllbalken, aktueller Bereich hervorgehoben, fertige Bereiche mit Haken
-3. **Die Karte = der Check**, startet ohne Intro direkt mit Schritt 1 (Wünsche, mit kurzer Kopfzeile „Wie vital ist dein Alltag?“) → 5 × 4 Aussagen als Antwortkarten mit Icon-Faces (✓ / – / ✕, Tasten 1-2-3) → Zwischenstopp nach jedem Bereich (Pop-Haken + „Gut zu wissen“) → Antrieb (optional) → Investition (optional, Standard aus) → Ergebnis (Konfetti, Radar, Gewohnheits-Level, Stärke/Hebel, 5 Bereiche, 3 Tipps, Wunsch) → Einladung zum Gespräch → Lead-Formular → Danke
-4. PM-Disclaimer-Leiste (Pflichttext, gendert nach `geschlecht`)
-5. Footer (Kontakt, `/impressum`, `/datenschutz`, Selbsteinschätzungs-Hinweis, Made by finestsites)
-6. Cookie-Banner (identisch zu cellRESET/PM Business, nur nicht-blockierend)
+1. Ganz oben: 5 Fortschritts-Segmente (je Bereich, füllen sich mit jeder Antwort)
+2. Kopfzeile: Zurück-Button (ab Schritt 2), Avatar + Name, Zähler „4 / 22“, Sprachschalter mit Flaggen
+3. **Die Bühne = der Check**, ohne Karte, große Typografie (Frage bis 52 px, Start-Headline bis 68 px). Der Hintergrund ist oben sanft in der Farbe des aktuellen Bereichs getönt (Ernährung grün, Tagesstruktur blau, Schlaf indigo, Bewegung koralle, Ausgleich amber) und wechselt weich beim Bereichswechsel.
+   Ablauf: Wünsche (mit Kopfzeile „Wie vital ist dein Alltag?“) → 5 × 4 Aussagen als große Antwortzeilen mit Icon-Faces (✓ / – / ✕, Tasten 1-2-3) → Zwischenstopp mit großer Ziffer „1 / 5“ und „Gut zu wissen“ → Antrieb (optional) → Investition (optional, Standard aus) → Ergebnis (Konfetti in Bereichsfarben, Level bis 92 px, Zähler, Radar mit farbigen Punkten, Stärke/Hebel, 5 Bereiche mit großen Prozentzahlen, Tipps mit großen Ziffern, Wunsch, dunkle Einladung mit Foto) → Lead-Formular → Danke
+4. Fuß: Pflichtkennzeichnung mit Avatar, Kontakt/Impressum/Datenschutz, Selbsteinschätzungs-Hinweis, Made by finestsites
+5. Cookie-Banner (identisch zu cellRESET/PM Business, nicht-blockierend, Reopener rechts unten)
 
-Kein „Über mich“: Die Seite besteht nur aus dem Check. Der Berater erscheint mit Foto und Name in der Leiste, in der Pflichtkennzeichnung und in der Einladung am Ende.
+Kein „Über mich“: Der Berater erscheint mit Foto und Name in der Kopfzeile, in der Pflichtkennzeichnung und in der Einladung am Ende.
 
 ## Design
 
-- Font: **Geist** (wie die FinestSites-App), keine Serif, keine Glow-Blobs, keine Feature-Kacheln
-- Getönter Hintergrund je Theme, weiße Karte mit weichem Schatten, Akzentfarbe für Buttons, Auswahl, Fortschritt und Radar
-- 6 Themes: mint (Default), ocean, coral, violet, sun, midnight (dunkel)
+- Font: **Geist** (wie die FinestSites-App), enge Laufweite bei Headlines, Tabellenziffern
+- Warmes Off-White (bzw. Midnight dunkel), weiße Flächen nur für interaktive Elemente, 1,5-px-Linien, große Radien, weiche Schatten nur bei Hover
+- 6 Akzentfarben (mint Default, ocean, coral, violet, sun, midnight) für Buttons, Auswahl, Segmente; die fünf Bereichsfarben sind fix
 - Keine Fotos nötig außer dem Profilbild
 
 ## Personalisierbar (Schema)
