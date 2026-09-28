@@ -5,7 +5,8 @@ Zweite, eigenständige Variante des Vitalchecks (gleiche 20 Verhaltens-Aussagen,
 ## UI
 
 - Warmes Off-White, kleine Marke (Avatar + Name) links oben, schlanke Fortschritts-Pille „Vitalcheck · 35 % abgeschlossen“ mit Ring, Flaggen rechts
-- **Ein Bereich pro Seite**: Überschrift „Wie sehr trifft jede Aussage auf dich zu?“, darunter die vier Aussagen als weiße Karten mit **fünfstufiger Skala** aus farbigen, gestrichelten Kreisen (Trifft gar nicht zu → Trifft voll zu, Beschriftung nur unter der ersten Karte). Klick füllt den Kreis, die nächste offene Karte wird hervorgehoben und ins Bild gescrollt. „Weiter“ prüft, ob alles beantwortet ist.
+- **Seite 1 als Landingpage**: Hero mit Headline, Einleitung, drei „Das bekommst du“-Punkten und Button; rechts eine Beispiel-Profilkarte (Typ-Abzeichen, fünf animierte Balken, Level). Darunter „1 · Los geht's mit dir“ mit der Wunsch-Karte, also der Check direkt eingebettet
+- **Ein Bereich pro Seite**: Überschrift „Wie sehr trifft jede Aussage auf dich zu?“, darunter die vier Aussagen als weiße Karten mit **fünfstufiger Skala** aus farbigen, gestrichelten Kreisen (Trifft gar nicht zu → Trifft voll zu, Beschriftung nur unter der ersten Karte). Die fünf Kreise sind **Abstufungen der Akzentfarbe** (zart bis voll) und werden nach rechts größer, keine Rot-Grün-Ampel wie beim Vorbild. Klick füllt den Kreis, die nächste offene Karte wird hervorgehoben und ins Bild gescrollt. „Weiter“ prüft, ob alles beantwortet ist.
 - Bewertung 0–4 je Aussage, 16 Punkte je Bereich, 80 gesamt (Level-Schwellen entsprechend verdoppelt)
 
 ## Auswertung („Dein Vitalprofil“)
