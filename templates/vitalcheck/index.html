@@ -89,6 +89,14 @@ html[data-lang="de"] .lang [data-lang="de"], html[data-lang="en"] .lang [data-la
 @media (max-width: 520px) { .brand span { display: none; } }
 
 /* ============ BÜHNE ============ */
+/* Check-Fläche */
+.panel { position: relative; background: var(--paper); border-radius: 28px; padding: clamp(28px, 5vw, 52px); box-shadow: 0 30px 80px -44px rgba(0,0,0,0.35), 0 2px 8px rgba(0,0,0,0.04); overflow: hidden; }
+.panel::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 5px; background: linear-gradient(90deg, #2FA877 0 20%, #3B86D8 20% 40%, #6E5BD6 40% 60%, #E4664A 60% 80%, #E0A030 80% 100%); }
+html[data-theme="midnight"] .panel { box-shadow: 0 30px 80px -40px rgba(0,0,0,0.8); border: 1px solid var(--line); }
+.panel .ans, .panel .chip, .panel .seg button, .panel .input, .panel .consent, .panel .summary span { background: var(--bg); }
+.panel .ans.picked, .panel .chip.on, .panel .seg button.active { background: var(--accent-soft); }
+.panel .pair div, .panel .dims { background: var(--bg); border-color: transparent; }
+.panel .dim .track, .panel .eyebrow .ic { background: var(--paper); }
 .stage { position: relative; z-index: 1; flex: 1; display: flex; flex-direction: column; justify-content: center; max-width: var(--max); width: 100%; margin: 0 auto; padding: clamp(36px, 7vh, 80px) var(--pad) clamp(48px, 8vh, 96px); }
 .step { animation: in 0.45s var(--ease) both; }
 .step.out { animation: out 0.2s var(--ease) both; }
@@ -120,7 +128,7 @@ html[data-theme="midnight"] .eyebrow { color: var(--accent); }
 
 /* Chips */
 .chips { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: clamp(28px, 4vh, 40px); max-width: 720px; }
-.chip { display: inline-flex; align-items: center; gap: 12px; padding: 14px 20px 14px 14px; border-radius: 9999px; background: var(--paper); border: 1.5px solid var(--line); font-weight: 500; font-size: 17px; box-shadow: 0 1px 2px rgba(0,0,0,0.04); transition: transform 0.25s var(--spring), border-color 0.2s, background 0.2s, opacity 0.2s; }
+.chip { display: inline-flex; align-items: center; text-align: left; gap: 12px; padding: 14px 20px 14px 14px; border-radius: 9999px; background: var(--paper); border: 1.5px solid var(--line); font-weight: 500; font-size: 17px; box-shadow: 0 1px 2px rgba(0,0,0,0.04); transition: transform 0.25s var(--spring), border-color 0.2s, background 0.2s, opacity 0.2s; }
 .chip:hover { transform: translateY(-3px); border-color: var(--accent); }
 .chip .chk { width: 26px; height: 26px; border-radius: 50%; border: 1.5px solid var(--line-2); display: inline-flex; align-items: center; justify-content: center; transition: background 0.2s, border-color 0.2s; }
 .chip .chk svg { width: 13px; height: 13px; opacity: 0; color: var(--on-accent); }
@@ -133,9 +141,9 @@ html[data-theme="midnight"] .eyebrow { color: var(--accent); }
 .skip:hover { color: var(--ink); }
 
 /* Start (erster Schritt) */
-.lead-in { margin-bottom: clamp(28px, 4vh, 44px); padding-bottom: clamp(22px, 3vh, 32px); border-bottom: 1.5px solid var(--line); }
-.lead-in h1 { font-size: clamp(38px, 7.5vw, 68px); letter-spacing: -0.035em; line-height: 1.02; max-width: 12ch; margin-bottom: 14px; text-wrap: balance; }
-.lead-in p { font-size: clamp(16px, 1.7vw, 19px); color: var(--ink-2); max-width: 46ch; }
+.lead-in { margin-bottom: clamp(28px, 4vh, 40px); }
+.lead-in h1 { font-size: clamp(38px, 7.5vw, 66px); letter-spacing: -0.035em; line-height: 1.02; max-width: 15ch; margin-bottom: 18px; text-wrap: balance; }
+.lead-in p { font-size: clamp(17px, 1.8vw, 20px); color: var(--ink-2); max-width: 54ch; line-height: 1.55; }
 .lead-in .facts { display: flex; flex-wrap: wrap; gap: 8px 22px; margin-top: 18px; font-size: 14px; color: var(--ink-3); font-weight: 500; }
 .lead-in .facts span { display: inline-flex; align-items: center; gap: 8px; }
 .lead-in .facts span::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
@@ -159,7 +167,7 @@ html[data-theme="midnight"] .eyebrow { color: var(--accent); }
 .res-top { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: clamp(24px, 5vw, 56px); align-items: center; margin-bottom: clamp(32px, 5vh, 56px); }
 .res-top .lbl { font-size: 14px; font-weight: 600; color: var(--accent-dark); margin-bottom: 14px; }
 html[data-theme="midnight"] .res-top .lbl { color: var(--accent); }
-.res-top h2 { font-size: clamp(48px, 9vw, 92px); letter-spacing: -0.045em; line-height: 0.98; margin-bottom: 16px; }
+.res-top h2 { font-size: clamp(44px, 7.5vw, 74px); letter-spacing: -0.045em; line-height: 0.98; margin-bottom: 16px; }
 .res-top p { color: var(--ink-2); font-size: 18px; max-width: 40ch; }
 .res-top .pts { margin-top: 22px; display: flex; align-items: baseline; gap: 8px; }
 .res-top .pts .n { font-size: 44px; font-weight: 600; letter-spacing: -0.04em; line-height: 1; }
@@ -245,6 +253,9 @@ html[data-theme="midnight"] .seg button.active { color: var(--accent-deep); }
 /* ============ FUSS ============ */
 .foot { position: relative; z-index: 1; border-top: 1.5px solid var(--line); }
 .foot-inner { max-width: var(--max); margin: 0 auto; padding: 26px var(--pad) 40px; font-size: 13px; color: var(--ink-3); line-height: 1.55; }
+.trust { font-size: 14.5px; color: var(--ink-2); line-height: 1.6; max-width: 72ch; margin-bottom: 22px; }
+.trust p + p { margin-top: 10px; }
+.trust b { font-weight: 600; color: var(--ink); }
 .pm { display: flex; gap: 12px; align-items: flex-start; font-size: 14px; color: var(--ink-2); margin-bottom: 18px; }
 .pm img { width: 30px; height: 30px; border-radius: 50%; object-fit: cover; flex-shrink: 0; box-shadow: 0 0 0 2px var(--paper); }
 .pm b { font-weight: 600; color: var(--ink); }
@@ -276,6 +287,10 @@ html[data-theme="midnight"] .links .made img { filter: invert(1); }
 
 <div class="foot">
   <div class="foot-inner">
+    <div class="trust">
+      <p><span class="l-de"><b>Deine Daten.</b> Der Vitalcheck wird vollständig auf deinem Gerät ausgewertet. Es wird nichts gespeichert oder übermittelt, solange du dein Ergebnis nicht selbst an mich sendest. Entscheidest du dich dafür, verwende ich deine Angaben ausschließlich für unser persönliches Gespräch. Sie werden niemals an Dritte weitergegeben, nicht für Newsletter genutzt und auf Wunsch jederzeit gelöscht.</span><span class="l-en"><b>Your data.</b> The vitality check is evaluated entirely on your device. Nothing is stored or transmitted unless you choose to send your result to me yourself. If you do, I use your details solely for our personal conversation. They are never passed on to third parties, never used for newsletters and deleted on request at any time.</span></p>
+      <p><span class="l-de"><b>Eine Selbsteinschätzung.</b> Der Check fragt nach deinen Alltagsgewohnheiten und gibt dir dazu eine Einordnung mit allgemeinen Alltagstipps. Er ist keine medizinische Untersuchung, stellt keine Diagnose und ersetzt keine ärztliche Beratung.</span><span class="l-en"><b>A self-assessment.</b> The check asks about your everyday habits and gives you an overview with general everyday tips. It is not a medical examination, does not make a diagnosis and does not replace medical advice.</span></p>
+    </div>
     <div class="pm">
       <img src="{{profilbild}}" alt="">
       <div>
@@ -290,7 +305,7 @@ html[data-theme="midnight"] .links .made img { filter: invert(1); }
       <a href="/datenschutz"><span class="l-de">Datenschutz</span><span class="l-en">Privacy</span></a>
       <span class="made">© 2026 {{vorname}} {{nachname}} · <a href="https://finestsites.io" target="_blank" rel="noopener" aria-label="finestsites"><img loading="lazy" decoding="async" src="assets/fs-logo.svg" alt="finestsites"></a></span>
     </div>
-    <p><span class="l-de">Der Vitalcheck ist eine Selbsteinschätzung deiner Alltagsgewohnheiten (Ernährung, Tagesstruktur, Schlaf, Bewegung, Ausgleich). Er ist keine medizinische Untersuchung, stellt keine Diagnose, gibt keine Behandlungs- oder Produktempfehlung und ersetzt keine ärztliche Beratung. Die angezeigten Hinweise sind allgemeine Alltagstipps. Bei gesundheitlichen Beschwerden wende dich bitte an deine Ärztin oder deinen Arzt. Der Check richtet sich an Personen ab 18 Jahren.</span><span class="l-en">The vitality check is a self-assessment of your everyday habits (food, daily structure, sleep, movement, balance). It is not a medical examination, does not make a diagnosis, gives no treatment or product recommendation and does not replace medical advice. The hints shown are general everyday tips. If you have health complaints, please consult your doctor. The check is intended for adults aged 18 and over.</span></p>
+    <p><span class="l-de">Der Vitalcheck gibt keine Behandlungs- oder Produktempfehlung. Bei gesundheitlichen Beschwerden wende dich bitte an deine Ärztin oder deinen Arzt. Der Check richtet sich an Personen ab 18 Jahren.</span><span class="l-en">The vitality check gives no treatment or product recommendation. If you have health complaints, please consult your doctor. The check is intended for adults aged 18 and over.</span></p>
   </div>
 </div>
 
@@ -566,7 +581,7 @@ var VC = (function(){
     else if (key === 'result') html = vResult();
     else if (key === 'lead') html = vLead();
     else if (key === 'done') html = vDone();
-    root.innerHTML = '<div class="step">' + html + '</div>';
+    root.innerHTML = '<div class="step">' + (key === 'wishes' ? html : '<div class="panel">' + html + '</div>') + '</div>';
     if (S.step > 0) window.scrollTo(0, 0);
     bind(key);
   }
@@ -576,14 +591,13 @@ var VC = (function(){
   function eyebrow(icon, text){ return '<div class="eyebrow">' + (icon ? '<span class="ic">' + icon + '</span>' : '') + text + '</div>'; }
 
   function vWishes(){
-    return '<div class="lead-in"><h1>' + (en() ? 'How vital is your everyday life?' : 'Wie vital ist dein Alltag?') + '</h1>' +
-      '<p>' + (en() ? '20 statements about your habits. Three minutes. Your result right away, calculated on your device.' : '20 Aussagen zu deinen Gewohnheiten. Drei Minuten. Dein Ergebnis sofort, berechnet auf deinem Gerät.') + '</p>' +
-      '<div class="facts"><span>' + (en() ? 'No sign-up' : 'Keine Anmeldung') + '</span><span>' + (en() ? 'Nothing is sent unless you choose to' : 'Nichts wird gesendet, außer du willst es') + '</span><span>' + (en() ? 'Self-assessment, not a diagnosis' : 'Selbsteinschätzung, keine Diagnose') + '</span></div></div>' +
-      eyebrow(ICO.star, (en() ? 'First: your wishes' : 'Zuerst: deine Wünsche')) +
+    return '<div class="lead-in"><h1>' + (en() ? 'Find out where your vitality level stands.' : 'Finde heraus, wo dein Vitallevel steht.') + '</h1>' +
+      '<p>' + (en() ? 'In just a few minutes you will know where your vitality level stands. You get a clear, easy-to-read evaluation right away. And if you like, you can contact me afterwards so we can check together how our concept fits you.' : 'Erfahre in nur wenigen Minuten, wo dein Vitallevel steht. Du erhältst direkt deine übersichtliche Auswertung. Und wenn du magst, kannst du mich im Anschluss kontaktieren, damit wir gemeinsam prüfen, wie unser Konzept zu dir passt.') + '</p></div>' +
+      '<div class="panel">' + eyebrow(null, (en() ? 'Vitality check · step 1 of ' + total() : 'Vitalcheck · Schritt 1 von ' + total())) +
       '<h2 class="q wide">' + (en() ? 'What would you like most right now?' : 'Was wünschst du dir gerade am meisten?') + '</h2>' +
       '<p class="hint">' + (en() ? 'Pick up to three. Your result will pick them up again.' : 'Wähle bis zu drei. Dein Ergebnis greift sie wieder auf.') + '</p>' +
       '<div class="chips">' + CFG.wishes.map(function(w){ return chip('wish', w.id, t(w), S.wishes.indexOf(w.id) > -1); }).join('') + '</div>' +
-      '<div class="actions"><button type="button" class="btn btn-primary" data-next ' + (S.wishes.length ? '' : 'disabled') + '>' + (en() ? "Let's go" : 'Los geht\'s') + ' <span class="arr">→</span></button></div>';
+      '<div class="actions"><button type="button" class="btn btn-primary" data-next ' + (S.wishes.length ? '' : 'disabled') + '>' + (en() ? "Let's go" : 'Los geht\'s') + ' <span class="arr">→</span></button></div></div>';
   }
   function vQ(di, qi){
     var d = CFG.dims[di], q = d.q[qi], cur = S.answers[di + ':' + qi];
@@ -602,14 +616,14 @@ var VC = (function(){
       '<button type="button" class="btn btn-primary" data-next>' + (en() ? 'Continue' : 'Weiter') + ' <span class="arr">→</span></button></div>';
   }
   function vMotive(){
-    return eyebrow(ICO.star, (en() ? 'Almost done' : 'Fast geschafft')) +
+    return eyebrow(null, (en() ? 'Almost done' : 'Fast geschafft')) +
       '<h2 class="q wide">' + (en() ? 'What drives you most in life?' : 'Was treibt dich im Leben am meisten an?') + '</h2>' +
       '<p class="hint">' + (en() ? 'Pick up to three. There is no wrong answer.' : 'Wähle bis zu drei. Es gibt keine falsche Antwort.') + '</p>' +
       '<div class="chips">' + CFG.motives.map(function(m){ return chip('motive', m.id, t(m), S.motives.indexOf(m.id) > -1); }).join('') + '</div>' +
       '<div class="actions"><button type="button" class="btn btn-primary" data-next ' + (S.motives.length ? '' : 'disabled') + '>' + (en() ? 'Continue' : 'Weiter') + ' <span class="arr">→</span></button><button type="button" class="skip" data-skip>' + (en() ? 'Skip' : 'Überspringen') + '</button></div>';
   }
   function vInvest(){
-    return eyebrow(ICO.star, (en() ? 'Last question' : 'Letzte Frage')) +
+    return eyebrow(null, (en() ? 'Last question' : 'Letzte Frage')) +
       '<h2 class="q wide">' + (en() ? 'How much time or money would you invest in your wellbeing per day?' : 'Wie viel Zeit oder Geld würdest du täglich in dein Wohlbefinden investieren?') + '</h2>' +
       '<p class="hint">' + (en() ? 'Just a gut feeling. Optional.' : 'Nur ein Bauchgefühl. Optional.') + '</p>' +
       '<div class="chips">' + CFG.invest.map(function(m){ return chip('invest', m.id, t(m), S.invest === m.id); }).join('') + '</div>' +
@@ -620,9 +634,9 @@ var VC = (function(){
     var R = evalResult(), o = CFG.owner;
     var wishes = S.wishes.map(function(id){ var w = CFG.wishes.filter(function(x){ return x.id === id; })[0]; return w ? t(w) : ''; }).filter(Boolean);
     var tips = [CFG.dims[R.worst].tips[0], CFG.dims[R.worst].tips[1], CFG.dims[R.second].tips[0]];
-    var html = '<div class="res-top"><div><div class="lbl">' + (en() ? 'Your result · habit level' : 'Dein Ergebnis · Gewohnheits-Level') + '</div>' +
+    var html = '<div class="res-top"><div><div class="lbl">' + (en() ? 'Your result · vitality level' : 'Dein Ergebnis · Dein Vitallevel') + '</div>' +
       '<h2>' + esc(t(R.lv.name)) + '</h2><p>' + esc(t(R.lv.desc)) + '</p>' +
-      '<div class="pts"><span class="n num" id="pts">0</span><span class="d">/ 40 ' + (en() ? 'habit points from 20 statements' : 'Gewohnheitspunkte aus 20 Aussagen') + '</span></div></div>' +
+      '<div class="pts"><span class="n num" id="pts">0</span><span class="d">/ 40 ' + (en() ? 'points from 20 everyday statements' : 'Punkte aus 20 Alltags-Aussagen') + '</span></div></div>' +
       '<svg class="radar" id="radar" viewBox="0 0 320 320"></svg></div>' +
       '<div class="pair"><div><small><span class="sw" style="background:var(--tier-high)"></span>' + (en() ? 'Your strength' : 'Deine Stärke') + '</small><b>' + esc(t(CFG.dims[R.best].strength)) + '</b><p>' + esc(t(CFG.dims[R.best].name)) + ' · ' + Math.round(R.sc[R.best]/8*100) + '%</p></div>' +
       '<div><small><span class="sw" style="background:var(--accent)"></span>' + (en() ? 'Your biggest lever' : 'Dein größter Hebel') + '</small><b>' + esc(t(CFG.dims[R.worst].name)) + '</b><p>' + (en() ? 'The smallest step moves the most here.' : 'Hier bewegt der kleinste Schritt am meisten.') + '</p></div></div>' +
@@ -659,7 +673,7 @@ var VC = (function(){
   function vDone(){
     var o = CFG.owner;
     var wa = o.whatsapp ? '<a class="btn btn-ghost" target="_blank" rel="noopener" href="https://wa.me/' + esc(o.whatsapp) + '?text=' + encodeURIComponent(en() ? 'Hi ' + o.vorname + ', I just did your vitality check.' : 'Hi ' + o.vorname + ', ich habe gerade deinen Vitalcheck gemacht.') + '">' + (en() ? 'Message on WhatsApp' : 'Per WhatsApp schreiben') + '</a>' : '';
-    return '<div class="done">' + eyebrow(ICO.check, (en() ? 'Sent' : 'Gesendet')) + '<h2>' + (en() ? 'Thank you. Your result is on its way.' : 'Danke. Dein Ergebnis ist unterwegs.') + '</h2>' +
+    return '<div class="done">' + eyebrow(null, (en() ? 'Sent' : 'Gesendet')) + '<h2>' + (en() ? 'Thank you. Your result is on its way.' : 'Danke. Dein Ergebnis ist unterwegs.') + '</h2>' +
       '<p>' + (en() ? esc(o.vorname) + ' will get back to you personally. Until then, your three tips are a good start.' : esc(o.vorname) + ' meldet sich persönlich bei dir. Bis dahin sind deine drei Tipps ein guter Anfang.') + '</p>' +
       '<div class="actions">' + wa + '<button type="button" class="btn btn-primary" data-restart-quiet>' + (en() ? 'Back to start' : 'Zurück zum Start') + '</button></div></div>';
   }
@@ -719,7 +733,7 @@ var VC = (function(){
       name: name, email: email, phone: phone, kontakt_weg: method,
       interesse: S.interests.map(function(id){ return labelOf(CFG.interests, id); }).join(', '),
       nachricht: document.getElementById('lf-msg').value.trim(),
-      gewohnheits_level: R.lv.name.de + ' (' + R.total + '/40)',
+      vitallevel: R.lv.name.de + ' (' + R.total + '/40)',
       staerke: CFG.dims[R.best].name.de, hebel: CFG.dims[R.worst].name.de,
       wuensche: S.wishes.map(function(id){ return labelOf(CFG.wishes, id); }).join(', '),
       antriebsmotive: S.motives.map(function(id){ return labelOf(CFG.motives, id); }).join(', '),
