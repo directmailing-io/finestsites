@@ -106,7 +106,26 @@ html[data-theme="midnight"] .hero .gets li i { color: var(--accent); }
 html[data-theme="midnight"] .start .sec-head .no { background: var(--accent); color: var(--on-accent); }
 .start .sec-head h2 { font-size: 20px; }
 .start .sec-head small { font-size: 13.5px; color: var(--ink-3); margin-left: auto; }
-@media (max-width: 860px) { .hero { grid-template-columns: 1fr; } .pv { transform: none; max-width: 420px; } }
+/* Landing: keine Fortschritts-Pille vor dem Start, Karte in Hero-Breite */
+.top.landing .pill { visibility: hidden; }
+@media (max-width: 720px) { .top.landing .pill { display: none; } }
+.hero { padding: clamp(12px, 3vh, 36px) 0 clamp(24px, 4vh, 40px); }
+.hero h1 { font-size: clamp(32px, 4.6vw, 48px); margin-bottom: 14px; }
+.hero .pills { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
+.hero .pills span { display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px 8px 10px; border-radius: 9999px; background: var(--paper); font-size: 14px; font-weight: 500; color: var(--ink-2); box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+.hero .pills span i { width: 20px; height: 20px; border-radius: 50%; background: var(--accent-soft); color: var(--accent-dark); display: inline-flex; align-items: center; justify-content: center; }
+html[data-theme="midnight"] .hero .pills span i { color: var(--accent); }
+.hero .pills span i svg { width: 11px; height: 11px; }
+.hero .btn { margin-top: 24px; }
+.startcard { background: var(--paper); border-radius: 24px; padding: clamp(24px, 3.5vw, 36px); box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 16px 40px -30px rgba(0,0,0,0.3); transition: box-shadow 0.4s; }
+.startcard.focus { box-shadow: 0 0 0 3px var(--accent-soft), 0 16px 40px -30px rgba(0,0,0,0.3); }
+.startcard h2 { font-size: clamp(20px, 2.6vw, 26px); margin-bottom: 4px; }
+.startcard .sub { color: var(--ink-3); font-size: 15px; margin-bottom: 18px; }
+.startcard .chips { justify-content: flex-start; gap: 10px; }
+.startcard .chip { font-size: 15.5px; padding: 12px 18px 12px 12px; }
+.startcard .foot { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--line); }
+.startcard .foot small { font-size: 13.5px; color: var(--ink-3); }
+@media (max-width: 860px) { .hero { grid-template-columns: 1fr; } .pv { transform: none; max-width: 420px; } .startcard .foot .btn { width: 100%; } }
 @media (max-width: 600px) { .hero { padding-top: 8px; } .pv { display: none; } }
 .step { animation: in 0.4s var(--ease) both; }
 @keyframes in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
@@ -605,6 +624,7 @@ var VC = (function(){
     else if (key === 'lead') html = vLead();
     else if (key === 'done') html = vDone();
     root.classList.toggle('wide', key === 'wishes');
+    document.querySelector('.top').classList.toggle('landing', key === 'wishes');
     root.innerHTML = '<div class="step">' + html + '</div>';
     bind(key);
   }
@@ -613,16 +633,16 @@ var VC = (function(){
   function chip(attr, id, label, on){ return '<button type="button" class="chip' + (on ? ' on' : '') + '" data-' + attr + '="' + id + '"><span class="chk">' + ICO.check + '</span>' + esc(label) + '</button>'; }
   function vWishes(){
     var demo = [0.78, 0.35, 0.9, 0.5, 0.65];
-    var get = function(ic, b, txt){ return '<li><i>' + ic + '</i><span><b>' + b + '</b> ' + txt + '</span></li>'; };
-    return '<div class="hero"><div><div class="kick"><i></i>' + (en() ? 'The vitality check · 3 minutes' : 'Der Vitalcheck · 3 Minuten') + '</div>' +
+    var pill = function(txt){ return '<span><i>' + ICO.check + '</i>' + txt + '</span>'; };
+    return '<div class="hero"><div>' +
       '<h1>' + (en() ? 'Find out where your vitality level stands.' : 'Finde heraus, wo dein Vitallevel steht.') + '</h1>' +
-      '<p>' + (en() ? 'In just a few minutes you will know where your vitality level stands and which type you are. You get a clear evaluation right away. And if you like, you can contact me afterwards so we can check together whether the nutrient concept I work with fits you and your everyday life.' : 'Erfahre in nur wenigen Minuten, wo dein Vitallevel steht und welcher Vital-Typ du bist. Du erhältst direkt deine übersichtliche Auswertung. Und wenn du magst, kannst du mich im Anschluss kontaktieren, damit wir gemeinsam prüfen, ob das Nährstoff-Konzept, mit dem ich arbeite, zu dir und deinem Alltag passt.') + '</p>' +
-      '<ul class="gets">' + get(ICO.check, en() ? 'Your vitality type' : 'Dein Vital-Typ', en() ? 'and your level across five areas' : 'und dein Level in fünf Bereichen') + get(ICO.clock, en() ? 'Your day at a glance:' : 'Dein Tag auf einen Blick:', en() ? 'nine moments, from morning light to sleep' : 'neun Momente, vom Morgenlicht bis zum Schlaf') + get(ICO.flag, en() ? 'Three things' : 'Drei Dinge,', en() ? 'you can start tomorrow' : 'die du morgen starten kannst') + '</ul>' +
-      '<div class="cta-row"><a href="#start" class="btn btn-accent">' + (en() ? 'Start the check' : 'Check starten') + '</a><span class="note">' + (en() ? '20 statements · no sign-up' : '20 Aussagen · keine Anmeldung') + '</span></div></div>' +
+      '<p>' + (en() ? 'In a few minutes you will know where your vitality level stands and which type you are. You get your evaluation right away. And if you like, we then check together whether the nutrient concept I work with fits you and your everyday life.' : 'In wenigen Minuten weißt du, wo dein Vitallevel steht und welcher Vital-Typ du bist. Deine Auswertung bekommst du sofort. Und wenn du magst, prüfen wir danach gemeinsam, ob das Nährstoff-Konzept, mit dem ich arbeite, zu dir und deinem Alltag passt.') + '</p>' +
+      '<div class="pills">' + pill(en() ? 'Your vitality type' : 'Dein Vital-Typ') + pill(en() ? 'Your day at a glance' : 'Dein Tag auf einen Blick') + pill(en() ? 'Three tips for tomorrow' : 'Drei Tipps für morgen') + '</div>' +
+      '<a href="#start" class="btn btn-accent" data-scroll>' + (en() ? 'Start the check' : 'Check starten') + '</a></div>' +
       '<div class="pv" aria-hidden="true"><div class="pv-head">' + badgeSvg(CFG.dims[2].color) + '<div><small>' + (en() ? 'Example profile' : 'Beispiel-Profil') + '</small><b>' + (en() ? 'The Rester' : 'Der Nachtruhe-Typ') + '</b></div></div>' + CFG.dims.map(function(d, i){ return '<div class="pv-row"><i style="background:' + d.color + '">' + ICO[d.ico] + '</i><div class="b"><i style="--w:' + Math.round(demo[i]*100) + '%;background:' + d.color + ';animation-delay:' + (i*0.12) + 's"></i></div><span class="n num">' + Math.round(demo[i]*100) + ' %</span></div>'; }).join('') + '<div class="pv-foot"><span>' + (en() ? 'Vitality level' : 'Vitallevel') + '</span><b>' + (en() ? 'On track · 64 %' : 'Auf Kurs · 64 %') + '</b></div></div></div>' +
-      '<div class="start" id="start"><div class="sec-head"><span class="no">1</span><h2>' + (en() ? 'Let\'s start with you.' : 'Los geht\'s mit dir.') + '</h2><small>' + (en() ? 'Step 1 of ' : 'Schritt 1 von ') + (6 + (CFG.flags.motive ? 1 : 0) + (CFG.flags.invest ? 1 : 0)) + '</small></div>' +
-      '<div class="card left"><p>' + (en() ? 'What would you like most right now? Pick up to three.' : 'Was wünschst du dir gerade am meisten? Wähle bis zu drei.') + '</p><div class="chips" style="justify-content:flex-start">' + CFG.wishes.map(function(w){ return chip('wish', w.id, t(w), S.wishes.indexOf(w.id) > -1); }).join('') + '</div></div>' +
-      '<div class="btnrow"><button type="button" class="btn btn-primary btn-wide" data-next ' + (S.wishes.length ? '' : 'disabled') + '>' + (en() ? 'Continue to the statements' : 'Weiter zu den Aussagen') + '</button><span class="note">' + (en() ? 'Nothing is sent, unless you choose to at the end.' : 'Nichts wird gesendet, außer du entscheidest dich am Ende dafür.') + '</span></div></div>';
+      '<div class="startcard" id="start"><h2>' + (en() ? 'What would you like most right now?' : 'Was wünschst du dir gerade am meisten?') + '</h2><p class="sub">' + (en() ? 'Pick up to three, then we begin.' : 'Wähle bis zu drei, dann geht es los.') + '</p>' +
+      '<div class="chips">' + CFG.wishes.map(function(w){ return chip('wish', w.id, t(w), S.wishes.indexOf(w.id) > -1); }).join('') + '</div>' +
+      '<div class="foot"><small>' + (en() ? 'Nothing is sent unless you choose to at the end.' : 'Nichts wird gesendet, außer du entscheidest dich am Ende dafür.') + '</small><button type="button" class="btn btn-primary" data-next ' + (S.wishes.length ? '' : 'disabled') + '>' + (en() ? 'Continue' : 'Weiter') + '</button></div></div>';
   }
   function vArea(di){
     var d = CFG.dims[di], first = -1;
@@ -729,6 +749,7 @@ var VC = (function(){
       }
       go(S.step + 1);
     });
+    if (key === 'wishes') { var sc = root.querySelector('[data-scroll]'), card = document.getElementById('start'); if (sc) sc.addEventListener('click', function(e){ e.preventDefault(); card.scrollIntoView({ behavior: 'smooth', block: 'start' }); card.classList.add('focus'); setTimeout(function(){ card.classList.remove('focus'); }, 1800); }); }
     if (key === 'wishes') root.querySelectorAll('[data-wish]').forEach(function(c){ c.addEventListener('click', function(){ toggleIn(S.wishes, c.getAttribute('data-wish'), 3); save(); refresh('wish', S.wishes, 3); }); });
     if (key === 'motive') root.querySelectorAll('[data-motive]').forEach(function(c){ c.addEventListener('click', function(){ toggleIn(S.motives, c.getAttribute('data-motive'), 3); save(); refresh('motive', S.motives, 3); }); });
     if (key === 'invest') root.querySelectorAll('[data-invest]').forEach(function(c){ c.addEventListener('click', function(){ S.invest = c.getAttribute('data-invest'); save(); root.querySelectorAll('[data-invest]').forEach(function(x){ x.classList.toggle('on', x === c); }); root.querySelector('[data-next]').disabled = false; }); });
