@@ -1,55 +1,191 @@
 {
   "version": 1,
   "fields": [
-
-    { "key": "vorname", "label": "Vorname", "type": "text", "section": "Profil", "order": 0, "required": true, "placeholder_text": "z. B. Anna", "default_value": "", "max_length": 40, "options": [], "card_options": [] },
-    { "key": "nachname", "label": "Nachname", "type": "text", "section": "Profil", "order": 1, "required": true, "placeholder_text": "z. B. Bauer", "default_value": "", "max_length": 40, "options": [], "card_options": [] },
-    { "key": "profilbild", "label": "Profilbild", "type": "image", "section": "Profil", "order": 2, "required": false, "placeholder_text": "Quadratisch, mind. 400×400 px", "default_value": "", "aspect_ratio": "1/1", "options": [], "card_options": [] },
-    { "key": "geschlecht", "label": "Geschlecht", "type": "card_select", "section": "Profil", "order": 3, "required": true, "placeholder_text": "Für die Bezeichnung &bdquo;Berater/in&ldquo;", "default_value": "weiblich", "max_length": null, "options": [], "card_options": [
-      { "value": "weiblich", "label": "Weiblich", "description": "Beraterin", "card_type": "text", "color": "", "image_url": "" },
-      { "value": "maennlich", "label": "Männlich", "description": "Berater", "card_type": "text", "color": "", "image_url": "" }
-    ]},
-    { "key": "email_benachrichtigung", "label": "Benachrichtigungs-E-Mail", "type": "email", "section": "Profil", "order": 4, "required": true, "placeholder_text": "Hier landen die Auswertungen deiner Interessenten", "default_value": "", "max_length": null, "options": [], "card_options": [] },
-    { "key": "whatsapp_nummer", "label": "WhatsApp-Nummer (Ländercode + Nummer ohne Plus)", "type": "text", "section": "Profil", "order": 5, "required": false, "placeholder_text": "z. B. 491701234567", "default_value": "", "max_length": 20, "options": [], "card_options": [] },
-
-    { "key": "hero_headline", "label": "Headline (Hero)", "type": "text", "section": "Texte", "order": 10, "required": false, "placeholder_text": "z. B. Wie vital fühlst du dich wirklich?", "default_value": "Wie vital fühlst du dich wirklich?", "max_length": 80, "options": [], "card_options": [] },
-    { "key": "hero_subtext", "label": "Begrüßungstext", "type": "textarea", "section": "Texte", "order": 11, "required": false, "placeholder_text": "Kurzbeschreibung des Vitalchecks", "default_value": "60 Sekunden ehrliche Antworten. Du bekommst ein klares Bild deiner vier Vital-Säulen. Anonym, ohne Anmeldung.", "max_length": 220, "options": [], "card_options": [] },
-    { "key": "hero_cta", "label": "Button-Text zum Start", "type": "text", "section": "Texte", "order": 12, "required": false, "placeholder_text": "z. B. Vitalcheck starten", "default_value": "Vitalcheck starten", "max_length": 40, "options": [], "card_options": [] },
-
-    { "key": "farbthema", "label": "Farbthema", "type": "card_select", "section": "Design", "order": 20, "required": true, "placeholder_text": "", "default_value": "hell", "max_length": null, "options": [], "card_options": [
-      { "value": "hell", "label": "Hell", "description": "Cremig-weiß, frisch", "card_type": "color", "color": "#FAFAF7", "image_url": "" },
-      { "value": "dunkel", "label": "Dunkel", "description": "Elegantes Schwarz", "card_type": "color", "color": "#0A0A0A", "image_url": "" }
-    ]},
-    { "key": "akzentfarbe", "label": "Akzentfarbe", "type": "color", "section": "Design", "order": 21, "required": false, "placeholder_text": "Wird für Buttons, Badges, Highlights verwendet", "default_value": "#10B981", "max_length": null, "options": [], "card_options": [] },
-
-    { "key": "zeige_block_verdauung", "label": "Block &bdquo;Verdauung & Ernährung&ldquo; zeigen", "type": "toggle", "section": "Fragen anpassen", "order": 30, "required": false, "default_value": "ja", "placeholder_text": "5 Fragen zu Verdauung, Ernährung, Flüssigkeit", "max_length": null, "options": [], "card_options": [] },
-    { "key": "zeige_block_energie", "label": "Block &bdquo;Energie & Fokus&ldquo; zeigen", "type": "toggle", "section": "Fragen anpassen", "order": 31, "required": false, "default_value": "ja", "placeholder_text": "5 Fragen zu Müdigkeit, Konzentration, Kopfschmerzen", "max_length": null, "options": [], "card_options": [] },
-    { "key": "zeige_block_schlaf", "label": "Block &bdquo;Schlaf & Erholung&ldquo; zeigen", "type": "toggle", "section": "Fragen anpassen", "order": 32, "required": false, "default_value": "ja", "placeholder_text": "5 Fragen zu Schlaf, Stress, Stimmung", "max_length": null, "options": [], "card_options": [] },
-    { "key": "zeige_block_lebensstil", "label": "Block &bdquo;Lebensstil & Körper&ldquo; zeigen", "type": "toggle", "section": "Fragen anpassen", "order": 33, "required": false, "default_value": "ja", "placeholder_text": "5 Fragen zu Haut/Haar, Alter, Sport", "max_length": null, "options": [], "card_options": [] },
-    { "key": "zeige_frage_rauchen", "label": "Frage &bdquo;Rauchst du?&ldquo; zeigen", "type": "toggle", "section": "Fragen anpassen", "order": 34, "required": false, "default_value": "ja", "placeholder_text": "Sensible Frage — manche Berater lassen sie weg", "max_length": null, "options": [], "card_options": [] },
-
-    { "key": "shop_optimalset", "label": "Shop-Link Optimalset", "type": "url", "section": "Produkt-Links", "order": 40, "required": true, "placeholder_text": "Dein personalisierter Shoplink zum Optimalset", "default_value": "https://www.fitline.com/de/de-de/products/9700731", "max_length": null, "options": [], "card_options": [] },
-    { "key": "shop_activize", "label": "Shop-Link Activize Oxyplus", "type": "url", "section": "Produkt-Links", "order": 41, "required": true, "placeholder_text": "Shoplink zu Activize Oxyplus", "default_value": "https://www.fitline.com/de/de-de/products/0708054", "max_length": null, "options": [], "card_options": [] },
-    { "key": "shop_restorate", "label": "Shop-Link Restorate", "type": "url", "section": "Produkt-Links", "order": 42, "required": true, "placeholder_text": "Shoplink zu Restorate", "default_value": "https://www.fitline.com/de/de-de/products/0708052", "max_length": null, "options": [], "card_options": [] },
-    { "key": "shop_probiotic", "label": "Shop-Link Probiotischer Joghurt-Drink", "type": "url", "section": "Produkt-Links", "order": 43, "required": false, "placeholder_text": "Shoplink Probiotik", "default_value": "https://www.fitline.com/de/de-de/products/0708071", "max_length": null, "options": [], "card_options": [] },
-    { "key": "shop_q10", "label": "Shop-Link Q10 Plus", "type": "url", "section": "Produkt-Links", "order": 44, "required": false, "placeholder_text": "Shoplink Q10", "default_value": "https://www.fitline.com/de/de-de/products/0708089", "max_length": null, "options": [], "card_options": [] },
-    { "key": "shop_beauty", "label": "Shop-Link FitLine Beauty", "type": "url", "section": "Produkt-Links", "order": 45, "required": false, "placeholder_text": "Shoplink Beauty", "default_value": "https://www.fitline.com/de/de-de/products/0708137", "max_length": null, "options": [], "card_options": [] },
-    { "key": "shop_basics", "label": "Shop-Link FitLine Basics", "type": "url", "section": "Produkt-Links", "order": 46, "required": false, "placeholder_text": "Shoplink Basics", "default_value": "https://www.fitline.com/de/de-de/products/0708023", "max_length": null, "options": [], "card_options": [] }
+    {
+      "key": "vorname",
+      "type": "text",
+      "label": "Vorname",
+      "section": "Profil",
+      "order": 1,
+      "required": true,
+      "max_length": 40,
+      "profile_key": "first_name",
+      "default_value": "",
+      "preview_value": "Daniel",
+      "input_placeholder": "z.B. Daniel",
+      "placeholder_text": "Dein Vorname, wie er auf deiner Website und im Check erscheinen soll."
+    },
+    {
+      "key": "nachname",
+      "type": "text",
+      "label": "Nachname",
+      "section": "Profil",
+      "order": 2,
+      "required": true,
+      "max_length": 60,
+      "profile_key": "last_name",
+      "default_value": "",
+      "preview_value": "Kurzeja",
+      "input_placeholder": "z.B. Kurzeja",
+      "placeholder_text": "Dein Nachname für den Footer, den PM-Disclaimer und die Einwilligung im Formular."
+    },
+    {
+      "key": "profilbild",
+      "type": "image",
+      "label": "Profilbild",
+      "section": "Profil",
+      "order": 3,
+      "required": true,
+      "profile_key": "avatar_url",
+      "aspect_ratio": "1/1",
+      "default_value": "https://app.finestsites.io/placeholders/profilbild.webp",
+      "preview_value": "",
+      "placeholder_text": "Quadratisch, mindestens 400×400 px. Erscheint in der Navigation, im PM-Disclaimer und am Ende des Checks neben deiner Einladung zum Gespräch."
+    },
+    {
+      "key": "geschlecht",
+      "type": "card_select",
+      "label": "Anrede",
+      "section": "Profil",
+      "order": 4,
+      "required": true,
+      "default_value": "weiblich",
+      "preview_value": "weiblich",
+      "placeholder_text": "Damit die Bezeichnung auf deiner Website stimmt: \"unabhängige Vertriebspartnerin\" oder \"unabhängiger Vertriebspartner\".",
+      "card_options": [
+        { "value": "weiblich", "label": "Weiblich", "card_type": "color", "color": "#FDF2F8", "description": "Vertriebspartnerin, unabhängige …" },
+        { "value": "maennlich", "label": "Männlich", "card_type": "color", "color": "#EFF6FF", "description": "Vertriebspartner, unabhängiger …" }
+      ]
+    },
+    {
+      "key": "email_benachrichtigung",
+      "type": "email",
+      "label": "E-Mail für Check-Ergebnisse",
+      "section": "Profil",
+      "order": 10,
+      "required": true,
+      "profile_key": "email",
+      "default_value": "",
+      "preview_value": "daniel@example.com",
+      "input_placeholder": "deine@email.de",
+      "placeholder_text": "Wenn jemand am Ende des Checks sein Vitalporträt an dich schickt, bekommst du alle Antworten und Kontaktdaten an diese Adresse. Wird im Footer angezeigt."
+    },
+    {
+      "key": "whatsapp_nummer",
+      "type": "text",
+      "label": "WhatsApp-Nummer (optional)",
+      "section": "Kontakt",
+      "order": 12,
+      "required": false,
+      "max_length": 20,
+      "default_value": "",
+      "preview_value": "491761234567",
+      "input_placeholder": "491761234567",
+      "placeholder_text": "Nur Ziffern, ohne + oder 00. Beispiel: statt „+49 176 1234567\" nur „491761234567\". Wenn gesetzt, erscheint nach dem Absenden ein „Direkt per WhatsApp schreiben\"-Button und ein WhatsApp-Link im Footer."
+    },
+    {
+      "key": "farbthema",
+      "type": "card_select",
+      "label": "Farbthema",
+      "section": "Design",
+      "order": 14,
+      "required": true,
+      "default_value": "mint",
+      "preview_value": "mint",
+      "placeholder_text": "Wähle das Farbthema deiner Website. Die Farbe wirkt sich auf Buttons, Akzente, das Vitalporträt und den Check aus.",
+      "card_options": [
+        { "value": "mint", "label": "Fresh Mint", "card_type": "color", "color": "#2FB08A", "description": "Frisch, klar, vitalisierend." },
+        { "value": "ocean", "label": "Ocean Blue", "card_type": "color", "color": "#3A7BD5", "description": "Ruhig, seriös, kühl." },
+        { "value": "coral", "label": "Warm Coral", "card_type": "color", "color": "#E5654B", "description": "Warm, energiegeladen, nahbar." },
+        { "value": "violet", "label": "Soft Violet", "card_type": "color", "color": "#7C5CE6", "description": "Modern, kreativ, ausgeglichen." },
+        { "value": "sun", "label": "Golden Sun", "card_type": "color", "color": "#E39A2B", "description": "Sonnig, optimistisch, warm." },
+        { "value": "midnight", "label": "Midnight", "card_type": "color", "color": "#0F1513", "description": "Dunkel, edel, App-Look." }
+      ]
+    },
+    {
+      "key": "frage_motive",
+      "type": "card_select",
+      "label": "Frage „Was treibt dich an?\" stellen?",
+      "section": "Check anpassen",
+      "order": 15,
+      "required": true,
+      "default_value": "an",
+      "preview_value": "an",
+      "display_mode": "section_toggle",
+      "toggle_on_value": "an",
+      "toggle_off_value": "aus",
+      "preview_interactive": true,
+      "placeholder_text": "Nach den 20 Aussagen wählt die Person bis zu drei Antriebsmotive (Gesundheit, Familie, Freiheit, finanzielle Unabhängigkeit …). Hilft dir im Gespräch, den richtigen Ton zu treffen. Die Frage ist überspringbar.",
+      "card_options": [
+        { "value": "an", "label": "Stellen", "card_type": "color", "color": "#DDF2EA", "description": "Die Motiv-Frage ist Teil des Checks." },
+        { "value": "aus", "label": "Weglassen", "card_type": "color", "color": "#F1F5F9", "description": "Der Check endet direkt nach den 20 Aussagen." }
+      ]
+    },
+    {
+      "key": "frage_investition",
+      "type": "card_select",
+      "label": "Frage „Wie viel würdest du täglich investieren?\" stellen?",
+      "section": "Check anpassen",
+      "order": 16,
+      "required": true,
+      "default_value": "an",
+      "preview_value": "an",
+      "display_mode": "section_toggle",
+      "toggle_on_value": "an",
+      "toggle_off_value": "aus",
+      "preview_interactive": true,
+      "placeholder_text": "Letzte Frage vor dem Ergebnis: bis 3 €, 3 bis 5 €, mehr als 5 € am Tag oder „weiß ich noch nicht\". Überspringbar. Schalte sie aus, wenn du das Thema Geld lieber erst im Gespräch ansprichst.",
+      "card_options": [
+        { "value": "an", "label": "Stellen", "card_type": "color", "color": "#DDF2EA", "description": "Die Investitions-Frage ist Teil des Checks." },
+        { "value": "aus", "label": "Weglassen", "card_type": "color", "color": "#F1F5F9", "description": "Keine Frage nach Geld im Check." }
+      ]
+    },
+    {
+      "key": "about_bild",
+      "type": "image",
+      "label": "Foto für „Über mich\"",
+      "section": "Inhalte",
+      "order": 17,
+      "required": true,
+      "aspect_ratio": "4/5",
+      "default_value": "https://app.finestsites.io/placeholders/about-bild.webp",
+      "preview_value": "",
+      "placeholder_text": "Persönliches Foto für die „Über mich\"-Sektion, ideal im Hochformat (4:5)."
+    },
+    {
+      "key": "about_intro",
+      "type": "intro",
+      "label": "Begrüßung",
+      "section": "Inhalte",
+      "order": 17.5,
+      "required": false,
+      "max_length": 60,
+      "default_value": "",
+      "preview_value": "",
+      "placeholder_text": "Standard: Hi, ich bin {vorname}. Klick auf Bearbeiten, wenn du eine eigene Begrüßung willst."
+    },
+    {
+      "key": "about_me_html",
+      "type": "richtext",
+      "label": "Über mich-Text",
+      "section": "Inhalte",
+      "order": 18,
+      "compliance_check": true,
+      "required": true,
+      "max_length": 1500,
+      "default_value": "<p>Kurz zu mir: Ich komme aus [Ort] und beschäftige mich seit [Zeitraum] mit dem Thema Alltag, Energie und gute Gewohnheiten. Der Vitalcheck ist mein Werkzeug für ein ehrliches Gespräch, ohne Druck und ohne Verkaufsshow.</p>",
+      "preview_value": "<p>Ich bin Daniel, Vater von zwei Kindern und seit ein paar Jahren mit dem Thema Alltag, Energie und Gewohnheiten unterwegs. Ich weiß, wie es ist, wenn der Tag mehr zieht, als er gibt.</p><p>Der Vitalcheck ist mein Werkzeug für ein ehrliches Gespräch: ohne Druck, ohne Verkaufsshow.</p>",
+      "placeholder_text": "Stell dich vor: Wer bist du, was treibt dich an, warum machst du das? Locker und persönlich. Bitte keine Heil- oder Wirkaussagen zu Produkten, der KI-Check weist dich darauf hin. Max. 1.500 Zeichen. Die englische Fassung erstellen wir automatisch beim Speichern."
+    }
   ],
   "preview_values": {
-    "vorname": "Anna",
-    "nachname": "Bauer",
-    "geschlecht": "weiblich",
-    "email_benachrichtigung": "anna@example.de",
-    "hero_headline": "Wie vital fühlst du dich wirklich?",
-    "hero_subtext": "60 Sekunden ehrliche Antworten. Du bekommst ein klares Bild deiner vier Vital-Säulen. Anonym, ohne Anmeldung.",
-    "hero_cta": "Vitalcheck starten",
-    "farbthema": "hell",
-    "akzentfarbe": "#10B981",
-    "zeige_block_verdauung": "ja",
-    "zeige_block_energie": "ja",
-    "zeige_block_schlaf": "ja",
-    "zeige_block_lebensstil": "ja",
-    "zeige_frage_rauchen": "ja"
+    "vorname": "Daniel",
+    "nachname": "Kurzeja",
+    "geschlecht": "maennlich",
+    "email_benachrichtigung": "daniel@example.com",
+    "whatsapp_nummer": "",
+    "farbthema": "mint",
+    "frage_motive": "an",
+    "frage_investition": "an"
   }
 }
