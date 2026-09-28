@@ -15,7 +15,7 @@ Konzept, Psychologie, Rechtsgrundlagen und Fragen-Mapping: `docs/konzept-vitalch
 1. Ganz oben: 5 Fortschritts-Segmente (je Bereich, füllen sich mit jeder Antwort)
 2. Kopfzeile: Zurück-Button (ab Schritt 2), Avatar + Name, Zähler „4 / 22“, Sprachschalter mit Flaggen
 3. **Die Bühne = der Check**, ohne Karte, große Typografie (Frage bis 52 px, Start-Headline bis 68 px). Der Hintergrund ist oben sanft in der Farbe des aktuellen Bereichs getönt (Ernährung grün, Tagesstruktur blau, Schlaf indigo, Bewegung koralle, Ausgleich amber) und wechselt weich beim Bereichswechsel.
-   Ablauf: Wünsche (mit Kopfzeile „Wie vital ist dein Alltag?“) → 5 × 4 Aussagen als große Antwortzeilen mit Icon-Faces (✓ / – / ✕, Tasten 1-2-3) → Zwischenstopp mit großer Ziffer „1 / 5“ und „Gut zu wissen“ → Antrieb (optional) → Investition (optional, Standard aus) → Ergebnis (Konfetti in Bereichsfarben, Level bis 92 px, Zähler, Radar mit farbigen Punkten, Stärke/Hebel, 5 Bereiche mit großen Prozentzahlen, Tipps mit großen Ziffern, Wunsch, dunkle Einladung mit Foto) → Lead-Formular → Danke
+   Ablauf: Wünsche (mit Kopfzeile „Wie vital ist dein Alltag?“) → 5 × 4 Aussagen als große Antwortzeilen mit Icon-Faces (✓ / – / ✕, Tasten 1-2-3) → Zwischenstopp mit großer Ziffer „1 / 5“ und „Gut zu wissen“ → Antrieb (optional) → Investition (optional, Standard aus) → Ergebnis (Konfetti in Bereichsfarben, Level groß, Zähler, Radar mit farbigen Punkten, Stärke/Hebel, 5 Bereiche mit Prozentzahlen und „Gut zu wissen“-Einordnung zur Versorgung bei mittleren/niedrigen Werten, 3 Tipps mit sichtbarem Bezug: Bereich + niedrigste Antwort, Wunsch, dunkle Gesprächseinladung mit Foto, persönlicher Zeile, 3 Nutzenpunkten) → Formular „Gespräch anfragen“ (Sendebox mit Level/Hebel/Inhalt, Nachricht einklappbar, Vertrauenszeile) → Danke
 4. Fuß: Pflichtkennzeichnung mit Avatar, Kontakt/Impressum/Datenschutz, Selbsteinschätzungs-Hinweis, Made by finestsites
 5. Cookie-Banner (identisch zu cellRESET/PM Business, nicht-blockierend, Reopener rechts unten)
 
@@ -62,6 +62,7 @@ VALUES (
 - Alle 20 Aussagen sind beobachtbares Verhalten, positiv formuliert (keine Befindlichkeiten wie „Ich wache erholt auf“); die Auswertung spricht nur über Gewohnheiten und Routinen, nie über Gesundheitszustand
 - Kritische Prüfung „Auswertung + Beratungsangebot“ und Verhaltensregeln fürs Gespräch: `docs/konzept-vitalcheck.html`, Abschnitt 5b
 - Tipps sind allgemeine Empfehlungen (DGE, WHO, National Sleep Foundation) ohne Produktbezug
+- „Gut zu wissen“-Einordnungen (Obst/Gemüse als Vitaminbasis, Tageslicht und Vitamin D, Bedarf bei Bewegung) sind allgemeine Ernährungsfakten in der Sprache „Versorgung im Blick behalten“; keine Produkte, keine Wörter wie Mangel/Defizit/Risiko, keine Wirkaussage
 - Ergebnis wird clientseitig berechnet; Übermittlung nur nach aktiver Entscheidung + ausdrücklicher Einwilligung (DSGVO Art. 9 Abs. 2 lit. a, Art. 7), unangekreuzte Checkbox, Widerrufshinweis, Zeitstempel
 - Werbezweck transparent: PM-Disclaimer unter dem Hero und im Footer, FAQ „Muss ich etwas kaufen? Nein.“
 - Hinweis „Selbsteinschätzung, keine Diagnose“ auf der Seite, im Ergebnis und im Footer; Zielgruppe ab 18

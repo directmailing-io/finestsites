@@ -194,31 +194,57 @@ html[data-theme="midnight"] .res-top .lbl { color: var(--accent); }
 .dim .pct small { font-size: 14px; color: var(--ink-3); font-weight: 500; margin-left: 1px; }
 @media (max-width: 480px) { .dim { grid-template-columns: 36px 1fr; } .dim .pct { grid-column: 2; font-size: 22px; } }
 .tips h3 { font-size: clamp(22px, 3vw, 28px); margin-bottom: 14px; }
-.tip { display: grid; grid-template-columns: 56px 1fr; gap: 16px; padding: 18px 0; border-top: 1.5px solid var(--line); }
+.tip { display: grid; grid-template-columns: 56px 1fr; gap: 16px; padding: 20px 0; border-top: 1.5px solid var(--line); }
+.tip .why { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; margin-bottom: 8px; padding: 4px 10px 4px 6px; border-radius: 9999px; background: var(--bg); color: var(--ink-2); }
+.tip .why i { width: 20px; height: 20px; border-radius: 6px; display: inline-flex; align-items: center; justify-content: center; color: #fff; }
+.tip .why i svg { width: 12px; height: 12px; }
+.tip .ans-ref { margin-top: 8px; font-size: 13.5px; color: var(--ink-3); }
+.tip .ans-ref b { color: var(--ink-2); font-weight: 500; }
+.dim .insight { margin-top: 10px; padding: 10px 12px; border-radius: 10px; background: var(--paper); font-size: 13.5px; color: var(--ink-2); line-height: 1.5; }
+.dim .insight b { font-weight: 600; color: var(--ink); }
+html[data-theme="midnight"] .dim .insight { background: var(--bg); }
 .tip .n { font-size: 34px; font-weight: 600; letter-spacing: -0.04em; color: var(--accent); line-height: 1; }
 .tip b { display: block; font-weight: 600; font-size: 18px; margin-bottom: 4px; }
 .tip p { font-size: 15.5px; color: var(--ink-2); }
 .wish { margin-top: 26px; padding: 18px 22px; border-radius: 18px; background: var(--accent-soft); color: var(--accent-deep); font-size: 15.5px; }
 .wish b { font-weight: 600; }
-.invite { margin-top: 30px; padding: clamp(24px, 4vw, 36px); border-radius: 24px; background: var(--ink); color: var(--bg); display: grid; grid-template-columns: 64px 1fr; gap: 20px; align-items: center; }
+.invite { margin-top: 30px; padding: clamp(24px, 4vw, 40px); border-radius: 24px; background: var(--ink); color: var(--bg); }
+.invite .who { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; }
+.invite .who small { display: block; font-size: 13px; opacity: 0.65; }
+.invite .who b { font-size: 16px; font-weight: 600; }
+.invite .personal { font-size: 15.5px; opacity: 0.85; margin-bottom: 18px; padding: 12px 16px; border-radius: 12px; background: rgba(255,255,255,0.08); }
+.invite .personal b { font-weight: 600; opacity: 1; }
+.invite ul { list-style: none; display: grid; gap: 10px; margin: 0 0 22px; }
+.invite li { display: grid; grid-template-columns: 22px 1fr; gap: 12px; font-size: 15.5px; opacity: 0.92; }
+.invite li i { width: 22px; height: 22px; border-radius: 50%; background: var(--accent); color: var(--on-accent); display: inline-flex; align-items: center; justify-content: center; }
+.invite li i svg { width: 12px; height: 12px; }
+.invite .fineprint { margin-top: 14px; font-size: 13px; opacity: 0.75; }
 html[data-theme="midnight"] .invite { background: var(--paper); color: var(--ink); border: 1.5px solid var(--line-2); }
-.invite img { width: 64px; height: 64px; border-radius: 50%; object-fit: cover; box-shadow: 0 0 0 3px rgba(255,255,255,0.25); }
+.invite img { width: 56px; height: 56px; border-radius: 50%; object-fit: cover; box-shadow: 0 0 0 3px rgba(255,255,255,0.25); }
 .invite h3 { font-size: clamp(22px, 3vw, 28px); margin-bottom: 8px; }
 .invite p { opacity: 0.8; font-size: 16px; max-width: 52ch; }
-.invite .row { grid-column: 1 / -1; display: flex; gap: 12px; flex-wrap: wrap; margin-top: 8px; }
+.invite .row { display: flex; gap: 12px; flex-wrap: wrap; }
 .invite .btn-primary { background: var(--bg); color: var(--ink); box-shadow: none; }
 .invite .btn-primary:hover { background: var(--paper); }
 html[data-theme="midnight"] .invite .btn-primary { background: var(--accent); color: var(--on-accent); }
 .invite .btn-ghost { color: inherit; border-color: rgba(255,255,255,0.3); }
 html[data-theme="midnight"] .invite .btn-ghost { border-color: var(--line-2); }
-@media (max-width: 480px) { .invite { grid-template-columns: 1fr; } }
+@media (max-width: 480px) { .invite .row .btn { width: 100%; } }
 .note { margin-top: 18px; font-size: 13px; color: var(--ink-3); line-height: 1.55; max-width: 70ch; }
 
 /* Formular */
 .lead h2 { font-size: clamp(30px, 5vw, 44px); margin-bottom: 10px; letter-spacing: -0.03em; }
 .lead .sub { color: var(--ink-2); font-size: 18px; margin-bottom: 20px; max-width: 50ch; }
-.summary { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 30px; }
-.summary span { padding: 8px 14px; border-radius: 9999px; background: var(--paper); border: 1.5px solid var(--line); font-size: 14px; font-weight: 500; color: var(--ink-2); }
+.sendbox { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 18px 20px; border-radius: 18px; background: var(--bg); margin-bottom: 28px; max-width: 640px; }
+.sendbox .k { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 4px; }
+.sendbox .v { font-size: 16px; font-weight: 600; }
+.sendbox .full { grid-column: 1 / -1; font-size: 14px; color: var(--ink-2); }
+@media (max-width: 480px) { .sendbox { grid-template-columns: 1fr; } }
+.msg-toggle { font-size: 15px; font-weight: 500; color: var(--accent-dark); padding: 6px 0; display: inline-flex; align-items: center; gap: 6px; }
+html[data-theme="midnight"] .msg-toggle { color: var(--accent); }
+.form-trust { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 14px; font-size: 13.5px; color: var(--ink-3); }
+.form-trust span { display: inline-flex; align-items: center; gap: 6px; }
+.form-trust span::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: var(--accent); }
 form { max-width: 640px; }
 .row { margin-bottom: 18px; }
 label.lbl { display: block; font-size: 14px; font-weight: 600; color: var(--ink-2); margin-bottom: 8px; }
@@ -245,6 +271,41 @@ html[data-theme="midnight"] .seg button.active { color: var(--accent-deep); }
 .done h2 { font-size: clamp(32px, 6vw, 52px); letter-spacing: -0.035em; margin-bottom: 12px; max-width: 16ch; }
 .done p { color: var(--ink-2); font-size: 18px; max-width: 48ch; margin-bottom: 30px; }
 .done .actions { gap: 12px; }
+
+/* ============ TABLET & SMARTPHONE ============ */
+@media (max-width: 900px) {
+  .stage { justify-content: flex-start; padding-top: 22px; }
+  .panel { padding: clamp(22px, 4.5vw, 36px); border-radius: 22px; }
+  .q { font-size: clamp(28px, 5.4vw, 40px); max-width: none; }
+  .hint { margin-bottom: 24px; }
+  .lead-in h1 { font-size: clamp(34px, 7vw, 52px); max-width: none; }
+  .answers { max-width: none; }
+  .res-top h2 { font-size: clamp(40px, 8vw, 60px); }
+}
+@media (max-width: 600px) {
+  .head { padding-top: 14px; gap: 10px; }
+  .stage { padding-left: 16px; padding-right: 16px; padding-bottom: 40px; }
+  .panel { padding: 22px 18px 24px; border-radius: 20px; }
+  .eyebrow { margin-bottom: 14px; font-size: 13px; }
+  .q { font-size: clamp(26px, 7vw, 32px); letter-spacing: -0.025em; }
+  .hint { font-size: 15.5px; margin-bottom: 20px; }
+  .ans { min-height: 64px; gap: 14px; padding: 12px 14px; border-radius: 16px; font-size: 16.5px; }
+  .ans .face { width: 42px; height: 42px; }
+  .chip { font-size: 15.5px; padding: 12px 16px 12px 12px; gap: 10px; }
+  .chips { gap: 10px; margin-bottom: 24px; }
+  .btn { min-height: 54px; font-size: 16px; padding: 0 22px; }
+  .actions .btn-primary { width: 100%; }
+  .inter .big { font-size: 72px; }
+  .res-top .pts .n { font-size: 36px; }
+  .dims { padding: 4px 16px; border-radius: 18px; }
+  .dim { gap: 12px; padding: 16px 0; }
+  .tip { grid-template-columns: 44px 1fr; gap: 12px; }
+  .tip .n { font-size: 28px; }
+  .invite { padding: 22px 18px; border-radius: 20px; }
+  .lead h2 { font-size: 28px; }
+  .input { font-size: 16px; }
+  .foot-inner { padding: 22px 16px 34px; }
+}
 
 /* Konfetti */
 .confetti { position: fixed; top: -12px; width: 9px; height: 16px; border-radius: 2px; opacity: 0; animation: fall 1.8s ease-out forwards; pointer-events: none; z-index: 5; }
@@ -481,9 +542,19 @@ var CFG = {
     motive: {{#unless frage_motive=aus}}true{{/unless}}{{#if frage_motive=aus}}false{{/if}},
     invest: {{#if frage_investition=an}}true{{/if}}{{#unless frage_investition=an}}false{{/unless}}
   },
-  owner: { vorname: "{{vorname}}", nachname: "{{nachname}}", avatar: "{{profilbild}}", whatsapp: "{{whatsapp_nummer}}", recipient: "{{email_benachrichtigung}}" }
+  owner: { vorname: "{{vorname}}", nachname: "{{nachname}}", avatar: "{{profilbild}}", whatsapp: "{{whatsapp_nummer}}", recipient: "{{email_benachrichtigung}}", female: {{#if geschlecht=weiblich}}true{{/if}}{{#unless geschlecht=weiblich}}false{{/unless}} }
 };
 
+
+/* Einordnung je Bereich für mittlere/niedrige Werte: allgemeine Ernährungs- und Alltagsfakten,
+   keine Produkte, keine Wirk- oder Heilaussagen, keine Begriffe wie Mangel/Defizit/Risiko. */
+var INSIGHT = {
+  ernaehrung: { de: 'Obst und Gemüse sind die Basis deiner Versorgung mit Vitaminen, Mineralstoffen und sekundären Pflanzenstoffen. Wer im Alltag selten auf fünf Portionen kommt, sollte bewusst im Blick behalten, wie er seinen täglichen Bedarf deckt.', en: 'Fruit and vegetables are the foundation of your supply of vitamins, minerals and phytonutrients. If you rarely reach five portions a day, it is worth consciously keeping an eye on how you cover your daily needs.' },
+  tag: { de: 'Lange Phasen ohne Pause und ohne klares Ende halten den Körper im Dauerbetrieb. Wie gleichmäßig deine Energie über den Tag bleibt, hängt neben Pausen auch davon ab, wie regelmäßig du isst und trinkst.', en: 'Long stretches without breaks and without a clear end keep your body in permanent operation. How steady your energy stays through the day depends on breaks, but also on how regularly you eat and drink.' },
+  schlaf: { de: 'Regeneration passiert vor allem nachts. Neben festen Zeiten und einer ruhigen letzten Stunde spielt auch der Abend eine Rolle: späte, schwere Mahlzeiten machen die Nacht oft unruhiger.', en: 'Recovery happens mostly at night. Besides fixed times and a calm last hour, the evening itself matters: late, heavy meals often make the night more restless.' },
+  bewegung: { de: 'Wer sich wenig bewegt, hat einen niedrigeren Energieumsatz. Wer anfängt, sich mehr zu bewegen, braucht mehr Flüssigkeit, Eiweiß und Mineralstoffe. Beides lohnt einen bewussten Blick auf die Versorgung.', en: 'If you move little, your energy turnover is lower. If you start moving more, you need more fluids, protein and minerals. Both are worth a conscious look at your supply.' },
+  ausgleich: { de: 'Tageslicht ist die wichtigste natürliche Quelle für die körpereigene Bildung von Vitamin D. Wer selten draußen ist, vor allem im Winter, sollte seine Versorgung bewusst im Blick behalten.', en: 'Daylight is the most important natural source for your body\'s own vitamin D production. If you are rarely outside, especially in winter, it is worth consciously keeping an eye on your supply.' }
+};
 
 /* ============ RADAR ============ */
 function radarSvg(vals, opts) {
@@ -633,26 +704,39 @@ var VC = (function(){
   function vResult(){
     var R = evalResult(), o = CFG.owner;
     var wishes = S.wishes.map(function(id){ var w = CFG.wishes.filter(function(x){ return x.id === id; })[0]; return w ? t(w) : ''; }).filter(Boolean);
-    var tips = [CFG.dims[R.worst].tips[0], CFG.dims[R.worst].tips[1], CFG.dims[R.second].tips[0]];
+    function lowQs(di){ return CFG.dims[di].q.map(function(q, qi){ return { q: q, v: S.answers[di + ':' + qi] === undefined ? 2 : S.answers[di + ':' + qi] }; }).sort(function(a, b){ return a.v - b.v; }); }
+    var lw = lowQs(R.worst), ls = lowQs(R.second);
+    var tips = [
+      { tp: CFG.dims[R.worst].tips[0], di: R.worst, ref: lw[0], why: en() ? 'Your biggest lever' : 'Dein größter Hebel' },
+      { tp: CFG.dims[R.worst].tips[1], di: R.worst, ref: lw[1], why: en() ? 'Your biggest lever' : 'Dein größter Hebel' },
+      { tp: CFG.dims[R.second].tips[0], di: R.second, ref: ls[0], why: en() ? 'Second lever' : 'Zweiter Hebel' }
+    ];
+    var ansWord = function(v){ return v === 2 ? (en() ? 'true for me' : 'trifft zu') : (v === 1 ? (en() ? 'partly' : 'teils, teils') : (en() ? 'not really' : 'trifft nicht zu')); };
     var html = '<div class="res-top"><div><div class="lbl">' + (en() ? 'Your result · vitality level' : 'Dein Ergebnis · Dein Vitallevel') + '</div>' +
       '<h2>' + esc(t(R.lv.name)) + '</h2><p>' + esc(t(R.lv.desc)) + '</p>' +
       '<div class="pts"><span class="n num" id="pts">0</span><span class="d">/ 40 ' + (en() ? 'points from 20 everyday statements' : 'Punkte aus 20 Alltags-Aussagen') + '</span></div></div>' +
       '<svg class="radar" id="radar" viewBox="0 0 320 320"></svg></div>' +
       '<div class="pair"><div><small><span class="sw" style="background:var(--tier-high)"></span>' + (en() ? 'Your strength' : 'Deine Stärke') + '</small><b>' + esc(t(CFG.dims[R.best].strength)) + '</b><p>' + esc(t(CFG.dims[R.best].name)) + ' · ' + Math.round(R.sc[R.best]/8*100) + '%</p></div>' +
       '<div><small><span class="sw" style="background:var(--accent)"></span>' + (en() ? 'Your biggest lever' : 'Dein größter Hebel') + '</small><b>' + esc(t(CFG.dims[R.worst].name)) + '</b><p>' + (en() ? 'The smallest step moves the most here.' : 'Hier bewegt der kleinste Schritt am meisten.') + '</p></div></div>' +
-      '<div class="dims">' + CFG.dims.map(function(d, i){ var s = R.sc[i]; return '<div class="dim"><div class="ic" style="background:' + d.color + '">' + ICO[d.ico] + '</div><div><h4>' + esc(t(d.name)) + '</h4><div class="track"><i data-w="' + Math.round(s/8*100) + '" style="background:' + tierColor(s) + '"></i></div><p>' + esc(t(d.fb[tier(s)])) + '</p></div><div class="pct num">' + Math.round(s/8*100) + '<small>%</small></div></div>'; }).join('') + '</div>' +
-      '<div class="tips"><h3>' + (en() ? 'Three things you can start tomorrow' : 'Drei Dinge, die du morgen starten kannst') + '</h3>' + tips.map(function(tp, i){ return '<div class="tip"><span class="n num">0' + (i+1) + '</span><div><b>' + esc(t(tp.t)) + '</b><p>' + esc(t(tp.d)) + '</p></div></div>'; }).join('') + '</div>';
+      '<div class="dims">' + CFG.dims.map(function(d, i){ var s = R.sc[i], ins = tier(s) !== 'high' && INSIGHT[d.id] ? '<div class="insight"><b>' + (en() ? 'Good to know: ' : 'Gut zu wissen: ') + '</b>' + esc(t(INSIGHT[d.id])) + '</div>' : ''; return '<div class="dim"><div class="ic" style="background:' + d.color + '">' + ICO[d.ico] + '</div><div><h4>' + esc(t(d.name)) + '</h4><div class="track"><i data-w="' + Math.round(s/8*100) + '" style="background:' + tierColor(s) + '"></i></div><p>' + esc(t(d.fb[tier(s)])) + '</p>' + ins + '</div><div class="pct num">' + Math.round(s/8*100) + '<small>%</small></div></div>'; }).join('') + '</div>' +
+      '<div class="tips"><h3>' + (en() ? 'Three things you can start tomorrow' : 'Drei Dinge, die du morgen starten kannst') + '</h3><p class="hint" style="margin-bottom:6px">' + (en() ? 'Derived from your two weakest areas and the statements you rated lowest.' : 'Abgeleitet aus deinen zwei schwächsten Bereichen und den Aussagen, die du am niedrigsten bewertet hast.') + '</p>' + tips.map(function(x, i){ var d = CFG.dims[x.di]; return '<div class="tip"><span class="n num">0' + (i+1) + '</span><div><span class="why"><i style="background:' + d.color + '">' + ICO[d.ico] + '</i>' + x.why + ' · ' + esc(t(d.short)) + '</span><b>' + esc(t(x.tp.t)) + '</b><p>' + esc(t(x.tp.d)) + '</p><div class="ans-ref">' + (en() ? 'Your answer: ' : 'Deine Antwort: ') + '<b>„' + esc(t(x.ref.q.label)) + '“ · ' + ansWord(x.ref.v) + '</b></div></div></div>'; }).join('') + '</div>';
     if (wishes.length) html += '<div class="wish">' + (en() ? 'Your wish: ' : 'Dein Wunsch: ') + '<b>' + esc(wishes.join(', ')) + '</b>. ' + (en() ? 'Your biggest lever is a realistic place to start.' : 'Dein größter Hebel ist ein realistischer Startpunkt dafür.') + '</div>';
-    html += '<div class="invite"><img src="' + esc(o.avatar) + '" alt=""><div><h3>' + (en() ? 'Want to talk about your result?' : 'Möchtest du über dein Ergebnis sprechen?') + '</h3><p>' + (en() ? 'Send it to me and I will get back to you personally. We talk about your habits and what is realistic in your everyday life. No obligation, no newsletter, nothing to buy.' : 'Schick es mir und ich melde mich persönlich bei dir. Wir sprechen über deine Gewohnheiten und darüber, was in deinem Alltag realistisch ist. Unverbindlich, kein Newsletter, keine Kaufpflicht.') + '</p></div>' +
-      '<div class="row"><button type="button" class="btn btn-primary" data-lead>' + (en() ? 'Send result to ' + esc(o.vorname) : 'Ergebnis an ' + esc(o.vorname) + ' senden') + ' <span class="arr">→</span></button><button type="button" class="btn btn-ghost" data-restart>' + (en() ? 'Start over' : 'Nochmal starten') + '</button></div></div>' +
+    var li = function(txt){ return '<li><i>' + ICO.check + '</i><span>' + txt + '</span></li>'; };
+    html += '<div class="invite"><div class="who"><img src="' + esc(o.avatar) + '" alt=""><div><b>' + esc(o.vorname) + ' ' + esc(o.nachname) + '</b><small>' + (en() ? 'Independent distributor of PM-International' : (CFG.owner.female ? 'Unabhängige Vertriebspartnerin' : 'Unabhängiger Vertriebspartner') + ' der PM-International') + '</small></div></div>' +
+      '<h3>' + (en() ? 'Let\'s look at your result together.' : 'Lass uns gemeinsam auf dein Ergebnis schauen.') + '</h3>' +
+      '<div class="personal">' + (en() ? 'Your biggest lever is <b>' + esc(t(CFG.dims[R.worst].name)) + '</b>' + (wishes.length ? ', your wish is <b>' + esc(wishes[0]) + '</b>' : '') + '. That is exactly where I would start with you.' : 'Dein größter Hebel ist <b>' + esc(t(CFG.dims[R.worst].name)) + '</b>' + (wishes.length ? ', dein Wunsch ist <b>' + esc(wishes[0]) + '</b>' : '') + '. Genau da würde ich mit dir anfangen.') + '</div>' +
+      '<ul>' + li(en() ? 'A personal 20-minute conversation, by phone or WhatsApp, at a time that suits you' : 'Ein persönliches Gespräch von etwa 20 Minuten, per Telefon oder WhatsApp, wann es dir passt') + li(en() ? 'We go through your three levers and what is realistic in your everyday life' : 'Wir gehen deine drei Hebel durch und schauen, was in deinem Alltag realistisch ist') + li(en() ? 'I show you how our concept fits your answers, and you decide whether it is for you' : 'Ich zeige dir, wie unser Konzept zu deinen Antworten passt, und du entscheidest, ob es etwas für dich ist') + '</ul>' +
+      '<div class="row"><button type="button" class="btn btn-primary" data-lead>' + (en() ? 'Send result and request a chat' : 'Ergebnis senden und Gespräch anfragen') + ' <span class="arr">→</span></button><button type="button" class="btn btn-ghost" data-restart>' + (en() ? 'Start over' : 'Nochmal starten') + '</button></div>' +
+      '<div class="fineprint">' + (en() ? 'Free · reply within 24 hours · no newsletter · nothing to buy' : 'Kostenlos · Antwort innerhalb von 24 Stunden · kein Newsletter · keine Kaufpflicht') + '</div></div>' +
       '<p class="note">' + (en() ? 'This result is a self-assessment of your habits, not a medical evaluation, and it contains no product recommendation. It was calculated on your device and is only sent if you actively choose to.' : 'Dieses Ergebnis ist eine Selbsteinschätzung deiner Gewohnheiten, keine medizinische Bewertung, und enthält keine Produktempfehlung. Es wurde auf deinem Gerät berechnet und wird nur übermittelt, wenn du das aktiv möchtest.') + '</p>';
     return html;
   }
   function vLead(){
     var R = evalResult(), o = CFG.owner;
-    return '<div class="lead"><h2>' + (en() ? 'Send your result to ' + esc(o.vorname) + '.' : 'Ergebnis an ' + esc(o.vorname) + ' senden.') + '</h2>' +
-      '<p class="sub">' + (en() ? 'I will look at it and get back to you personally within a day or two.' : 'Ich schaue es mir an und melde mich innerhalb von ein, zwei Tagen persönlich bei dir.') + '</p>' +
-      '<div class="summary"><span>' + esc(t(R.lv.name)) + '</span><span>' + (en() ? 'Strength: ' : 'Stärke: ') + esc(t(CFG.dims[R.best].short)) + '</span><span>' + (en() ? 'Lever: ' : 'Hebel: ') + esc(t(CFG.dims[R.worst].short)) + '</span><span>' + (en() ? '20 answers + wishes' : '20 Antworten + Wünsche') + '</span></div>' +
+    var wl = S.wishes.map(function(id){ var w = CFG.wishes.filter(function(x){ return x.id === id; })[0]; return w ? t(w) : ''; }).filter(Boolean).join(', ');
+    return '<div class="lead"><h2>' + (en() ? 'Request your conversation with ' + esc(o.vorname) + '.' : 'Dein Gespräch mit ' + esc(o.vorname) + ' anfragen.') + '</h2>' +
+      '<p class="sub">' + (en() ? 'Your result goes to ' + esc(o.vorname) + ' together with your contact details. You will hear back personally within 24 hours.' : 'Dein Ergebnis geht zusammen mit deinen Kontaktdaten an ' + esc(o.vorname) + '. Du bekommst innerhalb von 24 Stunden eine persönliche Antwort.') + '</p>' +
+      '<div class="sendbox"><div><div class="k">' + (en() ? 'Vitality level' : 'Vitallevel') + '</div><div class="v">' + esc(t(R.lv.name)) + ' · ' + R.total + '/40</div></div><div><div class="k">' + (en() ? 'Biggest lever' : 'Größter Hebel') + '</div><div class="v">' + esc(t(CFG.dims[R.worst].name)) + '</div></div><div class="full">' + (en() ? 'Included: your 20 answers, your strength (' : 'Enthalten: deine 20 Antworten, deine Stärke (') + esc(t(CFG.dims[R.best].short)) + ')' + (wl ? (en() ? ' and your wishes: ' : ' und deine Wünsche: ') + esc(wl) : '') + '.</div></div>' +
       '<form id="leadForm" action="/.finestsites/forms/kontakt" method="POST" novalidate>' +
         '<input type="hidden" name="_recipient" value="' + esc(o.recipient) + '">' +
         '<input type="text" name="_honeypot" style="position:absolute;left:-9999px;opacity:0" tabindex="-1" autocomplete="off">' +
@@ -661,13 +745,13 @@ var VC = (function(){
         '<div class="row"><label class="lbl">' + (en() ? 'How should I reach you?' : 'Wie soll ich dich erreichen?') + '</label><div class="seg" id="seg"><button type="button" class="active" data-method="email">' + ICO.mail + (en() ? 'Email' : 'E-Mail') + '</button><button type="button" data-method="telefon">' + ICO.phone + (en() ? 'Phone' : 'Telefon') + '</button><button type="button" data-method="whatsapp">' + ICO.wa + 'WhatsApp</button></div></div>' +
         '<div class="row" id="phoneRow" hidden><label class="lbl" for="lf-phone">' + (en() ? 'Your number' : 'Deine Nummer') + '</label><input class="input" id="lf-phone" name="phone" type="tel" autocomplete="tel" placeholder="+49 170 1234567"></div>' +
         '<div class="row"><label class="lbl">' + (en() ? 'What are you interested in?' : 'Was interessiert dich?') + ' <span class="opt">(' + (en() ? 'optional' : 'optional') + ')</span></label><div class="chips" style="margin-bottom:0">' + CFG.interests.map(function(m){ return chip('interest', m.id, t(m), S.interests.indexOf(m.id) > -1); }).join('') + '</div></div>' +
-        '<div class="row"><label class="lbl" for="lf-msg">' + (en() ? 'Anything else?' : 'Möchtest du noch etwas sagen?') + ' <span class="opt">(' + (en() ? 'optional' : 'optional') + ')</span></label><textarea class="input" id="lf-msg" name="nachricht" rows="3" placeholder="' + (en() ? 'Whatever is on your mind …' : 'Was dir gerade wichtig ist …') + '"></textarea></div>' +
+        '<div class="row"><button type="button" class="msg-toggle" id="msgToggle">+ ' + (en() ? 'Add a message' : 'Nachricht hinzufügen') + ' <span class="opt">(' + (en() ? 'optional' : 'optional') + ')</span></button><textarea class="input" id="lf-msg" name="nachricht" rows="3" hidden placeholder="' + (en() ? 'Whatever is on your mind …' : 'Was dir gerade wichtig ist …') + '"></textarea></div>' +
         '<label class="consent" id="consentBox"><input type="checkbox" id="lf-consent"><span>' + (en()
           ? 'Yes, I want ' + esc(o.vorname) + ' ' + esc(o.nachname) + ' to receive my 20 answers from the vitality check (my habits regarding food, daily structure, sleep, movement and balance), my wishes and my contact details, in order to contact me personally. I can withdraw this consent at any time by emailing <a href="mailto:' + esc(o.recipient) + '">' + esc(o.recipient) + '</a>. Details in the <a href="/datenschutz" target="_blank" rel="noopener">privacy policy</a>.'
           : 'Ja, ich möchte, dass ' + esc(o.vorname) + ' ' + esc(o.nachname) + ' meine 20 Antworten aus dem Vitalcheck (meine Gewohnheiten zu Ernährung, Tagesstruktur, Schlaf, Bewegung und Ausgleich), meine Wünsche und meine Kontaktdaten erhält, um mich persönlich zu kontaktieren. Diese Einwilligung kann ich jederzeit per E-Mail an <a href="mailto:' + esc(o.recipient) + '">' + esc(o.recipient) + '</a> widerrufen. Details in der <a href="/datenschutz" target="_blank" rel="noopener">Datenschutzerklärung</a>.') + '</span></label>' +
-        '<button type="submit" class="btn btn-primary btn-block" id="leadSubmit">' + (en() ? 'Send result' : 'Ergebnis senden') + ' <span class="arr">→</span></button>' +
+        '<button type="submit" class="btn btn-primary btn-block" id="leadSubmit">' + (en() ? 'Request conversation' : 'Gespräch anfragen') + ' <span class="arr">→</span></button>' +
         '<div class="err-msg" id="leadError"></div>' +
-        '<p class="privacy">' + (en() ? 'No newsletter, no sharing with third parties.' : 'Kein Newsletter, keine Weitergabe an Dritte.') + '</p>' +
+        '<div class="form-trust"><span>' + (en() ? 'Free and non-binding' : 'Kostenlos und unverbindlich') + '</span><span>' + (en() ? 'Reply within 24 hours' : 'Antwort innerhalb von 24 Stunden') + '</span><span>' + (en() ? 'No newsletter, no sharing' : 'Kein Newsletter, keine Weitergabe') + '</span></div>' +
       '</form></div>';
   }
   function vDone(){
@@ -712,6 +796,7 @@ var VC = (function(){
     seg.querySelectorAll('button').forEach(function(tb){ tb.addEventListener('click', function(){ method = tb.getAttribute('data-method'); seg.querySelectorAll('button').forEach(function(x){ x.classList.toggle('active', x === tb); }); phoneRow.hidden = method === 'email'; if (!phoneRow.hidden) document.getElementById('lf-phone').focus(); }); });
     root.querySelectorAll('[data-interest]').forEach(function(c){ c.addEventListener('click', function(){ toggleIn(S.interests, c.getAttribute('data-interest'), 3); save(); root.querySelectorAll('[data-interest]').forEach(function(x){ x.classList.toggle('on', S.interests.indexOf(x.getAttribute('data-interest')) > -1); }); }); });
     var box = document.getElementById('consentBox'); document.getElementById('lf-consent').addEventListener('change', function(){ box.classList.remove('err'); });
+    var mt = document.getElementById('msgToggle'), msg = document.getElementById('lf-msg'); mt.addEventListener('click', function(){ msg.hidden = false; mt.hidden = true; msg.focus(); });
     form.addEventListener('submit', function(e){
       e.preventDefault();
       var err = document.getElementById('leadError'), btn = document.getElementById('leadSubmit'); err.classList.remove('show');
@@ -722,7 +807,7 @@ var VC = (function(){
       btn.disabled = true; btn.textContent = en() ? 'Sending …' : 'Wird gesendet …';
       fetch(form.action, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: JSON.stringify(payload(name, email, phone, method)) })
         .then(function(r){ if (!r.ok) throw new Error('bad'); S.sent = true; save(); go(S.step + 1); })
-        .catch(function(){ btn.disabled = false; btn.innerHTML = (en() ? 'Send result' : 'Ergebnis senden') + ' <span class="arr">→</span>'; err.textContent = en() ? 'That did not work. Please try again in a moment.' : 'Das hat nicht geklappt. Bitte versuch es gleich nochmal.'; err.classList.add('show'); });
+        .catch(function(){ btn.disabled = false; btn.innerHTML = (en() ? 'Request conversation' : 'Gespräch anfragen') + ' <span class="arr">→</span>'; err.textContent = en() ? 'That did not work. Please try again in a moment.' : 'Das hat nicht geklappt. Bitte versuch es gleich nochmal.'; err.classList.add('show'); });
     });
   }
   /* Alle Werte als Strings (FormSubmission.data ist Record<string,string>) */
