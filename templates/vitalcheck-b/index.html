@@ -27,6 +27,8 @@
   --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
   --s0: #DF5B47; --s1: #E6963A; --s2: #9CA3A8; --s3: #4C8CE3; --s4: #2FA877;
   --s0-soft: #FCF0EE; --s1-soft: #FDF3E7; --s2-soft: #F3F4F5; --s3-soft: #EDF3FC; --s4-soft: #ECF7F1;
+  /* Antwortskala: fünf Abstufungen der Akzentfarbe, von zart bis voll */
+  --k0: color-mix(in srgb, var(--accent) 22%, var(--ink-3)); --k1: color-mix(in srgb, var(--accent) 45%, var(--ink-3)); --k2: color-mix(in srgb, var(--accent) 65%, var(--ink-3)); --k3: color-mix(in srgb, var(--accent) 85%, var(--ink-3)); --k4: var(--accent);
 }
 html[data-theme="mint"], html:not([data-theme]), html[data-theme=""] { --accent: #2FA877; --accent-dark: #22875F; --accent-soft: #E4F3EC; }
 html[data-theme="ocean"]  { --accent: #3B7DD8; --accent-dark: #2C63B0; --accent-soft: #E3EDFA; }
@@ -67,6 +69,45 @@ html[data-lang="de"] .lang [data-lang="de"], html[data-lang="en"] .lang [data-la
 
 /* Seite */
 main { flex: 1; width: 100%; max-width: var(--col); margin: 0 auto; padding: 22px 18px 80px; }
+main.wide { max-width: 1040px; }
+/* Landing (Schritt 1) */
+.hero { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: clamp(28px, 5vw, 64px); align-items: center; padding: clamp(20px, 4vh, 48px) 0 clamp(28px, 4vh, 44px); }
+.hero .kick { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: var(--accent-dark); margin-bottom: 14px; }
+html[data-theme="midnight"] .hero .kick { color: var(--accent); }
+.hero .kick i { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
+.hero h1 { font-size: clamp(34px, 5.2vw, 54px); letter-spacing: -0.03em; line-height: 1.05; margin-bottom: 16px; text-wrap: balance; }
+.hero p { color: var(--ink-2); font-size: clamp(16px, 1.6vw, 18px); line-height: 1.6; max-width: 50ch; }
+.hero .gets { list-style: none; display: grid; gap: 10px; margin-top: 22px; }
+.hero .gets li { display: grid; grid-template-columns: 30px 1fr; gap: 12px; align-items: center; font-size: 15px; color: var(--ink-2); }
+.hero .gets li b { color: var(--ink); font-weight: 500; }
+.hero .gets li i { width: 30px; height: 30px; border-radius: 9px; background: var(--paper); display: inline-flex; align-items: center; justify-content: center; color: var(--accent-dark); box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+html[data-theme="midnight"] .hero .gets li i { color: var(--accent); }
+.hero .gets li i svg { width: 15px; height: 15px; }
+.hero .cta-row { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-top: 26px; }
+.hero .cta-row .note { text-align: left; }
+/* Vorschau-Karte rechts */
+.pv { background: var(--paper); border-radius: 24px; padding: 24px 24px 20px; box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 24px 60px -36px rgba(0,0,0,0.35); transform: rotate(1.5deg); }
+.pv .pv-head { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+.pv .pv-head svg { width: 52px; height: 52px; }
+.pv .pv-head small { display: block; font-size: 12px; color: var(--ink-3); }
+.pv .pv-head b { font-size: 17px; font-weight: 500; }
+.pv .pv-row { display: grid; grid-template-columns: 22px 1fr 40px; align-items: center; gap: 10px; padding: 7px 0; font-size: 13px; color: var(--ink-2); }
+.pv .pv-row i { width: 22px; height: 22px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; color: #fff; }
+.pv .pv-row i svg { width: 11px; height: 11px; }
+.pv .pv-row .b { height: 6px; border-radius: 6px; background: var(--bg); overflow: hidden; }
+.pv .pv-row .b i { display: block; height: 100%; width: 0; border-radius: 6px; animation: grow 1.2s var(--ease) forwards; }
+@keyframes grow { to { width: var(--w); } }
+.pv .pv-row .n { text-align: right; font-weight: 500; color: var(--ink); }
+.pv .pv-foot { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line); font-size: 12.5px; color: var(--ink-3); display: flex; justify-content: space-between; }
+.pv .pv-foot b { color: var(--ink-2); font-weight: 500; }
+.start { max-width: var(--col); margin: 0 auto; }
+.start .sec-head { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+.start .sec-head .no { width: 32px; height: 32px; border-radius: 50%; background: var(--ink); color: var(--bg); display: inline-flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; }
+html[data-theme="midnight"] .start .sec-head .no { background: var(--accent); color: var(--on-accent); }
+.start .sec-head h2 { font-size: 20px; }
+.start .sec-head small { font-size: 13.5px; color: var(--ink-3); margin-left: auto; }
+@media (max-width: 860px) { .hero { grid-template-columns: 1fr; } .pv { transform: none; max-width: 420px; } }
+@media (max-width: 600px) { .hero { padding-top: 8px; } .pv { display: none; } }
 .step { animation: in 0.4s var(--ease) both; }
 @keyframes in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
 .pagehead { margin: 6px 0 20px; }
@@ -86,17 +127,19 @@ main { flex: 1; width: 100%; max-width: var(--col); margin: 0 auto; padding: 22p
 .opt .c { width: 50px; height: 50px; border-radius: 50%; border: 1.5px dashed; display: inline-flex; align-items: center; justify-content: center; transition: transform 0.2s var(--ease), background 0.2s, border-style 0.2s; }
 .opt .c svg { width: 20px; height: 20px; color: #fff; opacity: 0; transition: opacity 0.15s; }
 .opt:hover .c { transform: scale(1.08); }
-.opt[data-v="0"] .c { border-color: var(--s0); background: var(--s0-soft); }
-.opt[data-v="1"] .c { border-color: var(--s1); background: var(--s1-soft); }
-.opt[data-v="2"] .c { border-color: var(--s2); background: var(--s2-soft); }
-.opt[data-v="3"] .c { border-color: var(--s3); background: var(--s3-soft); }
-.opt[data-v="4"] .c { border-color: var(--s4); background: var(--s4-soft); }
-.opt.on[data-v="0"] .c { background: var(--s0); } .opt.on[data-v="1"] .c { background: var(--s1); } .opt.on[data-v="2"] .c { background: var(--s2); } .opt.on[data-v="3"] .c { background: var(--s3); } .opt.on[data-v="4"] .c { background: var(--s4); }
+.opt[data-v="0"] .c { border-color: var(--k0); background: color-mix(in srgb, var(--k0) 10%, var(--paper)); width: 40px; height: 40px; }
+.opt[data-v="1"] .c { border-color: var(--k1); background: color-mix(in srgb, var(--k1) 12%, var(--paper)); width: 44px; height: 44px; }
+.opt[data-v="2"] .c { border-color: var(--k2); background: color-mix(in srgb, var(--k2) 14%, var(--paper)); width: 48px; height: 48px; }
+.opt[data-v="3"] .c { border-color: var(--k3); background: color-mix(in srgb, var(--k3) 16%, var(--paper)); width: 52px; height: 52px; }
+.opt[data-v="4"] .c { border-color: var(--k4); background: color-mix(in srgb, var(--k4) 18%, var(--paper)); width: 56px; height: 56px; }
+.opt.on[data-v="0"] .c { background: var(--k0); } .opt.on[data-v="1"] .c { background: var(--k1); } .opt.on[data-v="2"] .c { background: var(--k2); } .opt.on[data-v="3"] .c { background: var(--k3); } .opt.on[data-v="4"] .c { background: var(--k4); }
+.opt { justify-content: flex-end; }
+.scale { align-items: end; }
 .opt.on .c { border-style: solid; transform: scale(1.06); }
 .opt.on .c svg { opacity: 1; }
 .opt small { font-size: 11.5px; line-height: 1.25; color: var(--ink-3); max-width: 84px; }
 .card:not(.labels) .opt small { display: none; }
-@media (max-width: 420px) { .opt .c { width: 44px; height: 44px; } .opt small { font-size: 10.5px; } }
+@media (max-width: 420px) { .opt[data-v="0"] .c { width: 34px; height: 34px; } .opt[data-v="1"] .c { width: 38px; height: 38px; } .opt[data-v="2"] .c { width: 42px; height: 42px; } .opt[data-v="3"] .c { width: 46px; height: 46px; } .opt[data-v="4"] .c { width: 50px; height: 50px; } .opt .c svg { width: 18px; height: 18px; } .opt small { font-size: 10.5px; } }
 
 .btnrow { margin: 22px 0 0; display: flex; flex-direction: column; align-items: center; gap: 10px; }
 .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 52px; padding: 0 26px; border-radius: 12px; font-weight: 500; font-size: 16px; transition: transform 0.2s var(--ease), background 0.15s, opacity 0.15s; }
@@ -561,6 +604,7 @@ var VC = (function(){
     else if (key === 'result') html = vResult();
     else if (key === 'lead') html = vLead();
     else if (key === 'done') html = vDone();
+    root.classList.toggle('wide', key === 'wishes');
     root.innerHTML = '<div class="step">' + html + '</div>';
     bind(key);
   }
@@ -568,9 +612,17 @@ var VC = (function(){
   /* ---- Views ---- */
   function chip(attr, id, label, on){ return '<button type="button" class="chip' + (on ? ' on' : '') + '" data-' + attr + '="' + id + '"><span class="chk">' + ICO.check + '</span>' + esc(label) + '</button>'; }
   function vWishes(){
-    return '<div class="pagehead"><h1>' + (en() ? 'Find out where your vitality level stands.' : 'Finde heraus, wo dein Vitallevel steht.') + '</h1><p>' + (en() ? 'In just a few minutes you will know where your vitality level stands and which type you are. You get a clear evaluation right away. And if you like, you can contact me afterwards so we can check together whether the nutrient concept I work with fits you and your everyday life.' : 'Erfahre in nur wenigen Minuten, wo dein Vitallevel steht und welcher Vital-Typ du bist. Du erhältst direkt deine übersichtliche Auswertung. Und wenn du magst, kannst du mich im Anschluss kontaktieren, damit wir gemeinsam prüfen, ob das Nährstoff-Konzept, mit dem ich arbeite, zu dir und deinem Alltag passt.') + '</p></div>' +
+    var demo = [0.78, 0.35, 0.9, 0.5, 0.65];
+    var get = function(ic, b, txt){ return '<li><i>' + ic + '</i><span><b>' + b + '</b> ' + txt + '</span></li>'; };
+    return '<div class="hero"><div><div class="kick"><i></i>' + (en() ? 'The vitality check · 3 minutes' : 'Der Vitalcheck · 3 Minuten') + '</div>' +
+      '<h1>' + (en() ? 'Find out where your vitality level stands.' : 'Finde heraus, wo dein Vitallevel steht.') + '</h1>' +
+      '<p>' + (en() ? 'In just a few minutes you will know where your vitality level stands and which type you are. You get a clear evaluation right away. And if you like, you can contact me afterwards so we can check together whether the nutrient concept I work with fits you and your everyday life.' : 'Erfahre in nur wenigen Minuten, wo dein Vitallevel steht und welcher Vital-Typ du bist. Du erhältst direkt deine übersichtliche Auswertung. Und wenn du magst, kannst du mich im Anschluss kontaktieren, damit wir gemeinsam prüfen, ob das Nährstoff-Konzept, mit dem ich arbeite, zu dir und deinem Alltag passt.') + '</p>' +
+      '<ul class="gets">' + get(ICO.check, en() ? 'Your vitality type' : 'Dein Vital-Typ', en() ? 'and your level across five areas' : 'und dein Level in fünf Bereichen') + get(ICO.clock, en() ? 'Your day at a glance:' : 'Dein Tag auf einen Blick:', en() ? 'nine moments, from morning light to sleep' : 'neun Momente, vom Morgenlicht bis zum Schlaf') + get(ICO.flag, en() ? 'Three things' : 'Drei Dinge,', en() ? 'you can start tomorrow' : 'die du morgen starten kannst') + '</ul>' +
+      '<div class="cta-row"><a href="#start" class="btn btn-accent">' + (en() ? 'Start the check' : 'Check starten') + '</a><span class="note">' + (en() ? '20 statements · no sign-up' : '20 Aussagen · keine Anmeldung') + '</span></div></div>' +
+      '<div class="pv" aria-hidden="true"><div class="pv-head">' + badgeSvg(CFG.dims[2].color) + '<div><small>' + (en() ? 'Example profile' : 'Beispiel-Profil') + '</small><b>' + (en() ? 'The Rester' : 'Der Nachtruhe-Typ') + '</b></div></div>' + CFG.dims.map(function(d, i){ return '<div class="pv-row"><i style="background:' + d.color + '">' + ICO[d.ico] + '</i><div class="b"><i style="--w:' + Math.round(demo[i]*100) + '%;background:' + d.color + ';animation-delay:' + (i*0.12) + 's"></i></div><span class="n num">' + Math.round(demo[i]*100) + ' %</span></div>'; }).join('') + '<div class="pv-foot"><span>' + (en() ? 'Vitality level' : 'Vitallevel') + '</span><b>' + (en() ? 'On track · 64 %' : 'Auf Kurs · 64 %') + '</b></div></div></div>' +
+      '<div class="start" id="start"><div class="sec-head"><span class="no">1</span><h2>' + (en() ? 'Let\'s start with you.' : 'Los geht\'s mit dir.') + '</h2><small>' + (en() ? 'Step 1 of 8' : 'Schritt 1 von 8') + '</small></div>' +
       '<div class="card left"><p>' + (en() ? 'What would you like most right now? Pick up to three.' : 'Was wünschst du dir gerade am meisten? Wähle bis zu drei.') + '</p><div class="chips" style="justify-content:flex-start">' + CFG.wishes.map(function(w){ return chip('wish', w.id, t(w), S.wishes.indexOf(w.id) > -1); }).join('') + '</div></div>' +
-      '<div class="btnrow"><button type="button" class="btn btn-primary btn-wide" data-next ' + (S.wishes.length ? '' : 'disabled') + '>' + (en() ? 'Start the check' : 'Check starten') + '</button><span class="note">' + (en() ? '20 statements · about 3 minutes · no sign-up' : '20 Aussagen · etwa 3 Minuten · keine Anmeldung') + '</span></div>';
+      '<div class="btnrow"><button type="button" class="btn btn-primary btn-wide" data-next ' + (S.wishes.length ? '' : 'disabled') + '>' + (en() ? 'Continue to the statements' : 'Weiter zu den Aussagen') + '</button><span class="note">' + (en() ? 'Nothing is sent, unless you choose to at the end.' : 'Nichts wird gesendet, außer du entscheidest dich am Ende dafür.') + '</span></div></div>';
   }
   function vArea(di){
     var d = CFG.dims[di], first = -1;
