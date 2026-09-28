@@ -40,7 +40,7 @@
       "aspect_ratio": "1/1",
       "default_value": "https://app.finestsites.io/placeholders/profilbild.webp",
       "preview_value": "",
-      "placeholder_text": "Quadratisch, mindestens 400×400 px. Erscheint in der Navigation, im PM-Disclaimer und am Ende des Checks neben deiner Einladung zum Gespräch."
+      "placeholder_text": "Quadratisch, mindestens 400×400 px. Erscheint oben in der Leiste, im PM-Disclaimer und am Ende des Checks neben deiner Einladung zum Gespräch."
     },
     {
       "key": "geschlecht",
@@ -53,8 +53,20 @@
       "preview_value": "weiblich",
       "placeholder_text": "Damit die Bezeichnung auf deiner Website stimmt: \"unabhängige Vertriebspartnerin\" oder \"unabhängiger Vertriebspartner\".",
       "card_options": [
-        { "value": "weiblich", "label": "Weiblich", "card_type": "color", "color": "#FDF2F8", "description": "Vertriebspartnerin, unabhängige …" },
-        { "value": "maennlich", "label": "Männlich", "card_type": "color", "color": "#EFF6FF", "description": "Vertriebspartner, unabhängiger …" }
+        {
+          "value": "weiblich",
+          "label": "Weiblich",
+          "card_type": "color",
+          "color": "#FDF2F8",
+          "description": "Vertriebspartnerin, unabhängige …"
+        },
+        {
+          "value": "maennlich",
+          "label": "Männlich",
+          "card_type": "color",
+          "color": "#EFF6FF",
+          "description": "Vertriebspartner, unabhängiger …"
+        }
       ]
     },
     {
@@ -68,7 +80,7 @@
       "default_value": "",
       "preview_value": "daniel@example.com",
       "input_placeholder": "deine@email.de",
-      "placeholder_text": "Wenn jemand am Ende des Checks sein Vitalporträt an dich schickt, bekommst du alle Antworten und Kontaktdaten an diese Adresse. Wird im Footer angezeigt."
+      "placeholder_text": "Wenn jemand am Ende des Checks sein Ergebnis an dich schickt, bekommst du alle 20 Antworten, Wünsche und Kontaktdaten an diese Adresse. Wird im Footer angezeigt."
     },
     {
       "key": "whatsapp_nummer",
@@ -92,14 +104,50 @@
       "required": true,
       "default_value": "mint",
       "preview_value": "mint",
-      "placeholder_text": "Wähle das Farbthema deiner Website. Die Farbe wirkt sich auf Buttons, Akzente, das Vitalporträt und den Check aus.",
+      "placeholder_text": "Akzentfarbe deiner Seite (Fortschritt, Auswahl, Radar). Die Seite selbst bleibt ruhig in Schwarz-Weiß, „Midnight“ ist die dunkle Variante.",
       "card_options": [
-        { "value": "mint", "label": "Fresh Mint", "card_type": "color", "color": "#2FB08A", "description": "Frisch, klar, vitalisierend." },
-        { "value": "ocean", "label": "Ocean Blue", "card_type": "color", "color": "#3A7BD5", "description": "Ruhig, seriös, kühl." },
-        { "value": "coral", "label": "Warm Coral", "card_type": "color", "color": "#E5654B", "description": "Warm, energiegeladen, nahbar." },
-        { "value": "violet", "label": "Soft Violet", "card_type": "color", "color": "#7C5CE6", "description": "Modern, kreativ, ausgeglichen." },
-        { "value": "sun", "label": "Golden Sun", "card_type": "color", "color": "#E39A2B", "description": "Sonnig, optimistisch, warm." },
-        { "value": "midnight", "label": "Midnight", "card_type": "color", "color": "#0F1513", "description": "Dunkel, edel, App-Look." }
+        {
+          "value": "mint",
+          "label": "Fresh Mint",
+          "card_type": "color",
+          "color": "#2FB08A",
+          "description": "Frisch, klar, vitalisierend."
+        },
+        {
+          "value": "ocean",
+          "label": "Ocean Blue",
+          "card_type": "color",
+          "color": "#3A7BD5",
+          "description": "Ruhig, seriös, kühl."
+        },
+        {
+          "value": "coral",
+          "label": "Warm Coral",
+          "card_type": "color",
+          "color": "#E5654B",
+          "description": "Warm, energiegeladen, nahbar."
+        },
+        {
+          "value": "violet",
+          "label": "Soft Violet",
+          "card_type": "color",
+          "color": "#7C5CE6",
+          "description": "Modern, kreativ, ausgeglichen."
+        },
+        {
+          "value": "sun",
+          "label": "Golden Sun",
+          "card_type": "color",
+          "color": "#E39A2B",
+          "description": "Sonnig, optimistisch, warm."
+        },
+        {
+          "value": "midnight",
+          "label": "Midnight",
+          "card_type": "color",
+          "color": "#0F1513",
+          "description": "Dunkel, edel, App-Look."
+        }
       ]
     },
     {
@@ -117,8 +165,20 @@
       "preview_interactive": true,
       "placeholder_text": "Nach den 20 Aussagen wählt die Person bis zu drei Antriebsmotive (Gesundheit, Familie, Freiheit, finanzielle Unabhängigkeit …). Hilft dir im Gespräch, den richtigen Ton zu treffen. Die Frage ist überspringbar.",
       "card_options": [
-        { "value": "an", "label": "Stellen", "card_type": "color", "color": "#DDF2EA", "description": "Die Motiv-Frage ist Teil des Checks." },
-        { "value": "aus", "label": "Weglassen", "card_type": "color", "color": "#F1F5F9", "description": "Der Check endet direkt nach den 20 Aussagen." }
+        {
+          "value": "an",
+          "label": "Stellen",
+          "card_type": "color",
+          "color": "#DDF2EA",
+          "description": "Die Motiv-Frage ist Teil des Checks."
+        },
+        {
+          "value": "aus",
+          "label": "Weglassen",
+          "card_type": "color",
+          "color": "#F1F5F9",
+          "description": "Der Check endet direkt nach den 20 Aussagen."
+        }
       ]
     },
     {
@@ -128,16 +188,28 @@
       "section": "Check anpassen",
       "order": 16,
       "required": true,
-      "default_value": "an",
-      "preview_value": "an",
+      "default_value": "aus",
+      "preview_value": "aus",
       "display_mode": "section_toggle",
       "toggle_on_value": "an",
       "toggle_off_value": "aus",
       "preview_interactive": true,
-      "placeholder_text": "Letzte Frage vor dem Ergebnis: bis 3 €, 3 bis 5 €, mehr als 5 € am Tag oder „weiß ich noch nicht\". Überspringbar. Schalte sie aus, wenn du das Thema Geld lieber erst im Gespräch ansprichst.",
+      "placeholder_text": "Letzte Frage vor dem Ergebnis: bis 3 €, 3 bis 5 €, mehr als 5 € am Tag oder „weiß ich noch nicht“. Standard: aus. Empfehlung aus der Rechtsprüfung: ausgeschaltet lassen, weil die Frage den Eindruck verstärkt, dass die Auswertung in einen Produktkauf münden soll. Wenn du sie einschaltest, bleibt sie für Besucher überspringbar.",
       "card_options": [
-        { "value": "an", "label": "Stellen", "card_type": "color", "color": "#DDF2EA", "description": "Die Investitions-Frage ist Teil des Checks." },
-        { "value": "aus", "label": "Weglassen", "card_type": "color", "color": "#F1F5F9", "description": "Keine Frage nach Geld im Check." }
+        {
+          "value": "an",
+          "label": "Stellen",
+          "card_type": "color",
+          "color": "#DDF2EA",
+          "description": "Die Frage nach Zeit/Geld pro Tag ist Teil des Checks."
+        },
+        {
+          "value": "aus",
+          "label": "Weglassen",
+          "card_type": "color",
+          "color": "#F1F5F9",
+          "description": "Keine Frage nach Geld im Check."
+        }
       ]
     },
     {
@@ -175,7 +247,7 @@
       "max_length": 1500,
       "default_value": "<p>Kurz zu mir: Ich komme aus [Ort] und beschäftige mich seit [Zeitraum] mit dem Thema Alltag, Energie und gute Gewohnheiten. Der Vitalcheck ist mein Werkzeug für ein ehrliches Gespräch, ohne Druck und ohne Verkaufsshow.</p>",
       "preview_value": "<p>Ich bin Daniel, Vater von zwei Kindern und seit ein paar Jahren mit dem Thema Alltag, Energie und Gewohnheiten unterwegs. Ich weiß, wie es ist, wenn der Tag mehr zieht, als er gibt.</p><p>Der Vitalcheck ist mein Werkzeug für ein ehrliches Gespräch: ohne Druck, ohne Verkaufsshow.</p>",
-      "placeholder_text": "Stell dich vor: Wer bist du, was treibt dich an, warum machst du das? Locker und persönlich. Bitte keine Heil- oder Wirkaussagen zu Produkten, der KI-Check weist dich darauf hin. Max. 1.500 Zeichen. Die englische Fassung erstellen wir automatisch beim Speichern."
+      "placeholder_text": "Kurz und persönlich: Wer bist du, warum machst du den Check? Erscheint klein unter dem Check. Bitte keine Heil- oder Wirkaussagen und keine Produktnamen, der KI-Check weist dich darauf hin. Max. 1.500 Zeichen. Die englische Fassung erstellen wir automatisch beim Speichern."
     }
   ],
   "preview_values": {
@@ -186,6 +258,6 @@
     "whatsapp_nummer": "",
     "farbthema": "mint",
     "frage_motive": "an",
-    "frage_investition": "an"
+    "frage_investition": "aus"
   }
 }

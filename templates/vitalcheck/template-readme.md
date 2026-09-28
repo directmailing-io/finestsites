@@ -6,29 +6,24 @@
 
 ## Kernidee
 
-Ein 3-Minuten-Check mit **20 positiv formulierten Alltags-Aussagen** in fünf Bereichen (Ernährung & Trinken, Energie & Fokus, Schlaf & Erholung, Bewegung & Fitness, Balance & Wohlbefinden). Das Ergebnis („Vitalporträt“: Radar, Vital-Level, Stärke, größter Hebel, drei Alltagstipps) wird **auf dem Gerät berechnet** und sofort angezeigt. Erst danach kann die Person freiwillig ihr Porträt an den Partner schicken (Lead-Formular mit ausdrücklicher Einwilligung).
+Die Seite **ist** der Check. Ein 3-Minuten-Check mit **20 reinen Verhaltens-Aussagen** (beobachtbare Gewohnheiten, keine Befindlichkeiten) in fünf Bereichen (Ernährung & Trinken, Tagesstruktur & Pausen, Schlaf & Abschalten, Bewegung & Fitness, Ausgleich & Zeit für dich). Das Ergebnis (Gewohnheits-Level, Radar, Stärke, größter Hebel, drei Alltagstipps) wird **auf dem Gerät berechnet** und sofort angezeigt. Erst danach kann die Person freiwillig ihr Ergebnis an den Partner schicken (Lead-Formular mit ausdrücklicher Einwilligung).
 
 Konzept, Psychologie, Rechtsgrundlagen und Fragen-Mapping: `docs/konzept-vitalcheck.html`
 
-## Sektionen
+## Aufbau (eine Spalte, max. 640 px)
 
-1. Navigation (Avatar, Name, Links, DE/EN, CTA)
-2. Hero mit animiertem Vitalporträt-Preview
+1. Leiste: Avatar + Name, DE/EN, 2-px-Fortschrittslinie
+2. **Der Check** direkt auf der Seite: Intro (Headline, ein Satz, „Check starten“) → Wünsche → 5 × 4 Aussagen mit kurzen Zwischenstopps → Antrieb (optional) → Investition (optional, Standard aus) → Ergebnis → Lead-Formular → Danke
 3. PM-Disclaimer-Leiste (Pflichttext, gendert nach `geschlecht`)
-4. So funktioniert's (3 Schritte)
-5. Die 5 Bereiche + Hinweis „keine Diagnose“
-6. Über mich (`about_bild`, `about_intro`, `about_me_html` mit KI-Compliance-Check)
-7. FAQ (5 Fragen inkl. „Ist das ein medizinischer Test?“ und „Muss ich etwas kaufen?“)
-8. CTA-Banner
-9. Footer (Impressum/Datenschutz auf `/impressum`, `/datenschutz`, Disclaimer, Made with ♥)
-10. Check-Overlay (Wünsche → 5 × 4 Aussagen mit Zwischenstopps → Antrieb → Investition → Ergebnis → Lead-Formular → Erfolg)
-11. Cookie-Banner (identisch zu cellRESET/PM Business, nur nicht-blockierend)
+4. Über mich, klein (`about_bild`, `about_intro`, `about_me_html` mit KI-Compliance-Check)
+5. Footer (Kontakt, `/impressum`, `/datenschutz`, Selbsteinschätzungs-Hinweis, Made by finestsites)
+6. Cookie-Banner (identisch zu cellRESET/PM Business, nur nicht-blockierend)
 
 ## Design
 
-- Fonts: DM Sans + Instrument Serif (Akzentwörter kursiv), wie PM Business / cellRESET
-- 6 Farbthemen: mint (Default), ocean, coral, violet, sun, midnight (dunkel)
-- Keine Fotos nötig außer Profil- und Über-mich-Bild: Hero-Visual ist das animierte Radar
+- Font: **Geist** (wie die FinestSites-App), keine Serif, keine Verläufe, keine Icon-Karten
+- Schwarz-Weiß mit einer Akzentfarbe: 6 Themes (mint Default, ocean, coral, violet, sun, midnight = dunkel)
+- Keine Fotos nötig außer Profil- und Über-mich-Bild
 
 ## Personalisierbar (Schema)
 
@@ -39,14 +34,14 @@ Konzept, Psychologie, Rechtsgrundlagen und Fragen-Mapping: `docs/konzept-vitalch
 | `whatsapp_nummer` | text | Optionaler WhatsApp-Button nach dem Absenden + Footer-Link |
 | `farbthema` | card_select | 6 Themes |
 | `frage_motive` | section_toggle | Motiv-Frage an/aus |
-| `frage_investition` | section_toggle | Investitions-Frage an/aus |
+| `frage_investition` | section_toggle | Investitions-Frage an/aus (Standard aus, siehe Rechtsprüfung) |
 | `about_bild`, `about_intro`, `about_me_html` | Inhalte | Über-mich-Sektion |
 
 Tags in der DB: `["pm-international", "fitline", "vitalcheck", "leads", "multilingual"]`
 
 ## Formular `kontakt` – Felder, die ankommen (alle Strings)
 
-`name`, `email`, `phone`, `kontakt_weg` (email/telefon/whatsapp), `interesse`, `nachricht`, `vital_level` („Auf Kurs (22/40)“), `staerke`, `hebel`, `wuensche`, `antriebsmotive`, `investition_pro_tag`, `sprache`, `dsgvo_einwilligung` (ja + Zeitstempel), `score_ernaehrung` … `score_balance` („5/8“), `antworten_ernaehrung` … `antworten_balance` (lesbare Einzelantworten)
+`name`, `email`, `phone`, `kontakt_weg` (email/telefon/whatsapp), `interesse`, `nachricht`, `gewohnheits_level` („Auf Kurs (22/40)“), `staerke`, `hebel`, `wuensche`, `antriebsmotive`, `investition_pro_tag`, `sprache`, `dsgvo_einwilligung` (ja + Zeitstempel), `score_ernaehrung`, `score_tag`, `score_schlaf`, `score_bewegung`, `score_ausgleich` („5/8“), `antworten_ernaehrung` … `antworten_ausgleich` (lesbare Einzelantworten)
 
 Vorschlag für `form_schemas`:
 
@@ -54,7 +49,7 @@ Vorschlag für `form_schemas`:
 INSERT INTO form_schemas (template_id, form_name, title, fields, email_notification_enabled)
 VALUES (
   '{templateId}', 'kontakt', 'Vitalcheck-Ergebnis',
-  '[{"key":"name","label":"Name"},{"key":"email","label":"E-Mail"},{"key":"phone","label":"Telefon"},{"key":"kontakt_weg","label":"Gewünschter Kontaktweg"},{"key":"interesse","label":"Interesse"},{"key":"vital_level","label":"Vital-Level"},{"key":"staerke","label":"Stärke"},{"key":"hebel","label":"Größter Hebel"},{"key":"wuensche","label":"Wünsche"},{"key":"antriebsmotive","label":"Antriebsmotive"},{"key":"investition_pro_tag","label":"Investition pro Tag"},{"key":"score_ernaehrung","label":"Ernährung & Trinken"},{"key":"antworten_ernaehrung","label":"Antworten Ernährung"},{"key":"score_energie","label":"Energie & Fokus"},{"key":"antworten_energie","label":"Antworten Energie"},{"key":"score_schlaf","label":"Schlaf & Erholung"},{"key":"antworten_schlaf","label":"Antworten Schlaf"},{"key":"score_bewegung","label":"Bewegung & Fitness"},{"key":"antworten_bewegung","label":"Antworten Bewegung"},{"key":"score_balance","label":"Balance & Wohlbefinden"},{"key":"antworten_balance","label":"Antworten Balance"},{"key":"nachricht","label":"Nachricht"},{"key":"sprache","label":"Sprache"},{"key":"dsgvo_einwilligung","label":"Einwilligung"}]'::jsonb,
+  '[{"key":"name","label":"Name"},{"key":"email","label":"E-Mail"},{"key":"phone","label":"Telefon"},{"key":"kontakt_weg","label":"Gewünschter Kontaktweg"},{"key":"interesse","label":"Interesse"},{"key":"gewohnheits_level","label":"Gewohnheits-Level"},{"key":"staerke","label":"Stärke"},{"key":"hebel","label":"Größter Hebel"},{"key":"wuensche","label":"Wünsche"},{"key":"antriebsmotive","label":"Antriebsmotive"},{"key":"investition_pro_tag","label":"Investition pro Tag"},{"key":"score_ernaehrung","label":"Ernährung & Trinken"},{"key":"antworten_ernaehrung","label":"Antworten Ernährung"},{"key":"score_tag","label":"Tagesstruktur & Pausen"},{"key":"antworten_tag","label":"Antworten Tagesstruktur"},{"key":"score_schlaf","label":"Schlaf & Abschalten"},{"key":"antworten_schlaf","label":"Antworten Schlaf"},{"key":"score_bewegung","label":"Bewegung & Fitness"},{"key":"antworten_bewegung","label":"Antworten Bewegung"},{"key":"score_ausgleich","label":"Ausgleich & Zeit für dich"},{"key":"antworten_ausgleich","label":"Antworten Ausgleich"},{"key":"nachricht","label":"Nachricht"},{"key":"sprache","label":"Sprache"},{"key":"dsgvo_einwilligung","label":"Einwilligung"}]'::jsonb,
   true
 );
 ```
@@ -62,7 +57,8 @@ VALUES (
 ## Rechtliche Leitplanken (im Template fest eingebaut)
 
 - Keine Produktnamen, keine Wirk- oder Heilaussagen, keine Krankheits-/Symptomfragen (HWG § 1, § 3, § 11, § 12; LMIV Art. 7 Abs. 3; HCVO)
-- Alle 20 Aussagen sind Gewohnheiten, positiv formuliert; die Auswertung spricht nur über Gewohnheiten und Routinen, nie über Gesundheitszustand
+- Alle 20 Aussagen sind beobachtbares Verhalten, positiv formuliert (keine Befindlichkeiten wie „Ich wache erholt auf“); die Auswertung spricht nur über Gewohnheiten und Routinen, nie über Gesundheitszustand
+- Kritische Prüfung „Auswertung + Beratungsangebot“ und Verhaltensregeln fürs Gespräch: `docs/konzept-vitalcheck.html`, Abschnitt 5b
 - Tipps sind allgemeine Empfehlungen (DGE, WHO, National Sleep Foundation) ohne Produktbezug
 - Ergebnis wird clientseitig berechnet; Übermittlung nur nach aktiver Entscheidung + ausdrücklicher Einwilligung (DSGVO Art. 9 Abs. 2 lit. a, Art. 7), unangekreuzte Checkbox, Widerrufshinweis, Zeitstempel
 - Werbezweck transparent: PM-Disclaimer unter dem Hero und im Footer, FAQ „Muss ich etwas kaufen? Nein.“

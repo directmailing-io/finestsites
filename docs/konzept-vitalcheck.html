@@ -46,8 +46,8 @@
 <body>
 <main>
   <h1>Konzept: Der Vitalcheck</h1>
-  <p class="lead">Ein Lead-Template für FinestSites-User, das Besucher freiwillig und gern ausfüllen: ein 3-Minuten-Check, der sich wie ein Erlebnis anfühlt, sofort ein greifbares Ergebnis liefert und rechtlich sauber bleibt, weil er Gewohnheiten abfragt, keine Beschwerden.</p>
-  <p class="meta">Stand 28.09.2026 · Dateien: <code>templates/vitalcheck/index.html</code>, <code>placeholders-schema.json</code>, <code>template-readme.md</code> · Domains: <code>docs/vitalcheck-domains.html</code></p>
+  <p class="lead">Ein Lead-Template für FinestSites-User, das Besucher freiwillig und gern ausfüllen: Die Seite <em>ist</em> der Check. Drei Minuten, sofort ein greifbares Ergebnis, rechtlich so defensiv wie möglich, weil er ausschließlich beobachtbares Verhalten abfragt, keine Beschwerden und keine Befindlichkeiten.</p>
+  <p class="meta">Stand 28.09.2026 (Version 2: Check im Zentrum, Geist-Typografie, reine Verhaltens-Aussagen) · Dateien: <code>templates/vitalcheck/index.html</code>, <code>placeholders-schema.json</code>, <code>template-readme.md</code> · Domains: <code>docs/vitalcheck-domains.html</code></p>
 
   <h2>1. Die Kernidee in einem Satz</h2>
   <p><strong>Erst geben, dann fragen.</strong> Der Besucher bekommt in unter drei Minuten ein persönliches „Vitalporträt“ (Radar mit fünf Bereichen, Vital-Level, Stärke, größter Hebel, drei Alltagstipps), ganz ohne Kontaktdaten. Erst danach kommt die Einladung, das Porträt an den Berater zu schicken. Wer das tut, will wirklich ein Gespräch. Das ist ein besserer Lead als jeder Newsletter-Haken.</p>
@@ -60,31 +60,31 @@
     <div class="card"><h3>Ziel zuerst (Commitment)</h3><p>Schritt 1 fragt nach Wünschen („Mehr Energie im Alltag“, „Besser schlafen“). Wer sein Ziel benennt, will das Ergebnis sehen. Die Wünsche tauchen am Ende wieder auf: „Dein Wunsch: Mehr Energie. Dein größter Hebel ist ein guter Startpunkt dafür.“</p></div>
     <div class="card"><h3>Endowed Progress</h3><p>Der Fortschrittsbalken startet nicht bei 0, sondern zeigt nach dem ersten Schritt sofort Bewegung. Angefangene Dinge werden eher beendet (Zeigarnik-Effekt).</p></div>
     <div class="card"><h3>Eine Aussage pro Screen</h3><p>Große Tap-Ziele, drei Antworten (Trifft zu / Teils / Trifft nicht zu), Auto-Weiter nach dem Tippen, Tastenkürzel 1-2-3. Keine Scroll-Formulare. Jede Antwort fühlt sich wie ein kleiner Abschluss an.</p></div>
-    <div class="card"><h3>Positive Formulierung</h3><p>Alle 20 Aussagen beschreiben eine gute Gewohnheit („Ich trinke mindestens 1,5 Liter“). Man sammelt Punkte statt Defizite anzukreuzen. Das fühlt sich besser an als eine Symptomliste und ist rechtlich der entscheidende Unterschied.</p></div>
+    <div class="card"><h3>Positive Verhaltens-Aussagen</h3><p>Alle 20 Aussagen beschreiben eine beobachtbare Gewohnheit („Ich trinke mindestens 1,5 Liter“, „Die letzte Stunde vor dem Schlafen ohne Bildschirm“). Man sammelt Punkte statt Defizite anzukreuzen. Bewusst keine Befindlichkeiten („Ich wache erholt auf“), siehe Abschnitt 5b.</p></div>
     <div class="card"><h3>Variable Belohnung</h3><p>Nach jedem Bereich ein Zwischenstopp: Haken-Animation, „Bereich 2 von 5 geschafft“, ein kurzer „Gut zu wissen“-Fakt mit Quelle (DGE, WHO, National Sleep Foundation). Man lernt nebenbei etwas.</p></div>
-    <div class="card"><h3>Live-Radar</h3><p>Oben rechts wächst während des Checks ein Mini-Radar mit. Das Ergebnis entsteht sichtbar, statt am Ende aus dem Nichts zu kommen.</p></div>
-    <div class="card"><h3>Peak-End-Rule</h3><p>Das Ende ist der Höhepunkt: kurze „Dein Vitalporträt entsteht …“-Animation, dann Radar, Vital-Level mit kursivem Namen („Auf Kurs“), Stärke, Hebel, drei konkrete Tipps. Das Ergebnis ist etwas, das man gern zeigt.</p></div>
+    <div class="card"><h3>Nichts lenkt ab</h3><p>Keine Hero-Sektion, keine Feature-Kacheln, kein FAQ. Eine Spalte, eine Frage, drei Antworten. Der Besucher ist nach dem ersten Klick im Check, nicht auf einer Landingpage.</p></div>
+    <div class="card"><h3>Peak-End-Rule</h3><p>Das Ende ist der Höhepunkt: kurze Radar-Animation, dann Gewohnheits-Level („Auf Kurs“), Stärke, Hebel, fünf Bereiche mit kurzem Feedback, drei konkrete Tipps.</p></div>
     <div class="card"><h3>Reziprozität statt Druck</h3><p>Der Besucher hat bereits etwas Wertvolles bekommen. Die Einladung „Möchtest du dein Ergebnis mit Daniel besprechen?“ kommt mit Foto, ohne Kaufpflicht, ohne Newsletter. Wer nicht will, behält sein Ergebnis trotzdem.</p></div>
-    <div class="card"><h3>Vertrauen durch Transparenz</h3><p>„Antworten bleiben auf deinem Gerät“ steht schon im Hero. FAQ: „Ist das ein medizinischer Test? Nein.“ „Muss ich etwas kaufen? Nein.“ Die PM-Zugehörigkeit steht offen unter dem Hero. Ehrlichkeit senkt die Abbruchquote.</p></div>
+    <div class="card"><h3>Vertrauen durch Transparenz</h3><p>Direkt unter dem Start-Button: „Keine Anmeldung · Nichts wird gesendet, außer du willst es · Selbsteinschätzung, keine Diagnose“. Die PM-Zugehörigkeit steht offen direkt unter dem Check. Ehrlichkeit senkt die Abbruchquote.</p></div>
   </div>
 
   <h2>3. Ablauf des Checks</h2>
   <div class="flow">
-    <span>Wünsche (max. 3)</span><em>→</em>
+    <span>Intro („Check starten“)</span><em>→</em><span>Wünsche (max. 3)</span><em>→</em>
     <span>Ernährung &amp; Trinken · 4</span><em>→</em><span>Zwischenstopp</span><em>→</em>
-    <span>Energie &amp; Fokus · 4</span><em>→</em><span>Zwischenstopp</span><em>→</em>
-    <span>Schlaf &amp; Erholung · 4</span><em>→</em><span>Zwischenstopp</span><em>→</em>
+    <span>Tagesstruktur &amp; Pausen · 4</span><em>→</em><span>Zwischenstopp</span><em>→</em>
+    <span>Schlaf &amp; Abschalten · 4</span><em>→</em><span>Zwischenstopp</span><em>→</em>
     <span>Bewegung &amp; Fitness · 4</span><em>→</em><span>Zwischenstopp</span><em>→</em>
-    <span>Balance &amp; Wohlbefinden · 4</span><em>→</em>
-    <span>Antrieb (optional, abschaltbar)</span><em>→</em><span>Investition/Tag (optional, abschaltbar)</span><em>→</em>
-    <span>Porträt entsteht</span><em>→</em><span><b>Ergebnis</b></span><em>→</em><span>Lead-Formular + Einwilligung</span><em>→</em><span>Danke (+ WhatsApp)</span>
+    <span>Ausgleich &amp; Zeit für dich · 4</span><em>→</em>
+    <span>Antrieb (optional, abschaltbar)</span><em>→</em><span>Zeit/Geld pro Tag (optional, Standard aus)</span><em>→</em>
+    <span><b>Ergebnis</b></span><em>→</em><span>Lead-Formular + Einwilligung</span><em>→</em><span>Danke (+ WhatsApp)</span>
   </div>
-  <p>23 Interaktionen, davon 20 Aussagen. Gemessen im Test: unter drei Minuten. Fortschritt wird in <code>sessionStorage</code> gehalten (Reload verliert nichts), Browser-Zurück schließt den Check ohne Datenverlust, Escape ebenfalls. Sprachwechsel DE/EN funktioniert mitten im Check.</p>
+  <p>22 bis 23 Interaktionen, davon 20 Aussagen. Gemessen im Test: unter drei Minuten. Der Check läuft direkt auf der Seite (kein Overlay), Fortschritt wird in <code>sessionStorage</code> gehalten (Reload verliert nichts). Sprachwechsel DE/EN funktioniert mitten im Check.</p>
 
   <h3>Auswertung (clientseitig, deterministisch)</h3>
   <ul>
     <li>Pro Aussage 0 / 1 / 2 Punkte → 8 Punkte je Bereich, 40 gesamt.</li>
-    <li><b>Vital-Level</b> (5 Stufen): Am Startpunkt (0-8), Im Aufbau (9-16), Auf Kurs (17-24), Gut dabei (25-32), Volle Kraft (33-40). Bewusst kein „schlecht“.</li>
+    <li><b>Gewohnheits-Level</b> (5 Stufen): Am Startpunkt (0-8), Im Aufbau (9-16), Auf Kurs (17-24), Gut dabei (25-32), Volle Kraft (33-40). Bewusst kein „schlecht“.</li>
     <li><b>Stärke</b> = Bereich mit den meisten Punkten, <b>größter Hebel</b> = Bereich mit den wenigsten.</li>
     <li>Pro Bereich ein Feedback-Text in drei Stufen (hoch / mittel / niedrig), ausschließlich in Gewohnheitssprache: „Frisches und Trinken sind fest verankert“, nie „dein Immunsystem ist schwach“.</li>
     <li><b>Drei Tipps</b>: zwei aus dem schwächsten, einer aus dem zweitschwächsten Bereich. Alle allgemein und produktfrei (5 am Tag, 1,5 l, 150 Min./Woche, feste Zubettgehzeit, Morgenlicht, Bildschirmpause).</li>
@@ -101,28 +101,27 @@
       <tr><td>Entgiften und reinigen</td><td><span class="tag drop">gestrichen</span></td><td>Für „Detox/Entgiftung“ existiert keine zugelassene Health-Claim-Formulierung; die Wettbewerbszentrale mahnt Entgiftungswerbung bei Lebensmitteln regelmäßig ab.</td></tr>
       <tr><td>Biologisches Alter reduzieren</td><td><span class="tag re">umformuliert</span></td><td>→ „Fit und aktiv älter werden“ (Lebensziel statt Wirkversprechen).</td></tr>
       <tr><td>Starkes Immunsystem · Stoffwechsel aktivieren/verbessern</td><td><span class="tag drop">gestrichen</span></td><td>Körperfunktions-Ziele, die im Beratungsgespräch fast zwangsläufig zu Produkt-Wirkaussagen führen. Zugelassene Claims (z.&nbsp;B. „Vitamin C trägt zu einer normalen Funktion des Immunsystems bei“) gehören ins persönliche Gespräch mit korrektem Wortlaut, nicht in ein Lead-Formular.</td></tr>
-      <tr><td>Bist du mit deinem Gewicht zufrieden?</td><td><span class="tag re">umformuliert</span></td><td>→ „Ich fühle mich in meinem Körper wohl.“ (Balance-Bereich)</td></tr>
+      <tr><td>Bist du mit deinem Gewicht zufrieden?</td><td><span class="tag drop">gestrichen</span></td><td>Befindlichkeit/Körperbild. Der Wunsch „Mein Wohlfühlgewicht erreichen“ bleibt als frei wählbares Ziel.</td></tr>
       <tr><td colspan="3"><b>Darm &amp; Immunsystem</b></td></tr>
       <tr><td>Weniger als 5 Portionen Gemüse/Salat/Obst</td><td><span class="tag keep">übernommen</span></td><td>„Ich esse an den meisten Tagen fünf Portionen Obst und Gemüse.“</td></tr>
       <tr><td>Weniger als 3 Liter Wasser</td><td><span class="tag re">umformuliert</span></td><td>„… mindestens 1,5 Liter Wasser oder ungesüßten Tee.“ 1,5 l ist die DGE-Empfehlung; 3 l wäre eine unbelegte Zahl.</td></tr>
-      <tr><td>Oft Heißhunger</td><td><span class="tag keep">übernommen</span></td><td>Positiv: „Heißhunger ist für mich selten ein Thema.“</td></tr>
+      <tr><td>Oft Heißhunger</td><td><span class="tag re">umformuliert</span></td><td>Als Verhalten: „Ich habe meistens etwas Gesundes griffbereit (Obst, Gemüse, Nüsse).“ „Heißhunger“ selbst ist eine Befindlichkeit und wird nicht abgefragt.</td></tr>
       <tr><td>Probleme mit Magen/Darm/Verdauung · Anfällig für Infekte/Erkältungen · Allergien/Heuschnupfen</td><td><span class="tag drop">gestrichen</span></td><td>Beschwerden/Krankheiten → HWG § 1 Abs. 1 Nr. 2 (krankheitsbezogene Werbung für „andere Mittel“), LMIV Art. 7 Abs. 3; außerdem Gesundheitsdaten nach DSGVO Art. 9.</td></tr>
       <tr><td>Ich rauche</td><td><span class="tag drop">gestrichen</span></td><td>Sensibel, kein Beratungsnutzen im Lead-Kontext, Nikotinthema grenzt an Sucht (HWG § 12 Anlage nimmt Nikotin zwar aus, das Signal bleibt heikel).</td></tr>
       <tr><td colspan="3"><b>Energie &amp; Leistung</b></td></tr>
-      <tr><td>Energielöcher am Tag · Abends müde, schlapp</td><td><span class="tag keep">übernommen</span></td><td>„Ich komme ohne großes Nachmittagstief durch den Tag.“ · „Abends habe ich noch Energie für Dinge, die mir wichtig sind.“</td></tr>
-      <tr><td>Nervös, unkonzentriert, energielos · Gereizt, unausgeglichen</td><td><span class="tag re">umformuliert</span></td><td>„Ich kann mich über längere Zeit gut konzentrieren.“ · „Ich fühle mich meistens ausgeglichen.“</td></tr>
-      <tr><td>Mehr als 4 Stunden vor dem Computer</td><td><span class="tag re">umformuliert</span></td><td>„Bei Bildschirmarbeit mache ich regelmäßig kurze Pausen.“ (Gewohnheit statt Belastungsangabe)</td></tr>
+      <tr><td>Energielöcher am Tag · Abends müde, schlapp · Nervös, unkonzentriert, energielos · Gereizt, unausgeglichen</td><td><span class="tag re">umformuliert</span></td><td>Befindlichkeiten werden nicht abgefragt. Stattdessen der Bereich <b>Tagesstruktur &amp; Pausen</b> als Verhalten: „Bei Bildschirmarbeit stehe ich mindestens einmal pro Stunde kurz auf.“ · „Ich gehe mittags mindestens einmal an die frische Luft.“ · „Ich arbeite an einer Sache am Stück.“ · „Ich beende meinen Arbeitstag zu einer festen Zeit.“</td></tr>
+      <tr><td>Mehr als 4 Stunden vor dem Computer</td><td><span class="tag re">umformuliert</span></td><td>→ Bildschirmpausen-Aussage (Gewohnheit statt Belastungsangabe).</td></tr>
       <tr><td>Kopfschmerzen/Migräne · Hörgeräusche/Tinnitus · Körperlich stark beansprucht</td><td><span class="tag drop">gestrichen</span></td><td>Migräne und Tinnitus sind Krankheiten (HWG, Gesundheitsdaten). Berufliche Beanspruchung liefert keinen Mehrwert für die Auswertung.</td></tr>
       <tr><td colspan="3"><b>Regeneration &amp; Säure-Basen</b></td></tr>
-      <tr><td>Unausgeschlafen/unerholt · Ein-/Durchschlafprobleme · Oft Stress</td><td><span class="tag re">umformuliert</span></td><td>„Ich schlafe meistens sieben Stunden oder mehr.“ · „Ich wache in der Regel erholt auf.“ · „Ich habe eine Abendroutine, mit der ich gut abschalte.“ · „Stressige Phasen kann ich gut ausgleichen.“ Schlafstörung als Diagnose wird nicht abgefragt.</td></tr>
-      <tr><td>Unzufrieden mit Haut, Haare, Nägel · Hautbild verbessern</td><td><span class="tag re">umformuliert</span></td><td>Als Wunsch: „Strahlen: Haut, Haare, Nägel“. Keine Frage nach Hautzustand.</td></tr>
+      <tr><td>Unausgeschlafen/unerholt · Ein-/Durchschlafprobleme · Oft Stress</td><td><span class="tag re">umformuliert</span></td><td>Nur Verhalten: „Ich plane meine Nächte so, dass ich meistens sieben Stunden oder mehr schlafe.“ · „Ich gehe unter der Woche zu ähnlichen Zeiten ins Bett.“ · „Die letzte Stunde vor dem Schlafen ohne Handy, Laptop, Fernseher.“ · „Nach stressigen Tagen habe ich einen festen Weg, um abzuschalten.“ Weder Schlafqualität noch Stressempfinden werden abgefragt.</td></tr>
+      <tr><td>Unzufrieden mit Haut, Haare, Nägel · Hautbild verbessern</td><td><span class="tag drop">gestrichen</span></td><td>Körperzustand. Auch als Wunsch entfernt, weil „Haut, Haare, Nägel“ die klassische Claim-Kategorie für Nahrungsergänzung ist (Biotin/Zink-Claims) und damit die gedankliche Brücke zum Produkt baut.</td></tr>
       <tr><td>Sodbrennen/Aufstoßen · Verspannungen · Muskelkrämpfe · Wassereinlagerungen · Schwaches Bindegewebe/Cellulite</td><td><span class="tag drop">gestrichen</span></td><td>Beschwerden. „Säure-Basen“ als Konzept hat zudem keine zugelassenen Claims.</td></tr>
       <tr><td colspan="3"><b>Sport &amp; Regeneration · Gelenke · Herz &amp; Kreislauf · für Frauen · Kinder &amp; Enkel</b></td></tr>
       <tr><td>Mehr Leistung im Sport · Schneller regenerieren</td><td><span class="tag re">umformuliert</span></td><td>Bewegungs-Bereich: „30 Minuten Bewegung täglich“, „2× Sport pro Woche“, „Selten länger als eine Stunde sitzen“, „Dehnen/Mobilität gehören zu meiner Woche“.</td></tr>
       <tr><td>Muskelkater/Muskelkrämpfe · Gelenkbeschwerden · Rheuma, Gicht, Arthrose · Herz/Kreislauf · Schrittmacher, Stent · Blutdruck hoch/niedrig · Wechseljahrsbeschwerden · Osteoporose vorbeugen · Periodenbeschwerden</td><td><span class="tag drop">gestrichen</span></td><td>Krankheiten und Diagnosen. Verbindung mit Nahrungsergänzung = krankheitsbezogene Werbung (LMIV Art. 7 Abs. 3, § 12 LFGB a.F., HWG § 3, UWG Anhang Nr. 18). Gehört ausschließlich zum Arzt.</td></tr>
       <tr><td>Kinder/Enkel: Konzentrationsschwierigkeiten, Allergien, ADS/ADHS</td><td><span class="tag drop">gestrichen</span></td><td>Gesundheitsdaten Dritter und Minderjähriger; ADHS ist eine Diagnose; HWG § 11 Abs. 1 Nr. 12 (Kinder unter 14). Nicht verhandelbar.</td></tr>
       <tr><td colspan="3"><b>Abschluss</b></td></tr>
-      <tr><td>Wie viel ist dir dein Wohlbefinden pro Tag wert? 3 / 4 / 5 € / mehr</td><td><span class="tag re">umformuliert</span></td><td>Optional, abschaltbar (<code>frage_investition</code>): „Wie viel würdest du täglich in dein Wohlbefinden investieren?“ Bis 3 € / 3-5 € / mehr als 5 € / weiß ich noch nicht. Überspringbar, damit die Frage nie wie eine Kaufbedingung wirkt.</td></tr>
+      <tr><td>Wie viel ist dir dein Wohlbefinden pro Tag wert? 3 / 4 / 5 € / mehr</td><td><span class="tag re">umformuliert</span></td><td>Optional (<code>frage_investition</code>), <b>Standard: aus</b>. „Wie viel Zeit oder Geld würdest du täglich in dein Wohlbefinden investieren?“ Überspringbar. Empfehlung: aus lassen, siehe 5b. Die Frage verstärkt den Eindruck, dass die Auswertung in einen Kauf münden soll.</td></tr>
       <tr><td>Die 3 wichtigsten Antriebsmotive</td><td><span class="tag keep">übernommen</span></td><td>Optional, abschaltbar (<code>frage_motive</code>): 10 Motive, max. 3. Liefert dem Berater den Ton fürs Gespräch (Familie vs. finanzielle Unabhängigkeit).</td></tr>
       <tr><td>„Würdest du das Konzept weiterempfehlen und die Möglichkeit für dich nutzen?“</td><td><span class="tag re">umformuliert</span></td><td>Im Lead-Formular als Interessen-Chips: „Tipps für meinen Alltag“ / „Mein Ergebnis besprechen“ / „Auch beruflich interessant“. Gleiche Information (Business-Interesse), ohne Verkaufsdruck.</td></tr>
     </tbody>
@@ -147,6 +146,40 @@
     <p><strong>Was der Berater im Gespräch beachten muss</strong> (nicht vom Template lösbar): Produktaussagen nur im zugelassenen HCVO-Wortlaut, keine Verknüpfung „dein Schlaf-Score → Produkt X hilft bei Schlafstörungen“, keine Erfahrungsberichte mit Krankheitsbezug. Empfehlung: Kurzer Hinweis dazu in den Template-Marketingtext oder ins Onboarding.</p>
   </div>
 
+  <h2>5b. Kritische Prüfung: Suggeriert „Auswertung + Beratungsangebot“ eine Wirkaussage?</h2>
+  <p><strong>Die Frage ist berechtigt, und die ehrliche Antwort lautet: Das Restrisiko liegt nicht im Formular, sondern im Gesamteindruck und im Gespräch danach.</strong> Gerichte prüfen bei gesundheitsbezogenen Angaben nicht den einzelnen Satz, sondern den Gesamteindruck für den Durchschnittsverbraucher. Eine gesundheitsbezogene Angabe im Sinne der HCVO liegt schon vor, wenn ein Zusammenhang zwischen einem Lebensmittel und der Gesundheit auch nur <em>mittelbar zum Ausdruck gebracht</em> wird (Art. 2 Abs. 2 Nr. 1 und 5 HCVO). Der BGH (Botanicals II, 05.06.2025) und das OLG Köln („MenoGlück“, 16.01.2026) haben das zuletzt streng angewandt, sogar auf Produkt- und Fantasienamen.</p>
+  <h3>Wo der Gesamteindruck kippen könnte</h3>
+  <ul>
+    <li><b>Kette „Auswertung → Beratung durch FitLine-Partner“.</b> Ein Verbraucher könnte verstehen: „Der Check zeigt mein Defizit, der FitLine-Partner hat die Lösung.“ Das wäre eine mittelbare Angabe, dass FitLine-Produkte Energie/Schlaf/Vitalität verbessern.</li>
+    <li><b>Befindlichkeits-Fragen.</b> „Ich wache erholt auf“, „Ich habe kein Nachmittagstief“, „Ich fühle mich wohl in meinem Körper“ sind Aussagen über den Zustand einer Person. In Verbindung mit einem Beratungsangebot rücken sie in Richtung „krankhafte Beschwerden“ (HWG § 1 Abs. 1 Nr. 2) und sind nach der weiten Auslegung des EuGH (C-21/23, Lindenapotheke, 04.10.2024) eindeutig Gesundheitsdaten.</li>
+    <li><b>Die Geld-Frage.</b> „Wie viel ist dir dein Wohlbefinden pro Tag wert?“ direkt vor der Auswertung macht den Verkaufszweck der Auswertung sichtbar und stützt die Lesart „Check = Verkaufstrichter für ein Produkt, das das Ergebnis verbessert“.</li>
+    <li><b>Wunsch-Kategorien, die Claim-Kategorien sind.</b> „Haut, Haare, Nägel“, „Immunsystem“, „Stoffwechsel“ sind exakt die Bereiche, für die es zugelassene Nährstoff-Claims gibt. Wer sie als Wunsch anbietet, baut die Brücke zum Produkt schon im Kopf des Besuchers.</li>
+    <li><b>Das Gespräch.</b> Sagt der Partner im Telefonat „bei deinem Schlaf-Wert hilft Restorate“, ist das eine krankheits- bzw. beschwerdenbezogene Produktaussage außerhalb des zugelassenen Claim-Wortlauts. Dagegen schützt kein Template.</li>
+  </ul>
+  <h3>Was in Version 2 deshalb geändert wurde</h3>
+  <ul>
+    <li><b>Nur noch beobachtbares Verhalten.</b> Alle 20 Aussagen beschreiben Handlungen (trinken, gehen, Bildschirm aus, Bettzeit, Treppe), keine Zustände. Die Auswertung bewertet Routinen, nie den Körper. Ein „Gewohnheits-Level“ ist keine Gesundheitsbewertung.</li>
+    <li><b>Kein Zustand, keine Diagnose-Sprache.</b> Keine Begriffe wie Defizit, Mangel, Risiko, Symptom, Analyse, Messung, Test. Das Wort „Vital“ steht nur im Titel und bezieht sich auf den Alltag der Person, nicht auf ein Lebensmittel.</li>
+    <li><b>Wünsche entschärft.</b> „Haut, Haare, Nägel“ entfernt, „Immunsystem“ und „Stoffwechsel“ waren nie drin. Übrig sind Lebensziele (Energie, Schlaf, Fitness, Wohlfühlgewicht, Gelassenheit, Ernährung im Griff, Routinen, aktiv älter werden).</li>
+    <li><b>Geld-Frage standardmäßig aus</b> und, wenn eingeschaltet, überspringbar.</li>
+    <li><b>Beratungsangebot ohne Lösungsversprechen.</b> Wortlaut: „Wir sprechen über deine Gewohnheiten und darüber, was in deinem Alltag realistisch ist. Unverbindlich, kein Newsletter, keine Kaufpflicht.“ Kein „Lösung“, kein „passende Produkte“, kein „verbessern“.</li>
+    <li><b>FitLine nur in der Pflichtkennzeichnung.</b> Die vom User vorgegebene Betreiber-Angabe ist eine Transparenzpflicht (UWG § 5a), keine Werbeaussage über ein Lebensmittel. Nirgendwo sonst auf der Seite wird ein Produkt oder eine Marke genannt.</li>
+    <li><b>Ergebnis-Hinweis</b> direkt unter dem Beratungsangebot: „keine medizinische Bewertung, enthält keine Produktempfehlung“.</li>
+  </ul>
+  <h3>Einschätzung</h3>
+  <p>Mit diesen Änderungen macht das Template selbst keine gesundheitsbezogene Angabe über ein Lebensmittel und keine krankheitsbezogene Aussage. Es bewirbt eine Dienstleistung (Gespräch über Gewohnheiten) eines offen gekennzeichneten Vertriebspartners. Das ist zulässig. <strong>Null Risiko gibt es nicht</strong>: Ein Abmahnverein könnte argumentieren, der Gesamtkontext „Vitalcheck eines FitLine-Partners“ impliziere einen Produktnutzen. Diese Argumentation ist mit dem jetzigen Aufbau schwach, weil kein Produkt genannt, kein Zustand bewertet und keine Verbesserung versprochen wird. Das größere und realistischere Risiko sitzt im Beratungsgespräch.</p>
+  <div class="callout warn">
+    <p><strong>Verbindliche Regeln für das Gespräch</strong> (gehören in die Marketing-Seite des Templates oder ins Onboarding):</p>
+    <ul>
+      <li>Nie „bei deinem Wert X hilft Produkt Y“. Produktaussagen nur im zugelassenen Claim-Wortlaut („Magnesium trägt zur Verringerung von Müdigkeit und Ermüdung bei“), niemals bezogen auf Beschwerden der Person.</li>
+      <li>Keine Empfehlung, die gezielt auf eine geschilderte Beschwerde abzielt (Grenze zur Heilkunde, HeilprG).</li>
+      <li>Keine Erfahrungsberichte mit Krankheitsbezug, keine „Vorher/Nachher“-Geschichten.</li>
+      <li>Antworten nur für das Gespräch nutzen, nicht für Newsletter oder Weitergabe (Zweckbindung der Einwilligung).</li>
+    </ul>
+  </div>
+  <h3>Datenschutz nach EuGH C-21/23</h3>
+  <p>Der EuGH lässt einen „konzeptionell möglichen“ Gesundheitsbezug genügen. Selbst Verhaltensdaten (Schlafdauer, Bewegung) können danach Gesundheitsdaten sein. Deshalb bleibt die ausdrückliche Einwilligung (Art. 9 Abs. 2 lit. a) Pflicht, mit Nennung der Kategorien, Widerrufsweg und Zeitstempel. Offener Punkt für den Rollout: Die vom Worker generierte Datenschutzerklärung (<code>renderDatenschutz</code> in <code>cloudflare-worker/src/index.ts</code>) muss den Check als Verarbeitung nennen (Zweck, Rechtsgrundlage Art. 6 Abs. 1 lit. a und Art. 9 Abs. 2 lit. a, Speicherung bei FinestSites als Auftragsverarbeiter, Löschfrist). Weitere Datensparsamkeit wäre möglich, indem nur Bereichs-Scores statt Einzelantworten übertragen werden; das kostet Beratungsqualität und ist eine Entscheidung des Users.</p>
+
   <h2>6. Was der FinestSites-User erhält (E-Mail / Dashboard)</h2>
   <p>Jede Übermittlung enthält ausschließlich Strings (Vorgabe der Worker-API):</p>
   <table>
@@ -154,10 +187,10 @@
     <tbody>
       <tr><td><code>name</code>, <code>email</code>, <code>phone</code>, <code>kontakt_weg</code></td><td>Test Person · test@example.com · +49 170 … · whatsapp</td></tr>
       <tr><td><code>interesse</code></td><td>Mein Ergebnis besprechen, Auch beruflich interessant</td></tr>
-      <tr><td><code>vital_level</code>, <code>staerke</code>, <code>hebel</code></td><td>Auf Kurs (22/40) · Schlaf &amp; Erholung · Bewegung &amp; Fitness</td></tr>
+      <tr><td><code>gewohnheits_level</code>, <code>staerke</code>, <code>hebel</code></td><td>Auf Kurs (22/40) · Schlaf &amp; Abschalten · Bewegung &amp; Fitness</td></tr>
       <tr><td><code>wuensche</code>, <code>antriebsmotive</code>, <code>investition_pro_tag</code></td><td>Mehr Energie im Alltag, Fitter … · Gesundheit, Freiheit &amp; Zeit · 3 bis 5 € am Tag</td></tr>
-      <tr><td><code>score_ernaehrung</code> … <code>score_balance</code></td><td>5/8 · 2/8 · 7/8 · 1/8 · 7/8</td></tr>
-      <tr><td><code>antworten_ernaehrung</code> … <code>antworten_balance</code></td><td>5 Portionen Obst &amp; Gemüse: ja · Mind. 1,5 Liter trinken: teils · Regelmäßige Mahlzeiten: nein · Heißhunger selten: ja</td></tr>
+      <tr><td><code>score_ernaehrung</code>, <code>score_tag</code>, <code>score_schlaf</code>, <code>score_bewegung</code>, <code>score_ausgleich</code></td><td>5/8 · 2/8 · 7/8 · 1/8 · 7/8</td></tr>
+      <tr><td><code>antworten_ernaehrung</code> … <code>antworten_ausgleich</code></td><td>5 Portionen Obst &amp; Gemüse: ja · Mind. 1,5 Liter trinken: teils · Regelmäßige Mahlzeiten: nein · Gesunde Snacks griffbereit: ja</td></tr>
       <tr><td><code>nachricht</code>, <code>sprache</code>, <code>dsgvo_einwilligung</code></td><td>… · DE · ja, 2026-09-28 10:44 UTC</td></tr>
     </tbody>
   </table>
@@ -165,12 +198,13 @@
 
   <h2>7. Design und Technik</h2>
   <ul>
-    <li><b>Familienlook</b> wie cellRESET und PM Business: DM Sans, kursive Serif-Akzente, weiche Karten, Sprachschalter oben rechts, gleicher Cookie-Banner (hier nicht-blockierend), gleicher Footer.</li>
-    <li><b>6 Farbthemen</b> (mint, ocean, coral, violet, sun, midnight). Das Radar, Buttons und Chips folgen dem Thema; die Bewertungsfarben (grün/amber/koralle) bleiben themenunabhängig lesbar.</li>
-    <li><b>Kein Foto-Bedarf</b> außer Profil- und Über-mich-Bild: Das Hero-Visual ist ein animiertes Vitalporträt, das alle vier Sekunden ein neues Beispielprofil zeichnet.</li>
-    <li><b>Ein einziges HTML</b>, inline CSS/JS, keine Frameworks, nur Google Fonts extern. Placeholder-Engine-kompatibel (getestet mit <code>src/lib/utils/template-engine.ts</code>).</li>
+    <li><b>Die Seite ist der Check.</b> Eine Spalte (max. 640 px), Leiste mit Name und DE/EN, darunter sofort Intro und Check. Keine Hero-Grafik, keine Feature-Kacheln, kein FAQ, keine Verläufe, keine Serif. Über mich, Pflichtkennzeichnung und Footer stehen klein unter dem Check.</li>
+    <li><b>Typografie Geist</b>, dieselbe Schrift wie die FinestSites-App. Schwarz-Weiß, eine Akzentfarbe für Fortschritt, Auswahl und Radar.</li>
+    <li><b>6 Akzentfarben</b> (mint, ocean, coral, violet, sun, midnight = dunkel). Die Bewertungsfarben (grün/amber/koralle) bleiben themenunabhängig lesbar.</li>
+    <li><b>Kein Foto-Bedarf</b> außer Profil- und Über-mich-Bild.</li>
+    <li><b>Ein einziges HTML</b> (rund 1.000 Zeilen), inline CSS/JS, keine Frameworks, nur Google Fonts extern. Placeholder-Engine-kompatibel (getestet mit <code>src/lib/utils/template-engine.ts</code>).</li>
     <li><b>Formular</b>: <code>/.finestsites/forms/kontakt</code> mit <code>_recipient</code>, <code>_honeypot</code>, AJAX-Submit mit <code>Accept: application/json</code>, Fehlerzustände, Doppel-Submit-Schutz.</li>
-    <li><b>Getestet</b> (Playwright, Chrome): kompletter Durchlauf DE Desktop 1280 px und EN Mobile 390 px, max. 3 Wünsche erzwungen, Consent-Pflicht greift, Payload nur Strings, keine Konsolenfehler.</li>
+    <li><b>Getestet</b> (Playwright, Chrome): kompletter Durchlauf DE Desktop 1280 px und EN Mobile 390 px, max. 3 Wünsche erzwungen, Consent-Pflicht greift, Payload nur Strings (26 Felder), keine Konsolenfehler.</li>
   </ul>
 
   <h2>8. Domain</h2>
@@ -183,13 +217,18 @@
     <li><code>form_schemas</code>-Row anlegen (SQL im Readme).</li>
     <li>R2-Upload <code>index.html</code> + <code>assets/fs-logo.svg</code> mit <code>--remote</code>, KV-Purge.</li>
     <li>Test-Site anlegen, echten Submit an info@daniel-kurzeja.de prüfen, Editor/Autosave/Publish durchklicken, KI-Compliance-Check am Über-mich-Text testen.</li>
-    <li>Preview-Bild <code>public/previews/vitalcheck.jpg</code> ist bereits erzeugt; Marketing-Seite <code>/vorlagen/{id}</code> mit Texten befüllen.</li>
+    <li>Preview-Bild <code>public/previews/vitalcheck.jpg</code> ist bereits erzeugt; Marketing-Seite <code>/vorlagen/{id}</code> mit Texten befüllen, inklusive der Gesprächsregeln aus 5b.</li>
+    <li>Datenschutzerklärung des Workers um den Check erweitern (siehe 5b).</li>
   </ol>
 
   <h2>Quellen</h2>
   <ul class="src">
     <li>HWG § 1, § 3, § 11, § 12 und Anlage: <a href="https://www.gesetze-im-internet.de/heilmwerbg/">gesetze-im-internet.de/heilmwerbg</a></li>
     <li>UWG Anhang Nr. 18 (Heilungsversprechen): <a href="https://www.gesetze-im-internet.de/uwg_2004/anhang.html">gesetze-im-internet.de/uwg_2004/anhang.html</a></li>
+    <li>EuGH C-21/23 „Lindenapotheke“ (04.10.2024), weiter Begriff der Gesundheitsdaten: <a href="https://curia.europa.eu/site/upload/docs/application/pdf/2024-10/cp240159de.pdf">curia.europa.eu (Pressemitteilung)</a>, <a href="https://www.thomashelbing.com/en/wissen/dsgvo-hub/rechtsprechung/1.4.31-eugh-lindenapotheke">thomashelbing.com</a></li>
+    <li>BGH I ZR 109/22 „Botanicals II“ (05.06.2025), strenge Anforderungen an gesundheitsbezogene Werbung: <a href="https://dejure.org/dienste/vernetzung/rechtsprechung?Gericht=BGH&Datum=05.06.2025&Aktenzeichen=I+ZR+109/22">dejure.org</a></li>
+    <li>Heilpraktikergesetz / Grenze der Beratung: <a href="https://www.isolde-richter.de/kostenlose-angebote/aktuelles-und-rechtliches/was-darf-ein-berater-und-coach">isolde-richter.de</a>, <a href="https://heilpraktikerverband.de/aktuelles/aktuelle-meldungen/811-wissenswertes-zum-verkauf-von-nahrungsergaenzungsmitteln">heilpraktikerverband.de</a></li>
+    <li>Wettbewerbszentrale gegen Stoffwechselkur-Werbung (Health Claims): <a href="https://foehlisch.com/abmahnung-wettbewerbszentrale-e-v-wegen-irrefuehrender-werbung-health-claims-fehlender-informationen-hinsichtlich-kundenbewertungen-2/">foehlisch.com</a></li>
     <li>HCVO 1924/2006 (Volltext): <a href="https://eur-lex.europa.eu/LexUriServ/LexUriServ.do?uri=OJ:L:2007:012:0003:0018:DE:PDF">eur-lex.europa.eu</a> · Übersicht BVL: <a href="https://www.bvl.bund.de/DE/Arbeitsbereiche/01_Lebensmittel/04_AntragstellerUnternehmen/01_HealthClaims/lm_healthClaims_node.html">bvl.bund.de</a> · Urteile inkl. OLG Köln „MenoGlück“: <a href="https://www.drmlegal.de/health-claims-urteile/">drmlegal.de</a></li>
     <li>LMIV Art. 7 Abs. 3 / krankheitsbezogene Werbung: <a href="https://www.heilmittelwerberecht.net/lmiv">heilmittelwerberecht.net/lmiv</a>, <a href="https://www.omsels.info/die-verbote-oder-was-darf-ich-nicht/3-lebensmittelrecht/alfgb/12-verbot-der-krankheitsbezogenen-werbung">omsels.info</a></li>
     <li>Nahrungsergänzung und HWG: <a href="https://www.heilmittelwerberecht.net/nahrungsergaenzungsmittel">heilmittelwerberecht.net</a>, <a href="https://www.haendlerbund.de/de/ratgeber/recht/3881-heilmittelwerbegesetz">haendlerbund.de</a>, <a href="https://www.verbraucherzentrale.de/wissen/projekt-klartext-nem/informationen/rechtliches/werbung-mit-gesundheit-meist-zu-viel-versprochen-13245">verbraucherzentrale.de</a></li>

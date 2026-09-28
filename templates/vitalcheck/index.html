@@ -4,11 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Vitalcheck · {{vorname}} {{nachname}}</title>
-<meta name="description" content="Der 3-Minuten-Vitalcheck: 20 kurze Fragen zu deinem Alltag, sofort dein persönliches Vitalporträt. Kostenlos, ohne Anmeldung.">
-<meta name="theme-color" content="#F2F6F3">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%232FB08A'/%3E%3Cpolygon points='32,12 50,25 43,48 21,48 14,25' fill='none' stroke='white' stroke-width='4' stroke-linejoin='round'/%3E%3Ccircle cx='32' cy='32' r='5' fill='white'/%3E%3C/svg%3E">
+<meta name="description" content="Der 3-Minuten-Vitalcheck: 20 Aussagen zu deinen Alltagsgewohnheiten, Ergebnis sofort. Kostenlos, ohne Anmeldung.">
+<meta name="theme-color" content="#FFFFFF">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23111'/%3E%3Cpolygon points='32,13 49,26 43,47 21,47 15,26' fill='none' stroke='white' stroke-width='4' stroke-linejoin='round'/%3E%3C/svg%3E">
 
-<!-- Sprache früh setzen — verhindert Flackern beim ersten Layout-Paint. -->
 <script>
 (function(){
   try {
@@ -16,566 +15,233 @@
     var lang = stored || (navigator.language && navigator.language.toLowerCase().startsWith('en') ? 'en' : 'de');
     document.documentElement.setAttribute('data-lang', lang);
     document.documentElement.setAttribute('lang', lang);
-  } catch(e) {
-    document.documentElement.setAttribute('data-lang', 'de');
-  }
+  } catch(e) { document.documentElement.setAttribute('data-lang', 'de'); }
 })();
 </script>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
 :root {
-  --font: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-  --serif: 'Instrument Serif', Georgia, serif;
-  --pad-x: clamp(20px, 5vw, 64px);
-  --max: 1160px;
-  --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
-  --r-sm: 12px; --r: 20px; --r-lg: 28px;
-  --on-accent: #FFFFFF;
-  --tier-high: #2FB08A; --tier-mid: #E2A33A; --tier-low: #E0705A;
+  --font: 'Geist', -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, sans-serif;
+  --max: 640px;
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --r: 12px;
+  --tier-high: #1F9D6A; --tier-mid: #D18F1E; --tier-low: #C9573C;
 }
 
-/* ============ FARBTHEMEN — 6 Varianten ============ */
-html[data-theme="mint"], html:not([data-theme]), html[data-theme=""] {
-  --bg: #F2F6F3; --bg-2: #E4ECE6; --paper: #FFFFFF;
-  --ink: #14261F; --ink-2: #3E574D; --ink-3: #86998F;
-  --line: #D8E2DB; --line-2: #BFCEC5;
-  --accent: #2FB08A; --accent-dark: #22906F; --accent-soft: #DDF2EA; --accent-deep: #17483A;
-  --glow: rgba(47,176,138,0.22);
-}
-html[data-theme="ocean"] {
-  --bg: #F0F4F8; --bg-2: #E1E8F0; --paper: #FFFFFF;
-  --ink: #14202E; --ink-2: #405266; --ink-3: #8595A8;
-  --line: #D7E0EA; --line-2: #BCC9D8;
-  --accent: #3A7BD5; --accent-dark: #2C63B0; --accent-soft: #DFE9F8; --accent-deep: #163561;
-  --glow: rgba(58,123,213,0.22);
-}
-html[data-theme="coral"] {
-  --bg: #FAF4EF; --bg-2: #F1E6DD; --paper: #FFFFFF;
-  --ink: #2A1E18; --ink-2: #5E4A40; --ink-3: #A08E84;
-  --line: #ECDDD2; --line-2: #D9C6B8;
-  --accent: #E5654B; --accent-dark: #C94E36; --accent-soft: #FBE4DD; --accent-deep: #5E2417;
-  --glow: rgba(229,101,75,0.22);
-}
-html[data-theme="violet"] {
-  --bg: #F5F3FA; --bg-2: #EAE6F4; --paper: #FFFFFF;
-  --ink: #1C1830; --ink-2: #4A4466; --ink-3: #9089A8;
-  --line: #E0DBEC; --line-2: #C9C2DC;
-  --accent: #7C5CE6; --accent-dark: #6446C4; --accent-soft: #EAE3FB; --accent-deep: #2F2261;
-  --glow: rgba(124,92,230,0.22);
-}
-html[data-theme="sun"] {
-  --bg: #FBF6EA; --bg-2: #F3EAD3; --paper: #FFFFFF;
-  --ink: #2A2213; --ink-2: #5E5033; --ink-3: #A09372;
-  --line: #EEE3C9; --line-2: #DCCFA8;
-  --accent: #E39A2B; --accent-dark: #C2811C; --accent-soft: #FBEDD2; --accent-deep: #5E3E0D;
-  --glow: rgba(227,154,43,0.22);
-}
-html[data-theme="midnight"] {
-  --bg: #0F1513; --bg-2: #161E1B; --paper: #1B2521;
-  --ink: #F2F6F3; --ink-2: #B7C6BE; --ink-3: #7A8C84;
-  --line: #27332E; --line-2: #35443E;
-  --accent: #3FD0A5; --accent-dark: #2FB08A; --accent-soft: #1D3A32; --accent-deep: #9BE8D0;
-  --glow: rgba(63,208,165,0.25);
-}
+/* ============ FARBTHEMEN (Akzentfarbe) ============ */
+html[data-theme="mint"], html:not([data-theme]), html[data-theme=""] { --accent: #178A64; --accent-ink: #0F5C43; --accent-soft: #E6F4EE; }
+html[data-theme="ocean"]  { --accent: #2563C7; --accent-ink: #1A458C; --accent-soft: #E7EEFB; }
+html[data-theme="coral"]  { --accent: #D2513A; --accent-ink: #93371F; --accent-soft: #FBE9E4; }
+html[data-theme="violet"] { --accent: #6A48D8; --accent-ink: #4A2FA3; --accent-soft: #EEE9FB; }
+html[data-theme="sun"]    { --accent: #C27A12; --accent-ink: #85520A; --accent-soft: #FBEFD8; }
+html { --bg: #FFFFFF; --bg-2: #F6F6F4; --paper: #FFFFFF; --ink: #111111; --ink-2: #4E4E4A; --ink-3: #8A8A85; --line: #E6E6E2; --line-2: #D4D4CF; --on-accent: #FFFFFF; }
+html[data-theme="midnight"] { --bg: #0E0E0F; --bg-2: #171718; --paper: #151516; --ink: #F4F4F2; --ink-2: #B9B9B4; --ink-3: #7C7C78; --line: #262628; --line-2: #343437; --accent: #4CC79B; --accent-ink: #9BE3C6; --accent-soft: #14312A; --on-accent: #0E0E0F; }
 
-/* ============ SPRACHSCHALTER — Dual-DOM DE/EN ============ */
+/* ============ BASIS ============ */
 html[data-lang="en"] .l-de, html[data-lang="de"] .l-en { display: none !important; }
-
-.lang-switch {
-  display: inline-flex; align-items: center; gap: 2px;
-  padding: 3px; border-radius: 9999px;
-  background: color-mix(in srgb, var(--paper) 70%, transparent); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-  border: 1px solid var(--line);
-  flex-shrink: 0;
-}
-.lang-opt {
-  display: inline-flex; align-items: center; gap: 6px;
-  padding: 5px 10px; border: none; border-radius: 9999px; background: transparent;
-  color: var(--ink-3); font-family: inherit; font-size: 12px; font-weight: 700; letter-spacing: 0.04em;
-  cursor: pointer; transition: background 0.2s, color 0.2s;
-}
-.lang-opt svg { width: 16px; height: 16px; border-radius: 50%; display: block; flex-shrink: 0; }
-.lang-opt:hover { color: var(--ink); }
-html[data-lang="de"] .lang-opt[data-lang="de"],
-html[data-lang="en"] .lang-opt[data-lang="en"] { background: var(--paper); color: var(--ink); box-shadow: 0 1px 2px rgba(0,0,0,0.08); }
-html[data-theme="midnight"] .lang-opt { color: var(--ink-3); }
-html[data-theme="midnight"][data-lang="de"] .lang-opt[data-lang="de"],
-html[data-theme="midnight"][data-lang="en"] .lang-opt[data-lang="en"] { background: var(--line-2); }
-
-/* ============ BASE ============ */
 * { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
-body {
-  font-family: var(--font); color: var(--ink); background: var(--bg);
-  line-height: 1.55; font-size: 16px; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
-  overflow-x: hidden;
-}
-body.vc-open { overflow: hidden; }
-body.vc-open #fs-ck-reopener { display: none !important; }
+html { -webkit-text-size-adjust: 100%; }
+body { font-family: var(--font); color: var(--ink); background: var(--bg); line-height: 1.5; font-size: 16px; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; min-height: 100vh; display: flex; flex-direction: column; }
 a { color: inherit; text-decoration: none; }
-img { display: block; max-width: 100%; height: auto; }
+img { display: block; max-width: 100%; }
 button { font: inherit; cursor: pointer; background: transparent; border: 0; color: inherit; }
-input, textarea, select { font: inherit; }
-:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 8px; }
-.serif { font-family: var(--serif); font-style: italic; font-weight: 400; color: var(--accent); }
-h1, h2, h3 { font-weight: 600; letter-spacing: -0.025em; line-height: 1.08; }
-h2 { font-size: clamp(30px, 4.2vw, 46px); }
-.section-tag {
-  display: inline-flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700;
-  letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent-dark); margin-bottom: 16px;
-}
-.section-tag::before { content: ''; width: 18px; height: 2px; background: var(--accent); border-radius: 2px; }
-html[data-theme="midnight"] .section-tag { color: var(--accent); }
-.wrap { max-width: var(--max); margin: 0 auto; padding: 0 var(--pad-x); }
-section { padding: clamp(72px, 9vw, 120px) 0; }
+input, textarea { font: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
+h1, h2, h3 { font-weight: 600; letter-spacing: -0.02em; line-height: 1.15; }
 
-.btn {
-  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
-  padding: 15px 26px; border-radius: 9999px; font-weight: 600; font-size: 16px;
-  transition: transform 0.25s var(--ease), box-shadow 0.25s var(--ease), background 0.2s;
-  white-space: nowrap;
-}
-.btn-primary { background: var(--accent); color: var(--on-accent); box-shadow: 0 10px 28px -10px var(--glow); }
-.btn-primary:hover { background: var(--accent-dark); transform: translateY(-2px); box-shadow: 0 16px 34px -12px var(--glow); }
-.btn-primary:active { transform: translateY(0); }
-.btn-ghost { background: var(--paper); color: var(--ink); border: 1px solid var(--line-2); }
-.btn-ghost:hover { border-color: var(--ink-3); transform: translateY(-1px); }
-.btn .arr { transition: transform 0.25s var(--ease); }
-.btn:hover .arr { transform: translateX(3px); }
-.btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 14px 22px; border-radius: var(--r); font-weight: 500; font-size: 16px; transition: opacity 0.15s, transform 0.15s var(--ease), background 0.15s; }
+.btn-primary { background: var(--ink); color: var(--bg); }
+.btn-primary:hover { opacity: 0.88; }
+.btn-primary:active { transform: scale(0.99); }
+.btn-ghost { background: transparent; color: var(--ink); border: 1px solid var(--line-2); }
+.btn-ghost:hover { background: var(--bg-2); }
+.btn:disabled { opacity: 0.35; cursor: not-allowed; }
+.btn-block { width: 100%; }
 
-/* ============ NAV ============ */
-.nav { position: sticky; top: 0; z-index: 50; background: color-mix(in srgb, var(--bg) 82%, transparent); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-bottom: 1px solid color-mix(in srgb, var(--line) 60%, transparent); }
-.nav-inner { max-width: var(--max); margin: 0 auto; padding: 12px var(--pad-x); display: flex; align-items: center; gap: 20px; }
-.brand { display: inline-flex; align-items: center; gap: 10px; font-weight: 600; font-size: 15px; }
-.brand-avatar { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 2px solid var(--paper); box-shadow: 0 2px 8px rgba(0,0,0,0.12); }
-.nav-links { display: flex; align-items: center; gap: 4px; margin-left: auto; }
-.nav-links a { padding: 8px 12px; font-size: 14px; font-weight: 500; color: var(--ink-2); border-radius: 9999px; transition: color 0.2s, background 0.2s; }
-.nav-links a:hover { color: var(--ink); background: var(--bg-2); }
-.nav-cta { padding: 10px 18px; font-size: 14px; }
-.nav-burger { display: none; width: 40px; height: 40px; border-radius: 50%; align-items: center; justify-content: center; }
-.nav-mobile { display: none; position: fixed; inset: 0; z-index: 60; background: var(--bg); padding: 20px var(--pad-x); }
-.nav-mobile[open] { display: block; }
-.nav-mobile-head { display: flex; align-items: center; justify-content: space-between; }
-.nav-mobile a.nm-link { display: block; padding: 18px 0; font-size: 22px; font-weight: 600; border-bottom: 1px solid var(--line); }
-.nav-mobile .nm-actions { margin-top: 24px; display: grid; gap: 12px; }
-@media (max-width: 900px) {
-  .nav-links { display: none; }
-  .nav-burger { display: inline-flex; margin-left: auto; }
-}
+/* ============ TOPBAR ============ */
+.top { border-bottom: 1px solid var(--line); background: var(--bg); position: sticky; top: 0; z-index: 20; }
+.top-inner { max-width: var(--max); margin: 0 auto; padding: 12px 20px; display: flex; align-items: center; gap: 12px; }
+.brand { display: inline-flex; align-items: center; gap: 10px; font-weight: 500; font-size: 14.5px; }
+.brand img { width: 30px; height: 30px; border-radius: 50%; object-fit: cover; }
+.lang { margin-left: auto; display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+.lang button { padding: 5px 10px; font-size: 12.5px; font-weight: 500; color: var(--ink-3); }
+.lang button:hover { color: var(--ink); }
+html[data-lang="de"] .lang [data-lang="de"], html[data-lang="en"] .lang [data-lang="en"] { background: var(--ink); color: var(--bg); }
+.progress { height: 2px; background: var(--line); }
+.progress > i { display: block; height: 100%; width: 0; background: var(--accent); transition: width 0.4s var(--ease); }
 
-/* ============ HERO ============ */
-.hero { position: relative; padding: clamp(48px, 7vw, 96px) 0 clamp(56px, 7vw, 96px); overflow: hidden; }
-.hero::before {
-  content: ''; position: absolute; inset: -20% -10% auto auto; width: 60vw; height: 60vw; max-width: 760px; max-height: 760px;
-  background: radial-gradient(closest-side, var(--glow), transparent 70%); filter: blur(30px); pointer-events: none;
-}
-.hero-grid { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: clamp(32px, 6vw, 80px); align-items: center; position: relative; }
-.hero-eyebrow { display: inline-flex; align-items: center; gap: 8px; padding: 7px 14px; border-radius: 9999px; background: var(--paper); border: 1px solid var(--line); font-size: 13px; font-weight: 600; color: var(--ink-2); box-shadow: 0 2px 10px rgba(0,0,0,0.04); }
-.hero-eyebrow .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 4px var(--accent-soft); }
-.hero h1 { font-size: clamp(40px, 6.2vw, 74px); margin: 22px 0 20px; }
-.hero-sub { font-size: clamp(17px, 1.5vw, 20px); color: var(--ink-2); max-width: 540px; margin-bottom: 30px; }
-.hero-sub b { color: var(--ink); font-weight: 600; }
-.hero-actions { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
-.hero-signals { display: flex; flex-wrap: wrap; gap: 10px 22px; margin-top: 30px; padding-top: 26px; border-top: 1px solid var(--line); font-size: 14px; color: var(--ink-2); }
-.hero-signal { display: inline-flex; align-items: center; gap: 8px; }
-.hero-signal svg { width: 18px; height: 18px; color: var(--accent); }
+/* ============ CHECK ============ */
+main { flex: 1; }
+#check { max-width: var(--max); margin: 0 auto; padding: 56px 20px 72px; }
+.step { animation: in 0.35s var(--ease) both; }
+.step.out { animation: out 0.18s var(--ease) both; }
+@keyframes in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+@keyframes out { from { opacity: 1; } to { opacity: 0; transform: translateY(-6px); } }
+.meta { font-size: 13.5px; color: var(--ink-3); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.meta b { color: var(--ink-2); font-weight: 500; }
+.q { font-size: clamp(26px, 5vw, 34px); font-weight: 600; letter-spacing: -0.02em; line-height: 1.2; margin-bottom: 10px; }
+.hint { color: var(--ink-3); font-size: 15px; margin-bottom: 24px; }
+.back { display: inline-flex; align-items: center; gap: 4px; font-size: 14px; color: var(--ink-3); margin-bottom: 22px; padding: 4px 0; }
+.back:hover { color: var(--ink); }
+.back svg { width: 14px; height: 14px; }
 
-/* Hero-Visual: animiertes Vitalporträt */
-.hero-visual { position: relative; display: flex; justify-content: center; }
-.portrait-card {
-  width: min(100%, 440px); background: var(--paper); border-radius: var(--r-lg); border: 1px solid var(--line);
-  box-shadow: 0 30px 80px -30px rgba(0,0,0,0.25), 0 0 0 1px rgba(255,255,255,0.4) inset; padding: 26px 26px 22px;
-  position: relative; transform: rotate(-1.5deg); padding-bottom: 48px;
-}
-.portrait-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
-.portrait-title { font-size: 13px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-3); }
-.portrait-level { display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px; border-radius: 9999px; background: var(--accent-soft); color: var(--accent-deep); font-size: 12px; font-weight: 700; }
-html[data-theme="midnight"] .portrait-level { color: var(--accent-deep); }
-.portrait-radar { width: 100%; aspect-ratio: 1; display: block; overflow: visible; }
-.portrait-bars { display: grid; gap: 8px; margin-top: 6px; }
-.pbar { display: grid; grid-template-columns: 96px 1fr 34px; align-items: center; gap: 10px; font-size: 12.5px; color: var(--ink-2); }
-.pbar-track { height: 6px; border-radius: 6px; background: var(--bg-2); overflow: hidden; }
-.pbar-fill { height: 100%; border-radius: 6px; background: var(--accent); transition: width 1.2s var(--ease); }
-.pbar-val { text-align: right; font-weight: 600; color: var(--ink); font-variant-numeric: tabular-nums; }
-.portrait-float {
-  position: absolute; padding: 10px 14px; background: var(--paper); border: 1px solid var(--line); border-radius: 14px;
-  box-shadow: 0 12px 30px -12px rgba(0,0,0,0.25); font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 8px;
-  animation: floaty 6s ease-in-out infinite;
-}
-.portrait-float .ico { width: 26px; height: 26px; border-radius: 8px; background: var(--accent-soft); color: var(--accent-dark); display: inline-flex; align-items: center; justify-content: center; }
-.portrait-float.f1 { top: -16px; left: -8%; animation-delay: -1s; }
-.portrait-float.f2 { bottom: -14px; right: -7%; animation-delay: -3s; }
-@keyframes floaty { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
-@media (max-width: 900px) {
-  .hero-grid { grid-template-columns: 1fr; }
-  .hero-visual { margin-top: 12px; }
-  .portrait-card { transform: none; }
-  .portrait-float.f1 { left: 0; } .portrait-float.f2 { right: 0; }
-}
-@media (max-width: 520px) { .portrait-float { display: none; } .portrait-card { padding: 20px 18px 16px; } }
+/* Intro */
+.intro h1 { font-size: clamp(36px, 7vw, 56px); letter-spacing: -0.03em; line-height: 1.05; margin-bottom: 18px; }
+.intro p { font-size: 18px; color: var(--ink-2); max-width: 520px; margin-bottom: 30px; }
+.intro .facts { margin-top: 26px; font-size: 13.5px; color: var(--ink-3); display: flex; flex-wrap: wrap; gap: 6px 18px; }
+.intro .facts span::before { content: ''; display: inline-block; width: 5px; height: 5px; border-radius: 50%; background: var(--accent); margin-right: 8px; vertical-align: 2px; }
 
-/* ============ PM-DISCLAIMER ============ */
-.pm-disclaimer { background: var(--bg-2); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
-.pm-disclaimer-inner { max-width: var(--max); margin: 0 auto; padding: 14px var(--pad-x); display: flex; align-items: center; gap: 14px; font-size: 13.5px; color: var(--ink-2); line-height: 1.45; }
-.pm-disclaimer-avatar { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; flex-shrink: 0; border: 2px solid var(--paper); }
-.pm-disclaimer b { color: var(--ink); font-weight: 600; }
+/* Antworten */
+.answers { display: grid; gap: 8px; }
+.ans { display: flex; align-items: center; gap: 14px; width: 100%; padding: 16px 18px; border-radius: var(--r); border: 1px solid var(--line-2); background: var(--paper); text-align: left; font-size: 16px; font-weight: 500; transition: border-color 0.15s, background 0.15s; }
+.ans:hover { border-color: var(--ink); }
+.ans .radio { width: 20px; height: 20px; border-radius: 50%; border: 1.5px solid var(--line-2); flex-shrink: 0; position: relative; transition: border-color 0.15s, background 0.15s; }
+.ans.picked { border-color: var(--accent); background: var(--accent-soft); }
+.ans.picked .radio { border-color: var(--accent); background: var(--accent); }
+.ans.picked .radio::after { content: ''; position: absolute; inset: 5px; border-radius: 50%; background: var(--on-accent); }
+.ans .key { margin-left: auto; font-size: 11.5px; color: var(--ink-3); border: 1px solid var(--line); border-radius: 5px; padding: 1px 6px; }
+@media (max-width: 600px) { .ans .key { display: none; } }
 
-/* ============ SO FUNKTIONIERT'S ============ */
-.steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 40px; }
-.step-card { background: var(--paper); border: 1px solid var(--line); border-radius: var(--r); padding: 28px; position: relative; transition: transform 0.3s var(--ease), box-shadow 0.3s var(--ease); }
-.step-card:hover { transform: translateY(-4px); box-shadow: 0 24px 50px -30px rgba(0,0,0,0.25); }
-.step-num { font-family: var(--serif); font-style: italic; font-size: 44px; line-height: 1; color: var(--accent); margin-bottom: 18px; }
-.step-card h3 { font-size: 21px; margin-bottom: 10px; }
-.step-card p { color: var(--ink-2); font-size: 15.5px; }
-@media (max-width: 800px) { .steps { grid-template-columns: 1fr; } }
-
-/* ============ BEREICHE ============ */
-.areas-section { background: var(--paper); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
-html[data-theme="midnight"] .areas-section { background: var(--bg-2); }
-.areas-grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(32px, 6vw, 80px); align-items: center; }
-.areas-list { display: grid; gap: 10px; }
-.area-row { display: flex; align-items: center; gap: 16px; padding: 16px 18px; border-radius: 16px; border: 1px solid var(--line); background: var(--bg); transition: transform 0.25s var(--ease), border-color 0.25s; }
-.area-row:hover { transform: translateX(4px); border-color: var(--accent); }
-.area-ico { width: 44px; height: 44px; border-radius: 12px; background: var(--accent-soft); color: var(--accent-dark); display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
-html[data-theme="midnight"] .area-ico { color: var(--accent); }
-.area-ico svg { width: 22px; height: 22px; }
-.area-row h3 { font-size: 17px; margin-bottom: 2px; }
-.area-row p { font-size: 14px; color: var(--ink-2); }
-.areas-copy p { color: var(--ink-2); font-size: 17px; margin-top: 18px; }
-.areas-copy .note { margin-top: 22px; padding: 16px 18px; border-radius: 14px; background: var(--accent-soft); color: var(--accent-deep); font-size: 14.5px; line-height: 1.5; }
-@media (max-width: 900px) { .areas-grid { grid-template-columns: 1fr; } }
-
-/* ============ ÜBER MICH ============ */
-.about-wrap { display: grid; grid-template-columns: 0.85fr 1.15fr; gap: clamp(32px, 6vw, 80px); align-items: center; }
-.about-photo-frame { border-radius: var(--r-lg); overflow: hidden; aspect-ratio: 4/5; background: var(--bg-2); box-shadow: 0 30px 70px -30px rgba(0,0,0,0.3); }
-.about-photo-frame img { width: 100%; height: 100%; object-fit: cover; }
-.about-content h2 .accent { color: var(--accent); font-family: var(--serif); font-style: italic; font-weight: 400; }
-.about-lead-wrap { margin-top: 22px; font-size: 17.5px; color: var(--ink-2); }
-.about-lead-wrap p + p { margin-top: 14px; }
-.about-sig { margin-top: 26px; padding-top: 20px; border-top: 1px solid var(--line); display: flex; align-items: center; gap: 12px; }
-.about-sig-name { font-family: var(--serif); font-style: italic; font-size: 26px; }
-.about-sig-role { font-size: 13px; color: var(--ink-3); }
-@media (max-width: 900px) { .about-wrap { grid-template-columns: 1fr; } .about-photo-frame { max-width: 420px; } }
-
-/* ============ FAQ ============ */
-.faq-section { background: var(--paper); border-top: 1px solid var(--line); }
-html[data-theme="midnight"] .faq-section { background: var(--bg-2); }
-.faq-list { max-width: 780px; margin: 36px auto 0; display: grid; gap: 10px; }
-.faq-item { border: 1px solid var(--line); border-radius: 16px; background: var(--bg); overflow: hidden; }
-.faq-q { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 20px 22px; text-align: left; font-weight: 600; font-size: 17px; }
-.faq-plus { width: 26px; height: 26px; border-radius: 50%; border: 1px solid var(--line-2); position: relative; flex-shrink: 0; transition: transform 0.3s var(--ease), background 0.3s; }
-.faq-plus::before, .faq-plus::after { content: ''; position: absolute; left: 50%; top: 50%; background: var(--ink); transform: translate(-50%,-50%); }
-.faq-plus::before { width: 10px; height: 2px; } .faq-plus::after { width: 2px; height: 10px; }
-.faq-item.open .faq-plus { transform: rotate(45deg); background: var(--accent-soft); border-color: var(--accent); }
-.faq-a { max-height: 0; overflow: hidden; transition: max-height 0.4s var(--ease); }
-.faq-a-inner { padding: 0 22px 22px; color: var(--ink-2); font-size: 15.5px; }
-
-/* ============ CTA-BANNER ============ */
-.cta-banner { background: var(--accent-deep); color: #fff; border-radius: var(--r-lg); padding: clamp(40px, 6vw, 72px); text-align: center; position: relative; overflow: hidden; }
-html[data-theme="midnight"] .cta-banner { background: var(--accent-soft); color: var(--ink); }
-.cta-banner::before { content: ''; position: absolute; inset: auto -20% -60% auto; width: 60%; aspect-ratio: 1; background: radial-gradient(closest-side, var(--glow), transparent 70%); pointer-events: none; }
-.cta-banner h2 { color: inherit; }
-.cta-banner p { opacity: 0.85; margin: 14px auto 28px; max-width: 520px; font-size: 17px; }
-.cta-banner .btn-primary { background: #fff; color: var(--accent-deep); box-shadow: none; }
-.cta-banner .btn-primary:hover { background: #F3F7F5; }
-html[data-theme="midnight"] .cta-banner .btn-primary { background: var(--accent); color: #0F1513; }
-
-/* ============ FOOTER ============ */
-footer { padding: 56px 0 36px; border-top: 1px solid var(--line); }
-.footer-cols { display: grid; grid-template-columns: repeat(4, 1fr); gap: 28px; }
-.footer-col-title { font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 12px; }
-.footer-col a { display: block; padding: 5px 0; font-size: 15px; color: var(--ink-2); }
-.footer-col a:hover { color: var(--ink); }
-.footer-bottom { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-top: 40px; padding-top: 22px; border-top: 1px solid var(--line); font-size: 14px; color: var(--ink-2); }
-.footer-made { display: inline-flex; align-items: center; gap: 6px; }
-.footer-made img { height: 16px; width: auto; opacity: 0.8; }
-html[data-theme="midnight"] .footer-made img { filter: invert(1); }
-.footer-made .heart { color: var(--accent); }
-.footer-disclaimer { margin-top: 22px; font-size: 12.5px; color: var(--ink-3); line-height: 1.6; max-width: 900px; }
-.footer-disclaimer p + p { margin-top: 8px; }
-@media (max-width: 800px) { .footer-cols { grid-template-columns: 1fr 1fr; } }
-
-/* ============ REVEAL ============ */
-.reveal { opacity: 0; transform: translateY(22px); transition: opacity 0.7s var(--ease), transform 0.7s var(--ease); }
-.reveal.in { opacity: 1; transform: none; }
-@media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } .portrait-float { animation: none; } }
-
-/* ============ VITALCHECK OVERLAY ============ */
-.vc { position: fixed; inset: 0; z-index: 100; background: var(--bg); display: flex; flex-direction: column; opacity: 0; pointer-events: none; transition: opacity 0.3s var(--ease); }
-.vc.open { opacity: 1; pointer-events: auto; }
-.vc-top { display: flex; align-items: center; gap: 14px; padding: 14px var(--pad-x); max-width: 880px; width: 100%; margin: 0 auto; }
-.vc-close { width: 40px; height: 40px; border-radius: 50%; background: var(--paper); border: 1px solid var(--line); display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background 0.2s; }
-.vc-close:hover { background: var(--bg-2); }
-.vc-progress { flex: 1; height: 8px; border-radius: 8px; background: var(--bg-2); overflow: hidden; position: relative; }
-.vc-progress-fill { height: 100%; width: 0; border-radius: 8px; background: var(--accent); transition: width 0.5s var(--ease); }
-.vc-counter { font-size: 13px; font-weight: 600; color: var(--ink-3); font-variant-numeric: tabular-nums; white-space: nowrap; min-width: 52px; text-align: right; }
-.vc-mini { width: 40px; height: 40px; flex-shrink: 0; }
-.vc-body { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 10px var(--pad-x) 40px; }
-.vc-inner { max-width: 720px; margin: 0 auto; min-height: 100%; display: flex; flex-direction: column; justify-content: center; }
-.vc-step { animation: stepIn 0.45s var(--ease) both; }
-.vc-step.out { animation: stepOut 0.25s var(--ease) both; }
-@keyframes stepIn { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
-@keyframes stepOut { from { opacity: 1; transform: none; } to { opacity: 0; transform: translateY(-14px); } }
-.vc-kicker { display: inline-flex; align-items: center; gap: 10px; font-size: 12.5px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent-dark); margin-bottom: 14px; }
-html[data-theme="midnight"] .vc-kicker { color: var(--accent); }
-.vc-kicker .area-ico { width: 32px; height: 32px; border-radius: 10px; }
-.vc-kicker .area-ico svg { width: 17px; height: 17px; }
-.vc-q { font-size: clamp(26px, 4vw, 38px); font-weight: 600; letter-spacing: -0.025em; line-height: 1.15; margin-bottom: 10px; }
-.vc-hint { font-size: 15.5px; color: var(--ink-2); margin-bottom: 26px; }
-.vc-answers { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-.vc-ans { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 22px 14px 18px; border-radius: 18px; background: var(--paper); border: 1.5px solid var(--line); font-weight: 600; font-size: 15.5px; text-align: center; transition: transform 0.2s var(--ease), border-color 0.2s, background 0.2s, box-shadow 0.2s; position: relative; }
-.vc-ans:hover { transform: translateY(-3px); border-color: var(--accent); box-shadow: 0 16px 30px -18px rgba(0,0,0,0.3); }
-.vc-ans .face { width: 44px; height: 44px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; background: var(--bg-2); color: var(--ink-2); transition: background 0.2s, color 0.2s; }
-.vc-ans .face svg { width: 22px; height: 22px; }
-.vc-ans[data-v="2"]:hover .face, .vc-ans[data-v="2"].picked .face { background: var(--accent); color: #fff; }
-.vc-ans[data-v="1"]:hover .face, .vc-ans[data-v="1"].picked .face { background: var(--tier-mid); color: #fff; }
-.vc-ans[data-v="0"]:hover .face, .vc-ans[data-v="0"].picked .face { background: var(--ink-3); color: #fff; }
-.vc-ans.picked { border-color: var(--accent); background: var(--accent-soft); transform: scale(1.03); }
-.vc-ans .key { position: absolute; top: 8px; right: 10px; font-size: 11px; font-weight: 700; color: var(--ink-3); border: 1px solid var(--line-2); border-radius: 6px; padding: 1px 6px; }
-@media (max-width: 560px) { .vc-answers { grid-template-columns: 1fr; } .vc-ans { flex-direction: row; justify-content: flex-start; padding: 14px 16px; } .vc-ans .face { width: 38px; height: 38px; } .vc-ans .key { display: none; } }
-
-.vc-chips { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 26px; }
-.vc-chip { display: inline-flex; align-items: center; gap: 9px; padding: 13px 18px; border-radius: 9999px; background: var(--paper); border: 1.5px solid var(--line); font-weight: 600; font-size: 15px; transition: transform 0.2s var(--ease), border-color 0.2s, background 0.2s; }
-.vc-chip:hover { transform: translateY(-2px); border-color: var(--accent); }
-.vc-chip .chk { width: 20px; height: 20px; border-radius: 50%; border: 1.5px solid var(--line-2); display: inline-flex; align-items: center; justify-content: center; transition: background 0.2s, border-color 0.2s; }
-.vc-chip .chk svg { width: 12px; height: 12px; opacity: 0; color: #fff; }
-.vc-chip.on { border-color: var(--accent); background: var(--accent-soft); }
-.vc-chip.on .chk { background: var(--accent); border-color: var(--accent); }
-.vc-chip.on .chk svg { opacity: 1; }
-.vc-chip.off { opacity: 0.45; }
-.vc-actions { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
-.vc-skip { font-size: 14.5px; font-weight: 500; color: var(--ink-3); padding: 8px 4px; }
-.vc-skip:hover { color: var(--ink); }
-.vc-back { display: flex; width: max-content; align-items: center; gap: 6px; font-size: 14px; color: var(--ink-3); margin-bottom: 18px; padding: 6px 0; }
-.vc-back:hover { color: var(--ink); }
-.vc-back svg { width: 16px; height: 16px; }
+/* Chips (Wünsche, Motive) */
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; }
+.chip { display: inline-flex; align-items: center; gap: 8px; padding: 11px 15px; border-radius: 10px; border: 1px solid var(--line-2); background: var(--paper); font-size: 15px; font-weight: 500; transition: border-color 0.15s, background 0.15s, opacity 0.15s; }
+.chip:hover { border-color: var(--ink); }
+.chip .box { width: 16px; height: 16px; border-radius: 4px; border: 1.5px solid var(--line-2); display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.chip .box svg { width: 10px; height: 10px; opacity: 0; color: var(--on-accent); }
+.chip.on { border-color: var(--accent); background: var(--accent-soft); }
+.chip.on .box { background: var(--accent); border-color: var(--accent); }
+.chip.on .box svg { opacity: 1; }
+.chip.off { opacity: 0.4; }
+.actions { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.skip { font-size: 14px; color: var(--ink-3); padding: 6px 0; }
+.skip:hover { color: var(--ink); }
 
 /* Zwischenstopp */
-.vc-inter { text-align: center; }
-.vc-inter .big-check { width: 84px; height: 84px; border-radius: 50%; background: var(--accent-soft); color: var(--accent-dark); display: inline-flex; align-items: center; justify-content: center; margin-bottom: 20px; animation: pop 0.6s var(--ease) both; }
-html[data-theme="midnight"] .vc-inter .big-check { color: var(--accent); }
-.vc-inter .big-check svg { width: 38px; height: 38px; }
-@keyframes pop { 0% { transform: scale(0.4); opacity: 0; } 60% { transform: scale(1.1); opacity: 1; } 100% { transform: scale(1); } }
-.vc-inter h2 { font-size: clamp(26px, 4vw, 36px); }
-.vc-inter .sub { color: var(--ink-2); margin-top: 8px; }
-.vc-fact { margin: 26px auto; max-width: 560px; text-align: left; background: var(--paper); border: 1px solid var(--line); border-radius: 18px; padding: 20px 22px; display: flex; gap: 14px; }
-.vc-fact .fi { width: 38px; height: 38px; border-radius: 12px; background: var(--accent-soft); color: var(--accent-dark); display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
-html[data-theme="midnight"] .vc-fact .fi { color: var(--accent); }
-.vc-fact .fi svg { width: 20px; height: 20px; }
-.vc-fact b { display: block; font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 4px; }
-.vc-fact p { font-size: 15px; color: var(--ink-2); }
-.vc-fact small { display: block; margin-top: 6px; font-size: 12px; color: var(--ink-3); }
-
-/* Loading */
-.vc-loading { text-align: center; padding: 40px 0; }
-.vc-loading .draw { width: 180px; height: 180px; margin: 0 auto 22px; }
-.vc-loading p { color: var(--ink-2); font-size: 17px; }
+.inter h2 { font-size: clamp(24px, 4.5vw, 30px); margin-bottom: 6px; }
+.inter .next { color: var(--ink-3); font-size: 15px; margin-bottom: 22px; }
+.fact { border-left: 2px solid var(--accent); padding: 4px 0 4px 16px; margin-bottom: 28px; }
+.fact b { display: block; font-size: 12.5px; color: var(--ink-3); font-weight: 500; margin-bottom: 4px; }
+.fact p { font-size: 15.5px; color: var(--ink-2); }
+.fact small { display: block; font-size: 12.5px; color: var(--ink-3); margin-top: 6px; }
 
 /* Ergebnis */
-.res-head { text-align: center; margin-bottom: 26px; }
-.res-head h2 { font-size: clamp(30px, 4.6vw, 44px); }
-.res-head .sub { color: var(--ink-2); margin-top: 10px; font-size: 16.5px; }
-.res-hero { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: center; background: var(--paper); border: 1px solid var(--line); border-radius: var(--r-lg); padding: 26px; box-shadow: 0 30px 70px -40px rgba(0,0,0,0.3); }
-.res-radar { width: 100%; max-width: 320px; margin: 0 auto; aspect-ratio: 1; overflow: visible; }
-.res-level-tag { display: inline-flex; align-items: center; gap: 8px; padding: 7px 12px; border-radius: 9999px; background: var(--accent-soft); color: var(--accent-deep); font-size: 12.5px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
-.res-level { font-size: clamp(30px, 4vw, 40px); font-weight: 600; letter-spacing: -0.03em; line-height: 1.05; margin: 12px 0 8px; }
-.res-level .serif { font-size: 1.05em; }
-.res-level-desc { color: var(--ink-2); font-size: 15.5px; }
-.res-score { display: flex; align-items: baseline; gap: 6px; margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--line); }
-.res-score .n { font-size: 40px; font-weight: 600; letter-spacing: -0.03em; line-height: 1; font-variant-numeric: tabular-nums; }
-.res-score .d { color: var(--ink-3); font-weight: 600; }
-.res-score .lbl { margin-left: auto; font-size: 13px; color: var(--ink-3); text-align: right; }
-@media (max-width: 640px) { .res-hero { grid-template-columns: 1fr; } }
+.loading { padding: 40px 0; text-align: center; color: var(--ink-3); }
+.loading svg { width: 160px; height: 160px; margin: 0 auto 18px; display: block; }
+.res-top { display: grid; grid-template-columns: 1fr 250px; gap: 24px; align-items: center; padding-bottom: 26px; border-bottom: 1px solid var(--line); margin-bottom: 26px; }
+.res-top .lvl { font-size: 13.5px; color: var(--ink-3); margin-bottom: 8px; }
+.res-top h2 { font-size: clamp(34px, 6vw, 46px); letter-spacing: -0.03em; line-height: 1.05; margin-bottom: 10px; }
+.res-top p { color: var(--ink-2); font-size: 15.5px; }
+.res-top .pts { margin-top: 14px; font-size: 14px; color: var(--ink-3); }
+.res-top .pts b { color: var(--ink); font-weight: 600; font-size: 22px; letter-spacing: -0.02em; }
+.radar { width: 100%; aspect-ratio: 1; overflow: visible; }
+@media (max-width: 560px) { .res-top { grid-template-columns: 1fr; } .radar { max-width: 240px; margin: 0 auto; } }
+.pair { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 26px; }
+.pair div { padding: 16px 18px; border: 1px solid var(--line); border-radius: var(--r); }
+.pair small { display: block; font-size: 12.5px; color: var(--ink-3); margin-bottom: 4px; }
+.pair b { font-size: 17px; font-weight: 600; }
+@media (max-width: 480px) { .pair { grid-template-columns: 1fr; } }
+.dims { display: grid; gap: 4px; margin-bottom: 30px; }
+.dim { padding: 14px 0; border-bottom: 1px solid var(--line); }
+.dim-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 8px; }
+.dim-head h4 { font-size: 15.5px; font-weight: 600; }
+.dim-head span { font-size: 13px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+.bar { height: 4px; border-radius: 4px; background: var(--bg-2); overflow: hidden; margin-bottom: 8px; }
+.bar i { display: block; height: 100%; width: 0; border-radius: 4px; transition: width 0.9s var(--ease); }
+.dim p { font-size: 14.5px; color: var(--ink-2); }
+.tips h3 { font-size: 17px; margin-bottom: 12px; }
+.tip { display: grid; grid-template-columns: 26px 1fr; gap: 12px; padding: 12px 0; border-top: 1px solid var(--line); }
+.tip .n { font-size: 13px; color: var(--ink-3); font-variant-numeric: tabular-nums; padding-top: 2px; }
+.tip b { display: block; font-weight: 600; font-size: 15.5px; margin-bottom: 2px; }
+.tip p { font-size: 14.5px; color: var(--ink-2); }
+.wish { margin: 22px 0 0; padding: 14px 16px; background: var(--bg-2); border-radius: var(--r); font-size: 14.5px; color: var(--ink-2); }
+.wish b { color: var(--ink); font-weight: 500; }
+.invite { margin-top: 30px; padding: 22px; border: 1px solid var(--line-2); border-radius: 14px; display: grid; grid-template-columns: 52px 1fr; gap: 16px; align-items: start; }
+.invite img { width: 52px; height: 52px; border-radius: 50%; object-fit: cover; }
+.invite h3 { font-size: 18px; margin-bottom: 6px; }
+.invite p { font-size: 14.5px; color: var(--ink-2); }
+.invite .row { grid-column: 1 / -1; display: flex; gap: 10px; flex-wrap: wrap; margin-top: 4px; }
+@media (max-width: 480px) { .invite { grid-template-columns: 1fr; } }
+.note { margin-top: 18px; font-size: 12.5px; color: var(--ink-3); line-height: 1.5; }
 
-.res-two { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 14px; }
-.res-card { background: var(--paper); border: 1px solid var(--line); border-radius: var(--r); padding: 20px 22px; }
-.res-card .lbl { font-size: 11.5px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
-.res-card .lbl .sw { width: 10px; height: 10px; border-radius: 50%; }
-.res-card h3 { font-size: 21px; margin-bottom: 6px; }
-.res-card p { color: var(--ink-2); font-size: 15px; }
-@media (max-width: 640px) { .res-two { grid-template-columns: 1fr; } }
-
-.res-dims { display: grid; gap: 10px; margin-top: 14px; }
-.res-dim { background: var(--paper); border: 1px solid var(--line); border-radius: 18px; padding: 16px 18px; display: grid; grid-template-columns: 44px 1fr; gap: 14px; align-items: start; }
-.res-dim .area-ico { width: 44px; height: 44px; }
-.res-dim-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
-.res-dim h4 { font-size: 16.5px; font-weight: 600; }
-.res-dim .pct { font-size: 13px; font-weight: 700; padding: 3px 9px; border-radius: 9999px; background: var(--bg-2); color: var(--ink-2); font-variant-numeric: tabular-nums; }
-.res-dim .track { height: 7px; border-radius: 7px; background: var(--bg-2); overflow: hidden; margin: 10px 0; }
-.res-dim .fill { height: 100%; width: 0; border-radius: 7px; transition: width 1.1s var(--ease); }
-.res-dim p { font-size: 14.5px; color: var(--ink-2); }
-
-.res-tips { margin-top: 26px; }
-.res-tips h3 { font-size: 22px; margin-bottom: 14px; }
-.res-tip { display: grid; grid-template-columns: 36px 1fr; gap: 14px; padding: 16px 18px; border-radius: 16px; background: var(--paper); border: 1px solid var(--line); margin-bottom: 10px; }
-.res-tip .num { width: 36px; height: 36px; border-radius: 50%; background: var(--accent-soft); color: var(--accent-deep); display: inline-flex; align-items: center; justify-content: center; font-family: var(--serif); font-style: italic; font-size: 20px; }
-.res-tip b { display: block; font-weight: 600; margin-bottom: 2px; }
-.res-tip p { font-size: 14.5px; color: var(--ink-2); }
-.res-wish { margin-top: 20px; padding: 16px 18px; border-radius: 16px; background: var(--accent-soft); color: var(--accent-deep); font-size: 15px; display: flex; gap: 12px; align-items: flex-start; }
-.res-wish svg { width: 20px; height: 20px; flex-shrink: 0; margin-top: 2px; }
-html[data-theme="midnight"] .res-wish { color: var(--accent-deep); }
-
-.res-cta { margin-top: 28px; background: var(--accent-deep); color: #fff; border-radius: var(--r-lg); padding: 28px; display: grid; grid-template-columns: 64px 1fr; gap: 18px; align-items: center; position: relative; overflow: hidden; }
-html[data-theme="midnight"] .res-cta { background: var(--accent-soft); color: var(--ink); }
-.res-cta img { width: 64px; height: 64px; border-radius: 50%; object-fit: cover; border: 2px solid rgba(255,255,255,0.5); }
-.res-cta h3 { font-size: 22px; margin-bottom: 6px; }
-.res-cta p { opacity: 0.85; font-size: 15px; }
-.res-cta .cta-row { grid-column: 1 / -1; display: flex; gap: 12px; flex-wrap: wrap; margin-top: 6px; }
-.res-cta .btn-primary { background: #fff; color: var(--accent-deep); box-shadow: none; }
-html[data-theme="midnight"] .res-cta .btn-primary { background: var(--accent); color: #0F1513; }
-.res-cta .btn-ghost { background: transparent; color: inherit; border-color: rgba(255,255,255,0.35); }
-html[data-theme="midnight"] .res-cta .btn-ghost { border-color: var(--line-2); }
-@media (max-width: 560px) { .res-cta { grid-template-columns: 1fr; } }
-.res-note { margin-top: 18px; font-size: 12.5px; color: var(--ink-3); line-height: 1.55; text-align: center; }
-
-/* Lead-Formular */
-.lead h2 { font-size: clamp(26px, 4vw, 34px); margin-bottom: 8px; }
-.lead .sub { color: var(--ink-2); margin-bottom: 22px; }
-.lead-summary { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 22px; }
-.lead-summary span { padding: 6px 12px; border-radius: 9999px; background: var(--paper); border: 1px solid var(--line); font-size: 13px; font-weight: 600; color: var(--ink-2); }
-.form-row { margin-bottom: 16px; }
-.form-label { display: block; font-size: 13.5px; font-weight: 600; margin-bottom: 7px; color: var(--ink-2); }
-.form-optional { font-weight: 400; color: var(--ink-3); }
-.form-input { width: 100%; padding: 14px 16px; border-radius: 14px; border: 1.5px solid var(--line-2); background: var(--paper); color: var(--ink); transition: border-color 0.2s, box-shadow 0.2s; }
-.form-input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-soft); }
-.form-input::placeholder { color: var(--ink-3); }
-.form-textarea { min-height: 96px; resize: vertical; }
-.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-@media (max-width: 560px) { .form-grid { grid-template-columns: 1fr; } }
-.method-tabs { display: flex; gap: 8px; flex-wrap: wrap; }
-.method-tab { display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; border-radius: 9999px; border: 1.5px solid var(--line-2); background: var(--paper); font-weight: 600; font-size: 14px; transition: all 0.2s; }
-.method-tab svg { width: 16px; height: 16px; }
-.method-tab.active { border-color: var(--accent); background: var(--accent-soft); color: var(--accent-deep); }
-html[data-theme="midnight"] .method-tab.active { color: var(--accent-deep); }
-.consent { display: grid; grid-template-columns: 24px 1fr; gap: 12px; align-items: start; padding: 16px 18px; border-radius: 16px; background: var(--paper); border: 1.5px solid var(--line-2); margin: 20px 0 18px; cursor: pointer; transition: border-color 0.2s; }
+/* Formular */
+.lead h2 { font-size: clamp(26px, 5vw, 32px); margin-bottom: 8px; }
+.lead .sub { color: var(--ink-2); margin-bottom: 20px; }
+.summary { font-size: 13.5px; color: var(--ink-3); margin-bottom: 22px; }
+.summary b { color: var(--ink-2); font-weight: 500; }
+.row { margin-bottom: 14px; }
+label.lbl { display: block; font-size: 13.5px; font-weight: 500; color: var(--ink-2); margin-bottom: 6px; }
+.opt { font-weight: 400; color: var(--ink-3); }
+.input { width: 100%; padding: 13px 14px; border-radius: 10px; border: 1px solid var(--line-2); background: var(--paper); color: var(--ink); transition: border-color 0.15s; }
+.input:focus { outline: none; border-color: var(--ink); }
+.input::placeholder { color: var(--ink-3); }
+textarea.input { min-height: 88px; resize: vertical; }
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 520px) { .two { grid-template-columns: 1fr; } }
+.seg { display: inline-flex; border: 1px solid var(--line-2); border-radius: 10px; overflow: hidden; }
+.seg button { padding: 10px 16px; font-size: 14.5px; font-weight: 500; color: var(--ink-2); border-right: 1px solid var(--line-2); }
+.seg button:last-child { border-right: 0; }
+.seg button.active { background: var(--ink); color: var(--bg); }
+.consent { display: grid; grid-template-columns: 20px 1fr; gap: 12px; align-items: start; padding: 16px; border: 1px solid var(--line-2); border-radius: var(--r); margin: 20px 0 16px; cursor: pointer; }
 .consent.err { border-color: var(--tier-low); }
-.consent input { width: 20px; height: 20px; margin-top: 2px; accent-color: var(--accent); cursor: pointer; }
-.consent span { font-size: 13.5px; color: var(--ink-2); line-height: 1.55; }
+.consent input { width: 18px; height: 18px; margin-top: 2px; accent-color: var(--accent); cursor: pointer; }
+.consent span { font-size: 13.5px; color: var(--ink-2); line-height: 1.5; }
 .consent a { text-decoration: underline; }
-.form-privacy { margin-top: 14px; font-size: 13px; color: var(--ink-3); text-align: center; }
-.form-error { display: none; margin-top: 12px; padding: 12px 14px; border-radius: 12px; background: #FBE6E1; color: #7A2A1C; font-size: 14px; }
-.form-error.show { display: block; }
+.err-msg { display: none; margin-top: 12px; font-size: 14px; color: var(--tier-low); }
+.err-msg.show { display: block; }
+.privacy { margin-top: 12px; font-size: 13px; color: var(--ink-3); text-align: center; }
+.done h2 { font-size: clamp(28px, 5vw, 36px); margin-bottom: 10px; }
+.done p { color: var(--ink-2); margin-bottom: 24px; max-width: 480px; }
+.done .actions { gap: 10px; }
 
-/* Erfolg */
-.vc-success { text-align: center; }
-.vc-success h2 { font-size: clamp(28px, 4.4vw, 40px); margin: 18px 0 10px; }
-.vc-success p { color: var(--ink-2); max-width: 480px; margin: 0 auto; font-size: 16.5px; }
-.vc-success .actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 26px; }
-.vc-success .wa { display: inline-flex; align-items: center; gap: 8px; }
-.vc-success .wa svg { width: 18px; height: 18px; }
+/* ============ UNTEN: Disclaimer, Über mich, Footer ============ */
+.pm { border-top: 1px solid var(--line); background: var(--bg-2); }
+.pm-inner { max-width: var(--max); margin: 0 auto; padding: 14px 20px; display: flex; gap: 12px; align-items: flex-start; font-size: 13px; color: var(--ink-2); line-height: 1.5; }
+.pm-inner img { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; flex-shrink: 0; margin-top: 1px; }
+.pm b { font-weight: 500; color: var(--ink); }
+.about { max-width: var(--max); margin: 0 auto; padding: 40px 20px; display: grid; grid-template-columns: 72px 1fr; gap: 18px; }
+.about img { width: 72px; height: 72px; border-radius: 50%; object-fit: cover; }
+.about h2 { font-size: 20px; margin-bottom: 4px; }
+.about h2 .accent { color: var(--accent); }
+.about .role { font-size: 13px; color: var(--ink-3); margin-bottom: 12px; }
+.about .text { font-size: 15px; color: var(--ink-2); }
+.about .text p + p { margin-top: 10px; }
+@media (max-width: 480px) { .about { grid-template-columns: 56px 1fr; } .about img { width: 56px; height: 56px; } }
+footer { border-top: 1px solid var(--line); }
+.foot { max-width: var(--max); margin: 0 auto; padding: 22px 20px 36px; font-size: 12.5px; color: var(--ink-3); line-height: 1.55; }
+.foot .links { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-bottom: 14px; font-size: 13px; align-items: center; }
+.foot .links a { color: var(--ink-2); }
+.foot .links a:hover { color: var(--ink); }
+.foot .made { display: inline-flex; align-items: center; gap: 6px; margin-left: auto; }
+.foot .made img { height: 13px; width: auto; opacity: 0.7; }
+html[data-theme="midnight"] .foot .made img { filter: invert(1); }
+.foot p + p { margin-top: 8px; }
 </style>
 </head>
 <body>
 
-<!-- NAVIGATION -->
-<nav class="nav">
-  <div class="nav-inner">
-    <a href="#top" class="brand">
-      <img class="brand-avatar" src="{{profilbild}}" alt="{{vorname}} {{nachname}}" width="36" height="36">
-      <span>{{vorname}} {{nachname}}</span>
-    </a>
-    <div class="nav-links">
-      <a href="#so"><span class="l-de">So funktioniert's</span><span class="l-en">How it works</span></a>
-      <a href="#bereiche"><span class="l-de">Die 5 Bereiche</span><span class="l-en">The 5 areas</span></a>
-      <a href="#ueber"><span class="l-de">Über mich</span><span class="l-en">About me</span></a>
-      <a href="#faq">FAQ</a>
-      <div class="lang-switch" role="group" aria-label="Sprache / Language">
-        <button type="button" class="lang-opt" data-lang="de" onclick="fsSetLang('de')" aria-label="Deutsch">
-          <svg viewBox="0 0 24 24"><rect width="24" height="8" fill="#000"/><rect y="8" width="24" height="8" fill="#D00"/><rect y="16" width="24" height="8" fill="#FFCE00"/></svg>DE
-        </button>
-        <button type="button" class="lang-opt" data-lang="en" onclick="fsSetLang('en')" aria-label="English">
-          <svg viewBox="0 0 24 24"><rect width="24" height="24" fill="#012169"/><path d="M0 0L24 24M24 0L0 24" stroke="#fff" stroke-width="4"/><path d="M0 0L24 24M24 0L0 24" stroke="#C8102E" stroke-width="2"/><path d="M12 0V24M0 12H24" stroke="#fff" stroke-width="6"/><path d="M12 0V24M0 12H24" stroke="#C8102E" stroke-width="3"/></svg>EN
-        </button>
-      </div>
-      <button type="button" class="btn btn-primary nav-cta" data-vc-start><span class="l-de">Check starten</span><span class="l-en">Start the check</span></button>
+<div class="top">
+  <div class="top-inner">
+    <a href="/" class="brand"><img src="{{profilbild}}" alt="{{vorname}} {{nachname}}" width="30" height="30"><span>{{vorname}} {{nachname}}</span></a>
+    <div class="lang" role="group" aria-label="Sprache / Language">
+      <button type="button" data-lang="de" onclick="fsSetLang('de')">DE</button>
+      <button type="button" data-lang="en" onclick="fsSetLang('en')">EN</button>
     </div>
-    <button type="button" class="nav-burger" id="navBurger" aria-label="Menü öffnen" aria-expanded="false">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
-    </button>
   </div>
-</nav>
-<div class="nav-mobile" id="navMobile">
-  <div class="nav-mobile-head">
-    <div class="lang-switch" role="group" aria-label="Sprache / Language">
-      <button type="button" class="lang-opt" data-lang="de" onclick="fsSetLang('de')">DE</button>
-      <button type="button" class="lang-opt" data-lang="en" onclick="fsSetLang('en')">EN</button>
-    </div>
-    <button type="button" class="vc-close" id="navMobileClose" aria-label="Menü schließen"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
-  </div>
-  <a class="nm-link" href="#so"><span class="l-de">So funktioniert's</span><span class="l-en">How it works</span></a>
-  <a class="nm-link" href="#bereiche"><span class="l-de">Die 5 Bereiche</span><span class="l-en">The 5 areas</span></a>
-  <a class="nm-link" href="#ueber"><span class="l-de">Über mich</span><span class="l-en">About me</span></a>
-  <a class="nm-link" href="#faq">FAQ</a>
-  <div class="nm-actions">
-    <button type="button" class="btn btn-primary" data-vc-start><span class="l-de">Check starten</span><span class="l-en">Start the check</span> <span class="arr">→</span></button>
-  </div>
+  <div class="progress"><i id="progress"></i></div>
 </div>
 
-<main id="top">
+<main>
+  <div id="check"></div>
+</main>
 
-<!-- HERO -->
-<header class="hero">
-  <div class="wrap hero-grid">
-    <div>
-      <div class="hero-eyebrow"><span class="dot"></span><span class="l-de">Der 3-Minuten-Vitalcheck</span><span class="l-en">The 3-minute vitality check</span></div>
-      <h1>
-        <span class="l-de">Wie vital lebst du <span class="serif">wirklich?</span></span>
-        <span class="l-en">How vital is your <span class="serif">everyday life?</span></span>
-      </h1>
-      <p class="hero-sub">
-        <span class="l-de"><b>20 kurze Fragen</b> zu deinem Alltag. Am Ende siehst du sofort dein persönliches <b>Vitalporträt</b> in fünf Bereichen. Kostenlos, ohne Anmeldung, in unter drei Minuten.</span>
-        <span class="l-en"><b>20 short questions</b> about your everyday habits. At the end you instantly see your personal <b>vitality portrait</b> across five areas. Free, no sign-up, under three minutes.</span>
-      </p>
-      <div class="hero-actions">
-        <button type="button" class="btn btn-primary" data-vc-start><span class="l-de">Check starten</span><span class="l-en">Start the check</span> <span class="arr">→</span></button>
-        <a href="#so" class="btn btn-ghost"><span class="l-de">Wie es funktioniert</span><span class="l-en">How it works</span></a>
-      </div>
-      <div class="hero-signals">
-        <div class="hero-signal">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
-          <span class="l-de">Unter 3 Minuten</span><span class="l-en">Under 3 minutes</span>
-        </div>
-        <div class="hero-signal">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
-          <span class="l-de">Antworten bleiben auf deinem Gerät</span><span class="l-en">Answers stay on your device</span>
-        </div>
-        <div class="hero-signal">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
-          <span class="l-de">Ergebnis sofort</span><span class="l-en">Instant result</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="hero-visual">
-      <div class="portrait-card" aria-hidden="true">
-        <div class="portrait-head">
-          <div class="portrait-title"><span class="l-de">Vitalporträt</span><span class="l-en">Vitality portrait</span></div>
-          <div class="portrait-level" id="heroLevel">Auf Kurs</div>
-        </div>
-        <svg class="portrait-radar" id="heroRadar" viewBox="0 0 320 320"></svg>
-        <div class="portrait-bars" id="heroBars"></div>
-      </div>
-      <div class="portrait-float f1">
-        <span class="ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>
-        <span class="l-de">Bereich 3 von 5 geschafft</span><span class="l-en">Area 3 of 5 done</span>
-      </div>
-      <div class="portrait-float f2">
-        <span class="ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg></span>
-        <span class="l-de">Dein größter Hebel: Schlaf</span><span class="l-en">Your biggest lever: sleep</span>
-      </div>
-    </div>
-  </div>
-</header>
-
-<!-- PM-International Disclaimer -->
-<div class="pm-disclaimer">
-  <div class="pm-disclaimer-inner">
-    <img loading="eager" decoding="async" class="pm-disclaimer-avatar" src="{{profilbild}}" alt="{{vorname}} {{nachname}}">
+<!-- Pflicht-Kennzeichnung -->
+<div class="pm">
+  <div class="pm-inner">
+    <img src="{{profilbild}}" alt="">
     <div>
       <span class="l-de">Diese Seite wird betrieben von <b>{{vorname}} {{nachname}}</b>, {{#if geschlecht=weiblich}}unabhängige Vertriebspartnerin{{/if}}{{#unless geschlecht=weiblich}}unabhängiger Vertriebspartner{{/unless}} der PM-International (FitLine®). Diese Seite ist keine offizielle Website der PM-International AG.</span>
       <span class="l-en">This site is operated by <b>{{vorname}} {{nachname}}</b>, independent distributor of PM-International (FitLine®). This site is not an official website of PM-International AG.</span>
@@ -583,358 +249,149 @@ html[data-theme="midnight"] .method-tab.active { color: var(--accent-deep); }
   </div>
 </div>
 
-<!-- SO FUNKTIONIERT'S -->
-<section id="so">
-  <div class="wrap">
-    <div class="reveal">
-      <div class="section-tag"><span class="l-de">So funktioniert's</span><span class="l-en">How it works</span></div>
-      <h2><span class="l-de">Drei Schritte. <span class="serif">Ein ehrliches Bild.</span></span><span class="l-en">Three steps. <span class="serif">One honest picture.</span></span></h2>
-    </div>
-    <div class="steps">
-      <div class="step-card reveal">
-        <div class="step-num">1</div>
-        <h3><span class="l-de">Antworte ehrlich</span><span class="l-en">Answer honestly</span></h3>
-        <p><span class="l-de">20 Aussagen zu Ernährung, Energie, Schlaf, Bewegung und Balance. Trifft zu, teils oder nicht. Keine Anmeldung, kein Richtig oder Falsch.</span><span class="l-en">20 statements about food, energy, sleep, movement and balance. True, partly, or not. No sign-up, no right or wrong.</span></p>
-      </div>
-      <div class="step-card reveal">
-        <div class="step-num">2</div>
-        <h3><span class="l-de">Sieh dein Vitalporträt</span><span class="l-en">See your vitality portrait</span></h3>
-        <p><span class="l-de">Sofort nach der letzten Frage: dein Profil in fünf Bereichen, deine Stärke, dein größter Hebel und drei konkrete Alltagstipps.</span><span class="l-en">Right after the last question: your profile across five areas, your strength, your biggest lever and three practical everyday tips.</span></p>
-      </div>
-      <div class="step-card reveal">
-        <div class="step-num">3</div>
-        <h3><span class="l-de">Besprich es, wenn du magst</span><span class="l-en">Talk it through, if you like</span></h3>
-        <p><span class="l-de">Optional: Schick mir dein Ergebnis und ich melde mich persönlich bei dir. Unverbindlich, ohne Verpflichtung, ohne Newsletter.</span><span class="l-en">Optional: send me your result and I'll get back to you personally. No strings attached, no obligation, no newsletter.</span></p>
-      </div>
-    </div>
+<!-- Über mich -->
+<section class="about" id="ueber">
+  <img loading="lazy" decoding="async" src="{{about_bild}}" alt="{{vorname}} {{nachname}}" width="72" height="72">
+  <div>
+    <h2><span class="l-de">{{{about_intro_de_html}}}</span><span class="l-en">{{{about_intro_en_html}}}</span></h2>
+    <div class="role"><span class="l-de">{{#if geschlecht=weiblich}}Unabhängige Vertriebspartnerin{{/if}}{{#unless geschlecht=weiblich}}Unabhängiger Vertriebspartner{{/unless}} der PM-International</span><span class="l-en">Independent distributor of PM-International</span></div>
+    <div class="text"><span class="l-de">{{about_me_html}}</span><span class="l-en">{{about_me_html_en}}</span></div>
   </div>
 </section>
 
-<!-- DIE 5 BEREICHE -->
-<section id="bereiche" class="areas-section">
-  <div class="wrap areas-grid">
-    <div class="areas-copy reveal">
-      <div class="section-tag"><span class="l-de">Die 5 Bereiche</span><span class="l-en">The 5 areas</span></div>
-      <h2><span class="l-de">Fünf Bereiche, <span class="serif">ein Alltag.</span></span><span class="l-en">Five areas, <span class="serif">one everyday life.</span></span></h2>
-      <p><span class="l-de">Vitalität entsteht nicht durch eine einzelne Sache, sondern durch das Zusammenspiel deiner Gewohnheiten. Der Check zeigt dir, wo du schon stark bist und wo der kleinste Schritt am meisten bewegt.</span><span class="l-en">Vitality isn't one single thing. It's the interplay of your habits. The check shows you where you're already strong and where the smallest step moves the most.</span></p>
-      <div class="note">
-        <span class="l-de"><b>Wichtig:</b> Der Vitalcheck ist eine Selbsteinschätzung deiner Alltagsgewohnheiten. Er ist kein medizinischer Test und stellt keine Diagnose.</span>
-        <span class="l-en"><b>Important:</b> The vitality check is a self-assessment of your everyday habits. It is not a medical test and does not make a diagnosis.</span>
-      </div>
-    </div>
-    <div class="areas-list">
-      <div class="area-row reveal">
-        <div class="area-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg></div>
-        <div><h3><span class="l-de">Ernährung &amp; Trinken</span><span class="l-en">Food &amp; hydration</span></h3><p><span class="l-de">Frisches, Regelmäßigkeit, Flüssigkeit</span><span class="l-en">Fresh food, regularity, fluids</span></p></div>
-      </div>
-      <div class="area-row reveal">
-        <div class="area-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg></div>
-        <div><h3><span class="l-de">Energie &amp; Fokus</span><span class="l-en">Energy &amp; focus</span></h3><p><span class="l-de">Tagesverlauf, Konzentration, Pausen</span><span class="l-en">Daily rhythm, concentration, breaks</span></p></div>
-      </div>
-      <div class="area-row reveal">
-        <div class="area-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></div>
-        <div><h3><span class="l-de">Schlaf &amp; Erholung</span><span class="l-en">Sleep &amp; recovery</span></h3><p><span class="l-de">Schlafdauer, Abendroutine, Ausgleich</span><span class="l-en">Sleep duration, evening routine, balance</span></p></div>
-      </div>
-      <div class="area-row reveal">
-        <div class="area-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
-        <div><h3><span class="l-de">Bewegung &amp; Fitness</span><span class="l-en">Movement &amp; fitness</span></h3><p><span class="l-de">Alltagsbewegung, Sport, Mobilität</span><span class="l-en">Daily activity, sport, mobility</span></p></div>
-      </div>
-      <div class="area-row reveal">
-        <div class="area-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></div>
-        <div><h3><span class="l-de">Balance &amp; Wohlbefinden</span><span class="l-en">Balance &amp; wellbeing</span></h3><p><span class="l-de">Tageslicht, Pausen, Ausgeglichenheit</span><span class="l-en">Daylight, breaks, equanimity</span></p></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ÜBER MICH -->
-<section class="about-section" id="ueber">
-  <div class="wrap about-wrap">
-    <div class="about-photo-side reveal">
-      <div class="about-photo-frame">
-        <img loading="lazy" decoding="async" width="600" height="750" src="{{about_bild}}" alt="{{vorname}} {{nachname}}">
-      </div>
-    </div>
-    <div class="about-content reveal">
-      <div class="section-tag"><span class="l-de">Über mich</span><span class="l-en">About me</span></div>
-      <h2>
-        <span class="l-de">{{{about_intro_de_html}}}</span><span class="l-en">{{{about_intro_en_html}}}</span>
-      </h2>
-      <div class="about-lead-wrap">
-        <span class="l-de">{{about_me_html}}</span>
-        <span class="l-en">{{about_me_html_en}}</span>
-      </div>
-      <div class="about-sig">
-        <div>
-          <div class="about-sig-name">{{vorname}} {{nachname}}</div>
-          <div class="about-sig-role"><span class="l-de">{{#if geschlecht=weiblich}}Unabhängige Vertriebspartnerin{{/if}}{{#unless geschlecht=weiblich}}Unabhängiger Vertriebspartner{{/unless}} der PM-International</span><span class="l-en">Independent distributor of PM-International</span></div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- FAQ -->
-<section id="faq" class="faq-section">
-  <div class="wrap">
-    <div class="reveal" style="text-align:center">
-      <div class="section-tag" style="justify-content:center"><span class="l-de">Fragen &amp; Antworten</span><span class="l-en">Questions &amp; answers</span></div>
-      <h2><span class="l-de">Kurz und <span class="serif">ehrlich.</span></span><span class="l-en">Short and <span class="serif">honest.</span></span></h2>
-    </div>
-    <div class="faq-list reveal">
-      <div class="faq-item">
-        <button class="faq-q" type="button"><span><span class="l-de">Ist das ein medizinischer Test?</span><span class="l-en">Is this a medical test?</span></span><span class="faq-plus"></span></button>
-        <div class="faq-a"><div class="faq-a-inner"><span class="l-de">Nein. Der Vitalcheck fragt nach deinen Alltagsgewohnheiten, nicht nach Beschwerden oder Krankheiten. Er stellt keine Diagnose und ersetzt keine ärztliche Beratung. Wenn du gesundheitliche Fragen hast, wende dich bitte an deine Ärztin oder deinen Arzt.</span><span class="l-en">No. The vitality check asks about your everyday habits, not about symptoms or illnesses. It does not make a diagnosis and does not replace medical advice. If you have health concerns, please talk to your doctor.</span></div></div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q" type="button"><span><span class="l-de">Was passiert mit meinen Antworten?</span><span class="l-en">What happens to my answers?</span></span><span class="faq-plus"></span></button>
-        <div class="faq-a"><div class="faq-a-inner"><span class="l-de">Nichts, solange du es nicht willst. Das Ergebnis wird direkt auf deinem Gerät berechnet. Erst wenn du am Ende aktiv entscheidest, dein Ergebnis mit mir zu besprechen, und dem ausdrücklich zustimmst, werden deine Angaben an mich übermittelt.</span><span class="l-en">Nothing, unless you want it to. The result is calculated right on your device. Only if you actively decide at the end to discuss your result with me, and explicitly agree, will your answers be sent to me.</span></div></div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q" type="button"><span><span class="l-de">Kostet der Check etwas?</span><span class="l-en">Does the check cost anything?</span></span><span class="faq-plus"></span></button>
-        <div class="faq-a"><div class="faq-a-inner"><span class="l-de">Nein. Der Check ist kostenlos, und du musst dich nirgends anmelden.</span><span class="l-en">No. The check is free, and you don't have to sign up anywhere.</span></div></div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q" type="button"><span><span class="l-de">Muss ich danach etwas kaufen?</span><span class="l-en">Do I have to buy anything afterwards?</span></span><span class="faq-plus"></span></button>
-        <div class="faq-a"><div class="faq-a-inner"><span class="l-de">Nein. Ich bin {{#if geschlecht=weiblich}}unabhängige Vertriebspartnerin{{/if}}{{#unless geschlecht=weiblich}}unabhängiger Vertriebspartner{{/unless}} der PM-International und sage das offen. Ob und worüber wir sprechen, entscheidest du. Das Gespräch ist unverbindlich.</span><span class="l-en">No. I'm an independent distributor of PM-International and I say so openly. Whether and what we talk about is up to you. The conversation is non-binding.</span></div></div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q" type="button"><span><span class="l-de">Was bekomme ich am Ende?</span><span class="l-en">What do I get at the end?</span></span><span class="faq-plus"></span></button>
-        <div class="faq-a"><div class="faq-a-inner"><span class="l-de">Dein Vitalporträt: fünf Bereiche im Überblick, deine größte Stärke, dein wirksamster Hebel und drei Alltagstipps, die du sofort umsetzen kannst. Ganz ohne Kontaktdaten.</span><span class="l-en">Your vitality portrait: five areas at a glance, your biggest strength, your most effective lever and three everyday tips you can use right away. No contact details needed.</span></div></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- CTA -->
-<section>
-  <div class="wrap">
-    <div class="cta-banner reveal">
-      <h2><span class="l-de">Drei Minuten für <span class="serif">ein ehrliches Bild.</span></span><span class="l-en">Three minutes for <span class="serif">an honest picture.</span></span></h2>
-      <p><span class="l-de">Keine Anmeldung. Keine Verpflichtung. Nur du und 20 Fragen zu deinem Alltag.</span><span class="l-en">No sign-up. No obligation. Just you and 20 questions about your everyday life.</span></p>
-      <button type="button" class="btn btn-primary" data-vc-start><span class="l-de">Check starten</span><span class="l-en">Start the check</span> <span class="arr">→</span></button>
-    </div>
-  </div>
-</section>
-
-</main>
-
-<!-- FOOTER -->
 <footer>
-  <div class="wrap">
-    <div class="footer-cols">
-      <div class="footer-col">
-        <div class="footer-col-title"><span class="l-de">Der Check</span><span class="l-en">The check</span></div>
-        <a href="#so"><span class="l-de">So funktioniert's</span><span class="l-en">How it works</span></a>
-        <a href="#bereiche"><span class="l-de">Die 5 Bereiche</span><span class="l-en">The 5 areas</span></a>
-        <a href="#top" data-vc-start><span class="l-de">Check starten</span><span class="l-en">Start the check</span></a>
-      </div>
-      <div class="footer-col">
-        <div class="footer-col-title">Info</div>
-        <a href="#ueber"><span class="l-de">Über mich</span><span class="l-en">About me</span></a>
-        <a href="#faq"><span class="l-de">Fragen &amp; Antworten</span><span class="l-en">Questions &amp; answers</span></a>
-      </div>
-      <div class="footer-col">
-        <div class="footer-col-title"><span class="l-de">Kontakt</span><span class="l-en">Contact</span></div>
-        <a href="mailto:{{email_benachrichtigung}}">{{email_benachrichtigung}}</a>
-        {{#if whatsapp_nummer}}<a href="https://wa.me/{{whatsapp_nummer}}" target="_blank" rel="noopener">WhatsApp</a>{{/if}}
-      </div>
-      <div class="footer-col">
-        <div class="footer-col-title"><span class="l-de">Rechtliches</span><span class="l-en">Legal</span></div>
-        <a href="/impressum"><span class="l-de">Impressum</span><span class="l-en">Imprint</span></a>
-        <a href="/datenschutz"><span class="l-de">Datenschutz</span><span class="l-en">Privacy</span></a>
-      </div>
+  <div class="foot">
+    <div class="links">
+      <a href="mailto:{{email_benachrichtigung}}">{{email_benachrichtigung}}</a>
+      {{#if whatsapp_nummer}}<a href="https://wa.me/{{whatsapp_nummer}}" target="_blank" rel="noopener">WhatsApp</a>{{/if}}
+      <a href="/impressum"><span class="l-de">Impressum</span><span class="l-en">Imprint</span></a>
+      <a href="/datenschutz"><span class="l-de">Datenschutz</span><span class="l-en">Privacy</span></a>
+      <span class="made">© 2026 {{vorname}} {{nachname}} · <a href="https://finestsites.io" target="_blank" rel="noopener" aria-label="finestsites"><img loading="lazy" decoding="async" src="assets/fs-logo.svg" alt="finestsites"></a></span>
     </div>
-    <div class="footer-bottom">
-      <div>© 2026 {{vorname}} {{nachname}}</div>
-      <div class="footer-made">
-        Made with <span class="heart">♥</span> <span class="l-de">von</span><span class="l-en">by</span>
-        <a href="https://finestsites.io" target="_blank" rel="noopener" aria-label="finestsites"><img loading="lazy" decoding="async" src="assets/fs-logo.svg" alt="finestsites"></a>
-      </div>
-    </div>
-    <div class="footer-disclaimer">
-      <p><span class="l-de">Diese Seite wird betrieben von {{vorname}} {{nachname}}, {{#if geschlecht=weiblich}}unabhängige Vertriebspartnerin{{/if}}{{#unless geschlecht=weiblich}}unabhängiger Vertriebspartner{{/unless}} der PM-International (FitLine®). Diese Seite ist keine offizielle Website der PM-International AG.</span><span class="l-en">This site is operated by {{vorname}} {{nachname}}, independent distributor of PM-International (FitLine®). This site is not an official website of PM-International AG.</span></p>
-      <p><span class="l-de">Der Vitalcheck ist eine Selbsteinschätzung deiner Alltagsgewohnheiten (Ernährung, Bewegung, Schlaf, Erholung). Er ist keine medizinische Untersuchung, stellt keine Diagnose, gibt keine Behandlungsempfehlung und ersetzt keine ärztliche Beratung. Die angezeigten Hinweise sind allgemeine Alltagstipps. Bei gesundheitlichen Beschwerden oder Vorerkrankungen wende dich bitte an deine Ärztin oder deinen Arzt. Der Check richtet sich an Personen ab 18 Jahren.</span><span class="l-en">The vitality check is a self-assessment of your everyday habits (food, movement, sleep, recovery). It is not a medical examination, does not make a diagnosis, gives no treatment recommendation and does not replace medical advice. The hints shown are general everyday tips. If you have health complaints or pre-existing conditions, please consult your doctor. The check is intended for adults aged 18 and over.</span></p>
-    </div>
+    <p><span class="l-de">Der Vitalcheck ist eine Selbsteinschätzung deiner Alltagsgewohnheiten (Ernährung, Tagesstruktur, Schlaf, Bewegung, Ausgleich). Er ist keine medizinische Untersuchung, stellt keine Diagnose, gibt keine Behandlungs- oder Produktempfehlung und ersetzt keine ärztliche Beratung. Die angezeigten Hinweise sind allgemeine Alltagstipps. Bei gesundheitlichen Beschwerden wende dich bitte an deine Ärztin oder deinen Arzt. Der Check richtet sich an Personen ab 18 Jahren.</span><span class="l-en">The vitality check is a self-assessment of your everyday habits (food, daily structure, sleep, movement, balance). It is not a medical examination, does not make a diagnosis, gives no treatment or product recommendation and does not replace medical advice. The hints shown are general everyday tips. If you have health complaints, please consult your doctor. The check is intended for adults aged 18 and over.</span></p>
   </div>
 </footer>
 
-<!-- ============ VITALCHECK OVERLAY ============ -->
-<div class="vc" id="vc" role="dialog" aria-modal="true" aria-label="Vitalcheck">
-  <div class="vc-top">
-    <button type="button" class="vc-close" id="vcClose" aria-label="Schließen"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
-    <div class="vc-progress"><div class="vc-progress-fill" id="vcProgress"></div></div>
-    <div class="vc-counter" id="vcCounter"></div>
-    <svg class="vc-mini" id="vcMini" viewBox="0 0 320 320" aria-hidden="true"></svg>
-  </div>
-  <div class="vc-body" id="vcBody"><div class="vc-inner" id="vcInner"></div></div>
-</div>
-
 <script>
-/* ============ SPRACHE ============ */
 function fsSetLang(lang) {
   if (lang !== 'de' && lang !== 'en') return;
   document.documentElement.setAttribute('data-lang', lang);
   document.documentElement.setAttribute('lang', lang);
   try { localStorage.setItem('fs-lang', lang); } catch(e){}
-  document.querySelectorAll('[data-de-placeholder]').forEach(function(el){
-    var v = lang === 'en' ? el.getAttribute('data-en-placeholder') : el.getAttribute('data-de-placeholder');
-    if (v) el.setAttribute('placeholder', v);
-  });
-  if (window.VC && VC.opened) VC.render(true);
-  if (window.HERO) HERO.paint();
+  if (window.VC) VC.render();
 }
 function L(){ return document.documentElement.getAttribute('data-lang') === 'en' ? 'en' : 'de'; }
 function t(o){ if (!o) return ''; if (typeof o === 'string') return o; return o[L()] || o.de || ''; }
-(function initLang(){
-  var lang = L();
-  document.querySelectorAll('[data-de-placeholder]').forEach(function(el){
-    var v = lang === 'en' ? el.getAttribute('data-en-placeholder') : el.getAttribute('data-de-placeholder');
-    if (v) el.setAttribute('placeholder', v);
-  });
-})();
 
-/* ============ NAV ============ */
-(function(){
-  var burger = document.getElementById('navBurger'), mob = document.getElementById('navMobile'), close = document.getElementById('navMobileClose');
-  function open(){ mob.setAttribute('open',''); burger.setAttribute('aria-expanded','true'); }
-  function shut(){ mob.removeAttribute('open'); burger.setAttribute('aria-expanded','false'); }
-  burger.addEventListener('click', open); close.addEventListener('click', shut);
-  mob.querySelectorAll('a, button[data-vc-start]').forEach(function(a){ a.addEventListener('click', shut); });
-  document.querySelectorAll('.faq-q').forEach(function(q){
-    q.addEventListener('click', function(){
-      var item = q.parentElement, a = item.querySelector('.faq-a'), open = item.classList.contains('open');
-      document.querySelectorAll('.faq-item.open').forEach(function(o){ o.classList.remove('open'); o.querySelector('.faq-a').style.maxHeight = '0'; });
-      if (!open) { item.classList.add('open'); a.style.maxHeight = a.scrollHeight + 'px'; }
-    });
-  });
-  var io = new IntersectionObserver(function(entries){ entries.forEach(function(e){ if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }); }, { threshold: 0.12 });
-  document.querySelectorAll('.reveal').forEach(function(el){ io.observe(el); });
-})();
-
-/* ============ ICONS ============ */
 var ICO = {
-  food: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>',
-  bolt: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg>',
-  moon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>',
-  move: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>',
-  sun: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>',
-  check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>',
-  yes: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>',
-  mid: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14"/></svg>',
-  no: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>',
-  bulb: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1V17h6v-.2c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z"/></svg>',
-  back: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>',
-  star: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3 6.5 7 .8-5.2 4.8 1.4 7L12 17.6 5.8 21l1.4-7L2 9.3l7-.8z"/></svg>',
-  wa: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.6 6.32A7.85 7.85 0 0 0 12.05 4a7.94 7.94 0 0 0-6.9 11.9L4 20l4.2-1.1a7.93 7.93 0 0 0 3.85.98h.01c4.38 0 7.93-3.57 7.93-7.95a7.9 7.9 0 0 0-2.39-5.6zM12.04 18.54h-.01a6.6 6.6 0 0 1-3.37-.92l-.24-.14-2.5.66.67-2.44-.16-.25a6.59 6.59 0 0 1-1.01-3.51 6.6 6.6 0 0 1 11.27-4.66 6.55 6.55 0 0 1 1.93 4.67 6.6 6.6 0 0 1-6.58 6.59zm3.61-4.93c-.2-.1-1.17-.58-1.35-.64-.18-.07-.31-.1-.45.1-.13.2-.51.64-.63.77-.11.13-.23.15-.43.05-.2-.1-.83-.31-1.59-.98-.59-.52-.98-1.17-1.1-1.37-.11-.2-.01-.3.09-.4.09-.09.2-.23.3-.35.1-.12.13-.2.2-.33.07-.13.03-.25-.02-.35-.05-.1-.45-1.08-.61-1.48-.16-.39-.33-.34-.45-.34h-.38c-.13 0-.35.05-.53.25-.18.2-.7.68-.7 1.66s.72 1.93.82 2.06c.1.13 1.41 2.16 3.42 3.03.48.2.85.33 1.14.42.48.15.92.13 1.26.08.39-.06 1.17-.48 1.34-.94.16-.46.16-.86.11-.94-.05-.08-.18-.13-.38-.23z"/></svg>',
-  mail: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>',
-  phone: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>'
+  check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>',
+  back: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>'
 };
 
-/* ============ CHECK-KONFIGURATION ============ */
-/* Alle Aussagen sind positiv formulierte Alltagsgewohnheiten. Bewusst KEINE Fragen zu Beschwerden,
-   Krankheiten oder Symptomen, keine Produkt- oder Wirkaussagen (HWG, LMIV Art. 7 Abs. 3, HCVO). */
+/* ============ KONFIGURATION ============
+   Alle 20 Aussagen beschreiben beobachtbares Verhalten (Gewohnheiten), keine Befindlichkeiten,
+   keine Beschwerden, keine Krankheiten. Keine Produkt-, Wirk- oder Heilaussagen. */
 var CFG = {
   dims: [
-    { id: 'ernaehrung', ico: 'food', name: { de: 'Ernährung & Trinken', en: 'Food & hydration' }, short: { de: 'Ernährung', en: 'Food' },
+    { id: 'ernaehrung', name: { de: 'Ernährung & Trinken', en: 'Food & hydration' }, short: { de: 'Ernährung', en: 'Food' },
       strength: { de: 'Bewusste Ernährung', en: 'Mindful eating' },
       q: [
-        { id: 'portionen', label: { de: '5 Portionen Obst & Gemüse', en: '5 portions fruit & veg' }, text: { de: 'Ich esse an den meisten Tagen fünf Portionen Obst und Gemüse.', en: 'On most days I eat five portions of fruit and vegetables.' } },
-        { id: 'trinken', label: { de: 'Mind. 1,5 Liter trinken', en: 'At least 1.5 litres' }, text: { de: 'Ich trinke über den Tag verteilt mindestens 1,5 Liter Wasser oder ungesüßten Tee.', en: 'Spread over the day, I drink at least 1.5 litres of water or unsweetened tea.' } },
-        { id: 'mahlzeiten', label: { de: 'Regelmäßige Mahlzeiten', en: 'Regular meals' }, text: { de: 'Ich esse regelmäßig richtige Mahlzeiten, statt zwischendurch zu snacken.', en: 'I eat proper, regular meals instead of snacking in between.' } },
-        { id: 'heisshunger', label: { de: 'Heißhunger selten', en: 'Cravings rare' }, text: { de: 'Heißhunger ist für mich selten ein Thema.', en: 'Food cravings are rarely an issue for me.' } }
+        { label: { de: '5 Portionen Obst & Gemüse', en: '5 portions fruit & veg' }, text: { de: 'Ich esse an den meisten Tagen fünf Portionen Obst und Gemüse.', en: 'On most days I eat five portions of fruit and vegetables.' } },
+        { label: { de: 'Mind. 1,5 Liter trinken', en: 'At least 1.5 litres' }, text: { de: 'Ich trinke über den Tag verteilt mindestens 1,5 Liter Wasser oder ungesüßten Tee.', en: 'Spread over the day, I drink at least 1.5 litres of water or unsweetened tea.' } },
+        { label: { de: 'Regelmäßige Mahlzeiten', en: 'Regular meals' }, text: { de: 'Ich esse regelmäßig richtige Mahlzeiten, statt zwischendurch zu snacken.', en: 'I eat proper, regular meals instead of snacking in between.' } },
+        { label: { de: 'Gesunde Snacks griffbereit', en: 'Healthy snacks at hand' }, text: { de: 'Ich habe meistens etwas Gesundes griffbereit, zum Beispiel Obst, Gemüse oder Nüsse.', en: 'I usually have something healthy within reach, such as fruit, vegetables or nuts.' } }
       ],
       fb: {
-        high: { de: 'Frisches, Regelmäßigkeit und Trinken sind bei dir fest im Alltag verankert. Diese Routine trägt vieles andere mit.', en: 'Fresh food, regular meals and hydration are firmly part of your routine. That foundation carries a lot else.' },
-        mid: { de: 'Vieles läuft. An manchen Tagen rutschen Frisches oder das Trinken durch. Kleine Anker im Tagesablauf machen hier den Unterschied.', en: 'A lot is working. On some days fresh food or drinking slips. Small anchors in your daily routine make the difference here.' },
-        low: { de: 'Hier liegt dein größter Alltags-Hebel: regelmäßige Mahlzeiten, mehr Frisches und genug Flüssigkeit sind die Basis, auf der alles andere aufbaut.', en: 'This is your biggest everyday lever: regular meals, more fresh food and enough fluids are the base everything else builds on.' }
+        high: { de: 'Frisches, Regelmäßigkeit und Trinken sind bei dir fest im Alltag verankert.', en: 'Fresh food, regular meals and hydration are firmly part of your routine.' },
+        mid: { de: 'Vieles läuft. An manchen Tagen rutschen Frisches oder das Trinken durch. Kleine Anker im Tagesablauf machen den Unterschied.', en: 'A lot is working. On some days fresh food or drinking slips. Small anchors in your daily routine make the difference.' },
+        low: { de: 'Hier liegt dein größter Alltags-Hebel: regelmäßige Mahlzeiten, mehr Frisches und genug zu trinken.', en: 'This is your biggest everyday lever: regular meals, more fresh food and enough to drink.' }
       },
       tips: [
         { t: { de: 'Eine Handvoll Gemüse zu jeder Mahlzeit', en: 'A handful of veg with every meal' }, d: { de: 'So kommst du fast nebenbei auf die fünf Portionen am Tag, die die Deutsche Gesellschaft für Ernährung empfiehlt.', en: 'That gets you close to the five portions a day recommended by nutrition societies, almost as a side effect.' } },
-        { t: { de: 'Die Flasche auf den Tisch', en: 'Bottle on the desk' }, d: { de: 'Morgens eine 1-Liter-Flasche hinstellen. Bis mittags leer, dann nochmal füllen. Trinken wird sichtbar statt vergessen.', en: 'Put a 1-litre bottle on your desk in the morning. Empty by noon, refill once. Drinking becomes visible instead of forgotten.' } }
+        { t: { de: 'Die Flasche auf den Tisch', en: 'Bottle on the desk' }, d: { de: 'Morgens eine 1-Liter-Flasche hinstellen. Bis mittags leer, dann nochmal füllen.', en: 'Put a 1-litre bottle on your desk in the morning. Empty by noon, refill once.' } }
       ]
     },
-    { id: 'energie', ico: 'bolt', name: { de: 'Energie & Fokus', en: 'Energy & focus' }, short: { de: 'Energie', en: 'Energy' },
-      strength: { de: 'Stabile Energie', en: 'Steady energy' },
+    { id: 'tag', name: { de: 'Tagesstruktur & Pausen', en: 'Daily structure & breaks' }, short: { de: 'Tagesstruktur', en: 'Structure' },
+      strength: { de: 'Klare Tagesstruktur', en: 'Clear daily structure' },
       q: [
-        { id: 'tief', label: { de: 'Kein Nachmittagstief', en: 'No afternoon slump' }, text: { de: 'Ich komme ohne großes Nachmittagstief durch den Tag.', en: 'I get through the day without a big afternoon slump.' } },
-        { id: 'fokus', label: { de: 'Gute Konzentration', en: 'Good concentration' }, text: { de: 'Ich kann mich über längere Zeit gut konzentrieren.', en: 'I can concentrate well for longer stretches.' } },
-        { id: 'pausen', label: { de: 'Bildschirmpausen', en: 'Screen breaks' }, text: { de: 'Bei Bildschirmarbeit mache ich regelmäßig kurze Pausen.', en: 'When working on a screen, I take regular short breaks.' } },
-        { id: 'abends', label: { de: 'Abends noch Energie', en: 'Energy in the evening' }, text: { de: 'Abends habe ich noch Energie für Dinge, die mir wichtig sind.', en: 'In the evening I still have energy for things that matter to me.' } }
+        { label: { de: 'Bildschirmpausen', en: 'Screen breaks' }, text: { de: 'Bei Bildschirmarbeit stehe ich mindestens einmal pro Stunde kurz auf.', en: 'When working on a screen, I get up briefly at least once an hour.' } },
+        { label: { de: 'Mittags frische Luft', en: 'Fresh air at midday' }, text: { de: 'Ich gehe mittags mindestens einmal an die frische Luft.', en: 'I go outside for fresh air at least once around midday.' } },
+        { label: { de: 'Eine Sache am Stück', en: 'One thing at a time' }, text: { de: 'Ich arbeite an einer Sache am Stück, statt ständig zwischen Aufgaben und Nachrichten zu springen.', en: 'I work on one thing at a time instead of constantly switching between tasks and messages.' } },
+        { label: { de: 'Fester Feierabend', en: 'Fixed end of workday' }, text: { de: 'Ich beende meinen Arbeitstag zu einer festen Zeit.', en: 'I end my workday at a fixed time.' } }
       ],
       fb: {
-        high: { de: 'Du kommst mit stabiler Energie durch den Tag und bleibst fokussiert. Das ist ein echter Alltagsvorteil.', en: 'You move through the day with steady energy and stay focused. That is a real everyday advantage.' },
-        mid: { de: 'Dein Tag hat Hochs und Tiefs. Bewusste Pausen und kurze Bewegung zwischendurch halten die Kurve flacher.', en: 'Your day has highs and lows. Deliberate breaks and short bursts of movement keep the curve flatter.' },
-        low: { de: 'Dein Tag zieht spürbar Energie. Pausen, Bewegung und ein Blick auf Schlaf und Mahlzeiten zahlen hier direkt ein.', en: 'Your day noticeably drains energy. Breaks, movement and a look at sleep and meals pay off here directly.' }
+        high: { de: 'Dein Tag hat eine klare Struktur mit Pausen und einem Ende. Das trägt deine Konzentration über den Tag.', en: 'Your day has a clear structure with breaks and an end. That carries your concentration through the day.' },
+        mid: { de: 'Struktur ist da, aber Pausen und ein klares Ende gehen im Alltag manchmal verloren.', en: 'There is structure, but breaks and a clear end sometimes get lost in the daily routine.' },
+        low: { de: 'Dein Tag läuft oft ohne feste Pausen und ohne klares Ende. Kleine feste Unterbrechungen sind hier der einfachste Anfang.', en: 'Your day often runs without fixed breaks and without a clear end. Small fixed interruptions are the easiest start here.' }
       },
       tips: [
-        { t: { de: 'Alle 60 bis 90 Minuten aufstehen', en: 'Stand up every 60 to 90 minutes' }, d: { de: 'Drei Minuten gehen, dehnen, Fenster auf. Kurze Unterbrechungen halten den Kopf klarer als ein dritter Kaffee.', en: 'Three minutes of walking, stretching, window open. Short interruptions keep your head clearer than a third coffee.' } },
-        { t: { de: 'Das Tief spazieren gehen', en: 'Walk the slump off' }, d: { de: 'Wenn es nachmittags zäh wird: zehn Minuten draußen statt Snack und Bildschirm.', en: 'When the afternoon gets sluggish: ten minutes outside instead of snack and screen.' } }
+        { t: { de: 'Alle 60 Minuten drei Minuten aufstehen', en: 'Stand up for three minutes every hour' }, d: { de: 'Gehen, dehnen, Fenster auf. Kurze Unterbrechungen halten den Kopf klarer als ein weiterer Kaffee.', en: 'Walk, stretch, open a window. Short interruptions keep your head clearer than another coffee.' } },
+        { t: { de: 'Der Feierabend hat eine Uhrzeit', en: 'Your evening has a start time' }, d: { de: 'Leg eine feste Zeit fest und schließ den Laptop dann wirklich. Ein Ritual hilft: kurzer Spaziergang, Musik, Sport.', en: 'Set a fixed time and actually close the laptop then. A ritual helps: short walk, music, sport.' } }
       ]
     },
-    { id: 'schlaf', ico: 'moon', name: { de: 'Schlaf & Erholung', en: 'Sleep & recovery' }, short: { de: 'Schlaf', en: 'Sleep' },
-      strength: { de: 'Echte Erholung', en: 'Real recovery' },
+    { id: 'schlaf', name: { de: 'Schlaf & Abschalten', en: 'Sleep & winding down' }, short: { de: 'Schlaf', en: 'Sleep' },
+      strength: { de: 'Feste Schlafroutine', en: 'Solid sleep routine' },
       q: [
-        { id: 'dauer', label: { de: '7+ Stunden Schlaf', en: '7+ hours of sleep' }, text: { de: 'Ich schlafe meistens sieben Stunden oder mehr.', en: 'I usually sleep seven hours or more.' } },
-        { id: 'erholt', label: { de: 'Erholt aufwachen', en: 'Wake up rested' }, text: { de: 'Ich wache in der Regel erholt auf.', en: 'I usually wake up feeling rested.' } },
-        { id: 'routine', label: { de: 'Abendroutine', en: 'Evening routine' }, text: { de: 'Ich habe eine Abendroutine, mit der ich gut abschalte.', en: 'I have an evening routine that helps me switch off.' } },
-        { id: 'stress', label: { de: 'Stress ausgleichen', en: 'Balancing stress' }, text: { de: 'Stressige Phasen kann ich im Alltag gut ausgleichen.', en: 'I can balance out stressful phases well in everyday life.' } }
+        { label: { de: '7+ Stunden Schlaf', en: '7+ hours of sleep' }, text: { de: 'Ich plane meine Nächte so, dass ich meistens sieben Stunden oder mehr schlafe.', en: 'I plan my nights so that I usually get seven hours of sleep or more.' } },
+        { label: { de: 'Ähnliche Schlafenszeiten', en: 'Similar bedtimes' }, text: { de: 'Ich gehe unter der Woche zu ähnlichen Zeiten ins Bett.', en: 'During the week I go to bed at similar times.' } },
+        { label: { de: 'Letzte Stunde ohne Bildschirm', en: 'Last hour screen-free' }, text: { de: 'Die letzte Stunde vor dem Schlafen verbringe ich ohne Handy, Laptop oder Fernseher.', en: 'I spend the last hour before sleep without phone, laptop or TV.' } },
+        { label: { de: 'Fester Weg zum Abschalten', en: 'Fixed way to switch off' }, text: { de: 'Nach stressigen Tagen habe ich einen festen Weg, um abzuschalten, zum Beispiel Sport, Spaziergang oder Musik.', en: 'After stressful days I have a fixed way to switch off, such as sport, a walk or music.' } }
       ],
       fb: {
-        high: { de: 'Erholung funktioniert bei dir. Du gibst deinem Körper die Zeit, die er braucht.', en: 'Recovery works for you. You give your body the time it needs.' },
-        mid: { de: 'Mal erholt, mal nicht. Eine feste Abendroutine ist oft der einfachste Hebel, den es gibt.', en: 'Sometimes rested, sometimes not. A fixed evening routine is often the simplest lever there is.' },
-        low: { de: 'Schlaf und Abschalten kommen aktuell zu kurz. Mit einer kleinen Abendroutine und festen Zeiten gewinnst du hier am schnellsten.', en: 'Sleep and switching off are getting short-changed right now. A small evening routine and fixed times are where you gain fastest.' }
+        high: { de: 'Deine Abende und Nächte haben Routine. Das ist eine der wertvollsten Gewohnheiten überhaupt.', en: 'Your evenings and nights have routine. That is one of the most valuable habits there is.' },
+        mid: { de: 'Mal mit Routine, mal ohne. Feste Zeiten und die letzte Stunde ohne Bildschirm sind oft der einfachste Hebel.', en: 'Sometimes with routine, sometimes without. Fixed times and a screen-free last hour are often the simplest lever.' },
+        low: { de: 'Abschalten und Schlafenszeiten laufen bei dir eher zufällig. Mit einer kleinen Abendroutine gewinnst du hier am schnellsten.', en: 'Winding down and bedtimes are rather random for you. A small evening routine is where you gain fastest.' }
       },
       tips: [
-        { t: { de: 'Feste Zubettgeh-Zeit', en: 'Fixed bedtime' }, d: { de: 'Plus/minus 30 Minuten, auch am Wochenende. Der Körper liebt Regelmäßigkeit mehr als Nachholschlaf.', en: 'Plus or minus 30 minutes, weekends included. Your body loves regularity more than catch-up sleep.' } },
+        { t: { de: 'Feste Zubettgeh-Zeit', en: 'Fixed bedtime' }, d: { de: 'Plus/minus 30 Minuten, auch am Wochenende. Regelmäßigkeit wirkt stärker als Nachholschlaf.', en: 'Plus or minus 30 minutes, weekends included. Regularity works better than catch-up sleep.' } },
         { t: { de: 'Letzte Stunde ohne Bildschirm', en: 'Last hour screen-free' }, d: { de: 'Buch, Musik, kurzer Spaziergang, Gespräch. Der Kopf braucht eine Landebahn.', en: 'Book, music, short walk, conversation. Your mind needs a runway.' } }
       ]
     },
-    { id: 'bewegung', ico: 'move', name: { de: 'Bewegung & Fitness', en: 'Movement & fitness' }, short: { de: 'Bewegung', en: 'Movement' },
+    { id: 'bewegung', name: { de: 'Bewegung & Fitness', en: 'Movement & fitness' }, short: { de: 'Bewegung', en: 'Movement' },
       strength: { de: 'In Bewegung', en: 'In motion' },
       q: [
-        { id: 'taeglich', label: { de: '30 Min. Bewegung täglich', en: '30 min movement daily' }, text: { de: 'Ich bewege mich täglich mindestens 30 Minuten, zum Beispiel zügig zu Fuß.', en: 'I move for at least 30 minutes every day, for example brisk walking.' } },
-        { id: 'sport', label: { de: '2× Sport pro Woche', en: 'Sport twice a week' }, text: { de: 'Ich treibe mindestens zweimal pro Woche Sport.', en: 'I do sport at least twice a week.' } },
-        { id: 'sitzen', label: { de: 'Selten lange sitzen', en: 'Rarely sit for long' }, text: { de: 'Ich sitze selten länger als eine Stunde am Stück.', en: 'I rarely sit for more than an hour at a time.' } },
-        { id: 'mobil', label: { de: 'Dehnen / Mobilität', en: 'Stretching / mobility' }, text: { de: 'Dehnen oder Mobilitätsübungen gehören zu meiner Woche.', en: 'Stretching or mobility exercises are part of my week.' } }
+        { label: { de: '30 Min. Bewegung täglich', en: '30 min movement daily' }, text: { de: 'Ich bewege mich täglich mindestens 30 Minuten, zum Beispiel zügig zu Fuß oder mit dem Rad.', en: 'I move for at least 30 minutes every day, for example brisk walking or cycling.' } },
+        { label: { de: '2× Sport pro Woche', en: 'Sport twice a week' }, text: { de: 'Ich treibe mindestens zweimal pro Woche Sport.', en: 'I do sport at least twice a week.' } },
+        { label: { de: 'Treppe statt Aufzug', en: 'Stairs instead of lift' }, text: { de: 'Ich nehme im Alltag die Treppe statt Aufzug oder Rolltreppe.', en: 'In everyday life I take the stairs instead of the lift or escalator.' } },
+        { label: { de: 'Dehnen / Mobilität', en: 'Stretching / mobility' }, text: { de: 'Dehnen oder Mobilitätsübungen gehören zu meiner Woche.', en: 'Stretching or mobility exercises are part of my week.' } }
       ],
       fb: {
-        high: { de: 'Bewegung ist ein fester Teil deiner Woche. Genau das hält Körper und Kopf in Schwung.', en: 'Movement is a fixed part of your week. Exactly that keeps body and mind going.' },
+        high: { de: 'Bewegung ist ein fester Teil deiner Woche, im Sport und im Alltag.', en: 'Movement is a fixed part of your week, in sport and in everyday life.' },
         mid: { de: 'Du bewegst dich, aber nicht immer regelmäßig. Feste Termine mit dir selbst machen es leichter.', en: 'You do move, but not always regularly. Fixed appointments with yourself make it easier.' },
-        low: { de: 'Bewegung kommt aktuell zu kurz. Schon 30 Minuten zügiges Gehen am Tag verändern das Gesamtbild spürbar.', en: 'Movement is getting short-changed right now. Even 30 minutes of brisk walking a day changes the overall picture noticeably.' }
+        low: { de: 'Bewegung kommt aktuell zu kurz. Schon 30 Minuten zügiges Gehen am Tag verändern das Gesamtbild deutlich.', en: 'Movement is getting short-changed right now. Even 30 minutes of brisk walking a day changes the overall picture noticeably.' }
       },
       tips: [
         { t: { de: '5 × 30 Minuten zügig gehen', en: '5 × 30 minutes brisk walking' }, d: { de: 'Das entspricht den 150 Minuten moderater Bewegung pro Woche, die die WHO empfiehlt. Kein Fitnessstudio nötig.', en: 'That matches the 150 minutes of moderate activity per week the WHO recommends. No gym needed.' } },
-        { t: { de: 'Bewegung in den Weg bauen', en: 'Build movement into your route' }, d: { de: 'Treppe statt Aufzug, eine Station früher aussteigen, Telefonate im Gehen. Kleine Wege, große Summe.', en: 'Stairs instead of lift, get off one stop early, take calls walking. Small distances, big sum.' } }
+        { t: { de: 'Bewegung in den Weg bauen', en: 'Build movement into your route' }, d: { de: 'Treppe statt Aufzug, eine Station früher aussteigen, Telefonate im Gehen.', en: 'Stairs instead of lift, get off one stop early, take calls walking.' } }
       ]
     },
-    { id: 'balance', ico: 'sun', name: { de: 'Balance & Wohlbefinden', en: 'Balance & wellbeing' }, short: { de: 'Balance', en: 'Balance' },
-      strength: { de: 'Innere Balance', en: 'Inner balance' },
+    { id: 'ausgleich', name: { de: 'Ausgleich & Zeit für dich', en: 'Balance & time for yourself' }, short: { de: 'Ausgleich', en: 'Balance' },
+      strength: { de: 'Guter Ausgleich', en: 'Good balance' },
       q: [
-        { id: 'licht', label: { de: 'Täglich Tageslicht', en: 'Daily daylight' }, text: { de: 'Ich bin jeden Tag mindestens 20 Minuten draußen im Tageslicht.', en: 'I spend at least 20 minutes outside in daylight every day.' } },
-        { id: 'zeit', label: { de: 'Zeit für mich', en: 'Time for myself' }, text: { de: 'Ich nehme mir bewusst Zeit für Pausen und Dinge, die mir guttun.', en: 'I deliberately make time for breaks and things that do me good.' } },
-        { id: 'koerper', label: { de: 'Wohl im Körper', en: 'At home in my body' }, text: { de: 'Ich fühle mich in meinem Körper wohl.', en: 'I feel comfortable in my body.' } },
-        { id: 'ausgeglichen', label: { de: 'Meist ausgeglichen', en: 'Mostly balanced' }, text: { de: 'Ich fühle mich meistens ausgeglichen.', en: 'Most of the time I feel balanced.' } }
+        { label: { de: 'Täglich Tageslicht', en: 'Daily daylight' }, text: { de: 'Ich bin jeden Tag mindestens 20 Minuten draußen im Tageslicht.', en: 'I spend at least 20 minutes outside in daylight every day.' } },
+        { label: { de: 'Täglich Minuten ohne Handy', en: 'Daily minutes without phone' }, text: { de: 'Ich nehme mir täglich ein paar Minuten bewusst ohne Handy und Bildschirm.', en: 'Every day I deliberately take a few minutes without phone and screen.' } },
+        { label: { de: 'Wöchentlich Zeit für Menschen/Hobby', en: 'Weekly time for people/hobby' }, text: { de: 'Ich habe jede Woche feste Zeit für Freunde, Familie oder ein Hobby.', en: 'Every week I have fixed time for friends, family or a hobby.' } },
+        { label: { de: 'Pausen eingeplant', en: 'Breaks planned' }, text: { de: 'Ich plane Pausen und freie Zeit genauso fest ein wie Termine.', en: 'I schedule breaks and free time as firmly as appointments.' } }
       ],
       fb: {
-        high: { de: 'Tageslicht, Pausen, Ausgeglichenheit: Du hast einen guten Ausgleich zu deinem Alltag gefunden.', en: 'Daylight, breaks, equanimity: you have found a good counterbalance to everyday life.' },
-        mid: { de: 'Du achtest auf dich, aber die Pausen fallen im Alltag manchmal hinten runter.', en: 'You look after yourself, but breaks sometimes fall by the wayside.' },
+        high: { de: 'Tageslicht, Pausen, Zeit für Menschen: Du hast dir einen echten Ausgleich in den Alltag gebaut.', en: 'Daylight, breaks, time for people: you have built a real counterbalance into your everyday life.' },
+        mid: { de: 'Du achtest auf Ausgleich, aber er fällt im Alltag manchmal hinten runter.', en: 'You do pay attention to balance, but it sometimes falls by the wayside.' },
         low: { de: 'Zeit für dich ist gerade knapp. Kleine, feste Auszeiten am Tag sind hier der wirksamste Anfang.', en: 'Time for yourself is scarce right now. Small, fixed time-outs during the day are the most effective start here.' }
       },
       tips: [
-        { t: { de: '10 Minuten Morgenlicht', en: '10 minutes of morning light' }, d: { de: 'Direkt nach dem Aufstehen kurz raus oder ans offene Fenster. Tageslicht am Morgen stellt die innere Uhr.', en: 'Right after getting up, step outside or to an open window. Morning daylight sets your inner clock.' } },
-        { t: { de: 'Eine Pause ohne Handy', en: 'One break without your phone' }, d: { de: 'Täglich zehn Minuten, in denen nichts passieren muss. Kaffee, Fenster, Atem. Das ist schon der ganze Trick.', en: 'Ten minutes a day where nothing has to happen. Coffee, window, breath. That is the whole trick.' } }
+        { t: { de: '10 Minuten Morgenlicht', en: '10 minutes of morning light' }, d: { de: 'Direkt nach dem Aufstehen kurz raus oder ans offene Fenster.', en: 'Right after getting up, step outside or to an open window.' } },
+        { t: { de: 'Eine Pause ohne Handy', en: 'One break without your phone' }, d: { de: 'Täglich zehn Minuten, in denen nichts passieren muss. Kaffee, Fenster, Atem.', en: 'Ten minutes a day where nothing has to happen. Coffee, window, breath.' } }
       ]
     }
   ],
   wishes: [
     { id: 'energie', de: 'Mehr Energie im Alltag', en: 'More energy every day' },
-    { id: 'schlaf', de: 'Besser schlafen und erholen', en: 'Sleep and recover better' },
+    { id: 'schlaf', de: 'Besser schlafen und abschalten', en: 'Sleep and switch off better' },
     { id: 'fit', de: 'Fitter und aktiver werden', en: 'Get fitter and more active' },
     { id: 'gewicht', de: 'Mein Wohlfühlgewicht erreichen', en: 'Reach my feel-good weight' },
-    { id: 'ruhe', de: 'Ausgeglichener und gelassener sein', en: 'Be more balanced and relaxed' },
+    { id: 'ruhe', de: 'Gelassener durch den Tag', en: 'A calmer day' },
     { id: 'ernaehrung', de: 'Ernährung im Alltag im Griff haben', en: 'Get everyday eating under control' },
-    { id: 'strahlen', de: 'Strahlen: Haut, Haare, Nägel', en: 'Glow: skin, hair, nails' },
+    { id: 'routine', de: 'Feste Routinen aufbauen', en: 'Build solid routines' },
     { id: 'aelter', de: 'Fit und aktiv älter werden', en: 'Age fit and active' }
   ],
   motives: [
@@ -957,12 +414,12 @@ var CFG = {
   ],
   interests: [
     { id: 'tipps', de: 'Tipps für meinen Alltag', en: 'Tips for my everyday life' },
-    { id: 'gespraech', de: 'Mein Ergebnis besprechen', en: 'Discuss my result' },
+    { id: 'gespraech', de: 'Über mein Ergebnis sprechen', en: 'Talk about my result' },
     { id: 'beruflich', de: 'Auch beruflich interessant', en: 'Also interesting professionally' }
   ],
   facts: [
     { de: 'Fünf Portionen Obst und Gemüse am Tag sind rund 400 Gramm. Eine Portion ist ungefähr so groß wie deine Hand.', en: 'Five portions of fruit and veg a day is around 400 grams. One portion is about the size of your hand.', src: { de: 'Deutsche Gesellschaft für Ernährung', en: 'German Nutrition Society (DGE)' } },
-    { de: 'Kurze Bewegungspausen bei Bildschirmarbeit helfen Augen, Rücken und Konzentration. Die Faustregel: alle 20 Minuten 20 Sekunden in die Ferne schauen.', en: 'Short movement breaks during screen work help eyes, back and concentration. Rule of thumb: every 20 minutes, look into the distance for 20 seconds.', src: { de: 'Allgemeine Empfehlung der Arbeitsmedizin', en: 'General occupational health guidance' } },
+    { de: 'Kurze Bewegungspausen bei Bildschirmarbeit helfen Augen, Rücken und Konzentration. Faustregel: alle 20 Minuten 20 Sekunden in die Ferne schauen.', en: 'Short movement breaks during screen work help eyes, back and concentration. Rule of thumb: every 20 minutes, look into the distance for 20 seconds.', src: { de: 'Allgemeine Empfehlung der Arbeitsmedizin', en: 'General occupational health guidance' } },
     { de: 'Erwachsenen werden sieben bis neun Stunden Schlaf pro Nacht empfohlen. Regelmäßige Zeiten wirken dabei stärker als einzelne lange Nächte.', en: 'Adults are recommended seven to nine hours of sleep per night. Regular times matter more than single long nights.', src: { de: 'National Sleep Foundation', en: 'National Sleep Foundation' } },
     { de: 'Die WHO empfiehlt Erwachsenen mindestens 150 Minuten moderate Bewegung pro Woche. Zügiges Gehen zählt voll mit.', en: 'The WHO recommends adults get at least 150 minutes of moderate activity per week. Brisk walking counts in full.', src: { de: 'Weltgesundheitsorganisation', en: 'World Health Organization' } }
   ],
@@ -971,375 +428,264 @@ var CFG = {
     { max: 16, name: { de: 'Im Aufbau', en: 'Building up' }, desc: { de: 'Einiges läuft schon, vieles ist noch unregelmäßig. Zwei, drei feste Anker im Tag machen den Unterschied.', en: 'Some things already work, many are still irregular. Two or three fixed anchors in your day make the difference.' } },
     { max: 24, name: { de: 'Auf Kurs', en: 'On track' }, desc: { de: 'Deine Basis steht. Jetzt geht es um Feinschliff in den Bereichen, die dir am wichtigsten sind.', en: 'Your base is in place. Now it is about fine-tuning the areas that matter most to you.' } },
     { max: 32, name: { de: 'Gut dabei', en: 'Going strong' }, desc: { de: 'Du lebst schon sehr bewusst. Ein oder zwei Bereiche haben noch Luft nach oben.', en: 'You already live very consciously. One or two areas still have room to grow.' } },
-    { max: 40, name: { de: 'Volle Kraft', en: 'Full power' }, desc: { de: 'Beeindruckend konsequent. Deine Gewohnheiten tragen dich. Bleib dran und teile, was für dich funktioniert.', en: 'Impressively consistent. Your habits carry you. Keep going and share what works for you.' } }
+    { max: 40, name: { de: 'Volle Kraft', en: 'Full power' }, desc: { de: 'Beeindruckend konsequent. Deine Gewohnheiten tragen dich. Bleib dran.', en: 'Impressively consistent. Your habits carry you. Keep going.' } }
   ],
   flags: {
     motive: {{#unless frage_motive=aus}}true{{/unless}}{{#if frage_motive=aus}}false{{/if}},
-    invest: {{#unless frage_investition=aus}}true{{/unless}}{{#if frage_investition=aus}}false{{/if}}
+    invest: {{#if frage_investition=an}}true{{/if}}{{#unless frage_investition=an}}false{{/unless}}
   },
-  owner: {
-    vorname: "{{vorname}}",
-    nachname: "{{nachname}}",
-    avatar: "{{profilbild}}",
-    whatsapp: "{{whatsapp_nummer}}",
-    recipient: "{{email_benachrichtigung}}"
-  }
+  owner: { vorname: "{{vorname}}", nachname: "{{nachname}}", avatar: "{{profilbild}}", whatsapp: "{{whatsapp_nummer}}", recipient: "{{email_benachrichtigung}}" }
 };
 
 /* ============ RADAR ============ */
 function radarSvg(vals, opts) {
   opts = opts || {};
-  var cx = 160, cy = 160, R = opts.r || 108, n = vals.length, i, pts = [], labels = '';
+  var cx = 160, cy = 160, R = opts.r || 100, n = vals.length, i, pts = [], labels = '';
   function pt(idx, r) { var a = -Math.PI/2 + idx * 2*Math.PI/n; return [cx + r*Math.cos(a), cy + r*Math.sin(a)]; }
-  var rings = '';
-  (opts.noGrid ? [1] : [0.25, 0.5, 0.75, 1]).forEach(function(f){
-    var p = []; for (i = 0; i < n; i++) p.push(pt(i, R*f).join(','));
-    rings += '<polygon points="' + p.join(' ') + '" fill="none" stroke="var(--line)" stroke-width="1"/>';
-  });
-  var axes = '';
-  if (!opts.noGrid) for (i = 0; i < n; i++) { var e = pt(i, R); axes += '<line x1="' + cx + '" y1="' + cy + '" x2="' + e[0] + '" y2="' + e[1] + '" stroke="var(--line)" stroke-width="1"/>'; }
+  var grid = '';
+  [0.33, 0.66, 1].forEach(function(f){ var p = []; for (i = 0; i < n; i++) p.push(pt(i, R*f).join(',')); grid += '<polygon points="' + p.join(' ') + '" fill="none" stroke="var(--line-2)" stroke-width="1"/>'; });
+  for (i = 0; i < n; i++) { var e = pt(i, R); grid += '<line x1="' + cx + '" y1="' + cy + '" x2="' + e[0] + '" y2="' + e[1] + '" stroke="var(--line)" stroke-width="1"/>'; }
   for (i = 0; i < n; i++) pts.push(pt(i, R * Math.max(0.04, vals[i])));
   var poly = pts.map(function(p){ return p.join(','); }).join(' ');
-  var dots = pts.map(function(p){ return '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="' + (opts.dot || 5) + '" fill="var(--accent)" stroke="var(--paper)" stroke-width="2"/>'; }).join('');
-  if (opts.labels) {
-    for (i = 0; i < n; i++) {
-      var lp = pt(i, R + 22), anchor = Math.abs(lp[0]-cx) < 8 ? 'middle' : (lp[0] > cx ? 'start' : 'end');
-      labels += '<text x="' + lp[0] + '" y="' + (lp[1] + 4) + '" text-anchor="' + anchor + '" font-size="12" font-weight="600" fill="var(--ink-2)" font-family="inherit">' + opts.labels[i] + '</text>';
-    }
-  }
-  return rings + axes + '<polygon points="' + poly + '" fill="var(--accent)" fill-opacity="0.22" stroke="var(--accent)" stroke-width="2.5" stroke-linejoin="round"/>' + dots + labels;
+  var dots = pts.map(function(p){ return '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="4" fill="var(--accent)"/>'; }).join('');
+  if (opts.labels) for (i = 0; i < n; i++) { var lp = pt(i, R + 26), anchor = Math.abs(lp[0]-cx) < 8 ? 'middle' : (lp[0] > cx ? 'start' : 'end'); labels += '<text x="' + lp[0] + '" y="' + (lp[1] + 4) + '" text-anchor="' + anchor + '" font-size="14" font-weight="500" fill="var(--ink-2)" font-family="inherit">' + opts.labels[i] + '</text>'; }
+  return grid + '<polygon points="' + poly + '" fill="var(--accent)" fill-opacity="0.15" stroke="var(--accent)" stroke-width="2" stroke-linejoin="round"/>' + dots + labels;
 }
 function animateRadar(el, from, to, opts, dur) {
-  dur = dur || 900; var t0 = null;
-  function frame(ts) {
-    if (!t0) t0 = ts; var p = Math.min(1, (ts - t0) / dur); var e = 1 - Math.pow(1 - p, 3);
-    var cur = to.map(function(v, i){ return from[i] + (v - from[i]) * e; });
-    el.innerHTML = radarSvg(cur, opts);
-    if (p < 1) requestAnimationFrame(frame);
-  }
+  dur = dur || 800; var t0 = null;
+  function frame(ts) { if (!t0) t0 = ts; var p = Math.min(1, (ts - t0) / dur), e = 1 - Math.pow(1 - p, 3); el.innerHTML = radarSvg(to.map(function(v, i){ return from[i] + (v - from[i]) * e; }), opts); if (p < 1) requestAnimationFrame(frame); }
   requestAnimationFrame(frame);
 }
 
-/* ============ HERO-DEMO ============ */
-var HERO = (function(){
-  var radar = document.getElementById('heroRadar'), bars = document.getElementById('heroBars'), lvl = document.getElementById('heroLevel');
-  var sets = [[0.75,0.5,0.35,0.6,0.7],[0.6,0.85,0.55,0.4,0.8],[0.9,0.65,0.7,0.85,0.55],[0.45,0.4,0.8,0.65,0.9]];
-  var idx = 0, cur = [0,0,0,0,0];
-  function labels(){ return CFG.dims.map(function(d){ return t(d.short); }); }
-  function paint(){
-    var v = sets[idx];
-    animateRadar(radar, cur, v, { labels: labels(), r: 88 }, 1100); cur = v;
-    bars.innerHTML = CFG.dims.map(function(d, i){ return '<div class="pbar"><span>' + t(d.short) + '</span><div class="pbar-track"><div class="pbar-fill" style="width:' + Math.round(v[i]*100) + '%"></div></div><span class="pbar-val">' + Math.round(v[i]*100) + '%</span></div>'; }).join('');
-    var sum = v.reduce(function(a,b){ return a+b; }, 0) * 8; var lv = CFG.levels.filter(function(l){ return sum <= l.max; })[0] || CFG.levels[4];
-    lvl.textContent = t(lv.name);
-  }
-  paint();
-  if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) setInterval(function(){ idx = (idx + 1) % sets.length; paint(); }, 4200);
-  return { paint: paint };
-})();
-
-/* ============ VITALCHECK-ENGINE ============ */
+/* ============ ENGINE ============ */
 var VC = (function(){
-  var el = document.getElementById('vc'), inner = document.getElementById('vcInner'), body = document.getElementById('vcBody');
-  var prog = document.getElementById('vcProgress'), counter = document.getElementById('vcCounter'), mini = document.getElementById('vcMini');
+  var root = document.getElementById('check'), prog = document.getElementById('progress');
   var S = load() || fresh();
-  var opened = false, lastMini = [0,0,0,0,0];
 
   function fresh(){ return { step: 0, wishes: [], answers: {}, motives: [], invest: '', interests: [], sent: false }; }
-  function load(){ try { var raw = sessionStorage.getItem('vc_state_v1'); return raw ? JSON.parse(raw) : null; } catch(e){ return null; } }
-  function save(){ try { sessionStorage.setItem('vc_state_v1', JSON.stringify(S)); } catch(e){} }
+  function load(){ try { var raw = sessionStorage.getItem('vc_state_v2'); return raw ? JSON.parse(raw) : null; } catch(e){ return null; } }
+  function save(){ try { sessionStorage.setItem('vc_state_v2', JSON.stringify(S)); } catch(e){} }
+  function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+  function en(){ return L() === 'en'; }
 
-  /* Schrittfolge: wishes | q:dim:idx | inter:dim | motive | invest | loading | result | lead | success */
   function steps(){
-    var s = ['wishes'];
-    CFG.dims.forEach(function(d, di){
-      d.q.forEach(function(q, qi){ s.push('q:' + di + ':' + qi); });
-      if (di < CFG.dims.length - 1) s.push('inter:' + di);
-    });
+    var s = ['intro', 'wishes'];
+    CFG.dims.forEach(function(d, di){ d.q.forEach(function(q, qi){ s.push('q:' + di + ':' + qi); }); if (di < CFG.dims.length - 1) s.push('inter:' + di); });
     if (CFG.flags.motive) s.push('motive');
     if (CFG.flags.invest) s.push('invest');
-    s.push('loading', 'result', 'lead', 'success');
+    s.push('loading', 'result', 'lead', 'done');
     return s;
   }
-  function countable(){ return steps().filter(function(x){ return x === 'wishes' || x.indexOf('q:') === 0 || x === 'motive' || x === 'invest'; }).length; }
-  function doneCount(){
-    var n = S.wishes.length ? 1 : 0;
-    n += Object.keys(S.answers).length;
-    if (CFG.flags.motive && S.step > steps().indexOf('motive')) n++;
-    if (CFG.flags.invest && S.step > steps().indexOf('invest')) n++;
-    return n;
-  }
-  function scores(){
-    return CFG.dims.map(function(d, di){ var s = 0; d.q.forEach(function(q, qi){ var v = S.answers[di + ':' + qi]; if (v !== undefined) s += v; }); return s; });
-  }
+  function total(){ return steps().filter(function(x){ return x === 'wishes' || x.indexOf('q:') === 0 || x === 'motive' || x === 'invest'; }).length; }
+  function done(){ var n = S.wishes.length ? 1 : 0; n += Object.keys(S.answers).length; var st = steps(); if (CFG.flags.motive && S.step > st.indexOf('motive')) n++; if (CFG.flags.invest && S.step > st.indexOf('invest')) n++; return n; }
+  function scores(){ return CFG.dims.map(function(d, di){ var s = 0; d.q.forEach(function(q, qi){ var v = S.answers[di + ':' + qi]; if (v !== undefined) s += v; }); return s; }); }
   function ratios(){ return scores().map(function(s){ return s / 8; }); }
-  function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-  function chipHtml(cls, id, label, on){ return '<button type="button" class="vc-chip' + (on ? ' on' : '') + '" data-' + cls + '="' + id + '"><span class="chk">' + ICO.check + '</span>' + esc(label) + '</button>'; }
-  function backBtn(){ return '<button type="button" class="vc-back" data-back>' + ICO.back + '<span>' + (L()==='en' ? 'Back' : 'Zurück') + '</span></button>'; }
+  function evalResult(){
+    var sc = scores(), sum = sc.reduce(function(a,b){ return a+b; }, 0);
+    var lv = CFG.levels.filter(function(l){ return sum <= l.max; })[0] || CFG.levels[4];
+    var order = sc.map(function(s, i){ return { i: i, s: s }; }).sort(function(a, b){ return b.s - a.s || a.i - b.i; });
+    return { sc: sc, total: sum, lv: lv, best: order[0].i, worst: order[order.length-1].i, second: order[order.length-2].i };
+  }
+  function tier(s){ return s >= 6 ? 'high' : (s >= 4 ? 'mid' : 'low'); }
+  function tierColor(s){ return s >= 6 ? 'var(--tier-high)' : (s >= 4 ? 'var(--tier-mid)' : 'var(--tier-low)'); }
+  function labelOf(list, id){ var x = list.filter(function(i){ return i.id === id; })[0]; return x ? x.de : ''; }
 
-  function open(){
-    el.classList.add('open'); document.body.classList.add('vc-open'); opened = true;
-    try { history.pushState({ vc: 1 }, ''); } catch(e){}
-    render();
-    setTimeout(function(){ var f = inner.querySelector('button, input'); if (f && window.innerWidth > 900) f.focus({ preventScroll: true }); }, 350);
-  }
-  function close(){
-    el.classList.remove('open'); document.body.classList.remove('vc-open'); opened = false;
-    if (history.state && history.state.vc) { try { history.back(); } catch(e){} }
-  }
-  function go(n, dir){
-    var cur = inner.querySelector('.vc-step');
+  function go(n){
+    var cur = root.querySelector('.step');
     S.step = Math.max(0, Math.min(steps().length - 1, n)); save();
-    if (cur && dir !== 'none') { cur.classList.add('out'); setTimeout(function(){ render(); }, 220); } else render();
+    if (cur) { cur.classList.add('out'); setTimeout(render, 170); } else render();
   }
   function progress(){
-    var total = countable(), done = doneCount(), key = steps()[S.step];
-    var pct = key === 'result' || key === 'lead' || key === 'success' || key === 'loading' ? 100 : Math.max(6, Math.round(done / total * 100));
-    prog.style.width = pct + '%';
-    counter.textContent = (key === 'result' || key === 'lead' || key === 'success' || key === 'loading') ? '' : Math.min(done + 1, total) + ' / ' + total;
-    var r = ratios(); animateRadar(mini, lastMini, r, { r: 140, dot: 0, noGrid: true }, 500); lastMini = r;
+    var key = steps()[S.step], final = ['loading','result','lead','done'].indexOf(key) > -1;
+    prog.style.width = key === 'intro' ? '0%' : (final ? '100%' : Math.max(5, Math.round(done() / total() * 100)) + '%');
   }
-
-  function render(keepAnim){
+  function render(){
     var key = steps()[S.step], html = '';
     progress();
-    if (key === 'wishes') html = viewWishes();
-    else if (key.indexOf('q:') === 0) { var p = key.split(':'); html = viewQ(+p[1], +p[2]); }
-    else if (key.indexOf('inter:') === 0) html = viewInter(+key.split(':')[1]);
-    else if (key === 'motive') html = viewMotive();
-    else if (key === 'invest') html = viewInvest();
-    else if (key === 'loading') html = viewLoading();
-    else if (key === 'result') html = viewResult();
-    else if (key === 'lead') html = viewLead();
-    else if (key === 'success') html = viewSuccess();
-    inner.innerHTML = '<div class="vc-step">' + html + '</div>';
-    body.scrollTop = 0;
+    if (key === 'intro') html = vIntro();
+    else if (key === 'wishes') html = vWishes();
+    else if (key.indexOf('q:') === 0) { var p = key.split(':'); html = vQ(+p[1], +p[2]); }
+    else if (key.indexOf('inter:') === 0) html = vInter(+key.split(':')[1]);
+    else if (key === 'motive') html = vMotive();
+    else if (key === 'invest') html = vInvest();
+    else if (key === 'loading') html = vLoading();
+    else if (key === 'result') html = vResult();
+    else if (key === 'lead') html = vLead();
+    else if (key === 'done') html = vDone();
+    root.innerHTML = '<div class="step">' + html + '</div>';
+    if (key !== 'intro') window.scrollTo(0, 0);
     bind(key);
   }
 
   /* ---- Views ---- */
-  function viewWishes(){
-    var en = L()==='en';
-    return '<div class="vc-kicker">' + (en ? 'Step 1 · Your wishes' : 'Schritt 1 · Deine Wünsche') + '</div>' +
-      '<h2 class="vc-q">' + (en ? 'What would you like most right now?' : 'Was wünschst du dir gerade am meisten?') + '</h2>' +
-      '<p class="vc-hint">' + (en ? 'Pick up to three. Your portrait will reflect them at the end.' : 'Wähle bis zu drei. Dein Porträt greift sie am Ende wieder auf.') + '</p>' +
-      '<div class="vc-chips">' + CFG.wishes.map(function(w){ return chipHtml('wish', w.id, t(w), S.wishes.indexOf(w.id) > -1); }).join('') + '</div>' +
-      '<div class="vc-actions"><button type="button" class="btn btn-primary" data-next ' + (S.wishes.length ? '' : 'disabled') + '>' + (en ? 'Continue' : 'Weiter') + ' <span class="arr">→</span></button></div>';
+  function chip(attr, id, label, on){ return '<button type="button" class="chip' + (on ? ' on' : '') + '" data-' + attr + '="' + id + '"><span class="box">' + ICO.check + '</span>' + esc(label) + '</button>'; }
+  function back(){ return '<button type="button" class="back" data-back>' + ICO.back + (en() ? 'Back' : 'Zurück') + '</button>'; }
+  function counter(){ return '<div class="meta">' + (en() ? 'Step ' : 'Schritt ') + Math.min(done() + 1, total()) + ' / ' + total() + '</div>'; }
+
+  function vIntro(){
+    return '<div class="intro">' +
+      '<h1>' + (en() ? 'How vital is your everyday life?' : 'Wie vital ist dein Alltag?') + '</h1>' +
+      '<p>' + (en() ? '20 statements about your habits. Three minutes. Your result right away, calculated on your device.' : '20 Aussagen zu deinen Gewohnheiten. Drei Minuten. Dein Ergebnis sofort, berechnet auf deinem Gerät.') + '</p>' +
+      '<button type="button" class="btn btn-primary" data-next>' + (en() ? 'Start the check' : 'Check starten') + '</button>' +
+      '<div class="facts"><span>' + (en() ? 'No sign-up' : 'Keine Anmeldung') + '</span><span>' + (en() ? 'Nothing is sent unless you choose to' : 'Nichts wird gesendet, außer du willst es') + '</span><span>' + (en() ? 'Self-assessment, not a diagnosis' : 'Selbsteinschätzung, keine Diagnose') + '</span></div>' +
+      '</div>';
   }
-  function viewQ(di, qi){
-    var d = CFG.dims[di], q = d.q[qi], en = L()==='en', cur = S.answers[di + ':' + qi];
-    var opts = [
-      { v: 2, ico: 'yes', de: 'Trifft zu', en: 'True for me' },
-      { v: 1, ico: 'mid', de: 'Teils, teils', en: 'Partly' },
-      { v: 0, ico: 'no', de: 'Trifft nicht zu', en: 'Not really' }
-    ];
-    return backBtn() +
-      '<div class="vc-kicker"><span class="area-ico">' + ICO[d.ico] + '</span>' + esc(t(d.name)) + ' · ' + (qi + 1) + '/' + d.q.length + '</div>' +
-      '<h2 class="vc-q">' + esc(t(q.text)) + '</h2>' +
-      '<p class="vc-hint">' + (en ? 'Answer as it usually is, not how it should be.' : 'Antworte so, wie es meistens ist, nicht wie es sein sollte.') + '</p>' +
-      '<div class="vc-answers">' + opts.map(function(o, i){ return '<button type="button" class="vc-ans' + (cur === o.v ? ' picked' : '') + '" data-v="' + o.v + '"><span class="face">' + ICO[o.ico] + '</span><span>' + (en ? o.en : o.de) + '</span><span class="key">' + (i+1) + '</span></button>'; }).join('') + '</div>';
+  function vWishes(){
+    return back() + counter() +
+      '<h2 class="q">' + (en() ? 'What would you like most right now?' : 'Was wünschst du dir gerade am meisten?') + '</h2>' +
+      '<p class="hint">' + (en() ? 'Pick up to three.' : 'Wähle bis zu drei.') + '</p>' +
+      '<div class="chips">' + CFG.wishes.map(function(w){ return chip('wish', w.id, t(w), S.wishes.indexOf(w.id) > -1); }).join('') + '</div>' +
+      '<div class="actions"><button type="button" class="btn btn-primary" data-next ' + (S.wishes.length ? '' : 'disabled') + '>' + (en() ? 'Continue' : 'Weiter') + '</button></div>';
   }
-  function viewInter(di){
-    var d = CFG.dims[di], en = L()==='en', f = CFG.facts[di % CFG.facts.length], next = CFG.dims[di + 1];
-    return '<div class="vc-inter"><div class="big-check">' + ICO.check + '</div>' +
-      '<h2>' + (en ? 'Area ' + (di+1) + ' of 5 done' : 'Bereich ' + (di+1) + ' von 5 geschafft') + '</h2>' +
-      '<p class="sub">' + (en ? 'Next up: ' : 'Als Nächstes: ') + esc(t(next.name)) + '</p>' +
-      '<div class="vc-fact"><div class="fi">' + ICO.bulb + '</div><div><b>' + (en ? 'Good to know' : 'Gut zu wissen') + '</b><p>' + esc(t(f)) + '</p><small>' + (en ? 'Source: ' : 'Quelle: ') + esc(t(f.src)) + '</small></div></div>' +
-      '<button type="button" class="btn btn-primary" data-next>' + (en ? 'Continue' : 'Weiter') + ' <span class="arr">→</span></button></div>';
+  function vQ(di, qi){
+    var d = CFG.dims[di], q = d.q[qi], cur = S.answers[di + ':' + qi];
+    var opts = [{ v: 2, de: 'Trifft zu', en: 'True for me' }, { v: 1, de: 'Teils, teils', en: 'Partly' }, { v: 0, de: 'Trifft nicht zu', en: 'Not really' }];
+    return back() + '<div class="meta">' + (en() ? 'Step ' : 'Schritt ') + Math.min(done() + 1, total()) + ' / ' + total() + ' <span>·</span> <b>' + esc(t(d.name)) + '</b> ' + (qi + 1) + '/' + d.q.length + '</div>' +
+      '<h2 class="q">' + esc(t(q.text)) + '</h2>' +
+      '<p class="hint">' + (en() ? 'Answer as it usually is, not how it should be.' : 'Antworte so, wie es meistens ist, nicht wie es sein sollte.') + '</p>' +
+      '<div class="answers">' + opts.map(function(o, i){ return '<button type="button" class="ans' + (cur === o.v ? ' picked' : '') + '" data-v="' + o.v + '"><span class="radio"></span><span>' + (en() ? o.en : o.de) + '</span><span class="key">' + (i+1) + '</span></button>'; }).join('') + '</div>';
   }
-  function viewMotive(){
-    var en = L()==='en';
-    return backBtn() + '<div class="vc-kicker">' + (en ? 'Almost done · What drives you' : 'Fast geschafft · Dein Antrieb') + '</div>' +
-      '<h2 class="vc-q">' + (en ? 'What drives you most in life?' : 'Was treibt dich im Leben am meisten an?') + '</h2>' +
-      '<p class="vc-hint">' + (en ? 'Pick up to three. There is no wrong answer.' : 'Wähle bis zu drei. Es gibt keine falsche Antwort.') + '</p>' +
-      '<div class="vc-chips">' + CFG.motives.map(function(m){ return chipHtml('motive', m.id, t(m), S.motives.indexOf(m.id) > -1); }).join('') + '</div>' +
-      '<div class="vc-actions"><button type="button" class="btn btn-primary" data-next ' + (S.motives.length ? '' : 'disabled') + '>' + (en ? 'Continue' : 'Weiter') + ' <span class="arr">→</span></button><button type="button" class="vc-skip" data-skip>' + (en ? 'Skip' : 'Überspringen') + '</button></div>';
+  function vInter(di){
+    var f = CFG.facts[di % CFG.facts.length], next = CFG.dims[di + 1];
+    return '<div class="inter"><div class="meta">' + (en() ? 'Area ' + (di+1) + ' of 5 done' : 'Bereich ' + (di+1) + ' von 5 geschafft') + '</div>' +
+      '<h2>' + (en() ? 'Next: ' : 'Als Nächstes: ') + esc(t(next.name)) + '</h2>' +
+      '<p class="next">' + (en() ? 'Four more statements.' : 'Vier weitere Aussagen.') + '</p>' +
+      '<div class="fact"><b>' + (en() ? 'Good to know' : 'Gut zu wissen') + '</b><p>' + esc(t(f)) + '</p><small>' + (en() ? 'Source: ' : 'Quelle: ') + esc(t(f.src)) + '</small></div>' +
+      '<button type="button" class="btn btn-primary" data-next>' + (en() ? 'Continue' : 'Weiter') + '</button></div>';
   }
-  function viewInvest(){
-    var en = L()==='en';
-    return backBtn() + '<div class="vc-kicker">' + (en ? 'Last question' : 'Letzte Frage') + '</div>' +
-      '<h2 class="vc-q">' + (en ? 'How much would you invest in your wellbeing per day?' : 'Wie viel würdest du täglich in dein Wohlbefinden investieren?') + '</h2>' +
-      '<p class="vc-hint">' + (en ? 'Time or money, however you like to think about it. Just a gut feeling.' : 'Zeit oder Geld, wie du magst. Nur ein Bauchgefühl.') + '</p>' +
-      '<div class="vc-chips">' + CFG.invest.map(function(m){ return chipHtml('invest', m.id, t(m), S.invest === m.id); }).join('') + '</div>' +
-      '<div class="vc-actions"><button type="button" class="btn btn-primary" data-next ' + (S.invest ? '' : 'disabled') + '>' + (en ? 'Show my portrait' : 'Mein Porträt anzeigen') + ' <span class="arr">→</span></button><button type="button" class="vc-skip" data-skip>' + (en ? 'Skip' : 'Überspringen') + '</button></div>';
+  function vMotive(){
+    return back() + counter() +
+      '<h2 class="q">' + (en() ? 'What drives you most in life?' : 'Was treibt dich im Leben am meisten an?') + '</h2>' +
+      '<p class="hint">' + (en() ? 'Pick up to three. Optional.' : 'Wähle bis zu drei. Optional.') + '</p>' +
+      '<div class="chips">' + CFG.motives.map(function(m){ return chip('motive', m.id, t(m), S.motives.indexOf(m.id) > -1); }).join('') + '</div>' +
+      '<div class="actions"><button type="button" class="btn btn-primary" data-next ' + (S.motives.length ? '' : 'disabled') + '>' + (en() ? 'Continue' : 'Weiter') + '</button><button type="button" class="skip" data-skip>' + (en() ? 'Skip' : 'Überspringen') + '</button></div>';
   }
-  function viewLoading(){
-    var en = L()==='en';
-    return '<div class="vc-loading"><svg class="draw" id="vcDraw" viewBox="0 0 320 320"></svg><p>' + (en ? 'Drawing your vitality portrait …' : 'Dein Vitalporträt entsteht …') + '</p></div>';
+  function vInvest(){
+    return back() + counter() +
+      '<h2 class="q">' + (en() ? 'How much time or money would you invest in your wellbeing per day?' : 'Wie viel Zeit oder Geld würdest du täglich in dein Wohlbefinden investieren?') + '</h2>' +
+      '<p class="hint">' + (en() ? 'Just a gut feeling. Optional.' : 'Nur ein Bauchgefühl. Optional.') + '</p>' +
+      '<div class="chips">' + CFG.invest.map(function(m){ return chip('invest', m.id, t(m), S.invest === m.id); }).join('') + '</div>' +
+      '<div class="actions"><button type="button" class="btn btn-primary" data-next ' + (S.invest ? '' : 'disabled') + '>' + (en() ? 'Show my result' : 'Ergebnis anzeigen') + '</button><button type="button" class="skip" data-skip>' + (en() ? 'Skip' : 'Überspringen') + '</button></div>';
   }
-  function evalResult(){
-    var sc = scores(), total = sc.reduce(function(a,b){ return a+b; }, 0);
-    var lv = CFG.levels.filter(function(l){ return total <= l.max; })[0] || CFG.levels[4];
-    var order = sc.map(function(s, i){ return { i: i, s: s }; }).sort(function(a, b){ return b.s - a.s || a.i - b.i; });
-    var best = order[0].i, worst = order[order.length - 1].i, second = order[order.length - 2].i;
-    return { sc: sc, total: total, lv: lv, best: best, worst: worst, second: second };
-  }
-  function tier(s){ return s >= 6 ? 'high' : (s >= 4 ? 'mid' : 'low'); }
-  function tierColor(s){ return s >= 6 ? 'var(--tier-high)' : (s >= 4 ? 'var(--tier-mid)' : 'var(--tier-low)'); }
-  function viewResult(){
-    var en = L()==='en', R = evalResult(), o = CFG.owner;
-    var wishesTxt = S.wishes.map(function(id){ var w = CFG.wishes.filter(function(x){ return x.id === id; })[0]; return w ? t(w) : ''; }).filter(Boolean);
-    var tips = [];
-    [R.worst, R.second].forEach(function(i, k){ var d = CFG.dims[i]; tips.push(d.tips[0]); if (k === 0) tips.push(d.tips[1]); });
-    tips = tips.slice(0, 3);
-    var html = '<div class="res-head"><div class="vc-kicker" style="justify-content:center">' + (en ? 'Your result' : 'Dein Ergebnis') + '</div>' +
-      '<h2>' + (en ? 'Your vitality <span class="serif">portrait.</span>' : 'Dein <span class="serif">Vitalporträt.</span>') + '</h2>' +
-      '<p class="sub">' + (en ? 'A snapshot of your everyday habits across five areas. No diagnosis, just an honest picture.' : 'Eine Momentaufnahme deiner Alltagsgewohnheiten in fünf Bereichen. Keine Diagnose, nur ein ehrliches Bild.') + '</p></div>' +
-      '<div class="res-hero"><svg class="res-radar" id="resRadar" viewBox="0 0 320 320"></svg><div>' +
-        '<div class="res-level-tag">' + ICO.star.replace('<svg', '<svg width="14" height="14"') + (en ? 'Vitality level' : 'Vital-Level') + '</div>' +
-        '<div class="res-level"><span class="serif">' + esc(t(R.lv.name)) + '</span></div>' +
-        '<p class="res-level-desc">' + esc(t(R.lv.desc)) + '</p>' +
-        '<div class="res-score"><span class="n">' + R.total + '</span><span class="d">/ 40</span><span class="lbl">' + (en ? 'habit points<br>across 20 statements' : 'Gewohnheitspunkte<br>aus 20 Aussagen') + '</span></div>' +
-      '</div></div>' +
-      '<div class="res-two">' +
-        '<div class="res-card"><div class="lbl"><span class="sw" style="background:var(--tier-high)"></span>' + (en ? 'Your strength' : 'Deine Stärke') + '</div><h3>' + esc(t(CFG.dims[R.best].strength)) + '</h3><p>' + esc(t(CFG.dims[R.best].name)) + ' · ' + Math.round(R.sc[R.best]/8*100) + '%</p></div>' +
-        '<div class="res-card"><div class="lbl"><span class="sw" style="background:var(--accent)"></span>' + (en ? 'Your biggest lever' : 'Dein größter Hebel') + '</div><h3>' + esc(t(CFG.dims[R.worst].name)) + '</h3><p>' + (en ? 'The smallest step moves the most here.' : 'Hier bewegt der kleinste Schritt am meisten.') + '</p></div>' +
-      '</div>' +
-      '<div class="res-dims">' + CFG.dims.map(function(d, i){ var s = R.sc[i]; return '<div class="res-dim"><div class="area-ico">' + ICO[d.ico] + '</div><div><div class="res-dim-top"><h4>' + esc(t(d.name)) + '</h4><span class="pct">' + Math.round(s/8*100) + '%</span></div><div class="track"><div class="fill" data-w="' + Math.round(s/8*100) + '" style="background:' + tierColor(s) + '"></div></div><p>' + esc(t(d.fb[tier(s)])) + '</p></div></div>'; }).join('') + '</div>' +
-      '<div class="res-tips"><h3>' + (en ? 'Three things you can start tomorrow' : 'Drei Dinge, die du morgen starten kannst') + '</h3>' + tips.map(function(tp, i){ return '<div class="res-tip"><div class="num">' + (i+1) + '</div><div><b>' + esc(t(tp.t)) + '</b><p>' + esc(t(tp.d)) + '</p></div></div>'; }).join('') + '</div>';
-    if (wishesTxt.length) html += '<div class="res-wish">' + ICO.star + '<span>' + (en ? 'Your wish: ' : 'Dein Wunsch: ') + '<b>' + esc(wishesTxt.join(', ')) + '</b>. ' + (en ? 'Your biggest lever is a good place to start. If you like, we can look at it together.' : 'Dein größter Hebel ist ein guter Startpunkt dafür. Wenn du magst, schauen wir gemeinsam drauf.') + '</span></div>';
-    html += '<div class="res-cta"><img src="' + esc(o.avatar) + '" alt="' + esc(o.vorname) + '"><div><h3>' + (en ? 'Want to talk it through with ' + esc(o.vorname) + '?' : 'Möchtest du dein Ergebnis mit ' + esc(o.vorname) + ' besprechen?') + '</h3><p>' + (en ? 'Send your portrait along and I will get back to you personally. Non-binding, no newsletter, nothing to buy.' : 'Schick mir dein Porträt mit und ich melde mich persönlich bei dir. Unverbindlich, ohne Newsletter, ohne Kaufpflicht.') + '</p></div>' +
-      '<div class="cta-row"><button type="button" class="btn btn-primary" data-lead>' + (en ? 'Yes, discuss my result' : 'Ja, Ergebnis besprechen') + ' <span class="arr">→</span></button><button type="button" class="btn btn-ghost" data-restart>' + (en ? 'Start over' : 'Nochmal starten') + '</button></div></div>' +
-      '<p class="res-note">' + (en ? 'This result is a self-assessment of your habits, not a medical evaluation. It is calculated on your device and is only sent if you actively choose to.' : 'Dieses Ergebnis ist eine Selbsteinschätzung deiner Gewohnheiten, keine medizinische Bewertung. Es wird auf deinem Gerät berechnet und nur übermittelt, wenn du das aktiv möchtest.') + '</p>';
+  function vLoading(){ return '<div class="loading"><svg id="draw" viewBox="0 0 320 320"></svg>' + (en() ? 'Putting your result together …' : 'Dein Ergebnis wird zusammengestellt …') + '</div>'; }
+  function vResult(){
+    var R = evalResult(), o = CFG.owner;
+    var wishes = S.wishes.map(function(id){ var w = CFG.wishes.filter(function(x){ return x.id === id; })[0]; return w ? t(w) : ''; }).filter(Boolean);
+    var tips = [CFG.dims[R.worst].tips[0], CFG.dims[R.worst].tips[1], CFG.dims[R.second].tips[0]];
+    var html = '<div class="res-top"><div><div class="lvl">' + (en() ? 'Your result · habit level' : 'Dein Ergebnis · Gewohnheits-Level') + '</div>' +
+      '<h2>' + esc(t(R.lv.name)) + '</h2><p>' + esc(t(R.lv.desc)) + '</p>' +
+      '<div class="pts"><b>' + R.total + '</b> / 40 ' + (en() ? 'habit points from 20 statements' : 'Gewohnheitspunkte aus 20 Aussagen') + '</div></div>' +
+      '<svg class="radar" id="radar" viewBox="0 0 320 320"></svg></div>' +
+      '<div class="pair"><div><small>' + (en() ? 'Your strength' : 'Deine Stärke') + '</small><b>' + esc(t(CFG.dims[R.best].strength)) + '</b></div><div><small>' + (en() ? 'Your biggest lever' : 'Dein größter Hebel') + '</small><b>' + esc(t(CFG.dims[R.worst].name)) + '</b></div></div>' +
+      '<div class="dims">' + CFG.dims.map(function(d, i){ var s = R.sc[i]; return '<div class="dim"><div class="dim-head"><h4>' + esc(t(d.name)) + '</h4><span>' + s + ' / 8</span></div><div class="bar"><i data-w="' + Math.round(s/8*100) + '" style="background:' + tierColor(s) + '"></i></div><p>' + esc(t(d.fb[tier(s)])) + '</p></div>'; }).join('') + '</div>' +
+      '<div class="tips"><h3>' + (en() ? 'Three things you can start tomorrow' : 'Drei Dinge, die du morgen starten kannst') + '</h3>' + tips.map(function(tp, i){ return '<div class="tip"><span class="n">0' + (i+1) + '</span><div><b>' + esc(t(tp.t)) + '</b><p>' + esc(t(tp.d)) + '</p></div></div>'; }).join('') + '</div>';
+    if (wishes.length) html += '<div class="wish">' + (en() ? 'Your wish: ' : 'Dein Wunsch: ') + '<b>' + esc(wishes.join(', ')) + '</b>. ' + (en() ? 'Your biggest lever is a realistic place to start.' : 'Dein größter Hebel ist ein realistischer Startpunkt dafür.') + '</div>';
+    html += '<div class="invite"><img src="' + esc(o.avatar) + '" alt=""><div><h3>' + (en() ? 'Want to talk about your result?' : 'Möchtest du über dein Ergebnis sprechen?') + '</h3><p>' + (en() ? 'If you like, send it to me and I will get back to you personally. We talk about your habits and what is realistic in your everyday life. No obligation, no newsletter, nothing to buy.' : 'Wenn du magst, schick es mir und ich melde mich persönlich bei dir. Wir sprechen über deine Gewohnheiten und darüber, was in deinem Alltag realistisch ist. Unverbindlich, kein Newsletter, keine Kaufpflicht.') + '</p></div>' +
+      '<div class="row"><button type="button" class="btn btn-primary" data-lead>' + (en() ? 'Send my result to ' + esc(o.vorname) : 'Ergebnis an ' + esc(o.vorname) + ' senden') + '</button><button type="button" class="btn btn-ghost" data-restart>' + (en() ? 'Start over' : 'Nochmal starten') + '</button></div></div>' +
+      '<p class="note">' + (en() ? 'This result is a self-assessment of your habits, not a medical evaluation, and it contains no product recommendation. It was calculated on your device and is only sent if you actively choose to.' : 'Dieses Ergebnis ist eine Selbsteinschätzung deiner Gewohnheiten, keine medizinische Bewertung, und enthält keine Produktempfehlung. Es wurde auf deinem Gerät berechnet und wird nur übermittelt, wenn du das aktiv möchtest.') + '</p>';
     return html;
   }
-  function viewLead(){
-    var en = L()==='en', R = evalResult(), o = CFG.owner;
-    var sum = '<span>' + (en ? 'Level: ' : 'Level: ') + esc(t(R.lv.name)) + '</span><span>' + (en ? 'Strength: ' : 'Stärke: ') + esc(t(CFG.dims[R.best].short)) + '</span><span>' + (en ? 'Lever: ' : 'Hebel: ') + esc(t(CFG.dims[R.worst].short)) + '</span>';
-    return backBtn() + '<div class="lead"><div class="vc-kicker">' + (en ? 'Last step' : 'Letzter Schritt') + '</div>' +
-      '<h2>' + (en ? 'Send your portrait to ' + esc(o.vorname) + '.' : 'Schick dein Porträt an ' + esc(o.vorname) + '.') + '</h2>' +
-      '<p class="sub">' + (en ? 'I will look at it and get back to you personally within a day or two.' : 'Ich schaue es mir an und melde mich innerhalb von ein, zwei Tagen persönlich bei dir.') + '</p>' +
-      '<div class="lead-summary">' + sum + '</div>' +
+  function vLead(){
+    var R = evalResult(), o = CFG.owner;
+    return back() + '<div class="lead"><h2>' + (en() ? 'Send your result to ' + esc(o.vorname) + '.' : 'Ergebnis an ' + esc(o.vorname) + ' senden.') + '</h2>' +
+      '<p class="sub">' + (en() ? 'I will look at it and get back to you personally within a day or two.' : 'Ich schaue es mir an und melde mich innerhalb von ein, zwei Tagen persönlich bei dir.') + '</p>' +
+      '<p class="summary">' + (en() ? 'Included: ' : 'Enthalten: ') + '<b>' + esc(t(R.lv.name)) + '</b> · ' + (en() ? 'strength ' : 'Stärke ') + '<b>' + esc(t(CFG.dims[R.best].short)) + '</b> · ' + (en() ? 'lever ' : 'Hebel ') + '<b>' + esc(t(CFG.dims[R.worst].short)) + '</b> · ' + (en() ? 'your 20 answers and wishes' : 'deine 20 Antworten und Wünsche') + '</p>' +
       '<form id="leadForm" action="/.finestsites/forms/kontakt" method="POST" novalidate>' +
         '<input type="hidden" name="_recipient" value="' + esc(o.recipient) + '">' +
         '<input type="text" name="_honeypot" style="position:absolute;left:-9999px;opacity:0" tabindex="-1" autocomplete="off">' +
-        '<div class="form-grid"><div class="form-row"><label class="form-label" for="lf-name">' + (en ? 'Your name' : 'Dein Name') + '</label><input class="form-input" id="lf-name" name="name" type="text" required autocomplete="name" placeholder="' + (en ? 'First and last name' : 'Vor- und Nachname') + '"></div>' +
-        '<div class="form-row"><label class="form-label" for="lf-email">' + (en ? 'Your email' : 'Deine E-Mail') + '</label><input class="form-input" id="lf-email" name="email" type="email" required autocomplete="email" placeholder="' + (en ? 'you@example.com' : 'du@beispiel.de') + '"></div></div>' +
-        '<div class="form-row"><label class="form-label">' + (en ? 'How should I reach you?' : 'Wie soll ich dich erreichen?') + '</label><div class="method-tabs" id="methodTabs">' +
-          '<button type="button" class="method-tab active" data-method="email">' + ICO.mail + (en ? 'Email' : 'E-Mail') + '</button>' +
-          '<button type="button" class="method-tab" data-method="telefon">' + ICO.phone + (en ? 'Phone' : 'Telefon') + '</button>' +
-          '<button type="button" class="method-tab" data-method="whatsapp">' + ICO.wa + 'WhatsApp</button></div></div>' +
-        '<div class="form-row" id="phoneRow" hidden><label class="form-label" for="lf-phone">' + (en ? 'Your number' : 'Deine Nummer') + '</label><input class="form-input" id="lf-phone" name="phone" type="tel" autocomplete="tel" placeholder="+49 170 1234567"></div>' +
-        '<div class="form-row"><label class="form-label">' + (en ? 'What are you interested in?' : 'Was interessiert dich?') + ' <span class="form-optional">(' + (en ? 'optional' : 'optional') + ')</span></label><div class="vc-chips" style="margin-bottom:0">' + CFG.interests.map(function(m){ return chipHtml('interest', m.id, t(m), S.interests.indexOf(m.id) > -1); }).join('') + '</div></div>' +
-        '<div class="form-row"><label class="form-label" for="lf-msg">' + (en ? 'Anything else?' : 'Möchtest du noch etwas sagen?') + ' <span class="form-optional">(' + (en ? 'optional' : 'optional') + ')</span></label><textarea class="form-input form-textarea" id="lf-msg" name="nachricht" rows="3" placeholder="' + (en ? 'Whatever is on your mind …' : 'Was dir gerade wichtig ist …') + '"></textarea></div>' +
-        '<label class="consent" id="consentBox"><input type="checkbox" id="lf-consent"><span>' + (en
-          ? 'Yes, I want ' + esc(o.vorname) + ' ' + esc(o.nachname) + ' to receive my answers from the vitality check (including my details on food, energy, sleep, movement and wellbeing) together with my contact details, in order to contact me personally. I can withdraw this consent at any time by emailing <a href="mailto:' + esc(o.recipient) + '">' + esc(o.recipient) + '</a>. Details in the <a href="/datenschutz" target="_blank" rel="noopener">privacy policy</a>.'
-          : 'Ja, ich möchte, dass ' + esc(o.vorname) + ' ' + esc(o.nachname) + ' meine Antworten aus dem Vitalcheck (einschließlich meiner Angaben zu Ernährung, Energie, Schlaf, Bewegung und Wohlbefinden) zusammen mit meinen Kontaktdaten erhält, um mich persönlich zu kontaktieren. Diese Einwilligung kann ich jederzeit per E-Mail an <a href="mailto:' + esc(o.recipient) + '">' + esc(o.recipient) + '</a> widerrufen. Details in der <a href="/datenschutz" target="_blank" rel="noopener">Datenschutzerklärung</a>.') + '</span></label>' +
-        '<button type="submit" class="btn btn-primary" id="leadSubmit" style="width:100%">' + (en ? 'Send my portrait' : 'Porträt absenden') + ' <span class="arr">→</span></button>' +
-        '<div class="form-error" id="leadError"></div>' +
-        '<p class="form-privacy">' + (en ? 'No newsletter, no sharing with third parties. Just a personal reply.' : 'Kein Newsletter, keine Weitergabe an Dritte. Nur eine persönliche Antwort.') + '</p>' +
+        '<div class="two"><div class="row"><label class="lbl" for="lf-name">' + (en() ? 'Your name' : 'Dein Name') + '</label><input class="input" id="lf-name" name="name" type="text" required autocomplete="name"></div>' +
+        '<div class="row"><label class="lbl" for="lf-email">' + (en() ? 'Your email' : 'Deine E-Mail') + '</label><input class="input" id="lf-email" name="email" type="email" required autocomplete="email"></div></div>' +
+        '<div class="row"><label class="lbl">' + (en() ? 'How should I reach you?' : 'Wie soll ich dich erreichen?') + '</label><div class="seg" id="seg"><button type="button" class="active" data-method="email">' + (en() ? 'Email' : 'E-Mail') + '</button><button type="button" data-method="telefon">' + (en() ? 'Phone' : 'Telefon') + '</button><button type="button" data-method="whatsapp">WhatsApp</button></div></div>' +
+        '<div class="row" id="phoneRow" hidden><label class="lbl" for="lf-phone">' + (en() ? 'Your number' : 'Deine Nummer') + '</label><input class="input" id="lf-phone" name="phone" type="tel" autocomplete="tel" placeholder="+49 170 1234567"></div>' +
+        '<div class="row"><label class="lbl">' + (en() ? 'What are you interested in?' : 'Was interessiert dich?') + ' <span class="opt">(' + (en() ? 'optional' : 'optional') + ')</span></label><div class="chips" style="margin-bottom:0">' + CFG.interests.map(function(m){ return chip('interest', m.id, t(m), S.interests.indexOf(m.id) > -1); }).join('') + '</div></div>' +
+        '<div class="row"><label class="lbl" for="lf-msg">' + (en() ? 'Anything else?' : 'Möchtest du noch etwas sagen?') + ' <span class="opt">(' + (en() ? 'optional' : 'optional') + ')</span></label><textarea class="input" id="lf-msg" name="nachricht" rows="3"></textarea></div>' +
+        '<label class="consent" id="consentBox"><input type="checkbox" id="lf-consent"><span>' + (en()
+          ? 'Yes, I want ' + esc(o.vorname) + ' ' + esc(o.nachname) + ' to receive my 20 answers from the vitality check (my habits regarding food, daily structure, sleep, movement and balance), my wishes and my contact details, in order to contact me personally. I can withdraw this consent at any time by emailing <a href="mailto:' + esc(o.recipient) + '">' + esc(o.recipient) + '</a>. Details in the <a href="/datenschutz" target="_blank" rel="noopener">privacy policy</a>.'
+          : 'Ja, ich möchte, dass ' + esc(o.vorname) + ' ' + esc(o.nachname) + ' meine 20 Antworten aus dem Vitalcheck (meine Gewohnheiten zu Ernährung, Tagesstruktur, Schlaf, Bewegung und Ausgleich), meine Wünsche und meine Kontaktdaten erhält, um mich persönlich zu kontaktieren. Diese Einwilligung kann ich jederzeit per E-Mail an <a href="mailto:' + esc(o.recipient) + '">' + esc(o.recipient) + '</a> widerrufen. Details in der <a href="/datenschutz" target="_blank" rel="noopener">Datenschutzerklärung</a>.') + '</span></label>' +
+        '<button type="submit" class="btn btn-primary btn-block" id="leadSubmit">' + (en() ? 'Send result' : 'Ergebnis senden') + '</button>' +
+        '<div class="err-msg" id="leadError"></div>' +
+        '<p class="privacy">' + (en() ? 'No newsletter, no sharing with third parties.' : 'Kein Newsletter, keine Weitergabe an Dritte.') + '</p>' +
       '</form></div>';
   }
-  function viewSuccess(){
-    var en = L()==='en', o = CFG.owner;
-    var wa = o.whatsapp ? '<a class="btn btn-ghost wa" target="_blank" rel="noopener" href="https://wa.me/' + esc(o.whatsapp) + '?text=' + encodeURIComponent(en ? 'Hi ' + o.vorname + ', I just did your vitality check.' : 'Hi ' + o.vorname + ', ich habe gerade deinen Vitalcheck gemacht.') + '">' + ICO.wa + (en ? 'Message on WhatsApp' : 'Direkt per WhatsApp schreiben') + '</a>' : '';
-    return '<div class="vc-success"><div class="big-check" style="width:84px;height:84px;border-radius:50%;background:var(--accent-soft);color:var(--accent-dark);display:inline-flex;align-items:center;justify-content:center"><svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div>' +
-      '<h2>' + (en ? 'Thank you. Your portrait is on its way.' : 'Danke. Dein Porträt ist unterwegs.') + '</h2>' +
-      '<p>' + (en ? esc(o.vorname) + ' will get back to you personally. Until then: your three tips are a good start.' : esc(o.vorname) + ' meldet sich persönlich bei dir. Bis dahin: Deine drei Tipps sind ein guter Anfang.') + '</p>' +
-      '<div class="actions">' + wa + '<button type="button" class="btn btn-primary" data-close>' + (en ? 'Back to the page' : 'Zurück zur Seite') + '</button></div></div>';
+  function vDone(){
+    var o = CFG.owner;
+    var wa = o.whatsapp ? '<a class="btn btn-ghost" target="_blank" rel="noopener" href="https://wa.me/' + esc(o.whatsapp) + '?text=' + encodeURIComponent(en() ? 'Hi ' + o.vorname + ', I just did your vitality check.' : 'Hi ' + o.vorname + ', ich habe gerade deinen Vitalcheck gemacht.') + '">' + (en() ? 'Message on WhatsApp' : 'Per WhatsApp schreiben') + '</a>' : '';
+    return '<div class="done"><h2>' + (en() ? 'Thank you. Your result is on its way.' : 'Danke. Dein Ergebnis ist unterwegs.') + '</h2>' +
+      '<p>' + (en() ? esc(o.vorname) + ' will get back to you personally. Until then, your three tips are a good start.' : esc(o.vorname) + ' meldet sich persönlich bei dir. Bis dahin sind deine drei Tipps ein guter Anfang.') + '</p>' +
+      '<div class="actions">' + wa + '<button type="button" class="btn btn-primary" data-restart-quiet>' + (en() ? 'Back to start' : 'Zurück zum Start') + '</button></div></div>';
   }
 
   /* ---- Bindings ---- */
   function toggleIn(arr, id, max){ var i = arr.indexOf(id); if (i > -1) arr.splice(i, 1); else if (arr.length < max) arr.push(id); }
-  function refreshChips(attr, arr, max){
-    inner.querySelectorAll('[data-' + attr + ']').forEach(function(c){ var on = arr.indexOf(c.getAttribute('data-' + attr)) > -1; c.classList.toggle('on', on); c.classList.toggle('off', !on && arr.length >= max); });
-    var nx = inner.querySelector('[data-next]'); if (nx) nx.disabled = !arr.length;
-  }
+  function refresh(attr, arr, max){ root.querySelectorAll('[data-' + attr + ']').forEach(function(c){ var on = arr.indexOf(c.getAttribute('data-' + attr)) > -1; c.classList.toggle('on', on); c.classList.toggle('off', !on && arr.length >= max); }); var nx = root.querySelector('[data-next]'); if (nx) nx.disabled = !arr.length; }
   function bind(key){
-    var back = inner.querySelector('[data-back]'); if (back) back.addEventListener('click', function(){ go(S.step - 1, 'back'); });
-    var next = inner.querySelector('[data-next]'); if (next) next.addEventListener('click', function(){ go(S.step + 1); });
-    var skip = inner.querySelector('[data-skip]'); if (skip) skip.addEventListener('click', function(){ if (key === 'motive') S.motives = []; if (key === 'invest') S.invest = ''; go(S.step + 1); });
-    if (key === 'wishes') inner.querySelectorAll('[data-wish]').forEach(function(c){ c.addEventListener('click', function(){ toggleIn(S.wishes, c.getAttribute('data-wish'), 3); save(); refreshChips('wish', S.wishes, 3); progress(); }); });
-    if (key === 'motive') inner.querySelectorAll('[data-motive]').forEach(function(c){ c.addEventListener('click', function(){ toggleIn(S.motives, c.getAttribute('data-motive'), 3); save(); refreshChips('motive', S.motives, 3); }); });
-    if (key === 'invest') inner.querySelectorAll('[data-invest]').forEach(function(c){ c.addEventListener('click', function(){ S.invest = c.getAttribute('data-invest'); save(); inner.querySelectorAll('[data-invest]').forEach(function(x){ x.classList.toggle('on', x === c); }); inner.querySelector('[data-next]').disabled = false; }); });
-    if (key.indexOf('q:') === 0) {
-      var p = key.split(':'), k = p[1] + ':' + p[2];
-      inner.querySelectorAll('.vc-ans').forEach(function(b){ b.addEventListener('click', function(){ pick(b, k); }); });
-    }
-    if (key === 'loading') {
-      var draw = document.getElementById('vcDraw'); animateRadar(draw, [0,0,0,0,0], ratios(), { r: 120, dot: 6 }, 1300);
-      setTimeout(function(){ go(S.step + 1, 'none'); }, 1700);
-    }
+    var b = root.querySelector('[data-back]'); if (b) b.addEventListener('click', function(){ go(S.step - 1); });
+    var n = root.querySelector('[data-next]'); if (n) n.addEventListener('click', function(){ go(S.step + 1); });
+    var sk = root.querySelector('[data-skip]'); if (sk) sk.addEventListener('click', function(){ if (key === 'motive') S.motives = []; if (key === 'invest') S.invest = ''; go(S.step + 1); });
+    if (key === 'wishes') root.querySelectorAll('[data-wish]').forEach(function(c){ c.addEventListener('click', function(){ toggleIn(S.wishes, c.getAttribute('data-wish'), 3); save(); refresh('wish', S.wishes, 3); progress(); }); });
+    if (key === 'motive') root.querySelectorAll('[data-motive]').forEach(function(c){ c.addEventListener('click', function(){ toggleIn(S.motives, c.getAttribute('data-motive'), 3); save(); refresh('motive', S.motives, 3); }); });
+    if (key === 'invest') root.querySelectorAll('[data-invest]').forEach(function(c){ c.addEventListener('click', function(){ S.invest = c.getAttribute('data-invest'); save(); root.querySelectorAll('[data-invest]').forEach(function(x){ x.classList.toggle('on', x === c); }); root.querySelector('[data-next]').disabled = false; }); });
+    if (key.indexOf('q:') === 0) { var p = key.split(':'), k = p[1] + ':' + p[2]; root.querySelectorAll('.ans').forEach(function(a){ a.addEventListener('click', function(){ root.querySelectorAll('.ans').forEach(function(x){ x.classList.remove('picked'); }); a.classList.add('picked'); S.answers[k] = +a.getAttribute('data-v'); save(); progress(); setTimeout(function(){ go(S.step + 1); }, 320); }); }); }
+    if (key === 'loading') { animateRadar(document.getElementById('draw'), [0,0,0,0,0], ratios(), { r: 110 }, 1100); setTimeout(function(){ go(S.step + 1); }, 1500); }
     if (key === 'result') {
-      var rr = document.getElementById('resRadar'); animateRadar(rr, [0,0,0,0,0], ratios(), { labels: CFG.dims.map(function(d){ return t(d.short); }), r: 88, dot: 5 }, 1100);
-      setTimeout(function(){ inner.querySelectorAll('.res-dim .fill').forEach(function(f){ f.style.width = f.getAttribute('data-w') + '%'; }); }, 150);
-      inner.querySelector('[data-lead]').addEventListener('click', function(){ go(S.step + 1); });
-      inner.querySelector('[data-restart]').addEventListener('click', function(){ if (confirm(L()==='en' ? 'Start over? Your answers will be reset.' : 'Nochmal starten? Deine Antworten werden zurückgesetzt.')) { S = fresh(); save(); lastMini = [0,0,0,0,0]; go(0, 'none'); } });
+      animateRadar(document.getElementById('radar'), [0,0,0,0,0], ratios(), { r: 92, labels: CFG.dims.map(function(d){ return t(d.short); }) }, 900);
+      setTimeout(function(){ root.querySelectorAll('.bar i').forEach(function(f){ f.style.width = f.getAttribute('data-w') + '%'; }); }, 120);
+      root.querySelector('[data-lead]').addEventListener('click', function(){ go(S.step + 1); });
+      root.querySelector('[data-restart]').addEventListener('click', function(){ if (confirm(en() ? 'Start over? Your answers will be reset.' : 'Nochmal starten? Deine Antworten werden zurückgesetzt.')) { S = fresh(); save(); go(0); } });
     }
     if (key === 'lead') bindLead();
-    if (key === 'success') inner.querySelector('[data-close]').addEventListener('click', close);
-  }
-  function pick(btn, k){
-    if (inner.querySelector('.vc-ans.picked') && !btn.classList.contains('picked')) inner.querySelectorAll('.vc-ans').forEach(function(x){ x.classList.remove('picked'); });
-    btn.classList.add('picked');
-    S.answers[k] = +btn.getAttribute('data-v'); save(); progress();
-    setTimeout(function(){ go(S.step + 1); }, 380);
+    if (key === 'done') root.querySelector('[data-restart-quiet]').addEventListener('click', function(){ S = fresh(); save(); go(0); });
   }
   document.addEventListener('keydown', function(e){
-    if (!opened) return;
-    if (e.key === 'Escape') { close(); return; }
     var key = steps()[S.step];
-    if (key.indexOf('q:') === 0 && ['1','2','3'].indexOf(e.key) > -1) { var b = inner.querySelectorAll('.vc-ans')[+e.key - 1]; if (b) b.click(); }
-    if (e.key === 'Enter' && key !== 'lead') { var nx = inner.querySelector('[data-next]:not(:disabled)'); if (nx && document.activeElement.tagName !== 'BUTTON') nx.click(); }
+    if (key.indexOf('q:') === 0 && ['1','2','3'].indexOf(e.key) > -1) { var a = root.querySelectorAll('.ans')[+e.key - 1]; if (a) a.click(); }
+    if (e.key === 'Enter' && key !== 'lead' && document.activeElement.tagName !== 'BUTTON') { var nx = root.querySelector('[data-next]:not(:disabled)'); if (nx) nx.click(); }
   });
-
   function bindLead(){
-    var form = document.getElementById('leadForm'), tabs = document.getElementById('methodTabs'), phoneRow = document.getElementById('phoneRow'), method = 'email';
-    tabs.querySelectorAll('.method-tab').forEach(function(tb){ tb.addEventListener('click', function(){ method = tb.getAttribute('data-method'); tabs.querySelectorAll('.method-tab').forEach(function(x){ x.classList.toggle('active', x === tb); }); phoneRow.hidden = method === 'email'; if (!phoneRow.hidden) document.getElementById('lf-phone').focus(); }); });
-    inner.querySelectorAll('[data-interest]').forEach(function(c){ c.addEventListener('click', function(){ toggleIn(S.interests, c.getAttribute('data-interest'), 3); save(); inner.querySelectorAll('[data-interest]').forEach(function(x){ x.classList.toggle('on', S.interests.indexOf(x.getAttribute('data-interest')) > -1); }); }); });
-    var consentBox = document.getElementById('consentBox'); document.getElementById('lf-consent').addEventListener('change', function(){ consentBox.classList.remove('err'); });
+    var form = document.getElementById('leadForm'), seg = document.getElementById('seg'), phoneRow = document.getElementById('phoneRow'), method = 'email';
+    seg.querySelectorAll('button').forEach(function(tb){ tb.addEventListener('click', function(){ method = tb.getAttribute('data-method'); seg.querySelectorAll('button').forEach(function(x){ x.classList.toggle('active', x === tb); }); phoneRow.hidden = method === 'email'; if (!phoneRow.hidden) document.getElementById('lf-phone').focus(); }); });
+    root.querySelectorAll('[data-interest]').forEach(function(c){ c.addEventListener('click', function(){ toggleIn(S.interests, c.getAttribute('data-interest'), 3); save(); root.querySelectorAll('[data-interest]').forEach(function(x){ x.classList.toggle('on', S.interests.indexOf(x.getAttribute('data-interest')) > -1); }); }); });
+    var box = document.getElementById('consentBox'); document.getElementById('lf-consent').addEventListener('change', function(){ box.classList.remove('err'); });
     form.addEventListener('submit', function(e){
       e.preventDefault();
-      var en = L()==='en', err = document.getElementById('leadError'), btn = document.getElementById('leadSubmit');
-      err.classList.remove('show');
+      var err = document.getElementById('leadError'), btn = document.getElementById('leadSubmit'); err.classList.remove('show');
       var name = form.name.value.trim(), email = form.email.value.trim(), phone = form.phone.value.trim();
-      if (!name || !email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { err.textContent = en ? 'Please enter your name and a valid email address.' : 'Bitte gib deinen Namen und eine gültige E-Mail-Adresse an.'; err.classList.add('show'); return; }
-      if (method !== 'email' && !phone) { err.textContent = en ? 'Please enter your phone number for this contact method.' : 'Bitte gib deine Telefonnummer für diesen Kontaktweg an.'; err.classList.add('show'); return; }
-      if (!document.getElementById('lf-consent').checked) { consentBox.classList.add('err'); err.textContent = en ? 'Please confirm the consent so I may receive your answers.' : 'Bitte bestätige die Einwilligung, damit ich deine Antworten erhalten darf.'; err.classList.add('show'); return; }
-      btn.disabled = true; btn.textContent = en ? 'Sending …' : 'Wird gesendet …';
+      if (!name || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { err.textContent = en() ? 'Please enter your name and a valid email address.' : 'Bitte gib deinen Namen und eine gültige E-Mail-Adresse an.'; err.classList.add('show'); return; }
+      if (method !== 'email' && !phone) { err.textContent = en() ? 'Please enter your phone number for this contact method.' : 'Bitte gib deine Telefonnummer für diesen Kontaktweg an.'; err.classList.add('show'); return; }
+      if (!document.getElementById('lf-consent').checked) { box.classList.add('err'); err.textContent = en() ? 'Please confirm the consent so I may receive your answers.' : 'Bitte bestätige die Einwilligung, damit ich deine Antworten erhalten darf.'; err.classList.add('show'); return; }
+      btn.disabled = true; btn.textContent = en() ? 'Sending …' : 'Wird gesendet …';
       fetch(form.action, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: JSON.stringify(payload(name, email, phone, method)) })
         .then(function(r){ if (!r.ok) throw new Error('bad'); S.sent = true; save(); go(S.step + 1); })
-        .catch(function(){ btn.disabled = false; btn.innerHTML = (en ? 'Send my portrait' : 'Porträt absenden') + ' <span class="arr">→</span>'; err.textContent = en ? 'That did not work. Please try again in a moment.' : 'Das hat nicht geklappt. Bitte versuch es gleich nochmal.'; err.classList.add('show'); });
+        .catch(function(){ btn.disabled = false; btn.textContent = en() ? 'Send result' : 'Ergebnis senden'; err.textContent = en() ? 'That did not work. Please try again in a moment.' : 'Das hat nicht geklappt. Bitte versuch es gleich nochmal.'; err.classList.add('show'); });
     });
   }
   /* Alle Werte als Strings (FormSubmission.data ist Record<string,string>) */
   function payload(name, email, phone, method){
-    var R = evalResult(), o = CFG.owner, en = L()==='en';
-    var labelOf = function(list, id){ var x = list.filter(function(i){ return i.id === id; })[0]; return x ? (x.de || t(x)) : ''; };
-    var ansWord = function(v){ return v === 2 ? 'ja' : (v === 1 ? 'teils' : 'nein'); };
+    var R = evalResult(), o = CFG.owner, word = function(v){ return v === 2 ? 'ja' : (v === 1 ? 'teils' : 'nein'); };
     var body = {
-      _recipient: o.recipient,
-      _honeypot: document.querySelector('#leadForm [name=_honeypot]').value,
-      name: name, email: email, phone: phone,
-      kontakt_weg: method,
+      _recipient: o.recipient, _honeypot: document.querySelector('#leadForm [name=_honeypot]').value,
+      name: name, email: email, phone: phone, kontakt_weg: method,
       interesse: S.interests.map(function(id){ return labelOf(CFG.interests, id); }).join(', '),
       nachricht: document.getElementById('lf-msg').value.trim(),
-      vital_level: t(R.lv.name) + ' (' + R.total + '/40)',
-      staerke: CFG.dims[R.best].name.de,
-      hebel: CFG.dims[R.worst].name.de,
+      gewohnheits_level: R.lv.name.de + ' (' + R.total + '/40)',
+      staerke: CFG.dims[R.best].name.de, hebel: CFG.dims[R.worst].name.de,
       wuensche: S.wishes.map(function(id){ return labelOf(CFG.wishes, id); }).join(', '),
       antriebsmotive: S.motives.map(function(id){ return labelOf(CFG.motives, id); }).join(', '),
       investition_pro_tag: labelOf(CFG.invest, S.invest),
-      sprache: en ? 'EN' : 'DE',
+      sprache: en() ? 'EN' : 'DE',
       dsgvo_einwilligung: 'ja, ' + new Date().toISOString().replace('T', ' ').substring(0, 16) + ' UTC'
     };
-    CFG.dims.forEach(function(d, di){
-      body['score_' + d.id] = R.sc[di] + '/8';
-      body['antworten_' + d.id] = d.q.map(function(q, qi){ var v = S.answers[di + ':' + qi]; return q.label.de + ': ' + (v === undefined ? '–' : ansWord(v)); }).join(' · ');
-    });
+    CFG.dims.forEach(function(d, di){ body['score_' + d.id] = R.sc[di] + '/8'; body['antworten_' + d.id] = d.q.map(function(q, qi){ var v = S.answers[di + ':' + qi]; return q.label.de + ': ' + (v === undefined ? '–' : word(v)); }).join(' · '); });
     return body;
   }
 
-  /* ---- Öffnen / Schließen ---- */
-  document.querySelectorAll('[data-vc-start]').forEach(function(b){ b.addEventListener('click', function(e){ e.preventDefault(); if (S.sent) { S = fresh(); save(); } open(); }); });
-  document.getElementById('vcClose').addEventListener('click', close);
-  window.addEventListener('popstate', function(){ if (opened) { el.classList.remove('open'); document.body.classList.remove('vc-open'); opened = false; } });
-
-  return { open: open, close: close, render: render, get opened(){ return opened; } };
+  if (S.sent) { S = fresh(); save(); }
+  render();
+  return { render: render };
 })();
 </script>
 
-<!-- ============ COOKIE-CONSENT (identisch zu den anderen FinestSites-Templates) ============ -->
+<!-- ============ COOKIE-CONSENT (identisch zu den anderen FinestSites-Templates, nicht blockierend) ============ -->
 <style id="fs-cookie-css">
   #fs-ck-wrap {
     position: fixed; inset: 0; z-index: 99999;
@@ -1347,7 +693,6 @@ var VC = (function(){
     padding: 24px;
     pointer-events: none;
   }
-  /* Vitalcheck: Banner blockiert die Seite nicht — nur der Banner selbst ist klickbar */
   #fs-ck-wrap.fs-ck-open { pointer-events: none; }
   #fs-ck-wrap.fs-ck-open #fs-ck-banner { pointer-events: auto; }
 
