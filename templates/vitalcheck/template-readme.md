@@ -10,20 +10,23 @@ Die Seite **ist** der Check. Ein 3-Minuten-Check mit **20 reinen Verhaltens-Auss
 
 Konzept, Psychologie, Rechtsgrundlagen und Fragen-Mapping: `docs/konzept-vitalcheck.html`
 
-## Aufbau (eine Spalte, max. 640 px)
+## Aufbau (App-Karte, max. 720 px)
 
-1. Leiste: Avatar + Name, DE/EN, 2-px-Fortschrittslinie
-2. **Der Check** direkt auf der Seite: Intro (Headline, ein Satz, „Check starten“) → Wünsche → 5 × 4 Aussagen mit kurzen Zwischenstopps → Antrieb (optional) → Investition (optional, Standard aus) → Ergebnis → Lead-Formular → Danke
-3. PM-Disclaimer-Leiste (Pflichttext, gendert nach `geschlecht`)
-4. Über mich, klein (`about_bild`, `about_intro`, `about_me_html` mit KI-Compliance-Check)
+1. Leiste: Avatar + Name, Sprachschalter mit Flaggen (DE/EN)
+2. Bereichs-Fortschritt: 5 Icons (Ernährung, Tagesstruktur, Schlaf, Bewegung, Ausgleich) mit Füllbalken, aktueller Bereich hervorgehoben, fertige Bereiche mit Haken
+3. **Die Karte = der Check**, startet ohne Intro direkt mit Schritt 1 (Wünsche, mit kurzer Kopfzeile „Wie vital ist dein Alltag?“) → 5 × 4 Aussagen als Antwortkarten mit Icon-Faces (✓ / – / ✕, Tasten 1-2-3) → Zwischenstopp nach jedem Bereich (Pop-Haken + „Gut zu wissen“) → Antrieb (optional) → Investition (optional, Standard aus) → Ergebnis (Konfetti, Radar, Gewohnheits-Level, Stärke/Hebel, 5 Bereiche, 3 Tipps, Wunsch) → Einladung zum Gespräch → Lead-Formular → Danke
+4. PM-Disclaimer-Leiste (Pflichttext, gendert nach `geschlecht`)
 5. Footer (Kontakt, `/impressum`, `/datenschutz`, Selbsteinschätzungs-Hinweis, Made by finestsites)
 6. Cookie-Banner (identisch zu cellRESET/PM Business, nur nicht-blockierend)
 
+Kein „Über mich“: Die Seite besteht nur aus dem Check. Der Berater erscheint mit Foto und Name in der Leiste, in der Pflichtkennzeichnung und in der Einladung am Ende.
+
 ## Design
 
-- Font: **Geist** (wie die FinestSites-App), keine Serif, keine Verläufe, keine Icon-Karten
-- Schwarz-Weiß mit einer Akzentfarbe: 6 Themes (mint Default, ocean, coral, violet, sun, midnight = dunkel)
-- Keine Fotos nötig außer Profil- und Über-mich-Bild
+- Font: **Geist** (wie die FinestSites-App), keine Serif, keine Glow-Blobs, keine Feature-Kacheln
+- Getönter Hintergrund je Theme, weiße Karte mit weichem Schatten, Akzentfarbe für Buttons, Auswahl, Fortschritt und Radar
+- 6 Themes: mint (Default), ocean, coral, violet, sun, midnight (dunkel)
+- Keine Fotos nötig außer dem Profilbild
 
 ## Personalisierbar (Schema)
 
@@ -35,7 +38,6 @@ Konzept, Psychologie, Rechtsgrundlagen und Fragen-Mapping: `docs/konzept-vitalch
 | `farbthema` | card_select | 6 Themes |
 | `frage_motive` | section_toggle | Motiv-Frage an/aus |
 | `frage_investition` | section_toggle | Investitions-Frage an/aus (Standard aus, siehe Rechtsprüfung) |
-| `about_bild`, `about_intro`, `about_me_html` | Inhalte | Über-mich-Sektion |
 
 Tags in der DB: `["pm-international", "fitline", "vitalcheck", "leads", "multilingual"]`
 

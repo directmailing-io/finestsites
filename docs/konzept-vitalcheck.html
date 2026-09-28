@@ -47,7 +47,7 @@
 <main>
   <h1>Konzept: Der Vitalcheck</h1>
   <p class="lead">Ein Lead-Template für FinestSites-User, das Besucher freiwillig und gern ausfüllen: Die Seite <em>ist</em> der Check. Drei Minuten, sofort ein greifbares Ergebnis, rechtlich so defensiv wie möglich, weil er ausschließlich beobachtbares Verhalten abfragt, keine Beschwerden und keine Befindlichkeiten.</p>
-  <p class="meta">Stand 28.09.2026 (Version 2: Check im Zentrum, Geist-Typografie, reine Verhaltens-Aussagen) · Dateien: <code>templates/vitalcheck/index.html</code>, <code>placeholders-schema.json</code>, <code>template-readme.md</code> · Domains: <code>docs/vitalcheck-domains.html</code></p>
+  <p class="meta">Stand 28.09.2026 (Version 3: Check startet sofort, App-Karte mit Bereichs-Fortschritt, Antwortkarten mit Icons, kein Über-mich) · Dateien: <code>templates/vitalcheck/index.html</code>, <code>placeholders-schema.json</code>, <code>template-readme.md</code> · Domains: <code>docs/vitalcheck-domains.html</code></p>
 
   <h2>1. Die Kernidee in einem Satz</h2>
   <p><strong>Erst geben, dann fragen.</strong> Der Besucher bekommt in unter drei Minuten ein persönliches „Vitalporträt“ (Radar mit fünf Bereichen, Vital-Level, Stärke, größter Hebel, drei Alltagstipps), ganz ohne Kontaktdaten. Erst danach kommt die Einladung, das Porträt an den Berater zu schicken. Wer das tut, will wirklich ein Gespräch. Das ist ein besserer Lead als jeder Newsletter-Haken.</p>
@@ -62,15 +62,15 @@
     <div class="card"><h3>Eine Aussage pro Screen</h3><p>Große Tap-Ziele, drei Antworten (Trifft zu / Teils / Trifft nicht zu), Auto-Weiter nach dem Tippen, Tastenkürzel 1-2-3. Keine Scroll-Formulare. Jede Antwort fühlt sich wie ein kleiner Abschluss an.</p></div>
     <div class="card"><h3>Positive Verhaltens-Aussagen</h3><p>Alle 20 Aussagen beschreiben eine beobachtbare Gewohnheit („Ich trinke mindestens 1,5 Liter“, „Die letzte Stunde vor dem Schlafen ohne Bildschirm“). Man sammelt Punkte statt Defizite anzukreuzen. Bewusst keine Befindlichkeiten („Ich wache erholt auf“), siehe Abschnitt 5b.</p></div>
     <div class="card"><h3>Variable Belohnung</h3><p>Nach jedem Bereich ein Zwischenstopp: Haken-Animation, „Bereich 2 von 5 geschafft“, ein kurzer „Gut zu wissen“-Fakt mit Quelle (DGE, WHO, National Sleep Foundation). Man lernt nebenbei etwas.</p></div>
-    <div class="card"><h3>Nichts lenkt ab</h3><p>Keine Hero-Sektion, keine Feature-Kacheln, kein FAQ. Eine Spalte, eine Frage, drei Antworten. Der Besucher ist nach dem ersten Klick im Check, nicht auf einer Landingpage.</p></div>
-    <div class="card"><h3>Peak-End-Rule</h3><p>Das Ende ist der Höhepunkt: kurze Radar-Animation, dann Gewohnheits-Level („Auf Kurs“), Stärke, Hebel, fünf Bereiche mit kurzem Feedback, drei konkrete Tipps.</p></div>
+    <div class="card"><h3>Nichts lenkt ab</h3><p>Kein Intro-Screen, keine Hero-Sektion, kein FAQ, kein Über-mich. Die Seite öffnet direkt mit Schritt 1. Oben zeigen fünf Bereichs-Icons mit Füllbalken, wo man steht; fertige Bereiche bekommen einen Haken.</p></div>
+    <div class="card"><h3>Peak-End-Rule</h3><p>Das Ende ist der Höhepunkt: Radar-Animation, Konfetti, Gewohnheits-Level („Auf Kurs“) groß in Akzentfarbe, Stärke, Hebel, fünf Bereiche mit farbigen Balken, drei konkrete Tipps.</p></div>
     <div class="card"><h3>Reziprozität statt Druck</h3><p>Der Besucher hat bereits etwas Wertvolles bekommen. Die Einladung „Möchtest du dein Ergebnis mit Daniel besprechen?“ kommt mit Foto, ohne Kaufpflicht, ohne Newsletter. Wer nicht will, behält sein Ergebnis trotzdem.</p></div>
     <div class="card"><h3>Vertrauen durch Transparenz</h3><p>Direkt unter dem Start-Button: „Keine Anmeldung · Nichts wird gesendet, außer du willst es · Selbsteinschätzung, keine Diagnose“. Die PM-Zugehörigkeit steht offen direkt unter dem Check. Ehrlichkeit senkt die Abbruchquote.</p></div>
   </div>
 
   <h2>3. Ablauf des Checks</h2>
   <div class="flow">
-    <span>Intro („Check starten“)</span><em>→</em><span>Wünsche (max. 3)</span><em>→</em>
+    <span>Wünsche (max. 3, direkt beim Öffnen)</span><em>→</em>
     <span>Ernährung &amp; Trinken · 4</span><em>→</em><span>Zwischenstopp</span><em>→</em>
     <span>Tagesstruktur &amp; Pausen · 4</span><em>→</em><span>Zwischenstopp</span><em>→</em>
     <span>Schlaf &amp; Abschalten · 4</span><em>→</em><span>Zwischenstopp</span><em>→</em>
@@ -79,7 +79,7 @@
     <span>Antrieb (optional, abschaltbar)</span><em>→</em><span>Zeit/Geld pro Tag (optional, Standard aus)</span><em>→</em>
     <span><b>Ergebnis</b></span><em>→</em><span>Lead-Formular + Einwilligung</span><em>→</em><span>Danke (+ WhatsApp)</span>
   </div>
-  <p>22 bis 23 Interaktionen, davon 20 Aussagen. Gemessen im Test: unter drei Minuten. Der Check läuft direkt auf der Seite (kein Overlay), Fortschritt wird in <code>sessionStorage</code> gehalten (Reload verliert nichts). Sprachwechsel DE/EN funktioniert mitten im Check.</p>
+  <p>22 bis 23 Interaktionen, davon 20 Aussagen. Gemessen im Test: unter drei Minuten. Der Check ist die Seite (kein Overlay, kein Intro), Antworten per Klick oder Tasten 1-2-3, Fortschritt wird in <code>sessionStorage</code> gehalten (Reload verliert nichts). Sprachwechsel DE/EN mit Flaggen funktioniert mitten im Check.</p>
 
   <h3>Auswertung (clientseitig, deterministisch)</h3>
   <ul>
@@ -198,8 +198,9 @@
 
   <h2>7. Design und Technik</h2>
   <ul>
-    <li><b>Die Seite ist der Check.</b> Eine Spalte (max. 640 px), Leiste mit Name und DE/EN, darunter sofort Intro und Check. Keine Hero-Grafik, keine Feature-Kacheln, kein FAQ, keine Verläufe, keine Serif. Über mich, Pflichtkennzeichnung und Footer stehen klein unter dem Check.</li>
-    <li><b>Typografie Geist</b>, dieselbe Schrift wie die FinestSites-App. Schwarz-Weiß, eine Akzentfarbe für Fortschritt, Auswahl und Radar.</li>
+    <li><b>Die Seite ist der Check.</b> Getönter Hintergrund, eine weiße App-Karte (max. 720 px), darüber Leiste mit Avatar, Name und Flaggen-Sprachschalter sowie die fünf Bereichs-Icons mit Fortschritt. Keine Hero-Grafik, keine Feature-Kacheln, kein FAQ, kein Über-mich, keine Serif. Pflichtkennzeichnung und Footer stehen klein unter der Karte.</li>
+    <li><b>Antwortkarten mit Icon-Faces</b> (Haken grün, Strich amber, Kreuz grau), die beim Tippen aufspringen; Chips mit rundem Haken; Zwischenstopp mit Pop-Animation; Konfetti beim Ergebnis.</li>
+    <li><b>Typografie Geist</b>, dieselbe Schrift wie die FinestSites-App. Akzentfarbe für Buttons, Auswahl, Fortschritt und Radar.</li>
     <li><b>6 Akzentfarben</b> (mint, ocean, coral, violet, sun, midnight = dunkel). Die Bewertungsfarben (grün/amber/koralle) bleiben themenunabhängig lesbar.</li>
     <li><b>Kein Foto-Bedarf</b> außer Profil- und Über-mich-Bild.</li>
     <li><b>Ein einziges HTML</b> (rund 1.000 Zeilen), inline CSS/JS, keine Frameworks, nur Google Fonts extern. Placeholder-Engine-kompatibel (getestet mit <code>src/lib/utils/template-engine.ts</code>).</li>

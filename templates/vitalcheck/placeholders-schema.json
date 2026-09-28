@@ -40,7 +40,7 @@
       "aspect_ratio": "1/1",
       "default_value": "https://app.finestsites.io/placeholders/profilbild.webp",
       "preview_value": "",
-      "placeholder_text": "Quadratisch, mindestens 400×400 px. Erscheint oben in der Leiste, im PM-Disclaimer und am Ende des Checks neben deiner Einladung zum Gespräch."
+      "placeholder_text": "Quadratisch, mindestens 400×400 px. Erscheint oben neben deinem Namen, in der Pflichtkennzeichnung und am Ende des Checks neben deiner Einladung zum Gespräch."
     },
     {
       "key": "geschlecht",
@@ -211,43 +211,6 @@
           "description": "Keine Frage nach Geld im Check."
         }
       ]
-    },
-    {
-      "key": "about_bild",
-      "type": "image",
-      "label": "Foto für „Über mich\"",
-      "section": "Inhalte",
-      "order": 17,
-      "required": true,
-      "aspect_ratio": "4/5",
-      "default_value": "https://app.finestsites.io/placeholders/about-bild.webp",
-      "preview_value": "",
-      "placeholder_text": "Persönliches Foto für die „Über mich\"-Sektion, ideal im Hochformat (4:5)."
-    },
-    {
-      "key": "about_intro",
-      "type": "intro",
-      "label": "Begrüßung",
-      "section": "Inhalte",
-      "order": 17.5,
-      "required": false,
-      "max_length": 60,
-      "default_value": "",
-      "preview_value": "",
-      "placeholder_text": "Standard: Hi, ich bin {vorname}. Klick auf Bearbeiten, wenn du eine eigene Begrüßung willst."
-    },
-    {
-      "key": "about_me_html",
-      "type": "richtext",
-      "label": "Über mich-Text",
-      "section": "Inhalte",
-      "order": 18,
-      "compliance_check": true,
-      "required": true,
-      "max_length": 1500,
-      "default_value": "<p>Kurz zu mir: Ich komme aus [Ort] und beschäftige mich seit [Zeitraum] mit dem Thema Alltag, Energie und gute Gewohnheiten. Der Vitalcheck ist mein Werkzeug für ein ehrliches Gespräch, ohne Druck und ohne Verkaufsshow.</p>",
-      "preview_value": "<p>Ich bin Daniel, Vater von zwei Kindern und seit ein paar Jahren mit dem Thema Alltag, Energie und Gewohnheiten unterwegs. Ich weiß, wie es ist, wenn der Tag mehr zieht, als er gibt.</p><p>Der Vitalcheck ist mein Werkzeug für ein ehrliches Gespräch: ohne Druck, ohne Verkaufsshow.</p>",
-      "placeholder_text": "Kurz und persönlich: Wer bist du, warum machst du den Check? Erscheint klein unter dem Check. Bitte keine Heil- oder Wirkaussagen und keine Produktnamen, der KI-Check weist dich darauf hin. Max. 1.500 Zeichen. Die englische Fassung erstellen wir automatisch beim Speichern."
     }
   ],
   "preview_values": {
