@@ -208,27 +208,26 @@ html[data-theme="midnight"] .dim .insight { background: var(--bg); }
 .tip p { font-size: 15.5px; color: var(--ink-2); }
 .wish { margin-top: 26px; padding: 18px 22px; border-radius: 18px; background: var(--accent-soft); color: var(--accent-deep); font-size: 15.5px; }
 .wish b { font-weight: 600; }
-.invite { margin-top: 30px; padding: clamp(24px, 4vw, 40px); border-radius: 24px; background: var(--ink); color: var(--bg); }
+.invite { margin-top: 30px; padding: clamp(24px, 4vw, 40px); border-radius: 24px; background: var(--accent); color: var(--on-accent); }
 .invite .who { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; }
 .invite .who small { display: block; font-size: 13px; opacity: 0.65; }
 .invite .who b { font-size: 16px; font-weight: 600; }
-.invite .personal { font-size: 15.5px; opacity: 0.85; margin-bottom: 18px; padding: 12px 16px; border-radius: 12px; background: rgba(255,255,255,0.08); }
+.invite .personal { font-size: 15.5px; opacity: 0.95; margin-bottom: 18px; padding: 12px 16px; border-radius: 12px; background: rgba(255,255,255,0.14); }
 .invite .personal b { font-weight: 600; opacity: 1; }
 .invite ul { list-style: none; display: grid; gap: 10px; margin: 0 0 22px; }
 .invite li { display: grid; grid-template-columns: 22px 1fr; gap: 12px; font-size: 15.5px; opacity: 0.92; }
-.invite li i { width: 22px; height: 22px; border-radius: 50%; background: var(--accent); color: var(--on-accent); display: inline-flex; align-items: center; justify-content: center; }
+.invite li i { width: 22px; height: 22px; border-radius: 50%; background: rgba(255,255,255,0.22); color: var(--on-accent); display: inline-flex; align-items: center; justify-content: center; }
 .invite li i svg { width: 12px; height: 12px; }
 .invite .fineprint { margin-top: 14px; font-size: 13px; opacity: 0.75; }
-html[data-theme="midnight"] .invite { background: var(--paper); color: var(--ink); border: 1.5px solid var(--line-2); }
+html[data-theme="midnight"] .invite { background: var(--accent); color: var(--on-accent); }
 .invite img { width: 56px; height: 56px; border-radius: 50%; object-fit: cover; box-shadow: 0 0 0 3px rgba(255,255,255,0.25); }
 .invite h3 { font-size: clamp(22px, 3vw, 28px); margin-bottom: 8px; }
 .invite p { opacity: 0.8; font-size: 16px; max-width: 52ch; }
 .invite .row { display: flex; gap: 12px; flex-wrap: wrap; }
-.invite .btn-primary { background: var(--bg); color: var(--ink); box-shadow: none; }
-.invite .btn-primary:hover { background: var(--paper); }
-html[data-theme="midnight"] .invite .btn-primary { background: var(--accent); color: var(--on-accent); }
-.invite .btn-ghost { color: inherit; border-color: rgba(255,255,255,0.3); }
-html[data-theme="midnight"] .invite .btn-ghost { border-color: var(--line-2); }
+.invite .btn-primary { background: #fff; color: var(--accent-dark); box-shadow: 0 10px 24px -12px rgba(0,0,0,0.35); }
+.invite .btn-primary:hover { background: #F4F7F5; }
+html[data-theme="midnight"] .invite .btn-primary { background: var(--on-accent); color: var(--accent); }
+.invite .btn-ghost { color: inherit; border-color: rgba(255,255,255,0.45); }
 @media (max-width: 480px) { .invite .row .btn { width: 100%; } }
 .note { margin-top: 18px; font-size: 13px; color: var(--ink-3); line-height: 1.55; max-width: 70ch; }
 
@@ -725,9 +724,9 @@ var VC = (function(){
     html += '<div class="invite"><div class="who"><img src="' + esc(o.avatar) + '" alt=""><div><b>' + esc(o.vorname) + ' ' + esc(o.nachname) + '</b><small>' + (en() ? 'Independent distributor of PM-International' : (CFG.owner.female ? 'Unabhängige Vertriebspartnerin' : 'Unabhängiger Vertriebspartner') + ' der PM-International') + '</small></div></div>' +
       '<h3>' + (en() ? 'Let\'s look at your result together.' : 'Lass uns gemeinsam auf dein Ergebnis schauen.') + '</h3>' +
       '<div class="personal">' + (en() ? 'Your biggest lever is <b>' + esc(t(CFG.dims[R.worst].name)) + '</b>' + (wishes.length ? ', your wish is <b>' + esc(wishes[0]) + '</b>' : '') + '. That is exactly where I would start with you.' : 'Dein größter Hebel ist <b>' + esc(t(CFG.dims[R.worst].name)) + '</b>' + (wishes.length ? ', dein Wunsch ist <b>' + esc(wishes[0]) + '</b>' : '') + '. Genau da würde ich mit dir anfangen.') + '</div>' +
-      '<ul>' + li(en() ? 'A personal 20-minute conversation, by phone or WhatsApp, at a time that suits you' : 'Ein persönliches Gespräch von etwa 20 Minuten, per Telefon oder WhatsApp, wann es dir passt') + li(en() ? 'We go through your three levers and what is realistic in your everyday life' : 'Wir gehen deine drei Hebel durch und schauen, was in deinem Alltag realistisch ist') + li(en() ? 'I show you how our concept fits your answers, and you decide whether it is for you' : 'Ich zeige dir, wie unser Konzept zu deinen Antworten passt, und du entscheidest, ob es etwas für dich ist') + '</ul>' +
+      '<ul>' + li(en() ? 'A personal consultation, by phone or WhatsApp, whenever it suits you' : 'Eine persönliche Beratung, per Telefon oder WhatsApp, wann es dir passt') + li(en() ? 'Together we check whether the nutrient concept I work with fits you and your everyday life' : 'Wir prüfen gemeinsam, ob das Nährstoff-Konzept, mit dem ich arbeite, zu dir und deinem Alltag passt') + li(en() ? 'No risk for you: even if you decide to go for it afterwards, you have a 30-day satisfaction guarantee' : 'Du trägst kein Risiko: Selbst wenn du dich im Anschluss dafür entscheidest, hast du eine 30-tägige Zufriedenheitsgarantie') + '</ul>' +
       '<div class="row"><button type="button" class="btn btn-primary" data-lead>' + (en() ? 'Send result and request a chat' : 'Ergebnis senden und Gespräch anfragen') + ' <span class="arr">→</span></button><button type="button" class="btn btn-ghost" data-restart>' + (en() ? 'Start over' : 'Nochmal starten') + '</button></div>' +
-      '<div class="fineprint">' + (en() ? 'Free · reply within 24 hours · no newsletter · nothing to buy' : 'Kostenlos · Antwort innerhalb von 24 Stunden · kein Newsletter · keine Kaufpflicht') + '</div></div>' +
+      '<div class="fineprint">' + (en() ? 'Free and non-binding · no newsletter · you decide' : 'Kostenlos und unverbindlich · kein Newsletter · du entscheidest') + '</div></div>' +
       '<p class="note">' + (en() ? 'This result is a self-assessment of your habits, not a medical evaluation, and it contains no product recommendation. It was calculated on your device and is only sent if you actively choose to.' : 'Dieses Ergebnis ist eine Selbsteinschätzung deiner Gewohnheiten, keine medizinische Bewertung, und enthält keine Produktempfehlung. Es wurde auf deinem Gerät berechnet und wird nur übermittelt, wenn du das aktiv möchtest.') + '</p>';
     return html;
   }
@@ -735,7 +734,7 @@ var VC = (function(){
     var R = evalResult(), o = CFG.owner;
     var wl = S.wishes.map(function(id){ var w = CFG.wishes.filter(function(x){ return x.id === id; })[0]; return w ? t(w) : ''; }).filter(Boolean).join(', ');
     return '<div class="lead"><h2>' + (en() ? 'Request your conversation with ' + esc(o.vorname) + '.' : 'Dein Gespräch mit ' + esc(o.vorname) + ' anfragen.') + '</h2>' +
-      '<p class="sub">' + (en() ? 'Your result goes to ' + esc(o.vorname) + ' together with your contact details. You will hear back personally within 24 hours.' : 'Dein Ergebnis geht zusammen mit deinen Kontaktdaten an ' + esc(o.vorname) + '. Du bekommst innerhalb von 24 Stunden eine persönliche Antwort.') + '</p>' +
+      '<p class="sub">' + (en() ? 'Your result goes to ' + esc(o.vorname) + ' together with your contact details. You will hear back personally.' : 'Dein Ergebnis geht zusammen mit deinen Kontaktdaten an ' + esc(o.vorname) + '. Du bekommst eine persönliche Antwort.') + '</p>' +
       '<div class="sendbox"><div><div class="k">' + (en() ? 'Vitality level' : 'Vitallevel') + '</div><div class="v">' + esc(t(R.lv.name)) + ' · ' + R.total + '/40</div></div><div><div class="k">' + (en() ? 'Biggest lever' : 'Größter Hebel') + '</div><div class="v">' + esc(t(CFG.dims[R.worst].name)) + '</div></div><div class="full">' + (en() ? 'Included: your 20 answers, your strength (' : 'Enthalten: deine 20 Antworten, deine Stärke (') + esc(t(CFG.dims[R.best].short)) + ')' + (wl ? (en() ? ' and your wishes: ' : ' und deine Wünsche: ') + esc(wl) : '') + '.</div></div>' +
       '<form id="leadForm" action="/.finestsites/forms/kontakt" method="POST" novalidate>' +
         '<input type="hidden" name="_recipient" value="' + esc(o.recipient) + '">' +
@@ -751,7 +750,7 @@ var VC = (function(){
           : 'Ja, ich möchte, dass ' + esc(o.vorname) + ' ' + esc(o.nachname) + ' meine 20 Antworten aus dem Vitalcheck (meine Gewohnheiten zu Ernährung, Tagesstruktur, Schlaf, Bewegung und Ausgleich), meine Wünsche und meine Kontaktdaten erhält, um mich persönlich zu kontaktieren. Diese Einwilligung kann ich jederzeit per E-Mail an <a href="mailto:' + esc(o.recipient) + '">' + esc(o.recipient) + '</a> widerrufen. Details in der <a href="/datenschutz" target="_blank" rel="noopener">Datenschutzerklärung</a>.') + '</span></label>' +
         '<button type="submit" class="btn btn-primary btn-block" id="leadSubmit">' + (en() ? 'Request conversation' : 'Gespräch anfragen') + ' <span class="arr">→</span></button>' +
         '<div class="err-msg" id="leadError"></div>' +
-        '<div class="form-trust"><span>' + (en() ? 'Free and non-binding' : 'Kostenlos und unverbindlich') + '</span><span>' + (en() ? 'Reply within 24 hours' : 'Antwort innerhalb von 24 Stunden') + '</span><span>' + (en() ? 'No newsletter, no sharing' : 'Kein Newsletter, keine Weitergabe') + '</span></div>' +
+        '<div class="form-trust"><span>' + (en() ? 'Free and non-binding' : 'Kostenlos und unverbindlich') + '</span><span>' + (en() ? '30-day satisfaction guarantee' : '30 Tage Zufriedenheitsgarantie') + '</span><span>' + (en() ? 'No newsletter, no sharing' : 'Kein Newsletter, keine Weitergabe') + '</span></div>' +
       '</form></div>';
   }
   function vDone(){
