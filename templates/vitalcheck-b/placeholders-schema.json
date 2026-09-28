@@ -1,0 +1,226 @@
+{
+  "version": 1,
+  "fields": [
+    {
+      "key": "vorname",
+      "type": "text",
+      "label": "Vorname",
+      "section": "Profil",
+      "order": 1,
+      "required": true,
+      "max_length": 40,
+      "profile_key": "first_name",
+      "default_value": "",
+      "preview_value": "Daniel",
+      "input_placeholder": "z.B. Daniel",
+      "placeholder_text": "Dein Vorname, wie er auf deiner Website und im Check erscheinen soll."
+    },
+    {
+      "key": "nachname",
+      "type": "text",
+      "label": "Nachname",
+      "section": "Profil",
+      "order": 2,
+      "required": true,
+      "max_length": 60,
+      "profile_key": "last_name",
+      "default_value": "",
+      "preview_value": "Kurzeja",
+      "input_placeholder": "z.B. Kurzeja",
+      "placeholder_text": "Dein Nachname für den Footer, den PM-Disclaimer und die Einwilligung im Formular."
+    },
+    {
+      "key": "profilbild",
+      "type": "image",
+      "label": "Profilbild",
+      "section": "Profil",
+      "order": 3,
+      "required": true,
+      "profile_key": "avatar_url",
+      "aspect_ratio": "1/1",
+      "default_value": "https://app.finestsites.io/placeholders/profilbild.webp",
+      "preview_value": "",
+      "placeholder_text": "Quadratisch, mindestens 400×400 px. Erscheint oben neben deinem Namen, in der Pflichtkennzeichnung und am Ende des Checks neben deiner Einladung zum Gespräch."
+    },
+    {
+      "key": "geschlecht",
+      "type": "card_select",
+      "label": "Anrede",
+      "section": "Profil",
+      "order": 4,
+      "required": true,
+      "default_value": "weiblich",
+      "preview_value": "weiblich",
+      "placeholder_text": "Damit die Bezeichnung auf deiner Website stimmt: \"unabhängige Vertriebspartnerin\" oder \"unabhängiger Vertriebspartner\".",
+      "card_options": [
+        {
+          "value": "weiblich",
+          "label": "Weiblich",
+          "card_type": "color",
+          "color": "#FDF2F8",
+          "description": "Vertriebspartnerin, unabhängige …"
+        },
+        {
+          "value": "maennlich",
+          "label": "Männlich",
+          "card_type": "color",
+          "color": "#EFF6FF",
+          "description": "Vertriebspartner, unabhängiger …"
+        }
+      ]
+    },
+    {
+      "key": "email_benachrichtigung",
+      "type": "email",
+      "label": "E-Mail für Check-Ergebnisse",
+      "section": "Profil",
+      "order": 10,
+      "required": true,
+      "profile_key": "email",
+      "default_value": "",
+      "preview_value": "daniel@example.com",
+      "input_placeholder": "deine@email.de",
+      "placeholder_text": "Wenn jemand am Ende des Checks sein Ergebnis an dich schickt, bekommst du alle 20 Antworten, Wünsche und Kontaktdaten an diese Adresse. Wird im Footer angezeigt."
+    },
+    {
+      "key": "whatsapp_nummer",
+      "type": "text",
+      "label": "WhatsApp-Nummer (optional)",
+      "section": "Kontakt",
+      "order": 12,
+      "required": false,
+      "max_length": 20,
+      "default_value": "",
+      "preview_value": "491761234567",
+      "input_placeholder": "491761234567",
+      "placeholder_text": "Nur Ziffern, ohne + oder 00. Beispiel: statt „+49 176 1234567\" nur „491761234567\". Wenn gesetzt, erscheint nach dem Absenden ein „Direkt per WhatsApp schreiben\"-Button und ein WhatsApp-Link im Footer."
+    },
+    {
+      "key": "farbthema",
+      "type": "card_select",
+      "label": "Farbthema",
+      "section": "Design",
+      "order": 14,
+      "required": true,
+      "default_value": "mint",
+      "preview_value": "mint",
+      "placeholder_text": "Akzentfarbe deiner Seite (Fortschritt, Auswahl, Radar). Die Seite selbst bleibt ruhig in Schwarz-Weiß, „Midnight“ ist die dunkle Variante.",
+      "card_options": [
+        {
+          "value": "mint",
+          "label": "Fresh Mint",
+          "card_type": "color",
+          "color": "#2FB08A",
+          "description": "Frisch, klar, vitalisierend."
+        },
+        {
+          "value": "ocean",
+          "label": "Ocean Blue",
+          "card_type": "color",
+          "color": "#3A7BD5",
+          "description": "Ruhig, seriös, kühl."
+        },
+        {
+          "value": "coral",
+          "label": "Warm Coral",
+          "card_type": "color",
+          "color": "#E5654B",
+          "description": "Warm, energiegeladen, nahbar."
+        },
+        {
+          "value": "violet",
+          "label": "Soft Violet",
+          "card_type": "color",
+          "color": "#7C5CE6",
+          "description": "Modern, kreativ, ausgeglichen."
+        },
+        {
+          "value": "sun",
+          "label": "Golden Sun",
+          "card_type": "color",
+          "color": "#E39A2B",
+          "description": "Sonnig, optimistisch, warm."
+        },
+        {
+          "value": "midnight",
+          "label": "Midnight",
+          "card_type": "color",
+          "color": "#0F1513",
+          "description": "Dunkel, edel, App-Look."
+        }
+      ]
+    },
+    {
+      "key": "frage_motive",
+      "type": "card_select",
+      "label": "Frage „Was treibt dich an?\" stellen?",
+      "section": "Check anpassen",
+      "order": 15,
+      "required": true,
+      "default_value": "an",
+      "preview_value": "an",
+      "display_mode": "section_toggle",
+      "toggle_on_value": "an",
+      "toggle_off_value": "aus",
+      "preview_interactive": true,
+      "placeholder_text": "Nach den 20 Aussagen wählt die Person bis zu drei Antriebsmotive (Gesundheit, Familie, Freiheit, finanzielle Unabhängigkeit …). Hilft dir im Gespräch, den richtigen Ton zu treffen. Die Frage ist überspringbar.",
+      "card_options": [
+        {
+          "value": "an",
+          "label": "Stellen",
+          "card_type": "color",
+          "color": "#DDF2EA",
+          "description": "Die Motiv-Frage ist Teil des Checks."
+        },
+        {
+          "value": "aus",
+          "label": "Weglassen",
+          "card_type": "color",
+          "color": "#F1F5F9",
+          "description": "Der Check endet direkt nach den 20 Aussagen."
+        }
+      ]
+    },
+    {
+      "key": "frage_investition",
+      "type": "card_select",
+      "label": "Frage „Wie viel würdest du täglich investieren?\" stellen?",
+      "section": "Check anpassen",
+      "order": 16,
+      "required": true,
+      "default_value": "aus",
+      "preview_value": "aus",
+      "display_mode": "section_toggle",
+      "toggle_on_value": "an",
+      "toggle_off_value": "aus",
+      "preview_interactive": true,
+      "placeholder_text": "Letzte Frage vor dem Ergebnis: bis 3 €, 3 bis 5 €, mehr als 5 € am Tag oder „weiß ich noch nicht“. Standard: aus. Empfehlung aus der Rechtsprüfung: ausgeschaltet lassen, weil die Frage den Eindruck verstärkt, dass die Auswertung in einen Produktkauf münden soll. Wenn du sie einschaltest, bleibt sie für Besucher überspringbar.",
+      "card_options": [
+        {
+          "value": "an",
+          "label": "Stellen",
+          "card_type": "color",
+          "color": "#DDF2EA",
+          "description": "Die Frage nach Zeit/Geld pro Tag ist Teil des Checks."
+        },
+        {
+          "value": "aus",
+          "label": "Weglassen",
+          "card_type": "color",
+          "color": "#F1F5F9",
+          "description": "Keine Frage nach Geld im Check."
+        }
+      ]
+    }
+  ],
+  "preview_values": {
+    "vorname": "Daniel",
+    "nachname": "Kurzeja",
+    "geschlecht": "maennlich",
+    "email_benachrichtigung": "daniel@example.com",
+    "whatsapp_nummer": "",
+    "farbthema": "mint",
+    "frage_motive": "an",
+    "frage_investition": "aus"
+  }
+}

@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="{{farbthema}}">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Vitalcheck · {{vorname}} {{nachname}}</title>
+<meta name="description" content="Der Vitalcheck: 20 Aussagen zu deinen Alltagsgewohnheiten, dein Vitalprofil sofort. Kostenlos, ohne Anmeldung.">
+<meta name="theme-color" content="#F7F6F2">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%232FA877'/%3E%3Ccircle cx='32' cy='32' r='12' fill='white'/%3E%3C/svg%3E">
+<script>
+(function(){
+  try {
+    var stored = localStorage.getItem('fs-lang');
+    var lang = stored || (navigator.language && navigator.language.toLowerCase().startsWith('en') ? 'en' : 'de');
+    document.documentElement.setAttribute('data-lang', lang);
+    document.documentElement.setAttribute('lang', lang);
+  } catch(e) { document.documentElement.setAttribute('data-lang', 'de'); }
+})();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --font: 'Geist', -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, sans-serif;
+  --col: 640px;
+  --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --s0: #DF5B47; --s1: #E6963A; --s2: #9CA3A8; --s3: #4C8CE3; --s4: #2FA877;
+  --s0-soft: #FCF0EE; --s1-soft: #FDF3E7; --s2-soft: #F3F4F5; --s3-soft: #EDF3FC; --s4-soft: #ECF7F1;
+}
+html[data-theme="mint"], html:not([data-theme]), html[data-theme=""] { --accent: #2FA877; --accent-dark: #22875F; --accent-soft: #E4F3EC; }
+html[data-theme="ocean"]  { --accent: #3B7DD8; --accent-dark: #2C63B0; --accent-soft: #E3EDFA; }
+html[data-theme="coral"]  { --accent: #DF6A50; --accent-dark: #BD5239; --accent-soft: #FBE7E1; }
+html[data-theme="violet"] { --accent: #7057D9; --accent-dark: #5942B5; --accent-soft: #ECE7FA; }
+html[data-theme="sun"]    { --accent: #D2921E; --accent-dark: #AE7816; --accent-soft: #FAEED5; }
+html { --bg: #F7F6F2; --paper: #FFFFFF; --pill: #EEEDE7; --ink: #1B1B19; --ink-2: #5A5B57; --ink-3: #8E8F8A; --line: #E7E6E0; --line-2: #D6D5CE; --on-accent: #FFFFFF; }
+html[data-theme="midnight"] { --bg: #121413; --paper: #1B1E1C; --pill: #232725; --ink: #F2F3F0; --ink-2: #B7BAB4; --ink-3: #7B7E79; --line: #2A2E2B; --line-2: #3A3F3B; --accent: #3FCB9E; --accent-dark: #2FB08A; --accent-soft: #18342A; --on-accent: #121413; --s0-soft: #3A2320; --s1-soft: #3A2E1C; --s2-soft: #262A2C; --s3-soft: #1C2A3D; --s4-soft: #1B3328; }
+
+html[data-lang="en"] .l-de, html[data-lang="de"] .l-en { display: none !important; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+body { font-family: var(--font); color: var(--ink); background: var(--bg); line-height: 1.5; font-size: 16px; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; min-height: 100vh; display: flex; flex-direction: column; }
+a { color: inherit; text-decoration: none; }
+img { display: block; max-width: 100%; }
+button { font: inherit; cursor: pointer; background: transparent; border: 0; color: inherit; }
+input, textarea { font: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 8px; }
+h1, h2, h3 { font-weight: 500; letter-spacing: -0.015em; line-height: 1.2; }
+.num { font-variant-numeric: tabular-nums; }
+
+/* Kopf */
+.top { position: sticky; top: 0; z-index: 20; display: flex; align-items: center; gap: 12px; padding: 14px 18px; background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+.brand { display: inline-flex; align-items: center; gap: 9px; font-size: 14px; font-weight: 500; color: var(--ink-2); }
+.brand img { width: 30px; height: 30px; border-radius: 50%; object-fit: cover; }
+.pill { margin: 0 auto; display: flex; align-items: center; gap: 12px; width: 100%; max-width: var(--col); padding: 11px 16px 11px 18px; border-radius: 12px; background: var(--pill); font-size: 15px; color: var(--ink-2); }
+.pill b { font-weight: 500; color: var(--ink); }
+.pill .pct { margin-left: auto; font-size: 14px; color: var(--ink-3); }
+.ring { width: 20px; height: 20px; flex-shrink: 0; }
+.ring circle { fill: none; stroke-width: 2.5; }
+.ring .bgc { stroke: var(--line-2); }
+.ring .fgc { stroke: var(--accent); stroke-linecap: round; transform: rotate(-90deg); transform-origin: 50% 50%; transition: stroke-dashoffset 0.5s var(--ease); }
+.lang { display: inline-flex; gap: 2px; padding: 3px; border-radius: 9999px; background: var(--pill); }
+.lang button { display: inline-flex; align-items: center; gap: 5px; padding: 4px 9px; border-radius: 9999px; font-size: 11.5px; font-weight: 600; color: var(--ink-3); }
+.lang button svg { width: 14px; height: 14px; border-radius: 50%; }
+html[data-lang="de"] .lang [data-lang="de"], html[data-lang="en"] .lang [data-lang="en"] { background: var(--paper); color: var(--ink); box-shadow: 0 1px 2px rgba(0,0,0,0.08); }
+@media (max-width: 720px) { .top { flex-wrap: wrap; } .brand { order: 1; } .lang { order: 2; margin-left: auto; } .pill { order: 3; } .brand span { display: none; } }
+
+/* Seite */
+main { flex: 1; width: 100%; max-width: var(--col); margin: 0 auto; padding: 22px 18px 80px; }
+.step { animation: in 0.4s var(--ease) both; }
+@keyframes in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+.pagehead { margin: 6px 0 20px; }
+.pagehead h1 { font-size: clamp(24px, 4.5vw, 30px); }
+.pagehead p { color: var(--ink-2); margin-top: 8px; font-size: 16px; }
+.area-tag { display: inline-flex; align-items: center; gap: 8px; margin-bottom: 12px; padding: 6px 12px 6px 6px; border-radius: 9999px; background: var(--paper); font-size: 13.5px; font-weight: 500; color: var(--ink-2); box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+.area-tag i { width: 24px; height: 24px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; color: #fff; }
+.area-tag i svg { width: 13px; height: 13px; }
+
+/* Aussage-Karte mit Skala */
+.card { background: var(--paper); border-radius: 22px; padding: 26px 22px 22px; margin-bottom: 14px; box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 10px 30px -24px rgba(0,0,0,0.25); text-align: center; transition: box-shadow 0.3s; }
+.card.active { box-shadow: 0 0 0 2px var(--accent-soft), 0 10px 30px -24px rgba(0,0,0,0.25); }
+.card.done { opacity: 0.92; }
+.card p { font-size: 17px; font-weight: 500; line-height: 1.4; margin-bottom: 18px; }
+.scale { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; max-width: 460px; margin: 0 auto; }
+.opt { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.opt .c { width: 50px; height: 50px; border-radius: 50%; border: 1.5px dashed; display: inline-flex; align-items: center; justify-content: center; transition: transform 0.2s var(--ease), background 0.2s, border-style 0.2s; }
+.opt .c svg { width: 20px; height: 20px; color: #fff; opacity: 0; transition: opacity 0.15s; }
+.opt:hover .c { transform: scale(1.08); }
+.opt[data-v="0"] .c { border-color: var(--s0); background: var(--s0-soft); }
+.opt[data-v="1"] .c { border-color: var(--s1); background: var(--s1-soft); }
+.opt[data-v="2"] .c { border-color: var(--s2); background: var(--s2-soft); }
+.opt[data-v="3"] .c { border-color: var(--s3); background: var(--s3-soft); }
+.opt[data-v="4"] .c { border-color: var(--s4); background: var(--s4-soft); }
+.opt.on[data-v="0"] .c { background: var(--s0); } .opt.on[data-v="1"] .c { background: var(--s1); } .opt.on[data-v="2"] .c { background: var(--s2); } .opt.on[data-v="3"] .c { background: var(--s3); } .opt.on[data-v="4"] .c { background: var(--s4); }
+.opt.on .c { border-style: solid; transform: scale(1.06); }
+.opt.on .c svg { opacity: 1; }
+.opt small { font-size: 11.5px; line-height: 1.25; color: var(--ink-3); max-width: 84px; }
+.card:not(.labels) .opt small { display: none; }
+@media (max-width: 420px) { .opt .c { width: 44px; height: 44px; } .opt small { font-size: 10.5px; } }
+
+.btnrow { margin: 22px 0 0; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 52px; padding: 0 26px; border-radius: 12px; font-weight: 500; font-size: 16px; transition: transform 0.2s var(--ease), background 0.15s, opacity 0.15s; }
+.btn-primary { background: var(--ink); color: var(--bg); }
+html[data-theme="midnight"] .btn-primary { background: var(--accent); color: var(--on-accent); }
+.btn-primary:hover { transform: translateY(-1px); opacity: 0.92; }
+.btn-accent { background: var(--accent); color: var(--on-accent); }
+.btn-accent:hover { background: var(--accent-dark); transform: translateY(-1px); }
+.btn-ghost { background: var(--paper); color: var(--ink); border: 1.5px solid var(--line-2); }
+.btn-ghost:hover { border-color: var(--ink-3); }
+.btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none !important; }
+.btn svg { width: 18px; height: 18px; flex-shrink: 0; }
+.btn-wide { width: 100%; max-width: 360px; }
+.note { font-size: 13.5px; color: var(--ink-3); text-align: center; }
+.note.warn { color: var(--s0); }
+.skip { font-size: 14px; color: var(--ink-3); padding: 6px; }
+
+/* Chips (Wünsche, Motive) */
+.chips { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+.chip { display: inline-flex; align-items: center; gap: 8px; padding: 11px 15px 11px 11px; border-radius: 9999px; background: var(--bg); border: 1.5px solid var(--line); font-size: 15px; font-weight: 500; transition: border-color 0.15s, background 0.15s, opacity 0.15s; }
+.chip:hover { border-color: var(--ink-3); }
+.chip .chk { width: 20px; height: 20px; border-radius: 50%; border: 1.5px dashed var(--line-2); display: inline-flex; align-items: center; justify-content: center; }
+.chip .chk svg { width: 11px; height: 11px; color: #fff; opacity: 0; }
+.chip.on { border-color: var(--accent); background: var(--accent-soft); }
+.chip.on .chk { background: var(--accent); border: 0; }
+.chip.on .chk svg { opacity: 1; }
+.chip.off { opacity: 0.4; }
+.card.left { text-align: left; }
+.card.left p { margin-bottom: 14px; }
+
+/* Analyse-Reveal */
+.reveal { text-align: center; padding: 30px 0; }
+.reveal h2 { font-size: 26px; margin-bottom: 8px; }
+.reveal p { color: var(--ink-2); margin-bottom: 26px; }
+.reveal .rows { display: grid; gap: 10px; max-width: 420px; margin: 0 auto; }
+.reveal .row { display: grid; grid-template-columns: 30px 1fr 52px; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 14px; background: var(--paper); opacity: 0.35; transform: translateY(6px); transition: opacity 0.4s, transform 0.4s; text-align: left; }
+.reveal .row.on { opacity: 1; transform: none; }
+.reveal .row i { width: 30px; height: 30px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; color: #fff; }
+.reveal .row i svg { width: 15px; height: 15px; }
+.reveal .row b { font-weight: 500; font-size: 15px; }
+.reveal .row .p { text-align: right; font-weight: 500; }
+
+/* Ergebnis */
+.res .hero { text-align: center; padding: 8px 0 26px; }
+.badge { width: 128px; height: 128px; margin: 0 auto 18px; }
+.res .kicker { font-size: 13.5px; color: var(--ink-3); margin-bottom: 8px; }
+.res h1 { font-size: clamp(30px, 6vw, 42px); letter-spacing: -0.02em; }
+.res .typedesc { color: var(--ink-2); font-size: 17px; max-width: 46ch; margin: 12px auto 0; }
+.levelrow { display: inline-flex; align-items: center; gap: 10px; margin-top: 18px; padding: 8px 8px 8px 16px; border-radius: 9999px; background: var(--paper); font-size: 15px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+.levelrow b { font-weight: 500; }
+.levelrow .pct { padding: 5px 11px; border-radius: 9999px; background: var(--accent-soft); color: var(--accent-dark); font-weight: 600; font-size: 14px; }
+html[data-theme="midnight"] .levelrow .pct { color: var(--accent); }
+.sec { margin-top: 26px; }
+.sec h2 { font-size: 21px; margin-bottom: 4px; }
+.sec .sub { color: var(--ink-3); font-size: 14.5px; margin-bottom: 14px; }
+.card.res-card { text-align: left; padding: 8px 22px; }
+/* Tag auf einen Blick */
+.day { list-style: none; }
+.day li { display: grid; grid-template-columns: 52px 32px 1fr auto; align-items: center; gap: 12px; padding: 13px 0; border-bottom: 1px solid var(--line); }
+.day li:last-child { border-bottom: 0; }
+.day .t { font-size: 13.5px; color: var(--ink-3); }
+.day i { width: 32px; height: 32px; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center; color: #fff; }
+.day i svg { width: 16px; height: 16px; }
+.day .l { font-size: 15.5px; font-weight: 500; }
+.day .l small { display: block; font-size: 13px; color: var(--ink-3); font-weight: 400; }
+.day .st { font-size: 12.5px; font-weight: 600; padding: 4px 10px; border-radius: 9999px; }
+.day .st.ok { background: var(--s4-soft); color: var(--s4); }
+.day .st.mid { background: var(--s1-soft); color: var(--s1); }
+.day .st.no { background: var(--s0-soft); color: var(--s0); }
+.day li.dim i { opacity: 0.35; }
+@media (max-width: 420px) { .day li { grid-template-columns: 44px 28px 1fr; } .day .st { grid-column: 3; justify-self: start; } }
+/* Bereiche */
+.trait { padding: 16px 0; border-bottom: 1px solid var(--line); }
+.trait:last-child { border-bottom: 0; }
+.trait .h { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.trait .h i { width: 26px; height: 26px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; color: #fff; }
+.trait .h i svg { width: 13px; height: 13px; }
+.trait .h b { font-weight: 500; font-size: 16px; }
+.trait .h .pct { margin-left: auto; font-weight: 600; font-size: 16px; }
+.trait .bar { height: 8px; border-radius: 8px; background: var(--bg); overflow: hidden; margin-bottom: 10px; }
+.trait .bar i { display: block; height: 100%; width: 0; border-radius: 8px; transition: width 1s var(--ease); }
+.trait p { font-size: 14.5px; color: var(--ink-2); }
+.trait .ins { margin-top: 8px; font-size: 13.5px; color: var(--ink-2); padding: 10px 12px; border-radius: 10px; background: var(--bg); }
+.trait .ins b { font-weight: 600; color: var(--ink); }
+/* Tipps */
+.tip { display: grid; grid-template-columns: 34px 1fr; gap: 12px; padding: 14px 0; border-bottom: 1px solid var(--line); }
+.tip:last-child { border-bottom: 0; }
+.tip .n { width: 34px; height: 34px; border-radius: 50%; background: var(--accent-soft); color: var(--accent-dark); display: inline-flex; align-items: center; justify-content: center; font-weight: 600; font-size: 14px; }
+html[data-theme="midnight"] .tip .n { color: var(--accent); }
+.tip b { display: block; font-weight: 500; font-size: 16px; margin-bottom: 2px; }
+.tip p { font-size: 14.5px; color: var(--ink-2); }
+.tip .ref { margin-top: 6px; font-size: 13px; color: var(--ink-3); }
+.tip .ref span { color: var(--ink-2); font-weight: 500; }
+.wish { margin-top: 14px; padding: 14px 16px; border-radius: 14px; background: var(--accent-soft); font-size: 14.5px; color: var(--ink-2); }
+.wish b { color: var(--ink); font-weight: 500; }
+/* CTA */
+.cta { margin-top: 26px; padding: 26px 24px; border-radius: 22px; background: var(--accent); color: var(--on-accent); }
+.cta .who { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+.cta .who img { width: 48px; height: 48px; border-radius: 50%; object-fit: cover; box-shadow: 0 0 0 3px rgba(255,255,255,0.35); }
+.cta .who b { display: block; font-weight: 500; }
+.cta .who small { font-size: 13px; opacity: 0.8; }
+.cta h2 { font-size: 24px; margin-bottom: 8px; }
+.cta .personal { font-size: 15px; opacity: 0.95; margin-bottom: 16px; padding: 12px 14px; border-radius: 12px; background: rgba(255,255,255,0.14); }
+.cta .personal b { font-weight: 600; }
+.cta ul { list-style: none; display: grid; gap: 9px; margin-bottom: 20px; }
+.cta li { display: grid; grid-template-columns: 22px 1fr; gap: 10px; font-size: 15px; }
+.cta li i { width: 22px; height: 22px; border-radius: 50%; background: rgba(255,255,255,0.22); display: inline-flex; align-items: center; justify-content: center; }
+.cta li i svg { width: 12px; height: 12px; }
+.cta .btns { display: flex; flex-wrap: wrap; gap: 10px; }
+.cta .btn-primary { background: #fff; color: var(--accent-dark); }
+html[data-theme="midnight"] .cta .btn-primary { background: var(--on-accent); color: var(--accent); }
+.cta .btn-ghost { background: transparent; color: inherit; border-color: rgba(255,255,255,0.45); }
+.cta .fine { margin-top: 12px; font-size: 13px; opacity: 0.8; }
+.tools { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 16px; }
+.small-note { margin-top: 16px; font-size: 12.5px; color: var(--ink-3); text-align: center; line-height: 1.5; }
+/* Formular */
+.lead h2 { font-size: 26px; margin-bottom: 8px; }
+.lead .sub { color: var(--ink-2); margin-bottom: 16px; }
+.sendbox { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 16px 18px; border-radius: 16px; background: var(--bg); margin-bottom: 20px; }
+.sendbox .k { font-size: 11.5px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 3px; }
+.sendbox .v { font-weight: 500; font-size: 15px; }
+.sendbox .full { grid-column: 1 / -1; font-size: 13.5px; color: var(--ink-2); }
+@media (max-width: 480px) { .sendbox { grid-template-columns: 1fr; } }
+.row { margin-bottom: 14px; }
+label.lbl { display: block; font-size: 13.5px; font-weight: 500; color: var(--ink-2); margin-bottom: 6px; }
+.opt-lbl { font-weight: 400; color: var(--ink-3); }
+.input { width: 100%; min-height: 52px; padding: 13px 16px; border-radius: 12px; border: 1.5px solid var(--line-2); background: var(--bg); color: var(--ink); transition: border-color 0.2s, box-shadow 0.2s; }
+.input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-soft); background: var(--paper); }
+.input::placeholder { color: var(--ink-3); }
+textarea.input { min-height: 96px; resize: vertical; }
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 520px) { .two { grid-template-columns: 1fr; } }
+.seg { display: flex; flex-wrap: wrap; gap: 8px; }
+.seg button { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 16px; border-radius: 9999px; border: 1.5px solid var(--line-2); background: var(--bg); font-weight: 500; font-size: 14.5px; }
+.seg button svg { width: 16px; height: 16px; }
+.seg button.active { border-color: var(--accent); background: var(--accent-soft); }
+.msg-toggle { font-size: 14.5px; font-weight: 500; color: var(--accent-dark); padding: 4px 0; }
+html[data-theme="midnight"] .msg-toggle { color: var(--accent); }
+.consent { display: grid; grid-template-columns: 22px 1fr; gap: 12px; align-items: start; padding: 16px; border: 1.5px solid var(--line-2); border-radius: 14px; margin: 18px 0 14px; cursor: pointer; background: var(--bg); }
+.consent.err { border-color: var(--s0); }
+.consent input { width: 20px; height: 20px; margin-top: 1px; accent-color: var(--accent); }
+.consent span { font-size: 13.5px; color: var(--ink-2); line-height: 1.5; }
+.consent a { text-decoration: underline; }
+.err-msg { display: none; margin-top: 12px; padding: 12px 14px; border-radius: 10px; background: var(--s0-soft); color: var(--s0); font-size: 14px; }
+.err-msg.show { display: block; }
+.form-trust { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 12px; font-size: 13px; color: var(--ink-3); justify-content: center; }
+.done { text-align: center; padding: 20px 0; }
+.done .ok { width: 72px; height: 72px; border-radius: 50%; background: var(--accent-soft); color: var(--accent-dark); display: inline-flex; align-items: center; justify-content: center; margin-bottom: 16px; }
+html[data-theme="midnight"] .done .ok { color: var(--accent); }
+.done .ok svg { width: 32px; height: 32px; }
+.done h2 { font-size: 26px; margin-bottom: 8px; }
+.done p { color: var(--ink-2); max-width: 44ch; margin: 0 auto 22px; }
+.done .btns { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+
+/* Fuß */
+footer { border-top: 1px solid var(--line); }
+.foot { max-width: var(--col); margin: 0 auto; padding: 24px 18px 40px; font-size: 12.5px; color: var(--ink-3); line-height: 1.55; }
+.trust { font-size: 14px; color: var(--ink-2); line-height: 1.6; margin-bottom: 18px; }
+.trust p + p { margin-top: 8px; }
+.trust b { font-weight: 600; color: var(--ink); }
+.pm { display: flex; gap: 10px; align-items: flex-start; font-size: 13.5px; color: var(--ink-2); margin-bottom: 14px; }
+.pm img { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
+.pm b { font-weight: 600; color: var(--ink); }
+.links { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-bottom: 12px; font-size: 13.5px; align-items: center; }
+.links a { color: var(--ink-2); font-weight: 500; }
+.links .made { display: inline-flex; align-items: center; gap: 6px; margin-left: auto; color: var(--ink-3); }
+.links .made img { height: 12px; width: auto; opacity: 0.75; }
+html[data-theme="midnight"] .links .made img { filter: invert(1); }
+#fs-ck-reopener { left: auto !important; right: 16px !important; }
+</style>
+</head>
+<body>
+
+<div class="top">
+  <a href="/" class="brand"><img src="{{profilbild}}" alt="{{vorname}} {{nachname}}" width="30" height="30"><span>{{vorname}} {{nachname}}</span></a>
+  <div class="pill"><svg class="ring" viewBox="0 0 24 24"><circle class="bgc" cx="12" cy="12" r="9"/><circle class="fgc" id="ring" cx="12" cy="12" r="9" stroke-dasharray="56.5" stroke-dashoffset="56.5"/></svg><b>Vitalcheck</b><span class="pct num" id="pct"></span></div>
+  <div class="lang" role="group" aria-label="Sprache / Language">
+    <button type="button" data-lang="de" onclick="fsSetLang('de')" aria-label="Deutsch"><svg viewBox="0 0 24 24"><rect width="24" height="8" fill="#000"/><rect y="8" width="24" height="8" fill="#D00"/><rect y="16" width="24" height="8" fill="#FFCE00"/></svg>DE</button>
+    <button type="button" data-lang="en" onclick="fsSetLang('en')" aria-label="English"><svg viewBox="0 0 24 24"><rect width="24" height="24" fill="#012169"/><path d="M0 0L24 24M24 0L0 24" stroke="#fff" stroke-width="4"/><path d="M0 0L24 24M24 0L0 24" stroke="#C8102E" stroke-width="2"/><path d="M12 0V24M0 12H24" stroke="#fff" stroke-width="6"/><path d="M12 0V24M0 12H24" stroke="#C8102E" stroke-width="3"/></svg>EN</button>
+  </div>
+</div>
+
+<main id="check"></main>
+
+<footer>
+  <div class="foot">
+    <div class="trust">
+      <p><span class="l-de"><b>Deine Daten.</b> Der Vitalcheck wird vollständig auf deinem Gerät ausgewertet. Es wird nichts gespeichert oder übermittelt, solange du dein Ergebnis nicht selbst an mich sendest. Entscheidest du dich dafür, verwende ich deine Angaben ausschließlich für unsere persönliche Beratung. Sie werden niemals an Dritte weitergegeben, nicht für Newsletter genutzt und auf Wunsch jederzeit gelöscht.</span><span class="l-en"><b>Your data.</b> The vitality check is evaluated entirely on your device. Nothing is stored or transmitted unless you choose to send your result to me yourself. If you do, I use your details solely for our personal consultation. They are never passed on to third parties, never used for newsletters and deleted on request at any time.</span></p>
+      <p><span class="l-de"><b>Eine Selbsteinschätzung.</b> Der Check fragt nach deinen Alltagsgewohnheiten und gibt dir dazu eine Einordnung mit allgemeinen Alltagstipps. Er ist keine medizinische Untersuchung, stellt keine Diagnose und ersetzt keine ärztliche Beratung.</span><span class="l-en"><b>A self-assessment.</b> The check asks about your everyday habits and gives you an overview with general everyday tips. It is not a medical examination, does not make a diagnosis and does not replace medical advice.</span></p>
+    </div>
+    <div class="pm">
+      <img src="{{profilbild}}" alt="">
+      <div><span class="l-de">Diese Seite wird betrieben von <b>{{vorname}} {{nachname}}</b>, {{#if geschlecht=weiblich}}unabhängige Vertriebspartnerin{{/if}}{{#unless geschlecht=weiblich}}unabhängiger Vertriebspartner{{/unless}} der PM-International (FitLine®). Diese Seite ist keine offizielle Website der PM-International AG.</span><span class="l-en">This site is operated by <b>{{vorname}} {{nachname}}</b>, independent distributor of PM-International (FitLine®). This site is not an official website of PM-International AG.</span></div>
+    </div>
+    <div class="links">
+      <a href="mailto:{{email_benachrichtigung}}">{{email_benachrichtigung}}</a>
+      {{#if whatsapp_nummer}}<a href="https://wa.me/{{whatsapp_nummer}}" target="_blank" rel="noopener">WhatsApp</a>{{/if}}
+      <a href="/impressum"><span class="l-de">Impressum</span><span class="l-en">Imprint</span></a>
+      <a href="/datenschutz"><span class="l-de">Datenschutz</span><span class="l-en">Privacy</span></a>
+      <span class="made">© 2026 {{vorname}} {{nachname}} · <a href="https://finestsites.io" target="_blank" rel="noopener" aria-label="finestsites"><img loading="lazy" decoding="async" src="assets/fs-logo.svg" alt="finestsites"></a></span>
+    </div>
+    <p><span class="l-de">Der Vitalcheck gibt keine Behandlungs- oder Produktempfehlung. Bei gesundheitlichen Beschwerden wende dich bitte an deine Ärztin oder deinen Arzt. Der Check richtet sich an Personen ab 18 Jahren.</span><span class="l-en">The vitality check gives no treatment or product recommendation. If you have health complaints, please consult your doctor. The check is intended for adults aged 18 and over.</span></p>
+  </div>
+</footer>
+
+<script>
+function fsSetLang(lang) {
+  if (lang !== 'de' && lang !== 'en') return;
+  document.documentElement.setAttribute('data-lang', lang);
+  document.documentElement.setAttribute('lang', lang);
+  try { localStorage.setItem('fs-lang', lang); } catch(e){}
+  if (window.VC) VC.render();
+}
+function L(){ return document.documentElement.getAttribute('data-lang') === 'en' ? 'en' : 'de'; }
+function t(o){ if (!o) return ''; if (typeof o === 'string') return o; return o[L()] || o.de || ''; }
+
+var ICO = {
+  food: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>',
+  clock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
+  moon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>',
+  move: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>',
+  sun: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>',
+  check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>',
+  drop: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.7s6 6.6 6 11.3a6 6 0 0 1-12 0C6 9.3 12 2.7 12 2.7z"/></svg>',
+  screen: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg>',
+  bed: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18V8M3 12h18v6M3 12V8a2 2 0 0 1 2-2h5a2 2 0 0 1 2 2v4"/></svg>',
+  flag: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21V4M5 4h12l-2 4 2 4H5"/></svg>',
+  wa: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.6 6.32A7.85 7.85 0 0 0 12.05 4a7.94 7.94 0 0 0-6.9 11.9L4 20l4.2-1.1a7.93 7.93 0 0 0 3.85.98h.01c4.38 0 7.93-3.57 7.93-7.95a7.9 7.9 0 0 0-2.39-5.6zM12.04 18.54h-.01a6.6 6.6 0 0 1-3.37-.92l-.24-.14-2.5.66.67-2.44-.16-.25a6.59 6.59 0 0 1-1.01-3.51 6.6 6.6 0 0 1 11.27-4.66 6.55 6.55 0 0 1 1.93 4.67 6.6 6.6 0 0 1-6.58 6.59zm3.61-4.93c-.2-.1-1.17-.58-1.35-.64-.18-.07-.31-.1-.45.1-.13.2-.51.64-.63.77-.11.13-.23.15-.43.05-.2-.1-.83-.31-1.59-.98-.59-.52-.98-1.17-1.1-1.37-.11-.2-.01-.3.09-.4.09-.09.2-.23.3-.35.1-.12.13-.2.2-.33.07-.13.03-.25-.02-.35-.05-.1-.45-1.08-.61-1.48-.16-.39-.33-.34-.45-.34h-.38c-.13 0-.35.05-.53.25-.18.2-.7.68-.7 1.66s.72 1.93.82 2.06c.1.13 1.41 2.16 3.42 3.03.48.2.85.33 1.14.42.48.15.92.13 1.26.08.39-.06 1.17-.48 1.34-.94.16-.46.16-.86.11-.94-.05-.08-.18-.13-.38-.23z"/></svg>',
+  mail: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>',
+  phone: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>',
+  save: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5M4 17v3h16v-3"/></svg>'
+};
+
+/* ============ KONFIGURATION ============
+   Alle 20 Aussagen beschreiben beobachtbares Verhalten (Gewohnheiten), keine Befindlichkeiten,
+   keine Beschwerden, keine Krankheiten. Keine Produkt-, Wirk- oder Heilaussagen. */
+var CFG = {
+  dims: [
+    { id: 'ernaehrung', color: '#2FA877', ico: 'food', name: { de: 'Ernährung & Trinken', en: 'Food & hydration' }, short: { de: 'Ernährung', en: 'Food' },
+      strength: { de: 'Bewusste Ernährung', en: 'Mindful eating' },
+      q: [
+        { label: { de: '5 Portionen Obst & Gemüse', en: '5 portions fruit & veg' }, text: { de: 'Ich esse an den meisten Tagen fünf Portionen Obst und Gemüse.', en: 'On most days I eat five portions of fruit and vegetables.' } },
+        { label: { de: 'Mind. 1,5 Liter trinken', en: 'At least 1.5 litres' }, text: { de: 'Ich trinke über den Tag verteilt mindestens 1,5 Liter Wasser oder ungesüßten Tee.', en: 'Spread over the day, I drink at least 1.5 litres of water or unsweetened tea.' } },
+        { label: { de: 'Regelmäßige Mahlzeiten', en: 'Regular meals' }, text: { de: 'Ich esse regelmäßig richtige Mahlzeiten, statt zwischendurch zu snacken.', en: 'I eat proper, regular meals instead of snacking in between.' } },
+        { label: { de: 'Gesunde Snacks griffbereit', en: 'Healthy snacks at hand' }, text: { de: 'Ich habe meistens etwas Gesundes griffbereit, zum Beispiel Obst, Gemüse oder Nüsse.', en: 'I usually have something healthy within reach, such as fruit, vegetables or nuts.' } }
+      ],
+      fb: {
+        high: { de: 'Frisches, Regelmäßigkeit und Trinken sind bei dir fest im Alltag verankert.', en: 'Fresh food, regular meals and hydration are firmly part of your routine.' },
+        mid: { de: 'Vieles läuft. An manchen Tagen rutschen Frisches oder das Trinken durch. Kleine Anker im Tagesablauf machen den Unterschied.', en: 'A lot is working. On some days fresh food or drinking slips. Small anchors in your daily routine make the difference.' },
+        low: { de: 'Hier liegt dein größter Alltags-Hebel: regelmäßige Mahlzeiten, mehr Frisches und genug zu trinken.', en: 'This is your biggest everyday lever: regular meals, more fresh food and enough to drink.' }
+      },
+      tips: [
+        { t: { de: 'Eine Handvoll Gemüse zu jeder Mahlzeit', en: 'A handful of veg with every meal' }, d: { de: 'So kommst du fast nebenbei auf die fünf Portionen am Tag, die die Deutsche Gesellschaft für Ernährung empfiehlt.', en: 'That gets you close to the five portions a day recommended by nutrition societies, almost as a side effect.' } },
+        { t: { de: 'Die Flasche auf den Tisch', en: 'Bottle on the desk' }, d: { de: 'Morgens eine 1-Liter-Flasche hinstellen. Bis mittags leer, dann nochmal füllen.', en: 'Put a 1-litre bottle on your desk in the morning. Empty by noon, refill once.' } }
+      ]
+    },
+    { id: 'tag', color: '#3B86D8', ico: 'clock', name: { de: 'Tagesstruktur & Pausen', en: 'Daily structure & breaks' }, short: { de: 'Tagesstruktur', en: 'Structure' },
+      strength: { de: 'Klare Tagesstruktur', en: 'Clear daily structure' },
+      q: [
+        { label: { de: 'Bildschirmpausen', en: 'Screen breaks' }, text: { de: 'Bei Bildschirmarbeit stehe ich mindestens einmal pro Stunde kurz auf.', en: 'When working on a screen, I get up briefly at least once an hour.' } },
+        { label: { de: 'Mittags frische Luft', en: 'Fresh air at midday' }, text: { de: 'Ich gehe mittags mindestens einmal an die frische Luft.', en: 'I go outside for fresh air at least once around midday.' } },
+        { label: { de: 'Eine Sache am Stück', en: 'One thing at a time' }, text: { de: 'Ich arbeite an einer Sache am Stück, statt ständig zwischen Aufgaben und Nachrichten zu springen.', en: 'I work on one thing at a time instead of constantly switching between tasks and messages.' } },
+        { label: { de: 'Fester Feierabend', en: 'Fixed end of workday' }, text: { de: 'Ich beende meinen Arbeitstag zu einer festen Zeit.', en: 'I end my workday at a fixed time.' } }
+      ],
+      fb: {
+        high: { de: 'Dein Tag hat eine klare Struktur mit Pausen und einem Ende. Das trägt deine Konzentration über den Tag.', en: 'Your day has a clear structure with breaks and an end. That carries your concentration through the day.' },
+        mid: { de: 'Struktur ist da, aber Pausen und ein klares Ende gehen im Alltag manchmal verloren.', en: 'There is structure, but breaks and a clear end sometimes get lost in the daily routine.' },
+        low: { de: 'Dein Tag läuft oft ohne feste Pausen und ohne klares Ende. Kleine feste Unterbrechungen sind hier der einfachste Anfang.', en: 'Your day often runs without fixed breaks and without a clear end. Small fixed interruptions are the easiest start here.' }
+      },
+      tips: [
+        { t: { de: 'Alle 60 Minuten drei Minuten aufstehen', en: 'Stand up for three minutes every hour' }, d: { de: 'Gehen, dehnen, Fenster auf. Kurze Unterbrechungen halten den Kopf klarer als ein weiterer Kaffee.', en: 'Walk, stretch, open a window. Short interruptions keep your head clearer than another coffee.' } },
+        { t: { de: 'Der Feierabend hat eine Uhrzeit', en: 'Your evening has a start time' }, d: { de: 'Leg eine feste Zeit fest und schließ den Laptop dann wirklich. Ein Ritual hilft: kurzer Spaziergang, Musik, Sport.', en: 'Set a fixed time and actually close the laptop then. A ritual helps: short walk, music, sport.' } }
+      ]
+    },
+    { id: 'schlaf', color: '#6E5BD6', ico: 'moon', name: { de: 'Schlaf & Abschalten', en: 'Sleep & winding down' }, short: { de: 'Schlaf', en: 'Sleep' },
+      strength: { de: 'Feste Schlafroutine', en: 'Solid sleep routine' },
+      q: [
+        { label: { de: '7+ Stunden Schlaf', en: '7+ hours of sleep' }, text: { de: 'Ich plane meine Nächte so, dass ich meistens sieben Stunden oder mehr schlafe.', en: 'I plan my nights so that I usually get seven hours of sleep or more.' } },
+        { label: { de: 'Ähnliche Schlafenszeiten', en: 'Similar bedtimes' }, text: { de: 'Ich gehe unter der Woche zu ähnlichen Zeiten ins Bett.', en: 'During the week I go to bed at similar times.' } },
+        { label: { de: 'Letzte Stunde ohne Bildschirm', en: 'Last hour screen-free' }, text: { de: 'Die letzte Stunde vor dem Schlafen verbringe ich ohne Handy, Laptop oder Fernseher.', en: 'I spend the last hour before sleep without phone, laptop or TV.' } },
+        { label: { de: 'Fester Weg zum Abschalten', en: 'Fixed way to switch off' }, text: { de: 'Nach stressigen Tagen habe ich einen festen Weg, um abzuschalten, zum Beispiel Sport, Spaziergang oder Musik.', en: 'After stressful days I have a fixed way to switch off, such as sport, a walk or music.' } }
+      ],
+      fb: {
+        high: { de: 'Deine Abende und Nächte haben Routine. Das ist eine der wertvollsten Gewohnheiten überhaupt.', en: 'Your evenings and nights have routine. That is one of the most valuable habits there is.' },
+        mid: { de: 'Mal mit Routine, mal ohne. Feste Zeiten und die letzte Stunde ohne Bildschirm sind oft der einfachste Hebel.', en: 'Sometimes with routine, sometimes without. Fixed times and a screen-free last hour are often the simplest lever.' },
+        low: { de: 'Abschalten und Schlafenszeiten laufen bei dir eher zufällig. Mit einer kleinen Abendroutine gewinnst du hier am schnellsten.', en: 'Winding down and bedtimes are rather random for you. A small evening routine is where you gain fastest.' }
+      },
+      tips: [
+        { t: { de: 'Feste Zubettgeh-Zeit', en: 'Fixed bedtime' }, d: { de: 'Plus/minus 30 Minuten, auch am Wochenende. Regelmäßigkeit wirkt stärker als Nachholschlaf.', en: 'Plus or minus 30 minutes, weekends included. Regularity works better than catch-up sleep.' } },
+        { t: { de: 'Letzte Stunde ohne Bildschirm', en: 'Last hour screen-free' }, d: { de: 'Buch, Musik, kurzer Spaziergang, Gespräch. Der Kopf braucht eine Landebahn.', en: 'Book, music, short walk, conversation. Your mind needs a runway.' } }
+      ]
+    },
+    { id: 'bewegung', color: '#E4664A', ico: 'move', name: { de: 'Bewegung & Fitness', en: 'Movement & fitness' }, short: { de: 'Bewegung', en: 'Movement' },
+      strength: { de: 'In Bewegung', en: 'In motion' },
+      q: [
+        { label: { de: '30 Min. Bewegung täglich', en: '30 min movement daily' }, text: { de: 'Ich bewege mich täglich mindestens 30 Minuten, zum Beispiel zügig zu Fuß oder mit dem Rad.', en: 'I move for at least 30 minutes every day, for example brisk walking or cycling.' } },
+        { label: { de: '2× Sport pro Woche', en: 'Sport twice a week' }, text: { de: 'Ich treibe mindestens zweimal pro Woche Sport.', en: 'I do sport at least twice a week.' } },
+        { label: { de: 'Treppe statt Aufzug', en: 'Stairs instead of lift' }, text: { de: 'Ich nehme im Alltag die Treppe statt Aufzug oder Rolltreppe.', en: 'In everyday life I take the stairs instead of the lift or escalator.' } },
+        { label: { de: 'Dehnen / Mobilität', en: 'Stretching / mobility' }, text: { de: 'Dehnen oder Mobilitätsübungen gehören zu meiner Woche.', en: 'Stretching or mobility exercises are part of my week.' } }
+      ],
+      fb: {
+        high: { de: 'Bewegung ist ein fester Teil deiner Woche, im Sport und im Alltag.', en: 'Movement is a fixed part of your week, in sport and in everyday life.' },
+        mid: { de: 'Du bewegst dich, aber nicht immer regelmäßig. Feste Termine mit dir selbst machen es leichter.', en: 'You do move, but not always regularly. Fixed appointments with yourself make it easier.' },
+        low: { de: 'Bewegung kommt aktuell zu kurz. Schon 30 Minuten zügiges Gehen am Tag verändern das Gesamtbild deutlich.', en: 'Movement is getting short-changed right now. Even 30 minutes of brisk walking a day changes the overall picture noticeably.' }
+      },
+      tips: [
+        { t: { de: '5 × 30 Minuten zügig gehen', en: '5 × 30 minutes brisk walking' }, d: { de: 'Das entspricht den 150 Minuten moderater Bewegung pro Woche, die die WHO empfiehlt. Kein Fitnessstudio nötig.', en: 'That matches the 150 minutes of moderate activity per week the WHO recommends. No gym needed.' } },
+        { t: { de: 'Bewegung in den Weg bauen', en: 'Build movement into your route' }, d: { de: 'Treppe statt Aufzug, eine Station früher aussteigen, Telefonate im Gehen.', en: 'Stairs instead of lift, get off one stop early, take calls walking.' } }
+      ]
+    },
+    { id: 'ausgleich', color: '#E0A030', ico: 'sun', name: { de: 'Ausgleich & Zeit für dich', en: 'Balance & time for yourself' }, short: { de: 'Ausgleich', en: 'Balance' },
+      strength: { de: 'Guter Ausgleich', en: 'Good balance' },
+      q: [
+        { label: { de: 'Täglich Tageslicht', en: 'Daily daylight' }, text: { de: 'Ich bin jeden Tag mindestens 20 Minuten draußen im Tageslicht.', en: 'I spend at least 20 minutes outside in daylight every day.' } },
+        { label: { de: 'Täglich Minuten ohne Handy', en: 'Daily minutes without phone' }, text: { de: 'Ich nehme mir täglich ein paar Minuten bewusst ohne Handy und Bildschirm.', en: 'Every day I deliberately take a few minutes without phone and screen.' } },
+        { label: { de: 'Wöchentlich Zeit für Menschen/Hobby', en: 'Weekly time for people/hobby' }, text: { de: 'Ich habe jede Woche feste Zeit für Freunde, Familie oder ein Hobby.', en: 'Every week I have fixed time for friends, family or a hobby.' } },
+        { label: { de: 'Pausen eingeplant', en: 'Breaks planned' }, text: { de: 'Ich plane Pausen und freie Zeit genauso fest ein wie Termine.', en: 'I schedule breaks and free time as firmly as appointments.' } }
+      ],
+      fb: {
+        high: { de: 'Tageslicht, Pausen, Zeit für Menschen: Du hast dir einen echten Ausgleich in den Alltag gebaut.', en: 'Daylight, breaks, time for people: you have built a real counterbalance into your everyday life.' },
+        mid: { de: 'Du achtest auf Ausgleich, aber er fällt im Alltag manchmal hinten runter.', en: 'You do pay attention to balance, but it sometimes falls by the wayside.' },
+        low: { de: 'Zeit für dich ist gerade knapp. Kleine, feste Auszeiten am Tag sind hier der wirksamste Anfang.', en: 'Time for yourself is scarce right now. Small, fixed time-outs during the day are the most effective start here.' }
+      },
+      tips: [
+        { t: { de: '10 Minuten Morgenlicht', en: '10 minutes of morning light' }, d: { de: 'Direkt nach dem Aufstehen kurz raus oder ans offene Fenster.', en: 'Right after getting up, step outside or to an open window.' } },
+        { t: { de: 'Eine Pause ohne Handy', en: 'One break without your phone' }, d: { de: 'Täglich zehn Minuten, in denen nichts passieren muss. Kaffee, Fenster, Atem.', en: 'Ten minutes a day where nothing has to happen. Coffee, window, breath.' } }
+      ]
+    }
+  ],
+  wishes: [
+    { id: 'energie', de: 'Mehr Energie im Alltag', en: 'More energy every day' },
+    { id: 'schlaf', de: 'Besser schlafen und abschalten', en: 'Sleep and switch off better' },
+    { id: 'fit', de: 'Fitter und aktiver werden', en: 'Get fitter and more active' },
+    { id: 'gewicht', de: 'Mein Wohlfühlgewicht erreichen', en: 'Reach my feel-good weight' },
+    { id: 'ruhe', de: 'Gelassener durch den Tag', en: 'A calmer day' },
+    { id: 'ernaehrung', de: 'Ernährung im Alltag im Griff haben', en: 'Get everyday eating under control' },
+    { id: 'routine', de: 'Feste Routinen aufbauen', en: 'Build solid routines' },
+    { id: 'aelter', de: 'Fit und aktiv älter werden', en: 'Age fit and active' }
+  ],
+  motives: [
+    { id: 'gesundheit', de: 'Gesundheit', en: 'Health' },
+    { id: 'familie', de: 'Familie', en: 'Family' },
+    { id: 'sicherheit', de: 'Sicherheit', en: 'Security' },
+    { id: 'freiheit', de: 'Freiheit & Zeit', en: 'Freedom & time' },
+    { id: 'selbst', de: 'Selbstverwirklichung', en: 'Self-fulfilment' },
+    { id: 'anerkennung', de: 'Anerkennung', en: 'Recognition' },
+    { id: 'neugier', de: 'Neugier', en: 'Curiosity' },
+    { id: 'bequem', de: 'Bequemlichkeit', en: 'Convenience' },
+    { id: 'andere', de: 'Für andere da sein', en: 'Being there for others' },
+    { id: 'finanzen', de: 'Finanzielle Unabhängigkeit', en: 'Financial independence' }
+  ],
+  invest: [
+    { id: 'bis3', de: 'Bis 3 € am Tag', en: 'Up to €3 a day' },
+    { id: '3bis5', de: '3 bis 5 € am Tag', en: '€3 to €5 a day' },
+    { id: 'ueber5', de: 'Mehr als 5 € am Tag', en: 'More than €5 a day' },
+    { id: 'offen', de: 'Weiß ich noch nicht', en: "I don't know yet" }
+  ],
+  interests: [
+    { id: 'tipps', de: 'Tipps für meinen Alltag', en: 'Tips for my everyday life' },
+    { id: 'gespraech', de: 'Über mein Ergebnis sprechen', en: 'Talk about my result' },
+    { id: 'beruflich', de: 'Auch beruflich interessant', en: 'Also interesting professionally' }
+  ],
+  facts: [
+    { de: 'Fünf Portionen Obst und Gemüse am Tag sind rund 400 Gramm. Eine Portion ist ungefähr so groß wie deine Hand.', en: 'Five portions of fruit and veg a day is around 400 grams. One portion is about the size of your hand.', src: { de: 'Deutsche Gesellschaft für Ernährung', en: 'German Nutrition Society (DGE)' } },
+    { de: 'Kurze Bewegungspausen bei Bildschirmarbeit helfen Augen, Rücken und Konzentration. Faustregel: alle 20 Minuten 20 Sekunden in die Ferne schauen.', en: 'Short movement breaks during screen work help eyes, back and concentration. Rule of thumb: every 20 minutes, look into the distance for 20 seconds.', src: { de: 'Allgemeine Empfehlung der Arbeitsmedizin', en: 'General occupational health guidance' } },
+    { de: 'Erwachsenen werden sieben bis neun Stunden Schlaf pro Nacht empfohlen. Regelmäßige Zeiten wirken dabei stärker als einzelne lange Nächte.', en: 'Adults are recommended seven to nine hours of sleep per night. Regular times matter more than single long nights.', src: { de: 'National Sleep Foundation', en: 'National Sleep Foundation' } },
+    { de: 'Die WHO empfiehlt Erwachsenen mindestens 150 Minuten moderate Bewegung pro Woche. Zügiges Gehen zählt voll mit.', en: 'The WHO recommends adults get at least 150 minutes of moderate activity per week. Brisk walking counts in full.', src: { de: 'Weltgesundheitsorganisation', en: 'World Health Organization' } }
+  ],
+  levels: [
+    { max: 8,  name: { de: 'Am Startpunkt', en: 'At the starting line' }, desc: { de: 'Viele Gewohnheiten sind noch nicht fest im Alltag. Die gute Nachricht: Hier bewirkt jeder kleine Schritt am meisten.', en: 'Many habits are not yet fixed in your routine. The good news: every small step moves the most here.' } },
+    { max: 16, name: { de: 'Im Aufbau', en: 'Building up' }, desc: { de: 'Einiges läuft schon, vieles ist noch unregelmäßig. Zwei, drei feste Anker im Tag machen den Unterschied.', en: 'Some things already work, many are still irregular. Two or three fixed anchors in your day make the difference.' } },
+    { max: 24, name: { de: 'Auf Kurs', en: 'On track' }, desc: { de: 'Deine Basis steht. Jetzt geht es um Feinschliff in den Bereichen, die dir am wichtigsten sind.', en: 'Your base is in place. Now it is about fine-tuning the areas that matter most to you.' } },
+    { max: 32, name: { de: 'Gut dabei', en: 'Going strong' }, desc: { de: 'Du lebst schon sehr bewusst. Ein oder zwei Bereiche haben noch Luft nach oben.', en: 'You already live very consciously. One or two areas still have room to grow.' } },
+    { max: 40, name: { de: 'Volle Kraft', en: 'Full power' }, desc: { de: 'Beeindruckend konsequent. Deine Gewohnheiten tragen dich. Bleib dran.', en: 'Impressively consistent. Your habits carry you. Keep going.' } }
+  ],
+  flags: {
+    motive: {{#unless frage_motive=aus}}true{{/unless}}{{#if frage_motive=aus}}false{{/if}},
+    invest: {{#if frage_investition=an}}true{{/if}}{{#unless frage_investition=an}}false{{/unless}}
+  },
+  owner: { vorname: "{{vorname}}", nachname: "{{nachname}}", avatar: "{{profilbild}}", whatsapp: "{{whatsapp_nummer}}", recipient: "{{email_benachrichtigung}}", female: {{#if geschlecht=weiblich}}true{{/if}}{{#unless geschlecht=weiblich}}false{{/unless}} }
+};
+
+
+/* Einordnung je Bereich für mittlere/niedrige Werte: allgemeine Ernährungs- und Alltagsfakten,
+   keine Produkte, keine Wirk- oder Heilaussagen, keine Begriffe wie Mangel/Defizit/Risiko. */
+var INSIGHT = {
+  ernaehrung: { de: 'Obst und Gemüse sind die Basis deiner Versorgung mit Vitaminen, Mineralstoffen und sekundären Pflanzenstoffen. Wer im Alltag selten auf fünf Portionen kommt, sollte bewusst im Blick behalten, wie er seinen täglichen Bedarf deckt.', en: 'Fruit and vegetables are the foundation of your supply of vitamins, minerals and phytonutrients. If you rarely reach five portions a day, it is worth consciously keeping an eye on how you cover your daily needs.' },
+  tag: { de: 'Lange Phasen ohne Pause und ohne klares Ende halten den Körper im Dauerbetrieb. Wie gleichmäßig deine Energie über den Tag bleibt, hängt neben Pausen auch davon ab, wie regelmäßig du isst und trinkst.', en: 'Long stretches without breaks and without a clear end keep your body in permanent operation. How steady your energy stays through the day depends on breaks, but also on how regularly you eat and drink.' },
+  schlaf: { de: 'Regeneration passiert vor allem nachts. Neben festen Zeiten und einer ruhigen letzten Stunde spielt auch der Abend eine Rolle: späte, schwere Mahlzeiten machen die Nacht oft unruhiger.', en: 'Recovery happens mostly at night. Besides fixed times and a calm last hour, the evening itself matters: late, heavy meals often make the night more restless.' },
+  bewegung: { de: 'Wer sich wenig bewegt, hat einen niedrigeren Energieumsatz. Wer anfängt, sich mehr zu bewegen, braucht mehr Flüssigkeit, Eiweiß und Mineralstoffe. Beides lohnt einen bewussten Blick auf die Versorgung.', en: 'If you move little, your energy turnover is lower. If you start moving more, you need more fluids, protein and minerals. Both are worth a conscious look at your supply.' },
+  ausgleich: { de: 'Tageslicht ist die wichtigste natürliche Quelle für die körpereigene Bildung von Vitamin D. Wer selten draußen ist, vor allem im Winter, sollte seine Versorgung bewusst im Blick behalten.', en: 'Daylight is the most important natural source for your body\'s own vitamin D production. If you are rarely outside, especially in winter, it is worth consciously keeping an eye on your supply.' }
+};
+
+
+/* Vital-Typ nach stärkstem Bereich */
+var TYPES = {
+  ernaehrung: { name: { de: 'Der Genießer-Typ', en: 'The Nourisher' }, desc: { de: 'Ernährung und Trinken sind bei dir keine Baustelle, sondern Routine. Das ist die stabilste Basis, die man im Alltag haben kann.', en: 'Food and hydration are not a construction site for you but a routine. That is the most stable base you can have in everyday life.' } },
+  tag: { name: { de: 'Der Taktgeber-Typ', en: 'The Pacer' }, desc: { de: 'Dein Tag hat Struktur, Pausen und ein Ende. Das gibt dir gleichmäßige Energie, wo andere im Dauerbetrieb laufen.', en: 'Your day has structure, breaks and an end. That gives you steady energy where others run non-stop.' } },
+  schlaf: { name: { de: 'Der Nachtruhe-Typ', en: 'The Rester' }, desc: { de: 'Du weißt, wie man abschaltet. Feste Zeiten und ruhige Abende sind deine Stärke, und davon zehrt der ganze nächste Tag.', en: 'You know how to switch off. Fixed times and calm evenings are your strength, and the whole next day draws on that.' } },
+  bewegung: { name: { de: 'Der Beweger-Typ', en: 'The Mover' }, desc: { de: 'Bewegung ist bei dir selbstverständlich, im Sport und im Alltag. Dein Motor läuft, jetzt geht es um das Drumherum.', en: 'Movement comes naturally to you, in sport and everyday life. Your engine is running, now it is about everything around it.' } },
+  ausgleich: { name: { de: 'Der Ausgleichs-Typ', en: 'The Balancer' }, desc: { de: 'Tageslicht, Pausen, Zeit für Menschen: Du hältst die Balance. Das ist selten und wertvoll.', en: 'Daylight, breaks, time for people: you keep the balance. That is rare and valuable.' } }
+};
+/* Dein Tag auf einen Blick: Uhrzeit → Aussage (Bereich:Frage) */
+var DAY = [
+  { time: '07:00', di: 4, qi: 0, ico: 'sun',    l: { de: 'Morgenlicht', en: 'Morning light' } },
+  { time: '08:00', di: 0, qi: 2, ico: 'food',   l: { de: 'Richtige Mahlzeiten', en: 'Proper meals' } },
+  { time: '10:00', di: 1, qi: 0, ico: 'screen', l: { de: 'Bildschirmpause', en: 'Screen break' } },
+  { time: '12:30', di: 1, qi: 1, ico: 'flag',   l: { de: 'Frische Luft', en: 'Fresh air' } },
+  { time: '15:00', di: 0, qi: 1, ico: 'drop',   l: { de: 'Genug getrunken', en: 'Enough to drink' } },
+  { time: '17:30', di: 3, qi: 0, ico: 'move',   l: { de: '30 Minuten Bewegung', en: '30 minutes of movement' } },
+  { time: '18:30', di: 1, qi: 3, ico: 'clock',  l: { de: 'Fester Feierabend', en: 'Fixed end of work' } },
+  { time: '21:30', di: 2, qi: 2, ico: 'moon',   l: { de: 'Bildschirm aus', en: 'Screens off' } },
+  { time: '22:30', di: 2, qi: 0, ico: 'bed',    l: { de: 'Sieben Stunden Schlaf', en: 'Seven hours of sleep' } }
+];
+var SCALE = [
+  { v: 0, de: 'Trifft gar nicht zu', en: 'Not at all' },
+  { v: 1, de: 'Trifft eher nicht zu', en: 'Not really' },
+  { v: 2, de: 'Teils, teils', en: 'Partly' },
+  { v: 3, de: 'Trifft eher zu', en: 'Mostly' },
+  { v: 4, de: 'Trifft voll zu', en: 'Completely' }
+];
+
+/* ============ ENGINE ============ */
+var VC = (function(){
+  var root = document.getElementById('check'), ring = document.getElementById('ring'), pctEl = document.getElementById('pct');
+  var S = load() || fresh();
+  function fresh(){ return { step: 0, wishes: [], answers: {}, motives: [], invest: '', interests: [], sent: false }; }
+  function load(){ try { var raw = sessionStorage.getItem('vcb_state_v1'); return raw ? JSON.parse(raw) : null; } catch(e){ return null; } }
+  function save(){ try { sessionStorage.setItem('vcb_state_v1', JSON.stringify(S)); } catch(e){} }
+  function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+  function en(){ return L() === 'en'; }
+
+  function steps(){ var s = ['wishes']; CFG.dims.forEach(function(d, i){ s.push('area:' + i); }); if (CFG.flags.motive) s.push('motive'); if (CFG.flags.invest) s.push('invest'); s.push('reveal', 'result', 'lead', 'done'); return s; }
+  function answeredCount(){ return Object.keys(S.answers).length; }
+  function scores(){ return CFG.dims.map(function(d, di){ var s = 0; d.q.forEach(function(q, qi){ var v = S.answers[di + ':' + qi]; if (v !== undefined) s += v; }); return s; }); }  /* max 16 je Bereich */
+  function ratios(){ return scores().map(function(s){ return s / 16; }); }
+  function evalResult(){
+    var sc = scores(), sum = sc.reduce(function(a,b){ return a+b; }, 0), pct = Math.round(sum / 80 * 100);
+    var lv = CFG.levels.filter(function(l){ return sum <= l.max * 2; })[0] || CFG.levels[4];
+    var order = sc.map(function(s, i){ return { i: i, s: s }; }).sort(function(a, b){ return b.s - a.s || a.i - b.i; });
+    return { sc: sc, total: sum, pct: pct, lv: lv, best: order[0].i, worst: order[order.length-1].i, second: order[order.length-2].i };
+  }
+  function tier(s){ return s >= 12 ? 'high' : (s >= 8 ? 'mid' : 'low'); }
+  function tierColor(s){ return s >= 12 ? 'var(--s4)' : (s >= 8 ? 'var(--s1)' : 'var(--s0)'); }
+  function labelOf(list, id){ var x = list.filter(function(i){ return i.id === id; })[0]; return x ? x.de : ''; }
+
+  function go(n){ S.step = Math.max(0, Math.min(steps().length - 1, n)); save(); render(); window.scrollTo(0, 0); }
+  function paintTop(){
+    var p = Math.round(answeredCount() / 20 * 100), key = steps()[S.step];
+    if (['reveal','result','lead','done'].indexOf(key) > -1) p = 100;
+    ring.style.strokeDashoffset = (56.5 - 56.5 * p / 100).toFixed(2);
+    pctEl.textContent = p + ' % ' + (en() ? 'completed' : 'abgeschlossen');
+  }
+  function render(){
+    var key = steps()[S.step], html = '';
+    paintTop();
+    if (key === 'wishes') html = vWishes();
+    else if (key.indexOf('area:') === 0) html = vArea(+key.split(':')[1]);
+    else if (key === 'motive') html = vMotive();
+    else if (key === 'invest') html = vInvest();
+    else if (key === 'reveal') html = vReveal();
+    else if (key === 'result') html = vResult();
+    else if (key === 'lead') html = vLead();
+    else if (key === 'done') html = vDone();
+    root.innerHTML = '<div class="step">' + html + '</div>';
+    bind(key);
+  }
+
+  /* ---- Views ---- */
+  function chip(attr, id, label, on){ return '<button type="button" class="chip' + (on ? ' on' : '') + '" data-' + attr + '="' + id + '"><span class="chk">' + ICO.check + '</span>' + esc(label) + '</button>'; }
+  function vWishes(){
+    return '<div class="pagehead"><h1>' + (en() ? 'Find out where your vitality level stands.' : 'Finde heraus, wo dein Vitallevel steht.') + '</h1><p>' + (en() ? 'In just a few minutes you will know where your vitality level stands and which type you are. You get a clear evaluation right away. And if you like, you can contact me afterwards so we can check together whether the nutrient concept I work with fits you and your everyday life.' : 'Erfahre in nur wenigen Minuten, wo dein Vitallevel steht und welcher Vital-Typ du bist. Du erhältst direkt deine übersichtliche Auswertung. Und wenn du magst, kannst du mich im Anschluss kontaktieren, damit wir gemeinsam prüfen, ob das Nährstoff-Konzept, mit dem ich arbeite, zu dir und deinem Alltag passt.') + '</p></div>' +
+      '<div class="card left"><p>' + (en() ? 'What would you like most right now? Pick up to three.' : 'Was wünschst du dir gerade am meisten? Wähle bis zu drei.') + '</p><div class="chips" style="justify-content:flex-start">' + CFG.wishes.map(function(w){ return chip('wish', w.id, t(w), S.wishes.indexOf(w.id) > -1); }).join('') + '</div></div>' +
+      '<div class="btnrow"><button type="button" class="btn btn-primary btn-wide" data-next ' + (S.wishes.length ? '' : 'disabled') + '>' + (en() ? 'Start the check' : 'Check starten') + '</button><span class="note">' + (en() ? '20 statements · about 3 minutes · no sign-up' : '20 Aussagen · etwa 3 Minuten · keine Anmeldung') + '</span></div>';
+  }
+  function vArea(di){
+    var d = CFG.dims[di], first = -1;
+    d.q.forEach(function(q, qi){ if (first === -1 && S.answers[di + ':' + qi] === undefined) first = qi; });
+    return '<div class="pagehead"><div class="area-tag"><i style="background:' + d.color + '">' + ICO[d.ico] + '</i>' + esc(t(d.name)) + ' · ' + (di + 1) + '/5</div><h1>' + (en() ? 'How much does each statement apply to you?' : 'Wie sehr trifft jede Aussage auf dich zu?') + '</h1></div>' +
+      d.q.map(function(q, qi){ var v = S.answers[di + ':' + qi], k = di + ':' + qi;
+        return '<div class="card' + (qi === 0 ? ' labels' : '') + (v !== undefined ? ' done' : '') + (qi === first ? ' active' : '') + '" data-card="' + k + '"><p>' + esc(t(q.text)) + '</p><div class="scale">' + SCALE.map(function(o){ return '<button type="button" class="opt' + (v === o.v ? ' on' : '') + '" data-k="' + k + '" data-v="' + o.v + '" aria-label="' + esc(en() ? o.en : o.de) + '"><span class="c">' + ICO.check + '</span><small>' + esc(en() ? o.en : o.de) + '</small></button>'; }).join('') + '</div></div>'; }).join('') +
+      '<div class="btnrow"><button type="button" class="btn btn-primary btn-wide" data-next>' + (en() ? 'Continue' : 'Weiter') + '</button><span class="note" id="areaNote"></span>' + (S.step > 0 ? '<button type="button" class="skip" data-back>' + (en() ? 'Back' : 'Zurück') + '</button>' : '') + '</div>';
+  }
+  function vMotive(){
+    return '<div class="pagehead"><h1>' + (en() ? 'What drives you most in life?' : 'Was treibt dich im Leben am meisten an?') + '</h1><p>' + (en() ? 'Pick up to three. Optional.' : 'Wähle bis zu drei. Optional.') + '</p></div>' +
+      '<div class="card left"><div class="chips" style="justify-content:flex-start">' + CFG.motives.map(function(m){ return chip('motive', m.id, t(m), S.motives.indexOf(m.id) > -1); }).join('') + '</div></div>' +
+      '<div class="btnrow"><button type="button" class="btn btn-primary btn-wide" data-next ' + (S.motives.length ? '' : 'disabled') + '>' + (en() ? 'Continue' : 'Weiter') + '</button><button type="button" class="skip" data-skip>' + (en() ? 'Skip' : 'Überspringen') + '</button></div>';
+  }
+  function vInvest(){
+    return '<div class="pagehead"><h1>' + (en() ? 'How much time or money would you invest in your wellbeing per day?' : 'Wie viel Zeit oder Geld würdest du täglich in dein Wohlbefinden investieren?') + '</h1><p>' + (en() ? 'Just a gut feeling. Optional.' : 'Nur ein Bauchgefühl. Optional.') + '</p></div>' +
+      '<div class="card left"><div class="chips" style="justify-content:flex-start">' + CFG.invest.map(function(m){ return chip('invest', m.id, t(m), S.invest === m.id); }).join('') + '</div></div>' +
+      '<div class="btnrow"><button type="button" class="btn btn-primary btn-wide" data-next ' + (S.invest ? '' : 'disabled') + '>' + (en() ? 'Show my profile' : 'Mein Profil anzeigen') + '</button><button type="button" class="skip" data-skip>' + (en() ? 'Skip' : 'Überspringen') + '</button></div>';
+  }
+  function vReveal(){
+    var R = evalResult();
+    return '<div class="reveal"><h2>' + (en() ? 'Creating your vitality profile …' : 'Dein Vitalprofil entsteht …') + '</h2><p>' + (en() ? 'Evaluating your 20 answers across five areas.' : 'Deine 20 Antworten werden in fünf Bereichen ausgewertet.') + '</p><div class="rows">' + CFG.dims.map(function(d, i){ return '<div class="row" data-i="' + i + '"><i style="background:' + d.color + '">' + ICO[d.ico] + '</i><b>' + esc(t(d.name)) + '</b><span class="p num" data-p="' + Math.round(R.sc[i]/16*100) + '">0 %</span></div>'; }).join('') + '</div></div>';
+  }
+  function badgeSvg(color){
+    return '<svg class="badge" viewBox="0 0 128 128"><defs><radialGradient id="g" cx="35%" cy="30%" r="80%"><stop offset="0" stop-color="#fff" stop-opacity="0.55"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient></defs><circle cx="64" cy="64" r="60" fill="' + color + '"/><circle cx="64" cy="64" r="60" fill="url(#g)"/><polygon points="64,30 92,50 82,88 46,88 36,50" fill="none" stroke="#fff" stroke-width="4" stroke-linejoin="round" opacity="0.9"/><circle cx="64" cy="64" r="8" fill="#fff"/></svg>';
+  }
+  function vResult(){
+    var R = evalResult(), o = CFG.owner, bestD = CFG.dims[R.best], worstD = CFG.dims[R.worst], ty = TYPES[bestD.id];
+    var wishes = S.wishes.map(function(id){ var w = CFG.wishes.filter(function(x){ return x.id === id; })[0]; return w ? t(w) : ''; }).filter(Boolean);
+    function lowQs(di){ return CFG.dims[di].q.map(function(q, qi){ return { q: q, v: S.answers[di + ':' + qi] === undefined ? 4 : S.answers[di + ':' + qi] }; }).sort(function(a, b){ return a.v - b.v; }); }
+    var lw = lowQs(R.worst), ls = lowQs(R.second);
+    var tips = [{ tp: worstD.tips[0], di: R.worst, ref: lw[0] }, { tp: worstD.tips[1], di: R.worst, ref: lw[1] }, { tp: CFG.dims[R.second].tips[0], di: R.second, ref: ls[0] }];
+    var word = function(v){ var s = SCALE[v]; return s ? (en() ? s.en : s.de) : '–'; };
+    var status = function(v){ return v >= 3 ? ['ok', en() ? 'in place' : 'läuft'] : (v === 2 ? ['mid', en() ? 'partly' : 'teils'] : ['no', en() ? 'not yet' : 'fehlt noch']); };
+    var html = '<div class="res"><div class="hero">' + badgeSvg(bestD.color) + '<div class="kicker">' + (en() ? 'Your vitality profile' : 'Dein Vitalprofil') + '</div><h1>' + esc(t(ty.name)) + '</h1><p class="typedesc">' + esc(t(ty.desc)) + '</p>' +
+      '<div class="levelrow"><span>' + (en() ? 'Vitality level: ' : 'Vitallevel: ') + '<b>' + esc(t(R.lv.name)) + '</b></span><span class="pct num">' + R.pct + ' %</span></div></div>' +
+      '<div class="sec"><h2>' + (en() ? 'Your day at a glance' : 'Dein Tag auf einen Blick') + '</h2><div class="sub">' + (en() ? 'Nine moments that shape a typical day, based on your answers.' : 'Neun Momente, die einen typischen Tag prägen, aus deinen Antworten.') + '</div><div class="card res-card"><ul class="day">' + DAY.map(function(m){ var v = S.answers[m.di + ':' + m.qi]; v = v === undefined ? 2 : v; var st = status(v); return '<li class="' + (v <= 1 ? 'dim' : '') + '"><span class="t num">' + m.time + '</span><i style="background:' + CFG.dims[m.di].color + '">' + ICO[m.ico] + '</i><span class="l">' + esc(t(m.l)) + '<small>' + esc(t(CFG.dims[m.di].q[m.qi].label)) + '</small></span><span class="st ' + st[0] + '">' + st[1] + '</span></li>'; }).join('') + '</ul></div></div>' +
+      '<div class="sec"><h2>' + (en() ? 'Your five areas' : 'Deine fünf Bereiche') + '</h2><div class="sub">' + (en() ? 'Strength: ' : 'Stärke: ') + esc(t(bestD.name)) + ' · ' + (en() ? 'biggest lever: ' : 'größter Hebel: ') + esc(t(worstD.name)) + '</div><div class="card res-card">' + CFG.dims.map(function(d, i){ var s = R.sc[i], p = Math.round(s/16*100), ins = tier(s) !== 'high' && INSIGHT[d.id] ? '<div class="ins"><b>' + (en() ? 'Good to know: ' : 'Gut zu wissen: ') + '</b>' + esc(t(INSIGHT[d.id])) + '</div>' : ''; return '<div class="trait"><div class="h"><i style="background:' + d.color + '">' + ICO[d.ico] + '</i><b>' + esc(t(d.name)) + '</b><span class="pct num">' + p + ' %</span></div><div class="bar"><i data-w="' + p + '" style="background:' + tierColor(s) + '"></i></div><p>' + esc(t(d.fb[tier(s)])) + '</p>' + ins + '</div>'; }).join('') + '</div></div>' +
+      '<div class="sec"><h2>' + (en() ? 'Three things you can start tomorrow' : 'Drei Dinge, die du morgen starten kannst') + '</h2><div class="sub">' + (en() ? 'Derived from your two weakest areas and the statements you rated lowest.' : 'Abgeleitet aus deinen zwei schwächsten Bereichen und den Aussagen, die du am niedrigsten bewertet hast.') + '</div><div class="card res-card">' + tips.map(function(x, i){ return '<div class="tip"><span class="n num">' + (i+1) + '</span><div><b>' + esc(t(x.tp.t)) + '</b><p>' + esc(t(x.tp.d)) + '</p><div class="ref">' + (en() ? 'Your answer: ' : 'Deine Antwort: ') + '<span>„' + esc(t(x.ref.q.label)) + '“ · ' + word(x.ref.v) + '</span></div></div></div>'; }).join('') + '</div>' +
+      (wishes.length ? '<div class="wish">' + (en() ? 'Your wish: ' : 'Dein Wunsch: ') + '<b>' + esc(wishes.join(', ')) + '</b>. ' + (en() ? 'Your biggest lever is a realistic place to start.' : 'Dein größter Hebel ist ein realistischer Startpunkt dafür.') + '</div>' : '') + '</div>';
+    var li = function(txt){ return '<li><i>' + ICO.check + '</i><span>' + txt + '</span></li>'; };
+    html += '<div class="cta"><div class="who"><img src="' + esc(o.avatar) + '" alt=""><div><b>' + esc(o.vorname) + ' ' + esc(o.nachname) + '</b><small>' + (en() ? 'Independent distributor of PM-International' : (o.female ? 'Unabhängige Vertriebspartnerin' : 'Unabhängiger Vertriebspartner') + ' der PM-International') + '</small></div></div>' +
+      '<h2>' + (en() ? 'Let\'s look at your profile together.' : 'Lass uns gemeinsam auf dein Profil schauen.') + '</h2>' +
+      '<div class="personal">' + (en() ? 'You are <b>' + esc(t(ty.name)) + '</b>, your biggest lever is <b>' + esc(t(worstD.name)) + '</b>' + (wishes.length ? ', your wish is <b>' + esc(wishes[0]) + '</b>' : '') + '. That is exactly where I would start with you.' : 'Du bist <b>' + esc(t(ty.name)) + '</b>, dein größter Hebel ist <b>' + esc(t(worstD.name)) + '</b>' + (wishes.length ? ', dein Wunsch ist <b>' + esc(wishes[0]) + '</b>' : '') + '. Genau da würde ich mit dir anfangen.') + '</div>' +
+      '<ul>' + li(en() ? 'A personal consultation, by phone or WhatsApp, whenever it suits you' : 'Eine persönliche Beratung, per Telefon oder WhatsApp, wann es dir passt') + li(en() ? 'Together we check whether the nutrient concept I work with fits you and your everyday life' : 'Wir prüfen gemeinsam, ob das Nährstoff-Konzept, mit dem ich arbeite, zu dir und deinem Alltag passt') + li(en() ? 'No risk for you: even if you decide to go for it afterwards, you have a 30-day satisfaction guarantee' : 'Du trägst kein Risiko: Selbst wenn du dich im Anschluss dafür entscheidest, hast du eine 30-tägige Zufriedenheitsgarantie') + '</ul>' +
+      '<div class="btns"><button type="button" class="btn btn-primary" data-lead>' + (en() ? 'Send profile and request consultation' : 'Profil senden und Beratung anfragen') + '</button><button type="button" class="btn btn-ghost" data-restart>' + (en() ? 'Start over' : 'Nochmal starten') + '</button></div>' +
+      '<div class="fine">' + (en() ? 'Free and non-binding · no newsletter · you decide' : 'Kostenlos und unverbindlich · kein Newsletter · du entscheidest') + '</div></div>' +
+      '<div class="tools"><button type="button" class="btn btn-ghost" data-save>' + ICO.save + (en() ? 'Save profile as image' : 'Profil als Bild speichern') + '</button></div>' +
+      '<p class="small-note">' + (en() ? 'This profile is a self-assessment of your habits, not a medical evaluation, and it contains no product recommendation. It was calculated on your device and is only sent if you actively choose to.' : 'Dieses Profil ist eine Selbsteinschätzung deiner Gewohnheiten, keine medizinische Bewertung, und enthält keine Produktempfehlung. Es wurde auf deinem Gerät berechnet und wird nur übermittelt, wenn du das aktiv möchtest.') + '</p>';
+    return html;
+  }
+  function vLead(){
+    var R = evalResult(), o = CFG.owner, ty = TYPES[CFG.dims[R.best].id];
+    var wl = S.wishes.map(function(id){ var w = CFG.wishes.filter(function(x){ return x.id === id; })[0]; return w ? t(w) : ''; }).filter(Boolean).join(', ');
+    return '<div class="card left lead"><h2>' + (en() ? 'Request your consultation with ' + esc(o.vorname) + '.' : 'Deine Beratung mit ' + esc(o.vorname) + ' anfragen.') + '</h2><p class="sub">' + (en() ? 'Your profile goes to ' + esc(o.vorname) + ' together with your contact details. You will hear back personally.' : 'Dein Profil geht zusammen mit deinen Kontaktdaten an ' + esc(o.vorname) + '. Du bekommst eine persönliche Antwort.') + '</p>' +
+      '<div class="sendbox"><div><div class="k">' + (en() ? 'Profile' : 'Profil') + '</div><div class="v">' + esc(t(ty.name)) + ' · ' + R.pct + ' %</div></div><div><div class="k">' + (en() ? 'Biggest lever' : 'Größter Hebel') + '</div><div class="v">' + esc(t(CFG.dims[R.worst].name)) + '</div></div><div class="full">' + (en() ? 'Included: your 20 answers, your strength (' : 'Enthalten: deine 20 Antworten, deine Stärke (') + esc(t(CFG.dims[R.best].short)) + ')' + (wl ? (en() ? ' and your wishes: ' : ' und deine Wünsche: ') + esc(wl) : '') + '.</div></div>' +
+      '<form id="leadForm" action="/.finestsites/forms/kontakt" method="POST" novalidate>' +
+        '<input type="hidden" name="_recipient" value="' + esc(o.recipient) + '"><input type="text" name="_honeypot" style="position:absolute;left:-9999px;opacity:0" tabindex="-1" autocomplete="off">' +
+        '<div class="two"><div class="row"><label class="lbl" for="lf-name">' + (en() ? 'Your name' : 'Dein Name') + '</label><input class="input" id="lf-name" name="name" type="text" required autocomplete="name"></div><div class="row"><label class="lbl" for="lf-email">' + (en() ? 'Your email' : 'Deine E-Mail') + '</label><input class="input" id="lf-email" name="email" type="email" required autocomplete="email"></div></div>' +
+        '<div class="row"><label class="lbl">' + (en() ? 'How should I reach you?' : 'Wie soll ich dich erreichen?') + '</label><div class="seg" id="seg"><button type="button" class="active" data-method="email">' + ICO.mail + (en() ? 'Email' : 'E-Mail') + '</button><button type="button" data-method="telefon">' + ICO.phone + (en() ? 'Phone' : 'Telefon') + '</button><button type="button" data-method="whatsapp">' + ICO.wa + 'WhatsApp</button></div></div>' +
+        '<div class="row" id="phoneRow" hidden><label class="lbl" for="lf-phone">' + (en() ? 'Your number' : 'Deine Nummer') + '</label><input class="input" id="lf-phone" name="phone" type="tel" autocomplete="tel" placeholder="+49 170 1234567"></div>' +
+        '<div class="row"><label class="lbl">' + (en() ? 'What are you interested in?' : 'Was interessiert dich?') + ' <span class="opt-lbl">(' + (en() ? 'optional' : 'optional') + ')</span></label><div class="chips" style="justify-content:flex-start">' + CFG.interests.map(function(m){ return chip('interest', m.id, t(m), S.interests.indexOf(m.id) > -1); }).join('') + '</div></div>' +
+        '<div class="row"><button type="button" class="msg-toggle" id="msgToggle">+ ' + (en() ? 'Add a message' : 'Nachricht hinzufügen') + '</button><textarea class="input" id="lf-msg" name="nachricht" rows="3" hidden></textarea></div>' +
+        '<label class="consent" id="consentBox"><input type="checkbox" id="lf-consent"><span>' + (en() ? 'Yes, I want ' + esc(o.vorname) + ' ' + esc(o.nachname) + ' to receive my 20 answers from the vitality check (my habits regarding food, daily structure, sleep, movement and balance), my wishes and my contact details, in order to contact me personally. I can withdraw this consent at any time by emailing <a href="mailto:' + esc(o.recipient) + '">' + esc(o.recipient) + '</a>. Details in the <a href="/datenschutz" target="_blank" rel="noopener">privacy policy</a>.' : 'Ja, ich möchte, dass ' + esc(o.vorname) + ' ' + esc(o.nachname) + ' meine 20 Antworten aus dem Vitalcheck (meine Gewohnheiten zu Ernährung, Tagesstruktur, Schlaf, Bewegung und Ausgleich), meine Wünsche und meine Kontaktdaten erhält, um mich persönlich zu kontaktieren. Diese Einwilligung kann ich jederzeit per E-Mail an <a href="mailto:' + esc(o.recipient) + '">' + esc(o.recipient) + '</a> widerrufen. Details in der <a href="/datenschutz" target="_blank" rel="noopener">Datenschutzerklärung</a>.') + '</span></label>' +
+        '<button type="submit" class="btn btn-accent" style="width:100%" id="leadSubmit">' + (en() ? 'Request consultation' : 'Beratung anfragen') + '</button><div class="err-msg" id="leadError"></div>' +
+        '<div class="form-trust"><span>' + (en() ? 'Free and non-binding' : 'Kostenlos und unverbindlich') + '</span><span>' + (en() ? '30-day satisfaction guarantee' : '30 Tage Zufriedenheitsgarantie') + '</span><span>' + (en() ? 'No newsletter, no sharing' : 'Kein Newsletter, keine Weitergabe') + '</span></div>' +
+      '</form></div><div class="btnrow"><button type="button" class="skip" data-back>' + (en() ? 'Back to profile' : 'Zurück zum Profil') + '</button></div>';
+  }
+  function vDone(){
+    var o = CFG.owner, wa = o.whatsapp ? '<a class="btn btn-ghost" target="_blank" rel="noopener" href="https://wa.me/' + esc(o.whatsapp) + '?text=' + encodeURIComponent(en() ? 'Hi ' + o.vorname + ', I just did your vitality check.' : 'Hi ' + o.vorname + ', ich habe gerade deinen Vitalcheck gemacht.') + '">' + (en() ? 'Message on WhatsApp' : 'Per WhatsApp schreiben') + '</a>' : '';
+    return '<div class="card done"><div class="ok">' + ICO.check + '</div><h2>' + (en() ? 'Thank you. Your profile is on its way.' : 'Danke. Dein Profil ist unterwegs.') + '</h2><p>' + (en() ? esc(o.vorname) + ' will get back to you personally. Until then, your three tips are a good start.' : esc(o.vorname) + ' meldet sich persönlich bei dir. Bis dahin sind deine drei Tipps ein guter Anfang.') + '</p><div class="btns">' + wa + '<button type="button" class="btn btn-primary" data-restart-quiet>' + (en() ? 'Back to start' : 'Zurück zum Start') + '</button></div></div>';
+  }
+
+  /* ---- Bild speichern ---- */
+  function saveImage(){
+    var R = evalResult(), ty = TYPES[CFG.dims[R.best].id], c = document.createElement('canvas'), W = 1080, H = 1350; c.width = W; c.height = H;
+    var x = c.getContext('2d'), accent = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#2FA877';
+    x.fillStyle = '#F7F6F2'; x.fillRect(0, 0, W, H);
+    x.fillStyle = '#8E8F8A'; x.font = '500 30px Geist, sans-serif'; x.fillText((en() ? 'MY VITALITY PROFILE' : 'MEIN VITALPROFIL'), 80, 120);
+    x.fillStyle = CFG.dims[R.best].color; x.beginPath(); x.arc(160, 260, 70, 0, Math.PI * 2); x.fill();
+    x.fillStyle = '#fff'; x.beginPath(); x.arc(160, 260, 12, 0, Math.PI * 2); x.fill();
+    x.fillStyle = '#1B1B19'; x.font = '500 64px Geist, sans-serif'; x.fillText(t(ty.name), 270, 250);
+    x.fillStyle = '#5A5B57'; x.font = '400 34px Geist, sans-serif'; x.fillText((en() ? 'Vitality level: ' : 'Vitallevel: ') + t(R.lv.name) + ' · ' + R.pct + ' %', 270, 305);
+    var y = 430;
+    CFG.dims.forEach(function(d, i){ var p = R.sc[i] / 16; x.fillStyle = '#1B1B19'; x.font = '500 34px Geist, sans-serif'; x.fillText(t(d.name), 80, y); x.font = '600 34px Geist, sans-serif'; x.textAlign = 'right'; x.fillText(Math.round(p*100) + ' %', W - 80, y); x.textAlign = 'left';
+      x.fillStyle = '#E7E6E0'; roundRect(x, 80, y + 22, W - 160, 18, 9); x.fill(); x.fillStyle = d.color; roundRect(x, 80, y + 22, Math.max(18, (W - 160) * p), 18, 9); x.fill(); y += 130; });
+    x.fillStyle = '#8E8F8A'; x.font = '400 28px Geist, sans-serif'; x.fillText((en() ? 'Vitality check by ' : 'Vitalcheck von ') + CFG.owner.vorname + ' ' + CFG.owner.nachname, 80, H - 90);
+    x.fillStyle = accent; x.fillRect(0, H - 14, W, 14);
+    var a = document.createElement('a'); a.download = 'vitalprofil.png'; a.href = c.toDataURL('image/png'); document.body.appendChild(a); a.click(); a.remove();
+  }
+  function roundRect(x, X, Y, w, h, r){ x.beginPath(); x.moveTo(X + r, Y); x.arcTo(X + w, Y, X + w, Y + h, r); x.arcTo(X + w, Y + h, X, Y + h, r); x.arcTo(X, Y + h, X, Y, r); x.arcTo(X, Y, X + w, Y, r); x.closePath(); }
+
+  /* ---- Bindings ---- */
+  function toggleIn(arr, id, max){ var i = arr.indexOf(id); if (i > -1) arr.splice(i, 1); else if (arr.length < max) arr.push(id); }
+  function refresh(attr, arr, max){ root.querySelectorAll('[data-' + attr + ']').forEach(function(c){ var on = arr.indexOf(c.getAttribute('data-' + attr)) > -1; c.classList.toggle('on', on); c.classList.toggle('off', !on && arr.length >= max); }); var nx = root.querySelector('[data-next]'); if (nx) nx.disabled = !arr.length; }
+  function bind(key){
+    var b = root.querySelector('[data-back]'); if (b) b.addEventListener('click', function(){ go(S.step - 1); });
+    var sk = root.querySelector('[data-skip]'); if (sk) sk.addEventListener('click', function(){ if (key === 'motive') S.motives = []; if (key === 'invest') S.invest = ''; go(S.step + 1); });
+    var n = root.querySelector('[data-next]');
+    if (n) n.addEventListener('click', function(){
+      if (key.indexOf('area:') === 0) {
+        var di = +key.split(':')[1], missing = CFG.dims[di].q.map(function(q, qi){ return S.answers[di + ':' + qi] === undefined ? qi : -1; }).filter(function(x){ return x > -1; });
+        if (missing.length) { var note = document.getElementById('areaNote'); note.className = 'note warn'; note.textContent = en() ? 'Please answer all statements before continuing.' : 'Alle Aussagen müssen beantwortet werden, bevor es weitergeht.'; var card = root.querySelector('[data-card="' + di + ':' + missing[0] + '"]'); if (card) { root.querySelectorAll('.card.active').forEach(function(c){ c.classList.remove('active'); }); card.classList.add('active'); card.scrollIntoView({ behavior: 'smooth', block: 'center' }); } return; }
+      }
+      go(S.step + 1);
+    });
+    if (key === 'wishes') root.querySelectorAll('[data-wish]').forEach(function(c){ c.addEventListener('click', function(){ toggleIn(S.wishes, c.getAttribute('data-wish'), 3); save(); refresh('wish', S.wishes, 3); }); });
+    if (key === 'motive') root.querySelectorAll('[data-motive]').forEach(function(c){ c.addEventListener('click', function(){ toggleIn(S.motives, c.getAttribute('data-motive'), 3); save(); refresh('motive', S.motives, 3); }); });
+    if (key === 'invest') root.querySelectorAll('[data-invest]').forEach(function(c){ c.addEventListener('click', function(){ S.invest = c.getAttribute('data-invest'); save(); root.querySelectorAll('[data-invest]').forEach(function(x){ x.classList.toggle('on', x === c); }); root.querySelector('[data-next]').disabled = false; }); });
+    if (key.indexOf('area:') === 0) root.querySelectorAll('.opt').forEach(function(o){ o.addEventListener('click', function(){
+      var k = o.getAttribute('data-k'), card = o.closest('.card');
+      card.querySelectorAll('.opt').forEach(function(x){ x.classList.remove('on'); }); o.classList.add('on');
+      S.answers[k] = +o.getAttribute('data-v'); save(); paintTop(); card.classList.add('done');
+      var note = document.getElementById('areaNote'); if (note) { note.className = 'note'; note.textContent = ''; }
+      var next = null; root.querySelectorAll('.card[data-card]').forEach(function(c){ if (!next && S.answers[c.getAttribute('data-card')] === undefined) next = c; });
+      root.querySelectorAll('.card.active').forEach(function(c){ c.classList.remove('active'); });
+      if (next) { next.classList.add('active'); setTimeout(function(){ next.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 180); }
+      else { var btn = root.querySelector('[data-next]'); if (btn) setTimeout(function(){ btn.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 180); }
+    }); });
+    if (key === 'reveal') { var rows = root.querySelectorAll('.reveal .row'); rows.forEach(function(r, i){ setTimeout(function(){ r.classList.add('on'); var p = r.querySelector('.p'), to = +p.getAttribute('data-p'), t0 = null; function f(ts){ if (!t0) t0 = ts; var q = Math.min(1, (ts - t0) / 600); p.textContent = Math.round(to * q) + ' %'; if (q < 1) requestAnimationFrame(f); } requestAnimationFrame(f); }, 350 + i * 420); }); setTimeout(function(){ go(S.step + 1); }, 350 + rows.length * 420 + 700); }
+    if (key === 'result') {
+      setTimeout(function(){ root.querySelectorAll('.trait .bar i').forEach(function(f){ f.style.width = f.getAttribute('data-w') + '%'; }); }, 150);
+      root.querySelector('[data-lead]').addEventListener('click', function(){ go(S.step + 1); });
+      root.querySelector('[data-save]').addEventListener('click', saveImage);
+      root.querySelector('[data-restart]').addEventListener('click', function(){ if (confirm(en() ? 'Start over? Your answers will be reset.' : 'Nochmal starten? Deine Antworten werden zurückgesetzt.')) { S = fresh(); save(); go(0); } });
+    }
+    if (key === 'lead') bindLead();
+    if (key === 'done') root.querySelector('[data-restart-quiet]').addEventListener('click', function(){ S = fresh(); save(); go(0); });
+  }
+  function bindLead(){
+    var form = document.getElementById('leadForm'), seg = document.getElementById('seg'), phoneRow = document.getElementById('phoneRow'), method = 'email';
+    seg.querySelectorAll('button').forEach(function(tb){ tb.addEventListener('click', function(){ method = tb.getAttribute('data-method'); seg.querySelectorAll('button').forEach(function(x){ x.classList.toggle('active', x === tb); }); phoneRow.hidden = method === 'email'; if (!phoneRow.hidden) document.getElementById('lf-phone').focus(); }); });
+    root.querySelectorAll('[data-interest]').forEach(function(c){ c.addEventListener('click', function(){ toggleIn(S.interests, c.getAttribute('data-interest'), 3); save(); root.querySelectorAll('[data-interest]').forEach(function(x){ x.classList.toggle('on', S.interests.indexOf(x.getAttribute('data-interest')) > -1); }); }); });
+    var box = document.getElementById('consentBox'); document.getElementById('lf-consent').addEventListener('change', function(){ box.classList.remove('err'); });
+    var mt = document.getElementById('msgToggle'), msg = document.getElementById('lf-msg'); mt.addEventListener('click', function(){ msg.hidden = false; mt.hidden = true; msg.focus(); });
+    form.addEventListener('submit', function(e){
+      e.preventDefault();
+      var err = document.getElementById('leadError'), btn = document.getElementById('leadSubmit'); err.classList.remove('show');
+      var name = form.name.value.trim(), email = form.email.value.trim(), phone = form.phone.value.trim();
+      if (!name || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { err.textContent = en() ? 'Please enter your name and a valid email address.' : 'Bitte gib deinen Namen und eine gültige E-Mail-Adresse an.'; err.classList.add('show'); return; }
+      if (method !== 'email' && !phone) { err.textContent = en() ? 'Please enter your phone number for this contact method.' : 'Bitte gib deine Telefonnummer für diesen Kontaktweg an.'; err.classList.add('show'); return; }
+      if (!document.getElementById('lf-consent').checked) { box.classList.add('err'); err.textContent = en() ? 'Please confirm the consent so I may receive your answers.' : 'Bitte bestätige die Einwilligung, damit ich deine Antworten erhalten darf.'; err.classList.add('show'); return; }
+      btn.disabled = true; btn.textContent = en() ? 'Sending …' : 'Wird gesendet …';
+      fetch(form.action, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: JSON.stringify(payload(name, email, phone, method)) })
+        .then(function(r){ if (!r.ok) throw new Error('bad'); S.sent = true; save(); go(S.step + 1); })
+        .catch(function(){ btn.disabled = false; btn.textContent = en() ? 'Request consultation' : 'Beratung anfragen'; err.textContent = en() ? 'That did not work. Please try again in a moment.' : 'Das hat nicht geklappt. Bitte versuch es gleich nochmal.'; err.classList.add('show'); });
+    });
+  }
+  /* Alle Werte als Strings */
+  function payload(name, email, phone, method){
+    var R = evalResult(), o = CFG.owner, ty = TYPES[CFG.dims[R.best].id];
+    var word = function(v){ var s = SCALE[v]; return s ? s.de : '–'; };
+    var body = {
+      _recipient: o.recipient, _honeypot: document.querySelector('#leadForm [name=_honeypot]').value,
+      name: name, email: email, phone: phone, kontakt_weg: method,
+      interesse: S.interests.map(function(id){ return labelOf(CFG.interests, id); }).join(', '),
+      nachricht: document.getElementById('lf-msg').value.trim(),
+      vitaltyp: ty.name.de, vitallevel: R.lv.name.de + ' (' + R.pct + ' %)',
+      staerke: CFG.dims[R.best].name.de, hebel: CFG.dims[R.worst].name.de,
+      wuensche: S.wishes.map(function(id){ return labelOf(CFG.wishes, id); }).join(', '),
+      antriebsmotive: S.motives.map(function(id){ return labelOf(CFG.motives, id); }).join(', '),
+      investition_pro_tag: labelOf(CFG.invest, S.invest),
+      sprache: en() ? 'EN' : 'DE',
+      dsgvo_einwilligung: 'ja, ' + new Date().toISOString().replace('T', ' ').substring(0, 16) + ' UTC'
+    };
+    CFG.dims.forEach(function(d, di){ body['score_' + d.id] = R.sc[di] + '/16'; body['antworten_' + d.id] = d.q.map(function(q, qi){ var v = S.answers[di + ':' + qi]; return q.label.de + ': ' + (v === undefined ? '–' : word(v)); }).join(' · '); });
+    return body;
+  }
+
+  if (S.sent) { S = fresh(); save(); }
+  render();
+  return { render: render };
+})();
+</script>
+
+<!-- ============ COOKIE-CONSENT (identisch zu den anderen FinestSites-Templates, nicht blockierend) ============ -->
+<style id="fs-cookie-css">
+  #fs-ck-wrap {
+    position: fixed; inset: 0; z-index: 99999;
+    display: flex; align-items: flex-end; justify-content: center;
+    padding: 24px;
+    pointer-events: none;
+  }
+  #fs-ck-wrap.fs-ck-open { pointer-events: none; }
+  #fs-ck-wrap.fs-ck-open #fs-ck-banner { pointer-events: auto; }
+
+  #fs-ck-banner {
+    background: rgba(29, 36, 25, 0.96);
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 22px;
+    box-shadow:
+      0 20px 60px rgba(0, 0, 0, 0.45),
+      0 0 0 1px rgba(255, 255, 255, 0.04) inset;
+    max-width: 560px;
+    width: 100%;
+    padding: 28px 30px 24px;
+    transform: translateY(140%);
+    opacity: 0;
+    transition: transform 0.5s cubic-bezier(0.22, 1.2, 0.36, 1), opacity 0.35s ease;
+    will-change: transform, opacity;
+    color: #fff;
+  }
+  #fs-ck-banner.fs-ck-visible { transform: translateY(0); opacity: 1; }
+
+  .fs-ck-header { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+  .fs-ck-icon {
+    width: 36px; height: 36px;
+    background: color-mix(in oklab, var(--green) 25%, transparent);
+    border-radius: 50%;
+    display: grid; place-items: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+  .fs-ck-title { font-size: 16px; font-weight: 700; margin: 0; letter-spacing: -0.01em; }
+
+  .fs-ck-body {
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.72);
+    margin: 0 0 20px;
+  }
+  .fs-ck-body a {
+    color: color-mix(in oklab, var(--green) 60%, white 40%);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .fs-ck-body a:hover { color: #fff; }
+
+  .fs-ck-cats { display: none; margin-bottom: 20px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 14px; }
+  .fs-ck-cats.fs-ck-cats-open { display: block; }
+  .fs-ck-cat {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .fs-ck-cat:last-child { border-bottom: none; }
+  .fs-ck-cat-info { flex: 1; min-width: 0; margin-right: 16px; }
+  .fs-ck-cat-name { font-size: 13px; font-weight: 600; display: block; color: #fff; }
+  .fs-ck-cat-desc { font-size: 12px; color: rgba(255,255,255,0.55); display: block; margin-top: 2px; line-height: 1.45; }
+
+  .fs-ck-toggle { position: relative; width: 42px; height: 24px; flex-shrink: 0; display: block; }
+  .fs-ck-toggle input { opacity: 0; width: 0; height: 0; position: absolute; }
+  .fs-ck-slider {
+    position: absolute; inset: 0;
+    background: rgba(255,255,255,0.16);
+    border-radius: 9999px;
+    cursor: pointer;
+    transition: background 0.22s;
+  }
+  .fs-ck-slider::after {
+    content: '';
+    position: absolute;
+    left: 3px; top: 3px;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: #fff;
+    transition: transform 0.24s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.35);
+  }
+  .fs-ck-toggle input:checked + .fs-ck-slider { background: var(--green); }
+  .fs-ck-toggle input:checked + .fs-ck-slider::after { transform: translateX(18px); }
+  .fs-ck-toggle input:disabled + .fs-ck-slider { opacity: 0.6; cursor: not-allowed; }
+
+  .fs-ck-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    align-items: stretch;
+  }
+  .fs-ck-btn {
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 12px 18px;
+    border-radius: 9999px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    line-height: 1.1;
+  }
+  /* Reject und Accept haben gleiche Größe & Position → DSGVO Art. 7 */
+  .fs-ck-btn-reject {
+    background: rgba(255,255,255,0.1);
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.18);
+  }
+  .fs-ck-btn-reject:hover { background: rgba(255,255,255,0.16); }
+  .fs-ck-btn-accept {
+    background: var(--green);
+    color: #fff;
+    box-shadow: 0 2px 14px color-mix(in oklab, var(--green) 55%, transparent);
+  }
+  .fs-ck-btn-accept:hover { filter: brightness(1.08); transform: translateY(-1px); }
+  .fs-ck-settings-link {
+    grid-column: 1 / -1;
+    font-size: 12.5px;
+    color: rgba(255,255,255,0.55);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px 6px;
+    font-family: inherit;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    justify-self: center;
+    transition: color 0.15s;
+    margin-top: 2px;
+  }
+  .fs-ck-settings-link:hover { color: rgba(255,255,255,0.85); }
+
+  #fs-ck-reopener {
+    position: fixed;
+    bottom: 18px; left: 18px;
+    z-index: 9998;
+    width: 42px; height: 42px;
+    border-radius: 50%;
+    background: rgba(29, 36, 25, 0.92);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid color-mix(in oklab, var(--green) 40%, transparent);
+    cursor: pointer;
+    display: none;
+    align-items: center; justify-content: center;
+    font-size: 18px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.35);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    padding: 0;
+  }
+  #fs-ck-reopener:hover { transform: scale(1.08); }
+
+  @media (max-width: 520px) {
+    #fs-ck-wrap { padding: 12px; }
+    #fs-ck-banner { padding: 22px 20px 20px; border-radius: 20px; }
+    .fs-ck-btn { padding: 12px 12px; font-size: 13.5px; }
+  }
+</style>
+
+<div id="fs-ck-wrap">
+  <div id="fs-ck-banner" role="dialog" aria-modal="false" aria-labelledby="fs-ck-title" tabindex="-1">
+    <div class="fs-ck-header">
+      <div class="fs-ck-icon" aria-hidden="true">🍪</div>
+      <p class="fs-ck-title" id="fs-ck-title"><span class="l-de">Deine Privatsphäre</span><span class="l-en">Your privacy</span></p>
+    </div>
+    <p class="fs-ck-body">
+      <span class="l-de">Wir setzen nur technisch notwendige Cookies, damit die Seite funktioniert. Für Statistiken oder Marketing brauchen wir deine Einwilligung — du kannst frei wählen. Details in unserer <a href="/datenschutz" target="_blank" rel="noopener">Datenschutzerklärung</a>.</span><span class="l-en">We only set essential cookies to make the site work. For statistics or marketing we need your consent — your choice. Details in our <a href="/datenschutz" target="_blank" rel="noopener">privacy policy</a>.</span>
+    </p>
+
+    <div class="fs-ck-cats" id="fs-ck-cats">
+      <div class="fs-ck-cat">
+        <div class="fs-ck-cat-info">
+          <span class="fs-ck-cat-name"><span class="l-de">Technisch notwendig</span><span class="l-en">Essential</span></span>
+          <span class="fs-ck-cat-desc"><span class="l-de">Grundfunktionen wie Sprachwahl und Kontaktformular — immer aktiv.</span><span class="l-en">Basic functions like language choice and contact form — always on.</span></span>
+        </div>
+        <label class="fs-ck-toggle" aria-label="Technisch notwendig (immer aktiv)">
+          <input type="checkbox" checked disabled>
+          <span class="fs-ck-slider"></span>
+        </label>
+      </div>
+      <div class="fs-ck-cat">
+        <div class="fs-ck-cat-info">
+          <span class="fs-ck-cat-name"><span class="l-de">Statistik</span><span class="l-en">Statistics</span></span>
+          <span class="fs-ck-cat-desc"><span class="l-de">Anonyme Auswertung, wie Besucher die Seite nutzen (z.&nbsp;B. Aufrufe, Verweildauer).</span><span class="l-en">Anonymous analytics on how visitors use the site (e.g. pageviews, time on page).</span></span>
+        </div>
+        <label class="fs-ck-toggle" aria-label="Statistik-Cookies erlauben">
+          <input type="checkbox" id="fs-ck-chk-stats">
+          <span class="fs-ck-slider"></span>
+        </label>
+      </div>
+      <div class="fs-ck-cat">
+        <div class="fs-ck-cat-info">
+          <span class="fs-ck-cat-name">Marketing</span>
+          <span class="fs-ck-cat-desc"><span class="l-de">Für personalisierte Werbung und Retargeting (z.&nbsp;B. Meta Pixel).</span><span class="l-en">Personalized ads and retargeting (e.g. Meta Pixel).</span></span>
+        </div>
+        <label class="fs-ck-toggle" aria-label="Marketing-Cookies erlauben">
+          <input type="checkbox" id="fs-ck-chk-mkt">
+          <span class="fs-ck-slider"></span>
+        </label>
+      </div>
+    </div>
+
+    <div class="fs-ck-actions">
+      <button class="fs-ck-btn fs-ck-btn-reject" id="fs-ck-reject" type="button"><span class="l-de">Alles ablehnen</span><span class="l-en">Reject all</span></button>
+      <button class="fs-ck-btn fs-ck-btn-accept" id="fs-ck-accept" type="button"><span class="l-de">Alles akzeptieren</span><span class="l-en">Accept all</span></button>
+      <button class="fs-ck-settings-link" id="fs-ck-settings-btn" type="button"><span class="l-de">Einstellungen anpassen ›</span><span class="l-en">Adjust settings ›</span></button>
+    </div>
+  </div>
+</div>
+
+<button id="fs-ck-reopener" type="button" aria-label="Cookie-Einstellungen öffnen" title="Cookie-Einstellungen">🍪</button>
+
+<script id="fs-cookie-js">(function() {
+  'use strict';
+  var KEY = 'fs_consent_v1';
+  var wrap = document.getElementById('fs-ck-wrap');
+  var banner = document.getElementById('fs-ck-banner');
+  var cats = document.getElementById('fs-ck-cats');
+  var reopener = document.getElementById('fs-ck-reopener');
+  var chkStats = document.getElementById('fs-ck-chk-stats');
+  var chkMkt = document.getElementById('fs-ck-chk-mkt');
+  var settingsBtn = document.getElementById('fs-ck-settings-btn');
+  var settingsOpen = false;
+
+  function loadConsent() {
+    try { return JSON.parse(localStorage.getItem(KEY) || 'null'); } catch(e) { return null; }
+  }
+  function saveConsent(stats, mkt) {
+    var c = {
+      v: 1,
+      ts: new Date().toISOString(),
+      necessary: true,
+      statistics: !!stats,
+      marketing: !!mkt
+    };
+    try { localStorage.setItem(KEY, JSON.stringify(c)); } catch(e) {}
+    window.dispatchEvent(new CustomEvent('fs:consent', { detail: c }));
+    return c;
+  }
+  // Globaler Getter für spätere Analytics-/Pixel-Skripte
+  window.fsConsent = function() { return loadConsent(); };
+
+  function showReopener() { reopener.style.display = 'flex'; }
+  function hideReopener() { reopener.style.display = 'none'; }
+
+  function hideBanner() {
+    banner.classList.remove('fs-ck-visible');
+    setTimeout(function() { wrap.classList.remove('fs-ck-open'); }, 520);
+    showReopener();
+  }
+  function showBanner() {
+    wrap.classList.add('fs-ck-open');
+    hideReopener();
+    requestAnimationFrame(function() {
+      requestAnimationFrame(function() {
+        banner.classList.add('fs-ck-visible');
+      });
+    });
+  }
+  function setSettingsOpen(open) {
+    settingsOpen = open;
+    if (open) {
+      cats.classList.add('fs-ck-cats-open');
+      settingsBtn.innerHTML = '<span class="l-de">Auswahl speichern ›</span><span class="l-en">Save selection ›</span>';
+    } else {
+      cats.classList.remove('fs-ck-cats-open');
+      settingsBtn.innerHTML = '<span class="l-de">Einstellungen anpassen ›</span><span class="l-en">Adjust settings ›</span>';
+    }
+    // Sprachschalter neu anwenden (l-de/l-en toggle nach DOM-Änderung)
+    document.documentElement.getAttribute('data-lang'); // no-op, aber CSS greift automatisch
+  }
+
+  document.getElementById('fs-ck-accept').addEventListener('click', function() {
+    chkStats.checked = true; chkMkt.checked = true;
+    saveConsent(true, true);
+    hideBanner();
+  });
+  document.getElementById('fs-ck-reject').addEventListener('click', function() {
+    chkStats.checked = false; chkMkt.checked = false;
+    saveConsent(false, false);
+    hideBanner();
+  });
+  settingsBtn.addEventListener('click', function() {
+    if (!settingsOpen) {
+      setSettingsOpen(true);
+    } else {
+      saveConsent(chkStats.checked, chkMkt.checked);
+      hideBanner();
+      setSettingsOpen(false);
+    }
+  });
+  reopener.addEventListener('click', function() {
+    var c = loadConsent();
+    if (c) { chkStats.checked = !!c.statistics; chkMkt.checked = !!c.marketing; }
+    setSettingsOpen(false);
+    showBanner();
+  });
+
+  var existing = loadConsent();
+  if (!existing) {
+    // Kleine Verzögerung — Seite malt zuerst, Banner slidet dann ein
+    setTimeout(showBanner, 900);
+  } else {
+    showReopener();
+    // Bestehende Einwilligung erneut broadcasten (falls andere Scripts erst später laden)
+    setTimeout(function() {
+      window.dispatchEvent(new CustomEvent('fs:consent', { detail: existing }));
+    }, 0);
+  }
+})();</script>
+
+
+</body>
+</html>
