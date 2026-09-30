@@ -184,24 +184,24 @@
     {
       "key": "frage_investition",
       "type": "card_select",
-      "label": "Frage „Wie viel würdest du täglich investieren?\" stellen?",
+      "label": "Frage „Was ist dir dein Wohlbefinden pro Tag wert?“ stellen?",
       "section": "Check anpassen",
       "order": 16,
       "required": true,
-      "default_value": "aus",
-      "preview_value": "aus",
+      "default_value": "an",
+      "preview_value": "an",
       "display_mode": "section_toggle",
       "toggle_on_value": "an",
       "toggle_off_value": "aus",
       "preview_interactive": true,
-      "placeholder_text": "Letzte Frage vor dem Ergebnis: bis 3 €, 3 bis 5 €, mehr als 5 € am Tag oder „weiß ich noch nicht“. Standard: aus. Empfehlung aus der Rechtsprüfung: ausgeschaltet lassen, weil die Frage den Eindruck verstärkt, dass die Auswertung in einen Produktkauf münden soll. Wenn du sie einschaltest, bleibt sie für Besucher überspringbar.",
+      "placeholder_text": "Letzte Frage vor dem Ergebnis, mit Alltagsvergleichen (Kaffee, Coffee to go, Mittagssnack). Hilft dir einzuschätzen, welcher Umfang zum Budget der Person passt. Standard: an. Für Besucher überspringbar.",
       "card_options": [
         {
           "value": "an",
           "label": "Stellen",
           "card_type": "color",
           "color": "#DDF2EA",
-          "description": "Die Frage nach Zeit/Geld pro Tag ist Teil des Checks."
+          "description": "Die Frage nach dem Tagesbudget ist Teil des Checks."
         },
         {
           "value": "aus",
@@ -221,6 +221,6 @@
     "whatsapp_nummer": "",
     "farbthema": "mint",
     "frage_motive": "an",
-    "frage_investition": "aus"
+    "frage_investition": "an"
   }
 }

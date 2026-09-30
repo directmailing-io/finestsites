@@ -604,10 +604,11 @@ var CFG = {
     { id: 'finanzen', de: 'Finanzielle Unabhängigkeit', en: 'Financial independence' }
   ],
   invest: [
-    { id: 'bis3', de: 'Bis 3 € am Tag', en: 'Up to €3 a day' },
-    { id: '3bis5', de: '3 bis 5 € am Tag', en: '€3 to €5 a day' },
-    { id: 'ueber5', de: 'Mehr als 5 € am Tag', en: 'More than €5 a day' },
-    { id: 'offen', de: 'Weiß ich noch nicht', en: "I don't know yet" }
+    { id: 'ca2', de: 'Etwa 2 € am Tag', en: 'About €2 a day', hint: { de: 'ein Kaffee', en: 'a coffee' } },
+    { id: 'ca3bis4', de: 'Etwa 3 bis 4 € am Tag', en: 'About €3 to €4 a day', hint: { de: 'ein Coffee to go', en: 'a coffee to go' } },
+    { id: 'ca5', de: 'Etwa 5 € am Tag', en: 'About €5 a day', hint: { de: 'ein Mittagssnack', en: 'a lunch snack' } },
+    { id: 'ueber5', de: 'Mehr als 5 € am Tag', en: 'More than €5 a day', hint: { de: 'ein Mittagessen', en: 'a lunch' } },
+    { id: 'offen', de: 'Weiß ich noch nicht', en: "I don't know yet", hint: null }
   ],
   interests: [
     { id: 'tipps', de: 'Tipps für meinen Alltag', en: 'Tips for my everyday life' },
@@ -648,11 +649,12 @@ var INSIGHT = {
 
 /* Vital-Typ nach stärkstem Bereich */
 var TYPES = {
-  ernaehrung: { traits: { de: ['Frisches im Alltag', 'Genug getrunken', 'Feste Mahlzeiten'], en: ['Fresh food daily', 'Well hydrated', 'Regular meals'] }, name: { de: 'Der Genießer-Typ', en: 'The Nourisher' }, desc: { de: 'Ernährung und Trinken sind bei dir keine Baustelle, sondern Routine. Das ist die stabilste Basis, die man im Alltag haben kann.', en: 'Food and hydration are not a construction site for you but a routine. That is the most stable base you can have in everyday life.' } },
-  tag: { traits: { de: ['Feste Pausen', 'Frische Luft', 'Klarer Feierabend'], en: ['Fixed breaks', 'Fresh air', 'Clear end of day'] }, name: { de: 'Der Taktgeber-Typ', en: 'The Pacer' }, desc: { de: 'Dein Tag hat Struktur, Pausen und ein Ende. Das gibt dir gleichmäßige Energie, wo andere im Dauerbetrieb laufen.', en: 'Your day has structure, breaks and an end. That gives you steady energy where others run non-stop.' } },
-  schlaf: { traits: { de: ['Feste Schlafzeiten', 'Abende ohne Bildschirm', 'Kann abschalten'], en: ['Fixed bedtimes', 'Screen-free evenings', 'Can switch off'] }, name: { de: 'Der Nachtruhe-Typ', en: 'The Rester' }, desc: { de: 'Du weißt, wie man abschaltet. Feste Zeiten und ruhige Abende sind deine Stärke, und davon zehrt der ganze nächste Tag.', en: 'You know how to switch off. Fixed times and calm evenings are your strength, and the whole next day draws on that.' } },
-  bewegung: { traits: { de: ['Täglich in Bewegung', 'Sport ist Routine', 'Treppe statt Aufzug'], en: ['Moves every day', 'Sport is routine', 'Stairs over lift'] }, name: { de: 'Der Beweger-Typ', en: 'The Mover' }, desc: { de: 'Bewegung ist bei dir selbstverständlich, im Sport und im Alltag. Dein Motor läuft, jetzt geht es um das Drumherum.', en: 'Movement comes naturally to you, in sport and everyday life. Your engine is running, now it is about everything around it.' } },
-  ausgleich: { traits: { de: ['Tageslicht täglich', 'Zeit ohne Handy', 'Zeit für Menschen'], en: ['Daylight daily', 'Time off screen', 'Time for people'] }, name: { de: 'Der Ausgleichs-Typ', en: 'The Balancer' }, desc: { de: 'Tageslicht, Pausen, Zeit für Menschen: Du hältst die Balance. Das ist selten und wertvoll.', en: 'Daylight, breaks, time for people: you keep the balance. That is rare and valuable.' } }
+  aufbruch: { traits: { de: ['Ehrlich geantwortet', 'Viel Spielraum', 'Erster Schritt zählt'], en: ['Answered honestly', 'Lots of room', 'First step counts'] }, name: { de: 'Der Aufbruch-Typ', en: 'The Starter' }, desc: { de: 'Noch ist keiner deiner fünf Bereiche fest im Alltag verankert. Das ist kein Urteil, sondern ein Ausgangspunkt: Bei dir bringt jeder kleine Schritt spürbar am meisten.', en: 'None of your five areas is firmly anchored in your routine yet. That is not a verdict but a starting point: for you, every small step moves the most.' } },
+  ernaehrung: { traits: { de: ['Frisches im Alltag', 'Genug getrunken', 'Feste Mahlzeiten'], en: ['Fresh food daily', 'Well hydrated', 'Regular meals'] }, name: { de: 'Der Genießer-Typ', en: 'The Nourisher' }, desc2: { de: 'Ernährung und Trinken sind dein stärkster Bereich. Hier hast du schon Routinen, auf denen sich aufbauen lässt.', en: 'Food and hydration are your strongest area. You already have routines here to build on.' }, desc: { de: 'Ernährung und Trinken sind bei dir keine Baustelle, sondern Routine. Das ist die stabilste Basis, die man im Alltag haben kann.', en: 'Food and hydration are not a construction site for you but a routine. That is the most stable base you can have in everyday life.' } },
+  tag: { traits: { de: ['Feste Pausen', 'Frische Luft', 'Klarer Feierabend'], en: ['Fixed breaks', 'Fresh air', 'Clear end of day'] }, name: { de: 'Der Taktgeber-Typ', en: 'The Pacer' }, desc2: { de: 'Tagesstruktur ist dein stärkster Bereich. Pausen und ein Ende des Arbeitstags sind bei dir zumindest angelegt.', en: 'Daily structure is your strongest area. Breaks and an end to the workday are at least in place for you.' }, desc: { de: 'Dein Tag hat Struktur, Pausen und ein Ende. Das gibt dir gleichmäßige Energie, wo andere im Dauerbetrieb laufen.', en: 'Your day has structure, breaks and an end. That gives you steady energy where others run non-stop.' } },
+  schlaf: { traits: { de: ['Feste Schlafzeiten', 'Abende ohne Bildschirm', 'Kann abschalten'], en: ['Fixed bedtimes', 'Screen-free evenings', 'Can switch off'] }, name: { de: 'Der Nachtruhe-Typ', en: 'The Rester' }, desc2: { de: 'Schlaf und Abschalten sind dein stärkster Bereich. Feste Zeiten und ruhige Abende gelingen dir öfter als der Rest.', en: 'Sleep and winding down are your strongest area. Fixed times and calm evenings work out for you more often than the rest.' }, desc: { de: 'Du weißt, wie man abschaltet. Feste Zeiten und ruhige Abende sind deine Stärke, und davon zehrt der ganze nächste Tag.', en: 'You know how to switch off. Fixed times and calm evenings are your strength, and the whole next day draws on that.' } },
+  bewegung: { traits: { de: ['Täglich in Bewegung', 'Sport ist Routine', 'Treppe statt Aufzug'], en: ['Moves every day', 'Sport is routine', 'Stairs over lift'] }, name: { de: 'Der Beweger-Typ', en: 'The Mover' }, desc2: { de: 'Bewegung ist dein stärkster Bereich. Du bist in Bewegung, auch wenn es noch nicht jede Woche gleich klappt.', en: 'Movement is your strongest area. You do move, even if it does not work out every week yet.' }, desc: { de: 'Bewegung ist bei dir selbstverständlich, im Sport und im Alltag. Dein Motor läuft, jetzt geht es um das Drumherum.', en: 'Movement comes naturally to you, in sport and everyday life. Your engine is running, now it is about everything around it.' } },
+  ausgleich: { traits: { de: ['Tageslicht täglich', 'Zeit ohne Handy', 'Zeit für Menschen'], en: ['Daylight daily', 'Time off screen', 'Time for people'] }, name: { de: 'Der Ausgleichs-Typ', en: 'The Balancer' }, desc2: { de: 'Ausgleich ist dein stärkster Bereich. Tageslicht und Zeit für dich bekommst du öfter unter als vieles andere.', en: 'Balance is your strongest area. You manage daylight and time for yourself more often than much else.' }, desc: { de: 'Tageslicht, Pausen, Zeit für Menschen: Du hältst die Balance. Das ist selten und wertvoll.', en: 'Daylight, breaks, time for people: you keep the balance. That is rare and valuable.' } }
 };
 /* Dein Tag auf einen Blick: Uhrzeit → Aussage (Bereich:Frage) */
 var DAY = [
@@ -688,6 +690,7 @@ var VC = (function(){
   function answeredCount(){ return Object.keys(S.answers).length; }
   function scores(){ return CFG.dims.map(function(d, di){ var s = 0; d.q.forEach(function(q, qi){ var v = S.answers[di + ':' + qi]; if (v !== undefined) s += v; }); return s; }); }  /* max 16 je Bereich */
   function ratios(){ return scores().map(function(s){ return s / 16; }); }
+  function typeOf(R){ var best = CFG.dims[R.best], sc = R.sc[R.best]; if (sc < 8) return { key: 'aufbruch', ty: TYPES.aufbruch, color: getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#2FA877', desc: t(TYPES.aufbruch.desc) }; var ty = TYPES[best.id]; return { key: best.id, ty: ty, color: best.color, desc: sc >= 12 ? t(ty.desc) : t(ty.desc2 || ty.desc) }; }
   function evalResult(){
     var sc = scores(), sum = sc.reduce(function(a,b){ return a+b; }, 0), pct = Math.round(sum / 80 * 100);
     var lv = CFG.levels.filter(function(l){ return sum <= l.max * 2; })[0] || CFG.levels[4];
@@ -760,8 +763,8 @@ var VC = (function(){
       '<div class="btnrow"><button type="button" class="btn btn-primary btn-wide" data-next ' + (S.motives.length ? '' : 'disabled') + '>' + (en() ? 'Continue' : 'Weiter') + '</button><button type="button" class="skip" data-skip>' + (en() ? 'Skip' : 'Überspringen') + '</button></div>';
   }
   function vInvest(){
-    return '<div class="pagehead"><h1>' + (en() ? 'How much time or money would you invest in your wellbeing per day?' : 'Wie viel Zeit oder Geld würdest du täglich in dein Wohlbefinden investieren?') + '</h1><p>' + (en() ? 'Just a gut feeling. Optional.' : 'Nur ein Bauchgefühl. Optional.') + '</p></div>' +
-      '<div class="card left"><div class="chips" style="justify-content:flex-start">' + CFG.invest.map(function(m){ return chip('invest', m.id, t(m), S.invest === m.id); }).join('') + '</div></div>' +
+    return '<div class="pagehead"><div class="area-tag">' + (en() ? 'Almost done · one last question' : 'Fast geschafft · eine letzte Frage') + '</div><h1>' + (en() ? 'What is your wellbeing worth to you per day?' : 'Was ist dir dein Wohlbefinden pro Tag wert?') + '</h1><p>' + (en() ? 'Just a gut feeling. It helps me to advise you in a way that fits your everyday life and your budget.' : 'Nur ein Bauchgefühl. Es hilft mir, dich so zu beraten, dass es zu deinem Alltag und deinem Budget passt.') + '</p></div>' +
+      '<div class="card left"><div class="chips" style="justify-content:flex-start">' + CFG.invest.map(function(m){ return '<button type="button" class="chip' + (S.invest === m.id ? ' on' : '') + '" data-invest="' + m.id + '"><span class="chk">' + ICO.check + '</span>' + esc(t(m)) + (m.hint ? ' <span style="color:var(--ink-3);font-weight:400">· ' + esc(t(m.hint)) + '</span>' : '') + '</button>'; }).join('') + '</div><p style="margin:14px 0 0;font-size:13.5px;color:var(--ink-3)">' + (en() ? 'For comparison: a coffee to go is about €3.50, a lunch out about €12.' : 'Zum Vergleich: Ein Coffee to go kostet etwa 3,50 €, ein Mittagessen unterwegs etwa 12 €.') + '</p></div>' +
       '<div class="btnrow"><button type="button" class="btn btn-primary btn-wide" data-next ' + (S.invest ? '' : 'disabled') + '>' + (en() ? 'Show my profile' : 'Mein Profil anzeigen') + '</button><button type="button" class="skip" data-skip>' + (en() ? 'Skip' : 'Überspringen') + '</button></div>';
   }
   function vReveal(){
@@ -772,8 +775,9 @@ var VC = (function(){
     return '<svg class="badge" viewBox="0 0 128 128"><defs><radialGradient id="g" cx="35%" cy="30%" r="80%"><stop offset="0" stop-color="#fff" stop-opacity="0.55"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient></defs><circle cx="64" cy="64" r="60" fill="' + color + '"/><circle cx="64" cy="64" r="60" fill="url(#g)"/><polygon points="64,30 92,50 82,88 46,88 36,50" fill="none" stroke="#fff" stroke-width="4" stroke-linejoin="round" opacity="0.9"/><circle cx="64" cy="64" r="8" fill="#fff"/></svg>';
   }
   function vResult(){
-    var R = evalResult(), o = CFG.owner, bestD = CFG.dims[R.best], worstD = CFG.dims[R.worst], ty = TYPES[bestD.id];
+    var R = evalResult(), o = CFG.owner, bestD = CFG.dims[R.best], worstD = CFG.dims[R.worst], TY = typeOf(R), ty = TY.ty;
     var wishes = S.wishes.map(function(id){ var w = CFG.wishes.filter(function(x){ return x.id === id; })[0]; return w ? t(w) : ''; }).filter(Boolean);
+    var motive = S.motives.length ? (function(){ var m = CFG.motives.filter(function(x){ return x.id === S.motives[0]; })[0]; return m ? t(m) : ''; })() : '';
     function lowQs(di){ return CFG.dims[di].q.map(function(q, qi){ return { q: q, v: S.answers[di + ':' + qi] === undefined ? 4 : S.answers[di + ':' + qi] }; }).sort(function(a, b){ return a.v - b.v; }); }
     var lw = lowQs(R.worst), ls = lowQs(R.second);
     var tips = [{ tp: worstD.tips[0], di: R.worst, ref: lw[0] }, { tp: worstD.tips[1], di: R.worst, ref: lw[1] }, { tp: CFG.dims[R.second].tips[0], di: R.second, ref: ls[0] }];
@@ -785,14 +789,15 @@ var VC = (function(){
         '<div class="k">' + (en() ? 'Your next step' : 'Dein nächster Schritt') + '</div>' +
         '<h2>' + (en() ? 'A personal consultation on your profile.' : 'Eine persönliche Beratung zu deinem Profil.') + '</h2>' +
         '<div class="personal">' + (en() ? 'You are <b>' + esc(t(ty.name)) + '</b>, your biggest lever is <b>' + esc(t(worstD.name)) + '</b>' + (wishes.length ? ' and your wish is <b>' + esc(wishes[0]) + '</b>' : '') + '. That is exactly where we start.' : 'Du bist <b>' + esc(t(ty.name)) + '</b>, dein größter Hebel ist <b>' + esc(t(worstD.name)) + '</b>' + (wishes.length ? ' und dein Wunsch ist <b>' + esc(wishes[0]) + '</b>' : '') + '. Genau da setzen wir an.') + '</div>' +
-        '<p class="body">' + (en() ? 'Together we look at your profile and check whether the nutrient concept I work with fits you and your everyday life. Personally, by phone or WhatsApp, whenever it suits you.' : 'Wir schauen gemeinsam auf dein Profil und prüfen, ob das Nährstoff-Konzept, mit dem ich arbeite, zu dir und deinem Alltag passt. Persönlich, per Telefon oder WhatsApp, wann es dir passt.') + '</p>' +
+        (motive ? '<p class="body" style="margin-bottom:10px">' + (en() ? 'You said <b>' + esc(motive) + '</b> is what drives you. That is a good reason to tackle your habits now, not someday.' : 'Du hast gesagt, <b>' + esc(motive) + '</b> treibt dich an. Das ist ein guter Grund, deine Gewohnheiten jetzt anzugehen und nicht irgendwann.') + '</p>' : '') +
+        '<p class="body">' + (en() ? 'I work with the FitLine concept by PM-International. Together we look at your profile and check whether and how the concept can be integrated into your everyday life: into your routines, your day and your budget. Personally, by phone or WhatsApp, whenever it suits you.' : 'Ich arbeite mit dem FitLine-Konzept von PM-International. Wir schauen gemeinsam auf dein Profil und prüfen, ob und wie sich das Konzept in deinen Alltag integrieren lässt: in deine Gewohnheiten, deinen Tag und dein Budget. Persönlich, per Telefon oder WhatsApp, wann es dir passt.') + '</p>' +
         '<div class="guarantee"><i>' + ICO.check + '</i><span><b>' + (en() ? 'No risk for you.' : 'Du trägst kein Risiko.') + '</b> ' + (en() ? 'Even if you decide to go for it afterwards, you have a 30-day satisfaction guarantee.' : 'Selbst wenn du dich im Anschluss dafür entscheidest, hast du eine 30-tägige Zufriedenheitsgarantie.') + '</span></div>' +
         '<button type="button" class="btn btn-accent" data-lead>' + (en() ? 'Request personal consultation' : 'Persönliche Beratung anfragen') + '</button>' +
         '<div class="fine">' + (en() ? 'Free and non-binding · no newsletter · you decide' : 'Kostenlos und unverbindlich · kein Newsletter · du entscheidest') + '</div></div>';
     }
     var html = '<div class="res">' +
-      '<div class="typecard" style="--tc:' + bestD.color + '"><div class="lbl">' + (en() ? 'Your vitality type' : 'Dein Vital-Typ') + '</div>' + badgeSvg('#fff').replace('fill="#fff"', 'fill="' + bestD.color + '"') +
-      '<h1>' + esc(t(ty.name)) + '</h1><p class="desc">' + esc(t(ty.desc)) + '</p>' +
+      '<div class="typecard" style="--tc:' + TY.color + '"><div class="lbl">' + (en() ? 'Your vitality type' : 'Dein Vital-Typ') + '</div>' + badgeSvg('#fff').replace('fill="#fff"', 'fill="' + TY.color + '"') +
+      '<h1>' + esc(t(ty.name)) + '</h1><p class="desc">' + esc(TY.desc) + '</p>' +
       '<div class="traits">' + t(ty.traits).map(function(x){ return '<span>' + esc(x) + '</span>'; }).join('') + '</div>' +
       '<div class="stats"><div class="stat"><small>' + (en() ? 'Vitality level' : 'Vitallevel') + '</small><b>' + esc(t(R.lv.name)) + ' · ' + R.pct + ' %</b></div><div class="stat"><small>' + (en() ? 'Biggest lever' : 'Größter Hebel') + '</small><b>' + esc(t(worstD.name)) + '</b></div></div>' +
       '<div class="actions"><button type="button" class="btn btn-white" data-lead>' + (en() ? 'Request consultation' : 'Beratung anfragen') + '</button><button type="button" class="btn btn-glass" data-story>' + ICO.save + (en() ? 'Save as story' : 'Als Story speichern') + '</button></div>' +
@@ -809,7 +814,7 @@ var VC = (function(){
     return html;
   }
   function vLead(){
-    var R = evalResult(), o = CFG.owner, ty = TYPES[CFG.dims[R.best].id];
+    var R = evalResult(), o = CFG.owner, ty = typeOf(R).ty;
     var wl = S.wishes.map(function(id){ var w = CFG.wishes.filter(function(x){ return x.id === id; })[0]; return w ? t(w) : ''; }).filter(Boolean).join(', ');
     return '<div class="card left lead"><h2>' + (en() ? 'Request your consultation with ' + esc(o.vorname) + '.' : 'Deine Beratung mit ' + esc(o.vorname) + ' anfragen.') + '</h2><p class="sub">' + (en() ? 'Your profile goes to ' + esc(o.vorname) + ' together with your contact details. You will hear back personally.' : 'Dein Profil geht zusammen mit deinen Kontaktdaten an ' + esc(o.vorname) + '. Du bekommst eine persönliche Antwort.') + '</p>' +
       '<div class="sendbox"><div><div class="k">' + (en() ? 'Profile' : 'Profil') + '</div><div class="v">' + esc(t(ty.name)) + ' · ' + R.pct + ' %</div></div><div><div class="k">' + (en() ? 'Biggest lever' : 'Größter Hebel') + '</div><div class="v">' + esc(t(CFG.dims[R.worst].name)) + '</div></div><div class="full">' + (en() ? 'Included: your 20 answers, your strength (' : 'Enthalten: deine 20 Antworten, deine Stärke (') + esc(t(CFG.dims[R.best].short)) + ')' + (wl ? (en() ? ' and your wishes: ' : ' und deine Wünsche: ') + esc(wl) : '') + '.</div></div>' +
@@ -835,7 +840,7 @@ var VC = (function(){
   function hexToRgb(h){ h = h.replace('#',''); return [parseInt(h.substr(0,2),16), parseInt(h.substr(2,2),16), parseInt(h.substr(4,2),16)]; }
   function mix(h, k, dark){ var c = hexToRgb(h); return 'rgb(' + c.map(function(v){ return Math.round(dark ? v * (1 - k) : v + (255 - v) * k); }).join(',') + ')'; }
   function drawStory(cb){
-    var R = evalResult(), bestD = CFG.dims[R.best], worstD = CFG.dims[R.worst], ty = TYPES[bestD.id], o = CFG.owner, col = bestD.color;
+    var R = evalResult(), bestD = CFG.dims[R.best], worstD = CFG.dims[R.worst], TY = typeOf(R), ty = TY.ty, o = CFG.owner, col = TY.color;
     var c = document.createElement('canvas'), W = 1080, H = 1920; c.width = W; c.height = H; var x = c.getContext('2d');
     var g = x.createLinearGradient(0, 0, 0, H); g.addColorStop(0, mix(col, 0.18, false)); g.addColorStop(0.45, col); g.addColorStop(1, mix(col, 0.45, true)); x.fillStyle = g; x.fillRect(0, 0, W, H);
     x.fillStyle = 'rgba(255,255,255,0.10)'; x.beginPath(); x.arc(980, 120, 420, 0, Math.PI*2); x.fill();
@@ -845,7 +850,7 @@ var VC = (function(){
     x.strokeStyle = col; x.lineWidth = 9; x.lineJoin = 'round'; x.beginPath(); for (var i = 0; i < 5; i++) { var a = -Math.PI/2 + i * 2*Math.PI/5, px = W/2 + 92*Math.cos(a), py = 430 + 92*Math.sin(a); if (i === 0) x.moveTo(px, py); else x.lineTo(px, py); } x.closePath(); x.stroke(); x.fillStyle = col; x.beginPath(); x.arc(W/2, 430, 22, 0, Math.PI*2); x.fill();
     x.fillStyle = 'rgba(255,255,255,0.85)'; x.font = '500 34px Geist, sans-serif'; x.fillText(en() ? 'My vitality type' : 'Mein Vital-Typ', W/2, 660);
     x.fillStyle = '#fff'; x.font = '600 96px Geist, sans-serif'; x.fillText(t(ty.name), W/2, 770);
-    x.fillStyle = 'rgba(255,255,255,0.92)'; x.font = '400 36px Geist, sans-serif'; var yy = wrapText(x, t(ty.desc), W/2, 850, 860, 50, 3);
+    x.fillStyle = 'rgba(255,255,255,0.92)'; x.font = '400 36px Geist, sans-serif'; var yy = wrapText(x, TY.desc, W/2, 850, 860, 50, 3);
     var pillTxt = (en() ? 'Vitality level: ' : 'Vitallevel: ') + t(R.lv.name) + ' · ' + R.pct + ' %'; x.font = '600 34px Geist, sans-serif'; var pw = x.measureText(pillTxt).width + 80; x.fillStyle = 'rgba(255,255,255,0.2)'; roundRect(x, W/2 - pw/2, yy + 20, pw, 74, 37); x.fill(); x.fillStyle = '#fff'; x.fillText(pillTxt, W/2, yy + 70);
     var by = yy + 190; x.textAlign = 'left';
     CFG.dims.forEach(function(d, i){ var p = R.sc[i] / 16; x.fillStyle = 'rgba(255,255,255,0.95)'; x.font = '500 32px Geist, sans-serif'; x.fillText(t(d.name), 110, by); x.textAlign = 'right'; x.font = '600 32px Geist, sans-serif'; x.fillText(Math.round(p*100) + ' %', W - 110, by); x.textAlign = 'left'; x.fillStyle = 'rgba(255,255,255,0.22)'; roundRect(x, 110, by + 22, W - 220, 16, 8); x.fill(); x.fillStyle = '#fff'; roundRect(x, 110, by + 22, Math.max(16, (W - 220) * p), 16, 8); x.fill(); by += 104; });
@@ -942,7 +947,7 @@ var VC = (function(){
   }
   /* Alle Werte als Strings */
   function payload(name, email, phone, method){
-    var R = evalResult(), o = CFG.owner, ty = TYPES[CFG.dims[R.best].id];
+    var R = evalResult(), o = CFG.owner, ty = typeOf(R).ty;
     var word = function(v){ var s = SCALE[v]; return s ? s.de : '–'; };
     var body = {
       _recipient: o.recipient, _honeypot: document.querySelector('#leadForm [name=_honeypot]').value,

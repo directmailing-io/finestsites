@@ -514,10 +514,11 @@ var CFG = {
     { id: 'finanzen', de: 'Finanzielle Unabhängigkeit', en: 'Financial independence' }
   ],
   invest: [
-    { id: 'bis3', de: 'Bis 3 € am Tag', en: 'Up to €3 a day' },
-    { id: '3bis5', de: '3 bis 5 € am Tag', en: '€3 to €5 a day' },
-    { id: 'ueber5', de: 'Mehr als 5 € am Tag', en: 'More than €5 a day' },
-    { id: 'offen', de: 'Weiß ich noch nicht', en: "I don't know yet" }
+    { id: 'ca2', de: 'Etwa 2 € am Tag', en: 'About €2 a day', hint: { de: 'ein Kaffee', en: 'a coffee' } },
+    { id: 'ca3bis4', de: 'Etwa 3 bis 4 € am Tag', en: 'About €3 to €4 a day', hint: { de: 'ein Coffee to go', en: 'a coffee to go' } },
+    { id: 'ca5', de: 'Etwa 5 € am Tag', en: 'About €5 a day', hint: { de: 'ein Mittagssnack', en: 'a lunch snack' } },
+    { id: 'ueber5', de: 'Mehr als 5 € am Tag', en: 'More than €5 a day', hint: { de: 'ein Mittagessen', en: 'a lunch' } },
+    { id: 'offen', de: 'Weiß ich noch nicht', en: "I don't know yet", hint: null }
   ],
   interests: [
     { id: 'tipps', de: 'Tipps für meinen Alltag', en: 'Tips for my everyday life' },
@@ -694,8 +695,8 @@ var VC = (function(){
   }
   function vInvest(){
     return eyebrow(null, (en() ? 'Last question' : 'Letzte Frage')) +
-      '<h2 class="q wide">' + (en() ? 'How much time or money would you invest in your wellbeing per day?' : 'Wie viel Zeit oder Geld würdest du täglich in dein Wohlbefinden investieren?') + '</h2>' +
-      '<p class="hint">' + (en() ? 'Just a gut feeling. Optional.' : 'Nur ein Bauchgefühl. Optional.') + '</p>' +
+      '<h2 class="q wide">' + (en() ? 'What is your wellbeing worth to you per day?' : 'Was ist dir dein Wohlbefinden pro Tag wert?') + '</h2>' +
+      '<p class="hint">' + (en() ? 'Just a gut feeling. For comparison: a coffee to go is about €3.50, a lunch out about €12.' : 'Nur ein Bauchgefühl. Zum Vergleich: Ein Coffee to go kostet etwa 3,50 €, ein Mittagessen unterwegs etwa 12 €.') + '</p>' +
       '<div class="chips">' + CFG.invest.map(function(m){ return chip('invest', m.id, t(m), S.invest === m.id); }).join('') + '</div>' +
       '<div class="actions"><button type="button" class="btn btn-primary" data-next ' + (S.invest ? '' : 'disabled') + '>' + (en() ? 'Show my result' : 'Ergebnis anzeigen') + ' <span class="arr">→</span></button><button type="button" class="skip" data-skip>' + (en() ? 'Skip' : 'Überspringen') + '</button></div>';
   }
@@ -724,7 +725,7 @@ var VC = (function(){
     html += '<div class="invite"><div class="who"><img src="' + esc(o.avatar) + '" alt=""><div><b>' + esc(o.vorname) + ' ' + esc(o.nachname) + '</b><small>' + (en() ? 'Independent distributor of PM-International' : (CFG.owner.female ? 'Unabhängige Vertriebspartnerin' : 'Unabhängiger Vertriebspartner') + ' der PM-International') + '</small></div></div>' +
       '<h3>' + (en() ? 'Let\'s look at your result together.' : 'Lass uns gemeinsam auf dein Ergebnis schauen.') + '</h3>' +
       '<div class="personal">' + (en() ? 'Your biggest lever is <b>' + esc(t(CFG.dims[R.worst].name)) + '</b>' + (wishes.length ? ', your wish is <b>' + esc(wishes[0]) + '</b>' : '') + '. That is exactly where I would start with you.' : 'Dein größter Hebel ist <b>' + esc(t(CFG.dims[R.worst].name)) + '</b>' + (wishes.length ? ', dein Wunsch ist <b>' + esc(wishes[0]) + '</b>' : '') + '. Genau da würde ich mit dir anfangen.') + '</div>' +
-      '<ul>' + li(en() ? 'A personal consultation, by phone or WhatsApp, whenever it suits you' : 'Eine persönliche Beratung, per Telefon oder WhatsApp, wann es dir passt') + li(en() ? 'Together we check whether the nutrient concept I work with fits you and your everyday life' : 'Wir prüfen gemeinsam, ob das Nährstoff-Konzept, mit dem ich arbeite, zu dir und deinem Alltag passt') + li(en() ? 'No risk for you: even if you decide to go for it afterwards, you have a 30-day satisfaction guarantee' : 'Du trägst kein Risiko: Selbst wenn du dich im Anschluss dafür entscheidest, hast du eine 30-tägige Zufriedenheitsgarantie') + '</ul>' +
+      '<ul>' + li(en() ? 'A personal consultation, by phone or WhatsApp, whenever it suits you' : 'Eine persönliche Beratung, per Telefon oder WhatsApp, wann es dir passt') + li(en() ? 'I work with the FitLine concept by PM-International. Together we check whether and how it can be integrated into your everyday life' : 'Ich arbeite mit dem FitLine-Konzept von PM-International. Gemeinsam prüfen wir, ob und wie es sich in deinen Alltag integrieren lässt') + li(en() ? 'No risk for you: even if you decide to go for it afterwards, you have a 30-day satisfaction guarantee' : 'Du trägst kein Risiko: Selbst wenn du dich im Anschluss dafür entscheidest, hast du eine 30-tägige Zufriedenheitsgarantie') + '</ul>' +
       '<div class="row"><button type="button" class="btn btn-primary" data-lead>' + (en() ? 'Send result and request a chat' : 'Ergebnis senden und Gespräch anfragen') + ' <span class="arr">→</span></button><button type="button" class="btn btn-ghost" data-restart>' + (en() ? 'Start over' : 'Nochmal starten') + '</button></div>' +
       '<div class="fineprint">' + (en() ? 'Free and non-binding · no newsletter · you decide' : 'Kostenlos und unverbindlich · kein Newsletter · du entscheidest') + '</div></div>' +
       '<p class="note">' + (en() ? 'This result is a self-assessment of your habits, not a medical evaluation, and it contains no product recommendation. It was calculated on your device and is only sent if you actively choose to.' : 'Dieses Ergebnis ist eine Selbsteinschätzung deiner Gewohnheiten, keine medizinische Bewertung, und enthält keine Produktempfehlung. Es wurde auf deinem Gerät berechnet und wird nur übermittelt, wenn du das aktiv möchtest.') + '</p>';
