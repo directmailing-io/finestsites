@@ -65,7 +65,7 @@ h1, h2, h3 { font-weight: 500; letter-spacing: -0.015em; line-height: 1.2; }
 .lang button { display: inline-flex; align-items: center; gap: 5px; padding: 4px 9px; border-radius: 9999px; font-size: 11.5px; font-weight: 600; color: var(--ink-3); }
 .lang button svg { width: 14px; height: 14px; border-radius: 50%; }
 html[data-lang="de"] .lang [data-lang="de"], html[data-lang="en"] .lang [data-lang="en"] { background: var(--paper); color: var(--ink); box-shadow: 0 1px 2px rgba(0,0,0,0.08); }
-@media (max-width: 720px) { .top { flex-wrap: wrap; } .brand { order: 1; } .lang { order: 2; margin-left: auto; } .pill { order: 3; } .brand span { display: none; } }
+@media (max-width: 720px) { .top { flex-wrap: wrap; } .brand { order: 1; } .btn-top { order: 2; } .lang { order: 3; margin-left: auto; } .pill { order: 4; } .brand span { display: none; } .top.landing .lang { margin-left: 8px; } }
 
 /* Seite */
 main { flex: 1; width: 100%; max-width: var(--col); margin: 0 auto; padding: 22px 18px 80px; }
@@ -106,6 +106,47 @@ html[data-theme="midnight"] .hero .gets li i { color: var(--accent); }
 html[data-theme="midnight"] .start .sec-head .no { background: var(--accent); color: var(--on-accent); }
 .start .sec-head h2 { font-size: 20px; }
 .start .sec-head small { font-size: 13.5px; color: var(--ink-3); margin-left: auto; }
+/* ===== Landing nach Vorbild: weiße Hero-Karte, Handy-Mockup, drei Schritt-Karten ===== */
+.top .btn-top { display: none; margin-left: auto; padding: 10px 18px; border-radius: 9999px; background: var(--ink); color: var(--bg); font-size: 14px; font-weight: 500; }
+html[data-theme="midnight"] .top .btn-top { background: var(--accent); color: var(--on-accent); }
+.top.landing .btn-top { display: inline-flex; }
+.top.landing .lang { margin-left: 12px; }
+.lp-hero { display: grid; grid-template-columns: 1fr 1fr; background: var(--paper); border-radius: 28px; overflow: hidden; box-shadow: 0 1px 2px rgba(0,0,0,0.03); }
+.lp-copy { padding: clamp(36px, 6vw, 88px) clamp(28px, 5vw, 64px); display: flex; flex-direction: column; justify-content: center; }
+.lp-copy .kick { font-size: 14px; font-weight: 500; color: var(--accent-dark); margin-bottom: 18px; }
+html[data-theme="midnight"] .lp-copy .kick { color: var(--accent); }
+.lp-copy h1 { font-size: clamp(28px, 3vw, 36px); font-weight: 500; letter-spacing: -0.02em; line-height: 1.2; margin-bottom: 16px; }
+.lp-copy h1 em { font-style: normal; color: var(--accent-dark); display: block; }
+html[data-theme="midnight"] .lp-copy h1 em { color: var(--accent); }
+.lp-copy p { color: var(--ink-2); font-size: 16.5px; line-height: 1.6; max-width: 42ch; margin-bottom: 26px; }
+.lp-copy .btn { align-self: flex-start; border-radius: 9999px; padding: 0 30px; }
+.lp-copy .fine { margin-top: 10px; font-size: 12.5px; color: var(--ink-3); }
+.lp-visual { position: relative; min-height: 460px; background: radial-gradient(120% 90% at 20% 15%, color-mix(in srgb, var(--accent) 55%, #fff) 0%, transparent 55%), radial-gradient(90% 80% at 85% 25%, color-mix(in srgb, #6E5BD6 45%, #fff) 0%, transparent 55%), radial-gradient(100% 90% at 70% 100%, color-mix(in srgb, #E0A030 45%, #fff) 0%, transparent 60%), color-mix(in srgb, var(--accent) 18%, #fff); display: flex; align-items: flex-end; justify-content: center; padding: 36px 24px 0; overflow: hidden; }
+html[data-theme="midnight"] .lp-visual { background: radial-gradient(120% 90% at 20% 15%, color-mix(in srgb, var(--accent) 40%, #0E1412) 0%, transparent 55%), radial-gradient(90% 80% at 85% 25%, color-mix(in srgb, #6E5BD6 35%, #0E1412) 0%, transparent 55%), #16201B; }
+.phone { width: min(320px, 100%); background: #111; border-radius: 40px; padding: 12px; box-shadow: 0 40px 70px -30px rgba(0,0,0,0.55); }
+.phone .scr { background: var(--bg); border-radius: 30px 30px 0 0; padding: 14px 14px 0; min-height: 420px; position: relative; overflow: hidden; }
+.phone .notch { width: 92px; height: 26px; background: #111; border-radius: 14px; margin: 0 auto 12px; }
+.phone .ppill { display: flex; align-items: center; justify-content: space-between; padding: 9px 12px; border-radius: 10px; background: var(--pill); font-size: 12px; color: var(--ink-2); margin-bottom: 14px; }
+.phone .ppill i { width: 12px; height: 12px; border-radius: 50%; border: 1.5px solid var(--line-2); }
+.phone h4 { font-size: 15.5px; font-weight: 500; line-height: 1.3; margin-bottom: 12px; }
+.phone .pc { background: var(--paper); border-radius: 14px; padding: 14px 12px 12px; margin-bottom: 10px; text-align: center; box-shadow: 0 1px 2px rgba(0,0,0,0.04); }
+.phone .pc p { font-size: 12px; font-weight: 500; line-height: 1.35; margin-bottom: 10px; }
+.phone .pc .ps { display: flex; justify-content: center; gap: 8px; }
+.phone .pc .ps i { width: 26px; height: 26px; border-radius: 50%; border: 1.5px dashed; }
+.phone .pc .ps i:nth-child(1) { border-color: var(--k0); } .phone .pc .ps i:nth-child(2) { border-color: var(--k1); } .phone .pc .ps i:nth-child(3) { border-color: var(--k2); } .phone .pc .ps i:nth-child(4) { border-color: var(--k3); } .phone .pc .ps i:nth-child(5) { border-color: var(--k4); }
+.phone .pc .ps i.on { background: var(--accent); border: 0; }
+.lp-steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 16px; }
+.lp-step { background: var(--pill); border-radius: 22px; padding: 26px 24px 28px; }
+.lp-step .no { width: 30px; height: 30px; border-radius: 50%; border: 1.5px solid var(--ink); display: inline-flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 500; margin-bottom: 18px; }
+.lp-step h3 { font-size: 19px; font-weight: 500; margin-bottom: 8px; }
+.lp-step p { font-size: 14.5px; color: var(--ink-2); line-height: 1.55; }
+@media (max-width: 900px) { .lp-hero { grid-template-columns: 1fr; } .lp-copy { text-align: center; align-items: center; padding: 36px 24px 30px; } .lp-copy .btn { align-self: center; width: 100%; max-width: 360px; } .lp-copy p { margin-left: auto; margin-right: auto; } .lp-visual { min-height: 380px; padding-top: 28px; } .lp-steps { grid-template-columns: 1fr 1fr; } .lp-step:last-child { grid-column: 1 / -1; } }
+@media (max-width: 560px) { .lp-steps { grid-template-columns: 1fr; } .lp-step:last-child { grid-column: auto; } .top .btn-top { padding: 9px 14px; font-size: 13px; } }
+/* Footer als abgerundeter Block */
+footer { border-top: 0; padding: 16px 18px 24px; }
+.foot { background: var(--pill); border-radius: 24px; padding: 28px 26px 30px; }
+main.wide + footer .foot { max-width: 1040px; }
+
 /* Landing: keine Fortschritts-Pille vor dem Start, Karte in Hero-Breite */
 .top.landing .pill { visibility: hidden; }
 @media (max-width: 720px) { .top.landing .pill { display: none; } }
@@ -146,19 +187,19 @@ html[data-theme="midnight"] .hero .pills span i { color: var(--accent); }
 .opt .c { width: 50px; height: 50px; border-radius: 50%; border: 1.5px dashed; display: inline-flex; align-items: center; justify-content: center; transition: transform 0.2s var(--ease), background 0.2s, border-style 0.2s; }
 .opt .c svg { width: 20px; height: 20px; color: #fff; opacity: 0; transition: opacity 0.15s; }
 .opt:hover .c { transform: scale(1.08); }
-.opt[data-v="0"] .c { border-color: var(--k0); background: color-mix(in srgb, var(--k0) 10%, var(--paper)); width: 40px; height: 40px; }
-.opt[data-v="1"] .c { border-color: var(--k1); background: color-mix(in srgb, var(--k1) 12%, var(--paper)); width: 44px; height: 44px; }
-.opt[data-v="2"] .c { border-color: var(--k2); background: color-mix(in srgb, var(--k2) 14%, var(--paper)); width: 48px; height: 48px; }
-.opt[data-v="3"] .c { border-color: var(--k3); background: color-mix(in srgb, var(--k3) 16%, var(--paper)); width: 52px; height: 52px; }
-.opt[data-v="4"] .c { border-color: var(--k4); background: color-mix(in srgb, var(--k4) 18%, var(--paper)); width: 56px; height: 56px; }
+.opt[data-v="0"] .c { border-color: var(--k0); background: color-mix(in srgb, var(--k0) 10%, var(--paper)); }
+.opt[data-v="1"] .c { border-color: var(--k1); background: color-mix(in srgb, var(--k1) 12%, var(--paper)); }
+.opt[data-v="2"] .c { border-color: var(--k2); background: color-mix(in srgb, var(--k2) 14%, var(--paper)); }
+.opt[data-v="3"] .c { border-color: var(--k3); background: color-mix(in srgb, var(--k3) 16%, var(--paper)); }
+.opt[data-v="4"] .c { border-color: var(--k4); background: color-mix(in srgb, var(--k4) 18%, var(--paper)); }
 .opt.on[data-v="0"] .c { background: var(--k0); } .opt.on[data-v="1"] .c { background: var(--k1); } .opt.on[data-v="2"] .c { background: var(--k2); } .opt.on[data-v="3"] .c { background: var(--k3); } .opt.on[data-v="4"] .c { background: var(--k4); }
-.opt { justify-content: flex-end; }
-.scale { align-items: end; }
+.opt { justify-content: flex-start; }
+.scale { align-items: start; }
 .opt.on .c { border-style: solid; transform: scale(1.06); }
 .opt.on .c svg { opacity: 1; }
 .opt small { font-size: 11.5px; line-height: 1.25; color: var(--ink-3); max-width: 84px; }
 .card:not(.labels) .opt small { display: none; }
-@media (max-width: 420px) { .opt[data-v="0"] .c { width: 34px; height: 34px; } .opt[data-v="1"] .c { width: 38px; height: 38px; } .opt[data-v="2"] .c { width: 42px; height: 42px; } .opt[data-v="3"] .c { width: 46px; height: 46px; } .opt[data-v="4"] .c { width: 50px; height: 50px; } .opt .c svg { width: 18px; height: 18px; } .opt small { font-size: 10.5px; } }
+@media (max-width: 420px) { .opt .c { width: 44px; height: 44px; } .opt .c svg { width: 18px; height: 18px; } .opt small { font-size: 10.5px; } }
 
 .btnrow { margin: 22px 0 0; display: flex; flex-direction: column; align-items: center; gap: 10px; }
 .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 52px; padding: 0 26px; border-radius: 12px; font-weight: 500; font-size: 16px; transition: transform 0.2s var(--ease), background 0.15s, opacity 0.15s; }
@@ -335,6 +376,7 @@ html[data-theme="midnight"] .links .made img { filter: invert(1); }
 <div class="top">
   <a href="/" class="brand"><img src="{{profilbild}}" alt="{{vorname}} {{nachname}}" width="30" height="30"><span>{{vorname}} {{nachname}}</span></a>
   <div class="pill"><svg class="ring" viewBox="0 0 24 24"><circle class="bgc" cx="12" cy="12" r="9"/><circle class="fgc" id="ring" cx="12" cy="12" r="9" stroke-dasharray="56.5" stroke-dashoffset="56.5"/></svg><b>Vitalcheck</b><span class="pct num" id="pct"></span></div>
+  <button type="button" class="btn-top" id="topStart"><span class="l-de">Vitalcheck starten</span><span class="l-en">Start the check</span></button>
   <div class="lang" role="group" aria-label="Sprache / Language">
     <button type="button" data-lang="de" onclick="fsSetLang('de')" aria-label="Deutsch"><svg viewBox="0 0 24 24"><rect width="24" height="8" fill="#000"/><rect y="8" width="24" height="8" fill="#D00"/><rect y="16" width="24" height="8" fill="#FFCE00"/></svg>DE</button>
     <button type="button" data-lang="en" onclick="fsSetLang('en')" aria-label="English"><svg viewBox="0 0 24 24"><rect width="24" height="24" fill="#012169"/><path d="M0 0L24 24M24 0L0 24" stroke="#fff" stroke-width="4"/><path d="M0 0L24 24M24 0L0 24" stroke="#C8102E" stroke-width="2"/><path d="M12 0V24M0 12H24" stroke="#fff" stroke-width="6"/><path d="M12 0V24M0 12H24" stroke="#C8102E" stroke-width="3"/></svg>EN</button>
@@ -591,7 +633,7 @@ var VC = (function(){
   function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
   function en(){ return L() === 'en'; }
 
-  function steps(){ var s = ['wishes']; CFG.dims.forEach(function(d, i){ s.push('area:' + i); }); if (CFG.flags.motive) s.push('motive'); if (CFG.flags.invest) s.push('invest'); s.push('reveal', 'result', 'lead', 'done'); return s; }
+  function steps(){ var s = ['landing', 'wishes']; CFG.dims.forEach(function(d, i){ s.push('area:' + i); }); if (CFG.flags.motive) s.push('motive'); if (CFG.flags.invest) s.push('invest'); s.push('reveal', 'result', 'lead', 'done'); return s; }
   function answeredCount(){ return Object.keys(S.answers).length; }
   function scores(){ return CFG.dims.map(function(d, di){ var s = 0; d.q.forEach(function(q, qi){ var v = S.answers[di + ':' + qi]; if (v !== undefined) s += v; }); return s; }); }  /* max 16 je Bereich */
   function ratios(){ return scores().map(function(s){ return s / 16; }); }
@@ -609,13 +651,15 @@ var VC = (function(){
   function paintTop(){
     var p = Math.round(answeredCount() / 20 * 100), key = steps()[S.step];
     if (['reveal','result','lead','done'].indexOf(key) > -1) p = 100;
+    if (key === 'landing') p = 0;
     ring.style.strokeDashoffset = (56.5 - 56.5 * p / 100).toFixed(2);
     pctEl.textContent = p + ' % ' + (en() ? 'completed' : 'abgeschlossen');
   }
   function render(){
     var key = steps()[S.step], html = '';
     paintTop();
-    if (key === 'wishes') html = vWishes();
+    if (key === 'landing') html = vLanding();
+    else if (key === 'wishes') html = vWishes();
     else if (key.indexOf('area:') === 0) html = vArea(+key.split(':')[1]);
     else if (key === 'motive') html = vMotive();
     else if (key === 'invest') html = vInvest();
@@ -623,26 +667,33 @@ var VC = (function(){
     else if (key === 'result') html = vResult();
     else if (key === 'lead') html = vLead();
     else if (key === 'done') html = vDone();
-    root.classList.toggle('wide', key === 'wishes');
-    document.querySelector('.top').classList.toggle('landing', key === 'wishes');
+    root.classList.toggle('wide', key === 'landing');
+    document.querySelector('.top').classList.toggle('landing', key === 'landing');
     root.innerHTML = '<div class="step">' + html + '</div>';
     bind(key);
   }
 
   /* ---- Views ---- */
   function chip(attr, id, label, on){ return '<button type="button" class="chip' + (on ? ' on' : '') + '" data-' + attr + '="' + id + '"><span class="chk">' + ICO.check + '</span>' + esc(label) + '</button>'; }
+  function vLanding(){
+    var o = CFG.owner;
+    var pc = function(txt, on){ return '<div class="pc"><p>' + txt + '</p><div class="ps"><i' + (on === 0 ? ' class="on"' : '') + '></i><i' + (on === 1 ? ' class="on"' : '') + '></i><i' + (on === 2 ? ' class="on"' : '') + '></i><i' + (on === 3 ? ' class="on"' : '') + '></i><i' + (on === 4 ? ' class="on"' : '') + '></i></div></div>'; };
+    return '<div class="lp-hero"><div class="lp-copy">' +
+      '<div class="kick">' + (en() ? 'Takes 3 minutes' : 'Dauert 3 Minuten') + '</div>' +
+      '<h1>' + (en() ? 'Find out <em>where your vitality stands</em> and which type you are' : 'Finde heraus, <em>wo dein Vitallevel steht</em> und welcher Vital-Typ du bist') + '</h1>' +
+      '<p>' + (en() ? 'You get your evaluation right away. And if you like, we then check together whether the nutrient concept I work with fits you and your everyday life.' : 'Deine Auswertung bekommst du sofort. Und wenn du magst, prüfen wir danach gemeinsam, ob das Nährstoff-Konzept, mit dem ich arbeite, zu dir und deinem Alltag passt.') + '</p>' +
+      '<button type="button" class="btn btn-primary" data-next>' + (en() ? 'Start the vitality check' : 'Vitalcheck starten') + '</button>' +
+      '<div class="fine">' + (en() ? '*No sign-up required' : '*Keine Anmeldung erforderlich') + '</div></div>' +
+      '<div class="lp-visual" aria-hidden="true"><div class="phone"><div class="scr"><div class="notch"></div><div class="ppill"><span>Vitalcheck</span><i></i></div><h4>' + (en() ? 'How much does each statement apply to you?' : 'Wie sehr trifft jede Aussage auf dich zu?') + '</h4>' + pc(esc(t(CFG.dims[0].q[0].text)), 4) + pc(esc(t(CFG.dims[0].q[1].text)), 2) + pc(esc(t(CFG.dims[0].q[2].text)), -1) + '</div></div></div></div>' +
+      '<div class="lp-steps">' +
+      '<div class="lp-step"><span class="no">1</span><h3>' + (en() ? 'Get ready' : 'Mach dich bereit') + '</h3><p>' + (en() ? 'Take three quiet minutes. There is no right or wrong, only your everyday life as it usually is.' : 'Nimm dir drei ruhige Minuten. Es gibt kein Richtig oder Falsch, nur deinen Alltag, wie er meistens ist.') + '</p></div>' +
+      '<div class="lp-step"><span class="no">2</span><h3>' + (en() ? 'Do the check' : 'Mach den Check') + '</h3><p>' + (en() ? 'Answer 20 statements about how you eat, drink, move, sleep and structure your day.' : 'Beantworte 20 Aussagen dazu, wie du isst, trinkst, dich bewegst, schläfst und deinen Tag strukturierst.') + '</p></div>' +
+      '<div class="lp-step"><span class="no">3</span><h3>' + (en() ? 'Get your vitality profile' : 'Erhalte dein Vitalprofil') + '</h3><p>' + (en() ? 'Your vitality type, your day at a glance and three things you can start tomorrow.' : 'Dein Vital-Typ, dein Tag auf einen Blick und drei Dinge, die du morgen starten kannst.') + '</p></div></div>';
+  }
   function vWishes(){
-    var demo = [0.78, 0.35, 0.9, 0.5, 0.65];
-    var pill = function(txt){ return '<span><i>' + ICO.check + '</i>' + txt + '</span>'; };
-    return '<div class="hero"><div>' +
-      '<h1>' + (en() ? 'Find out where your vitality level stands.' : 'Finde heraus, wo dein Vitallevel steht.') + '</h1>' +
-      '<p>' + (en() ? 'In a few minutes you will know where your vitality level stands and which type you are. You get your evaluation right away. And if you like, we then check together whether the nutrient concept I work with fits you and your everyday life.' : 'In wenigen Minuten weißt du, wo dein Vitallevel steht und welcher Vital-Typ du bist. Deine Auswertung bekommst du sofort. Und wenn du magst, prüfen wir danach gemeinsam, ob das Nährstoff-Konzept, mit dem ich arbeite, zu dir und deinem Alltag passt.') + '</p>' +
-      '<div class="pills">' + pill(en() ? 'Your vitality type' : 'Dein Vital-Typ') + pill(en() ? 'Your day at a glance' : 'Dein Tag auf einen Blick') + pill(en() ? 'Three tips for tomorrow' : 'Drei Tipps für morgen') + '</div>' +
-      '<a href="#start" class="btn btn-accent" data-scroll>' + (en() ? 'Start the check' : 'Check starten') + '</a></div>' +
-      '<div class="pv" aria-hidden="true"><div class="pv-head">' + badgeSvg(CFG.dims[2].color) + '<div><small>' + (en() ? 'Example profile' : 'Beispiel-Profil') + '</small><b>' + (en() ? 'The Rester' : 'Der Nachtruhe-Typ') + '</b></div></div>' + CFG.dims.map(function(d, i){ return '<div class="pv-row"><i style="background:' + d.color + '">' + ICO[d.ico] + '</i><div class="b"><i style="--w:' + Math.round(demo[i]*100) + '%;background:' + d.color + ';animation-delay:' + (i*0.12) + 's"></i></div><span class="n num">' + Math.round(demo[i]*100) + ' %</span></div>'; }).join('') + '<div class="pv-foot"><span>' + (en() ? 'Vitality level' : 'Vitallevel') + '</span><b>' + (en() ? 'On track · 64 %' : 'Auf Kurs · 64 %') + '</b></div></div></div>' +
-      '<div class="startcard" id="start"><h2>' + (en() ? 'What would you like most right now?' : 'Was wünschst du dir gerade am meisten?') + '</h2><p class="sub">' + (en() ? 'Pick up to three, then we begin.' : 'Wähle bis zu drei, dann geht es los.') + '</p>' +
-      '<div class="chips">' + CFG.wishes.map(function(w){ return chip('wish', w.id, t(w), S.wishes.indexOf(w.id) > -1); }).join('') + '</div>' +
-      '<div class="foot"><small>' + (en() ? 'Nothing is sent unless you choose to at the end.' : 'Nichts wird gesendet, außer du entscheidest dich am Ende dafür.') + '</small><button type="button" class="btn btn-primary" data-next ' + (S.wishes.length ? '' : 'disabled') + '>' + (en() ? 'Continue' : 'Weiter') + '</button></div></div>';
+    return '<div class="pagehead"><h1>' + (en() ? 'What would you like most right now?' : 'Was wünschst du dir gerade am meisten?') + '</h1><p>' + (en() ? 'Pick up to three. Your profile will pick them up again.' : 'Wähle bis zu drei. Dein Profil greift sie wieder auf.') + '</p></div>' +
+      '<div class="card left"><div class="chips" style="justify-content:flex-start">' + CFG.wishes.map(function(w){ return chip('wish', w.id, t(w), S.wishes.indexOf(w.id) > -1); }).join('') + '</div></div>' +
+      '<div class="btnrow"><button type="button" class="btn btn-primary btn-wide" data-next ' + (S.wishes.length ? '' : 'disabled') + '>' + (en() ? 'Continue' : 'Weiter') + '</button><button type="button" class="skip" data-back>' + (en() ? 'Back' : 'Zurück') + '</button></div>';
   }
   function vArea(di){
     var d = CFG.dims[di], first = -1;
@@ -749,7 +800,6 @@ var VC = (function(){
       }
       go(S.step + 1);
     });
-    if (key === 'wishes') { var sc = root.querySelector('[data-scroll]'), card = document.getElementById('start'); if (sc) sc.addEventListener('click', function(e){ e.preventDefault(); card.scrollIntoView({ behavior: 'smooth', block: 'start' }); card.classList.add('focus'); setTimeout(function(){ card.classList.remove('focus'); }, 1800); }); }
     if (key === 'wishes') root.querySelectorAll('[data-wish]').forEach(function(c){ c.addEventListener('click', function(){ toggleIn(S.wishes, c.getAttribute('data-wish'), 3); save(); refresh('wish', S.wishes, 3); }); });
     if (key === 'motive') root.querySelectorAll('[data-motive]').forEach(function(c){ c.addEventListener('click', function(){ toggleIn(S.motives, c.getAttribute('data-motive'), 3); save(); refresh('motive', S.motives, 3); }); });
     if (key === 'invest') root.querySelectorAll('[data-invest]').forEach(function(c){ c.addEventListener('click', function(){ S.invest = c.getAttribute('data-invest'); save(); root.querySelectorAll('[data-invest]').forEach(function(x){ x.classList.toggle('on', x === c); }); root.querySelector('[data-next]').disabled = false; }); });
@@ -813,6 +863,7 @@ var VC = (function(){
     return body;
   }
 
+  document.getElementById('topStart').addEventListener('click', function(){ go(1); });
   if (S.sent) { S = fresh(); save(); }
   render();
   return { render: render };
