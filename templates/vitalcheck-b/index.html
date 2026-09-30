@@ -244,6 +244,57 @@ html[data-theme="midnight"] .btn-primary { background: var(--accent); color: var
 
 /* Ergebnis */
 .res .hero { text-align: center; padding: 8px 0 26px; }
+/* Typ-Karte (Held der Auswertung) */
+.typecard { --tc: var(--accent); position: relative; overflow: hidden; border-radius: 28px; padding: clamp(28px, 5vw, 44px) clamp(22px, 4vw, 40px) clamp(24px, 4vw, 34px); color: #fff; background: linear-gradient(160deg, color-mix(in srgb, var(--tc) 88%, #fff) 0%, var(--tc) 45%, color-mix(in srgb, var(--tc) 70%, #000) 100%); text-align: center; box-shadow: 0 30px 70px -40px color-mix(in srgb, var(--tc) 80%, #000); }
+.typecard::before { content: ''; position: absolute; width: 520px; height: 520px; right: -200px; top: -220px; border-radius: 50%; background: rgba(255,255,255,0.12); }
+.typecard::after { content: ''; position: absolute; width: 380px; height: 380px; left: -160px; bottom: -220px; border-radius: 50%; background: rgba(0,0,0,0.10); }
+.typecard > * { position: relative; }
+.typecard .lbl { font-size: 13px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; opacity: 0.85; margin-bottom: 18px; }
+.typecard .badge { width: 148px; height: 148px; margin: 0 auto 18px; filter: drop-shadow(0 18px 30px rgba(0,0,0,0.25)); }
+.typecard h1 { font-size: clamp(32px, 6vw, 46px); font-weight: 600; letter-spacing: -0.025em; line-height: 1.1; }
+.typecard .desc { max-width: 46ch; margin: 12px auto 0; font-size: 16.5px; line-height: 1.55; opacity: 0.95; }
+.typecard .traits { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 18px; }
+.typecard .traits span { padding: 8px 14px; border-radius: 9999px; background: rgba(255,255,255,0.18); backdrop-filter: blur(6px); font-size: 13.5px; font-weight: 500; }
+.typecard .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 22px; }
+.typecard .stat { background: rgba(255,255,255,0.14); border-radius: 16px; padding: 14px 12px; }
+.typecard .stat small { display: block; font-size: 11.5px; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.8; margin-bottom: 4px; }
+.typecard .stat b { font-size: 18px; font-weight: 600; }
+.typecard .actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 22px; }
+.typecard .btn-white { background: #fff; color: var(--tc); }
+.typecard .btn-white:hover { background: #F3F3F0; }
+.typecard .btn-glass { background: rgba(255,255,255,0.16); color: #fff; border: 1.5px solid rgba(255,255,255,0.4); }
+.typecard .btn-glass:hover { background: rgba(255,255,255,0.24); }
+.typecard .badge polygon, .typecard .badge circle:last-of-type { stroke: var(--tc); }
+/* Haupt-CTA: Beratung */
+.consult { margin-top: 18px; background: var(--paper); border-radius: 26px; padding: clamp(24px, 4vw, 34px); box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 20px 50px -36px rgba(0,0,0,0.3); border: 1.5px solid var(--accent-soft); }
+.consult .who { display: flex; align-items: center; gap: 14px; margin-bottom: 18px; }
+.consult .who img { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; box-shadow: 0 0 0 3px var(--accent-soft); }
+.consult .who b { display: block; font-size: 16px; font-weight: 600; }
+.consult .who small { font-size: 13px; color: var(--ink-3); }
+.consult .k { font-size: 12.5px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent-dark); margin-bottom: 8px; }
+html[data-theme="midnight"] .consult .k { color: var(--accent); }
+.consult h2 { font-size: clamp(24px, 3.4vw, 30px); font-weight: 600; letter-spacing: -0.02em; margin-bottom: 12px; }
+.consult .personal { padding: 14px 16px; border-radius: 14px; background: var(--accent-soft); font-size: 15px; color: var(--ink); margin-bottom: 14px; }
+.consult .personal b { font-weight: 600; }
+.consult p.body { font-size: 15.5px; color: var(--ink-2); line-height: 1.6; margin-bottom: 18px; }
+.consult .guarantee { display: grid; grid-template-columns: 26px 1fr; gap: 10px; align-items: start; font-size: 14.5px; color: var(--ink-2); margin-bottom: 20px; }
+.consult .guarantee i { width: 26px; height: 26px; border-radius: 50%; background: var(--accent); color: var(--on-accent); display: inline-flex; align-items: center; justify-content: center; }
+.consult .guarantee i svg { width: 13px; height: 13px; }
+.consult .guarantee b { color: var(--ink); font-weight: 600; }
+.consult .btn-accent { width: 100%; min-height: 56px; font-size: 16.5px; }
+.consult .fine { margin-top: 10px; font-size: 13px; color: var(--ink-3); text-align: center; }
+.consult.compact h2 { font-size: 22px; }
+/* Sticky-Leiste */
+.sticky { position: fixed; left: 0; right: 0; bottom: 0; z-index: 40; padding: 10px 14px calc(10px + env(safe-area-inset-bottom)); background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-top: 1px solid var(--line); transform: translateY(110%); transition: transform 0.35s var(--ease); }
+.sticky.show { transform: none; }
+.sticky .in { max-width: var(--col); margin: 0 auto; display: flex; align-items: center; gap: 12px; }
+.sticky img { width: 38px; height: 38px; border-radius: 50%; object-fit: cover; }
+.sticky .txt { font-size: 13.5px; color: var(--ink-2); line-height: 1.3; }
+.sticky .txt b { display: block; color: var(--ink); font-weight: 600; font-size: 14px; }
+.sticky .btn { margin-left: auto; min-height: 46px; padding: 0 20px; font-size: 15px; white-space: nowrap; }
+@media (max-width: 480px) { .sticky .txt { display: none; } .sticky .btn { flex: 1; } }
+body.has-sticky { padding-bottom: 80px; }
+.story-hint { margin-top: 8px; font-size: 12.5px; color: var(--ink-3); text-align: center; }
 .badge { width: 128px; height: 128px; margin: 0 auto 18px; }
 .res .kicker { font-size: 13.5px; color: var(--ink-3); margin-bottom: 8px; }
 .res h1 { font-size: clamp(30px, 6vw, 42px); letter-spacing: -0.02em; }
@@ -597,11 +648,11 @@ var INSIGHT = {
 
 /* Vital-Typ nach stärkstem Bereich */
 var TYPES = {
-  ernaehrung: { name: { de: 'Der Genießer-Typ', en: 'The Nourisher' }, desc: { de: 'Ernährung und Trinken sind bei dir keine Baustelle, sondern Routine. Das ist die stabilste Basis, die man im Alltag haben kann.', en: 'Food and hydration are not a construction site for you but a routine. That is the most stable base you can have in everyday life.' } },
-  tag: { name: { de: 'Der Taktgeber-Typ', en: 'The Pacer' }, desc: { de: 'Dein Tag hat Struktur, Pausen und ein Ende. Das gibt dir gleichmäßige Energie, wo andere im Dauerbetrieb laufen.', en: 'Your day has structure, breaks and an end. That gives you steady energy where others run non-stop.' } },
-  schlaf: { name: { de: 'Der Nachtruhe-Typ', en: 'The Rester' }, desc: { de: 'Du weißt, wie man abschaltet. Feste Zeiten und ruhige Abende sind deine Stärke, und davon zehrt der ganze nächste Tag.', en: 'You know how to switch off. Fixed times and calm evenings are your strength, and the whole next day draws on that.' } },
-  bewegung: { name: { de: 'Der Beweger-Typ', en: 'The Mover' }, desc: { de: 'Bewegung ist bei dir selbstverständlich, im Sport und im Alltag. Dein Motor läuft, jetzt geht es um das Drumherum.', en: 'Movement comes naturally to you, in sport and everyday life. Your engine is running, now it is about everything around it.' } },
-  ausgleich: { name: { de: 'Der Ausgleichs-Typ', en: 'The Balancer' }, desc: { de: 'Tageslicht, Pausen, Zeit für Menschen: Du hältst die Balance. Das ist selten und wertvoll.', en: 'Daylight, breaks, time for people: you keep the balance. That is rare and valuable.' } }
+  ernaehrung: { traits: { de: ['Frisches im Alltag', 'Genug getrunken', 'Feste Mahlzeiten'], en: ['Fresh food daily', 'Well hydrated', 'Regular meals'] }, name: { de: 'Der Genießer-Typ', en: 'The Nourisher' }, desc: { de: 'Ernährung und Trinken sind bei dir keine Baustelle, sondern Routine. Das ist die stabilste Basis, die man im Alltag haben kann.', en: 'Food and hydration are not a construction site for you but a routine. That is the most stable base you can have in everyday life.' } },
+  tag: { traits: { de: ['Feste Pausen', 'Frische Luft', 'Klarer Feierabend'], en: ['Fixed breaks', 'Fresh air', 'Clear end of day'] }, name: { de: 'Der Taktgeber-Typ', en: 'The Pacer' }, desc: { de: 'Dein Tag hat Struktur, Pausen und ein Ende. Das gibt dir gleichmäßige Energie, wo andere im Dauerbetrieb laufen.', en: 'Your day has structure, breaks and an end. That gives you steady energy where others run non-stop.' } },
+  schlaf: { traits: { de: ['Feste Schlafzeiten', 'Abende ohne Bildschirm', 'Kann abschalten'], en: ['Fixed bedtimes', 'Screen-free evenings', 'Can switch off'] }, name: { de: 'Der Nachtruhe-Typ', en: 'The Rester' }, desc: { de: 'Du weißt, wie man abschaltet. Feste Zeiten und ruhige Abende sind deine Stärke, und davon zehrt der ganze nächste Tag.', en: 'You know how to switch off. Fixed times and calm evenings are your strength, and the whole next day draws on that.' } },
+  bewegung: { traits: { de: ['Täglich in Bewegung', 'Sport ist Routine', 'Treppe statt Aufzug'], en: ['Moves every day', 'Sport is routine', 'Stairs over lift'] }, name: { de: 'Der Beweger-Typ', en: 'The Mover' }, desc: { de: 'Bewegung ist bei dir selbstverständlich, im Sport und im Alltag. Dein Motor läuft, jetzt geht es um das Drumherum.', en: 'Movement comes naturally to you, in sport and everyday life. Your engine is running, now it is about everything around it.' } },
+  ausgleich: { traits: { de: ['Tageslicht täglich', 'Zeit ohne Handy', 'Zeit für Menschen'], en: ['Daylight daily', 'Time off screen', 'Time for people'] }, name: { de: 'Der Ausgleichs-Typ', en: 'The Balancer' }, desc: { de: 'Tageslicht, Pausen, Zeit für Menschen: Du hältst die Balance. Das ist selten und wertvoll.', en: 'Daylight, breaks, time for people: you keep the balance. That is rare and valuable.' } }
 };
 /* Dein Tag auf einen Blick: Uhrzeit → Aussage (Bereich:Frage) */
 var DAY = [
@@ -726,23 +777,35 @@ var VC = (function(){
     function lowQs(di){ return CFG.dims[di].q.map(function(q, qi){ return { q: q, v: S.answers[di + ':' + qi] === undefined ? 4 : S.answers[di + ':' + qi] }; }).sort(function(a, b){ return a.v - b.v; }); }
     var lw = lowQs(R.worst), ls = lowQs(R.second);
     var tips = [{ tp: worstD.tips[0], di: R.worst, ref: lw[0] }, { tp: worstD.tips[1], di: R.worst, ref: lw[1] }, { tp: CFG.dims[R.second].tips[0], di: R.second, ref: ls[0] }];
-    var word = function(v){ var s = SCALE[v]; return s ? (en() ? s.en : s.de) : '–'; };
+    var word = function(v){ var x = SCALE[v]; return x ? (en() ? x.en : x.de) : '–'; };
     var status = function(v){ return v >= 3 ? ['ok', en() ? 'in place' : 'läuft'] : (v === 2 ? ['mid', en() ? 'partly' : 'teils'] : ['no', en() ? 'not yet' : 'fehlt noch']); };
-    var html = '<div class="res"><div class="hero">' + badgeSvg(bestD.color) + '<div class="kicker">' + (en() ? 'Your vitality profile' : 'Dein Vitalprofil') + '</div><h1>' + esc(t(ty.name)) + '</h1><p class="typedesc">' + esc(t(ty.desc)) + '</p>' +
-      '<div class="levelrow"><span>' + (en() ? 'Vitality level: ' : 'Vitallevel: ') + '<b>' + esc(t(R.lv.name)) + '</b></span><span class="pct num">' + R.pct + ' %</span></div></div>' +
+    var role = en() ? 'Independent distributor of PM-International' : (o.female ? 'Unabhängige Vertriebspartnerin' : 'Unabhängiger Vertriebspartner') + ' der PM-International';
+    function consult(compact){
+      return '<div class="consult' + (compact ? ' compact' : '') + '"><div class="who"><img src="' + esc(o.avatar) + '" alt=""><div><b>' + esc(o.vorname) + ' ' + esc(o.nachname) + '</b><small>' + role + '</small></div></div>' +
+        '<div class="k">' + (en() ? 'Your next step' : 'Dein nächster Schritt') + '</div>' +
+        '<h2>' + (en() ? 'A personal consultation on your profile.' : 'Eine persönliche Beratung zu deinem Profil.') + '</h2>' +
+        '<div class="personal">' + (en() ? 'You are <b>' + esc(t(ty.name)) + '</b>, your biggest lever is <b>' + esc(t(worstD.name)) + '</b>' + (wishes.length ? ' and your wish is <b>' + esc(wishes[0]) + '</b>' : '') + '. That is exactly where we start.' : 'Du bist <b>' + esc(t(ty.name)) + '</b>, dein größter Hebel ist <b>' + esc(t(worstD.name)) + '</b>' + (wishes.length ? ' und dein Wunsch ist <b>' + esc(wishes[0]) + '</b>' : '') + '. Genau da setzen wir an.') + '</div>' +
+        '<p class="body">' + (en() ? 'Together we look at your profile and check whether the nutrient concept I work with fits you and your everyday life. Personally, by phone or WhatsApp, whenever it suits you.' : 'Wir schauen gemeinsam auf dein Profil und prüfen, ob das Nährstoff-Konzept, mit dem ich arbeite, zu dir und deinem Alltag passt. Persönlich, per Telefon oder WhatsApp, wann es dir passt.') + '</p>' +
+        '<div class="guarantee"><i>' + ICO.check + '</i><span><b>' + (en() ? 'No risk for you.' : 'Du trägst kein Risiko.') + '</b> ' + (en() ? 'Even if you decide to go for it afterwards, you have a 30-day satisfaction guarantee.' : 'Selbst wenn du dich im Anschluss dafür entscheidest, hast du eine 30-tägige Zufriedenheitsgarantie.') + '</span></div>' +
+        '<button type="button" class="btn btn-accent" data-lead>' + (en() ? 'Request personal consultation' : 'Persönliche Beratung anfragen') + '</button>' +
+        '<div class="fine">' + (en() ? 'Free and non-binding · no newsletter · you decide' : 'Kostenlos und unverbindlich · kein Newsletter · du entscheidest') + '</div></div>';
+    }
+    var html = '<div class="res">' +
+      '<div class="typecard" style="--tc:' + bestD.color + '"><div class="lbl">' + (en() ? 'Your vitality type' : 'Dein Vital-Typ') + '</div>' + badgeSvg('#fff').replace('fill="#fff"', 'fill="' + bestD.color + '"') +
+      '<h1>' + esc(t(ty.name)) + '</h1><p class="desc">' + esc(t(ty.desc)) + '</p>' +
+      '<div class="traits">' + t(ty.traits).map(function(x){ return '<span>' + esc(x) + '</span>'; }).join('') + '</div>' +
+      '<div class="stats"><div class="stat"><small>' + (en() ? 'Vitality level' : 'Vitallevel') + '</small><b>' + esc(t(R.lv.name)) + ' · ' + R.pct + ' %</b></div><div class="stat"><small>' + (en() ? 'Biggest lever' : 'Größter Hebel') + '</small><b>' + esc(t(worstD.name)) + '</b></div></div>' +
+      '<div class="actions"><button type="button" class="btn btn-white" data-lead>' + (en() ? 'Request consultation' : 'Beratung anfragen') + '</button><button type="button" class="btn btn-glass" data-story>' + ICO.save + (en() ? 'Save as story' : 'Als Story speichern') + '</button></div>' +
+      '<div class="story-hint" style="color:rgba(255,255,255,0.75)">' + (en() ? 'Portrait format for Instagram and WhatsApp stories' : 'Hochformat für Instagram- und WhatsApp-Stories') + '</div></div>' +
+      consult(false) +
       '<div class="sec"><h2>' + (en() ? 'Your day at a glance' : 'Dein Tag auf einen Blick') + '</h2><div class="sub">' + (en() ? 'Nine moments that shape a typical day, based on your answers.' : 'Neun Momente, die einen typischen Tag prägen, aus deinen Antworten.') + '</div><div class="card res-card"><ul class="day">' + DAY.map(function(m){ var v = S.answers[m.di + ':' + m.qi]; v = v === undefined ? 2 : v; var st = status(v); return '<li class="' + (v <= 1 ? 'dim' : '') + '"><span class="t num">' + m.time + '</span><i style="background:' + CFG.dims[m.di].color + '">' + ICO[m.ico] + '</i><span class="l">' + esc(t(m.l)) + '<small>' + esc(t(CFG.dims[m.di].q[m.qi].label)) + '</small></span><span class="st ' + st[0] + '">' + st[1] + '</span></li>'; }).join('') + '</ul></div></div>' +
-      '<div class="sec"><h2>' + (en() ? 'Your five areas' : 'Deine fünf Bereiche') + '</h2><div class="sub">' + (en() ? 'Strength: ' : 'Stärke: ') + esc(t(bestD.name)) + ' · ' + (en() ? 'biggest lever: ' : 'größter Hebel: ') + esc(t(worstD.name)) + '</div><div class="card res-card">' + CFG.dims.map(function(d, i){ var s = R.sc[i], p = Math.round(s/16*100), ins = tier(s) !== 'high' && INSIGHT[d.id] ? '<div class="ins"><b>' + (en() ? 'Good to know: ' : 'Gut zu wissen: ') + '</b>' + esc(t(INSIGHT[d.id])) + '</div>' : ''; return '<div class="trait"><div class="h"><i style="background:' + d.color + '">' + ICO[d.ico] + '</i><b>' + esc(t(d.name)) + '</b><span class="pct num">' + p + ' %</span></div><div class="bar"><i data-w="' + p + '" style="background:' + tierColor(s) + '"></i></div><p>' + esc(t(d.fb[tier(s)])) + '</p>' + ins + '</div>'; }).join('') + '</div></div>' +
+      '<div class="sec"><h2>' + (en() ? 'Your five areas' : 'Deine fünf Bereiche') + '</h2><div class="sub">' + (en() ? 'Strength: ' : 'Stärke: ') + esc(t(bestD.name)) + ' · ' + (en() ? 'biggest lever: ' : 'größter Hebel: ') + esc(t(worstD.name)) + '</div><div class="card res-card">' + CFG.dims.map(function(d, i){ var sc = R.sc[i], p = Math.round(sc/16*100), ins = tier(sc) !== 'high' && INSIGHT[d.id] ? '<div class="ins"><b>' + (en() ? 'Good to know: ' : 'Gut zu wissen: ') + '</b>' + esc(t(INSIGHT[d.id])) + '</div>' : ''; return '<div class="trait"><div class="h"><i style="background:' + d.color + '">' + ICO[d.ico] + '</i><b>' + esc(t(d.name)) + '</b><span class="pct num">' + p + ' %</span></div><div class="bar"><i data-w="' + p + '" style="background:' + tierColor(sc) + '"></i></div><p>' + esc(t(d.fb[tier(sc)])) + '</p>' + ins + '</div>'; }).join('') + '</div></div>' +
       '<div class="sec"><h2>' + (en() ? 'Three things you can start tomorrow' : 'Drei Dinge, die du morgen starten kannst') + '</h2><div class="sub">' + (en() ? 'Derived from your two weakest areas and the statements you rated lowest.' : 'Abgeleitet aus deinen zwei schwächsten Bereichen und den Aussagen, die du am niedrigsten bewertet hast.') + '</div><div class="card res-card">' + tips.map(function(x, i){ return '<div class="tip"><span class="n num">' + (i+1) + '</span><div><b>' + esc(t(x.tp.t)) + '</b><p>' + esc(t(x.tp.d)) + '</p><div class="ref">' + (en() ? 'Your answer: ' : 'Deine Antwort: ') + '<span>„' + esc(t(x.ref.q.label)) + '“ · ' + word(x.ref.v) + '</span></div></div></div>'; }).join('') + '</div>' +
-      (wishes.length ? '<div class="wish">' + (en() ? 'Your wish: ' : 'Dein Wunsch: ') + '<b>' + esc(wishes.join(', ')) + '</b>. ' + (en() ? 'Your biggest lever is a realistic place to start.' : 'Dein größter Hebel ist ein realistischer Startpunkt dafür.') + '</div>' : '') + '</div>';
-    var li = function(txt){ return '<li><i>' + ICO.check + '</i><span>' + txt + '</span></li>'; };
-    html += '<div class="cta"><div class="who"><img src="' + esc(o.avatar) + '" alt=""><div><b>' + esc(o.vorname) + ' ' + esc(o.nachname) + '</b><small>' + (en() ? 'Independent distributor of PM-International' : (o.female ? 'Unabhängige Vertriebspartnerin' : 'Unabhängiger Vertriebspartner') + ' der PM-International') + '</small></div></div>' +
-      '<h2>' + (en() ? 'Let\'s look at your profile together.' : 'Lass uns gemeinsam auf dein Profil schauen.') + '</h2>' +
-      '<div class="personal">' + (en() ? 'You are <b>' + esc(t(ty.name)) + '</b>, your biggest lever is <b>' + esc(t(worstD.name)) + '</b>' + (wishes.length ? ', your wish is <b>' + esc(wishes[0]) + '</b>' : '') + '. That is exactly where I would start with you.' : 'Du bist <b>' + esc(t(ty.name)) + '</b>, dein größter Hebel ist <b>' + esc(t(worstD.name)) + '</b>' + (wishes.length ? ', dein Wunsch ist <b>' + esc(wishes[0]) + '</b>' : '') + '. Genau da würde ich mit dir anfangen.') + '</div>' +
-      '<ul>' + li(en() ? 'A personal consultation, by phone or WhatsApp, whenever it suits you' : 'Eine persönliche Beratung, per Telefon oder WhatsApp, wann es dir passt') + li(en() ? 'Together we check whether the nutrient concept I work with fits you and your everyday life' : 'Wir prüfen gemeinsam, ob das Nährstoff-Konzept, mit dem ich arbeite, zu dir und deinem Alltag passt') + li(en() ? 'No risk for you: even if you decide to go for it afterwards, you have a 30-day satisfaction guarantee' : 'Du trägst kein Risiko: Selbst wenn du dich im Anschluss dafür entscheidest, hast du eine 30-tägige Zufriedenheitsgarantie') + '</ul>' +
-      '<div class="btns"><button type="button" class="btn btn-primary" data-lead>' + (en() ? 'Send profile and request consultation' : 'Profil senden und Beratung anfragen') + '</button><button type="button" class="btn btn-ghost" data-restart>' + (en() ? 'Start over' : 'Nochmal starten') + '</button></div>' +
-      '<div class="fine">' + (en() ? 'Free and non-binding · no newsletter · you decide' : 'Kostenlos und unverbindlich · kein Newsletter · du entscheidest') + '</div></div>' +
-      '<div class="tools"><button type="button" class="btn btn-ghost" data-save>' + ICO.save + (en() ? 'Save profile as image' : 'Profil als Bild speichern') + '</button></div>' +
-      '<p class="small-note">' + (en() ? 'This profile is a self-assessment of your habits, not a medical evaluation, and it contains no product recommendation. It was calculated on your device and is only sent if you actively choose to.' : 'Dieses Profil ist eine Selbsteinschätzung deiner Gewohnheiten, keine medizinische Bewertung, und enthält keine Produktempfehlung. Es wurde auf deinem Gerät berechnet und wird nur übermittelt, wenn du das aktiv möchtest.') + '</p>';
+      (wishes.length ? '<div class="wish">' + (en() ? 'Your wish: ' : 'Dein Wunsch: ') + '<b>' + esc(wishes.join(', ')) + '</b>. ' + (en() ? 'Your biggest lever is a realistic place to start.' : 'Dein größter Hebel ist ein realistischer Startpunkt dafür.') + '</div>' : '') + '</div>' +
+      consult(true) +
+      '<div class="tools"><button type="button" class="btn btn-ghost" data-story>' + ICO.save + (en() ? 'Save profile as story' : 'Profil als Story speichern') + '</button><button type="button" class="btn btn-ghost" data-restart>' + (en() ? 'Start over' : 'Nochmal starten') + '</button></div>' +
+      '<p class="small-note">' + (en() ? 'This profile is a self-assessment of your habits, not a medical evaluation, and it contains no product recommendation. It was calculated on your device and is only sent if you actively choose to.' : 'Dieses Profil ist eine Selbsteinschätzung deiner Gewohnheiten, keine medizinische Bewertung, und enthält keine Produktempfehlung. Es wurde auf deinem Gerät berechnet und wird nur übermittelt, wenn du das aktiv möchtest.') + '</p></div>' +
+      '<div class="sticky" id="sticky"><div class="in"><img src="' + esc(o.avatar) + '" alt=""><div class="txt"><b>' + (en() ? 'Talk about your profile?' : 'Über dein Profil sprechen?') + '</b>' + (en() ? 'Personal consultation with ' : 'Persönliche Beratung mit ') + esc(o.vorname) + '</div><button type="button" class="btn btn-accent" data-lead>' + (en() ? 'Request consultation' : 'Beratung anfragen') + '</button></div></div>';
     return html;
   }
   function vLead(){
@@ -767,22 +830,50 @@ var VC = (function(){
     return '<div class="card done"><div class="ok">' + ICO.check + '</div><h2>' + (en() ? 'Thank you. Your profile is on its way.' : 'Danke. Dein Profil ist unterwegs.') + '</h2><p>' + (en() ? esc(o.vorname) + ' will get back to you personally. Until then, your three tips are a good start.' : esc(o.vorname) + ' meldet sich persönlich bei dir. Bis dahin sind deine drei Tipps ein guter Anfang.') + '</p><div class="btns">' + wa + '<button type="button" class="btn btn-primary" data-restart-quiet>' + (en() ? 'Back to start' : 'Zurück zum Start') + '</button></div></div>';
   }
 
-  /* ---- Bild speichern ---- */
-  function saveImage(){
-    var R = evalResult(), ty = TYPES[CFG.dims[R.best].id], c = document.createElement('canvas'), W = 1080, H = 1350; c.width = W; c.height = H;
-    var x = c.getContext('2d'), accent = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#2FA877';
-    x.fillStyle = '#F7F6F2'; x.fillRect(0, 0, W, H);
-    x.fillStyle = '#8E8F8A'; x.font = '500 30px Geist, sans-serif'; x.fillText((en() ? 'MY VITALITY PROFILE' : 'MEIN VITALPROFIL'), 80, 120);
-    x.fillStyle = CFG.dims[R.best].color; x.beginPath(); x.arc(160, 260, 70, 0, Math.PI * 2); x.fill();
-    x.fillStyle = '#fff'; x.beginPath(); x.arc(160, 260, 12, 0, Math.PI * 2); x.fill();
-    x.fillStyle = '#1B1B19'; x.font = '500 64px Geist, sans-serif'; x.fillText(t(ty.name), 270, 250);
-    x.fillStyle = '#5A5B57'; x.font = '400 34px Geist, sans-serif'; x.fillText((en() ? 'Vitality level: ' : 'Vitallevel: ') + t(R.lv.name) + ' · ' + R.pct + ' %', 270, 305);
-    var y = 430;
-    CFG.dims.forEach(function(d, i){ var p = R.sc[i] / 16; x.fillStyle = '#1B1B19'; x.font = '500 34px Geist, sans-serif'; x.fillText(t(d.name), 80, y); x.font = '600 34px Geist, sans-serif'; x.textAlign = 'right'; x.fillText(Math.round(p*100) + ' %', W - 80, y); x.textAlign = 'left';
-      x.fillStyle = '#E7E6E0'; roundRect(x, 80, y + 22, W - 160, 18, 9); x.fill(); x.fillStyle = d.color; roundRect(x, 80, y + 22, Math.max(18, (W - 160) * p), 18, 9); x.fill(); y += 130; });
-    x.fillStyle = '#8E8F8A'; x.font = '400 28px Geist, sans-serif'; x.fillText((en() ? 'Vitality check by ' : 'Vitalcheck von ') + CFG.owner.vorname + ' ' + CFG.owner.nachname, 80, H - 90);
-    x.fillStyle = accent; x.fillRect(0, H - 14, W, 14);
-    var a = document.createElement('a'); a.download = 'vitalprofil.png'; a.href = c.toDataURL('image/png'); document.body.appendChild(a); a.click(); a.remove();
+  /* ---- Story-Bild (1080×1920) ---- */
+  function wrapText(x, text, X, Y, maxW, lh, maxLines){ var words = text.split(' '), line = '', lines = 0; for (var i = 0; i < words.length; i++) { var test = line ? line + ' ' + words[i] : words[i]; if (x.measureText(test).width > maxW && line) { x.fillText(line, X, Y); Y += lh; line = words[i]; lines++; if (maxLines && lines >= maxLines - 1) { line += '…'; break; } } else line = test; } x.fillText(line, X, Y); return Y + lh; }
+  function hexToRgb(h){ h = h.replace('#',''); return [parseInt(h.substr(0,2),16), parseInt(h.substr(2,2),16), parseInt(h.substr(4,2),16)]; }
+  function mix(h, k, dark){ var c = hexToRgb(h); return 'rgb(' + c.map(function(v){ return Math.round(dark ? v * (1 - k) : v + (255 - v) * k); }).join(',') + ')'; }
+  function drawStory(cb){
+    var R = evalResult(), bestD = CFG.dims[R.best], worstD = CFG.dims[R.worst], ty = TYPES[bestD.id], o = CFG.owner, col = bestD.color;
+    var c = document.createElement('canvas'), W = 1080, H = 1920; c.width = W; c.height = H; var x = c.getContext('2d');
+    var g = x.createLinearGradient(0, 0, 0, H); g.addColorStop(0, mix(col, 0.18, false)); g.addColorStop(0.45, col); g.addColorStop(1, mix(col, 0.45, true)); x.fillStyle = g; x.fillRect(0, 0, W, H);
+    x.fillStyle = 'rgba(255,255,255,0.10)'; x.beginPath(); x.arc(980, 120, 420, 0, Math.PI*2); x.fill();
+    x.fillStyle = 'rgba(0,0,0,0.10)'; x.beginPath(); x.arc(80, 1760, 360, 0, Math.PI*2); x.fill();
+    x.textAlign = 'center'; x.fillStyle = 'rgba(255,255,255,0.85)'; x.font = '600 30px Geist, sans-serif'; x.letterSpacing = '6px'; x.fillText('VITALCHECK', W/2, 150); x.letterSpacing = '0px';
+    x.save(); x.shadowColor = 'rgba(0,0,0,0.25)'; x.shadowBlur = 40; x.shadowOffsetY = 20; x.fillStyle = '#fff'; x.beginPath(); x.arc(W/2, 430, 150, 0, Math.PI*2); x.fill(); x.restore();
+    x.strokeStyle = col; x.lineWidth = 9; x.lineJoin = 'round'; x.beginPath(); for (var i = 0; i < 5; i++) { var a = -Math.PI/2 + i * 2*Math.PI/5, px = W/2 + 92*Math.cos(a), py = 430 + 92*Math.sin(a); if (i === 0) x.moveTo(px, py); else x.lineTo(px, py); } x.closePath(); x.stroke(); x.fillStyle = col; x.beginPath(); x.arc(W/2, 430, 22, 0, Math.PI*2); x.fill();
+    x.fillStyle = 'rgba(255,255,255,0.85)'; x.font = '500 34px Geist, sans-serif'; x.fillText(en() ? 'My vitality type' : 'Mein Vital-Typ', W/2, 660);
+    x.fillStyle = '#fff'; x.font = '600 96px Geist, sans-serif'; x.fillText(t(ty.name), W/2, 770);
+    x.fillStyle = 'rgba(255,255,255,0.92)'; x.font = '400 36px Geist, sans-serif'; var yy = wrapText(x, t(ty.desc), W/2, 850, 860, 50, 3);
+    var pillTxt = (en() ? 'Vitality level: ' : 'Vitallevel: ') + t(R.lv.name) + ' · ' + R.pct + ' %'; x.font = '600 34px Geist, sans-serif'; var pw = x.measureText(pillTxt).width + 80; x.fillStyle = 'rgba(255,255,255,0.2)'; roundRect(x, W/2 - pw/2, yy + 20, pw, 74, 37); x.fill(); x.fillStyle = '#fff'; x.fillText(pillTxt, W/2, yy + 70);
+    var by = yy + 190; x.textAlign = 'left';
+    CFG.dims.forEach(function(d, i){ var p = R.sc[i] / 16; x.fillStyle = 'rgba(255,255,255,0.95)'; x.font = '500 32px Geist, sans-serif'; x.fillText(t(d.name), 110, by); x.textAlign = 'right'; x.font = '600 32px Geist, sans-serif'; x.fillText(Math.round(p*100) + ' %', W - 110, by); x.textAlign = 'left'; x.fillStyle = 'rgba(255,255,255,0.22)'; roundRect(x, 110, by + 22, W - 220, 16, 8); x.fill(); x.fillStyle = '#fff'; roundRect(x, 110, by + 22, Math.max(16, (W - 220) * p), 16, 8); x.fill(); by += 104; });
+    x.textAlign = 'center'; x.fillStyle = 'rgba(255,255,255,0.8)'; x.font = '500 28px Geist, sans-serif'; x.fillText((en() ? 'Biggest lever: ' : 'Größter Hebel: ') + t(worstD.name), W/2, by + 30);
+    var host = (location.protocol.indexOf('http') === 0 && location.host) ? location.host : '';
+    x.fillStyle = 'rgba(255,255,255,0.7)'; x.font = '400 26px Geist, sans-serif'; x.fillText(en() ? 'Do the check yourself:' : 'Mach den Check auch:', W/2, H - 150);
+    x.fillStyle = '#fff'; x.font = '600 34px Geist, sans-serif'; x.fillText(host || ((en() ? 'Vitality check by ' : 'Vitalcheck von ') + o.vorname + ' ' + o.nachname), W/2, H - 100);
+    cb(c);
+  }
+  /* Story vorab rendern, damit das Teilen auf dem Handy direkt in der Klick-Geste passiert (Safari-Anforderung) */
+  var storyBlob = null, storyBusy = false;
+  function prepareStory(){
+    if (storyBlob || storyBusy) return; storyBusy = true;
+    var run = function(){ try { drawStory(function(c){ c.toBlob(function(b){ storyBlob = b; storyBusy = false; }, 'image/png'); }); } catch(e){ storyBusy = false; } };
+    if (document.fonts && document.fonts.load) Promise.all([document.fonts.load('600 96px Geist'), document.fonts.load('400 36px Geist'), document.fonts.load('500 32px Geist')]).then(run, run); else run();
+  }
+  function isMobile(){ return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || (navigator.maxTouchPoints > 1 && window.innerWidth < 1024); }
+  function deliverStory(blob){
+    var file = new File([blob], 'vitalprofil-story.png', { type: 'image/png' });
+    if (isMobile() && navigator.canShare && navigator.canShare({ files: [file] })) { navigator.share({ files: [file], title: 'Vitalcheck' }).catch(function(){ downloadBlob(blob, file.name); }); }
+    else downloadBlob(blob, file.name);
+  }
+  function downloadBlob(blob, name){ var a = document.createElement('a'); a.download = name; a.href = URL.createObjectURL(blob); document.body.appendChild(a); a.click(); setTimeout(function(){ a.remove(); }, 1000); }
+  function saveStory(btn){
+    if (storyBlob) { deliverStory(storyBlob); return; }
+    var orig = btn.innerHTML; btn.disabled = true; btn.textContent = en() ? 'Creating …' : 'Wird erstellt …';
+    var run = function(){ drawStory(function(c){ c.toBlob(function(b){ storyBlob = b; btn.disabled = false; btn.innerHTML = orig; deliverStory(b); }, 'image/png'); }); };
+    if (document.fonts && document.fonts.load) Promise.all([document.fonts.load('600 96px Geist'), document.fonts.load('400 36px Geist')]).then(run, run); else run();
   }
   function roundRect(x, X, Y, w, h, r){ x.beginPath(); x.moveTo(X + r, Y); x.arcTo(X + w, Y, X + w, Y + h, r); x.arcTo(X + w, Y + h, X, Y + h, r); x.arcTo(X, Y + h, X, Y, r); x.arcTo(X, Y, X + w, Y, r); x.closePath(); }
 
@@ -816,10 +907,17 @@ var VC = (function(){
     if (key === 'reveal') { var rows = root.querySelectorAll('.reveal .row'); rows.forEach(function(r, i){ setTimeout(function(){ r.classList.add('on'); var p = r.querySelector('.p'), to = +p.getAttribute('data-p'), t0 = null; function f(ts){ if (!t0) t0 = ts; var q = Math.min(1, (ts - t0) / 600); p.textContent = Math.round(to * q) + ' %'; if (q < 1) requestAnimationFrame(f); } requestAnimationFrame(f); }, 350 + i * 420); }); setTimeout(function(){ go(S.step + 1); }, 350 + rows.length * 420 + 700); }
     if (key === 'result') {
       setTimeout(function(){ root.querySelectorAll('.trait .bar i').forEach(function(f){ f.style.width = f.getAttribute('data-w') + '%'; }); }, 150);
-      root.querySelector('[data-lead]').addEventListener('click', function(){ go(S.step + 1); });
-      root.querySelector('[data-save]').addEventListener('click', saveImage);
+      root.querySelectorAll('[data-lead]').forEach(function(b){ b.addEventListener('click', function(){ go(steps().indexOf('lead')); }); });
+      storyBlob = null; setTimeout(prepareStory, 600);
+      root.querySelectorAll('[data-story]').forEach(function(b){ b.addEventListener('click', function(){ saveStory(b); }); });
       root.querySelector('[data-restart]').addEventListener('click', function(){ if (confirm(en() ? 'Start over? Your answers will be reset.' : 'Nochmal starten? Deine Antworten werden zurückgesetzt.')) { S = fresh(); save(); go(0); } });
-    }
+      var sticky = document.getElementById('sticky'), firstCta = root.querySelector('.consult'), last = root.querySelector('.consult.compact');
+      document.body.classList.add('has-sticky');
+      var io = new IntersectionObserver(function(es){ var visible = false; es.forEach(function(e){ if (e.isIntersecting) visible = true; }); }, { threshold: 0.1 });
+      var seen = { a: true, b: false }; var io2 = new IntersectionObserver(function(es){ es.forEach(function(e){ if (e.target === firstCta) seen.a = e.isIntersecting; if (e.target === last) seen.b = e.isIntersecting; }); sticky.classList.toggle('show', !seen.a && !seen.b && window.scrollY > 300); }, { threshold: 0.05 });
+      io2.observe(firstCta); io2.observe(last);
+      window.addEventListener('scroll', function(){ if (steps()[S.step] !== 'result') return; sticky.classList.toggle('show', !seen.a && !seen.b && window.scrollY > 300); }, { passive: true });
+    } else { document.body.classList.remove('has-sticky'); }
     if (key === 'lead') bindLead();
     if (key === 'done') root.querySelector('[data-restart-quiet]').addEventListener('click', function(){ S = fresh(); save(); go(0); });
   }
