@@ -106,7 +106,72 @@ html[data-theme="midnight"] .hero .gets li i { color: var(--accent); }
 html[data-theme="midnight"] .start .sec-head .no { background: var(--accent); color: var(--on-accent); }
 .start .sec-head h2 { font-size: 20px; }
 .start .sec-head small { font-size: 13.5px; color: var(--ink-3); margin-left: auto; }
-/* ===== Landing nach Vorbild: weiße Hero-Karte, Handy-Mockup, drei Schritt-Karten ===== */
+/* ===== Startseite: drei Layouts (startseite = split | buehne | teaser) ===== */
+.device { width: 300px; border-radius: 44px; background: #14171A; padding: 10px; box-shadow: 0 40px 80px -34px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,255,255,0.08) inset; }
+.device .screen { position: relative; border-radius: 36px; overflow: hidden; background: #F7F6F2; aspect-ratio: 9 / 18.5; }
+.device .screen img { width: 100%; display: block; margin-top: -5px; }
+.device .screen::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 90px; background: linear-gradient(180deg, rgba(247,246,242,0) 0%, rgba(247,246,242,0.9) 100%); }
+.device .isl { position: absolute; top: 12px; left: 50%; transform: translateX(-50%); width: 92px; height: 26px; border-radius: 14px; background: #14171A; z-index: 2; }
+/* A: Split */
+.ls-split { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: clamp(28px, 5vw, 64px); align-items: center; padding: clamp(24px, 5vh, 56px) 0 clamp(24px, 4vh, 40px); }
+.ls-split h1 { font-size: clamp(34px, 4.8vw, 56px); font-weight: 500; letter-spacing: -0.03em; line-height: 1.05; margin-bottom: 16px; text-wrap: balance; }
+.ls-split h1 em { font-style: normal; color: var(--accent-dark); }
+html[data-theme="midnight"] .ls-split h1 em { color: var(--accent); }
+.ls-split p { color: var(--ink-2); font-size: 18px; line-height: 1.55; max-width: 40ch; margin-bottom: 26px; }
+.ls-split .ls-cta { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.ls-split .ls-cta .btn { border-radius: 9999px; padding: 0 30px; min-height: 56px; font-size: 17px; }
+.ls-split .trust { font-size: 14px; color: var(--ink-3); }
+.ls-split .visual { position: relative; display: flex; justify-content: center; align-items: center; min-height: 520px; }
+.ls-split .visual::before { content: ''; position: absolute; width: 440px; height: 440px; border-radius: 50%; background: radial-gradient(closest-side, color-mix(in srgb, var(--accent) 28%, #fff), color-mix(in srgb, var(--accent) 10%, var(--bg)) 70%, transparent 100%); }
+html[data-theme="midnight"] .ls-split .visual::before { background: radial-gradient(closest-side, color-mix(in srgb, var(--accent) 35%, #000), transparent 100%); }
+.ls-split .device { position: relative; transform: rotate(-4deg); }
+.ls-split .tag { position: absolute; padding: 10px 14px; border-radius: 14px; background: var(--paper); box-shadow: 0 14px 30px -18px rgba(0,0,0,0.35); font-size: 13.5px; font-weight: 500; display: flex; align-items: center; gap: 10px; }
+.ls-split .tag i { width: 26px; height: 26px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; color: #fff; }
+.ls-split .tag i svg { width: 13px; height: 13px; }
+.ls-split .tag.t1 { top: 12%; right: 0; } .ls-split .tag.t2 { bottom: 14%; left: 0; }
+.ls-strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 8px; }
+.ls-strip div { display: flex; align-items: center; gap: 12px; padding: 16px 18px; border-radius: 16px; background: var(--paper); font-size: 15px; box-shadow: 0 1px 2px rgba(0,0,0,0.04); }
+.ls-strip b { width: 28px; height: 28px; border-radius: 50%; background: var(--accent-soft); color: var(--accent-dark); display: inline-flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; flex-shrink: 0; }
+html[data-theme="midnight"] .ls-strip b { color: var(--accent); }
+@media (max-width: 860px) { .ls-split { grid-template-columns: 1fr; text-align: center; } .ls-split p { margin: 0 auto 22px; } .ls-split .ls-cta { justify-content: center; } .ls-split .visual { min-height: 0; margin-top: 8px; } .ls-split .device { width: 240px; } .ls-split .visual::before { width: 340px; height: 340px; } .ls-split .tag { display: none; } .ls-strip { grid-template-columns: 1fr; } }
+/* B: Bühne */
+.ls-stage { position: relative; overflow: hidden; border-radius: 30px; background: linear-gradient(160deg, color-mix(in srgb, var(--accent) 22%, #fff) 0%, color-mix(in srgb, var(--accent) 8%, var(--bg)) 55%, var(--paper) 100%); padding: clamp(32px, 6vw, 72px) clamp(22px, 5vw, 64px) 0; display: grid; grid-template-columns: 1fr auto; gap: 32px; align-items: end; }
+html[data-theme="midnight"] .ls-stage { background: linear-gradient(160deg, color-mix(in srgb, var(--accent) 30%, #0E1412) 0%, #16201B 60%, var(--paper) 100%); }
+.ls-stage .copy { padding-bottom: clamp(32px, 6vw, 72px); }
+.ls-stage h1 { font-size: clamp(36px, 5.6vw, 64px); font-weight: 500; letter-spacing: -0.035em; line-height: 1.0; margin-bottom: 14px; max-width: 12ch; }
+.ls-stage p { font-size: 18px; color: var(--ink-2); max-width: 34ch; margin-bottom: 26px; }
+.ls-stage .btn { border-radius: 9999px; padding: 0 30px; min-height: 56px; font-size: 17px; }
+.ls-stage .trust { margin-top: 12px; font-size: 13.5px; color: var(--ink-3); }
+.ls-stage .device { width: 280px; margin-bottom: -140px; transform: rotate(3deg); }
+.ls-areas { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 18px; }
+.ls-areas span { display: inline-flex; align-items: center; gap: 8px; padding: 9px 14px 9px 9px; border-radius: 9999px; background: var(--paper); font-size: 13.5px; font-weight: 500; color: var(--ink-2); box-shadow: 0 1px 2px rgba(0,0,0,0.04); }
+.ls-areas span i { width: 22px; height: 22px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; color: #fff; }
+.ls-areas span i svg { width: 12px; height: 12px; }
+@media (max-width: 860px) { .ls-stage { grid-template-columns: 1fr; text-align: center; padding-bottom: 0; } .ls-stage p { margin: 0 auto 22px; } .ls-stage h1 { max-width: none; } .ls-stage .device { margin: 0 auto -120px; width: 230px; transform: none; } .ls-stage .copy { padding-bottom: 24px; } }
+/* C: Ergebnis-Teaser */
+.ls-teaser { display: grid; grid-template-columns: 0.9fr 1.1fr; gap: clamp(28px, 5vw, 72px); align-items: center; padding: clamp(24px, 5vh, 56px) 0 clamp(24px, 4vh, 40px); }
+.ls-teaser .visual { position: relative; display: flex; justify-content: center; min-height: 540px; align-items: center; }
+.ls-teaser .device { width: 280px; transform: rotate(-3deg); }
+.ls-teaser .rescard { position: absolute; right: -6px; bottom: 40px; width: 230px; padding: 16px; border-radius: 18px; background: var(--paper); box-shadow: 0 24px 50px -28px rgba(0,0,0,0.4); }
+.ls-teaser .rescard small { display: block; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 6px; }
+.ls-teaser .rescard b { display: block; font-size: 16px; font-weight: 600; margin-bottom: 10px; }
+.ls-teaser .rescard .r { display: grid; grid-template-columns: 16px 1fr 32px; gap: 8px; align-items: center; font-size: 11.5px; color: var(--ink-2); padding: 4px 0; }
+.ls-teaser .rescard .r i { width: 16px; height: 16px; border-radius: 50%; }
+.ls-teaser .rescard .r .b { height: 5px; border-radius: 5px; background: var(--bg); overflow: hidden; }
+.ls-teaser .rescard .r .b i { display: block; height: 100%; border-radius: 5px; width: var(--w); }
+.ls-teaser .rescard .r span { text-align: right; font-weight: 500; color: var(--ink); }
+.ls-teaser h1 { font-size: clamp(34px, 4.8vw, 54px); font-weight: 500; letter-spacing: -0.03em; line-height: 1.06; margin-bottom: 20px; text-wrap: balance; }
+.ls-teaser ul { list-style: none; display: grid; gap: 12px; margin-bottom: 28px; }
+.ls-teaser li { display: grid; grid-template-columns: 28px 1fr; gap: 12px; align-items: center; font-size: 17px; color: var(--ink-2); }
+.ls-teaser li b { color: var(--ink); font-weight: 500; }
+.ls-teaser li i { width: 28px; height: 28px; border-radius: 50%; background: var(--accent); color: var(--on-accent); display: inline-flex; align-items: center; justify-content: center; }
+.ls-teaser li i svg { width: 13px; height: 13px; }
+.ls-teaser .btn { border-radius: 9999px; padding: 0 30px; min-height: 56px; font-size: 17px; }
+.ls-teaser .trust { margin-top: 12px; font-size: 13.5px; color: var(--ink-3); }
+@media (max-width: 860px) { .ls-teaser { grid-template-columns: 1fr; } .ls-teaser .visual { order: 2; min-height: 0; } .ls-teaser .device { width: 240px; } .ls-teaser .rescard { right: 0; bottom: 20px; width: 200px; } }
+@media (max-width: 480px) { .ls-teaser .rescard { display: none; } }
+
+/* ===== (alt) Landing nach Vorbild ===== */
 .top .btn-top { display: none; margin-left: auto; padding: 10px 18px; border-radius: 9999px; background: var(--ink); color: var(--bg); font-size: 14px; font-weight: 500; }
 html[data-theme="midnight"] .top .btn-top { background: var(--accent); color: var(--on-accent); }
 .top.landing .btn-top { display: inline-flex; }
@@ -630,7 +695,8 @@ var CFG = {
   ],
   flags: {
     motive: {{#unless frage_motive=aus}}true{{/unless}}{{#if frage_motive=aus}}false{{/if}},
-    invest: {{#if frage_investition=an}}true{{/if}}{{#unless frage_investition=an}}false{{/unless}}
+    invest: {{#if frage_investition=an}}true{{/if}}{{#unless frage_investition=an}}false{{/unless}},
+    landing: "{{startseite}}"
   },
   owner: { vorname: "{{vorname}}", nachname: "{{nachname}}", avatar: "{{profilbild}}", whatsapp: "{{whatsapp_nummer}}", recipient: "{{email_benachrichtigung}}", female: {{#if geschlecht=weiblich}}true{{/if}}{{#unless geschlecht=weiblich}}false{{/unless}} }
 };
@@ -730,19 +796,29 @@ var VC = (function(){
   /* ---- Views ---- */
   function chip(attr, id, label, on){ return '<button type="button" class="chip' + (on ? ' on' : '') + '" data-' + attr + '="' + id + '"><span class="chk">' + ICO.check + '</span>' + esc(label) + '</button>'; }
   function vLanding(){
-    var o = CFG.owner;
-    var pc = function(txt, on){ return '<div class="pc"><p>' + txt + '</p><div class="ps"><i' + (on === 0 ? ' class="on"' : '') + '></i><i' + (on === 1 ? ' class="on"' : '') + '></i><i' + (on === 2 ? ' class="on"' : '') + '></i><i' + (on === 3 ? ' class="on"' : '') + '></i><i' + (on === 4 ? ' class="on"' : '') + '></i></div></div>'; };
-    return '<div class="lp-hero"><div class="lp-copy">' +
-      '<div class="kick">' + (en() ? 'Takes 3 minutes' : 'Dauert 3 Minuten') + '</div>' +
-      '<h1>' + (en() ? 'Find out <em>where your vitality stands</em> and which type you are' : 'Finde heraus, <em>wo dein Vitallevel steht</em> und welcher Vital-Typ du bist') + '</h1>' +
-      '<p>' + (en() ? 'You get your evaluation right away. And if you like, we then check together whether the nutrient concept I work with fits you and your everyday life.' : 'Deine Auswertung bekommst du sofort. Und wenn du magst, prüfen wir danach gemeinsam, ob das Nährstoff-Konzept, mit dem ich arbeite, zu dir und deinem Alltag passt.') + '</p>' +
-      '<button type="button" class="btn btn-primary" data-next>' + (en() ? 'Start the vitality check' : 'Vitalcheck starten') + '</button>' +
-      '<div class="fine">' + (en() ? '*No sign-up required' : '*Keine Anmeldung erforderlich') + '</div></div>' +
-      '<div class="lp-visual" aria-hidden="true"><div class="phone"><div class="scr"><div class="notch"></div><div class="ppill"><span>Vitalcheck</span><i></i></div><h4>' + (en() ? 'How much does each statement apply to you?' : 'Wie sehr trifft jede Aussage auf dich zu?') + '</h4>' + pc(esc(t(CFG.dims[0].q[0].text)), 4) + pc(esc(t(CFG.dims[0].q[1].text)), 2) + pc(esc(t(CFG.dims[0].q[2].text)), -1) + '</div></div></div></div>' +
-      '<div class="lp-steps">' +
-      '<div class="lp-step"><span class="no">1</span><h3>' + (en() ? 'Get ready' : 'Mach dich bereit') + '</h3><p>' + (en() ? 'Take three quiet minutes. There is no right or wrong, only your everyday life as it usually is.' : 'Nimm dir drei ruhige Minuten. Es gibt kein Richtig oder Falsch, nur deinen Alltag, wie er meistens ist.') + '</p></div>' +
-      '<div class="lp-step"><span class="no">2</span><h3>' + (en() ? 'Do the check' : 'Mach den Check') + '</h3><p>' + (en() ? 'Answer 20 statements about how you eat, drink, move, sleep and structure your day.' : 'Beantworte 20 Aussagen dazu, wie du isst, trinkst, dich bewegst, schläfst und deinen Tag strukturierst.') + '</p></div>' +
-      '<div class="lp-step"><span class="no">3</span><h3>' + (en() ? 'Get your vitality profile' : 'Erhalte dein Vitalprofil') + '</h3><p>' + (en() ? 'Your vitality type, your day at a glance and three things you can start tomorrow.' : 'Dein Vital-Typ, dein Tag auf einen Blick und drei Dinge, die du morgen starten kannst.') + '</p></div></div>';
+    var o = CFG.owner, L2 = CFG.flags.landing || 'split';
+    var phone = '<div class="device"><div class="screen"><div class="isl"></div><img src="assets/check-mobile.png" alt="" width="800" height="1506" loading="eager"></div></div>';
+    var trust = en() ? '3 minutes · free · no sign-up' : '3 Minuten · kostenlos · keine Anmeldung';
+    var btn = '<button type="button" class="btn btn-primary" data-next>' + (en() ? 'Start the vitality check' : 'Vitalcheck starten') + '</button>';
+    if (L2 === 'buehne') {
+      return '<div class="ls-stage"><div class="copy"><h1>' + (en() ? 'How vital is your everyday life?' : 'Wie vital ist dein Alltag?') + '</h1>' +
+        '<p>' + (en() ? '20 statements, your vitality type and three things for tomorrow.' : '20 Aussagen, dein Vital-Typ und drei Dinge für morgen.') + '</p>' + btn + '<div class="trust">' + trust + '</div></div>' + phone + '</div>' +
+        '<div class="ls-areas">' + CFG.dims.map(function(d){ return '<span><i style="background:' + d.color + '">' + ICO[d.ico] + '</i>' + esc(t(d.name)) + '</span>'; }).join('') + '</div>';
+    }
+    if (L2 === 'teaser') {
+      var demo = [0.78, 0.35, 0.9, 0.5, 0.65];
+      var li = function(b, txt){ return '<li><i>' + ICO.check + '</i><span><b>' + b + '</b> ' + txt + '</span></li>'; };
+      return '<div class="ls-teaser"><div class="visual">' + phone + '<div class="rescard" aria-hidden="true"><small>' + (en() ? 'Your result' : 'Dein Ergebnis') + '</small><b>' + (en() ? 'The Rester' : 'Der Nachtruhe-Typ') + '</b>' + CFG.dims.map(function(d, i){ return '<div class="r"><i style="background:' + d.color + '"></i><div class="b"><i style="--w:' + Math.round(demo[i]*100) + '%;background:' + d.color + '"></i></div><span>' + Math.round(demo[i]*100) + ' %</span></div>'; }).join('') + '</div></div>' +
+        '<div><h1>' + (en() ? 'Your vitality type in 3 minutes.' : 'Dein Vital-Typ in 3 Minuten.') + '</h1>' +
+        '<ul>' + li(en() ? 'Your vitality type' : 'Dein Vital-Typ', en() ? 'and your level across five areas' : 'und dein Level in fünf Bereichen') + li(en() ? 'Your day at a glance,' : 'Dein Tag auf einen Blick,', en() ? 'from morning light to sleep' : 'vom Morgenlicht bis zum Schlaf') + li(en() ? 'Three things' : 'Drei Dinge,', en() ? 'you can start tomorrow' : 'die du morgen starten kannst') + '</ul>' +
+        btn + '<div class="trust">' + trust + '</div></div></div>';
+    }
+    /* split (Standard) */
+    return '<div class="ls-split"><div><h1>' + (en() ? 'Find out <em>where your vitality stands.</em>' : 'Finde heraus, <em>wo dein Vitallevel steht.</em>') + '</h1>' +
+      '<p>' + (en() ? '20 statements about your everyday life. Your vitality type and your evaluation right away.' : '20 Aussagen zu deinem Alltag. Dein Vital-Typ und deine Auswertung sofort.') + '</p>' +
+      '<div class="ls-cta">' + btn + '<span class="trust">' + trust + '</span></div></div>' +
+      '<div class="visual">' + phone + '<div class="tag t1" aria-hidden="true"><i style="background:' + CFG.dims[2].color + '">' + ICO.moon + '</i>' + (en() ? 'The Rester · 59 %' : 'Der Nachtruhe-Typ · 59 %') + '</div><div class="tag t2" aria-hidden="true"><i style="background:' + CFG.dims[3].color + '">' + ICO.move + '</i>' + (en() ? 'Biggest lever: movement' : 'Größter Hebel: Bewegung') + '</div></div></div>' +
+      '<div class="ls-strip"><div><b>1</b>' + (en() ? 'Answer 20 statements' : '20 Aussagen beantworten') + '</div><div><b>2</b>' + (en() ? 'See your vitality type' : 'Deinen Vital-Typ sehen') + '</div><div><b>3</b>' + (en() ? 'Get three things for tomorrow' : 'Drei Dinge für morgen mitnehmen') + '</div></div>';
   }
   function vWishes(){
     return '<div class="pagehead"><h1>' + (en() ? 'What would you like most right now?' : 'Was wünschst du dir gerade am meisten?') + '</h1><p>' + (en() ? 'Pick up to three. Your profile will pick them up again.' : 'Wähle bis zu drei. Dein Profil greift sie wieder auf.') + '</p></div>' +

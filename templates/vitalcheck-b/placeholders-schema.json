@@ -151,6 +151,40 @@
       ]
     },
     {
+      "key": "startseite",
+      "type": "card_select",
+      "label": "Startseite",
+      "section": "Design",
+      "order": 14.5,
+      "required": true,
+      "default_value": "split",
+      "preview_value": "split",
+      "placeholder_text": "Wie die erste Seite aussieht. Der Check selbst ist bei allen drei gleich.",
+      "card_options": [
+        {
+          "value": "split",
+          "label": "Split",
+          "card_type": "color",
+          "color": "#DCEFE6",
+          "description": "Headline links, Handy rechts, drei Schritte darunter."
+        },
+        {
+          "value": "buehne",
+          "label": "Bühne",
+          "card_type": "color",
+          "color": "#C9E8DA",
+          "description": "Farbige Bühne, Handy ragt heraus, fünf Bereiche als Chips."
+        },
+        {
+          "value": "teaser",
+          "label": "Ergebnis-Teaser",
+          "card_type": "color",
+          "color": "#EEF3F0",
+          "description": "Handy mit Beispiel-Ergebnis links, drei Vorteile rechts."
+        }
+      ]
+    },
+    {
       "key": "frage_motive",
       "type": "card_select",
       "label": "Frage „Was treibt dich an?\" stellen?",
@@ -221,6 +255,7 @@
     "whatsapp_nummer": "",
     "farbthema": "mint",
     "frage_motive": "an",
-    "frage_investition": "an"
+    "frage_investition": "an",
+    "startseite": "split"
   }
 }

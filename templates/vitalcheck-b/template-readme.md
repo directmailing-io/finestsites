@@ -5,7 +5,11 @@ Zweite, eigenständige Variante des Vitalchecks (gleiche 20 Verhaltens-Aussagen,
 ## UI
 
 - Warmes Off-White, kleine Marke (Avatar + Name) links oben, schlanke Fortschritts-Pille „Vitalcheck · 35 % abgeschlossen“ mit Ring, Flaggen rechts
-- **Startseite nach mindprofile.co/de/personality**: Kopfzeile mit Avatar/Name, dunklem Pill-Button „Vitalcheck starten“ und Flaggen (keine Fortschritts-Pille). Weiße Hero-Karte: links grüner Kicker „Dauert 3 Minuten“, dreizeilige Headline mit grüner Mittelzeile, kurzer Absatz, dunkler Pill-Button, „*Keine Anmeldung erforderlich“; rechts eine Farbfläche mit Handy-Mockup, das den Check zeigt. Darunter drei nummerierte Schritt-Karten (Mach dich bereit, Mach den Check, Erhalte dein Vitalprofil). Footer als abgerundeter grauer Block. Der Wunsch-Schritt ist die erste Check-Seite.
+- **Startseite in drei Layouts** (Editor-Feld `startseite`), alle mit wenig Text, einem CTA und einer Vertrauenszeile „3 Minuten · kostenlos · keine Anmeldung“. Das Hero-Bild ist ein echter Screenshot des Checks (`assets/check-mobile.png`) in einem CSS-Handyrahmen.
+  - `split` (Standard): Headline mit grünem Akzent links, Handy leicht gedreht auf weichem Farbkreis rechts mit zwei schwebenden Ergebnis-Tags, darunter drei Schritte in einer Reihe.
+  - `buehne`: farbige Bühne über die volle Breite, Headline „Wie vital ist dein Alltag?“, Handy ragt aus der Bühne, darunter die fünf Bereiche als Chips.
+  - `teaser`: Handy links mit eingeblendeter Beispiel-Ergebniskarte, rechts „Dein Vital-Typ in 3 Minuten.“ und drei Vorteile mit Haken.
+  Kopfzeile immer: Avatar/Name, dunkler Pill-Button, Flaggen; keine Fortschritts-Pille vor dem Start. Der Wunsch-Schritt ist die erste Check-Seite.
 - **Ein Bereich pro Seite**: Überschrift „Wie sehr trifft jede Aussage auf dich zu?“, darunter die vier Aussagen als weiße Karten mit **fünfstufiger Skala** aus farbigen, gestrichelten Kreisen (Trifft gar nicht zu → Trifft voll zu, Beschriftung nur unter der ersten Karte). Die fünf Kreise sind gleich groß und **Abstufungen der Akzentfarbe** (zart bis voll), keine Rot-Grün-Ampel wie beim Vorbild. Klick füllt den Kreis, die nächste offene Karte wird hervorgehoben und ins Bild gescrollt. „Weiter“ prüft, ob alles beantwortet ist.
 - Bewertung 0–4 je Aussage, 16 Punkte je Bereich, 80 gesamt (Level-Schwellen entsprechend verdoppelt)
 
