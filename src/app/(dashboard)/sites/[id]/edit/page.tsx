@@ -7,6 +7,7 @@ import ImageCropModal from '@/components/ImageCropModal'
 import { RichTextField } from '@/components/editor/RichTextField'
 import { usePlanQuota } from '@/components/dashboard/PlanQuotaContext'
 import { PHONE_COUNTRIES, parsePhoneValue, toWhatsAppDigits, toDisplayPhone } from '@/lib/constants/phone-countries'
+import { promoDurationInfo, type PromoDuration } from '@/lib/billing/promo-duration'
 import { FITLINE_SHOP_PRODUCTS, FITLINE_AUTO_LINK_RE, buildFitlineShopLink, ensureSponsorParam } from '@/lib/utils/fitline-shop-links'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -4520,7 +4521,7 @@ function UpgradeModal({
   const [showPromoInput, setShowPromoInput] = useState(false)
   type PromoResult =
     | { valid: true; type: 'affiliate'; username: string; display_name: string; percent_off: 10; amount_off: null }
-    | { valid: true; type: 'promo'; percent_off: number | null; amount_off: number | null; name: string }
+    | { valid: true; type: 'promo'; percent_off: number | null; amount_off: number | null; name: string; duration?: PromoDuration; duration_in_months?: number | null }
     | { valid: false }
 
   const [promoStatus, setPromoStatus] = useState<null | 'validating' | PromoResult>(null)
@@ -4747,7 +4748,7 @@ function UpgradeModal({
 
                   {/* Price */}
                   <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                    {hasDiscount && (
+                    {(hasDiscount || promoApplied) && price !== baseMonthly && (
                       <p style={{ fontSize: 11, color: '#C4B5FD', textDecoration: 'line-through', lineHeight: 1, marginBottom: 2 }}>
                         {baseMonthly} €
                       </p>
@@ -4794,9 +4795,16 @@ function UpgradeModal({
                       : p.percent_off ? `${p.percent_off} % Aktionsrabatt aktiv`
                       : p.amount_off ? `${Math.round(p.amount_off / 100)} € Rabatt aktiv`
                       : 'Rabatt aktiv'
+                    const promoDuration = p.type === 'promo'
+                      ? promoDurationInfo(p.duration, p.duration_in_months, intervalMode)
+                      : null
                     const sub = p.type === 'affiliate'
                       ? '10 % Rabatt dauerhaft auf dein Abo'
-                      : 'Preis wurde aktualisiert'
+                      : !promoDuration ? 'Preis wurde aktualisiert'
+                      : !promoDuration.limited ? 'Gilt dauerhaft auf dein Abo'
+                      : intervalMode === 'yearly'
+                        ? `Gilt ${promoDuration.text} auf die gesamte Jahresrechnung, danach regulärer Preis`
+                        : `Gilt ${promoDuration.text}, danach regulärer Preis`
                     return (
                       <div className="flex items-center gap-3 mb-3 px-4 py-3 rounded-2xl" style={{ background: '#F0FDF4', border: '1px solid #BBF7D0' }}>
                         <div className="flex items-center justify-center w-7 h-7 rounded-full flex-shrink-0" style={{ background: '#16A34A' }}>

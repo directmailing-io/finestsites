@@ -28,6 +28,8 @@ export async function GET(req: NextRequest) {
         display_name: affiliateUser.firstName ?? affiliateUser.username,
         percent_off: 10,
         amount_off: null,
+        duration: 'forever',
+        duration_in_months: null,
       })
     }
   } catch { /* DB error: fall through to Stripe check */ }
@@ -50,8 +52,11 @@ export async function GET(req: NextRequest) {
     const amountOff = typeof coupon === 'object' && coupon ? coupon.amount_off ?? null : null
     const name = typeof coupon === 'object' && coupon ? (coupon.name ?? code.toUpperCase()) : code.toUpperCase()
     const intervalRestriction = typeof coupon === 'object' && coupon ? ((coupon as any).metadata?.interval ?? 'both') : 'both'
+    // Duration is needed by the UI: a time-limited coupon must never be shown as a permanent discount
+    const duration = typeof coupon === 'object' && coupon ? coupon.duration : 'forever'
+    const durationInMonths = typeof coupon === 'object' && coupon ? coupon.duration_in_months ?? null : null
 
-    return NextResponse.json({ valid: true, type: 'promo', percent_off: percentOff, amount_off: amountOff, name, interval_restriction: intervalRestriction })
+    return NextResponse.json({ valid: true, type: 'promo', percent_off: percentOff, amount_off: amountOff, name, interval_restriction: intervalRestriction, duration, duration_in_months: durationInMonths })
   } catch {
     return NextResponse.json({ valid: false })
   }

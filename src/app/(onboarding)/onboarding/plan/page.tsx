@@ -4,12 +4,13 @@ import { useState, useEffect } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { Suspense } from 'react'
 import { PLAN_LIST, COMMON_FEATURES, type PlanDef } from '@/lib/plans'
+import { promoDurationInfo, type PromoDuration } from '@/lib/billing/promo-duration'
 
 const REFERRAL_DISCOUNT = 0.10
 
 type PromoResult =
   | { valid: true; type: 'affiliate'; username: string; display_name: string; percent_off: 10; amount_off: null }
-  | { valid: true; type: 'promo'; percent_off: number | null; amount_off: number | null; name: string }
+  | { valid: true; type: 'promo'; percent_off: number | null; amount_off: number | null; name: string; duration?: PromoDuration; duration_in_months?: number | null }
   | { valid: false }
 
 function PlanPageInner() {
@@ -50,6 +51,11 @@ function PlanPageInner() {
   const hasDiscount = !!referredBy
   // Explicit promo code overrides referral discount
   const promoApplied = promoStatus !== null && promoStatus !== 'validating' && (promoStatus as PromoResult).valid
+  // How long the active discount lasts for the selected interval (referral/affiliate = forever)
+  const appliedPromo = promoApplied ? promoStatus as { type: string; duration?: PromoDuration; duration_in_months?: number | null } : null
+  const discountDuration = appliedPromo?.type === 'promo'
+    ? promoDurationInfo(appliedPromo.duration, appliedPromo.duration_in_months, interval)
+    : { text: 'dauerhaft', limited: false }
 
   function effectiveMonthly(base: number): number {
     if (promoApplied) {
@@ -172,7 +178,7 @@ function PlanPageInner() {
               return (
                 <div className="flex items-center gap-2 px-3 py-2 rounded-xl" style={{ background: '#F0FDF4', border: '1px solid #BBF7D0' }}>
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#16A34A" strokeWidth="2.5" strokeLinecap="round"><path d="M20 6L9 17l-5-5"/></svg>
-                  <span className="text-xs font-semibold" style={{ color: '#15803D' }}>{label} — {discountText} angewendet</span>
+                  <span className="text-xs font-semibold" style={{ color: '#15803D' }}>{label} — {discountText}{p.type === 'promo' ? ` ${discountDuration.text}` : ''} angewendet</span>
                 </div>
               )
             })()}
@@ -279,7 +285,9 @@ function PlanPageInner() {
                   {anyDiscount && showYearly !== baseYearly ? (
                     <p className="text-xs font-semibold" style={{ color: '#15803D' }}>
                       <span className="line-through mr-1" style={{ color: '#9CA3AF' }}>€{baseYearly}</span>
-                      €{showYearly.toFixed(2).replace('.', ',')}/Jahr · du sparst €{savings}
+                      {discountDuration.limited
+                        ? `€${showYearly.toFixed(2).replace('.', ',')} ${discountDuration.text} · danach €${baseYearly}/Jahr`
+                        : `€${showYearly.toFixed(2).replace('.', ',')}/Jahr · du sparst €${savings}`}
                     </p>
                   ) : (
                     <p className="text-xs font-semibold" style={{ color: '#15803D' }}>
@@ -291,7 +299,14 @@ function PlanPageInner() {
                 <div className="mb-4">
                   {anyDiscount && showMonthly !== baseMonthly && (() => {
                     const p = promoApplied ? promoStatus as { valid: true; percent_off: number | null } : null
-                    return <p className="text-xs font-semibold" style={{ color: '#15803D' }}>{p?.percent_off ?? 10}% Rabatt, dauerhaft</p>
+                    const amount = p ? (p.percent_off ? `${p.percent_off}% Rabatt` : 'Rabatt') : '10% Rabatt'
+                    return (
+                      <p className="text-xs font-semibold" style={{ color: '#15803D' }}>
+                        {discountDuration.limited
+                          ? `${amount} ${discountDuration.text} · danach €${baseMonthly}/Monat`
+                          : `${amount}, dauerhaft`}
+                      </p>
+                    )
                   })()}
                 </div>
               )}
