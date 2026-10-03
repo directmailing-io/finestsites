@@ -41,11 +41,6 @@ export function discountedTotal(baseTotalEur: number, discount: DiscountAmount |
   return baseTotalEur
 }
 
-/** Per-month equivalent of a period total, rounded to cents. */
-export function perMonthEur(totalEur: number, interval: 'monthly' | 'yearly'): number {
-  return interval === 'yearly' ? Math.round(totalEur / 12 * 100) / 100 : totalEur
-}
-
 /** "14" for whole euros, otherwise "13,60" — never rounds cents away. */
 export function formatEur(amount: number): string {
   const cents = Math.round(amount * 100)

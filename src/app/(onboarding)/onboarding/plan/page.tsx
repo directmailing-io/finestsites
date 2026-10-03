@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { Suspense } from 'react'
 import { PLAN_LIST, COMMON_FEATURES, type PlanDef } from '@/lib/plans'
-import { promoDurationInfo, discountedTotal, perMonthEur, formatEur, type PromoDuration, type DiscountAmount } from '@/lib/billing/promo-duration'
+import { promoDurationInfo, discountedTotal, formatEur, type PromoDuration, type DiscountAmount } from '@/lib/billing/promo-duration'
 
 const REFERRAL_DISCOUNT = 0.10
 
@@ -220,13 +220,11 @@ function PlanPageInner() {
       {/* Plan cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
         {PLAN_LIST.map(plan => {
-          // Discount is applied to the amount Stripe actually charges (month or full year);
-          // the per-month figure for yearly plans is derived from that total.
-          const baseTotal = interval === 'monthly' ? plan.monthly_eur : plan.yearly_eur
-          const baseMonthly = perMonthEur(baseTotal, interval)
-          const baseYearly = plan.yearly_eur
-          const showMonthly = perMonthEur(discountedTotal(baseTotal, activeDiscount), interval)
-          const showYearly = discountedTotal(baseYearly, activeDiscount)
+          // Cards show the amount Stripe actually charges per billing period
+          // (month or full year) — never a per-month average of the yearly price.
+          const basePrice = interval === 'monthly' ? plan.monthly_eur : plan.yearly_eur
+          const showPrice = discountedTotal(basePrice, activeDiscount)
+          const unit = interval === 'monthly' ? 'Monat' : 'Jahr'
           const anyDiscount = hasDiscount || promoApplied
           const isLoading = loading === plan.key
           const savings = yearlySavings(plan)
@@ -253,51 +251,38 @@ function PlanPageInner() {
               <p className="text-sm font-semibold mb-1" style={{ color: isPopular ? '#6D28D9' : '#6B7280' }}>{plan.name}</p>
 
               <div className="flex items-baseline gap-1 mb-1">
-                {anyDiscount && showMonthly !== baseMonthly && (
+                {anyDiscount && showPrice !== basePrice && (
                   <span className="text-base line-through mr-1" style={{ color: '#9CA3AF' }}>
-                    €{formatEur(baseMonthly)}
+                    €{formatEur(basePrice)}
                   </span>
                 )}
                 <span className="text-3xl font-bold" style={{ color: isPopular ? '#3B0764' : '#111827' }}>
-                  €{formatEur(showMonthly)}
+                  €{formatEur(showPrice)}
                 </span>
-                <span className="text-sm" style={{ color: isPopular ? '#7C3AED' : '#9CA3AF' }}>/Monat</span>
+                <span className="text-sm" style={{ color: isPopular ? '#7C3AED' : '#9CA3AF' }}>/{unit}</span>
               </div>
 
               <p className="text-[10px] mb-1" style={{ color: isPopular ? '#7C3AED' : '#9CA3AF' }}>
                 inkl. ges. MwSt.
               </p>
 
-              {interval === 'yearly' ? (
-                <div className="mb-4">
-                  {anyDiscount && showYearly !== baseYearly ? (
+              <div className="mb-4">
+                {anyDiscount && showPrice !== basePrice ? (() => {
+                  const p = promoApplied ? promoStatus as { valid: true; percent_off: number | null } : null
+                  const amount = p ? (p.percent_off ? `${p.percent_off}% Rabatt` : 'Rabatt') : '10% Rabatt'
+                  return (
                     <p className="text-xs font-semibold" style={{ color: '#15803D' }}>
-                      <span className="line-through mr-1" style={{ color: '#9CA3AF' }}>€{baseYearly}</span>
                       {discountDuration.limited
-                        ? `€${formatEur(showYearly)} ${discountDuration.text} · danach €${baseYearly}/Jahr`
-                        : `€${formatEur(showYearly)}/Jahr · du sparst €${savings}`}
+                        ? `${amount} ${discountDuration.text} · danach €${basePrice}/${unit}`
+                        : `${amount}, dauerhaft`}
                     </p>
-                  ) : (
-                    <p className="text-xs font-semibold" style={{ color: '#15803D' }}>
-                      €{plan.yearly_eur}/Jahr · du sparst €{savings}
-                    </p>
-                  )}
-                </div>
-              ) : (
-                <div className="mb-4">
-                  {anyDiscount && showMonthly !== baseMonthly && (() => {
-                    const p = promoApplied ? promoStatus as { valid: true; percent_off: number | null } : null
-                    const amount = p ? (p.percent_off ? `${p.percent_off}% Rabatt` : 'Rabatt') : '10% Rabatt'
-                    return (
-                      <p className="text-xs font-semibold" style={{ color: '#15803D' }}>
-                        {discountDuration.limited
-                          ? `${amount} ${discountDuration.text} · danach €${baseMonthly}/Monat`
-                          : `${amount}, dauerhaft`}
-                      </p>
-                    )
-                  })()}
-                </div>
-              )}
+                  )
+                })() : interval === 'yearly' && (
+                  <p className="text-xs font-semibold" style={{ color: '#15803D' }}>
+                    du sparst €{savings} gegenüber monatlicher Zahlung
+                  </p>
+                )}
+              </div>
 
               <ul className="flex flex-col gap-2 mb-6 flex-1">
                 <li className="flex items-start gap-2 text-xs font-semibold" style={{ color: isPopular ? '#4A2D9A' : '#111827' }}>

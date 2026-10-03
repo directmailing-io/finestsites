@@ -5,7 +5,7 @@ import { useSearchParams } from 'next/navigation'
 import { authClient } from '@/lib/auth/client'
 import { useRouter } from 'next/navigation'
 import { PLAN_LIST, PLAN_LABELS, COMMON_FEATURES, canUpgradeTo } from '@/lib/plans'
-import { discountedTotal, perMonthEur, formatEur } from '@/lib/billing/promo-duration'
+import { discountedTotal, formatEur } from '@/lib/billing/promo-duration'
 import ImageCropModal from '@/components/ImageCropModal'
 import { NM_COMPANIES } from '@/lib/constants/nm-companies'
 
@@ -947,7 +947,7 @@ function SettingsContent() {
                   {PLAN_LIST.map((plan, idx) => {
                     const isCurrent = currentPlan === plan.key
                     const price = billingInterval === 'monthly' ? plan.monthly_eur : plan.yearly_eur
-                    const perMonth = formatEur(perMonthEur(price, billingInterval))
+                    const unit = billingInterval === 'yearly' ? '/Jahr' : '/Mo.'
                     const isUpgrade = canUpgradeTo(currentPlan, plan.key)
                     const isLower = !isCurrent && !isUpgrade
                     const isLast = idx === PLAN_LIST.length - 1
@@ -988,9 +988,9 @@ function SettingsContent() {
                               <div className="flex items-baseline gap-1.5">
                                 <span className="text-2xl font-bold tracking-tight text-gray-900">€0</span>
                                 <span className="text-xs line-through" style={{ color: '#CBD5E1' }}>
-                                  €{billingInterval === 'yearly' ? perMonth : price}
+                                  €{price}
                                 </span>
-                                <span className="text-xs ml-0.5" style={{ color: '#94A3B8' }}>/Mo.</span>
+                                <span className="text-xs ml-0.5" style={{ color: '#94A3B8' }}>{unit}</span>
                               </div>
                               <p className="text-[11px]" style={{ color: '#15803D' }}>100% Rabatt aktiv</p>
                             </>
@@ -998,12 +998,12 @@ function SettingsContent() {
                             <>
                               <div className="flex items-baseline gap-1.5">
                                 <span className="text-2xl font-bold tracking-tight text-gray-900">
-                                  €{formatEur(perMonthEur(discountedTotal(price, { percent_off: subscription.discount_percent }), billingInterval))}
+                                  €{formatEur(discountedTotal(price, { percent_off: subscription.discount_percent }))}
                                 </span>
                                 <span className="text-xs line-through" style={{ color: '#CBD5E1' }}>
-                                  €{billingInterval === 'yearly' ? perMonth : price}
+                                  €{price}
                                 </span>
-                                <span className="text-xs ml-0.5" style={{ color: '#94A3B8' }}>/Mo.</span>
+                                <span className="text-xs ml-0.5" style={{ color: '#94A3B8' }}>{unit}</span>
                               </div>
                               <p className="text-[11px]" style={{ color: '#15803D' }}>-{subscription.discount_percent}% Rabatt aktiv</p>
                             </>
@@ -1011,13 +1011,13 @@ function SettingsContent() {
                             <>
                               <div className="flex items-baseline gap-0.5">
                                 <span className="text-2xl font-bold tracking-tight text-gray-900">
-                                  €{billingInterval === 'yearly' ? perMonth : price}
+                                  €{price}
                                 </span>
-                                <span className="text-xs ml-0.5" style={{ color: '#94A3B8' }}>/Mo.</span>
+                                <span className="text-xs ml-0.5" style={{ color: '#94A3B8' }}>{unit}</span>
                               </div>
                               {billingInterval === 'yearly' ? (
                                 <p className="text-[11px]" style={{ color: '#15803D' }}>
-                                  €{price}/Jahr · spare €{plan.monthly_eur * 12 - price}
+                                  spare €{plan.monthly_eur * 12 - price} gegenüber monatlich
                                 </p>
                               ) : (
                                 <p className="text-[11px]" style={{ color: '#94A3B8' }}>inkl. MwSt.</p>

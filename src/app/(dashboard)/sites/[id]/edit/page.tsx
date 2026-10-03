@@ -7,7 +7,7 @@ import ImageCropModal from '@/components/ImageCropModal'
 import { RichTextField } from '@/components/editor/RichTextField'
 import { usePlanQuota } from '@/components/dashboard/PlanQuotaContext'
 import { PHONE_COUNTRIES, parsePhoneValue, toWhatsAppDigits, toDisplayPhone } from '@/lib/constants/phone-countries'
-import { promoDurationInfo, discountedTotal, perMonthEur, formatEur, type PromoDuration, type DiscountAmount } from '@/lib/billing/promo-duration'
+import { promoDurationInfo, discountedTotal, formatEur, type PromoDuration, type DiscountAmount } from '@/lib/billing/promo-duration'
 import { FITLINE_SHOP_PRODUCTS, FITLINE_AUTO_LINK_RE, buildFitlineShopLink, ensureSponsorParam } from '@/lib/utils/fitline-shop-links'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -4594,7 +4594,11 @@ function UpgradeModal({
 
   const activePlan = UPGRADE_PLANS.find(p => p.key === selectedPlan)!
   const activeTotal = periodTotal(activePlan, activeDiscount)
-  const activePrice = perMonthEur(activeTotal, intervalMode)
+  const priceUnit = intervalMode === 'monthly' ? '€/Monat' : '€/Jahr'
+  // Time-limited promo (e.g. first 3 months): per-day figures would not hold for the whole term
+  const appliedPromo = promoApplied ? promoStatus as { type: string; duration?: PromoDuration; duration_in_months?: number | null } : null
+  const discountLimited = appliedPromo?.type === 'promo'
+    && promoDurationInfo(appliedPromo.duration, appliedPromo.duration_in_months, intervalMode).limited
 
   return (
     <div
@@ -4692,12 +4696,13 @@ function UpgradeModal({
           {/* Plan list — Apple settings-list style */}
           <div style={{ border: '1px solid #E5E7EB', borderRadius: 18, overflow: 'hidden', marginBottom: 24 }}>
             {UPGRADE_PLANS.map((plan, idx) => {
-              const baseMonthly = perMonthEur(periodTotal(plan, null), intervalMode)
-              const price = perMonthEur(periodTotal(plan, activeDiscount), intervalMode)
+              // Amounts actually charged per billing period — no per-month average for yearly
+              const basePrice = periodTotal(plan, null)
+              const price = periodTotal(plan, activeDiscount)
               const isSelected = selectedPlan === plan.key
               const isPopular = !!plan.popular
               const isLast = idx === UPGRADE_PLANS.length - 1
-              const dailyCents = (price / 30).toFixed(2).replace('.', ',')
+              const dailyCents = (price / (intervalMode === 'monthly' ? 30 : 365)).toFixed(2).replace('.', ',')
 
               return (
                 <button
@@ -4747,15 +4752,17 @@ function UpgradeModal({
 
                   {/* Price */}
                   <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                    {(hasDiscount || promoApplied) && price !== baseMonthly && (
+                    {(hasDiscount || promoApplied) && price !== basePrice && (
                       <p style={{ fontSize: 11, color: '#C4B5FD', textDecoration: 'line-through', lineHeight: 1, marginBottom: 2 }}>
-                        {formatEur(baseMonthly)} €
+                        {formatEur(basePrice)} €
                       </p>
                     )}
                     <p style={{ fontSize: 18, fontWeight: 700, color: isSelected ? '#8060b0' : '#111', lineHeight: 1.1 }}>
-                      {formatEur(price)} <span style={{ fontSize: 11, fontWeight: 400, color: '#9CA3AF' }}>€/Mo</span>
+                      {formatEur(price)} <span style={{ fontSize: 11, fontWeight: 400, color: '#9CA3AF' }}>{priceUnit}</span>
                     </p>
-                    <p style={{ fontSize: 11, color: '#9CA3AF', marginTop: 2 }}>{dailyCents} € tägl.</p>
+                    {!discountLimited && (
+                      <p style={{ fontSize: 11, color: '#9CA3AF', marginTop: 2 }}>{dailyCents} € tägl.</p>
+                    )}
                   </div>
                 </button>
               )
@@ -4895,7 +4902,7 @@ function UpgradeModal({
                 Wird geladen...
               </>
             ) : (
-              `${activePlan.name} freischalten \u00b7 ${formatEur(activePrice)} \u20ac/Mo`
+              `${activePlan.name} freischalten \u00b7 ${formatEur(activeTotal)} ${priceUnit}`
             )}
           </button>
 
