@@ -200,12 +200,18 @@ export async function POST(req: NextRequest) {
       // this ends the affiliate relationship and suppresses the first-payment commission.
       let affiliateOverrideDetected = false
       try {
+        // Stripe allows max. 4 expand levels, so the coupon cannot be expanded inline.
+        // Stripe v22+: the coupon is a string ID in discount.source.coupon → fetch it separately.
         const sessionExpanded = await stripe.checkout.sessions.retrieve(session.id, {
-          expand: ['total_details.breakdown.discounts.discount.coupon'],
+          expand: ['total_details.breakdown'],
         })
         const appliedDiscount = sessionExpanded.total_details?.breakdown?.discounts?.[0]
-        const coupon = (appliedDiscount?.discount as any)?.coupon as Stripe.Coupon | undefined
-        const promoCodeId = (appliedDiscount?.discount as any)?.promotion_code as string | undefined
+        const rawCoupon = (appliedDiscount?.discount as any)?.source?.coupon ?? (appliedDiscount?.discount as any)?.coupon ?? null
+        const coupon: Stripe.Coupon | undefined = !rawCoupon ? undefined
+          : typeof rawCoupon === 'string' ? await stripe.coupons.retrieve(rawCoupon)
+          : rawCoupon
+        const rawPromo = (appliedDiscount?.discount as any)?.promotion_code
+        const promoCodeId: string | undefined = typeof rawPromo === 'string' ? rawPromo : rawPromo?.id
 
         if (coupon?.id) {
           let promoCodeStr = ''
