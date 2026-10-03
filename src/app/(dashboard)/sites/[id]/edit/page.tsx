@@ -2794,6 +2794,11 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
       // Clean URL
       window.history.replaceState({}, '', `/sites/${id}/edit`)
     }
+    // Direct link to the plan selection (e.g. from support): /sites/{id}/edit?upgrade=1
+    if (searchParams.get('upgrade') === '1') {
+      setShowUpgradeModal(true)
+      window.history.replaceState({}, '', `/sites/${id}/edit`)
+    }
     if (searchParams.get('payment_canceled') === '1') {
       showToast('Zahlung abgebrochen. Deine Inhalte wurden gespeichert.', 'error')
       window.history.replaceState({}, '', `/sites/${id}/edit`)
@@ -3256,7 +3261,7 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
       `}</style>
 
       {/* ── Mobile Header ── */}
-      <div className="lg:hidden flex-shrink-0 flex items-center gap-3 px-4 py-3 bg-white border-b"
+      <div className="lg:hidden flex-shrink-0 flex items-center gap-2.5 px-4 py-3 bg-white border-b"
         style={{ borderColor: '#E5E7EB' }}>
         <button onClick={() => router.push('/sites')}
           className="w-10 h-10 flex items-center justify-center rounded-2xl flex-shrink-0"
@@ -3307,9 +3312,10 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
               </span>
             )
           ) : (
-            <button onClick={() => handlePublish()} disabled={publishing || !allRequiredComplete}
-              className="flex items-center gap-1 text-xs font-semibold px-3 py-2 rounded-full text-white transition-all"
-              style={{ background: allRequiredComplete ? '#1a1a1a' : '#9CA3AF', opacity: publishing ? 0.7 : 1, cursor: allRequiredComplete ? 'pointer' : 'not-allowed' }}>
+            <button onClick={() => allRequiredComplete ? handlePublish() : handleBlockedPublishTap()} disabled={publishing}
+              aria-disabled={!allRequiredComplete}
+              className="flex items-center justify-center gap-1.5 h-10 text-[13px] font-semibold px-4 max-[359px]:px-3 max-[359px]:text-xs rounded-full text-white whitespace-nowrap transition-all"
+              style={{ background: allRequiredComplete ? '#1a1a1a' : '#9CA3AF', opacity: publishing ? 0.7 : 1 }}>
               {publishing ? <span className="w-3 h-3 rounded-full border-2 border-white/40 border-t-white animate-spin" /> : null}
               {publishing ? 'Warten…' : 'Veröffentlichen'}
             </button>
@@ -3319,7 +3325,8 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
           <div className="relative flex-shrink-0">
             <button
               onClick={() => setShowMobileMenu(v => !v)}
-              className="w-9 h-9 flex items-center justify-center rounded-full"
+              aria-label="Weitere Aktionen"
+              className="w-10 h-10 flex items-center justify-center rounded-full"
               style={{ background: '#F3F4F6', color: '#6B7280' }}>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
                 <circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/>
@@ -3689,6 +3696,15 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
               </>
             )}
 
+            {/* No plan yet: reassure that editing is free and payment only comes at publish */}
+            {!isDomainSection && !quota.loading && !quota.hasSub && (
+              <p className="flex items-start gap-2 rounded-2xl px-4 py-2.5 mb-5 text-sm leading-snug"
+                style={{ background: '#F5F0FB', border: '1px solid #E4D7F5', color: '#3B2A63' }}>
+                <svg className="flex-shrink-0" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7C3AED" strokeWidth="2.5" strokeLinecap="round" style={{ marginTop: 2 }}><path d="M20 6L9 17l-5-5"/></svg>
+                <span><strong>Bearbeiten ist kostenlos.</strong> Du musst nicht alles ausfüllen. Bezahlt wird erst beim Veröffentlichen.</span>
+              </p>
+            )}
+
             {/* Section heading */}
             {!isDomainSection && sections.length > 1 && activeSection && (
               <div className="mb-6">
@@ -3829,6 +3845,27 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
                             {!isCollapsed && field.placeholder_text && field.type !== 'loop' && field.type !== 'toggle' && field.type !== 'intro' && (
                               <p className="text-sm text-gray-400 mt-0.5">{field.placeholder_text}</p>
                             )}
+                          </div>
+                        )}
+                        {/* Unmissable for non-technical users: without the check the site cannot go live */}
+                        {!isCollapsed && field.type === 'richtext' && field.compliance_check && !isComplianceApproved(field.key) && (
+                          <div className="flex items-start gap-3 rounded-2xl px-4 py-3.5 mt-3 mb-3"
+                            style={{ background: '#FFF7ED', border: '1.5px solid #FDBA74' }}>
+                            <svg className="flex-shrink-0" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#C2410C" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round" style={{ marginTop: 1 }}>
+                              <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12.5"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+                            </svg>
+                            <div className="min-w-0">
+                              <p className="text-base font-bold leading-snug" style={{ color: '#9A3412' }}>
+                                Wichtig: Text prüfen lassen
+                              </p>
+                              <p className="text-[15px] leading-snug mt-1" style={{ color: '#7C2D12' }}>
+                                Ohne diese Prüfung kannst du deine Webseite <strong>nicht veröffentlichen</strong>.
+                              </p>
+                              <p className="text-[15px] leading-snug mt-2" style={{ color: '#7C2D12' }}>
+                                <strong>1.</strong> Schreibe hier deinen Text.<br />
+                                <strong>2.</strong> Tippe darunter auf <strong>„Jetzt prüfen“</strong>.
+                              </p>
+                            </div>
                           </div>
                         )}
                         {!isCollapsed && <FieldRenderer
@@ -3980,7 +4017,7 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
               </div>
             </div>
           )}
-          <div className="flex items-center gap-3 px-4 pt-3">
+          <div className="flex items-center gap-2 px-4 pt-3">
 
             {/* Zurück */}
             {!isDomainSection && sections.length > 1 && !isFirst && (
@@ -3989,12 +4026,12 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
                   setActiveSection(sections[activeIdx - 1])
                   document.getElementById('editor-scroll')?.scrollTo({ top: 0, behavior: 'smooth' })
                 }}
-                className="flex items-center justify-center gap-1.5 px-5 py-3.5 rounded-full text-sm font-semibold flex-shrink-0"
+                aria-label="Zurück"
+                className="flex items-center justify-center w-12 h-12 rounded-full flex-shrink-0"
                 style={{ background: '#F3F4F6', color: '#374151' }}>
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.25">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M19 12H5M12 5l-7 7 7 7"/>
                 </svg>
-                Zurück
               </button>
             )}
 
@@ -4035,7 +4072,7 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
                   <button
                     onClick={() => handlePublish()}
                     disabled={publishing}
-                    className="flex-1 flex items-center justify-center gap-2 py-3.5 text-sm font-bold text-white rounded-full"
+                    className="flex-1 min-w-0 flex items-center justify-center gap-2 h-12 px-4 text-[15px] font-bold text-white rounded-full whitespace-nowrap"
                     style={{ background: '#16A34A', boxShadow: '0 4px 14px rgba(22,163,74,0.25)', opacity: publishing ? 0.7 : 1 }}>
                     {publishing
                       ? <span className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
@@ -4051,13 +4088,14 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
                 <div className="flex gap-2">
                   <button
                     onClick={() => { setShowFullPreview(true); setPreviewKey(k => k + 1) }}
-                    className="flex items-center justify-center gap-1.5 px-4 py-3.5 rounded-full text-sm font-semibold flex-shrink-0"
+                    aria-label="Vorschau"
+                    className="flex items-center justify-center gap-1.5 h-12 px-4 rounded-full text-sm font-semibold flex-shrink-0"
                     style={{ background: '#F3F4F6', color: '#374151' }}>
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
                       <circle cx="12" cy="12" r="3"/>
                     </svg>
-                    Vorschau
+                    <span className="max-[359px]:hidden">Vorschau</span>
                   </button>
                   <button
                     onClick={async () => {
@@ -4066,7 +4104,7 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
                       document.getElementById('editor-scroll')?.scrollTo({ top: 0, behavior: 'smooth' })
                     }}
                     disabled={saving}
-                    className="flex-1 flex items-center justify-center gap-2 py-3.5 text-sm font-bold text-white rounded-full"
+                    className="flex-1 min-w-0 flex items-center justify-center gap-2 h-12 px-4 text-[15px] font-bold text-white rounded-full whitespace-nowrap"
                     style={{ background: '#1a1a1a', boxShadow: '0 4px 14px rgba(26,26,26,0.2)', opacity: saving ? 0.7 : 1 }}>
                     {saving
                       ? <span className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
@@ -4084,26 +4122,27 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
                 <div className="flex gap-2">
                   <button
                     onClick={() => { setShowFullPreview(true); setPreviewKey(k => k + 1) }}
-                    className="flex items-center justify-center gap-1.5 px-4 py-3.5 rounded-full text-sm font-semibold flex-shrink-0"
+                    aria-label="Vorschau"
+                    className="flex items-center justify-center gap-1.5 h-12 px-4 rounded-full text-sm font-semibold flex-shrink-0"
                     style={{ background: '#F3F4F6', color: '#374151' }}>
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
                       <circle cx="12" cy="12" r="3"/>
                     </svg>
-                    Vorschau
+                    <span className="max-[359px]:hidden">Vorschau</span>
                   </button>
                   <button
                     onClick={() => allRequiredComplete ? handlePublish() : handleBlockedPublishTap()}
                     disabled={publishing}
                     aria-disabled={!allRequiredComplete}
-                    className="flex-1 flex items-center justify-center gap-2 py-3.5 text-sm font-bold text-white rounded-full"
+                    className="flex-1 min-w-0 flex items-center justify-center gap-2 h-12 px-4 text-[15px] font-bold text-white rounded-full whitespace-nowrap"
                     style={{
                       background: allRequiredComplete ? (isPublished ? '#16A34A' : '#1a1a1a') : '#9CA3AF',
                       boxShadow: allRequiredComplete ? '0 4px 14px rgba(26,26,26,0.2)' : 'none',
                       opacity: publishing ? 0.7 : 1,
                     }}>
                     {publishing ? <span className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" /> : null}
-                    {publishing ? 'Bitte warten…' : isPublished ? '✓ Live stellen' : '🚀 Veröffentlichen'}
+                    {publishing ? 'Bitte warten…' : isPublished ? 'Live stellen' : 'Veröffentlichen'}
                   </button>
                 </div>
               )}
@@ -4684,42 +4723,63 @@ function UpgradeModal({
         {/* Scrollable body */}
         <div className="overflow-y-auto flex-1 px-6 pb-7">
 
-          {/* Billing toggle */}
-          <div className="flex items-center gap-1 p-1 rounded-xl mb-5" style={{ background: '#F3F4F6', width: 'fit-content' }}>
-            {(['monthly', 'yearly'] as const).map(iv => (
-              <button
-                key={iv}
-                onClick={() => setIntervalMode(iv)}
-                style={{
-                  padding: '7px 16px',
-                  borderRadius: 10,
-                  fontSize: 13,
-                  fontWeight: 600,
-                  background: intervalMode === iv ? '#fff' : 'transparent',
-                  color: intervalMode === iv ? '#111' : '#9CA3AF',
-                  boxShadow: intervalMode === iv ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
-                  whiteSpace: 'nowrap',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 6,
-                }}
-              >
-                {iv === 'monthly' ? 'Monatlich' : (
-                  <>
-                    Jährlich
+          {/* Billing interval — two large, clearly labelled options (a small toggle was overlooked) */}
+          <p style={{ fontSize: 15, fontWeight: 700, color: '#111', marginBottom: 10 }}>1. Wie möchtest du zahlen?</p>
+          <div role="radiogroup" aria-label="Zahlungsweise" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 22 }}>
+            {(['monthly', 'yearly'] as const).map(iv => {
+              const selected = intervalMode === iv
+              return (
+                <button
+                  key={iv}
+                  type="button"
+                  role="radio"
+                  aria-checked={selected}
+                  onClick={() => setIntervalMode(iv)}
+                  disabled={loading}
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'flex-start',
+                    justifyContent: 'flex-start',
+                    textAlign: 'left',
+                    padding: '14px 12px 13px',
+                    borderRadius: 16,
+                    border: `2px solid ${selected ? '#8060b0' : '#E5E7EB'}`,
+                    background: selected ? '#F5F0FB' : '#fff',
+                    cursor: 'pointer',
+                    transition: 'background 0.15s, border-color 0.15s',
+                    minHeight: 92,
+                  }}
+                >
+                  <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                     <span style={{
-                      fontSize: 10, fontWeight: 700,
-                      padding: '2px 6px', borderRadius: 99,
+                      width: 20, height: 20, borderRadius: '50%', flexShrink: 0,
+                      border: `2px solid ${selected ? '#8060b0' : '#D1D5DB'}`,
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    }}>
+                      {selected && <span style={{ width: 10, height: 10, borderRadius: '50%', background: '#8060b0' }} />}
+                    </span>
+                    <span style={{ fontSize: 16, fontWeight: 700, color: '#111' }}>{iv === 'monthly' ? 'Monatlich' : 'Jährlich'}</span>
+                  </span>
+                  <span style={{ display: 'block', fontSize: 13, color: '#6B7280', lineHeight: 1.35, marginTop: 6 }}>
+                    {iv === 'monthly' ? 'Jeden Monat kündbar' : 'Einmal im Jahr zahlen'}
+                  </span>
+                  {iv === 'yearly' && (
+                    <span style={{
+                      display: 'inline-block', marginTop: 6,
+                      fontSize: 12, fontWeight: 700, whiteSpace: 'nowrap',
+                      padding: '3px 8px', borderRadius: 99,
                       background: '#C8D8B8', color: '#2d5a1b',
                     }}>
                       2 Monate gratis
                     </span>
-                  </>
-                )}
-              </button>
-            ))}
+                  )}
+                </button>
+              )
+            })}
           </div>
+
+          <p style={{ fontSize: 15, fontWeight: 700, color: '#111', marginBottom: 10 }}>2. Welcher Tarif passt zu dir?</p>
 
           {/* Plan list — Apple settings-list style */}
           <div style={{ border: '1px solid #E5E7EB', borderRadius: 18, overflow: 'hidden', marginBottom: 24 }}>

@@ -11,16 +11,26 @@ import { FITLINE_SHOP_PRODUCTS, buildFitlineShopLink } from '@/lib/utils/fitline
  * Only non-empty values are included — nothing is overwritten with null/empty.
  */
 function buildProfileSiteData(profile: typeof users.$inferSelect): Array<{ fieldKey: string; fieldValue: string }> {
+  // Social profiles are stored as full URLs. Templates name these fields either
+  // `instagram` or `instagram_url` — fill both so every template gets them.
+  // A value with whitespace (e.g. a display name typed instead of a handle) is not a
+  // working link and is left out rather than published as a broken one.
+  const socialUrl = (val: string | null | undefined) => (val && !/\s/.test(val.trim()) ? val.trim() : null)
+  const socials: Array<[string | null, string]> = [
+    [socialUrl(profile.instagram), 'instagram'],
+    [socialUrl(profile.facebook),  'facebook'],
+    [socialUrl(profile.linkedin),  'linkedin'],
+    [socialUrl(profile.tiktok),    'tiktok'],
+    [socialUrl(profile.youtube),   'youtube'],
+  ]
   const mappings: Array<[string | null | undefined, string]> = [
     [profile.firstName,      'vorname'],
     [profile.lastName,       'nachname'],
     [profile.phone,          'phone'],
     [profile.phone,          'telefon'],
-    [profile.instagram,      'instagram'],
-    [profile.facebook,       'facebook'],
-    [profile.linkedin,       'linkedin'],
-    [profile.tiktok,         'tiktok'],
-    [profile.youtube,        'youtube'],
+    [profile.phone,          'telefon_nummer'],
+    ...socials,
+    ...socials.map(([val, key]): [string | null, string] => [val, `${key}_url`]),
     [profile.websiteUrl,     'website'],
     [profile.profileImageUrl,'profilbild'],
   ]

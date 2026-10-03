@@ -6,6 +6,7 @@ import { eq } from 'drizzle-orm'
 import { DashboardSidebar } from '@/components/dashboard/Sidebar'
 import { MobileNav } from '@/components/dashboard/MobileNav'
 import { PlanQuotaProvider } from '@/components/dashboard/PlanQuotaContext'
+import { GettingStartedSteps } from '@/components/dashboard/GettingStartedSteps'
 import SupportChat from '@/components/support/SupportChat'
 import ImpersonationBanner from '@/components/dashboard/ImpersonationBanner'
 import CancellationBanner from '@/components/dashboard/CancellationBanner'
@@ -81,6 +82,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
             </div>
           )}
           <main className="flex-1 px-5 pt-6 pb-32 sm:px-8 sm:pt-8 sm:pb-32 lg:px-12 lg:py-10">
+            <GettingStartedSteps />
             {children}
           </main>
         </div>

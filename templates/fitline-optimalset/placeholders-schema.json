@@ -357,36 +357,6 @@
       "section": "Sektionen"
     },
     {
-      "key": "zeige_mit_optimalset",
-      "label": "Sektion „Mit dem Optimalset\"",
-      "type": "card_select",
-      "display_mode": "section_toggle",
-      "required": true,
-      "placeholder_text": "",
-      "default_value": "ja",
-      "max_length": null,
-      "options": [],
-      "card_options": [
-        {
-          "value": "ja",
-          "label": "Anzeigen",
-          "description": "Was dir das Optimalset im Alltag erspart, mit Bon-Vergleich.",
-          "card_type": "image",
-          "color": "",
-          "image_url": "/templates/fitline-optimalset/section-previews/section-mit-optimalset.webp"
-        },
-        {
-          "value": "nein",
-          "label": "Ausblenden",
-          "description": "Diese Sektion wird auf deiner Webseite nicht angezeigt.",
-          "card_type": "color",
-          "color": "#F1F5F9",
-          "image_url": ""
-        }
-      ],
-      "section": "Sektionen"
-    },
-    {
       "key": "zeige_vergleich",
       "label": "Sektion „Im direkten Vergleich\"",
       "type": "card_select",
@@ -434,7 +404,6 @@
     "whatsapp_number": "",
     "telefon": "",
     "zeige_was_ersetzt": "ja",
-    "zeige_mit_optimalset": "ja",
     "zeige_vergleich": "ja",
     "farbthema": "gruen"
   }
