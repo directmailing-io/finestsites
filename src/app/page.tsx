@@ -187,7 +187,7 @@ export default async function HomePage({
 
           .fs-pricing-mascot { display: none !important; }
 .fs-footer-dark { padding: 48px 22px 0; }
-          .fs-footer-grid { grid-template-columns: 1fr; gap: 36px; padding-bottom: 40px; }
+          .fs-footer-grid { grid-template-columns: minmax(0, 1fr); gap: 36px; padding-bottom: 40px; }
           .fs-footer-bottom { flex-direction: column; align-items: flex-start; gap: 12px; }
         }
 

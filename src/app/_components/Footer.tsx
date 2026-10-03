@@ -13,7 +13,7 @@ export default function Footer() {
         .fs-footer-bottom { max-width: 1060px; margin: 0 auto; padding: 24px 0 32px; border-top: 1px solid rgba(255,255,255,0.08); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
         @media (max-width: 767px) {
           .fs-footer-dark { padding: 48px 22px 0; }
-          .fs-footer-grid { grid-template-columns: 1fr; gap: 36px; padding-bottom: 40px; }
+          .fs-footer-grid { grid-template-columns: minmax(0, 1fr); gap: 36px; padding-bottom: 40px; }
           .fs-footer-bottom { flex-direction: column; align-items: flex-start; gap: 12px; }
         }
       `}</style>

@@ -30,8 +30,9 @@ export function campaignDiscount(
 
 /** "20 % Rabatt" / "5 € Rabatt" */
 export function campaignAmountLabel(campaign: PublicCampaign): string {
-  if (campaign.percentOff) return `${campaign.percentOff} % Rabatt`
-  if (campaign.amountOff) return `${String(campaign.amountOff / 100).replace('.', ',')} € Rabatt`
+  // Non-breaking spaces: the amount must never be split across two lines
+  if (campaign.percentOff) return `${campaign.percentOff}\u00a0%\u00a0Rabatt`
+  if (campaign.amountOff) return `${String(campaign.amountOff / 100).replace('.', ',')}\u00a0€\u00a0Rabatt`
   return 'Rabatt'
 }
 

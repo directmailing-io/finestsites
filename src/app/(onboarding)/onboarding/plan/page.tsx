@@ -7,6 +7,7 @@ import { PLAN_LIST, COMMON_FEATURES, type PlanDef } from '@/lib/plans'
 import { promoDurationInfo, discountedTotal, formatEur, type PromoDuration, type DiscountAmount } from '@/lib/billing/promo-duration'
 import { campaignDiscount, campaignAmountLabel } from '@/lib/billing/campaign-shared'
 import { useFetchedCampaign, useCampaignCountdown } from '@/components/billing/useCampaign'
+import CampaignCard from '@/components/billing/CampaignCard'
 
 const REFERRAL_DISCOUNT = 0.10
 
@@ -133,19 +134,7 @@ function PlanPageInner() {
 
       {/* Campaign banner — discount is applied automatically, no code entry needed */}
       {campaign && (
-        <div className="mb-4 px-4 py-3 rounded-xl flex items-start gap-3"
-          style={{ background: '#F0FDF4', border: '1px solid #BBF7D0' }}>
-          <svg className="flex-shrink-0 mt-0.5" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#16A34A" strokeWidth="2.5" strokeLinecap="round"><path d="M20 6L9 17l-5-5"/></svg>
-          <div>
-            <p className="text-sm font-semibold" style={{ color: '#15803D' }}>
-              Aktion {campaign.code}: {campaignAmountLabel(campaign)}
-            </p>
-            <p className="text-xs" style={{ color: '#166534' }}>
-              Wird automatisch abgezogen. Du musst keinen Code eingeben.
-              {campaignCountdown.remaining ? ` Die Aktion endet in ${campaignCountdown.remaining}` : ''}
-            </p>
-          </div>
-        </div>
+        <CampaignCard campaign={campaign} countdown={campaignCountdown} style={{ maxWidth: 560, margin: '0 auto 20px' }} />
       )}
 
       {/* Promo code section */}

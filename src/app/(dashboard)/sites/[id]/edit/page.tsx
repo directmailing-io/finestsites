@@ -10,6 +10,7 @@ import { PHONE_COUNTRIES, parsePhoneValue, toWhatsAppDigits, toDisplayPhone } fr
 import { promoDurationInfo, discountedTotal, formatEur, type PromoDuration, type DiscountAmount } from '@/lib/billing/promo-duration'
 import { campaignDiscount, campaignAmountLabel } from '@/lib/billing/campaign-shared'
 import { useFetchedCampaign, useCampaignCountdown } from '@/components/billing/useCampaign'
+import CampaignCard from '@/components/billing/CampaignCard'
 import { FITLINE_SHOP_PRODUCTS, FITLINE_AUTO_LINK_RE, buildFitlineShopLink, ensureSponsorParam } from '@/lib/utils/fitline-shop-links'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -4650,27 +4651,17 @@ function UpgradeModal({
 
           {/* Campaign — applied automatically at checkout, no code entry needed */}
           {campaign && (
-            <div className="flex items-start gap-3 mt-4 px-4 py-3 rounded-2xl" style={{ background: '#F0FDF4', border: '1px solid #BBF7D0' }}>
-              <div className="flex items-center justify-center w-7 h-7 rounded-full flex-shrink-0" style={{ background: '#16A34A' }}>
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round">
-                  <polyline points="20 6 9 17 4 12"/>
-                </svg>
-              </div>
-              <div>
-                <p style={{ fontSize: 14, fontWeight: 700, color: '#15803D' }}>Aktion {campaign.code}: {campaignAmountLabel(campaign)}</p>
-                <p style={{ fontSize: 13, color: '#166534', lineHeight: 1.45 }}>
-                  Wird automatisch abgezogen. Du musst keinen Code eingeben.
-                  {campaignDuration
-                    ? campaignDuration.limited
-                      ? ` Gilt ${campaignDuration.text} (${formatEur(activeTotal)} € statt ${activeBase} €), danach ${activeBase} ${priceUnit}.`
-                      : ' Gilt dauerhaft.'
-                    : ` Gilt nicht bei ${intervalMode === 'yearly' ? 'jährlicher' : 'monatlicher'} Zahlung.`}
-                </p>
-                {campaignCountdown.remaining && (
-                  <p style={{ fontSize: 12, color: '#166534', marginTop: 2 }}>Die Aktion endet in {campaignCountdown.remaining}</p>
-                )}
-              </div>
-            </div>
+            <CampaignCard
+              compact
+              campaign={campaign}
+              countdown={campaignCountdown}
+              style={{ marginTop: 16 }}
+              note={campaignDuration
+                ? campaignDuration.limited
+                  ? `${activePlan.name}: ${formatEur(activeTotal)} € statt ${activeBase} € ${campaignDuration.text}, danach ${activeBase} ${priceUnit}.`
+                  : 'Der Rabatt gilt dauerhaft.'
+                : `Gilt nicht bei ${intervalMode === 'yearly' ? 'jährlicher' : 'monatlicher'} Zahlung.`}
+            />
           )}
 
           {hasDiscount && !promoApplied && (

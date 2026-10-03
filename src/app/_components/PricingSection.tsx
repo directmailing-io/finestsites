@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { campaignDiscount, campaignAmountLabel, type PublicCampaign } from '@/lib/billing/campaign-shared'
 import { promoDurationInfo, discountedTotal, formatEur } from '@/lib/billing/promo-duration'
 import { useCampaignCountdown } from '@/components/billing/useCampaign'
+import CampaignCard from '@/components/billing/CampaignCard'
 
 const PLANS = [
   {
@@ -96,15 +97,12 @@ export default function PricingSection({ validatedRef, campaign }: { validatedRe
 
 
         {activeCampaign && (
-          <div style={{ maxWidth: 520, margin: '0 auto 24px', background: '#F0FDF4', border: '1px solid #BBF7D0', borderRadius: 18, padding: '14px 18px', textAlign: 'center' }}>
-            <p style={{ fontSize: 15, fontWeight: 700, color: '#15803D', marginBottom: 2 }}>
-              Aktion {activeCampaign.code}: {campaignAmountLabel(activeCampaign)}
-            </p>
-            <p style={{ fontSize: 13.5, color: '#166534', lineHeight: 1.5 }}>
-              Der Rabatt wird beim Bezahlen automatisch abgezogen. Du musst keinen Code eingeben.
-              {campaignCountdown.remaining ? ` Die Aktion endet in ${campaignCountdown.remaining}` : ''}
-            </p>
-          </div>
+          <CampaignCard
+            campaign={activeCampaign}
+            countdown={campaignCountdown}
+            headlineFont={'"Plein", sans-serif'}
+            style={{ maxWidth: 560, margin: '0 auto 28px' }}
+          />
         )}
 
         {/* ── Toggle ─────────────────────────────────────────────── */}

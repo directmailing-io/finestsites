@@ -4,7 +4,7 @@ import { useState, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { setTemplateIntentCookie, isValidTemplateId } from '@/lib/cookies/template-intent'
-import { campaignAmountLabel } from '@/lib/billing/campaign-shared'
+import CampaignCard from '@/components/billing/CampaignCard'
 import { useFetchedCampaign, useCampaignCountdown } from '@/components/billing/useCampaign'
 // signIn removed — raw fetch is used instead for Safari iOS compatibility
 
@@ -134,15 +134,7 @@ function RegisterForm() {
       </div>
 
       {campaign && (
-        <div className="mb-5 px-4 py-3 rounded-2xl" style={{ background: '#F0FDF4', border: '1px solid #BBF7D0' }}>
-          <p className="text-sm font-semibold" style={{ color: '#15803D' }}>
-            Aktion {campaign.code}: {campaignAmountLabel(campaign)}
-          </p>
-          <p className="text-xs mt-0.5" style={{ color: '#166534', lineHeight: 1.5 }}>
-            Der Rabatt wird später beim Bezahlen automatisch abgezogen. Du musst keinen Code eingeben.
-            {campaignCountdown.remaining ? ` Die Aktion endet in ${campaignCountdown.remaining}` : ''}
-          </p>
-        </div>
+        <CampaignCard compact campaign={campaign} countdown={campaignCountdown} style={{ marginBottom: 22 }} />
       )}
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
