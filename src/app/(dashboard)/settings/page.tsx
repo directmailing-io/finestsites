@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation'
 import { authClient } from '@/lib/auth/client'
 import { useRouter } from 'next/navigation'
 import { PLAN_LIST, PLAN_LABELS, COMMON_FEATURES, canUpgradeTo } from '@/lib/plans'
+import { discountedTotal, perMonthEur, formatEur } from '@/lib/billing/promo-duration'
 import ImageCropModal from '@/components/ImageCropModal'
 import { NM_COMPANIES } from '@/lib/constants/nm-companies'
 
@@ -946,7 +947,7 @@ function SettingsContent() {
                   {PLAN_LIST.map((plan, idx) => {
                     const isCurrent = currentPlan === plan.key
                     const price = billingInterval === 'monthly' ? plan.monthly_eur : plan.yearly_eur
-                    const perMonth = billingInterval === 'yearly' ? (plan.yearly_eur / 12).toFixed(0) : plan.monthly_eur
+                    const perMonth = formatEur(perMonthEur(price, billingInterval))
                     const isUpgrade = canUpgradeTo(currentPlan, plan.key)
                     const isLower = !isCurrent && !isUpgrade
                     const isLast = idx === PLAN_LIST.length - 1
@@ -997,7 +998,7 @@ function SettingsContent() {
                             <>
                               <div className="flex items-baseline gap-1.5">
                                 <span className="text-2xl font-bold tracking-tight text-gray-900">
-                                  €{Math.round((billingInterval === 'yearly' ? Number(perMonth) : price) * (1 - subscription.discount_percent / 100))}
+                                  €{formatEur(perMonthEur(discountedTotal(price, { percent_off: subscription.discount_percent }), billingInterval))}
                                 </span>
                                 <span className="text-xs line-through" style={{ color: '#CBD5E1' }}>
                                   €{billingInterval === 'yearly' ? perMonth : price}

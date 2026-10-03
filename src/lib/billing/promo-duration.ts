@@ -22,3 +22,32 @@ export function promoDurationInfo(
   }
   return { text: months === 1 ? 'im ersten Monat' : `in den ersten ${months} Monaten`, limited: true }
 }
+
+export interface DiscountAmount {
+  percent_off?: number | null
+  /** Fixed discount in cents (Stripe coupon.amount_off). */
+  amount_off?: number | null
+}
+
+/**
+ * Amount in EUR that is actually charged for one billing period.
+ * Mirrors Stripe: the discount is taken off the invoice total and rounded to cents.
+ * Always pass the full period price (monthly price or yearly price), never a per-month equivalent.
+ */
+export function discountedTotal(baseTotalEur: number, discount: DiscountAmount | null | undefined): number {
+  const baseCents = Math.round(baseTotalEur * 100)
+  if (discount?.percent_off) return (baseCents - Math.round(baseCents * discount.percent_off / 100)) / 100
+  if (discount?.amount_off) return Math.max(0, baseCents - discount.amount_off) / 100
+  return baseTotalEur
+}
+
+/** Per-month equivalent of a period total, rounded to cents. */
+export function perMonthEur(totalEur: number, interval: 'monthly' | 'yearly'): number {
+  return interval === 'yearly' ? Math.round(totalEur / 12 * 100) / 100 : totalEur
+}
+
+/** "14" for whole euros, otherwise "13,60" — never rounds cents away. */
+export function formatEur(amount: number): string {
+  const cents = Math.round(amount * 100)
+  return cents % 100 === 0 ? String(cents / 100) : (cents / 100).toFixed(2).replace('.', ',')
+}

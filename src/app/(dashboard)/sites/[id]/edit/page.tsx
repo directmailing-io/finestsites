@@ -7,7 +7,7 @@ import ImageCropModal from '@/components/ImageCropModal'
 import { RichTextField } from '@/components/editor/RichTextField'
 import { usePlanQuota } from '@/components/dashboard/PlanQuotaContext'
 import { PHONE_COUNTRIES, parsePhoneValue, toWhatsAppDigits, toDisplayPhone } from '@/lib/constants/phone-countries'
-import { promoDurationInfo, type PromoDuration } from '@/lib/billing/promo-duration'
+import { promoDurationInfo, discountedTotal, perMonthEur, formatEur, type PromoDuration, type DiscountAmount } from '@/lib/billing/promo-duration'
 import { FITLINE_SHOP_PRODUCTS, FITLINE_AUTO_LINK_RE, buildFitlineShopLink, ensureSponsorParam } from '@/lib/utils/fitline-shop-links'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -4503,7 +4503,7 @@ const UPGRADE_PLANS = [
   },
 ]
 
-const REFERRAL_DISCOUNT = 0.20
+const REFERRAL_DISCOUNT = 0.10 // matches the AFFILIATE10 coupon applied at checkout
 
 function UpgradeModal({
   siteId,
@@ -4554,15 +4554,14 @@ function UpgradeModal({
   // Promo code can override referral — if user explicitly enters a code it takes priority
   const promoApplied = promoStatus !== null && promoStatus !== 'validating' && (promoStatus as PromoResult).valid
 
-  function effectivePrice(base: number) {
-    // Explicit promo code wins over referral discount
-    if (promoApplied) {
-      const p = promoStatus as { valid: true; percent_off: number | null; amount_off: number | null }
-      if (p.percent_off) return Math.round(base * (1 - p.percent_off / 100))
-      if (p.amount_off) return Math.max(0, base - Math.round(p.amount_off / 100))
-    }
-    if (hasDiscount) return Math.round(base * (1 - REFERRAL_DISCOUNT))
-    return base
+  // Explicit promo code wins over referral discount
+  const activeDiscount: DiscountAmount | null = promoApplied
+    ? promoStatus as { valid: true; percent_off: number | null; amount_off: number | null }
+    : hasDiscount ? { percent_off: REFERRAL_DISCOUNT * 100 } : null
+
+  // Amount Stripe charges per billing period (month or full year) for a plan
+  function periodTotal(plan: { price_monthly: number; price_yearly: number }, discount: DiscountAmount | null) {
+    return discountedTotal(intervalMode === 'monthly' ? plan.price_monthly : plan.price_yearly, discount)
   }
 
   async function checkout() {
@@ -4594,8 +4593,8 @@ function UpgradeModal({
   ]
 
   const activePlan = UPGRADE_PLANS.find(p => p.key === selectedPlan)!
-  const activeBaseMonthly = intervalMode === 'monthly' ? activePlan.price_monthly : Math.round(activePlan.price_yearly / 12)
-  const activePrice = effectivePrice(activeBaseMonthly)
+  const activeTotal = periodTotal(activePlan, activeDiscount)
+  const activePrice = perMonthEur(activeTotal, intervalMode)
 
   return (
     <div
@@ -4693,8 +4692,8 @@ function UpgradeModal({
           {/* Plan list — Apple settings-list style */}
           <div style={{ border: '1px solid #E5E7EB', borderRadius: 18, overflow: 'hidden', marginBottom: 24 }}>
             {UPGRADE_PLANS.map((plan, idx) => {
-              const baseMonthly = intervalMode === 'monthly' ? plan.price_monthly : Math.round(plan.price_yearly / 12)
-              const price = effectivePrice(baseMonthly)
+              const baseMonthly = perMonthEur(periodTotal(plan, null), intervalMode)
+              const price = perMonthEur(periodTotal(plan, activeDiscount), intervalMode)
               const isSelected = selectedPlan === plan.key
               const isPopular = !!plan.popular
               const isLast = idx === UPGRADE_PLANS.length - 1
@@ -4750,11 +4749,11 @@ function UpgradeModal({
                   <div style={{ textAlign: 'right', flexShrink: 0 }}>
                     {(hasDiscount || promoApplied) && price !== baseMonthly && (
                       <p style={{ fontSize: 11, color: '#C4B5FD', textDecoration: 'line-through', lineHeight: 1, marginBottom: 2 }}>
-                        {baseMonthly} €
+                        {formatEur(baseMonthly)} €
                       </p>
                     )}
                     <p style={{ fontSize: 18, fontWeight: 700, color: isSelected ? '#8060b0' : '#111', lineHeight: 1.1 }}>
-                      {price} <span style={{ fontSize: 11, fontWeight: 400, color: '#9CA3AF' }}>€/Mo</span>
+                      {formatEur(price)} <span style={{ fontSize: 11, fontWeight: 400, color: '#9CA3AF' }}>€/Mo</span>
                     </p>
                     <p style={{ fontSize: 11, color: '#9CA3AF', marginTop: 2 }}>{dailyCents} € tägl.</p>
                   </div>
@@ -4803,8 +4802,8 @@ function UpgradeModal({
                       : !promoDuration ? 'Preis wurde aktualisiert'
                       : !promoDuration.limited ? 'Gilt dauerhaft auf dein Abo'
                       : intervalMode === 'yearly'
-                        ? `Gilt ${promoDuration.text} auf die gesamte Jahresrechnung, danach regulärer Preis`
-                        : `Gilt ${promoDuration.text}, danach regulärer Preis`
+                        ? `Gilt ${promoDuration.text} auf die gesamte Jahresrechnung (${formatEur(activeTotal)} € statt ${activePlan.price_yearly} €), danach ${activePlan.price_yearly} €/Jahr`
+                        : `Gilt ${promoDuration.text} (${formatEur(activeTotal)} € statt ${activePlan.price_monthly} €), danach ${activePlan.price_monthly} €/Monat`
                     return (
                       <div className="flex items-center gap-3 mb-3 px-4 py-3 rounded-2xl" style={{ background: '#F0FDF4', border: '1px solid #BBF7D0' }}>
                         <div className="flex items-center justify-center w-7 h-7 rounded-full flex-shrink-0" style={{ background: '#16A34A' }}>
@@ -4896,7 +4895,7 @@ function UpgradeModal({
                 Wird geladen...
               </>
             ) : (
-              `${activePlan.name} freischalten \u00b7 ${activePrice} \u20ac/Mo`
+              `${activePlan.name} freischalten \u00b7 ${formatEur(activePrice)} \u20ac/Mo`
             )}
           </button>
 

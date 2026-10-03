@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { Suspense } from 'react'
 import { PLAN_LIST, COMMON_FEATURES, type PlanDef } from '@/lib/plans'
-import { promoDurationInfo, type PromoDuration } from '@/lib/billing/promo-duration'
+import { promoDurationInfo, discountedTotal, perMonthEur, formatEur, type PromoDuration, type DiscountAmount } from '@/lib/billing/promo-duration'
 
 const REFERRAL_DISCOUNT = 0.10
 
@@ -57,25 +57,10 @@ function PlanPageInner() {
     ? promoDurationInfo(appliedPromo.duration, appliedPromo.duration_in_months, interval)
     : { text: 'dauerhaft', limited: false }
 
-  function effectiveMonthly(base: number): number {
-    if (promoApplied) {
-      const p = promoStatus as { valid: true; percent_off: number | null; amount_off: number | null }
-      if (p.percent_off) return Math.round(base * (1 - p.percent_off / 100) * 100) / 100
-      if (p.amount_off) return Math.max(0, base - Math.round(p.amount_off / 100))
-    }
-    if (hasDiscount) return Math.round(base * (1 - REFERRAL_DISCOUNT) * 100) / 100
-    return base
-  }
-
-  function effectiveYearly(base: number): number {
-    if (promoApplied) {
-      const p = promoStatus as { valid: true; percent_off: number | null; amount_off: number | null }
-      if (p.percent_off) return Math.round(base * (1 - p.percent_off / 100) * 100) / 100
-      if (p.amount_off) return Math.max(0, base - Math.round(p.amount_off / 100))
-    }
-    if (hasDiscount) return Math.round(base * (1 - REFERRAL_DISCOUNT) * 100) / 100
-    return base
-  }
+  // Explicit promo code wins over the referral discount
+  const activeDiscount: DiscountAmount | null = promoApplied
+    ? promoStatus as { valid: true; percent_off: number | null; amount_off: number | null }
+    : hasDiscount ? { percent_off: REFERRAL_DISCOUNT * 100 } : null
 
   async function selectPlan(planKey: string) {
     setLoading(planKey)
@@ -100,8 +85,8 @@ function PlanPageInner() {
   }
 
   const yearlySavings = (plan: PlanDef) => {
-    const baseMonthly = effectiveMonthly(plan.monthly_eur)
-    const baseYearly = effectiveYearly(plan.yearly_eur)
+    const baseMonthly = discountedTotal(plan.monthly_eur, activeDiscount)
+    const baseYearly = discountedTotal(plan.yearly_eur, activeDiscount)
     return Math.round(baseMonthly * 12 - baseYearly)
   }
 
@@ -235,10 +220,13 @@ function PlanPageInner() {
       {/* Plan cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
         {PLAN_LIST.map(plan => {
-          const baseMonthly = interval === 'monthly' ? plan.monthly_eur : Math.round(plan.yearly_eur / 12)
+          // Discount is applied to the amount Stripe actually charges (month or full year);
+          // the per-month figure for yearly plans is derived from that total.
+          const baseTotal = interval === 'monthly' ? plan.monthly_eur : plan.yearly_eur
+          const baseMonthly = perMonthEur(baseTotal, interval)
           const baseYearly = plan.yearly_eur
-          const showMonthly = effectiveMonthly(baseMonthly)
-          const showYearly = effectiveYearly(baseYearly)
+          const showMonthly = perMonthEur(discountedTotal(baseTotal, activeDiscount), interval)
+          const showYearly = discountedTotal(baseYearly, activeDiscount)
           const anyDiscount = hasDiscount || promoApplied
           const isLoading = loading === plan.key
           const savings = yearlySavings(plan)
@@ -267,11 +255,11 @@ function PlanPageInner() {
               <div className="flex items-baseline gap-1 mb-1">
                 {anyDiscount && showMonthly !== baseMonthly && (
                   <span className="text-base line-through mr-1" style={{ color: '#9CA3AF' }}>
-                    €{baseMonthly}
+                    €{formatEur(baseMonthly)}
                   </span>
                 )}
                 <span className="text-3xl font-bold" style={{ color: isPopular ? '#3B0764' : '#111827' }}>
-                  €{showMonthly % 1 === 0 ? showMonthly : showMonthly.toFixed(2).replace('.', ',')}
+                  €{formatEur(showMonthly)}
                 </span>
                 <span className="text-sm" style={{ color: isPopular ? '#7C3AED' : '#9CA3AF' }}>/Monat</span>
               </div>
@@ -286,8 +274,8 @@ function PlanPageInner() {
                     <p className="text-xs font-semibold" style={{ color: '#15803D' }}>
                       <span className="line-through mr-1" style={{ color: '#9CA3AF' }}>€{baseYearly}</span>
                       {discountDuration.limited
-                        ? `€${showYearly.toFixed(2).replace('.', ',')} ${discountDuration.text} · danach €${baseYearly}/Jahr`
-                        : `€${showYearly.toFixed(2).replace('.', ',')}/Jahr · du sparst €${savings}`}
+                        ? `€${formatEur(showYearly)} ${discountDuration.text} · danach €${baseYearly}/Jahr`
+                        : `€${formatEur(showYearly)}/Jahr · du sparst €${savings}`}
                     </p>
                   ) : (
                     <p className="text-xs font-semibold" style={{ color: '#15803D' }}>
