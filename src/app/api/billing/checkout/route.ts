@@ -5,6 +5,8 @@ import { users } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
 import { getUserFromRequest } from '@/lib/auth/server'
 import { getStripe, getPriceIdByPlan, type PlanKey, type BillingInterval } from '@/lib/stripe/client'
+import { getCampaignForProfile } from '@/lib/billing/campaign'
+import { campaignDiscount } from '@/lib/billing/campaign-shared'
 
 /**
  * Creates a Stripe Checkout Session for a subscription.
@@ -32,7 +34,7 @@ export async function POST(req: NextRequest) {
     const stripe = getStripe()
     const profile = await db.query.users.findFirst({
       where: eq(users.id, user.id),
-      columns: { stripeCustomerId: true, email: true, username: true, referredByUsername: true, firstName: true, lastName: true },
+      columns: { stripeCustomerId: true, email: true, username: true, referredByUsername: true, firstName: true, lastName: true, subscriptionStatus: true, stripeSubscriptionId: true },
     })
 
     // Build customer display name and metadata from current profile
@@ -154,6 +156,18 @@ export async function POST(req: NextRequest) {
       }
     }
 
+    // Site-wide campaign (e.g. INNERVISIONDAY): applied automatically so customers don't
+    // have to find and fill the code field. Only when nothing else applies — an entered
+    // code and the partner discount always take precedence.
+    let campaignApplied = false
+    if (!promoCodeId && !hasReferral && !affiliateApplied) {
+      const campaign = await getCampaignForProfile(profile)
+      if (campaign && campaignDiscount(campaign, interval)) {
+        promoCodeId = campaign.promoCodeId
+        campaignApplied = true
+      }
+    }
+
     // MwSt.: inclusive 19% tax rate applied to all subscriptions.
     // Prices are stored gross (inkl. MwSt.), the tax rate makes Stripe
     // break out the MwSt. amount on every invoice automatically.
@@ -205,7 +219,17 @@ export async function POST(req: NextRequest) {
       locale: 'auto',
     }
 
-    const session = await stripe.checkout.sessions.create(sessionParams)
+    let session: Stripe.Checkout.Session
+    try {
+      session = await stripe.checkout.sessions.create(sessionParams)
+    } catch (err) {
+      // The auto-applied campaign must never block a purchase: if Stripe rejects the code
+      // (e.g. just expired, or the customer is not a first-time buyer), continue without it.
+      if (!campaignApplied) throw err
+      console.error('[billing/checkout] campaign code rejected, continuing without:', err instanceof Error ? err.message : err)
+      const { discounts: _discounts, ...withoutDiscount } = sessionParams
+      session = await stripe.checkout.sessions.create({ ...withoutDiscount, allow_promotion_codes: true })
+    }
 
     return NextResponse.json({ url: session.url })
   } catch (err) {

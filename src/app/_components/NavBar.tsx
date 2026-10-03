@@ -3,10 +3,14 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import CampaignStrip from './CampaignStrip'
+import type { PublicCampaign } from '@/lib/billing/campaign-shared'
 
 interface NavBarProps {
   primaryCta?: { label: string; href: string }
   minimal?: boolean
+  /** Running site-wide campaign — shown as a strip below the nav. */
+  campaign?: PublicCampaign | null
 }
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://app.finestsites.io'
@@ -18,7 +22,7 @@ const NAV_LINKS = [
   { label: 'Häufig gestellte Fragen', href: '#faq' },
 ]
 
-export default function NavBar({ primaryCta, minimal }: NavBarProps = {}) {
+export default function NavBar({ primaryCta, minimal, campaign }: NavBarProps = {}) {
   const [open, setOpen] = useState(false)
   const close = () => setOpen(false)
   const pathname = usePathname()
@@ -86,6 +90,10 @@ export default function NavBar({ primaryCta, minimal }: NavBarProps = {}) {
           <span style={{ display: 'block', width: 22, height: 2, background: '#111', borderRadius: 2, transition: 'transform 0.22s ease', transform: open ? 'translateY(-7px) rotate(-45deg)' : 'none' }} />
         </button>
       </nav>
+
+      {campaign && !open && (
+        <CampaignStrip campaign={campaign} href={isHome ? '#preise' : (primaryCta?.href ?? `${APP_URL}/register`)} />
+      )}
 
       {/* ── Mobile dropdown ── */}
       <div style={{ maxHeight: open ? 400 : 0, overflow: 'hidden', transition: 'max-height 0.3s ease', maxWidth: 1200, margin: '0 auto' }}>

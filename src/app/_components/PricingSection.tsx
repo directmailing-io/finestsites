@@ -1,6 +1,9 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { campaignDiscount, campaignAmountLabel, type PublicCampaign } from '@/lib/billing/campaign-shared'
+import { promoDurationInfo, discountedTotal, formatEur } from '@/lib/billing/promo-duration'
+import { useCampaignCountdown } from '@/components/billing/useCampaign'
 
 const PLANS = [
   {
@@ -49,7 +52,7 @@ const COMMON_FEATURES = [
   'Deine eigene Internetadresse nutzbar, z.\u202fB. mein-name.de (die Adresse selbst kaufst du separat)',
 ]
 
-export default function PricingSection({ validatedRef }: { validatedRef?: string | null }) {
+export default function PricingSection({ validatedRef, campaign }: { validatedRef?: string | null; campaign?: PublicCampaign | null }) {
   const [yearly, setYearly] = useState(false)
 
   // Primary source: server-validated prop from page.tsx (DB-checked, never spoofable).
@@ -70,6 +73,16 @@ export default function PricingSection({ validatedRef }: { validatedRef?: string
 
   const DISCOUNT = 0.10 // 10 % affiliate discount
 
+  // Site-wide campaign: checkout applies it automatically, so we show the amounts that are
+  // really charged. Partner-link visitors keep the partner discount instead. Ends by itself.
+  const campaignCountdown = useCampaignCountdown(campaign)
+  const activeCampaign = campaign && campaignCountdown.live && !refCode ? campaign : null
+  const campaignInterval = yearly ? 'yearly' : 'monthly'
+  const campaignOff = campaignDiscount(activeCampaign, campaignInterval)
+  const campaignDuration = activeCampaign && campaignOff
+    ? promoDurationInfo(activeCampaign.duration, activeCampaign.durationInMonths, campaignInterval)
+    : null
+
   return (
     <section id="preise" style={{ background: '#fff' }} className="fs-section-pad">
       <div style={{ maxWidth: 980, margin: '0 auto' }}>
@@ -81,6 +94,18 @@ export default function PricingSection({ validatedRef }: { validatedRef?: string
           Bearbeiten ist immer kostenlos. Du zahlst erst wenn du live gehst.
         </p>
 
+
+        {activeCampaign && (
+          <div style={{ maxWidth: 520, margin: '0 auto 24px', background: '#F0FDF4', border: '1px solid #BBF7D0', borderRadius: 18, padding: '14px 18px', textAlign: 'center' }}>
+            <p style={{ fontSize: 15, fontWeight: 700, color: '#15803D', marginBottom: 2 }}>
+              Aktion {activeCampaign.code}: {campaignAmountLabel(activeCampaign)}
+            </p>
+            <p style={{ fontSize: 13.5, color: '#166534', lineHeight: 1.5 }}>
+              Der Rabatt wird beim Bezahlen automatisch abgezogen. Du musst keinen Code eingeben.
+              {campaignCountdown.remaining ? ` Die Aktion endet in ${campaignCountdown.remaining}` : ''}
+            </p>
+          </div>
+        )}
 
         {/* ── Toggle ─────────────────────────────────────────────── */}
         <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 48 }}>
@@ -186,6 +211,31 @@ export default function PricingSection({ validatedRef }: { validatedRef?: string
 
                 <p style={{ fontSize: 13, fontWeight: 600, color: plan.popular ? 'rgba(255,255,255,0.45)' : '#888', marginBottom: 12 }}>{plan.name}</p>
 
+                {campaignOff && campaignDuration && activeCampaign ? (() => {
+                  // Campaign: actual amounts charged per billing period (month or full year)
+                  const periodBase = yearly ? plan.yearly : plan.monthly
+                  const periodPrice = discountedTotal(periodBase, campaignOff)
+                  const unit = yearly ? 'Jahr' : 'Monat'
+                  return (
+                    <>
+                      <div style={{ display: 'flex', alignItems: 'baseline', flexWrap: 'wrap', gap: 4, marginBottom: 6 }}>
+                        <span style={{ fontSize: 22, fontWeight: 400, color: plan.popular ? 'rgba(255,255,255,0.3)' : '#bbb', letterSpacing: '-0.02em', lineHeight: 1, textDecoration: 'line-through', marginRight: 4 }}>{periodBase} €</span>
+                        <span style={{ fontFamily: '"Plein", sans-serif', fontSize: 50, fontWeight: 400, color: plan.popular ? '#fff' : '#111', letterSpacing: '-0.04em', lineHeight: 1 }}>{formatEur(periodPrice)} €</span>
+                        <span style={{ fontSize: 13, color: plan.popular ? 'rgba(255,255,255,0.35)' : '#aaa' }}>/{unit}</span>
+                      </div>
+                      <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: plan.popular ? 'rgba(200,216,184,0.2)' : '#F0FDF4', border: `1px solid ${plan.popular ? 'rgba(200,216,184,0.3)' : '#BBF7D0'}`, borderRadius: 100, padding: '3px 10px', marginBottom: 6 }}>
+                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke={plan.popular ? '#86efac' : '#16A34A'} strokeWidth="2.5" strokeLinecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+                        <span style={{ fontSize: 11, fontWeight: 700, color: plan.popular ? '#86efac' : '#16A34A' }}>{campaignAmountLabel(activeCampaign)} · Aktion {activeCampaign.code}</span>
+                      </div>
+                      <p style={{ fontSize: 12.5, color: plan.popular ? 'rgba(255,255,255,0.55)' : '#666', lineHeight: 1.5, marginBottom: 20 }}>
+                        {campaignDuration.limited
+                          ? `Aktionspreis ${campaignDuration.text}, danach ${periodBase}\u00a0€/${unit}.`
+                          : 'Aktionspreis gilt dauerhaft.'}
+                      </p>
+                    </>
+                  )
+                })() : (
+                <>
                 <div style={{ display: 'flex', alignItems: 'baseline', gap: 4, marginBottom: 4 }}>
                   {refCode && (
                     <span style={{ fontSize: 22, fontWeight: 400, color: plan.popular ? 'rgba(255,255,255,0.3)' : '#bbb', letterSpacing: '-0.02em', lineHeight: 1, textDecoration: 'line-through', marginRight: 4 }}>{basePrice} €</span>
@@ -211,6 +261,8 @@ export default function PricingSection({ validatedRef }: { validatedRef?: string
                 <p style={{ fontSize: 12, color: plan.popular ? 'rgba(212,197,226,0.8)' : '#A070C0', fontWeight: 600, marginBottom: 20 }}>
                   ≈ {dailyEuros} € am Tag
                 </p>
+                </>
+                )}
 
                 {/* Premium sites */}
                 <div style={{

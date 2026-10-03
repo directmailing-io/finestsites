@@ -5,6 +5,8 @@ import { useSearchParams } from 'next/navigation'
 import { Suspense } from 'react'
 import { PLAN_LIST, COMMON_FEATURES, type PlanDef } from '@/lib/plans'
 import { promoDurationInfo, discountedTotal, formatEur, type PromoDuration, type DiscountAmount } from '@/lib/billing/promo-duration'
+import { campaignDiscount, campaignAmountLabel } from '@/lib/billing/campaign-shared'
+import { useFetchedCampaign, useCampaignCountdown } from '@/components/billing/useCampaign'
 
 const REFERRAL_DISCOUNT = 0.10
 
@@ -51,16 +53,28 @@ function PlanPageInner() {
   const hasDiscount = !!referredBy
   // Explicit promo code overrides referral discount
   const promoApplied = promoStatus !== null && promoStatus !== 'validating' && (promoStatus as PromoResult).valid
+
+  // Site-wide campaign (e.g. INNERVISIONDAY): checkout applies it automatically when no
+  // code was entered and there is no partner discount — so we show exactly that price.
+  const fetchedCampaign = useFetchedCampaign()
+  const campaignCountdown = useCampaignCountdown(fetchedCampaign)
+  const campaign = campaignCountdown.live && !promoApplied && !hasDiscount ? fetchedCampaign : null
+  const campaignOff = campaignDiscount(campaign, interval)
+
   // How long the active discount lasts for the selected interval (referral/affiliate = forever)
-  const appliedPromo = promoApplied ? promoStatus as { type: string; duration?: PromoDuration; duration_in_months?: number | null } : null
+  const appliedPromo = promoApplied ? promoStatus as { type: string; percent_off: number | null; duration?: PromoDuration; duration_in_months?: number | null } : null
   const discountDuration = appliedPromo?.type === 'promo'
     ? promoDurationInfo(appliedPromo.duration, appliedPromo.duration_in_months, interval)
+    : campaign && campaignOff ? promoDurationInfo(campaign.duration, campaign.durationInMonths, interval)
     : { text: 'dauerhaft', limited: false }
 
-  // Explicit promo code wins over the referral discount
+  // Priority: entered code > partner discount > automatic campaign
   const activeDiscount: DiscountAmount | null = promoApplied
     ? promoStatus as { valid: true; percent_off: number | null; amount_off: number | null }
-    : hasDiscount ? { percent_off: REFERRAL_DISCOUNT * 100 } : null
+    : hasDiscount ? { percent_off: REFERRAL_DISCOUNT * 100 } : campaignOff
+  const discountLabel = appliedPromo ? (appliedPromo.percent_off ? `${appliedPromo.percent_off}% Rabatt` : 'Rabatt')
+    : hasDiscount ? '10% Rabatt'
+    : campaign ? campaignAmountLabel(campaign) : 'Rabatt'
 
   async function selectPlan(planKey: string) {
     setLoading(planKey)
@@ -117,6 +131,23 @@ function PlanPageInner() {
         </div>
       )}
 
+      {/* Campaign banner — discount is applied automatically, no code entry needed */}
+      {campaign && (
+        <div className="mb-4 px-4 py-3 rounded-xl flex items-start gap-3"
+          style={{ background: '#F0FDF4', border: '1px solid #BBF7D0' }}>
+          <svg className="flex-shrink-0 mt-0.5" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#16A34A" strokeWidth="2.5" strokeLinecap="round"><path d="M20 6L9 17l-5-5"/></svg>
+          <div>
+            <p className="text-sm font-semibold" style={{ color: '#15803D' }}>
+              Aktion {campaign.code}: {campaignAmountLabel(campaign)}
+            </p>
+            <p className="text-xs" style={{ color: '#166534' }}>
+              Wird automatisch abgezogen. Du musst keinen Code eingeben.
+              {campaignCountdown.remaining ? ` Die Aktion endet in ${campaignCountdown.remaining}` : ''}
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* Promo code section */}
       <div className="mb-6">
         {!showPromoInput ? (
@@ -125,7 +156,7 @@ function PlanPageInner() {
             className="text-sm underline underline-offset-2"
             style={{ color: '#9CA3AF' }}
           >
-            Hast du einen Gutschein-Code?
+            {campaign ? 'Hast du einen anderen Gutschein-Code?' : 'Hast du einen Gutschein-Code?'}
           </button>
         ) : (
           <div className="flex flex-col gap-2">
@@ -225,7 +256,7 @@ function PlanPageInner() {
           const basePrice = interval === 'monthly' ? plan.monthly_eur : plan.yearly_eur
           const showPrice = discountedTotal(basePrice, activeDiscount)
           const unit = interval === 'monthly' ? 'Monat' : 'Jahr'
-          const anyDiscount = hasDiscount || promoApplied
+          const anyDiscount = !!activeDiscount
           const isLoading = loading === plan.key
           const savings = yearlySavings(plan)
           const isPopular = plan.popular
@@ -268,8 +299,7 @@ function PlanPageInner() {
 
               <div className="mb-4">
                 {anyDiscount && showPrice !== basePrice ? (() => {
-                  const p = promoApplied ? promoStatus as { valid: true; percent_off: number | null } : null
-                  const amount = p ? (p.percent_off ? `${p.percent_off}% Rabatt` : 'Rabatt') : '10% Rabatt'
+                  const amount = discountLabel
                   return (
                     <p className="text-xs font-semibold" style={{ color: '#15803D' }}>
                       {discountDuration.limited

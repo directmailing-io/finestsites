@@ -15,6 +15,7 @@ import { Suspense } from 'react'
 import FAQSection from './_components/FAQSection'
 import WaitlistSection from './_components/WaitlistSection'
 import Footer from './_components/Footer'
+import { getActiveCampaign, toPublicCampaign } from '@/lib/billing/campaign'
 
 export const dynamic = 'force-dynamic'
 
@@ -43,6 +44,9 @@ export default async function HomePage({
       // DB error: fail safe — no discount shown
     }
   }
+
+  // Site-wide campaign (e.g. INNERVISIONDAY). Partner-link visitors keep the partner discount instead.
+  const campaign = validatedRef ? null : toPublicCampaign(await getActiveCampaign())
 
   // Fetch published templates with new marketing fields
   let templateList: TemplateCardData[] = []
@@ -200,7 +204,7 @@ export default async function HomePage({
       `}</style>
 
       {/* ══ NAV ══════════════════════════════════════════════════════════ */}
-      <NavBar />
+      <NavBar campaign={campaign} />
 
       {/* ══ HERO ═════════════════════════════════════════════════════════ */}
       <HeroSection registerHref={`${process.env.NEXT_PUBLIC_APP_URL ?? 'https://app.finestsites.io'}/register${validatedRef ? `?ref=${validatedRef}` : ''}`} />
@@ -299,7 +303,7 @@ export default async function HomePage({
         <WaitlistSection />
       </Suspense>
 
-      <PricingSection validatedRef={validatedRef} />
+      <PricingSection validatedRef={validatedRef} campaign={campaign} />
 
       {/* ══ FAQ ══════════════════════════════════════════════════════════ */}
       <FAQSection />
