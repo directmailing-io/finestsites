@@ -45,6 +45,8 @@ export interface Env {
   KV_CACHE: KVNamespace
   /** Resend API key for sending form submission notification emails. */
   RESEND_API_KEY: string
+  /** Sender for form notifications, e.g. 'FinestSites <anfragen@finestsites.io>' — must be a domain verified in the Resend account of RESEND_API_KEY. */
+  NOTIFY_FROM?: string
   /** Base URL of the FinestSites app (e.g. https://app.finestsites.io). */
   APP_URL: string
 }
@@ -850,16 +852,18 @@ async function sendSubmissionEmail(
 </body>
 </html>`
 
-    await fetch('https://api.resend.com/emails', {
+    const res = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: { Authorization: `Bearer ${env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        from: 'FinestSites <anfragen@finestsites.io>',
+        from: env.NOTIFY_FROM || 'FinestSites <anfragen@finestsites.io>',
         to: [recipient],
         subject: `Neue Anfrage: ${formTitle}`,
         html,
       }),
     })
+    // Visible in `wrangler tail` — a silent failure here means a customer misses a lead
+    if (!res.ok) console.error('Form notification failed:', res.status, (await res.text()).slice(0, 300))
   } catch {
     // Fire-and-forget — never block or crash the response
   }
