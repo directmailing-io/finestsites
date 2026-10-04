@@ -124,36 +124,28 @@ function TemplateGrid({
   onSelect: (id: string) => void
 }) {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4" style={isFreeSection ? { opacity: 0.8 } : undefined}>
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
       {list.map(tpl => {
         const isBusy = busy === tpl.id
         const preview = tpl.preview_images?.[0] ?? null
         const existingSite = siteMap[tpl.id]
         const isDraft = existingSite?.status === 'draft'
-        const isPublished = !!existingSite && !isDraft
         const isPremium = !(tpl.is_free ?? false)
         const companyLabel = tpl.is_allrounder
           ? null
           : (tpl.nm_companies.find(c => userCompanies.includes(c)) ?? tpl.nm_companies[0] ?? null)
-        const ctaLabel = isBusy ? 'Wird geöffnet…' : isDraft ? 'Bearbeiten →' : isPublished ? 'Öffnen →' : 'Verwenden →'
 
         return (
-          <div key={tpl.id}
-            className="flex flex-col rounded-2xl overflow-hidden"
-            style={{
-              background: '#fff',
-              border: isFreeSection ? '1px solid #E5E7EB' : '1.5px solid #C4A0F0',
-              boxShadow: isFreeSection
-                ? 'none'
-                : '0 4px 28px rgba(128,96,176,0.18), 0 1px 4px rgba(128,96,176,0.08)',
-            }}>
+          <article key={tpl.id}
+            className="flex flex-col rounded-3xl overflow-hidden bg-white"
+            style={{ border: '1.5px solid #E2E8F0', boxShadow: '0 2px 12px rgba(15,23,42,0.06)' }}>
 
-            {/* Image — top */}
-            <div className="relative overflow-hidden flex-shrink-0" style={{ height: 180, background: '#f5f5f7' }}>
+            {/* Preview — whole picture in its own format (16:10), never cropped */}
+            <div className="relative flex-shrink-0 bg-gray-100" style={{ aspectRatio: '16 / 10', borderBottom: '1px solid #E2E8F0' }}>
               {preview ? (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={preview} alt={tpl.title}
-                  className="absolute inset-0 w-full h-full object-cover object-top" />
+                <img src={preview} alt="" className="absolute inset-0 w-full h-full"
+                  style={{ objectFit: 'cover', objectPosition: 'top center' }} />
               ) : (
                 <div className="absolute inset-0 flex items-center justify-center"
                   style={{ background: 'linear-gradient(160deg, #F8FAFC 0%, #F1F5F9 100%)' }}>
@@ -164,73 +156,64 @@ function TemplateGrid({
                   </svg>
                 </div>
               )}
-              {/* Status badge on image */}
-              {(isDraft || isPublished) && (
-                <div className="absolute top-2 right-2">
-                  <span className="text-xs font-semibold px-2 py-0.5 rounded-full"
-                    style={isDraft
-                      ? { background: 'rgba(255,247,237,0.95)', color: '#C2410C', border: '1px solid #FED7AA' }
-                      : { background: 'rgba(240,253,244,0.95)', color: '#15803D', border: '1px solid #BBF7D0' }}>
-                    {isDraft ? 'Entwurf' : 'Aktiv'}
-                  </span>
-                </div>
-              )}
-              {/* New badge on image */}
-              {tpl.badge === 'brandneu' && (
-                <div className="absolute top-2 left-2">
-                  <span className="text-xs font-bold px-2 py-0.5 rounded-full"
-                    style={{ background: 'rgba(245,243,255,0.95)', color: '#7C3AED', border: '1px solid #DDD6FE' }}>
-                    Neu
-                  </span>
-                </div>
+              {tpl.badge === 'brandneu' && !existingSite && (
+                <span className="absolute top-3 left-3 text-xs font-bold px-2.5 py-1 rounded-full"
+                  style={{ background: '#7C3AED', color: '#fff' }}>
+                  Neu
+                </span>
               )}
             </div>
 
-            {/* Card body */}
-            <div style={{ padding: '14px 16px 10px', flex: 1, display: 'flex', flexDirection: 'column', gap: 5 }}>
-              <p style={{ fontSize: 11, fontWeight: 700, color: tpl.is_allrounder ? '#2563EB' : '#9d7ecc', letterSpacing: '0.07em', textTransform: 'uppercase', margin: 0 }}>
-                {tpl.is_allrounder ? 'Allgemein' : (companyLabel ?? '')}
-              </p>
-              <h3 style={{ fontSize: isFreeSection ? 14 : 15, fontWeight: 700, color: '#111', lineHeight: 1.3, margin: 0 }}>
-                {tpl.title}
-              </h3>
-            </div>
+            <div className="flex flex-col gap-3 p-4 sm:p-5 flex-1">
+              <div className="flex-1">
+                <div className="flex flex-wrap items-center gap-2 mb-2">
+                  {existingSite && (
+                    <span className="inline-flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-full"
+                      style={isDraft ? { background: '#F1F5F9', color: '#475569' } : { background: '#DCFCE7', color: '#15803D' }}>
+                      <span className="w-2 h-2 rounded-full" style={{ background: isDraft ? '#94A3B8' : '#16A34A' }} />
+                      {isDraft ? 'Entwurf vorhanden' : 'Schon online'}
+                    </span>
+                  )}
+                  <span className="text-xs font-bold px-2.5 py-1 rounded-full"
+                    style={isPremium ? { background: '#F5F0FB', color: '#6D28D9' } : { background: '#ECFDF5', color: '#047857' }}>
+                    {isPremium ? 'Premium' : 'Kostenlos'}
+                  </span>
+                  {companyLabel && (
+                    <span className="text-xs font-semibold" style={{ color: '#64748B' }}>{companyLabel}</span>
+                  )}
+                </div>
+                <h3 className="text-lg font-bold text-gray-900 leading-snug">{tpl.title}</h3>
+                {tpl.description && (
+                  <p className="text-sm mt-1 leading-relaxed" style={{ color: '#64748B' }}>{tpl.description}</p>
+                )}
+              </div>
 
-            {/* Footer bar */}
-            <button
-              onClick={() => onSelect(tpl.id)}
-              disabled={!!busy}
-              style={{
-                padding: '11px 16px 13px',
-                background: isBusy ? '#E5E7EB' : isPremium
-                  ? 'linear-gradient(120deg, #7C3AED 0%, #9D5FEF 100%)'
-                  : '#F5F5F7',
-                borderTop: isPremium ? 'none' : '1px solid #EBEBED',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                border: 'none',
-                cursor: isBusy ? 'default' : 'pointer',
-                width: '100%',
-                flexShrink: 0,
-              }}>
-              <span style={{
-                fontSize: 11, fontWeight: 700,
-                color: isBusy ? '#9CA3AF' : isPremium ? 'rgba(255,255,255,0.75)' : '#9CA3AF',
-                letterSpacing: '0.07em', textTransform: 'uppercase',
-              }}>
-                {isPremium ? 'Premium' : 'Gratis'}
-              </span>
-              <span style={{
-                fontSize: 13, fontWeight: 700,
-                color: isBusy ? '#9CA3AF' : isPremium ? '#fff' : '#6B7280',
-                display: 'flex', alignItems: 'center', gap: 5,
-              }}>
-                {isBusy && <span className="w-3 h-3 rounded-full border-2 border-gray-300 border-t-gray-500 animate-spin inline-block" />}
-                {ctaLabel}
-              </span>
-            </button>
-          </div>
+              {existingSite ? (
+                <button type="button" onClick={() => onSelect(tpl.id)} disabled={!!busy}
+                  className="flex items-center justify-center gap-2 w-full min-h-12 px-4 rounded-2xl text-[15px] font-bold text-white"
+                  style={{ background: '#111827', opacity: busy && !isBusy ? 0.5 : 1 }}>
+                  {isBusy ? 'Wird geöffnet…' : isDraft ? 'Weiter bearbeiten' : 'Bearbeiten'}
+                </button>
+              ) : (
+                <div className="flex flex-wrap gap-2">
+                  <a href={`/api/templates/${tpl.id}/public-preview`} target="_blank" rel="noopener noreferrer"
+                    className="flex-[1_1_120px] flex items-center justify-center gap-2 min-h-12 px-3 rounded-2xl text-sm font-semibold whitespace-nowrap"
+                    style={{ background: '#F1F5F9', color: '#111827' }}>
+                    <svg className="flex-shrink-0" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+                    </svg>
+                    Ansehen
+                  </a>
+                  <button type="button" onClick={() => onSelect(tpl.id)} disabled={!!busy}
+                    className="flex-[2_1_190px] flex items-center justify-center gap-2 min-h-12 px-3 rounded-2xl text-[15px] font-bold text-white whitespace-nowrap"
+                    style={{ background: '#7C3AED', opacity: busy && !isBusy ? 0.5 : 1 }}>
+                    {isBusy && <span className="w-3.5 h-3.5 rounded-full border-2 border-white/40 border-t-white animate-spin inline-block" />}
+                    {isBusy ? 'Wird angelegt…' : 'Diese Vorlage verwenden'}
+                  </button>
+                </div>
+              )}
+            </div>
+          </article>
         )
       })}
     </div>
@@ -275,13 +258,9 @@ export default function NewSitePage() {
 
   // Step 1: filter by user's companies + exclude published/active sites + exclude coming soon
   const companyMatched = useMemo(() => {
-    // Exclude coming soon and templates where the user already has a live (non-draft) site
-    const base = templates.filter(t => {
-      if (t.is_coming_soon) return false  // never show coming soon
-      const site = siteMap[t.id]
-      if (!site) return true          // no site → always show
-      return site.status === 'draft'  // draft → show; published/active → hide
-    })
+    // Every template stays visible. Ones the user already started or published are not
+    // hidden (that made them look "gone") — they are listed in their own group below.
+    const base = templates.filter(t => !t.is_coming_soon)
     if (!hasPrefs) return base
     return base.filter(t => t.is_allrounder || t.nm_companies.some(c => userCompanies.includes(c)))
   }, [templates, siteMap, userCompanies, hasPrefs])
@@ -310,28 +289,23 @@ export default function NewSitePage() {
     )
   }, [priceFiltered, search])
 
-  // Step 5: sort — drafts first within each group
-  const sortByDraft = (list: Template[]) => [...list].sort((a, b) => {
-    const draftA = siteMap[a.id]?.status === 'draft' ? 0 : 1
-    const draftB = siteMap[b.id]?.status === 'draft' ? 0 : 1
-    return draftA - draftB
-  })
-
-  const premiumTemplates = useMemo(() => {
-    const list = searched.filter(t => !(t.is_free ?? false))
-    return sortByDraft(list)
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searched, siteMap])
-
-  const freeTemplates = useMemo(() => {
-    const list = searched.filter(t => t.is_free ?? false)
-    return sortByDraft(list)
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searched, siteMap])
+  // Step 5: new templates (premium, then free) and, separately, the ones already in use
+  const premiumTemplates = useMemo(
+    () => searched.filter(t => !siteMap[t.id] && !(t.is_free ?? false)),
+    [searched, siteMap],
+  )
+  const freeTemplates = useMemo(
+    () => searched.filter(t => !siteMap[t.id] && (t.is_free ?? false)),
+    [searched, siteMap],
+  )
+  const usedTemplates = useMemo(
+    () => searched.filter(t => !!siteMap[t.id]),
+    [searched, siteMap],
+  )
 
   const visible = useMemo(() => {
-    return [...premiumTemplates, ...freeTemplates]
-  }, [premiumTemplates, freeTemplates])
+    return [...premiumTemplates, ...freeTemplates, ...usedTemplates]
+  }, [premiumTemplates, freeTemplates, usedTemplates])
 
   async function handleSelect(templateId: string) {
     if (busy) return
@@ -369,19 +343,20 @@ export default function NewSitePage() {
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
           <path d="M19 12H5M12 5l-7 7 7 7"/>
         </svg>
-        Zurück
+        Zurück zu meinen Webseiten
       </Link>
 
       {/* ── Header ── */}
       <div className="mb-5">
         <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight">
-          Welche Vorlage passt zu dir?
+          Neue Webseite erstellen
         </h1>
-        <p className="text-base mt-1.5" style={{ color: '#94A3B8' }}>
-          {hasPrefs
-            ? `Templates für: ${userCompanies.join(', ')}`
-            : 'Wähle eine Vorlage und starte sofort.'}
+        <p className="text-base mt-1.5" style={{ color: '#64748B' }}>
+          Such dir eine Vorlage aus. Mit „Ansehen“ kannst du sie dir vorher in Ruhe anschauen.
         </p>
+        {hasPrefs && (
+          <p className="text-sm mt-1" style={{ color: '#94A3B8' }}>Vorlagen für: {userCompanies.join(', ')}</p>
+        )}
       </div>
 
       {/* ── Search ── */}
@@ -474,20 +449,25 @@ export default function NewSitePage() {
         <EmptyState hasPrefs={hasPrefs} search={search} priceFilter={priceFilter} />
       ) : (
         <>
-          {/* ── Premium templates ── */}
+          {/* ── New templates: premium first, then free ── */}
           {priceFilter !== 'free' && premiumTemplates.length > 0 && (
             <TemplateGrid templates={premiumTemplates} isFreeSection={false} siteMap={siteMap} busy={busy} userCompanies={userCompanies} onSelect={handleSelect} />
           )}
 
-          {/* ── Free templates (secondary section) ── */}
           {priceFilter !== 'premium' && freeTemplates.length > 0 && (
             <>
-              <div style={{ margin: '32px 0 16px', display: 'flex', alignItems: 'center', gap: 12 }}>
-                <div style={{ flex: 1, height: 1, background: '#E5E7EB' }} />
-                <span style={{ fontSize: 11, fontWeight: 600, color: '#9CA3AF', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Kostenlose Vorlagen</span>
-                <div style={{ flex: 1, height: 1, background: '#E5E7EB' }} />
-              </div>
+              <h2 className="text-xl font-bold text-gray-900 mt-10 mb-1">Kostenlose Vorlagen</h2>
+              <p className="text-sm mb-4" style={{ color: '#64748B' }}>Für diese Vorlagen brauchst du keinen Tarif.</p>
               <TemplateGrid templates={freeTemplates} isFreeSection={true} siteMap={siteMap} busy={busy} userCompanies={userCompanies} onSelect={handleSelect} />
+            </>
+          )}
+
+          {/* ── Templates the user already has — shown, not hidden ── */}
+          {usedTemplates.length > 0 && (
+            <>
+              <h2 className="text-xl font-bold text-gray-900 mt-10 mb-1">Diese Vorlagen nutzt du schon</h2>
+              <p className="text-sm mb-4" style={{ color: '#64748B' }}>Du findest sie auch auf deiner Startseite unter „Online“ oder „Entwürfe“.</p>
+              <TemplateGrid templates={usedTemplates} isFreeSection={false} siteMap={siteMap} busy={busy} userCompanies={userCompanies} onSelect={handleSelect} />
             </>
           )}
         </>
