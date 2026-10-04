@@ -5166,6 +5166,47 @@ html.js .food-card { opacity: 1; }
 .shop-inline-extra-head::after { content: ''; flex: 1; height: 1px; background: var(--border); }
 /* No extra products rendered after it → the head is the last child → hide */
 .shop-inline-extra-head:last-child { display: none; }
+/* Long lists of extra products: first few visible, rest behind one button; search from 8 products */
+.shop-inline-row-extra.is-hidden { display: none; }
+.shop-inline-search {
+  width: 100%;
+  font: inherit;
+  font-size: 16px;
+  color: var(--text);
+  background: #fff;
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin-bottom: 2px;
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.shop-inline-search:focus { border-color: var(--primary); }
+.shop-inline-more {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 48px;
+  margin-top: 2px;
+  padding: 10px 16px;
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--primary);
+  background: transparent;
+  border: 1.5px dashed rgba(86,168,109,0.5);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+.shop-inline-more:hover { background: rgba(86,168,109,0.08); border-color: var(--primary); }
+.shop-inline-more[hidden] { display: none; }
+.shop-inline-more svg { transition: transform 0.2s; }
+.shop-inline-more[aria-expanded="true"] svg { transform: rotate(180deg); }
+.shop-inline-empty { font-size: 0.84rem; color: var(--text-muted); text-align: center; padding: 10px 0 4px; }
 .shop-inline-info { flex: 1; min-width: 0; }
 .shop-inline-name { font-size: 0.88rem; font-weight: 700; color: var(--text); display: block; margin-bottom: 2px; }
 .shop-inline-sub { font-size: 0.76rem; color: var(--text-muted); }
@@ -7688,10 +7729,24 @@ section.section.reviews {
               <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
             </a>
           </div>
+          <!-- Zubehör zum Yoghurt Drink: ohne Joghurt entfällt auch der Yoghurtbereiter -->
+          <div class="shop-inline-row">
+            <div class="shop-inline-num shop-inline-num-extra">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            </div>
+            <div class="shop-inline-info">
+              <span class="shop-inline-name"><span class="l-de">Yoghurtbereiter</span><span class="l-en">Yoghurt Maker</span></span>
+              <span class="shop-inline-sub"><span class="l-de">Damit bereitest du den Yoghurt Drink zu</span><span class="l-en">What you need to prepare the Yoghurt Drink</span></span>
+            </div>
+            <a href="{{shop_joghurtbereiter}}" target="_blank" rel="noopener" class="shop-inline-link">
+              <span class="l-de">Zum Shop</span><span class="l-en">Shop now</span>
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            </a>
+          </div>
 {{/unless}}
           <div class="shop-inline-extra-head"><span class="l-de">Weitere Empfehlungen</span><span class="l-en">More recommendations</span></div>
 {{#each shop_extra}}
-          <div class="shop-inline-row">
+          <div class="shop-inline-row shop-inline-row-extra">
             <div class="shop-inline-num shop-inline-num-extra">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             </div>
@@ -9364,6 +9419,59 @@ section.section.reviews {
 })();
 
 /* ---- Kontakt Toggle Tabs ---- */
+/* ============ Weitere Produkte: lange Listen bedienbar halten ============ */
+/* Ohne Limit kann die Liste lang werden: die ersten Produkte sind sichtbar, der Rest
+   hängt an einem Knopf; ab 8 Produkten gibt es zusätzlich ein Suchfeld. */
+(function initShopExtras() {
+  var VISIBLE = 4, SEARCH_FROM = 8;
+  var list = document.querySelector('.shop-inline-products');
+  if (!list) return;
+  var rows = Array.prototype.slice.call(list.querySelectorAll('.shop-inline-row-extra'));
+  if (rows.length <= VISIBLE) return;
+  var expanded = false, query = '';
+
+  var more = document.createElement('button');
+  more.type = 'button';
+  more.className = 'shop-inline-more';
+  var chevron = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>';
+  list.appendChild(more);
+
+  var empty = document.createElement('p');
+  empty.className = 'shop-inline-empty';
+  empty.innerHTML = '<span class="l-de">Kein Produkt gefunden.</span><span class="l-en">No product found.</span>';
+  empty.hidden = true;
+  list.appendChild(empty);
+
+  var search = null;
+  if (rows.length >= SEARCH_FROM) {
+    search = document.createElement('input');
+    search.type = 'search';
+    search.className = 'shop-inline-search';
+    search.setAttribute('placeholder', 'Produkt suchen …');
+    search.setAttribute('aria-label', 'Produkt suchen');
+    list.insertBefore(search, rows[0]);
+    search.addEventListener('input', function() { query = search.value.trim().toLowerCase(); render(); });
+  }
+
+  function render() {
+    var shown = 0;
+    rows.forEach(function(row, i) {
+      var visible = query ? row.textContent.toLowerCase().indexOf(query) !== -1 : (expanded || i < VISIBLE);
+      row.classList.toggle('is-hidden', !visible);
+      if (visible) shown++;
+    });
+    var rest = rows.length - VISIBLE;
+    more.hidden = !!query;
+    more.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+    more.innerHTML = (expanded
+      ? '<span class="l-de">Weniger anzeigen</span><span class="l-en">Show less</span>'
+      : '<span class="l-de">' + rest + ' weitere Produkte anzeigen</span><span class="l-en">Show ' + rest + ' more products</span>') + chevron;
+    empty.hidden = !(query && shown === 0);
+  }
+  more.addEventListener('click', function() { expanded = !expanded; render(); });
+  render();
+})();
+
 function switchKontaktTab(tab) {
   const tabs = { beratung: 'tabBeratung', bestellen: 'tabBestellen' };
   const panels = { beratung: 'panelBeratung', bestellen: 'panelBestellen' };

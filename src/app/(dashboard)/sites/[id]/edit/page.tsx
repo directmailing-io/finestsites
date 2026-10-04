@@ -12,7 +12,7 @@ import { campaignDiscount, campaignAmountLabel } from '@/lib/billing/campaign-sh
 import { useFetchedCampaign, useCampaignCountdown } from '@/components/billing/useCampaign'
 import CampaignCard from '@/components/billing/CampaignCard'
 import { downloadQrPng } from '@/lib/utils/qr-download'
-import { FITLINE_SHOP_PRODUCTS, FITLINE_AUTO_LINK_RE, buildFitlineShopLink, ensureSponsorParam } from '@/lib/utils/fitline-shop-links'
+import { FITLINE_SHOP_PRODUCTS, FITLINE_JOGHURT_KEYS, FITLINE_AUTO_LINK_RE, buildFitlineShopLink, ensureSponsorParam } from '@/lib/utils/fitline-shop-links'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -1533,6 +1533,7 @@ const FITLINE_PRODUCT_LABELS: Record<string, string> = {
   shop_optimalset: 'Optimal-Set',
   shop_activize: 'Activize Oxyplus',
   shop_joghurt: 'Feel-Good Yoghurt Drink',
+  shop_joghurtbereiter: 'Yoghurtbereiter',
 }
 
 function FitlineShopLinksCard({ values, onChange, hideJoghurt }: {
@@ -1542,7 +1543,7 @@ function FitlineShopLinksCard({ values, onChange, hideJoghurt }: {
 }) {
   const partner = (values['team_partner_number'] ?? '').trim()
   const [editing, setEditing] = useState<Set<string>>(new Set())
-  const entries = Object.entries(FITLINE_SHOP_PRODUCTS).filter(([k]) => !(hideJoghurt && k === 'shop_joghurt'))
+  const entries = Object.entries(FITLINE_SHOP_PRODUCTS).filter(([k]) => !(hideJoghurt && FITLINE_JOGHURT_KEYS.includes(k)))
   return (
     <div className="flex flex-col" style={{ gap: 10 }}>
       {entries.map(([key, productId]) => {
@@ -1667,7 +1668,8 @@ function LoopField({ field, value, onChange, onItemFocus }: {
   onItemFocus?: (item: Record<string, string> | null, idx: number) => void
 }) {
   const subFields = field.sub_fields ?? []
-  const maxItems = field.max_items ?? 50
+  // No max_items in the schema = unlimited
+  const maxItems = field.max_items ?? Infinity
 
   const items: Record<string, string>[] = (() => {
     try { return JSON.parse(value || '[]') } catch { return [] }

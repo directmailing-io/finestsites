@@ -9,7 +9,12 @@ export const FITLINE_SHOP_PRODUCTS: Record<string, string> = {
   shop_optimalset: '9700731',
   shop_activize: '0708054',
   shop_joghurt: '9709001',
+  // Accessory for the yoghurt drink — shown/hidden together with it (joghurt_anzeigen)
+  shop_joghurtbereiter: '071300100',
 }
+
+/** Shop links that only exist while the yoghurt is promoted (joghurt_anzeigen ≠ nein). */
+export const FITLINE_JOGHURT_KEYS = ['shop_joghurt', 'shop_joghurtbereiter']
 
 export function buildFitlineShopLink(productId: string, partnerNumber: string): string {
   return `https://www.fitline.com/de/de-de/products/${productId}?sponsor=${encodeURIComponent(partnerNumber)}`

@@ -240,6 +240,18 @@
       "section": "Shop"
     },
     {
+      "key": "shop_joghurtbereiter",
+      "label": "Shop-Link Yoghurtbereiter",
+      "type": "url",
+      "required": false,
+      "placeholder_text": "Dein personalisierter Shoplink zum Yoghurtbereiter",
+      "default_value": "https://www.fitline.com/de/de-de/products/071300100",
+      "max_length": null,
+      "options": [],
+      "card_options": [],
+      "section": "Shop"
+    },
+    {
       "key": "shop_extra",
       "label": "Weitere Produkte",
       "type": "loop",
@@ -248,7 +260,6 @@
       "default_value": "",
       "max_length": null,
       "min_items": 0,
-      "max_items": 10,
       "sub_fields": [
         {
           "key": "produktname",
@@ -405,6 +416,7 @@
     "telefon": "",
     "zeige_was_ersetzt": "ja",
     "zeige_vergleich": "ja",
-    "farbthema": "gruen"
+    "farbthema": "gruen",
+    "shop_joghurtbereiter": "https://www.fitline.com/de/de-de/products/071300100"
   }
 }

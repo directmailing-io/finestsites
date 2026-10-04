@@ -2231,6 +2231,10 @@ section { padding: clamp(80px, 12vh, 140px) var(--pad-x); position: relative; }
   border-bottom: 1px dashed var(--line);
 }
 .wp-row:last-child { border-bottom: none; }
+/* Eine Phase über zwei Zeilen (z. B. Aktivieren: Woche 1 / Woche 2 bis 4) */
+.wp-row--joined { border-bottom: none; padding-bottom: 6px; }
+.wp-row--cont { padding-top: 6px; }
+.wp-row--cont .wp-phase-duration { font-size: 13px; font-weight: 600; color: var(--ink-2); margin-top: 0; }
 
 .wp-repeat {
   display: inline-flex;
@@ -5041,22 +5045,42 @@ img {
       </div>
     </div>
 
-    <div class="wp-row">
+    <!-- Phase 02 = 28 Tage: Woche 1 nur weiße Tage, danach pro Woche 5 grüne + 2 weiße Tage -->
+    <div class="wp-row wp-row--joined">
       <div class="wp-phase">
         <div class="wp-phase-tag"><span class="l-de">Phase 02</span><span class="l-en">Phase 02</span></div>
         <div class="wp-phase-name"><span class="l-de">Aktivieren</span><span class="l-en">Activate</span></div>
+        <div class="wp-phase-duration"><span class="l-de">Woche 1: nur weiße Tage</span><span class="l-en">Week 1: white days only</span></div>
       </div>
       <div class="wp-days">
-        <div class="wp-day g">G</div>
         <div class="wp-day w">W</div>
-        <div class="wp-day g">G</div>
         <div class="wp-day w">W</div>
-        <div class="wp-day g">G</div>
-        <div class="wp-day g">G</div>
+        <div class="wp-day w">W</div>
+        <div class="wp-day w">W</div>
+        <div class="wp-day w">W</div>
+        <div class="wp-day w">W</div>
         <div class="wp-day w">W</div>
       </div>
       <div class="wp-repeat">
-        <span class="wp-repeat-multi">×4</span> <span class="l-de">Wochen</span><span class="l-en">weeks</span>
+        <span class="wp-repeat-multi">×1</span> <span class="l-de">Woche</span><span class="l-en">week</span>
+      </div>
+    </div>
+
+    <div class="wp-row wp-row--cont">
+      <div class="wp-phase">
+        <div class="wp-phase-duration"><span class="l-de">Woche 2 bis 4</span><span class="l-en">Weeks 2 to 4</span></div>
+      </div>
+      <div class="wp-days">
+        <div class="wp-day g">G</div>
+        <div class="wp-day g">G</div>
+        <div class="wp-day g">G</div>
+        <div class="wp-day g">G</div>
+        <div class="wp-day w">W</div>
+        <div class="wp-day w">W</div>
+        <div class="wp-day g">G</div>
+      </div>
+      <div class="wp-repeat">
+        <span class="wp-repeat-multi">×3</span> <span class="l-de">Wochen</span><span class="l-en">weeks</span>
       </div>
     </div>
 
