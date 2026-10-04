@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { getTemplateIntentCookie, clearTemplateIntentCookie, isValidTemplateId } from '@/lib/cookies/template-intent'
+import { downloadQrPng, copyText } from '@/lib/utils/qr-download'
 
 // ── Types ───────────────────────────────────────────────────────────────────
 
@@ -36,6 +37,22 @@ function SiteCard({ site }: { site: Site }) {
   const siteUrl = isPublished && displayUrl ? `https://${displayUrl}` : null
   const preview = site.templates?.preview_images?.[0]
     ?? (siteUrl ? `https://image.thum.io/get/width/800/crop/500/${siteUrl}` : null)
+
+  // Share actions for live sites: copy the link, download the QR code
+  const [copyState, setCopyState] = useState<'idle' | 'copied' | 'failed'>('idle')
+  const [qrBusy, setQrBusy] = useState(false)
+
+  async function handleCopyLink() {
+    if (!siteUrl) return
+    setCopyState(await copyText(siteUrl) ? 'copied' : 'failed')
+    setTimeout(() => setCopyState('idle'), 2500)
+  }
+
+  async function handleQrDownload() {
+    if (!siteUrl || qrBusy) return
+    setQrBusy(true)
+    try { await downloadQrPng(siteUrl) } catch { /* nothing to clean up */ } finally { setQrBusy(false) }
+  }
 
   return (
     <div className="group">
@@ -146,6 +163,44 @@ function SiteCard({ site }: { site: Site }) {
             </Link>
           ) : null}
         </div>
+
+        {/* Live site: share actions — side by side when the card is wide enough, otherwise stacked full-width; labels never wrap */}
+        {siteUrl && (
+          <div className="flex flex-wrap gap-2 mt-3">
+            <button
+              type="button"
+              onClick={handleCopyLink}
+              className="flex-[1_1_176px] flex items-center justify-center gap-2 min-h-12 px-2 py-2 rounded-2xl text-sm font-semibold leading-tight whitespace-nowrap transition-colors"
+              style={copyState === 'copied'
+                ? { background: '#DCFCE7', color: '#15803D' }
+                : { background: '#F3F4F6', color: '#111827' }}
+            >
+              {copyState === 'copied' ? (
+                <svg className="flex-shrink-0" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M20 6L9 17l-5-5"/></svg>
+              ) : (
+                <svg className="flex-shrink-0" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
+                </svg>
+              )}
+              <span aria-live="polite">
+                {copyState === 'copied' ? 'Link kopiert' : copyState === 'failed' ? 'Kopieren fehlgeschlagen' : 'Link kopieren'}
+              </span>
+            </button>
+            <button
+              type="button"
+              onClick={handleQrDownload}
+              disabled={qrBusy}
+              className="flex-[1_1_176px] flex items-center justify-center gap-2 min-h-12 px-2 py-2 rounded-2xl text-sm font-semibold leading-tight whitespace-nowrap transition-colors"
+              style={{ background: '#F3F4F6', color: '#111827', opacity: qrBusy ? 0.6 : 1 }}
+            >
+              <svg className="flex-shrink-0" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/>
+                <path d="M14 14h3v3h-3zM20 14v.01M14 20v.01M17 20h4v-3"/>
+              </svg>
+              <span>{qrBusy ? 'Wird erstellt…' : 'QR-Code speichern'}</span>
+            </button>
+          </div>
+        )}
       </div>
     </div>
   )

@@ -11,6 +11,7 @@ import { promoDurationInfo, discountedTotal, formatEur, type PromoDuration, type
 import { campaignDiscount, campaignAmountLabel } from '@/lib/billing/campaign-shared'
 import { useFetchedCampaign, useCampaignCountdown } from '@/components/billing/useCampaign'
 import CampaignCard from '@/components/billing/CampaignCard'
+import { downloadQrPng } from '@/lib/utils/qr-download'
 import { FITLINE_SHOP_PRODUCTS, FITLINE_AUTO_LINK_RE, buildFitlineShopLink, ensureSponsorParam } from '@/lib/utils/fitline-shop-links'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -4652,6 +4653,48 @@ function UpgradeModal({
     : !!campaignDuration?.limited
   const activeBase = intervalMode === 'monthly' ? activePlan.price_monthly : activePlan.price_yearly
 
+  // What each payment option costs in the first 12 months for the selected plan — basis for
+  // the "größte Ersparnis" note. Same discount rules as the price list above, so it is exact.
+  function firstYearCost(iv: 'monthly' | 'yearly'): number {
+    const base = iv === 'monthly' ? activePlan.price_monthly : activePlan.price_yearly
+    let discount: DiscountAmount | null
+    let duration: PromoDuration | undefined
+    let months: number | null | undefined
+    if (promoApplied) {
+      const p = promoStatus as { type: string; percent_off: number | null; amount_off: number | null; duration?: PromoDuration; duration_in_months?: number | null }
+      discount = p
+      duration = p.type === 'promo' ? p.duration : 'forever'
+      months = p.duration_in_months
+    } else if (hasDiscount) {
+      discount = { percent_off: REFERRAL_DISCOUNT * 100 }
+      duration = 'forever'
+    } else {
+      discount = campaignDiscount(campaign, iv)
+      duration = campaign?.duration
+      months = campaign?.durationInMonths
+    }
+    // Yearly: one invoice in the first year, discounted in full
+    if (iv === 'yearly') return discountedTotal(base, discount)
+    const discountedMonths = !discount ? 0
+      : !duration || duration === 'forever' ? 12
+      : duration === 'once' ? 1
+      : Math.min(12, Math.max(1, months ?? 1))
+    return discountedMonths * discountedTotal(base, discount) + (12 - discountedMonths) * base
+  }
+  const yearlySaving = Math.round((firstYearCost('monthly') - firstYearCost('yearly')) * 100) / 100
+  // Campaign benefit per payment option, e.g. monthly "in den ersten 3 Monaten" vs. yearly "aufs ganze Jahr"
+  const campaignBenefit = (iv: 'monthly' | 'yearly'): string | null => {
+    if (!campaign || !campaignDiscount(campaign, iv)) return null
+    const info = promoDurationInfo(campaign.duration, campaign.durationInMonths, iv)
+    const months = campaign.duration === 'repeating' ? Math.max(1, campaign.durationInMonths ?? 1) : 1
+    // Kept as short as possible — these sit in narrow cards on phones
+    const when = !info.limited ? 'dauerhaft'
+      : iv === 'yearly' ? (info.text === 'im ersten Jahr' ? 'aufs ganze Jahr' : info.text)
+      : months === 1 ? 'im ersten Monat' : `für ${months} Monate`
+    const amount = campaign.percentOff ? `${campaign.percentOff}\u00a0%` : campaignAmountLabel(campaign)
+    return `${amount} ${when}`
+  }
+
   return (
     <div
       className="fixed inset-0 z-[200] flex items-end sm:items-center justify-center"
@@ -4725,7 +4768,7 @@ function UpgradeModal({
 
           {/* Billing interval — two large, clearly labelled options (a small toggle was overlooked) */}
           <p style={{ fontSize: 15, fontWeight: 700, color: '#111', marginBottom: 10 }}>1. Wie möchtest du zahlen?</p>
-          <div role="radiogroup" aria-label="Zahlungsweise" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 22 }}>
+          <div role="radiogroup" aria-label="Zahlungsweise" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, paddingTop: 8, marginBottom: yearlySaving > 0 ? 10 : 22 }}>
             {(['monthly', 'yearly'] as const).map(iv => {
               const selected = intervalMode === iv
               return (
@@ -4737,6 +4780,7 @@ function UpgradeModal({
                   onClick={() => setIntervalMode(iv)}
                   disabled={loading}
                   style={{
+                    position: 'relative',
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'flex-start',
@@ -4764,20 +4808,34 @@ function UpgradeModal({
                   <span style={{ display: 'block', fontSize: 13, color: '#6B7280', lineHeight: 1.35, marginTop: 6 }}>
                     {iv === 'monthly' ? 'Jeden Monat kündbar' : 'Einmal im Jahr zahlen'}
                   </span>
-                  {iv === 'yearly' && (
+                  {iv === 'yearly' && yearlySaving > 0 && (
                     <span style={{
-                      display: 'inline-block', marginTop: 6,
-                      fontSize: 12, fontWeight: 700, whiteSpace: 'nowrap',
-                      padding: '3px 8px', borderRadius: 99,
-                      background: '#C8D8B8', color: '#2d5a1b',
+                      position: 'absolute', top: -11, right: 10,
+                      fontSize: 11, fontWeight: 700, whiteSpace: 'nowrap',
+                      padding: '3px 9px', borderRadius: 99,
+                      background: '#8060b0', color: '#fff',
                     }}>
-                      2 Monate gratis
+                      Größte Ersparnis
                     </span>
                   )}
+                  {/* Benefits of this option — short, one per line */}
+                  {[iv === 'yearly' ? '2 Monate gratis' : null, campaignBenefit(iv)].filter(Boolean).map(benefit => (
+                    <span key={benefit} style={{ display: 'flex', alignItems: 'flex-start', gap: 5, marginTop: 6, fontSize: 13, fontWeight: 700, lineHeight: 1.3, color: iv === 'yearly' ? '#15803D' : '#4B5563' }}>
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" style={{ flexShrink: 0, marginTop: 2 }}><path d="M20 6L9 17l-5-5"/></svg>
+                      <span>{benefit}</span>
+                    </span>
+                  ))}
                 </button>
               )
             })}
           </div>
+
+          {yearlySaving > 0 && (
+            <p style={{ fontSize: 14, lineHeight: 1.4, color: '#166534', background: '#F0FDF4', border: '1px solid #BBF7D0', borderRadius: 14, padding: '10px 14px', marginBottom: 22 }}>
+              {intervalMode === 'yearly' ? 'Gute Wahl: Du sparst' : 'Tipp: Mit jährlicher Zahlung sparst du'} bei {activePlan.name}{' '}
+              <strong style={{ whiteSpace: 'nowrap' }}>{formatEur(yearlySaving)} €</strong> im ersten Jahr.
+            </p>
+          )}
 
           <p style={{ fontSize: 15, fontWeight: 700, color: '#111', marginBottom: 10 }}>2. Welcher Tarif passt zu dir?</p>
 
@@ -5034,15 +5092,7 @@ function PublishCelebrationModal({ publishedUrl, onClose }: {
     if (!publishedUrl || qrDownloading) return
     setQrDownloading(true)
     try {
-      const QRCode = await import('qrcode')
-      const png = await QRCode.toDataURL(publishedUrl, { width: 2048, margin: 4, errorCorrectionLevel: 'H' })
-      const host = publishedUrl.replace(/^https?:\/\//, '').replace(/\/.*$/, '')
-      const a = document.createElement('a')
-      a.href = png
-      a.download = `qr-code-${host}.png`
-      document.body.appendChild(a)
-      a.click()
-      a.remove()
+      await downloadQrPng(publishedUrl)
     } finally {
       setQrDownloading(false)
     }
