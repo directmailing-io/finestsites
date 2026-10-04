@@ -21,7 +21,7 @@
 
 import { db } from '@/lib/db'
 import { users, userSites } from '@/lib/db/schema'
-import { and, eq, inArray, isNull } from 'drizzle-orm'
+import { and, eq, inArray, isNull, isNotNull, or } from 'drizzle-orm'
 import {
   setSiteOfflineKV,
   clearSiteMetaKV,
@@ -33,6 +33,17 @@ import {
 export const ONLINE_STATUSES = ['active', 'trialing'] as const
 /** Subscription states in which the user's sites must be offline (recoverable). */
 export const SUSPENDED_STATUSES = ['past_due', 'unpaid'] as const
+
+/**
+ * Stripe also reports `past_due` while a payment is merely still *processing* —
+ * typical for SEPA: an upgrade invoice paid by direct debit stays open for days
+ * although nothing failed. Only a recorded failure (paymentFailedAt, set by the
+ * invoice.payment_failed webhook) makes `past_due` a real arrear.
+ */
+export function isInArrears(status: string | null | undefined, paymentFailedAt: Date | null | undefined): boolean {
+  if (status === 'unpaid') return true
+  return status === 'past_due' && !!paymentFailedAt
+}
 
 type SiteRow = {
   id: string
@@ -185,16 +196,18 @@ export async function reconcileSiteAccess(userId: string): Promise<ReconcileResu
   if (!user || user.deactivatedAt) return { action: 'unchanged' }
 
   const status = user.subscriptionStatus ?? ''
+  // past_due without a failed payment = payment still processing (SEPA) → stays online
+  const paymentProcessing = status === 'past_due' && !user.paymentFailedAt
 
-  if ((ONLINE_STATUSES as readonly string[]).includes(status)) {
+  if ((ONLINE_STATUSES as readonly string[]).includes(status) || paymentProcessing) {
     const sites = await restoreSites(userId)
-    if (user.paymentFailedAt) {
+    if (user.paymentFailedAt && !paymentProcessing) {
       await db.update(users).set({ paymentFailedAt: null }).where(eq(users.id, userId))
     }
     return sites > 0 ? { action: 'restored', sites } : { action: 'unchanged' }
   }
 
-  if ((SUSPENDED_STATUSES as readonly string[]).includes(status)) {
+  if (isInArrears(status, user.paymentFailedAt)) {
     const sites = await suspendSites(userId)
     return sites > 0 ? { action: 'suspended', sites } : { action: 'unchanged' }
   }
@@ -215,7 +228,10 @@ export async function reconcileAllSiteAccess(): Promise<{ restored: number; susp
     .from(userSites)
     .innerJoin(users, eq(users.id, userSites.userId))
     .where(and(
-      inArray(users.subscriptionStatus, [...ONLINE_STATUSES]),
+      or(
+        inArray(users.subscriptionStatus, [...ONLINE_STATUSES]),
+        and(eq(users.subscriptionStatus, 'past_due'), isNull(users.paymentFailedAt)),
+      ),
       isNull(users.deactivatedAt),
       eq(userSites.status, 'deactivated'),
       isNull(userSites.scheduledDeletionAt),
@@ -227,7 +243,10 @@ export async function reconcileAllSiteAccess(): Promise<{ restored: number; susp
     .from(userSites)
     .innerJoin(users, eq(users.id, userSites.userId))
     .where(and(
-      inArray(users.subscriptionStatus, [...SUSPENDED_STATUSES]),
+      or(
+        eq(users.subscriptionStatus, 'unpaid'),
+        and(eq(users.subscriptionStatus, 'past_due'), isNotNull(users.paymentFailedAt)),
+      ),
       isNull(users.deactivatedAt),
       eq(userSites.status, 'published'),
     ))

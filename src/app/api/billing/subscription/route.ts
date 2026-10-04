@@ -6,7 +6,7 @@ import { eq } from 'drizzle-orm'
 import { getUserFromRequest } from '@/lib/auth/server'
 import { getStripe } from '@/lib/stripe/client'
 
-function getSubInfo(sub: Stripe.Subscription, plan: string, billingInterval: string | null, couponObj?: { percent_off?: number | null; name?: string | null; id?: string } | null) {
+function getSubInfo(sub: Stripe.Subscription, plan: string, billingInterval: string | null, couponObj?: { percent_off?: number | null; name?: string | null; id?: string } | null, paymentFailed = true) {
   // In Stripe v22+, current_period_end is per subscription item
   const item = sub.items?.data?.[0]
   const currentPeriodEnd = (item as any)?.current_period_end ?? null
@@ -15,7 +15,9 @@ function getSubInfo(sub: Stripe.Subscription, plan: string, billingInterval: str
   const discountName: string | null = couponObj?.name ?? couponObj?.id ?? null
 
   return {
-    status: sub.status,
+    // Stripe says past_due while a SEPA payment is still processing — nothing failed,
+    // so the customer must not see the "payment failed" banner (see isInArrears)
+    status: sub.status === 'past_due' && !paymentFailed ? 'active' : sub.status,
     current_period_end: currentPeriodEnd,
     cancel_at_period_end: sub.cancel_at_period_end,
     cancel_at: sub.cancel_at,
@@ -32,7 +34,7 @@ export async function GET(req: NextRequest) {
 
   const profile = await db.query.users.findFirst({
     where: eq(users.id, user.id),
-    columns: { stripeCustomerId: true, plan: true, billingInterval: true, subscriptionStatus: true },
+    columns: { stripeCustomerId: true, plan: true, billingInterval: true, subscriptionStatus: true, paymentFailedAt: true },
   })
 
   if (!profile?.stripeCustomerId) {
@@ -70,13 +72,13 @@ export async function GET(req: NextRequest) {
       })
       if (!allSubs.data.length) return NextResponse.json({ subscription: null })
       const coupon = await resolveCoupon(allSubs.data[0])
-      return NextResponse.json({ subscription: getSubInfo(allSubs.data[0], profile.plan, profile.billingInterval, coupon) })
+      return NextResponse.json({ subscription: getSubInfo(allSubs.data[0], profile.plan, profile.billingInterval, coupon, !!profile.paymentFailedAt) })
     }
 
     const sub0 = subscriptions.data[0]
     const coupon = await resolveCoupon(sub0)
     return NextResponse.json({
-      subscription: getSubInfo(sub0, profile.plan, profile.billingInterval, coupon)
+      subscription: getSubInfo(sub0, profile.plan, profile.billingInterval, coupon, !!profile.paymentFailedAt)
     })
   } catch {
     return NextResponse.json({ subscription: null })

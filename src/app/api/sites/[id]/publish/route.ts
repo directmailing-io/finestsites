@@ -24,6 +24,7 @@ import { eq, and, ne } from 'drizzle-orm'
 import { purgeSiteCache, markSiteOffline } from '@/lib/cloudflare/kv'
 import { writeRenderedHtmlKV } from '@/lib/cloudflare/kv-api'
 import { renderTemplate } from '@/lib/utils/template-engine'
+import { isInArrears } from '@/lib/billing/site-access'
 
 const r2Client = new S3Client({
   region: 'auto',
@@ -104,13 +105,14 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     // offline for the open payment and come back automatically once it's paid.
     // Letting them republish here would silently undo that.
     const status = userRow.subscriptionStatus ?? ''
-    if (status === 'past_due' || status === 'unpaid') {
+    if (isInArrears(status, userRow.paymentFailedAt)) {
       return NextResponse.json({
         error: 'Deine letzte Zahlung ist noch offen. Sobald sie eingegangen ist, gehen deine Webseiten automatisch wieder online.',
         code: 'PAYMENT_PENDING',
       }, { status: 402 })
     }
-    const hasActiveSub = status === 'active' || status === 'trialing'
+    // past_due without a failed payment = SEPA payment still processing → counts as paying
+    const hasActiveSub = status === 'active' || status === 'trialing' || status === 'past_due'
 
     if (!hasActiveSub) {
       return NextResponse.json({
