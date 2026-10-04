@@ -51,6 +51,15 @@ zone_id = "90e5c504e63e834339109d3f19213bb0"
 #   Worker liest Host-Header → schlägt KV nach custom:{hostname} auf
 # ──────────────────────────────────────────────────────────────────────────────
 
+#   Worker liest Host-Header → schlägt custom:{hostname} nach (KV, sonst App-API)
+#
+# WICHTIG: Für eigene Kunden-Domains zählt der Host der Kunden-Domain, nicht
+# custom.womenplus.io — "*.womenplus.io/*" passt darauf NICHT. Ohne die Route "*/*"
+# landet der Request beim Fallback-Origin 192.0.2.1 → Cloudflare-Fehler 522.
+[[routes]]
+pattern = "*/*"
+zone_id = "6e299b7d60fc54649cc64f9106fe1d57"
+
 [[r2_buckets]]
 binding = "R2_BUCKET"
 bucket_name = "finestsites-templates"

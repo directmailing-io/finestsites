@@ -323,6 +323,50 @@ function rememberMeta(cacheKey: string, value: SiteMeta | '__offline__'): void {
   metaMemo.set(cacheKey, { value, expires: Date.now() + META_MEMO_MS })
 }
 
+// ─── Customer's own domain → site ─────────────────────────────────────────────
+// Lookup order: this instance's memory → KV (`custom:{hostname}`) → app API (database).
+// KV is only a cache: if the entry is missing or KV is unavailable, the database decides.
+// Negative answers are remembered too, so ordinary template subdomains cost at most one
+// extra app call per instance every few minutes.
+type CustomSite = { username: string; templateDomain: string }
+const CUSTOM_MEMO_MS = 5 * 60_000
+const customMemo = new Map<string, { value: CustomSite | null; expires: number }>()
+
+async function resolveCustomDomain(hostname: string, env: Env): Promise<CustomSite | null> {
+  const memo = customMemo.get(hostname)
+  if (memo && memo.expires > Date.now()) return memo.value
+  const remember = (value: CustomSite | null, ms = CUSTOM_MEMO_MS) => {
+    if (customMemo.size > 2000) customMemo.clear()
+    customMemo.set(hostname, { value, expires: Date.now() + ms })
+    return value
+  }
+
+  const cached = await kvGet(env, `custom:${hostname}`)
+  if (cached) {
+    try {
+      const parsed = JSON.parse(cached) as CustomSite
+      if (parsed.username && parsed.templateDomain) return remember(parsed)
+    } catch { /* corrupt entry → ask the app */ }
+  }
+
+  try {
+    const res = await fetch(
+      `${env.APP_URL}/api/worker/custom-domain?hostname=${encodeURIComponent(hostname)}`,
+      { headers: { 'x-worker-secret': env.WORKER_SECRET } },
+    )
+    if (res.status === 404) return remember(null)
+    // App not reachable / error: don't remember for long, try again soon
+    if (!res.ok) return remember(null, 20_000)
+    const site = await res.json() as CustomSite
+    if (!site.username || !site.templateDomain) return remember(null)
+    // Best effort: put it into KV so other instances skip the app call
+    await kvPut(env, `custom:${hostname}`, JSON.stringify(site))
+    return remember(site)
+  } catch {
+    return remember(null, 20_000)
+  }
+}
+
 // Returns null if the site doesn't exist, or '__offline__' if it exists but isn't published
 async function getSiteMeta(username: string, domain: string, env: Env): Promise<SiteMeta | '__offline__' | null> {
   const cacheKey = `meta:${username}:${domain}`
@@ -943,15 +987,10 @@ export default {
     let username: string
     let domain: string
 
-    const customEntry = await kvGet(env, `custom:${hostname}`)
-    if (customEntry) {
-      try {
-        const parsed = JSON.parse(customEntry) as { username: string; templateDomain: string }
-        username = parsed.username
-        domain = parsed.templateDomain
-      } catch {
-        return new Response('Not found', { status: 404 })
-      }
+    const customSite = await resolveCustomDomain(hostname, env)
+    if (customSite) {
+      username = customSite.username
+      domain = customSite.templateDomain
     } else {
       // Fall back to subdomain pattern: username.template-domain.tld
       const parts = hostname.split('.')
