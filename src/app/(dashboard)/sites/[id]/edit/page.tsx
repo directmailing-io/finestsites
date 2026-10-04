@@ -108,6 +108,10 @@ function getProfilePrefill(
 
   const key = fieldKey.toLowerCase()
 
+  // Fields of the second person in duo/team mode (partner_vorname, vorname2, profilbild2 …)
+  // must stay empty: the profile belongs to the account owner, not to the partner.
+  if (key.startsWith('partner_') || /2$/.test(key)) return null
+
   for (const [profileField, patterns] of Object.entries(PROFILE_KEY_MAP)) {
     if (patterns.some(p => key === p || key.includes(p))) {
       // Special case: combine first + last name

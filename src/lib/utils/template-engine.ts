@@ -27,7 +27,26 @@ function htmlEscape(s: string): string {
     .replace(/'/g, '&#39;')
 }
 
-export function renderTemplate(html: string, data: SiteData): string {
+/**
+ * Templates name the two-person mode in two ways:
+ *   partner_modus=duo  + vorname2 / nachname2 / profilbild2          (Wellpreneur, cellRESET)
+ *   team_modus=team    + partner_vorname / partner_nachname / partner_profilbild   (Optimalset)
+ * Shared pages (legal notice, privacy) only know the first form, so the second is mirrored
+ * into it. Values the template already has are never overwritten.
+ */
+function withDuoAliases(data: SiteData): SiteData {
+  if ((data.team_modus || '').trim() !== 'team') return data
+  return {
+    ...data,
+    partner_modus: data.partner_modus || 'duo',
+    vorname2: data.vorname2 || data.partner_vorname || '',
+    nachname2: data.nachname2 || data.partner_nachname || '',
+    profilbild2: data.profilbild2 || data.partner_profilbild || '',
+  }
+}
+
+export function renderTemplate(html: string, rawData: SiteData): string {
+  const data = withDuoAliases(rawData)
   const enriched = { ...data, ...computeAboutIntro(data) }
   html = processLoops(html, enriched, [])
   html = evalConditionalBlocks(html, enriched, [])

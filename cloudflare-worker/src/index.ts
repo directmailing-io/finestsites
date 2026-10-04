@@ -264,7 +264,23 @@ function wrapAccentMarkers(text: string): string {
   return `${m[1]}${m[2]}<span class="accent">${m[3]}</span>`
 }
 
+/**
+ * Templates name the two-person mode in two ways:
+ *   partner_modus=duo  + vorname2 / nachname2 / profilbild2          (Wellpreneur, cellRESET)
+ *   team_modus=team    + partner_vorname / partner_nachname / partner_profilbild   (Optimalset)
+ * Shared pages (legal notice, privacy) only know the first form, so the second is mirrored
+ * into it. Values the template already has are never overwritten.
+ */
+function applyDuoAliases(data: Data): void {
+  if ((data.team_modus || '').trim() !== 'team') return
+  data.partner_modus = data.partner_modus || 'duo'
+  data.vorname2 = data.vorname2 || data.partner_vorname || ''
+  data.nachname2 = data.nachname2 || data.partner_nachname || ''
+  data.profilbild2 = data.profilbild2 || data.partner_profilbild || ''
+}
+
 function render(html: string, data: Data): string {
+  applyDuoAliases(data)
   const intros = computeAboutIntro(data)
   data.about_intro_de_html = intros.about_intro_de_html
   data.about_intro_en_html = intros.about_intro_en_html

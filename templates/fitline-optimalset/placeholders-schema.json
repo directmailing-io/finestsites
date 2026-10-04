@@ -1,6 +1,31 @@
 {
   "fields": [
     {
+      "key": "team_modus",
+      "type": "card_select",
+      "label": "Machst du das allein oder zu zweit?",
+      "section": "Profil",
+      "required": false,
+      "card_options": [
+        {
+          "color": "#F8FAFC",
+          "label": "Nur ich",
+          "value": "alleine",
+          "card_type": "color",
+          "description": "Deine Webseite zeigt dich allein."
+        },
+        {
+          "color": "#EEF4FF",
+          "label": "Wir zu zweit",
+          "value": "team",
+          "card_type": "color",
+          "description": "Für Paare oder Partner-Teams: zwei Fotos, zwei Namen."
+        }
+      ],
+      "default_value": "alleine",
+      "placeholder_text": "Betreibst du die Webseite allein oder zusammen mit deinem Partner / deiner Partnerin? Zu zweit erscheinen zwei Fotos, beide Namen und „wir“ statt „ich“."
+    },
+    {
       "key": "vorname",
       "label": "Vorname",
       "type": "text",
@@ -10,7 +35,8 @@
       "max_length": 40,
       "options": [],
       "card_options": [],
-      "section": "Profil"
+      "section": "Profil",
+      "color_tag": "person1"
     },
     {
       "key": "nachname",
@@ -22,7 +48,69 @@
       "max_length": 60,
       "options": [],
       "card_options": [],
-      "section": "Profil"
+      "section": "Profil",
+      "color_tag": "person1"
+    },
+    {
+      "key": "profilbild",
+      "label": "Profilbild",
+      "type": "image",
+      "required": true,
+      "placeholder_text": "Quadratisch, min. 400×400 px. Wird in Navigation, Header und Signatur verwendet.",
+      "default_value": "https://finestsites.vercel.app/placeholders/profilbild.webp",
+      "max_length": null,
+      "options": [],
+      "card_options": [],
+      "section": "Profil",
+      "aspect_ratio": "1/1",
+      "color_tag": "person1"
+    },
+    {
+      "key": "partner_vorname",
+      "type": "text",
+      "label": "Vorname Partner/in",
+      "section": "Profil",
+      "required": false,
+      "color_tag": "person2",
+      "show_when": {
+        "field": "team_modus",
+        "value": "team"
+      },
+      "max_length": 40,
+      "default_value": "",
+      "placeholder_text": "Vorname deiner Partnerin / deines Partners.",
+      "input_placeholder": "z. B. Max"
+    },
+    {
+      "key": "partner_nachname",
+      "type": "text",
+      "label": "Nachname Partner/in",
+      "section": "Profil",
+      "required": false,
+      "color_tag": "person2",
+      "show_when": {
+        "field": "team_modus",
+        "value": "team"
+      },
+      "max_length": 60,
+      "default_value": "",
+      "placeholder_text": "Nachname deiner Partnerin / deines Partners.",
+      "input_placeholder": "z. B. Müller"
+    },
+    {
+      "key": "partner_profilbild",
+      "type": "image",
+      "label": "Foto Partner/in",
+      "section": "Profil",
+      "required": false,
+      "color_tag": "person2",
+      "show_when": {
+        "field": "team_modus",
+        "value": "team"
+      },
+      "aspect_ratio": "1/1",
+      "default_value": "",
+      "placeholder_text": "Profilbild deiner Partnerin / deines Partners. Quadratisch (1:1), mind. 400×400 px."
     },
     {
       "key": "geschlecht",
@@ -51,20 +139,14 @@
           "image_url": ""
         }
       ],
-      "section": "Profil"
-    },
-    {
-      "key": "profilbild",
-      "label": "Profilbild",
-      "type": "image",
-      "required": true,
-      "placeholder_text": "Quadratisch, min. 400×400 px. Wird in Navigation, Header und Signatur verwendet.",
-      "default_value": "https://finestsites.vercel.app/placeholders/profilbild.webp",
-      "max_length": null,
-      "options": [],
-      "card_options": [],
       "section": "Profil",
-      "aspect_ratio": "1/1"
+      "show_when": {
+        "field": "team_modus",
+        "value": [
+          "alleine",
+          ""
+        ]
+      }
     },
     {
       "key": "about_bild",
@@ -417,6 +499,7 @@
     "zeige_was_ersetzt": "ja",
     "zeige_vergleich": "ja",
     "farbthema": "gruen",
-    "shop_joghurtbereiter": "https://www.fitline.com/de/de-de/products/071300100"
+    "shop_joghurtbereiter": "https://www.fitline.com/de/de-de/products/071300100",
+    "team_modus": "alleine"
   }
 }
