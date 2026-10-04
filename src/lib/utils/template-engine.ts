@@ -45,8 +45,39 @@ function withDuoAliases(data: SiteData): SiteData {
   }
 }
 
+/**
+ * WhatsApp links are built as https://wa.me/{number} and only work with digits:
+ * country code + number, no "+", no spaces, no trunk zero. Stored values are not always
+ * in that form (e.g. "+49 151 2025 2822" copied from the profile phone number), so every
+ * WhatsApp value is normalised here, at render time — whatever was saved, the link works.
+ *   "+49 15120252822"       → 4915120252822
+ *   "+49 016096692800"      → 4916096692800   (trunk zero after the country code dropped)
+ *   "+49 +49 151 70241573"  → 4915170241573
+ *   "0151 1234567"          → 491511234567    (national format: assumed German)
+ * Full URLs (https://wa.me/…) are left untouched.
+ */
+export function normalizeWhatsAppNumber(raw: string): string {
+  const v = (raw || '').trim()
+  if (!v || /^https?:/i.test(v)) return v
+  const spaced = v.match(/^(?:\+\d{1,4}\s+)*\+(\d{1,4})\s+(.*)$/)
+  if (spaced) return spaced[1] + spaced[2].replace(/\D/g, '').replace(/^0+/, '')
+  const digits = v.replace(/\D/g, '')
+  if (v.startsWith('+')) return digits
+  if (digits.startsWith('00')) return digits.slice(2)
+  if (digits.startsWith('0')) return '49' + digits.slice(1)
+  return digits
+}
+
+function withWhatsAppDigits(data: SiteData): SiteData {
+  const out: SiteData = { ...data }
+  for (const key of Object.keys(out)) {
+    if (/whatsapp/i.test(key) && typeof out[key] === 'string') out[key] = normalizeWhatsAppNumber(out[key] as string)
+  }
+  return out
+}
+
 export function renderTemplate(html: string, rawData: SiteData): string {
-  const data = withDuoAliases(rawData)
+  const data = withWhatsAppDigits(withDuoAliases(rawData))
   const enriched = { ...data, ...computeAboutIntro(data) }
   html = processLoops(html, enriched, [])
   html = evalConditionalBlocks(html, enriched, [])

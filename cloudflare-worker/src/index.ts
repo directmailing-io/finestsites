@@ -279,8 +279,34 @@ function applyDuoAliases(data: Data): void {
   data.profilbild2 = data.profilbild2 || data.partner_profilbild || ''
 }
 
+/**
+ * WhatsApp links are built as https://wa.me/{number} and only work with digits:
+ * country code + number, no "+", no spaces, no trunk zero. Stored values are not always
+ * in that form (e.g. "+49 151 2025 2822" copied from the profile phone number), so every
+ * WhatsApp value is normalised here, at render time — whatever was saved, the link works.
+ *   "+49 15120252822"       → 4915120252822
+ *   "+49 016096692800"      → 4916096692800   (trunk zero after the country code dropped)
+ *   "+49 +49 151 70241573"  → 4915170241573
+ *   "0151 1234567"          → 491511234567    (national format: assumed German)
+ * Full URLs (https://wa.me/…) are left untouched.
+ */
+function normalizeWhatsAppNumber(raw: string): string {
+  const v = (raw || '').trim()
+  if (!v || /^https?:/i.test(v)) return v
+  const spaced = v.match(/^(?:\+\d{1,4}\s+)*\+(\d{1,4})\s+(.*)$/)
+  if (spaced) return spaced[1] + spaced[2].replace(/\D/g, '').replace(/^0+/, '')
+  const digits = v.replace(/\D/g, '')
+  if (v.startsWith('+')) return digits
+  if (digits.startsWith('00')) return digits.slice(2)
+  if (digits.startsWith('0')) return '49' + digits.slice(1)
+  return digits
+}
+
 function render(html: string, data: Data): string {
   applyDuoAliases(data)
+  for (const key of Object.keys(data)) {
+    if (/whatsapp/i.test(key) && typeof data[key] === 'string') data[key] = normalizeWhatsAppNumber(data[key])
+  }
   const intros = computeAboutIntro(data)
   data.about_intro_de_html = intros.about_intro_de_html
   data.about_intro_en_html = intros.about_intro_en_html

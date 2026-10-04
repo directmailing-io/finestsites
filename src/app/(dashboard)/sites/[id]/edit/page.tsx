@@ -123,6 +123,11 @@ function getProfilePrefill(
       }
       const val = profile[profileField]
       if (!val?.trim()) return null
+      // WhatsApp fields store digits only (wa.me link) — the profile phone is "+49 151 …"
+      if (profileField === 'phone' && key.includes('whatsapp')) {
+        const { country, local } = parsePhoneValue(val.trim())
+        return toWhatsAppDigits(country, local) || null
+      }
       // For social media URL fields, extract handle from full URL so templates
       // that store just the handle (e.g. "deinname") get the right value.
       // Profile DB stores full URLs like "https://instagram.com/daniel.kurzeja".
