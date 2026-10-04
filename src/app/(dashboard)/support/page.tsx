@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
+import { ChatText, chatPreviewText, enterSends } from '@/components/support/ChatText'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -41,7 +42,8 @@ function formatTime(iso: string): string {
 function truncatePreview(msg: ConversationSummary['lastMessage']): string {
   if (!msg) return 'Kein Inhalt'
   if (msg.contentType === 'image') return '📷 Bild'
-  return msg.content.length > 80 ? msg.content.slice(0, 80) + '…' : msg.content
+  const text = chatPreviewText(msg.content, msg.senderType === 'admin')
+  return text.length > 80 ? text.slice(0, 80) + '…' : text
 }
 
 function statusColor(status: string) {
@@ -214,7 +216,7 @@ export default function SupportPage() {
   useEffect(() => { fetchConversations() }, [fetchConversations])
 
   useEffect(() => {
-    convPollRef.current = setInterval(fetchConversations, 5000)
+    convPollRef.current = setInterval(() => { if (!document.hidden) fetchConversations() }, 5000)
     return () => { if (convPollRef.current) clearInterval(convPollRef.current) }
   }, [fetchConversations])
 
@@ -343,7 +345,7 @@ export default function SupportPage() {
   }
 
   function handleKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
-    if (e.key === 'Enter' && !e.shiftKey && !isComposingRef.current) {
+    if (e.key === 'Enter' && !e.shiftKey && !isComposingRef.current && enterSends()) {
       e.preventDefault(); sendMessage()
     }
   }
@@ -482,7 +484,7 @@ export default function SupportPage() {
                     borderRadius: '18px 18px 4px 18px', padding: '10px 14px',
                     maxWidth: '80%', fontSize: 15, lineHeight: 1.6, wordBreak: 'break-word',
                     whiteSpace: 'pre-wrap',
-                  }}>{mediaEl ?? msg.content}</div>
+                  }}>{mediaEl ?? <ChatText text={msg.content} />}</div>
                   <span style={{ fontSize: 11, color: '#9CA3AF', marginTop: 4 }}>{formatTime(msg.createdAt)}</span>
                 </div>
               )
@@ -496,7 +498,7 @@ export default function SupportPage() {
                       maxWidth: '80%', fontSize: 15, lineHeight: 1.6, wordBreak: 'break-word',
                       whiteSpace: 'pre-wrap',
                       boxShadow: '0 1px 4px rgba(0,0,0,0.08)',
-                    }}>{mediaEl ?? msg.content}</div>
+                    }}>{mediaEl ?? <ChatText text={msg.content} formatted />}</div>
                     <span style={{ fontSize: 11, color: '#9CA3AF', marginTop: 4 }}>{formatTime(msg.createdAt)}</span>
                   </div>
                 </div>

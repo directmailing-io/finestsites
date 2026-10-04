@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef, useCallback } from 'react'
+import { ChatText, chatPreviewText, enterSends } from './ChatText'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -112,7 +113,8 @@ function truncatePreview(msg: ConversationSummary['lastMessage']): string {
     } catch { /* ignore */ }
     return '📋 Systemnachricht'
   }
-  return msg.content.length > 45 ? msg.content.slice(0, 45) + '…' : msg.content
+  const text = chatPreviewText(msg.content, msg.senderType === 'admin')
+  return text.length > 45 ? text.slice(0, 45) + '…' : text
 }
 
 function statusColor(status: string): string {
@@ -631,6 +633,7 @@ export default function SupportChat() {
       return
     }
     pollRef.current = setInterval(async () => {
+      if (document.hidden) return
       try {
         const since = lastMsgTimeRef.current ? `&since=${encodeURIComponent(lastMsgTimeRef.current)}` : ''
         const res = await fetch(`/api/support/messages?conversationId=${activeConvId}${since}`)
@@ -655,10 +658,17 @@ export default function SupportChat() {
   // ── Conversation list polling (always active for unread badge) ───────────
 
   useEffect(() => {
-    // Poll every 5s regardless of whether panel is open — keeps unread badge live
-    convPollRef.current = setInterval(fetchConversations, 5000)
-    return () => { if (convPollRef.current) { clearInterval(convPollRef.current); convPollRef.current = null } }
-  }, [fetchConversations])
+    // Keeps the unread badge live. Every open dashboard tab runs this, so it is deliberately
+    // gentle: only while the tab is visible, every 5s with the panel open, otherwise every 30s —
+    // plus an immediate refresh when the user comes back to the tab.
+    const poll = () => { if (!document.hidden) fetchConversations() }
+    convPollRef.current = setInterval(poll, open ? 5000 : 30000)
+    document.addEventListener('visibilitychange', poll)
+    return () => {
+      document.removeEventListener('visibilitychange', poll)
+      if (convPollRef.current) { clearInterval(convPollRef.current); convPollRef.current = null }
+    }
+  }, [fetchConversations, open])
 
   // ── Open conversation ────────────────────────────────────────────────────
 
@@ -766,7 +776,7 @@ export default function SupportChat() {
   // ── Keyboard ─────────────────────────────────────────────────────────────
 
   function handleKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
-    if (e.key === 'Enter' && !e.shiftKey && !isComposingRef.current) {
+    if (e.key === 'Enter' && !e.shiftKey && !isComposingRef.current && enterSends()) {
       e.preventDefault()
       sendMessage()
     }
@@ -945,7 +955,7 @@ export default function SupportChat() {
                         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', flex: 1, minWidth: 0 }}>
                           {parsed.type === 'impersonation_request'
                             ? <ImpersonationCard token={parsed.token} />
-                            : <div className="fs-msg-bubble-admin">{msg.content}</div>
+                            : <div className="fs-msg-bubble-admin"><ChatText text={msg.content} formatted /></div>
                           }
                           <span style={{ fontSize: 10, color: '#AAA', marginTop: 3 }}>{formatTime(msg.createdAt)}</span>
                         </div>
@@ -959,7 +969,7 @@ export default function SupportChat() {
 
                   if (isUser) return (
                     <div key={msg.id} style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
-                      <div className="fs-msg-bubble-user">{mediaEl ?? msg.content}</div>
+                      <div className="fs-msg-bubble-user">{mediaEl ?? <ChatText text={msg.content} />}</div>
                       <span style={{ fontSize: 10, color: '#AAA', marginTop: 3 }}>{formatTime(msg.createdAt)}</span>
                     </div>
                   )
@@ -967,7 +977,7 @@ export default function SupportChat() {
                     <div key={msg.id} style={{ display: 'flex', alignItems: 'flex-end', gap: 7 }}>
                       <SupportAvatar size={22} />
                       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', flex: 1, minWidth: 0 }}>
-                        <div className="fs-msg-bubble-admin">{mediaEl ?? msg.content}</div>
+                        <div className="fs-msg-bubble-admin">{mediaEl ?? <ChatText text={msg.content} formatted />}</div>
                         <span style={{ fontSize: 10, color: '#AAA', marginTop: 3 }}>{formatTime(msg.createdAt)}</span>
                       </div>
                     </div>

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 import Link from 'next/link'
+import { ChatText, chatPreviewText, enterSends } from '@/components/support/ChatText'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -82,11 +83,11 @@ function renderMessageContent(msg: Message) {
           style={{ maxWidth: '100%', maxHeight: 200, borderRadius: 10, display: 'block', cursor: 'pointer' }}
           onClick={() => window.open(msg.mediaUrl!, '_blank')}
         />
-        {msg.content && <div style={{ marginTop: 6, fontSize: 13 }}>{msg.content}</div>}
+        {msg.content && <div style={{ marginTop: 6, fontSize: 13 }}><ChatText text={msg.content} formatted={msg.senderType === 'admin'} /></div>}
       </div>
     )
   }
-  return <span>{msg.content}</span>
+  return <ChatText text={msg.content} formatted={msg.senderType === 'admin'} />
 }
 
 function getInitials(user: ConversationWithUser['user']): string {
@@ -400,12 +401,55 @@ export default function SupportAdminPanel() {
     }
   }
 
+  // Wraps the selection (or the cursor position) in **…** / *…* — rendered as bold / italic
+  // in the customer's chat. Also on Cmd/Ctrl+B and Cmd/Ctrl+I.
+  const applyFormat = (marker: '**' | '*') => {
+    const el = textareaRef.current
+    if (!el) return
+    const start = el.selectionStart ?? inputText.length
+    const end = el.selectionEnd ?? inputText.length
+    const selected = inputText.slice(start, end)
+    const next = inputText.slice(0, start) + marker + selected + marker + inputText.slice(end)
+    setInputText(next)
+    requestAnimationFrame(() => {
+      el.focus()
+      el.setSelectionRange(start + marker.length, end + marker.length)
+    })
+  }
+
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if ((e.metaKey || e.ctrlKey) && !e.shiftKey && !e.altKey && (e.key === 'b' || e.key === 'i')) {
+      e.preventDefault()
+      applyFormat(e.key === 'b' ? '**' : '*')
+      return
+    }
+    if (e.key === 'Enter' && !e.shiftKey && enterSends()) {
       e.preventDefault()
       handleSend()
     }
   }
+
+  const formatButtons = (
+    <div style={{ display: 'flex', gap: 6 }}>
+      {([['**', 'B', 'Fett (Strg/Cmd+B)', { fontWeight: 800 }], ['*', 'I', 'Kursiv (Strg/Cmd+I)', { fontStyle: 'italic', fontFamily: 'Georgia, serif' }]] as const).map(([marker, label, title, style]) => (
+        <button
+          key={label}
+          type="button"
+          title={title}
+          aria-label={title}
+          // keep the text selection: don't let the button take focus
+          onMouseDown={e => e.preventDefault()}
+          onClick={() => applyFormat(marker)}
+          style={{
+            width: 36, height: 36, borderRadius: 8, border: '1px solid #EBEBEB', background: '#fff',
+            color: '#111', fontSize: 15, cursor: 'pointer', flexShrink: 0, ...style,
+          }}
+        >
+          {label}
+        </button>
+      ))}
+    </div>
+  )
 
   // ── Selected conversation data ───────────────────────────────────────────────
 
@@ -511,7 +555,7 @@ export default function SupportAdminPanel() {
                 } else if (conv.lastMessage.contentType === 'image') {
                   lastMsgPreview = '📷 Bild'
                 } else {
-                  const txt = conv.lastMessage.content ?? ''
+                  const txt = chatPreviewText(conv.lastMessage.content ?? '', conv.lastMessage.senderType === 'admin')
                   lastMsgPreview = txt.length > 50 ? txt.slice(0, 50) + '…' : txt
                 }
               }
@@ -976,7 +1020,9 @@ export default function SupportAdminPanel() {
                 }}
               >
                 {isMobile ? (
-                  // Mobile: single-line input + send button side by side
+                  // Mobile: formatting buttons, then input + send button side by side
+                  <>
+                  <div style={{ marginBottom: 8 }}>{formatButtons}</div>
                   <div style={{ display: 'flex', gap: 8, alignItems: 'flex-end' }}>
                     <textarea
                       ref={textareaRef}
@@ -1026,6 +1072,7 @@ export default function SupportAdminPanel() {
                       </svg>
                     </button>
                   </div>
+                  </>
                 ) : (
                   // Desktop: textarea + button below
                   <>
@@ -1054,7 +1101,10 @@ export default function SupportAdminPanel() {
                       }}
                     />
                     <div style={{ marginTop: 10, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <span style={{ fontSize: 11, color: '#BBB' }}>Enter zum Senden, Shift+Enter für Zeilenumbruch</span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                        {formatButtons}
+                        <span style={{ fontSize: 11, color: '#BBB' }}>Enter zum Senden, Shift+Enter für Zeilenumbruch</span>
+                      </div>
                       <button
                         onClick={handleSend}
                         disabled={!inputText.trim() || sending}
