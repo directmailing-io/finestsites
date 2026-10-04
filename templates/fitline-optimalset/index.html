@@ -6688,7 +6688,7 @@ section.section.reviews {
       <div class="cocktail-letterbox-bot"></div>
 
       <div class="cocktail-eyebrow-top">
-        <span class="section-eyebrow"><span class="l-de">Mein Lieblings-Trick</span><span class="l-en">My favorite trick</span></span>
+        <span class="section-eyebrow"><span class="l-de">{{#unless team_modus=team}}Mein{{/unless}}{{#if team_modus=team}}Unser{{/if}} Lieblings-Trick</span><span class="l-en">{{#unless team_modus=team}}My{{/unless}}{{#if team_modus=team}}Our{{/if}} favorite trick</span></span>
         <h2><span class="l-de">So pimpst du deinen Drink.</span><span class="l-en">How to level up your drink.</span></h2>
       </div>
 
@@ -7595,7 +7595,7 @@ section.section.reviews {
           <!-- Step 1: Ausgangssituation (exklusiv) -->
           <div class="form-step active" id="formStep1">
             <h3><span class="l-de">Was trifft auf dich zu?</span><span class="l-en">Which sounds like you?</span></h3>
-            <p class="form-step-hint"><span class="l-de">Damit ich dich besser vorbereitet beraten kann.</span><span class="l-en">So I can come to our chat better prepared.</span></p>
+            <p class="form-step-hint"><span class="l-de">Damit {{#unless team_modus=team}}ich dich besser vorbereitet beraten kann{{/unless}}{{#if team_modus=team}}wir dich besser vorbereitet beraten können{{/if}}.</span><span class="l-en">So {{#unless team_modus=team}}I{{/unless}}{{#if team_modus=team}}we{{/if}} can come to our chat better prepared.</span></p>
             <div class="form-options" style="grid-template-columns:1fr;gap:10px;">
               <button type="button" class="form-option form-option--card" data-type="akut">
                 <span class="form-option-dot"></span>
@@ -7621,7 +7621,7 @@ section.section.reviews {
           <!-- Step 2: Ziele (dynamisch je nach Auswahl in Step 1) -->
           <div class="form-step" id="formStep2">
             <h3 id="step2Headline"><span class="l-de">Was ist dir am wichtigsten?</span><span class="l-en">What matters most to you?</span></h3>
-            <p class="form-step-hint"><span class="l-de">Mehrere Antworten möglich, ich bereite mich darauf vor.</span><span class="l-en">Pick as many as you like, it helps me prepare.</span></p>
+            <p class="form-step-hint"><span class="l-de">Mehrere Antworten möglich, {{#unless team_modus=team}}ich bereite mich{{/unless}}{{#if team_modus=team}}wir bereiten uns{{/if}} darauf vor.</span><span class="l-en">Pick as many as you like, it helps {{#unless team_modus=team}}me{{/unless}}{{#if team_modus=team}}us{{/if}} prepare.</span></p>
             <div class="form-options" id="step2Options"></div>
             <div class="form-nav" style="margin-top:24px;">
               <button type="button" class="form-back" data-back="0"><span class="l-de">← Zurück</span><span class="l-en">← Back</span></button>
@@ -7631,7 +7631,7 @@ section.section.reviews {
 
           <!-- Step 3: Kontaktdaten & Kontaktmethode -->
           <div class="form-step" id="formStep3">
-            <h3><span class="l-de">Wie erreiche ich dich?</span><span class="l-en">How can I reach you?</span></h3>
+            <h3><span class="l-de">Wie {{#unless team_modus=team}}erreiche ich{{/unless}}{{#if team_modus=team}}erreichen wir{{/if}} dich?</span><span class="l-en">How can {{#unless team_modus=team}}I{{/unless}}{{#if team_modus=team}}we{{/if}} reach you?</span></h3>
             <p class="form-step-hint"><span class="l-de">Name und E-Mail reichen, der Rest ist optional.</span><span class="l-en">Name and email are enough, everything else is optional.</span></p>
             <input type="text" class="form-input" name="name" id="formName" required placeholder="Dein Name" style="margin-bottom:12px;">
             <input type="email" class="form-input" name="email" id="formEmail" required placeholder="Deine E-Mail-Adresse" style="margin-bottom:16px;">
@@ -7682,8 +7682,8 @@ section.section.reviews {
           <div class="form-success-icon">
             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
           </div>
-          <h3><span class="l-de">Danke. Deine Nachricht ist bei mir.</span><span class="l-en">Thanks. Your message just landed with me.</span></h3>
-          <p style="color: var(--text-muted); margin-top: 6px; font-size: 14px;"><span class="l-de">Ich melde mich innerhalb von 24 Stunden persönlich.</span><span class="l-en">I'll personally get back to you within 24 hours.</span></p>
+          <h3><span class="l-de">Danke. Deine Nachricht ist bei {{#unless team_modus=team}}mir{{/unless}}{{#if team_modus=team}}uns{{/if}}.</span><span class="l-en">Thanks. Your message just landed with {{#unless team_modus=team}}me{{/unless}}{{#if team_modus=team}}us{{/if}}.</span></h3>
+          <p style="color: var(--text-muted); margin-top: 6px; font-size: 14px;"><span class="l-de">{{#unless team_modus=team}}Ich melde mich{{/unless}}{{#if team_modus=team}}Wir melden uns{{/if}} innerhalb von 24 Stunden persönlich.</span><span class="l-en">{{#unless team_modus=team}}I&#39;ll{{/unless}}{{#if team_modus=team}}We&#39;ll{{/if}} personally get back to you within 24 hours.</span></p>
         </div>
       </div>
     </div>
@@ -7910,7 +7910,7 @@ section.section.reviews {
           <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
         </button>
         <div class="faq-answer">
-          <div class="faq-answer-inner"><span class="l-de">Das ist eine Frage, die ich oft bekomme, und die Antwort überrascht viele. Ja, in manchen Produkten steckt eine kleine Menge Zucker, zum Beispiel Dextrose. Aber der ist nicht da, damit es süß schmeckt. Er funktioniert als Transportmittel. Vereinfacht erklärt: Dein Darm hat Kanäle, durch die Nährstoffe ins Blut wandern. Bestimmte Vitamine und Aminosäuren kommen durch diese Kanäle deutlich besser rein, wenn gleichzeitig ein kleiner Zuckeranteil dabei ist. Der Zucker öffnet quasi das Tor, und die Nährstoffe kommen mit rein. Die Menge ist so gering, dass du dir da keine Sorgen machen musst, solange du nicht den ganzen Tag davon isst.</span><span class="l-en">I get this question a lot, and the answer surprises many people. Yes, some products contain a small amount of sugar, dextrose for example. But it's not there to make it taste sweet. It works as a transport vehicle. Put simply: your gut has channels through which nutrients pass into the blood. Certain vitamins and amino acids get through those channels much better when a small amount of sugar comes along. The sugar basically opens the gate, and the nutrients slip in with it. The amount is so small that you don't need to worry about it, as long as you're not sipping it all day long.</span></div>
+          <div class="faq-answer-inner"><span class="l-de">Das ist eine Frage, die {{#unless team_modus=team}}ich oft bekomme{{/unless}}{{#if team_modus=team}}wir oft bekommen{{/if}}, und die Antwort überrascht viele. Ja, in manchen Produkten steckt eine kleine Menge Zucker, zum Beispiel Dextrose. Aber der ist nicht da, damit es süß schmeckt. Er funktioniert als Transportmittel. Vereinfacht erklärt: Dein Darm hat Kanäle, durch die Nährstoffe ins Blut wandern. Bestimmte Vitamine und Aminosäuren kommen durch diese Kanäle deutlich besser rein, wenn gleichzeitig ein kleiner Zuckeranteil dabei ist. Der Zucker öffnet quasi das Tor, und die Nährstoffe kommen mit rein. Die Menge ist so gering, dass du dir da keine Sorgen machen musst, solange du nicht den ganzen Tag davon isst.</span><span class="l-en">{{#unless team_modus=team}}I{{/unless}}{{#if team_modus=team}}We{{/if}} get this question a lot, and the answer surprises many people. Yes, some products contain a small amount of sugar, dextrose for example. But it's not there to make it taste sweet. It works as a transport vehicle. Put simply: your gut has channels through which nutrients pass into the blood. Certain vitamins and amino acids get through those channels much better when a small amount of sugar comes along. The sugar basically opens the gate, and the nutrients slip in with it. The amount is so small that you don't need to worry about it, as long as you're not sipping it all day long.</span></div>
         </div>
       </div>
 
@@ -7943,7 +7943,7 @@ section.section.reviews {
           <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
         </button>
         <div class="faq-answer">
-          <div class="faq-answer-inner"><span class="l-de">Das ist eine faire Frage, und ich verstehe den ersten Gedanken: mehr Verpackung klingt nach mehr Müll. Aber schau mal genauer hin. Ein normales Supplement-Glas enthält 30 oder 60 Portionen, muss mit Trockenmittel und Sauerstoffabsorbern stabilisiert werden, und du öffnest es täglich. Dabei oxidiert der Rest immer weiter. Die Tagespäckchen hier sind luftdicht versiegelt, brauchen deshalb keine Konservierungsstoffe, und es entsteht kein Abfall durch Reste, die schlecht werden. Außerdem sind die Verpackungen aus recycelbarem Material. Perfekt ist das natürlich nicht, aber im direkten Vergleich nachhaltiger als viele große Plastikflaschen, die am Ende halb voll weggeworfen werden.</span><span class="l-en">Fair question, and I get the first thought: more packaging sounds like more waste. But look a little closer. A regular supplement jar holds 30 or 60 servings, needs drying agents and oxygen absorbers to stay stable, and you open it every day. The rest keeps oxidizing the whole time. The daily sachets here are sealed airtight, so they don't need any preservatives, and there's no waste from leftovers going bad. On top of that, the packaging is made from recyclable material. It's not perfect, of course, but compared directly it's more sustainable than all those big plastic bottles that end up in the bin half full.</span></div>
+          <div class="faq-answer-inner"><span class="l-de">Das ist eine faire Frage, und {{#unless team_modus=team}}ich verstehe{{/unless}}{{#if team_modus=team}}wir verstehen{{/if}} den ersten Gedanken: mehr Verpackung klingt nach mehr Müll. Aber schau mal genauer hin. Ein normales Supplement-Glas enthält 30 oder 60 Portionen, muss mit Trockenmittel und Sauerstoffabsorbern stabilisiert werden, und du öffnest es täglich. Dabei oxidiert der Rest immer weiter. Die Tagespäckchen hier sind luftdicht versiegelt, brauchen deshalb keine Konservierungsstoffe, und es entsteht kein Abfall durch Reste, die schlecht werden. Außerdem sind die Verpackungen aus recycelbarem Material. Perfekt ist das natürlich nicht, aber im direkten Vergleich nachhaltiger als viele große Plastikflaschen, die am Ende halb voll weggeworfen werden.</span><span class="l-en">Fair question, and {{#unless team_modus=team}}I{{/unless}}{{#if team_modus=team}}we{{/if}} get the first thought: more packaging sounds like more waste. But look a little closer. A regular supplement jar holds 30 or 60 servings, needs drying agents and oxygen absorbers to stay stable, and you open it every day. The rest keeps oxidizing the whole time. The daily sachets here are sealed airtight, so they don't need any preservatives, and there's no waste from leftovers going bad. On top of that, the packaging is made from recyclable material. It's not perfect, of course, but compared directly it's more sustainable than all those big plastic bottles that end up in the bin half full.</span></div>
         </div>
       </div>
 
@@ -7956,7 +7956,7 @@ section.section.reviews {
           <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
         </button>
         <div class="faq-answer">
-          <div class="faq-answer-inner"><span class="l-de">Einstiegspakete starten typischerweise bei 50 bis 100 Euro, je nach Set. Es gibt keine Mindestbestellmenge und keinen Kaufzwang. Im Gespräch zeige ich dir alle Möglichkeiten und was für dich sinnvoll wäre, du entscheidest in Ruhe.</span><span class="l-en">Starter packages typically begin at 50 to 100 euros, depending on the set. There's no minimum order and no obligation to buy. In our chat I'll walk you through all the options and what would make sense for you, and you decide in your own time.</span></div>
+          <div class="faq-answer-inner"><span class="l-de">Einstiegspakete starten typischerweise bei 50 bis 100 Euro, je nach Set. Es gibt keine Mindestbestellmenge und keinen Kaufzwang. Im Gespräch {{#unless team_modus=team}}zeige ich{{/unless}}{{#if team_modus=team}}zeigen wir{{/if}} dir alle Möglichkeiten und was für dich sinnvoll wäre, du entscheidest in Ruhe.</span><span class="l-en">Starter packages typically begin at 50 to 100 euros, depending on the set. There's no minimum order and no obligation to buy. In our chat {{#unless team_modus=team}}I&#39;ll{{/unless}}{{#if team_modus=team}}we&#39;ll{{/if}} walk you through all the options and what would make sense for you, and you decide in your own time.</span></div>
         </div>
       </div>
 
