@@ -297,7 +297,7 @@ interface SiteMeta {
 // Returns null if the site doesn't exist, or '__offline__' if it exists but isn't published
 async function getSiteMeta(username: string, domain: string, env: Env): Promise<SiteMeta | '__offline__' | null> {
   const cacheKey = `meta:${username}:${domain}`
-  const cached = await env.KV_CACHE.get(cacheKey)
+  const cached = await kvGet(env, cacheKey)
 
   // Offline sentinel — site was explicitly taken offline
   if (cached === '__offline__') return '__offline__'
@@ -317,13 +317,13 @@ async function getSiteMeta(username: string, domain: string, env: Env): Promise<
   // Site exists but is not published (unpublished, or suspended for an open
   // payment) → cache the offline state briefly and show the offline page.
   if (meta.offline) {
-    await env.KV_CACHE.put(cacheKey, '__offline__', { expirationTtl: 60 })
+    await kvPut(env, cacheKey, '__offline__', { expirationTtl: 60 })
     return '__offline__'
   }
   if (!meta.r2BasePath) return null
 
   // Cache for 60 seconds so repeated requests are fast
-  await env.KV_CACHE.put(cacheKey, JSON.stringify(meta), { expirationTtl: 60 })
+  await kvPut(env, cacheKey, JSON.stringify(meta), { expirationTtl: 60 })
   return meta
 }
 
@@ -344,6 +344,37 @@ async function timingSafeCompare(a: string, b: string): Promise<boolean> {
   return diff === 0
 }
 
+// ─── KV access (best effort) ──────────────────────────────────────────────────
+// KV is only a cache here — the app API and R2 are the source of truth. KV has daily
+// limits (free plan: 1,000 writes, 100,000 reads); when one is hit the operation throws
+// ("KV put() limit exceeded for the day."). That must never take a customer site down:
+// a failed write means "not cached", a failed read means "cache miss".
+
+async function kvGet(env: Env, key: string): Promise<string | null> {
+  try {
+    return await env.KV_CACHE.get(key)
+  } catch (err) {
+    console.error('KV get failed (treated as cache miss):', key, err instanceof Error ? err.message : err)
+    return null
+  }
+}
+
+async function kvPut(env: Env, key: string, value: string, options?: KVNamespacePutOptions): Promise<void> {
+  try {
+    await env.KV_CACHE.put(key, value, options)
+  } catch (err) {
+    console.error('KV put failed (continuing uncached):', key, err instanceof Error ? err.message : err)
+  }
+}
+
+async function kvDelete(env: Env, key: string): Promise<void> {
+  try {
+    await env.KV_CACHE.delete(key)
+  } catch (err) {
+    console.error('KV delete failed:', key, err instanceof Error ? err.message : err)
+  }
+}
+
 // ─── KV Admin Handler ─────────────────────────────────────────────────────────
 
 async function handleKvAdmin(request: Request, username: string, domain: string, env: Env): Promise<Response> {
@@ -358,8 +389,8 @@ async function handleKvAdmin(request: Request, username: string, domain: string,
 
   if (body.action === 'purge') {
     await Promise.allSettled([
-      env.KV_CACHE.delete(metaKey),
-      env.KV_CACHE.delete(renderedKey),
+      kvDelete(env, metaKey),
+      kvDelete(env, renderedKey),
     ])
     return new Response(JSON.stringify({ ok: true }), { headers: { 'Content-Type': 'application/json' } })
   }
@@ -367,8 +398,8 @@ async function handleKvAdmin(request: Request, username: string, domain: string,
   if (body.action === 'offline') {
     await Promise.allSettled([
       // TTL-bound: the DB is the source of truth, KV only caches it
-      env.KV_CACHE.put(metaKey, '__offline__', { expirationTtl: 300 }),
-      env.KV_CACHE.delete(renderedKey),
+      kvPut(env, metaKey, '__offline__', { expirationTtl: 300 }),
+      kvDelete(env, renderedKey),
     ])
     return new Response(JSON.stringify({ ok: true }), { headers: { 'Content-Type': 'application/json' } })
   }
@@ -764,13 +795,13 @@ async function handleFormSubmission(request: Request, pathname: string, meta: Si
   // Rate limit via KV (5 submissions per IP per 10min)
   const ip = request.headers.get('cf-connecting-ip') ?? request.headers.get('x-forwarded-for') ?? ''
   const rateLimitKey = `rate:${meta.siteId}:${ip}`
-  const rateCount = parseInt(await env.KV_CACHE.get(rateLimitKey) ?? '0')
+  const rateCount = parseInt(await kvGet(env, rateLimitKey) ?? '0')
   if (rateCount >= 5) {
     return new Response(JSON.stringify({ error: 'Zu viele Anfragen. Bitte warte 10 Minuten.' }), {
       status: 429, headers: { 'Content-Type': 'application/json' },
     })
   }
-  await env.KV_CACHE.put(rateLimitKey, String(rateCount + 1), { expirationTtl: 600 })
+  await kvPut(env, rateLimitKey, String(rateCount + 1), { expirationTtl: 600 })
 
   const ipHash = ip ? await hashIP(ip) : null
 
@@ -858,7 +889,7 @@ export default {
     // Push the rendered HTML to KV under `demo:{slug}` (24h TTL).
     if (pathname.startsWith('/.finestsites/demo/')) {
       const slug = pathname.replace('/.finestsites/demo/', '').replace(/\/$/, '')
-      const html = await env.KV_CACHE.get(`demo:${slug}`)
+      const html = await kvGet(env, `demo:${slug}`)
       if (html) {
         return new Response(html, {
           headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-cache' },
@@ -873,7 +904,7 @@ export default {
     let username: string
     let domain: string
 
-    const customEntry = await env.KV_CACHE.get(`custom:${hostname}`)
+    const customEntry = await kvGet(env, `custom:${hostname}`)
     if (customEntry) {
       try {
         const parsed = JSON.parse(customEntry) as { username: string; templateDomain: string }
@@ -1060,7 +1091,7 @@ export default {
 
       // ── Render HTML ──────────────────────────────────────────────────────
       const renderCacheKey = `rendered:${username}:${domain}`
-      const cachedHtml = await env.KV_CACHE.get(renderCacheKey)
+      const cachedHtml = await kvGet(env, renderCacheKey)
       if (cachedHtml) {
         ctx.waitUntil(trackPageview(request, url, hostname, pathname, meta, env))
         return new Response(injectBeacon(cachedHtml), {
@@ -1115,7 +1146,7 @@ export default {
       }
 
       renderedHtml = injectBeacon(renderedHtml)
-      await env.KV_CACHE.put(renderCacheKey, renderedHtml, { expirationTtl: 60 })
+      await kvPut(env, renderCacheKey, renderedHtml, { expirationTtl: 60 })
 
       ctx.waitUntil(trackPageview(request, url, hostname, pathname, meta, env))
       return new Response(renderedHtml, {
