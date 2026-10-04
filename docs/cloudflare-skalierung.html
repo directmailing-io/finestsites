@@ -1,0 +1,299 @@
+<meta charset="utf-8">
+<title>Cloudflare-Limits bei FinestSites</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Figtree:wght@400;500;600;700&display=swap">
+<style>
+  /* Layout: one reading column (max 760px), sections separated by space; tables and the
+     route diagram are the only wide elements and scroll inside their own container. */
+  :root {
+    --bg: #f6f7f9;
+    --surface: #ffffff;
+    --fg: #17202b;
+    --muted: #5a6675;
+    --line: #dde2e8;
+    --accent: #0f6b6f;
+    --accent-soft: #e2f1f1;
+    --ok: #1c7a45;
+    --ok-soft: #e3f4ea;
+    --warn: #9a5b00;
+    --warn-soft: #fdf0d8;
+    --crit: #b3261e;
+    --crit-soft: #fbe6e4;
+    --track: #e7eaee;
+    --display: "Bricolage Grotesque", "Figtree", system-ui, sans-serif;
+    --body: "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #11161c; --surface: #1a2129; --fg: #e8edf2; --muted: #9aa7b5; --line: #2c3641;
+      --accent: #5cc4c6; --accent-soft: #17333a;
+      --ok: #6fd39a; --ok-soft: #173326; --warn: #f0b858; --warn-soft: #3a2c12;
+      --crit: #ff8f86; --crit-soft: #3d1c1a; --track: #2a333d;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #11161c; --surface: #1a2129; --fg: #e8edf2; --muted: #9aa7b5; --line: #2c3641;
+    --accent: #5cc4c6; --accent-soft: #17333a;
+    --ok: #6fd39a; --ok-soft: #173326; --warn: #f0b858; --warn-soft: #3a2c12;
+    --crit: #ff8f86; --crit-soft: #3d1c1a; --track: #2a333d;
+    color-scheme: dark;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--body);
+    font-size: 17px;
+    line-height: 1.6;
+    padding-inline: 20px;
+    padding-block: 40px 72px;
+  }
+  .page { max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; gap: 44px; }
+  section { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+  h1, h2, h3 { font-family: var(--display); text-wrap: balance; line-height: 1.15; margin: 0; }
+  h1 { font-size: clamp(30px, 6vw, 42px); font-weight: 700; letter-spacing: -0.02em; }
+  h2 { font-size: clamp(23px, 4.4vw, 29px); font-weight: 700; letter-spacing: -0.01em; }
+  h3 { font-size: 19px; font-weight: 700; }
+  p { margin: 0; }
+  strong { font-weight: 700; }
+  .lead { font-size: 19px; color: var(--muted); }
+  .stamp { font-size: 14px; color: var(--muted); }
+  .eyebrow { font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
+
+  ul, ol { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 8px; }
+
+  /* Summary */
+  .summary { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 22px; gap: 14px; }
+
+  /* Route diagram */
+  .routes { display: flex; flex-direction: column; gap: 14px; }
+  .route { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 18px; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+  .route-title { font-weight: 700; }
+  .route-sub { font-size: 15px; color: var(--muted); }
+  .steps { display: flex; flex-wrap: wrap; align-items: stretch; gap: 8px; }
+  .step { flex: 1 1 150px; min-width: 0; border-radius: 12px; padding: 10px 12px; background: var(--bg); border: 1px solid var(--line); font-size: 15px; line-height: 1.35; }
+  .step b { display: block; font-size: 15px; }
+  .step span { color: var(--muted); font-size: 14px; }
+  .step.cf { background: var(--accent-soft); border-color: transparent; }
+  .arrow { align-self: center; color: var(--muted); font-size: 18px; flex: 0 0 auto; }
+  @media (max-width: 560px) { .arrow { display: none; } }
+
+  /* Tables */
+  .scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); }
+  table { border-collapse: collapse; width: 100%; font-size: 15.5px; font-variant-numeric: tabular-nums; }
+  th, td { text-align: left; padding: 12px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  th { font-size: 13px; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); font-weight: 700; white-space: nowrap; }
+  td.num { white-space: nowrap; }
+  .group td { background: var(--bg); font-weight: 700; font-size: 14px; }
+
+  .pill { display: inline-block; font-size: 13px; font-weight: 700; padding: 3px 10px; border-radius: 99px; white-space: nowrap; }
+  .pill.ok { background: var(--ok-soft); color: var(--ok); }
+  .pill.warn { background: var(--warn-soft); color: var(--warn); }
+  .pill.crit { background: var(--crit-soft); color: var(--crit); }
+
+  .meter { height: 8px; border-radius: 99px; background: var(--track); overflow: hidden; margin-top: 6px; min-width: 110px; }
+  .meter i { display: block; height: 100%; border-radius: 99px; background: var(--ok); }
+  .meter.warn i { background: var(--warn); }
+  .meter.crit i { background: var(--crit); }
+
+  /* Option cards */
+  .options { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 14px; }
+  .option { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 18px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+  .option .cost { font-family: var(--display); font-size: 22px; font-weight: 700; color: var(--accent); }
+  .option p, .option li { font-size: 15.5px; }
+  .tag { font-size: 13px; font-weight: 700; color: var(--muted); }
+
+  .callout { border-radius: 16px; padding: 18px 20px; display: flex; flex-direction: column; gap: 8px; }
+  .callout.crit { background: var(--crit-soft); }
+  .callout.ok { background: var(--ok-soft); }
+  .callout.info { background: var(--accent-soft); }
+  .callout h3 { font-size: 18px; }
+
+  .plan { counter-reset: step; list-style: none; padding: 0; gap: 12px; }
+  .plan li { counter-increment: step; background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 16px 18px 16px 60px; position: relative; }
+  .plan li::before { content: counter(step); position: absolute; left: 18px; top: 16px; width: 30px; height: 30px; border-radius: 50%; background: var(--accent); color: var(--surface); font-weight: 700; display: grid; place-items: center; font-size: 15px; }
+  .plan .who { display: block; font-size: 14px; color: var(--muted); margin-top: 2px; }
+
+  .note { font-size: 15px; color: var(--muted); }
+  a { color: var(--accent); }
+
+  /* v2 additions */
+  .qa { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 20px 22px; display: flex; flex-direction: column; gap: 10px; }
+  .qa .q { font-family: var(--display); font-size: 20px; font-weight: 700; line-height: 1.2; }
+  .verdict { display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px; }
+  .chain { display: flex; flex-direction: column; gap: 6px; }
+  .chain .link { display: flex; gap: 12px; align-items: flex-start; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
+  .chain .n { flex: 0 0 26px; height: 26px; border-radius: 50%; background: var(--accent-soft); color: var(--accent); font-weight: 700; font-size: 14px; display: grid; place-items: center; margin-top: 1px; }
+  .chain .link div { min-width: 0; }
+  .chain small { display: block; color: var(--muted); font-size: 14.5px; line-height: 1.45; }
+  .risk { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 18px 20px; display: flex; flex-direction: column; gap: 8px; }
+  .risk .head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px; }
+  .risk p { font-size: 16px; }
+  .risk .fix { color: var(--muted); font-size: 15.5px; }
+  .risks { display: flex; flex-direction: column; gap: 12px; }
+</style>
+
+<main class="page">
+
+  <header style="display:flex;flex-direction:column;gap:12px">
+    <span class="eyebrow">FinestSites · Infrastruktur</span>
+    <h1>Wie stabil ist FinestSites? Eine ehrliche Bestandsaufnahme</h1>
+    <p class="lead">Ich habe die ganze Kette geprüft: von der Kundenseite über Cloudflare bis zum Server, dazu Chat, Sicherungen und Überwachung. Kurz gesagt: Es läuft, aber „immer erreichbar“ ist heute noch nicht garantiert. Unten steht, woran das liegt und was es ändert.</p>
+    <p class="stamp">Stand: 4. Oktober 2026, Nachmittag. Zahlen gemessen, Preise laut Cloudflare-Preisliste von heute.</p>
+  </header>
+
+  <section>
+    <h2>Deine Fragen, direkt beantwortet</h2>
+
+    <div class="qa">
+      <div class="q">Welches Konto ist betroffen?</div>
+      <p><strong>Beide, aber auf verschiedene Weise.</strong> Du hast zwei Cloudflare-Konten. Beide sind im Gratis-Tarif, und beide haben heute ein Tageslimit erreicht.</p>
+      <div class="scroll">
+        <table>
+          <thead><tr><th></th><th>Konto 1</th><th>Konto 2</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Was läuft darüber</strong></td><td>finestsites.io und die App (app.finestsites.io)</td><td>alle Kundenseiten: dailyoptimal.de, cellrestart.net, wellpreneur.io, lnko.me, myevnt.io und eigene Domains</td></tr>
+            <tr><td><strong>Name im Dashboard</strong></td><td>„Info@daniel-kurzeja.de's Account“</td><td>das Konto, in dem diese Domains liegen</td></tr>
+            <tr><td><strong>Problem heute</strong></td><td>zu viele Aufrufe (136.000 statt 100.000)</td><td>Zwischenspeicher durfte nicht mehr schreiben (1.188 statt 1.000)</td></tr>
+            <tr><td><strong>Folge</strong></td><td>App hätte ausfallen können</td><td>alle Kundenseiten zeigten kurzzeitig „Internal Server Error“</td></tr>
+            <tr><td><strong>Was du tun musst</strong></td><td>nichts kaufen, ich baue um</td><td><strong>Workers Paid buchen, 5 $ pro Monat</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note">Die Mail von Cloudflare mit den 92 % betraf Konto 1. Der Ausfall der Kundenseiten kam aus Konto 2.</p>
+    </div>
+
+    <div class="qa">
+      <div class="q">Was hat der Support-Chat damit zu tun?</div>
+      <p>Der Chat hat keine dauerhafte Leitung zum Server. Stattdessen fragt jeder Browser regelmäßig nach: „Gibt es neue Nachrichten?“ Bisher alle 5 Sekunden, bei jedem eingeloggten Nutzer, auch wenn der Chat zu war und der Tab im Hintergrund lag.</p>
+      <p>Jede dieser Nachfragen zählt in Konto 1 als ein Aufruf. Ein einziger offener Tab erzeugte so 720 Aufrufe pro Stunde. Am Aktionstag waren viele Nutzer gleichzeitig eingeloggt, und so kamen über 40.000 Aufrufe pro Stunde zusammen, fast nur durch den Chat.</p>
+      <p><strong>Und das betrifft auch die Kundenseiten:</strong> Sie holen sich ihre Inhalte über die App-Adresse, also durch Konto 1. Wäre Konto 1 gesperrt worden, hätten die Kundenseiten nach etwa einer Minute ebenfalls nichts mehr anzeigen können.</p>
+      <p class="note">Seit heute fragt der Chat nur noch bei sichtbarem Tab nach, und bei geschlossenem Chat alle 30 Sekunden. Bei geöffnetem Chat bleibt es bei wenigen Sekunden, damit Antworten sofort erscheinen.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Wie alles zusammenhängt</h2>
+    <p>So entsteht eine Kundenseite, wenn jemand sie aufruft. Jedes Glied der Kette kann die Seite aufhalten.</p>
+    <div class="chain">
+      <div class="link"><span class="n">1</span><div><strong>Besucher ruft die Kundenseite auf</strong><small>zum Beispiel anna.dailyoptimal.de</small></div></div>
+      <div class="link"><span class="n">2</span><div><strong>Cloudflare Konto 2 nimmt die Anfrage an</strong><small>Ein kleines Programm („Worker“) baut die Seite zusammen. Gratis-Limit: 100.000 Aufrufe pro Tag.</small></div></div>
+      <div class="link"><span class="n">3</span><div><strong>Der Worker schaut in den Zwischenspeicher</strong><small>Liegt die fertige Seite dort, wird sie sofort ausgeliefert. Sie bleibt dort 1 Minute, nach einer Änderung des Kunden bis zu 1 Stunde.</small></div></div>
+      <div class="link"><span class="n">4</span><div><strong>Sonst fragt er die App nach den Inhalten des Kunden</strong><small>Diese Anfrage läuft über Konto 1 zum Hetzner-Server. Hier hängen die Kundenseiten an der App.</small></div></div>
+      <div class="link"><span class="n">5</span><div><strong>Server und Datenbank bei Hetzner antworten</strong><small>Ein App-Server, ein Datenbank-Server. Fällt einer aus, gibt es keine Inhalte.</small></div></div>
+      <div class="link"><span class="n">6</span><div><strong>Bilder und Dateien kommen einzeln nach</strong><small>Jedes Bild läuft ebenfalls durch den Worker. Gemessen: Ein Besuch einer Optimalset-Seite sind 74 Aufrufe, bei cellrestart 21, bei wellpreneur 10.</small></div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Anforderung 1: Kundenseiten müssen immer erreichbar sein</h2>
+    <div class="verdict"><span class="pill crit">heute nicht garantiert</span><span>Es gibt vier Dinge, die alle Kundenseiten gleichzeitig treffen können.</span></div>
+    <div class="risks">
+      <div class="risk">
+        <div class="head"><h3>Das Aufruf-Limit in Konto 2</h3><span class="pill crit">größtes Risiko</span></div>
+        <p>100.000 Aufrufe pro Tag klingen viel. Weil eine Optimalset-Seite pro Besuch 74 Aufrufe braucht, sind das aber nur rund <strong>1.350 Seitenbesuche pro Tag, für alle Kunden zusammen</strong>. Ein zweites Limit (Lesen im Zwischenspeicher) greift sogar schon bei rund 675 Besuchen.</p>
+        <p>Gestern waren es 19.000 Aufrufe, heute bisher 6.500. Es ist also noch Luft. Aber ein Kunde, der Werbung schaltet, oder ein Suchmaschinen-Roboter kann das Limit an einem Tag aufbrauchen. Dann zeigt Cloudflare auf <strong>allen</strong> Kundenseiten eine Fehlerseite, bis 02:00 Uhr nachts.</p>
+        <p class="fix"><strong>Abhilfe:</strong> Workers Paid in Konto 2. Dann gibt es keine Tagesgrenze mehr, und mehr Verkehr kostet nur Cent-Beträge.</p>
+      </div>
+      <div class="risk">
+        <div class="head"><h3>Der Hetzner-Server fällt aus</h3><span class="pill crit">ohne Auffangnetz</span></div>
+        <p>Die Kundenseiten haben nur eine Kopie für 1 Minute. Antwortet der Server nicht, etwa wegen einer Störung bei Hetzner oder eines Fehlers nach einem Update, sind nach einer Minute alle Kundenseiten weg.</p>
+        <p class="fix"><strong>Abhilfe:</strong> Der Worker bewahrt die letzte funktionierende Fassung jeder Seite mehrere Tage auf und liefert sie aus, wenn der Server nicht antwortet. Dann bleiben die Kundenseiten online, auch wenn die App steht. Das baue ich.</p>
+      </div>
+      <div class="risk">
+        <div class="head"><h3>Die Abhängigkeit von Konto 1</h3><span class="pill warn">heute entschärft</span></div>
+        <p>Kundenseiten holen ihre Inhalte über die App-Adresse und damit durch Konto 1. Probleme dort, wie heute durch den Chat, schlagen auf die Kundenseiten durch.</p>
+        <p class="fix"><strong>Abhilfe:</strong> Die Kundenseiten direkt an den Server anbinden und den Worker in Konto 1 entfernen. Das baue ich nach der Aktion.</p>
+      </div>
+      <div class="risk">
+        <div class="head"><h3>Das Schreiblimit im Zwischenspeicher</h3><span class="pill ok">Absturz behoben</span></div>
+        <p>Das war der Ausfall von heute. Der Fehler ist behoben: Die Seiten werden auch ohne Zwischenspeicher ausgeliefert. Das Limit selbst bleibt aber, und es wird schnell erreicht, weil <strong>jedes Speichern einer veröffentlichten Seite im Editor einen Schreibvorgang kostet</strong>.</p>
+        <p class="fix"><strong>Abhilfe:</strong> Workers Paid in Konto 2 hebt das Limit von 1.000 pro Tag auf rund 33.000.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Anforderung 2: Änderungen sollen sofort sichtbar sein</h2>
+    <div class="verdict"><span class="pill warn">meistens, aber nicht immer</span></div>
+    <div class="scroll">
+      <table>
+        <thead><tr><th>Wer ändert was</th><th>Wie schnell live</th><th>Wo es hakt</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Kunde</strong> speichert oder veröffentlicht</td><td>sofort</td><td>Nur solange der Zwischenspeicher schreiben darf. Ist das Tageslimit erreicht, kann es <strong>bis zu 1 Stunde</strong> dauern.</td></tr>
+          <tr><td><strong>Du oder ich</strong> ändern eine Vorlage</td><td>1 Minute bis 1 Stunde</td><td>Seiten, die kürzlich gespeichert wurden, zeigen bis zu 1 Stunde die alte Fassung. Heute so gesehen bei der Patent-Zahl: 41 Seiten sofort, 3 erst nach gezieltem Leeren.</td></tr>
+          <tr><td><strong>Seite offline nehmen</strong></td><td>sofort bis 5 Minuten</td><td>unkritisch</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p><strong>Abhilfe für Vorlagen:</strong> Jede Vorlage bekommt eine Versionsnummer. Ändert sie sich, gelten alle alten Kopien automatisch als veraltet. Dann sind Vorlagen-Änderungen überall innerhalb einer Minute live, ohne dass jemand etwas leeren muss. Das baue ich.</p>
+  </section>
+
+  <section>
+    <h2>Der Support-Chat</h2>
+    <div class="verdict"><span class="pill ok">funktioniert</span><span>mit einer Lücke</span></div>
+    <ul>
+      <li><strong>Nutzer mit offenem Chat:</strong> neue Nachrichten erscheinen nach etwa 3 Sekunden.</li>
+      <li><strong>Nutzer mit geschlossenem Chat:</strong> der rote Zähler erscheint nach spätestens 30 Sekunden, vorher 5.</li>
+      <li><strong>Du im Admin-Bereich:</strong> die Liste aktualisiert sich alle 15 Sekunden, ein offenes Gespräch alle 5.</li>
+      <li><strong>Die Lücke:</strong> Du wirst nicht benachrichtigt, wenn ein Nutzer schreibt. Du siehst es nur, wenn der Admin-Bereich offen ist. Eine Mail oder Handy-Nachricht bei neuer Anfrage würde dir das ständige Nachschauen ersparen.</li>
+    </ul>
+    <p class="note">Sobald der Worker in Konto 1 entfernt ist, kann der Chat kein Cloudflare-Limit mehr auslösen, egal wie viele Nutzer eingeloggt sind.</p>
+  </section>
+
+  <section>
+    <h2>Was sonst noch auffällt</h2>
+    <div class="risks">
+      <div class="risk">
+        <div class="head"><h3>Niemand merkt einen Ausfall automatisch</h3><span class="pill crit">fehlt</span></div>
+        <p>Es gibt keine Überwachung, die Alarm schlägt. Den Ausfall heute hast du selbst entdeckt. Ein Dienst, der jede Minute eine Kundenseite und die App aufruft und dir bei einem Fehler sofort schreibt, schließt diese Lücke.</p>
+      </div>
+      <div class="risk">
+        <div class="head"><h3>Datensicherung liegt nur auf demselben Server</h3><span class="pill warn">verbessern</span></div>
+        <p>Die Datenbank wird jede Nacht um 03:00 Uhr gesichert, 14 Tage rückwirkend. Das funktioniert. Die Sicherungen liegen aber auf dem Datenbank-Server selbst. Geht dieser Server verloren, sind auch die Sicherungen weg. Eine tägliche Kopie an einen zweiten Ort behebt das.</p>
+      </div>
+      <div class="risk">
+        <div class="head"><h3>Die Textprüfung hängt an einem fremden KI-Dienst</h3><span class="pill warn">im Blick behalten</span></div>
+        <p>Ohne bestandene Textprüfung kann eine Optimalset-Seite nicht veröffentlicht werden. Ist der KI-Dienst gestört oder das Guthaben aufgebraucht, können Kunden in dieser Zeit nicht veröffentlichen.</p>
+      </div>
+      <div class="risk">
+        <div class="head"><h3>Ein einzelner App-Server</h3><span class="pill ok">Leistung reicht</span></div>
+        <p>4 Kerne, 8 GB, Auslastung unter 10 %. Die Datenbank ist 13 MB groß. An der Leistung liegt es auf absehbare Zeit nicht. Das Risiko ist der Ausfall, und das fängt die Notfall-Kopie der Kundenseiten ab.</p>
+      </div>
+    </div>
+    <p class="note">Nicht geprüft: Versandlimits der E-Mail-Dienste und der Verbrauch des Dateispeichers bei Cloudflare.</p>
+  </section>
+
+  <section>
+    <h2>Was ich empfehle, in dieser Reihenfolge</h2>
+    <ol class="plan">
+      <li><strong>Workers Paid für Konto 2 buchen.</strong> Nimmt das größte Risiko weg: keine Tagesgrenzen mehr für die Kundenseiten.<span class="who">Du · heute · 5 $ pro Monat · im Dashboard von Konto 2: „Workers &amp; Pages“ → „Plans“ → „Workers Paid“</span></li>
+      <li><strong>Notfall-Kopie der Kundenseiten.</strong> Seiten bleiben online, auch wenn der Server nicht antwortet.<span class="who">Claude · wichtigster Umbau für „immer erreichbar“</span></li>
+      <li><strong>Kundenseiten von Konto 1 entkoppeln, Worker dort entfernen.</strong> Chat und App können die Kundenseiten nicht mehr mitreißen.<span class="who">Claude · nach Ende der Aktion</span></li>
+      <li><strong>Versionsnummer für Vorlagen.</strong> Vorlagen-Änderungen überall in einer Minute live.<span class="who">Claude</span></li>
+      <li><strong>Überwachung mit Alarm.</strong> Du erfährst Ausfälle in einer Minute statt durch Zufall.<span class="who">Claude richtet ein, du wählst, wohin der Alarm geht</span></li>
+      <li><strong>Benachrichtigung bei neuer Chat-Anfrage.</strong><span class="who">Claude · wenn du es möchtest</span></li>
+      <li><strong>Sicherung an einen zweiten Ort kopieren.</strong><span class="who">Claude</span></li>
+      <li><strong>Bilder am Worker vorbei ausliefern.</strong> Aus 74 Aufrufen pro Besuch werden etwa 2. Das senkt Kosten und macht die Seiten schneller.<span class="who">Claude · größerer Umbau, lohnt sich bei Wachstum</span></li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>Was es kostet, wenn ihr wachst</h2>
+    <p>Mit Workers Paid in Konto 2 sind im Grundpreis rund 2.250 Optimalset-Seitenbesuche pro Tag enthalten. Danach wird nach Verbrauch abgerechnet.</p>
+    <div class="scroll">
+      <table>
+        <thead><tr><th>Seitenbesuche pro Tag (alle Kunden)</th><th>Gratis-Tarif</th><th>Workers Paid, heutige Technik</th></tr></thead>
+        <tbody>
+          <tr><td class="num">bis 675</td><td><span class="pill warn">knapp</span></td><td class="num">5 $ / Monat</td></tr>
+          <tr><td class="num">2.000</td><td><span class="pill crit">Ausfall</span></td><td class="num">5 $ / Monat</td></tr>
+          <tr><td class="num">10.000</td><td><span class="pill crit">Ausfall</span></td><td class="num">ca. 25 $ / Monat</td></tr>
+          <tr><td class="num">50.000</td><td><span class="pill crit">Ausfall</span></td><td class="num">ca. 140 $ / Monat</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note">Geschätzt aus den gemessenen 74 Aufrufen pro Besuch. Liefert man die Bilder am Worker vorbei (Schritt 8), sinken diese Kosten auf einen Bruchteil. Eigene Domains der Kunden: 100 sind inklusive, jede weitere kostet 0,10 $ pro Monat.</p>
+  </section>
+
+</main>

@@ -294,16 +294,36 @@ interface SiteMeta {
   r2BasePath: string
 }
 
+// In-memory copy of site meta per Worker instance (same 60 s lifetime as the KV entry).
+// One page view is dozens of requests (every image needs the meta for its R2 path) —
+// this answers them without touching KV or the app. It also keeps working when KV is
+// unavailable (daily limit reached): without it every single asset request would call
+// the app API.
+const META_MEMO_MS = 60_000
+const metaMemo = new Map<string, { value: SiteMeta | '__offline__'; expires: number }>()
+
+function rememberMeta(cacheKey: string, value: SiteMeta | '__offline__'): void {
+  if (metaMemo.size > 2000) metaMemo.clear()
+  metaMemo.set(cacheKey, { value, expires: Date.now() + META_MEMO_MS })
+}
+
 // Returns null if the site doesn't exist, or '__offline__' if it exists but isn't published
 async function getSiteMeta(username: string, domain: string, env: Env): Promise<SiteMeta | '__offline__' | null> {
   const cacheKey = `meta:${username}:${domain}`
+  const memo = metaMemo.get(cacheKey)
+  if (memo && memo.expires > Date.now()) return memo.value
+
   const cached = await kvGet(env, cacheKey)
 
   // Offline sentinel — site was explicitly taken offline
-  if (cached === '__offline__') return '__offline__'
+  if (cached === '__offline__') { rememberMeta(cacheKey, '__offline__'); return '__offline__' }
 
   if (cached) {
-    try { return JSON.parse(cached) as SiteMeta } catch { /* stale/corrupt cache, fall through */ }
+    try {
+      const parsed = JSON.parse(cached) as SiteMeta
+      rememberMeta(cacheKey, parsed)
+      return parsed
+    } catch { /* stale/corrupt cache, fall through */ }
   }
 
   // Fetch from the FinestSites app API (PostgreSQL-backed)
@@ -317,12 +337,14 @@ async function getSiteMeta(username: string, domain: string, env: Env): Promise<
   // Site exists but is not published (unpublished, or suspended for an open
   // payment) → cache the offline state briefly and show the offline page.
   if (meta.offline) {
+    rememberMeta(cacheKey, '__offline__')
     await kvPut(env, cacheKey, '__offline__', { expirationTtl: 60 })
     return '__offline__'
   }
   if (!meta.r2BasePath) return null
 
   // Cache for 60 seconds so repeated requests are fast
+  rememberMeta(cacheKey, meta)
   await kvPut(env, cacheKey, JSON.stringify(meta), { expirationTtl: 60 })
   return meta
 }
@@ -386,6 +408,7 @@ async function handleKvAdmin(request: Request, username: string, domain: string,
   const body = await request.json() as { action?: string }
   const metaKey = `meta:${username}:${domain}`
   const renderedKey = `rendered:${username}:${domain}`
+  metaMemo.delete(metaKey)
 
   if (body.action === 'purge') {
     await Promise.allSettled([
