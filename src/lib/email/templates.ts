@@ -604,3 +604,77 @@ export function campaignReminderEmail({ firstName }: { firstName?: string }): st
     </p>
   `)
 }
+
+// ─── Campaign: INNERVISIONDAY last hour ───────────────────────────────────────
+// Sent in the final hour of the campaign to fresh sign-ups without a plan.
+export function campaignLastHourEmail({ firstName }: { firstName?: string }): string {
+  const hi = firstName?.trim() ? `Hey ${escapeHtml(firstName.trim())},` : 'Hey,'
+  const loginUrl = `${APP_URL}/login`
+  const waUrl = 'https://wa.me/4915151005561'
+  const step = (n: number, title: string, text: string) => `
+    <tr>
+      <td width="40" valign="top" style="padding:0 0 16px;">
+        <div style="width:28px;height:28px;border-radius:14px;background:${base.heading};color:#FFFFFF;font-size:14px;font-weight:700;line-height:28px;text-align:center;">${n}</div>
+      </td>
+      <td valign="top" style="padding:3px 0 16px;">
+        <p style="margin:0;font-size:15px;font-weight:700;color:${base.heading};">${title}</p>
+        <p style="margin:2px 0 0;font-size:14px;color:${base.body};line-height:1.55;">${text}</p>
+      </td>
+    </tr>`
+  return layout(`
+    <p style="margin:0 0 16px;font-size:16px;color:${base.body};line-height:1.65;">${hi}</p>
+    <p style="margin:0 0 16px;font-size:16px;color:${base.body};line-height:1.65;">
+      schön, dass du heute noch bei FinestSites vorbeigeschaut hast! ⏰ Kurze Info: <strong style="color:${base.heading};">Die letzte Stunde der INNERVISIONDAY-Aktion hat gerade angefangen.</strong> Um 24 Uhr ist sie vorbei.
+    </p>
+    <p style="margin:0 0 16px;font-size:16px;color:${base.body};line-height:1.65;">
+      Ich würde mich riesig freuen, wenn ich dich mit deiner eigenen FinestSites-Seite begeistern kann. Und ich unterstütze dich gern dabei, damit alles klappt.
+    </p>
+
+    <table cellpadding="0" cellspacing="0" role="presentation" width="100%" style="margin:8px 0 28px;">
+      <tr>
+        <td style="background:#6D28D9;border-radius:16px;padding:22px 24px;">
+          <p style="margin:0 0 4px;font-size:12px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#DDD6FE;">Nur noch bis 24 Uhr</p>
+          <p style="margin:0 0 12px;font-size:24px;font-weight:800;color:#FFFFFF;letter-spacing:-0.02em;">20&nbsp;% Rabatt für dich</p>
+          <p style="margin:0;font-size:15px;color:#FFFFFF;line-height:1.7;">
+            ✓ Monatlich: 20&nbsp;% auf die ersten 3 Monate<br />
+            ✓ Jährlich: 20&nbsp;% aufs ganze erste Jahr<br />
+            ✓ Kein Code nötig, der Rabatt ist automatisch drin
+          </p>
+        </td>
+      </tr>
+    </table>
+
+    <p style="margin:0 0 16px;font-size:17px;font-weight:700;color:${base.heading};">Deine nächsten Schritte:</p>
+    <table cellpadding="0" cellspacing="0" role="presentation" width="100%">
+      ${step(1, 'Einloggen', 'Mit deiner E-Mail und deinem Passwort.')}
+      ${step(2, 'Webseite aussuchen', 'Such dir die Vorlage aus, die zu dir passt.')}
+      ${step(3, 'Nur das Nötigste eintragen', 'Du musst die Seite jetzt nicht fertig machen. Um den Rest kümmerst du dich ganz entspannt morgen.')}
+      ${step(4, 'Veröffentlichen', 'Dabei wählst du deinen Tarif. Die 20&nbsp;% sind schon abgezogen.')}
+    </table>
+
+    ${button(loginUrl, 'Jetzt einloggen und Rabatt sichern')}
+
+    <table cellpadding="0" cellspacing="0" role="presentation" width="100%" style="margin:28px 0 0;">
+      <tr>
+        <td style="background:#F0FDF4;border:1px solid #BBF7D0;border-radius:14px;padding:16px 18px;">
+          <p style="margin:0 0 6px;font-size:15px;font-weight:700;color:${base.heading};">Fragen? Schreib mir einfach!</p>
+          <p style="margin:0;font-size:14px;color:${base.body};line-height:1.6;">
+            Im Chat auf FinestSites oder direkt per WhatsApp:<br />
+            <a href="${waUrl}" style="color:#15803D;font-weight:700;text-decoration:none;">💬 +49 151 51005561 – jetzt per WhatsApp schreiben</a>
+          </p>
+        </td>
+      </tr>
+    </table>
+
+    <p style="margin:24px 0 0;font-size:15px;color:${base.body};line-height:1.65;">
+      Liebe Grüße<br />
+      <strong style="color:${base.heading};">Daniel</strong> von FinestSites
+    </p>
+
+    <p style="margin:24px 0 0;padding-top:20px;border-top:1px solid ${base.border};font-size:14px;color:${base.body};line-height:1.65;">
+      <strong style="color:${base.heading};">PS: Am meisten sparst du mit jährlicher Zahlung.</strong>
+      Da bekommst du 2 Monate geschenkt, und die 20&nbsp;% gelten fürs komplette erste Jahr statt nur für 3 Monate.
+      Beim Pro-Tarif zahlst du so zum Beispiel <strong style="color:${base.heading};">216&nbsp;€ fürs ganze Jahr</strong> statt 307,80&nbsp;€ bei monatlicher Zahlung. Viele haben das erst hinterher erfahren, deshalb wollte ich es dir direkt sagen. 😊
+    </p>
+  `)
+}
