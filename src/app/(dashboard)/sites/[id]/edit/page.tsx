@@ -1019,11 +1019,14 @@ function ImageField({ field, value, onChange }: {
   const [uploadError, setUploadError] = useState('')
   const fileInputRef = useRef<HTMLInputElement>(null)
 
+  // Aspect ratio from the schema: "1/1", "3/4", "4:5" … — any "a/b" or "a:b" works.
+  // The same ratio drives the crop dialog and the preview, so the editor shows the image
+  // exactly as it was cropped — never a cut-off strip.
   const arStr = field.aspect_ratio ?? 'free'
-  const arMap: Record<string, number | undefined> = {
-    '1/1': 1, '4/3': 4/3, '16/9': 16/9, '3/2': 3/2, '9/16': 9/16
-  }
-  const aspectRatioNum = arMap[arStr]
+  const arParts = arStr.split(/[/:]/).map(n => parseFloat(n))
+  const aspectRatioNum = arParts.length === 2 && arParts[0] > 0 && arParts[1] > 0 ? arParts[0] / arParts[1] : undefined
+  const formatLabel = aspectRatioNum === undefined ? null
+    : `${aspectRatioNum === 1 ? 'Quadratisch' : aspectRatioNum < 1 ? 'Hochformat' : 'Querformat'} (${arParts[0]}:${arParts[1]})`
 
   async function handleCropConfirm(blob: Blob) {
     if (cropSrc) URL.revokeObjectURL(cropSrc)
@@ -1050,15 +1053,34 @@ function ImageField({ field, value, onChange }: {
         onChange={e => { const f = e.target.files?.[0]; if (f) setCropSrc(URL.createObjectURL(f)); e.target.value = '' }} />
 
       {value ? (
-        <div className="flex flex-col gap-2">
-          <div className="relative rounded-[16px] overflow-hidden bg-gray-100">
+        <div className="flex flex-wrap items-center gap-4">
+          {/* Preview in the field's own format, whole image visible (contain, never cover) */}
+          <div className="relative rounded-[16px] overflow-hidden flex-shrink-0"
+            style={{
+              height: 148,
+              aspectRatio: aspectRatioNum,
+              maxWidth: '100%',
+              background: '#F3F4F6',
+              border: '1px solid #E5E7EB',
+              opacity: uploading ? 0.5 : 1,
+            }}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={value} alt="Hochgeladenes Bild" className="w-full object-cover rounded-[16px]"
-              style={{ aspectRatio: arStr !== 'free' ? arStr : undefined, maxHeight: '160px' }} />
+            <img src={value} alt="Hochgeladenes Bild"
+              style={aspectRatioNum !== undefined
+                ? { width: '100%', height: '100%', objectFit: 'contain', display: 'block' }
+                : { height: '100%', width: 'auto', maxWidth: '100%', objectFit: 'contain', display: 'block' }} />
+            {uploading && (
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="w-7 h-7 rounded-full border-2 border-gray-300 border-t-gray-700 animate-spin" />
+              </div>
+            )}
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-col gap-2 min-w-0">
+            {formatLabel && (
+              <p className="text-xs font-medium" style={{ color: '#6B7280' }}>{formatLabel}</p>
+            )}
             <button type="button" onClick={() => fileInputRef.current?.click()}
-              className="flex items-center gap-2 px-4 py-3 text-sm font-semibold rounded-[12px] min-h-[44px]"
+              className="flex items-center justify-center gap-2 px-4 py-3 text-sm font-semibold rounded-[12px] min-h-[44px]"
               style={{ background: '#1a1a1a', color: 'white' }}>
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
@@ -1089,9 +1111,9 @@ function ImageField({ field, value, onChange }: {
               <div className="text-center">
                 <p className="text-sm font-bold text-gray-700">Bild hochladen</p>
                 <p className="text-xs text-gray-400 mt-0.5">Tippen um ein Foto auszuwählen</p>
-                {arStr !== 'free' && (
+                {formatLabel && (
                   <p className="text-xs font-medium mt-1.5 px-2.5 py-0.5 rounded-full inline-block" style={{ background: '#EFF6FF', color: '#2563EB' }}>
-                    Format: {arStr}
+                    {formatLabel}
                   </p>
                 )}
               </div>
