@@ -548,3 +548,59 @@ export function textToHtml(text: string): string {
     })
     .join('\n')
 }
+
+// ─── Campaign: INNERVISIONDAY reminder ────────────────────────────────────────
+// For people who signed up but haven't booked yet. Personal, casual tone.
+export function campaignReminderEmail({ firstName }: { firstName?: string }): string {
+  const hi = firstName?.trim() ? `Hey ${escapeHtml(firstName.trim())},` : 'Hey,'
+  const loginUrl = `${APP_URL}/login`
+  const step = (n: number, title: string, text: string) => `
+    <tr>
+      <td width="40" valign="top" style="padding:0 0 16px;">
+        <div style="width:28px;height:28px;border-radius:14px;background:${base.heading};color:#FFFFFF;font-size:14px;font-weight:700;line-height:28px;text-align:center;">${n}</div>
+      </td>
+      <td valign="top" style="padding:3px 0 16px;">
+        <p style="margin:0;font-size:15px;font-weight:700;color:${base.heading};">${title}</p>
+        <p style="margin:2px 0 0;font-size:14px;color:${base.body};line-height:1.55;">${text}</p>
+      </td>
+    </tr>`
+  return layout(`
+    <p style="margin:0 0 16px;font-size:16px;color:${base.body};line-height:1.65;">${hi}</p>
+    <p style="margin:0 0 16px;font-size:16px;color:${base.body};line-height:1.65;">
+      schön, dass du dir ein Konto bei FinestSites angelegt hast! 🙌 Ich wollte dir nur kurz Bescheid geben, bevor's zu spät ist:
+      <strong style="color:${base.heading};">Die INNERVISIONDAY-Aktion läuft nur noch bis heute Nacht um 24 Uhr.</strong>
+    </p>
+
+    <table cellpadding="0" cellspacing="0" role="presentation" width="100%" style="margin:8px 0 28px;">
+      <tr>
+        <td style="background:#6D28D9;border-radius:16px;padding:22px 24px;">
+          <p style="margin:0 0 4px;font-size:12px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#DDD6FE;">Aktion INNERVISIONDAY</p>
+          <p style="margin:0 0 12px;font-size:24px;font-weight:800;color:#FFFFFF;letter-spacing:-0.02em;">20&nbsp;% Rabatt für dich</p>
+          <p style="margin:0;font-size:15px;color:#FFFFFF;line-height:1.7;">
+            ✓ Monatlich: 20&nbsp;% auf die ersten 3 Monate<br />
+            ✓ Jährlich: 20&nbsp;% aufs ganze erste Jahr<br />
+            ✓ Kein Code nötig, der Rabatt ist automatisch drin
+          </p>
+        </td>
+      </tr>
+    </table>
+
+    <p style="margin:0 0 16px;font-size:17px;font-weight:700;color:${base.heading};">So geht's, dauert nur ein paar Minuten:</p>
+    <table cellpadding="0" cellspacing="0" role="presentation" width="100%">
+      ${step(1, 'Einloggen', 'Mit deiner E-Mail und deinem Passwort.')}
+      ${step(2, 'Webseite aussuchen', 'Such dir die Vorlage aus, die zu dir passt.')}
+      ${step(3, 'Infos eintragen', 'Du musst nicht alles ausfüllen. Den Rest kannst du jederzeit später ergänzen.')}
+      ${step(4, 'Veröffentlichen', 'Dabei wählst du deinen Tarif. Die 20&nbsp;% sind schon abgezogen.')}
+    </table>
+
+    ${button(loginUrl, 'Jetzt einloggen und Rabatt sichern')}
+
+    <p style="margin:28px 0 0;font-size:15px;color:${base.body};line-height:1.65;">
+      Wenn irgendwo was hakt: Schreib mir einfach im Chat auf FinestSites oder antworte auf diese Mail. Ich helf dir gern!
+    </p>
+    <p style="margin:20px 0 0;font-size:15px;color:${base.body};line-height:1.65;">
+      Liebe Grüße<br />
+      <strong style="color:${base.heading};">Daniel</strong> von FinestSites
+    </p>
+  `)
+}
