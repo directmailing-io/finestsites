@@ -17,6 +17,11 @@ BUILD_DIR=/tmp/fs-build-$(date +%s)
 
 echo "▶ [1/5] Code aktualisieren..."
 cd "$APP_DIR" && git pull origin main
+# .env.production ist die EINZIGE Quelle für Einstellungen. Vor Build und Reload laden, damit
+# Variablen aus der aufrufenden Shell (z. B. ein für wrangler exportierter CLOUDFLARE_API_TOKEN)
+# nicht per --update-env in die laufende App wandern. (Vorfall 04./05.10.2026: falscher
+# Cloudflare-Schlüssel in der App -> eigene Kunden-Domains ließen sich nicht verbinden.)
+set -a; . "$APP_DIR/.env.production"; set +a
 
 echo "▶ [2/5] Build-Verzeichnis vorbereiten (live-Seite läuft weiter)..."
 mkdir -p "$BUILD_DIR"
