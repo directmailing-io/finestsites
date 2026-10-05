@@ -2,10 +2,27 @@
 
 import { useState, useEffect, useMemo } from 'react'
 
+// Name + E-Mail als ein Link aufs Nutzerprofil (ganze Fläche klickbar)
+function UserCell({ userId, username, email }: { userId: string | null; username: string | null; email: string }) {
+  const content = (
+    <>
+      {username && <span className="block font-semibold group-hover:underline" style={{ color: '#1a1a1a' }}>@{username}</span>}
+      <span className="block text-xs" style={{ color: '#94A3B8' }}>{email}</span>
+    </>
+  )
+  if (!userId) return content
+  return (
+    <a href={`/admin/users/${userId}`} className="group block" title="Nutzerprofil öffnen">
+      {content}
+    </a>
+  )
+}
+
 // ── Types ─────────────────────────────────────────────────────────────────────
 interface Transaction {
   id: string
   date: number
+  userId: string | null
   username: string | null
   email: string
   plan: string
@@ -26,6 +43,7 @@ interface Transaction {
 
 interface PlannedPayment {
   subscriptionId: string
+  userId: string | null
   username: string | null
   email: string
   plan: string
@@ -321,10 +339,7 @@ export default function TransactionsPage() {
 
                     {/* User */}
                     <td className="px-4 py-3 min-w-[140px]">
-                      {tx.username
-                        ? <a href={`/admin/users?q=${encodeURIComponent(tx.username)}`} className="font-semibold hover:underline" style={{ color: '#1a1a1a' }}>@{tx.username}</a>
-                        : null}
-                      <p className="text-xs" style={{ color: '#94A3B8' }}>{tx.email}</p>
+                      <UserCell userId={tx.userId} username={tx.username} email={tx.email} />
                     </td>
 
                     {/* Plan */}
@@ -518,10 +533,7 @@ export default function TransactionsPage() {
                           </td>
 
                           <td className="px-4 py-3 min-w-[140px]">
-                            {p.username
-                              ? <span className="font-semibold" style={{ color: '#1a1a1a' }}>@{p.username}</span>
-                              : null}
-                            <p className="text-xs" style={{ color: '#94A3B8' }}>{p.email}</p>
+                            <UserCell userId={p.userId} username={p.username} email={p.email} />
                           </td>
 
                           <td className="px-4 py-3 whitespace-nowrap">

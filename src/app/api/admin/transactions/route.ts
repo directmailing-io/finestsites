@@ -251,6 +251,7 @@ export async function GET(req: NextRequest) {
       return {
         id: inv.id,
         date: inv.created,
+        userId: userInfo?.id || null,
         username: userInfo?.username || null,
         email: inv.customer_email || '',
         plan,
@@ -319,6 +320,7 @@ export async function GET(req: NextRequest) {
 
       return {
         subscriptionId: sub.id,
+        userId: userInfo?.id || null,
         username: userInfo?.username || null,
         email: customer?.email || '',
         plan: sub.metadata?.plan || userInfo?.plan || '',
