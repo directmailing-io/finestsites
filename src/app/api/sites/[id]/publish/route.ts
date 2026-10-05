@@ -8,6 +8,7 @@
  *   3. Template:     template must have an R2 HTML bundle
  *   4. Subscription: premium templates require an active subscription within the plan quota
  *   5. Consent:      user must have completed the onboarding content-consent step
+ *   6. Impressum:    required "impressum_*" schema fields must be filled
  *
  * After all gates pass, the route:
  *   a. Marks the site as published in the DB
@@ -152,6 +153,23 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       code: 'CONSENT_REQUIRED',
       error: 'Bitte bestätige zuerst die Nutzungsbedingungen unter Einstellungen.',
     }, { status: 403 })
+  }
+
+  // ── Gate 5: Impressum ──────────────────────────────────────────────────────
+  // Pflichtangaben fürs Impressum (Schema-Felder "impressum_*" mit required) werden
+  // auch hier geprüft, nicht nur im Editor — ohne sie geht keine Seite online.
+  const schemaFields = ((site.template.placeholderSchema as { fields?: { key: string; label?: string; required?: boolean; show_when?: unknown }[] } | null)?.fields) ?? []
+  const legalRequired = schemaFields.filter(f => f.required && !f.show_when && f.key.startsWith('impressum_'))
+  if (legalRequired.length > 0) {
+    const rows = await db.query.siteData.findMany({ where: eq(siteData.userSiteId, id) })
+    const filled = new Set(rows.filter(r => (r.fieldValue ?? '').trim()).map(r => r.fieldKey))
+    const missing = legalRequired.filter(f => !filled.has(f.key))
+    if (missing.length > 0) {
+      return NextResponse.json({
+        code: 'IMPRESSUM_REQUIRED',
+        error: `Bitte fülle zuerst dein Impressum aus: ${missing.map(f => f.label ?? f.key).join(', ')}.`,
+      }, { status: 400 })
+    }
   }
 
   // ── Publish ────────────────────────────────────────────────────────────────

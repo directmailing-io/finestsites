@@ -13,7 +13,7 @@
       "type": "text",
       "label": "Nachname",
       "section": "Profil",
-      "required": false,
+      "required": true,
       "placeholder_text": "z.B. Müller"
     },
     {
@@ -85,11 +85,12 @@
     },
     {
       "key": "whatsapp",
-      "type": "url",
+      "type": "text",
       "label": "WhatsApp",
       "section": "Social Media",
       "required": false,
-      "placeholder_text": "https://wa.me/491234567890"
+      "placeholder_text": "Deine WhatsApp-Nummer. Wer darauf tippt, kann dir direkt schreiben.",
+      "input_placeholder": "151 12345678"
     },
     {
       "key": "mail",
@@ -196,15 +197,19 @@
       "type": "text",
       "label": "Straße und Hausnummer",
       "section": "Rechtliches",
-      "required": false,
-      "placeholder_text": "z.B. Musterstraße 12"
+      "required": true,
+      "placeholder_text": "z.B. Musterstraße 12",
+      "notice": {
+        "title": "Impressum ist Pflicht",
+        "text": "Auf deiner Linkseite kannst du auf beliebige Seiten verlinken. Diese Inhalte können wir nicht prüfen. Deshalb brauchst du ein eigenes Impressum mit deinem Namen und deiner Anschrift. Ohne diese Angaben kannst du die Seite nicht veröffentlichen."
+      }
     },
     {
       "key": "impressum_plz_ort",
       "type": "text",
       "label": "Postleitzahl und Ort",
       "section": "Rechtliches",
-      "required": false,
+      "required": true,
       "placeholder_text": "z.B. 12345 Berlin"
     },
     {
@@ -212,7 +217,7 @@
       "type": "text",
       "label": "E-Mail-Adresse",
       "section": "Rechtliches",
-      "required": false,
+      "required": true,
       "placeholder_text": "deine@email.de"
     },
     {

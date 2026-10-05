@@ -59,6 +59,8 @@ interface FieldSchema {
   show_when?: { field: string; value: string | string[] }
   label_when?: { field: string; value: string; label: string }
   color_tag?: string
+  /** Hinweis-Kasten über dem Feld (z. B. warum das Impressum Pflicht ist) */
+  notice?: { title: string; text: string }
   // loop fields
   sub_fields?: LoopSubField[]
   min_items?: number
@@ -2291,6 +2293,9 @@ function getSocialPlatform(fieldKey: string) {
 
 function urlToSocialHandle(url: string, prefix: string): string {
   if (!url) return ''
+  // Link versehentlich hinter den festen Anfang kopiert ("instagram.com/https://www.instagram.com/anna")
+  const nested = url.slice(1).search(/https?:\/\//i)
+  if (nested >= 0) url = url.slice(nested + 1)
   const bare = prefix.replace(/^https?:\/\//i, '').replace(/^www\./, '')
   return url
     .replace(/^https?:\/\//i, '')
@@ -2312,6 +2317,9 @@ function SocialUrlField({ field, value, onChange }: {
     onChange(u ? social.prefix + u : '')
   }
 
+  // Häufigster Fehler: der eigene Name statt des Benutzernamens ("Ulla Hildebrandt")
+  const looksLikeName = /\s/.test(username.trim())
+
   function handlePaste(e: React.ClipboardEvent<HTMLInputElement>) {
     const text = e.clipboardData.getData('text')
     if (text.includes('://') || text.includes('.com')) {
@@ -2321,6 +2329,7 @@ function SocialUrlField({ field, value, onChange }: {
   }
 
   return (
+    <>
     <div ref={wrapRef}
       className="flex items-center overflow-hidden"
       style={{ border: '1.5px solid #E5E7EB', borderRadius: 14, background: '#fff', transition: 'border-color 0.15s' }}>
@@ -2341,6 +2350,13 @@ function SocialUrlField({ field, value, onChange }: {
         onBlur={() => { if (wrapRef.current) wrapRef.current.style.borderColor = '#E5E7EB' }}
       />
     </div>
+    {looksLikeName && (
+      <p className="text-[13px] leading-snug mt-2 px-1" style={{ color: '#B45309' }}>
+        Bitte nicht deinen Namen eintragen, sondern deinen Benutzernamen <strong>ohne Leerzeichen</strong>.
+        Am einfachsten: Profil-Link in der App kopieren und hier einfügen.
+      </p>
+    )}
+    </>
   )
 }
 
@@ -3827,6 +3843,18 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
                               }
                             : { background: '#fff', boxShadow: '0 2px 8px rgba(0,0,0,0.05)', border: '1px solid #F0F0F0' }
                           : { display: 'none' }}>
+                        {visible && field.notice && (
+                          <div className="flex items-start gap-3 rounded-2xl px-4 py-3.5 mb-4"
+                            style={{ background: '#EFF6FF', border: '1.5px solid #BFDBFE' }}>
+                            <svg className="flex-shrink-0" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round" style={{ marginTop: 1 }}>
+                              <circle cx="12" cy="12" r="10"/><line x1="12" y1="11" x2="12" y2="16.5"/><line x1="12" y1="7.5" x2="12.01" y2="7.5"/>
+                            </svg>
+                            <div className="min-w-0">
+                              <p className="text-base font-bold leading-snug" style={{ color: '#1E3A8A' }}>{field.notice.title}</p>
+                              <p className="text-[15px] leading-snug mt-1" style={{ color: '#1E40AF' }}>{field.notice.text}</p>
+                            </div>
+                          </div>
+                        )}
                         {visible && (
                           <div className={isCollapsed ? '' : 'mb-3'}>
                             <div className="flex items-start justify-between gap-2">
