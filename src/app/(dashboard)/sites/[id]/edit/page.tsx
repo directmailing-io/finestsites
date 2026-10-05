@@ -172,7 +172,7 @@ function DomainPanel({ siteId, subdomain, initialDomain, initialStatus }: {
   const [removing, setRemoving] = useState(false)
   const [error, setError] = useState('')
   const [copied, setCopied] = useState(false)
-  const [fallbackHost, setFallbackHost] = useState('custom.finestsites.de')
+  const [fallbackHost, setFallbackHost] = useState('domains.finestsites.io')
   const [isApex, setIsApex] = useState(false)
 
   // Always re-fetch current domain state from DB when panel mounts

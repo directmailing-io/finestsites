@@ -7,7 +7,7 @@
  * Required env vars:
  *   CLOUDFLARE_API_TOKEN       — API token with "SSL and Certificates" + "Zone" permissions
  *   CLOUDFLARE_ZONE_ID         — Zone ID of your platform domain in Cloudflare (e.g. finestsites.de)
- *   CLOUDFLARE_FALLBACK_HOST   — Fallback hostname (e.g. custom.finestsites.de), must be CF-proxied
+ *   CLOUDFLARE_FALLBACK_HOST   — optional override of the CNAME target shown to users (default: domains.finestsites.io)
  */
 
 const CF_TOKEN = process.env.CLOUDFLARE_API_TOKEN!

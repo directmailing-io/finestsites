@@ -247,7 +247,8 @@ The setup uses Cloudflare for SaaS (Custom Hostnames):
 
 ```
 www.my-business.de
-        │  (user sets CNAME → proxy.finestsites.io)
+        │  (user sets CNAME → domains.finestsites.io, a DNS-only CNAME to custom.womenplus.io;
+        │   domains connected before 05.10.2026 point at custom.womenplus.io directly — keep both)
         ▼
 Cloudflare for SaaS (womenplus.io zone)
         │  Custom Hostname entry for www.my-business.de

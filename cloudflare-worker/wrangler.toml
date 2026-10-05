@@ -44,7 +44,9 @@ zone_id = "90e5c504e63e834339109d3f19213bb0"
 # CF for SaaS (custom user domains, z.B. www.kundenname.de)
 #
 # Architektur:
-#   www.kundenname.de  →  CNAME  →  custom.womenplus.io
+#   www.kundenname.de  →  CNAME  →  domains.finestsites.io (seit 05.10.2026 in der Anleitung;
+#       DNS-only-CNAME in der Zone finestsites.io)  →  custom.womenplus.io
+#   Ältere Kunden-Domains zeigen direkt auf custom.womenplus.io — beides funktioniert.
 #   custom.womenplus.io  →  CF for SaaS (womenplus.io Zone)
 #   CF for SaaS Fallback Origin: custom.womenplus.io (A → 192.0.2.1, proxied)
 #   Worker Route *.womenplus.io/*  fängt den Request ab

@@ -8,7 +8,11 @@ import { deleteCustomDomainKV } from '@/lib/cloudflare/kv-api'
 
 export const runtime = 'nodejs'
 
-const FALLBACK_HOST = process.env.CLOUDFLARE_FALLBACK_HOST ?? 'custom.womenplus.io'
+// Ziel, das Kunden bei ihrem Domain-Anbieter als CNAME eintragen. domains.finestsites.io ist
+// ein reiner DNS-Verweis (nicht proxied) auf custom.womenplus.io, die technische Adresse von
+// Cloudflare for SaaS. custom.womenplus.io muss dauerhaft bestehen bleiben: ältere
+// Kunden-Domains zeigen direkt darauf.
+const FALLBACK_HOST = process.env.CLOUDFLARE_FALLBACK_HOST ?? 'domains.finestsites.io'
 
 function isValidHostname(hostname: string): boolean {
   const clean = hostname.trim().toLowerCase()
