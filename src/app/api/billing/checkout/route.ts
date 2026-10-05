@@ -16,8 +16,11 @@ import { campaignDiscount } from '@/lib/billing/campaign-shared'
  *   stored gross (incl. VAT), so prices in Stripe must have tax_behavior=inclusive.
  *   Stripe Tax then breaks out the correct VAT per customer location on the invoice.
  * Address: collected and synced back to the customer so future invoices have it.
- * VAT-ID (tax_id_collection): enabled so B2B customers can enter their VAT ID
- *   and benefit from reverse charge where applicable.
+ * VAT-ID: deliberately NOT collected in Checkout. The "Ich kaufe als Unternehmen"
+ *   checkbox made the VAT ID mandatory; buyers entered their Steuernummer instead
+ *   and got stuck. It has no effect on the price (gross prices, fixed MwSt. rate),
+ *   so it is optional after purchase: Einstellungen → Rechnungen
+ *   (/api/billing/invoice-details).
  * Invoicing: invoices are created automatically by Stripe for subscription billing.
  */
 export async function POST(req: NextRequest) {
@@ -194,8 +197,6 @@ export async function POST(req: NextRequest) {
       billing_address_collection: 'required',
       // Sync address + name from checkout back to the customer object
       customer_update: { address: 'auto', name: 'auto' },
-      // Allow B2B customers to enter their VAT ID
-      tax_id_collection: { enabled: true },
 
       subscription_data: {
         default_tax_rates: [MWST_TAX_RATE],

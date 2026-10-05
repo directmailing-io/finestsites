@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation'
 import { PLAN_LIST, PLAN_LABELS, COMMON_FEATURES, canUpgradeTo } from '@/lib/plans'
 import { discountedTotal, formatEur } from '@/lib/billing/promo-duration'
 import ImageCropModal from '@/components/ImageCropModal'
+import InvoiceDetailsCard from '@/components/billing/InvoiceDetailsCard'
 import { NM_COMPANIES } from '@/lib/constants/nm-companies'
 
 // ── Social media helpers ──────────────────────────────────────────────────────
@@ -1250,6 +1251,12 @@ function SettingsContent() {
               </div>
             )}
           </TabSection>
+
+          {hasSubscription && (
+            <TabSection title="Rechnung auf deine Firma?" subtitle="Freiwillig. Du kannst beides leer lassen.">
+              <InvoiceDetailsCard />
+            </TabSection>
+          )}
         </div>
       )}
 
