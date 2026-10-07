@@ -214,50 +214,50 @@
       "section": "Design",
       "order": 14,
       "required": true,
-      "default_value": "mint",
-      "preview_value": "mint",
-      "placeholder_text": "Akzentfarbe deiner Seite (Profilbild-Ring, Fortschritt, Auswahl, Ergebniskarte). „Midnight“ ist die dunkle Variante.",
+      "default_value": "gruen",
+      "preview_value": "gruen",
+      "placeholder_text": "Akzentfarbe deiner Seite mit passend getöntem Hintergrund: Profilbild-Ring, Fortschritt, Auswahl, Buttons. „Nacht“ ist die dunkle Variante.",
       "card_options": [
         {
-          "value": "mint",
-          "label": "Fresh Mint",
+          "value": "gruen",
+          "label": "Grün",
           "card_type": "color",
-          "color": "#2FB08A",
-          "description": "Frisch, klar, vitalisierend."
+          "color": "#1F9D6B",
+          "description": "Frisch, klar, vital."
         },
         {
-          "value": "ocean",
-          "label": "Ocean Blue",
+          "value": "orange",
+          "label": "Orange",
           "card_type": "color",
-          "color": "#3A7BD5",
-          "description": "Ruhig, seriös, kühl."
+          "color": "#E8842A",
+          "description": "Warm, energiegeladen."
         },
         {
-          "value": "coral",
-          "label": "Warm Coral",
+          "value": "rot",
+          "label": "Rot",
           "card_type": "color",
-          "color": "#E5654B",
-          "description": "Warm, energiegeladen, nahbar."
+          "color": "#D9433B",
+          "description": "Kraftvoll, direkt."
         },
         {
-          "value": "violet",
-          "label": "Soft Violet",
+          "value": "blau",
+          "label": "Blau",
           "card_type": "color",
-          "color": "#7C5CE6",
-          "description": "Modern, kreativ, ausgeglichen."
+          "color": "#3572DF",
+          "description": "Ruhig, seriös."
         },
         {
-          "value": "sun",
-          "label": "Golden Sun",
+          "value": "violett",
+          "label": "Violett",
           "card_type": "color",
-          "color": "#E39A2B",
-          "description": "Sonnig, optimistisch, warm."
+          "color": "#7357D9",
+          "description": "Modern, kreativ."
         },
         {
-          "value": "midnight",
-          "label": "Midnight",
+          "value": "nacht",
+          "label": "Nacht",
           "card_type": "color",
-          "color": "#0F1513",
+          "color": "#121413",
           "description": "Dunkel, edel, App-Look."
         }
       ]
@@ -336,7 +336,7 @@
     "whatsapp_nummer": "491761234567",
     "email_benachrichtigung": "daniel@example.com",
     "links": "[{\"titel\":\"Meine Linkseite\",\"url\":\"https://demo.lnko.me\"},{\"titel\":\"Die Business-Seite\",\"url\":\"https://demo.wellpreneur.io\"}]",
-    "farbthema": "mint",
+    "farbthema": "gruen",
     "frage_motive": "an",
     "frage_investition": "an"
   }

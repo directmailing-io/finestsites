@@ -16,9 +16,9 @@ Alles einspaltig (600 px), ruhig, jede Einheit eine weiße Karte mit Rundung. Ke
    - Karten „Dein Tag auf einen Blick“, „Deine fünf Bereiche“, „Drei Dinge, die du morgen starten kannst“ (mit Wunsch-Rückbezug in der Karte); Überschriften jeweils in der Karte.
    - **Meine Seiten** (`links`, optional) als eigene Karte: Profilbild, „Meine Seiten · Mehr von {Vorname}, unabhängig von deinem Ergebnis“, Link-Buttons, fester Hinweissatz „Diese Links gehören zu meinem Profil. Sie sind keine Empfehlung aus deinem Vitalprofil und haben mit deinem Ergebnis nichts zu tun.“
    - Werkzeug-Karte: „Persönliche Beratung anfragen“ (Akzent, volle Breite), „Profil als Story speichern“, „Nochmal starten“. Keine Sticky-Leiste mehr.
-   - Teilen: Web Share API mit Story-PNG + Text + URL (Handy); ohne Share-API wird der Link kopiert (Toast). Story-PNG 1080×1920 wie bisher (Canvas, ohne Profilbild, damit das Canvas nicht durch Cross-Origin „tainted“ wird).
+   - Teilen: Web Share API mit Story-PNG + Text + URL (Handy); ohne Share-API wird der Link kopiert (Toast). Story-PNG 1080×1920 (Canvas, ohne Profilbild, damit das Canvas nicht durch Cross-Origin „tainted“ wird); unten die Zeile „Mach deinen eigenen Check auf {host}“ mit der Seitenadresse ohne Protokoll (lokal/ohne Host: „Vitalcheck von {Name}“).
 4. **Formular** und **Danke** als eigene Karten, darunter „Zurück zum Profil“.
-5. **Footer** als graue Karte mit drei kurzen Zeilen mit Icon (Daten bleiben bei dir · Selbsteinschätzung, keine Diagnose · Betreiber/PM-Kennzeichnung), dann E-Mail, WhatsApp, Impressum, Datenschutz, Copyright.
+5. **Footer** als dunkler Streifen über die volle Breite (wie bei den anderen Templates): Profilbild + Name + PM-Kennzeichnung, zwei Icon-Zeilen (Daten bleiben bei dir · Selbsteinschätzung, keine Diagnose), Links (E-Mail, WhatsApp, Impressum, Datenschutz), unten Copyright und „Made with ♥ von FinestSites“ mit Logo (`assets/fs-logo.svg`, invertiert).
 
 ## Rechtlicher Rahmen der Seiten-Links (Entscheidung 07.10.2026)
 
@@ -41,16 +41,16 @@ Lösung im Template:
 
 ## Schema (`placeholders-schema.json`, Version 2)
 
-Profil: `vorname`, `nachname`, `profilbild`, `geschlecht`, `intro` (textarea, 320 Zeichen, leer = Standardtext). Social Media: `instagram`, `tiktok`, `facebook`, `youtube`, `linkedin` (URL oder Benutzername, Engine normalisiert), `whatsapp_nummer`. Kontakt: `email_benachrichtigung`. Meine Seiten: `links` (loop, max 6, `titel` + `url` mit `site_picker` + `site_picker_only`). Design: `farbthema` (6). Check anpassen: `frage_motive`, `frage_investition`. Entfernt: `startseite`.
+Profil: `vorname`, `nachname`, `profilbild`, `geschlecht`, `intro` (textarea, 320 Zeichen, leer = Standardtext). Social Media: `instagram`, `tiktok`, `facebook`, `youtube`, `linkedin` (URL oder Benutzername, Engine normalisiert), `whatsapp_nummer`. Kontakt: `email_benachrichtigung`. Meine Seiten: `links` (loop, max 6, `titel` + `url` mit `site_picker` + `site_picker_only`). Design: `farbthema` mit sechs Themen `gruen` (Standard), `orange`, `rot`, `blau`, `violett`, `nacht` (dunkel); jedes Thema setzt Akzent, Akzent-Soft und einen leicht getönten Seitenhintergrund. Check anpassen: `frage_motive`, `frage_investition`. Entfernt: `startseite`.
 
 ## Lokale Vorschau
 
 ```
-npx tsx scripts/render-template-preview.ts vitalcheck-b --theme mint            # Startseite
-npx tsx scripts/render-template-preview.ts vitalcheck-b --theme mint --result   # Auswertung (Antworten vorbefüllt)
-npx tsx scripts/render-template-preview.ts vitalcheck-b --theme mint --result --step area:1   # ein Bereichs-Schritt
-npx tsx scripts/render-template-preview.ts vitalcheck-b --theme mint --result --step lead     # das Formular
-npx tsx scripts/render-template-preview.ts vitalcheck-b --theme mint --intro --nolinks
+npx tsx scripts/render-template-preview.ts vitalcheck-b --theme gruen            # Startseite
+npx tsx scripts/render-template-preview.ts vitalcheck-b --theme gruen --result   # Auswertung (Antworten vorbefüllt)
+npx tsx scripts/render-template-preview.ts vitalcheck-b --theme gruen --result --step area:1   # ein Bereichs-Schritt
+npx tsx scripts/render-template-preview.ts vitalcheck-b --theme gruen --result --step lead     # das Formular
+npx tsx scripts/render-template-preview.ts vitalcheck-b --theme gruen --intro --nolinks
 ```
 Dateien landen in `preview-lokal/` (gitignored). `assets/hero.jpg` wird nicht mehr genutzt und kann beim Rollout entfallen; `assets/fs-logo.svg` bleibt.
 
