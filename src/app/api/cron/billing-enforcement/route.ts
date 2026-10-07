@@ -1,35 +1,39 @@
 /**
- * Cron: Daily billing enforcement
+ * Cron: billing enforcement
  *
- * Runs daily at 06:00 UTC (set up in VPS crontab).
- * Also callable manually via GET with CRON_SECRET for testing.
+ * Crontab on the app server (see docs/billing-lifecycle.html):
+ *   every 15 min  `?only=reconcile`  — steps 0 + 1
+ *   daily 06:00   full run           — all steps
+ * Also callable manually with the CRON_SECRET.
  *
- * Rules:
- *  0. Reconcile — sites of active users are online, sites of past_due/unpaid
- *     users are offline (safety net for missed/out-of-order Stripe webhooks).
- *     Also runs hourly via `?only=reconcile`.
- *  1. 7-day warning — users with paymentFailedAt between 6-8 days ago
- *  2. 14-day deactivation — users with paymentFailedAt older than 14 days:
- *     - Set deactivatedAt on user
- *     - Set published sites to 'deactivated' status
- *     - Push offline marker to KV
- *     - Delete custom domain KV entries
- *     - Send deactivation email
+ * Rules (payment recovery, see src/lib/billing/payment-recovery.ts):
+ *  0. Reconcile — every user's sites match shouldBeOffline(): online during
+ *     the grace period / while a SEPA retry is processing, offline after the
+ *     grace or the hard deadline. Safety net for missed Stripe webhooks and
+ *     the place where time-based transitions actually happen.
+ *  1. Recovery mails — day-0 notice, day-3 reminder, offline notice. Each
+ *     exactly once per episode (markers on the user row).
+ *  2. Hard deadline (HARD_DEADLINE_DAYS after the first failure):
+ *     - user.deactivatedAt set, published sites → 'deactivated', KV offline
+ *     - open invoice voided + Stripe subscription cancelled → the resulting
+ *       customer.subscription.deleted webhook starts the 90-day deletion timer
+ *     - "Konto pausiert" mail
  *  3. Unpaid/canceled cleanup — fallback for Stripe-side cancellations
  *  4. 90-day hard deletion — sites with scheduledDeletionAt in the past:
- *     - Delete R2 images
- *     - Delete site records from DB (cascades siteData + siteImages)
+ *     R2 images + site rows (cascades siteData + siteImages)
  */
 
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
-import { users, userSites } from '@/lib/db/schema'
-import { eq, isNull, isNotNull, lte, gte, and, inArray, or } from 'drizzle-orm'
+import { users, userSites, subscriptionEvents } from '@/lib/db/schema'
+import { eq, isNull, isNotNull, lte, and, or } from 'drizzle-orm'
 import { setSiteOfflineKV, deleteCustomDomainKV } from '@/lib/cloudflare/kv-api'
 import { deleteFromR2 } from '@/lib/r2/client'
 import { sendEmail } from '@/lib/resend'
-import { paymentWarningEmail, accountDeactivatedEmail } from '@/lib/email/templates'
+import { accountDeactivatedEmail } from '@/lib/email/templates'
 import { reconcileAllSiteAccess } from '@/lib/billing/site-access'
+import { HARD_DEADLINE_DAYS, cancelForNonPayment } from '@/lib/billing/payment-recovery'
+import { runRecoveryNotifications } from '@/lib/billing/recovery-notifications'
 
 export const runtime = 'nodejs'
 export const maxDuration = 60
@@ -43,54 +47,37 @@ export async function GET(request: NextRequest) {
   }
 
   const now = new Date()
-  const stats = { reconciled: { restored: 0, suspended: 0, errors: 0 }, warned: 0, deactivated: 0, deleted: 0, errors: 0 }
+  const stats = {
+    reconciled: { restored: 0, suspended: 0, errors: 0 },
+    notified: { notice: 0, reminder: 0, offline: 0, errors: 0 },
+    deactivated: 0,
+    deleted: 0,
+    errors: 0,
+  }
 
-  // ── 0. Reconcile site access with subscription status ─────────────────────
+  // ── 0. Reconcile site access with the recovery state ──────────────────────
   stats.reconciled = await reconcileAllSiteAccess()
+
+  // ── 1. Recovery mails ──────────────────────────────────────────────────────
+  stats.notified = await runRecoveryNotifications(now)
+
   if (request.nextUrl.searchParams.get('only') === 'reconcile') {
     return NextResponse.json(stats)
   }
 
-  // ── 1. Send 7-day warning ──────────────────────────────────────────────────
-  // Window: 6–8 days after paymentFailedAt to handle slight cron drift.
-  const warnFrom = new Date(now.getTime() - 8 * 24 * 60 * 60 * 1000)
-  const warnTo   = new Date(now.getTime() - 6 * 24 * 60 * 60 * 1000)
-
-  const warnCandidates = await db.query.users.findMany({
-    where: and(
-      eq(users.subscriptionStatus, 'past_due'),
-      isNotNull(users.paymentFailedAt),
-      gte(users.paymentFailedAt, warnFrom),
-      lte(users.paymentFailedAt, warnTo),
-      isNull(users.deactivatedAt),
-    ),
-    columns: { id: true, email: true, paymentFailedAt: true },
-  })
-
-  for (const user of warnCandidates) {
-    try {
-      await sendEmail({ to: user.email, subject: 'Zahlung ausstehend – dein Konto wird in 7 Tagen deaktiviert', html: paymentWarningEmail({ daysLeft: 7 }), type: 'payment_warning' })
-      stats.warned++
-    } catch (err) {
-      console.error(`[billing-enforcement] warning email error for ${user.id}:`, err)
-      stats.errors++
-    }
-  }
-
-  // ── 2. Deactivate after 14-day grace period ────────────────────────────────
-  const graceCutoff = new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000)
+  // ── 2. Hard deadline: deactivate + cancel in Stripe ────────────────────────
+  const deadlineCutoff = new Date(now.getTime() - HARD_DEADLINE_DAYS * 24 * 60 * 60 * 1000)
 
   const overdueCandidates = await db.query.users.findMany({
     where: and(
-      eq(users.subscriptionStatus, 'past_due'),
       isNotNull(users.paymentFailedAt),
-      lte(users.paymentFailedAt, graceCutoff),
+      lte(users.paymentFailedAt, deadlineCutoff),
       isNull(users.deactivatedAt),
     ),
-    columns: { id: true, email: true },
+    columns: { id: true, email: true, stripeSubscriptionId: true, paymentFailedInvoiceId: true },
   })
 
-  // Also catch unpaid/canceled users not yet deactivated (Stripe-side fallback)
+  // ── 3. Also catch unpaid/canceled users not yet deactivated (Stripe-side fallback)
   const staleCandidates = await db.query.users.findMany({
     where: and(
       or(
@@ -99,22 +86,24 @@ export async function GET(request: NextRequest) {
       ),
       isNull(users.deactivatedAt),
     ),
-    columns: { id: true, email: true },
+    columns: { id: true, email: true, stripeSubscriptionId: true, paymentFailedInvoiceId: true },
   })
 
-  const toDeactivate = [...overdueCandidates, ...staleCandidates]
-  // Deduplicate by id
   const seen = new Set<string>()
-  const deduped = toDeactivate.filter(u => { if (seen.has(u.id)) return false; seen.add(u.id); return true })
+  const toDeactivate = [...overdueCandidates, ...staleCandidates].filter(u => {
+    if (seen.has(u.id)) return false
+    seen.add(u.id)
+    return true
+  })
 
-  for (const user of deduped) {
+  for (const user of toDeactivate) {
     try {
-      // Mark user as deactivated
+      // Mark user as deactivated first: the subscription.deleted webhook that
+      // our cancellation triggers must not send a second mail
       await db.update(users)
         .set({ deactivatedAt: now })
         .where(eq(users.id, user.id))
 
-      // Find published sites to take offline
       const sites = await db.query.userSites.findMany({
         where: and(
           eq(userSites.userId, user.id),
@@ -128,22 +117,18 @@ export async function GET(request: NextRequest) {
       })
 
       for (const site of sites) {
-        // Update DB status
         await db.update(userSites)
           .set({ status: 'deactivated', deactivatedAt: now })
           .where(eq(userSites.id, site.id))
 
-        const username      = (site as any).user?.username as string | null
+        const username       = (site as any).user?.username as string | null
         const templateDomain = (site as any).template?.domain as string | null
 
-        // Push offline marker to KV so Worker shows offline page
         if (username && templateDomain) {
           await setSiteOfflineKV(username, templateDomain).catch(err =>
             console.error(`[billing-enforcement] KV offline error for ${site.id}:`, err)
           )
         }
-
-        // Remove custom domain KV entry so the domain 404s
         if (site.customDomain) {
           await deleteCustomDomainKV(site.customDomain).catch(err =>
             console.error(`[billing-enforcement] KV custom domain delete error for ${site.customDomain}:`, err)
@@ -151,11 +136,26 @@ export async function GET(request: NextRequest) {
         }
       }
 
-      // Send deactivation email (fire-and-forget)
-      sendEmail({ to: user.email, subject: 'Dein FinestSites-Konto wurde deaktiviert', html: accountDeactivatedEmail(), type: 'account_deactivated' }).catch(() => {})
+      // Stop collecting: void the open invoice, cancel the subscription.
+      // Stripe then fires customer.subscription.deleted → 90-day deletion timer.
+      const cancelled = await cancelForNonPayment({
+        subscriptionId: user.stripeSubscriptionId,
+        trackedInvoiceId: user.paymentFailedInvoiceId,
+      })
+
+      await db.insert(subscriptionEvents).values({
+        userId: user.id,
+        eventType: 'account_deactivated',
+        stripeEventId: `cron:deactivate:${user.id}:${now.toISOString().slice(0, 10)}`,
+        stripeSubscriptionId: user.stripeSubscriptionId,
+        stripeInvoiceId: user.paymentFailedInvoiceId,
+        metadata: { sites: sites.length, ...cancelled },
+      }).catch(() => {})
+
+      sendEmail({ to: user.email, subject: 'Dein Konto wurde pausiert', html: accountDeactivatedEmail(), type: 'account_deactivated' }).catch(() => {})
 
       stats.deactivated++
-      console.log(`[billing-enforcement] Deactivated user ${user.id} (${user.email})`)
+      console.log(`[billing-enforcement] Deactivated user ${user.id} (${user.email})`, cancelled)
     } catch (err) {
       console.error(`[billing-enforcement] deactivation error for ${user.id}:`, err)
       stats.errors++
@@ -163,7 +163,6 @@ export async function GET(request: NextRequest) {
   }
 
   // ── 4. 90-day hard deletion ────────────────────────────────────────────────
-  // Sites where scheduledDeletionAt has passed: delete R2 files then DB records
   const sitesToDelete = await db.query.userSites.findMany({
     where: and(
       eq(userSites.status, 'deactivated'),
@@ -178,7 +177,6 @@ export async function GET(request: NextRequest) {
 
   for (const site of sitesToDelete) {
     try {
-      // Delete all uploaded images from R2
       for (const img of (site as any).siteImages ?? []) {
         if (img.r2Path) {
           await deleteFromR2(img.r2Path).catch(err =>
@@ -186,11 +184,9 @@ export async function GET(request: NextRequest) {
           )
         }
       }
-      // Delete published R2 path if exists
       if (site.r2PublishedPath) {
         await deleteFromR2(site.r2PublishedPath).catch(() => {})
       }
-      // Delete site from DB (cascades siteData + siteImages)
       await db.delete(userSites).where(eq(userSites.id, site.id))
       stats.deleted++
       console.log(`[billing-enforcement] Hard deleted site ${site.id}`)
@@ -200,6 +196,6 @@ export async function GET(request: NextRequest) {
     }
   }
 
-  console.log(`[billing-enforcement] Done — warned: ${stats.warned}, deactivated: ${stats.deactivated}, deleted: ${stats.deleted}, errors: ${stats.errors}`)
+  console.log(`[billing-enforcement] Done — notified: ${JSON.stringify(stats.notified)}, deactivated: ${stats.deactivated}, deleted: ${stats.deleted}, errors: ${stats.errors}`)
   return NextResponse.json(stats)
 }

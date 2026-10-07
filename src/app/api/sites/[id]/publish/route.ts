@@ -25,7 +25,7 @@ import { eq, and, ne } from 'drizzle-orm'
 import { purgeSiteCache, markSiteOffline } from '@/lib/cloudflare/kv'
 import { writeRenderedHtmlKV } from '@/lib/cloudflare/kv-api'
 import { renderTemplate } from '@/lib/utils/template-engine'
-import { isInArrears } from '@/lib/billing/site-access'
+import { shouldBeOffline } from '@/lib/billing/site-access'
 
 const r2Client = new S3Client({
   region: 'auto',
@@ -102,11 +102,12 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   // subscription AND must not exceed the plan's concurrent-site quota.
   const tplIsFree = site.template.isFree ?? false
   if (!tplIsFree) {
-    // past_due/unpaid users are NOT allowed to publish: their sites were taken
-    // offline for the open payment and come back automatically once it's paid.
-    // Letting them republish here would silently undo that.
+    // Users whose sites are offline for an open payment are NOT allowed to
+    // publish: the sites come back automatically once it's paid. Letting them
+    // republish here would silently undo that. Inside the grace period the
+    // sites are online anyway, so publishing is fine.
     const status = userRow.subscriptionStatus ?? ''
-    if (isInArrears(status, userRow.paymentFailedAt)) {
+    if (shouldBeOffline(userRow)) {
       return NextResponse.json({
         error: 'Deine letzte Zahlung ist noch offen. Sobald sie eingegangen ist, gehen deine Webseiten automatisch wieder online.',
         code: 'PAYMENT_PENDING',

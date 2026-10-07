@@ -216,110 +216,116 @@
     <div class="card-header">
       <div class="card-icon" style="background:#FFF7ED;">⚠️</div>
       <div>
-        <h2 style="margin:0;">Zahlung schlägt fehl</h2>
-        <p style="margin:0;color:#6B7280;font-size:13px;">z.B. Kreditkarte abgelaufen, kein Guthaben, SEPA-Rückbuchung</p>
+        <h2 style="margin:0;">Zahlung schlägt fehl &mdash; Schonfrist statt Sofort-Offline</h2>
+        <p style="margin:0;color:#6B7280;font-size:13px;">z.B. Karte abgelaufen, Konto nicht gedeckt, SEPA-Rücklastschrift. Regeln seit 07.10.2026, Code: <code>src/lib/billing/payment-recovery.ts</code></p>
       </div>
+    </div>
+
+    <div class="info info-blue" style="margin-bottom:20px;">
+      <strong>Vier Regeln, gleich für Karte und SEPA:</strong><br>
+      1. Die Uhr startet, wenn <em>wir</em> vom Fehlschlag erfahren (<code>paymentFailedAt</code>) &mdash; bei SEPA ist das ca. eine Woche nach der Abbuchung.<br>
+      2. Solange ein neuer Zahlungsversuch in Arbeit ist (<code>paymentRetryProcessingAt</code>, SEPA: 1–2 Wochen), bleibt die Seite online.<br>
+      3. Eine zweite Chance, keine dritte: Platzt auch der Versuch, auf den wir gewartet haben, geht die Seite sofort offline.<br>
+      4. Harte Obergrenze: 21 Tage nach dem ersten Fehlschlag ist Schluss, egal was in Arbeit ist.<br>
+      <strong>Unsere DB entscheidet</strong> (<code>shouldBeOffline()</code>), nicht der Stripe-Status: Stripe meldet <code>past_due</code> auch während eine SEPA-Zahlung nur verarbeitet wird, und kann ein Abo <code>active</code> lassen, obwohl die erste Rechnung nie bezahlt wurde.
     </div>
 
     <div class="timeline">
       <div class="timeline-item">
-        <div class="timeline-dot" style="background:#F97316;"></div>
-        <div class="timeline-title">Tag 0 &mdash; Erste Fehler-Meldung &mdash; <code>invoice.payment_failed</code></div>
+        <div class="timeline-dot" style="background:#F59E0B;"></div>
+        <div class="timeline-title">Tag 0 &mdash; Fehlschlag bekannt &mdash; <code>invoice.payment_failed</code></div>
         <div class="timeline-body">
-          Stripe feuert Webhook bei erstem Fehlschlag:<br>
-          <code>subscriptionStatus = 'past_due'</code>, <code>paymentFailedAt = jetzt</code> (nur beim ersten Fehler gesetzt, bei Retry-Fehlern nicht überschrieben).<br>
-          <strong>Seiten bleiben online.</strong> User merkt erstmal nichts am Frontend.<br>
-          Stripe versucht die Zahlung automatisch erneut (Smart Retries: typisch nach 3, 5, 7 Tagen).
+          <code>paymentFailedAt = jetzt</code>, <code>paymentFailedInvoiceId</code>, <code>paymentGraceUntil = +7 Tage</code>, <code>subscriptionStatus = 'past_due'</code>.<br>
+          <strong>Ersatz-Zahlung sofort:</strong> Ist eine (nicht abgelaufene) Karte hinterlegt, die nicht die gescheiterte Methode ist, wird die offene Rechnung einmalig darüber bezahlt (<code>invoices.pay</code>, Sperre per Rechnungs-Metadaten <code>fs_fallback_pm</code>). Karte &rarr; in Sekunden bezahlt, Episode sofort beendet. SEPA als Ersatz nur mit Opt-in (<code>paymentFallbackSepa</code>) &rarr; <code>paymentRetryProcessingAt</code> gesetzt.<br>
+          Karten-Smart-Retries von Stripe laufen im Hintergrund weiter; scheitern sie, ändert das nichts an der Schonfrist (kind = <code>repeat</code>).
           <div style="margin-top:8px;">
             <span class="tag tag-orange">subscriptionStatus: past_due</span>
-            <span class="tag tag-green" style="margin-left:4px;">Seiten: noch online</span>
-          </div>
-          <div style="margin-top:8px;" class="email-card">
-            <div class="email-subject">✉️ "Kurze Info zu deiner Zahlung"</div>
-            <div class="email-trigger">Nur beim ersten Fehler. Bei Retry-Fehlern kein weiteres E-Mail.</div>
-            <div class="email-preview">"Deine letzte Zahlung hat leider nicht geklappt. Keine Panik, deine Seiten laufen noch ganz normal und du hast 14 Tage Zeit, das zu klären."</div>
+            <span class="tag tag-green" style="margin-left:4px;">Seiten: online</span>
           </div>
         </div>
       </div>
 
       <div class="timeline-item">
-        <div class="timeline-dot" style="background:#F97316;"></div>
-        <div class="timeline-title">Tag 7 &mdash; Warnungs-E-Mail &mdash; Cron täglich 06:00 UTC</div>
+        <div class="timeline-dot" style="background:#F59E0B;"></div>
+        <div class="timeline-title">Tag 0 &mdash; E-Mails</div>
         <div class="timeline-body">
-          Cron-Job (<code>/api/cron/billing-enforcement</code>) läuft täglich.<br>
-          Bedingung: <code>paymentFailedAt</code> liegt 6–8 Tage zurück (Zeitfenster für Drift) UND <code>deactivatedAt = null</code>.<br>
-          <strong>Seiten bleiben weiter online.</strong>
-          <div style="margin-top:8px;" class="email-card">
-            <div class="email-subject">✉️ "Zahlung ausstehend – dein Konto wird in 7 Tagen deaktiviert"</div>
-            <div class="email-trigger">Cron, einmalig ca. Tag 7 nach Erstzahlfehler</div>
-            <div class="email-preview">"Die offene Zahlung konnte bisher nicht eingezogen werden. In 7 Tagen gehen deine Webseiten leider offline, wenn das nicht geklärt ist."</div>
-          </div>
+          <strong>Ersatz genutzt:</strong> "Wir haben deine Karte verwendet" (bzw. "… zweite Zahlungsmethode", wenn SEPA-Ersatz läuft), sofort aus dem Webhook, idempotent über <code>subscription_events</code>.<br>
+          <strong>Kein Ersatz:</strong> "Deine Zahlung hat nicht geklappt" mit Datum, bis zu dem die Seite online bleibt, Button "Jetzt bezahlen" (Stripe-Rechnungsseite, Karte sofort / SEPA) und Link "Zahlungsmethode ändern" (Portal). Bei Verlängerungsrechnungen sofort; bei der <em>ersten</em> Rechnung eines Abos erst über den 15-Minuten-Cron, weil Stripe diese Rechnung Sekunden später stornieren kann (siehe unten) und der Zahlungslink sonst tot wäre.<br>
+          Alle Mails sind zustandsgesteuert (<code>recovery-notifications.ts</code>, Marker <code>paymentNoticeSentAt</code> / <code>paymentReminderSentAt</code> / <code>paymentOfflineNotifiedAt</code>) &rarr; jede Mail genau einmal pro Episode.
         </div>
       </div>
 
       <div class="timeline-item">
-        <div class="timeline-dot" style="background:#EF4444;"></div>
-        <div class="timeline-title">Tag 14 &mdash; Deaktivierung &mdash; Cron täglich 06:00 UTC</div>
+        <div class="timeline-dot" style="background:#F59E0B;"></div>
+        <div class="timeline-title">Tag 3 &mdash; Erinnerung &mdash; Cron</div>
         <div class="timeline-body">
-          Bedingung: <code>paymentFailedAt</code> älter als 14 Tage, <code>subscriptionStatus = 'past_due'</code>, <code>deactivatedAt = null</code>.<br>
-          Was passiert:
-          <ul style="margin:8px 0 0;padding-left:16px;font-size:13px;">
-            <li>User: <code>deactivatedAt = jetzt</code></li>
-            <li>Alle published Seiten: <code>status = 'deactivated'</code></li>
-            <li>KV-Cache: Seiten gehen offline (<code>setSiteOfflineKV</code>)</li>
-            <li>Custom-Domain-KV: wird gelöscht (<code>deleteCustomDomainKV</code>) &rarr; Domain zeigt 404</li>
-            <li><strong>scheduledDeletionAt wird vom Cron NICHT gesetzt</strong> (das macht erst der Stripe-Webhook)</li>
-          </ul>
-          <div style="margin-top:8px;">
-            <span class="tag tag-red">subscriptionStatus: past_due</span>
-            <span class="tag tag-red" style="margin-left:4px;">Seiten: offline</span>
-          </div>
-          <div style="margin-top:8px;" class="email-card">
-            <div class="email-subject">✉️ "Dein FinestSites-Konto wurde deaktiviert"</div>
-            <div class="email-trigger">Cron-E-Mail (accountDeactivatedEmail)</div>
-            <div class="email-preview">"Die offene Zahlung ist leider nicht eingegangen, deshalb sind deine Webseiten jetzt offline. Das Gute: Alle deine Inhalte sind noch da. Deine Daten werden in 90 Tagen endgültig gelöscht."</div>
-          </div>
+          Nur wenn noch online, nichts in Arbeit und noch nicht bezahlt: "Noch X Tage, dann geht deine Seite offline".
         </div>
       </div>
 
       <div class="timeline-item">
         <div class="timeline-dot" style="background:#EF4444;"></div>
-        <div class="timeline-title">Stripe gibt auf &mdash; <code>customer.subscription.deleted</code></div>
+        <div class="timeline-title">Tag 7 &mdash; Schonfrist vorbei &mdash; Cron (alle 15 Minuten)</div>
         <div class="timeline-body">
-          Wenn Stripe nach allen Retries aufgibt (Zeitpunkt hängt von Stripe Smart Retries ab, typisch 30+ Tage):<br>
-          <ul style="margin:8px 0 0;padding-left:16px;font-size:13px;">
-            <li>User: <code>plan = 'starter'</code>, <code>subscriptionStatus = 'canceled'</code>, <code>stripeSubscriptionId = null</code></li>
-            <li>Alle noch published/draft Seiten: <code>status = 'deactivated'</code>, <code>scheduledDeletionAt = jetzt + 90 Tage</code></li>
-            <li>KV + Custom-Domain-KV werden ebenfalls geleert</li>
-            <li>E-Mail wird nur gesendet, wenn <code>deactivatedAt</code> noch nicht gesetzt war (verhindert Doppel-E-Mail, falls Cron schon vorher deaktiviert hat)</li>
-          </ul>
-          <div class="info info-orange" style="margin-top:12px;">
-            <strong>90-Tage-Löschfrist startet ab Stripe-Kündigung</strong> &mdash; nicht ab der Cron-Deaktivierung (Tag 14). Der Cron setzt kein <code>scheduledDeletionAt</code>, der Webhook schon.
+          <code>reconcileAllSiteAccess()</code> nimmt die veröffentlichten Seiten offline (<code>status = 'deactivated'</code>, KV-Offline-Marker, Custom-Domain-KV gelöscht). <strong>Kein</strong> <code>scheduledDeletionAt</code> &mdash; alles ist wiederherstellbar.<br>
+          Ausnahme: Läuft gerade ein Zahlungsversuch (<code>paymentRetryProcessingAt</code>), bleibt die Seite online, bis die Bank antwortet. Scheitert er &rarr; <code>paymentGraceUntil = jetzt</code> &rarr; sofort offline.<br>
+          Zahlt der Kunde später per SEPA über die Rechnungsseite, meldet <code>payment_intent.processing</code> den neuen Versuch &rarr; Seite kommt während der Verarbeitung <em>wieder</em> online.
+          <div style="margin-top:8px;">
+            <span class="tag tag-red">Seiten: offline</span>
+          </div>
+          <div class="email-card" style="margin-top:10px;">
+            <div class="email-subject">✉️ "Deine Seite ist jetzt offline"</div>
+            <div class="email-meta">Sobald die Seiten offline sind (Cron / Second Strike)</div>
+            <div class="email-body">"Sobald die Zahlung da ist, geht deine Seite automatisch wieder online. Bleibt sie bis [Tag 21] aus, pausieren wir dein Konto."</div>
           </div>
         </div>
       </div>
 
       <div class="timeline-item">
-        <div class="timeline-dot" style="background:#6B7280;"></div>
-        <div class="timeline-title">Tag 90 (nach Stripe-Kündigung) &mdash; Endgültige Löschung</div>
+        <div class="timeline-dot" style="background:#DC2626;"></div>
+        <div class="timeline-title">Tag 21 &mdash; Harte Obergrenze &mdash; Cron täglich 06:00 UTC</div>
         <div class="timeline-body">
-          Cron-Job prüft: <code>status = 'deactivated'</code> UND <code>scheduledDeletionAt &le; jetzt</code>.<br>
-          Was gelöscht wird:
-          <ul style="margin:8px 0 0;padding-left:16px;font-size:13px;">
-            <li>Alle hochgeladenen Bilder aus R2 (Cloudflare Storage)</li>
-            <li>Published R2-Pfad der Seite (falls vorhanden)</li>
-            <li>Site-Datenbankzeile (Cascade: siteData + siteImages mitgelöscht)</li>
+          Bedingung: <code>paymentFailedAt</code> älter als 21 Tage, <code>deactivatedAt = null</code>.<br>
+          <ul style="margin:6px 0 0;padding-left:18px;">
+            <li>User: <code>deactivatedAt = jetzt</code>; veröffentlichte Seiten <code>deactivated</code>, KV offline</li>
+            <li>Stripe: offene Rechnung storniert, Abo gekündigt (<code>cancelForNonPayment</code>) &rarr; <code>customer.subscription.deleted</code> setzt <code>scheduledDeletionAt = +90 Tage</code> (ohne zweite Mail, weil <code>deactivatedAt</code> schon gesetzt ist)</li>
+            <li>Event <code>account_deactivated</code> im Verlauf</li>
           </ul>
-          <strong>Kein E-Mail</strong> bei Datenlöschung.
           <div style="margin-top:8px;">
-            <span class="tag tag-gray">Seiten: permanent gelöscht</span>
+            <span class="tag tag-red">subscriptionStatus: canceled</span>
+            <span class="tag tag-red" style="margin-left:4px;">Seiten: offline, Löschtimer 90 Tage</span>
           </div>
+          <div class="email-card" style="margin-top:10px;">
+            <div class="email-subject">✉️ "Dein Konto wurde pausiert"</div>
+            <div class="email-meta">Cron (accountDeactivatedEmail)</div>
+            <div class="email-body">"Alle deine Inhalte sind noch da. Buch einfach wieder einen Tarif, dann sind deine Seiten sofort wieder online. Deine Daten werden in 90 Tagen endgültig gelöscht."</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot" style="background:#22C55E;"></div>
+        <div class="timeline-title">Jederzeit &mdash; Zahlung geht ein &mdash; <code>invoice.payment_succeeded</code></div>
+        <div class="timeline-body">
+          Beendet die Episode nur, wenn die <em>verfolgte</em> Rechnung bezahlt ist (<code>paidInvoiceSettlesArrears</code>) &mdash; eine andere bezahlte Rechnung (z.B. Upgrade) lässt die alte Schuld offen. Gilt auch für die erste Rechnung eines Abos (verspätete SEPA-Bestätigung). Seiten ohne <code>scheduledDeletionAt</code> gehen sofort wieder online, E-Mail "Dein Konto ist wieder aktiv!".
         </div>
       </div>
     </div>
 
-    <div class="info info-green" style="margin-top:20px;">
-      <strong>Reaktivierung jederzeit möglich:</strong> Wenn der User die Zahlung klärt und Stripe erfolgreich abbucht (<code>invoice.payment_succeeded</code>), werden alle Seiten ohne <code>scheduledDeletionAt</code> sofort reaktiviert. E-Mail: "Alles wieder online!" Kein Neuaufbau nötig.
+    <div class="info info-yellow" style="margin-top:20px;">
+      <strong>Sonderfall erste Rechnung (SEPA):</strong> Laut Stripe-Doku kann Stripe die allererste Rechnung eines Abos bei einer geplatzten Lastschrift selbst stornieren und das Abo <code>active</code> lassen. Dann feuert <code>invoice.voided</code> für die verfolgte Rechnung: Wir erstellen eine <strong>Ersatzrechnung</strong> über denselben Betrag (verknüpft mit dem Abo, <code>auto_advance = false</code>, damit Stripe nicht hinter unserem Rücken erneut per SEPA abbucht), verfolgen sie weiter, versuchen die Ersatz-Zahlung per Karte und schicken die Tag-0-Mail mit dem neuen Link. Wird dagegen eine <em>andere</em> verfolgte Rechnung storniert (von Hand im Dashboard), gilt die Schuld als erlassen: Episode beendet, Seiten wieder online, Event <code>invoice_forgiven</code>.
+    </div>
+
+    <div class="info info-gray" style="margin-top:12px;">
+      <strong>Zwei Zahlungsmethoden:</strong> Stripe kennt nur einen Standard (Abo &rarr; Kunde). Unter Einstellungen &rarr; Zahlung sieht der Kunde seine Methoden, wählt den Standard (wird am Abo <em>und</em> am Kunden gesetzt, <code>setDefaultPaymentMethod</code>) und kann SEPA als Ersatz für eine gescheiterte Karte freischalten. Karte als Ersatz für gescheiterte SEPA ist immer an. Ein Ersatzversuch stellt den Standard <em>nicht</em> um &mdash; die Mail fragt, ob die Karte künftig Standard sein soll.
+    </div>
+
+    <div class="info info-gray" style="margin-top:12px;">
+      <strong>Vorbeugung:</strong> <code>invoice.upcoming</code> (Stripe schickt es N Tage vor der Verlängerung, Dashboard-Einstellung) &rarr; SEPA-Kunden bekommen "Am [Datum] buchen wir [Betrag] ab". Kartenkunden nicht.
+    </div>
+
+    <div class="info info-gray" style="margin-top:12px;">
+      <strong>Kosten (Stripe, Stand 10/2026):</strong> geplatzte SEPA-Lastschrift 3,50 €, Anfechtung 15,00 €. Stripe-eigene SEPA-Wiederholungen (Dashboard: Umsatzsicherung &rarr; Erneute Versuche &rarr; Lokale Zahlungsmethoden, max. 2 in 30 Tagen, nur bei "nicht gedeckt") sind gebührenfrei; von uns ausgelöste Versuche (<code>invoices.pay</code>) nicht.
     </div>
   </div>
 
@@ -454,7 +460,7 @@
     </table>
 
     <div class="info info-yellow" style="margin-top:20px;">
-      <strong>Wichtiger Unterschied:</strong> Cron-deaktivierte Seiten (Tag 14 Zahlungsfehler) haben <strong>kein</strong> <code>scheduledDeletionAt</code>. Sie können bei Reaktivierung (<code>invoice.payment_succeeded</code>) sofort wiederhergestellt werden. Erst wenn Stripe die Subscription endgültig löscht (<code>customer.subscription.deleted</code>), setzt der Webhook das 90-Tage-Löschdatum.
+      <strong>Wichtiger Unterschied:</strong> Wegen offener Zahlung offline genommene Seiten (ab Tag 7) haben <strong>kein</strong> <code>scheduledDeletionAt</code>. Sie kommen bei Zahlungseingang (<code>invoice.payment_succeeded</code>) oder einem laufenden SEPA-Versuch (<code>payment_intent.processing</code>) sofort zurück. Erst die Kündigung in Stripe (Tag 21 durch unseren Cron, oder Stripe selbst &rarr; <code>customer.subscription.deleted</code>) setzt das 90-Tage-Löschdatum.
     </div>
 
     <div class="info info-orange" style="margin-top:12px;">
@@ -529,16 +535,34 @@
           <td>BetterAuth Hook</td>
         </tr>
         <tr>
-          <td><strong>Kurze Info zu deiner Zahlung</strong></td>
-          <td><code>invoice.payment_failed</code></td>
-          <td>Nur beim <strong>ersten</strong> Fehlschlag</td>
+          <td><strong>Deine Zahlung hat nicht geklappt</strong></td>
+          <td><code>invoice.payment_failed</code> / Cron</td>
+          <td>Tag 0, einmal pro Episode (erste Abo-Rechnung: über den 15-Minuten-Cron)</td>
+          <td>Webhook / Cron</td>
+        </tr>
+        <tr>
+          <td><strong>Wir haben deine Karte verwendet</strong></td>
+          <td><code>invoice.payment_failed</code> / <code>invoice.voided</code></td>
+          <td>Wenn die Ersatz-Zahlungsmethode genutzt wurde (ersetzt die Tag-0-Mail)</td>
           <td>Stripe Webhook</td>
         </tr>
         <tr>
-          <td><strong>Zahlung ausstehend &ndash; 7 Tage</strong></td>
+          <td><strong>Noch X Tage, dann geht deine Seite offline</strong></td>
           <td>Cron (billing-enforcement)</td>
-          <td>Ca. Tag 7 nach Erstzahlfehler</td>
+          <td>Tag 3, nur wenn noch online und nichts in Arbeit</td>
           <td>Cron-Job</td>
+        </tr>
+        <tr>
+          <td><strong>Deine Seite ist jetzt offline</strong></td>
+          <td>Cron (alle 15 Minuten)</td>
+          <td>Sobald die Seiten offline sind (Tag 7 oder Second Strike)</td>
+          <td>Cron-Job</td>
+        </tr>
+        <tr>
+          <td><strong>Am [Datum] buchen wir [Betrag] ab</strong></td>
+          <td><code>invoice.upcoming</code></td>
+          <td>Vor jeder Verlängerung, nur SEPA-Kunden</td>
+          <td>Stripe Webhook</td>
         </tr>
         <tr>
           <td><strong>Dein Abo wurde gekündigt</strong></td>
@@ -547,15 +571,15 @@
           <td>Stripe Webhook</td>
         </tr>
         <tr>
-          <td><strong>Dein FinestSites-Konto wurde deaktiviert</strong></td>
+          <td><strong>Dein Konto wurde pausiert</strong></td>
           <td>Cron (billing-enforcement)</td>
-          <td>Tag 14 nach Erstzahlfehler</td>
+          <td>Tag 21 nach Erstzahlfehler (Abo wird in Stripe gekündigt)</td>
           <td>Cron-Job</td>
         </tr>
         <tr>
           <td><strong>Dein Konto wurde pausiert</strong></td>
           <td><code>customer.subscription.deleted</code></td>
-          <td>Wenn Stripe aufgibt &mdash; nur wenn Cron noch nicht deaktiviert hatte</td>
+          <td>Wenn Stripe selbst kündigt &mdash; nur wenn der Cron noch nicht deaktiviert hatte</td>
           <td>Stripe Webhook</td>
         </tr>
         <tr>
@@ -683,8 +707,13 @@
           <td>BetterAuth-Einstellung (passwordResetEmail)</td>
         </tr>
         <tr>
-          <td>Zahlung kläre-Zeitfenster (vor Deaktivierung)</td>
-          <td><strong>14 Tage</strong> nach erstem Fehlschlag</td>
+          <td>Schonfrist: Seiten bleiben online</td>
+          <td><strong>7 Tage</strong> nach erstem Fehlschlag (länger, solange ein Zahlungsversuch läuft)</td>
+          <td>paymentGraceUntil / paymentRetryProcessingAt</td>
+        </tr>
+        <tr>
+          <td>Harte Obergrenze: Konto pausiert, Abo gekündigt</td>
+          <td><strong>21 Tage</strong> nach erstem Fehlschlag</td>
           <td>paymentFailedAt + Cron-Job</td>
         </tr>
         <tr>

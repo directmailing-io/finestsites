@@ -85,6 +85,18 @@ export const users = pgTable('users', {
   currentPeriodEnd: timestamp('current_period_end', { withTimezone: true }),
   cancelAtPeriodEnd: boolean('cancel_at_period_end').notNull().default(false),
   paymentFailedAt: timestamp('payment_failed_at', { withTimezone: true }),
+  // Payment recovery (see src/lib/billing/payment-recovery.ts):
+  // the open invoice behind paymentFailedAt, how long the sites stay online
+  // despite the arrears, whether a new attempt is still being processed (SEPA),
+  // and which reminder mails already went out for this episode.
+  paymentFailedInvoiceId: text('payment_failed_invoice_id'),
+  paymentGraceUntil: timestamp('payment_grace_until', { withTimezone: true }),
+  paymentRetryProcessingAt: timestamp('payment_retry_processing_at', { withTimezone: true }),
+  paymentNoticeSentAt: timestamp('payment_notice_sent_at', { withTimezone: true }),
+  paymentReminderSentAt: timestamp('payment_reminder_sent_at', { withTimezone: true }),
+  paymentOfflineNotifiedAt: timestamp('payment_offline_notified_at', { withTimezone: true }),
+  // Opt-in: when the card fails, retry with the stored SEPA mandate (slow, may cost a fee)
+  paymentFallbackSepa: boolean('payment_fallback_sepa').notNull().default(false),
   deactivatedAt: timestamp('deactivated_at', { withTimezone: true }),
   isAdmin: boolean('is_admin').notNull().default(false),
   // Profile fields
@@ -534,7 +546,8 @@ export type ImpersonationRequest = typeof impersonationRequests.$inferSelect
 export const emailLogs = pgTable('email_logs', {
   id: uuid('id').primaryKey().defaultRandom(),
   // 'welcome' | 'verification' | 'password_reset' | 'subscription_confirmation' |
-  // 'payment_failed' | 'payment_warning' | 'account_deactivated' | 'account_expired' |
+  // 'payment_failed' | 'payment_reminder' | 'sites_offline' | 'payment_fallback' |
+  // 'upcoming_debit' | 'account_deactivated' | 'account_expired' |
   // 'account_canceled' | 'account_reactivated' | 'domain_active' |
   // 'affiliate_referral' | 'affiliate_payout' | 'newsletter' | 'waitlist' | 'other'
   type: text('type').notNull(),

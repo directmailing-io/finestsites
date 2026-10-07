@@ -22,7 +22,11 @@ const TYPE_LABELS: Record<string, string> = {
   account_deactivated: 'Konto deaktiviert',
   account_reactivated: 'Konto reaktiviert',
   payment_failed: 'Zahlung fehlgeschlagen',
-  payment_warning: 'Zahlungswarnung',
+  payment_reminder: 'Zahlungserinnerung',
+  sites_offline: 'Seite offline',
+  payment_fallback: 'Ersatz-Zahlungsmethode',
+  upcoming_debit: 'Abbuchung angekündigt',
+  payment_warning: 'Zahlungswarnung (alt)',
   domain_active: 'Domain aktiv',
 }
 

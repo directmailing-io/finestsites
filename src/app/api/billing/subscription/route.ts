@@ -5,8 +5,37 @@ import { users } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
 import { getUserFromRequest } from '@/lib/auth/server'
 import { getStripe } from '@/lib/stripe/client'
+import { shouldBeOffline, hardDeadlineFor, trackedInvoiceInfo, recoveryColumns } from '@/lib/billing/payment-recovery'
 
-function getSubInfo(sub: Stripe.Subscription, plan: string, billingInterval: string | null, couponObj?: { percent_off?: number | null; name?: string | null; id?: string } | null, paymentFailed = true) {
+type RecoveryProfile = {
+  subscriptionStatus: string | null
+  paymentFailedAt: Date | null
+  paymentFailedInvoiceId: string | null
+  paymentGraceUntil: Date | null
+  paymentRetryProcessingAt: Date | null
+}
+
+/**
+ * The open-payment block the settings page renders. null when nothing is
+ * open. Our DB decides (see payment-recovery.ts): Stripe says past_due while
+ * a SEPA payment is merely processing, and may say active although the first
+ * invoice never got paid.
+ */
+async function getRecoveryInfo(profile: RecoveryProfile) {
+  if (!profile.paymentFailedAt) return null
+  const info = await trackedInvoiceInfo(profile.paymentFailedInvoiceId)
+  return {
+    failed_at: profile.paymentFailedAt.toISOString(),
+    grace_until: profile.paymentGraceUntil?.toISOString() ?? null,
+    hard_deadline: hardDeadlineFor(profile.paymentFailedAt).toISOString(),
+    sites_offline: shouldBeOffline(profile),
+    retry_processing: !!profile.paymentRetryProcessingAt,
+    pay_url: info.payUrl,
+    amount_cents: info.amountCents,
+  }
+}
+
+function getSubInfo(sub: Stripe.Subscription, plan: string, billingInterval: string | null, couponObj: { percent_off?: number | null; name?: string | null; id?: string } | null | undefined, recovery: Awaited<ReturnType<typeof getRecoveryInfo>>) {
   // In Stripe v22+, current_period_end is per subscription item
   const item = sub.items?.data?.[0]
   const currentPeriodEnd = (item as any)?.current_period_end ?? null
@@ -14,10 +43,12 @@ function getSubInfo(sub: Stripe.Subscription, plan: string, billingInterval: str
   const discountPercent: number | null = couponObj?.percent_off ?? null
   const discountName: string | null = couponObj?.name ?? couponObj?.id ?? null
 
+  // An open arrears episode shows as past_due; a Stripe past_due without a
+  // recorded failure (SEPA still processing) shows as active
+  const status = recovery ? 'past_due' : sub.status === 'past_due' ? 'active' : sub.status
+
   return {
-    // Stripe says past_due while a SEPA payment is still processing — nothing failed,
-    // so the customer must not see the "payment failed" banner (see isInArrears)
-    status: sub.status === 'past_due' && !paymentFailed ? 'active' : sub.status,
+    status,
     current_period_end: currentPeriodEnd,
     cancel_at_period_end: sub.cancel_at_period_end,
     cancel_at: sub.cancel_at,
@@ -25,6 +56,7 @@ function getSubInfo(sub: Stripe.Subscription, plan: string, billingInterval: str
     billing_interval: billingInterval,
     discount_percent: discountPercent,
     discount_name: discountName,
+    recovery,
   }
 }
 
@@ -34,7 +66,7 @@ export async function GET(req: NextRequest) {
 
   const profile = await db.query.users.findFirst({
     where: eq(users.id, user.id),
-    columns: { stripeCustomerId: true, plan: true, billingInterval: true, subscriptionStatus: true, paymentFailedAt: true },
+    columns: { stripeCustomerId: true, plan: true, billingInterval: true, paymentFailedInvoiceId: true, ...recoveryColumns },
   })
 
   if (!profile?.stripeCustomerId) {
@@ -43,6 +75,7 @@ export async function GET(req: NextRequest) {
 
   try {
     const stripe = getStripe()
+    const recovery = await getRecoveryInfo(profile)
 
     async function resolveCoupon(sub: Stripe.Subscription) {
       // Stripe v22+: discount coupon lives in discounts[0].source.coupon (string ID)
@@ -72,13 +105,13 @@ export async function GET(req: NextRequest) {
       })
       if (!allSubs.data.length) return NextResponse.json({ subscription: null })
       const coupon = await resolveCoupon(allSubs.data[0])
-      return NextResponse.json({ subscription: getSubInfo(allSubs.data[0], profile.plan, profile.billingInterval, coupon, !!profile.paymentFailedAt) })
+      return NextResponse.json({ subscription: getSubInfo(allSubs.data[0], profile.plan, profile.billingInterval, coupon, recovery) })
     }
 
     const sub0 = subscriptions.data[0]
     const coupon = await resolveCoupon(sub0)
     return NextResponse.json({
-      subscription: getSubInfo(sub0, profile.plan, profile.billingInterval, coupon, !!profile.paymentFailedAt)
+      subscription: getSubInfo(sub0, profile.plan, profile.billingInterval, coupon, recovery)
     })
   } catch {
     return NextResponse.json({ subscription: null })

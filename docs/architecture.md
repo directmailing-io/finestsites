@@ -350,8 +350,8 @@ Affiliate tracking tables. See `supabase/migrations/006_affiliate_system.sql`.
 **Rules:**
 - Upgrade only — no downgrade in the billing portal
 - Free templates are always publishable regardless of plan
-- `past_due` subscriptions still count as active (grace period)
 - Stripe webhooks update `users.subscription_status` and `users.plan`
+- Failed payments: 7-day grace (sites online), offline after, account paused + Stripe subscription cancelled on day 21; card on file is charged automatically as fallback. Our DB (`users.payment_failed_at` & co.) decides, not Stripe's status. Full rules: `docs/billing-lifecycle.html`, code: `src/lib/billing/payment-recovery.ts`
 
 ---
 

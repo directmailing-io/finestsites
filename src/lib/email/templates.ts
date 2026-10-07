@@ -332,60 +332,139 @@ export function affiliatePayoutEmail({
 
 // ─── Billing lifecycle emails ──────────────────────────────────────────────────
 
-export function paymentFailedEmail({ invoiceUrl }: { invoiceUrl?: string }): string {
-  // Always link to the billing portal (GET redirect) — user can update payment
-  // method directly in Stripe. invoiceUrl kept as secondary fallback context.
-  const billingUrl = `${APP_URL}/api/billing/portal`
-  void invoiceUrl // available for future use (e.g. direct invoice link)
+type RecoveryMailParams = {
+  /** Stripe hosted invoice page — pays by card in seconds, or by SEPA */
+  payUrl: string | null
+  /** Date until which the sites stay online (formatted dd.mm.yyyy) */
+  graceUntil: string
+  amount: string
+}
+
+function payButtons(payUrl: string | null): string {
+  const portalUrl = `${APP_URL}/api/billing/portal`
+  return `
+    ${button(payUrl ?? portalUrl, 'Jetzt bezahlen')}
+    <p style="margin:16px 0 0;font-size:13px;color:${base.muted};line-height:1.6;">
+      Oder <a href="${portalUrl}" style="color:${base.body};">Zahlungsmethode ändern</a>, zum Beispiel eine Karte hinterlegen. Dann holen wir die Zahlung automatisch darüber nach.
+    </p>`
+}
+
+/** Day 0 of an arrears episode — the sites are still online. */
+export function paymentFailedEmail({ payUrl, graceUntil, amount }: RecoveryMailParams): string {
   return layout(`
     <h1 style="margin:0 0 8px;font-size:22px;font-weight:700;color:#111827;letter-spacing:-0.02em;">
       Deine Zahlung hat nicht geklappt
     </h1>
     <p style="margin:0 0 16px;font-size:15px;color:${base.body};line-height:1.65;">
-      Beim Einzug per SEPA gab es ein Problem. Passiert manchmal, kein Stress.
+      Wir konnten ${amount} nicht einziehen. Das passiert, kein Stress. Deine Seite bleibt erst einmal online.
+    </p>
+    <table cellpadding="0" cellspacing="0" role="presentation" width="100%" style="margin:0 0 24px;">
+      <tr>
+        <td style="background:#FFF7ED;border-radius:12px;padding:16px 20px;border:1px solid #FED7AA;">
+          <p style="margin:0;font-size:14px;color:#9A3412;line-height:1.6;">
+            <strong>Bis ${graceUntil} hast du Zeit.</strong> Danach geht deine Seite offline, bis die Zahlung da ist.
+          </p>
+        </td>
+      </tr>
+    </table>
+    ${payButtons(payUrl)}
+    <p style="margin:28px 0 0;font-size:13px;color:${base.muted};line-height:1.6;">
+      <strong style="color:${base.body};">Gut zu wissen:</strong> Mit Karte ist die Zahlung sofort bestätigt. Per SEPA dauert die Bestätigung ein bis zwei Wochen. Solange sie läuft, bleibt deine Seite online.
+    </p>
+    <p style="margin:12px 0 0;font-size:13px;color:${base.muted};line-height:1.6;">
+      Fragen? <a href="mailto:support@finestsites.de" style="color:${base.muted};">support@finestsites.de</a>
+    </p>
+  `)
+}
+
+/** Day 3 — reminder while the sites are still online. */
+export function paymentReminderEmail({ payUrl, graceUntil, amount, daysLeft }: RecoveryMailParams & { daysLeft: number }): string {
+  const days = daysLeft === 1 ? 'einem Tag' : `${daysLeft} Tagen`
+  return layout(`
+    <h1 style="margin:0 0 8px;font-size:22px;font-weight:700;color:#111827;letter-spacing:-0.02em;">
+      Noch ${days}, dann geht deine Seite offline
+    </h1>
+    <p style="margin:0 0 16px;font-size:15px;color:${base.body};line-height:1.65;">
+      Die offene Zahlung über ${amount} ist noch nicht bei uns angekommen. Am ${graceUntil} nehmen wir deine Seite vom Netz, bis sie bezahlt ist.
+    </p>
+    <p style="margin:0 0 8px;font-size:15px;color:${base.body};line-height:1.65;">
+      Ein Klick reicht. Mit Karte ist alles sofort erledigt.
+    </p>
+    ${payButtons(payUrl)}
+    <p style="margin:28px 0 0;font-size:13px;color:${base.muted};line-height:1.6;">
+      Schon bezahlt? Dann ignorier diese Mail. Bei SEPA dauert die Bestätigung ein paar Tage, deine Seite bleibt so lange online. Fragen? <a href="mailto:support@finestsites.de" style="color:${base.muted};">support@finestsites.de</a>
+    </p>
+  `)
+}
+
+/** Grace over (or the second attempt failed) — the sites are offline now. */
+export function sitesOfflineEmail({ payUrl, amount, deadline }: { payUrl: string | null; amount: string; deadline: string }): string {
+  return layout(`
+    <h1 style="margin:0 0 8px;font-size:22px;font-weight:700;color:#111827;letter-spacing:-0.02em;">
+      Deine Seite ist jetzt offline
+    </h1>
+    <p style="margin:0 0 16px;font-size:15px;color:${base.body};line-height:1.65;">
+      Die Zahlung über ${amount} ist leider immer noch offen. Deshalb können deine Besucher deine Seite im Moment nicht aufrufen.
     </p>
     <table cellpadding="0" cellspacing="0" role="presentation" width="100%" style="margin:0 0 24px;">
       <tr>
         <td style="background:#FEF2F2;border-radius:12px;padding:16px 20px;border:1px solid #FECACA;">
           <p style="margin:0;font-size:14px;color:#7F1D1D;line-height:1.6;">
-            <strong>Deine Seite ist gerade offline.</strong> Deine Besucher können sie im Moment nicht aufrufen.
+            <strong>Sobald die Zahlung da ist, geht deine Seite automatisch wieder online.</strong> Alle Inhalte sind noch da, du musst nichts neu aufbauen.
           </p>
         </td>
       </tr>
     </table>
-    <p style="margin:0 0 24px;font-size:15px;color:${base.body};line-height:1.65;">
-      Klick auf den Button und aktualisier deine Zahlungsmethode. Das dauert eine Minute.
-    </p>
-    ${button(billingUrl, 'Jetzt Zahlung klären')}
-    <p style="margin:28px 0 16px;font-size:13px;color:${base.muted};line-height:1.6;">
-      <strong style="color:${base.body};">Tipp:</strong> Mit Kreditkarte klappt es sofort. Mit SEPA kann es wieder ein paar Tage dauern.
-    </p>
-    <p style="margin:0;font-size:13px;color:${base.muted};line-height:1.6;">
-      Sobald die Zahlung durch ist, geht deine Seite automatisch wieder online. Du musst nichts weiter tun. Bei Fragen: <a href="mailto:support@finestsites.de" style="color:${base.muted};">support@finestsites.de</a>
+    ${payButtons(payUrl)}
+    <p style="margin:28px 0 0;font-size:13px;color:${base.muted};line-height:1.6;">
+      Bleibt die Zahlung bis zum ${deadline} aus, pausieren wir dein Konto und beenden das Abo. Deine Daten bleiben danach noch 90 Tage gespeichert. Fragen? <a href="mailto:support@finestsites.de" style="color:${base.muted};">support@finestsites.de</a>
     </p>
   `)
 }
 
-export function paymentWarningEmail({ daysLeft, invoiceUrl }: { daysLeft: number; invoiceUrl?: string }): string {
-  const billingUrl = invoiceUrl ?? `${APP_URL}/billing`
+/** The default method failed, we charged the backup card instead. */
+export function paymentFallbackUsedEmail({ amount, methodLabel, pending }: { amount: string; methodLabel: string; pending: boolean }): string {
+  const settingsUrl = `${APP_URL}/settings`
   return layout(`
     <h1 style="margin:0 0 8px;font-size:22px;font-weight:700;color:#111827;letter-spacing:-0.02em;">
-      Noch ${daysLeft} Tage, dann schalten wir ab
+      ${pending ? 'Wir versuchen es über deine zweite Zahlungsmethode' : 'Wir haben deine Karte verwendet'}
     </h1>
     <p style="margin:0 0 16px;font-size:15px;color:${base.body};line-height:1.65;">
-      Die offene Zahlung konnte bisher nicht eingezogen werden. In <strong>${daysLeft} Tagen</strong> gehen deine Webseiten leider offline, wenn das nicht geklärt ist.
+      Der Einzug über deine Standard-Zahlungsmethode hat nicht geklappt. ${pending
+        ? `Deshalb haben wir ${amount} über <strong>${methodLabel}</strong> angestoßen. Die Bestätigung dauert ein bis zwei Wochen, deine Seite bleibt so lange online.`
+        : `Deshalb haben wir ${amount} über <strong>${methodLabel}</strong> abgebucht. Deine Seite war keine Sekunde offline.`}
     </p>
-    <p style="margin:0 0 24px;font-size:15px;color:${base.body};line-height:1.65;">
-      Aktualisier kurz deine Zahlungsmethode oder stell sicher, dass genug auf dem Konto ist. Das reicht schon.
+    <p style="margin:0 0 8px;font-size:15px;color:${base.body};line-height:1.65;">
+      Soll diese Zahlungsmethode künftig der Standard sein? Das stellst du in den Einstellungen um.
     </p>
-    ${button(billingUrl, 'Jetzt klären')}
+    ${button(settingsUrl, 'Zahlungsmethoden ansehen')}
     <p style="margin:28px 0 0;font-size:13px;color:${base.muted};line-height:1.6;">
-      Sobald die Zahlung klappt, bleibt alles wie gewohnt aktiv. Fragen? <a href="mailto:support@finestsites.de" style="color:${base.muted};">support@finestsites.de</a>
+      Fragen? <a href="mailto:support@finestsites.de" style="color:${base.muted};">support@finestsites.de</a>
     </p>
   `)
 }
 
-/** Sent when payment failure leads to deactivation after 14-day grace period */
+/** 7 days before a SEPA renewal — so the account is covered on the day. */
+export function upcomingDebitEmail({ amount, date, last4 }: { amount: string; date: string; last4: string | null }): string {
+  const settingsUrl = `${APP_URL}/settings`
+  return layout(`
+    <h1 style="margin:0 0 8px;font-size:22px;font-weight:700;color:#111827;letter-spacing:-0.02em;">
+      Am ${date} buchen wir ${amount} ab
+    </h1>
+    <p style="margin:0 0 16px;font-size:15px;color:${base.body};line-height:1.65;">
+      Kurze Erinnerung: Dein FinestSites-Abo verlängert sich am ${date}. Wir ziehen ${amount} per SEPA-Lastschrift${last4 ? ` von deinem Konto •••• ${last4}` : ''} ein.
+    </p>
+    <p style="margin:0 0 8px;font-size:15px;color:${base.body};line-height:1.65;">
+      Bitte sorg dafür, dass das Konto an dem Tag gedeckt ist. Eine geplatzte Lastschrift kostet dich bei deiner Bank Gebühren. Du musst sonst nichts tun.
+    </p>
+    ${button(settingsUrl, 'Zahlungsmethode prüfen')}
+    <p style="margin:28px 0 0;font-size:13px;color:${base.muted};line-height:1.6;">
+      Fragen? <a href="mailto:support@finestsites.de" style="color:${base.muted};">support@finestsites.de</a>
+    </p>
+  `)
+}
+
+/** Day 21 of an arrears episode: account paused, Stripe subscription cancelled */
 export function accountDeactivatedEmail(): string {
   const billingUrl = `${APP_URL}/billing`
   return layout(`
@@ -396,7 +475,7 @@ export function accountDeactivatedEmail(): string {
       Die offene Zahlung ist leider nicht eingegangen, deshalb sind deine Webseiten jetzt offline. Deine Besucher sehen im Moment eine Fehlerseite.
     </p>
     <p style="margin:0 0 24px;font-size:15px;color:${base.body};line-height:1.65;">
-      Das Gute: Alle deine Inhalte, Texte und Bilder sind noch da. Wenn du jetzt zahlst, sind deine Seiten sofort wieder online. Du musst nichts neu aufbauen.
+      Das Gute: Alle deine Inhalte, Texte und Bilder sind noch da. Buch einfach wieder einen Tarif, dann sind deine Seiten sofort wieder online. Du musst nichts neu aufbauen.
     </p>
     <table cellpadding="0" cellspacing="0" role="presentation" width="100%" style="margin:0 0 28px;">
       <tr>

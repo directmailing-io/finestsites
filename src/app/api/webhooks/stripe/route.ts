@@ -7,13 +7,28 @@ import { getStripe, getPlanByPriceId, planCents, type PlanKey, type BillingInter
 import { sendEmail } from '@/lib/resend'
 import {
   affiliateNewReferralEmail,
-  paymentFailedEmail,
+  paymentFallbackUsedEmail,
+  upcomingDebitEmail,
   accountDeactivatedEmail,
   accountExpiredEmail,
   accountCanceledEmail,
   accountReactivatedEmail,
 } from '@/lib/email/templates'
 import { suspendSites, restoreSites, reconcileSiteAccess } from '@/lib/billing/site-access'
+import {
+  recoveryCleared,
+  recordPaymentFailure,
+  clearPaymentFailure,
+  markRetryProcessing,
+  retrackInvoice,
+  paidInvoiceSettlesArrears,
+  attemptFallbackPayment,
+  createReplacementInvoice,
+  resolveDefaultPaymentMethodId,
+  formatDateDe,
+  formatEur,
+} from '@/lib/billing/payment-recovery'
+import { runRecoveryNotificationsFor } from '@/lib/billing/recovery-notifications'
 
 export async function POST(req: NextRequest) {
   if (!process.env.STRIPE_WEBHOOK_SECRET) throw new Error('Missing STRIPE_WEBHOOK_SECRET')
@@ -77,6 +92,28 @@ export async function POST(req: NextRequest) {
       if (err?.code !== '23505') {
         console.error('[webhook] logEvent error:', err?.message ?? err)
       }
+    }
+  }
+
+  // Like logEvent, but tells the caller whether THIS delivery was the first
+  // one — used to send a mail exactly once even if Stripe redelivers the event.
+  async function logEventOnce(params: Parameters<typeof logEvent>[0]): Promise<boolean> {
+    try {
+      await db.insert(subscriptionEvents).values({
+        userId: params.userId,
+        eventType: params.eventType,
+        plan: params.plan ?? null,
+        billingInterval: params.billingInterval ?? null,
+        amountCents: params.amountCents ?? null,
+        stripeEventId: params.stripeEventId,
+        stripeSubscriptionId: params.stripeSubscriptionId ?? null,
+        stripeInvoiceId: params.stripeInvoiceId ?? null,
+        metadata: params.metadata ?? {},
+      })
+      return true
+    } catch (err: any) {
+      if (err?.code !== '23505') console.error('[webhook] logEventOnce error:', err?.message ?? err)
+      return false
     }
   }
 
@@ -284,7 +321,7 @@ export async function POST(req: NextRequest) {
         subscriptionStatus: subscription.status,
         stripeSubscriptionId: subscription.id,
         currentPeriodEnd: getPeriodEnd(subscription),
-        paymentFailedAt: null,
+        ...recoveryCleared,
         deactivatedAt: null,
       }).where(eq(users.id, userId))
 
@@ -384,7 +421,7 @@ export async function POST(req: NextRequest) {
         stripeSubscriptionId: sub.id,
         currentPeriodEnd: getPeriodEnd(sub),
         cancelAtPeriodEnd: sub.cancel_at_period_end,
-        ...(fullReactivation ? { deactivatedAt: null, paymentFailedAt: null } : {}),
+        ...(fullReactivation ? { deactivatedAt: null, ...recoveryCleared } : {}),
       }).where(eq(users.id, userId))
 
       if (fullReactivation) {
@@ -445,21 +482,22 @@ export async function POST(req: NextRequest) {
 
       const userRow = await db.query.users.findFirst({
         where: eq(users.id, userId),
-        columns: { email: true, deactivatedAt: true, subscriptionStatus: true },
+        columns: { email: true, deactivatedAt: true, subscriptionStatus: true, paymentFailedAt: true },
       })
 
       // Was this a voluntary cancellation or a payment-failure termination?
       // past_due/unpaid → Stripe gave up on retries → payment failure email
       // active/trialing → period ended after cancel_at_period_end → expired email
-      const wasPaymentFailure = ['past_due', 'unpaid'].includes(userRow?.subscriptionStatus ?? '')
+      const wasPaymentFailure = ['past_due', 'unpaid'].includes(userRow?.subscriptionStatus ?? '') || !!userRow?.paymentFailedAt
 
-      // Deactivate user account
+      // Deactivate user account; the arrears episode ends with the subscription
       await db.update(users).set({
         plan: 'starter',
         subscriptionStatus: 'canceled',
         stripeSubscriptionId: null,
         cancelAtPeriodEnd: false,
         deactivatedAt: now,
+        ...recoveryCleared,
       }).where(eq(users.id, userId))
 
       // Take all live sites offline and start the 90-day deletion timer
@@ -489,45 +527,237 @@ export async function POST(req: NextRequest) {
     }
 
     // ── Payment failed ───────────────────────────────────────────────────────
+    // Starts (or continues) an arrears episode — see payment-recovery.ts.
+    // Sites stay online for the grace period; the fallback card is charged
+    // right away when there is one. Customer mails are state-driven
+    // (runRecoveryNotificationsFor) so redeliveries never double-send.
     case 'invoice.payment_failed': {
       const invoice = event.data.object as Stripe.Invoice
       const userId = await getUserIdByCustomer(invoice.customer as string)
       if (!userId) break
 
-      // Only set paymentFailedAt on the first failure (don't reset the clock on retries)
-      const existing = await db.query.users.findFirst({
+      const user = await db.query.users.findFirst({
         where: eq(users.id, userId),
-        columns: { email: true, paymentFailedAt: true },
+        columns: { email: true, stripeCustomerId: true, stripeSubscriptionId: true, paymentFallbackSepa: true, deactivatedAt: true },
       })
-
-      const isFirstFailure = !existing?.paymentFailedAt
-      await db.update(users).set({
-        subscriptionStatus: 'past_due',
-        ...(isFirstFailure ? { paymentFailedAt: new Date() } : {}),
-      }).where(eq(users.id, userId))
-
-      // Take sites offline immediately on payment failure — no grace period.
-      // Sites are reactivated automatically as soon as the subscription is
-      // active again (see reconcileSiteAccess). scheduledDeletionAt is NOT set
-      // here — this state is recoverable.
-      await reconcileSiteAccess(userId)
-
-      // Send email only on first failure
-      if (isFirstFailure && existing?.email) {
-        const inv1 = invoice as any
-        const invoiceUrl = inv1.hosted_invoice_url ?? undefined
-        sendEmail({ to: existing.email, subject: 'Deine Seite ist gerade offline', html: paymentFailedEmail({ invoiceUrl }), type: 'payment_failed' }).catch(() => {})
-      }
+      if (!user?.stripeCustomerId) break
 
       const inv1 = invoice as any
+      const invSubId: string | undefined = typeof inv1.subscription === 'string' ? inv1.subscription : inv1.subscription?.id
+      const record = await recordPaymentFailure(userId, invoice.id)
+
+      let fallbackOutcome = 'skipped'
+      if (record.kind === 'first' && !user.deactivatedAt) {
+        const fallback = await attemptFallbackPayment({
+          customerId: user.stripeCustomerId,
+          subscriptionId: invSubId ?? user.stripeSubscriptionId,
+          invoice,
+          allowSepa: user.paymentFallbackSepa,
+        })
+        fallbackOutcome = fallback.outcome === 'none' ? `none:${fallback.reason}` : fallback.outcome
+
+        if (fallback.outcome === 'paid') {
+          // invoice.payment_succeeded follows and sets the Stripe status; the
+          // episode is over right now so nothing can take the sites offline
+          await clearPaymentFailure(userId)
+        } else if (fallback.outcome === 'processing') {
+          await markRetryProcessing(userId)
+        }
+
+        if ((fallback.outcome === 'paid' || fallback.outcome === 'processing') && user.email) {
+          const first = await logEventOnce({
+            userId,
+            eventType: 'payment_fallback',
+            stripeEventId: `${event.id}:fallback`,
+            stripeSubscriptionId: invSubId,
+            stripeInvoiceId: invoice.id,
+            metadata: { outcome: fallback.outcome, method: fallback.method.label, method_type: fallback.method.type },
+          })
+          if (first) {
+            sendEmail({
+              to: user.email,
+              subject: fallback.outcome === 'paid' ? 'Wir haben deine Karte verwendet' : 'Wir versuchen es über deine zweite Zahlungsmethode',
+              html: paymentFallbackUsedEmail({ amount: formatEur(invoice.amount_due ?? 0), methodLabel: fallback.method.label, pending: fallback.outcome === 'processing' }),
+              type: 'payment_fallback',
+            }).catch(() => {})
+            // The fallback mail IS the day-0 notice
+            await db.update(users).set({ paymentNoticeSentAt: new Date() }).where(eq(users.id, userId))
+          }
+        } else if (fallback.outcome === 'failed') {
+          console.error(`[webhook] fallback payment failed for ${userId}: ${fallback.error}`)
+        }
+      }
+
+      // Grace → sites stay online; second strike → offline now
+      await reconcileSiteAccess(userId)
+
+      // First invoice of a subscription: Stripe may void it right after this
+      // event — the notice (with a pay link) is sent by the cron once the
+      // replacement invoice exists. Every other invoice: notify immediately.
+      if (inv1.billing_reason !== 'subscription_create') {
+        await runRecoveryNotificationsFor(userId).catch(err =>
+          console.error('[webhook] recovery notification error:', err instanceof Error ? err.message : err))
+      }
+
       await logEvent({
         userId,
         eventType: 'payment_failed',
         stripeEventId: event.id,
-        stripeSubscriptionId: typeof inv1.subscription === 'string' ? inv1.subscription : inv1.subscription?.id,
+        stripeSubscriptionId: invSubId,
         stripeInvoiceId: invoice.id,
-        metadata: { attempt_count: inv1.attempt_count ?? null, first_failure: isFirstFailure },
+        metadata: {
+          attempt_count: inv1.attempt_count ?? null,
+          billing_reason: inv1.billing_reason ?? null,
+          kind: record.kind,
+          fallback: fallbackOutcome,
+          first_failure: record.kind === 'first',
+        },
       })
+      break
+    }
+
+    // ── Invoice voided ───────────────────────────────────────────────────────
+    // Stripe voids a subscription's FIRST invoice itself when its SEPA debit
+    // fails (subscription stays active). Nobody paid → the episode continues
+    // against a replacement invoice we create. Any other voided tracked invoice
+    // was voided by hand in the Dashboard = debt forgiven → episode ends.
+    case 'invoice.voided': {
+      const invoice = event.data.object as Stripe.Invoice
+      const userId = await getUserIdByCustomer(invoice.customer as string)
+      if (!userId) break
+
+      const user = await db.query.users.findFirst({
+        where: eq(users.id, userId),
+        columns: { email: true, stripeCustomerId: true, stripeSubscriptionId: true, paymentFallbackSepa: true, paymentFailedInvoiceId: true, deactivatedAt: true },
+      })
+      if (!user?.stripeCustomerId || user.paymentFailedInvoiceId !== invoice.id || user.deactivatedAt) break
+
+      const inv3 = invoice as any
+      const subId: string | null = typeof inv3.subscription === 'string' ? inv3.subscription : inv3.subscription?.id ?? user.stripeSubscriptionId
+
+      if (inv3.billing_reason !== 'subscription_create' || (invoice.amount_paid ?? 0) > 0) {
+        await clearPaymentFailure(userId)
+        await reconcileSiteAccess(userId)
+        await logEvent({ userId, eventType: 'invoice_forgiven', stripeEventId: event.id, stripeInvoiceId: invoice.id, stripeSubscriptionId: subId ?? undefined })
+        break
+      }
+
+      // Idempotency: a replacement for this invoice may already exist
+      const existing = await stripe.invoices.search({ query: `metadata['fs_replaces_invoice']:'${invoice.id}'`, limit: 1 })
+      let replacement: Stripe.Invoice | null = existing.data[0] ?? null
+      if (!replacement) {
+        replacement = await createReplacementInvoice({ customerId: user.stripeCustomerId, subscriptionId: subId, voided: invoice })
+      }
+      if (!replacement) break
+
+      await retrackInvoice(userId, replacement.id)
+
+      const fallback = await attemptFallbackPayment({
+        customerId: user.stripeCustomerId,
+        subscriptionId: subId,
+        invoice: replacement,
+        allowSepa: user.paymentFallbackSepa,
+      })
+      if (fallback.outcome === 'paid') {
+        await clearPaymentFailure(userId)
+      } else if (fallback.outcome === 'processing') {
+        await markRetryProcessing(userId)
+      }
+      if ((fallback.outcome === 'paid' || fallback.outcome === 'processing') && user.email) {
+        const first = await logEventOnce({
+          userId, eventType: 'payment_fallback', stripeEventId: `${event.id}:fallback`, stripeInvoiceId: replacement.id, stripeSubscriptionId: subId ?? undefined,
+          metadata: { outcome: fallback.outcome, method: fallback.method.label, method_type: fallback.method.type },
+        })
+        if (first) {
+          sendEmail({
+            to: user.email,
+            subject: fallback.outcome === 'paid' ? 'Wir haben deine Karte verwendet' : 'Wir versuchen es über deine zweite Zahlungsmethode',
+            html: paymentFallbackUsedEmail({ amount: formatEur(replacement.amount_due ?? 0), methodLabel: fallback.method.label, pending: fallback.outcome === 'processing' }),
+            type: 'payment_fallback',
+          }).catch(() => {})
+          await db.update(users).set({ paymentNoticeSentAt: new Date() }).where(eq(users.id, userId))
+        }
+      }
+
+      await reconcileSiteAccess(userId)
+      await runRecoveryNotificationsFor(userId).catch(() => {})
+      await logEvent({
+        userId, eventType: 'invoice_replaced', stripeEventId: event.id, stripeInvoiceId: replacement.id, stripeSubscriptionId: subId ?? undefined,
+        amountCents: replacement.amount_due ?? 0,
+        metadata: { voided_invoice: invoice.id, fallback: fallback.outcome },
+      })
+      break
+    }
+
+    // ── A new attempt for the open invoice is being processed (SEPA) ────────
+    // The customer paid via the hosted invoice page or Stripe retried the
+    // debit: sites stay (or come back) online until the bank answers.
+    case 'payment_intent.processing': {
+      const pi = event.data.object as Stripe.PaymentIntent
+      const piInvoiceId: string | null = typeof (pi as any).invoice === 'string' ? (pi as any).invoice : (pi as any).invoice?.id ?? null
+      if (!piInvoiceId || !pi.customer) break
+      const userId = await getUserIdByCustomer(pi.customer as string)
+      if (!userId) break
+
+      const user = await db.query.users.findFirst({
+        where: eq(users.id, userId),
+        columns: { paymentFailedAt: true, paymentFailedInvoiceId: true, deactivatedAt: true },
+      })
+      if (!user?.paymentFailedAt || user.deactivatedAt || user.paymentFailedInvoiceId !== piInvoiceId) break
+
+      await markRetryProcessing(userId)
+      await reconcileSiteAccess(userId)
+      await logEvent({ userId, eventType: 'payment_retry_processing', stripeEventId: event.id, stripeInvoiceId: piInvoiceId, metadata: { payment_intent: pi.id } })
+      break
+    }
+
+    // ── Upcoming renewal (Stripe sends this N days before, Dashboard setting) ─
+    // SEPA customers get a heads-up so the account is covered on the day.
+    case 'invoice.upcoming': {
+      const upcoming = event.data.object as Stripe.Invoice
+      if (!upcoming.customer) break
+      const userId = await getUserIdByCustomer(upcoming.customer as string)
+      if (!userId) break
+      const amountDue = upcoming.amount_due ?? 0
+      if (amountDue <= 0) break
+
+      const user = await db.query.users.findFirst({
+        where: eq(users.id, userId),
+        columns: { email: true, stripeCustomerId: true, stripeSubscriptionId: true, deactivatedAt: true },
+      })
+      if (!user?.email || !user.stripeCustomerId || user.deactivatedAt) break
+
+      const up = upcoming as any
+      const upSubId: string | null = typeof up.subscription === 'string' ? up.subscription : up.subscription?.id ?? user.stripeSubscriptionId
+      let pmType: string | null = null
+      let last4: string | null = null
+      try {
+        const pmId = await resolveDefaultPaymentMethodId(user.stripeCustomerId, upSubId)
+        if (pmId) {
+          const pm = await stripe.paymentMethods.retrieve(pmId)
+          pmType = pm.type
+          last4 = pm.sepa_debit?.last4 ?? null
+        }
+      } catch { /* no mail without a known method */ }
+      if (pmType !== 'sepa_debit') break
+
+      const debitTs: number | null = up.next_payment_attempt ?? up.period_end ?? null
+      const debitDate = debitTs ? new Date(debitTs * 1000) : null
+      if (!debitDate) break
+
+      // upcoming invoices have no id — the event id + period keeps this once per renewal
+      const first = await logEventOnce({
+        userId, eventType: 'upcoming_debit_notice', stripeEventId: event.id, stripeSubscriptionId: upSubId ?? undefined,
+        amountCents: amountDue, metadata: { debit_date: debitDate.toISOString(), last4 },
+      })
+      if (first) {
+        sendEmail({
+          to: user.email,
+          subject: `Am ${formatDateDe(debitDate)} buchen wir ${formatEur(amountDue)} ab`,
+          html: upcomingDebitEmail({ amount: formatEur(amountDue), date: formatDateDe(debitDate), last4 }),
+          type: 'upcoming_debit',
+        }).catch(() => {})
+      }
       break
     }
 
@@ -536,9 +766,6 @@ export async function POST(req: NextRequest) {
       const invoice = event.data.object as Stripe.Invoice
       const billingReason = (invoice as any).billing_reason
 
-      // Skip the very first invoice — handled by checkout.session.completed
-      if (billingReason === 'subscription_create') break
-
       const userId = await getUserIdByCustomer(invoice.customer as string)
       if (!userId) break
 
@@ -546,6 +773,31 @@ export async function POST(req: NextRequest) {
       const subId = typeof inv2.subscription === 'string'
         ? inv2.subscription
         : inv2.subscription?.id
+
+      const userBefore = await db.query.users.findFirst({
+        where: eq(users.id, userId),
+        columns: { email: true, deactivatedAt: true, paymentFailedAt: true, paymentFailedInvoiceId: true },
+      })
+
+      // Does this payment close an open arrears episode? Only if it pays the
+      // tracked invoice (or that one is paid by now) — a different invoice
+      // (e.g. an upgrade) leaves the old debt open.
+      const settles = userBefore?.paymentFailedAt
+        ? await paidInvoiceSettlesArrears(userBefore.paymentFailedInvoiceId, invoice.id)
+        : false
+
+      // The very first invoice: plan/status were set by checkout.session.completed.
+      // Still, a late SEPA confirmation after a failure must end the episode.
+      if (billingReason === 'subscription_create') {
+        if (settles) {
+          await clearPaymentFailure(userId)
+          const reconciledFirst = await reconcileSiteAccess(userId)
+          if (reconciledFirst.action === 'restored' && userBefore?.email) {
+            sendEmail({ to: userBefore.email, subject: 'Dein Konto ist wieder aktiv!', html: accountReactivatedEmail(), type: 'account_reactivated' }).catch(() => {})
+          }
+        }
+        break
+      }
       if (!subId) break
 
       const sub = await stripe.subscriptions.retrieve(subId)
@@ -553,15 +805,10 @@ export async function POST(req: NextRequest) {
       const plan = getPlanByPriceId()[priceId] ?? 'starter'
       const interval = sub.items.data[0]?.price.recurring?.interval === 'year' ? 'yearly' : 'monthly'
 
-      const userBefore = await db.query.users.findFirst({
-        where: eq(users.id, userId),
-        columns: { email: true, deactivatedAt: true },
-      })
-
       await db.update(users).set({
         subscriptionStatus: sub.status,
         currentPeriodEnd: getPeriodEnd(sub),
-        paymentFailedAt: null,
+        ...(settles ? recoveryCleared : {}),
         deactivatedAt: null,
       }).where(eq(users.id, userId))
 

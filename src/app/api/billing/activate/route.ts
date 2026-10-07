@@ -4,6 +4,7 @@ import { db } from '@/lib/db'
 import { users } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
 import { getUserFromRequest } from '@/lib/auth/server'
+import { recoveryCleared } from '@/lib/billing/payment-recovery'
 import { getStripe, getPlanByPriceId } from '@/lib/stripe/client'
 import { sendEmail } from '@/lib/resend'
 import { subscriptionConfirmationEmail } from '@/lib/email/templates'
@@ -65,7 +66,7 @@ export async function GET(req: NextRequest) {
         subscriptionStatus: sub.status,
         stripeSubscriptionId: sub.id,
         currentPeriodEnd,
-        paymentFailedAt: null,
+        ...recoveryCleared,
         deactivatedAt: null,
       }).where(eq(users.id, user.id))
     } catch (dbErr) {

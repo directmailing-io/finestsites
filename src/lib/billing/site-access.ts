@@ -22,6 +22,7 @@
 import { db } from '@/lib/db'
 import { users, userSites } from '@/lib/db/schema'
 import { and, eq, inArray, isNull, isNotNull, or } from 'drizzle-orm'
+import { shouldBeOffline, recoveryColumns } from '@/lib/billing/payment-recovery'
 import {
   setSiteOfflineKV,
   clearSiteMetaKV,
@@ -29,21 +30,16 @@ import {
   setCustomDomainKV,
 } from '@/lib/cloudflare/kv-api'
 
-/** Subscription states in which the user's sites must be online. */
+/** Subscription states in which the user's sites may be online. */
 export const ONLINE_STATUSES = ['active', 'trialing'] as const
-/** Subscription states in which the user's sites must be offline (recoverable). */
-export const SUSPENDED_STATUSES = ['past_due', 'unpaid'] as const
 
 /**
- * Stripe also reports `past_due` while a payment is merely still *processing* —
- * typical for SEPA: an upgrade invoice paid by direct debit stays open for days
- * although nothing failed. Only a recorded failure (paymentFailedAt, set by the
- * invoice.payment_failed webhook) makes `past_due` a real arrear.
+ * Whether the sites must be offline is decided by shouldBeOffline() in
+ * payment-recovery.ts (grace period, in-flight SEPA retry, hard deadline).
+ * Stripe's `past_due` alone never takes a site offline: Stripe also reports it
+ * while a SEPA payment is merely still processing.
  */
-export function isInArrears(status: string | null | undefined, paymentFailedAt: Date | null | undefined): boolean {
-  if (status === 'unpaid') return true
-  return status === 'past_due' && !!paymentFailedAt
-}
+export { shouldBeOffline }
 
 type SiteRow = {
   id: string
@@ -178,9 +174,9 @@ export type ReconcileResult =
 /**
  * Make the user's sites match their subscription status in the DB.
  *
- *   active / trialing → all billing-suspended sites come back online,
- *                       paymentFailedAt is cleared
- *   past_due / unpaid → all published sites go offline
+ *   shouldBeOffline() → all published sites go offline
+ *   active / trialing / past_due (processing or in grace)
+ *                     → all billing-suspended sites come back online
  *   anything else     → untouched (canceled/expired accounts are handled by
  *                       subscription.deleted and the cron, which set
  *                       deactivatedAt + a deletion timer)
@@ -188,31 +184,26 @@ export type ReconcileResult =
  * Safe to call after every webhook regardless of event order: whichever
  * event lands last sees the final Stripe status and the sites follow it.
  */
-export async function reconcileSiteAccess(userId: string): Promise<ReconcileResult> {
+export async function reconcileSiteAccess(userId: string, now: Date = new Date()): Promise<ReconcileResult> {
   const user = await db.query.users.findFirst({
     where: eq(users.id, userId),
-    columns: { subscriptionStatus: true, deactivatedAt: true, paymentFailedAt: true },
+    columns: { ...recoveryColumns, deactivatedAt: true },
   })
   if (!user || user.deactivatedAt) return { action: 'unchanged' }
 
-  const status = user.subscriptionStatus ?? ''
-  // past_due without a failed payment = payment still processing (SEPA) → stays online
-  const paymentProcessing = status === 'past_due' && !user.paymentFailedAt
-
-  if ((ONLINE_STATUSES as readonly string[]).includes(status) || paymentProcessing) {
-    const sites = await restoreSites(userId)
-    if (user.paymentFailedAt && !paymentProcessing) {
-      await db.update(users).set({ paymentFailedAt: null }).where(eq(users.id, userId))
-    }
-    return sites > 0 ? { action: 'restored', sites } : { action: 'unchanged' }
-  }
-
-  if (isInArrears(status, user.paymentFailedAt)) {
+  if (shouldBeOffline(user, now)) {
     const sites = await suspendSites(userId)
     return sites > 0 ? { action: 'suspended', sites } : { action: 'unchanged' }
   }
 
-  return { action: 'unchanged' }
+  const status = user.subscriptionStatus ?? ''
+  // active/trialing, a SEPA payment still processing (past_due without a
+  // recorded failure) or an arrears episode inside its grace → online
+  const mayBeOnline = (ONLINE_STATUSES as readonly string[]).includes(status) || status === 'past_due'
+  if (!mayBeOnline) return { action: 'unchanged' }
+
+  const sites = await restoreSites(userId)
+  return sites > 0 ? { action: 'restored', sites } : { action: 'unchanged' }
 }
 
 /**
@@ -222,36 +213,39 @@ export async function reconcileSiteAccess(userId: string): Promise<ReconcileResu
 export async function reconcileAllSiteAccess(): Promise<{ restored: number; suspended: number; errors: number }> {
   const stats = { restored: 0, suspended: 0, errors: 0 }
 
-  // Paying users with billing-suspended sites
-  const shouldBeOnline = await db
+  // Candidates with billing-suspended sites (may need to come back online)
+  const suspendedCandidates = await db
     .selectDistinct({ userId: userSites.userId })
     .from(userSites)
     .innerJoin(users, eq(users.id, userSites.userId))
     .where(and(
-      or(
-        inArray(users.subscriptionStatus, [...ONLINE_STATUSES]),
-        and(eq(users.subscriptionStatus, 'past_due'), isNull(users.paymentFailedAt)),
-      ),
+      inArray(users.subscriptionStatus, [...ONLINE_STATUSES, 'past_due']),
       isNull(users.deactivatedAt),
       eq(userSites.status, 'deactivated'),
       isNull(userSites.scheduledDeletionAt),
     ))
 
-  // Users in arrears with live sites
-  const shouldBeOffline = await db
+  // Candidates with live sites and an open arrears episode (may need to go
+  // offline — grace end and hard deadline are time-based, so the hourly run
+  // is what actually flips them)
+  const arrearsCandidates = await db
     .selectDistinct({ userId: userSites.userId })
     .from(userSites)
     .innerJoin(users, eq(users.id, userSites.userId))
     .where(and(
-      or(
-        eq(users.subscriptionStatus, 'unpaid'),
-        and(eq(users.subscriptionStatus, 'past_due'), isNotNull(users.paymentFailedAt)),
-      ),
+      or(eq(users.subscriptionStatus, 'unpaid'), isNotNull(users.paymentFailedAt)),
       isNull(users.deactivatedAt),
       eq(userSites.status, 'published'),
     ))
 
-  for (const { userId } of [...shouldBeOnline, ...shouldBeOffline]) {
+  const seen = new Set<string>()
+  const candidates = [...suspendedCandidates, ...arrearsCandidates].filter(({ userId }) => {
+    if (seen.has(userId)) return false
+    seen.add(userId)
+    return true
+  })
+
+  for (const { userId } of candidates) {
     try {
       const r = await reconcileSiteAccess(userId)
       if (r.action === 'restored') stats.restored += r.sites

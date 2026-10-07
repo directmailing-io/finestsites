@@ -1112,6 +1112,11 @@ export default function AdminUserDetailPage({ params }: { params: Promise<{ id: 
                   subscription_deleted: { dot: '#DC2626', bg: '#FEF2F2' },
                   payment_failed: { dot: '#DC2626', bg: '#FEF2F2' },
                   payment_succeeded: { dot: '#16A34A', bg: '#F0FDF4' },
+                  payment_fallback: { dot: '#2563EB', bg: '#EFF6FF' },
+                  payment_retry_processing: { dot: '#D97706', bg: '#FFFBEB' },
+                  invoice_replaced: { dot: '#D97706', bg: '#FFFBEB' },
+                  invoice_forgiven: { dot: '#16A34A', bg: '#F0FDF4' },
+                  upcoming_debit_notice: { dot: '#9CA3AF', bg: '#F9FAFB' },
                   account_deactivated: { dot: '#DC2626', bg: '#FEF2F2' },
                 }
                 const style = STYLE[ev.eventType] ?? { dot: '#9CA3AF', bg: '#F9FAFB' }
@@ -1124,7 +1129,12 @@ export default function AdminUserDetailPage({ params }: { params: Promise<{ id: 
                   subscription_deleted: 'Abo beendet',
                   payment_failed: 'Zahlung fehlgeschlagen',
                   payment_succeeded: 'Zahlung erfolgreich',
-                  account_deactivated: 'Konto deaktiviert',
+                  payment_fallback: 'Ersatz-Zahlungsmethode genutzt',
+                  payment_retry_processing: 'Neuer Zahlungsversuch läuft',
+                  invoice_replaced: 'Ersatzrechnung erstellt',
+                  invoice_forgiven: 'Rechnung erlassen',
+                  upcoming_debit_notice: 'Abbuchung angekündigt',
+                  account_deactivated: 'Konto pausiert',
                 }
                 const label = LABEL[ev.eventType] ?? ev.eventType
 

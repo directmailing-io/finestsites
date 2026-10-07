@@ -1,4 +1,5 @@
 'use client'
+import { PaymentMethodsCard } from '@/components/dashboard/PaymentMethodsCard'
 
 import { useState, useEffect, Suspense, useRef } from 'react'
 import { useSearchParams } from 'next/navigation'
@@ -130,6 +131,16 @@ const FAQ = [
 
 // ── Interfaces ───────────────────────────────────────────────────────────────
 
+interface RecoveryInfo {
+  failed_at: string
+  grace_until: string | null
+  hard_deadline: string
+  sites_offline: boolean
+  retry_processing: boolean
+  pay_url: string | null
+  amount_cents: number
+}
+
 interface SubscriptionInfo {
   status: string
   current_period_end: number
@@ -139,6 +150,7 @@ interface SubscriptionInfo {
   billing_interval: string | null
   discount_percent: number | null
   discount_name: string | null
+  recovery: RecoveryInfo | null
 }
 
 interface UserProfile {
@@ -185,6 +197,25 @@ interface UpgradePreview {
   renewal_date: number | null
   interval: 'monthly' | 'yearly'
   plan: string
+}
+
+function fmtDate(iso: string | null): string {
+  if (!iso) return ''
+  return new Date(iso).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' })
+}
+
+function recoveryHeadline(r: RecoveryInfo | null): string {
+  if (!r) return 'Zahlung fehlgeschlagen.'
+  if (r.sites_offline) return 'Zahlung fehlgeschlagen. Deine Seiten sind offline.'
+  if (r.retry_processing) return 'Dein neuer Zahlungsversuch wird verarbeitet.'
+  return `Zahlung fehlgeschlagen. Deine Seiten bleiben bis ${fmtDate(r.grace_until)} online.`
+}
+
+function recoveryBody(r: RecoveryInfo | null): string {
+  if (!r) return 'Aktualisiere deine Zahlungsmethode. Sobald die Zahlung klappt, sind deine Seiten automatisch wieder live.'
+  if (r.sites_offline) return `Sobald die Zahlung da ist, gehen deine Seiten automatisch wieder online. Bleibt sie bis ${fmtDate(r.hard_deadline)} aus, pausieren wir dein Konto.`
+  if (r.retry_processing) return 'Per SEPA dauert die Bestätigung ein bis zwei Wochen. Deine Seiten bleiben so lange online. Mit Karte wäre es sofort erledigt.'
+  return 'Mit Karte ist die Zahlung in Sekunden bestätigt. Oder hinterleg eine Karte als Ersatz, dann holen wir die Zahlung automatisch darüber nach.'
 }
 
 function fmtCents(cents: number) {
@@ -569,24 +600,39 @@ function SettingsContent() {
               </svg>
             </div>
             <div>
-              <p className="text-sm font-bold" style={{ color: '#991B1B' }}>Zahlung fehlgeschlagen. Deine Seiten sind offline.</p>
+              <p className="text-sm font-bold" style={{ color: '#991B1B' }}>
+                {recoveryHeadline(subscription.recovery)}
+              </p>
               <p className="text-sm mt-0.5" style={{ color: '#DC2626' }}>
-                Aktualisiere deine Zahlungsmethode. Sobald die Zahlung klappt, sind deine Seiten automatisch wieder live.
+                {recoveryBody(subscription.recovery)}
               </p>
             </div>
           </div>
-          <button
-            onClick={handlePortal}
-            disabled={portalLoading}
-            className="flex-shrink-0 flex items-center gap-2 px-5 py-2.5 text-sm font-semibold rounded-xl transition-opacity hover:opacity-90 disabled:opacity-70"
-            style={{ background: '#DC2626', color: '#fff', whiteSpace: 'nowrap' }}
-          >
-            {portalLoading
-              ? <Spinner />
-              : <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
-            }
-            Jetzt Zahlung klären
-          </button>
+          {subscription.recovery?.pay_url ? (
+            <a
+              href={subscription.recovery.pay_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex-shrink-0 flex items-center gap-2 px-5 py-2.5 text-sm font-semibold rounded-xl transition-opacity hover:opacity-90"
+              style={{ background: '#DC2626', color: '#fff', whiteSpace: 'nowrap' }}
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+              Jetzt bezahlen
+            </a>
+          ) : (
+            <button
+              onClick={handlePortal}
+              disabled={portalLoading}
+              className="flex-shrink-0 flex items-center gap-2 px-5 py-2.5 text-sm font-semibold rounded-xl transition-opacity hover:opacity-90 disabled:opacity-70"
+              style={{ background: '#DC2626', color: '#fff', whiteSpace: 'nowrap' }}
+            >
+              {portalLoading
+                ? <Spinner />
+                : <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+              }
+              Zahlungsmethode ändern
+            </button>
+          )}
         </div>
       )}
 
@@ -907,6 +953,8 @@ function SettingsContent() {
             </button>
           )}
 
+          {hasSubscription && <PaymentMethodsCard />}
+
           {/* ── Plan wählen ── */}
           <TabSection title="Plan wählen" subtitle="Upgrade jederzeit. Wir verrechnen anteilig.">
             <>
@@ -1112,7 +1160,7 @@ function SettingsContent() {
 
                 {subscription.status === 'past_due' ? (
                   <p className="text-sm" style={{ color: '#DC2626' }}>
-                    Deine Seiten sind offline. Klicke oben auf &quot;Zahlung verwalten&quot;, um deine Zahlungsmethode zu aktualisieren.
+                    {recoveryBody(subscription.recovery)}
                   </p>
                 ) : subscription.cancel_at_period_end ? (
                   <div>
