@@ -18,7 +18,7 @@ Alles einspaltig (600 px), ruhig, jede Einheit eine weiße Karte mit Rundung. Ke
    - Werkzeug-Karte: „Persönliche Beratung anfragen“ (Akzent, volle Breite), „Profil als Story speichern“, „Nochmal starten“. Keine Sticky-Leiste mehr.
    - Teilen: Web Share API mit Story-PNG + Text + URL (Handy); ohne Share-API wird der Link kopiert (Toast). Story-PNG 1080×1920 (Canvas, ohne Profilbild, damit das Canvas nicht durch Cross-Origin „tainted“ wird); unten die Zeile „Mach deinen eigenen Check auf {host}“ mit der Seitenadresse ohne Protokoll (lokal/ohne Host: „Vitalcheck von {Name}“).
 4. **Formular** und **Danke** als eigene Karten, darunter „Zurück zum Profil“.
-5. **Footer** als dunkler Streifen über die volle Breite (wie bei den anderen Templates): Profilbild + Name + PM-Kennzeichnung, zwei Icon-Zeilen (Daten bleiben bei dir · Selbsteinschätzung, keine Diagnose), Links (E-Mail, WhatsApp, Impressum, Datenschutz), unten Copyright und „Made with ♥ von FinestSites“ mit Logo (`assets/fs-logo.svg`, invertiert).
+5. **Footer** als dunkler Streifen über die volle Breite (wie bei den anderen Templates): Profilbild + Name + PM-Kennzeichnung, zwei Icon-Zeilen (Daten bleiben bei dir · Selbsteinschätzung, keine Diagnose), unten links Copyright · Impressum · Datenschutz, rechts „Made with ♥ von FinestSites“ mit Logo (E-Mail und WhatsApp stehen nur im Profil) (`assets/fs-logo.svg`, invertiert).
 
 ## Rechtlicher Rahmen der Seiten-Links (Entscheidung 07.10.2026)
 
@@ -41,7 +41,7 @@ Lösung im Template:
 
 ## Schema (`placeholders-schema.json`, Version 2)
 
-Profil: `vorname`, `nachname`, `profilbild`, `geschlecht`, `intro` (textarea, 320 Zeichen, leer = Standardtext). Social Media: `instagram`, `tiktok`, `facebook`, `youtube`, `linkedin` (URL oder Benutzername, Engine normalisiert), `whatsapp_nummer`. Kontakt: `email_benachrichtigung`. Meine Seiten: `links` (loop, max 6, `titel` + `url` mit `site_picker` + `site_picker_only`). Design: `farbthema` mit sechs Themen `gruen` (Standard), `orange`, `rot`, `blau`, `violett`, `nacht` (dunkel); jedes Thema setzt Akzent, Akzent-Soft und einen leicht getönten Seitenhintergrund. Check anpassen: `frage_motive`, `frage_investition`. Entfernt: `startseite`.
+Profil: `vorname`, `nachname`, `profilbild`, `geschlecht`, `intro` (textarea, 320 Zeichen, leer = Standardtext). Social Media: `instagram`, `tiktok`, `facebook`, `youtube`, `linkedin` (URL oder Benutzername, Engine normalisiert), `whatsapp_nummer`. Kontakt: `email_benachrichtigung`. Meine Seiten: `links` (loop, max 6, `titel` + `url` mit `site_picker` + `site_picker_only`). Design: `farbthema` mit sechs Themen `gruen` (Standard), `orange`, `rot`, `blau`, `violett`, `nacht` (dunkel). Jedes Thema setzt Akzent, Akzent-Soft und einen **Hintergrund-Verlauf** (`--wash-a/-b/-c`): zwei weiche Lichtflecken links oben und rechts plus ein vertikaler Verlauf, der nach 760 px in die ruhige Seitenfarbe ausläuft (`background-size` begrenzt, kein Blob, keine harte Kante). Der Check und die Auswertung stehen damit immer auf neutralem Grund, die Farbe sitzt hinter dem Profil. Check anpassen: `frage_motive`, `frage_investition`. Entfernt: `startseite`.
 
 ## Lokale Vorschau
 

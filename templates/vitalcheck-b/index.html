@@ -34,13 +34,13 @@
   --k0: color-mix(in srgb, var(--accent) 22%, var(--ink-3)); --k1: color-mix(in srgb, var(--accent) 45%, var(--ink-3)); --k2: color-mix(in srgb, var(--accent) 65%, var(--ink-3)); --k3: color-mix(in srgb, var(--accent) 85%, var(--ink-3)); --k4: var(--accent);
 }
 /* Sechs Farbthemen: Akzent + weich getönter Hintergrund, damit das Thema sofort sichtbar ist */
-html[data-theme="gruen"], html:not([data-theme]), html[data-theme=""] { --accent: #1F9D6B; --accent-dark: #177A53; --accent-soft: #DCF1E6; --bg: #F3F7F4; --pill: #E6EEE9; }
-html[data-theme="orange"]  { --accent: #E8842A; --accent-dark: #C46A1B; --accent-soft: #FBE8D7; --bg: #FAF5EF; --pill: #F1E7DC; }
-html[data-theme="rot"]     { --accent: #D9433B; --accent-dark: #B3342E; --accent-soft: #FAE0DE; --bg: #FAF3F2; --pill: #F2E4E2; }
-html[data-theme="blau"]    { --accent: #3572DF; --accent-dark: #2858B3; --accent-soft: #DFE9FB; --bg: #F2F5FA; --pill: #E4EAF3; }
-html[data-theme="violett"] { --accent: #7357D9; --accent-dark: #5A43B2; --accent-soft: #EAE5FA; --bg: #F5F3FA; --pill: #E9E6F2; }
+html[data-theme="gruen"], html:not([data-theme]), html[data-theme=""] { --accent: #1F9D6B; --accent-dark: #177A53; --accent-soft: #DCF1E6; --bg: #F4F6F3; --pill: #E7ECE8; --wash-a: #BFE6D2; --wash-b: #DDF1E6; --wash-c: #F1F7F3; }
+html[data-theme="orange"]  { --accent: #E8842A; --accent-dark: #C46A1B; --accent-soft: #FBE8D7; --bg: #F8F5F1; --pill: #EFE8E0; --wash-a: #F8D4B3; --wash-b: #FBE6D2; --wash-c: #FAF3EC; }
+html[data-theme="rot"]     { --accent: #D9433B; --accent-dark: #B3342E; --accent-soft: #FAE0DE; --bg: #F8F4F3; --pill: #F0E6E4; --wash-a: #F6C9C5; --wash-b: #FADFDC; --wash-c: #FAF1F0; }
+html[data-theme="blau"]    { --accent: #3572DF; --accent-dark: #2858B3; --accent-soft: #DFE9FB; --bg: #F3F5F9; --pill: #E5E9F1; --wash-a: #C5D8F8; --wash-b: #DEE8FA; --wash-c: #F0F4FB; }
+html[data-theme="violett"] { --accent: #7357D9; --accent-dark: #5A43B2; --accent-soft: #EAE5FA; --bg: #F5F4F9; --pill: #E9E7F1; --wash-a: #D3C9F5; --wash-b: #E6E0F9; --wash-c: #F3F1FA; }
 html { --paper: #FFFFFF; --ink: #1B1B19; --ink-2: #5A5B57; --ink-3: #8E8F8A; --line: #E7E6E0; --line-2: #D6D5CE; --on-accent: #FFFFFF; --foot: #1B1B19; --foot-ink: #E9E8E3; --foot-ink-2: #A9A9A3; --foot-line: rgba(255,255,255,0.12); }
-html[data-theme="nacht"] { --bg: #121413; --paper: #1B1E1C; --pill: #232725; --ink: #F2F3F0; --ink-2: #B7BAB4; --ink-3: #7B7E79; --line: #2A2E2B; --line-2: #3A3F3B; --accent: #3FCB9E; --accent-dark: #2FB08A; --accent-soft: #18342A; --on-accent: #121413; --s0-soft: #3A2320; --s1-soft: #3A2E1C; --s2-soft: #262A2C; --s3-soft: #1C2A3D; --s4-soft: #1B3328; --foot: #0C0E0D; --foot-ink: #E9E8E3; --foot-ink-2: #8F928C; --foot-line: rgba(255,255,255,0.10); }
+html[data-theme="nacht"] { --bg: #121413; --paper: #1B1E1C; --pill: #232725; --ink: #F2F3F0; --ink-2: #B7BAB4; --ink-3: #7B7E79; --line: #2A2E2B; --line-2: #3A3F3B; --accent: #3FCB9E; --accent-dark: #2FB08A; --accent-soft: #18342A; --on-accent: #121413; --s0-soft: #3A2320; --s1-soft: #3A2E1C; --s2-soft: #262A2C; --s3-soft: #1C2A3D; --s4-soft: #1B3328; --foot: #0C0E0D; --foot-ink: #E9E8E3; --foot-ink-2: #8F928C; --foot-line: rgba(255,255,255,0.10); --wash-a: #1E3A30; --wash-b: #16221D; --wash-c: #121413; }
 
 html[data-lang="en"] .l-de, html[data-lang="de"] .l-en { display: none !important; }
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -55,17 +55,29 @@ h1, h2, h3 { font-weight: 500; letter-spacing: -0.015em; line-height: 1.2; }
 .num { font-variant-numeric: tabular-nums; }
 
 
+/* Hintergrund: Verlauf in der Themenfarbe oben hinter dem Profil, der zur Check-Karte hin ruhig ausläuft.
+   Zwei weiche Lichtflecken (links oben, rechts) geben Tiefe; keine Blobs, keine harten Kanten. */
+body { background-color: var(--bg); background-image:
+  radial-gradient(900px 520px at 18% -120px, var(--wash-a) 0%, transparent 70%),
+  radial-gradient(760px 480px at 88% 60px, color-mix(in srgb, var(--wash-a) 70%, var(--wash-b)) 0%, transparent 68%),
+  linear-gradient(180deg, var(--wash-b) 0px, var(--wash-c) 520px, var(--bg) 760px);
+  background-repeat: no-repeat; background-size: 100% 760px, 100% 760px, 100% 760px; }
+html[data-theme="nacht"] body { background-image:
+  radial-gradient(900px 520px at 18% -120px, var(--wash-a) 0%, transparent 70%),
+  radial-gradient(760px 480px at 88% 60px, color-mix(in srgb, var(--accent) 22%, var(--bg)) 0%, transparent 68%),
+  linear-gradient(180deg, var(--wash-b) 0px, var(--wash-c) 520px, var(--bg) 760px); }
+.lang { backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
 /* Oberste Leiste: nur der Sprachschalter, rechts oben, nicht sticky */
 .top { position: absolute; top: 0; left: 0; right: 0; z-index: 20; display: flex; justify-content: flex-end; padding: 12px 16px; pointer-events: none; }
 .top .lang { pointer-events: auto; }
-.lang { display: inline-flex; gap: 2px; padding: 3px; border-radius: 9999px; background: var(--pill); flex-shrink: 0; }
+.lang { display: inline-flex; gap: 2px; padding: 3px; border-radius: 9999px; background: color-mix(in srgb, var(--paper) 55%, transparent); flex-shrink: 0; }
 .lang button { display: inline-flex; align-items: center; gap: 5px; padding: 4px 9px; border-radius: 9999px; font-size: 11.5px; font-weight: 600; color: var(--ink-3); }
 .lang button svg { width: 14px; height: 14px; border-radius: 50%; }
 html[data-lang="de"] .lang [data-lang="de"], html[data-lang="en"] .lang [data-lang="en"] { background: var(--paper); color: var(--ink); box-shadow: 0 1px 2px rgba(0,0,0,0.08); }
 
 /* Profil (wie die Linkseite): Bild, Name, Rolle, Social, kurzer Text */
 .profile { width: 100%; max-width: var(--col); margin: 0 auto; padding: 56px 18px 0; display: flex; flex-direction: column; align-items: center; text-align: center; }
-.avatar { width: 112px; height: 112px; border-radius: 50%; object-fit: cover; box-shadow: 0 0 0 4px var(--paper), 0 0 0 7px var(--accent-soft), 0 18px 40px -22px rgba(0,0,0,0.35); background: var(--paper); }
+.avatar { width: 112px; height: 112px; border-radius: 50%; object-fit: cover; box-shadow: 0 0 0 4px var(--paper), 0 0 0 6px color-mix(in srgb, var(--accent) 35%, transparent), 0 22px 44px -22px color-mix(in srgb, var(--accent) 55%, #000); background: var(--paper); }
 .avatar-fb { width: 112px; height: 112px; border-radius: 50%; background: var(--accent-soft); color: var(--accent-dark); display: flex; align-items: center; justify-content: center; font-size: 42px; font-weight: 600; box-shadow: 0 0 0 4px var(--paper), 0 0 0 7px var(--accent-soft); }
 html[data-theme="nacht"] .avatar-fb { color: var(--accent); }
 .pname { margin-top: 18px; font-size: 27px; font-weight: 600; letter-spacing: -0.025em; line-height: 1.15; }
@@ -124,8 +136,8 @@ footer.site .row-i { display: grid; grid-template-columns: 26px 1fr; gap: 12px; 
 footer.site .row-i b { color: var(--foot-ink); font-weight: 600; }
 footer.site .row-i i { width: 26px; height: 26px; border-radius: 8px; background: rgba(255,255,255,0.08); color: var(--foot-ink); display: inline-flex; align-items: center; justify-content: center; }
 footer.site .row-i i svg { width: 14px; height: 14px; }
-footer.site .links { display: flex; flex-wrap: wrap; gap: 6px 18px; margin: 16px 0 0; padding-top: 16px; border-top: 1px solid var(--foot-line); font-size: 13.5px; }
-footer.site .links a { color: var(--foot-ink); font-weight: 500; }
+footer.site .legal { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 4px 14px; }
+footer.site .legal a { color: var(--foot-ink); font-weight: 500; }
 footer.site .bottom { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--foot-line); font-size: 12.5px; }
 footer.site .made { display: inline-flex; align-items: center; gap: 5px; }
 footer.site .fs-heart { color: var(--accent); }
@@ -461,14 +473,8 @@ html[data-theme="nacht"] .links .made img { filter: invert(1); }
     <div class="who"><img src="{{profilbild}}" alt=""><div><b>{{vorname}} {{nachname}}</b><small><span class="l-de">{{#if geschlecht=weiblich}}Unabhängige Vertriebspartnerin{{/if}}{{#unless geschlecht=weiblich}}Unabhängiger Vertriebspartner{{/unless}} der PM-International (FitLine®). Keine offizielle Website der PM-International AG.</span><span class="l-en">Independent distributor of PM-International (FitLine®). Not an official website of PM-International AG.</span></small></div></div>
     <div class="row-i"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></i><div><span class="l-de"><b>Deine Daten bleiben bei dir.</b> Der Check wird auf deinem Gerät ausgewertet. Nichts wird gespeichert oder gesendet, außer du schickst mir dein Ergebnis selbst. Dann nutze ich es nur für unser Gespräch, nie für Newsletter, nie für Dritte.</span><span class="l-en"><b>Your data stays with you.</b> The check is evaluated on your device. Nothing is stored or sent unless you send me your result yourself. Then I use it only for our conversation, never for newsletters, never for third parties.</span></div></div>
     <div class="row-i"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1M9 11h6M9 15h4"/></svg></i><div><span class="l-de"><b>Eine Selbsteinschätzung, keine Diagnose.</b> Der Check fragt nach Gewohnheiten und gibt allgemeine Alltagstipps. Er ersetzt keine ärztliche Beratung, empfiehlt keine Behandlung und kein Produkt. Für Personen ab 18.</span><span class="l-en"><b>A self-assessment, not a diagnosis.</b> The check asks about habits and gives general everyday tips. It does not replace medical advice and recommends no treatment and no product. For adults aged 18 and over.</span></div></div>
-    <div class="links">
-      <a href="mailto:{{email_benachrichtigung}}">{{email_benachrichtigung}}</a>
-      {{#if whatsapp_nummer}}<a href="https://wa.me/{{whatsapp_nummer}}" target="_blank" rel="noopener">WhatsApp</a>{{/if}}
-      <a href="/impressum"><span class="l-de">Impressum</span><span class="l-en">Imprint</span></a>
-      <a href="/datenschutz"><span class="l-de">Datenschutz</span><span class="l-en">Privacy</span></a>
-    </div>
     <div class="bottom">
-      <span>© 2026 {{vorname}} {{nachname}}</span>
+      <span class="legal">© 2026 {{vorname}} {{nachname}} <a href="/impressum"><span class="l-de">Impressum</span><span class="l-en">Imprint</span></a> <a href="/datenschutz"><span class="l-de">Datenschutz</span><span class="l-en">Privacy</span></a></span>
       <span class="made">Made with <span class="fs-heart">♥</span> <span class="l-de">von</span><span class="l-en">by</span> <a href="https://finestsites.io" target="_blank" rel="noopener" class="fs-brand" aria-label="FinestSites"><img loading="lazy" decoding="async" src="assets/fs-logo.svg" alt="FinestSites" class="fs-logo"></a></span>
     </div>
   </div>
