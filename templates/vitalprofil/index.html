@@ -251,9 +251,10 @@ html[data-theme="nacht"] .btn-primary { background: var(--accent); color: var(--
 .res .hero { text-align: center; padding: 8px 0 26px; }
 /* Typ-Karte (Held der Auswertung) */
 .typecard { --tc: var(--accent); position: relative; overflow: hidden; border-radius: 28px; padding: clamp(28px, 5vw, 44px) clamp(22px, 4vw, 40px) clamp(24px, 4vw, 34px); color: #fff; background: linear-gradient(160deg, color-mix(in srgb, var(--tc) 88%, #fff) 0%, var(--tc) 45%, color-mix(in srgb, var(--tc) 70%, #000) 100%); text-align: center; box-shadow: 0 30px 70px -40px color-mix(in srgb, var(--tc) 80%, #000); }
-.typecard::before { content: ''; position: absolute; width: 520px; height: 520px; right: -200px; top: -220px; border-radius: 50%; background: rgba(255,255,255,0.12); }
-.typecard::after { content: ''; position: absolute; width: 380px; height: 380px; left: -160px; bottom: -220px; border-radius: 50%; background: rgba(0,0,0,0.10); }
-.typecard > * { position: relative; }
+.typecard { isolation: isolate; }
+.typecard::before { content: ''; position: absolute; z-index: 0; pointer-events: none; width: 520px; height: 520px; right: -200px; top: -220px; border-radius: 50%; background: rgba(255,255,255,0.12); }
+.typecard::after { content: ''; position: absolute; z-index: 0; pointer-events: none; width: 380px; height: 380px; left: -160px; bottom: -220px; border-radius: 50%; background: rgba(0,0,0,0.10); }
+.typecard > * { position: relative; z-index: 1; }
 .typecard .lbl { font-size: 14px; font-weight: 500; opacity: 0.85; margin-bottom: 16px; }
 .typecard .badge { width: 148px; height: 148px; margin: 0 auto 18px; filter: drop-shadow(0 18px 30px rgba(0,0,0,0.25)); }
 .typecard h1 { font-size: clamp(32px, 6vw, 46px); font-weight: 600; letter-spacing: -0.025em; line-height: 1.1; }
@@ -900,25 +901,34 @@ var VC = (function(){
   function wrapText(x, text, X, Y, maxW, lh, maxLines){ var words = text.split(' '), line = '', lines = 0; for (var i = 0; i < words.length; i++) { var test = line ? line + ' ' + words[i] : words[i]; if (x.measureText(test).width > maxW && line) { x.fillText(line, X, Y); Y += lh; line = words[i]; lines++; if (maxLines && lines >= maxLines - 1) { line += '…'; break; } } else line = test; } x.fillText(line, X, Y); return Y + lh; }
   function hexToRgb(h){ h = h.replace('#',''); return [parseInt(h.substr(0,2),16), parseInt(h.substr(2,2),16), parseInt(h.substr(4,2),16)]; }
   function mix(h, k, dark){ var c = hexToRgb(h); return 'rgb(' + c.map(function(v){ return Math.round(dark ? v * (1 - k) : v + (255 - v) * k); }).join(',') + ')'; }
+  /* Story 1080×1920. Instagram blendet oben ~250 px (Profilzeile) und unten ~250 px (Antwortleiste) ab,
+     deshalb liegt alles Wichtige zwischen 300 und 1650. Unten eine weiße CTA-Karte mit der Adresse der Seite. */
   function drawStory(cb){
-    var R = evalResult(), bestD = CFG.dims[R.best], worstD = CFG.dims[R.worst], TY = typeOf(R), ty = TY.ty, o = CFG.owner, col = TY.color;
+    var R = evalResult(), worstD = CFG.dims[R.worst], bestD = CFG.dims[R.best], TY = typeOf(R), ty = TY.ty, col = TY.color;
     var c = document.createElement('canvas'), W = 1080, H = 1920; c.width = W; c.height = H; var x = c.getContext('2d');
-    var g = x.createLinearGradient(0, 0, 0, H); g.addColorStop(0, mix(col, 0.18, false)); g.addColorStop(0.45, col); g.addColorStop(1, mix(col, 0.45, true)); x.fillStyle = g; x.fillRect(0, 0, W, H);
-    x.fillStyle = 'rgba(255,255,255,0.10)'; x.beginPath(); x.arc(980, 120, 420, 0, Math.PI*2); x.fill();
-    x.fillStyle = 'rgba(0,0,0,0.10)'; x.beginPath(); x.arc(80, 1760, 360, 0, Math.PI*2); x.fill();
-    x.textAlign = 'center'; x.fillStyle = 'rgba(255,255,255,0.85)'; x.font = '600 30px Geist, sans-serif'; x.letterSpacing = '6px'; x.fillText('VITALPROFIL', W/2, 150); x.letterSpacing = '0px';
-    x.save(); x.shadowColor = 'rgba(0,0,0,0.25)'; x.shadowBlur = 40; x.shadowOffsetY = 20; x.fillStyle = '#fff'; x.beginPath(); x.arc(W/2, 430, 150, 0, Math.PI*2); x.fill(); x.restore();
-    x.strokeStyle = col; x.lineWidth = 9; x.lineJoin = 'round'; x.beginPath(); for (var i = 0; i < 5; i++) { var a = -Math.PI/2 + i * 2*Math.PI/5, px = W/2 + 92*Math.cos(a), py = 430 + 92*Math.sin(a); if (i === 0) x.moveTo(px, py); else x.lineTo(px, py); } x.closePath(); x.stroke(); x.fillStyle = col; x.beginPath(); x.arc(W/2, 430, 22, 0, Math.PI*2); x.fill();
-    x.fillStyle = 'rgba(255,255,255,0.85)'; x.font = '500 34px Geist, sans-serif'; x.fillText(en() ? 'My vitality type' : 'Mein Vital-Typ', W/2, 660);
-    x.fillStyle = '#fff'; x.font = '600 96px Geist, sans-serif'; x.fillText(t(ty.name), W/2, 770);
-    x.fillStyle = 'rgba(255,255,255,0.92)'; x.font = '400 36px Geist, sans-serif'; var yy = wrapText(x, TY.desc, W/2, 850, 860, 50, 3);
-    var pillTxt = (en() ? 'Vitality level: ' : 'Vitallevel: ') + t(R.lv.name) + ' · ' + R.pct + ' %'; x.font = '600 34px Geist, sans-serif'; var pw = x.measureText(pillTxt).width + 80; x.fillStyle = 'rgba(255,255,255,0.2)'; roundRect(x, W/2 - pw/2, yy + 20, pw, 74, 37); x.fill(); x.fillStyle = '#fff'; x.fillText(pillTxt, W/2, yy + 70);
-    var by = yy + 190; x.textAlign = 'left';
-    CFG.dims.forEach(function(d, i){ var p = R.sc[i] / 16; x.fillStyle = 'rgba(255,255,255,0.95)'; x.font = '500 32px Geist, sans-serif'; x.fillText(t(d.name), 110, by); x.textAlign = 'right'; x.font = '600 32px Geist, sans-serif'; x.fillText(Math.round(p*100) + ' %', W - 110, by); x.textAlign = 'left'; x.fillStyle = 'rgba(255,255,255,0.22)'; roundRect(x, 110, by + 22, W - 220, 16, 8); x.fill(); x.fillStyle = '#fff'; roundRect(x, 110, by + 22, Math.max(16, (W - 220) * p), 16, 8); x.fill(); by += 104; });
-    x.textAlign = 'center'; x.fillStyle = 'rgba(255,255,255,0.8)'; x.font = '500 28px Geist, sans-serif'; x.fillText((en() ? 'Biggest lever: ' : 'Größter Hebel: ') + t(worstD.name), W/2, by + 30);
+    var g = x.createLinearGradient(0, 0, 0, H); g.addColorStop(0, mix(col, 0.18, false)); g.addColorStop(0.5, col); g.addColorStop(1, mix(col, 0.5, true)); x.fillStyle = g; x.fillRect(0, 0, W, H);
+    x.fillStyle = 'rgba(255,255,255,0.10)'; x.beginPath(); x.arc(960, 220, 380, 0, Math.PI*2); x.fill();
+    x.fillStyle = 'rgba(0,0,0,0.10)'; x.beginPath(); x.arc(120, 1500, 320, 0, Math.PI*2); x.fill();
+    x.textAlign = 'center';
+    /* Kopf */
+    x.fillStyle = 'rgba(255,255,255,0.85)'; x.font = '600 28px Geist, sans-serif'; x.letterSpacing = '6px'; x.fillText(en() ? 'MY VITAL PROFILE' : 'MEIN VITALPROFIL', W/2, 318); x.letterSpacing = '0px';
+    /* Abzeichen */
+    x.save(); x.shadowColor = 'rgba(0,0,0,0.25)'; x.shadowBlur = 40; x.shadowOffsetY = 18; x.fillStyle = '#fff'; x.beginPath(); x.arc(W/2, 520, 132, 0, Math.PI*2); x.fill(); x.restore();
+    x.strokeStyle = col; x.lineWidth = 9; x.lineJoin = 'round'; x.beginPath(); for (var i = 0; i < 5; i++) { var a = -Math.PI/2 + i * 2*Math.PI/5, px = W/2 + 80*Math.cos(a), py = 520 + 80*Math.sin(a); if (i === 0) x.moveTo(px, py); else x.lineTo(px, py); } x.closePath(); x.stroke(); x.fillStyle = col; x.beginPath(); x.arc(W/2, 520, 20, 0, Math.PI*2); x.fill();
+    /* Typ */
+    x.fillStyle = 'rgba(255,255,255,0.85)'; x.font = '500 32px Geist, sans-serif'; x.fillText(en() ? 'I am' : 'Ich bin', W/2, 722);
+    x.fillStyle = '#fff'; x.font = '600 92px Geist, sans-serif'; var name = t(ty.name); if (x.measureText(name).width > 960) x.font = '600 76px Geist, sans-serif'; x.fillText(name, W/2, 820);
+    var pillTxt = (en() ? 'Vitality level: ' : 'Vitallevel: ') + t(R.lv.name) + ' · ' + R.pct + ' %'; x.font = '600 32px Geist, sans-serif'; var pw = x.measureText(pillTxt).width + 72; x.fillStyle = 'rgba(255,255,255,0.22)'; roundRect(x, W/2 - pw/2, 862, pw, 68, 34); x.fill(); x.fillStyle = '#fff'; x.fillText(pillTxt, W/2, 908);
+    /* Fünf Bereiche, Balken in Bereichsfarbe auf weißer Spur */
+    var by = 975; x.textAlign = 'left';
+    CFG.dims.forEach(function(d, i){ var p = R.sc[i] / 16; x.fillStyle = 'rgba(255,255,255,0.95)'; x.font = '500 30px Geist, sans-serif'; x.fillText(t(d.name), 110, by); x.textAlign = 'right'; x.font = '600 30px Geist, sans-serif'; x.fillText(Math.round(p*100) + ' %', W - 110, by); x.textAlign = 'left'; x.fillStyle = 'rgba(255,255,255,0.28)'; roundRect(x, 110, by + 18, W - 220, 18, 9); x.fill(); x.fillStyle = '#fff'; roundRect(x, 110, by + 18, Math.max(18, (W - 220) * p), 18, 9); x.fill(); x.fillStyle = d.color; roundRect(x, 110, by + 18, Math.max(18, (W - 220) * p), 18, 9); x.globalAlpha = 0.55; x.fill(); x.globalAlpha = 1; by += 70; });
+    x.textAlign = 'center';
+    /* CTA-Karte (liegt über der Instagram-Antwortleiste → bleibt sichtbar) */
     var host = (location.protocol.indexOf('http') === 0 && location.host) ? location.host : '';
-    x.fillStyle = 'rgba(255,255,255,0.92)'; x.font = '500 32px Geist, sans-serif';
-    wrapText(x, host ? (en() ? 'Create your own vital profile at ' + host : 'Erstell dein eigenes Vitalprofil auf ' + host) : ((en() ? 'Vital profile by ' : 'Vitalprofil von ') + ownerFull()), W/2, H - 150, 900, 44, 2);
+    var cy = 1345; x.save(); x.shadowColor = 'rgba(0,0,0,0.22)'; x.shadowBlur = 40; x.shadowOffsetY = 16; x.fillStyle = '#fff'; roundRect(x, 90, cy, W - 180, 300, 36); x.fill(); x.restore();
+    x.fillStyle = '#1B1B19'; x.font = '600 50px Geist, sans-serif'; x.fillText(en() ? 'Which vital type are you?' : 'Welcher Vital-Typ bist du?', W/2, cy + 92);
+    x.fillStyle = '#6B6B66'; x.font = '400 28px Geist, sans-serif'; x.fillText(en() ? '20 statements · 3 minutes · free' : '20 Aussagen · 3 Minuten · kostenlos', W/2, cy + 142);
+    var link = host || (en() ? 'Vital profile by ' : 'Vitalprofil von ') + ownerFull(); x.font = '600 36px Geist, sans-serif'; var lw = Math.min(W - 260, x.measureText(link).width + 90); x.fillStyle = col; roundRect(x, W/2 - lw/2, cy + 184, lw, 76, 38); x.fill(); x.fillStyle = '#fff'; if (x.measureText(link).width > lw - 40) x.font = '600 30px Geist, sans-serif'; x.fillText(link, W/2, cy + 234);
     cb(c);
   }
   /* Story vorab rendern, damit das Teilen auf dem Handy direkt in der Klick-Geste passiert (Safari-Anforderung) */
@@ -944,7 +954,7 @@ var VC = (function(){
   /* Teilen: Bild + Text über das System-Menü (Handy), sonst Link kopieren */
   var toastT = null;
   function toast(msg){ var el = document.getElementById('toast'); el.textContent = msg; el.classList.add('show'); clearTimeout(toastT); toastT = setTimeout(function(){ el.classList.remove('show'); }, 2200); }
-  function shareText(){ var R = evalResult(), ty = typeOf(R).ty; return en() ? 'I am ' + t(ty.name) + ' (' + R.pct + ' %). Find out your vitality type in 3 minutes:' : 'Ich bin ' + t(ty.name) + ' (' + R.pct + ' %). Finde in 3 Minuten deinen Vital-Typ heraus:'; }
+  function shareText(){ var R = evalResult(), ty = typeOf(R).ty; return en() ? 'I am ' + t(ty.name) + ' (' + R.pct + ' %). Which vital type are you? 20 statements, 3 minutes, free:' : 'Ich bin ' + t(ty.name) + ' (' + R.pct + ' %). Welcher Vital-Typ bist du? 20 Aussagen, 3 Minuten, kostenlos:'; }
   function pageUrl(){ return (location.protocol.indexOf('http') === 0) ? location.origin + location.pathname : ''; }
   function copyLink(){ var u = pageUrl(); if (!u) { toast(en() ? 'Link not available in preview' : 'Link in der Vorschau nicht verfügbar'); return; } var done = function(){ toast(en() ? 'Link copied' : 'Link kopiert'); }; if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(u).then(done, done); else done(); }
   function shareResult(btn){
@@ -1021,27 +1031,24 @@ var VC = (function(){
   }
   /* Alle Werte als Strings */
   function payload(name, email, phone, method){
-    var R = evalResult(), o = CFG.owner, ty = typeOf(R).ty, bestD = CFG.dims[R.best], worstD = CFG.dims[R.worst];
+    var R = evalResult(), o = CFG.owner, ty = typeOf(R).ty;
     var word = function(v){ var s = SCALE[v]; return s ? s.de : '–'; };
-    var methodLabel = { email: 'E-Mail', telefon: 'Telefon', whatsapp: 'WhatsApp' }[method] || method;
     var body = {
       _recipient: o.recipient, _honeypot: document.querySelector('#leadForm [name=_honeypot]').value,
-      name: name, email: email, telefon: phone, kontaktweg: methodLabel,
+      name: name, email: email, phone: phone, kontakt_weg: method,
       interesse: S.interests.map(function(id){ return labelOf(CFG.interests, id); }).join(', '),
       nachricht: document.getElementById('lf-msg').value.trim(),
-      vitaltyp: ty.name.de, vitallevel: R.lv.name.de + ' · ' + R.pct + ' %',
-      staerke: bestD.name.de + ' · ' + Math.round(R.sc[R.best] / 16 * 100) + ' %',
-      hebel: worstD.name.de + ' · ' + Math.round(R.sc[R.worst] / 16 * 100) + ' %',
+      vitaltyp: ty.name.de, vitallevel: R.lv.name.de + ' (' + R.pct + ' %)',
+      staerke: CFG.dims[R.best].name.de, hebel: CFG.dims[R.worst].name.de,
       wuensche: S.wishes.map(function(id){ return labelOf(CFG.wishes, id); }).join(', '),
       antriebsmotive: S.motives.map(function(id){ return labelOf(CFG.motives, id); }).join(', '),
-      budget_pro_tag: labelOf(CFG.invest, S.invest)
+      investition_pro_tag: labelOf(CFG.invest, S.invest),
+      sprache: en() ? 'EN' : 'DE',
+      dsgvo_einwilligung: 'ja, ' + new Date().toISOString().replace('T', ' ').substring(0, 16) + ' UTC'
     };
-    CFG.dims.forEach(function(d, di){ body['bereich_' + d.id] = R.sc[di] + '/16 · ' + Math.round(R.sc[di] / 16 * 100) + ' %\n' + d.q.map(function(q, qi){ var v = S.answers[di + ':' + qi]; return q.label.de + ': ' + (v === undefined ? '–' : word(v)); }).join('\n'); });
-    body.sprache = en() ? 'EN' : 'DE';
-    body.einwilligung = 'Ja, ' + new Date().toISOString().replace('T', ' ').substring(0, 16) + ' UTC';
+    CFG.dims.forEach(function(d, di){ body['score_' + d.id] = R.sc[di] + '/16'; body['antworten_' + d.id] = d.q.map(function(q, qi){ var v = S.answers[di + ':' + qi]; return q.label.de + ': ' + (v === undefined ? '–' : word(v)); }).join(' · '); });
     return body;
   }
-
 
   if (S.sent) { S = fresh(); save(); }
   render();
