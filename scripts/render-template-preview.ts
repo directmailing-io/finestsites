@@ -29,6 +29,7 @@ for (const f of schema.fields) {
 Object.assign(data, schema.preview_values ?? {})
 if (opt('--theme')) data.farbthema = opt('--theme')!
 if (flag('--nolinks')) delete data.links
+if (flag('--duo')) Object.assign(data, { partner_modus: 'duo', vorname2: 'Anna', nachname2: 'Kurzeja', profilbild2: 'https://app.finestsites.io/placeholders/profilbild.webp', instagram2: 'https://instagram.com/finestsites', tiktok2: 'https://tiktok.com/@finestsites', whatsapp_nummer2: '491761234568', email2: 'anna@example.com' })
 if (flag('--intro')) data.intro = 'Hi, ich bin Daniel. Ich hab vor zwei Jahren angefangen, meine Gewohnheiten umzukrempeln, und seitdem hat sich mein Alltag komplett verändert. Mach den Check, dann weißt du, wo du stehst.'
 
 let out = renderTemplate(html, data)
@@ -45,6 +46,6 @@ if (flag('--result')) {
 
 const outDir = path.join(dir, 'preview-lokal')
 fs.mkdirSync(outDir, { recursive: true })
-const name = `${slug}-${data.farbthema ?? 'default'}${flag('--result') ? '-' + (opt('--step') ?? 'result').replace(':', '') : ''}${flag('--nolinks') ? '-nolinks' : ''}${flag('--intro') ? '-intro' : ''}.html`
+const name = `${slug}-${data.farbthema ?? 'default'}${flag('--result') ? '-' + (opt('--step') ?? 'result').replace(':', '') : ''}${flag('--nolinks') ? '-nolinks' : ''}${flag('--duo') ? '-duo' : ''}${flag('--intro') ? '-intro' : ''}.html`
 fs.writeFileSync(path.join(outDir, name), out)
 console.log('wrote', path.relative(process.cwd(), path.join(outDir, name)))
