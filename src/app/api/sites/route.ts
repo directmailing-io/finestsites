@@ -49,6 +49,33 @@ function buildProfileSiteData(profile: typeof users.$inferSelect): Array<{ field
   return result
 }
 
+/**
+ * Loops flagged `prefill_sites` (e.g. "Meine Seiten" in the Vitalprofil) start
+ * with every published site of the user — one entry per site, title from the
+ * template, URL = custom domain when active, else username.domain.
+ */
+async function buildPublishedSiteLinks(
+  userId: string,
+  schema: unknown,
+  username: string | null,
+): Promise<Array<{ fieldKey: string; fieldValue: string }>> {
+  const fields = (schema as { fields?: Array<Record<string, unknown>> } | null)?.fields ?? []
+  const loops = fields.filter(f => f.type === 'loop' && f.prefill_sites === true)
+  if (loops.length === 0) return []
+  const sites = await db.query.userSites.findMany({
+    where: and(eq(userSites.userId, userId), eq(userSites.status, 'published')),
+    with: { template: { columns: { title: true, domain: true } } },
+  })
+  const entries = sites.flatMap(s => {
+    const url = s.customDomain && s.customDomainStatus === 'active'
+      ? `https://${s.customDomain}`
+      : username && s.template?.domain ? `https://${username}.${s.template.domain}` : null
+    return url ? [{ titel: s.template?.title ?? 'Meine Seite', url }] : []
+  })
+  if (entries.length === 0) return []
+  return loops.map(l => ({ fieldKey: String(l.key), fieldValue: JSON.stringify(entries) }))
+}
+
 // GET /api/sites → list current user's sites with template info + username
 export async function GET(req: NextRequest) {
   const user = await getUserFromRequest(req)
@@ -207,9 +234,11 @@ export async function POST(req: NextRequest) {
     // Auto-populate profile fields into site_data for the newly created site
     if (profile) {
       const profileData = buildProfileSiteData(profile)
-      if (profileData.length > 0) {
+      const siteLinks = await buildPublishedSiteLinks(user.id, tpl?.placeholderSchema, profile.username)
+      const rows = [...profileData, ...siteLinks]
+      if (rows.length > 0) {
         await db.insert(siteData).values(
-          profileData.map(({ fieldKey, fieldValue }) => ({
+          rows.map(({ fieldKey, fieldValue }) => ({
             userSiteId: created.id,
             fieldKey,
             fieldValue,

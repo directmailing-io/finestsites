@@ -46,6 +46,8 @@ interface LoopSubField {
   site_picker?: boolean
   /** Only published sites from the user's own account may be picked — no free URL (e.g. links shown inside a check result) */
   site_picker_only?: boolean
+  /** On site creation, fill this loop with every published site of the user */
+  prefill_sites?: boolean
 }
 
 interface FieldSchema {
@@ -1751,6 +1753,15 @@ function LoopField({ field, value, onChange, onItemFocus }: {
   const [pickerSites, setPickerSites] = useState<SitePickerEntry[] | null>(null)
   const [pickerLoading, setPickerLoading] = useState(false)
   const hasSitePicker = subFields.some(sf => sf.site_picker)
+  // "Only my sites" loops: every published site at most once; nothing left → no add button
+  const pickerOnlyKey = subFields.find(sf => sf.site_picker_only)?.key ?? null
+  const usedUrls = new Set(pickerOnlyKey ? items.map(it => (it[pickerOnlyKey] ?? '').trim()).filter(Boolean) : [])
+  useEffect(() => {
+    if (pickerOnlyKey && pickerSites === null && !pickerLoading) void openPicker(-1)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pickerOnlyKey])
+  const availableSites = pickerSites === null ? null : pickerSites.filter(e => !usedUrls.has(e.url))
+  const canAddMore = pickerOnlyKey ? (availableSites === null || availableSites.length > 0) : true
 
   // Close picker when clicking outside
   useEffect(() => {
@@ -1764,7 +1775,7 @@ function LoopField({ field, value, onChange, onItemFocus }: {
   }, [pickerForIdx])
 
   async function openPicker(itemIdx: number) {
-    setPickerForIdx(itemIdx)
+    if (itemIdx >= 0) setPickerForIdx(itemIdx)
     if (pickerSites !== null) return          // already loaded
     setPickerLoading(true)
     try {
@@ -2027,18 +2038,18 @@ function LoopField({ field, value, onChange, onItemFocus }: {
                             {pickerLoading && (
                               <div style={{ padding: '14px 14px', fontSize: 13, color: '#9CA3AF' }}>Laden…</div>
                             )}
-                            {!pickerLoading && pickerSites !== null && pickerSites.length === 0 && (
+                            {!pickerLoading && pickerSites !== null && (availableSites ?? pickerSites).length === 0 && (
                               <div style={{ padding: '14px 14px', fontSize: 13, color: '#9CA3AF' }}>
-                                Noch keine veröffentlichten Seiten vorhanden.
+                                {pickerSites.length === 0 ? 'Noch keine veröffentlichten Seiten vorhanden.' : 'Alle deine Seiten sind schon eingetragen.'}
                               </div>
                             )}
-                            {!pickerLoading && pickerSites !== null && pickerSites.map((entry, ei) => (
+                            {!pickerLoading && pickerSites !== null && (availableSites ?? pickerSites).map((entry, ei) => (
                               <button key={ei} type="button" onClick={() => pickSite(idx, entry)}
                                 style={{
                                   display: 'flex', alignItems: 'center', gap: 10,
                                   width: '100%', padding: '10px 14px', border: 'none', background: 'none',
                                   cursor: 'pointer', textAlign: 'left',
-                                  borderBottom: ei < pickerSites.length - 1 ? '1px solid #F3F4F6' : 'none',
+                                  borderBottom: ei < (availableSites ?? pickerSites).length - 1 ? '1px solid #F3F4F6' : 'none',
                                   transition: 'background 100ms',
                                 }}
                                 onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = '#F9FAFB'}
@@ -2083,7 +2094,10 @@ function LoopField({ field, value, onChange, onItemFocus }: {
         )
       })}
 
-      {items.length < maxItems && (
+      {pickerOnlyKey && !canAddMore && items.length > 0 && (
+        <p className="text-xs text-center mt-1" style={{ color: '#9CA3AF' }}>Alle deine veröffentlichten Seiten sind eingetragen.</p>
+      )}
+      {items.length < maxItems && canAddMore && (
         <button type="button" onClick={addItem}
           className="flex items-center justify-center gap-2 py-3 text-sm font-semibold rounded-[16px] transition-all w-full mt-1"
           style={{ border: '1.5px dashed #D1D5DB', color: '#374151', background: 'transparent' }}
@@ -3216,7 +3230,9 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
   // Approved = explicitly approved (__chk) OR the text still matches the last
   // approved baseline (__chkbase). The latter keeps green check UI and publish
   // gate consistent when a user unlocks via "Bearbeiten" but changes nothing.
+  // An empty optional text (template falls back to its default copy) has nothing to check.
   const isComplianceApproved = (key: string) =>
+    !(values[key] ?? '').replace(/<[^>]*>/g, '').trim() ||
     !!values[key + '__chk'] || complianceTextsMatch(values[key], values[key + '__chkbase'])
 
   function getSectionCompletion(sec: string) {

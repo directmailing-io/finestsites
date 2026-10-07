@@ -327,7 +327,12 @@ export function RichTextField({
       </div>
 
       {/* ── Compliance section — below editor ── */}
-      {complianceCheck && (
+      {complianceCheck && textLength === 0 && (
+        <p style={{ margin: '10px 4px 0', fontSize: 12.5, lineHeight: 1.5, color: '#6B7280' }}>
+          Leer gelassen wird unser Standardtext angezeigt. Sobald du eigenen Text schreibst, prüfen wir ihn auf Heil- und Wirkaussagen.
+        </p>
+      )}
+      {complianceCheck && textLength > 0 && (
         <>
           <ComplianceSection
             state={checkState}

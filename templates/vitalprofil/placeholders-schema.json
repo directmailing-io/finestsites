@@ -384,7 +384,7 @@
       "required": false,
       "min_items": 0,
       "max_items": 6,
-      "placeholder_text": "Optional. Am Ende der Auswertung kannst du auf deine anderen aktiven FinestSites-Seiten verlinken, zum Beispiel deine Linkseite oder deine Business-Seite. Nur veröffentlichte Seiten aus deinem Konto, keine fremden Links. Die Links stehen bewusst getrennt vom Ergebnis mit dem Hinweis, dass sie keine Empfehlung aus dem Vitalprofil sind.",
+      "placeholder_text": "Deine veröffentlichten FinestSites-Seiten erscheinen am Ende der Auswertung unter „Meine Seiten“, zum Beispiel deine Linkseite oder deine Business-Seite. Beim Anlegen sind alle aktiven Seiten schon eingetragen; du kannst Einträge entfernen, umbenennen oder die Reihenfolge ändern. Jede Seite nur einmal, keine fremden Links.",
       "notice": {
         "title": "Bewusst getrennt vom Ergebnis",
         "text": "Die Links erscheinen unter deiner Einladung zum Gespräch als „Meine Seiten“, für alle Besucher gleich und unabhängig von ihrem Ergebnis. Das Vitalprofil selbst empfiehlt nie ein Produkt. So bleibt die Auswertung eine Selbsteinschätzung und keine Produktwerbung."
@@ -407,7 +407,8 @@
           "site_picker_only": true,
           "placeholder_text": "Aus deinen aktiven Seiten wählen"
         }
-      ]
+      ],
+      "prefill_sites": true
     },
     {
       "key": "farbthema",
@@ -463,68 +464,6 @@
           "description": "Dunkel, edel, App-Look."
         }
       ]
-    },
-    {
-      "key": "frage_motive",
-      "type": "card_select",
-      "label": "Frage „Was treibt dich an?\" stellen?",
-      "section": "Vitalprofil anpassen",
-      "order": 15,
-      "required": true,
-      "default_value": "an",
-      "preview_value": "an",
-      "display_mode": "section_toggle",
-      "toggle_on_value": "an",
-      "toggle_off_value": "aus",
-      "preview_interactive": true,
-      "placeholder_text": "Nach den 20 Aussagen wählt die Person bis zu drei Antriebsmotive (Gesundheit, Familie, Freiheit, finanzielle Unabhängigkeit …). Hilft dir im Gespräch, den richtigen Ton zu treffen. Die Frage ist überspringbar.",
-      "card_options": [
-        {
-          "value": "an",
-          "label": "Stellen",
-          "card_type": "color",
-          "color": "#DDF2EA",
-          "description": "Die Motiv-Frage ist Teil des Vitalprofils."
-        },
-        {
-          "value": "aus",
-          "label": "Weglassen",
-          "card_type": "color",
-          "color": "#F1F5F9",
-          "description": "Der Vitalprofil endet direkt nach den 20 Aussagen."
-        }
-      ]
-    },
-    {
-      "key": "frage_investition",
-      "type": "card_select",
-      "label": "Frage „Was ist dir dein Wohlbefinden pro Tag wert?“ stellen?",
-      "section": "Vitalprofil anpassen",
-      "order": 16,
-      "required": true,
-      "default_value": "an",
-      "preview_value": "an",
-      "display_mode": "section_toggle",
-      "toggle_on_value": "an",
-      "toggle_off_value": "aus",
-      "preview_interactive": true,
-      "placeholder_text": "Letzte Frage vor dem Ergebnis, mit Alltagsvergleichen (Kaffee, Coffee to go, Mittagssnack). Hilft dir einzuschätzen, welcher Umfang zum Budget der Person passt. Standard: an. Für Besucher überspringbar.",
-      "card_options": [
-        {
-          "value": "an",
-          "label": "Stellen",
-          "card_type": "color",
-          "color": "#DDF2EA",
-          "description": "Die Frage nach dem Tagesbudget ist Teil des Vitalprofils."
-        },
-        {
-          "value": "aus",
-          "label": "Weglassen",
-          "card_type": "color",
-          "color": "#F1F5F9",
-          "description": "Keine Frage nach Geld im Vitalprofil."
-        }
-      ]
     }
   ],
   "preview_values": {
@@ -539,8 +478,6 @@
     "email_benachrichtigung": "daniel@example.com",
     "links": "[{\"titel\":\"Meine Linkseite\",\"url\":\"https://demo.lnko.me\"},{\"titel\":\"Die Business-Seite\",\"url\":\"https://demo.wellpreneur.io\"}]",
     "farbthema": "gruen",
-    "frage_motive": "an",
-    "frage_investition": "an",
     "partner_modus": "solo"
   }
 }

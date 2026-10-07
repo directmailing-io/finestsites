@@ -784,12 +784,14 @@ async function sendSubmissionEmail(
       .map(([k, v], i) => {
         const isLast = i === entries.length - 1
         const label = htmlEscape(fieldMap[k] ?? prettyKey(k))
-        const value = htmlEscape(v) || '—'
+        const value = htmlEscape(v).replace(/\n/g, '<br>') || '—'
         const border = isLast ? '' : 'border-bottom:1px solid #E5E7EB;'
         return `<tr><td style="padding:10px 16px;${border}width:40%;font-size:12px;font-weight:600;color:#6B7280;text-transform:uppercase;letter-spacing:0.05em;white-space:nowrap;vertical-align:top;">${label}</td><td style="padding:10px 16px;${border}font-size:14px;color:#111827;line-height:1.5;vertical-align:top;">${value}</td></tr>`
       })
       .join('')
 
+    const isVital = typeof formData.vitaltyp === 'string' && formData.vitaltyp.trim() !== ''
+    const bodyBlock = isVital ? vitalprofilMailBody(formData) : `<table cellpadding="0" cellspacing="0" width="100%" style="margin:0 0 28px;background:#F9FAFB;border-radius:12px;border:1px solid #E5E7EB;border-collapse:separate;border-spacing:0;">${rows}</table>`
     const html = `<!DOCTYPE html>
 <html lang="de">
 <head>
@@ -811,7 +813,7 @@ async function sendSubmissionEmail(
             <h1 style="margin:0 0 8px;font-size:22px;font-weight:700;color:#111827;letter-spacing:-0.02em;">Neue Anfrage erhalten</h1>
             <p style="margin:0 0 6px;font-size:15px;color:#374151;line-height:1.65;">Über dein Formular <strong>${htmlEscape(formTitle)}</strong> ist eine neue Anfrage eingegangen.</p>
             ${siteUrl ? `<p style="margin:0 0 24px;font-size:13px;color:#6B7280;"><a href="${siteUrl}" style="color:#6B7280;text-decoration:underline;">${siteUrl.replace(/^https?:\/\//, '')}</a></p>` : '<p style="margin:0 0 24px;"></p>'}
-            <table cellpadding="0" cellspacing="0" width="100%" style="margin:0 0 28px;background:#F9FAFB;border-radius:12px;border:1px solid #E5E7EB;border-collapse:separate;border-spacing:0;">${rows}</table>
+            ${bodyBlock}
             <table cellpadding="0" cellspacing="0">
               <tr>
                 <td style="background:#111827;border-radius:99px;">
@@ -838,7 +840,7 @@ async function sendSubmissionEmail(
       body: JSON.stringify({
         from: env.NOTIFY_FROM || 'FinestSites <anfragen@finestsites.io>',
         to: [recipient],
-        subject: `Neue Anfrage: ${formTitle}`,
+        subject: isVital ? `Vitalprofil von ${formData.name || 'Unbekannt'}: ${formData.vitaltyp}` : `Neue Anfrage: ${formTitle}`,
         html,
       }),
     })
@@ -847,6 +849,52 @@ async function sendSubmissionEmail(
   } catch {
     // Fire-and-forget — never block or crash the response
   }
+}
+
+/**
+ * Vitalprofil result mail: contact first, then the profile as cards and the five
+ * areas with their four answers. Keys come from the template's payload():
+ * name, email, telefon, kontaktweg, interesse, nachricht, vitaltyp, vitallevel,
+ * staerke, hebel, wuensche, antriebsmotive, budget_pro_tag, bereich_* (score line +
+ * one "Aussage: Antwort" per line), sprache, einwilligung.
+ */
+function vitalprofilMailBody(d: Record<string, string>): string {
+  const esc = (v: string | undefined) => htmlEscape(v ?? '')
+  const h2 = (t: string) => `<p style="margin:0 0 8px;font-size:11.5px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#6B7280;">${t}</p>`
+  const row = (label: string, value: string | undefined, last = false) => value && value.trim()
+    ? `<tr><td style="padding:9px 14px;${last ? '' : 'border-bottom:1px solid #E5E7EB;'}width:38%;font-size:13px;color:#6B7280;vertical-align:top;">${label}</td><td style="padding:9px 14px;${last ? '' : 'border-bottom:1px solid #E5E7EB;'}font-size:14px;color:#111827;font-weight:500;">${esc(value).replace(/\n/g, '<br>')}</td></tr>`
+    : ''
+  const box = (inner: string) => `<table cellpadding="0" cellspacing="0" width="100%" style="margin:0 0 22px;background:#F9FAFB;border-radius:12px;border:1px solid #E5E7EB;border-collapse:separate;border-spacing:0;">${inner}</table>`
+
+  const contact = box(row('Name', d.name) + row('E-Mail', d.email ? `<a href="mailto:${esc(d.email)}" style="color:#111827;">${esc(d.email)}</a>` : '') + row('Telefon', d.telefon) + row('Kontaktweg', d.kontaktweg) + row('Interesse', d.interesse) + row('Nachricht', d.nachricht, true))
+    .replace('<td style="padding:9px 14px;border-bottom:1px solid #E5E7EB;font-size:14px;color:#111827;font-weight:500;">&lt;a href', '<td style="padding:9px 14px;border-bottom:1px solid #E5E7EB;font-size:14px;color:#111827;font-weight:500;"><a href')
+
+  const tile = (label: string, value: string | undefined) => `<td width="50%" style="padding:0 6px 12px 0;vertical-align:top;"><div style="background:#FFFFFF;border:1px solid #E5E7EB;border-radius:12px;padding:12px 14px;"><p style="margin:0 0 3px;font-size:11.5px;color:#6B7280;">${label}</p><p style="margin:0;font-size:15px;font-weight:600;color:#111827;">${esc(value) || '—'}</p></div></td>`
+  const profile = `<table cellpadding="0" cellspacing="0" width="100%" style="margin:0 0 10px;border-collapse:separate;border-spacing:0;"><tr>${tile('Vital-Typ', d.vitaltyp)}${tile('Vitallevel', d.vitallevel)}</tr><tr>${tile('Stärke', d.staerke)}${tile('Größter Hebel', d.hebel)}</tr></table>`
+    + box(row('Wünsche', d.wuensche) + row('Antriebsmotive', d.antriebsmotive) + row('Wohlbefinden pro Tag', d.budget_pro_tag, true))
+
+  const areas: Array<[string, string, string]> = [
+    ['bereich_ernaehrung', 'Ernährung & Trinken', '#2FA877'], ['bereich_tag', 'Tagesstruktur & Pausen', '#3B86D8'],
+    ['bereich_schlaf', 'Schlaf & Abschalten', '#6E5BD6'], ['bereich_bewegung', 'Bewegung & Fitness', '#E4664A'],
+    ['bereich_ausgleich', 'Ausgleich & Zeit für dich', '#E0A030'],
+  ]
+  const areaCards = areas.map(([key, label, color]) => {
+    const raw = d[key] ?? ''
+    if (!raw.trim()) return ''
+    const lines = raw.split('\n')
+    const score = lines.shift() ?? ''
+    const pct = parseInt((score.match(/(\d+)\s*%/) ?? [])[1] ?? '0', 10)
+    const answers = lines.map(l => { const i = l.indexOf(':'); const q = i > -1 ? l.slice(0, i) : l; const a = i > -1 ? l.slice(i + 1).trim() : ''
+      return `<tr><td style="padding:5px 0;font-size:13px;color:#374151;">${esc(q)}</td><td align="right" style="padding:5px 0 5px 12px;font-size:13px;color:#111827;font-weight:500;white-space:nowrap;">${esc(a)}</td></tr>` }).join('')
+    return `<div style="background:#FFFFFF;border:1px solid #E5E7EB;border-radius:12px;padding:14px 16px;margin:0 0 10px;">
+      <table cellpadding="0" cellspacing="0" width="100%"><tr><td style="font-size:14px;font-weight:600;color:#111827;">${label}</td><td align="right" style="font-size:13px;color:#6B7280;">${esc(score)}</td></tr></table>
+      <div style="height:6px;border-radius:6px;background:#F3F4F6;margin:8px 0 10px;"><div style="height:6px;border-radius:6px;width:${Math.max(4, Math.min(100, pct))}%;background:${color};"></div></div>
+      <table cellpadding="0" cellspacing="0" width="100%">${answers}</table>
+    </div>`
+  }).join('')
+
+  const meta = `<p style="margin:14px 0 0;font-size:12px;color:#9CA3AF;line-height:1.6;">Sprache: ${esc(d.sprache) || '—'} · Einwilligung (Art. 9 DSGVO): ${esc(d.einwilligung) || '—'}</p>`
+  return `${h2('Kontakt')}${contact}${h2('Vitalprofil')}${profile}${h2('Die fünf Bereiche')}${areaCards}${meta}<div style="height:18px;"></div>`
 }
 
 // ─── Form Submission Handler ──────────────────────────────────────────────────

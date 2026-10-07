@@ -12,7 +12,7 @@ Eine ruhige Spalte (600 px), jede Einheit eine weiße Karte. Kein Ansichtswechse
    **Duo** (`partner_modus=duo`): zwei Fotos leicht überlappend, gemeinsamer Name (gleicher Nachname → „Daniel & Anna Kurzeja“, sonst „Daniel Kurzeja & Anna Müller“, in JS), gemeinsamer Text (Standardtext auf „wir“), zwei Kontaktspalten mit Vorname und eigener Icon-Zeile. Duo zieht sich durch Signatur, Beratungs-Karte, Formular, Einwilligung, Danke-Seite (zwei WhatsApp-Buttons) und Footer.
 2. **Check-Karte**: „Schritt n von 8“ mit Balken, Wünsche → fünf Bereiche (vier Aussagen als Abschnitte, fünfstufige Skala in Akzent-Abstufungen) → Motive (abschaltbar) → Tagesbudget (abschaltbar) → Reveal. „Weiter“ volle Breite, „Zurück“ als Textlink.
 3. **Auswertung** als Kartenfolge: Typ-Karte im Farbverlauf (Abzeichen, Typ, Merkmale, Vitallevel, größter Hebel, fünf Bereichs-Ringe, **Teilen** + **Als Story speichern**, Signatur mit Foto) → Beratungs-Karte (einmal) → Dein Tag → Deine fünf Bereiche → Drei Dinge (mit Wunsch-Rückbezug) → **Meine Seiten** (optional, eigene Karte) → Werkzeuge (Beratung anfragen, Story, Nochmal). Teilen: Web Share mit Story-PNG + Text + URL, sonst Link kopieren. Story-PNG 1080×1920 endet mit „Erstell dein eigenes Vitalprofil auf {host}“.
-4. **Formular** (`/.finestsites/forms/kontakt`, `_recipient`, Honeypot, Einwilligung Art. 9) und **Danke** als Karten.
+4. **Formular** (`/.finestsites/forms/kontakt`, `_recipient`, Honeypot, Einwilligung Art. 9) und **Danke** als Karten. Payload-Schlüssel: `name`, `email`, `telefon`, `kontaktweg`, `interesse`, `nachricht`, `vitaltyp`, `vitallevel`, `staerke`, `hebel`, `wuensche`, `antriebsmotive`, `budget_pro_tag`, `bereich_{ernaehrung,tag,schlaf,bewegung,ausgleich}` (erste Zeile „12/16 · 75 %“, dann je Aussage eine Zeile „Aussage: Antwort“), `sprache`, `einwilligung`. Der Worker baut daraus eine strukturierte Mail (`vitalprofilMailBody`: Kontakt → Profil-Kacheln → fünf Bereiche mit Balken und Antworten), Betreff „Vitalprofil von {Name}: {Typ}“; im Dashboard erscheinen die Blöcke mit Zeilenumbrüchen.
 5. **Footer**: dunkler Streifen volle Breite, Profil + PM-Kennzeichnung, zwei Icon-Zeilen (Daten bleiben bei dir · Selbsteinschätzung, keine Diagnose), unten „© Jahr Name · Impressum · Datenschutz“ und „Made with ♥ von FinestSites“ mit Logo.
 
 Sechs Farbthemen `gruen` (Standard), `orange`, `rot`, `blau`, `violett`, `nacht`, jeweils Akzent + Verlauf (`--wash-a/-b/-c`).
@@ -21,11 +21,10 @@ Sechs Farbthemen `gruen` (Standard), `orange`, `rot`, `blau`, `violett`, `nacht`
 
 - **Aus dem Profil übernommen** beim Anlegen der Seite (`src/app/api/sites/route.ts`, `profileToPlaceholders`) und beim Öffnen des Editors (`PROFILE_KEY_MAP` in `edit/page.tsx`): `vorname`, `nachname`, `profilbild`, `instagram`, `facebook`, `linkedin`, `tiktok`, `youtube` (Handle aus der Profil-URL), `whatsapp_nummer` (aus der Profil-Telefonnummer als Ziffern). Felder für Person 2 (`*2`) bleiben leer, das Profil gehört dem Kontoinhaber.
 - **Social-Links**: Benutzername oder kompletter Link, die Engine (`rewriteSocialHrefs`) macht daraus gültige Links; WhatsApp wird normalisiert.
-- **Eigener Text** `intro`: Richtext (400 Zeichen) mit **KI-Compliance-Check** (`compliance_check: true`, Freigabe liegt in `intro__chk`). Leer = Standardtext DE/EN.
+- **Eigener Text** `intro`: Richtext (400 Zeichen) mit **KI-Compliance-Check** (`compliance_check: true`, Freigabe liegt in `intro__chk`). Leer = Standardtext DE/EN; ein leeres Feld gilt als geprüft (kein „Prüfen“-Knopf, nur ein Hinweis), erst eigener Text löst den Check aus.
 - **Duo**: `partner_modus` (Nur ich / Wir zu zweit) wie bei cellRESET; die `*2`-Felder erscheinen nur im Duo (`show_when`), farblich als Person 2 markiert (`color_tag`).
-- **Meine Seiten**: Loop `links` mit `site_picker_only`; der Editor erlaubt keine freie URL, nur veröffentlichte Seiten aus dem eigenen Konto.
-- **Check anpassen**: Motiv-Frage und Budget-Frage als Section-Toggles.
-- Abschnitte im Editor: Profil · Social Media · Kontakt · Meine Seiten · Design · Vitalprofil anpassen.
+- **Meine Seiten**: Loop `links` mit `site_picker_only` + `prefill_sites`. Beim Anlegen der Seite werden alle veröffentlichten Seiten des Nutzers eingetragen (Titel = Template-Titel, URL = eigene Domain oder username.domain); im Editor keine freie URL, jede Seite nur einmal wählbar, „hinzufügen“ verschwindet, wenn alle Seiten drin sind.
+- Abschnitte im Editor: Profil · Social Media · Kontakt · Meine Seiten · Design. Motiv- und Budget-Frage werden immer gestellt (Entscheidung 07.10.2026).
 
 ## Rechtliches
 
@@ -39,7 +38,7 @@ Problem: Ein Link aus einer Gewohnheits-Auswertung auf eine Produktseite kann im
 
 ## Rollout-Stand (07.10.2026)
 
-Alles eingerichtet, Template läuft live, aber **nur für den Admin sichtbar**:
+Alles eingerichtet, Template läuft live, aber **nur für den Admin sichtbar** (Stand nach der Editor-Runde vom 07.10.):
 
 - Zone `vitalprofil.net` (ID `649f7422ce4f0d12dc89228530b39997`, Account `bc6cb133…`), Wildcard-A `*` und Apex `@` → 192.0.2.1 proxied
 - Worker-Route `*.vitalprofil.net/*` aktiv, Worker deployt (Legal-Design, Datenschutz-Abschnitt „Vitalprofil“)

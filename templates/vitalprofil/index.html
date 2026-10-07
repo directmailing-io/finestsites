@@ -705,10 +705,7 @@ var CFG = {
     { max: 32, name: { de: 'Gut dabei', en: 'Going strong' }, desc: { de: 'Du lebst schon sehr bewusst. Ein oder zwei Bereiche haben noch Luft nach oben.', en: 'You already live very consciously. One or two areas still have room to grow.' } },
     { max: 40, name: { de: 'Volle Kraft', en: 'Full power' }, desc: { de: 'Beeindruckend konsequent. Deine Gewohnheiten tragen dich. Bleib dran.', en: 'Impressively consistent. Your habits carry you. Keep going.' } }
   ],
-  flags: {
-    motive: {{#unless frage_motive=aus}}true{{/unless}}{{#if frage_motive=aus}}false{{/if}},
-    invest: {{#if frage_investition=an}}true{{/if}}{{#unless frage_investition=an}}false{{/unless}}
-  },
+  flags: { motive: true, invest: true },
   owner: { vorname: "{{vorname}}", nachname: "{{nachname}}", avatar: "{{profilbild}}", whatsapp: "{{whatsapp_nummer}}", recipient: "{{email_benachrichtigung}}", female: {{#if geschlecht=weiblich}}true{{/if}}{{#unless geschlecht=weiblich}}false{{/unless}},
     duo: {{#if partner_modus=duo}}true{{/if}}{{#unless partner_modus=duo}}false{{/unless}}, vorname2: "{{vorname2}}", nachname2: "{{nachname2}}", avatar2: "{{profilbild2}}", whatsapp2: "{{whatsapp_nummer2}}" }
 };
@@ -1024,24 +1021,27 @@ var VC = (function(){
   }
   /* Alle Werte als Strings */
   function payload(name, email, phone, method){
-    var R = evalResult(), o = CFG.owner, ty = typeOf(R).ty;
+    var R = evalResult(), o = CFG.owner, ty = typeOf(R).ty, bestD = CFG.dims[R.best], worstD = CFG.dims[R.worst];
     var word = function(v){ var s = SCALE[v]; return s ? s.de : '–'; };
+    var methodLabel = { email: 'E-Mail', telefon: 'Telefon', whatsapp: 'WhatsApp' }[method] || method;
     var body = {
       _recipient: o.recipient, _honeypot: document.querySelector('#leadForm [name=_honeypot]').value,
-      name: name, email: email, phone: phone, kontakt_weg: method,
+      name: name, email: email, telefon: phone, kontaktweg: methodLabel,
       interesse: S.interests.map(function(id){ return labelOf(CFG.interests, id); }).join(', '),
       nachricht: document.getElementById('lf-msg').value.trim(),
-      vitaltyp: ty.name.de, vitallevel: R.lv.name.de + ' (' + R.pct + ' %)',
-      staerke: CFG.dims[R.best].name.de, hebel: CFG.dims[R.worst].name.de,
+      vitaltyp: ty.name.de, vitallevel: R.lv.name.de + ' · ' + R.pct + ' %',
+      staerke: bestD.name.de + ' · ' + Math.round(R.sc[R.best] / 16 * 100) + ' %',
+      hebel: worstD.name.de + ' · ' + Math.round(R.sc[R.worst] / 16 * 100) + ' %',
       wuensche: S.wishes.map(function(id){ return labelOf(CFG.wishes, id); }).join(', '),
       antriebsmotive: S.motives.map(function(id){ return labelOf(CFG.motives, id); }).join(', '),
-      investition_pro_tag: labelOf(CFG.invest, S.invest),
-      sprache: en() ? 'EN' : 'DE',
-      dsgvo_einwilligung: 'ja, ' + new Date().toISOString().replace('T', ' ').substring(0, 16) + ' UTC'
+      budget_pro_tag: labelOf(CFG.invest, S.invest)
     };
-    CFG.dims.forEach(function(d, di){ body['score_' + d.id] = R.sc[di] + '/16'; body['antworten_' + d.id] = d.q.map(function(q, qi){ var v = S.answers[di + ':' + qi]; return q.label.de + ': ' + (v === undefined ? '–' : word(v)); }).join(' · '); });
+    CFG.dims.forEach(function(d, di){ body['bereich_' + d.id] = R.sc[di] + '/16 · ' + Math.round(R.sc[di] / 16 * 100) + ' %\n' + d.q.map(function(q, qi){ var v = S.answers[di + ':' + qi]; return q.label.de + ': ' + (v === undefined ? '–' : word(v)); }).join('\n'); });
+    body.sprache = en() ? 'EN' : 'DE';
+    body.einwilligung = 'Ja, ' + new Date().toISOString().replace('T', ' ').substring(0, 16) + ' UTC';
     return body;
   }
+
 
   if (S.sent) { S = fresh(); save(); }
   render();
