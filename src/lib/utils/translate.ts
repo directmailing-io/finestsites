@@ -20,9 +20,16 @@ import { eq, and, inArray, sql } from 'drizzle-orm'
 
 const OPENAI_MODEL = 'gpt-4o-mini'
 
-const KEY_DE = 'about_me_html'
-const KEY_EN = 'about_me_html_en'
-const KEY_SRC = 'about_me_html_en_src'
+/**
+ * User-written fields that bilingual templates show in EN too. Each one gets a
+ * derived `<key>_en` (+ `<key>_en_src` hash) in site_data — never in the schema.
+ *   about_me_html → Wellpreneur „Über mich“
+ *   intro         → Vitalprofil „Dein kurzer Text“
+ */
+const TRANSLATED_FIELDS: Array<{ de: string; en: string; src: string }> = [
+  { de: 'about_me_html', en: 'about_me_html_en', src: 'about_me_html_en_src' },
+  { de: 'intro', en: 'intro_en', src: 'intro_en_src' },
+]
 
 function hashOf(text: string): string {
   return createHash('sha256').update(text).digest('hex').slice(0, 16)
@@ -68,37 +75,40 @@ async function translateHtml(germanHtml: string): Promise<string | null> {
 }
 
 /**
- * Ensures `about_me_html_en` exists and matches the current `about_me_html`.
- * No-op when there is no about text or the stored translation is up to date.
+ * Ensures every translated field (see TRANSLATED_FIELDS) has an up-to-date EN
+ * version. No-op per field when it is empty or the stored translation matches.
  */
 export async function ensureAboutMeTranslation(siteId: string): Promise<void> {
+  const keys = TRANSLATED_FIELDS.flatMap(f => [f.de, f.en, f.src])
   const rows = await db
     .select({ fieldKey: siteData.fieldKey, fieldValue: siteData.fieldValue })
     .from(siteData)
-    .where(and(eq(siteData.userSiteId, siteId), inArray(siteData.fieldKey, [KEY_DE, KEY_EN, KEY_SRC])))
+    .where(and(eq(siteData.userSiteId, siteId), inArray(siteData.fieldKey, keys)))
 
   const map: Record<string, string> = {}
   for (const r of rows) map[r.fieldKey] = r.fieldValue ?? ''
 
-  const german = (map[KEY_DE] ?? '').trim()
-  if (!german) return
+  for (const f of TRANSLATED_FIELDS) {
+    const german = (map[f.de] ?? '').trim()
+    if (!german) continue
 
-  const srcHash = hashOf(german)
-  if (map[KEY_EN] && map[KEY_SRC] === srcHash) return
+    const srcHash = hashOf(german)
+    if (map[f.en] && map[f.src] === srcHash) continue
 
-  const translated = await translateHtml(german)
+    const translated = await translateHtml(german)
 
-  // Fallback at the data level: store the German text so the template never
-  // renders an empty EN about section. Hash is only set on real translations.
-  const upserts = [
-    { userSiteId: siteId, fieldKey: KEY_EN, fieldValue: translated ?? german, updatedAt: new Date() },
-    { userSiteId: siteId, fieldKey: KEY_SRC, fieldValue: translated ? srcHash : '', updatedAt: new Date() },
-  ]
-  await db
-    .insert(siteData)
-    .values(upserts)
-    .onConflictDoUpdate({
-      target: [siteData.userSiteId, siteData.fieldKey],
-      set: { fieldValue: sql`excluded.field_value`, updatedAt: new Date() },
-    })
+    // Fallback at the data level: store the German text so the template never
+    // renders an empty EN section. Hash is only set on real translations.
+    const upserts = [
+      { userSiteId: siteId, fieldKey: f.en, fieldValue: translated ?? german, updatedAt: new Date() },
+      { userSiteId: siteId, fieldKey: f.src, fieldValue: translated ? srcHash : '', updatedAt: new Date() },
+    ]
+    await db
+      .insert(siteData)
+      .values(upserts)
+      .onConflictDoUpdate({
+        target: [siteData.userSiteId, siteData.fieldKey],
+        set: { fieldValue: sql`excluded.field_value`, updatedAt: new Date() },
+      })
+  }
 }

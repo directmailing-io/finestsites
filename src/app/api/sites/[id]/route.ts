@@ -167,11 +167,12 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     }
   }
 
-  // Fire-and-forget: translate the about text (Wellpreneur EN mode), then —
+  // Fire-and-forget: translate user texts (Wellpreneur about, Vitalprofil intro; see translate.ts), then —
   // if the site is already published — refresh the Worker's pre-rendered KV
   // entry so visitors see edits without waiting for the next publish click.
   // Non-blocking — autosave succeeds even if translation or KV write fails.
   const aboutMeChanged = typeof (body as Record<string, unknown>).about_me_html === 'string'
+    || typeof (body as Record<string, unknown>).intro === 'string'
   if (aboutMeChanged || site.status === 'published') {
     ;(async () => {
       if (aboutMeChanged) {
