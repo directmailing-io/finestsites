@@ -2,7 +2,7 @@
 
 Profilseite mit eingebautem Vitalprofil für PM-International-Teampartner. Gleiche 20 Verhaltens-Aussagen und Rechtsleitplanken wie `templates/vitalcheck/` (siehe dort und `docs/konzept-vitalcheck.html`), aber als **Profilseite wie die Linkseite** (`templates/lnko-bio/`) mit dem Check direkt darunter. Produktname auf der Seite: **Vitalprofil** (nicht mehr „Vitalcheck“). Früherer Ordnername: `templates/vitalcheck-b/`.
 
-Template-ID in der DB: `8a3ef41a-78fa-419d-937d-ccc7b552da1a` (Status `coming_soon`, `is_test = true`, bis Domain und R2 stehen).
+Template-ID in der DB: `8a3ef41a-78fa-419d-937d-ccc7b552da1a` (Status `published`, `is_test = true` bis zur Freigabe).
 
 ## Aufbau
 
@@ -37,26 +37,23 @@ Sechs Farbthemen `gruen` (Standard), `orange`, `rot`, `blau`, `violett`, `nacht`
 
 Problem: Ein Link aus einer Gewohnheits-Auswertung auf eine Produktseite kann im Gesamteindruck als „das Produkt hilft bei den geprüften Bereichen“ gelesen werden (HCVO Art. 10, UWG § 5, Linkhaftung). Lösung: Auswertung nennt nie ein Produkt; Links sind ein Profil-Element in eigener Karte mit festem Hinweissatz, erst nach der Beratungs-Karte; keine Logik nach Score/Typ; nur veröffentlichte eigene Seiten; kommerzielle Absicht durch Kennzeichnung erkennbar. Restrisiko niedrig bis mittel.
 
-## Rollout (nach `docs/new-template-checklist.md`)
+## Rollout-Stand (07.10.2026)
 
-Erledigt (07.10.2026):
-- [x] Template, Schema v2, Readme im Repo (`templates/vitalprofil/`)
-- [x] Editor: `site_picker_only` (deployt)
-- [x] Worker: `LEGAL_DESIGNS['vitalprofil.net']`, Theme-Akzente, Datenschutz-Abschnitt (Code im Repo; Worker-Deploy siehe unten)
-- [x] DB-Row `8a3ef41a-…` aktualisiert: Titel „Dein Vitalprofil“, slug `vitalprofil`, domain `vitalprofil.net`, Schema, Tags, `is_test = true`, Status `coming_soon`
-- [x] `form_schemas`-Row `kontakt` („Beratungsanfrage Vitalprofil“) angelegt
-- [x] Preview-Bild `public/previews/vitalprofil.jpg`
+Alles eingerichtet, Template läuft live, aber **nur für den Admin sichtbar**:
 
-Offen (braucht die Domain):
-1. **Domain** `vitalprofil.net` bei Cloudflare registrieren (Account `6d5e22b7…`), Zone-ID notieren.
-2. CF Dashboard: Proxied Wildcard-A `*.vitalprofil.net → 192.0.2.1`.
-3. `cloudflare-worker/wrangler.toml`: den vorbereiteten `[[routes]]`-Block für `*.vitalprofil.net/*` aktivieren und die Zone-ID eintragen.
-4. Worker vom App-Server deployen:
-   `ssh -i ~/.ssh/finestsites_hetzner root@188.245.35.52 "cd /var/www/finestsites && git pull origin main && cd cloudflare-worker && CLOUDFLARE_API_TOKEN=… npx wrangler deploy --config wrangler.toml"`
-5. R2 (mit `--remote`!): `templates/8a3ef41a-78fa-419d-937d-ccc7b552da1a/index.html` und `assets/fs-logo.svg` hochladen. `assets/hero.jpg` wird nicht mehr gebraucht.
-6. Health-Check `curl https://test.vitalprofil.net/.finestsites/health` → 200; `/impressum` und `/datenschutz` auf einer Testseite prüfen (Abschnitt „Vitalprofil“ sichtbar).
-7. Testseite als Test-Account anlegen (Solo und Duo), Formular absenden, Mail an `email_benachrichtigung` prüfen (Betreff „Neue Anfrage: Beratungsanfrage Vitalprofil“), Story-Export auf dem Handy.
-8. Freigabe: `status = 'published'`, `is_test = false`. Marketing-Seite `/vorlagen/vitalprofil` (detail_content) kann danach gefüllt werden.
+- Zone `vitalprofil.net` (ID `649f7422ce4f0d12dc89228530b39997`, Account `bc6cb133…`), Wildcard-A `*` und Apex `@` → 192.0.2.1 proxied
+- Worker-Route `*.vitalprofil.net/*` aktiv, Worker deployt (Legal-Design, Datenschutz-Abschnitt „Vitalprofil“)
+- R2: `templates/8a3ef41a-78fa-419d-937d-ccc7b552da1a/index.html` + `assets/fs-logo.svg` (`--remote`)
+- DB: `status = 'published'`, **`is_test = true`** → auf Startseite und `/vorlagen` unsichtbar, im Dashboard nur für Nutzer mit `template_access`-Eintrag (aktuell: Admin `demo`)
+- Demo-Seite: `https://demo.vitalprofil.net` (Site `f838a210-…`, Daten aus dem Admin-Profil, Farbthema grün, Links auf demo.lnko.me und demo.wellpreneur.io)
+- Thumbnail `public/previews/vitalprofil.jpg` = Screenshot der Live-Demo (1280×800)
+- `/impressum` und `/datenschutz` auf der Demo geprüft (200, Vitalprofil-Abschnitt vorhanden)
+
+**Freigabe für alle Nutzer** (ein SQL, danach erscheint die Vorlage automatisch als Premium auf der Startseite und unter `/vorlagen`, Badge „NEU“, Sortierung 40):
+```sql
+UPDATE templates SET is_test = false, updated_at = now() WHERE id = '8a3ef41a-78fa-419d-937d-ccc7b552da1a';
+```
+Vorher noch offen: Formular-Testsendung auf der Demo (Mail an info@daniel-kurzeja.de), Story-Export am Handy, Duo-Testseite. Nach einem Template-Update in R2: KV-Purge für `demo.vitalprofil.net` (`POST /.finestsites/kv {"action":"purge"}` mit `Authorization: Bearer WORKER_SECRET`).
 
 ## Lokale Vorschau
 
