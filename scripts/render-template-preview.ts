@@ -39,12 +39,12 @@ if (flag('--result')) {
   pattern.forEach((qs, di) => qs.forEach((v, qi) => { answers[`${di}:${qi}`] = v }))
   const state = { step: 999, wishes: ['energie', 'schlaf'], answers, motives: ['familie'], invest: 'ca3bis4', interests: [], sent: false }
   // step 999 is clamped to the last step by go(); we want 'result': compute index = steps().indexOf('result')
-  const seed = `<script>try{var s=${JSON.stringify(state)};var steps=['wishes','area:0','area:1','area:2','area:3','area:4'];${data.frage_motive !== 'aus' ? "steps.push('motive');" : ''}${data.frage_investition === 'an' ? "steps.push('invest');" : ''}steps.push('reveal','result');s.step=steps.indexOf('result');sessionStorage.setItem('vcb_state_v1',JSON.stringify(s));}catch(e){}</script>`
+  const seed = `<script>try{var s=${JSON.stringify(state)};var steps=['wishes','area:0','area:1','area:2','area:3','area:4'];${data.frage_motive !== 'aus' ? "steps.push('motive');" : ''}${data.frage_investition === 'an' ? "steps.push('invest');" : ''}steps.push('reveal','result','lead','done');s.step=steps.indexOf('${opt('--step') ?? 'result'}');sessionStorage.setItem('vcb_state_v1',JSON.stringify(s));}catch(e){}</script>`
   out = out.replace('<head>', '<head>' + seed)
 }
 
 const outDir = path.join(dir, 'preview-lokal')
 fs.mkdirSync(outDir, { recursive: true })
-const name = `${slug}-${data.farbthema ?? 'default'}${flag('--result') ? '-result' : ''}${flag('--nolinks') ? '-nolinks' : ''}${flag('--intro') ? '-intro' : ''}.html`
+const name = `${slug}-${data.farbthema ?? 'default'}${flag('--result') ? '-' + (opt('--step') ?? 'result').replace(':', '') : ''}${flag('--nolinks') ? '-nolinks' : ''}${flag('--intro') ? '-intro' : ''}.html`
 fs.writeFileSync(path.join(outDir, name), out)
 console.log('wrote', path.relative(process.cwd(), path.join(outDir, name)))

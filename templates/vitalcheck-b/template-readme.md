@@ -2,17 +2,23 @@
 
 Lead-Check für PM-International-Teampartner. Gleiche 20 Verhaltens-Aussagen und gleiche Rechtsleitplanken wie `templates/vitalcheck/` (siehe `docs/konzept-vitalcheck.html`), aber als **Profilseite mit eingebettetem Check**, aufgebaut wie die Linkseite (`templates/lnko-bio/`).
 
-Stand 07.10.2026: Startseiten-Layouts (Split/Bühne/Teaser), Hero-Foto und Kopfleiste mit Marke sind weg. Die Seite ist einspaltig (600 px), oben das Profil, direkt darunter der Check.
+Stand 07.10.2026 (zweite Runde nach User-Feedback): Startseiten-Layouts, Hero-Foto, Kopfleiste, Fortschritts-Pille, „Zum Profil“-Zeile und Sticky-Leiste sind weg. Oben das Profil, direkt darunter der Check in einer Karte, die Auswertung als Kartenfolge.
 
 ## Aufbau
 
-1. **Profil** (wie lnko): Profilbild 112 px mit Akzent-Ring, Name, Rolle („Unabhängige/r Vertriebspartner/in der PM-International“, aus `geschlecht`), Social-Icons (Instagram, TikTok, Facebook, YouTube, LinkedIn, WhatsApp, E-Mail; nur gesetzte), kurzer Text. Ist `intro` leer, greift ein eingebauter lockerer Standardtext in DE und EN. Darunter die Zeile „Der Vitalcheck · 3 Minuten · kostenlos“.
-2. **Check**, beginnt sofort mit dem Wunsch-Schritt („Schritt 1 von 8“). Ab dem ersten Weiter verschwindet das Profil, oben erscheint die sticky Fortschritts-Pille, über dem Schritt die Zeile „Vitalcheck von {Vorname} · Zum Profil“. Ablauf, Skala, Reveal, Formular wie bisher (siehe unten).
-3. **Auswertung**:
-   - Typ-Karte im Farbverlauf: Abzeichen, Typname, Beschreibung, Merkmal-Chips, Vitallevel + größter Hebel, **fünf Bereichs-Ringe mit Prozent**, Buttons **Teilen** und **Als Story speichern**, Signatur „Vitalcheck von {Name}“ mit Profilbild. Die Karte ist so gebaut, dass ein Screenshot für sich steht.
+Alles einspaltig (600 px), ruhig, jede Einheit eine weiße Karte mit Rundung. Kein Ansichtswechsel: Das Profil bleibt immer oben stehen, der Check läuft darunter in einer Karte.
+
+1. **Profil** (wie lnko): Profilbild 112 px mit Akzent-Ring, Name, Rolle („Unabhängige/r Vertriebspartner/in der PM-International“, aus `geschlecht`), Social-Icons (Instagram, TikTok, Facebook, YouTube, LinkedIn, WhatsApp, E-Mail; nur gesetzte), kurzer Text. Ist `intro` leer, greift ein eingebauter lockerer Standardtext in DE und EN. Rechts oben nur der Sprachschalter (nicht sticky).
+2. **Check-Karte** (`.panel`): oben „Schritt n von 8“ mit dünnem Fortschrittsbalken, darunter der Schritt (Wünsche → fünf Bereiche → Motive → Budget → Reveal), unten „Weiter“ in voller Breite und „Zurück“ als Textlink. Die vier Aussagen eines Bereichs liegen als ruhige Abschnitte in der Karte (aktive Aussage leicht getönt), keine Karte in der Karte. Bei jedem Schritt scrollt die Seite an den Kartenanfang.
+3. **Auswertung**, eine Folge gleich gebauter Karten:
+   - Typ-Karte im Farbverlauf: Abzeichen, Typname, Beschreibung, Merkmal-Chips, Kacheln „Vitallevel“ und „Größter Hebel“, **fünf Bereichs-Ringe mit Prozent**, Buttons **Teilen** und **Als Story speichern**, Signatur „Vitalcheck von {Name}“ mit Profilbild. Ein Screenshot der Karte steht für sich.
+   - Beratungs-Karte (einmal): Profilbild/Name/Rolle, „Lass uns über dein Profil sprechen.“, personalisierter Satz, Motiv-Satz, Konzept-Absatz (geprüfter Wortlaut), Garantie-Zeile, Button, Fineprint.
+   - Karten „Dein Tag auf einen Blick“, „Deine fünf Bereiche“, „Drei Dinge, die du morgen starten kannst“ (mit Wunsch-Rückbezug in der Karte); Überschriften jeweils in der Karte.
+   - **Meine Seiten** (`links`, optional) als eigene Karte: Profilbild, „Meine Seiten · Mehr von {Vorname}, unabhängig von deinem Ergebnis“, Link-Buttons, fester Hinweissatz „Diese Links gehören zu meinem Profil. Sie sind keine Empfehlung aus deinem Vitalprofil und haben mit deinem Ergebnis nichts zu tun.“
+   - Werkzeug-Karte: „Persönliche Beratung anfragen“ (Akzent, volle Breite), „Profil als Story speichern“, „Nochmal starten“. Keine Sticky-Leiste mehr.
    - Teilen: Web Share API mit Story-PNG + Text + URL (Handy); ohne Share-API wird der Link kopiert (Toast). Story-PNG 1080×1920 wie bisher (Canvas, ohne Profilbild, damit das Canvas nicht durch Cross-Origin „tainted“ wird).
-   - Beratungs-Block, Tag auf einen Blick, fünf Bereiche, drei Tipps, Wunsch-Rückbezug, kompakter Beratungs-Block, Sticky-Leiste: unverändert.
-   - **Meine Seiten** (`links`, optional): nach dem zweiten Beratungs-Block, über den Werkzeug-Buttons. Kopfzeile mit Profilbild, „Meine Seiten · Mehr von {Vorname}, unabhängig von deinem Ergebnis“, Link-Buttons im Linkseiten-Stil, darunter der feste Satz „Diese Links gehören zu meinem Profil. Sie sind keine Empfehlung aus deinem Vitalprofil und haben mit deinem Ergebnis nichts zu tun.“ Für alle Besucher gleich, unabhängig vom Ergebnis.
+4. **Formular** und **Danke** als eigene Karten, darunter „Zurück zum Profil“.
+5. **Footer** als graue Karte mit drei kurzen Zeilen mit Icon (Daten bleiben bei dir · Selbsteinschätzung, keine Diagnose · Betreiber/PM-Kennzeichnung), dann E-Mail, WhatsApp, Impressum, Datenschutz, Copyright.
 
 ## Rechtlicher Rahmen der Seiten-Links (Entscheidung 07.10.2026)
 
@@ -42,6 +48,8 @@ Profil: `vorname`, `nachname`, `profilbild`, `geschlecht`, `intro` (textarea, 32
 ```
 npx tsx scripts/render-template-preview.ts vitalcheck-b --theme mint            # Startseite
 npx tsx scripts/render-template-preview.ts vitalcheck-b --theme mint --result   # Auswertung (Antworten vorbefüllt)
+npx tsx scripts/render-template-preview.ts vitalcheck-b --theme mint --result --step area:1   # ein Bereichs-Schritt
+npx tsx scripts/render-template-preview.ts vitalcheck-b --theme mint --result --step lead     # das Formular
 npx tsx scripts/render-template-preview.ts vitalcheck-b --theme mint --intro --nolinks
 ```
 Dateien landen in `preview-lokal/` (gitignored). `assets/hero.jpg` wird nicht mehr genutzt und kann beim Rollout entfallen; `assets/fs-logo.svg` bleibt.
