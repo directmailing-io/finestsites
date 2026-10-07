@@ -3,13 +3,20 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>{{#unless partner_modus=duo}}{{vorname}} {{nachname}}{{/unless}}{{#if partner_modus=duo}}{{vorname}} &amp; {{vorname2}}{{/if}} · Vitalprofil</title>
-<meta name="description" content="Dein Vitalprofil in 3 Minuten: 20 Aussagen zu deinem Alltag, dein Vital-Typ sofort. Kostenlos, ohne Anmeldung.">
-<meta property="og:title" content="Dein Vitalprofil in 3 Minuten">
-<meta property="og:description" content="20 Aussagen zu deinem Alltag, dein Vital-Typ sofort. Kostenlos, keine Anmeldung.">
-{{#if profilbild}}<meta property="og:image" content="{{profilbild}}">{{/if}}
-<meta name="theme-color" content="#F7F6F2">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%232FA877'/%3E%3Ccircle cx='32' cy='32' r='12' fill='white'/%3E%3C/svg%3E">
+<title>Welcher Vital-Typ bist du? · Vitalprofil von {{#unless partner_modus=duo}}{{vorname}} {{nachname}}{{/unless}}{{#if partner_modus=duo}}{{vorname}} &amp; {{vorname2}}{{/if}}</title>
+<meta name="description" content="Finde in 3 Minuten heraus, welcher Vital-Typ du bist: 20 kurze Aussagen zu deinem Alltag, dein Ergebnis sofort. Kostenlos, ohne Anmeldung. Von {{#unless partner_modus=duo}}{{vorname}} {{nachname}}{{/unless}}{{#if partner_modus=duo}}{{vorname}} &amp; {{vorname2}}{{/if}}.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Vitalprofil">
+<meta property="og:locale" content="de_DE">
+<meta property="og:title" content="Welcher Vital-Typ bist du?">
+<meta property="og:description" content="20 kurze Aussagen zu deinem Alltag, dein Vital-Typ in 3 Minuten. Kostenlos, ohne Anmeldung. Vitalprofil von {{#unless partner_modus=duo}}{{vorname}} {{nachname}}{{/unless}}{{#if partner_modus=duo}}{{vorname}} &amp; {{vorname2}}{{/if}}.">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Welcher Vital-Typ bist du? Vitalprofil in 3 Minuten">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Welcher Vital-Typ bist du?">
+<meta name="twitter:description" content="20 kurze Aussagen, dein Vital-Typ in 3 Minuten. Kostenlos, ohne Anmeldung.">
+{{#if farbthema=gruen}}<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%231F9D6B'/%3E%3Cpolygon points='32,14 49,26.5 42.5,47 21.5,47 15,26.5' fill='none' stroke='white' stroke-width='4.5' stroke-linejoin='round'/%3E%3Ccircle cx='32' cy='33' r='5' fill='white'/%3E%3C/svg%3E"><meta name="theme-color" content="#F3F7F4"><meta property="og:image" content="https://app.finestsites.io/og/vitalprofil-gruen.png"><meta name="twitter:image" content="https://app.finestsites.io/og/vitalprofil-gruen.png">{{/if}}{{#if farbthema=orange}}<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23E8842A'/%3E%3Cpolygon points='32,14 49,26.5 42.5,47 21.5,47 15,26.5' fill='none' stroke='white' stroke-width='4.5' stroke-linejoin='round'/%3E%3Ccircle cx='32' cy='33' r='5' fill='white'/%3E%3C/svg%3E"><meta name="theme-color" content="#F8F5F1"><meta property="og:image" content="https://app.finestsites.io/og/vitalprofil-orange.png"><meta name="twitter:image" content="https://app.finestsites.io/og/vitalprofil-orange.png">{{/if}}{{#if farbthema=rot}}<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23D9433B'/%3E%3Cpolygon points='32,14 49,26.5 42.5,47 21.5,47 15,26.5' fill='none' stroke='white' stroke-width='4.5' stroke-linejoin='round'/%3E%3Ccircle cx='32' cy='33' r='5' fill='white'/%3E%3C/svg%3E"><meta name="theme-color" content="#F8F4F3"><meta property="og:image" content="https://app.finestsites.io/og/vitalprofil-rot.png"><meta name="twitter:image" content="https://app.finestsites.io/og/vitalprofil-rot.png">{{/if}}{{#if farbthema=blau}}<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%233572DF'/%3E%3Cpolygon points='32,14 49,26.5 42.5,47 21.5,47 15,26.5' fill='none' stroke='white' stroke-width='4.5' stroke-linejoin='round'/%3E%3Ccircle cx='32' cy='33' r='5' fill='white'/%3E%3C/svg%3E"><meta name="theme-color" content="#F3F5F9"><meta property="og:image" content="https://app.finestsites.io/og/vitalprofil-blau.png"><meta name="twitter:image" content="https://app.finestsites.io/og/vitalprofil-blau.png">{{/if}}{{#if farbthema=violett}}<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%237357D9'/%3E%3Cpolygon points='32,14 49,26.5 42.5,47 21.5,47 15,26.5' fill='none' stroke='white' stroke-width='4.5' stroke-linejoin='round'/%3E%3Ccircle cx='32' cy='33' r='5' fill='white'/%3E%3C/svg%3E"><meta name="theme-color" content="#F5F4F9"><meta property="og:image" content="https://app.finestsites.io/og/vitalprofil-violett.png"><meta name="twitter:image" content="https://app.finestsites.io/og/vitalprofil-violett.png">{{/if}}{{#if farbthema=nacht}}<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%233FCB9E'/%3E%3Cpolygon points='32,14 49,26.5 42.5,47 21.5,47 15,26.5' fill='none' stroke='white' stroke-width='4.5' stroke-linejoin='round'/%3E%3Ccircle cx='32' cy='33' r='5' fill='white'/%3E%3C/svg%3E"><meta name="theme-color" content="#121413"><meta property="og:image" content="https://app.finestsites.io/og/vitalprofil-nacht.png"><meta name="twitter:image" content="https://app.finestsites.io/og/vitalprofil-nacht.png">{{/if}}
 <script>
 (function(){
   try {
@@ -911,24 +918,25 @@ var VC = (function(){
     x.fillStyle = 'rgba(0,0,0,0.10)'; x.beginPath(); x.arc(120, 1500, 320, 0, Math.PI*2); x.fill();
     x.textAlign = 'center';
     /* Kopf */
-    x.fillStyle = 'rgba(255,255,255,0.85)'; x.font = '600 28px Geist, sans-serif'; x.letterSpacing = '6px'; x.fillText(en() ? 'MY VITAL PROFILE' : 'MEIN VITALPROFIL', W/2, 318); x.letterSpacing = '0px';
+    x.fillStyle = 'rgba(255,255,255,0.85)'; x.font = '600 28px Geist, sans-serif'; x.letterSpacing = '6px'; x.fillText(en() ? 'MY VITAL PROFILE' : 'MEIN VITALPROFIL', W/2, 236); x.letterSpacing = '0px';
     /* Abzeichen */
-    x.save(); x.shadowColor = 'rgba(0,0,0,0.25)'; x.shadowBlur = 40; x.shadowOffsetY = 18; x.fillStyle = '#fff'; x.beginPath(); x.arc(W/2, 520, 132, 0, Math.PI*2); x.fill(); x.restore();
-    x.strokeStyle = col; x.lineWidth = 9; x.lineJoin = 'round'; x.beginPath(); for (var i = 0; i < 5; i++) { var a = -Math.PI/2 + i * 2*Math.PI/5, px = W/2 + 80*Math.cos(a), py = 520 + 80*Math.sin(a); if (i === 0) x.moveTo(px, py); else x.lineTo(px, py); } x.closePath(); x.stroke(); x.fillStyle = col; x.beginPath(); x.arc(W/2, 520, 20, 0, Math.PI*2); x.fill();
+    x.save(); x.shadowColor = 'rgba(0,0,0,0.25)'; x.shadowBlur = 40; x.shadowOffsetY = 18; x.fillStyle = '#fff'; x.beginPath(); x.arc(W/2, 420, 120, 0, Math.PI*2); x.fill(); x.restore();
+    x.strokeStyle = col; x.lineWidth = 9; x.lineJoin = 'round'; x.beginPath(); for (var i = 0; i < 5; i++) { var a = -Math.PI/2 + i * 2*Math.PI/5, px = W/2 + 72*Math.cos(a), py = 420 + 72*Math.sin(a); if (i === 0) x.moveTo(px, py); else x.lineTo(px, py); } x.closePath(); x.stroke(); x.fillStyle = col; x.beginPath(); x.arc(W/2, 420, 18, 0, Math.PI*2); x.fill();
     /* Typ */
-    x.fillStyle = 'rgba(255,255,255,0.85)'; x.font = '500 32px Geist, sans-serif'; x.fillText(en() ? 'I am' : 'Ich bin', W/2, 722);
-    x.fillStyle = '#fff'; x.font = '600 92px Geist, sans-serif'; var name = t(ty.name); if (x.measureText(name).width > 960) x.font = '600 76px Geist, sans-serif'; x.fillText(name, W/2, 820);
-    var pillTxt = (en() ? 'Vitality level: ' : 'Vitallevel: ') + t(R.lv.name) + ' · ' + R.pct + ' %'; x.font = '600 32px Geist, sans-serif'; var pw = x.measureText(pillTxt).width + 72; x.fillStyle = 'rgba(255,255,255,0.22)'; roundRect(x, W/2 - pw/2, 862, pw, 68, 34); x.fill(); x.fillStyle = '#fff'; x.fillText(pillTxt, W/2, 908);
+    x.fillStyle = 'rgba(255,255,255,0.85)'; x.font = '500 32px Geist, sans-serif'; x.fillText(en() ? 'I am' : 'Ich bin', W/2, 606);
+    x.fillStyle = '#fff'; x.font = '600 92px Geist, sans-serif'; var name = t(ty.name); if (x.measureText(name).width > 960) x.font = '600 76px Geist, sans-serif'; x.fillText(name, W/2, 700);
+    x.fillStyle = 'rgba(255,255,255,0.92)'; x.font = '400 33px Geist, sans-serif'; var dy = wrapText(x, TY.desc, W/2, 764, 920, 45, 5);
+    var pillTxt = (en() ? 'Vitality level: ' : 'Vitallevel: ') + t(R.lv.name) + ' · ' + R.pct + ' %'; x.font = '600 32px Geist, sans-serif'; var pw = x.measureText(pillTxt).width + 72; x.fillStyle = 'rgba(255,255,255,0.22)'; roundRect(x, W/2 - pw/2, dy + 14, pw, 68, 34); x.fill(); x.fillStyle = '#fff'; x.fillText(pillTxt, W/2, dy + 60);
     /* Fünf Bereiche, Balken in Bereichsfarbe auf weißer Spur */
-    var by = 975; x.textAlign = 'left';
+    var by = dy + 150; x.textAlign = 'left';
     CFG.dims.forEach(function(d, i){ var p = R.sc[i] / 16; x.fillStyle = 'rgba(255,255,255,0.95)'; x.font = '500 30px Geist, sans-serif'; x.fillText(t(d.name), 110, by); x.textAlign = 'right'; x.font = '600 30px Geist, sans-serif'; x.fillText(Math.round(p*100) + ' %', W - 110, by); x.textAlign = 'left'; x.fillStyle = 'rgba(255,255,255,0.28)'; roundRect(x, 110, by + 18, W - 220, 18, 9); x.fill(); x.fillStyle = '#fff'; roundRect(x, 110, by + 18, Math.max(18, (W - 220) * p), 18, 9); x.fill(); x.fillStyle = d.color; roundRect(x, 110, by + 18, Math.max(18, (W - 220) * p), 18, 9); x.globalAlpha = 0.55; x.fill(); x.globalAlpha = 1; by += 70; });
     x.textAlign = 'center';
     /* CTA-Karte (liegt über der Instagram-Antwortleiste → bleibt sichtbar) */
     var host = (location.protocol.indexOf('http') === 0 && location.host) ? location.host : '';
-    var cy = 1345; x.save(); x.shadowColor = 'rgba(0,0,0,0.22)'; x.shadowBlur = 40; x.shadowOffsetY = 16; x.fillStyle = '#fff'; roundRect(x, 90, cy, W - 180, 300, 36); x.fill(); x.restore();
-    x.fillStyle = '#1B1B19'; x.font = '600 50px Geist, sans-serif'; x.fillText(en() ? 'Which vital type are you?' : 'Welcher Vital-Typ bist du?', W/2, cy + 92);
-    x.fillStyle = '#6B6B66'; x.font = '400 28px Geist, sans-serif'; x.fillText(en() ? '20 statements · 3 minutes · free' : '20 Aussagen · 3 Minuten · kostenlos', W/2, cy + 142);
-    var link = host || (en() ? 'Vital profile by ' : 'Vitalprofil von ') + ownerFull(); x.font = '600 36px Geist, sans-serif'; var lw = Math.min(W - 260, x.measureText(link).width + 90); x.fillStyle = col; roundRect(x, W/2 - lw/2, cy + 184, lw, 76, 38); x.fill(); x.fillStyle = '#fff'; if (x.measureText(link).width > lw - 40) x.font = '600 30px Geist, sans-serif'; x.fillText(link, W/2, cy + 234);
+    var cy = Math.max(by + 40, 1370); x.save(); x.shadowColor = 'rgba(0,0,0,0.22)'; x.shadowBlur = 40; x.shadowOffsetY = 16; x.fillStyle = '#fff'; roundRect(x, 90, cy, W - 180, 290, 36); x.fill(); x.restore();
+    x.fillStyle = '#1B1B19'; x.font = '600 50px Geist, sans-serif'; x.fillText(en() ? 'Which vital type are you?' : 'Welcher Vital-Typ bist du?', W/2, cy + 88);
+    x.fillStyle = '#6B6B66'; x.font = '400 28px Geist, sans-serif'; x.fillText(en() ? 'Create your vital profile for free at:' : 'Erstell dein Vitalprofil kostenlos auf:', W/2, cy + 138);
+    var link = host || (en() ? 'Vital profile by ' : 'Vitalprofil von ') + ownerFull(); x.font = '600 36px Geist, sans-serif'; var lw = Math.min(W - 260, x.measureText(link).width + 90); x.fillStyle = col; roundRect(x, W/2 - lw/2, cy + 176, lw, 76, 38); x.fill(); x.fillStyle = '#fff'; if (x.measureText(link).width > lw - 40) x.font = '600 30px Geist, sans-serif'; x.fillText(link, W/2, cy + 226);
     cb(c);
   }
   /* Story vorab rendern, damit das Teilen auf dem Handy direkt in der Klick-Geste passiert (Safari-Anforderung) */
