@@ -88,3 +88,11 @@ zone_id = "7d59763ba878ba1f36f05787fb4c3ee4"
 [[routes]]
 pattern = "*.cellrestart.net/*"
 zone_id = "0166791ea674db271b3eb58ff083a058"
+
+# Vitalprofil (templates/vitalprofil) — Zone wird bei Cloudflare registriert, danach:
+#   1. Proxied Wildcard-A  *.vitalprofil.net → 192.0.2.1
+#   2. zone_id hier eintragen und den Block aktivieren
+#   3. vom App-Server deployen (--config wrangler.toml)
+# [[routes]]
+# pattern = "*.vitalprofil.net/*"
+# zone_id = "ZONE_ID_VITALPROFIL"

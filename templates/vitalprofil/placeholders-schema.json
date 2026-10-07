@@ -10,7 +10,7 @@
       "required": false,
       "default_value": "solo",
       "preview_value": "solo",
-      "placeholder_text": "Betreibst du die Seite allein oder zusammen mit deiner Partnerin / deinem Partner? Im Duo-Modus erscheinen zwei Fotos, ein gemeinsamer Name, je eine Kontaktzeile pro Person, und die Texte werden auf „wir“ umgestellt. Ihr teilt euch eine Adresse und eine E-Mail für die Check-Ergebnisse.",
+      "placeholder_text": "Betreibst du die Seite allein oder zusammen mit deiner Partnerin / deinem Partner? Im Duo-Modus erscheinen zwei Fotos, ein gemeinsamer Name, je eine Kontaktzeile pro Person, und die Texte werden auf „wir“ umgestellt. Ihr teilt euch eine Adresse und eine E-Mail für die Ergebnisse.",
       "card_options": [
         {
           "value": "solo",
@@ -36,11 +36,10 @@
       "order": 1,
       "required": true,
       "max_length": 40,
-      "profile_key": "first_name",
       "default_value": "",
       "preview_value": "Daniel",
       "input_placeholder": "z.B. Daniel",
-      "placeholder_text": "Dein Vorname, wie er oben auf der Seite und im Check erscheint.",
+      "placeholder_text": "Dein Vorname, wie er oben auf der Seite und im Vitalprofil erscheint.",
       "color_tag": "person1"
     },
     {
@@ -51,7 +50,6 @@
       "order": 2,
       "required": true,
       "max_length": 60,
-      "profile_key": "last_name",
       "default_value": "",
       "preview_value": "Kurzeja",
       "input_placeholder": "z.B. Kurzeja",
@@ -65,11 +63,10 @@
       "section": "Profil",
       "order": 3,
       "required": true,
-      "profile_key": "avatar_url",
       "aspect_ratio": "1/1",
       "default_value": "https://app.finestsites.io/placeholders/profilbild.webp",
       "preview_value": "",
-      "placeholder_text": "Quadratisch, mindestens 400×400 px. Erscheint groß oben auf der Seite, auf deiner Ergebniskarte und bei deiner Einladung zum Gespräch.",
+      "placeholder_text": "Wird aus deinem Profil übernommen. Quadratisch, mindestens 400×400 px. Erscheint groß oben auf der Seite, auf deiner Ergebniskarte, bei deiner Einladung zum Gespräch und im Footer.",
       "color_tag": "person1"
     },
     {
@@ -155,16 +152,17 @@
     },
     {
       "key": "intro",
-      "type": "textarea",
+      "type": "richtext",
       "label": "Dein kurzer Text (optional)",
       "section": "Profil",
       "order": 5,
       "required": false,
-      "max_length": 320,
+      "max_length": 400,
       "default_value": "",
       "preview_value": "",
-      "input_placeholder": "Hey, schön, dass du hier bist! Ich glaub ja, dass kleine Gewohnheiten den größten Unterschied machen. Mach kurz den Check …",
-      "placeholder_text": "Zwei, drei lockere Sätze von dir, wie du jemandem am Telefon erklären würdest, worum es geht. Lass das Feld leer, dann nutzen wir unseren Standardtext (auf Deutsch und Englisch). Bitte keine Produkt- oder Wirkaussagen, nur du und deine Einladung."
+      "input_placeholder": "Hey, schön, dass du hier bist! Ich glaub ja, dass kleine Gewohnheiten den größten Unterschied machen …",
+      "placeholder_text": "Zwei, drei lockere Sätze von dir, wie du jemandem am Telefon erklären würdest, worum es geht. Lass das Feld leer, dann nutzen wir unseren Standardtext (auf Deutsch und Englisch). Bitte keine Produkt- oder Wirkaussagen und kein Erfahrungsbericht, nur du und deine Einladung. Der Text wird automatisch auf Heil- und Wirkaussagen geprüft.",
+      "compliance_check": true
     },
     {
       "key": "instagram",
@@ -173,7 +171,6 @@
       "section": "Social Media",
       "order": 6,
       "required": false,
-      "profile_key": "instagram",
       "default_value": "",
       "preview_value": "https://instagram.com/finestsites",
       "input_placeholder": "deinname oder https://instagram.com/deinname",
@@ -187,7 +184,6 @@
       "section": "Social Media",
       "order": 7,
       "required": false,
-      "profile_key": "tiktok",
       "default_value": "",
       "preview_value": "",
       "input_placeholder": "deinname oder https://tiktok.com/@deinname",
@@ -201,7 +197,6 @@
       "section": "Social Media",
       "order": 8,
       "required": false,
-      "profile_key": "facebook",
       "default_value": "",
       "preview_value": "https://facebook.com/finestsites",
       "input_placeholder": "deinname oder https://facebook.com/deinname",
@@ -215,7 +210,6 @@
       "section": "Social Media",
       "order": 9,
       "required": false,
-      "profile_key": "youtube",
       "default_value": "",
       "preview_value": "",
       "input_placeholder": "@deinkanal oder https://youtube.com/@deinkanal",
@@ -229,7 +223,6 @@
       "section": "Social Media",
       "order": 10,
       "required": false,
-      "profile_key": "linkedin",
       "default_value": "",
       "preview_value": "",
       "input_placeholder": "deinname oder https://linkedin.com/in/deinname",
@@ -247,7 +240,7 @@
       "default_value": "",
       "preview_value": "491761234567",
       "input_placeholder": "0176 1234567",
-      "placeholder_text": "Deine Nummer, so wie du sie aufschreibst. Wer auf das Icon tippt, kann dir direkt schreiben. Erscheint außerdem nach dem Absenden des Checks und im Footer.",
+      "placeholder_text": "Wird aus deinem Profil übernommen, wenn dort eine Nummer steht. Wer auf das Icon tippt, kann dir direkt schreiben. Erscheint außerdem nach dem Absenden als „Per WhatsApp schreiben“.",
       "color_tag": "person1"
     },
     {
@@ -346,7 +339,7 @@
       "default_value": "",
       "preview_value": "",
       "input_placeholder": "0176 1234567",
-      "placeholder_text": "Erscheint in der Kontaktzeile von Person 2 und nach dem Absenden des Checks als zweiter WhatsApp-Button.",
+      "placeholder_text": "Erscheint in der Kontaktzeile von Person 2 und nach dem Absenden als zweiter WhatsApp-Button.",
       "show_when": {
         "field": "partner_modus",
         "value": "duo"
@@ -363,7 +356,7 @@
       "default_value": "",
       "preview_value": "",
       "input_placeholder": "anna@email.de",
-      "placeholder_text": "Nur für das E-Mail-Icon in der Kontaktzeile von Person 2. Die Check-Ergebnisse gehen immer an die Adresse unter „Kontakt“.",
+      "placeholder_text": "Nur für das E-Mail-Icon in der Kontaktzeile von Person 2. Die Ergebnisse gehen immer an die Adresse unter „Kontakt“.",
       "show_when": {
         "field": "partner_modus",
         "value": "duo"
@@ -373,15 +366,14 @@
     {
       "key": "email_benachrichtigung",
       "type": "email",
-      "label": "E-Mail für Check-Ergebnisse",
+      "label": "E-Mail für Ergebnisse",
       "section": "Kontakt",
       "order": 12,
       "required": true,
-      "profile_key": "email",
       "default_value": "",
       "preview_value": "daniel@example.com",
       "input_placeholder": "deine@email.de",
-      "placeholder_text": "Wenn jemand am Ende des Checks sein Ergebnis an dich schickt, bekommst du alle 20 Antworten, Wünsche und Kontaktdaten an diese Adresse. Erscheint als E-Mail-Icon unter deinem Namen und im Footer."
+      "placeholder_text": "Wenn jemand am Ende sein Vitalprofil an dich schickt, bekommst du alle 20 Antworten, Wünsche und Kontaktdaten an diese Adresse. Erscheint als E-Mail-Icon unter deinem Namen."
     },
     {
       "key": "links",
@@ -476,7 +468,7 @@
       "key": "frage_motive",
       "type": "card_select",
       "label": "Frage „Was treibt dich an?\" stellen?",
-      "section": "Check anpassen",
+      "section": "Vitalprofil anpassen",
       "order": 15,
       "required": true,
       "default_value": "an",
@@ -492,14 +484,14 @@
           "label": "Stellen",
           "card_type": "color",
           "color": "#DDF2EA",
-          "description": "Die Motiv-Frage ist Teil des Checks."
+          "description": "Die Motiv-Frage ist Teil des Vitalprofils."
         },
         {
           "value": "aus",
           "label": "Weglassen",
           "card_type": "color",
           "color": "#F1F5F9",
-          "description": "Der Check endet direkt nach den 20 Aussagen."
+          "description": "Der Vitalprofil endet direkt nach den 20 Aussagen."
         }
       ]
     },
@@ -507,7 +499,7 @@
       "key": "frage_investition",
       "type": "card_select",
       "label": "Frage „Was ist dir dein Wohlbefinden pro Tag wert?“ stellen?",
-      "section": "Check anpassen",
+      "section": "Vitalprofil anpassen",
       "order": 16,
       "required": true,
       "default_value": "an",
@@ -523,14 +515,14 @@
           "label": "Stellen",
           "card_type": "color",
           "color": "#DDF2EA",
-          "description": "Die Frage nach dem Tagesbudget ist Teil des Checks."
+          "description": "Die Frage nach dem Tagesbudget ist Teil des Vitalprofils."
         },
         {
           "value": "aus",
           "label": "Weglassen",
           "card_type": "color",
           "color": "#F1F5F9",
-          "description": "Keine Frage nach Geld im Check."
+          "description": "Keine Frage nach Geld im Vitalprofil."
         }
       ]
     }

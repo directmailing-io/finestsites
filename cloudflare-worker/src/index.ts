@@ -1077,7 +1077,17 @@ export default {
           orange:  { accent: '#C2410C', boxBg: '#FFF1E0', boxBorder: '#FDBA74', logo: '#F97316' },
           skyblau: { accent: '#0284C7', boxBg: '#E0F2FE', boxBorder: '#BAE6FD', logo: '#38BDF8' },
         }
-        const ta = themeAccents[farbthema] ?? themeAccents.blau
+        const vitalAccents: Record<string, { accent: string; boxBg: string; boxBorder: string; logo: string }> = {
+          gruen:   { accent: '#1F9D6B', boxBg: '#F3F7F4', boxBorder: '#DCF1E6', logo: '#1F9D6B' },
+          orange:  { accent: '#E8842A', boxBg: '#FAF5EF', boxBorder: '#FBE8D7', logo: '#E8842A' },
+          rot:     { accent: '#D9433B', boxBg: '#FAF3F2', boxBorder: '#FAE0DE', logo: '#D9433B' },
+          blau:    { accent: '#3572DF', boxBg: '#F2F5FA', boxBorder: '#DFE9FB', logo: '#3572DF' },
+          violett: { accent: '#7357D9', boxBg: '#F5F3FA', boxBorder: '#EAE5FA', logo: '#7357D9' },
+          nacht:   { accent: '#3FCB9E', boxBg: '#F3F7F4', boxBorder: '#DCF1E6', logo: '#1F9D6B' },
+        }
+        const ta = domain === 'vitalprofil.net'
+          ? (vitalAccents[farbthema] ?? vitalAccents.gruen)
+          : (themeAccents[farbthema] ?? themeAccents.blau)
         const design = {
           ...baseDesign,
           accent: ta.accent,
@@ -1085,7 +1095,7 @@ export default {
           boxBorder: ta.boxBorder,
           logoHtml: baseDesign.logoHtml.replace(/#[0-9A-Fa-f]{6}/g, ta.logo),
         }
-        const legalHtml = pathname === '/impressum' ? renderImpressum(design) : renderDatenschutz(design)
+        const legalHtml = pathname === '/impressum' ? renderImpressum(design) : renderDatenschutz(design, domain)
         ctx.waitUntil(trackPageview(request, url, hostname, pathname, meta, env))
         return new Response(injectBeacon(render(legalHtml, pageDataMap)), {
           headers: {
@@ -1314,6 +1324,14 @@ const LEGAL_DESIGNS: Record<string, LegalDesign> = {
     font: "'Inter',system-ui,-apple-system,sans-serif",
     fontUrl: 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap',
     logoHtml: 'Women<span style="color:#e11d48">Plus</span>', navHeight: 56,
+  },
+  'vitalprofil.net': {
+    accent: '#1F9D6B', bg: '#FFFFFF', text: '#1B1B19', muted: '#5A5B57',
+    faint: '#8E8F8A', divider: '#E7E6E0', boxBg: '#F3F7F4', boxBorder: '#DCF1E6',
+    navBg: 'rgba(255,255,255,0.92)',
+    font: "'Geist',system-ui,-apple-system,sans-serif",
+    fontUrl: 'https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&display=swap',
+    logoHtml: 'Vital<span style="color:#1F9D6B">profil</span>', navHeight: 54,
   },
   'wellpreneur.io': {
     accent: '#2563EB', bg: '#ffffff', text: '#0A1120', muted: '#374151',
@@ -1571,7 +1589,40 @@ ${legalFooterHtml()}
 </html>`
 }
 
-function renderDatenschutz(d: LegalDesign): string {
+/**
+ * Vitalprofil (vitalprofil.net): the visitor answers 20 statements about daily habits. Evaluated
+ * in the browser; sent only when the visitor submits the form with explicit consent. Because habit
+ * data can count as health data (CJEU C-21/23), the section names Art. 9 (2) (a) and the categories.
+ */
+function vitalprofilSectionDe(): string {
+  return `<section>
+<h2>Vitalprofil (Selbsteinsch\u00E4tzung zu Alltagsgewohnheiten)</h2>
+<p>Auf dieser Seite k\u00F6nnen Sie ein Vitalprofil erstellen: 20 Aussagen zu Ihren Alltagsgewohnheiten (Ern\u00E4hrung und Trinken, Tagesstruktur und Pausen, Schlaf und Abschalten, Bewegung, Ausgleich), optional Ihre W\u00FCnsche, Antriebsmotive und ein Tagesbudget. Die Auswertung erfolgt vollst\u00E4ndig in Ihrem Browser. Solange Sie Ihr Ergebnis nicht aktiv absenden, werden keine Antworten gespeichert oder \u00FCbertragen; der Zwischenstand liegt nur im Sitzungsspeicher Ihres Browsers und wird beim Schlie\u00DFen des Tabs gel\u00F6scht.</p>
+<p>Wenn Sie am Ende das Formular \u201EBeratung anfragen\u201C absenden, werden Ihre Kontaktdaten (Name, E-Mail-Adresse, optional Telefonnummer, bevorzugter Kontaktweg, Nachricht) zusammen mit Ihren 20 Antworten, dem ermittelten Vital-Typ, Ihren W\u00FCnschen und Antriebsmotiven verschl\u00FCsselt an die FinestSites-Server \u00FCbertragen, im gesicherten Dashboard der betreibenden Person gespeichert und ihr per E-Mail zugestellt. Angaben zu Ihren Gewohnheiten k\u00F6nnen als Gesundheitsdaten im Sinne von Art. 9 DSGVO gelten. Die Verarbeitung erfolgt daher ausschlie\u00DFlich auf Grundlage Ihrer ausdr\u00FCcklichen Einwilligung (Art. 6 Abs. 1 lit. a und Art. 9 Abs. 2 lit. a DSGVO), die Sie im Formular per H\u00E4kchen erteilen. Zeitpunkt und Wortlaut der Einwilligung werden mitgespeichert.</p>
+<p>Zweck ist ausschlie\u00DFlich die von Ihnen angefragte pers\u00F6nliche Beratung durch die betreibende Person. Die Daten werden nicht an Dritte weitergegeben und nicht f\u00FCr Newsletter oder Werbung verwendet. FinestSites verarbeitet die Daten als Auftragsverarbeiter (Art. 28 DSGVO) im Auftrag der betreibenden Person. Sie k\u00F6nnen Ihre Einwilligung jederzeit mit Wirkung f\u00FCr die Zukunft widerrufen und die L\u00F6schung verlangen, per E-Mail an die im Impressum genannte Adresse. Die Daten werden gel\u00F6scht, sobald die Beratung abgeschlossen ist und keine gesetzliche Aufbewahrungspflicht entgegensteht.</p>
+<p>Das Vitalprofil ist eine Selbsteinsch\u00E4tzung Ihrer Gewohnheiten. Es stellt keine Diagnose, ersetzt keine \u00E4rztliche Beratung und enth\u00E4lt keine Produktempfehlung.</p>
+</section>
+
+<hr class="divider">
+
+`
+}
+function vitalprofilSectionEn(): string {
+  return `<section>
+<h2>Vital profile (self-assessment of everyday habits)</h2>
+<p>On this site you can create a vital profile: 20 statements about your everyday habits (food and hydration, daily structure and breaks, sleep and winding down, movement, balance), optionally your wishes, motives and a daily budget. The evaluation takes place entirely in your browser. Unless you actively submit your result, no answers are stored or transmitted; the interim state is kept only in your browser's session storage and is deleted when the tab is closed.</p>
+<p>If you submit the \u201CRequest consultation\u201D form at the end, your contact details (name, email address, optionally phone number, preferred contact method, message) are transmitted in encrypted form to the FinestSites servers together with your 20 answers, the determined vitality type, your wishes and motives, stored in the operator's secured dashboard and delivered to the operator by email. Information about your habits may constitute health data within the meaning of Art. 9 GDPR. Processing therefore takes place exclusively on the basis of your explicit consent (Art. 6 (1) (a) and Art. 9 (2) (a) GDPR), which you give by ticking the box in the form. The time and wording of the consent are stored as well.</p>
+<p>The sole purpose is the personal consultation you requested from the operator. The data is not shared with third parties and not used for newsletters or advertising. FinestSites processes the data as a processor (Art. 28 GDPR) on behalf of the operator. You can withdraw your consent at any time with effect for the future and request deletion by emailing the address given in the legal notice. The data is deleted once the consultation has been completed and no statutory retention obligation applies.</p>
+<p>The vital profile is a self-assessment of your habits. It does not constitute a diagnosis, does not replace medical advice and contains no product recommendation.</p>
+</section>
+
+<hr class="divider">
+
+`
+}
+
+function renderDatenschutz(d: LegalDesign, domain = ''): string {
+  const vital = domain === 'vitalprofil.net'
   return `${legalHead('Datenschutzerkl\u00E4rung', d)}
 <body>
 <nav class="top-nav"><a class="logo" href="/">${d.logoHtml}</a></nav>
@@ -1610,7 +1661,7 @@ ${legalTopbarHtml()}
 
 <hr class="divider">
 
-<section>
+${vital ? vitalprofilSectionDe() : ''}<section>
 <h2>Kontaktformular</h2>
 <p>Wenn Sie das Kontaktformular auf dieser Seite nutzen, werden Ihre Angaben (z.\u202FB. Name, E-Mail-Adresse, Nachricht) verschl\u00FCsselt an die FinestSites-Server \u00FCbertragen und in unserem gesicherten Dashboard gespeichert. Sie werden ausschlie\u00DFlich zur Bearbeitung Ihrer Anfrage verwendet und nicht an Dritte weitergegeben.</p>
 <p>Rechtsgrundlage: Art. 6 Abs. 1 lit. b DSGVO (Vertragsanbahnung) bzw. Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an der Beantwortung von Anfragen). Die Daten werden gel\u00F6scht, sobald Ihre Anfrage abschlie\u00DFend bearbeitet wurde und keine gesetzliche Aufbewahrungspflicht entgegensteht.</p>
@@ -1687,7 +1738,7 @@ ${legalTopbarHtml()}
 
 <hr class="divider">
 
-<section>
+${vital ? vitalprofilSectionEn() : ''}<section>
 <h2>Contact form</h2>
 <p>If you use the contact form on this site, your details (e.g. name, email address, message) are transmitted to the FinestSites servers in encrypted form and stored in our secured dashboard. They are used exclusively to process your inquiry and are not shared with third parties.</p>
 <p>Legal basis: Art. 6 (1) (b) GDPR (steps prior to entering into a contract) or Art. 6 (1) (f) GDPR (legitimate interest in responding to inquiries). The data is deleted once your inquiry has been fully processed and no statutory retention obligation applies.</p>
