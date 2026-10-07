@@ -44,6 +44,8 @@ interface LoopSubField {
   max_items?: number
   /** When true, shows a "pick from your sites" button next to this URL field */
   site_picker?: boolean
+  /** Only published sites from the user's own account may be picked — no free URL (e.g. links shown inside a check result) */
+  site_picker_only?: boolean
 }
 
 interface FieldSchema {
@@ -1981,9 +1983,11 @@ function LoopField({ field, value, onChange, onItemFocus }: {
                           type="url"
                           value={item[sf.key] ?? ''}
                           onChange={e => updateSubField(idx, sf.key, e.target.value)}
-                          placeholder={sf.placeholder_text || sf.label}
+                          placeholder={sf.site_picker_only ? 'Aus deinen aktiven Seiten wählen ↓' : (sf.placeholder_text || sf.label)}
                           maxLength={sf.max_length ?? undefined}
-                          style={INPUT}
+                          readOnly={!!sf.site_picker_only}
+                          onClick={() => { if (sf.site_picker_only && pickerForIdx !== idx) openPicker(idx) }}
+                          style={{ ...INPUT, ...(sf.site_picker_only ? { cursor: 'pointer', background: '#FAFAFA' } : {}) }}
                           onFocus={focusBorder} onBlur={blurBorder}
                         />
                         {/* "Aus meinen Seiten" trigger */}

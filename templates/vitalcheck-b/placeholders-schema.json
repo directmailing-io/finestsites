@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": 2,
   "fields": [
     {
       "key": "vorname",
@@ -13,7 +13,7 @@
       "default_value": "",
       "preview_value": "Daniel",
       "input_placeholder": "z.B. Daniel",
-      "placeholder_text": "Dein Vorname, wie er auf deiner Website und im Check erscheinen soll."
+      "placeholder_text": "Dein Vorname, wie er oben auf der Seite und im Check erscheint."
     },
     {
       "key": "nachname",
@@ -27,7 +27,7 @@
       "default_value": "",
       "preview_value": "Kurzeja",
       "input_placeholder": "z.B. Kurzeja",
-      "placeholder_text": "Dein Nachname für den Footer, den PM-Disclaimer und die Einwilligung im Formular."
+      "placeholder_text": "Dein Nachname für die Seite, die Pflichtkennzeichnung und die Einwilligung im Formular."
     },
     {
       "key": "profilbild",
@@ -40,7 +40,7 @@
       "aspect_ratio": "1/1",
       "default_value": "https://app.finestsites.io/placeholders/profilbild.webp",
       "preview_value": "",
-      "placeholder_text": "Quadratisch, mindestens 400×400 px. Erscheint oben neben deinem Namen, in der Pflichtkennzeichnung und am Ende des Checks neben deiner Einladung zum Gespräch."
+      "placeholder_text": "Quadratisch, mindestens 400×400 px. Erscheint groß oben auf der Seite, auf deiner Ergebniskarte und bei deiner Einladung zum Gespräch."
     },
     {
       "key": "geschlecht",
@@ -51,7 +51,7 @@
       "required": true,
       "default_value": "weiblich",
       "preview_value": "weiblich",
-      "placeholder_text": "Damit die Bezeichnung auf deiner Website stimmt: \"unabhängige Vertriebspartnerin\" oder \"unabhängiger Vertriebspartner\".",
+      "placeholder_text": "Damit die Bezeichnung unter deinem Namen stimmt: \"Unabhängige Vertriebspartnerin\" oder \"Unabhängiger Vertriebspartner\".",
       "card_options": [
         {
           "value": "weiblich",
@@ -70,30 +70,142 @@
       ]
     },
     {
-      "key": "email_benachrichtigung",
-      "type": "email",
-      "label": "E-Mail für Check-Ergebnisse",
+      "key": "intro",
+      "type": "textarea",
+      "label": "Dein kurzer Text (optional)",
       "section": "Profil",
-      "order": 10,
-      "required": true,
-      "profile_key": "email",
+      "order": 5,
+      "required": false,
+      "max_length": 320,
       "default_value": "",
-      "preview_value": "daniel@example.com",
-      "input_placeholder": "deine@email.de",
-      "placeholder_text": "Wenn jemand am Ende des Checks sein Ergebnis an dich schickt, bekommst du alle 20 Antworten, Wünsche und Kontaktdaten an diese Adresse. Wird im Footer angezeigt."
+      "preview_value": "",
+      "input_placeholder": "Hey, schön, dass du hier bist! Ich glaub ja, dass kleine Gewohnheiten den größten Unterschied machen. Mach kurz den Check …",
+      "placeholder_text": "Zwei, drei lockere Sätze von dir, wie du jemandem am Telefon erklären würdest, worum es geht. Lass das Feld leer, dann nutzen wir unseren Standardtext (auf Deutsch und Englisch). Bitte keine Produkt- oder Wirkaussagen, nur du und deine Einladung."
+    },
+    {
+      "key": "instagram",
+      "type": "url",
+      "label": "Instagram",
+      "section": "Social Media",
+      "order": 6,
+      "required": false,
+      "profile_key": "instagram",
+      "default_value": "",
+      "preview_value": "https://instagram.com/finestsites",
+      "input_placeholder": "deinname oder https://instagram.com/deinname",
+      "placeholder_text": "Benutzername oder kompletter Link. Erscheint als Icon unter deinem Namen."
+    },
+    {
+      "key": "tiktok",
+      "type": "url",
+      "label": "TikTok",
+      "section": "Social Media",
+      "order": 7,
+      "required": false,
+      "profile_key": "tiktok",
+      "default_value": "",
+      "preview_value": "",
+      "input_placeholder": "deinname oder https://tiktok.com/@deinname",
+      "placeholder_text": "Benutzername oder kompletter Link."
+    },
+    {
+      "key": "facebook",
+      "type": "url",
+      "label": "Facebook",
+      "section": "Social Media",
+      "order": 8,
+      "required": false,
+      "profile_key": "facebook",
+      "default_value": "",
+      "preview_value": "https://facebook.com/finestsites",
+      "input_placeholder": "deinname oder https://facebook.com/deinname",
+      "placeholder_text": "Benutzername oder kompletter Link."
+    },
+    {
+      "key": "youtube",
+      "type": "url",
+      "label": "YouTube",
+      "section": "Social Media",
+      "order": 9,
+      "required": false,
+      "profile_key": "youtube",
+      "default_value": "",
+      "preview_value": "",
+      "input_placeholder": "@deinkanal oder https://youtube.com/@deinkanal",
+      "placeholder_text": "Kanalname oder kompletter Link."
+    },
+    {
+      "key": "linkedin",
+      "type": "url",
+      "label": "LinkedIn",
+      "section": "Social Media",
+      "order": 10,
+      "required": false,
+      "profile_key": "linkedin",
+      "default_value": "",
+      "preview_value": "",
+      "input_placeholder": "deinname oder https://linkedin.com/in/deinname",
+      "placeholder_text": "Profilname oder kompletter Link."
     },
     {
       "key": "whatsapp_nummer",
       "type": "text",
       "label": "WhatsApp-Nummer (optional)",
-      "section": "Kontakt",
-      "order": 12,
+      "section": "Social Media",
+      "order": 11,
       "required": false,
       "max_length": 20,
       "default_value": "",
       "preview_value": "491761234567",
-      "input_placeholder": "491761234567",
-      "placeholder_text": "Nur Ziffern, ohne + oder 00. Beispiel: statt „+49 176 1234567\" nur „491761234567\". Wenn gesetzt, erscheint nach dem Absenden ein „Direkt per WhatsApp schreiben\"-Button und ein WhatsApp-Link im Footer."
+      "input_placeholder": "0176 1234567",
+      "placeholder_text": "Deine Nummer, so wie du sie aufschreibst. Wer auf das Icon tippt, kann dir direkt schreiben. Erscheint außerdem nach dem Absenden des Checks und im Footer."
+    },
+    {
+      "key": "email_benachrichtigung",
+      "type": "email",
+      "label": "E-Mail für Check-Ergebnisse",
+      "section": "Kontakt",
+      "order": 12,
+      "required": true,
+      "profile_key": "email",
+      "default_value": "",
+      "preview_value": "daniel@example.com",
+      "input_placeholder": "deine@email.de",
+      "placeholder_text": "Wenn jemand am Ende des Checks sein Ergebnis an dich schickt, bekommst du alle 20 Antworten, Wünsche und Kontaktdaten an diese Adresse. Erscheint als E-Mail-Icon unter deinem Namen und im Footer."
+    },
+    {
+      "key": "links",
+      "type": "loop",
+      "label": "Meine Seiten in der Auswertung",
+      "section": "Meine Seiten",
+      "order": 13,
+      "required": false,
+      "min_items": 0,
+      "max_items": 6,
+      "placeholder_text": "Optional. Am Ende der Auswertung kannst du auf deine anderen aktiven FinestSites-Seiten verlinken, zum Beispiel deine Linkseite oder deine Business-Seite. Nur veröffentlichte Seiten aus deinem Konto, keine fremden Links. Die Links stehen bewusst getrennt vom Ergebnis mit dem Hinweis, dass sie keine Empfehlung aus dem Vitalprofil sind.",
+      "notice": {
+        "title": "Bewusst getrennt vom Ergebnis",
+        "text": "Die Links erscheinen unter deiner Einladung zum Gespräch als „Meine Seiten“, für alle Besucher gleich und unabhängig von ihrem Ergebnis. Das Vitalprofil selbst empfiehlt nie ein Produkt. So bleibt die Auswertung eine Selbsteinschätzung und keine Produktwerbung."
+      },
+      "sub_fields": [
+        {
+          "key": "titel",
+          "type": "text",
+          "label": "Beschriftung",
+          "required": true,
+          "max_length": 40,
+          "placeholder_text": "z.B. Meine Linkseite"
+        },
+        {
+          "key": "url",
+          "type": "url",
+          "label": "Seite",
+          "required": true,
+          "site_picker": true,
+          "site_picker_only": true,
+          "placeholder_text": "Aus deinen aktiven Seiten wählen"
+        }
+      ]
     },
     {
       "key": "farbthema",
@@ -104,7 +216,7 @@
       "required": true,
       "default_value": "mint",
       "preview_value": "mint",
-      "placeholder_text": "Akzentfarbe deiner Seite (Fortschritt, Auswahl, Radar). Die Seite selbst bleibt ruhig in Schwarz-Weiß, „Midnight“ ist die dunkle Variante.",
+      "placeholder_text": "Akzentfarbe deiner Seite (Profilbild-Ring, Fortschritt, Auswahl, Ergebniskarte). „Midnight“ ist die dunkle Variante.",
       "card_options": [
         {
           "value": "mint",
@@ -147,40 +259,6 @@
           "card_type": "color",
           "color": "#0F1513",
           "description": "Dunkel, edel, App-Look."
-        }
-      ]
-    },
-    {
-      "key": "startseite",
-      "type": "card_select",
-      "label": "Startseite",
-      "section": "Design",
-      "order": 14.5,
-      "required": true,
-      "default_value": "split",
-      "preview_value": "split",
-      "placeholder_text": "Wie die erste Seite aussieht. Der Check selbst ist bei allen drei gleich.",
-      "card_options": [
-        {
-          "value": "split",
-          "label": "Split",
-          "card_type": "color",
-          "color": "#DCEFE6",
-          "description": "Headline links, Handy rechts, drei Schritte darunter."
-        },
-        {
-          "value": "buehne",
-          "label": "Bühne",
-          "card_type": "color",
-          "color": "#C9E8DA",
-          "description": "Farbige Bühne, Handy ragt heraus, fünf Bereiche als Chips."
-        },
-        {
-          "value": "teaser",
-          "label": "Ergebnis-Teaser",
-          "card_type": "color",
-          "color": "#EEF3F0",
-          "description": "Handy mit Beispiel-Ergebnis links, drei Vorteile rechts."
         }
       ]
     },
@@ -250,12 +328,16 @@
   "preview_values": {
     "vorname": "Daniel",
     "nachname": "Kurzeja",
+    "profilbild": "https://app.finestsites.io/placeholders/profilbild.webp",
     "geschlecht": "maennlich",
+    "intro": "",
+    "instagram": "https://instagram.com/finestsites",
+    "facebook": "https://facebook.com/finestsites",
+    "whatsapp_nummer": "491761234567",
     "email_benachrichtigung": "daniel@example.com",
-    "whatsapp_nummer": "",
+    "links": "[{\"titel\":\"Meine Linkseite\",\"url\":\"https://demo.lnko.me\"},{\"titel\":\"Die Business-Seite\",\"url\":\"https://demo.wellpreneur.io\"}]",
     "farbthema": "mint",
     "frage_motive": "an",
-    "frage_investition": "an",
-    "startseite": "split"
+    "frage_investition": "an"
   }
 }
