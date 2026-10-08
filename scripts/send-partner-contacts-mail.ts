@@ -5,6 +5,7 @@
  * Vorschau (kein Versand): npx tsx scripts/send-partner-contacts-mail.ts --dry
  * Echter Versand (nur auf dem App-Server, dort zeigt DATABASE_URL auf Prod):
  *                          npx tsx scripts/send-partner-contacts-mail.ts --go
+ * Nachversand an Konten, die nur Entwurfs-Partnerseiten haben: --drafts --dry / --drafts --go
  *
  * Empfänger bei --go: jeder Nutzer mit mindestens einer veröffentlichten Seite,
  * auf der partner_modus=duo bzw. team_modus=team gesetzt ist (eine Mail pro Nutzer).
@@ -32,6 +33,11 @@ const from = process.env.RESEND_FROM_EMAIL ?? 'FinestSites <info@finestsites.io>
 
 type Recipient = { email: string; firstName: string | null; partnerName: string | null }
 
+// --drafts: nur Konten, deren Partnerseiten ausschließlich im Entwurf sind (Nachversand nach der
+// ersten Welle an veröffentlichte Seiten). Demo-/Admin-Konto ist immer ausgeschlossen.
+const DRAFTS_ONLY = argv.includes('--drafts')
+const EXCLUDED_USERNAMES = ['demo']
+
 async function recipientsFromDb(): Promise<Recipient[]> {
   // dieselben Optionen wie src/lib/db/index.ts (SSL kommt aus der URL)
   const sql = postgres(process.env.DATABASE_URL!, { prepare: false, max: 1, connect_timeout: 8 })
@@ -43,8 +49,14 @@ async function recipientsFromDb(): Promise<Recipient[]> {
     from site_data d
     join user_sites s on s.id = d.user_site_id
     join users u on u.id = s.user_id
-    where s.status = 'published'
-      and ((d.field_key = 'partner_modus' and d.field_value = 'duo') or (d.field_key = 'team_modus' and d.field_value = 'team'))
+    where ((d.field_key = 'partner_modus' and d.field_value = 'duo') or (d.field_key = 'team_modus' and d.field_value = 'team'))
+      and coalesce(u.username, '') not in ${sql(EXCLUDED_USERNAMES)}
+      and ${DRAFTS_ONLY
+        ? sql`s.status <> 'published' and not exists (
+            select 1 from user_sites s2 join site_data d2 on d2.user_site_id = s2.id
+            where s2.user_id = u.id and s2.status = 'published'
+              and ((d2.field_key = 'partner_modus' and d2.field_value = 'duo') or (d2.field_key = 'team_modus' and d2.field_value = 'team')))`
+        : sql`s.status = 'published'`}
     order by u.email, s.published_at desc nulls last`
   await sql.end()
   const seen = new Map<string, Recipient>()
