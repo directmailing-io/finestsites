@@ -25,8 +25,8 @@ function AppSidebar({ activeIdx = 0 }: { activeIdx?: number }) {
 function MockupTemplateSelect() {
   const cards = [
     { bg: '#DCD0ED', label: 'MyEvnt', sub: 'Events & Webinare', selected: false },
-    { bg: '#B8CCDB', label: 'Fitline', sub: 'OptimalSet', selected: true },
-    { bg: '#C8D8B8', label: 'VitalCheck', sub: 'Gesundheits-Quiz', selected: false },
+    { bg: '#B8CCDB', label: 'Nährstoff-System', sub: 'Produkt-Seite', selected: true },
+    { bg: '#C8D8B8', label: 'Vitalprofil', sub: 'Vital-Typ-Check', selected: false },
     { bg: '#EAD4B5', label: 'lnko.bio', sub: 'Link in Bio', selected: false },
   ]
   return (
