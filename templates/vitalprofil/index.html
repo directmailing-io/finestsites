@@ -166,7 +166,28 @@ main { width: 100%; max-width: var(--col); margin: 0 auto; padding: 24px 16px 40
 .supply h3 { font-size: 19px; font-weight: 600; letter-spacing: -0.01em; margin-bottom: 8px; }
 .supply p { font-size: 14.5px; color: var(--ink-2); line-height: 1.55; margin-bottom: 14px; }
 .supply .btn-accent { width: 100%; min-height: 52px; }
-.supply .fine { margin-top: 10px; font-size: 12px; color: var(--ink-3); text-align: center; line-height: 1.45; }
+.fine-nutri { margin-top: 12px; font-size: 12px; color: var(--ink-3); text-align: center; line-height: 1.45; }
+/* Akkordeon „Deine fünf Bereiche“ */
+.trait .h { all: unset; box-sizing: border-box; display: flex; align-items: center; gap: 10px; width: 100%; cursor: pointer; margin-bottom: 8px; -webkit-tap-highlight-color: transparent; }
+.trait .h:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; border-radius: 8px; }
+.trait .h .nm { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+.trait .h .nm b { font-weight: 500; font-size: 16px; line-height: 1.25; }
+.trait .h .tl { font-size: 12px; font-weight: 500; color: var(--ink-3); }
+.trait .h .tl.high { color: var(--s4); } .trait .h .tl.mid { color: var(--s1); } .trait .h .tl.low { color: var(--s0); }
+.trait .h .pct { margin-left: 0; }
+.trait .h .chev { width: 28px; height: 28px; border-radius: 50%; background: var(--bg); color: var(--ink-2); display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; transition: transform 0.25s var(--ease), background 0.2s; }
+.trait .h .chev svg { width: 15px; height: 15px; }
+.trait.open .h .chev { transform: rotate(180deg); background: var(--accent-soft); color: var(--accent-dark); }
+.trait .more { display: none; }
+.trait.open .more { display: block; }
+.trait .less { all: unset; cursor: pointer; display: block; margin-top: 8px; font-size: 13px; font-weight: 500; color: var(--accent-dark); }
+/* Beratungskarte farbig hervorgehoben */
+.res .consult { background: linear-gradient(170deg, var(--accent-soft) 0%, color-mix(in srgb, var(--accent-soft) 45%, var(--paper)) 55%, var(--paper) 100%); border: 1.5px solid color-mix(in srgb, var(--accent) 45%, transparent); box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 24px 56px -30px color-mix(in srgb, var(--accent) 70%, transparent); }
+.res .consult .k { display: block; font-size: 12px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent-dark); margin-bottom: 8px; }
+.res .consult .personal { background: var(--paper); border: 1px solid color-mix(in srgb, var(--accent) 28%, transparent); }
+.res .consult .who img { box-shadow: 0 0 0 3px var(--paper); }
+/* Emblem */
+.typecard .badge { width: 156px; height: 156px; filter: drop-shadow(0 16px 28px rgba(0,0,0,0.28)); }
 /* Footer: dunkler Streifen über die volle Breite, wie bei den anderen Templates */
 footer.site { margin-top: 28px; background: var(--foot); color: var(--foot-ink-2); padding: 34px 20px calc(30px + env(safe-area-inset-bottom)); }
 footer.site .in { max-width: var(--col); margin: 0 auto; }
@@ -583,7 +604,9 @@ var ICO = {
   phone: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>',
   save: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5M4 17v3h16v-3"/></svg>',
   share: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7M16 6l-4-4-4 4M12 2v13"/></svg>',
-  leaf: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 20c0-8 4-13 14-15-1 10-6 14-14 15z"/><path d="M5 20c3-5 6-8 10-10"/></svg>'
+  leaf: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 20c0-8 4-13 14-15-1 10-6 14-14 15z"/><path d="M5 20c3-5 6-8 10-10"/></svg>',
+  chev: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>',
+  start: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v5M5.6 7.6l1.5 1.5M18.4 7.6l-1.5 1.5M5 15a7 7 0 0 1 14 0"/><path d="M2 19h20M7 22h10"/></svg>'
 };
 
 /* ============ KONFIGURATION ============
@@ -863,6 +886,16 @@ var VC = (function(){
     var R = evalResult();
     return '<div class="reveal"><h2>' + (en() ? 'Creating your vitality profile …' : 'Dein Vitalprofil entsteht …') + '</h2><p>' + (en() ? 'Evaluating your 20 answers across five areas.' : 'Deine 20 Antworten werden in fünf Bereichen ausgewertet.') + '</p><div class="rows">' + CFG.dims.map(function(d, i){ return '<div class="row" data-i="' + i + '"><i style="background:' + d.color + '">' + ICO[d.ico] + '</i><b>' + esc(t(d.name)) + '</b><span class="p num" data-p="' + Math.round(R.sc[i]/16*100) + '">0 %</span></div>'; }).join('') + '</div></div>';
   }
+  function pol(cx, cy, r, a){ var t = (a - 90) * Math.PI / 180; return { x: +(cx + r * Math.cos(t)).toFixed(2), y: +(cy + r * Math.sin(t)).toFixed(2) }; }
+  function arcPath(cx, cy, r, a0, a1){ var s = pol(cx, cy, r, a0), e = pol(cx, cy, r, a1); return 'M' + s.x + ' ' + s.y + ' A' + r + ' ' + r + ' 0 0 1 ' + e.x + ' ' + e.y; }
+  function emblemIcon(TY){ var d = CFG.dims.filter(function(x){ return x.id === TY.key; })[0]; return TY.key === 'aufbruch' || !d ? ICO.start : ICO[d.ico]; }
+  function emblemSvg(TY){
+    var segs = CFG.dims.map(function(d, i){ return '<path d="' + arcPath(64, 64, 58, i * 72 + 7, (i + 1) * 72 - 7) + '" stroke="' + d.color + '" stroke-width="5" fill="none" stroke-linecap="round"/>'; }).join('');
+    var ico = emblemIcon(TY).replace('<svg viewBox="0 0 24 24"', '<svg x="41" y="41" width="46" height="46" viewBox="0 0 24 24"').replace(/currentColor/g, TY.color);
+    return '<svg class="badge" viewBox="0 0 128 128"><defs><linearGradient id="eg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity="0.84"/></linearGradient></defs>' +
+      '<circle cx="64" cy="64" r="58" fill="rgba(255,255,255,0.10)"/><circle cx="64" cy="64" r="58" fill="none" stroke="rgba(255,255,255,0.45)" stroke-width="5"/>' + segs + '<circle cx="64" cy="64" r="47" fill="url(#eg)"/>' + ico + '</svg>';
+  }
+  function emblemIconUrl(TY){ var svg = emblemIcon(TY).replace('<svg viewBox="0 0 24 24"', '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"').replace(/currentColor/g, TY.color); return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg); }
   function badgeSvg(color){
     return '<svg class="badge" viewBox="0 0 128 128"><defs><radialGradient id="g" cx="35%" cy="30%" r="80%"><stop offset="0" stop-color="#fff" stop-opacity="0.55"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient></defs><circle cx="64" cy="64" r="60" fill="' + color + '"/><circle cx="64" cy="64" r="60" fill="url(#g)"/><polygon points="64,30 92,50 82,88 46,88 36,50" fill="none" stroke="#fff" stroke-width="4" stroke-linejoin="round" opacity="0.9"/><circle cx="64" cy="64" r="8" fill="#fff"/></svg>';
   }
@@ -883,27 +916,20 @@ var VC = (function(){
         '<div class="personal">' + (en() ? 'You are <b>' + esc(t(ty.name)) + '</b>, your biggest lever is <b>' + esc(t(worstD.name)) + '</b>. That is exactly where we start: with your habits and your everyday life.' : 'Du bist <b>' + esc(t(ty.name)) + '</b>, dein größter Hebel ist <b>' + esc(t(worstD.name)) + '</b>. Genau da setzen wir an: bei deinen Gewohnheiten und deinem Alltag.') + '</div>' +
         (motive ? '<p class="body" style="margin-bottom:10px">' + (en() ? 'You said <b>' + esc(motive) + '</b> drives you. A good reason to start now, not someday.' : 'Du hast gesagt, <b>' + esc(motive) + '</b> treibt dich an. Ein guter Grund, jetzt anzufangen und nicht irgendwann.') + '</p>' : '') +
         '<p class="body">' + (en() ? (o.duo ? 'We work' : 'I work') + ' with the FitLine concept by PM-International. Together we look at your profile and check whether and how the concept can be integrated into your everyday life: into your routines, your day and your budget. Personally, by phone or WhatsApp, whenever it suits you.' : (o.duo ? 'Wir arbeiten' : 'Ich arbeite') + ' mit dem FitLine-Konzept von PM-International. Wir schauen gemeinsam auf dein Profil und prüfen, ob und wie sich das Konzept in deinen Alltag integrieren lässt: in deine Gewohnheiten, deinen Tag und dein Budget. Persönlich, per Telefon oder WhatsApp, wann es dir passt.') + '</p>' +
-        '<div class="guarantee"><i>' + ICO.check + '</i><span><b>' + (en() ? 'Free, non-binding, no obligation to buy.' : 'Kostenlos, unverbindlich, ohne Kaufpflicht.') + '</b> ' + (en() ? 'And should you decide on products afterwards, the 30-day satisfaction guarantee by PM-International applies.' : 'Und solltest du dich danach für Produkte entscheiden, gilt die 30-Tage-Zufriedenheitsgarantie von PM-International.') + '</span></div>' +
+        '<div class="guarantee"><i>' + ICO.check + '</i><span><b>' + (en() ? 'Free, non-binding, no obligation to buy.' : 'Kostenlos, unverbindlich, ohne Kaufpflicht.') + '</b> ' + (en() ? 'You decide afterwards what, if anything, you want to do with it.' : 'Was du danach daraus machst, entscheidest allein du.') + '</span></div>' +
         '<button type="button" class="btn btn-accent" data-lead>' + (en() ? 'Request personal consultation' : 'Persönliche Beratung anfragen') + '</button>' +
         '<div class="fine">' + (en() ? 'No newsletter · no medical advice · you decide' : 'Kein Newsletter · keine medizinische Beratung · du entscheidest') + '</div></div>';
     }
-    function supplyBox(){
-      var who = esc(ownerFirst()), v = o.duo ? (en() ? ' are happy to look at it with you, personally.' : ' schauen gern persönlich mit dir drauf.') : (en() ? ' is happy to look at it with you, personally.' : ' schaut gern persönlich mit dir drauf.');
-      return '<div class="supply"><div class="k">' + (en() ? 'Your daily supply' : 'Deine tägliche Versorgung') + '</div>' +
-        '<h3>' + (en() ? 'How well are you supplied every day?' : 'Wie gut bist du jeden Tag versorgt?') + '</h3>' +
-        '<p>' + (en() ? 'Vitamins and minerals contribute to normal energy-yielding metabolism and to the normal function of the nervous system, muscles and immune system. A varied, balanced diet and a healthy lifestyle are the basis. Whether and how your daily supply fits into your everyday life, ' + who + v : 'Vitamine und Mineralstoffe tragen zu einem normalen Energiestoffwechsel und zur normalen Funktion von Nervensystem, Muskeln und Immunsystem bei. Eine abwechslungsreiche, ausgewogene Ernährung und eine gesunde Lebensweise sind dafür die Basis. Ob und wie deine tägliche Versorgung in deinen Alltag passt, ' + who + v) + '</p>' +
-        '<button type="button" class="btn btn-accent" data-lead>' + (en() ? 'Talk to ' + who + ' about my supply' : 'Mit ' + who + ' über meine Versorgung sprechen') + '</button>' +
-        '<div class="fine">' + (en() ? 'General nutrient facts (authorised EU health claims), no assessment of your supply, no product recommendation.' : 'Allgemeines Nährstoff-Wissen (zugelassene EU-Health-Claims), keine Bewertung deiner Versorgung, keine Produktempfehlung.') + '</div></div>';
-    }
+    function nutriFine(){ return '<div class="fine-nutri">' + (en() ? 'Nutrient facts are general information (authorised EU health claims), no assessment of your supply and no product recommendation.' : 'Nährstoff-Wissen ist allgemeine Information (zugelassene EU-Health-Claims), keine Bewertung deiner Versorgung und keine Produktempfehlung.') + '</div>'; }
     var html = '<div class="res">' +
-      '<div class="typecard" style="--tc:' + TY.color + '"><div class="lbl">' + (en() ? 'Your vitality type' : 'Dein Vital-Typ') + '</div>' + badgeSvg('#fff').replace('fill="#fff"', 'fill="' + TY.color + '"') +
+      '<div class="typecard" style="--tc:' + TY.color + '"><div class="lbl">' + (en() ? 'Your vitality type' : 'Dein Vital-Typ') + '</div>' + emblemSvg(TY) +
       '<h1>' + esc(t(ty.name)) + '</h1><p class="desc">' + esc(TY.desc) + '</p>' +
       '<div class="traits">' + t(ty.traits).map(function(x){ return '<span>' + esc(x) + '</span>'; }).join('') + '</div>' +
       '<div class="stats"><div class="stat"><small>' + (en() ? 'Vitality level' : 'Vitallevel') + '</small><b>' + esc(t(R.lv.name)) + ' · ' + R.pct + '\u00a0%</b></div><div class="stat"><small>' + (en() ? 'Biggest lever' : 'Größter Hebel') + '</small><b>' + esc(t(worstD.name)) + '</b></div></div>' +
       '<div class="dots">' + CFG.dims.map(function(d, i){ var p = Math.round(R.sc[i]/16*100); return '<span><i style="--p:' + p + '%">' + ICO[d.ico] + '</i><b class="num">' + p + ' %</b>' + esc(t(d.short)) + '</span>'; }).join('') + '</div>' +
       '<div class="actions"><button type="button" class="btn btn-white" data-share>' + ICO.share + (en() ? 'Share' : 'Teilen') + '</button><button type="button" class="btn btn-glass" data-story>' + ICO.save + (en() ? 'Save as story' : 'Als Story speichern') + '</button></div>' +
       '<div class="sig">' + ownerAvatars() + (en() ? 'Vital profile by ' : 'Vitalprofil von ') + esc(ownerFull()) + '</div></div>' +
-      '<div class="card res-card sec"><h2>' + (en() ? 'Your five areas' : 'Deine fünf Bereiche') + '</h2><div class="sub">' + (en() ? 'Strength: ' : 'Stärke: ') + esc(t(bestD.name)) + ' · ' + (en() ? 'biggest lever: ' : 'größter Hebel: ') + esc(t(worstD.name)) + '</div>' + CFG.dims.map(function(d, i){ var sc = R.sc[i], p = Math.round(sc/16*100), nutri = NUTRI[d.id] ? '<div class="nutri"><i>' + ICO.leaf + '</i><div><b>' + (en() ? 'Nutrient facts: ' : 'Nährstoff-Wissen: ') + '</b>' + esc(t(NUTRI[d.id])) + '</div></div>' : '', ins = tier(sc) !== 'high' && INSIGHT[d.id] ? '<div class="ins"><b>' + (en() ? 'Good to know: ' : 'Gut zu wissen: ') + '</b>' + esc(t(INSIGHT[d.id])) + '</div>' : ''; return '<div class="trait"><div class="h"><i style="background:' + d.color + '">' + ICO[d.ico] + '</i><b>' + esc(t(d.name)) + '</b><span class="pct num">' + p + ' %</span></div><div class="bar"><i data-w="' + p + '" style="background:' + tierColor(sc) + '"></i></div><p>' + esc(t(d.fb[tier(sc)])) + '</p>' + ins + nutri + '</div>'; }).join('') + supplyBox() + '</div>' +
+      '<div class="card res-card sec"><h2>' + (en() ? 'Your five areas' : 'Deine fünf Bereiche') + '</h2><div class="sub">' + (en() ? 'Strength: ' : 'Stärke: ') + esc(t(bestD.name)) + ' · ' + (en() ? 'biggest lever: ' : 'größter Hebel: ') + esc(t(worstD.name)) + '</div>' + CFG.dims.map(function(d, i){ var sc = R.sc[i], p = Math.round(sc/16*100), nutri = NUTRI[d.id] ? '<div class="nutri"><i>' + ICO.leaf + '</i><div><b>' + (en() ? 'Nutrient facts: ' : 'Nährstoff-Wissen: ') + '</b>' + esc(t(NUTRI[d.id])) + '</div></div>' : '', ins = tier(sc) !== 'high' && INSIGHT[d.id] ? '<div class="ins"><b>' + (en() ? 'Good to know: ' : 'Gut zu wissen: ') + '</b>' + esc(t(INSIGHT[d.id])) + '</div>' : ''; var tl = tier(sc), isOpen = i === R.worst, tlab = tl === 'high' ? (en() ? 'Strength' : 'Stärke') : (tl === 'mid' ? (en() ? 'Room to grow' : 'Ausbaufähig') : (en() ? 'Your lever' : 'Dein Hebel')); return '<div class="trait' + (isOpen ? ' open' : '') + '"><button type="button" class="h" aria-expanded="' + isOpen + '"><i style="background:' + d.color + '">' + ICO[d.ico] + '</i><span class="nm"><b>' + esc(t(d.name)) + '</b><small class="tl ' + tl + '">' + tlab + '</small></span><span class="pct num">' + p + ' %</span><span class="chev">' + ICO.chev + '</span></button><div class="bar"><i data-w="' + p + '" style="background:' + tierColor(sc) + '"></i></div><p>' + esc(t(d.fb[tier(sc)])) + '</p><div class="more">' + ins + nutri + '<button type="button" class="less">' + (en() ? 'Show less' : 'Weniger anzeigen') + '</button></div></div>'; }).join('') + nutriFine() + '</div>' +
             consult(false) +
             '<div data-links-slot></div>' +
             '<div class="card res-card sec"><h2>' + (en() ? 'Your day at a glance' : 'Dein Tag auf einen Blick') + '</h2><div class="sub">' + (en() ? 'Nine moments of a typical day, from your answers.' : 'Neun Momente eines typischen Tages, aus deinen Antworten.') + '</div><ul class="day">' + DAY.map(function(m){ var v = S.answers[m.di + ':' + m.qi]; v = v === undefined ? 2 : v; var st = status(v); return '<li class="' + (v <= 1 ? 'dim' : '') + '"><span class="t num">' + m.time + '</span><i style="background:' + CFG.dims[m.di].color + '">' + ICO[m.ico] + '</i><span class="l">' + esc(t(m.l)) + '<small>' + esc(t(CFG.dims[m.di].q[m.qi].label)) + '</small></span><span class="st ' + st[0] + '">' + st[1] + '</span></li>'; }).join('') + '</ul></div>' +
@@ -928,7 +954,7 @@ var VC = (function(){
         '<div class="row"><button type="button" class="msg-toggle" id="msgToggle">+ ' + (en() ? 'Add a message' : 'Nachricht hinzufügen') + '</button><textarea class="input" id="lf-msg" name="nachricht" rows="3" hidden></textarea></div>' +
         '<label class="consent" id="consentBox"><input type="checkbox" id="lf-consent"><span>' + (en() ? 'Yes, I want ' + esc(ownerFull()) + ' to receive my 20 answers from the vital profile (my habits regarding food, daily structure, sleep, movement and balance), my wishes and my contact details, in order to contact me personally. I can withdraw this consent at any time by emailing <a href="mailto:' + esc(o.recipient) + '">' + esc(o.recipient) + '</a>. Details in the <a href="/datenschutz" target="_blank" rel="noopener">privacy policy</a>.' : 'Ja, ich möchte, dass ' + esc(ownerFull()) + ' meine 20 Antworten aus dem Vitalprofil (meine Gewohnheiten zu Ernährung, Tagesstruktur, Schlaf, Bewegung und Ausgleich), meine Wünsche und meine Kontaktdaten erhält, um mich persönlich zu kontaktieren. Diese Einwilligung kann ich jederzeit per E-Mail an <a href="mailto:' + esc(o.recipient) + '">' + esc(o.recipient) + '</a> widerrufen. Details in der <a href="/datenschutz" target="_blank" rel="noopener">Datenschutzerklärung</a>.') + '</span></label>' +
         '<button type="submit" class="btn btn-accent" style="width:100%" id="leadSubmit">' + (en() ? 'Request consultation' : 'Beratung anfragen') + '</button><div class="err-msg" id="leadError"></div>' +
-        '<div class="form-trust"><span>' + (en() ? 'Free and non-binding' : 'Kostenlos und unverbindlich') + '</span><span>' + (en() ? '30-day satisfaction guarantee by PM-International on products' : '30-Tage-Zufriedenheitsgarantie von PM-International auf Produkte') + '</span><span>' + (en() ? 'No newsletter, no sharing' : 'Kein Newsletter, keine Weitergabe') + '</span></div>' +
+        '<div class="form-trust"><span>' + (en() ? 'Free and non-binding' : 'Kostenlos und unverbindlich') + '</span><span>' + (en() ? 'No newsletter, no sharing' : 'Kein Newsletter, keine Weitergabe') + '</span></div>' +
       '</form></div><div class="btnrow"><button type="button" class="skip" data-back>' + (en() ? 'Back to profile' : 'Zurück zum Profil') + '</button></div>';
   }
   function vDone(){
@@ -945,6 +971,11 @@ var VC = (function(){
   /* Story 1080×1920. Instagram blendet oben ~250 px (Profilzeile) und unten ~250 px (Antwortleiste) ab,
      deshalb liegt alles Wichtige zwischen 300 und 1650. Unten eine weiße CTA-Karte mit der Adresse der Seite. */
   function drawStory(cb){
+    var TY0 = typeOf(evalResult()), im = new Image(), done = false;
+    var go = function(){ if (done) return; done = true; paintStory(cb, im.naturalWidth ? im : null); };
+    im.onload = go; im.onerror = go; im.src = emblemIconUrl(TY0); setTimeout(go, 1500);
+  }
+  function paintStory(cb, iconImg){
     var R = evalResult(), worstD = CFG.dims[R.worst], bestD = CFG.dims[R.best], TY = typeOf(R), ty = TY.ty, col = TY.color;
     var c = document.createElement('canvas'), W = 1080, H = 1920; c.width = W; c.height = H; var x = c.getContext('2d');
     var g = x.createLinearGradient(0, 0, 0, H); g.addColorStop(0, mix(col, 0.18, false)); g.addColorStop(0.5, col); g.addColorStop(1, mix(col, 0.5, true)); x.fillStyle = g; x.fillRect(0, 0, W, H);
@@ -953,9 +984,13 @@ var VC = (function(){
     x.textAlign = 'center';
     /* Kopf */
     x.fillStyle = 'rgba(255,255,255,0.85)'; x.font = '600 28px Geist, sans-serif'; x.letterSpacing = '6px'; x.fillText(en() ? 'MY VITAL PROFILE' : 'MEIN VITALPROFIL', W/2, 236); x.letterSpacing = '0px';
-    /* Abzeichen */
-    x.save(); x.shadowColor = 'rgba(0,0,0,0.25)'; x.shadowBlur = 40; x.shadowOffsetY = 18; x.fillStyle = '#fff'; x.beginPath(); x.arc(W/2, 420, 120, 0, Math.PI*2); x.fill(); x.restore();
-    x.strokeStyle = col; x.lineWidth = 9; x.lineJoin = 'round'; x.beginPath(); for (var i = 0; i < 5; i++) { var a = -Math.PI/2 + i * 2*Math.PI/5, px = W/2 + 72*Math.cos(a), py = 420 + 72*Math.sin(a); if (i === 0) x.moveTo(px, py); else x.lineTo(px, py); } x.closePath(); x.stroke(); x.fillStyle = col; x.beginPath(); x.arc(W/2, 420, 18, 0, Math.PI*2); x.fill();
+    /* Emblem: fünffarbiger Ring, weiße Scheibe, Icon des Typs */
+    var ex = W/2, ey = 420;
+    x.fillStyle = 'rgba(255,255,255,0.12)'; x.beginPath(); x.arc(ex, ey, 150, 0, Math.PI*2); x.fill();
+    x.strokeStyle = 'rgba(255,255,255,0.45)'; x.lineWidth = 13; x.beginPath(); x.arc(ex, ey, 140, 0, Math.PI*2); x.stroke();
+    CFG.dims.forEach(function(d, i){ var a0 = (i * 72 + 7 - 90) * Math.PI/180, a1 = ((i + 1) * 72 - 7 - 90) * Math.PI/180; x.strokeStyle = d.color; x.lineWidth = 13; x.lineCap = 'round'; x.beginPath(); x.arc(ex, ey, 140, a0, a1); x.stroke(); });
+    x.save(); x.shadowColor = 'rgba(0,0,0,0.25)'; x.shadowBlur = 40; x.shadowOffsetY = 18; x.fillStyle = '#fff'; x.beginPath(); x.arc(ex, ey, 112, 0, Math.PI*2); x.fill(); x.restore();
+    if (iconImg) x.drawImage(iconImg, ex - 56, ey - 56, 112, 112);
     /* Typ */
     x.fillStyle = 'rgba(255,255,255,0.85)'; x.font = '500 32px Geist, sans-serif'; x.fillText(en() ? 'I am' : 'Ich bin', W/2, 606);
     x.fillStyle = '#fff'; x.font = '600 92px Geist, sans-serif'; var name = t(ty.name); if (x.measureText(name).width > 960) x.font = '600 76px Geist, sans-serif'; x.fillText(name, W/2, 700);
@@ -1045,6 +1080,7 @@ var VC = (function(){
       storyBlob = null; setTimeout(prepareStory, 600);
       root.querySelectorAll('[data-story]').forEach(function(b){ b.addEventListener('click', function(){ saveStory(b); }); });
       root.querySelectorAll('[data-share]').forEach(function(b){ b.addEventListener('click', function(){ shareResult(b); }); });
+      root.querySelectorAll('.trait .h, .trait .less').forEach(function(h){ h.addEventListener('click', function(){ var tr = h.closest('.trait'), o = !tr.classList.contains('open'); tr.classList.toggle('open', o); tr.querySelector('.h').setAttribute('aria-expanded', o); }); });
       var tpl = document.getElementById('siteLinks'), slot = root.querySelector('[data-links-slot]');
       if (tpl && slot) { slot.appendChild(tpl.content.cloneNode(true)); slot.querySelectorAll('.link-btn').forEach(function(a){ if (!a.textContent.trim()) { try { a.textContent = new URL(a.getAttribute('data-url')).hostname.replace(/^www\./, ''); } catch(e){ a.textContent = a.getAttribute('data-url'); } } }); }
       root.querySelector('[data-restart]').addEventListener('click', function(){ if (confirm(en() ? 'Start over? Your answers will be reset.' : 'Nochmal starten? Deine Antworten werden zurückgesetzt.')) { S = fresh(); save(); go(0); } });

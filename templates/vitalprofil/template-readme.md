@@ -72,9 +72,11 @@ Dateien in `preview-lokal/` (gitignored).
 
 PM-International gewährt Kunden laut AGB eine 30-tägige Rückgabegarantie ab Rechnungsdatum. Der CTA-Text muss zu den aktuellen PM-Bedingungen passen; bei Änderung anpassen.
 
-## Auswertung seit 08.10.2026: Nährstoff-Wissen und Beratung
+## Auswertung seit 08.10.2026: fünf Bereiche als Akkordeon, Nährstoff-Wissen, Beratung
 
-- Reihenfolge: Typ-Karte → **Deine fünf Bereiche** → Beratungskarte → **Meine Seiten** → Dein Tag → Drei Tipps → Werkzeuge.
-- Jeder Bereich hat eine Zeile **„Nährstoff-Wissen“** (`NUTRI` im Script). Erlaubt ist ausschließlich der amtliche Wortlaut zugelassener Health Claims aus der VO (EU) Nr. 432/2012 („trägt zu … bei“), als allgemeine Information ohne Produkt. Nie: „Mangel“, „Defizit“, „brauchst du“, Krankheiten, Wirkversprechen, Produktnamen.
-- Unten in der Karte die **Versorgungs-Box** („Wie gut bist du jeden Tag versorgt?“) mit Hinweis auf abwechslungsreiche Ernährung (Art. 10 Abs. 2 HCVO), CTA „Mit {Vorname} über meine Versorgung sprechen“ und Fine-Print „keine Bewertung deiner Versorgung, keine Produktempfehlung“.
-- „Meine Seiten“ bleibt als Profil-Element gekennzeichnet (Fine-Print bleibt), steht aber direkt nach der Beratung.
+- Reihenfolge: Typ-Karte → **Deine fünf Bereiche** → Beratungskarte (farbig hervorgehoben) → **Meine Seiten** → Dein Tag → Drei Tipps → Werkzeuge.
+- Fünf Bereiche als **Akkordeon**: Kopf mit Icon, Name, Einordnung (Stärke / Ausbaufähig / Dein Hebel), Prozent und Pfeil; Balken und Kurztext immer sichtbar; „Gut zu wissen“ + „Nährstoff-Wissen“ nur aufgeklappt (der größte Hebel ist standardmäßig offen).
+- **Nährstoff-Wissen** (`NUTRI` im Script): ausschließlich der amtliche Wortlaut zugelassener Health Claims aus der VO (EU) Nr. 432/2012 („trägt zu … bei“) als allgemeine Information ohne Produkt, mit Fine-Print unter der Karte. Nie: „Mangel“, „Defizit“, „brauchst du“, Krankheiten, Wirkversprechen, Produktnamen.
+- Bewusst **keine** Versorgungs-Box/CTA „Deine tägliche Versorgung“ (wäre allgemeine Nährstoffberatung; wir beraten ausschließlich zum FitLine-Konzept) und **kein Garantie-Satz** („30-Tage-Zufriedenheitsgarantie“) mehr – Produktversprechen gehören nicht in die Auswertung.
+- **Emblem** (`emblemSvg`/`paintStory`): fünffarbiger Ring (ein Bogen je Bereich auf hellem Track) um eine weiße Scheibe mit dem Icon des Vital-Typs (Aufbruch-Typ: Sonnenaufgang). Identisch in Karte und Story.
+- „Meine Seiten“ bleibt als Profil-Element gekennzeichnet (Fine-Print „keine Empfehlung aus deinem Vitalprofil“).
