@@ -71,3 +71,10 @@ Dateien in `preview-lokal/` (gitignored).
 ## Hinweis Zufriedenheitsgarantie
 
 PM-International gewährt Kunden laut AGB eine 30-tägige Rückgabegarantie ab Rechnungsdatum. Der CTA-Text muss zu den aktuellen PM-Bedingungen passen; bei Änderung anpassen.
+
+## Auswertung seit 08.10.2026: Nährstoff-Wissen und Beratung
+
+- Reihenfolge: Typ-Karte → **Deine fünf Bereiche** → Beratungskarte → **Meine Seiten** → Dein Tag → Drei Tipps → Werkzeuge.
+- Jeder Bereich hat eine Zeile **„Nährstoff-Wissen“** (`NUTRI` im Script). Erlaubt ist ausschließlich der amtliche Wortlaut zugelassener Health Claims aus der VO (EU) Nr. 432/2012 („trägt zu … bei“), als allgemeine Information ohne Produkt. Nie: „Mangel“, „Defizit“, „brauchst du“, Krankheiten, Wirkversprechen, Produktnamen.
+- Unten in der Karte die **Versorgungs-Box** („Wie gut bist du jeden Tag versorgt?“) mit Hinweis auf abwechslungsreiche Ernährung (Art. 10 Abs. 2 HCVO), CTA „Mit {Vorname} über meine Versorgung sprechen“ und Fine-Print „keine Bewertung deiner Versorgung, keine Produktempfehlung“.
+- „Meine Seiten“ bleibt als Profil-Element gekennzeichnet (Fine-Print bleibt), steht aber direkt nach der Beratung.

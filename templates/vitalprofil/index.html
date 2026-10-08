@@ -153,6 +153,20 @@ main { width: 100%; max-width: var(--col); margin: 0 auto; padding: 24px 16px 40
 .link-btn:hover { border-color: var(--ink-3); }
 .link-btn:active { transform: scale(0.985); }
 .mylinks .fine { margin-top: 10px; font-size: 12.5px; color: var(--ink-3); text-align: center; line-height: 1.5; }
+.mylinks { border: 1.5px solid var(--accent-soft); }
+.mylinks .ph img { width: 44px; height: 44px; }
+.mylinks .ph b { font-size: 17px; }
+/* Nährstoff-Wissen je Bereich + Versorgungs-Box in „Deine fünf Bereiche“ */
+.trait .nutri { display: grid; grid-template-columns: 22px 1fr; gap: 8px; align-items: start; margin-top: 8px; font-size: 13.5px; color: var(--ink-2); line-height: 1.5; }
+.trait .nutri i { width: 22px; height: 22px; border-radius: 50%; background: var(--accent-soft); color: var(--accent-dark); display: inline-flex; align-items: center; justify-content: center; margin-top: 1px; }
+.trait .nutri i svg { width: 12px; height: 12px; }
+.trait .nutri b { font-weight: 600; color: var(--ink); }
+.supply { margin-top: 14px; padding: 18px 18px 16px; border-radius: 16px; background: var(--accent-soft); }
+.supply .k { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent-dark); margin-bottom: 6px; }
+.supply h3 { font-size: 19px; font-weight: 600; letter-spacing: -0.01em; margin-bottom: 8px; }
+.supply p { font-size: 14.5px; color: var(--ink-2); line-height: 1.55; margin-bottom: 14px; }
+.supply .btn-accent { width: 100%; min-height: 52px; }
+.supply .fine { margin-top: 10px; font-size: 12px; color: var(--ink-3); text-align: center; line-height: 1.45; }
 /* Footer: dunkler Streifen über die volle Breite, wie bei den anderen Templates */
 footer.site { margin-top: 28px; background: var(--foot); color: var(--foot-ink-2); padding: 34px 20px calc(30px + env(safe-area-inset-bottom)); }
 footer.site .in { max-width: var(--col); margin: 0 auto; }
@@ -520,7 +534,7 @@ html[data-theme="nacht"] .links .made img { filter: invert(1); }
 {{#if links}}
 <template id="siteLinks">
   <div class="mylinks">
-    <div class="ph"><img src="{{profilbild}}" alt=""><div><b><span class="l-de">Meine Seiten</span><span class="l-en">My pages</span></b><small><span class="l-de">Mehr von {{vorname}}, unabhängig von deinem Ergebnis</span><span class="l-en">More from {{vorname}}, independent of your result</span></small></div></div>
+    <div class="ph"><img src="{{profilbild}}" alt=""><div><b><span class="l-de">Meine Seiten</span><span class="l-en">My pages</span></b><small><span class="l-de">Hier findest du mehr von {{vorname}}{{#if partner_modus=duo}} &amp; {{vorname2}}{{/if}}</span><span class="l-en">Find more from {{vorname}}{{#if partner_modus=duo}} &amp; {{vorname2}}{{/if}} here</span></small></div></div>
     <div class="btns">
       {{#each links}}<a class="link-btn" href="{{this.url}}" target="_blank" rel="noopener" data-url="{{this.url}}">{{this.titel}}</a>{{/each}}
     </div>
@@ -568,7 +582,8 @@ var ICO = {
   mail: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>',
   phone: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>',
   save: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5M4 17v3h16v-3"/></svg>',
-  share: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7M16 6l-4-4-4 4M12 2v13"/></svg>'
+  share: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7M16 6l-4-4-4 4M12 2v13"/></svg>',
+  leaf: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 20c0-8 4-13 14-15-1 10-6 14-14 15z"/><path d="M5 20c3-5 6-8 10-10"/></svg>'
 };
 
 /* ============ KONFIGURATION ============
@@ -731,6 +746,16 @@ var INSIGHT = {
 };
 
 
+/* Nährstoff-Wissen je Bereich: ausschließlich zugelassene Health Claims (VO (EU) 432/2012) im amtlichen
+   Wortlaut als allgemeine Information. Kein Produkt, keine Mangel-Aussage, keine Bewertung der Person. */
+var NUTRI = {
+  ernaehrung: { de: 'Vitamin C, B-Vitamine und Magnesium tragen zu einem normalen Energiestoffwechsel bei. Wasser trägt zur Erhaltung normaler körperlicher und geistiger Funktionen bei, ab etwa zwei Litern am Tag.', en: 'Vitamin C, B vitamins and magnesium contribute to normal energy-yielding metabolism. Water contributes to the maintenance of normal physical and cognitive functions, from about two litres a day.' },
+  tag: { de: 'Magnesium, Vitamin C, Folat, Vitamin B6 und B12 tragen zur Verringerung von Müdigkeit und Ermüdung bei. Gerade an vollen Tagen ohne echte Pausen zählt die tägliche Versorgung.', en: 'Magnesium, vitamin C, folate, vitamin B6 and B12 contribute to the reduction of tiredness and fatigue. On full days without real breaks, your daily supply counts.' },
+  schlaf: { de: 'Magnesium, Vitamin B6 und B12 tragen zur normalen Funktion des Nervensystems und zur normalen psychischen Funktion bei. Regelmäßige, nicht zu späte Mahlzeiten sind die Basis für eine ruhige Nacht.', en: 'Magnesium, vitamin B6 and B12 contribute to normal functioning of the nervous system and to normal psychological function. Regular meals that are not too late are the basis for a calm night.' },
+  bewegung: { de: 'Magnesium, Calcium und Vitamin D tragen zur Erhaltung einer normalen Muskelfunktion bei, Protein zur Erhaltung von Muskelmasse. Wer mehr in Bewegung kommt, plant Flüssigkeit und Versorgung am besten gleich mit.', en: 'Magnesium, calcium and vitamin D contribute to the maintenance of normal muscle function, protein to the maintenance of muscle mass. If you start moving more, plan fluids and supply along with it.' },
+  ausgleich: { de: 'Vitamin D und Vitamin C tragen zu einer normalen Funktion des Immunsystems bei. Vitamin C, Vitamin E und Zink tragen dazu bei, die Zellen vor oxidativem Stress zu schützen. Tageslicht und Zeit im Freien bleiben die natürliche Basis.', en: 'Vitamin D and vitamin C contribute to the normal function of the immune system. Vitamin C, vitamin E and zinc contribute to the protection of cells from oxidative stress. Daylight and time outdoors remain the natural basis.' }
+};
+
 /* Vital-Typ nach stärkstem Bereich */
 var TYPES = {
   aufbruch: { traits: { de: ['Ehrlich geantwortet', 'Viel Spielraum', 'Erster Schritt zählt'], en: ['Answered honestly', 'Lots of room', 'First step counts'] }, name: { de: 'Der Aufbruch-Typ', en: 'The Starter' }, desc: { de: 'Noch ist keiner deiner fünf Bereiche fest im Alltag verankert. Das ist kein Urteil, sondern ein Ausgangspunkt: Bei dir bringt jeder kleine Schritt spürbar am meisten.', en: 'None of your five areas is firmly anchored in your routine yet. That is not a verdict but a starting point: for you, every small step moves the most.' } },
@@ -862,6 +887,14 @@ var VC = (function(){
         '<button type="button" class="btn btn-accent" data-lead>' + (en() ? 'Request personal consultation' : 'Persönliche Beratung anfragen') + '</button>' +
         '<div class="fine">' + (en() ? 'No newsletter · no medical advice · you decide' : 'Kein Newsletter · keine medizinische Beratung · du entscheidest') + '</div></div>';
     }
+    function supplyBox(){
+      var who = esc(ownerFirst()), v = o.duo ? (en() ? ' are happy to look at it with you, personally.' : ' schauen gern persönlich mit dir drauf.') : (en() ? ' is happy to look at it with you, personally.' : ' schaut gern persönlich mit dir drauf.');
+      return '<div class="supply"><div class="k">' + (en() ? 'Your daily supply' : 'Deine tägliche Versorgung') + '</div>' +
+        '<h3>' + (en() ? 'How well are you supplied every day?' : 'Wie gut bist du jeden Tag versorgt?') + '</h3>' +
+        '<p>' + (en() ? 'Vitamins and minerals contribute to normal energy-yielding metabolism and to the normal function of the nervous system, muscles and immune system. A varied, balanced diet and a healthy lifestyle are the basis. Whether and how your daily supply fits into your everyday life, ' + who + v : 'Vitamine und Mineralstoffe tragen zu einem normalen Energiestoffwechsel und zur normalen Funktion von Nervensystem, Muskeln und Immunsystem bei. Eine abwechslungsreiche, ausgewogene Ernährung und eine gesunde Lebensweise sind dafür die Basis. Ob und wie deine tägliche Versorgung in deinen Alltag passt, ' + who + v) + '</p>' +
+        '<button type="button" class="btn btn-accent" data-lead>' + (en() ? 'Talk to ' + who + ' about my supply' : 'Mit ' + who + ' über meine Versorgung sprechen') + '</button>' +
+        '<div class="fine">' + (en() ? 'General nutrient facts (authorised EU health claims), no assessment of your supply, no product recommendation.' : 'Allgemeines Nährstoff-Wissen (zugelassene EU-Health-Claims), keine Bewertung deiner Versorgung, keine Produktempfehlung.') + '</div></div>';
+    }
     var html = '<div class="res">' +
       '<div class="typecard" style="--tc:' + TY.color + '"><div class="lbl">' + (en() ? 'Your vitality type' : 'Dein Vital-Typ') + '</div>' + badgeSvg('#fff').replace('fill="#fff"', 'fill="' + TY.color + '"') +
       '<h1>' + esc(t(ty.name)) + '</h1><p class="desc">' + esc(TY.desc) + '</p>' +
@@ -870,12 +903,12 @@ var VC = (function(){
       '<div class="dots">' + CFG.dims.map(function(d, i){ var p = Math.round(R.sc[i]/16*100); return '<span><i style="--p:' + p + '%">' + ICO[d.ico] + '</i><b class="num">' + p + ' %</b>' + esc(t(d.short)) + '</span>'; }).join('') + '</div>' +
       '<div class="actions"><button type="button" class="btn btn-white" data-share>' + ICO.share + (en() ? 'Share' : 'Teilen') + '</button><button type="button" class="btn btn-glass" data-story>' + ICO.save + (en() ? 'Save as story' : 'Als Story speichern') + '</button></div>' +
       '<div class="sig">' + ownerAvatars() + (en() ? 'Vital profile by ' : 'Vitalprofil von ') + esc(ownerFull()) + '</div></div>' +
-      consult(false) +
-      '<div class="card res-card sec"><h2>' + (en() ? 'Your day at a glance' : 'Dein Tag auf einen Blick') + '</h2><div class="sub">' + (en() ? 'Nine moments of a typical day, from your answers.' : 'Neun Momente eines typischen Tages, aus deinen Antworten.') + '</div><ul class="day">' + DAY.map(function(m){ var v = S.answers[m.di + ':' + m.qi]; v = v === undefined ? 2 : v; var st = status(v); return '<li class="' + (v <= 1 ? 'dim' : '') + '"><span class="t num">' + m.time + '</span><i style="background:' + CFG.dims[m.di].color + '">' + ICO[m.ico] + '</i><span class="l">' + esc(t(m.l)) + '<small>' + esc(t(CFG.dims[m.di].q[m.qi].label)) + '</small></span><span class="st ' + st[0] + '">' + st[1] + '</span></li>'; }).join('') + '</ul></div>' +
-      '<div class="card res-card sec"><h2>' + (en() ? 'Your five areas' : 'Deine fünf Bereiche') + '</h2><div class="sub">' + (en() ? 'Strength: ' : 'Stärke: ') + esc(t(bestD.name)) + ' · ' + (en() ? 'biggest lever: ' : 'größter Hebel: ') + esc(t(worstD.name)) + '</div>' + CFG.dims.map(function(d, i){ var sc = R.sc[i], p = Math.round(sc/16*100), ins = tier(sc) !== 'high' && INSIGHT[d.id] ? '<div class="ins"><b>' + (en() ? 'Good to know: ' : 'Gut zu wissen: ') + '</b>' + esc(t(INSIGHT[d.id])) + '</div>' : ''; return '<div class="trait"><div class="h"><i style="background:' + d.color + '">' + ICO[d.ico] + '</i><b>' + esc(t(d.name)) + '</b><span class="pct num">' + p + ' %</span></div><div class="bar"><i data-w="' + p + '" style="background:' + tierColor(sc) + '"></i></div><p>' + esc(t(d.fb[tier(sc)])) + '</p>' + ins + '</div>'; }).join('') + '</div>' +
+      '<div class="card res-card sec"><h2>' + (en() ? 'Your five areas' : 'Deine fünf Bereiche') + '</h2><div class="sub">' + (en() ? 'Strength: ' : 'Stärke: ') + esc(t(bestD.name)) + ' · ' + (en() ? 'biggest lever: ' : 'größter Hebel: ') + esc(t(worstD.name)) + '</div>' + CFG.dims.map(function(d, i){ var sc = R.sc[i], p = Math.round(sc/16*100), nutri = NUTRI[d.id] ? '<div class="nutri"><i>' + ICO.leaf + '</i><div><b>' + (en() ? 'Nutrient facts: ' : 'Nährstoff-Wissen: ') + '</b>' + esc(t(NUTRI[d.id])) + '</div></div>' : '', ins = tier(sc) !== 'high' && INSIGHT[d.id] ? '<div class="ins"><b>' + (en() ? 'Good to know: ' : 'Gut zu wissen: ') + '</b>' + esc(t(INSIGHT[d.id])) + '</div>' : ''; return '<div class="trait"><div class="h"><i style="background:' + d.color + '">' + ICO[d.ico] + '</i><b>' + esc(t(d.name)) + '</b><span class="pct num">' + p + ' %</span></div><div class="bar"><i data-w="' + p + '" style="background:' + tierColor(sc) + '"></i></div><p>' + esc(t(d.fb[tier(sc)])) + '</p>' + ins + nutri + '</div>'; }).join('') + supplyBox() + '</div>' +
+            consult(false) +
+            '<div data-links-slot></div>' +
+            '<div class="card res-card sec"><h2>' + (en() ? 'Your day at a glance' : 'Dein Tag auf einen Blick') + '</h2><div class="sub">' + (en() ? 'Nine moments of a typical day, from your answers.' : 'Neun Momente eines typischen Tages, aus deinen Antworten.') + '</div><ul class="day">' + DAY.map(function(m){ var v = S.answers[m.di + ':' + m.qi]; v = v === undefined ? 2 : v; var st = status(v); return '<li class="' + (v <= 1 ? 'dim' : '') + '"><span class="t num">' + m.time + '</span><i style="background:' + CFG.dims[m.di].color + '">' + ICO[m.ico] + '</i><span class="l">' + esc(t(m.l)) + '<small>' + esc(t(CFG.dims[m.di].q[m.qi].label)) + '</small></span><span class="st ' + st[0] + '">' + st[1] + '</span></li>'; }).join('') + '</ul></div>' +
       '<div class="card res-card sec"><h2>' + (en() ? 'Three things you can start tomorrow' : 'Drei Dinge, die du morgen starten kannst') + '</h2><div class="sub">' + (en() ? 'From your two weakest areas and your lowest-rated statements.' : 'Aus deinen zwei schwächsten Bereichen und den Aussagen, die du am niedrigsten bewertet hast.') + '</div>' + tips.map(function(x, i){ return '<div class="tip"><span class="n num">' + (i+1) + '</span><div><b>' + esc(t(x.tp.t)) + '</b><p>' + esc(t(x.tp.d)) + '</p><div class="ref">' + (en() ? 'Your answer: ' : 'Deine Antwort: ') + '<span>„' + esc(t(x.ref.q.label)) + '“ · ' + word(x.ref.v) + '</span></div></div></div>'; }).join('') +
       (wishes.length ? '<div class="wish">' + (en() ? 'Your wish: ' : 'Dein Wunsch: ') + '<b>' + esc(wishes.join(', ')) + '</b>. ' + (en() ? 'Your biggest lever is a realistic place to start.' : 'Dein größter Hebel ist ein realistischer Startpunkt dafür.') + '</div>' : '') + '</div>' +
-      '<div data-links-slot></div>' +
       '<div class="tools"><button type="button" class="btn btn-accent" data-lead>' + (en() ? 'Request personal consultation' : 'Persönliche Beratung anfragen') + '</button><button type="button" class="btn btn-ghost" data-story>' + ICO.save + (en() ? 'Save profile as story' : 'Profil als Story speichern') + '</button><button type="button" class="btn btn-ghost" data-restart>' + (en() ? 'Start over' : 'Nochmal starten') + '</button></div>' +
       '<p class="small-note">' + (en() ? 'This profile is a self-assessment of your habits, not a medical evaluation, and it contains no product recommendation. It was calculated on your device and is only sent if you actively choose to.' : 'Dieses Profil ist eine Selbsteinschätzung deiner Gewohnheiten, keine medizinische Bewertung, und enthält keine Produktempfehlung. Es wurde auf deinem Gerät berechnet und wird nur übermittelt, wenn du das aktiv möchtest.') + '</p></div>' +
       '';
