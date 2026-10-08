@@ -1,3 +1,4 @@
+import { safeEqual } from '@/lib/security/request'
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { userSites, users } from '@/lib/db/schema'
@@ -26,7 +27,7 @@ export async function GET(req: NextRequest) {
   // Verify Vercel cron secret (or manual call with header)
   const authHeader = req.headers.get('authorization')
   const cronSecret = process.env.CRON_SECRET
-  if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {
+  if (!cronSecret || !safeEqual(authHeader ?? '', `Bearer ${cronSecret}`)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 

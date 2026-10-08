@@ -1,9 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { getClientIp, rateLimit } from '@/lib/security/request'
 import { auth } from '@/lib/auth'
 
 const APP_URL = (process.env.NEXT_PUBLIC_APP_URL ?? 'https://app.finestsites.io').replace(/\/$/, '')
 
 export async function POST(req: NextRequest) {
+  // max. 5 Reset-Anfragen je IP in 15 Minuten
+  if (!rateLimit('forgot-password', getClientIp(req), 5, 15 * 60 * 1000)) {
+    return NextResponse.json({ error: 'Zu viele Anfragen. Bitte versuch es in ein paar Minuten erneut.' }, { status: 429 })
+  }
   const { email } = await req.json()
   if (!email) {
     return NextResponse.json({ error: 'E-Mail erforderlich.' }, { status: 400 })
@@ -17,7 +22,8 @@ export async function POST(req: NextRequest) {
       new URL('/api/auth/request-password-reset', APP_URL),
       {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        // Client-IP weiterreichen, sonst landen alle Reset-Anfragen in EINEM Limiter-Bucket
+        headers: { 'Content-Type': 'application/json', 'x-forwarded-for': getClientIp(req) ?? '' },
         body: JSON.stringify({
           email: email.toLowerCase().trim(),
           redirectTo: `${APP_URL}/update-password`,

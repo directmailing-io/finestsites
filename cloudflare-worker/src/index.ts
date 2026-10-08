@@ -300,8 +300,13 @@ function render(html: string, data: Data): string {
     const v = data[k]
     return v !== undefined && v !== null ? String(v) : ''
   })
-  // Simple {{key}} (HTML-unsafe but historical; matches Vercel engine for parity)
-  html = html.replace(/\{\{([^#/{}][^{}]*)\}\}/g, (_, k) => data[k.trim()] ?? '')
+  // Simple {{key}} → HTML-escaped; roh nur für Richtext-Schlüssel (…_html, …_html_en, intro, intro_en).
+  // Muss mit src/lib/utils/template-engine.ts (RAW_KEY_RE) übereinstimmen.
+  html = html.replace(/\{\{([^#/{}][^{}]*)\}\}/g, (_, k) => {
+    const key = k.trim(); const v = data[key]
+    if (v === undefined || v === null) return ''
+    return RAW_KEY_RE.test(key) ? String(v) : htmlEscape(String(v))
+  })
   // Safety net: drop leftover control tokens so they never leak into output
   html = html
     .replace(/\{\{\s*\/\s*(?:each|if|unless)\s*\}\}/g, '')
@@ -728,7 +733,6 @@ async function sendSubmissionEmail(
   meta: SiteMeta,
   formName: string,
   formData: Record<string, string>,
-  formRecipient: string | null,
   siteUrl: string | null,
 ): Promise<void> {
   if (!env.RESEND_API_KEY) return
@@ -745,17 +749,25 @@ async function sendSubmissionEmail(
     const accountEmail = info.userEmail
     const schema = info.formSchema
 
-    // Prefer the form's _recipient (per-template config like {{email_benachrichtigung}})
-    // when it's a valid email; otherwise fall back to the account email.
+    // Empfänger ausschließlich aus unseren Daten: die vom Nutzer im Editor hinterlegte
+    // Benachrichtigungs-Adresse (email_benachrichtigung), sonst die Konto-E-Mail.
     const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    const recipient = (formRecipient && EMAIL_RE.test(formRecipient.trim()))
-      ? formRecipient.trim()
-      : accountEmail
+    let siteRecipient: string | null = null
+    try {
+      const sdRes = await fetch(`${env.APP_URL}/api/worker/site-data?siteId=${meta.siteId}`, { headers: { 'x-worker-secret': env.WORKER_SECRET } })
+      if (sdRes.ok) {
+        const rows = await sdRes.json() as { fieldKey: string; fieldValue: string | null }[]
+        const hit = rows.find(r => r.fieldKey === 'email_benachrichtigung' && r.fieldValue && EMAIL_RE.test(r.fieldValue.trim()))
+        siteRecipient = hit?.fieldValue?.trim() ?? null
+      }
+    } catch { /* fällt auf die Konto-E-Mail zurück */ }
+    const recipient = siteRecipient ?? accountEmail
     if (!recipient) return
 
     if (schema && !schema.emailNotificationEnabled) return
 
-    const formTitle = schema?.title ?? formName
+    // Ohne Schema keinen Request-String als Titel verwenden
+    const formTitle = schema?.title ?? 'Kontaktformular'
     const fieldMap = Object.fromEntries((schema?.fields ?? []).map(f => [f.key, f.label]))
     const appUrl = (env.APP_URL ?? 'https://app.finestsites.io').replace(/\/$/, '')
     const year = new Date().getFullYear()
@@ -866,8 +878,10 @@ function vitalprofilMailBody(d: Record<string, string>): string {
     : ''
   const box = (inner: string) => `<table cellpadding="0" cellspacing="0" width="100%" style="margin:0 0 22px;background:#F9FAFB;border-radius:12px;border:1px solid #E5E7EB;border-collapse:separate;border-spacing:0;">${inner}</table>`
 
-  const contact = box(row('Name', d.name) + row('E-Mail', d.email ? `<a href="mailto:${esc(d.email)}" style="color:#111827;">${esc(d.email)}</a>` : '') + row('Telefon', d.telefon) + row('Kontaktweg', d.kontaktweg) + row('Interesse', d.interesse) + row('Nachricht', d.nachricht, true))
-    .replace('<td style="padding:9px 14px;border-bottom:1px solid #E5E7EB;font-size:14px;color:#111827;font-weight:500;">&lt;a href', '<td style="padding:9px 14px;border-bottom:1px solid #E5E7EB;font-size:14px;color:#111827;font-weight:500;"><a href')
+  const emailRow = d.email && d.email.trim()
+    ? `<tr><td style="padding:9px 14px;border-bottom:1px solid #E5E7EB;width:38%;font-size:13px;color:#6B7280;vertical-align:top;">E-Mail</td><td style="padding:9px 14px;border-bottom:1px solid #E5E7EB;font-size:14px;color:#111827;font-weight:500;"><a href="mailto:${esc(d.email)}" style="color:#111827;">${esc(d.email)}</a></td></tr>`
+    : ''
+  const contact = box(row('Name', d.name) + emailRow + row('Telefon', d.telefon) + row('Kontaktweg', d.kontaktweg) + row('Interesse', d.interesse) + row('Nachricht', d.nachricht, true))
 
   const tile = (label: string, value: string | undefined) => `<td width="50%" style="padding:0 6px 12px 0;vertical-align:top;"><div style="background:#FFFFFF;border:1px solid #E5E7EB;border-radius:12px;padding:12px 14px;"><p style="margin:0 0 3px;font-size:11.5px;color:#6B7280;">${label}</p><p style="margin:0;font-size:15px;font-weight:600;color:#111827;">${esc(value) || '—'}</p></div></td>`
   const profile = `<table cellpadding="0" cellspacing="0" width="100%" style="margin:0 0 10px;border-collapse:separate;border-spacing:0;"><tr>${tile('Vital-Typ', d.vitaltyp)}${tile('Vitallevel', d.vitallevel)}</tr><tr>${tile('Stärke', d.staerke)}${tile('Größter Hebel', d.hebel)}</tr></table>`
@@ -897,33 +911,83 @@ function vitalprofilMailBody(d: Record<string, string>): string {
   return `${h2('Kontakt')}${contact}${h2('Vitalprofil')}${profile}${h2('Die fünf Bereiche')}${areaCards}${meta}<div style="height:18px;"></div>`
 }
 
+const RAW_KEY_RE = /(_html|_html_en)$|^intro(_en)?$/
+
+// ─── Pfad-Policy ──────────────────────────────────────────────────────────────
+// Scanner fragen /.git/config, /env, /setup/, /wp-admin … ab. Solche Pfade bekommen
+// ein knappes 404 (kein Seiten-HTML, kein Pageview), damit weder Analytics noch
+// App-API dafür Arbeit leisten. /.finestsites/* und /.well-known/* bleiben unberührt.
+const SCANNER_PATH_RE = /^\/(?:env|setup|api|feed|rss|admin|administrator|wp-admin|wp-content|wp-includes|wp-json|wp-login\.php|xmlrpc\.php|phpmyadmin|pma|vendor|cgi-bin|config|configuration|backup|backups|db|database|dump|server-status|server-info|_profiler|actuator|console|telescope|graphql|debug|test|tmp|old|login|owa|autodiscover|ecp|remote|manager|solr|jenkins|aws|s3|credentials|secrets)(?:\/|$)/i
+function isBlockedPath(pathname: string): boolean {
+  if (pathname.startsWith('/.finestsites/') || pathname.startsWith('/.well-known/')) return false
+  if (/\/\./.test(pathname)) return true           // jede Dotfile-/Dotdir-Komponente (.git, .env, .svn, .DS_Store …)
+  if (/\.(php|asp|aspx|jsp|cgi|pl|sh|bak|sql|zip|tar|gz|rar|7z|log|ini|yml|yaml|json|xml|txt)$/i.test(pathname) && !/^\/(robots\.txt|sitemap\.xml|manifest\.json|site\.webmanifest)$/i.test(pathname)) return true
+  return SCANNER_PATH_RE.test(pathname)
+}
+// SPA-Fallback (Pfade ohne Dateiendung → index.html) nur für einfache Slugs wie /testevent
+const SPA_SLUG_RE = /^\/[a-z0-9][a-z0-9_-]{0,80}\/?$/i
+function plain404(): Response {
+  return new Response('Not found', { status: 404, headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' } })
+}
+function shouldTrack(pathname: string): boolean { return !pathname.startsWith('/.well-known/') }
+
+// ─── Security-Header für ausgelieferte Seiten ─────────────────────────────────
+const HTML_SEC_HEADERS: Record<string, string> = {
+  'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
+  'X-Content-Type-Options': 'nosniff',
+  'Referrer-Policy': 'strict-origin-when-cross-origin',
+  'Content-Security-Policy': "frame-ancestors 'self' https://app.finestsites.io https://finestsites.io",
+  'Permissions-Policy': 'camera=(), microphone=(), geolocation=(), payment=()',
+}
+function htmlHeaders(extra: Record<string, string> = {}): Record<string, string> {
+  return { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-cache', ...HTML_SEC_HEADERS, ...extra }
+}
+
 // ─── Form Submission Handler ──────────────────────────────────────────────────
 
 async function handleFormSubmission(request: Request, pathname: string, meta: SiteMeta, env: Env, ctx: ExecutionContext, hostname: string): Promise<Response> {
   const formName = pathname.split('/').filter(Boolean).pop() ?? 'default'
 
+  // Formularname nur als kurzer Slug (steht im DB-Datensatz und im Mail-Betreff)
+  if (!/^[a-z0-9][a-z0-9_-]{0,39}$/i.test(formName)) {
+    return new Response(JSON.stringify({ error: 'Ungültiges Formular.' }), { status: 400, headers: { 'Content-Type': 'application/json' } })
+  }
+  // Größenlimits: 64 KB Body, 60 Felder, 64 Zeichen je Schlüssel, 5.000 Zeichen je Wert
+  const MAX_BODY = 65536, MAX_FIELDS = 60, MAX_KEY = 64, MAX_VALUE = 5000
+  const declared = parseInt(request.headers.get('content-length') ?? '0', 10)
+  if (declared > MAX_BODY) {
+    return new Response(JSON.stringify({ error: 'Anfrage zu groß.' }), { status: 413, headers: { 'Content-Type': 'application/json' } })
+  }
+
   let formData: Record<string, string> = {}
   let redirectUrl: string | null = null
   let honeypot = false
-  let formRecipient: string | null = null
+  // `_recipient` aus dem Request wird bewusst ignoriert: der Empfänger wird in
+  // sendSubmissionEmail aus den Seitendaten (email_benachrichtigung) bzw. dem Konto
+  // bestimmt. Sonst wäre das Endpoint ein offener Mail-Relay.
+  const take = (key: string, raw: unknown) => {
+    if (key === '_redirect') { redirectUrl = String(raw ?? ''); return }
+    if (key === '_honeypot') { if (String(raw ?? '').trim() !== '') honeypot = true; return }
+    if (key.startsWith('_')) return // andere Systemfelder (inkl. _recipient) verwerfen
+    if (Object.keys(formData).length >= MAX_FIELDS) return
+    if (!/^[\w.:-]{1,64}$/.test(key) || key.length > MAX_KEY) return
+    const v = typeof raw === 'string' ? raw : (raw == null ? '' : String(raw))
+    formData[key] = v.length > MAX_VALUE ? v.slice(0, MAX_VALUE) : v
+  }
 
   const contentType = request.headers.get('content-type') ?? ''
   if (contentType.includes('application/x-www-form-urlencoded') || contentType.includes('multipart/form-data')) {
     const fd = await request.formData()
-    for (const [key, value] of fd.entries()) {
-      if (key === '_redirect') { redirectUrl = value.toString(); continue }
-      if (key === '_honeypot') { if (value.toString().trim() !== '') honeypot = true; continue }
-      if (key === '_recipient') { formRecipient = value.toString(); continue }
-      if (key.startsWith('_')) continue // skip other system fields
-      formData[key] = value.toString()
-    }
+    for (const [key, value] of fd.entries()) take(key, typeof value === 'string' ? value : '')
   } else if (contentType.includes('application/json')) {
-    const body = await request.json() as Record<string, string>
-    redirectUrl = body._redirect ?? null
-    honeypot = (body._honeypot ?? '').trim() !== ''
-    formRecipient = body._recipient ?? null
-    for (const [k, v] of Object.entries(body)) {
-      if (!k.startsWith('_')) formData[k] = v
+    const text = await request.text()
+    if (text.length > MAX_BODY) {
+      return new Response(JSON.stringify({ error: 'Anfrage zu groß.' }), { status: 413, headers: { 'Content-Type': 'application/json' } })
+    }
+    let body: unknown = null
+    try { body = JSON.parse(text) } catch { body = null }
+    if (body && typeof body === 'object' && !Array.isArray(body)) {
+      for (const [k, v] of Object.entries(body as Record<string, unknown>)) take(k, v)
     }
   }
 
@@ -971,7 +1035,7 @@ async function handleFormSubmission(request: Request, pathname: string, meta: Si
   // Fire-and-forget email notification (only for non-spam)
   if (!honeypot) {
     const siteUrl = `https://${hostname}`
-    ctx.waitUntil(sendSubmissionEmail(env, meta, formName, formData, formRecipient, siteUrl))
+    ctx.waitUntil(sendSubmissionEmail(env, meta, formName, formData, siteUrl))
   }
 
   // Response
@@ -982,12 +1046,12 @@ async function handleFormSubmission(request: Request, pathname: string, meta: Si
     })
   }
 
-  // Only allow relative redirects — block open redirect to external URLs
-  if (redirectUrl && redirectUrl.startsWith('/')) return Response.redirect(redirectUrl, 302)
+  // Nur relative Pfade (kein "//evil.tld"), immer auf den eigenen Host aufgelöst
+  if (redirectUrl && /^\/(?!\/)/.test(redirectUrl) && redirectUrl.length < 512) {
+    return Response.redirect(`https://${hostname}${redirectUrl}`, 302)
+  }
 
-  return new Response(successPage(), {
-    headers: { 'Content-Type': 'text/html; charset=utf-8' },
-  })
+  return new Response(successPage(), { headers: htmlHeaders() })
 }
 
 // ─── Main Handler ─────────────────────────────────────────────────────────────
@@ -1071,10 +1135,7 @@ export default {
       if (meta === '__offline__') {
         return new Response(offlinePage(username, domain), {
           status: 410,
-          headers: {
-            'Content-Type': 'text/html; charset=utf-8',
-            'Cache-Control': 'no-store',
-          },
+          headers: htmlHeaders({ 'Cache-Control': 'no-store' }),
         })
       }
 
@@ -1082,12 +1143,12 @@ export default {
       if (!meta) {
         return new Response(notFoundPage(username, domain), {
           status: 404,
-          headers: {
-            'Content-Type': 'text/html; charset=utf-8',
-            'Cache-Control': 'no-store',
-          },
+          headers: htmlHeaders({ 'Cache-Control': 'no-store' }),
         })
       }
+
+      // ── Scanner-/Dotfile-Pfade ───────────────────────────────────────────
+      if (isBlockedPath(pathname)) return plain404()
 
       // ── Form submission ──────────────────────────────────────────────────
       if (request.method === 'POST' && pathname.startsWith('/.finestsites/forms/')) {
@@ -1144,13 +1205,9 @@ export default {
           logoHtml: baseDesign.logoHtml.replace(/#[0-9A-Fa-f]{6}/g, ta.logo),
         }
         const legalHtml = pathname === '/impressum' ? renderImpressum(design) : renderDatenschutz(design, domain)
-        ctx.waitUntil(trackPageview(request, url, hostname, pathname, meta, env))
+        if (shouldTrack(pathname)) ctx.waitUntil(trackPageview(request, url, hostname, pathname, meta, env))
         return new Response(injectBeacon(render(legalHtml, pageDataMap)), {
-          headers: {
-            'Content-Type': 'text/html; charset=utf-8',
-            'Cache-Control': 'no-cache',
-            'X-Powered-By': 'FinestSites',
-          },
+          headers: htmlHeaders(),
         })
       }
 
@@ -1171,13 +1228,9 @@ export default {
             : []
           const pageDataMap: Data = {}
           for (const r of pageRows) pageDataMap[r.fieldKey] = r.fieldValue ?? ''
-          ctx.waitUntil(trackPageview(request, url, hostname, pathname, meta, env))
+          if (shouldTrack(pathname)) ctx.waitUntil(trackPageview(request, url, hostname, pathname, meta, env))
           return new Response(injectBeacon(render(pageHtml, pageDataMap)), {
-            headers: {
-              'Content-Type': 'text/html; charset=utf-8',
-              'Cache-Control': 'no-cache',
-              'X-Powered-By': 'FinestSites',
-            },
+            headers: htmlHeaders(),
           })
         }
         // No dedicated page found in R2 — fall through to SPA routing
@@ -1191,6 +1244,8 @@ export default {
       const assetPath = pathname === '/' ? 'index.html' : pathname.replace(/^\//, '')
       const hasFileExt = /\.[a-zA-Z0-9]+$/.test(assetPath)
       const isHtml = assetPath === 'index.html' || assetPath.endsWith('.html') || !hasFileExt
+      // Unbekannte HTML-Pfade: nur "/" und einfache SPA-Slugs rendern, alles andere 404
+      if (isHtml && pathname !== '/' && assetPath !== 'index.html' && !SPA_SLUG_RE.test(pathname) && !pathname.startsWith('/.well-known/')) return plain404()
 
       if (!isHtml && assetPath) {
         const r2Key = `${meta.r2BasePath}/${assetPath}`
@@ -1211,6 +1266,7 @@ export default {
             status: 206,
             headers: {
               'Content-Type': ct(assetPath),
+              'X-Content-Type-Options': 'nosniff',
               'Content-Range': `bytes ${start}-${end}/${size}`,
               'Content-Length': String(length),
               'Accept-Ranges': 'bytes',
@@ -1225,6 +1281,7 @@ export default {
           return new Response(asset.body, {
             headers: {
               'Content-Type': ct(assetPath),
+              'X-Content-Type-Options': 'nosniff',
               'Content-Length': String(asset.size),
               'Accept-Ranges': 'bytes',
               'Cache-Control': 'public, max-age=31536000, immutable',
@@ -1239,9 +1296,9 @@ export default {
       const renderCacheKey = `rendered:${username}:${domain}`
       const cachedHtml = await kvGet(env, renderCacheKey)
       if (cachedHtml) {
-        ctx.waitUntil(trackPageview(request, url, hostname, pathname, meta, env))
+        if (shouldTrack(pathname)) ctx.waitUntil(trackPageview(request, url, hostname, pathname, meta, env))
         return new Response(injectBeacon(cachedHtml), {
-          headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-cache', 'X-Cache': 'HIT' },
+          headers: htmlHeaders({ 'X-Cache': 'HIT' }),
         })
       }
 
@@ -1294,13 +1351,9 @@ export default {
       renderedHtml = injectBeacon(renderedHtml)
       await kvPut(env, renderCacheKey, renderedHtml, { expirationTtl: 60 })
 
-      ctx.waitUntil(trackPageview(request, url, hostname, pathname, meta, env))
+      if (shouldTrack(pathname)) ctx.waitUntil(trackPageview(request, url, hostname, pathname, meta, env))
       return new Response(renderedHtml, {
-        headers: {
-          'Content-Type': 'text/html; charset=utf-8',
-          'Cache-Control': 'no-cache',
-          'X-Powered-By': 'FinestSites',
-        },
+        headers: htmlHeaders(),
       })
 
     } catch (err) {

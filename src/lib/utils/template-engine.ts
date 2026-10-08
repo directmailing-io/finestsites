@@ -399,11 +399,18 @@ function replaceSimplePlaceholders(html: string, data: SiteData): string {
     const val = data[key]
     return val !== undefined && val !== null ? String(val) : ''
   })
+  // {{key}} → HTML-escaped. Ausnahme: Richtext-Schlüssel (…_html, …_html_en, intro, intro_en),
+  // die in älteren Templates mit zwei Klammern stehen und gespeichertes (serverseitig
+  // bereinigtes) HTML enthalten.
   return html.replace(/\{\{([^#/{}][^{}]*)\}\}/g, (match, key) => {
-    const val = data[key.trim()]
-    return val !== undefined && val !== null ? val : ''
+    const k = key.trim()
+    const val = data[k]
+    if (val === undefined || val === null) return ''
+    return RAW_KEY_RE.test(k) ? String(val) : htmlEscape(String(val))
   })
 }
+/** Schlüssel, deren Wert als HTML ausgegeben wird (Richtext). Muss mit dem Worker übereinstimmen. */
+export const RAW_KEY_RE = /(_html|_html_en)$|^intro(_en)?$/
 
 export function extractPlaceholders(html: string): string[] {
   const keys = new Set<string>()

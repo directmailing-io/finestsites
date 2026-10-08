@@ -20,6 +20,9 @@ function isValidHostname(hostname: string): boolean {
   if (clean.startsWith('.') || clean.endsWith('.')) return false
   if (!/^[a-z0-9._-]+$/.test(clean)) return false
   if (clean.length > 253) return false
+  // Eigene Infrastruktur und Template-Domains dürfen nie als Kunden-Domain registriert werden
+  const BLOCKED = ['finestsites.io', 'finestsites.de', 'womenplus.io', 'lnko.me', 'wellpreneur.io', 'cellrestart.net', 'dailyoptimal.de', 'myevnt.io', 'vitalprofil.net', 'workers.dev', 'cloudflare.com', 'hetzner.com', 'localhost']
+  if (BLOCKED.some(b => clean === b || clean.endsWith('.' + b))) return false
   return true
 }
 

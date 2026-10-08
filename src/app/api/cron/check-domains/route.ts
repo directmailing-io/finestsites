@@ -1,3 +1,4 @@
+import { safeEqual } from '@/lib/security/request'
 /**
  * Cron: Auto-verify pending custom domains
  *
@@ -27,7 +28,7 @@ export const maxDuration = 60
 export async function GET(request: NextRequest) {
   // Vercel cron jobs send the CRON_SECRET in the Authorization header
   const authHeader = request.headers.get('authorization')
-  if (!process.env.CRON_SECRET || authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+  if (!process.env.CRON_SECRET || !safeEqual(authHeader ?? '', `Bearer ${process.env.CRON_SECRET}`)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 

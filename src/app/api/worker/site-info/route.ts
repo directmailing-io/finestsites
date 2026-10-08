@@ -43,7 +43,7 @@ import { eq, and } from 'drizzle-orm'
 const WORKER_SECRET = process.env.WORKER_SECRET
 
 function checkSecret(req: NextRequest): boolean {
-  if (!WORKER_SECRET) return true
+  if (!WORKER_SECRET) return false // fehlendes Secret = alles ablehnen (fail closed)
   const incoming = req.headers.get('x-worker-secret') ?? ''
   const a = Buffer.from(incoming)
   const b = Buffer.from(WORKER_SECRET)

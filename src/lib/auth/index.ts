@@ -60,12 +60,12 @@ export const auth = betterAuth({
     'https://finestsites.de',
     'https://www.finestsites.de',
     // Vercel canonical URL (used if NEXT_PUBLIC_APP_URL points here)
-    'https://finestsites.vercel.app',
-    'http://localhost:3000',
-    'http://localhost:3001',
+    ...(process.env.NODE_ENV === 'production' ? [] : ['http://localhost:3000', 'http://localhost:3001']),
   ],
 
   advanced: {
+    // Hinter Cloudflare ist cf-connecting-ip die echte Client-IP (Origin ist nur aus CF-Netzen erreichbar)
+    ipAddress: { ipAddressHeaders: ['cf-connecting-ip', 'x-forwarded-for'] },
     // users.id is uuid type — generate proper UUIDs app-side (not DB default)
     // so all BetterAuth tables (users/sessions/accounts/verifications) get valid UUIDs
     database: {

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { getClientIp } from '@/lib/security/request'
 import { getUserFromRequest } from '@/lib/auth/server'
 import { db } from '@/lib/db'
 import { users } from '@/lib/db/schema'
@@ -38,7 +39,7 @@ export async function POST(req: NextRequest) {
   // Server-side: extract IP from Cloudflare or proxy headers
   const ip = (
     req.headers.get('cf-connecting-ip') ??
-    req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ??
+    getClientIp(req) ??
     req.headers.get('x-real-ip') ??
     'unknown'
   ).slice(0, 64)

@@ -54,6 +54,16 @@ export async function POST(req: NextRequest) {
   if (contentType === 'image' && !mediaUrl) {
     return NextResponse.json({ error: 'mediaUrl required for image' }, { status: 400 })
   }
+  // Nur bekannte Typen; Bild-URLs nur aus dem eigenen Support-Upload-Ordner (der Admin
+  // löscht beim Schließen die R2-Objekte hinter image-Nachrichten), GIFs nur von Giphy.
+  if (!['text', 'image', 'gif'].includes(contentType)) return NextResponse.json({ error: 'Ungültiger Typ' }, { status: 400 })
+  if (mediaUrl !== undefined && mediaUrl !== null) {
+    if (typeof mediaUrl !== 'string' || mediaUrl.length > 2048) return NextResponse.json({ error: 'Ungültige Medien-URL' }, { status: 400 })
+    const ownPrefix = `/api/support/media?key=support-media/${user.id}/`
+    const ownOk = mediaUrl.startsWith(ownPrefix) || mediaUrl.includes(`${ownPrefix}`) && /^https:\/\/[a-z0-9.-]+\.finestsites\.io\//.test(mediaUrl)
+    const gifOk = contentType === 'gif' && /^https:\/\/([a-z0-9-]+\.)*giphy\.com\//.test(mediaUrl)
+    if (!(ownOk || gifOk)) return NextResponse.json({ error: 'Medien-URL nicht erlaubt' }, { status: 400 })
+  }
 
   try {
     const now = new Date()

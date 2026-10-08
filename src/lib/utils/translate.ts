@@ -13,6 +13,7 @@
  * successful API translation, so failures (or a missing API key) fall back
  * to storing the German text as EN and retry on the next save.
  */
+import { sanitizeRichtext } from '@/lib/security/sanitize'
 import { createHash } from 'crypto'
 import { db } from '@/lib/db'
 import { siteData } from '@/lib/db/schema'
@@ -100,7 +101,7 @@ export async function ensureAboutMeTranslation(siteId: string): Promise<void> {
     // Fallback at the data level: store the German text so the template never
     // renders an empty EN section. Hash is only set on real translations.
     const upserts = [
-      { userSiteId: siteId, fieldKey: f.en, fieldValue: translated ?? german, updatedAt: new Date() },
+      { userSiteId: siteId, fieldKey: f.en, fieldValue: sanitizeRichtext(translated ?? german), updatedAt: new Date() },
       { userSiteId: siteId, fieldKey: f.src, fieldValue: translated ? srcHash : '', updatedAt: new Date() },
     ]
     await db

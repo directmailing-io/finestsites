@@ -1,10 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { getClientIp, rateLimit } from '@/lib/security/request'
 import { auth } from '@/lib/auth'
 import { db } from '@/lib/db'
 import { users } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
 
 export async function POST(req: NextRequest) {
+  // max. 5 Registrierungen je IP in 10 Minuten (Konto-Flooding, E-Mail-Enumeration bremsen)
+  if (!rateLimit('register', getClientIp(req), 5, 10 * 60 * 1000)) {
+    return NextResponse.json({ error: 'Zu viele Anfragen. Bitte versuch es in ein paar Minuten erneut.' }, { status: 429 })
+  }
   let email: string, password: string, referral_code: string | undefined
   try {
     const body = await req.json()

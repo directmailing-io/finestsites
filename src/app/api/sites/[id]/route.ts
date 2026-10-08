@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { richtextKeysFromSchema, sanitizeFieldValue } from '@/lib/security/sanitize'
 import { getUserFromRequest } from '@/lib/auth/server'
 import { db } from '@/lib/db'
 import { users, userSites, templates, siteData } from '@/lib/db/schema'
@@ -94,9 +95,21 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   if (!site) return NextResponse.json({ error: 'Not found' }, { status: 404 })
 
   const body = await req.json()
+  if (!body || typeof body !== 'object' || Array.isArray(body)) return NextResponse.json({ error: 'Ungültige Daten' }, { status: 400 })
+
+  // Richtext wird roh ausgegeben → beim Speichern auf eine feste Tag-Liste reduzieren.
+  // Schlüssel: nur kurze Bezeichner, Werte: nur Strings (max. 200 kB).
+  const schemaInfo = richtextKeysFromSchema((site as { template?: { placeholderSchema?: unknown } }).template?.placeholderSchema)
+  const entries: Array<[string, string]> = []
+  for (const [fieldKey, raw] of Object.entries(body as Record<string, unknown>)) {
+    if (!/^[\w.:-]{1,80}$/.test(fieldKey)) continue
+    const str = raw === null || raw === undefined ? '' : (typeof raw === 'string' ? raw : (typeof raw === 'number' || typeof raw === 'boolean' ? String(raw) : JSON.stringify(raw)))
+    if (str.length > 200_000) return NextResponse.json({ error: `Feld „${fieldKey}“ ist zu groß.` }, { status: 413 })
+    entries.push([fieldKey, sanitizeFieldValue(fieldKey, str, schemaInfo)])
+  }
 
   // Upsert each field value
-  const upserts = Object.entries(body as Record<string, string>).map(([fieldKey, fieldValue]) => ({
+  const upserts = entries.map(([fieldKey, fieldValue]) => ({
     userSiteId: id,
     fieldKey,
     fieldValue: fieldValue ?? '',

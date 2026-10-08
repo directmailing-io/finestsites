@@ -159,7 +159,7 @@ export async function PATCH(req: NextRequest) {
       current_period_end: item?.current_period_end ?? null,
     })
   } catch (e: any) {
-    return NextResponse.json({ error: e.message }, { status: 500 })
+    return NextResponse.json({ error: 'Der Zahlungsdienst ist gerade nicht erreichbar. Bitte versuch es gleich noch einmal.' }, { status: 500 })
   }
 }
 
@@ -200,6 +200,6 @@ export async function DELETE(req: NextRequest) {
       current_period_end: item?.current_period_end ?? null,
     })
   } catch (e: any) {
-    return NextResponse.json({ error: e.message }, { status: 500 })
+    return NextResponse.json({ error: 'Der Zahlungsdienst ist gerade nicht erreichbar. Bitte versuch es gleich noch einmal.' }, { status: 500 })
   }
 }

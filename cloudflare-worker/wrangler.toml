@@ -2,7 +2,7 @@ name = "finestsites-worker"
 main = "src/index.ts"
 compatibility_date = "2025-01-01"
 account_id = "bc6cb133755178f3e44ca3e2662d1242"
-workers_dev = true
+workers_dev = false
 
 # ──────────────────────────────────────────────────────────────────────────────
 # TEMPLATE DOMAINS — Worker Routes

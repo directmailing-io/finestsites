@@ -3,6 +3,7 @@ import type { NextConfig } from "next";
 const isDev = process.env.NODE_ENV === 'development'
 
 const nextConfig: NextConfig = {
+  poweredByHeader: false,
   // Standalone output for self-hosted deployment (Coolify/Docker)
   output: 'standalone',
 
@@ -45,6 +46,7 @@ const nextConfig: NextConfig = {
           { key: 'X-Content-Type-Options', value: 'nosniff' },
           // Prevent this app from being embedded in iframes on other origins (clickjacking)
           { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
+          { key: 'Content-Security-Policy', value: "frame-ancestors 'self'" },
           // Enforce HTTPS for 2 years (only meaningful over TLS, harmless in dev)
           { key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains; preload' },
           // Limit referrer info sent to third parties

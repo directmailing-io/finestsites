@@ -150,7 +150,7 @@ function checkRateLimit(ip: string): boolean {
 
 function getClientIp(req: NextRequest): string {
   return (
-    req.headers.get('x-forwarded-for')?.split(',')[0].trim() ??
+    getClientIp(req) ??
     req.headers.get('x-real-ip') ??
     'unknown'
   )

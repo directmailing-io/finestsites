@@ -1,3 +1,4 @@
+import { safeEqual } from '@/lib/security/request'
 /**
  * Cron: Räumt verwaiste Erfahrungsbericht-Drafts auf.
  * Drafts älter als 48h werden inkl. ihrer R2-Objekte gelöscht
@@ -13,7 +14,7 @@ import { deleteFromR2 } from '@/lib/r2/client'
 export async function POST(req: NextRequest) {
   const authHeader = req.headers.get('authorization')
   const cronSecret = process.env.CRON_SECRET
-  if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {
+  if (!cronSecret || !safeEqual(authHeader ?? '', `Bearer ${cronSecret}`)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 

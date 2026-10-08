@@ -1,4 +1,5 @@
 import { NextRequest } from 'next/server'
+import { getClientIp as sharedClientIp } from '@/lib/security/request'
 import { db } from '@/lib/db'
 import { testimonials, testimonialAssets } from '@/lib/db/schema'
 import { and, eq } from 'drizzle-orm'
@@ -26,11 +27,7 @@ export function createRateLimiter(limit: number, windowMs: number) {
 }
 
 export function getClientIp(req: NextRequest): string {
-  return (
-    req.headers.get('x-forwarded-for')?.split(',')[0].trim() ??
-    req.headers.get('x-real-ip') ??
-    'unknown'
-  )
+  return sharedClientIp(req) ?? 'unknown'
 }
 
 // ── Autorisierung anonymer Folge-Requests über das uploadToken ────────────────
