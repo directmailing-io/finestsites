@@ -861,10 +861,10 @@ export function vitalcheckLaunchEmail({ firstName, segment }: { firstName?: stri
 
   const segmentBlock: Record<VitalcheckSegment, string> = {
     none: box('So bekommst du die Seite',
-      p('Dafür brauchst du einen Tarif. Mit <strong>Starter</strong> (17 € im Monat) ist deine erste Seite online. Du kannst jeden Monat kündigen.', 'margin-bottom:6px;')
+      p('Dafür brauchst du nur einen Tarif. Mit <strong>Starter</strong> (17 € im Monat) ist deine erste Seite online, gern gleich die Vitalcheck-Seite. Du kannst jeden Monat kündigen, ganz ohne Haken.', 'margin-bottom:6px;')
       + button(`${APP_URL}/billing`, 'Tarif wählen')),
     starter: box('Warum Pro für dich passt',
-      p('Im Starter-Tarif hast du eine Seite. Mit <strong>Pro</strong> hast du drei Seiten für 27 € im Monat, also 10 € mehr. Dann läuft die Vitalcheck-Seite neben deiner jetzigen Seite.')
+      p('Im Starter-Tarif hast du eine Seite. Mit <strong>Pro</strong> hast du drei Seiten für 27 € im Monat, also 10 € mehr. Ehrlich gesagt lohnt sich das hier richtig: Die Vitalcheck-Seite bringt die Gespräche, deine jetzige Seite erklärt dann den Rest.')
       + `<p style="margin:0 0 10px;font-size:16px;font-weight:700;color:${base.heading};">So geht es:</p>
         <table cellpadding="0" cellspacing="0" role="presentation" width="100%">
           ${step(1, 'Klick unten auf den Button.')}
@@ -874,8 +874,8 @@ export function vitalcheckLaunchEmail({ firstName, segment }: { firstName?: stri
       + p('Den Unterschied zahlst du nur für die restlichen Tage des Monats.', 'margin-bottom:6px;font-size:14px;color:' + base.muted + ';')
       + button(`${APP_URL}/billing`, 'Jetzt auf Pro wechseln')),
     pro: box('Vielleicht passt Unlimited jetzt besser',
-      p('Im Pro-Tarif hast du drei Seiten. Von PM-International gibt es jetzt vier: Optimalset, cellRESET, Business und Vitalcheck. Weitere Seiten sind schon in Arbeit.')
-      + p('Mit <strong>Unlimited</strong> (37 € im Monat) hast du alle Seiten, auch die neuen.')
+      p('Im Pro-Tarif hast du drei Seiten. Von PM-International gibt es jetzt aber vier: Optimalset, cellRESET, Business und Vitalcheck. Und ich verrate dir: Die nächsten Seiten sind schon in Arbeit.')
+      + p('Mit <strong>Unlimited</strong> (37 € im Monat) hast du einfach alle, auch die neuen. Dann musst du nie wieder überlegen, welche Seite du dafür abschaltest.')
       + `<table cellpadding="0" cellspacing="0" role="presentation" width="100%">
           ${step(1, 'Klick unten auf den Button.')}
           ${step(2, 'Wähle <strong>Unlimited</strong> und bestätige.')}
@@ -883,7 +883,7 @@ export function vitalcheckLaunchEmail({ firstName, segment }: { firstName?: stri
       + p('Den Unterschied zahlst du nur für die restlichen Tage des Monats.', 'margin-bottom:6px;font-size:14px;color:' + base.muted + ';')
       + button(`${APP_URL}/billing`, 'Auf Unlimited wechseln')),
     unlimited: box('Für dich ist die Seite schon freigeschaltet',
-      p('Gehe auf <strong>Meine Seiten</strong>, klicke auf <strong>Neue Seite</strong> und wähle <strong>Dein Vitalprofil (Vitalcheck)</strong>. Dein Foto und deine Texte werden übernommen.', 'margin-bottom:6px;')
+      p('Du musst nichts weiter tun. Gehe auf <strong>Meine Seiten</strong>, klicke auf <strong>Neue Seite</strong> und wähle <strong>Dein Vitalprofil (Vitalcheck)</strong>. Dein Foto und deine Texte sind schon drin, in zehn Minuten ist die Seite online.', 'margin-bottom:6px;')
       + button(`${APP_URL}/sites/new`, 'Vitalcheck-Seite anlegen'), '#ECFDF5'),
   }
 
@@ -892,20 +892,21 @@ export function vitalcheckLaunchEmail({ firstName, segment }: { firstName?: stri
       Neu: Deine Vitalcheck-Seite
     </h1>
     ${p(`${hi},`)}
-    ${p('es gibt eine neue Seite für dich: die <strong>Vitalcheck-Seite</strong>.')}
-    ${p('So funktioniert sie: Deine Besucher beantworten 20 kurze Fragen zu ihrem Alltag. Das dauert 3 Minuten. Am Ende sehen sie ihren <strong>Vital-Typ</strong> und können ihn als Bild in ihrer Story teilen.')}
-    ${p('Und genau da passiert das Schöne: Die Freundin sieht das Bild, macht den Check auch und teilt ihr Ergebnis. So kommen immer neue Menschen auf deine Seite, ganz von allein. Und jede Anfrage landet mit allen Antworten direkt bei dir.')}
+    ${p('ich hab was Neues für dich: deine eigene <strong>Vitalcheck-Seite</strong>.')}
+    ${p('Stell dir das so vor: Jemand kommt auf deine Seite, beantwortet 20 kurze Fragen zu seinem Alltag (dauert drei Minuten) und bekommt am Ende seinen <strong>Vital-Typ</strong>. Den kann er als Bild in seiner Story teilen.')}
+    ${p('Und jetzt kommt der schöne Teil: Die Freundin sieht das Bild, denkt sich „das mach ich auch“, macht den Check und teilt ihr Ergebnis. So wandert deine Seite ganz von allein weiter, von einer zur nächsten.')}
+    ${p('Und wer danach mit dir sprechen möchte, klickt auf <strong>„Beratung anfragen“</strong>. Dann bekommst du eine E-Mail mit allen Antworten und weißt schon vor dem ersten Gespräch, worum es geht.')}
 
     <table cellpadding="0" cellspacing="0" role="presentation" width="100%" style="margin:20px 0 6px;">
-      ${fact('20 Fragen, 3 Minuten, ohne Anmeldung')}
-      ${fact('Ergebnis als Bild zum Teilen')}
-      ${fact('Anfragen kommen mit allen Antworten per E-Mail zu dir')}
+      ${fact('20 Fragen, drei Minuten, ohne Anmeldung')}
+      ${fact('Das Ergebnis gibt es als Bild zum Teilen')}
+      ${fact('Wer Beratung möchte, schickt dir seine Antworten mit einem Klick')}
       ${fact('Oben dein Foto, dein Text und deine anderen Seiten')}
     </table>
 
     <table cellpadding="0" cellspacing="0" role="presentation" width="100%" style="margin:22px 0 0;">
       <tr><td style="padding:0;">
-        <p style="margin:0 0 12px;font-size:16px;line-height:1.65;color:${base.body};">Im Video zeige ich dir die Seite und wie du sie anlegst. Es dauert 5 Minuten. Klick einfach auf das Bild:</p>
+        <p style="margin:0 0 12px;font-size:16px;line-height:1.65;color:${base.body};">Ich hab dir ein kleines Video gemacht, fünf Minuten. Da zeig ich dir die Seite und wie du sie anlegst. Klick einfach aufs Bild:</p>
         <a href="${VIDEO}" style="display:block;border-radius:14px;overflow:hidden;line-height:0;">
           <img src="${APP_URL}/mail/vitalcheck-video.png" alt="Video: Deine Vitalcheck-Seite (5 Minuten)" width="480" style="width:100%;max-width:480px;height:auto;display:block;border-radius:14px;border:1px solid ${base.border};" />
         </a>
@@ -916,7 +917,7 @@ export function vitalcheckLaunchEmail({ firstName, segment }: { firstName?: stri
     ${segmentBlock[segment]}
 
     <p style="margin:28px 0 0;font-size:16px;line-height:1.65;color:${base.body};">
-      Wenn etwas unklar ist, antworte einfach auf diese E-Mail. Ich helfe dir gern.
+      Wenn irgendwas unklar ist, antworte einfach auf diese E-Mail. Ich bin da und helfe dir gern.
     </p>
     <p style="margin:22px 0 0;font-size:16px;line-height:1.65;color:${base.body};">
       Liebe Grüße<br />
