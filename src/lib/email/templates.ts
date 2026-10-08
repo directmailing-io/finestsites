@@ -757,3 +757,67 @@ export function campaignLastHourEmail({ firstName }: { firstName?: string }): st
     </p>
   `)
 }
+
+// ─── Produkt-Update: Partner-Kontaktdaten ─────────────────────────────────────
+// Geht einmalig an alle Nutzer mit aktiver Partnerseite (lnko, Business, cellRESET,
+// Dailyoptimal). Zielgruppe ist älter – deshalb große Schritte, kein Fachjargon,
+// ein einziger Button.
+export function partnerContactsUpdateEmail({ firstName, partnerName }: { firstName?: string; partnerName?: string }): string {
+  const hi = firstName ? `Hallo ${firstName}` : 'Hallo'
+  const wir = partnerName ? `du und ${partnerName}` : 'ihr beide'
+  const step = (n: number, text: string) => `
+    <tr>
+      <td valign="top" style="padding:0 14px 16px 0;">
+        <span style="display:inline-block;width:32px;height:32px;line-height:32px;border-radius:50%;background:#111827;color:#fff;font-size:15px;font-weight:700;text-align:center;">${n}</span>
+      </td>
+      <td valign="top" style="padding:5px 0 16px;font-size:16px;line-height:1.55;color:${base.body};">${text}</td>
+    </tr>`
+  return layout(`
+    <h1 style="margin:0 0 18px;font-size:23px;font-weight:700;color:${base.heading};line-height:1.3;">
+      Neu: Jeder von euch kann eigene Kontaktdaten zeigen
+    </h1>
+    <p style="margin:0 0 16px;font-size:16px;line-height:1.6;color:${base.body};">
+      ${hi},
+    </p>
+    <p style="margin:0 0 16px;font-size:16px;line-height:1.6;color:${base.body};">
+      eine kleine Neuigkeit für eure Partnerseite: Ab sofort könnt ${wir} auf der Webseite <strong>jeweils eigene Kontaktdaten</strong> zeigen – zum Beispiel jede Person ihre eigene WhatsApp-Nummer oder ihr eigenes Instagram-Profil.
+    </p>
+    <p style="margin:0 0 10px;font-size:16px;line-height:1.6;color:${base.body};">
+      Ihr habt die Wahl:
+    </p>
+    <table cellpadding="0" cellspacing="0" role="presentation" width="100%" style="margin:0 0 24px;">
+      <tr>
+        <td style="padding:14px 16px;background:#F5F3FF;border-radius:12px;font-size:15px;line-height:1.55;color:${base.body};">
+          <strong style="color:${base.heading};">Gemeinsam</strong> – eine WhatsApp-Nummer, ein Instagram für euch beide.<br />
+          <span style="color:${base.muted};">So ist es jetzt eingestellt. Wenn euch das passt, müsst ihr nichts tun.</span>
+        </td>
+      </tr>
+      <tr><td style="height:10px;"></td></tr>
+      <tr>
+        <td style="padding:14px 16px;background:#EEF4FF;border-radius:12px;font-size:15px;line-height:1.55;color:${base.body};">
+          <strong style="color:${base.heading};">Jeder für sich</strong> – jede Person trägt ihre eigenen Daten ein.<br />
+          <span style="color:${base.muted};">Besucher sehen dann beide nebeneinander, jeweils mit Namen.</span>
+        </td>
+      </tr>
+    </table>
+    <p style="margin:0 0 14px;font-size:16px;font-weight:700;color:${base.heading};">
+      So stellt ihr auf „Jeder für sich“ um – dauert 2 Minuten:
+    </p>
+    <table cellpadding="0" cellspacing="0" role="presentation" width="100%" style="margin:0 0 8px;">
+      ${step(1, 'Unten auf den schwarzen Button klicken und einloggen.')}
+      ${step(2, 'Bei eurer Webseite auf <strong>„Bearbeiten“</strong> klicken.')}
+      ${step(3, 'Links den Bereich <strong>„Kontakt“</strong> öffnen (bei der lnko- und der Business-Seite heißt er „Social Media“).')}
+      ${step(4, 'Bei <strong>„Wie sollen Besucher euch erreichen?“</strong> auf <strong>„Jeder für sich“</strong> tippen. Darunter erscheinen jetzt grün markierte Felder für die zweite Person.')}
+      ${step(5, 'Die Felder ausfüllen und oben auf <strong>„Speichern“</strong> klicken. Fertig – die Webseite zeigt sofort beide.')}
+    </table>
+    ${button(`${APP_URL}/sites`, 'Zu meiner Webseite')}
+    <p style="margin:28px 0 0;font-size:15px;line-height:1.6;color:${base.body};">
+      Wenn etwas nicht klappt: Einfach auf diese E-Mail antworten, ich helfe euch persönlich weiter.
+    </p>
+    <p style="margin:22px 0 0;font-size:15px;line-height:1.6;color:${base.body};">
+      Liebe Grüße<br />
+      <strong style="color:${base.heading};">Daniel</strong><br />
+      <span style="color:${base.muted};">FinestSites</span>
+    </p>
+  `)
+}

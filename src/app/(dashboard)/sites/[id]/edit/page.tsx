@@ -63,6 +63,9 @@ interface FieldSchema {
   show_when?: { field: string; value: string | string[] }
   label_when?: { field: string; value: string; label: string }
   color_tag?: string
+  // Kontakt-/Social-Feld einer Person: im Partner-Modus mit kontakt_modus=gemeinsam
+  // gelten die Person-1-Felder für beide und werden als „Gemeinsam“ gruppiert
+  contact?: boolean
   /** Hinweis-Kasten über dem Feld (z. B. warum das Impressum Pflicht ist) */
   notice?: { title: string; text: string }
   // loop fields
@@ -3817,16 +3820,44 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
                   const personName = (n: 1 | 2) => n === 1
                     ? (values['vorname'] || '').trim()
                     : (values['vorname2'] || values['partner_vorname'] || '').trim()
+                  // Partner-Modus mit gemeinsamen Kontaktdaten (Standard): die Person-1-Kontaktfelder
+                  // gelten für beide und bekommen die Gruppe „Gemeinsam“ statt „Person 1“.
+                  const jointContacts = duoOn && (values['kontakt_modus'] || 'gemeinsam') !== 'getrennt'
+                  const groupOf = (f: FieldSchema): 'joint' | 'person1' | 'person2' | null => {
+                    if (f.color_tag !== 'person1' && f.color_tag !== 'person2') return null
+                    if (jointContacts && f.contact && f.color_tag === 'person1') return 'joint'
+                    return f.color_tag
+                  }
                   const firstTagged: Record<string, string | undefined> = {}
                   for (const f of sectionFields) {
-                    if (f.color_tag === 'person1' || f.color_tag === 'person2') {
-                      if (!firstTagged[f.color_tag]) firstTagged[f.color_tag] = f.key
-                    }
+                    const g = groupOf(f)
+                    if (g && !firstTagged[g]) firstTagged[g] = f.key
                   }
                   const groupHeading = (field: FieldSchema) => {
-                    if (!duoOn || !field.color_tag) return null
-                    if (firstTagged[field.color_tag] !== field.key) return null
-                    const two = field.color_tag === 'person2'
+                    if (!duoOn) return null
+                    const g = groupOf(field)
+                    if (!g || firstTagged[g] !== field.key) return null
+                    if (g === 'joint') {
+                      const n1 = personName(1) || 'dich'
+                      const n2 = personName(2) || 'deine Partnerin / deinen Partner'
+                      return (
+                        <div key={field.key + '__grp'} className="flex items-center gap-3 px-1 pt-2 -mb-1">
+                          <span className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0"
+                            style={{ background: '#EDE9FE', color: '#6D28D9' }} aria-hidden="true">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                              <circle cx="9" cy="8" r="3.2"/><path d="M3.5 19a5.5 5.5 0 0 1 11 0"/><circle cx="16.5" cy="9" r="2.6"/><path d="M15 19a5 5 0 0 1 5.5-4.9"/>
+                            </svg>
+                          </span>
+                          <div className="min-w-0">
+                            <p className="text-sm font-bold text-gray-900 leading-tight">Gemeinsame Kontaktdaten</p>
+                            <p className="text-xs" style={{ color: '#9CA3AF' }}>
+                              Einmal eintragen – gilt für {n1} &amp; {n2}
+                            </p>
+                          </div>
+                        </div>
+                      )
+                    }
+                    const two = g === 'person2'
                     const name = personName(two ? 2 : 1)
                     return (
                       <div key={field.key + '__grp'} className="flex items-center gap-3 px-1 pt-2 -mb-1">
@@ -3881,7 +3912,9 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
                       && values['team_modus'] === 'team'
                     // color_tag: person1 / person2 — highlight when duo/team mode active
                     const duoActive = values['partner_modus'] === 'duo' || values['team_modus'] === 'team'
-                    const isPerson1Tag = visible && duoActive && field.color_tag === 'person1'
+                    // Gemeinsame Kontaktdaten: Person-1-Kontaktfeld gilt für beide → violett statt blau
+                    const isJointTag = visible && jointContacts && field.contact === true && field.color_tag === 'person1'
+                    const isPerson1Tag = visible && duoActive && field.color_tag === 'person1' && !isJointTag
                     const isPerson2Tag = visible && duoActive && field.color_tag === 'person2'
                     return (
                       <div key={field.key}
@@ -3893,6 +3926,13 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
                                 border: '1.5px solid #A7F3D0',
                                 boxShadow: '0 2px 8px rgba(16,185,129,0.06)',
                                 borderLeft: '4px solid #10B981',
+                              }
+                            : isJointTag
+                            ? {
+                                background: '#FAF5FF',
+                                border: '1.5px solid #DDD6FE',
+                                boxShadow: '0 2px 8px rgba(109,40,217,0.06)',
+                                borderLeft: '4px solid #8B5CF6',
                               }
                             : isPerson1Tag
                             ? {
@@ -3927,6 +3967,11 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
                                   <span className="text-[11px] font-semibold px-1.5 py-0.5 rounded-full"
                                     style={{ background: '#D1FAE5', color: '#059669' }}>
                                     {(values['vorname2'] || values['partner_vorname'] || '').trim() || 'Partner/in'}
+                                  </span>
+                                ) : isJointTag ? (
+                                  <span className="text-[11px] font-semibold px-1.5 py-0.5 rounded-full"
+                                    style={{ background: '#EDE9FE', color: '#6D28D9' }}>
+                                    Gemeinsam
                                   </span>
                                 ) : isPerson1Tag ? (
                                   <span className="text-[11px] font-semibold px-1.5 py-0.5 rounded-full"

@@ -347,6 +347,36 @@
       "placeholder_text": "Du empfiehlst noch weitere FitLine-Produkte? Füge sie hier hinzu — sie erscheinen zusätzlich in deiner Bestellliste."
     },
     {
+      "key": "kontakt_modus",
+      "type": "card_select",
+      "label": "Wie sollen Besucher euch erreichen?",
+      "section": "Kontakt",
+      "required": false,
+      "card_options": [
+        {
+          "color": "#F5F3FF",
+          "label": "Gemeinsam",
+          "value": "gemeinsam",
+          "card_type": "color",
+          "description": "Eine Angabe für euch beide – z. B. eine WhatsApp-Nummer oder ein Instagram-Profil."
+        },
+        {
+          "color": "#EEF4FF",
+          "label": "Jeder für sich",
+          "value": "getrennt",
+          "card_type": "color",
+          "description": "Jede Person trägt ihre eigenen Kontaktdaten ein. Besucher sehen beide nebeneinander."
+        }
+      ],
+      "default_value": "gemeinsam",
+      "preview_value": "gemeinsam",
+      "placeholder_text": "Habt ihr gemeinsame Kontaktdaten oder hat jeder eigene? Bei „Gemeinsam“ füllst du die Felder nur einmal aus. Bei „Jeder für sich“ erscheinen zusätzliche Felder für deine Partnerin / deinen Partner. Du kannst das jederzeit ändern.",
+      "show_when": {
+        "field": "team_modus",
+        "value": "team"
+      }
+    },
+    {
       "key": "instagram_url",
       "type": "url",
       "label": "Instagram-Profil",
@@ -356,7 +386,8 @@
       "card_options": [],
       "default_value": "",
       "placeholder_text": "https://instagram.com/dein.handle",
-      "color_tag": "person1"
+      "color_tag": "person1",
+      "contact": true
     },
     {
       "key": "facebook_url",
@@ -368,7 +399,8 @@
       "card_options": [],
       "default_value": "",
       "placeholder_text": "https://facebook.com/dein.handle",
-      "color_tag": "person1"
+      "color_tag": "person1",
+      "contact": true
     },
     {
       "key": "whatsapp_number",
@@ -381,7 +413,8 @@
       "card_options": [],
       "default_value": "",
       "placeholder_text": "Internationales Format ohne + und ohne Leerzeichen, z. B. 4915112345678",
-      "color_tag": "person1"
+      "color_tag": "person1",
+      "contact": true
     },
     {
       "key": "telefon",
@@ -394,7 +427,8 @@
       "card_options": [],
       "default_value": "",
       "placeholder_text": "z. B. +49 151 1234 5678",
-      "color_tag": "person1"
+      "color_tag": "person1",
+      "contact": true
     },
     {
       "key": "zeige_was_ersetzt",
@@ -466,10 +500,11 @@
       "input_placeholder": "name oder https://instagram.com/name",
       "placeholder_text": "Instagram-Profil deiner Partnerin / deines Partners. Erscheint in der gemeinsamen Signatur unter dem Namen.",
       "show_when": {
-        "field": "team_modus",
-        "value": "team"
+        "field": "kontakt_modus",
+        "value": "getrennt"
       },
-      "color_tag": "person2"
+      "color_tag": "person2",
+      "contact": true
     },
     {
       "key": "partner_facebook_url",
@@ -483,10 +518,11 @@
       "input_placeholder": "name oder https://facebook.com/name",
       "placeholder_text": "Facebook-Profil deiner Partnerin / deines Partners.",
       "show_when": {
-        "field": "team_modus",
-        "value": "team"
+        "field": "kontakt_modus",
+        "value": "getrennt"
       },
-      "color_tag": "person2"
+      "color_tag": "person2",
+      "contact": true
     },
     {
       "key": "partner_whatsapp_number",
@@ -501,10 +537,11 @@
       "input_placeholder": "0176 1234567",
       "placeholder_text": "WhatsApp-Nummer deiner Partnerin / deines Partners, so wie ihr sie aufschreibt. Erscheint als eigener WhatsApp-Link.",
       "show_when": {
-        "field": "team_modus",
-        "value": "team"
+        "field": "kontakt_modus",
+        "value": "getrennt"
       },
-      "color_tag": "person2"
+      "color_tag": "person2",
+      "contact": true
     },
     {
       "key": "partner_telefon",
@@ -519,10 +556,11 @@
       "input_placeholder": "+49 176 1234567",
       "placeholder_text": "Telefonnummer deiner Partnerin / deines Partners für den „Anrufen“-Link.",
       "show_when": {
-        "field": "team_modus",
-        "value": "team"
+        "field": "kontakt_modus",
+        "value": "getrennt"
       },
-      "color_tag": "person2"
+      "color_tag": "person2",
+      "contact": true
     },
     {
       "key": "about_intro",

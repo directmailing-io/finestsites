@@ -215,6 +215,36 @@
       "preview_interactive": true
     },
     {
+      "key": "kontakt_modus",
+      "type": "card_select",
+      "label": "Wie sollen Besucher euch erreichen?",
+      "section": "Social Media",
+      "required": false,
+      "card_options": [
+        {
+          "color": "#F5F3FF",
+          "label": "Gemeinsam",
+          "value": "gemeinsam",
+          "card_type": "color",
+          "description": "Eine Angabe für euch beide – z. B. eine WhatsApp-Nummer oder ein Instagram-Profil."
+        },
+        {
+          "color": "#EEF4FF",
+          "label": "Jeder für sich",
+          "value": "getrennt",
+          "card_type": "color",
+          "description": "Jede Person trägt ihre eigenen Kontaktdaten ein. Besucher sehen beide nebeneinander."
+        }
+      ],
+      "default_value": "gemeinsam",
+      "preview_value": "gemeinsam",
+      "placeholder_text": "Habt ihr gemeinsame Kontaktdaten oder hat jeder eigene? Bei „Gemeinsam“ füllst du die Felder nur einmal aus. Bei „Jeder für sich“ erscheinen zusätzliche Felder für deine Partnerin / deinen Partner. Du kannst das jederzeit ändern.",
+      "show_when": {
+        "field": "partner_modus",
+        "value": "duo"
+      }
+    },
+    {
       "key": "instagram_url",
       "type": "text",
       "label": "Instagram",
@@ -225,7 +255,8 @@
       "preview_value": "",
       "placeholder_text": "Dein Instagram-Profil (optional). Wird in der \"Wer dich begleitet\"-Sektion angezeigt.",
       "input_placeholder": "https://instagram.com/deinprofil",
-      "color_tag": "person1"
+      "color_tag": "person1",
+      "contact": true
     },
     {
       "key": "tiktok_url",
@@ -238,7 +269,8 @@
       "preview_value": "",
       "placeholder_text": "Dein TikTok-Kanal (optional).",
       "input_placeholder": "https://tiktok.com/@deinprofil",
-      "color_tag": "person1"
+      "color_tag": "person1",
+      "contact": true
     },
     {
       "key": "facebook_url",
@@ -251,7 +283,8 @@
       "preview_value": "",
       "placeholder_text": "Deine Facebook-Seite oder dein Profil (optional).",
       "input_placeholder": "https://facebook.com/deinprofil",
-      "color_tag": "person1"
+      "color_tag": "person1",
+      "contact": true
     },
     {
       "key": "linkedin_url",
@@ -264,7 +297,8 @@
       "preview_value": "",
       "placeholder_text": "Dein LinkedIn-Profil (optional).",
       "input_placeholder": "https://linkedin.com/in/deinprofil",
-      "color_tag": "person1"
+      "color_tag": "person1",
+      "contact": true
     },
     {
       "key": "youtube_url",
@@ -277,7 +311,8 @@
       "preview_value": "",
       "placeholder_text": "Dein YouTube-Kanal (optional).",
       "input_placeholder": "https://youtube.com/@deinkanal",
-      "color_tag": "person1"
+      "color_tag": "person1",
+      "contact": true
     },
     {
       "key": "global_sektion",
@@ -327,10 +362,11 @@
       "input_placeholder": "deinname oder https://instagram.com/deinname",
       "placeholder_text": "Instagram-Profil deiner Partnerin / deines Partners. Benutzername oder kompletter Link. Erscheint im Bereich „Wer euch begleitet“ und nach dem Absenden des Formulars, jeweils mit Namen.",
       "show_when": {
-        "field": "partner_modus",
-        "value": "duo"
+        "field": "kontakt_modus",
+        "value": "getrennt"
       },
-      "color_tag": "person2"
+      "color_tag": "person2",
+      "contact": true
     },
     {
       "key": "tiktok_url2",
@@ -344,10 +380,11 @@
       "input_placeholder": "deinname oder https://tiktok.com/@deinname",
       "placeholder_text": "TikTok-Profil deiner Partnerin / deines Partners. Benutzername oder kompletter Link. Erscheint im Bereich „Wer euch begleitet“ und nach dem Absenden des Formulars, jeweils mit Namen.",
       "show_when": {
-        "field": "partner_modus",
-        "value": "duo"
+        "field": "kontakt_modus",
+        "value": "getrennt"
       },
-      "color_tag": "person2"
+      "color_tag": "person2",
+      "contact": true
     },
     {
       "key": "facebook_url2",
@@ -361,10 +398,11 @@
       "input_placeholder": "deinname oder https://facebook.com/deinname",
       "placeholder_text": "Facebook-Profil deiner Partnerin / deines Partners. Benutzername oder kompletter Link. Erscheint im Bereich „Wer euch begleitet“ und nach dem Absenden des Formulars, jeweils mit Namen.",
       "show_when": {
-        "field": "partner_modus",
-        "value": "duo"
+        "field": "kontakt_modus",
+        "value": "getrennt"
       },
-      "color_tag": "person2"
+      "color_tag": "person2",
+      "contact": true
     },
     {
       "key": "linkedin_url2",
@@ -378,10 +416,11 @@
       "input_placeholder": "deinname oder https://linkedin.com/in/deinname",
       "placeholder_text": "LinkedIn-Profil deiner Partnerin / deines Partners. Benutzername oder kompletter Link. Erscheint im Bereich „Wer euch begleitet“ und nach dem Absenden des Formulars, jeweils mit Namen.",
       "show_when": {
-        "field": "partner_modus",
-        "value": "duo"
+        "field": "kontakt_modus",
+        "value": "getrennt"
       },
-      "color_tag": "person2"
+      "color_tag": "person2",
+      "contact": true
     },
     {
       "key": "youtube_url2",
@@ -395,10 +434,11 @@
       "input_placeholder": "@deinkanal oder https://youtube.com/@deinkanal",
       "placeholder_text": "YouTube-Profil deiner Partnerin / deines Partners. Benutzername oder kompletter Link. Erscheint im Bereich „Wer euch begleitet“ und nach dem Absenden des Formulars, jeweils mit Namen.",
       "show_when": {
-        "field": "partner_modus",
-        "value": "duo"
+        "field": "kontakt_modus",
+        "value": "getrennt"
       },
-      "color_tag": "person2"
+      "color_tag": "person2",
+      "contact": true
     },
     {
       "key": "warum_sektion",

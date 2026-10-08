@@ -38,7 +38,9 @@ if (flag('--duo')) Object.assign(data, {
   partner_instagram_url: 'https://instagram.com/finestsites', partner_facebook_url: 'https://facebook.com/finestsites', partner_whatsapp_number: '491761234568', partner_telefon: '+49 176 1234568',
   instagram_url: data.instagram_url || 'finestsites', facebook_url: data.facebook_url || 'finestsites', whatsapp_nummer: data.whatsapp_nummer || '491761234567', whatsapp_number: data.whatsapp_number || '491761234567', telefon: data.telefon || '+49 176 1234567',
 })
-if (flag('--intro')) data.intro = 'Hi, ich bin Daniel. Ich hab vor zwei Jahren angefangen, meine Gewohnheiten umzukrempeln, und seitdem hat sich mein Alltag komplett verändert. Mach den Check, dann weißt du, wo du stehst.'
+// Partner-Modus mit getrennten Kontaktdaten (ohne Flag: gemeinsam = Standard)
+if (flag('--split')) data.kontakt_modus = 'getrennt'
+if (flag('--intro')) data.intro ='Hi, ich bin Daniel. Ich hab vor zwei Jahren angefangen, meine Gewohnheiten umzukrempeln, und seitdem hat sich mein Alltag komplett verändert. Mach den Check, dann weißt du, wo du stehst.'
 
 let out = renderTemplate(html, data)
 
@@ -54,6 +56,6 @@ if (flag('--result')) {
 
 const outDir = path.join(dir, 'preview-lokal')
 fs.mkdirSync(outDir, { recursive: true })
-const name = `${slug}-${data.farbthema ?? 'default'}${flag('--result') ? '-' + (opt('--step') ?? 'result').replace(':', '') : ''}${flag('--nolinks') ? '-nolinks' : ''}${flag('--duo') ? '-duo' : ''}${flag('--intro') ? '-intro' : ''}.html`
+const name = `${slug}-${data.farbthema ?? 'default'}${flag('--result') ? '-' + (opt('--step') ?? 'result').replace(':', '') : ''}${flag('--nolinks') ? '-nolinks' : ''}${flag('--duo') ? '-duo' : ''}${flag('--split') ? '-split' : ''}${flag('--intro') ? '-intro' : ''}.html`
 fs.writeFileSync(path.join(outDir, name), out)
 console.log('wrote', path.relative(process.cwd(), path.join(outDir, name)))

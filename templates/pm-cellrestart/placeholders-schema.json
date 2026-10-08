@@ -166,6 +166,37 @@
       "input_placeholder": "deine@email.de"
     },
     {
+      "key": "kontakt_modus",
+      "type": "card_select",
+      "label": "Wie sollen Besucher euch erreichen?",
+      "section": "Kontakt",
+      "required": false,
+      "card_options": [
+        {
+          "color": "#F5F3FF",
+          "label": "Gemeinsam",
+          "value": "gemeinsam",
+          "card_type": "color",
+          "description": "Eine Angabe für euch beide – z. B. eine WhatsApp-Nummer oder ein Instagram-Profil."
+        },
+        {
+          "color": "#EEF4FF",
+          "label": "Jeder für sich",
+          "value": "getrennt",
+          "card_type": "color",
+          "description": "Jede Person trägt ihre eigenen Kontaktdaten ein. Besucher sehen beide nebeneinander."
+        }
+      ],
+      "default_value": "gemeinsam",
+      "preview_value": "gemeinsam",
+      "placeholder_text": "Habt ihr gemeinsame Kontaktdaten oder hat jeder eigene? Bei „Gemeinsam“ füllst du die Felder nur einmal aus. Bei „Jeder für sich“ erscheinen zusätzliche Felder für deine Partnerin / deinen Partner. Du kannst das jederzeit ändern.",
+      "show_when": {
+        "field": "partner_modus",
+        "value": "duo"
+      },
+      "order": 11.9
+    },
+    {
       "key": "whatsapp_nummer",
       "type": "text",
       "label": "WhatsApp-Nummer (optional)",
@@ -177,7 +208,8 @@
       "preview_value": "491761234567",
       "placeholder_text": "Deine Nummer, so wie du sie aufschreibst. Erscheint als WhatsApp-Button im Selbst-Check, als Kontaktweg im Formular und im Footer.",
       "input_placeholder": "0176 1234567",
-      "color_tag": "person1"
+      "color_tag": "person1",
+      "contact": true
     },
     {
       "key": "instagram_url",
@@ -190,7 +222,8 @@
       "preview_value": "",
       "input_placeholder": "deinname oder https://instagram.com/deinname",
       "placeholder_text": "Dein Instagram-Profil. Erscheint im Footer unter „Kontakt“.",
-      "color_tag": "person1"
+      "color_tag": "person1",
+      "contact": true
     },
     {
       "key": "facebook_url",
@@ -203,7 +236,8 @@
       "preview_value": "",
       "input_placeholder": "deinname oder https://facebook.com/deinname",
       "placeholder_text": "Dein Facebook-Profil. Erscheint im Footer unter „Kontakt“.",
-      "color_tag": "person1"
+      "color_tag": "person1",
+      "contact": true
     },
     {
       "key": "whatsapp_nummer2",
@@ -218,10 +252,11 @@
       "input_placeholder": "0176 1234567",
       "placeholder_text": "WhatsApp-Nummer deiner Partnerin / deines Partners. Im Duo bekommt jede Person ihren eigenen WhatsApp-Button.",
       "show_when": {
-        "field": "partner_modus",
-        "value": "duo"
+        "field": "kontakt_modus",
+        "value": "getrennt"
       },
-      "color_tag": "person2"
+      "color_tag": "person2",
+      "contact": true
     },
     {
       "key": "instagram_url2",
@@ -235,10 +270,11 @@
       "input_placeholder": "name oder https://instagram.com/name",
       "placeholder_text": "Instagram-Profil deiner Partnerin / deines Partners. Erscheint im Footer unter „Kontakt“.",
       "show_when": {
-        "field": "partner_modus",
-        "value": "duo"
+        "field": "kontakt_modus",
+        "value": "getrennt"
       },
-      "color_tag": "person2"
+      "color_tag": "person2",
+      "contact": true
     },
     {
       "key": "facebook_url2",
@@ -252,10 +288,11 @@
       "input_placeholder": "name oder https://facebook.com/name",
       "placeholder_text": "Facebook-Profil deiner Partnerin / deines Partners. Erscheint im Footer unter „Kontakt“.",
       "show_when": {
-        "field": "partner_modus",
-        "value": "duo"
+        "field": "kontakt_modus",
+        "value": "getrennt"
       },
-      "color_tag": "person2"
+      "color_tag": "person2",
+      "contact": true
     },
     {
       "key": "hero_variante",

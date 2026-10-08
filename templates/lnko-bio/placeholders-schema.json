@@ -148,6 +148,37 @@
       "order": 50
     },
     {
+      "key": "kontakt_modus",
+      "type": "card_select",
+      "label": "Wie sollen Besucher euch erreichen?",
+      "section": "Social Media",
+      "required": false,
+      "card_options": [
+        {
+          "color": "#F5F3FF",
+          "label": "Gemeinsam",
+          "value": "gemeinsam",
+          "card_type": "color",
+          "description": "Eine Angabe für euch beide – z. B. eine WhatsApp-Nummer oder ein Instagram-Profil."
+        },
+        {
+          "color": "#EEF4FF",
+          "label": "Jeder für sich",
+          "value": "getrennt",
+          "card_type": "color",
+          "description": "Jede Person trägt ihre eigenen Kontaktdaten ein. Besucher sehen beide nebeneinander."
+        }
+      ],
+      "default_value": "gemeinsam",
+      "preview_value": "gemeinsam",
+      "placeholder_text": "Habt ihr gemeinsame Kontaktdaten oder hat jeder eigene? Bei „Gemeinsam“ füllst du die Felder nur einmal aus. Bei „Jeder für sich“ erscheinen zusätzliche Felder für deine Partnerin / deinen Partner. Du kannst das jederzeit ändern.",
+      "show_when": {
+        "field": "partner_modus",
+        "value": "duo"
+      },
+      "order": 59
+    },
+    {
       "key": "instagram",
       "type": "url",
       "label": "Instagram",
@@ -155,7 +186,8 @@
       "required": false,
       "placeholder_text": "https://instagram.com/deinname",
       "order": 60,
-      "color_tag": "person1"
+      "color_tag": "person1",
+      "contact": true
     },
     {
       "key": "tiktok",
@@ -165,7 +197,8 @@
       "required": false,
       "placeholder_text": "https://tiktok.com/@deinname",
       "order": 70,
-      "color_tag": "person1"
+      "color_tag": "person1",
+      "contact": true
     },
     {
       "key": "facebook",
@@ -175,7 +208,8 @@
       "required": false,
       "placeholder_text": "https://facebook.com/deinname",
       "order": 80,
-      "color_tag": "person1"
+      "color_tag": "person1",
+      "contact": true
     },
     {
       "key": "whatsapp",
@@ -186,7 +220,8 @@
       "placeholder_text": "Deine WhatsApp-Nummer. Wer darauf tippt, kann dir direkt schreiben.",
       "input_placeholder": "151 12345678",
       "order": 90,
-      "color_tag": "person1"
+      "color_tag": "person1",
+      "contact": true
     },
     {
       "key": "mail",
@@ -196,7 +231,8 @@
       "required": false,
       "placeholder_text": "deine@email.de",
       "order": 100,
-      "color_tag": "person1"
+      "color_tag": "person1",
+      "contact": true
     },
     {
       "key": "instagram2",
@@ -210,10 +246,11 @@
       "input_placeholder": "https://instagram.com/name",
       "placeholder_text": "Erscheint in der Icon-Zeile deiner Partnerin / deines Partners.",
       "show_when": {
-        "field": "partner_modus",
-        "value": "duo"
+        "field": "kontakt_modus",
+        "value": "getrennt"
       },
-      "color_tag": "person2"
+      "color_tag": "person2",
+      "contact": true
     },
     {
       "key": "tiktok2",
@@ -227,10 +264,11 @@
       "input_placeholder": "https://tiktok.com/@name",
       "placeholder_text": "Benutzername oder kompletter Link.",
       "show_when": {
-        "field": "partner_modus",
-        "value": "duo"
+        "field": "kontakt_modus",
+        "value": "getrennt"
       },
-      "color_tag": "person2"
+      "color_tag": "person2",
+      "contact": true
     },
     {
       "key": "facebook2",
@@ -244,10 +282,11 @@
       "input_placeholder": "https://facebook.com/name",
       "placeholder_text": "Benutzername oder kompletter Link.",
       "show_when": {
-        "field": "partner_modus",
-        "value": "duo"
+        "field": "kontakt_modus",
+        "value": "getrennt"
       },
-      "color_tag": "person2"
+      "color_tag": "person2",
+      "contact": true
     },
     {
       "key": "whatsapp2",
@@ -261,10 +300,11 @@
       "input_placeholder": "151 12345678",
       "placeholder_text": "WhatsApp-Nummer deiner Partnerin / deines Partners. Wer darauf tippt, kann ihr / ihm direkt schreiben.",
       "show_when": {
-        "field": "partner_modus",
-        "value": "duo"
+        "field": "kontakt_modus",
+        "value": "getrennt"
       },
-      "color_tag": "person2"
+      "color_tag": "person2",
+      "contact": true
     },
     {
       "key": "mail2",
@@ -278,10 +318,11 @@
       "input_placeholder": "anna@email.de",
       "placeholder_text": "Nur für das E-Mail-Icon in der Zeile deiner Partnerin / deines Partners.",
       "show_when": {
-        "field": "partner_modus",
-        "value": "duo"
+        "field": "kontakt_modus",
+        "value": "getrennt"
       },
-      "color_tag": "person2"
+      "color_tag": "person2",
+      "contact": true
     },
     {
       "key": "farbthema",
