@@ -3525,6 +3525,15 @@ section { padding: clamp(80px, 12vh, 140px) var(--pad-x); position: relative; }
   margin-top: 22px;
 }
 .conv-actions[hidden] { display: none; }
+/* Duo: zwei Fotos in der Antwort, getrennte WhatsApp-Buttons als gleichmäßige Reihe unter dem Hauptbutton */
+.conv-avatars { display: flex; justify-content: center; margin: 0 auto 12px; }
+.conv-avatars .conv-avatar { margin: 0; }
+.conv-avatars .conv-avatar-2 { margin-left: -14px; }
+.conv-actions:has(.conv-wa-row) { flex-direction: column; align-items: stretch; }
+.conv-actions:has(.conv-wa-row) .btn-primary { width: 100%; justify-content: center; }
+.conv-wa-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.conv-wa-row .btn-whatsapp { width: 100%; justify-content: center; }
+@media (max-width: 480px) { .conv-wa-row { grid-template-columns: 1fr; } }
 
 /* Primary: sattes Mittel-Grün, weißer Text — harmoniert mit Card */
 .conversion .btn-primary {
@@ -5397,7 +5406,8 @@ img {
         </ul>
 
         <div class="conv-response" id="convResponse" data-checked="0">
-          <img loading="lazy" decoding="async" class="conv-avatar" src="{{profilbild}}" alt="{{vorname}} {{nachname}}">
+          {{#unless partner_modus=duo}}<img loading="lazy" decoding="async" class="conv-avatar" src="{{profilbild}}" alt="{{vorname}} {{nachname}}">{{/unless}}
+          {{#if partner_modus=duo}}<div class="conv-avatars"><img loading="lazy" decoding="async" class="conv-avatar" src="{{profilbild}}" alt="{{vorname}} {{nachname}}"><img loading="lazy" decoding="async" class="conv-avatar conv-avatar-2" src="{{profilbild2}}" alt="{{vorname2}} {{nachname2}}"></div>{{/if}}
           <div class="conv-response-title" id="convTitle"><span class="l-de">Setz dein erstes Häkchen</span><span class="l-en">Tick your first box</span></div>
           <div class="conv-response-txt" id="convTxt"><span class="l-de">Klick alles an was auf dich zutrifft. {{#unless partner_modus=duo}}Ich zeig{{/unless}}{{#if partner_modus=duo}}Wir zeigen{{/if}} dir dann, was {{#unless partner_modus=duo}}ich{{/unless}}{{#if partner_modus=duo}}wir{{/if}} dir konkret zeigen {{#unless partner_modus=duo}}kann{{/unless}}{{#if partner_modus=duo}}können{{/if}}.</span><span class="l-en">Tick everything that fits you. Then {{#unless partner_modus=duo}}I'll{{/unless}}{{#if partner_modus=duo}}we'll{{/if}} show you what actually works for you.</span></div>
 
@@ -5418,6 +5428,7 @@ img {
             </a>
             {{/if}}
             {{/unless}}{{#if kontakt_modus=getrennt}}
+            <div class="conv-wa-row">
             {{#if whatsapp_nummer}}
             <a href="https://wa.me/{{whatsapp_nummer}}?text=Hi%20{{vorname}}%2C%20ich%20interessiere%20mich%20f%C3%BCr%20den%20Reset." target="_blank" rel="noopener" class="btn btn-whatsapp">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.6 6.32A7.85 7.85 0 0 0 12.05 4a7.94 7.94 0 0 0-6.9 11.9L4 20l4.2-1.1a7.93 7.93 0 0 0 3.85.98h.01c4.38 0 7.93-3.57 7.93-7.95a7.9 7.9 0 0 0-2.39-5.6zm-5.55 12.22h-.01a6.6 6.6 0 0 1-3.37-.92l-.24-.14-2.5.66.67-2.44-.16-.25a6.59 6.59 0 0 1-1.01-3.51 6.6 6.6 0 0 1 11.27-4.66 6.55 6.55 0 0 1 1.93 4.67 6.6 6.6 0 0 1-6.58 6.59zm3.61-4.94c-.2-.1-1.17-.58-1.35-.64-.18-.07-.31-.1-.44.1-.13.2-.51.64-.62.77-.11.13-.23.15-.43.05a5.39 5.39 0 0 1-1.6-.99 5.98 5.98 0 0 1-1.1-1.38c-.12-.2-.01-.31.09-.4.09-.09.2-.24.3-.36.1-.12.13-.2.2-.34.06-.13.03-.25-.02-.35-.05-.1-.44-1.07-.6-1.47-.16-.38-.32-.33-.44-.34l-.38-.01a.72.72 0 0 0-.53.25c-.18.2-.69.68-.69 1.66 0 .98.71 1.92.81 2.06.1.13 1.4 2.13 3.4 2.99.48.2.85.33 1.13.42.48.15.9.13 1.25.08.38-.06 1.17-.48 1.34-.94.16-.47.16-.86.11-.94-.05-.09-.18-.14-.38-.24z"/></svg>
@@ -5430,6 +5441,7 @@ img {
               WhatsApp · {{vorname2}}
             </a>
             {{/if}}
+            </div>
             {{/if}}{{/if}}
           </div>
         </div>
