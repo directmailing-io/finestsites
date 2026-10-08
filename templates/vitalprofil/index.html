@@ -167,6 +167,36 @@ main { width: 100%; max-width: var(--col); margin: 0 auto; padding: 24px 16px 40
 .supply p { font-size: 14.5px; color: var(--ink-2); line-height: 1.55; margin-bottom: 14px; }
 .supply .btn-accent { width: 100%; min-height: 52px; }
 .fine-nutri { margin-top: 12px; font-size: 12px; color: var(--ink-3); text-align: center; line-height: 1.45; }
+/* Fünf Bereiche als einzelne Karten */
+.sec-head { margin-top: 18px; }
+.area-card { --ac: var(--accent); background: var(--paper); border-radius: 18px; padding: 16px 16px 14px; margin-top: 10px; box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 10px 30px -24px rgba(0,0,0,0.25); border: 1.5px solid transparent; text-align: left; }
+.area-card.lever { border-color: color-mix(in srgb, var(--ac) 45%, transparent); }
+.area-card .ah { all: unset; box-sizing: border-box; display: flex; align-items: center; gap: 12px; width: 100%; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.area-card .ah:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; border-radius: 8px; }
+.area-card .ai { width: 34px; height: 34px; border-radius: 50%; background: var(--ac); color: #fff; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.area-card .ai svg { width: 16px; height: 16px; }
+.area-card .an { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+.area-card .an b { font-weight: 600; font-size: 16px; line-height: 1.25; }
+.area-card .an .tl { font-size: 12.5px; font-weight: 500; color: var(--ink-3); }
+.area-card .tl.high { color: var(--s4); } .area-card .tl.mid { color: var(--s1); } .area-card .tl.low { color: var(--s0); }
+.area-card .ap { font-weight: 600; font-size: 17px; }
+.area-card .chev { width: 30px; height: 30px; border-radius: 50%; background: var(--bg); color: var(--ink-2); display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; transition: transform 0.25s var(--ease), background 0.2s; }
+.area-card .chev svg { width: 15px; height: 15px; }
+.area-card.open .chev { transform: rotate(180deg); background: var(--accent-soft); color: var(--accent-dark); }
+.area-card .bar { height: 8px; border-radius: 8px; background: var(--bg); overflow: hidden; margin: 12px 0 10px; }
+.area-card .bar i { display: block; height: 100%; width: 0; border-radius: 8px; transition: width 1s var(--ease); }
+.area-card .af { font-size: 14.5px; color: var(--ink-2); line-height: 1.5; }
+.area-card .tlink { all: unset; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; margin-top: 10px; font-size: 13.5px; font-weight: 600; color: var(--accent-dark); }
+.area-card .tlink svg { width: 14px; height: 14px; transition: transform 0.25s var(--ease); }
+.area-card .tlink u { display: none; text-decoration: none; } .area-card .tlink em { font-style: normal; }
+.area-card.open .tlink em { display: none; } .area-card.open .tlink u { display: inline; } .area-card.open .tlink svg { transform: rotate(180deg); }
+.area-card .more { display: none; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line); }
+.area-card.open .more { display: block; }
+.area-card .ins { font-size: 13.5px; color: var(--ink-2); padding: 10px 12px; border-radius: 10px; background: var(--bg); line-height: 1.5; }
+.area-card .ins b { font-weight: 600; color: var(--ink); }
+.area-card .nutri { display: grid; grid-template-columns: 22px 1fr; gap: 8px; align-items: start; margin-top: 10px; font-size: 13.5px; color: var(--ink-2); line-height: 1.5; }
+.area-card .nutri i { width: 22px; height: 22px; border-radius: 50%; background: var(--accent-soft); color: var(--accent-dark); display: inline-flex; align-items: center; justify-content: center; margin-top: 1px; }
+.area-card .nutri i svg { width: 12px; height: 12px; } .area-card .nutri b { font-weight: 600; color: var(--ink); }
 /* Akkordeon „Deine fünf Bereiche“ */
 .trait .h { all: unset; box-sizing: border-box; display: flex; align-items: center; gap: 10px; width: 100%; cursor: pointer; margin-bottom: 8px; -webkit-tap-highlight-color: transparent; }
 .trait .h:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; border-radius: 8px; }
@@ -935,7 +965,20 @@ var VC = (function(){
       '<div class="dots">' + CFG.dims.map(function(d, i){ var p = Math.round(R.sc[i]/16*100); return '<span><i style="--p:' + p + '%">' + ICO[d.ico] + '</i><b class="num">' + p + ' %</b>' + esc(t(d.short)) + '</span>'; }).join('') + '</div>' +
       '<div class="actions"><button type="button" class="btn btn-white" data-share>' + ICO.share + (en() ? 'Share' : 'Teilen') + '</button><button type="button" class="btn btn-glass" data-story>' + ICO.save + (en() ? 'Save as story' : 'Als Story speichern') + '</button></div>' +
       '<div class="sig">' + ownerAvatars() + (en() ? 'Vital profile by ' : 'Vitalprofil von ') + esc(ownerFull()) + '</div></div>' +
-      '<div class="card res-card sec"><h2>' + (en() ? 'Your five areas' : 'Deine fünf Bereiche') + '</h2><div class="sub">' + (en() ? 'Strength: ' : 'Stärke: ') + esc(t(bestD.name)) + ' · ' + (en() ? 'biggest lever: ' : 'größter Hebel: ') + esc(t(worstD.name)) + '</div><div class="hint">' + (en() ? 'Tap an area for background and nutrient facts.' : 'Tippe auf einen Bereich für Hintergrund und Nährstoff-Wissen.') + '</div>' + CFG.dims.map(function(d, i){ var sc = R.sc[i], p = Math.round(sc/16*100), nutri = NUTRI[d.id] ? '<div class="nutri"><i>' + ICO.leaf + '</i><div><b>' + (en() ? 'Nutrient facts: ' : 'Nährstoff-Wissen: ') + '</b>' + esc(t(NUTRI[d.id])) + '</div></div>' : '', ins = tier(sc) !== 'high' && INSIGHT[d.id] ? '<div class="ins"><b>' + (en() ? 'Good to know: ' : 'Gut zu wissen: ') + '</b>' + esc(t(INSIGHT[d.id])) + '</div>' : ''; var tl = tier(sc), isOpen = i === R.worst, tlab = tl === 'high' ? (en() ? 'Strength' : 'Stärke') : (tl === 'mid' ? (en() ? 'Room to grow' : 'Ausbaufähig') : (en() ? 'Your lever' : 'Dein Hebel')); return '<div class="trait' + (isOpen ? ' open' : '') + '"><button type="button" class="h" aria-expanded="' + isOpen + '"><i style="background:' + d.color + '">' + ICO[d.ico] + '</i><span class="nm"><b>' + esc(t(d.name)) + '</b><small class="tl ' + tl + '">' + tlab + '</small></span><span class="pct num">' + p + ' %</span><span class="chev"><em>' + (en() ? 'More' : 'Mehr') + '</em><u>' + (en() ? 'Less' : 'Weniger') + '</u>' + ICO.chev + '</span></button><div class="bar"><i data-w="' + p + '" style="background:' + tierColor(sc) + '"></i></div><p>' + esc(t(d.fb[tier(sc)])) + '</p><div class="more">' + ins + nutri + '<button type="button" class="less">' + (en() ? 'Show less' : 'Weniger anzeigen') + '</button></div></div>'; }).join('') + nutriFine() + '</div>' +
+      '<div class="sec sec-head"><h2>' + (en() ? 'Your five areas' : 'Deine fünf Bereiche') + '</h2><div class="sub">' + (en() ? 'Strength: ' : 'Stärke: ') + esc(t(bestD.name)) + ' · ' + (en() ? 'biggest lever: ' : 'größter Hebel: ') + esc(t(worstD.name)) + '</div><div class="hint">' + (en() ? 'Tap a card for background and nutrient facts.' : 'Tippe auf eine Karte für Hintergrund und Nährstoff-Wissen.') + '</div></div>' +
+      CFG.dims.map(function(d, i){
+        var sc = R.sc[i], p = Math.round(sc/16*100), tl = tier(sc), lever = i === R.worst;
+        var tlab = tl === 'high' ? (en() ? 'Strength' : 'Stärke') : (tl === 'mid' ? (en() ? 'Room to grow' : 'Ausbaufähig') : (en() ? 'Your lever' : 'Dein Hebel'));
+        if (lever) tlab = en() ? 'Your biggest lever' : 'Dein größter Hebel';
+        var ins = tl !== 'high' && INSIGHT[d.id] ? '<div class="ins"><b>' + (en() ? 'Good to know: ' : 'Gut zu wissen: ') + '</b>' + esc(t(INSIGHT[d.id])) + '</div>' : '';
+        var nutri = NUTRI[d.id] ? '<div class="nutri"><i>' + ICO.leaf + '</i><div><b>' + (en() ? 'Nutrient facts: ' : 'Nährstoff-Wissen: ') + '</b>' + esc(t(NUTRI[d.id])) + '</div></div>' : '';
+        return '<div class="area-card' + (lever ? ' lever' : '') + '" style="--ac:' + d.color + '">' +
+          '<button type="button" class="ah" aria-expanded="false"><i class="ai">' + ICO[d.ico] + '</i><span class="an"><b>' + esc(t(d.name)) + '</b><small class="tl ' + tl + '">' + tlab + '</small></span><span class="ap num">' + p + ' %</span><span class="chev">' + ICO.chev + '</span></button>' +
+          '<div class="bar"><i data-w="' + p + '" style="background:' + tierColor(sc) + '"></i></div>' +
+          '<p class="af">' + esc(t(d.fb[tl])) + '</p>' +
+          '<button type="button" class="tlink"><em>' + (en() ? 'Background & nutrient facts' : 'Hintergrund & Nährstoff-Wissen') + '</em><u>' + (en() ? 'Show less' : 'Weniger anzeigen') + '</u>' + ICO.chev + '</button>' +
+          '<div class="more">' + ins + nutri + '</div></div>';
+      }).join('') + nutriFine() +
             consult(false) +
             '<div data-links-slot></div>' +
             '<div class="card res-card sec"><h2>' + (en() ? 'Your day at a glance' : 'Dein Tag auf einen Blick') + '</h2><div class="sub">' + (en() ? 'Nine moments of a typical day, from your answers.' : 'Neun Momente eines typischen Tages, aus deinen Antworten.') + '</div><ul class="day">' + DAY.map(function(m){ var v = S.answers[m.di + ':' + m.qi]; v = v === undefined ? 2 : v; var st = status(v); return '<li class="' + (v <= 1 ? 'dim' : '') + '"><span class="t num">' + m.time + '</span><i style="background:' + CFG.dims[m.di].color + '">' + ICO[m.ico] + '</i><span class="l">' + esc(t(m.l)) + '<small>' + esc(t(CFG.dims[m.di].q[m.qi].label)) + '</small></span><span class="st ' + st[0] + '">' + st[1] + '</span></li>'; }).join('') + '</ul></div>' +
@@ -1081,12 +1124,12 @@ var VC = (function(){
     }); });
     if (key === 'reveal') { var rows = root.querySelectorAll('.reveal .row'); rows.forEach(function(r, i){ setTimeout(function(){ r.classList.add('on'); var p = r.querySelector('.p'), to = +p.getAttribute('data-p'), t0 = null; function f(ts){ if (!t0) t0 = ts; var q = Math.min(1, (ts - t0) / 600); p.textContent = Math.round(to * q) + ' %'; if (q < 1) requestAnimationFrame(f); } requestAnimationFrame(f); }, 350 + i * 420); }); setTimeout(function(){ go(S.step + 1); }, 350 + rows.length * 420 + 700); }
     if (key === 'result') {
-      setTimeout(function(){ root.querySelectorAll('.trait .bar i').forEach(function(f){ f.style.width = f.getAttribute('data-w') + '%'; }); }, 150);
+      setTimeout(function(){ root.querySelectorAll('.trait .bar i, .area-card .bar i').forEach(function(f){ f.style.width = f.getAttribute('data-w') + '%'; }); }, 150);
       root.querySelectorAll('[data-lead]').forEach(function(b){ b.addEventListener('click', function(){ go(steps().indexOf('lead')); }); });
       storyBlob = null; setTimeout(prepareStory, 600);
       root.querySelectorAll('[data-story]').forEach(function(b){ b.addEventListener('click', function(){ saveStory(b); }); });
       root.querySelectorAll('[data-share]').forEach(function(b){ b.addEventListener('click', function(){ shareResult(b); }); });
-      root.querySelectorAll('.trait .h, .trait .less').forEach(function(h){ h.addEventListener('click', function(){ var tr = h.closest('.trait'), o = !tr.classList.contains('open'); tr.classList.toggle('open', o); tr.querySelector('.h').setAttribute('aria-expanded', o); }); });
+      root.querySelectorAll('.area-card .ah, .area-card .tlink').forEach(function(h){ h.addEventListener('click', function(){ var c = h.closest('.area-card'), o = !c.classList.contains('open'); c.classList.toggle('open', o); c.querySelector('.ah').setAttribute('aria-expanded', o); }); });
       var tpl = document.getElementById('siteLinks'), slot = root.querySelector('[data-links-slot]');
       if (tpl && slot) { slot.appendChild(tpl.content.cloneNode(true)); slot.querySelectorAll('.link-btn').forEach(function(a){ if (!a.textContent.trim()) { try { a.textContent = new URL(a.getAttribute('data-url')).hostname.replace(/^www\./, ''); } catch(e){ a.textContent = a.getAttribute('data-url'); } } }); }
       root.querySelector('[data-restart]').addEventListener('click', function(){ if (confirm(en() ? 'Start over? Your answers will be reset.' : 'Nochmal starten? Deine Antworten werden zurückgesetzt.')) { S = fresh(); save(); go(0); } });
