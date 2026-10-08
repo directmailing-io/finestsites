@@ -1,12 +1,41 @@
 {
   "fields": [
     {
+      "key": "partner_modus",
+      "type": "card_select",
+      "label": "Machst du das allein oder zu zweit?",
+      "section": "Profil",
+      "order": 0,
+      "required": false,
+      "default_value": "solo",
+      "preview_value": "solo",
+      "placeholder_text": "Betreibst du die Linkseite allein oder zusammen mit deiner Partnerin / deinem Partner? Im Duo erscheinen zwei Fotos, ein gemeinsamer Name und je eine eigene Zeile mit Social-Media-Icons pro Person. Die Links teilt ihr euch.",
+      "card_options": [
+        {
+          "value": "solo",
+          "label": "Nur ich",
+          "card_type": "color",
+          "color": "#F8FAFC",
+          "description": "Die Seite zeigt dich allein."
+        },
+        {
+          "value": "duo",
+          "label": "Wir zu zweit",
+          "card_type": "color",
+          "color": "#EEF4FF",
+          "description": "Für Paare oder Partner-Teams: zwei Fotos, zwei Namen."
+        }
+      ]
+    },
+    {
       "key": "vorname",
       "type": "text",
       "label": "Vorname",
       "section": "Profil",
       "required": true,
-      "placeholder_text": "z.B. Maria"
+      "placeholder_text": "z.B. Maria",
+      "order": 10,
+      "color_tag": "person1"
     },
     {
       "key": "nachname",
@@ -14,7 +43,9 @@
       "label": "Nachname",
       "section": "Profil",
       "required": true,
-      "placeholder_text": "z.B. Müller"
+      "placeholder_text": "z.B. Müller",
+      "order": 20,
+      "color_tag": "person1"
     },
     {
       "key": "profilbild",
@@ -22,7 +53,62 @@
       "label": "Profilbild",
       "section": "Profil",
       "required": false,
-      "aspect_ratio": "1:1"
+      "aspect_ratio": "1:1",
+      "order": 30,
+      "color_tag": "person1"
+    },
+    {
+      "key": "vorname2",
+      "type": "text",
+      "label": "Vorname (Partner/in)",
+      "section": "Profil",
+      "order": 31,
+      "required": false,
+      "max_length": 40,
+      "default_value": "",
+      "preview_value": "",
+      "input_placeholder": "z.B. Anna",
+      "placeholder_text": "Nur im Duo. Vorname deiner Partnerin / deines Partners.",
+      "show_when": {
+        "field": "partner_modus",
+        "value": "duo"
+      },
+      "color_tag": "person2"
+    },
+    {
+      "key": "nachname2",
+      "type": "text",
+      "label": "Nachname (Partner/in)",
+      "section": "Profil",
+      "order": 32,
+      "required": false,
+      "max_length": 60,
+      "default_value": "",
+      "preview_value": "",
+      "input_placeholder": "z.B. Müller",
+      "placeholder_text": "Bei gleichem Nachnamen zeigt die Seite „Daniel & Anna Kurzeja“, sonst „Daniel Kurzeja & Anna Müller“.",
+      "show_when": {
+        "field": "partner_modus",
+        "value": "duo"
+      },
+      "color_tag": "person2"
+    },
+    {
+      "key": "profilbild2",
+      "type": "image",
+      "label": "Profilbild (Partner/in)",
+      "section": "Profil",
+      "order": 33,
+      "required": false,
+      "aspect_ratio": "1:1",
+      "default_value": "",
+      "preview_value": "",
+      "placeholder_text": "Quadratisch, mindestens 400×400 px. Erscheint neben deinem Foto.",
+      "show_when": {
+        "field": "partner_modus",
+        "value": "duo"
+      },
+      "color_tag": "person2"
     },
     {
       "key": "bio",
@@ -30,8 +116,9 @@
       "label": "Kurzbeschreibung",
       "section": "Profil",
       "required": false,
+      "max_length": 400,
       "placeholder_text": "Erzähl kurz, wer du bist. Absätze, Fettdruck und Listen sind möglich.",
-      "max_length": 400
+      "order": 40
     },
     {
       "key": "links",
@@ -57,7 +144,8 @@
           "site_picker": true,
           "placeholder_text": "https://..."
         }
-      ]
+      ],
+      "order": 50
     },
     {
       "key": "instagram",
@@ -65,7 +153,9 @@
       "label": "Instagram",
       "section": "Social Media",
       "required": false,
-      "placeholder_text": "https://instagram.com/deinname"
+      "placeholder_text": "https://instagram.com/deinname",
+      "order": 60,
+      "color_tag": "person1"
     },
     {
       "key": "tiktok",
@@ -73,7 +163,9 @@
       "label": "TikTok",
       "section": "Social Media",
       "required": false,
-      "placeholder_text": "https://tiktok.com/@deinname"
+      "placeholder_text": "https://tiktok.com/@deinname",
+      "order": 70,
+      "color_tag": "person1"
     },
     {
       "key": "facebook",
@@ -81,7 +173,9 @@
       "label": "Facebook",
       "section": "Social Media",
       "required": false,
-      "placeholder_text": "https://facebook.com/deinname"
+      "placeholder_text": "https://facebook.com/deinname",
+      "order": 80,
+      "color_tag": "person1"
     },
     {
       "key": "whatsapp",
@@ -90,7 +184,9 @@
       "section": "Social Media",
       "required": false,
       "placeholder_text": "Deine WhatsApp-Nummer. Wer darauf tippt, kann dir direkt schreiben.",
-      "input_placeholder": "151 12345678"
+      "input_placeholder": "151 12345678",
+      "order": 90,
+      "color_tag": "person1"
     },
     {
       "key": "mail",
@@ -98,7 +194,94 @@
       "label": "E-Mail-Adresse",
       "section": "Social Media",
       "required": false,
-      "placeholder_text": "deine@email.de"
+      "placeholder_text": "deine@email.de",
+      "order": 100,
+      "color_tag": "person1"
+    },
+    {
+      "key": "instagram2",
+      "type": "url",
+      "label": "Instagram (Partner/in)",
+      "section": "Social Media",
+      "order": 101,
+      "required": false,
+      "default_value": "",
+      "preview_value": "",
+      "input_placeholder": "https://instagram.com/name",
+      "placeholder_text": "Erscheint in der Icon-Zeile deiner Partnerin / deines Partners.",
+      "show_when": {
+        "field": "partner_modus",
+        "value": "duo"
+      },
+      "color_tag": "person2"
+    },
+    {
+      "key": "tiktok2",
+      "type": "url",
+      "label": "TikTok (Partner/in)",
+      "section": "Social Media",
+      "order": 102,
+      "required": false,
+      "default_value": "",
+      "preview_value": "",
+      "input_placeholder": "https://tiktok.com/@name",
+      "placeholder_text": "Benutzername oder kompletter Link.",
+      "show_when": {
+        "field": "partner_modus",
+        "value": "duo"
+      },
+      "color_tag": "person2"
+    },
+    {
+      "key": "facebook2",
+      "type": "url",
+      "label": "Facebook (Partner/in)",
+      "section": "Social Media",
+      "order": 103,
+      "required": false,
+      "default_value": "",
+      "preview_value": "",
+      "input_placeholder": "https://facebook.com/name",
+      "placeholder_text": "Benutzername oder kompletter Link.",
+      "show_when": {
+        "field": "partner_modus",
+        "value": "duo"
+      },
+      "color_tag": "person2"
+    },
+    {
+      "key": "whatsapp2",
+      "type": "text",
+      "label": "WhatsApp (Partner/in)",
+      "section": "Social Media",
+      "order": 104,
+      "required": false,
+      "default_value": "",
+      "preview_value": "",
+      "input_placeholder": "151 12345678",
+      "placeholder_text": "WhatsApp-Nummer deiner Partnerin / deines Partners. Wer darauf tippt, kann ihr / ihm direkt schreiben.",
+      "show_when": {
+        "field": "partner_modus",
+        "value": "duo"
+      },
+      "color_tag": "person2"
+    },
+    {
+      "key": "mail2",
+      "type": "text",
+      "label": "E-Mail-Adresse (Partner/in)",
+      "section": "Social Media",
+      "order": 105,
+      "required": false,
+      "default_value": "",
+      "preview_value": "",
+      "input_placeholder": "anna@email.de",
+      "placeholder_text": "Nur für das E-Mail-Icon in der Zeile deiner Partnerin / deines Partners.",
+      "show_when": {
+        "field": "partner_modus",
+        "value": "duo"
+      },
+      "color_tag": "person2"
     },
     {
       "key": "farbthema",
@@ -156,7 +339,8 @@
           "description": "Gelb & Warm"
         }
       ],
-      "default_value": "klassisch"
+      "default_value": "klassisch",
+      "order": 110
     },
     {
       "key": "knopf_form",
@@ -190,19 +374,21 @@
           "description": "Pill-Form"
         }
       ],
-      "default_value": "abgerundet"
+      "default_value": "abgerundet",
+      "order": 120
     },
     {
       "key": "impressum_strasse",
       "type": "text",
       "label": "Straße und Hausnummer",
+      "notice": {
+        "text": "Auf deiner Linkseite kannst du auf beliebige Seiten verlinken. Diese Inhalte können wir nicht prüfen. Deshalb brauchst du ein eigenes Impressum mit deinem Namen und deiner Anschrift. Ohne diese Angaben kannst du die Seite nicht veröffentlichen.",
+        "title": "Impressum ist Pflicht"
+      },
       "section": "Rechtliches",
       "required": true,
       "placeholder_text": "z.B. Musterstraße 12",
-      "notice": {
-        "title": "Impressum ist Pflicht",
-        "text": "Auf deiner Linkseite kannst du auf beliebige Seiten verlinken. Diese Inhalte können wir nicht prüfen. Deshalb brauchst du ein eigenes Impressum mit deinem Namen und deiner Anschrift. Ohne diese Angaben kannst du die Seite nicht veröffentlichen."
-      }
+      "order": 130
     },
     {
       "key": "impressum_plz_ort",
@@ -210,7 +396,8 @@
       "label": "Postleitzahl und Ort",
       "section": "Rechtliches",
       "required": true,
-      "placeholder_text": "z.B. 12345 Berlin"
+      "placeholder_text": "z.B. 12345 Berlin",
+      "order": 140
     },
     {
       "key": "impressum_email",
@@ -218,7 +405,8 @@
       "label": "E-Mail-Adresse",
       "section": "Rechtliches",
       "required": true,
-      "placeholder_text": "deine@email.de"
+      "placeholder_text": "deine@email.de",
+      "order": 150
     },
     {
       "key": "impressum_telefon",
@@ -226,7 +414,24 @@
       "label": "Telefonnummer (empfohlen)",
       "section": "Rechtliches",
       "required": false,
-      "placeholder_text": "z.B. +49 123 456789"
+      "placeholder_text": "z.B. +49 123 456789",
+      "order": 160
     }
-  ]
+  ],
+  "preview_values": {
+    "vorname": "Daniel",
+    "nachname": "Kurzeja",
+    "profilbild": "https://app.finestsites.io/placeholders/profilbild.webp",
+    "bio": "<p>Hey, ich bin Daniel. Hier findest du alles Wichtige von mir an einem Ort.</p>",
+    "instagram": "https://instagram.com/finestsites",
+    "whatsapp": "491761234567",
+    "mail": "daniel@example.com",
+    "links": "[{\"titel\":\"Mein Vitalprofil\",\"url\":\"https://demo.vitalprofil.net\"},{\"titel\":\"Das Optimalset\",\"url\":\"https://demo.dailyoptimal.de\"}]",
+    "farbthema": "klassisch",
+    "knopf_form": "abgerundet",
+    "impressum_strasse": "Musterstraße 12",
+    "impressum_plz_ort": "12345 Berlin",
+    "impressum_email": "daniel@example.com",
+    "partner_modus": "solo"
+  }
 }

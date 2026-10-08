@@ -3810,7 +3810,47 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
                   // FitLine: die drei Shoplink-Felder als EINE ruhige Karte rendern,
                   // sobald das Template eine TeamPartner-Nummer im Schema hat.
                   const fitlineGrouped = fields.some(f => f.key === 'team_partner_number')
-                  return [...sectionFields, ...hiddenComplianceFields].map(field => {
+                  // Duo/Team: the first field of each person in this section gets a heading
+                  // ("Person 1 · Daniel" / "Person 2 · Anna"), so the two blocks read as two
+                  // people instead of a long list of similar fields.
+                  const duoOn = values['partner_modus'] === 'duo' || values['team_modus'] === 'team'
+                  const personName = (n: 1 | 2) => n === 1
+                    ? (values['vorname'] || '').trim()
+                    : (values['vorname2'] || values['partner_vorname'] || '').trim()
+                  const firstTagged: Record<string, string | undefined> = {}
+                  for (const f of sectionFields) {
+                    if (f.color_tag === 'person1' || f.color_tag === 'person2') {
+                      if (!firstTagged[f.color_tag]) firstTagged[f.color_tag] = f.key
+                    }
+                  }
+                  const groupHeading = (field: FieldSchema) => {
+                    if (!duoOn || !field.color_tag) return null
+                    if (firstTagged[field.color_tag] !== field.key) return null
+                    const two = field.color_tag === 'person2'
+                    const name = personName(two ? 2 : 1)
+                    return (
+                      <div key={field.key + '__grp'} className="flex items-center gap-3 px-1 pt-2 -mb-1">
+                        <span className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0"
+                          style={{ background: two ? '#D1FAE5' : '#DBEAFE', color: two ? '#059669' : '#1D4ED8' }}>
+                          {two ? '2' : '1'}
+                        </span>
+                        <div className="min-w-0">
+                          <p className="text-sm font-bold text-gray-900 leading-tight">
+                            {two ? 'Person 2' : 'Person 1'}{name ? ` · ${name}` : two ? ' · Partner/in' : ' · Du'}
+                          </p>
+                          <p className="text-xs" style={{ color: '#9CA3AF' }}>
+                            {two ? 'Angaben deiner Partnerin / deines Partners' : 'Deine Angaben'}
+                          </p>
+                        </div>
+                      </div>
+                    )
+                  }
+                  return [...sectionFields, ...hiddenComplianceFields].flatMap(field => {
+                    const heading = groupHeading(field)
+                    const card = renderFieldCard(field)
+                    return heading ? [heading, card] : [card]
+                  })
+                  function renderFieldCard(field: FieldSchema) {
                     if (fitlineGrouped && field.key in FITLINE_SHOP_PRODUCTS) {
                       if (field.key !== 'shop_optimalset') return null
                       return (
@@ -3886,12 +3926,12 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
                                 {(isPartnerField || isPerson2Tag) ? (
                                   <span className="text-[11px] font-semibold px-1.5 py-0.5 rounded-full"
                                     style={{ background: '#D1FAE5', color: '#059669' }}>
-                                    Person 2
+                                    {(values['vorname2'] || values['partner_vorname'] || '').trim() || 'Partner/in'}
                                   </span>
                                 ) : isPerson1Tag ? (
                                   <span className="text-[11px] font-semibold px-1.5 py-0.5 rounded-full"
                                     style={{ background: '#DBEAFE', color: '#1D4ED8' }}>
-                                    Person 1
+                                    {(values['vorname'] || '').trim() || 'Du'}
                                   </span>
                                 ) : isOptional && (
                                   <span className="text-[11px] font-medium px-1.5 py-0.5 rounded-full"
@@ -3992,7 +4032,7 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
                         />}
                       </div>
                     )
-                  })
+                  }
                 })()}
               </div>
             )}

@@ -29,7 +29,15 @@ for (const f of schema.fields) {
 Object.assign(data, schema.preview_values ?? {})
 if (opt('--theme')) data.farbthema = opt('--theme')!
 if (flag('--nolinks')) delete data.links
-if (flag('--duo')) Object.assign(data, { partner_modus: 'duo', vorname2: 'Anna', nachname2: 'Kurzeja', profilbild2: 'https://app.finestsites.io/placeholders/profilbild.webp', instagram2: 'https://instagram.com/finestsites', tiktok2: 'https://tiktok.com/@finestsites', whatsapp_nummer2: '491761234568', email2: 'anna@example.com' })
+if (flag('--duo')) Object.assign(data, {
+  partner_modus: 'duo', team_modus: 'team',
+  vorname2: 'Anna', nachname2: 'Kurzeja', profilbild2: 'https://app.finestsites.io/placeholders/profilbild.webp',
+  partner_vorname: 'Anna', partner_nachname: 'Kurzeja', partner_profilbild: 'https://app.finestsites.io/placeholders/profilbild.webp',
+  instagram2: 'https://instagram.com/finestsites', tiktok2: 'https://tiktok.com/@finestsites', whatsapp2: '491761234568', mail2: 'anna@example.com',
+  instagram_url2: 'finestsites', facebook_url2: 'finestsites', linkedin_url2: 'finestsites', whatsapp_nummer2: '491761234568', email2: 'anna@example.com',
+  partner_instagram_url: 'https://instagram.com/finestsites', partner_facebook_url: 'https://facebook.com/finestsites', partner_whatsapp_number: '491761234568', partner_telefon: '+49 176 1234568',
+  instagram_url: data.instagram_url || 'finestsites', facebook_url: data.facebook_url || 'finestsites', whatsapp_nummer: data.whatsapp_nummer || '491761234567', whatsapp_number: data.whatsapp_number || '491761234567', telefon: data.telefon || '+49 176 1234567',
+})
 if (flag('--intro')) data.intro = 'Hi, ich bin Daniel. Ich hab vor zwei Jahren angefangen, meine Gewohnheiten umzukrempeln, und seitdem hat sich mein Alltag komplett verändert. Mach den Check, dann weißt du, wo du stehst.'
 
 let out = renderTemplate(html, data)

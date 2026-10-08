@@ -1,69 +1,68 @@
 {
-  "version": 1,
   "fields": [
     {
       "key": "partner_modus",
       "type": "card_select",
       "label": "Machst du das allein oder zu zweit?",
-      "section": "Profil",
       "order": 0,
+      "section": "Profil",
       "required": false,
-      "default_value": "solo",
-      "preview_value": "solo",
-      "placeholder_text": "Betreibst du die Website allein oder zusammen mit deinem Partner / deiner Partnerin? Im Duo-Modus erscheinen zwei Fotos, zwei Namen und alle Texte werden auf \"wir\" umgestellt.",
       "card_options": [
         {
-          "value": "solo",
-          "label": "Nur ich",
-          "card_type": "color",
           "color": "#F8FAFC",
+          "label": "Nur ich",
+          "value": "solo",
+          "card_type": "color",
           "description": "Deine Website zeigt dich allein."
         },
         {
-          "value": "duo",
-          "label": "Wir zu zweit",
-          "card_type": "color",
           "color": "#EEF4FF",
+          "label": "Wir zu zweit",
+          "value": "duo",
+          "card_type": "color",
           "description": "Für Paare oder Partner-Teams: zwei Fotos, zwei Namen."
         }
-      ]
+      ],
+      "default_value": "solo",
+      "preview_value": "solo",
+      "placeholder_text": "Betreibst du die Website allein oder zusammen mit deinem Partner / deiner Partnerin? Im Duo-Modus erscheinen zwei Fotos, zwei Namen und alle Texte werden auf \"wir\" umgestellt."
     },
     {
       "key": "vorname",
       "type": "text",
       "label": "Vorname",
-      "section": "Profil",
       "order": 1,
+      "section": "Profil",
       "required": true,
       "color_tag": "person1",
       "max_length": 40,
       "profile_key": "first_name",
       "default_value": "",
       "preview_value": "Julia",
-      "input_placeholder": "z.B. Julia",
-      "placeholder_text": "Dein Vorname, wie er auf deiner Website erscheinen soll."
+      "placeholder_text": "Dein Vorname, wie er auf deiner Website erscheinen soll.",
+      "input_placeholder": "z.B. Julia"
     },
     {
       "key": "nachname",
       "type": "text",
       "label": "Nachname",
-      "section": "Profil",
       "order": 2,
+      "section": "Profil",
       "required": true,
       "color_tag": "person1",
       "max_length": 60,
       "profile_key": "last_name",
       "default_value": "",
       "preview_value": "Becker",
-      "input_placeholder": "z.B. Becker",
-      "placeholder_text": "Dein Nachname für die Signatur, den Footer und den PM-Disclaimer."
+      "placeholder_text": "Dein Nachname für die Signatur, den Footer und den PM-Disclaimer.",
+      "input_placeholder": "z.B. Becker"
     },
     {
       "key": "profilbild",
       "type": "image",
       "label": "Profilbild",
-      "section": "Profil",
       "order": 3,
+      "section": "Profil",
       "required": true,
       "color_tag": "person1",
       "profile_key": "avatar_url",
@@ -76,243 +75,354 @@
       "key": "geschlecht",
       "type": "card_select",
       "label": "Anrede",
-      "section": "Profil",
       "order": 4,
+      "section": "Profil",
       "required": true,
       "color_tag": "person1",
-      "default_value": "weiblich",
-      "preview_value": "weiblich",
-      "placeholder_text": "Damit die Bezeichnungen auf deiner Website korrekt sind: \"unabhängige Vertriebspartnerin\" (weiblich) oder \"unabhängiger Vertriebspartner\" (männlich).",
       "card_options": [
         {
-          "value": "weiblich",
-          "label": "Weiblich",
-          "card_type": "color",
           "color": "#FDF2F8",
+          "label": "Weiblich",
+          "value": "weiblich",
+          "card_type": "color",
           "description": "Vertriebspartnerin, unabhängige …"
         },
         {
-          "value": "maennlich",
-          "label": "Männlich",
-          "card_type": "color",
           "color": "#EFF6FF",
+          "label": "Männlich",
+          "value": "maennlich",
+          "card_type": "color",
           "description": "Vertriebspartner, unabhängiger …"
         }
-      ]
+      ],
+      "default_value": "weiblich",
+      "preview_value": "weiblich",
+      "placeholder_text": "Damit die Bezeichnungen auf deiner Website korrekt sind: \"unabhängige Vertriebspartnerin\" (weiblich) oder \"unabhängiger Vertriebspartner\" (männlich)."
     },
     {
       "key": "vorname2",
       "type": "text",
       "label": "Vorname Partner/in",
-      "section": "Profil",
       "order": 5,
+      "section": "Profil",
       "required": false,
       "color_tag": "person2",
+      "show_when": {
+        "field": "partner_modus",
+        "value": "duo"
+      },
       "max_length": 40,
       "default_value": "",
       "preview_value": "Max",
-      "show_when": { "field": "partner_modus", "value": "duo" },
-      "input_placeholder": "z.B. Max",
-      "placeholder_text": "Vorname deiner Partnerin / deines Partners. Wird nur im Duo-Modus angezeigt."
+      "placeholder_text": "Vorname deiner Partnerin / deines Partners. Wird nur im Duo-Modus angezeigt.",
+      "input_placeholder": "z.B. Max"
     },
     {
       "key": "nachname2",
       "type": "text",
       "label": "Nachname Partner/in",
-      "section": "Profil",
       "order": 6,
+      "section": "Profil",
       "required": false,
       "color_tag": "person2",
+      "show_when": {
+        "field": "partner_modus",
+        "value": "duo"
+      },
       "max_length": 60,
       "default_value": "",
       "preview_value": "Müller",
-      "show_when": { "field": "partner_modus", "value": "duo" },
-      "input_placeholder": "z.B. Müller",
-      "placeholder_text": "Nachname deiner Partnerin / deines Partners."
+      "placeholder_text": "Nachname deiner Partnerin / deines Partners.",
+      "input_placeholder": "z.B. Müller"
     },
     {
       "key": "profilbild2",
       "type": "image",
       "label": "Foto Partner/in",
-      "section": "Profil",
       "order": 7,
+      "section": "Profil",
       "required": false,
       "color_tag": "person2",
+      "show_when": {
+        "field": "partner_modus",
+        "value": "duo"
+      },
       "aspect_ratio": "1/1",
       "default_value": "https://app.finestsites.io/placeholders/profilbild.webp",
       "preview_value": "",
-      "show_when": { "field": "partner_modus", "value": "duo" },
       "placeholder_text": "Profilbild deiner Partnerin / deines Partners — quadratisch (1:1), mindestens 400×400 px. Erscheint neben deinem Foto in Navigation und Disclaimer."
     },
     {
       "key": "email_benachrichtigung",
       "type": "email",
       "label": "E-Mail für Kontaktanfragen",
-      "section": "Profil",
       "order": 10,
+      "section": "Profil",
       "required": true,
       "profile_key": "email",
       "default_value": "",
       "preview_value": "julia@example.com",
-      "input_placeholder": "deine@email.de",
-      "placeholder_text": "Wenn jemand dein Kontaktformular ausfüllt, bekommst du die Anfrage an diese Adresse. Wird nicht öffentlich angezeigt."
-    },
-    {
-      "key": "telefon_nummer",
-      "type": "text",
-      "label": "Telefonnummer",
-      "section": "Kontakt",
-      "order": 11,
-      "required": false,
-      "max_length": 40,
-      "default_value": "",
-      "preview_value": "+49 176 12345678",
-      "input_placeholder": "+49 176 12345678",
-      "placeholder_text": "Deine Telefonnummer inkl. Ländervorwahl. Erscheint in E-Mails an dich, wenn ein Interessent per Telefon zurückgerufen werden möchte."
+      "placeholder_text": "Wenn jemand dein Kontaktformular ausfüllt, bekommst du die Anfrage an diese Adresse. Wird nicht öffentlich angezeigt.",
+      "input_placeholder": "deine@email.de"
     },
     {
       "key": "whatsapp_nummer",
       "type": "text",
       "label": "WhatsApp-Nummer (optional)",
-      "section": "Kontakt",
       "order": 12,
+      "section": "Kontakt",
       "required": false,
       "max_length": 20,
       "default_value": "",
       "preview_value": "491761234567",
-      "input_placeholder": "491761234567",
-      "placeholder_text": "Nur Ziffern, keine Leerzeichen, kein + oder 00. Beispiel: statt „+49 176 1234567\" nur „491761234567\" eintragen. Wenn du dieses Feld leer lässt, verschwinden alle WhatsApp-Buttons von deiner Seite."
+      "placeholder_text": "Deine Nummer, so wie du sie aufschreibst. Erscheint als WhatsApp-Button im Selbst-Check, als Kontaktweg im Formular und im Footer.",
+      "input_placeholder": "0176 1234567",
+      "color_tag": "person1"
+    },
+    {
+      "key": "instagram_url",
+      "type": "url",
+      "label": "Instagram (optional)",
+      "section": "Kontakt",
+      "order": 12.1,
+      "required": false,
+      "default_value": "",
+      "preview_value": "",
+      "input_placeholder": "deinname oder https://instagram.com/deinname",
+      "placeholder_text": "Dein Instagram-Profil. Erscheint im Footer unter „Kontakt“.",
+      "color_tag": "person1"
+    },
+    {
+      "key": "facebook_url",
+      "type": "url",
+      "label": "Facebook (optional)",
+      "section": "Kontakt",
+      "order": 12.2,
+      "required": false,
+      "default_value": "",
+      "preview_value": "",
+      "input_placeholder": "deinname oder https://facebook.com/deinname",
+      "placeholder_text": "Dein Facebook-Profil. Erscheint im Footer unter „Kontakt“.",
+      "color_tag": "person1"
+    },
+    {
+      "key": "whatsapp_nummer2",
+      "type": "text",
+      "label": "WhatsApp-Nummer (Partner/in)",
+      "section": "Kontakt",
+      "order": 12.5,
+      "required": false,
+      "max_length": 40,
+      "default_value": "",
+      "preview_value": "",
+      "input_placeholder": "0176 1234567",
+      "placeholder_text": "WhatsApp-Nummer deiner Partnerin / deines Partners. Im Duo bekommt jede Person ihren eigenen WhatsApp-Button.",
+      "show_when": {
+        "field": "partner_modus",
+        "value": "duo"
+      },
+      "color_tag": "person2"
+    },
+    {
+      "key": "instagram_url2",
+      "type": "url",
+      "label": "Instagram (Partner/in)",
+      "section": "Kontakt",
+      "order": 12.6,
+      "required": false,
+      "default_value": "",
+      "preview_value": "",
+      "input_placeholder": "name oder https://instagram.com/name",
+      "placeholder_text": "Instagram-Profil deiner Partnerin / deines Partners. Erscheint im Footer unter „Kontakt“.",
+      "show_when": {
+        "field": "partner_modus",
+        "value": "duo"
+      },
+      "color_tag": "person2"
+    },
+    {
+      "key": "facebook_url2",
+      "type": "url",
+      "label": "Facebook (Partner/in)",
+      "section": "Kontakt",
+      "order": 12.7,
+      "required": false,
+      "default_value": "",
+      "preview_value": "",
+      "input_placeholder": "name oder https://facebook.com/name",
+      "placeholder_text": "Facebook-Profil deiner Partnerin / deines Partners. Erscheint im Footer unter „Kontakt“.",
+      "show_when": {
+        "field": "partner_modus",
+        "value": "duo"
+      },
+      "color_tag": "person2"
     },
     {
       "key": "hero_variante",
       "type": "card_select",
       "label": "Hero-Hintergrundbild",
-      "section": "Design",
       "order": 13,
+      "section": "Design",
       "required": true,
-      "default_value": "junge-frau",
-      "preview_value": "junge-frau",
-      "placeholder_text": "Das große Bild ganz oben. Wähle die Person, die zu deiner Zielgruppe passt.",
       "card_options": [
         {
-          "value": "junge-frau",
           "label": "Junge Frau",
+          "value": "junge-frau",
           "card_type": "image",
           "image_url": "/templates/pm-cellrestart/hero-previews/junge-frau.webp",
           "description": "Sportlich, aktiv, Ende 20 bis Mitte 30."
         },
         {
-          "value": "aeltere-frau",
           "label": "Ältere Frau",
+          "value": "aeltere-frau",
           "card_type": "image",
           "image_url": "/templates/pm-cellrestart/hero-previews/aeltere-frau.webp",
           "description": "Elegant, entspannt, um die 50 plus."
         },
         {
-          "value": "junger-mann",
           "label": "Junger Mann",
+          "value": "junger-mann",
           "card_type": "image",
           "image_url": "/templates/pm-cellrestart/hero-previews/junger-mann.webp",
           "description": "Locker, Ende 20 bis Mitte 30."
         },
         {
-          "value": "aelterer-mann",
           "label": "Älterer Mann",
+          "value": "aelterer-mann",
           "card_type": "image",
           "image_url": "/templates/pm-cellrestart/hero-previews/aelterer-mann.webp",
           "description": "Souverän, entspannt, um die 50 plus."
         }
-      ]
+      ],
+      "default_value": "junge-frau",
+      "preview_value": "junge-frau",
+      "placeholder_text": "Das große Bild ganz oben. Wähle die Person, die zu deiner Zielgruppe passt."
     },
     {
       "key": "farbthema",
       "type": "card_select",
       "label": "Farbthema",
-      "section": "Design",
       "order": 14,
+      "section": "Design",
       "required": true,
+      "card_options": [
+        {
+          "color": "#5EBFA0",
+          "label": "Fresh Mint",
+          "value": "mint",
+          "card_type": "color",
+          "description": "Vitalisierend, frisch, energetisch."
+        },
+        {
+          "color": "#7DB93B",
+          "label": "Wellness-Lime",
+          "value": "lime",
+          "card_type": "color",
+          "description": "Frisch, natürlich, klassisch."
+        },
+        {
+          "color": "#8CA47A",
+          "label": "Sage & Terracotta",
+          "value": "sage",
+          "card_type": "color",
+          "description": "Editorial, ruhig, warm."
+        },
+        {
+          "color": "#D4A94E",
+          "label": "Warm Amber",
+          "value": "amber",
+          "card_type": "color",
+          "description": "Sonnig, honigfarben, südlich."
+        },
+        {
+          "color": "#4C86A8",
+          "label": "Deep Ocean",
+          "value": "ocean",
+          "card_type": "color",
+          "description": "Premium, kühl, ruhig."
+        },
+        {
+          "color": "#C63A2E",
+          "label": "Warmes Rot",
+          "value": "ziegel",
+          "card_type": "color",
+          "description": "Erdig, kraftvoll, edel."
+        }
+      ],
       "default_value": "mint",
       "preview_value": "mint",
-      "placeholder_text": "Wähle das Farbthema deiner Website. Die Farben wirken sich auf alle Buttons, Akzente und Illustrationen aus.",
-      "card_options": [
-        { "value": "mint",   "label": "Fresh Mint",         "card_type": "color", "color": "#5EBFA0", "description": "Vitalisierend, frisch, energetisch." },
-        { "value": "lime",   "label": "Wellness-Lime",      "card_type": "color", "color": "#7DB93B", "description": "Frisch, natürlich, klassisch." },
-        { "value": "sage",   "label": "Sage & Terracotta",  "card_type": "color", "color": "#8CA47A", "description": "Editorial, ruhig, warm." },
-        { "value": "amber",  "label": "Warm Amber",         "card_type": "color", "color": "#D4A94E", "description": "Sonnig, honigfarben, südlich." },
-        { "value": "ocean",  "label": "Deep Ocean",         "card_type": "color", "color": "#4C86A8", "description": "Premium, kühl, ruhig." },
-        { "value": "ziegel", "label": "Warmes Rot",         "card_type": "color", "color": "#C63A2E", "description": "Erdig, kraftvoll, edel." }
-      ]
+      "placeholder_text": "Wähle das Farbthema deiner Website. Die Farben wirken sich auf alle Buttons, Akzente und Illustrationen aus."
     },
     {
       "key": "ziel_sektion",
       "type": "card_select",
       "label": "Sektion „Das Ziel: Ketose\" anzeigen?",
-      "section": "Sektionen",
       "order": 15,
+      "section": "Sektionen",
       "required": true,
-      "default_value": "an",
-      "preview_value": "an",
-      "display_mode": "section_toggle",
-      "toggle_on_value": "an",
-      "toggle_off_value": "aus",
-      "preview_interactive": true,
-      "placeholder_text": "Der Vorher-Nachher-Vergleich zur Ketose. Blende ihn aus, wenn du das Thema „ketogene Ernährung\" auf deiner Seite lieber vermeiden möchtest.",
       "card_options": [
         {
-          "value": "an",
           "label": "Anzeigen",
+          "value": "an",
           "card_type": "image",
           "image_url": "/templates/pm-cellrestart/section-previews/section-ziel.webp",
           "description": "Der Ketose-Vergleich ist sichtbar."
         },
         {
-          "value": "aus",
-          "label": "Ausblenden",
-          "card_type": "color",
           "color": "#F1F5F9",
+          "label": "Ausblenden",
+          "value": "aus",
+          "card_type": "color",
           "image_url": "",
           "description": "Die Sektion verschwindet komplett."
         }
-      ]
+      ],
+      "display_mode": "section_toggle",
+      "default_value": "an",
+      "preview_value": "an",
+      "toggle_on_value": "an",
+      "placeholder_text": "Der Vorher-Nachher-Vergleich zur Ketose. Blende ihn aus, wenn du das Thema „ketogene Ernährung\" auf deiner Seite lieber vermeiden möchtest.",
+      "toggle_off_value": "aus",
+      "preview_interactive": true
     },
     {
       "key": "preis_anzeigen",
       "type": "card_select",
       "label": "Preis-Card „~5 € am Tag\" anzeigen?",
-      "section": "Sektionen",
       "order": 16,
+      "section": "Sektionen",
       "required": true,
-      "default_value": "an",
-      "preview_value": "an",
-      "display_mode": "section_toggle",
-      "toggle_on_value": "an",
-      "toggle_off_value": "aus",
-      "preview_interactive": true,
-      "placeholder_text": "Die Preis-Card direkt beim Kontaktformular. Blende sie aus, wenn du nicht offen mit einem Preis werben möchtest.",
       "card_options": [
         {
-          "value": "an",
           "label": "Anzeigen",
+          "value": "an",
           "card_type": "image",
           "image_url": "/templates/pm-cellrestart/section-previews/section-preis.webp",
           "description": "Die „~5 € am Tag\"-Card ist sichtbar."
         },
         {
-          "value": "aus",
-          "label": "Ausblenden",
-          "card_type": "color",
           "color": "#F1F5F9",
+          "label": "Ausblenden",
+          "value": "aus",
+          "card_type": "color",
           "image_url": "",
           "description": "Nur das Kontaktformular bleibt."
         }
-      ]
+      ],
+      "display_mode": "section_toggle",
+      "default_value": "an",
+      "preview_value": "an",
+      "toggle_on_value": "an",
+      "placeholder_text": "Die Preis-Card direkt beim Kontaktformular. Blende sie aus, wenn du nicht offen mit einem Preis werben möchtest.",
+      "toggle_off_value": "aus",
+      "preview_interactive": true
     },
     {
       "key": "about_bild",
       "type": "image",
       "label": "Foto für „Über mich\"",
-      "section": "Inhalte",
       "order": 17,
+      "section": "Inhalte",
       "required": true,
       "aspect_ratio": "4/5",
       "default_value": "https://app.finestsites.io/placeholders/about-bild.webp",
@@ -323,8 +433,8 @@
       "key": "about_intro",
       "type": "intro",
       "label": "Begrüßung",
-      "section": "Inhalte",
       "order": 17.5,
+      "section": "Inhalte",
       "required": false,
       "max_length": 60,
       "default_value": "",
@@ -335,25 +445,26 @@
       "key": "about_me_html",
       "type": "richtext",
       "label": "Über mich-Text",
-      "section": "Inhalte",
       "order": 18,
-      "compliance_check": true,
+      "section": "Inhalte",
       "required": true,
       "max_length": 1500,
       "default_value": "<p>Kurz zu mir: Ich komme aus [Ort] und bin seit [Zeitraum] mit dem cellRESET-Konzept unterwegs. Ich kenne die Produkte selbst und helfe dir, deinen eigenen Weg zu finden — ohne Druck.</p>",
       "preview_value": "<p>Ich bin Julia, Mama von zwei Kindern und seit 3 Jahren mit dem Konzept unterwegs. Ich weiß, wie es sich anfühlt, wieder mehr Energie zu wollen ohne alles auf den Kopf zu stellen.</p><p>Genau deshalb mache ich das: unaufgeregt, ehrlich, ohne Verkaufsdruck.</p>",
+      "compliance_check": true,
       "placeholder_text": "Stell dich vor: Wer bist du, was treibt dich an, wie kamst du zum cellRESET-Konzept? Locker und persönlich. Max. 1.500 Zeichen. Die englische Fassung erstellen wir automatisch beim Speichern."
     }
   ],
+  "version": 1,
   "preview_values": {
     "vorname": "Julia",
     "nachname": "Becker",
-    "email_benachrichtigung": "julia@example.com",
-    "hero_variante": "junge-frau",
     "farbthema": "mint",
+    "geschlecht": "weiblich",
     "ziel_sektion": "an",
-    "preis_anzeigen": "an",
+    "hero_variante": "junge-frau",
     "partner_modus": "solo",
-    "geschlecht": "weiblich"
+    "preis_anzeigen": "an",
+    "email_benachrichtigung": "julia@example.com"
   }
 }

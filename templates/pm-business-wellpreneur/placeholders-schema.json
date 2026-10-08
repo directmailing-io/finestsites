@@ -1,0 +1,464 @@
+{
+  "fields": [
+    {
+      "key": "partner_modus",
+      "type": "card_select",
+      "label": "Machst du das allein oder zu zweit?",
+      "section": "Profil",
+      "required": false,
+      "card_options": [
+        {
+          "color": "#F8FAFC",
+          "label": "Nur ich",
+          "value": "solo",
+          "card_type": "color",
+          "description": "Deine Website zeigt dich allein."
+        },
+        {
+          "color": "#EEF4FF",
+          "label": "Wir zu zweit",
+          "value": "duo",
+          "card_type": "color",
+          "description": "Für Paare oder Partner-Teams — zwei Fotos, zwei Namen."
+        }
+      ],
+      "default_value": "solo",
+      "preview_value": "solo",
+      "placeholder_text": "Betreibst du die Website allein oder zusammen mit deinem Partner / deiner Partnerin? Im Duo-Modus erscheinen zwei Fotos, beide Namen und \"wir\" statt \"ich\"."
+    },
+    {
+      "key": "vorname",
+      "type": "text",
+      "label": "Vorname",
+      "section": "Profil",
+      "required": true,
+      "color_tag": "person1",
+      "max_length": 40,
+      "profile_key": "first_name",
+      "default_value": "Vorname",
+      "preview_value": "Julia",
+      "placeholder_text": "Dein Vorname, wie er auf deiner Website erscheinen soll.",
+      "input_placeholder": "z.B. Julia"
+    },
+    {
+      "key": "nachname",
+      "type": "text",
+      "label": "Nachname",
+      "section": "Profil",
+      "required": true,
+      "color_tag": "person1",
+      "max_length": 60,
+      "profile_key": "last_name",
+      "default_value": "Nachname",
+      "preview_value": "Becker",
+      "placeholder_text": "Dein Nachname für deine Website.",
+      "input_placeholder": "z.B. Becker"
+    },
+    {
+      "key": "profilbild",
+      "type": "image",
+      "label": "Profilbild",
+      "section": "Profil",
+      "required": true,
+      "color_tag": "person1",
+      "profile_key": "avatar_url",
+      "aspect_ratio": "1/1",
+      "default_value": "https://app.finestsites.io/placeholders/profilbild.webp",
+      "preview_value": "assets/julia-becker-profil.png",
+      "placeholder_text": "Dein Profilbild. Quadratisch, mind. 400×400 Pixel. Erscheint in der Navigation, im Kontaktformular und im Video-Abschlussscreen."
+    },
+    {
+      "key": "vorname2",
+      "type": "text",
+      "label": "Vorname Partner/in",
+      "section": "Profil",
+      "required": false,
+      "color_tag": "person2",
+      "show_when": {
+        "field": "partner_modus",
+        "value": "duo"
+      },
+      "max_length": 40,
+      "default_value": "",
+      "preview_value": "Max",
+      "placeholder_text": "Vorname deiner Partnerin / deines Partners. Wird nur im Duo-Modus angezeigt.",
+      "input_placeholder": "z.B. Max"
+    },
+    {
+      "key": "nachname2",
+      "type": "text",
+      "label": "Nachname Partner/in",
+      "section": "Profil",
+      "required": false,
+      "color_tag": "person2",
+      "show_when": {
+        "field": "partner_modus",
+        "value": "duo"
+      },
+      "max_length": 60,
+      "default_value": "",
+      "preview_value": "Müller",
+      "placeholder_text": "Nachname deiner Partnerin / deines Partners.",
+      "input_placeholder": "z.B. Müller"
+    },
+    {
+      "key": "profilbild2",
+      "type": "image",
+      "label": "Foto Partner/in",
+      "section": "Profil",
+      "required": false,
+      "color_tag": "person2",
+      "show_when": {
+        "field": "partner_modus",
+        "value": "duo"
+      },
+      "aspect_ratio": "1/1",
+      "default_value": "https://app.finestsites.io/placeholders/profilbild.webp",
+      "preview_value": "",
+      "placeholder_text": "Profilbild deiner Partnerin / deines Partners. Quadratisch (1:1), mind. 400×400 px. Erscheint in der Navigation, im Kontaktformular und im Abschluss-Screen des Videos."
+    },
+    {
+      "key": "about_bild",
+      "type": "image",
+      "label": "Foto für 'Wer dich begleitet'",
+      "section": "Profil",
+      "required": true,
+      "aspect_ratio": "4/5",
+      "default_value": "https://app.finestsites.io/placeholders/about-bild.webp",
+      "preview_value": "assets/julia-becker-about.png",
+      "placeholder_text": "Dein persönliches Foto. Ideal im Hochformat (4:5). Im Duo-Modus einfach ein gemeinsames Foto von euch beiden. Wird in der \"Wer dich begleitet\"-Sektion angezeigt."
+    },
+    {
+      "key": "email_benachrichtigung",
+      "type": "email",
+      "label": "E-Mail für Kontaktanfragen",
+      "section": "Profil",
+      "required": true,
+      "profile_key": "email",
+      "default_value": "",
+      "preview_value": "julia@example.com",
+      "placeholder_text": "Wenn jemand dein Kontaktformular ausfüllt, bekommst du die Anfrage an diese Adresse. Wird nicht öffentlich angezeigt.",
+      "input_placeholder": "deine@email.de"
+    },
+    {
+      "key": "geschlecht",
+      "type": "card_select",
+      "label": "Anrede auf der Website",
+      "section": "Profil",
+      "required": true,
+      "show_when": {
+        "field": "partner_modus",
+        "value": [
+          "solo",
+          ""
+        ]
+      },
+      "card_options": [
+        {
+          "color": "#FDF2F8",
+          "label": "Weiblich",
+          "value": "weiblich",
+          "card_type": "color",
+          "description": "Vertriebspartnerin, Beraterin, ..."
+        },
+        {
+          "color": "#EFF6FF",
+          "label": "Männlich",
+          "value": "maennlich",
+          "card_type": "color",
+          "description": "Vertriebspartner, Berater, ..."
+        }
+      ],
+      "default_value": "weiblich",
+      "preview_value": "weiblich",
+      "placeholder_text": "Damit die Bezeichnungen auf deiner Website korrekt sind."
+    },
+    {
+      "key": "farbthema",
+      "type": "card_select",
+      "label": "Farbthema",
+      "section": "Design",
+      "required": true,
+      "card_options": [
+        {
+          "color": "#2563EB",
+          "label": "Ozean-Blau",
+          "value": "blau",
+          "card_type": "color",
+          "description": "Klar, vertrauenswürdig und professionell."
+        },
+        {
+          "color": "#1F5138",
+          "label": "Smaragd-Grün",
+          "value": "gruen",
+          "card_type": "color",
+          "description": "Frisch, natürlich, voller Energie."
+        },
+        {
+          "color": "#C2410C",
+          "label": "Bernstein-Orange",
+          "value": "orange",
+          "card_type": "color",
+          "description": "Warm, einladend und voller Tatendrang."
+        },
+        {
+          "color": "#0284C7",
+          "label": "Himmel-Blau",
+          "value": "skyblau",
+          "card_type": "color",
+          "description": "Luftig, frisch und voller Optimismus."
+        }
+      ],
+      "default_value": "blau",
+      "preview_value": "blau",
+      "placeholder_text": "Das Farbthema deiner Website. Du kannst es jederzeit ändern.",
+      "preview_interactive": true
+    },
+    {
+      "key": "instagram_url",
+      "type": "text",
+      "label": "Instagram",
+      "section": "Social Media",
+      "required": false,
+      "profile_key": "instagram_url",
+      "default_value": "",
+      "preview_value": "",
+      "placeholder_text": "Dein Instagram-Profil (optional). Wird in der \"Wer dich begleitet\"-Sektion angezeigt.",
+      "input_placeholder": "https://instagram.com/deinprofil",
+      "color_tag": "person1"
+    },
+    {
+      "key": "tiktok_url",
+      "type": "text",
+      "label": "TikTok",
+      "section": "Social Media",
+      "required": false,
+      "profile_key": "tiktok_url",
+      "default_value": "",
+      "preview_value": "",
+      "placeholder_text": "Dein TikTok-Kanal (optional).",
+      "input_placeholder": "https://tiktok.com/@deinprofil",
+      "color_tag": "person1"
+    },
+    {
+      "key": "facebook_url",
+      "type": "text",
+      "label": "Facebook",
+      "section": "Social Media",
+      "required": false,
+      "profile_key": "facebook_url",
+      "default_value": "",
+      "preview_value": "",
+      "placeholder_text": "Deine Facebook-Seite oder dein Profil (optional).",
+      "input_placeholder": "https://facebook.com/deinprofil",
+      "color_tag": "person1"
+    },
+    {
+      "key": "linkedin_url",
+      "type": "text",
+      "label": "LinkedIn",
+      "section": "Social Media",
+      "required": false,
+      "profile_key": "linkedin_url",
+      "default_value": "",
+      "preview_value": "",
+      "placeholder_text": "Dein LinkedIn-Profil (optional).",
+      "input_placeholder": "https://linkedin.com/in/deinprofil",
+      "color_tag": "person1"
+    },
+    {
+      "key": "youtube_url",
+      "type": "text",
+      "label": "YouTube",
+      "section": "Social Media",
+      "required": false,
+      "profile_key": "youtube_url",
+      "default_value": "",
+      "preview_value": "",
+      "placeholder_text": "Dein YouTube-Kanal (optional).",
+      "input_placeholder": "https://youtube.com/@deinkanal",
+      "color_tag": "person1"
+    },
+    {
+      "key": "global_sektion",
+      "type": "card_select",
+      "label": "Sektion „Dein Business. Weltweit.“",
+      "order": 0,
+      "options": [
+        "zeigen",
+        "ausblenden"
+      ],
+      "section": "Bereiche",
+      "required": false,
+      "card_options": [
+        {
+          "label": "Anzeigen",
+          "value": "zeigen",
+          "card_type": "image",
+          "image_url": "/templates/pm-business-wellpreneur/section-previews/section-global.webp?v=2",
+          "description": "Weltkugel mit 74 Ländern und Flaggen."
+        },
+        {
+          "color": "#F1F5F9",
+          "label": "Ausblenden",
+          "value": "ausblenden",
+          "card_type": "color",
+          "image_url": "",
+          "description": "Diese Sektion wird nicht angezeigt."
+        }
+      ],
+      "display_mode": "section_toggle",
+      "default_value": "zeigen",
+      "preview_value": "zeigen",
+      "toggle_on_value": "zeigen",
+      "placeholder_text": "Zeigt 74 Länder mit Weltkugel – ideal wenn du international rekrutierst.",
+      "toggle_off_value": "ausblenden",
+      "preview_interactive": true
+    },
+    {
+      "key": "instagram_url2",
+      "type": "text",
+      "label": "Instagram (Partner/in)",
+      "section": "Social Media",
+      "order": 0.1,
+      "required": false,
+      "default_value": "",
+      "preview_value": "",
+      "input_placeholder": "deinname oder https://instagram.com/deinname",
+      "placeholder_text": "Instagram-Profil deiner Partnerin / deines Partners. Benutzername oder kompletter Link. Erscheint im Bereich „Wer euch begleitet“ und nach dem Absenden des Formulars, jeweils mit Namen.",
+      "show_when": {
+        "field": "partner_modus",
+        "value": "duo"
+      },
+      "color_tag": "person2"
+    },
+    {
+      "key": "tiktok_url2",
+      "type": "text",
+      "label": "TikTok (Partner/in)",
+      "section": "Social Media",
+      "order": 0.2,
+      "required": false,
+      "default_value": "",
+      "preview_value": "",
+      "input_placeholder": "deinname oder https://tiktok.com/@deinname",
+      "placeholder_text": "TikTok-Profil deiner Partnerin / deines Partners. Benutzername oder kompletter Link. Erscheint im Bereich „Wer euch begleitet“ und nach dem Absenden des Formulars, jeweils mit Namen.",
+      "show_when": {
+        "field": "partner_modus",
+        "value": "duo"
+      },
+      "color_tag": "person2"
+    },
+    {
+      "key": "facebook_url2",
+      "type": "text",
+      "label": "Facebook (Partner/in)",
+      "section": "Social Media",
+      "order": 0.30000000000000004,
+      "required": false,
+      "default_value": "",
+      "preview_value": "",
+      "input_placeholder": "deinname oder https://facebook.com/deinname",
+      "placeholder_text": "Facebook-Profil deiner Partnerin / deines Partners. Benutzername oder kompletter Link. Erscheint im Bereich „Wer euch begleitet“ und nach dem Absenden des Formulars, jeweils mit Namen.",
+      "show_when": {
+        "field": "partner_modus",
+        "value": "duo"
+      },
+      "color_tag": "person2"
+    },
+    {
+      "key": "linkedin_url2",
+      "type": "text",
+      "label": "LinkedIn (Partner/in)",
+      "section": "Social Media",
+      "order": 0.4,
+      "required": false,
+      "default_value": "",
+      "preview_value": "",
+      "input_placeholder": "deinname oder https://linkedin.com/in/deinname",
+      "placeholder_text": "LinkedIn-Profil deiner Partnerin / deines Partners. Benutzername oder kompletter Link. Erscheint im Bereich „Wer euch begleitet“ und nach dem Absenden des Formulars, jeweils mit Namen.",
+      "show_when": {
+        "field": "partner_modus",
+        "value": "duo"
+      },
+      "color_tag": "person2"
+    },
+    {
+      "key": "youtube_url2",
+      "type": "text",
+      "label": "YouTube (Partner/in)",
+      "section": "Social Media",
+      "order": 0.5,
+      "required": false,
+      "default_value": "",
+      "preview_value": "",
+      "input_placeholder": "@deinkanal oder https://youtube.com/@deinkanal",
+      "placeholder_text": "YouTube-Profil deiner Partnerin / deines Partners. Benutzername oder kompletter Link. Erscheint im Bereich „Wer euch begleitet“ und nach dem Absenden des Formulars, jeweils mit Namen.",
+      "show_when": {
+        "field": "partner_modus",
+        "value": "duo"
+      },
+      "color_tag": "person2"
+    },
+    {
+      "key": "warum_sektion",
+      "type": "card_select",
+      "label": "Sektion „Warum das geht“",
+      "order": 1,
+      "options": [
+        "zeigen",
+        "ausblenden"
+      ],
+      "section": "Bereiche",
+      "required": false,
+      "card_options": [
+        {
+          "label": "Anzeigen",
+          "value": "zeigen",
+          "card_type": "image",
+          "image_url": "/templates/pm-business-wellpreneur/section-previews/section-warum.webp",
+          "description": "Erklärt visuell, warum PM-Produkte so viel Qualität bieten."
+        },
+        {
+          "color": "#F1F5F9",
+          "label": "Ausblenden",
+          "value": "ausblenden",
+          "card_type": "color",
+          "image_url": "",
+          "description": "Diese Sektion wird nicht angezeigt."
+        }
+      ],
+      "display_mode": "section_toggle",
+      "default_value": "zeigen",
+      "preview_value": "zeigen",
+      "toggle_on_value": "zeigen",
+      "placeholder_text": "Diese Sektion zeigt visuell, warum PM-International-Produkte qualitativ hochwertig sind.",
+      "toggle_off_value": "ausblenden",
+      "preview_interactive": true
+    },
+    {
+      "key": "about_intro",
+      "type": "intro",
+      "label": "Begrüßung",
+      "order": 17.5,
+      "section": "Inhalte",
+      "required": false,
+      "max_length": 60,
+      "default_value": "",
+      "preview_value": "",
+      "placeholder_text": "Standard: Hi, ich bin {vorname}. Klick auf Bearbeiten, wenn du eine eigene Begrüßung willst."
+    },
+    {
+      "key": "about_me_html",
+      "type": "richtext",
+      "label": "Über mich-Text",
+      "order": 18,
+      "section": "Inhalte",
+      "required": true,
+      "max_length": 1000,
+      "default_value": "<p>Kurz zu mir: Ich komme aus [Ort] und bin seit [Zeitraum] dabei. Ich kenne die Produkte selbst und helfe dir, deinen eigenen Weg zu finden.</p>",
+      "preview_value": "<p>Ich bin Julia, Mama von zwei Kindern und seit 3 Jahren dabei. Ich weiß, wie es sich anfühlt, Geld dazuverdienen zu wollen, ohne die Familie zu vernachlässigen. Genau deshalb mache ich das.</p>",
+      "placeholder_text": "Stelle dich vor: Wer bist du, was treibt dich an, warum machst du das? Locker und persönlich. Max. 1.000 Zeichen."
+    }
+  ]
+}
