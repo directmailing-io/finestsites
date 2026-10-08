@@ -26,6 +26,18 @@ const APPLY = process.argv.includes('--apply')
 const ONLY = (() => { const i = process.argv.indexOf('--site'); return i > -1 ? process.argv[i + 1] : null })()
 const BACKUP_SUFFIX = '__backup_20261008'
 const KEYS = ['about_me_html', 'intro', 'bio']
+const OUT = path.resolve(process.cwd(), 'scratch-remediation-' + (APPLY ? 'apply' : 'dry') + '.txt')
+fs.writeFileSync(OUT, '')
+
+/** Zusatzregeln für die Bereinigung bestehender Kundentexte: so wenig wie möglich ändern, nichts erfinden. */
+const REMEDIATION_RULES = `═══ SONDERMODUS: BEREINIGUNG BESTEHENDER TEXTE ═══
+Du bereinigst einen bereits veröffentlichten Text eines echten Menschen. Oberstes Ziel: so wenig wie möglich ändern, nichts hinzuerfinden.
+A. STREICHEN STATT ERSETZEN: Entferne Krankheiten, Symptome, Diagnosen, Therapien, Medikamente, Ärzte und Beschwerden ersatzlos – als Wort, Aufzählungspunkt, Teilsatz oder ganzen Satz. Erfinde KEINE neue Motivation (also NICHT "Ich war auf der Suche nach einer einfachen Routine" o. ä. einfügen). Nur wenn ein Satz ohne die Streichung keinen Sinn mehr ergibt, kürze ihn auf das, was der Mensch sonst noch gesagt hat (z. B. "Ich hatte Migräne und wollte etwas verändern" → "Ich wollte etwas verändern").
+B. BEZÜGE PRÜFEN: Wenn du einen Satz streichst, auf den ein folgender Satz verweist ("Das hat …", "Dieser Satz …", "Diese Zeit …", "Dazu kam …"), passe den Folgesatz an oder streiche ihn mit, damit nichts ins Leere zeigt. Lies den Vorschlag am Ende einmal als Ganzes: Jeder Satz muss sich auf etwas beziehen, das noch im Text steht.
+C. STIMME BEHALTEN: Emojis, Anrede, Absätze, Rechtschreibung, Ortsangaben, Jahreszahlen, Berufe, Familie, alles Persönliche ohne Gesundheitsbezug bleibt zeichengenau stehen. Keine Glättung, kein neuer Ton.
+D. GEWICHT: Kommt im Text ein Produkt/Konzept vor (Optimalset, FitLine, cellRESET, Stoffwechselkur, Kur, Produkte), entferne konkrete Kilo-/kg-Zahlen und die Wörter "abgenommen"/"Kilo"/"kg"/"Gewicht verloren" vollständig. Erlaubt sind Formulierungen wie "ich fühle mich leichter", "ich habe einen Weg gefunden, der zu mir passt", "mein Wohlfühlgewicht". Gilt auch für Dritte ("ein Freund hatte 20 kg abgenommen").
+E. ERLAUBT BLEIBT: müde, erschöpft (ohne "Erschöpfung"/"Burnout"), antriebslos, wenig Energie, schlecht geschlafen (ohne "Schlafstörung/-probleme"), "fühle mich wohler", "schlafe besser", "mehr Energie" – solange kein Kausalwort zum Produkt im selben Satz steht. Diese Stellen NICHT anfassen.
+F. HTML: Tags, Absätze (<p>, <br>) und Formatierungen wie im Original lassen; nur Textinhalt ändern.`
 
 type Row = { site_id: string; username: string; domain: string; custom_domain: string | null; custom_domain_status: string | null; field_key: string; field_value: string }
 
@@ -49,13 +61,14 @@ async function main() {
   for (const r of affected) {
     const host = r.custom_domain_status === 'active' && r.custom_domain ? r.custom_domain : `${r.username}.${r.domain}`
     const before = findBlockedTerms(r.field_value).map(b => b.reason.split(':')[0]).join(', ')
-    let result = await checkCompliance(r.field_value, '', apiKey)
+    let result = await checkCompliance(r.field_value, '', apiKey, REMEDIATION_RULES)
     let suggestion = result.ok ? '' : result.suggested_html
     // zweite Runde, falls der Vorschlag noch Sperrbegriffe enthält
     if (suggestion && findBlockedTerms(suggestion).length) {
-      const again = await checkCompliance(suggestion, '', apiKey, 'Der Text enthält weiterhin Krankheits-/Symptombegriffe. Entferne sie vollständig und ersetze sie durch eine neutrale Motivation.')
+      const again = await checkCompliance(suggestion, '', apiKey, REMEDIATION_RULES + '\n\nDer Text enthält weiterhin gesperrte Begriffe (' + findBlockedTerms(suggestion).map(b => b.quote).join(' | ') + '). Entferne genau diese Stellen vollständig.')
       if (!again.ok && again.suggested_html) suggestion = again.suggested_html
     }
+    if (suggestion) { fs.appendFileSync(OUT, `\n\n==== ${host} · ${r.field_key}\n--- VORHER\n${r.field_value}\n--- NACHHER\n${suggestion}\n`) }
     const stillBlocked = suggestion ? findBlockedTerms(suggestion) : [{ quote: '', reason: 'kein Vorschlag' }]
     console.log(`\n── ${host} · ${r.field_key} · gefunden: ${before}`)
     console.log('VORHER : ' + r.field_value.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 500))
