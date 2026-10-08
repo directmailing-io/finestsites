@@ -66,7 +66,7 @@ export default async function HomePage({
         status: templates.status,
       })
       .from(templates)
-      .where(and(inArray(templates.status, ['published', 'coming_soon']), eq(templates.isTest, false), eq(templates.isAllrounder, false)))
+      .where(and(eq(templates.status, 'published'), eq(templates.isTest, false), eq(templates.isAllrounder, false)))
       .orderBy(asc(sql`COALESCE(${templates.sortOrder}, 100)`), asc(templates.createdAt))
     templateList = rows.map(r => ({
       ...r,
@@ -281,12 +281,6 @@ export default async function HomePage({
 
           <TemplateGridSection templates={templateList} />
 
-          {/* Coming soon note */}
-          {templateList.some(t => t.isComingSoon) && (
-            <p style={{ textAlign: 'center', fontSize: 13, color: '#bbb', marginTop: 32 }}>
-              Weitere Vorlagen für Vorwerk, LR Health &amp; Beauty, Herbalife, Nu Skin und mehr folgen in Kürze.
-            </p>
-          )}
 
           <div style={{ textAlign: 'center', marginTop: 40 }}>
             <Link

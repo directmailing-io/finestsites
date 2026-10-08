@@ -186,7 +186,7 @@ const STEPS = [
   {
     num: '01',
     title: 'Vorlage wählen',
-    text: 'Für FitLine, Ringana, doTERRA und viele mehr gibt es fertige Vorlagen. Texte, Design, alles drin. Du wählst einmal die passende aus.',
+    text: 'Für Produkt-Seiten, Kuren, Business-Seiten und Vitalcheck gibt es fertige Vorlagen. Texte, Design, alles drin. Du wählst einmal die passende Vorlage aus.',
     visual: <MockupTemplateSelect />,
   },
   {

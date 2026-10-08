@@ -45,7 +45,7 @@ export default async function VorlagenPage() {
         createdAt: templates.createdAt,
       })
       .from(templates)
-      .where(and(inArray(templates.status, ['published', 'coming_soon']), eq(templates.isTest, false), eq(templates.isFree, false), eq(templates.isAllrounder, false)))
+      .where(and(eq(templates.status, 'published'), eq(templates.isTest, false), eq(templates.isFree, false), eq(templates.isAllrounder, false)))
       .orderBy(asc(sql`COALESCE(${templates.sortOrder}, 100)`), asc(templates.createdAt))
 
     templateList = rows.map(r => ({
@@ -79,7 +79,7 @@ export default async function VorlagenPage() {
             Finde das passende Template.
           </h1>
           <p style={{ fontSize: 16, color: '#777', maxWidth: 500, margin: '0 auto' }}>
-            Jedes Template wurde speziell für ein Network-Marketing-Unternehmen entwickelt. Fertige Texte, fertige Designs.
+            Jedes Template ist auf ein Ziel zugeschnitten: Produkt zeigen, Kur erklären, Partner gewinnen, Gespräche starten. Fertige Texte, fertige Designs.
           </p>
         </div>
 

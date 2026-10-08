@@ -7602,18 +7602,18 @@ section.section.reviews {
             <h3><span class="l-de">Was trifft auf dich zu?</span><span class="l-en">Which sounds like you?</span></h3>
             <p class="form-step-hint"><span class="l-de">Damit {{#unless team_modus=team}}ich dich besser vorbereitet beraten kann{{/unless}}{{#if team_modus=team}}wir dich besser vorbereitet beraten können{{/if}}.</span><span class="l-en">So {{#unless team_modus=team}}I{{/unless}}{{#if team_modus=team}}we{{/if}} can come to our chat better prepared.</span></p>
             <div class="form-options" style="grid-template-columns:1fr;gap:10px;">
-              <button type="button" class="form-option form-option--card" data-type="akut">
+              <button type="button" class="form-option form-option--card" data-type="alltag">
                 <span class="form-option-dot"></span>
                 <span>
-                  <strong style="display:block;margin-bottom:2px;"><span class="l-de">Ich habe akute Beschwerden</span><span class="l-en">I'm dealing with symptoms right now</span></strong>
-                  <span style="font-size:13px;color:var(--text-muted);"><span class="l-de">z.&#8202;B. Müdigkeit, Schlafprobleme, geschwächtes Immunsystem</span><span class="l-en">e.g. tiredness, sleep problems, a weakened immune system</span></span>
+                  <strong style="display:block;margin-bottom:2px;"><span class="l-de">Ich möchte meinen Alltag gut versorgen</span><span class="l-en">I want to be well supplied in everyday life</span></strong>
+                  <span style="font-size:13px;color:var(--text-muted);"><span class="l-de">Für Beruf, Familie, Sport und alles, was dazukommt</span><span class="l-en">For work, family, sport and everything in between</span></span>
                 </span>
               </button>
-              <button type="button" class="form-option form-option--card" data-type="praeventiv">
+              <button type="button" class="form-option form-option--card" data-type="kennenlernen">
                 <span class="form-option-dot"></span>
                 <span>
-                  <strong style="display:block;margin-bottom:2px;"><span class="l-de">Ich möchte es präventiv nutzen</span><span class="l-en">I want to use it preventively</span></strong>
-                  <span style="font-size:13px;color:var(--text-muted);"><span class="l-de">Ich bin gesund und will es bleiben</span><span class="l-en">I'm healthy and want to stay that way</span></span>
+                  <strong style="display:block;margin-bottom:2px;"><span class="l-de">Ich möchte das Optimalset erst mal kennenlernen</span><span class="l-en">I want to get to know the Optimal Set first</span></strong>
+                  <span style="font-size:13px;color:var(--text-muted);"><span class="l-de">Was steckt drin, wie schmeckt es, was kostet es</span><span class="l-en">What is in it, how it tastes, what it costs</span></span>
                 </span>
               </button>
             </div>
@@ -9036,25 +9036,25 @@ section.section.reviews {
     const themaInput = document.getElementById('themaInput');
     const successEl = document.getElementById('formSuccess');
     let currentStep = 0;
-    let selectedType = ''; // 'akut' oder 'praeventiv'
+    let selectedType = ''; // 'alltag' oder 'kennenlernen'
 
+    // Wünsche und Interessen, keine Beschwerden oder Symptome (Health-Claims-Vorgaben)
     // label = DE, labelEn = EN — beide werden als l-de/l-en Spans gerendert
     const GOALS = {
-      akut: [
-        { value: 'energie', label: 'Energie & Erschöpfung', labelEn: 'Energy & exhaustion' },
-        { value: 'schlaf', label: 'Schlaf & Erholung', labelEn: 'Sleep & recovery' },
-        { value: 'immunsystem', label: 'Immunsystem stärken', labelEn: 'A stronger immune system' },
-        { value: 'stress', label: 'Stress & innere Ruhe', labelEn: 'Stress & inner calm' },
-        { value: 'verdauung', label: 'Verdauung & Darm', labelEn: 'Digestion & gut' },
-        { value: 'muskeln', label: 'Muskeln & Gelenke', labelEn: 'Muscles & joints' },
-      ],
-      praeventiv: [
+      alltag: [
         { value: 'energie', label: 'Mehr Energie im Alltag', labelEn: 'More energy day to day' },
-        { value: 'schlaf', label: 'Besserer Schlaf', labelEn: 'Better sleep' },
-        { value: 'sport', label: 'Leistung & Sport', labelEn: 'Performance & sport' },
+        { value: 'erholung', label: 'Erholung & Ausgleich', labelEn: 'Recovery & balance' },
+        { value: 'sport', label: 'Sport & Leistung', labelEn: 'Performance & sport' },
         { value: 'beauty', label: 'Haut, Haare & Nägel', labelEn: 'Skin, hair & nails' },
-        { value: 'vitalitaet', label: 'Allgemeine Vitalität', labelEn: 'Overall vitality' },
-        { value: 'altern', label: 'Gesund altern vorsorgen', labelEn: 'Healthy aging' },
+        { value: 'ernaehrung', label: 'Ausgewogene Ernährung', labelEn: 'A balanced diet' },
+        { value: 'vitalitaet', label: 'Fit älter werden', labelEn: 'Staying fit as I age' },
+      ],
+      kennenlernen: [
+        { value: 'inhalt', label: 'Was steckt drin?', labelEn: 'What is in it?' },
+        { value: 'geschmack', label: 'Geschmack & Zubereitung', labelEn: 'Taste & preparation' },
+        { value: 'preis', label: 'Preis & Bestellung', labelEn: 'Price & ordering' },
+        { value: 'erfahrungen', label: 'Erfahrungen anderer', labelEn: 'Other people\'s experiences' },
+        { value: 'routine', label: 'Wie passt es in meinen Tag?', labelEn: 'How does it fit into my day?' },
       ],
     };
 
@@ -9071,8 +9071,8 @@ section.section.reviews {
       if (!container) return;
       container.innerHTML = '';
       const goals = GOALS[selectedType] || [];
-      if (headline) headline.innerHTML = selectedType === 'akut'
-        ? '<span class="l-de">Was beschäftigt dich am meisten?</span><span class="l-en">What\'s weighing on you the most?</span>'
+      if (headline) headline.innerHTML = selectedType === 'kennenlernen'
+        ? '<span class="l-de">Was interessiert dich am meisten?</span><span class="l-en">What interests you most?</span>'
         : '<span class="l-de">Was wünschst du dir?</span><span class="l-en">What are you hoping for?</span>';
       goals.forEach(g => {
         const btn = document.createElement('button');
@@ -9092,14 +9092,14 @@ section.section.reviews {
       if (step2Next) step2Next.disabled = true;
     }
 
-    // Step 1: exklusive Auswahl (akut / praeventiv)
+    // Step 1: exklusive Auswahl (alltag / kennenlernen)
     const step1Next = document.getElementById('step1Next');
     msForm.querySelectorAll('.form-option[data-type]').forEach(opt => {
       opt.addEventListener('click', () => {
         msForm.querySelectorAll('.form-option[data-type]').forEach(o => o.classList.remove('selected'));
         opt.classList.add('selected');
         selectedType = opt.dataset.type || '';
-        if (hintergrundInput) hintergrundInput.value = selectedType === 'akut' ? 'Akute Beschwerden' : 'Präventiv';
+        if (hintergrundInput) hintergrundInput.value = selectedType === 'kennenlernen' ? 'Möchte das Optimalset kennenlernen' : 'Möchte den Alltag gut versorgen';
         if (step1Next) step1Next.disabled = false;
       });
     });

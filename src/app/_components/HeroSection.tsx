@@ -52,7 +52,7 @@ export const heroTheme: HeroTheme = {
 const benefits: { title: string; desc: string; icon: ReactNode }[] = [
   {
     title: 'Fertige Seiten für Produkt und Zielgruppe',
-    desc: 'Optimalset, Stoffwechselkur, Mütter, Sportler: In der Bibliothek ist die passende Seite schon fertig.',
+    desc: 'Produkt-Seite, Stoffwechselkur, Business-Seite, Vitalcheck: In der Bibliothek ist die passende Seite schon fertig.',
     icon: <><rect width="7" height="7" x="3" y="3" rx="1.5"/><rect width="7" height="7" x="14" y="3" rx="1.5"/><rect width="7" height="7" x="14" y="14" rx="1.5"/><rect width="7" height="7" x="3" y="14" rx="1.5"/></>,
   },
   {

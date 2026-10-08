@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { NM_COMPANIES } from '@/lib/constants/nm-companies'
 
 export interface TemplateCardData {
   id: string
@@ -143,15 +142,9 @@ function TemplateCard({ tpl }: { tpl: TemplateCardData }) {
   )
 }
 
-// All supported NM companies as tabs (static list so every company always appears)
-const COMPANY_TABS = ['Alle', ...NM_COMPANIES]
-
 export default function TemplateGridSection({ templates }: { templates: TemplateCardData[] }) {
-  const [activeFilter, setActiveFilter] = useState<string>('Alle')
-
-  const filtered = activeFilter === 'Alle'
-    ? templates
-    : templates.filter(t => t.nmCompanies.includes(activeFilter))
+  // Keine Firmen-Tabs mehr: Vorlagen werden ohne Markenbezug gelistet
+  const filtered = templates
 
   if (templates.length === 0) {
     return (
@@ -163,34 +156,10 @@ export default function TemplateGridSection({ templates }: { templates: Template
 
   return (
     <>
-      {/* Company tabs */}
-      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', justifyContent: 'center', marginBottom: 36, overflowX: 'auto' }}>
-          {COMPANY_TABS.map(opt => (
-            <button
-              key={opt}
-              onClick={() => setActiveFilter(opt)}
-              style={{
-                background: activeFilter === opt ? '#111' : '#fff',
-                color: activeFilter === opt ? '#fff' : '#555',
-                border: activeFilter === opt ? '1.5px solid #111' : '1.5px solid #e0e0e0',
-                borderRadius: 100,
-                padding: '7px 18px',
-                fontSize: 13,
-                fontWeight: 600,
-                cursor: 'pointer',
-                transition: 'all 0.15s',
-                whiteSpace: 'nowrap',
-                flexShrink: 0,
-              }}
-            >
-              {opt}
-            </button>
-          ))}
-      </div>
 
       {filtered.length === 0 && (
         <p style={{ textAlign: 'center', color: '#aaa', fontSize: 14, padding: '32px 0' }}>
-          Für {activeFilter} folgen Templates in Kürze.
+          Templates folgen in Kürze.
         </p>
       )}
       <div className="fs-template-grid">

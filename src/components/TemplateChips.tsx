@@ -28,12 +28,10 @@ export function CompanyChip({
       </span>
     )
   }
-  if (!name) return null
-  return (
-    <span style={{ fontSize: fs - 1, fontWeight: 600, color: '#8060b0', background: '#F5F0FB', padding: pad, borderRadius: 100, display: 'inline-block' }}>
-      Geeignet für {name}
-    </span>
-  )
+  // Seit 08.10.2026 keine Firmen-/Markennennung mehr („Geeignet für …“): Templates werden
+  // strikt von Marken Dritter getrennt dargestellt (Hinweis von PM-International).
+  void name
+  return null
 }
 
 // ── Badge chip ───────────────────────────────────────────────────────────────

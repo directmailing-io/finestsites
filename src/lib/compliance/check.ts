@@ -21,9 +21,11 @@ export const SYSTEM_PROMPT = `Du bist ein Compliance-Prüfer für Vertriebspartn
 
 ═══ GRUNDPRINZIPIEN (WICHTIGSTE REGELN) ═══
 
-1. IM ZWEIFEL COMPLIANT: Markiere nur KLARE Verstöße. Grenzwertige, vage oder allgemeine Formulierungen ohne konkreten Krankheits-/Symptombezug sind OK. Du bist ein Helfer, kein Zensor. Ein Text, den du übervorsichtig zerlegst, ist ein schlechteres Ergebnis als ein Text mit einer grenzwertigen, aber vertretbaren Formulierung.
+0. KEINE KRANKHEITEN UND SYMPTOME (HÄRTESTE REGEL): Sobald ein Text ein Produkt (Nahrungsergänzung, Kur, Set) erwähnt, darf er KEINE Krankheit, kein Symptom und keine gesundheitliche Beschwerde nennen – auch nicht als persönliche Vorgeschichte, auch nicht in Vergangenheitsform, auch nicht ohne Kausalwort. Beispiele für verbotene Nennungen: Migräne, Kopfschmerzen, unreine Haut, Hautprobleme, Schlafprobleme, Schlafstörungen, Verdauungsprobleme, Gelenkschmerzen, Rückenschmerzen, Allergien, Erkältungen, geschwächtes Immunsystem, Erschöpfung, Burnout, Depression, Diabetes, Blutdruck, Entzündungen, Medikamente, Diagnosen, Therapien, "Beschwerden". Begründung: Der Hersteller (PM-International) und Prüfstellen lesen die gesamte Erzählung als Zusammenhang „Beschwerde → Produkt → Besserung“, selbst wenn die Sätze getrennt sind. Ersetze solche Stellen durch eine neutrale Motivation ohne Gesundheitsbezug, z. B. "Ich war auf der Suche nach einer einfachen Routine für meinen Alltag." oder "Ich wollte etwas für mich tun."
 
-2. KERNBOTSCHAFT ERHALTEN: Beim Umformulieren darf KEINE persönliche Erfahrung und KEIN Thema des Users gestrichen werden. Du entschärfst nur die verbotene Kausalität — die Geschichte bleibt vollständig erhalten. Wenn der User über seine Verdauung, seinen Schlaf oder seine Energie schreibt, muss das Thema auch im Vorschlag vorkommen. Streichen ist verboten, umformulieren ist deine Aufgabe.
+1. IM ZWEIFEL COMPLIANT: Abgesehen von Regel 0 markiere nur KLARE Verstöße. Grenzwertige, vage oder allgemeine Formulierungen ohne konkreten Krankheits-/Symptombezug sind OK. Du bist ein Helfer, kein Zensor. Ein Text, den du übervorsichtig zerlegst, ist ein schlechteres Ergebnis als ein Text mit einer grenzwertigen, aber vertretbaren Formulierung.
+
+2. KERNBOTSCHAFT ERHALTEN: Beim Umformulieren darf KEINE persönliche Erfahrung des Users gestrichen werden (Ausnahme: Krankheits-/Symptomnennungen nach Regel 0 werden durch neutrale Motivation ersetzt). Du entschärfst nur die verbotene Kausalität — die Geschichte bleibt vollständig erhalten. Wenn der User über seine Verdauung, seinen Schlaf oder seine Energie schreibt, muss das Thema auch im Vorschlag vorkommen. Streichen ist verboten, umformulieren ist deine Aufgabe.
 
 3. MINIMAL-EDIT: Ändere in suggested_html AUSSCHLIESSLICH die Sätze, die du in issues beanstandet hast. Jeder nicht beanstandete Satz wird ZEICHENGENAU aus dem Original übernommen — kein Umschreiben aus Stilgründen, kein "Verbessern" unbeanstandeter Sätze, keine neue Struktur.
 
@@ -55,9 +57,10 @@ export const SYSTEM_PROMPT = `Du bist ein Compliance-Prüfer für Vertriebspartn
 
 ═══ WAS ERLAUBT IST ═══
 
-1. PERSÖNLICHE VORGESCHICHTE ohne Produktverknüpfung:
-   ✓ "Ich hatte damals oft Migräne und war auf der Suche nach etwas."
-   ✓ "Ich war oft müde und wollte etwas ändern."
+1. PERSÖNLICHE VORGESCHICHTE ohne Gesundheitsbezug:
+   ✓ "Ich war auf der Suche nach einer einfachen Routine für meinen Alltag."
+   ✓ "Ich wollte etwas für mich tun und habe es einfach ausprobiert."
+   ✗ NICHT erlaubt (Regel 0): "Ich hatte damals oft Migräne und war auf der Suche nach etwas."
 
 2. ROUTINE ohne Wirkungsbehauptung:
    ✓ "Seit 2019 ist es Teil meines Morgenrituals."
@@ -83,7 +86,7 @@ Brich die kausale Kette auf: Produktnennung und Ergebnisbeschreibung in getrennt
 
 Beispiel 1:
    ✗ "Seitdem ich das Optimalset nehme, ist meine Migräne weg."
-   ✓ "Ich hatte damals Migräne. Heute ist das Optimalset fester Teil meines Alltags."
+   ✓ "Ich war auf der Suche nach einer Routine, die ich durchhalte. Heute ist das Optimalset fester Teil meines Alltags."
 
 Beispiel 2:
    ✗ "Ich nehme es seit 3 Jahren und fühle mich so viel energiegeladener."
@@ -95,8 +98,8 @@ Beispiel 3:
 
 Beispiel 4 (Erfahrung bleibt vollständig erhalten — so sieht Kernbotschaft-Erhalt aus):
    ✗ "Das Optimalset hat mich bei der Verdauung unterstützt."
-   ✓ "Meine Verdauung war lange ein Thema für mich. Heute fühle ich mich insgesamt wohler. Das Optimalset gehört fest zu meiner täglichen Routine."
-   → Das Thema Verdauung bleibt drin. Nur die direkte Produkt-Wirkungs-Zuschreibung ist raus. FALSCH wäre, den Verdauungs-Bezug komplett zu streichen.
+   ✓ "Ich wollte meinem Alltag mehr Struktur geben. Heute fühle ich mich insgesamt wohler. Das Optimalset gehört fest zu meiner täglichen Routine."
+   → Das Gesundheitsthema (Verdauung) wird durch eine neutrale Motivation ersetzt. Die persönliche Geschichte (skeptisch, ausprobiert, Routine, Wohlbefinden) bleibt erhalten.
 
 SELBSTTEST: Bevor du suggested_html ausgibst, prüfe drei Dinge:
 1. Enthält der Text noch ein Kausalwort zwischen Produkt und Symptomverbesserung? Falls ja, überarbeite nochmals.
@@ -129,6 +132,44 @@ Antworte AUSSCHLIESSLICH mit reinem JSON ohne Code-Fences:
   "issues": [{"quote": "exakter Wortlaut aus dem Text", "reason": "kurze Erklärung warum Verstoß"}],
   "suggested_html": "die umformulierte HTML-Version (nur bei compliant=false, sonst leerer String)"
 }`
+
+// ── Deterministische Sperrliste (Krankheiten/Symptome) ───────────────────────
+// Greift unabhängig vom Modell und VOR dem Bestandsschutz: Texte mit diesen Begriffen
+// gelten nie als freigegeben (Anlass: Hinweis von PM-International am 08.10.2026,
+// „Migräne“ in einem Über-mich-Text hatte die KI durchgewinkt).
+const BLOCKED_TERMS: Array<{ re: RegExp; label: string }> = [
+  { re: /migr[äa]ne/i, label: 'Migräne' },
+  { re: /kopfschmerz|kopfweh/i, label: 'Kopfschmerzen' },
+  { re: /unreine haut|hautproblem|hautunreinheit|akne|neurodermitis|ekzem/i, label: 'Hautprobleme' },
+  { re: /schlafproblem|schlafst[öo]rung|einschlafproblem|durchschlafproblem/i, label: 'Schlafprobleme' },
+  { re: /verdauungsproblem|verdauungsbeschwerd|bl[äa]hung|verstopfung|durchfall|reizdarm/i, label: 'Verdauungsbeschwerden' },
+  { re: /gelenkschmerz|r[üu]ckenschmerz|muskelschmerz|schmerz/i, label: 'Schmerzen' },
+  { re: /allergi/i, label: 'Allergie' },
+  { re: /erk[äa]ltung|grippe|infekt/i, label: 'Erkältung/Infekt' },
+  { re: /immunsystem (st[äa]rk|schw[äa]ch)|geschw[äa]chtes immunsystem|immunschw[äa]che/i, label: 'Immunsystem' },
+  { re: /ersch[öo]pfung|burnout|burn-out|chronisch m[üu]de|dauerm[üu]de/i, label: 'Erschöpfung' },
+  { re: /depress|angstst[öo]rung|panikattack/i, label: 'Depression/Angst' },
+  { re: /diabet|blutzucker|blutdruck|cholesterin|schilddr[üu]se|hashimoto/i, label: 'Stoffwechsel-/Kreislauferkrankung' },
+  { re: /entz[üu]ndung|arthrose|arthritis|rheuma|osteoporose/i, label: 'Entzündliche/degenerative Erkrankung' },
+  { re: /krebs|tumor|chemo/i, label: 'Krebs' },
+  { re: /\bmedikament|\btablette|\btherapie|\bdiagnose|\b(arzt|[äa]rztin|[äa]rzte)\b|\bklinik\b|\boperation\b/i, label: 'Medizinischer Kontext' },
+  { re: /\bbeschwerden|\bsymptom|\bkrankheit|\bkrank\b|\bheilt\b|\bgeheilt|\bheilung|\blindert|\blinderung/i, label: 'Beschwerden/Heilung' },
+  { re: /abgenommen|kilo\b|kg\b|gewicht verloren/i, label: 'Gewichtsangabe (nur ohne Produktbezug erlaubt – wird geprüft)' },
+]
+/** Liefert gefundene Sperrbegriffe mit dem Satz, in dem sie stehen. Gewichtsangaben nur melden, wenn ein Produkt im Text steht. */
+export function findBlockedTerms(html: string): Array<{ quote: string; reason: string }> {
+  const text = normalizeForMatch(html)
+  const sentences = text.split(/(?<=[.!?…])\s+/)
+  const mentionsProduct = /optimal|set|restorate|activize|powercocktail|cocktail|basics|fitline|produkt|kur|reset|shake|kapsel|pulver|drink/i.test(text)
+  const out: Array<{ quote: string; reason: string }> = []
+  for (const t of BLOCKED_TERMS) {
+    if (t.label.startsWith('Gewichtsangabe') && !mentionsProduct) continue
+    for (const sentence of sentences) {
+      if (t.re.test(sentence)) { out.push({ quote: sentence.trim().slice(0, 240), reason: `${t.label}: Krankheits-, Symptom- oder Wirkungsbezug ist in Produkt-Texten nicht erlaubt (Health-Claims-Verordnung, Vorgaben des Herstellers).` }); break }
+    }
+  }
+  return out
+}
 
 // ── Deterministic Bestandsschutz ──────────────────────────────────────────────
 
@@ -197,6 +238,10 @@ export async function checkCompliance(
   apiKey: string,
   extraRules?: string
 ): Promise<CheckResult> {
+  const blocked = findBlockedTerms(html)
+  const blockRules = blocked.length
+    ? `\n\nZUSÄTZLICH (deterministisch gefunden, MUSS beanstandet und umformuliert werden – compliant darf NICHT true sein): ${blocked.map(b => `„${b.quote}“`).join(' | ')}`
+    : ''
   const userContent =
     approvedHtml && approvedHtml !== html
       ? `Bereits freigegebene Fassung (Bestandsschutz — wortgleiche Sätze nicht erneut melden):\n\n${approvedHtml}\n\nPrüfe diesen Text auf Heil- und Wirkungsaussagen:\n\n${html}`
@@ -213,7 +258,7 @@ export async function checkCompliance(
       temperature: 0,
       response_format: { type: 'json_object' },
       messages: [
-        { role: 'system', content: extraRules ? `${SYSTEM_PROMPT}\n\n${extraRules}` : SYSTEM_PROMPT },
+        { role: 'system', content: `${SYSTEM_PROMPT}${extraRules ? `\n\n${extraRules}` : ''}${blockRules}` },
         { role: 'user', content: userContent },
       ],
     }),
@@ -239,14 +284,18 @@ export async function checkCompliance(
     throw new Error('KI-Antwort ungültiges Format')
   }
 
-  if (parsed.compliant) return { ok: true }
+  if (parsed.compliant && blocked.length === 0) return { ok: true }
 
   const rawIssues = (parsed.issues ?? []).filter(i => i && typeof i.quote === 'string')
+  // Sperrbegriffe immer als Issue führen, auch wenn das Modell sie nicht genannt hat
+  for (const b of blocked) if (!rawIssues.some(i => normalizeForMatch(i.quote).includes(normalizeForMatch(b.quote).slice(0, 40)))) rawIssues.push(b)
 
   // Deterministic Bestandsschutz: never re-flag sentences the user already
   // has in an approved version, regardless of what the model claims.
+  // Sperrbegriffe sind vom Bestandsschutz ausgenommen (eine frühere Freigabe mit „Migräne“ gilt nicht mehr)
+  const isBlockedIssue = (i: { quote: string }) => blocked.some(b => normalizeForMatch(i.quote).includes(normalizeForMatch(b.quote).slice(0, 40)) || normalizeForMatch(b.quote).includes(normalizeForMatch(i.quote).slice(0, 40)))
   const issues = approvedHtml
-    ? rawIssues.filter(i => !isGrandfathered(i.quote, approvedHtml))
+    ? rawIssues.filter(i => isBlockedIssue(i) || !isGrandfathered(i.quote, approvedHtml))
     : rawIssues
 
   if (issues.length === 0) {
@@ -257,7 +306,7 @@ export async function checkCompliance(
   }
 
   // Hard-strip em/en-dashes as a safety net even if model ignored the rule
-  const cleaned = (parsed.suggested_html ?? '')
+  const cleaned = (parsed.suggested_html ?? (parsed.compliant ? '' : ''))
     .replace(/—/g, ', ')
     .replace(/–/g, '-')
 

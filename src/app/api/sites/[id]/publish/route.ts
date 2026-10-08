@@ -21,6 +21,7 @@ import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3'
 import { getUserFromRequest } from '@/lib/auth/server'
 import { db } from '@/lib/db'
 import { userSites, siteData, users } from '@/lib/db/schema'
+import { findBlockedTerms } from '@/lib/compliance/check'
 import { eq, and, ne } from 'drizzle-orm'
 import { purgeSiteCache, markSiteOffline } from '@/lib/cloudflare/kv'
 import { writeRenderedHtmlKV } from '@/lib/cloudflare/kv-api'
@@ -143,6 +144,41 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
         error: `Plan-Limit erreicht. Dein ${plan}-Plan erlaubt ${limit} ${limit === 1 ? 'aktive Premium-Webseite' : 'aktive Premium-Webseiten'}. Bitte upgrade oder nimm eine andere Seite offline.`,
         code: 'PLAN_LIMIT_REACHED',
       }, { status: 403 })
+    }
+  }
+
+  // ── Gate 3b: Compliance der Richtext-Felder ────────────────────────────────
+  // Felder mit compliance_check (Über mich, Intro) müssen (a) per KI-Prüfung freigegeben
+  // sein (gespeicherte Freigabe = genau dieser Text) und (b) frei von Krankheits-/
+  // Symptombegriffen sein. Eine alte Freigabe mit solchen Begriffen gilt nicht mehr
+  // (Hinweis von PM-International, 08.10.2026). Veröffentlichte Seiten bleiben online,
+  // aber jede neue Veröffentlichung verlangt die Korrektur.
+  {
+    const normText = (v: string) => v.replace(/<[^>]*>/g, ' ').replace(/&nbsp;/gi, ' ').replace(/\s+/g, ' ').trim()
+    const complianceRows = await db.select({ k: siteData.fieldKey, v: siteData.fieldValue }).from(siteData).where(eq(siteData.userSiteId, id))
+    const siteDataMap: Record<string, string> = {}
+    for (const r of complianceRows) siteDataMap[r.k] = r.v ?? ''
+    const complianceFields = ((site.template.placeholderSchema as { fields?: { key: string; type?: string; compliance_check?: boolean; label?: string }[] } | null)?.fields ?? [])
+      .filter(f => f.compliance_check && f.type === 'richtext')
+    for (const f of complianceFields) {
+      const text = siteDataMap[f.key] ?? ''
+      if (!normText(text)) continue
+      const blocked = findBlockedTerms(text)
+      if (blocked.length) {
+        return NextResponse.json({
+          error: `Dein Text „${f.label ?? f.key}“ enthält Formulierungen mit Krankheits- oder Symptombezug (${blocked.map(b => b.reason.split(':')[0]).join(', ')}). Bitte lass ihn im Editor prüfen und übernimm den Vorschlag, dann kannst du veröffentlichen.`,
+          code: 'COMPLIANCE_BLOCKED',
+          field: f.key,
+        }, { status: 403 })
+      }
+      const approved = [siteDataMap[f.key + '__chk'], siteDataMap[f.key + '__chkbase']].some(a => a && normText(a) === normText(text))
+      if (!approved) {
+        return NextResponse.json({
+          error: `Bitte lass deinen Text „${f.label ?? f.key}“ im Editor prüfen (Button „Prüfen“), bevor du veröffentlichst.`,
+          code: 'COMPLIANCE_REQUIRED',
+          field: f.key,
+        }, { status: 403 })
+      }
     }
   }
 

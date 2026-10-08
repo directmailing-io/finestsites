@@ -1,8 +1,7 @@
 'use client'
 
 import { useState, useMemo } from 'react'
-import { CompanyChip, BadgeChip } from '@/components/TemplateChips'
-import { NM_COMPANIES } from '@/lib/constants/nm-companies'
+import { BadgeChip } from '@/components/TemplateChips'
 
 interface TemplateItem {
   id: string
@@ -48,7 +47,6 @@ function ComingSoonCard({ tpl }: { tpl: TemplateItem }) {
         <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.2) 35%, transparent 60%)' }} />
         <div style={{ position: 'absolute', bottom: 14, left: 16, right: 16 }}>
           <div style={{ marginBottom: 4 }}>
-            <CompanyChip name={tpl.nmCompanies[0]} isAllrounder={tpl.isAllrounder} size="xs" />
           </div>
           <h3 style={{ fontSize: 15, fontWeight: 700, color: '#fff', lineHeight: 1.2, margin: 0, textShadow: '0 1px 6px rgba(0,0,0,0.6)' }}>{tpl.title}</h3>
         </div>
@@ -95,7 +93,6 @@ function TemplateCard({ tpl }: { tpl: TemplateItem }) {
         <div style={{ position: 'absolute', bottom: 14, left: 16, right: 16, display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: 8 }}>
           <div>
             <div style={{ marginBottom: 4 }}>
-              <CompanyChip name={tpl.nmCompanies[0]} isAllrounder={tpl.isAllrounder} size="xs" />
             </div>
             <h3 style={{ fontSize: 15, fontWeight: 700, color: '#fff', lineHeight: 1.2, margin: 0, textShadow: '0 1px 4px rgba(0,0,0,0.35)' }}>{tpl.title}</h3>
           </div>
@@ -131,12 +128,9 @@ function TemplateCard({ tpl }: { tpl: TemplateItem }) {
 
 export default function VorlagenGrid({ templates }: { templates: TemplateItem[] }) {
   const [search, setSearch] = useState('')
-  const [companyFilter, setCompanyFilter] = useState('Alle')
   const [availFilter, setAvailFilter] = useState<AvailFilter>('all')
   const [sort, setSort] = useState<SortOption>('default')
 
-  // Static company list — always show all NM companies regardless of template availability
-  const companies = useMemo(() => ['Alle', ...NM_COMPANIES], [])
 
   const filtered = useMemo(() => {
     let list = templates
@@ -145,16 +139,12 @@ export default function VorlagenGrid({ templates }: { templates: TemplateItem[] 
     if (availFilter === 'available') list = list.filter(t => !t.isComingSoon)
     else if (availFilter === 'coming_soon') list = list.filter(t => t.isComingSoon)
 
-    // Company
-    if (companyFilter === 'Allgemein') list = list.filter(t => t.isAllrounder)
-    else if (companyFilter !== 'Alle') list = list.filter(t => !t.isAllrounder && t.nmCompanies.includes(companyFilter))
 
     // Search
     const q = search.trim().toLowerCase()
     if (q) list = list.filter(t =>
       t.title.toLowerCase().includes(q) ||
-      (t.description ?? '').toLowerCase().includes(q) ||
-      t.nmCompanies.some(c => c.toLowerCase().includes(q))
+      (t.description ?? '').toLowerCase().includes(q)
     )
 
     // Sort
@@ -162,7 +152,7 @@ export default function VorlagenGrid({ templates }: { templates: TemplateItem[] 
     else if (sort === 'za') list = [...list].sort((a, b) => b.title.localeCompare(a.title, 'de'))
 
     return list
-  }, [templates, search, companyFilter, availFilter, sort])
+  }, [templates, search, availFilter, sort])
 
   const chipStyle = (active: boolean): React.CSSProperties => ({
     background: active ? '#111' : '#fff',
@@ -203,17 +193,6 @@ export default function VorlagenGrid({ templates }: { templates: TemplateItem[] 
       {/* ── Filters row ── */}
       <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap', marginBottom: 32, alignItems: 'flex-start' }}>
 
-        {/* Company */}
-        {companies.length > 1 && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-            <span style={{ fontSize: 11, fontWeight: 600, color: '#aaa', letterSpacing: '0.06em', textTransform: 'uppercase' }}>Unternehmen</span>
-            <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-              {companies.map(c => (
-                <button key={c} onClick={() => setCompanyFilter(c)} style={chipStyle(companyFilter === c)}>{c}</button>
-              ))}
-            </div>
-          </div>
-        )}
 
         {/* Availability */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -221,7 +200,6 @@ export default function VorlagenGrid({ templates }: { templates: TemplateItem[] 
           <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
             <button onClick={() => setAvailFilter('all')} style={chipStyle(availFilter === 'all')}>Alle</button>
             <button onClick={() => setAvailFilter('available')} style={chipStyle(availFilter === 'available')}>Verfügbar</button>
-            <button onClick={() => setAvailFilter('coming_soon')} style={chipStyle(availFilter === 'coming_soon')}>Coming Soon</button>
           </div>
         </div>
 
