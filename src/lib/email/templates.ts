@@ -834,47 +834,56 @@ export function partnerContactsUpdateEmail({ firstName, partnerName }: { firstNa
 export type VitalcheckSegment = 'none' | 'starter' | 'pro' | 'unlimited'
 
 export const VITALCHECK_SUBJECTS: Record<VitalcheckSegment, string> = {
-  none: 'Neu: Die Vitalcheck-Seite – der Check, der Gespräche startet',
-  starter: 'Neu: Die Vitalcheck-Seite (und warum Pro jetzt Sinn macht)',
-  pro: 'Neu: Die Vitalcheck-Seite – jetzt 4 PM-Vorlagen',
-  unlimited: 'Neu und für dich schon freigeschaltet: Die Vitalcheck-Seite',
+  none: 'Neu: Deine Vitalcheck-Seite',
+  starter: 'Neu: Deine Vitalcheck-Seite (lohnt sich mit Pro)',
+  pro: 'Neu: Deine Vitalcheck-Seite, jetzt 4 PM-Vorlagen',
+  unlimited: 'Neu für dich: Deine Vitalcheck-Seite ist freigeschaltet',
 }
 
+// Zielgruppe: ältere Frauen, wenig Technik-Erfahrung. Kurze Sätze, keine Fachwörter,
+// keine Gedankenstriche, ein Gedanke pro Absatz. Kern: Der Check lädt zum Mitmachen ein,
+// das Ergebnis wird geteilt, Freundinnen machen den Check auch (Weiterempfehlung von allein).
 export function vitalcheckLaunchEmail({ firstName, segment }: { firstName?: string; segment: VitalcheckSegment }): string {
   const fn = (firstName ?? '').trim()
   const hi = fn ? `Hallo ${fn}` : 'Hallo'
   const VIDEO = 'https://screen.studio/share/5Krw9gKt'
   const DEMO = 'https://demo.vitalprofil.net'
-  const p = (t: string, extra = '') => `<p style="margin:0 0 16px;font-size:16px;line-height:1.6;color:${base.body};${extra}">${t}</p>`
-  const fact = (t: string) => `<tr><td valign="top" style="padding:0 10px 9px 0;width:18px;"><span style="display:inline-block;width:18px;height:18px;border-radius:50%;background:#DCFCE7;color:#15803D;font-size:12px;line-height:18px;text-align:center;font-weight:700;">✓</span></td><td style="padding:0 0 9px;font-size:15px;line-height:1.5;color:${base.body};">${t}</td></tr>`
-  const step = (n: number, t: string) => `<tr><td valign="top" style="padding:0 12px 10px 0;"><span style="display:inline-block;width:26px;height:26px;line-height:26px;border-radius:50%;background:#111827;color:#fff;font-size:13px;font-weight:700;text-align:center;">${n}</span></td><td valign="top" style="padding:3px 0 10px;font-size:15px;line-height:1.5;color:${base.body};">${t}</td></tr>`
+  const p = (t: string, extra = '') => `<p style="margin:0 0 16px;font-size:16px;line-height:1.65;color:${base.body};${extra}">${t}</p>`
+  const fact = (t: string) => `<tr><td valign="top" style="padding:0 10px 10px 0;width:20px;"><span style="display:inline-block;width:20px;height:20px;border-radius:50%;background:#DCFCE7;color:#15803D;font-size:12px;line-height:20px;text-align:center;font-weight:700;">✓</span></td><td style="padding:1px 0 10px;font-size:16px;line-height:1.5;color:${base.body};">${t}</td></tr>`
+  const step = (n: number, t: string) => `<tr><td valign="top" style="padding:0 12px 10px 0;"><span style="display:inline-block;width:28px;height:28px;line-height:28px;border-radius:50%;background:#111827;color:#fff;font-size:14px;font-weight:700;text-align:center;">${n}</span></td><td valign="top" style="padding:4px 0 10px;font-size:16px;line-height:1.5;color:${base.body};">${t}</td></tr>`
   const box = (title: string, inner: string, bg = '#F5F3FF') => `
     <table cellpadding="0" cellspacing="0" role="presentation" width="100%" style="margin:26px 0 0;">
       <tr><td style="padding:20px 20px 16px;background:${bg};border-radius:14px;">
-        <p style="margin:0 0 10px;font-size:17px;font-weight:700;color:${base.heading};">${title}</p>
+        <p style="margin:0 0 10px;font-size:18px;font-weight:700;color:${base.heading};">${title}</p>
         ${inner}
       </td></tr>
     </table>`
 
   const segmentBlock: Record<VitalcheckSegment, string> = {
-    none: box('Dein nächster Schritt',
-      p('Du hast aktuell noch keinen Tarif. Mit <strong>Starter (17 €/Monat)</strong> ist deine erste Seite online – wenn du magst, gleich die Vitalcheck-Seite. Monatlich kündbar, kein Risiko, alles aus deinem Profil vorbelegt.', 'margin-bottom:6px;')
+    none: box('So bekommst du die Seite',
+      p('Dafür brauchst du einen Tarif. Mit <strong>Starter</strong> (17 € im Monat) ist deine erste Seite online. Du kannst jeden Monat kündigen.', 'margin-bottom:6px;')
       + button(`${APP_URL}/billing`, 'Tarif wählen')),
-    starter: box('Warum sich Pro für dich lohnt',
-      p('Mit Starter hast du eine Seite online. Die Vitalcheck-Seite ist der perfekte zweite Baustein: <strong>Sie startet das Gespräch</strong>, deine Optimalset- oder cellRESET-Seite liefert die Antworten. Mit <strong>Pro</strong> hast du <strong>3 Seiten</strong> für 27 €/Monat – also 10 € mehr für zwei zusätzliche Seiten.')
-      + `<p style="margin:0 0 10px;font-size:15px;font-weight:700;color:${base.heading};">So geht's – dauert 2 Minuten:</p>
+    starter: box('Warum Pro für dich passt',
+      p('Im Starter-Tarif hast du eine Seite. Mit <strong>Pro</strong> hast du drei Seiten für 27 € im Monat, also 10 € mehr. Dann läuft die Vitalcheck-Seite neben deiner jetzigen Seite.')
+      + `<p style="margin:0 0 10px;font-size:16px;font-weight:700;color:${base.heading};">So geht es:</p>
         <table cellpadding="0" cellspacing="0" role="presentation" width="100%">
-          ${step(1, '<strong>app.finestsites.io/billing</strong> öffnen')}
-          ${step(2, '<strong>Pro</strong> auswählen und das Upgrade bestätigen – die Differenz wird anteilig berechnet, dein Abo läuft einfach weiter')}
-          ${step(3, 'Unter <strong>Meine Seiten → Neue Seite</strong> die Vitalcheck-Seite anlegen')}
+          ${step(1, 'Klick unten auf den Button.')}
+          ${step(2, 'Wähle <strong>Pro</strong> und bestätige.')}
+          ${step(3, 'Gehe auf <strong>Meine Seiten</strong>, klicke auf <strong>Neue Seite</strong> und wähle die Vitalcheck-Seite.')}
         </table>`
-      + button(`${APP_URL}/billing`, 'Jetzt auf Pro upgraden')),
-    pro: box('Zeit für Unlimited?',
-      p('Mit Pro hast du 3 Seiten. Von PM-International gibt es jetzt <strong>vier</strong>: Optimalset, cellRESET, Business – und die Vitalcheck-Seite. Und ehrlich: weitere Seiten sind bereits in der Pipeline. Mit <strong>Unlimited (37 €/Monat)</strong> nutzt du alle, auch die kommenden, ohne jedes Mal nachzurechnen, welche Seite du dafür abschaltest.')
-      + p('Upgrade: <strong>app.finestsites.io/billing</strong> → Unlimited → bestätigen. Die Differenz wird anteilig berechnet.', 'margin-bottom:6px;')
-      + button(`${APP_URL}/billing`, 'Auf Unlimited upgraden')),
-    unlimited: box('Für dich schon freigeschaltet',
-      p('Du hast Unlimited – die Vitalcheck-Seite ist ab sofort in deinem Konto verfügbar: <strong>Meine Seiten → Neue Seite → „Dein Vitalprofil (Vitalcheck)“</strong>. Foto, Text und Social-Links werden aus deinem Profil übernommen; in zehn Minuten ist sie online.', 'margin-bottom:6px;')
+      + p('Den Unterschied zahlst du nur für die restlichen Tage des Monats.', 'margin-bottom:6px;font-size:14px;color:' + base.muted + ';')
+      + button(`${APP_URL}/billing`, 'Jetzt auf Pro wechseln')),
+    pro: box('Vielleicht passt Unlimited jetzt besser',
+      p('Im Pro-Tarif hast du drei Seiten. Von PM-International gibt es jetzt vier: Optimalset, cellRESET, Business und Vitalcheck. Weitere Seiten sind schon in Arbeit.')
+      + p('Mit <strong>Unlimited</strong> (37 € im Monat) hast du alle Seiten, auch die neuen.')
+      + `<table cellpadding="0" cellspacing="0" role="presentation" width="100%">
+          ${step(1, 'Klick unten auf den Button.')}
+          ${step(2, 'Wähle <strong>Unlimited</strong> und bestätige.')}
+        </table>`
+      + p('Den Unterschied zahlst du nur für die restlichen Tage des Monats.', 'margin-bottom:6px;font-size:14px;color:' + base.muted + ';')
+      + button(`${APP_URL}/billing`, 'Auf Unlimited wechseln')),
+    unlimited: box('Für dich ist die Seite schon freigeschaltet',
+      p('Gehe auf <strong>Meine Seiten</strong>, klicke auf <strong>Neue Seite</strong> und wähle <strong>Dein Vitalprofil (Vitalcheck)</strong>. Dein Foto und deine Texte werden übernommen.', 'margin-bottom:6px;')
       + button(`${APP_URL}/sites/new`, 'Vitalcheck-Seite anlegen'), '#ECFDF5'),
   }
 
@@ -883,41 +892,36 @@ export function vitalcheckLaunchEmail({ firstName, segment }: { firstName?: stri
       Neu: Deine Vitalcheck-Seite
     </h1>
     ${p(`${hi},`)}
-    ${p('kurz und ehrlich: Ich habe die letzten Wochen an einer Seite gebaut, die ich mir selbst früher gewünscht hätte – die <strong>Vitalcheck-Seite</strong>.')}
-    ${p('Die Idee: Statt „Hier sind meine Produkte“ stellst du deinen Besuchern erst mal eine Frage: <em>Wie geht’s dir eigentlich im Alltag?</em> 20 kurze Aussagen, 3 Minuten – und am Ende bekommt jeder seinen <strong>Vital-Typ</strong>. Mit einem Story-Bild zum Teilen und einem Button, der direkt bei dir landet.')}
+    ${p('es gibt eine neue Seite für dich: die <strong>Vitalcheck-Seite</strong>.')}
+    ${p('So funktioniert sie: Deine Besucher beantworten 20 kurze Fragen zu ihrem Alltag. Das dauert 3 Minuten. Am Ende sehen sie ihren <strong>Vital-Typ</strong> und können ihn als Bild in ihrer Story teilen.')}
+    ${p('Und genau da passiert das Schöne: Die Freundin sieht das Bild, macht den Check auch und teilt ihr Ergebnis. So kommen immer neue Menschen auf deine Seite, ganz von allein. Und jede Anfrage landet mit allen Antworten direkt bei dir.')}
 
-    <table cellpadding="0" cellspacing="0" role="presentation" width="100%" style="margin:22px 0 6px;">
-      ${fact('<strong>20 Aussagen, 3 Minuten</strong>, Ergebnis sofort – ohne Anmeldung')}
-      ${fact('<strong>5 Lebensbereiche:</strong> Ernährung, Tagesstruktur, Schlaf, Bewegung, Ausgleich')}
-      ${fact('<strong>Vital-Typ als Story-Bild</strong> – deine Besucher teilen es, du bekommst neue Besucher')}
-      ${fact('<strong>Beratungsanfrage</strong> mit allen 20 Antworten direkt in dein Postfach')}
-      ${fact('<strong>Dein Profil oben:</strong> Foto, Text, Social-Links und deine anderen FinestSites-Seiten')}
-      ${fact('<strong>6 Farbthemen</strong>, Partner-Modus, Deutsch & Englisch')}
-      ${fact('<strong>Rechtlich sauber:</strong> keine Produkt- oder Heilversprechen, Datenschutz-Einwilligung eingebaut')}
+    <table cellpadding="0" cellspacing="0" role="presentation" width="100%" style="margin:20px 0 6px;">
+      ${fact('20 Fragen, 3 Minuten, ohne Anmeldung')}
+      ${fact('Ergebnis als Bild zum Teilen')}
+      ${fact('Anfragen kommen mit allen Antworten per E-Mail zu dir')}
+      ${fact('Oben dein Foto, dein Text und deine anderen Seiten')}
     </table>
 
     <table cellpadding="0" cellspacing="0" role="presentation" width="100%" style="margin:22px 0 0;">
       <tr><td style="padding:0;">
-        <p style="margin:0 0 12px;font-size:16px;line-height:1.6;color:${base.body};">Lieber anschauen statt lesen? In <strong>5 Minuten</strong> zeige ich dir die Seite und wie du sie in deinem Konto aktivierst. (Das Video läuft in 1,5-facher Geschwindigkeit – ruhig mal auf Pause drücken.)</p>
+        <p style="margin:0 0 12px;font-size:16px;line-height:1.65;color:${base.body};">Im Video zeige ich dir die Seite und wie du sie anlegst. Es dauert 5 Minuten. Klick einfach auf das Bild:</p>
         <a href="${VIDEO}" style="display:block;border-radius:14px;overflow:hidden;line-height:0;">
-          <img src="${APP_URL}/mail/vitalcheck-video.png" alt="Video: Deine Vitalcheck-Seite bei FinestSites (ca. 5 Minuten)" width="480" style="width:100%;max-width:480px;height:auto;display:block;border-radius:14px;border:1px solid ${base.border};" />
+          <img src="${APP_URL}/mail/vitalcheck-video.png" alt="Video: Deine Vitalcheck-Seite (5 Minuten)" width="480" style="width:100%;max-width:480px;height:auto;display:block;border-radius:14px;border:1px solid ${base.border};" />
         </a>
-        <p style="margin:10px 0 0;font-size:13px;color:${base.muted};">Falls das Bild nicht lädt: <a href="${VIDEO}" style="color:${base.muted};">${VIDEO.replace('https://', '')}</a> &nbsp;·&nbsp; Live ausprobieren: <a href="${DEMO}" style="color:${base.muted};">demo.vitalprofil.net</a></p>
+        <p style="margin:10px 0 0;font-size:13px;color:${base.muted};">Falls das Bild nicht lädt: <a href="${VIDEO}" style="color:${base.muted};">${VIDEO.replace('https://', '')}</a><br />Die Seite ansehen: <a href="${DEMO}" style="color:${base.muted};">demo.vitalprofil.net</a></p>
       </td></tr>
     </table>
 
     ${segmentBlock[segment]}
 
-    <p style="margin:28px 0 0;font-size:15px;line-height:1.6;color:${base.body};">
-      Fragen, Feedback, Wünsche? Antworte einfach auf diese Mail – ich lese alles selbst.
+    <p style="margin:28px 0 0;font-size:16px;line-height:1.65;color:${base.body};">
+      Wenn etwas unklar ist, antworte einfach auf diese E-Mail. Ich helfe dir gern.
     </p>
-    <p style="margin:22px 0 0;font-size:15px;line-height:1.6;color:${base.body};">
+    <p style="margin:22px 0 0;font-size:16px;line-height:1.65;color:${base.body};">
       Liebe Grüße<br />
       <strong style="color:${base.heading};">Daniel</strong><br />
       <span style="color:${base.muted};">FinestSites</span>
-    </p>
-    <p style="margin:22px 0 0;font-size:13px;line-height:1.6;color:${base.muted};">
-      PS: Im Konto heißt die Vorlage „Dein Vitalprofil (Vitalcheck)“ – gegenüber deinen Besuchern nennt sich die Seite „Vitalprofil“. Das klingt nach Einladung, nicht nach Prüfung.
     </p>
   `)
 }
