@@ -4,7 +4,7 @@ import { db } from '@/lib/db'
 import { userSites, siteData } from '@/lib/db/schema'
 import { eq, and } from 'drizzle-orm'
 import { getFromR2 } from '@/lib/r2/client'
-import { renderTemplate } from '@/lib/utils/template-engine'
+import { renderTemplate, rawKeysFromSchema } from '@/lib/utils/template-engine'
 
 // GET /api/preview/[siteId]?data=base64json  → renders template HTML for iframe
 // The ?data param overrides stored data for live-preview while user is typing
@@ -91,7 +91,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ site
 
   // 2. Substitute placeholders. The markers we just inserted are preserved
   //    (comments stay as comments, data-fs-bind stays).
-  let rendered = renderTemplate(annotated, dataMap)
+  let rendered = renderTemplate(annotated, dataMap, { rawKeys: rawKeysFromSchema(site.template?.placeholderSchema) })
 
   // 2. Rewrite relative asset URLs so the preview iframe can load them via
   //    /api/preview/[siteId]/asset/[path] (same-origin, authenticated).

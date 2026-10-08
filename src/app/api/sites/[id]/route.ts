@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { rawKeysFromSchema } from '@/lib/utils/template-engine'
 import { richtextKeysFromSchema, sanitizeFieldValue } from '@/lib/security/sanitize'
 import { getUserFromRequest } from '@/lib/auth/server'
 import { db } from '@/lib/db'
@@ -224,7 +225,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
             Key: r2BundlePath,
           }))
           const tplHtml = await resp.Body!.transformToString('utf-8')
-          const rendered = renderTemplate(tplHtml, siteDataMap)
+          const rendered = renderTemplate(tplHtml, siteDataMap, { rawKeys: rawKeysFromSchema(site.template?.placeholderSchema) })
           await writeRenderedHtmlKV(username, domain, rendered)
         }
       } catch (err) {

@@ -4,7 +4,7 @@ import { db } from '@/lib/db'
 import { users, templates } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
 import { getFromR2 } from '@/lib/r2/client'
-import { renderTemplate } from '@/lib/utils/template-engine'
+import { renderTemplate, rawKeysFromSchema } from '@/lib/utils/template-engine'
 
 async function checkAdmin(req: NextRequest) {
   const user = await getRealUserFromRequest(req)
@@ -45,7 +45,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     dataMap[f.key] = previewValues[f.key] ?? f.default_value ?? `[${f.label ?? f.key}]`
   }
 
-  let rendered = renderTemplate(html, dataMap)
+  let rendered = renderTemplate(html, dataMap, { rawKeys: rawKeysFromSchema(template.placeholderSchema) })
 
   // Override viewport to force 1280px width (iOS Safari renders iframe at device-width otherwise)
   rendered = rendered.replace(

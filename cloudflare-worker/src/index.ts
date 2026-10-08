@@ -283,7 +283,7 @@ function applyDuoAliases(data: Data): void {
   data.profilbild2 = data.profilbild2 || data.partner_profilbild || ''
 }
 
-function render(html: string, data: Data): string {
+function render(html: string, data: Data, rawKeys: Set<string> = new Set()): string {
   applyDuoAliases(data)
   for (const key of Object.keys(data)) {
     if (/whatsapp/i.test(key) && typeof data[key] === 'string') data[key] = normalizeWhatsAppNumber(data[key])
@@ -305,7 +305,7 @@ function render(html: string, data: Data): string {
   const simple = (chunk: string, inScript: boolean) => chunk.replace(/\{\{([^#/{}][^{}]*)\}\}/g, (_, k) => {
     const key = k.trim(); const v = data[key]
     if (v === undefined || v === null) return ''
-    if (RAW_KEY_RE.test(key)) return String(v)
+    if (rawKeys.has(key) || RAW_KEY_RE.test(key)) return String(v)
     return inScript ? jsEscape(String(v)) : htmlEscape(String(v))
   })
   html = html.replace(/(<script\b[^>]*>)([\s\S]*?)(<\/script>)/gi, (_m, open: string, body: string, close: string) => open + simple(body, true) + close)
@@ -1319,11 +1319,13 @@ export default {
         `${env.APP_URL}/api/worker/site-data?siteId=${meta.siteId}`,
         { headers: { 'x-worker-secret': env.WORKER_SECRET } }
       )
-      const rows = dataRes.ok ? await dataRes.json() as { fieldKey: string; fieldValue: string | null }[] : []
+      const rows = dataRes.ok ? await dataRes.json() as { fieldKey: string; fieldValue: string | null; html?: boolean }[] : []
       const dataMap: Data = {}
-      for (const r of rows) dataMap[r.fieldKey] = r.fieldValue ?? ''
+      // html: true markiert Richtext-Felder laut Template-Schema → werden roh ausgegeben
+      const rawKeys = new Set<string>()
+      for (const r of rows) { dataMap[r.fieldKey] = r.fieldValue ?? ''; if (r.html) rawKeys.add(r.fieldKey) }
 
-      let renderedHtml = render(templateHtml, dataMap)
+      let renderedHtml = render(templateHtml, dataMap, rawKeys)
 
       // Link the "Made with FinestSites" credit in template footers
       renderedHtml = renderedHtml.replace(

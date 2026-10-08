@@ -24,7 +24,7 @@ import { db } from '@/lib/db'
 import { templates } from '@/lib/db/schema'
 import { eq, and, or, sql } from 'drizzle-orm'
 import { getFromR2 } from '@/lib/r2/client'
-import { renderTemplate } from '@/lib/utils/template-engine'
+import { renderTemplate, rawKeysFromSchema } from '@/lib/utils/template-engine'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -643,7 +643,7 @@ svg{opacity:0.4}p{font-size:14px;font-weight:500}</style></head>
   // ---------------------------------------------------------------------------
   // Render template + inject preview security guard
   // ---------------------------------------------------------------------------
-  let rendered = renderTemplate(html, dataMap)
+  let rendered = renderTemplate(html, dataMap, { rawKeys: rawKeysFromSchema(template.placeholderSchema) })
 
   // Inject security guard before </body>
   rendered = rendered.includes('</body>')

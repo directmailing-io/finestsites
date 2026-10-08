@@ -4,7 +4,7 @@ import { db } from '@/lib/db'
 import { templates } from '@/lib/db/schema'
 import { eq, and } from 'drizzle-orm'
 import { getFromR2 } from '@/lib/r2/client'
-import { renderTemplate } from '@/lib/utils/template-engine'
+import { renderTemplate, rawKeysFromSchema } from '@/lib/utils/template-engine'
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const user = await getUserFromRequest(req)
@@ -54,7 +54,7 @@ svg{opacity:0.4}p{font-size:14px;font-weight:500}</style></head>
     (_m, pre, src, post) => `${pre}${assetBase}/${src}${post}`
   )
 
-  const rendered = renderTemplate(html, dataMap)
+  const rendered = renderTemplate(html, dataMap, { rawKeys: rawKeysFromSchema(template.placeholderSchema) })
 
   return new NextResponse(rendered, {
     headers: {

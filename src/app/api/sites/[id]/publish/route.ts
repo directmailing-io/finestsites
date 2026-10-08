@@ -24,7 +24,7 @@ import { userSites, siteData, users } from '@/lib/db/schema'
 import { eq, and, ne } from 'drizzle-orm'
 import { purgeSiteCache, markSiteOffline } from '@/lib/cloudflare/kv'
 import { writeRenderedHtmlKV } from '@/lib/cloudflare/kv-api'
-import { renderTemplate } from '@/lib/utils/template-engine'
+import { renderTemplate, rawKeysFromSchema } from '@/lib/utils/template-engine'
 import { shouldBeOffline } from '@/lib/billing/site-access'
 
 const r2Client = new S3Client({
@@ -56,10 +56,11 @@ async function preRenderAndPushToKV(
   templateDomain: string,
   r2Path: string,
   siteDataMap: Record<string, string>,
+  rawKeys: Set<string> = new Set(),
 ): Promise<void> {
   try {
     const templateHtml = await fetchTemplateHtml(r2Path)
-    const rendered = renderTemplate(templateHtml, siteDataMap)
+    const rendered = renderTemplate(templateHtml, siteDataMap, { rawKeys })
     await writeRenderedHtmlKV(username, templateDomain, rendered)
   } catch (err) {
     console.error('[publish] pre-render failed:', err)
@@ -198,7 +199,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   })
   const dataMap: Record<string, string> = {}
   for (const row of dataRows) dataMap[row.fieldKey] = row.fieldValue ?? ''
-  await preRenderAndPushToKV(username, site.template.domain, site.template.r2BundlePath, dataMap)
+  await preRenderAndPushToKV(username, site.template.domain, site.template.r2BundlePath, dataMap, rawKeysFromSchema(site.template.placeholderSchema))
 
   const url = `https://${username}.${site.template.domain}`
   return NextResponse.json({ success: true, url })

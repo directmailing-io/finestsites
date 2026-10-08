@@ -57,13 +57,35 @@ function withWhatsAppDigits(data: SiteData): SiteData {
   return out
 }
 
-export function renderTemplate(html: string, rawData: SiteData): string {
+export interface RenderOptions {
+  /** Schlüssel, deren Wert als HTML ausgegeben wird (Richtext laut Template-Schema). */
+  rawKeys?: Iterable<string>
+}
+
+/**
+ * Richtext-Schlüssel aus einem Template-Schema (type: richtext) inkl. der serverseitig
+ * abgeleiteten Übersetzungen (`<key>_en`). Einzige Quelle der Wahrheit für „roh ausgeben“;
+ * RAW_KEY_RE ist nur noch Sicherheitsnetz für Templates ohne Schema (z. B. Legal-Seiten).
+ */
+export function rawKeysFromSchema(schema: unknown): Set<string> {
+  const out = new Set<string>()
+  const fields = (schema && typeof schema === 'object' && Array.isArray((schema as { fields?: unknown }).fields))
+    ? (schema as { fields: Array<{ key?: string; type?: string }> }).fields : []
+  for (const f of fields) {
+    if (!f || typeof f.key !== 'string') continue
+    if (f.type === 'richtext' || RAW_KEY_RE.test(f.key)) { out.add(f.key); out.add(f.key + '_en') }
+  }
+  return out
+}
+
+export function renderTemplate(html: string, rawData: SiteData, opts: RenderOptions = {}): string {
+  const rawKeys = new Set(opts.rawKeys ?? [])
   const data = withWhatsAppDigits(withDuoAliases(rawData))
   const enriched = { ...data, ...computeAboutIntro(data) }
   html = rewriteSocialHrefs(html, enriched)
   html = processLoops(html, enriched, [])
   html = evalConditionalBlocks(html, enriched, [])
-  html = replaceSimplePlaceholders(html, enriched)
+  html = replaceSimplePlaceholders(html, enriched, rawKeys)
   // Safety net: drop any leftover control tokens (orphaned closers, unmatched
   // openers) that would otherwise leak into the final HTML as literal text.
   html = html
@@ -392,7 +414,7 @@ function processConditionals(html: string, data: SiteData): string {
   return html
 }
 
-function replaceSimplePlaceholders(html: string, data: SiteData): string {
+function replaceSimplePlaceholders(html: string, data: SiteData, rawKeys: Set<string> = new Set()): string {
   // {{{key}}} → raw substitution (no HTML-escape). Used for richtext fields
   // whose stored value is already HTML.
   html = html.replace(/\{\{\{\s*([\w]+)\s*\}\}\}/g, (_m, key: string) => {
@@ -408,7 +430,7 @@ function replaceSimplePlaceholders(html: string, data: SiteData): string {
     const k = key.trim()
     const val = data[k]
     if (val === undefined || val === null) return ''
-    if (RAW_KEY_RE.test(k)) return String(val)
+    if (rawKeys.has(k) || RAW_KEY_RE.test(k)) return String(val)
     return inScript ? jsEscape(String(val)) : htmlEscape(String(val))
   })
   return html.replace(/(<script\b[^>]*>)([\s\S]*?)(<\/script>)/gi, (_m, open: string, body: string, close: string) => open + simple(body, true) + close)

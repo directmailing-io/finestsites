@@ -29,6 +29,8 @@ mkdir -p "$BUILD_DIR"
 rsync -a --exclude='.next' --exclude='node_modules' "$APP_DIR/" "$BUILD_DIR/"
 ln -s "$APP_DIR/node_modules" "$BUILD_DIR/node_modules"
 
+echo "▶ [2b] Render-Check aller Templates (Richtext roh, Text escaped)..."
+npx tsx scripts/check-template-render.ts
 echo "▶ [3/5] Build starten..."
 cd "$BUILD_DIR"
 NEXT_TELEMETRY_DISABLED=1 npm run build

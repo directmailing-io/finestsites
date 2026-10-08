@@ -14,7 +14,8 @@
  *   siteId — the user_site UUID
  *
  * Response (200):
- *   Array<{ fieldKey: string; fieldValue: string | null }>
+ *   Array<{ fieldKey: string; fieldValue: string | null; html?: true }>
+ *   html: true = Richtext laut Template-Schema → der Worker gibt den Wert roh (unescaped) aus
  *
  * Security: requests without the correct x-worker-secret header are rejected.
  * In development (WORKER_SECRET unset) all requests are allowed through.
@@ -23,7 +24,8 @@
 import { timingSafeEqual } from 'crypto'
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
-import { siteData, userSites, users } from '@/lib/db/schema'
+import { siteData, userSites, users, templates } from '@/lib/db/schema'
+import { rawKeysFromSchema } from '@/lib/utils/template-engine'
 import { eq } from 'drizzle-orm'
 
 const WORKER_SECRET = process.env.WORKER_SECRET
@@ -54,16 +56,18 @@ export async function GET(req: NextRequest) {
 
     // Fetch user profile for legal pages (impressum/datenschutz)
     const [userInfo] = await db
-      .select({ firstName: users.firstName, lastName: users.lastName, username: users.username })
+      .select({ firstName: users.firstName, lastName: users.lastName, username: users.username, schema: templates.placeholderSchema })
       .from(userSites)
       .innerJoin(users, eq(userSites.userId, users.id))
+      .innerJoin(templates, eq(userSites.templateId, templates.id))
       .where(eq(userSites.id, siteId))
+    const rawKeys = rawKeysFromSchema(userInfo?.schema)
 
     const fullName = [userInfo?.firstName, userInfo?.lastName].filter(Boolean).join(' ').trim()
     const displayName = fullName || (userInfo?.username ? `Benutzer ${userInfo.username}` : 'Benutzer')
 
     const rows = [
-      ...siteRows,
+      ...siteRows.map(r => rawKeys.has(r.fieldKey) ? { ...r, html: true as const } : r),
       { fieldKey: 'user_first_name', fieldValue: userInfo?.firstName ?? '' },
       { fieldKey: 'user_last_name', fieldValue: userInfo?.lastName ?? '' },
       { fieldKey: 'user_username', fieldValue: userInfo?.username ?? '' },

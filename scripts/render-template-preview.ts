@@ -9,7 +9,7 @@
  */
 import fs from 'node:fs'
 import path from 'node:path'
-import { renderTemplate } from '../src/lib/utils/template-engine'
+import { renderTemplate, rawKeysFromSchema } from '../src/lib/utils/template-engine'
 
 const slug = process.argv[2]
 if (!slug) { console.error('usage: render-template-preview.ts <template-slug> [--theme x] [--result] [--nolinks] [--intro]'); process.exit(1) }
@@ -42,7 +42,7 @@ if (flag('--duo')) Object.assign(data, {
 if (flag('--split')) data.kontakt_modus = 'getrennt'
 if (flag('--intro')) data.intro ='Hi, ich bin Daniel. Ich hab vor zwei Jahren angefangen, meine Gewohnheiten umzukrempeln, und seitdem hat sich mein Alltag komplett verändert. Mach den Check, dann weißt du, wo du stehst.'
 
-let out = renderTemplate(html, data)
+let out = renderTemplate(html, data, { rawKeys: rawKeysFromSchema(schema) })
 
 if (flag('--result')) {
   const answers: Record<string, number> = {}
