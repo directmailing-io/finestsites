@@ -399,18 +399,28 @@ function replaceSimplePlaceholders(html: string, data: SiteData): string {
     const val = data[key]
     return val !== undefined && val !== null ? String(val) : ''
   })
-  // {{key}} → HTML-escaped. Ausnahme: Richtext-Schlüssel (…_html, …_html_en, intro, intro_en),
+  // {{key}} → kontextabhängig escaped: in <script>-Blöcken als JS-String (\' \" \\ und
+  // "<" als \x3C, damit weder Anführungszeichen noch </script> ausbrechen können), sonst
+  // als HTML-Entities. Ausnahme: Richtext-Schlüssel (…_html, …_html_en, intro, intro_en),
   // die in älteren Templates mit zwei Klammern stehen und gespeichertes (serverseitig
   // bereinigtes) HTML enthalten.
-  return html.replace(/\{\{([^#/{}][^{}]*)\}\}/g, (match, key) => {
+  const simple = (chunk: string, inScript: boolean) => chunk.replace(/\{\{([^#/{}][^{}]*)\}\}/g, (match, key) => {
     const k = key.trim()
     const val = data[k]
     if (val === undefined || val === null) return ''
-    return RAW_KEY_RE.test(k) ? String(val) : htmlEscape(String(val))
+    if (RAW_KEY_RE.test(k)) return String(val)
+    return inScript ? jsEscape(String(val)) : htmlEscape(String(val))
   })
+  return html.replace(/(<script\b[^>]*>)([\s\S]*?)(<\/script>)/gi, (_m, open: string, body: string, close: string) => open + simple(body, true) + close)
+    .split(/(<script\b[^>]*>[\s\S]*?<\/script>)/gi)
+    .map((part, i) => i % 2 === 1 ? part : simple(part, false))
+    .join('')
 }
 /** Schlüssel, deren Wert als HTML ausgegeben wird (Richtext). Muss mit dem Worker übereinstimmen. */
 export const RAW_KEY_RE = /(_html|_html_en)$|^intro(_en)?$/
+function jsEscape(s: string): string {
+  return s.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '\\"').replace(/</g, '\\x3C').replace(/\r/g, '\\r').replace(/\n/g, '\\n').replace(/\u2028/g, '\\u2028').replace(/\u2029/g, '\\u2029')
+}
 
 export function extractPlaceholders(html: string): string[] {
   const keys = new Set<string>()

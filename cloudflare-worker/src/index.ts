@@ -302,11 +302,16 @@ function render(html: string, data: Data): string {
   })
   // Simple {{key}} → HTML-escaped; roh nur für Richtext-Schlüssel (…_html, …_html_en, intro, intro_en).
   // Muss mit src/lib/utils/template-engine.ts (RAW_KEY_RE) übereinstimmen.
-  html = html.replace(/\{\{([^#/{}][^{}]*)\}\}/g, (_, k) => {
+  const simple = (chunk: string, inScript: boolean) => chunk.replace(/\{\{([^#/{}][^{}]*)\}\}/g, (_, k) => {
     const key = k.trim(); const v = data[key]
     if (v === undefined || v === null) return ''
-    return RAW_KEY_RE.test(key) ? String(v) : htmlEscape(String(v))
+    if (RAW_KEY_RE.test(key)) return String(v)
+    return inScript ? jsEscape(String(v)) : htmlEscape(String(v))
   })
+  html = html.replace(/(<script\b[^>]*>)([\s\S]*?)(<\/script>)/gi, (_m, open: string, body: string, close: string) => open + simple(body, true) + close)
+    .split(/(<script\b[^>]*>[\s\S]*?<\/script>)/gi)
+    .map((part, i) => i % 2 === 1 ? part : simple(part, false))
+    .join('')
   // Safety net: drop leftover control tokens so they never leak into output
   html = html
     .replace(/\{\{\s*\/\s*(?:each|if|unless)\s*\}\}/g, '')
@@ -912,6 +917,10 @@ function vitalprofilMailBody(d: Record<string, string>): string {
 }
 
 const RAW_KEY_RE = /(_html|_html_en)$|^intro(_en)?$/
+// JS-String-Escaping für {{key}} innerhalb von <script> (kein Ausbruch aus Strings oder </script>)
+function jsEscape(s: string): string {
+  return s.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '\\"').replace(/</g, '\\x3C').replace(/\r/g, '\\r').replace(/\n/g, '\\n').replace(/\u2028/g, '\\u2028').replace(/\u2029/g, '\\u2029')
+}
 
 // ─── Pfad-Policy ──────────────────────────────────────────────────────────────
 // Scanner fragen /.git/config, /env, /setup/, /wp-admin … ab. Solche Pfade bekommen
