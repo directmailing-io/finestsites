@@ -211,7 +211,7 @@ export function StatTile({ label, value, sub, color, trend }: {
     <div className="rounded-[20px] p-5 bg-white flex flex-col gap-1" style={cardStyle}>
       <span className="text-xs font-medium" style={{ color: '#64748B' }}>{label}</span>
       <div className="flex items-baseline gap-1.5 min-w-0">
-        <span className="text-3xl font-bold tracking-tight truncate" style={{ color: color ?? '#111827' }}>{value}</span>
+        <span className="text-2xl lg:text-3xl font-bold tracking-tight leading-tight break-words" style={{ color: color ?? '#111827' }}>{value}</span>
         {typeof trend === 'number' && (
           <span
             className="flex-shrink-0 text-[11px] font-bold px-1.5 py-0.5 rounded-full"
@@ -248,7 +248,7 @@ export function BreakdownCard({ title, entries, total }: {
           {entries.map(e => (
             <div key={e.label}>
               <div className="flex items-baseline justify-between gap-3 mb-1">
-                <span className="text-xs font-medium truncate" style={{ color: '#374151' }}>{e.label}</span>
+                <span className="text-xs font-medium break-all" style={{ color: '#374151' }}>{e.label}</span>
                 <span className="text-xs font-semibold flex-shrink-0" style={{ color: '#6B7280' }}>
                   {fmtNum(e.count)} · {pct(e.count, total)} %
                 </span>

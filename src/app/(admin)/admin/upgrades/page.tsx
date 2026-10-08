@@ -76,10 +76,8 @@ export default async function UpgradesPage() {
     SELECT *
     FROM ranked
     WHERE
-      -- subscription_created: new paying customer (always an upgrade)
-      (event_type = 'subscription_created' AND plan != 'free')
-      OR
-      -- subscription_updated: plan actually went up
+      -- nur echte Upgrades: bestehendes Abo wechselt auf einen höheren Tarif
+      -- (neue Abos „von neu auf Tarif“ gehören nicht hierher)
       (
         event_type = 'subscription_updated'
         AND prev_plan IS NOT NULL
@@ -108,8 +106,8 @@ export default async function UpgradesPage() {
   const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
 
   const thisMonth = rows.filter(r => new Date(r.created_at) >= startOfMonth)
-  const newThisMonth = thisMonth.filter(r => r.event_type === 'subscription_created').length
-  const upgradesThisMonth = thisMonth.filter(r => r.event_type === 'subscription_updated').length
+  const upgradesThisMonth = thisMonth.length
+  // MRR der Tarife NACH dem Upgrade (Jahresbeträge auf Monat umgerechnet)
   const newMrrThisMonth = thisMonth
     .filter(r => r.amount_cents)
     .reduce((sum, r) => {
@@ -129,17 +127,11 @@ export default async function UpgradesPage() {
           Zurück zum Dashboard
         </Link>
         <h1 className="text-2xl font-semibold text-gray-900 tracking-tight">Upgrades</h1>
-        <p className="text-sm mt-1" style={{ color: '#94A3B8' }}>Neue Abos und Plan-Upgrades</p>
+        <p className="text-sm mt-1" style={{ color: '#94A3B8' }}>Bestehende Abos, die auf einen höheren Tarif gewechselt haben</p>
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-3 gap-3 mb-6">
-        <div className="rounded-[20px] p-5 bg-white flex flex-col gap-1"
-          style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04)', border: '1px solid #F1F5F9' }}>
-          <span className="text-xs font-medium" style={{ color: '#64748B' }}>Neue Abos</span>
-          <span className="text-3xl font-bold tracking-tight" style={{ color: '#15803D' }}>{newThisMonth}</span>
-          <span className="text-[11px]" style={{ color: '#94A3B8' }}>diesen Monat</span>
-        </div>
+      <div className="grid grid-cols-2 gap-3 mb-6">
         <div className="rounded-[20px] p-5 bg-white flex flex-col gap-1"
           style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04)', border: '1px solid #F1F5F9' }}>
           <span className="text-xs font-medium" style={{ color: '#64748B' }}>Plan-Upgrades</span>
@@ -148,11 +140,11 @@ export default async function UpgradesPage() {
         </div>
         <div className="rounded-[20px] p-5 bg-white flex flex-col gap-1"
           style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04)', border: '1px solid #F1F5F9' }}>
-          <span className="text-xs font-medium" style={{ color: '#64748B' }}>Neuer MRR</span>
+          <span className="text-xs font-medium" style={{ color: '#64748B' }}>MRR nach Upgrade</span>
           <span className="text-3xl font-bold tracking-tight" style={{ color: '#1D4ED8' }}>
             {newMrrThisMonth > 0 ? fmtEur(newMrrThisMonth) : '€ 0'}
           </span>
-          <span className="text-[11px]" style={{ color: '#94A3B8' }}>diesen Monat (aus neuen Abos)</span>
+          <span className="text-[11px]" style={{ color: '#94A3B8' }}>diesen Monat (Tarife nach dem Wechsel)</span>
         </div>
       </div>
 
@@ -160,7 +152,7 @@ export default async function UpgradesPage() {
         <div className="rounded-[20px] bg-white p-10 text-center"
           style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04)', border: '1px solid #F1F5F9' }}>
           <p className="text-sm font-medium text-gray-900">Noch keine Upgrades</p>
-          <p className="text-xs mt-1" style={{ color: '#94A3B8' }}>Sobald jemand ein Abo abschließt oder upgradet, erscheint es hier.</p>
+          <p className="text-xs mt-1" style={{ color: '#94A3B8' }}>Sobald jemand von einem bestehenden Tarif auf einen höheren wechselt, erscheint es hier.</p>
         </div>
       ) : (
         <div className="rounded-[20px] bg-white overflow-hidden"

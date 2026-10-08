@@ -231,7 +231,7 @@ export default async function AnalyticsPage({ searchParams }: {
               <Link key={tpl.template_id} href={`/admin/analytics/template/${tpl.template_id}?range=${range}`}
                 className="rounded-[20px] p-5 bg-white block transition-shadow hover:shadow-md" style={cardStyle}>
                 <div className="flex items-center justify-between gap-3 mb-3">
-                  <span className="text-sm font-semibold text-gray-900 truncate">
+                  <span className="text-sm font-semibold text-gray-900 break-words">
                     {tpl.title ?? 'Gelöschtes Template'}
                   </span>
                   <span className="flex items-center gap-1 text-[11px] font-medium flex-shrink-0" style={{ color: '#94A3B8' }}>
