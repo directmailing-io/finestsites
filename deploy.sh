@@ -7,7 +7,8 @@
 #   ssh -i ~/.ssh/finestsites_hetzner root@188.245.35.52 "/usr/local/bin/finestsites-deploy.sh"
 #
 # Baut in /tmp, tauscht das standalone-Verzeichnis atomisch und macht ein
-# PM2 Rolling-Reload (2 Cluster-Instanzen → kein Ausfall).
+# PM2 Rolling-Reload (2 Cluster-Instanzen → kein Ausfall). PM2 läuft als Nutzer "finestsites":
+#   Status/Logs auf dem Server: /usr/local/bin/finestsites-pm2 list | logs finestsites
 # Installiert KEINE Dependencies — bei neuen Paketen vorher auf dem Server:
 #   cd /var/www/finestsites && npm install --no-audit --no-fund
 set -e
@@ -41,7 +42,11 @@ mv "${APP_DIR}/.next/standalone" "$BACKUP"
 mv "${BUILD_DIR}/.next/standalone" "${APP_DIR}/.next/standalone"
 
 echo "▶ [5/5] Rolling Reload (kein Ausfall)..."
-pm2 reload finestsites --update-env
+# Die App läuft seit 08.10.2026 unter dem Systemnutzer "finestsites" (nicht root). Der Build hier
+# passiert als root, danach gehört das standalone-Verzeichnis dem Nutzer (Bild-Cache muss schreibbar
+# sein). Reload über den Wrapper, der .env.production als root lädt und dann zum Nutzer wechselt.
+chown -R finestsites:finestsites "${APP_DIR}/.next/standalone"
+/usr/local/bin/finestsites-pm2 reload finestsites --update-env
 
 echo "▶ Aufräumen..."
 rm -rf "$BUILD_DIR" "$BACKUP"
