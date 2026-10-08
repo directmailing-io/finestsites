@@ -1,3 +1,4 @@
+import { getClientIp as sharedClientIp } from '@/lib/security/request'
 /**
  * Public (unauthenticated) template preview.
  *
@@ -150,7 +151,7 @@ function checkRateLimit(ip: string): boolean {
 
 function getClientIp(req: NextRequest): string {
   return (
-    getClientIp(req) ??
+    sharedClientIp(req) ??
     req.headers.get('x-real-ip') ??
     'unknown'
   )

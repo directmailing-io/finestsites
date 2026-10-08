@@ -1,3 +1,4 @@
+import { getClientIp as sharedClientIp } from '@/lib/security/request'
 /**
  * Asset proxy for the public template preview.
  * Serves CSS, JS, images, and fonts from R2 for the public-preview iframe.
@@ -54,7 +55,7 @@ async function isTemplatePublic(id: string): Promise<boolean> {
 
 function getClientIp(req: NextRequest): string {
   return (
-    getClientIp(req) ??
+    sharedClientIp(req) ??
     req.headers.get('x-real-ip') ??
     'unknown'
   )
