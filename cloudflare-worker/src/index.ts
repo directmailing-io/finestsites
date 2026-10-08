@@ -1327,11 +1327,12 @@ export default {
 
       let renderedHtml = render(templateHtml, dataMap, rawKeys)
 
-      // Link the "Made with FinestSites" credit in template footers
-      renderedHtml = renderedHtml.replace(
-        />Made with FinestSites</g,
-        '>Made with <a href="https://finestsites.io" target="_blank" rel="noopener noreferrer" style="color:inherit;text-decoration:none;">FinestSites</a><'
-      )
+      // "Made with FinestSites" im Footer: immer auf die Startseite mit dem Empfehlungslink
+      // des Seitenbesitzers (finestsites.io/?ref=username, gleicher Link wie im Affiliate-Bereich)
+      const refLink = `https://finestsites.io/?ref=${encodeURIComponent(username)}`
+      renderedHtml = renderedHtml
+        .replace(/>Made with FinestSites</g, `>Made with <a href="${refLink}" target="_blank" rel="noopener noreferrer" style="color:inherit;text-decoration:none;">FinestSites</a><`)
+        .replace(/href="https:\/\/finestsites\.(?:io|de)\/?"/g, `href="${refLink}"`)
 
       // Inject hero image as og:image when the template has no og:image set.
       // Prefers data keys containing "hero", "bg", "bild", or "background".

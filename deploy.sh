@@ -54,3 +54,6 @@ echo "▶ Aufräumen..."
 rm -rf "$BUILD_DIR" "$BACKUP"
 
 echo "✅ Deploy abgeschlossen. Keine Ausfallzeit."
+# Nach dem Reload: zentrale Pfade von außen prüfen (Login, Vorschau-Endpunkte, Demo-Seiten, Schutz)
+sleep 3
+bash "$APP_DIR/scripts/smoke-test.sh" || true
