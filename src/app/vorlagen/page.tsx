@@ -56,7 +56,7 @@ export default async function VorlagenPage() {
       isFree: r.isFree ?? false,
       badge: r.badge ?? null,
       tags: (r.tags as string[] | null) ?? [],
-      nmCompanies: (r.nmCompanies as string[] | null) ?? [],
+      nmCompanies: [], // Firmen-Zuordnung bleibt serverseitig (keine Markennennung im Marketing)
       isAllrounder: r.isAllrounder ?? false,
       previewImages: r.previewImages,
       isComingSoon: r.status === 'coming_soon',

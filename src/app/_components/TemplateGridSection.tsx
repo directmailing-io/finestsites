@@ -62,7 +62,7 @@ function LanguageFlags() {
 function TemplateCard({ tpl }: { tpl: TemplateCardData }) {
   const images = Array.isArray(tpl.previewImages) ? tpl.previewImages as string[] : []
   const cover = images[0] ?? null
-  const companyLabel = tpl.nmCompanies[0] ?? null
+  const companyLabel: string | null = null // keine Firmen-/Markennennung (Hinweis PM-International, 08.10.2026)
   const isMultilingual = tpl.tags.includes('multilingual')
 
   if (tpl.isComingSoon) {

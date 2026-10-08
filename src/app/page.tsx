@@ -71,7 +71,7 @@ export default async function HomePage({
     templateList = rows.map(r => ({
       ...r,
       tags: (r.tags as string[] | null) ?? [],
-      nmCompanies: (r.nmCompanies as string[] | null) ?? [],
+      nmCompanies: [], // Firmen-Zuordnung bleibt serverseitig (keine Markennennung im Marketing)
       isAllrounder: r.isAllrounder ?? false,
       isComingSoon: r.status === 'coming_soon',
     }))

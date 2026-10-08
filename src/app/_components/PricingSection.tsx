@@ -302,7 +302,7 @@ export default function PricingSection({ validatedRef, campaign }: { validatedRe
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
                     <div>
                       <span style={{ fontSize: 11, fontWeight: 700, color: plan.popular ? 'rgba(255,255,255,0.7)' : '#111' }}>Premium-Seiten: </span>
-                      <span style={{ fontSize: 11, color: plan.popular ? 'rgba(255,255,255,0.45)' : '#6B7280', lineHeight: 1.5 }}>Professionelle Produkt-Seiten für FitLine, Thermomix & Co. Für dein Kerngeschäft.</span>
+                      <span style={{ fontSize: 11, color: plan.popular ? 'rgba(255,255,255,0.45)' : '#6B7280', lineHeight: 1.5 }}>Professionelle Produkt-Seiten für dein Kerngeschäft.</span>
                     </div>
                     <div>
                       <span style={{ fontSize: 11, fontWeight: 700, color: plan.popular ? 'rgba(255,255,255,0.7)' : '#111' }}>Standard-Seiten: </span>
