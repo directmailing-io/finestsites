@@ -152,7 +152,7 @@ const BLOCKED_TERMS: Array<{ re: RegExp; label: string }> = [
   { re: /diabet|blutzucker|blutdruck|cholesterin|schilddr[üu]se|hashimoto/i, label: 'Stoffwechsel-/Kreislauferkrankung' },
   { re: /entz[üu]ndung|arthrose|arthritis|rheuma|osteoporose/i, label: 'Entzündliche/degenerative Erkrankung' },
   { re: /krebs|tumor|chemo/i, label: 'Krebs' },
-  { re: /\bmedikament|\btablette|\btherapie|\bdiagnose|\b(arzt|[äa]rztin|[äa]rzte)\b|\bklinik\b|\boperation\b/i, label: 'Medizinischer Kontext' },
+  { re: /\bmedikament|\btablette|\btherapie|\bdiagnose|(?<![a-zäöü])(haus|fach)?(arzt|ärzt|aerzt)|\bklinik\b|\boperation\b/i, label: 'Medizinischer Kontext' },
   { re: /\bbeschwerden|\bsymptom|\bkrankheit|\bkrank\b|\bheilt\b|\bgeheilt|\bheilung|\blindert|\blinderung/i, label: 'Beschwerden/Heilung' },
   { re: /abgenommen|kilo\b|kg\b|gewicht verloren/i, label: 'Gewichtsangabe (nur ohne Produktbezug erlaubt – wird geprüft)' },
 ]

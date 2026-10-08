@@ -25,6 +25,8 @@ for (const file of ['.env.production', '.env.local']) {
 const APPLY = process.argv.includes('--apply')
 const ONLY = (() => { const i = process.argv.indexOf('--site'); return i > -1 ? process.argv[i + 1] : null })()
 const BACKUP_SUFFIX = '__backup_20261008'
+/** --plan datei.json: { "host·field_key": "<html>" } – geprüfte Zieltexte, ersetzen den KI-Vorschlag (deterministisch) */
+const PLAN: Record<string, string> = (() => { const i = process.argv.indexOf('--plan'); return i > -1 ? JSON.parse(fs.readFileSync(process.argv[i + 1], 'utf8')) : {} })()
 const KEYS = ['about_me_html', 'intro', 'bio']
 const OUT = path.resolve(process.cwd(), 'scratch-remediation-' + (APPLY ? 'apply' : 'dry') + '.txt')
 fs.writeFileSync(OUT, '')
@@ -61,16 +63,20 @@ async function main() {
   for (const r of affected) {
     const host = r.custom_domain_status === 'active' && r.custom_domain ? r.custom_domain : `${r.username}.${r.domain}`
     const before = findBlockedTerms(r.field_value).map(b => b.reason.split(':')[0]).join(', ')
-    let result = await checkCompliance(r.field_value, '', apiKey, REMEDIATION_RULES)
-    let suggestion = result.ok ? '' : result.suggested_html
+    const planned = PLAN[`${host}·${r.field_key}`]
+    let suggestion = planned ?? ''
+    if (!planned) {
+      const result = await checkCompliance(r.field_value, '', apiKey, REMEDIATION_RULES)
+      suggestion = result.ok ? '' : result.suggested_html
+    }
     // zweite Runde, falls der Vorschlag noch Sperrbegriffe enthält
-    if (suggestion && findBlockedTerms(suggestion).length) {
+    if (!planned && suggestion && findBlockedTerms(suggestion).length) {
       const again = await checkCompliance(suggestion, '', apiKey, REMEDIATION_RULES + '\n\nDer Text enthält weiterhin gesperrte Begriffe (' + findBlockedTerms(suggestion).map(b => b.quote).join(' | ') + '). Entferne genau diese Stellen vollständig.')
       if (!again.ok && again.suggested_html) suggestion = again.suggested_html
     }
     if (suggestion) { fs.appendFileSync(OUT, `\n\n==== ${host} · ${r.field_key}\n--- VORHER\n${r.field_value}\n--- NACHHER\n${suggestion}\n`) }
     const stillBlocked = suggestion ? findBlockedTerms(suggestion) : [{ quote: '', reason: 'kein Vorschlag' }]
-    console.log(`\n── ${host} · ${r.field_key} · gefunden: ${before}`)
+    console.log(`\n── ${host} · ${r.field_key} · gefunden: ${before}${planned ? ' · aus Plan' : ' · KI'}`)
     console.log('VORHER : ' + r.field_value.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 500))
     console.log('NACHHER: ' + (suggestion ? suggestion.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 500) : '(leer)'))
     if (stillBlocked.length) { failed++; console.log(`   ✗ nicht automatisch lösbar (${stillBlocked.map(b => b.reason.split(':')[0]).join(', ')}) – manuell prüfen`); continue }
