@@ -916,7 +916,7 @@ function vitalprofilMailBody(d: Record<string, string>): string {
   return `${h2('Kontakt')}${contact}${h2('Vitalprofil')}${profile}${h2('Die fünf Bereiche')}${areaCards}${meta}<div style="height:18px;"></div>`
 }
 
-const RAW_KEY_RE = /(_html|_html_en)$|^intro(_en)?$/
+const RAW_KEY_RE = /(_html|_html_en)$|^(intro|bio|about_me_html)(_en)?$/
 // JS-String-Escaping für {{key}} innerhalb von <script> (kein Ausbruch aus Strings oder </script>)
 function jsEscape(s: string): string {
   return s.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '\\"').replace(/</g, '\\x3C').replace(/\r/g, '\\r').replace(/\n/g, '\\n').replace(/\u2028/g, '\\u2028').replace(/\u2029/g, '\\u2029')

@@ -417,7 +417,7 @@ function replaceSimplePlaceholders(html: string, data: SiteData): string {
     .join('')
 }
 /** Schlüssel, deren Wert als HTML ausgegeben wird (Richtext). Muss mit dem Worker übereinstimmen. */
-export const RAW_KEY_RE = /(_html|_html_en)$|^intro(_en)?$/
+export const RAW_KEY_RE = /(_html|_html_en)$|^(intro|bio|about_me_html)(_en)?$/
 function jsEscape(s: string): string {
   return s.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '\\"').replace(/</g, '\\x3C').replace(/\r/g, '\\r').replace(/\n/g, '\\n').replace(/\u2028/g, '\\u2028').replace(/\u2029/g, '\\u2029')
 }
