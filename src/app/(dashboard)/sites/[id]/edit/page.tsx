@@ -1735,6 +1735,8 @@ function LoopField({ field, value, onChange, onItemFocus }: {
     const next = [...items, empty]
     save(next)
     setExpandedIdx(next.length - 1)
+    // „Nur meine Seiten“: direkt die Auswahl öffnen, damit der neue Eintrag nicht leer stehen bleibt
+    if (pickerOnlyKey) void openPicker(next.length - 1)
   }
 
   function removeItem(idx: number) {
@@ -1764,7 +1766,10 @@ function LoopField({ field, value, onChange, onItemFocus }: {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pickerOnlyKey])
   const availableSites = pickerSites === null ? null : pickerSites.filter(e => !usedUrls.has(e.url))
-  const canAddMore = pickerOnlyKey ? (availableSites === null || availableSites.length > 0) : true
+  // Erst einen neuen Eintrag erlauben, wenn kein leerer mehr offen ist – sonst ließen sich
+  // beliebig viele leere Zeilen anlegen (leere zählen nicht als „benutzt“).
+  const hasEmptyPickerItem = pickerOnlyKey ? items.some(it => !(it[pickerOnlyKey] ?? '').trim()) : false
+  const canAddMore = pickerOnlyKey ? (!hasEmptyPickerItem && (availableSites === null || availableSites.length > 0)) : true
 
   // Close picker when clicking outside
   useEffect(() => {
