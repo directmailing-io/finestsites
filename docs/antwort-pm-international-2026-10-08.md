@@ -1,27 +1,26 @@
-# Antwort an PM-International (Entwurf, 08.10.2026)
-
 Betreff: AW: Ihre Hinweise zu demo.dailyoptimal.de und finestsites.io
 
 Hallo liebes PM-Team,
 
-vielen Dank für Ihre Nachricht und dafür, dass Sie mich direkt angesprochen haben. Ich nehme das ernst, und ehrlich gesagt bin ich froh über den Hinweis. Ich will mit FinestSites nichts gegen PM-International bauen, sondern für die Vertriebspartner, und dazu gehört, dass die Seiten sauber sind.
+danke für die Nachricht und dafür, dass Sie mich direkt angeschrieben haben. Ganz ehrlich: Gut, dass Sie es mir sagen. Ich will mit FinestSites nichts gegen PM-International bauen, sondern Ihren Teampartnern helfen, eine saubere eigene Seite zu haben. Und sauber heißt für mich auch: nach Ihren Regeln.
 
-Ich habe heute schon alles umgesetzt, nicht erst in fünf Tagen:
+Ich habe nicht fünf Tage gewartet, sondern alles heute erledigt:
 
-1. Der Text auf demo.dailyoptimal.de ist komplett überarbeitet. Keine Nennung von Migräne oder unreiner Haut mehr, keine Verknüpfung von Beschwerden und Produkt. Die Seite ist bereits aktualisiert.
+1. Der Text auf demo.dailyoptimal.de ist neu geschrieben. Keine Migräne, keine unreine Haut, keine Verbindung von Beschwerden und Produkt. Ist schon online.
 
-2. Der Beratungs-Funnel enthält keine Auswahl „akute Beschwerden“ mehr. Die Besucher wählen jetzt nur noch, ob sie ihren Alltag gut versorgen oder das Optimalset erst einmal kennenlernen möchten. Die Antwortmöglichkeiten sind Wünsche und Interessen, keine Symptome. Das gilt für alle Seiten, die mit dieser Vorlage erstellt wurden.
+2. Im Beratungs-Funnel gibt es die Auswahl „akute Beschwerden“ nicht mehr. Besucher wählen jetzt nur noch, ob sie ihren Alltag gut versorgen oder das Produkt erst mal kennenlernen möchten. Die Antworten sind Wünsche und Interessen, keine Symptome. Das gilt automatisch für alle Seiten, die mit dieser Vorlage gebaut wurden.
 
-3. Die KI-Prüfung, die jede Vertriebspartnerin und jeder Vertriebspartner vor dem Veröffentlichen des „Über mich“-Textes durchläuft, war an dieser Stelle zu großzügig. Ich habe sie verschärft: Krankheits- und Symptombegriffe werden jetzt grundsätzlich beanstandet, auch als persönliche Vorgeschichte, und zusätzlich fängt eine feste Begriffsliste diese Fälle unabhängig von der KI ab. Ohne Freigabe lässt sich ein solcher Text nicht mehr veröffentlichen.
+3. Jeder Teampartner lässt seinen „Über mich“-Text vor dem Veröffentlichen durch eine Prüfung laufen. Die war an dieser Stelle zu lasch, das habe ich heute geändert: Krankheiten und Symptome werden jetzt grundsätzlich beanstandet, auch als Vorgeschichte, und eine feste Begriffsliste fängt das zusätzlich ab. Ohne saubere Freigabe lässt sich so ein Text nicht mehr veröffentlichen. Die bestehenden Texte, in denen so etwas noch stand, bereinige ich gerade ebenfalls.
 
-4. Auf finestsites.io habe ich alle Nennungen von PM-International, FitLine und den Produktnamen entfernt. Es gibt keine Firmen-Auswahl mehr, keine „Geeignet für PM-International“-Kennzeichnung, keine anderen Unternehmen, und die Vorlagen heißen jetzt neutral („Dein tägliches Nährstoff-System“, „Stoffwechselkur in 4 Phasen“, „Deine Business-Seite“, „Dein Vitalprofil“).
+4. Auf finestsites.io sind alle Nennungen von PM-International, FitLine und Ihren Produktnamen raus. Keine Firmenauswahl mehr, kein „Geeignet für PM-International“, keine anderen Unternehmen. Die Vorlagen heißen jetzt neutral, zum Beispiel „Deine Optimal-Seite“ und „Deine Stoffwechsel-Seite“.
 
-Dazu eine ehrliche Bitte: FinestSites wird aktuell von rund 120 aktiven PM-Vertriebspartnern genutzt, weil sie damit in wenigen Minuten eine saubere, rechtlich geprüfte Seite bekommen, statt selbst etwas zu basteln. Die Vorlagen gibt es nur für PM, und es ist mir wichtig, dass das auch so bleibt und dass die Seiten Ihren Richtlinien entsprechen. Deshalb würde ich gern zwei Dinge mit Ihnen klären:
+Noch etwas, das Ihnen die Arbeit erleichtern sollte: Auf jeder Nutzerseite stehe ich mit im Impressum. Wenn Ihnen also irgendwann auf irgendeiner Seite etwas auffällt, egal von welchem Teampartner, melden Sie sich bitte einfach direkt bei mir. Ich halte die Kontrolle über die Inhalte ganz bewusst bei mir, damit weder bei Ihnen noch bei mir Chaos entsteht. Sie haben einen Ansprechpartner, nicht 120.
 
-- Ob ich auf finestsites.io den Hinweis „Geeignet für PM-International“ verwenden darf, wenn ich mich gleichzeitig klar von anderen Unternehmen abgrenze. Die Partner suchen genau danach, und ohne diese Einordnung wird es für sie unübersichtlicher. Wenn Sie das nicht möchten, respektiere ich das selbstverständlich.
-- Wie wir generell zusammenarbeiten können. Ich würde mich jederzeit mit Ihnen zusammensetzen, Ihnen die Vorlagen zeigen und Ihre Vorgaben direkt einbauen. Ich wünsche mir die Unterstützung von PM-International, nicht nur die Duldung.
+Und damit bin ich beim eigentlichen Punkt: Inzwischen nutzen rund 120 aktive Teampartner von PM FinestSites, weil sie damit in ein paar Minuten eine ordentliche Seite bekommen, statt selbst irgendwas zu basteln. Die Vorlagen gibt es nur für PM. Ich würde deshalb sehr gern eng mit Ihnen zusammenarbeiten, damit die Seiten garantiert zu Ihren Richtlinien passen und die Teampartner trotzdem das Beste rausholen können.
 
-Ich kenne und beachte die beiden Richtlinien (Social Media Policies, Logos/Brands/Names), und wenn Ihnen auf einer der Seiten noch etwas auffällt, sagen Sie mir bitte einfach Bescheid, ich ändere es sofort.
+Dazu eine ehrliche Bitte: Für die Nutzer wäre es deutlich einfacher, wenn ich auf finestsites.io „Geeignet für PM-International“ schreiben und die Produktnamen nennen dürfte, natürlich kontrolliert und in einer Form, die Sie vorher freigeben. Ohne diese Einordnung finden die Teampartner ihre Vorlage schlicht schwerer. Wenn Sie das nicht möchten, bleibt es so wie jetzt, das ist völlig in Ordnung. Aber ich wäre Ihnen sehr dankbar, wenn wir darüber sprechen könnten.
 
-Vielen Dank und liebe Grüße
+Ich kenne die beiden Richtlinien (Social Media Policies, Logos/Brands/Names) und halte mich daran. Wenn Ihnen noch etwas auffällt, bitte einfach Bescheid sagen, ich ändere es sofort. Und für ein Gespräch, gern auch per Telefon oder Video, habe ich jederzeit Zeit.
+
+Viele Grüße
 Daniel Kurzeja
