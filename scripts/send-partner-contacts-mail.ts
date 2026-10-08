@@ -33,7 +33,8 @@ const from = process.env.RESEND_FROM_EMAIL ?? 'FinestSites <info@finestsites.io>
 type Recipient = { email: string; firstName: string | null; partnerName: string | null }
 
 async function recipientsFromDb(): Promise<Recipient[]> {
-  const sql = postgres(process.env.DATABASE_URL!, { ssl: process.env.DATABASE_URL!.includes('sslmode=') ? undefined : 'prefer' as never })
+  // dieselben Optionen wie src/lib/db/index.ts (SSL kommt aus der URL)
+  const sql = postgres(process.env.DATABASE_URL!, { prepare: false, max: 1, connect_timeout: 8 })
   const rows = await sql<{ email: string; first_name: string | null; partner_name: string | null }[]>`
     select u.email, u.first_name,
       (select d2.field_value from site_data d2

@@ -763,8 +763,13 @@ export function campaignLastHourEmail({ firstName }: { firstName?: string }): st
 // Dailyoptimal). Zielgruppe ist älter – deshalb große Schritte, kein Fachjargon,
 // ein einziger Button.
 export function partnerContactsUpdateEmail({ firstName, partnerName }: { firstName?: string; partnerName?: string }): string {
-  const hi = firstName ? `Hallo ${firstName}` : 'Hallo'
-  const wir = partnerName ? `du und ${partnerName}` : 'ihr beide'
+  // Nutzer tragen den Vornamen teils als „Janin und Thomas“ ein oder beide Felder
+  // gleich – dann lieber neutral „ihr beide“ als „du und Thomas“
+  const fn = (firstName ?? '').trim()
+  const pn = (partnerName ?? '').trim()
+  const hi = fn ? `Hallo ${fn}` : 'Hallo'
+  const pairInFirst = /\bund\b|&|,/.test(fn)
+  const wir = pn && !pairInFirst && pn.toLowerCase() !== fn.toLowerCase() ? `du und ${pn}` : 'ihr beide'
   const step = (n: number, text: string) => `
     <tr>
       <td valign="top" style="padding:0 14px 16px 0;">

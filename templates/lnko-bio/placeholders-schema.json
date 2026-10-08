@@ -159,14 +159,14 @@
           "label": "Gemeinsam",
           "value": "gemeinsam",
           "card_type": "color",
-          "description": "Eine Angabe für euch beide – z. B. eine WhatsApp-Nummer oder ein Instagram-Profil."
+          "description": "Ein Eintrag für euch beide."
         },
         {
           "color": "#EEF4FF",
           "label": "Jeder für sich",
           "value": "getrennt",
           "card_type": "color",
-          "description": "Jede Person trägt ihre eigenen Kontaktdaten ein. Besucher sehen beide nebeneinander."
+          "description": "Jede Person eigene Daten."
         }
       ],
       "default_value": "gemeinsam",
