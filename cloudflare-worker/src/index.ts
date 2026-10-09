@@ -1,5 +1,6 @@
 import { normalizeWhatsAppNumber, rewriteSocialHrefs } from '../../src/lib/utils/social-links'
 import type { PublicTrackingConfig } from '../../src/lib/tracking/types'
+import { pickContactFields } from '../../src/lib/tracking/platforms'
 import {
   shouldInject, injectTracking, handleTrackingBeacon, handleNoTrack, recordEvent, sendServerEvent,
   hasMarketingConsent, isNoTrack, privacySectionDe, privacySectionEn,
@@ -863,12 +864,18 @@ async function sendSubmissionEmail(
 </body>
 </html>`
 
+    const submitter = pickContactFields(formData).email ?? ''
+    const replyTo = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(submitter) ? submitter : null
     const res = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: { Authorization: `Bearer ${env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({
         from: env.NOTIFY_FROM || 'FinestSites <anfragen@finestsites.io>',
         to: [recipient],
+        // Antworten gehen direkt an den Interessenten, nicht an uns. Kein CC, kein Name
+        // des Betreibers von FinestSites — der Seitenbetreiber soll die Mail bedenkenlos
+        // weiterleiten können.
+        ...(replyTo ? { reply_to: [replyTo] } : {}),
         subject: isVital ? `Vitalprofil von ${formData.name || 'Unbekannt'}: ${formData.vitaltyp}` : `Neue Anfrage: ${formTitle}`,
         html,
       }),

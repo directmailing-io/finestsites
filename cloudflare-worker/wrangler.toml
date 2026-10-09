@@ -73,8 +73,8 @@ id = "d59a4cba067147dc8db48fdd7b4d39e3"
 [vars]
 APP_URL = "https://app.finestsites.io"
 # Absender der Anfrage-Benachrichtigungen (Domain muss im Resend-Konto des RESEND_API_KEY verifiziert sein).
-# Übergangsweise daniel-kurzeja.de, solange das Resend-Konto mit finestsites.io gesperrt/unerreichbar ist.
-NOTIFY_FROM = "FinestSites <anfragen@daniel-kurzeja.de>"
+# Seit 09.10.2026 wieder finestsites.io (Resend-Konto reaktiviert). Reply-To = Interessent.
+NOTIFY_FROM = "FinestSites <anfragen@finestsites.io>"
 
 # Subdomain traffic: username.wellpreneur.io
 # Zone: 7d59763ba878ba1f36f05787fb4c3ee4
