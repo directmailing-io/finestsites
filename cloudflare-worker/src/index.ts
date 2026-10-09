@@ -3,6 +3,7 @@ import type { PublicTrackingConfig } from '../../src/lib/tracking/types'
 import { pickContactFields } from '../../src/lib/tracking/platforms'
 import { applyOpenGraph, type OgContext } from '../../src/lib/utils/open-graph'
 import { computeAboutIntro } from '../../src/lib/utils/about-intro'
+import LEGAL_I18N_JSON from './legal-i18n/translations.json'
 import {
   shouldInject, injectTracking, handleTrackingBeacon, handleNoTrack, recordEvent, sendServerEvent,
   hasMarketingConsent, isNoTrack, privacySectionDe, privacySectionEn,
@@ -1226,7 +1227,7 @@ export default {
           boxBorder: ta.boxBorder,
           logoHtml: baseDesign.logoHtml.replace(/#[0-9A-Fa-f]{6}/g, ta.logo),
         }
-        const legalHtml = pathname === '/impressum' ? renderImpressum(design) : renderDatenschutz(design, domain, meta.tracking)
+        const legalHtml = pathname === '/impressum' ? renderImpressum(design, domain) : renderDatenschutz(design, domain, meta.tracking)
         if (shouldTrack(pathname)) ctx.waitUntil(trackPageview(request, url, hostname, pathname, meta, env))
         return new Response(injectBeacon(render(legalHtml, pageDataMap)), {
           headers: htmlHeaders(),
@@ -1471,7 +1472,7 @@ a{color:${d.accent};text-decoration:none}
 a:hover{text-decoration:underline}
 strong{color:${d.text}}
 .footnote{font-size:13px;color:${d.faint};margin-top:48px}
-html[data-lang="en"] .l-de,html[data-lang="de"] .l-en{display:none!important}
+html:not([data-lang="de"]) .l-de,html:not([data-lang="en"]) .l-en,html:not([data-lang="it"]) .l-it,html:not([data-lang="ru"]) .l-ru,html:not([data-lang="uk"]) .l-uk,html:not([data-lang="pl"]) .l-pl,html:not([data-lang="bg"]) .l-bg,html:not([data-lang="hi"]) .l-hi{display:none!important}.lang-menu{position:relative}.lang-cur{display:inline-flex;align-items:center;gap:7px;height:34px;padding:0 10px 0 6px;border-radius:9999px;border:1px solid ${d.boxBorder};background:${d.boxBg};color:${d.text};font:inherit;font-size:13px;font-weight:600;cursor:pointer}.lang-flag{display:block;width:18px;height:18px;border-radius:50%;overflow:hidden;flex-shrink:0;box-shadow:inset 0 0 0 1px rgba(0,0,0,.08)}.lang-flag svg{display:block;width:100%;height:100%}.lang-cur-flag{display:none}html[data-lang="de"] .lang-cur-flag[data-lang="de"]{display:block}html[data-lang="en"] .lang-cur-flag[data-lang="en"]{display:block}html[data-lang="it"] .lang-cur-flag[data-lang="it"]{display:block}html[data-lang="ru"] .lang-cur-flag[data-lang="ru"]{display:block}html[data-lang="uk"] .lang-cur-flag[data-lang="uk"]{display:block}html[data-lang="pl"] .lang-cur-flag[data-lang="pl"]{display:block}html[data-lang="bg"] .lang-cur-flag[data-lang="bg"]{display:block}html[data-lang="hi"] .lang-cur-flag[data-lang="hi"]{display:block}.lang-caret{width:12px;height:12px;opacity:.8;transition:transform .25s ease}.lang-menu.open .lang-caret{transform:rotate(180deg)}.lang-list{position:absolute;right:0;top:calc(100% + 8px);min-width:196px;padding:6px;border-radius:14px;background:#fff;box-shadow:0 12px 40px rgba(0,0,0,.16);border:1px solid rgba(0,0,0,.06);z-index:1000;opacity:0;visibility:hidden;transform:translateY(-6px) scale(.98);transform-origin:top right;transition:opacity .18s ease,transform .22s cubic-bezier(.2,.8,.2,1),visibility 0s linear .22s}.lang-menu.open .lang-list{opacity:1;visibility:visible;transform:none;transition:opacity .18s ease,transform .22s cubic-bezier(.2,.8,.2,1),visibility 0s}.lang-item{display:flex;align-items:center;gap:10px;width:100%;padding:9px 10px;border:0;background:transparent;border-radius:10px;color:#1a1a1a;font:inherit;font-size:14px;cursor:pointer;text-align:left}.lang-item:hover{background:#F3F4F6}html[data-lang="de"] .lang-item[data-lang="de"]{background:#F3F4F6;font-weight:600}html[data-lang="en"] .lang-item[data-lang="en"]{background:#F3F4F6;font-weight:600}html[data-lang="it"] .lang-item[data-lang="it"]{background:#F3F4F6;font-weight:600}html[data-lang="ru"] .lang-item[data-lang="ru"]{background:#F3F4F6;font-weight:600}html[data-lang="uk"] .lang-item[data-lang="uk"]{background:#F3F4F6;font-weight:600}html[data-lang="pl"] .lang-item[data-lang="pl"]{background:#F3F4F6;font-weight:600}html[data-lang="bg"] .lang-item[data-lang="bg"]{background:#F3F4F6;font-weight:600}html[data-lang="hi"] .lang-item[data-lang="hi"]{background:#F3F4F6;font-weight:600}
 .legal-topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:32px}
 .legal-topbar .back-link{margin-bottom:0}
 .lang-switch{display:inline-flex;align-items:center;gap:2px;padding:3px;border-radius:9999px;background:${d.boxBg};border:1px solid ${d.boxBorder};flex-shrink:0}
@@ -1488,7 +1489,8 @@ footer nav.foot-nav a:hover{color:${d.muted}}
 </style>`
 }
 
-function legalHead(title: string, d: LegalDesign): string {
+function legalHead(title: string, d: LegalDesign, domain = ''): string {
+  const langs = legalLangsFor(domain)
   const fontLink = d.fontUrl
     ? `<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="${d.fontUrl}" rel="stylesheet">`
     : ''
@@ -1499,16 +1501,77 @@ function legalHead(title: string, d: LegalDesign): string {
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <meta name="robots" content="noindex,nofollow">
 <title>${title}</title>
-<script>(function(){var l;try{l=localStorage.getItem('fs-lang')}catch(e){}if(l!=='de'&&l!=='en'){l=(navigator.language||'de').toLowerCase().indexOf('de')===0?'de':'en'}document.documentElement.setAttribute('data-lang',l);document.documentElement.setAttribute('lang',l)})();</script>
+<script>(function(){var SUP=${JSON.stringify(langs)};var l;try{l=localStorage.getItem('fs-lang')}catch(e){}if(SUP.indexOf(l)<0){l='de';var c=(navigator.languages&&navigator.languages.length?navigator.languages:[navigator.language||'de']);for(var i=0;i<c.length;i++){var x=String(c[i]||'').toLowerCase().split('-')[0];if(SUP.indexOf(x)>=0){l=x;break}}}document.documentElement.setAttribute('data-lang',l);document.documentElement.setAttribute('lang',l)})();</script>
 ${fontLink}
 ${legalStyles(d)}
 </head>`
 }
 
+// ─── Mehrsprachige Rechtsseiten ───────────────────────────────────────────────
+// Templates mit mehr als DE/EN: Impressum und Datenschutz bekommen je Sprache einen Block
+// (Übersetzungen: src/legal-i18n/translations.json, Quelle de.json, Skript translate.py).
+const MULTI_LANG_DOMAINS = new Set(['dailyoptimal.de'])
+const LEGAL_LANGS = ['de', 'en', 'it', 'ru', 'uk', 'pl', 'bg', 'hi'] as const
+type LegalLang = typeof LEGAL_LANGS[number]
+const LEGAL_I18N = LEGAL_I18N_JSON as Record<string, Record<string, string>>
+const LANG_NAMES: Record<LegalLang, string> = { de: 'Deutsch', en: 'English', it: 'Italiano', ru: 'Русский', uk: 'Українська', pl: 'Polski', bg: 'Български', hi: 'हिन्दी' }
+const FLAG_PATHS: Record<LegalLang, string> = {
+  de: '<rect width="20" height="7" fill="#000"/><rect y="7" width="20" height="6" fill="#D00"/><rect y="13" width="20" height="7" fill="#FFCE00"/>',
+  en: '<rect width="20" height="20" fill="#012169"/><path d="M0 0L20 20M20 0L0 20" stroke="#fff" stroke-width="4"/><path d="M0 0L20 20M20 0L0 20" stroke="#C8102E" stroke-width="2"/><path d="M10 0V20M0 10H20" stroke="#fff" stroke-width="6"/><path d="M10 0V20M0 10H20" stroke="#C8102E" stroke-width="3"/>',
+  it: '<rect width="7" height="20" fill="#009246"/><rect x="7" width="6" height="20" fill="#fff"/><rect x="13" width="7" height="20" fill="#CE2B37"/>',
+  ru: '<rect width="20" height="7" fill="#fff"/><rect y="7" width="20" height="6" fill="#0039A6"/><rect y="13" width="20" height="7" fill="#D52B1E"/>',
+  uk: '<rect width="20" height="10" fill="#0057B7"/><rect y="10" width="20" height="10" fill="#FFD700"/>',
+  pl: '<rect width="20" height="10" fill="#fff"/><rect y="10" width="20" height="10" fill="#DC143C"/>',
+  bg: '<rect width="20" height="7" fill="#fff"/><rect y="7" width="20" height="6" fill="#00966E"/><rect y="13" width="20" height="7" fill="#D62612"/>',
+  hi: '<rect width="20" height="7" fill="#FF9933"/><rect y="7" width="20" height="6" fill="#fff"/><rect y="13" width="20" height="7" fill="#138808"/><circle cx="10" cy="10" r="2.2" fill="none" stroke="#000080" stroke-width="0.8"/>',
+}
+const flagSvg = (l: LegalLang) => `<span class="lang-flag"><svg viewBox="0 0 20 20" aria-hidden="true">${FLAG_PATHS[l]}</svg></span>`
+const legalLangsFor = (domain: string): LegalLang[] => MULTI_LANG_DOMAINS.has(domain) ? [...LEGAL_LANGS] : ['de', 'en']
+/** Übersetzter Rechtstext-Chunk; fehlt er, deutscher Text. */
+const legalChunk = (lang: string, key: string, de: string) => LEGAL_I18N[lang]?.[key] ?? de
+/** Blöcke der Zusatzsprachen (it, ru, …) für Impressum/Datenschutz aus den Übersetzungen. */
+function extraLegalBlocks(domain: string, page: 'impressum' | 'datenschutz', tracking?: PublicTrackingConfig): string {
+  if (!MULTI_LANG_DOMAINS.has(domain)) return ''
+  let out = ''
+  for (const lang of LEGAL_LANGS) {
+    if (lang === 'de' || lang === 'en') continue
+    const t = LEGAL_I18N[lang]
+    if (!t?.[page]) continue
+    let html = t[page]
+    if (page === 'datenschutz') {
+      let privacy: string
+      if (!tracking) privacy = t.privacy_none ?? ''
+      else {
+        const providers = [tracking.meta ? t.privacy_meta : '', tracking.google ? t.privacy_google : '', tracking.tiktok ? t.privacy_tiktok : ''].join('')
+        privacy = (t.privacy_tracking ?? '').replace('§§PROVIDERS§§', providers)
+      }
+      html = html.replace('§§PRIVACY§§', privacy)
+    }
+    // Hinweis „Übersetzung zur Orientierung“ nach dem Untertitel
+    html = html.replace(/(<p class="page-subtitle">[\s\S]*?<\/p>)/, `$1\n<div class="binding-note">${t.binding_note ?? ''}</div>`)
+    out += `\n<div class="l-${lang}">\n${html}\n</div>`
+  }
+  return out
+}
+/** Sprach-Spans für kurze UI-Texte (Zurück, Startseite, …) in allen Sprachen der Domain. */
+function legalUiSpans(domain: string, key: string, de: string, en: string): string {
+  return legalLangsFor(domain).map(l => `<span class="l-${l}">${l === 'de' ? de : l === 'en' ? en : legalChunk(l, key, de)}</span>`).join('')
+}
+
 const FLAG_DE_SVG = `<svg viewBox="0 0 20 20" aria-hidden="true"><rect width="20" height="6.67" y="0" fill="#000"/><rect width="20" height="6.67" y="6.67" fill="#DD0000"/><rect width="20" height="6.66" y="13.34" fill="#FFCE00"/></svg>`
 const FLAG_EN_SVG = `<svg viewBox="0 0 20 20" aria-hidden="true"><rect width="20" height="20" fill="#012169"/><path d="M0 0 L20 20 M20 0 L0 20" stroke="#fff" stroke-width="4"/><path d="M0 0 L20 20 M20 0 L0 20" stroke="#C8102E" stroke-width="2"/><path d="M10 0 V20 M0 10 H20" stroke="#fff" stroke-width="6"/><path d="M10 0 V20 M0 10 H20" stroke="#C8102E" stroke-width="3.5"/></svg>`
 
-function legalTopbarHtml(): string {
+function legalTopbarHtml(domain = ''): string {
+  const langs = legalLangsFor(domain)
+  if (langs.length > 2) {
+    const cur = langs.map(l => `<span class="lang-cur-flag" data-lang="${l}">${flagSvg(l)}</span>`).join('')
+    const items = langs.map(l => `<button type="button" class="lang-item" data-lang="${l}" onclick="fsSetLang('${l}');fsLangClose()">${flagSvg(l)}<span>${LANG_NAMES[l]}</span></button>`).join('')
+    return `<div class="legal-topbar">
+<a class="back-link" href="/">&#8592; ${legalUiSpans(domain, 'ui_back', 'Zurück', 'Back')}</a>
+<div class="lang-menu"><button type="button" class="lang-cur" aria-haspopup="listbox" aria-label="Sprache wählen" onclick="fsLangToggle(this)">${cur}<span class="lang-cur-code"></span><svg class="lang-caret" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5l3 3 3-3" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button><div class="lang-list" role="listbox">${items}</div></div>
+</div>
+<script>function fsLangToggle(b){var m=b.parentNode;var o=!m.classList.contains('open');document.querySelectorAll('.lang-menu.open').forEach(function(x){x.classList.remove('open')});if(o)m.classList.add('open')}function fsLangClose(){document.querySelectorAll('.lang-menu.open').forEach(function(x){x.classList.remove('open')})}document.addEventListener('click',function(e){if(!e.target.closest||!e.target.closest('.lang-menu'))fsLangClose()});(function(){function c(){var l=document.documentElement.getAttribute('data-lang')||'de';document.querySelectorAll('.lang-cur-code').forEach(function(s){s.textContent=l.toUpperCase()})}c();new MutationObserver(c).observe(document.documentElement,{attributes:true,attributeFilter:['data-lang']})})();</script>`
+  }
   return `<div class="legal-topbar">
 <a class="back-link" href="/">&#8592; <span class="l-de">Zurück</span><span class="l-en">Back</span></a>
 <div class="lang-switch" role="group" aria-label="Sprache / Language">
@@ -1518,28 +1581,30 @@ function legalTopbarHtml(): string {
 </div>`
 }
 
-function legalLangScript(titleDe: string, titleEn: string): string {
-  return `<script>function fsSetLang(l){try{localStorage.setItem('fs-lang',l)}catch(e){}document.documentElement.setAttribute('data-lang',l);document.documentElement.setAttribute('lang',l);document.title=l==='en'?'${titleEn}':'${titleDe}'}
-if(document.documentElement.getAttribute('data-lang')==='en'){document.title='${titleEn}'}</script>`
+function legalLangScript(titleDe: string, titleEn: string, domain = '', key: 'title_imprint' | 'title_privacy' = 'title_imprint'): string {
+  const titles: Record<string, string> = { de: titleDe, en: titleEn }
+  for (const l of legalLangsFor(domain)) if (l !== 'de' && l !== 'en') titles[l] = legalChunk(l, key, titleDe)
+  return `<script>var FS_TITLES=${JSON.stringify(titles)};function fsSetLang(l){try{localStorage.setItem('fs-lang',l)}catch(e){}document.documentElement.setAttribute('data-lang',l);document.documentElement.setAttribute('lang',l);document.title=FS_TITLES[l]||FS_TITLES.de}
+(function(){var l=document.documentElement.getAttribute('data-lang');if(l&&FS_TITLES[l])document.title=FS_TITLES[l]})();</script>`
 }
 
-function legalFooterHtml(): string {
+function legalFooterHtml(domain = ''): string {
   return `<footer>
 <span class="copyright">&copy; ${new Date().getFullYear()} FinestSites</span>
 <nav class="foot-nav">
-<a href="/"><span class="l-de">Startseite</span><span class="l-en">Home</span></a>
-<a href="/datenschutz"><span class="l-de">Datenschutz</span><span class="l-en">Privacy</span></a>
-<a href="/impressum"><span class="l-de">Impressum</span><span class="l-en">Legal notice</span></a>
+<a href="/">${legalUiSpans(domain, 'ui_home', 'Startseite', 'Home')}</a>
+<a href="/datenschutz">${legalUiSpans(domain, 'ui_privacy', 'Datenschutz', 'Privacy')}</a>
+<a href="/impressum">${legalUiSpans(domain, 'ui_imprint', 'Impressum', 'Legal notice')}</a>
 </nav>
 </footer>`
 }
 
-function renderImpressum(d: LegalDesign): string {
-  return `${legalHead('Impressum', d)}
+function renderImpressum(d: LegalDesign, domain = ''): string {
+  return `${legalHead('Impressum', d, domain)}
 <body>
 <nav class="top-nav"><a class="logo" href="/">${d.logoHtml}</a></nav>
 <main>
-${legalTopbarHtml()}
+${legalTopbarHtml(domain)}
 <div class="l-de">
 <div class="eyebrow">Rechtliches</div>
 <h1>Impressum</h1>
@@ -1686,9 +1751,10 @@ ${legalTopbarHtml()}
 
 <p class="footnote">Last updated: July 2026</p>
 </div>
-${legalLangScript('Impressum', 'Legal Notice')}
+${extraLegalBlocks(domain, 'impressum')}
+${legalLangScript('Impressum', 'Legal Notice', domain, 'title_imprint')}
 </main>
-${legalFooterHtml()}
+${legalFooterHtml(domain)}
 </body>
 </html>`
 }
@@ -1727,11 +1793,11 @@ function vitalprofilSectionEn(): string {
 
 function renderDatenschutz(d: LegalDesign, domain = '', tracking?: PublicTrackingConfig): string {
   const vital = domain === 'vitalprofil.net'
-  return `${legalHead('Datenschutzerkl\u00E4rung', d)}
+  return `${legalHead('Datenschutzerkl\u00E4rung', d, domain)}
 <body>
 <nav class="top-nav"><a class="logo" href="/">${d.logoHtml}</a></nav>
 <main>
-${legalTopbarHtml()}
+${legalTopbarHtml(domain)}
 <div class="l-de">
 <div class="eyebrow">Rechtliches</div>
 <h1>Datenschutz&shy;erkl\u00E4rung</h1>
@@ -1896,9 +1962,10 @@ ${vital ? vitalprofilSectionEn() : ''}<section>
 
 <p class="footnote">Last updated: July 2026</p>
 </div>
-${legalLangScript('Datenschutzerklärung', 'Privacy Policy')}
+${extraLegalBlocks(domain, 'datenschutz', tracking)}
+${legalLangScript('Datenschutzerklärung', 'Privacy Policy', domain, 'title_privacy')}
 </main>
-${legalFooterHtml()}
+${legalFooterHtml(domain)}
 </body>
 </html>`
 }
