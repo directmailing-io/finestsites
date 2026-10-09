@@ -33,11 +33,29 @@ function hashOf(text: string): string {
   return createHash('sha256').update(text).digest('hex').slice(0, 16)
 }
 
+/** 429/5xx: bis zu drei Versuche mit Wartezeit (Rate-Limit bei vielen Seiten auf einmal). */
+async function fetchWithRetry(url: string, init: RequestInit): Promise<Response> {
+  let resp = await fetch(url, init)
+  for (let attempt = 1; attempt <= 3 && (resp.status === 429 || resp.status >= 500); attempt++) {
+    const wait = parseFloat(resp.headers.get('retry-after') ?? '') * 1000 || 3000 * attempt
+    await new Promise(r => setTimeout(r, wait))
+    resp = await fetch(url, init)
+  }
+  return resp
+}
+
+/** Höchstens N gleichzeitige Aufgaben. */
+async function runLimited(tasks: Array<() => Promise<void>>, limit: number): Promise<void> {
+  let next = 0
+  const worker = async () => { while (next < tasks.length) { const t = tasks[next++]; await t() } }
+  await Promise.all(Array.from({ length: Math.min(limit, tasks.length) }, worker))
+}
+
 async function translateText(german: string, lang: SiteLang, html: boolean, context: string): Promise<string | null> {
   const apiKey = process.env.OPENAI_API_KEY
   if (!apiKey) return null
   try {
-    const resp = await fetch('https://api.openai.com/v1/chat/completions', {
+    const resp = await fetchWithRetry('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: { 'content-type': 'application/json', authorization: `Bearer ${apiKey}` },
       body: JSON.stringify({
@@ -83,7 +101,7 @@ export async function ensureAboutMeTranslation(siteId: string, langs: SiteLang[]
   const map: Record<string, string> = {}
   for (const r of rows) map[r.fieldKey] = r.fieldValue ?? ''
 
-  const jobs: Promise<void>[] = []
+  const jobs: Array<() => Promise<void>> = []
   for (const f of TRANSLATED_FIELDS) {
     const german = (map[f.key] ?? '').trim()
     if (!german) continue
@@ -91,7 +109,7 @@ export async function ensureAboutMeTranslation(siteId: string, langs: SiteLang[]
     for (const lang of langs) {
       const outKey = `${f.key}_${lang}`, srcKey = `${f.key}_${lang}_src`
       if (map[outKey] && map[srcKey] === srcHash) continue
-      jobs.push((async () => {
+      jobs.push(async () => {
         const translated = await translateText(german, lang, f.html, f.context)
         // Fallback auf Datenebene: deutscher Text, damit nie ein leerer Abschnitt erscheint.
         // Der Hash wird nur bei echter Übersetzung gesetzt — beim nächsten Mal wird es erneut versucht.
@@ -102,8 +120,8 @@ export async function ensureAboutMeTranslation(siteId: string, langs: SiteLang[]
             { userSiteId: siteId, fieldKey: srcKey, fieldValue: translated ? srcHash : '', updatedAt: new Date() },
           ])
           .onConflictDoUpdate({ target: [siteData.userSiteId, siteData.fieldKey], set: { fieldValue: sql`excluded.field_value`, updatedAt: new Date() } })
-      })())
+      })
     }
   }
-  await Promise.all(jobs)
+  await runLimited(jobs, 4)
 }
