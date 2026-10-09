@@ -238,26 +238,8 @@ export default function TrackingSettings() {
             ))}
           </Section>
 
-          {/* Retargeting */}
-          <Section title="Nur Besucher einer bestimmten Seite ansprechen" subtitle="Für Retargeting-Anzeigen. Jede deiner Seiten hat eine eigene Adresse, daran erkennt die Plattform, wer wo war.">
-            <ol className="text-[15px] text-gray-700 leading-snug flex flex-col gap-1.5 pl-5 list-decimal">
-              <li>In Meta: <strong>Zielgruppen</strong> → <strong>Zielgruppe erstellen</strong> → <strong>Custom Audience</strong> → <strong>Website</strong>.</li>
-              <li><strong>„Personen, die bestimmte Webseiten besucht haben“</strong> wählen, bei „URL enthält“ die Adresse unten einfügen.</li>
-              <li>Zeitraum wählen (z. B. 30 Tage), speichern. In der Anzeige diese Zielgruppe auswählen.</li>
-            </ol>
-            <div className="flex flex-col gap-2">
-              {published.map(s => (
-                <div key={s.id} className="flex items-center gap-2 rounded-2xl px-4 py-3" style={{ background: '#fff', border: '1px solid #E5E7EB' }}>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-xs text-gray-500">{s.title}</p>
-                    <p className="text-[15px] font-semibold text-gray-900 break-all">{s.host}</p>
-                  </div>
-                  <CopyButton text={s.host} />
-                </div>
-              ))}
-            </div>
-            <p className="text-[14px] text-gray-500 leading-snug">Bei Google Ads und TikTok geht es genauso: Zielgruppe „Website-Besucher“, Regel „URL enthält“. Wer auf WhatsApp getippt hat, lässt sich über das Ereignis „Kontakt“ als eigene Zielgruppe anlegen.</p>
-          </Section>
+          {/* Zielgruppen-Helfer (Retargeting) */}
+          <AudienceHelper sites={published} stats={stats} />
 
           {/* Auswertung */}
           <Section title={`Auswertung, letzte ${stats?.days ?? 30} Tage`} subtitle="Aus unserer eigenen Zählung, unabhängig von Werbeblockern und Zustimmung.">
@@ -360,6 +342,132 @@ export default function TrackingSettings() {
         </>
       )}
     </div>
+  )
+}
+
+// ─── Zielgruppen-Helfer ───────────────────────────────────────────────────────
+// Übersetzt „Ich will die ansprechen, die X, aber nicht Y“ in die Klicks bei Meta.
+// Unterscheidung läuft über die Seitenadresse (jede Seite hat ihre eigene) und die
+// Ereignisse Lead/Contact, die der Pixel mit derselben Adresse meldet.
+
+const SITUATIONS = [
+  { key: 'visited',       title: 'Seite besucht',                          text: 'Alle, die die Seite geöffnet haben.' },
+  { key: 'no_lead',       title: 'Besucht, aber keine Anfrage gestellt',   text: 'Für Erinnerungs-Anzeigen: „Du warst auf meiner Seite, hast aber noch nicht angefragt.“' },
+  { key: 'no_contact',    title: 'Besucht, aber weder Kontakt noch Anfrage', text: 'Noch enger: auch WhatsApp-, Telefon- und E-Mail-Klicker sind raus.' },
+  { key: 'lead',          title: 'Anfrage gestellt',                       text: 'Zum Ausschließen aus Werbung oder als Vorlage für eine Lookalike-Zielgruppe.' },
+] as const
+type SituationKey = typeof SITUATIONS[number]['key']
+
+function AudienceHelper({ sites, stats }: { sites: Site[]; stats: Stats | null }) {
+  const [siteId, setSiteId] = useState<string>(sites[0]?.id ?? '')
+  const [situation, setSituation] = useState<SituationKey>('no_lead')
+  const [days, setDays] = useState(30)
+  const site = sites.find(s => s.id === siteId) ?? sites[0]
+  const n = stats?.bySite.find(b => b.siteId === site?.id)
+  const consentRate = stats && (stats.totals.consentYes + stats.totals.consentNo) > 0
+    ? stats.totals.consentYes / (stats.totals.consentYes + stats.totals.consentNo) : null
+
+  if (sites.length === 0) {
+    return (
+      <Section title="Zielgruppe für Retargeting zusammenstellen" subtitle="Sobald du eine Seite veröffentlicht hast, zeigt dir dieser Helfer Klick für Klick, wie du z. B. alle ansprichst, die deine Seite besucht, aber nicht angefragt haben." >
+        <p className="text-[14px] text-gray-500">Du hast noch keine veröffentlichte Seite.</p>
+      </Section>
+    )
+  }
+
+  const include = `URL enthält  ${site.host}`
+  const excludeLead = `Ereignis „Lead“, verfeinert nach: URL enthält  ${site.host}`
+  const excludeContact = `Ereignis „Contact“, verfeinert nach: URL enthält  ${site.host}`
+
+  const estimate = (() => {
+    if (!n) return null
+    const base = situation === 'lead' ? n.leads : situation === 'visited' ? n.pageviews : situation === 'no_lead' ? Math.max(0, n.pageviews - n.leads) : Math.max(0, n.pageviews - n.leads - n.contacts)
+    return base
+  })()
+
+  return (
+    <Section title="Zielgruppe für Retargeting zusammenstellen" subtitle="Sag, wen du ansprechen willst. Du bekommst die genauen Klicks für Meta und siehst, wie groß die Gruppe ungefähr ist.">
+      {/* 1. Seite */}
+      <div className="flex flex-col gap-2">
+        <p className="text-sm font-semibold text-gray-700">1. Welche Seite?</p>
+        <div className="flex flex-wrap gap-2">
+          {sites.map(s => (
+            <button key={s.id} type="button" onClick={() => setSiteId(s.id)}
+              className="text-[14px] font-semibold px-3.5 py-2.5 rounded-xl min-h-[42px]"
+              style={site?.id === s.id ? { background: '#1a1a1a', color: '#fff' } : { background: '#fff', color: '#1a1a1a', border: '1.5px solid #D1D5DB' }}>
+              {s.title}
+            </button>
+          ))}
+        </div>
+      </div>
+      {/* 2. Situation */}
+      <div className="flex flex-col gap-2">
+        <p className="text-sm font-semibold text-gray-700">2. Wen davon?</p>
+        {SITUATIONS.map(o => (
+          <button key={o.key} type="button" onClick={() => setSituation(o.key)}
+            className="text-left rounded-2xl px-4 py-3"
+            style={{ background: '#fff', border: `1.5px solid ${situation === o.key ? '#1a1a1a' : '#E5E7EB'}` }}>
+            <p className="text-[15px] font-semibold text-gray-900">{o.title}</p>
+            <p className="text-[14px] text-gray-600 leading-snug">{o.text}</p>
+          </button>
+        ))}
+      </div>
+      {/* 3. Zeitraum */}
+      <div className="flex items-center gap-3 flex-wrap">
+        <p className="text-sm font-semibold text-gray-700">3. Wie lange zurück?</p>
+        {[7, 30, 90, 180].map(d => (
+          <button key={d} type="button" onClick={() => setDays(d)} className="text-[14px] font-semibold px-3 py-2 rounded-xl min-h-[40px]"
+            style={days === d ? { background: '#1a1a1a', color: '#fff' } : { background: '#fff', color: '#1a1a1a', border: '1.5px solid #D1D5DB' }}>{d} Tage</button>
+        ))}
+      </div>
+
+      {/* Ergebnis */}
+      <div className="rounded-2xl p-4 sm:p-5 flex flex-col gap-3" style={{ background: '#fff', border: '1.5px solid #1a1a1a' }}>
+        <p className="text-[15px] font-bold text-gray-900">So legst du die Zielgruppe bei Meta an</p>
+        <ol className="text-[15px] text-gray-700 leading-snug flex flex-col gap-2 pl-5 list-decimal">
+          <li>Werbeanzeigenmanager → <strong>Zielgruppen</strong> → <strong>Zielgruppe erstellen</strong> → <strong>Custom Audience</strong> → Quelle <strong>Website</strong>.</li>
+          {situation === 'lead' ? (
+            <li>Bei „Ereignisse“ statt „Alle Website-Besucher“ das Ereignis <strong>Lead</strong> wählen. Auf <strong>Verfeinern nach</strong> → <strong>URL</strong> → <strong>enthält</strong> und einfügen:
+              <Rule text={site.host} /></li>
+          ) : (
+            <li>„Ereignisse“ auf <strong>Alle Website-Besucher</strong> lassen. Auf <strong>Verfeinern nach</strong> → <strong>URL</strong> → <strong>enthält</strong> und einfügen:
+              <Rule text={site.host} /></li>
+          )}
+          <li>Rechts daneben „in den letzten … Tagen“ auf <strong>{days}</strong> stellen.</li>
+          {(situation === 'no_lead' || situation === 'no_contact') && (
+            <li>Auf <strong>Weitere Personen ausschließen</strong>. Dort das Ereignis <strong>Lead</strong> wählen, wieder <strong>Verfeinern nach URL enthält</strong> mit derselben Adresse, ebenfalls {days} Tage.
+              {situation === 'no_contact' && <> Danach noch einmal <strong>Weitere Personen ausschließen</strong> mit dem Ereignis <strong>Contact</strong>, gleiche Adresse.</>}
+            </li>
+          )}
+          <li>Namen vergeben, z. B. <em>„{site.title}: {SITUATIONS.find(x => x.key === situation)?.title}“</em>, speichern. In der Anzeige unter „Zielgruppe“ diese Custom Audience wählen.</li>
+        </ol>
+        <details className="text-[14px] text-gray-600">
+          <summary className="font-semibold cursor-pointer" style={{ color: '#1a1a1a' }}>Zur Kontrolle: Regeln als Text</summary>
+          <div className="mt-2 flex flex-col gap-1.5 font-mono text-[12px]">
+            <p><span className="text-gray-400">Einschließen:</span> {situation === 'lead' ? excludeLead.replace('Ereignis', 'Ereignis') : `Alle Website-Besucher, ${include}`}</p>
+            {(situation === 'no_lead' || situation === 'no_contact') && <p><span className="text-gray-400">Ausschließen:</span> {excludeLead}</p>}
+            {situation === 'no_contact' && <p><span className="text-gray-400">Ausschließen:</span> {excludeContact}</p>}
+          </div>
+        </details>
+        {estimate !== null && n && (
+          <p className="text-[14px] leading-snug rounded-xl px-3.5 py-3" style={{ background: '#F8FAFC', color: '#374151' }}>
+            <strong>Größe, grob geschätzt:</strong> In den letzten {stats?.days ?? 30} Tagen hatte {site.host} {n.pageviews} Aufrufe, {n.contacts} Kontakte und {n.leads} Anfragen. Für diese Auswahl bleiben etwa <strong>{estimate}</strong> Aufrufe übrig.
+            {consentRate !== null && <> Davon landen nur die mit Zustimmung bei Meta, zuletzt {Math.round(consentRate * 100)} %.</>}
+            {' '}Meta zeigt die Zielgruppe erst ab 100 Personen an.
+          </p>
+        )}
+        <p className="text-[13px] text-gray-500 leading-snug">Google Ads: Zielgruppenverwaltung → „Website-Besucher“ mit Regel „URL enthält {site.host}“, zum Ausschließen eine zweite Liste aus der Conversion „Anfrage“. TikTok: Zielgruppen → Custom Audience → Website-Traffic, gleiche Logik mit „Formular absenden“. Die Begriffe können bei den Plattformen leicht abweichen, schreib uns im Chat, wenn etwas anders aussieht.</p>
+      </div>
+    </Section>
+  )
+}
+
+function Rule({ text }: { text: string }) {
+  return (
+    <span className="mt-1.5 flex items-center gap-2">
+      <code className="flex-1 min-w-0 text-[14px] font-semibold px-3 py-2 rounded-xl break-all" style={{ background: '#F3F4F6', color: '#111' }}>{text}</code>
+      <CopyButton text={text} />
+    </span>
   )
 }
 
