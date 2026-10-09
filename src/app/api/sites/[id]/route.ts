@@ -191,8 +191,9 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     ;(async () => {
       if (aboutMeChanged) {
         try {
-          const { ensureAboutMeTranslation } = await import('@/lib/utils/translate')
-          await ensureAboutMeTranslation(id)
+          const { ensureAboutMeTranslation, templateLangs } = await import('@/lib/utils/translate')
+          const [tpl] = await db.select({ domain: templates.domain }).from(userSites).innerJoin(templates, eq(templates.id, userSites.templateId)).where(eq(userSites.id, id)).limit(1)
+          await ensureAboutMeTranslation(id, templateLangs(tpl?.domain))
         } catch (err) {
           console.error('[PATCH] about_me translation failed:', err)
         }

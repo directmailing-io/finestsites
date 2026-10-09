@@ -223,8 +223,8 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   // (Wellpreneur dual-language template). Blocking on purpose: the published
   // page must never go live with an empty EN about section.
   try {
-    const { ensureAboutMeTranslation } = await import('@/lib/utils/translate')
-    await ensureAboutMeTranslation(id)
+    const { ensureAboutMeTranslation, templateLangs } = await import('@/lib/utils/translate')
+    await ensureAboutMeTranslation(id, templateLangs(site.template.domain))
   } catch (err) {
     console.error('[publish] about_me translation failed:', err)
   }

@@ -1,64 +1,58 @@
-/**
- * Auto-translation of the user-entered "Über mich" text (about_me_html).
- *
- * The Wellpreneur template is bilingual (DE/EN dual-DOM). Static copy is
- * translated in the template itself, but the about text is user content and
- * gets translated server-side into the `about_me_html_en` site_data key.
- *
- * Like the FitLine shop links, `about_me_html_en` is intentionally NOT part
- * of the placeholder schema — it is derived data, invisible in the editor.
- *
- * Staleness tracking: `about_me_html_en_src` stores a hash of the German
- * source the translation was made from. The hash is only written on a
- * successful API translation, so failures (or a missing API key) fall back
- * to storing the German text as EN and retry on the next save.
- */
 import { sanitizeRichtext } from '@/lib/security/sanitize'
 import { createHash } from 'crypto'
 import { db } from '@/lib/db'
 import { siteData } from '@/lib/db/schema'
 import { eq, and, inArray, sql } from 'drizzle-orm'
+import type { SiteLang } from '@/lib/utils/about-intro'
 
-const OPENAI_MODEL = 'gpt-4o-mini'
+const OPENAI_MODEL = 'gpt-5.5-2026-04-23'
 
 /**
- * User-written fields that bilingual templates show in EN too. Each one gets a
- * derived `<key>_en` (+ `<key>_en_src` hash) in site_data — never in the schema.
- *   about_me_html → Wellpreneur „Über mich“
+ * Nutzertexte, die mehrsprachige Templates in anderen Sprachen zeigen. Je Sprache entsteht ein
+ * abgeleiteter Wert `<key>_<lang>` (+ `<key>_<lang>_src` = Hash des deutschen Textes) in site_data —
+ * nie im Schema. Fehlt die Übersetzung, zeigt das Template den deutschen Text.
+ *   about_me_html → „Über mich“ (Richtext, HTML)        — Wellpreneur, Dailyoptimal
+ *   about_intro   → eigene Begrüßung (Text, *Marker*)   — Dailyoptimal, Wellpreneur
  *   intro         → Vitalprofil „Dein kurzer Text“
  */
-const TRANSLATED_FIELDS: Array<{ de: string; en: string; src: string }> = [
-  { de: 'about_me_html', en: 'about_me_html_en', src: 'about_me_html_en_src' },
-  { de: 'intro', en: 'intro_en', src: 'intro_en_src' },
+const TRANSLATED_FIELDS: Array<{ key: string; html: boolean; context: string }> = [
+  { key: 'about_me_html', html: true, context: 'a personal "about me" section on a casual landing page' },
+  { key: 'about_intro', html: false, context: 'a one-line personal greeting headline; words wrapped in *asterisks* are highlighted and the asterisks must be kept around the matching words' },
+  { key: 'intro', html: false, context: 'a short personal intro text on a landing page' },
 ]
+
+const LANG_NAMES: Record<SiteLang, string> = { de: 'German', en: 'English', it: 'Italian', ru: 'Russian', uk: 'Ukrainian', pl: 'Polish', bg: 'Bulgarian', hi: 'Hindi' }
+
+/** Welche Sprachen ein Template zeigt (de ist immer die Quelle). */
+export function templateLangs(templateDomain: string | null | undefined): SiteLang[] {
+  if (templateDomain === 'dailyoptimal.de') return ['en', 'it', 'ru', 'uk', 'pl', 'bg', 'hi']
+  return ['en']
+}
 
 function hashOf(text: string): string {
   return createHash('sha256').update(text).digest('hex').slice(0, 16)
 }
 
-async function translateHtml(germanHtml: string): Promise<string | null> {
+async function translateText(german: string, lang: SiteLang, html: boolean, context: string): Promise<string | null> {
   const apiKey = process.env.OPENAI_API_KEY
   if (!apiKey) return null
   try {
     const resp = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
-      headers: {
-        'content-type': 'application/json',
-        authorization: `Bearer ${apiKey}`,
-      },
+      headers: { 'content-type': 'application/json', authorization: `Bearer ${apiKey}` },
       body: JSON.stringify({
         model: OPENAI_MODEL,
-        max_tokens: 4096,
         messages: [
           {
             role: 'system',
             content:
-              'You translate German HTML snippets into English for a personal "about me" section on a casual landing page. ' +
-              'Rules: keep the HTML structure and all tags/attributes exactly as they are, translate only the text content. ' +
-              'Translate idiomatically and colloquially, the way a native speaker would actually say it, not word for word. ' +
-              'Never use em-dashes. Reply with ONLY the translated HTML, no explanations, no code fences.',
+              `You translate German ${html ? 'HTML snippets' : 'text'} into ${LANG_NAMES[lang]} for ${context}. ` +
+              (html ? 'Keep the HTML structure and all tags/attributes exactly as they are, translate only the text content. ' : 'Keep line breaks. ') +
+              'Translate idiomatically and colloquially, warm and personal, the way a native speaker would actually say it, not word for word. ' +
+              'Keep the informal, friendly register. Keep names, product names (FitLine, PowerCocktail, Activize, Restorate, Optimalset) and numbers unchanged. ' +
+              'Never use em-dashes. Reply with ONLY the translation, no explanations, no code fences.',
           },
-          { role: 'user', content: germanHtml },
+          { role: 'user', content: german },
         ],
       }),
     })
@@ -76,40 +70,40 @@ async function translateHtml(germanHtml: string): Promise<string | null> {
 }
 
 /**
- * Ensures every translated field (see TRANSLATED_FIELDS) has an up-to-date EN
- * version. No-op per field when it is empty or the stored translation matches.
+ * Stellt sicher, dass jedes übersetzte Feld in jeder Sprache aktuell ist. Je Feld/Sprache
+ * kein Aufruf, wenn der Text leer ist oder die gespeicherte Übersetzung zum deutschen Text passt.
+ * Alle Sprachen laufen parallel (Veröffentlichen wartet darauf).
  */
-export async function ensureAboutMeTranslation(siteId: string): Promise<void> {
-  const keys = TRANSLATED_FIELDS.flatMap(f => [f.de, f.en, f.src])
+export async function ensureAboutMeTranslation(siteId: string, langs: SiteLang[] = ['en']): Promise<void> {
+  const keys = TRANSLATED_FIELDS.flatMap(f => [f.key, ...langs.flatMap(l => [`${f.key}_${l}`, `${f.key}_${l}_src`])])
   const rows = await db
     .select({ fieldKey: siteData.fieldKey, fieldValue: siteData.fieldValue })
     .from(siteData)
     .where(and(eq(siteData.userSiteId, siteId), inArray(siteData.fieldKey, keys)))
-
   const map: Record<string, string> = {}
   for (const r of rows) map[r.fieldKey] = r.fieldValue ?? ''
 
+  const jobs: Promise<void>[] = []
   for (const f of TRANSLATED_FIELDS) {
-    const german = (map[f.de] ?? '').trim()
+    const german = (map[f.key] ?? '').trim()
     if (!german) continue
-
     const srcHash = hashOf(german)
-    if (map[f.en] && map[f.src] === srcHash) continue
-
-    const translated = await translateHtml(german)
-
-    // Fallback at the data level: store the German text so the template never
-    // renders an empty EN section. Hash is only set on real translations.
-    const upserts = [
-      { userSiteId: siteId, fieldKey: f.en, fieldValue: sanitizeRichtext(translated ?? german), updatedAt: new Date() },
-      { userSiteId: siteId, fieldKey: f.src, fieldValue: translated ? srcHash : '', updatedAt: new Date() },
-    ]
-    await db
-      .insert(siteData)
-      .values(upserts)
-      .onConflictDoUpdate({
-        target: [siteData.userSiteId, siteData.fieldKey],
-        set: { fieldValue: sql`excluded.field_value`, updatedAt: new Date() },
-      })
+    for (const lang of langs) {
+      const outKey = `${f.key}_${lang}`, srcKey = `${f.key}_${lang}_src`
+      if (map[outKey] && map[srcKey] === srcHash) continue
+      jobs.push((async () => {
+        const translated = await translateText(german, lang, f.html, f.context)
+        // Fallback auf Datenebene: deutscher Text, damit nie ein leerer Abschnitt erscheint.
+        // Der Hash wird nur bei echter Übersetzung gesetzt — beim nächsten Mal wird es erneut versucht.
+        const value = f.html ? sanitizeRichtext(translated ?? german) : (translated ?? german)
+        await db.insert(siteData)
+          .values([
+            { userSiteId: siteId, fieldKey: outKey, fieldValue: value, updatedAt: new Date() },
+            { userSiteId: siteId, fieldKey: srcKey, fieldValue: translated ? srcHash : '', updatedAt: new Date() },
+          ])
+          .onConflictDoUpdate({ target: [siteData.userSiteId, siteData.fieldKey], set: { fieldValue: sql`excluded.field_value`, updatedAt: new Date() } })
+      })())
+    }
   }
+  await Promise.all(jobs)
 }

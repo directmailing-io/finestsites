@@ -2,6 +2,7 @@ import { normalizeWhatsAppNumber, rewriteSocialHrefs } from '../../src/lib/utils
 import type { PublicTrackingConfig } from '../../src/lib/tracking/types'
 import { pickContactFields } from '../../src/lib/tracking/platforms'
 import { applyOpenGraph, type OgContext } from '../../src/lib/utils/open-graph'
+import { computeAboutIntro } from '../../src/lib/utils/about-intro'
 import {
   shouldInject, injectTracking, handleTrackingBeacon, handleNoTrack, recordEvent, sendServerEvent,
   hasMarketingConsent, isNoTrack, privacySectionDe, privacySectionEn,
@@ -240,40 +241,7 @@ function processLoops(html: string, data: Data, stack: Item[]): string {
  * back to the last whitespace-separated token so pre-existing values still
  * look intentional.
  */
-function computeAboutIntro(data: Data): { about_intro_de_html: string; about_intro_en_html: string } {
-  const raw = (data.about_intro || '').trim()
-  const isDuo = (data.partner_modus || '').trim() === 'duo' || (data.team_modus || '').trim() === 'team'
-  const vorname = (data.vorname || '').trim() || 'Daniel'
-  const vorname2 = ((data.vorname2 || '').trim() || (data.partner_vorname || '').trim())
 
-  if (raw) {
-    const html = wrapAccentMarkers(raw)
-    return { about_intro_de_html: html, about_intro_en_html: html }
-  }
-
-  if (isDuo && vorname2) {
-    const nameHtml = `${htmlEscape(vorname)} &amp; ${htmlEscape(vorname2)}`
-    return {
-      about_intro_de_html: `Hi, wir sind <span class="accent">${nameHtml}.</span>`,
-      about_intro_en_html: `Hi, we're <span class="accent">${nameHtml}.</span>`,
-    }
-  }
-
-  const nameHtml = `<span class="accent">${htmlEscape(vorname)}.</span>`
-  return {
-    about_intro_de_html: `Hi, ich bin ${nameHtml}`,
-    about_intro_en_html: `Hi, I'm ${nameHtml}`,
-  }
-}
-
-function wrapAccentMarkers(text: string): string {
-  const escaped = htmlEscape(text)
-  const marked = escaped.replace(/\*([^*\s][^*]*?)\*/g, '<span class="accent">$1</span>')
-  if (marked !== escaped) return marked
-  const m = escaped.match(/^(.*?)(\s+)(\S+)$/)
-  if (!m) return `<span class="accent">${escaped}</span>`
-  return `${m[1]}${m[2]}<span class="accent">${m[3]}</span>`
-}
 
 /**
  * Templates name the two-person mode in two ways:
@@ -295,9 +263,7 @@ function render(html: string, data: Data, rawKeys: Set<string> = new Set(), og?:
   for (const key of Object.keys(data)) {
     if (/whatsapp/i.test(key) && typeof data[key] === 'string') data[key] = normalizeWhatsAppNumber(data[key])
   }
-  const intros = computeAboutIntro(data)
-  data.about_intro_de_html = intros.about_intro_de_html
-  data.about_intro_en_html = intros.about_intro_en_html
+  Object.assign(data, computeAboutIntro(data))
 
   html = rewriteSocialHrefs(html, data)
   html = processLoops(html, data, [])
