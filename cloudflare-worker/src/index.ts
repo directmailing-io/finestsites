@@ -1,6 +1,7 @@
 import { normalizeWhatsAppNumber, rewriteSocialHrefs } from '../../src/lib/utils/social-links'
 import type { PublicTrackingConfig } from '../../src/lib/tracking/types'
 import { pickContactFields } from '../../src/lib/tracking/platforms'
+import { applyOpenGraph, type OgContext } from '../../src/lib/utils/open-graph'
 import {
   shouldInject, injectTracking, handleTrackingBeacon, handleNoTrack, recordEvent, sendServerEvent,
   hasMarketingConsent, isNoTrack, privacySectionDe, privacySectionEn,
@@ -289,7 +290,7 @@ function applyDuoAliases(data: Data): void {
   data.profilbild2 = data.profilbild2 || data.partner_profilbild || ''
 }
 
-function render(html: string, data: Data, rawKeys: Set<string> = new Set()): string {
+function render(html: string, data: Data, rawKeys: Set<string> = new Set(), og?: OgContext): string {
   applyDuoAliases(data)
   for (const key of Object.keys(data)) {
     if (/whatsapp/i.test(key) && typeof data[key] === 'string') data[key] = normalizeWhatsAppNumber(data[key])
@@ -318,6 +319,7 @@ function render(html: string, data: Data, rawKeys: Set<string> = new Set()): str
     .split(/(<script\b[^>]*>[\s\S]*?<\/script>)/gi)
     .map((part, i) => i % 2 === 1 ? part : simple(part, false))
     .join('')
+  if (og) html = applyOpenGraph(html, data, og)
   // Safety net: drop leftover control tokens so they never leak into output
   html = html
     .replace(/\{\{\s*\/\s*(?:each|if|unless)\s*\}\}/g, '')
@@ -1370,7 +1372,7 @@ export default {
       const rawKeys = new Set<string>()
       for (const r of rows) { dataMap[r.fieldKey] = r.fieldValue ?? ''; if (r.html) rawKeys.add(r.fieldKey) }
 
-      let renderedHtml = render(templateHtml, dataMap, rawKeys)
+      let renderedHtml = render(templateHtml, dataMap, rawKeys, { templateDomain: domain, siteId: meta.siteId, host: hostname })
 
       // "Made with FinestSites" im Footer: immer auf die Startseite mit dem Empfehlungslink
       // des Seitenbesitzers (finestsites.io/?ref=username, gleicher Link wie im Affiliate-Bereich)
@@ -1379,31 +1381,7 @@ export default {
         .replace(/>Made with FinestSites</g, `>Made with <a href="${refLink}" target="_blank" rel="noopener noreferrer" style="color:inherit;text-decoration:none;">FinestSites</a><`)
         .replace(/href="https:\/\/finestsites\.(?:io|de)\/?"/g, `href="${refLink}"`)
 
-      // Inject hero image as og:image when the template has no og:image set.
-      // Prefers data keys containing "hero", "bg", "bild", or "background".
-      const ogMatch = renderedHtml.match(/<meta\s+property="og:image"\s+content="([^"]*)"/i)
-      if (!ogMatch || !ogMatch[1]) {
-        const imageKeys = Object.keys(dataMap).filter(k => {
-          const v = dataMap[k]
-          return v && /^https?:\/\/.+\.(jpg|jpeg|png|webp|gif)(\?|$)/i.test(v)
-        })
-        const heroKey = imageKeys.find(k => /hero|bg|bild|background|header/i.test(k)) ?? imageKeys[0]
-        const heroImageUrl = heroKey ? dataMap[heroKey] : null
-        if (heroImageUrl) {
-          const safeUrl = heroImageUrl.replace(/"/g, '&quot;')
-          if (ogMatch) {
-            renderedHtml = renderedHtml.replace(
-              ogMatch[0],
-              `<meta property="og:image" content="${safeUrl}"`
-            )
-          } else {
-            renderedHtml = renderedHtml.replace(
-              /<head>/i,
-              `<head><meta property="og:image" content="${safeUrl}" />`
-            )
-          }
-        }
-      }
+      // Meta/Open-Graph: einheitlich über applyOpenGraph in render() (src/lib/utils/open-graph.ts)
 
       renderedHtml = injectBeacon(renderedHtml)
       await kvPut(env, renderCacheKey, renderedHtml, { expirationTtl: 60 })

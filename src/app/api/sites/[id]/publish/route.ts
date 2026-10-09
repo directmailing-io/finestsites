@@ -58,10 +58,11 @@ async function preRenderAndPushToKV(
   r2Path: string,
   siteDataMap: Record<string, string>,
   rawKeys: Set<string> = new Set(),
+  og?: { siteId: string; host: string },
 ): Promise<void> {
   try {
     const templateHtml = await fetchTemplateHtml(r2Path)
-    const rendered = renderTemplate(templateHtml, siteDataMap, { rawKeys })
+    const rendered = renderTemplate(templateHtml, siteDataMap, { rawKeys, og: og ? { templateDomain, ...og } : undefined })
     await writeRenderedHtmlKV(username, templateDomain, rendered)
   } catch (err) {
     console.error('[publish] pre-render failed:', err)
@@ -235,7 +236,8 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   })
   const dataMap: Record<string, string> = {}
   for (const row of dataRows) dataMap[row.fieldKey] = row.fieldValue ?? ''
-  await preRenderAndPushToKV(username, site.template.domain, site.template.r2BundlePath, dataMap, rawKeysFromSchema(site.template.placeholderSchema))
+  const liveHost = site.customDomain && site.customDomainStatus === 'active' ? site.customDomain : `${username}.${site.template.domain}`
+  await preRenderAndPushToKV(username, site.template.domain, site.template.r2BundlePath, dataMap, rawKeysFromSchema(site.template.placeholderSchema), { siteId: id, host: liveHost })
 
   const url = `https://${username}.${site.template.domain}`
   return NextResponse.json({ success: true, url })

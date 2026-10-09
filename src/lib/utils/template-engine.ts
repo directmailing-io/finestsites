@@ -16,6 +16,7 @@
  */
 
 import { normalizeWhatsAppNumber, rewriteSocialHrefs } from './social-links'
+import { applyOpenGraph, type OgContext } from './open-graph'
 
 export { normalizeWhatsAppNumber }
 
@@ -60,6 +61,8 @@ function withWhatsAppDigits(data: SiteData): SiteData {
 export interface RenderOptions {
   /** Schlüssel, deren Wert als HTML ausgegeben wird (Richtext laut Template-Schema). */
   rawKeys?: Iterable<string>
+  /** Einheitliche Meta-/Open-Graph-Tags setzen (nur für die echte Seite, nicht für Vorschauen). */
+  og?: OgContext
 }
 
 /**
@@ -86,6 +89,7 @@ export function renderTemplate(html: string, rawData: SiteData, opts: RenderOpti
   html = processLoops(html, enriched, [])
   html = evalConditionalBlocks(html, enriched, [])
   html = replaceSimplePlaceholders(html, enriched, rawKeys)
+  if (opts.og) html = applyOpenGraph(html, enriched, opts.og)
   // Safety net: drop any leftover control tokens (orphaned closers, unmatched
   // openers) that would otherwise leak into the final HTML as literal text.
   html = html
