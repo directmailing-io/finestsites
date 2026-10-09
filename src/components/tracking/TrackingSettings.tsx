@@ -3,15 +3,21 @@
 import { useCallback, useEffect, useState } from 'react'
 
 /**
- * Einstellungen → Werbung: Meta / Google Ads / TikTok einrichten, prüfen, auswerten.
- * Nur für Nutzer, die Anzeigen schalten. Konzept: docs/werbung-tracking-konzept.html
+ * Einstellungen → Werbung.
+ * Übersicht: drei Karten (Meta, Google Ads, TikTok) mit Status und einem Knopf.
+ * Einrichten: je Plattform ein kurzer Ablauf, ein Schritt pro Bildschirm.
+ * Danach: Was wird gemessen (Schalter), Retargeting-Hilfe, Auswertung, „Mehr“ zugeklappt.
+ * Konzept: docs/werbung-tracking-konzept.html
  */
+
+type Platform = 'meta' | 'google' | 'tiktok'
 
 interface Config {
   metaPixelId: string; metaTokenSet: boolean
   googleAdsId: string; googleLeadLabel: string; googleContactLabel: string
   tiktokPixelId: string; tiktokTokenSet: boolean
   siteIds: string[] | null
+  events: { contact: boolean; lead: boolean }
   confirmed: boolean
   lastSend: { at: string; platform: string | null; status: string | null; error: string | null } | null
   firstLeadAt: string | null
@@ -24,12 +30,39 @@ interface Stats {
   byCampaign: { source: string; campaign: string; pageviews: number; contacts: number; leads: number }[]
 }
 
-const INPUT = 'w-full px-4 py-3 text-[15px] rounded-2xl outline-none transition-all bg-white'
-const border = (err?: boolean) => ({ border: `1.5px solid ${err ? '#DC2626' : '#E5E7EB'}` })
+const PLATFORMS: Record<Platform, { name: string; sub: string }> = {
+  meta:   { name: 'Meta',       sub: 'Facebook & Instagram' },
+  google: { name: 'Google Ads', sub: 'Google-Suche & YouTube' },
+  tiktok: { name: 'TikTok',     sub: 'TikTok-Anzeigen' },
+}
 
-function Field({ id, label, hint, value, onChange, placeholder, error, mono, secret }: {
-  id: string; label: string; hint?: string; value: string; onChange: (v: string) => void
-  placeholder?: string; error?: string | null; mono?: boolean; secret?: boolean
+function Logo({ p, size = 36 }: { p: Platform; size?: number }) {
+  if (p === 'meta') return (
+    <svg width={size} height={size} viewBox="0 0 48 48" aria-hidden="true">
+      <path fill="#0866FF" d="M14.3 11C8.4 11 4 18.1 4 26.1 4 32.4 7.2 36.5 11.6 36.5c3.2 0 5.5-1.9 8.6-7.3l3.8-6.7c3.3 6.4 5.1 8.9 6.3 10.3 2 2.5 4 3.7 6.6 3.7 3 0 5.2-1.5 6.5-4.1 1-2 1.5-4.4 1.5-6.8C45 17.3 40 11 34.1 11c-3.4 0-6.1 2.3-9.3 7.9l-1.2 2.1C20.3 14.4 18 11 14.3 11zm.2 4.6c1.7 0 3.9 3.5 7.1 9.6l-1.6 2.8c-2.6 4.6-3.8 5.4-5.6 5.4-2.7 0-4.6-2.8-4.6-7 0-6.2 2.2-10.8 4.7-10.8zm19.4 0c3 0 6 5.9 6 11 0 4-1.5 6.2-3.6 6.2-1.6 0-2.7-1.2-4.7-4.1-1.3-1.9-3.3-5.1-5.6-9.5 3-5.3 5.2-7.6 7.9-7.6z"/>
+    </svg>
+  )
+  if (p === 'google') return (
+    <svg width={size} height={size} viewBox="0 0 48 48" aria-hidden="true">
+      <path fill="#FBBC04" d="M7.2 31.3 21.1 7.2a7.2 7.2 0 0 1 12.5 7.2L19.7 38.5a7.2 7.2 0 0 1-12.5-7.2z"/>
+      <path fill="#4285F4" d="m27.4 14.4 13.9 24.1a7.2 7.2 0 1 1-12.5 7.2L14.9 21.6z"/>
+      <circle fill="#34A853" cx="13.4" cy="35" r="7.2"/>
+    </svg>
+  )
+  return (
+    <svg width={size} height={size} viewBox="0 0 48 48" aria-hidden="true">
+      <path fill="#25F4EE" d="M31 5h-6.4v26.9a5.6 5.6 0 1 1-5.6-5.6c.5 0 1 .1 1.5.2v-6.6a12.2 12.2 0 1 0 10.5 12.1V18.6a15.6 15.6 0 0 0 8.9 2.8v-6.5A9.2 9.2 0 0 1 31 5z" transform="translate(-1.6 1.2)"/>
+      <path fill="#FE2C55" d="M31 5h-6.4v26.9a5.6 5.6 0 1 1-5.6-5.6c.5 0 1 .1 1.5.2v-6.6a12.2 12.2 0 1 0 10.5 12.1V18.6a15.6 15.6 0 0 0 8.9 2.8v-6.5A9.2 9.2 0 0 1 31 5z" transform="translate(1.6 -1.2)"/>
+      <path fill="#111" d="M31 5h-6.4v26.9a5.6 5.6 0 1 1-5.6-5.6c.5 0 1 .1 1.5.2v-6.6a12.2 12.2 0 1 0 10.5 12.1V18.6a15.6 15.6 0 0 0 8.9 2.8v-6.5A9.2 9.2 0 0 1 31 5z"/>
+    </svg>
+  )
+}
+
+const INPUT = 'w-full px-4 py-3 text-[16px] rounded-2xl outline-none transition-all bg-white'
+
+function Field({ id, label, value, onChange, placeholder, error, secret, hint }: {
+  id: string; label: string; value: string; onChange: (v: string) => void
+  placeholder?: string; error?: string | null; secret?: boolean; hint?: string
 }) {
   return (
     <div className="flex flex-col gap-1.5">
@@ -37,406 +70,500 @@ function Field({ id, label, hint, value, onChange, placeholder, error, mono, sec
       <input
         id={id} type={secret ? 'password' : 'text'} value={value} onChange={e => onChange(e.target.value)}
         placeholder={placeholder} autoComplete="off" autoCorrect="off" autoCapitalize="off" spellCheck={false}
-        className={INPUT} style={{ ...border(!!error), fontFamily: mono ? 'ui-monospace, Menlo, monospace' : undefined }}
+        className={INPUT} style={{ border: `1.5px solid ${error ? '#DC2626' : '#E5E7EB'}`, fontFamily: 'ui-monospace, Menlo, monospace' }}
         onFocus={e => { if (!error) e.target.style.borderColor = '#1a1a1a' }}
         onBlur={e => { if (!error) e.target.style.borderColor = '#E5E7EB' }}
       />
       {error ? (
-        <p role="alert" className="text-sm font-medium rounded-2xl px-4 py-3" style={{ background: '#FEF2F2', color: '#B91C1C' }}>{error}</p>
-      ) : hint ? (
-        <p className="text-[13px] px-1" style={{ color: '#64748B' }}>{hint}</p>
-      ) : null}
+        <p role="alert" className="text-[15px] font-medium rounded-2xl px-4 py-3" style={{ background: '#FEF2F2', color: '#B91C1C' }}>{error}</p>
+      ) : hint ? <p className="text-[13px] px-1" style={{ color: '#64748B' }}>{hint}</p> : null}
     </div>
   )
 }
 
-function Steps({ steps }: { steps: { title: string; text: string }[] }) {
+function Where({ children }: { children: React.ReactNode }) {
   return (
-    <ol className="flex flex-col gap-3 mt-3">
-      {steps.map((s, i) => (
-        <li key={i} className="flex gap-3">
-          <span className="flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-sm font-bold text-white" style={{ background: '#1a1a1a' }}>{i + 1}</span>
-          <div>
-            <p className="text-[15px] font-semibold text-gray-900">{s.title}</p>
-            <p className="text-[15px] text-gray-600 leading-snug">{s.text}</p>
-          </div>
-        </li>
-      ))}
-    </ol>
+    <div className="rounded-2xl px-4 py-3.5 text-[15px] leading-snug" style={{ background: '#fff', border: '1px solid #E5E7EB', color: '#374151' }}>
+      <p className="text-xs font-bold uppercase tracking-wide mb-1" style={{ color: '#6B7280' }}>Wo finde ich das?</p>
+      {children}
+    </div>
   )
 }
 
-function Card({ title, badge, children }: { title: string; badge?: { text: string; ok: boolean }; children: React.ReactNode }) {
+function Primary({ children, onClick, disabled }: { children: React.ReactNode; onClick: () => void; disabled?: boolean }) {
+  return (
+    <button type="button" onClick={onClick} disabled={disabled}
+      className="text-[16px] font-semibold px-6 py-3.5 rounded-2xl disabled:opacity-60 min-h-[50px]" style={{ background: '#1a1a1a', color: '#fff' }}>
+      {children}
+    </button>
+  )
+}
+function Secondary({ children, onClick, disabled }: { children: React.ReactNode; onClick: () => void; disabled?: boolean }) {
+  return (
+    <button type="button" onClick={onClick} disabled={disabled}
+      className="text-[16px] font-semibold px-6 py-3.5 rounded-2xl disabled:opacity-60 min-h-[50px]" style={{ background: '#fff', color: '#1a1a1a', border: '1.5px solid #D1D5DB' }}>
+      {children}
+    </button>
+  )
+}
+
+function Switch({ on, onChange, disabled }: { on: boolean; onChange?: (v: boolean) => void; disabled?: boolean }) {
+  return (
+    <button type="button" role="switch" aria-checked={on} disabled={disabled} onClick={() => onChange?.(!on)}
+      className="relative flex-shrink-0 w-12 h-7 rounded-full transition-colors disabled:opacity-60"
+      style={{ background: on ? '#16A34A' : '#D1D5DB' }}>
+      <span className="absolute top-0.5 w-6 h-6 rounded-full bg-white shadow transition-all" style={{ left: on ? 22 : 2 }} />
+    </button>
+  )
+}
+
+function CopyButton({ text }: { text: string }) {
+  const [done, setDone] = useState(false)
+  return (
+    <button type="button"
+      onClick={async () => { try { await navigator.clipboard.writeText(text); setDone(true); setTimeout(() => setDone(false), 1800) } catch { /* ignore */ } }}
+      className="flex-shrink-0 text-sm font-semibold px-3.5 py-2 rounded-xl min-h-[40px]"
+      style={{ background: done ? '#DCFCE7' : '#F3F4F6', color: done ? '#15803D' : '#111' }}>
+      {done ? 'Kopiert' : 'Kopieren'}
+    </button>
+  )
+}
+
+function Section({ title, subtitle, children }: { title: string; subtitle?: string; children: React.ReactNode }) {
   return (
     <div className="rounded-3xl p-5 sm:p-7 flex flex-col gap-4" style={{ background: '#F8FAFC' }}>
-      <div className="flex items-center gap-2 flex-wrap">
+      <div>
         <h3 className="text-lg font-bold text-gray-900">{title}</h3>
-        {badge && (
-          <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full" style={{ background: badge.ok ? '#DCFCE7' : '#F3F4F6', color: badge.ok ? '#15803D' : '#6B7280' }}>{badge.text}</span>
-        )}
+        {subtitle && <p className="text-[15px] text-gray-600 mt-0.5 leading-snug">{subtitle}</p>}
       </div>
       {children}
     </div>
   )
 }
 
-function CopyButton({ text, label = 'Kopieren' }: { text: string; label?: string }) {
-  const [done, setDone] = useState(false)
-  return (
-    <button type="button"
-      onClick={async () => { try { await navigator.clipboard.writeText(text); setDone(true); setTimeout(() => setDone(false), 1800) } catch { /* ignore */ } }}
-      className="flex-shrink-0 text-xs font-semibold px-3 py-2 rounded-xl"
-      style={{ background: done ? '#DCFCE7' : '#1a1a1a', color: done ? '#15803D' : '#fff' }}>
-      {done ? 'Kopiert' : label}
-    </button>
-  )
-}
+// ─────────────────────────────────────────────────────────────────────────────
 
 export default function TrackingSettings() {
   const [config, setConfig] = useState<Config | null>(null)
   const [sites, setSites] = useState<Site[]>([])
   const [loaded, setLoaded] = useState(false)
-  const [form, setForm] = useState({
-    metaPixelId: '', metaToken: '', metaTestCode: '',
-    googleAdsId: '', googleLeadLabel: '', googleContactLabel: '',
-    tiktokPixelId: '', tiktokToken: '', tiktokTestCode: '',
-    confirmed: false, allSites: true, siteIds: [] as string[],
-  })
-  const [errors, setErrors] = useState<Record<string, string>>({})
-  const [saving, setSaving] = useState(false)
-  const [saved, setSaved] = useState(false)
-  const [testing, setTesting] = useState<string | null>(null)
-  const [testResult, setTestResult] = useState<{ platform: string; ok: boolean; text: string } | null>(null)
   const [stats, setStats] = useState<Stats | null>(null)
-  const [open, setOpen] = useState<Record<string, boolean>>({})
-  const [showAll, setShowAll] = useState(false)
+  const [view, setView] = useState<'overview' | Platform>('overview')
+  const [more, setMore] = useState(false)
+  const [eventsSaving, setEventsSaving] = useState(false)
 
   const load = useCallback(async () => {
     const r = await fetch('/api/tracking/config').then(r => r.json()).catch(() => null)
     if (!r) return
-    setConfig(r.config)
-    setSites(r.sites ?? [])
-    if (r.config) {
-      setForm(f => ({
-        ...f,
-        metaPixelId: r.config.metaPixelId, googleAdsId: r.config.googleAdsId,
-        googleLeadLabel: r.config.googleLeadLabel, googleContactLabel: r.config.googleContactLabel,
-        tiktokPixelId: r.config.tiktokPixelId, confirmed: r.config.confirmed,
-        allSites: !Array.isArray(r.config.siteIds), siteIds: r.config.siteIds ?? [],
-      }))
-    }
-    setLoaded(true)
+    setConfig(r.config); setSites(r.sites ?? []); setLoaded(true)
   }, [])
-
   useEffect(() => { load() }, [load])
   useEffect(() => {
     if (!config) return
     fetch('/api/tracking/stats?days=30').then(r => r.json()).then(setStats).catch(() => {})
   }, [config])
 
-  const set = (k: keyof typeof form) => (v: string) => { setForm(f => ({ ...f, [k]: v })); setSaved(false); setErrors(e => ({ ...e, [k]: '' })) }
-  const active = !!config && (config.metaPixelId || config.googleAdsId || config.tiktokPixelId)
-  const wantsAny = !!(form.metaPixelId || form.googleAdsId || form.tiktokPixelId)
-
-  async function save() {
-    setSaving(true); setSaved(false); setErrors({}); setTestResult(null)
-    try {
-      const res = await fetch('/api/tracking/config', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          metaPixelId: form.metaPixelId, metaToken: form.metaToken,
-          googleAdsId: form.googleAdsId, googleLeadLabel: form.googleLeadLabel, googleContactLabel: form.googleContactLabel,
-          tiktokPixelId: form.tiktokPixelId, tiktokToken: form.tiktokToken,
-          confirmed: form.confirmed, siteIds: form.allSites ? null : form.siteIds,
-        }),
-      })
-      const data = await res.json().catch(() => ({}))
-      if (!res.ok) { setErrors({ [data.field ?? 'form']: data.error ?? 'Speichern hat nicht geklappt.' }); return }
-      setConfig(data.config)
-      // Bereinigte Werte übernehmen (z. B. ID aus einem kopierten Pixel-Code), Tokens leeren
-      const c = data.config as Config | null
-      setForm(f => ({
-        ...f, metaToken: '', tiktokToken: '',
-        metaPixelId: c?.metaPixelId ?? '', googleAdsId: c?.googleAdsId ?? '',
-        googleLeadLabel: c?.googleLeadLabel ?? '', googleContactLabel: c?.googleContactLabel ?? '',
-        tiktokPixelId: c?.tiktokPixelId ?? '', confirmed: c?.confirmed ?? f.confirmed,
-      }))
-      setSaved(true)
-    } finally { setSaving(false) }
-  }
-
-  async function test(platform: 'meta' | 'tiktok') {
-    setTesting(platform); setTestResult(null)
-    try {
-      const res = await fetch('/api/tracking/test', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ platform, testCode: platform === 'meta' ? form.metaTestCode : form.tiktokTestCode }),
-      })
-      const data = await res.json().catch(() => ({}))
-      setTestResult({ platform, ok: !!data.ok, text: data.ok ? data.message : (data.error ?? 'Prüfung fehlgeschlagen.') })
-      load()
-    } finally { setTesting(null) }
-  }
-
-  async function remove() {
-    if (!confirm('Tracking komplett ausschalten und alle Angaben löschen?')) return
-    await fetch('/api/tracking/config', { method: 'DELETE' })
-    setConfig(null); setStats(null)
-    setForm(f => ({ ...f, metaPixelId: '', metaToken: '', googleAdsId: '', googleLeadLabel: '', googleContactLabel: '', tiktokPixelId: '', tiktokToken: '', confirmed: false }))
-  }
-
-  if (!loaded) return <div className="h-24 rounded-3xl animate-pulse" style={{ background: '#F1F5F9' }} />
-
+  const connected = (p: Platform) => !!config && (p === 'meta' ? !!config.metaPixelId : p === 'google' ? !!config.googleAdsId : !!config.tiktokPixelId)
+  const anyConnected = connected('meta') || connected('google') || connected('tiktok')
+  const problem = (p: Platform) => !!config?.lastSend && config.lastSend.platform === p && config.lastSend.status === 'error'
   const published = sites.filter(s => s.status === 'published')
-  const adLink = (s: Site, p: 'meta' | 'google' | 'tiktok') => {
-    const q = p === 'meta'
-      ? 'utm_source=meta&utm_medium=paid&utm_campaign={{campaign.name}}&utm_content={{adset.name}}'
-      : p === 'google'
-        ? 'utm_source=google&utm_medium=paid&utm_campaign={campaignid}&utm_content={adgroupid}'
-        : 'utm_source=tiktok&utm_medium=paid&utm_campaign=__CAMPAIGN_NAME__&utm_content=__AID_NAME__'
-    return `${s.url}/?${q}`
+
+  async function saveEvents(events: { contact: boolean; lead: boolean }) {
+    setEventsSaving(true)
+    try {
+      const r = await fetch('/api/tracking/config', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ events }) })
+      const d = await r.json().catch(() => ({}))
+      if (r.ok) setConfig(d.config)
+    } finally { setEventsSaving(false) }
   }
 
-  const statusLine = (() => {
-    if (!config?.lastSend) return null
-    const when = new Date(config.lastSend.at).toLocaleString('de-DE', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })
-    const name = config.lastSend.platform === 'tiktok' ? 'TikTok' : 'Meta'
-    return config.lastSend.status === 'ok'
-      ? { ok: true, text: `Letzte Übertragung an ${name}: ${when} Uhr, angenommen.` }
-      : { ok: false, text: `Letzte Übertragung an ${name}: ${when} Uhr, fehlgeschlagen. ${config.lastSend.error ?? ''}` }
-  })()
+  async function saveSites(siteIds: string[] | null) {
+    const r = await fetch('/api/tracking/config', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ siteIds }) })
+    const d = await r.json().catch(() => ({}))
+    if (r.ok) setConfig(d.config)
+  }
+
+  if (!loaded) return <div className="h-40 rounded-3xl animate-pulse" style={{ background: '#F1F5F9' }} />
+
+  if (view !== 'overview') {
+    return <PlatformFlow platform={view} config={config} sites={sites} onBack={() => { setView('overview'); load() }} onSaved={c => setConfig(c)} />
+  }
 
   return (
     <div className="flex flex-col gap-6">
-      {/* Für wen ist das? */}
-      <div className="rounded-3xl p-5 sm:p-6" style={{ background: '#EFF6FF', border: '1.5px solid #BFDBFE' }}>
-        <p className="text-base font-bold" style={{ color: '#1E3A8A' }}>Schaltest du Werbeanzeigen bei Facebook, Instagram, Google oder TikTok?</p>
-        <p className="text-[15px] mt-1 leading-snug" style={{ color: '#1E40AF' }}>
-          Nur dann brauchst du diesen Bereich. Hier verbindest du dein Werbekonto, damit es sieht, welche Anzeige echte Anfragen bringt. Wenn du keine Anzeigen schaltest, kannst du das hier ignorieren.
-        </p>
+      <p className="text-[15px] leading-snug text-gray-600">
+        Nur nötig, wenn du Anzeigen schaltest. Verbinde dein Werbekonto, dann sieht es, welche Anzeige echte Anfragen bringt.
+      </p>
+
+      {/* Drei Karten */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        {(Object.keys(PLATFORMS) as Platform[]).map(p => {
+          const on = connected(p); const err = problem(p)
+          return (
+            <div key={p} className="rounded-3xl p-5 flex flex-col gap-3" style={{ background: '#fff', border: `1.5px solid ${on ? (err ? '#FCA5A5' : '#BBF7D0') : '#E5E7EB'}` }}>
+              <div className="flex items-center gap-3">
+                <Logo p={p} />
+                <div className="min-w-0">
+                  <p className="text-base font-bold text-gray-900 leading-tight">{PLATFORMS[p].name}</p>
+                  <p className="text-xs text-gray-500">{PLATFORMS[p].sub}</p>
+                </div>
+              </div>
+              <span className="self-start text-[12px] font-semibold px-2.5 py-1 rounded-full"
+                style={{ background: on ? (err ? '#FEF2F2' : '#ECFDF5') : '#F3F4F6', color: on ? (err ? '#B91C1C' : '#15803D') : '#6B7280' }}>
+                {on ? (err ? 'Problem, bitte prüfen' : 'Verbunden') : 'Nicht verbunden'}
+              </span>
+              <button type="button" onClick={() => setView(p)}
+                className="mt-auto text-[15px] font-semibold px-4 py-3 rounded-2xl min-h-[48px]"
+                style={on ? { background: '#fff', color: '#1a1a1a', border: '1.5px solid #D1D5DB' } : { background: '#1a1a1a', color: '#fff' }}>
+                {on ? 'Verwalten' : 'Einrichten'}
+              </button>
+            </div>
+          )
+        })}
       </div>
 
-      {!active && !showAll && (
-        <button type="button" onClick={() => setShowAll(true)}
-          className="self-start text-[15px] font-semibold px-6 py-3 rounded-2xl" style={{ background: '#1a1a1a', color: '#fff' }}>
-          Ich schalte Anzeigen, einrichten
-        </button>
-      )}
-
-      {(active || showAll) && (
+      {anyConnected && config && (
         <>
-          {statusLine && (
-            <div className="rounded-2xl px-4 py-3 text-[15px] font-medium" style={{ background: statusLine.ok ? '#ECFDF5' : '#FEF2F2', color: statusLine.ok ? '#15803D' : '#B91C1C' }}>
-              {statusLine.text}
-              {config?.firstLeadAt && statusLine.ok && <span className="block text-sm font-normal mt-0.5">Erste echte Anfrage übertragen am {new Date(config.firstLeadAt).toLocaleDateString('de-DE')}.</span>}
-            </div>
-          )}
-
-          {/* META */}
-          <Card title="Meta (Facebook & Instagram)" badge={config?.metaPixelId ? { text: config.metaTokenSet ? 'Eingerichtet, mit Server-Übertragung' : 'Pixel eingerichtet, ohne Zugriffsschlüssel', ok: true } : undefined}>
-            <Field id="metaPixelId" label="Pixel-ID (Datensatz-ID)" value={form.metaPixelId} onChange={set('metaPixelId')} placeholder="z. B. 123456789012345" mono error={errors.metaPixelId}
-              hint="15 bis 16 Ziffern. Steht im Events Manager direkt unter dem Namen deines Datensatzes." />
-            <Field id="metaToken" label={config?.metaTokenSet ? 'Zugriffsschlüssel (hinterlegt, nur zum Ersetzen eintragen)' : 'Zugriffsschlüssel für die Conversions API'} value={form.metaToken} onChange={set('metaToken')} placeholder={config?.metaTokenSet ? '••••••••' : 'EAA…'} mono secret error={errors.metaToken}
-              hint="Damit zählen Anfragen auch dann, wenn ein Werbeblocker den Pixel im Browser blockiert. Wird verschlüsselt gespeichert." />
-            <button type="button" onClick={() => setOpen(o => ({ ...o, meta: !o.meta }))} className="self-start text-sm font-semibold underline" style={{ color: '#1a1a1a' }}>
-              {open.meta ? 'Anleitung ausblenden' : 'Wo finde ich das? Anleitung in 4 Schritten'}
-            </button>
-            {open.meta && (
-              <Steps steps={[
-                { title: 'Events Manager öffnen', text: 'Gehe auf business.facebook.com, links auf „Alle Tools“, dann „Events Manager“. Links unter „Datenquellen“ siehst du deinen Datensatz (früher „Pixel“). Ist keiner da: „Daten verknüpfen“ → „Web“ → Namen eingeben, fertig.' },
-                { title: 'Die ID kopieren', text: 'Klicke den Datensatz an. Direkt unter dem Namen steht eine lange Zahl: die Datensatz-ID. Kopieren und oben in „Pixel-ID“ einfügen.' },
-                { title: 'Zugriffsschlüssel erzeugen', text: 'Im Datensatz oben auf „Einstellungen“, dann nach unten bis „Conversions API“. Dort „Zugriffsschlüssel generieren“. Es erscheint ein langer Text, der mit EAA beginnt. Kopieren und oben einfügen.' },
-                { title: 'Speichern und prüfen', text: 'Unten auf „Speichern“. Dann im Datensatz auf „Ereignisse testen“: Dort steht ein Code wie TEST12345. Hier eintragen und „Verbindung prüfen“ drücken. In Meta erscheint sofort ein Test-Ereignis „Lead“.' },
-              ]} />
-            )}
-            {config?.metaPixelId && config.metaTokenSet && (
-              <div className="flex flex-col sm:flex-row gap-2 sm:items-end">
-                <div className="flex-1">
-                  <Field id="metaTestCode" label="Test-Code aus „Ereignisse testen“ (freiwillig)" value={form.metaTestCode} onChange={set('metaTestCode')} placeholder="TEST12345" mono />
+          {/* Was wird gemessen */}
+          <Section title="Was wird gemessen" subtitle="Drei Ereignisse, für alle verbundenen Plattformen gleich. Nur mit Zustimmung der Besucher.">
+            {[
+              { key: 'pageview', title: 'Seitenaufruf', text: 'Jemand öffnet deine Seite. Immer an, sonst kann die Plattform keine Zielgruppen bilden.', on: true, fixed: true },
+              { key: 'contact', title: 'Kontakt-Klick', text: 'Jemand tippt auf WhatsApp, Telefon oder E-Mail. Wichtig, wenn deine Seite kein Formular hat.', on: config.events.contact, fixed: false },
+              { key: 'lead', title: 'Anfrage', text: 'Jemand schickt das Kontaktformular ab. Darauf optimierst du deine Kampagnen.', on: config.events.lead, fixed: false },
+            ].map(row => (
+              <div key={row.key} className="flex items-start gap-3 rounded-2xl px-4 py-3.5" style={{ background: '#fff', border: '1px solid #E5E7EB' }}>
+                <div className="flex-1 min-w-0">
+                  <p className="text-[15px] font-semibold text-gray-900">{row.title}</p>
+                  <p className="text-[14px] text-gray-600 leading-snug">{row.text}</p>
                 </div>
-                <button type="button" onClick={() => test('meta')} disabled={testing === 'meta'}
-                  className="text-[15px] font-semibold px-5 py-3 rounded-2xl disabled:opacity-60" style={{ background: '#fff', color: '#1a1a1a', border: '1.5px solid #1a1a1a' }}>
-                  {testing === 'meta' ? 'Prüfe …' : 'Verbindung prüfen'}
-                </button>
+                <Switch on={row.on} disabled={row.fixed || eventsSaving}
+                  onChange={v => saveEvents({ ...config.events, [row.key]: v })} />
               </div>
-            )}
-            {testResult?.platform === 'meta' && (
-              <p role="status" className="text-[15px] font-medium rounded-2xl px-4 py-3" style={{ background: testResult.ok ? '#ECFDF5' : '#FEF2F2', color: testResult.ok ? '#15803D' : '#B91C1C' }}>{testResult.text}</p>
-            )}
-          </Card>
+            ))}
+          </Section>
 
-          {/* GOOGLE */}
-          <Card title="Google Ads" badge={config?.googleAdsId ? { text: 'Eingerichtet', ok: true } : undefined}>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <Field id="googleAdsId" label="Conversion-ID" value={form.googleAdsId} onChange={set('googleAdsId')} placeholder="AW-123456789" mono error={errors.googleAdsId} />
-              <Field id="googleLeadLabel" label="Conversion-Label „Anfrage“" value={form.googleLeadLabel} onChange={set('googleLeadLabel')} placeholder="AbC-dEfGhIjK1LmN" mono error={errors.googleLeadLabel} />
-            </div>
-            <Field id="googleContactLabel" label="Conversion-Label „Kontakt“ (freiwillig, für WhatsApp-Klicks)" value={form.googleContactLabel} onChange={set('googleContactLabel')} placeholder="leer lassen, wenn du nur Anfragen zählen willst" mono error={errors.googleContactLabel} />
-            <button type="button" onClick={() => setOpen(o => ({ ...o, google: !o.google }))} className="self-start text-sm font-semibold underline" style={{ color: '#1a1a1a' }}>
-              {open.google ? 'Anleitung ausblenden' : 'Wo finde ich das? Anleitung in 3 Schritten'}
-            </button>
-            {open.google && (
-              <Steps steps={[
-                { title: 'Conversion anlegen', text: 'In Google Ads links auf „Ziele“ → „Conversions“ → „Zusammenfassung“ → „Neue Conversion-Aktion“ → „Website“. Deine Seitenadresse eingeben, dann „Conversion-Aktion manuell hinzufügen“. Kategorie „Lead senden“, Name „Anfrage“. Optional eine zweite mit Namen „Kontakt“.' },
-                { title: 'ID und Label kopieren', text: 'Nach dem Anlegen auf „Tag-Einrichtung“ → „Tag selbst einrichten“. Dort stehen „Conversion-ID“ (AW-…) und „Conversion-Label“. Beides oben eintragen. Mehr musst du nicht einbauen, das übernehmen wir.' },
-                { title: 'Erweiterte Conversions einschalten', text: 'In der Conversion-Aktion unter „Erweiterte Conversions“ einschalten und „Google-Tag“ wählen. Dann erkennt Google Anfragen besser.' },
-              ]} />
-            )}
-          </Card>
-
-          {/* TIKTOK */}
-          <Card title="TikTok" badge={config?.tiktokPixelId ? { text: config.tiktokTokenSet ? 'Eingerichtet, mit Server-Übertragung' : 'Pixel eingerichtet', ok: true } : undefined}>
-            <Field id="tiktokPixelId" label="Pixel-ID" value={form.tiktokPixelId} onChange={set('tiktokPixelId')} placeholder="z. B. CABC1DEFGH2IJKLM3NOP" mono error={errors.tiktokPixelId} />
-            <Field id="tiktokToken" label={config?.tiktokTokenSet ? 'Zugriffstoken (hinterlegt, nur zum Ersetzen eintragen)' : 'Zugriffstoken für die Events API'} value={form.tiktokToken} onChange={set('tiktokToken')} placeholder={config?.tiktokTokenSet ? '••••••••' : ''} mono secret error={errors.tiktokToken} />
-            <button type="button" onClick={() => setOpen(o => ({ ...o, tiktok: !o.tiktok }))} className="self-start text-sm font-semibold underline" style={{ color: '#1a1a1a' }}>
-              {open.tiktok ? 'Anleitung ausblenden' : 'Wo finde ich das? Anleitung in 3 Schritten'}
-            </button>
-            {open.tiktok && (
-              <Steps steps={[
-                { title: 'Pixel öffnen', text: 'Im TikTok Ads Manager oben auf „Tools“ → „Events“ → „Web-Events“. Pixel anlegen (Name eingeben, „Manuell einrichten“) oder einen vorhandenen öffnen.' },
-                { title: 'Pixel-ID kopieren', text: 'Oben im Pixel steht die Pixel-ID (etwa 20 Zeichen). Kopieren und oben eintragen.' },
-                { title: 'Zugriffstoken erzeugen', text: 'Im Pixel auf „Einstellungen“ → „Events API“ → „Zugriffstoken generieren“. Kopieren und oben eintragen, dann speichern und „Verbindung prüfen“.' },
-              ]} />
-            )}
-            {config?.tiktokPixelId && config.tiktokTokenSet && (
-              <div className="flex flex-col sm:flex-row gap-2 sm:items-end">
-                <div className="flex-1">
-                  <Field id="tiktokTestCode" label="Test-Code (freiwillig)" value={form.tiktokTestCode} onChange={set('tiktokTestCode')} placeholder="TEST…" mono />
+          {/* Retargeting */}
+          <Section title="Nur Besucher einer bestimmten Seite ansprechen" subtitle="Für Retargeting-Anzeigen. Jede deiner Seiten hat eine eigene Adresse, daran erkennt die Plattform, wer wo war.">
+            <ol className="text-[15px] text-gray-700 leading-snug flex flex-col gap-1.5 pl-5 list-decimal">
+              <li>In Meta: <strong>Zielgruppen</strong> → <strong>Zielgruppe erstellen</strong> → <strong>Custom Audience</strong> → <strong>Website</strong>.</li>
+              <li><strong>„Personen, die bestimmte Webseiten besucht haben“</strong> wählen, bei „URL enthält“ die Adresse unten einfügen.</li>
+              <li>Zeitraum wählen (z. B. 30 Tage), speichern. In der Anzeige diese Zielgruppe auswählen.</li>
+            </ol>
+            <div className="flex flex-col gap-2">
+              {published.map(s => (
+                <div key={s.id} className="flex items-center gap-2 rounded-2xl px-4 py-3" style={{ background: '#fff', border: '1px solid #E5E7EB' }}>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs text-gray-500">{s.title}</p>
+                    <p className="text-[15px] font-semibold text-gray-900 break-all">{s.host}</p>
+                  </div>
+                  <CopyButton text={s.host} />
                 </div>
-                <button type="button" onClick={() => test('tiktok')} disabled={testing === 'tiktok'}
-                  className="text-[15px] font-semibold px-5 py-3 rounded-2xl disabled:opacity-60" style={{ background: '#fff', color: '#1a1a1a', border: '1.5px solid #1a1a1a' }}>
-                  {testing === 'tiktok' ? 'Prüfe …' : 'Verbindung prüfen'}
-                </button>
-              </div>
-            )}
-            {testResult?.platform === 'tiktok' && (
-              <p role="status" className="text-[15px] font-medium rounded-2xl px-4 py-3" style={{ background: testResult.ok ? '#ECFDF5' : '#FEF2F2', color: testResult.ok ? '#15803D' : '#B91C1C' }}>{testResult.text}</p>
-            )}
-          </Card>
-
-          {/* Seiten + Bestätigung + Speichern */}
-          <Card title="Auf welchen Seiten?">
-            <label className="flex items-center gap-3 text-[15px] text-gray-800">
-              <input type="checkbox" checked={form.allSites} onChange={e => setForm(f => ({ ...f, allSites: e.target.checked }))} className="w-5 h-5" />
-              Auf allen meinen veröffentlichten Seiten (empfohlen)
-            </label>
-            {!form.allSites && (
-              <div className="flex flex-col gap-2 pl-8">
-                {published.map(s => (
-                  <label key={s.id} className="flex items-center gap-3 text-[15px] text-gray-800">
-                    <input type="checkbox" className="w-5 h-5" checked={form.siteIds.includes(s.id)}
-                      onChange={e => setForm(f => ({ ...f, siteIds: e.target.checked ? [...f.siteIds, s.id] : f.siteIds.filter(x => x !== s.id) }))} />
-                    {s.host}
-                  </label>
-                ))}
-                {published.length === 0 && <p className="text-sm text-gray-500">Du hast noch keine veröffentlichte Seite.</p>}
-              </div>
-            )}
-            {wantsAny && !config?.confirmed && (
-              <label className="flex items-start gap-3 text-[15px] text-gray-800 mt-2">
-                <input type="checkbox" checked={form.confirmed} onChange={e => { setForm(f => ({ ...f, confirmed: e.target.checked })); setErrors(er => ({ ...er, confirmed: '' })) }} className="w-5 h-5 mt-0.5" />
-                <span>Ich bin für mein Werbekonto verantwortlich und weiß, dass meine Besucher dann einen kurzen Hinweis zur Einwilligung sehen. Die Datenschutzseite meiner Webseite wird automatisch ergänzt.</span>
-              </label>
-            )}
-            {errors.confirmed && <p role="alert" className="text-sm font-medium rounded-2xl px-4 py-3" style={{ background: '#FEF2F2', color: '#B91C1C' }}>{errors.confirmed}</p>}
-            {errors.form && <p role="alert" className="text-sm font-medium rounded-2xl px-4 py-3" style={{ background: '#FEF2F2', color: '#B91C1C' }}>{errors.form}</p>}
-            <div className="flex items-center gap-3 flex-wrap">
-              <button type="button" onClick={save} disabled={saving}
-                className="text-[15px] font-semibold px-6 py-3 rounded-2xl disabled:opacity-60" style={{ background: '#1a1a1a', color: '#fff' }}>
-                {saving ? 'Wird gespeichert …' : 'Speichern'}
-              </button>
-              {saved && <span role="status" className="text-sm font-semibold" style={{ color: '#15803D' }}>Gespeichert. Auf deinen Seiten in spätestens einer Minute aktiv.</span>}
-              {active && (
-                <button type="button" onClick={remove} className="text-sm font-semibold underline ml-auto" style={{ color: '#B91C1C' }}>Tracking ausschalten</button>
-              )}
+              ))}
             </div>
-          </Card>
+            <p className="text-[14px] text-gray-500 leading-snug">Bei Google Ads und TikTok geht es genauso: Zielgruppe „Website-Besucher“, Regel „URL enthält“. Wer auf WhatsApp getippt hat, lässt sich über das Ereignis „Kontakt“ als eigene Zielgruppe anlegen.</p>
+          </Section>
 
-          {active && (
+          {/* Auswertung */}
+          <Section title={`Auswertung, letzte ${stats?.days ?? 30} Tage`} subtitle="Aus unserer eigenen Zählung, unabhängig von Werbeblockern und Zustimmung.">
+            {!stats ? <p className="text-sm text-gray-500">Lade …</p> : (
+              <>
+                <div className="grid grid-cols-3 gap-3">
+                  {[['Seitenaufrufe', stats.totals.pageviews], ['Kontakte', stats.totals.contacts], ['Anfragen', stats.totals.leads]].map(([l, v]) => (
+                    <div key={String(l)} className="rounded-2xl p-4" style={{ background: '#fff', border: '1px solid #E5E7EB' }}>
+                      <p className="text-2xl font-bold text-gray-900">{v}</p>
+                      <p className="text-xs text-gray-500">{l}</p>
+                    </div>
+                  ))}
+                </div>
+                {(stats.totals.consentYes + stats.totals.consentNo) > 0 && (
+                  <p className="text-[14px] text-gray-600 leading-snug">
+                    {Math.round(stats.totals.consentYes / (stats.totals.consentYes + stats.totals.consentNo) * 100)} % der Besucher haben dem Messen zugestimmt. Nur diese sieht die Werbeplattform.
+                  </p>
+                )}
+                {stats.byCampaign.length > 0 && (
+                  <div className="overflow-x-auto rounded-2xl" style={{ background: '#fff', border: '1px solid #E5E7EB' }}>
+                    <table className="w-full text-sm">
+                      <thead><tr className="text-left text-xs text-gray-500"><th className="py-2.5 px-3">Woher</th><th className="py-2.5 px-3">Kampagne</th><th className="py-2.5 px-3 text-right">Aufrufe</th><th className="py-2.5 px-3 text-right">Kontakte</th><th className="py-2.5 px-3 text-right">Anfragen</th></tr></thead>
+                      <tbody>
+                        {stats.byCampaign.map((r, i) => (
+                          <tr key={i} style={{ borderTop: '1px solid #F1F5F9' }}>
+                            <td className="py-2.5 px-3 font-medium text-gray-900">{r.source}</td>
+                            <td className="py-2.5 px-3 text-gray-700">{r.campaign || '–'}</td>
+                            <td className="py-2.5 px-3 text-right text-gray-700">{r.pageviews}</td>
+                            <td className="py-2.5 px-3 text-right text-gray-700">{r.contacts}</td>
+                            <td className="py-2.5 px-3 text-right font-semibold text-gray-900">{r.leads}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+                {stats.byCampaign.length === 0 && <p className="text-[14px] text-gray-500">Sobald Besucher über eine Anzeige kommen, siehst du hier, aus welcher Kampagne die Anfragen stammen.</p>}
+              </>
+            )}
+          </Section>
+
+          {/* Mehr */}
+          <button type="button" onClick={() => setMore(m => !m)} className="self-start text-[15px] font-semibold underline" style={{ color: '#1a1a1a' }}>
+            {more ? 'Weitere Einstellungen ausblenden' : 'Weitere Einstellungen'}
+          </button>
+          {more && (
             <>
-              {/* Anzeigen-Links */}
-              <Card title="Dein Anzeigen-Link je Seite">
-                <p className="text-[15px] text-gray-600 leading-snug">
-                  Diesen Link setzt du in der Anzeige als Website-Adresse ein. Die Plattform ersetzt die Platzhalter automatisch durch Kampagnen- und Anzeigennamen. So siehst du unten, aus welcher Kampagne jede Anfrage kam.
-                </p>
+              <Section title="Link für deine Anzeige" subtitle="Nur nötig, wenn du in der Auswertung oben sehen willst, welche Kampagne eine Anfrage gebracht hat. Setze den Link als Website-Adresse in der Anzeige ein, mehr nicht.">
                 {published.map(s => (
                   <div key={s.id} className="rounded-2xl p-4 flex flex-col gap-2" style={{ background: '#fff', border: '1px solid #E5E7EB' }}>
                     <p className="text-sm font-semibold text-gray-900">{s.host}</p>
-                    {(['meta', 'google', 'tiktok'] as const).filter(p => (p === 'meta' && config?.metaPixelId) || (p === 'google' && config?.googleAdsId) || (p === 'tiktok' && config?.tiktokPixelId)).map(p => (
-                      <div key={p} className="flex items-center gap-2">
-                        <span className="text-xs font-semibold w-14 flex-shrink-0 text-gray-500">{p === 'meta' ? 'Meta' : p === 'google' ? 'Google' : 'TikTok'}</span>
-                        <code className="flex-1 min-w-0 text-[12px] break-all text-gray-700">{adLink(s, p)}</code>
-                        <CopyButton text={adLink(s, p)} />
-                      </div>
-                    ))}
+                    {(['meta', 'google', 'tiktok'] as Platform[]).filter(connected).map(p => {
+                      const q = p === 'meta' ? 'utm_source=meta&utm_medium=paid&utm_campaign={{campaign.name}}&utm_content={{adset.name}}'
+                        : p === 'google' ? 'utm_source=google&utm_medium=paid&utm_campaign={campaignid}&utm_content={adgroupid}'
+                          : 'utm_source=tiktok&utm_medium=paid&utm_campaign=__CAMPAIGN_NAME__&utm_content=__AID_NAME__'
+                      const link = `${s.url}/?${q}`
+                      return (
+                        <div key={p} className="flex items-center gap-2">
+                          <Logo p={p} size={22} />
+                          <code className="flex-1 min-w-0 text-[12px] break-all text-gray-600">{link}</code>
+                          <CopyButton text={link} />
+                        </div>
+                      )
+                    })}
                   </div>
                 ))}
-                <div className="rounded-2xl p-4 text-[15px] leading-snug" style={{ background: '#fff', border: '1px solid #E5E7EB', color: '#374151' }}>
-                  <p className="font-semibold text-gray-900 mb-1">So legst du die Anzeige bei Meta an</p>
-                  Kampagnenziel <strong>Leads</strong> · Conversion-Ort <strong>Website</strong> · dein Datensatz · Conversion-Ereignis <strong>Lead</strong> · Website-URL: der Link oben.
-                </div>
-              </Card>
+                <p className="text-[13px] text-gray-500">Die geschweiften Teile ersetzt die Plattform selbst durch den Namen deiner Kampagne.</p>
+              </Section>
 
-              {/* Mein Gerät */}
-              <Card title="Mein Gerät nicht mitzählen">
-                <p className="text-[15px] text-gray-600 leading-snug">Wenn du deine Seite selbst öffnest, würde das sonst als Besuch zählen. Tippe den Link auf jedem Gerät an, mit dem du deine Seite anschaust.</p>
+              <Section title="Mein Gerät nicht mitzählen" subtitle="Wenn du deine Seite selbst öffnest, zählt das sonst als Besuch. Einmal pro Gerät antippen.">
                 <div className="flex flex-col gap-2">
                   {published.map(s => (
                     <div key={s.id} className="flex items-center gap-3 flex-wrap">
-                      <a href={`${s.url}/.finestsites/notrack`} target="_blank" rel="noopener noreferrer" className="text-[15px] font-semibold underline" style={{ color: '#1a1a1a' }}>{s.host}: dieses Gerät ausschließen</a>
+                      <a href={`${s.url}/.finestsites/notrack`} target="_blank" rel="noopener noreferrer" className="text-[15px] font-semibold underline" style={{ color: '#1a1a1a' }}>{s.host}</a>
                       <a href={`${s.url}/.finestsites/notrack?off=1`} target="_blank" rel="noopener noreferrer" className="text-sm text-gray-500 underline">wieder mitzählen</a>
                     </div>
                   ))}
                 </div>
-              </Card>
+              </Section>
 
-              {/* Auswertung */}
-              <Card title={`Auswertung, letzte ${stats?.days ?? 30} Tage`}>
-                {!stats ? <p className="text-sm text-gray-500">Lade …</p> : (
-                  <>
-                    <div className="grid grid-cols-3 gap-3">
-                      {[['Seitenaufrufe', stats.totals.pageviews], ['Kontakte', stats.totals.contacts], ['Anfragen', stats.totals.leads]].map(([l, v]) => (
-                        <div key={String(l)} className="rounded-2xl p-4" style={{ background: '#fff', border: '1px solid #E5E7EB' }}>
-                          <p className="text-2xl font-bold text-gray-900">{v}</p>
-                          <p className="text-xs text-gray-500">{l}</p>
-                        </div>
-                      ))}
-                    </div>
-                    {(stats.totals.consentYes + stats.totals.consentNo) > 0 && (
-                      <p className="text-sm text-gray-600">
-                        Einwilligung: {Math.round(stats.totals.consentYes / (stats.totals.consentYes + stats.totals.consentNo) * 100)} % der Besucher, die gewählt haben, haben zugestimmt. Nur bei diesen sehen die Werbeplattformen etwas. Anfragen und Kontakte zählen wir hier unabhängig davon.
-                      </p>
-                    )}
-                    {stats.byCampaign.length > 0 && (
-                      <div className="overflow-x-auto">
-                        <table className="w-full text-sm">
-                          <thead><tr className="text-left text-xs text-gray-500"><th className="py-2 pr-3">Quelle</th><th className="py-2 pr-3">Kampagne</th><th className="py-2 pr-3 text-right">Aufrufe</th><th className="py-2 pr-3 text-right">Kontakte</th><th className="py-2 text-right">Anfragen</th></tr></thead>
-                          <tbody>
-                            {stats.byCampaign.map((r, i) => (
-                              <tr key={i} style={{ borderTop: '1px solid #E5E7EB' }}>
-                                <td className="py-2 pr-3 font-medium text-gray-900">{r.source}</td>
-                                <td className="py-2 pr-3 text-gray-700">{r.campaign || '–'}</td>
-                                <td className="py-2 pr-3 text-right text-gray-700">{r.pageviews}</td>
-                                <td className="py-2 pr-3 text-right text-gray-700">{r.contacts}</td>
-                                <td className="py-2 text-right font-semibold text-gray-900">{r.leads}</td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                      </div>
-                    )}
-                    {stats.bySite.length > 1 && (
-                      <div className="flex flex-col gap-1 text-sm text-gray-700">
-                        {stats.bySite.map(s => <p key={s.siteId}><strong>{s.host}</strong>: {s.pageviews} Aufrufe, {s.contacts} Kontakte, {s.leads} Anfragen</p>)}
-                      </div>
-                    )}
-                  </>
+              <Section title="Auf welchen Seiten?">
+                <label className="flex items-center gap-3 text-[15px] text-gray-800">
+                  <input type="checkbox" className="w-5 h-5" checked={config.siteIds === null} onChange={e => saveSites(e.target.checked ? null : published.map(s => s.id))} />
+                  Auf allen meinen veröffentlichten Seiten
+                </label>
+                {config.siteIds !== null && (
+                  <div className="flex flex-col gap-2 pl-8">
+                    {published.map(s => (
+                      <label key={s.id} className="flex items-center gap-3 text-[15px] text-gray-800">
+                        <input type="checkbox" className="w-5 h-5" checked={config.siteIds!.includes(s.id)}
+                          onChange={e => saveSites(e.target.checked ? [...config.siteIds!, s.id] : config.siteIds!.filter(x => x !== s.id))} />
+                        {s.host}
+                      </label>
+                    ))}
+                  </div>
                 )}
-              </Card>
+              </Section>
             </>
           )}
         </>
       )}
+    </div>
+  )
+}
+
+// ─── Einrichten je Plattform ──────────────────────────────────────────────────
+
+function PlatformFlow({ platform, config, sites, onBack, onSaved }: {
+  platform: Platform; config: Config | null; sites: Site[]; onBack: () => void; onSaved: (c: Config) => void
+}) {
+  const info = PLATFORMS[platform]
+  const isConnected = !!config && (platform === 'meta' ? !!config.metaPixelId : platform === 'google' ? !!config.googleAdsId : !!config.tiktokPixelId)
+  const [step, setStep] = useState(1)
+  const [f, setF] = useState({
+    id: platform === 'meta' ? config?.metaPixelId ?? '' : platform === 'google' ? config?.googleAdsId ?? '' : config?.tiktokPixelId ?? '',
+    label: config?.googleLeadLabel ?? '',
+    contactLabel: config?.googleContactLabel ?? '',
+    token: '',
+    testCode: '',
+    confirmed: config?.confirmed ?? false,
+  })
+  const [error, setError] = useState<{ field: string; text: string } | null>(null)
+  const [busy, setBusy] = useState(false)
+  const [result, setResult] = useState<{ ok: boolean; text: string } | null>(null)
+  const tokenSet = platform === 'meta' ? !!config?.metaTokenSet : platform === 'tiktok' ? !!config?.tiktokTokenSet : false
+  const hasServer = platform !== 'google'
+  const lastStep = hasServer ? 3 : 2
+  const statusError = config?.lastSend?.platform === platform && config.lastSend.status === 'error' ? config.lastSend.error : null
+
+  async function save(fields: Record<string, unknown>): Promise<boolean> {
+    setBusy(true); setError(null)
+    try {
+      const r = await fetch('/api/tracking/config', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...fields, confirmed: f.confirmed }) })
+      const d = await r.json().catch(() => ({}))
+      if (!r.ok) { setError({ field: d.field ?? 'form', text: d.error ?? 'Speichern hat nicht geklappt.' }); return false }
+      onSaved(d.config)
+      return true
+    } finally { setBusy(false) }
+  }
+
+  async function next() {
+    if (step === 1) {
+      const ok = platform === 'meta' ? await save({ metaPixelId: f.id })
+        : platform === 'google' ? await save({ googleAdsId: f.id, googleLeadLabel: f.label, googleContactLabel: f.contactLabel })
+          : await save({ tiktokPixelId: f.id })
+      if (ok) setStep(2)
+      return
+    }
+    if (step === 2 && hasServer) {
+      if (f.token.trim() === '') { setStep(3); return } // „Später“: ohne Serverweg
+      const ok = platform === 'meta' ? await save({ metaToken: f.token }) : await save({ tiktokToken: f.token })
+      if (ok) { setF(x => ({ ...x, token: '' })); setStep(3) }
+      return
+    }
+    onBack()
+  }
+
+  async function test() {
+    setBusy(true); setResult(null)
+    try {
+      const r = await fetch('/api/tracking/test', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ platform, testCode: f.testCode }) })
+      const d = await r.json().catch(() => ({}))
+      setResult({ ok: !!d.ok, text: d.ok ? d.message : (d.error ?? 'Prüfung fehlgeschlagen.') })
+    } finally { setBusy(false) }
+  }
+
+  async function disconnect() {
+    if (!confirm(`${info.name} trennen? Die Angaben werden gelöscht.`)) return
+    const ok = platform === 'meta' ? await save({ metaPixelId: '', metaToken: '-' })
+      : platform === 'google' ? await save({ googleAdsId: '', googleLeadLabel: '', googleContactLabel: '' })
+        : await save({ tiktokPixelId: '', tiktokToken: '-' })
+    if (ok) onBack()
+  }
+
+  const siteName = sites.find(s => s.status === 'published')?.host ?? 'deine Seite'
+
+  return (
+    <div className="flex flex-col gap-5">
+      <button type="button" onClick={onBack} className="self-start flex items-center gap-1.5 text-[15px] font-semibold" style={{ color: '#1a1a1a' }}>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M15 18l-6-6 6-6"/></svg>
+        Zurück zur Übersicht
+      </button>
+
+      <div className="flex items-center gap-3">
+        <Logo p={platform} size={44} />
+        <div>
+          <h3 className="text-xl font-bold text-gray-900 leading-tight">{info.name} {isConnected ? 'verwalten' : 'einrichten'}</h3>
+          <p className="text-sm text-gray-500">Schritt {step} von {lastStep}</p>
+        </div>
+      </div>
+
+      {statusError && step === 1 && (
+        <p className="text-[15px] font-medium rounded-2xl px-4 py-3" style={{ background: '#FEF2F2', color: '#B91C1C' }}>Letzte Übertragung fehlgeschlagen: {statusError}</p>
+      )}
+
+      <div className="rounded-3xl p-5 sm:p-7 flex flex-col gap-4" style={{ background: '#F8FAFC' }}>
+        {/* Schritt 1: ID */}
+        {step === 1 && platform === 'meta' && (
+          <>
+            <h4 className="text-lg font-bold text-gray-900">Deine Pixel-ID</h4>
+            <Field id="id" label="Pixel-ID (Meta nennt sie Datensatz-ID)" value={f.id} onChange={v => { setF({ ...f, id: v }); setError(null) }} placeholder="123456789012345" error={error?.field === 'metaPixelId' ? error.text : null} hint="15 bis 16 Ziffern. Ein kopierter Pixel-Code ist auch okay, wir ziehen die Zahl heraus." />
+            <Where>
+              <p>Gehe auf <strong>business.facebook.com</strong>, links auf <strong>Alle Tools</strong>, dann <strong>Events Manager</strong>. Unter <strong>Datenquellen</strong> klickst du deinen Datensatz an (früher „Pixel“). Die lange Zahl direkt unter dem Namen ist die ID.</p>
+              <p className="mt-2">Noch kein Datensatz? <strong>Daten verknüpfen</strong> → <strong>Web</strong> → Namen eingeben, fertig.</p>
+            </Where>
+          </>
+        )}
+        {step === 1 && platform === 'google' && (
+          <>
+            <h4 className="text-lg font-bold text-gray-900">Deine Conversion-Daten</h4>
+            <Field id="id" label="Conversion-ID" value={f.id} onChange={v => { setF({ ...f, id: v }); setError(null) }} placeholder="AW-123456789" error={error?.field === 'googleAdsId' ? error.text : null} />
+            <Field id="label" label="Conversion-Label für „Anfrage“" value={f.label} onChange={v => { setF({ ...f, label: v }); setError(null) }} placeholder="AbC-dEfGhIjK1LmN" error={error?.field === 'googleLeadLabel' ? error.text : null} />
+            <Where>
+              <p>In Google Ads links auf <strong>Ziele</strong> → <strong>Conversions</strong> → <strong>Zusammenfassung</strong> → <strong>Neue Conversion-Aktion</strong> → <strong>Website</strong>. Deine Seitenadresse eingeben, dann <strong>Conversion-Aktion manuell hinzufügen</strong>: Kategorie „Lead senden“, Name „Anfrage“.</p>
+              <p className="mt-2">Danach <strong>Tag-Einrichtung</strong> → <strong>Tag selbst einrichten</strong>. Dort stehen Conversion-ID und Conversion-Label. Mehr musst du nicht einbauen, das machen wir.</p>
+            </Where>
+            <details className="text-[15px]">
+              <summary className="font-semibold cursor-pointer" style={{ color: '#1a1a1a' }}>Auch WhatsApp-Klicks zählen (freiwillig)</summary>
+              <div className="mt-3">
+                <Field id="contactLabel" label="Conversion-Label für „Kontakt“" value={f.contactLabel} onChange={v => { setF({ ...f, contactLabel: v }); setError(null) }} placeholder="zweite Conversion-Aktion mit Namen „Kontakt“" error={error?.field === 'googleContactLabel' ? error.text : null} />
+              </div>
+            </details>
+          </>
+        )}
+        {step === 1 && platform === 'tiktok' && (
+          <>
+            <h4 className="text-lg font-bold text-gray-900">Deine Pixel-ID</h4>
+            <Field id="id" label="Pixel-ID" value={f.id} onChange={v => { setF({ ...f, id: v }); setError(null) }} placeholder="CABC1DEFGH2IJKLM3NOP" error={error?.field === 'tiktokPixelId' ? error.text : null} hint="Etwa 20 Zeichen aus Buchstaben und Ziffern." />
+            <Where>
+              <p>Im <strong>TikTok Ads Manager</strong> oben auf <strong>Tools</strong> → <strong>Events</strong> → <strong>Web-Events</strong>. Pixel anlegen („Manuell einrichten“) oder einen vorhandenen öffnen. Die Pixel-ID steht oben.</p>
+            </Where>
+          </>
+        )}
+        {step === 1 && !config?.confirmed && (
+          <label className="flex items-start gap-3 text-[15px] text-gray-800">
+            <input type="checkbox" className="w-5 h-5 mt-0.5" checked={f.confirmed} onChange={e => { setF({ ...f, confirmed: e.target.checked }); setError(null) }} />
+            <span>Ich bin für mein Werbekonto verantwortlich und weiß, dass meine Besucher dann einen kurzen Hinweis zur Einwilligung sehen. Die Datenschutzseite meiner Webseite wird automatisch ergänzt.</span>
+          </label>
+        )}
+        {error && !['metaPixelId', 'googleAdsId', 'googleLeadLabel', 'googleContactLabel', 'tiktokPixelId', 'metaToken', 'tiktokToken'].includes(error.field) && (
+          <p role="alert" className="text-[15px] font-medium rounded-2xl px-4 py-3" style={{ background: '#FEF2F2', color: '#B91C1C' }}>{error.text}</p>
+        )}
+
+        {/* Schritt 2: Token (Meta/TikTok) bzw. Fertig (Google) */}
+        {step === 2 && hasServer && (
+          <>
+            <h4 className="text-lg font-bold text-gray-900">Zugriffsschlüssel {tokenSet ? '(bereits hinterlegt)' : '(empfohlen)'}</h4>
+            <p className="text-[15px] text-gray-600 leading-snug">Damit melden wir Anfragen zusätzlich direkt von unserem Server. So zählen sie auch, wenn ein Werbeblocker den Pixel im Browser blockiert. Wird verschlüsselt gespeichert und nie angezeigt.</p>
+            <Field id="token" label={tokenSet ? 'Neuen Schlüssel eintragen (nur zum Ersetzen)' : 'Zugriffsschlüssel'} value={f.token} onChange={v => { setF({ ...f, token: v }); setError(null) }} placeholder={platform === 'meta' ? 'EAA…' : ''} secret error={error?.field === 'metaToken' || error?.field === 'tiktokToken' ? error.text : null} />
+            <Where>
+              {platform === 'meta'
+                ? <p>Im Events Manager in deinem Datensatz oben auf <strong>Einstellungen</strong>, dann nach unten bis <strong>Conversions API</strong>. Dort <strong>Zugriffsschlüssel generieren</strong>. Der lange Text beginnt mit EAA. Kopieren und hier einfügen.</p>
+                : <p>Im Pixel auf <strong>Einstellungen</strong> → <strong>Events API</strong> → <strong>Zugriffstoken generieren</strong>. Kopieren und hier einfügen.</p>}
+            </Where>
+          </>
+        )}
+        {step === 2 && !hasServer && (
+          <>
+            <h4 className="text-lg font-bold text-gray-900">Fertig. Ein Tipp noch:</h4>
+            <p className="text-[15px] text-gray-700 leading-snug">Schalte in Google Ads in der Conversion-Aktion <strong>„Erweiterte Conversions“</strong> ein und wähle „Google-Tag“. Dann erkennt Google Anfragen deutlich besser. Google-Anzeigen messen wir im Browser des Besuchers, mit Google Consent Mode.</p>
+            <p className="text-[15px] text-gray-700 leading-snug">In der Kampagne wählst du als Ziel die Conversion <strong>„Anfrage“</strong>.</p>
+          </>
+        )}
+
+        {/* Schritt 3: Prüfen */}
+        {step === 3 && (
+          <>
+            <h4 className="text-lg font-bold text-gray-900">Verbindung prüfen</h4>
+            {(platform === 'meta' ? config?.metaTokenSet : config?.tiktokTokenSet) ? (
+              <>
+                <p className="text-[15px] text-gray-600 leading-snug">Wir schicken ein Test-Ereignis „Lead“. {platform === 'meta' ? 'Mit Test-Code siehst du es in Meta sofort unter „Ereignisse testen“.' : ''}</p>
+                {platform === 'meta' && (
+                  <Field id="testCode" label="Test-Code (freiwillig)" value={f.testCode} onChange={v => setF({ ...f, testCode: v })} placeholder="TEST12345" hint="Im Events Manager in deinem Datensatz unter „Ereignisse testen“." />
+                )}
+                <div className="flex flex-wrap gap-2">
+                  <Secondary onClick={test} disabled={busy}>{busy ? 'Prüfe …' : 'Jetzt prüfen'}</Secondary>
+                </div>
+                {result && (
+                  <p role="status" className="text-[15px] font-medium rounded-2xl px-4 py-3" style={{ background: result.ok ? '#ECFDF5' : '#FEF2F2', color: result.ok ? '#15803D' : '#B91C1C' }}>{result.text}</p>
+                )}
+              </>
+            ) : (
+              <p className="text-[15px] text-gray-700 leading-snug">Ohne Zugriffsschlüssel läuft der Pixel nur im Browser deiner Besucher. Das funktioniert, zählt aber weniger, wenn Werbeblocker im Spiel sind. Du kannst den Schlüssel jederzeit nachtragen.</p>
+            )}
+            <div className="rounded-2xl px-4 py-3.5 text-[15px] leading-snug" style={{ background: '#fff', border: '1px solid #E5E7EB', color: '#374151' }}>
+              <p className="font-semibold text-gray-900 mb-1">So legst du die Anzeige an</p>
+              {platform === 'meta' && <p>Kampagnenziel <strong>Leads</strong> · Conversion-Ort <strong>Website</strong> · dein Datensatz · Ereignis <strong>Lead</strong>. Als Website-Adresse {siteName}.</p>}
+              {platform === 'tiktok' && <p>Kampagnenziel <strong>Lead-Generierung</strong> · <strong>Website</strong> · dein Pixel · Ereignis <strong>Formular absenden</strong>. Als Website-Adresse {siteName}.</p>}
+            </div>
+          </>
+        )}
+
+        <div className="flex flex-wrap items-center gap-2 pt-1">
+          {step > 1 && <Secondary onClick={() => setStep(step - 1)} disabled={busy}>Zurück</Secondary>}
+          <Primary onClick={next} disabled={busy || (step === 1 && !f.id.trim())}>
+            {busy && step < 3 ? 'Speichert …' : step === lastStep ? 'Fertig' : step === 2 && hasServer && f.token.trim() === '' && !tokenSet ? 'Später, ohne Schlüssel weiter' : 'Weiter'}
+          </Primary>
+          {isConnected && (
+            <button type="button" onClick={disconnect} className="ml-auto text-sm font-semibold underline" style={{ color: '#B91C1C' }}>{info.name} trennen</button>
+          )}
+        </div>
+      </div>
     </div>
   )
 }

@@ -618,6 +618,8 @@ export const trackingConfigs = pgTable('tracking_configs', {
   tiktokPixelId: text('tiktok_pixel_id'),
   tiktokTokenEnc: text('tiktok_token_enc'),
   siteIds: jsonb('site_ids').$type<string[] | null>(), // null = alle Seiten
+  // Welche Ereignisse an die Plattformen gehen (Seitenaufruf immer). Eigene Statistik zählt immer.
+  events: jsonb('events').$type<{ contact: boolean; lead: boolean }>().notNull().default({ contact: true, lead: true }),
   confirmedAt: timestamp('confirmed_at', { withTimezone: true }), // Verantwortung bestätigt
   lastSendAt: timestamp('last_send_at', { withTimezone: true }),
   lastSendPlatform: text('last_send_platform'),

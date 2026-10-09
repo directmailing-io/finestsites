@@ -9,11 +9,12 @@ export type { PublicTrackingConfig }
 export function toPublicConfig(c: typeof trackingConfigs.$inferSelect | undefined | null, siteId: string): PublicTrackingConfig | null {
   if (!c || !c.confirmedAt) return null
   if (Array.isArray(c.siteIds) && !c.siteIds.includes(siteId)) return null
-  const out: PublicTrackingConfig = {}
+  const ev = c.events ?? { contact: true, lead: true }
+  const out: PublicTrackingConfig = { events: { contact: ev.contact !== false, lead: ev.lead !== false } }
   if (c.metaPixelId) out.meta = { pixelId: c.metaPixelId, server: !!c.metaTokenEnc }
   if (c.googleAdsId && c.googleLeadLabel) out.google = { adsId: c.googleAdsId, leadLabel: c.googleLeadLabel, ...(c.googleContactLabel ? { contactLabel: c.googleContactLabel } : {}) }
   if (c.tiktokPixelId) out.tiktok = { pixelId: c.tiktokPixelId, server: !!c.tiktokTokenEnc }
-  return Object.keys(out).length ? out : null
+  return out.meta || out.google || out.tiktok ? out : null
 }
 
 /** Konfiguration zur Seite (über den Besitzer). */

@@ -100,8 +100,9 @@ function loadPixels(){if(loaded)return;loaded=true;keepClickIds();
  if(C.google){gtag('consent','update',{ad_storage:'granted',ad_user_data:'granted',ad_personalization:'granted'});script('https://www.googletagmanager.com/gtag/js?id='+C.google.adsId);gtag('js',new Date());gtag('config',C.google.adsId,{allow_enhanced_conversions:true})}
  if(C.tiktok){!function(w,d,t){w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=['page','track','identify','instances','debug','on','off','once','ready','alias','group','enableCookie','disableCookie'];ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n]);return e};ttq.load=function(e,n){var i='https://analytics.tiktok.com/i18n/pixel/events.js';ttq._i=ttq._i||{};ttq._i[e]=[];ttq._i[e]._u=i;ttq._t=ttq._t||{};ttq._t[e]=+new Date;ttq._o=ttq._o||{};ttq._o[e]=n||{};var o=document.createElement('script');o.type='text/javascript';o.async=!0;o.src=i+'?sdkid='+e+'&lib='+t;var a=document.getElementsByTagName('script')[0];a.parentNode.insertBefore(o,a)};ttq.load(C.tiktok.pixelId);ttq.page()}(window,document,'ttq')}}
 function consented(){var c=loadConsent();return !!(c&&c.marketing)}
-function fire(name,eid,hashed){ /* Browser-Ereignis, nur mit Einwilligung; Server-Teil macht der Worker mit derselben Nummer */
- if(!consented())return;loadPixels();
+var EV=C.events||{contact:true,lead:true};
+function fire(name,eid){ /* Browser-Ereignis, nur mit Einwilligung; Server-Teil macht der Worker mit derselben Nummer */
+ if(!consented())return;if(name==='Lead'&&EV.lead===false)return;if(name==='Contact'&&EV.contact===false)return;loadPixels();
  try{if(C.meta&&window.fbq)fbq('track',name,{},{eventID:eid})}catch(e){}
  try{if(C.google){var l=name==='Lead'?C.google.leadLabel:C.google.contactLabel;if(l){var p={send_to:C.google.adsId+'/'+l,transaction_id:eid};gtag('event','conversion',p)}}}catch(e){}
  try{if(C.tiktok&&window.ttq)ttq.track(name==='Lead'?'SubmitForm':'Contact',{},{event_id:eid})}catch(e){}}
@@ -159,7 +160,7 @@ export async function handleTrackingBeacon(request: Request, meta: SiteMeta, env
     ctx.waitUntil((async () => {
       const dup = await recordEvent(env, meta, hostname, request, 'contact', sourceUrl, eventId, { kind })
       if (dup) return
-      if (body.c === 1 && hasMarketingConsent(request)) {
+      if (body.c === 1 && hasMarketingConsent(request) && meta.tracking?.events.contact !== false) {
         await sendServerEvent(env, meta, request, { name: 'Contact', eventId, sourceUrl })
       }
     })())

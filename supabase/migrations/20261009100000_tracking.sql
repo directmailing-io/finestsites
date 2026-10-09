@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS tracking_configs (
   tiktok_pixel_id TEXT,
   tiktok_token_enc TEXT,
   site_ids JSONB,
+  events JSONB NOT NULL DEFAULT '{"contact": true, "lead": true}',
   confirmed_at TIMESTAMPTZ,
   last_send_at TIMESTAMPTZ,
   last_send_platform TEXT,
@@ -26,3 +27,6 @@ CREATE TABLE IF NOT EXISTS tracking_configs (
 
 -- Die App-Rolle braucht Rechte auf neue Tabellen (Tabellen werden als postgres angelegt):
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE tracking_configs TO finestsites;
+
+-- Nachtrag 09.10.2026: wählbare Ereignisse
+ALTER TABLE tracking_configs ADD COLUMN IF NOT EXISTS events JSONB NOT NULL DEFAULT '{"contact": true, "lead": true}';

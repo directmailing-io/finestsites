@@ -1069,7 +1069,7 @@ async function handleFormSubmission(request: Request, pathname: string, meta: Si
       const leadId = eventId ?? `srv-${crypto.randomUUID()}`
       const sourceUrl = pageUrl ?? siteUrl
       duplicate = await recordEvent(env, meta, hostname, request, 'lead', sourceUrl, leadId, { form: formName })
-      if (!duplicate && hasMarketingConsent(request)) {
+      if (!duplicate && hasMarketingConsent(request) && meta.tracking.events.lead !== false) {
         ctx.waitUntil(sendServerEvent(env, meta, request, { name: 'Lead', eventId: leadId, sourceUrl, formData }))
       }
       eventId = leadId
