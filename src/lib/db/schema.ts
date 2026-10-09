@@ -14,7 +14,7 @@ import {
   index,
   uniqueIndex,
 } from 'drizzle-orm/pg-core'
-import { relations, sql } from 'drizzle-orm'
+import { relations } from 'drizzle-orm'
 
 // ─── Enums ────────────────────────────────────────────────────────────────────
 
@@ -596,7 +596,9 @@ export const siteEvents = pgTable('site_events', {
   index('idx_site_events_site_occurred').on(t.siteId, t.occurredAt),
   index('idx_site_events_template_occurred').on(t.templateId, t.occurredAt),
   index('idx_site_events_occurred').on(t.occurredAt),
-  uniqueIndex('site_events_event_id_unique').on(t.eventId).where(sql`event_id IS NOT NULL`),
+  // Plain unique index: Postgres lässt beliebig viele NULLs zu, ein partieller Index würde
+  // ON CONFLICT (event_id) nicht bedienen.
+  uniqueIndex('site_events_event_id_unique').on(t.eventId),
 ])
 
 export type SiteEvent = typeof siteEvents.$inferSelect

@@ -153,7 +153,14 @@ export default function TrackingSettings() {
       const data = await res.json().catch(() => ({}))
       if (!res.ok) { setErrors({ [data.field ?? 'form']: data.error ?? 'Speichern hat nicht geklappt.' }); return }
       setConfig(data.config)
-      setForm(f => ({ ...f, metaToken: '', tiktokToken: '' }))
+      // Bereinigte Werte übernehmen (z. B. ID aus einem kopierten Pixel-Code), Tokens leeren
+      const c = data.config as Config | null
+      setForm(f => ({
+        ...f, metaToken: '', tiktokToken: '',
+        metaPixelId: c?.metaPixelId ?? '', googleAdsId: c?.googleAdsId ?? '',
+        googleLeadLabel: c?.googleLeadLabel ?? '', googleContactLabel: c?.googleContactLabel ?? '',
+        tiktokPixelId: c?.tiktokPixelId ?? '', confirmed: c?.confirmed ?? f.confirmed,
+      }))
       setSaved(true)
     } finally { setSaving(false) }
   }

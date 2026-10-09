@@ -1,6 +1,6 @@
 -- Werbung & Tracking: Meta / Google Ads / TikTok (see src/lib/tracking/, docs/werbung-tracking-konzept.html)
 ALTER TABLE site_events ADD COLUMN IF NOT EXISTS event_id VARCHAR(64);
-CREATE UNIQUE INDEX IF NOT EXISTS site_events_event_id_unique ON site_events (event_id) WHERE event_id IS NOT NULL;
+CREATE UNIQUE INDEX IF NOT EXISTS site_events_event_id_unique ON site_events (event_id);
 
 CREATE TABLE IF NOT EXISTS tracking_configs (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -23,3 +23,6 @@ CREATE TABLE IF NOT EXISTS tracking_configs (
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
+
+-- Die App-Rolle braucht Rechte auf neue Tabellen (Tabellen werden als postgres angelegt):
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE tracking_configs TO finestsites;

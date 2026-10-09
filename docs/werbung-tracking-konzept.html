@@ -81,7 +81,7 @@
 </head>
 <body>
 <main>
-  <p class="meta">Konzept · Stand 09.10.2026, 2. Fassung · Auslöser: Support-Anfrage von André Russ (3 Seiten, Meta-Werbekonto vorhanden)</p>
+  <p class="meta">Konzept · Stand 09.10.2026, 3. Fassung: umgesetzt und live · Auslöser: Support-Anfrage von André Russ (3 Seiten, Meta-Werbekonto vorhanden)</p>
   <h1>Werbung &amp; Tracking für FinestSites-Seiten</h1>
   <p class="lead">Wenige Nutzer wollen Anzeigen bei Meta, Google und TikTok schalten und wissen, welche Kampagne echte Beratungsanfragen bringt. Alle anderen sollen davon nichts merken. Dieses Konzept beschreibt, wie wir das einbauen, damit die Zahlen in den Werbeplattformen stimmen und die Seiten rechtlich sauber bleiben.</p>
 
@@ -288,7 +288,31 @@
   </div>
   <p>Damit beantwortet sich Andrés Frage nach den drei Seiten ohne jede Einstellung: Jede Seite hat ihren eigenen Link, jede Anfrage trägt Seite, Kampagne und Anzeige, und zwar bei Meta <em>und</em> bei uns. Die Kampagnen-Zuordnung bei uns funktioniert sogar ohne Zustimmung, weil sie nur aus dem Link kommt und nichts an Dritte geht.</p>
 
-  <h2>12. Was ich von dir brauche</h2>
+  
+  <h2>12. Was schiefgehen kann und was dann passiert</h2>
+  <div class="table-wrap">
+  <table>
+    <tr><th>Fehler</th><th>Was wir tun</th></tr>
+    <tr><td>Nutzer tippt etwas Falsches ein (Steuernummer, ganzer Code-Schnipsel, Leerzeichen)</td><td>Beim Speichern wird die Eingabe bereinigt (ID aus einem kopierten Pixel-Code herausgezogen, „AW-…/Label“ getrennt) oder mit einem Satz abgelehnt, der sagt, wo der richtige Wert steht. Es wird nichts Halbes gespeichert.</td></tr>
+    <tr><td>Zugriffsschlüssel falsch, abgelaufen oder für ein anderes Pixel</td><td>„Verbindung prüfen“ zeigt es sofort. Im Betrieb steht es in der Statusanzeige („Zugriffsschlüssel ungültig. Bitte im Events Manager einen neuen erzeugen.“). Browser-Pixel läuft weiter, nur der Serverweg fehlt.</td></tr>
+    <tr><td>Pixel-ID existiert nicht (mehr)</td><td>Statusanzeige „Pixel-ID nicht gefunden“. Die Seite selbst ist nicht betroffen.</td></tr>
+    <tr><td>Meta oder TikTok antwortet nicht oder drosselt</td><td>Server-Übertragung läuft im Hintergrund, der Besucher merkt nichts. Fehler wird gespeichert und angezeigt; das nächste Ereignis versucht es wieder.</td></tr>
+    <tr><td>Besucher klickt zweimal, Netzwerk wiederholt die Anfrage</td><td>Gleiche Ereignis-Nummer → zweite Meldung wird in unserer Datenbank verworfen (eindeutiger Index) und geht nicht an die Plattformen. Live getestet.</td></tr>
+    <tr><td>Spam oder sechste Anfrage in 10 Minuten</td><td>Honeypot und Rate-Limit greifen vor dem Tracking: kein Lead.</td></tr>
+    <tr><td>Werbeblocker blockiert das Pixel</td><td>Der Serverweg (Conversions API) meldet die Anfrage trotzdem. Deshalb ist der Zugriffsschlüssel so wichtig.</td></tr>
+    <tr><td>Besucher lehnt ab</td><td>Kein Skript, kein Cookie der Plattformen, keine Server-Übertragung. In unserer eigenen Statistik zählt die Anfrage trotzdem (ohne Fremdanbieter). Der Reiter zeigt die Zustimmungsquote.</td></tr>
+    <tr><td>Template hat schon ein Cookie-Banner (Wellpreneur, Cellrestart)</td><td>Es wird benutzt, es erscheint kein zweites. Beide Banner schreiben denselben Speicher-Schlüssel. FitLine und Linkseite bekommen das eingebaute Banner nur, wenn Tracking aktiv ist.</td></tr>
+    <tr><td>Nutzer schaut seine eigene Seite an</td><td>„Mein Gerät nicht mitzählen“ im Reiter, ein Klick je Gerät. Editor-Vorschau, Vorlagen-Vorschau und Bots bekommen nie einen Tracking-Block.</td></tr>
+    <tr><td>Test-Code bleibt versehentlich aktiv</td><td>Unmöglich: Er wird nur vom Prüf-Knopf benutzt und nicht gespeichert.</td></tr>
+    <tr><td>Nutzer ändert Einstellungen, Seite ist gecacht</td><td>Der Tracking-Block wird beim Ausliefern angehängt, das gecachte HTML bleibt ohne Pixel. Neue Einstellungen greifen in spätestens 60 Sekunden, ohne Cache-Leeren.</td></tr>
+    <tr><td>Unsere App ist kurz nicht erreichbar</td><td>Seite wird ausgeliefert wie bisher. Beim Absenden fehlt dann nur die Server-Übertragung; der Browser-Pixel meldet weiterhin.</td></tr>
+    <tr><td>Nutzer schaltet Tracking aus</td><td>Alle Angaben werden gelöscht, Seiten liefern innerhalb einer Minute wieder ohne Block und mit dem alten Datenschutztext aus.</td></tr>
+    <tr><td>Meta benennt Menüs um</td><td>Anleitung endet mit „Sieht es bei dir anders aus? Schreib uns im Chat.“ Texte sind an einer Stelle gepflegt.</td></tr>
+  </table>
+  </div>
+  <div class="note ok"><p><strong>Stand 09.10.2026:</strong> Meta, Google Ads und TikTok sind umgesetzt und live (Reiter „Werbung“ unter Einstellungen). Getestet mit einem Test-Pixel: Einbau auf allen Templates, Banner nur ohne Template-Banner, nichts lädt vor der Zustimmung, Ablehnen lädt nichts, Anfrage und Kontakt werden genau einmal gezählt, ungültiger Schlüssel erzeugt die verständliche Statusmeldung. Noch offen: ein echter Durchlauf mit einem echten Meta-Konto (André als erster Tester) und Screenshots für die Anleitung.</p></div>
+
+  <h2>13. Was ich von dir brauche</h2>
   <ul>
     <li><strong>Platzierung:</strong> Einstellungen-Reiter „Werbung“ (meine Empfehlung) oder zusätzlich ein Chip im Editor neben „Domain“?</li>
     <li><strong>Für welche Tarife?</strong> Technisch für alle möglich. Als Argument für Pro oder Unlimited wäre es naheliegend, das ist aber deine Preisentscheidung.</li>
@@ -296,7 +320,7 @@
     <li><strong>Einrichtungs-Service:</strong> André fragt, ob wir das für ihn einrichten. Mit „Verbindung prüfen“ schafft er es allein in fünf Minuten; ein kurzes Video oder eine bebilderte Anleitung im Reiter reicht.</li>
   </ul>
 
-  <h2>13. Vorschlag für die Antwort an André</h2>
+  <h2>14. Vorschlag für die Antwort an André</h2>
   <div class="card">
     <p>Moin André, hier der Stand: Wir bauen genau das, was du beschreibst. Du trägst bei uns deine Pixel-ID und einen Zugriffstoken ein, dann läuft auf allen drei Seiten der Meta-Pixel, und jede abgeschickte Beratungsanfrage geht als Lead an Meta, sowohl aus dem Browser als auch direkt von unserem Server über die Conversions API. Beides mit derselben Ereignis-Nummer, damit nichts doppelt zählt. Deine drei Seiten kannst du in Meta über die Seiten-Adresse auseinanderhalten, zusätzlich siehst du bei uns, aus welcher Kampagne die Anfragen kamen.</p>
     <p>Datenschutz ist eingeplant: Auf deinen Seiten erscheint dann ein kleiner Zustimmungs-Hinweis, und die Datenschutzseite ergänzt sich automatisch um Meta.</p>
