@@ -58,6 +58,16 @@
       "input_placeholder": "z.B. Becker"
     },
     {
+      "key": "firma",
+      "type": "text",
+      "label": "Firma (freiwillig)",
+      "section": "Profil",
+      "required": false,
+      "placeholder_text": "Nur wenn du als Firma auftrittst, z. B. „Mustermann & Müller GbR“. Steht dann im Impressum und in der Datenschutzerklärung.",
+      "input_placeholder": "z. B. Mustermann & Müller GbR",
+      "max_length": 120
+    },
+    {
       "key": "profilbild",
       "type": "image",
       "label": "Profilbild",

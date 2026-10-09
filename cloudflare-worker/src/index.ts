@@ -1633,7 +1633,7 @@ ${legalTopbarHtml()}
 <h2>Nutzergenerierte Inhalte</h2>
 {{#unless partner_modus=duo}}<p>Diese Website wird im Rahmen des FinestSites-Dienstleistungsangebots f\u00FCr folgende Person betrieben:</p>{{/unless}}{{#if partner_modus=duo}}<p>Diese Website wird im Rahmen des FinestSites-Dienstleistungsangebots f\u00FCr folgende Personen betrieben:</p>{{/if}}
 <div class="highlight-box">
-{{#unless partner_modus=duo}}<p><strong>{{vorname}} {{nachname}}</strong></p>{{/unless}}{{#if partner_modus=duo}}<p><strong>{{vorname}} {{nachname}} &amp; {{vorname2}} {{nachname2}}</strong></p>{{/if}}
+{{#if firma}}<p><strong>{{firma}}</strong></p>{{/if}}{{#unless partner_modus=duo}}<p><strong>{{vorname}} {{nachname}}</strong></p>{{/unless}}{{#if partner_modus=duo}}<p><strong>{{vorname}} {{nachname}} &amp; {{vorname2}} {{nachname2}}</strong></p>{{/if}}
 </div>
 {{#unless partner_modus=duo}}<p>F\u00FCr eigene nutzergenerierte Inhalte dieser Person &ndash; insbesondere pers\u00F6nliche Erfahrungsberichte, Fotos und selbst hochgeladene Medien &ndash; ist {{vorname}} {{nachname}} gem\u00E4\u00DF \u00A7 7 Abs. 1 TMG selbst verantwortlich. FinestSites ist nicht verpflichtet, diese Inhalte vorab zu pr\u00FCfen.</p>{{/unless}}{{#if partner_modus=duo}}<p>F\u00FCr eigene nutzergenerierte Inhalte dieser Personen &ndash; insbesondere pers\u00F6nliche Erfahrungsberichte, Fotos und selbst hochgeladene Medien &ndash; sind {{vorname}} {{nachname}} und {{vorname2}} {{nachname2}} gem\u00E4\u00DF \u00A7 7 Abs. 1 TMG selbst verantwortlich. FinestSites ist nicht verpflichtet, diese Inhalte vorab zu pr\u00FCfen.</p>{{/if}}
 </section>
@@ -1707,7 +1707,7 @@ ${legalTopbarHtml()}
 <h2>User-generated content</h2>
 {{#unless partner_modus=duo}}<p>This website is operated as part of the FinestSites service offering for the following person:</p>{{/unless}}{{#if partner_modus=duo}}<p>This website is operated as part of the FinestSites service offering for the following persons:</p>{{/if}}
 <div class="highlight-box">
-{{#unless partner_modus=duo}}<p><strong>{{vorname}} {{nachname}}</strong></p>{{/unless}}{{#if partner_modus=duo}}<p><strong>{{vorname}} {{nachname}} &amp; {{vorname2}} {{nachname2}}</strong></p>{{/if}}
+{{#if firma}}<p><strong>{{firma}}</strong></p>{{/if}}{{#unless partner_modus=duo}}<p><strong>{{vorname}} {{nachname}}</strong></p>{{/unless}}{{#if partner_modus=duo}}<p><strong>{{vorname}} {{nachname}} &amp; {{vorname2}} {{nachname2}}</strong></p>{{/if}}
 </div>
 {{#unless partner_modus=duo}}<p>For their own user-generated content, in particular personal testimonials, photos and self-uploaded media, {{vorname}} {{nachname}} is personally responsible in accordance with Section 7 (1) TMG. FinestSites is not obliged to review this content in advance.</p>{{/unless}}{{#if partner_modus=duo}}<p>For their own user-generated content, in particular personal testimonials, photos and self-uploaded media, {{vorname}} {{nachname}} and {{vorname2}} {{nachname2}} are personally responsible in accordance with Section 7 (1) TMG. FinestSites is not obliged to review this content in advance.</p>{{/if}}
 </section>
@@ -1827,6 +1827,15 @@ ${vital ? vitalprofilSectionDe() : ''}<section>
 <hr class="divider">
 
 <section>
+<h2>Anfragen über Werbeanzeigen und WhatsApp</h2>
+<p>Der auf dieser Website genannte Betreiber ({{#if firma}}{{firma}}, {{/if}}{{vorname}} {{nachname}}{{#if partner_modus=duo}} &amp; {{vorname2}} {{nachname2}}{{/if}}) kann für diese Website Werbeanzeigen schalten, zum Beispiel bei Facebook, Instagram, Google oder TikTok. Wenn Sie dort in einem Formular (z.&nbsp;B. einem Lead-Formular bei Meta) Ihre Kontaktdaten hinterlassen, werden diese Angaben von der jeweiligen Plattform an den Betreiber übermittelt. Er verwendet sie ausschließlich, um die von Ihnen gewünschte Beratung oder Kontaktaufnahme durchzuführen; eine Weitergabe an Dritte findet nicht statt. Für die Erhebung auf der Plattform gelten zusätzlich deren Datenschutzbestimmungen (Meta: <a href="https://www.facebook.com/privacy/policy/" target="_blank" rel="noopener">facebook.com/privacy/policy</a>).</p>
+<p>Wenn Sie freiwillig über <strong>WhatsApp</strong> Kontakt aufnehmen, werden Ihre Telefonnummer und Nachrichteninhalte von WhatsApp (WhatsApp Ireland Ltd.) nach deren Datenschutzrichtlinie verarbeitet (<a href="https://www.whatsapp.com/legal/privacy-policy-eea" target="_blank" rel="noopener">whatsapp.com/legal/privacy-policy-eea</a>). Der Betreiber nutzt die Unterhaltung nur für die Beantwortung Ihres Anliegens.</p>
+<p>Rechtsgrundlage: Art. 6 Abs. 1 lit. b DSGVO (Vertragsanbahnung auf Ihre Anfrage) bzw. Art. 6 Abs. 1 lit. a DSGVO (Ihre Einwilligung bei Angabe der Daten). Die Daten werden gelöscht, sobald Ihr Anliegen abschließend bearbeitet ist und keine gesetzliche Aufbewahrungspflicht entgegensteht.</p>
+</section>
+
+<hr class="divider">
+
+<section>
 <h2>Eingebettete Inhalte</h2>
 <p>Diese Website kann eingebettete Inhalte (z.\u202FB. Schriftarten von Google Fonts) enthalten. Beim Laden dieser Inhalte wird Ihre IP-Adresse an den jeweiligen Anbieter \u00FCbertragen. Dies geschieht auf Basis von Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an einem einwandfrei funktionierenden Erscheinungsbild der Website).</p>
 </section>
@@ -1896,6 +1905,15 @@ ${vital ? vitalprofilSectionEn() : ''}<section>
 <h2>Contact form</h2>
 <p>If you use the contact form on this site, your details (e.g. name, email address, message) are transmitted to the FinestSites servers in encrypted form and stored in our secured dashboard. They are used exclusively to process your inquiry and are not shared with third parties.</p>
 <p>Legal basis: Art. 6 (1) (b) GDPR (steps prior to entering into a contract) or Art. 6 (1) (f) GDPR (legitimate interest in responding to inquiries). The data is deleted once your inquiry has been fully processed and no statutory retention obligation applies.</p>
+</section>
+
+<hr class="divider">
+
+<section>
+<h2>Enquiries via advertisements and WhatsApp</h2>
+<p>The operator named on this website ({{#if firma}}{{firma}}, {{/if}}{{vorname}} {{nachname}}{{#if partner_modus=duo}} &amp; {{vorname2}} {{nachname2}}{{/if}}) may run advertisements for this website, for example on Facebook, Instagram, Google or TikTok. If you leave your contact details in a form there (e.g. a Meta lead form), the platform transmits them to the operator, who uses them solely to carry out the consultation or contact you requested; they are not passed on to third parties. The platform's own privacy policy applies to the collection there (Meta: <a href="https://www.facebook.com/privacy/policy/" target="_blank" rel="noopener">facebook.com/privacy/policy</a>).</p>
+<p>If you voluntarily get in touch via <strong>WhatsApp</strong>, your phone number and message contents are processed by WhatsApp (WhatsApp Ireland Ltd.) under its privacy policy (<a href="https://www.whatsapp.com/legal/privacy-policy-eea" target="_blank" rel="noopener">whatsapp.com/legal/privacy-policy-eea</a>). The operator uses the conversation only to answer your enquiry.</p>
+<p>Legal basis: Art. 6(1)(b) GDPR (pre-contractual steps at your request) or Art. 6(1)(a) GDPR (your consent when providing the data). The data is deleted once your enquiry has been dealt with and no statutory retention obligation applies.</p>
 </section>
 
 <hr class="divider">
