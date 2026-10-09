@@ -20,7 +20,8 @@
  *     events: [{
  *       siteId:       string (uuid)
  *       templateId:   string (uuid)
- *       eventType:    'pageview' | 'click' | 'duration'
+ *       eventType:    'pageview' | 'click' | 'duration' | 'contact' | 'lead' | 'consent'
+ *       eventId:      string | null — Ereignis-Nummer aus dem Browser (contact/lead), eindeutig
  *       visitorHash:  string | null
  *       host:         string
  *       path:         string
@@ -52,7 +53,7 @@ import { siteEvents } from '@/lib/db/schema'
 const WORKER_SECRET = process.env.WORKER_SECRET
 
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
-const EVENT_TYPES = new Set(['pageview', 'click', 'duration'])
+const EVENT_TYPES = new Set(['pageview', 'click', 'duration', 'contact', 'lead', 'consent'])
 const MAX_BATCH = 25
 
 function checkSecret(req: NextRequest): boolean {
@@ -99,6 +100,7 @@ function sanitizeEvent(raw: unknown): typeof siteEvents.$inferInsert | null {
     os: str(e.os, 32),
     country: str(e.country, 8),
     meta: typeof e.meta === 'object' && e.meta !== null ? e.meta : null,
+    eventId: typeof e.eventId === 'string' && /^[A-Za-z0-9_-]{8,64}$/.test(e.eventId) ? e.eventId : null,
   }
 }
 
@@ -120,9 +122,15 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ok: true, inserted: 0 })
     }
 
-    await db.insert(siteEvents).values(valid)
+    // Ereignisse mit eventId sind eindeutig: ein zweites Mal dieselbe Nummer (Doppelklick,
+    // Wiederholung) wird verworfen — und der Worker erfährt das (duplicate), damit er
+    // nichts erneut an die Werbeplattformen schickt.
+    const inserted = await db.insert(siteEvents).values(valid).onConflictDoNothing({ target: siteEvents.eventId })
+      .returning({ eventId: siteEvents.eventId })
+    const insertedIds = new Set(inserted.map(r => r.eventId).filter(Boolean))
+    const duplicate = valid.map(e => e.eventId).filter((id): id is string => !!id && !insertedIds.has(id))
 
-    return NextResponse.json({ ok: true, inserted: valid.length })
+    return NextResponse.json({ ok: true, inserted: inserted.length, duplicate })
   } catch (err) {
     console.error('[worker/track]', err)
     return NextResponse.json({ error: 'internal error' }, { status: 500 })

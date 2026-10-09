@@ -1,0 +1,310 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Werbung &amp; Tracking</title>
+<meta name="description" content="Konzept: Wie FinestSites-Nutzer Meta-, Google- und TikTok-Anzeigen zuverlässig auf ihren Seiten messen können, ohne dass alle anderen davon etwas merken.">
+<style>
+  :root {
+    --bg: #F6F7F9; --card: #FFFFFF; --ink: #111827; --ink-2: #4B5563; --ink-3: #8A94A6;
+    --line: #E5E7EB; --accent: #6D28D9; --accent-soft: #F1ECFB; --ok: #15803D; --ok-soft: #ECFDF5;
+    --warn: #B45309; --warn-soft: #FFF7ED; --bad: #B91C1C; --bad-soft: #FEF2F2; --code: #F3F4F6;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0F1115; --card: #171A21; --ink: #F3F4F6; --ink-2: #C4C9D4; --ink-3: #8A94A6;
+      --line: #2A2F3A; --accent: #A78BFA; --accent-soft: #241B3A; --ok: #4ADE80; --ok-soft: #10281B;
+      --warn: #FBBF24; --warn-soft: #2E2410; --bad: #F87171; --bad-soft: #2E1515; --code: #20242D;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0F1115; --card: #171A21; --ink: #F3F4F6; --ink-2: #C4C9D4; --ink-3: #8A94A6;
+    --line: #2A2F3A; --accent: #A78BFA; --accent-soft: #241B3A; --ok: #4ADE80; --ok-soft: #10281B;
+    --warn: #FBBF24; --warn-soft: #2E2410; --bad: #F87171; --bad-soft: #2E1515; --code: #20242D;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body { background: var(--bg); color: var(--ink); font: 16px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; }
+  main { max-width: 860px; margin: 0 auto; padding: 32px 16px 80px; }
+  h1 { font-size: 30px; line-height: 1.2; letter-spacing: -0.02em; margin: 0 0 8px; }
+  h2 { font-size: 21px; line-height: 1.3; letter-spacing: -0.01em; margin: 44px 0 14px; }
+  h3 { font-size: 16px; margin: 22px 0 8px; }
+  p { margin: 0 0 12px; color: var(--ink-2); }
+  p strong, li strong { color: var(--ink); }
+  ul, ol { margin: 0 0 14px; padding-left: 22px; color: var(--ink-2); }
+  li { margin: 4px 0; }
+  .lead { font-size: 18px; color: var(--ink-2); }
+  .meta { font-size: 14px; color: var(--ink-3); margin-bottom: 28px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 20px; margin: 14px 0; }
+  .card h3 { margin-top: 0; }
+  .grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
+  @media (min-width: 640px) { .grid-2 { grid-template-columns: 1fr 1fr; } .grid-3 { grid-template-columns: 1fr 1fr 1fr; } }
+  .tag { display: inline-block; font-size: 12px; font-weight: 600; padding: 3px 9px; border-radius: 999px; background: var(--accent-soft); color: var(--accent); vertical-align: middle; }
+  .tag.ok { background: var(--ok-soft); color: var(--ok); }
+  .tag.warn { background: var(--warn-soft); color: var(--warn); }
+  .tag.bad { background: var(--bad-soft); color: var(--bad); }
+  .note { border-left: 4px solid var(--accent); background: var(--accent-soft); border-radius: 12px; padding: 14px 16px; margin: 16px 0; }
+  .note.warn { border-color: var(--warn); background: var(--warn-soft); }
+  .note.ok { border-color: var(--ok); background: var(--ok-soft); }
+  .note p { margin: 0; }
+  .note p + p { margin-top: 8px; }
+  code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.9em; background: var(--code); padding: 2px 6px; border-radius: 6px; }
+  table { width: 100%; border-collapse: collapse; font-size: 15px; margin: 10px 0 16px; }
+  th, td { text-align: left; padding: 10px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { font-size: 13px; color: var(--ink-3); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+  td { color: var(--ink-2); }
+  td:first-child { color: var(--ink); font-weight: 600; }
+  .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .flow { display: flex; flex-direction: column; gap: 0; margin: 16px 0; }
+  .step { display: flex; gap: 14px; align-items: flex-start; }
+  .step + .step { margin-top: 0; }
+  .num { flex: 0 0 32px; height: 32px; border-radius: 50%; background: var(--ink); color: var(--card); font-weight: 700; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+  .step .body { flex: 1; padding-bottom: 18px; border-left: 2px solid var(--line); margin-left: -23px; padding-left: 36px; }
+  .step:last-child .body { border-left-color: transparent; }
+  .step h4 { margin: 4px 0 4px; font-size: 16px; }
+  .step p { margin: 0; font-size: 15px; }
+  .mock { border: 1px solid var(--line); border-radius: 14px; background: var(--bg); padding: 14px; font-size: 14px; }
+  .mock .label { font-size: 12px; font-weight: 600; color: var(--ink-3); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 8px; }
+  .mock .field { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; margin: 8px 0; color: var(--ink); }
+  .mock .field small { display: block; color: var(--ink-3); font-size: 12px; margin-top: 2px; }
+  .mock .btn { display: inline-block; background: var(--ink); color: var(--card); border-radius: 10px; padding: 8px 14px; font-weight: 600; margin-top: 6px; }
+  .mock .btn.ghost { background: transparent; color: var(--ink); border: 1px solid var(--line); }
+  .banner { border: 1px solid var(--line); background: var(--card); border-radius: 14px; padding: 14px; font-size: 14px; }
+  .banner .row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+  .kpi { display: flex; flex-direction: column; gap: 2px; }
+  .kpi b { font-size: 22px; letter-spacing: -0.01em; }
+  .kpi span { font-size: 13px; color: var(--ink-3); }
+  .muted { color: var(--ink-3); font-size: 14px; }
+  hr { border: 0; border-top: 1px solid var(--line); margin: 36px 0; }
+</style>
+</head>
+<body>
+<main>
+  <p class="meta">Konzept · Stand 09.10.2026, 2. Fassung · Auslöser: Support-Anfrage von André Russ (3 Seiten, Meta-Werbekonto vorhanden)</p>
+  <h1>Werbung &amp; Tracking für FinestSites-Seiten</h1>
+  <p class="lead">Wenige Nutzer wollen Anzeigen bei Meta, Google und TikTok schalten und wissen, welche Kampagne echte Beratungsanfragen bringt. Alle anderen sollen davon nichts merken. Dieses Konzept beschreibt, wie wir das einbauen, damit die Zahlen in den Werbeplattformen stimmen und die Seiten rechtlich sauber bleiben.</p>
+
+  <div class="card">
+    <h3>Kurzfassung</h3>
+    <ul>
+      <li><strong>Ein neuer Bereich „Werbung &amp; Tracking“ in den Einstellungen</strong>, zugeklappt, mit einem Satz, für wen er gedacht ist. Im Editor ändert sich nichts.</li>
+      <li><strong>Drei feste Ereignisse, nichts zum Auswählen:</strong> Seitenaufruf, Kontakt (WhatsApp-, Telefon-, E-Mail-Klick) und Anfrage (Formular gespeichert, kein Spam). Kampagnen optimieren auf „Anfrage“.</li>
+      <li><strong>Doppelt gesichert:</strong> jedes Ereignis geht einmal aus dem Browser und einmal von unserem Server an Meta (Conversions API). Beide tragen dieselbe Ereignis-Nummer, Meta zählt es genau einmal.</li>
+      <li><strong>Erst Zustimmung, dann Tracking:</strong> Nur Seiten mit aktivem Tracking zeigen einen kleinen Zustimmungs-Hinweis. Die Datenschutzseite ergänzt sich automatisch.</li>
+      <li><strong>Anleitung in 5 Schritten mit Screenshots</strong> direkt im Reiter, dazu der fertige Anzeigen-Link je Seite und ein Status „Verbunden / letzte Übertragung“.</li>
+      <li><strong>Reihenfolge:</strong> Meta zuerst (3 Arbeitstage), dann Google Ads, dann TikTok.</li>
+    </ul>
+  </div>
+
+  <h2>1. Was André braucht und was davon heute geht</h2>
+  <div class="table-wrap">
+  <table>
+    <tr><th>Seine Frage</th><th>Heute</th><th>Nach dem Update</th></tr>
+    <tr><td>Meta Pixel einbinden</td><td><span class="tag bad">Nicht möglich</span></td><td>Pixel-ID eintragen, fertig. Wird auf allen seinen veröffentlichten Seiten ausgeliefert.</td></tr>
+    <tr><td>Beratungsanfragen als Lead erfassen</td><td><span class="tag bad">Nicht möglich</span></td><td>Jede gespeicherte Formular-Anfrage löst ein <code>Lead</code>-Ereignis aus. Meta erkennt, welche Anzeige die Anfrage gebracht hat.</td></tr>
+    <tr><td>Conversions API</td><td><span class="tag bad">Nicht möglich</span></td><td>Ja, serverseitig aus unserem Worker, mit Deduplizierung. Das ist der Teil, der die Zahlen zuverlässig macht.</td></tr>
+    <tr><td>Drei Seiten getrennt auswerten</td><td><span class="tag warn">Nur unsere eigene Statistik</span></td><td>Ein Pixel reicht: Jedes Ereignis trägt die Seiten-Adresse. In Meta filtert er nach <code>andre-russ.cellrestart.net</code> usw. Zusätzlich zeigen wir ihm bei uns „Anfragen je Kampagne“.</td></tr>
+  </table>
+  </div>
+  <p class="muted">Unsere Datenschutzseite auf Kundenseiten sagt heute wörtlich „keine Cookies, kein Tracking, kein Banner nötig“. Das bleibt für alle wahr, die das Feature nicht einschalten. Für die anderen muss der Text automatisch mitwachsen (siehe Abschnitt 5).</p>
+
+  <h2>2. Wo es im Produkt sitzt</h2>
+  <p><strong>Empfehlung: In den Einstellungen, nicht im Editor.</strong> Der Editor ist der Ort, an dem alle Nutzer täglich sind, und dort soll nichts Neues stehen, das verunsichert. Die Einstellungen besucht man gezielt. Die Domainanbindung sitzt zwar im Editor, aber sie ist pro Seite gedacht. Tracking hängt am Werbekonto und gilt sinnvollerweise für alle Seiten eines Nutzers.</p>
+  <div class="grid grid-2">
+    <div class="mock">
+      <div class="label">Einstellungen · neuer Reiter „Werbung“</div>
+      <div class="field"><strong>Schaltest du Werbeanzeigen?</strong><small>Nur dann brauchst du diesen Bereich. Wenn nicht, kannst du ihn ignorieren.</small></div>
+      <div class="field">Meta (Facebook &amp; Instagram) <span class="tag">Einrichten</span></div>
+      <div class="field">Google Ads <span class="tag">Bald</span></div>
+      <div class="field">TikTok <span class="tag">Bald</span></div>
+    </div>
+    <div class="mock">
+      <div class="label">Meta einrichten</div>
+      <div class="field">Pixel-ID (Datensatz-ID)<small>15 bis 16 Ziffern, aus dem Events Manager</small></div>
+      <div class="field">Zugriffstoken für die Conversions API<small>Wird verschlüsselt gespeichert, nie wieder angezeigt</small></div>
+      <div class="field">Test-Code (freiwillig)<small>Damit du in Meta „Test-Ereignisse“ live siehst</small></div>
+      <span class="btn">Verbindung prüfen</span> <span class="btn ghost">Speichern</span>
+    </div>
+  </div>
+  <p>„Verbindung prüfen“ schickt ein Test-Ereignis über die Conversions API und zeigt die Antwort von Meta direkt an: grün, wenn Meta es angenommen hat, mit dem Hinweis, wo es im Events Manager auftaucht. Das erspart den meisten Support.</p>
+  <p>Eingaben werden geprüft, bevor sie gespeichert werden: Pixel-ID nur Ziffern, Google-Kennung im Format <code>AW-123456789</code> plus Label, TikTok-Pixel 20 Zeichen. Wer eine Steuernummer ins Pixel-Feld tippt, bekommt einen klaren Satz statt eines Fehlers.</p>
+  <div class="note">
+    <p><strong>Pro Seite ein- oder ausschalten?</strong> Standard: gilt für alle veröffentlichten Seiten. Eine Liste „Auf diesen Seiten aktiv“ mit Häkchen kostet wenig und deckt den Fall ab, dass jemand eine Seite bewusst ohne Tracking lassen will. Ich würde sie in Phase 1 mitnehmen.</p>
+  </div>
+
+  <h2>3. Wie das Messen technisch zuverlässig wird</h2>
+  <p>Werbeplattformen messen schlecht, wenn nur ein Skript im Browser läuft: Adblocker, iOS-Tracking-Schutz und abgebrochene Seitenwechsel schlucken 20–40 % der Ereignisse. Deshalb zwei Wege, die sich gegenseitig absichern.</p>
+  <div class="flow">
+    <div class="step"><div class="num">1</div><div class="body"><h4>Seitenaufruf</h4><p>Der Worker liefert die Seite aus und hängt, wie heute schon den Besucher-Beacon, den Tracking-Block an. Der Block kennt die Pixel-IDs des Seitenbetreibers. Die Skripte der Plattformen werden erst nach Zustimmung geladen (Schritt 2). Die Kennungen <code>fbclid</code> und <code>gclid</code> aus der Anzeigen-URL werden sofort in einem Erstanbieter-Cookie gesichert, damit sie beim Absenden noch da sind.</p></div></div>
+    <div class="step"><div class="num">2</div><div class="body"><h4>Zustimmung</h4><p>Kleiner Hinweis am unteren Rand: „Diese Seite misst, ob Werbeanzeigen funktionieren. Einverstanden?“ mit zwei gleich großen Knöpfen, <strong>Ja</strong> und <strong>Nein</strong>. Die Wahl gilt sechs Monate. Bei „Nein“ wird nichts geladen und nichts gesendet, auch nicht serverseitig.</p></div></div>
+    <div class="step"><div class="num">3</div><div class="body"><h4>Anfrage absenden</h4><p>Das Formular erzeugt beim Absenden eine eindeutige Ereignis-Nummer und schickt sie als <code>_event_id</code> mit. Der Worker speichert die Anfrage wie heute, prüft Honeypot und Rate-Limit, und erst wenn das Speichern gelungen ist, geht es weiter. Spam und Doppel-Klicks erzeugen keine Leads.</p></div></div>
+    <div class="step"><div class="num">4</div><div class="body"><h4>Browser meldet Lead</h4><p>Das Formular bekommt wie heute <code>success: true</code> zurück und feuert <code>fbq('track','Lead',{eventID})</code> bzw. das Google-/TikTok-Gegenstück. Nur mit Zustimmung.</p></div></div>
+    <div class="step"><div class="num">5</div><div class="body"><h4>Server meldet Lead</h4><p>Der Worker schickt dasselbe Ereignis mit derselben Nummer an die Meta Conversions API: Seiten-URL, Zeitstempel, <code>fbp</code>/<code>fbc</code>-Cookies, IP und User-Agent, dazu E-Mail und Telefonnummer aus dem Formular als SHA-256-Hash (Meta verlangt das Hashing, wir schicken nie Klartext). Meta erkennt an der Nummer, dass Browser- und Server-Ereignis dasselbe sind, und zählt einmal.</p></div></div>
+    <div class="step"><div class="num">6</div><div class="body"><h4>Eigene Statistik</h4><p>Unabhängig von den Plattformen speichern wir das Lead-Ereignis in unserer Besucherstatistik mit Quelle, Kampagne und UTM-Parametern. Der Nutzer sieht bei uns: „12 Anfragen, davon 7 aus Kampagne Herbst-Reset“. Das funktioniert auch, wenn ein Adblocker alles andere blockiert.</p></div></div>
+  </div>
+
+  <div class="grid grid-3">
+    <div class="card"><div class="kpi"><b>1×</b><span>Zählung je Anfrage, dank gemeinsamer Ereignis-Nummer</span></div></div>
+    <div class="card"><div class="kpi"><b>0</b><span>Leads aus Spam, Doppel-Klicks oder Testaufrufen</span></div></div>
+    <div class="card"><div class="kpi"><b>60 s</b><span>bis geänderte Pixel-Einstellungen live sind, ohne Cache-Sturm</span></div></div>
+  </div>
+
+  <h3>Warum das zum bestehenden System passt</h3>
+  <ul>
+    <li><strong>Kein Umbau der Templates.</strong> Alle Templates schicken Formulare heute schon per <code>fetch</code> an <code>/.finestsites/forms/kontakt</code> und warten auf <code>success: true</code>. Die Lead-Meldung hängt sich an genau diese Stelle, zentral im Worker-Skript, nicht in jedem Template einzeln.</li>
+    <li><strong>Kein Cache-Problem.</strong> Der Tracking-Block wird beim Ausliefern eingefügt, so wie heute der Beacon. Das gerenderte HTML im Cache bleibt unverändert. Die Einstellungen kommen über die Seiten-Metadaten, die der Worker ohnehin alle 60 Sekunden frisch holt. Wir müssen also nichts leeren und reißen kein Cloudflare-Tageslimit.</li>
+    <li><strong>Fehler bleiben unsichtbar.</strong> Wenn Meta nicht antwortet, läuft das Formular trotzdem normal weiter. Der Server-Aufruf läuft im Hintergrund (<code>waitUntil</code>), Fehler werden geloggt und in den Einstellungen als „Letzte Übertragung fehlgeschlagen“ angezeigt.</li>
+    <li><strong>Schnelligkeit.</strong> Die Plattform-Skripte laden asynchron nach der Zustimmung. Die Seite selbst wird nicht langsamer.</li>
+  </ul>
+
+  <h2>4. Die drei Plattformen im Vergleich</h2>
+  <div class="table-wrap">
+  <table>
+    <tr><th>Plattform</th><th>Im Browser</th><th>Vom Server</th><th>Was der Nutzer eintragen muss</th><th>Phase</th></tr>
+    <tr><td>Meta</td><td>Pixel: PageView, Lead</td><td>Conversions API mit Deduplizierung, gehashte Kontaktdaten</td><td>Pixel-ID, Zugriffstoken (aus dem Events Manager, 2 Minuten)</td><td><span class="tag ok">1</span></td></tr>
+    <tr><td>Google Ads</td><td>Google-Tag mit Conversion-Label, Enhanced Conversions (gehashte E-Mail)</td><td>Erst später: braucht OAuth-Anmeldung beim Google-Konto, deutlich mehr Aufwand</td><td>Conversion-ID <code>AW-…</code> und Label</td><td><span class="tag">2</span></td></tr>
+    <tr><td>TikTok</td><td>Pixel: Pageview, SubmitForm</td><td>Events API, gleiches Prinzip wie Meta</td><td>Pixel-ID, Zugriffstoken</td><td><span class="tag">2</span></td></tr>
+  </table>
+  </div>
+  <p>Google ohne Serverweg ist für Lead-Kampagnen in der Praxis ausreichend, weil Google den Klick über <code>gclid</code> selbst zuordnet. Meta ist die Plattform, bei der der Serverweg den größten Unterschied macht. Deshalb dort zuerst und vollständig.</p>
+
+  <h2>5. Zustimmung und Datenschutz</h2>
+  <p>Pixel setzen Cookies und senden Daten an Dritte. Dafür braucht es nach § 25 TDDDG und DSGVO eine Einwilligung. Heute versprechen wir auf jeder Kundenseite das Gegenteil. Der Plan:</p>
+  <div class="grid grid-2">
+    <div>
+      <h3>Zustimmungs-Hinweis</h3>
+      <div class="banner">
+        <strong>Hilf mit, Werbung zu messen</strong>
+        <p style="margin:6px 0 0;font-size:14px">Diese Seite nutzt Meta-Dienste, um zu sehen, ob Anzeigen funktionieren. Du kannst das ablehnen, die Seite funktioniert trotzdem. <a href="#">Mehr dazu</a></p>
+        <div class="row"><span class="btn" style="background:var(--ink);color:var(--card);border-radius:10px;padding:8px 14px;font-weight:600">Einverstanden</span><span class="btn ghost" style="border:1px solid var(--line);border-radius:10px;padding:8px 14px;font-weight:600">Nein, danke</span></div>
+      </div>
+      <p class="muted" style="margin-top:8px">Erscheint nur auf Seiten mit aktivem Tracking. Beide Knöpfe gleich groß, kein Dunkelmuster. Zweisprachig bei Cellrestart. In den Farben des Templates.</p>
+    </div>
+    <div>
+      <h3>Datenschutzseite</h3>
+      <ul>
+        <li>Der Absatz „Cookies &amp; Tracking“ wird vom Worker abhängig von den Einstellungen gerendert: ohne Tracking bleibt der heutige Text, mit Tracking kommt je Plattform ein Abschnitt (Anbieter, Zweck, Rechtsgrundlage Einwilligung, Widerruf über „Einstellungen ändern“ im Seitenfuß, gemeinsame Verantwortlichkeit mit Meta).</li>
+        <li>Ein Link „Tracking-Einstellungen ändern“ im Seitenfuß, damit die Zustimmung jederzeit widerrufbar ist.</li>
+        <li>Zustimmung und Zeitpunkt werden im Browser gespeichert, nicht bei uns. Wir brauchen keine Datenbank dafür.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="note warn">
+    <p><strong>Hinweis zur Verantwortung.</strong> Der Seitenbetreiber (unser Nutzer) ist für sein Werbekonto verantwortlich und schließt mit Meta die Vereinbarung zur gemeinsamen Verantwortlichkeit. Das sollte beim Einschalten mit einem Häkchen bestätigt werden, wie beim Inhalts-Einverständnis im Onboarding. Die Formulierungen für Banner und Datenschutz würde ich vor dem Start von eurer Datenschutzberatung gegenlesen lassen. Ich bin kein Jurist.</p>
+  </div>
+
+  <h2>6. Datenmodell und Technik</h2>
+  <div class="table-wrap">
+  <table>
+    <tr><th>Baustein</th><th>Was passiert</th></tr>
+    <tr><td>Datenbank</td><td>Neue Tabelle <code>tracking_configs</code> je Nutzer: Meta-Pixel-ID, Meta-Token (verschlüsselt mit App-Schlüssel), Test-Code, Google-ID und Label, TikTok-ID und Token, Liste aktiver Seiten, Zeitpunkt der Bestätigung, letzter Übertragungsstatus.</td></tr>
+    <tr><td>Seiten-Metadaten</td><td><code>GET /api/worker/site-meta</code> liefert zusätzlich den Tracking-Teil ohne Tokens (nur IDs). Der Worker braucht Tokens nur beim Absenden und holt sie über einen eigenen geschützten Endpunkt.</td></tr>
+    <tr><td>Worker, Auslieferung</td><td>Neue Funktion <code>injectTracking(html, meta)</code> neben <code>injectBeacon</code>: Zustimmungs-Hinweis, Pixel-Lader, Sicherung von <code>fbclid</code>/<code>gclid</code>. Nur wenn Tracking für diese Seite aktiv ist, sonst keine Änderung am HTML.</td></tr>
+    <tr><td>Worker, Formular</td><td>Nach erfolgreichem Speichern: Conversions-API-Aufruf mit <code>event_id</code>, gehashten Kontaktdaten, <code>fbp</code>/<code>fbc</code>, IP, User-Agent. Antwort bleibt im Hintergrund, Formular-Antwort an den Browser bekommt <code>event_id</code> zurück.</td></tr>
+    <tr><td>Templates</td><td>Keine Änderung nötig. Ein zentrales Skript im Tracking-Block hängt sich an <code>fetch</code> auf <code>/.finestsites/forms/</code> und feuert das Browser-Ereignis nach <code>success: true</code>. Damit gilt es für alle fünf Templates und alle künftigen.</td></tr>
+    <tr><td>Eigene Statistik</td><td><code>site_events</code> bekommt den Ereignis-Typ <code>lead</code> mit <code>utm_*</code> und Quelle. Admin-Analytics zeigt Anfragen je Kampagne; später auch für Nutzer sichtbar.</td></tr>
+    <tr><td>App, Einstellungen</td><td>Reiter „Werbung“ mit Formular, Prüfung der Eingaben, „Verbindung prüfen“ (Test-Ereignis), Status der letzten Übertragung, Häkchen-Liste der Seiten.</td></tr>
+  </table>
+  </div>
+
+  <h2>7. Reihenfolge und Aufwand</h2>
+  <div class="grid grid-3">
+    <div class="card"><span class="tag ok">Phase 1</span><h3 style="margin-top:10px">Meta komplett</h3><p>Einstellungen, Zustimmungs-Hinweis, Datenschutztext, Pixel, Conversions API mit Deduplizierung, Ereignisse Kontakt und Anfrage, Test-Knopf, Status, „Mein Gerät nicht mitzählen“, Anzeigen-Link, Anleitung.</p><p class="muted">3 Arbeitstage inkl. Anleitung mit Screenshots und Anzeigen-Link, danach André als erster Tester.</p></div>
+    <div class="card"><span class="tag">Phase 2</span><h3 style="margin-top:10px">Google Ads und TikTok</h3><p>Google-Tag mit Conversion und Enhanced Conversions. TikTok-Pixel plus Events API nach dem Meta-Muster.</p><p class="muted">1–2 Arbeitstage, viel wiederverwendbar.</p></div>
+    <div class="card"><span class="tag">Phase 3</span><h3 style="margin-top:10px">Auswertung für Nutzer</h3><p>„Anfragen je Kampagne“ im Dashboard, UTM-Link-Generator für Anzeigen, Hinweis bei fehlgeschlagenen Übertragungen.</p><p class="muted">1 Arbeitstag.</p></div>
+  </div>
+  <h3>So testen wir, bevor André es sieht</h3>
+  <ol>
+    <li>Test-Pixel in unserem eigenen Meta-Konto, Test-Ereignisse im Events Manager mitlesen.</li>
+    <li>Anfrage auf einer Demo-Seite absenden: genau ein Lead in Meta, mit „Dedupliziert“ markiert, Match-Qualität sichtbar.</li>
+    <li>Gleiche Anfrage mit Adblocker: Server-Ereignis kommt trotzdem an.</li>
+    <li>Zustimmung abgelehnt: kein Skript geladen, kein Cookie gesetzt, kein Server-Aufruf (Netzwerk-Mitschnitt).</li>
+    <li>Honeypot und sechste Anfrage in 10 Minuten: kein Lead.</li>
+    <li>Seite ohne Tracking: HTML byte-gleich mit heute, Datenschutztext unverändert.</li>
+  </ol>
+
+  
+  <h2>8. Ereignisse: von uns festgelegt, nichts zum Auswählen</h2>
+  <p>Der Nutzer wählt keine Ereignisse, keine Namen, keine Parameter. Wir legen drei fest, die für Beratungs-Landingpages genau das Richtige messen, und benennen sie so, wie die Plattformen sie als Standard kennen. Nur dann kann Meta eine Kampagne auf „Leads“ optimieren.</p>
+  <div class="table-wrap">
+  <table>
+    <tr><th>Ereignis</th><th>Wann genau</th><th>Meta</th><th>Google Ads</th><th>TikTok</th><th>Doppelt-Schutz</th></tr>
+    <tr><td>Seitenaufruf</td><td>Seite geladen, nach Zustimmung</td><td><code>PageView</code></td><td>automatisch</td><td><code>Pageview</code></td><td>Einmal je Laden; Bots, Vorschau und Editor ausgeschlossen</td></tr>
+    <tr><td>Kontakt</td><td>Klick auf WhatsApp, Telefon oder E-Mail</td><td><code>Contact</code></td><td>Conversion „Kontakt“ (sekundär)</td><td><code>Contact</code></td><td>Einmal je Besucher und Seite, egal wie oft geklickt wird</td></tr>
+    <tr><td>Anfrage</td><td>Formular <strong>gespeichert</strong>, kein Spam, kein Rate-Limit</td><td><code>Lead</code></td><td>Conversion „Anfrage“ (primär)</td><td><code>SubmitForm</code></td><td>Ereignis-Nummer in Browser und Server identisch; gleiche E-Mail binnen 24 h zählt nicht erneut</td></tr>
+  </table>
+  </div>
+  <p><strong>Warum „Kontakt“ dazugehört:</strong> Auf Cellrestart und Dailyoptimal ist WhatsApp der wichtigste Weg, oft gibt es gar kein Formular. Ohne dieses Ereignis würde Meta bei vielen Nutzern „0 Ergebnisse“ zeigen, obwohl die Anzeige funktioniert. „Anfrage“ bleibt das Ereignis, auf das Kampagnen optimiert werden; „Kontakt“ ist die Ergänzung für Seiten ohne Formular.</p>
+  <p>Beide Ereignisse laufen nach demselben Muster wie in Abschnitt 3: Der Klick bzw. das Formular erzeugt eine Ereignis-Nummer, der Browser meldet sie an die Plattform, und ein Beacon an unseren Worker löst dieselbe Meldung serverseitig aus. Ein Prinzip, kein Sonderfall.</p>
+
+  <h2>9. Regeln gegen Fehler und Doppelzählungen</h2>
+  <div class="grid grid-2">
+    <div class="card"><h3>Ein Pixel, eine Quelle</h3><p>Es gibt genau ein Feld für die Pixel-ID je Nutzer, gültig für alle seine Seiten. Keine eigenen Code-Schnipsel, kein „Tracking-Code einfügen“. Damit sind doppelte Pixel, kaputte Seiten und fremde Skripte ausgeschlossen.</p></div>
+    <div class="card"><h3>Nur die echte Seite zählt</h3><p>Tracking wird nur auf der veröffentlichten Seite unter ihrer echten Adresse ausgeliefert. Editor-Vorschau, Vorlagen-Vorschau auf finestsites.io, Demo-Seiten und Bots bekommen nichts. Der Nutzer sieht beim Bearbeiten also nie seine eigenen Klicks in Meta.</p></div>
+    <div class="card"><h3>Eigene Besuche ausschließen</h3><p>Knopf „Mein Gerät nicht mitzählen“ im Reiter: setzt auf dem Gerät des Nutzers ein Merkmal, danach wird dort nichts gemeldet. Sonst verfälscht jeder Kontrollblick die Zahlen.</p></div>
+    <div class="card"><h3>Test-Code läuft nie live</h3><p>Der Test-Code aus Meta wird nur vom Knopf „Verbindung prüfen“ benutzt und nicht gespeichert. Damit kann kein echter Lead versehentlich als Test landen, der häufigste Fehler bei Meta-Einrichtungen.</p></div>
+    <div class="card"><h3>Ereignis-Nummer wird gespeichert</h3><p>Die Nummer wird an der gespeicherten Anfrage hinterlegt. Kommt dieselbe Nummer noch einmal (Netzwerk-Wiederholung, Doppelklick), wird nichts erneut gesendet.</p></div>
+    <div class="card"><h3>Kontaktdaten sauber gehasht</h3><p>E-Mail klein und ohne Leerzeichen, Telefon als reine Ziffern mit Ländervorwahl (die Logik haben wir schon für WhatsApp), Vor- und Nachname klein. Erst dann SHA-256. Das hebt die Match-Qualität bei Meta auf 7–9 von 10 und ist der Unterschied zwischen „5 Leads“ und „12 Leads“ in der Auswertung.</p></div>
+    <div class="card"><h3>Zustimmung entscheidet komplett</h3><p>„Nein“ heißt: kein Skript, kein Cookie, kein Server-Aufruf, auch <code>fbclid</code> wird dann nicht gespeichert. „Ja“ gilt sechs Monate und ist im Seitenfuß jederzeit widerrufbar.</p></div>
+    <div class="card"><h3>Status statt Rätselraten</h3><p>Der Reiter zeigt: „Letzte Übertragung an Meta: vor 4 Minuten, angenommen“ oder „fehlgeschlagen: Token ungültig“ mit dem passenden nächsten Schritt. Dazu die Zahl der Anfragen und Kontakte der letzten 7 Tage aus unserer eigenen Statistik.</p></div>
+  </div>
+
+  <h2>10. Die Anleitung für Nutzer (Entwurf)</h2>
+  <p>Steht direkt im Reiter, Schritt für Schritt, mit je einem Screenshot pro Schritt. Kein Fachwort ohne Erklärung. Meta nennt den Pixel inzwischen „Datensatz“, das steht an jeder Stelle dabei.</p>
+  <div class="card">
+    <h3>Meta (Facebook &amp; Instagram) in 5 Minuten</h3>
+    <div class="flow">
+      <div class="step"><div class="num">1</div><div class="body"><h4>Events Manager öffnen</h4><p>Gehe auf <strong>business.facebook.com</strong>, links auf <strong>Alle Tools</strong>, dann <strong>Events Manager</strong>. Links steht <strong>Datenquellen</strong>. Dort siehst du deinen Datensatz (früher „Pixel“). Wenn keiner da ist: <strong>Daten verknüpfen → Web → Datensatz erstellen</strong>, einen Namen eingeben, fertig.</p></div></div>
+      <div class="step"><div class="num">2</div><div class="body"><h4>Die ID kopieren</h4><p>Klicke deinen Datensatz an. Direkt unter dem Namen steht eine lange Zahl, die <strong>Datensatz-ID</strong> (15 bis 16 Ziffern). Kopieren und bei uns in das Feld <strong>Pixel-ID</strong> einfügen. Wir prüfen beim Einfügen, ob es eine solche Zahl ist.</p></div></div>
+      <div class="step"><div class="num">3</div><div class="body"><h4>Den Zugriffsschlüssel erzeugen</h4><p>Im Datensatz oben auf <strong>Einstellungen</strong>. Nach unten scrollen bis <strong>Conversions API</strong>. Dort <strong>Zugriffsschlüssel generieren</strong> anklicken. Es erscheint ein langer Text, der mit <code>EAA…</code> beginnt. Kopieren und bei uns in das Feld <strong>Zugriffsschlüssel</strong> einfügen. Er wird bei uns verschlüsselt gespeichert und nie wieder angezeigt.</p></div></div>
+      <div class="step"><div class="num">4</div><div class="body"><h4>Verbindung prüfen</h4><p>Im Datensatz auf <strong>Ereignisse testen</strong>. Dort steht ein Code wie <code>TEST12345</code>. Bei uns in das Feld daneben eintippen und auf <strong>Verbindung prüfen</strong> drücken. Innerhalb von Sekunden erscheint bei Meta ein Test-Ereignis „Lead“, und bei uns steht grün: <strong>Verbunden</strong>. Der Test-Code wird danach verworfen.</p></div></div>
+      <div class="step"><div class="num">5</div><div class="body"><h4>Fertig</h4><p>Ab jetzt läuft das Tracking auf allen deinen veröffentlichten Seiten. Jede Beratungsanfrage erscheint in Meta als <strong>Lead</strong>, jeder WhatsApp-Klick als <strong>Kontakt</strong>. Beim ersten echten Lead schicken wir dir eine kurze E-Mail: „Dein Tracking funktioniert.“</p></div></div>
+    </div>
+  </div>
+  <div class="note">
+    <p><strong>Hinweis zur Pflege:</strong> Meta benennt Menüs regelmäßig um. Die Screenshots liegen bei uns im Repo und werden mit der Anleitung ausgeliefert, damit wir sie ohne Deploy austauschen können. Ein Satz am Ende der Anleitung: „Sieht es bei dir anders aus? Schreib uns im Chat, wir schauen gemeinsam drauf.“</p>
+  </div>
+  <div class="grid grid-2">
+    <div class="card"><h3>Google Ads (Phase 2)</h3><p><strong>Google Ads → Ziele → Conversions → Zusammenfassung → Neue Conversion-Aktion → Website</strong>. Adresse der Seite eingeben, „Manuell hinzufügen“, Kategorie <strong>Lead senden</strong>, Name „Anfrage“. Danach <strong>Tag-Einrichtung → Tag selbst einrichten</strong>: Dort stehen <strong>Conversion-ID</strong> (<code>AW-…</code>) und <strong>Conversion-Label</strong>. Beides bei uns eintragen. Zusätzlich im Google-Konto <strong>Erweiterte Conversions</strong> einschalten, dann wird die gehashte E-Mail mitgeschickt.</p></div>
+    <div class="card"><h3>TikTok (Phase 2)</h3><p><strong>TikTok Ads Manager → Tools → Events → Web-Events → Verwalten</strong>. Pixel anlegen oder öffnen, die <strong>Pixel-ID</strong> (20 Zeichen) steht oben. Für den Serverweg: <strong>Einstellungen → Zugriffstoken generieren</strong>. Beides bei uns eintragen, „Verbindung prüfen“ wie bei Meta.</p></div>
+  </div>
+
+  <h2>11. Kampagne richtig anlegen und der fertige Anzeigen-Link</h2>
+  <p>Das beste Tracking nützt nichts, wenn die Kampagne nicht darauf optimiert. Deshalb steht im Reiter ein zweiter kurzer Block, den die Nutzer beim Anlegen der Anzeige daneben liegen haben.</p>
+  <div class="grid grid-2">
+    <div class="mock">
+      <div class="label">So legst du die Anzeige bei Meta an</div>
+      <div class="field">Kampagnenziel: <strong>Leads</strong></div>
+      <div class="field">Conversion-Ort: <strong>Website</strong></div>
+      <div class="field">Datensatz: <strong>dein Pixel</strong> · Conversion-Ereignis: <strong>Lead</strong></div>
+      <div class="field">Website-URL: <strong>den Link unten einsetzen</strong></div>
+    </div>
+    <div class="mock">
+      <div class="label">Dein Anzeigen-Link je Seite (kopieren)</div>
+      <div class="field" style="font-family:ui-monospace,Menlo,monospace;font-size:12px;word-break:break-all">https://andre-russ.cellrestart.net/?utm_source=meta&amp;utm_medium=paid&amp;utm_campaign={{campaign.name}}&amp;utm_content={{ad.name}}</div>
+      <p class="muted" style="margin:6px 0 0">Meta ersetzt die geschweiften Teile automatisch durch Kampagnen- und Anzeigenname. Bei uns erscheint dann: „Anfrage aus Kampagne Herbst-Reset, Anzeige Video 2“. Für Google und TikTok gibt es denselben Link mit deren Platzhaltern.</p>
+    </div>
+  </div>
+  <p>Damit beantwortet sich Andrés Frage nach den drei Seiten ohne jede Einstellung: Jede Seite hat ihren eigenen Link, jede Anfrage trägt Seite, Kampagne und Anzeige, und zwar bei Meta <em>und</em> bei uns. Die Kampagnen-Zuordnung bei uns funktioniert sogar ohne Zustimmung, weil sie nur aus dem Link kommt und nichts an Dritte geht.</p>
+
+  <h2>12. Was ich von dir brauche</h2>
+  <ul>
+    <li><strong>Platzierung:</strong> Einstellungen-Reiter „Werbung“ (meine Empfehlung) oder zusätzlich ein Chip im Editor neben „Domain“?</li>
+    <li><strong>Für welche Tarife?</strong> Technisch für alle möglich. Als Argument für Pro oder Unlimited wäre es naheliegend, das ist aber deine Preisentscheidung.</li>
+    <li><strong>Texte:</strong> Banner und Datenschutz-Abschnitte vor dem Start juristisch gegenlesen lassen, ja oder nein?</li>
+    <li><strong>Einrichtungs-Service:</strong> André fragt, ob wir das für ihn einrichten. Mit „Verbindung prüfen“ schafft er es allein in fünf Minuten; ein kurzes Video oder eine bebilderte Anleitung im Reiter reicht.</li>
+  </ul>
+
+  <h2>13. Vorschlag für die Antwort an André</h2>
+  <div class="card">
+    <p>Moin André, hier der Stand: Wir bauen genau das, was du beschreibst. Du trägst bei uns deine Pixel-ID und einen Zugriffstoken ein, dann läuft auf allen drei Seiten der Meta-Pixel, und jede abgeschickte Beratungsanfrage geht als Lead an Meta, sowohl aus dem Browser als auch direkt von unserem Server über die Conversions API. Beides mit derselben Ereignis-Nummer, damit nichts doppelt zählt. Deine drei Seiten kannst du in Meta über die Seiten-Adresse auseinanderhalten, zusätzlich siehst du bei uns, aus welcher Kampagne die Anfragen kamen.</p>
+    <p>Datenschutz ist eingeplant: Auf deinen Seiten erscheint dann ein kleiner Zustimmungs-Hinweis, und die Datenschutzseite ergänzt sich automatisch um Meta.</p>
+    <p>Zeitplan: Meta zuerst, ich melde mich, sobald du es testen kannst. Google und TikTok folgen danach.</p>
+  </div>
+
+  <hr>
+  <p class="muted">Datei: <code>docs/werbung-tracking-konzept.html</code>. Quellen: Worker-Formularfluss (<code>cloudflare-worker/src/index.ts</code>), Besucherstatistik <code>site_events</code>, Datenschutzseite der Kundenseiten, Support-Chat vom 09.10.2026.</p>
+</main>
+</body>
+</html>

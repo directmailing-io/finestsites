@@ -9,6 +9,7 @@ import { PLAN_LIST, PLAN_LABELS, COMMON_FEATURES, canUpgradeTo } from '@/lib/pla
 import { discountedTotal, formatEur } from '@/lib/billing/promo-duration'
 import ImageCropModal from '@/components/ImageCropModal'
 import InvoiceDetailsCard from '@/components/billing/InvoiceDetailsCard'
+import TrackingSettings from '@/components/tracking/TrackingSettings'
 import { NM_COMPANIES } from '@/lib/constants/nm-companies'
 
 // ── Social media helpers ──────────────────────────────────────────────────────
@@ -100,6 +101,7 @@ const TABS = [
   { id: 'profil',      label: 'Profil'       },
   { id: 'zahlung',     label: 'Zahlung & Plan' },
   { id: 'rechnungen',  label: 'Rechnungen'   },
+  { id: 'werbung',     label: 'Werbung'      },
   { id: 'sicherheit',  label: 'Passwort & FAQ' },
 ] as const
 type TabId = typeof TABS[number]['id']
@@ -351,6 +353,9 @@ function SettingsContent() {
     if (success === '1' || canceled === '1' || sessionId) {
       setActiveTab('zahlung')
     }
+    // Direktlink aus E-Mails: /settings?tab=werbung
+    const wanted = searchParams.get('tab')
+    if (wanted && TABS.some(t => t.id === wanted)) setActiveTab(wanted as TabId)
 
     if (success === '1') {
       // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -1305,6 +1310,17 @@ function SettingsContent() {
               <InvoiceDetailsCard />
             </TabSection>
           )}
+        </div>
+      )}
+
+      {/* ════════════════════════════════════════════════════════════════
+          TAB: WERBUNG & TRACKING
+          ════════════════════════════════════════════════════════════════ */}
+      {activeTab === 'werbung' && (
+        <div className="flex flex-col gap-10">
+          <TabSection title="Werbung & Tracking" subtitle="Für Anzeigen bei Meta, Google und TikTok. Nur nötig, wenn du Werbung schaltest.">
+            <TrackingSettings />
+          </TabSection>
         </div>
       )}
 

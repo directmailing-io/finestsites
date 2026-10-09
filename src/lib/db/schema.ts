@@ -14,7 +14,7 @@ import {
   index,
   uniqueIndex,
 } from 'drizzle-orm/pg-core'
-import { relations } from 'drizzle-orm'
+import { relations, sql } from 'drizzle-orm'
 
 // ─── Enums ────────────────────────────────────────────────────────────────────
 
@@ -589,13 +589,45 @@ export const siteEvents = pgTable('site_events', {
   os: varchar('os', { length: 32 }),
   country: varchar('country', { length: 8 }),
   meta: jsonb('meta'),
+  // Werbe-Ereignisse (contact/lead): Ereignis-Nummer aus dem Browser. Eindeutig, damit
+  // Doppelklicks und Wiederholungen nicht doppelt zählen (und nicht doppelt an Meta gehen).
+  eventId: varchar('event_id', { length: 64 }),
 }, (t) => [
   index('idx_site_events_site_occurred').on(t.siteId, t.occurredAt),
   index('idx_site_events_template_occurred').on(t.templateId, t.occurredAt),
   index('idx_site_events_occurred').on(t.occurredAt),
+  uniqueIndex('site_events_event_id_unique').on(t.eventId).where(sql`event_id IS NOT NULL`),
 ])
 
 export type SiteEvent = typeof siteEvents.$inferSelect
+
+// ─── Werbung & Tracking (Meta / Google Ads / TikTok) ───────────────────────────
+// Eine Konfiguration je Nutzer, gilt für alle seine veröffentlichten Seiten
+// (optional eingeschränkt über site_ids). Tokens liegen AES-256-GCM-verschlüsselt
+// (src/lib/tracking/crypto.ts) und werden nie an den Browser zurückgegeben.
+export const trackingConfigs = pgTable('tracking_configs', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  userId: uuid('user_id').notNull().unique().references(() => users.id, { onDelete: 'cascade' }),
+  metaPixelId: text('meta_pixel_id'),
+  metaTokenEnc: text('meta_token_enc'),
+  googleAdsId: text('google_ads_id'),            // AW-123456789
+  googleLeadLabel: text('google_lead_label'),    // Conversion-Label „Anfrage“
+  googleContactLabel: text('google_contact_label'), // Conversion-Label „Kontakt“ (optional)
+  tiktokPixelId: text('tiktok_pixel_id'),
+  tiktokTokenEnc: text('tiktok_token_enc'),
+  siteIds: jsonb('site_ids').$type<string[] | null>(), // null = alle Seiten
+  confirmedAt: timestamp('confirmed_at', { withTimezone: true }), // Verantwortung bestätigt
+  lastSendAt: timestamp('last_send_at', { withTimezone: true }),
+  lastSendPlatform: text('last_send_platform'),
+  lastSendStatus: text('last_send_status'), // 'ok' | 'error'
+  lastSendError: text('last_send_error'),
+  firstLeadAt: timestamp('first_lead_at', { withTimezone: true }),
+  firstLeadNotifiedAt: timestamp('first_lead_notified_at', { withTimezone: true }),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+})
+
+export type TrackingConfig = typeof trackingConfigs.$inferSelect
 
 // ─── Erfahrungsberichte (öffentliche Testimonial-Sammlung) ────────────────────
 

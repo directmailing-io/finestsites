@@ -25,6 +25,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { users, userSites, templates } from '@/lib/db/schema'
 import { eq, and, inArray } from 'drizzle-orm'
+import { trackingForSite, toPublicConfig, type PublicTrackingConfig } from '@/lib/tracking/config'
 
 const WORKER_SECRET = process.env.WORKER_SECRET
 
@@ -91,10 +92,15 @@ export async function GET(req: NextRequest) {
 
     // Strip the trailing /index.html so the Worker can construct arbitrary
     // asset paths like `${r2BasePath}/style.css` without special-casing.
+    // Werbung & Tracking: nur IDs (keine Tokens) — der Worker fügt damit Pixel + Einwilligung ein
+    let tracking: PublicTrackingConfig | null = null
+    try { tracking = toPublicConfig(await trackingForSite(row.siteId), row.siteId) } catch (err) { console.error('[site-meta] tracking', err) }
+
     return NextResponse.json({
       siteId: row.siteId,
       templateId: row.templateId,
       r2BasePath: row.r2BundlePath.replace('/index.html', ''),
+      ...(tracking ? { tracking } : {}),
     })
   } catch {
     return NextResponse.json({ error: 'internal error' }, { status: 500 })

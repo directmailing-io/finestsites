@@ -1,4 +1,9 @@
 import { normalizeWhatsAppNumber, rewriteSocialHrefs } from '../../src/lib/utils/social-links'
+import type { PublicTrackingConfig } from '../../src/lib/tracking/types'
+import {
+  shouldInject, injectTracking, handleTrackingBeacon, handleNoTrack, recordEvent, sendServerEvent,
+  hasMarketingConsent, isNoTrack, privacySectionDe, privacySectionEn,
+} from './tracking'
 
 /**
  * FinestSites Cloudflare Worker
@@ -322,10 +327,12 @@ function render(html: string, data: Data, rawKeys: Set<string> = new Set()): str
 
 // ─── Site Metadata Lookup ─────────────────────────────────────────────────────
 
-interface SiteMeta {
+export interface SiteMeta {
   siteId: string
   templateId: string
   r2BasePath: string
+  /** Werbung & Tracking des Besitzers (nur IDs) — fehlt, wenn nicht eingerichtet */
+  tracking?: PublicTrackingConfig
 }
 
 // In-memory copy of site meta per Worker instance (same 60 s lifetime as the KV entry).
@@ -525,7 +532,7 @@ async function hashIP(ip: string): Promise<string> {
 // Link-preview crawlers (WhatsApp, Telegram, Facebook external hit …) are bots.
 // The Instagram IN-APP browser is a real visitor — its UA contains 'Instagram'
 // but none of these patterns.
-const BOT_UA_RE = /bot|crawl|spider|slurp|preview|scan|fetch|monitor|lighthouse|headless|curl|wget|python|node-fetch|axios|facebookexternalhit|whatsapp|telegrambot|twitterbot|linkedinbot|pinterest|vkshare|skypeuripreview/i
+export const BOT_UA_RE = /bot|crawl|spider|slurp|preview|scan|fetch|monitor|lighthouse|headless|curl|wget|python|node-fetch|axios|facebookexternalhit|whatsapp|telegrambot|twitterbot|linkedinbot|pinterest|vkshare|skypeuripreview/i
 
 // Pure, CF-runtime-free — unit-testable in plain Node.
 export function parseUserAgent(ua: string): { device: string; browser: string; os: string | null } {
@@ -583,7 +590,7 @@ export function parseReferrer(referer: string | null, ownHost: string): { source
   return { source, referrerHost: refHost }
 }
 
-async function sha256Hex(input: string): Promise<string> {
+export async function sha256Hex(input: string): Promise<string> {
   const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(input))
   return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('')
 }
@@ -659,6 +666,11 @@ async function trackPageview(
 // first hidden (tab switch, navigation, close) and reports it once via
 // sendBeacon — the only reliable delivery on unload, especially mobile.
 const BEACON_SNIPPET = `<script data-fs-beacon>(function(){var t0=Date.now(),sent=0;function send(){if(sent)return;sent=1;var d=Math.round((Date.now()-t0)/1e3);if(d<3||d>1800)return;try{navigator.sendBeacon('/.finestsites/e',JSON.stringify({d:d,p:location.pathname}))}catch(e){}}document.addEventListener('visibilitychange',function(){if(document.visibilityState==='hidden')send()});addEventListener('pagehide',send)})();</script>`
+
+/** Werbe-Tracking anhängen — nur wenn eingerichtet, nicht auf Rechtsseiten, nicht für Bots/„nicht mitzählen“. */
+function finalizeHtml(html: string, pathname: string, request: Request, meta: SiteMeta): string {
+  return shouldInject(pathname, request, meta) ? injectTracking(html, meta) : html
+}
 
 function injectBeacon(html: string): string {
   if (html.includes('data-fs-beacon')) return html
@@ -971,11 +983,15 @@ async function handleFormSubmission(request: Request, pathname: string, meta: Si
   let formData: Record<string, string> = {}
   let redirectUrl: string | null = null
   let honeypot = false
+  let eventId: string | null = null   // Ereignis-Nummer fürs Werbe-Tracking (vom Script gesetzt)
+  let pageUrl: string | null = null   // Seite inkl. utm_* beim Absenden
   // `_recipient` aus dem Request wird bewusst ignoriert: der Empfänger wird in
   // sendSubmissionEmail aus den Seitendaten (email_benachrichtigung) bzw. dem Konto
   // bestimmt. Sonst wäre das Endpoint ein offener Mail-Relay.
   const take = (key: string, raw: unknown) => {
     if (key === '_redirect') { redirectUrl = String(raw ?? ''); return }
+    if (key === '_event_id') { const v = String(raw ?? ''); if (/^[A-Za-z0-9_-]{8,64}$/.test(v)) eventId = v; return }
+    if (key === '_page') { const v = String(raw ?? ''); if (/^https?:\/\/[^\s]{1,500}$/.test(v)) pageUrl = v; return }
     if (key === '_honeypot') { if (String(raw ?? '').trim() !== '') honeypot = true; return }
     if (key.startsWith('_')) return // andere Systemfelder (inkl. _recipient) verwerfen
     if (Object.keys(formData).length >= MAX_FIELDS) return
@@ -1042,15 +1058,28 @@ async function handleFormSubmission(request: Request, pathname: string, meta: Si
   }
 
   // Fire-and-forget email notification (only for non-spam)
+  let duplicate = false
   if (!honeypot) {
     const siteUrl = `https://${hostname}`
     ctx.waitUntil(sendSubmissionEmail(env, meta, formName, formData, siteUrl))
+
+    // Werbe-Tracking: Anfrage als „lead“ in die eigene Statistik (eindeutig je Ereignis-Nummer),
+    // und nur mit Einwilligung serverseitig an Meta/TikTok — mit derselben Nummer wie im Browser.
+    if (meta.tracking && !isNoTrack(request)) {
+      const leadId = eventId ?? `srv-${crypto.randomUUID()}`
+      const sourceUrl = pageUrl ?? siteUrl
+      duplicate = await recordEvent(env, meta, hostname, request, 'lead', sourceUrl, leadId, { form: formName })
+      if (!duplicate && hasMarketingConsent(request)) {
+        ctx.waitUntil(sendServerEvent(env, meta, request, { name: 'Lead', eventId: leadId, sourceUrl, formData }))
+      }
+      eventId = leadId
+    }
   }
 
   // Response
   const acceptsJson = request.headers.get('accept')?.includes('application/json')
   if (acceptsJson) {
-    return new Response(JSON.stringify({ success: true }), {
+    return new Response(JSON.stringify({ success: true, ...(eventId ? { event_id: eventId, duplicate } : {}) }), {
       headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
     })
   }
@@ -1164,6 +1193,15 @@ export default {
         return handleFormSubmission(request, pathname, meta, env, ctx, hostname)
       }
 
+      // ── Werbe-Tracking: Kontakt-Klick / Einwilligung (sendBeacon) ───────
+      if (request.method === 'POST' && pathname === '/.finestsites/t') {
+        return handleTrackingBeacon(request, meta, env, ctx, hostname)
+      }
+      // ── „Mein Gerät nicht mitzählen“ (Link aus den Einstellungen) ───────
+      if (request.method === 'GET' && pathname === '/.finestsites/notrack') {
+        return handleNoTrack(url)
+      }
+
       // ── Duration beacon (sendBeacon on page hide) ────────────────────────
       if (request.method === 'POST' && pathname === '/.finestsites/e') {
         // Body must be read before the response is returned — afterwards the
@@ -1213,7 +1251,7 @@ export default {
           boxBorder: ta.boxBorder,
           logoHtml: baseDesign.logoHtml.replace(/#[0-9A-Fa-f]{6}/g, ta.logo),
         }
-        const legalHtml = pathname === '/impressum' ? renderImpressum(design) : renderDatenschutz(design, domain)
+        const legalHtml = pathname === '/impressum' ? renderImpressum(design) : renderDatenschutz(design, domain, meta.tracking)
         if (shouldTrack(pathname)) ctx.waitUntil(trackPageview(request, url, hostname, pathname, meta, env))
         return new Response(injectBeacon(render(legalHtml, pageDataMap)), {
           headers: htmlHeaders(),
@@ -1238,7 +1276,7 @@ export default {
           const pageDataMap: Data = {}
           for (const r of pageRows) pageDataMap[r.fieldKey] = r.fieldValue ?? ''
           if (shouldTrack(pathname)) ctx.waitUntil(trackPageview(request, url, hostname, pathname, meta, env))
-          return new Response(injectBeacon(render(pageHtml, pageDataMap)), {
+          return new Response(finalizeHtml(injectBeacon(render(pageHtml, pageDataMap)), pathname, request, meta), {
             headers: htmlHeaders(),
           })
         }
@@ -1306,7 +1344,7 @@ export default {
       const cachedHtml = await kvGet(env, renderCacheKey)
       if (cachedHtml) {
         if (shouldTrack(pathname)) ctx.waitUntil(trackPageview(request, url, hostname, pathname, meta, env))
-        return new Response(injectBeacon(cachedHtml), {
+        return new Response(finalizeHtml(injectBeacon(cachedHtml), pathname, request, meta), {
           headers: htmlHeaders({ 'X-Cache': 'HIT' }),
         })
       }
@@ -1364,7 +1402,9 @@ export default {
       await kvPut(env, renderCacheKey, renderedHtml, { expirationTtl: 60 })
 
       if (shouldTrack(pathname)) ctx.waitUntil(trackPageview(request, url, hostname, pathname, meta, env))
-      return new Response(renderedHtml, {
+      // Tracking-Block erst hier, nach dem Cache-Put: das gecachte HTML bleibt ohne Pixel,
+      // damit geänderte Einstellungen (Meta alle 60 s frisch) ohne Purge greifen.
+      return new Response(finalizeHtml(renderedHtml, pathname, request, meta), {
         headers: htmlHeaders(),
       })
 
@@ -1734,7 +1774,7 @@ function vitalprofilSectionEn(): string {
 `
 }
 
-function renderDatenschutz(d: LegalDesign, domain = ''): string {
+function renderDatenschutz(d: LegalDesign, domain = '', tracking?: PublicTrackingConfig): string {
   const vital = domain === 'vitalprofil.net'
   return `${legalHead('Datenschutzerkl\u00E4rung', d)}
 <body>
@@ -1767,10 +1807,7 @@ ${legalTopbarHtml()}
 
 <hr class="divider">
 
-<section>
-<h2>Cookies &amp; Tracking (\u00A7 25 TTDSG)</h2>
-<p>Diese Website verwendet <strong>keine Cookies</strong> und kein Tracking. Es werden keine Daten f\u00FCr Werbezwecke erhoben, keine Analyse-Tools eingesetzt und keine Daten an Dritte weitergegeben. Ein Cookie-Banner ist daher nicht erforderlich.</p>
-</section>
+${privacySectionDe(tracking)}
 
 <hr class="divider">
 
@@ -1844,10 +1881,7 @@ ${vital ? vitalprofilSectionDe() : ''}<section>
 
 <hr class="divider">
 
-<section>
-<h2>Cookies &amp; tracking (Section 25 TTDSG)</h2>
-<p>This website uses <strong>no cookies</strong> and no tracking. No data is collected for advertising purposes, no analytics tools are used, and no data is shared with third parties. A cookie banner is therefore not required.</p>
-</section>
+${privacySectionEn(tracking)}
 
 <hr class="divider">
 

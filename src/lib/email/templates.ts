@@ -192,6 +192,22 @@ export function domainActiveEmail({ domain, siteUrl }: { domain: string; siteUrl
   `)
 }
 
+export function trackingFirstLeadEmail({ firstName }: { firstName: string }): string {
+  const hi = firstName ? `Hallo ${firstName}` : 'Hallo'
+  return layout(`
+    <h1 style="margin:0 0 8px;font-size:22px;font-weight:700;color:${base.heading};letter-spacing:-0.02em;">
+      Dein Tracking funktioniert ✅
+    </h1>
+    <p style="margin:0;font-size:15px;color:${base.body};line-height:1.65;">
+      ${hi}, gerade ist die erste echte Beratungsanfrage über deine Webseite als <strong>Lead</strong> an Meta übertragen worden. Ab jetzt sieht Meta, welche Anzeige Anfragen bringt, und kann deine Kampagnen darauf optimieren.
+    </p>
+    <p style="margin:16px 0 0;font-size:15px;color:${base.body};line-height:1.65;">
+      Unter <strong>Einstellungen → Werbung</strong> siehst du jederzeit, wie viele Anfragen und Kontakte aus welcher Kampagne kommen.
+    </p>
+    ${button('https://app.finestsites.io/settings?tab=werbung', 'Auswertung ansehen')}
+  `)
+}
+
 export function subscriptionConfirmationEmail({
   plan,
   interval,
