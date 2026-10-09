@@ -1,0 +1,314 @@
+[
+ {
+  "de": "Dein Darm in<br>90 Sek. erklärt",
+  "alt": "Твоите черва,<br>обяснени за 90 сек.",
+  "neu": "Червата ти<br>обяснени за 90 сек.",
+  "grund": "По-естествено обръщение; без излишна запетая."
+ },
+ {
+  "de": "Vitamin C, D, Zink und Selen tragen zur normalen Funktion des Immunsystems bei.",
+  "alt": "Витамин C, D, цинк и селен допринасят за нормалната функция на имунната система.",
+  "neu": "Витамините C и D, цинкът и селенът допринасят за нормалната функция на имунната система.",
+  "grund": "Граматически по-правилен списък на витамините и минералите."
+ },
+ {
+  "de": "Haut, Haare &amp; Nägel",
+  "alt": "Кожа, коса &amp; нокти",
+  "neu": "Кожа, коса и нокти",
+  "grund": "В българския съюзът е по-естествен от &amp; тук."
+ },
+ {
+  "de": "Vital älter werden",
+  "alt": "Да остаряваме жизнени",
+  "neu": "Да остаряваме, запазвайки жизнеността си",
+  "grund": "Оригиналният превод звучи неестествено на български."
+ },
+ {
+  "de": "PowerCocktail morgens und Restorate abends bilden die Basis. Wer tagsüber mehr Energie braucht, greift zum Activize.{{#unless joghurt_anzeigen=nein}} Der probiotische Joghurt ist das optionale Darm-Upgrade.{{/unless}}",
+  "alt": "PowerCocktail сутрин и Restorate вечер са основата. Ако през деня имаш нужда от повече енергия, посегни към Activize.{{#unless joghurt_anzeigen=nein}} Пробиотичното кисело мляко е опционалният ъпгрейд за червата.{{/unless}}",
+  "neu": "PowerCocktail сутрин и Restorate вечер са основата. Ако през деня имаш нужда от повече енергия, избери Activize.{{#unless joghurt_anzeigen=nein}} Пробиотичното кисело мляко е допълнителен ъпгрейд за червата.{{/unless}}",
+  "grund": "По-естествен разговорен изказ; „опционалният“ е прекалено формално и калкирано."
+ },
+ {
+  "de": "Liefert die Wirkstoffe, die dein Körper braucht, um Energie zu erzeugen.¹ Für fokussierte Tage und klare Köpfe.² Mit Stevia gesüßt, ohne künstliche Farbstoffe und Konservierungsmittel.",
+  "alt": "Доставя активните вещества, от които тялото ти има нужда, за да произвежда енергия.¹ За фокусирани дни и бистра глава.² Подсладен със стевия, без изкуствени оцветители и консерванти.",
+  "neu": "Доставя активните вещества, от които тялото ти има нужда, за да произвежда енергия.¹ За дни с фокус и ясна глава.² Подсладен със стевия, без изкуствени оцветители и консерванти.",
+  "grund": "„бистра глава“ и „фокусирани дни“ звучат неестествено."
+ },
+ {
+  "de": "Joghurt-Drink",
+  "alt": "Joghurt-Drink",
+  "neu": "Напитка с йогурт",
+  "grund": "Немското название е оставено непреведено.",
+  "skip": true
+ },
+ {
+  "de": "Selbstgemachter Joghurt-Drink statt Fertigprodukt — frisch angerührt, frei von Konservierungsstoffen, mit natürlichem Geschmack und Milchsäurekulturen, ideal für die ganze Familie.",
+  "alt": "Домашно приготвен Joghurt-Drink вместо готов продукт — свежо разбъркан, без консерванти, с натурален вкус и млечнокисели култури, идеален за цялото семейство.",
+  "neu": "Домашно приготвена напитка с йогурт вместо готов продукт — прясно приготвена, без консерванти, с натурален вкус и млечнокисели култури, идеална за цялото семейство.",
+  "grund": "Оставено е непреведено „Joghurt-Drink“; съгласуване с „напитка“.",
+  "skip": true
+ },
+ {
+  "de": "Frisch angerührt, nicht aus dem Kühlregal",
+  "alt": "Свежо разбъркан, не от хладилната витрина",
+  "neu": "Прясно приготвена, не от хладилната витрина",
+  "grund": "По-естествено и съгласувано с „напитка“."
+ },
+ {
+  "de": "Mehr Bakterienkulturen als im Supermarkt-Joghurt",
+  "alt": "Повече бактериални култури, отколкото в йогурта от супермаркета",
+  "neu": "Повече бактериални култури, отколкото в киселото мляко от супермаркета",
+  "grund": "„йогурта“ звучи неестествено в този контекст."
+ },
+ {
+  "de": "¹ Vitamin B6 trägt zu einem normalen Energiestoffwechsel bei. ² Vitamin B6, B12 und C tragen zu einer normalen psychologischen Funktion bei.",
+  "alt": "¹ Витамин B6 допринася за нормалния енергиен метаболизъм. ² Витамин B6, B12 и C допринасят за нормалната психологична функция.",
+  "neu": "¹ Витамин B6 допринася за нормалния енергиен метаболизъм. ² Витамините B6, B12 и C допринасят за нормалната психологична функция.",
+  "grund": "По-естествено граматично изброяване на витамините."
+ },
+ {
+  "de": "So pimpst du deinen Drink.",
+  "alt": "Ето как да пимпнеш напитката си.",
+  "neu": "Ето как да направиш напитката си още по-добра.",
+  "grund": "„пимпнеш“ звучи неестествено на български."
+ },
+ {
+  "de": "Joghurt rundet ab",
+  "alt": "Joghurt-Drink завършва вкуса",
+  "neu": "Напитката с йогурт завършва вкуса",
+  "grund": "Немското „Joghurt“ не бива да остава непреведено.",
+  "skip": true
+ },
+ {
+  "de": "Ein Schluck Joghurt-Drink obendrauf. Die beiden Produkte sind aufeinander abgestimmt und ergänzen sich in deiner täglichen Routine.",
+  "alt": "Една глътка Joghurt-Drink отгоре. Двата продукта са съгласувани един с друг и се допълват в ежедневната ти рутина.",
+  "neu": "Една глътка напитка с йогурт отгоре. Двата продукта са създадени да си пасват и се допълват в ежедневната ти рутина.",
+  "grund": "Оставено е непреведено „Joghurt-Drink“; „съгласувани“ звучи твърде формално.",
+  "skip": true
+ },
+ {
+  "de": "Eine Portion Activize mit ins Glas. So hast du den Wachmacher gleich dabei.",
+  "alt": "Една порция Activize в чашата. Така имаш и събуждащия ефект веднага вътре.",
+  "neu": "Една порция Activize в чашата. Така получаваш и ободряващия ефект веднага.",
+  "grund": "„събуждащия ефект веднага вътре“ звучи неестествено."
+ },
+ {
+  "de": "Drei Dinge muss ein Produkt erfüllen, {{#unless team_modus=team}}damit ich es empfehle{{/unless}}{{#if team_modus=team}}damit wir es empfehlen{{/if}}: Es muss wirken, sauber hergestellt sein und sicher sein. Hier ist, warum das Optimalset alle drei Punkte erfüllt.",
+  "alt": "Три неща трябва да покрива един продукт, {{#unless team_modus=team}}за да го препоръчам{{/unless}}{{#if team_modus=team}}за да го препоръчаме{{/if}}: трябва да действа, да е чисто произведен и да е безопасен. Ето защо Optimalset покрива и трите точки.",
+  "neu": "Един продукт трябва да изпълнява три условия, {{#unless team_modus=team}}за да го препоръчам{{/unless}}{{#if team_modus=team}}за да го препоръчаме{{/if}}: да действа, да е произведен по чист начин и да е безопасен. Ето защо Optimalset изпълнява и трите.",
+  "grund": "„чисто произведен“ и „точки“ звучат неестествено."
+ },
+ {
+  "de": "Wie streng kontrolliert",
+  "alt": "Колко строг е контролът",
+  "neu": "Контролирано толкова строго",
+  "grund": "Съседният ред довършва сравнението; текущото звучи като въпрос."
+ },
+ {
+  "de": "wie bei Medikamenten",
+  "alt": "като при лекарствата",
+  "neu": "колкото при лекарствата",
+  "grund": "По-естествено довършва сравнението."
+ },
+ {
+  "de": "Von der Forschung bis zur Abfüllung passiert alles in Speyer. Kein Outsourcing, keine langen Lieferketten. Du weißt genau, wo dein Optimalset herkommt.",
+  "alt": "От изследването до разфасоването всичко се случва в Шпайер. Без аутсорсинг, без дълги вериги за доставка. Знаеш точно откъде идва твоят Optimalset.",
+  "neu": "От научните изследвания до разфасоването всичко се случва в Шпайер. Без аутсорсинг, без дълги вериги за доставка. Знаеш точно откъде идва твоят Optimalset.",
+  "grund": "„изследването“ е неестествено/твърде тясно за Forschung."
+ },
+ {
+  "de": "Ein Teil jedes Verkaufs geht an die PM We Care-Stiftung. Seit über 20 Jahren Partnerschaft mit World Vision. 8.500 Patenkinder und 40 Projekte weltweit.",
+  "alt": "Част от всяка продажба отива във фондация PM We Care. Партньорство с World Vision от над 20 години. 8.500 спонсорирани деца и 40 проекта по целия свят.",
+  "neu": "Част от всяка продажба отива във фондацията PM We Care. Партньорство с World Vision от над 20 години. 8 500 спонсорирани деца и 40 проекта по целия свят.",
+  "grund": "В българския точка не се използва за хилядите."
+ },
+ {
+  "de": "Wenn dir das Optimalset nicht schmeckt, nicht zu dir passt oder es dich aus irgendeinem Grund nicht überzeugt, schickst du die angefangene Verpackung zurück und bekommst auf den Cent alles wieder.",
+  "alt": "Ако Optimalset не ти харесва на вкус, не е за теб или по някаква причина не те убеждава, връщаш започнатата опаковка и получаваш всичко обратно до последния цент.",
+  "neu": "Ако Optimalset не ти харесва на вкус, не ти пасва или по някаква причина не те убеди, връщаш отворената опаковка и получаваш обратно всичко до последния цент.",
+  "grund": "По-естествено; „започната опаковка“ е буквално."
+ },
+ {
+  "de": "Auch angefangene oder leere Verpackungen reichen aus.",
+  "alt": "Достатъчни са и започнати или празни опаковки.",
+  "neu": "Достатъчни са и отворени или празни опаковки.",
+  "grund": "„започнати опаковки“ е неестествено."
+ },
+ {
+  "de": "Ehrliche Frage: Wo gibt es das heute noch? Geht nur, weil die Qualität wirklich überzeugt.",
+  "alt": "Честен въпрос: къде днес още го има това? Възможно е само защото качеството наистина убеждава.",
+  "neu": "Честно казано: къде го има това днес? Възможно е само защото качеството наистина е убедително.",
+  "grund": "Оригиналът е преведен буквално и звучи неестествено."
+ },
+ {
+  "de": "Liefert Beta-Carotin, das im Körper zu Vitamin A wird. Vitamin A trägt zur Erhaltung normaler Sehkraft und Haut bei.",
+  "alt": "Доставя бета-каротин, който в тялото се превръща във витамин A. Витамин A допринася за поддържането на нормално зрение и кожа.",
+  "neu": "Доставя бета-каротин, който в тялото се превръща във витамин A. Витамин A допринася за поддържането на нормално зрение и нормална кожа.",
+  "grund": "Граматично липсва „нормална“ към „кожа“."
+ },
+ {
+  "de": "Bringt Apfelfaser als Ballaststoff in den Drink. Plus die typischen Apfel-Pflanzenstoffe aus dem Trester.",
+  "alt": "Внася ябълкови фибри като баластни вещества в напитката. Плюс типичните ябълкови растителни вещества от пресовките.",
+  "neu": "Внася ябълкови фибри в напитката. Плюс типичните ябълкови растителни вещества от ябълковото кюспе.",
+  "grund": "„Баластни вещества“ и „пресовки“ звучат неестествено/калкирано."
+ },
+ {
+  "de": "Pflanzliche Vorstufe von Vitamin A. Vitamin A trägt zur Erhaltung normaler Sehkraft, Haut und einer normalen Funktion des Immunsystems bei.",
+  "alt": "Растителен прекурсор на витамин A. Витамин A допринася за поддържането на нормално зрение, кожа и нормална функция на имунната система.",
+  "neu": "Растителен прекурсор на витамин A. Витамин A допринася за поддържането на нормално зрение, нормална кожа и нормална функция на имунната система.",
+  "grund": "Граматично липсва „нормална“ към „кожа“."
+ },
+ {
+  "de": "Liefert Lycopin, den roten Pflanzenstoff aus sommerreifen Tomaten. Plus etwas natürliches Vitamin C aus der Frucht.",
+  "alt": "Доставя ликопен, червения растителен пигмент от летни узрели домати. Плюс малко естествен витамин C от плода.",
+  "neu": "Доставя ликопен, червения растителен пигмент от узрели на слънце домати. Плюс малко естествен витамин C от плода.",
+  "grund": "„летни узрели домати“ е неграматично/неестествено."
+ },
+ {
+  "de": "Trägt zur Verringerung von Müdigkeit und einem normalen Sauerstofftransport im Körper bei. Sanft an Citrat gebunden, magenfreundlich.",
+  "alt": "Допринася за намаляване на умората и за нормалния пренос на кислород в тялото. Нежно свързано с цитрат, щадящо стомаха.",
+  "neu": "Допринася за намаляване на умората и за нормалния пренос на кислород в тялото. Свързано с цитрат в щадяща за стомаха форма.",
+  "grund": "„Нежно свързано“ е неестествена калка."
+ },
+ {
+  "de": "Alles einzeln kaufen? Teurer, aufwändiger, fehleranfälliger.",
+  "alt": "Да купуваш всичко поотделно? По-скъпо, по-трудоемко, по-лесно за грешки.",
+  "neu": "Да купуваш всичко поотделно? По-скъпо, по-трудоемко, с по-голям риск от грешки.",
+  "grund": "„по-лесно за грешки“ е неестествено на български."
+ },
+ {
+  "de": "Zeitaufwand pro Tag",
+  "alt": "Време на ден",
+  "neu": "Необходимо време на ден",
+  "grund": "По-ясно и естествено за „Zeitaufwand“; „Време на ден“ е двусмислено."
+ },
+ {
+  "de": "{{#unless team_modus=team}}Wer ich bin{{/unless}}{{#if team_modus=team}}Wer wir sind{{/if}}",
+  "alt": "{{#unless team_modus=team}}Кой съм аз{{/unless}}{{#if team_modus=team}}Кои сме ние{{/if}}",
+  "neu": "{{#unless team_modus=team}}За мен{{/unless}}{{#if team_modus=team}}За нас{{/if}}",
+  "grund": "Избягва ненужно родово маркиране („Кой съм аз“) и звучи естествено като заглавие."
+ },
+ {
+  "de": "Für Beruf, Familie, Sport und alles, was dazukommt",
+  "alt": "За работа, семейство, спорт и всичко останало, което се добавя",
+  "neu": "За работа, семейство, спорт и всичко останало покрай тях",
+  "grund": "Избягва буквалното и неестествено „което се добавя“."
+ },
+ {
+  "de": "Am liebsten per (optional)",
+  "alt": "Най-удобно по (по избор)",
+  "neu": "Най-удобно ми е по (по избор)",
+  "grund": "Липсва местоимение; иначе звучи недовършено."
+ },
+ {
+  "de": "Danke. Deine Nachricht ist bei {{#unless team_modus=team}}mir{{/unless}}{{#if team_modus=team}}uns{{/if}}.",
+  "alt": "Благодаря. Съобщението ти е при {{#unless team_modus=team}}мен{{/unless}}{{#if team_modus=team}}нас{{/if}}.",
+  "neu": "Благодаря. Съобщението ти стигна до {{#unless team_modus=team}}мен{{/unless}}{{#if team_modus=team}}нас{{/if}}.",
+  "grund": "„Съобщението ти е при мен/нас“ звучи неестествено."
+ },
+ {
+  "de": "{{#unless joghurt_anzeigen=nein}}Diese drei Produkte bilden das Optimalset.{{/unless}}{{#if joghurt_anzeigen=nein}}Diese beiden Produkte bilden deine tägliche Routine.{{/if}} Einfach einzeln in den Warenkorb legen im offiziellen FitLine-Shop.",
+  "alt": "{{#unless joghurt_anzeigen=nein}}Тези три продукта образуват Optimalset.{{/unless}}{{#if joghurt_anzeigen=nein}}Тези два продукта са твоята ежедневна рутина.{{/if}} Просто ги сложи поотделно в количката в официалния FitLine магазин.",
+  "neu": "{{#unless joghurt_anzeigen=nein}}Тези три продукта съставляват Optimalset.{{/unless}}{{#if joghurt_anzeigen=nein}}Тези два продукта са твоята ежедневна рутина.{{/if}} Просто ги добави поотделно в количката в официалния FitLine магазин.",
+  "grund": "„Образуват Optimalset“ е неестествено; „добави в количката“ е по-точно."
+ },
+ {
+  "de": "Eure persönlichen Berater",
+  "alt": "Твоите лични консултанти",
+  "neu": "Вашите лични консултанти",
+  "grund": "„Eure“ е форма за множествено число, не „твоите“."
+ },
+ {
+  "de": "Hinter dem Optimalset steckt das NTC, das Nährstoff-Transport-Konzept von PM-International. Der Grundgedanke: Zwischen Nährstoffe aufnehmen und Nährstoffe verwerten liegt ein langer Weg. Das NTC ist darauf ausgelegt, Nährstoffe in der richtigen Form zur richtigen Zeit dorthin zu bringen, wo dein Körper sie braucht. 100+ Patente stehen dahinter. Dazu kommt der Timing-Ansatz: bestimmte Produkte morgens, andere tagsüber oder abends, weil dein Körper zu verschiedenen Zeiten unterschiedliche Nährstoffe braucht. Das ist der Unterschied zwischen einem einzelnen Supplement und einem durchdachten System.",
+  "alt": "Зад Optimalset стои NTC, концепцията за транспорт на хранителни вещества на PM-International. Основната идея: между приемането на хранителни вещества и тяхното усвояване има дълъг път. NTC е разработена така, че да доставя хранителните вещества в правилната форма, в правилния момент, там, където тялото ти има нужда от тях. Зад нея стоят 100+ патента. Към това идва и подходът с точния момент: определени продукти сутрин, други през деня или вечер, защото тялото ти има нужда от различни хранителни вещества по различно време. Това е разликата между отделна добавка и добре обмислена система.",
+  "neu": "Зад Optimalset стои NTC, концепцията за транспорт на хранителни вещества на PM-International. Основната идея: между приемането на хранителни вещества и тяхното усвояване има дълъг път. NTC е разработена така, че да доставя хранителните вещества в правилната форма, в правилния момент, там, където тялото ти има нужда от тях. Зад нея стоят над 100 патента. Към това се добавя и подходът с точния момент: определени продукти сутрин, други през деня или вечер, защото тялото ти има нужда от различни хранителни вещества по различно време. Това е разликата между отделна добавка и добре обмислена система.",
+  "grund": "„Към това идва“ е германизъм; „100+ патента“ е по-естествено като „над 100 патента“."
+ },
+ {
+  "de": "Nein, das sind Nahrungsergänzungsmittel. Sie ersetzen keine ausgewogene Ernährung und sind keine ärztliche Behandlung. Bei konkreten gesundheitlichen Fragen schau bitte zuerst mit einem Arzt. Was das Optimalset tut, ist deinen Körper besser versorgen, nicht etwas kurieren.",
+  "alt": "Не, това са хранителни добавки. Те не заместват балансираното хранене и не са лекарско лечение. При конкретни здравословни въпроси, моля, първо се консултирай с лекар. Това, което прави Optimalset, е да снабдява тялото ти по-добре, а не да лекува нещо.",
+  "neu": "Не, това са хранителни добавки. Те не заместват балансираното хранене и не са лекарско лечение. При конкретни здравословни въпроси, моля, първо се консултирай с лекар. Това, което прави Optimalset, е да подпомага по-доброто снабдяване на тялото ти, а не да лекува.",
+  "grund": "Последното изречение беше неестествено формулирано."
+ },
+ {
+  "de": "Das ist eine faire Frage, und {{#unless team_modus=team}}ich verstehe{{/unless}}{{#if team_modus=team}}wir verstehen{{/if}} den ersten Gedanken: mehr Verpackung klingt nach mehr Müll. Aber schau mal genauer hin. Ein normales Supplement-Glas enthält 30 oder 60 Portionen, muss mit Trockenmittel und Sauerstoffabsorbern stabilisiert werden, und du öffnest es täglich. Dabei oxidiert der Rest immer weiter. Die Tagespäckchen hier sind luftdicht versiegelt, brauchen deshalb keine Konservierungsstoffe, und es entsteht kein Abfall durch Reste, die schlecht werden. Außerdem sind die Verpackungen aus recycelbarem Material. Perfekt ist das natürlich nicht, aber im direkten Vergleich nachhaltiger als viele große Plastikflaschen, die am Ende halb voll weggeworfen werden.",
+  "alt": "Това е честен въпрос и {{#unless team_modus=team}}разбирам{{/unless}}{{#if team_modus=team}}разбираме{{/if}} първата мисъл: повече опаковка звучи като повече боклук. Но погледни малко по-внимателно. Един нормален буркан с добавка съдържа 30 или 60 порции, трябва да бъде стабилизиран с влагопоглъщател и абсорбери на кислород, и го отваряш всеки ден. Така остатъкът продължава да се окислява все повече. Дневните пакетчета тук са херметически затворени, затова не се нуждаят от консерванти и не се създава отпадък от остатъци, които се развалят. Освен това опаковките са от рециклируем материал. Разбира се, не е перфектно, но в директно сравнение е по-устойчиво от много големи пластмасови бутилки, които накрая се изхвърлят наполовина пълни.",
+  "neu": "Това е основателен въпрос и {{#unless team_modus=team}}разбирам{{/unless}}{{#if team_modus=team}}разбираме{{/if}} първата мисъл: повече опаковка звучи като повече боклук. Но погледни малко по-внимателно. Един нормален буркан с добавка съдържа 30 или 60 порции, трябва да бъде стабилизиран с влагопоглъщател и абсорбери на кислород и го отваряш всеки ден. Така остатъкът продължава да се окислява все повече. Дневните пакетчета тук са херметически затворени, затова не се нуждаят от консерванти и не се създава отпадък от остатъци, които се развалят. Освен това опаковките са от рециклируем материал. Разбира се, не е перфектно, но при пряко сравнение е по-устойчиво от много големи пластмасови бутилки, които накрая се изхвърлят наполовина пълни.",
+  "grund": "„Честен въпрос“ и „в директно сравнение“ са неестествени/калкирани изрази."
+ },
+ {
+  "de": "Nein. PM-International ist eine seit 1993 bestehende Aktiengesellschaft mit Sitz in Speyer und arbeitet im legalen Direktvertrieb. Du kannst ganz normal als Kunde bestellen, ohne selbst etwas zu verkaufen oder weiterzuempfehlen.",
+  "alt": "Не. PM-International е акционерно дружество, съществуващо от 1993 г., със седалище в Шпайер, и работи в легалните директни продажби. Можеш съвсем нормално да поръчваш като клиент, без лично да продаваш или да препоръчваш нататък.",
+  "neu": "Не. PM-International е акционерно дружество, съществуващо от 1993 г., със седалище в Шпайер, и работи в сферата на законните директни продажби. Можеш съвсем нормално да поръчваш като клиент, без да се налага лично да продаваш или да препоръчваш на други.",
+  "grund": "По-естествена формулировка; „препоръчваш нататък“ е неестествено."
+ },
+ {
+  "de": "Ballaststoffe & Sonstiges",
+  "alt": "Фибри & други",
+  "neu": "Фибри и други",
+  "grund": "Амперсандът звучи неестествено в български текст."
+ },
+ {
+  "de": "Süßung & Geschmack",
+  "alt": "Подслаждане & вкус",
+  "neu": "Подслаждане и вкус",
+  "grund": "Амперсандът звучи неестествено в български текст."
+ },
+ {
+  "de": "Pflanzliches",
+  "alt": "Растителни",
+  "neu": "Растителни съставки",
+  "grund": "„Растителни“ само по себе си звучи недовършено като заглавие."
+ },
+ {
+  "de": "Süßung aus Stevia",
+  "alt": "Подслаждане със стевия",
+  "neu": "Подсладено със стевия",
+  "grund": "По-естествено и точно за „Süßung aus Stevia“."
+ },
+ {
+  "de": "Protein-angereichertes Molkepulver",
+  "alt": "Суроватъчен прах, обогатен с протеин",
+  "neu": "Суроватка на прах, обогатена с протеин",
+  "grund": "„Molkepulver“ на български е по-естествено „суроватка на прах“."
+ },
+ {
+  "de": "Alle Produkte sind Nahrungsergänzungsmittel und keine Arzneimittel. Sie können Krankheiten weder heilen, lindern noch verhindern. Bei gesundheitlichen Beschwerden wenden Sie sich bitte an einen Arzt oder Apotheker.",
+  "alt": "Всички продукти са хранителни добавки, а не лекарства. Те не могат нито да лекуват, облекчават или предотвратяват заболявания. При здравословни оплаквания, моля, обърни се към лекар или фармацевт.",
+  "neu": "Всички продукти са хранителни добавки, а не лекарства. Те не могат да лекуват, облекчават или предотвратяват заболявания. При здравословни оплаквания, моля, обърни се към лекар или фармацевт.",
+  "grund": "Граматична грешка в конструкцията „нито … или“."
+ },
+ {
+  "de": "Frau Ende 50 lacht im Garten",
+  "alt": "Жена към края на 50-те се смее в градината",
+  "neu": "Жена в края на 50-те си години се смее в градината",
+  "grund": "По-естествен и ясен израз за възрастта."
+ },
+ {
+  "de": "Joghurt-Drink",
+  "alt": "Joghurt-Drink",
+  "neu": "Йогурт напитка",
+  "grund": "Непреведено немско наименование/описание.",
+  "skip": true
+ },
+ {
+  "de": "Mann konzentriert am Laptop mit Activize-Drink",
+  "alt": "Мъж, съсредоточен пред лаптоп с Activize напитка",
+  "neu": "Мъж, съсредоточен пред лаптоп, с напитка Activize",
+  "grund": "По-естествен словоред на български."
+ },
+ {
+  "de": "Mehr zum Joghurt-Drink",
+  "alt": "Повече за Joghurt-Drink",
+  "neu": "Повече за йогурт напитката",
+  "grund": "Непреведено немско наименование/описание.",
+  "skip": true
+ },
+ {
+  "de": "Play/Pause",
+  "alt": "Пусни/пауза",
+  "neu": "Пускане/пауза",
+  "grund": "По-естествен UI етикет; избягва смесване на глагол и съществително."
+ }
+]

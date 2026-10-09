@@ -1,0 +1,449 @@
+[
+ {
+  "de": "Mit Milchsäurekulturen für den Darmaufbau. Schmeckt cremig und macht satt. Nur in ausgewählten Ländern erhältlich.",
+  "alt": "С молочнокислыми культурами для кишечника. Кремовый на вкус и хорошо насыщает. Доступен только в отдельных странах.",
+  "neu": "С молочнокислыми культурами для поддержки кишечника. Нежный кремовый вкус и хорошо насыщает. Доступен только в отдельных странах.",
+  "grund": "Натуральнее по-русски; «кремовый на вкус» звучит неестественно."
+ },
+ {
+  "de": "Dein tägliches Nährstoff-System.",
+  "alt": "Твоя ежедневная система питательных веществ.",
+  "neu": "Твоя система питательных веществ на каждый день.",
+  "grund": "Более естественный порядок слов."
+ },
+ {
+  "de": "Morgens, tagsüber, abends: {{#unless joghurt_anzeigen=nein}}vier{{/unless}}{{#if joghurt_anzeigen=nein}}drei{{/if}} Produkte, die genau aufeinander abgestimmt sind. Fit und versorgt durch den Alltag, entwickelt von einem Hersteller mit 100+ Patenten, der offiziell für Profisportler aus 40 Ländern produziert. {{#unless team_modus=team}}Ich nutze es selbst{{/unless}}{{#if team_modus=team}}Wir nutzen es selbst{{/if}}, jeden Tag.",
+  "alt": "Утром, днём, вечером: {{#unless joghurt_anzeigen=nein}}четыре{{/unless}}{{#if joghurt_anzeigen=nein}}три{{/if}} продукта, которые точно согласованы между собой. Чтобы в повседневной жизни быть в форме и получать всё нужное — разработано производителем с 100+ патентами, который официально производит для профессиональных спортсменов из 40 стран. {{#unless team_modus=team}}Я сам(а) пользуюсь этим{{/unless}}{{#if team_modus=team}}Мы сами пользуемся этим{{/if}}, каждый день.",
+  "neu": "Утром, днём, вечером: {{#unless joghurt_anzeigen=nein}}четыре{{/unless}}{{#if joghurt_anzeigen=nein}}три{{/if}} продукта, которые точно согласованы между собой. С ними ты в повседневной жизни в форме и получаешь всё нужное — от производителя с 100+ патентами, который официально производит продукцию для профессиональных спортсменов из 40 стран. {{#unless team_modus=team}}Я сам(а) пользуюсь этим{{/unless}}{{#if team_modus=team}}Мы сами пользуемся этим{{/if}}, каждый день.",
+  "grund": "Исходная фраза была грамматически тяжёлой и неестественной."
+ },
+ {
+  "de": "{{#unless team_modus=team}}{{#if geschlecht=weiblich}}Unabhängige Vertriebspartnerin{{/if}}{{#if geschlecht=maennlich}}Unabhängiger Vertriebspartner{{/if}}{{/unless}}{{#if team_modus=team}}Unabhängige Vertriebspartner{{/if}} der PM-International (FitLine®). Diese Seite ist keine offizielle Website der PM-International AG.",
+  "alt": "{{#unless team_modus=team}}{{#if geschlecht=weiblich}}Независимая партнёрша по продажам{{/if}}{{#if geschlecht=maennlich}}Независимый партнёр по продажам{{/if}}{{/unless}}{{#if team_modus=team}}Независимые партнёры по продажам{{/if}} PM-International (FitLine®). Эта страница не является официальным сайтом PM-International AG.",
+  "neu": "{{#unless team_modus=team}}{{#if geschlecht=weiblich}}Независимый дистрибьютор{{/if}}{{#if geschlecht=maennlich}}Независимый дистрибьютор{{/if}}{{/unless}}{{#if team_modus=team}}Независимые дистрибьюторы{{/if}} PM-International (FitLine®). Эта страница не является официальным сайтом PM-International AG.",
+  "grund": "«Партнёрша по продажам» неестественно для делового/юридического контекста."
+ },
+ {
+  "de": "Besseres Bauchgefühl?",
+  "alt": "Лучше ощущение в животе?",
+  "neu": "Больше комфорта в животе?",
+  "grund": "«Лучше ощущение в животе» звучит неестественно."
+ },
+ {
+  "de": "Leichter durch den Tag?",
+  "alt": "Легче проживать день?",
+  "neu": "Легче справляться с каждым днём?",
+  "grund": "«Легче проживать день» неестественно по-русски."
+ },
+ {
+  "de": "Mehr Wohlbefinden?",
+  "alt": "Больше хорошего самочувствия?",
+  "neu": "Лучшее самочувствие?",
+  "grund": "Естественнее и грамматически корректнее для краткого заголовка."
+ },
+ {
+  "de": "Bessere Stimmung?",
+  "alt": "Лучше настроение?",
+  "neu": "Лучшее настроение?",
+  "grund": "Ошибка согласования: «настроение» среднего рода."
+ },
+ {
+  "de": "Vitamin C, D, Zink und Selen tragen zur normalen Funktion des Immunsystems bei.",
+  "alt": "Витамин C, D, цинк и селен способствуют нормальной работе иммунной системы.",
+  "neu": "Витамины C и D, цинк и селен способствуют нормальной работе иммунной системы.",
+  "grund": "Нужно множественное число: речь о витаминах C и D."
+ },
+ {
+  "de": "Calcium trägt zur normalen Funktion der Verdauungsenzyme bei. Plus Inulin als löslicher Ballaststoff.",
+  "alt": "Кальций способствует нормальной работе пищеварительных ферментов. Плюс инулин как растворимая клетчатка.",
+  "neu": "Кальций способствует нормальной работе пищеварительных ферментов. Плюс инулин — растворимая клетчатка.",
+  "grund": "Более естественная конструкция на русском."
+ },
+ {
+  "de": "Deine tägliche Morgenroutine für die optimale Nährstoffversorgung — alles, was dein Körper für einen energiereichen Start in den Tag braucht, in einem einzigen frischen Glas.",
+  "alt": "Твоя ежедневная утренняя рутина для оптимального снабжения питательными веществами — всё, что нужно твоему телу для энергичного старта дня, в одном свежем стакане.",
+  "neu": "Твой ежедневный утренний ритуал для оптимального обеспечения организма питательными веществами — всё, что нужно твоему телу для энергичного старта дня, в одном стакане свежего напитка.",
+  "grund": "«Утренняя рутина» и «в одном свежем стакане» звучат неестественно."
+ },
+ {
+  "de": "Liefert die Wirkstoffe, die dein Körper braucht, um Energie zu erzeugen.¹ Für fokussierte Tage und klare Köpfe.² Mit Stevia gesüßt, ohne künstliche Farbstoffe und Konservierungsmittel.",
+  "alt": "Даёт активные вещества, которые нужны твоему телу, чтобы вырабатывать энергию.¹ Для сфокусированных дней и ясной головы.² Подслащён стевией, без искусственных красителей и консервантов.",
+  "neu": "Даёт твоему телу активные вещества, необходимые для выработки энергии.¹ Для фокуса в течение дня и ясной головы.² Подслащён стевией, без искусственных красителей и консервантов.",
+  "grund": "«Для сфокусированных дней» — неестественная калька."
+ },
+ {
+  "de": "Joghurt-Drink",
+  "alt": "Joghurt-Drink",
+  "neu": "Йогуртовый напиток",
+  "grund": "Оставлено немецкое название вместо русского.",
+  "skip": true
+ },
+ {
+  "de": "Selbstgemachter Joghurt-Drink statt Fertigprodukt — frisch angerührt, frei von Konservierungsstoffen, mit natürlichem Geschmack und Milchsäurekulturen, ideal für die ganze Familie.",
+  "alt": "Домашний Joghurt-Drink вместо готового продукта — свежеприготовленный, без консервантов, с натуральным вкусом и молочнокислыми культурами, идеально для всей семьи.",
+  "neu": "Домашний йогуртовый напиток вместо готового продукта — свежеприготовленный, без консервантов, с натуральным вкусом и молочнокислыми культурами, идеален для всей семьи.",
+  "grund": "Оставлено немецкое название; также нужна грамматическая согласованность.",
+  "skip": true
+ },
+ {
+  "de": "¹ Vitamin B6 trägt zu einem normalen Energiestoffwechsel bei. ² Vitamin B6, B12 und C tragen zu einer normalen psychologischen Funktion bei.",
+  "alt": "¹ Витамин B6 способствует нормальному энергетическому обмену. ² Витамины B6, B12 и C способствуют нормальной психологической функции.",
+  "neu": "¹ Витамин B6 способствует нормальному энергетическому обмену. ² Витамины B6, B12 и C способствуют нормальной работе психики.",
+  "grund": "«Нормальной психологической функции» звучит как неестественная калька."
+ },
+ {
+  "de": "Ein Schluck Joghurt-Drink obendrauf. Die beiden Produkte sind aufeinander abgestimmt und ergänzen sich in deiner täglichen Routine.",
+  "alt": "Сверху — глоток Joghurt-Drink. Эти два продукта подобраны друг к другу и дополняют друг друга в твоей ежедневной рутине.",
+  "neu": "Сверху — глоток йогуртового напитка. Эти два продукта хорошо сочетаются и дополняют друг друга в твоём ежедневном ритуале.",
+  "grund": "Оставлено немецкое название; есть неестественный повтор.",
+  "skip": true
+ },
+ {
+  "de": "Drei Dinge muss ein Produkt erfüllen, {{#unless team_modus=team}}damit ich es empfehle{{/unless}}{{#if team_modus=team}}damit wir es empfehlen{{/if}}: Es muss wirken, sauber hergestellt sein und sicher sein. Hier ist, warum das Optimalset alle drei Punkte erfüllt.",
+  "alt": "Продукт должен соответствовать трём требованиям, {{#unless team_modus=team}}чтобы я его рекомендовала{{/unless}}{{#if team_modus=team}}чтобы мы его рекомендовали{{/if}}: он должен работать, быть чисто произведённым и безопасным. Вот почему Optimalset соответствует всем трём пунктам.",
+  "neu": "Прежде чем {{#unless team_modus=team}}я порекомендую продукт{{/unless}}{{#if team_modus=team}}мы порекомендуем продукт{{/if}}, он должен соответствовать трём требованиям: он должен работать, быть изготовлен по чистым стандартам и быть безопасным. Вот почему Optimalset соответствует всем трём пунктам.",
+  "grund": "Гендерная форма «рекомендовала» не универсальна; «чисто произведённым» звучит неестественно."
+ },
+ {
+  "de": "Die Kölner Liste® prüft Nahrungsergänzungsmittel unabhängig auf unerlaubte Substanzen. {{#unless joghurt_anzeigen=nein}}Alle vier Produkte{{/unless}}{{#if joghurt_anzeigen=nein}}Alle drei Produkte{{/if}} des Optimalsets sind gelistet und wurden ohne Beanstandung analysiert. Für Profis Pflicht, für alle anderen eine starke Garantie.",
+  "alt": "Кёльнский список® независимо проверяет пищевые добавки на запрещённые вещества. {{#unless joghurt_anzeigen=nein}}Все четыре продукта{{/unless}}{{#if joghurt_anzeigen=nein}}Все три продукта{{/if}} из Optimalset внесены в список и прошли анализ без замечаний. Для профессионалов — обязательно, для всех остальных — сильная гарантия.",
+  "neu": "Кёльнский список® независимо проверяет БАДы на запрещённые вещества. {{#unless joghurt_anzeigen=nein}}Все четыре продукта{{/unless}}{{#if joghurt_anzeigen=nein}}Все три продукта{{/if}} из набора Optimalset внесены в список и прошли анализ без замечаний. Для профессионалов это обязательное условие, для всех остальных — надёжная гарантия.",
+  "grund": "«Пищевые добавки» и «из Optimalset» неточно/неестественно; «сильная гарантия» не по-русски."
+ },
+ {
+  "de": "GMP ist der Standard der Pharmaindustrie und für Medikamente gesetzlich vorgeschrieben. Für Nahrungsergänzung reicht deutlich weniger. Unsere Produkte halten sich trotzdem freiwillig daran und werden zusätzlich unabhängig von der ELAB Analytic GmbH geprüft.",
+  "alt": "GMP — это стандарт фармацевтической индустрии, для лекарств он обязателен по закону. Для пищевых добавок требования заметно мягче. Но наши продукты всё равно добровольно ему соответствуют и дополнительно проходят независимую проверку в ELAB Analytic GmbH.",
+  "neu": "GMP — это стандарт фармацевтической индустрии, для лекарств он обязателен по закону. Для БАДов требования заметно мягче. Но наши продукты всё равно добровольно ему соответствуют и дополнительно проходят независимую проверку в ELAB Analytic GmbH.",
+  "grund": "Nahrungsergänzungsmittel — это БАДы, не пищевые добавки."
+ },
+ {
+  "de": "Wie streng kontrolliert",
+  "alt": "Насколько строго проверяют",
+  "neu": "Такой же строгий контроль",
+  "grund": "Текущий вариант не складывается с продолжением и звучит неестественно."
+ },
+ {
+  "de": "wie bei Medikamenten",
+  "alt": "как лекарства",
+  "neu": "как у лекарств",
+  "grund": "Нужно согласовать с предыдущей строкой."
+ },
+ {
+  "de": "Von der Forschung bis zur Abfüllung passiert alles in Speyer. Kein Outsourcing, keine langen Lieferketten. Du weißt genau, wo dein Optimalset herkommt.",
+  "alt": "От исследований до фасовки — всё происходит в Шпайере. Никакого аутсорсинга, никаких длинных цепочек поставок. Ты точно знаешь, откуда приходит твой Optimalset.",
+  "neu": "От исследований до фасовки — всё происходит в Шпайере. Никакого аутсорсинга, никаких длинных цепочек поставок. Ты точно знаешь, откуда твой Optimalset.",
+  "grund": "«Откуда приходит» — неестественная калька."
+ },
+ {
+  "de": "Offizieller Partner der ATP-Tour, Partner des Deutschen Skiverbands. Athleten aus über 85 Disziplinen in 40 Nationen.<sup style=\"font-size:0.7em;vertical-align:super;opacity:0.55\">³</sup> Wer Ergebnisse braucht, kann sich keine Kompromisse leisten.",
+  "alt": "Официальный партнёр ATP-Tour, партнёр Немецкого лыжного союза. Атлеты из более чем 85 дисциплин в 40 странах.<sup style=\"font-size:0.7em;vertical-align:super;opacity:0.55\">³</sup> Кому нужны результаты, тот не может позволить себе компромиссы.",
+  "neu": "Официальный партнёр ATP-Tour, партнёр Немецкого лыжного союза. Спортсмены, представляющие более 85 дисциплин в 40 странах.<sup style=\"font-size:0.7em;vertical-align:super;opacity:0.55\">³</sup> Кому нужны результаты, тот не может позволить себе компромиссы.",
+  "grund": "«Атлеты из дисциплин» — неестественная калька."
+ },
+ {
+  "de": "Ein Teil jedes Verkaufs geht an die PM We Care-Stiftung. Seit über 20 Jahren Partnerschaft mit World Vision. 8.500 Patenkinder und 40 Projekte weltweit.",
+  "alt": "Часть с каждой продажи идёт в фонд PM We Care. Партнёрство с World Vision уже более 20 лет. 8.500 подопечных детей и 40 проектов по всему миру.",
+  "neu": "Часть средств от каждой продажи идёт в фонд PM We Care. Партнёрство с World Vision длится уже более 20 лет. 8 500 подопечных детей и 40 проектов по всему миру.",
+  "grund": "«Часть с каждой продажи» неестественно; формат числа по-русски."
+ },
+ {
+  "de": "Volle Zufriedenheit oder Geld zurück",
+  "alt": "Полное удовлетворение или деньги назад",
+  "neu": "Полная удовлетворённость или деньги назад",
+  "grund": "«Полное удовлетворение» здесь звучит неестественно."
+ },
+ {
+  "de": "Ehrliche Frage: Wo gibt es das heute noch? Geht nur, weil die Qualität wirklich überzeugt.",
+  "alt": "Честный вопрос: где такое сейчас ещё есть? Это возможно только потому, что качество действительно убеждает.",
+  "neu": "Честный вопрос: где такое сейчас ещё есть? Это возможно только потому, что качество действительно говорит само за себя.",
+  "grund": "«Качество убеждает» без дополнения звучит неестественно."
+ },
+ {
+  "de": "Liefert Beta-Carotin, das im Körper zu Vitamin A wird. Vitamin A trägt zur Erhaltung normaler Sehkraft und Haut bei.",
+  "alt": "Даёт бета-каротин, который в организме превращается в витамин A. Витамин A способствует сохранению нормального зрения и кожи.",
+  "neu": "Даёт бета-каротин, который в организме превращается в витамин A. Витамин A способствует сохранению нормального зрения и нормального состояния кожи.",
+  "grund": "Неестественное сочетание «сохранению … кожи»."
+ },
+ {
+  "de": "Trägt zur Erhaltung normaler Knochen und einer normalen Muskelfunktion bei. In zwei Verbindungen kombiniert, für gute Aufnahme.",
+  "alt": "Способствует сохранению нормальных костей и нормальной работе мышц. Сочетание двух соединений для хорошего усвоения.",
+  "neu": "Способствует поддержанию нормального состояния костей и нормальной работе мышц. Сочетание двух соединений для хорошего усвоения.",
+  "grund": "«Сохранению нормальных костей» звучит неестественно."
+ },
+ {
+  "de": "Pflanzliche Vorstufe von Vitamin A. Vitamin A trägt zur Erhaltung normaler Sehkraft, Haut und einer normalen Funktion des Immunsystems bei.",
+  "alt": "Растительный предшественник витамина A. Витамин A способствует сохранению нормального зрения, кожи и нормальной работе иммунной системы.",
+  "neu": "Растительный предшественник витамина A. Витамин A способствует поддержанию нормального зрения, нормального состояния кожи и нормальной работе иммунной системы.",
+  "grund": "Неестественное сочетание «сохранению … кожи»."
+ },
+ {
+  "de": "Trägt zur Erhaltung normaler Haut, Haare und Nägel und zur normalen Funktion des Immunsystems bei. Organisch an Gluconat gebunden.",
+  "alt": "Способствует сохранению нормальной кожи, волос и ногтей, а также нормальной работе иммунной системы. Органически связан с глюконатом.",
+  "neu": "Способствует поддержанию нормального состояния кожи, волос и ногтей, а также нормальной работе иммунной системы. Органическая форма — глюконат.",
+  "grund": "«Органически связан» звучит неестественно и двусмысленно по-русски."
+ },
+ {
+  "de": "Liefert Lycopin, den roten Pflanzenstoff aus sommerreifen Tomaten. Plus etwas natürliches Vitamin C aus der Frucht.",
+  "alt": "Даёт ликопин — красное растительное вещество из летних спелых томатов. Плюс немного натурального витамина C из плода.",
+  "neu": "Даёт ликопин — красное растительное вещество из спелых летних томатов. Плюс немного натурального витамина C из плода.",
+  "grund": "Неестественный порядок слов: «летних спелых»."
+ },
+ {
+  "de": "Trägt zur Verringerung von Müdigkeit und einem normalen Sauerstofftransport im Körper bei. Sanft an Citrat gebunden, magenfreundlich.",
+  "alt": "Способствует снижению усталости и нормальному переносу кислорода в организме. Мягко связано с цитратом, дружелюбно к желудку.",
+  "neu": "Способствует снижению усталости и нормальному переносу кислорода в организме. Связано с цитратом — мягкая для желудка форма.",
+  "grund": "«Дружелюбно к желудку» — калька, неестественно по-русски."
+ },
+ {
+  "de": "Eine der natürlich vitamin-C-reichsten Beeren überhaupt. Vitamin C trägt zu einer normalen Funktion des Immunsystems und zur Verringerung von Müdigkeit bei.",
+  "alt": "Одна из ягод, самых богатых натуральным витамином C. Витамин C способствует нормальной работе иммунной системы и снижению усталости.",
+  "neu": "Одна из самых богатых натуральным витамином C ягод. Витамин C способствует нормальной работе иммунной системы и снижению усталости.",
+  "grund": "Более естественный порядок слов."
+ },
+ {
+  "de": "Bringt dunkle Beeren-Pflanzenstoffe und natürliches Vitamin C mit. Vitamin C trägt zum Schutz der Zellen vor oxidativem Stress bei.",
+  "alt": "Даёт тёмные ягодные растительные вещества и натуральный витамин C. Витамин C способствует защите клеток от окислительного стресса.",
+  "neu": "Содержит тёмные растительные вещества ягод и натуральный витамин C. Витамин C способствует защите клеток от окислительного стресса.",
+  "grund": "Неестественная формулировка «даёт вещества»."
+ },
+ {
+  "de": "Bringt typische Cranberry-Pflanzenstoffe und natürliches Vitamin C mit. Vitamin C trägt zur normalen Funktion des Immunsystems bei.",
+  "alt": "Даёт типичные растительные вещества клюквы и натуральный витамин C. Витамин C способствует нормальной работе иммунной системы.",
+  "neu": "Содержит характерные растительные вещества клюквы и натуральный витамин C. Витамин C способствует нормальной работе иммунной системы.",
+  "grund": "Неестественная формулировка «даёт вещества»."
+ },
+ {
+  "de": "Liefert das natürliche Koffein im Drink. Aus der Amazonas-Frucht statt synthetisch hergestellt. Wird langsamer freigesetzt als reiner Kaffee.",
+  "alt": "Даёт напитку натуральный кофеин. Из амазонского плода, а не синтетического производства. Высвобождается медленнее, чем кофе в чистом виде.",
+  "neu": "Даёт напитку натуральный кофеин — из амазонского плода, а не синтетический. Высвобождается медленнее, чем кофеин из обычного кофе.",
+  "grund": "Неточно и неестественно про «кофе в чистом виде»."
+ },
+ {
+  "de": "Was das Optimalset ersetzt",
+  "alt": "Что заменяет Optimalset",
+  "neu": "Что заменяет собой Optimalset",
+  "grund": "Убрана двусмысленность."
+ },
+ {
+  "de": "Du musst Abstand zu Milch und Calcium halten.",
+  "alt": "Нужно выдерживать интервал с молоком и кальцием.",
+  "neu": "Нужно принимать отдельно от молока и кальция.",
+  "grund": "Неестественное «интервал с молоком»."
+ },
+ {
+  "de": "Optimalset, Drogerie-Vitamine, frischer Smoothie. Was steckt wirklich drin, was kostet es, was bringt es dir tatsächlich.",
+  "alt": "Optimalset, витамины из дрогери, свежий смузи. Что в них действительно есть, сколько это стоит и что это тебе реально даёт.",
+  "neu": "Optimalset, витамины из дрогерии, свежий смузи. Что в них действительно есть, сколько это стоит и что это тебе реально даёт.",
+  "grund": "«Из дрогери» звучит неестественно по-русски."
+ },
+ {
+  "de": "Meist gezielt 1 bis 3 Stoffe pro Produkt",
+  "alt": "Обычно точечно 1–3 вещества на продукт",
+  "neu": "Обычно 1–3 конкретных вещества в одном продукте",
+  "grund": "Калька «на продукт»."
+ },
+ {
+  "de": "Wechselnd, je nach Tageszutaten",
+  "alt": "Меняется в зависимости от ингредиентов дня",
+  "neu": "Меняется в зависимости от ингредиентов, выбранных на день",
+  "grund": "Неестественное «ингредиенты дня»."
+ },
+ {
+  "de": "Ich möchte meinen Alltag gut versorgen",
+  "alt": "Я хочу хорошо обеспечивать себя всем нужным в повседневной жизни",
+  "neu": "Я хочу обеспечить себя всем необходимым на каждый день",
+  "grund": "Нынешний вариант звучит тяжеловесно и неестественно."
+ },
+ {
+  "de": "Für Beruf, Familie, Sport und alles, was dazukommt",
+  "alt": "Для работы, семьи, спорта и всего, что к этому добавляется",
+  "neu": "Для работы, семьи, спорта и всего остального",
+  "grund": "Буквальный перевод «что к этому добавляется» звучит неестественно."
+ },
+ {
+  "de": "{{#unless joghurt_anzeigen=nein}}Diese drei Produkte bilden das Optimalset.{{/unless}}{{#if joghurt_anzeigen=nein}}Diese beiden Produkte bilden deine tägliche Routine.{{/if}} Einfach einzeln in den Warenkorb legen im offiziellen FitLine-Shop.",
+  "alt": "{{#unless joghurt_anzeigen=nein}}Эти три продукта составляют Optimalset.{{/unless}}{{#if joghurt_anzeigen=nein}}Эти два продукта — твоя ежедневная рутина.{{/if}} Просто добавь их по отдельности в корзину в официальном магазине FitLine.",
+  "neu": "{{#unless joghurt_anzeigen=nein}}Эти три продукта составляют Optimalset.{{/unless}}{{#if joghurt_anzeigen=nein}}Эти два продукта составляют твою ежедневную программу.{{/if}} Просто добавь их по отдельности в корзину в официальном магазине FitLine.",
+  "grund": "«ежедневная рутина» звучит неестественно и с негативным оттенком"
+ },
+ {
+  "de": "Energie &amp; Sauerstoffversorgung für den Tag",
+  "alt": "Энергия &amp; снабжение кислородом на день",
+  "neu": "Энергия и кислородное обеспечение на день",
+  "grund": "Амперсанд в русском тексте неестественен"
+ },
+ {
+  "de": "Probiotisch, cremig &amp; sättigend",
+  "alt": "С пробиотиками, кремовый &amp; сытный",
+  "neu": "Пробиотический, кремообразный и сытный",
+  "grund": "«кремовый &amp;» неестественно по-русски"
+ },
+ {
+  "de": "Hinter dem Optimalset steckt das NTC, das Nährstoff-Transport-Konzept von PM-International. Der Grundgedanke: Zwischen Nährstoffe aufnehmen und Nährstoffe verwerten liegt ein langer Weg. Das NTC ist darauf ausgelegt, Nährstoffe in der richtigen Form zur richtigen Zeit dorthin zu bringen, wo dein Körper sie braucht. 100+ Patente stehen dahinter. Dazu kommt der Timing-Ansatz: bestimmte Produkte morgens, andere tagsüber oder abends, weil dein Körper zu verschiedenen Zeiten unterschiedliche Nährstoffe braucht. Das ist der Unterschied zwischen einem einzelnen Supplement und einem durchdachten System.",
+  "alt": "В основе Optimalset — NTC, концепция транспортировки питательных веществ от PM-International. Главная идея: между тем, чтобы получить питательные вещества, и тем, чтобы их усвоить, большой путь. NTC создана для того, чтобы доставлять питательные вещества в правильной форме и в правильное время туда, где они нужны твоему организму. За этим стоит 100+ патентов. Плюс подход с таймингом: одни продукты — утром, другие — днём или вечером, потому что в разное время твоему организму нужны разные питательные вещества. В этом разница между отдельной добавкой и продуманной системой.",
+  "neu": "В основе Optimalset лежит NTC — концепция транспортировки питательных веществ от PM-International. Главная идея: от поступления питательных веществ в организм до их усвоения — долгий путь. NTC разработана для того, чтобы доставлять питательные вещества в нужной форме и в нужное время туда, где они нужны твоему организму. За этим стоит более 100 патентов. Плюс подход с таймингом: одни продукты — утром, другие — днём или вечером, потому что в разное время твоему организму нужны разные питательные вещества. В этом разница между отдельной добавкой и продуманной системой.",
+  "grund": "Была неестественная конструкция в ключевом предложении"
+ },
+ {
+  "de": "Nein, das sind Nahrungsergänzungsmittel. Sie ersetzen keine ausgewogene Ernährung und sind keine ärztliche Behandlung. Bei konkreten gesundheitlichen Fragen schau bitte zuerst mit einem Arzt. Was das Optimalset tut, ist deinen Körper besser versorgen, nicht etwas kurieren.",
+  "alt": "Нет, это пищевые добавки. Они не заменяют сбалансированное питание и не являются врачебным лечением. Если есть конкретные вопросы по здоровью, пожалуйста, сначала обсуди это с врачом. Что делает Optimalset — лучше снабжает твой организм, а не лечит что-то.",
+  "neu": "Нет, это пищевые добавки. Они не заменяют сбалансированное питание и не являются медицинским лечением. Если есть конкретные вопросы по здоровью, пожалуйста, сначала обсуди их с врачом. Задача Optimalset — лучше снабжать твой организм питательными веществами, а не что-то лечить.",
+  "grund": "Последнее предложение было грамматически неестественным"
+ },
+ {
+  "de": "Zutaten &amp; Inhaltsstoffe",
+  "alt": "Ингредиенты &amp; состав",
+  "neu": "Ингредиенты и состав",
+  "grund": "Амперсанд в русском заголовке неестественен"
+ },
+ {
+  "de": "Viele FitLine-Produkte werden mit Stevia gesüßt. Stevia ist ein natürlicher Pflanzenextrakt aus der gleichnamigen Pflanze, hat praktisch null Kalorien und bringt deinen Blutzucker nicht durcheinander. Das klingt erstmal nach dem typischen Gesundheitstrend, aber der Unterschied zu klassischen Süßungsmitteln wie Aspartam oder Acesulfam-K ist wirklich relevant: Die sind synthetisch hergestellt und stehen schon länger in der Diskussion, weil sie bei manchen Menschen Heißhunger verstärken oder den Darm belasten sollen. Stevia kommt aus der Natur und gilt bei normaler Menge als unbedenklich. Du bekommst also den süßen Geschmack, ohne deinen Körper damit zu belasten.",
+  "alt": "Многие продукты FitLine подслащены стевией. Стевия — это натуральный растительный экстракт из одноимённого растения, в ней практически ноль калорий, и она не сбивает уровень сахара в крови. Сначала это звучит как типичный ЗОЖ-тренд, но разница с классическими подсластителями вроде аспартама или ацесульфама-К действительно важна: их производят синтетически, и они уже давно обсуждаются, потому что, как считается, у некоторых людей они могут усиливать тягу к еде или нагружать кишечник. Стевия родом из природы и при нормальном количестве считается безвредной. То есть ты получаешь сладкий вкус, не нагружая этим свой организм.",
+  "neu": "Многие продукты FitLine подслащены стевией. Стевия — это натуральный растительный экстракт из одноимённого растения, в ней практически ноль калорий, и она не сбивает уровень сахара в крови. На первый взгляд это звучит как типичный ЗОЖ-тренд, но разница с классическими подсластителями вроде аспартама или ацесульфама-К действительно важна: их производят синтетически, и они уже давно вызывают споры, потому что, как считается, у некоторых людей они могут усиливать тягу к еде или нагружать кишечник. Стевия имеет природное происхождение и в обычных количествах считается безопасной. То есть ты получаешь сладкий вкус, не нагружая этим свой организм.",
+  "grund": "«Стевия родом из природы» звучит неестественно"
+ },
+ {
+  "de": "Nein. Auf Konservierungsstoffe wird bewusst verzichtet. Das funktioniert, weil die Produkte in kleinen, luftdicht versiegelten Tagespäckchen abgepackt sind. Das Pulver hat bis zum Öffnen keinen Kontakt mit Luft oder Feuchtigkeit, also braucht es schlicht keine Konservierung. Sobald du die Packung aufmachst, verwendest du alles auf einmal. Kein Anbruch, keine Oxidation, keine Konservierungsstoffe nötig.",
+  "alt": "Нет. От консервантов сознательно отказались. Это работает, потому что продукты расфасованы в маленькие, герметично запечатанные дневные пакетики. До вскрытия порошок не контактирует с воздухом или влагой, поэтому консервация ему просто не нужна. Как только ты открываешь пакетик, используешь всё сразу. Никакой открытой пачки, никакого окисления, консерванты не нужны.",
+  "neu": "Нет. От консервантов сознательно отказались. Это работает потому, что продукты расфасованы в маленькие герметично запечатанные дневные пакетики. До вскрытия порошок не контактирует с воздухом или влагой, поэтому консерванты ему просто не нужны. Открыв пакетик, ты используешь всё сразу. Никакой открытой пачки, никакого окисления — и никаких консервантов.",
+  "grund": "«консервация ему не нужна» звучит неестественно в этом контексте"
+ },
+ {
+  "de": "Verpackung &amp; Umwelt",
+  "alt": "Упаковка &amp; экология",
+  "neu": "Упаковка и экология",
+  "grund": "Амперсанд в русском заголовке неестественен"
+ },
+ {
+  "de": "Das ist eine faire Frage, und {{#unless team_modus=team}}ich verstehe{{/unless}}{{#if team_modus=team}}wir verstehen{{/if}} den ersten Gedanken: mehr Verpackung klingt nach mehr Müll. Aber schau mal genauer hin. Ein normales Supplement-Glas enthält 30 oder 60 Portionen, muss mit Trockenmittel und Sauerstoffabsorbern stabilisiert werden, und du öffnest es täglich. Dabei oxidiert der Rest immer weiter. Die Tagespäckchen hier sind luftdicht versiegelt, brauchen deshalb keine Konservierungsstoffe, und es entsteht kein Abfall durch Reste, die schlecht werden. Außerdem sind die Verpackungen aus recycelbarem Material. Perfekt ist das natürlich nicht, aber im direkten Vergleich nachhaltiger als viele große Plastikflaschen, die am Ende halb voll weggeworfen werden.",
+  "alt": "Это справедливый вопрос, и {{#unless team_modus=team}}я понимаю{{/unless}}{{#if team_modus=team}}мы понимаем{{/if}} первую мысль: больше упаковки звучит как больше мусора. Но присмотрись внимательнее. Обычная банка с добавками содержит 30 или 60 порций, её нужно стабилизировать осушителем и поглотителями кислорода, и ты открываешь её каждый день. При этом остаток всё больше окисляется. Дневные пакетики здесь герметично запечатаны, поэтому им не нужны консерванты, и не появляется мусор из-за остатков, которые портятся. Кроме того, упаковка сделана из перерабатываемого материала. Идеально это, конечно, не, но в прямом сравнении экологичнее, чем многие большие пластиковые бутылки, которые в итоге выбрасывают полупустыми.",
+  "neu": "Это справедливый вопрос, и {{#unless team_modus=team}}я понимаю{{/unless}}{{#if team_modus=team}}мы понимаем{{/if}} первую мысль: больше упаковки — значит больше мусора. Но присмотрись внимательнее. Обычная банка с добавками содержит 30 или 60 порций, её нужно стабилизировать осушителем и поглотителями кислорода, и ты открываешь её каждый день. При этом остаток всё больше окисляется. Дневные пакетики здесь герметично запечатаны, поэтому им не нужны консерванты, и не появляется мусор из-за остатков, которые портятся. Кроме того, упаковка сделана из перерабатываемого материала. Это, конечно, не идеально, но в прямом сравнении экологичнее, чем многие большие пластиковые бутылки, которые в итоге выбрасывают полупустыми.",
+  "grund": "Была грамматическая ошибка: «Идеально это, конечно, не»"
+ },
+ {
+  "de": "Bestellung &amp; Transparenz",
+  "alt": "Заказ &amp; прозрачность",
+  "neu": "Заказ и прозрачность",
+  "grund": "Амперсанд в русском заголовке неестественен"
+ },
+ {
+  "de": "Einstiegspakete starten typischerweise bei 50 bis 100 Euro, je nach Set. Es gibt keine Mindestbestellmenge und keinen Kaufzwang. Im Gespräch {{#unless team_modus=team}}zeige ich{{/unless}}{{#if team_modus=team}}zeigen wir{{/if}} dir alle Möglichkeiten und was für dich sinnvoll wäre, du entscheidest in Ruhe.",
+  "alt": "Стартовые наборы обычно начинаются от 50 до 100 евро, в зависимости от набора. Нет минимального объёма заказа и никакой обязанности покупать. В разговоре {{#unless team_modus=team}}я покажу{{/unless}}{{#if team_modus=team}}мы покажем{{/if}} тебе все варианты и что для тебя имело бы смысл, а ты спокойно решишь.",
+  "neu": "Стартовые наборы обычно стоят примерно от 50 до 100 евро, в зависимости от набора. Нет минимального объёма заказа и никакой обязанности покупать. На консультации {{#unless team_modus=team}}я покажу{{/unless}}{{#if team_modus=team}}мы покажем{{/if}} тебе все варианты и что может подойти именно тебе, а ты спокойно решишь.",
+  "grund": "«начинаются от 50 до 100 евро» и «что имело бы смысл» звучали неестественно"
+ },
+ {
+  "de": "Nein. PM-International ist eine seit 1993 bestehende Aktiengesellschaft mit Sitz in Speyer und arbeitet im legalen Direktvertrieb. Du kannst ganz normal als Kunde bestellen, ohne selbst etwas zu verkaufen oder weiterzuempfehlen.",
+  "alt": "Нет. PM-International — акционерное общество, существующее с 1993 года, с головным офисом в Шпайере, и работает в легальном прямом сбыте. Ты можешь просто заказывать как клиент, без необходимости самому что-то продавать или рекомендовать дальше.",
+  "neu": "Нет. PM-International — акционерное общество с головным офисом в Шпайере, существующее с 1993 года; компания работает в сфере легальных прямых продаж. Ты можешь просто заказывать как клиент, без необходимости что-либо продавать или рекомендовать другим.",
+  "grund": "«прямой сбыт» и «рекомендовать дальше» звучат неестественно по-русски."
+ },
+ {
+  "de": "Ja, als {{#unless team_modus=team}}{{#if geschlecht=weiblich}}unabhängige Vertriebspartnerin{{/if}}{{#if geschlecht=maennlich}}unabhängiger Vertriebspartner{{/if}} werde ich{{/unless}}{{#if team_modus=team}}unabhängige Vertriebspartner werden wir{{/if}} am Umsatz beteiligt, wenn du über {{#unless team_modus=team}}mich{{/unless}}{{#if team_modus=team}}uns{{/if}} bestellst. So funktioniert Direktvertrieb. {{#unless team_modus=team}}Mir ist Transparenz dabei wichtig: Mein Ziel ist deine Zufriedenheit{{/unless}}{{#if team_modus=team}}Uns ist Transparenz dabei wichtig: Unser Ziel ist deine Zufriedenheit{{/if}}, nicht der schnelle Abschluss.",
+  "alt": "Да, {{#unless team_modus=team}}{{#if geschlecht=weiblich}}как независимый партнёр по продажам{{/if}}{{#if geschlecht=maennlich}}как независимый партнёр по продажам{{/if}} я получаю долю с оборота{{/unless}}{{#if team_modus=team}}как независимые партнёры по продажам мы получаем долю с оборота{{/if}}, если ты заказываешь через {{#unless team_modus=team}}меня{{/unless}}{{#if team_modus=team}}нас{{/if}}. Так работает прямой сбыт. {{#unless team_modus=team}}Для меня здесь важна прозрачность: моя цель — чтобы ты был доволен{{/unless}}{{#if team_modus=team}}Для нас здесь важна прозрачность: наша цель — чтобы ты был доволен{{/if}}, а не быстрая продажа.",
+  "neu": "Да, {{#unless team_modus=team}}{{#if geschlecht=weiblich}}как независимый партнёр по продажам{{/if}}{{#if geschlecht=maennlich}}как независимый партнёр по продажам{{/if}} я получаю процент от оборота{{/unless}}{{#if team_modus=team}}как независимые партнёры по продажам мы получаем процент от оборота{{/if}}, если ты заказываешь через {{#unless team_modus=team}}меня{{/unless}}{{#if team_modus=team}}нас{{/if}}. Так работают прямые продажи. {{#unless team_modus=team}}Для меня здесь важна прозрачность: моя цель — чтобы ты был доволен{{/unless}}{{#if team_modus=team}}Для нас здесь важна прозрачность: наша цель — чтобы ты был доволен{{/if}}, а не быстрая продажа.",
+  "grund": "«доля с оборота» и «прямой сбыт» звучат неестественно."
+ },
+ {
+  "de": "<strong>Tagesportion:</strong> 15 g Pulver (1 Sachet), angerührt mit Wasser. Energie 190 kJ / 45 kcal.",
+  "alt": "<strong>Дневная порция:</strong> 15 g порошка (1 саше), размешать с водой. Энергетическая ценность 190 kJ / 45 kcal.",
+  "neu": "<strong>Дневная порция:</strong> 15 г порошка (1 саше), размешанного с водой. Энергетическая ценность — 190 кДж / 45 ккал.",
+  "grund": "Единицы измерения лучше оформить по-русски; нужна грамматическая связь с порцией."
+ },
+ {
+  "de": "Süßung & Geschmack",
+  "alt": "Подслащивание и вкус",
+  "neu": "Подсластители и вкус",
+  "grund": "«Подслащивание» как заголовок раздела ингредиентов звучит неестественно."
+ },
+ {
+  "de": "<strong>Tagesportion:</strong> 3× 1 Messlöffel (1,67 g) in je 40 ml stilles Wasser. Insgesamt 30 mg Koffein pro Tag.",
+  "alt": "<strong>Дневная порция:</strong> 3× 1 мерная ложка (1,67 g) в 40 ml негазированной воды каждая. Всего 30 mg кофеина в день.",
+  "neu": "<strong>Дневная порция:</strong> 3 раза по 1 мерной ложке (1,67 г), каждый раз в 40 мл негазированной воды. Всего 30 мг кофеина в день.",
+  "grund": "Единицы измерения и фраза «в 40 ml ... каждая» оформлены неестественно."
+ },
+ {
+  "de": "30 mg Koffein",
+  "alt": "30 mg кофеина",
+  "neu": "30 мг кофеина",
+  "grund": "Единица измерения должна быть по-русски."
+ },
+ {
+  "de": "<strong>Tagesportion:</strong> 1 Beutel (6,7 g) in Wasser aufgelöst, am Abend vor dem Schlafengehen.",
+  "alt": "<strong>Суточная порция:</strong> 1 пакетик (6,7 g), растворённый в воде, вечером перед сном.",
+  "neu": "<strong>Суточная порция:</strong> 1 пакетик (6,7 г), растворённый в воде, вечером перед сном.",
+  "grund": "Единица измерения должна быть по-русски."
+ },
+ {
+  "de": "<strong>Portion:</strong> 100 ml angerührter Drink enthält ca. <strong>100 Milliarden lebende Bakterien</strong>.",
+  "alt": "<strong>Порция:</strong> 100 ml приготовленного напитка содержит около <strong>100 миллиардов живых бактерий</strong>.",
+  "neu": "<strong>Порция:</strong> 100 мл приготовленного напитка содержит около <strong>100 миллиардов живых бактерий</strong>.",
+  "grund": "Единица измерения должна быть по-русски."
+ },
+ {
+  "de": "Protein-angereichertes Molkepulver",
+  "alt": "Сывороточный порошок, обогащённый белком",
+  "neu": "Порошок молочной сыворотки, обогащённый белком",
+  "grund": "Более точный и естественный перевод Molkepulver."
+ },
+ {
+  "de": "Für jeden Tag, an dem du dir selbst etwas Gutes tust. Finde heraus, ob das Optimalset zu dir passt.",
+  "alt": "На каждый день, когда ты делаешь для себя что-то хорошее. Узнай, подходит ли тебе Optimalset.",
+  "neu": "Для каждого дня, когда ты делаешь себе что-то хорошее. Узнай, подходит ли тебе Optimalset.",
+  "grund": "«На каждый день, когда…» звучит неестественно по-русски."
+ },
+ {
+  "de": "Antwort innerhalb 24h",
+  "alt": "Ответ в течение 24h",
+  "neu": "Ответ в течение 24 часов",
+  "grund": "Непринятое для русского обозначение времени"
+ },
+ {
+  "de": "Alle Produkte sind Nahrungsergänzungsmittel und keine Arzneimittel. Sie können Krankheiten weder heilen, lindern noch verhindern. Bei gesundheitlichen Beschwerden wenden Sie sich bitte an einen Arzt oder Apotheker.",
+  "alt": "Все продукты — это пищевые добавки, а не лекарственные средства. Они не могут ни лечить, ни облегчать, ни предотвращать заболевания. Если у тебя есть жалобы на здоровье, пожалуйста, обратись к врачу или фармацевту.",
+  "neu": "Все продукты являются биологически активными добавками, а не лекарственными средствами. Они не могут излечивать заболевания, облегчать их течение или предотвращать их. Если у тебя есть проблемы со здоровьем, пожалуйста, обратись к врачу или фармацевту.",
+  "grund": "Неточная терминология и неестественная формулировка"
+ },
+ {
+  "de": "Alle Nährwertangaben basieren auf zugelassenen EU-Health-Claims. Individuelle Ergebnisse können variieren.",
+  "alt": "Все данные о пищевой ценности основаны на разрешённых EU-Health-Claims. Индивидуальные результаты могут отличаться.",
+  "neu": "Все данные о пищевой ценности основаны на разрешённых в ЕС утверждениях о пользе для здоровья. Индивидуальные результаты могут отличаться.",
+  "grund": "Непереведённый термин EU-Health-Claims"
+ },
+ {
+  "de": "' + rest + ' weitere Produkte anzeigen",
+  "alt": "' + rest + ' других продуктов показать",
+  "neu": "Показать ещё ' + rest + ' продуктов",
+  "grund": "Неестественный порядок слов"
+ },
+ {
+  "de": "Glas mit angerührtem PowerCocktail und frischen Lebensmitteln",
+  "alt": "Стакан с размешанным PowerCocktail и свежими продуктами",
+  "neu": "Стакан с приготовленным PowerCocktail и свежими продуктами",
+  "grund": "«Размешанным PowerCocktail» звучит неестественно по-русски."
+ },
+ {
+  "de": "Mehr zum Activize",
+  "alt": "Больше об Activize",
+  "neu": "Подробнее об Activize",
+  "grund": "Для ссылки/CTA естественнее «Подробнее…», а не калька «Больше…»."
+ },
+ {
+  "de": "Mehr zum Joghurt-Drink",
+  "alt": "Больше о Joghurt-Drink",
+  "neu": "Подробнее о Joghurt-Drink",
+  "grund": "Для ссылки/CTA естественнее «Подробнее…», а не калька «Больше…»."
+ },
+ {
+  "de": "Mehr zum PowerCocktail",
+  "alt": "Больше о PowerCocktail",
+  "neu": "Подробнее о PowerCocktail",
+  "grund": "Для ссылки/CTA естественнее «Подробнее…», а не калька «Больше…»."
+ },
+ {
+  "de": "Mehr zum Restorate",
+  "alt": "Больше о Restorate",
+  "neu": "Подробнее о Restorate",
+  "grund": "Для ссылки/CTA естественнее «Подробнее…», а не калька «Больше…»."
+ }
+]

@@ -1,0 +1,337 @@
+[
+ {
+  "de": "Mit Milchsäurekulturen für den Darmaufbau. Schmeckt cremig und macht satt. Nur in ausgewählten Ländern erhältlich.",
+  "alt": "आंतों की सेहत बनाने के लिए लैक्टिक एसिड कल्चर के साथ। स्वाद क्रीमी है और पेट भरा रखता है। केवल चुनिंदा देशों में उपलब्ध।",
+  "neu": "आंतों की सेहत को बेहतर बनाने के लिए लैक्टिक एसिड कल्चर के साथ। इसका स्वाद क्रीमी है और यह पेट भरा रखता है। केवल चुनिंदा देशों में उपलब्ध।",
+  "grund": "‘आंतों की सेहत बनाने’ अस्वाभाविक है।"
+ },
+ {
+  "de": "Für deinen Kick",
+  "alt": "आपके किक के लिए",
+  "neu": "आपकी एनर्जी किक के लिए",
+  "grund": "‘आपके किक के लिए’ हिंदी में अस्वाभाविक है।"
+ },
+ {
+  "de": "Dein tägliches Nährstoff-System.",
+  "alt": "आपका रोज़ का पोषक तत्व सिस्टम।",
+  "neu": "आपका रोज़ाना पोषक तत्वों वाला सिस्टम।",
+  "grund": "‘पोषक तत्व सिस्टम’ व्याकरण/प्रयोग में अस्वाभाविक है।"
+ },
+ {
+  "de": "Besseres Bauchgefühl?",
+  "alt": "पेट का बेहतर अहसास?",
+  "neu": "पेट ज़्यादा अच्छा महसूस हो?",
+  "grund": "‘पेट का बेहतर अहसास’ अस्वाभाविक लगता है।"
+ },
+ {
+  "de": "Pantothensäure trägt zur normalen geistigen Leistung bei, Zink zur normalen kognitiven Funktion.",
+  "alt": "पैंटोथेनिक एसिड सामान्य मानसिक प्रदर्शन में योगदान देता है, ज़िंक सामान्य संज्ञानात्मक कार्य में।",
+  "neu": "पैंटोथेनिक एसिड सामान्य मानसिक प्रदर्शन में योगदान देता है और ज़िंक सामान्य संज्ञानात्मक कार्य में योगदान देता है।",
+  "grund": "दूसरे भाग में क्रिया छूट गई थी।"
+ },
+ {
+  "de": "Vital älter werden",
+  "alt": "उम्र बढ़ने पर भी वाइटल रहें",
+  "neu": "उम्र बढ़ने के साथ भी चुस्त-दुरुस्त रहें",
+  "grund": "“वाइटल” हिंदी में अप्राकृतिक/अस्पष्ट है।"
+ },
+ {
+  "de": "Vitamin D trägt zur Erhaltung normaler Knochen und zur normalen Muskelfunktion bei. Eisen trägt dazu bei, Müdigkeit und Erschöpfung zu verringern.",
+  "alt": "Vitamin D सामान्य हड्डियों को बनाए रखने और सामान्य मांसपेशी कार्य में योगदान देता है। आयरन थकान और कमजोरी कम करने में योगदान देता है।",
+  "neu": "Vitamin D हड्डियों को सामान्य बनाए रखने और मांसपेशियों के सामान्य कार्य में योगदान देता है। आयरन थकान और थकावट को कम करने में योगदान देता है।",
+  "grund": "“Erschöpfung” का अर्थ “कमजोरी” नहीं; वाक्य भी अधिक स्वाभाविक किया गया।"
+ },
+ {
+  "de": "Liefert die Wirkstoffe, die dein Körper braucht, um Energie zu erzeugen.¹ Für fokussierte Tage und klare Köpfe.² Mit Stevia gesüßt, ohne künstliche Farbstoffe und Konservierungsmittel.",
+  "alt": "वे सक्रिय तत्व देता है जिनकी आपके शरीर को ऊर्जा बनाने के लिए ज़रूरत होती है।¹ फोकस वाले दिनों और साफ़ सोच के लिए।² Stevia से मीठा किया गया, कृत्रिम रंगों और प्रिज़र्वेटिव्स के बिना।",
+  "neu": "यह वे सक्रिय तत्व देता है, जिनकी आपके शरीर को ऊर्जा बनाने के लिए ज़रूरत होती है।¹ फोकस वाले दिनों और साफ़ सोच के लिए।² Stevia से मीठा किया गया, कृत्रिम रंगों और प्रिज़र्वेटिव्स के बिना।",
+  "grund": "व्याकरण: कर्ता-क्रिया मेल गलत था।"
+ },
+ {
+  "de": "Joghurt-Drink",
+  "alt": "Joghurt-Drink",
+  "neu": "योगर्ट-ड्रिंक",
+  "grund": "जर्मन शब्द अनुवादित नहीं था।",
+  "skip": true
+ },
+ {
+  "de": "Selbstgemachter Joghurt-Drink statt Fertigprodukt — frisch angerührt, frei von Konservierungsstoffen, mit natürlichem Geschmack und Milchsäurekulturen, ideal für die ganze Familie.",
+  "alt": "तैयार प्रोडक्ट के बजाय घर पर बनाया गया Joghurt-Drink — ताज़ा मिलाया हुआ, प्रिज़र्वेटिव्स से मुक्त, प्राकृतिक स्वाद और लैक्टिक एसिड कल्चर्स के साथ, पूरी फैमिली के लिए आदर्श।",
+  "neu": "तैयार प्रोडक्ट के बजाय घर पर बनाया गया योगर्ट-ड्रिंक — ताज़ा मिलाया हुआ, प्रिज़र्वेटिव्स से मुक्त, प्राकृतिक स्वाद और लैक्टिक एसिड कल्चर्स के साथ, पूरी फैमिली के लिए आदर्श।",
+  "grund": "जर्मन शब्द अनुवादित नहीं था।",
+  "skip": true
+ },
+ {
+  "de": "{{#unless team_modus=team}}Mein{{/unless}}{{#if team_modus=team}}Unser{{/if}} Lieblings-Trick",
+  "alt": "{{#unless team_modus=team}}मेरा{{/unless}}{{#if team_modus=team}}हमारा{{/if}} पसंदीदा ट्रिक",
+  "neu": "{{#unless team_modus=team}}मेरी{{/unless}}{{#if team_modus=team}}हमारी{{/if}} पसंदीदा ट्रिक",
+  "grund": "‘ट्रिक’ स्त्रीलिंग है।"
+ },
+ {
+  "de": "Ein Schluck Joghurt-Drink obendrauf. Die beiden Produkte sind aufeinander abgestimmt und ergänzen sich in deiner täglichen Routine.",
+  "alt": "ऊपर से Joghurt-Drink का एक घूंट। दोनों प्रोडक्ट्स एक-दूसरे के साथ तालमेल में हैं और आपकी रोज़ की रूटीन में एक-दूसरे को पूरा करते हैं।",
+  "neu": "ऊपर से थोड़ा योगर्ट-ड्रिंक डालें। दोनों प्रोडक्ट्स एक-दूसरे के साथ तालमेल में हैं और आपकी रोज़ की रूटीन में एक-दूसरे को पूरा करते हैं।",
+  "grund": "जर्मन शब्द अनुवादित नहीं था और ‘घूंट’ डालना अप्राकृतिक था।",
+  "skip": true
+ },
+ {
+  "de": "Pharma-Standard, freiwillig",
+  "alt": "फार्मा-स्टैंडर्ड, स्वेच्छा से",
+  "neu": "फार्मा-स्टैंडर्ड, स्वैच्छिक",
+  "grund": "शीर्षक में 'स्वेच्छा से' अधूरा/अप्राकृतिक लगता है।"
+ },
+ {
+  "de": "Pharma-Standard. <span class=\"t-gold\">Freiwillig.</span>",
+  "alt": "फार्मा-स्टैंडर्ड। <span class=\"t-gold\">स्वेच्छा से।</span>",
+  "neu": "फार्मा-स्टैंडर्ड। <span class=\"t-gold\">स्वैच्छिक।</span>",
+  "grund": "Standalone 'स्वेच्छा से' अप्राकृतिक है।"
+ },
+ {
+  "de": "Made in Germany. Vom Labor bis zur Abfüllung.",
+  "alt": "Made in Germany. लैब से भराई तक।",
+  "neu": "Made in Germany. लैब से फिलिंग तक।",
+  "grund": "'भराई' इस संदर्भ में अप्राकृतिक है।"
+ },
+ {
+  "de": "Von der Forschung bis zur Abfüllung passiert alles in Speyer. Kein Outsourcing, keine langen Lieferketten. Du weißt genau, wo dein Optimalset herkommt.",
+  "alt": "रिसर्च से लेकर भराई तक सब कुछ Speyer में होता है। कोई आउटसोर्सिंग नहीं, कोई लंबी सप्लाई चेन नहीं। आपको ठीक-ठीक पता होता है कि आपका Optimalset कहाँ से आता है।",
+  "neu": "रिसर्च से लेकर फिलिंग तक सब कुछ Speyer में होता है। कोई आउटसोर्सिंग नहीं, कोई लंबी सप्लाई चेन नहीं। आपको ठीक-ठीक पता होता है कि आपका Optimalset कहाँ से आता है।",
+  "grund": "'भराई' इस उत्पादन संदर्भ में अप्राकृतिक है।"
+ },
+ {
+  "de": "Ein Teil jedes Verkaufs geht an die PM We Care-Stiftung. Seit über 20 Jahren Partnerschaft mit World Vision. 8.500 Patenkinder und 40 Projekte weltweit.",
+  "alt": "हर बिक्री का एक हिस्सा PM We Care फाउंडेशन को जाता है। World Vision के साथ 20 साल से ज़्यादा की साझेदारी। दुनिया भर में 8.500 प्रायोजित बच्चे और 40 प्रोजेक्ट।",
+  "neu": "हर बिक्री का एक हिस्सा PM We Care फाउंडेशन को जाता है। World Vision के साथ 20 साल से ज़्यादा की साझेदारी। दुनिया भर में 8,500 प्रायोजित बच्चे और 40 प्रोजेक्ट।",
+  "grund": "हिंदी/अंग्रेज़ी संख्या-प्रारूप में हजार के लिए comma अधिक स्पष्ट है।"
+ },
+ {
+  "de": "Du hast eine 30-tägige Zufriedenheitsgarantie.",
+  "alt": "आपको 30-दिन की संतुष्टि गारंटी मिलती है।",
+  "neu": "आपको 30 दिन की संतुष्टि गारंटी मिलती है।",
+  "grund": "'30-दिन की' हिंदी में अप्राकृतिक है।"
+ },
+ {
+  "de": "Wenn dir das Optimalset nicht schmeckt, nicht zu dir passt oder es dich aus irgendeinem Grund nicht überzeugt, schickst du die angefangene Verpackung zurück und bekommst auf den Cent alles wieder.",
+  "alt": "अगर आपको Optimalset का स्वाद पसंद नहीं आता, यह आपको सूट नहीं करता या किसी भी वजह से आपको नहीं मनाता, तो आप शुरू की हुई पैकिंग वापस भेजते हैं और आपको एक-एक पैसा वापस मिल जाता है।",
+  "neu": "अगर आपको Optimalset का स्वाद पसंद नहीं आता, यह आपको सूट नहीं करता या आप किसी भी वजह से उससे संतुष्ट नहीं हैं, तो खोला हुआ पैक वापस भेज दें और आपको एक-एक पैसा वापस मिल जाएगा।",
+  "grund": "'आपको नहीं मनाता' और 'शुरू की हुई पैकिंग' अप्राकृतिक हैं।"
+ },
+ {
+  "de": "Auch angefangene oder leere Verpackungen reichen aus.",
+  "alt": "शुरू की हुई या खाली पैकिंग भी काफी है।",
+  "neu": "खोले हुए या खाली पैक भी काफी हैं।",
+  "grund": "'शुरू की हुई पैकिंग' अप्राकृतिक है।"
+ },
+ {
+  "de": "Ehrliche Frage: Wo gibt es das heute noch? Geht nur, weil die Qualität wirklich überzeugt.",
+  "alt": "सच-सच बताइए: आजकल ऐसा कहाँ मिलता है? यह सिर्फ इसलिए संभव है, क्योंकि क्वालिटी सच में मनवा देती है।",
+  "neu": "सच-सच बताइए: आजकल ऐसा कहाँ मिलता है? यह सिर्फ इसलिए संभव है, क्योंकि क्वालिटी सच में भरोसा दिलाती है।",
+  "grund": "'क्वालिटी सच में मनवा देती है' अप्राकृतिक है।"
+ },
+ {
+  "de": "Liefert Beta-Carotin, das im Körper zu Vitamin A wird. Vitamin A trägt zur Erhaltung normaler Sehkraft und Haut bei.",
+  "alt": "बीटा-कैरोटीन देता है, जो शरीर में विटामिन A में बदल जाता है। विटामिन A सामान्य दृष्टि और त्वचा बनाए रखने में योगदान देता है।",
+  "neu": "बीटा-कैरोटीन देता है, जो शरीर में विटामिन A में बदल जाता है। विटामिन A सामान्य दृष्टि और सामान्य त्वचा को बनाए रखने में योगदान देता है।",
+  "grund": "व्याकरण और health claim को साफ किया गया।"
+ },
+ {
+  "de": "Bringt natürliche blaue Pflanzenfarbstoffe und Vitamin C mit. Vitamin C trägt zu einem normalen Energiestoffwechsel bei.",
+  "alt": "प्राकृतिक नीले पौधों के रंगद्रव्य और विटामिन C साथ लाता है। विटामिन C सामान्य ऊर्जा मेटाबॉलिज़्म में योगदान देता है।",
+  "neu": "पौधों के प्राकृतिक नीले रंगद्रव्य और विटामिन C साथ लाता है। विटामिन C सामान्य ऊर्जा मेटाबॉलिज़्म में योगदान देता है।",
+  "grund": "मूल अर्थ 'नीले पौधे' नहीं, नीले पौधा-रंगद्रव्य है।"
+ },
+ {
+  "de": "Bringt Apfelfaser als Ballaststoff in den Drink. Plus die typischen Apfel-Pflanzenstoffe aus dem Trester.",
+  "alt": "ड्रिंक में डाइटरी फाइबर के रूप में सेब फाइबर लाता है। साथ में पोमेस से मिलने वाले सेब के विशिष्ट पौधों के तत्व।",
+  "neu": "ड्रिंक में डाइटरी फाइबर के रूप में सेब का फाइबर लाता है। साथ में पोमेस से मिलने वाले सेब के खास पौधा-तत्व भी।",
+  "grund": "'सेब फाइबर' और वाक्य-रचना अस्वाभाविक थी।"
+ },
+ {
+  "de": "Trägt zur Erhaltung normaler Knochen und einer normalen Muskelfunktion bei. In zwei Verbindungen kombiniert, für gute Aufnahme.",
+  "alt": "सामान्य हड्डियों को बनाए रखने और सामान्य मांसपेशी कार्य में योगदान देता है। अच्छे अवशोषण के लिए दो यौगिकों में मिलाया गया।",
+  "neu": "हड्डियों को सामान्य बनाए रखने और मांसपेशियों के सामान्य कामकाज में योगदान देता है। अच्छे अवशोषण के लिए दो यौगिकों में मिलाया गया।",
+  "grund": "हिंदी में स्वास्थ्य दावा अधिक स्वाभाविक किया गया।"
+ },
+ {
+  "de": "Bringt den charakteristischen gelben Pflanzenstoff Curcumin und warme goldene Farbe in den Drink. Klassische Wurzel aus der ayurvedischen Tradition.",
+  "alt": "ड्रिंक में खास पीला पौधों का तत्व करक्यूमिन और गर्म सुनहरा रंग लाता है। आयुर्वेदिक परंपरा की क्लासिक जड़।",
+  "neu": "ड्रिंक में खास पीला पौधा-तत्व करक्यूमिन और गर्माहट भरा सुनहरा रंग लाता है। आयुर्वेदिक परंपरा की क्लासिक जड़।",
+  "grund": "'पीला पौधों का तत्व' व्याकरणिक रूप से गलत था।"
+ },
+ {
+  "de": "Pflanzliche Vorstufe von Vitamin A. Vitamin A trägt zur Erhaltung normaler Sehkraft, Haut und einer normalen Funktion des Immunsystems bei.",
+  "alt": "विटामिन A का पौधों से मिलने वाला पूर्वरूप। विटामिन A सामान्य दृष्टि, त्वचा और इम्यून सिस्टम के सामान्य कामकाज को बनाए रखने में योगदान देता है।",
+  "neu": "विटामिन A का पौधों से मिलने वाला पूर्वरूप। विटामिन A सामान्य दृष्टि, सामान्य त्वचा और इम्यून सिस्टम के सामान्य कामकाज को बनाए रखने में योगदान देता है।",
+  "grund": "'सामान्य त्वचा' का अर्थ साफ नहीं था।"
+ },
+ {
+  "de": "Liefert Lycopin, den roten Pflanzenstoff aus sommerreifen Tomaten. Plus etwas natürliches Vitamin C aus der Frucht.",
+  "alt": "लाइकोपीन देता है, गर्मियों में पके टमाटरों का लाल पौधों का तत्व। साथ में फल से थोड़ा प्राकृतिक विटामिन C।",
+  "neu": "लाइकोपीन देता है, जो गर्मियों में पके टमाटरों में पाया जाने वाला लाल पौधा-तत्व है। साथ में फल से थोड़ा प्राकृतिक विटामिन C।",
+  "grund": "मूल वाक्य में 'लाल पौधों का तत्व' गलत/अस्वाभाविक था।"
+ },
+ {
+  "de": "Trägt zur Verringerung von Müdigkeit und einem normalen Sauerstofftransport im Körper bei. Sanft an Citrat gebunden, magenfreundlich.",
+  "alt": "थकान कम करने और शरीर में सामान्य ऑक्सीजन परिवहन में योगदान देता है। साइट्रेट से सौम्य रूप से बंधा हुआ, पेट के लिए सौम्य।",
+  "neu": "थकान कम करने और शरीर में सामान्य ऑक्सीजन परिवहन में योगदान देता है। साइट्रेट से सौम्य तरीके से जुड़ा हुआ, पेट पर हल्का।",
+  "grund": "'पेट के लिए सौम्य' अस्वाभाविक था।"
+ },
+ {
+  "de": "Bringt die feine Schärfe und die typischen Pflanzenstoffe (Gingerole) der Wurzel in den Drink. Klassisches Gewürz aus der asiatischen Tradition.",
+  "alt": "जड़ की हल्की तीखापन और उसके खास वनस्पति तत्व (Gingerole) ड्रिंक में लाता है। एशियाई परंपरा का क्लासिक मसाला।",
+  "neu": "जड़ का हल्का तीखापन और उसके खास वनस्पति तत्व (जिंजरॉल्स) ड्रिंक में लाता है। एशियाई परंपरा का क्लासिक मसाला।",
+  "grund": "व्याकरण और जर्मन शब्द ठीक किया।"
+ },
+ {
+  "de": "Süße Sommerbeere mit natürlichem Vitamin C. Vitamin C trägt zur Verringerung von Müdigkeit und einem normalen Energiestoffwechsel bei.",
+  "alt": "मीठी गर्मियों वाली बेरी, प्राकृतिक Vitamin C के साथ। Vitamin C थकान कम करने और सामान्य ऊर्जा मेटाबॉलिज़्म में योगदान देता है।",
+  "neu": "गर्मियों की मीठी बेरी, प्राकृतिक Vitamin C के साथ। Vitamin C थकान कम करने और सामान्य ऊर्जा मेटाबॉलिज़्म में योगदान देता है।",
+  "grund": "पहला वाक्य अप्राकृतिक था।"
+ },
+ {
+  "de": "Löslicher Ballaststoff aus der Chicoree-Wurzel. {{#unless joghurt_anzeigen=nein}}Im Probiotic-Joghurt-Drink die natürliche Nährgrundlage für die enthaltenen Milchsäurekulturen.{{/unless}}{{#if joghurt_anzeigen=nein}}Im PowerCocktail die natürliche Nährgrundlage für die enthaltenen Milchsäurekulturen.{{/if}}",
+  "alt": "चिकोरी की जड़ से घुलनशील फाइबर। {{#unless joghurt_anzeigen=nein}}Probiotic-Joghurt-Drink में मौजूद लैक्टिक एसिड कल्चर्स के लिए प्राकृतिक पोषण आधार।{{/unless}}{{#if joghurt_anzeigen=nein}}PowerCocktail में मौजूद लैक्टिक एसिड कल्चर्स के लिए प्राकृतिक पोषण आधार।{{/if}}",
+  "neu": "चिकोरी की जड़ से मिलने वाला घुलनशील फाइबर। {{#unless joghurt_anzeigen=nein}}प्रोबायोटिक योगर्ट ड्रिंक में मौजूद लैक्टिक एसिड कल्चर्स के लिए प्राकृतिक पोषण आधार।{{/unless}}{{#if joghurt_anzeigen=nein}}PowerCocktail में मौजूद लैक्टिक एसिड कल्चर्स के लिए प्राकृतिक पोषण आधार।{{/if}}",
+  "grund": "German “Joghurt” अनुवाद में रह गया था।",
+  "skip": true
+ },
+ {
+  "de": "20+ Vitamine & Mineralien plus 25 Pflanzen, alles in einem Glas",
+  "alt": "20+ विटामिन और मिनरल्स, साथ में 25 पौधे, सब एक ग्लास में",
+  "neu": "20+ विटामिन और मिनरल्स, साथ में 25 पौधों के घटक, सब एक ग्लास में",
+  "grund": "“25 पौधे” हिन्दी में अप्राकृतिक/भ्रामक है।"
+ },
+ {
+  "de": "Pillen-Box mitnehmen, Tabletten dosieren",
+  "alt": "पिल-बॉक्स साथ लें, टैबलेट्स की खुराक तय करें",
+  "neu": "पिल-बॉक्स साथ लें, टैबलेट्स डोज़ के हिसाब से रखें",
+  "grund": "“खुराक तय करें” suggests deciding the dosage, not portioning it."
+ },
+ {
+  "de": "⁴ Preis variiert je nach Bestellweg. Im Kundenabo oder als Teampartner günstiger. Konditionen in der persönlichen Beratung.",
+  "alt": "⁴ कीमत ऑर्डर करने के तरीके के हिसाब से बदलती है। Kundenabo में या टीम पार्टनर के रूप में सस्ता। शर्तें व्यक्तिगत सलाह में।",
+  "neu": "⁴ कीमत ऑर्डर करने के तरीके के अनुसार बदलती है। ग्राहक सब्सक्रिप्शन में या टीम पार्टनर के रूप में कीमत कम होती है। शर्तों की जानकारी व्यक्तिगत सलाह में।",
+  "grund": "Untranslated German term and unnatural phrasing."
+ },
+ {
+  "de": "{{#unless team_modus=team}}Wie kann ich dir am besten helfen?{{/unless}}{{#if team_modus=team}}Wie können wir dir am besten helfen?{{/if}}",
+  "alt": "{{#unless team_modus=team}}मैं आपकी सबसे अच्छी मदद कैसे करूँ?{{/unless}}{{#if team_modus=team}}हम आपकी सबसे अच्छी मदद कैसे करें?{{/if}}",
+  "neu": "{{#unless team_modus=team}}मैं आपकी मदद सबसे अच्छे तरीके से कैसे करूँ?{{/unless}}{{#if team_modus=team}}हम आपकी मदद सबसे अच्छे तरीके से कैसे करें?{{/if}}",
+  "grund": "Original wording sounded unnatural in Hindi."
+ },
+ {
+  "de": "Ich möchte meinen Alltag gut versorgen",
+  "alt": "मुझे रोज़मर्रा के लिए अच्छी सपोर्ट चाहिए",
+  "neu": "मुझे अपनी रोज़मर्रा की ज़िंदगी के लिए अच्छा सपोर्ट चाहिए",
+  "grund": "“अच्छी सपोर्ट” is unnatural/grammatically off."
+ },
+ {
+  "de": "Für Beruf, Familie, Sport und alles, was dazukommt",
+  "alt": "काम, परिवार, स्पोर्ट और बाकी सबके लिए जो साथ आता है",
+  "neu": "काम, परिवार, स्पोर्ट और बाकी हर चीज़ के लिए",
+  "grund": "Literal wording “जो साथ आता है” is unnatural."
+ },
+ {
+  "de": "Mehrere Antworten möglich, {{#unless team_modus=team}}ich bereite mich{{/unless}}{{#if team_modus=team}}wir bereiten uns{{/if}} darauf vor.",
+  "alt": "एक से ज़्यादा जवाब दे सकते हैं, {{#unless team_modus=team}}मैं उसी के हिसाब से तैयारी कर लूँ{{/unless}}{{#if team_modus=team}}हम उसी के हिसाब से तैयारी कर लें{{/if}}.",
+  "neu": "एक से ज़्यादा जवाब दे सकते हैं, {{#unless team_modus=team}}मेरी{{/unless}}{{#if team_modus=team}}हमारी{{/if}} तैयारी उसी के हिसाब से होगी.",
+  "grund": "Original Hindi clause was incomplete/unnatural."
+ },
+ {
+  "de": "{{#unless joghurt_anzeigen=nein}}Diese drei Produkte bilden das Optimalset.{{/unless}}{{#if joghurt_anzeigen=nein}}Diese beiden Produkte bilden deine tägliche Routine.{{/if}} Einfach einzeln in den Warenkorb legen im offiziellen FitLine-Shop.",
+  "alt": "{{#unless joghurt_anzeigen=nein}}ये तीनों प्रोडक्ट मिलकर Optimalset बनाते हैं।{{/unless}}{{#if joghurt_anzeigen=nein}}ये दोनों प्रोडक्ट आपकी रोज़ की रूटीन बनाते हैं।{{/if}} बस आधिकारिक FitLine-Shop में इन्हें एक-एक करके कार्ट में डाल दें।",
+  "neu": "{{#unless joghurt_anzeigen=nein}}ये तीनों प्रोडक्ट मिलकर Optimalset बनाते हैं।{{/unless}}{{#if joghurt_anzeigen=nein}}ये दोनों प्रोडक्ट आपकी रोज़ की दिनचर्या का हिस्सा हैं।{{/if}} बस आधिकारिक FitLine-Shop में इन्हें एक-एक करके कार्ट में डाल दें।",
+  "grund": "“रूटीन बनाते हैं” अप्राकृतिक है; अर्थ है कि ये दैनिक रूटीन का हिस्सा/आधार हैं।"
+ },
+ {
+  "de": "Was macht das Optimalset anders als normale Supplements?",
+  "alt": "Optimalset सामान्य सप्लीमेंट्स से अलग क्या करता है?",
+  "neu": "Optimalset सामान्य सप्लीमेंट्स से किस तरह अलग है?",
+  "grund": "मूल अर्थ “क्या अलग बनाता है/कैसे अलग है” है, “क्या करता है” नहीं।"
+ },
+ {
+  "de": "Nein, das sind Nahrungsergänzungsmittel. Sie ersetzen keine ausgewogene Ernährung und sind keine ärztliche Behandlung. Bei konkreten gesundheitlichen Fragen schau bitte zuerst mit einem Arzt. Was das Optimalset tut, ist deinen Körper besser versorgen, nicht etwas kurieren.",
+  "alt": "नहीं, ये फूड सप्लीमेंट्स हैं। ये संतुलित आहार की जगह नहीं लेते और कोई मेडिकल इलाज नहीं हैं। अगर स्वास्थ्य से जुड़े कोई ठोस सवाल हैं, तो कृपया पहले डॉक्टर से बात करें। Optimalset जो करता है, वह है आपके शरीर को बेहतर सप्लाई देना, किसी चीज़ का इलाज करना नहीं।",
+  "neu": "नहीं, ये फूड सप्लीमेंट्स हैं। ये संतुलित आहार की जगह नहीं लेते और कोई मेडिकल इलाज नहीं हैं। अगर स्वास्थ्य से जुड़े कोई ठोस सवाल हैं, तो कृपया पहले डॉक्टर से बात करें। Optimalset आपके शरीर को बेहतर पोषण देने में मदद करता है, किसी चीज़ का इलाज नहीं करता।",
+  "grund": "“शरीर को बेहतर सप्लाई देना” अप्राकृतिक है; साथ ही इलाज न करने का अर्थ साफ़ किया गया।"
+ },
+ {
+  "de": "Ja, als {{#unless team_modus=team}}{{#if geschlecht=weiblich}}unabhängige Vertriebspartnerin{{/if}}{{#if geschlecht=maennlich}}unabhängiger Vertriebspartner{{/if}} werde ich{{/unless}}{{#if team_modus=team}}unabhängige Vertriebspartner werden wir{{/if}} am Umsatz beteiligt, wenn du über {{#unless team_modus=team}}mich{{/unless}}{{#if team_modus=team}}uns{{/if}} bestellst. So funktioniert Direktvertrieb. {{#unless team_modus=team}}Mir ist Transparenz dabei wichtig: Mein Ziel ist deine Zufriedenheit{{/unless}}{{#if team_modus=team}}Uns ist Transparenz dabei wichtig: Unser Ziel ist deine Zufriedenheit{{/if}}, nicht der schnelle Abschluss.",
+  "alt": "हाँ, {{#unless team_modus=team}}{{#if geschlecht=weiblich}}स्वतंत्र बिक्री पार्टनर{{/if}}{{#if geschlecht=maennlich}}स्वतंत्र बिक्री पार्टनर{{/if}} के तौर पर मुझे{{/unless}}{{#if team_modus=team}}स्वतंत्र बिक्री पार्टनर के तौर पर हमें{{/if}} बिक्री राशि में हिस्सा मिलता है, जब आप {{#unless team_modus=team}}मेरे ज़रिए{{/unless}}{{#if team_modus=team}}हमारे ज़रिए{{/if}} ऑर्डर करते हैं। डायरेक्ट सेलिंग इसी तरह काम करती है। {{#unless team_modus=team}}मेरे लिए इसमें पारदर्शिता ज़रूरी है: मेरा लक्ष्य आपकी संतुष्टि है{{/unless}}{{#if team_modus=team}}हमारे लिए इसमें पारदर्शिता ज़रूरी है: हमारा लक्ष्य आपकी संतुष्टि है{{/if}}, जल्दी सौदा बंद करना नहीं।",
+  "neu": "हाँ, {{#unless team_modus=team}}{{#if geschlecht=weiblich}}स्वतंत्र बिक्री पार्टनर{{/if}}{{#if geschlecht=maennlich}}स्वतंत्र बिक्री पार्टनर{{/if}} के तौर पर मुझे{{/unless}}{{#if team_modus=team}}स्वतंत्र बिक्री पार्टनर के तौर पर हमें{{/if}} बिक्री राशि में हिस्सा मिलता है, जब आप {{#unless team_modus=team}}मेरे ज़रिए{{/unless}}{{#if team_modus=team}}हमारे ज़रिए{{/if}} ऑर्डर करते हैं। डायरेक्ट सेलिंग इसी तरह काम करती है। {{#unless team_modus=team}}मेरे लिए इसमें पारदर्शिता ज़रूरी है: मेरा लक्ष्य आपकी संतुष्टि है{{/unless}}{{#if team_modus=team}}हमारे लिए इसमें पारदर्शिता ज़रूरी है: हमारा लक्ष्य आपकी संतुष्टि है{{/if}}, जल्दी बिक्री पूरी करना नहीं।",
+  "grund": "“सौदा बंद करना” यहाँ अप्राकृतिक/कठोर लगता है।"
+ },
+ {
+  "de": "Ja, das geht. Was {{#unless team_modus=team}}ich anbiete{{/unless}}{{#if team_modus=team}}wir anbieten{{/if}}: persönliche Beratung davor, damit du weißt was du bestellst, und {{#unless team_modus=team}}{{#if geschlecht=weiblich}}eine Ansprechpartnerin{{/if}}{{#if geschlecht=maennlich}}einen Ansprechpartner{{/if}}{{/unless}}{{#if team_modus=team}}Ansprechpartner{{/if}} danach, falls Fragen auftauchen. Kein Druck.",
+  "alt": "हाँ, यह हो सकता है। {{#unless team_modus=team}}मेरी ओर से{{/unless}}{{#if team_modus=team}}हमारी ओर से{{/if}}: उससे पहले व्यक्तिगत सलाह, ताकि आपको पता हो कि आप क्या ऑर्डर कर रहे हैं, और उसके बाद {{#unless team_modus=team}}{{#if geschlecht=weiblich}}एक संपर्क व्यक्ति{{/if}}{{#if geschlecht=maennlich}}एक संपर्क व्यक्ति{{/if}}{{/unless}}{{#if team_modus=team}}संपर्क व्यक्ति{{/if}}, अगर सवाल आएँ। कोई दबाव नहीं।",
+  "neu": "हाँ, बिल्कुल। {{#unless team_modus=team}}मेरी ओर से आपको मिलता है{{/unless}}{{#if team_modus=team}}हमारी ओर से आपको मिलता है{{/if}}: ऑर्डर से पहले व्यक्तिगत सलाह, ताकि आपको पता हो कि आप क्या ऑर्डर कर रहे हैं, और बाद में {{#unless team_modus=team}}{{#if geschlecht=weiblich}}सवालों के लिए एक संपर्क व्यक्ति{{/if}}{{#if geschlecht=maennlich}}सवालों के लिए एक संपर्क व्यक्ति{{/if}}{{/unless}}{{#if team_modus=team}}सवालों के लिए संपर्क व्यक्ति{{/if}}, अगर कोई सवाल आए। कोई दबाव नहीं।",
+  "grund": "“हाँ, यह हो सकता है” जर्मन का शाब्दिक और अप्राकृतिक अनुवाद है।"
+ },
+ {
+  "de": "NRV = Nährstoffbezugswert für die tägliche Zufuhr nach EU-Verordnung 1169/2011. Quelle: offizielles Datenblatt PM-International AG. Verfügbare Geschmacksrichtungen ohne Künstliche Aromen.",
+  "alt": "NRV = EU-विनियम 1169/2011 के अनुसार दैनिक सेवन के लिए पोषक तत्व संदर्भ मान। स्रोत: आधिकारिक डेटा शीट PM-International AG। उपलब्ध स्वाद कृत्रिम अरोमा के बिना हैं.",
+  "neu": "NRV = EU-विनियम 1169/2011 के अनुसार दैनिक सेवन के लिए पोषक तत्व संदर्भ मान। स्रोत: आधिकारिक डेटा शीट PM-International AG। उपलब्ध स्वादों में कोई कृत्रिम फ्लेवर नहीं है.",
+  "grund": "मूल वाक्यांश हिंदी में अप्राकृतिक था; खाद्य संदर्भ में “फ्लेवर” अधिक स्वाभाविक है।"
+ },
+ {
+  "de": "Natürliches Aroma",
+  "alt": "प्राकृतिक अरोमा",
+  "neu": "प्राकृतिक फ्लेवर",
+  "grund": "खाद्य संदर्भ में “Aroma” के लिए “फ्लेवर” अधिक स्वाभाविक है।"
+ },
+ {
+  "de": "milder Joghurt-Geschmack",
+  "alt": "हल्का योगर्ट स्वाद",
+  "neu": "योगर्ट का हल्का स्वाद",
+  "grund": "“हल्का योगर्ट स्वाद” हिंदी में अप्राकृतिक है।"
+ },
+ {
+  "de": "Keine künstlichen Aromen",
+  "alt": "कोई कृत्रिम अरोमा नहीं",
+  "neu": "कोई कृत्रिम फ्लेवर नहीं",
+  "grund": "खाद्य संदर्भ में “Aromen” के लिए “फ्लेवर” अधिक स्वाभाविक है।"
+ },
+ {
+  "de": "Für jeden Tag, an dem du dir selbst etwas Gutes tust. Finde heraus, ob das Optimalset zu dir passt.",
+  "alt": "हर उस दिन के लिए, जब आप अपने लिए कुछ अच्छा करते हैं। जानिए कि Optimalset आपके लिए सही है या नहीं.",
+  "neu": "हर उस दिन के लिए, जब तुम खुद के लिए कुछ अच्छा करते हो। पता करो कि Optimalset तुम्हारे लिए सही है या नहीं.",
+  "grund": "स्रोत में अनौपचारिक “du” है; अनुवाद में औपचारिक “आप/जानिए” था।",
+  "skip": true
+ },
+ {
+  "de": "Impressum",
+  "alt": "इम्प्रेसम",
+  "neu": "प्रकाशक विवरण",
+  "grund": "‘Impressum’ का शाब्दिक लिप्यंतरण हिंदी में अस्पष्ट/अस्वाभाविक है।"
+ },
+ {
+  "de": "Alle Nährwertangaben basieren auf zugelassenen EU-Health-Claims. Individuelle Ergebnisse können variieren.",
+  "alt": "सभी पोषण संबंधी जानकारियाँ स्वीकृत EU-Health-Claims पर आधारित हैं। व्यक्तिगत नतीजे अलग-अलग हो सकते हैं।",
+  "neu": "सभी पोषण संबंधी जानकारी ईयू के स्वीकृत स्वास्थ्य दावों पर आधारित है। व्यक्तिगत नतीजे अलग-अलग हो सकते हैं।",
+  "grund": "EU-Health-Claims अनुवादित नहीं था और वाक्य हिंदी में कम स्वाभाविक था।"
+ },
+ {
+  "de": "Beta-Carotin",
+  "alt": "Beta-Carotin",
+  "neu": "बीटा-कैरोटीन",
+  "grund": "जर्मन/लैटिन रूप अनुवादित नहीं था; हिंदी लिप्यंतरण अधिक स्वाभाविक है।"
+ },
+ {
+  "de": "Der Wachmacher",
+  "alt": "जगाने वाला",
+  "neu": "नींद भगाने वाला",
+  "grund": "‘जगाने वाला’ इस संदर्भ में अस्वाभाविक लगता है।"
+ },
+ {
+  "de": "Frau Ende 50 lacht im Garten",
+  "alt": "पचास के आखिरी सालों की महिला बगीचे में हंसती हुई",
+  "neu": "पचास की उम्र के उत्तरार्ध में एक महिला बगीचे में हँसती हुई",
+  "grund": "मौजूदा वाक्यांश उम्र के लिए अस्वाभाविक था।"
+ },
+ {
+  "de": "Schwarze Johannisbeere",
+  "alt": "काली किशमिश",
+  "neu": "ब्लैककरंट",
+  "grund": "“Schwarze Johannisbeere” means blackcurrant, not black raisin."
+ }
+]

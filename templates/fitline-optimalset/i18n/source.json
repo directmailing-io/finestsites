@@ -1,0 +1,2082 @@
+[
+ {
+  "id": 0,
+  "de": "Wofür?",
+  "en": "What for?"
+ },
+ {
+  "id": 1,
+  "de": "Optimalset",
+  "en": "Optimal Set"
+ },
+ {
+  "id": 2,
+  "de": "Die Vorteile <span class=\"nav-chip\">7 Gründe</span>",
+  "en": "The benefits <span class=\"nav-chip\">7 reasons"
+ },
+ {
+  "id": 3,
+  "de": "Was steckt drinnen?",
+  "en": "What's inside?"
+ },
+ {
+  "id": 4,
+  "de": "Über {{vorname}}",
+  "en": "About {{vorname}}"
+ },
+ {
+  "id": 5,
+  "de": "Über uns",
+  "en": "About us"
+ },
+ {
+  "id": 6,
+  "de": "Lass dich beraten",
+  "en": "Get in touch"
+ },
+ {
+  "id": 7,
+  "de": "{{#unless team_modus=team}}FitLine {{#if geschlecht=weiblich}}Beraterin{{/if}}{{#if geschlecht=maennlich}}Berater{{/if}}{{/unless}}{{#if team_modus=team}}FitLine Berater/in{{/if}}",
+  "en": "{{#unless team_modus=team}}FitLine Consultant{{/unless}}{{#if team_modus=team}}FitLine Consultant{{/if}}"
+ },
+ {
+  "id": 8,
+  "de": "Die Vorteile",
+  "en": "The benefits"
+ },
+ {
+  "id": 9,
+  "de": "7 Gründe",
+  "en": "7 reasons"
+ },
+ {
+  "id": 10,
+  "de": "Für die Verdauung",
+  "en": "For digestion"
+ },
+ {
+  "id": 11,
+  "de": "Probiotisch",
+  "en": "Probiotic"
+ },
+ {
+  "id": 12,
+  "de": "Dein Probiotic-Joghurt",
+  "en": "Your probiotic yogurt"
+ },
+ {
+  "id": 13,
+  "de": "Mit Milchsäurekulturen für den Darmaufbau. Schmeckt cremig und macht satt. Nur in ausgewählten Ländern erhältlich.",
+  "en": "With live cultures to support your gut. Tastes creamy and keeps you full. Only available in selected countries."
+ },
+ {
+  "id": 14,
+  "de": "Für die Nacht",
+  "en": "For the night"
+ },
+ {
+  "id": 15,
+  "de": "Erholung",
+  "en": "Recovery"
+ },
+ {
+  "id": 16,
+  "de": "Dein Abend-Drink",
+  "en": "Your evening drink"
+ },
+ {
+  "id": 17,
+  "de": "Kurz vor dem Schlafen für eine bessere Regeneration. Mit Magnesium, Kalzium und neun Vitaminen für die Nacht.",
+  "en": "Right before bed for better recovery. With magnesium, calcium and nine vitamins for the night."
+ },
+ {
+  "id": 18,
+  "de": "Für deinen Kick",
+  "en": "For your boost"
+ },
+ {
+  "id": 19,
+  "de": "Zuckerfrei",
+  "en": "Sugar-free"
+ },
+ {
+  "id": 20,
+  "de": "Mit Guarana",
+  "en": "With guarana"
+ },
+ {
+  "id": 21,
+  "de": "Dein Booster",
+  "en": "Your booster"
+ },
+ {
+  "id": 22,
+  "de": "Wenn der Akku leer ist. Mit Guarana und B-Vitaminen, ganz ohne Zucker.",
+  "en": "For when your battery runs low. With guarana and B vitamins, no sugar at all."
+ },
+ {
+  "id": 23,
+  "de": "Für jeden Tag",
+  "en": "For every day"
+ },
+ {
+  "id": 24,
+  "de": "Alles drin",
+  "en": "All in one"
+ },
+ {
+  "id": 25,
+  "de": "Dein Nährstoff-Cocktail",
+  "en": "Your nutrient cocktail"
+ },
+ {
+  "id": 26,
+  "de": "Dein Start in den Tag. Vitamine, Mineralstoffe und alles Wichtige in einem Glas.",
+  "en": "Your start to the day. Vitamins, minerals and all the essentials in one glass."
+ },
+ {
+  "id": 27,
+  "de": "{{#unless team_modus=team}}Meine{{/unless}}{{#if team_modus=team}}Unsere{{/if}} persönliche Empfehlung",
+  "en": "{{#unless team_modus=team}}My{{/unless}}{{#if team_modus=team}}Our{{/if}} personal recommendation"
+ },
+ {
+  "id": 28,
+  "de": "Dein tägliches Nährstoff-System.",
+  "en": "Your daily nutrient system."
+ },
+ {
+  "id": 29,
+  "de": "Morgens, tagsüber, abends: {{#unless joghurt_anzeigen=nein}}vier{{/unless}}{{#if joghurt_anzeigen=nein}}drei{{/if}} Produkte, die genau aufeinander abgestimmt sind. Fit und versorgt durch den Alltag, entwickelt von einem Hersteller mit 100+ Patenten, der offiziell für Profisportler aus 40 Ländern produziert. {{#unless team_modus=team}}Ich nutze es selbst{{/unless}}{{#if team_modus=team}}Wir nutzen es selbst{{/if}}, jeden Tag.",
+  "en": "Morning, daytime, evening: {{#unless joghurt_anzeigen=nein}}four{{/unless}}{{#if joghurt_anzeigen=nein}}three{{/if}} products designed to work together. Fit and fueled all day long, developed by a manufacturer with 100+ patents that officially produces for professional athletes from 40 countries. {{#unless team_modus=team}}I use it myself{{/unless}}{{#if team_modus=team}}We use it ourselves{{/if}}, every single day."
+ },
+ {
+  "id": 30,
+  "de": "Kostenlos beraten lassen",
+  "en": "Get free advice"
+ },
+ {
+  "id": 31,
+  "de": "↓ Wofür brauche ich das?",
+  "en": "↓ Why would I need this?"
+ },
+ {
+  "id": 32,
+  "de": "Diese Seite wird betrieben von <strong>{{#unless team_modus=team}}{{vorname}} {{nachname}}{{/unless}}{{#if team_modus=team}}{{vorname}} {{nachname}} &amp; {{partner_vorname}} {{partner_nachname}}{{/if}}</strong>",
+  "en": "This site is run by <strong>{{#unless team_modus=team}}{{vorname}} {{nachname}}{{/unless}}{{#if team_modus=team}}{{vorname}} {{nachname}} &amp; {{partner_vorname}} {{partner_nachname}}{{/if}}</strong>"
+ },
+ {
+  "id": 33,
+  "de": "{{#unless team_modus=team}}{{#if geschlecht=weiblich}}Unabhängige Vertriebspartnerin{{/if}}{{#if geschlecht=maennlich}}Unabhängiger Vertriebspartner{{/if}}{{/unless}}{{#if team_modus=team}}Unabhängige Vertriebspartner{{/if}} der PM-International (FitLine®). Diese Seite ist keine offizielle Website der PM-International AG.",
+  "en": "{{#unless team_modus=team}}Independent distributor{{/unless}}{{#if team_modus=team}}Independent distributors{{/if}} of PM-International (FitLine®). This is not an official website of PM-International AG."
+ },
+ {
+  "id": 34,
+  "de": "Hand auf's Herz",
+  "en": "Let's be honest"
+ },
+ {
+  "id": 35,
+  "de": "Du hast schon Supplements genommen.<br><em>Aber hast du es auch gemerkt?</em>",
+  "en": "You've taken supplements before.<br><em>But did you actually feel a difference?</em>"
+ },
+ {
+  "id": 36,
+  "de": "Mehr Energie im Alltag?",
+  "en": "More energy every day?"
+ },
+ {
+  "id": 37,
+  "de": "Besseres Bauchgefühl?",
+  "en": "A happier gut?"
+ },
+ {
+  "id": 38,
+  "de": "Mehr Gelassenheit?",
+  "en": "Feeling calmer?"
+ },
+ {
+  "id": 39,
+  "de": "Leichter durch den Tag?",
+  "en": "Breezing through the day?"
+ },
+ {
+  "id": 40,
+  "de": "Ruhiger schlafen?",
+  "en": "Sleeping better?"
+ },
+ {
+  "id": 41,
+  "de": "Mehr Wohlbefinden?",
+  "en": "Feeling better overall?"
+ },
+ {
+  "id": 42,
+  "de": "Bessere Stimmung?",
+  "en": "Better mood?"
+ },
+ {
+  "id": 43,
+  "de": "<strong>Eingenommen ist nicht gleich aufgenommen.</strong> Zwischen Nährstoffe aufnehmen und Nährstoffe verwerten liegt ein langer Weg. Genau dafür hat PM-International das NTC entwickelt, ein patentiertes Konzept, das Nährstoffe dorthin bringt, wo dein Körper sie braucht.",
+  "en": "<strong>Swallowing is not the same as absorbing.</strong> There's a long way between taking nutrients in and actually putting them to use. That's exactly why PM-International developed the NTC, a patented concept that delivers nutrients where your body needs them."
+ },
+ {
+  "id": 44,
+  "de": "Dein Darm in<br>90 Sek. erklärt",
+  "en": "Your gut explained<br>in 90 seconds"
+ },
+ {
+  "id": 45,
+  "de": "Video lädt nicht.",
+  "en": "Video won't load."
+ },
+ {
+  "id": 46,
+  "de": "Erneut versuchen",
+  "en": "Try again"
+ },
+ {
+  "id": 47,
+  "de": "Warum immer mehr Menschen gezielt ergänzen",
+  "en": "Why more and more people supplement smartly"
+ },
+ {
+  "id": 48,
+  "de": "Modernes Leben braucht <em>mehr als Essen</em>.",
+  "en": "Modern life takes <em>more than food</em>."
+ },
+ {
+  "id": 49,
+  "de": "Stress, Schlafmangel, wenig Sonnenlicht. Der Körper hat mehr Bedarf, als er durch normale Ernährung deckt. Das Optimalset liefert bioaktive Mikronährstoffe als tägliche Basis für 12 Bereiche.",
+  "en": "Stress, too little sleep, not enough sunlight. Your body needs more than a normal diet can deliver. The Optimal Set provides bioactive micronutrients as a daily foundation for 12 areas."
+ },
+ {
+  "id": 50,
+  "de": "Energie",
+  "en": "Energy"
+ },
+ {
+  "id": 51,
+  "de": "B-Vitamine und Vitamin C tragen zu einem normalen Energiestoffwechsel bei und helfen, Müdigkeit zu reduzieren.",
+  "en": "B vitamins and vitamin C contribute to normal energy-yielding metabolism and help reduce tiredness."
+ },
+ {
+  "id": 52,
+  "de": "Immunsystem",
+  "en": "Immune system"
+ },
+ {
+  "id": 53,
+  "de": "Vitamin C, D, Zink und Selen tragen zur normalen Funktion des Immunsystems bei.",
+  "en": "Vitamins C and D, zinc and selenium contribute to the normal function of the immune system."
+ },
+ {
+  "id": 54,
+  "de": "Konzentration",
+  "en": "Focus"
+ },
+ {
+  "id": 55,
+  "de": "Pantothensäure trägt zur normalen geistigen Leistung bei, Zink zur normalen kognitiven Funktion.",
+  "en": "Pantothenic acid contributes to normal mental performance, zinc to normal cognitive function."
+ },
+ {
+  "id": 56,
+  "de": "Innere Balance",
+  "en": "Inner balance"
+ },
+ {
+  "id": 57,
+  "de": "Magnesium und die B-Vitamine tragen zur normalen Funktion des Nervensystems bei.",
+  "en": "Magnesium and the B vitamins contribute to the normal function of the nervous system."
+ },
+ {
+  "id": 58,
+  "de": "Verdauung",
+  "en": "Digestion"
+ },
+ {
+  "id": 59,
+  "de": "Calcium trägt zur normalen Funktion der Verdauungsenzyme bei. Plus Inulin als löslicher Ballaststoff.",
+  "en": "Calcium contributes to the normal function of digestive enzymes. Plus inulin as a soluble fibre."
+ },
+ {
+  "id": 60,
+  "de": "Haut, Haare &amp; Nägel",
+  "en": "Skin, hair &amp; nails"
+ },
+ {
+  "id": 61,
+  "de": "Biotin und Zink tragen zur Erhaltung normaler Haut, Haare und Nägel bei. Vitamin C trägt zu einer normalen Kollagenbildung bei.",
+  "en": "Biotin and zinc contribute to the maintenance of normal skin, hair and nails. Vitamin C contributes to normal collagen formation."
+ },
+ {
+  "id": 62,
+  "de": "Muskelkraft",
+  "en": "Muscle strength"
+ },
+ {
+  "id": 63,
+  "de": "Magnesium und Vitamin D tragen zur normalen Muskelfunktion bei.",
+  "en": "Magnesium and vitamin D contribute to normal muscle function."
+ },
+ {
+  "id": 64,
+  "de": "Stoffwechsel",
+  "en": "Metabolism"
+ },
+ {
+  "id": 65,
+  "de": "Chrom trägt zu einem normalen Makronährstoff-Stoffwechsel bei. Vitamin B6 unterstützt den Eiweißstoffwechsel.",
+  "en": "Chromium contributes to normal macronutrient metabolism. Vitamin B6 supports protein metabolism."
+ },
+ {
+  "id": 66,
+  "de": "Hormonbalance",
+  "en": "Hormonal balance"
+ },
+ {
+  "id": 67,
+  "de": "Vitamin B6 trägt zur Regulierung der Hormontätigkeit bei. Jod trägt zu einer normalen Schilddrüsenfunktion bei.",
+  "en": "Vitamin B6 contributes to the regulation of hormonal activity. Iodine contributes to normal thyroid function."
+ },
+ {
+  "id": 68,
+  "de": "Magnesium trägt zur normalen Funktion des Nervensystems und zur normalen Muskelfunktion bei.",
+  "en": "Magnesium contributes to the normal function of the nervous system and to normal muscle function."
+ },
+ {
+  "id": 69,
+  "de": "Zellschutz",
+  "en": "Cell protection"
+ },
+ {
+  "id": 70,
+  "de": "Vitamin E, Selen und Zink tragen dazu bei, die Zellen vor oxidativem Stress zu schützen.",
+  "en": "Vitamin E, selenium and zinc help protect cells from oxidative stress."
+ },
+ {
+  "id": 71,
+  "de": "Vital älter werden",
+  "en": "Aging well"
+ },
+ {
+  "id": 72,
+  "de": "Vitamin D trägt zur Erhaltung normaler Knochen und zur normalen Muskelfunktion bei. Eisen trägt dazu bei, Müdigkeit und Erschöpfung zu verringern.",
+  "en": "Vitamin D contributes to the maintenance of normal bones and normal muscle function. Iron contributes to the reduction of tiredness and fatigue."
+ },
+ {
+  "id": 73,
+  "de": "← wischen →",
+  "en": "← swipe →"
+ },
+ {
+  "id": 74,
+  "de": "Nahrungsergänzungsmittel sind kein Ersatz für eine ausgewogene Ernährung und einen gesunden Lebensstil.",
+  "en": "Food supplements are not a substitute for a balanced diet and a healthy lifestyle."
+ },
+ {
+  "id": 75,
+  "de": "So funktioniert das Optimalset",
+  "en": "How the Optimal Set works"
+ },
+ {
+  "id": 76,
+  "de": "Deine tägliche Routine. Einfacher als gedacht.",
+  "en": "Your daily routine. Easier than you'd think."
+ },
+ {
+  "id": 77,
+  "de": "PowerCocktail morgens und Restorate abends bilden die Basis. Wer tagsüber mehr Energie braucht, greift zum Activize.{{#unless joghurt_anzeigen=nein}} Der probiotische Joghurt ist das optionale Darm-Upgrade.{{/unless}}",
+  "en": "PowerCocktail in the morning and Restorate in the evening are your foundation. Need more energy during the day? That's what Activize is for.{{#unless joghurt_anzeigen=nein}} The probiotic yogurt is the optional gut upgrade.{{/unless}}"
+ },
+ {
+  "id": 78,
+  "de": "Morgen",
+  "en": "Morning"
+ },
+ {
+  "id": 79,
+  "de": "Der Wachmacher",
+  "en": "The Wake-Up"
+ },
+ {
+  "id": 80,
+  "de": "Wofür",
+  "en": "What it's for"
+ },
+ {
+  "id": 81,
+  "de": "Deine tägliche Morgenroutine für die optimale Nährstoffversorgung — alles, was dein Körper für einen energiereichen Start in den Tag braucht, in einem einzigen frischen Glas.",
+  "en": "Your daily morning routine for optimal nutrient supply. Everything your body needs for an energized start to the day, in one single fresh glass."
+ },
+ {
+  "id": 82,
+  "de": "Was drin steckt",
+  "en": "What's inside"
+ },
+ {
+  "id": 83,
+  "de": "12 Vitamine + Spurenelemente in einer Portion",
+  "en": "12 vitamins + trace elements in one serving"
+ },
+ {
+  "id": 84,
+  "de": "20+ Pflanzenextrakte inkl. Kurkuma &amp; Guarana",
+  "en": "20+ plant extracts incl. turmeric &amp; guarana"
+ },
+ {
+  "id": 85,
+  "de": "Lebende Milchsäurekulturen direkt im Pulver",
+  "en": "Live lactic acid cultures right in the powder"
+ },
+ {
+  "id": 86,
+  "de": "Alle Inhaltsstoffe",
+  "en": "All ingredients"
+ },
+ {
+  "id": 87,
+  "de": "Tagsüber",
+  "en": "Daytime"
+ },
+ {
+  "id": 88,
+  "de": "Der Booster",
+  "en": "The Booster"
+ },
+ {
+  "id": 89,
+  "de": "Liefert die Wirkstoffe, die dein Körper braucht, um Energie zu erzeugen.¹ Für fokussierte Tage und klare Köpfe.² Mit Stevia gesüßt, ohne künstliche Farbstoffe und Konservierungsmittel.",
+  "en": "Delivers the nutrients your body needs to produce energy.¹ For focused days and a clear head.² Sweetened with stevia, no artificial colors or preservatives."
+ },
+ {
+  "id": 90,
+  "de": "B-Vitamine und Vitamin C in einer Portion",
+  "en": "B vitamins and vitamin C in one serving"
+ },
+ {
+  "id": 91,
+  "de": "Koffein aus Guarana, sanfter als Energy-Drink",
+  "en": "Caffeine from guarana, gentler than an energy drink"
+ },
+ {
+  "id": 92,
+  "de": "Vegan, ohne Aspartam und künstliche Süßstoffe",
+  "en": "Vegan, no aspartame or artificial sweeteners"
+ },
+ {
+  "id": 93,
+  "de": "Abends",
+  "en": "Evening"
+ },
+ {
+  "id": 94,
+  "de": "Abend-Drink",
+  "en": "Evening Drink"
+ },
+ {
+  "id": 95,
+  "de": "Das basische Pulver für deinen Abend. Mit Magnesium, Zink, B-Vitaminen und Kräutern.",
+  "en": "The alkaline powder for your evening. With magnesium, zinc, B vitamins and herbs."
+ },
+ {
+  "id": 96,
+  "de": "Neun Mineralstoffe in einem Glas",
+  "en": "Nine minerals in one glass"
+ },
+ {
+  "id": 97,
+  "de": "Calcium und Magnesium gemeinsam",
+  "en": "Calcium and magnesium together"
+ },
+ {
+  "id": 98,
+  "de": "Plus Vitamin D und 13 Spurenelemente",
+  "en": "Plus vitamin D and 13 trace elements"
+ },
+ {
+  "id": 99,
+  "de": "Optional",
+  "en": "Optional"
+ },
+ {
+  "id": 100,
+  "de": "Joghurt-Drink",
+  "en": "Yogurt Drink"
+ },
+ {
+  "id": 101,
+  "de": "Selbstgemachter Joghurt-Drink statt Fertigprodukt — frisch angerührt, frei von Konservierungsstoffen, mit natürlichem Geschmack und Milchsäurekulturen, ideal für die ganze Familie.",
+  "en": "A homemade yogurt drink instead of a store-bought one. Freshly mixed, free from preservatives, with natural flavor and live cultures, great for the whole family."
+ },
+ {
+  "id": 102,
+  "de": "Frisch angerührt, nicht aus dem Kühlregal",
+  "en": "Freshly mixed, not from the chiller aisle"
+ },
+ {
+  "id": 103,
+  "de": "Mehr Bakterienkulturen als im Supermarkt-Joghurt",
+  "en": "More bacterial cultures than supermarket yogurt"
+ },
+ {
+  "id": 104,
+  "de": "Mit Inulin und Molkeprotein, ohne Konservierungsstoffe",
+  "en": "With inulin and whey protein, no preservatives"
+ },
+ {
+  "id": 105,
+  "de": "¹ Vitamin B6 trägt zu einem normalen Energiestoffwechsel bei. ² Vitamin B6, B12 und C tragen zu einer normalen psychologischen Funktion bei.",
+  "en": "¹ Vitamin B6 contributes to normal energy-yielding metabolism. ² Vitamins B6, B12 and C contribute to normal psychological function."
+ },
+ {
+  "id": 106,
+  "de": "{{#unless team_modus=team}}Mein{{/unless}}{{#if team_modus=team}}Unser{{/if}} Lieblings-Trick",
+  "en": "{{#unless team_modus=team}}My{{/unless}}{{#if team_modus=team}}Our{{/if}} favorite trick"
+ },
+ {
+  "id": 107,
+  "de": "So pimpst du deinen Drink.",
+  "en": "How to level up your drink."
+ },
+ {
+  "id": 108,
+  "de": "Start mit PowerCocktail",
+  "en": "Start with PowerCocktail"
+ },
+ {
+  "id": 109,
+  "de": "Ein Beutel ins Glas, kaltes Wasser dazu. Kurz umrühren, fertig ist die Basis.",
+  "en": "One sachet in a glass, add cold water. A quick stir and your base is ready."
+ },
+ {
+  "id": 110,
+  "de": "Joghurt rundet ab",
+  "en": "Yogurt tops it off"
+ },
+ {
+  "id": 111,
+  "de": "Ein Schluck Joghurt-Drink obendrauf. Die beiden Produkte sind aufeinander abgestimmt und ergänzen sich in deiner täglichen Routine.",
+  "en": "A splash of yogurt drink on top. The two products are made for each other and complement your daily routine."
+ },
+ {
+  "id": 112,
+  "de": "Activize hinzu",
+  "en": "Add Activize"
+ },
+ {
+  "id": 113,
+  "de": "Eine Portion Activize mit ins Glas. So hast du den Wachmacher gleich dabei.",
+  "en": "One serving of Activize into the same glass. That way your wake-up boost is built right in."
+ },
+ {
+  "id": 114,
+  "de": "Fertig in 30 Sekunden",
+  "en": "Done in 30 seconds"
+ },
+ {
+  "id": 115,
+  "de": "Schneller als dein Kaffee gebrüht ist. Und du hast deinen Drink für den Tag.",
+  "en": "Faster than your coffee brews. And your drink for the day is ready."
+ },
+ {
+  "id": 116,
+  "de": "{{#unless team_modus=team}}Warum ich das empfehle{{/unless}}{{#if team_modus=team}}Warum wir das empfehlen{{/if}}",
+  "en": "{{#unless team_modus=team}}Why I recommend this{{/unless}}{{#if team_modus=team}}Why we recommend this{{/if}}"
+ },
+ {
+  "id": 117,
+  "de": "Ergebnisse, Qualität, Sicherheit.",
+  "en": "Results, quality, safety."
+ },
+ {
+  "id": 118,
+  "de": "Drei Dinge muss ein Produkt erfüllen, {{#unless team_modus=team}}damit ich es empfehle{{/unless}}{{#if team_modus=team}}damit wir es empfehlen{{/if}}: Es muss wirken, sauber hergestellt sein und sicher sein. Hier ist, warum das Optimalset alle drei Punkte erfüllt.",
+  "en": "A product has to deliver on three things before {{#unless team_modus=team}}I recommend it{{/unless}}{{#if team_modus=team}}we recommend it{{/if}}: it has to work, be cleanly produced and be safe. Here is why the Optimal Set checks all three boxes."
+ },
+ {
+  "id": 119,
+  "de": "Das NTC. Damit Nährstoffe ankommen, wo sie gebraucht werden.",
+  "en": "The NTC. So nutrients arrive where they are needed."
+ },
+ {
+  "id": 120,
+  "de": "Zwischen Nährstoffe aufnehmen und Nährstoffe verwerten liegt ein langer Weg. Das NTC, das Nährstoff-Transport-Konzept von PM-International, ist darauf ausgelegt, Nährstoffe in der richtigen Form zur richtigen Zeit dorthin zu bringen, wo dein Körper sie braucht. 100+ nationale und internationale Patente stehen hinter diesem Ansatz.",
+  "en": "There's a long way between taking nutrients in and actually using them. The NTC, PM-International's Nutrient Transport Concept, is designed to deliver nutrients in the right form at the right time to where your body needs them. 100+ national and international patents back this approach."
+ },
+ {
+  "id": 121,
+  "de": "Für Sportler geprüft",
+  "en": "Tested for athletes"
+ },
+ {
+  "id": 122,
+  "de": "Kölner Liste®. {{#unless joghurt_anzeigen=nein}}Alle vier Produkte.{{/unless}}{{#if joghurt_anzeigen=nein}}Alle drei Produkte.{{/if}} Ohne Beanstandung.",
+  "en": "Cologne List®. {{#unless joghurt_anzeigen=nein}}All four products.{{/unless}}{{#if joghurt_anzeigen=nein}}All three products.{{/if}} No objections."
+ },
+ {
+  "id": 123,
+  "de": "Die Kölner Liste® prüft Nahrungsergänzungsmittel unabhängig auf unerlaubte Substanzen. {{#unless joghurt_anzeigen=nein}}Alle vier Produkte{{/unless}}{{#if joghurt_anzeigen=nein}}Alle drei Produkte{{/if}} des Optimalsets sind gelistet und wurden ohne Beanstandung analysiert. Für Profis Pflicht, für alle anderen eine starke Garantie.",
+  "en": "The Cologne List® independently tests food supplements for banned substances. {{#unless joghurt_anzeigen=nein}}All four products{{/unless}}{{#if joghurt_anzeigen=nein}}All three products{{/if}} of the Optimal Set are listed and were analyzed with no objections. Mandatory for pros, a strong guarantee for everyone else."
+ },
+ {
+  "id": 124,
+  "de": "Einträge auf der Kölner Liste:",
+  "en": "Entries on the Cologne List:"
+ },
+ {
+  "id": 125,
+  "de": "Pharma-Standard, freiwillig",
+  "en": "Pharma standard, voluntary"
+ },
+ {
+  "id": 126,
+  "de": "Pharma-Standard. <span class=\"t-gold\">Freiwillig.</span>",
+  "en": "Pharma standard. <span class=\"t-gold\">By choice."
+ },
+ {
+  "id": 127,
+  "de": "GMP ist der Standard der Pharmaindustrie und für Medikamente gesetzlich vorgeschrieben. Für Nahrungsergänzung reicht deutlich weniger. Unsere Produkte halten sich trotzdem freiwillig daran und werden zusätzlich unabhängig von der ELAB Analytic GmbH geprüft.",
+  "en": "GMP is the pharma industry standard, legally required for medicines. For supplements, far less would be enough. Our products voluntarily follow it anyway and are additionally tested independently by ELAB Analytic GmbH."
+ },
+ {
+  "id": 128,
+  "de": "Wie streng kontrolliert",
+  "en": "How strictly controlled"
+ },
+ {
+  "id": 129,
+  "de": "wie bei Medikamenten",
+  "en": "like medicines"
+ },
+ {
+  "id": 130,
+  "de": "Bio-Siegel",
+  "en": "Organic seal"
+ },
+ {
+  "id": 131,
+  "de": "Standard NEM",
+  "en": "Standard supplements"
+ },
+ {
+  "id": 132,
+  "de": "Made in Germany. Vom Labor bis zur Abfüllung.",
+  "en": "Made in Germany. From lab to bottling."
+ },
+ {
+  "id": 133,
+  "de": "Von der Forschung bis zur Abfüllung passiert alles in Speyer. Kein Outsourcing, keine langen Lieferketten. Du weißt genau, wo dein Optimalset herkommt.",
+  "en": "From research to bottling, everything happens in Speyer, Germany. No outsourcing, no long supply chains. You know exactly where your Optimal Set comes from."
+ },
+ {
+  "id": 134,
+  "de": "Alles aus einer Hand",
+  "en": "All under one roof"
+ },
+ {
+  "id": 135,
+  "de": "Forschung",
+  "en": "Research"
+ },
+ {
+  "id": 136,
+  "de": "Entwicklung",
+  "en": "Development"
+ },
+ {
+  "id": 137,
+  "de": "Produktion",
+  "en": "Production"
+ },
+ {
+  "id": 138,
+  "de": "Qualitätskontrolle",
+  "en": "Quality control"
+ },
+ {
+  "id": 139,
+  "de": "Vertrauen von Profis",
+  "en": "Trusted by pros"
+ },
+ {
+  "id": 140,
+  "de": "Profisportler, die auf unser Konzept setzen.",
+  "en": "Professional athletes who rely on our concept."
+ },
+ {
+  "id": 141,
+  "de": "Offizieller Partner der ATP-Tour, Partner des Deutschen Skiverbands. Athleten aus über 85 Disziplinen in 40 Nationen.<sup style=\"font-size:0.7em;vertical-align:super;opacity:0.55\">³</sup> Wer Ergebnisse braucht, kann sich keine Kompromisse leisten.",
+  "en": "Official partner of the ATP Tour, partner of the German Ski Association. Athletes from over 85 disciplines in 40 nations.<sup style=\"font-size:0.7em;vertical-align:super;opacity:0.55\">³</sup> When results matter, there's no room for compromise."
+ },
+ {
+  "id": 142,
+  "de": "³ Angaben gemäß PM-International AG",
+  "en": "³ Figures according to PM-International AG"
+ },
+ {
+  "id": 143,
+  "de": "Patenkinder",
+  "en": "sponsored children"
+ },
+ {
+  "id": 144,
+  "de": "weltweite Projekte",
+  "en": "projects worldwide"
+ },
+ {
+  "id": 145,
+  "de": "Kaufen und Gutes tun",
+  "en": "Buy and do good"
+ },
+ {
+  "id": 146,
+  "de": "Mit jedem Kauf hilfst du automatisch mit.",
+  "en": "Every purchase automatically helps."
+ },
+ {
+  "id": 147,
+  "de": "Ein Teil jedes Verkaufs geht an die PM We Care-Stiftung. Seit über 20 Jahren Partnerschaft mit World Vision. 8.500 Patenkinder und 40 Projekte weltweit.",
+  "en": "Part of every sale goes to the PM We Care foundation. Partnered with World Vision for over 20 years. 8,500 sponsored children and 40 projects worldwide."
+ },
+ {
+  "id": 148,
+  "de": "Volle Zufriedenheit oder Geld zurück",
+  "en": "Full satisfaction or your money back"
+ },
+ {
+  "id": 149,
+  "de": "Du hast eine 30-tägige Zufriedenheitsgarantie.",
+  "en": "You get a 30-day satisfaction guarantee."
+ },
+ {
+  "id": 150,
+  "de": "Wenn dir das Optimalset nicht schmeckt, nicht zu dir passt oder es dich aus irgendeinem Grund nicht überzeugt, schickst du die angefangene Verpackung zurück und bekommst auf den Cent alles wieder.",
+  "en": "If the Optimal Set doesn't taste right, doesn't suit you or just doesn't win you over for any reason, send back the opened packaging and get every cent refunded."
+ },
+ {
+  "id": 151,
+  "de": "Auch angefangene oder leere Verpackungen reichen aus.",
+  "en": "Even opened or empty packaging is fine."
+ },
+ {
+  "id": 152,
+  "de": "Keine Formulare. Keine Rechtfertigung. Kein Stress.",
+  "en": "No forms. No explanations. No hassle."
+ },
+ {
+  "id": 153,
+  "de": "Innerhalb weniger Tage zurück auf dem Konto.",
+  "en": "Back in your account within a few days."
+ },
+ {
+  "id": 154,
+  "de": "Ehrliche Frage: Wo gibt es das heute noch? Geht nur, weil die Qualität wirklich überzeugt.",
+  "en": "Honest question: where else do you get that these days? Only possible because the quality truly delivers."
+ },
+ {
+  "id": 155,
+  "de": "Garantiegeber: PM-International AG, Hauptstrasse 5, 67547 Worms. Bedingungen gemäß PM-Rückgaberichtlinien. Gilt für Erstkäufe über den offiziellen FitLine-Shop.",
+  "en": "Guarantor: PM-International AG, Hauptstrasse 5, 67547 Worms, Germany. Terms per PM return policy. Applies to first purchases via the official FitLine shop."
+ },
+ {
+  "id": 156,
+  "de": "TAGE",
+  "en": "DAYS"
+ },
+ {
+  "id": 157,
+  "de": "GELD ZURÜCK",
+  "en": "MONEY BACK"
+ },
+ {
+  "id": 158,
+  "de": "Was steckt eigentlich drin?",
+  "en": "So what's actually in it?"
+ },
+ {
+  "id": 159,
+  "de": "Aus echten Lebensmitteln.",
+  "en": "Made from real foods."
+ },
+ {
+  "id": 160,
+  "de": "Pflanzen, Beeren, Mineralien, Spurenelemente. Alles als Pulver, Extrakt oder Konzentrat, sorgfältig ausgewählt und aufeinander abgestimmt.",
+  "en": "Plants, berries, minerals, trace elements. All as powders, extracts or concentrates, carefully selected and matched to work together."
+ },
+ {
+  "id": 161,
+  "de": "Rote Bete",
+  "en": "Beetroot"
+ },
+ {
+  "id": 162,
+  "de": "als Saftkonzentrat",
+  "en": "as juice concentrate"
+ },
+ {
+  "id": 163,
+  "de": "Bringt natürliches Folat in den Drink. Folat trägt zur Verringerung von Müdigkeit und einer normalen Blutbildung bei.",
+  "en": "Adds natural folate to the drink. Folate contributes to the reduction of tiredness and fatigue and to normal blood formation."
+ },
+ {
+  "id": 164,
+  "de": "Brokkoli",
+  "en": "Broccoli"
+ },
+ {
+  "id": 165,
+  "de": "als Pulver",
+  "en": "as powder"
+ },
+ {
+  "id": 166,
+  "de": "Echtes Gemüse mit natürlichem Vitamin C im Drink. Vitamin C trägt zu einer normalen Funktion des Immunsystems bei.",
+  "en": "Real vegetables with natural vitamin C in your drink. Vitamin C contributes to the normal function of the immune system."
+ },
+ {
+  "id": 167,
+  "de": "Karotte",
+  "en": "Carrot"
+ },
+ {
+  "id": 168,
+  "de": "Liefert Beta-Carotin, das im Körper zu Vitamin A wird. Vitamin A trägt zur Erhaltung normaler Sehkraft und Haut bei.",
+  "en": "Provides beta-carotene, which the body turns into vitamin A. Vitamin A contributes to the maintenance of normal vision and skin."
+ },
+ {
+  "id": 169,
+  "de": "als Citrat & Carbonat",
+  "en": "as citrate & carbonate"
+ },
+ {
+  "id": 170,
+  "de": "Trägt zur Verringerung von Müdigkeit und einer normalen Muskelfunktion bei. Gleich in zwei Verbindungen drin, damit der Körper es gut aufnehmen kann.",
+  "en": "Contributes to the reduction of tiredness and fatigue and to normal muscle function. Included in two compounds so your body can absorb it well."
+ },
+ {
+  "id": 171,
+  "de": "Heidelbeere",
+  "en": "Blueberry"
+ },
+ {
+  "id": 172,
+  "de": "Bringt natürliche blaue Pflanzenfarbstoffe und Vitamin C mit. Vitamin C trägt zu einem normalen Energiestoffwechsel bei.",
+  "en": "Brings natural blue plant pigments and vitamin C. Vitamin C contributes to normal energy-yielding metabolism."
+ },
+ {
+  "id": 173,
+  "de": "Apfel",
+  "en": "Apple"
+ },
+ {
+  "id": 174,
+  "de": "als Faser & Extrakt",
+  "en": "as fiber & extract"
+ },
+ {
+  "id": 175,
+  "de": "Bringt Apfelfaser als Ballaststoff in den Drink. Plus die typischen Apfel-Pflanzenstoffe aus dem Trester.",
+  "en": "Adds apple fiber to the drink. Plus the typical apple plant compounds from the pomace."
+ },
+ {
+  "id": 176,
+  "de": "als Carbonat & Lactat",
+  "en": "as carbonate & lactate"
+ },
+ {
+  "id": 177,
+  "de": "Trägt zur Erhaltung normaler Knochen und einer normalen Muskelfunktion bei. In zwei Verbindungen kombiniert, für gute Aufnahme.",
+  "en": "Contributes to the maintenance of normal bones and normal muscle function. Combined in two compounds for good absorption."
+ },
+ {
+  "id": 178,
+  "de": "Kurkuma",
+  "en": "Turmeric"
+ },
+ {
+  "id": 179,
+  "de": "als Pulver & Extrakt",
+  "en": "as powder & extract"
+ },
+ {
+  "id": 180,
+  "de": "Bringt den charakteristischen gelben Pflanzenstoff Curcumin und warme goldene Farbe in den Drink. Klassische Wurzel aus der ayurvedischen Tradition.",
+  "en": "Brings curcumin, the signature yellow plant compound, and a warm golden color to the drink. A classic root from the Ayurvedic tradition."
+ },
+ {
+  "id": 181,
+  "de": "Spinat",
+  "en": "Spinach"
+ },
+ {
+  "id": 182,
+  "de": "Liefert natürliches Eisen aus der Pflanze. Eisen trägt zur Verringerung von Müdigkeit und einem normalen Sauerstofftransport im Körper bei.",
+  "en": "Provides natural iron from the plant. Iron contributes to the reduction of tiredness and fatigue and to normal oxygen transport in the body."
+ },
+ {
+  "id": 183,
+  "de": "Beta-Carotin",
+  "en": "Beta-carotene"
+ },
+ {
+  "id": 184,
+  "de": "als Pflanzenfarbstoff",
+  "en": "as plant pigment"
+ },
+ {
+  "id": 185,
+  "de": "Pflanzliche Vorstufe von Vitamin A. Vitamin A trägt zur Erhaltung normaler Sehkraft, Haut und einer normalen Funktion des Immunsystems bei.",
+  "en": "Plant-based precursor of vitamin A. Vitamin A contributes to the maintenance of normal vision and skin and to the normal function of the immune system."
+ },
+ {
+  "id": 186,
+  "de": "Granatapfel",
+  "en": "Pomegranate"
+ },
+ {
+  "id": 187,
+  "de": "als Extrakt",
+  "en": "as extract"
+ },
+ {
+  "id": 188,
+  "de": "Bringt die typischen Granatapfel-Pflanzenstoffe und Vitamin C mit. Vitamin C trägt zum Schutz der Zellen vor oxidativem Stress bei.",
+  "en": "Brings the typical pomegranate plant compounds and vitamin C. Vitamin C contributes to the protection of cells from oxidative stress."
+ },
+ {
+  "id": 189,
+  "de": "Zink",
+  "en": "Zinc"
+ },
+ {
+  "id": 190,
+  "de": "als Gluconat",
+  "en": "as gluconate"
+ },
+ {
+  "id": 191,
+  "de": "Trägt zur Erhaltung normaler Haut, Haare und Nägel und zur normalen Funktion des Immunsystems bei. Organisch an Gluconat gebunden.",
+  "en": "Contributes to the maintenance of normal skin, hair and nails and to the normal function of the immune system. Organically bound to gluconate."
+ },
+ {
+  "id": 192,
+  "de": "Zimt",
+  "en": "Cinnamon"
+ },
+ {
+  "id": 193,
+  "de": "Bringt Wärme und feines Aroma in den Drink. Echter Ceylon-Zimt aus Sri Lanka, höher geschätzt als gewöhnlicher Cassia-Zimt.",
+  "en": "Adds warmth and a fine aroma to the drink. Real Ceylon cinnamon from Sri Lanka, prized above regular cassia cinnamon."
+ },
+ {
+  "id": 194,
+  "de": "Tomate",
+  "en": "Tomato"
+ },
+ {
+  "id": 195,
+  "de": "Liefert Lycopin, den roten Pflanzenstoff aus sommerreifen Tomaten. Plus etwas natürliches Vitamin C aus der Frucht.",
+  "en": "Provides lycopene, the red plant compound from sun-ripened tomatoes. Plus a bit of natural vitamin C from the fruit."
+ },
+ {
+  "id": 196,
+  "de": "Eisen",
+  "en": "Iron"
+ },
+ {
+  "id": 197,
+  "de": "als Citrat",
+  "en": "as citrate"
+ },
+ {
+  "id": 198,
+  "de": "Trägt zur Verringerung von Müdigkeit und einem normalen Sauerstofftransport im Körper bei. Sanft an Citrat gebunden, magenfreundlich.",
+  "en": "Contributes to the reduction of tiredness and fatigue and to normal oxygen transport in the body. Gently bound to citrate, easy on the stomach."
+ },
+ {
+  "id": 199,
+  "de": "Ingwer",
+  "en": "Ginger"
+ },
+ {
+  "id": 200,
+  "de": "Bringt die feine Schärfe und die typischen Pflanzenstoffe (Gingerole) der Wurzel in den Drink. Klassisches Gewürz aus der asiatischen Tradition.",
+  "en": "Brings the root's subtle heat and its typical plant compounds (gingerols) to the drink. A classic spice from the Asian tradition."
+ },
+ {
+  "id": 201,
+  "de": "Erdbeere",
+  "en": "Strawberry"
+ },
+ {
+  "id": 202,
+  "de": "Süße Sommerbeere mit natürlichem Vitamin C. Vitamin C trägt zur Verringerung von Müdigkeit und einem normalen Energiestoffwechsel bei.",
+  "en": "Sweet summer berry with natural vitamin C. Vitamin C contributes to the reduction of tiredness and fatigue and to normal energy-yielding metabolism."
+ },
+ {
+  "id": 203,
+  "de": "Eine der natürlich vitamin-C-reichsten Beeren überhaupt. Vitamin C trägt zu einer normalen Funktion des Immunsystems und zur Verringerung von Müdigkeit bei.",
+  "en": "One of the most naturally vitamin C rich berries there is. Vitamin C contributes to the normal function of the immune system and to the reduction of tiredness and fatigue."
+ },
+ {
+  "id": 204,
+  "de": "Selen",
+  "en": "Selenium"
+ },
+ {
+  "id": 205,
+  "de": "als Selenhefe",
+  "en": "as selenium yeast"
+ },
+ {
+  "id": 206,
+  "de": "Trägt zum Schutz der Zellen vor oxidativem Stress und einer normalen Schilddrüsenfunktion bei. Gewonnen aus angereicherter Hefe.",
+  "en": "Contributes to the protection of cells from oxidative stress and to normal thyroid function. Sourced from enriched yeast."
+ },
+ {
+  "id": 207,
+  "de": "Schwarze Johannisbeere",
+  "en": "Blackcurrant"
+ },
+ {
+  "id": 208,
+  "de": "Bringt dunkle Beeren-Pflanzenstoffe und natürliches Vitamin C mit. Vitamin C trägt zum Schutz der Zellen vor oxidativem Stress bei.",
+  "en": "Brings dark berry plant compounds and natural vitamin C. Vitamin C contributes to the protection of cells from oxidative stress."
+ },
+ {
+  "id": 209,
+  "de": "Bringt typische Cranberry-Pflanzenstoffe und natürliches Vitamin C mit. Vitamin C trägt zur normalen Funktion des Immunsystems bei.",
+  "en": "Brings typical cranberry plant compounds and natural vitamin C. Vitamin C contributes to the normal function of the immune system."
+ },
+ {
+  "id": 210,
+  "de": "Liefert das natürliche Koffein im Drink. Aus der Amazonas-Frucht statt synthetisch hergestellt. Wird langsamer freigesetzt als reiner Kaffee.",
+  "en": "Provides the natural caffeine in the drink. From the Amazon fruit instead of made synthetically. Released more slowly than plain coffee."
+ },
+ {
+  "id": 211,
+  "de": "Sauerkirsche",
+  "en": "Sour cherry"
+ },
+ {
+  "id": 212,
+  "de": "Bringt eine säuerlich-fruchtige Note und natürliche rote Pflanzenfarbstoffe in den Drink.",
+  "en": "Adds a tart, fruity note and natural red plant pigments to the drink."
+ },
+ {
+  "id": 213,
+  "de": "als Ballaststoff",
+  "en": "as dietary fiber"
+ },
+ {
+  "id": 214,
+  "de": "Löslicher Ballaststoff aus der Chicoree-Wurzel. {{#unless joghurt_anzeigen=nein}}Im Probiotic-Joghurt-Drink die natürliche Nährgrundlage für die enthaltenen Milchsäurekulturen.{{/unless}}{{#if joghurt_anzeigen=nein}}Im PowerCocktail die natürliche Nährgrundlage für die enthaltenen Milchsäurekulturen.{{/if}}",
+  "en": "Soluble fiber from the chicory root. {{#unless joghurt_anzeigen=nein}}In the Probiotic yogurt drink it serves as the natural food source for the live cultures inside.{{/unless}}{{#if joghurt_anzeigen=nein}}In the PowerCocktail it serves as the natural food source for the live cultures inside.{{/if}}"
+ },
+ {
+  "id": 215,
+  "de": "Alle 24 Bestandteile zeigen",
+  "en": "Show all 24 ingredients"
+ },
+ {
+  "id": 216,
+  "de": "Was das Optimalset ersetzt",
+  "en": "What the Optimal Set replaces"
+ },
+ {
+  "id": 217,
+  "de": "Alles einzeln kaufen? Teurer, aufwändiger, fehleranfälliger.",
+  "en": "Buying everything separately? Pricier, more hassle, more room for error."
+ },
+ {
+  "id": 218,
+  "de": "Wer Vitamine, Mineralien und Pflanzenextrakte einzeln kauft, gibt schnell mehr aus als gedacht. Dazu kommt: Viele Nährstoffe hemmen sich gegenseitig in der Aufnahme. Wer das nicht weiß, dosiert falsch, ohne es zu merken. Das Optimalset nimmt dir das ab.",
+  "en": "Buy vitamins, minerals and plant extracts separately and you quickly spend more than you planned. On top of that, many nutrients block each other during absorption. If you don't know that, you dose wrong without even noticing. The Optimal Set takes all of that off your plate."
+ },
+ {
+  "id": 219,
+  "de": "Bisher",
+  "en": "Until now"
+ },
+ {
+  "id": 220,
+  "de": "B-Komplex",
+  "en": "B complex"
+ },
+ {
+  "id": 221,
+  "de": "Coenzym Q10",
+  "en": "Coenzyme Q10"
+ },
+ {
+  "id": 222,
+  "de": "Pflanzenextrakte",
+  "en": "Plant extracts"
+ },
+ {
+  "id": 223,
+  "de": "Probiotika",
+  "en": "Probiotics"
+ },
+ {
+  "id": 224,
+  "de": "Folsäure",
+  "en": "Folic acid"
+ },
+ {
+  "id": 225,
+  "de": "Aminosäuren",
+  "en": "Amino acids"
+ },
+ {
+  "id": 226,
+  "de": "Kollagen",
+  "en": "Collagen"
+ },
+ {
+  "id": 227,
+  "de": "Du musst Abstand zu Milch und Calcium halten.",
+  "en": "You have to keep it away from milk and calcium."
+ },
+ {
+  "id": 228,
+  "de": "Folat",
+  "en": "Folate"
+ },
+ {
+  "id": 229,
+  "de": "Perfekt dosiert und aufeinander abgestimmt",
+  "en": "Perfectly dosed and matched to work together"
+ },
+ {
+  "id": 230,
+  "de": "Im direkten Vergleich",
+  "en": "Head-to-head"
+ },
+ {
+  "id": 231,
+  "de": "Was bekommst du wirklich?",
+  "en": "What do you actually get?"
+ },
+ {
+  "id": 232,
+  "de": "Optimalset, Drogerie-Vitamine, frischer Smoothie. Was steckt wirklich drin, was kostet es, was bringt es dir tatsächlich.",
+  "en": "The Optimal Set, drugstore vitamins, a fresh smoothie. What's really inside, what it costs, and what it actually does for you."
+ },
+ {
+  "id": 233,
+  "de": "Empfohlen",
+  "en": "Recommended"
+ },
+ {
+  "id": 234,
+  "de": "Einzelne Supplements",
+  "en": "Individual supplements"
+ },
+ {
+  "id": 235,
+  "de": "Frischer Smoothie",
+  "en": "Fresh smoothie"
+ },
+ {
+  "id": 236,
+  "de": "Was du täglich bekommst",
+  "en": "What you get daily"
+ },
+ {
+  "id": 237,
+  "de": "20+ Vitamine & Mineralien plus 25 Pflanzen, alles in einem Glas",
+  "en": "20+ vitamins & minerals plus 25 plants, all in one glass"
+ },
+ {
+  "id": 238,
+  "de": "Meist gezielt 1 bis 3 Stoffe pro Produkt",
+  "en": "Usually 1 to 3 targeted nutrients per product"
+ },
+ {
+  "id": 239,
+  "de": "Wechselnd, je nach Tageszutaten",
+  "en": "Varies with the day's ingredients"
+ },
+ {
+  "id": 240,
+  "de": "So bereitest du es zu",
+  "en": "How you prepare it"
+ },
+ {
+  "id": 241,
+  "de": "Beutel ins Glas, Wasser dazu, kurz umrühren",
+  "en": "Pouch in a glass, add water, quick stir"
+ },
+ {
+  "id": 242,
+  "de": "Tablette oder Kapsel schlucken",
+  "en": "Swallow a tablet or capsule"
+ },
+ {
+  "id": 243,
+  "de": "Einkaufen, schnippeln, mixen",
+  "en": "Shop, chop, blend"
+ },
+ {
+  "id": 244,
+  "de": "Zeitaufwand pro Tag",
+  "en": "Time needed per day"
+ },
+ {
+  "id": 245,
+  "de": "Etwa 30 Sekunden",
+  "en": "About 30 seconds"
+ },
+ {
+  "id": 246,
+  "de": "Schnell, aber mehrere Tabletten",
+  "en": "Quick, but several tablets"
+ },
+ {
+  "id": 247,
+  "de": "5 bis 15 Minuten inklusive Vorbereitung",
+  "en": "5 to 15 minutes including prep"
+ },
+ {
+  "id": 248,
+  "de": "Pharma-Standard (GMP)",
+  "en": "Pharma standard (GMP)"
+ },
+ {
+  "id": 249,
+  "de": "Ja, GMP-zertifiziert in Deutschland produziert",
+  "en": "Yes, GMP certified and produced in Germany"
+ },
+ {
+  "id": 250,
+  "de": "Eher selten, hängt vom Hersteller ab",
+  "en": "Rather rare, depends on the manufacturer"
+ },
+ {
+  "id": 251,
+  "de": "Du arbeitest mit frischen Lebensmitteln selbst",
+  "en": "You work with fresh foods yourself"
+ },
+ {
+  "id": 252,
+  "de": "Wenn du unterwegs bist",
+  "en": "When you're on the go"
+ },
+ {
+  "id": 253,
+  "de": "Beutel in die Tasche, ein Glas Wasser reicht",
+  "en": "Pouch in your bag, a glass of water is all you need"
+ },
+ {
+  "id": 254,
+  "de": "Pillen-Box mitnehmen, Tabletten dosieren",
+  "en": "Carry a pill box, dose out tablets"
+ },
+ {
+  "id": 255,
+  "de": "Vorbereitung zu Hause oder Frische-Kauf nötig",
+  "en": "Needs prep at home or buying fresh"
+ },
+ {
+  "id": 256,
+  "de": "Preis pro Tag",
+  "en": "Price per day"
+ },
+ {
+  "id": 257,
+  "de": "ab 2,50 &euro;",
+  "en": "from 2.50 &euro;"
+ },
+ {
+  "id": 258,
+  "de": "3 bis 8 &euro; bei mehreren Stoffen",
+  "en": "3 to 8 &euro; with several nutrients"
+ },
+ {
+  "id": 259,
+  "de": "5 bis 12 &euro; frische Zutaten",
+  "en": "5 to 12 &euro; for fresh ingredients"
+ },
+ {
+  "id": 260,
+  "de": "⁴ Preis variiert je nach Bestellweg. Im Kundenabo oder als Teampartner günstiger. Konditionen in der persönlichen Beratung.",
+  "en": "⁴ Price varies depending on how you order. Cheaper with a customer subscription or as a team partner. Details in your personal consultation."
+ },
+ {
+  "id": 261,
+  "de": "{{#unless team_modus=team}}Wer ich bin{{/unless}}{{#if team_modus=team}}Wer wir sind{{/if}}",
+  "en": "{{#unless team_modus=team}}Who I am{{/unless}}{{#if team_modus=team}}Who we are{{/if}}"
+ },
+ {
+  "id": 262,
+  "de": "{{{about_intro_de_html}}}",
+  "en": "{{{about_intro_en_html}}}"
+ },
+ {
+  "id": 263,
+  "de": "Persönliche Beratung",
+  "en": "Personal advice"
+ },
+ {
+  "id": 264,
+  "de": "{{#unless team_modus=team}}Wie kann ich dir am besten helfen?{{/unless}}{{#if team_modus=team}}Wie können wir dir am besten helfen?{{/if}}",
+  "en": "{{#unless team_modus=team}}How can I best help you?{{/unless}}{{#if team_modus=team}}How can we best help you?{{/if}}"
+ },
+ {
+  "id": 265,
+  "de": "Kostenlose Beratung",
+  "en": "Free consultation"
+ },
+ {
+  "id": 266,
+  "de": "Du sparst Geld",
+  "en": "You save money"
+ },
+ {
+  "id": 267,
+  "de": "Direkt bestellen",
+  "en": "Order directly"
+ },
+ {
+  "id": 268,
+  "de": "Was trifft auf dich zu?",
+  "en": "Which sounds like you?"
+ },
+ {
+  "id": 269,
+  "de": "Damit {{#unless team_modus=team}}ich dich besser vorbereitet beraten kann{{/unless}}{{#if team_modus=team}}wir dich besser vorbereitet beraten können{{/if}}.",
+  "en": "So {{#unless team_modus=team}}I{{/unless}}{{#if team_modus=team}}we{{/if}} can come to our chat better prepared."
+ },
+ {
+  "id": 270,
+  "de": "Ich möchte meinen Alltag gut versorgen",
+  "en": "I want to be well supplied in everyday life"
+ },
+ {
+  "id": 271,
+  "de": "Für Beruf, Familie, Sport und alles, was dazukommt",
+  "en": "For work, family, sport and everything in between"
+ },
+ {
+  "id": 272,
+  "de": "Ich möchte das Optimalset erst mal kennenlernen",
+  "en": "I want to get to know the Optimal Set first"
+ },
+ {
+  "id": 273,
+  "de": "Was steckt drin, wie schmeckt es, was kostet es",
+  "en": "What is in it, how it tastes, what it costs"
+ },
+ {
+  "id": 274,
+  "de": "Weiter →",
+  "en": "Next →"
+ },
+ {
+  "id": 275,
+  "de": "Was ist dir am wichtigsten?",
+  "en": "What matters most to you?"
+ },
+ {
+  "id": 276,
+  "de": "Mehrere Antworten möglich, {{#unless team_modus=team}}ich bereite mich{{/unless}}{{#if team_modus=team}}wir bereiten uns{{/if}} darauf vor.",
+  "en": "Pick as many as you like, it helps {{#unless team_modus=team}}me{{/unless}}{{#if team_modus=team}}us{{/if}} prepare."
+ },
+ {
+  "id": 277,
+  "de": "← Zurück",
+  "en": "← Back"
+ },
+ {
+  "id": 278,
+  "de": "Wie {{#unless team_modus=team}}erreiche ich{{/unless}}{{#if team_modus=team}}erreichen wir{{/if}} dich?",
+  "en": "How can {{#unless team_modus=team}}I{{/unless}}{{#if team_modus=team}}we{{/if}} reach you?"
+ },
+ {
+  "id": 279,
+  "de": "Name und E-Mail reichen, der Rest ist optional.",
+  "en": "Name and email are enough, everything else is optional."
+ },
+ {
+  "id": 280,
+  "de": "Am liebsten per (optional)",
+  "en": "Preferred way to reach you (optional)"
+ },
+ {
+  "id": 281,
+  "de": "Anruf",
+  "en": "Call"
+ },
+ {
+  "id": 282,
+  "de": "Ich bin einverstanden, dass meine Angaben zur Kontaktaufnahme verwendet werden.",
+  "en": "I agree that my details may be used to get in touch with me."
+ },
+ {
+  "id": 283,
+  "de": "Absenden →",
+  "en": "Send →"
+ },
+ {
+  "id": 284,
+  "de": "Danke. Deine Nachricht ist bei {{#unless team_modus=team}}mir{{/unless}}{{#if team_modus=team}}uns{{/if}}.",
+  "en": "Thanks. Your message just landed with {{#unless team_modus=team}}me{{/unless}}{{#if team_modus=team}}us{{/if}}."
+ },
+ {
+  "id": 285,
+  "de": "{{#unless team_modus=team}}Ich melde mich{{/unless}}{{#if team_modus=team}}Wir melden uns{{/if}} innerhalb von 24 Stunden persönlich.",
+  "en": "{{#unless team_modus=team}}I&#39;ll{{/unless}}{{#if team_modus=team}}We&#39;ll{{/if}} personally get back to you within 24 hours."
+ },
+ {
+  "id": 286,
+  "de": "{{#unless joghurt_anzeigen=nein}}Diese drei Produkte bilden das Optimalset.{{/unless}}{{#if joghurt_anzeigen=nein}}Diese beiden Produkte bilden deine tägliche Routine.{{/if}} Einfach einzeln in den Warenkorb legen im offiziellen FitLine-Shop.",
+  "en": "{{#unless joghurt_anzeigen=nein}}These three products make up the Optimal Set.{{/unless}}{{#if joghurt_anzeigen=nein}}These two products make up your daily routine.{{/if}} Just add each one to your cart in the official FitLine shop."
+ },
+ {
+  "id": 287,
+  "de": "PowerCocktail + Restorate — die tägliche Basis",
+  "en": "PowerCocktail + Restorate, your daily foundation"
+ },
+ {
+  "id": 288,
+  "de": "Zum Shop",
+  "en": "Shop now"
+ },
+ {
+  "id": 289,
+  "de": "Energie &amp; Sauerstoffversorgung für den Tag",
+  "en": "Energy &amp; oxygen supply for your day"
+ },
+ {
+  "id": 290,
+  "de": "Probiotisch, cremig &amp; sättigend",
+  "en": "Probiotic, creamy &amp; filling"
+ },
+ {
+  "id": 291,
+  "de": "Yoghurtbereiter",
+  "en": "Yoghurt Maker"
+ },
+ {
+  "id": 292,
+  "de": "Damit bereitest du den Yoghurt Drink zu",
+  "en": "What you need to prepare the Yoghurt Drink"
+ },
+ {
+  "id": 293,
+  "de": "Weitere Empfehlungen",
+  "en": "More recommendations"
+ },
+ {
+  "id": 294,
+  "de": "Noch unsicher, was du brauchst? <button onclick=\"switchKontaktTab('beratung')\">Lass dich kostenlos beraten</button> — {{#unless team_modus=team}}ich helfe{{/unless}}{{#if team_modus=team}}wir helfen{{/if}} dir persönlich.",
+  "en": "Not sure what you need yet? <button onclick=\"switchKontaktTab('beratung')\">Get free advice</button> and {{#unless team_modus=team}}I'll help{{/unless}}{{#if team_modus=team}}we'll help{{/if}} you personally."
+ },
+ {
+  "id": 295,
+  "de": "{{#if geschlecht=weiblich}}Deine persönliche Beraterin{{/if}}{{#if geschlecht=maennlich}}Dein persönlicher Berater{{/if}}",
+  "en": "Your personal consultant"
+ },
+ {
+  "id": 296,
+  "de": "Anrufen",
+  "en": "Call"
+ },
+ {
+  "id": 297,
+  "de": "Eure persönlichen Berater",
+  "en": "Your personal consultants"
+ },
+ {
+  "id": 298,
+  "de": "Häufige Fragen",
+  "en": "Common questions"
+ },
+ {
+  "id": 299,
+  "de": "{{#unless team_modus=team}}Die Fragen, die ich am häufigsten bekomme.{{/unless}}{{#if team_modus=team}}Die Fragen, die wir am häufigsten bekommen.{{/if}}",
+  "en": "{{#unless team_modus=team}}The questions I get asked the most.{{/unless}}{{#if team_modus=team}}The questions we get asked the most.{{/if}}"
+ },
+ {
+  "id": 300,
+  "de": "{{#unless team_modus=team}}Ich versuche so direkt und ehrlich wie möglich zu antworten. Wenn noch etwas fehlt, schreib mir einfach.{{/unless}}{{#if team_modus=team}}Wir versuchen so direkt und ehrlich wie möglich zu antworten. Wenn noch etwas fehlt, schreibt uns einfach.{{/if}}",
+  "en": "{{#unless team_modus=team}}I try to answer as directly and honestly as I can. If anything is missing, just drop me a message.{{/unless}}{{#if team_modus=team}}We try to answer as directly and honestly as we can. If anything is missing, just drop us a message.{{/if}}"
+ },
+ {
+  "id": 301,
+  "de": "Das Produkt",
+  "en": "The product"
+ },
+ {
+  "id": 302,
+  "de": "Was macht das Optimalset anders als normale Supplements?",
+  "en": "What makes the Optimal Set different from regular supplements?"
+ },
+ {
+  "id": 303,
+  "de": "Hinter dem Optimalset steckt das NTC, das Nährstoff-Transport-Konzept von PM-International. Der Grundgedanke: Zwischen Nährstoffe aufnehmen und Nährstoffe verwerten liegt ein langer Weg. Das NTC ist darauf ausgelegt, Nährstoffe in der richtigen Form zur richtigen Zeit dorthin zu bringen, wo dein Körper sie braucht. 100+ Patente stehen dahinter. Dazu kommt der Timing-Ansatz: bestimmte Produkte morgens, andere tagsüber oder abends, weil dein Körper zu verschiedenen Zeiten unterschiedliche Nährstoffe braucht. Das ist der Unterschied zwischen einem einzelnen Supplement und einem durchdachten System.",
+  "en": "Behind the Optimal Set is the NTC, PM-International's Nutrient Transport Concept. The basic idea: there's a long way between taking in nutrients and actually using them. The NTC is designed to get nutrients in the right form, at the right time, to where your body needs them. There are 100+ patents behind it. On top of that comes the timing approach: certain products in the morning, others during the day or in the evening, because your body needs different nutrients at different times. That's the difference between a single supplement and a well-thought-out system."
+ },
+ {
+  "id": 304,
+  "de": "Sind das Medikamente?",
+  "en": "Are these medicines?"
+ },
+ {
+  "id": 305,
+  "de": "Nein, das sind Nahrungsergänzungsmittel. Sie ersetzen keine ausgewogene Ernährung und sind keine ärztliche Behandlung. Bei konkreten gesundheitlichen Fragen schau bitte zuerst mit einem Arzt. Was das Optimalset tut, ist deinen Körper besser versorgen, nicht etwas kurieren.",
+  "en": "No, these are food supplements. They are not a substitute for a balanced diet and not a medical treatment. If you have specific health concerns, please talk to a doctor first. What the Optimal Set does is supply your body better, not cure anything."
+ },
+ {
+  "id": 306,
+  "de": "Zutaten &amp; Inhaltsstoffe",
+  "en": "Ingredients"
+ },
+ {
+  "id": 307,
+  "de": "Warum ist da Zucker drin?",
+  "en": "Why is there sugar in it?"
+ },
+ {
+  "id": 308,
+  "de": "Das ist eine Frage, die {{#unless team_modus=team}}ich oft bekomme{{/unless}}{{#if team_modus=team}}wir oft bekommen{{/if}}, und die Antwort überrascht viele. Ja, in manchen Produkten steckt eine kleine Menge Zucker, zum Beispiel Dextrose. Aber der ist nicht da, damit es süß schmeckt. Er funktioniert als Transportmittel. Vereinfacht erklärt: Dein Darm hat Kanäle, durch die Nährstoffe ins Blut wandern. Bestimmte Vitamine und Aminosäuren kommen durch diese Kanäle deutlich besser rein, wenn gleichzeitig ein kleiner Zuckeranteil dabei ist. Der Zucker öffnet quasi das Tor, und die Nährstoffe kommen mit rein. Die Menge ist so gering, dass du dir da keine Sorgen machen musst, solange du nicht den ganzen Tag davon isst.",
+  "en": "{{#unless team_modus=team}}I{{/unless}}{{#if team_modus=team}}We{{/if}} get this question a lot, and the answer surprises many people. Yes, some products contain a small amount of sugar, dextrose for example. But it's not there to make it taste sweet. It works as a transport vehicle. Put simply: your gut has channels through which nutrients pass into the blood. Certain vitamins and amino acids get through those channels much better when a small amount of sugar comes along. The sugar basically opens the gate, and the nutrients slip in with it. The amount is so small that you don't need to worry about it, as long as you're not sipping it all day long."
+ },
+ {
+  "id": 309,
+  "de": "Womit ist das gesüßt, und was ist der Unterschied zu anderen Süßungsmitteln?",
+  "en": "What is it sweetened with, and how is that different from other sweeteners?"
+ },
+ {
+  "id": 310,
+  "de": "Viele FitLine-Produkte werden mit Stevia gesüßt. Stevia ist ein natürlicher Pflanzenextrakt aus der gleichnamigen Pflanze, hat praktisch null Kalorien und bringt deinen Blutzucker nicht durcheinander. Das klingt erstmal nach dem typischen Gesundheitstrend, aber der Unterschied zu klassischen Süßungsmitteln wie Aspartam oder Acesulfam-K ist wirklich relevant: Die sind synthetisch hergestellt und stehen schon länger in der Diskussion, weil sie bei manchen Menschen Heißhunger verstärken oder den Darm belasten sollen. Stevia kommt aus der Natur und gilt bei normaler Menge als unbedenklich. Du bekommst also den süßen Geschmack, ohne deinen Körper damit zu belasten.",
+  "en": "Many FitLine products are sweetened with stevia. Stevia is a natural plant extract from the plant of the same name, has virtually zero calories and doesn't mess with your blood sugar. That might sound like the typical health trend, but the difference to classic sweeteners like aspartame or acesulfame K really matters: those are made synthetically and have been under debate for a while, because they're said to trigger cravings in some people or put strain on the gut. Stevia comes from nature and is considered safe in normal amounts. So you get the sweet taste without burdening your body."
+ },
+ {
+  "id": 311,
+  "de": "Sind Konservierungsstoffe drin?",
+  "en": "Does it contain preservatives?"
+ },
+ {
+  "id": 312,
+  "de": "Nein. Auf Konservierungsstoffe wird bewusst verzichtet. Das funktioniert, weil die Produkte in kleinen, luftdicht versiegelten Tagespäckchen abgepackt sind. Das Pulver hat bis zum Öffnen keinen Kontakt mit Luft oder Feuchtigkeit, also braucht es schlicht keine Konservierung. Sobald du die Packung aufmachst, verwendest du alles auf einmal. Kein Anbruch, keine Oxidation, keine Konservierungsstoffe nötig.",
+  "en": "No. Preservatives are deliberately left out. That works because the products come in small, airtight sealed daily sachets. The powder never touches air or moisture until you open it, so it simply doesn't need preserving. Once you open a sachet, you use it all at once. Nothing sits around half-open, nothing oxidizes, no preservatives needed."
+ },
+ {
+  "id": 313,
+  "de": "Verpackung &amp; Umwelt",
+  "en": "Packaging &amp; environment"
+ },
+ {
+  "id": 314,
+  "de": "Ist das nicht schlecht für die Umwelt, wenn alles in Einzelpäckchen steckt?",
+  "en": "Isn't all that single-serve packaging bad for the environment?"
+ },
+ {
+  "id": 315,
+  "de": "Das ist eine faire Frage, und {{#unless team_modus=team}}ich verstehe{{/unless}}{{#if team_modus=team}}wir verstehen{{/if}} den ersten Gedanken: mehr Verpackung klingt nach mehr Müll. Aber schau mal genauer hin. Ein normales Supplement-Glas enthält 30 oder 60 Portionen, muss mit Trockenmittel und Sauerstoffabsorbern stabilisiert werden, und du öffnest es täglich. Dabei oxidiert der Rest immer weiter. Die Tagespäckchen hier sind luftdicht versiegelt, brauchen deshalb keine Konservierungsstoffe, und es entsteht kein Abfall durch Reste, die schlecht werden. Außerdem sind die Verpackungen aus recycelbarem Material. Perfekt ist das natürlich nicht, aber im direkten Vergleich nachhaltiger als viele große Plastikflaschen, die am Ende halb voll weggeworfen werden.",
+  "en": "Fair question, and {{#unless team_modus=team}}I{{/unless}}{{#if team_modus=team}}we{{/if}} get the first thought: more packaging sounds like more waste. But look a little closer. A regular supplement jar holds 30 or 60 servings, needs drying agents and oxygen absorbers to stay stable, and you open it every day. The rest keeps oxidizing the whole time. The daily sachets here are sealed airtight, so they don't need any preservatives, and there's no waste from leftovers going bad. On top of that, the packaging is made from recyclable material. It's not perfect, of course, but compared directly it's more sustainable than all those big plastic bottles that end up in the bin half full."
+ },
+ {
+  "id": 316,
+  "de": "Bestellung &amp; Transparenz",
+  "en": "Ordering &amp; transparency"
+ },
+ {
+  "id": 317,
+  "de": "Was kostet das?",
+  "en": "What does it cost?"
+ },
+ {
+  "id": 318,
+  "de": "Einstiegspakete starten typischerweise bei 50 bis 100 Euro, je nach Set. Es gibt keine Mindestbestellmenge und keinen Kaufzwang. Im Gespräch {{#unless team_modus=team}}zeige ich{{/unless}}{{#if team_modus=team}}zeigen wir{{/if}} dir alle Möglichkeiten und was für dich sinnvoll wäre, du entscheidest in Ruhe.",
+  "en": "Starter packages typically begin at 50 to 100 euros, depending on the set. There's no minimum order and no obligation to buy. In our chat {{#unless team_modus=team}}I&#39;ll{{/unless}}{{#if team_modus=team}}we&#39;ll{{/if}} walk you through all the options and what would make sense for you, and you decide in your own time."
+ },
+ {
+  "id": 319,
+  "de": "Muss ich ein Abo abschließen?",
+  "en": "Do I have to sign up for a subscription?"
+ },
+ {
+  "id": 320,
+  "de": "Nein. Du kannst einmalig bestellen, regelmäßig bestellen oder optional Treuepunkte nutzen, kein Abo, keine Mindestlaufzeit. Du entscheidest bei jeder Bestellung neu, was du möchtest.",
+  "en": "No. You can order once, order regularly or optionally use loyalty points. No subscription, no minimum term. With every order you decide fresh what you want."
+ },
+ {
+  "id": 321,
+  "de": "Ist das ein Schneeballsystem?",
+  "en": "Is this a pyramid scheme?"
+ },
+ {
+  "id": 322,
+  "de": "Nein. PM-International ist eine seit 1993 bestehende Aktiengesellschaft mit Sitz in Speyer und arbeitet im legalen Direktvertrieb. Du kannst ganz normal als Kunde bestellen, ohne selbst etwas zu verkaufen oder weiterzuempfehlen.",
+  "en": "No. PM-International is a stock corporation founded in 1993, headquartered in Speyer, Germany, operating in legal direct sales. You can simply order as a customer without ever selling or recommending anything yourself."
+ },
+ {
+  "id": 323,
+  "de": "Verdienst du Geld, wenn ich bestelle?",
+  "en": "Do you earn money when I order?"
+ },
+ {
+  "id": 324,
+  "de": "Ja, als {{#unless team_modus=team}}{{#if geschlecht=weiblich}}unabhängige Vertriebspartnerin{{/if}}{{#if geschlecht=maennlich}}unabhängiger Vertriebspartner{{/if}} werde ich{{/unless}}{{#if team_modus=team}}unabhängige Vertriebspartner werden wir{{/if}} am Umsatz beteiligt, wenn du über {{#unless team_modus=team}}mich{{/unless}}{{#if team_modus=team}}uns{{/if}} bestellst. So funktioniert Direktvertrieb. {{#unless team_modus=team}}Mir ist Transparenz dabei wichtig: Mein Ziel ist deine Zufriedenheit{{/unless}}{{#if team_modus=team}}Uns ist Transparenz dabei wichtig: Unser Ziel ist deine Zufriedenheit{{/if}}, nicht der schnelle Abschluss.",
+  "en": "Yes. As {{#unless team_modus=team}}an independent distributor I get{{/unless}}{{#if team_modus=team}}independent distributors we get{{/if}} a share of the sales when you order through {{#unless team_modus=team}}me{{/unless}}{{#if team_modus=team}}us{{/if}}. That's how direct sales works. {{#unless team_modus=team}}Transparency matters to me here: my goal is your satisfaction{{/unless}}{{#if team_modus=team}}Transparency matters to us here: our goal is your satisfaction{{/if}}, not a quick sale."
+ },
+ {
+  "id": 325,
+  "de": "Kann ich auch direkt online bestellen?",
+  "en": "Can I also just order online directly?"
+ },
+ {
+  "id": 326,
+  "de": "Ja, das geht. Was {{#unless team_modus=team}}ich anbiete{{/unless}}{{#if team_modus=team}}wir anbieten{{/if}}: persönliche Beratung davor, damit du weißt was du bestellst, und {{#unless team_modus=team}}{{#if geschlecht=weiblich}}eine Ansprechpartnerin{{/if}}{{#if geschlecht=maennlich}}einen Ansprechpartner{{/if}}{{/unless}}{{#if team_modus=team}}Ansprechpartner{{/if}} danach, falls Fragen auftauchen. Kein Druck.",
+  "en": "Yes, you can. What {{#unless team_modus=team}}I offer{{/unless}}{{#if team_modus=team}}we offer{{/if}}: personal advice beforehand so you know what you're ordering, and someone to turn to afterwards if questions come up. No pressure."
+ },
+ {
+  "id": 327,
+  "de": "Inhaltsstoffe",
+  "en": "Ingredients"
+ },
+ {
+  "id": 328,
+  "de": "<strong>Tagesportion:</strong> 15 g Pulver (1 Sachet), angerührt mit Wasser. Energie 190 kJ / 45 kcal.",
+  "en": "<strong>Daily serving:</strong> 15 g powder (1 sachet), mixed with water. Energy 190 kJ / 45 kcal."
+ },
+ {
+  "id": 329,
+  "de": "Vitamine",
+  "en": "Vitamins"
+ },
+ {
+  "id": 330,
+  "de": "Pantothensäure (B5)",
+  "en": "Pantothenic acid (B5)"
+ },
+ {
+  "id": 331,
+  "de": "Beta-Carotin (Vorstufe Vit A)",
+  "en": "Beta-carotene (provitamin A)"
+ },
+ {
+  "id": 332,
+  "de": "Spurenelemente",
+  "en": "Trace elements"
+ },
+ {
+  "id": 333,
+  "de": "Selen (aus Selenhefe)",
+  "en": "Selenium (from selenium yeast)"
+ },
+ {
+  "id": 334,
+  "de": "Pflanzliche Inhaltsstoffe",
+  "en": "Botanical ingredients"
+ },
+ {
+  "id": 335,
+  "de": "Brokkolisprossen",
+  "en": "Broccoli sprouts"
+ },
+ {
+  "id": 336,
+  "de": "Himbeere",
+  "en": "Raspberry"
+ },
+ {
+  "id": 337,
+  "de": "Holunder",
+  "en": "Elderberry"
+ },
+ {
+  "id": 338,
+  "de": "Brombeere",
+  "en": "Blackberry"
+ },
+ {
+  "id": 339,
+  "de": "Rosenkohl",
+  "en": "Brussels sprouts"
+ },
+ {
+  "id": 340,
+  "de": "Basilikum",
+  "en": "Basil"
+ },
+ {
+  "id": 341,
+  "de": "Traubenkernextrakt (OPC)",
+  "en": "Grape seed extract (OPC)"
+ },
+ {
+  "id": 342,
+  "de": "Algenpulver (Ascophyllum nodosum)",
+  "en": "Algae powder (Ascophyllum nodosum)"
+ },
+ {
+  "id": 343,
+  "de": "Ananasmark",
+  "en": "Pineapple pulp"
+ },
+ {
+  "id": 344,
+  "de": "Ballaststoffe & Sonstiges",
+  "en": "Fiber & more"
+ },
+ {
+  "id": 345,
+  "de": "Apfelfaser",
+  "en": "Apple fiber"
+ },
+ {
+  "id": 346,
+  "de": "Ballaststoff",
+  "en": "dietary fiber"
+ },
+ {
+  "id": 347,
+  "de": "präbiotischer Ballaststoff",
+  "en": "prebiotic fiber"
+ },
+ {
+  "id": 348,
+  "de": "Milchsäurekulturen",
+  "en": "lactic acid cultures"
+ },
+ {
+  "id": 349,
+  "de": "Trägersubstanz",
+  "en": "carrier"
+ },
+ {
+  "id": 350,
+  "de": "Süßung & Geschmack",
+  "en": "Sweetening & taste"
+ },
+ {
+  "id": 351,
+  "de": "Fruktose",
+  "en": "Fructose"
+ },
+ {
+  "id": 352,
+  "de": "natürlicher Fruchtzucker",
+  "en": "natural fruit sugar"
+ },
+ {
+  "id": 353,
+  "de": "aus Stevia",
+  "en": "from stevia"
+ },
+ {
+  "id": 354,
+  "de": "Natürliche Aromen",
+  "en": "Natural flavors"
+ },
+ {
+  "id": 355,
+  "de": "Orange-Maracuja / Erdbeere",
+  "en": "Orange-passion fruit / strawberry"
+ },
+ {
+  "id": 356,
+  "de": "NRV = Nährstoffbezugswert für die tägliche Zufuhr nach EU-Verordnung 1169/2011. Quelle: offizielles Datenblatt PM-International AG (LMIV).",
+  "en": "NRV = nutrient reference value for daily intake under EU Regulation 1169/2011. Source: official data sheet, PM-International AG (LMIV)."
+ },
+ {
+  "id": 357,
+  "de": "<strong>Tagesportion:</strong> 3× 1 Messlöffel (1,67 g) in je 40 ml stilles Wasser. Insgesamt 30 mg Koffein pro Tag.",
+  "en": "<strong>Daily serving:</strong> 3× 1 scoop (1.67 g) in 40 ml still water each. A total of 30 mg caffeine per day."
+ },
+ {
+  "id": 358,
+  "de": "Pflanzliches",
+  "en": "Botanicals"
+ },
+ {
+  "id": 359,
+  "de": "Guarana-Extrakt",
+  "en": "Guarana extract"
+ },
+ {
+  "id": 360,
+  "de": "30 mg Koffein",
+  "en": "30 mg caffeine"
+ },
+ {
+  "id": 361,
+  "de": "Rote-Bete-Pulver",
+  "en": "Beetroot powder"
+ },
+ {
+  "id": 362,
+  "de": "natürliches Konzentrat",
+  "en": "natural concentrate"
+ },
+ {
+  "id": 363,
+  "de": "Algenpulver",
+  "en": "Algae powder"
+ },
+ {
+  "id": 364,
+  "de": "Sonstiges",
+  "en": "Other"
+ },
+ {
+  "id": 365,
+  "de": "Citronensäure",
+  "en": "Citric acid"
+ },
+ {
+  "id": 366,
+  "de": "Säuerungsmittel",
+  "en": "acidifier"
+ },
+ {
+  "id": 367,
+  "de": "Süßung aus Stevia",
+  "en": "stevia sweetening"
+ },
+ {
+  "id": 368,
+  "de": "Kirsche, Maracuja",
+  "en": "Cherry, passion fruit"
+ },
+ {
+  "id": 369,
+  "de": "<strong>Hinweis:</strong> Nicht für Kinder, Schwangere und Stillende geeignet wegen Koffeingehalt.",
+  "en": "<strong>Note:</strong> Not suitable for children, pregnant or breastfeeding women due to the caffeine content."
+ },
+ {
+  "id": 370,
+  "de": "NRV = Nährstoffbezugswert für die tägliche Zufuhr nach EU-Verordnung 1169/2011. Quelle: offizielles Datenblatt PM-International AG.",
+  "en": "NRV = nutrient reference value for daily intake under EU Regulation 1169/2011. Source: official data sheet, PM-International AG."
+ },
+ {
+  "id": 371,
+  "de": "<strong>Tagesportion:</strong> 1 Beutel (6,7 g) in Wasser aufgelöst, am Abend vor dem Schlafengehen.",
+  "en": "<strong>Daily serving:</strong> 1 sachet (6.7 g) dissolved in water, in the evening before bed."
+ },
+ {
+  "id": 372,
+  "de": "Mineralstoffe",
+  "en": "Minerals"
+ },
+ {
+  "id": 373,
+  "de": "Kalium",
+  "en": "Potassium"
+ },
+ {
+  "id": 374,
+  "de": "Mangan",
+  "en": "Manganese"
+ },
+ {
+  "id": 375,
+  "de": "Kupfer",
+  "en": "Copper"
+ },
+ {
+  "id": 376,
+  "de": "Chrom",
+  "en": "Chromium"
+ },
+ {
+  "id": 377,
+  "de": "Geschmacksrichtungen",
+  "en": "Flavors"
+ },
+ {
+  "id": 378,
+  "de": "NRV = Nährstoffbezugswert für die tägliche Zufuhr nach EU-Verordnung 1169/2011. Quelle: offizielles Datenblatt PM-International AG. Verfügbare Geschmacksrichtungen ohne Künstliche Aromen.",
+  "en": "NRV = nutrient reference value for daily intake under EU Regulation 1169/2011. Source: official data sheet, PM-International AG. Available flavors contain no artificial flavorings."
+ },
+ {
+  "id": 379,
+  "de": "<strong>Portion:</strong> 100 ml angerührter Drink enthält ca. <strong>100 Milliarden lebende Bakterien</strong>.",
+  "en": "<strong>Serving:</strong> 100 ml of the mixed drink contains around <strong>100 billion live bacteria</strong>."
+ },
+ {
+  "id": 380,
+  "de": "Vier lebende Bakterienkulturen",
+  "en": "Four live bacterial cultures"
+ },
+ {
+  "id": 381,
+  "de": "Milchsäurebakterium",
+  "en": "lactic acid bacterium"
+ },
+ {
+  "id": 382,
+  "de": "Joghurtkultur",
+  "en": "yogurt culture"
+ },
+ {
+  "id": 383,
+  "de": "Ballaststoffe & Protein",
+  "en": "Fiber & protein"
+ },
+ {
+  "id": 384,
+  "de": "19,8% präbiotischer Ballaststoff",
+  "en": "19.8% prebiotic fiber"
+ },
+ {
+  "id": 385,
+  "de": "Protein-angereichertes Molkepulver",
+  "en": "Protein-enriched whey powder"
+ },
+ {
+  "id": 386,
+  "de": "Eiweißquelle",
+  "en": "protein source"
+ },
+ {
+  "id": 387,
+  "de": "enthalten",
+  "en": "included"
+ },
+ {
+  "id": 388,
+  "de": "Natürliches Aroma",
+  "en": "Natural flavor"
+ },
+ {
+  "id": 389,
+  "de": "milder Joghurt-Geschmack",
+  "en": "mild yogurt taste"
+ },
+ {
+  "id": 390,
+  "de": "Was nicht drin ist",
+  "en": "What's not in it"
+ },
+ {
+  "id": 391,
+  "de": "Keine Konservierungsstoffe",
+  "en": "No preservatives"
+ },
+ {
+  "id": 392,
+  "de": "Keine künstlichen Aromen",
+  "en": "No artificial flavorings"
+ },
+ {
+  "id": 393,
+  "de": "Keine Farbstoffe",
+  "en": "No colorings"
+ },
+ {
+  "id": 394,
+  "de": "Keine Gelatine",
+  "en": "No gelatin"
+ },
+ {
+  "id": 395,
+  "de": "Pulver enthält Milch und Lactose. Quelle: offizielles Datenblatt PM-International AG.",
+  "en": "Powder contains milk and lactose. Source: official data sheet, PM-International AG."
+ },
+ {
+  "id": 396,
+  "de": "Für jeden Tag, an dem du dir selbst etwas Gutes tust. Finde heraus, ob das Optimalset zu dir passt.",
+  "en": "For every day you do something good for yourself. Find out if the Optimal Set is right for you."
+ },
+ {
+  "id": 397,
+  "de": "Seite",
+  "en": "Page"
+ },
+ {
+  "id": 398,
+  "de": "Wofür brauche ich das?",
+  "en": "Why would I need this?"
+ },
+ {
+  "id": 399,
+  "de": "Was steckt drin?",
+  "en": "What's inside?"
+ },
+ {
+  "id": 400,
+  "de": "{{#unless team_modus=team}}Über {{vorname}}{{/unless}}{{#if team_modus=team}}Über uns{{/if}}",
+  "en": "{{#unless team_modus=team}}About {{vorname}}{{/unless}}{{#if team_modus=team}}About us{{/if}}"
+ },
+ {
+  "id": 401,
+  "de": "Rechtliches",
+  "en": "Legal"
+ },
+ {
+  "id": 402,
+  "de": "Impressum",
+  "en": "Legal notice"
+ },
+ {
+  "id": 403,
+  "de": "Datenschutz",
+  "en": "Privacy policy"
+ },
+ {
+  "id": 404,
+  "de": "Antwort innerhalb 24h",
+  "en": "Reply within 24h"
+ },
+ {
+  "id": 405,
+  "de": "Wichtige Hinweise",
+  "en": "Important notes"
+ },
+ {
+  "id": 406,
+  "de": "Alle Produkte sind Nahrungsergänzungsmittel und keine Arzneimittel. Sie können Krankheiten weder heilen, lindern noch verhindern. Bei gesundheitlichen Beschwerden wenden Sie sich bitte an einen Arzt oder Apotheker.",
+  "en": "All products are food supplements, not medicines. They cannot cure, alleviate or prevent any disease. If you have health concerns, please consult a doctor or pharmacist."
+ },
+ {
+  "id": 407,
+  "de": "Alle Nährwertangaben basieren auf zugelassenen EU-Health-Claims. Individuelle Ergebnisse können variieren.",
+  "en": "All nutrition statements are based on authorized EU health claims. Individual results may vary."
+ },
+ {
+  "id": 408,
+  "de": "FitLine® ist eine eingetragene Marke der PM-International AG.",
+  "en": "FitLine® is a registered trademark of PM-International AG."
+ },
+ {
+  "id": 409,
+  "de": "Was interessiert dich am meisten?",
+  "en": "What interests you most?"
+ },
+ {
+  "id": 410,
+  "de": "Was wünschst du dir?",
+  "en": "What are you hoping for?"
+ },
+ {
+  "id": 411,
+  "de": "' + g.label + '",
+  "en": "' + g.labelEn + '"
+ },
+ {
+  "id": 412,
+  "de": "Wird gesendet…",
+  "en": "Sending…"
+ },
+ {
+  "id": 413,
+  "de": "Kein Produkt gefunden.",
+  "en": "No product found."
+ },
+ {
+  "id": 414,
+  "de": "Weniger anzeigen",
+  "en": "Show less"
+ },
+ {
+  "id": 415,
+  "de": "' + rest + ' weitere Produkte anzeigen",
+  "en": "Show ' + rest + ' more products"
+ }
+]
