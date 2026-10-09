@@ -1,344 +1,109 @@
 [
  {
-  "de": "Morgens, tagsüber, abends: {{#unless joghurt_anzeigen=nein}}vier{{/unless}}{{#if joghurt_anzeigen=nein}}drei{{/if}} Produkte, die genau aufeinander abgestimmt sind. Fit und versorgt durch den Alltag, entwickelt von einem Hersteller mit 100+ Patenten, der offiziell für Profisportler aus 40 Ländern produziert. {{#unless team_modus=team}}Ich nutze es selbst{{/unless}}{{#if team_modus=team}}Wir nutzen es selbst{{/if}}, jeden Tag.",
-  "alt": "Зранку, вдень, увечері: {{#unless joghurt_anzeigen=nein}}чотири{{/unless}}{{#if joghurt_anzeigen=nein}}три{{/if}} продукти, які точно узгоджені між собою. У формі й забезпечений усім потрібним у повсякденні, розроблено виробником із 100+ патентами, який офіційно виробляє продукцію для професійних спортсменів із 40 країн. {{#unless team_modus=team}}Я користуюся цим сам{{/unless}}{{#if team_modus=team}}Ми користуємося цим самі{{/if}}, щодня.",
-  "neu": "Зранку, вдень, увечері: {{#unless joghurt_anzeigen=nein}}чотири{{/unless}}{{#if joghurt_anzeigen=nein}}три{{/if}} продукти, точно узгоджені між собою. Вони допомагають бути у формі й отримувати все потрібне в повсякденні; їх розробив виробник із 100+ патентами, який офіційно виготовляє продукцію для професійних спортсменів із 40 країн. {{#unless team_modus=team}}Я користуюся цим особисто{{/unless}}{{#if team_modus=team}}Ми користуємося цим самі{{/if}}, щодня.",
-  "grund": "Уникнено чоловічого роду для невідомої статі й зроблено формулювання природнішим."
- },
- {
-  "de": "Du hast schon Supplements genommen.<br><em>Aber hast du es auch gemerkt?</em>",
-  "alt": "Ти вже приймав Supplements.<br><em>Але ти це справді відчув?</em>",
-  "neu": "У тебе вже був досвід із харчовими добавками.<br><em>Але результат справді відчувався?</em>",
-  "grund": "Було неперекладене “Supplements” і форма чоловічого роду."
- },
- {
-  "de": "Besseres Bauchgefühl?",
-  "alt": "Краще відчуття в животі?",
-  "neu": "Більше комфорту в животі?",
-  "grund": "Попередній варіант був калькою й звучав неприродно."
- },
- {
-  "de": "Leichter durch den Tag?",
-  "alt": "Легше проходити день?",
-  "neu": "Легше протягом дня?",
-  "grund": "Попередній варіант звучав неприродно українською."
- },
- {
-  "de": "Mehr Wohlbefinden?",
-  "alt": "Більше гарного самопочуття?",
-  "neu": "Краще самопочуття?",
-  "grund": "Природніше українською; «більше гарного самопочуття» звучить неприродно."
- },
- {
-  "de": "Modernes Leben braucht <em>mehr als Essen</em>.",
-  "alt": "Сучасному життю потрібно <em>більше, ніж просто їжа</em>.",
-  "neu": "Сучасне життя потребує <em>більше, ніж просто їжі</em>.",
-  "grund": "Природніша конструкція українською; «життю потрібно» звучить незграбно."
- },
- {
-  "de": "Deine tägliche Morgenroutine für die optimale Nährstoffversorgung — alles, was dein Körper für einen energiereichen Start in den Tag braucht, in einem einzigen frischen Glas.",
-  "alt": "Твоя щоденна ранкова рутина для оптимального забезпечення поживними речовинами — усе, що потрібно твоєму організму для енергійного старту дня, в одній свіжій склянці.",
-  "neu": "Твоя щоденна ранкова рутина для оптимального забезпечення поживними речовинами — усе, що потрібно твоєму організму для енергійного старту дня, в одній склянці свіжого напою.",
-  "grund": "«свіжа склянка» звучить неприродно й змінює зміст"
- },
- {
-  "de": "20+ Pflanzenextrakte inkl. Kurkuma &amp; Guarana",
-  "alt": "20+ рослинних екстрактів, зокрема куркума &amp; гуарана",
-  "neu": "20+ рослинних екстрактів, зокрема куркуми та гуарани",
-  "grund": "граматично правильніше після «екстрактів, зокрема»"
+  "de": "PowerCocktail morgens und Restorate abends bilden die Basis. Wer tagsüber mehr Energie braucht, greift zum Activize.{{#unless joghurt_anzeigen=nein}} Der probiotische Joghurt ist das optionale Darm-Upgrade.{{/unless}}",
+  "alt": "PowerCocktail вранці та Restorate ввечері — це база. Кому протягом дня потрібно більше енергії, бере Activize.{{#unless joghurt_anzeigen=nein}} Пробіотичний йогурт — це опційний апгрейд для кишківника.{{/unless}}",
+  "neu": "PowerCocktail вранці та Restorate ввечері — це база. Той, кому протягом дня потрібно більше енергії, обирає Activize.{{#unless joghurt_anzeigen=nein}} Пробіотичний йогурт — це опційний апгрейд для кишківника.{{/unless}}",
+  "grund": "Граматично некоректна конструкція «Кому..., бере»."
  },
  {
   "de": "Joghurt-Drink",
   "alt": "Joghurt-Drink",
   "neu": "Йогуртовий напій",
-  "grund": "німецький текст залишено без перекладу",
+  "grund": "Untranslated German.",
   "skip": true
  },
  {
   "de": "Selbstgemachter Joghurt-Drink statt Fertigprodukt — frisch angerührt, frei von Konservierungsstoffen, mit natürlichem Geschmack und Milchsäurekulturen, ideal für die ganze Familie.",
   "alt": "Домашній Joghurt-Drink замість готового продукту — свіжоприготований, без консервантів, із натуральним смаком і молочнокислими культурами, ідеальний для всієї родини.",
   "neu": "Домашній йогуртовий напій замість готового продукту — свіжоприготований, без консервантів, із натуральним смаком і молочнокислими культурами, ідеальний для всієї родини.",
-  "grund": "німецьку назву залишено без перекладу",
+  "grund": "Untranslated German and unnatural wording.",
   "skip": true
- },
- {
-  "de": "Frisch angerührt, nicht aus dem Kühlregal",
-  "alt": "Свіжоприготований, а не з холодильної полиці",
-  "neu": "Свіжоприготований, а не з холодильного відділу",
-  "grund": "«з холодильної полиці» звучить неприродно"
  },
  {
   "de": "Ein Schluck Joghurt-Drink obendrauf. Die beiden Produkte sind aufeinander abgestimmt und ergänzen sich in deiner täglichen Routine.",
   "alt": "Зверху — ковток Joghurt-Drink. Ці два продукти узгоджені між собою й доповнюють одне одного у твоїй щоденній рутині.",
   "neu": "Зверху — ковток йогуртового напою. Ці два продукти узгоджені між собою й доповнюють одне одного у твоїй щоденній рутині.",
-  "grund": "німецьку назву залишено без перекладу",
+  "grund": "Untranslated German.",
   "skip": true
  },
  {
   "de": "Drei Dinge muss ein Produkt erfüllen, {{#unless team_modus=team}}damit ich es empfehle{{/unless}}{{#if team_modus=team}}damit wir es empfehlen{{/if}}: Es muss wirken, sauber hergestellt sein und sicher sein. Hier ist, warum das Optimalset alle drei Punkte erfüllt.",
-  "alt": "Три речі має виконувати продукт, {{#unless team_modus=team}}щоб я його рекомендував(-ла){{/unless}}{{#if team_modus=team}}щоб ми його рекомендували{{/if}}: він має діяти, бути виготовленим у чистий спосіб і бути безпечним. Ось чому Optimalset відповідає всім трьом пунктам.",
+  "alt": "Продукт має відповідати трьом вимогам, {{#unless team_modus=team}}щоб я його рекомендував(-ла){{/unless}}{{#if team_modus=team}}щоб ми його рекомендували{{/if}}: він має працювати, бути чисто виготовленим і безпечним. Ось чому Optimalset відповідає всім трьом пунктам.",
   "neu": "Продукт має відповідати трьом вимогам, {{#unless team_modus=team}}щоб я його рекомендував(-ла){{/unless}}{{#if team_modus=team}}щоб ми його рекомендували{{/if}}: він має працювати, бути чисто виготовленим і безпечним. Ось чому Optimalset відповідає всім трьом пунктам.",
-  "grund": "«три речі має виконувати продукт» неприродно українською"
+  "grund": "Unnatural wording: “чисто виготовленим”."
  },
  {
-  "de": "GMP ist der Standard der Pharmaindustrie und für Medikamente gesetzlich vorgeschrieben. Für Nahrungsergänzung reicht deutlich weniger. Unsere Produkte halten sich trotzdem freiwillig daran und werden zusätzlich unabhängig von der ELAB Analytic GmbH geprüft.",
-  "alt": "GMP — це стандарт фармацевтичної індустрії, і для ліків він передбачений законом. Для дієтичних добавок достатньо значно меншого. Наші продукти все одно добровільно його дотримуються, а додатково їх незалежно перевіряє ELAB Analytic GmbH.",
-  "neu": "GMP — це стандарт фармацевтичної промисловості, для ліків він обов’язковий за законом. Для дієтичних добавок вимоги значно нижчі. Наші продукти все одно добровільно відповідають цьому стандарту, а додатково їх незалежно перевіряє ELAB Analytic GmbH.",
-  "grund": "Неприродне формулювання й калька про «достатньо меншого» та «продукти дотримуються»."
+  "de": "Trägt zur Erhaltung normaler Knochen und einer normalen Muskelfunktion bei. In zwei Verbindungen kombiniert, für gute Aufnahme.",
+  "alt": "Сприяє збереженню нормальних кісток і нормальній роботі м’язів. Поєднаний у двох сполуках для доброго засвоєння.",
+  "neu": "Сприяє збереженню нормального стану кісток і нормальній роботі м’язів. Поєднаний у двох сполуках для доброго засвоєння.",
+  "grund": "«нормальні кістки» звучить неприродно; краще як усталена health-claim фраза."
  },
  {
-  "de": "Ein Teil jedes Verkaufs geht an die PM We Care-Stiftung. Seit über 20 Jahren Partnerschaft mit World Vision. 8.500 Patenkinder und 40 Projekte weltweit.",
-  "alt": "Частина кожного продажу йде до фонду PM We Care. Уже понад 20 років партнерства з World Vision. 8.500 дітей під опікою та 40 проєктів у всьому світі.",
-  "neu": "Частина кожного продажу йде до фонду PM We Care. Уже понад 20 років партнерства з World Vision. 8 500 дітей під опікою та 40 проєктів у всьому світі.",
-  "grund": "В українській тисячі відділяються пробілом, не крапкою."
+  "de": "Viele FitLine-Produkte werden mit Stevia gesüßt. Stevia ist ein natürlicher Pflanzenextrakt aus der gleichnamigen Pflanze, hat praktisch null Kalorien und bringt deinen Blutzucker nicht durcheinander. Das klingt erstmal nach dem typischen Gesundheitstrend, aber der Unterschied zu klassischen Süßungsmitteln wie Aspartam oder Acesulfam-K ist wirklich relevant: Die sind synthetisch hergestellt und stehen schon länger in der Diskussion, weil sie bei manchen Menschen Heißhunger verstärken oder den Darm belasten sollen. Stevia kommt aus der Natur und gilt bei normaler Menge als unbedenklich. Du bekommst also den süßen Geschmack, ohne deinen Körper damit zu belasten.",
+  "alt": "Багато продуктів FitLine підсолоджуються стевією. Стевія — це натуральний рослинний екстракт з однойменної рослини, має практично нуль калорій і не збиває рівень цукру в крові. Спершу це звучить як типовий тренд про здоров’я, але різниця з класичними підсолоджувачами, такими як аспартам або Acesulfam-K, справді важлива: їх виробляють синтетично, і вони вже давно обговорюються, бо вважається, що в деяких людей вони можуть посилювати сильний голод або навантажувати кишечник. Стевія походить із природи й у звичайній кількості вважається безпечною. Тобто ти отримуєш солодкий смак, не навантажуючи цим своє тіло.",
+  "neu": "Багато продуктів FitLine підсолоджуються стевією. Стевія — це натуральний рослинний екстракт з однойменної рослини, має практично нуль калорій і не збиває рівень цукру в крові. Спершу це звучить як типовий тренд здорового способу життя, але різниця з класичними підсолоджувачами, такими як аспартам або ацесульфам-K, справді важлива: їх виробляють синтетично, і вони вже давно обговорюються, бо вважається, що в деяких людей вони можуть посилювати тягу до солодкого або навантажувати кишечник. Стевія походить із природи й у звичайній кількості вважається безпечною. Тобто ти отримуєш солодкий смак, не навантажуючи цим своє тіло.",
+  "grund": "«Тренд про здоров’я» і «сильний голод» звучать неприродно; назву підсолоджувача краще адаптувати українською."
  },
  {
-  "de": "Wenn dir das Optimalset nicht schmeckt, nicht zu dir passt oder es dich aus irgendeinem Grund nicht überzeugt, schickst du die angefangene Verpackung zurück und bekommst auf den Cent alles wieder.",
-  "alt": "Якщо Optimalset тобі не смакує, не підходить або з будь-якої причини тебе не переконав, ти відправляєш назад почату упаковку й отримуєш усе назад до цента.",
-  "neu": "Якщо Optimalset тобі не смакує, не підходить або з будь-якої причини тебе не переконав, ти відправляєш назад відкриту упаковку й отримуєш назад усю суму до цента.",
-  "grund": "«Почату упаковку» неприродно; уточнено повернення всієї суми."
+  "de": "Nein. Auf Konservierungsstoffe wird bewusst verzichtet. Das funktioniert, weil die Produkte in kleinen, luftdicht versiegelten Tagespäckchen abgepackt sind. Das Pulver hat bis zum Öffnen keinen Kontakt mit Luft oder Feuchtigkeit, also braucht es schlicht keine Konservierung. Sobald du die Packung aufmachst, verwendest du alles auf einmal. Kein Anbruch, keine Oxidation, keine Konservierungsstoffe nötig.",
+  "alt": "Ні. Від консервантів свідомо відмовилися. Це працює, бо продукти розфасовані в маленькі, герметично запечатані денні пакетики. До відкриття порошок не контактує з повітрям чи вологою, тож консервація йому просто не потрібна. Щойно ти відкриваєш пакетик, використовуєш усе за один раз. Немає відкритої упаковки на потім, немає окиснення, консерванти не потрібні.",
+  "neu": "Ні. Від консервантів свідомо відмовилися. Це працює, бо продукти розфасовані в маленькі, герметично запечатані денні пакетики. До відкриття порошок не контактує з повітрям чи вологою, тож консерванти йому просто не потрібні. Щойно ти відкриваєш пакетик, використовуєш усе за один раз. Немає відкритої упаковки на потім, немає окиснення, консерванти не потрібні.",
+  "grund": "«Консервація йому не потрібна» неприродно в цьому контексті."
  },
  {
-  "de": "Auch angefangene oder leere Verpackungen reichen aus.",
-  "alt": "Достатньо навіть початих або порожніх упаковок.",
-  "neu": "Достатньо навіть відкритих або порожніх упаковок.",
-  "grund": "«Початих упаковок» неприродно українською."
- },
- {
-  "de": "Liefert Beta-Carotin, das im Körper zu Vitamin A wird. Vitamin A trägt zur Erhaltung normaler Sehkraft und Haut bei.",
-  "alt": "Постачає бета-каротин, який в організмі перетворюється на вітамін A. Вітамін A сприяє збереженню нормального зору та шкіри.",
-  "neu": "Постачає бета-каротин, який в організмі перетворюється на вітамін A. Вітамін A сприяє збереженню нормального зору та нормального стану шкіри.",
-  "grund": "Уточнено природне українське формулювання для “normaler Haut”."
- },
- {
-  "de": "Pflanzliche Vorstufe von Vitamin A. Vitamin A trägt zur Erhaltung normaler Sehkraft, Haut und einer normalen Funktion des Immunsystems bei.",
-  "alt": "Рослинний попередник вітаміну A. Вітамін A сприяє збереженню нормального зору, шкіри та нормальній роботі імунної системи.",
-  "neu": "Рослинний попередник вітаміну A. Вітамін A сприяє збереженню нормального зору, нормального стану шкіри та нормальній роботі імунної системи.",
-  "grund": "Виправлено неприродне “збереженню ... шкіри”."
- },
- {
-  "de": "Trägt zur Erhaltung normaler Haut, Haare und Nägel und zur normalen Funktion des Immunsystems bei. Organisch an Gluconat gebunden.",
-  "alt": "Сприяє збереженню нормальної шкіри, волосся й нігтів та нормальній роботі імунної системи. Органічно зв’язаний із глюконатом.",
-  "neu": "Сприяє збереженню нормального стану шкіри, волосся й нігтів та нормальній роботі імунної системи. Органічно зв’язаний із глюконатом.",
-  "grund": "Природніше й точніше передано “normaler Haut, Haare und Nägel”."
- },
- {
-  "de": "Trägt zur Verringerung von Müdigkeit und einem normalen Sauerstofftransport im Körper bei. Sanft an Citrat gebunden, magenfreundlich.",
-  "alt": "Сприяє зменшенню втоми та нормальному транспорту кисню в організмі. М’яко зв’язане з цитратом, дружнє до шлунка.",
-  "neu": "Сприяє зменшенню втоми та нормальному транспорту кисню в організмі. М’яко зв’язане з цитратом, щадне для шлунка.",
-  "grund": "“Дружнє до шлунка” — калька й неприродне формулювання."
- },
- {
-  "de": "Eine der natürlich vitamin-C-reichsten Beeren überhaupt. Vitamin C trägt zu einer normalen Funktion des Immunsystems und zur Verringerung von Müdigkeit bei.",
-  "alt": "Одна з ягід із найвищим природним вмістом вітаміну C взагалі. Вітамін C сприяє нормальній роботі імунної системи та зменшенню втоми.",
-  "neu": "Одна з ягід із найвищим природним вмістом вітаміну C. Вітамін C сприяє нормальній роботі імунної системи та зменшенню втоми.",
-  "grund": "«взагалі» звучить неприродно й зайве в цьому контексті."
- },
- {
-  "de": "Liefert das natürliche Koffein im Drink. Aus der Amazonas-Frucht statt synthetisch hergestellt. Wird langsamer freigesetzt als reiner Kaffee.",
-  "alt": "Забезпечує натуральний кофеїн у напої. З амазонського плоду, а не синтетичного виробництва. Вивільняється повільніше, ніж у чистій каві.",
-  "neu": "Забезпечує натуральний кофеїн у напої. З плоду з Амазонії, а не синтетично вироблений. Вивільняється повільніше, ніж кофеїн зі звичайної кави.",
-  "grund": "Неприродне формулювання та неточне порівняння з кавою."
- },
- {
-  "de": "Löslicher Ballaststoff aus der Chicoree-Wurzel. {{#unless joghurt_anzeigen=nein}}Im Probiotic-Joghurt-Drink die natürliche Nährgrundlage für die enthaltenen Milchsäurekulturen.{{/unless}}{{#if joghurt_anzeigen=nein}}Im PowerCocktail die natürliche Nährgrundlage für die enthaltenen Milchsäurekulturen.{{/if}}",
-  "alt": "Розчинна клітковина з кореня цикорію. {{#unless joghurt_anzeigen=nein}}У Probiotic-Joghurt-Drink — природна поживна основа для молочнокислих культур, що містяться в ньому.{{/unless}}{{#if joghurt_anzeigen=nein}}У PowerCocktail — природна поживна основа для молочнокислих культур, що містяться в ньому.{{/if}}",
-  "neu": "Розчинна клітковина з кореня цикорію. {{#unless joghurt_anzeigen=nein}}У йогуртовому напої Probiotic — природна поживна основа для молочнокислих культур, що містяться в ньому.{{/unless}}{{#if joghurt_anzeigen=nein}}У PowerCocktail — природна поживна основа для молочнокислих культур, що містяться в ньому.{{/if}}",
-  "grund": "Залишено неперекладене німецьке «Joghurt-Drink».",
-  "skip": true
- },
- {
-  "de": "Optimalset, Drogerie-Vitamine, frischer Smoothie. Was steckt wirklich drin, was kostet es, was bringt es dir tatsächlich.",
-  "alt": "Optimalset, вітаміни з дрогері, свіжий смузі. Що там насправді є, скільки це коштує і що це реально тобі дає.",
-  "neu": "Optimalset, вітаміни з аптеки чи магазину, свіжий смузі. Що там насправді є, скільки це коштує і що це реально тобі дає.",
-  "grund": "«дрогері» звучить як неприродний германізм для українського тексту."
- },
- {
-  "de": "Meist gezielt 1 bis 3 Stoffe pro Produkt",
-  "alt": "Зазвичай прицільно від 1 до 3 речовин на продукт",
-  "neu": "Зазвичай по 1–3 конкретні речовини в одному продукті",
-  "grund": "«прицільно» тут неприродне калькування."
- },
- {
-  "de": "3 bis 8 &euro; bei mehreren Stoffen",
-  "alt": "Від 3 до 8 &euro; за кілька речовин",
-  "neu": "Від 3 до 8 &euro;, якщо компонентів кілька",
-  "grund": "Неприродне формулювання «за кілька речовин»."
- },
- {
-  "de": "Damit {{#unless team_modus=team}}ich dich besser vorbereitet beraten kann{{/unless}}{{#if team_modus=team}}wir dich besser vorbereitet beraten können{{/if}}.",
-  "alt": "Так {{#unless team_modus=team}}я зможу краще підготуватися до консультації для тебе{{/unless}}{{#if team_modus=team}}ми зможемо краще підготуватися до консультації для тебе{{/if}}.",
-  "neu": "Це допоможе {{#unless team_modus=team}}мені{{/unless}}{{#if team_modus=team}}нам{{/if}} краще підготуватися до консультації з тобою.",
-  "grund": "Природніше й точніше передає зміст; «консультації для тебе» звучить неприродно."
- },
- {
-  "de": "Am liebsten per (optional)",
-  "alt": "Найзручніше (за бажанням)",
-  "neu": "Бажаний спосіб зв’язку (необов’язково)",
-  "grund": "Точніше передає зміст поля «per» і природніше для форми."
- },
- {
-  "de": "Ich bin einverstanden, dass meine Angaben zur Kontaktaufnahme verwendet werden.",
-  "alt": "Я погоджуюся, щоб мої дані використали для зв’язку зі мною.",
-  "neu": "Я погоджуюся, щоб мої дані використовувалися для зв’язку зі мною.",
-  "grund": "Недоречний доконаний вид «використали»."
- },
- {
-  "de": "{{#unless joghurt_anzeigen=nein}}Diese drei Produkte bilden das Optimalset.{{/unless}}{{#if joghurt_anzeigen=nein}}Diese beiden Produkte bilden deine tägliche Routine.{{/if}} Einfach einzeln in den Warenkorb legen im offiziellen FitLine-Shop.",
-  "alt": "{{#unless joghurt_anzeigen=nein}}Ці три продукти утворюють Optimalset.{{/unless}}{{#if joghurt_anzeigen=nein}}Ці два продукти утворюють твою щоденну рутину.{{/if}} Просто додай їх окремо в кошик в офіційному магазині FitLine.",
-  "neu": "{{#unless joghurt_anzeigen=nein}}Ці три продукти разом складають Optimalset.{{/unless}}{{#if joghurt_anzeigen=nein}}Ці два продукти разом складають твою щоденну рутину.{{/if}} Просто додай їх окремо до кошика в офіційному магазині FitLine.",
-  "grund": "Природніше формулювання українською; виправлено «в кошик в магазині»."
- },
- {
-  "de": "Energie &amp; Sauerstoffversorgung für den Tag",
-  "alt": "Енергія &amp; забезпечення киснем на день",
-  "neu": "Енергія &amp; забезпечення киснем на весь день",
-  "grund": "«На день» звучить неприродно; потрібно «на весь день»."
- },
- {
-  "de": "{{#unless team_modus=team}}Die Fragen, die ich am häufigsten bekomme.{{/unless}}{{#if team_modus=team}}Die Fragen, die wir am häufigsten bekommen.{{/if}}",
-  "alt": "{{#unless team_modus=team}}Питання, які я отримую найчастіше.{{/unless}}{{#if team_modus=team}}Питання, які ми отримуємо найчастіше.{{/if}}",
-  "neu": "{{#unless team_modus=team}}Питання, які мені ставлять найчастіше.{{/unless}}{{#if team_modus=team}}Питання, які нам ставлять найчастіше.{{/if}}",
-  "grund": "«Отримую питання» — калька; природніше «ставлять питання»."
- },
- {
-  "de": "Nein, das sind Nahrungsergänzungsmittel. Sie ersetzen keine ausgewogene Ernährung und sind keine ärztliche Behandlung. Bei konkreten gesundheitlichen Fragen schau bitte zuerst mit einem Arzt. Was das Optimalset tut, ist deinen Körper besser versorgen, nicht etwas kurieren.",
-  "alt": "Ні, це дієтичні добавки. Вони не замінюють збалансоване харчування і не є медичним лікуванням. Якщо маєш конкретні питання щодо здоров’я, будь ласка, спочатку звернися до лікаря. Те, що робить Optimalset, — це краще забезпечує твоє тіло, а не щось лікує.",
-  "neu": "Ні, це дієтичні добавки. Вони не замінюють збалансоване харчування і не є медичним лікуванням. Якщо маєш конкретні питання щодо здоров’я, будь ласка, спочатку проконсультуйся з лікарем. Завдання Optimalset — краще забезпечувати твоє тіло поживними речовинами, а не щось лікувати.",
-  "grund": "Останнє речення було граматично неповним/неприродним; уточнено зміст."
- },
- {
-  "de": "Das ist eine Frage, die {{#unless team_modus=team}}ich oft bekomme{{/unless}}{{#if team_modus=team}}wir oft bekommen{{/if}}, und die Antwort überrascht viele. Ja, in manchen Produkten steckt eine kleine Menge Zucker, zum Beispiel Dextrose. Aber der ist nicht da, damit es süß schmeckt. Er funktioniert als Transportmittel. Vereinfacht erklärt: Dein Darm hat Kanäle, durch die Nährstoffe ins Blut wandern. Bestimmte Vitamine und Aminosäuren kommen durch diese Kanäle deutlich besser rein, wenn gleichzeitig ein kleiner Zuckeranteil dabei ist. Der Zucker öffnet quasi das Tor, und die Nährstoffe kommen mit rein. Die Menge ist so gering, dass du dir da keine Sorgen machen musst, solange du nicht den ganzen Tag davon isst.",
-  "alt": "Це питання, яке {{#unless team_modus=team}}я часто отримую{{/unless}}{{#if team_modus=team}}ми часто отримуємо{{/if}}, і відповідь багатьох дивує. Так, у деяких продуктах є невелика кількість цукру, наприклад декстроза. Але він там не для того, щоб було солодко. Він працює як транспортний засіб. Якщо пояснити просто: у твоєму кишечнику є канали, через які поживні речовини потрапляють у кров. Певні вітаміни й амінокислоти проходять через ці канали значно краще, коли одночасно є невелика частка цукру. Цукор ніби відкриває ворота, і поживні речовини заходять разом із ним. Кількість настільки мала, що тобі не треба через це хвилюватися, якщо ти не їси це цілий день.",
-  "neu": "Це питання, яке {{#unless team_modus=team}}мені часто ставлять{{/unless}}{{#if team_modus=team}}нам часто ставлять{{/if}}, і відповідь багатьох дивує. Так, у деяких продуктах є невелика кількість цукру, наприклад декстрози. Але він там не для того, щоб було солодко. Він виконує транспортну функцію. Якщо пояснити просто: у твоєму кишечнику є канали, через які поживні речовини потрапляють у кров. Певні вітаміни й амінокислоти проходять через ці канали значно краще, коли одночасно є невелика частка цукру. Цукор ніби відкриває ворота, і поживні речовини заходять разом із ним. Кількість настільки мала, що тобі не треба через це хвилюватися, якщо ти не їси це цілий день.",
-  "grund": "«Отримую питання» і «транспортний засіб» звучали кальковано/неприродно."
- },
- {
-  "de": "Einstiegspakete starten typischerweise bei 50 bis 100 Euro, je nach Set. Es gibt keine Mindestbestellmenge und keinen Kaufzwang. Im Gespräch {{#unless team_modus=team}}zeige ich{{/unless}}{{#if team_modus=team}}zeigen wir{{/if}} dir alle Möglichkeiten und was für dich sinnvoll wäre, du entscheidest in Ruhe.",
-  "alt": "Стартові набори зазвичай починаються від 50 до 100 Euro, залежно від набору. Немає мінімальної суми замовлення і немає примусу купувати. Під час розмови {{#unless team_modus=team}}я покажу{{/unless}}{{#if team_modus=team}}ми покажемо{{/if}} тобі всі варіанти й що було б доречно саме для тебе, а ти спокійно вирішиш.",
-  "neu": "Стартові набори зазвичай коштують від 50 до 100 євро, залежно від комплекту. Немає мінімального обсягу замовлення, і ніхто не змушує тебе купувати. Під час розмови {{#unless team_modus=team}}я покажу{{/unless}}{{#if team_modus=team}}ми покажемо{{/if}} тобі всі варіанти й те, що має сенс саме для тебе, а ти спокійно вирішиш.",
-  "grund": "«Euro» не перекладено; «Mindestbestellmenge» — це не мінімальна сума."
- },
- {
-  "de": "Nein. PM-International ist eine seit 1993 bestehende Aktiengesellschaft mit Sitz in Speyer und arbeitet im legalen Direktvertrieb. Du kannst ganz normal als Kunde bestellen, ohne selbst etwas zu verkaufen oder weiterzuempfehlen.",
-  "alt": "Ні. PM-International — це акціонерне товариство, що існує з 1993 року, з офісом у Шпаєрі та працює в легальному прямому продажі. Ти можеш просто замовляти як клієнт, не продаючи й не рекомендуючи нічого іншим.",
-  "neu": "Ні. PM-International — акціонерне товариство зі штаб-квартирою у Шпаєрі, що існує з 1993 року й працює у сфері легального прямого продажу. Ти можеш просто замовляти як клієнт, не продаючи й не рекомендуючи нічого іншим.",
-  "grund": "Природніше й точніше передано Sitz і arbeitet im Direktvertrieb."
- },
- {
-  "de": "Ja, als {{#unless team_modus=team}}{{#if geschlecht=weiblich}}unabhängige Vertriebspartnerin{{/if}}{{#if geschlecht=maennlich}}unabhängiger Vertriebspartner{{/if}} werde ich{{/unless}}{{#if team_modus=team}}unabhängige Vertriebspartner werden wir{{/if}} am Umsatz beteiligt, wenn du über {{#unless team_modus=team}}mich{{/unless}}{{#if team_modus=team}}uns{{/if}} bestellst. So funktioniert Direktvertrieb. {{#unless team_modus=team}}Mir ist Transparenz dabei wichtig: Mein Ziel ist deine Zufriedenheit{{/unless}}{{#if team_modus=team}}Uns ist Transparenz dabei wichtig: Unser Ziel ist deine Zufriedenheit{{/if}}, nicht der schnelle Abschluss.",
-  "alt": "Так, якщо ти замовляєш через {{#unless team_modus=team}}мене{{/unless}}{{#if team_modus=team}}нас{{/if}}, {{#unless team_modus=team}}я як {{#if geschlecht=weiblich}}незалежна партнерка з продажу{{/if}}{{#if geschlecht=maennlich}}незалежний партнер з продажу{{/if}} отримую{{/unless}}{{#if team_modus=team}}ми як незалежні партнери з продажу отримуємо{{/if}} частку з обороту. Так працює прямий продаж. {{#unless team_modus=team}}Для мене тут важлива прозорість: моя мета — твоя задоволеність{{/unless}}{{#if team_modus=team}}Для нас тут важлива прозорість: наша мета — твоя задоволеність{{/if}}, а не швидкий продаж.",
-  "neu": "Так, якщо ти замовляєш через {{#unless team_modus=team}}мене{{/unless}}{{#if team_modus=team}}нас{{/if}}, {{#unless team_modus=team}}я як {{#if geschlecht=weiblich}}незалежна партнерка з продажу{{/if}}{{#if geschlecht=maennlich}}незалежний партнер з продажу{{/if}} отримую{{/unless}}{{#if team_modus=team}}ми як незалежні партнери з продажу отримуємо{{/if}} частку від обороту. Так працює прямий продаж. {{#unless team_modus=team}}Для мене тут важлива прозорість: моя мета — твоя задоволеність{{/unless}}{{#if team_modus=team}}Для нас тут важлива прозорість: наша мета — твоя задоволеність{{/if}}, а не швидкий продаж.",
-  "grund": "Українська керованість: частка від обороту."
- },
- {
-  "de": "Ja, das geht. Was {{#unless team_modus=team}}ich anbiete{{/unless}}{{#if team_modus=team}}wir anbieten{{/if}}: persönliche Beratung davor, damit du weißt was du bestellst, und {{#unless team_modus=team}}{{#if geschlecht=weiblich}}eine Ansprechpartnerin{{/if}}{{#if geschlecht=maennlich}}einen Ansprechpartner{{/if}}{{/unless}}{{#if team_modus=team}}Ansprechpartner{{/if}} danach, falls Fragen auftauchen. Kein Druck.",
-  "alt": "Так, можна. Що {{#unless team_modus=team}}я пропоную{{/unless}}{{#if team_modus=team}}ми пропонуємо{{/if}}: особиста консультація перед замовленням, щоб тобі було зрозуміло, що ти замовляєш, і {{#unless team_modus=team}}{{#if geschlecht=weiblich}}людина, до якої можна звернутися{{/if}}{{#if geschlecht=maennlich}}людина, до якої можна звернутися{{/if}}{{/unless}}{{#if team_modus=team}}люди, до яких можна звернутися{{/if}} після, якщо виникнуть запитання. Без тиску.",
-  "neu": "Так, можна. Що {{#unless team_modus=team}}я пропоную{{/unless}}{{#if team_modus=team}}ми пропонуємо{{/if}}: особисту консультацію перед замовленням, щоб тобі було зрозуміло, що ти замовляєш, і {{#unless team_modus=team}}{{#if geschlecht=weiblich}}людину, до якої можна звернутися{{/if}}{{#if geschlecht=maennlich}}людину, до якої можна звернутися{{/if}}{{/unless}}{{#if team_modus=team}}людей, до яких можна звернутися{{/if}} після нього, якщо виникнуть запитання. Без тиску.",
-  "grund": "Потрібен знахідний відмінок після «пропоную»; «після» без додатка звучало неприродно."
- },
- {
-  "de": "<strong>Tagesportion:</strong> 15 g Pulver (1 Sachet), angerührt mit Wasser. Energie 190 kJ / 45 kcal.",
-  "alt": "<strong>Добова порція:</strong> 15 g порошку (1 саше), змішаного з водою. Енергетична цінність 190 kJ / 45 kcal.",
-  "neu": "<strong>Добова порція:</strong> 15 г порошку (1 саше), розмішаного у воді. Енергетична цінність 190 кДж / 45 ккал.",
-  "grund": "Українські скорочення одиниць і природніше формулювання."
- },
- {
-  "de": "Süßung & Geschmack",
-  "alt": "Солодкість і смак",
-  "neu": "Підсолодження та смак",
-  "grund": "Süßung означає підсолодження, а не солодкість."
- },
- {
-  "de": "NRV = Nährstoffbezugswert für die tägliche Zufuhr nach EU-Verordnung 1169/2011. Quelle: offizielles Datenblatt PM-International AG (LMIV).",
-  "alt": "NRV = референтне значення поживних речовин для щоденного споживання згідно з Регламентом ЄС 1169/2011. Джерело: офіційний технічний паспорт PM-International AG (LMIV).",
-  "neu": "NRV = референтна величина добового споживання поживних речовин згідно з Регламентом ЄС 1169/2011. Джерело: офіційний інформаційний лист PM-International AG (LMIV).",
-  "grund": "Точніше й природніше передано Nährstoffbezugswert і Datenblatt."
- },
- {
-  "de": "<strong>Tagesportion:</strong> 3× 1 Messlöffel (1,67 g) in je 40 ml stilles Wasser. Insgesamt 30 mg Koffein pro Tag.",
-  "alt": "<strong>Добова порція:</strong> 3× 1 мірна ложка (1,67 g), кожну — у 40 ml негазованої води. Загалом 30 mg кофеїну на день.",
-  "neu": "<strong>Добова порція:</strong> 3× по 1 мірній ложці (1,67 г) у 40 мл негазованої води щоразу. Загалом 30 мг кофеїну на день.",
-  "grund": "Виправлено відмінки та українські скорочення одиниць."
- },
- {
-  "de": "30 mg Koffein",
-  "alt": "30 mg кофеїну",
-  "neu": "30 мг кофеїну",
-  "grund": "Одиницю вимірювання подано латиницею, не українським скороченням."
+  "de": "NRV = Nährstoffbezugswert für die tägliche Zufuhr nach EU-Verordnung 1169/2011. Quelle: offizielles Datenblatt PM-International AG.",
+  "alt": "NRV = референтна величина споживання поживних речовин для щоденного споживання згідно з Регламентом ЄС 1169/2011. Джерело: офіційний технічний опис PM-International AG.",
+  "neu": "NRV = референтна величина добового споживання поживних речовин згідно з Регламентом ЄС 1169/2011. Джерело: офіційний технічний опис PM-International AG.",
+  "grund": "Неприродне дублювання «споживання»; стандартніше формулювання."
  },
  {
   "de": "<strong>Tagesportion:</strong> 1 Beutel (6,7 g) in Wasser aufgelöst, am Abend vor dem Schlafengehen.",
-  "alt": "<strong>Денна порція:</strong> 1 пакетик (6,7 g), розчинений у воді, ввечері перед сном.",
-  "neu": "<strong>Денна порція:</strong> 1 пакетик (6,7 г), розчинити у воді та приймати ввечері перед сном.",
-  "grund": "Одиницю вимірювання треба локалізувати; формулювання з «розчинений пакетик» неприродне."
+  "alt": "<strong>Денна порція:</strong> 1 пакетик (6,7 г), розчинити у воді та приймати ввечері перед сном.",
+  "neu": "<strong>Добова порція:</strong> 1 пакетик (6,7 г), розчинити у воді та приймати ввечері перед сном.",
+  "grund": "Для Tagesportion у цьому контексті природніше «добова порція»."
  },
  {
-  "de": "<strong>Portion:</strong> 100 ml angerührter Drink enthält ca. <strong>100 Milliarden lebende Bakterien</strong>.",
-  "alt": "<strong>Порція:</strong> 100 ml приготовленого напою містить приблизно <strong>100 мільярдів живих бактерій</strong>.",
-  "neu": "<strong>Порція:</strong> 100 мл приготованого напою містить приблизно <strong>100 мільярдів живих бактерій</strong>.",
-  "grund": "Одиницю вимірювання подано латиницею, не українським скороченням."
+  "de": "NRV = Nährstoffbezugswert für die tägliche Zufuhr nach EU-Verordnung 1169/2011. Quelle: offizielles Datenblatt PM-International AG. Verfügbare Geschmacksrichtungen ohne Künstliche Aromen.",
+  "alt": "NRV = референтна величина споживання поживних речовин для щоденного споживання згідно з Регламентом ЄС 1169/2011. Джерело: офіційний технічний опис PM-International AG. Доступні смаки без штучних ароматизаторів.",
+  "neu": "NRV = референтна величина добового споживання поживних речовин згідно з Регламентом ЄС 1169/2011. Джерело: офіційний технічний опис PM-International AG. Доступні смаки без штучних ароматизаторів.",
+  "grund": "Неприродне дублювання «споживання»; стандартніше формулювання."
  },
  {
-  "de": "Rechtliches",
-  "alt": "Юридичне",
-  "neu": "Правова інформація",
-  "grund": "Природніший заголовок розділу українською."
- },
- {
-  "de": "Antwort innerhalb 24h",
-  "alt": "Відповідь протягом 24h",
-  "neu": "Відповідь протягом 24 годин",
-  "grund": "«24h» не по-українськи."
+  "de": "Für jeden Tag, an dem du dir selbst etwas Gutes tust. Finde heraus, ob das Optimalset zu dir passt.",
+  "alt": "На кожен день, коли ти робиш для себе щось хороше. Дізнайся, чи підходить тобі Optimalset.",
+  "neu": "Для кожного дня, коли ти робиш щось добре для себе. Дізнайся, чи підходить тобі Optimalset.",
+  "grund": "Природніше українське формулювання."
  },
  {
   "de": "Alle Produkte sind Nahrungsergänzungsmittel und keine Arzneimittel. Sie können Krankheiten weder heilen, lindern noch verhindern. Bei gesundheitlichen Beschwerden wenden Sie sich bitte an einen Arzt oder Apotheker.",
-  "alt": "Усі продукти є дієтичними добавками, а не лікарськими засобами. Вони не можуть ні лікувати, ні полегшувати, ні запобігати хворобам. Якщо маєш скарги щодо здоров’я, звернися, будь ласка, до лікаря або фармацевта.",
-  "neu": "Усі продукти є дієтичними добавками, а не лікарськими засобами. Вони не можуть ані лікувати, ані полегшувати, ані запобігати хворобам. Якщо маєш проблеми зі здоров’ям, звернися, будь ласка, до лікаря або фармацевта.",
-  "grund": "Неприродна фраза «скарги щодо здоров’я»; стилістично вирівняно заперечення."
+  "alt": "Усі продукти є дієтичними добавками, а не лікарськими засобами. Вони не можуть ані лікувати, ані полегшувати, ані запобігати хворобам. Якщо маєш проблеми зі здоров’ям, звернися, будь ласка, до лікаря або фармацевта.",
+  "neu": "Усі продукти є дієтичними добавками, а не лікарськими засобами. Вони не можуть ані лікувати захворювання, ані полегшувати їх перебіг, ані запобігати їм. Якщо маєш проблеми зі здоров’ям, звернися, будь ласка, до лікаря або фармацевта.",
+  "grund": "Уточнено й природніше передано юридичне формулювання про хвороби."
  },
  {
-  "de": "Alle Nährwertangaben basieren auf zugelassenen EU-Health-Claims. Individuelle Ergebnisse können variieren.",
-  "alt": "Усі дані про поживну цінність базуються на затверджених EU-Health-Claims. Індивідуальні результати можуть відрізнятися.",
-  "neu": "Усі дані про поживну цінність базуються на затверджених у ЄС твердженнях про користь для здоров’я. Індивідуальні результати можуть відрізнятися.",
-  "grund": "Неперекладений термін «EU-Health-Claims»."
+  "de": "Was wünschst du dir?",
+  "alt": "Чого ти хотів би для себе?",
+  "neu": "Чого б тобі хотілося для себе?",
+  "grund": "Оригінал звертається нейтрально; форма «хотів би» лише чоловічого роду."
  },
  {
-  "de": "' + rest + ' weitere Produkte anzeigen",
-  "alt": "' + rest + ' показати ще продуктів",
-  "neu": "Показати ще ' + rest + ' продуктів",
-  "grund": "Неправильний порядок слів українською."
- },
- {
-  "de": "Frau Ende 50 lacht im Garten",
-  "alt": "Жінка за 50 сміється в саду",
-  "neu": "Жінка близько 60 років сміється в саду",
-  "grund": "«Ende 50» означає ближче до 60, не просто «за 50»."
- },
- {
-  "de": "Glas mit angerührtem PowerCocktail und frischen Lebensmitteln",
-  "alt": "Склянка з розмішаним PowerCocktail і свіжими продуктами",
-  "neu": "Склянка з приготованим PowerCocktail і свіжими продуктами",
-  "grund": "«розмішаним» тут звучить неприродно; йдеться про приготований напій із порошку."
+  "de": "Der Wachmacher",
+  "alt": "Той, що бадьорить",
+  "neu": "Заряд бадьорості",
+  "grund": "«Той, що бадьорить» звучить неприродно як назва/ярлик продукту."
  },
  {
   "de": "Joghurt-Drink",
   "alt": "Joghurt-Drink",
   "neu": "Йогуртовий напій",
-  "grund": "Залишено німецьку назву без перекладу.",
+  "grund": "Німецький термін залишено неперекладеним.",
   "skip": true
  },
  {
   "de": "Mehr zum Joghurt-Drink",
   "alt": "Більше про Joghurt-Drink",
   "neu": "Більше про йогуртовий напій",
-  "grund": "Залишено німецьку назву без перекладу.",
+  "grund": "Німецький термін залишено неперекладеним.",
   "skip": true
- },
- {
-  "de": "Play/Pause",
-  "alt": "Відтворити/пауза",
-  "neu": "Відтворити/призупинити",
-  "grund": "Неприродне поєднання дієслова й іменника в UI-написі."
  }
 ]

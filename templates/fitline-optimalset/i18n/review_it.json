@@ -1,289 +1,135 @@
 [
  {
-  "de": "Über {{vorname}}",
-  "alt": "Su {{vorname}}",
-  "neu": "Chi è {{vorname}}",
-  "grund": "“Su {{vorname}}” suona poco naturale in italiano."
- },
- {
-  "de": "{{#unless team_modus=team}}Meine{{/unless}}{{#if team_modus=team}}Unsere{{/if}} persönliche Empfehlung",
-  "alt": "{{#unless team_modus=team}}La mia{{/unless}}{{#if team_modus=team}}La nostra{{/if}} raccomandazione personale",
-  "neu": "{{#unless team_modus=team}}Il mio{{/unless}}{{#if team_modus=team}}Il nostro{{/if}} consiglio personale",
-  "grund": "“Raccomandazione” è troppo formale/meno naturale qui."
- },
- {
-  "de": "Du hast schon Supplements genommen.<br><em>Aber hast du es auch gemerkt?</em>",
-  "alt": "Hai già preso integratori.<br><em>Ma l’hai anche notato?</em>",
-  "neu": "Hai già preso integratori.<br><em>Ma hai notato la differenza?</em>",
-  "grund": "“L’hai anche notato?” è un calco poco naturale."
- },
- {
-  "de": "Besseres Bauchgefühl?",
-  "alt": "Una sensazione migliore alla pancia?",
-  "neu": "Una pancia più serena?",
-  "grund": "“Sensazione migliore alla pancia” è innaturale."
- },
- {
-  "de": "<strong>Eingenommen ist nicht gleich aufgenommen.</strong> Zwischen Nährstoffe aufnehmen und Nährstoffe verwerten liegt ein langer Weg. Genau dafür hat PM-International das NTC entwickelt, ein patentiertes Konzept, das Nährstoffe dorthin bringt, wo dein Körper sie braucht.",
-  "alt": "<strong>Assumere non significa per forza assorbire.</strong> Tra assumere nutrienti e utilizzarli c’è un lungo percorso. Proprio per questo PM-International ha sviluppato l’NTC, un concetto brevettato che porta i nutrienti dove il tuo corpo ne ha bisogno.",
-  "neu": "<strong>Assumere non significa per forza assorbire.</strong> Tra l’assorbimento dei nutrienti e il loro utilizzo c’è un lungo percorso. Proprio per questo PM-International ha sviluppato l’NTC, un concetto brevettato che porta i nutrienti dove il tuo corpo ne ha bisogno.",
-  "grund": "Corretto il senso: aufnehmen qui è assorbire, non assumere."
- },
- {
-  "de": "Dein Darm in<br>90 Sek. erklärt",
-  "alt": "Il tuo intestino spiegato in<br>90 Sek.",
-  "neu": "Il tuo intestino spiegato in<br>90 secondi",
-  "grund": "“Sek.” era rimasto in tedesco."
- },
- {
-  "de": "Vitamin C, D, Zink und Selen tragen zur normalen Funktion des Immunsystems bei.",
-  "alt": "Vitamina C, D, zinco e selenio contribuiscono alla normale funzione del sistema immunitario.",
-  "neu": "La vitamina C, la vitamina D, lo zinco e il selenio contribuiscono alla normale funzione del sistema immunitario.",
-  "grund": "Elenco in italiano innaturale/ellittico."
+  "de": "Wenn der Akku leer ist. Mit Guarana und B-Vitaminen, ganz ohne Zucker.",
+  "alt": "Quando sei a batterie scariche. Con guaranà e vitamine del gruppo B, completamente senza zucchero.",
+  "neu": "Quando hai le batterie scariche. Con guaranà e vitamine del gruppo B, completamente senza zucchero.",
+  "grund": "Espressione idiomatica più naturale in italiano."
  },
  {
   "de": "Pantothensäure trägt zur normalen geistigen Leistung bei, Zink zur normalen kognitiven Funktion.",
-  "alt": "L’acido pantotenico contribuisce a normali prestazioni mentali, lo zinco alla normale funzione cognitiva.",
-  "neu": "L’acido pantotenico contribuisce a una normale prestazione mentale, lo zinco alla normale funzione cognitiva.",
-  "grund": "Formulazione italiana più corretta e naturale."
+  "alt": "L’acido pantotenico contribuisce a una normale prestazione mentale, lo zinco alla normale funzione cognitiva.",
+  "neu": "L’acido pantotenico contribuisce a normali prestazioni mentali, lo zinco alla normale funzione cognitiva.",
+  "grund": "Formulazione più naturale e corretta per la claim nutrizionale."
  },
  {
-  "de": "20+ Pflanzenextrakte inkl. Kurkuma &amp; Guarana",
-  "alt": "20+ estratti vegetali incl. curcuma &amp; guaranà",
-  "neu": "20+ estratti vegetali, tra cui curcuma &amp; guaranà",
-  "grund": "Abbreviazione poco naturale in italiano."
- },
- {
-  "de": "Liefert die Wirkstoffe, die dein Körper braucht, um Energie zu erzeugen.¹ Für fokussierte Tage und klare Köpfe.² Mit Stevia gesüßt, ohne künstliche Farbstoffe und Konservierungsmittel.",
-  "alt": "Fornisce i principi attivi di cui il tuo corpo ha bisogno per produrre energia.¹ Per giornate concentrate e mente lucida.² Dolcificato con stevia, senza coloranti artificiali né conservanti.",
-  "neu": "Fornisce i principi attivi di cui il tuo corpo ha bisogno per produrre energia.¹ Per restare concentrato e con la mente lucida durante la giornata.² Dolcificato con stevia, senza coloranti artificiali né conservanti.",
-  "grund": "“Giornate concentrate” non è naturale in italiano."
- },
- {
-  "de": "Das basische Pulver für deinen Abend. Mit Magnesium, Zink, B-Vitaminen und Kräutern.",
-  "alt": "La polvere alcalina per la tua sera. Con magnesio, zinco, vitamine del gruppo B ed erbe.",
-  "neu": "La polvere alcalina per la tua serata. Con magnesio, zinco, vitamine del gruppo B ed erbe.",
-  "grund": "“Per la tua sera” è poco naturale."
+  "de": "Deine tägliche Morgenroutine für die optimale Nährstoffversorgung — alles, was dein Körper für einen energiereichen Start in den Tag braucht, in einem einzigen frischen Glas.",
+  "alt": "La tua routine mattutina quotidiana per un apporto ottimale di nutrienti — tutto ciò di cui il tuo corpo ha bisogno per iniziare la giornata con energia, in un unico bicchiere fresco.",
+  "neu": "La tua routine mattutina quotidiana per un apporto ottimale di nutrienti — tutto ciò di cui il tuo corpo ha bisogno per iniziare la giornata con energia, in un unico bicchiere preparato al momento.",
+  "grund": "“bicchiere fresco” è innaturale in italiano."
  },
  {
   "de": "Joghurt-Drink",
   "alt": "Joghurt-Drink",
   "neu": "Drink allo yogurt",
-  "grund": "“Joghurt-Drink” è tedesco/non naturale in italiano.",
+  "grund": "“Joghurt-Drink” usa la grafia tedesca, non naturale in italiano.",
   "skip": true
  },
  {
   "de": "Selbstgemachter Joghurt-Drink statt Fertigprodukt — frisch angerührt, frei von Konservierungsstoffen, mit natürlichem Geschmack und Milchsäurekulturen, ideal für die ganze Familie.",
   "alt": "Joghurt-Drink fatto in casa invece di un prodotto pronto — preparato fresco, senza conservanti, dal gusto naturale e con fermenti lattici, ideale per tutta la famiglia.",
   "neu": "Drink allo yogurt fatto in casa invece di un prodotto pronto — preparato al momento, senza conservanti, dal gusto naturale e con fermenti lattici, ideale per tutta la famiglia.",
-  "grund": "“Joghurt-Drink” è tedesco/non naturale in italiano.",
+  "grund": "Germanismo e calco innaturale “preparato fresco”.",
   "skip": true
  },
  {
-  "de": "¹ Vitamin B6 trägt zu einem normalen Energiestoffwechsel bei. ² Vitamin B6, B12 und C tragen zu einer normalen psychologischen Funktion bei.",
-  "alt": "¹ La vitamina B6 contribuisce al normale metabolismo energetico. ² Le vitamine B6, B12 e C contribuiscono a una normale funzione psicologica.",
-  "neu": "¹ La vitamina B6 contribuisce al normale metabolismo energetico. ² Le vitamine B6, B12 e C contribuiscono alla normale funzione psicologica.",
-  "grund": "Formula grammaticale/normativa più corretta per il claim."
+  "de": "Frisch angerührt, nicht aus dem Kühlregal",
+  "alt": "Preparato fresco, non dal banco frigo",
+  "neu": "Preparato al momento, non preso dal banco frigo",
+  "grund": "“Preparato fresco” è un calco poco naturale."
  },
  {
   "de": "Joghurt rundet ab",
   "alt": "Il Joghurt-Drink completa il tutto",
   "neu": "Il drink allo yogurt completa il tutto",
-  "grund": "“Joghurt-Drink” è tedesco/non naturale in italiano.",
+  "grund": "“Joghurt-Drink” non è naturale in italiano.",
   "skip": true
  },
  {
   "de": "Ein Schluck Joghurt-Drink obendrauf. Die beiden Produkte sind aufeinander abgestimmt und ergänzen sich in deiner täglichen Routine.",
   "alt": "Un sorso di Joghurt-Drink sopra. I due prodotti sono pensati per stare insieme e si completano nella tua routine quotidiana.",
   "neu": "Aggiungi sopra un sorso di drink allo yogurt. I due prodotti sono pensati per stare insieme e si completano nella tua routine quotidiana.",
-  "grund": "“Joghurt-Drink” è tedesco e “sopra” da solo suona innaturale.",
+  "grund": "“Joghurt-Drink” non è naturale in italiano; frase resa più scorrevole.",
   "skip": true
  },
  {
-  "de": "Eine Portion Activize mit ins Glas. So hast du den Wachmacher gleich dabei.",
-  "alt": "Una porzione di Activize nel bicchiere. Così hai subito con te la carica per svegliarti.",
-  "neu": "Una porzione di Activize nel bicchiere. Così hai subito anche la carica per svegliarti.",
-  "grund": "“Con te” è innaturale in questo contesto."
+  "de": "³ Angaben gemäß PM-International AG",
+  "alt": "³ Dati secondo PM-International AG",
+  "neu": "³ Dati forniti da PM-International AG",
+  "grund": "Calco innaturale dal tedesco."
  },
  {
-  "de": "Drei Dinge muss ein Produkt erfüllen, {{#unless team_modus=team}}damit ich es empfehle{{/unless}}{{#if team_modus=team}}damit wir es empfehlen{{/if}}: Es muss wirken, sauber hergestellt sein und sicher sein. Hier ist, warum das Optimalset alle drei Punkte erfüllt.",
-  "alt": "Tre cose deve avere un prodotto, {{#unless team_modus=team}}perché io lo possa consigliare{{/unless}}{{#if team_modus=team}}perché noi lo possiamo consigliare{{/if}}: deve funzionare, essere prodotto in modo pulito ed essere sicuro. Ecco perché l’Optimalset soddisfa tutti e tre i punti.",
-  "neu": "Un prodotto deve soddisfare tre requisiti, {{#unless team_modus=team}}perché io lo possa consigliare{{/unless}}{{#if team_modus=team}}perché noi lo possiamo consigliare{{/if}}: deve funzionare, essere realizzato in modo pulito ed essere sicuro. Ecco perché l’Optimalset soddisfa tutti e tre i punti.",
-  "grund": "Frase iniziale e “prodotto in modo pulito” troppo letterali/innaturali."
+  "de": "Garantiegeber: PM-International AG, Hauptstrasse 5, 67547 Worms. Bedingungen gemäß PM-Rückgaberichtlinien. Gilt für Erstkäufe über den offiziellen FitLine-Shop.",
+  "alt": "Garante: PM-International AG, Hauptstrasse 5, 67547 Worms. Condizioni secondo le linee guida di reso PM. Vale per il primo acquisto tramite lo shop ufficiale FitLine.",
+  "neu": "Garante: PM-International AG, Hauptstrasse 5, 67547 Worms. Si applicano le condizioni previste dalle linee guida PM sui resi. Vale per il primo acquisto tramite lo shop ufficiale FitLine.",
+  "grund": "Formulazione innaturale/calco in italiano."
  },
  {
-  "de": "Zwischen Nährstoffe aufnehmen und Nährstoffe verwerten liegt ein langer Weg. Das NTC, das Nährstoff-Transport-Konzept von PM-International, ist darauf ausgelegt, Nährstoffe in der richtigen Form zur richtigen Zeit dorthin zu bringen, wo dein Körper sie braucht. 100+ nationale und internationale Patente stehen hinter diesem Ansatz.",
-  "alt": "Tra assumere nutrienti e utilizzarli c’è un bel percorso. L’NTC, il concetto di trasporto dei nutrienti di PM-International, è pensato per portare i nutrienti nella forma giusta, al momento giusto, dove il tuo corpo ne ha bisogno. 100+ brevetti nazionali e internazionali sono alla base di questo approccio.",
-  "neu": "Tra assumere i nutrienti e utilizzarli ce ne passa. L’NTC, il concetto di trasporto dei nutrienti di PM-International, è pensato per portare i nutrienti nella forma giusta, al momento giusto, dove il tuo corpo ne ha bisogno. Oltre 100 brevetti nazionali e internazionali sono alla base di questo approccio.",
-  "grund": "“c’è un bel percorso” è innaturale e fuorviante per “liegt ein langer Weg”."
+  "de": "Trägt zum Schutz der Zellen vor oxidativem Stress und einer normalen Schilddrüsenfunktion bei. Gewonnen aus angereicherter Hefe.",
+  "alt": "Contribuisce a proteggere le cellule dallo stress ossidativo e alla normale funzione tiroidea. Ottenuto da lievito arricchito.",
+  "neu": "Contribuisce alla protezione delle cellule dallo stress ossidativo e alla normale funzione tiroidea. Ottenuto da lievito arricchito.",
+  "grund": "Costruzione più corretta e naturale."
  },
  {
-  "de": "Die Kölner Liste® prüft Nahrungsergänzungsmittel unabhängig auf unerlaubte Substanzen. {{#unless joghurt_anzeigen=nein}}Alle vier Produkte{{/unless}}{{#if joghurt_anzeigen=nein}}Alle drei Produkte{{/if}} des Optimalsets sind gelistet und wurden ohne Beanstandung analysiert. Für Profis Pflicht, für alle anderen eine starke Garantie.",
-  "alt": "La Kölner Liste® controlla in modo indipendente gli integratori alimentari per verificare la presenza di sostanze non consentite. {{#unless joghurt_anzeigen=nein}}Tutti e quattro i prodotti{{/unless}}{{#if joghurt_anzeigen=nein}}Tutti e tre i prodotti{{/if}} dell’Optimalset sono registrati e sono stati analizzati senza rilievi. Per i professionisti è d’obbligo, per tutti gli altri una garanzia forte.",
-  "neu": "La Kölner Liste® controlla in modo indipendente gli integratori alimentari per verificare la presenza di sostanze non consentite. {{#unless joghurt_anzeigen=nein}}Tutti e quattro i prodotti{{/unless}}{{#if joghurt_anzeigen=nein}}Tutti e tre i prodotti{{/if}} dell’Optimalset sono inseriti nella lista e sono stati analizzati senza rilievi. Per i professionisti è d’obbligo, per tutti gli altri una garanzia solida.",
-  "grund": "“registrati” e “garanzia forte” suonano poco naturali in questo contesto."
- },
- {
-  "de": "Profisportler, die auf unser Konzept setzen.",
-  "alt": "Sportivi professionisti che puntano sul nostro concetto.",
-  "neu": "Sportivi professionisti che puntano sul nostro approccio.",
-  "grund": "“puntano sul nostro concetto” è un calco poco naturale in italiano."
- },
- {
-  "de": "Liefert Beta-Carotin, das im Körper zu Vitamin A wird. Vitamin A trägt zur Erhaltung normaler Sehkraft und Haut bei.",
-  "alt": "Fornisce beta-carotene, che nel corpo diventa vitamina A. La vitamina A contribuisce al mantenimento di una vista e di una pelle normali.",
-  "neu": "Fornisce beta-carotene, che nel corpo si trasforma in vitamina A. La vitamina A contribuisce al mantenimento della normale capacità visiva e di una pelle normale.",
-  "grund": "Formulazione più naturale per la claim su vista e pelle."
- },
- {
-  "de": "Trägt zur Verringerung von Müdigkeit und einer normalen Muskelfunktion bei. Gleich in zwei Verbindungen drin, damit der Körper es gut aufnehmen kann.",
-  "alt": "Contribuisce alla riduzione della stanchezza e a una normale funzione muscolare. Presente subito in due composti, così il corpo può assorbirlo bene.",
-  "neu": "Contribuisce alla riduzione della stanchezza e alla normale funzione muscolare. Presente in due composti, così il corpo può assorbirlo bene.",
-  "grund": "“Presente subito” è un calco errato di “gleich”."
- },
- {
-  "de": "Bringt Apfelfaser als Ballaststoff in den Drink. Plus die typischen Apfel-Pflanzenstoffe aus dem Trester.",
-  "alt": "Porta nel drink la fibra di mela come fibra alimentare. In più, le tipiche sostanze vegetali della mela dalla vinaccia.",
-  "neu": "Porta nel drink fibra di mela come fibra alimentare. In più, le tipiche sostanze vegetali della mela ricavate dal residuo di spremitura.",
-  "grund": "“Vinaccia” si usa per l’uva, non per la mela."
- },
- {
-  "de": "als Pulver & Extrakt",
-  "alt": "come polvere ed estratto",
-  "neu": "in polvere e come estratto",
-  "grund": "“Come polvere” è poco idiomatico e incoerente con “in polvere”."
- },
- {
-  "de": "Bringt den charakteristischen gelben Pflanzenstoff Curcumin und warme goldene Farbe in den Drink. Klassische Wurzel aus der ayurvedischen Tradition.",
-  "alt": "Porta nel drink la caratteristica sostanza vegetale gialla curcumina e un caldo colore dorato. Radice classica della tradizione ayurvedica.",
-  "neu": "Porta nel drink la curcumina, la caratteristica sostanza vegetale gialla, e un caldo colore dorato. Radice classica della tradizione ayurvedica.",
-  "grund": "Apposizione poco naturale nella versione originale."
- },
- {
-  "de": "Liefert natürliches Eisen aus der Pflanze. Eisen trägt zur Verringerung von Müdigkeit und einem normalen Sauerstofftransport im Körper bei.",
-  "alt": "Fornisce ferro naturale dalla pianta. Il ferro contribuisce alla riduzione della stanchezza e a un normale trasporto di ossigeno nel corpo.",
-  "neu": "Fornisce ferro naturale di origine vegetale. Il ferro contribuisce alla riduzione della stanchezza e al normale trasporto di ossigeno nel corpo.",
-  "grund": "“Dalla pianta” è un calco innaturale."
- },
- {
-  "de": "Pflanzliche Vorstufe von Vitamin A. Vitamin A trägt zur Erhaltung normaler Sehkraft, Haut und einer normalen Funktion des Immunsystems bei.",
-  "alt": "Precursore vegetale della vitamina A. La vitamina A contribuisce al mantenimento di una vista e di una pelle normali e alla normale funzione del sistema immunitario.",
-  "neu": "Precursore vegetale della vitamina A. La vitamina A contribuisce al mantenimento della normale capacità visiva, di una pelle normale e alla normale funzione del sistema immunitario.",
-  "grund": "Formulazione più naturale per la claim su vista e pelle."
- },
- {
-  "de": "Trägt zur Erhaltung normaler Haut, Haare und Nägel und zur normalen Funktion des Immunsystems bei. Organisch an Gluconat gebunden.",
-  "alt": "Contribuisce al mantenimento di pelle, capelli e unghie normali e alla normale funzione del sistema immunitario. Legato organicamente al gluconato.",
-  "neu": "Contribuisce al mantenimento di pelle, capelli e unghie normali e alla normale funzione del sistema immunitario. Legato al gluconato, un composto organico.",
-  "grund": "“Legato organicamente” è un calco innaturale."
- },
- {
-  "de": "Trägt zur Verringerung von Müdigkeit und einem normalen Sauerstofftransport im Körper bei. Sanft an Citrat gebunden, magenfreundlich.",
-  "alt": "Contribuisce alla riduzione della stanchezza e a un normale trasporto di ossigeno nel corpo. Legato delicatamente al citrato, amico dello stomaco.",
-  "neu": "Contribuisce alla riduzione della stanchezza e al normale trasporto di ossigeno nel corpo. Legato al citrato, delicato per lo stomaco.",
-  "grund": "“Amico dello stomaco” è innaturale in italiano."
+  "de": "Liefert das natürliche Koffein im Drink. Aus der Amazonas-Frucht statt synthetisch hergestellt. Wird langsamer freigesetzt als reiner Kaffee.",
+  "alt": "Fornisce la caffeina naturale nel drink. Dal frutto dell’Amazzonia invece che prodotta sinteticamente. Viene rilasciata più lentamente rispetto al caffè puro.",
+  "neu": "Fornisce la caffeina naturale del drink. È ricavata da un frutto dell’Amazzonia, invece di essere prodotta sinteticamente. Viene rilasciata più lentamente rispetto a quella del caffè puro.",
+  "grund": "Frase ellittica poco naturale e confronto più chiaro."
  },
  {
   "de": "Löslicher Ballaststoff aus der Chicoree-Wurzel. {{#unless joghurt_anzeigen=nein}}Im Probiotic-Joghurt-Drink die natürliche Nährgrundlage für die enthaltenen Milchsäurekulturen.{{/unless}}{{#if joghurt_anzeigen=nein}}Im PowerCocktail die natürliche Nährgrundlage für die enthaltenen Milchsäurekulturen.{{/if}}",
   "alt": "Fibra solubile dalla radice di cicoria. {{#unless joghurt_anzeigen=nein}}Nel Probiotic-Joghurt-Drink è la base nutriente naturale per le colture lattiche contenute.{{/unless}}{{#if joghurt_anzeigen=nein}}Nel PowerCocktail è la base nutriente naturale per le colture lattiche contenute.{{/if}}",
-  "neu": "Fibra solubile ricavata dalla radice di cicoria. {{#unless joghurt_anzeigen=nein}}Nel drink allo yogurt Probiotic è la base nutriente naturale per i fermenti lattici contenuti.{{/unless}}{{#if joghurt_anzeigen=nein}}Nel PowerCocktail è la base nutriente naturale per i fermenti lattici contenuti.{{/if}}",
-  "grund": "Elimina il tedesco “Joghurt-Drink” e rende la frase più naturale in italiano.",
+  "neu": "Fibra solubile ricavata dalla radice di cicoria. {{#unless joghurt_anzeigen=nein}}Nel drink allo yogurt Probiotic è la base nutritiva naturale per i fermenti lattici contenuti.{{/unless}}{{#if joghurt_anzeigen=nein}}Nel PowerCocktail è la base nutritiva naturale per i fermenti lattici contenuti.{{/if}}",
+  "grund": "Resa più naturale; evita il tedesco “Joghurt-Drink” e usa “fermenti lattici”.",
   "skip": true
  },
  {
-  "de": "Optimalset, Drogerie-Vitamine, frischer Smoothie. Was steckt wirklich drin, was kostet es, was bringt es dir tatsächlich.",
-  "alt": "Optimalset, vitamine da drugstore, smoothie fresco. Cosa c’è davvero dentro, quanto costa, cosa ti dà davvero.",
-  "neu": "Optimalset, vitamine da banco, smoothie fresco. Cosa c’è davvero dentro, quanto costa, cosa ti dà davvero.",
-  "grund": "“Vitamine da drugstore” suona poco naturale in italiano."
- },
- {
-  "de": "Beutel ins Glas, Wasser dazu, kurz umrühren",
-  "alt": "Bustina nel bicchiere, aggiungi acqua, mescoli brevemente",
-  "neu": "Metti la bustina nel bicchiere, aggiungi acqua e mescola brevemente",
-  "grund": "Forma più naturale e coerente per le istruzioni."
- },
- {
-  "de": "Tablette oder Kapsel schlucken",
-  "alt": "Ingoiare compressa o capsula",
-  "neu": "Ingoiare una compressa o una capsula",
-  "grund": "Mancavano gli articoli, in italiano suona innaturale."
- },
- {
-  "de": "Vorbereitung zu Hause oder Frische-Kauf nötig",
-  "alt": "Serve preparare a casa o comprare fresco",
-  "neu": "Serve preparare a casa o comprare ingredienti freschi",
-  "grund": "“Comprare fresco” è poco naturale in questo contesto."
- },
- {
-  "de": "Was trifft auf dich zu?",
-  "alt": "Cosa fa per te?",
-  "neu": "Cosa ti rispecchia?",
-  "grund": "“Cosa fa per te?” non rende bene il senso di “Was trifft auf dich zu?”."
+  "de": "⁴ Preis variiert je nach Bestellweg. Im Kundenabo oder als Teampartner günstiger. Konditionen in der persönlichen Beratung.",
+  "alt": "⁴ Il prezzo varia a seconda del modo in cui ordini. Più conveniente con l’abbonamento cliente o come team partner. Condizioni nella consulenza personale.",
+  "neu": "⁴ Il prezzo varia in base al canale d’ordine. Più conveniente con l’abbonamento cliente o come team partner. Le condizioni vengono chiarite nella consulenza personale.",
+  "grund": "Resa più naturale e chiara in italiano."
  },
  {
   "de": "Ich möchte meinen Alltag gut versorgen",
-  "alt": "Voglio sostenere bene la mia vita quotidiana",
-  "neu": "Voglio prendermi cura al meglio della mia vita quotidiana",
-  "grund": "La formulazione precedente era un calco innaturale."
+  "alt": "Voglio prendermi cura al meglio della mia vita quotidiana",
+  "neu": "Voglio dare al mio corpo un buon supporto ogni giorno",
+  "grund": "La traduzione attuale è innaturale e sposta il senso su “vita quotidiana” anziché sul supporto quotidiano."
  },
  {
-  "de": "Mehrere Antworten möglich, {{#unless team_modus=team}}ich bereite mich{{/unless}}{{#if team_modus=team}}wir bereiten uns{{/if}} darauf vor.",
-  "alt": "Possibili più risposte, {{#unless team_modus=team}}mi preparo{{/unless}}{{#if team_modus=team}}ci prepariamo{{/if}} di conseguenza.",
-  "neu": "Puoi selezionare più risposte, {{#unless team_modus=team}}mi preparo{{/unless}}{{#if team_modus=team}}ci prepariamo{{/if}} di conseguenza.",
-  "grund": "“Possibili più risposte” suona innaturale."
- },
- {
-  "de": "Wie {{#unless team_modus=team}}erreiche ich{{/unless}}{{#if team_modus=team}}erreichen wir{{/if}} dich?",
-  "alt": "Come {{#unless team_modus=team}}ti raggiungo{{/unless}}{{#if team_modus=team}}ti raggiungiamo{{/if}}?",
-  "neu": "Come {{#unless team_modus=team}}posso contattarti{{/unless}}{{#if team_modus=team}}possiamo contattarti{{/if}}?",
-  "grund": "“Ti raggiungo” è un calco e suona innaturale."
- },
- {
-  "de": "Danke. Deine Nachricht ist bei {{#unless team_modus=team}}mir{{/unless}}{{#if team_modus=team}}uns{{/if}}.",
-  "alt": "Grazie. Il tuo messaggio è arrivato {{#unless team_modus=team}}a me{{/unless}}{{#if team_modus=team}}a noi{{/if}}.",
-  "neu": "Grazie. Il tuo messaggio {{#unless team_modus=team}}mi{{/unless}}{{#if team_modus=team}}ci{{/if}} è arrivato.",
-  "grund": "Formulazione più naturale in italiano."
- },
- {
-  "de": "Yoghurtbereiter",
-  "alt": "Yoghurtiera",
-  "neu": "Yogurtiera",
-  "grund": "Ortografia italiana standard."
- },
- {
-  "de": "Zutaten &amp; Inhaltsstoffe",
-  "alt": "Ingredienti &amp; sostanze",
-  "neu": "Ingredienti &amp; composizione",
-  "grund": "“Sostanze” è poco naturale come titolo."
+  "de": "Nein, das sind Nahrungsergänzungsmittel. Sie ersetzen keine ausgewogene Ernährung und sind keine ärztliche Behandlung. Bei konkreten gesundheitlichen Fragen schau bitte zuerst mit einem Arzt. Was das Optimalset tut, ist deinen Körper besser versorgen, nicht etwas kurieren.",
+  "alt": "No, sono integratori alimentari. Non sostituiscono un’alimentazione equilibrata e non sono un trattamento medico. Per domande concrete sulla salute, per favore confrontati prima con un medico. Quello che fa l’Optimalset è dare al tuo corpo un apporto migliore, non curare qualcosa.",
+  "neu": "No, sono integratori alimentari. Non sostituiscono un’alimentazione equilibrata e non sono un trattamento medico. Per domande specifiche sulla salute, per favore confrontati prima con un medico. Quello che fa l’Optimalset è supportare meglio il tuo corpo, non curare qualcosa.",
+  "grund": "Resa più naturale e colloquiale di “besser versorgen”."
  },
  {
   "de": "Das ist eine faire Frage, und {{#unless team_modus=team}}ich verstehe{{/unless}}{{#if team_modus=team}}wir verstehen{{/if}} den ersten Gedanken: mehr Verpackung klingt nach mehr Müll. Aber schau mal genauer hin. Ein normales Supplement-Glas enthält 30 oder 60 Portionen, muss mit Trockenmittel und Sauerstoffabsorbern stabilisiert werden, und du öffnest es täglich. Dabei oxidiert der Rest immer weiter. Die Tagespäckchen hier sind luftdicht versiegelt, brauchen deshalb keine Konservierungsstoffe, und es entsteht kein Abfall durch Reste, die schlecht werden. Außerdem sind die Verpackungen aus recycelbarem Material. Perfekt ist das natürlich nicht, aber im direkten Vergleich nachhaltiger als viele große Plastikflaschen, die am Ende halb voll weggeworfen werden.",
-  "alt": "È una domanda giusta, e {{#unless team_modus=team}}capisco{{/unless}}{{#if team_modus=team}}capiamo{{/if}} il primo pensiero: più confezione sembra più rifiuti. Però guardaci meglio. Un normale barattolo di integratori contiene 30 o 60 porzioni, deve essere stabilizzato con disidratanti e assorbitori di ossigeno, e tu lo apri ogni giorno. Così il resto continua a ossidarsi sempre di più. Le bustine giornaliere qui sono sigillate ermeticamente, per questo non hanno bisogno di conservanti, e non si creano sprechi per resti che vanno a male. Inoltre le confezioni sono in materiale riciclabile. Perfetto naturalmente non lo è, ma nel confronto diretto è più sostenibile di molte grandi bottiglie di plastica che alla fine vengono buttate via ancora mezze piene.",
-  "neu": "È una domanda giusta, e {{#unless team_modus=team}}capisco{{/unless}}{{#if team_modus=team}}capiamo{{/if}} il primo pensiero: più imballaggio sembra voler dire più rifiuti. Però, a guardarci meglio. Un normale barattolo di integratori contiene 30 o 60 porzioni, deve essere stabilizzato con disidratanti e assorbitori di ossigeno, e tu lo apri ogni giorno. Così il resto continua a ossidarsi sempre di più. Le bustine giornaliere qui sono sigillate ermeticamente, per questo non hanno bisogno di conservanti, e non si creano sprechi per resti che vanno a male. Inoltre le confezioni sono in materiale riciclabile. Perfetto naturalmente non lo è, ma nel confronto diretto è più sostenibile di molte grandi bottiglie di plastica che alla fine vengono buttate via ancora mezze piene.",
-  "grund": "“Più confezione” e “guardaci meglio” sono innaturali."
+  "alt": "È una domanda giusta, e {{#unless team_modus=team}}capisco{{/unless}}{{#if team_modus=team}}capiamo{{/if}} il primo pensiero: più imballaggio sembra voler dire più rifiuti. Però, a guardarci meglio. Un normale barattolo di integratori contiene 30 o 60 porzioni, deve essere stabilizzato con disidratanti e assorbitori di ossigeno, e tu lo apri ogni giorno. Così il resto continua a ossidarsi sempre di più. Le bustine giornaliere qui sono sigillate ermeticamente, per questo non hanno bisogno di conservanti, e non si creano sprechi per resti che vanno a male. Inoltre le confezioni sono in materiale riciclabile. Perfetto naturalmente non lo è, ma nel confronto diretto è più sostenibile di molte grandi bottiglie di plastica che alla fine vengono buttate via ancora mezze piene.",
+  "neu": "È una domanda giusta, e {{#unless team_modus=team}}capisco{{/unless}}{{#if team_modus=team}}capiamo{{/if}} il primo pensiero: più imballaggio sembra voler dire più rifiuti. Ma guardiamola più da vicino. Un normale barattolo di integratori contiene 30 o 60 porzioni, deve essere stabilizzato con essiccanti e assorbitori di ossigeno, e lo apri ogni giorno. Così il resto continua a ossidarsi sempre di più. Le bustine giornaliere qui sono sigillate ermeticamente, per questo non hanno bisogno di conservanti, e non si creano sprechi dovuti a resti che vanno a male. Inoltre le confezioni sono in materiale riciclabile. Non è perfetto, naturalmente, ma nel confronto diretto è più sostenibile di molti grandi flaconi di plastica che alla fine vengono buttati via ancora mezzi pieni.",
+  "grund": "“Però, a guardarci meglio” era innaturale; testo reso più fluido."
  },
  {
-  "de": "NRV = Nährstoffbezugswert für die tägliche Zufuhr nach EU-Verordnung 1169/2011. Quelle: offizielles Datenblatt PM-International AG (LMIV).",
-  "alt": "VNR = valore nutritivo di riferimento per l’assunzione giornaliera secondo il Regolamento UE 1169/2011. Fonte: scheda tecnica ufficiale PM-International AG (LMIV).",
-  "neu": "VNR = valori nutritivi di riferimento per l’assunzione giornaliera secondo il Regolamento UE 1169/2011. Fonte: scheda tecnica ufficiale PM-International AG (Reg. UE 1169/2011).",
-  "grund": "Terminologia italiana corretta e acronimo tedesco LMIV da evitare."
+  "de": "Alle Produkte sind Nahrungsergänzungsmittel und keine Arzneimittel. Sie können Krankheiten weder heilen, lindern noch verhindern. Bei gesundheitlichen Beschwerden wenden Sie sich bitte an einen Arzt oder Apotheker.",
+  "alt": "Tutti i prodotti sono integratori alimentari e non medicinali. Non possono né curare, né alleviare, né prevenire malattie. In caso di disturbi di salute, rivolgiti a un medico o a un farmacista.",
+  "neu": "Tutti i prodotti sono integratori alimentari e non medicinali. Non possono né curare né alleviare né prevenire malattie. In caso di problemi di salute, rivolgiti a un medico o a un farmacista.",
+  "grund": "Punteggiatura con “né” e formulazione più naturale."
  },
  {
-  "de": "enthalten",
-  "alt": "contenuto",
-  "neu": "incluso",
-  "grund": "«contenuto» qui suona come sostantivo; per «enthalten» è più naturale «incluso»."
+  "de": "Alle Nährwertangaben basieren auf zugelassenen EU-Health-Claims. Individuelle Ergebnisse können variieren.",
+  "alt": "Tutte le informazioni nutrizionali si basano su Health Claims approvati dall’UE. I risultati individuali possono variare.",
+  "neu": "Tutte le informazioni nutrizionali si basano su indicazioni sulla salute approvate dall’UE. I risultati individuali possono variare.",
+  "grund": "“Health Claims” resta innaturale/non tradotto in italiano."
  },
  {
-  "de": "Impressum",
-  "alt": "Impressum",
-  "neu": "Note legali",
-  "grund": "“Impressum” è tedesco; in italiano suona non tradotto."
+  "de": "Joghurt-Drink",
+  "alt": "Joghurt-Drink",
+  "neu": "Bevanda allo yogurt",
+  "grund": "“Joghurt-Drink” è tedesco; meglio renderlo in italiano.",
+  "skip": true
  },
  {
-  "de": "Frau meditiert auf Rooftop bei Sonnenuntergang",
-  "alt": "Donna che medita su un rooftop al tramonto",
-  "neu": "Donna che medita su una terrazza panoramica al tramonto",
-  "grund": "“Rooftop” in italiano è poco naturale in questo contesto."
+  "de": "Mehr zum Joghurt-Drink",
+  "alt": "Scopri di più su Joghurt-Drink",
+  "neu": "Scopri di più sulla bevanda allo yogurt",
+  "grund": "“Joghurt-Drink” è tedesco; meglio renderlo in italiano.",
+  "skip": true
  }
 ]

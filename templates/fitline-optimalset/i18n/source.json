@@ -2078,5 +2078,265 @@
   "id": 415,
   "de": "' + rest + ' weitere Produkte anzeigen",
   "en": "Show ' + rest + ' more products"
+ },
+ {
+  "id": 416,
+  "de": "{{about_me_html}}",
+  "en": "{{about_me_html_en}}"
+ },
+ {
+  "id": 417,
+  "de": "Mehr Energie im Alltag",
+  "en": "More energy day to day"
+ },
+ {
+  "id": 418,
+  "de": "Erholung & Ausgleich",
+  "en": "Recovery & balance"
+ },
+ {
+  "id": 419,
+  "de": "Sport & Leistung",
+  "en": "Performance & sport"
+ },
+ {
+  "id": 420,
+  "de": "Haut, Haare & Nägel",
+  "en": "Skin, hair & nails"
+ },
+ {
+  "id": 421,
+  "de": "Ausgewogene Ernährung",
+  "en": "A balanced diet"
+ },
+ {
+  "id": 422,
+  "de": "Fit älter werden",
+  "en": "Staying fit as I age"
+ },
+ {
+  "id": 423,
+  "de": "Geschmack & Zubereitung",
+  "en": "Taste & preparation"
+ },
+ {
+  "id": 424,
+  "de": "Preis & Bestellung",
+  "en": "Price & ordering"
+ },
+ {
+  "id": 425,
+  "de": "Erfahrungen anderer",
+  "en": "Other people's experiences"
+ },
+ {
+  "id": 426,
+  "de": "Wie passt es in meinen Tag?",
+  "en": "How does it fit into my day?"
+ },
+ {
+  "id": 427,
+  "de": "Multivitamin",
+  "en": "Multivitamin"
+ },
+ {
+  "id": 428,
+  "de": "Die Stoffe darin können sich gegenseitig in der Aufnahme hemmen. Die Mischung ist nie für dich angepasst.",
+  "en": "The nutrients inside can block each other during absorption. And the mix is never tailored to you."
+ },
+ {
+  "id": 429,
+  "de": "Magnesium",
+  "en": "Magnesium"
+ },
+ {
+  "id": 430,
+  "de": "Nimm es nicht zur gleichen Zeit wie Calcium. Sonst konkurrieren beide um die Aufnahme.",
+  "en": "Don't take it at the same time as calcium. They compete for absorption."
+ },
+ {
+  "id": 431,
+  "de": "Vitamin C",
+  "en": "Vitamin C"
+ },
+ {
+  "id": 432,
+  "de": "Wenn du daneben Acerola oder Multivitamine nimmst, überdosierst du schnell.",
+  "en": "If you also take acerola or a multivitamin, you can quickly overdo it."
+ },
+ {
+  "id": 433,
+  "de": "Nicht mit Milch oder Calcium kombinieren. Sonst landet kaum etwas im Körper.",
+  "en": "Don't combine it with milk or calcium. Otherwise hardly any of it gets absorbed."
+ },
+ {
+  "id": 434,
+  "de": "Konkurriert mit Eisen und Kupfer um die Aufnahme. Du musst die Einnahme zeitlich planen.",
+  "en": "Competes with iron and copper for absorption. You have to time your intake."
+ },
+ {
+  "id": 435,
+  "de": "Calcium",
+  "en": "Calcium"
+ },
+ {
+  "id": 436,
+  "de": "Blockiert deine Eisenaufnahme. Beides gleichzeitig macht wenig Sinn.",
+  "en": "Blocks your iron absorption. Taking both at once makes little sense."
+ },
+ {
+  "id": 437,
+  "de": "Vitamin D",
+  "en": "Vitamin D"
+ },
+ {
+  "id": 438,
+  "de": "Wirkt nur richtig zusammen mit Magnesium und Vitamin K. Allein bringt es wenig.",
+  "en": "Only really works together with magnesium and vitamin K. On its own it does little."
+ },
+ {
+  "id": 439,
+  "de": "Spät am Abend wirst du davon wach. Du musst es morgens einplanen.",
+  "en": "Take it late in the evening and it keeps you awake. You have to plan it for the morning."
+ },
+ {
+  "id": 440,
+  "de": "Omega-3",
+  "en": "Omega-3"
+ },
+ {
+  "id": 441,
+  "de": "Ohne Vitamin E oxidiert es schnell. Die Wirkung kann dann verloren gehen.",
+  "en": "Without vitamin E it oxidizes quickly. The benefits can be lost."
+ },
+ {
+  "id": 442,
+  "de": "Wird zusammen mit Vitamin E besser im Körper verarbeitet. Allein eingenommen weniger effektiv.",
+  "en": "Your body processes it better together with vitamin E. Less effective on its own."
+ },
+ {
+  "id": 443,
+  "de": "Konkurriert mit Zink um die Aufnahme. Du musst beide zeitlich versetzen.",
+  "en": "Competes with zinc for absorption. You have to space them out."
+ },
+ {
+  "id": 444,
+  "de": "Können die Aufnahme anderer Vitamine und Mineralien hemmen. Reihenfolge zählt.",
+  "en": "Can block the absorption of other vitamins and minerals. Order matters."
+ },
+ {
+  "id": 445,
+  "de": "Magensäure setzt vielen Stämmen zu. Du musst auf den richtigen Einnahme-Zeitpunkt achten.",
+  "en": "Stomach acid is tough on many strains. You have to get the timing right."
+ },
+ {
+  "id": 446,
+  "de": "Hohe Dosen verstecken einen B12-Mangel. Beides muss aufeinander abgestimmt sein.",
+  "en": "High doses can mask a B12 deficiency. Both need to be balanced."
+ },
+ {
+  "id": 447,
+  "de": "Vitamin K",
+  "en": "Vitamin K"
+ },
+ {
+  "id": 448,
+  "de": "Gehört zu Vitamin D. Ohne D landet das Calcium nicht da wo es soll.",
+  "en": "Belongs with vitamin D. Without D, calcium does not end up where it should."
+ },
+ {
+  "id": 449,
+  "de": "Falsche Mischverhältnisse blockieren sich gegenseitig in der Aufnahme.",
+  "en": "The wrong ratios block each other during absorption."
+ },
+ {
+  "id": 450,
+  "de": "Acerola",
+  "en": "Acerola"
+ },
+ {
+  "id": 451,
+  "de": "Steckt voller Vitamin C. Mit anderen Vitamin-C-Quellen schnell überdosiert.",
+  "en": "Packed with vitamin C. Easy to overdo when combined with other vitamin C sources."
+ },
+ {
+  "id": 452,
+  "de": "Wird ohne Vitamin C kaum richtig aufgebaut. Du musst beides kombinieren.",
+  "en": "Hardly builds up properly without vitamin C. You need to combine both."
+ },
+ {
+  "id": 453,
+  "de": "Kann die Aufnahme von Eisen verstärken. Bei zu viel davon entstehen Überdosierungen.",
+  "en": "Can boost iron absorption. Too much of it can lead to getting more than you should."
+ },
+ {
+  "id": 454,
+  "de": "Echinacea",
+  "en": "Echinacea"
+ },
+ {
+  "id": 455,
+  "de": "Bei dauerhafter Einnahme verliert es seine Wirkung. Du musst Pausen einbauen.",
+  "en": "Loses its effect when taken continuously. You have to build in breaks."
+ },
+ {
+  "id": 456,
+  "de": "Konkurriert mit Vitamin E um die Aufnahme. Zusammen sind beide weniger effektiv.",
+  "en": "Competes with vitamin E for absorption. Together both are less effective."
+ },
+ {
+  "id": 457,
+  "de": "Etwas ist schiefgelaufen. Bitte versuche es erneut.",
+  "en": "Something went wrong. Please try again."
+ },
+ {
+  "id": 458,
+  "de": "Drei kurze Videos, drei Sprachnachrichten, drei Momente und drei geschriebene Eindrücke. Tipp auf eine Karte und schau rein.",
+  "en": ""
+ },
+ {
+  "id": 459,
+  "de": "Köln, Studentin",
+  "en": ""
+ },
+ {
+  "id": 460,
+  "de": "München, Selbstständig",
+  "en": ""
+ },
+ {
+  "id": 461,
+  "de": "Persönliche Erfahrungen. Keine Garantie für individuelle Ergebnisse.",
+  "en": ""
+ },
+ {
+  "id": 462,
+  "de": "Vor und nach dem Training",
+  "en": ""
+ },
+ {
+  "id": 463,
+  "de": "Wieso ein ehrliches Gespräch zählt",
+  "en": ""
+ },
+ {
+  "id": 464,
+  "de": "Wir nutzen das zu zweit",
+  "en": ""
+ },
+ {
+  "id": 465,
+  "de": "„Ich fühle mich rundum versorgt, ohne fünf verschiedene Dosen im Schrank stehen zu haben. Der Morgendrink ist mein fester Start in den Tag.\"",
+  "en": ""
+ },
+ {
+  "id": 466,
+  "de": "„Restorate am Abend ist Teil meines Runterkommens nach der Arbeit geworden. Seit über einem Jahr dabei und mag die Routine.\"",
+  "en": ""
+ },
+ {
+  "id": 467,
+  "de": "„War skeptisch, weil ich davon nur in einer Story gesehen hatte. Nach einem ehrlichen Gespräch habe ich es ausprobiert und finde es passt gut.\"",
+  "en": ""
  }
 ]

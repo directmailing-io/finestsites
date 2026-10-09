@@ -23,6 +23,22 @@ missing={l:0 for l in LANGS}
 
 assert 'class="l-it"' not in html and 'var FS_I18N' not in html, 'Quelle enthält schon Build-Ergebnisse'
 
+# 0b) JS-Strings (VOR der Paar-Erweiterung, sonst werden die Spans in den JS-Strings mit erweitert): Formular-Optionen, Wechselwirkungs-Hinweise, Fehlermeldung
+old_goal="""btn.innerHTML = '<span class="form-option-dot"></span><span class="l-de">' + g.label + '</span><span class="l-en">' + g.labelEn + '</span>';"""
+assert old_goal in html
+html=html.replace(old_goal,"""btn.innerHTML = '<span class="form-option-dot"></span>' + fsJsSpans(g.label, g.labelEn);""")
+old_warn="""            warnItemEl.textContent = isEn ? w.enName : w.name;
+            warnTextEl.textContent = isEn ? w.enText : w.text;"""
+assert old_warn in html
+html=html.replace(old_warn,"""            var curLang = document.documentElement.getAttribute('data-lang') || 'de';
+            warnItemEl.textContent = isEn ? w.enName : curLang === 'de' ? w.name : fsJ(curLang, w.name);
+            warnTextEl.textContent = isEn ? w.enText : curLang === 'de' ? w.text : fsJ(curLang, w.text);""")
+old_alert="""alert(document.documentElement.getAttribute('data-lang') === 'en'
+          ? 'Something went wrong. Please try again.'
+          : 'Etwas ist schiefgelaufen. Bitte versuche es erneut.');"""
+assert old_alert in html
+html=html.replace(old_alert,"""alert((function(){ var cl = document.documentElement.getAttribute('data-lang') || 'de'; return cl === 'en' ? 'Something went wrong. Please try again.' : cl === 'de' ? 'Etwas ist schiefgelaufen. Bitte versuche es erneut.' : fsJ(cl, 'Etwas ist schiefgelaufen. Bitte versuche es erneut.'); })());""")
+
 # 1) Paare erweitern
 def expand(m):
     tag, de, en = m.group(1), m.group(2), m.group(3)
@@ -61,10 +77,13 @@ html=html.replace(old_detect.group(0), """var SUP = %s;
   }""" % json.dumps(ALL))
 
 # 4) fsApplyLang: Attribute, Shop-Links, Video, Titel
-i18n={'attrs':{l:tr[l]['attrs'] for l in tr}, 'shop':SHOP, 'names':NAMES, 'langs':ALL}
+js=json.load(open(os.path.join(HERE,'js-strings.json')))
+i18n={'attrs':{l:tr[l]['attrs'] for l in tr}, 'js':{l:{de:tr[l]['strings'].get(de,de) for de in js} for l in tr}, 'shop':SHOP, 'names':NAMES, 'langs':ALL}
 html=html.replace("  function fsApplyLang(l) {\n    var en = l === 'en';",
 """  var FS_I18N = %s;
   function fsT(l, de) { var d = FS_I18N.attrs[l]; return (d && d[de]) ? d[de] : de; }
+  function fsJ(l, de) { var d = FS_I18N.js[l]; return (d && d[de]) ? d[de] : de; }
+  function fsJsSpans(de, en) { var h = '<span class="l-de">' + de + '</span><span class="l-en">' + en + '</span>'; FS_I18N.langs.slice(2).forEach(function(x) { h += '<span class="l-' + x + '">' + fsJ(x, de) + '</span>'; }); return h; }
   function fsApplyLang(l) {
     var en = l === 'en';
     var other = FS_I18N.langs.indexOf(l) > 1;""" % json.dumps(i18n, ensure_ascii=False).replace('</', '<\\/'))
@@ -98,7 +117,7 @@ def flag(l):
        'pl':'<rect width="20" height="10" fill="#fff"/><rect y="10" width="20" height="10" fill="#DC143C"/>',
        'bg':'<rect width="20" height="7" fill="#fff"/><rect y="7" width="20" height="6" fill="#00966E"/><rect y="13" width="20" height="7" fill="#D62612"/>',
        'hi':'<rect width="20" height="7" fill="#FF9933"/><rect y="7" width="20" height="6" fill="#fff"/><rect y="13" width="20" height="7" fill="#138808"/><circle cx="10" cy="10" r="2.2" fill="none" stroke="#000080" stroke-width="0.8"/>'}
-    return f'<svg viewBox="0 0 20 20" aria-hidden="true"><clipPath id="fl-{l}"><circle cx="10" cy="10" r="10"/></clipPath><g clip-path="url(#fl-{l})">{F[l]}</g></svg>'
+    return f'<span class="lang-flag"><svg viewBox="0 0 20 20" aria-hidden="true">{F[l]}</svg></span>'
 def menu(variant):
     items=''.join(f'<button type="button" class="lang-item" data-lang="{l}" onclick="fsSetLang(\'{l}\');fsLangClose()">{flag(l)}<span>{NAMES[l]}</span></button>' for l in ALL)
     cur=''.join(f'<span class="lang-cur-flag" data-lang="{l}">{flag(l)}</span>' for l in ALL)
@@ -108,20 +127,23 @@ html, n2 = re.subn(r'<div class="lang-switch lang-switch-mobile".*?</div>', menu
 assert n1==1 and n2==1, (n1,n2)
 css="""<style data-fs-i18n>
 .lang-menu { position: relative; }
-.lang-cur { display: inline-flex; align-items: center; gap: 6px; height: 36px; padding: 0 10px 0 6px; border-radius: 9999px; border: 1px solid rgba(255,255,255,0.18); background: rgba(255,255,255,0.10); color: #fff; font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; }
+.lang-cur { display: inline-flex; align-items: center; gap: 7px; height: 36px; padding: 0 10px 0 6px; border-radius: 9999px; border: 1px solid rgba(255,255,255,0.18); background: rgba(255,255,255,0.10); color: #fff; font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; transition: background .2s ease, border-color .2s ease; }
+.lang-cur:hover { background: rgba(255,255,255,0.18); }
 .nav.scrolled .lang-cur { background: rgba(0,0,0,0.05); border-color: rgba(0,0,0,0.10); color: #1a1a1a; }
-.lang-cur svg { width: 18px; height: 18px; display: block; }
+.nav.scrolled .lang-cur:hover { background: rgba(0,0,0,0.09); }
+.lang-flag { display: block; width: 20px; height: 20px; border-radius: 50%; overflow: hidden; flex-shrink: 0; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.08); }
+.lang-flag svg { display: block; width: 100%; height: 100%; }
 .lang-cur-flag { display: none; }
-.lang-cur-flag svg { width: 20px; height: 20px; }
 """ + ''.join(f'html[data-lang="{l}"] .lang-cur-flag[data-lang="{l}"] {{ display: block; }}\n' for l in ALL) + """
-.lang-caret { width: 12px; height: 12px; opacity: .8; }
-.lang-list { display: none; position: absolute; right: 0; top: calc(100% + 8px); min-width: 190px; padding: 6px; border-radius: 14px; background: #fff; box-shadow: 0 12px 40px rgba(0,0,0,0.18); border: 1px solid rgba(0,0,0,0.06); z-index: 1000; }
-.lang-menu.open .lang-list { display: block; }
-.lang-item { display: flex; align-items: center; gap: 10px; width: 100%; padding: 9px 10px; border: 0; background: transparent; border-radius: 10px; color: #1a1a1a; font: inherit; font-size: 14px; cursor: pointer; text-align: left; }
-.lang-item svg { width: 20px; height: 20px; flex-shrink: 0; }
+.lang-caret { width: 12px; height: 12px; opacity: .8; transition: transform .25s ease; }
+.lang-menu.open .lang-caret { transform: rotate(180deg); }
+.lang-list { position: absolute; right: 0; top: calc(100% + 8px); min-width: 196px; padding: 6px; border-radius: 14px; background: #fff; box-shadow: 0 12px 40px rgba(0,0,0,0.16); border: 1px solid rgba(0,0,0,0.06); z-index: 1000; opacity: 0; visibility: hidden; transform: translateY(-6px) scale(.98); transform-origin: top right; transition: opacity .18s ease, transform .22s cubic-bezier(.2,.8,.2,1), visibility 0s linear .22s; }
+.lang-menu.open .lang-list { opacity: 1; visibility: visible; transform: translateY(0) scale(1); transition: opacity .18s ease, transform .22s cubic-bezier(.2,.8,.2,1), visibility 0s; }
+.lang-item { display: flex; align-items: center; gap: 10px; width: 100%; padding: 9px 10px; border: 0; background: transparent; border-radius: 10px; color: #1a1a1a; font: inherit; font-size: 14px; cursor: pointer; text-align: left; transition: background .15s ease; }
 .lang-item:hover { background: #F3F4F6; }
 """ + ''.join(f'html[data-lang="{l}"] .lang-item[data-lang="{l}"] {{ background: #F3F4F6; font-weight: 600; }}\n' for l in ALL) + """
 .lang-switch-mobile { margin-left: auto; margin-right: 10px; }
+@media (prefers-reduced-motion: reduce) { .lang-list, .lang-caret, .lang-cur, .lang-item { transition: none; } }
 </style>"""
 html=html.replace('</head>', css+'\n</head>',1)
 js="""<script data-fs-i18n>

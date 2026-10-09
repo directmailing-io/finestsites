@@ -1,333 +1,189 @@
 [
  {
-  "de": "Lass dich beraten",
-  "alt": "Daj sobie doradzić",
-  "neu": "Skorzystaj z porady",
-  "grund": "Obecne brzmienie to nienaturalna kalka z niemieckiego."
- },
- {
-  "de": "Mit Milchsäurekulturen für den Darmaufbau. Schmeckt cremig und macht satt. Nur in ausgewählten Ländern erhältlich.",
-  "alt": "Z kulturami bakterii kwasu mlekowego do odbudowy jelit. Jest kremowy w smaku i syci. Dostępny tylko w wybranych krajach.",
-  "neu": "Z kulturami bakterii kwasu mlekowego wspierającymi florę jelitową. Jest kremowy w smaku i syci. Dostępny tylko w wybranych krajach.",
-  "grund": "„Do odbudowy jelit” brzmi nienaturalnie i sugeruje dosłowną odbudowę narządu."
- },
- {
-  "de": "Dein Abend-Drink",
-  "alt": "Twój wieczorny drink",
-  "neu": "Twój wieczorny napój",
-  "grund": "„Drink” po polsku może sugerować alkohol; tutaj chodzi o napój."
- },
- {
-  "de": "Dein Start in den Tag. Vitamine, Mineralstoffe und alles Wichtige in einem Glas.",
-  "alt": "Twój start w dzień. Witaminy, minerały i wszystko, co ważne, w jednej szklance.",
-  "neu": "Twój start w nowy dzień. Witaminy, minerały i wszystko, co ważne, w jednej szklance.",
-  "grund": "„Twój start w dzień” jest nieidiomatyczne."
- },
- {
-  "de": "Morgens, tagsüber, abends: {{#unless joghurt_anzeigen=nein}}vier{{/unless}}{{#if joghurt_anzeigen=nein}}drei{{/if}} Produkte, die genau aufeinander abgestimmt sind. Fit und versorgt durch den Alltag, entwickelt von einem Hersteller mit 100+ Patenten, der offiziell für Profisportler aus 40 Ländern produziert. {{#unless team_modus=team}}Ich nutze es selbst{{/unless}}{{#if team_modus=team}}Wir nutzen es selbst{{/if}}, jeden Tag.",
-  "alt": "Rano, w ciągu dnia, wieczorem: {{#unless joghurt_anzeigen=nein}}cztery{{/unless}}{{#if joghurt_anzeigen=nein}}trzy{{/if}} produkty, które są dokładnie do siebie dopasowane. Na co dzień: fit i dobrze odżywieni, opracowane przez producenta z 100+ patentami, który oficjalnie produkuje dla zawodowych sportowców z 40 krajów. {{#unless team_modus=team}}Korzystam z tego osobiście{{/unless}}{{#if team_modus=team}}Korzystamy z tego osobiście{{/if}}, każdego dnia.",
-  "neu": "Rano, w ciągu dnia, wieczorem: {{#unless joghurt_anzeigen=nein}}cztery{{/unless}}{{#if joghurt_anzeigen=nein}}trzy{{/if}} produkty, które są dokładnie do siebie dopasowane. Z nimi łatwiej przejść przez dzień w formie i z odpowiednim wsparciem odżywczym — zostały opracowane przez producenta z ponad 100 patentami, który oficjalnie produkuje dla zawodowych sportowców z 40 krajów. {{#unless team_modus=team}}Korzystam z nich osobiście{{/unless}}{{#if team_modus=team}}Korzystamy z nich osobiście{{/if}}, każdego dnia.",
-  "grund": "W obecnej wersji jest błąd składni i zgody („odżywieni, opracowane”) oraz nienaturalne sformułowania."
- },
- {
-  "de": "Du hast schon Supplements genommen.<br><em>Aber hast du es auch gemerkt?</em>",
-  "alt": "Masz już za sobą suplementy.<br><em>Ale czy faktycznie było coś czuć?</em>",
-  "neu": "Zdarzało ci się już brać suplementy.<br><em>Ale czy faktycznie było czuć różnicę?</em>",
-  "grund": "„Masz już za sobą suplementy” zmienia sens i brzmi nienaturalnie."
- },
- {
-  "de": "Leichter durch den Tag?",
-  "alt": "Lżej przez dzień?",
-  "neu": "Łatwiej przejść przez dzień?",
-  "grund": "„Lżej przez dzień?” jest mało naturalne po polsku."
- },
- {
   "de": "Dein Darm in<br>90 Sek. erklärt",
-  "alt": "Twoje jelita wyjaśnione w<br>90 sek.",
-  "neu": "Twoje jelita w<br>90 sek. wyjaśnione",
-  "grund": "Poprawa nienaturalnej składni."
+  "alt": "Twoje jelita w<br>90 sek. wyjaśnione",
+  "neu": "Twoje jelita wyjaśnione w<br>90 sek.",
+  "grund": "Poprawa nienaturalnego niemieckiego szyku zdania."
  },
  {
-  "de": "Modernes Leben braucht <em>mehr als Essen</em>.",
-  "alt": "Współczesne życie potrzebuje <em>czegoś więcej niż jedzenia</em>.",
-  "neu": "Współczesne życie wymaga <em>czegoś więcej niż jedzenia</em>.",
-  "grund": "„Życie potrzebuje” brzmi nienaturalnie po polsku."
+  "de": "20+ Pflanzenextrakte inkl. Kurkuma &amp; Guarana",
+  "alt": "20+ ekstraktów roślinnych, w tym kurkuma &amp; guarana",
+  "neu": "20+ ekstraktów roślinnych, m.in. z kurkumy &amp; guarany",
+  "grund": "Poprawa składni; chodzi o ekstrakty z roślin."
  },
  {
-  "de": "Stress, Schlafmangel, wenig Sonnenlicht. Der Körper hat mehr Bedarf, als er durch normale Ernährung deckt. Das Optimalset liefert bioaktive Mikronährstoffe als tägliche Basis für 12 Bereiche.",
-  "alt": "Stres, za mało snu, mało słońca. Organizm ma większe potrzeby, niż jest w stanie pokryć zwykłą dietą. Optimalset dostarcza bioaktywne mikroskładniki odżywcze jako codzienną bazę dla 12 obszarów.",
-  "neu": "Stres, za mało snu, mało słońca. Organizm ma większe potrzeby, niż jest w stanie pokryć zwykłą dietą. Optimalset dostarcza bioaktywne mikroskładniki odżywcze jako codzienną bazę w 12 obszarach.",
-  "grund": "„Baza dla 12 obszarów” jest nienaturalne."
- },
- {
-  "de": "Calcium trägt zur normalen Funktion der Verdauungsenzyme bei. Plus Inulin als löslicher Ballaststoff.",
-  "alt": "Wapń przyczynia się do prawidłowego funkcjonowania enzymów trawiennych. Plus inulina jako rozpuszczalny błonnik.",
-  "neu": "Wapń przyczynia się do prawidłowego funkcjonowania enzymów trawiennych. Do tego inulina jako rozpuszczalny błonnik.",
-  "grund": "„Plus inulina” brzmi nienaturalnie po polsku."
- },
- {
-  "de": "Deine tägliche Morgenroutine für die optimale Nährstoffversorgung — alles, was dein Körper für einen energiereichen Start in den Tag braucht, in einem einzigen frischen Glas.",
-  "alt": "Twoja codzienna poranna rutyna dla optymalnego dostarczenia składników odżywczych — wszystko, czego twój organizm potrzebuje na pełen energii start w dzień, w jednej świeżej szklance.",
-  "neu": "Twoja codzienna poranna rutyna zapewniająca optymalne zaopatrzenie w składniki odżywcze — wszystko, czego twój organizm potrzebuje, by z energią zacząć dzień, w jednej szklance świeżego napoju.",
-  "grund": "Poprawa nienaturalnego brzmienia i sensu „w jednej świeżej szklance”."
- },
- {
-  "de": "Liefert die Wirkstoffe, die dein Körper braucht, um Energie zu erzeugen.¹ Für fokussierte Tage und klare Köpfe.² Mit Stevia gesüßt, ohne künstliche Farbstoffe und Konservierungsmittel.",
-  "alt": "Dostarcza substancji aktywnych, których twój organizm potrzebuje, by wytwarzać energię.¹ Na dni ze skupieniem i jasną głową.² Słodzony stewią, bez sztucznych barwników i konserwantów.",
-  "neu": "Dostarcza substancji aktywnych, których twój organizm potrzebuje, by wytwarzać energię.¹ Na dni pełne skupienia i jasny umysł.² Słodzony stewią, bez sztucznych barwników i konserwantów.",
-  "grund": "„Na dni ze skupieniem” brzmi nienaturalnie."
- },
- {
-  "de": "Koffein aus Guarana, sanfter als Energy-Drink",
-  "alt": "Kofeina z guarany, łagodniejsza niż napój energetyczny",
-  "neu": "Kofeina z guarany — łagodniejsza niż ta z napoju energetycznego",
-  "grund": "Poprawa nieprecyzyjnego i nienaturalnego porównania."
- },
- {
-  "de": "¹ Vitamin B6 trägt zu einem normalen Energiestoffwechsel bei. ² Vitamin B6, B12 und C tragen zu einer normalen psychologischen Funktion bei.",
-  "alt": "¹ Witamina B6 przyczynia się do prawidłowego metabolizmu energetycznego. ² Witaminy B6, B12 i C przyczyniają się do prawidłowego funkcjonowania psychologicznego.",
-  "neu": "¹ Witamina B6 przyczynia się do prawidłowego metabolizmu energetycznego. ² Witaminy B6, B12 i C przyczyniają się do utrzymania prawidłowych funkcji psychologicznych.",
-  "grund": "Naturalniejsze i poprawne brzmienie oświadczenia zdrowotnego."
- },
- {
-  "de": "Ein Schluck Joghurt-Drink obendrauf. Die beiden Produkte sind aufeinander abgestimmt und ergänzen sich in deiner täglichen Routine.",
-  "alt": "Łyk Joghurt-Drink na wierzch. Te dwa produkty są do siebie dopasowane i uzupełniają się w twojej codziennej rutynie.",
-  "neu": "Łyk Joghurt-Drinku na wierzch. Te dwa produkty są do siebie dopasowane i uzupełniają się w twojej codziennej rutynie.",
-  "grund": "Brak odmiany powodował nienaturalne brzmienie po polsku."
- },
- {
-  "de": "Eine Portion Activize mit ins Glas. So hast du den Wachmacher gleich dabei.",
-  "alt": "Jedna porcja Activize do tej samej szklanki. Tak masz swój zastrzyk pobudzenia od razu pod ręką.",
-  "neu": "Jedna porcja Activize do tej samej szklanki. Dzięki temu masz od razu pod ręką coś na pobudzenie.",
-  "grund": "„Zastrzyk pobudzenia” brzmi nienaturalnie."
- },
- {
-  "de": "Drei Dinge muss ein Produkt erfüllen, {{#unless team_modus=team}}damit ich es empfehle{{/unless}}{{#if team_modus=team}}damit wir es empfehlen{{/if}}: Es muss wirken, sauber hergestellt sein und sicher sein. Hier ist, warum das Optimalset alle drei Punkte erfüllt.",
-  "alt": "Produkt musi spełniać trzy rzeczy, {{#unless team_modus=team}}żebym go polecał{{/unless}}{{#if team_modus=team}}żebyśmy go polecali{{/if}}: musi działać, być czysto wytwarzany i bezpieczny. Oto dlaczego Optimalset spełnia wszystkie trzy punkty.",
-  "neu": "Produkt musi spełniać trzy warunki, {{#unless team_modus=team}}żeby trafił do moich poleceń{{/unless}}{{#if team_modus=team}}żeby trafił do naszych poleceń{{/if}}: musi działać, być produkowany w czysty sposób i być bezpieczny. Oto dlaczego Optimalset spełnia wszystkie trzy warunki.",
-  "grund": "„Spełniać trzy rzeczy” i „czysto wytwarzany” są nienaturalne po polsku."
- },
- {
-  "de": "Die Kölner Liste® prüft Nahrungsergänzungsmittel unabhängig auf unerlaubte Substanzen. {{#unless joghurt_anzeigen=nein}}Alle vier Produkte{{/unless}}{{#if joghurt_anzeigen=nein}}Alle drei Produkte{{/if}} des Optimalsets sind gelistet und wurden ohne Beanstandung analysiert. Für Profis Pflicht, für alle anderen eine starke Garantie.",
-  "alt": "Lista Kolońska® niezależnie sprawdza suplementy diety pod kątem niedozwolonych substancji. {{#unless joghurt_anzeigen=nein}}Wszystkie cztery produkty{{/unless}}{{#if joghurt_anzeigen=nein}}Wszystkie trzy produkty{{/if}} z Optimalset są na liście i zostały przeanalizowane bez zastrzeżeń. Dla zawodowców to obowiązek, dla wszystkich innych mocna gwarancja.",
-  "neu": "Lista Kolońska® niezależnie sprawdza suplementy diety pod kątem niedozwolonych substancji. {{#unless joghurt_anzeigen=nein}}Wszystkie cztery produkty{{/unless}}{{#if joghurt_anzeigen=nein}}Wszystkie trzy produkty{{/if}} z zestawu Optimalset są na liście i zostały przeanalizowane bez zastrzeżeń. Dla zawodowców to obowiązek, dla wszystkich innych solidna gwarancja.",
-  "grund": "Poprawa gramatyki i naturalności: „z Optimalset” jest niezręczne."
- },
- {
-  "de": "Made in Germany. Vom Labor bis zur Abfüllung.",
-  "alt": "Made in Germany. Od laboratorium po rozlew.",
-  "neu": "Made in Germany. Od laboratorium po pakowanie.",
-  "grund": "„Rozlew” dotyczy płynów i jest tu zbyt wąskie/nieadekwatne."
- },
- {
-  "de": "Von der Forschung bis zur Abfüllung passiert alles in Speyer. Kein Outsourcing, keine langen Lieferketten. Du weißt genau, wo dein Optimalset herkommt.",
-  "alt": "Od badań po rozlew wszystko odbywa się w Speyer. Bez outsourcingu, bez długich łańcuchów dostaw. Wiesz dokładnie, skąd pochodzi Twój Optimalset.",
-  "neu": "Od badań po pakowanie wszystko odbywa się w Speyer. Bez outsourcingu, bez długich łańcuchów dostaw. Wiesz dokładnie, skąd pochodzi Twój Optimalset.",
-  "grund": "„Rozlew” dotyczy płynów i jest tu zbyt wąskie/nieadekwatne."
- },
- {
-  "de": "Patenkinder",
-  "alt": "Dzieci objęte sponsoringiem",
-  "neu": "Dzieci objęte opieką sponsorską",
-  "grund": "„Sponsoringiem” brzmi niezręcznie w kontekście charytatywnym."
- },
- {
-  "de": "Ein Teil jedes Verkaufs geht an die PM We Care-Stiftung. Seit über 20 Jahren Partnerschaft mit World Vision. 8.500 Patenkinder und 40 Projekte weltweit.",
-  "alt": "Część każdej sprzedaży trafia do fundacji PM We Care. Od ponad 20 lat współpracujemy z World Vision. 8.500 dzieci objętych sponsoringiem i 40 projektów na całym świecie.",
-  "neu": "Część każdej sprzedaży trafia do fundacji PM We Care. Od ponad 20 lat współpracujemy z World Vision. 8 500 dzieci objętych opieką sponsorską i 40 projektów na całym świecie.",
-  "grund": "Naturalniejsze określenie child sponsorship; poprawiony polski zapis liczby."
- },
- {
-  "de": "Wenn dir das Optimalset nicht schmeckt, nicht zu dir passt oder es dich aus irgendeinem Grund nicht überzeugt, schickst du die angefangene Verpackung zurück und bekommst auf den Cent alles wieder.",
-  "alt": "Jeśli Optimalset Ci nie smakuje, nie pasuje do Ciebie albo z jakiegoś powodu Cię nie przekonuje, odsyłasz rozpoczęte opakowanie i dostajesz wszystko z powrotem co do centa.",
-  "neu": "Jeśli Optimalset Ci nie smakuje, nie pasuje do Ciebie albo z jakiegoś powodu Cię nie przekonuje, odsyłasz napoczęte opakowanie i dostajesz wszystko z powrotem co do centa.",
-  "grund": "„Rozpoczęte opakowanie” to błędna kolokacja."
- },
- {
-  "de": "Auch angefangene oder leere Verpackungen reichen aus.",
-  "alt": "Wystarczą też rozpoczęte albo puste opakowania.",
-  "neu": "Wystarczą też napoczęte albo puste opakowania.",
-  "grund": "„Rozpoczęte opakowania” to błędna kolokacja."
- },
- {
-  "de": "Liefert Beta-Carotin, das im Körper zu Vitamin A wird. Vitamin A trägt zur Erhaltung normaler Sehkraft und Haut bei.",
-  "alt": "Dostarcza beta-karotenu, który w organizmie zamienia się w witaminę A. Witamina A pomaga zachować prawidłowy wzrok i skórę.",
-  "neu": "Dostarcza beta-karotenu, który w organizmie zamienia się w witaminę A. Witamina A pomaga zachować prawidłowy wzrok i prawidłowy stan skóry.",
-  "grund": "Nienaturalne „zachować prawidłową skórę”."
- },
- {
-  "de": "Trägt zur Erhaltung normaler Knochen und einer normalen Muskelfunktion bei. In zwei Verbindungen kombiniert, für gute Aufnahme.",
-  "alt": "Pomaga w utrzymaniu prawidłowych kości i prawidłowego funkcjonowania mięśni. Połączony w dwóch związkach, dla dobrego przyswajania.",
-  "neu": "Pomaga w utrzymaniu prawidłowego stanu kości i prawidłowego funkcjonowania mięśni. Połączony w dwóch związkach, dla dobrego przyswajania.",
-  "grund": "„Prawidłowe kości” brzmi nienaturalnie po polsku."
- },
- {
-  "de": "Pflanzliche Vorstufe von Vitamin A. Vitamin A trägt zur Erhaltung normaler Sehkraft, Haut und einer normalen Funktion des Immunsystems bei.",
-  "alt": "Roślinny prekursor witaminy A. Witamina A pomaga zachować prawidłowy wzrok, skórę i prawidłowe funkcjonowanie układu odpornościowego.",
-  "neu": "Roślinny prekursor witaminy A. Witamina A pomaga zachować prawidłowy wzrok, prawidłowy stan skóry i prawidłowe funkcjonowanie układu odpornościowego.",
-  "grund": "Nienaturalne zestawienie „zachować skórę”."
- },
- {
-  "de": "Trägt zur Erhaltung normaler Haut, Haare und Nägel und zur normalen Funktion des Immunsystems bei. Organisch an Gluconat gebunden.",
-  "alt": "Pomaga zachować prawidłową skórę, włosy i paznokcie oraz prawidłowe funkcjonowanie układu odpornościowego. Organicznie związany z glukonianem.",
-  "neu": "Pomaga zachować prawidłowy stan skóry, włosów i paznokci oraz prawidłowe funkcjonowanie układu odpornościowego. Organicznie związany z glukonianem.",
-  "grund": "„Prawidłowa skóra, włosy i paznokcie” brzmi nienaturalnie."
- },
- {
-  "de": "Süße Sommerbeere mit natürlichem Vitamin C. Vitamin C trägt zur Verringerung von Müdigkeit und einem normalen Energiestoffwechsel bei.",
-  "alt": "Słodka letnia jagoda z naturalną witaminą C. Witamina C przyczynia się do zmniejszenia uczucia zmęczenia i znużenia oraz do prawidłowego metabolizmu energetycznego.",
-  "neu": "Słodki letni owoc jagodowy z naturalną witaminą C. Witamina C przyczynia się do zmniejszenia uczucia zmęczenia i znużenia oraz do prawidłowego metabolizmu energetycznego.",
-  "grund": "„Jagoda” oznacza po polsku zwykle borówkę; przy truskawce lepiej użyć „owoc jagodowy”."
- },
- {
-  "de": "Bringt dunkle Beeren-Pflanzenstoffe und natürliches Vitamin C mit. Vitamin C trägt zum Schutz der Zellen vor oxidativem Stress bei.",
-  "alt": "Wnosi ciemne jagodowe substancje roślinne i naturalną witaminę C. Witamina C pomaga chronić komórki przed stresem oksydacyjnym.",
-  "neu": "Wnosi substancje roślinne ciemnych owoców jagodowych i naturalną witaminę C. Witamina C pomaga chronić komórki przed stresem oksydacyjnym.",
-  "grund": "„Ciemne jagodowe substancje roślinne” brzmi nienaturalnie."
- },
- {
-  "de": "Liefert das natürliche Koffein im Drink. Aus der Amazonas-Frucht statt synthetisch hergestellt. Wird langsamer freigesetzt als reiner Kaffee.",
-  "alt": "Dostarcza naturalną kofeinę w napoju. Z owocu Amazonii, zamiast syntetycznie wytwarzanej. Uwalnia się wolniej niż czysta kawa.",
-  "neu": "Dostarcza naturalną kofeinę w napoju. Z owocu Amazonii, zamiast syntetycznie wytwarzanej. Uwalnia się wolniej niż kofeina z samej kawy.",
-  "grund": "„Czysta kawa” brzmi nienaturalnie i zniekształca sens porównania."
- },
- {
-  "de": "Löslicher Ballaststoff aus der Chicoree-Wurzel. {{#unless joghurt_anzeigen=nein}}Im Probiotic-Joghurt-Drink die natürliche Nährgrundlage für die enthaltenen Milchsäurekulturen.{{/unless}}{{#if joghurt_anzeigen=nein}}Im PowerCocktail die natürliche Nährgrundlage für die enthaltenen Milchsäurekulturen.{{/if}}",
-  "alt": "Rozpuszczalny błonnik z korzenia cykorii. {{#unless joghurt_anzeigen=nein}}W Probiotic-Joghurt-Drink naturalna pożywka dla zawartych kultur bakterii kwasu mlekowego.{{/unless}}{{#if joghurt_anzeigen=nein}}W PowerCocktail naturalna pożywka dla zawartych kultur bakterii kwasu mlekowego.{{/if}}",
-  "neu": "Rozpuszczalny błonnik z korzenia cykorii. {{#unless joghurt_anzeigen=nein}}W Probiotic Jogurt Drink naturalna pożywka dla zawartych kultur bakterii kwasu mlekowego.{{/unless}}{{#if joghurt_anzeigen=nein}}W PowerCocktail naturalna pożywka dla zawartych kultur bakterii kwasu mlekowego.{{/if}}",
-  "grund": "Pozostawiono niemieckie „Joghurt” w nazwie/opisie produktu.",
+  "de": "Joghurt-Drink",
+  "alt": "Joghurt-Drink",
+  "neu": "Napój jogurtowy",
+  "grund": "Niepotrzebnie zostawiono niemieckie brzmienie.",
   "skip": true
  },
  {
+  "de": "Selbstgemachter Joghurt-Drink statt Fertigprodukt — frisch angerührt, frei von Konservierungsstoffen, mit natürlichem Geschmack und Milchsäurekulturen, ideal für die ganze Familie.",
+  "alt": "Domowy Joghurt-Drink zamiast gotowego produktu — świeżo wymieszany, bez konserwantów, o naturalnym smaku i z kulturami bakterii kwasu mlekowego, idealny dla całej rodziny.",
+  "neu": "Domowy napój jogurtowy zamiast gotowego produktu — świeżo wymieszany, bez konserwantów, o naturalnym smaku i z kulturami bakterii kwasu mlekowego, idealny dla całej rodziny.",
+  "grund": "Niepotrzebnie zostawiono niemieckie brzmienie.",
+  "skip": true
+ },
+ {
+  "de": "Joghurt rundet ab",
+  "alt": "Joghurt-Drink dopełnia całość",
+  "neu": "Napój jogurtowy dopełnia całość",
+  "grund": "Niepotrzebnie zostawiono niemieckie brzmienie.",
+  "skip": true
+ },
+ {
+  "de": "Ein Schluck Joghurt-Drink obendrauf. Die beiden Produkte sind aufeinander abgestimmt und ergänzen sich in deiner täglichen Routine.",
+  "alt": "Łyk Joghurt-Drinku na wierzch. Te dwa produkty są do siebie dopasowane i uzupełniają się w twojej codziennej rutynie.",
+  "neu": "Łyk napoju jogurtowego na wierzch. Te dwa produkty są do siebie dopasowane i uzupełniają się w twojej codziennej rutynie.",
+  "grund": "Niepotrzebnie zostawiono niemieckie brzmienie.",
+  "skip": true
+ },
+ {
+  "de": "³ Angaben gemäß PM-International AG",
+  "alt": "³ Dane zgodnie z PM-International AG",
+  "neu": "³ Dane według PM-International AG",
+  "grund": "Naturalniejsze i poprawniejsze po polsku niż „zgodnie z” przy źródle danych."
+ },
+ {
+  "de": "Wenn dir das Optimalset nicht schmeckt, nicht zu dir passt oder es dich aus irgendeinem Grund nicht überzeugt, schickst du die angefangene Verpackung zurück und bekommst auf den Cent alles wieder.",
+  "alt": "Jeśli Optimalset Ci nie smakuje, nie pasuje do Ciebie albo z jakiegoś powodu Cię nie przekonuje, odsyłasz napoczęte opakowanie i dostajesz wszystko z powrotem co do centa.",
+  "neu": "Jeśli Optimalset Ci nie smakuje, nie pasuje do Ciebie albo z jakiegoś powodu Cię nie przekonuje, odsyłasz napoczęte opakowanie i dostajesz wszystko z powrotem co do grosza.",
+  "grund": "„Co do grosza” to naturalny polski idiom; „co do centa” brzmi dosłownie."
+ },
+ {
+  "de": "Trägt zur Verringerung von Müdigkeit und einer normalen Muskelfunktion bei. Gleich in zwei Verbindungen drin, damit der Körper es gut aufnehmen kann.",
+  "alt": "Przyczynia się do zmniejszenia uczucia zmęczenia i do prawidłowego funkcjonowania mięśni. Od razu w dwóch związkach, żeby organizm mógł go dobrze przyswoić.",
+  "neu": "Przyczynia się do zmniejszenia uczucia zmęczenia i do prawidłowego funkcjonowania mięśni. I to w dwóch związkach, żeby organizm mógł go dobrze przyswoić.",
+  "grund": "„Od razu” błędnie oddaje niem. „gleich” w znaczeniu „aż/i to”."
+ },
+ {
+  "de": "Trägt zur Erhaltung normaler Knochen und einer normalen Muskelfunktion bei. In zwei Verbindungen kombiniert, für gute Aufnahme.",
+  "alt": "Pomaga w utrzymaniu prawidłowego stanu kości i prawidłowego funkcjonowania mięśni. Połączony w dwóch związkach, dla dobrego przyswajania.",
+  "neu": "Pomaga w utrzymaniu prawidłowego stanu kości i prawidłowego funkcjonowania mięśni. Występuje w dwóch związkach, dla dobrego przyswajania.",
+  "grund": "„Połączony w dwóch związkach” brzmi nienaturalnie po polsku."
+ },
+ {
+  "de": "Liefert natürliches Eisen aus der Pflanze. Eisen trägt zur Verringerung von Müdigkeit und einem normalen Sauerstofftransport im Körper bei.",
+  "alt": "Dostarcza naturalnego żelaza z rośliny. Żelazo przyczynia się do zmniejszenia uczucia zmęczenia i do prawidłowego transportu tlenu w organizmie.",
+  "neu": "Dostarcza naturalnego żelaza pochodzenia roślinnego. Żelazo przyczynia się do zmniejszenia uczucia zmęczenia i do prawidłowego transportu tlenu w organizmie.",
+  "grund": "„Żelazo z rośliny” to zbyt dosłowna, nienaturalna kalka."
+ },
+ {
+  "de": "Trägt zur Verringerung von Müdigkeit und einem normalen Sauerstofftransport im Körper bei. Sanft an Citrat gebunden, magenfreundlich.",
+  "alt": "Przyczynia się do zmniejszenia uczucia zmęczenia i do prawidłowego transportu tlenu w organizmie. Delikatnie związane z cytrynianem, przyjazne dla żołądka.",
+  "neu": "Przyczynia się do zmniejszenia uczucia zmęczenia i do prawidłowego transportu tlenu w organizmie. Związane z cytrynianem, łagodne dla żołądka.",
+  "grund": "„Delikatnie związane z cytrynianem” brzmi nienaturalnie i zbyt dosłownie."
+ },
+ {
+  "de": "Bringt die feine Schärfe und die typischen Pflanzenstoffe (Gingerole) der Wurzel in den Drink. Klassisches Gewürz aus der asiatischen Tradition.",
+  "alt": "Wnosi do napoju delikatną ostrość i typowe substancje roślinne korzenia (gingerole). Klasyczna przyprawa z tradycji azjatyckiej.",
+  "neu": "Wnosi do napoju delikatną ostrość i charakterystyczne dla tego korzenia związki roślinne (gingerole). Klasyczna przyprawa z tradycji azjatyckiej.",
+  "grund": "Nienaturalna kalka „substancje roślinne korzenia”."
+ },
+ {
+  "de": "Eine der natürlich vitamin-C-reichsten Beeren überhaupt. Vitamin C trägt zu einer normalen Funktion des Immunsystems und zur Verringerung von Müdigkeit bei.",
+  "alt": "Jedna z jagód naturalnie najbogatszych w witaminę C. Witamina C przyczynia się do prawidłowego funkcjonowania układu odpornościowego oraz do zmniejszenia uczucia zmęczenia i znużenia.",
+  "neu": "Jedna z naturalnie najbogatszych w witaminę C jagód. Witamina C przyczynia się do prawidłowego funkcjonowania układu odpornościowego oraz do zmniejszenia uczucia zmęczenia i znużenia.",
+  "grund": "Nienaturalny szyk zdania."
+ },
+ {
   "de": "Wer Vitamine, Mineralien und Pflanzenextrakte einzeln kauft, gibt schnell mehr aus als gedacht. Dazu kommt: Viele Nährstoffe hemmen sich gegenseitig in der Aufnahme. Wer das nicht weiß, dosiert falsch, ohne es zu merken. Das Optimalset nimmt dir das ab.",
-  "alt": "Kto kupuje witaminy, minerały i ekstrakty roślinne osobno, szybko wydaje więcej, niż myślał. Do tego: wiele składników odżywczych wzajemnie utrudnia swoje wchłanianie. Jeśli o tym nie wiesz, dawkujesz źle, nawet tego nie zauważając. Optimalset bierze to z ciebie.",
-  "neu": "Kiedy kupujesz witaminy, minerały i ekstrakty roślinne osobno, szybko wydajesz więcej, niż myślisz. Do tego wiele składników odżywczych wzajemnie utrudnia swoje wchłanianie. Jeśli o tym nie wiesz, dawkujesz źle, nawet tego nie zauważając. Optimalset robi to za ciebie.",
-  "grund": "„Bierze to z ciebie” to błędny idiom; całość wymaga naturalniejszego, bezpośredniego tonu."
+  "alt": "Kiedy kupujesz witaminy, minerały i ekstrakty roślinne osobno, szybko wydajesz więcej, niż myślisz. Do tego wiele składników odżywczych wzajemnie utrudnia swoje wchłanianie. Jeśli o tym nie wiesz, dawkujesz źle, nawet tego nie zauważając. Optimalset robi to za ciebie.",
+  "neu": "Kiedy kupujesz witaminy, minerały i ekstrakty roślinne osobno, szybko wydajesz więcej, niż myślisz. Do tego wiele składników odżywczych wzajemnie hamuje swoje wchłanianie. Jeśli o tym nie wiesz, dawkujesz źle, nawet tego nie zauważając. Optimalset robi to za ciebie.",
+  "grund": "Nienaturalne sformułowanie o wchłanianiu składników."
  },
  {
-  "de": "Optimalset, Drogerie-Vitamine, frischer Smoothie. Was steckt wirklich drin, was kostet es, was bringt es dir tatsächlich.",
-  "alt": "Optimalset, witaminy z drogerii, świeży smoothie. Co naprawdę jest w środku, ile to kosztuje, co faktycznie ci daje.",
-  "neu": "Optimalset, witaminy z drogerii, świeże smoothie. Co naprawdę jest w środku, ile to kosztuje, co faktycznie ci daje.",
-  "grund": "„Smoothie” ma w polszczyźnie zwykle rodzaj nijaki: „świeże smoothie”."
+  "de": "Du musst Abstand zu Milch und Calcium halten.",
+  "alt": "Musisz zachować odstęp od mleka i wapnia.",
+  "neu": "Musisz zachować odstęp czasowy od mleka i wapnia.",
+  "grund": "„Odstęp od mleka i wapnia” jest nieprecyzyjne i nienaturalne."
  },
  {
-  "de": "Frischer Smoothie",
-  "alt": "Świeży smoothie",
-  "neu": "Świeże smoothie",
-  "grund": "Nieprawidłowy rodzaj przymiotnika przy „smoothie”."
- },
- {
-  "de": "Meist gezielt 1 bis 3 Stoffe pro Produkt",
-  "alt": "Najczęściej celowo 1 do 3 składników na produkt",
-  "neu": "Zazwyczaj 1–3 konkretnie dobrane składniki w produkcie",
-  "grund": "Oryginał mówi o konkretnie dobranych substancjach; „celowo 1 do 3 składników” brzmi nienaturalnie."
- },
- {
-  "de": "⁴ Preis variiert je nach Bestellweg. Im Kundenabo oder als Teampartner günstiger. Konditionen in der persönlichen Beratung.",
-  "alt": "⁴ Cena różni się w zależności od sposobu zamówienia. W abonamencie klienta albo jako partner zespołu taniej. Warunki podczas osobistej konsultacji.",
-  "neu": "⁴ Cena zależy od sposobu zamówienia. W abonamencie dla klientów albo jako partner zespołu jest taniej. Warunki omawiamy podczas indywidualnej konsultacji.",
-  "grund": "Naturalniejsze brzmienie; „osobista konsultacja” może sugerować spotkanie twarzą w twarz."
- },
- {
-  "de": "Persönliche Beratung",
-  "alt": "Osobista konsultacja",
-  "neu": "Indywidualna konsultacja",
-  "grund": "„Osobista konsultacja” brzmi nienaturalnie i może oznaczać konsultację na miejscu."
- },
- {
-  "de": "Für Beruf, Familie, Sport und alles, was dazukommt",
-  "alt": "Na pracę, rodzinę, sport i wszystko, co jeszcze dochodzi",
-  "neu": "Z myślą o pracy, rodzinie, sporcie i całej reszcie",
-  "grund": "Obecne „Na pracę, rodzinę…” jest nienaturalne po polsku."
- },
- {
-  "de": "Am liebsten per (optional)",
-  "alt": "Najchętniej przez (opcjonalnie)",
-  "neu": "Preferowana forma kontaktu (opcjonalnie)",
-  "grund": "„Najchętniej przez” jest kalką i brzmi nienaturalnie jako etykieta pola."
- },
- {
-  "de": "Danke. Deine Nachricht ist bei {{#unless team_modus=team}}mir{{/unless}}{{#if team_modus=team}}uns{{/if}}.",
-  "alt": "Dziękuję. Twoja wiadomość dotarła do {{#unless team_modus=team}}mnie{{/unless}}{{#if team_modus=team}}nas{{/if}}.",
-  "neu": "Dzięki. Twoja wiadomość dotarła do {{#unless team_modus=team}}mnie{{/unless}}{{#if team_modus=team}}nas{{/if}}.",
-  "grund": "„Dziękuję” nie pasuje do wariantu zespołowego; „Dzięki” działa w obu."
- },
- {
-  "de": "Weitere Empfehlungen",
-  "alt": "Więcej poleceń",
-  "neu": "Więcej rekomendacji",
-  "grund": "„Więcej poleceń” brzmi dwuznacznie i mniej naturalnie w tym kontekście."
- },
- {
-  "de": "Hinter dem Optimalset steckt das NTC, das Nährstoff-Transport-Konzept von PM-International. Der Grundgedanke: Zwischen Nährstoffe aufnehmen und Nährstoffe verwerten liegt ein langer Weg. Das NTC ist darauf ausgelegt, Nährstoffe in der richtigen Form zur richtigen Zeit dorthin zu bringen, wo dein Körper sie braucht. 100+ Patente stehen dahinter. Dazu kommt der Timing-Ansatz: bestimmte Produkte morgens, andere tagsüber oder abends, weil dein Körper zu verschiedenen Zeiten unterschiedliche Nährstoffe braucht. Das ist der Unterschied zwischen einem einzelnen Supplement und einem durchdachten System.",
-  "alt": "Za Optimalset stoi NTC, koncepcja transportu składników odżywczych PM-International. Podstawowa idea: między przyjęciem składników odżywczych a ich wykorzystaniem jest długa droga. NTC ma za zadanie dostarczyć składniki odżywcze w odpowiedniej formie, o odpowiednim czasie, tam, gdzie Twój organizm ich potrzebuje. Stoi za tym ponad 100 patentów. Do tego dochodzi podejście oparte na czasie przyjmowania: niektóre produkty rano, inne w ciągu dnia albo wieczorem, bo Twój organizm o różnych porach potrzebuje różnych składników odżywczych. To jest różnica między pojedynczym suplementem a przemyślanym systemem.",
-  "neu": "Za Optimalset stoi NTC, koncepcja transportu składników odżywczych PM-International. Podstawowa idea: między przyjmowaniem składników odżywczych a ich wykorzystaniem jest długa droga. NTC ma dostarczać składniki odżywcze w odpowiedniej formie, we właściwym czasie i tam, gdzie Twój organizm ich potrzebuje. Stoi za tym ponad 100 patentów. Do tego dochodzi podejście oparte na czasie przyjmowania: jedne produkty rano, inne w ciągu dnia albo wieczorem, bo Twój organizm o różnych porach potrzebuje różnych składników odżywczych. Na tym polega różnica między pojedynczym suplementem a przemyślanym systemem.",
-  "grund": "Poprawa nienaturalnych kalk i błędnego połączenia „o odpowiednim czasie”."
- },
- {
-  "de": "Nein, das sind Nahrungsergänzungsmittel. Sie ersetzen keine ausgewogene Ernährung und sind keine ärztliche Behandlung. Bei konkreten gesundheitlichen Fragen schau bitte zuerst mit einem Arzt. Was das Optimalset tut, ist deinen Körper besser versorgen, nicht etwas kurieren.",
-  "alt": "Nie, to suplementy diety. Nie zastępują zbilansowanej diety i nie są leczeniem medycznym. Jeśli masz konkretne pytania zdrowotne, najpierw skonsultuj się z lekarzem. To, co robi Optimalset, to lepsze zaopatrzenie Twojego organizmu, a nie leczenie czegokolwiek.",
-  "neu": "Nie, to suplementy diety. Nie zastępują zbilansowanej diety i nie są leczeniem medycznym. Jeśli masz konkretne pytania zdrowotne, najpierw skonsultuj się z lekarzem. Optimalset ma lepiej zaopatrywać Twój organizm w składniki odżywcze, a nie cokolwiek leczyć.",
-  "grund": "„Lepsze zaopatrzenie Twojego organizmu” brzmi nienaturalnie."
+  "de": "Beutel ins Glas, Wasser dazu, kurz umrühren",
+  "alt": "Saszetkę do szklanki, dolej wody, krótko wymieszaj",
+  "neu": "Wsyp zawartość saszetki do szklanki, dolej wody i krótko wymieszaj",
+  "grund": "Jednoznaczniej i naturalniej po polsku; nie wkłada się całej saszetki do szklanki."
  },
  {
   "de": "Zutaten &amp; Inhaltsstoffe",
-  "alt": "Skład i składniki",
-  "neu": "Skład i składniki odżywcze",
-  "grund": "„Skład i składniki” jest tautologiczne i nienaturalne."
+  "alt": "Skład i składniki odżywcze",
+  "neu": "Skład i zawartość",
+  "grund": "„Inhaltsstoffe” nie oznacza tu wyłącznie składników odżywczych; sekcja dotyczy też cukru, słodzików i konserwantów."
  },
  {
-  "de": "Viele FitLine-Produkte werden mit Stevia gesüßt. Stevia ist ein natürlicher Pflanzenextrakt aus der gleichnamigen Pflanze, hat praktisch null Kalorien und bringt deinen Blutzucker nicht durcheinander. Das klingt erstmal nach dem typischen Gesundheitstrend, aber der Unterschied zu klassischen Süßungsmitteln wie Aspartam oder Acesulfam-K ist wirklich relevant: Die sind synthetisch hergestellt und stehen schon länger in der Diskussion, weil sie bei manchen Menschen Heißhunger verstärken oder den Darm belasten sollen. Stevia kommt aus der Natur und gilt bei normaler Menge als unbedenklich. Du bekommst also den süßen Geschmack, ohne deinen Körper damit zu belasten.",
-  "alt": "Wiele produktów FitLine jest słodzonych stewią. Stewia to naturalny ekstrakt roślinny z rośliny o tej samej nazwie, ma praktycznie zero kalorii i nie miesza w poziomie cukru we krwi. Na pierwszy rzut oka brzmi to jak typowy trend zdrowotny, ale różnica w porównaniu z klasycznymi słodzikami, takimi jak aspartam czy acesulfam-K, jest naprawdę istotna: one są produkowane syntetycznie i od dawna budzą dyskusje, bo mówi się, że u niektórych osób mogą nasilać napady głodu albo obciążać jelita. Stewia pochodzi z natury i w normalnych ilościach jest uważana za bezpieczną. Dostajesz więc słodki smak, bez obciążania nim organizmu.",
-  "neu": "Wiele produktów FitLine jest słodzonych stewią. Stewia to naturalny ekstrakt roślinny z rośliny o tej samej nazwie, ma praktycznie zero kalorii i nie rozregulowuje poziomu cukru we krwi. Na pierwszy rzut oka brzmi to jak typowy trend prozdrowotny, ale różnica w porównaniu z klasycznymi słodzikami, takimi jak aspartam czy acesulfam-K, jest naprawdę istotna: są one produkowane syntetycznie i od dawna budzą dyskusje, bo mówi się, że u niektórych osób mogą nasilać napady głodu albo obciążać jelita. Stewia pochodzi z natury i w normalnych ilościach jest uważana za bezpieczną. Dostajesz więc słodki smak, bez obciążania nim organizmu.",
-  "grund": "„Nie miesza w poziomie cukru” jest nienaturalne po polsku."
+  "de": "Warum ist da Zucker drin?",
+  "alt": "Dlaczego jest tam cukier?",
+  "neu": "Dlaczego jest w tym cukier?",
+  "grund": "Naturalniejsze w odniesieniu do produktu niż dosłowne „tam”."
  },
  {
-  "de": "Nein. Auf Konservierungsstoffe wird bewusst verzichtet. Das funktioniert, weil die Produkte in kleinen, luftdicht versiegelten Tagespäckchen abgepackt sind. Das Pulver hat bis zum Öffnen keinen Kontakt mit Luft oder Feuchtigkeit, also braucht es schlicht keine Konservierung. Sobald du die Packung aufmachst, verwendest du alles auf einmal. Kein Anbruch, keine Oxidation, keine Konservierungsstoffe nötig.",
-  "alt": "Nie. Celowo zrezygnowano z konserwantów. To działa, bo produkty są pakowane w małe, hermetycznie zamknięte dzienne saszetki. Proszek do momentu otwarcia nie ma kontaktu z powietrzem ani wilgocią, więc po prostu nie potrzebuje konserwacji. Gdy tylko otwierasz opakowanie, zużywasz wszystko naraz. Żadnego napoczętego opakowania, żadnego utleniania, żadnych potrzebnych konserwantów.",
-  "neu": "Nie. Celowo rezygnuje się z konserwantów. To możliwe, bo produkty są pakowane w małe, hermetycznie zamknięte dzienne saszetki. Proszek do momentu otwarcia nie ma kontaktu z powietrzem ani wilgocią, więc po prostu nie potrzebuje konserwantów. Gdy tylko otwierasz saszetkę, zużywasz wszystko naraz. Żadnego napoczętego opakowania, żadnego utleniania, żadnych konserwantów.",
-  "grund": "„Nie potrzebuje konserwacji” i „żadnych potrzebnych konserwantów” są nienaturalne i zmieniają sens."
+  "de": "Ja, als {{#unless team_modus=team}}{{#if geschlecht=weiblich}}unabhängige Vertriebspartnerin{{/if}}{{#if geschlecht=maennlich}}unabhängiger Vertriebspartner{{/if}} werde ich{{/unless}}{{#if team_modus=team}}unabhängige Vertriebspartner werden wir{{/if}} am Umsatz beteiligt, wenn du über {{#unless team_modus=team}}mich{{/unless}}{{#if team_modus=team}}uns{{/if}} bestellst. So funktioniert Direktvertrieb. {{#unless team_modus=team}}Mir ist Transparenz dabei wichtig: Mein Ziel ist deine Zufriedenheit{{/unless}}{{#if team_modus=team}}Uns ist Transparenz dabei wichtig: Unser Ziel ist deine Zufriedenheit{{/if}}, nicht der schnelle Abschluss.",
+  "alt": "Tak, jako {{#unless team_modus=team}}{{#if geschlecht=weiblich}}niezależna partnerka handlowa{{/if}}{{#if geschlecht=maennlich}}niezależny partner handlowy{{/if}} otrzymuję{{/unless}}{{#if team_modus=team}}niezależni partnerzy handlowi otrzymujemy{{/if}} udział w obrocie, jeśli zamawiasz przez {{#unless team_modus=team}}mnie{{/unless}}{{#if team_modus=team}}nas{{/if}}. Tak działa sprzedaż bezpośrednia. {{#unless team_modus=team}}Ważna jest dla mnie przy tym przejrzystość: moim celem jest twoje zadowolenie{{/unless}}{{#if team_modus=team}}Ważna jest dla nas przy tym przejrzystość: naszym celem jest twoje zadowolenie{{/if}}, a nie szybkie zamknięcie sprzedaży.",
+  "neu": "Tak, jako {{#unless team_modus=team}}{{#if geschlecht=weiblich}}niezależna partnerka handlowa{{/if}}{{#if geschlecht=maennlich}}niezależny partner handlowy{{/if}} otrzymuję{{/unless}}{{#if team_modus=team}}niezależni partnerzy handlowi otrzymujemy{{/if}} prowizję od obrotu, jeśli zamawiasz {{#unless team_modus=team}}przeze mnie{{/unless}}{{#if team_modus=team}}przez nas{{/if}}. Tak działa sprzedaż bezpośrednia. {{#unless team_modus=team}}Ważna jest dla mnie przy tym przejrzystość: moim celem jest twoje zadowolenie{{/unless}}{{#if team_modus=team}}Ważna jest dla nas przy tym przejrzystość: naszym celem jest twoje zadowolenie{{/if}}, a nie szybkie zamknięcie sprzedaży.",
+  "grund": "„udział w obrocie” brzmi nienaturalnie; poprawiono też „przez mnie” na „przeze mnie”."
  },
  {
-  "de": "Das ist eine faire Frage, und {{#unless team_modus=team}}ich verstehe{{/unless}}{{#if team_modus=team}}wir verstehen{{/if}} den ersten Gedanken: mehr Verpackung klingt nach mehr Müll. Aber schau mal genauer hin. Ein normales Supplement-Glas enthält 30 oder 60 Portionen, muss mit Trockenmittel und Sauerstoffabsorbern stabilisiert werden, und du öffnest es täglich. Dabei oxidiert der Rest immer weiter. Die Tagespäckchen hier sind luftdicht versiegelt, brauchen deshalb keine Konservierungsstoffe, und es entsteht kein Abfall durch Reste, die schlecht werden. Außerdem sind die Verpackungen aus recycelbarem Material. Perfekt ist das natürlich nicht, aber im direkten Vergleich nachhaltiger als viele große Plastikflaschen, die am Ende halb voll weggeworfen werden.",
-  "alt": "To zasadne pytanie i {{#unless team_modus=team}}rozumiem{{/unless}}{{#if team_modus=team}}rozumiemy{{/if}} pierwszą myśl: więcej opakowań brzmi jak więcej śmieci. Ale spójrz dokładniej. Zwykły słoik z suplementem zawiera 30 albo 60 porcji, musi być stabilizowany środkiem osuszającym i absorberami tlenu, a Ty otwierasz go codziennie. Przy tym reszta coraz bardziej się utlenia. Tutaj dzienne saszetki są hermetycznie zamknięte, dlatego nie potrzebują konserwantów i nie powstaje odpad z resztek, które się psują. Poza tym opakowania są z materiału nadającego się do recyklingu. Oczywiście nie jest to idealne, ale w bezpośrednim porównaniu bardziej przyjazne środowisku niż wiele dużych plastikowych butelek, które na końcu wyrzuca się w połowie pełne.",
-  "neu": "To zasadne pytanie i {{#unless team_modus=team}}rozumiem{{/unless}}{{#if team_modus=team}}rozumiemy{{/if}} pierwszą myśl: więcej opakowań brzmi jak więcej śmieci. Ale spójrz dokładniej. Zwykłe opakowanie suplementu zawiera 30 albo 60 porcji, wymaga środka osuszającego i absorberów tlenu, a Ty otwierasz je codziennie. Wtedy reszta coraz bardziej się utlenia. Tutaj dzienne saszetki są hermetycznie zamknięte, dlatego nie potrzebują konserwantów i nie powstają odpady z resztek, które się psują. Poza tym opakowania są z materiału nadającego się do recyklingu. Oczywiście nie jest to idealne, ale w bezpośrednim porównaniu bardziej przyjazne środowisku niż wiele dużych plastikowych butelek, które ostatecznie wyrzuca się w połowie pełne.",
-  "grund": "Poprawa nienaturalnych kalk i niezgrabnych sformułowań."
+  "de": "NRV = Nährstoffbezugswert für die tägliche Zufuhr nach EU-Verordnung 1169/2011. Quelle: offizielles Datenblatt PM-International AG.",
+  "alt": "NRV = referencyjna wartość spożycia składnika odżywczego dla dziennego spożycia zgodnie z rozporządzeniem UE 1169/2011. Źródło: oficjalna karta danych PM-International AG.",
+  "neu": "NRV = referencyjna wartość spożycia składnika odżywczego w dziennej diecie zgodnie z rozporządzeniem UE 1169/2011. Źródło: oficjalna karta informacyjna PM-International AG.",
+  "grund": "Unnatural literal wording („dla dziennego spożycia”, „karta danych”)."
  },
  {
-  "de": "Einstiegspakete starten typischerweise bei 50 bis 100 Euro, je nach Set. Es gibt keine Mindestbestellmenge und keinen Kaufzwang. Im Gespräch {{#unless team_modus=team}}zeige ich{{/unless}}{{#if team_modus=team}}zeigen wir{{/if}} dir alle Möglichkeiten und was für dich sinnvoll wäre, du entscheidest in Ruhe.",
-  "alt": "Pakiety na start zaczynają się zwykle od 50 do 100 euro, w zależności od zestawu. Nie ma minimalnej ilości zamówienia ani przymusu zakupu. Podczas rozmowy {{#unless team_modus=team}}pokażę{{/unless}}{{#if team_modus=team}}pokażemy{{/if}} Ci wszystkie możliwości i to, co miałoby dla Ciebie sens, a Ty zdecydujesz na spokojnie.",
-  "neu": "Pakiety na start zaczynają się zwykle od 50 do 100 euro, w zależności od zestawu. Nie ma minimalnej wielkości zamówienia ani obowiązku zakupu. Podczas rozmowy {{#unless team_modus=team}}pokażę{{/unless}}{{#if team_modus=team}}pokażemy{{/if}} Ci wszystkie możliwości i to, co miałoby dla Ciebie sens, a Ty zdecydujesz na spokojnie.",
-  "grund": "„Minimalna ilość zamówienia” i „przymus zakupu” brzmią nienaturalnie."
+  "de": "NRV = Nährstoffbezugswert für die tägliche Zufuhr nach EU-Verordnung 1169/2011. Quelle: offizielles Datenblatt PM-International AG. Verfügbare Geschmacksrichtungen ohne Künstliche Aromen.",
+  "alt": "NRV = referencyjna wartość spożycia składnika odżywczego dla dziennego spożycia zgodnie z rozporządzeniem UE 1169/2011. Źródło: oficjalna karta danych PM-International AG. Dostępne smaki bez sztucznych aromatów.",
+  "neu": "NRV = referencyjna wartość spożycia składnika odżywczego w dziennej diecie zgodnie z rozporządzeniem UE 1169/2011. Źródło: oficjalna karta informacyjna PM-International AG. Dostępne smaki bez sztucznych aromatów.",
+  "grund": "Unnatural literal wording („dla dziennego spożycia”, „karta danych”)."
  },
  {
-  "de": "Ja, das geht. Was {{#unless team_modus=team}}ich anbiete{{/unless}}{{#if team_modus=team}}wir anbieten{{/if}}: persönliche Beratung davor, damit du weißt was du bestellst, und {{#unless team_modus=team}}{{#if geschlecht=weiblich}}eine Ansprechpartnerin{{/if}}{{#if geschlecht=maennlich}}einen Ansprechpartner{{/if}}{{/unless}}{{#if team_modus=team}}Ansprechpartner{{/if}} danach, falls Fragen auftauchen. Kein Druck.",
-  "alt": "Tak, można. To, co {{#unless team_modus=team}}oferuję{{/unless}}{{#if team_modus=team}}oferujemy{{/if}}: osobistą poradę wcześniej, żeby było dla ciebie jasne, co zamawiasz, i {{#unless team_modus=team}}{{#if geschlecht=weiblich}}osobę do kontaktu{{/if}}{{#if geschlecht=maennlich}}osobę do kontaktu{{/if}}{{/unless}}{{#if team_modus=team}}osoby do kontaktu{{/if}} później, gdyby pojawiły się pytania. Bez presji.",
-  "neu": "Tak, to możliwe. To, co {{#unless team_modus=team}}oferuję{{/unless}}{{#if team_modus=team}}oferujemy{{/if}}: osobiste doradztwo przed zamówieniem, żeby było dla ciebie jasne, co zamawiasz, i {{#unless team_modus=team}}{{#if geschlecht=weiblich}}osobę do kontaktu{{/if}}{{#if geschlecht=maennlich}}osobę do kontaktu{{/if}}{{/unless}}{{#if team_modus=team}}osoby do kontaktu{{/if}} po zamówieniu, gdyby pojawiły się pytania. Bez presji.",
-  "grund": "Bardziej naturalne brzmienie po polsku; „osobistą poradę wcześniej” było niezgrabne."
+  "de": "Pulver enthält Milch und Lactose. Quelle: offizielles Datenblatt PM-International AG.",
+  "alt": "Proszek zawiera mleko i laktozę. Źródło: oficjalna karta danych PM-International AG.",
+  "neu": "Proszek zawiera mleko i laktozę. Źródło: oficjalna karta informacyjna PM-International AG.",
+  "grund": "„Karta danych” is an unnatural calque here."
  },
  {
-  "de": "<strong>Tagesportion:</strong> 15 g Pulver (1 Sachet), angerührt mit Wasser. Energie 190 kJ / 45 kcal.",
-  "alt": "<strong>Porcja dzienna:</strong> 15 g proszku (1 saszetka), wymieszane z wodą. Energia 190 kJ / 45 kcal.",
-  "neu": "<strong>Porcja dzienna:</strong> 15 g proszku (1 saszetka), wymieszać z wodą. Energia 190 kJ / 45 kcal.",
-  "grund": "Poprawa niezręcznej/niezgodnej formy „wymieszane z wodą”."
+  "de": "Antwort innerhalb 24h",
+  "alt": "Odpowiedź w ciągu 24h",
+  "neu": "Odpowiedź w ciągu 24 h",
+  "grund": "Poprawny zapis jednostki czasu po polsku wymaga spacji."
  },
  {
-  "de": "Alle Produkte sind Nahrungsergänzungsmittel und keine Arzneimittel. Sie können Krankheiten weder heilen, lindern noch verhindern. Bei gesundheitlichen Beschwerden wenden Sie sich bitte an einen Arzt oder Apotheker.",
-  "alt": "Wszystkie produkty są suplementami diety, a nie lekami. Nie mogą leczyć, łagodzić ani zapobiegać chorobom. W przypadku dolegliwości zdrowotnych skontaktuj się z lekarzem lub farmaceutą.",
-  "neu": "Wszystkie produkty są suplementami diety, a nie lekami. Nie mogą leczyć chorób, łagodzić ich ani im zapobiegać. W przypadku dolegliwości zdrowotnych skontaktuj się z lekarzem lub farmaceutą.",
-  "grund": "Poprawiono składnię z różnymi przypadkami przy czasownikach."
+  "de": "Was wünschst du dir?",
+  "alt": "Czego sobie życzysz?",
+  "neu": "Czego potrzebujesz?",
+  "grund": "„Czego sobie życzysz?” brzmi nienaturalnie i może mieć niewłaściwy ton w tym kontekście."
  },
  {
   "de": "' + rest + ' weitere Produkte anzeigen",
-  "alt": "Pokaż jeszcze ' + rest + ' produktów",
-  "neu": "Pokaż pozostałe produkty (' + rest + ')",
-  "grund": "Uniknięto błędnej odmiany po zmiennej liczbie."
+  "alt": "Pokaż pozostałe produkty (' + rest + ')",
+  "neu": "Pokaż jeszcze ' + rest + ' produktów",
+  "grund": "Oryginał mówi o pokazaniu jeszcze określonej liczby produktów, nie o pokazaniu wszystkich pozostałych z liczbą w nawiasie.",
+  "skip": true
  },
  {
-  "de": "Play/Pause",
-  "alt": "Odtwórz/pauza",
-  "neu": "Odtwórz/wstrzymaj",
-  "grund": "Naturalniejsza i spójna etykieta UI dla Play/Pause."
+  "de": "Joghurt-Drink",
+  "alt": "Joghurt-Drink",
+  "neu": "Napój jogurtowy",
+  "grund": "Niemiecka nazwa pospolita nie została przetłumaczona.",
+  "skip": true
+ },
+ {
+  "de": "Mehr zum Joghurt-Drink",
+  "alt": "Więcej o Joghurt-Drink",
+  "neu": "Więcej o napoju jogurtowym",
+  "grund": "Niemiecka nazwa pospolita nie została przetłumaczona.",
+  "skip": true
+ },
+ {
+  "de": "{{vorname}} {{nachname}} | Täglich optimal versorgt. Und das in Minuten.",
+  "alt": "{{vorname}} {{nachname}} | Codziennie optymalne wsparcie. I to w kilka minut.",
+  "neu": "{{vorname}} {{nachname}} | Optymalne wsparcie każdego dnia. I to w kilka minut.",
+  "grund": "Naturalniejsze brzmienie po polsku."
+ },
+ {
+  "de": "Das ist mein Morgenritual. {{#unless joghurt_anzeigen=nein}}Vier{{/unless}}{{#if joghurt_anzeigen=nein}}Drei{{/if}} aufeinander abgestimmte Produkte, morgens, tagsüber und abends. Was drinsteckt und warum ich dabei bleibe, siehst du hier.",
+  "alt": "To jest mój poranny rytuał. {{#unless joghurt_anzeigen=nein}}Cztery{{/unless}}{{#if joghurt_anzeigen=nein}}Trzy{{/if}} dopasowane do siebie produkty, rano, w ciągu dnia i wieczorem. Co jest w środku i dlaczego przy nich zostaję, zobaczysz tutaj.",
+  "neu": "To mój poranny rytuał. {{#unless joghurt_anzeigen=nein}}Cztery{{/unless}}{{#if joghurt_anzeigen=nein}}Trzy{{/if}} dopasowane do siebie produkty, rano, w ciągu dnia i wieczorem. Co jest w środku i dlaczego się ich trzymam, zobaczysz tutaj.",
+  "grund": "Usunięto nienaturalne kalki z niemieckiego."
  }
 ]
