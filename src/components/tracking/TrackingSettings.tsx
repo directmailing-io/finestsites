@@ -191,10 +191,6 @@ export default function TrackingSettings() {
 
   return (
     <div className="flex flex-col gap-6">
-      <p className="text-[15px] leading-snug text-gray-600">
-        Nur nötig, wenn du Anzeigen schaltest. Verbinde dein Werbekonto, dann sieht es, welche Anzeige echte Anfragen bringt.
-      </p>
-
       {/* Drei Karten */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         {(Object.keys(PLATFORMS) as Platform[]).map(p => {
