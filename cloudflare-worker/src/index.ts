@@ -855,7 +855,7 @@ async function sendSubmissionEmail(
         </tr>
         <tr>
           <td style="padding:24px 0 0;text-align:center;">
-            <p style="margin:0;font-size:12px;color:#9CA3AF;line-height:1.6;">© ${year} FinestSites &nbsp;·&nbsp; <a href="mailto:support@finestsites.de" style="color:#9CA3AF;text-decoration:underline;">Support</a></p>
+            <p style="margin:0;font-size:12px;color:#9CA3AF;line-height:1.6;">© ${year} FinestSites &nbsp;·&nbsp; <a href="mailto:info@finestsites.io" style="color:#9CA3AF;text-decoration:underline;">Support</a></p>
           </td>
         </tr>
       </table>

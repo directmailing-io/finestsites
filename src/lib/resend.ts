@@ -8,7 +8,7 @@ export function getResend(): Resend {
 }
 
 export const FROM_EMAIL =
-  process.env.RESEND_FROM_EMAIL ?? 'FinestSites <noreply@finestsites.de>'
+  process.env.RESEND_FROM_EMAIL ?? 'FinestSites <info@finestsites.io>'
 
 /**
  * Send an email and log it to the email_logs table.

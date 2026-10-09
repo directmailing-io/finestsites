@@ -59,7 +59,7 @@ function layout(content: string): string {
           <td style="padding:24px 0 0;text-align:center;">
             <p style="margin:0;font-size:12px;color:${base.footer};line-height:1.6;">
               © ${new Date().getFullYear()} FinestSites &nbsp;·&nbsp;
-              <a href="mailto:support@finestsites.de" style="color:${base.footer};text-decoration:underline;">Support</a>
+              <a href="mailto:info@finestsites.io" style="color:${base.footer};text-decoration:underline;">Support</a>
             </p>
           </td>
         </tr>
@@ -137,13 +137,13 @@ export function newsletterEmail({
           © ${new Date().getFullYear()} FinestSites &nbsp;·&nbsp;
           <a href="${unsubscribeUrl}" style="color:${base.footer};text-decoration:underline;">Abmelden</a>
           &nbsp;·&nbsp;
-          <a href="mailto:support@finestsites.de" style="color:${base.footer};text-decoration:underline;">Support</a>
+          <a href="mailto:info@finestsites.io" style="color:${base.footer};text-decoration:underline;">Support</a>
         </p>
       </td></tr>`
     : `<tr><td style="padding:24px 0 0;text-align:center;">
         <p style="margin:0;font-size:12px;color:${base.footer};line-height:1.6;">
           © ${new Date().getFullYear()} FinestSites &nbsp;·&nbsp;
-          <a href="mailto:support@finestsites.de" style="color:${base.footer};text-decoration:underline;">Support</a>
+          <a href="mailto:info@finestsites.io" style="color:${base.footer};text-decoration:underline;">Support</a>
         </p>
       </td></tr>`
 
@@ -239,7 +239,7 @@ export function subscriptionConfirmationEmail({
     </p>
     ${button(dashboardUrl, 'Zu meiner Webseite')}
     <p style="margin:28px 0 0;font-size:13px;color:${base.muted};line-height:1.6;">
-      Bei Fragen erreichst du uns jederzeit unter <a href="mailto:support@finestsites.de" style="color:${base.muted};">support@finestsites.de</a>.
+      Bei Fragen erreichst du uns jederzeit unter <a href="mailto:info@finestsites.io" style="color:${base.muted};">info@finestsites.io</a>.
     </p>
   `)
 }
@@ -341,7 +341,7 @@ export function affiliatePayoutEmail({
     </p>
     ${button(affiliateUrl, 'Zur Partnerplattform')}
     <p style="margin:28px 0 0;font-size:13px;color:${base.muted};line-height:1.6;">
-      Bei Fragen erreichst du uns unter <a href="mailto:support@finestsites.de" style="color:${base.muted};">support@finestsites.de</a>.
+      Bei Fragen erreichst du uns unter <a href="mailto:info@finestsites.io" style="color:${base.muted};">info@finestsites.io</a>.
     </p>
   `)
 }
@@ -388,7 +388,7 @@ export function paymentFailedEmail({ payUrl, graceUntil, amount }: RecoveryMailP
       <strong style="color:${base.body};">Gut zu wissen:</strong> Mit Karte ist die Zahlung sofort bestätigt. Per SEPA dauert die Bestätigung ein bis zwei Wochen. Solange sie läuft, bleibt deine Seite online.
     </p>
     <p style="margin:12px 0 0;font-size:13px;color:${base.muted};line-height:1.6;">
-      Fragen? <a href="mailto:support@finestsites.de" style="color:${base.muted};">support@finestsites.de</a>
+      Fragen? <a href="mailto:info@finestsites.io" style="color:${base.muted};">info@finestsites.io</a>
     </p>
   `)
 }
@@ -408,7 +408,7 @@ export function paymentReminderEmail({ payUrl, graceUntil, amount, daysLeft }: R
     </p>
     ${payButtons(payUrl)}
     <p style="margin:28px 0 0;font-size:13px;color:${base.muted};line-height:1.6;">
-      Schon bezahlt? Dann ignorier diese Mail. Bei SEPA dauert die Bestätigung ein paar Tage, deine Seite bleibt so lange online. Fragen? <a href="mailto:support@finestsites.de" style="color:${base.muted};">support@finestsites.de</a>
+      Schon bezahlt? Dann ignorier diese Mail. Bei SEPA dauert die Bestätigung ein paar Tage, deine Seite bleibt so lange online. Fragen? <a href="mailto:info@finestsites.io" style="color:${base.muted};">info@finestsites.io</a>
     </p>
   `)
 }
@@ -433,7 +433,7 @@ export function sitesOfflineEmail({ payUrl, amount, deadline }: { payUrl: string
     </table>
     ${payButtons(payUrl)}
     <p style="margin:28px 0 0;font-size:13px;color:${base.muted};line-height:1.6;">
-      Bleibt die Zahlung bis zum ${deadline} aus, pausieren wir dein Konto und beenden das Abo. Deine Daten bleiben danach noch 90 Tage gespeichert. Fragen? <a href="mailto:support@finestsites.de" style="color:${base.muted};">support@finestsites.de</a>
+      Bleibt die Zahlung bis zum ${deadline} aus, pausieren wir dein Konto und beenden das Abo. Deine Daten bleiben danach noch 90 Tage gespeichert. Fragen? <a href="mailto:info@finestsites.io" style="color:${base.muted};">info@finestsites.io</a>
     </p>
   `)
 }
@@ -455,7 +455,7 @@ export function paymentFallbackUsedEmail({ amount, methodLabel, pending }: { amo
     </p>
     ${button(settingsUrl, 'Zahlungsmethoden ansehen')}
     <p style="margin:28px 0 0;font-size:13px;color:${base.muted};line-height:1.6;">
-      Fragen? <a href="mailto:support@finestsites.de" style="color:${base.muted};">support@finestsites.de</a>
+      Fragen? <a href="mailto:info@finestsites.io" style="color:${base.muted};">info@finestsites.io</a>
     </p>
   `)
 }
@@ -475,7 +475,7 @@ export function upcomingDebitEmail({ amount, date, last4 }: { amount: string; da
     </p>
     ${button(settingsUrl, 'Zahlungsmethode prüfen')}
     <p style="margin:28px 0 0;font-size:13px;color:${base.muted};line-height:1.6;">
-      Fragen? <a href="mailto:support@finestsites.de" style="color:${base.muted};">support@finestsites.de</a>
+      Fragen? <a href="mailto:info@finestsites.io" style="color:${base.muted};">info@finestsites.io</a>
     </p>
   `)
 }
@@ -504,7 +504,7 @@ export function accountDeactivatedEmail(): string {
     </table>
     ${button(billingUrl, 'Jetzt reaktivieren')}
     <p style="margin:28px 0 0;font-size:13px;color:${base.muted};line-height:1.6;">
-      Hast du ein Problem mit der Zahlung? Schreib uns einfach direkt: <a href="mailto:support@finestsites.de" style="color:${base.muted};">support@finestsites.de</a>. Wir finden eine Lösung.
+      Hast du ein Problem mit der Zahlung? Schreib uns einfach direkt: <a href="mailto:info@finestsites.io" style="color:${base.muted};">info@finestsites.io</a>. Wir finden eine Lösung.
     </p>
   `)
 }
@@ -524,7 +524,7 @@ export function accountExpiredEmail(): string {
     </p>
     ${button(billingUrl, 'Jetzt wieder loslegen')}
     <p style="margin:28px 0 0;font-size:13px;color:${base.muted};line-height:1.6;">
-      War etwas nicht in Ordnung? Wir sind ehrlich interessiert, was wir besser machen können: <a href="mailto:support@finestsites.de" style="color:${base.muted};">support@finestsites.de</a>
+      War etwas nicht in Ordnung? Wir sind ehrlich interessiert, was wir besser machen können: <a href="mailto:info@finestsites.io" style="color:${base.muted};">info@finestsites.io</a>
     </p>
   `)
 }
@@ -544,7 +544,7 @@ export function accountCanceledEmail({ periodEnd }: { periodEnd: string }): stri
     </p>
     ${button(billingUrl, 'Abo weiter nutzen')}
     <p style="margin:28px 0 0;font-size:13px;color:${base.muted};line-height:1.6;">
-      Schade, dass du gehst. Falls du Feedback hast oder wir was besser machen koennen: <a href="mailto:support@finestsites.de" style="color:${base.muted};">support@finestsites.de</a>
+      Schade, dass du gehst. Falls du Feedback hast oder wir was besser machen koennen: <a href="mailto:info@finestsites.io" style="color:${base.muted};">info@finestsites.io</a>
     </p>
   `)
 }
@@ -576,7 +576,7 @@ export function welcomeEmail({ firstName }: { firstName?: string }): string {
       ${greeting} herzlich Willkommen bei FinestSites.
     </p>
     <p style="margin:0 0 20px;font-size:15px;color:${base.body};line-height:1.65;">
-      Dein Account ist freigeschaltet. Du kannst jetzt deine erste Website erstellen und sie in nur wenigen Minuten live schalten. Bei Fragen schreib uns jederzeit <a href="mailto:support@finestsites.de" style="color:${base.body};">support@finestsites.de</a>
+      Dein Account ist freigeschaltet. Du kannst jetzt deine erste Website erstellen und sie in nur wenigen Minuten live schalten. Bei Fragen schreib uns jederzeit <a href="mailto:info@finestsites.io" style="color:${base.body};">info@finestsites.io</a>
     </p>
     <p style="margin:0 0 0;font-size:15px;color:${base.body};line-height:1.65;">
       PS: Wer aus deinem Team sollte auch FinestSites nutzen?
