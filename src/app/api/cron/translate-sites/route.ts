@@ -29,8 +29,9 @@ export async function POST(req: NextRequest) {
     .where(and(
       eq(templates.domain, domain),
       eq(userSites.status, 'published'),
-      sql`exists (select 1 from ${siteData} d where d.user_site_id = ${userSites.id} and d.field_key in ('about_me_html','about_intro','intro') and coalesce(d.field_value,'') <> '')`,
-      sql`not exists (select 1 from ${siteData} d where d.user_site_id = ${userSites.id} and d.field_key = ${'about_me_html_' + lastLang + '_src'} and coalesce(d.field_value,'') <> '')`,
+      // offen = mindestens ein deutsches Feld ohne aktuelle Übersetzung in der letzten Sprache
+      sql`exists (select 1 from ${siteData} d where d.user_site_id = ${userSites.id} and d.field_key in ('about_me_html','about_intro','intro') and coalesce(d.field_value,'') <> ''
+            and not exists (select 1 from ${siteData} t where t.user_site_id = d.user_site_id and t.field_key = d.field_key || ${'_' + lastLang + '_src'} and coalesce(t.field_value,'') <> ''))`,
     ))
   const batch = sites.slice(0, limit)
   const results: { id: string; ok: boolean; error?: string }[] = []
