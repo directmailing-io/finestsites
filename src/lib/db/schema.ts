@@ -102,6 +102,7 @@ export const users = pgTable('users', {
   // Profile fields
   firstName: text('first_name'),
   lastName: text('last_name'),
+  companyName: text('company_name'), // freiwillig; erscheint in Impressum/Datenschutz aller Seiten des Nutzers
   phone: text('phone'),
   websiteUrl: text('website_url'),
   instagram: text('instagram'),

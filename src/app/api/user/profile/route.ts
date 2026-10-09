@@ -40,6 +40,7 @@ export async function GET(req: NextRequest) {
     // Personal profile fields
     first_name: profile?.firstName ?? null,
     last_name: profile?.lastName ?? null,
+    company_name: profile?.companyName ?? null,
     phone: profile?.phone ?? null,
     instagram: profile?.instagram ?? null,
     facebook: profile?.facebook ?? null,
@@ -61,6 +62,7 @@ export async function PATCH(req: NextRequest) {
   const fieldMap: Record<string, keyof typeof users.$inferInsert> = {
     first_name: 'firstName',
     last_name: 'lastName',
+    company_name: 'companyName',
     phone: 'phone',
     instagram: 'instagram',
     facebook: 'facebook',

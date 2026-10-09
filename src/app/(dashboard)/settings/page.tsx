@@ -242,7 +242,7 @@ function SettingsContent() {
   const [pwSuccess, setPwSuccess] = useState('')
 
   // ── Profile state ──────────────────────────────────────────────
-  const [profileName, setProfileName] = useState({ first_name: '', last_name: '' })
+  const [profileName, setProfileName] = useState({ first_name: '', last_name: '', company_name: '' })
   const [countryCode, setCountryCode] = useState('+49')
   const [customCountryCode, setCustomCountryCode] = useState('')
   const isCustomCode = countryCode === 'other'
@@ -298,7 +298,7 @@ function SettingsContent() {
     fetch('/api/user/profile').then(r => r.json()).then(data => {
       setProfile(data)
       if (data.billing_interval) setBillingInterval(data.billing_interval)
-      setProfileName({ first_name: data.first_name ?? '', last_name: data.last_name ?? '' })
+      setProfileName({ first_name: data.first_name ?? '', last_name: data.last_name ?? '', company_name: data.company_name ?? '' })
       const parsed = parsePhone(data.phone ?? '')
       const knownCode = COUNTRY_CODES.find(c => c.code === parsed.code)
       if (knownCode) {
@@ -828,6 +828,10 @@ function SettingsContent() {
                   onChange={v => setProfileName(p => ({ ...p, first_name: v }))} placeholder="Max" />
                 <ProfileField label="Nachname" value={profileName.last_name}
                   onChange={v => setProfileName(p => ({ ...p, last_name: v }))} placeholder="Mustermann" />
+                <ProfileField label="Firma (freiwillig)" value={profileName.company_name}
+                  onChange={v => setProfileName(p => ({ ...p, company_name: v }))}
+                  placeholder="z. B. Mustermann & Müller GbR"
+                  hint="Nur wenn du als Firma auftrittst. Steht dann im Impressum und in der Datenschutzerklärung aller deiner Webseiten." />
               </div>
 
               {/* Phone */}
@@ -1591,9 +1595,9 @@ function Field({
 }
 
 function ProfileField({
-  label, value, onChange, placeholder,
+  label, value, onChange, placeholder, hint,
 }: {
-  label: string; value: string; onChange: (v: string) => void; placeholder?: string
+  label: string; value: string; onChange: (v: string) => void; placeholder?: string; hint?: string
 }) {
   return (
     <div className="flex flex-col gap-1.5">
@@ -1606,6 +1610,7 @@ function ProfileField({
         onFocus={e => (e.target.style.borderColor = '#1a1a1a')}
         onBlur={e => (e.target.style.borderColor = '#E5E7EB')}
       />
+    {hint && <p className="text-xs px-1" style={{ color: '#94A3B8' }}>{hint}</p>}
     </div>
   )
 }

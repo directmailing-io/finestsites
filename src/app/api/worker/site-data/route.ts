@@ -56,7 +56,7 @@ export async function GET(req: NextRequest) {
 
     // Fetch user profile for legal pages (impressum/datenschutz)
     const [userInfo] = await db
-      .select({ firstName: users.firstName, lastName: users.lastName, username: users.username, schema: templates.placeholderSchema })
+      .select({ firstName: users.firstName, lastName: users.lastName, companyName: users.companyName, username: users.username, schema: templates.placeholderSchema })
       .from(userSites)
       .innerJoin(users, eq(userSites.userId, users.id))
       .innerJoin(templates, eq(userSites.templateId, templates.id))
@@ -72,6 +72,8 @@ export async function GET(req: NextRequest) {
       { fieldKey: 'user_last_name', fieldValue: userInfo?.lastName ?? '' },
       { fieldKey: 'user_username', fieldValue: userInfo?.username ?? '' },
       { fieldKey: 'user_display_name', fieldValue: displayName },
+      // Firma aus dem Profil (global), für {{firma}} in Impressum/Datenschutz
+      { fieldKey: 'firma', fieldValue: userInfo?.companyName?.trim() ?? '' },
     ]
 
     return NextResponse.json(rows)
