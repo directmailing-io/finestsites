@@ -681,7 +681,7 @@ export default function NewsletterPage() {
                     <RichTextarea
                       value={body}
                       onChange={setBody}
-                      placeholder={"Hey {{vorname}},\n\ndein Text hier...\n\n(Leerzeile = neuer Absatz, **fett**, [Text](URL))"}
+                      placeholder={"Hey {{vorname}},\n\ndein Text hier...\n\n(Leerzeile = neuer Absatz, **fett**, [Text](URL), [[Button-Text]](URL))"}
                       rows={12}
                     />
                     <p className="text-xs" style={{ color: '#CBD5E1' }}>

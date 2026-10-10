@@ -15,6 +15,11 @@ export function markupToHtml(body: string): string {
         .replace(/\n/g, '<br />')
         // Bold: **text**
         .replace(/\*\*(.+?)\*\*/g, '<strong style="color:#111111;font-weight:700;">$1</strong>')
+        // Button: [[text]](https://...) — hervorgehobene Handlungsaufforderung (vor Links, da gleicher Aufbau)
+        .replace(
+          /\[\[([^\]]+)\]\]\((https?:\/\/[^)]+)\)/g,
+          `<a href="$2" target="_blank" rel="noopener noreferrer" style="display:inline-block;margin:6px 0 2px;padding:14px 28px;background:#111111;color:#ffffff;border-radius:999px;font-size:15px;font-weight:600;text-decoration:none;font-family:${FONT};">$1</a>`
+        )
         // Links: [text](https://...) — only allow http/https to prevent javascript: injection
         .replace(
           /\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g,
