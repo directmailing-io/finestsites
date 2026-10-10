@@ -1526,7 +1526,9 @@ const FLAG_PATHS: Record<LegalLang, string> = {
   hi: '<rect width="20" height="7" fill="#FF9933"/><rect y="7" width="20" height="6" fill="#fff"/><rect y="13" width="20" height="7" fill="#138808"/><circle cx="10" cy="10" r="2.2" fill="none" stroke="#000080" stroke-width="0.8"/>',
 }
 const flagSvg = (l: LegalLang) => `<span class="lang-flag"><svg viewBox="0 0 20 20" aria-hidden="true">${FLAG_PATHS[l]}</svg></span>`
-const legalLangsFor = (domain: string): LegalLang[] => MULTI_LANG_DOMAINS.has(domain) ? [...LEGAL_LANGS] : ['de', 'en']
+// Nur Sprachen anbieten, für die eine Übersetzung vorliegt (sonst wäre die Seite leer)
+const legalLangsFor = (domain: string): LegalLang[] =>
+  MULTI_LANG_DOMAINS.has(domain) ? LEGAL_LANGS.filter(l => l === 'de' || l === 'en' || !!LEGAL_I18N[l]?.impressum) : ['de', 'en']
 /** Übersetzter Rechtstext-Chunk; fehlt er, deutscher Text. */
 const legalChunk = (lang: string, key: string, de: string) => LEGAL_I18N[lang]?.[key] ?? de
 /** Blöcke der Zusatzsprachen (it, ru, …) für Impressum/Datenschutz aus den Übersetzungen. */
