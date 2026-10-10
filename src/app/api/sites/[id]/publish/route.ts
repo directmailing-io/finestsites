@@ -231,13 +231,9 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
 
   // Pre-render the page with the canonical Vercel engine and write it
   // directly to Worker KV — bypasses the Worker's own rendering pass.
-  const dataRows = await db.query.siteData.findMany({
-    where: eq(siteData.userSiteId, id),
-  })
-  const rawMap: Record<string, string> = {}
-  for (const row of dataRows) rawMap[row.fieldKey] = row.fieldValue ?? ''
-  const { dropStaleTranslations } = await import('@/lib/utils/translate')
-  const dataMap = dropStaleTranslations(rawMap)
+  // Entwurf einfrieren: ab jetzt liefert der Worker diesen Stand aus (Entwurf ≠ Live)
+  const { snapshotPublishedData } = await import('@/lib/sites/published-data')
+  const dataMap = await snapshotPublishedData(id)
   const liveHost = site.customDomain && site.customDomainStatus === 'active' ? site.customDomain : `${username}.${site.template.domain}`
   await preRenderAndPushToKV(username, site.template.domain, site.template.r2BundlePath, dataMap, rawKeysFromSchema(site.template.placeholderSchema), { siteId: id, host: liveHost })
 

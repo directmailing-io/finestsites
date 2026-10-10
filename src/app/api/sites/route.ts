@@ -95,6 +95,7 @@ export async function GET(req: NextRequest) {
           deactivatedAt: userSites.deactivatedAt,
           customDomain: userSites.customDomain,
           customDomainStatus: userSites.customDomainStatus,
+          publishedData: userSites.publishedData,
           createdAt: userSites.createdAt,
           updatedAt: userSites.updatedAt,
           template: {
@@ -134,8 +135,11 @@ export async function GET(req: NextRequest) {
     }
 
     // Attach username + unread_submissions to each site, return snake_case for API compat
+    const { unpublishedChangesFor } = await import('@/lib/sites/published-data')
+    const changes = await unpublishedChangesFor(sites.map(s => ({ id: s.id, status: s.status, publishedData: s.publishedData ?? null })))
     const result = sites.map(s => ({
       id: s.id,
+      has_unpublished_changes: changes[s.id] ?? false,
       user_id: s.userId,
       template_id: s.templateId,
       status: s.status,

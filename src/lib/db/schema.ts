@@ -184,6 +184,10 @@ export const userSites = pgTable('user_sites', {
   customDomainStatus: text('custom_domain_status'),
   cfCustomHostnameId: text('cf_custom_hostname_id'),
   customDomainVerifiedAt: timestamp('custom_domain_verified_at', { withTimezone: true }),
+  // Veröffentlichter Stand (Schnappschuss von site_data beim Veröffentlichen). Der Worker
+  // liefert nur diesen aus; der Editor arbeitet am Entwurf in site_data. Siehe src/lib/sites/published-data.ts
+  publishedData: jsonb('published_data').$type<Record<string, string> | null>(),
+  publishedDataAt: timestamp('published_data_at', { withTimezone: true }),
   // @deprecated — per-site consent fields (replaced by users.content_consent_at onboarding step)
   // Kept for historical data; no longer written by the publish flow. Admin panel still reads them.
   contentConsentGivenAt: timestamp('content_consent_given_at', { withTimezone: true }),

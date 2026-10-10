@@ -36,7 +36,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ site
   if (!/^[0-9a-f-]{36}$/i.test(siteId)) return new Response('Not found', { status: 404 })
 
   const [site] = await db
-    .select({ id: userSites.id, status: userSites.status, domain: templates.domain, username: users.username, customDomain: userSites.customDomain, customDomainStatus: userSites.customDomainStatus })
+    .select({ id: userSites.id, status: userSites.status, domain: templates.domain, username: users.username, customDomain: userSites.customDomain, customDomainStatus: userSites.customDomainStatus, publishedData: userSites.publishedData })
     .from(userSites)
     .innerJoin(templates, eq(templates.id, userSites.templateId))
     .innerJoin(users, eq(users.id, userSites.userId))
@@ -48,6 +48,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ site
     .where(and(eq(siteData.userSiteId, siteId), inArray(siteData.fieldKey, KEYS)))
   const data: Record<string, string> = {}
   for (const r of rows) data[r.k] = r.v ?? ''
+  if (site.publishedData) for (const k of KEYS) if (k in site.publishedData) data[k] = site.publishedData[k] ?? ''
 
   const p = ogProfile(site.domain)
   const name = ogName(data)

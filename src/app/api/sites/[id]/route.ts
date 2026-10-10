@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { rawKeysFromSchema } from '@/lib/utils/template-engine'
 import { richtextKeysFromSchema, sanitizeFieldValue } from '@/lib/security/sanitize'
 import { getUserFromRequest } from '@/lib/auth/server'
+import { differs } from '@/lib/sites/published-data'
 import { db } from '@/lib/db'
 import { users, userSites, templates, siteData } from '@/lib/db/schema'
 import { eq, and, sql, inArray } from 'drizzle-orm'
@@ -19,6 +20,8 @@ async function getSiteForUser(siteId: string, userId: string) {
       deactivatedAt: userSites.deactivatedAt,
       customDomain: userSites.customDomain,
       customDomainStatus: userSites.customDomainStatus,
+      publishedData: userSites.publishedData,
+      publishedDataAt: userSites.publishedDataAt,
       contentConsentGivenAt: userSites.contentConsentGivenAt,
       createdAt: userSites.createdAt,
       updatedAt: userSites.updatedAt,
@@ -66,6 +69,8 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     template_id: site.templateId,
     status: site.status,
     published_at: site.publishedAt,
+    published_data_at: site.publishedDataAt ?? null,
+    has_unpublished_changes: site.status === 'published' && differs(dataMap, site.publishedData),
     deactivated_at: site.deactivatedAt,
     custom_domain: site.customDomain,
     custom_domain_status: site.customDomainStatus,
@@ -185,62 +190,10 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   // if the site is already published — refresh the Worker's pre-rendered KV
   // entry so visitors see edits without waiting for the next publish click.
   // Non-blocking — autosave succeeds even if translation or KV write fails.
-  const aboutMeChanged = typeof (body as Record<string, unknown>).about_me_html === 'string'
-    || typeof (body as Record<string, unknown>).intro === 'string'
-  if (aboutMeChanged || site.status === 'published') {
-    ;(async () => {
-      // Nutzertexte übersetzen, wenn die Änderung sofort live geht (Seite ist veröffentlicht).
-      // Entwürfe werden erst beim Veröffentlichen übersetzt (publish/route.ts). Unveränderte
-      // Texte kosten nichts: ensureAboutMeTranslation vergleicht per Hash.
-      if (aboutMeChanged && site.status === 'published') {
-        try {
-          const { ensureAboutMeTranslation, templateLangs } = await import('@/lib/utils/translate')
-          const [tpl] = await db.select({ domain: templates.domain }).from(userSites).innerJoin(templates, eq(templates.id, userSites.templateId)).where(eq(userSites.id, id)).limit(1)
-          await ensureAboutMeTranslation(id, templateLangs(tpl?.domain))
-        } catch (err) {
-          console.error('[PATCH] about_me translation failed:', err)
-        }
-      }
-      if (site.status !== 'published') return
-      try {
-        const profile = await db.query.users.findFirst({ where: eq(users.id, user.id) })
-        const username = profile?.username
-        const domain = site.template?.domain
-        const r2BundlePath = site.template?.r2BundlePath
-        if (username && domain && r2BundlePath) {
-          const rows = await db
-            .select({ fieldKey: siteData.fieldKey, fieldValue: siteData.fieldValue })
-            .from(siteData)
-            .where(eq(siteData.userSiteId, id))
-          const { dropStaleTranslations } = await import('@/lib/utils/translate')
-          const rawMap: Record<string, string> = {}
-          for (const r of rows) rawMap[r.fieldKey] = r.fieldValue ?? ''
-          const siteDataMap = dropStaleTranslations(rawMap)
-          const { S3Client, GetObjectCommand } = await import('@aws-sdk/client-s3')
-          const { renderTemplate } = await import('@/lib/utils/template-engine')
-          const { writeRenderedHtmlKV } = await import('@/lib/cloudflare/kv-api')
-          const client = new S3Client({
-            region: 'auto', endpoint: process.env.CLOUDFLARE_R2_ENDPOINT!,
-            credentials: {
-              accessKeyId: process.env.CLOUDFLARE_R2_ACCESS_KEY_ID!,
-              secretAccessKey: process.env.CLOUDFLARE_R2_SECRET_ACCESS_KEY!,
-            },
-          })
-          const resp = await client.send(new GetObjectCommand({
-            Bucket: process.env.CLOUDFLARE_R2_BUCKET_NAME!,
-            Key: r2BundlePath,
-          }))
-          const tplHtml = await resp.Body!.transformToString('utf-8')
-          const rendered = renderTemplate(tplHtml, siteDataMap, { rawKeys: rawKeysFromSchema(site.template?.placeholderSchema) })
-          await writeRenderedHtmlKV(username, domain, rendered)
-        }
-      } catch (err) {
-        console.error('[PATCH] pre-render KV refresh failed:', err)
-      }
-    })()
-  }
-
-  return NextResponse.json({ success: true })
+  // Entwurf ≠ Live: Speichern ändert nur den Entwurf. Übersetzung, Pre-Render und Live-Schaltung
+  // passieren erst beim Veröffentlichen (publish/route.ts → snapshotPublishedData).
+  const unpublished = site.status === 'published'
+  return NextResponse.json({ success: true, has_unpublished_changes: unpublished })
 }
 
 // DELETE /api/sites/[id] → HARD DELETE

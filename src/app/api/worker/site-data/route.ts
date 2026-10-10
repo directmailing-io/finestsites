@@ -50,10 +50,14 @@ export async function GET(req: NextRequest) {
 
   try {
     // Fetch all placeholder key/value pairs for this site
-    const siteRows = await db
-      .select({ fieldKey: siteData.fieldKey, fieldValue: siteData.fieldValue })
-      .from(siteData)
-      .where(eq(siteData.userSiteId, siteId))
+    // Entwurf ≠ Live: veröffentlichter Schnappschuss, falls vorhanden; sonst (alte Seiten) site_data
+    const [snap] = await db.select({ publishedData: userSites.publishedData }).from(userSites).where(eq(userSites.id, siteId)).limit(1)
+    const siteRows = snap?.publishedData
+      ? Object.entries(snap.publishedData).map(([fieldKey, fieldValue]) => ({ fieldKey, fieldValue }))
+      : await db
+        .select({ fieldKey: siteData.fieldKey, fieldValue: siteData.fieldValue })
+        .from(siteData)
+        .where(eq(siteData.userSiteId, siteId))
 
     // Fetch user profile for legal pages (impressum/datenschutz)
     const [userInfo] = await db

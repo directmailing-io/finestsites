@@ -87,6 +87,7 @@ interface SiteData {
     placeholder_schema: { fields: FieldSchema[] }
   }
   data: Record<string, string>
+  has_unpublished_changes?: boolean
 }
 
 // ─── Profile Pre-fill ────────────────────────────────────────────────────────
@@ -2813,6 +2814,8 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
       fetch('/api/user/profile').then(r => r.json()).catch(() => ({})),
     ]).then(([data, userProfile]: [SiteData, Record<string, string | null>]) => {
         setSite(data)
+        // Entwurf ≠ Live: gespeicherte, aber noch nicht veröffentlichte Änderungen anzeigen
+        if (data.status === 'published' && data.has_unpublished_changes) setHasChanges(true)
         const fields = data.templates?.placeholder_schema?.fields ?? []
         const init: Record<string, string> = {}
         for (const f of fields) {
@@ -3376,11 +3379,11 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
                  no need to walk through every section with "Weiter" */
               <button onClick={() => handlePublish()} disabled={publishing}
                 className="flex items-center gap-1.5 text-xs font-semibold px-3 py-2 rounded-full text-white transition-all"
-                style={{ background: '#16A34A', opacity: publishing ? 0.7 : 1 }}>
+                style={{ background: '#D97706', opacity: publishing ? 0.7 : 1 }}>
                 {publishing
                   ? <span className="w-3 h-3 rounded-full border-2 border-white/40 border-t-white animate-spin" />
-                  : <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M20 6L9 17l-5-5"/></svg>}
-                {publishing ? 'Warten…' : 'Änderungen live'}
+                  : <span className="w-2 h-2 rounded-full bg-white flex-shrink-0" />}
+                {publishing ? 'Warten…' : 'Änderungen veröffentlichen'}
               </button>
             ) : (
               <span className="flex items-center gap-1.5 text-xs font-semibold px-3 py-2 rounded-full select-none"
@@ -3538,11 +3541,11 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
               /* Changes to push live */
               <button onClick={() => handlePublish()} disabled={publishing}
                 className="flex items-center gap-1.5 text-xs font-semibold px-4 py-2 rounded-full text-white transition-all"
-                style={{ background: '#16A34A', opacity: publishing ? 0.7 : 1 }}>
+                style={{ background: '#D97706', opacity: publishing ? 0.7 : 1 }}>
                 {publishing
                   ? <span className="w-3 h-3 rounded-full border-2 border-white/40 border-t-white animate-spin" />
-                  : <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M20 6L9 17l-5-5"/></svg>}
-                {publishing ? 'Bitte warten…' : 'Änderungen live'}
+                  : <span className="w-2 h-2 rounded-full bg-white flex-shrink-0" />}
+                {publishing ? 'Bitte warten…' : 'Änderungen veröffentlichen'}
               </button>
             ) : (
               /* Already up to date — show status */
@@ -3643,6 +3646,27 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
               )
             })()}
           </div>
+        </div>
+      )}
+
+      {/* ── Entwurf ≠ Live: gespeichert, aber noch nicht online ── */}
+      {isPublished && hasChanges && !isDomainSection && (
+        <div className="flex items-center gap-3 px-4 sm:px-6 py-3 flex-shrink-0"
+          style={{ background: '#FFF7ED', borderBottom: '1px solid #FDBA74' }} role="status">
+          <span className="relative flex h-3 w-3 flex-shrink-0">
+            <span className="absolute inline-flex h-full w-full rounded-full opacity-60 animate-ping" style={{ background: '#F59E0B' }} />
+            <span className="relative inline-flex h-3 w-3 rounded-full" style={{ background: '#D97706' }} />
+          </span>
+          <p className="flex-1 min-w-0 text-[14px] sm:text-[15px] leading-snug" style={{ color: '#9A3412' }}>
+            <strong>Noch nicht online.</strong> Deine Änderungen sind gespeichert, Besucher sehen aber noch die alte Fassung.
+          </p>
+          <button type="button"
+            onClick={() => allRequiredComplete ? handlePublish() : handleBlockedPublishTap()}
+            disabled={publishing}
+            className="flex-shrink-0 text-[13px] sm:text-sm font-semibold px-3.5 sm:px-4 py-2 rounded-full text-white whitespace-nowrap"
+            style={{ background: allRequiredComplete ? '#D97706' : '#9CA3AF', opacity: publishing ? 0.7 : 1 }}>
+            {publishing ? 'Bitte warten…' : 'Jetzt veröffentlichen'}
+          </button>
         </div>
       )}
 
@@ -4160,7 +4184,7 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
                 <button onClick={() => handlePublish()} disabled={publishing || !allRequiredComplete}
                   className="flex items-center gap-2 px-6 py-3 text-sm font-bold text-white rounded-full"
                   style={{ background: allRequiredComplete ? (isPublished ? '#16A34A' : '#1a1a1a') : '#9CA3AF', opacity: publishing ? 0.7 : 1, cursor: allRequiredComplete ? 'pointer' : 'not-allowed' }}>
-                  {publishing ? 'Bitte warten…' : isPublished ? 'Änderungen live' : '🚀 Veröffentlichen'}
+                  {publishing ? 'Bitte warten…' : isPublished ? 'Änderungen veröffentlichen' : '🚀 Veröffentlichen'}
                 </button>
               </div>
             )}
@@ -4221,7 +4245,7 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
                   className="w-full flex items-center justify-center gap-2 py-3.5 text-sm font-bold text-white rounded-full"
                   style={{ background: allRequiredComplete ? (isPublished ? '#16A34A' : '#1a1a1a') : '#9CA3AF', opacity: publishing ? 0.7 : 1 }}>
                   {publishing ? <span className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" /> : null}
-                  {publishing ? 'Bitte warten…' : isPublished ? '✓ Änderungen live stellen' : '🚀 Jetzt veröffentlichen'}
+                  {publishing ? 'Bitte warten…' : isPublished ? 'Änderungen veröffentlichen' : '🚀 Jetzt veröffentlichen'}
                 </button>
               ) : !isLast && isPublished && hasChanges && allRequiredComplete ? (
                 /* Live site with unsaved-to-live changes: save right here, then
@@ -4250,7 +4274,7 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
                       ? <span className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
                       : <>
                           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M20 6L9 17l-5-5"/></svg>
-                          Änderungen live stellen
+                          Änderungen veröffentlichen
                         </>
                     }
                   </button>
@@ -4314,7 +4338,7 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
                       opacity: publishing ? 0.7 : 1,
                     }}>
                     {publishing ? <span className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" /> : null}
-                    {publishing ? 'Bitte warten…' : isPublished ? 'Live stellen' : 'Veröffentlichen'}
+                    {publishing ? 'Bitte warten…' : isPublished ? 'Veröffentlichen' : 'Veröffentlichen'}
                   </button>
                 </div>
               )}

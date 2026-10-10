@@ -17,6 +17,7 @@ interface Site {
   custom_domain: string | null
   custom_domain_status: string | null
   unread_submissions?: number
+  has_unpublished_changes?: boolean
   templates: {
     title: string
     domain: string
@@ -119,6 +120,13 @@ function SiteCard({ site, onDeleted }: { site: Site; onDeleted: (id: string) => 
             <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: meta.dot }} />
             {meta.label}
           </span>
+          {site.status === 'published' && site.has_unpublished_changes && (
+            <span className="inline-flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-full mb-2 ml-1.5"
+              style={{ background: '#FFF7ED', color: '#9A3412' }} title="Gespeicherte Änderungen, die noch nicht online sind">
+              <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: '#D97706' }} />
+              Änderungen nicht online
+            </span>
+          )}
           <h3 className="text-lg font-bold text-gray-900 leading-snug">{title}</h3>
           {displayUrl && (
             <p className="text-sm mt-0.5 break-all" style={{ color: hasCustomDomain ? '#15803D' : '#64748B' }}>
