@@ -189,9 +189,18 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     || typeof (body as Record<string, unknown>).intro === 'string'
   if (aboutMeChanged || site.status === 'published') {
     ;(async () => {
-      // Übersetzung der Nutzertexte bewusst NICHT beim Speichern (jede Änderung würde Kosten
-      // erzeugen), sondern erst beim Veröffentlichen nach dem Text-Check (publish/route.ts).
-      // Bis dahin zeigt die Seite bei geändertem Text den deutschen Text (dropStaleTranslations).
+      // Nutzertexte übersetzen, wenn die Änderung sofort live geht (Seite ist veröffentlicht).
+      // Entwürfe werden erst beim Veröffentlichen übersetzt (publish/route.ts). Unveränderte
+      // Texte kosten nichts: ensureAboutMeTranslation vergleicht per Hash.
+      if (aboutMeChanged && site.status === 'published') {
+        try {
+          const { ensureAboutMeTranslation, templateLangs } = await import('@/lib/utils/translate')
+          const [tpl] = await db.select({ domain: templates.domain }).from(userSites).innerJoin(templates, eq(templates.id, userSites.templateId)).where(eq(userSites.id, id)).limit(1)
+          await ensureAboutMeTranslation(id, templateLangs(tpl?.domain))
+        } catch (err) {
+          console.error('[PATCH] about_me translation failed:', err)
+        }
+      }
       if (site.status !== 'published') return
       try {
         const profile = await db.query.users.findFirst({ where: eq(users.id, user.id) })
