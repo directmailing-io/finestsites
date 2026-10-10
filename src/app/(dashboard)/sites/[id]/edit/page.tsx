@@ -3659,6 +3659,12 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
           </span>
           <p className="flex-1 min-w-0 text-[14px] sm:text-[15px] leading-snug" style={{ color: '#9A3412' }}>
             <strong>Noch nicht online.</strong> Deine Änderungen sind gespeichert, Besucher sehen aber noch die alte Fassung.
+            {publishBlockReason && (
+              // Grund direkt im Banner, nicht nur als flüchtiger Toast – auf dem Handy sonst leicht zu übersehen
+              <span className="block mt-0.5 text-[13px] sm:text-sm" style={{ color: publishBlockReason.color }}>
+                Vorher nötig: {publishBlockReason.text}
+              </span>
+            )}
           </p>
           <button type="button"
             onClick={() => allRequiredComplete ? handlePublish() : handleBlockedPublishTap()}
