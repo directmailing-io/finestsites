@@ -274,7 +274,7 @@ function render(html: string, data: Data, rawKeys: Set<string> = new Set(), og?:
     const v = data[k]
     return v !== undefined && v !== null ? String(v) : ''
   })
-  // Simple {{key}} → HTML-escaped; roh nur für Richtext-Schlüssel (…_html, …_html_en, intro, intro_en).
+  // Simple {{key}} → HTML-escaped; roh nur für Richtext-Schlüssel (…_html, …_html_<lang>, intro, intro_<lang>).
   // Muss mit src/lib/utils/template-engine.ts (RAW_KEY_RE) übereinstimmen.
   const simple = (chunk: string, inScript: boolean) => chunk.replace(/\{\{([^#/{}][^{}]*)\}\}/g, (_, k) => {
     const key = k.trim(); const v = data[key]
@@ -904,7 +904,7 @@ function vitalprofilMailBody(d: Record<string, string>): string {
   return `${h2('Kontakt')}${contact}${h2('Vitalprofil')}${profile}${h2('Die fünf Bereiche')}${areaCards}${meta}<div style="height:18px;"></div>`
 }
 
-const RAW_KEY_RE = /(_html|_html_en)$|^(intro|bio|about_me_html)(_en)?$/
+const RAW_KEY_RE = /_html(_[a-z]{2})?$|^(intro|bio|about_me_html)(_[a-z]{2})?$/
 // JS-String-Escaping für {{key}} innerhalb von <script> (kein Ausbruch aus Strings oder </script>)
 function jsEscape(s: string): string {
   return s.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '\\"').replace(/</g, '\\x3C').replace(/\r/g, '\\r').replace(/\n/g, '\\n').replace(/\u2028/g, '\\u2028').replace(/\u2029/g, '\\u2029')

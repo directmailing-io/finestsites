@@ -33,9 +33,9 @@ export function richtextKeysFromSchema(schema: unknown): { richtext: Set<string>
     : []
   for (const f of fields) {
     if (!f || typeof f.key !== 'string') continue
-    if (f.type === 'richtext' || /(_html|_html_en)$/.test(f.key)) richtext.add(f.key)
+    if (f.type === 'richtext' || /_html(_[a-z]{2})?$/.test(f.key)) richtext.add(f.key)
     if (f.type === 'loop' && Array.isArray(f.fields)) {
-      loops.set(f.key, new Set(f.fields.filter(s => s && (s.type === 'richtext' || /(_html|_html_en)$/.test(s.key))).map(s => s.key)))
+      loops.set(f.key, new Set(f.fields.filter(s => s && (s.type === 'richtext' || /_html(_[a-z]{2})?$/.test(s.key))).map(s => s.key)))
     }
   }
   return { richtext, loops }
@@ -49,7 +49,7 @@ export function richtextKeysFromSchema(schema: unknown): { richtext: Set<string>
  */
 export function sanitizeFieldValue(key: string, value: string, info: ReturnType<typeof richtextKeysFromSchema>): string {
   if (typeof value !== 'string' || value === '') return value
-  if (info.richtext.has(key) || /(_html|_html_en)$/.test(key) || key === 'intro' || key === 'intro_en') return sanitizeRichtext(value)
+  if (info.richtext.has(key) || /_html(_[a-z]{2})?$/.test(key) || /^intro(_[a-z]{2})?$/.test(key)) return sanitizeRichtext(value)
   const loopSub = info.loops.get(key)
   if (loopSub !== undefined || (value.startsWith('[') && value.endsWith(']'))) {
     try {

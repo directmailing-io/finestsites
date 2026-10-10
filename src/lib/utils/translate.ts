@@ -1,3 +1,4 @@
+import { TRANSLATION_LANGS } from '@/lib/utils/template-engine'
 import { sanitizeRichtext } from '@/lib/security/sanitize'
 import { createHash } from 'crypto'
 import { db } from '@/lib/db'
@@ -26,7 +27,7 @@ const LANG_NAMES: Record<SiteLang, string> = { de: 'German', en: 'English', it: 
 
 /** Welche Sprachen ein Template zeigt (de ist immer die Quelle). */
 export function templateLangs(templateDomain: string | null | undefined): SiteLang[] {
-  if (templateDomain === 'dailyoptimal.de') return ['en', 'it', 'ru', 'uk', 'pl', 'bg', 'hi']
+  if (templateDomain === 'dailyoptimal.de') return [...TRANSLATION_LANGS]
   return ['en']
 }
 

@@ -77,7 +77,12 @@ export function rawKeysFromSchema(schema: unknown): Set<string> {
     ? (schema as { fields: Array<{ key?: string; type?: string }> }).fields : []
   for (const f of fields) {
     if (!f || typeof f.key !== 'string') continue
-    if (f.type === 'richtext' || RAW_KEY_RE.test(f.key)) { out.add(f.key); out.add(f.key + '_en') }
+    if (f.type === 'richtext' || RAW_KEY_RE.test(f.key)) {
+      out.add(f.key)
+      // Übersetzungen in ALLEN Sprachen (`<key>_it`, `_bg`, …), nicht nur `_en` – sonst landen
+      // die Tags beim Sprachwechsel als Text auf der Seite (Bug 10.10.2026, Dailyoptimal BG)
+      for (const l of TRANSLATION_LANGS) out.add(f.key + '_' + l)
+    }
   }
   return out
 }
@@ -394,7 +399,7 @@ function replaceSimplePlaceholders(html: string, data: SiteData, rawKeys: Set<st
   })
   // {{key}} → kontextabhängig escaped: in <script>-Blöcken als JS-String (\' \" \\ und
   // "<" als \x3C, damit weder Anführungszeichen noch </script> ausbrechen können), sonst
-  // als HTML-Entities. Ausnahme: Richtext-Schlüssel (…_html, …_html_en, intro, intro_en),
+  // als HTML-Entities. Ausnahme: Richtext-Schlüssel (…_html, …_html_<lang>, intro, intro_<lang>),
   // die in älteren Templates mit zwei Klammern stehen und gespeichertes (serverseitig
   // bereinigtes) HTML enthalten.
   const simple = (chunk: string, inScript: boolean) => chunk.replace(/\{\{([^#/{}][^{}]*)\}\}/g, (match, key) => {
@@ -410,7 +415,9 @@ function replaceSimplePlaceholders(html: string, data: SiteData, rawKeys: Set<st
     .join('')
 }
 /** Schlüssel, deren Wert als HTML ausgegeben wird (Richtext). Muss mit dem Worker übereinstimmen. */
-export const RAW_KEY_RE = /(_html|_html_en)$|^(intro|bio|about_me_html)(_en)?$/
+/** Alle Sprach-Suffixe, in die Nutzertexte übersetzt werden können (siehe templateLangs in translate.ts). */
+export const TRANSLATION_LANGS = ['en', 'it', 'ru', 'uk', 'pl', 'bg', 'hi'] as const
+export const RAW_KEY_RE = /_html(_[a-z]{2})?$|^(intro|bio|about_me_html)(_[a-z]{2})?$/
 function jsEscape(s: string): string {
   return s.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '\\"').replace(/</g, '\\x3C').replace(/\r/g, '\\r').replace(/\n/g, '\\n').replace(/\u2028/g, '\\u2028').replace(/\u2029/g, '\\u2029')
 }
