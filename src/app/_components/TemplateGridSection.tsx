@@ -34,27 +34,51 @@ const CARD_BASE: React.CSSProperties = {
   transition: 'box-shadow 0.18s, transform 0.18s',
 }
 
-// Compact DE + GB flag SVGs (12x12) — surfaced on template cards so users see
-// at a glance which templates ship with both German and English content.
-function LanguageFlags() {
+// Sprachen je Template-Domain (muss zu templateLangs() in src/lib/utils/translate.ts passen).
+// Alle anderen Templates mit Tag „multilingual“ zeigen DE + EN.
+const LANGS_BY_DOMAIN: Record<string, string[]> = {
+  'dailyoptimal.de': ['de', 'en', 'it', 'ru', 'uk', 'pl', 'bg', 'hi'],
+}
+const LANG_LABEL: Record<string, string> = {
+  de: 'Deutsch', en: 'Englisch', it: 'Italienisch', ru: 'Russisch', uk: 'Ukrainisch', pl: 'Polnisch', bg: 'Bulgarisch', hi: 'Hindi',
+}
+
+// Runde Landesflaggen als kompakte SVGs (gleiche Optik wie der Sprachschalter im Template).
+const FLAG: Record<string, React.ReactNode> = {
+  de: <><rect width="20" height="6.67" fill="#000" /><rect width="20" height="6.67" y="6.67" fill="#DD0000" /><rect width="20" height="6.66" y="13.34" fill="#FFCE00" /></>,
+  en: <>
+    <rect width="20" height="20" fill="#012169" />
+    <path d="M0 0 L20 20 M20 0 L0 20" stroke="#fff" strokeWidth="4" />
+    <path d="M0 0 L20 20 M20 0 L0 20" stroke="#C8102E" strokeWidth="2" />
+    <path d="M10 0 V20 M0 10 H20" stroke="#fff" strokeWidth="6" />
+    <path d="M10 0 V20 M0 10 H20" stroke="#C8102E" strokeWidth="3.5" />
+  </>,
+  it: <><rect width="6.67" height="20" fill="#009246" /><rect width="6.67" height="20" x="6.67" fill="#fff" /><rect width="6.66" height="20" x="13.34" fill="#CE2B37" /></>,
+  ru: <><rect width="20" height="6.67" fill="#fff" /><rect width="20" height="6.67" y="6.67" fill="#0039A6" /><rect width="20" height="6.66" y="13.34" fill="#D52B1E" /></>,
+  uk: <><rect width="20" height="10" fill="#0057B7" /><rect width="20" height="10" y="10" fill="#FFD700" /></>,
+  pl: <><rect width="20" height="10" fill="#fff" /><rect width="20" height="10" y="10" fill="#DC143C" /></>,
+  bg: <><rect width="20" height="6.67" fill="#fff" /><rect width="20" height="6.67" y="6.67" fill="#00966E" /><rect width="20" height="6.66" y="13.34" fill="#D62612" /></>,
+  hi: <>
+    <rect width="20" height="6.67" fill="#FF9933" /><rect width="20" height="6.67" y="6.67" fill="#fff" /><rect width="20" height="6.66" y="13.34" fill="#138808" />
+    <circle cx="10" cy="10" r="2.2" fill="none" stroke="#000080" strokeWidth="0.8" />
+  </>,
+}
+
+function LanguageFlags({ langs }: { langs: string[] }) {
+  const label = `Verfügbar in ${langs.length} Sprachen: ${langs.map(l => LANG_LABEL[l] ?? l.toUpperCase()).join(', ')}`
   return (
-    <span
-      title="Verfügbar auf Deutsch und Englisch"
-      aria-label="Verfügbar auf Deutsch und Englisch"
-      style={{ display: 'inline-flex', alignItems: 'center', gap: 4, marginLeft: 6, verticalAlign: 'middle' }}
-    >
-      <svg width="14" height="14" viewBox="0 0 20 20" aria-hidden="true" style={{ borderRadius: '50%', boxShadow: '0 0 0 1px rgba(255,255,255,0.6)' }}>
-        <rect width="20" height="6.67" y="0" fill="#000" />
-        <rect width="20" height="6.67" y="6.67" fill="#DD0000" />
-        <rect width="20" height="6.66" y="13.34" fill="#FFCE00" />
-      </svg>
-      <svg width="14" height="14" viewBox="0 0 20 20" aria-hidden="true" style={{ borderRadius: '50%', boxShadow: '0 0 0 1px rgba(255,255,255,0.6)' }}>
-        <rect width="20" height="20" fill="#012169" />
-        <path d="M0 0 L20 20 M20 0 L0 20" stroke="#fff" strokeWidth="4" />
-        <path d="M0 0 L20 20 M20 0 L0 20" stroke="#C8102E" strokeWidth="2" />
-        <path d="M10 0 V20 M0 10 H20" stroke="#fff" strokeWidth="6" />
-        <path d="M10 0 V20 M0 10 H20" stroke="#C8102E" strokeWidth="3.5" />
-      </svg>
+    <span title={label} aria-label={label} style={{ display: 'inline-flex', alignItems: 'center', gap: 3, marginTop: 7 }}>
+      {langs.map(l => (
+        <svg key={l} width="15" height="15" viewBox="0 0 20 20" aria-hidden="true"
+          style={{ borderRadius: '50%', boxShadow: '0 0 0 1px rgba(255,255,255,0.7)', flexShrink: 0 }}>
+          {FLAG[l]}
+        </svg>
+      ))}
+      {langs.length > 2 && (
+        <span style={{ fontSize: 10, fontWeight: 600, color: 'rgba(255,255,255,0.85)', marginLeft: 4, letterSpacing: '0.02em' }}>
+          {langs.length} Sprachen
+        </span>
+      )}
     </span>
   )
 }
@@ -115,8 +139,8 @@ function TemplateCard({ tpl }: { tpl: TemplateCardData }) {
           {companyLabel && <p style={{ fontSize: 10, fontWeight: 600, color: 'rgba(255,255,255,0.8)', margin: '0 0 4px' }}>Geeignet für {companyLabel}</p>}
           <h3 style={{ fontSize: 15, fontWeight: 700, color: '#fff', lineHeight: 1.2, margin: 0, textShadow: '0 1px 4px rgba(0,0,0,0.35)' }}>
             {tpl.title}
-            {isMultilingual && <LanguageFlags />}
           </h3>
+          {isMultilingual && <LanguageFlags langs={LANGS_BY_DOMAIN[tpl.domain] ?? ['de', 'en']} />}
         </div>
       </div>
       <div style={{ padding: '12px 16px 14px', flex: 1, display: 'flex', flexDirection: 'column', gap: 8 }}>
