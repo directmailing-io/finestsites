@@ -4,7 +4,7 @@ Nur fehlende Chunks werden übersetzt. Aufruf: OPENAI_API_KEY=… python3 transl
 import json, os, re, sys, time, urllib.request
 HERE=os.path.dirname(os.path.abspath(__file__))
 LANGS={'it':'Italian','ru':'Russian','uk':'Ukrainian','pl':'Polish','bg':'Bulgarian','hi':'Hindi'}
-MODEL='gpt-5.5-2026-04-23'; KEY=os.environ.get('OPENAI_API_KEY','')
+MODEL=os.environ.get('I18N_MODEL','gpt-5.4-mini'); KEY=os.environ.get('OPENAI_API_KEY','')
 SYS="""You are a professional legal translator. Translate the German HTML of a website's legal notice / privacy policy into {lang}.
 Rules: formal register appropriate for legal texts in {lang} (polite "you"); keep all HTML tags and attributes exactly; keep every placeholder exactly ({{vorname}}, {{#if firma}}, {{/if}}, {{#unless …}}, {{/unless}} etc.) and keep §§…§§ markers exactly; keep legal references (Art. 6 Abs. 1 lit. a DSGVO, § 5 TMG, § 25 TDDDG) with the German/EU law names, you may add the common local abbreviation for GDPR in brackets once; keep company names, addresses, e-mail addresses, URLs unchanged; translate the meaning precisely, do not add or drop anything.
 Return ONLY the translated HTML, no explanations, no code fences."""
