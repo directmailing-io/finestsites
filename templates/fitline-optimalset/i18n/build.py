@@ -14,6 +14,17 @@ if not os.path.exists(SRC): raise SystemExit('index.de-en.html fehlt (DE/EN-Quel
 LANGS=['it','ru','uk','pl','bg','hi']           # neue Sprachen (de/en sind im Template)
 ALL=['de','en']+LANGS
 NAMES={'de':'Deutsch','en':'English','it':'Italiano','ru':'Русский','uk':'Українська','pl':'Polski','bg':'Български','hi':'हिन्दी'}
+# Sprachname je Sprache: NAMES_IN[aktiv][sprache]
+NAMES_IN={
+ 'de':{'de':'Deutsch','en':'Englisch','it':'Italienisch','ru':'Russisch','uk':'Ukrainisch','pl':'Polnisch','bg':'Bulgarisch','hi':'Hindi'},
+ 'en':{'de':'German','en':'English','it':'Italian','ru':'Russian','uk':'Ukrainian','pl':'Polish','bg':'Bulgarian','hi':'Hindi'},
+ 'it':{'de':'Tedesco','en':'Inglese','it':'Italiano','ru':'Russo','uk':'Ucraino','pl':'Polacco','bg':'Bulgaro','hi':'Hindi'},
+ 'ru':{'de':'Немецкий','en':'Английский','it':'Итальянский','ru':'Русский','uk':'Украинский','pl':'Польский','bg':'Болгарский','hi':'Хинди'},
+ 'uk':{'de':'Німецька','en':'Англійська','it':'Італійська','ru':'Російська','uk':'Українська','pl':'Польська','bg':'Болгарська','hi':'Гінді'},
+ 'pl':{'de':'Niemiecki','en':'Angielski','it':'Włoski','ru':'Rosyjski','uk':'Ukraiński','pl':'Polski','bg':'Bułgarski','hi':'Hindi'},
+ 'bg':{'de':'Немски','en':'Английски','it':'Италиански','ru':'Руски','uk':'Украински','pl':'Полски','bg':'Български','hi':'Хинди'},
+ 'hi':{'de':'जर्मन','en':'अंग्रेज़ी','it':'इतालवी','ru':'रूसी','uk':'यूक्रेनी','pl':'पोलिश','bg':'बल्गेरियाई','hi':'हिन्दी'},
+}
 SHOP={'en':'en-us','it':'it-it','ru':'ru-ru','uk':'uk-ua','pl':'pl-pl','bg':'bg-bg','hi':'hi-in'}
 USER_FIELDS=['about_me_html']                   # Nutzertexte mit Sprachvarianten {key}_{lang}
 
@@ -38,6 +49,19 @@ old_alert="""alert(document.documentElement.getAttribute('data-lang') === 'en'
           : 'Etwas ist schiefgelaufen. Bitte versuche es erneut.');"""
 assert old_alert in html
 html=html.replace(old_alert,"""alert((function(){ var cl = document.documentElement.getAttribute('data-lang') || 'de'; return cl === 'en' ? 'Something went wrong. Please try again.' : cl === 'de' ? 'Etwas ist schiefgelaufen. Bitte versuche es erneut.' : fsJ(cl, 'Etwas ist schiefgelaufen. Bitte versuche es erneut.'); })());""")
+
+# 0c) Alle übrigen Sprach-Span-Paare in Skripten (innerHTML-Strings) → fsJsSpans(...)
+def js_pairs(m):
+    de, en = m.group(1), m.group(2)
+    varsm = re.findall(r"' \+ (\w+) \+ '", de)
+    v = (', {' + ', '.join(f"{x}: {x}" for x in sorted(set(varsm))) + '}') if varsm else ''
+    return f"fsJsSpans('{de}', '{en}'{v})"
+scripts = list(re.finditer(r'<script[^>]*>.*?</script>', html, flags=re.S))
+for sc in reversed(scripts):
+    body = sc.group(0)
+    body2 = re.sub(r"'<span class=\"l-de\">((?:[^'\\]|\\.|' \+ \w+ \+ ')*?)</span><span class=\"l-en\">((?:[^'\\]|\\.|' \+ \w+ \+ ')*?)</span>'", js_pairs, body)
+    if body2 != body: html = html[:sc.start()] + body2 + html[sc.end():]
+print('JS-Span-Paare ersetzt:', html.count('fsJsSpans('))
 
 # 1) Paare erweitern
 def expand(m):
@@ -83,7 +107,13 @@ html=html.replace("  function fsApplyLang(l) {\n    var en = l === 'en';",
 """  var FS_I18N = %s;
   function fsT(l, de) { var d = FS_I18N.attrs[l]; return (d && d[de]) ? d[de] : de; }
   function fsJ(l, de) { var d = FS_I18N.js[l]; return (d && d[de]) ? d[de] : de; }
-  function fsJsSpans(de, en) { var h = '<span class="l-de">' + de + '</span><span class="l-en">' + en + '</span>'; FS_I18N.langs.slice(2).forEach(function(x) { h += '<span class="l-' + x + '">' + fsJ(x, de) + '</span>'; }); return h; }
+  function fsJsSpans(de, en, vars) {
+    function fill(t) { if (vars) { Object.keys(vars).forEach(function(k) { t = t.split("' + " + k + " + '").join(vars[k]); }); } return t; }
+    var h = '<span class="l-de">' + fill(de) + '</span><span class="l-en">' + fill(en) + '</span>';
+    FS_I18N.langs.slice(2).forEach(function(x) { h += '<span class="l-' + x + '">' + fill(fsJ(x, de)) + '</span>'; });
+    return h;
+  }
+  window.fsJsSpans = fsJsSpans; window.fsJ = fsJ; window.fsT = fsT;
   function fsApplyLang(l) {
     var en = l === 'en';
     var other = FS_I18N.langs.indexOf(l) > 1;""" % json.dumps(i18n, ensure_ascii=False).replace('</', '<\\/'))
@@ -119,7 +149,9 @@ def flag(l):
        'hi':'<rect width="20" height="7" fill="#FF9933"/><rect y="7" width="20" height="6" fill="#fff"/><rect y="13" width="20" height="7" fill="#138808"/><circle cx="10" cy="10" r="2.2" fill="none" stroke="#000080" stroke-width="0.8"/>'}
     return f'<span class="lang-flag"><svg viewBox="0 0 20 20" aria-hidden="true">{F[l]}</svg></span>'
 def menu(variant):
-    items=''.join(f'<button type="button" class="lang-item" data-lang="{l}" onclick="fsSetLang(\'{l}\');fsLangClose()">{flag(l)}<span>{NAMES[l]}</span></button>' for l in ALL)
+    def sub(l):  # „(Polnisch)“ in der gerade aktiven Sprache, entfällt wenn gleich
+        return '<small class="lang-sub">' + ''.join(f'<span class="l-{a}">({NAMES_IN[a][l]})</span>' for a in ALL if a != l) + '</small>'
+    items=''.join(f'<button type="button" class="lang-item" data-lang="{l}" onclick="fsSetLang(\'{l}\');fsLangClose()">{flag(l)}<span class="lang-name">{NAMES[l]}{sub(l)}</span></button>' for l in ALL)
     cur=''.join(f'<span class="lang-cur-flag" data-lang="{l}">{flag(l)}</span>' for l in ALL)
     return f'<div class="lang-menu lang-switch-{variant}"><button type="button" class="lang-cur" aria-haspopup="listbox" aria-label="Sprache wählen" onclick="fsLangToggle(this)">{cur}<span class="lang-cur-code"></span><svg class="lang-caret" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5l3 3 3-3" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button><div class="lang-list" role="listbox">{items}</div></div>'
 html, n1 = re.subn(r'<div class="lang-switch lang-switch-desktop".*?</div>', menu('desktop'), html, count=1, flags=re.S)
@@ -141,6 +173,8 @@ css="""<style data-fs-i18n>
 .lang-menu.open .lang-list { opacity: 1; visibility: visible; transform: translateY(0) scale(1); transition: opacity .18s ease, transform .22s cubic-bezier(.2,.8,.2,1), visibility 0s; }
 .lang-item { display: flex; align-items: center; gap: 10px; width: 100%; padding: 9px 10px; border: 0; background: transparent; border-radius: 10px; color: #1a1a1a; font: inherit; font-size: 14px; cursor: pointer; text-align: left; transition: background .15s ease; }
 .lang-item:hover { background: #F3F4F6; }
+.lang-name { display: flex; align-items: baseline; gap: 6px; min-width: 0; }
+.lang-sub { font-size: 11px; font-weight: 400; color: #9CA3AF; white-space: nowrap; }
 """ + ''.join(f'html[data-lang="{l}"] .lang-item[data-lang="{l}"] {{ background: #F3F4F6; font-weight: 600; }}\n' for l in ALL) + """
 .lang-switch-mobile { margin-left: auto; margin-right: 10px; }
 @media (prefers-reduced-motion: reduce) { .lang-list, .lang-caret, .lang-cur, .lang-item { transition: none; } }
