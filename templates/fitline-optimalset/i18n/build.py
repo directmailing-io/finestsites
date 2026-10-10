@@ -51,8 +51,9 @@ assert old_alert in html
 html=html.replace(old_alert,"""alert((function(){ var cl = document.documentElement.getAttribute('data-lang') || 'de'; return cl === 'en' ? 'Something went wrong. Please try again.' : cl === 'de' ? 'Etwas ist schiefgelaufen. Bitte versuche es erneut.' : fsJ(cl, 'Etwas ist schiefgelaufen. Bitte versuche es erneut.'); })());""")
 
 # 0c) Alle übrigen Sprach-Span-Paare in Skripten (innerHTML-Strings) → fsJsSpans(...)
+JS_EXTRA=[]
 def js_pairs(m):
-    de, en = m.group(1), m.group(2)
+    de, en = m.group(1), m.group(2); JS_EXTRA.append(de)
     varsm = re.findall(r"' \+ (\w+) \+ '", de)
     v = (', {' + ', '.join(f"{x}: {x}" for x in sorted(set(varsm))) + '}') if varsm else ''
     return f"fsJsSpans('{de}', '{en}'{v})"
@@ -78,7 +79,8 @@ def expand(m):
             if t is None: missing[l]+=1; t=de
         out+=f'<{tag} class="l-{l}">{t}</{tag}>'
     return out
-html, n = re.subn(r'<(span|div) class="l-de">(.*?)</\1><(?:span|div) class="l-en">(.*?)</\1>', expand, html, flags=re.S)
+INNER=r'(?:[^<]|<(?!/?(?:span|div)\b)[^>]*>|<span\b[^>]*>(?:[^<]|<(?!/?span\b)[^>]*>)*</span>)*?'
+html, n = re.subn(r'<(span|div) class="l-de">('+INNER+r')</\1><(?:span|div) class="l-en">('+INNER+r')</\1>', expand, html, flags=re.S)
 print('Paare erweitert:', n, '| fehlende Übersetzungen:', missing)
 
 # 2) CSS-Regel
@@ -102,7 +104,8 @@ html=html.replace(old_detect.group(0), """var SUP = %s;
 
 # 4) fsApplyLang: Attribute, Shop-Links, Video, Titel
 js=json.load(open(os.path.join(HERE,'js-strings.json')))
-i18n={'attrs':{l:tr[l]['attrs'] for l in tr}, 'js':{l:{de:tr[l]['strings'].get(de,de) for de in js} for l in tr}, 'shop':SHOP, 'names':NAMES, 'langs':ALL}
+js_keys=list(js)+[k for k in JS_EXTRA if k not in js]
+i18n={'attrs':{l:tr[l]['attrs'] for l in tr}, 'js':{l:{de:tr[l]['strings'].get(de,de) for de in js_keys} for l in tr}, 'shop':SHOP, 'names':NAMES, 'langs':ALL}
 html=html.replace("  function fsApplyLang(l) {\n    var en = l === 'en';",
 """  var FS_I18N = %s;
   function fsT(l, de) { var d = FS_I18N.attrs[l]; return (d && d[de]) ? d[de] : de; }

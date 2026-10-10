@@ -5,7 +5,8 @@ Danach: translate.py (übersetzt nur Fehlendes), build.py."""
 import json, os, re
 HERE=os.path.dirname(os.path.abspath(__file__)); ROOT=os.path.dirname(HERE)
 s=open(os.path.join(ROOT,'index.de-en.html'),encoding='utf-8').read()
-pairs=re.findall(r'<(?:span|div) class="l-de">(.*?)</(?:span|div)>\s*<(?:span|div) class="l-en">(.*?)</(?:span|div)>', s, flags=re.S)
+INNER=r'(?:[^<]|<(?!/?(?:span|div)\b)[^>]*>|<span\b[^>]*>(?:[^<]|<(?!/?span\b)[^>]*>)*</span>)*?'
+pairs=re.findall(r'<(?:span|div) class="l-de">('+INNER+r')</(?:span|div)>\s*<(?:span|div) class="l-en">('+INNER+r')</(?:span|div)>', s, flags=re.S)
 uniq={}
 for de,en in pairs: uniq.setdefault(de,en)
 # JS-Strings
