@@ -7,7 +7,7 @@
 import { db } from '@/lib/db'
 import { siteData, userSites } from '@/lib/db/schema'
 import { eq, inArray } from 'drizzle-orm'
-import { dropStaleTranslations } from '@/lib/utils/translate'
+import { dropStaleTranslations, isTranslationKey } from '@/lib/utils/translate'
 
 export type SiteDataMap = Record<string, string>
 
@@ -26,8 +26,12 @@ export async function snapshotPublishedData(siteId: string): Promise<SiteDataMap
   return map
 }
 
-/** Interne Schlüssel, die keine sichtbare Änderung sind (Prüf-Flags, Übersetzungs-Hashes). */
-const isInternalKey = (k: string) => k.endsWith('__chk') || k.endsWith('__chkbase') || /_[a-z]{2}_src$/.test(k)
+/**
+ * Interne Schlüssel, die keine sichtbare Änderung sind: Prüf-Flags sowie Übersetzungen samt Hash.
+ * Übersetzungen sind aus dem deutschen Text abgeleitet (Nachübersetzung per Cron schreibt sie in
+ * Entwurf UND Schnappschuss); ändert sich der deutsche Text, unterscheidet sich der ohnehin.
+ */
+const isInternalKey = (k: string) => k.endsWith('__chk') || k.endsWith('__chkbase') || isTranslationKey(k)
 
 /** Unterscheidet sich der Entwurf vom veröffentlichten Stand? */
 export function differs(draft: SiteDataMap, published: SiteDataMap | null | undefined): boolean {

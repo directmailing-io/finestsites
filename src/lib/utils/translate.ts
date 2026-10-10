@@ -2,7 +2,7 @@ import { TRANSLATION_LANGS } from '@/lib/utils/template-engine'
 import { sanitizeRichtext } from '@/lib/security/sanitize'
 import { createHash } from 'crypto'
 import { db } from '@/lib/db'
-import { siteData } from '@/lib/db/schema'
+import { siteData, userSites } from '@/lib/db/schema'
 import { eq, and, inArray, sql } from 'drizzle-orm'
 import type { SiteLang } from '@/lib/utils/about-intro'
 
@@ -147,3 +147,52 @@ export async function ensureAboutMeTranslation(siteId: string, langs: SiteLang[]
   }
   await runLimited(jobs, 4)
 }
+
+/**
+ * Entwurf ≠ Live: Der Worker liefert `user_sites.published_data`. Die Übersetzungen dort müssen zum
+ * VERÖFFENTLICHTEN deutschen Text passen (der Entwurf kann abweichen). Fehlende oder veraltete
+ * Übersetzungen werden aus dem Entwurf übernommen (gleicher Hash) oder neu übersetzt. Geschrieben
+ * werden ausschließlich Übersetzungsschlüssel per jsonb-Merge – nie andere Entwurfsänderungen,
+ * die gehen erst mit „Änderungen veröffentlichen“ online. Gibt die Zahl geschriebener Schlüssel zurück.
+ */
+export async function ensurePublishedTranslation(siteId: string, langs: SiteLang[] = ['en']): Promise<number> {
+  const [site] = await db.select({ status: userSites.status, pd: userSites.publishedData }).from(userSites).where(eq(userSites.id, siteId))
+  if (!site || site.status !== 'published' || !site.pd) return 0
+  const pd = site.pd
+  const keys = TRANSLATED_FIELDS.flatMap(f => langs.flatMap(l => [`${f.key}_${l}`, `${f.key}_${l}_src`]))
+  const draftRows = await db.select({ k: siteData.fieldKey, v: siteData.fieldValue }).from(siteData)
+    .where(and(eq(siteData.userSiteId, siteId), inArray(siteData.fieldKey, keys)))
+  const draft: Record<string, string> = {}
+  for (const r of draftRows) draft[r.k] = r.v ?? ''
+
+  const patch: Record<string, string> = {}
+  const jobs: Array<() => Promise<void>> = []
+  for (const f of TRANSLATED_FIELDS) {
+    const german = (pd[f.key] ?? '').trim()
+    if (!german) continue
+    const srcHash = hashOf(german)
+    for (const lang of langs) {
+      const outKey = `${f.key}_${lang}`, srcKey = `${f.key}_${lang}_src`
+      if (pd[outKey] && pd[srcKey] === srcHash) continue
+      if (draft[outKey] && draft[srcKey] === srcHash) { patch[outKey] = draft[outKey]; patch[srcKey] = srcHash; continue }
+      jobs.push(async () => {
+        const translated = await translateText(german, lang, f.html, f.context)
+        if (!translated) return // kein Fallback nötig: ohne Schlüssel zeigt der Worker den deutschen Text
+        patch[outKey] = f.html ? sanitizeRichtext(translated) : translated
+        patch[srcKey] = srcHash
+      })
+    }
+  }
+  await runLimited(jobs, 4)
+  const n = Object.keys(patch).length
+  if (n > 0) {
+    await db.update(userSites)
+      .set({ publishedData: sql`coalesce(${userSites.publishedData}, '{}'::jsonb) || ${JSON.stringify(patch)}::jsonb` })
+      .where(eq(userSites.id, siteId))
+  }
+  return n
+}
+
+/** Übersetzungsschlüssel (`about_me_html_it`, `intro_en_src`, …) – abgeleitet, keine Nutzeränderung. */
+export const isTranslationKey = (k: string) =>
+  TRANSLATED_FIELDS.some(f => new RegExp(`^${f.key}_[a-z]{2}(_src)?$`).test(k))
