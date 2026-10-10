@@ -26,6 +26,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { siteData, userSites, users, templates } from '@/lib/db/schema'
 import { rawKeysFromSchema } from '@/lib/utils/template-engine'
+import { dropStaleTranslations } from '@/lib/utils/translate'
 import { eq } from 'drizzle-orm'
 
 const WORKER_SECRET = process.env.WORKER_SECRET
@@ -66,8 +67,14 @@ export async function GET(req: NextRequest) {
     const fullName = [userInfo?.firstName, userInfo?.lastName].filter(Boolean).join(' ').trim()
     const displayName = fullName || (userInfo?.username ? `Benutzer ${userInfo.username}` : 'Benutzer')
 
+    // Übersetzungen nur, wenn sie zum aktuellen deutschen Text passen (sonst DE-Fallback)
+    const rawMap: Record<string, string> = {}
+    for (const r of siteRows) rawMap[r.fieldKey] = r.fieldValue ?? ''
+    const fresh = dropStaleTranslations(rawMap)
+    const liveRows = siteRows.filter(r => r.fieldKey in fresh)
+
     const rows = [
-      ...siteRows.map(r => rawKeys.has(r.fieldKey) ? { ...r, html: true as const } : r),
+      ...liveRows.map(r => rawKeys.has(r.fieldKey) ? { ...r, html: true as const } : r),
       { fieldKey: 'user_first_name', fieldValue: userInfo?.firstName ?? '' },
       { fieldKey: 'user_last_name', fieldValue: userInfo?.lastName ?? '' },
       { fieldKey: 'user_username', fieldValue: userInfo?.username ?? '' },

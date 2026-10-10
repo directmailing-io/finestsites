@@ -234,8 +234,10 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   const dataRows = await db.query.siteData.findMany({
     where: eq(siteData.userSiteId, id),
   })
-  const dataMap: Record<string, string> = {}
-  for (const row of dataRows) dataMap[row.fieldKey] = row.fieldValue ?? ''
+  const rawMap: Record<string, string> = {}
+  for (const row of dataRows) rawMap[row.fieldKey] = row.fieldValue ?? ''
+  const { dropStaleTranslations } = await import('@/lib/utils/translate')
+  const dataMap = dropStaleTranslations(rawMap)
   const liveHost = site.customDomain && site.customDomainStatus === 'active' ? site.customDomain : `${username}.${site.template.domain}`
   await preRenderAndPushToKV(username, site.template.domain, site.template.r2BundlePath, dataMap, rawKeysFromSchema(site.template.placeholderSchema), { siteId: id, host: liveHost })
 

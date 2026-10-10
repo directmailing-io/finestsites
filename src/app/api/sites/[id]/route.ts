@@ -189,15 +189,9 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     || typeof (body as Record<string, unknown>).intro === 'string'
   if (aboutMeChanged || site.status === 'published') {
     ;(async () => {
-      if (aboutMeChanged) {
-        try {
-          const { ensureAboutMeTranslation, templateLangs } = await import('@/lib/utils/translate')
-          const [tpl] = await db.select({ domain: templates.domain }).from(userSites).innerJoin(templates, eq(templates.id, userSites.templateId)).where(eq(userSites.id, id)).limit(1)
-          await ensureAboutMeTranslation(id, templateLangs(tpl?.domain))
-        } catch (err) {
-          console.error('[PATCH] about_me translation failed:', err)
-        }
-      }
+      // Übersetzung der Nutzertexte bewusst NICHT beim Speichern (jede Änderung würde Kosten
+      // erzeugen), sondern erst beim Veröffentlichen nach dem Text-Check (publish/route.ts).
+      // Bis dahin zeigt die Seite bei geändertem Text den deutschen Text (dropStaleTranslations).
       if (site.status !== 'published') return
       try {
         const profile = await db.query.users.findFirst({ where: eq(users.id, user.id) })
@@ -209,8 +203,10 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
             .select({ fieldKey: siteData.fieldKey, fieldValue: siteData.fieldValue })
             .from(siteData)
             .where(eq(siteData.userSiteId, id))
-          const siteDataMap: Record<string, string> = {}
-          for (const r of rows) siteDataMap[r.fieldKey] = r.fieldValue ?? ''
+          const { dropStaleTranslations } = await import('@/lib/utils/translate')
+          const rawMap: Record<string, string> = {}
+          for (const r of rows) rawMap[r.fieldKey] = r.fieldValue ?? ''
+          const siteDataMap = dropStaleTranslations(rawMap)
           const { S3Client, GetObjectCommand } = await import('@aws-sdk/client-s3')
           const { renderTemplate } = await import('@/lib/utils/template-engine')
           const { writeRenderedHtmlKV } = await import('@/lib/cloudflare/kv-api')

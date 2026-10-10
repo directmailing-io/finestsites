@@ -5,7 +5,8 @@ import { siteData } from '@/lib/db/schema'
 import { eq, and, inArray, sql } from 'drizzle-orm'
 import type { SiteLang } from '@/lib/utils/about-intro'
 
-const OPENAI_MODEL = 'gpt-5.5-2026-04-23'
+// Nutzertexte: günstiges Modell (gpt-5.4-mini, ~1/10 der Kosten von gpt-5.5, Qualität für „Über mich“-Texte geprüft)
+const OPENAI_MODEL = 'gpt-5.4-mini'
 
 /**
  * Nutzertexte, die mehrsprachige Templates in anderen Sprachen zeigen. Je Sprache entsteht ein
@@ -31,6 +32,26 @@ export function templateLangs(templateDomain: string | null | undefined): SiteLa
 
 function hashOf(text: string): string {
   return createHash('sha256').update(text).digest('hex').slice(0, 16)
+}
+
+/**
+ * Entfernt veraltete Übersetzungen aus einer Seitendaten-Map: Übersetzt wird erst beim
+ * Veröffentlichen (nach dem Text-Check). Hat sich der deutsche Text seitdem geändert
+ * (Hash ≠ `_src`), zeigt die Seite bis zur nächsten Veröffentlichung den deutschen Text
+ * statt einer alten Übersetzung.
+ */
+export function dropStaleTranslations(map: Record<string, string>): Record<string, string> {
+  const out = { ...map }
+  for (const f of TRANSLATED_FIELDS) {
+    const german = (map[f.key] ?? '').trim()
+    const hash = german ? hashOf(german) : ''
+    for (const key of Object.keys(map)) {
+      const m = key.match(new RegExp(`^${f.key}_([a-z]{2})$`))
+      if (!m) continue
+      if (!german || (map[`${key}_src`] ?? '') !== hash) { delete out[key]; delete out[`${key}_src`] }
+    }
+  }
+  return out
 }
 
 /** 429/5xx: bis zu drei Versuche mit Wartezeit (Rate-Limit bei vielen Seiten auf einmal). */
