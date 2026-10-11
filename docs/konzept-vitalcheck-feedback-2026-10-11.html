@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vitalprofil: Feedback Michaela, FitLine-Fitness-Check, Rechtsprüfung und Vorschlag</title>
+<style>
+  :root { --ink:#111; --muted:#5f6368; --line:#e6e6e6; --bg:#fafafa; --card:#fff; --ok:#1f8f5a; --warn:#b7791f; --bad:#c0392b; --accent:#1f5138; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif; color:var(--ink); background:var(--bg); line-height:1.55; font-size:16px; }
+  .wrap { max-width:1040px; margin:0 auto; padding:40px 24px 80px; }
+  header { border-bottom:1px solid var(--line); padding-bottom:20px; margin-bottom:32px; }
+  h1 { font-size:30px; line-height:1.2; margin:0 0 8px; letter-spacing:-0.01em; }
+  h2 { font-size:22px; margin:44px 0 12px; letter-spacing:-0.01em; }
+  h3 { font-size:17px; margin:24px 0 8px; }
+  p { margin:0 0 12px; }
+  .lead { font-size:18px; color:var(--muted); }
+  .meta { font-size:13px; color:var(--muted); }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:20px 22px; margin:16px 0; }
+  .card.verdict { border-left:5px solid var(--accent); }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  @media (max-width:760px){ .grid2 { grid-template-columns:1fr; } }
+  table { width:100%; border-collapse:collapse; background:var(--card); border:1px solid var(--line); border-radius:10px; overflow:hidden; font-size:14.5px; margin:14px 0 20px; }
+  th, td { text-align:left; vertical-align:top; padding:10px 12px; border-bottom:1px solid var(--line); }
+  th { background:#f3f4f6; font-weight:600; font-size:13px; letter-spacing:0.02em; }
+  tr:last-child td { border-bottom:0; }
+  .tag { display:inline-block; font-size:12px; font-weight:600; padding:3px 9px; border-radius:999px; white-space:nowrap; }
+  .ok { background:#e6f4ec; color:var(--ok); } .warn { background:#fdf3e1; color:var(--warn); } .bad { background:#fbe9e7; color:var(--bad); } .neutral { background:#eceff1; color:#455a64; }
+  blockquote { margin:0 0 12px; padding:14px 18px; background:#f3f4f6; border-left:4px solid #cfd8dc; border-radius:6px; color:#333; }
+  .quote-src { font-size:13px; color:var(--muted); }
+  ul, ol { margin:0 0 12px; padding-left:22px; } li { margin:4px 0; }
+  .stmt { font-family:Georgia,serif; font-size:17px; }
+  .small { font-size:13.5px; color:var(--muted); }
+  .kbd { font-family:ui-monospace,Menlo,monospace; font-size:13px; background:#f3f4f6; padding:1px 6px; border-radius:4px; }
+  .decision { background:#fff8e1; border:1px solid #f5d87a; border-radius:12px; padding:18px 22px; }
+  .opt { border:1px solid var(--line); border-radius:12px; padding:16px 18px; background:var(--card); }
+  .opt h3 { margin-top:0; }
+  .rec { border-color:var(--accent); box-shadow:0 0 0 2px rgba(31,81,56,0.12); }
+  .ampel { display:inline-block; width:11px; height:11px; border-radius:50%; margin-right:6px; vertical-align:middle; }
+  .g { background:var(--ok);} .y { background:var(--warn);} .r { background:var(--bad);}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>Vitalprofil: Michaelas Feedback, der FitLine-Fitness-Check und was wir rechtssicher übernehmen können</h1>
+  <p class="lead">Entscheidungsvorlage. Ziel: Das Feedback ernst nehmen (Besucher soll erkennen „da sollte ich etwas tun“ und verstehen, warum er sich mit der täglichen Versorgung beschäftigen sollte), ohne dass du oder ein Teampartner abgemahnt werden kann.</p>
+  <p class="meta">Stand 11.10.2026 · Grundlage: Vitalcheck-1.pdf (PM-International, Form FL.HealthFitnessCheck.FORM.0921.DE, © 2021), aktuelles Template <span class="kbd">templates/vitalprofil</span>, PM-Schreiben vom 08.10.2026, Rechtskonzept vom 30.09.2026</p>
+</header>
+
+<div class="card verdict">
+  <h3 style="margin-top:0">Kurzfassung</h3>
+  <ul>
+    <li><strong>Die Fragen des PDFs 1:1 auf die Webseite zu übernehmen, ist keine Option.</strong> 18 der 32 Fragen fragen Beschwerden oder Krankheitszeichen ab (Verdauungsprobleme, Infektanfälligkeit, Kopfschmerzen, niedergeschlagen, Krämpfe/steife Gelenke, Medikamente …). Auf einer öffentlichen Seite, deren Zweck die Beratung zu Nahrungsergänzung ist, ist das krankheitsbezogene Lebensmittelwerbung (LMIV Art. 7 Abs. 3), ein impliziter Health Claim (HCVO Art. 10) und eine Verarbeitung von Gesundheitsdaten (DSGVO Art. 9). Genau diesen Mechanismus („Ich habe akute Beschwerden“ → Beratung) hat PM-International am 08.10. selbst beanstandet. Dazu kommt: Das Formular ist urheberrechtlich geschütztes PM-Material für das persönliche Gespräch, nicht für Dritt-Webseiten.</li>
+    <li><strong>Der Kern des Feedbacks ist trotzdem berechtigt:</strong> Unser Check misst Gewohnheiten, aber er hält dem Besucher nicht den Spiegel vor, <em>wie es ihm damit geht</em>, und er erklärt nicht, warum die tägliche Versorgung mit Nährstoffen das Thema ist, über das der Teampartner sprechen möchte. Die Brücke fehlt.</li>
+    <li><strong>Empfehlung: Option B „Gewohnheit + Gefühl + Versorgungsbrücke“.</strong> Je Bereich eine zusätzliche Befindlichkeits-Aussage ohne Krankheitsbezug (Energie, erholt aufwachen, abschalten, fit fühlen, wohlfühlen mit der Ernährung), in der Auswertung die Lücke „was du tust vs. wie du dich fühlst“ sichtbar machen, danach ein klarer Block „Warum deine tägliche Versorgung dazugehört“ mit amtlichem Claim-Wortlaut und der Einladung zum Gespräch über das FitLine-Konzept. Ergänzt durch Option E: Der Teampartner bekommt in der Ergebnis-Mail einen Gesprächsleitfaden, in dem die Themen aus dem PM-Check dort landen, wo sie hingehören: ins persönliche Gespräch.</li>
+    <li>Restrisiko von Option B: <span class="tag warn">niedrig bis mittel</span>, beherrschbar durch feste Formulierungsregeln (unten). Ein Null-Risiko gibt es nur mit dem Status quo.</li>
+  </ul>
+</div>
+
+<h2>1. Was Michaela sagt, und was sie eigentlich braucht</h2>
+<blockquote>„Mir fehlt allerdings etwas der Bezug zu den FitLine Produkten. Wenn ich selbst ihn ausfülle, hätte ich danach zwar die Infos wo ich etwas ändern kann aber ich wüsste nicht warum ich mich jetzt mit den FitLine Produkten beschäftigen sollte. Ich denke es sollten Fragen rein zu Schlaf, Verdauung, Energielevel so wie es auch in den Vitalchecks von FitLine angefragt wird. Ich möchte ja wissen welche Herausforderungen der Jenige hat und dass er erkennt: Oh, da sollte ich was tun. Vielleicht ist das umsetzbar ohne in den Heilbereich zu gehen.“</blockquote>
+<p class="quote-src">Michaela, Teampartnerin, 10./11.10.2026</p>
+<div class="grid2">
+  <div class="card">
+    <h3 style="margin-top:0">Drei Bedürfnisse stecken darin</h3>
+    <ol>
+      <li><strong>Der Aha-Moment beim Besucher.</strong> Er soll merken, dass etwas nicht rund läuft. Heute sieht er nur: „Gewohnheit X ist ausbaufähig“. Das ist sachlich, aber es berührt nicht.</li>
+      <li><strong>Der Grund, sich mit der Versorgung zu beschäftigen.</strong> Die Auswertung endet in Alltagstipps. Dass tägliche Nährstoffversorgung an genau diesen Gewohnheiten hängt und dass der Teampartner dazu ein Konzept hat, wird nicht ausgesprochen.</li>
+      <li><strong>Gesprächsmaterial für den Teampartner.</strong> Sie will wissen, wo die Herausforderungen liegen, um das Gespräch zu führen. Heute bekommt sie Gewohnheits-Scores und Wünsche.</li>
+    </ol>
+  </div>
+  <div class="card">
+    <h3 style="margin-top:0">Was wir ihr nicht geben können, und warum nicht</h3>
+    <p>Fragen zu Beschwerden („Probleme mit der Verdauung?“, „häufig Kopfschmerzen?“) auf der Seite. Michaela selbst ahnt es („ohne in den Heilbereich zu gehen“). Der Haken: Nicht die Frage ist das Problem, sondern der <em>Gesamteindruck</em>. Wer auf einer Seite eines Nahrungsergänzungs-Vertriebs Beschwerden ankreuzt und danach ein Beratungsangebot bekommt, versteht zwangsläufig: „Das Produkt ist für diese Beschwerden“. Das ist die Aussage, die verboten ist, auch wenn sie nirgends wörtlich steht.</p>
+    <p class="small">PM-International hat genau das am 08.10. an unserem Dailyoptimal-Funnel moniert („Ich habe akute Beschwerden“ erwecke den Eindruck, Produkte behandelten Beschwerden). Wir haben es entfernt und das zugesagt. Es jetzt im Vitalprofil wieder einzubauen, wäre ein Wortbruch gegenüber PM, drei Tage nach der Zusage.</p>
+  </div>
+</div>
+
+<h2>2. Der FitLine-Fitness-Check (PDF): alle 32 Fragen bewertet</h2>
+<p>Legende: <span class="tag bad">Nein</span> nicht übernehmbar · <span class="tag warn">Umformuliert</span> Kern bleibt, als Befindlichkeit/Gewohnheit ohne Krankheitsbezug · <span class="tag ok">Ja</span> übernehmbar bzw. schon drin. Die Spalte „Risiko“ beschreibt das Risiko bei wörtlicher Übernahme auf die Webseite.</p>
+<table>
+  <tr><th style="width:38%">Frage im PDF</th><th>Art</th><th>Risiko</th><th>Bewertung</th></tr>
+  <tr><td>Probleme mit Verdauung, Magen oder Darm?</td><td>Beschwerde</td><td><span class="tag bad">hoch</span></td><td>Krankheitszeichen, Gesundheitsdatum. Als Befindlichkeit möglich: „Nach dem Essen fühle ich mich meistens leicht und wohl“ (siehe Option B, Variante mit Restrisiko).</td></tr>
+  <tr><td>Lebensmittel, die Sie nicht vertragen?</td><td>Unverträglichkeit</td><td><span class="tag bad">hoch</span></td><td>Medizinisches Thema (Intoleranz/Allergie). Nicht übernehmen.</td></tr>
+  <tr><td>Neigen Sie zu unreiner Haut?</td><td>Hautbild</td><td><span class="tag bad">hoch</span></td><td>Klassische Produktbrücke (Haut/Haare/Nägel-Claims), war schon Gegenstand des PM-Hinweises („unreine Haut“). Nein.</td></tr>
+  <tr><td>Anfällig für Erkältungen oder Infektionen?</td><td>Krankheit</td><td><span class="tag bad">hoch</span></td><td>Infektanfälligkeit + Nahrungsergänzung = Krankheitsbezug. Nein. Der zugelassene Claim „Vitamin C trägt zu einer normalen Funktion des Immunsystems bei“ steht bereits im Nährstoff-Wissen (allgemein, ohne Bezug zur Person).</td></tr>
+  <tr><td>Häufig müde und erschöpft?</td><td>Befindlichkeit</td><td><span class="tag warn">mittel</span></td><td>Müdigkeit ist regulatorisch keine Krankheit (es gibt zugelassene Claims zur „Verringerung von Müdigkeit und Ermüdung“). „Erschöpft“ dagegen steht in unserer Sperrliste (Erschöpfungszustand). Umformuliert als positive Aussage: „Meine Energie bleibt über den Tag gleichmäßig, auch am Nachmittag.“</td></tr>
+  <tr><td>Schwer, sich länger zu konzentrieren?</td><td>Befindlichkeit</td><td><span class="tag warn">mittel</span></td><td>Konzentrationsschwäche grenzt an Diagnose. Nur als Gewohnheit: „Ich arbeite an einer Sache am Stück“ (schon drin).</td></tr>
+  <tr><td>Häufiger Kopfschmerzen?</td><td>Symptom</td><td><span class="tag bad">hoch</span></td><td>Nein (Sperrliste, HWG-Bereich).</td></tr>
+  <tr><td>Manchmal grundlos niedergeschlagen?</td><td>Psychische Gesundheit</td><td><span class="tag bad">hoch</span></td><td>Depressions-Screening-Frage. Nein, auch aus Verantwortung dem Besucher gegenüber.</td></tr>
+  <tr><td>Öfter nervös und gereizt?</td><td>Befindlichkeit</td><td><span class="tag warn">mittel</span></td><td>Umformuliert als Ausgleich: „Ich kann abends gut abschalten und zur Ruhe kommen.“</td></tr>
+  <tr><td>Probleme einzuschlafen?</td><td>Symptom</td><td><span class="tag bad">hoch</span></td><td>„Schlafprobleme“ steht in der Sperrliste (Insomnie ist eine Diagnose). Nein.</td></tr>
+  <tr><td>Morgens öfter nicht erholt?</td><td>Befindlichkeit</td><td><span class="tag warn">mittel</span></td><td>Umformuliert, positiv: „Morgens wache ich meistens erholt auf.“ Auswertung darf daraus nie „Schlafproblem“ machen.</td></tr>
+  <tr><td>Wadenkrämpfe oder steife Gelenke?</td><td>Symptom</td><td><span class="tag bad">hoch</span></td><td>Nein (Krämpfe/Gelenke = Krankheitsbezug, Magnesium-Brücke).</td></tr>
+  <tr><td>Häufig gestresst?</td><td>Befindlichkeit</td><td><span class="tag warn">mittel</span></td><td>Das Wort „Stress“ vermeiden (Produktbrücke „Anti-Stress“). Abgedeckt durch die Abschalt-Aussage.</td></tr>
+  <tr><td>Unzufrieden mit Haut, Haaren, Nägeln?</td><td>Körperbild</td><td><span class="tag bad">hoch</span></td><td>Nein (siehe unreine Haut).</td></tr>
+  <tr><td>Über 40 Jahre alt?</td><td>Demografie</td><td><span class="tag warn">mittel</span></td><td>Harmlos als Frage, aber in der Auswertung („ab 40 brauchst du …“) sofort ein Claim-Problem. Weglassen; der Wunsch „Fit und aktiv älter werden“ deckt das ab.</td></tr>
+  <tr><td>Regelmäßig Alkohol?</td><td>Lebensstil / Gesundheitsdatum</td><td><span class="tag bad">hoch</span></td><td>Gesundheitsdatum, kein Nutzen für den Check, Produktbrücke („Leber“). Nein.</td></tr>
+  <tr><td>Regelmäßig Medikamente?</td><td>Gesundheitsdatum</td><td><span class="tag bad">hoch</span></td><td>Nein. Das gehört, wenn überhaupt, ins Gespräch (Wechselwirkungen sind Arzt-/Apothekenthema).</td></tr>
+  <tr><td>Rauchen Sie?</td><td>Gesundheitsdatum</td><td><span class="tag bad">hoch</span></td><td>Nein.</td></tr>
+  <tr><td>Mehr als 1 Liter Kaffee/Schwarztee?</td><td>Gewohnheit</td><td><span class="tag ok">niedrig</span></td><td>Übernehmbar als Gewohnheit, Mehrwert gering. Optional.</td></tr>
+  <tr><td>Weniger als 5 Portionen Obst/Gemüse?</td><td>Gewohnheit</td><td><span class="tag ok">niedrig</span></td><td>Schon drin (positiv formuliert).</td></tr>
+  <tr><td>Weniger als 2 Liter Flüssigkeit?</td><td>Gewohnheit</td><td><span class="tag ok">niedrig</span></td><td>Schon drin (1,5 l gemäß DGE; 2 l wären vertretbar, DGE nennt 1,5 l als Richtwert).</td></tr>
+  <tr><td>Häufig Fertigkost, Kantine, Imbiss?</td><td>Gewohnheit</td><td><span class="tag ok">niedrig</span></td><td>Übernehmbar: „Ich koche oder esse an den meisten Tagen frisch Zubereitetes statt Fertiggerichte.“ Empfehlung: ja, ersetzt „Gesunde Snacks griffbereit“ oder kommt dazu.</td></tr>
+  <tr><td>Gerne in die Sonne/Solarium?</td><td>Gewohnheit</td><td><span class="tag warn">mittel</span></td><td>Zielt auf „freie Radikale/Antioxidantien“. Nur die Tageslicht-Aussage behalten (schon drin). Solarium raus.</td></tr>
+  <tr><td>Schon von „Freien Radikalen“ gehört?</td><td>Wissensfrage / Verkaufsvorbereitung</td><td><span class="tag bad">hoch</span></td><td>Reine Produkt-Vorbereitung (Antioxidantien). Auf der Seite nein; im Gespräch Sache des Teampartners.</td></tr>
+  <tr><td>Erfahrung mit Diäten?</td><td>Gewohnheit</td><td><span class="tag warn">mittel</span></td><td>Gewichts-/Diätkontext mit späterer Produktberatung berührt HCVO Art. 12 lit. b. Weglassen.</td></tr>
+  <tr><td>Mit dem Körpergewicht zufrieden?</td><td>Körperbild</td><td><span class="tag warn">mittel</span></td><td>Bleibt als Wunsch („Mein Wohlfühlgewicht erreichen“), nicht als Frage.</td></tr>
+  <tr><td>BMI / Körperfettanteil bekannt?</td><td>Wissensfrage</td><td><span class="tag warn">mittel</span></td><td>Kein Mehrwert, baut Gewichts-Brücke. Nein.</td></tr>
+  <tr><td>Fettverbrennungsbereich bekannt?</td><td>Wissensfrage</td><td><span class="tag warn">mittel</span></td><td>Nein (s. o.).</td></tr>
+  <tr><td>Treiben Sie Sport? Welche Sportart, wie oft?</td><td>Gewohnheit</td><td><span class="tag ok">niedrig</span></td><td>Schon drin (Bewegungs-Bereich, 4 Aussagen).</td></tr>
+  <tr><td>Die 3 wichtigsten Dinge im Leben?</td><td>Motiv</td><td><span class="tag ok">niedrig</span></td><td>Schon drin (10 Motive, max. 3).</td></tr>
+  <tr><td>Wie viel ist Ihnen Ihr Wohlbefinden pro Tag wert? (3 / 4 / 5 €)</td><td>Verkaufsfrage</td><td><span class="tag ok">niedrig</span></td><td>Schon drin (2 € / 3–4 € / 5 € / mehr / weiß nicht).</td></tr>
+  <tr><td>Würden Sie die Möglichkeit nutzen, eine Beeinträchtigung positiv zu verändern?</td><td>Abschlussfrage</td><td><span class="tag warn">mittel</span></td><td>„Beeinträchtigung“ setzt Beschwerden voraus. Umformuliert als Interessen-Chips im Formular (schon drin).</td></tr>
+</table>
+<p class="small">Bilanz: 14 × Nein, 11 × nur umformuliert, 7 × schon drin oder übernehmbar. Das Formular ist für das persönliche Gespräch gebaut; im Gespräch darf der Teampartner (im Rahmen der PM-Richtlinien) Fragen stellen, die wir auf einer öffentlichen Seite nicht stellen dürfen.</p>
+
+<h2>3. Rechtliche Prüfung, streng</h2>
+<h3>3.1 Warum das Papierformular und eine Webseite zwei verschiedene Welten sind</h3>
+<table>
+  <tr><th style="width:30%">Merkmal</th><th>PDF im Gespräch</th><th>Check auf der Teampartner-Webseite</th></tr>
+  <tr><td>Öffentlichkeit</td><td>Zwei Personen, Papier, nicht indexiert</td><td>Öffentlich, Google-indexiert, von Wettbewerbszentrale, Verbraucherzentralen und Mitbewerbern mit einem Klick prüfbar</td></tr>
+  <tr><td>Werbecharakter</td><td>Gesprächshilfe; Aussagen fallen mündlich und individuell</td><td>Geschäftliche Handlung im Sinne des UWG; jede Auswertung ist eine veröffentlichte Werbeaussage</td></tr>
+  <tr><td>Auswertung</td><td>Der Mensch wertet aus und wählt seine Worte</td><td>Ein Algorithmus wertet aus; der Text ist fix und für alle gleich, also angreifbar und reproduzierbar</td></tr>
+  <tr><td>Datenverarbeitung</td><td>Papier, meist ohne Speicherung</td><td>Gesundheitsdaten elektronisch, Übermittlung an den Teampartner, FinestSites als Auftragsverarbeiter / im Impressum</td></tr>
+  <tr><td>Haftung</td><td>Teampartner, PM (Material)</td><td>Teampartner (Betreiber) <strong>und FinestSites</strong> (im Impressum, stellt die Vorlage, wertet aus; Täter/Teilnehmer, nicht nur Störer)</td></tr>
+</table>
+
+<h3>3.2 Die Normen, die hier greifen</h3>
+<table>
+  <tr><th style="width:28%">Norm</th><th>Was sie verbietet / verlangt</th><th>Folge für den Check</th></tr>
+  <tr><td>LMIV (VO 1169/2011) Art. 7 Abs. 3</td><td>Lebensmittel (inkl. Nahrungsergänzung) dürfen keine Eigenschaften der Vorbeugung, Behandlung oder Heilung einer Krankheit zugeschrieben werden, auch nicht mittelbar</td><td>Jede Beschwerde-Frage, die in ein Beratungsangebot mündet, schreibt dem Produkt mittelbar eine Wirkung auf die Beschwerde zu. Das ist der zentrale Verbotstatbestand.</td></tr>
+  <tr><td>Health-Claims-VO (VO 1924/2006) Art. 10, Art. 10 Abs. 3, Art. 12 lit. b/c, Art. 13/14</td><td>Nur zugelassene Claims im zugelassenen Wortlaut; allgemeine Hinweise nur mit zugelassenem Claim daneben; keine Angaben zu Ausmaß/Tempo der Gewichtsabnahme; keine Hinweise auf Arztempfehlungen</td><td>Zulässig: „Vitamin C trägt zu einer normalen Funktion des Immunsystems bei“ (allgemein). Unzulässig: „Weil du oft erkältet bist, achte auf deine Versorgung“ (Bezug auf Person + Beschwerde = unzulässiger Claim, BGH „Vitalpilze“, I ZR 5/12: auch unspezifische Gesundheitsbezüge fallen unter die HCVO).</td></tr>
+  <tr><td>HWG § 1 Abs. 1 Nr. 2, § 3, § 11</td><td>Gilt für „andere Mittel“, soweit sie sich auf Erkennung, Beseitigung oder Linderung von Krankheiten beziehen; Verbot irreführender und bestimmter suggestiver Werbung</td><td>Sobald eine Nahrungsergänzung krankheitsbezogen beworben wird, greift zusätzlich das HWG mit Bußgeld- und Abmahnrisiko.</td></tr>
+  <tr><td>UWG § 5, § 5a, § 3 Abs. 3 mit Anhang Nr. 18</td><td>Irreführung; die Behauptung, eine Ware könne Krankheiten heilen, ist per se unlauter</td><td>Abmahngrundlage für Wettbewerbszentrale, Verbraucherzentralen, Mitbewerber. Kosten pro Abmahnung typischerweise 200 bis 1.500 € plus Unterlassungserklärung mit Vertragsstrafe (häufig 5.000 € je Verstoß). Bei 100+ Teampartner-Seiten mit identischem Text: Serienabmahnung.</td></tr>
+  <tr><td>DSGVO Art. 9</td><td>Gesundheitsdaten nur mit ausdrücklicher Einwilligung, Zweckbindung, Datenschutzinformation; betrifft auch Rauchen, Alkohol, Medikamente, Beschwerden</td><td>Befindlichkeits-Aussagen („fühle mich fit“) sind grenzwertig, Beschwerde-Fragen eindeutig Gesundheitsdaten. Unsere Einwilligung im Formular deckt die Übermittlung ab; je mehr Gesundheitsbezug, desto höher der Rechtfertigungsdruck.</td></tr>
+  <tr><td>UrhG § 2, § 4 (Sammel-/Datenbankwerk)</td><td>Die konkrete Auswahl und Anordnung der 32 Fragen ist als Sammelwerk schützbar; Formular trägt © PM-International</td><td>Eine 1:1-Digitalisierung wäre eine Vervielfältigung von PM-Material ohne Erlaubnis. Einzelne, umformulierte Themen sind frei.</td></tr>
+  <tr><td>PM-Richtlinien (Social Media Policies, Logos/Brands/Names) + PM-Schreiben 08.10.2026</td><td>Keine Gesundheitsaussagen, keine Nutzung von PM-Material außerhalb der PM-Kanäle, Beschwerde-Funnel ausdrücklich beanstandet</td><td>PM ist derzeit die wahrscheinlichste „Abmahnung“: nicht als Gericht, aber als Hersteller, der 120 Teampartnern die Nutzung untersagen kann. Das wäre für FinestSites existenziell.</td></tr>
+</table>
+
+<h3>3.3 Was Gerichte und Abmahnvereine als Werbung werten</h3>
+<ul>
+  <li><strong>Gesamteindruck zählt, nicht der Wortlaut.</strong> EuGH „Deutsches Weintor“ (C-544/10): schon „bekömmlich“ ist ein Health Claim. BGH „Monsterbacke“ (I ZR 36/11): „So wichtig wie das tägliche Glas Milch“ ist ein Claim. Ein Fragebogen, der Beschwerden erhebt und mit einem Beratungs-Button endet, erzeugt den Eindruck „hier gibt es etwas gegen deine Beschwerden“, auch ohne Produktnennung.</li>
+  <li><strong>Selbsttests sind Werbung.</strong> Ein „Check“ auf der Seite eines Vertriebspartners ist eine geschäftliche Handlung; er ist nicht Information, sondern Teil der Anbahnung. Die Fiktion „der Check ist neutral, das Produkt kommt erst im Gespräch“ hält nicht, wenn Seite, Impressum und Footer den Vertriebsbezug ausweisen (und das müssen sie).</li>
+  <li><strong>Serieneffekt.</strong> Die Vorlage läuft auf vielen Seiten. Eine Abmahnung gegen eine Seite ist die Blaupause für alle, und FinestSites steht in jedem Impressum. Ein Fehler im Template ist kein Einzelfall, sondern ein Flächenproblem.</li>
+</ul>
+
+<h3>3.4 Die Grenze, die wir ziehen</h3>
+<div class="grid2">
+  <div class="card">
+    <p><strong><span class="ampel g"></span>Erlaubt (mit Regeln):</strong></p>
+    <ul>
+      <li>Gewohnheiten (was jemand tut)</li>
+      <li>Wünsche und Motive (was jemand will)</li>
+      <li>Befindlichkeiten <em>ohne Krankheitscharakter</em>, positiv formuliert: Energie über den Tag, erholt aufwachen, abschalten können, sich fit fühlen, sich mit der Ernährung wohlfühlen</li>
+      <li>Allgemeines Nährstoff-Wissen im amtlichen Claim-Wortlaut, nicht auf die Person bezogen</li>
+      <li>Einladung zum Gespräch über „die tägliche Versorgung“ und das „FitLine-Konzept von PM-International“, ohne Wirkaussage, mit Teampartner-Kennzeichnung</li>
+    </ul>
+  </div>
+  <div class="card">
+    <p><strong><span class="ampel r"></span>Nicht erlaubt (nicht verhandelbar):</strong></p>
+    <ul>
+      <li>Beschwerden, Symptome, Diagnosen, Medikamente, Unverträglichkeiten, Rauchen, Alkohol</li>
+      <li>Die Wörter Problem, Beschwerde, Mangel, Defizit, brauchst, hilft bei, gegen, Stress, erschöpft, Schlafprobleme, Verdauungsprobleme, Immunsystem stärken, Haut/Haare/Nägel</li>
+      <li>Jede Auswertung, die vom Befinden auf die Versorgung oder ein Produkt schließt („weil du müde bist, …“)</li>
+      <li>Produktnamen (PowerCocktail, Restorate, Activize …) im Check oder in der Auswertung</li>
+      <li>Zeit- oder Erfolgsversprechen, Vorher/Nachher, Erfahrungsberichte in der Auswertung</li>
+    </ul>
+  </div>
+</div>
+
+<h2>4. Optionen</h2>
+<div class="grid2">
+  <div class="opt">
+    <h3>A · Status quo</h3>
+    <p>Check bleibt wie er ist. Risiko <span class="tag ok">null</span>, Feedback bleibt unbeantwortet. Teampartner empfinden den Check als „nett, aber ohne Zug“.</p>
+  </div>
+  <div class="opt rec">
+    <h3>B · Gewohnheit + Gefühl + Versorgungsbrücke <span class="tag ok">Empfehlung</span></h3>
+    <p>Je Bereich eine fünfte Aussage zur Befindlichkeit (ohne Krankheitsbezug). Auswertung zeigt die Lücke zwischen Tun und Fühlen. Neuer Block erklärt, warum die tägliche Versorgung dazugehört, und lädt zum Gespräch über das FitLine-Konzept ein. Risiko <span class="tag warn">niedrig bis mittel</span>, Details in Abschnitt 5.</p>
+  </div>
+  <div class="opt">
+    <h3>C · PDF-Fragen digital übernehmen</h3>
+    <p>Beschwerde-Fragen wie im PM-Formular. Risiko <span class="tag bad">hoch</span>: LMIV Art. 7 Abs. 3, HCVO, HWG, DSGVO Art. 9, Urheberrecht, PM-Richtlinien, Wortbruch gegenüber PM. <strong>Nicht umsetzbar.</strong></p>
+  </div>
+  <div class="opt">
+    <h3>D · Offizielle Digitalisierung mit PM</h3>
+    <p>PM um Freigabe bitten, ihren Fitness-Check als digitale Version anzubieten (in deinem Antwortschreiben hast du die Zusammenarbeit angeboten). Dann trägt PM die inhaltliche Verantwortung für die Fragen. Realistisch? Eher nicht kurzfristig: PM müsste eine Drittplattform freigeben. Aber als Gesprächsangebot sinnvoll, kostet nichts. Zeithorizont Monate.</p>
+  </div>
+  <div class="opt">
+    <h3>E · Gesprächsleitfaden für den Teampartner <span class="tag ok">Ergänzung zu B</span></h3>
+    <p>Die Ergebnis-Mail an den Teampartner bekommt einen Abschnitt „Gesprächsimpulse“: aus den Antworten abgeleitete Themen, die er im persönlichen Gespräch mit dem PM-Fitness-Check vertiefen kann. Nicht öffentlich, kein PM-Material kopiert, nur Themen. Risiko <span class="tag ok">niedrig</span>. Gibt Michaela genau das „Ich möchte wissen, welche Herausforderungen derjenige hat“, ohne dass es auf der Seite steht.</p>
+  </div>
+  <div class="opt">
+    <h3>F · Beratung als Produkt-Erklärung (nach dem Check)</h3>
+    <p>Separate Seite „So arbeite ich“ mit Produktdarstellung. Risiko <span class="tag warn">mittel</span>: Produktdarstellung durch Teampartner unterliegt den PM-Markenrichtlinien, und die Nähe zur Auswertung baut wieder die Brücke Befinden → Produkt. Nicht empfohlen; der Produktteil gehört ins Gespräch.</p>
+  </div>
+</div>
+
+<h2>5. Option B im Detail</h2>
+<h3>5.1 Fünf neue „Gefühl“-Aussagen (je Bereich eine)</h3>
+<p>Gleiche 5er-Skala wie bisher („Trifft gar nicht zu“ bis „Trifft voll zu“). Alle positiv formuliert, damit niemand ein Problem „ankreuzt“. Varianten mit Bewertung:</p>
+<table>
+  <tr><th style="width:18%">Bereich</th><th>Aussage (Vorschlag)</th><th style="width:12%">Risiko</th><th>Anmerkung</th></tr>
+  <tr><td>Tagesstruktur</td><td class="stmt">Meine Energie bleibt über den Tag gleichmäßig, auch am Nachmittag.</td><td><span class="tag ok">niedrig</span></td><td>Müdigkeit ist kein Krankheitsbegriff; zugelassener Claim zur „Verringerung von Müdigkeit und Ermüdung“ existiert. Kein „erschöpft“.</td></tr>
+  <tr><td>Schlaf</td><td class="stmt">Morgens wache ich meistens erholt auf.</td><td><span class="tag warn">niedrig–mittel</span></td><td>Erholung ist Befinden, kein Symptom. Regel: Auswertung spricht nie von Schlafproblemen oder Schlafqualität, nur von „Abenden und Nächten mit Routine“.</td></tr>
+  <tr><td>Bewegung</td><td class="stmt">Ich fühle mich körperlich fit und beweglich.</td><td><span class="tag ok">niedrig</span></td><td>Fitness-Selbsteinschätzung, kein Gelenk-/Muskelbezug.</td></tr>
+  <tr><td>Ausgleich</td><td class="stmt">Abends kann ich gut abschalten und zur Ruhe kommen.</td><td><span class="tag ok">niedrig</span></td><td>Ersetzt „gestresst / nervös / gereizt“. Das Wort Stress kommt nicht vor.</td></tr>
+  <tr><td>Ernährung</td><td class="stmt">Mit dem, wie ich mich im Alltag ernähre, fühle ich mich wohl.</td><td><span class="tag ok">niedrig</span></td><td>Sichere Variante. Die Alternative „Nach dem Essen fühle ich mich meistens leicht und wohl“ (Verdauungsnähe) wäre <span class="tag warn">mittel</span>, weil die Auswertung bei niedriger Zustimmung zwangsläufig „Verdauung“ anklingen lässt. Empfehlung: sichere Variante.</td></tr>
+</table>
+<p class="small">Scoring: Die Gefühl-Aussage zählt nicht in den Gewohnheits-Score (max. 16 je Bereich bleibt), sondern bildet einen eigenen Wert „Wie du dich fühlst“ (0–4 je Bereich). So entsteht die Gegenüberstellung, ohne die bestehende Typ-Logik zu verändern.</p>
+
+<h3>5.2 Der Aha-Moment in der Auswertung: „Was du tust“ neben „Wie du dich fühlst“</h3>
+<div class="card">
+  <p>Je Bereich zwei kleine Balken. Drei Konstellationen, jeweils mit fester, geprüfter Formulierung:</p>
+  <ul>
+    <li><strong>Gewohnheiten niedrig, Gefühl niedrig</strong> („Hier hängt beides zusammen“): <em>„Du hast angegeben, dass du dich nachmittags selten gleichmäßig energiegeladen fühlst. Gleichzeitig laufen Pausen und Mahlzeiten bei dir unregelmäßig. Das ist der Bereich, in dem sich kleine Änderungen am schnellsten bemerkbar machen.“</em> Kein Ursache-Wirkung-Satz, kein Produkt.</li>
+    <li><strong>Gewohnheiten gut, Gefühl niedrig</strong> („Du tust schon viel“): <em>„Deine Gewohnheiten sind hier solide, trotzdem fühlst du dich morgens selten erholt. Genau so etwas lohnt sich, im Gespräch genauer anzuschauen.“</em> Das ist der ehrliche Gesprächsanlass, den Michaela meint.</li>
+    <li><strong>Gefühl hoch</strong>: Bestätigung, kein Hebel.</li>
+  </ul>
+  <p class="small">Formulierungsregel für alle Texte: Nur „du hast angegeben“, „lohnt sich anzuschauen“, „Bereich mit dem größten Hebel“. Nie „liegt daran“, „fehlt dir“, „brauchst du“, „Problem“.</p>
+</div>
+
+<h3>5.3 Die Brücke: „Warum deine tägliche Versorgung dazugehört“</h3>
+<div class="card">
+  <p>Ein fester Block nach den Bereichen, für alle gleich (keine Personalisierung auf Befinden, damit kein impliziter Claim entsteht):</p>
+  <blockquote>
+    <strong>Warum deine tägliche Versorgung dazugehört</strong><br>
+    Alles, was du oben siehst, läuft auf eine Frage hinaus: Was bekommt dein Körper jeden Tag? Wer selten auf fünf Portionen Obst und Gemüse kommt, unregelmäßig isst oder wenig trinkt, versorgt sich an vielen Tagen schlechter, als er denkt. Vitamine und Mineralstoffe haben dabei klar beschriebene Aufgaben: Magnesium, Vitamin C, Folat, Vitamin B6 und B12 tragen zur Verringerung von Müdigkeit und Ermüdung bei. Vitamin D und Calcium tragen zur Erhaltung normaler Muskelfunktion bei. Vitamin C trägt zu einer normalen Funktion des Immunsystems bei.<br><br>
+    {Vorname} arbeitet mit dem FitLine-Konzept von PM-International: einer einfachen täglichen Basis für morgens, tagsüber und abends. Ob und wie das zu deinem Alltag passt, besprecht ihr persönlich.<br>
+    <em>[Mit {Vorname} über meine tägliche Basis sprechen]</em><br>
+    <span class="small">Keine medizinische Beratung, keine Bewertung deiner Versorgung. {Vorname} ist unabhängige Vertriebspartnerin der PM-International AG.</span>
+  </blockquote>
+  <p>Damit ist Michaelas Frage „Warum sollte ich mich jetzt mit FitLine beschäftigen?“ beantwortet: weil die Auswertung auf die tägliche Versorgung zuläuft und der Teampartner dafür ein Konzept hat. Die Produkte selbst bleiben im Gespräch.</p>
+  <p class="small">Claims in diesem Block ausschließlich im Wortlaut der VO (EU) 432/2012. Die Erwähnung des FitLine-Konzepts ist Integrations-/Kennzeichnungs-Wording ohne Wirkaussage; sie entspricht der bereits auf der Seite vorhandenen Teampartner-Kennzeichnung. Vor Livegang trotzdem kurz mit den PM-Social-Media-Policies abgleichen (Nennung „FitLine“ + „unabhängige Vertriebspartnerin“ ist dort die vorgesehene Form).</p>
+</div>
+
+<h3>5.4 Option E: Gesprächsimpulse in der Mail an den Teampartner</h3>
+<div class="card">
+  <p>Nicht öffentlich, nur in der Ergebnis-Mail. Beispiel:</p>
+  <blockquote>
+    <strong>Gesprächsimpulse</strong> (aus den Antworten abgeleitet, nicht auf der Seite sichtbar)<br>
+    · Energie am Nachmittag: niedrig, Pausen und Mahlzeiten unregelmäßig → Tagesablauf, Mittagessen, Trinken ansprechen<br>
+    · Morgens erholt: eher nicht, Schlafroutine aber gut → nachfragen, was abends passiert (Mahlzeiten, Bildschirm)<br>
+    · Ernährung: wenig Frisches, oft unterwegs → Frühstück und Snacks, hier passt der Einstieg in die tägliche Basis<br>
+    · Wünsche: Mehr Energie, Besser schlafen · Motive: Familie, Freiheit · Budget: 3–4 € am Tag<br>
+    <span class="small">Hinweis: Den FitLine-Fitness-Check von PM nutzt du im persönlichen Gespräch; auf der Webseite dürfen Beschwerden nicht abgefragt werden.</span>
+  </blockquote>
+  <p>So bekommt der Teampartner die „Herausforderungen“ in Gesprächsform, und die Beschwerde-Fragen bleiben dort, wo PM sie vorgesehen hat.</p>
+</div>
+
+<h3>5.5 Risikomatrix Option B</h3>
+<table>
+  <tr><th>Element</th><th style="width:14%">Risiko</th><th>Warum / Absicherung</th></tr>
+  <tr><td>5 Gefühl-Aussagen (positiv, ohne Krankheitswörter)</td><td><span class="ampel y"></span>niedrig–mittel</td><td>Befindlichkeit ohne Diagnosecharakter; DSGVO-Einwilligung im Formular bleibt (Art. 9), Datenschutztext wird um „Selbsteinschätzung zum Befinden“ ergänzt.</td></tr>
+  <tr><td>Gegenüberstellung Tun vs. Fühlen</td><td><span class="ampel y"></span>niedrig–mittel</td><td>Feste Texte ohne Kausalität; Sperrliste gilt auch für diese Texte (Render-Wächter prüft).</td></tr>
+  <tr><td>Block „Tägliche Versorgung“ mit Claims</td><td><span class="ampel g"></span>niedrig</td><td>Amtlicher Wortlaut, nicht personalisiert, kein Produktname, keine Mangel-Aussage.</td></tr>
+  <tr><td>Nennung „FitLine-Konzept von PM-International“ + CTA</td><td><span class="ampel y"></span>niedrig–mittel</td><td>Rechtlich unkritisch (keine Wirkaussage). Markenrechtlich durch PM-Richtlinien gedeckt, wenn Teampartner-Kennzeichnung dabei ist. Restunsicherheit: PMs aktuelle Stimmung gegenüber FinestSites. Empfehlung: in deiner laufenden Abstimmung mit PM kurz erwähnen.</td></tr>
+  <tr><td>Gesprächsimpulse in der Mail</td><td><span class="ampel g"></span>niedrig</td><td>Intern, keine Werbung; keine Übernahme von PM-Formulartext.</td></tr>
+  <tr><td>Vergleich: PDF-Fragen auf der Seite (Option C)</td><td><span class="ampel r"></span>hoch</td><td>Siehe Abschnitt 3. Nicht umsetzen.</td></tr>
+</table>
+
+<h2>6. Aufwand und Umsetzung</h2>
+<table>
+  <tr><th>Schritt</th><th>Aufwand</th></tr>
+  <tr><td>Template: 5 Gefühl-Aussagen (DE/EN), eigener Score, Balken „Tun vs. Fühlen“ je Bereich, 3 Konstellationstexte je Bereich (DE/EN)</td><td>ca. 1 Tag</td></tr>
+  <tr><td>Template: Block „Warum deine tägliche Versorgung dazugehört“ + CTA, Fineprint; Story-PNG unverändert</td><td>2–3 Std.</td></tr>
+  <tr><td>Worker: Mail an Teampartner mit „Gesprächsimpulse“; Form-Schema um Gefühl-Werte erweitern</td><td>3–4 Std.</td></tr>
+  <tr><td>Datenschutzerklärung (Worker, vitalprofil.net) um Befindlichkeits-Selbsteinschätzung ergänzen</td><td>1 Std.</td></tr>
+  <tr><td>Sperrlisten-/Render-Check über alle neuen Texte, Playwright-Durchlauf DE/EN, Solo/Duo, R2-Upload, KV-Purge</td><td>2 Std.</td></tr>
+  <tr><td>Bestehende Vitalprofil-Seiten: bekommen das Update automatisch (Template in R2), keine Nutzeraktion nötig</td><td>–</td></tr>
+</table>
+
+<div class="card verdict" style="border-left-color:#b7791f">
+  <h3 style="margin-top:0">Konkrete Empfehlung (Stand 11.10.2026)</h3>
+  <p><strong>Jetzt nicht die Fragen ändern. Stattdessen die kleine Stufe „B-light“ umsetzen: Brücken-Block + Gesprächsimpulse (Option E). Die fünf Gefühl-Aussagen zurückstellen.</strong></p>
+  <ul>
+    <li><strong>Warum nicht einfach so lassen:</strong> Michaelas Punkt „Warum sollte ich mich jetzt mit FitLine beschäftigen?“ ist berechtigt und wird von weiteren Teampartnern kommen. Er lässt sich ohne eine einzige neue Frage beantworten: mit dem Block „Warum deine tägliche Versorgung dazugehört“ (Abschnitt 5.3) am Ende der Auswertung. Der Block ist für alle gleich, enthält nur amtliche Claim-Formulierungen und nennt das FitLine-Konzept nur als Kennzeichnung. Risiko niedrig, Aufwand ca. 3 Stunden.</li>
+    <li><strong>Warum die Gefühl-Aussagen (noch) nicht:</strong> Sie bringen den stärkeren Aha-Moment, aber auch neue Befindlichkeits-Daten, neue Auswertungstexte, eine Datenschutz-Ergänzung und ein kleines, aber echtes Restrisiko in einer Phase, in der PM gerade genau hinschaut. Das lohnt sich erst, wenn B-light nicht reicht. Dann liegt alles vorbereitet in Abschnitt 5.1/5.2.</li>
+    <li><strong>Gesprächsimpulse in der Ergebnis-Mail (Option E):</strong> Null Risiko, ca. 3 Stunden, und genau das, was Michaela sich als Beraterin wünscht. Die Themen aus dem PM-Check landen im Gespräch, nicht auf der Seite.</li>
+    <li><strong>Antwort an Michaela</strong> (Abschnitt 7) entsprechend kürzen: Brücke kommt, Gesprächsimpulse kommen, Beschwerde-Fragen bleiben bewusst draußen (mit der Begründung aus dem PM-Schreiben).</li>
+  </ul>
+  <p class="small">Gesamtaufwand B-light: etwa ein halber Tag inklusive Test und R2-Upload; bestehende Vitalprofil-Seiten bekommen es automatisch.</p>
+</div>
+
+<div class="decision">
+  <h3 style="margin-top:0">Deine Entscheidung</h3>
+  <ol>
+    <li><strong>Option B umsetzen?</strong> (Empfehlung: ja) Mit oder ohne die Ernährungs-Variante „Nach dem Essen leicht und wohl“? (Empfehlung: die sichere Variante.)</li>
+    <li><strong>Option E (Gesprächsimpulse in der Mail) dazu?</strong> (Empfehlung: ja, geringster Aufwand, größter Nutzen für Michaela.)</li>
+    <li><strong>Nennung „FitLine-Konzept von PM-International“ im Brücken-Block:</strong> ja, oder neutral „Nährstoff-Konzept, mit dem ich arbeite“? (Empfehlung: ja, mit Teampartner-Kennzeichnung; vorher in deinem PM-Kontakt erwähnen.)</li>
+    <li><strong>Option D (PM um offizielle Digitalisierung bitten)</strong> als längerfristiges Gesprächsthema mit PM aufnehmen?</li>
+  </ol>
+</div>
+
+<h2>7. Antwort an Michaela (Vorschlag)</h2>
+<div class="card">
+  <p>Hey Michaela, danke dir, das ist genau die Art Feedback, die hilft. Du hast recht: Der Check zeigt, wo man etwas ändern kann, aber er sagt nicht, warum man sich jetzt mit der täglichen Versorgung beschäftigen sollte. Das bauen wir ein.</p>
+  <p>Fragen zu Verdauung, Schlafproblemen oder Energielöchern, so wie im FitLine-Check, dürfen wir auf einer öffentlichen Webseite leider nicht stellen. Der Check von PM ist für das persönliche Gespräch gemacht; sobald so etwas online steht und danach ein Beratungsangebot kommt, gilt es rechtlich als Aussage, dass die Produkte gegen diese Beschwerden helfen. Dafür gibt es Abmahnungen, und PM hat uns genau diesen Punkt vor ein paar Tagen selbst angemahnt. Das Risiko trägst am Ende du als Seitenbetreiberin mit.</p>
+  <p>Was wir stattdessen machen: Zu jedem Bereich kommt eine Frage dazu, wie es sich anfühlt (Energie über den Tag, erholt aufwachen, abschalten können, fit fühlen, wohlfühlen mit der Ernährung). In der Auswertung sieht der Besucher dann nebeneinander, was er tut und wie er sich fühlt, und genau da entsteht das „Oh, da sollte ich was tun“. Danach folgt ein Block, der erklärt, warum die tägliche Versorgung dazugehört, mit der Einladung, mit dir über das FitLine-Konzept zu sprechen. Und du bekommst in der Ergebnis-Mail Gesprächsimpulse: welche Themen du im persönlichen Gespräch mit dem FitLine-Check vertiefen kannst. So landen die Fragen dort, wo sie hingehören, bei dir im Gespräch.</p>
+  <p>Ich melde mich, sobald es live ist. Liebe Grüße, Daniel</p>
+</div>
+
+<p class="small" style="margin-top:40px">Hinweis: Diese Einschätzung ist eine sorgfältige Zusammenstellung der einschlägigen Vorschriften und Rechtsprechung, aber keine Rechtsberatung. Bei Option B empfiehlt sich vor dem Livegang ein kurzer Blick eines Anwalts für Wettbewerbs-/Lebensmittelrecht auf die fünf Gefühl-Aussagen und die drei Konstellationstexte (ca. 1 Std.).</p>
+
+</div>
+</body>
+</html>

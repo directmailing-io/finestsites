@@ -905,6 +905,44 @@ function vitalprofilMailBody(d: Record<string, string>): string {
 }
 
 const RAW_KEY_RE = /_html(_[a-z]{2})?$|^(intro|bio|about_me_html)(_[a-z]{2})?$/
+
+/** Bild-URLs der App (`/api/media/…`) im gerenderten HTML auf den eigenen Host umbiegen. */
+const APP_MEDIA_RE = /https:\/\/app\.finestsites\.io\/api\/media\/(?=(?:user-images|profile-images)\/)/g
+function rewriteMediaUrls(html: string): string {
+  return html.replace(APP_MEDIA_RE, '/.finestsites/media/')
+}
+
+/** Erlaubte Schlüssel: nur Upload-Präfixe, nur harmlose Zeichen, kein `..`, keine Query. */
+const MEDIA_KEY_RE = /^(user-images|profile-images)\/[A-Za-z0-9][A-Za-z0-9._-]*(\/[A-Za-z0-9][A-Za-z0-9._-]*)+$/
+const MEDIA_CACHE: Record<string, string> = {
+  // Eindeutige Dateinamen (UUID) → lange cachen
+  'user-images': 'public, max-age=604800, immutable',
+  // Fester Schlüssel avatar.jpg wird beim Neu-Upload überschrieben → kurz cachen, per ETag revalidieren
+  'profile-images': 'public, max-age=300, must-revalidate',
+}
+async function serveUserMedia(request: Request, env: Env, rawKey: string): Promise<Response> {
+  let key: string
+  try { key = decodeURIComponent(rawKey) } catch { return new Response('Not found', { status: 404 }) }
+  if (!MEDIA_KEY_RE.test(key)) return new Response('Not found', { status: 404 })
+  const obj = await env.R2_BUCKET.get(key)
+  if (!obj) return new Response('Not found', { status: 404 })
+  // Typ aus R2-Metadaten, sonst aus der Endung; nur Rasterbilder – ein hochgeladenes
+  // HTML/SVG darf hier nie als Dokument ausgeliefert werden
+  const extType: Record<string, string> = { jpg: 'image/jpeg', jpeg: 'image/jpeg', png: 'image/png', webp: 'image/webp', gif: 'image/gif', avif: 'image/avif' }
+  const type = obj.httpMetadata?.contentType || extType[(key.split('.').pop() ?? '').toLowerCase()] || ''
+  if (!/^image\/(jpeg|png|webp|gif|avif)$/.test(type)) return new Response('Not found', { status: 404 })
+  const etag = obj.httpEtag
+  const headers: Record<string, string> = {
+    'Content-Type': type,
+    'X-Content-Type-Options': 'nosniff',
+    'Cache-Control': MEDIA_CACHE[key.split('/')[0]] ?? 'public, max-age=300, must-revalidate',
+    'ETag': etag,
+    'Content-Security-Policy': "default-src 'none'",
+  }
+  if (request.headers.get('If-None-Match') === etag) return new Response(null, { status: 304, headers })
+  headers['Content-Length'] = String(obj.size)
+  return new Response(request.method === 'HEAD' ? null : obj.body, { headers })
+}
 // JS-String-Escaping für {{key}} innerhalb von <script> (kein Ausbruch aus Strings oder </script>)
 function jsEscape(s: string): string {
   return s.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '\\"').replace(/</g, '\\x3C').replace(/\r/g, '\\r').replace(/\n/g, '\\n').replace(/\u2028/g, '\\u2028').replace(/\u2029/g, '\\u2029')
@@ -1101,6 +1139,15 @@ export default {
       return new Response(JSON.stringify({ ok: true, ts: Date.now() }), {
         headers: { 'Content-Type': 'application/json' },
       })
+    }
+
+    // Nutzerbilder (Profil-/Über-mich-Fotos) direkt aus R2 unter der eigenen Domain.
+    // Vorher liefen alle Bilder über app.finestsites.io (Worker s3redirects → App → R2):
+    // ein Cross-Origin-Umweg, der am Tageslimit des anderen Kontos, in iOS-Safari oder
+    // durch Blocker scheiterte („ich sehe das Bild, der Nutzer nicht“, 10./11.10.2026).
+    // Nur die beiden Upload-Präfixe, nur Bild-Typen, keine Listung, ETag für 304.
+    if (pathname.startsWith('/.finestsites/media/') && (request.method === 'GET' || request.method === 'HEAD')) {
+      return serveUserMedia(request, env, pathname.slice('/.finestsites/media/'.length))
     }
 
     // Demo endpoint — serves a pre-rendered template by slug for testing on
@@ -1339,7 +1386,7 @@ export default {
       const rawKeys = new Set<string>()
       for (const r of rows) { dataMap[r.fieldKey] = r.fieldValue ?? ''; if (r.html) rawKeys.add(r.fieldKey) }
 
-      let renderedHtml = render(templateHtml, dataMap, rawKeys, { templateDomain: domain, siteId: meta.siteId, host: hostname })
+      let renderedHtml = rewriteMediaUrls(render(templateHtml, dataMap, rawKeys, { templateDomain: domain, siteId: meta.siteId, host: hostname }))
 
       // "Made with FinestSites" im Footer: immer auf die Startseite mit dem Empfehlungslink
       // des Seitenbesitzers (finestsites.io/?ref=username, gleicher Link wie im Affiliate-Bereich)
