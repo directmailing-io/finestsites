@@ -40,6 +40,8 @@ export default async function AdminPage() {
       d30: sql<number>`count(*) filter (where ${users.createdAt} >= now() - interval '30 days')::int`,
       today: sql<number>`count(*) filter (where (${users.createdAt} at time zone 'Europe/Berlin')::date = (now() at time zone 'Europe/Berlin')::date)::int`,
       withSite: sql<number>`(select count(distinct s.user_id) from user_sites s where s.status = 'published')::int`,
+      // Nutzer, deren einzige veröffentlichte Seiten kostenlose Templates sind (z. B. Linkseite) – brauchen kein Abo
+      freeOnly: sql<number>`(select count(*) from (select s.user_id from user_sites s join templates t on t.id = s.template_id where s.status = 'published' group by s.user_id having bool_and(t.is_free)) x)::int`,
     }).from(users),
 
     db.select({ total: count() }).from(userSites).where(eq(userSites.status, 'published')),
@@ -147,6 +149,7 @@ export default async function AdminPage() {
             <Row strong cells={['Zahlende Kunden', num(paying)]} />
             <Row cells={['Registrierte Nutzer', num(userStats.total)]} />
             <Row cells={['davon mit veröffentlichter Seite', num(userStats.withSite)]} />
+            <Row muted cells={['… davon nur kostenlose Linkseite (ohne Abo)', num(userStats.freeOnly)]} />
             <Row cells={['Zahlquote (zahlend / registriert)', `${num(userStats.total ? paying / userStats.total * 100 : 0)} %`]} />
             <Row cells={['Neue Nutzer pro Tag, Ø 30 Tage', num(userStats.d30 / 30, 1)]} />
             <Row cells={['Neue Nutzer pro Tag, Ø 7 Tage', num(userStats.d7 / 7, 1)]} />
