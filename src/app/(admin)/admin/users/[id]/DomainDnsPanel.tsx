@@ -14,7 +14,7 @@ interface DnsRecordResult { name: string; cname: string[]; a: string[]; aaaa: st
 interface CfInfo { status: string; ssl_status: string; errors: string[]; txt: { name: string; value: string } | null }
 interface DnsCheck { host: string; is_apex: boolean; fallback_host: string; checked_at: string; records: DnsRecordResult[]; cloudflare: CfInfo | null }
 
-export default function DomainDnsPanel({ domain, status }: { domain: string; status: string | null }) {
+export default function DomainDnsPanel({ domain, status, siteId, onChanged }: { domain: string; status: string | null; siteId: string; onChanged: () => void }) {
   const [open, setOpen] = useState(false)
   const [check, setCheck] = useState<DnsCheck | null>(null)
   const [loading, setLoading] = useState(false)
@@ -23,6 +23,14 @@ export default function DomainDnsPanel({ domain, status }: { domain: string; sta
   const labels = domain.split('.')
   const isApex = labels.length === 2
   const hostPart = isApex ? 'www' : labels[0]
+
+  const [verifyMsg, setVerifyMsg] = useState('')
+  async function verify() {
+    setVerifyMsg('Prüfe…')
+    const v = await fetch(`/api/sites/${siteId}/domain/verify`, { method: 'POST' }).then(r => r.json()).catch(() => null)
+    setVerifyMsg(v?.custom_domain_status === 'active' ? 'Aktiv ✓' : `Status: ${v?.custom_domain_status ?? v?.error ?? 'unbekannt'}`)
+    if (v?.custom_domain_status === 'active') onChanged()
+  }
 
   async function runCheck() {
     setLoading(true); setError('')
@@ -72,6 +80,12 @@ export default function DomainDnsPanel({ domain, status }: { domain: string; sta
               style={{ background: '#111827', color: '#fff', opacity: loading ? 0.6 : 1 }}>
               {loading ? 'Prüfe…' : check ? 'Erneut prüfen' : 'DNS live prüfen'}
             </button>
+            {status !== 'active' && (
+              <button type="button" onClick={verify} className="px-2.5 py-1 rounded-[7px] font-semibold" style={{ background: '#16A34A', color: '#fff' }}>
+                Jetzt aktivieren
+              </button>
+            )}
+            {verifyMsg && <span style={{ color: verifyMsg.startsWith('Aktiv') ? '#16A34A' : '#6B7280' }}>{verifyMsg}</span>}
             {check && <span style={{ color: '#9CA3AF' }}>Stand {new Date(check.checked_at).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })} Uhr, Resolver 1.1.1.1</span>}
             {error && <span style={{ color: '#DC2626' }}>{error}</span>}
           </div>

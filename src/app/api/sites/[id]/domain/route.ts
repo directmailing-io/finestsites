@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getUserFromRequest } from '@/lib/auth/server'
 import { db } from '@/lib/db'
 import { userSites } from '@/lib/db/schema'
+import { siteWhereForUser } from '@/lib/sites/site-access'
 import { eq, and } from 'drizzle-orm'
 import { createUserCustomHostname, deleteCustomHostname } from '@/lib/cloudflare/custom-hostnames'
 import { deleteCustomDomainKV } from '@/lib/cloudflare/kv-api'
@@ -38,7 +39,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
   const { id } = await params
 
   const site = await db.query.userSites.findFirst({
-    where: and(eq(userSites.id, id), eq(userSites.userId, user.id)),
+    where: await siteWhereForUser(id, user.id),
   })
 
   if (!site) return NextResponse.json({ error: 'Not found' }, { status: 404 })
@@ -78,7 +79,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
 
   // Make sure this site belongs to the user
   const site = await db.query.userSites.findFirst({
-    where: and(eq(userSites.id, id), eq(userSites.userId, user.id)),
+    where: await siteWhereForUser(id, user.id),
     with: { template: true },
   })
 
@@ -147,7 +148,7 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
   const { id } = await params
 
   const site = await db.query.userSites.findFirst({
-    where: and(eq(userSites.id, id), eq(userSites.userId, user.id)),
+    where: await siteWhereForUser(id, user.id),
   })
 
   if (!site) return NextResponse.json({ error: 'Not found' }, { status: 404 })

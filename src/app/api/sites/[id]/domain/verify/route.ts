@@ -5,6 +5,7 @@ import { userSites, users } from '@/lib/db/schema'
 import { eq, and } from 'drizzle-orm'
 import { getCustomHostname } from '@/lib/cloudflare/custom-hostnames'
 import { setCustomDomainKV } from '@/lib/cloudflare/kv-api'
+import { siteWhereForUser } from '@/lib/sites/site-access'
 
 export const runtime = 'nodejs'
 
@@ -16,7 +17,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   const { id } = await params
 
   const site = await db.query.userSites.findFirst({
-    where: and(eq(userSites.id, id), eq(userSites.userId, user.id)),
+    where: await siteWhereForUser(id, user.id),
     with: { template: true },
   })
 
@@ -42,7 +43,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   const isActive = cfData.status === 'active' && cfData.ssl?.status === 'active'
 
   if (isActive) {
-    const userRow = await db.query.users.findFirst({ where: eq(users.id, user.id) })
+    const userRow = await db.query.users.findFirst({ where: eq(users.id, site.userId) })
     const username = userRow?.username
     const templateDomain = site.template?.domain
 
