@@ -942,3 +942,55 @@ export function vitalcheckLaunchEmail({ firstName, segment }: { firstName?: stri
     </p>
   `)
 }
+
+// ─── Bitte um Austausch eines Vorher-Nachher-Bilds (12.10.2026) ─────────────
+// Persönlich von Daniel, locker und wertschätzend. Das betroffene Bild wird gezeigt, damit
+// klar ist, welches gemeint ist. Keine Gedankenstriche, kurze Sätze, Schritte zum Austausch.
+export const ABOUT_IMAGE_SUBJECT = 'Kurze Bitte zu einem Foto auf deiner Optimalset-Seite'
+
+export function aboutImageGuidelineEmail({ firstName, imageUrl, pair = false }: { firstName?: string; imageUrl: string; pair?: boolean }): string {
+  const fn = (firstName ?? '').trim()
+  // Du- oder Ihr-Form (Partnerseiten wie „Janin und Thomas“)
+  const w = pair
+    ? { hi: fn ? `Hallo ${fn}` : 'Hallo ihr beiden', deinem: 'eurem', dich: 'euch', du: 'ihr', hast: 'habt', tausch: 'Tauscht', magst: 'mögt', antworte: 'Antwortet', dein: 'euer', seite: 'eurer', danke: 'Danke euch' }
+    : { hi: fn ? `Hallo ${fn}` : 'Hallo', deinem: 'deinem', dich: 'dich', du: 'du', hast: 'hast', tausch: 'Tausch', magst: 'magst', antworte: 'Antworte', dein: 'dein', seite: 'meiner', danke: 'Danke dir' }
+  const P = (html: string, extra = '') =>
+    `<p style="margin:0 0 16px;font-size:16px;line-height:1.6;color:${base.body};${extra}">${html}</p>`
+  const step = (n: number, text: string) => `
+    <tr>
+      <td valign="top" style="padding:0 12px 12px 0;">
+        <span style="display:inline-block;width:26px;height:26px;line-height:26px;border-radius:50%;background:#111827;color:#fff;font-size:13px;font-weight:700;text-align:center;">${n}</span>
+      </td>
+      <td valign="top" style="padding:3px 0 12px;font-size:15px;line-height:1.55;color:${base.body};">${text}</td>
+    </tr>`
+  return layout(`
+    <h1 style="margin:0 0 18px;font-size:22px;font-weight:700;color:${base.heading};line-height:1.3;">
+      Eine kleine Bitte zu ${w.deinem} Foto
+    </h1>
+    ${P(`${w.hi},`)}
+    ${P(`ich gehe gerade alle Optimalset-Seiten durch und bin dabei auf dieses Foto in ${w.deinem} „Über mich“-Bereich gestoßen:`)}
+    <table cellpadding="0" cellspacing="0" role="presentation" style="margin:4px 0 20px;">
+      <tr><td style="border-radius:14px;overflow:hidden;border:1px solid ${base.border};">
+        <img src="${imageUrl}" alt="Foto im Über-mich-Bereich" width="260" style="display:block;width:260px;max-width:100%;height:auto;border-radius:14px;" />
+      </td></tr>
+    </table>
+    ${P(`Erstmal: Das ist ein richtig starkes Bild, und man sieht sofort, was ${w.du} geschafft ${w.hast}. Es passt super zu der Seite, und ich verstehe total, warum es drin ist.`)}
+    ${P(`Leider gibt es bei Nahrungsergänzung strenge Regeln: Vorher-Nachher-Bilder gelten auf einer Webseite rechtlich als Werbeversprechen für die Produkte. Das gilt auch dann, wenn alles echt ist. Solche Seiten werden immer wieder abgemahnt, und auch PM-International achtet sehr genau darauf. Dieses Risiko möchte ich weder für ${w.dich} noch für uns eingehen.`)}
+    ${P(`Deshalb meine Bitte: ${w.tausch} das Foto einfach gegen ein normales Bild von ${w.dich}, zum Beispiel ein schönes Porträt oder ein Foto mit den Produkten im Alltag.`)}
+    ${P(`Und keine Sorge, für Termine braucht es das Bild auf der Seite gar nicht. Die meisten zeigen ihre Vorher-Nachher-Bilder auf Social Media und verlinken ihr Profil auf der Seite. Interessenten schauen dort sowieso vorbei, sehen die Bilder und überzeugen sich selbst.`)}
+    <p style="margin:6px 0 12px;font-size:16px;font-weight:700;color:${base.heading};">So geht der Austausch:</p>
+    <table cellpadding="0" cellspacing="0" role="presentation" width="100%" style="margin:0 0 4px;">
+      ${step(1, 'Unten auf den Button tippen und einloggen.')}
+      ${step(2, 'Bei der Optimalset-Seite auf <strong>„Bearbeiten“</strong> tippen.')}
+      ${step(3, 'Im Bereich <strong>„Profil“</strong> beim <strong>„Über mich“-Bild</strong> auf <strong>„Ersetzen“</strong> tippen und ein neues Foto wählen.')}
+      ${step(4, 'Oben auf <strong>„Änderungen veröffentlichen“</strong> tippen. Fertig.')}
+    </table>
+    ${button(`${APP_URL}/sites`, `Zu ${w.seite} Seite`)}
+    ${P(`Wenn ${w.du} ${w.magst}, mache ich das auch für ${w.dich}: ${w.antworte} einfach kurz auf diese Mail, dann setze ich ${w.dein} Profilbild an die Stelle.`, 'margin-top:28px;')}
+    <p style="margin:22px 0 0;font-size:15px;line-height:1.6;color:${base.body};">
+      ${w.danke} und liebe Grüße<br />
+      <strong style="color:${base.heading};">Daniel</strong><br />
+      <span style="color:${base.muted};">FinestSites</span>
+    </p>
+  `)
+}
