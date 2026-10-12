@@ -3,6 +3,7 @@
 import { useState, useEffect, use, useCallback, useRef } from 'react'
 import Link from 'next/link'
 import { CONSENT_TEXTS, hashConsentText } from '@/lib/constants/consent'
+import DomainDnsPanel from './DomainDnsPanel'
 
 interface UserProfile {
   id: string
@@ -763,6 +764,7 @@ export default function AdminUserDetailPage({ params }: { params: Promise<{ id: 
                           )}
                         </a>
                       )}
+                      {site.customDomain && <DomainDnsPanel domain={site.customDomain} status={site.customDomainStatus} />}
                     </div>
                     <div className="flex flex-col items-end gap-1 flex-shrink-0">
                       <span className="text-xs px-2.5 py-0.5 rounded-full"
