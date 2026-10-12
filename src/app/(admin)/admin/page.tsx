@@ -39,7 +39,7 @@ export default async function AdminPage() {
       d7: sql<number>`count(*) filter (where ${users.createdAt} >= now() - interval '7 days')::int`,
       d30: sql<number>`count(*) filter (where ${users.createdAt} >= now() - interval '30 days')::int`,
       today: sql<number>`count(*) filter (where (${users.createdAt} at time zone 'Europe/Berlin')::date = (now() at time zone 'Europe/Berlin')::date)::int`,
-      withSite: sql<number>`count(*) filter (where exists (select 1 from user_sites s where s.user_id = ${users.id} and s.status = 'published'))::int`,
+      withSite: sql<number>`(select count(distinct s.user_id) from user_sites s where s.status = 'published')::int`,
     }).from(users),
 
     db.select({ total: count() }).from(userSites).where(eq(userSites.status, 'published')),
