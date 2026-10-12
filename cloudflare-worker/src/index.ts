@@ -1134,6 +1134,13 @@ export default {
     ).split(':')[0].toLowerCase()
     const pathname = url.pathname
 
+    // Immer HTTPS: „Always Use HTTPS“ der Zone gilt nicht für Kunden-Domains (CF for SaaS),
+    // und Anbieter-Weiterleitungen (z. B. Strato) zeigen oft auf http://www… (12.10.2026)
+    if (url.protocol === 'http:' && (request.method === 'GET' || request.method === 'HEAD')) {
+      url.protocol = 'https:'
+      return Response.redirect(url.toString(), 301)
+    }
+
     // Health check (works on any hostname)
     if (pathname === '/.finestsites/health') {
       return new Response(JSON.stringify({ ok: true, ts: Date.now() }), {
