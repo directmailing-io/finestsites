@@ -421,10 +421,10 @@ export default async function AdminPage({
 
         {/* MRR */}
         <Link href="/admin/finanzen" className="rounded-[20px] bg-white p-5 block hover:bg-gray-50 transition-colors" style={cardStyle}>
-          <p className="text-[11px] font-medium uppercase tracking-wide mb-3" style={{ color: '#94A3B8' }}>MRR (nominell)</p>
-          <p className="text-3xl font-bold text-gray-900 tracking-tight">€ {fmtEur(currentMrr)}</p>
-          <p className="text-xs mt-1" style={{ color: actualMrr < currentMrr * 0.99 ? '#F97316' : '#94A3B8' }}>
-            Effektiv: € {fmtEur(actualMrr)}{actualMrr === 0 && currentMrr > 0 ? ' (alle Rabatt-Nutzer)' : ''}
+          <p className="text-[11px] font-medium uppercase tracking-wide mb-3" style={{ color: '#94A3B8' }}>Umsatz nächster Monat</p>
+          <p className="text-3xl font-bold text-gray-900 tracking-tight">€ {fin ? fmtEurCents(fin.subs.nextMonth.cents) : fmtEur(actualMrr)}</p>
+          <p className="text-xs mt-1" style={{ color: '#94A3B8' }}>
+            {fin ? `mit Rabatt · ${fin.subs.nextMonth.monthlyCount} Monats- + ${fin.subs.nextMonth.yearlyCount} Jahresabos` : 'mit Rabatt'}
           </p>
           {mrrAtRisk > 0 && (
             <p className="text-xs mt-0.5" style={{ color: '#F97316' }}>− € {fmtEur(mrrAtRisk)} gefährdet</p>
@@ -494,9 +494,9 @@ export default async function AdminPage({
           <div>
             <p className="text-[11px] font-medium mb-1.5" style={{ color: '#64748B' }}>Nächster Monat</p>
             <p className="text-2xl font-bold tracking-tight" style={{ color: '#34D399' }}>
-              € {fmtEurCents(nextMonthRevCents)}
+              € {fmtEurCents(fin ? fin.subs.nextMonth.cents : nextMonthRevCents)}
             </p>
-            <p className="text-[11px] mt-1" style={{ color: '#334155' }}>{dueNextMonth.length} Verlängerungen erwartet</p>
+            <p className="text-[11px] mt-1" style={{ color: '#334155' }}>{fin ? fin.subs.nextMonth.monthlyCount + fin.subs.nextMonth.yearlyCount : dueNextMonth.length} Abbuchungen erwartet (mit Rabatt)</p>
           </div>
 
         </div>

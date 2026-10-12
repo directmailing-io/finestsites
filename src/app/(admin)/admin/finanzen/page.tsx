@@ -1,5 +1,8 @@
 import Link from 'next/link'
 import { getFinanceSnapshot, type PlanKey } from '@/lib/admin/finance'
+import { db } from '@/lib/db'
+import { users } from '@/lib/db/schema'
+import { sql } from 'drizzle-orm'
 
 export const dynamic = 'force-dynamic'
 
@@ -30,7 +33,17 @@ function Kpi({ label, value, sub, tone }: { label: string; value: string; sub?: 
 
 export default async function FinanzenPage({ searchParams }: { searchParams: Promise<{ fresh?: string }> }) {
   const sp = await searchParams
-  const f = await getFinanceSnapshot({ fresh: sp.fresh === '1' })
+  const [f, [growth]] = await Promise.all([
+    getFinanceSnapshot({ fresh: sp.fresh === '1' }),
+    db.select({
+      total: sql<number>`count(*)::int`,
+      first: sql<Date>`min(${users.createdAt})`,
+      d7: sql<number>`count(*) filter (where ${users.createdAt} >= now() - interval '7 days')::int`,
+      d30: sql<number>`count(*) filter (where ${users.createdAt} >= now() - interval '30 days')::int`,
+      today: sql<number>`count(*) filter (where ${users.createdAt} >= date_trunc('day', now() at time zone 'Europe/Berlin') at time zone 'Europe/Berlin')::int`,
+    }).from(users),
+  ])
+  const daysSinceStart = Math.max(1, Math.ceil((Date.now() - new Date(growth.first).getTime()) / 86_400_000))
   const totalIfAll = f.charges.paid.cents + f.charges.pending.cents - f.charges.refundedCents
   const now = new Date()
   const curKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
@@ -41,6 +54,12 @@ export default async function FinanzenPage({ searchParams }: { searchParams: Pro
   const maxMonth = Math.max(...f.months.map(m => m.paidCents + m.pendingCents), 1)
   const running = f.subs.active + f.subs.pastDue
   const plans: PlanKey[] = ['starter', 'pro', 'unlimited', ...(f.subs.byPlan.unbekannt.month + f.subs.byPlan.unbekannt.year > 0 ? ['unbekannt' as PlanKey] : [])]
+  const monthlyN = plans.reduce((s, p) => s + f.subs.byPlan[p].month, 0)
+  const yearlyN = plans.reduce((s, p) => s + f.subs.byPlan[p].year, 0)
+  const pct = (n: number) => running ? Math.round(n / running * 100) : 0
+  const PLAN_COLOR: Record<PlanKey, string> = { starter: '#3B82F6', pro: '#8B5CF6', unlimited: '#10B981', unbekannt: '#9CA3AF' }
+  const pastDueRows = f.subs.rows.filter(r => r.status === 'past_due')
+  const nm = f.subs.nextMonth
 
   return (
     <div style={{ maxWidth: 1080 }}>
@@ -88,47 +107,68 @@ export default async function FinanzenPage({ searchParams }: { searchParams: Pro
       {/* ── Abos ───────────────────────────────────────────────────────── */}
       <h2 className="text-sm font-semibold text-gray-900 mb-3">Abos</h2>
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-3">
-        <Kpi label="Laufende Abos" value={String(running)} sub={`${f.subs.active} aktiv · ${f.subs.pastDue} überfällig`} />
-        <Kpi label="MRR (nach Rabatten)" value={eur(f.subs.mrrCents)} sub={`ohne Rabatte ${eur(f.subs.mrrListCents)} · Jahresabos ÷ 12`} tone="green" />
-        <Kpi label="Jahresumsatz-Lauf (ARR)" value={eur(f.subs.mrrCents * 12)} sub="MRR × 12" />
+        <Kpi label="Zahlende Kunden" value={String(running)}
+          sub={f.subs.pastDue ? `davon ${f.subs.pastDue} mit offener Zahlung (${f.subs.pastDueSepaRunning} davon: SEPA läuft noch)` : 'alle Zahlungen in Ordnung'} />
+        <Kpi label={`Umsatz ${monthLabel(nm.key)} (mit Rabatt)`} value={eur(nm.cents)}
+          sub={`${nm.monthlyCount} Monatsabos ${eur(nm.monthlyCents)} · ${nm.yearlyCount} Jahresabos ${eur(nm.yearlyCents)}`} tone="green" />
+        <Kpi label="Neue Nutzer pro Tag" value={(growth.d30 / 30).toLocaleString('de-DE', { maximumFractionDigits: 1 })}
+          sub={`Ø letzte 30 Tage · 7 Tage: ${(growth.d7 / 7).toLocaleString('de-DE', { maximumFractionDigits: 1 })}/Tag · seit Start: ${(growth.total / daysSinceStart).toLocaleString('de-DE', { maximumFractionDigits: 1 })}/Tag · heute ${growth.today}`} />
         <Kpi label="Gekündigt zum Periodenende" value={String(f.subs.cancelingAtPeriodEnd)}
-          sub={f.subs.mrrAtRiskCents ? `− ${eur(f.subs.mrrAtRiskCents)} MRR` : 'keine'} tone={f.subs.cancelingAtPeriodEnd ? 'amber' : undefined} />
+          sub={f.subs.mrrAtRiskCents ? `− ${eur(f.subs.mrrAtRiskCents)} pro Monat` : 'keine Kündigungen'} tone={f.subs.cancelingAtPeriodEnd ? 'amber' : undefined} />
       </div>
-      <div className="rounded-[20px] bg-white p-5 mb-8 overflow-x-auto" style={card}>
-        <table className="w-full text-sm" style={{ minWidth: 520 }}>
-          <thead>
-            <tr className="text-left text-[11px] uppercase tracking-wide" style={{ color: '#94A3B8' }}>
-              <th className="pb-2 font-medium">Tarif</th><th className="pb-2 font-medium text-right">Monatlich</th>
-              <th className="pb-2 font-medium text-right">Jährlich</th><th className="pb-2 font-medium text-right">Gesamt</th>
-              <th className="pb-2 font-medium text-right">MRR</th>
-            </tr>
-          </thead>
-          <tbody>
-            {plans.map(p => {
-              const b = f.subs.byPlan[p]
-              return (
-                <tr key={p} style={{ borderTop: '1px solid #F1F5F9' }}>
-                  <td className="py-2.5 font-medium text-gray-900">{PLAN_LABEL[p]}</td>
-                  <td className="py-2.5 text-right">{b.month}</td>
-                  <td className="py-2.5 text-right">{b.year}</td>
-                  <td className="py-2.5 text-right font-semibold">{b.month + b.year}</td>
-                  <td className="py-2.5 text-right">{eur(b.mrrCents)}</td>
-                </tr>
-              )
-            })}
-            <tr style={{ borderTop: '1.5px solid #E5E7EB' }}>
-              <td className="py-2.5 font-semibold">Summe</td>
-              <td className="py-2.5 text-right font-semibold">{plans.reduce((s, p) => s + f.subs.byPlan[p].month, 0)}</td>
-              <td className="py-2.5 text-right font-semibold">{plans.reduce((s, p) => s + f.subs.byPlan[p].year, 0)}</td>
-              <td className="py-2.5 text-right font-semibold">{running}</td>
-              <td className="py-2.5 text-right font-semibold">{eur(f.subs.mrrCents)}</td>
-            </tr>
-          </tbody>
-        </table>
-        <p className="text-xs mt-3" style={{ color: '#94A3B8' }}>
-          Abo-Status in Stripe: {Object.entries(f.subs.byStatus).map(([k, v]) => `${STATUS_LABEL[k] ?? k} ${v}`).join(' · ')}
-        </p>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 mb-3">
+        {/* Laufzeit */}
+        <div className="rounded-[20px] bg-white p-5" style={card}>
+          <p className="text-[11px] font-medium uppercase tracking-wide mb-3" style={{ color: '#94A3B8' }}>Monatlich oder jährlich</p>
+          <div className="flex h-3 rounded-full overflow-hidden gap-px mb-4">
+            <div style={{ width: `${pct(monthlyN)}%`, background: '#0EA5E9' }} />
+            <div style={{ width: `${pct(yearlyN)}%`, background: '#F59E0B' }} />
+          </div>
+          {[['Monatlich', monthlyN, '#0EA5E9'], ['Jährlich', yearlyN, '#F59E0B']].map(([l, n, c]) => (
+            <div key={l as string} className="flex items-center justify-between py-1.5">
+              <span className="flex items-center gap-2 text-sm text-gray-700"><span className="w-2.5 h-2.5 rounded-full" style={{ background: c as string }} />{l}</span>
+              <span className="text-sm"><b className="text-gray-900 text-base">{pct(n as number)} %</b> <span style={{ color: '#94A3B8' }}>· {n} Kunden</span></span>
+            </div>
+          ))}
+        </div>
+        {/* Tarife */}
+        <div className="rounded-[20px] bg-white p-5" style={card}>
+          <p className="text-[11px] font-medium uppercase tracking-wide mb-3" style={{ color: '#94A3B8' }}>Welcher Tarif</p>
+          <div className="flex h-3 rounded-full overflow-hidden gap-px mb-4">
+            {plans.map(p => <div key={p} style={{ width: `${pct(f.subs.byPlan[p].month + f.subs.byPlan[p].year)}%`, background: PLAN_COLOR[p] }} />)}
+          </div>
+          {plans.map(p => {
+            const b = f.subs.byPlan[p], n = b.month + b.year
+            return (
+              <div key={p} className="flex items-center justify-between py-1.5">
+                <span className="flex items-center gap-2 text-sm text-gray-700"><span className="w-2.5 h-2.5 rounded-full" style={{ background: PLAN_COLOR[p] }} />{PLAN_LABEL[p]}</span>
+                <span className="text-sm"><b className="text-gray-900 text-base">{pct(n)} %</b> <span style={{ color: '#94A3B8' }}>· {n} Kunden ({b.month} mtl. / {b.year} jährl.)</span></span>
+              </div>
+            )
+          })}
+        </div>
       </div>
+
+      {pastDueRows.length > 0 && (
+        <div className="rounded-[20px] bg-white p-5 mb-8" style={card}>
+          <p className="text-[11px] font-medium uppercase tracking-wide mb-2" style={{ color: '#94A3B8' }}>Kunden mit offener Zahlung</p>
+          <p className="text-xs mb-3" style={{ color: '#94A3B8' }}>
+            Stripe markiert ein Abo als „überfällig“, solange eine Rechnung nicht bezahlt ist. Bei SEPA ist das auch während der Bearbeitung so (bis zu 14 Tage). Die Seiten bleiben online.
+          </p>
+          {pastDueRows.map(r => (
+            <div key={r.id} className="flex items-center justify-between gap-3 text-sm py-1.5 flex-wrap" style={{ borderTop: '1px solid #F8FAFC' }}>
+              <span className="text-gray-900">{r.email ?? r.customerId}</span>
+              <span style={{ color: '#94A3B8' }}>{PLAN_LABEL[r.plan]} · {r.interval === 'year' ? 'jährlich' : 'monatlich'} · {eur(r.effectiveCents)}</span>
+              <span className="text-xs font-semibold px-2 py-0.5 rounded-full"
+                style={r.sepaRunning ? { background: '#FEF3C7', color: '#92400E' } : { background: '#FEE2E2', color: '#B91C1C' }}>
+                {r.sepaRunning ? 'SEPA läuft noch' : 'Zahlung offen'}
+              </span>
+            </div>
+          ))}
+        </div>
+      )}
+      {pastDueRows.length === 0 && <div className="mb-8" />}
 
       {/* ── Monate ─────────────────────────────────────────────────────── */}
       <h2 className="text-sm font-semibold text-gray-900 mb-3">Umsatz pro Monat</h2>

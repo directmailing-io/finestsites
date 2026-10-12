@@ -45,6 +45,10 @@ export interface SubRow {
   mrrCents: number           // monatliches Äquivalent, nach Rabatt
   cancelAtPeriodEnd: boolean
   currentPeriodEnd: number | null
+  /** Betrag der nächsten Abbuchung (Rabatt zum Verlängerungsdatum geprüft) */
+  nextChargeCents: number
+  /** past_due, aber für den Kunden läuft gerade eine SEPA-Lastschrift (kein echtes Problem) */
+  sepaRunning: boolean
   created: number
 }
 
@@ -73,6 +77,9 @@ export interface FinanceSnapshot {
     mrrListCents: number     // ohne Rabatte
     mrrAtRiskCents: number   // gekündigt zum Periodenende
     mrrPastDueCents: number
+    /** Erwartete Abbuchungen im nächsten Kalendermonat (mit Rabatt), ohne gekündigte */
+    nextMonth: { key: string; cents: number; monthlyCount: number; yearlyCount: number; monthlyCents: number; yearlyCents: number }
+    pastDueSepaRunning: number
   }
 }
 
@@ -93,8 +100,8 @@ const monthKey = (ts: number) => {
 }
 
 /** Aktiver Rabatt einer Subscription als Funktion Preis → effektiver Preis. */
-function applyDiscounts(cents: number, sub: Stripe.Subscription): number {
-  const now = Date.now() / 1000
+function applyDiscounts(cents: number, sub: Stripe.Subscription, at: number = Date.now() / 1000): number {
+  const now = at
   const list = ((sub as unknown as { discounts?: unknown[] }).discounts ?? []) as Array<Stripe.Discount | string>
   let out = cents
   for (const d of list) {
@@ -195,9 +202,13 @@ async function build(): Promise<FinanceSnapshot> {
     const email = typeof cust === 'object' && cust && !('deleted' in cust && cust.deleted) ? (cust as Stripe.Customer).email : null
     const periodEnd = (item as unknown as { current_period_end?: number }).current_period_end
       ?? (s as unknown as { current_period_end?: number }).current_period_end ?? null
+    const customerId = typeof cust === 'string' ? cust : cust.id
     rows.push({
-      id: s.id, customerId: typeof cust === 'string' ? cust : cust.id, email, status: s.status, plan, interval,
-      listCents, effectiveCents, mrrCents, cancelAtPeriodEnd: s.cancel_at_period_end, currentPeriodEnd: periodEnd, created: s.created,
+      id: s.id, customerId, email, status: s.status, plan, interval,
+      listCents, effectiveCents, mrrCents, cancelAtPeriodEnd: s.cancel_at_period_end, currentPeriodEnd: periodEnd,
+      nextChargeCents: applyDiscounts(listCents, s, periodEnd ?? Date.now() / 1000),
+      sepaRunning: s.status === 'past_due' && charges.some(c => custOf(c) === customerId && c.status === 'pending'),
+      created: s.created,
     })
     const counts = s.status === 'active' || s.status === 'trialing' || s.status === 'past_due'
     if (!counts) continue
@@ -208,6 +219,18 @@ async function build(): Promise<FinanceSnapshot> {
     byPlan[plan].mrrCents += mrrCents
     if (s.cancel_at_period_end) { canceling++; atRisk += mrrCents }
   }
+
+  // Nächster Kalendermonat: Monatsabos buchen einmal ab, Jahresabos nur, wenn ihre Periode dann endet
+  const nowD = new Date()
+  const nmStart = new Date(nowD.getFullYear(), nowD.getMonth() + 1, 1).getTime() / 1000
+  const nmEnd = new Date(nowD.getFullYear(), nowD.getMonth() + 2, 1).getTime() / 1000
+  const nextMonth = { key: monthKey(nmStart), cents: 0, monthlyCount: 0, yearlyCount: 0, monthlyCents: 0, yearlyCents: 0 }
+  for (const r of rows) {
+    if (!(r.status === 'active' || r.status === 'trialing' || r.status === 'past_due') || r.cancelAtPeriodEnd) continue
+    if (r.interval === 'month') { nextMonth.monthlyCount++; nextMonth.monthlyCents += r.nextChargeCents }
+    else if (r.currentPeriodEnd && r.currentPeriodEnd >= nmStart && r.currentPeriodEnd < nmEnd) { nextMonth.yearlyCount++; nextMonth.yearlyCents += r.nextChargeCents }
+  }
+  nextMonth.cents = nextMonth.monthlyCents + nextMonth.yearlyCents
 
   const fees = balanceTx.reduce((s, t) => s + t.fee, 0) + balanceTx.filter(t => t.type === 'stripe_fee').reduce((s, t) => s - t.amount, 0)
   const paidPayouts = payouts.filter(p => p.status === 'paid')
@@ -235,6 +258,7 @@ async function build(): Promise<FinanceSnapshot> {
       rows: rows.sort((a, b) => b.created - a.created),
       byStatus, active, pastDue, cancelingAtPeriodEnd: canceling, byPlan,
       mrrCents: mrr, mrrListCents: mrrList, mrrAtRiskCents: atRisk, mrrPastDueCents: pastDueMrr,
+      nextMonth, pastDueSepaRunning: rows.filter(r => r.sepaRunning).length,
     },
   }
 }
