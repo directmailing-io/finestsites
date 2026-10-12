@@ -52,6 +52,15 @@ export interface SubRow {
   created: number
 }
 
+export interface RecentCharge {
+  created: number
+  amountCents: number
+  email: string | null
+  method: string | null
+  status: 'succeeded' | 'pending' | 'failed'
+  refundedCents: number
+}
+
 export interface FinanceSnapshot {
   generatedAt: number
   balance: { availableCents: number; pendingCents: number }
@@ -64,6 +73,9 @@ export interface FinanceSnapshot {
     failedOpen: OpenFailure[]
     failedRecovered: { count: number; cents: number }
     firstPaymentAt: number | null
+    recent: RecentCharge[]
+    /** Laufende SEPA-Lastschriften: Abo gilt bereits als aktiv vs. Stripe zeigt „überfällig“ (Upgrade) */
+    pendingSplit: { activeCount: number; activeCents: number; pastDueCount: number; pastDueCents: number }
   }
   months: MonthRow[]         // alle Monate seit erster Zahlung, neueste zuletzt
   subs: {
@@ -79,6 +91,8 @@ export interface FinanceSnapshot {
     mrrPastDueCents: number
     /** Erwartete Abbuchungen im nächsten Kalendermonat (mit Rabatt), ohne gekündigte */
     nextMonth: { key: string; cents: number; monthlyCount: number; yearlyCount: number; monthlyCents: number; yearlyCents: number }
+    /** Heute zahlende Kunden, deren Abo in den letzten 7/30 Tagen begann */
+    newPaying: { d7: number; d30: number }
     pastDueSepaRunning: number
   }
 }
@@ -232,6 +246,24 @@ async function build(): Promise<FinanceSnapshot> {
   }
   nextMonth.cents = nextMonth.monthlyCents + nextMonth.yearlyCents
 
+  const subStatusByCustomer = new Map(rows.filter(r => r.status !== 'canceled').map(r => [r.customerId, r.status]))
+  const pendingSplit = { activeCount: 0, activeCents: 0, pastDueCount: 0, pastDueCents: 0 }
+  for (const c of charges) {
+    if (c.status !== 'pending') continue
+    if (subStatusByCustomer.get(custOf(c) ?? '') === 'past_due') { pendingSplit.pastDueCount++; pendingSplit.pastDueCents += c.amount }
+    else { pendingSplit.activeCount++; pendingSplit.activeCents += c.amount }
+  }
+  const nowSec = Date.now() / 1000
+  const paying = rows.filter(r => r.status === 'active' || r.status === 'trialing' || r.status === 'past_due')
+  const newPaying = {
+    d7: paying.filter(r => r.created >= nowSec - 7 * 86400).length,
+    d30: paying.filter(r => r.created >= nowSec - 30 * 86400).length,
+  }
+  const recent: RecentCharge[] = [...charges].sort((a, b) => b.created - a.created).slice(0, 15).map(c => ({
+    created: c.created, amountCents: c.amount, email: emailOf(c), method: c.payment_method_details?.type ?? null,
+    status: c.status as RecentCharge['status'], refundedCents: c.amount_refunded,
+  }))
+
   const fees = balanceTx.reduce((s, t) => s + t.fee, 0) + balanceTx.filter(t => t.type === 'stripe_fee').reduce((s, t) => s - t.amount, 0)
   const paidPayouts = payouts.filter(p => p.status === 'paid')
 
@@ -251,14 +283,14 @@ async function build(): Promise<FinanceSnapshot> {
       refundedCents,
       failedOpen: failedOpen.sort((a, b) => b.created - a.created),
       failedRecovered: { count: recCount, cents: recCents },
-      firstPaymentAt,
+      firstPaymentAt, recent, pendingSplit,
     },
     months: monthList,
     subs: {
       rows: rows.sort((a, b) => b.created - a.created),
       byStatus, active, pastDue, cancelingAtPeriodEnd: canceling, byPlan,
       mrrCents: mrr, mrrListCents: mrrList, mrrAtRiskCents: atRisk, mrrPastDueCents: pastDueMrr,
-      nextMonth, pastDueSepaRunning: rows.filter(r => r.sepaRunning).length,
+      nextMonth, newPaying, pastDueSepaRunning: rows.filter(r => r.sepaRunning).length,
     },
   }
 }
