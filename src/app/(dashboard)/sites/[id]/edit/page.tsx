@@ -1,5 +1,6 @@
 'use client'
 
+import ImageRulesHint from '@/components/editor/ImageRulesHint'
 import React, { useState, useEffect, useCallback, useRef, use } from 'react'
 import { createPortal } from 'react-dom'
 import { useRouter, useSearchParams } from 'next/navigation'
@@ -1142,6 +1143,7 @@ function ImageField({ field, value, onChange }: {
         </div>
       )}
       {uploadError && <p className="text-xs text-red-500 font-medium">{uploadError}</p>}
+      <ImageRulesHint />
     </div>
   )
 }

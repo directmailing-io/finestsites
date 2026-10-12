@@ -1,4 +1,5 @@
 'use client'
+import ImageRulesHint from '@/components/editor/ImageRulesHint'
 import { PaymentMethodsCard } from '@/components/dashboard/PaymentMethodsCard'
 
 import { useState, useEffect, Suspense, useRef } from 'react'
@@ -794,6 +795,7 @@ function SettingsContent() {
                     {profileImageUrl ? 'Foto ändern' : 'Foto hochladen'}
                   </button>
                   <p className="text-xs px-1" style={{ color: '#94A3B8' }}>JPG, PNG, WebP · max. 5 MB · wird zugeschnitten</p>
+                  <div className="max-w-[340px]"><ImageRulesHint compact /></div>
                   <input
                     ref={avatarInputRef}
                     type="file"

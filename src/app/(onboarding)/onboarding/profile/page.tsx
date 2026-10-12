@@ -1,5 +1,6 @@
 'use client'
 
+import ImageRulesHint from '@/components/editor/ImageRulesHint'
 import { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import ImageCropModal from '@/components/ImageCropModal'
@@ -208,6 +209,7 @@ export default function OnboardingProfilePage() {
             >
               {avatarUrl ? 'Foto ändern' : 'Foto hochladen'}
             </button>
+            <div className="w-full max-w-[340px] mt-1"><ImageRulesHint compact /></div>
             <input
               ref={fileInputRef}
               type="file"
