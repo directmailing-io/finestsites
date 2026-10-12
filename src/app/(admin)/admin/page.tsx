@@ -4,6 +4,7 @@ import { eq, gte, lte, gt, and, desc, count, sql, inArray, isNotNull } from 'dri
 import { getStripe, getPlanByPriceId } from '@/lib/stripe/client'
 import Link from 'next/link'
 import MonthSelector from './MonthSelector'
+import { getFinanceSnapshot } from '@/lib/admin/finance'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
@@ -227,6 +228,9 @@ export default async function AdminPage({
       )),
   ])
 
+  // ── Stripe-Finanzen (vollständig paginiert, siehe lib/admin/finance.ts) ──
+  const fin = await getFinanceSnapshot().catch(() => null)
+
   // ── Stripe: pending cancellations ────────────────────────────────────────
   const subIdToMrr = new Map<string, number>()
   let currentMrr = 0
@@ -239,7 +243,13 @@ export default async function AdminPage({
     if (u.billingInterval === 'yearly') yearlyCount++
     else monthlyCount++
   }
-  const activeSubsCount = activeUsersRaw.length
+  if (fin) {
+    // Laufzeit-Aufteilung aus Stripe statt aus der DB
+    monthlyCount = Object.values(fin.subs.byPlan).reduce((s, b) => s + b.month, 0)
+    yearlyCount  = Object.values(fin.subs.byPlan).reduce((s, b) => s + b.year, 0)
+    currentMrr   = fin.subs.mrrListCents / 100
+  }
+  const activeSubsCount = fin ? fin.subs.active + fin.subs.pastDue : activeUsersRaw.length
   const monthlyPct = activeSubsCount > 0 ? Math.round(monthlyCount / activeSubsCount * 100) : 0
   const yearlyPct  = activeSubsCount > 0 ? Math.round(yearlyCount  / activeSubsCount * 100) : 0
 
@@ -247,78 +257,27 @@ export default async function AdminPage({
   const subEffectiveCents = new Map<string, number>()
   let actualMrr = 0
 
-  try {
-    // Parallel: subscriptions + coupons holen
-    const [subs, couponsResult] = await Promise.all([
-      getStripe().subscriptions.list({ status: 'active', limit: 100, expand: ['data.discounts'] }),
-      getStripe().coupons.list({ limit: 100 }),
-    ])
-
-    // Coupon-Lookup-Map aufbauen (ID → percent_off, amount_off, duration)
-    const couponsMap = new Map<string, { percent_off: number | null; amount_off: number | null; duration: string }>()
-    for (const c of couponsResult.data) {
-      couponsMap.set(c.id, { percent_off: c.percent_off, amount_off: c.amount_off, duration: c.duration })
-    }
-
-    const cancelling = subs.data.filter(s => s.cancel_at_period_end)
-    pendingCancelCount = cancelling.length
-    for (const s of cancelling) mrrAtRisk += subIdToMrr.get(s.id) ?? 0
-
-    // subEffectiveCents: Discount aus discounts[] Array lesen (flexible billing)
-    for (const s of subs.data) {
-      const priceId = s.items.data[0]?.price.id ?? ''
-      const planKey = s.items.data[0]?.price.recurring?.interval === 'year' ? 'yearly' : 'monthly'
-      const plan = getPlanByPriceId()[priceId] ?? 'starter'
-      const fullCents = (PLAN_FULL_PRICE[plan]?.[planKey] ?? 0) * 100
-
-      // Flexible billing: discounts ist Array (nicht discount singular)
-      const discounts: any[] = (s as any).discounts ?? []
-      let effective = fullCents
-      for (const d of discounts) {
-        // coupon ID steht in d.source.coupon (string) oder d.coupon.id (object)
-        const couponId: string | undefined =
-          typeof d?.source?.coupon === 'string' ? d.source.coupon
-          : typeof d?.coupon === 'string' ? d.coupon
-          : d?.coupon?.id
-        if (!couponId) continue
-        const coupon = couponsMap.get(couponId)
-        if (!coupon || (coupon.duration !== 'forever' && coupon.duration !== 'repeating')) continue
-        if (coupon.percent_off) effective = Math.round(fullCents * (1 - coupon.percent_off / 100))
-        else if (coupon.amount_off) effective = Math.max(0, fullCents - coupon.amount_off)
-        break
-      }
-      subEffectiveCents.set(s.id, effective)
-
-      // Actual MRR berechnen (monatliches Äquivalent nach Rabatten)
-      const interval = s.items.data[0]?.price.recurring?.interval
-      actualMrr += interval === 'year' ? effective / 12 / 100 : effective / 100
-    }
-  } catch { /* Stripe unavailable */ }
-
-  // ── Stripe invoices: actual revenue (post-coupon, post-discount) ─────────
-  // Source of truth for "Eingegangen" figures — never uses planCents() fallback
   const stripeRevByMonth = new Map<string, number>()
-  try {
-    const twelveMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 11, 1)
-    const invoices = await getStripe().invoices.list({
-      status: 'paid',
-      created: { gte: Math.floor(twelveMonthsAgo.getTime() / 1000) },
-      limit: 100,
-    })
-    for (const inv of invoices.data) {
-      const paidTs = (inv as any).status_transitions?.paid_at ?? inv.created
-      const d = new Date(paidTs * 1000)
-      const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
-      stripeRevByMonth.set(key, (stripeRevByMonth.get(key) ?? 0) + (inv.amount_paid ?? 0))
+  const stripePendingByMonth = new Map<string, number>()
+  if (fin) {
+    pendingCancelCount = fin.subs.cancelingAtPeriodEnd
+    mrrAtRisk = fin.subs.mrrAtRiskCents / 100
+    actualMrr = fin.subs.mrrCents / 100
+    for (const r of fin.subs.rows) subEffectiveCents.set(r.id, r.effectiveCents)
+    for (const m of fin.months) {
+      stripeRevByMonth.set(m.key, m.paidCents - m.refundedCents)
+      stripePendingByMonth.set(m.key, m.pendingCents)
     }
-  } catch { /* Stripe unavailable — fall back to DB data below */ }
+  }
 
   const useStripeRev = stripeRevByMonth.size > 0
 
   // ── Plan breakdown ───────────────────────────────────────────────────────
   const planCounts: Record<string, number> = {}
-  for (const u of activeUsersRaw) {
-    planCounts[u.plan] = (planCounts[u.plan] ?? 0) + 1
+  if (fin) {
+    for (const [k, b] of Object.entries(fin.subs.byPlan)) planCounts[k] = b.month + b.year
+  } else {
+    for (const u of activeUsersRaw) planCounts[u.plan] = (planCounts[u.plan] ?? 0) + 1
   }
   const starterCount   = planCounts['starter']   ?? 0
   const proCount       = planCounts['pro']        ?? 0
@@ -461,7 +420,7 @@ export default async function AdminPage({
         </Link>
 
         {/* MRR */}
-        <Link href="/admin/mrr" className="rounded-[20px] bg-white p-5 block hover:bg-gray-50 transition-colors" style={cardStyle}>
+        <Link href="/admin/finanzen" className="rounded-[20px] bg-white p-5 block hover:bg-gray-50 transition-colors" style={cardStyle}>
           <p className="text-[11px] font-medium uppercase tracking-wide mb-3" style={{ color: '#94A3B8' }}>MRR (nominell)</p>
           <p className="text-3xl font-bold text-gray-900 tracking-tight">€ {fmtEur(currentMrr)}</p>
           <p className="text-xs mt-1" style={{ color: actualMrr < currentMrr * 0.99 ? '#F97316' : '#94A3B8' }}>
@@ -507,6 +466,9 @@ export default async function AdminPage({
             <p className="text-[11px] font-medium mb-1.5" style={{ color: '#64748B' }}>Eingegangen</p>
             <p className="text-2xl font-bold text-white tracking-tight">€ {fmtEurCents(curRevCents)}</p>
             <p className="text-[11px] mt-1" style={{ color: '#334155' }}>tatsächlich geflossen</p>
+            {(stripePendingByMonth.get(currentMonthKey) ?? 0) > 0 && (
+              <p className="text-[11px] mt-0.5" style={{ color: '#FCD34D' }}>+ € {fmtEurCents(stripePendingByMonth.get(currentMonthKey)!)} SEPA in Bearbeitung</p>
+            )}
           </div>
 
           <div>
@@ -558,6 +520,9 @@ export default async function AdminPage({
             <div className="rounded-[14px] p-4" style={{ background: '#F8FAFC' }}>
               <p className="text-[11px] font-medium mb-1" style={{ color: '#94A3B8' }}>Umsatz eingegangen</p>
               <p className="text-2xl font-bold text-gray-900">€ {fmtEurCents(selRevCents)}</p>
+              {(stripePendingByMonth.get(selectedMonth) ?? 0) > 0 && (
+                <p className="text-[11px] mt-0.5" style={{ color: '#D97706' }}>+ € {fmtEurCents(stripePendingByMonth.get(selectedMonth)!)} SEPA in Bearbeitung</p>
+              )}
             </div>
 
             <div className="rounded-[14px] p-4" style={{ background: '#F8FAFC' }}>
@@ -651,7 +616,7 @@ export default async function AdminPage({
           {([['starter', starterCount], ['pro', proCount], ['unlimited', unlimitedCount]] as [keyof typeof PLAN_META, number][]).map(([key, cnt]) => {
             const meta = PLAN_META[key]
             const pct  = activeSubsCount > 0 ? Math.round(cnt / activeSubsCount * 100) : 0
-            const mrr  = cnt * mrrFor(key, 'monthly')
+            const mrr  = fin ? fin.subs.byPlan[key].mrrCents / 100 : cnt * mrrFor(key, 'monthly')
             return (
               <div key={key} className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
@@ -673,6 +638,7 @@ export default async function AdminPage({
               <span className="text-xs font-medium" style={{ color: '#F97316' }}>− € {fmtEur(mrrAtRisk)} gefährdet</span>
             )}
             <span className="text-sm font-bold text-gray-900">€ {fmtEur(currentMrr)}</span>
+            {fin && <span className="text-xs font-medium" style={{ color: '#16A34A' }}>effektiv € {fmtEur(actualMrr)}</span>}
           </div>
         </div>
       </div>

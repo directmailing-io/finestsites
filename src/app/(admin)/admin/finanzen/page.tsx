@@ -1,0 +1,188 @@
+import Link from 'next/link'
+import { getFinanceSnapshot, type PlanKey } from '@/lib/admin/finance'
+
+export const dynamic = 'force-dynamic'
+
+const eur = (cents: number) => (cents / 100).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €'
+const date = (ts: number) => new Date(ts * 1000).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' })
+const monthLabel = (k: string) => {
+  const [y, m] = k.split('-').map(Number)
+  return new Date(y, m - 1, 1).toLocaleDateString('de-DE', { month: 'long', year: 'numeric' })
+}
+const PLAN_LABEL: Record<PlanKey, string> = { starter: 'Starter', pro: 'Pro', unlimited: 'Unlimited', unbekannt: 'Unbekannt' }
+const STATUS_LABEL: Record<string, string> = {
+  active: 'Aktiv', trialing: 'Testphase', past_due: 'Überfällig', canceled: 'Beendet',
+  unpaid: 'Unbezahlt', incomplete: 'Unvollständig', incomplete_expired: 'Abgebrochen', paused: 'Pausiert',
+}
+
+const card = { boxShadow: '0 1px 4px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04)', border: '1px solid #F1F5F9' }
+
+function Kpi({ label, value, sub, tone }: { label: string; value: string; sub?: string; tone?: 'green' | 'amber' | 'red' }) {
+  const color = tone === 'green' ? '#16A34A' : tone === 'amber' ? '#D97706' : tone === 'red' ? '#DC2626' : '#111827'
+  return (
+    <div className="rounded-[20px] bg-white p-5" style={card}>
+      <p className="text-[11px] font-medium uppercase tracking-wide mb-2" style={{ color: '#94A3B8' }}>{label}</p>
+      <p className="text-2xl font-bold tracking-tight" style={{ color }}>{value}</p>
+      {sub && <p className="text-xs mt-1.5" style={{ color: '#94A3B8' }}>{sub}</p>}
+    </div>
+  )
+}
+
+export default async function FinanzenPage({ searchParams }: { searchParams: Promise<{ fresh?: string }> }) {
+  const sp = await searchParams
+  const f = await getFinanceSnapshot({ fresh: sp.fresh === '1' })
+  const totalIfAll = f.charges.paid.cents + f.charges.pending.cents - f.charges.refundedCents
+  const now = new Date()
+  const curKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
+  const cur = f.months.find(m => m.key === curKey)
+  const yearRows = f.months.filter(m => m.key.startsWith(String(now.getFullYear())))
+  const ytdPaid = yearRows.reduce((s, m) => s + m.paidCents - m.refundedCents, 0)
+  const ytdPending = yearRows.reduce((s, m) => s + m.pendingCents, 0)
+  const maxMonth = Math.max(...f.months.map(m => m.paidCents + m.pendingCents), 1)
+  const running = f.subs.active + f.subs.pastDue
+  const plans: PlanKey[] = ['starter', 'pro', 'unlimited', ...(f.subs.byPlan.unbekannt.month + f.subs.byPlan.unbekannt.year > 0 ? ['unbekannt' as PlanKey] : [])]
+
+  return (
+    <div style={{ maxWidth: 1080 }}>
+      <div className="mb-6 flex items-start justify-between gap-3 flex-wrap">
+        <div>
+          <h1 className="text-2xl font-semibold text-gray-900 tracking-tight">Finanzen</h1>
+          <p className="text-sm mt-1" style={{ color: '#94A3B8' }}>
+            Alle Zahlen direkt aus Stripe · Stand {new Date(f.generatedAt).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })} Uhr · Beträge brutto inkl. USt
+          </p>
+        </div>
+        <Link href="/admin/finanzen?fresh=1" className="px-4 py-2 text-sm font-semibold rounded-[12px] bg-white" style={{ ...card, color: '#111827' }}>
+          Neu laden
+        </Link>
+      </div>
+
+      {/* ── Umsatz ─────────────────────────────────────────────────────── */}
+      <h2 className="text-sm font-semibold text-gray-900 mb-3">Umsatz seit Start ({f.charges.firstPaymentAt ? date(f.charges.firstPaymentAt) : '–'})</h2>
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-3">
+        <Kpi label="Bezahlt" value={eur(f.charges.paid.cents - f.charges.refundedCents)} sub={`${f.charges.paid.count} Zahlungen${f.charges.refundedCents ? ` · ${eur(f.charges.refundedCents)} erstattet` : ''}`} tone="green" />
+        <Kpi label="SEPA in Bearbeitung" value={eur(f.charges.pending.cents)} sub={`${f.charges.pending.count} Lastschriften laufen noch`} tone="amber" />
+        <Kpi label="Summe, wenn alle SEPA durchgehen" value={eur(totalIfAll)} sub={`ohne USt ≈ ${eur(Math.round(totalIfAll / 1.19))}`} />
+        <Kpi label="Offen / fehlgeschlagen" value={eur(f.charges.failedOpen.reduce((s, x) => s + x.amountCents, 0))}
+          sub={`${f.charges.failedOpen.length} offen · ${f.charges.failedRecovered.count} später bezahlt (${eur(f.charges.failedRecovered.cents)})`}
+          tone={f.charges.failedOpen.length ? 'red' : undefined} />
+      </div>
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-8">
+        <Kpi label={`Dieser Monat bezahlt`} value={eur((cur?.paidCents ?? 0) - (cur?.refundedCents ?? 0))} sub={`${cur?.paidCount ?? 0} Zahlungen`} />
+        <Kpi label="Dieser Monat SEPA offen" value={eur(cur?.pendingCents ?? 0)} sub={`${cur?.pendingCount ?? 0} Lastschriften`} />
+        <Kpi label={`Jahr ${now.getFullYear()} bezahlt`} value={eur(ytdPaid)} sub={ytdPending ? `+ ${eur(ytdPending)} SEPA in Bearbeitung` : undefined} />
+        <Kpi label="Stripe-Gebühren gesamt" value={eur(f.fees.totalCents)} sub={totalIfAll ? `${(f.fees.totalCents / totalIfAll * 100).toFixed(1)} % vom Umsatz` : undefined} />
+      </div>
+
+      {/* ── Geld in Stripe ─────────────────────────────────────────────── */}
+      <h2 className="text-sm font-semibold text-gray-900 mb-3">Geld in Stripe (nach Gebühren)</h2>
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-2">
+        <Kpi label="Verfügbar" value={eur(f.balance.availableCents)} sub="sofort auszahlbar" tone="green" />
+        <Kpi label="Kommt noch" value={eur(f.balance.pendingCents)} sub="inkl. SEPA in Bearbeitung" tone="amber" />
+        <Kpi label="Guthaben gesamt" value={eur(f.balance.availableCents + f.balance.pendingCents)} />
+        <Kpi label="Aufs Bankkonto ausgezahlt" value={eur(f.payouts.paidCents)}
+          sub={f.payouts.count ? `${f.payouts.count} Auszahlungen · zuletzt ${date(f.payouts.lastPaidAt!)}${f.payouts.inTransitCents ? ` · ${eur(f.payouts.inTransitCents)} unterwegs` : ''}` : 'noch keine Auszahlung'}
+          tone={f.payouts.count ? undefined : 'red'} />
+      </div>
+      <p className="text-xs mb-8" style={{ color: '#94A3B8' }}>Platzt eine SEPA-Lastschrift, zieht Stripe den Betrag wieder ab (plus ca. 3 bis 6 € Gebühr).</p>
+
+      {/* ── Abos ───────────────────────────────────────────────────────── */}
+      <h2 className="text-sm font-semibold text-gray-900 mb-3">Abos</h2>
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-3">
+        <Kpi label="Laufende Abos" value={String(running)} sub={`${f.subs.active} aktiv · ${f.subs.pastDue} überfällig`} />
+        <Kpi label="MRR (nach Rabatten)" value={eur(f.subs.mrrCents)} sub={`ohne Rabatte ${eur(f.subs.mrrListCents)} · Jahresabos ÷ 12`} tone="green" />
+        <Kpi label="Jahresumsatz-Lauf (ARR)" value={eur(f.subs.mrrCents * 12)} sub="MRR × 12" />
+        <Kpi label="Gekündigt zum Periodenende" value={String(f.subs.cancelingAtPeriodEnd)}
+          sub={f.subs.mrrAtRiskCents ? `− ${eur(f.subs.mrrAtRiskCents)} MRR` : 'keine'} tone={f.subs.cancelingAtPeriodEnd ? 'amber' : undefined} />
+      </div>
+      <div className="rounded-[20px] bg-white p-5 mb-8 overflow-x-auto" style={card}>
+        <table className="w-full text-sm" style={{ minWidth: 520 }}>
+          <thead>
+            <tr className="text-left text-[11px] uppercase tracking-wide" style={{ color: '#94A3B8' }}>
+              <th className="pb-2 font-medium">Tarif</th><th className="pb-2 font-medium text-right">Monatlich</th>
+              <th className="pb-2 font-medium text-right">Jährlich</th><th className="pb-2 font-medium text-right">Gesamt</th>
+              <th className="pb-2 font-medium text-right">MRR</th>
+            </tr>
+          </thead>
+          <tbody>
+            {plans.map(p => {
+              const b = f.subs.byPlan[p]
+              return (
+                <tr key={p} style={{ borderTop: '1px solid #F1F5F9' }}>
+                  <td className="py-2.5 font-medium text-gray-900">{PLAN_LABEL[p]}</td>
+                  <td className="py-2.5 text-right">{b.month}</td>
+                  <td className="py-2.5 text-right">{b.year}</td>
+                  <td className="py-2.5 text-right font-semibold">{b.month + b.year}</td>
+                  <td className="py-2.5 text-right">{eur(b.mrrCents)}</td>
+                </tr>
+              )
+            })}
+            <tr style={{ borderTop: '1.5px solid #E5E7EB' }}>
+              <td className="py-2.5 font-semibold">Summe</td>
+              <td className="py-2.5 text-right font-semibold">{plans.reduce((s, p) => s + f.subs.byPlan[p].month, 0)}</td>
+              <td className="py-2.5 text-right font-semibold">{plans.reduce((s, p) => s + f.subs.byPlan[p].year, 0)}</td>
+              <td className="py-2.5 text-right font-semibold">{running}</td>
+              <td className="py-2.5 text-right font-semibold">{eur(f.subs.mrrCents)}</td>
+            </tr>
+          </tbody>
+        </table>
+        <p className="text-xs mt-3" style={{ color: '#94A3B8' }}>
+          Abo-Status in Stripe: {Object.entries(f.subs.byStatus).map(([k, v]) => `${STATUS_LABEL[k] ?? k} ${v}`).join(' · ')}
+        </p>
+      </div>
+
+      {/* ── Monate ─────────────────────────────────────────────────────── */}
+      <h2 className="text-sm font-semibold text-gray-900 mb-3">Umsatz pro Monat</h2>
+      <div className="rounded-[20px] bg-white p-5 mb-8 overflow-x-auto" style={card}>
+        <table className="w-full text-sm" style={{ minWidth: 560 }}>
+          <thead>
+            <tr className="text-left text-[11px] uppercase tracking-wide" style={{ color: '#94A3B8' }}>
+              <th className="pb-2 font-medium">Monat</th><th className="pb-2 font-medium text-right">Bezahlt</th>
+              <th className="pb-2 font-medium text-right">SEPA offen</th><th className="pb-2 font-medium text-right">Summe</th>
+              <th className="pb-2 font-medium" style={{ width: '32%' }}></th>
+            </tr>
+          </thead>
+          <tbody>
+            {[...f.months].reverse().map(m => {
+              const paid = m.paidCents - m.refundedCents, sum = paid + m.pendingCents
+              return (
+                <tr key={m.key} style={{ borderTop: '1px solid #F1F5F9' }}>
+                  <td className="py-2.5 text-gray-900">{monthLabel(m.key)}</td>
+                  <td className="py-2.5 text-right">{eur(paid)}</td>
+                  <td className="py-2.5 text-right" style={{ color: m.pendingCents ? '#D97706' : '#CBD5E1' }}>{eur(m.pendingCents)}</td>
+                  <td className="py-2.5 text-right font-semibold">{eur(sum)}</td>
+                  <td className="py-2.5 pl-4">
+                    <div className="flex h-2 rounded-full overflow-hidden" style={{ background: '#F1F5F9' }}>
+                      <div style={{ width: `${paid / maxMonth * 100}%`, background: '#16A34A' }} />
+                      <div style={{ width: `${m.pendingCents / maxMonth * 100}%`, background: '#FBBF24' }} />
+                    </div>
+                  </td>
+                </tr>
+              )
+            })}
+          </tbody>
+        </table>
+      </div>
+
+      {/* ── Offene Zahlungen ───────────────────────────────────────────── */}
+      <h2 className="text-sm font-semibold text-gray-900 mb-3">Offene Zahlungen (fehlgeschlagen, nicht nachgeholt)</h2>
+      <div className="rounded-[20px] bg-white p-5 mb-8" style={card}>
+        {f.charges.failedOpen.length === 0 ? (
+          <p className="text-sm" style={{ color: '#16A34A' }}>Keine offenen Zahlungen. Alle fehlgeschlagenen Versuche wurden später bezahlt.</p>
+        ) : (
+          <div className="flex flex-col gap-2">
+            {f.charges.failedOpen.map(x => (
+              <div key={`${x.customerId}-${x.created}`} className="flex items-center justify-between gap-3 text-sm flex-wrap">
+                <span className="text-gray-900">{x.email ?? x.customerId ?? 'unbekannt'}</span>
+                <span style={{ color: '#94A3B8' }}>{date(x.created)} · {x.method === 'sepa_debit' ? 'SEPA' : x.method === 'card' ? 'Karte' : x.method} · {x.reason}</span>
+                <span className="font-semibold" style={{ color: '#DC2626' }}>{eur(x.amountCents)}</span>
+              </div>
+            ))}
+          </div>
+        )}
+        <p className="text-xs mt-3" style={{ color: '#94A3B8' }}>
+          Als „später bezahlt“ gilt ein Fehlschlag, wenn derselbe Kunde danach erfolgreich gezahlt hat oder eine SEPA-Lastschrift läuft.
+        </p>
+      </div>
+    </div>
+  )
+}
