@@ -500,6 +500,11 @@ function DomainPanel({ siteId, subdomain, initialDomain, initialStatus }: {
                   </div>
                 </div>
               )}
+              {!isApex && hostPart === 'www' && (
+                <p className="mt-2 text-xs" style={{ color: '#6B7280' }}>
+                  Damit auch <strong>{domain.replace(/^www\./, '')}</strong> (ohne www) funktioniert: Richte bei deinem Anbieter eine Weiterleitung von {domain.replace(/^www\./, '')} auf <strong>{domain}</strong> ein. Das geht bei fast allen Anbietern mit zwei Klicks (z. B. „Weiterleitung“ oder „Redirect“).
+                </p>
+              )}
               <p className="mt-2 text-xs" style={{ color: '#9CA3AF' }}>
                 Tipp: TTL kannst du auf &ldquo;Auto&rdquo; oder &ldquo;1 Stunde&rdquo; lassen.
               </p>

@@ -7,8 +7,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerUser } from '@/lib/auth/server'
 import { db } from '@/lib/db'
-import { users } from '@/lib/db/schema'
+import { users, userSites } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
+import { getCustomHostname } from '@/lib/cloudflare/custom-hostnames'
 
 export const runtime = 'nodejs'
 
@@ -57,11 +58,30 @@ export async function GET(req: NextRequest) {
     }
   }))
 
+  // Sicht von Cloudflare for SaaS: Hostname-/SSL-Status, Fehlertext und die TXT-Alternative
+  // (`_cf-custom-hostname`), falls der Kunde den CNAME nicht vorab setzen kann/will.
+  let cloudflare: { status: string; ssl_status: string; errors: string[]; txt: { name: string; value: string } | null } | null = null
+  const site = await db.query.userSites.findFirst({ where: eq(userSites.customDomain, host), columns: { cfCustomHostnameId: true } })
+  if (site?.cfCustomHostnameId) {
+    try {
+      const cf = await getCustomHostname(site.cfCustomHostnameId)
+      cloudflare = {
+        status: cf.status,
+        ssl_status: cf.ssl?.status ?? 'unknown',
+        errors: cf.verification_errors ?? [],
+        txt: cf.status !== 'active' && cf.ownership_verification?.type === 'txt'
+          ? { name: cf.ownership_verification.name, value: cf.ownership_verification.value }
+          : null,
+      }
+    } catch { cloudflare = null }
+  }
+
   return NextResponse.json({
     host,
     is_apex: isApex,
     fallback_host: FALLBACK_HOST,
     checked_at: new Date().toISOString(),
     records: results,
+    cloudflare,
   })
 }

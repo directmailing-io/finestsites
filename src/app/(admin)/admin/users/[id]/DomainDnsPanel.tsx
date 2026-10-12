@@ -11,7 +11,8 @@ import { useState } from 'react'
 const FALLBACK_HOST = 'domains.finestsites.io'
 
 interface DnsRecordResult { name: string; cname: string[]; a: string[]; aaaa: string[]; ok: boolean }
-interface DnsCheck { host: string; is_apex: boolean; fallback_host: string; checked_at: string; records: DnsRecordResult[] }
+interface CfInfo { status: string; ssl_status: string; errors: string[]; txt: { name: string; value: string } | null }
+interface DnsCheck { host: string; is_apex: boolean; fallback_host: string; checked_at: string; records: DnsRecordResult[]; cloudflare: CfInfo | null }
 
 export default function DomainDnsPanel({ domain, status }: { domain: string; status: string | null }) {
   const [open, setOpen] = useState(false)
@@ -55,15 +56,14 @@ export default function DomainDnsPanel({ domain, status }: { domain: string; sta
             <span className="font-sans font-bold">CNAME</span><span>{hostPart}</span><span className="break-all">{FALLBACK_HOST}</span>
           </div>
           {isApex && (
-            <>
-              <div className="px-2.5 pb-2 font-sans" style={{ color: '#6B7280' }}>
-                Apex-Domain: Nutzer soll <strong>www</strong> per CNAME verbinden und {domain} beim Anbieter auf www.{domain} weiterleiten (Option A).
-                Alternativ, falls der Anbieter es kann (Option B):
-              </div>
-              <div className="grid px-2.5 pb-2 gap-1 font-mono" style={{ gridTemplateColumns: '90px 70px 1fr', color: '#374151' }}>
-                <span className="font-sans font-bold">ALIAS/ANAME</span><span>@</span><span className="break-all">{FALLBACK_HOST}</span>
-              </div>
-            </>
+            <div className="px-2.5 pb-2 font-sans" style={{ color: '#B45309' }}>
+              Altbestand: Diese Domain ist noch als nackte Domain hinterlegt. Cloudflare prüft aber nur den Hostnamen, der per CNAME auf uns zeigt; ein CNAME auf der nackten Domain ist bei den meisten Anbietern nicht möglich. Neue Verbindungen werden automatisch als www.{domain} angelegt. Diese hier bitte entfernen und als www neu verbinden lassen.
+            </div>
+          )}
+          {!isApex && hostPart === 'www' && (
+            <div className="px-2.5 pb-2 font-sans" style={{ color: '#6B7280' }}>
+              Zusätzlich beim Anbieter: Weiterleitung von {domain.replace(/^www\./, '')} auf {domain} (kein DNS-Eintrag, meist „Weiterleitung/Redirect“ im Domain-Menü).
+            </div>
           )}
 
           <div className="px-2.5 py-2 flex items-center gap-2 font-sans" style={{ borderTop: '1px solid #F3F4F6', background: '#FAFAFA' }}>
@@ -98,8 +98,17 @@ export default function DomainDnsPanel({ domain, status }: { domain: string; sta
                   </div>
                 )
               })}
-              {check.is_apex && (
-                <p style={{ color: '#9CA3AF', margin: 0 }}>Bei Option A reicht es, wenn www korrekt zeigt; die Apex-Zeile ist dann die Weiterleitung des Anbieters.</p>
+              {check.cloudflare && (
+                <div className="mt-1 pt-1.5" style={{ borderTop: '1px dashed #E5E7EB', color: '#6B7280' }}>
+                  Cloudflare: Hostname <strong>{check.cloudflare.status}</strong>, SSL <strong>{check.cloudflare.ssl_status}</strong>
+                  {check.cloudflare.errors.length > 0 && <> · {check.cloudflare.errors.join('; ')}</>}
+                  {check.cloudflare.txt && (
+                    <div className="mt-1">
+                      Alternative, falls der Kunde den CNAME nicht vorab setzen kann (TXT-Nachweis, danach trotzdem CNAME nötig):
+                      <div className="font-mono break-all mt-0.5" style={{ color: '#374151' }}>TXT {check.cloudflare.txt.name} = {check.cloudflare.txt.value}</div>
+                    </div>
+                  )}
+                </div>
               )}
             </div>
           )}

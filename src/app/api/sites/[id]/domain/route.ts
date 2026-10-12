@@ -67,7 +67,14 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     )
   }
 
-  const hostname = domain.trim().toLowerCase()
+  // Nackte Domains (meine-domain.de) werden als www.meine-domain.de verbunden: Cloudflare
+  // validiert genau den Hostnamen, der per CNAME auf uns zeigt, und einen CNAME auf der
+  // nackten Domain erlauben die meisten Anbieter (Strato, IONOS, all-inkl …) nicht.
+  // Der Nutzer leitet die nackte Domain beim Anbieter auf www weiter (Anleitung im Editor).
+  // Vorher wurde der Apex bei Cloudflare angelegt, der Nutzer aber auf www geschickt → nie
+  // verifiziert (pulvermani.de, 10.10.2026).
+  const entered = domain.trim().toLowerCase()
+  const hostname = isApexDomain(entered) ? `www.${entered}` : entered
 
   // Make sure this site belongs to the user
   const site = await db.query.userSites.findFirst({
