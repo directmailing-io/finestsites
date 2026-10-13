@@ -15,16 +15,51 @@ export const runtime = 'nodejs'
 // Kunden-Domains zeigen direkt darauf.
 const FALLBACK_HOST = process.env.CLOUDFLARE_FALLBACK_HOST ?? 'domains.finestsites.io'
 
+// Eingabe wie „https://www.meine-domain.de/“ auf den reinen Hostnamen kürzen.
+function normalizeDomainInput(input: string): string {
+  return input.trim().toLowerCase().replace(/^https?:\/\//, '').split(/[/?#]/)[0].replace(/\.$/, '')
+}
+
 function isValidHostname(hostname: string): boolean {
   const clean = hostname.trim().toLowerCase()
   if (!clean.includes('.')) return false
   if (clean.startsWith('.') || clean.endsWith('.')) return false
   if (!/^[a-z0-9._-]+$/.test(clean)) return false
   if (clean.length > 253) return false
+  const labels = clean.split('.')
+  if (labels.some(l => !l || l.startsWith('-') || l.endsWith('-'))) return false
+  // Endung (.de, .com, .info …) ist Pflicht. „www.siegfriedhartmann“ wurde sonst als nackte
+  // Domain gelesen und zu „www.www.siegfriedhartmann“ (13.10.2026).
+  const tld = labels[labels.length - 1]
+  if (!/^([a-z]{2,24}|xn--[a-z0-9-]{2,59})$/.test(tld)) return false
+  if (labels[0] === 'www' && labels.length < 3) return false
+  if (labels[0] === 'www' && labels[1] === 'www') return false
   // Eigene Infrastruktur und Template-Domains dürfen nie als Kunden-Domain registriert werden
   const BLOCKED = ['finestsites.io', 'finestsites.de', 'womenplus.io', 'lnko.me', 'wellpreneur.io', 'cellrestart.net', 'dailyoptimal.de', 'myevnt.io', 'vitalprofil.net', 'workers.dev', 'cloudflare.com', 'hetzner.com', 'localhost']
   if (BLOCKED.some(b => clean === b || clean.endsWith('.' + b))) return false
   return true
+}
+
+// Gibt es die Domain überhaupt? NXDOMAIN = Tippfehler oder noch nicht registriert.
+// Fail-open: bei Netzwerkfehlern oder anderen DNS-Antworten wird nicht blockiert.
+// Geprüft wird die registrierte Domain (shop.meine-domain.de → meine-domain.de), weil eine
+// Subdomain vor dem CNAME-Eintrag noch nicht existiert. Kurze Second-Level-Endungen wie
+// co.uk / com.au / or.at zählen mit.
+async function domainDoesNotExist(hostname: string): Promise<boolean> {
+  const labels = hostname.split('.')
+  const keep = labels.length >= 3 && labels[labels.length - 2].length <= 3 ? 3 : 2
+  const name = labels.slice(-keep).join('.')
+  try {
+    const res = await fetch(`https://cloudflare-dns.com/dns-query?name=${encodeURIComponent(name)}&type=NS`, {
+      headers: { accept: 'application/dns-json' },
+      signal: AbortSignal.timeout(4000),
+    })
+    if (!res.ok) return false
+    const data = await res.json() as { Status?: number }
+    return data.Status === 3
+  } catch {
+    return false
+  }
 }
 
 function isApexDomain(hostname: string): boolean {
@@ -59,11 +94,12 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const { id } = await params
-  const { domain } = await req.json() as { domain: string }
+  const { domain: rawDomain } = await req.json() as { domain: string }
+  const domain = normalizeDomainInput(rawDomain ?? '')
 
   if (!domain || !isValidHostname(domain)) {
     return NextResponse.json(
-      { error: 'Ungültige Domain. Bitte gib z.B. www.meine-domain.de oder meine-domain.de ein.' },
+      { error: 'Ungültige Domain. Bitte gib deine vollständige Domain mit Endung ein, z. B. www.meine-domain.de oder meine-domain.de.' },
       { status: 400 },
     )
   }
@@ -74,8 +110,14 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   // Der Nutzer leitet die nackte Domain beim Anbieter auf www weiter (Anleitung im Editor).
   // Vorher wurde der Apex bei Cloudflare angelegt, der Nutzer aber auf www geschickt → nie
   // verifiziert (pulvermani.de, 10.10.2026).
-  const entered = domain.trim().toLowerCase()
-  const hostname = isApexDomain(entered) ? `www.${entered}` : entered
+  const hostname = isApexDomain(domain) ? `www.${domain}` : domain
+
+  if (await domainDoesNotExist(hostname)) {
+    return NextResponse.json(
+      { error: `Die Domain „${domain}“ gibt es nicht. Bitte prüfe die Schreibweise oder registriere sie zuerst bei deinem Domain-Anbieter.` },
+      { status: 400 },
+    )
+  }
 
   // Make sure this site belongs to the user
   const site = await db.query.userSites.findFirst({
