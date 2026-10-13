@@ -1,0 +1,200 @@
+[
+  {
+    "de": "{{#unless partner_modus=duo}}Diese Seite wird betrieben von <strong>{{vorname}} {{nachname}}</strong>, {{#if geschlecht=weiblich}}unabhängige Vertriebspartnerin{{/if}}{{#if geschlecht=maennlich}}unabhängiger Vertriebspartner{{/if}} der PM-International (FitLine®). Keine offizielle Website der PM-International AG.{{/unless}}{{#if partner_modus=duo}}Diese Seite wird betrieben von <strong>{{vorname}} {{nachname}} &amp; {{vorname2}} {{nachname2}}</strong>, unabhängige Vertriebspartner der PM-International (FitLine®). Keine offizielle Website der PM-International AG.{{/if}}",
+    "alt": "{{#unless partner_modus=duo}}Цю сторінку веде <strong>{{vorname}} {{nachname}}</strong>, {{#if geschlecht=weiblich}}незалежна партнерка-дистриб’юторка{{/if}}{{#if geschlecht=maennlich}}незалежний партнер-дистриб’ютор{{/if}} PM-International (FitLine®). Це не офіційний сайт PM-International AG.{{/unless}}{{#if partner_modus=duo}}Цю сторінку ведуть <strong>{{vorname}} {{nachname}} &amp; {{vorname2}} {{nachname2}}</strong>, незалежні партнери-дистриб’ютори PM-International (FitLine®). Це не офіційний сайт PM-International AG.{{/if}}",
+    "neu": "{{#unless partner_modus=duo}}Цю сторінку веде <strong>{{vorname}} {{nachname}}</strong>, {{#if geschlecht=weiblich}}незалежна дистриб’юторка{{/if}}{{#if geschlecht=maennlich}}незалежний дистриб’ютор{{/if}} PM-International (FitLine®). Це не офіційний сайт PM-International AG.{{/unless}}{{#if partner_modus=duo}}Цю сторінку ведуть <strong>{{vorname}} {{nachname}} &amp; {{vorname2}} {{nachname2}}</strong>, незалежні дистриб’ютори PM-International (FitLine®). Це не офіційний сайт PM-International AG.{{/if}}",
+    "grund": "„партнерка-дистриб’юторка“ ist ein unnatürliches Doppelkompositum; vereinheitlicht mit dem Footer-Text („незалежна дистриб’юторка“)"
+  },
+  {
+    "de": "Du lernst <strong>hochwertige Wellness- und Gesundheitsprodukte</strong> kennen, nutzt sie <strong>selbst</strong> und teilst deine Erfahrungen mit anderen. Wer sie testet und <strong>weiter bestellt</strong>, sorgt dafür, dass <strong>jeden Monat etwas auf deinem Konto</strong> landet.",
+    "alt": "Ти знайомишся з <strong>якісними wellness- і health-продуктами</strong>, користуєшся ними <strong>самостійно</strong> і ділишся своїм досвідом з іншими. Кожен, хто їх спробує і <strong>продовжить замовляти</strong>, допомагає тому, щоб <strong>щомісяця на твій рахунок щось надходило</strong>.",
+    "neu": "Ти знайомишся з <strong>якісними продуктами для здоров’я та гарного самопочуття</strong>, користуєшся ними <strong>особисто</strong> і ділишся своїм досвідом з іншими. Кожен, хто їх спробує і <strong>замовлятиме далі</strong>, подбає про те, щоб <strong>щомісяця на твій рахунок щось надходило</strong>.",
+    "grund": "„wellness- і health-продуктами“ lateinisch/denglisch, Leser erwartet Kyrillisch; „самостійно“ heißt „eigenständig“, nicht „selbst“; „допомагає тому, щоб“ ist eine steife Kalkierung"
+  },
+  {
+    "de": "Alleinerziehende",
+    "alt": "Одинокі батьки",
+    "neu": "Батьки-одинаки",
+    "grund": "Uneinheitlich: im Attribut steht „Батьки-одинаки“ (gebräuchlicher), im Text „Одинокі батьки“"
+  },
+  {
+    "de": "Bei der Firma. Nicht bei dir. Du hast damit nichts zu tun.",
+    "alt": "У компанії. Не в тебе. Ти цим не займаєшся.",
+    "neu": "У компанії. Не в тебе. Ти до цього взагалі не маєш стосунку.",
+    "grund": "„Ти цим не займаєшся“ heißt „du machst das nicht“; gemeint ist „du hast damit nichts zu tun“"
+  },
+  {
+    "de": "Deine Provision landet automatisch auf dem Konto. Jeden Monat, solange bestellt wird.",
+    "alt": "Твоя комісія автоматично надходить на рахунок. Щомісяця, доки продовжують замовляти.",
+    "neu": "Твої комісійні автоматично надходять на рахунок. Щомісяця, доки продовжують замовляти.",
+    "grund": "„комісія“ bedeutet Kommission/Bankgebühr; die Provision heißt „комісійні“ (so auch an anderer Stelle im Text)"
+  },
+  {
+    "de": "Kundenservice per Telefon und Mail leisten",
+    "alt": "Надавати клієнтську підтримку телефоном і поштою",
+    "neu": "Надавати клієнтську підтримку телефоном та електронною поштою",
+    "grund": "„поштою“ wird als Briefpost gelesen; „Mail“ = E-Mail"
+  },
+  {
+    "de": "Und was empfiehlst du <span class=\"accent\">eigentlich?</span>",
+    "alt": "То що ти <span class=\"accent\">власне рекомендуєш?</span>",
+    "neu": "То що ти, <span class=\"accent\">власне, рекомендуєш?</span>",
+    "grund": "„власне“ als Einschub braucht Kommas"
+  },
+  {
+    "de": "Wellness- und Gesundheitsprodukte für den Alltag. Vom Vitamin-Cocktail bis zum Immunbooster. Alle nach den gleichen strengen Standards produziert. Hier siehst du stellvertretend unser Herzstück: den PowerCocktail.",
+    "alt": "Продукти для гарного самопочуття та здоров’я на щодень. Від вітамінного коктейлю до імунобустера. Усе виробляється за однаково суворими стандартами. Тут як приклад ти бачиш нашу основу: PowerCocktail.",
+    "neu": "Продукти для гарного самопочуття та здоров’я на щодень. Від вітамінного коктейлю до імунобустера. Усі виробляються за однаковими суворими стандартами. Тут для прикладу наш головний продукт: PowerCocktail.",
+    "grund": "„за однаково суворими“ = „gleich streng“ statt „nach den gleichen Standards“; „нашу основу“ (unsere Grundlage) trifft „Herzstück“ nicht"
+  },
+  {
+    "de": "1.000+ Profisportler",
+    "alt": "1.000+ професійних спортсменів",
+    "neu": "1 000+ професійних спортсменів",
+    "grund": "Tausendertrennzeichen im Ukrainischen ist das Leerzeichen, „1.000“ liest sich wie eine Dezimalzahl"
+  },
+  {
+    "de": "Fit für Job und Familie gleichzeitig",
+    "alt": "Бути в формі і для роботи, і для сім’ї",
+    "neu": "Бути у формі і для роботи, і для сім’ї",
+    "grund": "Wohlklang: zwischen Konsonanten „у“, nicht „в“ („бути у формі“)"
+  },
+  {
+    "de": "Jemand quält sich seit Jahren morgens aus dem Bett. Und du bist derjenige, der ihm zeigt, dass es auch anders geht. <span class=\"accent\">Das ist der Job. Nicht das Verkaufen.</span>",
+    "alt": "Хтось роками вранці ледве витягує себе з ліжка. А ти — той, хто показує йому, що може бути інакше. <span class=\"accent\">Ось у чому робота. Не в продажах.</span>",
+    "neu": "Хтось роками вранці ледве витягує себе з ліжка. І саме ти показуєш йому, що може бути інакше. <span class=\"accent\">Ось у цьому й робота. Не в продажах.</span>",
+    "grund": "Gedankenstrich entfernt (Vorgabe), Satz natürlicher umformuliert"
+  },
+  {
+    "de": "Ich will das machen",
+    "alt": "Хочу це робити",
+    "neu": "Хочу цим зайнятися",
+    "grund": "„Хочу це робити“ ist eine wörtliche Kalkierung; so sagt man es nicht"
+  },
+  {
+    "de": "Rolf Sorg hat die Firma 1993 gegründet. Keine Aktionäre, keine Investoren im Nacken. Nur seine Familie und ein Team, das seit über 30 Jahren dazulernt. Was dabei rauskommt, siehst du hier:",
+    "alt": "Rolf Sorg заснував компанію у 1993 році. Жодних акціонерів, жодних інвесторів за спиною. Лише його сім’я і команда, яка вже понад 30 років вчиться й рухається далі. Ось до чого це приводить:",
+    "neu": "Рольф Зорг заснував компанію у 1993 році. Жодних акціонерів, жодних інвесторів за спиною. Лише його сім’я і команда, яка вже понад 30 років вчиться й рухається далі. Ось що з цього виходить:",
+    "grund": "Personenname in kyrillischer Transliteration (Рольф Зорг); „Ось до чого це приводить“ klingt nach negativer Folge, gemeint ist „das kommt dabei raus“"
+  },
+  {
+    "de": "Gesundheit ist gefragt wie nie.<br><span class=\"accent\">Und wir mittendrin.</span>",
+    "alt": "Здоров’я затребуване як ніколи.<br><span class=\"accent\">А ми — у самому центрі.</span>",
+    "neu": "Здоров’я затребуване як ніколи.<br><span class=\"accent\">І ми в самому центрі подій.</span>",
+    "grund": "Gedankenstrich entfernt (Vorgabe), umformuliert"
+  },
+  {
+    "de": "Rechnen wir kurz. Nimm einen 100 Euro Schuh im Laden. Wo landet dein Geld?",
+    "alt": "Давай швидко порахуємо. Візьми взуття за 100 євро в магазині. Куди йдуть твої гроші?",
+    "neu": "Давай швидко порахуємо. Візьми, наприклад, кросівки за 100 євро в магазині. Куди йдуть твої гроші?",
+    "grund": "„взуття“ ist ein Sammelbegriff, „einen Schuh“ = ein konkretes Paar; „кросівки“ ist das natürliche Alltagsbeispiel"
+  },
+  {
+    "de": "Das willst du <span class=\"accent\">wahrscheinlich wissen.</span>",
+    "alt": "Ти <span class=\"accent\">напевно хочеш це знати.</span>",
+    "neu": "Ти, <span class=\"accent\">напевно, хочеш це знати.</span>",
+    "grund": "„напевно“ (wahrscheinlich) als Einschub braucht Kommas"
+  },
+  {
+    "de": "Nein. Beim Schneeballsystem verdient man an neuen Leuten, die einzahlen. Bei uns verdienst du nur, wenn Produkte gekauft und weiter genutzt werden. Keine Bestellungen, kein Geld. Der Unterschied ist gesetzlich klar geregelt (siehe <a href=\"https://www.gesetze-im-internet.de/uwg_2004/anhang.html\" target=\"_blank\" rel=\"noopener\">UWG Anhang Nr. 14</a>) und wird auch vom <a href=\"https://direktvertrieb.de/de/abgrenzung\" target=\"_blank\" rel=\"noopener\">Bundesverband Direktvertrieb</a> so definiert. Und die Firma gibts seit 1993 mit 4 Milliarden Umsatz. Schneeballsysteme kollabieren nach ein paar Jahren. Wir sind bei über 30.",
+    "alt": "Ні. У фінансовій піраміді заробляють на нових людях, які вносять гроші. У нас ти заробляєш тільки тоді, коли продукти купують і далі ними користуються. Немає замовлень — немає грошей. Різниця чітко прописана в законі (див. <a href=\"https://www.gesetze-im-internet.de/uwg_2004/anhang.html\" target=\"_blank\" rel=\"noopener\">додаток до UWG № 14</a>) і так само визначається <a href=\"https://direktvertrieb.de/de/abgrenzung\" target=\"_blank\" rel=\"noopener\">Федеральною асоціацією прямих продажів</a>. А компанія існує з 1993 року й має 4 мільярди обороту. Піраміди розвалюються за кілька років. А ми вже понад 30.",
+    "neu": "Ні. У фінансовій піраміді заробляють на нових людях, які вносять гроші. У нас ти заробляєш тільки тоді, коли продукти купують і далі ними користуються. Без замовлень немає грошей. Різниця чітко прописана в законі (див. <a href=\"https://www.gesetze-im-internet.de/uwg_2004/anhang.html\" target=\"_blank\" rel=\"noopener\">п. 14 додатка до закону UWG</a>) і так само визначається <a href=\"https://direktvertrieb.de/de/abgrenzung\" target=\"_blank\" rel=\"noopener\">Федеральною асоціацією прямих продажів</a>. А компанія існує з 1993 року й має 4 мільярди обороту. Піраміди розвалюються за кілька років. А ми тримаємося вже понад 30.",
+    "grund": "Gedankenstrich entfernt (Vorgabe); „додаток до UWG № 14“ klingt nach „Anhang Nr. 14“, gemeint ist Nr. 14 des Anhangs; „А ми вже понад 30“ ohne Verb unverständlich"
+  },
+  {
+    "de": "Gut so. Denn hier verkauft niemand. Du erzählst nur, was dir selbst was gebracht hat. Wer das hören will, hört zu. Wer nicht, dann eben nicht. Kein Sales-Pitch, keine Techniken. Sondern eine Empfehlung, wie du sie auch bei einem guten Restaurant weitergibst.",
+    "alt": "І добре. Бо тут ніхто нічого не продає. Ти просто розповідаєш, що тобі самому щось дало. Хто хоче це почути — слухає. Хто ні — то ні. Без sales pitch, без технік. Просто рекомендація, як ти порадив би хороший ресторан.",
+    "neu": "І добре. Бо тут ніхто нічого не продає. Ти просто розповідаєш, що тобі самому щось дало. Хто хоче це почути, той слухає. Хто ні, той ні. Без рекламних промов, без технік. Просто рекомендація, як ти порадив би хороший ресторан.",
+    "grund": "„sales pitch“ lateinisch im Fließtext; Gedankenstriche entfernt (Vorgabe)"
+  },
+  {
+    "de": "Ist das nicht viel zu teuer?",
+    "alt": "Це ж не занадто дорого?",
+    "neu": "А це не надто дорого?",
+    "grund": "„Це ж не занадто дорого?“ heißt „das ist doch nicht zu teuer, oder?“ und passt nicht zur Antwort „на перший погляд, можливо“; die skeptische Frage lautet „А це не надто дорого?“"
+  },
+  {
+    "de": "Kann ich das nicht günstiger in der Drogerie kaufen?",
+    "alt": "А хіба не можна купити це дешевше в дрогерії?",
+    "neu": "А хіба не можна купити це дешевше в аптеці?",
+    "grund": "„дрогерія“ ist in der Ukraine kein gängiger Begriff; der Leser denkt bei Vitaminen an die Apotheke"
+  },
+  {
+    "de": "Kannst du. Aber du kaufst dann was anderes. Standard-Vitamine sind oft einzeln dosiert. Unsere Produkte sind aufeinander abgestimmt und werden nach Pharma-Standard in Deutschland hergestellt. Das ist ein Unterschied wie zwischen Instant-Kaffee und einem echten Espresso.",
+    "alt": "Можна. Але тоді ти купуєш щось інше. Звичайні вітаміни часто дозуються окремо. Наші продукти підібрані між собою й виробляються в Німеччині за фармацевтичним стандартом. Це як різниця між розчинною кавою та справжнім еспресо.",
+    "neu": "Можна. Але тоді ти купуєш щось інше. Звичайні вітаміни часто дозуються окремо. Наші продукти узгоджені між собою й виробляються в Німеччині за фармацевтичним стандартом. Це як різниця між розчинною кавою та справжнім еспресо.",
+    "grund": "„підібрані між собою“ ergibt keinen Sinn; „aufeinander abgestimmt“ = „узгоджені між собою“"
+  },
+  {
+    "de": "Ehrliche Antwort: Ganz unterschiedlich. Die einen machen 100 im Monat, die anderen ein paar Tausend, wieder andere leben komplett davon.",
+    "alt": "Чесна відповідь: дуже по-різному. Хтось робить 100 на місяць, хтось кілька тисяч, а хтось повністю з цього живе.",
+    "neu": "Чесна відповідь: дуже по-різному. Хтось заробляє 100 на місяць, хтось кілька тисяч, а хтось повністю з цього живе.",
+    "grund": "„робить 100 на місяць“ ist eine Kalkierung; auf Ukrainisch „заробляє“"
+  },
+  {
+    "de": "Am Anfang verdienst du an dem, was du selbst weiterempfiehlst. Mit der Zeit kannst du auch andere Menschen mit ins Boot holen, die genau das Gleiche machen wie du. Aus dem, was dein Team dann bewegt, kriegst du auch was ab. Nicht weil du an denen verdienst, sondern weil du sie mit aufgebaut und trainiert hast. Wie ein Trainer, der einen Prozentsatz vom Erfolg seiner Athleten kriegt.",
+    "alt": "На початку ти заробляєш на тому, що рекомендуєш сам. З часом ти можеш взяти в команду інших людей, які роблять те саме, що й ти. І з того, що потім створює твоя команда, ти теж отримуєш свою частку. Не тому, що ти заробляєш на них, а тому, що допоміг їх побудувати й навчити. Як тренер, який отримує відсоток від успіху своїх атлетів.",
+    "neu": "На початку ти заробляєш на тому, що рекомендуєш сам. З часом ти можеш взяти в команду інших людей, які роблять те саме, що й ти. І з того, що потім створює твоя команда, ти теж отримуєш свою частку. Не тому, що ти заробляєш на них, а тому, що допоміг їм стати на ноги й навчив їх. Як тренер, який отримує відсоток від успіху своїх спортсменів.",
+    "grund": "„допоміг їх побудувати“ – Menschen „baut“ man auf Ukrainisch nicht; „атлетів“ ist in diesem Kontext ungebräuchlich, „спортсменів“ natürlich"
+  },
+  {
+    "de": "Das ist der Grund, warum manche hier richtig groß werden: Sie bauen sich mit der Zeit ein eigenes Team auf, das mit ihnen wächst. Und alles, was du reinsteckst, kommt bei dir an. Nicht bei einem Chef.",
+    "alt": "Саме тому деякі тут виростають по-справжньому сильно: з часом вони будують власну команду, яка росте разом із ними. І все, що ти вкладаєш, приходить до тебе. А не до шефа.",
+    "neu": "Саме тому дехто тут виростає по-справжньому: з часом вони будують власну команду, яка росте разом із ними. І все, що ти вкладаєш, повертається до тебе. А не до якогось шефа.",
+    "grund": "„виростають по-справжньому сильно“ ist unidiomatisch; „приходить до тебе“ klingt nach Besuch, gemeint ist „kommt bei dir an / zurück“"
+  },
+  {
+    "de": "Für ein bisschen was extra: ein paar Stunden im Monat. Für einen echten Nebenverdienst: 4 bis 6 Stunden die Woche. Für richtig groß: mehr. Wir schauen im ersten Gespräch, was zu deinem Alltag passt und was du dir vorstellen kannst.",
+    "alt": "Для невеликого додаткового доходу: кілька годин на місяць. Для справжнього підробітку: 4–6 годин на тиждень. Щоб вийти на великий рівень: більше. На першій розмові подивимось, що вписується у твоє життя і що ти можеш собі уявити.",
+    "neu": "Для невеликого додаткового доходу: кілька годин на місяць. Для справжнього підробітку: 4–6 годин на тиждень. Щоб вийти на великий рівень: більше. Під час першої розмови подивимось, що вписується у твій ритм життя і що тобі було б цікаво.",
+    "grund": "„що ти можеш собі уявити“ ist eine wörtliche Kalkierung von „was du dir vorstellen kannst“; „На першій розмові“ ungrammatisch, richtig „Під час першої розмови“"
+  },
+  {
+    "de": "Die Anmeldung selbst kostet nichts. Um wirklich starten zu können, brauchst du ein kleines Startpaket mit Arbeitsmaterial (unter 20 Euro) und im Idealfall ein Produktset zum selbst Testen, damit du weißt, was du empfiehlst. Beides zusammen ist überschaubar, und das Produktset kannst du innerhalb von 30 Tagen zurückschicken, auch angebrochen. Kein Kursgeld, keine Ausbildungskosten, keine versteckten Gebühren.",
+    "alt": "Сама реєстрація нічого не коштує. Щоб справді стартувати, тобі потрібен невеликий стартовий пакет із робочими матеріалами (менше 20 євро) і в ідеалі набір продуктів, щоб протестувати їх самому й знати, що ти рекомендуєш. Разом це цілком підйомно, а набір продуктів можна повернути протягом 30 днів, навіть якщо вже відкрив. Без оплати курсів, без витрат на навчання, без прихованих платежів.",
+    "neu": "Сама реєстрація нічого не коштує. Щоб справді стартувати, тобі потрібен невеликий стартовий пакет із робочими матеріалами (менше 20 євро) і в ідеалі набір продуктів, щоб протестувати їх самому й знати, що ти рекомендуєш. Разом це цілком доступна сума, а набір продуктів можна повернути протягом 30 днів, навіть якщо вже відкрив. Без оплати курсів, без витрат на навчання, без прихованих платежів.",
+    "grund": "„підйомно“ ist ein Russismus (подъёмно)"
+  },
+  {
+    "de": "Dann hörst du auf. Kein Vertrag, keine Kündigungsfrist, keine offenen Rechnungen, keine Diskussionen. Bei uns gilt: jeder kann, keiner muss.",
+    "alt": "Тоді зупиняєшся. Без договору, без строку попередження, без відкритих рахунків, без розмов. У нас правило таке: кожен може, ніхто не мусить.",
+    "neu": "Тоді просто зупиняєшся. Без договору, без терміну попередження, без несплачених рахунків, без зайвих розмов. У нас правило таке: кожен може, ніхто не мусить.",
+    "grund": "„відкритих рахунків“ = geöffnete Konten, gemeint sind unbezahlte Rechnungen („несплачених рахунків“); „без розмов“ klingt nach Schweigegebot"
+  },
+  {
+    "de": "Was sag ich, wenn mein Umfeld denkt das ist Abzocke?",
+    "alt": "Що казати, якщо моє оточення думає, що це розвод?",
+    "neu": "Що казати, якщо моє оточення думає, що це лохотрон?",
+    "grund": "„розвод“ ist ein Russismus (развод), auf Ukrainisch bedeutet es Scheidung/Wachablösung; umgangssprachlich für „Abzocke“ sagt man „лохотрон“"
+  },
+  {
+    "de": "Kommt oft vor. Weil viele MLM-Sachen tatsächlich Abzocke waren oder sind. Ich hab dann drei Sachen im Ärmel: Eine Firma, die seit über 30 Jahren wächst. Produkte, die man selbst testen und zurückschicken kann. Und dass niemand außer dir entscheidet, wie weit du das treibst. Das reicht meistens.",
+    "alt": "Таке часто буває. Бо багато MLM-історій справді були або є розводом. У мене тоді є три речі в рукаві: компанія, яка росте вже понад 30 років. Продукти, які можна самому протестувати й повернути. І те, що ніхто, крім тебе, не вирішує, як далеко ти з цим підеш. Зазвичай цього достатньо.",
+    "neu": "Таке часто буває. Бо багато MLM-схем справді були або є лохотроном. Тоді в мене є три козирі в рукаві: компанія, яка росте вже понад 30 років. Продукти, які можна самому протестувати й повернути. І те, що ніхто, крім тебе, не вирішує, як далеко ти з цим підеш. Зазвичай цього достатньо.",
+    "grund": "„розводом“ Russismus; „три речі в рукаві“ ist keine ukrainische Redewendung, man hat „козирі в рукаві“"
+  },
+  {
+    "de": "Kostenlos beraten lassen",
+    "alt": "Порадитися безкоштовно",
+    "neu": "Безкоштовна консультація",
+    "grund": "„Порадитися“ heißt „sich mit jemandem beraten/abstimmen“; der Button meint eine kostenlose Beratung"
+  },
+  {
+    "de": "Alle Produkte sind Nahrungsergänzungsmittel und keine Arzneimittel. Sie können Krankheiten weder heilen, lindern noch verhindern.",
+    "alt": "Усі продукти — це дієтичні добавки, а не ліки. Вони не можуть ні лікувати, ні полегшувати, ні запобігати хворобам.",
+    "neu": "Усі продукти є дієтичними добавками, а не ліками. Вони не лікують хвороби, не полегшують їх перебіг і не запобігають їм.",
+    "grund": "Rektionsfehler: „лікувати/полегшувати“ verlangen Akkusativ, „запобігати“ Dativ, „хворобам“ passt nur zum letzten Verb; Gedankenstrich entfernt (Vorgabe)"
+  },
+  {
+    "de": "Bitte den Datenschutz-Hinweis bestätigen.",
+    "alt": "Будь ласка, підтвердь ознайомлення з інформацією про захист даних.",
+    "neu": "Будь ласка, підтвердь згоду з політикою конфіденційності.",
+    "grund": "„підтвердь ознайомлення з інформацією про захист даних“ ist Behördensprache und passt nicht zum Du-Ton; Begriff vereinheitlicht mit „Політика конфіденційності“ im Formular"
+  },
+  {
+    "de": "Empfiehl hochwertige Wellness-Produkte weiter und bau dir nebenbei ein monatliches Einkommen auf. Ohne Verkaufen, ohne Druck, in deinem Tempo.",
+    "alt": "Рекомендуй якісні wellness-продукти й паралельно створюй собі щомісячний дохід. Без продажів, без тиску, у своєму темпі.",
+    "neu": "Рекомендуй якісні продукти для здоров’я та гарного самопочуття й паралельно створюй собі щомісячний дохід. Без продажів, без тиску, у своєму темпі.",
+    "grund": "„wellness-продукти“ lateinisch/denglisch in der Meta-Beschreibung; Leser erwartet Kyrillisch"
+  }
+]

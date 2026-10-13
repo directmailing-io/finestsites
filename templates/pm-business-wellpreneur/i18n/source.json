@@ -1,0 +1,1262 @@
+[
+ {
+  "id": 0,
+  "de": "{{#unless partner_modus=duo}}Diese Seite wird betrieben von <strong>{{vorname}} {{nachname}}</strong>, {{#if geschlecht=weiblich}}unabhängige Vertriebspartnerin{{/if}}{{#if geschlecht=maennlich}}unabhängiger Vertriebspartner{{/if}} der PM-International (FitLine®). Keine offizielle Website der PM-International AG.{{/unless}}{{#if partner_modus=duo}}Diese Seite wird betrieben von <strong>{{vorname}} {{nachname}} &amp; {{vorname2}} {{nachname2}}</strong>, unabhängige Vertriebspartner der PM-International (FitLine®). Keine offizielle Website der PM-International AG.{{/if}}",
+  "en": "{{#unless partner_modus=duo}}This site is operated by <strong>{{vorname}} {{nachname}}</strong>, independent distributor of PM-International (FitLine®). Not an official website of PM-International AG.{{/unless}}{{#if partner_modus=duo}}This site is operated by <strong>{{vorname}} {{nachname}} &amp; {{vorname2}} {{nachname2}}</strong>, independent distributors of PM-International (FitLine®). Not an official website of PM-International AG.{{/if}}"
+ },
+ {
+  "id": 1,
+  "de": "Für wen",
+  "en": "Who it's for"
+ },
+ {
+  "id": 2,
+  "de": "So läuft's",
+  "en": "How it works"
+ },
+ {
+  "id": 3,
+  "de": "Über {{vorname}}",
+  "en": "About {{vorname}}"
+ },
+ {
+  "id": 4,
+  "de": "Über uns",
+  "en": "About us"
+ },
+ {
+  "id": 5,
+  "de": "Kontakt",
+  "en": "Contact"
+ },
+ {
+  "id": 6,
+  "de": "Gutes tun und dauerhaft profitieren",
+  "en": "Do good and profit for the long haul"
+ },
+ {
+  "id": 7,
+  "de": "Teile deine Erfahrungen und bau dir ein <span class=\"accent\">monatliches Einkommen</span> auf.",
+  "en": "Share your experience and build a <span class=\"accent\">monthly income</span>."
+ },
+ {
+  "id": 8,
+  "de": "Du lernst <strong>hochwertige Wellness- und Gesundheitsprodukte</strong> kennen, nutzt sie <strong>selbst</strong> und teilst deine Erfahrungen mit anderen. Wer sie testet und <strong>weiter bestellt</strong>, sorgt dafür, dass <strong>jeden Monat etwas auf deinem Konto</strong> landet.",
+  "en": "You get to know <strong>premium wellness and health products</strong>, use them <strong>yourself</strong> and share your experience with others. Everyone who tries them and <strong>keeps ordering</strong> puts <strong>money in your account, month after month</strong>."
+ },
+ {
+  "id": 9,
+  "de": "{{#unless partner_modus=duo}}Zeig{{/unless}}{{#if partner_modus=duo}}Zeigt{{/if}} mir, wie das läuft",
+  "en": "Show me how this works"
+ },
+ {
+  "id": 10,
+  "de": "Video lädt nicht.",
+  "en": "Video won't load."
+ },
+ {
+  "id": 11,
+  "de": "Erneut versuchen",
+  "en": "Try again"
+ },
+ {
+  "id": 12,
+  "de": "100% Unterstützung von",
+  "en": "100% support from"
+ },
+ {
+  "id": 13,
+  "de": "Zeit frei einteilen",
+  "en": "Work on your own schedule"
+ },
+ {
+  "id": 14,
+  "de": "Vom Handy aus",
+  "en": "Right from your phone"
+ },
+ {
+  "id": 15,
+  "de": "Keine Verpflichtung",
+  "en": "No strings attached"
+ },
+ {
+  "id": 16,
+  "de": "30 Tage Rückgabe",
+  "en": "30-day money back"
+ },
+ {
+  "id": 17,
+  "de": "Bist du geeignet?",
+  "en": "Is this for you?"
+ },
+ {
+  "id": 18,
+  "de": "Ja, das kannst du <span class=\"accent\">auch.</span>",
+  "en": "Yes, you can do this <span class=\"accent\">too.</span>"
+ },
+ {
+  "id": 19,
+  "de": "<strong>Egal wo du gerade stehst.</strong> Weil es <strong>nichts gibt, was du erst lernen müsstest</strong>. Kein Studium, keine Erfahrung, kein besonderes Talent. <strong>Alles was du brauchst, hast du längst dabei.</strong>",
+  "en": "<strong>No matter where you are in life.</strong> Because there is <strong>nothing you have to learn first</strong>. No degree, no experience, no special talent. <strong>Everything you need, you already have.</strong>"
+ },
+ {
+  "id": 20,
+  "de": "Alleinerziehende",
+  "en": "Single parents"
+ },
+ {
+  "id": 21,
+  "de": "Berufstätige",
+  "en": "Working professionals"
+ },
+ {
+  "id": 22,
+  "de": "Studenten",
+  "en": "Students"
+ },
+ {
+  "id": 23,
+  "de": "In Elternzeit",
+  "en": "On parental leave"
+ },
+ {
+  "id": 24,
+  "de": "Visionäre",
+  "en": "Visionaries"
+ },
+ {
+  "id": 25,
+  "de": "Selbstständige",
+  "en": "Self-employed"
+ },
+ {
+  "id": 26,
+  "de": "Paare",
+  "en": "Couples"
+ },
+ {
+  "id": 27,
+  "de": "Rentner",
+  "en": "Retirees"
+ },
+ {
+  "id": 28,
+  "de": "Und alle anderen, die Bock haben.",
+  "en": "And anyone else who's up for it."
+ },
+ {
+  "id": 29,
+  "de": "So einfach funktioniert<br><span class=\"accent\">dieses Business.</span>",
+  "en": "This business really is<br><span class=\"accent\">that simple.</span>"
+ },
+ {
+  "id": 30,
+  "de": "Schritt",
+  "en": "Step"
+ },
+ {
+  "id": 31,
+  "de": "Du erzählst davon",
+  "en": "You talk about it"
+ },
+ {
+  "id": 32,
+  "de": "Von einem Produkt, das du selbst nutzt und magst.",
+  "en": "About a product you use and love yourself."
+ },
+ {
+  "id": 33,
+  "de": "Kunde bestellt direkt",
+  "en": "Customers order directly"
+ },
+ {
+  "id": 34,
+  "de": "Bei der Firma. Nicht bei dir. Du hast damit nichts zu tun.",
+  "en": "From the company. Not from you. You don't have to deal with any of it."
+ },
+ {
+  "id": 35,
+  "de": "Du verdienst mit",
+  "en": "You earn your share"
+ },
+ {
+  "id": 36,
+  "de": "Deine Provision landet automatisch auf dem Konto. Jeden Monat, solange bestellt wird.",
+  "en": "Your commission lands in your account automatically. Every month, as long as people keep ordering."
+ },
+ {
+  "id": 37,
+  "de": "Alles, was sonst nervt,<br>macht <span class=\"accent\">die Firma für dich.</span>",
+  "en": "Everything that's usually a hassle,<br><span class=\"accent\">the company handles for you.</span>"
+ },
+ {
+  "id": 38,
+  "de": "Deine To-Do-Liste",
+  "en": "Your to-do list"
+ },
+ {
+  "id": 39,
+  "de": "fast alles erledigt",
+  "en": "almost everything done"
+ },
+ {
+  "id": 40,
+  "de": "Produkte selbst nutzen",
+  "en": "Use the products yourself"
+ },
+ {
+  "id": 41,
+  "de": "Du",
+  "en": "You"
+ },
+ {
+  "id": 42,
+  "de": "Eigene Erfahrung teilen",
+  "en": "Share your own experience"
+ },
+ {
+  "id": 43,
+  "de": "Anwender und Partner unterstützen",
+  "en": "Support your customers and partners"
+ },
+ {
+  "id": 44,
+  "de": "Alle Produkte lagern und weltweit versenden",
+  "en": "Store all products and ship them worldwide"
+ },
+ {
+  "id": 45,
+  "de": "Firma",
+  "en": "Company"
+ },
+ {
+  "id": 46,
+  "de": "Rechnungen schreiben und verschicken",
+  "en": "Write and send invoices"
+ },
+ {
+  "id": 47,
+  "de": "Kundengelder einziehen und auszahlen",
+  "en": "Collect and pay out customer payments"
+ },
+ {
+  "id": 48,
+  "de": "Rücksendungen abwickeln und erstatten",
+  "en": "Handle returns and refunds"
+ },
+ {
+  "id": 49,
+  "de": "Kundenservice per Telefon und Mail leisten",
+  "en": "Provide customer service by phone and email"
+ },
+ {
+  "id": 50,
+  "de": "Deine Provisionen berechnen und überweisen",
+  "en": "Calculate and transfer your commissions"
+ },
+ {
+  "id": 51,
+  "de": "Produkte weiterentwickeln und Qualität prüfen",
+  "en": "Develop products further and check quality"
+ },
+ {
+  "id": 52,
+  "de": "Marketing-Material und Videos bereitstellen",
+  "en": "Provide marketing material and videos"
+ },
+ {
+  "id": 53,
+  "de": "Business-Akademie, PowerDays und Reisen organisieren",
+  "en": "Organize the business academy, PowerDays and trips"
+ },
+ {
+  "id": 54,
+  "de": "Und was empfiehlst du <span class=\"accent\">eigentlich?</span>",
+  "en": "So what are you <span class=\"accent\">actually recommending?</span>"
+ },
+ {
+  "id": 55,
+  "de": "Wellness- und Gesundheitsprodukte für den Alltag. Vom Vitamin-Cocktail bis zum Immunbooster. Alle nach den gleichen strengen Standards produziert. Hier siehst du stellvertretend unser Herzstück: den PowerCocktail.",
+  "en": "Wellness and health products for everyday life. From vitamin cocktails to immune boosters. All produced to the same strict standards. Here's one example, and the heart of it all: the PowerCocktail."
+ },
+ {
+  "id": 56,
+  "de": "Transparent in Speyer, geprüfte statt billige Rohstoffe",
+  "en": "Made transparently in Speyer with tested ingredients, not cheap ones"
+ },
+ {
+  "id": 57,
+  "de": "100+ Patente",
+  "en": "100+ patents"
+ },
+ {
+  "id": 58,
+  "de": "Damit du beim ersten Schluck merkst: das ist anders",
+  "en": "So you notice from the very first sip: this is different"
+ },
+ {
+  "id": 59,
+  "de": "1.000+ Profisportler",
+  "en": "1,000+ pro athletes"
+ },
+ {
+  "id": 60,
+  "de": "Marktführer in Europa, in 40+ Ländern im Einsatz",
+  "en": "Market leader in Europe, used in 40+ countries"
+ },
+ {
+  "id": 61,
+  "de": "Natur pur",
+  "en": "Pure nature"
+ },
+ {
+  "id": 62,
+  "de": "Natürliche Rohstoffe statt synthetischer Zusätze",
+  "en": "Natural ingredients instead of synthetic additives"
+ },
+ {
+  "id": 63,
+  "de": "Alles perfekt dosiert",
+  "en": "Perfectly dosed"
+ },
+ {
+  "id": 64,
+  "de": "20+ Vitamine, 25+ Pflanzenextrakte in einem Glas",
+  "en": "20+ vitamins and 25+ plant extracts in one glass"
+ },
+ {
+  "id": 65,
+  "de": "19 Wissenschaftler",
+  "en": "19 scientists"
+ },
+ {
+  "id": 66,
+  "de": "Mediziner, Ernährungs- und Biochemiker im Beirat",
+  "en": "Doctors, nutrition experts and biochemists on the advisory board"
+ },
+ {
+  "id": 67,
+  "de": "Beim ersten Schluck spürbar anders",
+  "en": "Noticeably different from the first sip"
+ },
+ {
+  "id": 68,
+  "de": "Speyer, geprüfte Rohstoffe",
+  "en": "Speyer, tested ingredients"
+ },
+ {
+  "id": 69,
+  "de": "Mediziner & Biochemiker im Beirat",
+  "en": "Doctors & biochemists on board"
+ },
+ {
+  "id": 70,
+  "de": "Natürliche Rohstoffe, keine Ersatz-Chemie",
+  "en": "Natural ingredients, no synthetic substitutes"
+ },
+ {
+  "id": 71,
+  "de": "20+ Vitamine, 25+ Extrakte",
+  "en": "20+ vitamins, 25+ extracts"
+ },
+ {
+  "id": 72,
+  "de": "Marktführer Europa, 40+ Länder",
+  "en": "Europe's market leader, 40+ countries"
+ },
+ {
+  "id": 73,
+  "de": "Mehr als weiterempfehlen",
+  "en": "More than recommending"
+ },
+ {
+  "id": 74,
+  "de": "Du verkaufst kein Produkt.<br><span class=\"accent\">Du verteilst ein Stück Lebensqualität.</span>",
+  "en": "You're not selling a product.<br><span class=\"accent\">You're sharing a piece of quality of life.</span>"
+ },
+ {
+  "id": 75,
+  "de": "Gut in den Tag starten",
+  "en": "Start the day feeling good"
+ },
+ {
+  "id": 76,
+  "de": "Wumms im Alltag statt Nachmittagstief",
+  "en": "Energy all day instead of the afternoon slump"
+ },
+ {
+  "id": 77,
+  "de": "Fit für Job und Familie gleichzeitig",
+  "en": "Fit for work and family at the same time"
+ },
+ {
+  "id": 78,
+  "de": "Sport & schnellere Regeneration",
+  "en": "Sports & faster recovery"
+ },
+ {
+  "id": 79,
+  "de": "Ausgleich nach stressigen Tagen",
+  "en": "Winding down after stressful days"
+ },
+ {
+  "id": 80,
+  "de": "Aktiv bleiben in jedem Alter",
+  "en": "Staying active at any age"
+ },
+ {
+  "id": 81,
+  "de": "Nach der Schwangerschaft zurück zu sich",
+  "en": "Finding your way back to yourself after pregnancy"
+ },
+ {
+  "id": 82,
+  "de": "Klar im Kopf, konzentriert im Job",
+  "en": "Clear head, focused at work"
+ },
+ {
+  "id": 83,
+  "de": "Jemand quält sich seit Jahren morgens aus dem Bett. Und du bist derjenige, der ihm zeigt, dass es auch anders geht. <span class=\"accent\">Das ist der Job. Nicht das Verkaufen.</span>",
+  "en": "Someone has been dragging themselves out of bed for years. And you're the one who shows them it doesn't have to be that way. <span class=\"accent\">That's the job. Not selling.</span>"
+ },
+ {
+  "id": 84,
+  "de": "Kein Risiko. <span class=\"accent\">Für keinen.</span>",
+  "en": "No risk. <span class=\"accent\">For anyone.</span>"
+ },
+ {
+  "id": 85,
+  "de": "30 Tage ausprobieren. Passt nicht? 100 % Geld zurück. Ohne Papierkram.",
+  "en": "Try it for 30 days. Not for you? 100% money back. No paperwork."
+ },
+ {
+  "id": 86,
+  "de": "Ich will das machen",
+  "en": "I want to do this"
+ },
+ {
+  "id": 87,
+  "de": "Was hinter allem steht",
+  "en": "The company behind it all"
+ },
+ {
+  "id": 88,
+  "de": "Ein deutsches Familienunternehmen.<br><span class=\"accent\">Und es wächst wie verrückt.</span>",
+  "en": "A German family business.<br><span class=\"accent\">And it's growing like crazy.</span>"
+ },
+ {
+  "id": 89,
+  "de": "Rolf Sorg hat die Firma 1993 gegründet. Keine Aktionäre, keine Investoren im Nacken. Nur seine Familie und ein Team, das seit über 30 Jahren dazulernt. Was dabei rauskommt, siehst du hier:",
+  "en": "Rolf Sorg founded the company in 1993. No shareholders, no investors breathing down his neck. Just his family and a team that's been learning and improving for over 30 years. Here's what that leads to:"
+ },
+ {
+  "id": 90,
+  "de": "Jahresumsatz in Milliarden US-Dollar",
+  "en": "Annual revenue in billion US dollars"
+ },
+ {
+  "id": 91,
+  "de": "Gesundheit ist gefragt wie nie.<br><span class=\"accent\">Und wir mittendrin.</span>",
+  "en": "Health has never been in higher demand.<br><span class=\"accent\">And we're right in the middle of it.</span>"
+ },
+ {
+  "id": 92,
+  "de": "Ganz egal wie's der Wirtschaft gerade geht: Auf <strong>Gesundheit, Fitness und Wohlbefinden</strong> will niemand verzichten. <strong>Die Nachfrage steigt jedes Jahr</strong>, und wir wachsen mit. <strong>Hunderttausende Menschen weltweit</strong> sind längst dabei. <strong>Und jetzt bist du dran.</strong>",
+  "en": "No matter how the economy is doing: nobody wants to give up <strong>health, fitness and wellbeing</strong>. <strong>Demand grows every year</strong>, and we grow with it. <strong>Hundreds of thousands of people worldwide</strong> are already in. <strong>Now it's your turn.</strong>"
+ },
+ {
+  "id": 93,
+  "de": "Ich will dabei sein",
+  "en": "I want in"
+ },
+ {
+  "id": 94,
+  "de": "Foto hochladen",
+  "en": "Upload photo"
+ },
+ {
+  "id": 95,
+  "de": "Wer dich begleitet",
+  "en": "Who's got your back"
+ },
+ {
+  "id": 96,
+  "de": "Wer euch begleitet",
+  "en": "Who's got your back"
+ },
+ {
+  "id": 97,
+  "de": "Weltweit<span class=\"accent\">Kunden &amp; Partner.</span>",
+  "en": "Customers &amp; partners<span class=\"accent\">worldwide.</span>"
+ },
+ {
+  "id": 98,
+  "de": "Du arbeitest von zu Hause aus. Deine Kunden können trotzdem in Tokio, Miami oder Dubai ihre Produkte genießen.",
+  "en": "You work from home. Your customers can still enjoy their products in Tokyo, Miami or Dubai."
+ },
+ {
+  "id": 99,
+  "de": "Deutschland",
+  "en": "Germany"
+ },
+ {
+  "id": 100,
+  "de": "Österreich",
+  "en": "Austria"
+ },
+ {
+  "id": 101,
+  "de": "Schweiz",
+  "en": "Switzerland"
+ },
+ {
+  "id": 102,
+  "de": "Singapur",
+  "en": "Singapore"
+ },
+ {
+  "id": 103,
+  "de": "Australien",
+  "en": "Australia"
+ },
+ {
+  "id": 104,
+  "de": "VAE",
+  "en": "UAE"
+ },
+ {
+  "id": 105,
+  "de": "Frankreich",
+  "en": "France"
+ },
+ {
+  "id": 106,
+  "de": "Italien",
+  "en": "Italy"
+ },
+ {
+  "id": 107,
+  "de": "Spanien",
+  "en": "Spain"
+ },
+ {
+  "id": 108,
+  "de": "Niederlande",
+  "en": "Netherlands"
+ },
+ {
+  "id": 109,
+  "de": "Belgien",
+  "en": "Belgium"
+ },
+ {
+  "id": 110,
+  "de": "Luxemburg",
+  "en": "Luxembourg"
+ },
+ {
+  "id": 111,
+  "de": "Polen",
+  "en": "Poland"
+ },
+ {
+  "id": 112,
+  "de": "Tschechien",
+  "en": "Czechia"
+ },
+ {
+  "id": 113,
+  "de": "Slowakei",
+  "en": "Slovakia"
+ },
+ {
+  "id": 114,
+  "de": "Ungarn",
+  "en": "Hungary"
+ },
+ {
+  "id": 115,
+  "de": "Rumänien",
+  "en": "Romania"
+ },
+ {
+  "id": 116,
+  "de": "Bulgarien",
+  "en": "Bulgaria"
+ },
+ {
+  "id": 117,
+  "de": "Kroatien",
+  "en": "Croatia"
+ },
+ {
+  "id": 118,
+  "de": "Slowenien",
+  "en": "Slovenia"
+ },
+ {
+  "id": 119,
+  "de": "Griechenland",
+  "en": "Greece"
+ },
+ {
+  "id": 120,
+  "de": "Schweden",
+  "en": "Sweden"
+ },
+ {
+  "id": 121,
+  "de": "Dänemark",
+  "en": "Denmark"
+ },
+ {
+  "id": 122,
+  "de": "Norwegen",
+  "en": "Norway"
+ },
+ {
+  "id": 123,
+  "de": "Finnland",
+  "en": "Finland"
+ },
+ {
+  "id": 124,
+  "de": "Irland",
+  "en": "Ireland"
+ },
+ {
+  "id": 125,
+  "de": "Russland",
+  "en": "Russia"
+ },
+ {
+  "id": 126,
+  "de": "Estland",
+  "en": "Estonia"
+ },
+ {
+  "id": 127,
+  "de": "Lettland",
+  "en": "Latvia"
+ },
+ {
+  "id": 128,
+  "de": "Litauen",
+  "en": "Lithuania"
+ },
+ {
+  "id": 129,
+  "de": "Serbien",
+  "en": "Serbia"
+ },
+ {
+  "id": 130,
+  "de": "Bosnien",
+  "en": "Bosnia"
+ },
+ {
+  "id": 131,
+  "de": "Nordmazedonien",
+  "en": "North Macedonia"
+ },
+ {
+  "id": 132,
+  "de": "Albanien",
+  "en": "Albania"
+ },
+ {
+  "id": 133,
+  "de": "Moldawien",
+  "en": "Moldova"
+ },
+ {
+  "id": 134,
+  "de": "Zypern",
+  "en": "Cyprus"
+ },
+ {
+  "id": 135,
+  "de": "Türkei",
+  "en": "Turkey"
+ },
+ {
+  "id": 136,
+  "de": "Kasachstan",
+  "en": "Kazakhstan"
+ },
+ {
+  "id": 137,
+  "de": "Kanada",
+  "en": "Canada"
+ },
+ {
+  "id": 138,
+  "de": "Mexiko",
+  "en": "Mexico"
+ },
+ {
+  "id": 139,
+  "de": "Brasilien",
+  "en": "Brazil"
+ },
+ {
+  "id": 140,
+  "de": "Kolumbien",
+  "en": "Colombia"
+ },
+ {
+  "id": 141,
+  "de": "Argentinien",
+  "en": "Argentina"
+ },
+ {
+  "id": 142,
+  "de": "Dom. Republik",
+  "en": "Dominican Rep."
+ },
+ {
+  "id": 143,
+  "de": "Bolivien",
+  "en": "Bolivia"
+ },
+ {
+  "id": 144,
+  "de": "Südkorea",
+  "en": "South Korea"
+ },
+ {
+  "id": 145,
+  "de": "Indonesien",
+  "en": "Indonesia"
+ },
+ {
+  "id": 146,
+  "de": "Philippinen",
+  "en": "Philippines"
+ },
+ {
+  "id": 147,
+  "de": "Neuseeland",
+  "en": "New Zealand"
+ },
+ {
+  "id": 148,
+  "de": "Hongkong",
+  "en": "Hong Kong"
+ },
+ {
+  "id": 149,
+  "de": "Indien",
+  "en": "India"
+ },
+ {
+  "id": 150,
+  "de": "Saudi-Arabien",
+  "en": "Saudi Arabia"
+ },
+ {
+  "id": 151,
+  "de": "Elfenbeinküste",
+  "en": "Ivory Coast"
+ },
+ {
+  "id": 152,
+  "de": "Südafrika",
+  "en": "South Africa"
+ },
+ {
+  "id": 153,
+  "de": "Kenia",
+  "en": "Kenya"
+ },
+ {
+  "id": 154,
+  "de": "Island",
+  "en": "Iceland"
+ },
+ {
+  "id": 155,
+  "de": "+65 weitere Länder",
+  "en": "+65 more countries"
+ },
+ {
+  "id": 156,
+  "de": "Jetzt starten",
+  "en": "Get started"
+ },
+ {
+  "id": 157,
+  "de": "Weniger anzeigen",
+  "en": "Show less"
+ },
+ {
+  "id": 158,
+  "de": "Warum das geht",
+  "en": "Why this works"
+ },
+ {
+  "id": 159,
+  "de": "Warum du <span class=\"accent\">so viel Qualität</span> für dein Geld kriegst.",
+  "en": "Why you get <span class=\"accent\">so much quality</span> for your money."
+ },
+ {
+  "id": 160,
+  "de": "Rechnen wir kurz. Nimm einen 100 Euro Schuh im Laden. Wo landet dein Geld?",
+  "en": "Let's do some quick math. Take a 100-euro pair of shoes from a store. Where does your money actually go?"
+ },
+ {
+  "id": 161,
+  "de": "Klassischer Weg",
+  "en": "The classic way"
+ },
+ {
+  "id": 162,
+  "de": "Produkt",
+  "en": "Product"
+ },
+ {
+  "id": 163,
+  "de": "Hersteller",
+  "en": "Manufacturer"
+ },
+ {
+  "id": 164,
+  "de": "Großhandel",
+  "en": "Wholesale"
+ },
+ {
+  "id": 165,
+  "de": "Einzelhandel",
+  "en": "Retail"
+ },
+ {
+  "id": 166,
+  "de": "Werbung",
+  "en": "Advertising"
+ },
+ {
+  "id": 167,
+  "de": "Unser Weg",
+  "en": "Our way"
+ },
+ {
+  "id": 168,
+  "de": "Produkt & Qualität",
+  "en": "Product & quality"
+ },
+ {
+  "id": 169,
+  "de": "An die, die empfehlen",
+  "en": "To the people who spread the word"
+ },
+ {
+  "id": 170,
+  "de": "<span class=\"accent\">Viel mehr Geld</span> fließt in die Qualität. Deshalb wird nachbestellt.",
+  "en": "<span class=\"accent\">Far more money</span> goes into quality. That's why people reorder."
+ },
+ {
+  "id": 171,
+  "de": "Bevor du fragst",
+  "en": "Before you ask"
+ },
+ {
+  "id": 172,
+  "de": "Das willst du <span class=\"accent\">wahrscheinlich wissen.</span>",
+  "en": "You're probably <span class=\"accent\">wondering about this.</span>"
+ },
+ {
+  "id": 173,
+  "de": "Ist das dieses Schneeball-Ding?",
+  "en": "Is this one of those pyramid things?"
+ },
+ {
+  "id": 174,
+  "de": "Nein. Beim Schneeballsystem verdient man an neuen Leuten, die einzahlen. Bei uns verdienst du nur, wenn Produkte gekauft und weiter genutzt werden. Keine Bestellungen, kein Geld. Der Unterschied ist gesetzlich klar geregelt (siehe <a href=\"https://www.gesetze-im-internet.de/uwg_2004/anhang.html\" target=\"_blank\" rel=\"noopener\">UWG Anhang Nr. 14</a>) und wird auch vom <a href=\"https://direktvertrieb.de/de/abgrenzung\" target=\"_blank\" rel=\"noopener\">Bundesverband Direktvertrieb</a> so definiert. Und die Firma gibts seit 1993 mit 4 Milliarden Umsatz. Schneeballsysteme kollabieren nach ein paar Jahren. Wir sind bei über 30.",
+  "en": "No. In a pyramid scheme, you earn from new people paying in. Here you only earn when products are bought and actually used. No orders, no money. The difference is clearly regulated by German law (see <a href=\"https://www.gesetze-im-internet.de/uwg_2004/anhang.html\" target=\"_blank\" rel=\"noopener\">UWG Annex No. 14</a>) and defined the same way by the <a href=\"https://direktvertrieb.de/de/abgrenzung\" target=\"_blank\" rel=\"noopener\">German Direct Selling Association</a>. And the company has been around since 1993, now at 4 billion in revenue. Pyramid schemes collapse after a few years. We're past 30."
+ },
+ {
+  "id": 175,
+  "de": "Muss ich meine Freunde und Familie nerven?",
+  "en": "Do I have to bug my friends and family?"
+ },
+ {
+  "id": 176,
+  "de": "Ganz sicher nicht. Ich empfehle nur da, wo ich denke, dass es passt. Alles andere wär ja auch peinlich. Wenn du niemanden aus deinem Umfeld ansprechen willst, gibts genug andere Wege über Social Media oder deine Community. Wir machen das so, wie es zu dir passt.",
+  "en": "Definitely not. I only recommend where I think it's a good fit. Anything else would just be awkward. If you don't want to approach anyone you know, there are plenty of other ways through social media or your community. We do this the way that suits you."
+ },
+ {
+  "id": 177,
+  "de": "Ich bin kein Verkäufertyp. Geht das trotzdem?",
+  "en": "I'm not a salesperson. Can I still do this?"
+ },
+ {
+  "id": 178,
+  "de": "Gut so. Denn hier verkauft niemand. Du erzählst nur, was dir selbst was gebracht hat. Wer das hören will, hört zu. Wer nicht, dann eben nicht. Kein Sales-Pitch, keine Techniken. Sondern eine Empfehlung, wie du sie auch bei einem guten Restaurant weitergibst.",
+  "en": "Good. Because nobody sells here. You just talk about what worked for you. Whoever wants to hear it, listens. Whoever doesn't, doesn't. No sales pitch, no techniques. Just a recommendation, like you'd give for a good restaurant."
+ },
+ {
+  "id": 179,
+  "de": "Ist das nicht viel zu teuer?",
+  "en": "Isn't this way too expensive?"
+ },
+ {
+  "id": 180,
+  "de": "Auf den ersten Blick vielleicht. Aber schau dir mal an, wie sich der Preis zusammensetzt. Bei den meisten Marken gehen 60 Prozent in Werbung und Zwischenhandel. Bei uns fließt der Großteil in die Qualität. Deshalb ist der Preis höher. Und genau deshalb bestellen Menschen immer wieder nach.",
+  "en": "At first glance, maybe. But look at what makes up the price. With most brands, 60 percent goes into advertising and middlemen. With us, most of it goes into quality. That's why the price is higher. And that's exactly why people keep reordering."
+ },
+ {
+  "id": 181,
+  "de": "Kann ich das nicht günstiger in der Drogerie kaufen?",
+  "en": "Can't I get this cheaper at the drugstore?"
+ },
+ {
+  "id": 182,
+  "de": "Kannst du. Aber du kaufst dann was anderes. Standard-Vitamine sind oft einzeln dosiert. Unsere Produkte sind aufeinander abgestimmt und werden nach Pharma-Standard in Deutschland hergestellt. Das ist ein Unterschied wie zwischen Instant-Kaffee und einem echten Espresso.",
+  "en": "You can. But you'd be buying something different. Standard vitamins are often dosed individually. Our products are designed to work together and made to pharmaceutical standards in Germany. It's the difference between instant coffee and a real espresso."
+ },
+ {
+  "id": 183,
+  "de": "Muss ich jeden Monat Ware bestellen?",
+  "en": "Do I have to order products every month?"
+ },
+ {
+  "id": 184,
+  "de": "Nein. Du bestellst wann und wie viel du willst. Es gibt aber ein automatisches Belieferungssystem, mit dem du bei jeder Bestellung sparst. Die meisten entscheiden sich freiwillig dafür, weil sie die Produkte eh nutzen und Geld sparen wollen. Nicht weil sie müssen, sondern weil sie es wollen. Keine Mindestlaufzeit, jederzeit anpassbar oder kündbar. Kein Risiko.",
+  "en": "No. You order when and how much you want. There is an auto-delivery program that saves you money on every order. Most people opt in voluntarily because they use the products anyway and want to save. Not because they have to, but because they want to. No minimum term, adjust or cancel anytime. No risk."
+ },
+ {
+  "id": 185,
+  "de": "Was verdient man realistisch?",
+  "en": "What can you realistically earn?"
+ },
+ {
+  "id": 186,
+  "de": "Ehrliche Antwort: Ganz unterschiedlich. Die einen machen 100 im Monat, die anderen ein paar Tausend, wieder andere leben komplett davon.",
+  "en": "Honest answer: it varies a lot. Some make 100 a month, some a few thousand, and some live off it entirely."
+ },
+ {
+  "id": 187,
+  "de": "Am Anfang verdienst du an dem, was du selbst weiterempfiehlst. Mit der Zeit kannst du auch andere Menschen mit ins Boot holen, die genau das Gleiche machen wie du. Aus dem, was dein Team dann bewegt, kriegst du auch was ab. Nicht weil du an denen verdienst, sondern weil du sie mit aufgebaut und trainiert hast. Wie ein Trainer, der einen Prozentsatz vom Erfolg seiner Athleten kriegt.",
+  "en": "In the beginning, you earn from what you personally recommend. Over time, you can bring others on board who do exactly what you do. You then get a share of what your team generates. Not because you profit off them, but because you helped build and train them. Like a coach who gets a percentage of their athletes' success."
+ },
+ {
+  "id": 188,
+  "de": "Das ist der Grund, warum manche hier richtig groß werden: Sie bauen sich mit der Zeit ein eigenes Team auf, das mit ihnen wächst. Und alles, was du reinsteckst, kommt bei dir an. Nicht bei einem Chef.",
+  "en": "That's why some people get really big here: over time they build their own team that grows with them. And everything you put in comes back to you. Not to a boss."
+ },
+ {
+  "id": 189,
+  "de": "Wie viel Zeit muss ich investieren?",
+  "en": "How much time do I need to put in?"
+ },
+ {
+  "id": 190,
+  "de": "Für ein bisschen was extra: ein paar Stunden im Monat. Für einen echten Nebenverdienst: 4 bis 6 Stunden die Woche. Für richtig groß: mehr. Wir schauen im ersten Gespräch, was zu deinem Alltag passt und was du dir vorstellen kannst.",
+  "en": "For a little extra on the side: a few hours a month. For a real side income: 4 to 6 hours a week. To go big: more. In our first chat, we'll figure out what fits your life and what you can see yourself doing."
+ },
+ {
+  "id": 191,
+  "de": "Was kostet mich der Einstieg?",
+  "en": "What does it cost to get started?"
+ },
+ {
+  "id": 192,
+  "de": "Die Anmeldung selbst kostet nichts. Um wirklich starten zu können, brauchst du ein kleines Startpaket mit Arbeitsmaterial (unter 20 Euro) und im Idealfall ein Produktset zum selbst Testen, damit du weißt, was du empfiehlst. Beides zusammen ist überschaubar, und das Produktset kannst du innerhalb von 30 Tagen zurückschicken, auch angebrochen. Kein Kursgeld, keine Ausbildungskosten, keine versteckten Gebühren.",
+  "en": "Signing up is free. To really get going, you'll need a small starter kit with work materials (under 20 euros) and ideally a product set to try yourself, so you know what you're recommending. Both together won't break the bank, and you can return the product set within 30 days, even opened. No course fees, no training costs, no hidden charges."
+ },
+ {
+  "id": 193,
+  "de": "Was, wenn ich aufhören will?",
+  "en": "What if I want to quit?"
+ },
+ {
+  "id": 194,
+  "de": "Dann hörst du auf. Kein Vertrag, keine Kündigungsfrist, keine offenen Rechnungen, keine Diskussionen. Bei uns gilt: jeder kann, keiner muss.",
+  "en": "Then you quit. No contract, no notice period, no open bills, no arguments. Our rule: everyone can, nobody has to."
+ },
+ {
+  "id": 195,
+  "de": "Was sag ich, wenn mein Umfeld denkt das ist Abzocke?",
+  "en": "What do I say when people around me think it's a scam?"
+ },
+ {
+  "id": 196,
+  "de": "Kommt oft vor. Weil viele MLM-Sachen tatsächlich Abzocke waren oder sind. Ich hab dann drei Sachen im Ärmel: Eine Firma, die seit über 30 Jahren wächst. Produkte, die man selbst testen und zurückschicken kann. Und dass niemand außer dir entscheidet, wie weit du das treibst. Das reicht meistens.",
+  "en": "Happens a lot. Because plenty of MLM schemes really were or are scams. I have three things up my sleeve: a company that's been growing for over 30 years. Products you can try yourself and send back. And the fact that nobody but you decides how far you take this. That usually does the trick."
+ },
+ {
+  "id": 197,
+  "de": "Passt das zu dir?<br><span class=\"accent\">Lass es uns herausfinden.</span>",
+  "en": "Could this be for you?<br><span class=\"accent\">Let's find out.</span>"
+ },
+ {
+  "id": 198,
+  "de": "Schritt 1 von 3",
+  "en": "Step 1 of 3"
+ },
+ {
+  "id": 199,
+  "de": "Was interessiert dich?",
+  "en": "What are you interested in?"
+ },
+ {
+  "id": 200,
+  "de": "Ein bisschen was nebenbei",
+  "en": "A little something on the side"
+ },
+ {
+  "id": 201,
+  "de": "Zweites Standbein aufbauen",
+  "en": "Building a second income stream"
+ },
+ {
+  "id": 202,
+  "de": "Komplett neuer Weg",
+  "en": "A completely fresh start"
+ },
+ {
+  "id": 203,
+  "de": "Erstmal die Produkte kennenlernen",
+  "en": "Getting to know the products first"
+ },
+ {
+  "id": 204,
+  "de": "Weiter",
+  "en": "Next"
+ },
+ {
+  "id": 205,
+  "de": "Schritt 2 von 3",
+  "en": "Step 2 of 3"
+ },
+ {
+  "id": 206,
+  "de": "Wie viel Zeit hättest du?",
+  "en": "How much time could you spare?"
+ },
+ {
+  "id": 207,
+  "de": "Ein paar Stunden im Monat",
+  "en": "A few hours a month"
+ },
+ {
+  "id": 208,
+  "de": "2 bis 5 Stunden pro Woche",
+  "en": "2 to 5 hours a week"
+ },
+ {
+  "id": 209,
+  "de": "5 bis 15 Stunden pro Woche",
+  "en": "5 to 15 hours a week"
+ },
+ {
+  "id": 210,
+  "de": "Mehr, ich meine es ernst",
+  "en": "More, I'm serious about this"
+ },
+ {
+  "id": 211,
+  "de": "Weiß ich noch nicht",
+  "en": "Not sure yet"
+ },
+ {
+  "id": 212,
+  "de": "Zurück",
+  "en": "Back"
+ },
+ {
+  "id": 213,
+  "de": "Schritt 3 von 3",
+  "en": "Step 3 of 3"
+ },
+ {
+  "id": 214,
+  "de": "So erreiche ich dich",
+  "en": "How I can reach you"
+ },
+ {
+  "id": 215,
+  "de": "Du schreibst direkt an",
+  "en": "Your message goes straight to"
+ },
+ {
+  "id": 216,
+  "de": "Wie erreiche ich dich am besten?",
+  "en": "What's the best way to reach you?"
+ },
+ {
+  "id": 217,
+  "de": "Telefon",
+  "en": "Phone"
+ },
+ {
+  "id": 218,
+  "de": "Ich bin einverstanden, dass meine Angaben zur Kontaktaufnahme verwendet werden. Sie werden nicht weitergegeben. <a href=\"/datenschutz\" target=\"_blank\">Datenschutz</a>",
+  "en": "I agree that my details may be used to get in touch with me. They will not be shared with anyone. <a href=\"/datenschutz\" target=\"_blank\">Privacy policy</a>"
+ },
+ {
+  "id": 219,
+  "de": "Absenden",
+  "en": "Send"
+ },
+ {
+  "id": 220,
+  "de": "Gute Wahl!",
+  "en": "Great choice!"
+ },
+ {
+  "id": 221,
+  "de": "Deine Nachricht ist bei mir angekommen. Ich melde mich zeitnah, meistens noch am selben Tag.",
+  "en": "Your message just landed in my inbox. I'll get back to you soon, usually the same day."
+ },
+ {
+  "id": 222,
+  "de": "In der Zwischenzeit findest du {{#unless partner_modus=duo}}mich{{/unless}}{{#if partner_modus=duo}}uns{{/if}} auch hier:",
+  "en": "In the meantime, you can also find {{#unless partner_modus=duo}}me{{/unless}}{{#if partner_modus=duo}}us{{/if}} here:"
+ },
+ {
+  "id": 223,
+  "de": "Seite",
+  "en": "Site"
+ },
+ {
+  "id": 224,
+  "de": "Häufige Fragen",
+  "en": "FAQ"
+ },
+ {
+  "id": 225,
+  "de": "Kostenlos beraten lassen",
+  "en": "Get free advice"
+ },
+ {
+  "id": 226,
+  "de": "Rechtliches",
+  "en": "Legal"
+ },
+ {
+  "id": 227,
+  "de": "Impressum",
+  "en": "Legal notice"
+ },
+ {
+  "id": 228,
+  "de": "Datenschutz",
+  "en": "Privacy policy"
+ },
+ {
+  "id": 229,
+  "de": "Wichtige Hinweise",
+  "en": "Important notes"
+ },
+ {
+  "id": 230,
+  "de": "{{#unless partner_modus=duo}}{{#if geschlecht=weiblich}}Unabhängige Vertriebspartnerin{{/if}}{{#if geschlecht=maennlich}}Unabhängiger Vertriebspartner{{/if}}{{/unless}}{{#if partner_modus=duo}}Unabhängige Vertriebspartner{{/if}} der PM-International (FitLine®). Diese Seite ist keine offizielle Website der PM-International AG.",
+  "en": "{{#unless partner_modus=duo}}Independent distributor{{/unless}}{{#if partner_modus=duo}}Independent distributors{{/if}} of PM-International (FitLine®). This site is not an official website of PM-International AG."
+ },
+ {
+  "id": 231,
+  "de": "Alle Produkte sind Nahrungsergänzungsmittel und keine Arzneimittel. Sie können Krankheiten weder heilen, lindern noch verhindern.",
+  "en": "All products are food supplements, not medicines. They are not intended to cure, treat, or prevent any disease."
+ },
+ {
+  "id": 232,
+  "de": "von",
+  "en": "by"
+ },
+ {
+  "id": 233,
+  "de": "Wird gesendet …",
+  "en": "Sending…"
+ },
+ {
+  "id": 234,
+  "de": "So läuft’s",
+  "en": "How it works"
+ },
+ {
+  "id": 235,
+  "de": "Kontakt aufnehmen",
+  "en": "Get in touch"
+ },
+ {
+  "id": 236,
+  "de": "Deine Privatsphäre",
+  "en": "Your privacy"
+ },
+ {
+  "id": 237,
+  "de": "Wir nutzen Cookies, um dir das beste Erlebnis zu bieten. Technisch notwendige Cookies sind immer aktiv — sie machen die Seite funktionsfähig. Weitere Cookies (z.&nbsp;B. Statistiken) setzen wir nur mit deiner Zustimmung. Mehr Infos in unserer <a href=\"/datenschutz\" target=\"_blank\" rel=\"noopener\">Datenschutzerklärung</a>.",
+  "en": "We use cookies to give you the best experience. Essential cookies are always on; they keep the site working. Any other cookies (like statistics) are only set with your consent. More info in our <a href=\"/datenschutz\" target=\"_blank\" rel=\"noopener\">privacy policy</a>."
+ },
+ {
+  "id": 238,
+  "de": "Technisch notwendig",
+  "en": "Essential"
+ },
+ {
+  "id": 239,
+  "de": "Grundlegende Funktionen der Website — immer aktiv.",
+  "en": "Basic website functions, always on."
+ },
+ {
+  "id": 240,
+  "de": "Statistiken",
+  "en": "Statistics"
+ },
+ {
+  "id": 241,
+  "de": "Hilft uns zu verstehen, wie Besucher die Seite nutzen (z.&nbsp;B. Google Analytics).",
+  "en": "Helps us understand how visitors use the site (e.g. Google Analytics)."
+ },
+ {
+  "id": 242,
+  "de": "Für personalisierte Werbung und Retargeting (z.&nbsp;B. Meta Pixel).",
+  "en": "For personalized ads and retargeting (e.g. Meta Pixel)."
+ },
+ {
+  "id": 243,
+  "de": "Alles ablehnen",
+  "en": "Reject all"
+ },
+ {
+  "id": 244,
+  "de": "Alles akzeptieren",
+  "en": "Accept all"
+ },
+ {
+  "id": 245,
+  "de": "Einstellungen anpassen &#8250;",
+  "en": "Adjust settings &#8250;"
+ },
+ {
+  "id": 246,
+  "de": "Auswahl speichern ›",
+  "en": "Save selection ›"
+ },
+ {
+  "id": 247,
+  "de": "Einstellungen anpassen ›",
+  "en": "Adjust settings ›"
+ },
+ {
+  "id": 248,
+  "de": "Bitte deinen vollständigen Namen eingeben.",
+  "en": "Please enter your full name."
+ },
+ {
+  "id": 249,
+  "de": "Bitte deine Telefonnummer eingeben.",
+  "en": "Please enter your phone number."
+ },
+ {
+  "id": 250,
+  "de": "Bitte den Datenschutz-Hinweis bestätigen.",
+  "en": "Please confirm the privacy notice."
+ },
+ {
+  "id": 251,
+  "de": "Etwas ist schiefgelaufen. Bitte versuche es erneut.",
+  "en": "Something went wrong. Please try again."
+ }
+]

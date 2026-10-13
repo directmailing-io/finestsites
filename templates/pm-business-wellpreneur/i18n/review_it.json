@@ -1,0 +1,98 @@
+[
+ {
+  "de": "Du lernst <strong>hochwertige Wellness- und Gesundheitsprodukte</strong> kennen, nutzt sie <strong>selbst</strong> und teilst deine Erfahrungen mit anderen. Wer sie testet und <strong>weiter bestellt</strong>, sorgt dafür, dass <strong>jeden Monat etwas auf deinem Konto</strong> landet.",
+  "alt": "Conosci <strong>prodotti wellness e per la salute di alta qualità</strong>, li usi <strong>tu stesso</strong> e condividi la tua esperienza con gli altri. Chi li prova e <strong>continua a ordinarli</strong> fa sì che <strong>ogni mese arrivi qualcosa sul tuo conto</strong>.",
+  "neu": "Scopri <strong>prodotti per il benessere e la salute di alta qualità</strong>, li usi <strong>in prima persona</strong> e condividi la tua esperienza con gli altri. Chi li prova e <strong>continua a ordinarli</strong> fa sì che <strong>ogni mese arrivi qualcosa sul tuo conto</strong>.",
+  "grund": "Più naturale; evita “tu stesso” al maschile e “prodotti wellness” poco idiomatico."
+ },
+ {
+  "de": "100% Unterstützung von",
+  "alt": "Supporto al 100% da",
+  "neu": "Supporto al 100% da parte di",
+  "grund": "“Supporto … da” non è naturale in italiano."
+ },
+ {
+  "de": "Von einem Produkt, das du selbst nutzt und magst.",
+  "alt": "Di un prodotto che usi anche tu e che ti piace.",
+  "neu": "Di un prodotto che usi in prima persona e che ti piace.",
+  "grund": "“Anche tu” aggiunge un significato non presente; “in prima persona” rende meglio “selbst”."
+ },
+ {
+  "de": "Marketing-Material und Videos bereitstellen",
+  "alt": "Mettere a disposizione materiale marketing e video",
+  "neu": "Mettere a disposizione materiale di marketing e video",
+  "grund": "In italiano serve “di marketing”; “materiale marketing” suona poco naturale."
+ },
+ {
+  "de": "Wellness- und Gesundheitsprodukte für den Alltag. Vom Vitamin-Cocktail bis zum Immunbooster. Alle nach den gleichen strengen Standards produziert. Hier siehst du stellvertretend unser Herzstück: den PowerCocktail.",
+  "alt": "Prodotti per il benessere e la salute da usare ogni giorno. Dal cocktail di vitamine al booster immunitario. Tutti prodotti secondo gli stessi standard rigorosi. Qui vedi un esempio, il nostro cuore: il PowerCocktail.",
+  "neu": "Prodotti per il benessere e la salute da usare ogni giorno. Dal cocktail di vitamine al booster immunitario. Tutti prodotti secondo gli stessi standard rigorosi. Qui vedi, come esempio, il cuore della nostra linea: il PowerCocktail.",
+  "grund": "“Il nostro cuore” è un calco poco naturale per “Herzstück”."
+ },
+ {
+  "de": "Transparent in Speyer, geprüfte statt billige Rohstoffe",
+  "alt": "Trasparenza a Speyer, materie prime controllate invece che economiche",
+  "neu": "Produzione trasparente a Speyer, materie prime controllate invece che a basso costo",
+  "grund": "“Trasparenza a Speyer” è poco idiomatico e “economiche” qui può risultare ambiguo."
+ },
+ {
+  "de": "Natürliche Rohstoffe, keine Ersatz-Chemie",
+  "alt": "Materie prime naturali, niente chimica sostitutiva",
+  "neu": "Materie prime naturali, niente sostituti chimici",
+  "grund": "“Chimica sostitutiva” è un calco innaturale."
+ },
+ {
+  "de": "Klar im Kopf, konzentriert im Job",
+  "alt": "Mente lucida, concentrato sul lavoro",
+  "neu": "Mente lucida, concentrazione sul lavoro",
+  "grund": "Evita l’accordo al maschile “concentrato” in una formula generica."
+ },
+ {
+  "de": "Gesundheit ist gefragt wie nie.<br><span class=\"accent\">Und wir mittendrin.</span>",
+  "alt": "La salute è richiesta più che mai.<br><span class=\"accent\">E noi ci siamo dentro in pieno.</span>",
+  "neu": "La salute conta più che mai.<br><span class=\"accent\">E noi ci siamo dentro in pieno.</span>",
+  "grund": "“La salute è richiesta” è un calco innaturale in italiano."
+ },
+ {
+  "de": "Ganz egal wie's der Wirtschaft gerade geht: Auf <strong>Gesundheit, Fitness und Wohlbefinden</strong> will niemand verzichten. <strong>Die Nachfrage steigt jedes Jahr</strong>, und wir wachsen mit. <strong>Hunderttausende Menschen weltweit</strong> sind längst dabei. <strong>Und jetzt bist du dran.</strong>",
+  "alt": "Non importa come vada l’economia in questo momento: a <strong>salute, fitness e benessere</strong> non vuole rinunciare nessuno. <strong>La domanda cresce ogni anno</strong>, e noi cresciamo con lei. <strong>Centinaia di migliaia di persone in tutto il mondo</strong> ci sono già. <strong>E adesso tocca a te.</strong>",
+  "neu": "Non importa come vada l’economia in questo momento: nessuno vuole rinunciare a <strong>salute, fitness e benessere</strong>. <strong>La domanda cresce ogni anno</strong>, e noi cresciamo con lei. <strong>Centinaia di migliaia di persone in tutto il mondo</strong> sono già dei nostri. <strong>E adesso tocca a te.</strong>",
+  "grund": "Costruzione con “a salute…” innaturale; frase resa più scorrevole."
+ },
+ {
+  "de": "Das willst du <span class=\"accent\">wahrscheinlich wissen.</span>",
+  "alt": "Questo <span class=\"accent\">probabilmente vuoi saperlo.</span>",
+  "neu": "Questo <span class=\"accent\">probabilmente lo vuoi sapere.</span>",
+  "grund": "Manca il pronome di ripresa; frase più naturale in italiano."
+ },
+ {
+  "de": "Kann ich das nicht günstiger in der Drogerie kaufen?",
+  "alt": "Non posso comprarlo a meno in drogheria?",
+  "neu": "Non posso comprarlo a meno in farmacia o in parafarmacia?",
+  "grund": "“Drogheria” è un falso amico/luogo poco adatto per questo contesto."
+ },
+ {
+  "de": "Am Anfang verdienst du an dem, was du selbst weiterempfiehlst. Mit der Zeit kannst du auch andere Menschen mit ins Boot holen, die genau das Gleiche machen wie du. Aus dem, was dein Team dann bewegt, kriegst du auch was ab. Nicht weil du an denen verdienst, sondern weil du sie mit aufgebaut und trainiert hast. Wie ein Trainer, der einen Prozentsatz vom Erfolg seiner Athleten kriegt.",
+  "alt": "All’inizio guadagni da quello che consigli tu in prima persona. Col tempo puoi portare a bordo anche altre persone che fanno esattamente la stessa cosa che fai tu. Da quello che poi muove il tuo team, ti arriva anche una parte. Non perché ci guadagni su di loro, ma perché li hai aiutati a costruire e li hai formati. Come un allenatore che prende una percentuale dal successo dei suoi atleti.",
+  "neu": "All’inizio guadagni su quello che consigli tu in prima persona. Col tempo puoi coinvolgere anche altre persone che fanno esattamente la stessa cosa che fai tu. Su quello che poi genera il tuo team, arriva qualcosa anche a te. Non perché guadagni su di loro, ma perché li hai aiutati a partire e li hai formati. Come un allenatore che prende una percentuale dal successo dei suoi atleti.",
+  "grund": "“Muove il tuo team” e “aiutati a costruire” sono calchi poco naturali."
+ },
+ {
+  "de": "Das ist der Grund, warum manche hier richtig groß werden: Sie bauen sich mit der Zeit ein eigenes Team auf, das mit ihnen wächst. Und alles, was du reinsteckst, kommt bei dir an. Nicht bei einem Chef.",
+  "alt": "È questo il motivo per cui alcuni qui crescono davvero tanto: col tempo si costruiscono un proprio team che cresce insieme a loro. E tutto quello che ci metti torna a te. Non a un capo.",
+  "neu": "È questo il motivo per cui alcuni qui crescono davvero tanto: col tempo si costruiscono un team tutto loro, che cresce insieme a loro. E tutto quello che ci metti torna a te. Non a un capo.",
+  "grund": "“Si costruiscono un proprio team” è poco naturale/scorretto."
+ },
+ {
+  "de": "Rechtliches",
+  "alt": "Legale",
+  "neu": "Informazioni legali",
+  "grund": "“Legale” da solo suona poco naturale come intestazione in italiano."
+ },
+ {
+  "de": "Technisch notwendig (immer aktiv)",
+  "alt": "Necessari tecnici (sempre attivi)",
+  "neu": "Tecnicamente necessari (sempre attivi)",
+  "grund": "“Necessari tecnici” è innaturale in italiano per questa categoria di cookie."
+ }
+]

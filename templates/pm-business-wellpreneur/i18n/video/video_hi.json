@@ -1,0 +1,177 @@
+[
+ {
+  "id": 0,
+  "start": 0.0,
+  "end": 7.44,
+  "de": "Du hast bestimmt schon mal ein gutes Restaurant, eine spannende Serie oder ein Produkt empfohlen, von dem du selbst begeistert warst.",
+  "text": "आपने भी ज़रूर कभी कोई अच्छा रेस्टोरेंट, कोई मज़ेदार सीरीज़ या कोई ऐसा प्रोडक्ट रिकमेंड किया होगा, जिससे आप खुद बहुत खुश थे।"
+ },
+ {
+  "id": 1,
+  "start": 7.44,
+  "end": 11.56,
+  "de": "Einfach, weil du dir dachtest, das könnte auch anderen gefallen.",
+  "text": "बस इसलिए, कि आपको लगा होगा, ये दूसरों को भी पसंद आ सकता है।"
+ },
+ {
+  "id": 2,
+  "start": 11.56,
+  "end": 14.0,
+  "de": "Normalerweise bekommst du dafür nichts.",
+  "text": "आम तौर पर इसके लिए आपको कुछ नहीं मिलता।"
+ },
+ {
+  "id": 3,
+  "start": 14.0,
+  "end": 20.6,
+  "de": "Aber stell dir mal vor, ein Unternehmen würde dich für eine erfolgreiche Empfehlung mit einer Provision belohnen.",
+  "text": "लेकिन सोचिए ज़रा, कोई कंपनी आपकी सफल रिकमेंडेशन पर आपको कमीशन दे।"
+ },
+ {
+  "id": 4,
+  "start": 20.6,
+  "end": 22.4,
+  "de": "Eigentlich fair, oder?",
+  "text": "काफी fair है, है ना?"
+ },
+ {
+  "id": 5,
+  "start": 22.4,
+  "end": 25.36,
+  "de": "Genau darum geht's bei unserem Geschäftsmodell.",
+  "text": "हमारा बिज़नेस मॉडल बस इसी पर है।"
+ },
+ {
+  "id": 6,
+  "start": 25.36,
+  "end": 28.48,
+  "de": "Es geht darum, Lebensqualität weiterzugeben.",
+  "text": "बात है, लाइफ क्वालिटी आगे शेयर करने की।"
+ },
+ {
+  "id": 7,
+  "start": 28.56,
+  "end": 33.28,
+  "de": "Vielleicht kennst du jemanden, der sich jeden Morgen mühsam aus dem Bett quält,",
+  "text": "शायद आप किसी ऐसे इंसान को जानते हों, जो हर सुबह बड़ी मुश्किल से बिस्तर से उठता है,"
+ },
+ {
+  "id": 8,
+  "start": 33.28,
+  "end": 41.08,
+  "de": "der nachmittags kaum noch Energie hat oder versucht, gleichzeitig für den Job, die Familie und sich selbst da zu sein.",
+  "text": "जिसकी दोपहर तक एनर्जी लगभग खत्म हो जाती है, या जो जॉब, फैमिली और खुद को साथ-साथ संभालने की कोशिश करता है।"
+ },
+ {
+  "id": 9,
+  "start": 41.08,
+  "end": 46.56,
+  "de": "Und vielleicht bist du genau der Mensch, der ihnen zeigt, es kann auch anders gehen.",
+  "text": "और शायद आप ही वो इंसान हैं, जो उन्हें दिखाए कि चीज़ें अलग भी हो सकती हैं।"
+ },
+ {
+  "id": 10,
+  "start": 46.56,
+  "end": 48.88,
+  "de": "Genau das ist dein Job.",
+  "text": "ठीक यही आपका काम है।"
+ },
+ {
+  "id": 11,
+  "start": 48.88,
+  "end": 57.92,
+  "de": "Nicht verkaufen, nicht überreden, sondern einfach ehrlich von deinen Erfahrungen erzählen und zeigen, was auch für andere möglich sein kann.",
+  "text": "बेचना नहीं, मनाना नहीं, बस ईमानदारी से अपना एक्सपीरियंस बताना और दिखाना कि दूसरों के लिए भी क्या संभव हो सकता है।"
+ },
+ {
+  "id": 12,
+  "start": 57.92,
+  "end": 63.0,
+  "de": "Du lernst hochwertige Produkte aus den Bereichen Wellness, Fitness und Schönheit kennen,",
+  "text": "आप वेलनेस, फिटनेस और ब्यूटी के अच्छी क्वालिटी वाले प्रोडक्ट्स को जानते हैं,"
+ },
+ {
+  "id": 13,
+  "start": 63.0,
+  "end": 68.6,
+  "de": "probierst sie selbst aus und teilst deine Erfahrungen, wenn du wirklich dahinter stehst.",
+  "text": "उन्हें खुद आज़माते हैं और अपना एक्सपीरियंस शेयर करते हैं, जब आप सच में उन्हें सही मानते हों।"
+ },
+ {
+  "id": 14,
+  "start": 68.6,
+  "end": 74.52,
+  "de": "Das Beste daran, jeder kann die Produkte 30 Tage lang ganz in Ruhe ausprobieren.",
+  "text": "सबसे अच्छी बात, हर कोई प्रोडक्ट्स को 30 दिन तक आराम से आज़मा सकता है।"
+ },
+ {
+  "id": 15,
+  "start": 74.52,
+  "end": 78.0,
+  "de": "Wenn's nicht passt, gibt's das Geld einfach zurück.",
+  "text": "अगर सूट न करे, तो पैसे बस वापस मिल जाते हैं।"
+ },
+ {
+  "id": 16,
+  "start": 78.0,
+  "end": 82.2,
+  "de": "Das heißt für dich, du kannst die Produkte mit einem guten Gefühl empfehlen",
+  "text": "इसका मतलब, आप निश्चिंत होकर प्रोडक्ट्स रिकमेंड कर सकते हैं"
+ },
+ {
+  "id": 17,
+  "start": 82.2,
+  "end": 87.0,
+  "de": "und die andere Person kann ganz ohne Risiko schauen, ob's für sie passt.",
+  "text": "और सामने वाला बिना किसी रिस्क के देख सकता है कि ये उसके लिए सूट करता है या नहीं।"
+ },
+ {
+  "id": 18,
+  "start": 87.08,
+  "end": 92.88,
+  "de": "Einfacher und ehrlicher kann man sich nebenbei kaum ein zusätzliches Einkommen aufbauen.",
+  "text": "इतने आसान और ईमानदार तरीके से साथ-साथ एक्स्ट्रा इनकम बनाना मुश्किल ही है।"
+ },
+ {
+  "id": 19,
+  "start": 92.88,
+  "end": 99.2,
+  "de": "Hinter dem Ganzen steckt ein deutsches Familienunternehmen, gegründet im Jahr 1993.",
+  "text": "इस सबके पीछे एक जर्मन फैमिली बिज़नेस है, जिसकी शुरुआत साल 1993 में हुई थी।"
+ },
+ {
+  "id": 20,
+  "start": 99.2,
+  "end": 105.2,
+  "de": "Statt viele Zwischenhändler und teure Werbung zu bezahlen, fließt das Geld direkt in die Produkte.",
+  "text": "बहुत सारे बीच के डीलर्स और महँगी ऐडवरटाइजिंग पर पैसा लगाने के बजाय, पैसा सीधे प्रोडक्ट्स में जाता है।"
+ },
+ {
+  "id": 21,
+  "start": 105.2,
+  "end": 109.28,
+  "de": "So entsteht eine Qualität, die man im Alltag wirklich merkt.",
+  "text": "इससे ऐसी क्वालिटी बनती है, जो रोज़मर्रा में सच में महसूस होती है।"
+ },
+ {
+  "id": 22,
+  "start": 109.28,
+  "end": 116.4,
+  "de": "Und ein Teil geht an die Menschen, die die Produkte selbst nutzen, weiterempfehlen und andere dabei unterstützen.",
+  "text": "और एक हिस्सा उन लोगों को जाता है, जो प्रोडक्ट्स खुद यूज़ करते हैं, रिकमेंड करते हैं और दूसरों को सपोर्ट करते हैं।"
+ },
+ {
+  "id": 23,
+  "start": 116.4,
+  "end": 119.4,
+  "de": "Wie das genau funktioniert, zeige ich dir.",
+  "text": "ये ठीक-ठीक कैसे काम करता है, मैं आपको दिखाता हूँ।"
+ },
+ {
+  "id": 24,
+  "start": 119.4,
+  "end": 122.4,
+  "de": "Ich nehme dich gerne an die Hand.",
+  "text": "मैं आपको आराम से स्टेप-बाय-स्टेप गाइड करूँगा।"
+ }
+]

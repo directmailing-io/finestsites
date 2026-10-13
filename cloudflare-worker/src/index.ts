@@ -1564,7 +1564,7 @@ ${legalStyles(d)}
 // ─── Mehrsprachige Rechtsseiten ───────────────────────────────────────────────
 // Templates mit mehr als DE/EN: Impressum und Datenschutz bekommen je Sprache einen Block
 // (Übersetzungen: src/legal-i18n/translations.json, Quelle de.json, Skript translate.py).
-const MULTI_LANG_DOMAINS = new Set(['dailyoptimal.de'])
+const MULTI_LANG_DOMAINS = new Set(['dailyoptimal.de', 'wellpreneur.io'])
 const LEGAL_LANGS = ['de', 'en', 'it', 'ru', 'uk', 'pl', 'bg', 'hi'] as const
 type LegalLang = typeof LEGAL_LANGS[number]
 const LEGAL_I18N = LEGAL_I18N_JSON as Record<string, Record<string, string>>

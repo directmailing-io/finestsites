@@ -1,0 +1,200 @@
+[
+  {
+    "de": "Über {{vorname}}",
+    "alt": "O {{vorname}}",
+    "neu": "Kim jest {{vorname}}",
+    "grund": "„O Daniel“ ist falsch (nach „o“ müsste der Name dekliniert werden, geht mit Platzhalter nicht); „Kim jest …“ funktioniert mit Nominativ"
+  },
+  {
+    "de": "Gutes tun und dauerhaft profitieren",
+    "alt": "Robić coś dobrego i korzystać na tym długoterminowo",
+    "neu": "Rób coś dobrego i zyskuj na tym na stałe",
+    "grund": "Infinitiv-Überschrift ist deutsche Struktur, „długoterminowo“ klingt nach Geschäftsbericht; zudem Abgleich mit Meta-Titel"
+  },
+  {
+    "de": "Du lernst <strong>hochwertige Wellness- und Gesundheitsprodukte</strong> kennen, nutzt sie <strong>selbst</strong> und teilst deine Erfahrungen mit anderen. Wer sie testet und <strong>weiter bestellt</strong>, sorgt dafür, dass <strong>jeden Monat etwas auf deinem Konto</strong> landet.",
+    "alt": "Poznajesz <strong>wysokiej jakości produkty wellness i zdrowotne</strong>, używasz ich <strong>samodzielnie</strong> i dzielisz się swoimi doświadczeniami z innymi. Gdy ktoś je przetestuje i <strong>zamawia dalej</strong>, sprawia, że <strong>co miesiąc coś trafia na Twoje konto</strong>.",
+    "neu": "Poznajesz <strong>wysokiej jakości produkty wellness i zdrowotne</strong>, <strong>osobiście</strong> z nich korzystasz i dzielisz się swoimi doświadczeniami z innymi. Każdy, kto je wypróbuje i <strong>zamawia dalej</strong>, sprawia, że <strong>co miesiąc coś wpada na twoje konto</strong>.",
+    "grund": "„samodzielnie“ heißt „eigenständig“, nicht „selbst“; Aspektbruch „przetestuje i zamawia“; „Twoje“ groß, sonst überall klein"
+  },
+  {
+    "de": "100% Unterstützung von",
+    "alt": "100% wsparcia od",
+    "neu": "100% wsparcia od:",
+    "grund": "Danach folgt der Name im Nominativ, „od“ verlangt Genitiv; mit Doppelpunkt wirkt es wie ein Label (wie „Od:“ in Mails)"
+  },
+  {
+    "de": "Bist du geeignet?",
+    "alt": "Czy to dla Ciebie?",
+    "neu": "Czy to dla ciebie?",
+    "grund": "„Ciebie“ groß, auf der Seite sonst überall klein (ciebie/twoja/cię)"
+  },
+  {
+    "de": "Ja, das kannst du <span class=\"accent\">auch.</span>",
+    "alt": "Tak, Ty <span class=\"accent\">też</span> możesz to zrobić.",
+    "neu": "Tak, ty <span class=\"accent\">też</span> możesz to robić.",
+    "grund": "„Ty“ groß inkonsistent; „zrobić“ (einmalig) passt nicht zu einer dauerhaften Tätigkeit"
+  },
+  {
+    "de": "Bei der Firma. Nicht bei dir. Du hast damit nichts zu tun.",
+    "alt": "W firmie. Nie u Ciebie. Ty się tym nie zajmujesz.",
+    "neu": "W firmie. Nie u ciebie. Ty nie masz z tym nic wspólnego.",
+    "grund": "„Ciebie“ groß inkonsistent; „nie masz z tym nic wspólnego“ ist die idiomatische Entsprechung von „nichts damit zu tun haben“"
+  },
+  {
+    "de": "Alles, was sonst nervt,<br>macht <span class=\"accent\">die Firma für dich.</span>",
+    "alt": "Wszystko, co zwykle męczy,<br>robi za Ciebie <span class=\"accent\">firma.</span>",
+    "neu": "Wszystko, co zwykle męczy,<br>robi za ciebie <span class=\"accent\">firma.</span>",
+    "grund": "„Ciebie“ groß inkonsistent"
+  },
+  {
+    "de": "Rücksendungen abwickeln und erstatten",
+    "alt": "Obsługiwać zwroty i zwroty pieniędzy",
+    "neu": "Przyjmować zwroty i oddawać pieniądze",
+    "grund": "„zwroty i zwroty pieniędzy“ ist eine holprige Wortwiederholung"
+  },
+  {
+    "de": "Kundenservice per Telefon und Mail leisten",
+    "alt": "Zapewniać obsługę klienta przez telefon i mailowo",
+    "neu": "Zapewniać obsługę klienta telefonicznie i mailowo",
+    "grund": "„przez telefon i mailowo“ mischt zwei Konstruktionen; parallel „telefonicznie i mailowo“"
+  },
+  {
+    "de": "Wellness- und Gesundheitsprodukte für den Alltag. Vom Vitamin-Cocktail bis zum Immunbooster. Alle nach den gleichen strengen Standards produziert. Hier siehst du stellvertretend unser Herzstück: den PowerCocktail.",
+    "alt": "Produkty wellness i zdrowotne na co dzień. Od koktajlu witaminowego po booster odporności. Wszystkie produkowane według tych samych, surowych standardów. Tutaj jako przykład widzisz serce naszej oferty: PowerCocktail.",
+    "neu": "Produkty wellness i zdrowotne na co dzień. Od koktajlu witaminowego po booster odporności. Wszystkie produkowane według tych samych surowych standardów. Tutaj jako przykład widzisz serce naszej oferty: PowerCocktail.",
+    "grund": "Falsches Komma zwischen „tych samych“ und „surowych“ (keine gleichrangigen Attribute)"
+  },
+  {
+    "de": "1.000+ Profisportler",
+    "alt": "1.000+ zawodowych sportowców",
+    "neu": "1000+ zawodowych sportowców",
+    "grund": "„1.000“ ist deutsche Tausendertrennung; im Polnischen „1000“ oder „1 000“"
+  },
+  {
+    "de": "Du verkaufst kein Produkt.<br><span class=\"accent\">Du verteilst ein Stück Lebensqualität.</span>",
+    "alt": "Nie sprzedajesz produktu.<br><span class=\"accent\">Dzielisz się kawałkiem jakości życia.</span>",
+    "neu": "Nie sprzedajesz produktu.<br><span class=\"accent\">Dajesz innym kawałek lepszego życia.</span>",
+    "grund": "„kawałek jakości życia“ sagt niemand; so klingt es natürlich"
+  },
+  {
+    "de": "Fit für Job und Familie gleichzeitig",
+    "alt": "Siła na pracę i rodzinę jednocześnie",
+    "neu": "Siły na pracę i rodzinę jednocześnie",
+    "grund": "Idiom ist „mieć siły na coś“ (Plural); „siła na pracę“ klingt schief"
+  },
+  {
+    "de": "Rolf Sorg hat die Firma 1993 gegründet. Keine Aktionäre, keine Investoren im Nacken. Nur seine Familie und ein Team, das seit über 30 Jahren dazulernt. Was dabei rauskommt, siehst du hier:",
+    "alt": "Rolf Sorg założył firmę w 1993 roku. Bez akcjonariuszy, bez inwestorów na karku. Tylko jego rodzina i zespół, który od ponad 30 lat ciągle się uczy. Zobacz, do czego to prowadzi:",
+    "neu": "Rolf Sorg założył firmę w 1993 roku. Bez akcjonariuszy, bez inwestorów na karku. Tylko jego rodzina i zespół, który od ponad 30 lat ciągle się uczy. Efekt zobaczysz tutaj:",
+    "grund": "„do czego to prowadzi“ klingt nach Warnung („wohin das führt“), nicht nach Ergebnis"
+  },
+  {
+    "de": "Ganz egal wie's der Wirtschaft gerade geht: Auf <strong>Gesundheit, Fitness und Wohlbefinden</strong> will niemand verzichten. <strong>Die Nachfrage steigt jedes Jahr</strong>, und wir wachsen mit. <strong>Hunderttausende Menschen weltweit</strong> sind längst dabei. <strong>Und jetzt bist du dran.</strong>",
+    "alt": "Nieważne, co akurat dzieje się w gospodarce: z <strong>zdrowia, formy i dobrego samopoczucia</strong> nikt nie chce rezygnować. <strong>Popyt rośnie z każdym rokiem</strong>, a my rośniemy razem z nim. <strong>Setki tysięcy ludzi na całym świecie</strong> już w tym są. <strong>Teraz twoja kolej.</strong>",
+    "neu": "Nieważne, co akurat dzieje się w gospodarce: ze <strong>zdrowia, formy i dobrego samopoczucia</strong> nikt nie chce rezygnować. <strong>Popyt rośnie z każdym rokiem</strong>, a my rośniemy razem z nim. <strong>Setki tysięcy ludzi na całym świecie</strong> już w tym są. <strong>Teraz twoja kolej.</strong>",
+    "grund": "Grammatikfehler: vor „zdrowia“ muss es „ze“ heißen, nicht „z“"
+  },
+  {
+    "de": "<span class=\"accent\">Viel mehr Geld</span> fließt in die Qualität. Deshalb wird nachbestellt.",
+    "alt": "<span class=\"accent\">Dużo więcej pieniędzy</span> idzie w jakość. Dlatego ludzie zamawiają ponownie.",
+    "neu": "<span class=\"accent\">Dużo więcej pieniędzy</span> idzie na jakość. Dlatego ludzie zamawiają ponownie.",
+    "grund": "„pieniądze idą na coś“ ist die richtige Rektion, „idzie w jakość“ nicht"
+  },
+  {
+    "de": "Nein. Beim Schneeballsystem verdient man an neuen Leuten, die einzahlen. Bei uns verdienst du nur, wenn Produkte gekauft und weiter genutzt werden. Keine Bestellungen, kein Geld. Der Unterschied ist gesetzlich klar geregelt (siehe <a href=\"https://www.gesetze-im-internet.de/uwg_2004/anhang.html\" target=\"_blank\" rel=\"noopener\">UWG Anhang Nr. 14</a>) und wird auch vom <a href=\"https://direktvertrieb.de/de/abgrenzung\" target=\"_blank\" rel=\"noopener\">Bundesverband Direktvertrieb</a> so definiert. Und die Firma gibts seit 1993 mit 4 Milliarden Umsatz. Schneeballsysteme kollabieren nach ein paar Jahren. Wir sind bei über 30.",
+    "alt": "Nie. W piramidzie zarabia się na nowych osobach, które wpłacają pieniądze. U nas zarabiasz tylko wtedy, gdy produkty są kupowane i dalej używane. Nie ma zamówień, nie ma pieniędzy. Ta różnica jest jasno uregulowana w niemieckim prawie (zob. <a href=\"https://www.gesetze-im-internet.de/uwg_2004/anhang.html\" target=\"_blank\" rel=\"noopener\">załącznik do UWG nr 14</a>) i tak samo definiuje ją <a href=\"https://direktvertrieb.de/de/abgrenzung\" target=\"_blank\" rel=\"noopener\">Niemieckie Stowarzyszenie Sprzedaży Bezpośredniej</a>. A firma istnieje od 1993 roku i ma 4 miliardy obrotu. Piramidy padają po kilku latach. My jesteśmy już ponad 30.",
+    "neu": "Nie. W piramidzie zarabia się na nowych osobach, które wpłacają pieniądze. U nas zarabiasz tylko wtedy, gdy produkty są kupowane i dalej używane. Nie ma zamówień, nie ma pieniędzy. Ta różnica jest jasno uregulowana w niemieckim prawie (zob. <a href=\"https://www.gesetze-im-internet.de/uwg_2004/anhang.html\" target=\"_blank\" rel=\"noopener\">pkt 14 załącznika do UWG</a>) i tak samo definiuje ją <a href=\"https://direktvertrieb.de/de/abgrenzung\" target=\"_blank\" rel=\"noopener\">Niemieckie Stowarzyszenie Sprzedaży Bezpośredniej</a>. A firma istnieje od 1993 roku i ma 4 miliardy obrotu. Piramidy padają po kilku latach. My działamy już ponad 30 lat.",
+    "grund": "„My jesteśmy już ponad 30“ ist unverständlich (wörtlich „wir sind schon über 30“); „załącznik do UWG nr 14“ liest sich wie Anhang Nr. 14, gemeint ist Punkt 14 des Anhangs"
+  },
+  {
+    "de": "Ich bin kein Verkäufertyp. Geht das trotzdem?",
+    "alt": "Nie jestem typem sprzedawcy. Da się mimo to?",
+    "neu": "Nie jestem typem sprzedawcy. Czy mimo to się da?",
+    "grund": "„Da się mimo to?“ ist unnatürliche Wortstellung"
+  },
+  {
+    "de": "Auf den ersten Blick vielleicht. Aber schau dir mal an, wie sich der Preis zusammensetzt. Bei den meisten Marken gehen 60 Prozent in Werbung und Zwischenhandel. Bei uns fließt der Großteil in die Qualität. Deshalb ist der Preis höher. Und genau deshalb bestellen Menschen immer wieder nach.",
+    "alt": "Na pierwszy rzut oka może tak. Ale zobacz, z czego składa się cena. U większości marek 60 procent idzie na reklamę i pośredników. U nas większość trafia w jakość. Dlatego cena jest wyższa. I właśnie dlatego ludzie zamawiają wciąż od nowa.",
+    "neu": "Na pierwszy rzut oka może tak. Ale zobacz, z czego składa się cena. U większości marek 60 procent idzie na reklamę i pośredników. U nas większość idzie na jakość. Dlatego cena jest wyższa. I właśnie dlatego ludzie zamawiają wciąż na nowo.",
+    "grund": "„trafia w jakość“ ist falsche Rektion; „wciąż od nowa“ ist nicht idiomatisch („wciąż na nowo“)"
+  },
+  {
+    "de": "Nein. Du bestellst wann und wie viel du willst. Es gibt aber ein automatisches Belieferungssystem, mit dem du bei jeder Bestellung sparst. Die meisten entscheiden sich freiwillig dafür, weil sie die Produkte eh nutzen und Geld sparen wollen. Nicht weil sie müssen, sondern weil sie es wollen. Keine Mindestlaufzeit, jederzeit anpassbar oder kündbar. Kein Risiko.",
+    "alt": "Nie. Zamawiasz wtedy i tyle, ile chcesz. Jest jednak system automatycznych dostaw, dzięki któremu oszczędzasz przy każdym zamówieniu. Większość osób decyduje się na to dobrowolnie, bo i tak używa produktów i chce oszczędzać. Nie dlatego, że musi, tylko dlatego, że chce. Bez minimalnego okresu trwania, w każdej chwili możesz dostosować albo anulować. Bez ryzyka.",
+    "neu": "Nie. Zamawiasz, kiedy chcesz i ile chcesz. Jest jednak system automatycznych dostaw, dzięki któremu oszczędzasz przy każdym zamówieniu. Większość osób decyduje się na to dobrowolnie, bo i tak używa produktów i chce oszczędzać. Nie dlatego, że musi, tylko dlatego, że chce. Bez minimalnego okresu, w każdej chwili możesz to zmienić albo anulować. Bez ryzyka.",
+    "grund": "„Zamawiasz wtedy i tyle, ile chcesz“ ist verunglückt; „minimalny okres trwania“ ist kein polnischer Begriff (Mindestlaufzeit = „minimalny okres“); „dostosować“ ohne Objekt hängt in der Luft"
+  },
+  {
+    "de": "Ehrliche Antwort: Ganz unterschiedlich. Die einen machen 100 im Monat, die anderen ein paar Tausend, wieder andere leben komplett davon.",
+    "alt": "Szczera odpowiedź: bardzo różnie. Jedni robią 100 miesięcznie, inni kilka tysięcy, a jeszcze inni żyją z tego w całości.",
+    "neu": "Szczera odpowiedź: bardzo różnie. Jedni zarabiają 100 miesięcznie, inni kilka tysięcy, a jeszcze inni żyją z tego w całości.",
+    "grund": "„robią 100 miesięcznie“ ist ein Anglizismus/Germanismus („make 100“), auf Polnisch „zarabiają“"
+  },
+  {
+    "de": "Am Anfang verdienst du an dem, was du selbst weiterempfiehlst. Mit der Zeit kannst du auch andere Menschen mit ins Boot holen, die genau das Gleiche machen wie du. Aus dem, was dein Team dann bewegt, kriegst du auch was ab. Nicht weil du an denen verdienst, sondern weil du sie mit aufgebaut und trainiert hast. Wie ein Trainer, der einen Prozentsatz vom Erfolg seiner Athleten kriegt.",
+    "alt": "Na początku zarabiasz na tym, co sam polecasz dalej. Z czasem możesz też zabierać na pokład inne osoby, które robią dokładnie to samo co ty. Z tego, co potem wypracuje twój zespół, też dostajesz swoją część. Nie dlatego, że zarabiasz na nich, tylko dlatego, że pomogłeś go zbudować i szkoliłeś ludzi. Jak trener, który dostaje procent od sukcesów swoich zawodników.",
+    "neu": "Na początku zarabiasz na tym, co sam polecasz dalej. Z czasem możesz też zapraszać na pokład inne osoby, które robią dokładnie to samo co ty. Z tego, co potem wypracuje twój zespół, też dostajesz swoją część. Nie dlatego, że zarabiasz na nich, tylko dlatego, że pomogłeś go zbudować i szkoliłeś ludzi. Jak trener, który dostaje procent od sukcesów swoich zawodników.",
+    "grund": "„zabierać na pokład“ klingt nach Entführung; das Idiom ist „zapraszać na pokład“"
+  },
+  {
+    "de": "Das ist der Grund, warum manche hier richtig groß werden: Sie bauen sich mit der Zeit ein eigenes Team auf, das mit ihnen wächst. Und alles, was du reinsteckst, kommt bei dir an. Nicht bei einem Chef.",
+    "alt": "To jest powód, dla którego niektórzy naprawdę mocno tu rosną: z czasem budują własny zespół, który rośnie razem z nimi. I wszystko, co w to wkładasz, wraca do ciebie. Nie do szefa.",
+    "neu": "To jest powód, dla którego niektórzy dochodzą tu naprawdę daleko: z czasem budują własny zespół, który rośnie razem z nimi. I wszystko, co w to wkładasz, wraca do ciebie. Nie do szefa.",
+    "grund": "„niektórzy mocno tu rosną“ ist eine Lehnübersetzung („groß werden“), Polnisch sagt „dochodzą daleko“"
+  },
+  {
+    "de": "Für ein bisschen was extra: ein paar Stunden im Monat. Für einen echten Nebenverdienst: 4 bis 6 Stunden die Woche. Für richtig groß: mehr. Wir schauen im ersten Gespräch, was zu deinem Alltag passt und was du dir vorstellen kannst.",
+    "alt": "Na coś małego ekstra: kilka godzin w miesiącu. Na prawdziwy dodatkowy dochód: 4 do 6 godzin tygodniowo. Na coś naprawdę dużego: więcej. Podczas pierwszej rozmowy zobaczymy, co pasuje do twojej codzienności i co jesteś w stanie sobie wyobrazić.",
+    "neu": "Na coś małego ekstra: kilka godzin w miesiącu. Na prawdziwy dodatkowy dochód: 4 do 6 godzin tygodniowo. Na coś naprawdę dużego: więcej. Podczas pierwszej rozmowy zobaczymy, co pasuje do twojej codzienności i co wchodzi dla ciebie w grę.",
+    "grund": "„co jesteś w stanie sobie wyobrazić“ ist wörtlich übersetzt und bedeutet „was du dir ausmalen kannst“; gemeint ist „was für dich infrage kommt“"
+  },
+  {
+    "de": "Was, wenn ich aufhören will?",
+    "alt": "A jeśli będę chciał przestać?",
+    "neu": "A jeśli zechcę przestać?",
+    "grund": "„będę chciał“ ist nur männlich; „zechcę“ ist geschlechtsneutral und natürlicher"
+  },
+  {
+    "de": "Ein bisschen was nebenbei",
+    "alt": "Coś ekstra na boku",
+    "neu": "Dorobić trochę na boku",
+    "grund": "„Coś ekstra na boku“ ist mehrdeutig (auch „Affäre nebenbei“); „dorobić na boku“ ist der feste Ausdruck für Nebenverdienst"
+  },
+  {
+    "de": "Du schreibst direkt an",
+    "alt": "Piszesz bezpośrednio do",
+    "neu": "Piszesz bezpośrednio do:",
+    "grund": "Darunter steht der Name im Nominativ, „do“ verlangt Genitiv; mit Doppelpunkt wirkt es wie das Feld „Do:“ in einer Mail"
+  },
+  {
+    "de": "{{#unless partner_modus=duo}}{{#if geschlecht=weiblich}}Unabhängige Vertriebspartnerin{{/if}}{{#if geschlecht=maennlich}}Unabhängiger Vertriebspartner{{/if}}{{/unless}}{{#if partner_modus=duo}}Unabhängige Vertriebspartner{{/if}} der PM-International (FitLine®). Diese Seite ist keine offizielle Website der PM-International AG.",
+    "alt": "{{#unless partner_modus=duo}}{{#if geschlecht=weiblich}}Niezależna Partnerka Dystrybucyjna{{/if}}{{#if geschlecht=maennlich}}Niezależny Partner Dystrybucyjny{{/if}}{{/unless}}{{#if partner_modus=duo}}Niezależni Partnerzy Dystrybucyjni{{/if}} PM-International (FitLine®). Ta strona nie jest oficjalną stroną PM-International AG.",
+    "neu": "{{#unless partner_modus=duo}}{{#if geschlecht=weiblich}}Niezależna partnerka handlowa{{/if}}{{#if geschlecht=maennlich}}Niezależny partner handlowy{{/if}}{{/unless}}{{#if partner_modus=duo}}Niezależni partnerzy handlowi{{/if}} PM-International (FitLine®). Ta strona nie jest oficjalną stroną PM-International AG.",
+    "grund": "Großschreibung jedes Wortes ist englische Titelschreibung, im Polnischen falsch; außerdem anderer Begriff als im Footer-Disclaimer („partner handlowy“), jetzt einheitlich"
+  },
+  {
+    "de": "Wir nutzen Cookies, um dir das beste Erlebnis zu bieten. Technisch notwendige Cookies sind immer aktiv — sie machen die Seite funktionsfähig. Weitere Cookies (z.&nbsp;B. Statistiken) setzen wir nur mit deiner Zustimmung. Mehr Infos in unserer <a href=\"/datenschutz\" target=\"_blank\" rel=\"noopener\">Datenschutzerklärung</a>.",
+    "alt": "Używamy plików cookie, żeby zapewnić ci jak najlepsze korzystanie ze strony. Technicznie niezbędne pliki cookie są zawsze aktywne — dzięki nim strona działa. Pozostałe pliki cookie (np.&nbsp;statystyczne) ustawiamy tylko za twoją zgodą. Więcej informacji znajdziesz w naszej <a href=\"/datenschutz\" target=\"_blank\" rel=\"noopener\">polityce prywatności</a>.",
+    "neu": "Używamy plików cookie, żeby zapewnić ci jak najlepsze korzystanie ze strony. Technicznie niezbędne pliki cookie są zawsze aktywne, bo dzięki nim strona działa. Pozostałe pliki cookie (np.&nbsp;statystyczne) ustawiamy tylko za twoją zgodą. Więcej informacji znajdziesz w naszej <a href=\"/datenschutz\" target=\"_blank\" rel=\"noopener\">polityce prywatności</a>.",
+    "grund": "Gedankenstrich (—) entfernt, Satz umformuliert"
+  },
+  {
+    "de": "Grundlegende Funktionen der Website — immer aktiv.",
+    "alt": "Podstawowe funkcje strony — zawsze aktywne.",
+    "neu": "Podstawowe funkcje strony. Zawsze aktywne.",
+    "grund": "Gedankenstrich (—) entfernt"
+  },
+  {
+    "de": "Bitte den Datenschutz-Hinweis bestätigen.",
+    "alt": "Potwierdź informację o ochronie danych.",
+    "neu": "Zaznacz zgodę na przetwarzanie danych.",
+    "grund": "„Potwierdź informację o ochronie danych“ ist unverständlich (eine Information bestätigen?); Nutzer soll die Checkbox anhaken"
+  },
+  {
+    "de": "Gutes tun und dauerhaft profitieren",
+    "alt": "Rób coś dobrego i korzystaj długofalowo",
+    "neu": "Rób coś dobrego i zyskuj na tym na stałe",
+    "grund": "„korzystaj długofalowo“ ohne Objekt hängt in der Luft; einheitlich mit der Hero-Überschrift"
+  }
+]

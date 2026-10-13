@@ -1,0 +1,206 @@
+[
+  {
+    "de": "Über {{vorname}}",
+    "alt": "О {{vorname}}",
+    "neu": "{{vorname}} о себе",
+    "grund": "„О {{vorname}}“ verlangt im Russischen den Präpositiv, der Name steht aber im Nominativ („О Анна“ ist falsch); „{{vorname}} о себе“ funktioniert mit jedem Namen"
+  },
+  {
+    "de": "Gutes tun und dauerhaft profitieren",
+    "alt": "Делай хорошее и получай выгоду в долгую",
+    "neu": "Делай добро и зарабатывай на этом стабильно",
+    "grund": "„Делай хорошее“ sagt niemand (richtig: „Делай добро“); „в долгую“ ist Trader-Slang und falsch geschrieben"
+  },
+  {
+    "de": "Teile deine Erfahrungen und bau dir ein <span class=\"accent\">monatliches Einkommen</span> auf.",
+    "alt": "Делись своим опытом и выстраивай себе <span class=\"accent\">ежемесячный доход</span>.",
+    "neu": "Делись своим опытом и создавай себе <span class=\"accent\">ежемесячный доход</span>.",
+    "grund": "„выстраивать доход“ ist eine Kalkierung von „aufbauen“; natürlich: „создавать доход“"
+  },
+  {
+    "de": "Du lernst <strong>hochwertige Wellness- und Gesundheitsprodukte</strong> kennen, nutzt sie <strong>selbst</strong> und teilst deine Erfahrungen mit anderen. Wer sie testet und <strong>weiter bestellt</strong>, sorgt dafür, dass <strong>jeden Monat etwas auf deinem Konto</strong> landet.",
+    "alt": "Ты знакомишься с <strong>качественными продуктами для здоровья и хорошего самочувствия</strong>, пользуешься ими <strong>сам</strong> и делишься своим опытом с другими. Когда кто-то пробует их и <strong>продолжает заказывать</strong>, благодаря этому <strong>каждый месяц что-то поступает на твой счёт</strong>.",
+    "neu": "Ты знакомишься с <strong>качественными продуктами для здоровья и хорошего самочувствия</strong>, пользуешься ими <strong>сам</strong> и делишься своим опытом с другими. Когда кто-то пробует их и <strong>продолжает заказывать</strong>, <strong>каждый месяц на твой счёт что-то приходит</strong>.",
+    "grund": "„Когда …, благодаря этому …“ ist ein holpriger Doppelanschluss; Nebensatz direkt anschließen"
+  },
+  {
+    "de": "Ja, das kannst du <span class=\"accent\">auch.</span>",
+    "alt": "Да, это сможешь <span class=\"accent\">и ты.</span>",
+    "neu": "Да, у тебя <span class=\"accent\">тоже получится.</span>",
+    "grund": "„это сможешь и ты“ klingt steif; idiomatisch ist „у тебя тоже получится“"
+  },
+  {
+    "de": "Und alle anderen, die Bock haben.",
+    "alt": "И все остальные, кому хочется.",
+    "neu": "И все остальные, у кого есть желание.",
+    "grund": "„кому хочется“ bleibt unvollständig (hochет­ся чего?); „у кого есть желание“ trifft „Bock haben“"
+  },
+  {
+    "de": "So einfach funktioniert<br><span class=\"accent\">dieses Business.</span>",
+    "alt": "Так просто работает<br><span class=\"accent\">этот бизнес.</span>",
+    "neu": "Вот как просто устроен<br><span class=\"accent\">этот бизнес.</span>",
+    "grund": "„Так просто работает этот бизнес“ ist deutsche Wortstellung; russisch: „Вот как просто устроен …“"
+  },
+  {
+    "de": "Du verdienst mit",
+    "alt": "Ты получаешь свою часть",
+    "neu": "Ты получаешь свою долю",
+    "grund": "„свою часть“ ist unidiomatisch, bei Einkommen sagt man „доля“"
+  },
+  {
+    "de": "Kundenservice per Telefon und Mail leisten",
+    "alt": "Оказывать поддержку клиентам по телефону и по почте",
+    "neu": "Оказывать поддержку клиентам по телефону и электронной почте",
+    "grund": "„по почте“ bedeutet im Russischen Briefpost; „Mail“ = электронная почта"
+  },
+  {
+    "de": "Wellness- und Gesundheitsprodukte für den Alltag. Vom Vitamin-Cocktail bis zum Immunbooster. Alle nach den gleichen strengen Standards produziert. Hier siehst du stellvertretend unser Herzstück: den PowerCocktail.",
+    "alt": "Продукты для хорошего самочувствия и здоровья на каждый день. От витаминного коктейля до бустера для иммунитета. Все производятся по одинаково строгим стандартам. Здесь для примера — наше самое главное: PowerCocktail.",
+    "neu": "Продукты для хорошего самочувствия и здоровья на каждый день. От витаминного коктейля до бустера для иммунитета. Все производятся по одним и тем же строгим стандартам. Вот для примера наш флагман: PowerCocktail.",
+    "grund": "„наше самое главное“ ist kein Begriff für „Herzstück“ (russisch: флагман); „по одинаково строгим“ unnatürlich"
+  },
+  {
+    "de": "1.000+ Profisportler",
+    "alt": "1.000+ профессиональных спортсменов",
+    "neu": "1000+ профессиональных спортсменов",
+    "grund": "Punkt als Tausendertrenner ist deutsch; russisch Leerzeichen oder keine Trennung"
+  },
+  {
+    "de": "Mediziner, Ernährungs- und Biochemiker im Beirat",
+    "alt": "Врачи, специалисты по питанию и биохимики в консультативном совете",
+    "neu": "Врачи, специалисты по питанию и биохимики в экспертном совете",
+    "grund": "„консультативный совет“ klingt nach Behörde; für einen wissenschaftlichen Beirat sagt man „экспертный совет“"
+  },
+  {
+    "de": "Mediziner & Biochemiker im Beirat",
+    "alt": "Врачи и биохимики в консультативном совете",
+    "neu": "Врачи и биохимики в экспертном совете",
+    "grund": "wie oben, Konsistenz mit „экспертный совет“"
+  },
+  {
+    "de": "Du verkaufst kein Produkt.<br><span class=\"accent\">Du verteilst ein Stück Lebensqualität.</span>",
+    "alt": "Ты не продаёшь продукт.<br><span class=\"accent\">Ты делишься частичкой качества жизни.</span>",
+    "neu": "Ты не продаёшь продукт.<br><span class=\"accent\">Ты делишься тем, что делает жизнь лучше.</span>",
+    "grund": "„делишься частичкой качества жизни“ sagt niemand (Kalkierung von „Stück Lebensqualität“)"
+  },
+  {
+    "de": "Rolf Sorg hat die Firma 1993 gegründet. Keine Aktionäre, keine Investoren im Nacken. Nur seine Familie und ein Team, das seit über 30 Jahren dazulernt. Was dabei rauskommt, siehst du hier:",
+    "alt": "Rolf Sorg основал компанию в 1993 году. Никаких акционеров, никаких инвесторов за спиной. Только его семья и команда, которая уже больше 30 лет учится и становится лучше. Вот к чему это приводит:",
+    "neu": "Рольф Зорг основал компанию в 1993 году. Никаких акционеров, никаких инвесторов за спиной. Только его семья и команда, которая уже больше 30 лет учится и становится лучше. Вот к чему это приводит:",
+    "grund": "Personennamen werden im Russischen kyrillisch geschrieben („Rolf Sorg“ in Lateinschrift wirkt fremd)"
+  },
+  {
+    "de": "Weltweit<span class=\"accent\">Kunden &amp; Partner.</span>",
+    "alt": "По всему миру<span class=\"accent\">клиенты &amp; партнёры.</span>",
+    "neu": "По всему миру<span class=\"accent\">клиенты и партнёры.</span>",
+    "grund": "„&amp;“ ist in russischen Texten unüblich; „и“ verwenden"
+  },
+  {
+    "de": "Weniger anzeigen",
+    "alt": "Показать меньше",
+    "neu": "Свернуть",
+    "grund": "„Показать меньше“ ist eine Kalkierung; die übliche UI-Beschriftung ist „Свернуть“ (und kürzer)"
+  },
+  {
+    "de": "Nein. Beim Schneeballsystem verdient man an neuen Leuten, die einzahlen. Bei uns verdienst du nur, wenn Produkte gekauft und weiter genutzt werden. Keine Bestellungen, kein Geld. Der Unterschied ist gesetzlich klar geregelt (siehe <a href=\"https://www.gesetze-im-internet.de/uwg_2004/anhang.html\" target=\"_blank\" rel=\"noopener\">UWG Anhang Nr. 14</a>) und wird auch vom <a href=\"https://direktvertrieb.de/de/abgrenzung\" target=\"_blank\" rel=\"noopener\">Bundesverband Direktvertrieb</a> so definiert. Und die Firma gibts seit 1993 mit 4 Milliarden Umsatz. Schneeballsysteme kollabieren nach ein paar Jahren. Wir sind bei über 30.",
+    "alt": "Нет. В финансовой пирамиде зарабатывают на новых людях, которые вносят деньги. У нас ты зарабатываешь только тогда, когда продукты покупают и продолжают ими пользоваться. Нет заказов — нет денег. Разница чётко прописана в немецком законе (см. <a href=\"https://www.gesetze-im-internet.de/uwg_2004/anhang.html\" target=\"_blank\" rel=\"noopener\">приложение к UWG № 14</a>) и так же определяется <a href=\"https://direktvertrieb.de/de/abgrenzung\" target=\"_blank\" rel=\"noopener\">Федеральной ассоциацией прямых продаж</a>. И компания существует с 1993 года, с оборотом 4 миллиарда. Пирамиды рушатся через несколько лет. А нам уже больше 30.",
+    "neu": "Нет. В финансовой пирамиде зарабатывают на новых людях, которые вносят деньги. У нас ты зарабатываешь только тогда, когда продукты покупают и продолжают ими пользоваться. Нет заказов, нет и денег. Разница чётко прописана в немецком законе (см. <a href=\"https://www.gesetze-im-internet.de/uwg_2004/anhang.html\" target=\"_blank\" rel=\"noopener\">приложение к UWG, № 14</a>) и так же определяется <a href=\"https://direktvertrieb.de/de/abgrenzung\" target=\"_blank\" rel=\"noopener\">Федеральной ассоциацией прямых продаж</a>. И компания существует с 1993 года, с оборотом в 4 миллиарда. Пирамиды рушатся через несколько лет. А нам уже больше 30.",
+    "grund": "„с оборотом 4 миллиарда“ braucht die Präposition „в“; Gedankenstrich entfernt"
+  },
+  {
+    "de": "Gut so. Denn hier verkauft niemand. Du erzählst nur, was dir selbst was gebracht hat. Wer das hören will, hört zu. Wer nicht, dann eben nicht. Kein Sales-Pitch, keine Techniken. Sondern eine Empfehlung, wie du sie auch bei einem guten Restaurant weitergibst.",
+    "alt": "И хорошо. Потому что здесь никто ничего не продаёт. Ты просто рассказываешь о том, что тебе самому помогло. Кому интересно — тот слушает. Кому нет — значит нет. Никаких продажных речей, никаких техник. Просто рекомендация, как если бы ты посоветовал хороший ресторан.",
+    "neu": "И хорошо. Потому что здесь никто ничего не продаёт. Ты просто рассказываешь о том, что тебе самому помогло. Кому интересно, тот слушает. Кому нет, значит нет. Никаких скриптов продаж, никаких техник. Просто рекомендация, как если бы ты посоветовал хороший ресторан.",
+    "grund": "„продажные речи“ heißt „käufliche/korrupte Reden“, nicht Sales-Pitch; Gedankenstriche entfernt"
+  },
+  {
+    "de": "Kann ich das nicht günstiger in der Drogerie kaufen?",
+    "alt": "Разве я не могу купить это дешевле в дрогери?",
+    "neu": "Разве я не могу купить то же самое дешевле в аптеке?",
+    "grund": "„дрогери“ ist ein unübersetztes deutsches Wort, das russische Leser nicht kennen; Vitamine kauft man „в аптеке“"
+  },
+  {
+    "de": "Kannst du. Aber du kaufst dann was anderes. Standard-Vitamine sind oft einzeln dosiert. Unsere Produkte sind aufeinander abgestimmt und werden nach Pharma-Standard in Deutschland hergestellt. Das ist ein Unterschied wie zwischen Instant-Kaffee und einem echten Espresso.",
+    "alt": "Можешь. Но тогда ты купишь другое. Обычные витамины часто идут по отдельности и в отдельных дозировках. Наши продукты подобраны так, чтобы сочетаться друг с другом, и производятся в Германии по фармацевтическому стандарту. Это как разница между растворимым кофе и настоящим эспрессо.",
+    "neu": "Можешь. Но тогда ты купишь другое. Обычные витамины часто дозируются по отдельности. Наши продукты подобраны так, чтобы сочетаться друг с другом, и производятся в Германии по фармацевтическому стандарту. Это как разница между растворимым кофе и настоящим эспрессо.",
+    "grund": "„идут по отдельности и в отдельных дозировках“ ist doppelt gemoppelt"
+  },
+  {
+    "de": "Nein. Du bestellst wann und wie viel du willst. Es gibt aber ein automatisches Belieferungssystem, mit dem du bei jeder Bestellung sparst. Die meisten entscheiden sich freiwillig dafür, weil sie die Produkte eh nutzen und Geld sparen wollen. Nicht weil sie müssen, sondern weil sie es wollen. Keine Mindestlaufzeit, jederzeit anpassbar oder kündbar. Kein Risiko.",
+    "alt": "Нет. Ты заказываешь когда хочешь и сколько хочешь. Но есть система автодоставки, с которой ты экономишь на каждом заказе. Большинство выбирает её добровольно, потому что они всё равно пользуются продуктами и хотят экономить. Не потому что обязаны, а потому что хотят. Никакого минимального срока, можно в любой момент изменить или отменить. Без риска.",
+    "neu": "Нет. Ты заказываешь когда хочешь и сколько хочешь. Но есть система автодоставки, с которой ты экономишь на каждом заказе. Большинство выбирает её добровольно, потому что и так пользуется продуктами и хочет сэкономить. Не потому что обязаны, а потому что хотят. Никакого минимального срока, можно в любой момент изменить или отменить. Без риска.",
+    "grund": "Numerusfehler: „Большинство выбирает … потому что они пользуются“ (Singular/Plural gemischt)"
+  },
+  {
+    "de": "Am Anfang verdienst du an dem, was du selbst weiterempfiehlst. Mit der Zeit kannst du auch andere Menschen mit ins Boot holen, die genau das Gleiche machen wie du. Aus dem, was dein Team dann bewegt, kriegst du auch was ab. Nicht weil du an denen verdienst, sondern weil du sie mit aufgebaut und trainiert hast. Wie ein Trainer, der einen Prozentsatz vom Erfolg seiner Athleten kriegt.",
+    "alt": "В начале ты зарабатываешь на том, что рекомендуешь сам. Со временем ты можешь взять в команду других людей, которые делают то же самое, что и ты. И с того, что потом делает твоя команда, тебе тоже идёт часть. Не потому что ты зарабатываешь на них, а потому что ты помог их выстроить и обучить. Как тренер, который получает процент от успеха своих спортсменов.",
+    "neu": "В начале ты зарабатываешь на том, что рекомендуешь сам. Со временем ты можешь привлечь в команду других людей, которые делают то же самое, что и ты. С результатов твоей команды тебе тоже достаётся часть. Не потому что ты зарабатываешь на них, а потому что ты помог им вырасти и всему научил. Как тренер, который получает процент от успеха своих спортсменов.",
+    "grund": "„помог их выстроить“ geht bei Menschen nicht (man „baut“ keine Leute); „с того, что потом делает твоя команда, тебе тоже идёт часть“ ist holprig"
+  },
+  {
+    "de": "Das ist der Grund, warum manche hier richtig groß werden: Sie bauen sich mit der Zeit ein eigenes Team auf, das mit ihnen wächst. Und alles, was du reinsteckst, kommt bei dir an. Nicht bei einem Chef.",
+    "alt": "Вот почему некоторые здесь вырастают по-настоящему сильно: со временем они строят свою команду, которая растёт вместе с ними. И всё, что ты вкладываешь, возвращается к тебе. Не к начальнику.",
+    "neu": "Вот почему некоторые здесь по-настоящему вырастают: со временем они строят свою команду, которая растёт вместе с ними. И всё, что ты вкладываешь, возвращается к тебе. Не к начальнику.",
+    "grund": "„вырастают по-настоящему сильно“ ist unidiomatisch"
+  },
+  {
+    "de": "Für ein bisschen was extra: ein paar Stunden im Monat. Für einen echten Nebenverdienst: 4 bis 6 Stunden die Woche. Für richtig groß: mehr. Wir schauen im ersten Gespräch, was zu deinem Alltag passt und was du dir vorstellen kannst.",
+    "alt": "Чтобы было немного сверху: несколько часов в месяц. Для настоящего дополнительного дохода: 4–6 часов в неделю. Чтобы вырасти по-крупному: больше. На первом разговоре посмотрим, что подходит под твой ритм жизни и что ты можешь себе представить.",
+    "neu": "Для небольшой прибавки: несколько часов в месяц. Для настоящего дополнительного дохода: 4–6 часов в неделю. Чтобы выйти на серьёзный уровень: больше. В первом разговоре мы посмотрим, что вписывается в твою жизнь и чего ты сам хочешь.",
+    "grund": "„Чтобы было немного сверху“ und „что ты можешь себе представить“ sind Kalkierungen aus dem Deutschen; „вырасти по-крупному“ unnatürlich"
+  },
+  {
+    "de": "Dann hörst du auf. Kein Vertrag, keine Kündigungsfrist, keine offenen Rechnungen, keine Diskussionen. Bei uns gilt: jeder kann, keiner muss.",
+    "alt": "Тогда остановишься. Никакого договора, никакого срока уведомления, никаких открытых счетов, никаких споров. У нас правило простое: каждый может, никто не обязан.",
+    "neu": "Тогда просто остановишься. Никакого договора, никаких сроков расторжения, никаких неоплаченных счетов, никаких споров. У нас правило простое: каждый может, никто не обязан.",
+    "grund": "„срок уведомления“ ist kein Begriff für Kündigungsfrist; „открытые счета“ heißt im Russischen nicht „offene Rechnungen“ (richtig: неоплаченные счета)"
+  },
+  {
+    "de": "Kommt oft vor. Weil viele MLM-Sachen tatsächlich Abzocke waren oder sind. Ich hab dann drei Sachen im Ärmel: Eine Firma, die seit über 30 Jahren wächst. Produkte, die man selbst testen und zurückschicken kann. Und dass niemand außer dir entscheidet, wie weit du das treibst. Das reicht meistens.",
+    "alt": "Такое часто бывает. Потому что много MLM-историй правда были или остаются разводом. У меня на это есть три вещи: компания, которая растёт уже больше 30 лет. Продукты, которые можно самому протестировать и вернуть. И то, что никто, кроме тебя, не решает, как далеко ты в это пойдёшь. Обычно этого хватает.",
+    "neu": "Такое часто бывает. Потому что многие MLM-истории и правда были или остаются разводом. У меня на этот случай есть три аргумента: компания, которая растёт уже больше 30 лет. Продукты, которые можно самому протестировать и вернуть. И то, что никто, кроме тебя, не решает, как далеко ты с этим зайдёшь. Обычно этого хватает.",
+    "grund": "Grammatikfehler „много MLM-историй … были“ (Kongruenz); „три вещи“ und „как далеко ты в это пойдёшь“ unidiomatisch"
+  },
+  {
+    "de": "Ich bin einverstanden, dass meine Angaben zur Kontaktaufnahme verwendet werden. Sie werden nicht weitergegeben. <a href=\"/datenschutz\" target=\"_blank\">Datenschutz</a>",
+    "alt": "Даю согласие на использование моих данных для связи со мной. Они не передаются дальше. <a href=\"/datenschutz\" target=\"_blank\">Политика конфиденциальности</a>",
+    "neu": "Даю согласие на использование моих данных для связи со мной. Третьим лицам они не передаются. <a href=\"/datenschutz\" target=\"_blank\">Политика конфиденциальности</a>",
+    "grund": "„не передаются дальше“ ist eine Kalkierung von „weitergegeben“; russisch: „третьим лицам не передаются“"
+  },
+  {
+    "de": "Kostenlos beraten lassen",
+    "alt": "Получить консультацию бесплатно",
+    "neu": "Бесплатная консультация",
+    "grund": "Link-/Button-Beschriftung zu lang; übliche Kurzform"
+  },
+  {
+    "de": "{{#unless partner_modus=duo}}{{#if geschlecht=weiblich}}Unabhängige Vertriebspartnerin{{/if}}{{#if geschlecht=maennlich}}Unabhängiger Vertriebspartner{{/if}}{{/unless}}{{#if partner_modus=duo}}Unabhängige Vertriebspartner{{/if}} der PM-International (FitLine®). Diese Seite ist keine offizielle Website der PM-International AG.",
+    "alt": "{{#unless partner_modus=duo}}{{#if geschlecht=weiblich}}Независимый дистрибьютор{{/if}}{{#if geschlecht=maennlich}}Независимый дистрибьютор{{/if}}{{/unless}}{{#if partner_modus=duo}}Независимые дистрибьюторы{{/if}} PM-International (FitLine®). Этот сайт не является официальным сайтом PM-International AG.",
+    "neu": "{{#unless partner_modus=duo}}{{#if geschlecht=weiblich}}Независимая представительница{{/if}}{{#if geschlecht=maennlich}}Независимый представитель{{/if}}{{/unless}}{{#if partner_modus=duo}}Независимые представители{{/if}} PM-International (FitLine®). Этот сайт не является официальным сайтом PM-International AG.",
+    "grund": "Weiblicher Zweig war identisch mit dem männlichen; außerdem anderer Begriff als im Haftungshinweis oben („представитель/представительница“), jetzt einheitlich"
+  },
+  {
+    "de": "Alle Produkte sind Nahrungsergänzungsmittel und keine Arzneimittel. Sie können Krankheiten weder heilen, lindern noch verhindern.",
+    "alt": "Все продукты — пищевые добавки, а не лекарственные средства. Они не могут ни лечить заболевания, ни облегчать их течение, ни предотвращать их.",
+    "neu": "Все продукты являются биологически активными добавками к пище, а не лекарственными средствами. Они не лечат, не облегчают и не предотвращают заболевания.",
+    "grund": "„пищевые добавки“ sind im Russischen Lebensmittelzusatzstoffe (E-Nummern); Nahrungsergänzungsmittel = биологически активные добавки (БАД)"
+  },
+  {
+    "de": "Bitte den Datenschutz-Hinweis bestätigen.",
+    "alt": "Пожалуйста, подтверди, что ты ознакомился(-ась) с уведомлением о защите данных.",
+    "neu": "Пожалуйста, подтверди согласие с политикой конфиденциальности.",
+    "grund": "Fehlermeldung zu lang und mit „ознакомился(-ась)“ umständlich; zudem anderer Begriff als der Link („Политика конфиденциальности“)"
+  },
+  {
+    "de": "Gutes tun und dauerhaft profitieren",
+    "alt": "Делай добро и получай выгоду надолго",
+    "neu": "Делай добро и зарабатывай на этом стабильно",
+    "grund": "„получай выгоду надолго“ unidiomatisch; angeglichen an die Hero-Überschrift"
+  },
+  {
+    "de": "Empfiehl hochwertige Wellness-Produkte weiter und bau dir nebenbei ein monatliches Einkommen auf. Ohne Verkaufen, ohne Druck, in deinem Tempo.",
+    "alt": "Рекомендуй качественные велнес-продукты и параллельно выстраивай себе ежемесячный доход. Без продаж, без давления, в своём темпе.",
+    "neu": "Рекомендуй качественные велнес-продукты и параллельно создавай себе ежемесячный доход. Без продаж, без давления, в своём темпе.",
+    "grund": "„выстраивай себе доход“ ist eine Kalkierung; „создавай“ ist natürlich"
+  }
+]

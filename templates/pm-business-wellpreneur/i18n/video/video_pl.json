@@ -1,0 +1,177 @@
+[
+ {
+  "id": 0,
+  "start": 0.0,
+  "end": 7.44,
+  "de": "Du hast bestimmt schon mal ein gutes Restaurant, eine spannende Serie oder ein Produkt empfohlen, von dem du selbst begeistert warst.",
+  "text": "Na pewno zdarzyło ci się polecić dobrą restaurację, wciągający serial albo produkt, który naprawdę cię zachwycił."
+ },
+ {
+  "id": 1,
+  "start": 7.44,
+  "end": 11.56,
+  "de": "Einfach, weil du dir dachtest, das könnte auch anderen gefallen.",
+  "text": "Po prostu, bo przyszło ci do głowy: to może się spodobać też innym."
+ },
+ {
+  "id": 2,
+  "start": 11.56,
+  "end": 14.0,
+  "de": "Normalerweise bekommst du dafür nichts.",
+  "text": "Zwykle nic z tego nie masz."
+ },
+ {
+  "id": 3,
+  "start": 14.0,
+  "end": 20.6,
+  "de": "Aber stell dir mal vor, ein Unternehmen würde dich für eine erfolgreiche Empfehlung mit einer Provision belohnen.",
+  "text": "Ale wyobraź sobie, że firma daje ci prowizję za polecenie, które zadziałało."
+ },
+ {
+  "id": 4,
+  "start": 20.6,
+  "end": 22.4,
+  "de": "Eigentlich fair, oder?",
+  "text": "W sumie fair, nie?"
+ },
+ {
+  "id": 5,
+  "start": 22.4,
+  "end": 25.36,
+  "de": "Genau darum geht's bei unserem Geschäftsmodell.",
+  "text": "I właśnie na tym polega nasz model biznesowy."
+ },
+ {
+  "id": 6,
+  "start": 25.36,
+  "end": 28.48,
+  "de": "Es geht darum, Lebensqualität weiterzugeben.",
+  "text": "Chodzi o to, żeby dzielić się jakością życia."
+ },
+ {
+  "id": 7,
+  "start": 28.56,
+  "end": 33.28,
+  "de": "Vielleicht kennst du jemanden, der sich jeden Morgen mühsam aus dem Bett quält,",
+  "text": "Może znasz kogoś, kto każdego ranka z trudem zwleka się z łóżka,"
+ },
+ {
+  "id": 8,
+  "start": 33.28,
+  "end": 41.08,
+  "de": "der nachmittags kaum noch Energie hat oder versucht, gleichzeitig für den Job, die Familie und sich selbst da zu sein.",
+  "text": "kto po południu ledwo ma jeszcze energię albo próbuje ogarnąć naraz pracę, rodzinę i siebie."
+ },
+ {
+  "id": 9,
+  "start": 41.08,
+  "end": 46.56,
+  "de": "Und vielleicht bist du genau der Mensch, der ihnen zeigt, es kann auch anders gehen.",
+  "text": "I może to właśnie ty jesteś tą osobą, która pokaże im, że może być inaczej."
+ },
+ {
+  "id": 10,
+  "start": 46.56,
+  "end": 48.88,
+  "de": "Genau das ist dein Job.",
+  "text": "I to jest właśnie twoje zadanie."
+ },
+ {
+  "id": 11,
+  "start": 48.88,
+  "end": 57.92,
+  "de": "Nicht verkaufen, nicht überreden, sondern einfach ehrlich von deinen Erfahrungen erzählen und zeigen, was auch für andere möglich sein kann.",
+  "text": "Nie sprzedawać, nie namawiać, tylko po prostu szczerze opowiadać o swoich doświadczeniach i pokazywać, co może być możliwe też dla innych."
+ },
+ {
+  "id": 12,
+  "start": 57.92,
+  "end": 63.0,
+  "de": "Du lernst hochwertige Produkte aus den Bereichen Wellness, Fitness und Schönheit kennen,",
+  "text": "Poznajesz wysokiej jakości produkty z obszaru wellness, fitnessu i urody,"
+ },
+ {
+  "id": 13,
+  "start": 63.0,
+  "end": 68.6,
+  "de": "probierst sie selbst aus und teilst deine Erfahrungen, wenn du wirklich dahinter stehst.",
+  "text": "testujesz je na sobie i dzielisz się wrażeniami, jeśli naprawdę jesteś na tak."
+ },
+ {
+  "id": 14,
+  "start": 68.6,
+  "end": 74.52,
+  "de": "Das Beste daran, jeder kann die Produkte 30 Tage lang ganz in Ruhe ausprobieren.",
+  "text": "Najlepsze jest to, że każdy może spokojnie wypróbować produkty przez 30 dni."
+ },
+ {
+  "id": 15,
+  "start": 74.52,
+  "end": 78.0,
+  "de": "Wenn's nicht passt, gibt's das Geld einfach zurück.",
+  "text": "Jak nie pasuje, po prostu jest zwrot pieniędzy."
+ },
+ {
+  "id": 16,
+  "start": 78.0,
+  "end": 82.2,
+  "de": "Das heißt für dich, du kannst die Produkte mit einem guten Gefühl empfehlen",
+  "text": "To znaczy, że możesz polecać produkty z czystym sumieniem"
+ },
+ {
+  "id": 17,
+  "start": 82.2,
+  "end": 87.0,
+  "de": "und die andere Person kann ganz ohne Risiko schauen, ob's für sie passt.",
+  "text": "a druga osoba może bez żadnego ryzyka sprawdzić, czy jej pasują."
+ },
+ {
+  "id": 18,
+  "start": 87.08,
+  "end": 92.88,
+  "de": "Einfacher und ehrlicher kann man sich nebenbei kaum ein zusätzliches Einkommen aufbauen.",
+  "text": "Prościej i uczciwiej trudno sobie zbudować dodatkowy dochód przy okazji."
+ },
+ {
+  "id": 19,
+  "start": 92.88,
+  "end": 99.2,
+  "de": "Hinter dem Ganzen steckt ein deutsches Familienunternehmen, gegründet im Jahr 1993.",
+  "text": "Za tym wszystkim stoi niemiecka firma rodzinna, założona w 1993 roku."
+ },
+ {
+  "id": 20,
+  "start": 99.2,
+  "end": 105.2,
+  "de": "Statt viele Zwischenhändler und teure Werbung zu bezahlen, fließt das Geld direkt in die Produkte.",
+  "text": "Zamiast płacić wielu pośrednikom i za drogą reklamę, pieniądze trafiają prosto w produkty."
+ },
+ {
+  "id": 21,
+  "start": 105.2,
+  "end": 109.28,
+  "de": "So entsteht eine Qualität, die man im Alltag wirklich merkt.",
+  "text": "Tak powstaje jakość, którą naprawdę czuć na co dzień."
+ },
+ {
+  "id": 22,
+  "start": 109.28,
+  "end": 116.4,
+  "de": "Und ein Teil geht an die Menschen, die die Produkte selbst nutzen, weiterempfehlen und andere dabei unterstützen.",
+  "text": "A część trafia do ludzi, którzy sami używają produktów, polecają je dalej i wspierają przy tym innych."
+ },
+ {
+  "id": 23,
+  "start": 116.4,
+  "end": 119.4,
+  "de": "Wie das genau funktioniert, zeige ich dir.",
+  "text": "Pokażę ci, jak to dokładnie działa."
+ },
+ {
+  "id": 24,
+  "start": 119.4,
+  "end": 122.4,
+  "de": "Ich nehme dich gerne an die Hand.",
+  "text": "Chętnie poprowadzę cię krok po kroku."
+ }
+]

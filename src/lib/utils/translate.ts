@@ -27,7 +27,7 @@ const LANG_NAMES: Record<SiteLang, string> = { de: 'German', en: 'English', it: 
 
 /** Welche Sprachen ein Template zeigt (de ist immer die Quelle). */
 export function templateLangs(templateDomain: string | null | undefined): SiteLang[] {
-  if (templateDomain === 'dailyoptimal.de') return [...TRANSLATION_LANGS]
+  if (templateDomain === 'dailyoptimal.de' || templateDomain === 'wellpreneur.io') return [...TRANSLATION_LANGS]
   return ['en']
 }
 

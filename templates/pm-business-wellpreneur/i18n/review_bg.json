@@ -1,0 +1,206 @@
+[
+  {
+    "de": "Zeit frei einteilen",
+    "alt": "Свободно разпределяш времето",
+    "neu": "Разпределяш времето си свободно",
+    "grund": "Ohne „си“ klingt es unvollständig; natürliche Wortstellung."
+  },
+  {
+    "de": "Ja, das kannst du <span class=\"accent\">auch.</span>",
+    "alt": "Да, можеш го <span class=\"accent\">и ти.</span>",
+    "neu": "Да, това можеш <span class=\"accent\">и ти.</span>",
+    "grund": "„можеш го и ти“ ist holprig; natürliche Formulierung mit Bezug „това“."
+  },
+  {
+    "de": "<strong>Egal wo du gerade stehst.</strong> Weil es <strong>nichts gibt, was du erst lernen müsstest</strong>. Kein Studium, keine Erfahrung, kein besonderes Talent. <strong>Alles was du brauchst, hast du längst dabei.</strong>",
+    "alt": "<strong>Независимо къде се намираш в момента.</strong> Защото <strong>няма нищо, което първо трябва да учиш</strong>. Нито образование, нито опит, нито специален талант. <strong>Всичко, което ти трябва, вече го имаш.</strong>",
+    "neu": "<strong>Независимо къде се намираш в момента.</strong> Защото <strong>няма нищо, което първо трябва да научиш</strong>. Нито образование, нито опит, нито специален талант. <strong>Всичко, което ти трябва, вече го имаш.</strong>",
+    "grund": "Aspekt: „да научиш“ (perfektiv) statt „да учиш“ für „erst lernen müsstest“."
+  },
+  {
+    "de": "Deine Provision landet automatisch auf dem Konto. Jeden Monat, solange bestellt wird.",
+    "alt": "Твоята комисиона влиза автоматично по сметката ти. Всеки месец, докато се поръчва.",
+    "neu": "Комисионата ти влиза автоматично по сметката. Всеки месец, докато има поръчки.",
+    "grund": "Doppeltes Possessiv „Твоята … сметката ти“ entfernt; „докато се поръчва“ ist Kalk, „докато има поръчки“ natürlich."
+  },
+  {
+    "de": "Firma",
+    "alt": "Компанията",
+    "neu": "Фирмата",
+    "grund": "Konsistenz: überall sonst „фирмата“, nicht „компанията“ (Gegenüberstellung „Ти“/„Фирмата“)."
+  },
+  {
+    "de": "Kundengelder einziehen und auszahlen",
+    "alt": "Събира и изплаща клиентски плащания",
+    "neu": "Събира плащанията от клиентите и изплаща сумите",
+    "grund": "„изплаща клиентски плащания“ ist unlogisch (Zahlungen auszahlen); natürliche Formulierung."
+  },
+  {
+    "de": "Wellness- und Gesundheitsprodukte für den Alltag. Vom Vitamin-Cocktail bis zum Immunbooster. Alle nach den gleichen strengen Standards produziert. Hier siehst du stellvertretend unser Herzstück: den PowerCocktail.",
+    "alt": "Уелнес и здравни продукти за всеки ден. От витаминен коктейл до имунен бустер. Всички произведени по едни и същи строги стандарти. Тук виждаш като пример нашето сърце: PowerCocktail.",
+    "neu": "Уелнес и здравни продукти за всеки ден. От витаминен коктейл до имунен бустер. Всички произведени по едни и същи строги стандарти. Тук виждаш като пример сърцето на нашата гама: PowerCocktail.",
+    "grund": "„нашето сърце“ ist wörtlich und wirkt seltsam; „Herzstück“ = „сърцето на гамата“."
+  },
+  {
+    "de": "Rolf Sorg hat die Firma 1993 gegründet. Keine Aktionäre, keine Investoren im Nacken. Nur seine Familie und ein Team, das seit über 30 Jahren dazulernt. Was dabei rauskommt, siehst du hier:",
+    "alt": "Rolf Sorg създава фирмата през 1993. Без акционери, без инвеститори, които да му дишат във врата. Само семейството му и екип, който вече над 30 години учи и става по-добър. Ето докъде води това:",
+    "neu": "Ролф Зорг основава фирмата през 1993 г. Без акционери, без инвеститори, които да му дишат във врата. Само семейството му и екип, който вече над 30 години се учи и развива. Какво се получава от това, виждаш тук:",
+    "grund": "Personenname kyrillisch („Ролф Зорг“), „1993 г.“ wie im Bulgarischen üblich; „Ето докъде води това“ passt nicht zu den folgenden Kennzahlen."
+  },
+  {
+    "de": "Weltweit<span class=\"accent\">Kunden &amp; Partner.</span>",
+    "alt": "По целия свят<span class=\"accent\">клиенти &amp; партньори.</span>",
+    "neu": "По целия свят<span class=\"accent\">клиенти и партньори.</span>",
+    "grund": "„&“ ist im bulgarischen Fließtext unüblich (an anderer Stelle bereits „и“)."
+  },
+  {
+    "de": "Rechnen wir kurz. Nimm einen 100 Euro Schuh im Laden. Wo landet dein Geld?",
+    "alt": "Да сметнем набързо. Вземи един чифт обувки за 100 Euro в магазин. Къде отиват парите ти?",
+    "neu": "Да сметнем набързо. Вземи чифт обувки за 100 евро от магазина. Къде отиват парите ти?",
+    "grund": "„Euro“ lateinisch, muss „евро“ heißen; „от магазина“ natürlicher."
+  },
+  {
+    "de": "Unser Weg",
+    "alt": "Нашият начин",
+    "neu": "Нашият път",
+    "grund": "Parallel zu „Класическият път“ (Vergleichsgrafik); „начин“ bricht die Gegenüberstellung."
+  },
+  {
+    "de": "An die, die empfehlen",
+    "alt": "Към тези, които препоръчват",
+    "neu": "За тези, които препоръчват",
+    "grund": "Geldverteilung: „За тези“ (für die), nicht „Към тези“ (Kalk von „an die“)."
+  },
+  {
+    "de": "Ganz sicher nicht. Ich empfehle nur da, wo ich denke, dass es passt. Alles andere wär ja auch peinlich. Wenn du niemanden aus deinem Umfeld ansprechen willst, gibts genug andere Wege über Social Media oder deine Community. Wir machen das so, wie es zu dir passt.",
+    "alt": "Категорично не. Препоръчвам само там, където мисля, че има смисъл. Всичко друго би било доста неловко. Ако не искаш да говориш с хора от обкръжението си, има достатъчно други начини през социалните мрежи или твоята общност. Правим го така, както пасва на теб.",
+    "neu": "Категорично не. Препоръчвам само там, където мисля, че има смисъл. Всичко друго би било доста неловко. Ако не искаш да говориш с хора от обкръжението си, има достатъчно други начини през социалните мрежи или твоята общност. Правим го така, както е удобно на теб.",
+    "grund": "„както пасва на теб“ ist Kalk; „както е удобно на теб“ sagt man."
+  },
+  {
+    "de": "Gut so. Denn hier verkauft niemand. Du erzählst nur, was dir selbst was gebracht hat. Wer das hören will, hört zu. Wer nicht, dann eben nicht. Kein Sales-Pitch, keine Techniken. Sondern eine Empfehlung, wie du sie auch bei einem guten Restaurant weitergibst.",
+    "alt": "Точно така е по-добре. Защото тук никой не продава. Просто разказваш какво на теб самия ти е помогнало. Който иска да чуе, слуша. Който не иска — здраве да е. Без sales pitch, без техники. Просто препоръка, както би препоръчал добър ресторант.",
+    "neu": "Още по-добре. Защото тук никой не продава. Просто разказваш какво е помогнало на теб самия. Който иска да чуе, слуша. Който не иска, здраве да е. Без заучени речи, без техники за продажба. Просто препоръка, както би препоръчал и добър ресторант.",
+    "grund": "Gedankenstrich entfernt; „какво на теб самия ти е помогнало“ holprig; „sales pitch“ lateinisch/unverständlich → „заучени речи“."
+  },
+  {
+    "de": "Auf den ersten Blick vielleicht. Aber schau dir mal an, wie sich der Preis zusammensetzt. Bei den meisten Marken gehen 60 Prozent in Werbung und Zwischenhandel. Bei uns fließt der Großteil in die Qualität. Deshalb ist der Preis höher. Und genau deshalb bestellen Menschen immer wieder nach.",
+    "alt": "На пръв поглед може би. Но виж от какво се съставя цената. При повечето марки 60 процента отиват за реклама и посредници. При нас по-голямата част отива в качеството. Затова цената е по-висока. И точно затова хората поръчват пак и пак.",
+    "neu": "На пръв поглед може би. Но виж как се формира цената. При повечето марки 60 процента отиват за реклама и посредници. При нас по-голямата част отива в качеството. Затова цената е по-висока. И точно затова хората поръчват отново и отново.",
+    "grund": "„от какво се съставя цената“ unnatürlich → „как се формира цената“; „пак и пак“ → „отново и отново“."
+  },
+  {
+    "de": "Kannst du. Aber du kaufst dann was anderes. Standard-Vitamine sind oft einzeln dosiert. Unsere Produkte sind aufeinander abgestimmt und werden nach Pharma-Standard in Deutschland hergestellt. Das ist ein Unterschied wie zwischen Instant-Kaffee und einem echten Espresso.",
+    "alt": "Можеш. Но тогава купуваш нещо друго. Стандартните витамини често са дозирани поотделно. Нашите продукти са съгласувани помежду си и се произвеждат в Германия по фармацевтичен стандарт. Разликата е като между разтворимо кафе и истинско еспресо.",
+    "neu": "Можеш. Но тогава купуваш нещо друго. Стандартните витамини често са дозирани поотделно. Нашите продукти са съчетани така, че да се допълват, и се произвеждат в Германия по фармацевтичен стандарт. Разликата е като между разтворимо кафе и истинско еспресо.",
+    "grund": "„съгласувани помежду си“ klingt nach Behördensprache; „aufeinander abgestimmt“ = „съчетани така, че да се допълват“."
+  },
+  {
+    "de": "Nein. Du bestellst wann und wie viel du willst. Es gibt aber ein automatisches Belieferungssystem, mit dem du bei jeder Bestellung sparst. Die meisten entscheiden sich freiwillig dafür, weil sie die Produkte eh nutzen und Geld sparen wollen. Nicht weil sie müssen, sondern weil sie es wollen. Keine Mindestlaufzeit, jederzeit anpassbar oder kündbar. Kein Risiko.",
+    "alt": "Не. Поръчваш когато и колкото искаш. Има обаче система за автоматична доставка, с която спестяваш при всяка поръчка. Повечето хора я избират доброволно, защото така или иначе използват продуктите и искат да спестят пари. Не защото трябва, а защото искат. Без минимален срок, може да се променя или спира по всяко време. Без риск.",
+    "neu": "Не. Поръчваш, когато и колкото искаш. Има обаче система за автоматична доставка, с която спестяваш при всяка поръчка. Повечето хора я избират доброволно, защото така или иначе използват продуктите и искат да спестят пари. Не защото трябва, а защото искат. Без минимален срок, може да се променя или спира по всяко време. Без риск.",
+    "grund": "Fehlendes Komma vor „когато“ (Pflichtkomma im Bulgarischen)."
+  },
+  {
+    "de": "Für ein bisschen was extra: ein paar Stunden im Monat. Für einen echten Nebenverdienst: 4 bis 6 Stunden die Woche. Für richtig groß: mehr. Wir schauen im ersten Gespräch, was zu deinem Alltag passt und was du dir vorstellen kannst.",
+    "alt": "За малко допълнително: няколко часа на месец. За истински страничен доход: 4 до 6 часа седмично. За нещо наистина голямо: повече. В първия разговор ще видим какво пасва на ежедневието ти и какво можеш да си представиш.",
+    "neu": "За малко допълнително: няколко часа на месец. За истински страничен доход: 4 до 6 часа седмично. За нещо наистина голямо: повече. В първия разговор ще видим какво се вписва в ежедневието ти и какво ти се струва реалистично.",
+    "grund": "„какво можеш да си представиш“ ist Kalk von „was du dir vorstellen kannst“ und bedeutet im Bulgarischen etwas anderes."
+  },
+  {
+    "de": "Die Anmeldung selbst kostet nichts. Um wirklich starten zu können, brauchst du ein kleines Startpaket mit Arbeitsmaterial (unter 20 Euro) und im Idealfall ein Produktset zum selbst Testen, damit du weißt, was du empfiehlst. Beides zusammen ist überschaubar, und das Produktset kannst du innerhalb von 30 Tagen zurückschicken, auch angebrochen. Kein Kursgeld, keine Ausbildungskosten, keine versteckten Gebühren.",
+    "alt": "Самата регистрация не струва нищо. За да можеш наистина да започнеш, ти трябва малък стартов пакет с работни материали (под 20 Euro) и в идеалния случай продуктов комплект, който да тестваш сам, за да знаеш какво препоръчваш. Двете заедно са съвсем поносими като сума, а продуктовия комплект можеш да върнеш в рамките на 30 дни, дори отворен. Без такса за курс, без разходи за обучение, без скрити такси.",
+    "neu": "Самата регистрация не струва нищо. За да можеш наистина да започнеш, ти трябва малък стартов пакет с работни материали (под 20 евро) и в идеалния случай продуктов комплект, който да тестваш сам, за да знаеш какво препоръчваш. Общо сумата е съвсем поносима, а продуктовия комплект можеш да върнеш в рамките на 30 дни, дори отворен. Без такса за курс, без разходи за обучение, без скрити такси.",
+    "grund": "„Euro“ → „евро“; „Двете заедно са съвсем поносими като сума“ umständlich."
+  },
+  {
+    "de": "Kommt oft vor. Weil viele MLM-Sachen tatsächlich Abzocke waren oder sind. Ich hab dann drei Sachen im Ärmel: Eine Firma, die seit über 30 Jahren wächst. Produkte, die man selbst testen und zurückschicken kann. Und dass niemand außer dir entscheidet, wie weit du das treibst. Das reicht meistens.",
+    "alt": "Случва се често. Защото много MLM неща наистина са били или са измами. Тогава имам три неща в ръкава: фирма, която расте от над 30 години. Продукти, които можеш сам да тестваш и да върнеш. И това, че никой освен теб не решава докъде ще стигнеш с това. Обикновено това е достатъчно.",
+    "neu": "Случва се често. Защото много MLM неща наистина са били или са измами. Тогава имам три коза в ръкава: фирма, която расте от над 30 години. Продукти, които можеш сам да тестваш и да върнеш. И това, че никой освен теб не решава докъде ще стигнеш с това. Обикновено това е достатъчно.",
+    "grund": "„три неща в ръкава“ ist Kalk; die bulgarische Redewendung lautet „коз в ръкава“."
+  },
+  {
+    "de": "Zweites Standbein aufbauen",
+    "alt": "Да изградиш втори източник на доход",
+    "neu": "Да си изградя втори източник на доход",
+    "grund": "Antwortoptionen im Formular gemischt in 2. und 1. Person („Да изградиш“ vs. „да опозная“); 1. Person wie bei „Първо да опозная продуктите“."
+  },
+  {
+    "de": "Wie viel Zeit hättest du?",
+    "alt": "Колко време би имал/а?",
+    "neu": "С колко време разполагаш?",
+    "grund": "„би имал/а“ mit Schrägstrich ist unschön; genderneutrale, natürliche Frage."
+  },
+  {
+    "de": "So erreiche ich dich",
+    "alt": "Така можеш да се свържеш с мен",
+    "neu": "Така ще се свържа с теб",
+    "grund": "Falsche Richtung: Deutsch „So erreiche ICH DICH“ (Partner meldet sich), Übersetzung sagte „so kannst du mich erreichen“."
+  },
+  {
+    "de": "Ich bin einverstanden, dass meine Angaben zur Kontaktaufnahme verwendet werden. Sie werden nicht weitergegeben. <a href=\"/datenschutz\" target=\"_blank\">Datenschutz</a>",
+    "alt": "Съгласявам се данните ми да бъдат използвани за връзка с мен. Те няма да бъдат предавани на други. <a href=\"/datenschutz\" target=\"_blank\">Поверителност</a>",
+    "neu": "Съгласявам се данните ми да бъдат използвани за връзка с мен. Няма да бъдат предавани на трети лица. <a href=\"/datenschutz\" target=\"_blank\">Поверителност</a>",
+    "grund": "„предавани на други“ ist vage; Standardformel „на трети лица“."
+  },
+  {
+    "de": "Deine Nachricht ist bei mir angekommen. Ich melde mich zeitnah, meistens noch am selben Tag.",
+    "alt": "Съобщението ти стигна до мен. Ще ти пиша скоро, обикновено още същия ден.",
+    "neu": "Съобщението ти стигна до мен. Ще се свържа с теб скоро, обикновено още същия ден.",
+    "grund": "„Ich melde mich“ heißt nicht nur schreiben; „Ще се свържа с теб“ deckt Anruf und Nachricht ab."
+  },
+  {
+    "de": "In der Zwischenzeit findest du {{#unless partner_modus=duo}}mich{{/unless}}{{#if partner_modus=duo}}uns{{/if}} auch hier:",
+    "alt": "Междувременно можеш да намериш {{#unless partner_modus=duo}}мен{{/unless}}{{#if partner_modus=duo}}нас{{/if}} и тук:",
+    "neu": "Междувременно можеш да {{#unless partner_modus=duo}}ме{{/unless}}{{#if partner_modus=duo}}ни{{/if}} намериш и тук:",
+    "grund": "„да намериш мен/нас и тук“ ist unnatürlich betont; Kurzform des Pronomens vor dem Verb ist die normale Wortstellung."
+  },
+  {
+    "de": "Häufige Fragen",
+    "alt": "FAQ",
+    "neu": "Чести въпроси",
+    "grund": "Footer-Überschrift „Häufige Fragen“ wurde zu „FAQ“; bulgarische Leser erwarten „Чести въпроси“ (kurz genug)."
+  },
+  {
+    "de": "Wichtige Hinweise",
+    "alt": "Важни бележки",
+    "neu": "Важна информация",
+    "grund": "„Важни бележки“ heißt eher „Anmerkungen/Notizen“; für rechtliche Hinweise sagt man „Важна информация“."
+  },
+  {
+    "de": "{{#unless partner_modus=duo}}{{#if geschlecht=weiblich}}Unabhängige Vertriebspartnerin{{/if}}{{#if geschlecht=maennlich}}Unabhängiger Vertriebspartner{{/if}}{{/unless}}{{#if partner_modus=duo}}Unabhängige Vertriebspartner{{/if}} der PM-International (FitLine®). Diese Seite ist keine offizielle Website der PM-International AG.",
+    "alt": "{{#unless partner_modus=duo}}{{#if geschlecht=weiblich}}Независима партньорка по продажбите{{/if}}{{#if geschlecht=maennlich}}Независим партньор по продажбите{{/if}}{{/unless}}{{#if partner_modus=duo}}Независими партньори по продажбите{{/if}} на PM-International (FitLine®). Тази страница не е официален уебсайт на PM-International AG.",
+    "neu": "{{#unless partner_modus=duo}}{{#if geschlecht=weiblich}}Независима дистрибуторка{{/if}}{{#if geschlecht=maennlich}}Независим дистрибутор{{/if}}{{/unless}}{{#if partner_modus=duo}}Независими дистрибутори{{/if}} на PM-International (FitLine®). Тази страница не е официален уебсайт на PM-International AG.",
+    "grund": "„партньор по продажбите“ ist steifer Kalk; im Disclaimer oben bereits „независим дистрибутор“ – Konsistenz."
+  },
+  {
+    "de": "Wir nutzen Cookies, um dir das beste Erlebnis zu bieten. Technisch notwendige Cookies sind immer aktiv — sie machen die Seite funktionsfähig. Weitere Cookies (z.&nbsp;B. Statistiken) setzen wir nur mit deiner Zustimmung. Mehr Infos in unserer <a href=\"/datenschutz\" target=\"_blank\" rel=\"noopener\">Datenschutzerklärung</a>.",
+    "alt": "Използваме бисквитки, за да ти дадем най-доброто преживяване. Технически необходимите бисквитки са винаги активни — те помагат сайтът да работи. Други бисквитки (напр.&nbsp;статистика) използваме само с твоето съгласие. Повече информация има в нашата <a href=\"/datenschutz\" target=\"_blank\" rel=\"noopener\">политика за поверителност</a>.",
+    "neu": "Използваме бисквитки, за да ти дадем най-доброто преживяване. Технически необходимите бисквитки са винаги активни, защото без тях сайтът не работи. Други бисквитки (напр.&nbsp;статистика) използваме само с твоето съгласие. Повече информация има в нашата <a href=\"/datenschutz\" target=\"_blank\" rel=\"noopener\">политика за поверителност</a>.",
+    "grund": "Gedankenstrich entfernt; „те помагат сайтът да работи“ holprig."
+  },
+  {
+    "de": "Grundlegende Funktionen der Website — immer aktiv.",
+    "alt": "Основни функции на сайта — винаги активни.",
+    "neu": "Основни функции на сайта, винаги активни.",
+    "grund": "Gedankenstrich entfernt."
+  },
+  {
+    "de": "Bitte den Datenschutz-Hinweis bestätigen.",
+    "alt": "Моля, потвърди информацията за защита на личните данни.",
+    "neu": "Моля, потвърди съгласието си с политиката за поверителност.",
+    "grund": "„потвърди информацията“ ergibt keinen Sinn (man bestätigt die Zustimmung, nicht die Information)."
+  },
+  {
+    "de": "Gutes tun und dauerhaft profitieren",
+    "alt": "Прави добро и имай дългосрочна полза",
+    "neu": "Правиш добро и печелиш дългосрочно",
+    "grund": "„имай дългосрочна полза“ steif; Meta-Titel sollte mit der Hero-Überschrift übereinstimmen."
+  },
+  {
+    "de": "Empfiehl hochwertige Wellness-Produkte weiter und bau dir nebenbei ein monatliches Einkommen auf. Ohne Verkaufen, ohne Druck, in deinem Tempo.",
+    "alt": "Препоръчвай качествени wellness продукти и си изгради месечен доход между другото. Без продаване, без натиск, със собствено темпо.",
+    "neu": "Препоръчвай качествени уелнес продукти и си изгради покрай другото месечен доход. Без продаване, без натиск, с твоето темпо.",
+    "grund": "„между другото“ heißt „übrigens“, nicht „nebenbei“ (Sinnfehler); „wellness“ lateinisch → „уелнес“ wie im Text."
+  }
+]

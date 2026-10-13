@@ -1,0 +1,212 @@
+[
+  {
+    "de": "Du lernst <strong>hochwertige Wellness- und Gesundheitsprodukte</strong> kennen, nutzt sie <strong>selbst</strong> und teilst deine Erfahrungen mit anderen. Wer sie testet und <strong>weiter bestellt</strong>, sorgt dafür, dass <strong>jeden Monat etwas auf deinem Konto</strong> landet.",
+    "alt": "आप <strong>बेहतरीन वेलनेस और हेल्थ प्रोडक्ट्स</strong> को जानते हैं, उन्हें <strong>खुद</strong> इस्तेमाल करते हैं और अपने अनुभव दूसरों के साथ शेयर करते हैं। जो उन्हें आज़माता है और <strong>आगे भी ऑर्डर करता रहता है</strong>, उसकी वजह से <strong>हर महीने आपके खाते में कुछ पैसे</strong> आते हैं।",
+    "neu": "आप <strong>बेहतरीन वेलनेस और हेल्थ प्रोडक्ट्स</strong> से परिचित होते हैं, उन्हें <strong>खुद</strong> इस्तेमाल करते हैं और अपने अनुभव दूसरों के साथ शेयर करते हैं। जो उन्हें आज़माता है और <strong>आगे भी ऑर्डर करता रहता है</strong>, उसकी वजह से <strong>हर महीने आपके खाते में कुछ पैसे</strong> आते हैं।",
+    "grund": "„kennenlernen“ falsch als „जानते हैं“ (= kennen) übersetzt"
+  },
+  {
+    "de": "{{#unless partner_modus=duo}}Zeig{{/unless}}{{#if partner_modus=duo}}Zeigt{{/if}} mir, wie das läuft",
+    "alt": "{{#unless partner_modus=duo}}मुझे दिखाइए{{/unless}}{{#if partner_modus=duo}}मुझे दिखाइए{{/if}}, यह कैसे काम करता है",
+    "neu": "{{#unless partner_modus=duo}}मुझे दिखाइए{{/unless}}{{#if partner_modus=duo}}मुझे दिखाइए{{/if}} कि यह कैसे काम करता है",
+    "grund": "Komma-Kalkül aus dem Deutschen; im Hindi braucht der Nebensatz „कि“"
+  },
+  {
+    "de": "Ja, das kannst du <span class=\"accent\">auch.</span>",
+    "alt": "हाँ, आप यह <span class=\"accent\">भी।</span>",
+    "neu": "हाँ, यह आप भी <span class=\"accent\">कर सकते हैं।</span>",
+    "grund": "Verb fehlt („आप यह भी।“ ist kein Satz)"
+  },
+  {
+    "de": "Anwender und Partner unterstützen",
+    "alt": "उपयोगकर्ताओं और पार्टनर्स की मदद करना",
+    "neu": "ग्राहकों और पार्टनर्स की मदद करना",
+    "grund": "„उपयोगकर्ताओं“ ist steif/amtlich; hier sind Kunden gemeint"
+  },
+  {
+    "de": "Und was empfiehlst du <span class=\"accent\">eigentlich?</span>",
+    "alt": "तो आप <span class=\"accent\">असल में क्या recommend करते हैं?</span>",
+    "neu": "तो आप असल में <span class=\"accent\">किस चीज़ की सिफारिश करते हैं?</span>",
+    "grund": "„recommend“ in Lateinschrift; sonst überall „सिफारिश“"
+  },
+  {
+    "de": "1.000+ Profisportler",
+    "alt": "1.000+ प्रोफेशनल खिलाड़ी",
+    "neu": "1,000+ प्रोफेशनल खिलाड़ी",
+    "grund": "Deutsches Tausendertrennzeichen „1.000“ liest sich im Hindi wie 1,0"
+  },
+  {
+    "de": "Mehr als weiterempfehlen",
+    "alt": "सिर्फ recommend करने से ज़्यादा",
+    "neu": "सिर्फ़ सिफारिश करने से कहीं ज़्यादा",
+    "grund": "„recommend“ in Lateinschrift"
+  },
+  {
+    "de": "Fit für Job und Familie gleichzeitig",
+    "alt": "काम और परिवार—दोनों के लिए साथ-साथ फिट",
+    "neu": "काम और परिवार, दोनों के लिए एक साथ फिट",
+    "grund": "Gedankenstrich (—) entfernt"
+  },
+  {
+    "de": "Jahresumsatz in Milliarden US-Dollar",
+    "alt": "अरब US-Dollar में सालाना टर्नओवर",
+    "neu": "अरब US डॉलर में सालाना टर्नओवर",
+    "grund": "„US-Dollar“ deutsche Schreibweise; im Hindi „US डॉलर“"
+  },
+  {
+    "de": "Wer euch begleitet",
+    "alt": "आप लोगों का साथ कौन देगा",
+    "neu": "आपका साथ कौन देगा",
+    "grund": "„आप लोगों“ spricht mehrere Besucher an; der Besucher ist eine Person, nur die Partner sind zwei"
+  },
+  {
+    "de": "Du arbeitest von zu Hause aus. Deine Kunden können trotzdem in Tokio, Miami oder Dubai ihre Produkte genießen.",
+    "alt": "आप घर से काम करते हैं। फिर भी आपके ग्राहक Tokio, Miami या Dubai में अपने प्रोडक्ट्स एंजॉय कर सकते हैं।",
+    "neu": "आप घर से काम करते हैं। फिर भी आपके ग्राहक टोक्यो, मियामी या दुबई में अपने प्रोडक्ट्स एंजॉय कर सकते हैं।",
+    "grund": "Städtenamen in Lateinschrift statt Devanagari"
+  },
+  {
+    "de": "VAE",
+    "alt": "UAE",
+    "neu": "यूएई",
+    "grund": "Einziges Land in Lateinschrift in der Liste"
+  },
+  {
+    "de": "Rechnen wir kurz. Nimm einen 100 Euro Schuh im Laden. Wo landet dein Geld?",
+    "alt": "चलो थोड़ा हिसाब लगाते हैं। दुकान में 100 Euro का एक जूता मान लीजिए। आपका पैसा आखिर कहाँ जाता है?",
+    "neu": "चलिए, थोड़ा हिसाब लगाते हैं। दुकान में 100 यूरो का एक जूता लीजिए। आपका पैसा आखिर कहाँ जाता है?",
+    "grund": "„चलो“ ist तुम-Ebene neben „लीजिए“ (आप); „Euro“ in Lateinschrift"
+  },
+  {
+    "de": "Ganz sicher nicht. Ich empfehle nur da, wo ich denke, dass es passt. Alles andere wär ja auch peinlich. Wenn du niemanden aus deinem Umfeld ansprechen willst, gibts genug andere Wege über Social Media oder deine Community. Wir machen das so, wie es zu dir passt.",
+    "alt": "बिल्कुल नहीं। मैं सिर्फ वहीं सिफारिश करता हूँ, जहाँ मुझे लगता है कि यह सही फिट है। बाकी तो अजीब ही लगेगा। अगर आप अपने आसपास के लोगों से बात नहीं करना चाहते, तो Social Media या अपनी community के ज़रिए कई और रास्ते हैं। हम इसे वैसे करते हैं, जैसे आपको सूट करे।",
+    "neu": "बिल्कुल नहीं। मेरी सिफारिश सिर्फ़ वहीं होती है, जहाँ मुझे लगता है कि यह सही बैठता है। बाकी तो अजीब ही लगेगा। अगर आप अपने आसपास के लोगों से बात नहीं करना चाहते, तो सोशल मीडिया या अपनी कम्युनिटी के ज़रिए कई और रास्ते हैं। हम इसे वैसे ही करते हैं, जैसे आपको सूट करे।",
+    "grund": "„करता हूँ“ ist männlich, Partnerin kann weiblich sein; „Social Media/community“ in Lateinschrift"
+  },
+  {
+    "de": "Gut so. Denn hier verkauft niemand. Du erzählst nur, was dir selbst was gebracht hat. Wer das hören will, hört zu. Wer nicht, dann eben nicht. Kein Sales-Pitch, keine Techniken. Sondern eine Empfehlung, wie du sie auch bei einem guten Restaurant weitergibst.",
+    "alt": "अच्छी बात है। क्योंकि यहाँ कोई बेचता नहीं है। आप बस बताते हैं कि आपको खुद किस चीज़ से फायदा महसूस हुआ। जिसे सुनना है, वह सुनेगा। जिसे नहीं, तो नहीं। कोई sales pitch नहीं, कोई techniques नहीं। बस एक सिफारिश, जैसे आप किसी अच्छे restaurant की करते हैं।",
+    "neu": "अच्छी बात है। क्योंकि यहाँ कोई बेचता नहीं है। आप बस बताते हैं कि आपको खुद किस चीज़ से फायदा हुआ। जिसे सुनना है, वह सुनेगा। जिसे नहीं, तो नहीं। कोई सेल्स पिच नहीं, कोई तरकीबें नहीं। बस एक सिफारिश, जैसे आप किसी अच्छे रेस्टोरेंट की करते हैं।",
+    "grund": "„sales pitch“, „techniques“, „restaurant“ in Lateinschrift"
+  },
+  {
+    "de": "Auf den ersten Blick vielleicht. Aber schau dir mal an, wie sich der Preis zusammensetzt. Bei den meisten Marken gehen 60 Prozent in Werbung und Zwischenhandel. Bei uns fließt der Großteil in die Qualität. Deshalb ist der Preis höher. Und genau deshalb bestellen Menschen immer wieder nach.",
+    "alt": "पहली नज़र में शायद। लेकिन ज़रा देखिए कि कीमत बनती कैसे है। ज़्यादातर brands में 60 percent पैसा विज्ञापन और बीच के व्यापार में चला जाता है। हमारे यहाँ बड़ा हिस्सा क्वालिटी में जाता है। इसलिए कीमत ज़्यादा है। और इसी वजह से लोग बार-बार ऑर्डर करते हैं।",
+    "neu": "पहली नज़र में शायद। लेकिन ज़रा देखिए कि कीमत बनती कैसे है। ज़्यादातर ब्रांड्स में 60 प्रतिशत पैसा विज्ञापन और बिचौलियों में चला जाता है। हमारे यहाँ बड़ा हिस्सा क्वालिटी में जाता है। इसलिए कीमत ज़्यादा है। और इसी वजह से लोग बार-बार ऑर्डर करते हैं।",
+    "grund": "„brands“, „percent“ in Lateinschrift; „बीच के व्यापार“ unnatürlich"
+  },
+  {
+    "de": "Kann ich das nicht günstiger in der Drogerie kaufen?",
+    "alt": "क्या मैं यह drugstore से सस्ता नहीं खरीद सकता?",
+    "neu": "क्या यह मुझे मेडिकल स्टोर या सुपरमार्केट में सस्ता नहीं मिल जाएगा?",
+    "grund": "„drugstore“ in Lateinschrift; „सकता“ nur männlich"
+  },
+  {
+    "de": "Kannst du. Aber du kaufst dann was anderes. Standard-Vitamine sind oft einzeln dosiert. Unsere Produkte sind aufeinander abgestimmt und werden nach Pharma-Standard in Deutschland hergestellt. Das ist ein Unterschied wie zwischen Instant-Kaffee und einem echten Espresso.",
+    "alt": "खरीद सकते हैं। लेकिन तब आप कुछ और खरीद रहे होंगे। Standard vitamins अक्सर अलग-अलग dose में होते हैं। हमारे products एक-दूसरे के हिसाब से बनाए गए हैं और Germany में pharma-standard के अनुसार बनते हैं। फर्क वैसा ही है जैसे instant coffee और असली espresso में।",
+    "neu": "मिल जाएगा। लेकिन तब आप कुछ और खरीद रहे होंगे। आम विटामिन अक्सर अलग-अलग डोज़ में आते हैं। हमारे प्रोडक्ट्स एक-दूसरे के हिसाब से बनाए गए हैं और जर्मनी में फार्मा स्टैंडर्ड के अनुसार बनते हैं। फर्क वैसा ही है, जैसे इंस्टेंट कॉफ़ी और असली एस्प्रेसो में।",
+    "grund": "Halber Satz auf Englisch in Lateinschrift (Standard vitamins, dose, products, Germany, pharma-standard, instant coffee, espresso)"
+  },
+  {
+    "de": "Nein. Du bestellst wann und wie viel du willst. Es gibt aber ein automatisches Belieferungssystem, mit dem du bei jeder Bestellung sparst. Die meisten entscheiden sich freiwillig dafür, weil sie die Produkte eh nutzen und Geld sparen wollen. Nicht weil sie müssen, sondern weil sie es wollen. Keine Mindestlaufzeit, jederzeit anpassbar oder kündbar. Kein Risiko.",
+    "alt": "नहीं। आप जब चाहें और जितना चाहें ऑर्डर करते हैं। लेकिन एक automatic delivery system है, जिससे हर ऑर्डर पर आपकी बचत होती है। ज़्यादातर लोग इसे अपनी मर्ज़ी से चुनते हैं, क्योंकि वे products वैसे भी इस्तेमाल करते हैं और पैसे बचाना चाहते हैं। इसलिए नहीं कि उन्हें करना पड़ता है, बल्कि इसलिए कि वे करना चाहते हैं। कोई minimum term नहीं, कभी भी बदल सकते हैं या cancel कर सकते हैं। कोई risk नहीं।",
+    "neu": "नहीं। आप जब चाहें और जितना चाहें ऑर्डर करते हैं। लेकिन एक ऑटोमैटिक डिलीवरी सिस्टम है, जिससे हर ऑर्डर पर आपकी बचत होती है। ज़्यादातर लोग इसे अपनी मर्ज़ी से चुनते हैं, क्योंकि वे प्रोडक्ट्स वैसे भी इस्तेमाल करते हैं और पैसे बचाना चाहते हैं। इसलिए नहीं कि उन्हें करना पड़ता है, बल्कि इसलिए कि वे चाहते हैं। कोई मिनिमम पीरियड नहीं, कभी भी बदल या कैंसल कर सकते हैं। कोई जोखिम नहीं।",
+    "grund": "Viele Wörter in Lateinschrift (automatic delivery system, products, minimum term, cancel, risk)"
+  },
+  {
+    "de": "Was verdient man realistisch?",
+    "alt": "Realistically, इसमें कितना कमाया जा सकता है?",
+    "neu": "असल में इसमें कितना कमाया जा सकता है?",
+    "grund": "„Realistically“ in Lateinschrift"
+  },
+  {
+    "de": "Ehrliche Antwort: Ganz unterschiedlich. Die einen machen 100 im Monat, die anderen ein paar Tausend, wieder andere leben komplett davon.",
+    "alt": "ईमानदार जवाब: बहुत अलग-अलग। कुछ लोग महीने में 100 कमाते हैं, कुछ लोग कुछ हज़ार, और कुछ लोग पूरी तरह इसी से जीते हैं।",
+    "neu": "ईमानदार जवाब: बहुत अलग-अलग। कुछ लोग महीने में 100 कमाते हैं, कुछ लोग कुछ हज़ार, और कुछ लोग पूरी तरह इसी से अपना गुज़ारा चलाते हैं।",
+    "grund": "„इसी से जीते हैं“ ist Kalk von „davon leben“; natürlich: „गुज़ारा चलाना“"
+  },
+  {
+    "de": "Am Anfang verdienst du an dem, was du selbst weiterempfiehlst. Mit der Zeit kannst du auch andere Menschen mit ins Boot holen, die genau das Gleiche machen wie du. Aus dem, was dein Team dann bewegt, kriegst du auch was ab. Nicht weil du an denen verdienst, sondern weil du sie mit aufgebaut und trainiert hast. Wie ein Trainer, der einen Prozentsatz vom Erfolg seiner Athleten kriegt.",
+    "alt": "शुरुआत में आप उसी से कमाते हैं, जिसकी आप खुद सिफारिश करते हैं। समय के साथ आप दूसरे लोगों को भी साथ ला सकते हैं, जो वही करते हैं जो आप करते हैं। फिर आपकी team जो करती है, उसमें से आपको भी हिस्सा मिलता है। इसलिए नहीं कि आप उनसे कमाते हैं, बल्कि इसलिए कि आपने उन्हें build और train करने में मदद की है। जैसे एक trainer को अपने athletes की success का एक percentage मिलता है।",
+    "neu": "शुरुआत में आप उसी से कमाते हैं, जिसकी आप खुद सिफारिश करते हैं। समय के साथ आप दूसरे लोगों को भी साथ जोड़ सकते हैं, जो ठीक वही करते हैं जो आप करते हैं। फिर आपकी टीम जो कुछ करती है, उसमें से आपको भी हिस्सा मिलता है। इसलिए नहीं कि आप उनसे कमाते हैं, बल्कि इसलिए कि आपने उन्हें साथ मिलकर तैयार और ट्रेन किया है। जैसे एक कोच को अपने खिलाड़ियों की कामयाबी का एक हिस्सा मिलता है।",
+    "grund": "team, build, train, trainer, athletes, success, percentage in Lateinschrift"
+  },
+  {
+    "de": "Das ist der Grund, warum manche hier richtig groß werden: Sie bauen sich mit der Zeit ein eigenes Team auf, das mit ihnen wächst. Und alles, was du reinsteckst, kommt bei dir an. Nicht bei einem Chef.",
+    "alt": "यही वजह है कि कुछ लोग यहाँ सच में बड़े हो जाते हैं: वे समय के साथ अपनी खुद की team बनाते हैं, जो उनके साथ grow करती है। और आप जो भी मेहनत लगाते हैं, उसका फायदा आपको मिलता है। किसी boss को नहीं।",
+    "neu": "यही वजह है कि कुछ लोग यहाँ सच में बड़े हो जाते हैं: वे समय के साथ अपनी खुद की टीम बनाते हैं, जो उनके साथ बढ़ती है। और आप जो भी मेहनत लगाते हैं, उसका फायदा आपको मिलता है। किसी बॉस को नहीं।",
+    "grund": "team, grow, boss in Lateinschrift"
+  },
+  {
+    "de": "Für ein bisschen was extra: ein paar Stunden im Monat. Für einen echten Nebenverdienst: 4 bis 6 Stunden die Woche. Für richtig groß: mehr. Wir schauen im ersten Gespräch, was zu deinem Alltag passt und was du dir vorstellen kannst.",
+    "alt": "थोड़ा extra कमाने के लिए: महीने में कुछ घंटे। एक सही side income के लिए: हफ्ते में 4 से 6 घंटे। बड़ा करना है: तो ज़्यादा। पहली बातचीत में हम देखेंगे कि आपकी daily life में क्या fit बैठता है और आप खुद क्या कर सकते हैं।",
+    "neu": "थोड़ी एक्स्ट्रा कमाई के लिए: महीने में कुछ घंटे। एक असली साइड इनकम के लिए: हफ्ते में 4 से 6 घंटे। सच में बड़ा करना है: तो ज़्यादा। पहली बातचीत में हम देखेंगे कि आपकी रोज़मर्रा की ज़िंदगी में क्या फिट बैठता है और आप खुद कितना करना चाहेंगे।",
+    "grund": "extra, side income, daily life, fit in Lateinschrift; „आप खुद क्या कर सकते हैं“ trifft „vorstellen kannst“ nicht"
+  },
+  {
+    "de": "Die Anmeldung selbst kostet nichts. Um wirklich starten zu können, brauchst du ein kleines Startpaket mit Arbeitsmaterial (unter 20 Euro) und im Idealfall ein Produktset zum selbst Testen, damit du weißt, was du empfiehlst. Beides zusammen ist überschaubar, und das Produktset kannst du innerhalb von 30 Tagen zurückschicken, auch angebrochen. Kein Kursgeld, keine Ausbildungskosten, keine versteckten Gebühren.",
+    "alt": "Registration itself में कोई खर्च नहीं है। सच में शुरू करने के लिए आपको work material वाला एक छोटा starter kit चाहिए (20 Euro से कम) और ideally खुद test करने के लिए एक product set, ताकि आपको पता हो कि आप क्या recommend कर रहे हैं। दोनों मिलाकर खर्च manageable है, और product set आप 30 दिनों के अंदर वापस भेज सकते हैं, opened भी। कोई course fee नहीं, कोई training cost नहीं, कोई hidden charges नहीं।",
+    "neu": "रजिस्ट्रेशन में खुद कोई खर्च नहीं है। सच में शुरू करने के लिए आपको वर्क मटीरियल वाला एक छोटा स्टार्टर किट चाहिए (20 यूरो से कम) और बेहतर हो तो खुद आज़माने के लिए एक प्रोडक्ट सेट, ताकि आपको पता हो कि आप किसकी सिफारिश कर रहे हैं। दोनों मिलाकर खर्च ज़्यादा नहीं है, और प्रोडक्ट सेट आप 30 दिनों के अंदर वापस भेज सकते हैं, खुला हुआ भी। कोई कोर्स फ़ीस नहीं, कोई ट्रेनिंग का खर्च नहीं, कोई छिपी हुई फ़ीस नहीं।",
+    "grund": "Halb Englisch in Lateinschrift (Registration itself, work material, starter kit, Euro, ideally, test, recommend, manageable, opened, course fee, training cost, hidden charges)"
+  },
+  {
+    "de": "Dann hörst du auf. Kein Vertrag, keine Kündigungsfrist, keine offenen Rechnungen, keine Diskussionen. Bei uns gilt: jeder kann, keiner muss.",
+    "alt": "तो आप छोड़ देते हैं। कोई contract नहीं, कोई notice period नहीं, कोई pending bills नहीं, कोई बहस नहीं। हमारे यहाँ rule है: हर कोई कर सकता है, किसी को करना ज़रूरी नहीं।",
+    "neu": "तो आप छोड़ देते हैं। कोई कॉन्ट्रैक्ट नहीं, कोई नोटिस पीरियड नहीं, कोई बकाया बिल नहीं, कोई बहस नहीं। हमारे यहाँ नियम है: हर कोई कर सकता है, किसी को करना ज़रूरी नहीं।",
+    "grund": "contract, notice period, pending bills, rule in Lateinschrift"
+  },
+  {
+    "de": "Kommt oft vor. Weil viele MLM-Sachen tatsächlich Abzocke waren oder sind. Ich hab dann drei Sachen im Ärmel: Eine Firma, die seit über 30 Jahren wächst. Produkte, die man selbst testen und zurückschicken kann. Und dass niemand außer dir entscheidet, wie weit du das treibst. Das reicht meistens.",
+    "alt": "ऐसा अक्सर होता है। क्योंकि कई MLM वाली चीज़ें सच में ठगी थीं या हैं। मेरे पास तब तीन बातें होती हैं: एक कंपनी, जो 30 साल से ज़्यादा समय से grow कर रही है। Products, जिन्हें आप खुद test करके वापस भेज सकते हैं। और यह कि आपके अलावा कोई decide नहीं करता कि आप इसे कितना आगे ले जाना चाहते हैं। आम तौर पर इतना काफी होता है।",
+    "neu": "ऐसा अक्सर होता है। क्योंकि कई MLM वाली चीज़ें सच में ठगी थीं या हैं। तब मेरे पास तीन बातें होती हैं: एक कंपनी, जो 30 साल से ज़्यादा समय से बढ़ रही है। प्रोडक्ट्स, जिन्हें आप खुद आज़माकर वापस भेज सकते हैं। और यह कि आपके अलावा कोई तय नहीं करता कि आप इसे कितना आगे ले जाते हैं। आम तौर पर इतना काफी होता है।",
+    "grund": "grow, Products, test, decide in Lateinschrift"
+  },
+  {
+    "de": "Passt das zu dir?<br><span class=\"accent\">Lass es uns herausfinden.</span>",
+    "alt": "क्या यह आपके लिए सही है?<br><span class=\"accent\">चलो पता करते हैं।</span>",
+    "neu": "क्या यह आपके लिए सही है?<br><span class=\"accent\">चलिए, पता करते हैं।</span>",
+    "grund": "„चलो“ ist तुम-Ebene, Seite nutzt durchgehend आप"
+  },
+  {
+    "de": "Schritt 1 von 3",
+    "alt": "Step 1 of 3",
+    "neu": "3 में से स्टेप 1",
+    "grund": "Unübersetzt (Englisch), Schritt 2/3 sind auf Hindi"
+  },
+  {
+    "de": "Du schreibst direkt an",
+    "alt": "आप सीधे संपर्क कर रहे हैं",
+    "neu": "आपका मैसेज सीधे इन तक पहुँचेगा:",
+    "grund": "Label steht vor dem Namen; „आप सीधे संपर्क कर रहे हैं“ + Name ergibt keinen Satz"
+  },
+  {
+    "de": "{{#unless partner_modus=duo}}{{#if geschlecht=weiblich}}Unabhängige Vertriebspartnerin{{/if}}{{#if geschlecht=maennlich}}Unabhängiger Vertriebspartner{{/if}}{{/unless}}{{#if partner_modus=duo}}Unabhängige Vertriebspartner{{/if}} der PM-International (FitLine®). Diese Seite ist keine offizielle Website der PM-International AG.",
+    "alt": "{{#unless partner_modus=duo}}{{#if geschlecht=weiblich}}PM-International (FitLine®) की स्वतंत्र वितरण पार्टनर{{/if}}{{#if geschlecht=maennlich}}PM-International (FitLine®) के स्वतंत्र वितरण पार्टनर{{/if}}{{/unless}}{{#if partner_modus=duo}}PM-International (FitLine®) के स्वतंत्र वितरण पार्टनर{{/if}}। यह पेज PM-International AG की आधिकारिक वेबसाइट नहीं है।",
+    "neu": "{{#unless partner_modus=duo}}{{#if geschlecht=weiblich}}PM-International (FitLine®) की स्वतंत्र डिस्ट्रीब्यूशन पार्टनर{{/if}}{{#if geschlecht=maennlich}}PM-International (FitLine®) के स्वतंत्र डिस्ट्रीब्यूशन पार्टनर{{/if}}{{/unless}}{{#if partner_modus=duo}}PM-International (FitLine®) के स्वतंत्र डिस्ट्रीब्यूशन पार्टनर{{/if}}। यह पेज PM-International AG की आधिकारिक वेबसाइट नहीं है।",
+    "grund": "„वितरण पार्टनर“ ist ein steifer Mischbegriff; im Impressum-Satz oben heißt es „डिस्ट्रीब्यूशन पार्टनर“ (Konsistenz)"
+  },
+  {
+    "de": "Alle Produkte sind Nahrungsergänzungsmittel und keine Arzneimittel. Sie können Krankheiten weder heilen, lindern noch verhindern.",
+    "alt": "सभी प्रोडक्ट्स खाद्य सप्लीमेंट हैं, दवाएँ नहीं। वे बीमारियों को न तो ठीक कर सकते हैं, न उनसे राहत दे सकते हैं और न ही उन्हें रोक सकते हैं।",
+    "neu": "सभी प्रोडक्ट्स फ़ूड सप्लीमेंट हैं, दवाएँ नहीं। वे बीमारियों को न तो ठीक कर सकते हैं, न उनसे राहत दे सकते हैं और न ही उन्हें रोक सकते हैं।",
+    "grund": "„खाद्य सप्लीमेंट“ ist ein unüblicher Mischbegriff; gängig ist „फ़ूड सप्लीमेंट“"
+  },
+  {
+    "de": "Wir nutzen Cookies, um dir das beste Erlebnis zu bieten. Technisch notwendige Cookies sind immer aktiv — sie machen die Seite funktionsfähig. Weitere Cookies (z.&nbsp;B. Statistiken) setzen wir nur mit deiner Zustimmung. Mehr Infos in unserer <a href=\"/datenschutz\" target=\"_blank\" rel=\"noopener\">Datenschutzerklärung</a>.",
+    "alt": "हम आपको सबसे अच्छा अनुभव देने के लिए कुकीज़ का इस्तेमाल करते हैं। तकनीकी रूप से ज़रूरी कुकीज़ हमेशा सक्रिय रहती हैं — इन्हीं से साइट ठीक से काम करती है। बाकी कुकीज़ (जैसे आँकड़ों के लिए) हम सिर्फ़ आपकी सहमति से लगाते हैं। ज़्यादा जानकारी हमारी <a href=\"/datenschutz\" target=\"_blank\" rel=\"noopener\">गोपनीयता नीति</a> में है।",
+    "neu": "हम आपको सबसे अच्छा अनुभव देने के लिए कुकीज़ का इस्तेमाल करते हैं। तकनीकी रूप से ज़रूरी कुकीज़ हमेशा सक्रिय रहती हैं, इन्हीं से साइट ठीक से काम करती है। बाकी कुकीज़ (जैसे आँकड़ों के लिए) हम सिर्फ़ आपकी सहमति से लगाते हैं। ज़्यादा जानकारी हमारी <a href=\"/datenschutz\" target=\"_blank\" rel=\"noopener\">गोपनीयता नीति</a> में है।",
+    "grund": "Gedankenstrich (—) entfernt"
+  },
+  {
+    "de": "Grundlegende Funktionen der Website — immer aktiv.",
+    "alt": "वेबसाइट की बुनियादी सुविधाएँ — हमेशा सक्रिय।",
+    "neu": "वेबसाइट की बुनियादी सुविधाएँ, हमेशा सक्रिय।",
+    "grund": "Gedankenstrich (—) entfernt"
+  },
+  {
+    "de": "Alleinerziehende",
+    "alt": "सिंगल पेरेंट्स",
+    "neu": "सिंगल पैरेंट्स",
+    "grund": "Schreibweise „पेरेंट्स“ weicht vom sichtbaren Chip „सिंगल पैरेंट्स“ ab"
+  }
+]
