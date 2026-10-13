@@ -27,7 +27,12 @@ async function loadPhoto(url: string | undefined, origin: string): Promise<strin
     if (!type.startsWith('image/')) return null
     const buf = Buffer.from(await res.arrayBuffer())
     if (buf.length > 6_000_000) return null
-    return `data:${type};base64,${buf.toString('base64')}`
+    if (/^image\/(png|jpe?g|gif)$/i.test(type)) return `data:${type};base64,${buf.toString('base64')}`
+    // WebP/AVIF/HEIC kann ImageResponse nicht lesen („u2 is not iterable“, Vorschaubild 502):
+    // vorher in JPEG umwandeln (13.10.2026, betraf u. a. das Platzhalter-Profilbild).
+    const sharp = (await import('sharp')).default
+    const jpg = await sharp(buf).rotate().resize(600, 600, { fit: 'cover' }).jpeg({ quality: 85 }).toBuffer()
+    return `data:image/jpeg;base64,${jpg.toString('base64')}`
   } catch { return null }
 }
 
