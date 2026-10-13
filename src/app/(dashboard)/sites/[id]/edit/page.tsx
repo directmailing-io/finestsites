@@ -3658,17 +3658,22 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
 
       {/* ── Entwurf ≠ Live: gespeichert, aber noch nicht online ── */}
       {isPublished && hasChanges && !isDomainSection && (
-        <div className="flex items-center gap-3 px-4 sm:px-6 py-3 flex-shrink-0"
+        // Handy: eine schlanke Zeile, damit genug Platz zum Bearbeiten bleibt (Feedback 13.10.2026:
+        // mit größerer Systemschrift nahm der Hinweis ein Drittel des Bildschirms ein). Den Grund,
+        // warum noch nicht veröffentlicht werden kann, zeigt der Button per Tipp (Toast + Sprung
+        // zum Feld) und die Leiste unten. Ab sm der ausführliche Hinweis wie bisher.
+        <div className="flex items-center gap-2.5 sm:gap-3 px-4 sm:px-6 py-1.5 sm:py-3 flex-shrink-0"
           style={{ background: '#FFF7ED', borderBottom: '1px solid #FDBA74' }} role="status">
-          <span className="relative flex h-3 w-3 flex-shrink-0">
+          <span className="relative flex h-2.5 w-2.5 sm:h-3 sm:w-3 flex-shrink-0">
             <span className="absolute inline-flex h-full w-full rounded-full opacity-60 animate-ping" style={{ background: '#F59E0B' }} />
-            <span className="relative inline-flex h-3 w-3 rounded-full" style={{ background: '#D97706' }} />
+            <span className="relative inline-flex h-full w-full rounded-full" style={{ background: '#D97706' }} />
           </span>
-          <p className="flex-1 min-w-0 text-[14px] sm:text-[15px] leading-snug" style={{ color: '#9A3412' }}>
-            <strong>Noch nicht online.</strong> Deine Änderungen sind gespeichert, Besucher sehen aber noch die alte Fassung.
+          <p className="flex-1 min-w-0 text-[13px] sm:text-[15px] leading-snug truncate sm:whitespace-normal" style={{ color: '#9A3412' }}>
+            <strong className="sm:hidden">Noch nicht online</strong>
+            <span className="hidden sm:inline"><strong>Noch nicht online.</strong> Deine Änderungen sind gespeichert, Besucher sehen aber noch die alte Fassung.</span>
             {publishBlockReason && (
-              // Grund direkt im Banner, nicht nur als flüchtiger Toast – auf dem Handy sonst leicht zu übersehen
-              <span className="block mt-0.5 text-[13px] sm:text-sm" style={{ color: publishBlockReason.color }}>
+              // Grund direkt im Banner, nicht nur als flüchtiger Toast (Desktop)
+              <span className="hidden sm:block mt-0.5 text-sm" style={{ color: publishBlockReason.color }}>
                 Vorher nötig: {publishBlockReason.text}
               </span>
             )}
@@ -3676,9 +3681,9 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
           <button type="button"
             onClick={() => allRequiredComplete ? handlePublish() : handleBlockedPublishTap()}
             disabled={publishing}
-            className="flex-shrink-0 text-[13px] sm:text-sm font-semibold px-3.5 sm:px-4 py-2 rounded-full text-white whitespace-nowrap"
+            className="flex-shrink-0 text-[12.5px] sm:text-sm font-semibold px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-white whitespace-nowrap"
             style={{ background: allRequiredComplete ? '#D97706' : '#9CA3AF', opacity: publishing ? 0.7 : 1 }}>
-            {publishing ? 'Bitte warten…' : 'Jetzt veröffentlichen'}
+            {publishing ? 'Bitte warten…' : <><span className="sm:hidden">Veröffentlichen</span><span className="hidden sm:inline">Jetzt veröffentlichen</span></>}
           </button>
         </div>
       )}
