@@ -30,9 +30,12 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,system-ui,sans-serif;
 a{color:inherit;text-decoration:none;}
 img{display:block;max-width:100%;}
 /* ── Layout ─────────────────────────────────────────────────────────────────── */
+/* Abstands-System (8er-Raster): eng innerhalb einer Gruppe, großzügig zwischen den Gruppen
+   Profil → Text → Kontakte → Links → Rechtliches. */
 .page{min-height:100vh;min-height:100svh;display:flex;flex-direction:column;
-      align-items:center;padding:52px 20px 80px;}
-.card{width:100%;max-width:460px;display:flex;flex-direction:column;align-items:center;}
+      align-items:center;
+      padding:max(56px,env(safe-area-inset-top)) max(24px,env(safe-area-inset-right)) max(48px,env(safe-area-inset-bottom)) max(24px,env(safe-area-inset-left));}
+.card{width:100%;max-width:480px;display:flex;flex-direction:column;align-items:center;}
 /* ── Profilbild ──────────────────────────────────────────────────────────────── */
 .avatar{width:120px;height:120px;border-radius:50%;object-fit:cover;
         border:3px solid var(--div);flex-shrink:0;
@@ -46,25 +49,26 @@ img{display:block;max-width:100%;}
 .avatars .avatar,.avatars .avatar-fb{width:104px;height:104px;font-size:30px;}
 .avatars .avatar+.avatar,.avatars .avatar+.avatar-fb,.avatars .avatar-fb+.avatar,.avatars .avatar-fb+.avatar-fb{margin-left:-22px;}
 .avatars .avatar,.avatars .avatar-fb{border:3px solid var(--bg);}
-.contacts{margin-top:22px;width:100%;display:grid;grid-template-columns:1fr 1fr;}
+.contacts{margin-top:28px;width:100%;max-width:400px;display:grid;grid-template-columns:1fr 1fr;}
 .contacts .person{display:flex;flex-direction:column;align-items:center;padding:0 6px;}
 .contacts .person+.person{border-left:1px solid var(--div);}
-.contacts .person small{font-size:13px;font-weight:600;color:var(--muted);}
-.contacts .social{margin-top:4px;}
+.contacts .person small{font-size:13px;font-weight:600;color:var(--muted);letter-spacing:0.01em;}
+.contacts .social{margin-top:6px;}
 .contacts .social a{width:44px;height:44px;}
 .contacts .social svg{width:24px;height:24px;}
-@media(max-width:380px){.contacts{grid-template-columns:1fr;gap:14px;}.contacts .person+.person{border-left:0;border-top:1px solid var(--div);padding-top:12px;}}
+@media(max-width:380px){.contacts{grid-template-columns:1fr;gap:16px;}.contacts .person+.person{border-left:0;border-top:1px solid var(--div);padding-top:16px;}}
 /* ── Name + Bio ──────────────────────────────────────────────────────────────── */
-.name{margin-top:18px;font-size:26px;font-weight:700;letter-spacing:-0.025em;
-      text-align:center;line-height:1.15;}
-.bio{margin-top:10px;font-size:15px;color:var(--muted);text-align:center;
-     line-height:1.65;max-width:340px;}
-.bio p{margin:0 0 8px;}
+.name{margin-top:20px;font-size:27px;font-weight:700;letter-spacing:-0.025em;
+      text-align:center;line-height:1.15;text-wrap:balance;}
+/* Fließtext in abgedämpfter Textfarbe statt Akzentfarbe: längere Texte bleiben gut lesbar */
+.bio{margin-top:16px;font-size:15.5px;color:color-mix(in srgb,var(--text) 78%,var(--bg));
+     text-align:center;line-height:1.6;max-width:400px;text-wrap:pretty;}
+.bio p{margin:0 0 12px;}
 .bio p:last-child{margin-bottom:0;}
-.bio ul,.bio ol{display:inline-block;text-align:left;padding-left:20px;margin:0 0 8px;}
+.bio ul,.bio ol{display:inline-block;text-align:left;padding-left:20px;margin:0 0 12px;}
 .bio strong{color:var(--text);font-weight:600;}
 /* ── Social Icons ────────────────────────────────────────────────────────────── */
-.social{margin-top:22px;display:flex;flex-wrap:wrap;justify-content:center;gap:4px;}
+.social{margin-top:24px;display:flex;flex-wrap:wrap;justify-content:center;gap:4px;}
 .social a{display:flex;align-items:center;justify-content:center;width:52px;height:52px;
            border-radius:50%;transition:background 150ms,transform 100ms;
            -webkit-tap-highlight-color:transparent;}
@@ -73,7 +77,7 @@ img{display:block;max-width:100%;}
 .social a:active{transform:scale(0.88);transition-duration:50ms;}
 .social svg{width:28px;height:28px;color:var(--muted);transition:color 150ms;}
 /* ── Link-Buttons ────────────────────────────────────────────────────────────── */
-.links{margin-top:22px;width:100%;display:flex;flex-direction:column;gap:10px;}
+.links{margin-top:32px;width:100%;display:flex;flex-direction:column;gap:14px;}
 .link-btn{display:flex;align-items:center;justify-content:center;width:100%;
            min-height:58px;padding:16px 24px;background:var(--accent);color:var(--btn-txt);
            border-radius:var(--r);font-size:17px;font-weight:600;text-align:center;
@@ -84,13 +88,13 @@ img{display:block;max-width:100%;}
 .link-btn:hover{opacity:0.86;box-shadow:0 6px 24px var(--glow);}
 .link-btn:active{transform:scale(0.97);transition-duration:50ms;}
 /* ── FinestSites Footer ──────────────────────────────────────────────────────── */
-.legal-row{margin-top:36px;font-size:13px;color:var(--muted);
+.legal-row{margin-top:48px;font-size:13px;color:var(--muted);
            display:flex;gap:20px;flex-wrap:wrap;justify-content:center;}
 .legal-row button{background:none;border:none;color:inherit;cursor:pointer;font:inherit;
                   padding:4px 0;transition:color 150ms;text-decoration:underline;
                   text-underline-offset:3px;text-decoration-color:transparent;}
 .legal-row button:hover{color:var(--text);text-decoration-color:currentColor;}
-.fs-footer{margin-top:24px;font-size:12px;color:var(--muted);
+.fs-footer{margin-top:16px;font-size:12px;color:var(--muted);
            display:flex;align-items:center;gap:5px;}
 .fs-heart{color:var(--accent);}
 .fs-brand{display:inline-flex;align-items:center;line-height:1;}
@@ -115,6 +119,20 @@ img{display:block;max-width:100%;}
 .modal a{text-decoration:underline;text-underline-offset:3px;}
 .modal ul{padding-left:18px;margin-bottom:6px;}
 .modal li{font-size:15px;line-height:1.75;color:var(--text);}
+/* Größere Bildschirme: mehr Luft und etwas größere Schrift, Spalte bleibt fokussiert */
+@media(min-width:640px){
+  .page{padding-top:88px;padding-bottom:64px;}
+  .card{max-width:520px;}
+  .avatar,.avatar-fb{width:132px;height:132px;}
+  .avatars .avatar,.avatars .avatar-fb{width:116px;height:116px;}
+  .name{margin-top:24px;font-size:30px;}
+  .bio{margin-top:18px;font-size:16px;max-width:440px;}
+  .contacts{margin-top:32px;}
+  .social{margin-top:28px;}
+  .links{margin-top:40px;gap:16px;}
+  .link-btn{min-height:60px;}
+  .legal-row{margin-top:56px;}
+}
 @media(prefers-reduced-motion:reduce){.link-btn,.social a{transition:none;}}
 .fs-credit{color:inherit;text-decoration:none;}</style>
 </head>

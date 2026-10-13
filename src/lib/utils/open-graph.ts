@@ -23,6 +23,8 @@ export interface OgContext {
 
 export interface OgProfile {
   claim: string
+  /** Claim für Paare/Teams („unsere“ statt „meine“), sonst gilt claim */
+  claimDuo?: string
   description: (name: string) => string
   /** Farbe des Vorschaubilds */
   accent: string
@@ -48,6 +50,7 @@ export const OG_PROFILES: Record<string, OgProfile> = {
   },
   'lnko.me': {
     claim: 'Alle meine Links',
+    claimDuo: 'Alle unsere Links',
     description: n => `Die wichtigsten Links von ${n} auf einen Blick: Webseiten, Social Media und Kontakt.`,
     accent: '#111111', ink: '#FFFFFF',
   },
@@ -63,6 +66,7 @@ export const OG_PROFILES: Record<string, OgProfile> = {
   },
   'womenplus.io': {
     claim: 'Meine Seite',
+    claimDuo: 'Unsere Seite',
     description: n => `Schau dir die Seite von ${n} an und melde dich gern.`,
     accent: '#BE123C', ink: '#FFFFFF',
   },
@@ -70,6 +74,7 @@ export const OG_PROFILES: Record<string, OgProfile> = {
 
 const DEFAULT_PROFILE: OgProfile = {
   claim: 'Meine Seite',
+  claimDuo: 'Unsere Seite',
   description: n => `Schau dir die Seite von ${n} an und melde dich gern.`,
   accent: '#111111', ink: '#FFFFFF',
 }
@@ -79,6 +84,17 @@ export function ogProfile(templateDomain: string): OgProfile {
 }
 
 const clean = (v: unknown) => String(v ?? '').replace(/\s+/g, ' ').trim()
+
+/** Paar-/Team-Seite mit zwei Vornamen? */
+export function ogIsDuo(data: Record<string, unknown>): boolean {
+  const duo = clean(data.partner_modus) === 'duo' || clean(data.team_modus) === 'team'
+  return duo && !!clean(data.vorname) && !!(clean(data.vorname2) || clean(data.partner_vorname))
+}
+
+/** Claim passend zu Einzelperson oder Paar. */
+export function ogClaim(p: OgProfile, data: Record<string, unknown>): string {
+  return ogIsDuo(data) && p.claimDuo ? p.claimDuo : p.claim
+}
 
 /** Anzeigename: „Anna Krempel“, im Duo „Anna & Max“. */
 export function ogName(data: Record<string, unknown>): string {
@@ -98,7 +114,8 @@ export function ogInitials(data: Record<string, unknown>): string {
 export function ogImageUrl(ctx: OgContext, data: Record<string, unknown>): string {
   const base = (ctx.appUrl ?? 'https://app.finestsites.io').replace(/\/$/, '')
   // Versions-Parameter: ändert sich mit Name/Foto, damit WhatsApp & Co. das Bild neu holen
-  const seed = `${ogName(data)}|${clean(data.profilbild)}|${clean(data.profilbild2) || clean(data.partner_profilbild)}`
+  // und mit dem Farbthema (das Bild übernimmt dessen Farbe)
+  const seed = `${ogName(data)}|${clean(data.profilbild)}|${clean(data.profilbild2) || clean(data.partner_profilbild)}|${clean(data.farbthema)}|${ogClaim(ogProfile(ctx.templateDomain), data)}`
   let h = 0
   for (let i = 0; i < seed.length; i++) h = (h * 31 + seed.charCodeAt(i)) >>> 0
   return `${base}/api/og/${ctx.siteId}.png?v=${h.toString(36)}`
@@ -107,10 +124,11 @@ export function ogImageUrl(ctx: OgContext, data: Record<string, unknown>): strin
 export function ogCopy(ctx: OgContext, data: Record<string, unknown>) {
   const p = ogProfile(ctx.templateDomain)
   const name = ogName(data)
+  const claim = ogClaim(p, data)
   return {
     name,
-    claim: p.claim,
-    title: `${name} · ${p.claim}`,
+    claim,
+    title: `${name} · ${claim}`,
     description: p.description(name),
     url: `https://${ctx.host}/`,
     image: ogImageUrl(ctx, data),
