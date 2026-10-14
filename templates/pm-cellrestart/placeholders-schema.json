@@ -295,47 +295,6 @@
       "contact": true
     },
     {
-      "key": "hero_variante",
-      "type": "card_select",
-      "label": "Hero-Hintergrundbild",
-      "order": 13,
-      "section": "Design",
-      "required": true,
-      "card_options": [
-        {
-          "label": "Junge Frau",
-          "value": "junge-frau",
-          "card_type": "image",
-          "image_url": "/templates/pm-cellrestart/hero-previews/junge-frau.webp",
-          "description": "Sportlich, aktiv, Ende 20 bis Mitte 30."
-        },
-        {
-          "label": "Ältere Frau",
-          "value": "aeltere-frau",
-          "card_type": "image",
-          "image_url": "/templates/pm-cellrestart/hero-previews/aeltere-frau.webp",
-          "description": "Elegant, entspannt, um die 50 plus."
-        },
-        {
-          "label": "Junger Mann",
-          "value": "junger-mann",
-          "card_type": "image",
-          "image_url": "/templates/pm-cellrestart/hero-previews/junger-mann.webp",
-          "description": "Locker, Ende 20 bis Mitte 30."
-        },
-        {
-          "label": "Älterer Mann",
-          "value": "aelterer-mann",
-          "card_type": "image",
-          "image_url": "/templates/pm-cellrestart/hero-previews/aelterer-mann.webp",
-          "description": "Souverän, entspannt, um die 50 plus."
-        }
-      ],
-      "default_value": "junge-frau",
-      "preview_value": "junge-frau",
-      "placeholder_text": "Das große Bild ganz oben. Wähle die Person, die zu deiner Zielgruppe passt."
-    },
-    {
       "key": "farbthema",
       "type": "card_select",
       "label": "Farbthema",
@@ -392,6 +351,47 @@
       "brand_color": true
     },
     {
+      "key": "hero_variante",
+      "type": "card_select",
+      "label": "Hintergrundbild",
+      "order": 13,
+      "section": "Design",
+      "required": true,
+      "card_options": [
+        {
+          "label": "Junge Frau",
+          "value": "junge-frau",
+          "card_type": "image",
+          "image_url": "/templates/pm-cellrestart/hero-previews/junge-frau.webp",
+          "description": "Sportlich, aktiv, Ende 20 bis Mitte 30."
+        },
+        {
+          "label": "Ältere Frau",
+          "value": "aeltere-frau",
+          "card_type": "image",
+          "image_url": "/templates/pm-cellrestart/hero-previews/aeltere-frau.webp",
+          "description": "Elegant, entspannt, um die 50 plus."
+        },
+        {
+          "label": "Junger Mann",
+          "value": "junger-mann",
+          "card_type": "image",
+          "image_url": "/templates/pm-cellrestart/hero-previews/junger-mann.webp",
+          "description": "Locker, Ende 20 bis Mitte 30."
+        },
+        {
+          "label": "Älterer Mann",
+          "value": "aelterer-mann",
+          "card_type": "image",
+          "image_url": "/templates/pm-cellrestart/hero-previews/aelterer-mann.webp",
+          "description": "Souverän, entspannt, um die 50 plus."
+        }
+      ],
+      "default_value": "junge-frau",
+      "preview_value": "junge-frau",
+      "placeholder_text": "Das große Bild ganz oben auf deiner Seite."
+    },
+    {
       "key": "ziel_sektion",
       "type": "card_select",
       "label": "Sektion „Das Ziel: Ketose\" anzeigen?",
@@ -426,7 +426,7 @@
     {
       "key": "preis_anzeigen",
       "type": "card_select",
-      "label": "Preis-Card „~5 € am Tag\" anzeigen?",
+      "label": "Preis-Card „~6 € am Tag\" anzeigen?",
       "order": 16,
       "section": "Sektionen",
       "required": true,
@@ -436,7 +436,7 @@
           "value": "an",
           "card_type": "image",
           "image_url": "/templates/pm-cellrestart/section-previews/section-preis.webp",
-          "description": "Die „~5 € am Tag\"-Card ist sichtbar."
+          "description": "Die „~6 € am Tag\"-Card ist sichtbar."
         },
         {
           "color": "#F1F5F9",

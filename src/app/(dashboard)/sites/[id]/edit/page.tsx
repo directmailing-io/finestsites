@@ -955,8 +955,8 @@ function CardSelectField({ field, value, onChange, narrow, onMobileSelect }: {
   // Compact mode: when no option has an actual image preview AND no color mockup, render slim chips.
   const isCompact = opts.every(o => (o.card_type !== 'image' || !o.image_url) && o.card_type !== 'color')
   const isAllColor = opts.every(o => o.card_type === 'color')
-  // Viele Bild-Kacheln (z. B. 7 Hintergrundbilder): flacher und ohne Beschreibung, damit es nicht überladen wirkt
-  const manyImages = !isCompact && !isAllColor && opts.filter(o => o.card_type === 'image').length > 4
+  // Ab vier Bild-Kacheln (Hintergrundbilder): flacher und ohne Beschreibung, damit es nicht überladen wirkt
+  const manyImages = !isCompact && !isAllColor && opts.filter(o => o.card_type === 'image').length >= 4
 
   const gridCls = isCompact ? (
     narrow ? 'grid-cols-1' :
