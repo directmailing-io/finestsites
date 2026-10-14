@@ -4,7 +4,7 @@ import Footer from '@/app/_components/Footer'
 
 export const metadata: Metadata = {
   title: 'Impressum – FinestSites',
-  description: 'Impressum und Anbieterkennzeichnung gemäß § 5 TMG für FinestSites.',
+  description: 'Impressum und Anbieterkennzeichnung gemäß § 5 DDG für FinestSites.',
   robots: { index: false },
 }
 
@@ -18,7 +18,7 @@ export default function ImpressumPage() {
           Impressum
         </h1>
 
-        <Section title="Angaben gemäß § 5 TMG">
+        <Section title="Angaben gemäß § 5 DDG">
           <p>
             FinestSites Daniel Kurzeja<br />
             Herrleinstr. 39<br />
@@ -49,17 +49,8 @@ export default function ImpressumPage() {
           </p>
         </Section>
 
-        <Section title="EU-Streitschlichtung">
+        <Section title="Verbraucherstreitbeilegung">
           <p>
-            Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit:{' '}
-            <a href="https://ec.europa.eu/consumers/odr/" target="_blank" rel="noopener noreferrer" style={{ color: '#8060b0' }}>
-              https://ec.europa.eu/consumers/odr/
-            </a>
-          </p>
-          <p style={{ marginTop: 12 }}>
-            Unsere E-Mail-Adresse finden Sie oben im Impressum.
-          </p>
-          <p style={{ marginTop: 12 }}>
             Wir sind nicht bereit oder verpflichtet, an Streitbeilegungsverfahren vor einer
             Verbraucherschlichtungsstelle teilzunehmen.
           </p>
@@ -67,11 +58,12 @@ export default function ImpressumPage() {
 
         <Section title="Haftung für Inhalte">
           <p>
-            Als Diensteanbieter sind wir gemäß § 7 Abs. 1 TMG für eigene Inhalte auf diesen Seiten
-            nach den allgemeinen Gesetzen verantwortlich. Nach §§ 8 bis 10 TMG sind wir als
-            Diensteanbieter jedoch nicht verpflichtet, übermittelte oder gespeicherte fremde
-            Informationen zu überwachen oder nach Umständen zu forschen, die auf eine rechtswidrige
-            Tätigkeit hinweisen.
+            Als Diensteanbieter sind wir für eigene Inhalte auf diesen Seiten nach den allgemeinen
+            Gesetzen verantwortlich. Für fremde Informationen, die wir übermitteln oder speichern,
+            gelten die Haftungsregeln der Art. 4 bis 8 der Verordnung (EU) 2022/2065 (Digital
+            Services Act) in Verbindung mit § 7 DDG. Danach sind wir nicht verpflichtet, diese
+            Informationen allgemein zu überwachen oder aktiv nach Umständen zu forschen, die auf
+            eine rechtswidrige Tätigkeit hinweisen.
           </p>
           <p style={{ marginTop: 12 }}>
             Verpflichtungen zur Entfernung oder Sperrung der Nutzung von Informationen nach den
@@ -116,7 +108,7 @@ export default function ImpressumPage() {
         </Section>
 
         <p style={{ fontSize: 12, color: '#bbb', marginTop: 48 }}>
-          Stand: Juni 2026
+          Stand: Oktober 2026
         </p>
       </main>
 

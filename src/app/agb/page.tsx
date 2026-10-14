@@ -17,7 +17,7 @@ export default function AgbPage() {
         <h1 style={{ fontFamily: '"Plein", sans-serif', fontSize: 'clamp(32px, 4vw, 48px)', fontWeight: 400, color: '#111', letterSpacing: '-0.025em', marginBottom: 12 }}>
           Allgemeine Geschäftsbedingungen
         </h1>
-        <p style={{ fontSize: 14, color: '#aaa', marginBottom: 56 }}>Stand: Juli 2026</p>
+        <p style={{ fontSize: 14, color: '#aaa', marginBottom: 56 }}>Stand: Oktober 2026</p>
 
         <Section title="§ 1 Geltungsbereich und Vertragsparteien">
           <p>
@@ -152,7 +152,7 @@ export default function AgbPage() {
           <p style={{ marginTop: 12 }}>
             (3) Der Nutzer ist selbst dafür verantwortlich, dass die auf seiner Website veröffentlichten Inhalte
             allen anwendbaren gesetzlichen Vorschriften entsprechen, insbesondere den Anforderungen des
-            Telemediengesetzes (TMG), des Digitale-Dienste-Gesetzes (DDG), des Wettbewerbsrechts (UWG),
+            Digitale-Dienste-Gesetzes (DDG), des Wettbewerbsrechts (UWG),
             des Markenrechts sowie der DSGVO. Hierzu gehört insbesondere die Pflicht, ein ordnungsgemäßes
             Impressum und eine Datenschutzerklärung auf der eigenen Website vorzuhalten.
           </p>
@@ -453,17 +453,13 @@ export default function AgbPage() {
             aus diesem Vertrag ohne vorherige schriftliche Zustimmung des Anbieters an Dritte abzutreten.
           </p>
           <p style={{ marginTop: 12 }}>
-            (5) <strong>Streitbeilegung:</strong> Die Europäische Kommission stellt eine Plattform zur
-            Online-Streitbeilegung bereit:{' '}
-            <a href="https://ec.europa.eu/consumers/odr/" target="_blank" rel="noopener noreferrer" style={{ color: '#8060b0' }}>
-              ec.europa.eu/consumers/odr
-            </a>. Der Anbieter ist nicht bereit und nicht verpflichtet, an einem Streitbeilegungsverfahren
+            (5) <strong>Streitbeilegung:</strong> Der Anbieter ist nicht bereit und nicht verpflichtet, an einem Streitbeilegungsverfahren
             vor einer Verbraucherschlichtungsstelle teilzunehmen.
           </p>
         </Section>
 
         <p style={{ fontSize: 12, color: '#bbb', marginTop: 48 }}>
-          FinestSites Daniel Kurzeja · Herrleinstr. 39 · 97437 Haßfurt · Stand: Juli 2026
+          FinestSites Daniel Kurzeja · Herrleinstr. 39 · 97437 Haßfurt · Stand: Oktober 2026
         </p>
       </main>
 

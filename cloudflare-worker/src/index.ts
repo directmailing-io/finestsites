@@ -1664,7 +1664,7 @@ ${legalTopbarHtml(domain)}
 <div class="l-de">
 <div class="eyebrow">Rechtliches</div>
 <h1>Impressum</h1>
-<p class="page-subtitle">Angaben gem\u00E4\u00DF \u00A7 5 TMG</p>
+<p class="page-subtitle">Angaben gem\u00E4\u00DF \u00A7 5 DDG</p>
 
 <section>
 <h2>Betreiber und Diensteanbieter</h2>
@@ -1678,7 +1678,7 @@ ${legalTopbarHtml(domain)}
 <p>E-Mail: <a href="mailto:hello@finestsites.io">hello@finestsites.io</a></p>
 <p>USt-IdNr.: DE369220308</p>
 </div>
-<p>FinestSites stellt die technische Plattform bereit und ist Verantwortlicher im Sinne des \u00A7 5 TMG.</p>
+<p>FinestSites stellt die technische Plattform bereit und ist Diensteanbieter im Sinne des \u00A7 5 DDG.</p>
 </section>
 
 <hr class="divider">
@@ -1700,14 +1700,14 @@ ${legalTopbarHtml(domain)}
 <div class="highlight-box">
 {{#if firma}}<p><strong>{{firma}}</strong></p>{{/if}}{{#unless partner_modus=duo}}<p><strong>{{vorname}} {{nachname}}</strong></p>{{/unless}}{{#if partner_modus=duo}}<p><strong>{{vorname}} {{nachname}} &amp; {{vorname2}} {{nachname2}}</strong></p>{{/if}}
 </div>
-{{#unless partner_modus=duo}}<p>F\u00FCr eigene nutzergenerierte Inhalte dieser Person &ndash; insbesondere pers\u00F6nliche Erfahrungsberichte, Fotos und selbst hochgeladene Medien &ndash; ist {{vorname}} {{nachname}} gem\u00E4\u00DF \u00A7 7 Abs. 1 TMG selbst verantwortlich. FinestSites ist nicht verpflichtet, diese Inhalte vorab zu pr\u00FCfen.</p>{{/unless}}{{#if partner_modus=duo}}<p>F\u00FCr eigene nutzergenerierte Inhalte dieser Personen &ndash; insbesondere pers\u00F6nliche Erfahrungsberichte, Fotos und selbst hochgeladene Medien &ndash; sind {{vorname}} {{nachname}} und {{vorname2}} {{nachname2}} gem\u00E4\u00DF \u00A7 7 Abs. 1 TMG selbst verantwortlich. FinestSites ist nicht verpflichtet, diese Inhalte vorab zu pr\u00FCfen.</p>{{/if}}
+{{#unless partner_modus=duo}}<p>F\u00FCr eigene nutzergenerierte Inhalte dieser Person &ndash; insbesondere pers\u00F6nliche Erfahrungsberichte, Fotos und selbst hochgeladene Medien &ndash; ist {{vorname}} {{nachname}} nach den allgemeinen Gesetzen selbst verantwortlich. FinestSites ist nicht verpflichtet, diese Inhalte vorab zu pr\u00FCfen.</p>{{/unless}}{{#if partner_modus=duo}}<p>F\u00FCr eigene nutzergenerierte Inhalte dieser Personen &ndash; insbesondere pers\u00F6nliche Erfahrungsberichte, Fotos und selbst hochgeladene Medien &ndash; sind {{vorname}} {{nachname}} und {{vorname2}} {{nachname2}} nach den allgemeinen Gesetzen selbst verantwortlich. FinestSites ist nicht verpflichtet, diese Inhalte vorab zu pr\u00FCfen.</p>{{/if}}
 </section>
 
 <hr class="divider">
 
 <section>
 <h2>Haftung f\u00FCr Inhalte</h2>
-<p>Als Diensteanbieter sind wir gem\u00E4\u00DF \u00A7 7 Abs. 1 TMG f\u00FCr eigene Inhalte auf diesen Seiten nach den allgemeinen Gesetzen verantwortlich. Nach \u00A7\u00A7 8 bis 10 TMG sind wir als Diensteanbieter jedoch nicht verpflichtet, \u00FCbermittelte oder gespeicherte fremde Informationen zu \u00FCberwachen. Verpflichtungen zur Entfernung oder Sperrung der Nutzung von Informationen nach den allgemeinen Gesetzen bleiben hiervon unber\u00FChrt. Eine diesbez\u00FCgliche Haftung ist jedoch erst ab dem Zeitpunkt der Kenntnis einer konkreten Rechtsverletzung m\u00F6glich. Bei Bekanntwerden von Rechtsverletzungen werden wir diese Inhalte umgehend entfernen.</p>
+<p>Als Diensteanbieter sind wir f\u00FCr eigene Inhalte auf diesen Seiten nach den allgemeinen Gesetzen verantwortlich. F\u00FCr fremde Informationen, die wir \u00FCbermitteln oder speichern, gelten die Haftungsregeln der Art. 4 bis 8 der Verordnung (EU) 2022/2065 (Digital Services Act) in Verbindung mit \u00A7 7 DDG. Danach sind wir nicht verpflichtet, diese Informationen allgemein zu \u00FCberwachen oder aktiv nach Umst\u00E4nden zu forschen, die auf eine rechtswidrige T\u00E4tigkeit hinweisen. Verpflichtungen zur Entfernung oder Sperrung der Nutzung von Informationen nach den allgemeinen Gesetzen bleiben hiervon unber\u00FChrt. Eine diesbez\u00FCgliche Haftung ist jedoch erst ab dem Zeitpunkt der Kenntnis einer konkreten Rechtsverletzung m\u00F6glich. Bei Bekanntwerden von Rechtsverletzungen werden wir diese Inhalte umgehend entfernen.</p>
 </section>
 
 <hr class="divider">
@@ -1727,17 +1727,17 @@ ${legalTopbarHtml(domain)}
 <hr class="divider">
 
 <section>
-<h2>EU-Streitschlichtung</h2>
-<p>Die Europ\u00E4ische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit: <a href="https://ec.europa.eu/consumers/odr/" target="_blank" rel="noopener noreferrer">https://ec.europa.eu/consumers/odr/</a>. Wir sind nicht bereit oder verpflichtet, an Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen.</p>
+<h2>Verbraucherstreitbeilegung</h2>
+<p>Wir sind nicht bereit oder verpflichtet, an Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen.</p>
 </section>
 
-<p class="footnote">Stand: Juli 2026</p>
+<p class="footnote">Stand: Oktober 2026</p>
 </div>
 
 <div class="l-en">
 <div class="eyebrow">Legal</div>
 <h1>Legal Notice</h1>
-<p class="page-subtitle">Information pursuant to Section 5 of the German Telemedia Act (TMG)</p>
+<p class="page-subtitle">Information pursuant to Section 5 of the German Digital Services Act (Digitale-Dienste-Gesetz, DDG)</p>
 <div class="binding-note">This is a courtesy translation. The German version is legally binding.</div>
 
 <section>
@@ -1752,7 +1752,7 @@ ${legalTopbarHtml(domain)}
 <p>Email: <a href="mailto:hello@finestsites.io">hello@finestsites.io</a></p>
 <p>VAT ID: DE369220308</p>
 </div>
-<p>FinestSites provides the technical platform and is the responsible party within the meaning of Section 5 TMG.</p>
+<p>FinestSites provides the technical platform and is the service provider within the meaning of Section 5 DDG.</p>
 </section>
 
 <hr class="divider">
@@ -1774,14 +1774,14 @@ ${legalTopbarHtml(domain)}
 <div class="highlight-box">
 {{#if firma}}<p><strong>{{firma}}</strong></p>{{/if}}{{#unless partner_modus=duo}}<p><strong>{{vorname}} {{nachname}}</strong></p>{{/unless}}{{#if partner_modus=duo}}<p><strong>{{vorname}} {{nachname}} &amp; {{vorname2}} {{nachname2}}</strong></p>{{/if}}
 </div>
-{{#unless partner_modus=duo}}<p>For their own user-generated content, in particular personal testimonials, photos and self-uploaded media, {{vorname}} {{nachname}} is personally responsible in accordance with Section 7 (1) TMG. FinestSites is not obliged to review this content in advance.</p>{{/unless}}{{#if partner_modus=duo}}<p>For their own user-generated content, in particular personal testimonials, photos and self-uploaded media, {{vorname}} {{nachname}} and {{vorname2}} {{nachname2}} are personally responsible in accordance with Section 7 (1) TMG. FinestSites is not obliged to review this content in advance.</p>{{/if}}
+{{#unless partner_modus=duo}}<p>For their own user-generated content, in particular personal testimonials, photos and self-uploaded media, {{vorname}} {{nachname}} is personally responsible under general law. FinestSites is not obliged to review this content in advance.</p>{{/unless}}{{#if partner_modus=duo}}<p>For their own user-generated content, in particular personal testimonials, photos and self-uploaded media, {{vorname}} {{nachname}} and {{vorname2}} {{nachname2}} are personally responsible under general law. FinestSites is not obliged to review this content in advance.</p>{{/if}}
 </section>
 
 <hr class="divider">
 
 <section>
 <h2>Liability for content</h2>
-<p>As a service provider, we are responsible for our own content on these pages under general law in accordance with Section 7 (1) TMG. However, under Sections 8 to 10 TMG we are not obliged to monitor transmitted or stored third-party information. Obligations to remove or block the use of information under general law remain unaffected. Any such liability only arises from the moment we become aware of a specific legal violation. Upon becoming aware of such violations, we will remove the content in question immediately.</p>
+<p>As a service provider, we are responsible for our own content on these pages under general law. For third-party information that we transmit or store, the liability rules of Articles 4 to 8 of Regulation (EU) 2022/2065 (Digital Services Act) in conjunction with Section 7 DDG apply. Accordingly, we are not obliged to generally monitor such information or to actively seek facts or circumstances indicating illegal activity. Obligations to remove or block the use of information under general law remain unaffected. Any such liability only arises from the moment we become aware of a specific legal violation. Upon becoming aware of such violations, we will remove the content in question immediately.</p>
 </section>
 
 <hr class="divider">
@@ -1801,11 +1801,11 @@ ${legalTopbarHtml(domain)}
 <hr class="divider">
 
 <section>
-<h2>EU dispute resolution</h2>
-<p>The European Commission provides a platform for online dispute resolution (ODR): <a href="https://ec.europa.eu/consumers/odr/" target="_blank" rel="noopener noreferrer">https://ec.europa.eu/consumers/odr/</a>. We are neither willing nor obliged to participate in dispute resolution proceedings before a consumer arbitration board.</p>
+<h2>Consumer dispute resolution</h2>
+<p>We are neither willing nor obliged to participate in dispute resolution proceedings before a consumer arbitration board.</p>
 </section>
 
-<p class="footnote">Last updated: July 2026</p>
+<p class="footnote">Last updated: October 2026</p>
 </div>
 ${extraLegalBlocks(domain, 'impressum')}
 ${legalLangScript('Impressum', 'Legal Notice', domain, 'title_imprint')}
@@ -1926,14 +1926,7 @@ ${vital ? vitalprofilSectionDe() : ''}<section>
 <p>Sie haben das Recht, sich bei einer Datenschutz-Aufsichtsbeh\u00F6rde zu beschweren. Zust\u00E4ndig ist das Bayerische Landesamt f\u00FCr Datenschutzaufsicht (BayLDA), Promenade 18, 91522 Ansbach, <a href="https://www.lda.bayern.de" target="_blank" rel="noopener noreferrer">www.lda.bayern.de</a>.</p>
 </section>
 
-<hr class="divider">
-
-<section>
-<h2>EU-Streitschlichtung</h2>
-<p>Die Europ\u00E4ische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit: <a href="https://ec.europa.eu/consumers/odr/" target="_blank" rel="noopener noreferrer">https://ec.europa.eu/consumers/odr/</a>. Wir sind nicht bereit oder verpflichtet, an Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen.</p>
-</section>
-
-<p class="footnote">Stand: Juli 2026</p>
+<p class="footnote">Stand: Oktober 2026</p>
 </div>
 
 <div class="l-en">
@@ -2009,14 +2002,7 @@ ${vital ? vitalprofilSectionEn() : ''}<section>
 <p>You have the right to lodge a complaint with a data protection supervisory authority. The competent authority is the Bavarian State Office for Data Protection Supervision (BayLDA), Promenade 18, 91522 Ansbach, Germany, <a href="https://www.lda.bayern.de" target="_blank" rel="noopener noreferrer">www.lda.bayern.de</a>.</p>
 </section>
 
-<hr class="divider">
-
-<section>
-<h2>EU dispute resolution</h2>
-<p>The European Commission provides a platform for online dispute resolution (ODR): <a href="https://ec.europa.eu/consumers/odr/" target="_blank" rel="noopener noreferrer">https://ec.europa.eu/consumers/odr/</a>. We are neither willing nor obliged to participate in dispute resolution proceedings before a consumer arbitration board.</p>
-</section>
-
-<p class="footnote">Last updated: July 2026</p>
+<p class="footnote">Last updated: October 2026</p>
 </div>
 ${extraLegalBlocks(domain, 'datenschutz', tracking)}
 ${legalLangScript('Datenschutzerklärung', 'Privacy Policy', domain, 'title_privacy')}

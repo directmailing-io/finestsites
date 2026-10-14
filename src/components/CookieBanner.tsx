@@ -192,7 +192,7 @@ function BannerView({ onAll, onEssential, onSettings }: {
           <a href="/datenschutz" style={{ color: '#bbb', textDecoration: 'underline' }}>Datenschutzerklärung</a>
           {' '}und{' '}
           <a href="/agb" style={{ color: '#bbb', textDecoration: 'underline' }}>AGB</a>.
-          {' '}Gemäß DSGVO &amp; TTDSG § 25.
+          {' '}Gemäß DSGVO &amp; § 25 TDDDG.
         </p>
       </div>
     </>

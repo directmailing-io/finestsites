@@ -17,7 +17,7 @@ export default function DatenschutzPage() {
         <h1 style={{ fontFamily: '"Plein", sans-serif', fontSize: 'clamp(32px, 4vw, 48px)', fontWeight: 400, color: '#111', letterSpacing: '-0.025em', marginBottom: 16 }}>
           Datenschutzerklärung
         </h1>
-        <p style={{ fontSize: 14, color: '#bbb', marginBottom: 56 }}>Stand: Juni 2026</p>
+        <p style={{ fontSize: 14, color: '#bbb', marginBottom: 56 }}>Stand: Oktober 2026</p>
 
         {/* 1 */}
         <Section title="1. Verantwortlicher">
@@ -104,7 +104,7 @@ export default function DatenschutzPage() {
           </p>
           <p style={{ marginTop: 8 }}>
             Rechtsgrundlage: Art. 6 Abs. 1 lit. b DSGVO (Vertragserfüllung) sowie § 25 Abs. 2
-            Nr. 2 TTDSG (technisch unbedingt erforderlich).
+            Nr. 2 TDDDG (technisch unbedingt erforderlich).
           </p>
 
           <SubHeading>Template-Auswahl-Cookie (fs_template_intent)</SubHeading>
@@ -116,7 +116,7 @@ export default function DatenschutzPage() {
             Es wird nach erfolgreicher Einrichtung Ihres Accounts sofort gelöscht.
           </p>
           <p style={{ marginTop: 8 }}>
-            Rechtsgrundlage: § 25 Abs. 2 Nr. 2 TTDSG (technisch unbedingt erforderlich für
+            Rechtsgrundlage: § 25 Abs. 2 Nr. 2 TDDDG (technisch unbedingt erforderlich für
             den angeforderten Dienst).
           </p>
         </Section>
