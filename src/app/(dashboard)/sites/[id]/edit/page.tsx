@@ -958,7 +958,10 @@ function CardSelectField({ field, value, onChange, narrow, onMobileSelect }: {
   // Ab vier Bild-Kacheln (Hintergrundbilder): flacher und ohne Beschreibung, damit es nicht überladen wirkt
   const manyImages = !isCompact && !isAllColor && opts.filter(o => o.card_type === 'image').length >= 4
 
-  const gridCls = isCompact ? (
+  const gridCls = manyImages ? (
+    // Hintergrundbilder: am Handy seitlich wischen (nächste Kachel angeschnitten), ab Tablet 2, ab Desktop 3 nebeneinander
+    'flex overflow-x-auto snap-x snap-mandatory -mx-1 px-1 pb-1 sm:grid sm:grid-cols-2 lg:grid-cols-3 sm:overflow-visible sm:mx-0 sm:px-0'
+  ) : isCompact ? (
     narrow ? 'grid-cols-1' :
     opts.length <= 2 ? 'grid-cols-2' :
     opts.length === 3 ? 'grid-cols-1 sm:grid-cols-3' :
@@ -983,7 +986,7 @@ function CardSelectField({ field, value, onChange, narrow, onMobileSelect }: {
   }
 
   return (
-    <div className={`grid ${isCompact ? 'gap-2' : 'gap-4'} ${gridCls}`} style={{ position: 'relative' }}>
+    <div className={`${manyImages ? '' : 'grid'} ${isCompact ? 'gap-2' : 'gap-4'} ${gridCls}`} style={{ position: 'relative' }}>
       {opts.map(opt => {
         const selected = value === opt.value
 
@@ -1053,7 +1056,7 @@ function CardSelectField({ field, value, onChange, narrow, onMobileSelect }: {
             }}
             onMouseEnter={(e) => canZoom && showPreview(opt, e)}
             onMouseLeave={() => canZoom && setHovered(null)}
-            className="group relative flex flex-col text-left rounded-2xl overflow-hidden transition-all"
+            className={`group relative flex flex-col text-left rounded-2xl overflow-hidden transition-all ${manyImages ? 'min-w-[74%] snap-start sm:min-w-0' : ''}`}
             style={{
               border: `2px solid ${selected ? '#1a1a1a' : '#E5E7EB'}`,
               background: '#fff',
@@ -1066,7 +1069,7 @@ function CardSelectField({ field, value, onChange, narrow, onMobileSelect }: {
 
             {/* Visual area */}
             {isImage && opt.image_url ? (
-              <div className="relative w-full overflow-hidden" style={{ aspectRatio: manyImages ? '16 / 10' : '4 / 3', background: '#F8FAFC' }}>
+              <div className="relative w-full overflow-hidden" style={{ aspectRatio: '16 / 10', background: '#F8FAFC' }}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={opt.image_url} alt={opt.label}
                   className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.04]" />
@@ -1108,12 +1111,12 @@ function CardSelectField({ field, value, onChange, narrow, onMobileSelect }: {
             )}
 
             {/* Label + description */}
-            <div className={`flex-1 flex flex-col gap-1 ${manyImages ? 'p-2.5 sm:p-3' : 'p-3 sm:p-4'}`}>
+            <div className={`flex-1 flex flex-col gap-1 ${manyImages ? 'p-3' : 'p-3 sm:p-4'}`}>
               <span className="text-sm font-bold text-gray-900 leading-tight"
                 style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                 {opt.label}
               </span>
-              {opt.description && !manyImages && (
+              {opt.description && (
                 <span className="text-xs leading-snug" style={{ color: '#6B7280', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                   {opt.description}
                 </span>
