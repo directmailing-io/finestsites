@@ -1,206 +1,106 @@
-/* ── So funktioniert's — section with real UI mockups ── */
+/* ── So funktioniert's: drei Schritte, je ein Satz und ein ruhiges, großes Bild ──
+ * Die Bilder zeigen die Oberfläche so, wie sie im Editor aussieht (weiße Karten, Pillen,
+ * große Schrift), ohne Mini-App-Rahmen mit winziger Schrift. */
 
-const SIDEBAR_ICONS = [
-  <svg key="a" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="7" height="7" /><rect x="14" y="3" width="7" height="7" /><rect x="3" y="14" width="7" height="7" /><rect x="14" y="14" width="7" height="7" /></svg>,
-  <svg key="b" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" /><line x1="2" y1="12" x2="22" y2="12" /><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10" /></svg>,
-  <svg key="c" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="2" /><line x1="3" y1="9" x2="21" y2="9" /><line x1="9" y1="9" x2="9" y2="21" /></svg>,
-  <svg key="d" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="3" /><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" /></svg>,
-]
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://app.finestsites.io'
 
-function AppSidebar({ activeIdx = 0 }: { activeIdx?: number }) {
-  return (
-    <div style={{ width: 42, background: '#F5F0FB', display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '10px 0 8px', gap: 2, flexShrink: 0, borderRight: '1px solid #EAE4F5' }}>
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src="/logos/logo-black.svg" alt="FinestSites" style={{ width: 28, height: 'auto', display: 'block', marginBottom: 10, filter: 'brightness(0) saturate(100%) invert(26%) sepia(55%) saturate(600%) hue-rotate(240deg) brightness(85%)' }} />
-      {SIDEBAR_ICONS.map((icon, i) => (
-        <div key={i} style={{ width: 32, height: 26, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 6, background: i === activeIdx ? '#EAE4F5' : 'transparent', color: i === activeIdx ? '#8060b0' : 'rgba(128,96,176,0.3)' }}>
-          {icon}
-        </div>
-      ))}
-    </div>
-  )
+const frame: React.CSSProperties = {
+  background: '#F7F5FB',
+  border: '1px solid #EAE4F5',
+  borderRadius: 20,
+  padding: 18,
+  height: 250,
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'center',
+  overflow: 'hidden',
 }
 
-/* ── Mockup 1: Vorlage wählen ── */
-function MockupTemplateSelect() {
+const Check = ({ size = 14, color = '#fff' }: { size?: number; color?: string }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
+)
+
+/* Schritt 1: drei Vorlagen, die mittlere ist gewählt */
+function VisualChoose() {
   const cards = [
-    { bg: '#DCD0ED', label: 'MyEvnt', sub: 'Events & Webinare', selected: false },
-    { bg: '#B8CCDB', label: 'Nährstoff-System', sub: 'Produkt-Seite', selected: true },
-    { bg: '#C8D8B8', label: 'Vitalprofil', sub: 'Vital-Typ-Check', selected: false },
-    { bg: '#EAD4B5', label: 'lnko.bio', sub: 'Link in Bio', selected: false },
+    { src: '/previews/pm-business.jpg', label: 'Business' },
+    { src: '/previews/naehrstoff-system.jpg', label: 'Produkt', selected: true },
+    { src: '/previews/pm-cellrestart.jpg', label: 'Kur' },
   ]
   return (
-    <div style={{ borderRadius: 16, overflow: 'hidden', boxShadow: '0 4px 24px rgba(128,96,176,0.10)', border: '1px solid #EAE4F5' }}>
-      <div style={{ display: 'flex', height: 220 }}>
-        <AppSidebar activeIdx={2} />
-        <div style={{ flex: 1, background: '#FAFAF9', padding: '14px 14px', overflow: 'hidden' }}>
-          <div style={{ fontSize: 11, fontWeight: 700, color: '#222', marginBottom: 2 }}>Vorlage wählen</div>
-          <div style={{ fontSize: 9, color: '#aaa', marginBottom: 10 }}>Alle Texte und Designs sind bereits fertig</div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
-            {cards.map((c, i) => (
-              <div key={i} style={{ background: '#fff', borderRadius: 8, overflow: 'hidden', border: c.selected ? '2px solid #8060b0' : '1px solid #EAE4F5', position: 'relative', cursor: 'pointer' }}>
-                <div style={{ height: 50, background: c.bg }} />
-                <div style={{ padding: '5px 7px' }}>
-                  <div style={{ fontSize: 8, fontWeight: 700, color: '#222' }}>{c.label}</div>
-                  <div style={{ fontSize: 7, color: '#aaa' }}>{c.sub}</div>
-                </div>
-                {c.selected && (
-                  <div style={{ position: 'absolute', top: 5, right: 5, width: 16, height: 16, background: '#8060b0', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3" strokeLinecap="round"><polyline points="20 6 9 17 4 12" /></svg>
-                  </div>
-                )}
+    <div style={frame}>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.25fr 1fr', gap: 10, alignItems: 'center' }}>
+        {cards.map(c => (
+          <div key={c.label} style={{ background: '#fff', borderRadius: 14, overflow: 'hidden', border: c.selected ? '2.5px solid #8060b0' : '1px solid #EAE4F5', boxShadow: c.selected ? '0 10px 30px rgba(128,96,176,0.25)' : '0 2px 8px rgba(0,0,0,0.04)', position: 'relative', transform: c.selected ? 'scale(1.04)' : 'none' }}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={c.src} alt="" style={{ width: '100%', aspectRatio: '16 / 11', objectFit: 'cover', objectPosition: 'top', display: 'block' }} />
+            <div style={{ padding: '8px 10px', fontSize: 12, fontWeight: 700, color: c.selected ? '#8060b0' : '#555' }}>{c.label}</div>
+            {c.selected && (
+              <div style={{ position: 'absolute', top: 8, right: 8, width: 24, height: 24, borderRadius: '50%', background: '#8060b0', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 8px rgba(128,96,176,0.4)' }}>
+                <Check size={13} />
               </div>
-            ))}
+            )}
           </div>
-          <div style={{ marginTop: 10, background: '#111', color: '#fff', borderRadius: 99, padding: '5px 12px', fontSize: 9, fontWeight: 600, display: 'inline-block' }}>Vorlage nutzen →</div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+/* Schritt 2: zwei ausgefüllte Felder und ein Foto, mehr nicht */
+function VisualFill() {
+  const field = (label: string, value: string) => (
+    <div>
+      <div style={{ fontSize: 12, fontWeight: 600, color: '#888', marginBottom: 5 }}>{label}</div>
+      <div style={{ background: '#fff', border: '1px solid #E5E7EB', borderRadius: 12, padding: '11px 14px', fontSize: 14, color: '#111', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <span>{value}</span>
+        <span style={{ width: 20, height: 20, borderRadius: '50%', background: '#16A34A', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Check size={11} /></span>
+      </div>
+    </div>
+  )
+  return (
+    <div style={frame}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div style={{ width: 46, height: 46, borderRadius: '50%', background: 'linear-gradient(135deg, #D4C5E2, #8060b0)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 700, fontSize: 15, flexShrink: 0 }}>SM</div>
+          <div>
+            <div style={{ fontSize: 12, fontWeight: 600, color: '#888' }}>Dein Foto</div>
+            <div style={{ fontSize: 13, color: '#16A34A', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 5 }}><Check size={12} color="#16A34A" /> Hochgeladen</div>
+          </div>
+        </div>
+        {field('Dein Name', 'Sandra Müller')}
+        {field('Deine Telefonnummer', '0171 234 56 78')}
+      </div>
+    </div>
+  )
+}
+
+/* Schritt 3: online, mit Link zum Teilen */
+function VisualLive() {
+  return (
+    <div style={frame}>
+      <div style={{ background: '#fff', border: '1px solid #EAE4F5', borderRadius: 16, padding: '20px 18px', textAlign: 'center', boxShadow: '0 8px 30px rgba(22,163,74,0.10)' }}>
+        <div style={{ display: 'inline-flex', alignItems: 'center', gap: 7, background: '#DCFCE7', color: '#15803D', borderRadius: 99, padding: '6px 14px', fontSize: 12, fontWeight: 800, letterSpacing: '0.06em', marginBottom: 12 }}>
+          <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#16A34A', boxShadow: '0 0 0 4px rgba(22,163,74,0.18)' }} />
+          ONLINE
+        </div>
+        <div style={{ fontSize: 17, fontWeight: 700, color: '#111', marginBottom: 12 }}>Deine Seite ist live</div>
+        <div style={{ background: '#F7F5FB', borderRadius: 10, padding: '9px 12px', fontSize: 13, color: '#8060b0', fontWeight: 600, marginBottom: 12, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+          sandra-mueller.dailyoptimal.de
+        </div>
+        <div style={{ display: 'flex', gap: 8, justifyContent: 'center' }}>
+          <span style={{ background: '#111', color: '#fff', borderRadius: 99, padding: '8px 16px', fontSize: 12, fontWeight: 600 }}>Link kopieren</span>
+          <span style={{ background: '#25D366', color: '#fff', borderRadius: 99, padding: '8px 16px', fontSize: 12, fontWeight: 600 }}>WhatsApp</span>
         </div>
       </div>
     </div>
   )
 }
 
-/* ── Mockup 2: Anpassen — Design & Farben ── */
-function MockupEditor() {
-  const themes = [
-    { name: 'Lila',  hero: '#8060b0', btn: '#1a2530' },
-    { name: 'Ozean', hero: '#2563EB', btn: '#0F766E' },
-    { name: 'Natur', hero: '#16A34A', btn: '#713F12' },
-    { name: 'Warm',  hero: '#EA580C', btn: '#9F1239' },
-  ]
-  const sel = 0
-  return (
-    <div style={{ borderRadius: 16, overflow: 'hidden', boxShadow: '0 4px 24px rgba(128,96,176,0.10)', border: '1px solid #EAE4F5' }}>
-      <div style={{ display: 'flex', height: 220 }}>
-        <AppSidebar activeIdx={1} />
-        <div style={{ flex: 1, background: '#fff', padding: '14px 14px', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-          {/* Progress */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
-            <div style={{ fontSize: 9, fontWeight: 700, color: '#8060b0' }}>Schritt 2 von 3</div>
-            <div style={{ flex: 1, height: 3, background: '#EAE4F5', borderRadius: 2 }}>
-              <div style={{ width: '66%', height: '100%', background: '#8060b0', borderRadius: 2 }} />
-            </div>
-          </div>
-          <div style={{ fontSize: 11, fontWeight: 700, color: '#222', marginBottom: 8 }}>Design & Farben</div>
-          {/* Color theme picker */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 6, marginBottom: 12 }}>
-            {themes.map((t, i) => (
-              <div key={i} style={{ borderRadius: 8, overflow: 'hidden', border: i === sel ? '2px solid #8060b0' : '1.5px solid #EAE4F5', cursor: 'pointer' }}>
-                <div style={{ height: 24, background: `linear-gradient(135deg, ${t.hero} 55%, ${t.btn} 55%)` }} />
-                <div style={{ padding: '3px 0', fontSize: 7, color: i === sel ? '#8060b0' : '#bbb', fontWeight: i === sel ? 700 : 500, textAlign: 'center' }}>{t.name}</div>
-              </div>
-            ))}
-          </div>
-          {/* Text field */}
-          <div style={{ marginBottom: 8 }}>
-            <div style={{ fontSize: 8, color: '#aaa', marginBottom: 3 }}>Dein Name</div>
-            <div style={{ border: '1px solid #EAE4F5', borderRadius: 7, padding: '5px 9px', fontSize: 9, color: '#333', background: '#FAFAF9', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span>Sandra Müller</span>
-              <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#8060b0" strokeWidth="3" strokeLinecap="round"><polyline points="20 6 9 17 4 12" /></svg>
-            </div>
-          </div>
-          <div style={{ marginTop: 'auto', background: '#111', color: '#fff', borderRadius: 99, padding: '6px 14px', fontSize: 9, fontWeight: 600, display: 'inline-block', alignSelf: 'flex-start' }}>Weiter →</div>
-        </div>
-      </div>
-    </div>
-  )
-}
-
-/* ── Mockup 3: Live schalten — mit Konfetti ── */
-// Confetti falls from top, scattered x positions, staggered delays
-const CONFETTI: { x:number; c:string; w:number; h:number; r:number; d:number; br: string|number; spd:number }[] = [
-  { x:  6, c: '#8060b0', w: 5, h: 11, r: -22, d: 0,    br: 2,    spd: 1.9 },
-  { x: 16, c: '#FEBC2E', w: 8, h: 8,  r:   5, d: 0.55, br: '50%',spd: 2.3 },
-  { x: 27, c: '#FF5F57', w: 5, h: 12, r:  38, d: 0.15, br: 2,    spd: 2.0 },
-  { x: 38, c: '#16A34A', w: 7, h: 7,  r: -15, d: 0.7,  br: '50%',spd: 2.5 },
-  { x: 50, c: '#2563EB', w: 5, h: 11, r:  55, d: 0.08, br: 2,    spd: 1.8 },
-  { x: 62, c: '#EA580C', w: 8, h: 8,  r: -42, d: 0.4,  br: '50%',spd: 2.1 },
-  { x: 73, c: '#8060b0', w: 5, h: 12, r:  20, d: 0.25, br: 2,    spd: 2.4 },
-  { x: 84, c: '#FEBC2E', w: 7, h: 7,  r: -60, d: 0.62, br: '50%',spd: 1.95},
-  { x: 93, c: '#FF5F57', w: 5, h: 11, r:  45, d: 0.1,  br: 2,    spd: 2.2 },
-  { x: 11, c: '#16A34A', w: 6, h: 6,  r: -30, d: 0.85, br: '50%',spd: 2.6 },
-  { x: 45, c: '#EA580C', w: 5, h: 12, r:  10, d: 0.33, br: 2,    spd: 2.05},
-  { x: 78, c: '#2563EB', w: 6, h: 6,  r: -50, d: 0.48, br: '50%',spd: 1.85},
-]
-
-function MockupPublished() {
-  return (
-    <>
-      <style>{`
-        @keyframes fs-conf {
-          0%   { opacity: 0;   transform: translateY(-10px) rotate(var(--r0)); }
-          12%  { opacity: 1; }
-          88%  { opacity: 1; }
-          100% { opacity: 0;   transform: translateY(250px) rotate(var(--r1)); }
-        }
-      `}</style>
-      <div style={{ borderRadius: 16, overflow: 'hidden', boxShadow: '0 4px 24px rgba(128,96,176,0.10)', border: '1px solid #EAE4F5' }}>
-        <div style={{ display: 'flex', height: 220 }}>
-          <AppSidebar activeIdx={1} />
-          <div style={{ flex: 1, background: '#fff', position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 16, gap: 10 }}>
-            {CONFETTI.map((c, i) => (
-              <div key={i} style={{
-                position: 'absolute', left: `${c.x}%`, top: 0,
-                width: c.w, height: c.h, background: c.c,
-                borderRadius: c.br,
-                '--r0': `${c.r}deg`, '--r1': `${c.r + 240}deg`,
-                animation: `fs-conf ${c.spd}s linear ${c.d}s infinite`,
-                pointerEvents: 'none', zIndex: 0,
-              } as React.CSSProperties} />
-            ))}
-            <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 9, width: '100%' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 5, background: '#16A34A', borderRadius: 99, padding: '4px 10px', boxShadow: '0 3px 10px rgba(22,163,74,0.25)' }}>
-                <div style={{ width: 5, height: 5, borderRadius: '50%', background: '#fff', flexShrink: 0 }} />
-                <span style={{ fontSize: 9, fontWeight: 800, color: '#fff', letterSpacing: '0.08em' }}>LIVE</span>
-              </div>
-              <div>
-                <div style={{ fontSize: 12, fontWeight: 700, color: '#111', textAlign: 'center', marginBottom: 3 }}>Deine Seite ist live!</div>
-                <div style={{ fontSize: 9, color: '#aaa', textAlign: 'center' }}>Sie läuft jetzt rund um die Uhr</div>
-              </div>
-              {/* Stats strip */}
-              <div style={{ display: 'flex', gap: 8, width: '100%' }}>
-                {[
-                  { label: 'Besucher', val: '249', svg: <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#8060b0" strokeWidth="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> },
-                  { label: 'Anfragen', val: '4',   svg: <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#8060b0" strokeWidth="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> },
-                ].map(s => (
-                  <div key={s.label} style={{ flex: 1, background: '#F5F0FB', borderRadius: 8, padding: '6px 8px', textAlign: 'center' }}>
-                    <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 2 }}>{s.svg}</div>
-                    <div style={{ fontSize: 12, fontWeight: 700, color: '#111' }}>{s.val}</div>
-                    <div style={{ fontSize: 7, color: '#aaa' }}>{s.label}</div>
-                  </div>
-                ))}
-              </div>
-              <div style={{ display: 'flex', gap: 6 }}>
-                <div style={{ background: '#111', color: '#fff', borderRadius: 99, padding: '5px 12px', fontSize: 9, fontWeight: 600 }}>Seite besuchen →</div>
-                <div style={{ border: '1px solid #EAE4F5', color: '#888', borderRadius: 99, padding: '5px 12px', fontSize: 9, fontWeight: 500 }}>Teilen</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </>
-  )
-}
-
-/* ── Main export ── */
 const STEPS = [
-  {
-    num: '01',
-    title: 'Vorlage wählen',
-    text: 'Für Produkt-Seiten, Kuren, Business-Seiten und Vitalcheck gibt es fertige Vorlagen. Texte, Design, alles drin. Du wählst einmal die passende Vorlage aus.',
-    visual: <MockupTemplateSelect />,
-  },
-  {
-    num: '02',
-    title: 'Ein paar Klicks',
-    text: 'Name eingeben, Nummer eingeben, fertig. Vielleicht noch ein Foto. Du schreibst nichts, du designst nichts. Das dauert ein paar Minuten, nicht mehr.',
-    visual: <MockupEditor />,
-  },
-  {
-    num: '03',
-    title: 'Teilen & wachsen',
-    text: 'Ein Klick und deine Seite ist live. Den Link teilst du in der Story, auf dem Flyer oder im Chat. Sie erklärt dein Angebot und sammelt Anfragen, rund um die Uhr.',
-    visual: <MockupPublished />,
-  },
+  { title: 'Vorlage wählen', text: 'Texte und Design sind fertig. Du suchst nur aus.', visual: <VisualChoose /> },
+  { title: 'Name und Foto eintragen', text: 'Ein paar Felder ausfüllen. Mehr ist es nicht.', visual: <VisualFill /> },
+  { title: 'Online gehen', text: 'Ein Klick, und deine Seite ist live. Link teilen, fertig.', visual: <VisualLive /> },
 ]
 
 export default function HowItWorks() {
@@ -208,58 +108,42 @@ export default function HowItWorks() {
     <section id="wie-es-geht" style={{ background: 'radial-gradient(ellipse 110% 55% at 50% 0%, rgba(128,96,176,0.07) 0%, #fff 65%)' }} className="fs-section-pad">
       <div style={{ maxWidth: 1060, margin: '0 auto' }}>
 
-        {/* Header */}
-        <div style={{ textAlign: 'center', marginBottom: 64 }}>
+        <div style={{ textAlign: 'center', marginBottom: 56 }}>
           <p style={{ fontSize: 11, fontWeight: 700, color: '#8060b0', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 14 }}>So funktioniert&apos;s</p>
-          <h2 style={{ fontFamily: '"Plein", sans-serif', fontSize: 'clamp(28px, 3.8vw, 48px)', fontWeight: 400, color: '#111', letterSpacing: '-0.022em', lineHeight: 1.12, marginBottom: 20 }}>
-            Kein Design. Kein Code.<br />Kein Stress.
+          <h2 style={{ fontFamily: '"Plein", sans-serif', fontSize: 'clamp(28px, 3.8vw, 48px)', fontWeight: 400, color: '#111', letterSpacing: '-0.022em', lineHeight: 1.12, marginBottom: 16 }}>
+            Drei Schritte. Fertig.
           </h2>
-          <p style={{ fontSize: 16, color: '#666', lineHeight: 1.7, maxWidth: 520, margin: '0 auto' }}>
-            Du musst kein kreativer Mensch sein. Kein Marketer, kein Webdesigner, nichts. Drei Schritte und du bist fertig.
+          <p style={{ fontSize: 16, color: '#666', lineHeight: 1.7, maxWidth: 460, margin: '0 auto' }}>
+            Kein Design, kein Text, keine Technik. Das dauert keine fünf Minuten.
           </p>
         </div>
 
-        {/* Steps */}
         <div className="fs-how-grid">
           {STEPS.map((step, i) => (
-            <div key={i} style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-
-              {/* Step badge + connector */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 36, height: 36, borderRadius: '50%', background: '#F5F0FB', border: '1.5px solid #D4C5E2', flexShrink: 0 }}>
-                  <span style={{ fontSize: 11, fontWeight: 700, color: '#8060b0' }}>{step.num}</span>
+            <div key={i} style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+              {step.visual}
+              <div style={{ display: 'flex', gap: 14, alignItems: 'flex-start' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 34, height: 34, borderRadius: '50%', background: '#8060b0', color: '#fff', fontSize: 14, fontWeight: 700, flexShrink: 0 }}>{i + 1}</div>
+                <div>
+                  <h3 style={{ fontSize: 18, fontWeight: 700, color: '#111', marginBottom: 4, lineHeight: 1.3 }}>{step.title}</h3>
+                  <p style={{ fontSize: 15, color: '#666', lineHeight: 1.6 }}>{step.text}</p>
                 </div>
-                <div style={{ flex: 1, height: 1, background: i < STEPS.length - 1 ? 'linear-gradient(to right, #D4C5E2, transparent)' : 'transparent' }} className="fs-how-connector" />
               </div>
-
-              {/* Mockup visual */}
-              <div style={{ borderRadius: 16, overflow: 'hidden' }}>
-                {step.visual}
-              </div>
-
-              {/* Text */}
-              <div>
-                <h3 style={{ fontSize: 17, fontWeight: 700, color: '#111', marginBottom: 8, lineHeight: 1.3 }}>{step.title}</h3>
-                <p style={{ fontSize: 14, color: '#666', lineHeight: 1.7 }}>{step.text}</p>
-              </div>
-
             </div>
           ))}
         </div>
 
-        {/* Combined image + CTA block */}
+        {/* Bild + CTA */}
         <div style={{ marginTop: 56, borderRadius: 20, overflow: 'hidden', border: '1px solid #D4C5E2' }}>
-          {/* Smartphone image — no bottom radius, flows into CTA */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/mascot-mobile.png" alt="Geht auch einfach vom Handy aus." style={{ width: '100%', height: 'auto', display: 'block' }} />
-          {/* CTA strip — attached directly below */}
           <div style={{ background: '#F5F0FB', padding: '28px 36px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 20 }}>
             <div>
               <p style={{ fontSize: 15, fontWeight: 700, color: '#111', marginBottom: 4 }}>Probier&apos;s einfach aus. Es dauert keine 5 Minuten.</p>
               <p style={{ fontSize: 13, color: '#888' }}>Kein Webdesigner, kein Texter, keine Agentur nötig.</p>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 6 }}>
-              <a href={`${process.env.NEXT_PUBLIC_APP_URL ?? 'https://app.finestsites.io'}/register`} style={{ background: '#111', color: '#fff', padding: '13px 28px', borderRadius: 100, fontSize: 14, fontWeight: 600, textDecoration: 'none', whiteSpace: 'nowrap' }}>
+              <a href={`${APP_URL}/register`} style={{ background: '#111', color: '#fff', padding: '13px 28px', borderRadius: 100, fontSize: 14, fontWeight: 600, textDecoration: 'none', whiteSpace: 'nowrap' }}>
                 Kostenlos starten
               </a>
               <span style={{ fontSize: 11, color: '#aaa' }}>Kostenlos loslegen. Erst zahlen wenn du live gehst.</span>
