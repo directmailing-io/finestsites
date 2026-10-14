@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getUserFromRequest } from '@/lib/auth/server'
 import { db } from '@/lib/db'
-import { userSites, siteData } from '@/lib/db/schema'
+import { userSites, siteData, users } from '@/lib/db/schema'
 import { eq, and } from 'drizzle-orm'
 import { getFromR2 } from '@/lib/r2/client'
 import { renderTemplate, rawKeysFromSchema } from '@/lib/utils/template-engine'
@@ -74,6 +74,10 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ site
       // fall back to DB layer
     }
   }
+
+  // Markenfarbe kommt immer aus dem Konto (global), nie aus Seitendaten oder der Live-Eingabe
+  const [owner] = await db.select({ brandColor: users.brandColor }).from(users).where(eq(users.id, user.id)).limit(1)
+  dataMap.markenfarbe = owner?.brandColor ?? ''
 
   let html: string
   try {

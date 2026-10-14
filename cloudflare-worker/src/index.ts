@@ -3,6 +3,7 @@ import type { PublicTrackingConfig } from '../../src/lib/tracking/types'
 import { pickContactFields } from '../../src/lib/tracking/platforms'
 import { applyOpenGraph, type OgContext } from '../../src/lib/utils/open-graph'
 import { computeAboutIntro } from '../../src/lib/utils/about-intro'
+import { applyBrandColor, brandDataKeys } from '../../src/lib/color/brand-palette'
 import LEGAL_I18N_JSON from './legal-i18n/translations.json'
 import {
   shouldInject, injectTracking, handleTrackingBeacon, handleNoTrack, recordEvent, sendServerEvent,
@@ -264,7 +265,7 @@ function render(html: string, data: Data, rawKeys: Set<string> = new Set(), og?:
   for (const key of Object.keys(data)) {
     if (/whatsapp/i.test(key) && typeof data[key] === 'string') data[key] = normalizeWhatsAppNumber(data[key])
   }
-  Object.assign(data, computeAboutIntro(data))
+  Object.assign(data, computeAboutIntro(data), brandDataKeys(data))
 
   html = rewriteSocialHrefs(html, data)
   html = processLoops(html, data, [])
@@ -287,6 +288,7 @@ function render(html: string, data: Data, rawKeys: Set<string> = new Set(), og?:
     .map((part, i) => i % 2 === 1 ? part : simple(part, false))
     .join('')
   if (og) html = applyOpenGraph(html, data, og)
+  html = applyBrandColor(html, data)   // nur bei farbthema=eigene (Markenfarbe), sonst unverändert
   // Safety net: drop leftover control tokens so they never leak into output
   html = html
     .replace(/\{\{\s*\/\s*(?:each|if|unless)\s*\}\}/g, '')

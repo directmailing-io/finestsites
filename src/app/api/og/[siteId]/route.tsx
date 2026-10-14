@@ -11,6 +11,7 @@ import { db } from '@/lib/db'
 import { siteData, templates, userSites, users } from '@/lib/db/schema'
 import { and, eq, inArray } from 'drizzle-orm'
 import { ogProfile, ogName, ogInitials, ogClaim } from '@/lib/utils/open-graph'
+import { derivePalette, BRAND_THEME_VALUE } from '@/lib/color/brand-palette'
 
 export const runtime = 'nodejs'
 
@@ -42,7 +43,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ site
   if (!/^[0-9a-f-]{36}$/i.test(siteId)) return new Response('Not found', { status: 404 })
 
   const [site] = await db
-    .select({ id: userSites.id, status: userSites.status, domain: templates.domain, username: users.username, customDomain: userSites.customDomain, customDomainStatus: userSites.customDomainStatus, publishedData: userSites.publishedData, schema: templates.placeholderSchema })
+    .select({ id: userSites.id, status: userSites.status, domain: templates.domain, username: users.username, customDomain: userSites.customDomain, customDomainStatus: userSites.customDomainStatus, publishedData: userSites.publishedData, schema: templates.placeholderSchema, brandColor: users.brandColor })
     .from(userSites)
     .innerJoin(templates, eq(templates.id, userSites.templateId))
     .innerJoin(users, eq(users.id, userSites.userId))
@@ -57,7 +58,8 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ site
   if (site.publishedData) for (const k of KEYS) if (k in site.publishedData) data[k] = site.publishedData[k] ?? ''
 
   const p = ogProfile(site.domain)
-  const accent = themeAccent(site.schema, data.farbthema) ?? p.accent
+  const brand = data.farbthema === BRAND_THEME_VALUE && site.brandColor ? derivePalette(site.brandColor)?.primary : undefined
+  const accent = brand ?? themeAccent(site.schema, data.farbthema) ?? p.accent
   const claim = ogClaim(p, data)
   const name = ogName(data)
   const initials = ogInitials(data)

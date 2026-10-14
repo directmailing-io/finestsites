@@ -39,7 +39,7 @@
 <meta name="twitter:image" content="https://fitline-optimalset.vercel.app/assets/hero.png">
 
 <!-- Theme Color (Browser-Toolbar auf Mobile) -->
-<meta name="theme-color" content="{{#if farbthema=gruen}}#1F6037{{/if}}{{#if farbthema=rot}}#8B2315{{/if}}{{#if farbthema=orange}}#A8640E{{/if}}">
+<meta name="theme-color" content="{{#if farbthema=gruen}}#1F6037{{/if}}{{#if farbthema=rot}}#8B2315{{/if}}{{#if farbthema=orange}}#A8640E{{/if}}{{#if farbthema=eigene}}{{brand_deep}}{{/if}}">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 
@@ -130,6 +130,24 @@
   --primary-dark-1: #3D2A0A;
   --primary-dark-2: #231808;
   --primary-dark-3: #0F0B03;
+}
+{{/if}}
+{{#if farbthema=eigene}}
+/* Markenfarbe des Kontos: die --fs-*-Variablen fügt der Renderer ein (src/lib/color/brand-palette.ts) */
+:root {
+  --primary: var(--fs-primary);
+  --primary-rgb: var(--fs-primary-rgb);
+  --primary-deep: var(--fs-deep);
+  --primary-deep-rgb: var(--fs-deep-rgb);
+  --primary-soft: var(--fs-soft);
+  --primary-soft-rgb: var(--fs-soft-rgb);
+  --accent: var(--fs-primary);
+  --bg: var(--fs-paper);
+  --surface-warm: var(--fs-paper-2);
+  --border: var(--fs-line);
+  --primary-dark-1: var(--fs-dark-1);
+  --primary-dark-2: var(--fs-dark-2);
+  --primary-dark-3: var(--fs-dark-3);
 }
 {{/if}}
 

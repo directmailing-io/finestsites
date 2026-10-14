@@ -9,6 +9,7 @@ interface CardOption {
   label: string
   description?: string
   card_type?: 'color' | 'image' | 'text'
+  admin_only?: boolean
   color?: string
   image_url?: string
 }
@@ -269,7 +270,7 @@ export default function InteractiveEditorPreview({
             {isMobileVariant ? (
               /* Mobile: horizontal scroll chips */
               <div className="fs-mobile-scroll">
-                {(field.card_options ?? []).map(opt => {
+                {(field.card_options ?? []).filter(o => !o.admin_only).map(opt => {
                   const isActive = fieldValues[field.key] === opt.value
                   return (
                     <button
@@ -288,7 +289,7 @@ export default function InteractiveEditorPreview({
             ) : (
               /* Desktop: vertical list */
               <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
-                {(field.card_options ?? []).map(opt => {
+                {(field.card_options ?? []).filter(o => !o.admin_only).map(opt => {
                   const isActive = fieldValues[field.key] === opt.value
                   return (
                     <button
@@ -332,7 +333,7 @@ export default function InteractiveEditorPreview({
             {isMobileVariant ? (
               /* Mobile: horizontal scroll image chips */
               <div className="fs-mobile-scroll">
-                {(field.card_options ?? []).map(opt => {
+                {(field.card_options ?? []).filter(o => !o.admin_only).map(opt => {
                   const isActive = fieldValues[field.key] === opt.value
                   return (
                     <button
@@ -360,7 +361,7 @@ export default function InteractiveEditorPreview({
             ) : (
               /* Desktop: vertical list with thumbnail */
               <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
-                {(field.card_options ?? []).map(opt => {
+                {(field.card_options ?? []).filter(o => !o.admin_only).map(opt => {
                   const isActive = fieldValues[field.key] === opt.value
                   return (
                     <button
@@ -437,7 +438,7 @@ export default function InteractiveEditorPreview({
         {chipFields.map(field => (
           <SidebarSection key={field.key} label={field.label} variant={variant}>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-              {(field.card_options ?? []).map(opt => {
+              {(field.card_options ?? []).filter(o => !o.admin_only).map(opt => {
                 const isActive = fieldValues[field.key] === opt.value
                 return (
                   <button

@@ -34,7 +34,7 @@
 <link rel="canonical" href="https://{{username}}.wellpreneur.io">
 
 <!-- Theme Color (Mobile Browser Bar) -->
-<meta name="theme-color" content="#2563EB" id="meta-theme-color">
+<meta name="theme-color" content="{{#if farbthema=eigene}}{{brand_dark}}{{/if}}{{#unless farbthema=eigene}}#2563EB{{/unless}}" id="meta-theme-color">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 
@@ -199,6 +199,37 @@
     --glow-usp: rgba(2, 132, 199, 0.08);
     --glow-bar: rgba(56, 189, 248, 0.5);
   }
+
+  /* EIGENE (Markenfarbe des Kontos; die --fs-*-Variablen fügt der Renderer ein, src/lib/color/brand-palette.ts) */
+  [data-theme="eigene"] {
+    --navy: var(--fs-dark-3);
+    --navy-2: var(--fs-dark-2);
+    --navy-3: var(--fs-dark-1);
+    --blue: var(--fs-primary);
+    --blue-bright: var(--fs-bright);
+    --blue-soft: var(--fs-soft);
+    --blue-lightest: var(--fs-soft-2);
+    --paper: var(--fs-paper);
+    --paper-2: var(--fs-paper-2);
+    --white: #FFFFFF;
+    --ink: var(--fs-ink);
+    --ink-2: var(--fs-ink-2);
+    --ink-3: var(--fs-ink-3);
+    --line: var(--fs-line);
+    --line-2: var(--fs-line-2);
+    --chart-seg1: var(--fs-bright);
+    --gradient-dark:
+      radial-gradient(ellipse 60% 40% at 100% 0%, rgba(var(--fs-bright-rgb), 0.3), transparent 60%),
+      radial-gradient(ellipse 50% 40% at 0% 100%, rgba(var(--fs-primary-rgb), 0.35), transparent 60%),
+      linear-gradient(135deg, var(--fs-dark-3) 0%, var(--fs-dark-1) 50%, var(--fs-dark-3) 100%);
+    --gradient-accent:
+      linear-gradient(135deg, var(--fs-primary) 0%, var(--fs-bright) 100%);
+    --glow-top: rgba(var(--fs-bright-rgb), 0.15);
+    --glow-bottom: rgba(var(--fs-primary-rgb), 0.1);
+    --glow-video: rgba(var(--fs-bright-rgb), 0.2);
+    --glow-usp: rgba(var(--fs-primary-rgb), 0.08);
+    --glow-bar: rgba(var(--fs-bright-rgb), 0.5);
+  }
   /* Skyblau body gradient */
   [data-theme="skyblau"] body {
     background:
@@ -214,34 +245,40 @@
   /* Nicht-Blau-Themes: dunkle Elemente mit Gradient */
   [data-theme="gruen"] .hero,
   [data-theme="orange"] .hero,
-  [data-theme="skyblau"] .hero {
+  [data-theme="skyblau"] .hero,
+  [data-theme="eigene"] .hero {
     background: var(--gradient-dark);
   }
   [data-theme="gruen"] .firma-inner,
   [data-theme="orange"] .firma-inner,
-  [data-theme="skyblau"] .firma-inner {
+  [data-theme="skyblau"] .firma-inner,
+  [data-theme="eigene"] .firma-inner {
     background: var(--gradient-dark);
   }
   [data-theme="gruen"] .footer,
   [data-theme="orange"] .footer,
-  [data-theme="skyblau"] .footer {
+  [data-theme="skyblau"] .footer,
+  [data-theme="eigene"] .footer {
     background: var(--gradient-dark);
   }
   [data-theme="gruen"] .nav-cta,
   [data-theme="orange"] .nav-cta,
-  [data-theme="skyblau"] .nav-cta {
+  [data-theme="skyblau"] .nav-cta,
+  [data-theme="eigene"] .nav-cta {
     background: var(--white);
     color: var(--ink);
   }
   [data-theme="gruen"] .nav-cta:hover,
   [data-theme="orange"] .nav-cta:hover,
-  [data-theme="skyblau"] .nav-cta:hover {
+  [data-theme="skyblau"] .nav-cta:hover,
+  [data-theme="eigene"] .nav-cta:hover {
     background: var(--blue-bright);
     color: var(--white);
   }
   [data-theme="gruen"] .play-btn,
   [data-theme="orange"] .play-btn,
-  [data-theme="skyblau"] .play-btn {
+  [data-theme="skyblau"] .play-btn,
+  [data-theme="eigene"] .play-btn {
     background: var(--white);
     color: var(--ink);
   }
@@ -253,6 +290,9 @@
   }
   [data-theme="skyblau"] .top-notice {
     background: linear-gradient(90deg, #0C2340 0%, #1E4B7A 50%, #0C2340 100%);
+  }
+  [data-theme="eigene"] .top-notice {
+    background: linear-gradient(90deg, var(--fs-dark-3) 0%, var(--fs-dark-1) 50%, var(--fs-dark-3) 100%);
   }
   /* Chart flow segments using CSS var */
   .flow-segment[data-w="5"] { background: var(--chart-seg1) !important; color: var(--navy) !important; }
@@ -3090,6 +3130,7 @@
   [data-theme='gruen']   .globe-section { background: linear-gradient(170deg, #050D08 0%, #091C0E 50%, #050D08 100%); }
   [data-theme='orange']  .globe-section { background: linear-gradient(170deg, #100802 0%, #1E0F04 50%, #100802 100%); }
   [data-theme='skyblau'] .globe-section { background: linear-gradient(170deg, #030C18 0%, #07192E 50%, #030C18 100%); }
+  [data-theme='eigene']  .globe-section { background: linear-gradient(170deg, var(--fs-dark-3) 0%, var(--fs-dark-2) 50%, var(--fs-dark-3) 100%); }
 
   .globe-center {
     position: relative;
@@ -3115,6 +3156,7 @@
   [data-theme='gruen']   .globe-center h2 .accent { color: #60C080; }
   [data-theme='orange']  .globe-center h2 .accent { color: #FB923C; }
   [data-theme='skyblau'] .globe-center h2 .accent { color: #38BDF8; }
+  [data-theme='eigene']  .globe-center h2 .accent { color: var(--fs-bright); }
 
   .globe-center > p {
     font-size: 1.05rem;
@@ -3219,6 +3261,7 @@
   [data-theme='orange']  .globe-section .btn-primary { color: #200F04; }
   [data-theme='gruen']   .globe-section .btn-primary { color: #091C0E; }
   [data-theme='skyblau'] .globe-section .btn-primary { color: #07192E; }
+  [data-theme='eigene']  .globe-section .btn-primary { color: var(--fs-dark-3); }
 
   /* content-visibility: skip render cost for off-screen sections */
   .fuer-wen-section,
@@ -3256,6 +3299,7 @@
   [data-theme='gruen']   .globe-viewport::after { background: linear-gradient(to top, #050D08 0%, rgba(5,13,8,0.7) 40%, transparent 100%); }
   [data-theme='orange']  .globe-viewport::after { background: linear-gradient(to top, #100802 0%, rgba(16,8,2,0.7) 40%, transparent 100%); }
   [data-theme='skyblau'] .globe-viewport::after { background: linear-gradient(to top, #030C18 0%, rgba(3,12,24,0.7) 40%, transparent 100%); }
+  [data-theme='eigene']  .globe-viewport::after { background: linear-gradient(to top, var(--fs-dark-3) 0%, rgba(var(--fs-dark-3-rgb),0.7) 40%, transparent 100%); }
 
   /* Atmospheric glow — on the SECTION (not inside clipped viewport) */
   .globe-section::before {
@@ -3273,6 +3317,7 @@
   [data-theme='gruen']   .globe-section::before { background: radial-gradient(ellipse at center, rgba(74,165,100,0.40) 0%, rgba(74,165,100,0.13) 45%, transparent 72%); }
   [data-theme='orange']  .globe-section::before { background: radial-gradient(ellipse at center, rgba(249,115,22,0.36) 0%, rgba(249,115,22,0.12) 45%, transparent 72%); }
   [data-theme='skyblau'] .globe-section::before { background: radial-gradient(ellipse at center, rgba(56,189,248,0.38) 0%, rgba(56,189,248,0.12) 45%, transparent 72%); }
+  [data-theme='eigene']  .globe-section::before { background: radial-gradient(ellipse at center, rgba(var(--fs-bright-rgb),0.38) 0%, rgba(var(--fs-bright-rgb),0.12) 45%, transparent 72%); }
 
   /* Globe image — KEIN FILTER */
   .globe-img {

@@ -207,6 +207,14 @@
           "value": "skyblau",
           "card_type": "color",
           "description": "Luftig, frisch und voller Optimismus."
+        },
+        {
+          "color": "#6B7280",
+          "label": "Meine Farbe",
+          "value": "eigene",
+          "card_type": "color",
+          "description": "Deine Markenfarbe, auf allen deinen Seiten gleich.",
+          "admin_only": true
         }
       ],
       "default_value": "blau",

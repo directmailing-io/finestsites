@@ -114,6 +114,8 @@ export interface CardOption {
   color: string
   /** SVG path 'd' attribute (24×24 viewBox) rendered next to the label. */
   icon?: string
+  /** Nur für Admin-Konten sichtbar (gestufter Rollout, z. B. „Meine Farbe“) */
+  admin_only?: boolean
 }
 
 export interface UserSite {

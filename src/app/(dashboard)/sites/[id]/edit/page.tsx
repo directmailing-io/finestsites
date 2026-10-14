@@ -14,6 +14,66 @@ import { useFetchedCampaign, useCampaignCountdown } from '@/components/billing/u
 import CampaignCard from '@/components/billing/CampaignCard'
 import { downloadQrPng } from '@/lib/utils/qr-download'
 import { FITLINE_SHOP_PRODUCTS, FITLINE_JOGHURT_KEYS, FITLINE_AUTO_LINK_RE, buildFitlineShopLink, ensureSponsorParam } from '@/lib/utils/fitline-shop-links'
+import { derivePalette, BRAND_HEX_RE, BRAND_THEME_VALUE } from '@/lib/color/brand-palette'
+
+// ─── Markenfarbe (Phase A, 14.10.2026): eine Farbe je Konto, Option „Meine Farbe“ im Farbthema ───
+// Nur Admin-Konten sehen die Option und dürfen die Farbe setzen; für alle anderen ist der Editor unverändert.
+const BrandCtx = React.createContext<{
+  isAdmin: boolean
+  brandColor: string | null
+  setBrandColor: (hex: string) => Promise<boolean>
+  reloadPreviewRef: React.MutableRefObject<() => void>
+}>({ isAdmin: false, brandColor: null, setBrandColor: async () => false, reloadPreviewRef: { current: () => {} } })
+
+function BrandColorPicker() {
+  const brand = React.useContext(BrandCtx)
+  const [hex, setHex] = useState(brand.brandColor ?? '#2F8650')
+  const [text, setText] = useState(brand.brandColor ?? '#2F8650')
+  const [state, setState] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle')
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const pal = derivePalette(hex)
+
+  function commit(next: string) {
+    const v = next.toUpperCase()
+    if (!BRAND_HEX_RE.test(v)) return
+    setHex(v); setText(v); setState('saving')
+    if (timer.current) clearTimeout(timer.current)
+    timer.current = setTimeout(async () => {
+      const ok = await brand.setBrandColor(v)
+      setState(ok ? 'saved' : 'error')
+      if (ok) brand.reloadPreviewRef.current()
+    }, 400)
+  }
+
+  return (
+    <div className="rounded-md p-3.5 flex flex-col gap-3" style={{ background: '#FAFAFA', border: '1px solid #E5E7EB' }}>
+      <div className="flex items-center gap-3">
+        <label className="relative flex-shrink-0 rounded-lg overflow-hidden cursor-pointer" style={{ width: 44, height: 44, background: hex, border: '1px solid rgba(0,0,0,0.12)' }}>
+          <input type="color" value={hex} onChange={e => commit(e.target.value)} aria-label="Markenfarbe wählen"
+            className="absolute inset-0 opacity-0 cursor-pointer" style={{ width: '100%', height: '100%' }} />
+        </label>
+        <input type="text" value={text} maxLength={7} spellCheck={false} aria-label="Hex-Wert der Markenfarbe"
+          onChange={e => { const v = e.target.value.startsWith('#') ? e.target.value : '#' + e.target.value; setText(v.toUpperCase()); if (BRAND_HEX_RE.test(v)) commit(v) }}
+          className="text-sm font-mono rounded-md px-2.5 py-2" style={{ width: 104, border: '1px solid #E5E7EB', background: '#fff', color: '#1a1a1a' }} />
+        <span className="text-xs" style={{ color: state === 'error' ? '#B91C1C' : '#6B7280' }}>
+          {state === 'saving' ? 'Wird gespeichert …' : state === 'saved' ? 'Gespeichert' : state === 'error' ? 'Konnte nicht gespeichert werden' : ''}
+        </span>
+      </div>
+      {pal && (
+        <div className="flex items-center gap-1.5" aria-hidden="true">
+          {[pal.primary, pal.deep, pal.soft, pal.dark1, pal.paper].map((c, i) => (
+            <span key={i} className="rounded" style={{ width: 22, height: 22, background: c, border: '1px solid rgba(0,0,0,0.08)' }} />
+          ))}
+          <span className="text-[11px] ml-1" style={{ color: '#6B7280' }}>Buttons, Links, Flächen, dunkle Abschnitte, Hintergrund</span>
+        </div>
+      )}
+      <div className="text-xs leading-snug" style={{ color: '#6B7280' }}>
+        Gilt für alle deine Seiten mit „Meine Farbe“. Text, Buttons und Hintergründe passen wir automatisch an, damit alles lesbar bleibt.
+        {pal?.adjusted && ' Für Buttons und Links nutzen wir einen etwas dunkleren Ton deiner Farbe.'}
+      </div>
+    </div>
+  )
+}
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -21,6 +81,8 @@ interface CardOption {
   value: string; label: string; description: string
   card_type: 'text' | 'image' | 'color'; image_url: string; color: string
   icon?: string
+  /** Nur für Admin-Konten sichtbar (gestufter Rollout, z. B. „Meine Farbe“) */
+  admin_only?: boolean
 }
 
 interface LoopSubField {
@@ -745,7 +807,9 @@ function SectionToggleCard({ field, value, onChange, onMobileSelect }: {
 function CardSelectField({ field, value, onChange, narrow, onMobileSelect }: {
   field: FieldSchema; value: string; onChange: (v: string) => void; narrow?: boolean; onMobileSelect?: () => void
 }) {
-  const opts = field.card_options ?? []
+  const brand = React.useContext(BrandCtx)
+  // admin_only-Optionen (Markenfarbe) nur für Admin-Konten; sonst exakt die bisherige Liste
+  const opts = (field.card_options ?? []).filter(o => !o.admin_only || brand.isAdmin)
   const [hovered, setHovered] = useState<{ opt: CardOption; rect: DOMRect } | null>(null)
 
   // ── Section visibility toggle (display_mode: 'section_toggle') ──
@@ -926,7 +990,7 @@ function CardSelectField({ field, value, onChange, narrow, onMobileSelect }: {
             ) : opt.card_type === 'color' && opt.color ? (
               /* Color strip — 1/3 of card height; label+description take the remaining 2/3 */
               <div className="w-full flex-shrink-0 relative overflow-hidden"
-                style={{ height: 72, background: opt.color }}>
+                style={{ height: 72, background: opt.value === BRAND_THEME_VALUE ? (brand.brandColor ?? opt.color) : opt.color }}>
                 <div style={{
                   position: 'absolute', inset: 0,
                   background: 'linear-gradient(135deg, rgba(255,255,255,0.20) 0%, rgba(255,255,255,0) 55%, rgba(0,0,0,0.10) 100%)',
@@ -967,6 +1031,11 @@ function CardSelectField({ field, value, onChange, narrow, onMobileSelect }: {
           </button>
         )
       })}
+
+      {/* Markenfarbe: Farbwähler unter den Kacheln, sobald „Meine Farbe“ gewählt ist */}
+      {value === BRAND_THEME_VALUE && opts.some(o => o.value === BRAND_THEME_VALUE) && (
+        <div style={{ gridColumn: '1 / -1' }}><BrandColorPicker /></div>
+      )}
 
       {/* ── Floating hover preview ──────────────────────────────────────
           Shows the section image at large size next to the hovered card.
@@ -2896,6 +2965,9 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
     if (debounceRef.current) clearTimeout(debounceRef.current)
     debounceRef.current = setTimeout(() => setPreviewKey(k => k + 1), 600)
   }, [])
+  // Markenfarbe geändert → Vorschau neu laden (die Farbe kommt serverseitig aus dem Konto)
+  const brandCtx = React.useContext(BrandCtx)
+  useEffect(() => { brandCtx.reloadPreviewRef.current = () => setPreviewKey(k => k + 1) }, [brandCtx])
 
   function showToast(message: string, type: 'success' | 'error' = 'success') {
     if (toastTimerRef.current) clearTimeout(toastTimerRef.current)
@@ -4725,10 +4797,27 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
 }
 
 export default function SiteEditPage({ params }: { params: Promise<{ id: string }> }) {
+  const [isAdmin, setIsAdmin] = useState(false)
+  const [brandColor, setBrandColorState] = useState<string | null>(null)
+  const reloadPreviewRef = useRef<() => void>(() => {})
+  useEffect(() => {
+    fetch('/api/user/profile').then(r => r.json()).then((p: { is_admin?: boolean; brand_color?: string | null }) => {
+      setIsAdmin(!!p?.is_admin)
+      setBrandColorState(p?.brand_color ?? null)
+    }).catch(() => {})
+  }, [])
+  const setBrandColor = useCallback(async (hex: string) => {
+    const res = await fetch('/api/user/profile', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ brand_color: hex }) })
+    if (!res.ok) return false
+    setBrandColorState(hex)
+    return true
+  }, [])
   return (
-    <React.Suspense>
-      <SiteEditPageInner params={params} />
-    </React.Suspense>
+    <BrandCtx.Provider value={{ isAdmin, brandColor, setBrandColor, reloadPreviewRef }}>
+      <React.Suspense>
+        <SiteEditPageInner params={params} />
+      </React.Suspense>
+    </BrandCtx.Provider>
   )
 }
 

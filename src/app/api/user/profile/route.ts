@@ -4,6 +4,7 @@ import { db } from '@/lib/db'
 import { users, userSites, templates } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
 import { getStripe } from '@/lib/stripe/client'
+import { BRAND_HEX_RE } from '@/lib/color/brand-palette'
 
 export async function GET(req: NextRequest) {
   const user = await getUserFromRequest(req)
@@ -49,6 +50,9 @@ export async function GET(req: NextRequest) {
     youtube: profile?.youtube ?? null,
     profile_image_url: profile?.profileImageUrl ?? null,
     team_partner_number: profile?.teamPartnerNumber ?? null,
+    // Markenfarbe (Phase A: nur Admin-Konten dürfen sie setzen und sehen die Option im Editor)
+    brand_color: profile?.brandColor ?? null,
+    is_admin: profile?.isAdmin ?? false,
   })
 }
 
@@ -57,6 +61,18 @@ export async function PATCH(req: NextRequest) {
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const body = await req.json()
+
+  // Markenfarbe: nur #RRGGBB oder null; Phase A nur für Admin-Konten (sonst bleibt alles wie bisher)
+  let brandUpdate: { brandColor: string | null } | null = null
+  if ('brand_color' in body) {
+    const v = body.brand_color
+    if (v !== null && (typeof v !== 'string' || !BRAND_HEX_RE.test(v))) {
+      return NextResponse.json({ error: 'Markenfarbe muss ein Hex-Wert wie #1F4FA3 sein.' }, { status: 400 })
+    }
+    const me = await db.query.users.findFirst({ where: eq(users.id, user.id), columns: { isAdmin: true } })
+    if (!me?.isAdmin) return NextResponse.json({ error: 'Markenfarbe ist noch nicht freigeschaltet.' }, { status: 403 })
+    brandUpdate = { brandColor: v === null ? null : String(v).toUpperCase() }
+  }
 
   // Map snake_case body keys to camelCase Drizzle column names
   const fieldMap: Record<string, keyof typeof users.$inferInsert> = {
@@ -82,6 +98,7 @@ export async function PATCH(req: NextRequest) {
     }
   }
 
+  if (brandUpdate) Object.assign(updates, brandUpdate)
   if (Object.keys(updates).length === 0) {
     return NextResponse.json({ error: 'Keine Felder zum Aktualisieren.' }, { status: 400 })
   }

@@ -18,6 +18,7 @@
 import { normalizeWhatsAppNumber, rewriteSocialHrefs } from './social-links'
 import { applyOpenGraph, type OgContext } from './open-graph'
 import { computeAboutIntro } from './about-intro'
+import { applyBrandColor, brandDataKeys } from '../color/brand-palette'
 
 export { normalizeWhatsAppNumber }
 
@@ -90,12 +91,13 @@ export function rawKeysFromSchema(schema: unknown): Set<string> {
 export function renderTemplate(html: string, rawData: SiteData, opts: RenderOptions = {}): string {
   const rawKeys = new Set(opts.rawKeys ?? [])
   const data = withWhatsAppDigits(withDuoAliases(rawData))
-  const enriched = { ...data, ...computeAboutIntro(data) }
+  const enriched = { ...data, ...computeAboutIntro(data), ...brandDataKeys(data) }
   html = rewriteSocialHrefs(html, enriched)
   html = processLoops(html, enriched, [])
   html = evalConditionalBlocks(html, enriched, [])
   html = replaceSimplePlaceholders(html, enriched, rawKeys)
   if (opts.og) html = applyOpenGraph(html, enriched, opts.og)
+  html = applyBrandColor(html, enriched)   // nur bei farbthema=eigene (Markenfarbe), sonst unverändert
   // Safety net: drop any leftover control tokens (orphaned closers, unmatched
   // openers) that would otherwise leak into the final HTML as literal text.
   html = html

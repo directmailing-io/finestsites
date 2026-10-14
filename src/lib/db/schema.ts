@@ -99,6 +99,8 @@ export const users = pgTable('users', {
   paymentFallbackSepa: boolean('payment_fallback_sepa').notNull().default(false),
   deactivatedAt: timestamp('deactivated_at', { withTimezone: true }),
   isAdmin: boolean('is_admin').notNull().default(false),
+  // Markenfarbe (#RRGGBB) für alle Seiten des Nutzers mit farbthema=eigene; Phase A nur Admin (14.10.2026)
+  brandColor: varchar('brand_color', { length: 7 }),
   // Profile fields
   firstName: text('first_name'),
   lastName: text('last_name'),
