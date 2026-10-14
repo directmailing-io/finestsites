@@ -18,7 +18,7 @@
 import { normalizeWhatsAppNumber, rewriteSocialHrefs } from './social-links'
 import { applyOpenGraph, type OgContext } from './open-graph'
 import { computeAboutIntro } from './about-intro'
-import { applyBrandColor, brandDataKeys } from '../color/brand-palette'
+import { applyBrandColor, brandDataKeys, resolveBrandColor } from '../color/brand-palette'
 
 export { normalizeWhatsAppNumber }
 
@@ -90,7 +90,7 @@ export function rawKeysFromSchema(schema: unknown): Set<string> {
 
 export function renderTemplate(html: string, rawData: SiteData, opts: RenderOptions = {}): string {
   const rawKeys = new Set(opts.rawKeys ?? [])
-  const data = withWhatsAppDigits(withDuoAliases(rawData))
+  const data = resolveBrandColor(withWhatsAppDigits(withDuoAliases(rawData)))   // seite:#hex → eigene
   const enriched = { ...data, ...computeAboutIntro(data), ...brandDataKeys(data) }
   html = rewriteSocialHrefs(html, enriched)
   html = processLoops(html, enriched, [])

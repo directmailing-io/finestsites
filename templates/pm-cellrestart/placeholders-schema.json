@@ -388,7 +388,8 @@
       ],
       "default_value": "mint",
       "preview_value": "mint",
-      "placeholder_text": "Wähle das Farbthema deiner Website. Die Farben wirken sich auf alle Buttons, Akzente und Illustrationen aus."
+      "placeholder_text": "Wähle das Farbthema deiner Website. Die Farben wirken sich auf alle Buttons, Akzente und Illustrationen aus.",
+      "brand_color": true
     },
     {
       "key": "ziel_sektion",

@@ -381,7 +381,8 @@
         }
       ],
       "default_value": "klassisch",
-      "order": 110
+      "order": 110,
+      "brand_color": true
     },
     {
       "key": "knopf_form",

@@ -3,7 +3,7 @@ import type { PublicTrackingConfig } from '../../src/lib/tracking/types'
 import { pickContactFields } from '../../src/lib/tracking/platforms'
 import { applyOpenGraph, type OgContext } from '../../src/lib/utils/open-graph'
 import { computeAboutIntro } from '../../src/lib/utils/about-intro'
-import { applyBrandColor, brandDataKeys } from '../../src/lib/color/brand-palette'
+import { applyBrandColor, brandDataKeys, resolveBrandColor } from '../../src/lib/color/brand-palette'
 import LEGAL_I18N_JSON from './legal-i18n/translations.json'
 import {
   shouldInject, injectTracking, handleTrackingBeacon, handleNoTrack, recordEvent, sendServerEvent,
@@ -262,6 +262,7 @@ function applyDuoAliases(data: Data): void {
 
 function render(html: string, data: Data, rawKeys: Set<string> = new Set(), og?: OgContext): string {
   applyDuoAliases(data)
+  resolveBrandColor(data)   // seite:#hex → eigene (Markenfarbe nur dieser Seite)
   for (const key of Object.keys(data)) {
     if (/whatsapp/i.test(key) && typeof data[key] === 'string') data[key] = normalizeWhatsAppNumber(data[key])
   }

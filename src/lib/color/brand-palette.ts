@@ -11,8 +11,33 @@
  */
 
 export const BRAND_HEX_RE = /^#[0-9A-Fa-f]{6}$/
-/** Wert des Feldes `farbthema`, bei dem die Markenfarbe greift */
+/** Wert des Feldes `farbthema`: Markenfarbe des Kontos (`markenfarbe` kommt aus users.brand_color) */
 export const BRAND_THEME_VALUE = 'eigene'
+/** Präfix im Feld `farbthema` für eine Farbe nur dieser Seite: `seite:#RRGGBB` */
+export const SITE_COLOR_PREFIX = 'seite:'
+
+/** Welche Farbe für diese Seite gilt: Kontofarbe (eigene) oder Seitenfarbe (seite:#hex); null = Vorgabe-Thema */
+export function effectiveBrandColor(data: Record<string, unknown>): string | null {
+  const theme = String(data.farbthema ?? '').trim()
+  const hex = theme === BRAND_THEME_VALUE ? String(data.markenfarbe ?? '').trim()
+    : theme.startsWith(SITE_COLOR_PREFIX) ? theme.slice(SITE_COLOR_PREFIX.length).trim() : ''
+  return BRAND_HEX_RE.test(hex) ? hex.toUpperCase() : null
+}
+
+/**
+ * Vor dem Rendern aufrufen: eine Seitenfarbe (`seite:#hex`) wird auf `farbthema=eigene` + `markenfarbe`
+ * normalisiert, damit die Templates nur einen Fall (`data-theme="eigene"`) kennen müssen. Ohne gültige
+ * Farbe bleibt alles unverändert (dann greift das Standard-Thema des Templates).
+ */
+export function resolveBrandColor<T extends Record<string, unknown>>(data: T): T {
+  const theme = String(data.farbthema ?? '').trim()
+  if (!theme.startsWith(SITE_COLOR_PREFIX)) return data
+  const hex = effectiveBrandColor(data)
+  if (!hex) return data
+  ;(data as Record<string, unknown>).farbthema = BRAND_THEME_VALUE
+  ;(data as Record<string, unknown>).markenfarbe = hex
+  return data
+}
 
 export interface BrandPalette {
   brand: string
@@ -151,8 +176,8 @@ export function brandCss(hex: string): string | null {
  * berechnete Werte, nie der Rohtext des Nutzers. Für alle anderen Seiten bleibt das HTML unverändert.
  */
 export function applyBrandColor(html: string, data: Record<string, unknown>): string {
-  if (String(data.farbthema ?? '').trim() !== BRAND_THEME_VALUE) return html
-  const css = brandCss(String(data.markenfarbe ?? '').trim())
+  const hex = effectiveBrandColor(data)
+  const css = hex ? brandCss(hex) : null
   if (!css) return html
   const tag = `<style id="fs-brand">${css}</style>`
   const i = html.search(/<\/head\s*>/i)
@@ -161,8 +186,8 @@ export function applyBrandColor(html: string, data: Record<string, unknown>): st
 
 /** Zusätzliche Platzhalter (z. B. für <meta name="theme-color">), nur gesetzt, wenn die Markenfarbe greift */
 export function brandDataKeys(data: Record<string, unknown>): Record<string, string> {
-  if (String(data.farbthema ?? '').trim() !== BRAND_THEME_VALUE) return {}
-  const p = derivePalette(String(data.markenfarbe ?? '').trim())
+  const hex = effectiveBrandColor(data)
+  const p = hex ? derivePalette(hex) : null
   if (!p) return {}
   return { brand_primary: p.primary, brand_deep: p.deep, brand_dark: p.dark3 }
 }

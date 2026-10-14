@@ -4,7 +4,7 @@
  * (2) die Einfügung in den <head> passiert nur bei farbthema=eigene mit gültigem Hex.
  * Aufruf: npx tsx scripts/check-brand-palette.ts (läuft im Deploy)
  */
-import { derivePalette, contrastRatio, applyBrandColor, brandCss } from '../src/lib/color/brand-palette'
+import { derivePalette, contrastRatio, applyBrandColor, brandCss, resolveBrandColor, effectiveBrandColor } from '../src/lib/color/brand-palette'
 
 const rules: Array<[string, (p: NonNullable<ReturnType<typeof derivePalette>>) => number, number]> = [
   ['Button-Text / Primär', p => contrastRatio(p.onPrimary, p.primary), 4.5],
@@ -42,6 +42,14 @@ if (applyBrandColor(html, { farbthema: 'eigene' }) !== html) { console.error('�
 const out = applyBrandColor(html, { farbthema: 'eigene', markenfarbe: '#a0522d' })
 if (!out.includes('<style id="fs-brand">:root{--fs-brand:#A0522D;') || !out.includes('</style></head>')) { console.error('✗ Einfügung fehlt oder an falscher Stelle'); fails++ }
 if (!/^:root\{(--fs-[a-z0-9-]+:(#[0-9A-F]{6}|\d{1,3}, \d{1,3}, \d{1,3});?)+\}$/.test(brandCss('#A0522D') ?? '')) { console.error('✗ CSS enthält unerwartete Zeichen'); fails++ }
+
+// Seitenfarbe: seite:#hex wird zu eigene + markenfarbe; ungültig bleibt unverändert; Kontofarbe wird nicht überschrieben
+const site = resolveBrandColor({ farbthema: 'seite:#1f4fa3', markenfarbe: '#000000' })
+if (site.farbthema !== 'eigene' || site.markenfarbe !== '#1F4FA3') { console.error('✗ Seitenfarbe nicht aufgelöst', site); fails++ }
+const bad = resolveBrandColor({ farbthema: 'seite:red', markenfarbe: '#000000' })
+if (bad.farbthema !== 'seite:red' || bad.markenfarbe !== '#000000') { console.error('✗ ungültige Seitenfarbe verändert Daten'); fails++ }
+if (effectiveBrandColor({ farbthema: 'eigene', markenfarbe: '' }) !== null || effectiveBrandColor({ farbthema: 'blau', markenfarbe: '#123456' }) !== null) { console.error('✗ effectiveBrandColor liefert Farbe ohne Freigabe'); fails++ }
+if (!applyBrandColor(html, { farbthema: 'seite:#A0522D' }).includes('--fs-brand:#A0522D')) { console.error('✗ Seitenfarbe wird nicht eingefügt'); fails++ }
 
 if (fails) { console.error(`✗ Markenfarben-Check: ${fails} Fehler`); process.exit(1) }
 console.log(`✓ Markenfarben-Check ok (${samples.length} Farben, ${rules.length} Regeln)`)

@@ -200,19 +200,11 @@
           "card_type": "color",
           "image_url": "",
           "description": "Warm, einladend, sonnig. Optimismus pur."
-        },
-        {
-          "color": "#6B7280",
-          "label": "Meine Farbe",
-          "value": "eigene",
-          "card_type": "color",
-          "image_url": "",
-          "description": "Deine Markenfarbe, auf allen deinen Seiten gleich.",
-          "admin_only": true
         }
       ],
       "default_value": "gruen",
-      "placeholder_text": ""
+      "placeholder_text": "",
+      "brand_color": true
     },
     {
       "key": "hero_variant",

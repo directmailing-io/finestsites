@@ -103,6 +103,8 @@ export interface PlaceholderField {
   unit?: string               // e.g. "px", "%"
   // visibility condition based on another top-level field's value
   show_when?: { field: string; value: string | string[] }
+  /** Farbthema-Feld: zusätzlich „Meine Farbe“ (Konto) und „Eigene Farbe“ (nur diese Seite) anbieten */
+  brand_color?: boolean
 }
 
 export interface CardOption {

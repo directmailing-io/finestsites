@@ -17,6 +17,8 @@
 [data-theme="natur"]          {--bg:#F0FDF4;--text:#14532D; --muted:#16A34A;--accent:#16A34A;--btn-txt:#FFFFFF;--div:#BBF7D0;--glow:rgba(22,163,74,0.38);}
 [data-theme="rose"]           {--bg:#FDF2F8;--text:#831843; --muted:#DB2777;--accent:#DB2777;--btn-txt:#FFFFFF;--div:#FBCFE8;--glow:rgba(219,39,119,0.38);}
 [data-theme="sonne"]          {--bg:#FFFDF0;--text:#78350F; --muted:#D97706;--accent:#D97706;--btn-txt:#FFFFFF;--div:#FDE68A;--glow:rgba(217,119,6,0.38);}
+/* eigene = Markenfarbe des Kontos oder dieser Seite; --fs-* kommt vom Renderer (src/lib/color/brand-palette.ts) */
+[data-theme="eigene"]         {--bg:var(--fs-paper);--text:var(--fs-ink);--muted:var(--fs-ink-2);--accent:var(--fs-primary);--btn-txt:#FFFFFF;--div:var(--fs-line);--glow:rgba(var(--fs-primary-rgb),0.38);}
 /* ── 3 Button-Formen ───────────────────────────────────────────────────────── */
 :root,[data-shape="abgerundet"]{--r:14px;}
 [data-shape="eckig"]           {--r:0px;}

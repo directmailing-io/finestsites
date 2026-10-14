@@ -82,6 +82,16 @@ html[data-theme="ziegel"] {
   --warn: #7A2D22; --warn-soft: #F5DFDB;
   --day-white: #F5DFDB; --day-green: #C63A2E; --day-red: #D8A868;
 }
+/* EIGENE: Markenfarbe des Kontos oder dieser Seite (die --fs-*-Variablen fügt der Renderer ein, src/lib/color/brand-palette.ts) */
+html[data-theme="eigene"] {
+  --bg: var(--fs-paper-2); --bg-2: var(--fs-soft); --paper: var(--fs-paper);
+  --ink: var(--fs-ink); --ink-2: var(--fs-ink-2); --ink-3: var(--fs-ink-3);
+  --line: var(--fs-line); --line-2: var(--fs-line);
+  --green: var(--fs-primary); --green-dark: var(--fs-primary-hover); --green-soft: var(--fs-soft); --green-deep: var(--fs-deep);
+  --accent: var(--fs-bright);
+  --warn: #C63A2E; --warn-soft: #FBEBE8;
+  --day-white: var(--fs-soft); --day-green: var(--fs-primary); --day-red: var(--fs-bright);
+}
 html[data-theme="mint"], html:not([data-theme]), html[data-theme=""] {
   --bg: #F0F4EE; --bg-2: #E1EAE3; --paper: #FBFDFA;
   --ink: #142621; --ink-2: #3D5850; --ink-3: #869B92;

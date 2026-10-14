@@ -207,20 +207,13 @@
           "value": "skyblau",
           "card_type": "color",
           "description": "Luftig, frisch und voller Optimismus."
-        },
-        {
-          "color": "#6B7280",
-          "label": "Meine Farbe",
-          "value": "eigene",
-          "card_type": "color",
-          "description": "Deine Markenfarbe, auf allen deinen Seiten gleich.",
-          "admin_only": true
         }
       ],
       "default_value": "blau",
       "preview_value": "blau",
       "placeholder_text": "Das Farbthema deiner Website. Du kannst es jederzeit ändern.",
-      "preview_interactive": true
+      "preview_interactive": true,
+      "brand_color": true
     },
     {
       "key": "kontakt_modus",

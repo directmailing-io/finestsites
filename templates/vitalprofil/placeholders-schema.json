@@ -463,7 +463,8 @@
           "color": "#121413",
           "description": "Dunkel, edel, App-Look."
         }
-      ]
+      ],
+      "brand_color": true
     }
   ],
   "preview_values": {

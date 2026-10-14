@@ -11,7 +11,7 @@ import { db } from '@/lib/db'
 import { siteData, templates, userSites, users } from '@/lib/db/schema'
 import { and, eq, inArray } from 'drizzle-orm'
 import { ogProfile, ogName, ogInitials, ogClaim } from '@/lib/utils/open-graph'
-import { derivePalette, BRAND_THEME_VALUE } from '@/lib/color/brand-palette'
+import { derivePalette, effectiveBrandColor } from '@/lib/color/brand-palette'
 
 export const runtime = 'nodejs'
 
@@ -58,7 +58,8 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ site
   if (site.publishedData) for (const k of KEYS) if (k in site.publishedData) data[k] = site.publishedData[k] ?? ''
 
   const p = ogProfile(site.domain)
-  const brand = data.farbthema === BRAND_THEME_VALUE && site.brandColor ? derivePalette(site.brandColor)?.primary : undefined
+  const brandHex = effectiveBrandColor({ ...data, markenfarbe: site.brandColor ?? '' })
+  const brand = brandHex ? derivePalette(brandHex)?.primary : undefined
   const accent = brand ?? themeAccent(site.schema, data.farbthema) ?? p.accent
   const claim = ogClaim(p, data)
   const name = ogName(data)
