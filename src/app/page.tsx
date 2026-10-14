@@ -272,10 +272,10 @@ export default async function HomePage({
       <HowItWorks />
 
       {/* ══ CLAIMGUARD (KI-Prüfung) ══════════════════════════════════════ */}
-      <ClaimGuardSection />
-
-      {/* ══ FEATURES (alles inklusive) ═══════════════════════════════════ */}
-      <FeaturesSection />
+      <ClaimGuardSection>
+        {/* ══ FEATURES (alles inklusive), teilt sich den dunklen Hintergrund ══ */}
+        <FeaturesSection />
+      </ClaimGuardSection>
 
       {/* ══ TEMPLATES ════════════════════════════════════════════════════ */}
       <section id="templates" style={{ background: '#F9F7FF' }} className="fs-section-pad">

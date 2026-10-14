@@ -1,6 +1,8 @@
 /* ── FinestSites ClaimGuard: die KI-Prüfung der Texte, als Premium-Feature inszeniert ──
  * Dunkle Sektion mit leuchtender Wortmarke, drei Zeilen (was, wofür, Nutzen), Handy in der Hand.
- * Hinter dem Feature steckt /api/check-compliance (RichTextField im Editor, Publish-Gate). */
+ * Hinter dem Feature steckt /api/check-compliance (RichTextField im Editor, Publish-Gate).
+ * Der dunkle Hintergrund (Verlauf, Lichter, Sterne, Korn) liegt auf einem Wrapper, der auch die
+ * nachfolgende Feature-Sektion (children) umschließt, damit beide ohne Kante ineinander übergehen. */
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://app.finestsites.io'
 
@@ -13,9 +15,9 @@ const POINTS = [
 /* feines Korn für den Hintergrund (SVG-Rauschen, sehr schwach) */
 const NOISE = "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.07 0'/></filter><rect width='160' height='160' filter='url(%23n)'/></svg>\")"
 
-export default function ClaimGuardSection() {
+export default function ClaimGuardSection({ children }: { children?: React.ReactNode }) {
   return (
-    <section id="claimguard" style={{ position: 'relative', overflow: 'hidden', color: '#fff', background: 'linear-gradient(180deg, #06061A 0%, #0B0A2A 55%, #150E3C 100%)' }}>
+    <div className="cg-wrap" style={{ position: 'relative', overflow: 'hidden', color: '#fff', background: 'linear-gradient(180deg, #06061A 0%, #0B0A2A 28%, #150E3C 52%, #0C0A2C 78%, #07061C 100%)' }}>
       <style>{`
         .cg-inner { position: relative; z-index: 2; max-width: 1120px; margin: 0 auto; padding: 100px 7vw; min-height: 740px; display: flex; align-items: center; }
         .cg-text { max-width: 560px; width: 56%; }
@@ -34,12 +36,14 @@ export default function ClaimGuardSection() {
         /* Lichter: großer Schein hinter dem Handy, kleiner links unten, Sterne, Korn, Lichtkante oben */
         .cg-glow { position: absolute; inset: 0; pointer-events: none; z-index: 0;
           background:
-            radial-gradient(ellipse 55% 60% at 80% 62%, rgba(139,92,246,0.62) 0%, rgba(139,92,246,0) 68%),
-            radial-gradient(ellipse 36% 30% at 62% 108%, rgba(217,70,239,0.28) 0%, rgba(217,70,239,0) 70%),
-            radial-gradient(ellipse 40% 36% at 8% 96%, rgba(76,29,149,0.45) 0%, rgba(76,29,149,0) 70%),
-            radial-gradient(ellipse 50% 30% at 50% -6%, rgba(124,58,237,0.22) 0%, rgba(124,58,237,0) 70%);
+            radial-gradient(ellipse 55% 440px at 80% 460px, rgba(139,92,246,0.62) 0%, rgba(139,92,246,0) 68%),
+            radial-gradient(ellipse 36% 240px at 62% 800px, rgba(217,70,239,0.28) 0%, rgba(217,70,239,0) 70%),
+            radial-gradient(ellipse 40% 280px at 8% 720px, rgba(76,29,149,0.45) 0%, rgba(76,29,149,0) 70%),
+            radial-gradient(ellipse 50% 220px at 50% -40px, rgba(124,58,237,0.22) 0%, rgba(124,58,237,0) 70%),
+            radial-gradient(ellipse 45% 320px at 12% 1100px, rgba(139,92,246,0.20) 0%, rgba(139,92,246,0) 70%),
+            radial-gradient(ellipse 45% 320px at 90% 1500px, rgba(217,70,239,0.14) 0%, rgba(217,70,239,0) 70%);
         }
-        .cg-stars { position: absolute; inset: 0; pointer-events: none; z-index: 0; opacity: 0.9;
+        .cg-stars { position: absolute; inset: 0; pointer-events: none; z-index: 0; opacity: 0.9; background-size: 100% 900px; background-repeat: repeat-y;
           background-image:
             radial-gradient(1.2px 1.2px at 12% 18%, rgba(255,255,255,0.8) 50%, transparent 51%),
             radial-gradient(1px 1px at 28% 72%, rgba(255,255,255,0.55) 50%, transparent 51%),
@@ -54,6 +58,7 @@ export default function ClaimGuardSection() {
         }
         .cg-noise { position: absolute; inset: 0; pointer-events: none; z-index: 1; background-image: ${NOISE}; opacity: 0.5; mix-blend-mode: overlay; }
         .cg-edge { position: absolute; left: 0; right: 0; top: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(201,163,255,0.45), transparent); z-index: 1; }
+        .cg-section { position: relative; z-index: 2; }
         .cg-orbit { position: absolute; left: 50%; bottom: -140px; width: 1700px; height: 560px; transform: translateX(-50%); pointer-events: none; z-index: 1; }
         .cg-cta { display: inline-flex; align-items: center; justify-content: center; padding: 15px 30px; border-radius: 12px; font-size: 15px; font-weight: 700; color: #fff; text-decoration: none;
           background: linear-gradient(135deg, #9F67FF 0%, #6D28D9 100%); box-shadow: 0 12px 34px rgba(124,58,237,0.5), inset 0 1px 0 rgba(255,255,255,0.3); }
@@ -64,6 +69,7 @@ export default function ClaimGuardSection() {
           .cg-text { max-width: 640px; width: auto; }
           .cg-phone { position: relative; width: auto; margin: 28px -5vw 0 0; display: flex; justify-content: flex-end; }
           .cg-phone img { width: min(100%, 460px); }
+          .cg-orbit { opacity: 0.45; }
         }
         @media (max-width: 767px) {
           .cg-inner { padding: 56px 22px 0; }
@@ -78,6 +84,8 @@ export default function ClaimGuardSection() {
       <div className="cg-stars" aria-hidden="true" />
       <div className="cg-noise" aria-hidden="true" />
       <div className="cg-edge" aria-hidden="true" />
+
+      <section id="claimguard" className="cg-section">
       {/* feine Umlaufbahn wie auf dem Inspirationsbild */}
       <svg className="cg-orbit" viewBox="0 0 1700 560" fill="none" aria-hidden="true">
         <defs>
@@ -137,6 +145,9 @@ export default function ClaimGuardSection() {
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/claimguard-phone.webp" alt="ClaimGuard prüft einen Text im Editor auf dem Smartphone" loading="lazy" width={900} height={1036} />
       </div>
-    </section>
+      </section>
+
+      {children}
+    </div>
   )
 }
