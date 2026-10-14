@@ -1,7 +1,5 @@
 'use client'
 
-import FooterWaitlistMini from './FooterWaitlistMini'
-
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://app.finestsites.io'
 
 export default function Footer() {
@@ -23,17 +21,9 @@ export default function Footer() {
           <div className="fs-footer-brand">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/logos/logo-black.svg" alt="FinestSites" style={{ height: 22, display: 'block', filter: 'brightness(0) invert(1)', opacity: 0.85, marginBottom: 16 }} />
-            <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.45)', lineHeight: 1.7, marginBottom: 20, maxWidth: 260 }}>
-              Professionelle Websites fuer Network-Marketing-Profis. In 5 Minuten live.
+            <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.45)', lineHeight: 1.7, maxWidth: 260 }}>
+              Professionelle Websites für Network-Marketing-Profis. In 5 Minuten live.
             </p>
-            {/* Insider-Club Newsletter */}
-            <p style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'rgba(196,168,240,0.7)', marginBottom: 8 }}>
-              Insider-Club
-            </p>
-            <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.35)', lineHeight: 1.6, marginBottom: 12 }}>
-              Tipps, neue Templates und Neuigkeiten – direkt in dein Postfach.
-            </p>
-            <FooterWaitlistMini />
           </div>
 
           {/* Produkt column */}

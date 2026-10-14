@@ -14,8 +14,8 @@ const PLANS = [
     yearly: 170,
     yearlyMonthly: Math.round(170 / 12),
     dailyCents: Math.round((17 / 30) * 100),
-    premiumSites: '1 aktive Premium-Seite',
-    value: '3.000 €',
+    sites: '1 Webseite',
+    example: 'z. B. deine Optimalset-Seite',
     popular: false,
     cta: 'Kostenlos starten',
   },
@@ -26,8 +26,8 @@ const PLANS = [
     yearly: 270,
     yearlyMonthly: Math.round(270 / 12),
     dailyCents: Math.round((27 / 30) * 100),
-    premiumSites: '3 aktive Premium-Seiten',
-    value: '10.000 €',
+    sites: '3 Webseiten',
+    example: 'z. B. Optimalset, PM-Business und cellRESET',
     popular: true,
     cta: 'Kostenlos starten',
   },
@@ -38,23 +38,27 @@ const PLANS = [
     yearly: 370,
     yearlyMonthly: Math.round(370 / 12),
     dailyCents: Math.round((37 / 30) * 100),
-    premiumSites: 'Unbegrenzt Premium-Seiten',
-    value: 'mehrere 10.000 €',
+    sites: 'Alle Webseiten',
+    example: 'Optimalset, PM-Business, cellRESET, Vitalcheck und jede neue Vorlage, z. B. Beauty oder Mama',
     popular: false,
     cta: 'Kostenlos starten',
   },
 ]
 
-const COMMON_FEATURES = [
-  'Alle Vorlagen frei wählbar, einfach aussuchen und loslegen',
-  'Kein Stress mit DSGVO, Hosting oder Datenschutz, das übernehmen wir',
-  'Kein Designen, kein Texten, alles ist schon fertig für dich',
+/** Zum Aufklappen („Was ist alles dabei?“), in jedem Tarif gleich */
+const INCLUDED = [
+  'Linkseite für Instagram & Co. immer kostenlos dazu',
+  'Fertige Texte und fertiges Design, du trägst nur deine Daten ein',
+  'Hosting, SSL, Impressum und Datenschutz sind erledigt',
+  'Eigene Internetadresse möglich, z.\u202fB. mein-name.de',
   'Deine Seite wird laufend verbessert, ohne dass du etwas tun musst',
-  'Deine eigene Internetadresse nutzbar, z.\u202fB. mein-name.de (die Adresse selbst kaufst du separat)',
+  'Jederzeit kündbar, keine versteckten Kosten',
 ]
 
 export default function PricingSection({ validatedRef, campaign }: { validatedRef?: string | null; campaign?: PublicCampaign | null }) {
   const [yearly, setYearly] = useState(false)
+  // Ein Klick klappt die Details in allen drei Karten auf, damit die Karten gleich hoch bleiben
+  const [showDetails, setShowDetails] = useState(false)
 
   // Primary source: server-validated prop from page.tsx (DB-checked, never spoofable).
   // Fallback: sessionStorage — only ever populated from a previous server-validation
@@ -161,7 +165,7 @@ export default function PricingSection({ validatedRef, campaign }: { validatedRe
             const dailyEuros = (price / 30).toFixed(2).replace('.', ',')
 
             return (
-              <div key={plan.key} style={{ position: plan.key === 'starter' ? 'relative' : undefined }}>
+              <div key={plan.key} style={{ position: plan.key === 'starter' ? 'relative' : undefined, height: '100%' }}>
                 {plan.key === 'starter' && (
                   <img
                     src="/mascot-v2.png"
@@ -185,27 +189,16 @@ export default function PricingSection({ validatedRef, campaign }: { validatedRe
                 border: plan.popular ? 'none' : '1px solid #ebebeb',
                 position: 'relative',
                 boxShadow: plan.popular ? '0 8px 40px rgba(26,37,48,0.18)' : 'none',
+                // Karten gleich hoch, Buttons auf einer Linie (der Kasten „Webseiten“ wächst mit)
+                height: '100%',
+                display: 'flex',
+                flexDirection: 'column',
               }}>
                 {plan.popular && (
                   <div style={{ position: 'absolute', top: -13, left: '50%', transform: 'translateX(-50%)', background: '#D4C5E2', color: '#4a3060', fontSize: 11, fontWeight: 700, padding: '4px 16px', borderRadius: 100, whiteSpace: 'nowrap' }}>
                     BELIEBTESTE WAHL
                   </div>
                 )}
-
-                {/* Value badge */}
-                <div style={{
-                  display: 'inline-block',
-                  background: plan.popular ? 'rgba(255,255,255,0.1)' : '#F9F7FF',
-                  border: `1px solid ${plan.popular ? 'rgba(255,255,255,0.15)' : '#e8e0f5'}`,
-                  borderRadius: 100,
-                  padding: '4px 12px',
-                  fontSize: 11,
-                  fontWeight: 600,
-                  color: plan.popular ? 'rgba(255,255,255,0.55)' : '#8060b0',
-                  marginBottom: 16,
-                }}>
-                  Webseiten-Wert: {plan.value}+
-                </div>
 
                 <p style={{ fontSize: 13, fontWeight: 600, color: plan.popular ? 'rgba(255,255,255,0.45)' : '#888', marginBottom: 12 }}>{plan.name}</p>
 
@@ -262,52 +255,19 @@ export default function PricingSection({ validatedRef, campaign }: { validatedRe
                 </>
                 )}
 
-                {/* Premium sites */}
+                {/* Das Wesentliche: wie viele Webseiten, mit Beispiel */}
                 <div style={{
                   background: plan.popular ? 'rgba(255,255,255,0.07)' : '#F9F7FF',
-                  borderRadius: 10,
-                  padding: '10px 14px',
-                  marginBottom: 20,
-                  fontSize: 13,
-                  fontWeight: 600,
-                  color: plan.popular ? '#fff' : '#111',
+                  borderRadius: 14,
+                  padding: '14px 16px',
+                  marginBottom: 22,
+                  flex: 1,
                 }}>
-                  {plan.premiumSites}
-                  <div style={{ fontSize: 11, fontWeight: 400, color: plan.popular ? 'rgba(255,255,255,0.45)' : '#888', marginTop: 2 }}>
-                    + unbegrenzt Standard-Seiten kostenlos dabei
+                  <div style={{ fontSize: 17, fontWeight: 700, color: plan.popular ? '#fff' : '#111', lineHeight: 1.2 }}>
+                    {plan.sites}
                   </div>
-                </div>
-
-                {/* Features */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 9, marginBottom: 28 }}>
-                  {COMMON_FEATURES.map((f, fi) => (
-                    <div key={fi} style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={plan.popular ? '#D4C5E2' : '#16A34A'} strokeWidth="2.5" strokeLinecap="round" style={{ flexShrink: 0, marginTop: 1 }}><polyline points="20 6 9 17 4 12" /></svg>
-                      <span style={{ fontSize: 12.5, color: plan.popular ? 'rgba(255,255,255,0.6)' : '#555', lineHeight: 1.5 }}>{f}</span>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Info box: Premium vs Standard */}
-                <div style={{
-                  background: plan.popular ? 'rgba(255,255,255,0.06)' : '#F9FAFB',
-                  border: `1px solid ${plan.popular ? 'rgba(255,255,255,0.1)' : '#E5E7EB'}`,
-                  borderRadius: 12,
-                  padding: '12px 14px',
-                  marginBottom: 20,
-                }}>
-                  <p style={{ fontSize: 11, fontWeight: 700, color: plan.popular ? 'rgba(255,255,255,0.5)' : '#6B7280', marginBottom: 8, letterSpacing: '0.04em', textTransform: 'uppercase' }}>
-                    Was ist der Unterschied?
-                  </p>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                    <div>
-                      <span style={{ fontSize: 11, fontWeight: 700, color: plan.popular ? 'rgba(255,255,255,0.7)' : '#111' }}>Premium-Seiten: </span>
-                      <span style={{ fontSize: 11, color: plan.popular ? 'rgba(255,255,255,0.45)' : '#6B7280', lineHeight: 1.5 }}>Professionelle Produkt-Seiten für dein Kerngeschäft.</span>
-                    </div>
-                    <div>
-                      <span style={{ fontSize: 11, fontWeight: 700, color: plan.popular ? 'rgba(255,255,255,0.7)' : '#111' }}>Standard-Seiten: </span>
-                      <span style={{ fontSize: 11, color: plan.popular ? 'rgba(255,255,255,0.45)' : '#6B7280', lineHeight: 1.5 }}>Link-in-Bio, Event-Einladungen und mehr. Immer unbegrenzt dabei.</span>
-                    </div>
+                  <div style={{ fontSize: 13, color: plan.popular ? 'rgba(255,255,255,0.6)' : '#666', marginTop: 5, lineHeight: 1.5 }}>
+                    {plan.example}
                   </div>
                 </div>
 
@@ -316,6 +276,36 @@ export default function PricingSection({ validatedRef, campaign }: { validatedRe
                   style={{ display: 'block', textAlign: 'center', background: plan.popular ? '#D4C5E2' : '#111', color: plan.popular ? '#3a2060' : '#fff', padding: '13px 24px', borderRadius: 100, fontSize: 14, fontWeight: 600 }}>
                   {plan.cta}
                 </a>
+
+                {/* Zum Aufklappen: was in jedem Tarif dabei ist */}
+                <button
+                  type="button"
+                  onClick={() => setShowDetails(v => !v)}
+                  aria-expanded={showDetails}
+                  style={{
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+                    width: '100%', marginTop: 16, padding: '6px 0',
+                    background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit',
+                    fontSize: 13, fontWeight: 600, color: plan.popular ? 'rgba(255,255,255,0.55)' : '#777',
+                  }}
+                >
+                  Was ist alles dabei?
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+                    style={{ transition: 'transform 0.2s', transform: showDetails ? 'rotate(180deg)' : 'none' }}>
+                    <polyline points="6 9 12 15 18 9" />
+                  </svg>
+                </button>
+
+                {showDetails && (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 9, marginTop: 10, paddingTop: 16, borderTop: `1px solid ${plan.popular ? 'rgba(255,255,255,0.1)' : '#eee'}` }}>
+                    {INCLUDED.map((f, fi) => (
+                      <div key={fi} style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={plan.popular ? '#D4C5E2' : '#16A34A'} strokeWidth="2.5" strokeLinecap="round" style={{ flexShrink: 0, marginTop: 2 }}><polyline points="20 6 9 17 4 12" /></svg>
+                        <span style={{ fontSize: 12.5, color: plan.popular ? 'rgba(255,255,255,0.6)' : '#555', lineHeight: 1.5 }}>{f}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
               </div>
             )

@@ -1,5 +1,4 @@
 import type { Metadata } from 'next'
-import Link from 'next/link'
 import { db } from '@/lib/db'
 import { templates, users } from '@/lib/db/schema'
 import { eq, and, inArray, asc, sql } from 'drizzle-orm'
@@ -13,7 +12,7 @@ import HowItWorks from './_components/HowItWorks'
 import TemplateGridSection, { type TemplateCardData } from './_components/TemplateGridSection'
 import { Suspense } from 'react'
 import FAQSection from './_components/FAQSection'
-import WaitlistSection from './_components/WaitlistSection'
+import WaitlistToast from './_components/WaitlistToast'
 import Footer from './_components/Footer'
 import { getActiveCampaign, toPublicCampaign } from '@/lib/billing/campaign'
 
@@ -280,21 +279,12 @@ export default async function HomePage({
           </div>
 
           <TemplateGridSection templates={templateList} />
-
-
-          <div style={{ textAlign: 'center', marginTop: 40 }}>
-            <Link
-              href="/vorlagen"
-              style={{ display: 'inline-block', background: '#fff', color: '#111', border: '1.5px solid rgba(0,0,0,0.15)', borderRadius: 100, padding: '13px 36px', fontSize: 15, fontWeight: 600, textDecoration: 'none' }}
-            >
-              Alle Vorlagen ansehen →
-            </Link>
-          </div>
         </div>
       </section>
 
+      {/* Rückmeldung für Bestätigungs-/Abmeldelinks aus bereits verschickten Insider-Mails (?waitlist=…) */}
       <Suspense fallback={null}>
-        <WaitlistSection />
+        <WaitlistToast />
       </Suspense>
 
       <PricingSection validatedRef={validatedRef} campaign={campaign} />
