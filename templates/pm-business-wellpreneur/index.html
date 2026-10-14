@@ -4853,7 +4853,7 @@ html[data-lang="hi"] .lang-item[data-lang="hi"] { background: #F3F4F6; font-weig
     // started, reload at the same position and resume.
     const vid = document.getElementById('hero-video');
     if (vid) {
-      const want = l === 'de' ? 'videos/preview_01.mp4' : 'videos/preview_01_' + (["en"].indexOf(l) >= 0 ? l : 'en') + '.mp4';
+      const want = l === 'de' ? 'videos/preview_01.mp4' : 'videos/preview_01_' + (["en", "it", "ru", "uk", "pl", "bg", "hi"].indexOf(l) >= 0 ? l : 'en') + '.mp4';
       const srcEl = vid.querySelector('source');
       if (srcEl && srcEl.getAttribute('src') !== want) {
         const t = vid.currentTime || 0;

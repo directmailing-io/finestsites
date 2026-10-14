@@ -15,7 +15,7 @@ LANGS=['it','ru','uk','pl','bg','hi']           # neue Sprachen (de/en sind im T
 ALL=['de','en']+LANGS
 # Sprachen, für die videos/preview_01_{lang}.mp4 in R2 liegt (video/dub_auto.sh). Fehlt die Tonspur,
 # läuft das englische Video (weiter verbreitet als Deutsch). Nach jedem Video-Upload hier ergänzen und neu bauen.
-VIDEO_LANGS=['en']
+VIDEO_LANGS=['en','it','ru','uk','pl','bg','hi']   # videos/preview_01_{lang}.mp4 in R2 (ElevenLabs-Dubbing 14.10.2026)
 NAMES={'de':'Deutsch','en':'English','it':'Italiano','ru':'Русский','uk':'Українська','pl':'Polski','bg':'Български','hi':'हिन्दी'}
 # Sprachname je Sprache: NAMES_IN[aktiv][sprache]
 NAMES_IN={
