@@ -84,13 +84,14 @@ html[data-theme="ziegel"] {
 }
 /* EIGENE: Markenfarbe des Kontos oder dieser Seite (die --fs-*-Variablen fügt der Renderer ein, src/lib/color/brand-palette.ts) */
 html[data-theme="eigene"] {
-  --bg: var(--fs-paper-2); --bg-2: var(--fs-soft); --paper: var(--fs-paper);
+  /* Seite: leicht getönt, Karten: weiß, Akzentflächen: deutlich getönt (wie bei den Vorgaben drei klar getrennte Stufen) */
+  --bg: var(--fs-paper-2); --bg-2: var(--fs-paper-3); --paper: var(--fs-surface);
   --ink: var(--fs-ink); --ink-2: var(--fs-ink-2); --ink-3: var(--fs-ink-3);
-  --line: var(--fs-line); --line-2: var(--fs-line);
-  --green: var(--fs-primary); --green-dark: var(--fs-primary-hover); --green-soft: var(--fs-soft); --green-deep: var(--fs-deep);
+  --line: var(--fs-line); --line-2: var(--fs-ink-3);
+  --green: var(--fs-primary); --green-dark: var(--fs-primary-hover); --green-soft: var(--fs-tint); --green-deep: var(--fs-deep);
   --accent: var(--fs-bright);
   --warn: #C63A2E; --warn-soft: #FBEBE8;
-  --day-white: var(--fs-soft); --day-green: var(--fs-primary); --day-red: var(--fs-bright);
+  --day-white: var(--fs-paper-3); --day-green: var(--fs-primary); --day-red: var(--fs-bright);
 }
 html[data-theme="mint"], html:not([data-theme]), html[data-theme=""] {
   --bg: #F0F4EE; --bg-2: #E1EAE3; --paper: #FBFDFA;

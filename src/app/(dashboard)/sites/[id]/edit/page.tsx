@@ -64,8 +64,8 @@ function OwnColorTile({ color, selected, onClick }: { color: string | null; sele
   )
 }
 
-/** Fenster „Eigene Farbe“: oben die Farben der anderen Seiten (ein Tipp übernimmt), darunter „Neue Farbe
- *  wählen“ mit dem Farbwähler des Geräts. Übernommen wird erst mit dem Button, damit nichts überraschend passiert. */
+/** Fenster „Eigene Farbe“: oben die eigene Farbwahl, darunter die Farben der anderen Seiten (nach Farbe
+ *  zusammengeführt, ein Tipp übernimmt). Übernommen wird erst mit dem Button. Handy: Blatt von unten, scrollbar. */
 function OwnColorSheet({ siteId, current, start, onApply, onClose }: {
   siteId: string; current: string | null; start: string; onApply: (hex: string) => void; onClose: () => void
 }) {
@@ -74,7 +74,7 @@ function OwnColorSheet({ siteId, current, start, onApply, onClose }: {
   const inputRef = useRef<HTMLInputElement>(null)
   useEffect(() => {
     fetch('/api/user/site-colors').then(r => r.json()).then((d: { colors?: { hex: string; sites: { id: string; label: string }[] }[] }) => {
-      // Farben der ANDEREN Seiten; die aktuelle Seite zählt nicht mit
+      // Farben der ANDEREN Seiten (eigene wie Vorgaben), die aktuelle Seite zählt nicht mit; gleiche Farbe = eine Zeile
       const list = (d.colors ?? []).map(c => ({ hex: c.hex, sites: c.sites.filter(s => s.id !== siteId) })).filter(c => c.sites.length > 0)
       setOthers(list)
     }).catch(() => setOthers([]))
@@ -83,64 +83,75 @@ function OwnColorSheet({ siteId, current, start, onApply, onClose }: {
     const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
     window.addEventListener('keydown', onKey); return () => window.removeEventListener('keydown', onKey)
   }, [onClose])
-  const fromOthers = others?.some(c => c.hex === picked)
+  const fromOthers = !!others?.some(c => c.hex === picked)
+  const ownPicked = !!picked && !fromOthers
+  /** „Business-Seite, Linkseite“ bzw. „Business-Seite, Linkseite und 3 weitere“; gleiche Namen nur einmal */
+  const names = (sites: { label: string }[]) => {
+    const u = [...new Set(sites.map(s => s.label))]
+    return u.length <= 3 ? u.join(', ') : `${u.slice(0, 2).join(', ')} und ${u.length - 2} weitere`
+  }
+  const row = (active: boolean) => ({ border: `2px solid ${active ? '#1a1a1a' : '#E5E7EB'}`, background: '#fff', minHeight: 64 })
+  const check = (
+    <span className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: '#1a1a1a' }}>
+      <svg width="11" height="9" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
+    </span>
+  )
   return createPortal(
     <div className="fixed inset-0 z-[200] flex items-end sm:items-center justify-center" style={{ background: 'rgba(15,23,42,0.45)' }} onClick={onClose}>
-      <div className="w-full sm:max-w-[420px] bg-white rounded-t-2xl sm:rounded-2xl p-5 flex flex-col gap-4" style={{ boxShadow: '0 24px 60px rgba(0,0,0,0.25)' }} onClick={e => e.stopPropagation()} role="dialog" aria-label="Eigene Farbe">
-        <div className="flex items-center justify-between">
+      <div className="w-full sm:max-w-[440px] bg-white rounded-t-3xl sm:rounded-2xl flex flex-col"
+        style={{ boxShadow: '0 24px 60px rgba(0,0,0,0.25)', maxHeight: 'min(88vh, 720px)' }}
+        onClick={e => e.stopPropagation()} role="dialog" aria-label="Eigene Farbe">
+        <div className="flex items-center justify-between px-5 pt-4 pb-2 flex-shrink-0">
           <div className="text-base font-bold" style={{ color: '#1a1a1a' }}>Eigene Farbe</div>
-          <button type="button" onClick={onClose} aria-label="Schließen" className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: '#F3F4F6', color: '#1a1a1a' }}>
+          <button type="button" onClick={onClose} aria-label="Schließen" className="w-10 h-10 rounded-full flex items-center justify-center" style={{ background: '#F3F4F6', color: '#1a1a1a' }}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg>
           </button>
         </div>
 
-        {others && others.length > 0 && (
+        <div className="flex flex-col gap-4 px-5 pb-3 overflow-y-auto" style={{ WebkitOverflowScrolling: 'touch' }}>
           <div className="flex flex-col gap-2">
-            <div className="text-xs font-semibold uppercase tracking-wide" style={{ color: '#6B7280' }}>Von deinen anderen Seiten</div>
-            {others.map(c => (
-              <button key={c.hex} type="button" onClick={() => setPicked(c.hex)}
-                className="flex items-center gap-3 rounded-xl p-2.5 text-left"
-                style={{ border: `2px solid ${picked === c.hex ? '#1a1a1a' : '#E5E7EB'}`, background: '#fff' }}>
-                <span className="flex-shrink-0 rounded-lg" style={{ width: 44, height: 44, background: c.hex, border: '1px solid rgba(0,0,0,0.08)' }} />
-                <span className="flex-1 min-w-0">
-                  <span className="block text-sm font-semibold" style={{ color: '#1a1a1a' }}>{c.sites.map(s => s.label).join(', ')}</span>
-                  <span className="block text-xs" style={{ color: '#6B7280' }}>Gleiche Farbe wie dort</span>
-                </span>
-                {picked === c.hex && (
-                  <span className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: '#1a1a1a' }}>
-                    <svg width="11" height="9" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                  </span>
-                )}
-              </button>
-            ))}
+            <div className="text-xs font-semibold uppercase tracking-wide" style={{ color: '#6B7280' }}>Eigene Farbe wählen</div>
+            <button type="button" onClick={() => inputRef.current?.click()} className="flex items-center gap-3 rounded-xl p-2.5 text-left" style={row(ownPicked)}>
+              <span className="flex-shrink-0 rounded-lg flex items-center justify-center" style={{ width: 48, height: 48, background: ownPicked ? picked! : '#F3F4F6', border: '1px solid rgba(0,0,0,0.08)', color: '#1a1a1a' }}>
+                {!ownPicked && <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 3a9 9 0 1 0 0 18c1.5 0 2-1 2-2s-.5-2 1-2h2a3 3 0 0 0 3-3 9 9 0 0 0-8-11z"/><circle cx="7.5" cy="12" r="1.2"/><circle cx="10" cy="7.5" r="1.2"/><circle cx="15" cy="7.5" r="1.2"/></svg>}
+              </span>
+              <span className="flex-1 min-w-0">
+                <span className="block text-sm font-semibold" style={{ color: '#1a1a1a' }}>{ownPicked ? 'Deine Farbe' : 'Farbe aussuchen'}</span>
+                <span className="block text-xs" style={{ color: '#6B7280' }}>{ownPicked ? 'Zum Ändern nochmal antippen' : 'Öffnet die Farbauswahl'}</span>
+              </span>
+              {ownPicked && check}
+            </button>
+            {/* unsichtbarer Geräte-Farbwähler; startet bei der aktuellen Farbe der Seite, nie bei einer fremden */}
+            <input ref={inputRef} type="color" defaultValue={current ?? start} aria-label="Farbe wählen"
+              onChange={e => setPicked(e.target.value.toUpperCase())}
+              style={{ position: 'absolute', width: 1, height: 1, opacity: 0, pointerEvents: 'none' }} />
           </div>
-        )}
 
-        <div className="flex flex-col gap-2">
-          <div className="text-xs font-semibold uppercase tracking-wide" style={{ color: '#6B7280' }}>{others && others.length > 0 ? 'Oder neue Farbe' : 'Neue Farbe'}</div>
-          <button type="button" onClick={() => inputRef.current?.click()}
-            className="flex items-center gap-3 rounded-xl p-2.5 text-left"
-            style={{ border: `2px solid ${picked && !fromOthers ? '#1a1a1a' : '#E5E7EB'}`, background: '#fff' }}>
-            <span className="flex-shrink-0 rounded-lg flex items-center justify-center" style={{ width: 44, height: 44, background: picked && !fromOthers ? picked : '#F3F4F6', border: '1px solid rgba(0,0,0,0.08)', color: '#1a1a1a' }}>
-              {!(picked && !fromOthers) && <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 3a9 9 0 1 0 0 18c1.5 0 2-1 2-2s-.5-2 1-2h2a3 3 0 0 0 3-3 9 9 0 0 0-8-11z"/><circle cx="7.5" cy="12" r="1.2"/><circle cx="10" cy="7.5" r="1.2"/><circle cx="15" cy="7.5" r="1.2"/></svg>}
-            </span>
-            <span className="flex-1 min-w-0">
-              <span className="block text-sm font-semibold" style={{ color: '#1a1a1a' }}>{picked && !fromOthers ? 'Farbe gewählt' : 'Farbe wählen'}</span>
-              <span className="block text-xs" style={{ color: '#6B7280' }}>{picked && !fromOthers ? 'Zum Ändern nochmal antippen' : 'Öffnet die Farbauswahl'}</span>
-            </span>
-          </button>
-          {/* unsichtbarer Geräte-Farbwähler; startet bei der aktuellen Farbe der Seite, nie bei einer fremden */}
-          <input ref={inputRef} type="color" defaultValue={current ?? start} aria-label="Farbe wählen"
-            onChange={e => setPicked(e.target.value.toUpperCase())}
-            style={{ position: 'absolute', width: 1, height: 1, opacity: 0, pointerEvents: 'none' }} />
+          {others && others.length > 0 && (
+            <div className="flex flex-col gap-2">
+              <div className="text-xs font-semibold uppercase tracking-wide" style={{ color: '#6B7280' }}>Von deinen anderen Seiten übernehmen</div>
+              {others.map(c => (
+                <button key={c.hex} type="button" onClick={() => setPicked(c.hex)} className="flex items-center gap-3 rounded-xl p-2.5 text-left" style={row(picked === c.hex)}>
+                  <span className="flex-shrink-0 rounded-lg" style={{ width: 48, height: 48, background: c.hex, border: '1px solid rgba(0,0,0,0.08)' }} />
+                  <span className="flex-1 min-w-0">
+                    <span className="block text-sm font-semibold leading-snug" style={{ color: '#1a1a1a' }}>{names(c.sites)}</span>
+                    <span className="block text-xs" style={{ color: '#6B7280' }}>Gleiche Farbe wie dort</span>
+                  </span>
+                  {picked === c.hex && check}
+                </button>
+              ))}
+            </div>
+          )}
+
+          <div className="text-xs leading-snug" style={{ color: '#6B7280' }}>Text, Buttons und Hintergründe passen wir automatisch an, damit alles gut lesbar bleibt.</div>
         </div>
 
-        <div className="text-xs leading-snug" style={{ color: '#6B7280' }}>Text, Buttons und Hintergründe passen wir automatisch an, damit alles gut lesbar bleibt.</div>
-        <button type="button" disabled={!picked || picked === current} onClick={() => picked && onApply(picked)}
-          className="w-full rounded-xl py-3 text-sm font-semibold"
-          style={{ background: picked && picked !== current ? '#1a1a1a' : '#E5E7EB', color: picked && picked !== current ? '#fff' : '#9CA3AF' }}>
-          Übernehmen
-        </button>
+        <div className="px-5 pt-2 flex-shrink-0" style={{ paddingBottom: 'calc(16px + env(safe-area-inset-bottom, 0px))' }}>
+          <button type="button" disabled={!picked || picked === current} onClick={() => picked && onApply(picked)}
+            className="w-full rounded-xl text-sm font-semibold" style={{ minHeight: 52, background: picked && picked !== current ? '#1a1a1a' : '#E5E7EB', color: picked && picked !== current ? '#fff' : '#9CA3AF' }}>
+            Übernehmen
+          </button>
+        </div>
       </div>
     </div>,
     document.body,
@@ -944,6 +955,8 @@ function CardSelectField({ field, value, onChange, narrow, onMobileSelect }: {
   // Compact mode: when no option has an actual image preview AND no color mockup, render slim chips.
   const isCompact = opts.every(o => (o.card_type !== 'image' || !o.image_url) && o.card_type !== 'color')
   const isAllColor = opts.every(o => o.card_type === 'color')
+  // Viele Bild-Kacheln (z. B. 7 Hintergrundbilder): flacher und ohne Beschreibung, damit es nicht überladen wirkt
+  const manyImages = !isCompact && !isAllColor && opts.filter(o => o.card_type === 'image').length > 4
 
   const gridCls = isCompact ? (
     narrow ? 'grid-cols-1' :
@@ -1053,7 +1066,7 @@ function CardSelectField({ field, value, onChange, narrow, onMobileSelect }: {
 
             {/* Visual area */}
             {isImage && opt.image_url ? (
-              <div className="relative w-full overflow-hidden" style={{ aspectRatio: '4 / 3', background: '#F8FAFC' }}>
+              <div className="relative w-full overflow-hidden" style={{ aspectRatio: manyImages ? '16 / 10' : '4 / 3', background: '#F8FAFC' }}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={opt.image_url} alt={opt.label}
                   className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.04]" />
@@ -1095,12 +1108,12 @@ function CardSelectField({ field, value, onChange, narrow, onMobileSelect }: {
             )}
 
             {/* Label + description */}
-            <div className="flex-1 flex flex-col gap-1 p-3 sm:p-4">
+            <div className={`flex-1 flex flex-col gap-1 ${manyImages ? 'p-2.5 sm:p-3' : 'p-3 sm:p-4'}`}>
               <span className="text-sm font-bold text-gray-900 leading-tight"
                 style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                 {opt.label}
               </span>
-              {opt.description && (
+              {opt.description && !manyImages && (
                 <span className="text-xs leading-snug" style={{ color: '#6B7280', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                   {opt.description}
                 </span>
@@ -3278,8 +3291,10 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
       setSuccess(wasPublished ? 'Änderungen sind live!' : 'Veröffentlicht!')
       setTimeout(() => setSuccess(''), 3000)
       if (wasPublished) {
-        // Re-publish of a live site: confirm quietly, no confetti
+        // Änderungen an einer Live-Seite: kurz bestätigen, dann zurück zur Übersicht, wo die Seite grün aufleuchtet
+        // (viele Nutzer fragen sonst „Wo finde ich meine Seite jetzt?“)
         showToast('Deine Änderungen sind live ✓')
+        setTimeout(() => router.push(`/sites?live=${id}`), 1400)
       } else {
         showToast('Seite ist jetzt live!')
         setShowPublishCelebration(true)
@@ -4888,7 +4903,7 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
 
       {/* ── Publish Celebration Modal ── */}
       {showPublishCelebration && (
-        <PublishCelebrationModal publishedUrl={publishedUrl} onClose={() => setShowPublishCelebration(false)} />
+        <PublishCelebrationModal publishedUrl={publishedUrl} onClose={() => { setShowPublishCelebration(false); router.push(`/sites?live=${id}`) }} />
       )}
 
 

@@ -44,6 +44,10 @@ export interface BrandPalette {
   primary: string; primaryRgb: string; onPrimary: string; hover: string
   deep: string; deepRgb: string
   soft: string; softRgb: string; soft2: string
+  /** deutlich getönte Fläche (Karten-Akzente), unterscheidbar von Papier */
+  tint: string
+  /** dritte Papierstufe (dunkler Seitenhintergrund) */
+  paper3: string
   bright: string; brightRgb: string
   dark1: string; dark2: string; dark3: string; dark3Rgb: string
   paper: string; paper2: string; surface: string
@@ -114,6 +118,7 @@ export function derivePalette(input: string): BrandPalette | null {
 
   const paper = fromLch({ l: 0.985, c: tint(0.008), h })
   const paper2 = fromLch({ l: 0.955, c: tint(0.012), h })
+  const paper3 = fromLch({ l: 0.925, c: tint(0.016), h })
   const surface = '#FFFFFF'
   const ink = fromLch({ l: 0.22, c: tint(0.025), h })
   const ink2 = fromLch({ l: 0.42, c: tint(0.02), h })
@@ -132,9 +137,10 @@ export function derivePalette(input: string): BrandPalette | null {
   // Tief: Links und Akzente auf Papier UND auf der zarten Fläche lesbar
   const soft = fromLch({ l: 0.93, c: tint(Math.min(c * 0.45, 0.06)), h })
   const soft2 = fromLch({ l: 0.97, c: tint(Math.min(c * 0.3, 0.03)), h })
+  const tintSurface = fromLch({ l: 0.915, c: tint(Math.min(c * 0.7, 0.09)), h })
   let dl = 0.40
   let deep = fromLch({ l: dl, c: Math.min(c, 0.14), h })
-  while ((contrastRatio(deep, paper) < 4.5 || contrastRatio(deep, soft) < 4.5) && dl > 0.15) { dl -= 0.01; deep = fromLch({ l: dl, c: Math.min(c, 0.14), h }) }
+  while ((contrastRatio(deep, paper) < 4.5 || contrastRatio(deep, soft) < 4.5 || contrastRatio(deep, tintSurface) < 4.5) && dl > 0.15) { dl -= 0.01; deep = fromLch({ l: dl, c: Math.min(c, 0.14), h }) }
 
   // Dunkle Abschnitte: fast schwarz, im Farbton des Nutzers (Blau → Navy, Orange → Dunkelbraun)
   const dark1 = fromLch({ l: 0.27, c: tint(Math.min(c * 0.55, 0.08)), h })
@@ -149,7 +155,7 @@ export function derivePalette(input: string): BrandPalette | null {
     brand: fromLch(src),
     primary, primaryRgb: rgbTriple(primary), onPrimary: '#FFFFFF', hover,
     deep, deepRgb: rgbTriple(deep),
-    soft, softRgb: rgbTriple(soft), soft2,
+    soft, softRgb: rgbTriple(soft), soft2, tint: tintSurface, paper3,
     bright, brightRgb: rgbTriple(bright),
     dark1, dark2, dark3, dark3Rgb: rgbTriple(dark3),
     paper, paper2, surface, ink, ink2, ink3, line, line2,
@@ -163,9 +169,9 @@ export function brandCss(hex: string): string | null {
   if (!p) return null
   const v: Record<string, string> = {
     'brand': p.brand, 'primary': p.primary, 'primary-rgb': p.primaryRgb, 'on-primary': p.onPrimary, 'primary-hover': p.hover,
-    'deep': p.deep, 'deep-rgb': p.deepRgb, 'soft': p.soft, 'soft-rgb': p.softRgb, 'soft-2': p.soft2,
+    'deep': p.deep, 'deep-rgb': p.deepRgb, 'soft': p.soft, 'soft-rgb': p.softRgb, 'soft-2': p.soft2, 'tint': p.tint,
     'bright': p.bright, 'bright-rgb': p.brightRgb, 'dark-1': p.dark1, 'dark-2': p.dark2, 'dark-3': p.dark3, 'dark-3-rgb': p.dark3Rgb,
-    'paper': p.paper, 'paper-2': p.paper2, 'surface': p.surface, 'ink': p.ink, 'ink-2': p.ink2, 'ink-3': p.ink3, 'line': p.line, 'line-2': p.line2,
+    'paper': p.paper, 'paper-2': p.paper2, 'paper-3': p.paper3, 'surface': p.surface, 'ink': p.ink, 'ink-2': p.ink2, 'ink-3': p.ink3, 'line': p.line, 'line-2': p.line2,
   }
   return ':root{' + Object.entries(v).map(([k, val]) => `--fs-${k}:${val}`).join(';') + '}'
 }

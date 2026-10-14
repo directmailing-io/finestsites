@@ -25,7 +25,7 @@ export async function GET(req: NextRequest) {
 
   const [me] = await db.select({ brandColor: users.brandColor }).from(users).where(eq(users.id, user.id)).limit(1)
   const sites = await db
-    .select({ id: userSites.id, title: templates.title, domain: templates.domain })
+    .select({ id: userSites.id, title: templates.title, domain: templates.domain, schema: templates.placeholderSchema })
     .from(userSites)
     .leftJoin(templates, eq(templates.id, userSites.templateId))
     .where(and(eq(userSites.userId, user.id), inArray(userSites.status, ['draft', 'published'])))
@@ -36,12 +36,20 @@ export async function GET(req: NextRequest) {
     .from(siteData)
     .where(and(inArray(siteData.userSiteId, sites.map(s => s.id)), eq(siteData.fieldKey, 'farbthema')))
 
+  /** Farbe einer Vorgabe (card_options.color) aus dem Template-Schema, z. B. „gruen“ → #2F8650 */
+  function presetHex(schema: unknown, value: string): string | null {
+    const fields = (schema as { fields?: { key: string; card_options?: { value: string; color?: string }[] }[] } | null)?.fields ?? []
+    const color = fields.find(f => f.key === 'farbthema')?.card_options?.find(o => o.value === value)?.color ?? ''
+    return /^#[0-9a-f]{6}$/i.test(color) ? color.toUpperCase() : null
+  }
+
   const byHex = new Map<string, { id: string; label: string }[]>()
   for (const r of rows) {
-    const hex = effectiveBrandColor({ farbthema: r.value ?? '', markenfarbe: me?.brandColor ?? '' })
-    if (!hex) continue
     const site = sites.find(s => s.id === r.siteId)
     if (!site) continue
+    // eigene Farbe oder Vorgabe: beides zählt, damit alle Seiten dieselbe Farbe bekommen können
+    const hex = effectiveBrandColor({ farbthema: r.value ?? '', markenfarbe: me?.brandColor ?? '' }) ?? presetHex(site.schema, (r.value ?? '').trim())
+    if (!hex) continue
     const list = byHex.get(hex) ?? []
     list.push({ id: site.id, label: shortTitle(site.title, site.domain) })
     byHex.set(hex, list)

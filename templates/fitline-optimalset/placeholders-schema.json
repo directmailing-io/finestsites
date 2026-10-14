@@ -209,18 +209,18 @@
     {
       "key": "hero_variant",
       "type": "card_select",
-      "label": "Welche Hero-Variante möchtest du nutzen?",
+      "label": "Hintergrundbild",
       "options": [],
       "section": "Design",
       "required": true,
       "card_options": [
         {
           "color": "",
-          "label": "Produkt-Hotspots",
+          "label": "Produkte mit Infopunkten",
           "value": "v1",
           "card_type": "image",
           "image_url": "/templates/fitline-optimalset/hero-previews/hero-v1.webp",
-          "description": "Interaktive Tooltips zu jedem Produkt direkt im Hero-Bild."
+          "description": "Glas mit Drink, dazu kleine Infopunkte zu jedem Produkt."
         },
         {
           "color": "",
@@ -232,15 +232,47 @@
         },
         {
           "color": "",
-          "label": "Frau mit PowerCocktail",
+          "label": "Frau mit Drink",
           "value": "v3",
           "card_type": "image",
           "image_url": "/templates/fitline-optimalset/hero-previews/hero-v3.webp",
           "description": "Fokus auf eine Person beim Genuss."
+        },
+        {
+          "color": "",
+          "label": "Frühstück mit Orangensaft",
+          "value": "v4",
+          "card_type": "image",
+          "image_url": "/templates/fitline-optimalset/hero-previews/hero-v4.webp",
+          "description": "Sonniger Morgen auf der Terrasse, Obst und Sticks auf dem Tisch."
+        },
+        {
+          "color": "",
+          "label": "Sommer im Garten",
+          "value": "v5",
+          "card_type": "image",
+          "image_url": "/templates/fitline-optimalset/hero-previews/hero-v5.webp",
+          "description": "Entspannter Moment im Garten, Kinder spielen im Hintergrund."
+        },
+        {
+          "color": "",
+          "label": "Paar beim Frühstück",
+          "value": "v6",
+          "card_type": "image",
+          "image_url": "/templates/fitline-optimalset/hero-previews/hero-v6.webp",
+          "description": "Zwei Personen genießen den Morgen zusammen."
+        },
+        {
+          "color": "",
+          "label": "Paar mit Smoothie",
+          "value": "v7",
+          "card_type": "image",
+          "image_url": "/templates/fitline-optimalset/hero-previews/hero-v7.webp",
+          "description": "Lockerer Start in den Tag zu zweit, Obst und Sticks auf dem Tisch."
         }
       ],
       "default_value": "v2",
-      "placeholder_text": ""
+      "placeholder_text": "Das große Bild ganz oben auf deiner Seite."
     },
     {
       "key": "team_partner_number",

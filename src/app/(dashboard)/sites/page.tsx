@@ -35,7 +35,7 @@ const STATUS_META = {
   deactivated: { label: 'Offline', bg: '#FEF2F2', color: '#B91C1C', dot: '#DC2626' },
 } as const
 
-function SiteCard({ site, onDeleted }: { site: Site; onDeleted: (id: string) => void }) {
+function SiteCard({ site, onDeleted, highlight }: { site: Site; onDeleted: (id: string) => void; highlight?: boolean }) {
   const isPublished = site.status === 'published'
   const isDraft = site.status === 'draft'
   const meta = STATUS_META[site.status as keyof typeof STATUS_META] ?? STATUS_META.draft
@@ -84,8 +84,11 @@ function SiteCard({ site, onDeleted }: { site: Site; onDeleted: (id: string) => 
   const secondaryBtn = 'flex-[1_1_150px] flex items-center justify-center gap-2 min-h-12 px-3 py-2 rounded-2xl text-sm font-semibold leading-tight whitespace-nowrap transition-colors'
 
   return (
-    <article className="flex flex-col rounded-3xl overflow-hidden bg-white"
-      style={{ border: '1.5px solid #E2E8F0', boxShadow: '0 2px 12px rgba(15,23,42,0.06)' }}>
+    <article id={`site-${site.id}`} className="flex flex-col rounded-3xl overflow-hidden bg-white"
+      style={highlight
+        // gerade veröffentlicht: grün aufleuchten, damit die Seite in der Übersicht sofort ins Auge fällt
+        ? { border: '1.5px solid #16A34A', boxShadow: '0 0 0 4px rgba(22,163,74,0.18), 0 8px 30px rgba(22,163,74,0.25)', animation: 'fsLiveGlow 1.6s ease-in-out 3' }
+        : { border: '1.5px solid #E2E8F0', boxShadow: '0 2px 12px rgba(15,23,42,0.06)' }}>
 
       {/* Preview — full picture in its own format (16:10), never cropped */}
       <Link href={editHref} aria-label={`${title} bearbeiten`}
@@ -266,6 +269,22 @@ export default function SitesPage() {
     return () => { controller.abort(); clearTimeout(timer) }
   }, [router])
 
+  // Nach dem Veröffentlichen (…/sites?live=<id>): Hinweis oben + die Karte leuchtet kurz grün
+  const [liveId, setLiveId] = useState<string | null>(null)
+  useEffect(() => {
+    const id = new URLSearchParams(window.location.search).get('live')
+    if (!id) return
+    setLiveId(id)
+    window.history.replaceState(null, '', '/sites')
+  }, [])
+  useEffect(() => {
+    if (!liveId || loading) return
+    const el = document.getElementById(`site-${liveId}`)
+    if (el) setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'center' }), 150)
+    const t = setTimeout(() => setLiveId(null), 6000)
+    return () => clearTimeout(t)
+  }, [liveId, loading])
+
   const hasSites = sites.length > 0
   const liveSites = sites.filter(s => s.status === 'published')
   const offlineSites = sites.filter(s => s.status === 'deactivated')
@@ -361,6 +380,19 @@ export default function SitesPage() {
       )}
 
       {/* ── Live sites ── */}
+      <style>{`@keyframes fsLiveGlow { 0%, 100% { box-shadow: 0 0 0 4px rgba(22,163,74,0.18), 0 8px 30px rgba(22,163,74,0.25); } 50% { box-shadow: 0 0 0 10px rgba(22,163,74,0.10), 0 12px 44px rgba(22,163,74,0.45); } }`}</style>
+      {!loading && liveId && liveSites.some(s => s.id === liveId) && (
+        <div className="flex items-start gap-3 rounded-2xl px-4 py-3.5 mb-5" role="status"
+          style={{ background: '#DCFCE7', border: '1.5px solid #86EFAC', color: '#14532D' }}>
+          <span className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: '#16A34A' }}>
+            <svg width="14" height="11" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
+          </span>
+          <div className="text-sm leading-snug">
+            <div className="font-bold">Deine Seite ist online.</div>
+            <div>Hier in der Übersicht findest du sie jederzeit wieder. Mit „Bearbeiten“ kannst du sie weiter anpassen.</div>
+          </div>
+        </div>
+      )}
       {!loading && liveSites.length > 0 && (
         <section className="mb-10">
           <h2 className="text-xl font-bold text-gray-900">Online</h2>
@@ -368,7 +400,7 @@ export default function SitesPage() {
             {liveSites.length === 1 ? 'Diese Webseite ist veröffentlicht und für alle sichtbar.' : 'Diese Webseiten sind veröffentlicht und für alle sichtbar.'}
           </p>
           <div className={GRID}>
-            {liveSites.map(site => <SiteCard key={site.id} site={site} onDeleted={removeSite} />)}
+            {liveSites.map(site => <SiteCard key={site.id} site={site} onDeleted={removeSite} highlight={site.id === liveId} />)}
           </div>
         </section>
       )}
