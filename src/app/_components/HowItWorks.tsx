@@ -98,9 +98,9 @@ function VisualLive() {
 }
 
 const STEPS = [
-  { title: 'Vorlage wählen', text: 'Texte und Design sind fertig. Du suchst nur aus.', visual: <VisualChoose /> },
-  { title: 'Name und Foto eintragen', text: 'Ein paar Felder ausfüllen. Mehr ist es nicht.', visual: <VisualFill /> },
-  { title: 'Online gehen', text: 'Ein Klick, und deine Seite ist live. Link teilen, fertig.', visual: <VisualLive /> },
+  { title: 'Vorlage aussuchen', text: 'Texte und Design sind schon fertig.', visual: <VisualChoose /> },
+  { title: 'Name und Foto eintragen', text: 'Ein paar Felder, mehr nicht.', visual: <VisualFill /> },
+  { title: 'Online gehen', text: 'Ein Klick, und deine Seite ist da.', visual: <VisualLive /> },
 ]
 
 export default function HowItWorks() {
@@ -114,41 +114,29 @@ export default function HowItWorks() {
             Drei Schritte. Fertig.
           </h2>
           <p style={{ fontSize: 16, color: '#666', lineHeight: 1.7, maxWidth: 460, margin: '0 auto' }}>
-            Kein Design, kein Text, keine Technik. Das dauert keine fünf Minuten.
+            Du musst nichts gestalten und nichts schreiben.
           </p>
         </div>
 
+        {/* Schritt: erst die Nummer mit dem Titel, darunter das Bild, darunter ein kurzer Satz */}
         <div className="fs-how-grid">
           {STEPS.map((step, i) => (
-            <div key={i} style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
-              {step.visual}
-              <div style={{ display: 'flex', gap: 14, alignItems: 'flex-start' }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 34, height: 34, borderRadius: '50%', background: '#8060b0', color: '#fff', fontSize: 14, fontWeight: 700, flexShrink: 0 }}>{i + 1}</div>
-                <div>
-                  <h3 style={{ fontSize: 18, fontWeight: 700, color: '#111', marginBottom: 4, lineHeight: 1.3 }}>{step.title}</h3>
-                  <p style={{ fontSize: 15, color: '#666', lineHeight: 1.6 }}>{step.text}</p>
-                </div>
+            <div key={i} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+              <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 40, height: 40, borderRadius: '50%', background: '#8060b0', color: '#fff', fontSize: 17, fontWeight: 700, flexShrink: 0, boxShadow: '0 4px 14px rgba(128,96,176,0.35)' }}>{i + 1}</div>
+                <h3 style={{ fontSize: 20, fontWeight: 700, color: '#111', lineHeight: 1.25, margin: 0 }}>{step.title}</h3>
               </div>
+              {step.visual}
+              <p style={{ fontSize: 15, color: '#666', lineHeight: 1.6, margin: 0, paddingLeft: 4 }}>{step.text}</p>
             </div>
           ))}
         </div>
 
-        {/* Bild + CTA */}
-        <div style={{ marginTop: 56, borderRadius: 20, overflow: 'hidden', border: '1px solid #D4C5E2' }}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/mascot-mobile.png" alt="Geht auch einfach vom Handy aus." style={{ width: '100%', height: 'auto', display: 'block' }} />
-          <div style={{ background: '#F5F0FB', padding: '28px 36px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 20 }}>
-            <div>
-              <p style={{ fontSize: 15, fontWeight: 700, color: '#111', marginBottom: 4 }}>Probier&apos;s einfach aus. Es dauert keine 5 Minuten.</p>
-              <p style={{ fontSize: 13, color: '#888' }}>Kein Webdesigner, kein Texter, keine Agentur nötig.</p>
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 6 }}>
-              <a href={`${APP_URL}/register`} style={{ background: '#111', color: '#fff', padding: '13px 28px', borderRadius: 100, fontSize: 14, fontWeight: 600, textDecoration: 'none', whiteSpace: 'nowrap' }}>
-                Kostenlos starten
-              </a>
-              <span style={{ fontSize: 11, color: '#aaa' }}>Kostenlos loslegen. Erst zahlen wenn du live gehst.</span>
-            </div>
-          </div>
+        <div style={{ textAlign: 'center', marginTop: 52 }}>
+          <a href={`${APP_URL}/register`} style={{ display: 'inline-block', background: '#111', color: '#fff', padding: '15px 36px', borderRadius: 100, fontSize: 15, fontWeight: 600, textDecoration: 'none' }}>
+            Kostenlos starten
+          </a>
+          <p style={{ fontSize: 13, color: '#888', marginTop: 10 }}>Dauert keine 5 Minuten. Zahlen musst du erst, wenn du online gehst.</p>
         </div>
 
       </div>

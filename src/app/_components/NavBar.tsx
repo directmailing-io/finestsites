@@ -17,10 +17,23 @@ const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://app.finestsites.io'
 
 const NAV_LINKS = [
   { label: "So funktioniert's", href: '#wie-es-geht' },
+  { label: 'ClaimGuard',        href: '#claimguard', guard: true },
   { label: 'Templates',         href: '#templates' },
   { label: 'Preise',            href: '#preise' },
-  { label: 'Häufig gestellte Fragen', href: '#faq' },
+  { label: 'Häufige Fragen',    href: '#faq' },
 ]
+
+/** Menüpunkt ClaimGuard: kleiner lila Funke davor, Wortmarke im Lila-Verlauf */
+function GuardLabel({ size = 14 }: { size?: number }) {
+  return (
+    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
+      <svg width={size * 0.85} height={size * 0.85} viewBox="0 0 48 48" aria-hidden="true">
+        <path d="M24 2c1.5 11.5 10.5 20.5 22 22-11.5 1.5-20.5 10.5-22 22-1.5-11.5-10.5-20.5-22-22C13.5 22.5 22.5 13.5 24 2z" fill="#9B6BF2" />
+      </svg>
+      <span style={{ background: 'linear-gradient(90deg, #7C3AED, #A78BFA)', WebkitBackgroundClip: 'text', backgroundClip: 'text', color: 'transparent', fontWeight: 700 }}>ClaimGuard</span>
+    </span>
+  )
+}
 
 export default function NavBar({ primaryCta, minimal, campaign }: NavBarProps = {}) {
   const [open, setOpen] = useState(false)
@@ -54,7 +67,7 @@ export default function NavBar({ primaryCta, minimal, campaign }: NavBarProps = 
             {isHome ? (
               NAV_LINKS.map(l => (
                 <a key={l.href} href={l.href} style={{ color: '#555', fontSize: 14, fontWeight: 500, textDecoration: 'none' }}>
-                  {l.label}
+                  {l.guard ? <GuardLabel /> : l.label}
                 </a>
               ))
             ) : (
@@ -96,7 +109,7 @@ export default function NavBar({ primaryCta, minimal, campaign }: NavBarProps = 
       )}
 
       {/* ── Mobile dropdown ── */}
-      <div style={{ maxHeight: open ? 400 : 0, overflow: 'hidden', transition: 'max-height 0.3s ease', maxWidth: 1200, margin: '0 auto' }}>
+      <div style={{ maxHeight: open ? 520 : 0, overflow: 'hidden', transition: 'max-height 0.3s ease', maxWidth: 1200, margin: '0 auto' }}>
         <div style={{ background: '#fff', borderRadius: 20, marginTop: 8, padding: '8px 20px 20px', boxShadow: '0 8px 32px rgba(0,0,0,0.1)' }}>
           {isHome ? (
             NAV_LINKS.map((l, i) => (
@@ -106,7 +119,7 @@ export default function NavBar({ primaryCta, minimal, campaign }: NavBarProps = 
                 onClick={close}
                 style={{ display: 'block', fontSize: 16, color: '#222', fontWeight: 500, padding: '14px 4px', borderBottom: i < NAV_LINKS.length - 1 ? '1px solid #f0f0f0' : 'none', textDecoration: 'none' }}
               >
-                {l.label}
+                {l.guard ? <GuardLabel size={16} /> : l.label}
               </a>
             ))
           ) : (

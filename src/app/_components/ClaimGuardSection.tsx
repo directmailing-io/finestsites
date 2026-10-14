@@ -5,82 +5,106 @@
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://app.finestsites.io'
 
 const POINTS = [
-  { k: 'Prüft automatisch:', v: 'Jeder Text, den du schreibst, wird auf EU-Gesundheitsrecht geprüft.' },
-  { k: 'Formuliert um:', v: 'Heikle Sätze werden markiert und sauber umgeschrieben. Ein Klick, übernommen.' },
-  { k: 'Schützt dich:', v: 'Keine verbotenen Heilversprechen auf deiner Seite. Du gehst beruhigt online.' },
+  { k: 'Prüft deinen Text:', v: 'Jeder Satz wird auf Heil- und Wirkaussagen geprüft, etwa „hilft gegen“ oder „heilt“.' },
+  { k: 'Schreibt ihn um:', v: 'Problemstellen werden markiert und erlaubt formuliert. Ein Klick, übernommen.' },
+  { k: 'Erst dann online:', v: 'Veröffentlicht wird erst, wenn der Text sauber ist. So bleibst du auf der sicheren Seite.' },
 ]
+
+/* feines Korn für den Hintergrund (SVG-Rauschen, sehr schwach) */
+const NOISE = "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.07 0'/></filter><rect width='160' height='160' filter='url(%23n)'/></svg>\")"
 
 export default function ClaimGuardSection() {
   return (
-    <section id="claimguard" style={{ position: 'relative', overflow: 'hidden', background: '#0A0A1E', color: '#fff' }}>
+    <section id="claimguard" style={{ position: 'relative', overflow: 'hidden', color: '#fff', background: 'linear-gradient(180deg, #06061A 0%, #0B0A2A 55%, #150E3C 100%)' }}>
       <style>{`
-        .cg-inner { position: relative; z-index: 1; max-width: 1120px; margin: 0 auto; padding: 96px 7vw; min-height: 720px; display: flex; align-items: center; }
-        .cg-text { max-width: 600px; width: 56%; }
-        /* Handy hängt unten rechts am Rand der Sektion, der Arm läuft aus dem Bild (wie auf dem Inspirationsbild) */
-        .cg-phone { position: absolute; right: 0; bottom: 0; width: clamp(420px, 44vw, 640px); z-index: 1; pointer-events: none; }
-        .cg-phone img { width: 100%; height: auto; display: block; filter: drop-shadow(0 30px 60px rgba(0,0,0,0.55)); }
+        .cg-inner { position: relative; z-index: 2; max-width: 1120px; margin: 0 auto; padding: 100px 7vw; min-height: 740px; display: flex; align-items: center; }
+        .cg-text { max-width: 540px; width: 52%; }
+        /* Handy hängt unten rechts am Rand der Sektion, der Arm läuft aus dem Bild */
+        .cg-phone { position: absolute; right: 0; bottom: 0; width: clamp(440px, 46vw, 660px); z-index: 2; pointer-events: none; }
+        .cg-phone img { width: 100%; height: auto; display: block; filter: drop-shadow(0 30px 60px rgba(0,0,0,0.6)); }
         .cg-word {
           font-family: "Plus Jakarta Sans", sans-serif; font-weight: 700; letter-spacing: -0.035em; line-height: 1;
           font-size: clamp(56px, 8.5vw, 104px);
-          background: linear-gradient(180deg, #F4ECFF 0%, #C9A3FF 55%, #9B6BF2 100%);
+          background: linear-gradient(180deg, #F6EEFF 0%, #CDA8FF 55%, #9B6BF2 100%);
           -webkit-background-clip: text; background-clip: text; color: transparent;
-          filter: drop-shadow(0 0 28px rgba(165,120,255,0.45));
+          filter: drop-shadow(0 0 30px rgba(165,120,255,0.5));
           display: inline-block; position: relative;
         }
         .cg-spark { position: absolute; top: -0.22em; right: -0.42em; width: 0.42em; height: 0.42em; }
-        .cg-glow { position: absolute; inset: 0; pointer-events: none;
+        /* Lichter: großer Schein hinter dem Handy, kleiner links unten, Sterne, Korn, Lichtkante oben */
+        .cg-glow { position: absolute; inset: 0; pointer-events: none; z-index: 0;
           background:
-            radial-gradient(ellipse 60% 55% at 78% 50%, rgba(124,58,237,0.55) 0%, rgba(124,58,237,0) 70%),
-            radial-gradient(ellipse 40% 40% at 15% 100%, rgba(80,40,160,0.35) 0%, rgba(80,40,160,0) 70%);
+            radial-gradient(ellipse 55% 60% at 80% 62%, rgba(139,92,246,0.62) 0%, rgba(139,92,246,0) 68%),
+            radial-gradient(ellipse 36% 30% at 62% 108%, rgba(217,70,239,0.28) 0%, rgba(217,70,239,0) 70%),
+            radial-gradient(ellipse 40% 36% at 8% 96%, rgba(76,29,149,0.45) 0%, rgba(76,29,149,0) 70%),
+            radial-gradient(ellipse 50% 30% at 50% -6%, rgba(124,58,237,0.22) 0%, rgba(124,58,237,0) 70%);
         }
-        .cg-orbit { position: absolute; left: 50%; bottom: -120px; width: 1600px; height: 520px; transform: translateX(-50%); pointer-events: none; opacity: 0.9; }
+        .cg-stars { position: absolute; inset: 0; pointer-events: none; z-index: 0; opacity: 0.9;
+          background-image:
+            radial-gradient(1.2px 1.2px at 12% 18%, rgba(255,255,255,0.8) 50%, transparent 51%),
+            radial-gradient(1px 1px at 28% 72%, rgba(255,255,255,0.55) 50%, transparent 51%),
+            radial-gradient(1.5px 1.5px at 46% 12%, rgba(255,255,255,0.7) 50%, transparent 51%),
+            radial-gradient(1px 1px at 58% 38%, rgba(255,255,255,0.5) 50%, transparent 51%),
+            radial-gradient(1.2px 1.2px at 70% 16%, rgba(255,255,255,0.75) 50%, transparent 51%),
+            radial-gradient(1px 1px at 86% 28%, rgba(255,255,255,0.6) 50%, transparent 51%),
+            radial-gradient(1.4px 1.4px at 92% 70%, rgba(255,255,255,0.7) 50%, transparent 51%),
+            radial-gradient(1px 1px at 36% 50%, rgba(255,255,255,0.45) 50%, transparent 51%),
+            radial-gradient(1px 1px at 6% 56%, rgba(255,255,255,0.5) 50%, transparent 51%),
+            radial-gradient(1.3px 1.3px at 78% 88%, rgba(255,255,255,0.6) 50%, transparent 51%);
+        }
+        .cg-noise { position: absolute; inset: 0; pointer-events: none; z-index: 1; background-image: ${NOISE}; opacity: 0.5; mix-blend-mode: overlay; }
+        .cg-edge { position: absolute; left: 0; right: 0; top: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(201,163,255,0.45), transparent); z-index: 1; }
+        .cg-orbit { position: absolute; left: 50%; bottom: -140px; width: 1700px; height: 560px; transform: translateX(-50%); pointer-events: none; z-index: 1; }
         .cg-cta { display: inline-flex; align-items: center; justify-content: center; padding: 15px 30px; border-radius: 12px; font-size: 15px; font-weight: 700; color: #fff; text-decoration: none;
-          background: linear-gradient(135deg, #8B5CF6 0%, #6D28D9 100%); box-shadow: 0 10px 30px rgba(124,58,237,0.45), inset 0 1px 0 rgba(255,255,255,0.25); }
+          background: linear-gradient(135deg, #9F67FF 0%, #6D28D9 100%); box-shadow: 0 12px 34px rgba(124,58,237,0.5), inset 0 1px 0 rgba(255,255,255,0.3); }
         .cg-pill { display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; border-radius: 12px; font-size: 14px; font-weight: 600; color: rgba(255,255,255,0.85);
-          background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); }
+          background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.14); backdrop-filter: blur(6px); }
         @media (max-width: 1023px) {
           .cg-inner { padding: 72px 5vw 0; min-height: 0; display: block; }
           .cg-text { max-width: 640px; width: auto; }
-          .cg-phone { position: relative; width: auto; height: 500px; margin-top: 28px; }
-          .cg-phone img { position: absolute; right: 0; bottom: 0; width: 440px; }
+          .cg-phone { position: relative; width: auto; margin: 28px -5vw 0 0; display: flex; justify-content: flex-end; }
+          .cg-phone img { width: min(100%, 520px); }
         }
         @media (max-width: 767px) {
           .cg-inner { padding: 56px 22px 0; }
-          .cg-phone { height: 410px; margin-top: 20px; }
-          .cg-phone img { width: 360px; }
+          .cg-phone { margin: 20px -22px 0 0; }
+          .cg-phone img { width: 100%; }
           .cg-actions { flex-direction: column; align-items: stretch !important; }
           .cg-cta, .cg-pill { justify-content: center; }
         }
       `}</style>
 
       <div className="cg-glow" aria-hidden="true" />
+      <div className="cg-stars" aria-hidden="true" />
+      <div className="cg-noise" aria-hidden="true" />
+      <div className="cg-edge" aria-hidden="true" />
       {/* feine Umlaufbahn wie auf dem Inspirationsbild */}
-      <svg className="cg-orbit" viewBox="0 0 1600 520" fill="none" aria-hidden="true">
+      <svg className="cg-orbit" viewBox="0 0 1700 560" fill="none" aria-hidden="true">
         <defs>
           <linearGradient id="cg-orbit-g" x1="0" y1="0" x2="1" y2="0">
             <stop offset="0" stopColor="#C9A3FF" stopOpacity="0" />
-            <stop offset="0.5" stopColor="#D9C2FF" stopOpacity="0.55" />
+            <stop offset="0.5" stopColor="#E2CFFF" stopOpacity="0.6" />
             <stop offset="1" stopColor="#C9A3FF" stopOpacity="0" />
           </linearGradient>
         </defs>
-        <ellipse cx="800" cy="260" rx="760" ry="220" stroke="url(#cg-orbit-g)" strokeWidth="1.5" />
+        <ellipse cx="850" cy="280" rx="810" ry="236" stroke="url(#cg-orbit-g)" strokeWidth="1.5" />
+        <ellipse cx="850" cy="300" rx="700" ry="200" stroke="url(#cg-orbit-g)" strokeWidth="1" opacity="0.45" />
       </svg>
 
       <div className="cg-inner">
-        <div className="cg-text" style={{ position: 'relative', zIndex: 1 }}>
+        <div className="cg-text">
           <p style={{ fontSize: 15, fontWeight: 700, color: '#C9A3FF', letterSpacing: '0.01em', marginBottom: 10 }}>FinestSites</p>
           <h2 style={{ margin: '0 0 24px', lineHeight: 1 }}>
             <span className="cg-word">
               ClaimGuard
               <svg className="cg-spark" viewBox="0 0 48 48" fill="none" aria-hidden="true">
-                <path d="M24 2c1.5 11.5 10.5 20.5 22 22-11.5 1.5-20.5 10.5-22 22-1.5-11.5-10.5-20.5-22-22C13.5 22.5 22.5 13.5 24 2z" fill="#F2E8FF" />
                 <path d="M24 2c1.5 11.5 10.5 20.5 22 22-11.5 1.5-20.5 10.5-22 22-1.5-11.5-10.5-20.5-22-22C13.5 22.5 22.5 13.5 24 2z" fill="url(#cg-spark-g)" />
                 <defs><radialGradient id="cg-spark-g" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stopColor="#fff" /><stop offset="1" stopColor="#C084FC" /></radialGradient></defs>
               </svg>
             </span>
           </h2>
-          <p style={{ fontSize: 'clamp(18px, 2vw, 22px)', color: 'rgba(255,255,255,0.88)', lineHeight: 1.5, maxWidth: 560, marginBottom: 28, fontWeight: 500 }}>
-            Deine Texte werden automatisch geprüft, bevor sie online gehen. Damit auf deiner Seite nichts steht, was nicht erlaubt ist.
+          <p style={{ fontSize: 'clamp(18px, 2vw, 22px)', color: 'rgba(255,255,255,0.9)', lineHeight: 1.5, maxWidth: 560, marginBottom: 28, fontWeight: 500 }}>
+            Über Gesundheit und Wirkung darf man auf Webseiten nur wenig sagen. ClaimGuard prüft deine Texte auf Heil- und Wirkaussagen, bevor sie online gehen.
           </p>
 
           <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 14, marginBottom: 36 }}>
@@ -107,13 +131,12 @@ export default function ClaimGuardSection() {
             ClaimGuard ist eine Hilfe, keine Rechtsberatung. Für die Inhalte deiner Seite bleibst du selbst verantwortlich.
           </p>
         </div>
-
       </div>
 
-        <div className="cg-phone">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/claimguard-phone.webp" alt="ClaimGuard prüft einen Text im Editor auf dem Smartphone" loading="lazy" width={1000} height={1128} />
-        </div>
+      <div className="cg-phone">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/claimguard-phone.webp" alt="ClaimGuard prüft einen Text im Editor auf dem Smartphone" loading="lazy" width={1100} height={1042} />
+      </div>
     </section>
   )
 }

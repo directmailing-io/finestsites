@@ -153,8 +153,10 @@ export default async function HomePage({
           .fs-pricing-mascot { display: none !important; }
           .fs-prob-grid { grid-template-columns: 1fr; max-width: 500px; margin-left: auto; margin-right: auto; }
           .fs-solution-grid { grid-template-columns: 1fr; }
-          .fs-solution-cards { grid-template-columns: 1fr 1fr; }
+          .fs-solution-cards { grid-template-columns: repeat(3, 1fr); gap: 14px; }
+          .fs-solution-tile { padding: 24px 20px !important; }
           .fs-solution-bg { height: 300px; }
+          .fs-how-grid { grid-template-columns: 1fr; gap: 40px; max-width: 560px; margin-left: auto; margin-right: auto; }
         }
 
         /* ── Mobile (< 768 px) ───────────────────────────── */
@@ -173,7 +175,7 @@ export default async function HomePage({
           .fs-template-grid { grid-template-columns: 1fr 1fr; gap: 14px; }
           .fs-template-grid > * { min-width: 0; }
           .fs-pricing-grid { max-width: 100%; }
-          .fs-how-grid { grid-template-columns: 1fr; gap: 48px; }
+          .fs-how-grid { grid-template-columns: 1fr; gap: 40px; max-width: 100%; }
           .fs-how-connector { display: none; }
 
           /* Pricing banner: image on top, text below */
@@ -213,10 +215,10 @@ export default async function HomePage({
       <ProblemSection />
 
       {/* ══ WAS FINESTSITES BIETET ═══════════════════════════════════════ */}
-      <section id="was-ist" style={{ background: '#fff' }} className="fs-section-pad">
+      <section id="was-ist" style={{ background: 'radial-gradient(ellipse 90% 60% at 50% 100%, rgba(128,96,176,0.09) 0%, #fff 70%)' }} className="fs-section-pad">
         <div style={{ maxWidth: 960, margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: 52 }}>
-            <p style={{ fontSize: 11, fontWeight: 700, color: '#aaa', letterSpacing: '0.14em', textTransform: 'uppercase', marginBottom: 18 }}>Die Lösung</p>
+            <span style={{ display: 'inline-block', fontSize: 11, fontWeight: 700, color: '#8060b0', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 18, background: '#F5F0FB', border: '1px solid #E8E0F5', borderRadius: 100, padding: '6px 14px' }}>Die Lösung</span>
             <h2 style={{ fontFamily: '"Plein", sans-serif', fontSize: 'clamp(28px, 4vw, 46px)', fontWeight: 400, letterSpacing: '-0.025em', lineHeight: 1.15, color: '#111', margin: '0 auto', maxWidth: 600 }}>
               Einmal einrichten. Immer gefunden werden.
             </h2>
@@ -227,23 +229,29 @@ export default async function HomePage({
 
           <div className="fs-solution-cards">
             {([
-              { label: 'Schnell',  title: 'In unter 3 Minuten live',          desc: 'Template wählen, deinen Namen eintragen, ein Foto hochladen. Fertig. Kein Designer, kein Entwickler, kein Stress.' },
-              { label: 'Einfach', title: 'Texte und Design sind fertig',         desc: 'Du schreibst nichts, du gestaltest nichts. Alles ist bereits drin. Professionell getextet, getestet und für dein Produkt optimiert.' },
-              { label: 'Sicher',  title: 'Um den Rest kümmerst du dich nie',     desc: 'Hosting, SSL, DSGVO, Impressum, Barrierefreiheit. Alles läuft automatisch. Du musst dich damit nie beschäftigen.' },
-            ] as { label: string; title: string; desc: string }[]).map((f, i) => (
-              <div key={i} style={{
-                background: '#fff',
-                border: '1px solid #F3F4F6',
-                borderRadius: 20,
-                padding: 32,
-                boxShadow: '0 2px 12px rgba(0,0,0,0.06)',
+              { label: 'Schnell',  title: 'In 3 Minuten online',          desc: 'Vorlage wählen, Namen eintragen, Foto hochladen. Fertig.', tint: '#FFF4E5', ink: '#D97706',
+                icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#D97706" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M13 2L4 14h7l-1 8 9-12h-7l1-8z" /></svg> },
+              { label: 'Einfach', title: 'Texte und Design sind fertig', desc: 'Du schreibst nichts und gestaltest nichts. Alles ist schon drin.', tint: '#F3EDFB', ink: '#8060b0',
+                icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#8060b0" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9" /><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" /></svg> },
+              { label: 'Sicher',  title: 'Um den Rest kümmern wir uns', desc: 'Hosting, Impressum, Datenschutz, ClaimGuard. Läuft alles automatisch.', tint: '#E8F7EE', ink: '#16A34A',
+                icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#16A34A" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /><polyline points="9 12 11 14 15 10" /></svg> },
+            ] as { label: string; title: string; desc: string; tint: string; ink: string; icon: React.ReactNode }[]).map((f, i) => (
+              <div key={i} className="fs-solution-tile" style={{
+                background: 'linear-gradient(180deg, #fff 0%, #FBFAFD 100%)',
+                border: '1px solid #ECE8F3',
+                borderRadius: 22,
+                padding: '30px 28px',
+                boxShadow: '0 10px 30px rgba(128,96,176,0.08), 0 1px 0 rgba(255,255,255,0.8) inset',
                 display: 'flex',
                 flexDirection: 'column',
                 gap: 12,
               }}>
-                <span style={{ fontSize: 11, fontWeight: 700, color: '#D97706', letterSpacing: '0.1em', textTransform: 'uppercase' }}>{f.label}</span>
-                <h3 style={{ fontSize: 17, fontWeight: 700, color: '#111', lineHeight: 1.3, margin: 0 }}>{f.title}</h3>
-                <p style={{ fontSize: 14, color: '#555', lineHeight: 1.7, margin: 0 }}>{f.desc}</p>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div style={{ width: 50, height: 50, borderRadius: 15, background: f.tint, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{f.icon}</div>
+                  <span style={{ fontSize: 11, fontWeight: 700, color: f.ink, letterSpacing: '0.1em', textTransform: 'uppercase' }}>{f.label}</span>
+                </div>
+                <h3 style={{ fontSize: 19, fontWeight: 700, color: '#111', lineHeight: 1.3, margin: '6px 0 0' }}>{f.title}</h3>
+                <p style={{ fontSize: 15, color: '#666', lineHeight: 1.65, margin: 0 }}>{f.desc}</p>
               </div>
             ))}
           </div>
