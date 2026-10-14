@@ -1,131 +1,123 @@
-/* ── Features: jedes Extra hat einen eigenen Namen (wie ClaimGuard) und genau einen Satz ──
- * Acht Kacheln, jede mit eigener Akzentfarbe, Icon-Kachel mit Schein und leichtem Farbhauch
- * oben links. Alles davon steckt in jedem Tarif, deshalb kein Tarif-Hinweis je Kachel. */
+/* ── Features: jedes Extra als eigener Logo-Schriftzug im Stil von ClaimGuard ──
+ * Dunkle Fortsetzung der ClaimGuard-Sektion. Normale Namen (Farbwahl, QR-Code, …), aber jeder
+ * Name als leuchtende Wortmarke mit eigenem Farbverlauf und Funken, dazu genau ein Satz.
+ * Alles davon steckt in jedem Tarif, deshalb kein Tarif-Hinweis je Kachel. */
 
 type Feature = {
   name: string
   text: string
-  color: string
-  dark: string
-  tag?: string
+  /** Verlauf der Wortmarke (oben hell, unten satt) */
+  grad: string
+  /** Farbe von Funken, Schein und Lichtkante */
+  glow: string
   href?: string
-  icon: React.ReactNode
 }
 
-const stroke = { fill: 'none', stroke: '#fff', strokeWidth: 2, strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const }
-
 const FEATURES: Feature[] = [
-  {
-    name: 'ClaimGuard', color: '#9F67FF', dark: '#6D28D9', tag: 'KI', href: '#claimguard',
-    text: 'Deine Texte, automatisch geprüft auf Heil- und Wirkaussagen.',
-    icon: <svg width="24" height="24" viewBox="0 0 24 24" {...stroke}><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /><polyline points="9 12 11 14 15 10" /></svg>,
-  },
-  {
-    name: 'ColorPick', color: '#F472B6', dark: '#DB2777',
-    text: 'Ein Klick, und die ganze Seite trägt deine Farbe.',
-    icon: <svg width="24" height="24" viewBox="0 0 24 24" {...stroke}><circle cx="12" cy="12" r="9" /><circle cx="8.5" cy="10" r="1.2" fill="#fff" /><circle cx="12" cy="7.5" r="1.2" fill="#fff" /><circle cx="15.5" cy="10" r="1.2" fill="#fff" /><path d="M12 21c-1.5 0-2.5-1.2-2-2.5.4-1 1.5-1 2.5-1h1.5a2.5 2.5 0 0 0 0-5H13" /></svg>,
-  },
-  {
-    name: 'MultiLang', color: '#38BDF8', dark: '#0284C7', tag: '8 Sprachen',
-    text: 'Deine Seite in bis zu 8 Sprachen, automatisch übersetzt.',
-    icon: <svg width="24" height="24" viewBox="0 0 24 24" {...stroke}><circle cx="12" cy="12" r="9" /><path d="M3 12h18M12 3c2.8 3 2.8 15 0 18M12 3c-2.8 3-2.8 15 0 18" /></svg>,
-  },
-  {
-    name: 'QuickQR', color: '#64748B', dark: '#1E293B',
-    text: 'Dein QR-Code für Flyer und Visitenkarte, fertig zum Drucken.',
-    icon: <svg width="24" height="24" viewBox="0 0 24 24" {...stroke}><rect x="3" y="3" width="7" height="7" rx="1.5" /><rect x="14" y="3" width="7" height="7" rx="1.5" /><rect x="3" y="14" width="7" height="7" rx="1.5" /><path d="M14 14h3v3M21 14v3M14 21h3M21 21h-1.5" /></svg>,
-  },
-  {
-    name: 'LinkPage', color: '#34D399', dark: '#059669', tag: 'Immer kostenlos',
-    text: 'Alle deine Links auf einer Seite, für Instagram und WhatsApp.',
-    icon: <svg width="24" height="24" viewBox="0 0 24 24" {...stroke}><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.5 1.5" /><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.5-1.5" /></svg>,
-  },
-  {
-    name: 'MyDomain', color: '#FBBF24', dark: '#D97706',
-    text: 'Deine eigene Internetadresse, z. B. max-mustermann.de.',
-    icon: <svg width="24" height="24" viewBox="0 0 24 24" {...stroke}><rect x="3" y="4" width="18" height="16" rx="3" /><path d="M3 9h18" /><circle cx="6.5" cy="6.5" r="0.6" fill="#fff" /><circle cx="9" cy="6.5" r="0.6" fill="#fff" /><path d="M7 14.5h10" /></svg>,
-  },
-  {
-    name: 'AdsReady', color: '#FB7185', dark: '#E11D48',
-    text: 'Meta, Google und TikTok mit einem Klick verbunden. Werbung, die messbar ist.',
-    icon: <svg width="24" height="24" viewBox="0 0 24 24" {...stroke}><path d="M4 19V11M10 19V5M16 19v-6M22 19H2" /><circle cx="19" cy="7" r="2.2" /></svg>,
-  },
-  {
-    name: 'AutoLegal', color: '#818CF8', dark: '#4338CA',
-    text: 'Impressum und Datenschutz, automatisch erstellt und immer aktuell.',
-    icon: <svg width="24" height="24" viewBox="0 0 24 24" {...stroke}><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z" /><path d="M14 3v5h5" /><polyline points="9 15 11 17 15 12" /></svg>,
-  },
+  { name: 'ClaimGuard', href: '#claimguard', glow: '#B08CFF', grad: 'linear-gradient(180deg, #F6EEFF 0%, #CDA8FF 55%, #9B6BF2 100%)',
+    text: 'Deine Texte, automatisch geprüft auf Heil- und Wirkaussagen.' },
+  { name: 'Farbwahl', glow: '#FF9ECF', grad: 'linear-gradient(90deg, #FF9ECF 0%, #FFB86B 35%, #7FE3C4 70%, #8AB4FF 100%)',
+    text: 'Ein Klick, und die ganze Seite trägt deine Farbe.' },
+  { name: '8 Sprachen', glow: '#5CCBFF', grad: 'linear-gradient(180deg, #EAF8FF 0%, #9BDCFF 55%, #38BDF8 100%)',
+    text: 'Deine Seite spricht bis zu 8 Sprachen, automatisch übersetzt.' },
+  { name: 'QR-Code', glow: '#E5E7EB', grad: 'linear-gradient(180deg, #FFFFFF 0%, #E5E7EB 55%, #9CA3AF 100%)',
+    text: 'Für Flyer und Visitenkarte, fertig zum Drucken.' },
+  { name: 'Linkseite', glow: '#5EEAD4', grad: 'linear-gradient(180deg, #ECFDF5 0%, #A7F3D0 55%, #34D399 100%)',
+    text: 'Alle deine Links auf einer Seite, für Instagram und WhatsApp. Immer kostenlos.' },
+  { name: 'Eigene Domain', glow: '#FCD34D', grad: 'linear-gradient(180deg, #FFFBEB 0%, #FDE68A 55%, #F59E0B 100%)',
+    text: 'Deine eigene Internetadresse, z. B. max-mustermann.de.' },
+  { name: 'Werbe-Tracking', glow: '#FB7185', grad: 'linear-gradient(180deg, #FFF1F2 0%, #FDA4AF 55%, #FB7185 100%)',
+    text: 'Meta, Google und TikTok mit einem Klick verbunden. Werbung, die messbar ist.' },
+  { name: 'Rechtstexte', glow: '#A5B4FC', grad: 'linear-gradient(180deg, #EEF2FF 0%, #C7D2FE 55%, #818CF8 100%)',
+    text: 'Impressum und Datenschutz, automatisch erstellt und immer aktuell.' },
 ]
+
+/* derselbe Funke wie bei der ClaimGuard-Wortmarke, in der Farbe des Features */
+const Spark = ({ color, id }: { color: string; id: string }) => (
+  <svg className="ft-spark" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+    <path d="M24 2c1.5 11.5 10.5 20.5 22 22-11.5 1.5-20.5 10.5-22 22-1.5-11.5-10.5-20.5-22-22C13.5 22.5 22.5 13.5 24 2z" fill={`url(#${id})`} />
+    <defs><radialGradient id={id} cx="0.5" cy="0.5" r="0.5"><stop offset="0" stopColor="#fff" /><stop offset="1" stopColor={color} /></radialGradient></defs>
+  </svg>
+)
 
 export default function FeaturesSection() {
   return (
-    <section id="features" className="fs-section-pad" style={{ position: 'relative', background: 'radial-gradient(ellipse 80% 50% at 50% 0%, rgba(128,96,176,0.08) 0%, #fff 60%)' }}>
+    <section id="features" style={{ position: 'relative', overflow: 'hidden', color: '#fff', background: 'linear-gradient(180deg, #150E3C 0%, #0C0A2C 40%, #07061C 100%)' }}>
       <style>{`
+        .ft-pad { position: relative; z-index: 2; padding: 96px 7vw 110px; }
+        .ft-inner { max-width: 1200px; margin: 0 auto; }
+        .ft-glow { position: absolute; inset: 0; pointer-events: none; z-index: 0;
+          background:
+            radial-gradient(ellipse 50% 40% at 15% 20%, rgba(139,92,246,0.22) 0%, rgba(139,92,246,0) 70%),
+            radial-gradient(ellipse 45% 40% at 88% 75%, rgba(217,70,239,0.14) 0%, rgba(217,70,239,0) 70%);
+        }
         .ft-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
         .ft-card {
-          position: relative; display: flex; flex-direction: column; gap: 16px; padding: 26px 24px 28px;
-          border-radius: 22px; background: #fff; text-decoration: none; color: inherit;
-          border: 1px solid rgba(17,17,17,0.07);
-          box-shadow: 0 1px 2px rgba(17,17,17,0.04), 0 14px 40px rgba(128,96,176,0.08);
-          transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
-          overflow: hidden;
+          position: relative; display: block; padding: 34px 26px 32px; border-radius: 22px; overflow: hidden;
+          text-decoration: none; color: inherit;
+          background: linear-gradient(180deg, rgba(255,255,255,0.065) 0%, rgba(255,255,255,0.025) 100%);
+          border: 1px solid rgba(255,255,255,0.10);
+          box-shadow: 0 24px 60px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.08);
+          transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
         }
-        .ft-card::before {
-          content: ''; position: absolute; inset: 0; pointer-events: none;
-          background: radial-gradient(circle at 0% 0%, var(--ft-tint) 0%, transparent 55%);
+        /* Schein in der Farbe des Features oben links, Lichtkante oben */
+        .ft-card::before { content: ''; position: absolute; inset: 0; pointer-events: none;
+          background: radial-gradient(ellipse 75% 60% at 12% 0%, var(--ft-glow-soft) 0%, transparent 70%); }
+        .ft-card::after { content: ''; position: absolute; left: 20px; right: 20px; top: 0; height: 1px; pointer-events: none;
+          background: linear-gradient(90deg, transparent, var(--ft-line), transparent); }
+        a.ft-card:hover { transform: translateY(-4px); border-color: var(--ft-line); box-shadow: 0 30px 70px rgba(0,0,0,0.45), 0 0 40px var(--ft-glow-soft), inset 0 1px 0 rgba(255,255,255,0.12); }
+        .ft-word {
+          position: relative; display: inline-block; z-index: 1;
+          font-family: "Plus Jakarta Sans", sans-serif; font-weight: 700; letter-spacing: -0.035em; line-height: 1.05;
+          font-size: clamp(26px, 2.1vw, 29px); padding-right: 0.42em;
+          background: var(--ft-grad); -webkit-background-clip: text; background-clip: text; color: transparent;
+          filter: drop-shadow(0 0 16px var(--ft-shadow));
         }
-        .ft-card::after {
-          content: ''; position: absolute; left: 24px; right: 24px; top: 0; height: 1px; pointer-events: none;
-          background: linear-gradient(90deg, transparent, var(--ft-line), transparent);
-        }
-        a.ft-card:hover { transform: translateY(-4px); box-shadow: 0 2px 4px rgba(17,17,17,0.04), 0 22px 50px rgba(128,96,176,0.16); border-color: var(--ft-line); }
-        .ft-icon {
-          position: relative; width: 52px; height: 52px; border-radius: 15px; flex-shrink: 0;
-          display: flex; align-items: center; justify-content: center;
-          background: linear-gradient(135deg, var(--ft-color) 0%, var(--ft-dark) 100%);
-          box-shadow: 0 10px 24px var(--ft-shadow), inset 0 1px 0 rgba(255,255,255,0.35);
-        }
-        .ft-name { font-size: 19px; font-weight: 800; letter-spacing: -0.02em; color: #111; line-height: 1.2; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-        .ft-tag { font-size: 11px; font-weight: 700; letter-spacing: 0.02em; padding: 3px 8px; border-radius: 99px; color: var(--ft-dark); background: var(--ft-tint); border: 1px solid var(--ft-line); }
-        .ft-text { font-size: 14.5px; line-height: 1.55; color: #666; margin: 0; }
-        .ft-guard { background: linear-gradient(90deg, #6D28D9, #A78BFA); -webkit-background-clip: text; background-clip: text; color: transparent; }
+        .ft-spark { position: absolute; top: -0.28em; right: 0; width: 0.46em; height: 0.46em; }
+        .ft-text { position: relative; z-index: 1; margin: 14px 0 0; font-size: 15px; line-height: 1.55; color: rgba(255,255,255,0.72); }
         @media (max-width: 1023px) {
+          .ft-pad { padding: 72px 5vw 84px; }
           .ft-grid { grid-template-columns: repeat(2, 1fr); gap: 14px; }
-          .ft-card { padding: 22px 20px 24px; }
+          .ft-card { padding: 28px 22px 26px; }
+          .ft-word { font-size: 29px; }
         }
         @media (max-width: 767px) {
+          .ft-pad { padding: 56px 22px 64px; }
           .ft-grid { grid-template-columns: 1fr; gap: 12px; }
-          .ft-card { flex-direction: row; align-items: flex-start; gap: 16px; padding: 18px 18px; }
-          .ft-icon { width: 46px; height: 46px; border-radius: 13px; }
-          .ft-name { font-size: 17px; }
-          .ft-text { font-size: 14px; }
+          .ft-card { padding: 24px 22px 24px; }
+          .ft-word { font-size: 27px; }
+          .ft-text { font-size: 14.5px; margin-top: 10px; }
         }
       `}</style>
 
-      <div style={{ maxWidth: 1200, margin: '0 auto', position: 'relative' }}>
-        <div style={{ textAlign: 'center', marginBottom: 48 }}>
-          <span style={{ display: 'inline-block', fontSize: 12, fontWeight: 700, color: '#8060b0', background: '#F5F0FB', borderRadius: 99, padding: '6px 14px', letterSpacing: '0.04em', marginBottom: 18 }}>Alles inklusive</span>
-          <h2 style={{ fontFamily: '"Plein", sans-serif', fontSize: 'clamp(28px, 3.8vw, 48px)', fontWeight: 400, color: '#111', letterSpacing: '-0.022em', lineHeight: 1.12, marginBottom: 16 }}>
+      <div className="ft-glow" aria-hidden="true" />
+
+      <div className="ft-pad"><div className="ft-inner">
+        <div style={{ textAlign: 'center', marginBottom: 52 }}>
+          <p style={{ fontSize: 15, fontWeight: 700, color: '#C9A3FF', letterSpacing: '0.01em', marginBottom: 14 }}>Alles inklusive</p>
+          <h2 style={{ fontFamily: '"Plein", sans-serif', fontSize: 'clamp(30px, 4vw, 52px)', fontWeight: 400, color: '#fff', letterSpacing: '-0.022em', lineHeight: 1.1, marginBottom: 16 }}>
             Alles drin. In jedem Tarif.
           </h2>
-          <p style={{ fontSize: 16, color: '#666', lineHeight: 1.7, maxWidth: 480, margin: '0 auto' }}>
+          <p style={{ fontSize: 17, color: 'rgba(255,255,255,0.62)', lineHeight: 1.6, maxWidth: 480, margin: '0 auto' }}>
             Fertig eingebaut, kein Aufpreis.
           </p>
         </div>
 
         <div className="ft-grid">
-          {FEATURES.map(f => {
-            const vars = { '--ft-color': f.color, '--ft-dark': f.dark, '--ft-tint': `${f.color}1F`, '--ft-line': `${f.color}66`, '--ft-shadow': `${f.color}66` } as React.CSSProperties
+          {FEATURES.map((f, i) => {
+            const vars = {
+              '--ft-grad': f.grad,
+              '--ft-shadow': `${f.glow}66`,
+              '--ft-glow-soft': `${f.glow}2E`,
+              '--ft-line': `${f.glow}80`,
+            } as React.CSSProperties
             const body = (
               <>
-                <div className="ft-icon">{f.icon}</div>
-                <div>
-                  <div className="ft-name">
-                    <span className={f.href ? 'ft-guard' : undefined}>{f.name}</span>
-                    {f.tag && <span className="ft-tag">{f.tag}</span>}
-                  </div>
-                  <p className="ft-text" style={{ marginTop: 8 }}>{f.text}</p>
-                </div>
+                <span className="ft-word">
+                  {f.name}
+                  <Spark color={f.glow} id={`ft-spark-${i}`} />
+                </span>
+                <p className="ft-text">{f.text}</p>
               </>
             )
             return f.href
@@ -133,7 +125,7 @@ export default function FeaturesSection() {
               : <div key={f.name} className="ft-card" style={vars}>{body}</div>
           })}
         </div>
-      </div>
+      </div></div>
     </section>
   )
 }
