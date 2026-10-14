@@ -91,8 +91,17 @@ html[data-theme="eigene"] {
   --green: var(--fs-primary); --green-dark: var(--fs-primary-hover); --green-soft: var(--fs-tint); --green-deep: var(--fs-deep);
   --accent: var(--fs-bright);
   --warn: #C63A2E; --warn-soft: #FBEBE8;
-  --day-white: var(--fs-paper-3); --day-green: var(--fs-primary); --day-red: var(--fs-bright);
+  --day-white: var(--fs-paper-3); --day-green: #5EBFA0; --day-red: #C63A2E;
+  --green-deep: var(--fs-dark-1);
 }
+/* Eigene Farbe: dunkle Abschnitte brauchen den hellen Akzentton (die Primärfarbe ist dort zu dunkel) */
+html[data-theme="eigene"] .conversion h2 em, html[data-theme="eigene"] .conversion h2 .mark, html[data-theme="eigene"] .final h2 .mark { color: var(--fs-bright); }
+html[data-theme="eigene"] .conversion .section-tag { background: rgba(255,255,255,0.16); color: #fff; border-color: rgba(255,255,255,0.28); }
+/* Tag-Typen bleiben Ampelfarben (weiß/grün/rot), nur leicht an die Seitenfarbe angelehnt */
+html[data-theme="eigene"] .daytype.green .daytype-header { background: color-mix(in oklab, #DFF0E9 80%, var(--fs-soft)) !important; }
+html[data-theme="eigene"] .daytype.green .daytype-swatch { background: color-mix(in oklab, #5EBFA0 85%, var(--fs-primary)) !important; color: #1D4738 !important; }
+html[data-theme="eigene"] .daytype.green .daytype-label { color: color-mix(in oklab, #2F8A6B 85%, var(--fs-primary)) !important; }
+html[data-theme="eigene"] .daytype.red .daytype-header { background: #FBEBE8 !important; }
 html[data-theme="mint"], html:not([data-theme]), html[data-theme=""] {
   --bg: #F0F4EE; --bg-2: #E1EAE3; --paper: #FBFDFA;
   --ink: #142621; --ink-2: #3D5850; --ink-3: #869B92;
