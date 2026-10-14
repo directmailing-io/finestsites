@@ -32,33 +32,46 @@ function siteHexOf(value: string): string | null {
   return BRAND_HEX_RE.test(h) ? h : null
 }
 
-/** Kachel im Look der Vorgabe-Kacheln: Farbstreifen, Titel, ein Satz. Mit `pick` liegt der Farbwähler
- *  des Geräts unsichtbar über der Kachel, ein Tipp öffnet ihn direkt. */
-function ColorTile({ label, desc, color, selected, onClick, pick }: {
-  label: string; desc: string; color: string | null; selected: boolean; onClick?: () => void; pick?: (hex: string) => void
+/** Eine Kachel „Eigene Farbe“ im Look der Vorgabe-Kacheln. Zeigt die Farbe dieser Seite, sonst die Farbe
+ *  der anderen Seiten (Schnellauswahl), sonst einen Regenbogen. Tipp auf die Kachel: Farbe übernehmen bzw.
+ *  (ohne Farbe oder wenn schon gewählt) den Farbwähler des Geräts öffnen; „Farbe ändern“ öffnet ihn immer. */
+function OwnColorTile({ color, selected, onSelect, onPick }: {
+  color: string | null; selected: boolean; onSelect: () => void; onPick: (hex: string) => void
 }) {
-  const Tag = pick ? 'label' : 'button'
+  const inputRef = useRef<HTMLInputElement>(null)
+  const openPicker = () => inputRef.current?.click()
+  const desc = selected ? 'Deine Farbe auf dieser Seite' : color ? 'Wie auf deinen anderen Seiten' : 'Antippen und Farbe aussuchen'
   return (
-    <Tag type={pick ? undefined : 'button'} onClick={pick ? undefined : onClick} aria-pressed={pick ? undefined : selected}
-      className="relative flex flex-col text-left rounded-xl overflow-hidden cursor-pointer transition-shadow"
+    <div className="relative flex flex-col rounded-xl overflow-hidden"
       style={{ background: '#fff', border: selected ? '2px solid #1a1a1a' : '2px solid #E5E7EB', boxShadow: selected ? '0 4px 14px rgba(0,0,0,0.10)' : 'none' }}>
-      <div className="w-full flex-shrink-0 relative overflow-hidden" style={{ height: 72, background: color ?? 'conic-gradient(from 90deg, #F43F5E, #F59E0B, #84CC16, #06B6D4, #6366F1, #D946EF, #F43F5E)' }}>
-        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(135deg, rgba(255,255,255,0.20) 0%, rgba(255,255,255,0) 55%, rgba(0,0,0,0.10) 100%)' }} />
-        {pick && (
-          <input type="color" defaultValue={color ?? '#2F8650'} onChange={e => pick(e.target.value.toUpperCase())} aria-label={label}
-            className="absolute inset-0 opacity-0 cursor-pointer" style={{ width: '100%', height: '100%' }} />
-        )}
-      </div>
-      <div className="flex-1 flex flex-col gap-1 p-3 sm:p-4">
-        <span className="text-sm font-bold text-gray-900 leading-tight">{label}</span>
-        <span className="text-xs leading-snug" style={{ color: '#6B7280' }}>{desc}</span>
-      </div>
+      <button type="button" aria-pressed={selected} className="flex flex-col text-left w-full cursor-pointer"
+        onClick={() => { if (color && !selected) onSelect(); else openPicker() }}>
+        <div className="w-full flex-shrink-0 relative overflow-hidden" style={{ height: 72, background: color ?? 'conic-gradient(from 90deg, #F43F5E, #F59E0B, #84CC16, #06B6D4, #6366F1, #D946EF, #F43F5E)' }}>
+          <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(135deg, rgba(255,255,255,0.20) 0%, rgba(255,255,255,0) 55%, rgba(0,0,0,0.10) 100%)' }} />
+        </div>
+        <div className="flex-1 flex flex-col gap-1 p-3 sm:p-4">
+          <span className="text-sm font-bold text-gray-900 leading-tight">Eigene Farbe</span>
+          <span className="text-xs leading-snug" style={{ color: '#6B7280' }}>{desc}</span>
+        </div>
+      </button>
+      {color && (
+        /* im Farbstreifen unten links, damit der Text darunter frei bleibt */
+        <button type="button" onClick={openPicker}
+          className="absolute text-[11px] font-semibold rounded-full px-2.5 py-1"
+          style={{ top: 40, left: 12, background: 'rgba(255,255,255,0.94)', border: '1px solid rgba(0,0,0,0.08)', color: '#1a1a1a', boxShadow: '0 1px 4px rgba(0,0,0,0.12)' }}>
+          Farbe ändern
+        </button>
+      )}
       {selected && (
         <div className="absolute top-3 right-3 w-7 h-7 rounded-full flex items-center justify-center" style={{ background: '#1a1a1a', boxShadow: '0 2px 8px rgba(0,0,0,0.25)' }}>
           <svg width="12" height="10" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
         </div>
       )}
-    </Tag>
+      {/* unsichtbarer Geräte-Farbwähler; wird per Klick geöffnet, nicht per Overlay */}
+      <input ref={inputRef} type="color" defaultValue={color ?? '#2F8650'} aria-label="Eigene Farbe wählen"
+        onChange={e => onPick(e.target.value.toUpperCase())}
+        style={{ position: 'absolute', width: 1, height: 1, opacity: 0, left: 8, bottom: 8, pointerEvents: 'none' }} />
+    </div>
   )
 }
 
@@ -799,16 +812,19 @@ function CardSelectField({ field, value, onChange, narrow, onMobileSelect }: {
   const brand = React.useContext(BrandCtx)
   // admin_only-Optionen nur für Admin-Konten; sonst exakt die bisherige Liste
   const opts = (field.card_options ?? []).filter(o => !o.admin_only || brand.isAdmin)
-  // Farbe der Seite (Phase A nur Admin): Vorgaben + „Deine Farbe“ (zuletzt gewählt, kontoweit gemerkt) + „Neue Farbe wählen“
+  // Eigene Farbe (Phase A nur Admin): eine Kachel; Farbe dieser Seite, sonst die der anderen Seiten als Schnellauswahl
   const brandMode = !!field.brand_color && brand.isAdmin
-  const siteHex = siteHexOf(value)
-  const mine = brand.brandColor
-  const mineSelected = brandMode && ((!!mine && siteHex === mine) || value === BRAND_THEME_VALUE)
-  const ownSelected = brandMode && !!siteHex && !mineSelected
+  const siteHex = siteHexOf(value) ?? (value === BRAND_THEME_VALUE ? brand.brandColor : null)
+  const ownSelected = brandMode && !!siteHex
+  const ownColor = siteHex ?? brand.brandColor
+  const brandSaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   function pickColor(hex: string) {
     onChange(SITE_COLOR_PREFIX + hex)   // Farbe dieser Seite (Entwurf → Veröffentlichen)
-    void brand.setBrandColor(hex)       // und als „Deine Farbe“ für alle anderen Seiten merken
+    // erst nach dem Wählen am Konto merken (Schnellauswahl auf den anderen Seiten), nicht bei jedem Zwischenschritt
+    if (brandSaveTimer.current) clearTimeout(brandSaveTimer.current)
+    brandSaveTimer.current = setTimeout(() => { void brand.setBrandColor(hex) }, 800)
   }
+
   const [hovered, setHovered] = useState<{ opt: CardOption; rect: DOMRect } | null>(null)
 
   // ── Section visibility toggle (display_mode: 'section_toggle') ──
@@ -1031,17 +1047,11 @@ function CardSelectField({ field, value, onChange, narrow, onMobileSelect }: {
         )
       })}
 
-      {brandMode && mine && (
-        <ColorTile label="Deine Farbe" desc="Wie auf deinen anderen Seiten" color={mine} selected={mineSelected}
-          onClick={() => { onChange(SITE_COLOR_PREFIX + mine); if (window.matchMedia('(pointer: coarse)').matches) onMobileSelect?.() }} />
-      )}
-      {ownSelected && siteHex && (
-        <ColorTile label="Gewählte Farbe" desc="Nur auf dieser Seite" color={siteHex} selected />
-      )}
       {brandMode && (
-        <ColorTile label="Neue Farbe wählen" desc="Antippen und Farbe aussuchen" color={null} selected={false} pick={pickColor} />
+        <OwnColorTile color={ownColor} selected={ownSelected} onPick={pickColor}
+          onSelect={() => { if (ownColor) onChange(SITE_COLOR_PREFIX + ownColor); if (window.matchMedia('(pointer: coarse)').matches) onMobileSelect?.() }} />
       )}
-      {brandMode && (mineSelected || ownSelected) && (
+      {ownSelected && (
         <div className="text-xs leading-snug" style={{ gridColumn: '1 / -1', color: '#6B7280' }}>
           Text, Buttons und Hintergründe passen wir automatisch an, damit alles gut lesbar bleibt.
         </div>
