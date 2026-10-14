@@ -59,17 +59,17 @@ export default function ClaimGuardSection({ children }: { children?: React.React
         .cg-noise { position: absolute; inset: 0; pointer-events: none; z-index: 1; background-image: ${NOISE}; opacity: 0.5; mix-blend-mode: overlay; }
         .cg-edge { position: absolute; left: 0; right: 0; top: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(201,163,255,0.45), transparent); z-index: 1; }
         .cg-section { position: relative; z-index: 2; }
-        .cg-orbit { position: absolute; left: 50%; bottom: -140px; width: 1700px; height: 560px; transform: translateX(-50%); pointer-events: none; z-index: 1; }
-        .cg-cta { display: inline-flex; align-items: center; justify-content: center; padding: 15px 30px; border-radius: 12px; font-size: 15px; font-weight: 700; color: #fff; text-decoration: none;
+        .cg-orbit { position: absolute; left: 50%; bottom: 40px; width: 1700px; height: 300px; transform: translateX(-50%); pointer-events: none; z-index: 1; }
+        .cg-cta { display: inline-flex; align-items: center; justify-content: center; padding: 15px 32px; border-radius: 100px; font-size: 15px; font-weight: 700; color: #fff; text-decoration: none;
           background: linear-gradient(135deg, #9F67FF 0%, #6D28D9 100%); box-shadow: 0 12px 34px rgba(124,58,237,0.5), inset 0 1px 0 rgba(255,255,255,0.3); }
-        .cg-pill { display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; border-radius: 12px; font-size: 14px; font-weight: 600; color: rgba(255,255,255,0.85);
+        .cg-pill { display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px; border-radius: 100px; font-size: 14px; font-weight: 600; color: rgba(255,255,255,0.85);
           background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.14); backdrop-filter: blur(6px); }
         @media (max-width: 1023px) {
           .cg-inner { padding: 72px 5vw 0; min-height: 0; display: block; }
           .cg-text { max-width: 640px; width: auto; }
           .cg-phone { position: relative; width: auto; margin: 28px -5vw 0 0; display: flex; justify-content: flex-end; }
           .cg-phone img { width: min(100%, 460px); }
-          .cg-orbit { opacity: 0.45; }
+          .cg-orbit { opacity: 0.6; bottom: 40%; }
         }
         @media (max-width: 767px) {
           .cg-inner { padding: 56px 22px 0; }
@@ -86,17 +86,18 @@ export default function ClaimGuardSection({ children }: { children?: React.React
       <div className="cg-edge" aria-hidden="true" />
 
       <section id="claimguard" className="cg-section">
-      {/* feine Umlaufbahn wie auf dem Inspirationsbild */}
-      <svg className="cg-orbit" viewBox="0 0 1700 560" fill="none" aria-hidden="true">
+      {/* feiner Lichtbogen nur hinter dem Handy (rechte Hälfte eines oberen Bogens, links ausgeblendet) */}
+      <svg className="cg-orbit" viewBox="0 0 1700 300" fill="none" aria-hidden="true">
         <defs>
           <linearGradient id="cg-orbit-g" x1="0" y1="0" x2="1" y2="0">
             <stop offset="0" stopColor="#C9A3FF" stopOpacity="0" />
-            <stop offset="0.5" stopColor="#E2CFFF" stopOpacity="0.6" />
+            <stop offset="0.42" stopColor="#C9A3FF" stopOpacity="0" />
+            <stop offset="0.72" stopColor="#E2CFFF" stopOpacity="0.65" />
             <stop offset="1" stopColor="#C9A3FF" stopOpacity="0" />
           </linearGradient>
         </defs>
-        <ellipse cx="850" cy="280" rx="810" ry="236" stroke="url(#cg-orbit-g)" strokeWidth="1.5" />
-        <ellipse cx="850" cy="300" rx="700" ry="200" stroke="url(#cg-orbit-g)" strokeWidth="1" opacity="0.45" />
+        <path d="M40 300 A810 236 0 0 1 1660 300" stroke="url(#cg-orbit-g)" strokeWidth="1.5" />
+        <path d="M150 300 A700 200 0 0 1 1550 300" stroke="url(#cg-orbit-g)" strokeWidth="1" opacity="0.45" />
       </svg>
 
       <div className="cg-inner">
@@ -143,7 +144,12 @@ export default function ClaimGuardSection({ children }: { children?: React.React
 
       <div className="cg-phone">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/claimguard-phone.webp" alt="ClaimGuard prüft einen Text im Editor auf dem Smartphone" loading="lazy" width={900} height={1036} />
+        <img
+          src="/claimguard-phone.webp"
+          srcSet="/claimguard-phone-480.webp 480w, /claimguard-phone.webp 900w"
+          sizes="(max-width: 767px) 100vw, (max-width: 1023px) 460px, 40vw"
+          alt="ClaimGuard prüft einen Text im Editor auf dem Smartphone" loading="lazy" decoding="async" width={900} height={1036}
+        />
       </div>
       </section>
 

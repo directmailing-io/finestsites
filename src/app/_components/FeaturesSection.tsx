@@ -15,21 +15,21 @@ type Feature = {
 
 const FEATURES: Feature[] = [
   { name: 'Farbwahl', glow: '#FF9ECF', grad: 'linear-gradient(90deg, #FF9ECF 0%, #FFB86B 35%, #7FE3C4 70%, #8AB4FF 100%)',
-    text: 'Ein Klick, und die ganze Seite trägt deine Farbe.' },
-  { name: '8 Sprachen', glow: '#5CCBFF', grad: 'linear-gradient(180deg, #EAF8FF 0%, #9BDCFF 55%, #38BDF8 100%)',
-    text: 'Deine Seite spricht bis zu 8 Sprachen, automatisch übersetzt.' },
+    text: 'Wähle deine Farbe, und die ganze Seite passt sich an.' },
+  { name: 'Mehrsprachig', glow: '#5CCBFF', grad: 'linear-gradient(180deg, #EAF8FF 0%, #9BDCFF 55%, #38BDF8 100%)',
+    text: 'Deine Seite gibt es auch auf Englisch, Polnisch, Italienisch und mehr. Übersetzt wird automatisch.' },
   { name: 'QR-Code', glow: '#E5E7EB', grad: 'linear-gradient(180deg, #FFFFFF 0%, #E5E7EB 55%, #9CA3AF 100%)',
-    text: 'Für Flyer und Visitenkarte, fertig zum Drucken.' },
+    text: 'Ein QR-Code, der direkt zu deiner Seite führt. Zum Aufdrucken auf Flyer oder Visitenkarte.' },
   { name: 'Linkseite', glow: '#5EEAD4', grad: 'linear-gradient(180deg, #ECFDF5 0%, #A7F3D0 55%, #34D399 100%)',
-    text: 'Alle deine Links auf einer Seite, für Instagram und WhatsApp. Immer kostenlos.' },
+    text: 'Alle deine Links auf einer Seite, perfekt für dein Instagram-Profil. Immer kostenlos.' },
   { name: 'Eigene Domain', glow: '#FCD34D', grad: 'linear-gradient(180deg, #FFFBEB 0%, #FDE68A 55%, #F59E0B 100%)',
-    text: 'Deine eigene Internetadresse, z. B. max-mustermann.de.' },
+    text: 'Deine Seite unter deiner eigenen Internetadresse, z. B. max-mustermann.de.' },
   { name: 'Duo-Seite', glow: '#C4B5FD', grad: 'linear-gradient(180deg, #F5F3FF 0%, #DDD6FE 55%, #A78BFA 100%)',
-    text: 'Zu zweit unterwegs? Eine Seite für euch beide, mit beiden Fotos und Kontakten.' },
+    text: 'Du arbeitest zu zweit? Dann steht ihr beide auf der Seite, jeder mit Foto und Kontakt.' },
   { name: 'Werbe-Tracking', glow: '#FB7185', grad: 'linear-gradient(180deg, #FFF1F2 0%, #FDA4AF 55%, #FB7185 100%)',
-    text: 'Meta, Google und TikTok mit einem Klick verbunden. Werbung, die messbar ist.' },
+    text: 'Schaltest du Werbung bei Meta, Google oder TikTok? Ein Klick, und du siehst, was sie bringt.' },
   { name: 'Rechtstexte', glow: '#A5B4FC', grad: 'linear-gradient(180deg, #EEF2FF 0%, #C7D2FE 55%, #818CF8 100%)',
-    text: 'Impressum und Datenschutz, automatisch erstellt und immer aktuell.' },
+    text: 'Impressum und Datenschutzerklärung sind schon drauf. Wir halten sie aktuell.' },
 ]
 
 export default function FeaturesSection() {
