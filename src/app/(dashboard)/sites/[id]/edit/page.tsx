@@ -2818,6 +2818,9 @@ function complianceTextsMatch(a?: string, b?: string): boolean {
   return norm(a) === norm(b)
 }
 
+/** Wie normText im Publish-Gate (api/sites/[id]/publish): ohne Tags, Leerraum zusammengefasst. */
+const normComplianceText = (v: string) => v.replace(/<[^>]*>/g, ' ').replace(/&nbsp;/gi, ' ').replace(/\s+/g, ' ').trim()
+
 function FieldRenderer({ field, value, onChange, onItemFocus, complianceApprovedText, complianceBaseText, onComplianceApproved, onComplianceRevoked, narrow, onMobileSelect, siblings }: {
   field: FieldSchema; value: string; onChange: (v: string) => void
   onItemFocus?: (item: Record<string, string> | null, idx: number) => void
@@ -2846,7 +2849,9 @@ function FieldRenderer({ field, value, onChange, onItemFocus, complianceApproved
           placeholder={field.placeholder_text || field.label}
           maxLength={field.max_length}
           complianceCheck={field.compliance_check === true}
-          complianceApproved={field.compliance_check ? !!complianceApprovedText : undefined}
+          // Nur „bestanden“, wenn die Freigabe genau diesem Text gilt (gleiche Regel wie das
+          // Publish-Gate) – sonst zeigt der Editor grün, die Veröffentlichung scheitert aber.
+          complianceApproved={field.compliance_check ? !!complianceApprovedText && normComplianceText(complianceApprovedText) === normComplianceText(value) : undefined}
           approvedHtml={field.compliance_check ? (complianceApprovedText || complianceBaseText) : undefined}
           onComplianceApproved={field.compliance_check ? onComplianceApproved : undefined}
           onComplianceRevoked={field.compliance_check ? onComplianceRevoked : undefined}
