@@ -32,19 +32,22 @@ function siteHexOf(value: string): string | null {
   return BRAND_HEX_RE.test(h) ? h : null
 }
 
-/** Kachel „Meine Farbe“ / „Eigene Farbe“ im gleichen Look wie die Vorgabe-Kacheln */
-function BrandCard({ kind, selected, color, onClick }: { kind: 'global' | 'site'; selected: boolean; color: string | null; onClick: () => void }) {
-  const label = kind === 'global' ? 'Meine Farbe' : 'Eigene Farbe'
-  const desc = kind === 'global' ? 'Auf allen deinen Seiten gleich' : 'Nur für diese Seite'
+/** Kachel im Look der Vorgabe-Kacheln: Farbstreifen, Titel, ein Satz. Mit `pick` liegt der Farbwähler
+ *  des Geräts unsichtbar über der Kachel, ein Tipp öffnet ihn direkt. */
+function ColorTile({ label, desc, color, selected, onClick, pick }: {
+  label: string; desc: string; color: string | null; selected: boolean; onClick?: () => void; pick?: (hex: string) => void
+}) {
+  const Tag = pick ? 'label' : 'button'
   return (
-    <button type="button" onClick={onClick} aria-pressed={selected}
-      className="relative flex flex-col text-left rounded-xl overflow-hidden transition-shadow"
+    <Tag type={pick ? undefined : 'button'} onClick={pick ? undefined : onClick} aria-pressed={pick ? undefined : selected}
+      className="relative flex flex-col text-left rounded-xl overflow-hidden cursor-pointer transition-shadow"
       style={{ background: '#fff', border: selected ? '2px solid #1a1a1a' : '2px solid #E5E7EB', boxShadow: selected ? '0 4px 14px rgba(0,0,0,0.10)' : 'none' }}>
-      <div className="w-full flex-shrink-0 relative overflow-hidden flex items-center justify-center" style={{ height: 72, background: color ?? '#F3F4F6' }}>
-        {!color && (
-          <span className="text-xs font-semibold" style={{ color: '#6B7280' }}>{kind === 'global' ? 'Noch nicht festgelegt' : 'Farbe wählen'}</span>
+      <div className="w-full flex-shrink-0 relative overflow-hidden" style={{ height: 72, background: color ?? 'conic-gradient(from 90deg, #F43F5E, #F59E0B, #84CC16, #06B6D4, #6366F1, #D946EF, #F43F5E)' }}>
+        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(135deg, rgba(255,255,255,0.20) 0%, rgba(255,255,255,0) 55%, rgba(0,0,0,0.10) 100%)' }} />
+        {pick && (
+          <input type="color" defaultValue={color ?? '#2F8650'} onChange={e => pick(e.target.value.toUpperCase())} aria-label={label}
+            className="absolute inset-0 opacity-0 cursor-pointer" style={{ width: '100%', height: '100%' }} />
         )}
-        {color && <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(135deg, rgba(255,255,255,0.20) 0%, rgba(255,255,255,0) 55%, rgba(0,0,0,0.10) 100%)' }} />}
       </div>
       <div className="flex-1 flex flex-col gap-1 p-3 sm:p-4">
         <span className="text-sm font-bold text-gray-900 leading-tight">{label}</span>
@@ -55,84 +58,7 @@ function BrandCard({ kind, selected, color, onClick }: { kind: 'global' | 'site'
           <svg width="12" height="10" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
         </div>
       )}
-    </button>
-  )
-}
-
-/** Farbwahl unter den Kacheln: ein großes Farbfeld, Hex daneben, ein Satz Erklärung. */
-function BrandColorPanel({ value, onChange }: { value: string; onChange: (v: string) => void }) {
-  const brand = React.useContext(BrandCtx)
-  const kind: 'global' | 'site' = value === BRAND_THEME_VALUE ? 'global' : 'site'
-  const current = kind === 'global' ? brand.brandColor : siteHexOf(value)
-  const [text, setText] = useState(current ?? '')
-  const [state, setState] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle')
-  const timer = useRef<ReturnType<typeof setTimeout> | null>(null)
-  useEffect(() => { setText(current ?? '') }, [current])
-
-  function commit(next: string) {
-    const v = next.toUpperCase()
-    if (!BRAND_HEX_RE.test(v)) return
-    setText(v)
-    if (kind === 'site') { onChange(SITE_COLOR_PREFIX + v); return }
-    setState('saving')
-    if (timer.current) clearTimeout(timer.current)
-    timer.current = setTimeout(async () => {
-      const ok = await brand.setBrandColor(v)
-      setState(ok ? 'saved' : 'error')
-      if (ok) brand.reloadPreviewRef.current()
-    }, 400)
-  }
-  async function makeGlobal() {
-    const v = siteHexOf(value)
-    if (!v) return
-    setState('saving')
-    const ok = await brand.setBrandColor(v)
-    setState(ok ? 'saved' : 'error')
-    if (ok) onChange(BRAND_THEME_VALUE)
-  }
-
-  return (
-    <div className="rounded-xl p-4 flex flex-col gap-3" style={{ background: '#FAFAFA', border: '1px solid #E5E7EB' }}>
-      <div className="text-sm font-semibold" style={{ color: '#1a1a1a' }}>
-        {kind === 'global' ? 'Meine Farbe' : 'Eigene Farbe für diese Seite'}
-      </div>
-      <div className="flex items-center gap-4">
-        <label className="relative flex-shrink-0 rounded-xl overflow-hidden cursor-pointer flex items-end justify-center"
-          style={{ width: 72, height: 72, background: current ?? '#E5E7EB', border: '2px solid rgba(0,0,0,0.12)' }}
-          title="Farbe wählen">
-          <input type="color" value={current ?? '#2F8650'} onChange={e => commit(e.target.value)} aria-label="Farbe wählen"
-            className="absolute inset-0 opacity-0 cursor-pointer" style={{ width: '100%', height: '100%' }} />
-          <span className="text-[10px] font-semibold px-1.5 py-0.5 mb-1 rounded" style={{ background: 'rgba(255,255,255,0.92)', color: '#1a1a1a', pointerEvents: 'none' }}>ändern</span>
-        </label>
-        <div className="flex flex-col gap-1.5 min-w-0">
-          <div className="text-sm" style={{ color: '#1a1a1a' }}>
-            {current ? 'Tippe auf das Farbfeld, um die Farbe zu ändern.' : 'Tippe auf das Farbfeld und wähle deine Farbe.'}
-          </div>
-          <div className="flex items-center gap-2">
-            <input type="text" value={text} maxLength={7} spellCheck={false} aria-label="Farbcode"
-              placeholder="#1F4FA3"
-              onChange={e => { const v = e.target.value.startsWith('#') ? e.target.value : '#' + e.target.value; setText(v.toUpperCase()); if (BRAND_HEX_RE.test(v)) commit(v) }}
-              className="text-sm font-mono rounded-md px-2.5 py-1.5" style={{ width: 100, border: '1px solid #E5E7EB', background: '#fff', color: '#1a1a1a' }} />
-            <span className="text-xs" style={{ color: state === 'error' ? '#B91C1C' : '#6B7280' }}>
-              {state === 'saving' ? 'Wird gespeichert …' : state === 'saved' ? 'Gespeichert' : state === 'error' ? 'Konnte nicht gespeichert werden' : 'Farbcode (optional)'}
-            </span>
-          </div>
-        </div>
-      </div>
-      <div className="text-xs leading-snug" style={{ color: '#6B7280' }}>
-        {kind === 'global'
-          ? 'Diese Farbe gilt auf allen deinen Seiten, die „Meine Farbe“ nutzen. '
-          : 'Diese Farbe gilt nur für diese Seite. '}
-        Text, Buttons und Hintergründe passen wir automatisch an, damit alles gut lesbar bleibt.
-      </div>
-      {kind === 'site' && siteHexOf(value) && (
-        <button type="button" onClick={makeGlobal}
-          className="self-start text-xs font-semibold rounded-md px-3 py-2"
-          style={{ background: '#fff', border: '1px solid #D1D5DB', color: '#1a1a1a' }}>
-          Als „Meine Farbe“ für alle Seiten übernehmen
-        </button>
-      )}
-    </div>
+    </Tag>
   )
 }
 
@@ -873,9 +799,16 @@ function CardSelectField({ field, value, onChange, narrow, onMobileSelect }: {
   const brand = React.useContext(BrandCtx)
   // admin_only-Optionen nur für Admin-Konten; sonst exakt die bisherige Liste
   const opts = (field.card_options ?? []).filter(o => !o.admin_only || brand.isAdmin)
-  // Markenfarbe (Phase A nur Admin): Kacheln „Meine Farbe“ (Konto) und „Eigene Farbe“ (nur diese Seite)
+  // Farbe der Seite (Phase A nur Admin): Vorgaben + „Deine Farbe“ (zuletzt gewählt, kontoweit gemerkt) + „Neue Farbe wählen“
   const brandMode = !!field.brand_color && brand.isAdmin
-  const brandSelected = brandMode && (value === BRAND_THEME_VALUE || value.startsWith(SITE_COLOR_PREFIX))
+  const siteHex = siteHexOf(value)
+  const mine = brand.brandColor
+  const mineSelected = brandMode && ((!!mine && siteHex === mine) || value === BRAND_THEME_VALUE)
+  const ownSelected = brandMode && !!siteHex && !mineSelected
+  function pickColor(hex: string) {
+    onChange(SITE_COLOR_PREFIX + hex)   // Farbe dieser Seite (Entwurf → Veröffentlichen)
+    void brand.setBrandColor(hex)       // und als „Deine Farbe“ für alle anderen Seiten merken
+  }
   const [hovered, setHovered] = useState<{ opt: CardOption; rect: DOMRect } | null>(null)
 
   // ── Section visibility toggle (display_mode: 'section_toggle') ──
@@ -1098,16 +1031,20 @@ function CardSelectField({ field, value, onChange, narrow, onMobileSelect }: {
         )
       })}
 
-      {brandMode && (
-        <>
-          <BrandCard kind="global" selected={value === BRAND_THEME_VALUE} color={brand.brandColor}
-            onClick={() => { onChange(BRAND_THEME_VALUE); if (window.matchMedia('(pointer: coarse)').matches) onMobileSelect?.() }} />
-          <BrandCard kind="site" selected={value.startsWith(SITE_COLOR_PREFIX)} color={siteHexOf(value)}
-            onClick={() => { if (!value.startsWith(SITE_COLOR_PREFIX)) onChange(SITE_COLOR_PREFIX + (brand.brandColor ?? '#2F8650')) }} />
-        </>
+      {brandMode && mine && (
+        <ColorTile label="Deine Farbe" desc="Wie auf deinen anderen Seiten" color={mine} selected={mineSelected}
+          onClick={() => { onChange(SITE_COLOR_PREFIX + mine); if (window.matchMedia('(pointer: coarse)').matches) onMobileSelect?.() }} />
       )}
-      {brandSelected && (
-        <div style={{ gridColumn: '1 / -1' }}><BrandColorPanel value={value} onChange={onChange} /></div>
+      {ownSelected && siteHex && (
+        <ColorTile label="Gewählte Farbe" desc="Nur auf dieser Seite" color={siteHex} selected />
+      )}
+      {brandMode && (
+        <ColorTile label="Neue Farbe wählen" desc="Antippen und Farbe aussuchen" color={null} selected={false} pick={pickColor} />
+      )}
+      {brandMode && (mineSelected || ownSelected) && (
+        <div className="text-xs leading-snug" style={{ gridColumn: '1 / -1', color: '#6B7280' }}>
+          Text, Buttons und Hintergründe passen wir automatisch an, damit alles gut lesbar bleibt.
+        </div>
       )}
 
       {/* ── Floating hover preview ──────────────────────────────────────
