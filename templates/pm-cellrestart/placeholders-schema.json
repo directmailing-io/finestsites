@@ -298,7 +298,7 @@
       "key": "farbthema",
       "type": "card_select",
       "label": "Farbthema",
-      "order": 14,
+      "order": 13,
       "section": "Design",
       "required": true,
       "card_options": [
@@ -354,7 +354,7 @@
       "key": "hero_variante",
       "type": "card_select",
       "label": "Hintergrundbild",
-      "order": 13,
+      "order": 14,
       "section": "Design",
       "required": true,
       "card_options": [
