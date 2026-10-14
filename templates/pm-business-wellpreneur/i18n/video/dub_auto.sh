@@ -2,6 +2,8 @@
 # Automatisches ElevenLabs-Dubbing der deutschen Tonspur (Stimme geklont, Musik bleibt; ElevenLabs übersetzt selbst,
 # eine eigene Übersetzung per CSV wird vom Dubbing ignoriert, geprüft 13.10.2026). Je Sprache entsteht
 # preview_01_{lang}.mp4 mit der Original-Bildspur sowie dub_{lang}.srt (Transkript zum Prüfen).
+# Danach: prep_review.py (Whisper-Abgleich) und Zahlen per ASR gegenprüfen: Hindi-TTS spricht Ziffern falsch
+# ("1993" wurde 1983), am 14.10.2026 per TTS mit ausgeschriebener Zahl im Mix ersetzt.
 # Aufruf: ELEVENLABS_API_KEY=… ./dub_auto.sh <workdir mit biz_de.mp3 + preview_01.mp4> [langs…]
 set -u
 WD=$1; shift; LANGS=${@:-"it ru uk pl bg hi"}
