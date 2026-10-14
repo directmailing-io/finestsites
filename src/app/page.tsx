@@ -10,6 +10,7 @@ import HeroSection from './_components/HeroSection'
 import VorlagenSection from './_components/VorlagenSection'
 import HowItWorks from './_components/HowItWorks'
 import ClaimGuardSection from './_components/ClaimGuardSection'
+import FeaturesSection from './_components/FeaturesSection'
 import TemplateGridSection, { type TemplateCardData } from './_components/TemplateGridSection'
 import { Suspense } from 'react'
 import FAQSection from './_components/FAQSection'
@@ -272,6 +273,9 @@ export default async function HomePage({
 
       {/* ══ CLAIMGUARD (KI-Prüfung) ══════════════════════════════════════ */}
       <ClaimGuardSection />
+
+      {/* ══ FEATURES (alles inklusive) ═══════════════════════════════════ */}
+      <FeaturesSection />
 
       {/* ══ TEMPLATES ════════════════════════════════════════════════════ */}
       <section id="templates" style={{ background: '#F9F7FF' }} className="fs-section-pad">

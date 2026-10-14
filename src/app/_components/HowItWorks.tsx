@@ -9,7 +9,7 @@ const frame: React.CSSProperties = {
   border: '1px solid #EAE4F5',
   borderRadius: 20,
   padding: 18,
-  height: 250,
+  height: 292,
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'center',
@@ -24,16 +24,16 @@ const Check = ({ size = 14, color = '#fff' }: { size?: number; color?: string })
 function VisualChoose() {
   const cards = [
     { src: '/previews/pm-business.jpg', label: 'Business' },
-    { src: '/previews/naehrstoff-system.jpg', label: 'Produkt', selected: true },
-    { src: '/previews/pm-cellrestart.jpg', label: 'Kur' },
+    { src: '/previews/naehrstoff-system.jpg', label: 'Optimalset', selected: true },
+    { src: '/previews/pm-cellrestart.jpg', label: 'cellRESET' },
   ]
   return (
     <div style={frame}>
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.25fr 1fr', gap: 10, alignItems: 'center' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.25fr 1fr', gap: 10, alignItems: 'center', maxWidth: 330, margin: '0 auto' }}>
         {cards.map(c => (
           <div key={c.label} style={{ background: '#fff', borderRadius: 14, overflow: 'hidden', border: c.selected ? '2.5px solid #8060b0' : '1px solid #EAE4F5', boxShadow: c.selected ? '0 10px 30px rgba(128,96,176,0.25)' : '0 2px 8px rgba(0,0,0,0.04)', position: 'relative', transform: c.selected ? 'scale(1.04)' : 'none' }}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={c.src} alt="" style={{ width: '100%', aspectRatio: '16 / 11', objectFit: 'cover', objectPosition: 'top', display: 'block' }} />
+            <img src={c.src} alt="" style={{ width: '100%', aspectRatio: '1 / 1', objectFit: 'cover', objectPosition: 'top', display: 'block' }} />
             <div style={{ padding: '8px 10px', fontSize: 12, fontWeight: 700, color: c.selected ? '#8060b0' : '#555' }}>{c.label}</div>
             {c.selected && (
               <div style={{ position: 'absolute', top: 8, right: 8, width: 24, height: 24, borderRadius: '50%', background: '#8060b0', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 8px rgba(128,96,176,0.4)' }}>
@@ -47,29 +47,38 @@ function VisualChoose() {
   )
 }
 
-/* Schritt 2: zwei ausgefüllte Felder und ein Foto, mehr nicht */
+/* Schritt 2: Foto, Name und die Farbe der Seite, so wie es im Editor aussieht */
+const COLORS = ['#8060b0', '#0EA5E9', '#10B981', '#F59E0B', '#EC4899', '#111111']
+
 function VisualFill() {
-  const field = (label: string, value: string) => (
-    <div>
-      <div style={{ fontSize: 12, fontWeight: 600, color: '#888', marginBottom: 5 }}>{label}</div>
-      <div style={{ background: '#fff', border: '1px solid #E5E7EB', borderRadius: 12, padding: '11px 14px', fontSize: 14, color: '#111', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <span>{value}</span>
-        <span style={{ width: 20, height: 20, borderRadius: '50%', background: '#16A34A', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Check size={11} /></span>
-      </div>
-    </div>
-  )
+  const label = (t: string) => <div style={{ fontSize: 12, fontWeight: 600, color: '#888', marginBottom: 5 }}>{t}</div>
   return (
     <div style={frame}>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <div style={{ width: 46, height: 46, borderRadius: '50%', background: 'linear-gradient(135deg, #D4C5E2, #8060b0)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 700, fontSize: 15, flexShrink: 0 }}>SM</div>
+          <div style={{ width: 46, height: 46, borderRadius: '50%', background: 'linear-gradient(135deg, #D4C5E2, #8060b0)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 700, fontSize: 15, flexShrink: 0 }}>MM</div>
           <div>
             <div style={{ fontSize: 12, fontWeight: 600, color: '#888' }}>Dein Foto</div>
             <div style={{ fontSize: 13, color: '#16A34A', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 5 }}><Check size={12} color="#16A34A" /> Hochgeladen</div>
           </div>
         </div>
-        {field('Dein Name', 'Sandra Müller')}
-        {field('Deine Telefonnummer', '0171 234 56 78')}
+        <div>
+          {label('Dein Name')}
+          <div style={{ background: '#fff', border: '1px solid #E5E7EB', borderRadius: 12, padding: '11px 14px', fontSize: 14, color: '#111', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <span>Max Mustermann</span>
+            <span style={{ width: 20, height: 20, borderRadius: '50%', background: '#16A34A', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Check size={11} /></span>
+          </div>
+        </div>
+        <div>
+          {label('Deine Farbe')}
+          <div style={{ background: '#fff', border: '1px solid #E5E7EB', borderRadius: 12, padding: '10px 14px', display: 'flex', alignItems: 'center', gap: 10 }}>
+            {COLORS.map((c, i) => (
+              <span key={c} style={{ width: 26, height: 26, borderRadius: '50%', background: c, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: i === 0 ? `0 0 0 2px #fff, 0 0 0 4px ${c}` : 'none' }}>
+                {i === 0 && <Check size={13} />}
+              </span>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   )
@@ -86,7 +95,7 @@ function VisualLive() {
         </div>
         <div style={{ fontSize: 17, fontWeight: 700, color: '#111', marginBottom: 12 }}>Deine Seite ist live</div>
         <div style={{ background: '#F7F5FB', borderRadius: 10, padding: '9px 12px', fontSize: 13, color: '#8060b0', fontWeight: 600, marginBottom: 12, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-          sandra-mueller.dailyoptimal.de
+          max-mustermann.dailyoptimal.de
         </div>
         <div style={{ display: 'flex', gap: 8, justifyContent: 'center' }}>
           <span style={{ background: '#111', color: '#fff', borderRadius: 99, padding: '8px 16px', fontSize: 12, fontWeight: 600 }}>Link kopieren</span>
@@ -99,7 +108,7 @@ function VisualLive() {
 
 const STEPS = [
   { title: 'Vorlage aussuchen', text: 'Texte und Design sind schon fertig.', visual: <VisualChoose /> },
-  { title: 'Name und Foto eintragen', text: 'Ein paar Felder, mehr nicht.', visual: <VisualFill /> },
+  { title: 'Name, Foto und Farbe', text: 'Ein paar Klicks, mehr nicht.', visual: <VisualFill /> },
   { title: 'Online gehen', text: 'Ein Klick, und deine Seite ist da.', visual: <VisualLive /> },
 ]
 
