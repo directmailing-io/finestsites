@@ -5,9 +5,9 @@
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://app.finestsites.io'
 
 const POINTS = [
-  { k: 'Prüft deinen Text:', v: 'Jeder Satz wird auf Heil- und Wirkaussagen geprüft, etwa „hilft gegen“ oder „heilt“.' },
-  { k: 'Schreibt ihn um:', v: 'Problemstellen werden markiert und erlaubt formuliert. Ein Klick, übernommen.' },
-  { k: 'Erst dann online:', v: 'Veröffentlicht wird erst, wenn der Text sauber ist. So bleibst du auf der sicheren Seite.' },
+  { k: 'Prüft jeden Satz', v: 'auf Heil- und Wirkaussagen, etwa „hilft gegen“ oder „heilt“.' },
+  { k: 'Schreibt heikle Stellen um,', v: 'so dass sie erlaubt sind. Ein Klick, übernommen.' },
+  { k: 'Gibt erst frei, wenn alles sauber ist.', v: 'So bleibst du auf der sicheren Seite.' },
 ]
 
 /* feines Korn für den Hintergrund (SVG-Rauschen, sehr schwach) */
@@ -18,9 +18,9 @@ export default function ClaimGuardSection() {
     <section id="claimguard" style={{ position: 'relative', overflow: 'hidden', color: '#fff', background: 'linear-gradient(180deg, #06061A 0%, #0B0A2A 55%, #150E3C 100%)' }}>
       <style>{`
         .cg-inner { position: relative; z-index: 2; max-width: 1120px; margin: 0 auto; padding: 100px 7vw; min-height: 740px; display: flex; align-items: center; }
-        .cg-text { max-width: 540px; width: 52%; }
+        .cg-text { max-width: 560px; width: 56%; }
         /* Handy hängt unten rechts am Rand der Sektion, der Arm läuft aus dem Bild */
-        .cg-phone { position: absolute; right: 0; bottom: 0; width: clamp(440px, 46vw, 660px); z-index: 2; pointer-events: none; }
+        .cg-phone { position: absolute; right: 0; bottom: 0; width: clamp(400px, 40vw, 580px); z-index: 2; pointer-events: none; }
         .cg-phone img { width: 100%; height: auto; display: block; filter: drop-shadow(0 30px 60px rgba(0,0,0,0.6)); }
         .cg-word {
           font-family: "Plus Jakarta Sans", sans-serif; font-weight: 700; letter-spacing: -0.035em; line-height: 1;
@@ -63,7 +63,7 @@ export default function ClaimGuardSection() {
           .cg-inner { padding: 72px 5vw 0; min-height: 0; display: block; }
           .cg-text { max-width: 640px; width: auto; }
           .cg-phone { position: relative; width: auto; margin: 28px -5vw 0 0; display: flex; justify-content: flex-end; }
-          .cg-phone img { width: min(100%, 520px); }
+          .cg-phone img { width: min(100%, 460px); }
         }
         @media (max-width: 767px) {
           .cg-inner { padding: 56px 22px 0; }
@@ -103,8 +103,8 @@ export default function ClaimGuardSection() {
               </svg>
             </span>
           </h2>
-          <p style={{ fontSize: 'clamp(18px, 2vw, 22px)', color: 'rgba(255,255,255,0.9)', lineHeight: 1.5, maxWidth: 560, marginBottom: 28, fontWeight: 500 }}>
-            Über Gesundheit und Wirkung darf man auf Webseiten nur wenig sagen. ClaimGuard prüft deine Texte auf Heil- und Wirkaussagen, bevor sie online gehen.
+          <p style={{ fontSize: 'clamp(20px, 2.2vw, 26px)', color: '#fff', lineHeight: 1.35, maxWidth: 520, marginBottom: 30, fontWeight: 600, letterSpacing: '-0.01em' }}>
+            Deine Texte, automatisch geprüft auf Heil- und Wirkaussagen.
           </p>
 
           <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 14, marginBottom: 36 }}>
@@ -135,7 +135,7 @@ export default function ClaimGuardSection() {
 
       <div className="cg-phone">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/claimguard-phone.webp" alt="ClaimGuard prüft einen Text im Editor auf dem Smartphone" loading="lazy" width={1100} height={1042} />
+        <img src="/claimguard-phone.webp" alt="ClaimGuard prüft einen Text im Editor auf dem Smartphone" loading="lazy" width={900} height={1036} />
       </div>
     </section>
   )
