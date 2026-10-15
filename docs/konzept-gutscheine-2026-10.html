@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Konzept: FinestSites Gutscheine</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root { --violet:#8060b0; --violet-deep:#5B3F8F; --violet-soft:#F3EEF9; --ink:#111827; --body:#374151; --muted:#6B7280; --line:#E5E7EB; --bg:#F7F7F8; --ok:#16A34A; --warn:#D97706; --bad:#DC2626; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif; color:var(--body); background:var(--bg); line-height:1.6; }
+  .wrap { max-width:1080px; margin:0 auto; padding:0 24px; }
+  h1,h2,h3,h4 { color:var(--ink); letter-spacing:-0.02em; line-height:1.2; margin:0; }
+  h2 { font-size:28px; margin-bottom:8px; }
+  h3 { font-size:18px; margin-bottom:6px; }
+  p { margin:0 0 12px; }
+  section { padding:64px 0; }
+  .lead { font-size:17px; color:var(--muted); max-width:720px; }
+  .kicker { display:inline-block; font-size:12px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--violet); margin-bottom:12px; }
+
+  /* Hero */
+  .hero { background:linear-gradient(180deg,#06061A 0%,#0B0A2A 45%,#150E3C 100%); color:#fff; padding:88px 0 96px; position:relative; overflow:hidden; }
+  .hero::before { content:""; position:absolute; inset:0; background:radial-gradient(ellipse 50% 60% at 80% 40%, rgba(139,92,246,.45), transparent 70%), radial-gradient(ellipse 40% 40% at 10% 100%, rgba(76,29,149,.5), transparent 70%); pointer-events:none; }
+  .hero .wrap { position:relative; display:grid; grid-template-columns:1.1fr .9fr; gap:48px; align-items:center; }
+  .hero h1 { color:#fff; font-size:clamp(36px,5vw,56px); font-weight:800; }
+  .hero .word { background:linear-gradient(180deg,#F6EEFF 0%,#CDA8FF 55%,#9B6BF2 100%); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .hero p { color:rgba(255,255,255,.75); font-size:18px; max-width:520px; }
+  .hero .meta { display:flex; gap:10px; flex-wrap:wrap; margin-top:22px; }
+  .pill { display:inline-flex; align-items:center; gap:7px; padding:8px 14px; border-radius:999px; font-size:13px; font-weight:600; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.16); color:#fff; }
+
+  /* Gutschein-Karte (Mock) */
+  .voucher { background:linear-gradient(135deg,#9F67FF 0%,#6D28D9 100%); border-radius:22px; padding:28px; color:#fff; box-shadow:0 30px 80px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.25); position:relative; transform:rotate(-2deg); }
+  .voucher .logo { font-weight:800; letter-spacing:-.03em; font-size:18px; opacity:.9; }
+  .voucher .months { font-size:44px; font-weight:800; letter-spacing:-.03em; margin:22px 0 2px; line-height:1; }
+  .voucher .plan { font-size:15px; opacity:.85; }
+  .voucher .code { margin-top:26px; background:rgba(255,255,255,.14); border:1px dashed rgba(255,255,255,.5); border-radius:12px; padding:12px 14px; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:20px; letter-spacing:.14em; text-align:center; }
+  .voucher .foot { display:flex; justify-content:space-between; margin-top:16px; font-size:12px; opacity:.75; }
+  .voucher .spark { position:absolute; top:-18px; right:-10px; width:46px; height:46px; }
+
+  /* Layout-Helfer */
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+  .grid3 { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
+  .card { background:#fff; border:1px solid var(--line); border-radius:20px; padding:24px; }
+  .card.soft { background:var(--violet-soft); border-color:#E6DDF3; }
+  .num { width:34px; height:34px; border-radius:50%; background:var(--violet); color:#fff; font-weight:700; display:flex; align-items:center; justify-content:center; margin-bottom:14px; }
+  .tag { display:inline-block; font-size:12px; font-weight:700; padding:4px 10px; border-radius:999px; }
+  .tag.ok { background:#DCFCE7; color:#166534; } .tag.warn { background:#FEF3C7; color:#92400E; } .tag.bad { background:#FEE2E2; color:#991B1B; } .tag.info { background:var(--violet-soft); color:var(--violet-deep); }
+  ul { padding-left:20px; margin:0 0 12px; } li { margin-bottom:6px; }
+  table { width:100%; border-collapse:collapse; background:#fff; border-radius:16px; overflow:hidden; border:1px solid var(--line); }
+  th,td { text-align:left; padding:12px 14px; border-bottom:1px solid var(--line); vertical-align:top; font-size:14px; }
+  th { background:#FAFAFB; font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); }
+  tr:last-child td { border-bottom:0; }
+  code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:13px; background:#F3F4F6; padding:2px 6px; border-radius:6px; color:var(--ink); }
+
+  /* Urteil */
+  .verdict { background:#fff; border:2px solid var(--violet); border-radius:24px; padding:32px; display:grid; grid-template-columns:auto 1fr; gap:24px; align-items:start; }
+  .verdict .score { width:92px; height:92px; border-radius:50%; background:var(--violet); color:#fff; display:flex; flex-direction:column; align-items:center; justify-content:center; font-weight:800; font-size:26px; line-height:1; }
+  .verdict .score small { font-size:11px; font-weight:600; opacity:.85; margin-top:4px; }
+
+  /* UI-Mocks */
+  .mock { background:#F4F4F5; border:1px solid var(--line); border-radius:20px; padding:18px; }
+  .mock .screen { background:#fff; border-radius:14px; border:1px solid var(--line); padding:20px; }
+  .mock h4 { font-size:15px; margin-bottom:12px; }
+  .opt { display:flex; justify-content:space-between; align-items:center; padding:12px 14px; border:1.5px solid var(--line); border-radius:12px; margin-bottom:8px; font-size:14px; }
+  .opt.sel { border-color:var(--ink); background:#FAFAFB; }
+  .opt b { color:var(--ink); }
+  .btn { display:inline-block; background:var(--violet); color:#fff; font-weight:700; font-size:14px; padding:12px 22px; border-radius:999px; }
+  .btn.dark { background:var(--ink); }
+  .btn.ghost { background:#fff; color:var(--ink); border:1.5px solid var(--line); }
+  .input { border:1.5px solid var(--line); border-radius:12px; padding:12px 14px; font-family:ui-monospace,Menlo,monospace; font-size:16px; letter-spacing:.12em; color:var(--ink); background:#fff; text-align:center; }
+  .banner { border-radius:14px; padding:14px 16px; font-size:14px; display:flex; justify-content:space-between; align-items:center; gap:12px; }
+  .banner.ok { background:#F0FDF4; border:1px solid #BBF7D0; color:#14532D; }
+  .banner.warn { background:#FFFBEB; border:1px solid #FDE68A; color:#78350F; }
+  .banner.bad { background:#FEF2F2; border:1px solid #FECACA; color:#7F1D1D; }
+  .timeline { display:grid; grid-template-columns:repeat(6,1fr); gap:8px; margin-top:16px; }
+  .tl { background:#fff; border:1px solid var(--line); border-radius:14px; padding:12px; font-size:13px; }
+  .tl b { display:block; color:var(--ink); margin-bottom:4px; }
+  .tl.now { border-color:var(--violet); background:var(--violet-soft); }
+  .tl.end { border-color:#FECACA; background:#FEF2F2; }
+  .flow { display:grid; grid-template-columns:repeat(5,1fr); gap:10px; align-items:stretch; }
+  .flow .step { background:#fff; border:1px solid var(--line); border-radius:14px; padding:14px; font-size:13px; position:relative; }
+  .flow .step b { display:block; color:var(--ink); margin-bottom:4px; font-size:14px; }
+  .flow .step::after { content:"→"; position:absolute; right:-14px; top:40%; color:#C4B5FD; font-weight:700; }
+  .flow .step:last-child::after { content:""; }
+  .q { background:#fff; border-left:4px solid var(--violet); border-radius:0 14px 14px 0; padding:14px 18px; margin-bottom:10px; }
+  .q b { color:var(--ink); }
+  footer { padding:40px 0 60px; color:var(--muted); font-size:13px; }
+  @media (max-width:900px) { .hero .wrap, .grid2, .grid3, .verdict { grid-template-columns:1fr; } .timeline { grid-template-columns:repeat(3,1fr); } .flow { grid-template-columns:1fr 1fr; } .flow .step::after { display:none; } }
+</style>
+</head>
+<body>
+
+<!-- ───────────── HERO ───────────── -->
+<div class="hero">
+  <div class="wrap">
+    <div>
+      <span class="kicker" style="color:#C9A3FF">Konzept · 15.10.2026</span>
+      <h1>FinestSites <span class="word">Gutscheine</span></h1>
+      <p>Teamleiter kaufen 6 oder 12 Monate FinestSites als Belohnung für ihre Teampartner. Der Beschenkte löst einen Code ein und ist sofort online, ohne Karte, ohne Bankverbindung. Die Laufzeit startet erst beim Einlösen.</p>
+      <div class="meta">
+        <span class="pill">💳 Käufer zahlt einmalig</span>
+        <span class="pill">🎁 Code per Mail und WhatsApp teilbar</span>
+        <span class="pill">⏱ Laufzeit ab Einlösung</span>
+        <span class="pill">🔔 Erinnerungen vor Ablauf</span>
+      </div>
+    </div>
+    <div>
+      <div class="voucher">
+        <svg class="spark" viewBox="0 0 48 48" fill="none"><path d="M24 2c1.5 11.5 10.5 20.5 22 22-11.5 1.5-20.5 10.5-22 22-1.5-11.5-10.5-20.5-22-22C13.5 22.5 22.5 13.5 24 2z" fill="#fff" opacity=".9"/></svg>
+        <div class="logo">finestsites</div>
+        <div class="months">12 Monate</div>
+        <div class="plan">Tarif Pro · 3 Webseiten · alles inklusive</div>
+        <div class="code">FS-7K2M-9QHT</div>
+        <div class="foot"><span>Geschenk von Sandra M.</span><span>Gültig bis 10/2029</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ───────────── URTEIL ───────────── -->
+<section>
+  <div class="wrap">
+    <span class="kicker">Mein Urteil, ehrlich</span>
+    <h2>Gute Idee, aber nur in der schlanken Form</h2>
+    <p class="lead">Ich würde es bauen. Nicht, weil es viel Umsatz bringt, sondern weil es den einen Kanal öffnet, den wir sonst nicht haben: den Teamleiter, der 20 Partner auf einmal mitbringt.</p>
+    <div class="verdict" style="margin-top:24px">
+      <div class="score">7<span style="font-size:14px">/10</span><small>bauen</small></div>
+      <div>
+        <h3>Warum ja</h3>
+        <ul>
+          <li><b>Multiplikator.</b> Heute gewinnen wir Nutzer einzeln. Ein Teamleiter mit Struktur kauft 5, 10 oder 20 Codes auf einmal und bringt Leute, die sich sonst nie registriert hätten.</li>
+          <li><b>Geld vorab, kein Zahlungsausfall.</b> Der Code ist bezahlt, bevor jemand eine Seite baut. Keine Schonfristen, keine Mahnmails, kein SEPA-Rücklauf in der Laufzeit.</li>
+          <li><b>Passt zur Zielgruppe.</b> Belohnungen für erreichte Stufen sind im Network Marketing Alltag. „Deine eigene Webseite, ein Jahr geschenkt“ ist ein greifbares Geschenk, nicht noch ein Rabattcode.</li>
+          <li><b>Technisch günstig.</b> Mit Stripe-Testphasen (Trial ohne Zahlungsmethode) nutzen wir unsere bestehende Abo-Logik. Der Status <code>trialing</code> gilt bei uns heute schon überall als aktiv.</li>
+        </ul>
+        <h3 style="margin-top:14px">Warum nur schlank</h3>
+        <ul>
+          <li><b>Nachfrage ist unbewiesen.</b> Wir haben keinen einzigen Teamleiter, der danach gefragt hat. Also Version 1 in zwei bis drei Tagen, dann 2 Monate messen.</li>
+          <li><b>Die Verlängerung ist der kritische Moment.</b> Ein Beschenkter hat nie selbst gezahlt. Ein Teil wird am Ende nicht verlängern. Das ist okay, wenn der Code bezahlt war, aber wir dürfen keinen Aufwand in „Rettung“ stecken, bevor wir die Quote kennen.</li>
+          <li><b>Jede Sonderregel kostet.</b> Codes für Konten mit laufendem Abo, Upgrades während der Laufzeit, Rückgaben: alles machbar, aber nicht in Version 1.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ───────────── SO FUNKTIONIERT ES ───────────── -->
+<section style="background:#fff;border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
+  <div class="wrap">
+    <span class="kicker">Ablauf</span>
+    <h2>Fünf Schritte, zwei Personen</h2>
+    <p class="lead">Links der Käufer (Teamleiter), rechts der Beschenkte (Teampartner). Beide brauchen ein FinestSites-Konto, mehr nicht.</p>
+    <div class="flow" style="margin-top:24px">
+      <div class="step"><b>1 · Kaufen</b>Teamleiter wählt Tarif, Laufzeit und Anzahl, zahlt einmalig per Stripe (Karte oder SEPA). Rechnung kommt automatisch.</div>
+      <div class="step"><b>2 · Code erhalten</b>Nach Zahlungseingang erscheinen die Codes im Konto und kommen per Mail als Gutschein-Karte. Teilen per WhatsApp mit einem Tipp.</div>
+      <div class="step"><b>3 · Einlösen</b>Beschenkter öffnet <code>app.finestsites.io/einloesen</code>, registriert sich oder meldet sich an, tippt den Code ein.</div>
+      <div class="step"><b>4 · Nutzen</b>Konto ist sofort auf dem Tarif, Laufzeit läuft ab jetzt. Keine Zahlungsmethode nötig. Banner zeigt das Enddatum.</div>
+      <div class="step"><b>5 · Verlängern</b>30, 14, 7 und 1 Tag vorher Mail und Banner. Zahlungsmethode hinterlegen, Abo läuft nahtlos weiter. Sonst Schonfrist, dann offline.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ───────────── UI ───────────── -->
+<section>
+  <div class="wrap">
+    <span class="kicker">So könnte es aussehen</span>
+    <h2>Drei Bildschirme, ein Banner</h2>
+    <div class="grid2" style="margin-top:24px">
+
+      <div class="mock">
+        <h4>Kaufen · im Dashboard unter „Gutscheine“</h4>
+        <div class="screen">
+          <p style="font-weight:700;color:var(--ink);margin-bottom:10px">Gutschein verschenken</p>
+          <div class="opt"><span>Starter · 1 Webseite</span><span>ab 102 €</span></div>
+          <div class="opt sel"><span><b>Pro</b> · 3 Webseiten</span><span><b>ab 162 €</b></span></div>
+          <div class="opt"><span>Unlimited · alle Webseiten</span><span>ab 222 €</span></div>
+          <div style="display:flex;gap:8px;margin:14px 0">
+            <span class="opt" style="flex:1;margin:0;justify-content:center">6 Monate · 162 €</span>
+            <span class="opt sel" style="flex:1;margin:0;justify-content:center"><b>12 Monate · 270 €</b></span>
+          </div>
+          <div class="opt"><span>Anzahl</span><span><b>− &nbsp; 5 &nbsp; +</b></span></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:14px">
+            <span style="font-size:13px;color:var(--muted)">5 × 12 Monate Pro<br><b style="color:var(--ink);font-size:16px">1.350 €</b> inkl. MwSt.</span>
+            <span class="btn">Jetzt kaufen</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="mock">
+        <h4>Einlösen · app.finestsites.io/einloesen</h4>
+        <div class="screen" style="text-align:center">
+          <div style="width:52px;height:52px;border-radius:16px;background:var(--violet-soft);margin:0 auto 12px;display:flex;align-items:center;justify-content:center;font-size:24px">🎁</div>
+          <p style="font-weight:700;color:var(--ink);font-size:18px;margin-bottom:4px">Du hast einen Gutschein?</p>
+          <p style="font-size:14px;color:var(--muted)">Code eintippen, fertig. Keine Karte, keine Bankverbindung.</p>
+          <div class="input">FS-7K2M-9QHT</div>
+          <div class="banner ok" style="margin:12px 0;text-align:left"><span>✓ <b>12 Monate Pro</b>, geschenkt von Sandra M.</span></div>
+          <span class="btn" style="display:block">Gutschein einlösen</span>
+        </div>
+      </div>
+
+      <div class="mock">
+        <h4>Nach dem Einlösen · Banner im Dashboard</h4>
+        <div class="screen">
+          <div class="banner ok" style="margin-bottom:10px"><span>🎁 Dein Gutschein läuft bis <b>15. Oktober 2027</b>. Alles ist bezahlt, du musst nichts tun.</span></div>
+          <div class="banner warn" style="margin-bottom:10px"><span>Dein Gutschein endet in <b>14 Tagen</b>. Hinterleg eine Zahlungsmethode, dann läuft deine Seite einfach weiter.</span><span class="btn dark" style="padding:8px 14px;font-size:13px">Weiter nutzen</span></div>
+          <div class="banner bad"><span>Dein Gutschein ist abgelaufen. Deine Seite bleibt noch <b>7 Tage</b> online.</span><span class="btn dark" style="padding:8px 14px;font-size:13px;background:#DC2626">Jetzt verlängern</span></div>
+        </div>
+      </div>
+
+      <div class="mock">
+        <h4>Käufer-Ansicht · „Meine Gutscheine“</h4>
+        <div class="screen" style="padding:0;overflow:hidden">
+          <table style="border:0;border-radius:0">
+            <tr><th>Code</th><th>Inhalt</th><th>Status</th></tr>
+            <tr><td><code>FS-7K2M-9QHT</code></td><td>12 Mon. Pro</td><td><span class="tag ok">eingelöst 15.10.</span></td></tr>
+            <tr><td><code>FS-3PA8-W2LD</code></td><td>12 Mon. Pro</td><td><span class="tag info">offen</span> <span style="font-size:12px;color:var(--violet)">teilen</span></td></tr>
+            <tr><td><code>FS-9ZC1-H4RN</code></td><td>12 Mon. Pro</td><td><span class="tag info">offen</span> <span style="font-size:12px;color:var(--violet)">teilen</span></td></tr>
+          </table>
+        </div>
+        <p style="font-size:12px;color:var(--muted);margin:10px 4px 0">Der Käufer sieht nur „eingelöst“ und das Datum, nicht wer. Der Beschenkte entscheidet, ob er seinen Namen zeigt.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ───────────── CHANCEN & RISIKEN ───────────── -->
+<section style="background:#fff;border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
+  <div class="wrap">
+    <span class="kicker">Kritisch betrachtet</span>
+    <h2>Chancen und Risiken</h2>
+    <div class="grid2" style="margin-top:24px">
+      <div class="card">
+        <h3>Chancen</h3>
+        <ul>
+          <li><b>Neuer Vertriebskanal</b> über Strukturen statt Einzelkunden. Ein Käufer, viele Nutzer.</li>
+          <li><b>Liquidität:</b> 12 Monate sind sofort bezahlt. Heute zahlen die meisten monatlich.</li>
+          <li><b>Weniger Abbrüche am Anfang:</b> Die größte Hürde („Zahlungsdaten eingeben, bevor ich etwas gesehen habe“) fällt für Beschenkte weg.</li>
+          <li><b>Partnerprogramm greift mit:</b> Der Käufer wird automatisch Empfehlungsgeber der Beschenkten (10 % auf spätere Verlängerungen). Das macht den Kauf für Teamleiter doppelt interessant.</li>
+          <li><b>Gutscheine, die nie eingelöst werden,</b> sind bezahlter Umsatz ohne Kosten (im Handel typisch 10 bis 20 %).</li>
+          <li><b>Marketing-Anlass:</b> „Schenk deinem Team eine Webseite“ ist ein eigener Aufhänger für Mails und die Startseite.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Risiken</h3>
+        <ul>
+          <li><span class="tag warn">mittel</span> <b>Verlängerungsquote unbekannt.</b> Wer nie gezahlt hat, zahlt am Ende vielleicht nicht. Gegenmittel: Erinnerungen früh und freundlich, Preis in der Mail klar, Schonfrist 7 Tage.</li>
+          <li><span class="tag warn">mittel</span> <b>Zweite Wahrheit im Abo-System.</b> Wenn wir eine eigene „bezahlt bis“-Logik neben Stripe bauen, haben wir zwei Quellen. Gegenmittel: Stripe-Trial nutzen, dann gibt es nur eine.</li>
+          <li><span class="tag warn">mittel</span> <b>Kannibalisierung.</b> Bestehende Monatszahler lassen sich Codes schenken und kündigen ihr Abo. Gegenmittel: Version 1 nur für Konten ohne laufendes Abo; später Gutschrift aufs Konto.</li>
+          <li><span class="tag bad">hoch, aber selten</span> <b>Rückbuchung nach Einlösung.</b> Karte wird zurückgebucht, Code ist schon in Benutzung. Gegenmittel: Code erst nach bestätigter Zahlung aktiv; bei Rückbuchung Laufzeit beenden, Nutzer bekommt Mail mit Angebot.</li>
+          <li><span class="tag warn">mittel</span> <b>Widerruf.</b> Verbraucher können 14 Tage widerrufen, auch nach Weitergabe. Gegenmittel: nicht eingelöste Codes erstatten, eingelöste anteilig; in den AGB regeln.</li>
+          <li><span class="tag ok">niedrig</span> <b>Support:</b> verlorene Codes, falscher Tarif gekauft. Gegenmittel: Admin-Ansicht mit Suche, erneut senden, Tarif ändern.</li>
+          <li><span class="tag ok">niedrig</span> <b>Steuer:</b> Tarif und Laufzeit stehen fest, also Einzweck-Gutschein: Umsatzsteuer beim Verkauf, Rechnung über Stripe wie bisher. Kein Sonderfall.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ───────────── PRODUKT & PREISE ───────────── -->
+<section>
+  <div class="wrap">
+    <span class="kicker">Produkt</span>
+    <h2>Sechs Gutscheine, keine neuen Preise</h2>
+    <p class="lead">Die Preise sind die bestehenden: 6 Monate = 6 × Monatspreis, 12 Monate = Jahrespreis (zwei Monate geschenkt). Das ist leicht zu erklären und verträgt sich mit den Tarifseiten.</p>
+    <table style="margin-top:20px">
+      <tr><th>Tarif</th><th>6 Monate</th><th>12 Monate</th><th>Inhalt</th></tr>
+      <tr><td><b>Starter</b></td><td>102 €</td><td>170 €</td><td>1 Webseite</td></tr>
+      <tr><td><b>Pro</b></td><td>162 €</td><td>270 €</td><td>3 Webseiten</td></tr>
+      <tr><td><b>Unlimited</b></td><td>222 €</td><td>370 €</td><td>alle Webseiten</td></tr>
+    </table>
+    <div class="grid3" style="margin-top:20px">
+      <div class="card"><h3>Später: Mengenrabatt</h3><p style="font-size:14px">Ab 5 Codes 10 %, ab 10 Codes 15 %. Erst, wenn wir sehen, dass Teamleiter wirklich in Mengen kaufen. In Version 1 nur die Anzahl, kein Rabatt.</p></div>
+      <div class="card"><h3>Später: Geschenk-Karte als PDF</h3><p style="font-size:14px">Schöne Karte mit Code, Name des Schenkenden und persönlichem Satz, zum Ausdrucken oder für WhatsApp. In Version 1 reicht die Mail mit Code und Teilen-Button.</p></div>
+      <div class="card"><h3>Später: Gutschein als Zahlungsmittel</h3><p style="font-size:14px">Code auf ein Konto mit laufendem Abo einlösen und als Guthaben verrechnen. Technisch mit Stripe-Kundenguthaben machbar, aber Version 2.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ───────────── TECHNIK ───────────── -->
+<section style="background:#fff;border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
+  <div class="wrap">
+    <span class="kicker">Integration</span>
+    <h2>So bauen wir es in das bestehende System</h2>
+    <p class="lead">Kernentscheidung: Der eingelöste Gutschein wird ein <b>Stripe-Abo mit Testphase ohne Zahlungsmethode</b>. Damit bleibt Stripe die einzige Wahrheit über „hat ein Abo“, und alles, was heute auf <code>trialing</code> reagiert, funktioniert ohne Änderung.</p>
+
+    <div class="grid2" style="margin-top:24px">
+      <div class="card">
+        <h3>Datenmodell</h3>
+        <p style="font-size:14px">Eine neue Tabelle <code>vouchers</code>:</p>
+        <ul style="font-size:14px">
+          <li><code>code</code> (z. B. <code>FS-7K2M-9QHT</code>, ohne 0/O/1/I), <code>plan</code>, <code>months</code></li>
+          <li><code>buyer_user_id</code>, <code>stripe_payment_intent_id</code>, <code>paid_at</code>, <code>invoice_url</code></li>
+          <li><code>redeemed_by_user_id</code>, <code>redeemed_at</code>, <code>stripe_subscription_id</code></li>
+          <li><code>status</code>: <code>pending</code> → <code>open</code> → <code>redeemed</code> | <code>revoked</code> | <code>refunded</code> | <code>expired</code></li>
+          <li><code>expires_at</code> = Kauf + 3 Jahre, <code>message</code> (optionaler Satz des Schenkenden)</li>
+        </ul>
+        <p style="font-size:14px">Am Nutzer: <code>users.voucher_until</code> (nur für Banner und Mails, keine Entscheidungen).</p>
+      </div>
+      <div class="card">
+        <h3>Kauf</h3>
+        <ul style="font-size:14px">
+          <li>Dashboard-Seite „Gutscheine“ (nur eingeloggt, damit Rechnung und Partnerprogramm am Konto hängen).</li>
+          <li>Stripe Checkout <code>mode=payment</code>, Produkt „Gutschein 12 Monate Pro“, Menge, Stripe Tax wie bisher, Karte und SEPA.</li>
+          <li>Webhook <code>checkout.session.completed</code> + <code>payment_intent.succeeded</code>: Codes anlegen (<code>pending</code> → <code>open</code>), Mail „Deine Gutscheine“ mit Teilen-Links. SEPA zahlt verzögert: Codes erst bei Erfolg frei.</li>
+          <li>Webhook <code>charge.refunded</code> / <code>charge.dispute.created</code>: offene Codes auf <code>revoked</code>, eingelöste: Abo-Trial sofort beenden, Nutzer bekommt Mail.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Einlösen</h3>
+        <ul style="font-size:14px">
+          <li>Öffentliche Seite <code>/einloesen?code=…</code>: Code prüfen (zeigt Inhalt und Schenkenden), dann Login oder Registrierung (Onboarding läuft normal durch, Schritt „Plan“ wird übersprungen).</li>
+          <li>Regel Version 1: nur Konten ohne aktives Abo (<code>subscription_status</code> nicht in active/trialing/past_due). Sonst Hinweis „Gutschein an jemanden weitergeben, der noch kein Abo hat“.</li>
+          <li>Stripe: Kunde anlegen falls nötig, Abo erstellen mit <code>trial_end = jetzt + Monate</code>, <code>trial_settings.end_behavior.missing_payment_method = "cancel"</code>, <code>payment_settings.save_default_payment_method = "on_subscription"</code>. Keine Zahlungsmethode nötig.</li>
+          <li>Unser Webhook setzt wie heute <code>plan</code>, <code>subscription_status = trialing</code>, <code>current_period_end</code>. Veröffentlichen, Limits, Admin-Zahlen: alles läuft über den bestehenden Status.</li>
+          <li>Partnerprogramm: <code>referred_by_username</code> = Käufer, falls noch leer. Der Käufer verdient an der späteren Verlängerung mit.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Ende der Laufzeit</h3>
+        <ul style="font-size:14px">
+          <li>Täglicher Cron (es gibt schon <code>billing-enforcement</code>): Trials ohne Zahlungsmethode mit Ende in 30 / 14 / 7 / 1 Tagen → Mail (Kategorie „Konto und Zahlung“, nicht abbestellbar, weil Vertrag) und Banner im Dashboard.</li>
+          <li>Zahlungsmethode hinterlegt (Stripe-Portal oder unser Zahlungs-Tab): Stripe bucht am Trial-Ende ab, Abo läuft weiter. Monatlich oder jährlich wählbar.</li>
+          <li>Keine Zahlungsmethode: Stripe stellt das Abo auf <code>canceled</code>. Unser Webhook behandelt das wie heute eine Kündigung. Vorschlag: 7 Tage Schonfrist online, wie bei der Zahlungs-Schonfrist, dann offline. Seite bleibt als Entwurf erhalten, ein Klick reaktiviert.</li>
+          <li>Stripe-Mails („Trial endet“) bleiben aus, wir schreiben selbst, in unserer Sprache.</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3 style="margin-top:28px">Zeitachse für den Beschenkten</h3>
+    <div class="timeline">
+      <div class="tl now"><b>Tag 0</b>Code eingelöst, Konto auf Pro, Banner „bezahlt bis …“</div>
+      <div class="tl"><b>−30 Tage</b>Mail „In einem Monat endet dein Gutschein“ + Preis + Button</div>
+      <div class="tl"><b>−14 Tage</b>Mail + gelbes Banner im Dashboard</div>
+      <div class="tl"><b>−7 / −1 Tag</b>Mail kurz, Banner bleibt</div>
+      <div class="tl end"><b>Tag 365</b>Ohne Zahlungsmethode: Abo endet, 7 Tage Schonfrist, rotes Banner</div>
+      <div class="tl end"><b>Tag 372</b>Seite offline, Entwurf bleibt, Reaktivierung mit einem Klick</div>
+    </div>
+
+    <h3 style="margin-top:28px">Sonderfälle, die wir vorher entscheiden</h3>
+    <table style="margin-top:12px">
+      <tr><th>Fall</th><th>Vorschlag Version 1</th></tr>
+      <tr><td>Beschenkter hat schon ein aktives Abo</td><td>Einlösen abgelehnt, mit Hinweis zum Weitergeben. Version 2: als Guthaben verrechnen.</td></tr>
+      <tr><td>Beschenkter will während der Laufzeit auf Unlimited</td><td>Upgrade nur mit Zahlungsmethode; Differenz wird ab sofort berechnet, Trial endet (Stripe-Standard). Klar im Upgrade-Fenster erklären.</td></tr>
+      <tr><td>Zweiten Code auf dasselbe Konto einlösen</td><td>Verlängert den Trial um die Monate, wenn gleicher oder höherer Tarif. Niedrigerer Tarif: abgelehnt.</td></tr>
+      <tr><td>Käufer löst eigenen Code ein</td><td>Erlaubt. Ist dann einfach ein vorausbezahltes Jahr.</td></tr>
+      <tr><td>Code 3 Jahre nicht eingelöst</td><td>Verfällt (gesetzliche Verjährung). Erinnerung an den Käufer nach 11 Monaten.</td></tr>
+      <tr><td>Käufer widerruft innerhalb 14 Tagen</td><td>Offene Codes: volle Erstattung, Codes gesperrt. Eingelöste: anteilig nach genutzten Tagen; der Beschenkte behält den Rest nicht (Mail + Angebot).</td></tr>
+      <tr><td>Rückbuchung (Chargeback)</td><td>Alle Codes des Kaufs sperren, laufende Trials beenden, Käuferkonto markieren.</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- ───────────── ADMIN & RECHT ───────────── -->
+<section>
+  <div class="wrap">
+    <div class="grid2">
+      <div class="card">
+        <span class="kicker">Admin</span>
+        <h3>Eine Seite, eine Liste</h3>
+        <ul style="font-size:14px">
+          <li><code>/admin/gutscheine</code>: Suche nach Code, Käufer, Beschenktem; Status, Kaufdatum, Einlösedatum, Enddatum.</li>
+          <li>Aktionen: Code erneut senden, Code sperren, Tarif ändern (Käufer hat sich vertan), Laufzeit manuell verlängern (Kulanz).</li>
+          <li>Kundenansicht bekommt eine Karte „Gutschein: 12 Monate Pro, bezahlt von Sandra M., bis 15.10.2027“.</li>
+          <li>Finanzen: Gutscheinumsatz getrennt ausweisen (einmalige Zahlungen, nicht MRR).</li>
+        </ul>
+      </div>
+      <div class="card">
+        <span class="kicker">Recht und Steuer</span>
+        <h3>Nichts Exotisches, aber drei Dinge klären</h3>
+        <ul style="font-size:14px">
+          <li><b>Einzweck-Gutschein:</b> Leistung und Steuersatz stehen beim Kauf fest, also Umsatzsteuer beim Verkauf. Stripe Tax macht das wie bisher. Beim Einlösen entsteht keine zweite Rechnung.</li>
+          <li><b>AGB-Absatz „Gutscheine“:</b> Gültigkeit 3 Jahre ab Kauf, nicht bar auszahlbar, nur für Konten ohne laufendes Abo, Widerruf nur für nicht eingelöste Codes, Übertragung erlaubt.</li>
+          <li><b>Datenschutz:</b> Der Käufer sieht nur „eingelöst am“, keinen Namen und keine Adresse des Beschenkten. Umgekehrt sieht der Beschenkte den Namen des Käufers (das ist ein Geschenk, das soll er wissen).</li>
+          <li><b>Kein PM-Bezug:</b> Gutscheine sind ein FinestSites-Produkt, keine FitLine-Prämie. Keine PM-Marke auf der Gutscheinseite.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ───────────── PHASEN ───────────── -->
+<section style="background:#fff;border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
+  <div class="wrap">
+    <span class="kicker">Umsetzung</span>
+    <h2>Drei Stufen, die erste klein</h2>
+    <div class="grid3" style="margin-top:24px">
+      <div class="card soft">
+        <div class="num">1</div>
+        <h3>Version 1 · 2 bis 3 Tage</h3>
+        <ul style="font-size:14px">
+          <li>Tabelle, Checkout, Webhooks, Codes per Mail</li>
+          <li>Seite „Gutscheine“ im Dashboard (kaufen, Liste, teilen)</li>
+          <li>Öffentliche Einlöse-Seite + Onboarding-Abkürzung</li>
+          <li>Stripe-Trial ohne Zahlungsmethode, Banner, 4 Erinnerungsmails</li>
+          <li>Admin-Liste, AGB-Absatz, Eintrag in den Einstellungen</li>
+        </ul>
+        <p style="font-size:13px;color:var(--muted);margin-top:8px">Messen: verkaufte Codes, Einlösequote, Verlängerungsquote nach 6 und 12 Monaten.</p>
+      </div>
+      <div class="card">
+        <div class="num" style="background:#C4B5FD">2</div>
+        <h3>Version 2 · nach 2 Monaten Daten</h3>
+        <ul style="font-size:14px">
+          <li>Mengenrabatt ab 5 Codes</li>
+          <li>Geschenk-Karte als PDF mit persönlichem Satz</li>
+          <li>Code auf laufendes Abo als Guthaben</li>
+          <li>Landingpage auf finestsites.io „Schenk deinem Team eine Webseite“</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="num" style="background:#DDD6FE;color:var(--violet-deep)">3</div>
+        <h3>Version 3 · wenn es läuft</h3>
+        <ul style="font-size:14px">
+          <li>Teamleiter-Dashboard: welche Partner sind online, wer braucht Hilfe</li>
+          <li>Automatische Belohnung: „Erreicht Stufe X, bekommt Code“ über Schnittstelle oder CSV</li>
+          <li>Gutschein-Kauf ohne Konto (Gast-Checkout) für Außenstehende</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ───────────── ENTSCHEIDUNGEN ───────────── -->
+<section>
+  <div class="wrap">
+    <span class="kicker">Deine Entscheidungen</span>
+    <h2>Fünf Fragen, dann kann ich bauen</h2>
+    <div style="margin-top:20px">
+      <div class="q"><b>1. Laufzeiten:</b> nur 6 und 12 Monate? Mein Vorschlag: ja. 3 Monate ist zu kurz, um eine Seite ins Laufen zu bringen, und macht die Verlängerung unwahrscheinlicher.</div>
+      <div class="q"><b>2. Nur Konten ohne Abo in Version 1?</b> Mein Vorschlag: ja. Spart die Guthaben-Logik und verhindert, dass Monatszahler ihr Abo durch geschenkte Codes ersetzen.</div>
+      <div class="q"><b>3. Schonfrist nach Ablauf:</b> 7 Tage online wie bei der Zahlungs-Schonfrist, oder sofort offline? Mein Vorschlag: 7 Tage, mit rotem Banner. Die Seite ist oft schon in Flyern und WhatsApp-Status verlinkt.</div>
+      <div class="q"><b>4. Partnerprogramm:</b> Käufer automatisch als Empfehlungsgeber der Beschenkten eintragen? Mein Vorschlag: ja, das ist der stärkste Kaufgrund für Teamleiter. Dann aber in der Kauf-Seite sagen.</div>
+      <div class="q"><b>5. Name:</b> „Gutschein“ (alle verstehen es), „Geschenk-Code“ oder ein eigener Name wie bei ClaimGuard? Mein Vorschlag: „Gutschein“ in der Oberfläche, eigener Name nur auf der Marketing-Seite, wenn überhaupt.</div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">Konzept von Claude für Daniel · FinestSites · 15.10.2026 · Preise Stand Oktober 2026 (Starter 17/170 €, Pro 27/270 €, Unlimited 37/370 €) · Stripe-Begriffe: <code>trial_end</code>, <code>trial_settings.end_behavior.missing_payment_method</code>, Checkout <code>mode=payment</code></div>
+</footer>
+
+</body>
+</html>
