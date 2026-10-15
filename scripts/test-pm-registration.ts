@@ -61,6 +61,7 @@ assert.equal(pmRegistrationUrlFor({ pm_registrierung: 'zeigen', pm_reg_link: 'ka
 assert.equal(isPmRegistrationPilot('demo'), true)
 assert.equal(isPmRegistrationPilot('Siegfried-Hartmann'), true)
 assert.equal(isPmRegistrationPilot('katharinaschwarz'), true)
+assert.equal(isPmRegistrationPilot('rene-panke'), true)
 assert.equal(isPmRegistrationPilot('rebecca-schneider'), false)
 assert.equal(isPmRegistrationPilot(''), false)
 assert.equal(pmRegistrationUrlFor({ pm_registrierung: 'zeigen' }, '40237198', 'rebecca-schneider'), '')

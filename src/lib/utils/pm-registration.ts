@@ -30,7 +30,14 @@ export const PM_REG_DEFAULT_COUNTRY = 'Deutschland'
  * Gilt im Editor (Felder mit `pilot_only`) UND serverseitig (ohne Pilot nie ein Link, egal was in
  * den Seitendaten steht). Für den Rollout an alle: Liste leeren und `pilot_only` im Schema entfernen.
  */
-export const PM_REG_PILOT_USERNAMES: ReadonlyArray<string> = ['demo', 'siegfried-hartmann', 'katharinaschwarz']
+export const PM_REG_PILOT_USERNAMES: ReadonlyArray<string> = [
+  'demo', 'siegfried-hartmann', 'katharinaschwarz',
+  // Bestandskunden mit aktivem Abo, registriert vor dem 30.09.2026 (Daniels Freigabe 15.10.2026)
+  'thorstenmichael-senger', 'tobias-wessinger', 'michael-bayrle', 'jennyadlmueller', 'rene-panke', 'stefanie-bayrle',
+  'bea-lenk', 'michael-weigl', 'bianca-weigl', 'corinna-fackler', 'johannes-lutz', 'rudolf-juestel', 'christiane',
+  'simone-kastl', 'daniela-singer-lausch', 'anita-mandler', 'ullahildebrandt', 'jessica-matloka', 'kerstin-karpf',
+  'regina-prestel', 'anastasia-schiller-wellbeing',
+]
 
 export function isPmRegistrationPilot(username: string | null | undefined): boolean {
   return PM_REG_PILOT_USERNAMES.includes((username ?? '').trim().toLowerCase())
