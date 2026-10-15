@@ -5,6 +5,8 @@ import { users, userSites, templates } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
 import { getStripe } from '@/lib/stripe/client'
 import { BRAND_HEX_RE } from '@/lib/color/brand-palette'
+import { normalizeOptOut } from '@/lib/email/categories'
+import { sql } from 'drizzle-orm'
 
 export async function GET(req: NextRequest) {
   const user = await getUserFromRequest(req)
@@ -53,6 +55,8 @@ export async function GET(req: NextRequest) {
     // Markenfarbe (Phase A: nur Admin-Konten dürfen sie setzen und sehen die Option im Editor)
     brand_color: profile?.brandColor ?? null,
     is_admin: profile?.isAdmin ?? false,
+    // Abbestellte Mail-Kategorien (leer = alles erlaubt), siehe src/lib/email/categories.ts
+    email_opt_out: profile?.emailOptOut ?? [],
   })
 }
 
@@ -99,6 +103,16 @@ export async function PATCH(req: NextRequest) {
   }
 
   if (brandUpdate) Object.assign(updates, brandUpdate)
+
+  // Mail-Einstellungen: nur abbestellbare Kategorien landen in der Liste, "system" nie
+  if ('email_opt_out' in body) {
+    if (!Array.isArray(body.email_opt_out)) {
+      return NextResponse.json({ error: 'email_opt_out muss eine Liste sein.' }, { status: 400 })
+    }
+    updates.emailOptOut = normalizeOptOut(body.email_opt_out)
+    updates.emailOptOutUpdatedAt = sql`now()` as unknown as Date
+  }
+
   if (Object.keys(updates).length === 0) {
     return NextResponse.json({ error: 'Keine Felder zum Aktualisieren.' }, { status: 400 })
   }

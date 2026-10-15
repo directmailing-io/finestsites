@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { CONSENT_TEXTS, hashConsentText } from '@/lib/constants/consent'
 import DomainDnsPanel from './DomainDnsPanel'
 import AdminDomainConnect from './AdminDomainConnect'
+import { EMAIL_CATEGORIES } from '@/lib/email/categories'
 
 interface UserProfile {
   id: string
@@ -33,6 +34,8 @@ interface UserProfile {
   linkedin: string | null
   tiktok: string | null
   youtube: string | null
+  emailOptOut: string[] | null
+  emailOptOutUpdatedAt: string | null
 }
 
 interface AffiliateSearchResult {
@@ -716,6 +719,38 @@ export default function AdminUserDetailPage({ params }: { params: Promise<{ id: 
             )}
           </div>
         )}
+
+        {/* E-Mail-Benachrichtigungen: was der Nutzer erlaubt hat (nur Anzeige, Entscheidung liegt beim Nutzer) */}
+        <div className="p-6 rounded-[24px] bg-white flex flex-col gap-3"
+          style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.08)', border: '1px solid var(--border)' }}>
+          <div className="flex items-center justify-between">
+            <h2 className="font-medium text-gray-900">E-Mail-Benachrichtigungen</h2>
+            {profile.emailOptOutUpdatedAt && (
+              <span className="text-xs" style={{ color: '#9CA3AF' }}>
+                geändert {new Date(profile.emailOptOutUpdatedAt).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' })}
+              </span>
+            )}
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            {EMAIL_CATEGORIES.map(cat => {
+              const allowed = cat.locked || !(profile.emailOptOut ?? []).includes(cat.key)
+              return (
+                <div key={cat.key} className="flex items-center justify-between gap-3 px-3 py-2.5 rounded-xl"
+                  style={{ background: '#F9FAFB', border: '1px solid #F3F4F6' }}>
+                  <div className="min-w-0">
+                    <p className="text-sm text-gray-900 truncate">{cat.label}</p>
+                    {cat.locked && <p className="text-[11px]" style={{ color: '#9CA3AF' }}>nicht abbestellbar</p>}
+                  </div>
+                  <span className="text-[11px] font-semibold px-2.5 py-1 rounded-full flex items-center gap-1.5 flex-shrink-0"
+                    style={{ background: allowed ? '#DCFCE7' : '#FEE2E2', color: allowed ? '#166534' : '#991B1B' }}>
+                    <span className="w-1.5 h-1.5 rounded-full" style={{ background: allowed ? '#16A34A' : '#DC2626' }} />
+                    {allowed ? 'Erlaubt' : 'Abbestellt'}
+                  </span>
+                </div>
+              )
+            })}
+          </div>
+        </div>
 
         {/* Sites */}
         <div className="p-6 rounded-[24px] bg-white flex flex-col gap-3"

@@ -1,6 +1,7 @@
 import { db } from '@/lib/db'
 import { emailLogs } from '@/lib/db/schema'
 import { desc, gte } from 'drizzle-orm'
+import { emailCategoryLabel } from '@/lib/email/categories'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
@@ -28,6 +29,13 @@ const TYPE_LABELS: Record<string, string> = {
   upcoming_debit: 'Abbuchung angekündigt',
   payment_warning: 'Zahlungswarnung (alt)',
   domain_active: 'Domain aktiv',
+  product_update: 'Produkt-Update',
+  tip: 'Tipp',
+  offer: 'Angebot',
+  tracking_first_lead: 'Erste Anfrage (Tracking)',
+  testimonial_thanks: 'Erfahrungsbericht Danke',
+  testimonial_admin_notify: 'Erfahrungsbericht (Admin)',
+  impersonation_request: 'Zugriffsanfrage',
 }
 
 export default async function AdminEmailsPage() {
@@ -50,7 +58,9 @@ export default async function AdminEmailsPage() {
       .limit(1000),
   ])
 
-  const totalThisMonth = thisMonthLogs.length
+  // Übersprungene Mails (Kategorie abbestellt) zählen nicht gegen das Resend-Kontingent
+  const skippedThisMonth = thisMonthLogs.filter(l => l.status === 'skipped').length
+  const totalThisMonth = thisMonthLogs.length - skippedThisMonth
   const sentThisMonth = thisMonthLogs.filter(l => l.status === 'sent').length
   const errorThisMonth = thisMonthLogs.filter(l => l.status === 'error').length
   const quotaPercent = Math.round((totalThisMonth / RESEND_MONTHLY_QUOTA) * 100)
@@ -58,6 +68,7 @@ export default async function AdminEmailsPage() {
   // Group by type
   const byType: Record<string, { sent: number; error: number }> = {}
   for (const log of thisMonthLogs) {
+    if (log.status === 'skipped') continue
     if (!byType[log.type]) byType[log.type] = { sent: 0, error: 0 }
     if (log.status === 'sent') byType[log.type].sent++
     else byType[log.type].error++
@@ -88,7 +99,7 @@ export default async function AdminEmailsPage() {
           <div className="text-right">
             <p className="text-2xl font-bold" style={{ color: quotaColor }}>{quotaPercent}%</p>
             <p className="text-xs mt-1" style={{ color: '#6B7280' }}>
-              {sentThisMonth} gesendet &bull; {errorThisMonth} Fehler
+              {sentThisMonth} gesendet &bull; {errorThisMonth} Fehler{skippedThisMonth > 0 && <> &bull; {skippedThisMonth} abbestellt</>}
             </p>
           </div>
         </div>
@@ -149,6 +160,7 @@ export default async function AdminEmailsPage() {
                 <tr style={{ background: '#F9FAFB', borderBottom: '1px solid #F3F4F6' }}>
                   <th className="px-4 py-3 text-left font-medium text-xs" style={{ color: '#6B7280' }}>Zeitpunkt</th>
                   <th className="px-4 py-3 text-left font-medium text-xs" style={{ color: '#6B7280' }}>Typ</th>
+                  <th className="px-4 py-3 text-left font-medium text-xs" style={{ color: '#6B7280' }}>Kategorie</th>
                   <th className="px-4 py-3 text-left font-medium text-xs" style={{ color: '#6B7280' }}>Empfänger</th>
                   <th className="px-4 py-3 text-left font-medium text-xs" style={{ color: '#6B7280' }}>Betreff</th>
                   <th className="px-4 py-3 text-left font-medium text-xs" style={{ color: '#6B7280' }}>Status</th>
@@ -168,6 +180,9 @@ export default async function AdminEmailsPage() {
                         {TYPE_LABELS[log.type] ?? log.type}
                       </span>
                     </td>
+                    <td className="px-4 py-3 whitespace-nowrap text-xs" style={{ color: '#6B7280' }}>
+                      {log.category ? emailCategoryLabel(log.category) : '–'}
+                    </td>
                     <td className="px-4 py-3" style={{ color: '#374151', maxWidth: '200px' }}>
                       <span className="truncate block">{log.to}</span>
                     </td>
@@ -178,6 +193,10 @@ export default async function AdminEmailsPage() {
                       {log.status === 'sent' ? (
                         <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: '#DCFCE7', color: '#16A34A' }}>
                           Gesendet
+                        </span>
+                      ) : log.status === 'skipped' ? (
+                        <span className="text-xs px-2 py-0.5 rounded-full cursor-help" style={{ background: '#F3F4F6', color: '#6B7280' }} title={log.errorMessage ?? ''}>
+                          Abbestellt
                         </span>
                       ) : (
                         <span

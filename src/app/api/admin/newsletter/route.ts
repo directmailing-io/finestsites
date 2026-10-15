@@ -4,23 +4,18 @@ import { db } from '@/lib/db'
 import { users, userSites, templates } from '@/lib/db/schema'
 import { eq, ne } from 'drizzle-orm'
 import { sql } from 'drizzle-orm'
-import { getResend, FROM_EMAIL } from '@/lib/resend'
-import { newsletterEmail } from '@/lib/email/templates'
-import { markupToHtml } from '@/lib/email/markup'
-import { emailLogs } from '@/lib/db/schema'
+import { isEmailCategory, type EmailCategory } from '@/lib/email/categories'
+import { sendCategoryMail, type BulkRecipient } from '@/lib/email/bulk'
 
 export const runtime = 'nodejs'
 
-interface UserRow {
-  id: string
-  email: string
-  firstName: string | null
-  lastName: string | null
-  username: string | null
+interface UserRow extends BulkRecipient {
   plan: string
   subscription_status: string | null
   publishedTemplateIds: string[]
   has_any_site: boolean
+  /** abbestellte Mail-Kategorien, damit das Frontend die Empfängerzahl je Kategorie zeigen kann */
+  emailOptOut: string[]
 }
 
 interface TemplateRow {
@@ -51,7 +46,7 @@ async function checkAdmin() {
 
 async function getEnrichedUsers(): Promise<{ users: UserRow[]; templates: TemplateRow[] }> {
   const [rawUsers, publishedSites, anySites, tplRows] = await Promise.all([
-    db.select({ id: users.id, email: users.email, firstName: users.firstName, lastName: users.lastName, username: users.username, plan: users.plan, subscriptionStatus: users.subscriptionStatus })
+    db.select({ id: users.id, email: users.email, firstName: users.firstName, lastName: users.lastName, username: users.username, plan: users.plan, subscriptionStatus: users.subscriptionStatus, emailOptOut: users.emailOptOut })
       .from(users)
       .orderBy(users.email),
     db.select({ userId: userSites.userId, templateId: userSites.templateId })
@@ -84,6 +79,7 @@ async function getEnrichedUsers(): Promise<{ users: UserRow[]; templates: Templa
     subscription_status: u.subscriptionStatus,
     publishedTemplateIds: [...(publishedMap.get(u.id) ?? [])],
     has_any_site: anyUserIds.has(u.id),
+    emailOptOut: u.emailOptOut ?? [],
   }))
 
   const tpl: TemplateRow[] = tplRows.map(t => ({
@@ -93,23 +89,6 @@ async function getEnrichedUsers(): Promise<{ users: UserRow[]; templates: Templa
   }))
 
   return { users: enrichedUsers, templates: tpl }
-}
-
-/**
- * Replace placeholders in text. Syntax: {{field}} or {{field|fallback}}
- * Supported fields: vorname, nachname, username, email
- */
-function interpolate(text: string, user: UserRow): string {
-  return text.replace(/\{\{(\w+)(?:\|([^}]*))?\}\}/g, (_match, field: string, fallback: string | undefined) => {
-    const fb = fallback ?? ''
-    switch (field) {
-      case 'vorname':   return user.firstName?.trim() || fb || 'du'
-      case 'nachname':  return user.lastName?.trim()  || fb || ''
-      case 'username':  return user.username?.trim()  || fb || ''
-      case 'email':     return user.email
-      default:          return _match
-    }
-  })
 }
 
 function filterUsers(users: UserRow[], templates: TemplateRow[], filters: Filters): UserRow[] {
@@ -165,11 +144,16 @@ export async function POST(req: NextRequest) {
   const adminUser = await checkAdmin()
   if (!adminUser) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const { subject, body, filters }: { subject: string; body: string; filters: Filters } = await req.json()
+  const { subject, body, filters, category }: { subject: string; body: string; filters: Filters; category?: string } = await req.json()
 
   if (!subject?.trim() || !body?.trim()) {
     return NextResponse.json({ error: 'Betreff und Inhalt erforderlich.' }, { status: 400 })
   }
+  // Ohne Kategorie geht nichts raus: sie entscheidet, wer die Mail abbestellt hat
+  if (!isEmailCategory(category)) {
+    return NextResponse.json({ error: 'Bitte eine Mail-Kategorie wählen.' }, { status: 400 })
+  }
+  const cat: EmailCategory = category
 
   const { users: enrichedUsers, templates } = await getEnrichedUsers()
   const recipients = filterUsers(enrichedUsers, templates, filters ?? { mode: 'all' })
@@ -178,84 +162,32 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Keine Empfänger gefunden.' }, { status: 400 })
   }
 
-  const BATCH_SIZE = 100
-  let sent = 0, failed = 0
-
-  for (let i = 0; i < recipients.length; i += BATCH_SIZE) {
-    const chunk = recipients.slice(i, i + BATCH_SIZE)
-    const chunkPayloads = chunk.map(user => {
-      const personalSubject = interpolate(subject.trim(), user)
-      const personalBody = interpolate(body.trim(), user)
-      const bodyHtml = markupToHtml(personalBody)
-      const html = newsletterEmail({ subject: personalSubject, bodyHtml })
-      return { user, personalSubject, html }
-    })
-    try {
-      const result = await getResend().batch.send(
-        chunkPayloads.map(({ user, personalSubject, html }) => ({
-          from: FROM_EMAIL,
-          to: user.email,
-          subject: personalSubject,
-          html,
-        }))
-      )
-      if (result.error) {
-        console.error('[newsletter] Resend error:', JSON.stringify(result.error))
-        failed += chunk.length
-        // Log failures
-        db.insert(emailLogs).values(
-          chunkPayloads.map(({ user, personalSubject }) => ({
-            type: 'newsletter',
-            to: user.email,
-            subject: personalSubject,
-            status: 'error' as const,
-            errorMessage: result.error?.message ?? 'Batch error',
-          }))
-        ).catch(e => console.error('[newsletter] log error:', e.message))
-      } else {
-        // Resend batch.send() returns { data: { data: [...] } } or { data: [...] }
-        const raw = (result.data as any)
-        const items: unknown[] = Array.isArray(raw) ? raw : Array.isArray(raw?.data) ? raw.data : []
-        const ok = items.filter((r: unknown) => r !== null && typeof r === 'object' && (r as any)?.id).length
-        const resolvedOk = items.length > 0 ? ok : chunk.length
-        sent += resolvedOk; failed += chunk.length - resolvedOk
-        // Bulk log each send
-        db.insert(emailLogs).values(
-          chunkPayloads.map(({ user, personalSubject }, idx) => {
-            const item = items[idx] as any
-            return {
-              type: 'newsletter',
-              to: user.email,
-              subject: personalSubject,
-              resendId: item?.id ?? undefined,
-              status: item?.id ? 'sent' as const : 'error' as const,
-            }
-          })
-        ).catch(e => console.error('[newsletter] log error:', e.message))
-      }
-    } catch (err) {
-      console.error('[newsletter] batch exception:', err)
-      failed += chunk.length
-    }
-  }
+  // Opt-out-Filter, Versand in Paketen und email_logs übernimmt sendCategoryMail
+  const result = await sendCategoryMail({
+    category: cat,
+    type: 'newsletter',
+    subject: subject.trim(),
+    body: body.trim(),
+    recipients,
+  })
 
   // newsletter_sends is not in the Drizzle schema yet — use raw SQL
   try {
     await db.execute(sql`
-      INSERT INTO newsletter_sends (subject, body, recipient_filter, specific_emails, sent, failed, total)
+      INSERT INTO newsletter_sends (subject, body, recipient_filter, specific_emails, sent, failed, skipped, total, category)
       VALUES (
         ${subject.trim()},
         ${body.trim()},
         ${JSON.stringify(filters ?? { mode: 'all' })},
         ${JSON.stringify(recipients.map(u => u.email))},
-        ${sent}, ${failed}, ${recipients.length}
+        ${result.sent}, ${result.failed}, ${result.skipped}, ${recipients.length}, ${cat}
       )
     `)
   } catch (err) {
     console.error('[newsletter] failed to record send:', err)
   }
 
-  return NextResponse.json({ sent, failed, total: recipients.length })
+  return NextResponse.json({ sent: result.sent, failed: result.failed, skipped: result.skipped, total: recipients.length })
 }
 
 export async function GET() {

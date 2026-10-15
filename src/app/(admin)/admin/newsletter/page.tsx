@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, useMemo } from 'react'
 import Link from 'next/link'
 import RichTextarea from '@/components/admin/RichTextarea'
 import { markupToHtml } from '@/lib/email/markup'
+import { EMAIL_CATEGORIES, emailCategoryLabel, type EmailCategory } from '@/lib/email/categories'
 
 interface UserRow {
   id: string
@@ -15,12 +16,14 @@ interface UserRow {
   subscription_status: string | null
   publishedTemplateIds: string[]
   has_any_site: boolean
+  emailOptOut: string[]
 }
 interface TemplateRow { id: string; title: string; tags: string[] }
 interface HistoryEntry {
   id: string; subject: string; body: string
   recipient_filter: string; specific_emails: string[] | null
-  sent: number; failed: number; total: number; sent_at: string
+  sent: number; failed: number; skipped?: number | null; total: number; sent_at: string
+  category?: string | null
 }
 
 // ── Saved templates (localStorage) ────────────────────────────────────────────
@@ -58,9 +61,14 @@ function HistoryCard({ entry, onLoad }: { entry: HistoryEntry; onLoad: (subject:
             <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
             Laden
           </button>
+          {entry.category && (
+            <span className="text-xs px-2.5 py-1 rounded-full font-medium" style={{ background: '#EEF2FF', color: '#4338CA' }}>
+              {emailCategoryLabel(entry.category)}
+            </span>
+          )}
           <span className="text-xs px-2.5 py-1 rounded-full font-medium"
             style={{ background: entry.failed > 0 ? '#FEF2F2' : '#F0FDF4', color: entry.failed > 0 ? '#DC2626' : '#16A34A' }}>
-            {entry.failed > 0 ? `${entry.sent}/${entry.total} gesendet` : `${entry.sent} gesendet`}
+            {entry.failed > 0 ? `${entry.sent}/${entry.total} gesendet` : `${entry.sent} gesendet`}{entry.skipped ? ` · ${entry.skipped} abbestellt` : ''}
           </span>
         </div>
       </div>
@@ -210,6 +218,7 @@ export default function NewsletterPage() {
   const [subject, setSubject] = useState('')
   const [body, setBody] = useState(DEFAULT_SIGNATURE)
   const [mode, setMode] = useState<'all' | 'filtered' | 'specific'>('all')
+  const [category, setCategory] = useState<EmailCategory>('updates')
   const [filters, setFilters] = useState<ActiveFilters>(EMPTY_FILTERS)
   const [selectedUsers, setSelectedUsers] = useState<UserRow[]>([])
   const [userSearch, setUserSearch] = useState('')
@@ -217,7 +226,7 @@ export default function NewsletterPage() {
   const [data, setData] = useState<ApiData | null>(null)
   const [preview, setPreview] = useState(false)
   const [sending, setSending] = useState(false)
-  const [result, setResult] = useState<{ sent: number; failed: number; total: number } | null>(null)
+  const [result, setResult] = useState<{ sent: number; failed: number; skipped: number; total: number } | null>(null)
   const [error, setError] = useState('')
   const [confirm, setConfirm] = useState(false)
   const [savedTemplates, setSavedTemplates] = useState<SavedTemplate[]>([])
@@ -270,6 +279,9 @@ export default function NewsletterPage() {
   )
 
   const hasActiveFilters = Object.values(filters).some((s: Set<string>) => s.size > 0)
+  // Wer von den Empfängern hat diese Kategorie abbestellt? (System-Mails gehen an alle)
+  const optedOutCount = category === 'system' ? 0 : filteredRecipients.filter(u => (u.emailOptOut ?? []).includes(category)).length
+  const reachCount = filteredRecipients.length - optedOutCount
 
   function buildPayload() {
     if (mode === 'specific') return { mode: 'specific' as const, specificEmails: selectedUsers.map(u => u.email) }
@@ -290,7 +302,7 @@ export default function NewsletterPage() {
       const res = await fetch('/api/admin/newsletter', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ subject, body, filters: buildPayload() }),
+        body: JSON.stringify({ subject, body, category, filters: buildPayload() }),
       })
       const json = await res.json()
       if (!res.ok) { setError(json.error ?? 'Fehler beim Senden.'); return }
@@ -299,7 +311,7 @@ export default function NewsletterPage() {
     } catch { setError('Netzwerkfehler.') } finally { setSending(false) }
   }
 
-  const canSend = subject.trim().length > 0 && body.trim().length > 0 && filteredRecipients.length > 0
+  const canSend = subject.trim().length > 0 && body.trim().length > 0 && reachCount > 0
 
   function interpolatePreview(text: string): string {
     // Use first recipient for preview, or mock data
@@ -353,8 +365,10 @@ export default function NewsletterPage() {
       <tr>
         <td style="padding:24px 0 0;text-align:center;">
           <p style="margin:0;font-size:12px;color:#B0A89E;line-height:1.7;font-family:${FONT};">
-            Du bekommst diese Mail, weil du ein FinestSites-Konto hast.<br/>
-            <span style="color:#B0A89E;text-decoration:underline;">Abmelden</span>
+            ${category === 'system'
+              ? 'Du bekommst diese Mail, weil du ein FinestSites-Konto hast.'
+              : `Du bekommst diese Mail, weil du ein FinestSites-Konto hast und „${emailCategoryLabel(category)}“ erhalten möchtest.<br/>
+            <span style="color:#B0A89E;text-decoration:underline;">Diese Mails abbestellen</span> &nbsp;·&nbsp; <span style="color:#B0A89E;text-decoration:underline;">E-Mail-Einstellungen</span>`}
           </p>
         </td>
       </tr>
@@ -404,7 +418,7 @@ export default function NewsletterPage() {
                 <div>
                   <p className="font-semibold text-gray-900 text-sm">Newsletter gesendet</p>
                   <p className="text-xs mt-0.5" style={{ color: '#94A3B8' }}>
-                    {result.sent} von {result.total} E-Mails erfolgreich{result.failed > 0 && ` · ${result.failed} fehlgeschlagen`}
+                    {result.sent} von {result.total} E-Mails erfolgreich{result.failed > 0 && ` · ${result.failed} fehlgeschlagen`}{result.skipped > 0 && ` · ${result.skipped} übersprungen (abbestellt)`}
                   </p>
                 </div>
               </div>
@@ -418,6 +432,32 @@ export default function NewsletterPage() {
           {!result && (
             <div className="grid gap-5" style={{ gridTemplateColumns: preview ? '1fr 1fr' : '1fr' }}>
               <div className="flex flex-col gap-4">
+
+                {/* KATEGORIE: entscheidet, wer die Mail abbestellt hat */}
+                <div style={card}>
+                  <p className="text-xs font-semibold uppercase tracking-wider mb-1" style={{ color: '#94A3B8' }}>Mail-Kategorie</p>
+                  <p className="text-xs mb-4" style={{ color: '#9CA3AF' }}>Nutzer, die diese Kategorie in ihren Einstellungen abbestellt haben, werden automatisch übersprungen.</p>
+                  <div className="grid gap-2" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))' }}>
+                    {EMAIL_CATEGORIES.map(c => {
+                      const active = category === c.key
+                      return (
+                        <button key={c.key} type="button" onClick={() => setCategory(c.key)}
+                          className="text-left p-3 rounded-[12px] transition-all"
+                          style={{ background: active ? '#111827' : '#F9FAFB', color: active ? '#fff' : '#374151', border: `1px solid ${active ? '#111827' : '#E5E7EB'}` }}>
+                          <p className="text-sm font-semibold">{c.label}</p>
+                          <p className="text-xs mt-0.5" style={{ color: active ? 'rgba(255,255,255,0.7)' : '#9CA3AF' }}>
+                            {c.locked ? 'Nicht abbestellbar, nur für Pflichtinfos' : c.description}
+                          </p>
+                        </button>
+                      )
+                    })}
+                  </div>
+                  {category === 'system' && (
+                    <p className="text-xs mt-3 px-3 py-2 rounded-[10px]" style={{ background: '#FEF9C3', color: '#92400E' }}>
+                      Achtung: „Konto und Zahlung“ erreicht auch Nutzer, die alles andere abbestellt haben. Nur für Vertrag, Zahlung, Sicherheit oder Störungen benutzen.
+                    </p>
+                  )}
+                </div>
 
                 {/* RECIPIENT SECTION */}
                 <div style={card}>
@@ -603,9 +643,12 @@ export default function NewsletterPage() {
                   {/* Count */}
                   <div className="flex items-center gap-2 pt-3" style={{ borderTop: '1px solid #F1F5F9' }}>
                     <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: filteredRecipients.length > 0 ? '#16A34A' : '#E5E7EB' }} />
-                    <p className="text-sm font-medium" style={{ color: filteredRecipients.length > 0 ? '#111827' : '#9CA3AF' }}>
-                      {data ? `${filteredRecipients.length} Empfänger` : 'Wird geladen…'}
+                    <p className="text-sm font-medium" style={{ color: reachCount > 0 ? '#111827' : '#9CA3AF' }}>
+                      {data ? `${reachCount} Empfänger` : 'Wird geladen…'}
                     </p>
+                    {data && optedOutCount > 0 && (
+                      <p className="text-xs" style={{ color: '#9CA3AF' }}>{optedOutCount} haben „{emailCategoryLabel(category)}“ abbestellt und werden übersprungen.</p>
+                    )}
                     {mode === 'filtered' && hasActiveFilters && filteredRecipients.length === 0 && (
                       <p className="text-xs" style={{ color: '#9CA3AF' }}>Kein Nutzer entspricht dieser Kombination.</p>
                     )}
@@ -778,7 +821,7 @@ export default function NewsletterPage() {
             </div>
             <h3 className="font-semibold text-gray-900 text-base mb-1">Newsletter wirklich senden?</h3>
             <p className="text-sm mb-5" style={{ color: '#6B7280' }}>
-              Du sendest an <strong className="text-gray-900">{filteredRecipients.length} Empfänger</strong>. Diese Aktion kann nicht rückgängig gemacht werden.
+              Du sendest <strong className="text-gray-900">„{emailCategoryLabel(category)}“</strong> an <strong className="text-gray-900">{reachCount} Empfänger</strong>{optedOutCount > 0 && <> ({optedOutCount} abbestellt, werden übersprungen)</>}. Diese Aktion kann nicht rückgängig gemacht werden.
             </p>
             <div className="flex gap-3">
               <button onClick={() => setConfirm(false)} className="flex-1 py-2.5 rounded-[12px] text-sm font-medium" style={{ background: '#F3F4F6', color: '#374151' }}>Abbrechen</button>

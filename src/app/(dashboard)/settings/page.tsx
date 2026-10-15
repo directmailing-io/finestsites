@@ -12,6 +12,7 @@ import ImageCropModal from '@/components/ImageCropModal'
 import InvoiceDetailsCard from '@/components/billing/InvoiceDetailsCard'
 import TrackingSettings from '@/components/tracking/TrackingSettings'
 import { NM_COMPANIES } from '@/lib/constants/nm-companies'
+import { EMAIL_CATEGORIES, type EmailCategory } from '@/lib/email/categories'
 
 // ── Social media helpers ──────────────────────────────────────────────────────
 
@@ -103,6 +104,7 @@ const TABS = [
   { id: 'zahlung',     label: 'Zahlung & Plan' },
   { id: 'rechnungen',  label: 'Rechnungen'   },
   { id: 'werbung',     label: 'Werbung'      },
+  { id: 'mails',       label: 'E-Mails'      },
   { id: 'sicherheit',  label: 'Passwort & FAQ' },
 ] as const
 type TabId = typeof TABS[number]['id']
@@ -260,6 +262,11 @@ function SettingsContent() {
   const [profileError, setProfileError] = useState('')
   const [avatarUploading, setAvatarUploading] = useState(false)
 
+  // ── E-Mail-Benachrichtigungen (abbestellte Kategorien) ──────────
+  const [emailOptOut, setEmailOptOut] = useState<EmailCategory[]>([])
+  const [emailSaving, setEmailSaving] = useState(false)
+  const [emailSuccess, setEmailSuccess] = useState('')
+
   // ── NM company preferences ─────────────────────────────────────
   const [nmCompanies, setNmCompanies] = useState<string[]>([])
   const [nmSaving, setNmSaving] = useState(false)
@@ -321,6 +328,7 @@ function SettingsContent() {
       setProfileImageUrl(data.profile_image_url ?? null)
       setNmCompanies(Array.isArray(data.nm_companies) ? data.nm_companies : [])
       setTeamPartnerNumber(data.team_partner_number ?? '')
+      setEmailOptOut(Array.isArray(data.email_opt_out) ? data.email_opt_out : [])
     }).catch(() => {})
 
     fetch('/api/billing/invoices')
@@ -414,6 +422,20 @@ function SettingsContent() {
       setTimeout(() => setProfileSuccess(''), 3000)
     }
     setProfileSaving(false)
+  }
+
+  async function handleEmailPrefsSave() {
+    setEmailSaving(true); setEmailSuccess('')
+    const res = await fetch('/api/user/profile', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email_opt_out: emailOptOut }),
+    })
+    if (res.ok) {
+      setEmailSuccess('Gespeichert.')
+      setTimeout(() => setEmailSuccess(''), 3000)
+    }
+    setEmailSaving(false)
   }
 
   async function handleNmSave() {
@@ -1326,6 +1348,61 @@ function SettingsContent() {
         <div className="flex flex-col gap-10">
           <TabSection title="Werbung & Tracking" subtitle="Für Anzeigen bei Meta, Google und TikTok. Nur nötig, wenn du Werbung schaltest.">
             <TrackingSettings />
+          </TabSection>
+        </div>
+      )}
+
+      {/* ════════════════════════════════════════════════════════════════
+          TAB: E-MAILS (welche Mail-Arten der Nutzer bekommen will)
+          ════════════════════════════════════════════════════════════════ */}
+      {activeTab === 'mails' && (
+        <div className="flex flex-col gap-10">
+          <TabSection title="E-Mails von FinestSites" subtitle="Du entscheidest, welche Mails du von uns bekommst. Von Anfang an ist alles an.">
+            <div className="flex flex-col gap-3">
+              {EMAIL_CATEGORIES.map(cat => {
+                const on = cat.locked || !emailOptOut.includes(cat.key)
+                return (
+                  <div key={cat.key} className="flex items-start justify-between gap-4 p-4 sm:p-5 rounded-2xl bg-white"
+                    style={{ border: '1.5px solid #E5E7EB' }}>
+                    <div className="min-w-0">
+                      <p className="text-[15px] font-semibold text-gray-900 flex items-center gap-2">
+                        {cat.label}
+                        {cat.locked && (
+                          <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full" style={{ background: '#F3F4F6', color: '#6B7280' }}>Immer an</span>
+                        )}
+                      </p>
+                      <p className="text-sm mt-1" style={{ color: '#6B7280' }}>{cat.description}</p>
+                    </div>
+                    <button
+                      type="button"
+                      role="switch"
+                      aria-checked={on}
+                      aria-label={cat.label}
+                      disabled={cat.locked}
+                      onClick={() => setEmailOptOut(prev => prev.includes(cat.key) ? prev.filter(k => k !== cat.key) : [...prev, cat.key])}
+                      className="relative flex-shrink-0 w-12 h-7 rounded-full transition-colors disabled:opacity-60 disabled:cursor-not-allowed mt-0.5"
+                      style={{ background: on ? '#16A34A' : '#D1D5DB' }}>
+                      <span className="absolute top-0.5 w-6 h-6 rounded-full bg-white shadow transition-all" style={{ left: on ? 22 : 2 }} />
+                    </button>
+                  </div>
+                )
+              })}
+            </div>
+            <div className="flex items-center gap-3 pt-5">
+              <button
+                type="button"
+                onClick={handleEmailPrefsSave}
+                disabled={emailSaving}
+                className="px-5 py-2.5 text-sm font-semibold rounded-2xl transition-all"
+                style={{ background: emailSaving ? '#E5E7EB' : '#111827', color: emailSaving ? '#9CA3AF' : '#fff' }}
+              >
+                {emailSaving ? 'Wird gespeichert…' : 'Speichern'}
+              </button>
+              {emailSuccess && <span className="text-sm text-green-600">{emailSuccess}</span>}
+            </div>
+            <p className="text-xs mt-4 px-1" style={{ color: '#94A3B8' }}>
+              Mails zu Konto und Zahlung kommen immer, weil sie zu deinem Vertrag gehören. Alles andere kannst du hier oder unten in jeder Mail abbestellen.
+            </p>
           </TabSection>
         </div>
       )}

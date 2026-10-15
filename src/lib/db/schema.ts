@@ -101,6 +101,9 @@ export const users = pgTable('users', {
   isAdmin: boolean('is_admin').notNull().default(false),
   // Markenfarbe (#RRGGBB) für alle Seiten des Nutzers mit farbthema=eigene; Phase A nur Admin (14.10.2026)
   brandColor: varchar('brand_color', { length: 7 }),
+  // Abbestellte Mail-Kategorien (src/lib/email/categories.ts); leer = alles erlaubt, "system" nie abwählbar
+  emailOptOut: text('email_opt_out').array().notNull().default([]),
+  emailOptOutUpdatedAt: timestamp('email_opt_out_updated_at', { withTimezone: true }),
   // Profile fields
   firstName: text('first_name'),
   lastName: text('last_name'),
@@ -558,10 +561,12 @@ export const emailLogs = pgTable('email_logs', {
   // 'account_canceled' | 'account_reactivated' | 'domain_active' |
   // 'affiliate_referral' | 'affiliate_payout' | 'newsletter' | 'waitlist' | 'other'
   type: text('type').notNull(),
+  // Mail-Kategorie (system | updates | tips | offers), siehe src/lib/email/categories.ts
+  category: text('category'),
   to: text('to').notNull(),
   subject: text('subject').notNull(),
   resendId: text('resend_id'),
-  status: text('status').notNull().default('sent'), // 'sent' | 'error'
+  status: text('status').notNull().default('sent'), // 'sent' | 'error' | 'skipped' (Kategorie abbestellt)
   errorMessage: text('error_message'),
   sentAt: timestamp('sent_at', { withTimezone: true }).notNull().defaultNow(),
 }, (t) => [

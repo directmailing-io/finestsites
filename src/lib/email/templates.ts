@@ -122,16 +122,36 @@ export function passwordResetEmail({ url }: { url: string }): string {
   `)
 }
 
+/**
+ * Newsletter-Rahmen. Bei abbestellbaren Kategorien (updates | tips | offers) kommt `prefs` mit:
+ * der Footer sagt dann, warum der Nutzer die Mail bekommt, und verlinkt Abbestellen + Einstellungen.
+ */
 export function newsletterEmail({
   subject,
   bodyHtml,
   unsubscribeUrl,
+  prefs,
 }: {
   subject: string
   bodyHtml: string
+  /** @deprecated nur noch für alte Aufrufer; neue Aufrufer geben `prefs` */
   unsubscribeUrl?: string
+  prefs?: { categoryLabel: string; unsubscribeUrl: string; settingsUrl: string }
 }): string {
-  const footer = unsubscribeUrl
+  const footer = prefs
+    ? `<tr><td style="padding:24px 0 0;text-align:center;">
+        <p style="margin:0 0 6px;font-size:12px;color:${base.footer};line-height:1.6;">
+          Du bekommst diese Mail, weil du ein FinestSites-Konto hast und „${prefs.categoryLabel}“ erhalten möchtest.
+        </p>
+        <p style="margin:0;font-size:12px;color:${base.footer};line-height:1.6;">
+          <a href="${prefs.unsubscribeUrl}" style="color:${base.footer};text-decoration:underline;">Diese Mails abbestellen</a>
+          &nbsp;·&nbsp;
+          <a href="${prefs.settingsUrl}" style="color:${base.footer};text-decoration:underline;">E-Mail-Einstellungen</a>
+          &nbsp;·&nbsp;
+          <a href="mailto:info@finestsites.io" style="color:${base.footer};text-decoration:underline;">Support</a>
+        </p>
+      </td></tr>`
+    : unsubscribeUrl
     ? `<tr><td style="padding:24px 0 0;text-align:center;">
         <p style="margin:0;font-size:12px;color:${base.footer};line-height:1.6;">
           © ${new Date().getFullYear()} FinestSites &nbsp;·&nbsp;
