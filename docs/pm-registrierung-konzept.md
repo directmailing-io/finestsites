@@ -1,5 +1,9 @@
 # Konzept: Direkt-Registrierung als Teampartner (PM-Business-Seite)
 
+> Stand 15.10.2026 abends: Phase 1 umgesetzt und nur für demo live (Sektion v2 mit Sponsor-Karte,
+> eigener Editor-Tab „Registrierung“, Link vorgegeben + optional editierbar, Modal „Sag Bescheid“ mit
+> Formular `registrierung`). Übersetzungen IT/RU/UK/PL/BG/HI folgen nach Text-Freigabe. Details: Memory `project_pm_registrierung`.
+
 Stand 15.10.2026. Anlass: mehrfaches Nutzer-Feedback, dass Interessenten auf der
 Business-Seite nur das Kontaktformular ausfüllen können. Manche Teampartner wollen,
 dass sich Interessenten direkt bei PM-International als Teampartner registrieren.
