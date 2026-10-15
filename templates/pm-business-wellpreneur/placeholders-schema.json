@@ -511,11 +511,11 @@
       "toggle_on_value": "zeigen",
       "toggle_off_value": "ausblenden",
       "placeholder_text": "Du bist automatisch als Sponsor eingetragen. Fehlt deine Teampartner-Nummer im Profil, bleibt die Sektion ausgeblendet.",
-      "admin_only": true,
       "notice": {
         "title": "Neu: Interessenten können sich direkt als Teampartner registrieren",
         "text": "Schalte es ein, und deine Seite bekommt eine Sektion „Direkt starten“ vor dem Kontakt, einen Menüpunkt „Teampartner werden“ und einen zweiten Button im Hero. Der Link führt auf die offizielle PM-Registrierung, du bist automatisch als Sponsor eingetragen (Teampartner-Nummer aus deinem Profil)."
-      }
+      },
+      "pilot_only": true
     },
     {
       "key": "pm_reg_land",
@@ -564,7 +564,7 @@
         "field": "pm_registrierung",
         "value": "zeigen"
       },
-      "admin_only": true
+      "pilot_only": true
     },
     {
       "key": "pm_reg_link",
@@ -579,7 +579,7 @@
         "field": "pm_registrierung",
         "value": "zeigen"
       },
-      "admin_only": true
+      "pilot_only": true
     },
     {
       "key": "about_intro",

@@ -25,6 +25,17 @@ export const PM_REG_COUNTRIES: ReadonlyArray<readonly [label: string, iso: strin
 
 export const PM_REG_DEFAULT_COUNTRY = 'Deutschland'
 
+/**
+ * Pilot (seit 15.10.2026, Daniels Vorgabe): Die Direkt-Registrierung gibt es NUR für diese Konten.
+ * Gilt im Editor (Felder mit `pilot_only`) UND serverseitig (ohne Pilot nie ein Link, egal was in
+ * den Seitendaten steht). Für den Rollout an alle: Liste leeren und `pilot_only` im Schema entfernen.
+ */
+export const PM_REG_PILOT_USERNAMES: ReadonlyArray<string> = ['demo', 'siegfried-hartmann', 'katharinaschwarz']
+
+export function isPmRegistrationPilot(username: string | null | undefined): boolean {
+  return PM_REG_PILOT_USERNAMES.includes((username ?? '').trim().toLowerCase())
+}
+
 /** Schlüssel, unter denen die Teampartner-Nummer in Seitendaten liegen kann (Profil-Prefill-Aliase im Editor). */
 export const TEAM_PARTNER_KEYS = ['team_partner_number', 'teampartner_nummer', 'teampartnernummer'] as const
 
@@ -84,7 +95,9 @@ export function normalizeCustomPmRegLink(raw: string | null | undefined, partner
  * gültige Nummer vorliegt. Beides fehlt → '' → Template zeigt nichts (fail-closed).
  * Ein eigener Link (`pm_reg_link`) ersetzt den generierten, braucht aber ebenfalls die Nummer.
  */
-export function pmRegistrationUrlFor(siteValues: Record<string, string | null | undefined>, profilePartnerNumber: string | null | undefined): string {
+export function pmRegistrationUrlFor(siteValues: Record<string, string | null | undefined>, profilePartnerNumber: string | null | undefined, username?: string | null): string {
+  // Pilot-Sperre: außerhalb der Allowlist nie ein Link (username undefined = Aufruf ohne Kontext, z. B. Editor-Karte)
+  if (username !== undefined && !isPmRegistrationPilot(username)) return ''
   if ((siteValues['pm_registrierung'] ?? '').trim() !== 'zeigen') return ''
   const tp = resolvePartnerNumber(siteValues, profilePartnerNumber)
   if (!tp) return ''

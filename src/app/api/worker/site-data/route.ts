@@ -90,7 +90,7 @@ export async function GET(req: NextRequest) {
       { fieldKey: 'markenfarbe', fieldValue: userInfo?.brandColor ?? '' },
       // Direkt-Registrierung bei PM-International: Link nur serverseitig aus der
       // Teampartner-Nummer (Seite vor Profil) gebaut; '' wenn Schalter aus oder Nummer fehlt
-      { fieldKey: 'pm_registrierung_url', fieldValue: pmRegistrationUrlFor(rawMap, userInfo?.teamPartnerNumber) },
+      { fieldKey: 'pm_registrierung_url', fieldValue: pmRegistrationUrlFor(rawMap, userInfo?.teamPartnerNumber, userInfo?.username ?? '') },
     ]
     // Nummer fürs Template (Sponsor-Nr. im Kleintext): nur ergänzen, wenn die Seite selbst keine
     // gültige unter diesem Schlüssel hat (Alias-Schlüssel wie teampartner_nummer liest das Template nicht)

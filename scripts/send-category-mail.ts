@@ -8,6 +8,7 @@
  *     --category updates --subject "Betreff mit {{vorname}}" --body-file /tmp/mail.md            # Trockenlauf
  *   … --send                                                                                      # wirklich senden
  *   … --to info@daniel-kurzeja.de --send                                                          # nur an eine Adresse (Test)
+ *     … --only a@x.de,b@y.de --send    # nur an diese Konten (braucht Daniels Freigabe-Datei)
  *   … --segment with-sub | --segment without-sub                                                  # nach Abo-Status
  *
  * Kategorien: system (nicht abbestellbar, nur für Pflichtinfos), updates, tips, offers.
@@ -40,6 +41,13 @@ async function main() {
   let recipients: BulkRecipient[] = await loadAllRecipients()
   const to = opt('--to')
   if (to) recipients = recipients.filter(u => u.email.toLowerCase() === to.toLowerCase())
+  const only = opt('--only')
+  if (only) {
+    const set = new Set(only.split(',').map(e => e.trim().toLowerCase()).filter(Boolean))
+    recipients = recipients.filter(u => set.has(u.email.toLowerCase()))
+    const missing = [...set].filter(e => !recipients.some(u => u.email.toLowerCase() === e))
+    if (missing.length) { console.error('Unbekannte Adressen: ' + missing.join(', ')); process.exit(1) }
+  }
   const segment = opt('--segment')
   if (segment) {
     const status = await db.select({ id: users.id, s: users.subscriptionStatus }).from(users)

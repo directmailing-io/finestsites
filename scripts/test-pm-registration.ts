@@ -4,7 +4,7 @@
  */
 import assert from 'node:assert/strict'
 import {
-  buildPmRegistrationUrl, normalizePartnerNumber, resolvePartnerNumber, pmRegCountryIso, pmRegistrationUrlFor, normalizeCustomPmRegLink,
+  buildPmRegistrationUrl, normalizePartnerNumber, resolvePartnerNumber, pmRegCountryIso, pmRegistrationUrlFor, normalizeCustomPmRegLink, isPmRegistrationPilot,
 } from '../src/lib/utils/pm-registration'
 
 // Nummer: nur Ziffern
@@ -56,5 +56,14 @@ assert.equal(pmRegistrationUrlFor({ pm_registrierung: 'zeigen', pm_reg_link: 'ht
 assert.equal(pmRegistrationUrlFor({ pm_registrierung: 'zeigen', pm_reg_link: 'https://example.com/x' }, ''), '')
 assert.equal(pmRegistrationUrlFor({ pm_registrierung: 'zeigen', pm_reg_link: 'kaputt' }, '40237198'),
   'https://registration.pm-international.com/?TP=40237198&lang=de&country=DE')
+
+// Pilot: nur Allowlist-Konten bekommen einen Link, egal was in den Seitendaten steht
+assert.equal(isPmRegistrationPilot('demo'), true)
+assert.equal(isPmRegistrationPilot('Siegfried-Hartmann'), true)
+assert.equal(isPmRegistrationPilot('katharinaschwarz'), true)
+assert.equal(isPmRegistrationPilot('rebecca-schneider'), false)
+assert.equal(isPmRegistrationPilot(''), false)
+assert.equal(pmRegistrationUrlFor({ pm_registrierung: 'zeigen' }, '40237198', 'rebecca-schneider'), '')
+assert.equal(pmRegistrationUrlFor({ pm_registrierung: 'zeigen' }, '40237198', 'demo'), 'https://registration.pm-international.com/?TP=40237198&lang=de&country=DE')
 
 console.log('pm-registration: all checks passed')

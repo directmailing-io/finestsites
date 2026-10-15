@@ -77,10 +77,10 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ site
   }
 
   // Markenfarbe kommt immer aus dem Konto (global), nie aus Seitendaten oder der Live-Eingabe
-  const [owner] = await db.select({ brandColor: users.brandColor, teamPartnerNumber: users.teamPartnerNumber }).from(users).where(eq(users.id, user.id)).limit(1)
+  const [owner] = await db.select({ brandColor: users.brandColor, teamPartnerNumber: users.teamPartnerNumber, username: users.username }).from(users).where(eq(users.id, user.id)).limit(1)
   dataMap.markenfarbe = owner?.brandColor ?? ''
   // Direkt-Registrierung bei PM-International (Spiegel von /api/worker/site-data)
-  dataMap.pm_registrierung_url = pmRegistrationUrlFor(dataMap, owner?.teamPartnerNumber)
+  dataMap.pm_registrierung_url = pmRegistrationUrlFor(dataMap, owner?.teamPartnerNumber, owner?.username ?? '')
   if (!normalizePartnerNumber(dataMap.team_partner_number)) dataMap.team_partner_number = resolvePartnerNumber(dataMap, owner?.teamPartnerNumber)
 
   let html: string
