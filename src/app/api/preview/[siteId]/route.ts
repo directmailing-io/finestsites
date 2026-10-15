@@ -6,7 +6,7 @@ import { eq, and } from 'drizzle-orm'
 import { getFromR2 } from '@/lib/r2/client'
 import { renderTemplate, rawKeysFromSchema } from '@/lib/utils/template-engine'
 import { annotateLiveBindings } from '@/lib/preview/annotate'
-import { pmRegistrationUrlFor, resolvePartnerNumber, TEAM_PARTNER_KEYS } from '@/lib/utils/pm-registration'
+import { pmRegistrationUrlFor, resolvePartnerNumber, normalizePartnerNumber } from '@/lib/utils/pm-registration'
 
 // GET /api/preview/[siteId]?data=base64json  → renders template HTML for iframe
 // The ?data param overrides stored data for live-preview while user is typing
@@ -81,7 +81,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ site
   dataMap.markenfarbe = owner?.brandColor ?? ''
   // Direkt-Registrierung bei PM-International (Spiegel von /api/worker/site-data)
   dataMap.pm_registrierung_url = pmRegistrationUrlFor(dataMap, owner?.teamPartnerNumber)
-  if (!TEAM_PARTNER_KEYS.some(k => dataMap[k])) dataMap.team_partner_number = resolvePartnerNumber(dataMap, owner?.teamPartnerNumber)
+  if (!normalizePartnerNumber(dataMap.team_partner_number)) dataMap.team_partner_number = resolvePartnerNumber(dataMap, owner?.teamPartnerNumber)
 
   let html: string
   try {

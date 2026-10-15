@@ -27,7 +27,7 @@ import { db } from '@/lib/db'
 import { siteData, userSites, users, templates } from '@/lib/db/schema'
 import { rawKeysFromSchema } from '@/lib/utils/template-engine'
 import { dropStaleTranslations } from '@/lib/utils/translate'
-import { pmRegistrationUrlFor, resolvePartnerNumber, TEAM_PARTNER_KEYS } from '@/lib/utils/pm-registration'
+import { pmRegistrationUrlFor, resolvePartnerNumber, normalizePartnerNumber } from '@/lib/utils/pm-registration'
 import { eq } from 'drizzle-orm'
 
 const WORKER_SECRET = process.env.WORKER_SECRET
@@ -92,8 +92,9 @@ export async function GET(req: NextRequest) {
       // Teampartner-Nummer (Seite vor Profil) gebaut; '' wenn Schalter aus oder Nummer fehlt
       { fieldKey: 'pm_registrierung_url', fieldValue: pmRegistrationUrlFor(rawMap, userInfo?.teamPartnerNumber) },
     ]
-    // Nummer fürs Template (Sponsor-Nr. im Kleintext), ohne einen vorhandenen Seitenwert zu überschreiben
-    if (!TEAM_PARTNER_KEYS.some(k => k in rawMap)) {
+    // Nummer fürs Template (Sponsor-Nr. im Kleintext): nur ergänzen, wenn die Seite selbst keine
+    // gültige unter diesem Schlüssel hat (Alias-Schlüssel wie teampartner_nummer liest das Template nicht)
+    if (!normalizePartnerNumber(rawMap.team_partner_number)) {
       rows.push({ fieldKey: 'team_partner_number', fieldValue: resolvePartnerNumber(rawMap, userInfo?.teamPartnerNumber) })
     }
 
