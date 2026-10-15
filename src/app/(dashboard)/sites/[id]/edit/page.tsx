@@ -14,6 +14,7 @@ import { useFetchedCampaign, useCampaignCountdown } from '@/components/billing/u
 import CampaignCard from '@/components/billing/CampaignCard'
 import { downloadQrPng } from '@/lib/utils/qr-download'
 import { FITLINE_SHOP_PRODUCTS, FITLINE_JOGHURT_KEYS, FITLINE_AUTO_LINK_RE, buildFitlineShopLink, ensureSponsorParam } from '@/lib/utils/fitline-shop-links'
+import { pmRegistrationUrlFor, resolvePartnerNumber } from '@/lib/utils/pm-registration'
 import { BRAND_HEX_RE, BRAND_THEME_VALUE, SITE_COLOR_PREFIX } from '@/lib/color/brand-palette'
 
 // ─── Markenfarbe (Phase A, 14.10.2026): eine Farbe je Konto, Option „Meine Farbe“ im Farbthema ───
@@ -212,6 +213,8 @@ interface FieldSchema {
   // Kontakt-/Social-Feld einer Person: im Partner-Modus mit kontakt_modus=gemeinsam
   // gelten die Person-1-Felder für beide und werden als „Gemeinsam“ gruppiert
   contact?: boolean
+  /** Feld nur für Admin-Konten (gestufter Rollout, z. B. PM-Registrierung erst für demo) */
+  admin_only?: boolean
   /** Hinweis-Kasten über dem Feld (z. B. warum das Impressum Pflicht ist) */
   notice?: { title: string; text: string }
   // loop fields
@@ -1765,6 +1768,57 @@ const FITLINE_PRODUCT_LABELS: Record<string, string> = {
   shop_joghurtbereiter: 'Yoghurtbereiter',
 }
 
+/**
+ * PM-Business: zeigt unter dem Schalter „Direkt starten“ den fertigen Registrierungslink
+ * (Spiegel der Server-Logik in pm-registration.ts) mit der Sponsor-Nummer. Fehlt die
+ * Teampartner-Nummer, bleibt die Sektion live ausgeblendet; der Kasten sagt, wo sie hingehört.
+ */
+function PmRegistrationLinkCard({ values, profilePartnerNumber }: {
+  values: Record<string, string>
+  profilePartnerNumber: string
+}) {
+  const partner = resolvePartnerNumber(values, profilePartnerNumber)
+  const url = pmRegistrationUrlFor({ ...values, pm_registrierung: 'zeigen' }, profilePartnerNumber)
+  const [copied, setCopied] = useState(false)
+  if (!partner || !url) {
+    return (
+      <div className="rounded-[20px] p-5" style={{ background: '#FFF7ED', border: '1px solid #FED7AA' }}>
+        <p className="text-sm font-bold" style={{ color: '#9A3412' }}>Deine Teampartner-Nummer fehlt noch</p>
+        <p className="text-sm mt-1" style={{ color: '#9A3412' }}>
+          Ohne Nummer bleibt die Sektion auf deiner Seite ausgeblendet, damit niemand beim falschen Sponsor landet.
+          Trag sie in deinem Profil ein, dann ist der Link sofort fertig.
+        </p>
+        <a href="/settings" target="_blank" rel="noopener"
+          className="inline-flex items-center gap-1.5 mt-3 text-sm font-semibold px-3.5 py-2 rounded-lg"
+          style={{ background: '#9A3412', color: '#fff' }}>
+          Zum Profil
+        </a>
+      </div>
+    )
+  }
+  return (
+    <div className="rounded-[20px] p-5" style={{ background: '#fff', boxShadow: '0 2px 8px rgba(0,0,0,0.05)', border: '1px solid #F0F0F0' }}>
+      <div className="flex items-center justify-between gap-2 flex-wrap">
+        <label className="text-base font-bold text-gray-900">Dein Registrierungslink</label>
+        <span className="inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-full"
+          style={{ background: '#DCFCE7', color: '#15803D' }}>Sponsor-Nr. {partner}</span>
+      </div>
+      <p className="text-sm text-gray-400 mt-0.5 mb-3">
+        Fertig eingerichtet: Der Button führt auf die offizielle PM-Registrierung, du bist als Sponsor eingetragen (Nummer aus deinem Profil).
+      </p>
+      <div className="flex items-center gap-2 px-3.5 py-2.5 rounded-xl" style={{ background: '#FAFAFA', border: '1px solid #E5E7EB' }}>
+        <span className="text-xs font-mono truncate flex-1 min-w-0" style={{ color: '#374151' }}>{url}</span>
+        <button type="button"
+          onClick={() => { navigator.clipboard?.writeText(url).then(() => { setCopied(true); setTimeout(() => setCopied(false), 1500) }) }}
+          className="text-xs font-semibold px-2.5 py-1.5 rounded-lg flex-shrink-0"
+          style={{ background: '#F1F5F9', color: '#111827' }}>
+          {copied ? 'Kopiert' : 'Kopieren'}
+        </button>
+      </div>
+    </div>
+  )
+}
+
 function FitlineShopLinksCard({ values, onChange, hideJoghurt }: {
   values: Record<string, string>
   onChange: (key: string, val: string) => void
@@ -2952,6 +3006,8 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
   const [success, setSuccess] = useState('')
   const [publishedUrl, setPublishedUrl] = useState('')
   const [values, setValues] = useState<Record<string, string>>({})
+  // Teampartner-Nummer aus dem Profil (Sponsor für die PM-Registrierung); '' wenn nicht hinterlegt
+  const [profilePartnerNumber, setProfilePartnerNumber] = useState('')
   const [previewKey, setPreviewKey] = useState(0)
   const [previewHash, setPreviewHash] = useState<string>('')
   const lastAutosavedRef = useRef<string>('')
@@ -3007,6 +3063,7 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
       fetch('/api/user/profile').then(r => r.json()).catch(() => ({})),
     ]).then(([data, userProfile]: [SiteData, Record<string, string | null>]) => {
         setSite(data)
+        setProfilePartnerNumber((userProfile?.team_partner_number ?? '').trim())
         // Entwurf ≠ Live: gespeicherte, aber noch nicht veröffentlichte Änderungen anzeigen
         if (data.status === 'published' && data.has_unpublished_changes) setHasChanges(true)
         const fields = data.templates?.placeholder_schema?.fields ?? []
@@ -3495,6 +3552,8 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
   const sectionFields = fields
     .filter(f => !activeSection || (f.section || 'Allgemein') === activeSection || sections.length === 1)
     .filter(f => checkShowWhen(f as unknown as LoopSubField, values, fields as unknown as LoopSubField[]))
+    // admin_only-Felder nur für Admin-Konten (gestufter Rollout); für alle anderen unverändert
+    .filter(f => !f.admin_only || brandCtx.isAdmin)
     .sort((a, b) => ((a as any).order ?? 0) - ((b as any).order ?? 0))
 
   // Collapse section nav to icon-only when the editor panel is squeezed by the preview
@@ -4117,7 +4176,11 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
                   return [...sectionFields, ...hiddenComplianceFields].flatMap(field => {
                     const heading = groupHeading(field)
                     const card = renderFieldCard(field)
-                    return heading ? [heading, card] : [card]
+                    // PM-Registrierung eingeschaltet: fertigen Link + Sponsor-Nummer zeigen (oder Warnung, wenn sie fehlt)
+                    const extra = field.key === 'pm_registrierung' && sectionKeySet.has(field.key) && values[field.key] === 'zeigen'
+                      ? <PmRegistrationLinkCard key="pm-reg-link" values={values} profilePartnerNumber={profilePartnerNumber} />
+                      : null
+                    return [heading, card, extra].filter(Boolean)
                   })
                   function renderFieldCard(field: FieldSchema) {
                     if (fitlineGrouped && field.key in FITLINE_SHOP_PRODUCTS) {

@@ -27,6 +27,7 @@ import { db } from '@/lib/db'
 import { siteData, userSites, users, templates } from '@/lib/db/schema'
 import { rawKeysFromSchema } from '@/lib/utils/template-engine'
 import { dropStaleTranslations } from '@/lib/utils/translate'
+import { pmRegistrationUrlFor, resolvePartnerNumber, TEAM_PARTNER_KEYS } from '@/lib/utils/pm-registration'
 import { eq } from 'drizzle-orm'
 
 const WORKER_SECRET = process.env.WORKER_SECRET
@@ -61,7 +62,7 @@ export async function GET(req: NextRequest) {
 
     // Fetch user profile for legal pages (impressum/datenschutz)
     const [userInfo] = await db
-      .select({ firstName: users.firstName, lastName: users.lastName, companyName: users.companyName, username: users.username, brandColor: users.brandColor, schema: templates.placeholderSchema })
+      .select({ firstName: users.firstName, lastName: users.lastName, companyName: users.companyName, username: users.username, brandColor: users.brandColor, teamPartnerNumber: users.teamPartnerNumber, schema: templates.placeholderSchema })
       .from(userSites)
       .innerJoin(users, eq(userSites.userId, users.id))
       .innerJoin(templates, eq(userSites.templateId, templates.id))
@@ -87,7 +88,14 @@ export async function GET(req: NextRequest) {
       { fieldKey: 'firma', fieldValue: userInfo?.companyName?.trim() ?? '' },
       // Markenfarbe aus dem Konto (global, überschreibt bewusst jeden gleichnamigen Seitenwert)
       { fieldKey: 'markenfarbe', fieldValue: userInfo?.brandColor ?? '' },
+      // Direkt-Registrierung bei PM-International: Link nur serverseitig aus der
+      // Teampartner-Nummer (Seite vor Profil) gebaut; '' wenn Schalter aus oder Nummer fehlt
+      { fieldKey: 'pm_registrierung_url', fieldValue: pmRegistrationUrlFor(rawMap, userInfo?.teamPartnerNumber) },
     ]
+    // Nummer fürs Template (Sponsor-Nr. im Kleintext), ohne einen vorhandenen Seitenwert zu überschreiben
+    if (!TEAM_PARTNER_KEYS.some(k => k in rawMap)) {
+      rows.push({ fieldKey: 'team_partner_number', fieldValue: resolvePartnerNumber(rawMap, userInfo?.teamPartnerNumber) })
+    }
 
     return NextResponse.json(rows)
   } catch {

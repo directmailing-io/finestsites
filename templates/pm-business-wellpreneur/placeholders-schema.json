@@ -478,6 +478,91 @@
       "preview_interactive": true
     },
     {
+      "key": "pm_registrierung",
+      "type": "card_select",
+      "label": "Sektion „Direkt starten“ (Registrierung bei PM)",
+      "order": 2,
+      "options": [
+        "zeigen",
+        "ausblenden"
+      ],
+      "section": "Bereiche",
+      "required": false,
+      "card_options": [
+        {
+          "label": "Anzeigen",
+          "value": "zeigen",
+          "card_type": "image",
+          "image_url": "/templates/pm-business-wellpreneur/section-previews/section-teampartner.webp?v=1",
+          "description": "Interessenten können sich direkt bei PM-International als Teampartner registrieren – du bist automatisch der Sponsor."
+        },
+        {
+          "color": "#F1F5F9",
+          "label": "Ausblenden",
+          "value": "ausblenden",
+          "card_type": "color",
+          "image_url": "",
+          "description": "Diese Sektion wird nicht angezeigt."
+        }
+      ],
+      "display_mode": "section_toggle",
+      "default_value": "ausblenden",
+      "preview_value": "ausblenden",
+      "toggle_on_value": "zeigen",
+      "toggle_off_value": "ausblenden",
+      "placeholder_text": "Zeigt vor dem Kontaktbereich einen Button „Bei PM-International registrieren“ plus Erklärung in drei Schritten. Der Link führt auf die offizielle PM-Registrierung mit deiner Teampartner-Nummer als Sponsor (aus deinem Profil). Zusätzlich erscheint „Teampartner werden“ im Menü und ein zweiter Button im Hero.",
+      "admin_only": true
+    },
+    {
+      "key": "pm_reg_land",
+      "type": "dropdown",
+      "label": "Land auf der PM-Seite vorbelegen",
+      "order": 3,
+      "options": [
+        "Deutschland",
+        "Österreich",
+        "Schweiz",
+        "Italien",
+        "Polen",
+        "Frankreich",
+        "Spanien",
+        "Portugal",
+        "Niederlande",
+        "Belgien",
+        "Luxemburg",
+        "Tschechien",
+        "Slowakei",
+        "Ungarn",
+        "Rumänien",
+        "Bulgarien",
+        "Griechenland",
+        "Kroatien",
+        "Slowenien",
+        "Großbritannien",
+        "Irland",
+        "Dänemark",
+        "Schweden",
+        "Norwegen",
+        "Finnland",
+        "Ukraine",
+        "Türkei",
+        "USA",
+        "Kanada",
+        "Australien",
+        "Indien"
+      ],
+      "section": "Bereiche",
+      "required": false,
+      "default_value": "Deutschland",
+      "preview_value": "Deutschland",
+      "placeholder_text": "Welches Land soll bei der PM-Registrierung vorausgewählt sein? Interessenten können es dort jederzeit ändern.",
+      "show_when": {
+        "field": "pm_registrierung",
+        "value": "zeigen"
+      },
+      "admin_only": true
+    },
+    {
       "key": "about_intro",
       "type": "intro",
       "label": "Begrüßung",

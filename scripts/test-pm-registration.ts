@@ -1,0 +1,45 @@
+/**
+ * Unit-Checks für den PM-Registrierungslink (Sponsor-Nummer, Land, Fail-closed).
+ * Aufruf: npx tsx scripts/test-pm-registration.ts
+ */
+import assert from 'node:assert/strict'
+import {
+  buildPmRegistrationUrl, normalizePartnerNumber, resolvePartnerNumber, pmRegCountryIso, pmRegistrationUrlFor,
+} from '../src/lib/utils/pm-registration'
+
+// Nummer: nur Ziffern
+assert.equal(normalizePartnerNumber(' 40237198 '), '40237198')
+assert.equal(normalizePartnerNumber('4023 7198'), '')
+assert.equal(normalizePartnerNumber('TP40237198'), '')
+assert.equal(normalizePartnerNumber(''), '')
+assert.equal(normalizePartnerNumber(null), '')
+
+// Seitenwert (auch Alias) schlägt Profil; sonst Profil
+assert.equal(resolvePartnerNumber({ teampartner_nummer: '111' }, '222'), '111')
+assert.equal(resolvePartnerNumber({ team_partner_number: 'abc' }, '222'), '222')
+assert.equal(resolvePartnerNumber({}, '222'), '222')
+assert.equal(resolvePartnerNumber({}, null), '')
+
+// Land: Anzeigename → ISO, Unbekanntes → DE
+assert.equal(pmRegCountryIso('Schweiz'), 'CH')
+assert.equal(pmRegCountryIso('USA'), 'US')
+assert.equal(pmRegCountryIso('Mars'), 'DE')
+assert.equal(pmRegCountryIso(''), 'DE')
+
+// Link exakt im PM-Schema
+assert.equal(buildPmRegistrationUrl('40237198', 'Deutschland'), 'https://registration.pm-international.com/?TP=40237198&lang=de&country=DE')
+assert.equal(buildPmRegistrationUrl('40237198', 'Italien', 'en'), 'https://registration.pm-international.com/?TP=40237198&lang=en&country=IT')
+assert.equal(buildPmRegistrationUrl('', 'Deutschland'), '')
+assert.equal(buildPmRegistrationUrl('4023<script>', 'Deutschland'), '')
+
+// Fail-closed: Schalter aus ODER keine Nummer → kein Link
+assert.equal(pmRegistrationUrlFor({ pm_registrierung: 'ausblenden' }, '40237198'), '')
+assert.equal(pmRegistrationUrlFor({ pm_registrierung: 'zeigen' }, ''), '')
+assert.equal(pmRegistrationUrlFor({}, '40237198'), '')
+assert.equal(pmRegistrationUrlFor({ pm_registrierung: 'zeigen', pm_reg_land: 'Österreich' }, '40237198'),
+  'https://registration.pm-international.com/?TP=40237198&lang=de&country=AT')
+// Demo-Fall: Nummer liegt als Alias in den Seitendaten
+assert.equal(pmRegistrationUrlFor({ pm_registrierung: 'zeigen', teampartner_nummer: '40237198' }, null),
+  'https://registration.pm-international.com/?TP=40237198&lang=de&country=DE')
+
+console.log('pm-registration: all checks passed')
