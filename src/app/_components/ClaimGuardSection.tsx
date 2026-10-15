@@ -7,9 +7,9 @@
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://app.finestsites.io'
 
 const POINTS = [
-  { k: 'Prüft jeden Satz', v: 'auf Heil- und Wirkaussagen, etwa „hilft gegen“ oder „heilt“.' },
-  { k: 'Schreibt heikle Stellen um,', v: 'so dass sie erlaubt sind. Ein Klick, übernommen.' },
-  { k: 'Gibt erst frei, wenn alles sauber ist.', v: 'So bleibst du auf der sicheren Seite.' },
+  { k: 'Prüft jeden Satz, den du schreibst.', v: 'Wörter wie „heilt“ oder „hilft bei“ fallen sofort auf.' },
+  { k: 'Macht dir einen erlaubten Vorschlag.', v: 'Du klickst einmal, und der Satz ist ersetzt.' },
+  { k: 'Erst wenn alles passt, geht die Seite online.', v: 'So bist du auf der sicheren Seite.' },
 ]
 
 /* feines Korn für den Hintergrund (SVG-Rauschen, sehr schwach) */
@@ -113,7 +113,7 @@ export default function ClaimGuardSection({ children }: { children?: React.React
             </span>
           </h2>
           <p style={{ fontSize: 'clamp(20px, 2.2vw, 26px)', color: '#fff', lineHeight: 1.35, maxWidth: 520, marginBottom: 30, fontWeight: 600, letterSpacing: '-0.01em' }}>
-            Deine Texte, automatisch geprüft auf Heil- und Wirkaussagen.
+            Du schreibst deinen Text. Die KI prüft ihn auf Heil- und Wirkaussagen.
           </p>
 
           <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 14, marginBottom: 36 }}>

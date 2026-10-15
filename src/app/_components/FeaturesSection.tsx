@@ -15,7 +15,7 @@ type Feature = {
 
 const FEATURES: Feature[] = [
   { name: 'Farbwahl', glow: '#FF9ECF', grad: 'linear-gradient(90deg, #FF9ECF 0%, #FFB86B 35%, #7FE3C4 70%, #8AB4FF 100%)',
-    text: 'Wähle deine Farbe, und die ganze Seite passt sich an.' },
+    text: 'Pink, Rot oder ein ganz besonderer Ton? Du suchst deine Farbe aus, und die ganze Seite passt sich an.' },
   { name: 'Mehrsprachig', glow: '#5CCBFF', grad: 'linear-gradient(180deg, #EAF8FF 0%, #9BDCFF 55%, #38BDF8 100%)',
     text: 'Deine Seite gibt es auch auf Englisch, Polnisch, Italienisch und mehr. Übersetzt wird automatisch.' },
   { name: 'QR-Code', glow: '#E5E7EB', grad: 'linear-gradient(180deg, #FFFFFF 0%, #E5E7EB 55%, #9CA3AF 100%)',
@@ -23,9 +23,9 @@ const FEATURES: Feature[] = [
   { name: 'Linkseite', glow: '#5EEAD4', grad: 'linear-gradient(180deg, #ECFDF5 0%, #A7F3D0 55%, #34D399 100%)',
     text: 'Alle deine Links auf einer Seite, perfekt für dein Instagram-Profil. Immer kostenlos.' },
   { name: 'Eigene Domain', glow: '#FCD34D', grad: 'linear-gradient(180deg, #FFFBEB 0%, #FDE68A 55%, #F59E0B 100%)',
-    text: 'Deine Seite unter deiner eigenen Internetadresse, z. B. max-mustermann.de.' },
+    text: 'Du hast schon eine eigene Internetadresse, z. B. max-mustermann.de? Dann verbindest du sie einfach mit deiner Seite.' },
   { name: 'Duo-Seite', glow: '#C4B5FD', grad: 'linear-gradient(180deg, #F5F3FF 0%, #DDD6FE 55%, #A78BFA 100%)',
-    text: 'Du arbeitest zu zweit? Dann steht ihr beide auf der Seite, jeder mit Foto und Kontakt.' },
+    text: 'Du trittst mit deinem Partner gemeinsam auf? Dann steht ihr beide auf der Seite, jeder mit Foto und Kontakt.' },
   { name: 'Werbe-Tracking', glow: '#FB7185', grad: 'linear-gradient(180deg, #FFF1F2 0%, #FDA4AF 55%, #FB7185 100%)',
     text: 'Schaltest du Werbung bei Meta, Google oder TikTok? Ein Klick, und du siehst, was sie bringt.' },
   { name: 'Rechtstexte', glow: '#A5B4FC', grad: 'linear-gradient(180deg, #EEF2FF 0%, #C7D2FE 55%, #818CF8 100%)',
