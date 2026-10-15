@@ -1110,13 +1110,13 @@ export function productUpdate202610Email({ firstName, segment = 'pro', prefs }: 
      <p style="margin:0;font-size:15px;color:${base.body};line-height:1.65;">
        Hey ${name}, wir haben wieder an deiner Seite gebaut. Drei Sachen, die du ab sofort nutzen kannst. Kostet nichts extra.
      </p>`,
-    card(1, 'Deine Business-Seite kann jetzt 8 Sprachen', 'sprachen.png', 'Business-Seite in 8 Sprachen',
+    card(1, 'Deine Business-Seite kann jetzt 8 Sprachen', 'sprachen-v2.png', 'Business-Seite in 8 Sprachen',
       'Deutsch, Englisch, Italienisch, Russisch, Ukrainisch, Polnisch, Bulgarisch und Hindi. Kommt jemand aus Polen auf deine Seite, sieht er alles auf Polnisch. Auch deinen Über-mich-Text. Du musst dafür nichts machen.',
       'Läuft automatisch'),
-    card(2, 'Deine Farbe, ganz genau', 'farben.png', 'Eigene Farbe mit Farbwähler und Farbcode',
+    card(2, 'Deine Farbe, ganz genau', 'farben-v2.png', 'Eigene Farbe mit Farbwähler und Farbcode',
       'Nicht mehr nur ein paar Vorgaben. Du suchst dir deine Farbe selbst aus, Punkt für Punkt im Farbwähler, oder du tippst deinen Farbcode ein (z.\u202fB. #D9468B). Danach ist die ganze Seite in deiner Farbe: Buttons, Überschriften, alles.',
       'Im Editor unter „Farbe“'),
-    card(3, 'Neue Hintergrundbilder für deine Optimalset-Seite', 'hintergruende.png', 'Neue Hintergrundbilder',
+    card(3, 'Neue Hintergrundbilder für deine Optimalset-Seite', 'hintergruende-v2.png', 'Neue Hintergrundbilder',
       'Vier neue Bilder, vom Frühstück mit Orangensaft bis zum Sommer im Garten. Antippen, übernehmen, fertig.',
       'Im Editor unter „Hintergrundbild“'),
     ...(extra ? [extra] : []),
