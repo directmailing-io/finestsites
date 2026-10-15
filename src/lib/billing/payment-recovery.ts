@@ -203,7 +203,7 @@ export async function paidInvoiceSettlesArrears(trackedInvoiceId: string | null,
 
 export type PaymentMethodSummary = {
   id: string
-  type: 'card' | 'sepa_debit'
+  type: 'card' | 'link' | 'sepa_debit'
   label: string
   brand: string | null
   last4: string | null
@@ -229,6 +229,18 @@ function summarize(pm: Stripe.PaymentMethod, defaultId: string | null, now: Date
       brand, last4: pm.card.last4,
       expMonth: pm.card.exp_month, expYear: pm.card.exp_year,
       expired: isCardExpired(pm.card, now),
+      isDefault: pm.id === defaultId,
+      created: pm.created,
+    }
+  }
+  // Stripe Link: a card (or account) stored in the customer's Link wallet,
+  // charged instantly like a card. Customers add it via checkout/portal.
+  if (pm.type === 'link') {
+    return {
+      id: pm.id, type: 'link',
+      label: pm.link?.email ? `Link · ${pm.link.email}` : 'Link',
+      brand: 'Link', last4: null,
+      expMonth: null, expYear: null, expired: false,
       isDefault: pm.id === defaultId,
       created: pm.created,
     }
@@ -267,12 +279,13 @@ export async function resolveDefaultPaymentMethodId(customerId: string, subscrip
 
 export async function listPaymentMethods(customerId: string, subscriptionId: string | null, now: Date = new Date()): Promise<PaymentMethodSummary[]> {
   const stripe = getStripe()
-  const [cards, sepa, defaultId] = await Promise.all([
+  const [cards, links, sepa, defaultId] = await Promise.all([
     stripe.paymentMethods.list({ customer: customerId, type: 'card', limit: 20 }),
+    stripe.paymentMethods.list({ customer: customerId, type: 'link', limit: 20 }),
     stripe.paymentMethods.list({ customer: customerId, type: 'sepa_debit', limit: 20 }),
     resolveDefaultPaymentMethodId(customerId, subscriptionId),
   ])
-  return [...cards.data, ...sepa.data]
+  return [...cards.data, ...links.data, ...sepa.data]
     .map(pm => summarize(pm, defaultId, now))
     .filter((pm): pm is PaymentMethodSummary => pm !== null)
     .sort((a, b) => Number(b.isDefault) - Number(a.isDefault) || b.created - a.created)
@@ -296,8 +309,8 @@ export async function setDefaultPaymentMethod(customerId: string, subscriptionId
 }
 
 /**
- * Pick the fallback method for a failed payment: another card first
- * (instant), SEPA only when the customer opted in. Never the method that
+ * Pick the fallback method for a failed payment: another card or Link
+ * wallet first (instant), SEPA only when the customer opted in. Never the method that
  * just failed, never an expired card. Pure — unit-tested.
  */
 export function pickFallbackPaymentMethod(
@@ -306,7 +319,7 @@ export function pickFallbackPaymentMethod(
   allowSepa: boolean,
 ): PaymentMethodSummary | null {
   const usable = methods.filter(m => m.id !== failedPmId && !m.expired)
-  const card = usable.filter(m => m.type === 'card').sort((a, b) => Number(b.isDefault) - Number(a.isDefault) || b.created - a.created)[0]
+  const card = usable.filter(m => m.type === 'card' || m.type === 'link').sort((a, b) => Number(b.isDefault) - Number(a.isDefault) || b.created - a.created)[0]
   if (card) return card
   if (!allowSepa) return null
   return usable.filter(m => m.type === 'sepa_debit').sort((a, b) => b.created - a.created)[0] ?? null

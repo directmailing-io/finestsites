@@ -13,7 +13,7 @@ import { useEffect, useState } from 'react'
 
 type PaymentMethod = {
   id: string
-  type: 'card' | 'sepa_debit'
+  type: 'card' | 'link' | 'sepa_debit'
   label: string
   expMonth: number | null
   expYear: number | null
@@ -62,7 +62,7 @@ export function PaymentMethodsCard() {
   if (loading) return <div className="h-24 rounded-2xl bg-gray-100 animate-pulse" />
   if (methods.length === 0) return null
 
-  const hasCard = methods.some(m => m.type === 'card' && !m.expired)
+  const hasCard = methods.some(m => (m.type === 'card' || m.type === 'link') && !m.expired)
   const hasSepa = methods.some(m => m.type === 'sepa_debit')
 
   return (
@@ -77,7 +77,7 @@ export function PaymentMethodsCard() {
           <div key={m.id} className="flex items-center gap-3 px-4 py-3 rounded-xl"
             style={{ background: '#fff', border: m.isDefault ? '1.5px solid #111827' : '1px solid #E5E7EB' }}>
             <div className="flex-shrink-0 w-9 h-9 rounded-lg flex items-center justify-center" style={{ background: '#F1F5F9' }}>
-              {m.type === 'card'
+              {m.type !== 'sepa_debit'
                 ? <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#111827" strokeWidth="1.75" strokeLinecap="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
                 : <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#111827" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11M20 10v11M8 14v3M12 14v3M16 14v3"/></svg>
               }
@@ -87,6 +87,7 @@ export function PaymentMethodsCard() {
               <p className="text-xs" style={{ color: m.expired ? '#DC2626' : '#94A3B8' }}>
                 {m.type === 'card'
                   ? (m.expired ? 'Abgelaufen' : `Gültig bis ${String(m.expMonth).padStart(2, '0')}/${m.expYear}`)
+                  : m.type === 'link' ? 'Über Stripe Link, sofort bestätigt'
                   : 'Bestätigung dauert 1–2 Wochen'}
               </p>
             </div>

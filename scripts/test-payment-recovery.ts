@@ -65,5 +65,9 @@ assert.equal(pickFallbackPaymentMethod([newCard, sepa], 'pm_new', false), null)
 assert.equal(pickFallbackPaymentMethod([newCard, sepa], 'pm_new', true)?.id, 'pm_sepa')
 // Card failed, other card on file → card wins over SEPA even with opt-in
 assert.equal(pickFallbackPaymentMethod([newCard, oldCard, sepa], 'pm_new', true)?.id, 'pm_old')
+// Stripe Link counts as an instant method (Bianka R., 09.10.2026: Link on file, fallback found nothing)
+const link = pm({ id: 'pm_link', type: 'link', label: 'Link', last4: null, expMonth: null, expYear: null, created: 7 })
+assert.equal(pickFallbackPaymentMethod([sepa, link], 'pm_sepa', false)?.id, 'pm_link')
+assert.equal(pickFallbackPaymentMethod([newCard, link, sepa], 'pm_new', true)?.id, 'pm_link')
 
 console.log('payment-recovery: all checks passed')
