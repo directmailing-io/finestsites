@@ -30,6 +30,11 @@ function logoHeader(): string {
 export interface PrefsFooter { categoryLabel: string; unsubscribeUrl: string; settingsUrl: string }
 
 function layout(content: string, prefs?: PrefsFooter): string {
+  return layoutCards([content], prefs)
+}
+
+/** Wie layout(), aber jede Karte einzeln (klar getrennte Abschnitte, z. B. Produkt-Updates) */
+function layoutCards(cards: string[], prefs?: PrefsFooter): string {
   const footer = prefs
     ? `<p style="margin:0 0 6px;font-size:12px;color:${base.footer};line-height:1.6;">
               Du bekommst diese Mail, weil du ein FinestSites-Konto hast und „${prefs.categoryLabel}“ erhalten möchtest.
@@ -65,12 +70,12 @@ function layout(content: string, prefs?: PrefsFooter): string {
           </td>
         </tr>
 
-        <!-- Card -->
-        <tr>
-          <td style="background:${base.card};border-radius:20px;padding:40px 40px 36px;border:1px solid ${base.border};">
+        <!-- Cards -->
+        ${cards.map((content, i) => `<tr>
+          <td style="background:${base.card};border-radius:20px;padding:36px 36px 32px;border:1px solid ${base.border};${i > 0 ? 'border-top:0;' : ''}">
             ${content}
           </td>
-        </tr>
+        </tr>${i < cards.length - 1 ? '<tr><td style="height:14px;font-size:0;line-height:0;">&nbsp;</td></tr>' : ''}`).join('')}
 
         <!-- Footer -->
         <tr>
@@ -1048,49 +1053,56 @@ const MAIL_ASSETS = 'https://app.finestsites.io/mail/update-2026-10'
 export const PRODUCT_UPDATE_2026_10_SUBJECT = 'Neu: 8 Sprachen für deine Business-Seite, eigene Farben und neue Hintergrundbilder'
 
 /**
- * Drei Neuigkeiten mit je einem Bild. Bilder liegen in public/mail/update-2026-10 (PNG @2x, 560 px breit).
+ * Jede Neuigkeit ist eine eigene Karte: Nummer + Titel, Bild, zwei kurze Sätze, wo man es findet.
+ * Bilder liegen in public/mail/update-2026-10 (PNG @2x, 560 px breit, alle gleich aufgebaut).
  * Kategorie "updates", der Footer kommt über `prefs` aus sendCategoryMail.
  */
 export function productUpdate202610Email({ firstName, prefs }: { firstName?: string; prefs?: PrefsFooter }): string {
   const name = firstName?.trim() || 'du'
-  const feature = (img: string, alt: string, title: string, text: string, hint: string) => `
-    <table cellpadding="0" cellspacing="0" role="presentation" width="100%" style="margin:28px 0 0;">
-      <tr><td style="border-radius:16px;overflow:hidden;background:#F4F4F5;">
-        <img src="${MAIL_ASSETS}/${img}" alt="${alt}" width="480" style="display:block;width:100%;height:auto;border:0;border-radius:16px;" />
-      </td></tr>
-      <tr><td style="padding:18px 0 0;">
-        <h2 style="margin:0 0 6px;font-size:18px;font-weight:700;color:${base.heading};letter-spacing:-0.01em;">${title}</h2>
-        <p style="margin:0;font-size:15px;color:${base.body};line-height:1.65;">${text}</p>
-        <p style="margin:10px 0 0;font-size:13px;color:${base.muted};line-height:1.6;">${hint}</p>
-      </td></tr>
-    </table>`
+  const card = (n: number, title: string, img: string, alt: string, text: string, where: string) => `
+    <table cellpadding="0" cellspacing="0" role="presentation" width="100%">
+      <tr>
+        <td width="34" valign="top" style="padding:0 12px 0 0;">
+          <div style="width:30px;height:30px;border-radius:50%;background:#8060b0;color:#fff;font-size:14px;font-weight:700;text-align:center;line-height:30px;">${n}</div>
+        </td>
+        <td valign="middle">
+          <h2 style="margin:0;font-size:19px;font-weight:700;color:${base.heading};letter-spacing:-0.01em;line-height:1.3;">${title}</h2>
+        </td>
+      </tr>
+    </table>
+    <img src="${MAIL_ASSETS}/${img}" alt="${alt}" width="488" style="display:block;width:100%;height:auto;border:0;border-radius:16px;margin:18px 0 0;" />
+    <p style="margin:18px 0 0;font-size:15px;color:${base.body};line-height:1.65;">${text}</p>
+    <p style="margin:12px 0 0;font-size:13px;color:${base.muted};line-height:1.6;">
+      <span style="display:inline-block;background:#F3EEF9;color:#6B4FA0;border-radius:999px;padding:4px 10px;font-weight:600;">${where}</span>
+    </p>`
 
-  return layout(`
-    <p style="margin:0 0 10px;font-size:12px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#8060b0;">Neu bei FinestSites</p>
-    <h1 style="margin:0 0 12px;font-size:26px;font-weight:700;color:${base.heading};letter-spacing:-0.02em;line-height:1.2;">
-      Deine Seite, noch mehr du.
-    </h1>
-    <p style="margin:0;font-size:15px;color:${base.body};line-height:1.65;">
-      Hey ${name}, drei Neuigkeiten, die deine Seite persönlicher machen. Alles ist schon drin, du musst nichts dazubuchen.
-    </p>
-    ${feature('sprachen.png', 'Business-Seite in 8 Sprachen',
-      'Deine Business-Seite spricht jetzt 8 Sprachen',
-      'Deutsch, Englisch, Italienisch, Russisch, Ukrainisch, Polnisch, Bulgarisch und Hindi. Die Seite erkennt die Sprache deines Besuchers automatisch und zeigt alles passend an, auch deinen „Über mich“-Text.',
-      'Du musst nichts tun. Die Übersetzung passiert beim Veröffentlichen von selbst.')}
-    ${feature('farben.png', 'Eigene Farbe wählen',
-      'Deine Farbe, deine Seite',
-      'Pink, Rot, Petrol oder dein ganz eigener Ton: Du suchst deine Farbe aus, und die ganze Seite passt sich an. Buttons, Überschriften, Akzente.',
-      'Im Editor unter „Farbe“. Antippen, ansehen, übernehmen.')}
-    ${feature('hintergruende.png', 'Neue Hintergrundbilder',
-      'Neue Hintergrundbilder für deine Optimalset-Seite',
-      'Vier neue Bilder stehen zur Auswahl, vom Frühstück mit Orangensaft bis zum Sommer im Garten. So sieht deine Seite genau nach dir aus.',
-      'Im Editor unter „Hintergrundbild“. Ein Tipp, und das Bild ist drauf.')}
-    ${button(`${APP_URL}/sites`, 'Zu meinen Seiten')}
-    <p style="margin:32px 0 0;font-size:15px;color:${base.body};line-height:1.65;">
-      Wenn du Fragen hast, schreib mir einfach. Ich lese alles persönlich.
-    </p>
-    <p style="margin:16px 0 0;font-size:15px;color:${base.body};line-height:1.65;">
-      Viele Grüße<br /><strong style="color:${base.heading};">Daniel von FinestSites</strong>
-    </p>
-  `, prefs)
+  return layoutCards([
+    `<p style="margin:0 0 10px;font-size:12px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#8060b0;">Neu bei FinestSites</p>
+     <h1 style="margin:0 0 12px;font-size:26px;font-weight:700;color:${base.heading};letter-spacing:-0.02em;line-height:1.2;">
+       Deine Seite, noch mehr du.
+     </h1>
+     <p style="margin:0;font-size:15px;color:${base.body};line-height:1.65;">
+       Hey ${name}, drei neue Sachen für deine Seite. Alles ist schon drin, du musst nichts dazubuchen.
+     </p>`,
+    card(1, 'Deine Business-Seite kann jetzt 8 Sprachen', 'sprachen.png', 'Business-Seite in 8 Sprachen',
+      'Deutsch, Englisch, Italienisch, Russisch, Ukrainisch, Polnisch, Bulgarisch und Hindi. Deine Seite merkt, welche Sprache dein Besucher spricht, und zeigt alles passend an. Auch deinen Über-mich-Text.',
+      'Läuft automatisch, du musst nichts machen'),
+    card(2, 'Deine Farbe, ganz genau', 'farben.png', 'Eigene Farbe mit Farbwähler und Farbcode',
+      'Keine Vorauswahl, sondern wirklich deine Farbe: Du stellst sie im Farbwähler exakt ein oder tippst deinen Farbcode ein, z.\u202fB. #D9468B. Buttons, Überschriften, Akzente, alles übernimmt sie.',
+      'Im Editor unter „Farbe“'),
+    card(3, 'Neue Hintergrundbilder für deine Optimalset-Seite', 'hintergruende.png', 'Neue Hintergrundbilder',
+      'Vier neue Bilder, vom Frühstück mit Orangensaft bis zum Sommer im Garten. Antippen, übernehmen, fertig.',
+      'Im Editor unter „Hintergrundbild“'),
+    `<h2 style="margin:0 0 8px;font-size:19px;font-weight:700;color:${base.heading};letter-spacing:-0.01em;">Probier es gleich aus</h2>
+     <p style="margin:0;font-size:15px;color:${base.body};line-height:1.65;">
+       Öffne deine Seite im Editor, alles Neue ist schon da.
+     </p>
+     ${button(`${APP_URL}/sites`, 'Zu meinen Seiten')}
+     <p style="margin:28px 0 0;font-size:15px;color:${base.body};line-height:1.65;">
+       Fragen? Schreib mir einfach, ich lese alles selbst.
+     </p>
+     <p style="margin:14px 0 0;font-size:15px;color:${base.body};line-height:1.65;">
+       Viele Grüße<br /><strong style="color:${base.heading};">Daniel von FinestSites</strong>
+     </p>`,
+  ], prefs)
 }
