@@ -4,7 +4,7 @@
  */
 import assert from 'node:assert/strict'
 import {
-  buildPmRegistrationUrl, normalizePartnerNumber, resolvePartnerNumber, pmRegCountryIso, pmRegistrationUrlFor,
+  buildPmRegistrationUrl, normalizePartnerNumber, resolvePartnerNumber, pmRegCountryIso, pmRegistrationUrlFor, normalizeCustomPmRegLink,
 } from '../src/lib/utils/pm-registration'
 
 // Nummer: nur Ziffern
@@ -40,6 +40,21 @@ assert.equal(pmRegistrationUrlFor({ pm_registrierung: 'zeigen', pm_reg_land: 'Ö
   'https://registration.pm-international.com/?TP=40237198&lang=de&country=AT')
 // Demo-Fall: Nummer liegt als Alias in den Seitendaten
 assert.equal(pmRegistrationUrlFor({ pm_registrierung: 'zeigen', teampartner_nummer: '40237198' }, null),
+  'https://registration.pm-international.com/?TP=40237198&lang=de&country=DE')
+
+// Eigener Link: nur https; PM-Link ohne TP bekommt die Nummer; fremder Link bleibt wie er ist
+assert.equal(normalizeCustomPmRegLink('http://registration.pm-international.com/?lang=de', '40237198'), '')
+assert.equal(normalizeCustomPmRegLink('javascript:alert(1)', '40237198'), '')
+assert.equal(normalizeCustomPmRegLink('nicht-mal-eine-url', '40237198'), '')
+assert.equal(normalizeCustomPmRegLink('https://www.pmebusiness.com/registrationv2/?country=de&lang=de', '40237198'),
+  'https://www.pmebusiness.com/registrationv2/?country=de&lang=de&TP=40237198')
+assert.equal(normalizeCustomPmRegLink('https://registration.pm-international.com/?TP=111&lang=en&country=AT', '40237198'),
+  'https://registration.pm-international.com/?TP=111&lang=en&country=AT')
+assert.equal(normalizeCustomPmRegLink('https://example.com/mein-funnel', '40237198'), 'https://example.com/mein-funnel')
+// Eigener Link gewinnt, aber nie ohne Nummer; ungültiger eigener Link → generierter Link
+assert.equal(pmRegistrationUrlFor({ pm_registrierung: 'zeigen', pm_reg_link: 'https://example.com/x' }, '40237198'), 'https://example.com/x')
+assert.equal(pmRegistrationUrlFor({ pm_registrierung: 'zeigen', pm_reg_link: 'https://example.com/x' }, ''), '')
+assert.equal(pmRegistrationUrlFor({ pm_registrierung: 'zeigen', pm_reg_link: 'kaputt' }, '40237198'),
   'https://registration.pm-international.com/?TP=40237198&lang=de&country=DE')
 
 console.log('pm-registration: all checks passed')

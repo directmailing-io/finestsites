@@ -480,21 +480,21 @@
     {
       "key": "pm_registrierung",
       "type": "card_select",
-      "label": "Sektion „Direkt starten“ (Registrierung bei PM)",
-      "order": 2,
+      "label": "Direkt-Registrierung bei PM-International",
+      "order": 0,
       "options": [
         "zeigen",
         "ausblenden"
       ],
-      "section": "Bereiche",
+      "section": "Registrierung",
       "required": false,
       "card_options": [
         {
           "label": "Anzeigen",
           "value": "zeigen",
           "card_type": "image",
-          "image_url": "/templates/pm-business-wellpreneur/section-previews/section-teampartner.webp?v=1",
-          "description": "Interessenten können sich direkt bei PM-International als Teampartner registrieren – du bist automatisch der Sponsor."
+          "image_url": "/templates/pm-business-wellpreneur/section-previews/section-teampartner.webp?v=2",
+          "description": "Sektion „Direkt starten“ mit drei Schritten, deinem Sponsor-Eintrag und dem Button zur PM-Registrierung."
         },
         {
           "color": "#F1F5F9",
@@ -510,14 +510,18 @@
       "preview_value": "ausblenden",
       "toggle_on_value": "zeigen",
       "toggle_off_value": "ausblenden",
-      "placeholder_text": "Zeigt vor dem Kontaktbereich einen Button „Bei PM-International registrieren“ plus Erklärung in drei Schritten. Der Link führt auf die offizielle PM-Registrierung mit deiner Teampartner-Nummer als Sponsor (aus deinem Profil). Zusätzlich erscheint „Teampartner werden“ im Menü und ein zweiter Button im Hero.",
-      "admin_only": true
+      "placeholder_text": "Du bist automatisch als Sponsor eingetragen. Fehlt deine Teampartner-Nummer im Profil, bleibt die Sektion ausgeblendet.",
+      "admin_only": true,
+      "notice": {
+        "title": "Neu: Interessenten können sich direkt als Teampartner registrieren",
+        "text": "Schalte es ein, und deine Seite bekommt eine Sektion „Direkt starten“ vor dem Kontakt, einen Menüpunkt „Teampartner werden“ und einen zweiten Button im Hero. Der Link führt auf die offizielle PM-Registrierung, du bist automatisch als Sponsor eingetragen (Teampartner-Nummer aus deinem Profil)."
+      }
     },
     {
       "key": "pm_reg_land",
       "type": "dropdown",
       "label": "Land auf der PM-Seite vorbelegen",
-      "order": 3,
+      "order": 1,
       "options": [
         "Deutschland",
         "Österreich",
@@ -551,11 +555,26 @@
         "Australien",
         "Indien"
       ],
-      "section": "Bereiche",
+      "section": "Registrierung",
       "required": false,
       "default_value": "Deutschland",
       "preview_value": "Deutschland",
       "placeholder_text": "Welches Land soll bei der PM-Registrierung vorausgewählt sein? Interessenten können es dort jederzeit ändern.",
+      "show_when": {
+        "field": "pm_registrierung",
+        "value": "zeigen"
+      },
+      "admin_only": true
+    },
+    {
+      "key": "pm_reg_link",
+      "type": "url",
+      "label": "Registrierungslink",
+      "order": 2,
+      "section": "Registrierung",
+      "required": false,
+      "default_value": "",
+      "placeholder_text": "Wird automatisch aus deiner Teampartner-Nummer und dem Land gebaut. Du kannst ihn bei Bedarf durch einen eigenen Link ersetzen, zum Beispiel wenn PM dir einen anderen Registrierungslink gegeben hat.",
       "show_when": {
         "field": "pm_registrierung",
         "value": "zeigen"

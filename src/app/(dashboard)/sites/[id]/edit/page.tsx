@@ -14,7 +14,7 @@ import { useFetchedCampaign, useCampaignCountdown } from '@/components/billing/u
 import CampaignCard from '@/components/billing/CampaignCard'
 import { downloadQrPng } from '@/lib/utils/qr-download'
 import { FITLINE_SHOP_PRODUCTS, FITLINE_JOGHURT_KEYS, FITLINE_AUTO_LINK_RE, buildFitlineShopLink, ensureSponsorParam } from '@/lib/utils/fitline-shop-links'
-import { pmRegistrationUrlFor, resolvePartnerNumber } from '@/lib/utils/pm-registration'
+import { pmRegistrationUrlFor, resolvePartnerNumber, buildPmRegistrationUrl, normalizeCustomPmRegLink } from '@/lib/utils/pm-registration'
 import { BRAND_HEX_RE, BRAND_THEME_VALUE, SITE_COLOR_PREFIX } from '@/lib/color/brand-palette'
 
 // ─── Markenfarbe (Phase A, 14.10.2026): eine Farbe je Konto, Option „Meine Farbe“ im Farbthema ───
@@ -1769,21 +1769,30 @@ const FITLINE_PRODUCT_LABELS: Record<string, string> = {
 }
 
 /**
- * PM-Business: zeigt unter dem Schalter „Direkt starten“ den fertigen Registrierungslink
- * (Spiegel der Server-Logik in pm-registration.ts) mit der Sponsor-Nummer. Fehlt die
- * Teampartner-Nummer, bleibt die Sektion live ausgeblendet; der Kasten sagt, wo sie hingehört.
+ * PM-Business: Karte „Registrierungslink“. Zeigt den automatisch gebauten Link (Spiegel der
+ * Server-Logik in pm-registration.ts) mit der Sponsor-Nummer. Der Nutzer kann ihn durch einen
+ * eigenen https-Link ersetzen („Anpassen“) und jederzeit zurücksetzen. Fehlt die Teampartner-
+ * Nummer, bleibt die Sektion live ausgeblendet; die Karte sagt, wo sie hingehört.
  */
-function PmRegistrationLinkCard({ values, profilePartnerNumber }: {
+function PmRegistrationLinkCard({ values, profilePartnerNumber, value, onChange }: {
   values: Record<string, string>
   profilePartnerNumber: string
+  value: string
+  onChange: (v: string) => void
 }) {
   const partner = resolvePartnerNumber(values, profilePartnerNumber)
-  const url = pmRegistrationUrlFor({ ...values, pm_registrierung: 'zeigen' }, profilePartnerNumber)
+  const generated = partner ? buildPmRegistrationUrl(partner, values['pm_reg_land']) : ''
+  const custom = value.trim()
+  const effective = partner ? pmRegistrationUrlFor({ ...values, pm_registrierung: 'zeigen', pm_reg_link: custom }, profilePartnerNumber) : ''
+  const customInvalid = !!custom && !normalizeCustomPmRegLink(custom, partner)
+  const [editing, setEditing] = useState(!!custom)
   const [copied, setCopied] = useState(false)
-  if (!partner || !url) {
+  const CARD = { background: '#fff', boxShadow: '0 2px 8px rgba(0,0,0,0.05)', border: '1px solid #F0F0F0' }
+
+  if (!partner) {
     return (
       <div className="rounded-[20px] p-5" style={{ background: '#FFF7ED', border: '1px solid #FED7AA' }}>
-        <p className="text-sm font-bold" style={{ color: '#9A3412' }}>Deine Teampartner-Nummer fehlt noch</p>
+        <p className="text-base font-bold" style={{ color: '#9A3412' }}>Deine Teampartner-Nummer fehlt noch</p>
         <p className="text-sm mt-1" style={{ color: '#9A3412' }}>
           Ohne Nummer bleibt die Sektion auf deiner Seite ausgeblendet, damit niemand beim falschen Sponsor landet.
           Trag sie in deinem Profil ein, dann ist der Link sofort fertig.
@@ -1797,24 +1806,51 @@ function PmRegistrationLinkCard({ values, profilePartnerNumber }: {
     )
   }
   return (
-    <div className="rounded-[20px] p-5" style={{ background: '#fff', boxShadow: '0 2px 8px rgba(0,0,0,0.05)', border: '1px solid #F0F0F0' }}>
+    <div className="rounded-[20px] p-5" style={CARD}>
       <div className="flex items-center justify-between gap-2 flex-wrap">
-        <label className="text-base font-bold text-gray-900">Dein Registrierungslink</label>
+        <label className="text-base font-bold text-gray-900">Registrierungslink</label>
         <span className="inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-full"
           style={{ background: '#DCFCE7', color: '#15803D' }}>Sponsor-Nr. {partner}</span>
       </div>
       <p className="text-sm text-gray-400 mt-0.5 mb-3">
-        Fertig eingerichtet: Der Button führt auf die offizielle PM-Registrierung, du bist als Sponsor eingetragen (Nummer aus deinem Profil).
+        {editing
+          ? 'Eigener Link. Er muss mit https:// beginnen. Ein PM-Link ohne Sponsor-Nummer bekommt deine Nummer automatisch angehängt.'
+          : 'Fertig eingerichtet: führt auf die offizielle PM-Registrierung, du bist als Sponsor eingetragen (Nummer aus deinem Profil, Land von oben).'}
       </p>
-      <div className="flex items-center gap-2 px-3.5 py-2.5 rounded-xl" style={{ background: '#FAFAFA', border: '1px solid #E5E7EB' }}>
-        <span className="text-xs font-mono truncate flex-1 min-w-0" style={{ color: '#374151' }}>{url}</span>
-        <button type="button"
-          onClick={() => { navigator.clipboard?.writeText(url).then(() => { setCopied(true); setTimeout(() => setCopied(false), 1500) }) }}
-          className="text-xs font-semibold px-2.5 py-1.5 rounded-lg flex-shrink-0"
-          style={{ background: '#F1F5F9', color: '#111827' }}>
-          {copied ? 'Kopiert' : 'Kopieren'}
-        </button>
-      </div>
+      {editing ? (
+        <>
+          <input type="url" value={value} onChange={e => onChange(e.target.value)}
+            placeholder={generated}
+            style={{ ...INPUT, borderColor: customInvalid ? '#F87171' : undefined }} onFocus={focusBorder} onBlur={blurBorder} />
+          {customInvalid && (
+            <p className="text-xs mt-1.5" style={{ color: '#DC2626' }}>
+              Das ist keine gültige https-Adresse. Solange sie ungültig ist, nutzt deine Seite den automatischen Link.
+            </p>
+          )}
+          <div className="flex items-center gap-3 mt-2.5">
+            <button type="button" onClick={() => { onChange(''); setEditing(false) }}
+              className="text-xs font-semibold px-3 py-1.5 rounded-lg" style={{ background: '#F1F5F9', color: '#111827' }}>
+              Zurück zum automatischen Link
+            </button>
+          </div>
+        </>
+      ) : (
+        <>
+          <div className="flex items-center gap-2 px-3.5 py-2.5 rounded-xl" style={{ background: '#FAFAFA', border: '1px solid #E5E7EB' }}>
+            <span className="text-xs font-mono truncate flex-1 min-w-0" style={{ color: '#374151' }}>{effective}</span>
+            <button type="button"
+              onClick={() => { navigator.clipboard?.writeText(effective).then(() => { setCopied(true); setTimeout(() => setCopied(false), 1500) }) }}
+              className="text-xs font-semibold px-2.5 py-1.5 rounded-lg flex-shrink-0"
+              style={{ background: '#F1F5F9', color: '#111827' }}>
+              {copied ? 'Kopiert' : 'Kopieren'}
+            </button>
+          </div>
+          <button type="button" onClick={() => setEditing(true)}
+            className="mt-2.5 text-xs font-semibold" style={{ color: '#6B7280', textDecoration: 'underline', textUnderlineOffset: 3 }}>
+            Eigenen Link verwenden
+          </button>
+        </>
+      )}
     </div>
   )
 }
@@ -4176,13 +4212,16 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
                   return [...sectionFields, ...hiddenComplianceFields].flatMap(field => {
                     const heading = groupHeading(field)
                     const card = renderFieldCard(field)
-                    // PM-Registrierung eingeschaltet: fertigen Link + Sponsor-Nummer zeigen (oder Warnung, wenn sie fehlt)
-                    const extra = field.key === 'pm_registrierung' && sectionKeySet.has(field.key) && values[field.key] === 'zeigen'
-                      ? <PmRegistrationLinkCard key="pm-reg-link" values={values} profilePartnerNumber={profilePartnerNumber} />
-                      : null
-                    return [heading, card, extra].filter(Boolean)
+                    return heading ? [heading, card] : [card]
                   })
                   function renderFieldCard(field: FieldSchema) {
+                    // PM-Business: Registrierungslink als Karte mit Sponsor-Nummer (vorgegeben, optional eigener Link)
+                    if (field.key === 'pm_reg_link' && sectionKeySet.has(field.key)) {
+                      return (
+                        <PmRegistrationLinkCard key="pm-reg-link" values={values} profilePartnerNumber={profilePartnerNumber}
+                          value={values['pm_reg_link'] ?? ''} onChange={v => handleChange('pm_reg_link', v)} />
+                      )
+                    }
                     if (fitlineGrouped && field.key in FITLINE_SHOP_PRODUCTS) {
                       if (field.key !== 'shop_optimalset') return null
                       return (

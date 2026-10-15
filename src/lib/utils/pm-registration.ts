@@ -62,12 +62,31 @@ export function buildPmRegistrationUrl(partnerNumber: string, countryLabel: stri
   return u.toString()
 }
 
+/** Hosts, auf denen ein eigener Link ohne Sponsor-Parameter die Nummer automatisch bekommt. */
+const PM_HOSTS = /(^|\.)(pm-international\.com|pmebusiness\.com)$/i
+
+/**
+ * Eigener Link des Nutzers (Feld `pm_reg_link`): nur https, sonst ''. Auf PM-Hosts wird
+ * ein fehlender TP-Parameter ergänzt, damit ein kopierter PM-Link nie ohne Sponsor bleibt.
+ */
+export function normalizeCustomPmRegLink(raw: string | null | undefined, partnerNumber: string): string {
+  const s = (raw ?? '').trim()
+  if (!s) return ''
+  let u: URL
+  try { u = new URL(s) } catch { return '' }
+  if (u.protocol !== 'https:') return ''
+  if (PM_HOSTS.test(u.hostname) && !u.searchParams.get('TP') && partnerNumber) u.searchParams.set('TP', partnerNumber)
+  return u.toString()
+}
+
 /**
  * Was das Template bekommt: nur wenn der Nutzer die Sektion eingeschaltet hat UND eine
  * gültige Nummer vorliegt. Beides fehlt → '' → Template zeigt nichts (fail-closed).
+ * Ein eigener Link (`pm_reg_link`) ersetzt den generierten, braucht aber ebenfalls die Nummer.
  */
 export function pmRegistrationUrlFor(siteValues: Record<string, string | null | undefined>, profilePartnerNumber: string | null | undefined): string {
   if ((siteValues['pm_registrierung'] ?? '').trim() !== 'zeigen') return ''
   const tp = resolvePartnerNumber(siteValues, profilePartnerNumber)
-  return buildPmRegistrationUrl(tp, siteValues['pm_reg_land'])
+  if (!tp) return ''
+  return normalizeCustomPmRegLink(siteValues['pm_reg_link'], tp) || buildPmRegistrationUrl(tp, siteValues['pm_reg_land'])
 }
