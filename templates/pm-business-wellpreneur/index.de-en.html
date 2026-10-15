@@ -2225,6 +2225,72 @@
     border: 1.5px solid rgba(255,255,255,0.3);
     margin-top: 10px;
   }
+  .tp-already { background: none; border: 0; padding: 0; margin-top: 22px; font: inherit; font-size: 14px; color: var(--ink-2); cursor: pointer; }
+  .tp-already strong { color: var(--blue); font-weight: 600; border-bottom: 1px solid rgba(37, 99, 235, 0.3); }
+
+  /* Modal „Sag Bescheid“ — am Handy als Bottom-Sheet, ab Tablet als zentrierte Karte */
+  body.pmreg-open { overflow: hidden; }
+  .pmreg-modal { position: fixed; inset: 0; z-index: 10000; display: flex; align-items: flex-end; justify-content: center; }
+  .pmreg-modal[hidden] { display: none; }
+  .pmreg-backdrop { position: absolute; inset: 0; background: rgba(10, 17, 32, 0.55); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); opacity: 0; transition: opacity 0.25s; }
+  .pmreg-modal.is-open .pmreg-backdrop { opacity: 1; }
+  .pmreg-sheet {
+    position: relative; width: 100%; max-height: 92dvh; overflow-y: auto; -webkit-overflow-scrolling: touch;
+    background: var(--white); color: var(--navy);
+    border-radius: 28px 28px 0 0; padding: 12px 20px calc(24px + env(safe-area-inset-bottom));
+    transform: translateY(100%); transition: transform 0.32s cubic-bezier(0.32, 0.72, 0, 1);
+  }
+  .pmreg-modal.is-open .pmreg-sheet { transform: translateY(0); }
+  .pmreg-handle { width: 40px; height: 5px; border-radius: 999px; background: #D1D5DB; margin: 0 auto 14px; }
+  .pmreg-close { position: absolute; top: 14px; right: 14px; width: 36px; height: 36px; border-radius: 50%; border: 0; background: var(--paper); color: var(--navy); display: flex; align-items: center; justify-content: center; cursor: pointer; }
+  .pmreg-head { text-align: center; padding: 8px 0 18px; }
+  .pmreg-head[hidden], .pmreg-form[hidden], .pmreg-done[hidden], .pmreg-status[hidden], .pmreg-error[hidden] { display: none; }
+  .pmreg-status { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 999px; background: #ECFDF5; color: #047857; font-size: 12px; font-weight: 600; margin-bottom: 16px; }
+  .pmreg-dot { width: 8px; height: 8px; border-radius: 50%; background: #10B981; animation: pmregPulse 1.6s infinite; }
+  @keyframes pmregPulse { 0% { box-shadow: 0 0 0 0 rgba(16,185,129,0.55); } 70% { box-shadow: 0 0 0 9px rgba(16,185,129,0); } 100% { box-shadow: 0 0 0 0 rgba(16,185,129,0); } }
+  .pmreg-avatar { width: 72px; height: 72px; border-radius: 50%; overflow: hidden; margin: 0 auto 14px; background: var(--blue-soft); box-shadow: 0 0 0 3px var(--white), 0 0 0 5px var(--blue); }
+  .pmreg-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .pmreg-avatars { display: flex; justify-content: center; margin-bottom: 14px; }
+  .pmreg-avatars .pmreg-avatar { margin: 0; }
+  .pmreg-avatars .pmreg-avatar + .pmreg-avatar { margin-left: -18px; }
+  .pmreg-head h3 { font-size: 24px; font-weight: 600; letter-spacing: -0.02em; margin-bottom: 8px; }
+  .pmreg-head p { font-size: 15px; color: var(--ink-2); line-height: 1.55; max-width: 380px; margin: 0 auto; }
+  .pmreg-form { display: flex; flex-direction: column; gap: 14px; }
+  .pmreg-field { display: flex; flex-direction: column; gap: 6px; }
+  .pmreg-label { font-size: 13px; font-weight: 600; color: var(--navy); }
+  .pmreg-label em { font-style: normal; font-weight: 500; color: var(--ink-3); }
+  .pmreg-field input[type="text"], .pmreg-field input[type="tel"] {
+    width: 100%; font: inherit; font-size: 16px; padding: 14px 16px; border-radius: 14px;
+    border: 1.5px solid #E5E7EB; background: var(--paper); color: var(--navy); outline: none;
+    transition: border-color 0.2s, background 0.2s; -webkit-appearance: none; appearance: none;
+  }
+  .pmreg-field input:focus { border-color: var(--blue); background: var(--white); }
+  .pmreg-hint { font-size: 12px; color: var(--ink-3); line-height: 1.4; }
+  .pmreg-pills { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .pmreg-pills label { position: relative; }
+  .pmreg-pills input { position: absolute; opacity: 0; pointer-events: none; }
+  .pmreg-pills input + span { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px; border-radius: 14px; border: 1.5px solid #E5E7EB; background: var(--paper); font-size: 14px; font-weight: 600; color: var(--navy); cursor: pointer; transition: border-color 0.2s, background 0.2s, color 0.2s; }
+  .pmreg-pills input:checked + span { border-color: var(--blue); background: var(--blue-soft); color: var(--blue); }
+  .pmreg-consent { display: flex; gap: 10px; align-items: flex-start; font-size: 12.5px; color: var(--ink-2); line-height: 1.45; cursor: pointer; }
+  .pmreg-consent input { margin-top: 2px; width: 18px; height: 18px; flex-shrink: 0; accent-color: var(--blue); }
+  .pmreg-consent a { color: var(--blue); }
+  .pmreg-error { font-size: 13px; color: #B91C1C; background: #FEF2F2; border-radius: 10px; padding: 10px 12px; margin: 0; }
+  .pmreg-submit { width: 100%; justify-content: center; background: var(--blue); color: var(--white); padding: 16px 24px; font-size: 16px; }
+  .pmreg-submit:hover { background: var(--blue-bright); }
+  .pmreg-submit:disabled { opacity: 0.6; cursor: default; transform: none; }
+  .pmreg-reopen { text-align: center; font-size: 12.5px; color: var(--ink-3); margin: 2px 0 0; }
+  .pmreg-reopen a { color: var(--blue); font-weight: 600; text-decoration: none; }
+  .pmreg-done { text-align: center; padding: 24px 0 8px; }
+  .pmreg-check { width: 72px; height: 72px; border-radius: 50%; background: #ECFDF5; color: #059669; display: flex; align-items: center; justify-content: center; margin: 0 auto 18px; animation: pmregPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); }
+  @keyframes pmregPop { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  .pmreg-done h3 { font-size: 24px; font-weight: 600; margin-bottom: 8px; letter-spacing: -0.02em; }
+  .pmreg-done p { font-size: 15px; color: var(--ink-2); max-width: 360px; margin: 0 auto 22px; line-height: 1.55; }
+  @media (min-width: 768px) {
+    .pmreg-modal { align-items: center; padding: 24px; }
+    .pmreg-sheet { max-width: 480px; border-radius: 28px; padding: 28px 32px 32px; max-height: 90vh; opacity: 0; transform: translateY(24px) scale(0.97); transition: transform 0.28s cubic-bezier(0.32, 0.72, 0, 1), opacity 0.2s; }
+    .pmreg-modal.is-open .pmreg-sheet { opacity: 1; transform: none; }
+    .pmreg-handle { display: none; }
+  }
   @media (max-width: 1024px) {
     .tp-top { grid-template-columns: 1fr; gap: 28px; }
     .tp-steps { grid-template-columns: 1fr; }
@@ -4518,15 +4584,71 @@
         <p class="tp-alt"><span class="l-de">Lieber erst Fragen stellen? <a href="#kontakt">Zum Kontaktformular</a></span><span class="l-en">Rather ask a few questions first? <a href="#kontakt">Go to the contact form</a></span></p>
       </div>
     </div>
+    <button type="button" class="tp-already" onclick="pmRegOpen(false)"><span class="l-de">Schon registriert? <strong>Sag {{#unless partner_modus=duo}}{{vorname}}{{/unless}}{{#if partner_modus=duo}}{{vorname}} &amp; {{vorname2}}{{/if}} Bescheid</strong></span><span class="l-en">Already registered? <strong>Let {{#unless partner_modus=duo}}{{vorname}}{{/unless}}{{#if partner_modus=duo}}{{vorname}} &amp; {{vorname2}}{{/if}} know</strong></span></button>
   </div>
 </section>
+
+<!-- Modal „Sag Bescheid“: öffnet sich nach dem Klick auf den PM-Button (PM läuft im neuen Tab weiter).
+     Der Interessent hinterlässt Vorname, Teampartner-Nummer (optional) und Telefon/WhatsApp → Formular „registrierung“. -->
+<div class="pmreg-modal" id="pmreg-modal" role="dialog" aria-modal="true" aria-labelledby="pmreg-title" hidden>
+  <div class="pmreg-backdrop" onclick="pmRegClose()"></div>
+  <div class="pmreg-sheet">
+    <div class="pmreg-handle" aria-hidden="true"></div>
+    <button type="button" class="pmreg-close" onclick="pmRegClose()" aria-label="Schließen"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+
+    <div class="pmreg-head" id="pmreg-head">
+      <div class="pmreg-status" id="pmreg-status"><span class="pmreg-dot"></span><span class="l-de">PM-Registrierung ist in einem neuen Tab offen</span><span class="l-en">PM registration is open in a new tab</span></div>
+      {{#unless partner_modus=duo}}<div class="pmreg-avatar"><img src="{{profilbild}}" alt="{{vorname}}"></div>{{/unless}}{{#if partner_modus=duo}}<div class="pmreg-avatars"><div class="pmreg-avatar"><img src="{{profilbild}}" alt="{{vorname}}"></div><div class="pmreg-avatar"><img src="{{profilbild2}}" alt="{{vorname2}}"></div></div>{{/if}}
+      <h3 id="pmreg-title"><span class="l-de">Sag {{#unless partner_modus=duo}}{{vorname}}{{/unless}}{{#if partner_modus=duo}}{{vorname}} &amp; {{vorname2}}{{/if}} kurz Bescheid</span><span class="l-en">Give {{#unless partner_modus=duo}}{{vorname}}{{/unless}}{{#if partner_modus=duo}}{{vorname}} &amp; {{vorname2}}{{/if}} a quick heads-up</span></h3>
+      <p><span class="l-de">Sobald du dich registriert hast, trag hier deine Nummer ein. {{#unless partner_modus=duo}}{{vorname}} meldet sich{{/unless}}{{#if partner_modus=duo}}{{vorname}} &amp; {{vorname2}} melden sich{{/if}} bei dir und hilft dir beim Start.</span><span class="l-en">Once you've registered, leave your number here. {{#unless partner_modus=duo}}{{vorname}} will get{{/unless}}{{#if partner_modus=duo}}{{vorname}} &amp; {{vorname2}} will get{{/if}} in touch and help you get started.</span></p>
+    </div>
+
+    <form class="pmreg-form" id="pmreg-form" novalidate>
+      <label class="pmreg-field">
+        <span class="pmreg-label"><span class="l-de">Dein Vorname</span><span class="l-en">Your first name</span></span>
+        <input type="text" name="vorname" id="pmreg-vorname" autocomplete="given-name" required>
+      </label>
+      <label class="pmreg-field">
+        <span class="pmreg-label"><span class="l-de">Deine Teampartner-Nummer</span><span class="l-en">Your team partner number</span> <em><span class="l-de">optional</span><span class="l-en">optional</span></em></span>
+        <input type="text" name="teampartner_nummer" id="pmreg-tp" inputmode="numeric" autocomplete="off" placeholder="z. B. 40237198">
+        <span class="pmreg-hint"><span class="l-de">Steht in deiner Bestätigungs-Mail von PM. Du kannst sie auch später nachreichen.</span><span class="l-en">You'll find it in PM's confirmation email. You can also send it later.</span></span>
+      </label>
+      <div class="pmreg-field">
+        <span class="pmreg-label"><span class="l-de">Wie erreichen wir dich am besten?</span><span class="l-en">How do we best reach you?</span></span>
+        <div class="pmreg-pills">
+          <label><input type="radio" name="kontaktweg" value="whatsapp" checked><span><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.1-1.8-.9-2-1-.3-.1-.5-.1-.7.1-.2.3-.8 1-.9 1.2-.2.2-.3.2-.6.1-.3-.1-1.3-.5-2.4-1.5-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6l.4-.5c.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5l-.9-2.2c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.1.2 2.1 3.2 5.1 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.8-.7 2-1.4.2-.7.2-1.3.2-1.4-.1-.2-.3-.3-.6-.4zM12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2c-1.5 0-3-.4-4.3-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2z"/></svg>WhatsApp</span></label>
+          <label><input type="radio" name="kontaktweg" value="telefon"><span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg><span class="l-de">Anruf</span><span class="l-en">Call</span></span></label>
+        </div>
+      </div>
+      <label class="pmreg-field">
+        <span class="pmreg-label"><span class="l-de">Deine Nummer</span><span class="l-en">Your number</span></span>
+        <input type="tel" name="telefon" id="pmreg-tel" autocomplete="tel" inputmode="tel" placeholder="+49 170 1234567" required>
+        <span class="pmreg-hint"><span class="l-de">Mit Ländervorwahl, z. B. +49 für Deutschland.</span><span class="l-en">Including the country code, e.g. +49 for Germany.</span></span>
+      </label>
+      <label class="pmreg-consent">
+        <input type="checkbox" id="pmreg-dsgvo" required>
+        <span><span class="l-de">Ich bin einverstanden, dass meine Angaben zur Kontaktaufnahme verwendet werden. Sie werden nicht weitergegeben. <a href="/datenschutz" target="_blank">Datenschutz</a></span><span class="l-en">I agree that my details may be used to contact me. They will not be shared. <a href="/datenschutz" target="_blank">Privacy policy</a></span></span>
+      </label>
+      <p class="pmreg-error" id="pmreg-error" hidden></p>
+      <button type="submit" class="btn pmreg-submit" id="pmreg-submit"><span class="l-de">Bescheid geben</span><span class="l-en">Send heads-up</span> <svg class="arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+      <p class="pmreg-reopen"><span class="l-de">PM-Seite nicht aufgegangen? <a href="{{pm_registrierung_url}}" data-pm-reg-plain target="_blank" rel="noopener noreferrer">Hier nochmal öffnen</a></span><span class="l-en">PM page didn't open? <a href="{{pm_registrierung_url}}" data-pm-reg-plain target="_blank" rel="noopener noreferrer">Open it again</a></span></p>
+    </form>
+
+    <div class="pmreg-done" id="pmreg-done" hidden>
+      <div class="pmreg-check"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div>
+      <h3><span class="l-de">Danke dir!</span><span class="l-en">Thank you!</span></h3>
+      <p><span class="l-de">{{#unless partner_modus=duo}}{{vorname}} hat deine Nachricht und meldet sich{{/unless}}{{#if partner_modus=duo}}{{vorname}} &amp; {{vorname2}} haben deine Nachricht und melden sich{{/if}} bei dir, meistens noch am selben Tag. Willkommen im Team!</span><span class="l-en">{{#unless partner_modus=duo}}{{vorname}} has{{/unless}}{{#if partner_modus=duo}}{{vorname}} &amp; {{vorname2}} have{{/if}} your message and will get in touch, usually the same day. Welcome to the team!</span></p>
+      <button type="button" class="btn pmreg-submit" onclick="pmRegClose()"><span class="l-de">Alles klar</span><span class="l-en">Got it</span></button>
+    </div>
+  </div>
+</div>
 {{/if}}
 
 <section class="kontakt" id="kontakt">
   <div class="wrap">
     <div class="kontakt-split">
       <div class="kontakt-header reveal">
-        <h2><span class="l-de">Passt das zu dir?<br><span class="accent">Lass es uns herausfinden.</span></span><span class="l-en">Could this be for you?<br><span class="accent">Let's find out.</span></span></h2>
+        {{#unless pm_registrierung_url}}<h2><span class="l-de">Passt das zu dir?<br><span class="accent">Lass es uns herausfinden.</span></span><span class="l-en">Could this be for you?<br><span class="accent">Let's find out.</span></span></h2>{{/unless}}{{#if pm_registrierung_url}}<h2><span class="l-de">Noch nicht sicher?<br><span class="accent">Lass uns kurz sprechen.</span></span><span class="l-en">Not sure yet?<br><span class="accent">Let's have a quick chat.</span></span></h2>{{/if}}
       </div>
 
       <div class="form-wrap reveal">
@@ -4786,12 +4908,58 @@
   // Der Link selbst (Sponsor-Nummer, Land) kommt fertig vom Server und wird hier nicht angefasst.
   function fsPmRegSync() {
     var l = document.documentElement.getAttribute('data-lang') === 'de' ? 'de' : 'en';
-    document.querySelectorAll('a[data-pm-reg]').forEach(function(a) {
+    document.querySelectorAll('a[data-pm-reg], a[data-pm-reg-plain]').forEach(function(a) {
       a.href = a.href.replace(/([?&])lang=[a-z]{2}/, '$1lang=' + l);
     });
   }
   document.addEventListener('DOMContentLoaded', fsPmRegSync);
-  document.querySelectorAll('a[data-pm-reg]').forEach(function(a) { a.addEventListener('click', fsPmRegSync); });
+  document.querySelectorAll('a[data-pm-reg], a[data-pm-reg-plain]').forEach(function(a) { a.addEventListener('click', fsPmRegSync); });
+
+  // Modal „Sag Bescheid“: PM öffnet im neuen Tab (Standardverhalten des Links), hier bleibt das Fenster
+  // zum Hinterlassen von Nummer und Kontakt. Formular „registrierung“ → Mail an den Seitenbesitzer.
+  var pmRegModal = document.getElementById('pmreg-modal');
+  function pmRegOpen(fromPm) {
+    if (!pmRegModal) return;
+    var st = document.getElementById('pmreg-status'); if (st) st.hidden = !fromPm;
+    pmRegModal.hidden = false; document.body.classList.add('pmreg-open');
+    requestAnimationFrame(function() { pmRegModal.classList.add('is-open'); });
+    if (window.matchMedia('(min-width: 768px)').matches) setTimeout(function() { var f = document.getElementById('pmreg-vorname'); if (f) f.focus(); }, 320);
+  }
+  function pmRegClose() {
+    if (!pmRegModal) return;
+    pmRegModal.classList.remove('is-open'); document.body.classList.remove('pmreg-open');
+    setTimeout(function() { pmRegModal.hidden = true; }, 280);
+  }
+  document.querySelectorAll('a[data-pm-reg]').forEach(function(a) { a.addEventListener('click', function() { setTimeout(function() { pmRegOpen(true); }, 150); }); });
+  document.addEventListener('keydown', function(e) { if (e.key === 'Escape' && pmRegModal && !pmRegModal.hidden) pmRegClose(); });
+  var pmRegForm = document.getElementById('pmreg-form');
+  if (pmRegForm) pmRegForm.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    var vorname = document.getElementById('pmreg-vorname').value.trim();
+    var tp = document.getElementById('pmreg-tp').value.trim();
+    var tel = document.getElementById('pmreg-tel').value.trim();
+    var wegEl = pmRegForm.querySelector('input[name="kontaktweg"]:checked');
+    var weg = wegEl ? wegEl.value : 'whatsapp';
+    var err = document.getElementById('pmreg-error');
+    function fail(msg) { err.innerHTML = msg; err.hidden = false; }
+    if (!vorname) return fail('<span class="l-de">Bitte deinen Vornamen eingeben.</span><span class="l-en">Please enter your first name.</span>');
+    if (tel.replace(/\D/g, '').length < 6) return fail('<span class="l-de">Bitte eine gültige Nummer mit Ländervorwahl eingeben.</span><span class="l-en">Please enter a valid number including the country code.</span>');
+    if (tp && !/^\d{3,12}$/.test(tp)) return fail('<span class="l-de">Die Teampartner-Nummer besteht nur aus Ziffern.</span><span class="l-en">The team partner number consists of digits only.</span>');
+    if (!document.getElementById('pmreg-dsgvo').checked) return fail('<span class="l-de">Bitte den Datenschutz-Hinweis bestätigen.</span><span class="l-en">Please confirm the privacy notice.</span>');
+    err.hidden = true;
+    var btn = document.getElementById('pmreg-submit'); btn.disabled = true;
+    try {
+      var r = await fetch('/.finestsites/forms/registrierung', {
+        method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({ vorname: vorname, teampartner_nummer: tp, kontaktweg: weg, telefon: tel })
+      });
+      if (!r.ok) throw new Error();
+      pmRegForm.hidden = true; document.getElementById('pmreg-head').hidden = true; document.getElementById('pmreg-done').hidden = false;
+    } catch (e2) {
+      btn.disabled = false;
+      fail('<span class="l-de">Etwas ist schiefgelaufen. Bitte versuche es erneut.</span><span class="l-en">Something went wrong. Please try again.</span>');
+    }
+  });
 
   // FAQ Accordion
   function toggleFaq(button) {
