@@ -91,10 +91,10 @@ function layoutCards(cards: string[], prefs?: PrefsFooter): string {
 </html>`
 }
 
-function button(url: string, label: string): string {
+function button(url: string, label: string, bg: string = base.buttonBg): string {
   return `<table cellpadding="0" cellspacing="0" role="presentation" style="margin:32px 0 0;">
     <tr>
-      <td style="background:${base.buttonBg};border-radius:12px;">
+      <td style="background:${bg};border-radius:12px;">
         <a href="${url}" style="display:inline-block;padding:14px 28px;font-size:14px;font-weight:600;color:${base.buttonText};text-decoration:none;border-radius:12px;">${label}</a>
       </td>
     </tr>
@@ -1049,6 +1049,7 @@ export function aboutImageGuidelineEmail({ firstName, imageUrl, pair = false, la
 // ─── Produkt-Update 15.10.2026 ──────────────────────────────────────────────────
 
 const MAIL_ASSETS = 'https://app.finestsites.io/mail/update-2026-10'
+const VIOLET = '#8060b0'
 
 export const PRODUCT_UPDATE_2026_10_SUBJECT = 'Update bei FinestSites: 8 Sprachen, deine eigene Farbe und neue Hintergrundbilder'
 
@@ -1081,15 +1082,15 @@ export function productUpdate202610Email({ firstName, segment = 'pro', prefs }: 
 
   // Zusatzkarte je nach Abo-Stand: Starter → mehr Seiten lohnen sich, kein Abo → Anleitung zum Aktivieren
   const extra = segment === 'starter'
-    ? `<h2 style="margin:0 0 8px;font-size:19px;font-weight:700;color:${base.heading};letter-spacing:-0.01em;">Eine Seite ist gut. Drei sind besser.</h2>
+    ? `<h2 style="margin:0 0 8px;font-size:19px;font-weight:700;color:${base.heading};letter-spacing:-0.01em;">Mit Pro hast du drei Seiten statt einer</h2>
        <p style="margin:0;font-size:15px;color:${base.body};line-height:1.65;">
-         Du hast gerade eine Seite online. Mit Pro hast du drei, zum Beispiel Optimalset, Business und cellRESET. Jede Seite hat ihr eigenes Thema und spricht andere Leute an. Für 10\u202f€ mehr im Monat.
+         Gerade hast du eine Seite online. Mit Pro kannst du drei laufen lassen, zum Beispiel Optimalset, Business und cellRESET. Jede hat ihr eigenes Thema und holt andere Leute ab. Kostet 10\u202f€ mehr im Monat.
        </p>
-       ${button(`${APP_URL}/settings?tab=zahlung`, 'Auf Pro wechseln')}`
+       ${button(`${APP_URL}/settings?tab=zahlung`, 'Auf Pro wechseln', VIOLET)}`
     : segment === 'none'
-    ? `<h2 style="margin:0 0 8px;font-size:19px;font-weight:700;color:${base.heading};letter-spacing:-0.01em;">Deine Seite in 5 Minuten online</h2>
+    ? `<h2 style="margin:0 0 8px;font-size:19px;font-weight:700;color:${base.heading};letter-spacing:-0.01em;">In 5 Minuten ist deine Seite online</h2>
        <p style="margin:0 0 14px;font-size:15px;color:${base.body};line-height:1.65;">
-         Deine Seite wartet noch auf dich. So geht es los:
+         Deine Seite wartet noch auf dich. So geht's:
        </p>
        <table cellpadding="0" cellspacing="0" role="presentation" width="100%">
          ${['Einloggen und deine Seite im Editor öffnen.', 'Name, Foto und Farbe eintragen.', 'Auf „Veröffentlichen“ tippen und Tarif wählen.'].map((t, i) => `
@@ -1099,7 +1100,7 @@ export function productUpdate202610Email({ firstName, segment = 'pro', prefs }: 
          </tr>`).join('')}
        </table>
        <p style="margin:4px 0 0;font-size:14px;color:${base.muted};line-height:1.6;">Ab 17\u202f€ im Monat, jederzeit monatlich kündbar.</p>
-       ${button(`${APP_URL}/sites`, 'Jetzt Seite online stellen')}`
+       ${button(`${APP_URL}/sites`, 'Jetzt Seite online stellen', VIOLET)}`
     : null
 
   return layoutCards([
@@ -1110,22 +1111,22 @@ export function productUpdate202610Email({ firstName, segment = 'pro', prefs }: 
      <p style="margin:0;font-size:15px;color:${base.body};line-height:1.65;">
        Hey ${name}, wir haben wieder an deiner Seite gebaut. Drei Sachen, die du ab sofort nutzen kannst. Kostet nichts extra.
      </p>`,
-    card(1, 'Deine Business-Seite kann jetzt 8 Sprachen', 'sprachen-v2.png', 'Business-Seite in 8 Sprachen',
+    card(1, 'Deine Business-Seite gibt\'s jetzt in 8 Sprachen', 'sprachen-v2.png', 'Business-Seite in 8 Sprachen',
       'Deutsch, Englisch, Italienisch, Russisch, Ukrainisch, Polnisch, Bulgarisch und Hindi. Kommt jemand aus Polen auf deine Seite, sieht er alles auf Polnisch. Auch deinen Über-mich-Text. Du musst dafür nichts machen.',
       'Läuft automatisch'),
-    card(2, 'Deine Farbe, ganz genau', 'farben-v2.png', 'Eigene Farbe mit Farbwähler und Farbcode',
-      'Nicht mehr nur ein paar Vorgaben. Du suchst dir deine Farbe selbst aus, Punkt für Punkt im Farbwähler, oder du tippst deinen Farbcode ein (z.\u202fB. #D9468B). Danach ist die ganze Seite in deiner Farbe: Buttons, Überschriften, alles.',
+    card(2, 'Such dir deine eigene Farbe aus', 'farben-v2.png', 'Eigene Farbe mit Farbwähler und Farbcode',
+      'Bis jetzt gab\'s ein paar Farben zur Auswahl. Ab jetzt nimmst du genau die Farbe, die du willst: im Farbwähler einstellen oder deinen Farbcode eintippen (z.\u202fB. #D9468B). Dann ist die ganze Seite in deiner Farbe, Buttons, Überschriften, alles.',
       'Im Editor unter „Farbe“'),
-    card(3, 'Neue Hintergrundbilder für deine Optimalset-Seite', 'hintergruende-v2.png', 'Neue Hintergrundbilder',
-      'Vier neue Bilder, vom Frühstück mit Orangensaft bis zum Sommer im Garten. Antippen, übernehmen, fertig.',
+    card(3, 'Neue Bilder für deine Optimalset-Seite', 'hintergruende-v2.png', 'Neue Hintergrundbilder',
+      'Vier neue Hintergrundbilder, vom Frühstück mit Orangensaft bis zum Sommer im Garten. Antippen, übernehmen, fertig.',
       'Im Editor unter „Hintergrundbild“'),
     ...(extra ? [extra] : []),
     // mit Zusatzkarte gibt es schon einen Button, dann nur noch der Gruß
-    `${extra ? '' : `<h2 style="margin:0 0 8px;font-size:19px;font-weight:700;color:${base.heading};letter-spacing:-0.01em;">Probier es gleich aus</h2>
+    `${extra ? '' : `<h2 style="margin:0 0 8px;font-size:19px;font-weight:700;color:${base.heading};letter-spacing:-0.01em;">Probier's gleich aus</h2>
      <p style="margin:0;font-size:15px;color:${base.body};line-height:1.65;">
        Mach deine Seite im Editor auf, alles Neue ist schon drin.
      </p>
-     ${button(`${APP_URL}/sites`, 'Zu meinen Seiten')}`}
+     ${button(`${APP_URL}/sites`, 'Zu meinen Seiten', VIOLET)}`}
      <p style="margin:${extra ? 0 : 28}px 0 0;font-size:15px;color:${base.body};line-height:1.65;">
        Fragen? Schreib mir einfach, ich lese alles selbst.
      </p>
