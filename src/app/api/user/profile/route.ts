@@ -66,15 +66,13 @@ export async function PATCH(req: NextRequest) {
 
   const body = await req.json()
 
-  // Markenfarbe: nur #RRGGBB oder null; Phase A nur für Admin-Konten (sonst bleibt alles wie bisher)
+  // Markenfarbe: nur #RRGGBB oder null; seit 15.10.2026 für alle Konten (Phase C)
   let brandUpdate: { brandColor: string | null } | null = null
   if ('brand_color' in body) {
     const v = body.brand_color
     if (v !== null && (typeof v !== 'string' || !BRAND_HEX_RE.test(v))) {
       return NextResponse.json({ error: 'Markenfarbe muss ein Hex-Wert wie #1F4FA3 sein.' }, { status: 400 })
     }
-    const me = await db.query.users.findFirst({ where: eq(users.id, user.id), columns: { isAdmin: true } })
-    if (!me?.isAdmin) return NextResponse.json({ error: 'Markenfarbe ist noch nicht freigeschaltet.' }, { status: 403 })
     brandUpdate = { brandColor: v === null ? null : String(v).toUpperCase() }
   }
 

@@ -896,7 +896,8 @@ function CardSelectField({ field, value, onChange, narrow, onMobileSelect }: {
   // admin_only-Optionen nur für Admin-Konten; sonst exakt die bisherige Liste
   const opts = (field.card_options ?? []).filter(o => !o.admin_only || brand.isAdmin)
   // Eigene Farbe (Phase A nur Admin): eine Kachel, dahinter ein Fenster mit den Farben der anderen Seiten + Farbwähler
-  const brandMode = !!field.brand_color && brand.isAdmin
+  // seit 15.10.2026 für alle Konten (vorher nur Admin, Phase A)
+  const brandMode = !!field.brand_color
   const siteHex = siteHexOf(value) ?? (value === BRAND_THEME_VALUE ? brand.brandColor : null)
   const ownSelected = brandMode && !!siteHex
   const [sheetOpen, setSheetOpen] = useState(false)
