@@ -2288,6 +2288,20 @@
     .pmreg-sheet { padding-left: 16px; padding-right: 16px; }
     .pmreg-head h3 { font-size: 20px; }
   }
+  /* Kleine oder quer gehaltene Bildschirme: Kopf des Modals einklappen, Formular zuerst */
+  @media (max-height: 700px) {
+    .pmreg-avatar { width: 48px; height: 48px; margin-bottom: 10px; }
+    .pmreg-head { padding-bottom: 12px; }
+    .pmreg-head p { font-size: 13.5px; }
+  }
+  @media (max-height: 520px) {
+    .pmreg-avatar, .pmreg-avatars, .pmreg-status { display: none; }
+    .pmreg-head { padding: 0 0 10px; }
+    .pmreg-head h3 { font-size: 19px; }
+    .pmreg-head p { display: none; }
+    .pmreg-modal { padding: 12px; }
+    .pmreg-sheet { max-height: calc(100vh - 24px); padding-top: 20px; }
+  }
   @media (min-width: 768px) {
     .pmreg-modal { align-items: center; padding: 32px; }
     .pmreg-sheet { max-width: 520px; border-radius: 28px; padding: 28px 32px 32px; max-height: calc(100vh - 64px); opacity: 0; transform: translateY(24px) scale(0.97); transition: transform 0.28s cubic-bezier(0.32, 0.72, 0, 1), opacity 0.2s; box-shadow: 0 40px 100px -30px rgba(10, 17, 32, 0.5); }
@@ -2296,10 +2310,16 @@
     .pmreg-head { padding-top: 8px; }
     .pmreg-form { gap: 14px; }
   }
-  @media (max-width: 1024px) {
+  @media (max-width: 1100px) {
     .teampartner-inner { padding: 56px 40px; border-radius: 32px; }
+    .tp-top { gap: 32px; }
+    .tp-steps { gap: 10px; }
+    .tp-step { padding: 20px; gap: 12px; }
+    .tp-step h3 { font-size: 16px; }
+  }
+  @media (max-width: 900px) {
     .tp-top { grid-template-columns: 1fr; gap: 28px; }
-    .tp-steps { grid-template-columns: 1fr; gap: 10px; }
+    .tp-steps { grid-template-columns: 1fr; }
     .tp-step { padding: 18px 20px; }
     .tp-step h3 { margin-top: 2px; }
   }
@@ -2311,6 +2331,12 @@
     .tp-sponsor { padding: 18px; border-radius: 22px; }
     .tp-sponsor-photo { width: 56px; height: 56px; }
     .tp-sponsor-name { font-size: 18px; }
+    .tp-btn { white-space: normal; text-align: center; }
+  }
+  @media (max-width: 380px) {
+    .tp-btn { font-size: 15px; padding: 15px 16px; }
+    .tp-step h3 { font-size: 16px; }
+    .teampartner-head h2 { font-size: 30px; }
   }
 
   .kontakt {

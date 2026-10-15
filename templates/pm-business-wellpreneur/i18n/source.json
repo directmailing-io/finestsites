@@ -1258,5 +1258,225 @@
   "id": 251,
   "de": "Etwas ist schiefgelaufen. Bitte versuche es erneut.",
   "en": "Something went wrong. Please try again."
+ },
+ {
+  "id": 252,
+  "de": "Teampartner werden",
+  "en": "Become a partner"
+ },
+ {
+  "id": 253,
+  "de": "Direkt als Teampartner starten",
+  "en": "Start as a team partner now"
+ },
+ {
+  "id": 254,
+  "de": "Direkt starten",
+  "en": "Start right away"
+ },
+ {
+  "id": 255,
+  "de": "Du weißt schon, <span class=\"accent\">dass du das willst?</span>",
+  "en": "Already know <span class=\"accent\">you want this?</span>"
+ },
+ {
+  "id": 256,
+  "de": "Dann registrier dich direkt bei PM-International als Teampartner. Drei Schritte, ein paar Minuten, und {{#unless partner_modus=duo}}{{vorname}} begleitet dich{{/unless}}{{#if partner_modus=duo}}{{vorname}} &amp; {{vorname2}} begleiten dich{{/if}} von Anfang an.",
+  "en": "Then register directly with PM-International as a team partner. Three steps, a few minutes, and {{#unless partner_modus=duo}}{{vorname}} will be{{/unless}}{{#if partner_modus=duo}}{{vorname}} &amp; {{vorname2}} will be{{/if}} with you from day one."
+ },
+ {
+  "id": 257,
+  "de": "Kostenlos",
+  "en": "Free"
+ },
+ {
+  "id": 258,
+  "de": "Keine Kaufpflicht",
+  "en": "No purchase required"
+ },
+ {
+  "id": 259,
+  "de": "30 Tage Widerruf",
+  "en": "30-day withdrawal"
+ },
+ {
+  "id": 260,
+  "de": "Das siehst du bei PM-International",
+  "en": "What you'll see at PM-International"
+ },
+ {
+  "id": 261,
+  "de": "Dein Sponsor",
+  "en": "Your sponsor"
+ },
+ {
+  "id": 262,
+  "de": "Wird automatisch eingetragen, du musst nichts suchen.",
+  "en": "Filled in automatically, nothing to look up."
+ },
+ {
+  "id": 263,
+  "de": "Daten eingeben",
+  "en": "Enter your details"
+ },
+ {
+  "id": 264,
+  "de": "Land, Name und E-Mail. Dein Sponsor steht schon drin.",
+  "en": "Country, name and email. Your sponsor is already filled in."
+ },
+ {
+  "id": 265,
+  "de": "Startpaket wählen, oder nicht",
+  "en": "Pick a starter pack, or don't"
+ },
+ {
+  "id": 266,
+  "de": "PM zeigt dir zwei Pakete zum Loslegen. Du kannst dich aber auch ohne Bestellung registrieren.",
+  "en": "PM shows you two packs to get going. You can also register without ordering anything."
+ },
+ {
+  "id": 267,
+  "de": "Bestätigung per E-Mail",
+  "en": "Confirmation by email"
+ },
+ {
+  "id": 268,
+  "de": "Du bekommst deine Zugangsdaten von PM, und {{#unless partner_modus=duo}}{{vorname}} meldet sich{{/unless}}{{#if partner_modus=duo}}{{vorname}} &amp; {{vorname2}} melden sich{{/if}} bei dir.",
+  "en": "You get your login details from PM, and {{#unless partner_modus=duo}}{{vorname}} gets{{/unless}}{{#if partner_modus=duo}}{{vorname}} &amp; {{vorname2}} get{{/if}} in touch with you."
+ },
+ {
+  "id": 269,
+  "de": "Jetzt bei PM-International registrieren",
+  "en": "Register with PM-International now"
+ },
+ {
+  "id": 270,
+  "de": "Öffnet die offizielle Registrierungsseite von PM-International in einem neuen Tab.",
+  "en": "Opens the official PM-International registration page in a new tab."
+ },
+ {
+  "id": 271,
+  "de": "Lieber erst Fragen stellen? <a href=\"#kontakt\">Zum Kontaktformular</a>",
+  "en": "Rather ask a few questions first? <a href=\"#kontakt\">Go to the contact form</a>"
+ },
+ {
+  "id": 272,
+  "de": "Schon registriert? <strong>Nummer hinterlassen</strong>",
+  "en": "Already registered? <strong>Leave your number</strong>"
+ },
+ {
+  "id": 273,
+  "de": "PM-Registrierung läuft im neuen Tab",
+  "en": "PM registration is running in the new tab"
+ },
+ {
+  "id": 274,
+  "de": "Wie {{#unless partner_modus=duo}}kann {{vorname}}{{/unless}}{{#if partner_modus=duo}}können {{vorname}} &amp; {{vorname2}}{{/if}} dich erreichen?",
+  "en": "How can {{#unless partner_modus=duo}}{{vorname}}{{/unless}}{{#if partner_modus=duo}}{{vorname}} &amp; {{vorname2}}{{/if}} reach you?"
+ },
+ {
+  "id": 275,
+  "de": "Hinterlass hier kurz deine Nummer, sobald du dich registriert hast. {{#unless partner_modus=duo}}{{vorname}} meldet sich dann bei dir und hilft{{/unless}}{{#if partner_modus=duo}}{{vorname}} &amp; {{vorname2}} melden sich dann bei dir und helfen{{/if}} dir beim Start.",
+  "en": "Leave your number here once you've registered. {{#unless partner_modus=duo}}{{vorname}} will then get in touch and help{{/unless}}{{#if partner_modus=duo}}{{vorname}} &amp; {{vorname2}} will then get in touch and help{{/if}} you get started."
+ },
+ {
+  "id": 276,
+  "de": "Dein Vorname",
+  "en": "Your first name"
+ },
+ {
+  "id": 277,
+  "de": "Deine Teampartner-Nummer",
+  "en": "Your team partner number"
+ },
+ {
+  "id": 278,
+  "de": "optional",
+  "en": "optional"
+ },
+ {
+  "id": 279,
+  "de": "Steht in der Bestätigungs-Mail von PM, geht auch später.",
+  "en": "It's in PM's confirmation email, can be sent later."
+ },
+ {
+  "id": 280,
+  "de": "Am liebsten per",
+  "en": "Preferably via"
+ },
+ {
+  "id": 281,
+  "de": "Anruf",
+  "en": "Call"
+ },
+ {
+  "id": 282,
+  "de": "Deine Nummer",
+  "en": "Your number"
+ },
+ {
+  "id": 283,
+  "de": "Mit Ländervorwahl, z. B. +49.",
+  "en": "With country code, e.g. +49."
+ },
+ {
+  "id": 284,
+  "de": "Bescheid geben",
+  "en": "Send heads-up"
+ },
+ {
+  "id": 285,
+  "de": "PM-Seite nicht aufgegangen? <a href=\"{{pm_registrierung_url}}\" data-pm-reg-plain target=\"_blank\" rel=\"noopener noreferrer\">Hier nochmal öffnen</a>",
+  "en": "PM page didn't open? <a href=\"{{pm_registrierung_url}}\" data-pm-reg-plain target=\"_blank\" rel=\"noopener noreferrer\">Open it again</a>"
+ },
+ {
+  "id": 286,
+  "de": "Danke dir!",
+  "en": "Thank you!"
+ },
+ {
+  "id": 287,
+  "de": "{{#unless partner_modus=duo}}{{vorname}} hat deine Nachricht und meldet sich{{/unless}}{{#if partner_modus=duo}}{{vorname}} &amp; {{vorname2}} haben deine Nachricht und melden sich{{/if}} bei dir, meistens noch am selben Tag. Willkommen im Team!",
+  "en": "{{#unless partner_modus=duo}}{{vorname}} has{{/unless}}{{#if partner_modus=duo}}{{vorname}} &amp; {{vorname2}} have{{/if}} your message and will get in touch, usually the same day. Welcome to the team!"
+ },
+ {
+  "id": 288,
+  "de": "Alles klar",
+  "en": "Got it"
+ },
+ {
+  "id": 289,
+  "de": "Noch nicht sicher?<br><span class=\"accent\">Lass uns kurz sprechen.</span>",
+  "en": "Not sure yet?<br><span class=\"accent\">Let's have a quick chat.</span>"
+ },
+ {
+  "id": 290,
+  "de": "Du willst nicht warten? <a href=\"{{pm_registrierung_url}}\" data-pm-reg target=\"_blank\" rel=\"noopener noreferrer\">Du kannst dich auch jetzt schon bei PM-International registrieren.</a>",
+  "en": "Don't want to wait? <a href=\"{{pm_registrierung_url}}\" data-pm-reg target=\"_blank\" rel=\"noopener noreferrer\">You can register with PM-International right now.</a>"
+ },
+ {
+  "id": 291,
+  "de": "Schon entschieden? <a href=\"#teampartner\">Direkt bei PM-International registrieren</a>",
+  "en": "Already decided? <a href=\"#teampartner\">Register directly with PM-International</a>"
+ },
+ {
+  "id": 292,
+  "de": "Direkt registrieren",
+  "en": "Register directly"
+ },
+ {
+  "id": 293,
+  "de": "Bitte deinen Vornamen eingeben.",
+  "en": "Please enter your first name."
+ },
+ {
+  "id": 294,
+  "de": "Bitte eine gültige Nummer mit Ländervorwahl eingeben.",
+  "en": "Please enter a valid number including the country code."
+ },
+ {
+  "id": 295,
+  "de": "Die Teampartner-Nummer besteht nur aus Ziffern.",
+  "en": "The team partner number consists of digits only."
  }
 ]
