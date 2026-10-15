@@ -120,8 +120,8 @@ export const users = pgTable('users', {
   name: text('name').notNull().default(''),
   emailVerified: boolean('email_verified').notNull().default(false),
   image: text('image'),
-  // NM company preferences
-  nmCompanies: text('nm_companies').array().default([]),
+  // Unternehmen: seit 15.10.2026 immer PM-International (keine Auswahl mehr, Vorlagen gibt es nur dafür)
+  nmCompanies: text('nm_companies').array().default(['PM-International']),
   // PM-International / FitLine
   teamPartnerNumber: text('team_partner_number'),
   // Affiliate

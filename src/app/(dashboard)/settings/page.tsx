@@ -11,7 +11,6 @@ import { discountedTotal, formatEur } from '@/lib/billing/promo-duration'
 import ImageCropModal from '@/components/ImageCropModal'
 import InvoiceDetailsCard from '@/components/billing/InvoiceDetailsCard'
 import TrackingSettings from '@/components/tracking/TrackingSettings'
-import { NM_COMPANIES } from '@/lib/constants/nm-companies'
 import { EMAIL_CATEGORIES, type EmailCategory } from '@/lib/email/categories'
 
 // ── Social media helpers ──────────────────────────────────────────────────────
@@ -99,7 +98,6 @@ function parsePhone(full: string): { code: string; number: string } {
 // ── Tabs ─────────────────────────────────────────────────────────────────────
 
 const TABS = [
-  { id: 'unternehmen', label: 'Unternehmen' },
   { id: 'profil',      label: 'Profil'       },
   { id: 'zahlung',     label: 'Zahlung & Plan' },
   { id: 'rechnungen',  label: 'Rechnungen'   },
@@ -234,7 +232,7 @@ function SettingsContent() {
   const searchParams = useSearchParams()
 
   // ── Tab state ──────────────────────────────────────────────────
-  const [activeTab, setActiveTab] = useState<TabId>('unternehmen')
+  const [activeTab, setActiveTab] = useState<TabId>('profil')
 
   // ── Password state ─────────────────────────────────────────────
   const [currentPassword, setCurrentPassword] = useState('')
@@ -268,7 +266,6 @@ function SettingsContent() {
   const [emailSuccess, setEmailSuccess] = useState('')
 
   // ── NM company preferences ─────────────────────────────────────
-  const [nmCompanies, setNmCompanies] = useState<string[]>([])
   const [nmSaving, setNmSaving] = useState(false)
   const [nmSuccess, setNmSuccess] = useState('')
 
@@ -326,7 +323,6 @@ function SettingsContent() {
         youtube:   urlToUsername(data.youtube   ?? '', 'youtube.com/@'),
       })
       setProfileImageUrl(data.profile_image_url ?? null)
-      setNmCompanies(Array.isArray(data.nm_companies) ? data.nm_companies : [])
       setTeamPartnerNumber(data.team_partner_number ?? '')
       setEmailOptOut(Array.isArray(data.email_opt_out) ? data.email_opt_out : [])
     }).catch(() => {})
@@ -363,7 +359,8 @@ function SettingsContent() {
       setActiveTab('zahlung')
     }
     // Direktlink aus E-Mails: /settings?tab=werbung
-    const wanted = searchParams.get('tab')
+    // alter Link ?tab=unternehmen: der Tab ist im Profil aufgegangen
+    const wanted = searchParams.get('tab') === 'unternehmen' ? 'profil' : searchParams.get('tab')
     if (wanted && TABS.some(t => t.id === wanted)) setActiveTab(wanted as TabId)
 
     if (success === '1') {
@@ -443,7 +440,7 @@ function SettingsContent() {
     await fetch('/api/user/profile', {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ nm_companies: nmCompanies, team_partner_number: teamPartnerNumber.trim() || null }),
+      body: JSON.stringify({ team_partner_number: teamPartnerNumber.trim() || null }),
     })
     setNmSuccess('Gespeichert.')
     setTimeout(() => setNmSuccess(''), 3000)
@@ -613,7 +610,7 @@ function SettingsContent() {
       <div className="mb-6">
         <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight">Einstellungen</h1>
         <p className="text-base mt-1.5" style={{ color: '#94A3B8' }}>
-          Profil, Unternehmen, Zahlung und Sicherheit.
+          Profil, Zahlung, E-Mails und Sicherheit.
         </p>
       </div>
 
@@ -666,13 +663,14 @@ function SettingsContent() {
 
       {/* ── Tab-Leiste — Segmented Control ─────────────────────────────── */}
       <div className="-mx-4 sm:mx-0 mb-8 px-4 sm:px-0">
-        <div className="flex overflow-x-auto gap-1 p-1 rounded-2xl"
+        {/* alle Tabs immer sichtbar: umbrechen statt seitlich scrollen (das hat viele irritiert) */}
+        <div className="flex flex-wrap gap-1 p-1 rounded-2xl"
           style={{ background: '#ECEEF1' }}>
           {TABS.map(tab => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className="flex-shrink-0 px-4 py-2.5 text-sm font-semibold rounded-xl whitespace-nowrap transition-all"
+              className="flex-1 px-3 sm:px-4 py-2.5 text-sm font-semibold rounded-xl whitespace-nowrap transition-all"
               style={{
                 background: activeTab === tab.id ? '#111827' : 'transparent',
                 color: activeTab === tab.id ? '#ffffff' : '#6B7280',
@@ -684,81 +682,6 @@ function SettingsContent() {
           ))}
         </div>
       </div>
-
-      {/* ════════════════════════════════════════════════════════════════
-          TAB: UNTERNEHMEN
-          ════════════════════════════════════════════════════════════════ */}
-      {activeTab === 'unternehmen' && (
-        <div className="flex flex-col gap-10">
-          <TabSection title="Mein Network Marketing Unternehmen" subtitle="Wir zeigen dir passende Templates für dein Unternehmen. Du kannst mehrere auswählen.">
-            <div className="flex flex-wrap gap-2.5">
-              {NM_COMPANIES.map(company => {
-                const isActive = nmCompanies.includes(company)
-                return (
-                  <button
-                    key={company}
-                    type="button"
-                    onClick={() => setNmCompanies(prev =>
-                      prev.includes(company) ? prev.filter(c => c !== company) : [...prev, company]
-                    )}
-                    className="flex items-center gap-1.5 px-4 py-2 rounded-2xl text-sm font-semibold transition-all"
-                    style={{
-                      background: isActive ? '#111827' : '#F9FAFB',
-                      color: isActive ? '#fff' : '#374151',
-                      border: isActive ? '1.5px solid #111827' : '1.5px solid #E5E7EB',
-                      boxShadow: isActive ? '0 4px 12px rgba(17,24,39,0.15)' : 'none',
-                    }}
-                  >
-                    {isActive && (
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
-                        <polyline points="20 6 9 17 4 12"/>
-                      </svg>
-                    )}
-                    {company}
-                  </button>
-                )
-              })}
-            </div>
-
-            {nmCompanies.includes('PM-International') && (
-              <div className="flex flex-col gap-1.5 pt-2">
-                <label className="text-sm font-semibold text-gray-700">FitLine Teampartner-Nummer</label>
-                <input
-                  type="text"
-                  inputMode="numeric"
-                  pattern="[0-9]*"
-                  value={teamPartnerNumber}
-                  onChange={e => setTeamPartnerNumber(e.target.value.replace(/\D/g, ''))}
-                  placeholder="z.B. 40237198"
-                  className="w-full px-4 py-3 text-[15px] rounded-2xl outline-none transition-all bg-white"
-                  style={{ border: '1.5px solid #E5E7EB' }}
-                  onFocus={e => (e.target.style.borderColor = '#1a1a1a')}
-                  onBlur={e => (e.target.style.borderColor = '#E5E7EB')}
-                />
-                <p className="text-xs px-1" style={{ color: '#94A3B8' }}>
-                  Wird automatisch in deine FitLine Shop-Links eingefügt.
-                </p>
-              </div>
-            )}
-
-            <div className="flex items-center gap-3 pt-1">
-              <button
-                type="button"
-                onClick={handleNmSave}
-                disabled={nmSaving}
-                className="px-5 py-2.5 text-sm font-semibold rounded-2xl transition-all"
-                style={{
-                  background: nmSaving ? '#E5E7EB' : '#111827',
-                  color: nmSaving ? '#9CA3AF' : '#fff',
-                }}
-              >
-                {nmSaving ? 'Wird gespeichert…' : 'Speichern'}
-              </button>
-              {nmSuccess && <span className="text-sm text-green-600">{nmSuccess}</span>}
-            </div>
-          </TabSection>
-        </div>
-      )}
 
       {/* ════════════════════════════════════════════════════════════════
           TAB: PROFIL
@@ -949,6 +872,35 @@ function SettingsContent() {
                 Profil speichern
               </button>
             </form>
+          </TabSection>
+
+          <TabSection title="FitLine Teampartner-Nummer" subtitle="Wird automatisch in deine FitLine Shop-Links eingebaut.">
+            <div className="w-full sm:max-w-md flex flex-col gap-3">
+              <input
+                type="text"
+                inputMode="numeric"
+                pattern="[0-9]*"
+                value={teamPartnerNumber}
+                onChange={e => setTeamPartnerNumber(e.target.value.replace(/\D/g, ''))}
+                placeholder="z.B. 40237198"
+                className="w-full px-4 py-3 text-[15px] rounded-2xl outline-none transition-all bg-white"
+                style={{ border: '1.5px solid #E5E7EB' }}
+                onFocus={e => (e.target.style.borderColor = '#1a1a1a')}
+                onBlur={e => (e.target.style.borderColor = '#E5E7EB')}
+              />
+              <div className="flex items-center gap-3 pt-1">
+                <button
+                  type="button"
+                  onClick={handleNmSave}
+                  disabled={nmSaving}
+                  className="px-5 py-2.5 text-sm font-semibold rounded-2xl transition-all"
+                  style={{ background: nmSaving ? '#E5E7EB' : '#111827', color: nmSaving ? '#9CA3AF' : '#fff' }}
+                >
+                  {nmSaving ? 'Wird gespeichert…' : 'Speichern'}
+                </button>
+                {nmSuccess && <span className="text-sm text-green-600">{nmSuccess}</span>}
+              </div>
+            </div>
           </TabSection>
         </div>
       )}

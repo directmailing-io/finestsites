@@ -2,7 +2,9 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { NM_COMPANIES } from '@/lib/constants/nm-companies'
+
+/* Schritt 4: Teampartner-Nummer. Das Unternehmen ist immer PM-International (seit 15.10.2026
+ * keine Auswahl mehr, es gab ohnehin nur Vorlagen dafür); die Nummer ist freiwillig. */
 
 function StepDot({ n, active, done, label }: { n: number; active?: boolean; done?: boolean; label: string }) {
   return (
@@ -31,27 +33,17 @@ function StepLine() {
 
 export default function OnboardingCompanyPage() {
   const router = useRouter()
-  const [selected, setSelected] = useState<string[]>([])
   const [teamPartnerNumber, setTeamPartnerNumber] = useState('')
   const [loading, setLoading] = useState(false)
-
-  const isPmSelected = selected.includes('PM-International')
-
-  function toggle(company: string) {
-    setSelected(prev =>
-      prev.includes(company) ? prev.filter(c => c !== company) : [...prev, company]
-    )
-  }
 
   async function handleSave() {
     setLoading(true)
     await fetch('/api/onboarding/set-company', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ nm_companies: selected }),
+      body: JSON.stringify({ nm_companies: ['PM-International'] }),
     }).catch(() => {})
-    // Save Teampartner-Nummer if PM-International is selected and the field is filled
-    if (isPmSelected && teamPartnerNumber.trim()) {
+    if (teamPartnerNumber.trim()) {
       await fetch('/api/user/profile', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
@@ -71,7 +63,7 @@ export default function OnboardingCompanyPage() {
         <StepLine />
         <StepDot n={3} done label="Username" />
         <StepLine />
-        <StepDot n={4} active label="Unternehmen" />
+        <StepDot n={4} active label="Teampartner" />
         <StepLine />
         <StepDot n={5} label="Profil" />
       </div>
@@ -79,77 +71,33 @@ export default function OnboardingCompanyPage() {
       <div className="text-center mb-8">
         <div className="w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-5"
           style={{ background: '#F5F0FB' }}>
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#8060b0" strokeWidth="1.5">
-            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-            <circle cx="9" cy="7" r="4"/>
-            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
-            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#8060b0" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+            <circle cx="12" cy="7" r="4"/>
           </svg>
         </div>
-        <h1 className="text-2xl font-semibold text-gray-900 mb-2">Für welches Unternehmen?</h1>
+        <h1 className="text-2xl font-semibold text-gray-900 mb-2">Deine FitLine Teampartner-Nummer</h1>
         <p className="text-sm leading-relaxed" style={{ color: '#6B7280' }}>
-          Wähle dein Network-Marketing-Unternehmen aus. Wir zeigen dir dann die passenden Templates. Du kannst auch mehrere wählen.
+          Wir bauen sie automatisch in die Shop-Links auf deiner Seite ein. Du kannst sie auch später in den Einstellungen eintragen.
         </p>
       </div>
 
-      <div className="flex flex-wrap gap-2.5 justify-center mb-6">
-        {NM_COMPANIES.map(company => {
-          const isActive = selected.includes(company)
-          return (
-            <button
-              key={company}
-              type="button"
-              onClick={() => toggle(company)}
-              className="px-4 py-2.5 rounded-2xl text-sm font-semibold transition-all"
-              style={{
-                background: isActive ? '#111827' : '#fff',
-                color: isActive ? '#fff' : '#374151',
-                border: isActive ? '1.5px solid #111827' : '1.5px solid #E5E7EB',
-                boxShadow: isActive ? '0 4px 12px rgba(17,24,39,0.2)' : '0 1px 4px rgba(0,0,0,0.04)',
-              }}
-            >
-              {company}
-            </button>
-          )
-        })}
+      <div className="w-full mb-2 flex flex-col gap-1.5">
+        <input
+          type="text"
+          inputMode="numeric"
+          pattern="[0-9]*"
+          value={teamPartnerNumber}
+          onChange={e => setTeamPartnerNumber(e.target.value.replace(/\D/g, ''))}
+          placeholder="z.B. 40237198"
+          className="w-full px-4 py-3 text-sm rounded-2xl outline-none transition-all bg-white text-center"
+          style={{ border: '1.5px solid #E5E7EB', color: '#111827' }}
+          onFocus={e => (e.target.style.borderColor = '#1a1a1a')}
+          onBlur={e => (e.target.style.borderColor = '#E5E7EB')}
+        />
       </div>
 
-      {isPmSelected && (
-        <div className="w-full mt-2 mb-2 flex flex-col gap-1.5">
-          <div className="relative">
-            <input
-              type="text"
-              inputMode="numeric"
-              pattern="[0-9]*"
-              value={teamPartnerNumber}
-              onChange={e => setTeamPartnerNumber(e.target.value.replace(/\D/g, ''))}
-              placeholder="Teampartner-Nr. (optional)"
-              className="w-full pl-4 pr-12 py-3 text-sm rounded-2xl outline-none transition-all bg-white"
-              style={{ border: '1.5px solid #E5E7EB', color: '#111827' }}
-              onFocus={e => (e.target.style.borderColor = '#1a1a1a')}
-              onBlur={e => (e.target.style.borderColor = '#E5E7EB')}
-            />
-            <span className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none"
-              style={{ color: '#D1D5DB' }}>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                <circle cx="12" cy="7" r="4"/>
-              </svg>
-            </span>
-          </div>
-          <p className="text-xs px-1 text-center" style={{ color: '#9CA3AF' }}>
-            Wird automatisch in deine Shop-Links eingebaut
-          </p>
-        </div>
-      )}
-
-      {selected.length > 0 && (
-        <p className="text-center text-xs mb-6" style={{ color: '#9CA3AF' }}>
-          {selected.length} ausgewählt · Du kannst das später in den Einstellungen ändern.
-        </p>
-      )}
-
-      <div className="flex flex-col gap-3 mt-4">
+      <div className="flex flex-col gap-3 mt-6">
         <button
           onClick={handleSave}
           disabled={loading}
@@ -161,7 +109,7 @@ export default function OnboardingCompanyPage() {
             boxShadow: loading ? 'none' : '0 4px 14px rgba(17,24,39,0.2)',
           }}
         >
-          {loading ? 'Wird gespeichert…' : selected.length > 0 ? 'Weiter →' : 'Überspringen →'}
+          {loading ? 'Wird gespeichert…' : teamPartnerNumber.trim() ? 'Weiter →' : 'Später eintragen →'}
         </button>
       </div>
     </div>

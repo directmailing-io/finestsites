@@ -26,7 +26,25 @@ function logoHeader(): string {
             </table>`
 }
 
-function layout(content: string): string {
+/** Footer-Angaben für abbestellbare Kategorien (updates | tips | offers) */
+export interface PrefsFooter { categoryLabel: string; unsubscribeUrl: string; settingsUrl: string }
+
+function layout(content: string, prefs?: PrefsFooter): string {
+  const footer = prefs
+    ? `<p style="margin:0 0 6px;font-size:12px;color:${base.footer};line-height:1.6;">
+              Du bekommst diese Mail, weil du ein FinestSites-Konto hast und „${prefs.categoryLabel}“ erhalten möchtest.
+            </p>
+            <p style="margin:0;font-size:12px;color:${base.footer};line-height:1.6;">
+              <a href="${prefs.unsubscribeUrl}" style="color:${base.footer};text-decoration:underline;">Diese Mails abbestellen</a>
+              &nbsp;·&nbsp;
+              <a href="${prefs.settingsUrl}" style="color:${base.footer};text-decoration:underline;">E-Mail-Einstellungen</a>
+              &nbsp;·&nbsp;
+              <a href="mailto:info@finestsites.io" style="color:${base.footer};text-decoration:underline;">Support</a>
+            </p>`
+    : `<p style="margin:0;font-size:12px;color:${base.footer};line-height:1.6;">
+              © ${new Date().getFullYear()} FinestSites &nbsp;·&nbsp;
+              <a href="mailto:info@finestsites.io" style="color:${base.footer};text-decoration:underline;">Support</a>
+            </p>`
   return `<!DOCTYPE html>
 <html lang="de">
 <head>
@@ -57,10 +75,7 @@ function layout(content: string): string {
         <!-- Footer -->
         <tr>
           <td style="padding:24px 0 0;text-align:center;">
-            <p style="margin:0;font-size:12px;color:${base.footer};line-height:1.6;">
-              © ${new Date().getFullYear()} FinestSites &nbsp;·&nbsp;
-              <a href="mailto:info@finestsites.io" style="color:${base.footer};text-decoration:underline;">Support</a>
-            </p>
+            ${footer}
           </td>
         </tr>
 
@@ -1024,4 +1039,58 @@ export function aboutImageGuidelineEmail({ firstName, imageUrl, pair = false, la
       <span style="color:${base.muted};">FinestSites</span>
     </p>
   `)
+}
+
+// ─── Produkt-Update 15.10.2026 ──────────────────────────────────────────────────
+
+const MAIL_ASSETS = 'https://app.finestsites.io/mail/update-2026-10'
+
+export const PRODUCT_UPDATE_2026_10_SUBJECT = 'Neu: 8 Sprachen für deine Business-Seite, eigene Farben und neue Hintergrundbilder'
+
+/**
+ * Drei Neuigkeiten mit je einem Bild. Bilder liegen in public/mail/update-2026-10 (PNG @2x, 560 px breit).
+ * Kategorie "updates", der Footer kommt über `prefs` aus sendCategoryMail.
+ */
+export function productUpdate202610Email({ firstName, prefs }: { firstName?: string; prefs?: PrefsFooter }): string {
+  const name = firstName?.trim() || 'du'
+  const feature = (img: string, alt: string, title: string, text: string, hint: string) => `
+    <table cellpadding="0" cellspacing="0" role="presentation" width="100%" style="margin:28px 0 0;">
+      <tr><td style="border-radius:16px;overflow:hidden;background:#F4F4F5;">
+        <img src="${MAIL_ASSETS}/${img}" alt="${alt}" width="480" style="display:block;width:100%;height:auto;border:0;border-radius:16px;" />
+      </td></tr>
+      <tr><td style="padding:18px 0 0;">
+        <h2 style="margin:0 0 6px;font-size:18px;font-weight:700;color:${base.heading};letter-spacing:-0.01em;">${title}</h2>
+        <p style="margin:0;font-size:15px;color:${base.body};line-height:1.65;">${text}</p>
+        <p style="margin:10px 0 0;font-size:13px;color:${base.muted};line-height:1.6;">${hint}</p>
+      </td></tr>
+    </table>`
+
+  return layout(`
+    <p style="margin:0 0 10px;font-size:12px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#8060b0;">Neu bei FinestSites</p>
+    <h1 style="margin:0 0 12px;font-size:26px;font-weight:700;color:${base.heading};letter-spacing:-0.02em;line-height:1.2;">
+      Deine Seite, noch mehr du.
+    </h1>
+    <p style="margin:0;font-size:15px;color:${base.body};line-height:1.65;">
+      Hey ${name}, drei Neuigkeiten, die deine Seite persönlicher machen. Alles ist schon drin, du musst nichts dazubuchen.
+    </p>
+    ${feature('sprachen.png', 'Business-Seite in 8 Sprachen',
+      'Deine Business-Seite spricht jetzt 8 Sprachen',
+      'Deutsch, Englisch, Italienisch, Russisch, Ukrainisch, Polnisch, Bulgarisch und Hindi. Die Seite erkennt die Sprache deines Besuchers automatisch und zeigt alles passend an, auch deinen „Über mich“-Text.',
+      'Du musst nichts tun. Die Übersetzung passiert beim Veröffentlichen von selbst.')}
+    ${feature('farben.png', 'Eigene Farbe wählen',
+      'Deine Farbe, deine Seite',
+      'Pink, Rot, Petrol oder dein ganz eigener Ton: Du suchst deine Farbe aus, und die ganze Seite passt sich an. Buttons, Überschriften, Akzente.',
+      'Im Editor unter „Farbe“. Antippen, ansehen, übernehmen.')}
+    ${feature('hintergruende.png', 'Neue Hintergrundbilder',
+      'Neue Hintergrundbilder für deine Optimalset-Seite',
+      'Vier neue Bilder stehen zur Auswahl, vom Frühstück mit Orangensaft bis zum Sommer im Garten. So sieht deine Seite genau nach dir aus.',
+      'Im Editor unter „Hintergrundbild“. Ein Tipp, und das Bild ist drauf.')}
+    ${button(`${APP_URL}/sites`, 'Zu meinen Seiten')}
+    <p style="margin:32px 0 0;font-size:15px;color:${base.body};line-height:1.65;">
+      Wenn du Fragen hast, schreib mir einfach. Ich lese alles persönlich.
+    </p>
+    <p style="margin:16px 0 0;font-size:15px;color:${base.body};line-height:1.65;">
+      Viele Grüße<br /><strong style="color:${base.heading};">Daniel von FinestSites</strong>
+    </p>
+  `, prefs)
 }

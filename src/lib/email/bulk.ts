@@ -14,7 +14,7 @@ import { db } from '@/lib/db'
 import { users, emailLogs } from '@/lib/db/schema'
 import { inArray } from 'drizzle-orm'
 import { getResend, FROM_EMAIL } from '@/lib/resend'
-import { newsletterEmail } from '@/lib/email/templates'
+import { newsletterEmail, type PrefsFooter } from '@/lib/email/templates'
 import { markupToHtml } from '@/lib/email/markup'
 import { isEmailCategoryAllowed, emailCategoryLabel, type EmailCategory } from '@/lib/email/categories'
 import { unsubscribeUrl, listUnsubscribeHeaders, EMAIL_SETTINGS_URL } from '@/lib/email/unsubscribe'
@@ -79,6 +79,7 @@ export async function sendCategoryMail({
   type = 'newsletter',
   subject,
   body,
+  buildHtml,
   recipients,
   dryRun = false,
   onProgress,
@@ -88,13 +89,16 @@ export async function sendCategoryMail({
   type?: string
   /** Betreff mit Platzhaltern */
   subject: string
-  /** Text im Mail-Markup (src/lib/email/markup.ts) mit Platzhaltern */
-  body: string
+  /** Text im Mail-Markup (src/lib/email/markup.ts) mit Platzhaltern; alternativ `buildHtml` */
+  body?: string
+  /** Fertige Vorlage aus templates.ts (bekommt den Footer über `prefs`), statt `body` */
+  buildHtml?: (u: BulkRecipient, prefs?: PrefsFooter) => string
   recipients: BulkRecipient[]
   /** true = nur zählen und filtern, nichts senden, nichts loggen */
   dryRun?: boolean
   onProgress?: (msg: string) => void
 }): Promise<BulkResult> {
+  if (!body && !buildHtml) throw new Error('sendCategoryMail: body oder buildHtml angeben')
   const { allowed, skipped } = await splitByOptOut(recipients, category)
   const result: BulkResult = { sent: 0, failed: 0, skipped: skipped.length, total: recipients.length, skippedEmails: skipped.map(s => s.email) }
   onProgress?.(`${recipients.length} Empfänger, davon ${skipped.length} abbestellt (${emailCategoryLabel(category)}), ${allowed.length} werden angeschrieben`)
@@ -116,11 +120,10 @@ export async function sendCategoryMail({
     const payloads = chunk.map(u => {
       const personalSubject = interpolate(subject, u)
       const unsub = optional ? unsubscribeUrl(u.id, category) : null
-      const html = newsletterEmail({
-        subject: personalSubject,
-        bodyHtml: markupToHtml(interpolate(body, u)),
-        prefs: unsub ? { categoryLabel, unsubscribeUrl: unsub, settingsUrl: EMAIL_SETTINGS_URL } : undefined,
-      })
+      const prefs: PrefsFooter | undefined = unsub ? { categoryLabel, unsubscribeUrl: unsub, settingsUrl: EMAIL_SETTINGS_URL } : undefined
+      const html = buildHtml
+        ? buildHtml(u, prefs)
+        : newsletterEmail({ subject: personalSubject, bodyHtml: markupToHtml(interpolate(body!, u)), prefs })
       return { u, personalSubject, html, headers: unsub ? listUnsubscribeHeaders(unsub) : undefined }
     })
     try {
