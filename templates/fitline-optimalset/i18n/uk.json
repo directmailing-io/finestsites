@@ -467,7 +467,22 @@
   "Wir nutzen das zu zweit": "Ми користуємося цим удвох",
   "„Ich fühle mich rundum versorgt, ohne fünf verschiedene Dosen im Schrank stehen zu haben. Der Morgendrink ist mein fester Start in den Tag.\"": "«Я відчуваю, що маю все потрібне, без п’яти різних банок у шафі. Ранковий напій — мій незмінний старт дня.»",
   "„Restorate am Abend ist Teil meines Runterkommens nach der Arbeit geworden. Seit über einem Jahr dabei und mag die Routine.\"": "«Restorate ввечері — це вже частина мого заспокоєння після роботи. Користуюся вже понад рік і мені подобається ця рутина.»",
-  "„War skeptisch, weil ich davon nur in einer Story gesehen hatte. Nach einem ehrlichen Gespräch habe ich es ausprobiert und finde es passt gut.\"": "«Спершу був скепсис, бо це я бачила лише в сторіс. Після щирої розмови спробувала й думаю, що мені добре підходить.»"
+  "„War skeptisch, weil ich davon nur in einer Story gesehen hatte. Nach einem ehrlichen Gespräch habe ich es ausprobiert und finde es passt gut.\"": "«Спершу був скепсис, бо це я бачила лише в сторіс. Після щирої розмови спробувала й думаю, що мені добре підходить.»",
+  "Wer Vitamine, Mineralien und Pflanzenextrakte einzeln kauft, gibt schnell mehr aus als gedacht. Dazu kommt: Menge, Zeitpunkt und Zusammensetzung müssen zueinander passen. Wer das nicht weiß, nimmt von manchem zu viel und von anderem zu wenig, ohne es zu merken. Das Optimalset nimmt dir das ab.": "Якщо купувати вітаміни, мінерали та рослинні екстракти окремо, швидко витратиш більше, ніж думав. До того ж кількість, час прийому й склад мають підходити одне до одного. Якщо цього не знати, можна непомітно приймати чогось забагато, а чогось замало. Optimalset бере це на себе.",
+  "Zu viel ist nicht harmlos, zu wenig bringt nichts. Und Kaffee oder Tee direkt dazu bremsen die Aufnahme.": "Забагато — не безпечно, замало — не дає користі. А кава чи чай одразу разом із прийомом гальмують засвоєння.",
+  "Feste Mischung von der Stange. Die Mengen passen selten zu dir, und mit weiteren Präparaten verdoppelst du schnell einzelne Stoffe.": "Готова стандартна суміш. Кількості рідко підходять саме тобі, а з додатковими препаратами ти швидко подвоюєш окремі речовини.",
+  "Welche Form, welche Menge, wann? Einzeln gekauft musst du das selbst herausfinden. Zu viel auf einmal verträgt der Darm oft nicht.": "Яка форма, яка кількість, коли приймати? Купуючи окремо, ти маєш сам у цьому розібратися. Забагато за один раз кишківник часто погано переносить.",
+  "Hochdosiert über längere Zeit bringt es den Kupferhaushalt durcheinander. Die Menge muss zum Rest passen.": "У високих дозах протягом тривалого часу це порушує баланс міді. Кількість має підходити до всього іншого.",
+  "Große Einzeldosen nimmt der Körper schlechter auf als kleinere Portionen. Und es braucht Vitamin D, das zur normalen Aufnahme beiträgt.": "Великі разові дози організм засвоює гірше, ніж менші порції. І потрібен вітамін D, який сприяє нормальному засвоєнню.",
+  "Fettlöslich: Ohne etwas Fett dazu kommt wenig an. Und es gehört mit Magnesium und Vitamin K zusammen.": "Жиророзчинний: без невеликої кількості жиру разом із ним засвоїться мало. І він має йти разом із магнієм та вітаміном K.",
+  "Wasserlöslich: Was der Körper gerade nicht braucht, scheidet er aus. Hohe Dosen auf einmal bringen also wenig.": "Водорозчинний: те, що організму зараз не потрібно, він виводить. Тож високі дози за один раз дають небагато.",
+  "Fettlöslich und teuer. Auf nüchternen Magen kommt wenig davon an.": "Жиророзчинний і дорогий. Натщесерце засвоюється мало.",
+  "Die Spanne zwischen sinnvoll und zu viel ist klein. Einzeln kaufst du dir schnell ein Zuviel ein.": "Межа між доцільною кількістю і надлишком дуже тонка. Купуючи окремо, легко взяти забагато.",
+  "Gehalt und Qualität schwanken stark. Ohne Standardisierung weißt du nie, was wirklich drin ist.": "Вміст і якість сильно коливаються. Без стандартизації ти ніколи не знаєш, що там насправді є.",
+  "Gehört zu Vitamin D und Calcium. Einzeln gekauft fehlt meist einer der Partner.": "Йде разом із вітаміном D і кальцієм. Якщо купувати окремо, зазвичай бракує одного з партнерів.",
+  "Einzelne Aminosäuren in hoher Dosis verdrängen andere bei der Aufnahme. Das Verhältnis zählt.": "Окремі амінокислоти у високій дозі витісняють інші під час засвоєння. Важливе співвідношення.",
+  "Als Extrakt stark konzentriert. Dosis und Qualität schwanken von Produkt zu Produkt.": "Як екстракт — сильно концентрований. Доза й якість від продукту до продукту різняться.",
+  "Einzeln hochdosiert ist mehr nicht besser. Es gehört in natürlicher Menge in den Mix mit anderen Carotinoiden.": "Окремо у високій дозі — більше не означає краще. Він має бути в природній кількості в суміші з іншими каротиноїдами."
  },
  "attrs": {
   "5 von 5 Sternen": "5 із 5 зірок",
@@ -535,6 +550,10 @@
   "{{vorname}} {{nachname}} | Täglich optimal versorgt. Und das in Minuten.": "{{vorname}} {{nachname}} | Оптимальне забезпечення щодня. І це за лічені хвилини.",
   "Das ist mein Morgenritual. {{#unless joghurt_anzeigen=nein}}Vier{{/unless}}{{#if joghurt_anzeigen=nein}}Drei{{/if}} aufeinander abgestimmte Produkte, morgens, tagsüber und abends. Was drinsteckt und warum ich dabei bleibe, siehst du hier.": "Це мій ранковий ритуал. {{#unless joghurt_anzeigen=nein}}Чотири{{/unless}}{{#if joghurt_anzeigen=nein}}Три{{/if}} продукти, підібрані один до одного: зранку, протягом дня та ввечері. Що в них міститься і чому я й далі з ними, побачиш тут.",
   "{{vorname}} {{nachname}} · Nährstoff-Empfehlung": "{{vorname}} {{nachname}} · Рекомендація щодо нутрієнтів",
-  "Das FitLine Optimalset von {{vorname}} {{nachname}}": "FitLine Optimalset від {{vorname}} {{nachname}}"
+  "Das FitLine Optimalset von {{vorname}} {{nachname}}": "FitLine Optimalset від {{vorname}} {{nachname}}",
+  "Frau genießt ihren Morgendrink auf der sonnigen Terrasse": "Жінка насолоджується своїм ранковим напоєм на сонячній терасі",
+  "Frau mit Drink im Garten, Kinder spielen im Hintergrund": "Жінка з напоєм у саду, діти граються на задньому плані",
+  "Paar beim Frühstück mit frischem Drink": "Пара снідає зі свіжим напоєм",
+  "Paar genießt gemeinsam das Frühstück": "Пара разом насолоджується сніданком"
  }
 }

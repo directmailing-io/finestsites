@@ -467,7 +467,22 @@
   "Wir nutzen das zu zweit": "Мы пользуемся этим вдвоём",
   "„Ich fühle mich rundum versorgt, ohne fünf verschiedene Dosen im Schrank stehen zu haben. Der Morgendrink ist mein fester Start in den Tag.\"": "«Я чувствую, что у меня есть всё необходимое, и при этом в шкафу не стоят пять разных банок. Утренний напиток — мой постоянный старт дня.»",
   "„Restorate am Abend ist Teil meines Runterkommens nach der Arbeit geworden. Seit über einem Jahr dabei und mag die Routine.\"": "«Restorate по вечерам стал частью того, как я расслабляюсь после работы. Уже больше года с ним, и мне нравится эта рутина.»",
-  "„War skeptisch, weil ich davon nur in einer Story gesehen hatte. Nach einem ehrlichen Gespräch habe ich es ausprobiert und finde es passt gut.\"": "«Сначала был скепсис, потому что до этого я видела это только в сторис. После честного разговора попробовала и считаю, что хорошо подходит.»"
+  "„War skeptisch, weil ich davon nur in einer Story gesehen hatte. Nach einem ehrlichen Gespräch habe ich es ausprobiert und finde es passt gut.\"": "«Сначала был скепсис, потому что до этого я видела это только в сторис. После честного разговора попробовала и считаю, что хорошо подходит.»",
+  "Wer Vitamine, Mineralien und Pflanzenextrakte einzeln kauft, gibt schnell mehr aus als gedacht. Dazu kommt: Menge, Zeitpunkt und Zusammensetzung müssen zueinander passen. Wer das nicht weiß, nimmt von manchem zu viel und von anderem zu wenig, ohne es zu merken. Das Optimalset nimmt dir das ab.": "Если покупать витамины, минералы и растительные экстракты по отдельности, быстро тратишь больше, чем думал. К тому же: количество, время приема и состав должны сочетаться между собой. Если этого не знать, чего-то принимаешь слишком много, а чего-то слишком мало — и даже не замечаешь. Optimalset берет это на себя.",
+  "Zu viel ist nicht harmlos, zu wenig bringt nichts. Und Kaffee oder Tee direkt dazu bremsen die Aufnahme.": "Слишком много — не безобидно, слишком мало — бесполезно. А кофе или чай сразу вместе с ними тормозят усвоение.",
+  "Feste Mischung von der Stange. Die Mengen passen selten zu dir, und mit weiteren Präparaten verdoppelst du schnell einzelne Stoffe.": "Готовая смесь «для всех». Дозировки редко подходят именно тебе, а с дополнительными препаратами ты легко удваиваешь отдельные вещества.",
+  "Welche Form, welche Menge, wann? Einzeln gekauft musst du das selbst herausfinden. Zu viel auf einmal verträgt der Darm oft nicht.": "Какая форма, сколько, когда? Если покупать по отдельности, тебе придется разбираться самостоятельно. Слишком много за раз кишечник часто плохо переносит.",
+  "Hochdosiert über längere Zeit bringt es den Kupferhaushalt durcheinander. Die Menge muss zum Rest passen.": "В высоких дозах в течение длительного времени это нарушает баланс меди. Количество должно сочетаться с остальным.",
+  "Große Einzeldosen nimmt der Körper schlechter auf als kleinere Portionen. Und es braucht Vitamin D, das zur normalen Aufnahme beiträgt.": "Большие разовые дозы организм усваивает хуже, чем небольшие порции. И нужен витамин D, который способствует нормальному усвоению.",
+  "Fettlöslich: Ohne etwas Fett dazu kommt wenig an. Und es gehört mit Magnesium und Vitamin K zusammen.": "Жирорастворимый: без небольшого количества жира усвоится мало. И он должен идти в связке с магнием и витамином K.",
+  "Wasserlöslich: Was der Körper gerade nicht braucht, scheidet er aus. Hohe Dosen auf einmal bringen also wenig.": "Водорастворимый: то, что организму сейчас не нужно, он выводит. Поэтому большие дозы за раз дают мало.",
+  "Fettlöslich und teuer. Auf nüchternen Magen kommt wenig davon an.": "Жирорастворимый и дорогой. На голодный желудок от него мало что усваивается.",
+  "Die Spanne zwischen sinnvoll und zu viel ist klein. Einzeln kaufst du dir schnell ein Zuviel ein.": "Грань между разумным количеством и перебором тонкая. Покупая по отдельности, легко купить себе лишнего.",
+  "Gehalt und Qualität schwanken stark. Ohne Standardisierung weißt du nie, was wirklich drin ist.": "Содержание и качество сильно колеблются. Без стандартизации ты никогда не знаешь, что там действительно внутри.",
+  "Gehört zu Vitamin D und Calcium. Einzeln gekauft fehlt meist einer der Partner.": "Идет в связке с витамином D и кальцием. Если покупать по отдельности, обычно не хватает одного из компонентов.",
+  "Einzelne Aminosäuren in hoher Dosis verdrängen andere bei der Aufnahme. Das Verhältnis zählt.": "Отдельные аминокислоты в высокой дозе вытесняют другие при усвоении. Важно соотношение.",
+  "Als Extrakt stark konzentriert. Dosis und Qualität schwanken von Produkt zu Produkt.": "В виде экстракта сильно концентрирован. Дозировка и качество отличаются от продукта к продукту.",
+  "Einzeln hochdosiert ist mehr nicht besser. Es gehört in natürlicher Menge in den Mix mit anderen Carotinoiden.": "В высокой дозе по отдельности больше — не значит лучше. Ему место в смеси с другими каротиноидами в естественном количестве."
  },
  "attrs": {
   "5 von 5 Sternen": "5 из 5 звёзд",
@@ -535,6 +550,10 @@
   "{{vorname}} {{nachname}} | Täglich optimal versorgt. Und das in Minuten.": "{{vorname}} {{nachname}} | Оптимальная поддержка каждый день. И за считанные минуты.",
   "Das ist mein Morgenritual. {{#unless joghurt_anzeigen=nein}}Vier{{/unless}}{{#if joghurt_anzeigen=nein}}Drei{{/if}} aufeinander abgestimmte Produkte, morgens, tagsüber und abends. Was drinsteckt und warum ich dabei bleibe, siehst du hier.": "Это мой утренний ритуал. {{#unless joghurt_anzeigen=nein}}Четыре{{/unless}}{{#if joghurt_anzeigen=nein}}Три{{/if}} продукта, которые дополняют друг друга: утром, днём и вечером. Что внутри и почему я продолжаю их принимать, ты увидишь здесь.",
   "{{vorname}} {{nachname}} · Nährstoff-Empfehlung": "{{vorname}} {{nachname}} · Рекомендация по нутриентам",
-  "Das FitLine Optimalset von {{vorname}} {{nachname}}": "FitLine Optimalset от {{vorname}} {{nachname}}"
+  "Das FitLine Optimalset von {{vorname}} {{nachname}}": "FitLine Optimalset от {{vorname}} {{nachname}}",
+  "Frau genießt ihren Morgendrink auf der sonnigen Terrasse": "Женщина наслаждается утренним напитком на солнечной террасе",
+  "Frau mit Drink im Garten, Kinder spielen im Hintergrund": "Женщина с напитком в саду, дети играют на заднем плане",
+  "Paar beim Frühstück mit frischem Drink": "Пара за завтраком со свежим напитком",
+  "Paar genießt gemeinsam das Frühstück": "Пара вместе наслаждается завтраком"
  }
 }

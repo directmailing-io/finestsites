@@ -467,7 +467,22 @@
   "Wir nutzen das zu zweit": "Lo usiamo in due",
   "„Ich fühle mich rundum versorgt, ohne fünf verschiedene Dosen im Schrank stehen zu haben. Der Morgendrink ist mein fester Start in den Tag.\"": "«Mi sento seguita a 360 gradi, senza avere cinque barattoli diversi nell’armadietto. Il drink del mattino è il mio punto fisso per iniziare la giornata.»",
   "„Restorate am Abend ist Teil meines Runterkommens nach der Arbeit geworden. Seit über einem Jahr dabei und mag die Routine.\"": "«Restorate la sera è diventato parte del mio momento per staccare dopo il lavoro. Lo uso da oltre un anno e mi piace la routine.»",
-  "„War skeptisch, weil ich davon nur in einer Story gesehen hatte. Nach einem ehrlichen Gespräch habe ich es ausprobiert und finde es passt gut.\"": "«Ero scettica, perché l’avevo visto solo in una story. Dopo una chiacchierata sincera l’ho provato e penso che faccia per me.»"
+  "„War skeptisch, weil ich davon nur in einer Story gesehen hatte. Nach einem ehrlichen Gespräch habe ich es ausprobiert und finde es passt gut.\"": "«Ero scettica, perché l’avevo visto solo in una story. Dopo una chiacchierata sincera l’ho provato e penso che faccia per me.»",
+  "Wer Vitamine, Mineralien und Pflanzenextrakte einzeln kauft, gibt schnell mehr aus als gedacht. Dazu kommt: Menge, Zeitpunkt und Zusammensetzung müssen zueinander passen. Wer das nicht weiß, nimmt von manchem zu viel und von anderem zu wenig, ohne es zu merken. Das Optimalset nimmt dir das ab.": "Chi compra vitamine, minerali ed estratti vegetali singolarmente spende presto più di quanto pensasse. In più: quantità, momento e composizione devono essere in sintonia tra loro. Chi non lo sa, finisce per prenderne troppo di alcuni e troppo poco di altri, senza accorgersene. L’Optimalset ti toglie questo pensiero.",
+  "Zu viel ist nicht harmlos, zu wenig bringt nichts. Und Kaffee oder Tee direkt dazu bremsen die Aufnahme.": "Troppo non è innocuo, troppo poco non serve. E caffè o tè presi subito insieme ne frenano l’assorbimento.",
+  "Feste Mischung von der Stange. Die Mengen passen selten zu dir, und mit weiteren Präparaten verdoppelst du schnell einzelne Stoffe.": "Miscela fissa standard. Le quantità raramente sono adatte a te, e con altri preparati raddoppi in fretta singole sostanze.",
+  "Welche Form, welche Menge, wann? Einzeln gekauft musst du das selbst herausfinden. Zu viel auf einmal verträgt der Darm oft nicht.": "Quale forma, quale quantità, quando? Se li compri singolarmente, devi scoprirlo da solo. Troppo tutto in una volta spesso l’intestino non lo tollera.",
+  "Hochdosiert über längere Zeit bringt es den Kupferhaushalt durcheinander. Die Menge muss zum Rest passen.": "Ad alto dosaggio per un periodo prolungato scombina l’equilibrio del rame. La quantità deve essere adatta al resto.",
+  "Große Einzeldosen nimmt der Körper schlechter auf als kleinere Portionen. Und es braucht Vitamin D, das zur normalen Aufnahme beiträgt.": "Il corpo assorbe peggio grandi dosi singole rispetto a porzioni più piccole. E serve vitamina D, che contribuisce al normale assorbimento.",
+  "Fettlöslich: Ohne etwas Fett dazu kommt wenig an. Und es gehört mit Magnesium und Vitamin K zusammen.": "Liposolubile: senza un po’ di grassi insieme, ne arriva poco. E va associata a magnesio e vitamina K.",
+  "Wasserlöslich: Was der Körper gerade nicht braucht, scheidet er aus. Hohe Dosen auf einmal bringen also wenig.": "Idrosolubile: quello di cui il corpo non ha bisogno in quel momento, lo elimina. Dosi alte tutte insieme quindi servono a poco.",
+  "Fettlöslich und teuer. Auf nüchternen Magen kommt wenig davon an.": "Liposolubile e costosa. A stomaco vuoto ne arriva poco.",
+  "Die Spanne zwischen sinnvoll und zu viel ist klein. Einzeln kaufst du dir schnell ein Zuviel ein.": "Il margine tra utile e troppo è ristretto. Comprandolo singolarmente, ti ritrovi in fretta con un eccesso.",
+  "Gehalt und Qualität schwanken stark. Ohne Standardisierung weißt du nie, was wirklich drin ist.": "Contenuto e qualità variano molto. Senza standardizzazione non sai mai cosa c’è davvero dentro.",
+  "Gehört zu Vitamin D und Calcium. Einzeln gekauft fehlt meist einer der Partner.": "Va insieme a vitamina D e calcio. Comprati singolarmente, di solito manca uno dei partner.",
+  "Einzelne Aminosäuren in hoher Dosis verdrängen andere bei der Aufnahme. Das Verhältnis zählt.": "Singoli amminoacidi ad alto dosaggio ne ostacolano altri nell’assorbimento. Conta il rapporto.",
+  "Als Extrakt stark konzentriert. Dosis und Qualität schwanken von Produkt zu Produkt.": "Come estratto è molto concentrato. Dose e qualità variano da prodotto a prodotto.",
+  "Einzeln hochdosiert ist mehr nicht besser. Es gehört in natürlicher Menge in den Mix mit anderen Carotinoiden.": "Da solo e ad alto dosaggio, di più non è meglio. Deve stare nel mix con altri carotenoidi in quantità naturale."
  },
  "attrs": {
   "5 von 5 Sternen": "5 stelle su 5",
@@ -535,6 +550,10 @@
   "{{vorname}} {{nachname}} | Täglich optimal versorgt. Und das in Minuten.": "{{vorname}} {{nachname}} | Ogni giorno al meglio. E in pochi minuti.",
   "Das ist mein Morgenritual. {{#unless joghurt_anzeigen=nein}}Vier{{/unless}}{{#if joghurt_anzeigen=nein}}Drei{{/if}} aufeinander abgestimmte Produkte, morgens, tagsüber und abends. Was drinsteckt und warum ich dabei bleibe, siehst du hier.": "Questo è il mio rituale del mattino. {{#unless joghurt_anzeigen=nein}}Quattro{{/unless}}{{#if joghurt_anzeigen=nein}}Tre{{/if}} prodotti coordinati tra loro, al mattino, durante il giorno e la sera. Cosa c’è dentro e perché continuo a usarli, lo vedi qui.",
   "{{vorname}} {{nachname}} · Nährstoff-Empfehlung": "{{vorname}} {{nachname}} · Consiglio sui nutrienti",
-  "Das FitLine Optimalset von {{vorname}} {{nachname}}": "Il FitLine Optimalset di {{vorname}} {{nachname}}"
+  "Das FitLine Optimalset von {{vorname}} {{nachname}}": "Il FitLine Optimalset di {{vorname}} {{nachname}}",
+  "Frau genießt ihren Morgendrink auf der sonnigen Terrasse": "Donna che si gode il suo drink del mattino sulla terrazza soleggiata",
+  "Frau mit Drink im Garten, Kinder spielen im Hintergrund": "Donna con un drink in giardino, bambini che giocano sullo sfondo",
+  "Paar beim Frühstück mit frischem Drink": "Coppia a colazione con un drink fresco",
+  "Paar genießt gemeinsam das Frühstück": "Coppia che si gode la colazione insieme"
  }
 }

@@ -64,5 +64,9 @@
  "{{vorname}} {{nachname}} | Täglich optimal versorgt. Und das in Minuten.",
  "Das ist mein Morgenritual. {{#unless joghurt_anzeigen=nein}}Vier{{/unless}}{{#if joghurt_anzeigen=nein}}Drei{{/if}} aufeinander abgestimmte Produkte, morgens, tagsüber und abends. Was drinsteckt und warum ich dabei bleibe, siehst du hier.",
  "{{vorname}} {{nachname}} · Nährstoff-Empfehlung",
- "Das FitLine Optimalset von {{vorname}} {{nachname}}"
+ "Das FitLine Optimalset von {{vorname}} {{nachname}}",
+ "Frau genießt ihren Morgendrink auf der sonnigen Terrasse",
+ "Frau mit Drink im Garten, Kinder spielen im Hintergrund",
+ "Paar beim Frühstück mit frischem Drink",
+ "Paar genießt gemeinsam das Frühstück"
 ]

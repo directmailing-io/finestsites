@@ -467,7 +467,22 @@
   "Wir nutzen das zu zweit": "Używamy tego we dwoje",
   "„Ich fühle mich rundum versorgt, ohne fünf verschiedene Dosen im Schrank stehen zu haben. Der Morgendrink ist mein fester Start in den Tag.\"": "„Czuję, że mam wszystko, czego potrzebuję, bez trzymania w szafce pięciu różnych puszek. Poranny drink to mój stały start w dzień.”",
   "„Restorate am Abend ist Teil meines Runterkommens nach der Arbeit geworden. Seit über einem Jahr dabei und mag die Routine.\"": "„Restorate wieczorem stał się częścią mojego wyciszania się po pracy. Stosuję go od ponad roku i lubię tę rutynę.”",
-  "„War skeptisch, weil ich davon nur in einer Story gesehen hatte. Nach einem ehrlichen Gespräch habe ich es ausprobiert und finde es passt gut.\"": "„Byłam sceptyczna, bo widziałam to tylko w relacji. Po szczerej rozmowie spróbowałam i uważam, że dobrze pasuje.”"
+  "„War skeptisch, weil ich davon nur in einer Story gesehen hatte. Nach einem ehrlichen Gespräch habe ich es ausprobiert und finde es passt gut.\"": "„Byłam sceptyczna, bo widziałam to tylko w relacji. Po szczerej rozmowie spróbowałam i uważam, że dobrze pasuje.”",
+  "Wer Vitamine, Mineralien und Pflanzenextrakte einzeln kauft, gibt schnell mehr aus als gedacht. Dazu kommt: Menge, Zeitpunkt und Zusammensetzung müssen zueinander passen. Wer das nicht weiß, nimmt von manchem zu viel und von anderem zu wenig, ohne es zu merken. Das Optimalset nimmt dir das ab.": "Kto kupuje osobno witaminy, minerały i ekstrakty roślinne, szybko wydaje więcej, niż myślał. Do tego dochodzi jeszcze jedno: ilość, pora i skład muszą do siebie pasować. Jeśli tego nie wiesz, bierzesz niektórych rzeczy za dużo, a innych za mało, nawet tego nie zauważając. Optimalset zdejmuje ci to z głowy.",
+  "Zu viel ist nicht harmlos, zu wenig bringt nichts. Und Kaffee oder Tee direkt dazu bremsen die Aufnahme.": "Za dużo nie jest nieszkodliwe, za mało nic nie daje. A kawa albo herbata wypita od razu do tego hamuje wchłanianie.",
+  "Feste Mischung von der Stange. Die Mengen passen selten zu dir, und mit weiteren Präparaten verdoppelst du schnell einzelne Stoffe.": "Gotowa mieszanka z półki. Ilości rzadko pasują do ciebie, a dokładając kolejne preparaty, szybko podwajasz poszczególne składniki.",
+  "Welche Form, welche Menge, wann? Einzeln gekauft musst du das selbst herausfinden. Zu viel auf einmal verträgt der Darm oft nicht.": "Jaka forma, jaka ilość, kiedy? Kupując osobno, musisz samodzielnie to ustalić. Jelita często źle znoszą zbyt dużo naraz.",
+  "Hochdosiert über längere Zeit bringt es den Kupferhaushalt durcheinander. Die Menge muss zum Rest passen.": "Wysokie dawki przez dłuższy czas zaburzają gospodarkę miedzią. Ilość musi pasować do reszty.",
+  "Große Einzeldosen nimmt der Körper schlechter auf als kleinere Portionen. Und es braucht Vitamin D, das zur normalen Aufnahme beiträgt.": "Duże pojedyncze dawki organizm wchłania gorzej niż mniejsze porcje. A do tego potrzebna jest witamina D, która przyczynia się do prawidłowego wchłaniania.",
+  "Fettlöslich: Ohne etwas Fett dazu kommt wenig an. Und es gehört mit Magnesium und Vitamin K zusammen.": "Rozpuszczalna w tłuszczach: bez odrobiny tłuszczu niewiele się wchłonie. I powinna iść w parze z magnezem oraz witaminą K.",
+  "Wasserlöslich: Was der Körper gerade nicht braucht, scheidet er aus. Hohe Dosen auf einmal bringen also wenig.": "Rozpuszczalna w wodzie: to, czego organizm akurat nie potrzebuje, wydala. Wysokie dawki naraz dają więc niewiele.",
+  "Fettlöslich und teuer. Auf nüchternen Magen kommt wenig davon an.": "Rozpuszczalna w tłuszczach i droga. Na pusty żołądek niewiele z niej się wchłonie.",
+  "Die Spanne zwischen sinnvoll und zu viel ist klein. Einzeln kaufst du dir schnell ein Zuviel ein.": "Granica między rozsądną ilością a nadmiarem jest wąska. Kupując osobno, łatwo kupisz sobie za dużo.",
+  "Gehalt und Qualität schwanken stark. Ohne Standardisierung weißt du nie, was wirklich drin ist.": "Zawartość i jakość mocno się wahają. Bez standaryzacji nigdy nie wiesz, co naprawdę jest w środku.",
+  "Gehört zu Vitamin D und Calcium. Einzeln gekauft fehlt meist einer der Partner.": "Należy do witaminy D i wapnia. Kupując osobno, zwykle brakuje jednego z partnerów.",
+  "Einzelne Aminosäuren in hoher Dosis verdrängen andere bei der Aufnahme. Das Verhältnis zählt.": "Pojedyncze aminokwasy w wysokiej dawce wypierają inne podczas wchłaniania. Liczą się proporcje.",
+  "Als Extrakt stark konzentriert. Dosis und Qualität schwanken von Produkt zu Produkt.": "Jako ekstrakt jest mocno skoncentrowany. Dawka i jakość różnią się w zależności od produktu.",
+  "Einzeln hochdosiert ist mehr nicht besser. Es gehört in natürlicher Menge in den Mix mit anderen Carotinoiden.": "Pojedynczo w wysokiej dawce więcej nie znaczy lepiej. Powinien być w naturalnej ilości w mieszance z innymi karotenoidami."
  },
  "attrs": {
   "5 von 5 Sternen": "5 z 5 gwiazdek",
@@ -535,6 +550,10 @@
   "{{vorname}} {{nachname}} | Täglich optimal versorgt. Und das in Minuten.": "{{vorname}} {{nachname}} | Optymalne wsparcie każdego dnia. I to w kilka minut.",
   "Das ist mein Morgenritual. {{#unless joghurt_anzeigen=nein}}Vier{{/unless}}{{#if joghurt_anzeigen=nein}}Drei{{/if}} aufeinander abgestimmte Produkte, morgens, tagsüber und abends. Was drinsteckt und warum ich dabei bleibe, siehst du hier.": "To mój poranny rytuał. {{#unless joghurt_anzeigen=nein}}Cztery{{/unless}}{{#if joghurt_anzeigen=nein}}Trzy{{/if}} dopasowane do siebie produkty, rano, w ciągu dnia i wieczorem. Co jest w środku i dlaczego się ich trzymam, zobaczysz tutaj.",
   "{{vorname}} {{nachname}} · Nährstoff-Empfehlung": "{{vorname}} {{nachname}} · Rekomendacja składników odżywczych",
-  "Das FitLine Optimalset von {{vorname}} {{nachname}}": "FitLine Optimalset od {{vorname}} {{nachname}}"
+  "Das FitLine Optimalset von {{vorname}} {{nachname}}": "FitLine Optimalset od {{vorname}} {{nachname}}",
+  "Frau genießt ihren Morgendrink auf der sonnigen Terrasse": "Kobieta pije poranny napój na słonecznym tarasie",
+  "Frau mit Drink im Garten, Kinder spielen im Hintergrund": "Kobieta z napojem w ogrodzie, dzieci bawią się w tle",
+  "Paar beim Frühstück mit frischem Drink": "Para przy śniadaniu ze świeżym napojem",
+  "Paar genießt gemeinsam das Frühstück": "Para wspólnie delektuje się śniadaniem"
  }
 }
