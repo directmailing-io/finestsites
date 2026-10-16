@@ -10,6 +10,7 @@
 
 import { PDFDocument, StandardFonts, rgb, type PDFFont, type PDFPage } from 'pdf-lib'
 import { formatEuro, formatDateDE, VAT_RATE_PERCENT, type TaxStatus } from './tax'
+import { LOGO_PATHS, LOGO_RECTS, LOGO_VIEWBOX } from './logo-vector'
 
 /** Leistungsempfänger und Aussteller (exakt wie im Impressum, src/app/impressum/page.tsx). */
 export const CREDIT_NOTE_ISSUER = {
@@ -174,7 +175,18 @@ export async function generateCreditNotePdf(data: CreditNoteData): Promise<Uint8
 
   // ── Kopf: Absender rechts ────────────────────────────────────────────────────
   let y = A4[1] - M
-  textRight(page, 'FinestSites', right, y - 4, 18, bold, INK)
+  // Wortmarke als Vektor (rechtsbündig, Oberkante = y + 14)
+  {
+    const LOGO_H = 20
+    const scale = LOGO_H / LOGO_VIEWBOX.height
+    const lx = right - LOGO_VIEWBOX.width * scale
+    const top = y + 14
+    const logoColor = rgb(0x1a / 255, 0x1a / 255, 0x1a / 255)
+    for (const d of LOGO_PATHS) page.drawSvgPath(d, { x: lx, y: top, scale, color: logoColor })
+    for (const rc of LOGO_RECTS) {
+      page.drawRectangle({ x: lx + rc.x * scale, y: top - (rc.y + rc.h) * scale, width: rc.w * scale, height: rc.h * scale, color: logoColor })
+    }
+  }
   y -= 26
   // Name/Anschrift des Ausstellers vollständig (§ 14 Abs. 4 Nr. 1 UStG) – umbrechen, nie kürzen
   for (const l of [CREDIT_NOTE_ISSUER.name, CREDIT_NOTE_ISSUER.street, CREDIT_NOTE_ISSUER.zipCity, CREDIT_NOTE_ISSUER.country, `USt-IdNr.: ${CREDIT_NOTE_ISSUER.vatId}`]) {
