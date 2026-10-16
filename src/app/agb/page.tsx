@@ -442,7 +442,7 @@ export default function AgbPage() {
             Nutzers, solange dessen Abonnement besteht; als bezahlt gilt eine Rechnung auch, soweit sie mit einem
             Guthaben des geworbenen Nutzers beglichen wurde. Eine Selbstwerbung ist ausgeschlossen; Provisionen aus
             Selbstwerbung oder sonstigem Missbrauch entfallen. <strong>Rabatt für geworbene Nutzer:</strong> Beginnt
-            das erste Abonnement des geworbenen Nutzers am oder nach dem 1. Dezember 2026, erhält er bei monatlicher
+            das erste Abonnement des geworbenen Nutzers am oder nach dem 16. Oktober 2026, erhält er bei monatlicher
             Zahlung einen Rabatt von 20 % auf die erste Rechnung; ab der zweiten Rechnung gilt der reguläre Preis.
             Bei jährlicher Zahlung erhält er einen Rabatt von 10 % auf jede Jahresrechnung, solange das
             Jahresabonnement besteht. Wechselt er von monatlicher auf jährliche Zahlung, gilt der Rabatt von 10 %
@@ -450,10 +450,10 @@ export default function AgbPage() {
             Abonnements. Diese Rabatte gelten nur für Neukunden, die zuvor noch nicht Kunde des Anbieters waren;
             der Anbieter kann dies anhand von E-Mail-Adresse, Teampartner-Nummer und Zahlungsmittel prüfen. Die
             Provision des Partners nach Satz 1 bleibt davon unberührt. <strong>Bestandsschutz:</strong> Nutzer, die
-            vor dem 1. Dezember 2026 über eine Empfehlung ein Abonnement abgeschlossen haben, behalten ihren
+            vor dem 16. Oktober 2026 über eine Empfehlung ein Abonnement abgeschlossen haben, behalten ihren
             bisherigen Rabatt von 10 % dauerhaft auf ihr Abonnement, unabhängig von der Zahlungsweise. Dasselbe gilt
-            für Nutzer, die vor dem 1. Dezember 2026 über eine Empfehlung registriert wurden, sofern sie ihr erstes
-            Abonnement bis einschließlich 30. Dezember 2026 abschließen; danach gelten für sie die Rabatte nach Satz
+            für Nutzer, die vor dem 16. Oktober 2026 über eine Empfehlung registriert wurden, sofern sie ihr erstes
+            Abonnement bis einschließlich 14. November 2026 abschließen; danach gelten für sie die Rabatte nach Satz
             3 bis 6. Ein vom Nutzer eingelöster anderer Gutschein ersetzt den Rabatt; Rabatte werden nicht
             kombiniert.
           </p>

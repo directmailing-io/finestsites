@@ -1,5 +1,5 @@
 /**
- * Empfehlungsrabatt für geworbene Kunden – einzige Quelle der Wahrheit ("Modell C", ab 01.12.2026).
+ * Empfehlungsrabatt für geworbene Kunden – einzige Quelle der Wahrheit ("Modell C", ab 16.10.2026).
  *
  * Rein (kein DB-/Stripe-Zugriff, kein process.env) → läuft in Server-Routen, in Tests und
  * darf auch von Client-Komponenten importiert werden. Die Eingaben (Zeitpunkt, Coupon-IDs,
@@ -20,8 +20,9 @@ export type ReferralInterval = 'monthly' | 'yearly'
 export type ReferralDuration = 'once' | 'forever'
 export type ReferralDeniedReason = 'returning_customer' | 'unavailable'
 
-/** Start von Modell C, falls AFFILIATE_MODEL_C_START nicht gesetzt ist (01.12.2026, 00:00 Uhr deutscher Zeit). */
-export const AFFILIATE_MODEL_C_START_DEFAULT = '2026-12-01T00:00:00+01:00'
+/** Start von Modell C, falls AFFILIATE_MODEL_C_START nicht gesetzt ist (16.10.2026, 00:00 Uhr deutscher Zeit;
+ *  Daniel: neues Modell gilt sofort für neue Empfehlungen, bisher Geworbene behalten 10 % dauerhaft). */
+export const AFFILIATE_MODEL_C_START_DEFAULT = '2026-10-16T00:00:00+02:00'
 
 export const LEGACY_PERCENT = 10
 export const FIRST_MONTH_PERCENT = 20
@@ -415,7 +416,7 @@ export function partnerReferralPitch(terms: ReferralTerms): { headline: string; 
     return {
       headline: 'Dein Empfohlener spart 10 % dauerhaft.',
       // Partner rechtzeitig auf den Wechsel zu Modell C hinweisen (AGB § 16 Abs. 2)
-      step: `Dein Empfohlener bucht FinestSites und zahlt dauerhaft 10 % weniger, egal welchen Tarif. Ab 1. Dezember 2026 bekommen neue Kunden stattdessen ${FIRST_MONTH_PERCENT} % auf den ersten Monat oder dauerhaft ${YEARLY_PARTNER_PERCENT} % im Jahresabo.`,
+      step: `Dein Empfohlener bucht FinestSites und zahlt dauerhaft 10 % weniger, egal welchen Tarif. Neue Kunden bekommen inzwischen stattdessen ${FIRST_MONTH_PERCENT} % auf den ersten Monat oder dauerhaft ${YEARLY_PARTNER_PERCENT} % im Jahresabo.`,
     }
   }
   return {
