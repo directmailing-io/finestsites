@@ -35,7 +35,7 @@ async function getRecoveryInfo(profile: RecoveryProfile) {
   }
 }
 
-function getSubInfo(sub: Stripe.Subscription, plan: string, billingInterval: string | null, couponObj: { percent_off?: number | null; name?: string | null; id?: string } | null | undefined, recovery: Awaited<ReturnType<typeof getRecoveryInfo>>) {
+function getSubInfo(sub: Stripe.Subscription, plan: string, billingInterval: string | null, couponObj: { percent_off?: number | null; name?: string | null; id?: string; duration?: string | null } | null | undefined, recovery: Awaited<ReturnType<typeof getRecoveryInfo>>) {
   // In Stripe v22+, current_period_end is per subscription item
   const item = sub.items?.data?.[0]
   const currentPeriodEnd = (item as any)?.current_period_end ?? null
@@ -56,6 +56,8 @@ function getSubInfo(sub: Stripe.Subscription, plan: string, billingInterval: str
     billing_interval: billingInterval,
     discount_percent: discountPercent,
     discount_name: discountName,
+    // 'once' (z. B. Startbonus 1. Monat) | 'repeating' | 'forever'
+    discount_duration: couponObj?.duration ?? null,
     recovery,
   }
 }

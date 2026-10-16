@@ -5,16 +5,22 @@ import { eq } from 'drizzle-orm'
 import { getUserFromRequest } from '@/lib/auth/server'
 import { getStripe, getPriceIdByPlan, type PlanKey, type BillingInterval } from '@/lib/stripe/client'
 import { canUpgradeTo } from '@/lib/plans'
+import { discountsParam } from '@/lib/affiliate/referral-model'
 import { sendEmail } from '@/lib/resend'
 import { subscriptionConfirmationEmail } from '@/lib/email/templates'
+import { referralDiscountsForPlanChange, loadInheritedCustomerDiscount, PLAN_CHANGE_SUBSCRIPTION_EXPAND } from '@/lib/affiliate/referral-offer'
 
 /**
  * In-place subscription upgrade with proration.
  *
  * Uses stripe.subscriptions.update() so:
  * - User pays only the prorated difference for the remaining billing period
- * - Existing discounts (AKTION25, affiliate coupons) are automatically preserved
- *   because we do NOT pass a `discounts` parameter
+ * - Existing discounts (AKTION25, affiliate coupons) are preserved: for a same-interval plan
+ *   change we normally do NOT pass `discounts`. On an interval change (monthly → yearly) we
+ *   always pass the merged list: coupons restricted to the other interval (metadata.interval)
+ *   are dropped, Modell C adds AFFILIATE10, an inherited customer discount is kept
+ *   (see mergeReferralDiscounts in referral-model.ts)
+ * - Same plan monthly → yearly is allowed (interval upgrade); yearly → monthly never
  * - Tax rates stay on the subscription (already configured at checkout time)
  * - Works for SEPA: payment_behavior=pending_if_incomplete means the subscription
  *   item updates immediately, the invoice stays open until SEPA settles
@@ -32,16 +38,11 @@ export async function POST(req: NextRequest) {
 
   const profile = await db.query.users.findFirst({
     where: eq(users.id, user.id),
-    columns: { stripeCustomerId: true, plan: true },
+    columns: { stripeCustomerId: true, plan: true, username: true, referredByUsername: true, referralTerms: true },
   })
 
   if (!profile?.stripeCustomerId) {
     return NextResponse.json({ error: 'Kein aktives Abonnement gefunden.' }, { status: 400 })
-  }
-
-  // Server-side guard: only upgrades allowed, no downgrades
-  if (!canUpgradeTo(profile.plan, plan)) {
-    return NextResponse.json({ error: 'Nur Upgrades sind möglich.' }, { status: 400 })
   }
 
   const stripe = getStripe()
@@ -50,7 +51,8 @@ export async function POST(req: NextRequest) {
     customer: profile.stripeCustomerId,
     status: 'active',
     limit: 1,
-    expand: ['data.items'],
+    // Coupons expandiert: metadata.interval entscheidet beim Intervallwechsel
+    expand: [...PLAN_CHANGE_SUBSCRIPTION_EXPAND],
   })
 
   if (!subscriptions.data.length) {
@@ -64,9 +66,23 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Abonnement hat keine aktiven Positionen.' }, { status: 400 })
   }
 
+  // Server-side guard: only upgrades allowed, no downgrades. Das aktuelle Intervall kommt
+  // aus Stripe (nicht aus der DB): gleicher Tarif nur Monat → Jahr, Jahr → Monat nie.
+  const currentInterval: BillingInterval = existingItem.price.recurring?.interval === 'year' ? 'yearly' : 'monthly'
+  if (existingItem.price.id === newPriceId || !canUpgradeTo(profile.plan, plan, currentInterval, interval)) {
+    return NextResponse.json({ error: 'Nur Upgrades sind möglich.' }, { status: 400 })
+  }
+
   try {
+    // Modell C: beim Wechsel ins Jahresabo 10 % Partnerpreis ergänzen (bestehende Rabatte bleiben)
+    // Intervallwechsel: immer explizite Rabattliste (Intervall-beschränkte Coupons fallen weg,
+    // ein geerbter Kunden-Rabatt wird übernommen) – Vorschau und Upgrade identisch.
+    const customerDiscount = await loadInheritedCustomerDiscount(stripe, sub)
+    const referral = referralDiscountsForPlanChange({ profile, sub, targetInterval: interval, currentInterval, customerDiscount })
+
     const updated = await stripe.subscriptions.update(sub.id, {
       items: [{ id: existingItem.id, price: newPriceId }],
+      ...(referral.discounts ? { discounts: discountsParam(referral.discounts) } : {}),
 
       // always_invoice: Stripe erstellt sofort eine Rechnung für die Differenz
       // (verbleibende Tage im aktuellen Abrechnungszeitraum). Beim nächsten
@@ -77,8 +93,9 @@ export async function POST(req: NextRequest) {
       // Default je nach Zahlungsmethode. pending_if_incomplete ist bei SEPA
       // nicht erlaubt — daher kein fester Wert hier.
 
-      // WICHTIG: discounts NICHT mitschicken → Stripe behält alle bestehenden
-      // Rabatte (AKTION25, Affiliate-Gutscheine etc.) automatisch bei.
+      // WICHTIG: discounts nur mitschicken, wenn referral.discounts gesetzt ist (dann enthält
+      // die Liste ALLE weiter gültigen Rabatte inkl. geerbtem Kunden-Rabatt; beim Intervallwechsel
+      // immer) – sonst behält Stripe alles automatisch.
 
       // Falls der User zuvor gekündigt hatte (cancel_at_period_end), gleichzeitig
       // reaktivieren — Upgrade impliziert Weitermachen.
@@ -87,6 +104,10 @@ export async function POST(req: NextRequest) {
       // Proration-Rechnung mitliefern, damit die UI den echten Betrag anzeigen kann
       expand: ['latest_invoice'],
     })
+
+    if (referral.addedCoupon || referral.removedCoupons.length) {
+      console.info('[billing/upgrade] referral discounts changed:', user.id, { added: referral.addedCoupon, removed: referral.removedCoupons })
+    }
 
     // DB sofort aktualisieren; Stripe-Webhook ist Safety-Net für den Fall,
     // dass der Request hier abbricht.

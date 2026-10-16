@@ -126,9 +126,17 @@ export const users = pgTable('users', {
   teamPartnerNumber: text('team_partner_number'),
   // Affiliate
   referredByUsername: text('referred_by_username'),
+  // Empfehlungsrabatt als Kunde (src/lib/affiliate/referral-model.ts): 'legacy10' (10 % dauerhaft, Bestandsschutz) | 'c2026' (Modell C) | null
+  referralTerms: text('referral_terms'),
+  // Hinweis für den Admin, z. B. 'fingerprint_match:<username>' (Zahlungsmittel eines früheren Kunden); kein automatischer Entzug
+  referralDiscountFlag: text('referral_discount_flag'),
+  // Fingerprints der Zahlungsmittel (card/sepa_debit) für die Neukunden-Prüfung
+  paymentFingerprints: text('payment_fingerprints').array().notNull().default([]),
   stripeConnectId: text('stripe_connect_id').unique(),
   affiliateOnboarded: boolean('affiliate_onboarded').default(false),
   affiliatePayoutEmail: text('affiliate_payout_email'),
+  // Wie der Partner seine Provision bekommt: 'credit' = Verrechnung mit dem eigenen Abo (Kundenguthaben), 'payout' = Überweisung (Stripe Connect)
+  affiliatePayoutMode: text('affiliate_payout_mode').notNull().default('credit'),
   // Global content consent (legal proof — stored once at onboarding)
   contentConsentAt: timestamp('content_consent_at', { withTimezone: true }),
   contentConsentIp: varchar('content_consent_ip', { length: 64 }),
@@ -348,7 +356,10 @@ export const affiliatePayouts = pgTable('affiliate_payouts', {
   periodStart: date('period_start').notNull(),
   periodEnd: date('period_end').notNull(),
   stripeTransferId: text('stripe_transfer_id'),
-  payoutMethod: text('payout_method').default('stripe_connect'),
+  payoutMethod: text('payout_method').default('stripe_connect'), // stripe_connect | credit
+  // Verrechnung (payout_method = 'credit'): Stripe customer balance transaction + Kunde, dem sie gutgeschrieben wurde
+  stripeBalanceTxnId: text('stripe_balance_txn_id'),
+  stripeCustomerId: text('stripe_customer_id'),
   status: text('status').notNull().default('pending'),
   pdfUrl: text('pdf_url'),
   notes: text('notes'),

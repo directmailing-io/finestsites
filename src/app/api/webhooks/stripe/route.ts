@@ -32,6 +32,9 @@ import { runRecoveryNotificationsFor } from '@/lib/billing/recovery-notification
 import { invoiceSubscriptionId, invoiceCouponIds, resolveChargeInvoiceId } from '@/lib/affiliate/stripe-refs'
 import { planReversal, planDisputeRestore, type ReversalAction } from '@/lib/affiliate/reversal'
 import { syncConnectStatus } from '@/lib/affiliate/connect-status'
+import { computeInvoiceNet, commissionFromNet, invoiceSettledAmount } from '@/lib/affiliate/commission-base'
+import { isReferralCoupon, type ReferralTerms } from '@/lib/affiliate/referral-model'
+import { referralCouponsFromEnv, paymentMethodFingerprint, rememberPaymentFingerprint, flagFingerprintMatch } from '@/lib/affiliate/referral-offer'
 
 export async function POST(req: NextRequest) {
   if (!process.env.STRIPE_WEBHOOK_SECRET) throw new Error('Missing STRIPE_WEBHOOK_SECRET')
@@ -161,34 +164,8 @@ export async function POST(req: NextRequest) {
     return { pmType: null, pmLast4: null }
   }
 
-  // Commission base = the tax-free net amount the customer actually paid,
-  // taken from the real Stripe invoice (NOT a hardcoded VAT rate).
-  // Uses total_excluding_tax when present, otherwise total minus invoice tax.
-  // Partial payments scale the net proportionally. Pure integer math (cents).
-  function computeInvoiceNet(inv: any): number {
-    const paid = inv.amount_paid ?? 0
-    if (paid <= 0) return 0
-    const total = inv.total ?? paid
-    let netTotal: number
-    if (typeof inv.total_excluding_tax === 'number') {
-      netTotal = inv.total_excluding_tax
-    } else {
-      const taxCents = typeof inv.tax === 'number'
-        ? inv.tax
-        : Array.isArray(inv.total_taxes)
-          ? inv.total_taxes.reduce((s: number, t: any) => s + (t.amount ?? 0), 0)
-          : 0
-      netTotal = total - taxCents
-    }
-    if (netTotal <= 0) return 0
-    if (paid >= total || total === 0) return netTotal
-    return Math.floor((netTotal * paid) / total)
-  }
-
-  // 10% commission on the net base — integer division, no floats.
-  function commissionFromNet(netCents: number): number {
-    return netCents > 0 ? Math.floor(netCents / 10) : 0
-  }
+  // Provisionsbasis (Netto nach Rabatt, ohne USt) und 10 %: src/lib/affiliate/commission-base.ts.
+  // Kundenguthaben (z. B. verrechnete Partnerprovision) zählt dort als Zahlung, nicht als Rabatt.
 
   // Refund/chargeback handling per spec (Logik: src/lib/affiliate/reversal.ts):
   // - commissions not yet paid out → status 'cancelled' (Teilerstattung: anteilig gekürzt)
@@ -303,7 +280,8 @@ export async function POST(req: NextRequest) {
         refereeId,
         stripeInvoiceId: invoice.id,
         stripeCustomerId: customerId,
-        grossAmount: invoice.amount_paid ?? 0,
+        // beglichen = Zahlung + angewandtes Kundenguthaben
+        grossAmount: invoiceSettledAmount(invoice),
         netAmount: netPaid,
         commissionRate: '0.10',
         commissionAmount,
@@ -353,7 +331,8 @@ export async function POST(req: NextRequest) {
   // Ersatzrechnung). Quelle der Zuordnung ist users.referred_by_username; hat der Kunde
   // beim Checkout einen anderen Gutschein genutzt (promo_code_override), ist das Feld leer.
   async function bookReferralCommissionForInvoice(invoice: any, userId: string, billingReason: string | null) {
-    if (!invoice?.id || (invoice.amount_paid ?? 0) <= 0) return
+    // Auch voll mit Kundenguthaben beglichene Rechnungen (amount_paid = 0) zählen als bezahlt
+    if (!invoice?.id || invoiceSettledAmount(invoice) <= 0) return
     const paidUser = await db.query.users.findFirst({
       where: eq(users.id, userId),
       columns: { referredByUsername: true, username: true },
@@ -364,10 +343,11 @@ export async function POST(req: NextRequest) {
     // Erstrechnung mit fremdem Gutschein = Partnerbeziehung beendet (promo_code_override).
     // checkout.session.completed räumt das in der DB auf – kommt dieses Event zuerst,
     // verhindert diese Prüfung die Provision direkt an der Rechnung.
+    // Empfehlungs-Coupons (AFFILIATE10 und Modell-C-Startbonus) sind kein fremder Gutschein.
     if (billingReason === 'subscription_create') {
-      const affiliateCouponId = process.env.STRIPE_AFFILIATE_COUPON_ID?.trim()
+      const referralCoupons = referralCouponsFromEnv()
       const { ids } = invoiceCouponIds(invoice)
-      if (affiliateCouponId && ids.some(id => id !== affiliateCouponId)) return
+      if (referralCoupons.legacy && ids.some(id => !isReferralCoupon(id, referralCoupons))) return
     }
 
     const referrer = await db.query.users.findFirst({
@@ -463,8 +443,9 @@ export async function POST(req: NextRequest) {
           // Stripe promo code (e.g. ADMIN100), the affiliate relationship ends here:
           // we clear referredByUsername and reverse any pending/available commissions.
           // Future renewals will no longer generate commissions for the old referrer.
-          const affiliateCouponId = process.env.STRIPE_AFFILIATE_COUPON_ID?.trim()
-          if (affiliateCouponId && coupon.id !== affiliateCouponId) {
+          // Empfehlungs-Coupons (AFFILIATE10 und Modell-C-Startbonus AFFILIATE20FIRST) sind kein Override
+          const referralCoupons = referralCouponsFromEnv()
+          if (referralCoupons.legacy && !isReferralCoupon(coupon.id, referralCoupons)) {
             const currentUser = await db.query.users.findFirst({
               where: eq(users.id, userId),
               columns: { referredByUsername: true },
@@ -518,6 +499,40 @@ export async function POST(req: NextRequest) {
       // Reactivate previously deactivated/canceled sites — a new subscription
       // brings everything back, including sites that had a deletion timer.
       await restoreSites(userId, { includeScheduledDeletion: true })
+
+      // ── Empfehlungsrabatt: Konditionen merken + Zahlungsmittel prüfen ──────
+      // referral_terms nur, wenn der Empfehlungs-Coupon wirklich im Checkout war (Metadaten
+      // aus /api/billing/checkout) und kein fremder Gutschein die Partnerbeziehung beendet hat.
+      // Fingerprint des Zahlungsmittels (Karte/SEPA) für alle merken; bei Modell-C-Rabatt
+      // prüfen, ob es einem früheren Kunden gehört → nur Hinweis, kein Entzug.
+      try {
+        const metaTerms = session.metadata?.referral_terms
+        const referralTerms: ReferralTerms | null = !affiliateOverrideDetected && session.metadata?.referral_coupon
+          && (metaTerms === 'legacy10' || metaTerms === 'c2026') ? metaTerms : null
+        if (referralTerms) {
+          await db.update(users).set({ referralTerms }).where(eq(users.id, userId))
+        }
+        const pmRef = subscription.default_payment_method
+        const pm = typeof pmRef === 'string' ? await stripe.paymentMethods.retrieve(pmRef) : pmRef ?? null
+        const fingerprint = paymentMethodFingerprint(pm)
+        if (fingerprint) {
+          if (referralTerms === 'c2026') {
+            const flag = await flagFingerprintMatch(userId, fingerprint)
+            if (flag) {
+              await logEvent({
+                userId,
+                eventType: 'referral_discount_flagged',
+                stripeEventId: `${event.id}:referral-flag`,
+                stripeSubscriptionId: subscription.id,
+                metadata: { flag, coupon_id: session.metadata?.referral_coupon ?? null },
+              })
+            }
+          }
+          await rememberPaymentFingerprint(userId, fingerprint)
+        }
+      } catch (e) {
+        console.error('[webhook] referral terms/fingerprint error:', e instanceof Error ? e.message : e)
+      }
 
       const { pmType: checkoutPmType, pmLast4: checkoutPmLast4 } = await extractPaymentMethod({ payment_intent: session.payment_intent })
       await logEvent({
@@ -1032,6 +1047,23 @@ export async function POST(req: NextRequest) {
         stripeInvoiceId: invoice.id,
         metadata: { payment_method_type: renewedPmType, payment_method_last4: renewedPmLast4 },
       })
+      break
+    }
+
+    // ── Invoice paid → NUR Provision (Absicherung) ───────────────────────────
+    // Stripe garantiert invoice.payment_succeeded nur für erfolgreiche Zahlungsversuche; eine
+    // voll mit Kundenguthaben gedeckte Rechnung (amount_due 0) wird ohne Zahlungsversuch
+    // als bezahlt markiert – dafür ist invoice.paid das dokumentierte Ereignis. Hier wird
+    // ausschließlich die Provision gebucht (idempotent über UNIQUE stripe_invoice_id,
+    // Partner-Mail über logEventOnce dedupliziert); Verlängerung/Status/Seiten macht weiter
+    // invoice.payment_succeeded bzw. customer.subscription.updated.
+    // „Außerhalb von Stripe bezahlt“ markierte Rechnungen sind keine tatsächliche Zahlung.
+    case 'invoice.paid': {
+      const invoice = event.data.object as Stripe.Invoice
+      if ((invoice as any).paid_out_of_band) break
+      const userId = await getUserIdByCustomer(invoice.customer as string)
+      if (!userId) break
+      await bookReferralCommissionForInvoice(invoice, userId, (invoice as any).billing_reason ?? null)
       break
     }
 

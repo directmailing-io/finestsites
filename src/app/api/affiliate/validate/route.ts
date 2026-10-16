@@ -4,6 +4,7 @@ import { users } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
 import { getClientIp, rateLimit } from '@/lib/security/request'
 import { getUserFromRequest } from '@/lib/auth/server'
+import { anonymousReferralOffer } from '@/lib/affiliate/referral-offer'
 
 // GET /api/affiliate/validate?code=<username>
 // Only accepts exact username match (case-insensitive). Names are not accepted.
@@ -25,7 +26,7 @@ export async function GET(req: NextRequest) {
   try {
     const user = await db.query.users.findFirst({
       where: eq(users.username, code),
-      columns: { id: true, username: true, firstName: true },
+      columns: { id: true, username: true, firstName: true, isAdmin: true },
     })
 
     if (!user) return NextResponse.json({ error: 'Nicht gefunden' }, { status: 404 })
@@ -36,7 +37,9 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'Deinen eigenen Partnercode kannst du nicht verwenden.', own_code: true }, { status: 404 })
     }
 
-    return NextResponse.json({ valid: true, username: user.username, firstName: user.firstName ?? null })
+    // Angebot für Neukunden (Konto gibt es noch nicht) – Texte + Preise aus referral-model.ts
+    const offer = anonymousReferralOffer({ username: user.username!, firstName: user.firstName ?? null, isAdmin: user.isAdmin })
+    return NextResponse.json({ valid: true, username: user.username, firstName: user.firstName ?? null, offer })
   } catch {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }

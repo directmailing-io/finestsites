@@ -30,6 +30,18 @@
  *  - Unclear outcome (network/5xx) or crash between 2 and 3 → payout stays `processing`;
  *    `reconcileStuckPayouts` looks the transfer up by transfer_group and finalizes or fails it.
  *    Nothing is ever re-transferred automatically without that check.
+ *
+ * Verrechnung mit dem eigenen Abo (users.affiliate_payout_mode = 'credit', Standard seit 16.10.2026):
+ *  - Gleicher Ablauf (Sperren, Monatslimit, Steuerprofil, Gutschrift-Nummer beim „paid“),
+ *    aber statt Transfer eine Stripe customer balance transaction auf den EIGENEN Stripe-Kunden
+ *    des Partners: amount = −Brutto (regelbesteuert: netto + 19 % USt; Kleinunternehmer: netto),
+ *    idempotency key `credit-{payoutId}`, metadata.payout_id. Es fließt kein Geld ab →
+ *    keine Prüfung des Plattform-Guthabens, Mindestbetrag nur 1 €.
+ *  - Voraussetzung: aktives Abo (active/trialing, nicht zum Laufzeitende gekündigt) + stripe_customer_id.
+ *    Ohne Abo: mit eingerichtetem Connect-Konto greifen die Überweisungsregeln (ab 10 €), sonst
+ *    bleibt das Guthaben stehen (`skipped_no_subscription`, Admin-Hinweis).
+ *  - Unklares Ergebnis → `processing`; der Abgleich sucht die Buchung über metadata.payout_id in
+ *    den Kundenguthaben-Buchungen. Nie doppelt gutschreiben.
  */
 
 import type Stripe from 'stripe'
@@ -43,6 +55,11 @@ import { rateLimit } from '@/lib/security/request'
 import { computePayoutAmounts, isTaxProfileComplete, isTaxStatus, formatEuro, type TaxStatus } from './tax'
 import { generateCreditNotePdf, type CreditNoteLine, type CreditNoteData } from './credit-note-pdf'
 import { syncConnectStatus } from './connect-status'
+import { invalidateCustomerCredit, subscriptionConsumesCredit } from './customer-balance'
+import {
+  CREDIT_MINIMUM_CENTS, PAYOUT_METHOD_CREDIT, PAYOUT_METHOD_TRANSFER, isCreditEligible, isCreditMethod,
+  type PayoutMode,
+} from './payout-mode'
 
 export const PAYOUT_MINIMUM_CENTS = 1000
 
@@ -63,6 +80,7 @@ export type PayoutStatus =
   | 'skipped_negative_balance'
   | 'skipped_already_paid_this_month'
   | 'skipped_no_commissions'
+  | 'skipped_no_subscription'
   | 'failed'
   | 'unclear'
   | 'error'
@@ -77,6 +95,8 @@ export interface PayoutResult {
   netAmount?: number
   payoutId?: string
   creditNoteNumber?: string
+  /** 'credit' = mit dem eigenen Abo verrechnet, 'transfer' = überwiesen */
+  method?: 'credit' | 'transfer'
   error?: string
 }
 
@@ -228,7 +248,11 @@ function buildLines(rows: CommissionRow[]): CreditNoteLine[] {
  * Transaction B: assign the next gapless credit note number, mark payout + commissions paid.
  * Guarded by `status = 'processing'` so it can never run twice for the same payout.
  */
-async function finalizePaidPayout(payoutId: string, transferId: string, paidAt: Date): Promise<string> {
+async function finalizePaidPayout(
+  payoutId: string,
+  ref: { transferId?: string; balanceTxnId?: string },
+  paidAt: Date,
+): Promise<string> {
   return db.transaction(async (tx) => {
     const issueDate = berlinDate(paidAt)
     const year = Number(issueDate.slice(0, 4))
@@ -242,7 +266,9 @@ async function finalizePaidPayout(payoutId: string, transferId: string, paidAt: 
 
     const updated = await tx.update(affiliatePayouts).set({
       status: 'paid',
-      stripeTransferId: transferId,
+      // undefined-Felder lässt Drizzle weg: jede Methode setzt nur ihre eigene Stripe-Referenz
+      stripeTransferId: ref.transferId,
+      stripeBalanceTxnId: ref.balanceTxnId,
       paidAt,
       creditNoteNumber: number,
       creditNoteDate: issueDate,
@@ -306,6 +332,7 @@ export function creditNoteDataFromPayout(p: PayoutRow): CreditNoteData {
     grossCents: p.grossAmount ?? p.totalAmount,
     vatRate: Number(p.vatRate ?? 0),
     stripeTransferId: p.stripeTransferId,
+    paymentMethod: isCreditMethod(p.payoutMethod) ? 'credit' : 'transfer',
   }
 }
 
@@ -353,27 +380,94 @@ export async function retryPendingCreditNotes(): Promise<{ retried: number; fail
 }
 
 /**
- * Payouts stuck in `processing` (crash or unclear Stripe answer): look the transfer up by
- * transfer_group. Found → finalize as paid. Not found → failed, commissions released.
+ * Look up the customer balance transaction of a credit payout via metadata.payout_id
+ * (only the partner's own Stripe customer, only transactions created after the payout row).
+ */
+async function findCreditBalanceTxn(
+  stripe: Stripe,
+  customerId: string,
+  payoutId: string,
+  createdAt: Date,
+): Promise<Stripe.CustomerBalanceTransaction | null> {
+  const gte = Math.floor(createdAt.getTime() / 1000) - 300
+  let startingAfter: string | undefined
+  for (let page = 0; page < 20; page++) {
+    const list = await stripe.customers.listBalanceTransactions(customerId, {
+      limit: 100,
+      created: { gte },
+      ...(startingAfter ? { starting_after: startingAfter } : {}),
+    })
+    const hit = list.data.find(t => t.metadata?.payout_id === payoutId)
+    if (hit) return hit
+    if (!list.has_more || list.data.length === 0) return null
+    startingAfter = list.data[list.data.length - 1].id
+  }
+  // Mehr als 2000 Buchungen seit der Auszahlung: lieber unklar lassen als falsch freigeben
+  throw new Error('too many balance transactions to search')
+}
+
+/** Best effort: Gutschrift-Nummer an die Kundenguthaben-Buchung schreiben (Nummer gibt es erst beim „paid“). */
+async function labelCreditBalanceTxn(stripe: Stripe, customerId: string, txnId: string, number: string): Promise<void> {
+  invalidateCustomerCredit(customerId)
+  try {
+    await stripe.customers.updateBalanceTransaction(customerId, txnId, {
+      description: `Provision Gutschrift ${number}`,
+      metadata: { credit_note_number: number },
+    })
+  } catch (err) {
+    console.error(`[affiliate-payout] could not label balance txn ${txnId} with ${number}:`, errorMessage(err))
+  }
+}
+
+/**
+ * Payouts stuck in `processing` (crash or unclear Stripe answer).
+ *  - Transfer: look the transfer up by transfer_group.
+ *  - Verrechnung: look the customer balance transaction up by metadata.payout_id.
+ * Found → finalize as paid. Not found → failed, commissions released.
  */
 export async function reconcileStuckPayouts(stripe: Stripe): Promise<PayoutResult[]> {
   const cutoff = new Date(Date.now() - STUCK_AFTER_MS)
-  const stuck = await db.select({ id: affiliatePayouts.id, referrerId: affiliatePayouts.referrerId, createdAt: affiliatePayouts.createdAt })
+  const stuck = await db.select({
+    id: affiliatePayouts.id,
+    referrerId: affiliatePayouts.referrerId,
+    createdAt: affiliatePayouts.createdAt,
+    payoutMethod: affiliatePayouts.payoutMethod,
+    stripeCustomerId: affiliatePayouts.stripeCustomerId,
+  })
     .from(affiliatePayouts)
     .where(and(eq(affiliatePayouts.status, 'processing'), lte(affiliatePayouts.createdAt, cutoff)))
   const results: PayoutResult[] = []
   for (const p of stuck) {
     const name = p.referrerId ?? 'gelöscht'
     try {
+      if (isCreditMethod(p.payoutMethod)) {
+        if (!p.stripeCustomerId) {
+          // Ohne Kunden-ID kann keine Buchung angelegt worden sein
+          await failPayout(p.id, 'no_customer_for_credit')
+          results.push({ referrer: name, status: 'failed', reason: 'no_customer_for_credit', payoutId: p.id, method: 'credit' })
+          continue
+        }
+        const txn = await findCreditBalanceTxn(stripe, p.stripeCustomerId, p.id, p.createdAt)
+        if (txn) {
+          const number = await finalizePaidPayout(p.id, { balanceTxnId: txn.id }, new Date(txn.created * 1000))
+          await labelCreditBalanceTxn(stripe, p.stripeCustomerId, txn.id, number)
+          await createCreditNoteDocument(p.id)
+          results.push({ referrer: name, status: 'paid', reason: 'reconciled', amount: -txn.amount, payoutId: p.id, creditNoteNumber: number, method: 'credit' })
+        } else {
+          await failPayout(p.id, 'no_balance_txn_found_after_reconcile')
+          results.push({ referrer: name, status: 'failed', reason: 'no_balance_txn_found_after_reconcile', payoutId: p.id, method: 'credit' })
+        }
+        continue
+      }
       const list = await stripe.transfers.list({ transfer_group: `payout-${p.id}`, limit: 3 })
       const transfer = list.data.find(t => !t.reversed)
       if (transfer) {
-        const number = await finalizePaidPayout(p.id, transfer.id, new Date(transfer.created * 1000))
+        const number = await finalizePaidPayout(p.id, { transferId: transfer.id }, new Date(transfer.created * 1000))
         await createCreditNoteDocument(p.id)
-        results.push({ referrer: name, status: 'paid', reason: 'reconciled', amount: transfer.amount, payoutId: p.id, creditNoteNumber: number })
+        results.push({ referrer: name, status: 'paid', reason: 'reconciled', amount: transfer.amount, payoutId: p.id, creditNoteNumber: number, method: 'transfer' })
       } else {
         await failPayout(p.id, 'no_transfer_found_after_reconcile')
-        results.push({ referrer: name, status: 'failed', reason: 'no_transfer_found_after_reconcile', payoutId: p.id })
+        results.push({ referrer: name, status: 'failed', reason: 'no_transfer_found_after_reconcile', payoutId: p.id, method: 'transfer' })
       }
     } catch (err) {
       results.push({ referrer: name, status: 'unclear', reason: 'reconcile_error', payoutId: p.id, error: errorMessage(err) })
@@ -388,18 +482,272 @@ class SkipPayout extends Error {
   constructor(public result: Omit<PayoutResult, 'referrer'>) { super(result.status) }
 }
 
+interface PreparedPayout { id: string; grossCents: number; netCents: number; count: number }
+
+/**
+ * Transaction A (shared by transfer and credit): advisory lock per referrer, monthly limit,
+ * lock the available commissions, compute amounts, insert payout row `processing`, mark the
+ * commissions `processing`. Throws SkipPayout for every guard.
+ */
+async function preparePayout(
+  referrer: ReferrerProfile,
+  snapshot: TaxProfileSnapshot,
+  opts: { method: 'credit' | 'transfer'; minimumCents: number; platformAvailable: number | null; stripeCustomerId?: string | null },
+): Promise<PreparedPayout> {
+  return db.transaction(async (tx) => {
+    await tx.execute(sql`SELECT pg_advisory_xact_lock(hashtext(${`affiliate-payout:${referrer.id}`}))`)
+
+    const already = await tx.select({ id: affiliatePayouts.id }).from(affiliatePayouts)
+      .where(and(
+        eq(affiliatePayouts.referrerId, referrer.id),
+        inArray(affiliatePayouts.status, ACTIVE_PAYOUT_STATUSES),
+        sql`${affiliatePayouts.createdAt} >= (date_trunc('month', now() AT TIME ZONE 'Europe/Berlin') AT TIME ZONE 'Europe/Berlin')`,
+      ))
+      .limit(1)
+    if (already.length > 0) throw new SkipPayout({ status: 'skipped_already_paid_this_month', method: opts.method })
+
+    const commissions: CommissionRow[] = await tx.select({
+      id: affiliateCommissions.id,
+      commissionAmount: affiliateCommissions.commissionAmount,
+      grossAmount: affiliateCommissions.grossAmount,
+      netAmount: affiliateCommissions.netAmount,
+      commissionRate: affiliateCommissions.commissionRate,
+      stripeInvoiceId: affiliateCommissions.stripeInvoiceId,
+      stripeCustomerId: affiliateCommissions.stripeCustomerId,
+      refereeId: affiliateCommissions.refereeId,
+      createdAt: affiliateCommissions.createdAt,
+    })
+      .from(affiliateCommissions)
+      .where(and(
+        eq(affiliateCommissions.referrerId, referrer.id),
+        eq(affiliateCommissions.status, 'available'),
+      ))
+      .orderBy(asc(affiliateCommissions.createdAt))
+      .for('update')
+
+    if (commissions.length === 0) throw new SkipPayout({ status: 'skipped_no_commissions', method: opts.method })
+
+    // Safety: a commission may never exceed the customer revenue it is based on.
+    for (const c of commissions) {
+      if (Math.abs(c.commissionAmount) > Math.abs(c.grossAmount)) {
+        console.error(`[affiliate-payout] SANITY VIOLATION commission ${c.id}: ${c.commissionAmount} > gross ${c.grossAmount}`)
+        throw new SkipPayout({ status: 'error', reason: 'sanity_check_failed', error: 'sanity_check_failed', method: opts.method })
+      }
+    }
+
+    const amounts = computePayoutAmounts(commissions.map(c => c.commissionAmount), snapshot.taxStatus)
+    if (amounts.netCents < 0) throw new SkipPayout({ status: 'skipped_negative_balance', amount: amounts.netCents, method: opts.method })
+    if (amounts.netCents < opts.minimumCents) {
+      throw new SkipPayout({ status: 'skipped_below_minimum', amount: amounts.netCents, method: opts.method })
+    }
+    if (opts.platformAvailable != null && amounts.grossCents > opts.platformAvailable) {
+      throw new SkipPayout({
+        status: 'skipped_insufficient_platform_balance', reason: 'insufficient_platform_balance', method: opts.method,
+        amount: amounts.grossCents, error: `Stripe-Guthaben ${formatEuro(opts.platformAvailable)} < ${formatEuro(amounts.grossCents)}`,
+      })
+    }
+
+    const dates = commissions.map(c => berlinDate(c.createdAt)).sort()
+    const commissionIds = commissions.map(c => c.id)
+    const now = new Date()
+    const [row] = await tx.insert(affiliatePayouts).values({
+      referrerId: referrer.id,
+      commissionIds,
+      totalAmount: amounts.grossCents,
+      commissionCount: commissionIds.length,
+      periodStart: dates[0],
+      periodEnd: dates[dates.length - 1],
+      status: 'processing',
+      payoutMethod: opts.method === 'credit' ? PAYOUT_METHOD_CREDIT : PAYOUT_METHOD_TRANSFER,
+      stripeCustomerId: opts.method === 'credit' ? (opts.stripeCustomerId ?? null) : null,
+      netAmount: amounts.netCents,
+      vatAmount: amounts.vatCents,
+      grossAmount: amounts.grossCents,
+      vatRate: amounts.vatRate.toFixed(4),
+      taxStatus: snapshot.taxStatus,
+      taxProfileSnapshot: snapshot,
+      lineItems: buildLines(commissions),
+      createdAt: now,
+      updatedAt: now,
+    }).returning({ id: affiliatePayouts.id })
+
+    await tx.update(affiliateCommissions)
+      .set({ status: 'processing', payoutId: row.id, updatedAt: now })
+      .where(inArray(affiliateCommissions.id, commissionIds))
+
+    return { id: row.id, grossCents: amounts.grossCents, netCents: amounts.netCents, count: commissionIds.length }
+  })
+}
+
+/** Fresh payout preference + own subscription of the partner (read at the start of every run). */
+interface PayoutContext {
+  payoutMode: PayoutMode
+  stripeCustomerId: string | null
+  subscriptionStatus: string | null
+  cancelAtPeriodEnd: boolean | null
+  deactivatedAt: Date | null
+}
+
+async function loadPayoutContext(referrerId: string): Promise<PayoutContext | null> {
+  const row = await db.query.users.findFirst({
+    where: eq(users.id, referrerId),
+    columns: { affiliatePayoutMode: true, stripeCustomerId: true, subscriptionStatus: true, cancelAtPeriodEnd: true, deactivatedAt: true },
+  })
+  if (!row) return null
+  return {
+    payoutMode: row.affiliatePayoutMode === 'payout' ? 'payout' : 'credit',
+    stripeCustomerId: row.stripeCustomerId,
+    subscriptionStatus: row.subscriptionStatus,
+    cancelAtPeriodEnd: row.cancelAtPeriodEnd,
+    deactivatedAt: row.deactivatedAt,
+  }
+}
+
+/** Net sum of the available commissions (for the "Partner ohne Abo" admin note). */
+async function availableNetCents(referrerId: string): Promise<number> {
+  const [r] = await db.select({ s: sql<number>`coalesce(sum(${affiliateCommissions.commissionAmount}), 0)::int` })
+    .from(affiliateCommissions)
+    .where(and(eq(affiliateCommissions.referrerId, referrerId), eq(affiliateCommissions.status, 'available')))
+  return Number(r?.s ?? 0)
+}
+
+/** Credit-mode partner without an active subscription and without a usable Connect account. */
+async function noSubscriptionResult(referrer: ReferrerProfile, name: string): Promise<PayoutResult> {
+  const net = await availableNetCents(referrer.id)
+  if (net < 0) return { referrer: name, status: 'skipped_negative_balance', amount: net, method: 'credit' }
+  if (net === 0) return { referrer: name, status: 'skipped_no_commissions', method: 'credit' }
+  return { referrer: name, status: 'skipped_no_subscription', reason: 'no_active_subscription', amount: net, method: 'credit' }
+}
+
 /**
  * Process the payout for one referrer. All guards included.
  * There is deliberately no option to bypass the monthly limit.
+ *
+ * Methode nach users.affiliate_payout_mode (frisch gelesen):
+ *  - 'credit' + aktives Abo (nächste Rechnung > 0 €) → Verrechnung (Kundenguthaben)
+ *  - 'credit' ohne Abo → Überweisung, falls Connect eingerichtet; sonst bleibt das Guthaben stehen
+ *  - 'payout' → Überweisung
  */
 export async function processReferrerPayout(
   stripe: Stripe,
   referrer: ReferrerProfile,
 ): Promise<PayoutResult> {
   const name = referrer.username ?? referrer.id
+  let ctx: PayoutContext | null
+  try {
+    ctx = await loadPayoutContext(referrer.id)
+  } catch (err) {
+    return { referrer: name, status: 'error', error: errorMessage(err) }
+  }
+  if (!ctx) return { referrer: name, status: 'error', error: 'user not found' }
+
+  if (ctx.payoutMode === 'credit') {
+    // Abo, dessen nächste Rechnung 0 € ist (100-%-Gutschein), würde das Guthaben nie verbrauchen
+    // → wie "ohne Abo". Unbekannt (Stripe-Fehler) → wie bisher verrechnen.
+    if (isCreditEligible(ctx) && (await subscriptionConsumesCredit(stripe, ctx.stripeCustomerId!)) !== false) {
+      return processCreditPayout(stripe, referrer, ctx.stripeCustomerId!)
+    }
+    if (referrer.stripeConnectId) {
+      const r = await processTransferPayout(stripe, referrer)
+      if (r.status === 'skipped_no_connect' || r.status === 'skipped_not_verified') {
+        return { ...(await noSubscriptionResult(referrer, name)), ...(r.error ? { error: r.error } : {}) }
+      }
+      return r
+    }
+    // Ohne Steuerprofil zuerst das melden (das muss der Partner ohnehin nachholen)
+    if (!(await loadTaxSnapshot(referrer))) {
+      return { referrer: name, status: 'skipped_tax_profile_missing', reason: 'tax_profile_missing', method: 'credit' }
+    }
+    return noSubscriptionResult(referrer, name)
+  }
+  return processTransferPayout(stripe, referrer)
+}
+
+/** Verrechnung: Kundenguthaben auf den eigenen Stripe-Kunden des Partners. */
+async function processCreditPayout(stripe: Stripe, referrer: ReferrerProfile, customerId: string): Promise<PayoutResult> {
+  const name = referrer.username ?? referrer.id
+
+  const snapshot = await loadTaxSnapshot(referrer)
+  if (!snapshot) {
+    return { referrer: name, status: 'skipped_tax_profile_missing', reason: 'tax_profile_missing', method: 'credit' }
+  }
+
+  let payout: PreparedPayout
+  try {
+    payout = await preparePayout(referrer, snapshot, {
+      method: 'credit', minimumCents: CREDIT_MINIMUM_CENTS, platformAvailable: null, stripeCustomerId: customerId,
+    })
+  } catch (err) {
+    if (err instanceof SkipPayout) return { referrer: name, ...err.result }
+    console.error(`[affiliate-payout] prepare (credit) failed for ${name}:`, err)
+    return { referrer: name, status: 'error', error: errorMessage(err), method: 'credit' }
+  }
+
+  let txn: Stripe.CustomerBalanceTransaction
+  try {
+    txn = await stripe.customers.createBalanceTransaction(customerId, {
+      amount: -payout.grossCents, // negativ = Guthaben für den Kunden
+      currency: 'eur',
+      description: 'Provision Gutschrift (FinestSites Partnerprogramm)',
+      metadata: {
+        payout_id: payout.id,
+        referrer_id: referrer.id,
+        referrer_username: referrer.username ?? '',
+        net_cents: String(payout.netCents),
+        gross_cents: String(payout.grossCents),
+        tax_status: snapshot.taxStatus,
+      },
+    }, { idempotencyKey: `credit-${payout.id}` })
+  } catch (err) {
+    const message = errorMessage(err)
+    if (isDefinitiveStripeError(err)) {
+      await failPayout(payout.id, `credit_failed: ${message}`).catch(e => console.error('[affiliate-payout] failPayout error:', e))
+      console.error(`[affiliate-payout] credit failed for ${name}:`, message)
+      return { referrer: name, status: 'failed', reason: 'credit_failed', amount: payout.grossCents, payoutId: payout.id, error: message, method: 'credit' }
+    }
+    console.error(`[affiliate-payout] credit UNCLEAR for ${name}:`, message)
+    return { referrer: name, status: 'unclear', reason: 'credit_unclear', amount: payout.grossCents, payoutId: payout.id, error: message, method: 'credit' }
+  }
+
+  const paidAt = new Date()
+  let number: string
+  try {
+    number = await finalizePaidPayout(payout.id, { balanceTxnId: txn.id }, paidAt)
+  } catch (err) {
+    // Guthaben ist gebucht, DB-Update fehlgeschlagen → Abgleich findet die Buchung über metadata.payout_id
+    console.error(`[affiliate-payout] finalize (credit) failed for ${name} (txn ${txn.id}):`, err)
+    return { referrer: name, status: 'unclear', reason: 'finalize_failed', amount: payout.grossCents, payoutId: payout.id, error: errorMessage(err), method: 'credit' }
+  }
+
+  await labelCreditBalanceTxn(stripe, customerId, txn.id, number)
+  const doc = await createCreditNoteDocument(payout.id)
+
+  if (referrer.email) {
+    sendEmail({
+      to: referrer.email,
+      subject: 'Deine Provision wurde mit deinem Abo verrechnet – FinestSites',
+      html: affiliatePayoutEmail({ amountCents: payout.grossCents, commissionCount: payout.count, method: 'credit' }),
+      type: 'affiliate_payout',
+    }).catch(() => {})
+  }
+
+  console.log(`[affiliate-payout] credited ${payout.grossCents} cents (net ${payout.netCents}) to customer of ${name} (${txn.id}, ${number})`)
+  return {
+    referrer: name, status: 'paid', amount: payout.grossCents, netAmount: payout.netCents,
+    payoutId: payout.id, creditNoteNumber: number, method: 'credit',
+    ...(doc.ok ? {} : { reason: 'credit_note_pending', error: doc.error }),
+  }
+}
+
+/** Überweisung über Stripe Connect (ab 10 €). */
+async function processTransferPayout(
+  stripe: Stripe,
+  referrer: ReferrerProfile,
+): Promise<PayoutResult> {
+  const name = referrer.username ?? referrer.id
 
   if (!referrer.stripeConnectId) {
-    return { referrer: name, status: 'skipped_no_connect' }
+    return { referrer: name, status: 'skipped_no_connect', method: 'transfer' }
   }
   // DB-Flag noch false (z. B. account.updated verpasst oder kein Connect-Webhook):
   // live mit Stripe abgleichen, statt den Partner zu überspringen.
@@ -408,16 +756,16 @@ export async function processReferrerPayout(
     try {
       account = await stripe.accounts.retrieve(referrer.stripeConnectId)
     } catch (err) {
-      return { referrer: name, status: 'skipped_no_connect', reason: 'connect_sync_failed', error: errorMessage(err) }
+      return { referrer: name, status: 'skipped_no_connect', reason: 'connect_sync_failed', error: errorMessage(err), method: 'transfer' }
     }
     const onboarded = await syncConnectStatus(referrer.id, referrer.stripeConnectId, { current: referrer.affiliateOnboarded, account })
-    if (!onboarded) return { referrer: name, status: 'skipped_no_connect' }
+    if (!onboarded) return { referrer: name, status: 'skipped_no_connect', method: 'transfer' }
   }
 
   // Tax profile + consent are required BEFORE any transfer.
   const snapshot = await loadTaxSnapshot(referrer)
   if (!snapshot) {
-    return { referrer: name, status: 'skipped_tax_profile_missing', reason: 'tax_profile_missing' }
+    return { referrer: name, status: 'skipped_tax_profile_missing', reason: 'tax_profile_missing', method: 'transfer' }
   }
 
   // Live verification: account must be fully verified and payouts enabled.
@@ -425,10 +773,10 @@ export async function processReferrerPayout(
     const account = await stripe.accounts.retrieve(referrer.stripeConnectId)
     const disabledReason = (account.requirements as { disabled_reason?: string | null } | null)?.disabled_reason ?? null
     if (!account.payouts_enabled || disabledReason) {
-      return { referrer: name, status: 'skipped_not_verified' }
+      return { referrer: name, status: 'skipped_not_verified', method: 'transfer' }
     }
   } catch (err) {
-    return { referrer: name, status: 'error', error: errorMessage(err) }
+    return { referrer: name, status: 'error', error: errorMessage(err), method: 'transfer' }
   }
 
   // Platform balance (EUR, available) — read once before locking.
@@ -436,95 +784,17 @@ export async function processReferrerPayout(
   try {
     platformAvailable = await getPlatformAvailableEur(stripe)
   } catch (err) {
-    return { referrer: name, status: 'error', error: `balance: ${errorMessage(err)}` }
+    return { referrer: name, status: 'error', error: `balance: ${errorMessage(err)}`, method: 'transfer' }
   }
 
   // ── Transaction A: lock, select, create payout row `processing` ─────────────
-  let payout: { id: string; grossCents: number; netCents: number; count: number }
+  let payout: PreparedPayout
   try {
-    payout = await db.transaction(async (tx) => {
-      await tx.execute(sql`SELECT pg_advisory_xact_lock(hashtext(${`affiliate-payout:${referrer.id}`}))`)
-
-      const already = await tx.select({ id: affiliatePayouts.id }).from(affiliatePayouts)
-        .where(and(
-          eq(affiliatePayouts.referrerId, referrer.id),
-          inArray(affiliatePayouts.status, ACTIVE_PAYOUT_STATUSES),
-          sql`${affiliatePayouts.createdAt} >= (date_trunc('month', now() AT TIME ZONE 'Europe/Berlin') AT TIME ZONE 'Europe/Berlin')`,
-        ))
-        .limit(1)
-      if (already.length > 0) throw new SkipPayout({ status: 'skipped_already_paid_this_month' })
-
-      const commissions: CommissionRow[] = await tx.select({
-        id: affiliateCommissions.id,
-        commissionAmount: affiliateCommissions.commissionAmount,
-        grossAmount: affiliateCommissions.grossAmount,
-        netAmount: affiliateCommissions.netAmount,
-        commissionRate: affiliateCommissions.commissionRate,
-        stripeInvoiceId: affiliateCommissions.stripeInvoiceId,
-        stripeCustomerId: affiliateCommissions.stripeCustomerId,
-        refereeId: affiliateCommissions.refereeId,
-        createdAt: affiliateCommissions.createdAt,
-      })
-        .from(affiliateCommissions)
-        .where(and(
-          eq(affiliateCommissions.referrerId, referrer.id),
-          eq(affiliateCommissions.status, 'available'),
-        ))
-        .orderBy(asc(affiliateCommissions.createdAt))
-        .for('update')
-
-      if (commissions.length === 0) throw new SkipPayout({ status: 'skipped_no_commissions' })
-
-      // Safety: a commission may never exceed the customer revenue it is based on.
-      for (const c of commissions) {
-        if (Math.abs(c.commissionAmount) > Math.abs(c.grossAmount)) {
-          console.error(`[affiliate-payout] SANITY VIOLATION commission ${c.id}: ${c.commissionAmount} > gross ${c.grossAmount}`)
-          throw new SkipPayout({ status: 'error', reason: 'sanity_check_failed', error: 'sanity_check_failed' })
-        }
-      }
-
-      const amounts = computePayoutAmounts(commissions.map(c => c.commissionAmount), snapshot.taxStatus)
-      if (amounts.netCents < 0) throw new SkipPayout({ status: 'skipped_negative_balance', amount: amounts.netCents })
-      if (amounts.netCents < PAYOUT_MINIMUM_CENTS) throw new SkipPayout({ status: 'skipped_below_minimum', amount: amounts.netCents })
-      if (amounts.grossCents > platformAvailable) {
-        throw new SkipPayout({
-          status: 'skipped_insufficient_platform_balance', reason: 'insufficient_platform_balance',
-          amount: amounts.grossCents, error: `Stripe-Guthaben ${formatEuro(platformAvailable)} < ${formatEuro(amounts.grossCents)}`,
-        })
-      }
-
-      const dates = commissions.map(c => berlinDate(c.createdAt)).sort()
-      const commissionIds = commissions.map(c => c.id)
-      const now = new Date()
-      const [row] = await tx.insert(affiliatePayouts).values({
-        referrerId: referrer.id,
-        commissionIds,
-        totalAmount: amounts.grossCents,
-        commissionCount: commissionIds.length,
-        periodStart: dates[0],
-        periodEnd: dates[dates.length - 1],
-        status: 'processing',
-        netAmount: amounts.netCents,
-        vatAmount: amounts.vatCents,
-        grossAmount: amounts.grossCents,
-        vatRate: amounts.vatRate.toFixed(4),
-        taxStatus: snapshot.taxStatus,
-        taxProfileSnapshot: snapshot,
-        lineItems: buildLines(commissions),
-        createdAt: now,
-        updatedAt: now,
-      }).returning({ id: affiliatePayouts.id })
-
-      await tx.update(affiliateCommissions)
-        .set({ status: 'processing', payoutId: row.id, updatedAt: now })
-        .where(inArray(affiliateCommissions.id, commissionIds))
-
-      return { id: row.id, grossCents: amounts.grossCents, netCents: amounts.netCents, count: commissionIds.length }
-    })
+    payout = await preparePayout(referrer, snapshot, { method: 'transfer', minimumCents: PAYOUT_MINIMUM_CENTS, platformAvailable })
   } catch (err) {
     if (err instanceof SkipPayout) return { referrer: name, ...err.result }
     console.error(`[affiliate-payout] prepare failed for ${name}:`, err)
-    return { referrer: name, status: 'error', error: errorMessage(err) }
+    return { referrer: name, status: 'error', error: errorMessage(err), method: 'transfer' }
   }
 
   // ── Stripe transfer ──────────────────────────────────────────────────────────
@@ -550,22 +820,22 @@ export async function processReferrerPayout(
       const reason = isInsufficientFundsError(err) ? 'insufficient_platform_balance' : 'transfer_failed'
       await failPayout(payout.id, `${reason}: ${message}`).catch(e => console.error('[affiliate-payout] failPayout error:', e))
       console.error(`[affiliate-payout] transfer failed for ${name}:`, message)
-      return { referrer: name, status: 'failed', reason, amount: payout.grossCents, payoutId: payout.id, error: message }
+      return { referrer: name, status: 'failed', reason, amount: payout.grossCents, payoutId: payout.id, error: message, method: 'transfer' }
     }
     // Unclear (network / 5xx): money may have moved — leave `processing` for the reconciler.
     console.error(`[affiliate-payout] transfer UNCLEAR for ${name}:`, message)
-    return { referrer: name, status: 'unclear', reason: 'transfer_unclear', amount: payout.grossCents, payoutId: payout.id, error: message }
+    return { referrer: name, status: 'unclear', reason: 'transfer_unclear', amount: payout.grossCents, payoutId: payout.id, error: message, method: 'transfer' }
   }
 
   // ── Transaction B: number + paid ─────────────────────────────────────────────
   const paidAt = new Date()
   let number: string
   try {
-    number = await finalizePaidPayout(payout.id, transfer.id, paidAt)
+    number = await finalizePaidPayout(payout.id, { transferId: transfer.id }, paidAt)
   } catch (err) {
     // Money is out, DB update failed → reconciler finalizes via transfer_group.
     console.error(`[affiliate-payout] finalize failed for ${name} (transfer ${transfer.id}):`, err)
-    return { referrer: name, status: 'unclear', reason: 'finalize_failed', amount: payout.grossCents, payoutId: payout.id, error: errorMessage(err) }
+    return { referrer: name, status: 'unclear', reason: 'finalize_failed', amount: payout.grossCents, payoutId: payout.id, error: errorMessage(err), method: 'transfer' }
   }
 
   const doc = await createCreditNoteDocument(payout.id)
@@ -582,7 +852,7 @@ export async function processReferrerPayout(
   console.log(`[affiliate-payout] paid ${payout.grossCents} cents (net ${payout.netCents}) to ${name} (${transfer.id}, ${number})`)
   return {
     referrer: name, status: 'paid', amount: payout.grossCents, netAmount: payout.netCents,
-    payoutId: payout.id, creditNoteNumber: number,
+    payoutId: payout.id, creditNoteNumber: number, method: 'transfer',
     ...(doc.ok ? {} : { reason: 'credit_note_pending', error: doc.error }),
   }
 }
@@ -594,6 +864,7 @@ const ADMIN_LABEL: Partial<Record<PayoutStatus, string>> = {
   skipped_insufficient_platform_balance: 'Stripe-Guthaben reicht nicht – bitte Guthaben prüfen',
   skipped_not_verified: 'Stripe-Konto nicht verifiziert',
   skipped_no_connect: 'Kein eingerichtetes Auszahlungskonto (Stripe Connect) – Provision bleibt stehen',
+  skipped_no_subscription: 'Partner ohne Abo – Guthaben offen (kein Auszahlungskonto, bitte Auszahlung klären)',
   failed: 'Überweisung fehlgeschlagen – Provisionen wieder verfügbar',
   unclear: 'Ergebnis unklar – wird automatisch mit Stripe abgeglichen',
   error: 'Fehler',
@@ -610,11 +881,14 @@ export async function notifyAdminPayoutIssues(
   results: PayoutResult[],
   extra: { creditNoteFailures?: { number: string; error: string }[]; paidCount?: number } = {},
 ): Promise<void> {
+  const done = (r: PayoutResult) => (r.method === 'credit' ? 'verrechnet' : 'ausgezahlt')
   const items = results.filter(adminRelevant).map(r => ({
     partner: r.referrer,
     problem: r.status === 'paid'
-      ? (r.reason === 'reconciled' ? `Nachträglich als ausgezahlt verbucht (${r.creditNoteNumber ?? ''})` : `Ausgezahlt, Gutschrift-PDF folgt (${r.creditNoteNumber ?? ''})`)
-      : (ADMIN_LABEL[r.status] ?? r.status),
+      ? (r.reason === 'reconciled' ? `Nachträglich als ${done(r)} verbucht (${r.creditNoteNumber ?? ''})` : `${done(r) === 'verrechnet' ? 'Verrechnet' : 'Ausgezahlt'}, Gutschrift-PDF folgt (${r.creditNoteNumber ?? ''})`)
+      : r.status === 'failed' && r.method === 'credit'
+        ? 'Verrechnung fehlgeschlagen – Provisionen wieder verfügbar'
+        : (ADMIN_LABEL[r.status] ?? r.status),
     detail: [r.amount != null ? formatEuro(r.amount) : '', r.error ?? ''].filter(Boolean).join(' · '),
   }))
   for (const f of extra.creditNoteFailures ?? []) {
@@ -636,7 +910,7 @@ export async function notifyAdminPayoutIssues(
 
 /** Single-partner alert (self-service), throttled so repeated clicks don't spam. */
 export async function notifyAdminSingle(result: PayoutResult): Promise<void> {
-  if (!adminRelevant(result) || result.status === 'skipped_tax_profile_missing' || result.status === 'skipped_not_verified' || result.status === 'skipped_no_connect') return
+  if (!adminRelevant(result) || result.status === 'skipped_tax_profile_missing' || result.status === 'skipped_not_verified' || result.status === 'skipped_no_connect' || result.status === 'skipped_no_subscription') return
   if (!rateLimit('affiliate-payout-admin-alert', `${result.referrer}:${result.status}`, 1, 12 * 60 * 60 * 1000)) return
   await notifyAdminPayoutIssues('Auszahlung durch Partner', [result])
 }

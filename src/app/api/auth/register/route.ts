@@ -4,6 +4,7 @@ import { auth } from '@/lib/auth'
 import { db } from '@/lib/db'
 import { users } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
+import { stampLegacyTermsIfBeforeStart } from '@/lib/affiliate/referral-offer'
 
 export async function POST(req: NextRequest) {
   // max. 5 Registrierungen je IP in 10 Minuten (Konto-Flooding, E-Mail-Enumeration bremsen)
@@ -29,15 +30,17 @@ export async function POST(req: NextRequest) {
 
   // Validate referral code if provided
   let validatedReferralCode: string | null = null
+  let referrerIsAdmin = false
   if (referral_code) {
     const referrer = await db.query.users.findFirst({
       where: eq(users.username, referral_code.toLowerCase().trim()),
-      columns: { username: true, email: true },
+      columns: { username: true, email: true, isAdmin: true },
     })
     // Keine Selbstempfehlung (defensiv – das neue Konto hat noch keinen Benutzernamen,
     // ein Konto mit derselben E-Mail wird unten ohnehin abgelehnt)
     if (referrer?.username && referrer.email?.toLowerCase() !== email.toLowerCase().trim()) {
       validatedReferralCode = referrer.username
+      referrerIsAdmin = referrer.isAdmin
     }
   }
 
@@ -71,6 +74,9 @@ export async function POST(req: NextRequest) {
     await db.update(users)
       .set({ referredByUsername: validatedReferralCode })
       .where(eq(users.id, result.user.id))
+    // Registriert vor dem Stichtag von Modell C → behält das alte Modell (10 % dauerhaft)
+    await stampLegacyTermsIfBeforeStart(result.user.id, { isAdmin: referrerIsAdmin })
+      .catch(err => console.error('[auth/register] referral terms stamp error:', err))
   }
 
   return NextResponse.json({ success: true })

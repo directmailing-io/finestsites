@@ -12,6 +12,7 @@ import { promoDurationInfo, discountedTotal, formatEur, type PromoDuration, type
 import { campaignDiscount, campaignAmountLabel } from '@/lib/billing/campaign-shared'
 import { useFetchedCampaign, useCampaignCountdown } from '@/components/billing/useCampaign'
 import CampaignCard from '@/components/billing/CampaignCard'
+import type { ReferralOfferPublic } from '@/lib/affiliate/referral-model'
 import { downloadQrPng } from '@/lib/utils/qr-download'
 import { FITLINE_SHOP_PRODUCTS, FITLINE_JOGHURT_KEYS, FITLINE_AUTO_LINK_RE, buildFitlineShopLink, ensureSponsorParam } from '@/lib/utils/fitline-shop-links'
 import { pmRegistrationUrlFor, resolvePartnerNumber, buildPmRegistrationUrl, normalizeCustomPmRegLink, isPmRegistrationPilot } from '@/lib/utils/pm-registration'
@@ -5074,8 +5075,6 @@ const UPGRADE_PLANS = [
   },
 ]
 
-const REFERRAL_DISCOUNT = 0.10 // matches the AFFILIATE10 coupon applied at checkout
-
 function UpgradeModal({
   siteId,
   onClose,
@@ -5087,20 +5086,21 @@ function UpgradeModal({
   const [selectedPlan, setSelectedPlan] = useState('pro')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-  const [referredBy, setReferredBy] = useState<string | null>(null)
+  // Empfehlungsrabatt fertig vom Server (src/lib/affiliate/referral-model.ts) – hier wird nichts gerechnet
+  const [referralOffer, setReferralOffer] = useState<ReferralOfferPublic | null>(null)
   const [promoCode, setPromoCode] = useState('')
   const [showPromoInput, setShowPromoInput] = useState(false)
   type PromoResult =
-    | { valid: true; type: 'affiliate'; username: string; display_name: string; percent_off: 10; amount_off: null }
+    | { valid: true; type: 'affiliate'; username: string; display_name: string; percent_off: number | null; amount_off: null; referral?: ReferralOfferPublic }
     | { valid: true; type: 'promo'; percent_off: number | null; amount_off: number | null; name: string; duration?: PromoDuration; duration_in_months?: number | null }
     | { valid: false }
 
   const [promoStatus, setPromoStatus] = useState<null | 'validating' | PromoResult>(null)
 
   useEffect(() => {
-    fetch('/api/user/profile', { cache: 'no-store' })
+    fetch('/api/billing/referral-offer', { cache: 'no-store' })
       .then(r => r.json())
-      .then(d => setReferredBy(d.referred_by_username ?? null))
+      .then(d => setReferralOffer(d.offer ?? null))
       .catch(() => {})
   }, [])
 
@@ -5121,9 +5121,17 @@ function UpgradeModal({
     return () => clearTimeout(timer)
   }, [promoCode])
 
-  const hasDiscount = !!referredBy
+  const hasDiscount = !!referralOffer
   // Promo code can override referral — if user explicitly enters a code it takes priority
   const promoApplied = promoStatus !== null && promoStatus !== 'validating' && (promoStatus as PromoResult).valid
+  // Eingegebener Partnercode zählt nur ohne gespeicherten Partner (wie im Checkout)
+  const enteredAffiliate = promoApplied && (promoStatus as { type: string }).type === 'affiliate'
+    ? (promoStatus as { referral?: ReferralOfferPublic }).referral ?? null
+    : null
+  const offer = referralOffer ?? enteredAffiliate
+  const referralShown = !!offer && (!promoApplied || !!enteredAffiliate)
+  const referralFor = (iv: 'monthly' | 'yearly') => referralShown ? offer?.[iv] ?? null : null
+  const referralNow = referralFor(intervalMode)
 
   // Site-wide campaign (e.g. INNERVISIONDAY): checkout applies it automatically when no
   // code was entered and there is no partner discount — so we show exactly that price.
@@ -5133,9 +5141,9 @@ function UpgradeModal({
   const campaignOff = campaignDiscount(campaign, intervalMode)
 
   // Priority: entered code > partner discount > automatic campaign
-  const activeDiscount: DiscountAmount | null = promoApplied
+  const activeDiscount: DiscountAmount | null = promoApplied && !enteredAffiliate
     ? promoStatus as { valid: true; percent_off: number | null; amount_off: number | null }
-    : hasDiscount ? { percent_off: REFERRAL_DISCOUNT * 100 } : campaignOff
+    : referralShown ? (referralNow ? { percent_off: referralNow.percent_off } : null) : campaignOff
 
   // Amount Stripe charges per billing period (month or full year) for a plan
   function periodTotal(plan: { price_monthly: number; price_yearly: number }, discount: DiscountAmount | null) {
@@ -5176,9 +5184,11 @@ function UpgradeModal({
   // Time-limited promo (e.g. first 3 months): per-day figures would not hold for the whole term
   const appliedPromo = promoApplied ? promoStatus as { type: string; duration?: PromoDuration; duration_in_months?: number | null } : null
   const campaignDuration = campaign && campaignOff ? promoDurationInfo(campaign.duration, campaign.durationInMonths, intervalMode) : null
-  const discountLimited = appliedPromo?.type === 'promo'
-    ? promoDurationInfo(appliedPromo.duration, appliedPromo.duration_in_months, intervalMode).limited
-    : !!campaignDuration?.limited
+  const discountLimited = referralShown
+    ? referralNow?.duration === 'once'
+    : appliedPromo?.type === 'promo'
+      ? promoDurationInfo(appliedPromo.duration, appliedPromo.duration_in_months, intervalMode).limited
+      : !!campaignDuration?.limited
   const activeBase = intervalMode === 'monthly' ? activePlan.price_monthly : activePlan.price_yearly
 
   // What each payment option costs in the first 12 months for the selected plan — basis for
@@ -5188,14 +5198,15 @@ function UpgradeModal({
     let discount: DiscountAmount | null
     let duration: PromoDuration | undefined
     let months: number | null | undefined
-    if (promoApplied) {
+    if (referralShown) {
+      const r = referralFor(iv)
+      discount = r ? { percent_off: r.percent_off } : null
+      duration = r?.duration
+    } else if (promoApplied) {
       const p = promoStatus as { type: string; percent_off: number | null; amount_off: number | null; duration?: PromoDuration; duration_in_months?: number | null }
       discount = p
       duration = p.type === 'promo' ? p.duration : 'forever'
       months = p.duration_in_months
-    } else if (hasDiscount) {
-      discount = { percent_off: REFERRAL_DISCOUNT * 100 }
-      duration = 'forever'
     } else {
       discount = campaignDiscount(campaign, iv)
       duration = campaign?.duration
@@ -5274,17 +5285,18 @@ function UpgradeModal({
             />
           )}
 
-          {hasDiscount && !promoApplied && (
-            <div className="flex items-center gap-3 mt-4 px-4 py-3 rounded-2xl" style={{ background: '#F0FDF4', border: '1px solid #BBF7D0' }}>
-              <div className="flex items-center justify-center w-7 h-7 rounded-full flex-shrink-0" style={{ background: '#16A34A' }}>
+          {referralOffer && !promoApplied && (
+            <div className="flex items-center gap-3 mt-4 px-4 py-3 rounded-2xl"
+              style={referralOffer.eligible ? { background: '#F0FDF4', border: '1px solid #BBF7D0' } : { background: '#F9FAFB', border: '1px solid #E5E7EB' }}>
+              <div className="flex items-center justify-center w-7 h-7 rounded-full flex-shrink-0" style={{ background: referralOffer.eligible ? '#16A34A' : '#9CA3AF' }}>
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round">
                   <polyline points="20 6 9 17 4 12"/>
                 </svg>
               </div>
               <div>
-                <p style={{ fontSize: 13, fontWeight: 700, color: '#15803D' }}>10 % Empfehlungsrabatt aktiv</p>
-                <p style={{ fontSize: 12, color: '#166534' }}>
-                  Empfohlen von <strong>@{referredBy}</strong> &middot; dauerhaft
+                <p style={{ fontSize: 13, fontWeight: 700, color: referralOffer.eligible ? '#15803D' : '#374151' }}>{referralOffer.headline}</p>
+                <p style={{ fontSize: 12, color: referralOffer.eligible ? '#166534' : '#6B7280' }}>
+                  {referralOffer.note ?? (referralNow ? referralOffer.prices[activePlan.key]?.[intervalMode]?.text : 'Gilt nicht bei dieser Zahlungsweise.')}
                 </p>
               </div>
             </div>
@@ -5479,7 +5491,7 @@ function UpgradeModal({
                       ? promoDurationInfo(p.duration, p.duration_in_months, intervalMode)
                       : null
                     const sub = p.type === 'affiliate'
-                      ? '10 % Rabatt dauerhaft auf dein Abo'
+                      ? (offer ? offer.note ?? (referralNow ? offer.prices[activePlan.key]?.[intervalMode]?.text ?? offer.headline : offer.headline) : 'Partnercode erkannt')
                       : !promoDuration ? 'Preis wurde aktualisiert'
                       : !promoDuration.limited ? 'Gilt dauerhaft auf dein Abo'
                       : intervalMode === 'yearly'

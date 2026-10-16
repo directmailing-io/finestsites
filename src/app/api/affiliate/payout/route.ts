@@ -29,8 +29,16 @@ export async function POST(req: Request) {
 
   const profile = await db.query.users.findFirst({
     where: eq(users.id, user.id),
-    columns: { id: true, email: true, username: true, stripeConnectId: true, affiliateOnboarded: true },
+    columns: { id: true, email: true, username: true, stripeConnectId: true, affiliateOnboarded: true, affiliatePayoutMode: true },
   })
+
+  // Verrechnung mit dem eigenen Abo läuft nur automatisch im Monatslauf – hier gibt es nichts zu klicken.
+  if (profile && profile.affiliatePayoutMode !== 'payout') {
+    return NextResponse.json(
+      { error: 'Deine Provision wird jeden Monat automatisch mit deinem Abo verrechnet. Möchtest du lieber aufs Bankkonto ausgezahlt bekommen, stell das oben unter „So bekommst du deine Provision“ um.' },
+      { status: 400 }
+    )
+  }
 
   // affiliate_onboarded wird von der Auszahlungs-Engine live mit Stripe abgeglichen –
   // hier reicht ein verbundenes Konto.

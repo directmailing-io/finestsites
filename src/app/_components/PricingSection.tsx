@@ -5,6 +5,7 @@ import { campaignDiscount, campaignAmountLabel, type PublicCampaign } from '@/li
 import { promoDurationInfo, discountedTotal, formatEur } from '@/lib/billing/promo-duration'
 import { useCampaignCountdown } from '@/components/billing/useCampaign'
 import CampaignCard from '@/components/billing/CampaignCard'
+import type { ReferralOfferPublic } from '@/lib/affiliate/referral-model'
 
 const PLANS = [
   {
@@ -55,7 +56,7 @@ const INCLUDED = [
   'Jederzeit kündbar, keine versteckten Kosten',
 ]
 
-export default function PricingSection({ validatedRef, campaign }: { validatedRef?: string | null; campaign?: PublicCampaign | null }) {
+export default function PricingSection({ validatedRef, referralOffer, campaign }: { validatedRef?: string | null; referralOffer?: ReferralOfferPublic | null; campaign?: PublicCampaign | null }) {
   const [yearly, setYearly] = useState(false)
   // Ein Klick klappt die Details in allen drei Karten auf, damit die Karten gleich hoch bleiben
   const [showDetails, setShowDetails] = useState(false)
@@ -70,13 +71,20 @@ export default function PricingSection({ validatedRef, campaign }: { validatedRe
     return sessionStorage.getItem('fs_ref')
   })
 
+  // Empfehlungsangebot (Texte + Preise) – serverseitig berechnet (src/lib/affiliate/referral-model.ts),
+  // für die Sitzung gemerkt wie der Code selbst
+  const [refOffer] = useState<ReferralOfferPublic | null>(() => {
+    if (referralOffer) return referralOffer
+    if (typeof window === 'undefined' || !refCode) return null
+    try { return JSON.parse(sessionStorage.getItem('fs_ref_offer') ?? 'null') as ReferralOfferPublic | null } catch { return null }
+  })
+
   // Persist server-validated ref to sessionStorage so it survives client-side navigation
   // (e.g., user clicks to /vorlagen and comes back — discount persists for the session)
   useEffect(() => {
     if (validatedRef) sessionStorage.setItem('fs_ref', validatedRef)
-  }, [validatedRef])
-
-  const DISCOUNT = 0.10 // 10 % affiliate discount
+    try { if (validatedRef && referralOffer) sessionStorage.setItem('fs_ref_offer', JSON.stringify(referralOffer)) } catch { /* privat-Modus */ }
+  }, [validatedRef, referralOffer])
 
   // Site-wide campaign: checkout applies it automatically, so we show the amounts that are
   // really charged. Partner-link visitors keep the partner discount instead. Ends by itself.
@@ -161,8 +169,11 @@ export default function PricingSection({ validatedRef, campaign }: { validatedRe
         <div className="fs-pricing-grid">
           {PLANS.map((plan) => {
             const basePrice = yearly ? plan.yearlyMonthly : plan.monthly
-            const price = refCode ? Math.round(basePrice * (1 - DISCOUNT)) : basePrice
+            const price = basePrice
             const dailyEuros = (price / 30).toFixed(2).replace('.', ',')
+            // Empfehlung: echte Beträge je Abrechnung (1. Monat bzw. ganzes Jahr), wie der Checkout
+            const refIv = yearly ? refOffer?.yearly : refOffer?.monthly
+            const refPrice = refIv ? refOffer?.prices[plan.key]?.[yearly ? 'yearly' : 'monthly'] ?? null : null
 
             return (
               <div key={plan.key} style={{ position: plan.key === 'starter' ? 'relative' : undefined, height: '100%' }}>
@@ -225,26 +236,31 @@ export default function PricingSection({ validatedRef, campaign }: { validatedRe
                       </p>
                     </>
                   )
-                })() : (
+                })() : refIv && refPrice ? (
+                  <>
+                    <div style={{ display: 'flex', alignItems: 'baseline', flexWrap: 'wrap', gap: 4, marginBottom: 6 }}>
+                      <span style={{ fontSize: 22, fontWeight: 400, color: plan.popular ? 'rgba(255,255,255,0.3)' : '#bbb', letterSpacing: '-0.02em', lineHeight: 1, textDecoration: 'line-through', marginRight: 4 }}>{formatEur(refPrice.regular_eur)} €</span>
+                      <span style={{ fontFamily: '"Plein", sans-serif', fontSize: 50, fontWeight: 400, color: plan.popular ? '#fff' : '#111', letterSpacing: '-0.04em', lineHeight: 1 }}>{formatEur(refPrice.first_eur)} €</span>
+                      <span style={{ fontSize: 13, color: plan.popular ? 'rgba(255,255,255,0.35)' : '#aaa' }}>{yearly ? '/Jahr' : refIv.duration === 'once' ? 'im 1. Monat' : '/Monat'}</span>
+                    </div>
+                    <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: plan.popular ? 'rgba(200,216,184,0.2)' : '#F0FDF4', border: `1px solid ${plan.popular ? 'rgba(200,216,184,0.3)' : '#BBF7D0'}`, borderRadius: 100, padding: '3px 10px', marginBottom: 6 }}>
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke={plan.popular ? '#86efac' : '#16A34A'} strokeWidth="2.5" strokeLinecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+                      <span style={{ fontSize: 11, fontWeight: 700, color: plan.popular ? '#86efac' : '#16A34A' }}>{refIv.label} mit deinem Code</span>
+                    </div>
+                    <p style={{ fontSize: 12.5, color: plan.popular ? 'rgba(255,255,255,0.55)' : '#666', lineHeight: 1.5, marginBottom: 20 }}>
+                      {refPrice.text}
+                    </p>
+                  </>
+                ) : (
                 <>
                 <div style={{ display: 'flex', alignItems: 'baseline', gap: 4, marginBottom: 4 }}>
-                  {refCode && (
-                    <span style={{ fontSize: 22, fontWeight: 400, color: plan.popular ? 'rgba(255,255,255,0.3)' : '#bbb', letterSpacing: '-0.02em', lineHeight: 1, textDecoration: 'line-through', marginRight: 4 }}>{basePrice} €</span>
-                  )}
                   <span style={{ fontFamily: '"Plein", sans-serif', fontSize: 50, fontWeight: 400, color: plan.popular ? '#fff' : '#111', letterSpacing: '-0.04em', lineHeight: 1 }}>{price} €</span>
                   <span style={{ fontSize: 13, color: plan.popular ? 'rgba(255,255,255,0.35)' : '#aaa' }}>/Monat</span>
                 </div>
 
-                {refCode && (
-                  <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: plan.popular ? 'rgba(200,216,184,0.2)' : '#F0FDF4', border: `1px solid ${plan.popular ? 'rgba(200,216,184,0.3)' : '#BBF7D0'}`, borderRadius: 100, padding: '3px 10px', marginBottom: 4 }}>
-                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke={plan.popular ? '#86efac' : '#16A34A'} strokeWidth="2.5" strokeLinecap="round"><polyline points="20 6 9 17 4 12"/></svg>
-                    <span style={{ fontSize: 11, fontWeight: 700, color: plan.popular ? '#86efac' : '#16A34A' }}>10 % Rabatt mit deinem Code</span>
-                  </div>
-                )}
-
                 {yearly && (
                   <p style={{ fontSize: 12, color: plan.popular ? 'rgba(255,255,255,0.3)' : '#bbb', marginBottom: 4 }}>
-                    {refCode ? Math.round(plan.yearly * (1 - DISCOUNT)) : plan.yearly} €/Jahr · du sparst {Math.round((plan.monthly * 12 - plan.yearly) * (refCode ? (1 - DISCOUNT) : 1))} €
+                    {plan.yearly} €/Jahr · du sparst {plan.monthly * 12 - plan.yearly} €
                   </p>
                 )}
 

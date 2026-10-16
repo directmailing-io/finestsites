@@ -6,6 +6,7 @@ import { randomUUID } from 'crypto'
 import { getRealUserFromRequest } from '@/lib/auth/server'
 import { sendEmail } from '@/lib/resend'
 import { affiliateAdminAssignEmail } from '@/lib/email/templates'
+import { stampLegacyTermsIfBeforeStart } from '@/lib/affiliate/referral-offer'
 
 async function checkAdmin(req: Request) {
   const user = await getRealUserFromRequest(req)
@@ -63,7 +64,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   // Validate that the affiliate partner exists
   const affiliate = await db.query.users.findFirst({
     where: eq(users.username, affiliateUsername),
-    columns: { id: true, email: true, username: true, firstName: true, affiliateOnboarded: true, affiliatePayoutEmail: true },
+    columns: { id: true, email: true, username: true, firstName: true, affiliateOnboarded: true, affiliatePayoutEmail: true, isAdmin: true },
   })
 
   if (!affiliate) return NextResponse.json({ error: 'Partner nicht gefunden.' }, { status: 404 })
@@ -75,6 +76,10 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   // Update the referral
   await db.update(users).set({ referredByUsername: affiliateUsername }).where(eq(users.id, id))
   await logAssignmentChange(affiliateUsername)
+  // Zuordnung vor dem Stichtag → altes Modell (wie Registrierung/Partnercode; nie bei Admin-Partner,
+  // gilt ohne Abo nur bis Stichtag + 30 Tage). Ein vorhandener Vermerk bleibt unverändert.
+  await stampLegacyTermsIfBeforeStart(id, affiliate)
+    .catch(err => console.error('[admin/affiliate] referral terms stamp error:', err))
 
   // Notify the affiliate partner (fire-and-forget)
   const notifyEmail = affiliate.affiliatePayoutEmail ?? affiliate.email

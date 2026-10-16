@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { setTemplateIntentCookie, isValidTemplateId } from '@/lib/cookies/template-intent'
 import CampaignCard from '@/components/billing/CampaignCard'
 import { useFetchedCampaign, useCampaignCountdown } from '@/components/billing/useCampaign'
+import type { ReferralOfferPublic } from '@/lib/affiliate/referral-model'
 // signIn removed — raw fetch is used instead for Safari iOS compatibility
 
 function RegisterForm() {
@@ -24,6 +25,10 @@ function RegisterForm() {
   const [referralCode, setReferralCode] = useState(urlRef)
   const [referralValid, setReferralValid] = useState<boolean | null>(null)
   const [referrerName, setReferrerName] = useState<string | null>(null)
+  // Angebot des Partners (Texte serverseitig aus referral-model.ts)
+  const [referralOffer, setReferralOffer] = useState<ReferralOfferPublic | null>(null)
+  // Code kam über einen Empfehlungslink (URL oder fs_ref-Cookie) → Banner oben
+  const [refFromLink, setRefFromLink] = useState(!!urlRef)
   // Auto-expand when ref is present in URL
   const [showReferral, setShowReferral] = useState(!!urlRef)
   const [error, setError] = useState('')
@@ -55,6 +60,7 @@ function RegisterForm() {
         if (cookieRef) {
           setReferralCode(cookieRef)
           setShowReferral(true)
+          setRefFromLink(true)
           checkReferral(cookieRef)
         }
       }
@@ -64,15 +70,17 @@ function RegisterForm() {
   }, [])
 
   async function checkReferral(code: string) {
-    if (!code.trim()) { setReferralValid(null); setReferrerName(null); return }
+    if (!code.trim()) { setReferralValid(null); setReferrerName(null); setReferralOffer(null); return }
     const res = await fetch(`/api/affiliate/validate?code=${encodeURIComponent(code.trim())}`)
     if (res.ok) {
       const data = await res.json()
       setReferralValid(true)
       setReferrerName(data.firstName ?? null)
+      setReferralOffer(data.offer ?? null)
     } else {
       setReferralValid(false)
       setReferrerName(null)
+      setReferralOffer(null)
     }
   }
 
@@ -145,8 +153,8 @@ function RegisterForm() {
           </div>
         )}
 
-        {/* Referral discount banner — shown when ?ref= is in URL */}
-        {urlRef && (
+        {/* Referral discount banner — shown when the code came from a referral link (?ref= or cookie) */}
+        {refFromLink && referralValid !== false && (
           <div className="flex items-center gap-3 px-4 py-3 rounded-2xl"
             style={{ background: '#F0FDF4', border: '1.5px solid #BBF7D0' }}>
             <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
@@ -159,10 +167,18 @@ function RegisterForm() {
               </svg>
             </div>
             <div className="min-w-0">
-              <p className="text-xs font-semibold" style={{ color: '#15803D' }}>10% Rabatt, dauerhaft auf dein Abo</p>
-              <p className="text-xs" style={{ color: '#166534' }}>
-                Empfohlen von <strong>{referrerName ?? `Benutzer ${urlRef}`}</strong> · Rabatt wird automatisch beim Checkout angewendet
-              </p>
+              {referralOffer ? (
+                <>
+                  <p className="text-xs font-semibold" style={{ color: '#15803D' }}>{referralOffer.headline}</p>
+                  {referralOffer.detail && (
+                    <p className="text-xs" style={{ color: '#166534' }}>{referralOffer.detail}</p>
+                  )}
+                </>
+              ) : (
+                <p className="text-xs" style={{ color: '#166534' }}>
+                  Empfohlen von <strong>{referrerName ?? `Benutzer ${urlRef || referralCode}`}</strong>
+                </p>
+              )}
             </div>
           </div>
         )}
@@ -283,8 +299,8 @@ function RegisterForm() {
                     </div>
                   )}
                 </div>
-                {referralValid === true && !urlRef && (
-                  <p className="text-xs px-1" style={{ color: '#16A34A' }}>✓ Code gültig. Dauerhaft 10% Rabatt auf dein Abo!</p>
+                {referralValid === true && !refFromLink && (
+                  <p className="text-xs px-1" style={{ color: '#16A34A' }}>✓ Code gültig. {referralOffer?.headline ?? ''}</p>
                 )}
                 {referralValid === false && /^[A-Z0-9]+$/.test(referralCode.trim()) ? (
                   <div className="px-3 py-2.5 text-xs" style={{ background: '#FFF7ED', border: '1px solid #FED7AA', borderRadius: 10, color: '#92400E' }}>

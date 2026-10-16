@@ -25,6 +25,8 @@ export interface CreditNoteItem {
   date: string
   amount_cents: number
   ready: boolean
+  /** 'credit' = mit dem Abo verrechnet, 'transfer' = aufs Bankkonto ausgezahlt */
+  method?: 'credit' | 'transfer'
 }
 
 function euros(cents: number) {
@@ -43,7 +45,7 @@ const STATUS_OPTIONS: { key: TaxStatus; title: string; desc: string }[] = [
   {
     key: 'regelbesteuert',
     title: 'Mit Umsatzsteuer',
-    desc: 'Du berechnest Umsatzsteuer. Wir zahlen dir 19 % Umsatzsteuer zusätzlich aus.',
+    desc: 'Du berechnest Umsatzsteuer. Du bekommst 19 % Umsatzsteuer zusätzlich.',
   },
 ]
 
@@ -53,7 +55,7 @@ export function TaxProfileNotice() {
     <div className="flex flex-col sm:flex-row sm:items-center gap-3 px-4 py-3.5 rounded-2xl mb-6"
       style={{ background: '#FFFBEB', border: '1px solid #FDE68A' }}>
       <p className="flex-1 text-sm font-medium" style={{ color: '#92400E' }}>
-        Damit wir dir deine Provision auszahlen können, brauchen wir noch kurz deine Angaben für die Abrechnung.
+        Damit wir deine Provision verrechnen oder auszahlen können, brauchen wir noch kurz deine Angaben für die Abrechnung.
       </p>
       <a href="#abrechnung"
         className="inline-flex items-center justify-center min-h-[44px] px-5 py-2 rounded-xl text-sm font-bold flex-shrink-0"
@@ -109,7 +111,7 @@ export function TaxProfileSection({ profile, onSaved }: {
         return
       }
       onSaved(data.profile, data.complete)
-      setMsg({ type: 'success', text: 'Gespeichert. Deine Angaben gelten ab der nächsten Auszahlung.' })
+      setMsg({ type: 'success', text: 'Gespeichert. Deine Angaben gelten ab der nächsten Abrechnung.' })
       setEditing(false)
       setEntrepreneur(false)
       setConsent(false)
@@ -151,7 +153,7 @@ export function TaxProfileSection({ profile, onSaved }: {
     <section id="abrechnung" className="rounded-3xl p-6 mb-5 scroll-mt-6" style={{ background: '#fff', border: '1.5px solid #E5E7EB' }}>
       <p className="text-xs font-semibold uppercase tracking-widest mb-2" style={{ color: '#94A3B8' }}>Deine Angaben für die Abrechnung</p>
       <p className="text-sm text-gray-600 leading-relaxed mb-5">
-        Für jede Auszahlung bekommst du von uns eine Gutschrift. Das ist wie eine Rechnung, die wir für dich schreiben. Du musst also selbst keine Rechnung stellen.
+        Für jede Abrechnung bekommst du von uns eine Gutschrift. Das ist wie eine Rechnung, die wir für dich schreiben. Du musst also selbst keine Rechnung stellen.
       </p>
 
       <p className="text-sm font-semibold text-gray-700 mb-2">Was trifft auf dich zu?</p>
@@ -199,7 +201,7 @@ export function TaxProfileSection({ profile, onSaved }: {
       </div>
 
       <p className="text-xs mt-4 leading-relaxed" style={{ color: '#64748B' }}>
-        Änderungen gelten ab der nächsten Auszahlung. Bereits erstellte Gutschriften bleiben, wie sie sind. Stimmt etwas an einer Gutschrift nicht, sag uns bitte innerhalb von 4 Wochen Bescheid.
+        Änderungen gelten ab der nächsten Abrechnung. Bereits erstellte Gutschriften bleiben, wie sie sind. Stimmt etwas an einer Gutschrift nicht, sag uns bitte innerhalb von 4 Wochen Bescheid.
       </p>
 
       {msg && <p className="text-sm mt-4 px-4 py-3 rounded-2xl" style={msgStyle(msg.type)}>{msg.text}</p>}
@@ -233,7 +235,7 @@ export function CreditNotesSection({ items }: { items: CreditNoteItem[] }) {
             <div className="flex-1 min-w-0">
               <p className="text-sm font-semibold text-gray-800 whitespace-nowrap">{n.number}</p>
               <p className="text-xs text-gray-500 mt-0.5">
-                {fmtDate(n.date)}<span className="sm:hidden"> · <span className="font-bold tabular-nums text-gray-900">{euros(n.amount_cents)}</span></span>
+                {fmtDate(n.date)} · {n.method === 'credit' ? 'Verrechnet' : 'Ausgezahlt'}<span className="sm:hidden"> · <span className="font-bold tabular-nums text-gray-900">{euros(n.amount_cents)}</span></span>
               </p>
             </div>
             <p className="hidden sm:block text-sm font-bold tabular-nums text-gray-900">{euros(n.amount_cents)}</p>

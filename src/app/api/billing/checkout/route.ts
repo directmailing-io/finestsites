@@ -7,6 +7,8 @@ import { getUserFromRequest } from '@/lib/auth/server'
 import { getStripe, getPriceIdByPlan, type PlanKey, type BillingInterval } from '@/lib/stripe/client'
 import { getCampaignForProfile } from '@/lib/billing/campaign'
 import { campaignDiscount } from '@/lib/billing/campaign-shared'
+import { loadReferralContextSafe, referralDiscountFor, referralProfileColumns, stampLegacyTermsIfBeforeStart } from '@/lib/affiliate/referral-offer'
+import { assertReferralCouponAllowed } from '@/lib/affiliate/referral-model'
 
 /**
  * Creates a Stripe Checkout Session for a subscription.
@@ -37,7 +39,7 @@ export async function POST(req: NextRequest) {
     const stripe = getStripe()
     const profile = await db.query.users.findFirst({
       where: eq(users.id, user.id),
-      columns: { stripeCustomerId: true, email: true, username: true, referredByUsername: true, firstName: true, lastName: true, subscriptionStatus: true, stripeSubscriptionId: true },
+      columns: { ...referralProfileColumns, referredByUsername: true, firstName: true, lastName: true },
     })
 
     // Build customer display name and metadata from current profile
@@ -85,13 +87,12 @@ export async function POST(req: NextRequest) {
         ? `${appUrl}/onboarding/plan?canceled=1`
         : `${appUrl}/settings?canceled=1`
 
-    // Apply affiliate discount coupon if user was referred.
-    // If user manually entered a promo code and has no referral, look it up in Stripe.
-    const affiliateCouponId = process.env.STRIPE_AFFILIATE_COUPON_ID
+    // Empfehlungsrabatt: welcher Coupon gilt, entscheidet allein src/lib/affiliate/referral-model.ts
+    // (altes Modell 10 % dauerhaft | Modell C: Monat 20 % einmalig, Jahr 10 % solange es läuft).
     // Selbstempfehlung ist nie gültig (auch nicht, wenn sie früher einmal gespeichert wurde)
     const storedReferral = profile?.referredByUsername ?? null
     const referredBy = storedReferral && storedReferral !== profile?.username ? storedReferral : null
-    const hasReferral = !!referredBy && !!affiliateCouponId
+    const hasReferral = !!referredBy
     // Tatsächlich wirksamer Partner für diese Session – wird unten ggf. durch einen
     // eingegebenen Partnercode gesetzt und landet in den Session-Metadaten (Provision + Partner-Mail)
     let effectiveReferrer: string | null = referredBy
@@ -100,8 +101,8 @@ export async function POST(req: NextRequest) {
     // Priority: explicit Stripe promo code > referral affiliate coupon > nothing (codes are entered in our UI, not Stripe's).
     // An explicitly entered Stripe promo code (e.g. ADMIN100, SUMMER50) always wins —
     // the user may have received a better deal than their referral discount.
-    let affiliateApplied = false
     let promoCodeId: string | undefined
+    let stampedTerms: string | null = null
 
     if (promo_code) {
       const { users: usersTable } = await import('@/lib/db/schema')
@@ -131,7 +132,7 @@ export async function POST(req: NextRequest) {
       if (!promoCodeId && !hasReferral) {
         const affiliateUser = await db.query.users.findFirst({
           where: eqFn(usersTable.username, promo_code.toLowerCase().trim()),
-          columns: { id: true, username: true },
+          columns: { id: true, username: true, isAdmin: true },
         })
 
         // Eigener Benutzername als Partnercode → kein Rabatt, keine Provision an sich selbst
@@ -142,12 +143,16 @@ export async function POST(req: NextRequest) {
         if (affiliateUser?.username) {
           // It's an affiliate/partner code — track referral + apply coupon.
           // Only sets a FIRST assignment; an existing affiliate is never overwritten.
-          affiliateApplied = true
           if (!effectiveReferrer) effectiveReferrer = affiliateUser.username
           if (!referredBy) {
             await db.update(usersTable)
               .set({ referredByUsername: affiliateUser.username })
               .where(eqFn(usersTable.id, user.id))
+            // Zuordnung vor dem Stichtag → altes Modell (wie bei der Registrierung)
+            stampedTerms = await stampLegacyTermsIfBeforeStart(user.id, affiliateUser).catch(err => {
+              console.error('[billing/checkout] referral terms stamp error:', err)
+              return null
+            })
             // Audit log: every affiliate assignment change is recorded
             try {
               const { subscriptionEvents } = await import('@/lib/db/schema')
@@ -170,11 +175,45 @@ export async function POST(req: NextRequest) {
       }
     }
 
+    // Empfehlungsrabatt (nur wenn kein eingegebener Gutschein gewinnt). Wer schon Kunde war,
+    // bekommt bei Modell C keinen Rabatt – Zuordnung und Provision des Partners bleiben.
+    let referralCouponId: string | null = null
+    let referralTerms = ''
+    let referralDenied = ''
+    let referralFound = false
+    if (!promoCodeId && effectiveReferrer && profile) {
+      // Fehler (z. B. DB) dürfen den Checkout nicht abbrechen: dann ohne Empfehlungsrabatt weiter,
+      // die Zuordnung (referred_by) bleibt – Provision entsteht trotzdem. Keine Aktion als Ersatz,
+      // damit ein Kampagnen-Gutschein die Partnerbeziehung nicht beendet.
+      const { ctx, failed } = await loadReferralContextSafe({
+        profile: { ...profile, referralTerms: profile.referralTerms ?? stampedTerms },
+        referrerUsername: effectiveReferrer,
+        stripe,
+      })
+      if (failed) {
+        referralFound = true
+        referralDenied = 'unavailable'
+      }
+      if (ctx) {
+        referralFound = true
+        const offer = referralDiscountFor(ctx, interval)
+        referralTerms = offer.terms
+        referralCouponId = offer.couponId
+        referralDenied = offer.deniedReason ?? ''
+        if (ctx.returning.returning) {
+          console.info('[billing/checkout] referral discount denied (returning customer):', user.id, ctx.returning.reasons.join(','))
+        }
+        // Harte Absicherung: 20 % nie aufs Jahresabo, AFFILIATE10 nie auf ein Modell-C-Monatsabo
+        assertReferralCouponAllowed(offer.terms, interval, [referralCouponId], ctx.coupons)
+      }
+    }
+
     // Site-wide campaign (e.g. INNERVISIONDAY): applied automatically so customers don't
     // have to find and fill the code field. Only when nothing else applies — an entered
-    // code and the partner discount always take precedence.
+    // code and the partner discount always take precedence (also a denied partner discount:
+    // a campaign code would end the partner relationship).
     let campaignApplied = false
-    if (!promoCodeId && !hasReferral && !affiliateApplied) {
+    if (!promoCodeId && !referralFound) {
       const campaign = await getCampaignForProfile(profile)
       if (campaign && campaignDiscount(campaign, interval)) {
         promoCodeId = campaign.promoCodeId
@@ -196,11 +235,15 @@ export async function POST(req: NextRequest) {
       // An explicitly entered Stripe promo code wins over the referral coupon so users can
       // always use a better admin/action code even if they have a referral on file.
       // Stripe doesn't allow mixing discounts[] with allow_promotion_codes.
+      // Partner ohne Rabatt (kein Neukunde): kein Gutscheinfeld bei Stripe – ein Code dort
+      // würde die Partnerbeziehung beenden; Codes gehen weiter über unser Feld.
       ...(promoCodeId
         ? { discounts: [{ promotion_code: promoCodeId }] }
-        : hasReferral || affiliateApplied
-          ? { discounts: [{ coupon: affiliateCouponId!.trim() }] }
-          : { allow_promotion_codes: true }),
+        : referralCouponId
+          ? { discounts: [{ coupon: referralCouponId }] }
+          : referralFound
+            ? {}
+            : { allow_promotion_codes: true }),
       success_url: successUrl,
       cancel_url: cancelUrl,
 
@@ -216,6 +259,10 @@ export async function POST(req: NextRequest) {
           plan,
           interval,
           referred_by: effectiveReferrer ?? '',
+          // Konditionen des Empfehlungsrabatts (Webhook speichert sie am Konto)
+          referral_terms: referralCouponId ? referralTerms : '',
+          referral_coupon: referralCouponId ?? '',
+          referral_denied: referralDenied,
         },
       },
 
@@ -224,6 +271,9 @@ export async function POST(req: NextRequest) {
         plan,
         interval,
         referred_by: effectiveReferrer ?? '',
+        referral_terms: referralCouponId ? referralTerms : '',
+        referral_coupon: referralCouponId ?? '',
+        referral_denied: referralDenied,
       },
 
       // Locale: German by default. Stripe shows checkout in the right language

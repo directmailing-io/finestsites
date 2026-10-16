@@ -43,6 +43,9 @@ export default function NavBar({ primaryCta, minimal, campaign }: NavBarProps = 
 
   return (
     <div style={{ padding: '20px 24px 0', position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100 }}>
+      {/* Handy: Buttons ausblenden, Menü-Symbol zeigen. Stand bisher nur in page.tsx/webinar →
+          auf AGB, Datenschutz, Impressum und Vorlagen ragte die Leiste über den Bildschirmrand. */}
+      <style>{`@media (max-width: 767px) { .fs-nav-links { display: none; } .fs-nav-actions { display: none !important; } .fs-hamburger { display: flex !important; } }`}</style>
       {/* ── Pill nav ── */}
       <nav style={{
         background: '#fff',

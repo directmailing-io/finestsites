@@ -153,6 +153,7 @@ interface SubscriptionInfo {
   billing_interval: string | null
   discount_percent: number | null
   discount_name: string | null
+  discount_duration?: string | null
   recovery: RecoveryInfo | null
 }
 
@@ -200,6 +201,8 @@ interface UpgradePreview {
   renewal_date: number | null
   interval: 'monthly' | 'yearly'
   plan: string
+  interval_change?: boolean
+  referral_yearly_added?: boolean
 }
 
 function fmtDate(iso: string | null): string {
@@ -282,6 +285,10 @@ function SettingsContent() {
   const [billingInterval, setBillingInterval] = useState<'monthly' | 'yearly'>('monthly')
   const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null)
   const [upgradeTarget, setUpgradeTarget] = useState<string | null>(null)
+  // Intervall des angefragten Upgrades (Wechsel ins Jahresabo kann vom Umschalter abweichen)
+  const [upgradeInterval, setUpgradeInterval] = useState<'monthly' | 'yearly'>('monthly')
+  // Modell C: Monatskunde mit Empfehlung → Hinweis aufs Jahresabo (10 % Partnerpreis)
+  const [yearlySwitchHint, setYearlySwitchHint] = useState(false)
   const [upgradePreview, setUpgradePreview] = useState<UpgradePreview | null>(null)
   const [upgradePreviewError, setUpgradePreviewError] = useState('')
   const [upgradeLoading, setUpgradeLoading] = useState(false)
@@ -332,6 +339,11 @@ function SettingsContent() {
       .then(d => setInvoices(Array.isArray(d.invoices) ? d.invoices : []))
       .catch(() => {})
       .finally(() => setInvoicesLoading(false))
+
+    fetch('/api/billing/referral-offer', { cache: 'no-store' })
+      .then(r => r.json())
+      .then(d => setYearlySwitchHint(!!d.yearly_switch_hint))
+      .catch(() => {})
   }, [])
 
   useEffect(() => {
@@ -501,24 +513,26 @@ function SettingsContent() {
     setReactivateLoading(false)
   }
 
-  async function handleCheckout(plan: string) {
+  async function handleCheckout(plan: string, iv: 'monthly' | 'yearly' = billingInterval) {
     // Existing active subscription → show the exact prorated amount FIRST.
     // The actual upgrade only happens in confirmUpgrade() after the user confirms.
     if (subscription?.status === 'active') {
       setUpgradeTarget(plan)
+      setUpgradeInterval(iv)
       setUpgradePreview(null)
       setUpgradePreviewError('')
       try {
         const res = await fetch('/api/billing/upgrade/preview', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ plan, interval: billingInterval }),
+          body: JSON.stringify({ plan, interval: iv }),
         })
-        const data = await res.json()
-        if (!res.ok || data.error) throw new Error(data.error || 'Vorschau konnte nicht geladen werden.')
+        // Leere/kaputte Antwort (z. B. Zahlungsdienst nicht erreichbar) → nie die rohe JS-Fehlermeldung zeigen
+        const data = await res.json().catch(() => null)
+        if (!res.ok || !data || data.error) throw new Error(data?.error || 'Die Vorschau konnte gerade nicht geladen werden. Bitte versuch es gleich noch einmal.')
         setUpgradePreview(data)
       } catch (e) {
-        setUpgradePreviewError(e instanceof Error ? e.message : 'Vorschau konnte nicht geladen werden.')
+        setUpgradePreviewError(e instanceof Error && !/json|fetch|network/i.test(e.message) ? e.message : 'Die Vorschau konnte gerade nicht geladen werden. Bitte versuch es gleich noch einmal.')
       }
       return
     }
@@ -528,7 +542,7 @@ function SettingsContent() {
     const res = await fetch('/api/billing/checkout', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ plan, interval: billingInterval }),
+      body: JSON.stringify({ plan, interval: iv }),
     })
     const data = await res.json()
     if (data.url) router.push(data.url)
@@ -544,11 +558,11 @@ function SettingsContent() {
     const res = await fetch('/api/billing/upgrade', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ plan: upgradeTarget, interval: billingInterval }),
-    })
-    const data = await res.json()
-    if (data.error) {
-      setUpgradePreviewError(data.error)
+      body: JSON.stringify({ plan: upgradeTarget, interval: upgradeInterval }),
+    }).catch(() => null)
+    const data = res ? await res.json().catch(() => null) : null
+    if (!res || !data || data.error) {
+      setUpgradePreviewError(data?.error || 'Der Wechsel hat gerade nicht geklappt. Es wurde nichts berechnet. Bitte versuch es gleich noch einmal.')
     } else {
       const amount = typeof data.invoice_total_cents === 'number' ? fmtCents(data.invoice_total_cents) : null
       setToast(
@@ -561,6 +575,7 @@ function SettingsContent() {
       setTimeout(() => setToast(''), 8000)
       setUpgradeTarget(null)
       setUpgradePreview(null)
+      if (upgradeInterval === 'yearly') setYearlySwitchHint(false)
       // Refresh subscription state to reflect new plan
       fetch('/api/billing/subscription')
         .then(r => r.json())
@@ -582,6 +597,10 @@ function SettingsContent() {
     ? (profile?.plan ?? subscription?.plan ?? null)
     : null
   const hasSubscription = !!profile?.stripe_customer_id
+  // Aktuelles Intervall (für Upgrades: gleicher Tarif nur Monat → Jahr, Jahr → Monat nie)
+  const currentInterval: 'monthly' | 'yearly' | null = hasActiveSubscription
+    ? (profile?.billing_interval === 'yearly' ? 'yearly' : 'monthly')
+    : null
 
   // ── Render ─────────────────────────────────────────────────────
   return (
@@ -943,6 +962,25 @@ function SettingsContent() {
           {/* ── Plan wählen ── */}
           <TabSection title="Plan wählen" subtitle="Upgrade jederzeit. Wir verrechnen anteilig.">
             <>
+                {/* Modell C: geworbener Monatskunde → Jahresabo mit 10 % Partnerpreis */}
+                {yearlySwitchHint && currentPlan && currentInterval === 'monthly' && (
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-5 px-4 py-4 rounded-2xl"
+                    style={{ background: '#F0FDF4', border: '1px solid #BBF7D0' }}>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-semibold" style={{ color: '#15803D' }}>
+                        Wechsle ins Jahresabo: dauerhaft 10 % Rabatt
+                      </p>
+                      <p className="text-xs mt-0.5" style={{ color: '#166534' }}>
+                        Gleicher Tarif, du zahlst einmal im Jahr. Die 10 % gelten, solange dein Jahresabo läuft. Der ungenutzte Rest deines Monats wird angerechnet.
+                      </p>
+                    </div>
+                    <button onClick={() => handleCheckout(currentPlan, 'yearly')}
+                      className="flex-shrink-0 min-h-[44px] px-4 py-2.5 text-sm font-bold rounded-xl text-white transition-opacity hover:opacity-90"
+                      style={{ background: '#15803D' }}>
+                      Ins Jahresabo wechseln
+                    </button>
+                  </div>
+                )}
                 {/* Interval toggle */}
                 <div className="flex items-center justify-between gap-3 mb-6">
                   <div className="inline-flex p-1 rounded-2xl" style={{ background: '#F1F5F9' }}>
@@ -979,10 +1017,12 @@ function SettingsContent() {
                 {/* Plan rows — horizontal list */}
                 <div className="rounded-2xl overflow-hidden" style={{ border: '1.5px solid #E5E7EB' }}>
                   {PLAN_LIST.map((plan, idx) => {
-                    const isCurrent = currentPlan === plan.key
+                    const isUpgrade = canUpgradeTo(currentPlan, plan.key, currentInterval, billingInterval)
+                    // Gleicher Tarif im Jahres-Umschalter für Monatskunden = Wechsel ins Jahresabo
+                    const isIntervalSwitch = currentPlan === plan.key && isUpgrade
+                    const isCurrent = currentPlan === plan.key && !isIntervalSwitch
                     const price = billingInterval === 'monthly' ? plan.monthly_eur : plan.yearly_eur
                     const unit = billingInterval === 'yearly' ? '/Jahr' : '/Mo.'
-                    const isUpgrade = canUpgradeTo(currentPlan, plan.key)
                     const isLower = !isCurrent && !isUpgrade
                     const isLast = idx === PLAN_LIST.length - 1
                     return (
@@ -1039,7 +1079,9 @@ function SettingsContent() {
                                 </span>
                                 <span className="text-xs ml-0.5" style={{ color: '#94A3B8' }}>{unit}</span>
                               </div>
-                              <p className="text-[11px]" style={{ color: '#15803D' }}>-{subscription.discount_percent}% Rabatt aktiv</p>
+                              <p className="text-[11px]" style={{ color: '#15803D' }}>
+                                -{subscription.discount_percent}% Rabatt{subscription.discount_duration === 'once' ? ' auf die erste Rechnung' : ' aktiv'}
+                              </p>
                             </>
                           ) : (
                             <>
@@ -1077,7 +1119,7 @@ function SettingsContent() {
                               className="flex items-center gap-1.5 px-4 py-2.5 text-sm font-bold rounded-xl transition-opacity hover:opacity-90 disabled:opacity-70 text-white whitespace-nowrap"
                               style={{ background: plan.popular ? '#7C3AED' : '#1a1a1a' }}>
                               {checkoutLoading === plan.key ? <Spinner /> : null}
-                              {hasSubscription ? 'Upgraden' : 'Wählen'}
+                              {isIntervalSwitch ? 'Jährlich zahlen' : hasSubscription ? 'Upgraden' : 'Wählen'}
                             </button>
                           )}
                         </div>
@@ -1119,7 +1161,7 @@ function SettingsContent() {
                   {subscription.billing_interval && (
                     <span className="text-xs font-medium px-2 py-0.5 rounded-full"
                       style={{ background: 'rgba(255,255,255,0.65)', color: '#374151' }}>
-                      {subscription.billing_interval === 'year' ? 'Jährlich' : 'Monatlich'}
+                      {subscription.billing_interval === 'year' || subscription.billing_interval === 'yearly' ? 'Jährlich' : 'Monatlich'}
                     </span>
                   )}
                   {subscription.status === 'past_due' ? (
@@ -1454,11 +1496,20 @@ function SettingsContent() {
               style={{ boxShadow: '0 24px 64px rgba(0,0,0,0.20)' }}>
               <div>
                 <h3 className="font-bold text-gray-900 text-lg tracking-tight">
-                  Upgrade auf {PLAN_LABELS[upgradeTarget] ?? upgradeTarget}
+                  {upgradeTarget === currentPlan && upgradeInterval === 'yearly'
+                    ? `Wechsel ins Jahresabo (${PLAN_LABELS[upgradeTarget] ?? upgradeTarget})`
+                    : `Upgrade auf ${PLAN_LABELS[upgradeTarget] ?? upgradeTarget}${upgradeInterval !== currentInterval ? ' (jährlich)' : ''}`}
                 </h3>
                 <p className="text-sm mt-1.5 leading-relaxed" style={{ color: '#64748B' }}>
-                  Du zahlst jetzt nur die Differenz für die restlichen Tage deines aktuellen Abrechnungszeitraums.
+                  {upgradeInterval !== currentInterval
+                    ? 'Dein Jahresabo beginnt heute. Der ungenutzte Rest deines laufenden Monats wird angerechnet.'
+                    : 'Du zahlst jetzt nur die Differenz für die restlichen Tage deines aktuellen Abrechnungszeitraums.'}
                 </p>
+                {upgradePreview?.referral_yearly_added && (
+                  <p className="text-sm mt-2 font-semibold" style={{ color: '#15803D' }}>
+                    Mit 10 % Rabatt, solange dein Jahresabo läuft.
+                  </p>
+                )}
               </div>
 
               {upgradePreviewError ? (
@@ -1479,7 +1530,7 @@ function SettingsContent() {
                     </div>
                     <div className="mt-3 pt-3 flex flex-col gap-1.5" style={{ borderTop: '1px solid #E5E7EB' }}>
                       <div className="flex justify-between gap-3 text-xs" style={{ color: '#64748B' }}>
-                        <span>Neuer Tarif, anteilig{renewalDateStr ? ` bis zum ${renewalDateStr}` : ''}</span>
+                        <span>{upgradePreview.interval_change ? 'Jahresabo' : 'Neuer Tarif, anteilig'}{renewalDateStr ? ` bis zum ${renewalDateStr}` : ''}</span>
                         <span className="flex-shrink-0">{fmtCents(upgradePreview.charge_cents)}</span>
                       </div>
                       {upgradePreview.credit_cents < 0 && (
@@ -1517,7 +1568,9 @@ function SettingsContent() {
                   className="flex-1 flex items-center justify-center gap-2 px-4 py-3 text-sm font-semibold text-white rounded-xl transition-opacity hover:opacity-90 disabled:opacity-60"
                   style={{ background: '#7C3AED' }}>
                   {upgradeLoading && <Spinner />}
-                  {upgradePreview ? `Für ${fmtCents(upgradePreview.due_cents)} upgraden` : 'Jetzt upgraden'}
+                  {upgradePreview
+                    ? `Für ${fmtCents(upgradePreview.due_cents)} ${upgradeTarget === currentPlan ? 'wechseln' : 'upgraden'}`
+                    : upgradeTarget === currentPlan ? 'Jetzt wechseln' : 'Jetzt upgraden'}
                 </button>
               </div>
             </div>

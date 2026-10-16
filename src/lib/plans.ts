@@ -77,11 +77,28 @@ export function getPlanMaxSites(plan: string): number {
   return PLANS[plan as PlanKey]?.max_sites ?? 1
 }
 
-/** True if targetPlan is strictly higher than currentPlan.
- *  Pass null for free users (no active subscription) — all plans are upgradeable from free. */
-export function canUpgradeTo(currentPlan: string | null, targetPlan: string): boolean {
+/** True if switching from the current plan to the target is an upgrade.
+ *  Pass null for free users (no active subscription) — all plans are upgradeable from free.
+ *  Without intervals: only a strictly higher plan counts (old behaviour).
+ *  With both intervals: yearly → monthly is never allowed (no downgrades); the same plan
+ *  is allowed only monthly → yearly; a higher plan is allowed monthly→monthly,
+ *  monthly→yearly and yearly→yearly. */
+export function canUpgradeTo(
+  currentPlan: string | null,
+  targetPlan: string,
+  currentInterval?: BillingInterval | null,
+  targetInterval?: BillingInterval | null,
+): boolean {
+  // Intervall-Regel zuerst – gilt auch, wenn der Tarif in der DB fehlt (null), das Abo aber läuft
+  if (currentInterval === 'yearly' && targetInterval === 'monthly') return false
+  const tgt = PLAN_ORDER.indexOf(targetPlan as PlanKey)
+  if (tgt < 0) return false
   if (currentPlan === null) return true // free user: all paid plans are upgrades
-  return PLAN_ORDER.indexOf(targetPlan as PlanKey) > PLAN_ORDER.indexOf(currentPlan as PlanKey)
+  const cur = PLAN_ORDER.indexOf(currentPlan as PlanKey)
+  if (currentInterval && targetInterval && tgt === cur) {
+    return currentInterval === 'monthly' && targetInterval === 'yearly'
+  }
+  return tgt > cur
 }
 
 export const PLAN_LABELS: Record<string, string> = {

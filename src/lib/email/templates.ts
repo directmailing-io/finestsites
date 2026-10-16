@@ -366,30 +366,38 @@ export function affiliateAdminAssignEmail({
 export function affiliatePayoutEmail({
   amountCents,
   commissionCount,
+  method = 'transfer',
 }: {
   amountCents: number
   commissionCount: number
+  /** 'credit' = mit dem eigenen Abo verrechnet (Kundenguthaben) */
+  method?: 'transfer' | 'credit'
 }): string {
   const amount = (amountCents / 100).toLocaleString('de-DE', { style: 'currency', currency: 'EUR' })
   const affiliateUrl = `${APP_URL}/affiliate`
+  const credit = method === 'credit'
   return layout(`
     <h1 style="margin:0 0 8px;font-size:22px;font-weight:700;color:${base.heading};letter-spacing:-0.02em;">
-      Deine Provision wurde ausgezahlt
+      ${credit ? 'Deine Provision wurde verrechnet' : 'Deine Provision wurde ausgezahlt'}
     </h1>
     <p style="margin:0 0 20px;font-size:15px;color:${base.body};line-height:1.65;">
-      Wir haben soeben eine Auszahlung an dein verknüpftes Konto vorgenommen.
+      ${credit
+        ? 'Wir haben deine Provision deinem FinestSites-Konto gutgeschrieben.'
+        : 'Wir haben soeben eine Auszahlung an dein verknüpftes Konto vorgenommen.'}
     </p>
     <table cellpadding="0" cellspacing="0" role="presentation" width="100%" style="margin:0 0 24px;">
       <tr>
         <td style="background:#F0FDF4;border-radius:12px;padding:20px 24px;border:1px solid #BBF7D0;">
-          <p style="margin:0 0 4px;font-size:12px;font-weight:600;color:#15803D;text-transform:uppercase;letter-spacing:0.06em;">Ausgezahlter Betrag</p>
+          <p style="margin:0 0 4px;font-size:12px;font-weight:600;color:#15803D;text-transform:uppercase;letter-spacing:0.06em;">${credit ? 'Gutgeschriebener Betrag' : 'Ausgezahlter Betrag'}</p>
           <p style="margin:0;font-size:28px;font-weight:800;color:#15803D;letter-spacing:-0.02em;">${amount}</p>
           <p style="margin:8px 0 0;font-size:13px;color:#16A34A;">${commissionCount} Provision${commissionCount !== 1 ? 'en' : ''}</p>
         </td>
       </tr>
     </table>
     <p style="margin:0;font-size:14px;color:${base.muted};line-height:1.65;">
-      Der Betrag wird in Kürze auf deinem verknüpften Bankkonto gutgeschrieben. Die genaue Dauer hängt von deiner Bank ab.
+      ${credit
+        ? 'Der Betrag wird automatisch von deinen nächsten FinestSites-Rechnungen abgezogen. Du musst nichts tun. Die Gutschrift findest du in deinem Partnerbereich.'
+        : 'Der Betrag wird in Kürze auf deinem verknüpften Bankkonto gutgeschrieben. Die genaue Dauer hängt von deiner Bank ab.'}
     </p>
     ${button(affiliateUrl, 'Zur Partnerplattform')}
     <p style="margin:28px 0 0;font-size:13px;color:${base.muted};line-height:1.6;">
@@ -1167,7 +1175,7 @@ export function affiliatePayoutAdminAlertEmail({ context, paidCount, items }: {
       Partner-Auszahlungen: bitte kurz ansehen
     </h1>
     <p style="margin:0 0 20px;font-size:15px;color:${base.body};line-height:1.65;">
-      Lauf: ${escapeHtml(context)}. Ausgezahlt: ${paidCount}. Hinweise: ${items.length}.
+      Lauf: ${escapeHtml(context)}. Ausgezahlt oder verrechnet: ${paidCount}. Hinweise: ${items.length}.
     </p>
     <table cellpadding="0" cellspacing="0" role="presentation" width="100%">${rows}</table>
     ${button(`${APP_URL}/admin/gutschriften`, 'Gutschriften im Admin ansehen')}

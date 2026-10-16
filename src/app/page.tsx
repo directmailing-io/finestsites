@@ -17,6 +17,8 @@ import FAQSection from './_components/FAQSection'
 import WaitlistToast from './_components/WaitlistToast'
 import Footer from './_components/Footer'
 import { getActiveCampaign, toPublicCampaign } from '@/lib/billing/campaign'
+import { anonymousReferralOffer } from '@/lib/affiliate/referral-offer'
+import type { ReferralOfferPublic } from '@/lib/affiliate/referral-model'
 
 export const dynamic = 'force-dynamic'
 
@@ -34,13 +36,16 @@ export default async function HomePage({
   const params = await searchParams
   const refParam = params.ref?.trim().toLowerCase() ?? ''
   let validatedRef: string | null = null
+  let referralOffer: ReferralOfferPublic | null = null
   if (refParam) {
     try {
       const referrer = await db.query.users.findFirst({
         where: eq(users.username, refParam),
-        columns: { username: true },
+        columns: { username: true, firstName: true, isAdmin: true },
       })
       validatedRef = referrer?.username ?? null
+      // Angebot für Neukunden (Modell C ab Stichtag / altes Modell davor), fertig berechnet
+      if (referrer?.username) referralOffer = anonymousReferralOffer({ username: referrer.username, firstName: referrer.firstName, isAdmin: referrer.isAdmin })
     } catch {
       // DB error: fail safe — no discount shown
     }
@@ -303,7 +308,7 @@ export default async function HomePage({
         <WaitlistToast />
       </Suspense>
 
-      <PricingSection validatedRef={validatedRef} campaign={campaign} />
+      <PricingSection validatedRef={validatedRef} referralOffer={referralOffer} campaign={campaign} />
 
       {/* ══ FAQ ══════════════════════════════════════════════════════════ */}
       <FAQSection />

@@ -65,6 +65,8 @@ export interface CreditNoteData {
   grossCents: number
   vatRate: number
   stripeTransferId?: string | null
+  /** 'transfer' (Standard): Überweisung über Stripe · 'credit': Verrechnung mit dem eigenen Abo (Kundenguthaben) */
+  paymentMethod?: 'transfer' | 'credit'
 }
 
 const A4: [number, number] = [595.28, 841.89]
@@ -76,6 +78,14 @@ const LINE = rgb(0.86, 0.87, 0.89)
 const SOFT = rgb(0.965, 0.97, 0.975)
 
 export const DOCUMENT_TITLE = 'Gutschrift'
+
+/** Satz zum Ausgleich der Gutschrift (Zahlungsweg), je nach Methode. */
+export function paymentNoteFor(method: CreditNoteData['paymentMethod'], paidAt: string): string {
+  if (method === 'credit') {
+    return `Ausgleich durch Verrechnung mit deinem FinestSites-Abonnement (Kundenguthaben, wird mit deinen nächsten Rechnungen verrechnet) am ${formatDateDE(paidAt)}.`
+  }
+  return `Ausgezahlt per Überweisung über Stripe am ${formatDateDE(paidAt)}.`
+}
 
 export function taxNoteFor(status: TaxStatus): string | null {
   if (status === 'kleinunternehmer') {
@@ -302,7 +312,7 @@ export async function generateCreditNotePdf(data: CreditNoteData): Promise<Uint8
     sumRow('Umsatzsteuer', formatEuro(0))
     page.drawLine({ start: { x: sumLabelX, y: y + 8 }, end: { x: right, y: y + 8 }, thickness: 0.8, color: INK })
     y -= 4
-    sumRow('Auszahlungsbetrag', formatEuro(data.grossCents), true)
+    sumRow(data.paymentMethod === 'credit' ? 'Gutschriftsbetrag' : 'Auszahlungsbetrag', formatEuro(data.grossCents), true)
   }
 
   // ── Hinweise ─────────────────────────────────────────────────────────────────
@@ -310,7 +320,7 @@ export async function generateCreditNotePdf(data: CreditNoteData): Promise<Uint8
   const notes: string[] = []
   const taxNote = taxNoteFor(r.taxStatus)
   if (taxNote) notes.push(taxNote)
-  notes.push(`Ausgezahlt per Überweisung über Stripe am ${formatDateDE(data.paidAt)}.`)
+  notes.push(paymentNoteFor(data.paymentMethod, data.paidAt))
   notes.push('Diese Gutschrift wurde mit deinem Einverständnis erstellt (§ 14 Abs. 2 Satz 2 UStG). Bitte prüfe sie und melde dich sofort, wenn etwas nicht stimmt.')
   for (const n of notes) {
     y = paragraph(page, n, M, y, right - M, 9, regular, BODY)

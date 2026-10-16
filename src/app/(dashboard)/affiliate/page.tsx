@@ -4,6 +4,9 @@ import { useState, useEffect } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { TaxProfileNotice, TaxProfileSection, CreditNotesSection, type TaxProfileData, type CreditNoteItem } from './TaxProfileSection'
 import { computePayoutAmounts } from '@/lib/affiliate/tax'
+import { PayoutModeSection, type PayoutModeState } from './PayoutModeSection'
+import { CREDIT_MINIMUM_CENTS } from '@/lib/affiliate/payout-mode'
+import { partnerReferralPitch } from '@/lib/affiliate/referral-model'
 
 interface Commission {
   id: string
@@ -12,6 +15,7 @@ interface Commission {
   status: string
   available_at: string
   paid_at: string | null
+  payout_id?: string | null
   created_at: string
 }
 
@@ -23,6 +27,7 @@ interface Payout {
   period_end: string
   status: string
   paid_at: string | null
+  payout_method?: 'credit' | 'transfer'
 }
 
 interface ReferredUser {
@@ -40,6 +45,9 @@ interface Stats {
   username: string | null
   stripe_connect_id: string | null
   affiliate_onboarded: boolean
+  payout_mode?: 'credit' | 'payout'
+  /** Konditionen für neu geworbene Kunden (vom Server, referral-model.ts) */
+  referral_terms_new?: 'legacy10' | 'c2026'
   bank_last4: string | null
   bank_name: string | null
   referral_count: number
@@ -74,6 +82,7 @@ export default function AffiliatePage() {
   const [taxProfile, setTaxProfile] = useState<TaxProfileData | null>(null)
   const [taxComplete, setTaxComplete] = useState(false)
   const [creditNotes, setCreditNotes] = useState<CreditNoteItem[]>([])
+  const [payoutMode, setPayoutMode] = useState<PayoutModeState | null>(null)
 
   function loadCreditNotes() {
     fetch('/api/affiliate/credit-notes')
@@ -88,6 +97,10 @@ export default function AffiliatePage() {
       fetch('/api/affiliate/tax-profile')
         .then(r => (r.ok ? r.json() : null))
         .then(d => { if (d) { setTaxProfile(d.profile); setTaxComplete(!!d.complete) } })
+        .catch(() => {}),
+      fetch('/api/affiliate/payout-mode')
+        .then(r => (r.ok ? r.json() : null))
+        .then(d => { if (d?.mode) setPayoutMode(d) })
         .catch(() => {}),
     ]).finally(() => setLoading(false))
     loadCreditNotes()
@@ -154,18 +167,24 @@ export default function AffiliatePage() {
   )
 
   const PAYOUT_MIN_CENTS = 1000
+  // Standard ist die Verrechnung mit dem eigenen Abo; Überweisung nur, wenn der Partner das gewählt hat
+  const mode: 'credit' | 'payout' = payoutMode?.mode ?? stats?.payout_mode ?? 'credit'
+  const isCredit = mode === 'credit'
+  const minCents = isCredit ? CREDIT_MINIMUM_CENTS : PAYOUT_MIN_CENTS
   const availableCents = stats?.commissions?.filter(c => c.status === 'available').reduce((s, c) => s + c.commission_amount, 0) ?? 0
   const pendingCents   = stats?.commissions?.filter(c => c.status === 'pending').reduce((s, c) => s + c.commission_amount, 0) ?? 0
   const paidCents      = stats?.total_paid_cents ?? 0
   const totalEarned    = availableCents + pendingCents + paidCents
   // Ob das Stripe-Guthaben reicht, prüft der Server (payout.ts) – nicht die Seite.
-  const canPayout      = availableCents >= PAYOUT_MIN_CENTS && !!stats?.affiliate_onboarded && taxComplete
+  const canPayout      = !isCredit && availableCents >= PAYOUT_MIN_CENTS && !!stats?.affiliate_onboarded && taxComplete
   // Regelbesteuerte Partner bekommen 19 % USt obendrauf (gleiche Rechnung wie auf dem Server)
   const payoutAmount   = taxProfile?.tax_status === 'regelbesteuert'
     ? computePayoutAmounts([availableCents], 'regelbesteuert').grossCents
     : availableCents
   const hasCommissions = (stats?.commissions?.length ?? 0) > 0
-  const belowMinimum   = availableCents > 0 && availableCents < PAYOUT_MIN_CENTS
+  const belowMinimum   = availableCents > 0 && availableCents < minCents
+  const creditNext     = isCredit && availableCents >= CREDIT_MINIMUM_CENTS
+  const methodByPayout = new Map((stats?.payouts ?? []).map(p => [p.id, p.payout_method ?? 'transfer']))
   const negativeBalance = availableCents < 0
   const referralUrl    = stats?.username
     ? `https://finestsites.io/?ref=${stats.username}`
@@ -199,6 +218,8 @@ export default function AffiliatePage() {
     )
   }
 
+  const pitch = stats?.referral_terms_new ? partnerReferralPitch(stats.referral_terms_new) : null
+
   return (
     <div className="max-w-2xl mx-auto">
 
@@ -206,7 +227,7 @@ export default function AffiliatePage() {
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-gray-900">Partnerprogramm</h1>
         <p className="text-sm mt-1" style={{ color: '#94A3B8' }}>
-          Empfehle FinestSites. Du verdienst <strong className="text-gray-600">10%</strong> dauerhaft, dein Empfohlener spart <strong className="text-gray-600">10%</strong> dauerhaft.
+          Empfehle FinestSites. Du verdienst <strong className="text-gray-600">10%</strong> dauerhaft.{pitch ? ` ${pitch.headline}` : ''}
         </p>
       </div>
 
@@ -214,7 +235,9 @@ export default function AffiliatePage() {
       {(connectStatus || payoutMsg) && (
         <div className="space-y-2 mb-6">
           {connectStatus === 'success' && (
-            <Banner type="success">Bankkonto eingerichtet. Du wirst automatisch ausgezahlt.</Banner>
+            <Banner type="success">{isCredit
+              ? 'Bankkonto eingerichtet. Deine Provision wird weiter mit deinem Abo verrechnet. Möchtest du lieber Überweisungen, stell das unten um.'
+              : 'Bankkonto eingerichtet. Du wirst automatisch ausgezahlt.'}</Banner>
           )}
           {connectStatus === 'pending' && (
             <Banner type="warning">Noch nicht fertig. Bitte fahre mit der Einrichtung fort.</Banner>
@@ -235,11 +258,11 @@ export default function AffiliatePage() {
           <div className="hidden sm:flex items-center justify-center flex-shrink-0 mt-6">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#D1D5DB" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
           </div>
-          <HowStep icon="💳" n={2} title="Neukunde abonniert" desc="Dein Empfohlener bucht FinestSites und zahlt dauerhaft 10% weniger, egal welchen Tarif." />
+          <HowStep icon="💳" n={2} title="Neukunde abonniert" desc={pitch?.step ?? 'Dein Empfohlener bucht FinestSites und bekommt einen Empfehlungsrabatt.'} />
           <div className="hidden sm:flex items-center justify-center flex-shrink-0 mt-6">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#D1D5DB" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
           </div>
-          <HowStep icon="💰" n={3} title="Du bekommst Geld" desc="10% vom Nettobetrag jeder Zahlung wandern als Guthaben zu dir, jeden Monat aufs Neue. Ab 10 € wird ausgezahlt." highlight />
+          <HowStep icon="💰" n={3} title="Du bekommst Geld" desc="10% vom Nettobetrag jeder Zahlung gehören dir, jeden Monat aufs Neue. Wir ziehen sie automatisch von deiner FinestSites-Rechnung ab. Oder du lässt sie dir ab 10 € aufs Bankkonto auszahlen." highlight />
         </div>
       </section>
 
@@ -294,7 +317,8 @@ export default function AffiliatePage() {
             <EarningBox label="Verfügbar" value={euros(availableCents)} highlight={availableCents > 0} dark={totalEarned > 0} />
             <EarningBox label="In 14 Tagen" value={euros(pendingCents)} dark={totalEarned > 0}
               tooltip="Neue Provisionen werden 14 Tage zurückgehalten, damit mögliche Rückerstattungen abgerechnet werden können." />
-            <EarningBox label="Bereits ausgezahlt" value={euros(paidCents)} dark={totalEarned > 0} muted />
+            <EarningBox label="Bereits erhalten" value={euros(paidCents)} dark={totalEarned > 0} muted
+              tooltip="Verrechnet mit deinem Abo oder aufs Bankkonto ausgezahlt." />
           </div>
         )}
 
@@ -313,13 +337,30 @@ export default function AffiliatePage() {
           </div>
         )}
 
+        {creditNext && (
+          <div className="mt-5 pt-5" style={{ borderTop: '1px solid rgba(255,255,255,0.1)' }}>
+            <p className="text-sm" style={{ color: 'rgba(255,255,255,0.85)' }}>
+              {payoutMode && !payoutMode.subscription_active
+                ? 'Ohne aktives Abo können wir gerade nichts verrechnen. Dein Guthaben bleibt dir erhalten.'
+                : <>Am 1. des nächsten Monats ziehen wir <strong className="text-white">{euros(payoutAmount)}</strong> automatisch von deiner FinestSites-Rechnung ab.</>}
+            </p>
+            {payoutAmount !== availableCents && (
+              <p className="text-xs mt-1" style={{ color: 'rgba(255,255,255,0.6)' }}>
+                {euros(availableCents)} Provision + 19 % Umsatzsteuer
+              </p>
+            )}
+          </div>
+        )}
+
         {belowMinimum && (
           <div className="mt-5 pt-5" style={{ borderTop: totalEarned > 0 ? '1px solid rgba(255,255,255,0.1)' : '1px solid #E5E7EB' }}>
             <div className="mb-2 h-2 rounded-full overflow-hidden" style={{ background: totalEarned > 0 ? 'rgba(255,255,255,0.15)' : '#E5E7EB' }}>
-              <div className="h-full rounded-full" style={{ width: `${Math.min(100, Math.round((availableCents * 100) / PAYOUT_MIN_CENTS))}%`, background: '#34D399' }} />
+              <div className="h-full rounded-full" style={{ width: `${Math.min(100, Math.round((availableCents * 100) / minCents))}%`, background: '#34D399' }} />
             </div>
             <p className="text-xs" style={{ color: totalEarned > 0 ? 'rgba(255,255,255,0.6)' : '#6B7280' }}>
-              Noch {euros(PAYOUT_MIN_CENTS - availableCents)} bis zur Auszahlung. Ausgezahlt wird ab 10 €, dein Guthaben verfällt nicht und wandert einfach in den nächsten Monat.
+              {isCredit
+                ? `Noch ${euros(minCents - availableCents)}, dann verrechnen wir. Verrechnet wird ab 1 €, dein Guthaben verfällt nicht und wandert einfach in den nächsten Monat.`
+                : `Noch ${euros(minCents - availableCents)} bis zur Auszahlung. Ausgezahlt wird ab 10 €, dein Guthaben verfällt nicht und wandert einfach in den nächsten Monat.`}
             </p>
           </div>
         )}
@@ -333,16 +374,54 @@ export default function AffiliatePage() {
         )}
       </section>
 
+      {/* ── So bekommst du deine Provision ───────────────────────────────────── */}
+      {payoutMode && (
+        <PayoutModeSection state={payoutMode} onChanged={s => { setPayoutMode(s); setPayoutMsg(null) }} />
+      )}
+
+      {/* ── Bank account setup (nur bei „Aufs Bankkonto auszahlen“) ──────────── */}
+      {isCredit ? null : stats.affiliate_onboarded ? (
+        <section className="rounded-3xl p-5 mb-5" style={{ background: '#F0FDF4', border: '1px solid #BBF7D0' }}>
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex items-start gap-3">
+              <div className="w-9 h-9 rounded-2xl flex items-center justify-center flex-shrink-0" style={{ background: '#DCFCE7' }}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#16A34A" strokeWidth="2.5"><path d="M20 6 9 17l-5-5"/></svg>
+              </div>
+              <div>
+                <div className="flex items-center gap-2 mb-0.5">
+                  <p className="text-sm font-bold text-gray-900">Bankkonto eingerichtet</p>
+                  <span className="text-xs font-semibold px-2 py-0.5 rounded-full" style={{ background: '#DCFCE7', color: '#16A34A' }}>Aktiv</span>
+                </div>
+                {(stats.bank_name || stats.bank_last4) && (
+                  <p className="text-sm text-gray-600">
+                    {stats.bank_name}{stats.bank_last4 ? <> · •••• <strong>{stats.bank_last4}</strong></> : ''}
+                  </p>
+                )}
+                <p className="text-xs text-gray-500 mt-0.5">Auszahlung automatisch am 1. des Monats</p>
+              </div>
+            </div>
+            <button onClick={openStripeDashboard} disabled={stripeLinkLoading}
+              className="flex items-center gap-1.5 text-xs font-semibold px-3 py-2 rounded-xl flex-shrink-0 transition-opacity hover:opacity-80"
+              style={{ background: '#fff', color: '#374151', border: '1px solid #D1FAE5' }}>
+              {stripeLinkLoading ? 'Öffnet…' : 'Verwalten'}
+            </button>
+          </div>
+        </section>
+      ) : (
+        <BankSetupCard onStart={startConnect} connecting={connecting} error={connectError} />
+      )}
+
       {/* ── Payout rules, plain and simple ──────────────────────────────────── */}
       <section className="rounded-3xl p-6 mb-5" style={{ background: '#fff', border: '1.5px solid #E5E7EB' }}>
         <p className="text-xs font-semibold uppercase tracking-widest mb-4" style={{ color: '#94A3B8' }}>Gut zu wissen</p>
         <ul className="space-y-2.5 text-sm text-gray-600">
           <RuleItem>Du bekommst <strong className="text-gray-800">10% Provision</strong> auf jede Zahlung deiner Empfehlungen. Monat für Monat, solange sie dabei sind.</RuleItem>
-          <RuleItem>Ausgezahlt wird <strong className="text-gray-800">ab 10 €</strong> Guthaben. Bist du drunter, verfällt nichts. Dein Guthaben sammelt sich einfach weiter an.</RuleItem>
-          <RuleItem>Pro Monat gibt es <strong className="text-gray-800">eine Auszahlung</strong>. Die läuft automatisch, du musst nichts tun.</RuleItem>
+          <RuleItem>Normalerweise ziehen wir deine Provision <strong className="text-gray-800">jeden Monat automatisch von deiner FinestSites-Rechnung ab</strong>. Das geht ab 1 €, ein Auszahlungskonto brauchst du dafür nicht. Wichtig: Fülle einmal deine Angaben für die Abrechnung aus, sonst bleibt das Guthaben stehen.</RuleItem>
+          <RuleItem>Lieber aufs Bankkonto? Dann überweisen wir <strong className="text-gray-800">ab 10 €</strong> einmal im Monat. Bist du drunter, verfällt nichts. Dein Guthaben sammelt sich einfach weiter an.</RuleItem>
+          <RuleItem>Pro Monat gibt es <strong className="text-gray-800">eine Abrechnung</strong>. Die läuft automatisch, du musst nichts tun.</RuleItem>
           <RuleItem>Neue Provisionen haben eine <strong className="text-gray-800">Schutzfrist von 14 Tagen</strong>. So können wir Rückerstattungen sauber verrechnen, danach ist das Geld fest für dich reserviert.</RuleItem>
-          <RuleItem>Auszahlungen gehen nur auf ein <strong className="text-gray-800">verifiziertes Bankkonto</strong>. Solange die Verifizierung läuft, bleibt dein Guthaben sicher stehen.</RuleItem>
-          <RuleItem>Für jede Auszahlung bekommst du eine <strong className="text-gray-800">Gutschrift</strong> zum Herunterladen. Stimmt etwas nicht, sag uns bitte innerhalb von 4 Wochen Bescheid.</RuleItem>
+          <RuleItem>Endet dein eigenes Abo, zahlen wir dir dein <strong className="text-gray-800">restliches Guthaben auf Wunsch aus</strong>. Schreib uns dafür einfach an hello@finestsites.io.</RuleItem>
+          <RuleItem>Für jede Abrechnung bekommst du eine <strong className="text-gray-800">Gutschrift</strong> zum Herunterladen. Stimmt etwas nicht, sag uns bitte innerhalb von 4 Wochen Bescheid.</RuleItem>
         </ul>
       </section>
 
@@ -378,37 +457,6 @@ export default function AffiliatePage() {
         </section>
       )}
 
-      {/* ── Bank account setup ──────────────────────────────────────────────── */}
-      {stats.affiliate_onboarded ? (
-        <section className="rounded-3xl p-5 mb-5" style={{ background: '#F0FDF4', border: '1px solid #BBF7D0' }}>
-          <div className="flex items-start justify-between gap-4">
-            <div className="flex items-start gap-3">
-              <div className="w-9 h-9 rounded-2xl flex items-center justify-center flex-shrink-0" style={{ background: '#DCFCE7' }}>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#16A34A" strokeWidth="2.5"><path d="M20 6 9 17l-5-5"/></svg>
-              </div>
-              <div>
-                <div className="flex items-center gap-2 mb-0.5">
-                  <p className="text-sm font-bold text-gray-900">Bankkonto eingerichtet</p>
-                  <span className="text-xs font-semibold px-2 py-0.5 rounded-full" style={{ background: '#DCFCE7', color: '#16A34A' }}>Aktiv</span>
-                </div>
-                {(stats.bank_name || stats.bank_last4) && (
-                  <p className="text-sm text-gray-600">
-                    {stats.bank_name}{stats.bank_last4 ? <> · •••• <strong>{stats.bank_last4}</strong></> : ''}
-                  </p>
-                )}
-                <p className="text-xs text-gray-500 mt-0.5">Auszahlung automatisch am 1. des Monats</p>
-              </div>
-            </div>
-            <button onClick={openStripeDashboard} disabled={stripeLinkLoading}
-              className="flex items-center gap-1.5 text-xs font-semibold px-3 py-2 rounded-xl flex-shrink-0 transition-opacity hover:opacity-80"
-              style={{ background: '#fff', color: '#374151', border: '1px solid #D1FAE5' }}>
-              {stripeLinkLoading ? 'Öffnet…' : 'Verwalten'}
-            </button>
-          </div>
-        </section>
-      ) : (
-        <BankSetupCard onStart={startConnect} connecting={connecting} error={connectError} />
-      )}
 
       {/* ── Angaben für die Abrechnung + Gutschriften ─────────────────────────── */}
       <TaxProfileSection
@@ -432,9 +480,14 @@ export default function AffiliatePage() {
                 cancelled:  { label: 'Storniert',        color: '#6B7280', bg: '#F3F4F6' },
               }
               const isNegative = c.commission_amount < 0
+              const paidLabel = c.payout_id && methodByPayout.get(c.payout_id) === 'credit' ? 'Verrechnet' : 'Ausgezahlt'
               const s = isNegative
                 ? { label: 'Rückbuchung', color: '#991B1B', bg: '#FEF2F2' }
-                : statusMap[c.status] ?? statusMap.pending
+                : c.status === 'paid'
+                  ? { ...statusMap.paid, label: paidLabel }
+                  : c.status === 'available'
+                    ? { ...statusMap.available, label: 'Verfügbar' }
+                    : statusMap[c.status] ?? statusMap.pending
               return (
                 <div key={c.id} className="flex items-center gap-3 px-3 py-2.5 rounded-2xl hover:bg-gray-50">
                   <div className="flex-1 min-w-0">
@@ -442,7 +495,7 @@ export default function AffiliatePage() {
                     <p className="text-xs text-gray-400">
                       {isNegative ? 'Wird mit neuen Provisionen verrechnet' : ''}
                       {!isNegative && c.status === 'pending' && c.available_at ? `Verfügbar ab ${fmtDate(c.available_at)}` : ''}
-                      {!isNegative && c.status === 'paid' && c.paid_at ? `Ausgezahlt am ${fmtDate(c.paid_at)}` : ''}
+                      {!isNegative && c.status === 'paid' && c.paid_at ? `${paidLabel} am ${fmtDate(c.paid_at)}` : ''}
                     </p>
                   </div>
                   <p className="text-sm font-bold tabular-nums" style={{ color: isNegative ? '#991B1B' : '#111827' }}>{isNegative ? '' : '+'}{euros(c.commission_amount)}</p>
@@ -559,7 +612,7 @@ function BankSetupCard({ onStart, connecting, error }: { onStart: () => void; co
       <div style={{ background: '#fff', borderBottom: '1px solid #F1F5F9' }}>
         <button
           onClick={() => setExpanded(e => !e)}
-          className="w-full flex items-center justify-between px-6 py-3 text-xs font-semibold text-gray-500 hover:text-gray-700 transition-colors"
+          className="w-full flex items-center justify-between min-h-[44px] px-6 py-3 text-xs font-semibold text-gray-500 hover:text-gray-700 transition-colors"
         >
           <span>Was ist Stripe und warum wird das verwendet?</span>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"

@@ -437,26 +437,50 @@ export default function AgbPage() {
             müssen Unternehmer sein (§ 1 Abs. 3).
           </p>
           <p style={{ marginTop: 12 }}>
-            (2) <strong>Provision:</strong> Der werbende Partner erhält eine Provision von 10 % des Nettobetrags
+            (2) <strong>Provision und Rabatt:</strong> Der werbende Partner erhält eine Provision von 10 % des Nettobetrags
             (nach Abzug von Rabatten, ohne Umsatzsteuer) jeder tatsächlich bezahlten Rechnung des geworbenen
-            Nutzers, solange dessen Abonnement besteht. Der geworbene Nutzer erhält einen dauerhaften Rabatt
-            von 10 % auf sein Abonnement. Eine Selbstwerbung ist ausgeschlossen; Provisionen aus Selbstwerbung
-            oder sonstigem Missbrauch entfallen.
+            Nutzers, solange dessen Abonnement besteht; als bezahlt gilt eine Rechnung auch, soweit sie mit einem
+            Guthaben des geworbenen Nutzers beglichen wurde. Eine Selbstwerbung ist ausgeschlossen; Provisionen aus
+            Selbstwerbung oder sonstigem Missbrauch entfallen. <strong>Rabatt für geworbene Nutzer:</strong> Beginnt
+            das erste Abonnement des geworbenen Nutzers am oder nach dem 1. Dezember 2026, erhält er bei monatlicher
+            Zahlung einen Rabatt von 20 % auf die erste Rechnung; ab der zweiten Rechnung gilt der reguläre Preis.
+            Bei jährlicher Zahlung erhält er einen Rabatt von 10 % auf jede Jahresrechnung, solange das
+            Jahresabonnement besteht. Wechselt er von monatlicher auf jährliche Zahlung, gilt der Rabatt von 10 %
+            ab dem Wechsel; er endet mit dem Wechsel auf monatliche Zahlung oder mit der Beendigung des
+            Abonnements. Diese Rabatte gelten nur für Neukunden, die zuvor noch nicht Kunde des Anbieters waren;
+            der Anbieter kann dies anhand von E-Mail-Adresse, Teampartner-Nummer und Zahlungsmittel prüfen. Die
+            Provision des Partners nach Satz 1 bleibt davon unberührt. <strong>Bestandsschutz:</strong> Nutzer, die
+            vor dem 1. Dezember 2026 über eine Empfehlung ein Abonnement abgeschlossen haben, behalten ihren
+            bisherigen Rabatt von 10 % dauerhaft auf ihr Abonnement, unabhängig von der Zahlungsweise. Dasselbe gilt
+            für Nutzer, die vor dem 1. Dezember 2026 über eine Empfehlung registriert wurden, sofern sie ihr erstes
+            Abonnement bis einschließlich 30. Dezember 2026 abschließen; danach gelten für sie die Rabatte nach Satz
+            3 bis 6. Ein vom Nutzer eingelöster anderer Gutschein ersetzt den Rabatt; Rabatte werden nicht
+            kombiniert.
           </p>
           <p style={{ marginTop: 12 }}>
-            (3) <strong>Fälligkeit und Auszahlung:</strong> Eine Provision wird 14 Tage nach Zahlungseingang
-            auszahlbar. Die Auszahlung erfolgt einmal im Monat, sobald das auszahlbare Guthaben mindestens
-            10 Euro beträgt, per Überweisung auf das vom Partner eingerichtete Auszahlungskonto beim
-            Zahlungsdienstleister Stripe. Voraussetzung sind ein vollständig eingerichtetes Auszahlungskonto
-            sowie vollständige Abrechnungsangaben (Name bzw. Firma, Anschrift, steuerlicher Status, Steuernummer
-            oder Umsatzsteuer-Identifikationsnummer). Fehlen diese, bleibt das Guthaben bestehen, bis die
-            Angaben vorliegen.
+            (3) <strong>Fälligkeit, Verrechnung und Auszahlung:</strong> Eine Provision wird 14 Tage nach
+            Zahlungseingang fällig. Die Abrechnung erfolgt einmal im Monat. Standardmäßig wird das fällige
+            Guthaben ab einem Betrag von 1 Euro mit dem eigenen Abonnement des Partners verrechnet: Der Anbieter
+            schreibt es dem Kundenkonto des Partners als Guthaben gut, das automatisch mit den nächsten
+            Rechnungen des Partners verrechnet wird. Alternativ kann der Partner in seinem Partnerbereich die
+            Auszahlung wählen; dann erfolgt sie einmal im Monat, sobald das fällige Guthaben mindestens 10 Euro
+            beträgt, per Überweisung auf das vom Partner eingerichtete Auszahlungskonto beim
+            Zahlungsdienstleister Stripe. Hat der Partner kein aktives oder ein bereits gekündigtes Abonnement
+            oder fallen für sein Abonnement keine Entgelte an, wird nicht verrechnet; mit eingerichtetem Auszahlungskonto wird das fällige Guthaben dann nach den
+            Regeln für die Auszahlung überwiesen, andernfalls bleibt es bestehen. Endet das Abonnement des
+            Partners, wird ein dem Kundenkonto bereits gutgeschriebenes, noch nicht verrechnetes Guthaben auf
+            Anfrage ausgezahlt.
+            Voraussetzung für jede Abrechnung sind vollständige Abrechnungsangaben (Name bzw. Firma, Anschrift,
+            steuerlicher Status, Steuernummer oder Umsatzsteuer-Identifikationsnummer), für die Auszahlung
+            zusätzlich ein vollständig eingerichtetes Auszahlungskonto. Fehlen diese, bleibt das Guthaben
+            bestehen, bis die Angaben vorliegen.
           </p>
           <p style={{ marginTop: 12 }}>
             (4) <strong>Abrechnung per Gutschrift:</strong> Der Anbieter rechnet die Provisionen gegenüber dem
             Partner per Gutschrift gemäß § 14 Abs. 2 Satz 2 UStG ab; der Partner stimmt diesem Verfahren mit
             Abgabe seiner Abrechnungsangaben zu. Ist der Partner umsatzsteuerpflichtig (Regelbesteuerung), wird
-            die Provision zuzüglich der gesetzlichen Umsatzsteuer ausgezahlt und ausgewiesen. Ist der Partner
+            die Provision zuzüglich der gesetzlichen Umsatzsteuer verrechnet bzw. ausgezahlt und ausgewiesen. Die
+            Gutschrift wird auch bei der Verrechnung mit dem Abonnement erstellt. Ist der Partner
             Kleinunternehmer im Sinne von § 19 UStG, wird keine Umsatzsteuer ausgewiesen. Der Partner ist für die
             Richtigkeit seiner Angaben verantwortlich, teilt Änderungen unverzüglich mit und prüft jede Gutschrift;
             Einwendungen sind innerhalb von 4 Wochen nach Bereitstellung der Gutschrift zu erheben. Für die
@@ -465,8 +489,8 @@ export default function AgbPage() {
           <p style={{ marginTop: 12 }}>
             (5) <strong>Rückforderung und Verrechnung:</strong> Wird eine Zahlung des geworbenen Nutzers erstattet,
             zurückgebucht oder erfolgreich angefochten, entfällt die darauf entfallende Provision. Bereits
-            ausgezahlte Provisionen werden mit künftigen Provisionen verrechnet; der Anbieter kann sie
-            zurückfordern.
+            ausgezahlte oder mit dem Abonnement verrechnete Provisionen werden mit künftigen Provisionen
+            verrechnet; der Anbieter kann sie zurückfordern.
           </p>
           <p style={{ marginTop: 12 }}>
             (6) Der Anbieter kann das Partnerprogramm oder seine Konditionen mit einer Frist von 6 Wochen für die

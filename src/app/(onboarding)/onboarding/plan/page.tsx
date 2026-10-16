@@ -8,11 +8,10 @@ import { promoDurationInfo, discountedTotal, formatEur, type PromoDuration, type
 import { campaignDiscount, campaignAmountLabel } from '@/lib/billing/campaign-shared'
 import { useFetchedCampaign, useCampaignCountdown } from '@/components/billing/useCampaign'
 import CampaignCard from '@/components/billing/CampaignCard'
-
-const REFERRAL_DISCOUNT = 0.10
+import type { ReferralOfferPublic } from '@/lib/affiliate/referral-model'
 
 type PromoResult =
-  | { valid: true; type: 'affiliate'; username: string; display_name: string; percent_off: 10; amount_off: null }
+  | { valid: true; type: 'affiliate'; username: string; display_name: string; percent_off: number | null; amount_off: null; referral?: ReferralOfferPublic }
   | { valid: true; type: 'promo'; percent_off: number | null; amount_off: number | null; name: string; duration?: PromoDuration; duration_in_months?: number | null }
   | { valid: false }
 
@@ -22,15 +21,16 @@ function PlanPageInner() {
   const [interval, setInterval] = useState<'monthly' | 'yearly'>('monthly')
   const [loading, setLoading] = useState<string | null>(null)
   const [error, setError] = useState('')
-  const [referredBy, setReferredBy] = useState<string | null>(null)
+  // Empfehlungsrabatt fertig vom Server (src/lib/affiliate/referral-model.ts) – hier wird nichts gerechnet
+  const [referralOffer, setReferralOffer] = useState<ReferralOfferPublic | null>(null)
   const [promoCode, setPromoCode] = useState('')
   const [showPromoInput, setShowPromoInput] = useState(false)
   const [promoStatus, setPromoStatus] = useState<null | 'validating' | PromoResult>(null)
 
   useEffect(() => {
-    fetch('/api/user/profile')
+    fetch('/api/billing/referral-offer', { cache: 'no-store' })
       .then(r => r.json())
-      .then(d => { if (d.referred_by_username) setReferredBy(d.referred_by_username) })
+      .then(d => setReferralOffer(d.offer ?? null))
       .catch(() => {})
   }, [])
 
@@ -51,9 +51,16 @@ function PlanPageInner() {
     return () => clearTimeout(timer)
   }, [promoCode])
 
-  const hasDiscount = !!referredBy
   // Explicit promo code overrides referral discount
   const promoApplied = promoStatus !== null && promoStatus !== 'validating' && (promoStatus as PromoResult).valid
+  // Ein eingegebener Partnercode zählt nur, wenn noch kein Partner gespeichert ist (wie im Checkout)
+  const enteredAffiliate = promoApplied && (promoStatus as { type: string }).type === 'affiliate'
+    ? (promoStatus as { referral?: ReferralOfferPublic }).referral ?? null
+    : null
+  const offer = referralOffer ?? enteredAffiliate
+  const referralShown = !!offer && (!promoApplied || !!enteredAffiliate)
+  const referralNow = referralShown ? offer?.[interval] ?? null : null
+  const hasDiscount = !!referralOffer
 
   // Site-wide campaign (e.g. INNERVISIONDAY): checkout applies it automatically when no
   // code was entered and there is no partner discount — so we show exactly that price.
@@ -62,19 +69,18 @@ function PlanPageInner() {
   const campaign = campaignCountdown.live && !promoApplied && !hasDiscount ? fetchedCampaign : null
   const campaignOff = campaignDiscount(campaign, interval)
 
-  // How long the active discount lasts for the selected interval (referral/affiliate = forever)
-  const appliedPromo = promoApplied ? promoStatus as { type: string; percent_off: number | null; duration?: PromoDuration; duration_in_months?: number | null } : null
+  // How long the active discount lasts for the selected interval
+  const appliedPromo = promoApplied && !enteredAffiliate ? promoStatus as { type: string; percent_off: number | null; duration?: PromoDuration; duration_in_months?: number | null } : null
   const discountDuration = appliedPromo?.type === 'promo'
     ? promoDurationInfo(appliedPromo.duration, appliedPromo.duration_in_months, interval)
     : campaign && campaignOff ? promoDurationInfo(campaign.duration, campaign.durationInMonths, interval)
     : { text: 'dauerhaft', limited: false }
 
   // Priority: entered code > partner discount > automatic campaign
-  const activeDiscount: DiscountAmount | null = promoApplied
+  const activeDiscount: DiscountAmount | null = appliedPromo
     ? promoStatus as { valid: true; percent_off: number | null; amount_off: number | null }
-    : hasDiscount ? { percent_off: REFERRAL_DISCOUNT * 100 } : campaignOff
+    : referralShown ? (referralNow ? { percent_off: referralNow.percent_off } : null) : campaignOff
   const discountLabel = appliedPromo ? (appliedPromo.percent_off ? `${appliedPromo.percent_off}% Rabatt` : 'Rabatt')
-    : hasDiscount ? '10% Rabatt'
     : campaign ? campaignAmountLabel(campaign) : 'Rabatt'
 
   async function selectPlan(planKey: string) {
@@ -100,6 +106,9 @@ function PlanPageInner() {
   }
 
   const yearlySavings = (plan: PlanDef) => {
+    // Empfehlung: erstes Jahr monatlich (1. Rechnung + 11 weitere) gegen die Jahresrechnung
+    const ref = referralShown ? offer?.prices[plan.key] : null
+    if (ref) return Math.round(ref.monthly.first_eur + 11 * ref.monthly.after_eur - ref.yearly.first_eur)
     const baseMonthly = discountedTotal(plan.monthly_eur, activeDiscount)
     const baseYearly = discountedTotal(plan.yearly_eur, activeDiscount)
     return Math.round(baseMonthly * 12 - baseYearly)
@@ -115,19 +124,23 @@ function PlanPageInner() {
       </div>
 
       {/* Discount banner — referral (only shown when no promo code is overriding) */}
-      {hasDiscount && !promoApplied && (
+      {referralOffer && !promoApplied && (
         <div className="mb-4 px-4 py-3 rounded-xl flex items-center gap-3"
-          style={{ background: '#F0FDF4', border: '1px solid #BBF7D0' }}>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#16A34A" strokeWidth="2">
+          style={referralOffer.eligible
+            ? { background: '#F0FDF4', border: '1px solid #BBF7D0' }
+            : { background: '#F9FAFB', border: '1px solid #E5E7EB' }}>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={referralOffer.eligible ? '#16A34A' : '#9CA3AF'} strokeWidth="2" className="flex-shrink-0">
             <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
           </svg>
           <div>
-            <p className="text-sm font-semibold" style={{ color: '#15803D' }}>
-              10% Partner-Rabatt (dauerhaft) wird automatisch angewendet
+            <p className="text-sm font-semibold" style={{ color: referralOffer.eligible ? '#15803D' : '#374151' }}>
+              {referralOffer.headline}
             </p>
-            <p className="text-xs" style={{ color: '#166534' }}>
-              Dein Empfehlungscode gibt dir dauerhaft 10% Rabatt auf jeden Monat und jedes Jahr.
-            </p>
+            {(referralOffer.note || referralOffer.detail) && (
+              <p className="text-xs" style={{ color: referralOffer.eligible ? '#166534' : '#6B7280' }}>
+                {referralOffer.note ?? referralOffer.detail}
+              </p>
+            )}
           </div>
         </div>
       )}
@@ -178,12 +191,16 @@ function PlanPageInner() {
             )}
             {promoApplied && (() => {
               const p = promoStatus as { valid: true; type: string; percent_off: number | null; amount_off: number | null; name?: string; display_name?: string }
-              const label = p.type === 'affiliate' ? `${p.percent_off}% Partner-Rabatt (dauerhaft)` : p.name ?? 'Aktionscode'
+              const label = p.type === 'affiliate' ? 'Partnercode' : p.name ?? 'Aktionscode'
               const discountText = p.percent_off ? `${p.percent_off}% Rabatt` : p.amount_off ? `${(p.amount_off / 100).toFixed(2).replace('.', ',')} € Rabatt` : 'Rabatt'
+              // Partnercode: Text vom Server (Konditionen je nach Modell und Neukunden-Status)
+              const affiliateText = referralOffer ? referralOffer.headline : enteredAffiliate ? enteredAffiliate.note ?? enteredAffiliate.headline : null
               return (
                 <div className="flex items-center gap-2 px-3 py-2 rounded-xl" style={{ background: '#F0FDF4', border: '1px solid #BBF7D0' }}>
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#16A34A" strokeWidth="2.5" strokeLinecap="round"><path d="M20 6L9 17l-5-5"/></svg>
-                  <span className="text-xs font-semibold" style={{ color: '#15803D' }}>{label} — {discountText}{p.type === 'promo' ? ` ${discountDuration.text}` : ''} angewendet</span>
+                  <span className="text-xs font-semibold" style={{ color: '#15803D' }}>
+                    {p.type === 'affiliate' ? `${label}: ${affiliateText ?? 'erkannt'}` : `${label} — ${discountText} ${discountDuration.text} angewendet`}
+                  </span>
                 </div>
               )
             })()}
@@ -244,7 +261,12 @@ function PlanPageInner() {
           // (month or full year) — never a per-month average of the yearly price.
           const basePrice = interval === 'monthly' ? plan.monthly_eur : plan.yearly_eur
           const showPrice = discountedTotal(basePrice, activeDiscount)
+          // Empfehlung: Text mit echten Beträgen, z. B. "1. Monat 13,60 € statt 17 €, danach 17 €"
+          const referralLine = referralNow ? offer?.prices[plan.key]?.[interval] ?? null : null
           const unit = interval === 'monthly' ? 'Monat' : 'Jahr'
+          // Rabatt nur auf die erste Rechnung → großer Preis darf nicht wie ein Dauerpreis aussehen
+          const firstOnly = !!referralLine && referralLine.first_eur !== referralLine.after_eur
+          const unitLabel = firstOnly ? `im 1. ${unit}` : `/${unit}`
           const anyDiscount = !!activeDiscount
           const isLoading = loading === plan.key
           const savings = yearlySavings(plan)
@@ -270,7 +292,7 @@ function PlanPageInner() {
 
               <p className="text-sm font-semibold mb-1" style={{ color: isPopular ? '#6D28D9' : '#6B7280' }}>{plan.name}</p>
 
-              <div className="flex items-baseline gap-1 mb-1">
+              <div className="flex flex-wrap items-baseline gap-x-1 mb-1">
                 {anyDiscount && showPrice !== basePrice && (
                   <span className="text-base line-through mr-1" style={{ color: '#9CA3AF' }}>
                     €{formatEur(basePrice)}
@@ -279,7 +301,7 @@ function PlanPageInner() {
                 <span className="text-3xl font-bold" style={{ color: isPopular ? '#3B0764' : '#111827' }}>
                   €{formatEur(showPrice)}
                 </span>
-                <span className="text-sm" style={{ color: isPopular ? '#7C3AED' : '#9CA3AF' }}>/{unit}</span>
+                <span className="text-sm whitespace-nowrap" style={{ color: isPopular ? '#7C3AED' : '#9CA3AF' }}>{unitLabel}</span>
               </div>
 
               <p className="text-[10px] mb-1" style={{ color: isPopular ? '#7C3AED' : '#9CA3AF' }}>
@@ -287,7 +309,9 @@ function PlanPageInner() {
               </p>
 
               <div className="mb-4">
-                {anyDiscount && showPrice !== basePrice ? (() => {
+                {referralLine ? (
+                  <p className="text-xs font-semibold" style={{ color: '#15803D' }}>{referralLine.text}</p>
+                ) : anyDiscount && showPrice !== basePrice ? (() => {
                   const amount = discountLabel
                   return (
                     <p className="text-xs font-semibold" style={{ color: '#15803D' }}>

@@ -27,6 +27,7 @@ export async function GET(req: Request) {
     net: affiliatePayouts.netAmount,
     vat: affiliatePayouts.vatAmount,
     status: affiliatePayouts.creditNoteStatus,
+    method: affiliatePayouts.payoutMethod,
   })
     .from(affiliatePayouts)
     .where(and(eq(affiliatePayouts.referrerId, user.id), isNotNull(affiliatePayouts.creditNoteNumber)))
@@ -42,6 +43,7 @@ export async function GET(req: Request) {
       net_cents: r.net,
       vat_cents: r.vat,
       ready: r.status === 'created',
+      method: r.method === 'credit' ? 'credit' : 'transfer',
     })),
   })
 }

@@ -6,6 +6,8 @@ import { eq, desc } from 'drizzle-orm'
 import { getStripe } from '@/lib/stripe/client'
 import { syncConnectStatus } from '@/lib/affiliate/connect-status'
 import { maskEmail } from '@/lib/affiliate/mask'
+import { resolveReferralTerms } from '@/lib/affiliate/referral-model'
+import { modelCStartFromEnv } from '@/lib/affiliate/referral-offer'
 
 // GET /api/affiliate/stats — returns the current user's affiliate stats + referred users
 export async function GET(req: Request) {
@@ -14,7 +16,7 @@ export async function GET(req: Request) {
 
   const profile = await db.query.users.findFirst({
     where: eq(users.id, user.id),
-    columns: { username: true, stripeConnectId: true, affiliateOnboarded: true, plan: true },
+    columns: { username: true, stripeConnectId: true, affiliateOnboarded: true, plan: true, affiliatePayoutMode: true, isAdmin: true },
   })
 
   if (!profile?.plan || profile.plan === 'free') {
@@ -81,6 +83,9 @@ export async function GET(req: Request) {
     username: profile?.username ?? null,
     stripe_connect_id: profile?.stripeConnectId ?? null,
     affiliate_onboarded: affiliateOnboarded,
+    payout_mode: profile?.affiliatePayoutMode === 'payout' ? 'payout' : 'credit',
+    // Konditionen für NEU geworbene Kunden dieses Partners (Admin = Modell C sofort, sonst ab Stichtag)
+    referral_terms_new: resolveReferralTerms({ now: new Date(), startAt: modelCStartFromEnv(), referrerIsAdmin: !!profile?.isAdmin, termsOnUser: null }),
     bank_last4,
     bank_name,
     referral_count: referredUsers.length,
@@ -95,6 +100,7 @@ export async function GET(req: Request) {
       status: c.status,
       available_at: c.availableAt,
       paid_at: c.paidAt,
+      payout_id: c.payoutId,
       created_at: c.createdAt,
     })),
     payouts: payouts.map(p => ({
@@ -105,6 +111,7 @@ export async function GET(req: Request) {
       period_end: p.periodEnd,
       status: p.status,
       paid_at: p.paidAt,
+      payout_method: p.payoutMethod === 'credit' ? 'credit' : 'transfer',
     })),
     // Partner sehen Vorname, Tarif und Status – die E-Mail nur maskiert ("ma***@web.de")
     referred_users: referredUsers.map(u => ({
