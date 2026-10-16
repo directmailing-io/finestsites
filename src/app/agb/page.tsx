@@ -31,10 +31,17 @@ export default function AgbPage() {
             stimmt ihrer Geltung ausdrücklich und schriftlich zu.
           </p>
           <p style={{ marginTop: 12 }}>
-            (3) Diese AGB gelten sowohl gegenüber Unternehmern im Sinne von § 14 BGB als auch gegenüber Verbrauchern im
-            Sinne von § 13 BGB. Soweit einzelne Regelungen ausschließlich für eine dieser Gruppen gelten, ist dies
-            ausdrücklich vermerkt. Als Unternehmer gilt, wer die Plattform im Rahmen seiner gewerblichen oder
-            selbständigen beruflichen Tätigkeit nutzt.
+            (3) <strong>Nur für Unternehmer:</strong> Das Angebot des Anbieters richtet sich ausschließlich an
+            Unternehmer im Sinne von § 14 BGB, also an natürliche oder juristische Personen, die die Plattform in
+            Ausübung ihrer gewerblichen oder selbständigen beruflichen Tätigkeit nutzen (z. B. selbständige
+            Vertriebs- oder Teampartner eines Network-Marketing-Unternehmens). Verträge mit Verbrauchern im Sinne
+            von § 13 BGB werden nicht geschlossen.
+          </p>
+          <p style={{ marginTop: 12 }}>
+            (4) Mit der Registrierung bestätigt der Nutzer, dass er als Unternehmer handelt. Der Anbieter ist
+            berechtigt, hierfür geeignete Nachweise zu verlangen (z. B. Gewerbeanmeldung, Steuernummer oder
+            Umsatzsteuer-Identifikationsnummer). Stellt sich heraus, dass der Nutzer entgegen seiner Angabe als
+            Verbraucher handelt, ist der Anbieter zur außerordentlichen Kündigung berechtigt.
           </p>
         </Section>
 
@@ -88,15 +95,8 @@ export default function AgbPage() {
             Änderungen der Kontaktdaten sind unverzüglich im Nutzerprofil zu aktualisieren.
           </p>
           <p style={{ marginTop: 12 }}>
-            (4) <strong>Widerrufsrecht für Verbraucher:</strong> Verbraucher haben grundsätzlich das Recht, innerhalb
-            von 14 Tagen ohne Angabe von Gründen zu widerrufen. Die vollständige Widerrufsbelehrung sowie das
-            Muster-Widerrufsformular sind unter{' '}
-            <a href="/widerruf" style={{ color: '#8060b0' }}>finestsites.io/widerruf</a>{' '}
-            abrufbar. Stimmt der Verbraucher ausdrücklich zu, dass die Vertragserfüllung vor Ablauf der
-            Widerrufsfrist beginnt, und bestätigt er seine Kenntnis davon, dass er mit Beginn der Vertragserfüllung
-            sein Widerrufsrecht verliert, erlischt das Widerrufsrecht gemäß § 356 Abs. 5 BGB mit Beginn der
-            Dienstleistungserbringung. Der Nutzer erklärt durch Abschluss des Abonnements, dass er der sofortigen
-            Leistungserbringung zustimmt und sein Widerrufsrecht damit erlischt.
+            (4) Da Verträge ausschließlich mit Unternehmern geschlossen werden (§ 1 Abs. 3), besteht kein
+            gesetzliches Widerrufsrecht für Verbraucher.
           </p>
         </Section>
 
@@ -355,7 +355,7 @@ export default function AgbPage() {
             Produkthaftungsgesetz oder sonstigen zwingenden gesetzlichen Regelungen besteht.
           </p>
           <p style={{ marginTop: 12 }}>
-            (5) Gegenüber Unternehmern gilt eine Verjährungsfrist für Schadensersatzansprüche von einem Jahr
+            (5) Es gilt eine Verjährungsfrist für Schadensersatzansprüche von einem Jahr
             ab Kenntnis des Schadens, sofern nicht gesetzliche Vorschriften kürzere oder längere Fristen
             zwingend vorschreiben.
           </p>
@@ -430,17 +430,60 @@ export default function AgbPage() {
           </p>
         </Section>
 
-        <Section title="§ 16 Schlussbestimmungen">
+        <Section title="§ 16 Partnerprogramm">
           <p>
-            (1) <strong>Anwendbares Recht:</strong> Es gilt ausschließlich das Recht der Bundesrepublik
-            Deutschland unter Ausschluss des UN-Kaufrechts (CISG). Bei Verbrauchern gilt diese
-            Rechtswahl nur, soweit der durch zwingende Bestimmungen des Staates, in dem der Verbraucher
-            seinen gewöhnlichen Aufenthalt hat, gewährte Schutz nicht entzogen wird.
+            (1) Nutzer können am Partnerprogramm des Anbieters teilnehmen und neue Nutzer über ihren persönlichen
+            Empfehlungslink oder ihren Partnercode werben. Für geworbene Nutzer gelten diese AGB ebenfalls; auch sie
+            müssen Unternehmer sein (§ 1 Abs. 3).
           </p>
           <p style={{ marginTop: 12 }}>
-            (2) <strong>Gerichtsstand:</strong> Für Streitigkeiten mit Unternehmern ist ausschließlicher
-            Gerichtsstand der Sitz des Anbieters (Haßfurt, Bayern). Für Streitigkeiten mit Verbrauchern
-            gilt der gesetzliche Gerichtsstand.
+            (2) <strong>Provision:</strong> Der werbende Partner erhält eine Provision von 10 % des Nettobetrags
+            (nach Abzug von Rabatten, ohne Umsatzsteuer) jeder tatsächlich bezahlten Rechnung des geworbenen
+            Nutzers, solange dessen Abonnement besteht. Der geworbene Nutzer erhält einen dauerhaften Rabatt
+            von 10 % auf sein Abonnement. Eine Selbstwerbung ist ausgeschlossen; Provisionen aus Selbstwerbung
+            oder sonstigem Missbrauch entfallen.
+          </p>
+          <p style={{ marginTop: 12 }}>
+            (3) <strong>Fälligkeit und Auszahlung:</strong> Eine Provision wird 14 Tage nach Zahlungseingang
+            auszahlbar. Die Auszahlung erfolgt einmal im Monat, sobald das auszahlbare Guthaben mindestens
+            10 Euro beträgt, per Überweisung auf das vom Partner eingerichtete Auszahlungskonto beim
+            Zahlungsdienstleister Stripe. Voraussetzung sind ein vollständig eingerichtetes Auszahlungskonto
+            sowie vollständige Abrechnungsangaben (Name bzw. Firma, Anschrift, steuerlicher Status, Steuernummer
+            oder Umsatzsteuer-Identifikationsnummer). Fehlen diese, bleibt das Guthaben bestehen, bis die
+            Angaben vorliegen.
+          </p>
+          <p style={{ marginTop: 12 }}>
+            (4) <strong>Abrechnung per Gutschrift:</strong> Der Anbieter rechnet die Provisionen gegenüber dem
+            Partner per Gutschrift gemäß § 14 Abs. 2 Satz 2 UStG ab; der Partner stimmt diesem Verfahren mit
+            Abgabe seiner Abrechnungsangaben zu. Ist der Partner umsatzsteuerpflichtig (Regelbesteuerung), wird
+            die Provision zuzüglich der gesetzlichen Umsatzsteuer ausgezahlt und ausgewiesen. Ist der Partner
+            Kleinunternehmer im Sinne von § 19 UStG, wird keine Umsatzsteuer ausgewiesen. Der Partner ist für die
+            Richtigkeit seiner Angaben verantwortlich, teilt Änderungen unverzüglich mit und prüft jede Gutschrift;
+            Einwendungen sind innerhalb von 4 Wochen nach Bereitstellung der Gutschrift zu erheben. Für die
+            Versteuerung der Provision ist der Partner selbst verantwortlich.
+          </p>
+          <p style={{ marginTop: 12 }}>
+            (5) <strong>Rückforderung und Verrechnung:</strong> Wird eine Zahlung des geworbenen Nutzers erstattet,
+            zurückgebucht oder erfolgreich angefochten, entfällt die darauf entfallende Provision. Bereits
+            ausgezahlte Provisionen werden mit künftigen Provisionen verrechnet; der Anbieter kann sie
+            zurückfordern.
+          </p>
+          <p style={{ marginTop: 12 }}>
+            (6) Der Anbieter kann das Partnerprogramm oder seine Konditionen mit einer Frist von 6 Wochen für die
+            Zukunft ändern oder beenden. Bis zum Wirksamwerden entstandene Provisionen bleiben unberührt.
+          </p>
+        </Section>
+
+        <Section title="§ 17 Schlussbestimmungen">
+          <p>
+            (1) <strong>Anwendbares Recht:</strong> Es gilt ausschließlich das Recht der Bundesrepublik
+            Deutschland unter Ausschluss des UN-Kaufrechts (CISG).
+          </p>
+          <p style={{ marginTop: 12 }}>
+            (2) <strong>Gerichtsstand:</strong> Ausschließlicher Gerichtsstand für alle Streitigkeiten aus
+            diesem Vertrag ist der Sitz des Anbieters (Haßfurt, Bayern), soweit der Nutzer Kaufmann, juristische
+            Person des öffentlichen Rechts oder öffentlich-rechtliches Sondervermögen ist oder keinen allgemeinen
+            Gerichtsstand in Deutschland hat.
           </p>
           <p style={{ marginTop: 12 }}>
             (3) <strong>Salvatorische Klausel:</strong> Sollten einzelne Bestimmungen dieser AGB ganz

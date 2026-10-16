@@ -1,3 +1,5 @@
+import { refereeDisplayName } from '@/lib/affiliate/mask'
+
 // ─── Shared styles ─────────────────────────────────────────────────────────────
 
 const base = {
@@ -286,12 +288,17 @@ export function subscriptionConfirmationEmail({
 
 export function affiliateNewReferralEmail({
   refereeEmail,
+  refereeFirstName,
   planLabel,
 }: {
+  /** wird NIE im Klartext gezeigt – nur maskiert, falls kein Vorname da ist */
   refereeEmail: string
+  refereeFirstName?: string | null
   planLabel: string
 }): string {
   const affiliateUrl = `${APP_URL}/affiliate`
+  const referee = escapeHtml(refereeDisplayName(refereeFirstName, refereeEmail))
+  planLabel = escapeHtml(planLabel)
   return layout(`
     <h1 style="margin:0 0 8px;font-size:22px;font-weight:700;color:${base.heading};letter-spacing:-0.02em;">
       Neuer Partner registriert
@@ -303,7 +310,7 @@ export function affiliateNewReferralEmail({
       <tr>
         <td style="background:#F9FAFB;border-radius:12px;padding:16px 20px;border:1px solid ${base.border};">
           <p style="margin:0 0 4px;font-size:12px;font-weight:600;color:${base.muted};text-transform:uppercase;letter-spacing:0.06em;">Neuer Partner</p>
-          <p style="margin:0 0 12px;font-size:15px;font-weight:600;color:${base.heading};">${refereeEmail}</p>
+          <p style="margin:0 0 12px;font-size:15px;font-weight:600;color:${base.heading};">${referee}</p>
           <p style="margin:0 0 4px;font-size:12px;font-weight:600;color:${base.muted};text-transform:uppercase;letter-spacing:0.06em;">Gebuchter Plan</p>
           <p style="margin:0;font-size:15px;font-weight:600;color:${base.heading};">${planLabel}</p>
         </td>
@@ -318,14 +325,19 @@ export function affiliateNewReferralEmail({
 
 export function affiliateAdminAssignEmail({
   refereeEmail,
+  refereeFirstName,
   planLabel,
   firstName,
 }: {
+  /** wird NIE im Klartext gezeigt – nur maskiert, falls kein Vorname da ist */
   refereeEmail: string
+  refereeFirstName?: string | null
   planLabel: string
   firstName?: string | null
 }): string {
-  const greeting = firstName ? `Hey ${firstName},` : 'Hey,'
+  const greeting = firstName?.trim() ? `Hey ${escapeHtml(firstName.trim())},` : 'Hey,'
+  const referee = escapeHtml(refereeDisplayName(refereeFirstName, refereeEmail))
+  planLabel = escapeHtml(planLabel)
   const affiliateUrl = `${APP_URL}/affiliate`
   return layout(`
     <h1 style="margin:0 0 8px;font-size:22px;font-weight:700;color:${base.heading};letter-spacing:-0.02em;">
@@ -338,7 +350,7 @@ export function affiliateAdminAssignEmail({
       <tr>
         <td style="background:#F9FAFB;border-radius:12px;padding:16px 20px;border:1px solid ${base.border};">
           <p style="margin:0 0 4px;font-size:12px;font-weight:600;color:${base.muted};text-transform:uppercase;letter-spacing:0.06em;">Zugeordneter Nutzer</p>
-          <p style="margin:0 0 12px;font-size:15px;font-weight:600;color:${base.heading};">${refereeEmail}</p>
+          <p style="margin:0 0 12px;font-size:15px;font-weight:600;color:${base.heading};">${referee}</p>
           <p style="margin:0 0 4px;font-size:12px;font-weight:600;color:${base.muted};text-transform:uppercase;letter-spacing:0.06em;">Aktueller Plan</p>
           <p style="margin:0;font-size:15px;font-weight:600;color:${base.heading};">${planLabel}</p>
         </td>
@@ -629,7 +641,7 @@ export function welcomeEmail({ firstName }: { firstName?: string }): string {
 
 /** Convert plain text with line breaks to email-safe HTML paragraphs */
 function escapeHtml(s: string): string {
-  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;')
 }
 
 export function testimonialThanksEmail({ firstName }: { firstName?: string }): string {
@@ -1134,4 +1146,30 @@ export function productUpdate202610Email({ firstName, segment = 'pro', prefs }: 
        Viele Grüße<br /><strong style="color:${base.heading};">Daniel von FinestSites</strong>
      </p>`,
   ], prefs)
+}
+
+// ─── Partner-Auszahlungen: Sammelhinweis an den Admin (seit 16.10.2026) ───────
+// Eine Mail pro Lauf (Cron/Admin/Wartung), nie pro Partner. Nur an ADMIN_EMAIL.
+export function affiliatePayoutAdminAlertEmail({ context, paidCount, items }: {
+  context: string
+  paidCount: number
+  items: { partner: string; problem: string; detail?: string }[]
+}): string {
+  const rows = items.map(i => `
+    <tr>
+      <td style="padding:10px 0;border-top:1px solid ${base.border};font-size:14px;color:${base.heading};font-weight:600;vertical-align:top;">${escapeHtml(i.partner)}</td>
+      <td style="padding:10px 0 10px 16px;border-top:1px solid ${base.border};font-size:14px;color:${base.body};line-height:1.5;vertical-align:top;">
+        ${escapeHtml(i.problem)}${i.detail ? `<br /><span style="font-size:12px;color:${base.muted};">${escapeHtml(i.detail)}</span>` : ''}
+      </td>
+    </tr>`).join('')
+  return layout(`
+    <h1 style="margin:0 0 8px;font-size:22px;font-weight:700;color:${base.heading};letter-spacing:-0.02em;">
+      Partner-Auszahlungen: bitte kurz ansehen
+    </h1>
+    <p style="margin:0 0 20px;font-size:15px;color:${base.body};line-height:1.65;">
+      Lauf: ${escapeHtml(context)}. Ausgezahlt: ${paidCount}. Hinweise: ${items.length}.
+    </p>
+    <table cellpadding="0" cellspacing="0" role="presentation" width="100%">${rows}</table>
+    ${button(`${APP_URL}/admin/gutschriften`, 'Gutschriften im Admin ansehen')}
+  `)
 }

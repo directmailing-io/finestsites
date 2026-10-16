@@ -4,6 +4,8 @@ import { db } from '@/lib/db'
 import { users, affiliateCommissions, affiliatePayouts } from '@/lib/db/schema'
 import { eq, desc } from 'drizzle-orm'
 import { getStripe } from '@/lib/stripe/client'
+import { syncConnectStatus } from '@/lib/affiliate/connect-status'
+import { maskEmail } from '@/lib/affiliate/mask'
 
 // GET /api/affiliate/stats — returns the current user's affiliate stats + referred users
 export async function GET(req: Request) {
@@ -33,6 +35,7 @@ export async function GET(req: Request) {
     db.select({
       id: users.id,
       email: users.email,
+      firstName: users.firstName,
       username: users.username,
       plan: users.plan,
       billingInterval: users.billingInterval,
@@ -50,38 +53,36 @@ export async function GET(req: Request) {
   const totalPending = pending.reduce((s, c) => s + c.commissionAmount, 0)
   const totalPaid = paid.reduce((s, c) => s + c.commissionAmount, 0)
 
-  // Fetch bank account last4 + platform balance from Stripe
+  // Onboarding-Status mit Stripe abgleichen: affiliate_onboarded wurde früher nur beim
+  // Rücksprung aus dem Onboarding gesetzt und blieb danach für immer stehen (z. B. wenn
+  // Stripe die Prüfung erst später abschließt oder das Konto später sperrt).
+  let affiliateOnboarded = profile?.affiliateOnboarded ?? false
+  if (profile?.stripeConnectId) {
+    const synced = await syncConnectStatus(user.id, profile.stripeConnectId, { current: profile.affiliateOnboarded })
+    if (synced !== null) affiliateOnboarded = synced
+  }
+
+  // Bankverbindung (nur letzte 4 Ziffern) des eigenen Connect-Kontos.
+  // Das Plattform-Guthaben wird hier bewusst NICHT mehr ausgeliefert – das sind
+  // Finanzdaten von FinestSites und gehen keinen Partner etwas an.
   let bank_last4: string | null = null
   let bank_name: string | null = null
-  let stripe_balance_available_cents = 0
 
-  if (profile?.stripeConnectId && profile?.affiliateOnboarded) {
-    const stripe = getStripe()
-    await Promise.all([
-      // Bank account details
-      stripe.accounts.listExternalAccounts(profile.stripeConnectId, { object: 'bank_account', limit: 1 })
-        .then(accounts => {
-          const bank = accounts.data[0] as any
-          if (bank) { bank_last4 = bank.last4 ?? null; bank_name = bank.bank_name ?? null }
-        })
-        .catch(() => {}),
-      // Platform balance (EUR available for transfers)
-      stripe.balance.retrieve()
-        .then(balance => {
-          const eur = balance.available.find(b => b.currency === 'eur')
-          stripe_balance_available_cents = eur?.amount ?? 0
-        })
-        .catch(() => {}),
-    ])
+  if (profile?.stripeConnectId && affiliateOnboarded) {
+    await getStripe().accounts.listExternalAccounts(profile.stripeConnectId, { object: 'bank_account', limit: 1 })
+      .then(accounts => {
+        const bank = accounts.data[0] as any
+        if (bank) { bank_last4 = bank.last4 ?? null; bank_name = bank.bank_name ?? null }
+      })
+      .catch(() => {})
   }
 
   return NextResponse.json({
     username: profile?.username ?? null,
     stripe_connect_id: profile?.stripeConnectId ?? null,
-    affiliate_onboarded: profile?.affiliateOnboarded ?? false,
+    affiliate_onboarded: affiliateOnboarded,
     bank_last4,
     bank_name,
-    stripe_balance_available_cents,
     referral_count: referredUsers.length,
     total_pending_cents: totalPending,
     total_paid_cents: totalPaid,
@@ -105,9 +106,11 @@ export async function GET(req: Request) {
       status: p.status,
       paid_at: p.paidAt,
     })),
+    // Partner sehen Vorname, Tarif und Status – die E-Mail nur maskiert ("ma***@web.de")
     referred_users: referredUsers.map(u => ({
       id: u.id,
-      email: u.email,
+      email: maskEmail(u.email),
+      first_name: u.firstName?.trim() || null,
       username: u.username,
       plan: u.plan,
       billing_interval: u.billingInterval,

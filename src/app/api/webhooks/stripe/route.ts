@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import type Stripe from 'stripe'
 import { db } from '@/lib/db'
 import { users, subscriptionEvents, affiliateCommissions } from '@/lib/db/schema'
-import { eq, and, inArray } from 'drizzle-orm'
+import { eq, and, inArray, sql } from 'drizzle-orm'
 import { getStripe, getPlanByPriceId, planCents, type PlanKey, type BillingInterval } from '@/lib/stripe/client'
 import { sendEmail } from '@/lib/resend'
 import {
@@ -29,6 +29,9 @@ import {
   formatEur,
 } from '@/lib/billing/payment-recovery'
 import { runRecoveryNotificationsFor } from '@/lib/billing/recovery-notifications'
+import { invoiceSubscriptionId, invoiceCouponIds, resolveChargeInvoiceId } from '@/lib/affiliate/stripe-refs'
+import { planReversal, planDisputeRestore, type ReversalAction } from '@/lib/affiliate/reversal'
+import { syncConnectStatus } from '@/lib/affiliate/connect-status'
 
 export async function POST(req: NextRequest) {
   if (!process.env.STRIPE_WEBHOOK_SECRET) throw new Error('Missing STRIPE_WEBHOOK_SECRET')
@@ -38,11 +41,30 @@ export async function POST(req: NextRequest) {
 
   const stripe = getStripe()
   let event: Stripe.Event
+  // Zwei mögliche Endpunkte auf dieser URL: Plattform-Events (STRIPE_WEBHOOK_SECRET) und
+  // optional ein Connect-Endpunkt für Events aus Partnerkonten (STRIPE_CONNECT_WEBHOOK_SECRET,
+  // eigenes Signing-Secret). Erst Plattform-Secret, dann Connect-Secret.
+  let fromConnect = false
   try {
     event = stripe.webhooks.constructEvent(body, sig, process.env.STRIPE_WEBHOOK_SECRET)
   } catch (err) {
-    console.error('[webhook] Invalid signature:', err instanceof Error ? err.message : err)
-    return NextResponse.json({ error: 'Invalid signature' }, { status: 400 })
+    const connectSecret = process.env.STRIPE_CONNECT_WEBHOOK_SECRET?.trim()
+    let connectEvent: Stripe.Event | null = null
+    if (connectSecret) {
+      try { connectEvent = stripe.webhooks.constructEvent(body, sig, connectSecret) } catch { /* unten */ }
+    }
+    if (!connectEvent) {
+      console.error('[webhook] Invalid signature:', err instanceof Error ? err.message : err)
+      return NextResponse.json({ error: 'Invalid signature' }, { status: 400 })
+    }
+    event = connectEvent
+    fromConnect = true
+  }
+
+  // Aus Partnerkonten zählt nur account.updated – Zahlungen/Erstattungen dort gehören
+  // nicht zur Plattform und dürfen keine Provisionen oder Konten verändern.
+  if (fromConnect && event.type !== 'account.updated') {
+    return NextResponse.json({ received: true, ignored: true })
   }
 
   // ── helpers ────────────────────────────────────────────────────────────────
@@ -168,42 +190,210 @@ export async function POST(req: NextRequest) {
     return netCents > 0 ? Math.floor(netCents / 10) : 0
   }
 
-  // Refund/chargeback handling per spec:
-  // - commissions not yet paid out → status 'cancelled'
+  // Refund/chargeback handling per spec (Logik: src/lib/affiliate/reversal.ts):
+  // - commissions not yet paid out → status 'cancelled' (Teilerstattung: anteilig gekürzt)
   // - commissions already paid out → negative balancing entry that offsets
   //   future commissions in the next payout run (idempotent via unique invoice key)
-  async function reverseCommissionsForInvoice(invoiceId: string, reason: string) {
-    const rows = await db.query.affiliateCommissions.findMany({
-      where: eq(affiliateCommissions.stripeInvoiceId, invoiceId),
-    })
-    for (const row of rows) {
-      if (row.status === 'pending' || row.status === 'available') {
-        await db.update(affiliateCommissions).set({
-          status: 'cancelled',
-          reversalReason: reason,
-          updatedAt: new Date(),
-        }).where(eq(affiliateCommissions.id, row.id))
-      } else if (row.status === 'paid' && row.commissionAmount > 0) {
-        try {
-          await db.insert(affiliateCommissions).values({
-            referrerId: row.referrerId,
-            refereeId: row.refereeId,
-            stripeInvoiceId: `${invoiceId}:chargeback`,
-            stripeCustomerId: row.stripeCustomerId,
-            grossAmount: -row.grossAmount,
-            netAmount: row.netAmount == null ? null : -row.netAmount,
-            commissionRate: row.commissionRate,
-            commissionAmount: -row.commissionAmount,
-            status: 'available',
-            availableAt: new Date(),
-            reversalReason: `${reason}_after_payout`,
-          })
-        } catch (err: any) {
-          if (err?.code !== '23505') {
-            console.error('[webhook] chargeback booking error:', err?.message ?? err)
+  // amounts fehlt / refunded >= total → Vollstorno.
+  //
+  // Alles in EINER Transaktion mit SELECT … FOR UPDATE auf der Provisionszeile: Läuft
+  // gleichzeitig eine Auszahlung (Transaktion A in payout.ts sperrt dieselbe Zeile), wartet
+  // der Storno und plant danach mit dem echten Status ('processing' → Gegenbuchung).
+  // Greift eine Buchung trotzdem nicht, wirft die Funktion → 500 → Stripe stellt erneut zu.
+  async function reverseCommissionsForInvoice(invoiceId: string, reason: string, amounts?: { refunded: number; total: number }) {
+    await db.transaction(async (tx) => {
+      const [base] = await tx.select().from(affiliateCommissions)
+        .where(eq(affiliateCommissions.stripeInvoiceId, invoiceId))
+        .limit(1)
+        .for('update')
+      if (!base) return
+      const existingReversals = await tx
+        .select({ commissionAmount: affiliateCommissions.commissionAmount, status: affiliateCommissions.status })
+        .from(affiliateCommissions)
+        .where(sql`starts_with(${affiliateCommissions.stripeInvoiceId}, ${invoiceId + ':'})`)
+
+      const actions = planReversal({
+        invoiceId,
+        base,
+        existingReversals,
+        refunded: amounts?.refunded ?? 0,
+        total: amounts?.total ?? 0,
+        reason,
+      })
+      // Zusätzliche Absicherung: Zeile ist gesperrt, der Status muss also noch stimmen.
+      const notPaidOut = and(
+        eq(affiliateCommissions.id, base.id),
+        eq(affiliateCommissions.status, base.status),
+        inArray(affiliateCommissions.status, ['pending', 'available']),
+      )
+      for (const action of actions) {
+        if (action.type === 'cancel' || action.type === 'reduce') {
+          const updated = await tx.update(affiliateCommissions).set(
+            action.type === 'cancel'
+              ? { status: 'cancelled', reversalReason: action.reason, updatedAt: new Date() }
+              : { commissionAmount: action.commissionAmount, reversalReason: action.reason, updatedAt: new Date() },
+          ).where(notPaidOut).returning({ id: affiliateCommissions.id })
+          if (updated.length !== 1) {
+            throw new Error(`commission ${base.id} changed during reversal (${action.type})`)
           }
+        } else {
+          await insertBalancingEntry(tx, base, action)
         }
       }
+    })
+  }
+
+  // Gewonnener Chargeback: die durch die Rückbuchung stornierte Provision wieder
+  // gutschreiben (positive Zeile "<inv>:dispute_won", status 'available'). Idempotent über
+  // den eindeutigen Schlüssel; gleiche Sperre wie beim Storno.
+  async function restoreCommissionAfterWonDispute(invoiceId: string, amounts: { refunded: number; total: number }) {
+    await db.transaction(async (tx) => {
+      const [base] = await tx.select().from(affiliateCommissions)
+        .where(eq(affiliateCommissions.stripeInvoiceId, invoiceId))
+        .limit(1)
+        .for('update')
+      if (!base) return
+      const existingReversals = await tx
+        .select({
+          stripeInvoiceId: affiliateCommissions.stripeInvoiceId,
+          commissionAmount: affiliateCommissions.commissionAmount,
+          status: affiliateCommissions.status,
+        })
+        .from(affiliateCommissions)
+        .where(sql`starts_with(${affiliateCommissions.stripeInvoiceId}, ${invoiceId + ':'})`)
+      const action = planDisputeRestore({ invoiceId, base, existingReversals, ...amounts })
+      if (action) await insertBalancingEntry(tx, base, action)
+    })
+  }
+
+  type CommissionTx = Parameters<Parameters<typeof db.transaction>[0]>[0]
+  async function insertBalancingEntry(
+    tx: CommissionTx,
+    base: typeof affiliateCommissions.$inferSelect,
+    action: Extract<ReversalAction, { type: 'book' }>,
+  ) {
+    await tx.insert(affiliateCommissions).values({
+      referrerId: base.referrerId,
+      refereeId: base.refereeId,
+      stripeInvoiceId: action.key,
+      stripeCustomerId: base.stripeCustomerId,
+      grossAmount: action.grossAmount,
+      netAmount: action.netAmount,
+      commissionRate: base.commissionRate,
+      commissionAmount: action.commissionAmount,
+      status: 'available',
+      availableAt: new Date(),
+      reversalReason: action.reason,
+    }).onConflictDoNothing({ target: affiliateCommissions.stripeInvoiceId })
+  }
+
+  // Bucht die Provision für eine bezahlte Rechnung. Idempotent über den UNIQUE-Index
+  // auf stripe_invoice_id (checkout.session.completed und invoice.payment_succeeded
+  // können beide für dieselbe Erstrechnung kommen). true = Zeile wurde JETZT angelegt.
+  async function bookCommission(params: { referrerId: string; refereeId: string; invoice: any; customerId: string | null }): Promise<boolean> {
+    const { referrerId, refereeId, invoice, customerId } = params
+    // Keine Provision an sich selbst – egal, wie die Zuordnung zustande kam
+    if (!invoice?.id || referrerId === refereeId) return false
+    const netPaid = computeInvoiceNet(invoice)
+    const commissionAmount = commissionFromNet(netPaid)
+    if (commissionAmount <= 0) return false
+    try {
+      const inserted = await db.insert(affiliateCommissions).values({
+        referrerId,
+        refereeId,
+        stripeInvoiceId: invoice.id,
+        stripeCustomerId: customerId,
+        grossAmount: invoice.amount_paid ?? 0,
+        netAmount: netPaid,
+        commissionRate: '0.10',
+        commissionAmount,
+        status: 'pending',
+        availableAt: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000),
+      }).onConflictDoNothing({ target: affiliateCommissions.stripeInvoiceId })
+        .returning({ id: affiliateCommissions.id })
+      return inserted.length > 0
+    } catch (err: any) {
+      console.error('[webhook] commission insert error:', err?.message ?? err)
+      return false
+    }
+  }
+
+  // "Neuer Partner über deinen Link" – genau einmal je Abo (bzw. Rechnung ohne Abo),
+  // auch wenn beide Wege (Checkout + Zahlungseingang) oder Redeliveries feuern.
+  async function notifyReferrerOnce(params: { referrer: { id: string; email: string | null }; refereeId: string; key: string; plan: string | null }) {
+    const { referrer, refereeId, key, plan } = params
+    if (!referrer.email || referrer.id === refereeId) return
+    const first = await logEventOnce({
+      userId: refereeId,
+      eventType: 'affiliate_referral_notified',
+      stripeEventId: `affiliate-referral:${refereeId}:${key}`,
+      metadata: { referrer_id: referrer.id },
+    })
+    if (!first) return
+    const referee = await db.query.users.findFirst({
+      where: eq(users.id, refereeId),
+      columns: { email: true, firstName: true, plan: true },
+    })
+    const planKey = plan ?? referee?.plan ?? ''
+    const planLabel: Record<string, string> = { starter: 'Starter', pro: 'Pro', unlimited: 'Unlimited' }
+    sendEmail({
+      to: referrer.email,
+      subject: 'Neuer Partner über deinen Empfehlungslink – FinestSites',
+      html: affiliateNewReferralEmail({
+        refereeEmail: referee?.email ?? '',
+        refereeFirstName: referee?.firstName ?? null,
+        planLabel: planLabel[planKey] ?? (planKey || '–'),
+      }),
+      type: 'affiliate_referral',
+    }).catch(() => {})
+  }
+
+  // Provision für jede bezahlte Rechnung eines geworbenen Kunden (Erstrechnung – auch
+  // SEPA, die erst Tage später bestätigt wird –, Verlängerung, Upgrade, manuelle
+  // Ersatzrechnung). Quelle der Zuordnung ist users.referred_by_username; hat der Kunde
+  // beim Checkout einen anderen Gutschein genutzt (promo_code_override), ist das Feld leer.
+  async function bookReferralCommissionForInvoice(invoice: any, userId: string, billingReason: string | null) {
+    if (!invoice?.id || (invoice.amount_paid ?? 0) <= 0) return
+    const paidUser = await db.query.users.findFirst({
+      where: eq(users.id, userId),
+      columns: { referredByUsername: true, username: true },
+    })
+    const refUsername = paidUser?.referredByUsername
+    if (!refUsername || refUsername === paidUser?.username) return
+
+    // Erstrechnung mit fremdem Gutschein = Partnerbeziehung beendet (promo_code_override).
+    // checkout.session.completed räumt das in der DB auf – kommt dieses Event zuerst,
+    // verhindert diese Prüfung die Provision direkt an der Rechnung.
+    if (billingReason === 'subscription_create') {
+      const affiliateCouponId = process.env.STRIPE_AFFILIATE_COUPON_ID?.trim()
+      const { ids } = invoiceCouponIds(invoice)
+      if (affiliateCouponId && ids.some(id => id !== affiliateCouponId)) return
+    }
+
+    const referrer = await db.query.users.findFirst({
+      where: eq(users.username, refUsername),
+      columns: { id: true, email: true },
+    })
+    if (!referrer || referrer.id === userId) return
+
+    const inserted = await bookCommission({
+      referrerId: referrer.id,
+      refereeId: userId,
+      invoice,
+      customerId: typeof invoice.customer === 'string' ? invoice.customer : invoice.customer?.id ?? null,
+    })
+    // Partner-Mail nur, wenn der Checkout-Pfad sie NICHT schickt: Der schickt sie, wenn
+    // referred_by in den Abo-Metadaten steht (vor diesem Fix ohne Dedupe-Eintrag – sonst
+    // ginge an Bestandsfälle eine zweite Mail). Fehlt referred_by (Code erst im Checkout
+    // eingegeben, alter Fehler), kommt die Mail von hier.
+    const subMeta = invoice.subscription_details?.metadata ?? invoice.parent?.subscription_details?.metadata ?? null
+    const checkoutNotifies = !!subMeta?.referred_by
+    if (inserted && billingReason === 'subscription_create' && !checkoutNotifies) {
+      const subId = invoiceSubscriptionId(invoice)
+      const line = invoice.lines?.data?.[0]
+      const linePriceId: string | undefined = line?.price?.id ?? line?.pricing?.price_details?.price
+      const plan = linePriceId ? getPlanByPriceId()[linePriceId] ?? null : null
+      await notifyReferrerOnce({ referrer, refereeId: userId, key: subId ?? invoice.id, plan })
     }
   }
 
@@ -345,50 +535,43 @@ export async function POST(req: NextRequest) {
 
       // ── Affiliate commission for first payment ────────────────────────────
       // Skip if the user overrode their affiliate code with a different Stripe promo code.
-      const referredBy = session.metadata?.referred_by
+      // Partner aus den Session-Metadaten; Fallback DB (Sessions, die vor dem Fix ohne
+      // referred_by angelegt wurden). Bei Override ist die DB-Zuordnung bereits geleert.
+      let referredBy = session.metadata?.referred_by || null
+      if (!referredBy && !affiliateOverrideDetected) {
+        const row = await db.query.users.findFirst({ where: eq(users.id, userId), columns: { referredByUsername: true } })
+        referredBy = row?.referredByUsername ?? null
+      }
       if (referredBy && !affiliateOverrideDetected) {
         const referrer = await db.query.users.findFirst({
           where: eq(users.username, referredBy),
           columns: { id: true, email: true },
         })
 
-        if (referrer) {
-          // Commission only if the first invoice is actually paid.
+        // Selbstempfehlung → weder Provision noch Mail
+        if (referrer && referrer.id !== userId) {
+          // Commission only if the first invoice is actually paid (Karte). Bei SEPA ist sie
+          // hier noch 'open'/processing – die Provision bucht dann invoice.payment_succeeded.
           // Base = tax-free net from the real invoice (after discount, before VAT).
           if (latestInvoiceId) {
             try {
               const firstInvoice = await stripe.invoices.retrieve(latestInvoiceId)
               if (firstInvoice.status === 'paid') {
-                const netPaid = computeInvoiceNet(firstInvoice)
-                const commissionAmount = commissionFromNet(netPaid)
-                if (commissionAmount > 0) {
-                  const availableAt = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000)
-                  await db.insert(affiliateCommissions).values({
-                    referrerId: referrer.id,
-                    refereeId: userId,
-                    stripeInvoiceId: latestInvoiceId,
-                    stripeCustomerId: session.customer as string,
-                    grossAmount: (firstInvoice as any).amount_paid ?? session.amount_total ?? 0,
-                    netAmount: netPaid,
-                    commissionRate: '0.10',
-                    commissionAmount,
-                    status: 'pending',
-                    availableAt,
-                  })
-                }
+                await bookCommission({
+                  referrerId: referrer.id,
+                  refereeId: userId,
+                  invoice: firstInvoice,
+                  customerId: session.customer as string,
+                })
               }
             } catch (err: any) {
-              if (err?.code !== '23505') {
-                console.error('[webhook] first-payment commission error:', err?.message ?? err)
-              }
+              console.error('[webhook] first-payment commission error:', err?.message ?? err)
             }
           }
 
-          // Notify referrer by email (fire-and-forget)
-          if (referrer.email) {
-            const planLabel: Record<string, string> = { starter: 'Starter', pro: 'Pro', unlimited: 'Unlimited' }
-            sendEmail({ to: referrer.email, subject: 'Neuer Partner über deinen Empfehlungslink – FinestSites', html: affiliateNewReferralEmail({ refereeEmail: session.customer_email ?? session.customer_details?.email ?? '–', planLabel: planLabel[plan] ?? plan }), type: 'affiliate_referral' }).catch(() => {})
-          }
+          // Partner informieren – genau einmal je Abo (dedupliziert, auch gegen den
+          // Zahlungseingangs-Pfad und Redeliveries)
+          await notifyReferrerOnce({ referrer, refereeId: userId, key: subscription.id, plan })
         }
       }
       break
@@ -543,7 +726,7 @@ export async function POST(req: NextRequest) {
       if (!user?.stripeCustomerId) break
 
       const inv1 = invoice as any
-      const invSubId: string | undefined = typeof inv1.subscription === 'string' ? inv1.subscription : inv1.subscription?.id
+      const invSubId: string | undefined = invoiceSubscriptionId(inv1) ?? undefined
       const record = await recordPaymentFailure(userId, invoice.id)
 
       let fallbackOutcome = 'skipped'
@@ -633,7 +816,7 @@ export async function POST(req: NextRequest) {
       if (!user?.stripeCustomerId || user.paymentFailedInvoiceId !== invoice.id || user.deactivatedAt) break
 
       const inv3 = invoice as any
-      const subId: string | null = typeof inv3.subscription === 'string' ? inv3.subscription : inv3.subscription?.id ?? user.stripeSubscriptionId
+      const subId: string | null = invoiceSubscriptionId(inv3) ?? user.stripeSubscriptionId
 
       if (inv3.billing_reason !== 'subscription_create' || (invoice.amount_paid ?? 0) > 0) {
         await clearPaymentFailure(userId)
@@ -694,8 +877,15 @@ export async function POST(req: NextRequest) {
     // debit: sites stay (or come back) online until the bank answers.
     case 'payment_intent.processing': {
       const pi = event.data.object as Stripe.PaymentIntent
-      const piInvoiceId: string | null = typeof (pi as any).invoice === 'string' ? (pi as any).invoice : (pi as any).invoice?.id ?? null
-      if (!piInvoiceId || !pi.customer) break
+      if (!pi.customer) break
+      // Payload (2024-04-10) hat pi.invoice; ab dahlia fehlt das Feld → invoice_payments
+      let piInvoiceId: string | null = null
+      try {
+        piInvoiceId = await resolveChargeInvoiceId(stripe, { invoice: (pi as any).invoice, payment_intent: pi.id })
+      } catch (err) {
+        console.error('[webhook] processing invoice lookup error:', err instanceof Error ? err.message : err)
+      }
+      if (!piInvoiceId) break
       const userId = await getUserIdByCustomer(pi.customer as string)
       if (!userId) break
 
@@ -728,7 +918,7 @@ export async function POST(req: NextRequest) {
       if (!user?.email || !user.stripeCustomerId || user.deactivatedAt) break
 
       const up = upcoming as any
-      const upSubId: string | null = typeof up.subscription === 'string' ? up.subscription : up.subscription?.id ?? user.stripeSubscriptionId
+      const upSubId: string | null = invoiceSubscriptionId(up) ?? user.stripeSubscriptionId
       let pmType: string | null = null
       let last4: string | null = null
       try {
@@ -769,10 +959,7 @@ export async function POST(req: NextRequest) {
       const userId = await getUserIdByCustomer(invoice.customer as string)
       if (!userId) break
 
-      const inv2 = invoice as any
-      const subId = typeof inv2.subscription === 'string'
-        ? inv2.subscription
-        : inv2.subscription?.id
+      const subId = invoiceSubscriptionId(invoice)
 
       const userBefore = await db.query.users.findFirst({
         where: eq(users.id, userId),
@@ -785,6 +972,12 @@ export async function POST(req: NextRequest) {
       const settles = userBefore?.paymentFailedAt
         ? await paidInvoiceSettlesArrears(userBefore.paymentFailedInvoiceId, invoice.id)
         : false
+
+      // ── Affiliate commission ──────────────────────────────────────────────
+      // Für JEDE bezahlte Rechnung eines geworbenen Kunden – auch die Erstrechnung:
+      // Bei SEPA ist sie beim checkout.session.completed noch nicht bezahlt, die
+      // Provision entsteht erst hier. Idempotent (UNIQUE stripe_invoice_id).
+      await bookReferralCommissionForInvoice(invoice, userId, billingReason ?? null)
 
       // The very first invoice: plan/status were set by checkout.session.completed.
       // Still, a late SEPA confirmation after a failure must end the episode.
@@ -839,59 +1032,32 @@ export async function POST(req: NextRequest) {
         stripeInvoiceId: invoice.id,
         metadata: { payment_method_type: renewedPmType, payment_method_last4: renewedPmLast4 },
       })
-
-      // ── Affiliate commission ──────────────────────────────────────────────
-      // Check if this user was referred
-      const paidUser = await db.query.users.findFirst({
-        where: eq(users.id, userId),
-        columns: { referredByUsername: true },
-      })
-
-      if (paidUser?.referredByUsername) {
-        const referrer = await db.query.users.findFirst({
-          where: eq(users.username, paidUser.referredByUsername),
-          columns: { id: true },
-        })
-
-        if (referrer && invoice.id) {
-          // Base = tax-free net from the real invoice (after discount, before VAT).
-          const netPaid = computeInvoiceNet(invoice)
-          const commissionAmount = commissionFromNet(netPaid)
-          const availableAt = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000)
-
-          // Idempotent: unique on stripe_invoice_id
-          if (commissionAmount > 0) {
-            try {
-              await db.insert(affiliateCommissions).values({
-                referrerId: referrer.id,
-                refereeId: userId,
-                stripeInvoiceId: invoice.id,
-                stripeCustomerId: invoice.customer as string,
-                grossAmount: invoice.amount_paid,
-                netAmount: netPaid,
-                commissionRate: '0.10',
-                commissionAmount,
-                status: 'pending',
-                availableAt,
-              })
-            } catch (err: any) {
-              if (err?.code !== '23505') {
-                console.error('[webhook] commission insert error:', err?.message ?? err)
-              }
-            }
-          }
-        }
-      }
       break
     }
 
     // ── Refund → cancel unpaid commission / negative booking if already paid ──
+    // Teilerstattung → Provision anteilig (amount_refunded / amount, kumuliert).
     case 'charge.refunded': {
-      const charge = event.data.object as any
-      const invoiceId = charge.invoice
+      const charge = event.data.object as Stripe.Charge
+      let invoiceId: string | null
+      try {
+        // Payload (2024-04-10) hat charge.invoice; sonst über payment_intent → invoice_payments
+        invoiceId = await resolveChargeInvoiceId(stripe, charge)
+      } catch (err) {
+        console.error('[webhook] refund invoice lookup error:', err instanceof Error ? err.message : err)
+        // 500 → Stripe stellt erneut zu, die Storno-Buchung geht nicht verloren
+        return NextResponse.json({ error: 'invoice lookup failed' }, { status: 500 })
+      }
       if (!invoiceId) break
 
-      await reverseCommissionsForInvoice(invoiceId, 'charge_refunded')
+      const total = charge.amount ?? 0
+      const refunded = charge.refunded ? total : (charge.amount_refunded ?? 0)
+      try {
+        await reverseCommissionsForInvoice(invoiceId, 'charge_refunded', { refunded, total })
+      } catch (err) {
+        console.error('[webhook] refund reversal error:', err instanceof Error ? err.message : err)
+        return NextResponse.json({ error: 'reversal failed' }, { status: 500 })
+      }
       break
     }
 
@@ -902,13 +1068,68 @@ export async function POST(req: NextRequest) {
       if (!chargeId) break
 
       try {
-        const charge = await stripe.charges.retrieve(chargeId) as any
-        if (charge.invoice) {
-          await reverseCommissionsForInvoice(charge.invoice, 'chargeback')
+        // Abruf über das SDK (dahlia): charge.invoice existiert dort nicht mehr →
+        // Rechnung über payment_intent → invoice_payments auflösen
+        const charge = await stripe.charges.retrieve(chargeId)
+        const invoiceId = await resolveChargeInvoiceId(stripe, charge)
+        if (invoiceId) {
+          // Kumuliert: bereits Erstattetes + Dispute-Betrag (planReversal erwartet den
+          // GESAMT stornierten Anteil der Charge, sonst würde eine frühere Teilerstattung
+          // den Chargeback "verbrauchen")
+          const total = charge.amount ?? 0
+          const refunded = Math.min(total, (charge.amount_refunded ?? 0) + (dispute.amount ?? 0))
+          await reverseCommissionsForInvoice(invoiceId, 'chargeback', { refunded, total })
+        } else {
+          console.warn(`[webhook] dispute ${dispute.id}: no invoice for charge ${chargeId}`)
         }
       } catch (err) {
-        console.error('[webhook] dispute charge lookup error:', err)
+        console.error('[webhook] dispute charge lookup error:', err instanceof Error ? err.message : err)
+        return NextResponse.json({ error: 'dispute lookup failed' }, { status: 500 })
       }
+      break
+    }
+
+    // ── Chargeback gewonnen → stornierte Provision wieder gutschreiben ─────────
+    // funds_reinstated = Geld kommt nach gewonnenem Dispute zurück. closed/won als
+    // Absicherung, falls funds_reinstated nicht abonniert ist. Beide buchen höchstens
+    // einmal (Schlüssel "<inv>:dispute_won"); ohne vorherigen Chargeback-Storno passiert nichts.
+    case 'charge.dispute.funds_reinstated':
+    case 'charge.dispute.closed': {
+      const dispute = event.data.object as Stripe.Dispute
+      if (event.type === 'charge.dispute.closed' && dispute.status !== 'won') break
+      const chargeId = typeof dispute.charge === 'string' ? dispute.charge : dispute.charge?.id
+      if (!chargeId) break
+
+      try {
+        const charge = await stripe.charges.retrieve(chargeId)
+        const invoiceId = await resolveChargeInvoiceId(stripe, charge)
+        if (invoiceId) {
+          const total = charge.amount ?? 0
+          const refunded = charge.refunded ? total : Math.min(total, charge.amount_refunded ?? 0)
+          await restoreCommissionAfterWonDispute(invoiceId, { refunded, total })
+        } else {
+          console.warn(`[webhook] dispute ${dispute.id} won: no invoice for charge ${chargeId}`)
+        }
+      } catch (err) {
+        console.error('[webhook] dispute restore error:', err instanceof Error ? err.message : err)
+        return NextResponse.json({ error: 'dispute restore failed' }, { status: 500 })
+      }
+      break
+    }
+
+    // ── Connect: Partner-Konto geändert (Prüfung abgeschlossen, gesperrt …) ──
+    // Kommt nur über einen Connect-Webhook-Endpunkt (Events aus verbundenen Konten,
+    // Signing-Secret in STRIPE_CONNECT_WEBHOOK_SECRET). Unbekannte Konten werden ignoriert.
+    // Fehlt der Endpunkt, gleichen Stats-Seite und Auszahlungslauf live mit Stripe ab.
+    case 'account.updated': {
+      const account = event.data.object as Stripe.Account
+      if (!account?.id) break
+      const owner = await db.query.users.findFirst({
+        where: eq(users.stripeConnectId, account.id),
+        columns: { id: true, affiliateOnboarded: true },
+      })
+      if (!owner) break
+      await syncConnectStatus(owner.id, account.id, { current: owner.affiliateOnboarded, account })
       break
     }
   }

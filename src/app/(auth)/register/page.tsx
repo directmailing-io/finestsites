@@ -316,7 +316,8 @@ function RegisterForm() {
 
         <p className="text-xs text-center" style={{ color: '#9CA3AF' }}>
           Mit der Registrierung stimmst du unseren{' '}
-          <a href="/agb" className="underline underline-offset-2" style={{ color: '#6B7280' }}>AGB</a> zu.
+          <a href="/agb" className="underline underline-offset-2" style={{ color: '#6B7280' }}>AGB</a> zu und bestätigst,
+          dass du FinestSites als Unternehmer nutzt (z. B. als selbständige Teampartnerin oder selbständiger Teampartner).
         </p>
       </form>
     </>

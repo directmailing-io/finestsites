@@ -49,7 +49,6 @@ export default function Footer() {
                 { label: 'Impressum',             href: '/impressum' },
                 { label: 'Datenschutzerklärung',  href: '/datenschutz' },
                 { label: 'AGB',                   href: '/agb' },
-                { label: 'Widerrufsbelehrung',    href: '/widerruf' },
               ].map(l => (
                 <li key={l.label}><a href={l.href} style={{ fontSize: 14, color: 'rgba(255,255,255,0.6)', textDecoration: 'none' }}>{l.label}</a></li>
               ))}
@@ -67,7 +66,12 @@ export default function Footer() {
 
         {/* Bottom bar */}
         <div className="fs-footer-bottom">
-          <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.25)' }}>© 2026 FinestSites · Alle Rechte vorbehalten</span>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+            <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.25)' }}>© 2026 FinestSites · Alle Rechte vorbehalten</span>
+            <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)' }}>
+              Unser Angebot richtet sich ausschließlich an Unternehmer im Sinne von § 14 BGB, nicht an Verbraucher.
+            </span>
+          </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
             <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.3)', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', marginRight: 4 }}>Zahlungsarten</span>
             {[

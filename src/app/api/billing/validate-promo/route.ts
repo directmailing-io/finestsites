@@ -4,6 +4,7 @@ import { getStripe } from '@/lib/stripe/client'
 import { db } from '@/lib/db'
 import { users } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
+import { getUserFromRequest } from '@/lib/auth/server'
 
 /**
  * Validates a partner/affiliate or promo code in two phases:
@@ -18,9 +19,14 @@ export async function GET(req: NextRequest) {
   try {
     const affiliateUser = await db.query.users.findFirst({
       where: eq(users.username, code.toLowerCase()),
-      columns: { username: true, firstName: true },
+      columns: { id: true, username: true, firstName: true },
     })
     if (affiliateUser?.username) {
+      // Eigener Benutzername ist kein Partnercode (keine Selbstempfehlung/-rabatt)
+      const me = await getUserFromRequest(req).catch(() => null)
+      if (me?.id === affiliateUser.id) {
+        return NextResponse.json({ valid: false, own_code: true, error: 'Deinen eigenen Partnercode kannst du nicht verwenden.' })
+      }
       return NextResponse.json({
         valid: true,
         type: 'affiliate',

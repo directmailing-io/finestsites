@@ -1,6 +1,6 @@
 import { db } from '@/lib/db'
 import { affiliateCommissions, users } from '@/lib/db/schema'
-import { desc, eq, isNotNull } from 'drizzle-orm'
+import { desc, eq, isNotNull, sql } from 'drizzle-orm'
 import { getStripe } from '@/lib/stripe/client'
 import { AffiliateAdminActions } from './AffiliateAdminActions'
 import { AffiliatePartnersPanel } from './AffiliatePartnersPanel'
@@ -56,6 +56,22 @@ export default async function AdminAffiliatePage() {
     refereeUsername: refereeMap.get(c.id) ?? null,
   }))
 
+  // Summen IMMER per SQL über alle Provisionen – die Liste oben ist nur die Anzeige
+  // der letzten 200 und darf keine Grundlage für Gesamtwerte sein.
+  const commissionAgg = await db
+    .select({
+      referrerId: affiliateCommissions.referrerId,
+      refereeId: affiliateCommissions.refereeId,
+      status: affiliateCommissions.status,
+      amount: sql<number>`coalesce(sum(${affiliateCommissions.commissionAmount}), 0)::int`,
+      count: sql<number>`count(*)::int`,
+      referrerUsername: users.username,
+      referrerEmail: users.email,
+    })
+    .from(affiliateCommissions)
+    .leftJoin(users, eq(users.id, affiliateCommissions.referrerId))
+    .groupBy(affiliateCommissions.referrerId, affiliateCommissions.refereeId, affiliateCommissions.status, users.username, users.email)
+
   // Aggregate by referrer
   const referrerMap: Record<string, {
     username: string
@@ -67,7 +83,7 @@ export default async function AdminAffiliatePage() {
     total: number
   }> = {}
 
-  for (const c of commissions) {
+  for (const c of commissionAgg) {
     const username = c.referrerUsername
     const email = c.referrerEmail
     if (!username && !email) continue
@@ -75,10 +91,10 @@ export default async function AdminAffiliatePage() {
     if (!referrerMap[key]) {
       referrerMap[key] = { username: username ?? '', email: email ?? '', referral_count: 0, pending: 0, available: 0, paid: 0, total: 0 }
     }
-    referrerMap[key].total += c.commissionAmount
-    if (c.status === 'pending') referrerMap[key].pending += c.commissionAmount
-    if (c.status === 'available') referrerMap[key].available += c.commissionAmount
-    if (c.status === 'paid') referrerMap[key].paid += c.commissionAmount
+    referrerMap[key].total += c.amount
+    if (c.status === 'pending') referrerMap[key].pending += c.amount
+    if (c.status === 'available') referrerMap[key].available += c.amount
+    if (c.status === 'paid') referrerMap[key].paid += c.amount
   }
 
   // Count referred users per affiliate
@@ -178,17 +194,17 @@ export default async function AdminAffiliatePage() {
   const commissionsByReferrer = new Map<string, { pending: number; available: number; paid: number; total: number }>()
   const commissionsByReferee = new Map<string, number>() // refereeId -> total commission earned
 
-  for (const c of commissionsRaw) {
+  for (const c of commissionAgg) {
     if (c.referrerId) {
       const existing = commissionsByReferrer.get(c.referrerId) ?? { pending: 0, available: 0, paid: 0, total: 0 }
-      existing.total += c.commissionAmount
-      if (c.status === 'pending') existing.pending += c.commissionAmount
-      if (c.status === 'available') existing.available += c.commissionAmount
-      if (c.status === 'paid') existing.paid += c.commissionAmount
+      existing.total += c.amount
+      if (c.status === 'pending') existing.pending += c.amount
+      if (c.status === 'available') existing.available += c.amount
+      if (c.status === 'paid') existing.paid += c.amount
       commissionsByReferrer.set(c.referrerId, existing)
     }
     if (c.refereeId) {
-      commissionsByReferee.set(c.refereeId, (commissionsByReferee.get(c.refereeId) ?? 0) + c.commissionAmount)
+      commissionsByReferee.set(c.refereeId, (commissionsByReferee.get(c.refereeId) ?? 0) + c.amount)
     }
   }
 
@@ -204,14 +220,13 @@ export default async function AdminAffiliatePage() {
     .sort((a, b) => b.referredUsers.length - a.referredUsers.length || b.commissions.total - a.commissions.total)
 
   // Global stats
-  const pendingCount    = commissions.filter(c => c.status === 'pending').length
-  const availableCount  = commissions.filter(c => c.status === 'available').length
-  const totalPending    = commissions.filter(c => c.status === 'pending' || c.status === 'available')
-    .reduce((s, c) => s + c.commissionAmount, 0)
-  const availableTotal  = commissions.filter(c => c.status === 'available')
-    .reduce((s, c) => s + c.commissionAmount, 0)
-  const totalPaid = commissions.filter(c => c.status === 'paid')
-    .reduce((s, c) => s + c.commissionAmount, 0)
+  const sumBy = (pred: (status: string) => boolean, field: 'amount' | 'count') =>
+    commissionAgg.filter(c => pred(c.status)).reduce((s, c) => s + c[field], 0)
+  const pendingCount    = sumBy(st => st === 'pending', 'count')
+  const availableCount  = sumBy(st => st === 'available', 'count')
+  const totalPending    = sumBy(st => st === 'pending' || st === 'available', 'amount')
+  const availableTotal  = sumBy(st => st === 'available', 'amount')
+  const totalPaid       = sumBy(st => st === 'paid', 'amount')
   const totalReferrals = referredUsers.length
 
   // Stripe platform balance

@@ -39,10 +39,13 @@ export async function POST(req: NextRequest) {
           ...(profile?.firstName ? { first_name: profile.firstName } : {}),
           ...(profile?.lastName  ? { last_name:  profile.lastName  } : {}),
         },
-        // Monthly payouts on the 1st of each month
+        // Tägliche Auszahlung: Unser Transfer-Cron überweist am 1. des Monats – bei
+        // monatlichem Auszahlungsplan (ebenfalls am 1.) lag das Geld sonst bis zu einen
+        // Monat auf dem Stripe-Konto des Partners. Bestandskonten:
+        // scripts/affiliate-set-daily-payouts.ts
         settings: {
           payouts: {
-            schedule: { interval: 'monthly', monthly_anchor: 1 },
+            schedule: { interval: 'daily' },
           },
         },
         metadata: {

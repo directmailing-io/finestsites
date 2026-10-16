@@ -3,7 +3,8 @@
  * Self-service payout for the authenticated partner.
  * Uses the shared payout engine (same rules as cron + admin trigger):
  * 10 € minimum, max one payout per month, live Stripe Connect verification,
- * negative balance offsetting.
+ * negative balance offsetting, tax profile required, platform balance check
+ * (dem Partner gegenüber nie offengelegt).
  */
 
 import { NextResponse } from 'next/server'
@@ -12,11 +13,15 @@ import { db } from '@/lib/db'
 import { users } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
 import { getStripe } from '@/lib/stripe/client'
-import { releaseMaturedCommissions, processReferrerPayout, PAYOUT_MINIMUM_CENTS } from '@/lib/affiliate/payout'
+import { releaseMaturedCommissions, processReferrerPayout, notifyAdminSingle, PAYOUT_MINIMUM_CENTS } from '@/lib/affiliate/payout'
+import { rateLimit } from '@/lib/security/request'
 
 function euros(cents: number): string {
   return (cents / 100).toFixed(2).replace('.', ',') + ' €'
 }
+
+/** Neutrale Antwort, die nichts über den internen Stand (z. B. Plattform-Guthaben) verrät. */
+const NEUTRAL_PENDING_MESSAGE = 'Deine Auszahlung wird gerade vorbereitet und kommt automatisch. Dein Guthaben bleibt dir sicher erhalten.'
 
 export async function POST(req: Request) {
   const user = await getUserFromRequest(req)
@@ -27,20 +32,27 @@ export async function POST(req: Request) {
     columns: { id: true, email: true, username: true, stripeConnectId: true, affiliateOnboarded: true },
   })
 
-  if (!profile?.affiliateOnboarded || !profile?.stripeConnectId) {
+  // affiliate_onboarded wird von der Auszahlungs-Engine live mit Stripe abgeglichen –
+  // hier reicht ein verbundenes Konto.
+  if (!profile?.stripeConnectId) {
     return NextResponse.json(
       { error: 'Du hast noch kein Auszahlungskonto verbunden. Richte zuerst dein Bankkonto ein.' },
       { status: 400 }
     )
   }
 
+  if (!rateLimit('affiliate-payout', user.id, 5, 10 * 60 * 1000)) {
+    return NextResponse.json({ error: 'Bitte warte ein paar Minuten und versuch es dann nochmal.' }, { status: 429 })
+  }
+
   await releaseMaturedCommissions(user.id)
 
   const result = await processReferrerPayout(getStripe(), profile)
+  notifyAdminSingle(result).catch(() => {})
 
   switch (result.status) {
     case 'paid':
-      return NextResponse.json({ paid: 1, amount_cents: result.amount })
+      return NextResponse.json({ paid: 1, amount_cents: result.amount, credit_note_number: result.creditNoteNumber ?? null })
     case 'skipped_no_commissions':
       return NextResponse.json({ paid: 0, message: 'Gerade gibt es nichts auszuzahlen. Dein Guthaben bleibt dir aber sicher erhalten.' })
     case 'skipped_below_minimum':
@@ -68,16 +80,26 @@ export async function POST(req: Request) {
         { error: 'Du hast noch kein Auszahlungskonto verbunden. Richte zuerst dein Bankkonto ein.' },
         { status: 400 }
       )
-    case 'error': {
-      const isInsufficientFunds = (result.error ?? '').includes('insufficient funds')
+    case 'skipped_tax_profile_missing':
       return NextResponse.json(
-        {
-          error: isInsufficientFunds
-            ? 'Auszahlung gerade nicht möglich. Die Zahlung deines Partners wird noch von Stripe verarbeitet (ca. 7 Tage). Versuch es in ein paar Tagen nochmal.'
-            : 'Da ist was schiefgelaufen. Versuch es später nochmal oder melde dich beim Support.',
-        },
+        { error: 'Damit wir dir deine Provision auszahlen können, brauchen wir noch kurz deine Angaben für die Abrechnung. Du findest sie weiter unten auf dieser Seite.', reason: 'tax_profile_missing' },
+        { status: 400 }
+      )
+    // Plattform-Guthaben zu knapp ist ein internes Thema (Admin bekommt den Hinweis):
+    // Der Partner sieht dieselbe neutrale Antwort wie bei einer noch laufenden Auszahlung.
+    case 'skipped_insufficient_platform_balance':
+    case 'unclear':
+      return NextResponse.json({ paid: 0, message: NEUTRAL_PENDING_MESSAGE })
+    case 'failed':
+    case 'error': {
+      const isInsufficientFunds = result.reason === 'insufficient_platform_balance' || (result.error ?? '').includes('insufficient funds')
+      if (isInsufficientFunds) return NextResponse.json({ paid: 0, message: NEUTRAL_PENDING_MESSAGE })
+      return NextResponse.json(
+        { error: 'Da ist was schiefgelaufen. Versuch es später nochmal oder melde dich beim Support.' },
         { status: 400 }
       )
     }
+    default:
+      return NextResponse.json({ error: 'Da ist was schiefgelaufen. Versuch es später nochmal oder melde dich beim Support.' }, { status: 400 })
   }
 }

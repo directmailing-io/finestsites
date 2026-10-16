@@ -4,6 +4,7 @@ import { users } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
 import { getStripe } from '@/lib/stripe/client'
 import { getUserFromRequest } from '@/lib/auth/server'
+import { isConnectAccountOnboarded } from '@/lib/affiliate/connect-status'
 
 // GET /api/affiliate/connect/return — Stripe redirects here after onboarding.
 // Nur der eingeloggte Nutzer selbst, und nur ein Connect-Konto, das beim Anlegen
@@ -25,7 +26,9 @@ export async function GET(req: NextRequest) {
   if (account.metadata?.user_id !== user.id) {
     return NextResponse.redirect(`${appUrl}/affiliate?connect=error`)
   }
-  const onboarded = account.details_submitted && !account.requirements?.currently_due?.length
+  // Gleiche Regel wie der laufende Abgleich (connect-status.ts): Auszahlungen erlaubt,
+  // Angaben eingereicht, Konto nicht gesperrt
+  const onboarded = isConnectAccountOnboarded(account)
 
   await db.update(users)
     .set({ stripeConnectId: accountId, affiliateOnboarded: onboarded })

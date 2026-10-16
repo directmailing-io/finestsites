@@ -10,13 +10,16 @@ import { safeEqual } from '@/lib/security/request'
  * per affiliate per month, live Stripe Connect verification, negative
  * balance offsetting.
  *
+ * `?mode=maintenance` (safe to call daily): only reconciles payouts stuck in
+ * `processing` and retries missing credit note PDFs — never transfers money.
+ *
  * Prerequisite: Stripe account must be set to manual payouts
  * (dashboard.stripe.com/settings/payouts → Manual)
  */
 
 import { NextRequest, NextResponse } from 'next/server'
 import { getStripe } from '@/lib/stripe/client'
-import { runPayoutBatch } from '@/lib/affiliate/payout'
+import { runPayoutBatch, runPayoutMaintenance } from '@/lib/affiliate/payout'
 
 export async function POST(request: NextRequest) {
   const authHeader = request.headers.get('authorization')
@@ -26,11 +29,17 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  const { results, released } = await runPayoutBatch(getStripe())
+  if (request.nextUrl.searchParams.get('mode') === 'maintenance') {
+    const { reconciled, creditNotes } = await runPayoutMaintenance(getStripe())
+    console.log(`[affiliate-payouts] maintenance reconciled=${reconciled.length} credit_notes_retried=${creditNotes.retried} failed=${creditNotes.failed.length}`)
+    return NextResponse.json({ mode: 'maintenance', reconciled, creditNotes })
+  }
+
+  const { results, released, reconciled, creditNotes } = await runPayoutBatch(getStripe(), { context: 'Monatslauf' })
 
   const paid = results.filter(r => r.status === 'paid').length
   const skipped = results.filter(r => r.status !== 'paid').length
 
   console.log(`[affiliate-payouts] released=${released} paid=${paid} skipped=${skipped}`)
-  return NextResponse.json({ results, paid, skipped, released })
+  return NextResponse.json({ results, paid, skipped, released, reconciled, creditNotes })
 }

@@ -12,7 +12,12 @@ function RefCookieSetterInner() {
   useEffect(() => {
     const ref = searchParams.get('ref')
     if (ref && /^[a-z0-9][a-z0-9-]{1,29}$/.test(ref)) {
-      document.cookie = `fs_ref=${encodeURIComponent(ref)}; max-age=2592000; path=/; SameSite=Lax`
+      // Auf finestsites.io für alle Subdomains setzen (Marketing → app.finestsites.io),
+      // sonst sieht die Registrierung auf app. den Code nicht
+      const host = window.location.hostname
+      const domain = host === 'finestsites.io' || host.endsWith('.finestsites.io') ? '; domain=.finestsites.io' : ''
+      const secure = window.location.protocol === 'https:' ? '; Secure' : ''
+      document.cookie = `fs_ref=${encodeURIComponent(ref)}; max-age=2592000; path=/${domain}; SameSite=Lax${secure}`
     }
   }, [searchParams])
 

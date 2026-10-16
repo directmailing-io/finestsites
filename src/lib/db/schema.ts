@@ -316,14 +316,16 @@ export const subscriptionEvents = pgTable('subscription_events', {
 
 export const affiliateCommissions = pgTable('affiliate_commissions', {
   id: uuid('id').primaryKey().defaultRandom(),
-  referrerId: uuid('referrer_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
-  refereeId: uuid('referee_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  // SET NULL statt CASCADE: Provisionen sind Buchungsbelege (§ 147 AO, 10 Jahre) und bleiben
+  // erhalten, wenn ein Konto gelöscht wird. Gutschriften tragen eigene Snapshots.
+  referrerId: uuid('referrer_id').references(() => users.id, { onDelete: 'set null' }),
+  refereeId: uuid('referee_id').references(() => users.id, { onDelete: 'set null' }),
   stripeInvoiceId: text('stripe_invoice_id').notNull().unique(),
   stripeCustomerId: text('stripe_customer_id'),
   grossAmount: integer('gross_amount').notNull(),
   // Tax-free net amount from the Stripe invoice (commission base). Nullable for legacy rows.
   netAmount: integer('net_amount'),
-  commissionRate: numeric('commission_rate', { precision: 5, scale: 4 }).notNull().default('0.15'),
+  commissionRate: numeric('commission_rate', { precision: 5, scale: 4 }).notNull().default('0.10'),
   commissionAmount: integer('commission_amount').notNull(),
   status: text('status').notNull().default('pending'),
   availableAt: timestamp('available_at', { withTimezone: true }).notNull(),
@@ -339,7 +341,7 @@ export const affiliateCommissions = pgTable('affiliate_commissions', {
 
 export const affiliatePayouts = pgTable('affiliate_payouts', {
   id: uuid('id').primaryKey().defaultRandom(),
-  referrerId: uuid('referrer_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  referrerId: uuid('referrer_id').references(() => users.id, { onDelete: 'set null' }),
   commissionIds: uuid('commission_ids').array().notNull(),
   totalAmount: integer('total_amount').notNull(),
   commissionCount: integer('commission_count').notNull(),
@@ -350,11 +352,55 @@ export const affiliatePayouts = pgTable('affiliate_payouts', {
   status: text('status').notNull().default('pending'),
   pdfUrl: text('pdf_url'),
   notes: text('notes'),
+  // ── Gutschrift / Provisionsabrechnung (unveränderlicher Beleg, seit 16.10.2026) ──
+  // totalAmount = überwiesener Betrag (= grossAmount). Netto = Summe der Provisionszeilen.
+  netAmount: integer('net_amount'),
+  vatAmount: integer('vat_amount'),
+  grossAmount: integer('gross_amount'),
+  vatRate: numeric('vat_rate', { precision: 5, scale: 4 }),
+  taxStatus: text('tax_status'), // kleinunternehmer | regelbesteuert
+  taxProfileSnapshot: jsonb('tax_profile_snapshot'), // Angaben des Partners zum Zeitpunkt der Auszahlung
+  lineItems: jsonb('line_items'), // CreditNoteLine[] (ohne Kundennamen/E-Mails)
+  creditNoteNumber: text('credit_note_number').unique(), // GS-YYYY-NNNNN, lückenlos
+  creditNoteDate: date('credit_note_date'),
+  creditNoteKey: text('credit_note_key'), // privater R2-Schlüssel des PDFs
+  creditNoteStatus: text('credit_note_status'), // pending | created
+  creditNoteError: text('credit_note_error'),
+  failureReason: text('failure_reason'),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow(),
   paidAt: timestamp('paid_at', { withTimezone: true }),
 }, (t) => [
   index('idx_payouts_referrer').on(t.referrerId),
 ])
+
+/** Steuerliche Angaben des Partners für die Abrechnung (eine Zeile je Nutzer). */
+export const affiliateTaxProfiles = pgTable('affiliate_tax_profiles', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  userId: uuid('user_id').notNull().unique().references(() => users.id, { onDelete: 'cascade' }),
+  taxStatus: text('tax_status').notNull(), // kleinunternehmer | regelbesteuert (nur Unternehmer)
+  fullName: text('full_name').notNull(),
+  street: text('street').notNull(),
+  zip: text('zip').notNull(),
+  city: text('city').notNull(),
+  country: text('country').notNull().default('DE'),
+  taxNumber: text('tax_number'),
+  vatId: text('vat_id'),
+  // Bestätigung „Ich handle als Unternehmer (§ 14 BGB) …“ – gehört zum Einverständnis
+  entrepreneurConfirmed: boolean('entrepreneur_confirmed').notNull().default(false),
+  consentAt: timestamp('consent_at', { withTimezone: true }),
+  consentVersion: text('consent_version'),
+  consentText: text('consent_text'),
+  consentIp: varchar('consent_ip', { length: 64 }),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+})
+
+/** Lückenloser Gutschrift-Nummernkreis je Jahr (wird in derselben Transaktion hochgezählt). */
+export const affiliateCreditNoteCounters = pgTable('affiliate_credit_note_counters', {
+  year: integer('year').primaryKey(),
+  lastNumber: integer('last_number').notNull().default(0),
+})
 
 export const affiliateClicks = pgTable('affiliate_clicks', {
   id: uuid('id').primaryKey().defaultRandom(),
@@ -467,6 +513,7 @@ export type TemplateAccess = typeof templateAccess.$inferSelect
 export type SubscriptionEvent = typeof subscriptionEvents.$inferSelect
 export type AffiliateCommission = typeof affiliateCommissions.$inferSelect
 export type AffiliatePayout = typeof affiliatePayouts.$inferSelect
+export type AffiliateTaxProfile = typeof affiliateTaxProfiles.$inferSelect
 export type AffiliateClick = typeof affiliateClicks.$inferSelect
 
 // ─── Waitlist ──────────────────────────────────────────────────────────────────

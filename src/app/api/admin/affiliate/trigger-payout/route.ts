@@ -17,7 +17,7 @@ export async function POST(req: Request) {
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   if (user.email !== ADMIN_EMAIL) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
 
-  const { results, released } = await runPayoutBatch(getStripe())
+  const { results, released } = await runPayoutBatch(getStripe(), { context: 'Admin-Auslösung' })
 
   if (results.length === 0) {
     return NextResponse.json({ message: 'Keine fälligen Provisionen.', paid: 0, skipped: 0, released })

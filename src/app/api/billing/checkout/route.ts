@@ -88,8 +88,13 @@ export async function POST(req: NextRequest) {
     // Apply affiliate discount coupon if user was referred.
     // If user manually entered a promo code and has no referral, look it up in Stripe.
     const affiliateCouponId = process.env.STRIPE_AFFILIATE_COUPON_ID
-    const referredBy = profile?.referredByUsername ?? null
+    // Selbstempfehlung ist nie gültig (auch nicht, wenn sie früher einmal gespeichert wurde)
+    const storedReferral = profile?.referredByUsername ?? null
+    const referredBy = storedReferral && storedReferral !== profile?.username ? storedReferral : null
     const hasReferral = !!referredBy && !!affiliateCouponId
+    // Tatsächlich wirksamer Partner für diese Session – wird unten ggf. durch einen
+    // eingegebenen Partnercode gesetzt und landet in den Session-Metadaten (Provision + Partner-Mail)
+    let effectiveReferrer: string | null = referredBy
 
     // Resolve manually entered code: affiliate username OR Stripe promotion code.
     // Priority: explicit Stripe promo code > referral affiliate coupon > nothing (codes are entered in our UI, not Stripe's).
@@ -126,14 +131,20 @@ export async function POST(req: NextRequest) {
       if (!promoCodeId && !hasReferral) {
         const affiliateUser = await db.query.users.findFirst({
           where: eqFn(usersTable.username, promo_code.toLowerCase().trim()),
-          columns: { username: true },
+          columns: { id: true, username: true },
         })
+
+        // Eigener Benutzername als Partnercode → kein Rabatt, keine Provision an sich selbst
+        if (affiliateUser?.id === user.id) {
+          return NextResponse.json({ error: 'Deinen eigenen Partnercode kannst du nicht verwenden. Lass das Feld leer oder gib einen anderen Code ein.' }, { status: 400 })
+        }
 
         if (affiliateUser?.username) {
           // It's an affiliate/partner code — track referral + apply coupon.
           // Only sets a FIRST assignment; an existing affiliate is never overwritten.
           affiliateApplied = true
-          if (!profile?.referredByUsername) {
+          if (!effectiveReferrer) effectiveReferrer = affiliateUser.username
+          if (!referredBy) {
             await db.update(usersTable)
               .set({ referredByUsername: affiliateUser.username })
               .where(eqFn(usersTable.id, user.id))
@@ -204,7 +215,7 @@ export async function POST(req: NextRequest) {
           user_id: user.id,
           plan,
           interval,
-          referred_by: referredBy ?? '',
+          referred_by: effectiveReferrer ?? '',
         },
       },
 
@@ -212,7 +223,7 @@ export async function POST(req: NextRequest) {
         user_id: user.id,
         plan,
         interval,
-        referred_by: referredBy ?? '',
+        referred_by: effectiveReferrer ?? '',
       },
 
       // Locale: German by default. Stripe shows checkout in the right language

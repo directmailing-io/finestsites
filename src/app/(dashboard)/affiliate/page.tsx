@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react'
 import { useSearchParams } from 'next/navigation'
+import { TaxProfileNotice, TaxProfileSection, CreditNotesSection, type TaxProfileData, type CreditNoteItem } from './TaxProfileSection'
+import { computePayoutAmounts } from '@/lib/affiliate/tax'
 
 interface Commission {
   id: string
@@ -26,6 +28,7 @@ interface Payout {
 interface ReferredUser {
   id: string
   email: string
+  first_name?: string | null
   username: string | null
   plan: string
   billing_interval: string
@@ -39,7 +42,6 @@ interface Stats {
   affiliate_onboarded: boolean
   bank_last4: string | null
   bank_name: string | null
-  stripe_balance_available_cents: number
   referral_count: number
   total_pending_cents: number
   total_paid_cents: number
@@ -69,12 +71,26 @@ export default function AffiliatePage() {
   const [payingOut, setPayingOut] = useState(false)
   const [payoutMsg, setPayoutMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
   const [stripeLinkLoading, setStripeLinkLoading] = useState(false)
+  const [taxProfile, setTaxProfile] = useState<TaxProfileData | null>(null)
+  const [taxComplete, setTaxComplete] = useState(false)
+  const [creditNotes, setCreditNotes] = useState<CreditNoteItem[]>([])
+
+  function loadCreditNotes() {
+    fetch('/api/affiliate/credit-notes')
+      .then(r => (r.ok ? r.json() : { credit_notes: [] }))
+      .then(d => setCreditNotes(d.credit_notes ?? []))
+      .catch(() => {})
+  }
 
   useEffect(() => {
-    fetch('/api/affiliate/stats')
-      .then(r => r.json())
-      .then(d => { setStats(d); setLoading(false) })
-      .catch(() => setLoading(false))
+    Promise.all([
+      fetch('/api/affiliate/stats').then(r => r.json()).then(d => setStats(d)).catch(() => {}),
+      fetch('/api/affiliate/tax-profile')
+        .then(r => (r.ok ? r.json() : null))
+        .then(d => { if (d) { setTaxProfile(d.profile); setTaxComplete(!!d.complete) } })
+        .catch(() => {}),
+    ]).finally(() => setLoading(false))
+    loadCreditNotes()
   }, [])
 
   async function startConnect() {
@@ -107,6 +123,7 @@ export default function AffiliatePage() {
         setPayoutMsg({ type: 'success', text: `${euros(data.amount_cents)} wurden auf dein Konto überwiesen.` })
         const r = await fetch('/api/affiliate/stats')
         setStats(await r.json())
+        loadCreditNotes()
       } else {
         setPayoutMsg({ type: 'error', text: data.message ?? 'Keine auszahlbaren Provisionen.' })
       }
@@ -141,8 +158,13 @@ export default function AffiliatePage() {
   const pendingCents   = stats?.commissions?.filter(c => c.status === 'pending').reduce((s, c) => s + c.commission_amount, 0) ?? 0
   const paidCents      = stats?.total_paid_cents ?? 0
   const totalEarned    = availableCents + pendingCents + paidCents
-  const balanceSufficient = (stats?.stripe_balance_available_cents ?? 0) >= availableCents
-  const canPayout      = availableCents >= PAYOUT_MIN_CENTS && stats?.affiliate_onboarded && balanceSufficient
+  // Ob das Stripe-Guthaben reicht, prüft der Server (payout.ts) – nicht die Seite.
+  const canPayout      = availableCents >= PAYOUT_MIN_CENTS && !!stats?.affiliate_onboarded && taxComplete
+  // Regelbesteuerte Partner bekommen 19 % USt obendrauf (gleiche Rechnung wie auf dem Server)
+  const payoutAmount   = taxProfile?.tax_status === 'regelbesteuert'
+    ? computePayoutAmounts([availableCents], 'regelbesteuert').grossCents
+    : availableCents
+  const hasCommissions = (stats?.commissions?.length ?? 0) > 0
   const belowMinimum   = availableCents > 0 && availableCents < PAYOUT_MIN_CENTS
   const negativeBalance = availableCents < 0
   const referralUrl    = stats?.username
@@ -202,6 +224,8 @@ export default function AffiliatePage() {
           )}
         </div>
       )}
+
+      {hasCommissions && !taxComplete && <TaxProfileNotice />}
 
       {/* ── How it works ────────────────────────────────────────────────────── */}
       <section className="rounded-3xl p-6 mb-5" style={{ background: '#F8FAFC' }}>
@@ -279,8 +303,13 @@ export default function AffiliatePage() {
             <button onClick={requestPayout} disabled={payingOut}
               className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl text-sm font-bold transition-opacity hover:opacity-90"
               style={{ background: '#fff', color: '#0F172A' }}>
-              {payingOut ? <><Spinner /> Wird überwiesen…</> : `${euros(availableCents)} jetzt auszahlen`}
+              {payingOut ? <><Spinner /> Wird überwiesen…</> : `${euros(payoutAmount)} jetzt auszahlen`}
             </button>
+            {payoutAmount !== availableCents && (
+              <p className="text-xs text-center mt-2" style={{ color: 'rgba(255,255,255,0.6)' }}>
+                {euros(availableCents)} Provision + 19 % Umsatzsteuer
+              </p>
+            )}
           </div>
         )}
 
@@ -313,6 +342,7 @@ export default function AffiliatePage() {
           <RuleItem>Pro Monat gibt es <strong className="text-gray-800">eine Auszahlung</strong>. Die läuft automatisch, du musst nichts tun.</RuleItem>
           <RuleItem>Neue Provisionen haben eine <strong className="text-gray-800">Schutzfrist von 14 Tagen</strong>. So können wir Rückerstattungen sauber verrechnen, danach ist das Geld fest für dich reserviert.</RuleItem>
           <RuleItem>Auszahlungen gehen nur auf ein <strong className="text-gray-800">verifiziertes Bankkonto</strong>. Solange die Verifizierung läuft, bleibt dein Guthaben sicher stehen.</RuleItem>
+          <RuleItem>Für jede Auszahlung bekommst du eine <strong className="text-gray-800">Gutschrift</strong> zum Herunterladen. Stimmt etwas nicht, sag uns bitte innerhalb von 4 Wochen Bescheid.</RuleItem>
         </ul>
       </section>
 
@@ -332,10 +362,10 @@ export default function AffiliatePage() {
               <div key={u.id} className="flex items-center gap-3 px-3 py-2.5 rounded-2xl hover:bg-gray-50 transition-colors">
                 <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0"
                   style={{ background: '#F1F5F9', color: '#475569' }}>
-                  {(u.email[0] ?? '?').toUpperCase()}
+                  {((u.first_name || u.email)[0] ?? '?').toUpperCase()}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm text-gray-700 truncate">{u.email}</p>
+                  <p className="text-sm text-gray-700 truncate">{u.first_name || u.email}</p>
                   <p className="text-xs text-gray-400">{fmtDate(u.created_at)}</p>
                 </div>
                 <span className="text-xs font-semibold px-2.5 py-1 rounded-full flex-shrink-0"
@@ -379,6 +409,13 @@ export default function AffiliatePage() {
       ) : (
         <BankSetupCard onStart={startConnect} connecting={connecting} error={connectError} />
       )}
+
+      {/* ── Angaben für die Abrechnung + Gutschriften ─────────────────────────── */}
+      <TaxProfileSection
+        profile={taxProfile}
+        onSaved={(p, complete) => { setTaxProfile(p); setTaxComplete(complete) }}
+      />
+      <CreditNotesSection items={creditNotes} />
 
       {/* ── Commission history (only if any) ────────────────────────────────── */}
       {(stats.commissions?.length ?? 0) > 0 && (

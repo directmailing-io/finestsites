@@ -278,7 +278,16 @@ export default function DatenschutzPage() {
             <li>Individueller Referral-Link und Referral-Code</li>
             <li>Anzahl geworbener Nutzer und daraus resultierende Vergütungsansprüche</li>
             <li>Bankverbindung oder Stripe-Connect-Daten für Auszahlungen</li>
+            <li>Abrechnungsangaben für Gutschriften: Name bzw. Firma, Anschrift, steuerlicher Status,
+              Steuernummer bzw. Umsatzsteuer-Identifikationsnummer sowie Zeitpunkt der Zustimmung zum
+              Gutschriftverfahren</li>
           </ul>
+          <p style={{ marginTop: 12 }}>
+            Gutschriften und die zugehörigen Buchungsdaten bewahren wir aufgrund handels- und
+            steuerrechtlicher Pflichten (§ 147 AO, § 14b UStG) bis zu zehn Jahre auf, auch über
+            die Löschung des Nutzerkontos hinaus. Partner sehen von den von ihnen geworbenen Nutzern nur
+            Vorname, Tarif und Abo-Status, keine vollständigen E-Mail-Adressen.
+          </p>
           <p style={{ marginTop: 12 }}>
             Für Auszahlungen nutzen wir Stripe Connect. Es gelten die Datenschutzhinweise
             unter Ziffer 7. Rechtsgrundlage für die Verarbeitung der Affiliate-Daten ist

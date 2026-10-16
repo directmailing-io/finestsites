@@ -32,9 +32,13 @@ export async function POST(req: NextRequest) {
   if (referral_code) {
     const referrer = await db.query.users.findFirst({
       where: eq(users.username, referral_code.toLowerCase().trim()),
-      columns: { username: true },
+      columns: { username: true, email: true },
     })
-    if (referrer?.username) validatedReferralCode = referrer.username
+    // Keine Selbstempfehlung (defensiv – das neue Konto hat noch keinen Benutzernamen,
+    // ein Konto mit derselben E-Mail wird unten ohnehin abgelehnt)
+    if (referrer?.username && referrer.email?.toLowerCase() !== email.toLowerCase().trim()) {
+      validatedReferralCode = referrer.username
+    }
   }
 
   // Check if email already registered

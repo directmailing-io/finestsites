@@ -314,7 +314,7 @@ export default function PricingSection({ validatedRef, campaign }: { validatedRe
 
         {/* ── Bottom note ─────────────────────────────────────────── */}
         <div style={{ marginTop: 48, textAlign: 'center' }}>
-          <p style={{ fontSize: 13, color: '#bbb', marginBottom: 32 }}>Alle Preise inkl. MwSt. · {yearly ? 'Jährlich kündbar' : 'Monatlich kündbar'} · Keine versteckten Kosten</p>
+          <p style={{ fontSize: 13, color: '#bbb', marginBottom: 32 }}>Nur für Unternehmer · Alle Preise inkl. MwSt. · {yearly ? 'Jährlich kündbar' : 'Monatlich kündbar'} · Keine versteckten Kosten</p>
 
           <div style={{ background: '#FDF9F0', border: '1px solid #EDCBA8', borderRadius: 24, overflow: 'hidden', maxWidth: 980, margin: '0 auto' }}>
             <div className="fs-pricing-banner-grid">

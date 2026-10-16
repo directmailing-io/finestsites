@@ -29,7 +29,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   // Load the target user
   const targetUser = await db.query.users.findFirst({
     where: eq(users.id, id),
-    columns: { id: true, email: true, plan: true, referredByUsername: true },
+    columns: { id: true, email: true, firstName: true, username: true, plan: true, referredByUsername: true },
   })
   if (!targetUser) return NextResponse.json({ error: 'User not found' }, { status: 404 })
 
@@ -67,6 +67,10 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   })
 
   if (!affiliate) return NextResponse.json({ error: 'Partner nicht gefunden.' }, { status: 404 })
+  // Keine Selbstempfehlung: ein Nutzer kann nicht sein eigener Partner sein
+  if (affiliate.id === targetUser.id) {
+    return NextResponse.json({ error: 'Ein Nutzer kann nicht sich selbst als Partner zugeordnet werden.' }, { status: 400 })
+  }
 
   // Update the referral
   await db.update(users).set({ referredByUsername: affiliateUsername }).where(eq(users.id, id))
@@ -79,7 +83,9 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     to: notifyEmail,
     subject: 'Neuer Partner zugeordnet – Provision ab sofort aktiv',
     html: affiliateAdminAssignEmail({
+      // Template zeigt nur Vorname bzw. maskierte E-Mail (Datensparsamkeit gegenüber Partnern)
       refereeEmail: targetUser.email,
+      refereeFirstName: targetUser.firstName ?? null,
       planLabel,
       firstName: affiliate.firstName ?? null,
     }),

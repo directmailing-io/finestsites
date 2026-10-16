@@ -146,7 +146,7 @@ export async function GET(req: NextRequest) {
   }
 
   // Only count non-reversed commissions (reversed = coupon override or cancellation)
-  const commissionByInvoiceId = new Map<string, { amount: number; referrerId: string }>()
+  const commissionByInvoiceId = new Map<string, { amount: number; referrerId: string | null }>()
   for (const c of allCommissions) {
     if (c.stripeInvoiceId && c.status !== 'reversed') {
       commissionByInvoiceId.set(c.stripeInvoiceId, { amount: c.commissionAmount, referrerId: c.referrerId })
@@ -204,7 +204,7 @@ export async function GET(req: NextRequest) {
       const commission = commissionByInvoiceId.get(inv.id)
       const affiliateCommissionCents = commission?.amount || 0
       const affiliatePartnerUsername = commission
-        ? (referrerUsernameById.get(commission.referrerId) || userInfo?.referredByUsername || null)
+        ? ((commission.referrerId ? referrerUsernameById.get(commission.referrerId) : null) || userInfo?.referredByUsername || null)
         : null
       // net = gross - MwSt - stripe fee - affiliate commission
       const netCents = grossCents - taxCents - stripFeeCents - affiliateCommissionCents
