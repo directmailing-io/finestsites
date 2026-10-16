@@ -19,7 +19,7 @@ export const CREDIT_NOTE_ISSUER = {
   zipCity: '97437 Haßfurt',
   country: 'Deutschland',
   vatId: 'DE369220308',
-  email: 'hello@finestsites.io',
+  email: 'info@finestsites.io',
   web: 'finestsites.io',
 } as const
 

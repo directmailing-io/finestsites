@@ -248,7 +248,7 @@ export function CreditNotesSection({ items }: { items: CreditNoteItem[] }) {
         ))}
       </div>
       <p className="text-xs mt-3 px-3 leading-relaxed" style={{ color: '#64748B' }}>
-        Bitte prüfe jede Gutschrift. Stimmt etwas nicht, schreib uns innerhalb von 4 Wochen an hello@finestsites.io.
+        Bitte prüfe jede Gutschrift. Stimmt etwas nicht, schreib uns innerhalb von 4 Wochen an info@finestsites.io.
       </p>
     </section>
   )

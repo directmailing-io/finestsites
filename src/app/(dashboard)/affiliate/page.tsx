@@ -420,7 +420,7 @@ export default function AffiliatePage() {
           <RuleItem>Lieber aufs Bankkonto? Dann überweisen wir <strong className="text-gray-800">ab 10 €</strong> einmal im Monat. Bist du drunter, verfällt nichts. Dein Guthaben sammelt sich einfach weiter an.</RuleItem>
           <RuleItem>Pro Monat gibt es <strong className="text-gray-800">eine Abrechnung</strong>. Die läuft automatisch, du musst nichts tun.</RuleItem>
           <RuleItem>Neue Provisionen haben eine <strong className="text-gray-800">Schutzfrist von 14 Tagen</strong>. So können wir Rückerstattungen sauber verrechnen, danach ist das Geld fest für dich reserviert.</RuleItem>
-          <RuleItem>Endet dein eigenes Abo, zahlen wir dir dein <strong className="text-gray-800">restliches Guthaben auf Wunsch aus</strong>. Schreib uns dafür einfach an hello@finestsites.io.</RuleItem>
+          <RuleItem>Endet dein eigenes Abo, zahlen wir dir dein <strong className="text-gray-800">restliches Guthaben auf Wunsch aus</strong>. Schreib uns dafür einfach an info@finestsites.io.</RuleItem>
           <RuleItem>Für jede Abrechnung bekommst du eine <strong className="text-gray-800">Gutschrift</strong> zum Herunterladen. Stimmt etwas nicht, sag uns bitte innerhalb von 4 Wochen Bescheid.</RuleItem>
         </ul>
       </section>
