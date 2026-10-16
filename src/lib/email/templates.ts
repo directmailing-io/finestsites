@@ -668,7 +668,7 @@ export function testimonialThanksEmail({ firstName }: { firstName?: string }): s
       Kennst du Teampartner, die auch eine Geschichte zu erzählen haben? Schick ihnen gern den Link weiter: <a href="https://app.finestsites.io/erfahrungsbericht" style="color:${base.heading};">app.finestsites.io/erfahrungsbericht</a>
     </p>
     <p style="margin:28px 0 0;font-size:13px;color:${base.muted};line-height:1.6;">
-      Du kannst deine Einwilligung jederzeit widerrufen. Schreib uns dafür einfach eine E-Mail an hello@finestsites.io und wir nehmen deinen Bericht von allen Seiten runter.
+      Du kannst deine Einwilligung jederzeit widerrufen. Schreib uns dafür einfach eine E-Mail an info@finestsites.io und wir nehmen deinen Bericht von allen Seiten runter.
     </p>
   `)
 }

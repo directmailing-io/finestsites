@@ -117,7 +117,7 @@ export async function POST(req: NextRequest) {
     type: 'testimonial_thanks',
   }).catch(() => {})
 
-  const adminEmail = process.env.ADMIN_NOTIFY_EMAIL ?? 'hello@finestsites.io'
+  const adminEmail = process.env.ADMIN_NOTIFY_EMAIL ?? 'info@finestsites.io'
   const verifiedCount = assets.filter(a => a.status === 'verified').length
   sendEmail({
     to: adminEmail,

@@ -29,7 +29,7 @@ export default function DatenschutzPage() {
             97437 Haßfurt<br />
             Deutschland<br /><br />
             Telefon: +49 151 51005561<br />
-            E-Mail: <a href="mailto:hello@finestsites.io" style={{ color: '#8060b0' }}>hello@finestsites.io</a>
+            E-Mail: <a href="mailto:info@finestsites.io" style={{ color: '#8060b0' }}>info@finestsites.io</a>
           </p>
           <p style={{ marginTop: 12 }}>
             Ein Datenschutzbeauftragter ist gemäß Art. 37 DSGVO nicht benannt, da die gesetzlichen
@@ -426,7 +426,7 @@ export default function DatenschutzPage() {
 
           <p style={{ marginTop: 16 }}>
             Um Ihre Rechte auszuüben, wenden Sie sich bitte an:{' '}
-            <a href="mailto:hello@finestsites.io" style={{ color: '#8060b0' }}>hello@finestsites.io</a>.
+            <a href="mailto:info@finestsites.io" style={{ color: '#8060b0' }}>info@finestsites.io</a>.
             Wir bearbeiten Anfragen innerhalb von 30 Tagen.
           </p>
         </Section>

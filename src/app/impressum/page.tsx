@@ -30,7 +30,7 @@ export default function ImpressumPage() {
         <Section title="Kontakt">
           <p>
             Telefon: <a href="tel:+4915151005561" style={{ color: '#8060b0' }}>+49 151 51005561</a><br />
-            E-Mail: <a href="mailto:hello@finestsites.io" style={{ color: '#8060b0' }}>hello@finestsites.io</a>
+            E-Mail: <a href="mailto:info@finestsites.io" style={{ color: '#8060b0' }}>info@finestsites.io</a>
           </p>
         </Section>
 

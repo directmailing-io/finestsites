@@ -298,7 +298,7 @@ export default function AgbPage() {
             <li>Begründeten Abmahnungen oder Klageandrohungen Dritter aufgrund von Inhalten des Nutzers</li>
           </ul>
           <p style={{ marginTop: 12 }}>
-            (5) Kündigungen können per E-Mail an hello@finestsites.io oder über die Plattform selbst
+            (5) Kündigungen können per E-Mail an info@finestsites.io oder über die Plattform selbst
             erklärt werden. Die Kündigung ist wirksam, sobald sie dem Anbieter zugegangen ist.
           </p>
         </Section>
@@ -314,7 +314,7 @@ export default function AgbPage() {
             Dateien, Einstellungen) nach Vertragsbeendigung für einen Zeitraum von <strong>90 Tagen</strong> auf.
             In diesem Zeitraum kann der Nutzer das Abonnement reaktivieren und seine Daten sichern. Nach Ablauf
             dieser Frist werden die Website-Inhalte unwiderruflich gelöscht. Das Nutzerkonto selbst (E-Mail-Adresse,
-            Zugangsdaten) bleibt davon unberührt und kann jederzeit über hello@finestsites.io zur Löschung
+            Zugangsdaten) bleibt davon unberührt und kann jederzeit über info@finestsites.io zur Löschung
             beantragt werden.
           </p>
           <p style={{ marginTop: 12 }}>
@@ -407,7 +407,7 @@ export default function AgbPage() {
           </p>
           <p style={{ marginTop: 12 }}>
             (3) Auf Anfrage schließt der Anbieter mit dem Nutzer einen gesonderten Auftragsverarbeitungsvertrag
-            (AVV) gemäß Art. 28 DSGVO ab. Der Nutzer kann einen AVV per E-Mail an hello@finestsites.io
+            (AVV) gemäß Art. 28 DSGVO ab. Der Nutzer kann einen AVV per E-Mail an info@finestsites.io
             anfordern.
           </p>
         </Section>

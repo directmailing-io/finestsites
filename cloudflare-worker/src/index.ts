@@ -1678,7 +1678,7 @@ ${legalTopbarHtml(domain)}
 <p>97437 Ha\u00DFfurt</p>
 <p>Deutschland</p>
 <p>Telefon: <a href="tel:+4915151005561">+49 151 51005561</a></p>
-<p>E-Mail: <a href="mailto:hello@finestsites.io">hello@finestsites.io</a></p>
+<p>E-Mail: <a href="mailto:info@finestsites.io">info@finestsites.io</a></p>
 <p>USt-IdNr.: DE369220308</p>
 </div>
 <p>FinestSites stellt die technische Plattform bereit und ist Diensteanbieter im Sinne des \u00A7 5 DDG.</p>
@@ -1752,7 +1752,7 @@ ${legalTopbarHtml(domain)}
 <p>97437 Haßfurt</p>
 <p>Germany</p>
 <p>Phone: <a href="tel:+4915151005561">+49 151 51005561</a></p>
-<p>Email: <a href="mailto:hello@finestsites.io">hello@finestsites.io</a></p>
+<p>Email: <a href="mailto:info@finestsites.io">info@finestsites.io</a></p>
 <p>VAT ID: DE369220308</p>
 </div>
 <p>FinestSites provides the technical platform and is the service provider within the meaning of Section 5 DDG.</p>
@@ -1869,7 +1869,7 @@ ${legalTopbarHtml(domain)}
 <p>Herrleinstr. 39</p>
 <p>97437 Ha\u00DFfurt</p>
 <p>Deutschland</p>
-<p>E-Mail: <a href="mailto:hello@finestsites.io">hello@finestsites.io</a></p>
+<p>E-Mail: <a href="mailto:info@finestsites.io">info@finestsites.io</a></p>
 <p>Telefon: <a href="tel:+4915151005561">+49 151 51005561</a></p>
 </div>
 </section>
@@ -1919,7 +1919,7 @@ ${vital ? vitalprofilSectionDe() : ''}<section>
 <p><strong>Einschr\u00E4nkung</strong> (Art. 18 DSGVO) &ndash; Sie k\u00F6nnen die Einschr\u00E4nkung der Verarbeitung verlangen.</p>
 <p><strong>Widerspruch</strong> (Art. 21 DSGVO) &ndash; Sie k\u00F6nnen der Verarbeitung auf Basis berechtigter Interessen widersprechen.</p>
 <p><strong>Daten\u00FCbertragbarkeit</strong> (Art. 20 DSGVO) &ndash; Sie k\u00F6nnen Ihre Daten in einem strukturierten, maschinenlesbaren Format erhalten.</p>
-<p>Zur Aus\u00FCbung Ihrer Rechte wenden Sie sich an: <a href="mailto:hello@finestsites.io">hello@finestsites.io</a></p>
+<p>Zur Aus\u00FCbung Ihrer Rechte wenden Sie sich an: <a href="mailto:info@finestsites.io">info@finestsites.io</a></p>
 </section>
 
 <hr class="divider">
@@ -1945,7 +1945,7 @@ ${vital ? vitalprofilSectionDe() : ''}<section>
 <p>Herrleinstr. 39</p>
 <p>97437 Haßfurt</p>
 <p>Germany</p>
-<p>Email: <a href="mailto:hello@finestsites.io">hello@finestsites.io</a></p>
+<p>Email: <a href="mailto:info@finestsites.io">info@finestsites.io</a></p>
 <p>Phone: <a href="tel:+4915151005561">+49 151 51005561</a></p>
 </div>
 </section>
@@ -1995,7 +1995,7 @@ ${vital ? vitalprofilSectionEn() : ''}<section>
 <p><strong>Restriction</strong> (Art. 18 GDPR): you can request that processing be restricted.</p>
 <p><strong>Objection</strong> (Art. 21 GDPR): you can object to processing based on legitimate interests.</p>
 <p><strong>Data portability</strong> (Art. 20 GDPR): you can receive your data in a structured, machine-readable format.</p>
-<p>To exercise your rights, contact: <a href="mailto:hello@finestsites.io">hello@finestsites.io</a></p>
+<p>To exercise your rights, contact: <a href="mailto:info@finestsites.io">info@finestsites.io</a></p>
 </section>
 
 <hr class="divider">
