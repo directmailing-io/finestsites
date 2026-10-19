@@ -3,6 +3,7 @@ import { getRealUserFromRequest } from '@/lib/auth/server'
 import { db } from '@/lib/db'
 import { users, supportConversations, supportMessages } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
+import { recordSuggestionSent } from '@/lib/support/ai-suggest'
 
 async function checkAdmin(req: Request) {
   const user = await getRealUserFromRequest(req)
@@ -41,7 +42,7 @@ export async function POST(req: NextRequest) {
   const admin = await checkAdmin(req)
   if (!admin) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const { conversationId, content } = await req.json()
+  const { conversationId, content, suggestionId } = await req.json()
   if (!conversationId || !content?.trim()) return NextResponse.json({ error: 'conversationId and content required' }, { status: 400 })
 
   try {
@@ -50,6 +51,11 @@ export async function POST(req: NextRequest) {
       .insert(supportMessages)
       .values({ conversationId, senderType: 'admin', senderId: admin.id, content: content.trim() })
       .returning()
+
+    // Antwort ging nach einem KI-Vorschlag raus → gesendeten Text am Vorschlag merken (nie blockierend)
+    if (typeof suggestionId === 'string' && suggestionId) {
+      recordSuggestionSent(suggestionId, conversationId, content.trim()).catch(() => {})
+    }
 
     // Update conv: lastMessageAt, increment unreadByUser, re-open if closed
     const conv = await db.query.supportConversations.findFirst({ where: eq(supportConversations.id, conversationId) })

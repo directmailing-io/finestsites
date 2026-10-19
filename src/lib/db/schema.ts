@@ -588,6 +588,35 @@ export const supportMessagesRelations = relations(supportMessages, ({ one }) => 
 export type SupportConversation = typeof supportConversations.$inferSelect
 export type SupportMessage = typeof supportMessages.$inferSelect
 
+/** KI-Antwortvorschläge für den Admin (Migration 20261019120000). sent_content wird gefüllt, sobald
+ *  der Admin nach diesem Vorschlag antwortet – so lässt sich sehen, wie stark umgeschrieben wird. */
+export const supportAiSuggestions = pgTable('support_ai_suggestions', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  conversationId: uuid('conversation_id').references(() => supportConversations.id, { onDelete: 'cascade' }),
+  adminId: uuid('admin_id').references(() => users.id, { onDelete: 'set null' }),
+  model: text('model').notNull(),
+  hint: text('hint'),
+  suggestion: text('suggestion').notNull(),
+  sentContent: text('sent_content'),
+  sentAt: timestamp('sent_at', { withTimezone: true }),
+  promptTokens: integer('prompt_tokens').notNull().default(0),
+  cachedTokens: integer('cached_tokens').notNull().default(0),
+  completionTokens: integer('completion_tokens').notNull().default(0),
+  durationMs: integer('duration_ms'),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [
+  index('idx_support_ai_suggestions_conv').on(t.conversationId),
+  index('idx_support_ai_suggestions_created').on(t.createdAt),
+])
+
+/** Kleiner Schlüssel/Wert-Speicher für Admin-Einstellungen (z. B. 'support_ai_notes'). */
+export const appSettings = pgTable('app_settings', {
+  key: text('key').primaryKey(),
+  value: text('value').notNull().default(''),
+  updatedBy: uuid('updated_by').references(() => users.id, { onDelete: 'set null' }),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+})
+
 // ─── Impersonation ─────────────────────────────────────────────────────────────
 
 export const impersonationRequests = pgTable('impersonation_requests', {

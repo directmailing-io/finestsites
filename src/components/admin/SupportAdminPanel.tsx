@@ -181,6 +181,13 @@ export default function SupportAdminPanel() {
   const [activeFilter, setActiveFilter] = useState<FilterTab>('all')
   const [inputText, setInputText] = useState('')
   const [sending, setSending] = useState(false)
+  // KI-Vorschlag: landet nur im Eingabefeld, wird nie automatisch gesendet
+  const [suggesting, setSuggesting] = useState(false)
+  const [suggestion, setSuggestion] = useState<{ id: string; costCents: number; cached: boolean } | null>(null)
+  const [aiError, setAiError] = useState<string | null>(null)
+  const [notesOpen, setNotesOpen] = useState(false)
+  const [notes, setNotes] = useState('')
+  const [notesSaving, setNotesSaving] = useState(false)
   const [loadingMessages, setLoadingMessages] = useState(false)
   const [hoveredId, setHoveredId] = useState<string | null>(null)
   const [editingSubject, setEditingSubject] = useState<string | null>(null)
@@ -356,7 +363,10 @@ export default function SupportAdminPanel() {
   const handleSend = async () => {
     if (!selectedId || !inputText.trim() || sending) return
     const content = inputText.trim()
+    const suggestionId = suggestion?.id ?? null
     setInputText('')
+    setSuggestion(null)
+    setAiError(null)
     setSending(true)
 
     // Optimistic add
@@ -376,7 +386,7 @@ export default function SupportAdminPanel() {
       const res = await fetch('/api/admin/support/messages', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ conversationId: selectedId, content }),
+        body: JSON.stringify({ conversationId: selectedId, content, suggestionId }),
       })
       if (res.ok) {
         const data = await res.json()
@@ -398,6 +408,83 @@ export default function SupportAdminPanel() {
       // keep optimistic message
     } finally {
       setSending(false)
+    }
+  }
+
+  // ── KI-Vorschlag ─────────────────────────────────────────────────────────────
+  // Steht schon Text im Feld, gilt er als Stichpunkte: die KI formuliert daraus Daniels Antwort.
+
+  const handleSuggest = async () => {
+    if (!selectedId || suggesting) return
+    setSuggesting(true)
+    setAiError(null)
+    try {
+      const res = await fetch('/api/admin/support/suggest', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ conversationId: selectedId, hint: inputText.trim() }),
+      })
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok) {
+        setAiError(data.error ?? 'Vorschlag konnte nicht erstellt werden')
+        return
+      }
+      setInputText(data.text ?? '')
+      setSuggestion({ id: data.id, costCents: data.costCents ?? 0, cached: (data.usage?.cachedTokens ?? 0) > 0 })
+      requestAnimationFrame(() => {
+        const el = textareaRef.current
+        if (el) { el.focus(); el.setSelectionRange(0, 0); el.scrollTop = 0 }
+      })
+    } catch {
+      setAiError('Keine Verbindung')
+    } finally {
+      setSuggesting(false)
+    }
+  }
+
+  const discardSuggestion = () => {
+    setInputText('')
+    setSuggestion(null)
+    textareaRef.current?.focus()
+  }
+
+  // Eingabefeld wächst mit dem Text (am Handy bis knapp halber Bildschirm, am Desktop bis 320 px)
+  useEffect(() => {
+    const el = textareaRef.current
+    if (!el) return
+    el.style.height = 'auto'
+    const max = isMobile ? Math.round(window.innerHeight * 0.42) : 320
+    el.style.height = `${Math.min(el.scrollHeight, max)}px`
+    el.style.overflowY = el.scrollHeight > max ? 'auto' : 'hidden'
+  }, [inputText, isMobile, selectedId])
+
+  // Vorschlag verwerfen, wenn ein anderes Gespräch geöffnet wird
+  useEffect(() => {
+    setSuggestion(null)
+    setAiError(null)
+  }, [selectedId])
+
+  // ── KI-Hinweise (Aktionen, Störungen) ───────────────────────────────────────
+
+  const openNotes = async () => {
+    setNotesOpen(true)
+    try {
+      const res = await fetch('/api/admin/support/ai-notes')
+      if (res.ok) setNotes((await res.json()).notes ?? '')
+    } catch { /* ignore */ }
+  }
+
+  const saveNotes = async () => {
+    setNotesSaving(true)
+    try {
+      await fetch('/api/admin/support/ai-notes', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ notes }),
+      })
+      setNotesOpen(false)
+    } catch { /* ignore */ } finally {
+      setNotesSaving(false)
     }
   }
 
@@ -429,8 +516,36 @@ export default function SupportAdminPanel() {
     }
   }
 
+  const aiButton = (
+    <button
+      type="button"
+      onClick={handleSuggest}
+      disabled={suggesting || sending}
+      title={inputText.trim() ? 'KI formuliert aus deinen Stichpunkten eine Antwort in deinem Stil' : 'KI-Antwortvorschlag (wird nicht gesendet, nur eingefügt). Tipp: erst Stichpunkte tippen, dann klicken.'}
+      style={{
+        height: 36, padding: '0 12px', borderRadius: 8, border: '1px solid #DDD6FE',
+        background: suggesting ? '#EDE9FE' : '#F5F3FF', color: '#5B21B6', fontSize: 13, fontWeight: 600,
+        cursor: suggesting ? 'wait' : 'pointer', display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0,
+        opacity: sending ? 0.5 : 1, whiteSpace: 'nowrap',
+      }}
+    >
+      {suggesting ? (
+        <>
+          <span style={{ width: 12, height: 12, borderRadius: 6, border: '2px solid #C4B5FD', borderTopColor: '#5B21B6', animation: 'fsSpin 0.8s linear infinite', display: 'inline-block' }} />
+          Denkt nach…
+        </>
+      ) : (
+        <>
+          <span aria-hidden>✨</span>
+          {inputText.trim() && !suggestion ? 'Ausformulieren' : 'KI-Vorschlag'}
+        </>
+      )}
+    </button>
+  )
+
   const formatButtons = (
     <div style={{ display: 'flex', gap: 6 }}>
+      {aiButton}
       {([['**', 'B', 'Fett (Strg/Cmd+B)', { fontWeight: 800 }], ['*', 'I', 'Kursiv (Strg/Cmd+I)', { fontStyle: 'italic', fontFamily: 'Georgia, serif' }]] as const).map(([marker, label, title, style]) => (
         <button
           key={label}
@@ -451,6 +566,67 @@ export default function SupportAdminPanel() {
     </div>
   )
 
+  // Hinweiszeile über dem Eingabefeld: Vorschlag eingefügt (mit Kosten) oder Fehler
+  const aiInfoLine = (suggestion || aiError) ? (
+    <div
+      style={{
+        display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8, padding: '6px 10px', borderRadius: 8,
+        background: aiError ? '#FEF2F2' : '#F5F3FF', color: aiError ? '#B91C1C' : '#5B21B6', fontSize: 12, fontWeight: 500,
+      }}
+    >
+      <span style={{ flex: 1 }}>
+        {aiError
+          ? `KI-Fehler: ${aiError}`
+          : <>✨ KI-Vorschlag eingefügt, bitte prüfen und anpassen. Gesendet wird erst, wenn du auf Senden klickst.{suggestion && suggestion.costCents > 0 && <span style={{ color: '#8B7BB5', whiteSpace: 'nowrap' }}> · ≈ {suggestion.costCents < 1 ? suggestion.costCents.toFixed(2).replace('.', ',') : suggestion.costCents.toFixed(1).replace('.', ',')} ct{suggestion.cached ? '' : ' (erster Aufruf, Cache aufgebaut)'}</span>}</>}
+      </span>
+      {suggestion && !aiError && (
+        <button type="button" onClick={discardSuggestion} style={{ background: 'none', border: 'none', color: '#5B21B6', fontSize: 12, fontWeight: 600, cursor: 'pointer', padding: 0, textDecoration: 'underline' }}>
+          Verwerfen
+        </button>
+      )}
+      {aiError && (
+        <button type="button" onClick={() => setAiError(null)} style={{ background: 'none', border: 'none', color: '#B91C1C', fontSize: 12, fontWeight: 600, cursor: 'pointer', padding: 0 }}>
+          ✕
+        </button>
+      )}
+    </div>
+  ) : null
+
+  // Fenster „KI-Hinweise“: freier Text, der bei jedem Vorschlag mitgegeben wird (Aktionen, Störungen …)
+  const notesModal = notesOpen ? (
+    <div
+      onClick={() => !notesSaving && setNotesOpen(false)}
+      style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.35)', zIndex: 1000, display: 'flex', alignItems: isMobile ? 'flex-end' : 'center', justifyContent: 'center', padding: isMobile ? 0 : 16 }}
+    >
+      <div
+        onClick={e => e.stopPropagation()}
+        role="dialog"
+        aria-label="KI-Hinweise"
+        style={{ background: '#fff', borderRadius: isMobile ? '16px 16px 0 0' : 16, width: '100%', maxWidth: 560, padding: 20, boxShadow: '0 20px 60px rgba(0,0,0,0.25)', boxSizing: 'border-box' }}
+      >
+        <div style={{ fontSize: 16, fontWeight: 700, color: '#111', marginBottom: 4 }}>✨ Aktuelle Hinweise für die KI</div>
+        <div style={{ fontSize: 12, color: '#777', marginBottom: 12, lineHeight: 1.5 }}>
+          Was gerade gilt und nicht in der festen Wissensbasis steht: laufende Aktionen mit Code und Enddatum, bekannte Störungen, neue Funktionen, Sonderregeln. Wird bei jedem Vorschlag mitgegeben und hat Vorrang. Leer lassen ist okay.
+        </div>
+        <textarea
+          value={notes}
+          onChange={e => setNotes(e.target.value)}
+          placeholder={'z. B.\nAktion bis 31.10.: Code HERBST15 = 15 % auf die ersten 3 Monate\nBeauty-Seite ist seit heute für alle verfügbar'}
+          rows={8}
+          style={{ width: '100%', border: '1px solid #EBEBEB', borderRadius: 10, padding: 12, fontSize: 14, fontFamily: 'inherit', lineHeight: 1.5, resize: 'vertical', outline: 'none', boxSizing: 'border-box', color: '#111', minHeight: 160 }}
+        />
+        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginTop: 12 }}>
+          <button type="button" onClick={() => setNotesOpen(false)} disabled={notesSaving} style={{ height: 40, padding: '0 16px', borderRadius: 8, border: '1px solid #EBEBEB', background: '#fff', color: '#444', fontSize: 13, fontWeight: 600, cursor: 'pointer' }}>
+            Abbrechen
+          </button>
+          <button type="button" onClick={saveNotes} disabled={notesSaving} style={{ height: 40, padding: '0 18px', borderRadius: 8, border: 'none', background: '#111', color: '#fff', fontSize: 13, fontWeight: 600, cursor: 'pointer', opacity: notesSaving ? 0.6 : 1 }}>
+            {notesSaving ? 'Speichert…' : 'Speichern'}
+          </button>
+        </div>
+      </div>
+    </div>
+  ) : null
+
   // ── Selected conversation data ───────────────────────────────────────────────
 
   const selectedConversation = conversations.find(c => c.id === selectedId) ?? null
@@ -458,6 +634,9 @@ export default function SupportAdminPanel() {
   // ── Render ───────────────────────────────────────────────────────────────────
 
   return (
+    <>
+    <style>{`@keyframes fsSpin { to { transform: rotate(360deg) } }`}</style>
+    {notesModal}
     <div
       style={{
         display: 'flex',
@@ -479,9 +658,19 @@ export default function SupportAdminPanel() {
         }}
       >
         {/* Header */}
-        <div style={{ padding: '20px 16px 12px' }}>
-          <div style={{ fontSize: 20, fontWeight: 700, color: '#111' }}>Support</div>
-          <div style={{ fontSize: 13, color: '#999', marginTop: 2 }}>Kundenanfragen verwalten</div>
+        <div style={{ padding: '20px 16px 12px', display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 8 }}>
+          <div>
+            <div style={{ fontSize: 20, fontWeight: 700, color: '#111' }}>Support</div>
+            <div style={{ fontSize: 13, color: '#999', marginTop: 2 }}>Kundenanfragen verwalten</div>
+          </div>
+          <button
+            type="button"
+            onClick={openNotes}
+            title="Aktuelle Hinweise für die KI (Aktionen, Störungen, Sonderregeln)"
+            style={{ height: 32, padding: '0 10px', borderRadius: 8, border: '1px solid #EBEBEB', background: '#fff', color: '#5B21B6', fontSize: 12, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 5, flexShrink: 0 }}
+          >
+            <span aria-hidden>✨</span> KI-Hinweise
+          </button>
         </div>
 
         {/* Search */}
@@ -1019,55 +1208,62 @@ export default function SupportAdminPanel() {
                   flexShrink: 0,
                 }}
               >
+                {aiInfoLine}
                 {isMobile ? (
-                  // Mobile: formatting buttons, then input + send button side by side
+                  // Mobile: full-width textarea that grows with the text, below it the buttons
                   <>
-                  <div style={{ marginBottom: 8 }}>{formatButtons}</div>
-                  <div style={{ display: 'flex', gap: 8, alignItems: 'flex-end' }}>
-                    <textarea
-                      ref={textareaRef}
-                      value={inputText}
-                      onChange={e => setInputText(e.target.value)}
-                      onKeyDown={handleKeyDown}
-                      placeholder="Antwort schreiben…"
-                      rows={1}
-                      style={{
-                        flex: 1,
-                        minHeight: 44,
-                        maxHeight: 120,
-                        border: '1px solid #EBEBEB',
-                        borderRadius: 22,
-                        padding: '10px 16px',
-                        fontSize: 15,
-                        fontFamily: 'inherit',
-                        resize: 'none',
-                        outline: 'none',
-                        boxSizing: 'border-box',
-                        color: '#111',
-                        background: '#F7F7F7',
-                        lineHeight: 1.5,
-                      }}
-                    />
+                  <textarea
+                    ref={textareaRef}
+                    value={inputText}
+                    onChange={e => setInputText(e.target.value)}
+                    onKeyDown={handleKeyDown}
+                    placeholder={suggesting ? 'KI schreibt einen Vorschlag…' : 'Antwort schreiben… (oder Stichpunkte, dann ✨)'}
+                    rows={3}
+                    style={{
+                      width: '100%',
+                      minHeight: 88,
+                      border: `1px solid ${suggestion ? '#C4B5FD' : '#EBEBEB'}`,
+                      borderRadius: 14,
+                      padding: '12px 14px',
+                      fontSize: 16,
+                      fontFamily: 'inherit',
+                      resize: 'none',
+                      outline: 'none',
+                      boxSizing: 'border-box',
+                      color: '#111',
+                      background: suggestion ? '#FBFAFF' : '#F7F7F7',
+                      lineHeight: 1.5,
+                      display: 'block',
+                    }}
+                  />
+                  <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginTop: 8 }}>
+                    {formatButtons}
                     <button
                       onClick={handleSend}
                       disabled={!inputText.trim() || sending}
+                      aria-label="Senden"
                       style={{
                         background: '#111',
                         color: '#fff',
                         border: 'none',
                         borderRadius: 22,
-                        width: 44,
                         height: 44,
+                        padding: '0 18px',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
+                        gap: 8,
                         flexShrink: 0,
+                        marginLeft: 'auto',
+                        fontSize: 14,
+                        fontWeight: 600,
                         cursor: !inputText.trim() || sending ? 'not-allowed' : 'pointer',
                         opacity: !inputText.trim() || sending ? 0.35 : 1,
                         transition: 'opacity 0.15s',
                       }}
                     >
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      {sending ? 'Sende…' : 'Senden'}
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                         <line x1="22" y1="2" x2="11" y2="13" /><polygon points="22 2 15 22 11 13 2 9 22 2" />
                       </svg>
                     </button>
@@ -1081,13 +1277,12 @@ export default function SupportAdminPanel() {
                       value={inputText}
                       onChange={e => setInputText(e.target.value)}
                       onKeyDown={handleKeyDown}
-                      placeholder="Antwort schreiben…"
-                      rows={3}
+                      placeholder={suggesting ? 'KI schreibt einen Vorschlag…' : 'Antwort schreiben… (oder Stichpunkte tippen und auf ✨ klicken)'}
+                      rows={4}
                       style={{
                         width: '100%',
-                        minHeight: 72,
-                        maxHeight: 144,
-                        border: '1px solid #EBEBEB',
+                        minHeight: 96,
+                        border: `1px solid ${suggestion ? '#C4B5FD' : '#EBEBEB'}`,
                         borderRadius: 12,
                         padding: 12,
                         fontSize: 14,
@@ -1096,8 +1291,9 @@ export default function SupportAdminPanel() {
                         outline: 'none',
                         boxSizing: 'border-box',
                         color: '#111',
-                        background: '#fff',
+                        background: suggestion ? '#FBFAFF' : '#fff',
                         lineHeight: 1.5,
+                        display: 'block',
                       }}
                     />
                     <div style={{ marginTop: 10, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -1164,5 +1360,6 @@ export default function SupportAdminPanel() {
         )}
       </div>
     </div>
+    </>
   )
 }
