@@ -257,7 +257,7 @@ export function buildRequestTurn(input: {
     parts.push(input.hint.trim())
     parts.push('')
   }
-  parts.push('Schreibe jetzt Daniels nächste Nachricht an den Kunden. Beantworte alles, was der Kunde seit Daniels letzter echter Antwort gefragt hat. Falls die letzte Nachricht vom Kunden nur ein Dank oder eine Bestätigung ist, antworte entsprechend kurz.')
+  parts.push('Schreibe jetzt Daniels nächste Nachricht an den Kunden. Beantworte alles, was der Kunde seit Daniels letzter echter Antwort gefragt hat. Falls die letzte Nachricht vom Kunden nur ein Dank oder eine Bestätigung ist, antworte entsprechend kurz. Hat der Kunde seit Daniels letzter Antwort gar nichts geschrieben, schreibe nur eine kurze, freundliche Nachfrage, ob alles geklappt hat (ein bis zwei Sätze, nichts Neues anbieten).')
   return parts.join('\n')
 }
 
