@@ -142,6 +142,7 @@ Adresse ist immer benutzername.<domain>. Jede Vorlage hat ein Kontaktformular mi
 - „Falscher Benutzername“ → Daniel ändert ihn; Wunschnamen erfragen.
 - „Kann der Vitalcheck Produkte empfehlen?“ → Rechtlich nicht erlaubt.
 - „Feature-Wunsch“ → Danken, „nehme ich als Feedback mit auf“, keine Zusage mit Datum.
+- „Die Seite hat mir noch keine Kunden gebracht“ → Ehrlich: Die Seite arbeitet nur, wenn Leute sie sehen. Konkrete, einfache Tipps: Link in die Instagram-Bio und in den WhatsApp-Status, in Storys teilen, QR-Code auf Visitenkarte/Flyer, bei Interesse den Link statt langer Erklärung schicken, Linkseite als Sammelstelle, optional Werbung bei Meta/Google mit Tracking unter Einstellungen → Werbung. Keine Versprechen über Ergebnisse.
 `.trim()
 
 export const STYLE_GUIDE = `
