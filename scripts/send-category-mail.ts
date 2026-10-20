@@ -10,6 +10,7 @@
  *   … --to info@daniel-kurzeja.de --send                                                          # nur an eine Adresse (Test)
  *     … --only a@x.de,b@y.de --send    # nur an diese Konten (braucht Daniels Freigabe-Datei)
  *   … --segment with-sub | --segment without-sub                                                  # nach Abo-Status
+ *   … --personal --from "Daniel Kurzeja <info@finestsites.io>" --reply-to info@daniel-kurzeja.de  # schlichte persönliche Mail
  *
  * Kategorien: system (nicht abbestellbar, nur für Pflichtinfos), updates, tips, offers.
  * Body = Mail-Markup (Leerzeile = Absatz, **fett**, [Text](URL), [[Button]](URL)), Platzhalter
@@ -59,6 +60,9 @@ async function main() {
   console.log(`Kategorie ${category} · ${recipients.length} Empfänger vor Opt-out-Filter · ${SEND ? 'VERSAND' : 'Trockenlauf'}`)
   const result = await sendCategoryMail({
     category, subject, body, recipients, dryRun: !SEND,
+    personal: argv.includes('--personal'),
+    ...(opt('--from') ? { from: opt('--from') } : {}),
+    ...(opt('--reply-to') ? { replyTo: opt('--reply-to') } : {}),
     type: category === 'updates' ? 'product_update' : category === 'tips' ? 'tip' : category === 'offers' ? 'offer' : 'newsletter',
     onProgress: m => console.log('  ' + m),
   })

@@ -14,7 +14,7 @@ import { db } from '@/lib/db'
 import { users, emailLogs } from '@/lib/db/schema'
 import { inArray } from 'drizzle-orm'
 import { getResend, FROM_EMAIL } from '@/lib/resend'
-import { newsletterEmail, type PrefsFooter } from '@/lib/email/templates'
+import { newsletterEmail, personalEmail, personalEmailText, type PrefsFooter } from '@/lib/email/templates'
 import { markupToHtml } from '@/lib/email/markup'
 import { isEmailCategoryAllowed, emailCategoryLabel, type EmailCategory } from '@/lib/email/categories'
 import { unsubscribeUrl, listUnsubscribeHeaders, EMAIL_SETTINGS_URL } from '@/lib/email/unsubscribe'
@@ -83,6 +83,9 @@ export async function sendCategoryMail({
   recipients,
   dryRun = false,
   onProgress,
+  personal = false,
+  from = FROM_EMAIL,
+  replyTo,
 }: {
   category: EmailCategory
   /** email_logs.type, z. B. 'newsletter' oder 'product_update' */
@@ -97,6 +100,12 @@ export async function sendCategoryMail({
   /** true = nur zählen und filtern, nichts senden, nichts loggen */
   dryRun?: boolean
   onProgress?: (msg: string) => void
+  /** true = `body` als schlichte persönliche Mail (personalEmail) statt Newsletter-Layout, mit Textfassung */
+  personal?: boolean
+  /** Absender, z. B. 'Daniel Kurzeja <info@finestsites.io>' */
+  from?: string
+  /** Antworten gehen an diese Adresse */
+  replyTo?: string
 }): Promise<BulkResult> {
   if (!body && !buildHtml) throw new Error('sendCategoryMail: body oder buildHtml angeben')
   const { allowed, skipped } = await splitByOptOut(recipients, category)
@@ -123,12 +132,16 @@ export async function sendCategoryMail({
       const prefs: PrefsFooter | undefined = unsub ? { categoryLabel, unsubscribeUrl: unsub, settingsUrl: EMAIL_SETTINGS_URL } : undefined
       const html = buildHtml
         ? buildHtml(u, prefs)
-        : newsletterEmail({ subject: personalSubject, bodyHtml: markupToHtml(interpolate(body!, u)), prefs })
-      return { u, personalSubject, html, headers: unsub ? listUnsubscribeHeaders(unsub) : undefined }
+        : personal
+          ? personalEmail({ body: interpolate(body!, u), prefs })
+          : newsletterEmail({ subject: personalSubject, bodyHtml: markupToHtml(interpolate(body!, u)), prefs })
+      const text = !buildHtml && personal ? personalEmailText({ body: interpolate(body!, u), prefs }) : undefined
+      return { u, personalSubject, html, text, headers: unsub ? listUnsubscribeHeaders(unsub) : undefined }
     })
     try {
       const res = await resend.batch.send(payloads.map(p => ({
-        from: FROM_EMAIL, to: p.u.email, subject: p.personalSubject, html: p.html, ...(p.headers ? { headers: p.headers } : {}),
+        from, to: p.u.email, subject: p.personalSubject, html: p.html,
+        ...(p.text ? { text: p.text } : {}), ...(replyTo ? { replyTo } : {}), ...(p.headers ? { headers: p.headers } : {}),
       })))
       if (res.error) {
         result.failed += chunk.length

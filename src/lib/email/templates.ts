@@ -148,6 +148,29 @@ export function passwordResetEmail({ url }: { url: string }): string {
  * Newsletter-Rahmen. Bei abbestellbaren Kategorien (updates | tips | offers) kommt `prefs` mit:
  * der Footer sagt dann, warum der Nutzer die Mail bekommt, und verlinkt Abbestellen + Einstellungen.
  */
+/**
+ * Persönliche Mail im Look einer von Hand geschriebenen Mail: kein Logo, keine Karte, keine Buttons.
+ * Bewusste Ausnahme von layout() – nur für Mails, die wie eine private Nachricht von Daniel wirken
+ * sollen. Abbestellen-Link bleibt Pflicht (klein, grau, unten).
+ * Body im einfachen Mail-Markup: Leerzeile = Absatz, [Text](URL) = Link.
+ */
+export function personalEmail({ body, prefs }: { body: string; prefs?: PrefsFooter }): string {
+  const esc = (t: string) => t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+  const paragraphs = body.split(/\n\n+/).filter(p => p.trim()).map(p =>
+    `<p style="margin:0 0 14px;">${esc(p).replace(/\n/g, '<br>').replace(/\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g, '<a href="$2">$1</a>')}</p>`,
+  ).join('')
+  const footer = prefs
+    ? `<p style="margin:32px 0 0;font-size:11px;color:#9a9a9a;">Du bekommst diese Mail, weil du ein FinestSites-Konto hast. <a href="${prefs.unsubscribeUrl}" style="color:#9a9a9a;">Abbestellen</a></p>`
+    : ''
+  return `<!DOCTYPE html><html lang="de"><head><meta charset="UTF-8"></head><body style="margin:0;padding:16px;font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:1.5;color:#222;">${paragraphs}${footer}</body></html>`
+}
+
+/** Textfassung zu personalEmail (Links als „Text (URL)“) */
+export function personalEmailText({ body, prefs }: { body: string; prefs?: PrefsFooter }): string {
+  const text = body.replace(/\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g, '$1 ($2)').trim()
+  return prefs ? `${text}\n\n--\nDu bekommst diese Mail, weil du ein FinestSites-Konto hast. Abbestellen: ${prefs.unsubscribeUrl}` : text
+}
+
 export function newsletterEmail({
   subject,
   bodyHtml,
