@@ -167,7 +167,7 @@ export function personalEmail({ body, prefs }: { body: string; prefs?: PrefsFoot
 
 /** Textfassung zu personalEmail (Links als „Text (URL)“) */
 export function personalEmailText({ body, prefs }: { body: string; prefs?: PrefsFooter }): string {
-  const text = body.replace(/\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g, '$1 ($2)').trim()
+  const text = body.replace(/\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g, (_m, t: string, url: string) => (t === url ? url : `${t} (${url})`)).trim()
   return prefs ? `${text}\n\n--\nDu bekommst diese Mail, weil du ein FinestSites-Konto hast. Abbestellen: ${prefs.unsubscribeUrl}` : text
 }
 
