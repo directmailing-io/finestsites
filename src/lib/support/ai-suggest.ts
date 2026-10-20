@@ -22,7 +22,10 @@ const DEFAULT_MODEL = 'gpt-5.4-mini'
 const MAX_MESSAGES = 30
 const MAX_MESSAGE_CHARS = 1500
 const MAX_TRANSCRIPT_CHARS = 9000
-const MAX_COMPLETION_TOKENS = 900
+const MAX_COMPLETION_TOKENS = 600
+const MAX_COST_CENTS = 5
+/** Text der automatischen Eingangsbestätigung (src/app/api/support/conversation/route.ts) – zählt nicht als Antwort von Daniel. */
+const AUTO_REPLY_PREFIX = 'Hey! Deine Nachricht ist bei uns angekommen.'
 
 type ChatMessage = { role: 'system' | 'user' | 'assistant'; content: string }
 
@@ -227,6 +230,36 @@ export async function setSupportAiNotes(value: string, adminId: string): Promise
     .onConflictDoUpdate({ target: appSettings.key, set: { value, updatedBy: adminId, updatedAt: new Date() } })
 }
 
+/** Gesprächslage, deterministisch aus den Nachrichten bestimmt (nicht dem Modell überlassen). */
+export interface ConversationState {
+  /** Daniel hat in diesem Gespräch schon selbst geantwortet (Auto-Bestätigung zählt nicht). */
+  danielReplied: boolean
+  /** Daniels letzte eigene Antwort liegt weniger als 36 Stunden zurück → laufender Chat, keine neue Begrüßung. */
+  ongoing: boolean
+  /** Zufriedenheitsfrage wurde schon gestellt. */
+  satisfactionAsked: boolean
+  /** Zeichenlänge der letzten Kundennachricht(en) seit Daniels letzter Antwort. */
+  pendingCustomerChars: number
+}
+
+export function deriveConversationState(messages: TranscriptMessage[], now: Date): ConversationState {
+  let lastAdminAt: Date | null = null
+  let satisfactionAsked = false
+  let pendingCustomerChars = 0
+  for (const m of messages) {
+    if (m.senderType === 'admin' && m.contentType !== 'system' && !m.content.startsWith(AUTO_REPLY_PREFIX)) {
+      lastAdminAt = m.createdAt
+      pendingCustomerChars = 0
+      if (/zufrieden/i.test(m.content)) satisfactionAsked = true
+    } else if (m.senderType === 'user' && m.contentType !== 'system') {
+      pendingCustomerChars += m.content.length
+    }
+  }
+  const danielReplied = lastAdminAt !== null
+  const ongoing = danielReplied && now.getTime() - (lastAdminAt as Date).getTime() < 36 * 60 * 60 * 1000
+  return { danielReplied, ongoing, satisfactionAsked, pendingCustomerChars }
+}
+
 /** Baut den dynamischen User-Turn. Exportiert, damit Tests ihn ohne OpenAI prüfen können. */
 export function buildRequestTurn(input: {
   customerContext: string
@@ -234,6 +267,7 @@ export function buildRequestTurn(input: {
   notes: string
   hint: string
   now: Date
+  state?: ConversationState
 }): string {
   const now = input.now
   const hour = Number(now.toLocaleString('en-US', { hour: 'numeric', hour12: false, timeZone: 'Europe/Berlin' }))
@@ -257,7 +291,26 @@ export function buildRequestTurn(input: {
     parts.push(input.hint.trim())
     parts.push('')
   }
-  parts.push('Schreibe jetzt Daniels nächste Nachricht an den Kunden. Beantworte alles, was der Kunde seit Daniels letzter echter Antwort gefragt hat. Falls die letzte Nachricht vom Kunden nur ein Dank oder eine Bestätigung ist, antworte entsprechend kurz. Hat der Kunde seit Daniels letzter Antwort gar nichts geschrieben, schreibe nur eine kurze, freundliche Nachfrage, ob alles geklappt hat (ein bis zwei Sätze, nichts Neues anbieten).')
+  parts.push('## Vorgaben für genau diese Antwort')
+  const s = input.state
+  if (s?.ongoing) {
+    parts.push('- Das Gespräch LÄUFT bereits, Daniel hat vor Kurzem geantwortet: KEINE Begrüßung, kein „Hi …“, kein „Hey …“, kein Name am Anfang. Direkt mit dem Inhalt beginnen, so wie man in einem laufenden Chat weiterschreibt.')
+  } else if (s?.danielReplied) {
+    parts.push('- Daniel hat früher schon geantwortet, es ist aber etwas Zeit vergangen: kurze Anrede ohne Namen ist okay („Hey“, „Moin“), kein erneutes „Hi Vorname“.')
+  } else {
+    parts.push('- Erste echte Antwort von Daniel in diesem Gespräch: Anrede mit Vornamen.')
+  }
+  if (s?.satisfactionAsked) parts.push('- Die Zufriedenheitsfrage wurde schon gestellt: nicht noch einmal fragen.')
+  if (s && s.pendingCustomerChars === 0) {
+    parts.push('- Der Kunde hat seit Daniels letzter Antwort nichts geschrieben: nur eine kurze, freundliche Nachfrage, ob alles geklappt hat (ein bis zwei Sätze, nichts Neues anbieten).')
+  } else if (s && s.pendingCustomerChars < 160) {
+    parts.push('- Die Kundennachricht ist kurz (Feedback, Dank, kurze Frage): höchstens 2 bis 4 Sätze, keine Liste, kein Rundumschlag. Nur bei einer ausdrücklichen Frage nach einer Anleitung Schritte aufzählen.')
+  } else {
+    parts.push('- So kurz wie möglich: jede Frage des Kunden beantworten, nichts Ungefragtes ergänzen. Liste nur bei einer Anleitung.')
+  }
+  parts.push('- Kein Abschlusssatz mit einem Angebot, das der Kunde nicht erbeten hat (nicht: „Wenn du magst, schau ich mit dir …“, „Soll ich dir zeigen …“). Erlaubt ist höchstens „Melde dich, wenn du Fragen hast 😊“ oder gar kein Abschluss.')
+  parts.push('')
+  parts.push('Schreibe jetzt Daniels nächste Nachricht an den Kunden. Beantworte alles, was der Kunde seit Daniels letzter echter Antwort gefragt hat.')
   return parts.join('\n')
 }
 
@@ -359,10 +412,18 @@ export async function generateSuggestion(input: { conversationId: string; userId
     getSupportAiNotes(),
   ])
 
-  const messages = buildMessages({ customerContext, transcript: buildTranscript(rows), notes, hint, now: new Date() })
+  const now = new Date()
+  const messages = buildMessages({ customerContext, transcript: buildTranscript(rows), notes, hint, now, state: deriveConversationState(rows, now) })
 
   const result = await callOpenAI(messages)
   const durationMs = Date.now() - started
+  const costCents = estimateCostCents(result.model, result.usage)
+  // Daniels Obergrenze: ein Vorschlag darf höchstens 5 Cent kosten. Durch die Kürzung von Verlauf und Ausgabe
+  // liegt der schlimmste Fall bei rund 1 Cent – sollte das je reißen, lieber laut scheitern als still Geld verbrennen.
+  if (costCents > MAX_COST_CENTS) {
+    console.error('[support-ai] Vorschlag zu teuer', { costCents, usage: result.usage, model: result.model })
+    throw new SuggestError(`Vorschlag abgebrochen: ${costCents.toFixed(2)} Cent überschreiten die Grenze von ${MAX_COST_CENTS} Cent`, 500)
+  }
 
   const [row] = await db
     .insert(supportAiSuggestions)
@@ -379,7 +440,7 @@ export async function generateSuggestion(input: { conversationId: string; userId
     })
     .returning({ id: supportAiSuggestions.id })
 
-  return { id: row.id, text: result.text, model: result.model, usage: result.usage, costCents: estimateCostCents(result.model, result.usage), durationMs }
+  return { id: row.id, text: result.text, model: result.model, usage: result.usage, costCents, durationMs }
 }
 
 /** Nach dem Senden: gesendeten Text am Vorschlag speichern (Vergleich Vorschlag ↔ tatsächliche Antwort). */

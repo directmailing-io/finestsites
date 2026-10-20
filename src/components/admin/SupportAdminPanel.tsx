@@ -577,7 +577,7 @@ export default function SupportAdminPanel() {
       <span style={{ flex: 1 }}>
         {aiError
           ? `KI-Fehler: ${aiError}`
-          : <>✨ KI-Vorschlag eingefügt, bitte prüfen und anpassen. Gesendet wird erst, wenn du auf Senden klickst.{suggestion && suggestion.costCents > 0 && <span style={{ color: '#8B7BB5', whiteSpace: 'nowrap' }}> · ≈ {suggestion.costCents < 1 ? suggestion.costCents.toFixed(2).replace('.', ',') : suggestion.costCents.toFixed(1).replace('.', ',')} ct{suggestion.cached ? '' : ' (erster Aufruf, Cache aufgebaut)'}</span>}</>}
+          : <>✨ KI-Vorschlag eingefügt, bitte prüfen und anpassen. Gesendet wird erst, wenn du auf Senden klickst.{suggestion && suggestion.costCents > 0 && <span style={{ color: '#8B7BB5', whiteSpace: 'nowrap' }}> · Kosten ≈ {suggestion.costCents.toFixed(2).replace('.', ',')} Cent{suggestion.cached ? '' : ' (erster Aufruf ohne Cache)'}</span>}</>}
       </span>
       {suggestion && !aiError && (
         <button type="button" onClick={discardSuggestion} style={{ background: 'none', border: 'none', color: '#5B21B6', fontSize: 12, fontWeight: 600, cursor: 'pointer', padding: 0, textDecoration: 'underline' }}>

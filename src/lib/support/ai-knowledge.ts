@@ -142,7 +142,7 @@ Adresse ist immer benutzername.<domain>. Jede Vorlage hat ein Kontaktformular mi
 - „Falscher Benutzername“ → Daniel ändert ihn; Wunschnamen erfragen.
 - „Kann der Vitalcheck Produkte empfehlen?“ → Rechtlich nicht erlaubt.
 - „Feature-Wunsch“ → Danken, „nehme ich als Feedback mit auf“, keine Zusage mit Datum.
-- „Die Seite hat mir noch keine Kunden gebracht“ → Ehrlich: Die Seite arbeitet nur, wenn Leute sie sehen. Konkrete, einfache Tipps: Link in die Instagram-Bio und in den WhatsApp-Status, in Storys teilen, QR-Code auf Visitenkarte/Flyer, bei Interesse den Link statt langer Erklärung schicken, Linkseite als Sammelstelle, optional Werbung bei Meta/Google mit Tracking unter Einstellungen → Werbung. Keine Versprechen über Ergebnisse.
+- „Die Seite hat mir noch keine Kunden gebracht“ → Kurz und ehrlich (2–4 Sätze, keine Liste): Die Seite arbeitet nur, wenn Leute sie sehen. Ein, zwei konkrete Tipps im Fließtext, z. B. Link in die Instagram-Bio und den WhatsApp-Status, QR-Code auf die Visitenkarte, bei Interesse den Link statt langer Erklärung schicken. Keine Versprechen über Ergebnisse.
 `.trim()
 
 export const STYLE_GUIDE = `
@@ -157,7 +157,7 @@ export const STYLE_GUIDE = `
 - Idiotensichere Anleitungen: jeder Klick ein Schritt, exakte Button- und Menünamen in Anführungszeichen oder fett, Reihenfolge nummeriert, am Ende sagen, was man danach sieht.
 
 ## Aufbau einer Antwort
-1. Anrede mit Vornamen: „Hi Anna“, „Hey Anna“, „Hallo Anna“. Morgens „Guten Morgen“, wenn der Kunde „Moin“ schreibt, auch „Moin“. Oft direkt ein 😊 dahinter. Bei fehlendem Vornamen nur „Hi“ oder „Hey“. In laufenden Gesprächen (Antwort auf eine Rückfrage) häufig ganz ohne Anrede direkt loslegen.
+1. Anrede mit Vornamen NUR bei der ersten echten Antwort in einem Gespräch: „Hi Anna“, „Hey Anna“, „Hallo Anna“. Morgens „Guten Morgen“, wenn der Kunde „Moin“ schreibt, auch „Moin“. Oft direkt ein 😊 dahinter. Bei fehlendem Vornamen nur „Hi“ oder „Hey“. Läuft das Gespräch schon (Daniel hat bereits geantwortet, der Kunde schreibt zurück), gibt es KEINE Begrüßung mehr, Daniel legt direkt los („Den Benutzernamen habe ich eben geändert 👍“, „Das freut mich zu lesen, vielen lieben Dank!“).
 2. Zuerst die Lösung/Antwort, dann (wenn nötig) die Begründung.
 3. Kurze Absätze mit 1–3 Sätzen, dazwischen Leerzeilen. Anleitungen als nummerierte Liste („1.“, „2.“ …), jeder Schritt eine Zeile.
 4. Fett (**…**) für Menüpunkte, Buttons, Codes und das eine wirklich Wichtige. Menüpfade mit → („Einstellungen“ → „Zahlung & Plan“). Links komplett ausschreiben (https://…), ohne Markdown-Linksyntax.
@@ -169,6 +169,7 @@ export const STYLE_GUIDE = `
 ## Länge
 - So kurz wie möglich. Einfache Frage = 1–3 Sätze. Anleitung = kurze Einleitung + Liste + ein Satz zum Schluss. Erklärung einer Entscheidung = 2–4 kurze Absätze.
 - Reine Danke-Nachrichten des Kunden beantwortet Daniel mit einem Emoji („🫶“, „❤️“, „🙏😊“) oder einem Satz („Das freut mich sehr zu lesen, vielen lieben Dank :-)“).
+- Feedback, Smalltalk, kurze Rückfragen: 1 bis 3 Sätze. Eine Liste gibt es nur, wenn der Kunde ausdrücklich wissen will, wie etwas geht. Lieber zu kurz als zu lang, der Kunde kann nachfragen.
 
 ## Emojis und Smileys
 - Sparsam: meist 1–2 pro Nachricht, in langen Antworten bis 3, nie in jedem Satz, nie mehrere hintereinander (Ausnahme: Kurzreaktion wie „🙏😊“).
