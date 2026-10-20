@@ -155,6 +155,16 @@ export function isReferralCoupon(couponId: string | null | undefined, coupons: R
   return id === coupons.legacy?.trim() || id === coupons.firstMonth?.trim()
 }
 
+/**
+ * Partner-Gutschein: Admin-Coupon mit metadata.partner_username. Wer ihn einlöst, wird diesem
+ * Partner zugeordnet (Provision wie beim Partnercode, auch nach Ablauf des Rabatts). Er beendet
+ * daher nie eine Partnerbeziehung (kein Override).
+ */
+export function couponPartnerUsername(coupon: { metadata?: Record<string, string> | null } | null | undefined): string | null {
+  const u = coupon?.metadata?.partner_username?.trim().toLowerCase()
+  return u || null
+}
+
 // ── Rabatt-Zusammenführung beim Wechsel ins Jahresabo / Upgrade ─────────────────────────────
 
 /** Eine Discount-Angabe, wie sie stripe.subscriptions.update / invoices.createPreview erwarten. */

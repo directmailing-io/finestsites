@@ -33,7 +33,7 @@ import { invoiceSubscriptionId, invoiceCouponIds, resolveChargeInvoiceId } from 
 import { planReversal, planDisputeRestore, type ReversalAction } from '@/lib/affiliate/reversal'
 import { syncConnectStatus } from '@/lib/affiliate/connect-status'
 import { computeInvoiceNet, commissionFromNet, invoiceSettledAmount } from '@/lib/affiliate/commission-base'
-import { isReferralCoupon, type ReferralTerms } from '@/lib/affiliate/referral-model'
+import { couponPartnerUsername, isReferralCoupon, type ReferralTerms } from '@/lib/affiliate/referral-model'
 import { referralCouponsFromEnv, paymentMethodFingerprint, rememberPaymentFingerprint, flagFingerprintMatch } from '@/lib/affiliate/referral-offer'
 
 export async function POST(req: NextRequest) {
@@ -344,10 +344,15 @@ export async function POST(req: NextRequest) {
     // checkout.session.completed räumt das in der DB auf – kommt dieses Event zuerst,
     // verhindert diese Prüfung die Provision direkt an der Rechnung.
     // Empfehlungs-Coupons (AFFILIATE10 und Modell-C-Startbonus) sind kein fremder Gutschein.
+    // Partner-Gutscheine (metadata.partner_username) beenden nichts.
     if (billingReason === 'subscription_create') {
       const referralCoupons = referralCouponsFromEnv()
       const { ids } = invoiceCouponIds(invoice)
-      if (referralCoupons.legacy && ids.some(id => !isReferralCoupon(id, referralCoupons))) return
+      const foreign = referralCoupons.legacy ? ids.filter(id => !isReferralCoupon(id, referralCoupons)) : []
+      for (const id of foreign) {
+        const c = await stripe.coupons.retrieve(id).catch(() => null)
+        if (!couponPartnerUsername(c)) return
+      }
     }
 
     const referrer = await db.query.users.findFirst({
@@ -444,8 +449,36 @@ export async function POST(req: NextRequest) {
           // we clear referredByUsername and reverse any pending/available commissions.
           // Future renewals will no longer generate commissions for the old referrer.
           // Empfehlungs-Coupons (AFFILIATE10 und Modell-C-Startbonus AFFILIATE20FIRST) sind kein Override
+          // Partner-Gutschein: ordnet den Kunden dem Partner zu (falls noch keiner), nie Override.
+          // Fallback für Codes, die direkt im Stripe-Checkout eingegeben wurden.
           const referralCoupons = referralCouponsFromEnv()
-          if (referralCoupons.legacy && !isReferralCoupon(coupon.id, referralCoupons)) {
+          const couponPartner = couponPartnerUsername(coupon)
+          if (couponPartner) {
+            const currentUser = await db.query.users.findFirst({
+              where: eq(users.id, userId),
+              columns: { referredByUsername: true, username: true },
+            })
+            const partner = await db.query.users.findFirst({
+              where: eq(users.username, couponPartner),
+              columns: { id: true },
+            })
+            if (!currentUser?.referredByUsername && partner && partner.id !== userId) {
+              await db.update(users)
+                .set({ referredByUsername: couponPartner })
+                .where(eq(users.id, userId))
+              await logEvent({
+                userId,
+                eventType: 'affiliate_assignment_changed',
+                stripeEventId: `${event.id}:affiliate-partner-promo`,
+                metadata: {
+                  old_affiliate: null,
+                  new_affiliate: couponPartner,
+                  changed_by: 'system_partner_promo',
+                  coupon_id: coupon.id,
+                },
+              })
+            }
+          } else if (referralCoupons.legacy && !isReferralCoupon(coupon.id, referralCoupons)) {
             const currentUser = await db.query.users.findFirst({
               where: eq(users.id, userId),
               columns: { referredByUsername: true },

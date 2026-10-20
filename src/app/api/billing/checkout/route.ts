@@ -8,7 +8,7 @@ import { getStripe, getPriceIdByPlan, type PlanKey, type BillingInterval } from 
 import { getCampaignForProfile } from '@/lib/billing/campaign'
 import { campaignDiscount } from '@/lib/billing/campaign-shared'
 import { loadReferralContextSafe, referralDiscountFor, referralProfileColumns, stampLegacyTermsIfBeforeStart } from '@/lib/affiliate/referral-offer'
-import { assertReferralCouponAllowed } from '@/lib/affiliate/referral-model'
+import { assertReferralCouponAllowed, couponPartnerUsername } from '@/lib/affiliate/referral-model'
 
 /**
  * Creates a Stripe Checkout Session for a subscription.
@@ -116,10 +116,12 @@ export async function POST(req: NextRequest) {
       } catch { /* ignore: fall through to affiliate check */ }
 
       // If a Stripe promo code was found, check its interval restriction (stored in coupon metadata)
+      let promoPartner: string | null = null
       if (promoCodeId) {
         try {
           const pc = await stripe.promotionCodes.retrieve(promoCodeId, { expand: ['promotion.coupon'] })
           const pcCoupon = pc.promotion.coupon as any
+          promoPartner = couponPartnerUsername(pcCoupon)
           const intervalRestriction: string = pcCoupon?.metadata?.interval ?? 'both'
           if (intervalRestriction !== 'both' && intervalRestriction !== interval) {
             const label = intervalRestriction === 'yearly' ? 'Jahresabonnements' : 'Monatsabonnements'
@@ -128,20 +130,25 @@ export async function POST(req: NextRequest) {
         } catch { /* ignore fetch errors — Stripe already validated the code above */ }
       }
 
-      // Only check for affiliate username if no Stripe promo code matched AND user has no existing referral
-      if (!promoCodeId && !hasReferral) {
-        const affiliateUser = await db.query.users.findFirst({
-          where: eqFn(usersTable.username, promo_code.toLowerCase().trim()),
+      // Partner aus dem Code: Benutzername (Partnercode) oder Partner-Gutschein
+      // (metadata.partner_username, Rabatt kommt dann vom Gutschein). Nur ohne bestehende Zuordnung.
+      let affiliateUser: { id: string; username: string | null; isAdmin: boolean } | undefined
+      if (!hasReferral && (promoPartner || !promoCodeId)) {
+        affiliateUser = await db.query.users.findFirst({
+          where: eqFn(usersTable.username, promoPartner ?? promo_code.toLowerCase().trim()),
           columns: { id: true, username: true, isAdmin: true },
         })
 
         // Eigener Benutzername als Partnercode → kein Rabatt, keine Provision an sich selbst
         if (affiliateUser?.id === user.id) {
-          return NextResponse.json({ error: 'Deinen eigenen Partnercode kannst du nicht verwenden. Lass das Feld leer oder gib einen anderen Code ein.' }, { status: 400 })
+          if (!promoCodeId) {
+            return NextResponse.json({ error: 'Deinen eigenen Partnercode kannst du nicht verwenden. Lass das Feld leer oder gib einen anderen Code ein.' }, { status: 400 })
+          }
+          affiliateUser = undefined
         }
 
         if (affiliateUser?.username) {
-          // It's an affiliate/partner code — track referral + apply coupon.
+          // It's an affiliate/partner code — track referral (+ referral coupon, if no promo code).
           // Only sets a FIRST assignment; an existing affiliate is never overwritten.
           if (!effectiveReferrer) effectiveReferrer = affiliateUser.username
           if (!referredBy) {
@@ -164,7 +171,7 @@ export async function POST(req: NextRequest) {
                 metadata: {
                   old_affiliate: null,
                   new_affiliate: affiliateUser.username,
-                  changed_by: 'user_checkout_code',
+                  changed_by: promoPartner ? 'user_checkout_partner_promo' : 'user_checkout_code',
                 },
               })
             } catch (err) {
