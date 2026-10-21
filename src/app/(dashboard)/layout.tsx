@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation'
 import { getServerUser, getImpersonationState } from '@/lib/auth/server'
 import { db } from '@/lib/db'
-import { users } from '@/lib/db/schema'
+import { users, appSettings } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
 import { DashboardSidebar } from '@/components/dashboard/Sidebar'
 import { MobileNav } from '@/components/dashboard/MobileNav'
@@ -10,16 +10,30 @@ import { GettingStartedSteps } from '@/components/dashboard/GettingStartedSteps'
 import SupportChat from '@/components/support/SupportChat'
 import ImpersonationBanner from '@/components/dashboard/ImpersonationBanner'
 import CancellationBanner from '@/components/dashboard/CancellationBanner'
+import DashboardNotice from '@/components/dashboard/DashboardNotice'
+
+/** Hinweistext für alle Nutzer aus app_settings; leer oder Fehler = kein Hinweis (darf das Dashboard nie blockieren). */
+async function loadDashboardNotice(): Promise<string> {
+  try {
+    const row = await db.query.appSettings.findFirst({ where: eq(appSettings.key, 'dashboard_notice') })
+    return row?.value.trim() ?? ''
+  } catch {
+    return ''
+  }
+}
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const [user, impersonation] = await Promise.all([getServerUser(), getImpersonationState()])
 
   if (!user) redirect('/login')
 
-  const profile = await db.query.users.findFirst({
-    where: eq(users.id, user.id),
-    columns: { username: true, subscriptionStatus: true, cancelAtPeriodEnd: true, currentPeriodEnd: true },
-  })
+  const [profile, notice] = await Promise.all([
+    db.query.users.findFirst({
+      where: eq(users.id, user.id),
+      columns: { username: true, subscriptionStatus: true, cancelAtPeriodEnd: true, currentPeriodEnd: true },
+    }),
+    loadDashboardNotice(),
+  ])
 
   const ADMIN_EMAIL = 'info@daniel-kurzeja.de'
 
@@ -36,6 +50,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
       <div className="flex min-h-screen" style={{ background: 'var(--background)' }}>
         <DashboardSidebar />
         <div className="flex-1 min-w-0 flex flex-col">
+          {notice && <DashboardNotice text={notice} />}
           {!impersonation && <ImpersonationBanner />}
           {!impersonation && (
             <CancellationBanner
