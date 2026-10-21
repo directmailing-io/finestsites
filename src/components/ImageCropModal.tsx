@@ -72,7 +72,6 @@ export default function ImageCropModal({
       window.removeEventListener('resize', onResize)
       window.removeEventListener('orientationchange', onResize)
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ready])
 
   useEffect(() => {
