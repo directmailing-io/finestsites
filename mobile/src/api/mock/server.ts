@@ -10,6 +10,7 @@
  */
 import type { Overview, Site, Todo } from '../types';
 
+import { waiverText } from '../contracts/account-deletion';
 import { createMockDb, type MockDb } from './data';
 
 let db: MockDb = createMockDb();
@@ -222,11 +223,27 @@ export async function mockFetch(url: string, init: { method: string; headers: Re
   }
   if (path === '/api/app/v1/affiliate/credit-notes') return json({ items: db.creditNotes });
   if (path === '/api/app/v1/account/deletion') {
+    const total = db.me.features.partnerProgram ? db.affiliate.earnings.availableCents + db.affiliate.earnings.pendingCents : 0;
     if (method === 'POST') {
-      if (String(body.password) === 'falsch') return json({ code: 'INVALID_PASSWORD' }, 400);
-      return json({ scheduled_for: new Date(Date.now() + 14 * 864e5).toISOString() });
+      if (String(body.password) === 'falsch') return json({ code: 'INVALID_PASSWORD', message: 'Das Passwort stimmt nicht.' }, 400);
+      if (total > 0 && !body.balanceChoice) return json({ code: 'BALANCE_CHOICE_REQUIRED', message: '' }, 400);
+      return json({ status: 'scheduled', scheduledFor: new Date(Date.now() + 14 * 864e5).toISOString(), signedOut: true });
     }
-    return json({ partner_balance_cents: db.me.features.partnerProgram ? db.affiliate.earnings.availableCents + db.affiliate.earnings.pendingCents : 0, has_payout_account: true, scheduled_for: null });
+    if (method === 'DELETE') return json({ status: 'none', sitesOffline: true });
+    return json({
+      status: 'none', requestedAt: null, scheduledFor: null, graceDays: 14, canDelete: true, blockedReason: null,
+      partnerBalance: {
+        currency: 'EUR',
+        availableCents: db.me.features.partnerProgram ? db.affiliate.earnings.availableCents : 0,
+        pendingCents: db.me.features.partnerProgram ? db.affiliate.earnings.pendingCents : 0,
+        customerCreditCents: 0,
+        totalCents: total,
+        hasPayoutAccount: true,
+        taxProfileComplete: true,
+        choice: null,
+        waiverText: waiverText(total),
+      },
+    });
   }
   if (path === '/api/app/v1/impersonation') {
     if (method === 'POST') {

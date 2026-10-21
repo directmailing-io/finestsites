@@ -12,6 +12,12 @@ export default function LoginPage() {
   const [error, setError] = useState('')
   const searchParams = useSearchParams()
   const callbackUrl = searchParams.get('callbackUrl')
+  // Nach „Konto löschen“: alle Sitzungen sind beendet, Hinweis mit Datum
+  const deletionDate = (() => {
+    const v = searchParams.get('deletion')
+    const d = v ? new Date(v) : null
+    return d && !isNaN(d.getTime()) ? d.toLocaleDateString('de-DE', { day: 'numeric', month: 'long', year: 'numeric' }) : null
+  })()
 
   // Suppress Chrome's automatic credential manager prompt on load
   useEffect(() => {
@@ -82,6 +88,11 @@ export default function LoginPage() {
         </Link>
       </p>
 
+      {deletionDate && (
+        <p className="text-sm mb-4 px-4 py-3 rounded-2xl leading-relaxed" style={{ background: '#FEF2F2', color: '#991B1B' }}>
+          Dein Konto wird am {deletionDate} gelöscht. Du bist überall abgemeldet. Bis dahin kannst du dich anmelden und die Löschung abbrechen.
+        </p>
+      )}
       <form onSubmit={handleSubmit} className="flex flex-col gap-4" autoComplete="on">
         {error && (
           <p className="text-sm" style={{ color: '#DC2626' }}>{error}</p>

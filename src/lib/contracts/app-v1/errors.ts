@@ -32,6 +32,13 @@ export const AppErrorCode = z.enum([
   'NOT_SELF', // nur der Kontoinhaber selbst (nicht der Support im „Anmelden als“-Modus)
   // Editor-Übergabe
   'HANDOFF_INVALID',
+  // Konto löschen (/api/app/v1/account/deletion)
+  'INVALID_PASSWORD',
+  'BALANCE_CHOICE_REQUIRED',
+  'DELETION_NOT_ALLOWED',
+  'DELETION_ALREADY_REQUESTED',
+  'NO_DELETION_PENDING',
+  'ACCOUNT_DELETION_PENDING',
 ])
 export type AppErrorCode = z.infer<typeof AppErrorCode>
 

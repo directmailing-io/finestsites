@@ -357,9 +357,10 @@ export async function POST(req: NextRequest) {
 
     const referrer = await db.query.users.findFirst({
       where: eq(users.username, refUsername),
-      columns: { id: true, email: true },
+      columns: { id: true, email: true, deletedAt: true },
     })
-    if (!referrer || referrer.id === userId) return
+    // Gelöschtes Partner-Konto: Partnerschaft beendet, keine neuen Provisionen (Benutzername bleibt reserviert)
+    if (!referrer || referrer.id === userId || referrer.deletedAt) return
 
     const inserted = await bookCommission({
       referrerId: referrer.id,
@@ -593,11 +594,11 @@ export async function POST(req: NextRequest) {
       if (referredBy && !affiliateOverrideDetected) {
         const referrer = await db.query.users.findFirst({
           where: eq(users.username, referredBy),
-          columns: { id: true, email: true },
+          columns: { id: true, email: true, deletedAt: true },
         })
 
-        // Selbstempfehlung → weder Provision noch Mail
-        if (referrer && referrer.id !== userId) {
+        // Selbstempfehlung → weder Provision noch Mail; gelöschtes Partner-Konto → keine Provision
+        if (referrer && referrer.id !== userId && !referrer.deletedAt) {
           // Commission only if the first invoice is actually paid (Karte). Bei SEPA ist sie
           // hier noch 'open'/processing – die Provision bucht dann invoice.payment_succeeded.
           // Base = tax-free net from the real invoice (after discount, before VAT).
@@ -713,8 +714,22 @@ export async function POST(req: NextRequest) {
 
       const userRow = await db.query.users.findFirst({
         where: eq(users.id, userId),
-        columns: { email: true, deactivatedAt: true, subscriptionStatus: true, paymentFailedAt: true },
+        columns: { email: true, deactivatedAt: true, subscriptionStatus: true, paymentFailedAt: true, deletionRequestedAt: true, deletedAt: true },
       })
+
+      // Kontolöschung: Abo wurde von uns sofort beendet, Seiten sind schon offline. Kein 90-Tage-Timer,
+      // keine „Abo ausgelaufen/pausiert“-Mail (der Nutzer hat die Lösch-Bestätigung bekommen).
+      if (userRow?.deletionRequestedAt || userRow?.deletedAt) {
+        await db.update(users).set({
+          plan: 'starter', subscriptionStatus: userRow.deletedAt ? null : 'canceled', stripeSubscriptionId: null,
+          cancelAtPeriodEnd: false, ...recoveryCleared,
+        }).where(eq(users.id, userId))
+        await logEvent({
+          userId, eventType: 'subscription_deleted', stripeEventId: event.id, stripeSubscriptionId: sub.id,
+          metadata: { account_deletion: true },
+        })
+        break
+      }
 
       // Was this a voluntary cancellation or a payment-failure termination?
       // past_due/unpaid → Stripe gave up on retries → payment failure email

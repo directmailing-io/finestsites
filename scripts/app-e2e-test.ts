@@ -532,6 +532,28 @@ async function partnerAndSignOut() {
     assert.equal(foreign.status, 404)
   })
 
+  // Nur lesend: auf finestsites_dev wird nie eine Löschung angefragt (dafür scripts/test-account-deletion.ts
+  // gegen eine eigene Wegwerf-DB).
+  console.log('▶ Konto löschen (nur Status)')
+  await step('GET /api/app/v1/account/deletion (qa-pro) → status none, darf löschen', async () => {
+    const d = contract(C.DeletionStatusResponse, await pro.get('/api/app/v1/account/deletion'))
+    assert.equal(d.status, 'none')
+    assert.equal(d.scheduledFor, null)
+    assert.equal(d.canDelete, true)
+    assert.equal(d.graceDays, C.DELETION_GRACE_DAYS)
+  })
+  await step('GET /api/app/v1/account/deletion (qa-partner) → Guthaben im Vertrag, Verzichtstext nennt Betrag', async () => {
+    const d = contract(C.DeletionStatusResponse, await partner.get('/api/app/v1/account/deletion'))
+    assert.equal(d.status, 'none')
+    assert.ok(d.partnerBalance.totalCents >= 0)
+    assert.equal(d.partnerBalance.waiverText, C.waiverText(d.partnerBalance.totalCents))
+  })
+  await step('POST /api/app/v1/account/deletion mit falschem Passwort → 400 INVALID_PASSWORD, nichts vorgemerkt', async () => {
+    assert.equal(contract(C.AppErrorBody, await free.post('/api/app/v1/account/deletion', { password: 'falsch-falsch' }), 400).code, 'INVALID_PASSWORD')
+    const d = contract(C.DeletionStatusResponse, await free.get('/api/app/v1/account/deletion'))
+    assert.equal(d.status, 'none')
+  })
+
   console.log('▶ Abmelden')
   await step('POST /api/auth/sign-out mit Bearer (ohne Cookie/Origin) → danach 401', async () => {
     for (const c of [pro, free, partner]) {

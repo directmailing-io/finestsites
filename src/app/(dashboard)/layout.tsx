@@ -14,6 +14,7 @@ import DashboardNotice from '@/components/dashboard/DashboardNotice'
 import type { Viewport } from 'next'
 import { isAppModeRequest } from '@/lib/app-mode/server'
 import { AppModeProvider } from '@/components/app-mode/AppMode'
+import { DeletionPendingScreen } from '@/components/settings/AccountDeletionSection'
 
 /**
  * App-Modus (Cookie `fs_app=1`, Dashboard in der nativen App): Inhalt bis an die Ränder
@@ -44,13 +45,20 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const [profile, notice] = await Promise.all([
     db.query.users.findFirst({
       where: eq(users.id, user.id),
-      columns: { username: true, subscriptionStatus: true, cancelAtPeriodEnd: true, currentPeriodEnd: true },
+      columns: { username: true, subscriptionStatus: true, cancelAtPeriodEnd: true, currentPeriodEnd: true, deletionScheduledFor: true, deletedAt: true },
     }),
     loadDashboardNotice(),
   ])
 
   const ADMIN_EMAIL = 'info@daniel-kurzeja.de'
   const appMode = await isAppModeRequest()
+
+  // Bedenkzeit einer Kontolöschung: nur „Konto wird gelöscht am … – Löschung abbrechen“ (Web und App-Modus).
+  // Admin-Impersonation sieht das normale Dashboard.
+  if (!impersonation && profile?.deletedAt) redirect('/login')
+  if (!impersonation && profile?.deletionScheduledFor) {
+    return <DeletionPendingScreen scheduledFor={profile.deletionScheduledFor.toISOString()} />
+  }
 
   // Only enforce username setup — subscription is not required to use the dashboard.
   // The payment wall is at publish time (enforced in /api/sites/[id]/publish).

@@ -12,7 +12,7 @@
  */
 import { db } from '@/lib/db'
 import { users, emailLogs } from '@/lib/db/schema'
-import { inArray } from 'drizzle-orm'
+import { and, inArray, isNull } from 'drizzle-orm'
 import { getResend, FROM_EMAIL } from '@/lib/resend'
 import { newsletterEmail, personalEmail, personalEmailText, type PrefsFooter } from '@/lib/email/templates'
 import { markupToHtml } from '@/lib/email/markup'
@@ -49,10 +49,10 @@ export function interpolate(text: string, u: BulkRecipient): string {
   })
 }
 
-/** Alle Konten mit gültiger Adresse, je Adresse nur einmal */
+/** Alle Konten mit gültiger Adresse, je Adresse nur einmal (ohne gelöschte/zur Löschung vorgemerkte Konten) */
 export async function loadAllRecipients(): Promise<BulkRecipient[]> {
   const rows = await db.select({ id: users.id, email: users.email, firstName: users.firstName, lastName: users.lastName, username: users.username })
-    .from(users).orderBy(users.email)
+    .from(users).where(and(isNull(users.deletionRequestedAt), isNull(users.deletedAt))).orderBy(users.email)
   const seen = new Set<string>()
   return rows.filter(u => u.email?.includes('@') && !seen.has(u.email.toLowerCase()) && seen.add(u.email.toLowerCase()))
 }
@@ -62,15 +62,24 @@ export async function loadAllRecipients(): Promise<BulkRecipient[]> {
  * damit auch eine Liste aus dem Admin-Frontend (die älter sein kann) korrekt gefiltert wird.
  */
 export async function splitByOptOut<T extends { id: string; email: string }>(recipients: T[], category: EmailCategory): Promise<{ allowed: T[]; skipped: T[] }> {
-  if (category === 'system' || recipients.length === 0) return { allowed: recipients, skipped: [] }
+  if (recipients.length === 0) return { allowed: recipients, skipped: [] }
   const optOut = new Map<string, string[]>()
+  // Gelöschte und zur Löschung vorgemerkte Konten bekommen keine Rundmail – in KEINER Kategorie
+  const deleting = new Set<string>()
   for (let i = 0; i < recipients.length; i += 500) {
     const ids = recipients.slice(i, i + 500).map(r => r.id)
-    const rows = await db.select({ id: users.id, emailOptOut: users.emailOptOut }).from(users).where(inArray(users.id, ids))
-    for (const r of rows) optOut.set(r.id, r.emailOptOut ?? [])
+    const rows = await db.select({ id: users.id, emailOptOut: users.emailOptOut, deletionRequestedAt: users.deletionRequestedAt, deletedAt: users.deletedAt })
+      .from(users).where(inArray(users.id, ids))
+    for (const r of rows) {
+      optOut.set(r.id, r.emailOptOut ?? [])
+      if (r.deletionRequestedAt || r.deletedAt) deleting.add(r.id)
+    }
   }
   const allowed: T[] = [], skipped: T[] = []
-  for (const r of recipients) (isEmailCategoryAllowed(optOut.get(r.id), category) ? allowed : skipped).push(r)
+  for (const r of recipients) {
+    const ok = !deleting.has(r.id) && !/@deleted\.invalid$/i.test(r.email) && isEmailCategoryAllowed(optOut.get(r.id), category)
+    ;(ok ? allowed : skipped).push(r)
+  }
   return { allowed, skipped }
 }
 

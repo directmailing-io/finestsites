@@ -262,6 +262,7 @@ ssh -i ~/.ssh/finestsites_hetzner root@188.245.35.52 "cd /var/www/finestsites/cl
 | GET | `/api/cron/check-domains` | Verify pending custom domains |
 | GET | `/api/cron/cleanup-drafts` | Delete very old abandoned drafts |
 | GET | `/api/cron/affiliate-payouts` | Process pending affiliate payouts |
+| GET | `/api/cron/account-deletion` | Kontolöschung nach 14 Tagen Bedenkzeit ausführen + Schlussabrechnung gelöschter Partner (täglich, noch NICHT in der Crontab) |
 
 ---
 

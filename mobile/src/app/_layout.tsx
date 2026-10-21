@@ -91,6 +91,7 @@ export default function RootLayout() {
                 <Stack.Protected guard={signedIn} redirectTo="/login">
                   <Stack.Screen name="(tabs)" />
                   <Stack.Screen name="onboarding" options={{ gestureEnabled: false }} />
+                  <Stack.Screen name="deletion-pending" options={{ gestureEnabled: false }} />
                   <Stack.Screen
                     name="editor/[id]"
                     options={{ presentation: 'fullScreenModal', headerShown: true, gestureEnabled: false }}

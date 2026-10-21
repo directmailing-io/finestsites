@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getServerUser } from '@/lib/auth/server'
 import { db } from '@/lib/db'
 import { users, userSites, templates } from '@/lib/db/schema'
-import { eq, ne } from 'drizzle-orm'
+import { and, eq, isNull, ne } from 'drizzle-orm'
 import { sql } from 'drizzle-orm'
 import { isEmailCategory, type EmailCategory } from '@/lib/email/categories'
 import { sendCategoryMail, type BulkRecipient } from '@/lib/email/bulk'
@@ -48,6 +48,8 @@ async function getEnrichedUsers(): Promise<{ users: UserRow[]; templates: Templa
   const [rawUsers, publishedSites, anySites, tplRows] = await Promise.all([
     db.select({ id: users.id, email: users.email, firstName: users.firstName, lastName: users.lastName, username: users.username, plan: users.plan, subscriptionStatus: users.subscriptionStatus, emailOptOut: users.emailOptOut })
       .from(users)
+      // Gelöschte und zur Löschung vorgemerkte Konten sind keine Empfänger (src/lib/account-deletion)
+      .where(and(isNull(users.deletionRequestedAt), isNull(users.deletedAt)))
       .orderBy(users.email),
     db.select({ userId: userSites.userId, templateId: userSites.templateId })
       .from(userSites)

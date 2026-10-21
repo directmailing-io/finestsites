@@ -119,14 +119,12 @@ export interface Message {
   createdAt: string;
 }
 
-// ── Konto löschen (/api/app/v1/account/deletion, Phase 3 – noch nicht auf dem Server) ─────
-export type PartnerBalanceChoice = 'payout' | 'waive';
-
-export interface DeletionInfo {
-  partner_balance_cents: number;
-  has_payout_account: boolean;
-  scheduled_for: string | null;
-}
+// ── Konto löschen (/api/app/v1/account/deletion, aus contracts/account-deletion.ts) ──────
+export type PartnerBalanceChoice = z.infer<typeof C.BalanceChoice>;
+export type DeletionInfo = z.infer<typeof C.DeletionStatusResponse>;
+export type DeletionRequestBody = z.infer<typeof C.DeletionRequestBody>;
+export type DeletionRequestResult = z.infer<typeof C.DeletionRequestResponse>;
+export type DeletionCancelResult = z.infer<typeof C.DeletionCancelResponse>;
 
 // ── Fehler ────────────────────────────────────────────────────────────────────
 /** /api/app/v1/*: { code, message, fields? }; Web-Routen: { error, code? }; BetterAuth: { code, message }. */
