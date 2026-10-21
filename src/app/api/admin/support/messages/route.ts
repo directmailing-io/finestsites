@@ -4,6 +4,7 @@ import { db } from '@/lib/db'
 import { users, supportConversations, supportMessages } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
 import { recordSuggestionSent } from '@/lib/support/ai-suggest'
+import { pushTriggers } from '@/lib/push/triggers'
 
 async function checkAdmin(req: Request) {
   const user = await getRealUserFromRequest(req)
@@ -68,6 +69,9 @@ export async function POST(req: NextRequest) {
         status: conv?.status === 'closed' ? 'open' : conv?.status ?? 'open',
       })
       .where(eq(supportConversations.id, conversationId))
+
+    // App-Push an den Nutzer (ohne Nachrichtentext). Tut nichts, solange Push aus ist; wirft nie.
+    if (conv?.userId) void pushTriggers.supportReply(conv.userId, conversationId)
 
     return NextResponse.json({ message })
   } catch {

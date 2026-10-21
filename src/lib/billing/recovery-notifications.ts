@@ -28,6 +28,7 @@ import {
   shouldBeOffline,
   trackedInvoiceInfo,
 } from '@/lib/billing/payment-recovery'
+import { pushTriggers } from '@/lib/push/triggers'
 
 const DAY_MS = 24 * 60 * 60 * 1000
 
@@ -81,21 +82,25 @@ export async function runRecoveryNotificationsFor(userId: string, now: Date = ne
     // before any notice) — tell them the truth, not "stays online until X"
     await sendEmail({ to: user.email, subject: 'Deine Seite ist jetzt offline', html: sitesOfflineEmail({ payUrl: info.payUrl, amount, deadline: formatDateDe(deadline) }), type: 'sites_offline' })
     await db.update(users).set({ paymentNoticeSentAt: now, paymentOfflineNotifiedAt: now }).where(eq(users.id, userId))
+    void pushTriggers.paymentNotice(userId, 'offline') // App-Push ohne Betrag/Zahl-Link; aus = nichts, wirft nie
     return 'offline'
   }
   if (due === 'notice') {
     await sendEmail({ to: user.email, subject: 'Deine Zahlung hat nicht geklappt', html: paymentFailedEmail(params), type: 'payment_failed' })
     await db.update(users).set({ paymentNoticeSentAt: now }).where(eq(users.id, userId))
+    void pushTriggers.paymentNotice(userId, 'notice') // App-Push ohne Betrag/Zahl-Link; aus = nichts, wirft nie
     return 'notice'
   }
   if (due === 'offline') {
     await sendEmail({ to: user.email, subject: 'Deine Seite ist jetzt offline', html: sitesOfflineEmail({ payUrl: info.payUrl, amount, deadline: formatDateDe(deadline) }), type: 'sites_offline' })
     await db.update(users).set({ paymentOfflineNotifiedAt: now }).where(eq(users.id, userId))
+    void pushTriggers.paymentNotice(userId, 'offline') // App-Push ohne Betrag/Zahl-Link; aus = nichts, wirft nie
     return 'offline'
   }
   const daysLeft = Math.max(1, Math.ceil((graceUntil.getTime() - now.getTime()) / DAY_MS))
   await sendEmail({ to: user.email, subject: `Noch ${daysLeft === 1 ? '1 Tag' : `${daysLeft} Tage`}, dann geht deine Seite offline`, html: paymentReminderEmail({ ...params, daysLeft }), type: 'payment_reminder' })
   await db.update(users).set({ paymentReminderSentAt: now }).where(eq(users.id, userId))
+  void pushTriggers.paymentNotice(userId, 'reminder') // App-Push ohne Betrag/Zahl-Link; aus = nichts, wirft nie
   return 'reminder'
 }
 

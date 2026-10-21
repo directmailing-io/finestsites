@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { blockPurchaseInApp } from '@/lib/app-mode'
 import type Stripe from 'stripe'
 import { db } from '@/lib/db'
 import { users } from '@/lib/db/schema'
@@ -26,6 +27,9 @@ import { assertReferralCouponAllowed, couponPartnerUsername } from '@/lib/affili
  * Invoicing: invoices are created automatically by Stripe for subscription billing.
  */
 export async function POST(req: NextRequest) {
+  // App: Kauf-/Abo-Schnittstellen gesperrt (Apple 3.1.1). Browser: unverändert.
+  const appBlocked = blockPurchaseInApp(req)
+  if (appBlocked) return appBlocked
   try {
     const user = await getUserFromRequest(req)
     if (!user) return NextResponse.json({ error: 'Nicht angemeldet.' }, { status: 401 })

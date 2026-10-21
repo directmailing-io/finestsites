@@ -3,6 +3,7 @@ import { getRealUserFromRequest } from '@/lib/auth/server'
 import { db } from '@/lib/db'
 import { users, supportConversations, supportMessages, impersonationRequests } from '@/lib/db/schema'
 import { eq, and, desc } from 'drizzle-orm'
+import { pushTriggers } from '@/lib/push/triggers'
 
 async function checkAdmin(req: Request) {
   const user = await getRealUserFromRequest(req)
@@ -76,6 +77,9 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   await db.update(supportConversations)
     .set({ lastMessageAt: now, unreadByUser: 1, updatedAt: now })
     .where(eq(supportConversations.id, conv.id))
+
+  // App-Push „Support bittet um Freigabe“. Tut nichts, solange Push aus ist; wirft nie.
+  void pushTriggers.impersonationRequest(userId, conv.id, expiresAt)
 
   return NextResponse.json({ requestId: request.id, token, conversationId: conv.id })
 }
