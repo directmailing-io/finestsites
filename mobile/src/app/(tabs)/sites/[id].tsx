@@ -108,7 +108,7 @@ export default function SiteDetailScreen() {
             />
             {url && (
               <View style={styles.row}>
-                <Button title="Seite ansehen" icon={ExternalLink} variant="secondary" style={styles.flex} onPress={() => openInBrowser(url)} />
+                <Button title="Seite ansehen" icon={ExternalLink} variant="secondary" style={styles.full} onPress={() => openInBrowser(url)} />
                 <Button ref={shareRef} title="Link teilen" icon={Share2} variant="secondary" style={styles.flex} onPress={() => shareLink(url, shareRef, title)} />
                 <Button title="QR-Code" icon={QrCode} variant="secondary" style={styles.flex} onPress={() => setQrOpen(true)} />
               </View>
@@ -210,5 +210,6 @@ const styles = StyleSheet.create({
   placeholder: { ...StyleSheet.absoluteFill, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.surfaceSoft },
   pills: { flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginBottom: 4 },
   row: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-  flex: { flexGrow: 1, flexBasis: 140 },
+  flex: { flexGrow: 1, flexBasis: 130 },
+  full: { flexBasis: '100%' },
 });

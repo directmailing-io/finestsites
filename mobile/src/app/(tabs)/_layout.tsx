@@ -43,7 +43,7 @@ export default function TabsLayout() {
       <NativeTabs.Trigger name="inbox">
         <NativeTabs.Trigger.Label>Anfragen</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon sf={{ default: 'tray', selected: 'tray.fill' }} md="inbox" />
-        <NativeTabs.Trigger.Badge hidden={unreadSubs === 0}>{String(Math.min(unreadSubs, 99))}</NativeTabs.Trigger.Badge>
+        {unreadSubs > 0 ? <NativeTabs.Trigger.Badge>{String(Math.min(unreadSubs, 99))}</NativeTabs.Trigger.Badge> : null}
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="help">
         <NativeTabs.Trigger.Label>Hilfe</NativeTabs.Trigger.Label>
@@ -51,7 +51,7 @@ export default function TabsLayout() {
           sf={{ default: 'bubble.left.and.bubble.right', selected: 'bubble.left.and.bubble.right.fill' }}
           md="chat"
         />
-        <NativeTabs.Trigger.Badge hidden={unreadSupport === 0}>{String(unreadSupport)}</NativeTabs.Trigger.Badge>
+        {unreadSupport > 0 ? <NativeTabs.Trigger.Badge>{String(unreadSupport)}</NativeTabs.Trigger.Badge> : null}
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="account">
         <NativeTabs.Trigger.Label>Konto</NativeTabs.Trigger.Label>

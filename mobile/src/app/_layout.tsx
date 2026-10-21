@@ -22,7 +22,10 @@ import { startLockWatcher, useLock } from '@/lib/lock';
 import { registerPushDevice } from '@/lib/push';
 import { colors, fonts } from '@/theme/tokens';
 
+// Startbildschirm bleibt stehen, bis Schriften, Sitzung und Face-ID-Einstellung geladen sind,
+// dann sanft ausblenden (kein Spinner dazwischen).
 void SplashScreen.preventAutoHideAsync().catch(() => {});
+SplashScreen.setOptions({ duration: 250, fade: true });
 
 // TanStack Query an App-Vordergrund und Netz koppeln
 focusManager.setEventListener(handleFocus => {

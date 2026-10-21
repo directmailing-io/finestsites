@@ -8,7 +8,10 @@ import type { ConfigContext, ExpoConfig } from 'expo/config';
  */
 const EAS_PROJECT_ID = process.env.EAS_PROJECT_ID;
 
-const BRAND_BG = '#EFE9FB';
+// Icon-Grund weiß wie Sidebar/Wortmarke; Startbildschirm wie --background der Webapp
+const ICON_BG = '#FFFFFF';
+const SPLASH_BG = '#FAFAFA';
+export const SPLASH_BG_DARK = '#1a1a1a';
 
 export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
@@ -24,6 +27,12 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   runtimeVersion: { policy: 'fingerprint' },
   ios: {
     bundleIdentifier: 'io.finestsites.app',
+    // iOS 18+: helles, dunkles und getöntes Icon (erzeugt von scripts/build-icons.mjs)
+    icon: {
+      light: './assets/brand/icon.png',
+      dark: './assets/brand/icon-dark.png',
+      tinted: './assets/brand/icon-tinted.png',
+    },
     supportsTablet: true,
     requireFullScreen: false,
     associatedDomains: ['applinks:app.finestsites.io'],
@@ -47,9 +56,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   android: {
     package: 'io.finestsites.app',
     adaptiveIcon: {
-      backgroundColor: BRAND_BG,
+      backgroundColor: ICON_BG,
       foregroundImage: './assets/brand/adaptive-foreground.png',
-      backgroundImage: './assets/brand/adaptive-background.png',
       monochromeImage: './assets/brand/adaptive-monochrome.png',
     },
     predictiveBackGestureEnabled: false,
@@ -67,9 +75,15 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     [
       'expo-splash-screen',
       {
-        backgroundColor: '#FAFAFA',
-        image: './assets/brand/splash-icon.png',
-        imageWidth: 96,
+        // Vollständige Wortmarke, ruhig mittig. Die dunkle Fassung (splash-logo-dark.png, Grund
+        // SPLASH_BG_DARK) liegt bereit, ist aber bewusst NICHT eingetragen: Die App erzwingt das helle
+        // Design (userInterfaceStyle light) und expo-splash-screen meldet dann, dass ein dunkler
+        // Startbildschirm nicht sauber funktioniert. Eintragen, sobald die App einen Dark Mode bekommt:
+        //   dark: { backgroundColor: SPLASH_BG_DARK, image: './assets/brand/splash-logo-dark.png' }
+        backgroundColor: SPLASH_BG,
+        image: './assets/brand/splash-logo.png',
+        imageWidth: 200,
+        resizeMode: 'contain',
       },
     ],
     'expo-secure-store',

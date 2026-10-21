@@ -51,6 +51,7 @@
     "android": "expo run:android",
     "typecheck": "tsc --noEmit",
     "check:words": "bash scripts/check-forbidden-words.sh",
+    "build:icons": "node scripts/build-icons.mjs",
     "check": "tsc --noEmit && bash scripts/check-forbidden-words.sh && expo-doctor"
   },
   "engines": {

@@ -273,7 +273,7 @@ const styles = StyleSheet.create({
   linkBox: { backgroundColor: colors.surfaceSubtle, borderRadius: radius.input, borderWidth: 1.5, borderColor: colors.border, padding: 14 },
   link: { fontFamily: fonts.semibold, fontSize: 16, color: colors.ink },
   row: { flexDirection: 'row', gap: 8, flexWrap: 'wrap' },
-  flex: { flexGrow: 1, flexBasis: 140 },
+  flex: { flexGrow: 1, flexBasis: 170 },
   tiles: { flexDirection: 'row', gap: 10, flexWrap: 'wrap' },
   tile: {
     flexGrow: 1,
