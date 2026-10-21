@@ -10,7 +10,16 @@ import { Button, ListRow, ListSection, LoadError, Notice, Screen, Sheet, Skeleto
 import { getPushPermission, registerPushDevice, requestPushPermission, type PushPermission } from '@/lib/push';
 import { colors, fonts, radius } from '@/theme/tokens';
 
-const HOURS = Array.from({ length: 24 }, (_, h) => `${String(h).padStart(2, '0')}:00`);
+const HOURS = Array.from({ length: 24 }, (_, h) => h);
+const hourLabel = (h: number) => `${String(h).padStart(2, '0')}:00`;
+
+function deviceTimezone(): string | null {
+  try {
+    return Intl.DateTimeFormat().resolvedOptions().timeZone || null;
+  } catch {
+    return null;
+  }
+}
 
 /** Push-Mitteilungen je Bereich + Ruhezeit (nachts keine Töne). Inhalte von Interessenten stehen nie auf dem Sperrbildschirm. */
 export default function NotificationSettingsScreen() {
@@ -28,15 +37,33 @@ export default function NotificationSettingsScreen() {
     return () => sub.remove();
   }, [refreshPerm]);
   useEffect(() => {
-    if (q.data) setPrefs(q.data);
-  }, [q.data]);
+    if (!q.data) return;
+    setPrefs(q.data);
+    // Ruhezeit gilt in der Ortszeit des Geräts: Zeitzone einmal mitteilen, wenn sie abweicht
+    const tz = deviceTimezone();
+    if (tz && tz !== q.data.timezone) {
+      saveNotificationPreferences({ timezone: tz })
+        .then(saved => {
+          setPrefs(saved);
+          qc.setQueryData(qk.notificationPrefs, saved);
+        })
+        .catch(() => {});
+    }
+  }, [q.data, qc]);
 
   async function update(next: NotificationPreferences) {
     const prev = prefs;
     setPrefs(next);
     try {
-      await saveNotificationPreferences(next);
-      qc.setQueryData(qk.notificationPrefs, next);
+      const saved = await saveNotificationPreferences({
+        leads: next.leads,
+        support: next.support,
+        account: next.account,
+        partner: next.partner,
+        quietHours: next.quietHours,
+      });
+      setPrefs(saved);
+      qc.setQueryData(qk.notificationPrefs, saved);
     } catch {
       setPrefs(prev);
       toast.show('Konnte nicht gespeichert werden.', 'error');
@@ -83,57 +110,57 @@ export default function NotificationSettingsScreen() {
             <SwitchRow
               title="Neuen Anfragen"
               subtitle="Jemand hat ein Formular auf deiner Seite ausgefüllt."
-              value={prefs.push.submissions}
-              onValueChange={v => update({ ...prefs, push: { ...prefs.push, submissions: v } })}
+              value={prefs.leads}
+              onValueChange={v => update({ ...prefs, leads: v })}
             />
             <SwitchRow
               title="Antworten vom Support"
-              value={prefs.push.support}
-              onValueChange={v => update({ ...prefs, push: { ...prefs.push, support: v } })}
+              value={prefs.support}
+              onValueChange={v => update({ ...prefs, support: v })}
             />
             <SwitchRow
-              title="Deinen Webseiten"
+              title="Deinen Webseiten und deinem Konto"
               subtitle="Zum Beispiel, wenn eine Domain verbunden ist."
-              value={prefs.push.sites}
-              onValueChange={v => update({ ...prefs, push: { ...prefs.push, sites: v } })}
+              value={prefs.account}
+              onValueChange={v => update({ ...prefs, account: v })}
             />
             <SwitchRow
               title="Partnerprogramm"
               subtitle="Neue Provisionen und Abrechnungen."
-              value={prefs.push.partner}
-              onValueChange={v => update({ ...prefs, push: { ...prefs.push, partner: v } })}
+              value={prefs.partner}
+              onValueChange={v => update({ ...prefs, partner: v })}
             />
           </ListSection>
 
           <ListSection title="Ruhezeit" footer="In dieser Zeit kommen Mitteilungen ohne Ton. Du siehst sie am Morgen.">
             <SwitchRow
               title="Ruhezeit"
-              value={prefs.quiet_hours.enabled}
-              onValueChange={v => update({ ...prefs, quiet_hours: { ...prefs.quiet_hours, enabled: v } })}
+              value={prefs.quietHours.enabled}
+              onValueChange={v => update({ ...prefs, quietHours: { ...prefs.quietHours, enabled: v } })}
             />
-            {prefs.quiet_hours.enabled ? (
-              <ListRow icon={Moon} title="Von" value={prefs.quiet_hours.start} onPress={() => setPicker('start')} />
+            {prefs.quietHours.enabled ? (
+              <ListRow icon={Moon} title="Von" value={hourLabel(prefs.quietHours.start)} onPress={() => setPicker('start')} />
             ) : null}
-            {prefs.quiet_hours.enabled ? (
-              <ListRow icon={Moon} title="Bis" value={prefs.quiet_hours.end} onPress={() => setPicker('end')} />
+            {prefs.quietHours.enabled ? (
+              <ListRow icon={Moon} title="Bis" value={hourLabel(prefs.quietHours.end)} onPress={() => setPicker('end')} />
             ) : null}
           </ListSection>
 
           <Sheet visible={!!picker} onClose={() => setPicker(null)} title={picker === 'start' ? 'Ruhezeit ab' : 'Ruhezeit bis'}>
             <View style={styles.hours}>
               {HOURS.map(h => {
-                const active = picker && prefs.quiet_hours[picker] === h;
+                const active = picker && prefs.quietHours[picker] === h;
                 return (
                   <Pressable
                     key={h}
                     onPress={() => {
-                      if (picker) void update({ ...prefs, quiet_hours: { ...prefs.quiet_hours, [picker]: h } });
+                      if (picker) void update({ ...prefs, quietHours: { ...prefs.quietHours, [picker]: h } });
                       setPicker(null);
                     }}
                     style={[styles.hour, active && styles.hourActive]}
                     accessibilityRole="button"
                     accessibilityState={{ selected: !!active }}>
-                    <Text style={[styles.hourText, active && { color: colors.white }]}>{h}</Text>
+                    <Text style={[styles.hourText, active && { color: colors.white }]}>{hourLabel(h)}</Text>
                   </Pressable>
                 );
               })}

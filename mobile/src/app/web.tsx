@@ -26,7 +26,6 @@ export default function WebScreen() {
       <AppWebView
         next={safePath}
         onBridge={m => {
-          if (m.type === 'close') router.back();
           if (m.type === 'open-url' && /^https:\/\//.test(m.url)) void openInBrowser(m.url);
         }}
       />

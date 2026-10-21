@@ -42,14 +42,14 @@ export default function ProfileScreen() {
   useEffect(() => {
     if (!u) return;
     setForm({
-      first_name: u.first_name ?? '',
-      last_name: u.last_name ?? '',
-      company_name: u.company_name ?? '',
-      phone: u.phone ?? '',
-      team_partner_number: u.team_partner_number ?? '',
+      first_name: u.user.firstName ?? '',
+      last_name: u.user.lastName ?? '',
+      company_name: u.user.companyName ?? '',
+      phone: u.user.phone ?? '',
+      team_partner_number: u.user.teamPartnerNumber ?? '',
     });
-    setSocials(Object.fromEntries(SOCIALS.map(s => [s.key, toHandle(u.socials[s.key], s.prefix)])));
-    setPhoto(u.profile_image_url);
+    setSocials(Object.fromEntries(SOCIALS.map(s => [s.key, toHandle(u.user.socials[s.key], s.prefix)])));
+    setPhoto(u.user.profileImageUrl);
   }, [u]);
 
   async function save() {
@@ -122,8 +122,8 @@ export default function ProfileScreen() {
       </View>
 
       <View style={styles.readonlyGrid}>
-        <Input label="E-Mail-Adresse" value={u.email} editable={false} />
-        <Input label="Benutzername" value={u.username ? `@${u.username}` : '–'} editable={false} />
+        <Input label="E-Mail-Adresse" value={u.user.email} editable={false} />
+        <Input label="Benutzername" value={u.user.username ? `@${u.user.username}` : '–'} editable={false} />
       </View>
 
       <View style={{ gap: 16 }}>

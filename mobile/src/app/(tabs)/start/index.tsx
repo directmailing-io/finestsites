@@ -18,7 +18,7 @@ export default function StartScreen() {
   const sites = useSites();
   const loading = overview.isLoading || me.isLoading;
   const o = overview.data;
-  const name = me.data?.first_name || me.data?.username;
+  const name = me.data?.user.firstName || me.data?.user.username;
   const unreadNotifications = o?.unread.notifications ?? 0;
   const previewSites = (sites.data ?? []).filter(s => s.status !== 'deleted').slice(0, columns >= 2 ? 2 : 1);
 
@@ -56,7 +56,7 @@ export default function StartScreen() {
       ) : (
         <>
           {(() => {
-            const s = accountStatusView(o.account_status.code, o.account_status.online_count, o.account_status.offline_count);
+            const s = accountStatusView(o.accountStatus.code, o.accountStatus.online, o.accountStatus.offline);
             return (
               <Notice tone={s.tone} title={s.title}>
                 {s.text}
@@ -94,8 +94,8 @@ export default function StartScreen() {
           <View style={{ gap: 12 }}>
             <SectionHeader title="Diese Woche" subtitle="Alle deine Seiten zusammen, letzte 7 Tage." />
             <View style={styles.stats}>
-              <Stat label="Besucher" value={o.week.visitors} prev={o.week.visitors_prev} />
-              <Stat label="Anfragen" value={o.week.submissions} prev={o.week.submissions_prev} onPress={() => router.push('/inbox')} />
+              <Stat label="Besucher" value={o.stats.last7.visitors} prev={o.stats.prev7.visitors} />
+              <Stat label="Anfragen" value={o.stats.last7.submissions} prev={o.stats.prev7.submissions} onPress={() => router.push('/inbox')} />
             </View>
           </View>
 

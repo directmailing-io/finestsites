@@ -6,10 +6,10 @@ import { Copy, FileText, Handshake, History, Landmark, QrCode, Share2, Users } f
 import { useRef, useState } from 'react';
 import { Alert, Pressable, StyleSheet, View, type HostInstance } from 'react-native';
 
-import { humanError } from '@/api/client';
+import { ApiError, humanError } from '@/api/client';
 import { requestPayout, setPayoutMode, startConnect } from '@/api/endpoints';
 import { qk, useAffiliate } from '@/api/queries';
-import type { PayoutMode } from '@/api/types';
+import type { PayoutMode, PayoutResult } from '@/api/types';
 import { Button, Card, EmptyState, ListRow, ListSection, LoadError, Notice, Pill, Screen, SectionHeader, Skeleton, Text, useToast } from '@/components/ui';
 import { QrSheet } from '@/features/sites/QrSheet';
 import { CONNECT_RETURN_URL } from '@/lib/config';
@@ -34,6 +34,15 @@ export default function PartnerScreen() {
 
   const refresh = () => qc.invalidateQueries({ queryKey: qk.affiliate });
 
+  const unavailable =
+    q.error instanceof ApiError && (q.error.code === 'AFFILIATE_NOT_AVAILABLE' || q.error.code === 'FEATURE_DISABLED');
+  if (unavailable) {
+    return (
+      <Screen readable>
+        <EmptyState icon={Handshake} title="Partnerprogramm nicht verfügbar" text="Für dein Konto ist das Partnerprogramm gerade nicht verfügbar." />
+      </Screen>
+    );
+  }
   if (q.isError && !a) return <Screen readable><LoadError onRetry={() => void q.refetch()} /></Screen>;
   if (!a) {
     return (
@@ -43,20 +52,14 @@ export default function PartnerScreen() {
       </Screen>
     );
   }
-  if (!a.eligible) {
-    return (
-      <Screen readable>
-        <EmptyState icon={Handshake} title="Partnerprogramm nicht verfügbar" text="Für dein Konto ist das Partnerprogramm gerade nicht verfügbar." />
-      </Screen>
-    );
-  }
 
-  const canPayout =
-    a.payout_mode === 'payout' && a.payout_account.status === 'active' && a.tax_profile.complete && a.earnings.available_cents >= a.min_payout_cents;
-  const belowMin = a.payout_mode === 'payout' && a.earnings.available_cents > 0 && a.earnings.available_cents < a.min_payout_cents;
+  const minPayout = a.payout.minPayoutCents;
+  const available = a.earnings.availableCents;
+  const canPayout = a.payout.mode === 'payout' && a.payout.connectStatus === 'ready' && a.taxProfileComplete && available >= minPayout;
+  const belowMin = a.payout.mode === 'payout' && available > 0 && available < minPayout;
 
   async function changeMode(mode: PayoutMode) {
-    if (mode === a!.payout_mode) return;
+    if (mode === a!.payout.mode) return;
     setBusy('mode');
     try {
       await setPayoutMode(mode);
@@ -80,7 +83,7 @@ export default function PartnerScreen() {
   }
 
   function payout() {
-    Alert.alert(`${euros(a!.earnings.available_cents)} auszahlen?`, 'Das Geld ist in der Regel in 2 bis 3 Werktagen auf deinem Konto.', [
+    Alert.alert(`${euros(available)} auszahlen?`, 'Das Geld ist in der Regel in 2 bis 3 Werktagen auf deinem Konto.', [
       { text: 'Abbrechen', style: 'cancel' },
       {
         text: 'Auszahlen',
@@ -88,7 +91,8 @@ export default function PartnerScreen() {
           setBusy('payout');
           try {
             const res = await requestPayout();
-            toast.show(`${euros(res.amount_cents)} werden überwiesen.`, 'success');
+            const msg = payoutMessage(res);
+            toast.show(msg.text, msg.ok ? 'success' : 'error');
             await refresh();
           } catch (e) {
             toast.show(humanError(e), 'error');
@@ -101,7 +105,7 @@ export default function PartnerScreen() {
 
   return (
     <Screen readable refreshing={q.isRefetching} onRefresh={() => void q.refetch()}>
-      {!a.tax_profile.complete && (
+      {!a.taxProfileComplete && (
         <Notice
           tone="warning"
           action={<Button title="Angaben ausfüllen" size="sm" style={{ alignSelf: 'flex-start', marginTop: 8 }} onPress={() => router.push('/account/partner/tax')} />}>
@@ -141,23 +145,23 @@ export default function PartnerScreen() {
           />
         </View>
         <Text variant="callout">
-          {a.pitch} Du erhältst {a.commission_percent} % Provision auf die Zahlungen deiner Empfehlungen, solange sie dabei sind.
+          {a.texts.description}
         </Text>
       </Card>
 
       <View style={{ gap: 12 }}>
         <SectionHeader title="Deine Provisionen" />
         <View style={styles.tiles}>
-          <Tile label="Verfügbar" value={euros(a.earnings.available_cents)} strong />
-          <Tile label="In 14 Tagen" value={euros(a.earnings.pending_cents)} />
-          <Tile label="Bereits erhalten" value={euros(a.earnings.paid_cents)} />
+          <Tile label="Verfügbar" value={euros(available)} strong />
+          <Tile label="In 14 Tagen" value={euros(a.earnings.pendingCents)} />
+          <Tile label="Bereits erhalten" value={euros(a.earnings.paidCents)} />
         </View>
         {canPayout && (
-          <Button title={`${euros(a.earnings.available_cents)} jetzt auszahlen`} onPress={payout} loading={busy === 'payout'} fullWidth />
+          <Button title={`${euros(available)} jetzt auszahlen`} onPress={payout} loading={busy === 'payout'} fullWidth />
         )}
         {belowMin && (
           <Text variant="callout">
-            Noch {euros(a.min_payout_cents - a.earnings.available_cents)} bis zur Auszahlung. Dein Guthaben verfällt nicht und wandert einfach in den nächsten Monat.
+            Noch {euros(minPayout - available)} bis zur Auszahlung. Dein Guthaben verfällt nicht und wandert einfach in den nächsten Monat.
           </Text>
         )}
       </View>
@@ -165,36 +169,36 @@ export default function PartnerScreen() {
       <View style={{ gap: 12 }}>
         <SectionHeader title="So bekommst du deine Provision" />
         <ModeChoice
-          selected={a.payout_mode === 'credit'}
+          selected={a.payout.mode === 'credit'}
           disabled={busy === 'mode'}
           onPress={() => changeMode('credit')}
           title="Mit meinem Konto verrechnen"
           text="Deine Provision wird jeden Monat automatisch mit deinem FinestSites-Konto verrechnet. Kein Auszahlungskonto nötig."
         />
         <ModeChoice
-          selected={a.payout_mode === 'payout'}
+          selected={a.payout.mode === 'payout'}
           disabled={busy === 'mode'}
           onPress={() => changeMode('payout')}
           title="Aufs Bankkonto auszahlen"
-          text={`Ab ${euros(a.min_payout_cents)} einmal im Monat. Dafür richtest du einmal ein Auszahlungskonto bei Stripe ein.`}
+          text={`Ab ${euros(minPayout)} einmal im Monat. Dafür richtest du einmal ein Auszahlungskonto bei Stripe ein.`}
         />
       </View>
 
-      {a.payout_mode === 'payout' && (
+      {a.payout.mode === 'payout' && (
         <ListSection title="Auszahlungskonto" footer="Das läuft sicher über Stripe. FinestSites sieht deine Bankdaten nicht.">
-          {a.payout_account.status === 'active' ? (
+          {a.payout.connectStatus === 'ready' ? (
             <ListRow
               icon={Landmark}
               iconBg={colors.successSoft}
               iconColor={colors.success}
               title="Bankkonto eingerichtet"
-              subtitle={[a.payout_account.bank_name, a.payout_account.bank_last4 && `•••• ${a.payout_account.bank_last4}`].filter(Boolean).join(' ')}
+              subtitle={a.payout.bankLast4 ? `•••• ${a.payout.bankLast4}` : undefined}
               right={<Pill label="Aktiv" tone="online" dot={false} />}
             />
           ) : (
             <ListRow
               icon={Landmark}
-              title={a.payout_account.status === 'incomplete' ? 'Einrichtung fortsetzen' : 'Auszahlungskonto einrichten (über Stripe)'}
+              title={a.payout.connectStatus === 'pending' ? 'Einrichtung fortsetzen' : 'Auszahlungskonto einrichten (über Stripe)'}
               subtitle="Dauert ca. 3–5 Minuten. Du brauchst Name, Adresse und IBAN."
               onPress={connect}
               disabled={busy === 'connect'}
@@ -207,7 +211,7 @@ export default function PartnerScreen() {
         <ListRow
           icon={FileText}
           title="Angaben für die Abrechnung"
-          right={<Pill label={a.tax_profile.complete ? 'Vollständig' : 'Fehlt noch'} tone={a.tax_profile.complete ? 'online' : 'changes'} dot={false} />}
+          right={<Pill label={a.taxProfileComplete ? 'Vollständig' : 'Fehlt noch'} tone={a.taxProfileComplete ? 'online' : 'changes'} dot={false} />}
           onPress={() => router.push('/account/partner/tax')}
         />
         <ListRow icon={FileText} title="Gutschriften" onPress={() => router.push('/account/partner/credit-notes')} />
@@ -223,7 +227,7 @@ export default function PartnerScreen() {
       <Card tone="subtle" style={{ gap: 10 }}>
         <Text variant="overline">Gut zu wissen</Text>
         {[
-          `Du bekommst ${a.commission_percent} % Provision auf jede Zahlung deiner Empfehlungen, Monat für Monat, solange sie dabei sind.`,
+          `Du bekommst ${a.commissionPercent} % Provision auf jede Zahlung deiner Empfehlungen, Monat für Monat, solange sie dabei sind.`,
           'Neue Provisionen haben eine Schutzfrist von 14 Tagen. Danach ist das Geld fest für dich reserviert.',
           'Pro Monat gibt es eine Abrechnung. Die läuft automatisch, du musst nichts tun.',
           'Für jede Abrechnung bekommst du eine Gutschrift. Stimmt etwas nicht, sag uns bitte innerhalb von 4 Wochen Bescheid.',
@@ -237,6 +241,36 @@ export default function PartnerScreen() {
       <QrSheet visible={qrOpen} onClose={() => setQrOpen(false)} url={a.link} title="Dein Empfehlungslink" />
     </Screen>
   );
+}
+
+/** Ergebnis der Auszahlung: der Server schickt nur einen Code, die Sätze stehen hier. */
+function payoutMessage(r: PayoutResult): { ok: boolean; text: string } {
+  switch (r.status) {
+    case 'paid':
+      return { ok: true, text: `${euros(r.amountCents ?? 0)} werden überwiesen.` };
+    case 'processing':
+      return { ok: true, text: 'Deine Auszahlung wird vorbereitet und kommt automatisch. Dein Guthaben bleibt dir sicher erhalten.' };
+    case 'nothing_to_pay':
+      return { ok: false, text: 'Gerade gibt es nichts auszuzahlen. Dein Guthaben bleibt dir erhalten.' };
+    case 'below_minimum':
+      return { ok: false, text: `Ausgezahlt wird ab ${euros(r.minPayoutCents)}. Dein Guthaben wandert in den nächsten Monat.` };
+    case 'negative_balance':
+      return { ok: false, text: 'Dein Guthaben ist gerade im Minus. Neue Provisionen gleichen das automatisch aus.' };
+    case 'already_paid_this_month':
+      return { ok: false, text: 'Diesen Monat gab es schon eine Auszahlung. Ab nächstem Monat geht es wieder.' };
+    case 'mode_credit':
+      return { ok: false, text: 'Stell oben zuerst auf „Aufs Bankkonto auszahlen“ um.' };
+    case 'no_connect':
+      return { ok: false, text: 'Richte zuerst dein Auszahlungskonto ein.' };
+    case 'not_verified':
+      return { ok: false, text: 'Dein Auszahlungskonto ist bei Stripe noch nicht ganz eingerichtet. Dein Guthaben bleibt erhalten.' };
+    case 'tax_profile_missing':
+      return { ok: false, text: 'Bitte fülle zuerst deine Angaben für die Abrechnung aus.' };
+    case 'unavailable':
+      return { ok: false, text: 'Für dieses Konto ist keine Auszahlung möglich.' };
+    default:
+      return { ok: false, text: 'Das hat leider nicht geklappt. Bitte versuche es später nochmal.' };
+  }
 }
 
 function Tile({ label, value, strong }: { label: string; value: string; strong?: boolean }) {

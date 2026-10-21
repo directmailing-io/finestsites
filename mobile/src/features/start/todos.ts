@@ -25,8 +25,8 @@ export function todoView(t: Todo): { icon: LucideIcon; title: string; text: stri
       return {
         icon: Globe,
         title: 'Änderungen noch nicht online',
-        text: `${t.site_title ?? 'Eine Seite'}: Tippe im Editor auf „Änderungen veröffentlichen“.`,
-        href: t.site_id ? { pathname: '/sites/[id]', params: { id: t.site_id } } : '/sites',
+        text: `${t.siteTitle ?? 'Eine Seite'}: Tippe im Editor auf „Änderungen veröffentlichen“.`,
+        href: t.siteId ? { pathname: '/sites/[id]', params: { id: t.siteId } } : '/sites',
       };
     case 'complete_profile':
       return { icon: UserRound, title: 'Profil vervollständigen', text: 'Foto und Kontaktdaten werden in deine Seiten übernommen.', href: '/account/profile' };
@@ -35,7 +35,12 @@ export function todoView(t: Todo): { icon: LucideIcon; title: string; text: stri
     case 'tax_profile_missing':
       return { icon: FileText, title: 'Angaben für die Abrechnung', text: 'Damit wir deine Provision abrechnen können.', href: '/account/partner/tax' };
     case 'domain_pending':
-      return { icon: Globe, title: 'Domain wird verbunden', text: 'Das kann bis zu einem Tag dauern. Du musst nichts tun.', href: '/sites' };
+      return {
+        icon: Globe,
+        title: 'Domain wird verbunden',
+        text: `${t.siteTitle ? `${t.siteTitle}: ` : ''}Das kann bis zu einem Tag dauern. Du musst nichts tun.`,
+        href: t.siteId ? { pathname: '/sites/[id]', params: { id: t.siteId } } : '/sites',
+      };
     default:
       return { icon: Bell, title: 'Hinweis', text: '', href: '/start' };
   }

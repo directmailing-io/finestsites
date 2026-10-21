@@ -6,7 +6,7 @@ import { Pressable, StyleSheet, View, type HostInstance } from 'react-native';
 
 import type { Site } from '@/api/types';
 import { Button, Card, Pill, Text } from '@/components/ui';
-import { openInBrowser, siteUrlOf } from '@/lib/links';
+import { assetUrl, openInBrowser, siteUrlOf } from '@/lib/links';
 import { shareLink } from '@/lib/share';
 import { colors, fonts, radius } from '@/theme/tokens';
 
@@ -27,7 +27,7 @@ export function SiteCard({ site, highlight }: { site: Site; highlight?: boolean 
   const router = useRouter();
   const meta = STATUS_META[site.status];
   const { display, hasCustom, url } = siteUrlOf(site);
-  const preview = site.templates?.preview_images?.[0] ?? null;
+  const preview = assetUrl(site.templates?.preview_images?.[0]);
   const title = site.templates?.title ?? 'Meine Webseite';
   const isDraft = site.status === 'draft';
   const unread = site.unread_submissions ?? 0;
