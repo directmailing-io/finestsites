@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>App-Zugänge Anleitung</title>
+<style>
+:root { --bg:#F5F5F7; --card:#fff; --ink:#1D1D1F; --muted:#6E6E73; --line:#D2D2D7; --blue:#0071E3; --green:#1E7A4C; --amber:#9A3412; --amber-soft:#FFF7ED; --blue-soft:#EAF2FD; --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",system-ui,sans-serif; }
+* { box-sizing:border-box; } html,body { margin:0; }
+body { background:var(--bg); color:var(--ink); font-family:var(--font); font-size:16px; line-height:1.55; -webkit-font-smoothing:antialiased; }
+.page { max-width:980px; margin:0 auto; padding:0 20px 100px; }
+.hero { padding:48px 0 18px; }
+.kicker { font-size:12px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--blue); }
+h1 { font-size:clamp(1.9rem,4.5vw,2.6rem); letter-spacing:-.02em; margin:8px 0 10px; line-height:1.1; }
+.hero p { color:var(--muted); font-size:17px; max-width:740px; margin:0; }
+.overview { display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:10px; margin:22px 0 10px; }
+.ov { background:#fff; border:1px solid var(--line); border-radius:14px; padding:14px 16px; text-decoration:none; color:inherit; }
+.ov b { display:block; font-size:15px; } .ov span { font-size:13px; color:var(--muted); }
+.ov .st { display:inline-block; font-size:11px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; padding:2px 8px; border-radius:99px; margin-bottom:6px; }
+.st.done { background:#E3F2E9; color:var(--green); } .st.now { background:var(--blue-soft); color:var(--blue); } .st.later { background:#EEE; color:#555; }
+section { margin-top:54px; scroll-margin-top:20px; }
+section > h2 { font-size:clamp(1.4rem,3vw,1.9rem); letter-spacing:-.02em; margin:0 0 6px; }
+.why { color:var(--muted); margin:0 0 18px; max-width:760px; }
+.step { display:grid; grid-template-columns:44px 1fr; gap:14px; margin:18px 0; }
+.num { width:36px; height:36px; border-radius:50%; background:var(--ink); color:#fff; font-weight:700; display:flex; align-items:center; justify-content:center; }
+.step h3 { margin:4px 0 6px; font-size:17px; }
+.step p { margin:0 0 8px; }
+kbd, .k { font-family:var(--font); background:#fff; border:1px solid var(--line); border-bottom-width:2px; border-radius:6px; padding:1px 7px; font-size:14px; font-weight:600; white-space:nowrap; }
+code { font-family:ui-monospace,Menlo,monospace; background:#ECECF0; padding:2px 6px; border-radius:6px; font-size:.9em; }
+.copy { display:inline-flex; align-items:center; gap:8px; background:#fff; border:1px solid var(--line); border-radius:10px; padding:6px 10px; font-family:ui-monospace,Menlo,monospace; font-size:14px; }
+.note { border-radius:14px; padding:14px 16px; font-size:15px; margin:12px 0; }
+.note.amber { background:var(--amber-soft); color:#7C2D12; } .note.blue { background:var(--blue-soft); color:#0B3B78; } .note.green { background:#E3F2E9; color:#14532D; }
+/* Nachbau-Rahmen */
+.mock { border:1px solid var(--line); border-radius:12px; overflow:hidden; background:#fff; margin:10px 0 6px; box-shadow:0 6px 24px rgba(0,0,0,.06); }
+.mock .cap { font-size:11px; color:var(--muted); padding:6px 12px; background:#FAFAFA; border-bottom:1px solid #EEE; }
+.asc-nav { display:flex; align-items:center; gap:22px; padding:12px 18px; background:#F2F2F2; font-size:14px; flex-wrap:wrap; }
+.asc-nav b { font-size:15px; margin-right:auto; } .asc-nav .hl { outline:3px solid #FF3B30; outline-offset:4px; border-radius:6px; padding:0 4px; }
+.asc-menu { position:relative; }
+.drop { position:absolute; right:-10px; top:30px; background:#fff; border:1px solid var(--line); border-radius:10px; box-shadow:0 10px 30px rgba(0,0,0,.12); padding:6px; min-width:200px; z-index:2; }
+.drop div { padding:7px 10px; border-radius:6px; font-size:14px; } .drop .hl2 { background:var(--blue); color:#fff; }
+.asc-body { padding:18px; min-height:110px; }
+.tabs { display:flex; gap:22px; border-bottom:1px solid #EEE; padding:0 18px; font-size:14px; }
+.tabs span { padding:10px 0; color:var(--muted); } .tabs .on { color:var(--ink); border-bottom:2px solid var(--ink); font-weight:600; }
+.side { display:flex; gap:18px; } .side .l { width:190px; font-size:14px; } .side .l div { padding:6px 8px; border-radius:6px; } .side .l .on { background:#EDEDED; font-weight:600; }
+.side .r { flex:1; font-size:14px; }
+.btn { display:inline-block; background:var(--blue); color:#fff; border-radius:8px; padding:7px 14px; font-weight:600; font-size:14px; }
+.btn.ghost { background:#fff; color:var(--blue); border:1px solid var(--blue); }
+.mark { outline:3px solid #FF3B30; outline-offset:3px; border-radius:8px; }
+.field { border:1px solid var(--line); border-radius:8px; padding:7px 10px; font-size:14px; margin:4px 0 10px; background:#fff; }
+.lbl { font-size:12px; color:var(--muted); font-weight:600; }
+.tbl { width:100%; border-collapse:collapse; font-size:13px; } .tbl th, .tbl td { text-align:left; padding:7px 8px; border-bottom:1px solid #EEE; } .tbl th { color:var(--muted); font-weight:600; }
+.hz-nav { background:#D50C2D; color:#fff; padding:10px 16px; font-weight:700; font-size:14px; }
+.give { background:#fff; border:2px solid var(--ink); border-radius:14px; padding:14px 16px; margin:14px 0; }
+.give b { display:block; margin-bottom:4px; }
+@media (max-width:640px){ .side { flex-direction:column; } .side .l { width:auto; display:flex; flex-wrap:wrap; gap:4px; } .step { grid-template-columns:36px 1fr; } .num { width:30px; height:30px; } }
+</style>
+</head>
+<body>
+<div class="page">
+
+<header class="hero">
+  <div class="kicker">Anleitung · FinestSites App</div>
+  <h1>Was du wo machen musst</h1>
+  <p>Schritt für Schritt mit nachgebauten Bildschirmen. Die Nachbauten zeigen, wo du klicken musst. Farben und genaue Wörter können bei dir leicht anders aussehen, Apple und Hetzner ändern ihre Oberflächen öfter. Rot umrandet heißt: hier klicken.</p>
+</header>
+
+<div class="overview">
+  <a class="ov" href="#a0"><span class="st done">erledigt</span><b>App in App Store Connect</b><span>FinestSites, Kennung 6825371773</span></a>
+  <a class="ov" href="#a1"><span class="st done">erledigt</span><b>1. Apple: API-Zugang</b><span>war schon freigeschaltet</span></a>
+  <a class="ov" href="#a2"><span class="st now">jetzt</span><b>2. Hetzner: Limit erhöhen</b><span>2 Minuten, für den Testserver</span></a>
+  <a class="ov" href="#a3"><span class="st done">erledigt</span><b>3. Expo: Zugangsschlüssel</b><span>funktioniert</span></a>
+  <a class="ov" href="#a4"><span class="st now">fast fertig</span><b>4. Sentry: noch 1 Schlüssel</b><span>3 Minuten</span></a>
+  <a class="ov" href="#a5"><span class="st done">erledigt</span><b>5. Apple: API-Schlüssel</b><span>vorhandener Schlüssel „Automation“ funktioniert</span></a>
+  <a class="ov" href="#a6"><span class="st later">diese Woche</span><b>6. EU-Händlerangaben prüfen</b><span>5 Minuten</span></a>
+</div>
+
+<section id="a0">
+  <h2>Schon erledigt: die App ist angelegt</h2>
+  <div class="note green"><b>Alles richtig gemacht.</b> Die Meldung „Deine Benutzerzugriffseinstellungen konnten nicht gesichert werden“ betrifft nur, welche weiteren Teammitglieder die App sehen dürfen. Du bist allein im Team, deshalb kannst du sie ignorieren. Die App-Kennung <code>6825371773</code> habe ich notiert.</div>
+</section>
+
+<section id="a1">
+  <h2>1. Apple: Zugang zur Schnittstelle</h2>
+  <div class="note green"><b>Erledigt, du musst nichts tun.</b> Der Zugang war bei dir schon freigeschaltet (wahrscheinlich seit der FrankenBERATER-App). In „Benutzer und Zugriffsrechte“ › „Integration“ › „Teamschlüssel“ gibt es bereits zwei aktive Schlüssel.</div>
+</section>
+
+<section id="a2">
+  <h2>2. Hetzner: Limit für den Testserver erhöhen</h2>
+  <p class="why"><b>Brauchen wir das wirklich?</b> Ja, aber nicht heute. Der Testserver wird gebraucht, bevor ich an Anmeldung, Editor, Veröffentlichen oder Konto-Löschen arbeite, also in etwa 1 bis 2 Wochen. Hetzner bearbeitet Anfragen von Hand, deshalb am besten in den nächsten Tagen anstoßen.</p>
+  <p class="why">Auf deinem Dashboard siehst du es: <b>2 Server</b> und <b>4 Primäre IPs</b>. Hetzner erlaubt pro Server zwei Adressen; dein Projekt ist auf 2 Server begrenzt, beide sind die Live-Server.</p>
+
+  <div class="step"><div class="num">1</div><div>
+    <h3>Die Limits-Seite öffnen</h3>
+    <p>Hetzner hat die Konsole neu gestaltet, der genaue Ort steht in Hetzners Hilfe noch nicht. Probier es in dieser Reihenfolge:</p>
+    <div class="mock"><div class="cap">Nachbau: dein Hetzner-Dashboard (Projekt FinestSites)</div>
+      <div class="hz-nav" style="background:#2B2B2B;display:flex;justify-content:space-between;align-items:center"><span>HETZNER Console · FinestSites ▾</span><span><span class="mark" style="padding:2px 6px">👤 ▾</span></span></div>
+      <div class="asc-body" style="background:#1F1F1F;color:#fff"><div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:22px">Dashboard</span><span><span class="mark" style="display:inline-block;background:#555;border-radius:6px;padding:6px 10px">⚙</span> <span style="display:inline-block;background:#D50C2D;border-radius:6px;padding:6px 12px;font-weight:600">Ressource erstellen ▾</span></span></div>
+      <div style="margin-top:12px;font-size:13px;color:#bbb">2 Server · 4 Primäre IPs · 3 Firewalls · 1 Netzwerk</div></div></div>
+    <ol>
+      <li><b>Zahnrad</b> neben „Ressource erstellen“ (Projekt-Einstellungen) → dort ein Reiter oder Punkt <b>„Limits“</b>.</li>
+      <li>Falls nicht dort: oben rechts das <b>Personen-Symbol</b> → <b>„Limits“</b>.</li>
+      <li>Falls beides nicht: oben rechts das <b>Kachel-Symbol</b> (neun Punkte) → <b>„Support“</b> → neue Anfrage, Thema „Limit“.</li>
+    </ol>
+  </div></div>
+  <div class="step"><div class="num">2</div><div>
+    <h3>„Änderung anfragen“ → „Limiterhöhung“ und das hier eintragen</h3>
+    <div class="mock"><div class="cap">Nachbau: Anfrage-Formular</div><div class="asc-body">
+      <div class="lbl">Art der Anfrage</div><div class="field">Limiterhöhung</div>
+      <div class="lbl">Projekt</div><div class="field">FinestSites</div>
+      <div class="lbl">Ressource</div><div class="field">Server</div>
+      <div class="lbl">Gewünschtes Limit</div><div class="field">4</div>
+      <div class="lbl">Begründung</div><div class="field">Zusätzlicher Staging-Server (cx23, nbg1), um Änderungen vor dem Livegang zu testen. Später ggf. ein zweiter App-Server.</div>
+      <span class="btn" style="background:#D50C2D">Absenden</span></div></div>
+    <p>Fragt das Formular direkt nach „Primären IPs“: dort <b>8</b> eintragen.</p>
+  </div></div>
+  <div class="note blue">Sobald Hetzner per E-Mail bestätigt, sag mir kurz Bescheid. Den Rest erledige ich. Findest du die Seite gar nicht, schick mir einen Screenshot vom Menü hinter dem Zahnrad.</div>
+</section>
+
+<section id="a3">
+  <h2>3. Expo: Zugangsschlüssel</h2>
+  <div class="note green"><b>Erledigt.</b> Der Schlüssel funktioniert und gehört zu deinem Expo-Konto „frankenberater“ (das der FrankenBERATER-App). Dort lege ich das FinestSites-Projekt an. Den Kontonamen sehen Nutzer nirgends.</div>
+</section>
+
+<section id="a4">
+  <h2>4. Sentry: noch ein Schlüssel</h2>
+  <div class="note green"><b>Schon erledigt:</b> Organisation <b>finestsites</b> mit Speicherort <b>EU</b> (Frankfurt) ✓. Den Organisations-Schlüssel habe ich abgelegt, er dient später zum Hochladen von Absturz-Informationen.</div>
+  <p class="why">Der Organisations-Schlüssel darf aber keine Projekte anlegen. Dafür brauche ich einmal einen persönlichen Schlüssel. Die 14-Tage-Testphase kannst du ignorieren, danach geht Sentry automatisch in den kostenlosen Tarif, das reicht uns.</p>
+  <div class="step"><div class="num">1</div><div>
+    <h3>Einrichtung überspringen</h3>
+    <p>Auf dem Willkommensbildschirm oben rechts <b>„Skip setup“</b> klicken. Die Einrichtung mache ich.</p>
+  </div></div>
+  <div class="step"><div class="num">2</div><div>
+    <h3>Persönliche Schlüssel öffnen</h3>
+    <p>Diese Adresse öffnen: <span class="copy">sentry.io/settings/account/api/auth-tokens/</span><br>Falls sie nicht lädt: links unten auf deinen Namen → <b>User Settings</b> → <b>Personal Tokens</b>.</p>
+  </div></div>
+  <div class="step"><div class="num">3</div><div>
+    <h3>„Create New Token“, Name und Rechte wählen</h3>
+    <div class="mock"><div class="cap">Nachbau: Sentry, Create New Personal Token</div><div class="asc-body">
+      <div class="lbl">Name</div><div class="field">finestsites-setup</div>
+      <table class="tbl"><tr><th>Bereich</th><th>Auswahl</th></tr>
+      <tr><td>Project</td><td><b class="mark">Admin</b></td></tr>
+      <tr><td>Team</td><td><b class="mark">Read</b></td></tr>
+      <tr><td>Release</td><td><b class="mark">Admin</b></td></tr>
+      <tr><td>Issue &amp; Event</td><td><b class="mark">Read</b></td></tr>
+      <tr><td>Organization</td><td><b class="mark">Read</b></td></tr>
+      <tr><td>Member</td><td>No Access</td></tr></table>
+      <span class="btn" style="background:#6C5FC7;margin-top:10px">Create Token</span></div></div>
+    <p>Die Rechte lassen sich später nicht mehr ändern, also bitte genau so. Der Schlüssel beginnt mit <code>sntryu_</code> und wird nur einmal angezeigt: kopieren und hier im Chat einfügen.</p>
+  </div></div>
+</section>
+
+<section id="a5">
+  <h2>5. Apple: API-Schlüssel</h2>
+  <div class="note green"><b>Erledigt, kein neuer Schlüssel nötig.</b> Der vorhandene Teamschlüssel <b>„Automation“</b> (Schlüssel-ID <code>B6ULQLS8C9</code>, Rolle Administrator) funktioniert, die Datei lag in deinem Download-Ordner. Ich habe damit nur lesend geprüft: Die App <b>FinestSites</b> (6825371773) und die Bundle-ID <code>io.finestsites.app</code> sind korrekt angelegt, inklusive <b>Push-Mitteilungen</b> und <b>Associated Domains</b>.</div>
+  <div class="mock"><div class="cap">So sieht es bei dir aus (Benutzer und Zugriffsrechte › Integration)</div>
+    <div class="tabs"><span>Personen</span><span>Sandbox</span><span class="on">Integration</span><span>Xcode Cloud</span></div>
+    <div class="asc-body"><div class="side"><div class="l"><div class="on">App Store Connect-API</div><div>In-App-Kauf</div><div>Schlüssel (Shared Secret)</div></div>
+    <div class="r"><div class="tabs" style="padding:0;margin-bottom:12px"><span class="on">Teamschlüssel</span><span>Individuelle Schlüssel</span></div>
+    <p style="margin:0 0 10px"><span class="lbl">Issuer ID</span><br><span class="copy">827a498b-35f7-4c81-a845-4aefe621a058</span></p>
+    <table class="tbl"><tr><th>Name</th><th>Schlüssel-ID</th><th>Zugriff</th></tr>
+    <tr style="background:#E3F2E9"><td>Automation ✓ wird genutzt</td><td>B6ULQLS8C9</td><td>Administrator:in</td></tr>
+    <tr><td>[Expo] EAS Submit 24u8n7LN_U</td><td>B8T2C354JK</td><td>Administrator:in</td></tr></table></div></div></div></div>
+  <p class="why">Eine Kopie der Schlüsseldatei liegt jetzt geschützt in <code>finestsites-backups/apple/</code>. Aus dem Download-Ordner kannst du sie löschen, wenn du magst. Bitte die beiden Schlüssel in Apple <b>nicht</b> widerrufen.</p>
+</section>
+
+<section id="a6">
+  <h2>6. EU-Händlerangaben prüfen</h2>
+  <p class="why">Apple zeigt bei Apps in der EU Adresse, Telefon und E-Mail des Anbieters. Wenn du das für die FrankenBERATER-App schon gemacht hast, gilt es auch für FinestSites. Bitte nur prüfen, ob die Angaben stimmen.</p>
+  <div class="step"><div class="num">1</div><div>
+    <h3>„Geschäftliches“ in der oberen Leiste öffnen</h3>
+    <p>Dort gibt es einen Bereich zur Einhaltung des Digital Services Act (DSA) bzw. „Händlerstatus“. Steht dort „Händler“ mit bestätigter Adresse, Telefon und E-Mail, ist alles erledigt.</p>
+  </div></div>
+  <div class="step"><div class="num">2</div><div>
+    <h3>Falls noch offen: als Händler angeben und Codes bestätigen</h3>
+    <p>Adresse wie im Impressum (Herrleinstr. 39), Telefon und E-Mail werden per Code bestätigt. Diese Angaben sind auf der Store-Seite öffentlich sichtbar.</p>
+  </div></div>
+</section>
+
+<section>
+  <h2>Zusammengefasst: was du mir schickst</h2>
+  <div class="give"><b>Jetzt:</b>Den persönlichen Sentry-Schlüssel (<code>sntryu_…</code>, Schritt 4) hier im Chat. Kurze Info, wenn du bei Hetzner die Erhöhung angefragt hast (Schritt 2).</div>
+  <div class="give"><b>Später:</b>Bestätigung von Hetzner. Apple und Expo sind komplett erledigt.</div>
+  <p class="why">Schlüssel und Zugangsdaten lege ich nur in geschützten Konfigurationsdateien ab, nie im Code oder in Git.</p>
+</section>
+
+</div>
+</body>
+</html>

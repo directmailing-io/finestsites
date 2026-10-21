@@ -1,0 +1,361 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FinestSites App-Plan</title>
+<style>
+:root {
+  --bg: #FAFAFA; --card: #FFFFFF; --ink: #111827; --body: #374151; --muted: #64748B; --line: #E2E8F0;
+  --accent: #7C3AED; --accent-soft: #F5F0FB; --green: #15803D; --green-soft: #DCFCE7; --amber: #9A3412; --amber-soft: #FFF7ED;
+  --red: #B91C1C; --red-soft: #FEF2F2; --blue: #1D4ED8; --blue-soft: #EFF6FF;
+  --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Inter, system-ui, sans-serif;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: var(--bg); color: var(--body); font-family: var(--font); font-size: 16px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+.page { max-width: 1100px; margin: 0 auto; padding: 0 24px 120px; }
+@media (max-width: 600px) { .page { padding: 0 16px 80px; } }
+h1, h2, h3, h4 { color: var(--ink); letter-spacing: -.02em; line-height: 1.2; }
+a { color: var(--blue); }
+.hero { padding: 56px 0 20px; }
+.kicker { font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); }
+.hero h1 { font-size: clamp(2rem, 5vw, 3rem); margin: 10px 0 12px; }
+.hero p { font-size: 18px; color: var(--muted); max-width: 800px; margin: 0; }
+nav.toc { position: sticky; top: 0; z-index: 10; background: rgba(250,250,250,.94); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); margin: 24px -24px 0; padding: 10px 24px; display: flex; flex-wrap: wrap; gap: 8px; }
+@media (max-width: 600px) { nav.toc { margin: 24px -16px 0; padding: 10px 16px; } }
+nav.toc a { font-size: 14px; font-weight: 600; color: var(--ink); text-decoration: none; padding: 6px 12px; border: 1px solid var(--line); border-radius: 999px; background: #fff; }
+section { margin-top: 60px; scroll-margin-top: 70px; }
+section > h2 { font-size: clamp(1.5rem, 3.2vw, 2.1rem); margin: 0 0 8px; }
+.lead { color: var(--muted); font-size: 17px; max-width: 840px; margin: 0 0 20px; }
+h3 { font-size: 1.2rem; margin: 30px 0 10px; }
+p { margin: 0 0 12px; }
+ul, ol { padding-left: 20px; margin: 0 0 14px; }
+li { margin: 4px 0; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; margin: 14px 0; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 18px 20px; }
+.card h4 { margin: 0 0 6px; font-size: 16px; }
+.card p, .card li { font-size: 15px; color: var(--muted); }
+.big { font-size: 28px; font-weight: 700; color: var(--ink); letter-spacing: -.02em; }
+.pill { display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; padding: 2px 9px; border-radius: 99px; margin-bottom: 6px; white-space: nowrap; }
+.p-green { background: var(--green-soft); color: var(--green); } .p-amber { background: var(--amber-soft); color: var(--amber); } .p-red { background: var(--red-soft); color: var(--red); } .p-blue { background: var(--blue-soft); color: var(--blue); } .p-violet { background: var(--accent-soft); color: var(--accent); } .p-grey { background: #F1F5F9; color: #475569; }
+.note { border-radius: 16px; padding: 16px 18px; margin: 16px 0; font-size: 15.5px; }
+.note.green { background: var(--green-soft); color: #14532D; } .note.amber { background: var(--amber-soft); color: #7C2D12; } .note.red { background: var(--red-soft); color: #7F1D1D; } .note.blue { background: var(--blue-soft); color: #1E3A8A; }
+.note b { font-weight: 700; }
+.tablewrap { overflow-x: auto; margin: 12px 0 18px; }
+table { width: 100%; border-collapse: collapse; background: #fff; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; font-size: 14.5px; }
+th, td { text-align: left; vertical-align: top; padding: 10px 12px; border-bottom: 1px solid var(--line); }
+th { background: #F8FAFC; font-size: 12px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
+tr:last-child td { border-bottom: 0; }
+code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .86em; background: #F1F5F9; padding: 1px 5px; border-radius: 5px; }
+details { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 4px 18px; margin: 10px 0; }
+details summary { cursor: pointer; font-weight: 600; color: var(--ink); padding: 12px 0; }
+details[open] summary { border-bottom: 1px solid var(--line); margin-bottom: 12px; }
+.timeline { display: flex; flex-direction: column; gap: 12px; margin: 18px 0; }
+.phase { display: grid; grid-template-columns: 170px 1fr; gap: 18px; background: #fff; border: 1px solid var(--line); border-radius: 18px; padding: 18px 20px; }
+@media (max-width: 700px) { .phase { grid-template-columns: 1fr; gap: 8px; } }
+.phase .when b { display: block; font-size: 22px; color: var(--ink); letter-spacing: -.02em; }
+.phase .when span { font-size: 13px; color: var(--muted); }
+.phase h4 { margin: 0 0 6px; font-size: 17px; }
+.phase li { font-size: 15px; }
+.phase.prep { border: 2px solid var(--ink); }
+.bar { height: 10px; border-radius: 6px; background: #EEF2F7; margin-top: 10px; position: relative; overflow: hidden; }
+.bar i { position: absolute; top: 0; bottom: 0; border-radius: 6px; }
+.check { padding-left: 4px; }
+.check li { list-style: none; position: relative; padding-left: 26px; }
+.check li::before { content: ''; position: absolute; left: 0; top: 5px; width: 15px; height: 15px; border: 2px solid #CBD5E1; border-radius: 4px; }
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+@media (max-width: 800px) { .two { grid-template-columns: 1fr; } }
+.ok li::marker { color: var(--green); } .no li::marker { color: var(--red); }
+.decide { background: var(--ink); color: #fff; border-radius: 22px; padding: 26px 28px; margin-top: 60px; }
+.decide h2 { color: #fff; margin: 0 0 10px; }
+.decide ol { margin: 0; padding-left: 22px; color: rgba(255,255,255,.86); }
+.decide li { margin: 10px 0; }
+.decide b { color: #fff; }
+.src { font-size: 13.5px; color: var(--muted); }
+.ver { font-size: 13px; color: var(--muted); margin-top: 6px; }
+</style>
+</head>
+<body>
+<div class="page">
+
+<header class="hero">
+  <div class="kicker">Umsetzungsplan · Version 2 · 21.10.2026</div>
+  <h1>FinestSites als App für iPhone und iPad</h1>
+  <p>Alles aus dem Dashboard kommt in die App, auch das Partnerprogramm. Nur Tarife buchen bleibt draußen, der Admin-Bereich bleibt im Browser. Version 1 läuft auf iPhone und iPad, Android folgt direkt danach, Registrieren kommt per Update nach Apples Freigabe. Der Plan wurde von acht Rollen erarbeitet und gegengeprüft.</p>
+  <p class="ver">Version 1 (vormittags): Backend, Mobile-Architektur, App-Store &amp; Recht, UX &amp; Design. Version 2 (diese): Gegencheck durch Tech-Lead, Apple-Prüfer &amp; Recht, iPad- &amp; UX-Spezialist, Qualität &amp; Betrieb &amp; Datenschutz.</p>
+</header>
+
+<nav class="toc">
+  <a href="#kurz">Kurzfassung</a><a href="#ent">Entscheidungen</a><a href="#ipad">iPad-Frage</a><a href="#gegencheck">Gegencheck</a><a href="#vorbereitung">Vorbereitung</a><a href="#phasen">Phasen</a><a href="#partner">Partnerprogramm</a><a href="#screens">Bildschirme</a><a href="#risiken">Risiken</a><a href="#check">Checkliste</a>
+</nav>
+
+<section id="kurz">
+  <h2>Kurzfassung</h2>
+  <div class="grid">
+    <div class="card"><span class="pill p-green">Machbar</span><h4>Alles geht in die App</h4><p>Auch das Partnerprogramm: Provisionen in Euro, Link teilen, Auszahlung, Steuerprofil und Gutschriften sind erlaubt. Verboten sind nur Texte, die auf einen Kauf zeigen (Rabatte, Tarifnamen, „aktives Abo“).</p></div>
+    <div class="card"><span class="pill p-amber">Neu entdeckt</span><h4>Vorher muss mehr vorbereitet werden</h4><p>Der Gegencheck hat 13 Punkte gefunden, die vor dem ersten App-Code stehen müssen, darunter eine echte Testumgebung, Schutz für den Server-Build und eine Anmelde-Korrektur fürs iPhone.</p></div>
+    <div class="card"><span class="pill p-blue">iPad</span><h4>Der Editor braucht ein iPad-Update</h4><p>Auf fast allen iPads zeigt er heute die Handy-Ansicht oder eine Desktop-Ansicht ohne Vorschau. Etwa 6 bis 9 Tage, und das iPhone profitiert mit.</p></div>
+    <div class="card"><div class="big">12–14 Wochen</div><p>bis zur App im App Store (iPhone und iPad), inklusive Prüfung. Android etwa 2 Wochen danach. Vorher waren es 7–9 Wochen; dazu kamen Partnerprogramm, iPad und die gründlichere Vorbereitung.</p></div>
+  </div>
+</section>
+
+<section id="ent">
+  <h2>Deine Entscheidungen</h2>
+  <div class="tablewrap"><table>
+    <tr><th>Thema</th><th>Entscheidung</th></tr>
+    <tr><td><b>Umfang</b></td><td><span class="pill p-green">fest</span> Alles aus dem Dashboard in die App, inklusive Partnerprogramm</td></tr>
+    <tr><td><b>Tarife buchen</b></td><td><span class="pill p-green">fest</span> nie in der App: keine Preise, kein Kauf, kein „Upgrade“, kein Hinweis „buch auf der Website“</td></tr>
+    <tr><td><b>Admin-Bereich</b></td><td><span class="pill p-green">fest</span> bleibt vorerst im Browser</td></tr>
+    <tr><td><b>Geräte</b></td><td><span class="pill p-green">fest</span> iPhone und iPad in Version 1, Android direkt danach</td></tr>
+    <tr><td><b>Registrieren</b></td><td><span class="pill p-green">fest</span> Version 1 nur Anmelden, Registrieren per Update nach Apples Freigabe</td></tr>
+    <tr><td><b>Verkäufer im Store</b></td><td><span class="pill p-grey">Info</span> „Daniel Kurzeja“ (Einzelunternehmen); „FinestSites“ nur mit UG/GmbH. Dein Apple-Team wird weiter genutzt.</td></tr>
+  </table></div>
+  <p>Noch offene Fragen stehen <a href="#offen">am Ende</a>.</p>
+</section>
+
+<section id="ipad">
+  <h2>Was heißt „der Editor ist nicht fürs iPad abgestimmt“?</h2>
+  <p class="lead">Die Webseiten, die der Editor erzeugt, sehen auf allen iPad-Größen gut aus (geprüft mit Screenshots). Das Problem ist der Editor selbst. Er hat drei feste Umschaltpunkte nach Fensterbreite, und iPads landen fast alle im ungünstigsten Bereich.</p>
+  <div class="tablewrap"><table>
+    <tr><th>Breite</th><th>Welche iPads</th><th>Was der Editor heute zeigt</th></tr>
+    <tr><td>bis 1023 px</td><td>iPad mini, Air, Pro 11" hochkant; geteilter Bildschirm</td><td><b>Handy-Ansicht</b>, auf dem großen Bildschirm eine schmale Spalte mit viel Leerraum, Vorschau nur als Vollbild</td></tr>
+    <tr><td>1024–1279 px</td><td>Pro 13" hochkant; mini, Air, Pro 11" quer</td><td><b>Desktop-Ansicht ohne Live-Vorschau</b>: Wer eine Farbe oder einen Schalter antippt, sieht keine Änderung. Beim Pro 13" hochkant klappt die Seitenleiste fälschlich auf Nummern zusammen, deren Namen nur per Maus-Hover erscheinen.</td></tr>
+    <tr><td>ab 1280 px</td><td>nur Pro 13" quer</td><td>Volle Ansicht mit Vorschau</td></tr>
+  </table></div>
+  <p>Dazu kommt Bedienung, die eine Maus voraussetzt:</p>
+  <ul>
+    <li>Die Vorschau-Breite lässt sich nur mit der Maus ziehen.</li>
+    <li>Erklärungen erscheinen nur beim Drüberfahren mit der Maus.</li>
+    <li>Listen-Einträge lassen sich nur per Ziehen umsortieren, was mit dem Finger unzuverlässig ist.</li>
+    <li>Etwa 20 Elemente bleiben nach einem Antippen farbig „hängen“.</li>
+    <li>Mehrere Knöpfe sind kleiner als die von Apple empfohlenen 44 Punkte.</li>
+    <li>Im Querformat haben Eingabefelder 14 px Schrift, deshalb zoomt iPadOS bei jedem Antippen eines Felds hinein. Das Textfeld „Über mich“ zoomt sogar auf dem iPhone.</li>
+  </ul>
+  <div class="note green"><b>Lösung (Aufwand etwa 6–9 Tage):</b>
+    <ul>
+      <li>Vorschau auf dem iPad ab 1024 px mit festen Größen statt Maus-Ziehen.</li>
+      <li>Felder mit 16 px, damit nichts mehr zoomt.</li>
+      <li>Pfeil-Knöpfe zum Umsortieren.</li>
+      <li>Größere Tippflächen und sichtbare Erklärungen statt Maus-Tooltips.</li>
+      <li>Bildzuschnitt passt sich beim Drehen an.</li>
+      <li>Tastatur verdeckt die untere Leiste nicht mehr.</li>
+    </ul>
+    Das meiste davon verbessert auch den Editor auf dem iPhone und im Handy-Browser.</div>
+</section>
+
+<section id="gegencheck">
+  <h2>Was der Gegencheck gefunden hat</h2>
+  <p class="lead">Die wichtigsten Funde der zweiten Runde. Alle sind im neuen Plan eingearbeitet, die meisten in der Vorbereitung.</p>
+  <div class="tablewrap"><table>
+    <tr><th>Fund</th><th>Folge ohne Korrektur</th><th>Gegenmittel</th></tr>
+    <tr><td><span class="pill p-red">kritisch</span> Anmelden auf dem iPhone</td><td>iOS speichert Cookies der App automatisch; unsere Anmeldung lehnt dann jede Aktion ohne Herkunftsangabe ab. Abmelden, Passwort ändern und Konto löschen würden scheitern.</td><td>App sendet nur noch den Anmelde-Schlüssel, nie Cookies. Fester Test vor jedem Build.</td></tr>
+    <tr><td><span class="pill p-red">kritisch</span> Server-Build</td><td>Ein Ordner <code>mobile/</code> im Projekt würde den Build auf dem Server abbrechen, und die App-Pakete würden mit hochgeladen.</td><td>Schutzregeln (tsconfig, eslint, .gitignore) <b>vor</b> dem ersten App-Code.</td></tr>
+    <tr><td><span class="pill p-red">kritisch</span> Kauf-Texte vom Server</td><td>Beim Veröffentlichen ohne Tarif schickt der Server Texte wie „Wähle einen Tarif …“ und „Bitte upgrade“, der Editor zeigt sie an. Dazu 16 Dateien mit Kauf- und Upgrade-Elementen.</td><td>Server antwortet in der App nur mit Codes, Kauf-Schnittstellen sind für die App gesperrt, App zeigt eigene neutrale Texte.</td></tr>
+    <tr><td><span class="pill p-red">kritisch</span> Auszahlungskonto (Stripe) aus der App</td><td>Der Rückweg nach der Einrichtung braucht eine Browser-Anmeldung, die es in der App nicht gibt. Das Konto würde nie als eingerichtet markiert.</td><td>Eigener, signierter Rückweg für die App, geöffnet im Apple-Anmeldefenster.</td></tr>
+    <tr><td><span class="pill p-red">kritisch</span> Keine Testumgebung</td><td>Auf dem Entwicklungsrechner liegt nur der echte Stripe-Schlüssel. Ein Test des Konto-Löschens würde echte Abos kündigen.</td><td>Stripe-Testmodus, Sperre gegen echte Schlüssel außerhalb der Produktion, Test-Datenbank mit Beispieldaten, kleine Staging-Umgebung für Löschen und Push.</td></tr>
+    <tr><td><span class="pill p-amber">hoch</span> Partner-Texte</td><td>„Dein Empfohlener spart 20 %“, Tarifnamen in der Empfehlungsliste, „Ohne aktives Abo können wir nichts verrechnen“ wären bei Apple Kaufaufforderungen.</td><td>Eigene neutrale Fassung vom Server, siehe <a href="#partner">Partnerprogramm</a>.</td></tr>
+    <tr><td><span class="pill p-amber">hoch</span> iPad meldet sich als Mac</td><td>Der Editor im App-Rahmen erkennt das iPad als Desktop und zeigt die Kauf-Fenster und die Seitenleiste.</td><td>App-Modus über ein Cookie und eine eigene Kennung, nicht über den Gerätenamen.</td></tr>
+    <tr><td><span class="pill p-amber">hoch</span> iPad-Abstürze</td><td>Häufigster Ablehnungsgrund: Teilen-Fenster ohne Ankerpunkt stürzen auf dem iPad ab (Link teilen, QR, Gutschrift-PDF).</td><td>Feste Regel in den App-Bausteinen, Test auf echtem iPad.</td></tr>
+    <tr><td><span class="pill p-amber">hoch</span> Fenstergrößen ab iOS 27</td><td>Apps können sich ab iOS 27 nicht mehr gegen freie Fenstergrößen auf dem iPad sperren.</td><td>Jeder Bildschirm muss von 320 px bis Vollbild funktionieren.</td></tr>
+    <tr><td><span class="pill p-amber">hoch</span> Demo-Konto für Apple</td><td>Der Auszahlungs-Cron würde für Beispiel-Provisionen echte Gutschriften mit fortlaufender GS-Nummer erzeugen; Rundmails und Statistik würden es mitzählen.</td><td>Kennzeichen „intern“ für Konten, das alle diese Abläufe sicher ausnimmt.</td></tr>
+    <tr><td><span class="pill p-amber">hoch</span> Push mit zwei Server-Prozessen</td><td>Mitteilungen könnten beim Neustart verloren gehen oder doppelt kommen.</td><td>Warteschlange in der Datenbank, die ein Cron sicher abarbeitet.</td></tr>
+    <tr><td><span class="pill p-grey">mittel</span> Cronjobs und Rollback</td><td>Cronjobs stehen nur auf dem Server, nicht im Projekt. Das Deploy-Skript löscht die vorige Version sofort, schnelles Zurückrollen geht nicht.</td><td>Crontab ins Projekt, letzte Version beim Deploy behalten.</td></tr>
+    <tr><td><span class="pill p-grey">mittel</span> Aufbewahrung</td><td>Gutschriften und Belege 8 Jahre (§ 147 AO, § 14b UStG), Bücher bzw. Provisionsbuchungen vermutlich 10 Jahre.</td><td>Steuerberater bestätigt, danach Löschkonzept.</td></tr>
+  </table></div>
+</section>
+
+<section id="vorbereitung">
+  <h2>Phase 0: Vorbereitung, bevor die App gebaut wird</h2>
+  <p class="lead">Alles hier muss stehen, bevor die erste Zeile App-Code geschrieben wird. Deine Punkte haben Wartezeiten, deshalb am besten sofort starten. Meine Punkte laufen parallel.</p>
+  <div class="two">
+    <div class="card"><h4>Deine Aufgaben (mit Wartezeit)</h4>
+      <ol>
+        <li><b>Apple:</b> Mitgliedschaft prüfen (Einzelperson), Händlerangaben für die EU bestätigen (Adresse, Telefon, E-Mail sind öffentlich, gelten für alle deine Apps). <i>1 Tag + Prüfung durch Apple</i></li>
+        <li><b>App Store Connect:</b> neue App „FinestSites“ anlegen (Kennung <code>io.finestsites.app</code>), damit ist der Name reserviert; kurz Markenregister (DPMA/EUIPO) prüfen. <i>1 Tag</i></li>
+        <li><b>Google:</b> D-U-N-S-Nummer beantragen, dann Play-Organisationskonto. <i>Tage bis Wochen</i></li>
+        <li><b>Expo:</b> Konto der FrankenBERATER-App nutzen, neues Projekt, Zugangsschlüssel mit Push-Schutz. Auftragsverarbeitungsvertrag bei Expo per E-Mail anfragen. <i>1–2 Wochen</i></li>
+        <li><b>Steuerberater:</b> Aufbewahrung Gutschriften/Provisionen (8 oder 10 Jahre) und was beim Löschen mit offenem Partner-Guthaben passiert. <i>1–2 Wochen</i></li>
+        <li><b>Stripe:</b> Testmodus-Kopie anlegen lassen oder mir freigeben (Preise, Gutscheine, Webhook, Connect-Test). <i>1 Tag</i></li>
+        <li><b>Testgeräte:</b> ein Basis-iPad und ein kleines iPhone (leihen oder kaufen). <i>sofort</i></li>
+        <li><b>Rechtstexte freigeben,</b> die ich entwerfe: Datenschutz-Abschnitt App, AGB (Löschen, Partnerprogramm in der App, Benutzernamen werden nie neu vergeben). <i>nach meinem Entwurf</i></li>
+      </ol>
+    </div>
+    <div class="card"><h4>Meine Aufgaben (Reihenfolge)</h4>
+      <ol>
+        <li><b>Projekt absichern:</b> Schutzregeln für <code>mobile/</code>, automatische Prüfungen (Typen, Kauf-Wörter-Suche, Kontrakt-Tests), Crontab ins Projekt, letzte Version beim Deploy behalten.</li>
+        <li><b>Stripe-Sperre:</b> Server startet außerhalb der Produktion nie mit echtem Schlüssel; Testmodus einrichten.</li>
+        <li><b>Testumgebung:</b> lokale Test-Datenbank mit Beispielkonten in allen Zuständen (ohne Tarif, Limit, Zahlung offen, Partner mit Gutschriften); danach kleine Staging-Umgebung für Löschen und Push.</li>
+        <li><b>Kennzeichen „intern“</b> für Konten + Apple-Demo-Konto mit Seiten, Anfragen, Chat und Partner-Beispieldaten, ausgenommen von Rundmails, Statistik, Auszahlungen, Mahnwesen.</li>
+        <li><b>ClaimGuard</b> auf ein aktuelles Modell umstellen (<code>gpt-4o</code> wird am 14.01.2027 abgeschaltet).</li>
+        <li><b>Anmeldung</b> für die App vorbereiten (Anmelde-Schlüssel, Einmal-Schlüssel für den Editor) inklusive iPhone-Korrektur.</li>
+        <li><b>Schnittstellen-Verträge</b> für alle App-Daten und feste Fehlercodes.</li>
+        <li><b>Datenbank-Änderungen</b> (Push, Einstellungen, Löschung, Warteschlange, Verknüpfungs-Korrektur, reservierte Benutzernamen).</li>
+        <li><b>Universal Links</b> (Apple-Datei auf app.finestsites.io) und direkter Netzweg für App-Schnittstellen.</li>
+        <li><b>Überwachung:</b> Fehlerberichte (EU), eigenes Protokoll für App-Schnittstellen, Notschalter für einzelne App-Bereiche (z. B. Partnerprogramm), Warnungen an dich.</li>
+        <li><b>Kauf-Wörter-Liste:</b> alle 16 Stellen mit Preisen, Upgrade, Rabatten, Kampagnen dokumentiert und als automatischer Test.</li>
+        <li><b>Design-Werte</b> aus der Webapp übernehmen.</li>
+        <li><b>Entwürfe</b> für Datenschutz, AGB, Verarbeitungsverzeichnis, Prüf-Hinweise für Apple, Betriebshandbuch.</li>
+      </ol>
+    </div>
+  </div>
+  <div class="note blue"><b>Reihenfolge-Kette, die alles andere bestimmt:</b> App Store Connect anlegen → Apple-Datei für Links veröffentlichen → erster Testbuild mit Push und Links → Push-Test Ende zu Ende → TestFlight. Deshalb ist der App-Store-Eintrag (Punkt 2 bei dir) der wichtigste erste Schritt.</div>
+</section>
+
+<section id="phasen">
+  <h2>Phasen und Zeitplan</h2>
+  <p class="lead">Arbeitstage mit mir, ohne Wartezeiten bei Apple, Google und D-U-N-S.</p>
+  <div class="timeline">
+    <div class="phase prep"><div class="when"><b>Woche 1</b><span>ca. 4–5 Tage</span></div><div><h4>Phase 0 · Vorbereitung</h4><p>Siehe oben. Erst wenn alles grün ist, startet Phase 1.</p><div class="bar"><i style="left:0;width:9%;background:#111827"></i></div></div></div>
+
+    <div class="phase"><div class="when"><b>Woche 2–3</b><span>ca. 9–12 Tage</span></div><div><h4>Phase 1 · Backend-Fundament</h4><ul>
+      <li>App-Schnittstellen <code>/api/app/v1</code> (Mindestversion, Ich, Übersicht, Mitteilungen, Geräte, Einstellungen)</li>
+      <li>App-Modus auf dem Server: Kauf-Schnittstellen gesperrt, neutrale Codes beim Veröffentlichen</li>
+      <li>Partnerprogramm für die App: neutrale Texte, signierter Stripe-Rückweg, Gutschrift-PDF per App</li>
+      <li>Push: Warteschlange, Versand, Empfangsbestätigungen, Nachtruhe, alle Auslöser</li>
+      <li>Support-Antworten an App-Nutzer: Prüfung auf Preise und Kauf-Links vor dem Senden; Support-KI kennt die App</li>
+    </ul><div class="bar"><i style="left:9%;width:16%;background:#7C3AED"></i></div></div></div>
+
+    <div class="phase"><div class="when"><b>Woche 3–4</b><span>ca. 6–9 Tage</span></div><div><h4>Phase 2 · Editor fürs iPad und App-Modus im Web</h4><ul>
+      <li>iPad-Anpassungen aus dem Abschnitt oben (Vorschau, Schrift, Tippflächen, Umsortieren, Bildzuschnitt, Tastatur)</li>
+      <li>App-Modus im Editor: eigene Kopfzeile aus, Kauf-Fenster ersetzt, Links nach außen und „ungespeicherte Änderungen“ über die Brücke</li>
+      <li>Vorher-Nachher-Vergleich: Web-Dashboard ohne App-Modus muss exakt gleich bleiben</li>
+    </ul><div class="bar"><i style="left:20%;width:13%;background:#0EA5E9"></i></div></div></div>
+
+    <div class="phase"><div class="when"><b>Woche 4–5</b><span>ca. 7–9 Tage</span></div><div><h4>Phase 3 · Konto löschen</h4><ul>
+      <li>In App, Web und auf <code>finestsites.io/konto-loeschen</code>, 14 Tage Bedenkzeit</li>
+      <li>Stripe-Abo beenden ohne Kündigungs-Mails, Seiten offline, Domains frei, Sitzungen und Geräte weg</li>
+      <li>Partner: Guthaben nach AGB, Gutschriften und Steuerdaten bleiben, Auszahlungskonto entkoppelt</li>
+      <li>Komplett auf Staging getestet, nie mit echten Daten</li>
+    </ul><div class="bar"><i style="left:30%;width:14%;background:#DC2626"></i></div></div></div>
+
+    <div class="phase"><div class="when"><b>Woche 5–10</b><span>ca. 22–28 Tage</span></div><div><h4>Phase 4 · Die App für iPhone und iPad</h4><ul>
+      <li>Design-Bausteine, Anmelden, Ersteinrichtung, Face ID / Touch ID</li>
+      <li>Start, Seiten, Seiten-Detail, Neue Webseite</li>
+      <li>Anfragen (Anrufen, WhatsApp, E-Mail), Hilfe-Chat, Mitteilungen, Konto</li>
+      <li>Partnerprogramm: Link, Provisionen, Auszahlung, Steuerprofil, Gutschriften</li>
+      <li>Editor im App-Rahmen mit Brücke und nativer Veröffentlichen-Bestätigung</li>
+      <li>iPad: Liste und Detail nebeneinander, alle Ausrichtungen, geteilter Bildschirm, Tastaturkürzel</li>
+      <li>Lade-, Leer-, Fehler-, Offline-Zustände, große Schrift, VoiceOver, Universal Links</li>
+    </ul><div class="bar"><i style="left:40%;width:40%;background:#2563EB"></i></div></div></div>
+
+    <div class="phase"><div class="when"><b>Woche 11–13</b><span>ca. 8–10 Tage + Prüfung</span></div><div><h4>Phase 5 · Testen und bei Apple einreichen</h4><ul>
+      <li>TestFlight intern, dann 5–10 ausgewählte Nutzer (persönlich angefragt, keine Rundmail ohne Freigabe)</li>
+      <li>Externer TestFlight-Test als Probelauf für Apples Kaufregeln</li>
+      <li>Komplette Testliste, Prüfung „nirgends ein Kaufweg“ mit einem Konto ohne Tarif, Bildschirmaufnahme</li>
+      <li>Screenshots iPhone und iPad 13", Store-Texte, Datenschutz-Angaben, Altersfreigabe, Prüf-Hinweise, Antwort für eine mögliche Ablehnung</li>
+    </ul><div class="bar"><i style="left:78%;width:16%;background:#15803D"></i></div></div></div>
+
+    <div class="phase"><div class="when"><b>Woche 14–15</b><span>ca. 8–12 Tage</span></div><div><h4>Phase 6 · Android</h4><ul>
+      <li>Firebase-Push, Benachrichtigungs-Kanäle, Android 16, Zurück-Geste, Tablets</li>
+      <li>App-Links, Lösch-Seite, Datensicherheit, Altersfreigabe, interner Test, Einreichung</li>
+    </ul><div class="bar"><i style="left:92%;width:8%;background:#64748B"></i></div></div></div>
+  </div>
+  <div class="grid">
+    <div class="card"><h4>Danach als Update</h4><p>Registrieren in der App, Besucher-Chat, „Über mich“ per Sprache. Jeweils mit erneuter Prüfung der Store-Regeln.</p></div>
+    <div class="card"><h4>Laufende Kosten</h4><p>Apple 99 $/Jahr (vorhanden), Google 25 $ einmalig, Expo 0–19 $/Monat, Fehlerberichte im kostenlosen Rahmen, Push kostenlos.</p></div>
+  </div>
+</section>
+
+<section id="partner">
+  <h2>Partnerprogramm in der App</h2>
+  <p class="lead">Apple hat keine Regel gegen Partnerprogramme, Affiliate-Apps wie Awin sind im Store. Kritisch ist nur, wenn Texte auf einen Kauf zeigen. Darum gibt es eine eigene, neutrale Fassung vom Server, keine zweite Textsammlung in der App.</p>
+  <div class="two">
+    <div class="card"><h4>Erlaubt</h4><ul class="ok">
+      <li>„Dein Empfehlungslink“, „Link kopieren“, „Link teilen“, „Code kopieren“</li>
+      <li>„Du erhältst 10 % Provision auf die Zahlungen deiner Empfehlungen, solange sie dabei sind.“</li>
+      <li>Verfügbar · In 14 Tagen · Bereits erhalten, mit Euro-Beträgen</li>
+      <li>„Mit meinem Konto verrechnen“ / „Aufs Bankkonto auszahlen“</li>
+      <li>„Auszahlungskonto einrichten (über Stripe)“, „127,40 € jetzt auszahlen“</li>
+      <li>Steuerprofil, Gutschriften herunterladen</li>
+      <li>„Deine Empfehlungen: 4 · aktiv / pausiert“</li>
+    </ul></div>
+    <div class="card"><h4>Verboten (App, Mitteilungen, Screenshots, Store-Texte)</h4><ul class="no">
+      <li>Rabatte für Empfohlene („spart 20 %“, „10 % im Jahresabo“, „Partnerpreis“)</li>
+      <li>Tarifnamen (Starter, Pro, Unlimited) in der Empfehlungsliste</li>
+      <li>„Ohne aktives Abo …“, „Endet dein Abo …“, „Guthaben für deine nächsten Rechnungen“</li>
+      <li>Den Empfehlungslink in der App öffnen (er führt zur Preisseite)</li>
+      <li>„Verdiene Geld“, „passives Einkommen“</li>
+      <li>„Partnerprogramm nur mit Tarif“; Konten ohne Tarif sehen den Bereich gar nicht</li>
+    </ul></div>
+  </div>
+  <ul>
+    <li><b>Platz:</b> unter „Konto › Partnerprogramm“, nur sichtbar, wenn das Konto teilnehmen darf.</li>
+    <li><b>Auszahlungskonto einrichten:</b> im sicheren Apple-Anmeldefenster (wie bei „Mit Google anmelden“), nie im App-Rahmen. Jedes Mal ein frischer Link.</li>
+    <li><b>Apple-Datenschutzangaben:</b> wegen Steuerprofil zusätzlich „Anschrift“ und „Sonstige Finanzinformationen“. Bankdaten gibt der Nutzer nur bei Stripe ein, die zählen nicht.</li>
+    <li><b>Demo-Konto:</b> zeigt Beispiel-Provisionen und Gutschriften, löst aber nie eine echte Auszahlung oder Stripe-Prüfung aus.</li>
+  </ul>
+</section>
+
+<section id="screens">
+  <h2>Bildschirme der Version 1</h2>
+  <div class="tablewrap"><table>
+    <tr><th>Bereich</th><th>Inhalt</th><th>iPad</th></tr>
+    <tr><td><b>Start</b></td><td>Begrüßung, neutraler Konto-Status, „Zu erledigen“, Besucher und Anfragen der Woche, Mitteilungen</td><td>Inhalt mittig, max. ca. 720 pt breit</td></tr>
+    <tr><td><b>Seiten</b></td><td>Online/Offline/Entwürfe, Detail mit Bearbeiten, Seite ansehen (Safari-Fenster), Teilen, QR, Anfragen, Besucher, Domain, Offline schalten; Neue Webseite ohne Preis-Abzeichen</td><td>Raster mit 2–3 Spalten</td></tr>
+    <tr><td><b>Editor</b></td><td>Web-Editor im App-Rahmen, native Kopfzeile „Fertig“, native Bestätigung beim Veröffentlichen, neutrale Hinweise bei fehlendem Tarif</td><td>Vollbild, iPad-Anpassungen aus Phase 2</td></tr>
+    <tr><td><b>Anfragen</b></td><td>Postfach, Suche, Ungelesen/Archiv, Anrufen/WhatsApp/E-Mail</td><td>Liste und Detail nebeneinander; „Anrufen“ nur, wenn das Gerät telefonieren kann</td></tr>
+    <tr><td><b>Hilfe</b></td><td>Support-Chat mit Fotos, Freigabe für Support-Zugriff, Push</td><td>Liste und Chat nebeneinander</td></tr>
+    <tr><td><b>Konto</b></td><td>Profil, Teampartner-Nummer, „Tarif: Pro · 2 von 3 Webseiten“ (nur Anzeige), <b>Partnerprogramm</b>, Mitteilungen, E-Mails, Face ID / Touch ID, Passwort, Werbung &amp; Tracking, Rechtliches, Abmelden, Konto löschen</td><td>Einstellungen im iOS-Stil</td></tr>
+    <tr><td><b>Ersteinrichtung</b></td><td>Benutzername, Einwilligung, Teampartner-Nummer, Profilfoto</td><td>mittig</td></tr>
+    <tr><td colspan="3"><b>Nicht in der App:</b> Tarifwahl, Zahlung &amp; Plan, Rechnungen, Kampagnen, Gutscheincodes, Kündigen/Reaktivieren, Admin; Registrieren erst per Update.</td></tr>
+  </table></div>
+</section>
+
+<section id="risiken">
+  <h2>Risiken</h2>
+  <div class="tablewrap"><table>
+    <tr><th>Risiko</th><th>Höhe</th><th>Gegenmaßnahme</th></tr>
+    <tr><td>Apple lehnt nach 3.1.1 ab</td><td><span class="pill p-red">hoch</span></td><td>Regel 3.1.3(f) (Begleit-App zu Web-Hosting), nur Anmelden, nirgends Preise; Probelauf über externes TestFlight; Antwort vorbereitet</td></tr>
+    <tr><td>Kauf- oder Rabatt-Texte rutschen durch (Editor, Partner, Support, Mitteilungen)</td><td><span class="pill p-red">hoch</span></td><td>Server-Codes statt Texte, Sperre der Kauf-Schnittstellen, automatische Kauf-Wörter-Suche, Prüfung von Support-Antworten, Notschalter je Bereich</td></tr>
+    <tr><td>Konto löschen fehlerhaft (echte Daten)</td><td><span class="pill p-red">hoch</span></td><td>Nur auf Staging mit Stripe-Testmodus testen</td></tr>
+    <tr><td>iPad-Abstürze oder kaputtes Layout</td><td><span class="pill p-amber">mittel</span></td><td>Anker für Teilen-Fenster, Layout nach Fenstergröße, Testmatrix mit geteiltem Bildschirm und Stage Manager</td></tr>
+    <tr><td>Abstürze durch Paketversionen (wie bei FrankenBERATER)</td><td><span class="pill p-amber">mittel</span></td><td>Nur passende Expo-Versionen, Prüfung vor jedem Build, Test auf echten Geräten</td></tr>
+    <tr><td>Datenschutz (Push, Steuerprofil, Fehlerberichte)</td><td><span class="pill p-amber">mittel</span></td><td>Keine Interessenten-Daten auf dem Sperrbildschirm, Verträge mit Expo und Firebase, Fehlerberichte ohne personenbezogene Daten in der EU, abschaltbar</td></tr>
+    <tr><td>Expo SDK 58 ist erst eine Woche alt</td><td><span class="pill p-grey">gering</span></td><td>Versionen festschreiben; Ausweichen auf SDK 57 möglich</td></tr>
+  </table></div>
+</section>
+
+<section id="check">
+  <h2>Checkliste vor der Einreichung bei Apple</h2>
+  <ul class="check">
+    <li>Mit einem Konto ohne Tarif jeden Bildschirm durchgehen: nirgends Preis, Rabatt, Tarifname, „Upgrade“, Kauf-Link (aufgezeichnet)</li>
+    <li>Gleiche Prüfung für Editor, Partnerprogramm, Mitteilungen, Support-Antworten, Screenshots, Store-Texte</li>
+    <li>Konto löschen in App, Web und als Web-Seite, auf Staging Ende zu Ende getestet</li>
+    <li>Push in allen App-Zuständen inkl. „App war geschlossen“, keine Interessenten-Daten auf dem Sperrbildschirm</li>
+    <li>iPad: alle Ausrichtungen, geteilter Bildschirm, Stage Manager, Teilen-Fenster, Tastatur</li>
+    <li>Impressum, Datenschutz, AGB in der App; Datenschutzerklärung um die App ergänzt</li>
+    <li>Apple-Datenschutzangaben (inkl. Anschrift und Finanzinformationen), Altersfreigabe, Exportangabe, Rechte an Inhalten</li>
+    <li>Demo-Konto mit Tarif, Seiten, Anfragen, Chat und Partner-Beispieldaten, ohne Zusatzcode und ohne echte Auszahlung</li>
+    <li>Prüf-Hinweise auf Englisch (3.1.3(f), nur B2B, einstufiges Partnerprogramm ohne Kauf in der App, iPad getestet, wo Konto löschen ist)</li>
+    <li>Screenshots iPhone und iPad 13" ohne PM-/Fremdmarken</li>
+    <li>ClaimGuard auf aktuellem Modell, Web-Dashboard ohne App-Modus unverändert</li>
+  </ul>
+</section>
+
+<section class="decide" id="offen">
+  <h2>Offene Fragen und nächster Schritt</h2>
+  <ol>
+    <li><b>Knöpfe:</b> abgerundete Ecken wie im Dashboard oder ganz rund?</li>
+    <li><b>Staging-Umgebung:</b> eine kleine eigene Testumgebung (zweiter Prozess auf dem App-Server mit eigener Datenbank und Stripe-Testmodus, ohne Zusatzkosten) für Konto löschen und Push. Einverstanden?</li>
+    <li><b>Fehlerberichte:</b> Sentry mit EU-Speicherort (bewährt, kostenloser Rahmen) oder Expos eigene Lösung (neuer, noch nicht ganz fertig)? Ich empfehle Sentry.</li>
+    <li><b>Startschuss für Phase 0:</b> Soll ich mit meinen Vorbereitungs-Aufgaben beginnen, während du App Store Connect, D-U-N-S, Expo und Steuerberater anstößt?</li>
+  </ol>
+</section>
+
+<section>
+  <h2>Quellen</h2>
+  <ul class="src">
+    <li><a href="https://developer.apple.com/app-store/review/guidelines/">Apple App Review Guidelines (16.10.2026)</a>: 3.1.1, 3.1.1(a), 3.1.3(f), 2.4.1, 4.2, 4.5.4, 5.1.1, 5.6</li>
+    <li><a href="https://developer.apple.com/tutorials/data/documentation/technotes/tn3192-migrating-your-app-from-the-deprecated-uirequiresfullscreen-key.md">Apple TN3192: freie Fenstergrößen ab iOS 27</a>, <a href="https://developer.apple.com/help/app-store-connect/reference/app-information/screenshot-specifications">Screenshot-Größen</a>, <a href="https://developer.apple.com/app-store/app-privacy-details/">Datenschutzangaben</a>, <a href="https://developer.apple.com/help/app-store-connect/manage-compliance-information/manage-european-union-digital-services-act-trader-requirements">EU-Händlerangaben</a>, <a href="https://developer.apple.com/support/offering-account-deletion-in-your-app/">Konto löschen</a>, <a href="https://developer.apple.com/programs/enroll/">Mitgliedschaft</a></li>
+    <li><a href="https://docs.stripe.com/connect/express-accounts">Stripe Connect Express</a>, <a href="https://developer.apple.com/forums/thread/779622">Apple-Forum zu Anmeldefenstern</a>, <a href="https://apps.apple.com/us/app/awin/id6498894394">Awin im App Store</a></li>
+    <li><a href="https://support.google.com/googleplay/android-developer/answer/13327111">Google Play: Konto löschen</a>, <a href="https://support.google.com/googleplay/android-developer/answer/14151465">Testpflicht</a>, <a href="https://support.google.com/googleplay/android-developer/answer/10281818">Zahlungen</a></li>
+    <li><a href="https://www.gesetze-im-internet.de/ao_1977/__147.html">§ 147 AO</a>, <a href="https://www.gesetze-im-internet.de/ustg_1980/__14b.html">§ 14b UStG</a></li>
+    <li><a href="https://expo.dev/changelog/sdk-58">Expo SDK 58</a>, <a href="https://expo.dev/changelog/native-crash-reporting-in-eas-observe">EAS Observe</a>, <a href="https://www.better-auth.com/docs/plugins/one-time-token">BetterAuth One-Time-Token</a></li>
+    <li>Eigener Code (Editor, Partnerprogramm, Anmeldung, Deploy, Schema) und FrankenBERATER-App/-CRM, geprüft am 21.10.2026</li>
+  </ul>
+</section>
+
+</div>
+</body>
+</html>
