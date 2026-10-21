@@ -1,4 +1,4 @@
-import { S3Client, PutObjectCommand, GetObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3'
+import { S3Client, PutObjectCommand, GetObjectCommand, DeleteObjectCommand, ListObjectsV2Command, DeleteObjectsCommand } from '@aws-sdk/client-s3'
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 
 const r2Client = new S3Client({
@@ -52,6 +52,28 @@ export async function deleteFromR2(key: string) {
     Key: key,
   })
   await r2Client.send(command)
+}
+
+/**
+ * Löscht alle Objekte unter einem Präfix (z. B. `user-images/<userId>/`). Präfix muss mit „/“ enden,
+ * damit nie ein fremder Ordner mit gleichem Anfang getroffen wird. Gibt die Zahl gelöschter Objekte zurück.
+ */
+export async function deletePrefixFromR2(prefix: string): Promise<number> {
+  if (!prefix || !prefix.endsWith('/') || prefix.split('/').filter(Boolean).length < 2) {
+    throw new Error(`deletePrefixFromR2: unsicheres Präfix "${prefix}"`)
+  }
+  let deleted = 0
+  let token: string | undefined
+  do {
+    const list = await r2Client.send(new ListObjectsV2Command({ Bucket: BUCKET, Prefix: prefix, ContinuationToken: token, MaxKeys: 1000 }))
+    const keys = (list.Contents ?? []).map(o => o.Key).filter((k): k is string => !!k && k.startsWith(prefix))
+    if (keys.length > 0) {
+      await r2Client.send(new DeleteObjectsCommand({ Bucket: BUCKET, Delete: { Objects: keys.map(Key => ({ Key })), Quiet: true } }))
+      deleted += keys.length
+    }
+    token = list.IsTruncated ? list.NextContinuationToken : undefined
+  } while (token)
+  return deleted
 }
 
 export async function getPresignedUploadUrl(key: string, contentType: string, expiresIn = 3600) {

@@ -27,6 +27,9 @@ import { purgeSiteCache, markSiteOffline } from '@/lib/cloudflare/kv'
 import { writeRenderedHtmlKV } from '@/lib/cloudflare/kv-api'
 import { renderTemplate, rawKeysFromSchema } from '@/lib/utils/template-engine'
 import { shouldBeOffline } from '@/lib/billing/site-access'
+import { isAppRequest } from '@/lib/app-mode'
+import { appMessage } from '@/lib/app-api/messages'
+import { deletionPendingResponse } from '@/lib/account-deletion/guard'
 
 const r2Client = new S3Client({
   region: 'auto',
@@ -77,6 +80,9 @@ const PLAN_LIMITS: Record<string, number> = { starter: 1, pro: 3, unlimited: Inf
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const user = await getUserFromRequest(req)
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  // Kontolöschung angefragt: Veröffentlichen, neue Seiten und Kauf gesperrt
+  const deletionBlock = await deletionPendingResponse(user.id)
+  if (deletionBlock) return deletionBlock
 
   const { id } = await params
 
@@ -104,6 +110,9 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   // Free templates are always publishable. Premium templates need an active
   // subscription AND must not exceed the plan's concurrent-site quota.
   const tplIsFree = site.template.isFree ?? false
+  // App (nativ oder Editor-WebView der App): gleiche Codes, aber neutrale Texte ohne Tarif-/Kauf-Hinweis
+  // (Apple 3.1.1). Browser bekommen exakt die bisherigen Texte.
+  const forApp = isAppRequest(req)
   if (!tplIsFree) {
     // Users whose sites are offline for an open payment are NOT allowed to
     // publish: the sites come back automatically once it's paid. Letting them
@@ -112,7 +121,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     const status = userRow.subscriptionStatus ?? ''
     if (shouldBeOffline(userRow)) {
       return NextResponse.json({
-        error: 'Deine letzte Zahlung ist noch offen. Sobald sie eingegangen ist, gehen deine Webseiten automatisch wieder online.',
+        error: forApp ? appMessage('PAYMENT_PENDING') : 'Deine letzte Zahlung ist noch offen. Sobald sie eingegangen ist, gehen deine Webseiten automatisch wieder online.',
         code: 'PAYMENT_PENDING',
       }, { status: 402 })
     }
@@ -121,7 +130,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
 
     if (!hasActiveSub) {
       return NextResponse.json({
-        error: 'Wähle einen Tarif, um deine Webseite zu veröffentlichen.',
+        error: forApp ? appMessage('SUBSCRIPTION_REQUIRED') : 'Wähle einen Tarif, um deine Webseite zu veröffentlichen.',
         code: 'SUBSCRIPTION_REQUIRED',
       }, { status: 402 })
     }
@@ -142,7 +151,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
 
     if (otherPaidCount >= limit) {
       return NextResponse.json({
-        error: `Plan-Limit erreicht. Dein ${plan}-Plan erlaubt ${limit} ${limit === 1 ? 'aktive Premium-Webseite' : 'aktive Premium-Webseiten'}. Bitte upgrade oder nimm eine andere Seite offline.`,
+        error: forApp ? appMessage('PLAN_LIMIT_REACHED') : `Plan-Limit erreicht. Dein ${plan}-Plan erlaubt ${limit} ${limit === 1 ? 'aktive Premium-Webseite' : 'aktive Premium-Webseiten'}. Bitte upgrade oder nimm eine andere Seite offline.`,
         code: 'PLAN_LIMIT_REACHED',
       }, { status: 403 })
     }

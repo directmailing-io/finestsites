@@ -36,6 +36,64 @@ interface UserProfile {
   youtube: string | null
   emailOptOut: string[] | null
   emailOptOutUpdatedAt: string | null
+  deletionRequestedAt: string | null
+  deletionScheduledFor: string | null
+  deletedAt: string | null
+}
+
+interface DeletionInfo {
+  status: 'scheduled' | 'cancelled' | 'completed'
+  source: string
+  requestedAt: string
+  scheduledFor: string
+  cancelledAt: string | null
+  completedAt: string | null
+  balanceAvailableCents: number
+  balancePendingCents: number
+  balanceChoice: 'none' | 'payout' | 'waive'
+  settlementStatus: string
+  limitationUntil: string | null
+}
+
+const SETTLEMENT_LABEL: Record<string, string> = {
+  not_needed: 'kein Guthaben',
+  pending: 'Schlussabrechnung läuft',
+  settled: 'abgerechnet',
+  payable_on_request: 'auf Anfrage auszahlbar',
+  waived: 'Verzicht erklärt',
+  time_barred: 'verjährt',
+}
+
+function fmtDay(iso: string | null): string {
+  return iso ? new Date(iso).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '–'
+}
+
+/** Hinweis „Löschung angefragt“ / „Gelöscht“ oben in der Profilkarte. */
+function DeletionNotice({ profile, deletion }: { profile: UserProfile; deletion: DeletionInfo | null }) {
+  if (!profile.deletedAt && !profile.deletionRequestedAt) {
+    if (deletion?.status === 'cancelled') {
+      return <p className="text-xs" style={{ color: 'var(--muted-foreground)' }}>Löschung am {fmtDay(deletion.requestedAt)} angefragt, am {fmtDay(deletion.cancelledAt)} abgebrochen.</p>
+    }
+    return null
+  }
+  const deleted = !!profile.deletedAt
+  const total = (deletion?.balanceAvailableCents ?? 0) + (deletion?.balancePendingCents ?? 0)
+  const choice = deletion?.balanceChoice === 'waive' ? 'Verzicht' : deletion?.balanceChoice === 'payout' ? 'Auszahlung' : null
+  return (
+    <div className="rounded-2xl px-4 py-3 text-sm flex flex-col gap-1"
+      style={deleted
+        ? { background: '#F3F4F6', color: '#374151', border: '1px solid #E5E7EB' }
+        : { background: '#FEF2F2', color: '#991B1B', border: '1px solid #FECACA' }}>
+      <strong>{deleted ? `Konto gelöscht am ${fmtDay(profile.deletedAt)}` : `Löschung angefragt – wird am ${fmtDay(profile.deletionScheduledFor)} gelöscht`}</strong>
+      {!deleted && <span>Angefragt am {fmtDay(profile.deletionRequestedAt)}{deletion ? ` (${deletion.source === 'app' ? 'App' : 'Web'})` : ''}. Seiten offline, Abo beendet. Der Nutzer kann die Löschung nach dem Anmelden selbst abbrechen.</span>}
+      {deletion && total > 0 && (
+        <span>Partner-Guthaben bei Anfrage: {(total / 100).toLocaleString('de-DE', { style: 'currency', currency: 'EUR' })}{choice ? ` · Wahl: ${choice}` : ''}</span>
+      )}
+      {deletion && deletion.settlementStatus !== 'not_needed' && (
+        <span>Abrechnung: {SETTLEMENT_LABEL[deletion.settlementStatus] ?? deletion.settlementStatus}{deletion.limitationUntil ? ` (bis ${fmtDay(deletion.limitationUntil)})` : ''}</span>
+      )}
+    </div>
+  )
 }
 
 interface AffiliateSearchResult {
@@ -87,6 +145,7 @@ interface UserDetail {
   invoices: Invoice[]
   events: SubscriptionEvent[]
   subscriptionDiscount: { couponName: string | null; promoCode: string | null } | null
+  deletion?: DeletionInfo | null
 }
 
 interface SupportConv {
@@ -331,7 +390,7 @@ export default function AdminUserDetailPage({ params }: { params: Promise<{ id: 
     )
   }
 
-  const { profile, sites, invoices, events, subscriptionDiscount } = data
+  const { profile, sites, invoices, events, subscriptionDiscount, deletion } = data
   const planColor = PLAN_COLORS[profile.plan] ?? PLAN_COLORS.starter
 
   return (
@@ -349,6 +408,7 @@ export default function AdminUserDetailPage({ params }: { params: Promise<{ id: 
         {/* Profile card */}
         <div className="p-6 rounded-[24px] bg-white flex flex-col gap-3"
           style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.08)', border: '1px solid var(--border)' }}>
+          <DeletionNotice profile={profile} deletion={deletion ?? null} />
           <div className="flex items-start justify-between gap-4">
             <div>
               <h1 className="text-lg font-semibold text-gray-900">{profile.email}</h1>

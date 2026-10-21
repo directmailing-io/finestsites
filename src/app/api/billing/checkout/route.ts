@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { blockPurchaseInApp } from '@/lib/app-mode'
 import type Stripe from 'stripe'
 import { db } from '@/lib/db'
 import { users } from '@/lib/db/schema'
@@ -9,6 +10,7 @@ import { getCampaignForProfile } from '@/lib/billing/campaign'
 import { campaignDiscount } from '@/lib/billing/campaign-shared'
 import { loadReferralContextSafe, referralDiscountFor, referralProfileColumns, stampLegacyTermsIfBeforeStart } from '@/lib/affiliate/referral-offer'
 import { assertReferralCouponAllowed, couponPartnerUsername } from '@/lib/affiliate/referral-model'
+import { deletionPendingResponse } from '@/lib/account-deletion/guard'
 
 /**
  * Creates a Stripe Checkout Session for a subscription.
@@ -26,9 +28,15 @@ import { assertReferralCouponAllowed, couponPartnerUsername } from '@/lib/affili
  * Invoicing: invoices are created automatically by Stripe for subscription billing.
  */
 export async function POST(req: NextRequest) {
+  // App: Kauf-/Abo-Schnittstellen gesperrt (Apple 3.1.1). Browser: unverändert.
+  const appBlocked = blockPurchaseInApp(req)
+  if (appBlocked) return appBlocked
   try {
     const user = await getUserFromRequest(req)
     if (!user) return NextResponse.json({ error: 'Nicht angemeldet.' }, { status: 401 })
+    // Kontolöschung angefragt: Veröffentlichen, neue Seiten und Kauf gesperrt
+    const deletionBlock = await deletionPendingResponse(user.id)
+    if (deletionBlock) return deletionBlock
 
     const { plan, interval = 'monthly', site_id, promo_code } = await req.json() as {
       plan: PlanKey; interval?: BillingInterval; site_id?: string; promo_code?: string

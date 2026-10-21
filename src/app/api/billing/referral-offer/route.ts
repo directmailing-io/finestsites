@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { blockPurchaseInApp } from '@/lib/app-mode'
 import { db } from '@/lib/db'
 import { users } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
@@ -16,6 +17,9 @@ import { loadReferralContext, referralOfferFor, referralProfileColumns } from '@
  * dauerhaft 10 % Partnerpreis" (Einstellungen → Zahlung).
  */
 export async function GET(req: NextRequest) {
+  // App: Kauf-/Abo-Schnittstellen gesperrt (Apple 3.1.1). Browser: unverändert.
+  const appBlocked = blockPurchaseInApp(req)
+  if (appBlocked) return appBlocked
   const user = await getUserFromRequest(req)
   if (!user) return NextResponse.json({ error: 'Nicht angemeldet.' }, { status: 401 })
   // Die Neukunden-Prüfung fragt Stripe ab → je Konto und je IP drosseln

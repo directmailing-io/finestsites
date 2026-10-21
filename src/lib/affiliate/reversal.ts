@@ -76,7 +76,8 @@ export function planReversal(params: {
   const refunded = Math.max(0, Math.floor(params.refunded))
   const full = total <= 0 || refunded >= total
   if (!full && refunded <= 0) return []
-  if (base.status === 'cancelled' || base.status === 'reversed' || base.commissionAmount <= 0) return []
+  // 'waived' = Partner hat bei der Kontolöschung verzichtet → nichts mehr zu stornieren
+  if (base.status === 'cancelled' || base.status === 'reversed' || base.status === 'waived' || base.commissionAmount <= 0) return []
 
   const orig = originalCommission(base)
   if (orig == null) {
@@ -155,7 +156,7 @@ export function planDisputeRestore(params: {
   const refundTarget = total <= 0 ? 0 : refunded >= total ? original : Math.floor((original * refunded) / total)
   const shouldRemain = original - refundTarget
 
-  const baseEffective = base.status === 'cancelled' || base.status === 'reversed' ? 0 : base.commissionAmount
+  const baseEffective = base.status === 'cancelled' || base.status === 'reversed' || base.status === 'waived' ? 0 : base.commissionAmount
   const effective = baseEffective + existingReversals
     .filter(r => r.status !== 'cancelled')
     .reduce((s, r) => s + r.commissionAmount, 0)

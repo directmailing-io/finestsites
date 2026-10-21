@@ -1,15 +1,23 @@
 import { NextResponse } from 'next/server'
+import { blockPurchaseInApp } from '@/lib/app-mode'
 import { getServerUser } from '@/lib/auth/server'
 import { db } from '@/lib/db'
 import { users } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
 import { getStripe } from '@/lib/stripe/client'
+import { deletionPendingResponse } from '@/lib/account-deletion/guard'
 
 export const runtime = 'nodejs'
 
-export async function POST() {
+export async function POST(req: Request) {
+  // App: Kauf-/Abo-Schnittstellen gesperrt (Apple 3.1.1). Browser: unverändert.
+  const appBlocked = blockPurchaseInApp(req)
+  if (appBlocked) return appBlocked
   const user = await getServerUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  // Kontolöschung angefragt: Veröffentlichen, neue Seiten und Kauf gesperrt
+  const deletionBlock = await deletionPendingResponse(user.id)
+  if (deletionBlock) return deletionBlock
 
   const profile = await db.query.users.findFirst({
     where: eq(users.id, user.id),

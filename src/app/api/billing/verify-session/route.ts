@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { blockPurchaseInApp } from '@/lib/app-mode'
 import type Stripe from 'stripe'
 import { db } from '@/lib/db'
 import { users } from '@/lib/db/schema'
@@ -10,6 +11,9 @@ import { getStripe, getPlanByPriceId } from '@/lib/stripe/client'
 // but the webhook may not have fired yet. Verifies the session directly with Stripe
 // and updates the DB, so subsequent middleware checks pass.
 export async function GET(req: NextRequest) {
+  // App: Kauf-/Abo-Schnittstellen gesperrt (Apple 3.1.1). Browser: unverändert.
+  const appBlocked = blockPurchaseInApp(req)
+  if (appBlocked) return appBlocked
   const user = await getUserFromRequest(req)
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 

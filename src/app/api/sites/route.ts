@@ -4,6 +4,7 @@ import { db } from '@/lib/db'
 import { users, userSites, templates, siteData, formSubmissions, templateAccess } from '@/lib/db/schema'
 import { eq, ne, and, inArray, isNull } from 'drizzle-orm'
 import { FITLINE_SHOP_PRODUCTS, buildFitlineShopLink } from '@/lib/utils/fitline-shop-links'
+import { deletionPendingResponse } from '@/lib/account-deletion/guard'
 
 /**
  * Map user profile fields to common template placeholder keys.
@@ -173,6 +174,9 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   const user = await getUserFromRequest(req)
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  // Kontolöschung angefragt: Veröffentlichen, neue Seiten und Kauf gesperrt
+  const deletionBlock = await deletionPendingResponse(user.id)
+  if (deletionBlock) return deletionBlock
 
   const { template_id } = await req.json()
   if (!template_id) return NextResponse.json({ error: 'template_id required' }, { status: 400 })

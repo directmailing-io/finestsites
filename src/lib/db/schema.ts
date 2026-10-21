@@ -8,6 +8,7 @@ import {
   timestamp,
   jsonb,
   integer,
+  smallint,
   bigint,
   numeric,
   date,
@@ -99,6 +100,8 @@ export const users = pgTable('users', {
   paymentFallbackSepa: boolean('payment_fallback_sepa').notNull().default(false),
   deactivatedAt: timestamp('deactivated_at', { withTimezone: true }),
   isAdmin: boolean('is_admin').notNull().default(false),
+  // Internes Konto (z. B. Apple-Demo-Konto der App), Migration 20261021120000
+  isInternal: boolean('is_internal').notNull().default(false),
   // Markenfarbe (#RRGGBB) für alle Seiten des Nutzers mit farbthema=eigene; Phase A nur Admin (14.10.2026)
   brandColor: varchar('brand_color', { length: 7 }),
   // Abbestellte Mail-Kategorien (src/lib/email/categories.ts); leer = alles erlaubt, "system" nie abwählbar
@@ -143,6 +146,11 @@ export const users = pgTable('users', {
   contentConsentUa: text('content_consent_ua'),
   contentConsentVersion: varchar('content_consent_version', { length: 20 }),
   contentConsentTextHash: varchar('content_consent_text_hash', { length: 64 }),
+  // Konto löschen (Migration 20261022100000, src/lib/account-deletion): angefragt → nach 14 Tagen
+  // ausgeführt. Nach der Löschung bleibt die Zeile als Grabstein (id + Benutzername reserviert).
+  deletionRequestedAt: timestamp('deletion_requested_at', { withTimezone: true }),
+  deletionScheduledFor: timestamp('deletion_scheduled_for', { withTimezone: true }),
+  deletedAt: timestamp('deleted_at', { withTimezone: true }),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 }, (t) => [
@@ -340,6 +348,8 @@ export const affiliateCommissions = pgTable('affiliate_commissions', {
   paidAt: timestamp('paid_at', { withTimezone: true }),
   payoutId: uuid('payout_id'),
   reversalReason: text('reversal_reason'),
+  // Aufbewahrung bis (10 Jahre ab Jahresende, § 147 Abs. 1 Nr. 1 AO); gesetzt beim Löschen eines beteiligten Kontos
+  retentionUntil: date('retention_until'),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 }, (t) => [
@@ -378,6 +388,8 @@ export const affiliatePayouts = pgTable('affiliate_payouts', {
   creditNoteStatus: text('credit_note_status'), // pending | created
   creditNoteError: text('credit_note_error'),
   failureReason: text('failure_reason'),
+  // Aufbewahrung bis (Gutschrift 8 J., Auszahlungsbuchung 10 J., jeweils ab Jahresende – der längere Wert)
+  retentionUntil: date('retention_until'),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow(),
   paidAt: timestamp('paid_at', { withTimezone: true }),
@@ -419,11 +431,44 @@ export const affiliateClicks = pgTable('affiliate_clicks', {
   ipHash: text('ip_hash'),
   userAgentShort: text('user_agent_short'),
   converted: boolean('converted').default(false),
-  convertedUserId: uuid('converted_user_id').references(() => users.id),
+  convertedUserId: uuid('converted_user_id').references(() => users.id, { onDelete: 'set null' }),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
 }, (t) => [
   index('idx_clicks_referrer').on(t.referrerUsername),
 ])
+
+/**
+ * Protokoll der Kontolöschungen (Migration 20261022100000). Eine offene Anfrage je Nutzer
+ * (status 'scheduled'); abgebrochene und ausgeführte bleiben als Nachweis stehen.
+ */
+export const accountDeletionRequests = pgTable('account_deletion_requests', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  userId: uuid('user_id').notNull().references(() => users.id, { onDelete: 'restrict' }),
+  status: text('status').notNull().default('scheduled'), // scheduled | cancelled | completed
+  source: text('source').notNull().default('web'), // web | app | admin
+  requestedAt: timestamp('requested_at', { withTimezone: true }).notNull().defaultNow(),
+  scheduledFor: timestamp('scheduled_for', { withTimezone: true }).notNull(),
+  cancelledAt: timestamp('cancelled_at', { withTimezone: true }),
+  completedAt: timestamp('completed_at', { withTimezone: true }),
+  balanceAvailableCents: integer('balance_available_cents').notNull().default(0),
+  balancePendingCents: integer('balance_pending_cents').notNull().default(0),
+  // Stripe-Kundenguthaben (Verrechnungsmodus, noch nicht verbraucht) – AGB § 16 Abs. 3: auf Anfrage auszahlbar
+  balanceCustomerCreditCents: integer('balance_customer_credit_cents').notNull().default(0),
+  balanceChoice: text('balance_choice').notNull().default('none'), // none | payout | waive
+  waiverText: text('waiver_text'),
+  waiverAcceptedAt: timestamp('waiver_accepted_at', { withTimezone: true }),
+  // not_needed | pending | settled | payable_on_request | waived | time_barred
+  settlementStatus: text('settlement_status').notNull().default('not_needed'),
+  settledAt: timestamp('settled_at', { withTimezone: true }),
+  contactEmail: text('contact_email'),
+  limitationUntil: date('limitation_until'),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [
+  index('idx_account_deletion_requests_user').on(t.userId),
+])
+
+export type AccountDeletionRequest = typeof accountDeletionRequests.$inferSelect
 
 // ─── Relations ────────────────────────────────────────────────────────────────
 
@@ -803,3 +848,80 @@ export const testimonialAssetsRelations = relations(testimonialAssets, ({ one })
 
 export type Testimonial = typeof testimonials.$inferSelect
 export type TestimonialAsset = typeof testimonialAssets.$inferSelect
+
+// ─── Native App: Push (Migration 20261021120000) ──────────────────────────────
+// Versand ist standardmäßig AUS (src/lib/push/config.ts). Auslöser schreiben nur in push_outbox,
+// der Cron /api/cron/push-drain arbeitet die Warteschlange mit FOR UPDATE SKIP LOCKED ab.
+
+export const pushDevices = pgTable('push_devices', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  userId: uuid('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  expoToken: text('expo_token').notNull().unique(),
+  platform: text('platform').notNull(), // 'ios' | 'android'
+  appVersion: text('app_version'),
+  osVersion: text('os_version'),
+  deviceModel: text('device_model'),
+  locale: text('locale'),
+  enabled: boolean('enabled').notNull().default(true),
+  disabledReason: text('disabled_reason'), // 'user' | 'device_not_registered' | 'logout' | 'limit'
+  lastSeenAt: timestamp('last_seen_at', { withTimezone: true }).notNull().defaultNow(),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [
+  index('idx_push_devices_user').on(t.userId),
+])
+
+export const notificationPreferences = pgTable('notification_preferences', {
+  userId: uuid('user_id').primaryKey().references(() => users.id, { onDelete: 'cascade' }),
+  leads: boolean('leads').notNull().default(true),
+  support: boolean('support').notNull().default(true),
+  account: boolean('account').notNull().default(true),
+  partner: boolean('partner').notNull().default(true),
+  quietHoursEnabled: boolean('quiet_hours_enabled').notNull().default(true),
+  quietStartHour: smallint('quiet_start_hour').notNull().default(21),
+  quietEndHour: smallint('quiet_end_hour').notNull().default(8),
+  timezone: text('timezone').notNull().default('Europe/Berlin'),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+})
+
+export const pushOutbox = pgTable('push_outbox', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  userId: uuid('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  category: text('category').notNull(), // 'leads' | 'support' | 'account' | 'partner'
+  type: text('type').notNull(),
+  title: text('title').notNull(),
+  body: text('body').notNull(),
+  data: jsonb('data').$type<Record<string, unknown>>().notNull().default({}),
+  collapseKey: text('collapse_key'),
+  notificationId: uuid('notification_id').references(() => userNotifications.id, { onDelete: 'set null' }),
+  status: text('status').notNull().default('pending'), // pending | processing | sent | failed | skipped
+  skipReason: text('skip_reason'),
+  attempts: integer('attempts').notNull().default(0),
+  notBefore: timestamp('not_before', { withTimezone: true }).notNull().defaultNow(),
+  lockedAt: timestamp('locked_at', { withTimezone: true }),
+  lastError: text('last_error'),
+  sentAt: timestamp('sent_at', { withTimezone: true }),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [
+  index('idx_push_outbox_user_collapse').on(t.userId, t.collapseKey, t.createdAt),
+])
+
+export const pushDeliveries = pgTable('push_deliveries', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  outboxId: uuid('outbox_id').notNull().references(() => pushOutbox.id, { onDelete: 'cascade' }),
+  deviceId: uuid('device_id').references(() => pushDevices.id, { onDelete: 'set null' }),
+  ticketId: text('ticket_id'),
+  status: text('status').notNull(), // 'ok' | 'error'
+  error: text('error'),
+  receiptStatus: text('receipt_status'), // 'ok' | 'error' | null (noch nicht geprüft)
+  receiptError: text('receipt_error'),
+  receiptCheckedAt: timestamp('receipt_checked_at', { withTimezone: true }),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [
+  index('idx_push_deliveries_outbox').on(t.outboxId),
+])
+
+export type PushDevice = typeof pushDevices.$inferSelect
+export type NotificationPreference = typeof notificationPreferences.$inferSelect
+export type PushOutboxRow = typeof pushOutbox.$inferSelect
+export type PushDelivery = typeof pushDeliveries.$inferSelect

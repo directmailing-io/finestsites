@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
-import { users, userSites, subscriptionEvents } from '@/lib/db/schema'
+import { users, userSites, subscriptionEvents, accountDeletionRequests } from '@/lib/db/schema'
 import { eq, desc, ne, and } from 'drizzle-orm'
 import { getRealUserFromRequest } from '@/lib/auth/server'
 import type Stripe from 'stripe'
@@ -77,7 +77,17 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     } catch { /* ignore */ }
   }
 
-  return NextResponse.json({ profile, sites, invoices, events, subscriptionDiscount })
+  // Kontolöschung: letzte Anfrage (Bedenkzeit, Wahl beim Partner-Guthaben, Schlussabrechnung)
+  const deletion = await db.query.accountDeletionRequests.findFirst({
+    where: eq(accountDeletionRequests.userId, id),
+    orderBy: desc(accountDeletionRequests.requestedAt),
+    columns: {
+      status: true, source: true, requestedAt: true, scheduledFor: true, cancelledAt: true, completedAt: true,
+      balanceAvailableCents: true, balancePendingCents: true, balanceChoice: true, settlementStatus: true, limitationUntil: true,
+    },
+  }).catch(() => null)
+
+  return NextResponse.json({ profile, sites, invoices, events, subscriptionDiscount, deletion: deletion ?? null })
 }
 
 // ── Username change ───────────────────────────────────────────────────────────
@@ -114,9 +124,13 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   // Load current profile
   const profile = await db.query.users.findFirst({
     where: eq(users.id, id),
-    columns: { id: true, username: true },
+    columns: { id: true, username: true, deletionRequestedAt: true, deletedAt: true },
   })
   if (!profile) return NextResponse.json({ error: 'Nutzer nicht gefunden.' }, { status: 404 })
+  // Benutzernamen gelöschter (bzw. zur Löschung vorgemerkter) Konten bleiben für immer reserviert
+  if (profile.deletedAt || profile.deletionRequestedAt) {
+    return NextResponse.json({ error: 'Konto wird gelöscht oder ist gelöscht – der Benutzername bleibt reserviert.' }, { status: 409 })
+  }
 
   const oldUsername = profile.username
   if (oldUsername === newUsername) return NextResponse.json({ ok: true, username: newUsername })

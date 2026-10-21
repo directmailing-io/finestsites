@@ -30,6 +30,8 @@ export default async function AdminUsersPage() {
         stripeCustomerId: users.stripeCustomerId,
         stripeSubscriptionId: users.stripeSubscriptionId,
         emailVerified: users.emailVerified,
+        deletionScheduledFor: users.deletionScheduledFor,
+        deletedAt: users.deletedAt,
       })
       .from(users)
       .orderBy(desc(users.createdAt)),
@@ -48,7 +50,8 @@ export default async function AdminUsersPage() {
   const stripePromoByUser: Record<string, string | null> = {}      // human-readable promo code string (e.g. "ADMIN100")
   const stripeCouponNameByUser: Record<string, string | null> = {} // coupon name/label (e.g. "Admin 100% Rabatt")
 
-  const usersWithStripe = allUsers.filter(u => u.stripeCustomerId)
+  // Gelöschte Konten (Grabsteine) nicht live bei Stripe abfragen
+  const usersWithStripe = allUsers.filter(u => u.stripeCustomerId && !u.deletedAt)
   if (usersWithStripe.length > 0) {
     const stripe = getStripe()
     await Promise.allSettled(
@@ -139,6 +142,8 @@ export default async function AdminUsersPage() {
     activePromoCode: stripePromoByUser[u.id] ?? null,
     activeCouponName: stripeCouponNameByUser[u.id] ?? null,
     emailVerified: u.emailVerified,
+    deletionScheduledFor: u.deletionScheduledFor,
+    deletedAt: u.deletedAt,
   }))
 
   return (

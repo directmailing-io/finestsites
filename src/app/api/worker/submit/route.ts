@@ -35,6 +35,7 @@ import { timingSafeEqual } from 'crypto'
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { formSubmissions } from '@/lib/db/schema'
+import { pushTriggers } from '@/lib/push/triggers'
 
 const WORKER_SECRET = process.env.WORKER_SECRET
 
@@ -73,6 +74,9 @@ export async function POST(req: NextRequest) {
         isSpam: body.isSpam ?? false,
       })
       .returning({ id: formSubmissions.id })
+
+    // App-Push an den Seitenbesitzer (nur echte Anfragen). Tut nichts, solange Push aus ist; wirft nie.
+    if (!body.isSpam) void pushTriggers.newSubmission(body.userSiteId, inserted.id)
 
     return NextResponse.json({ success: true, id: inserted.id })
   } catch {

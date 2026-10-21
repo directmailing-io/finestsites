@@ -21,6 +21,7 @@ import { getCustomHostname } from '@/lib/cloudflare/custom-hostnames'
 import { setCustomDomainKV } from '@/lib/cloudflare/kv-api'
 import { sendEmail } from '@/lib/resend'
 import { domainActiveEmail } from '@/lib/email/templates'
+import { pushTriggers } from '@/lib/push/triggers'
 
 export const runtime = 'nodejs'
 export const maxDuration = 60
@@ -111,6 +112,9 @@ export async function GET(request: NextRequest) {
           sendEmail({ to: userEmail, subject: `Deine Domain ${site.customDomain} ist jetzt live!`, html: domainActiveEmail({ domain: site.customDomain }), type: 'domain_active' })
             .catch(err => console.error('[cron/check-domains] Email send error:', err))
         }
+
+        // App-Push „Domain verbunden“. Tut nichts, solange Push aus ist; wirft nie.
+        if (site.customDomain) void pushTriggers.domainActive(site.userId, site.id, site.customDomain)
 
         activated++
         console.log(`[cron/check-domains] Activated: ${site.customDomain}`)

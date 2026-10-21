@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { readAppModeCookie } from '@/lib/app-mode/shared'
 
 // ── Consent model ───────────────────────────────────────────────────────────
 interface Consent {
@@ -308,6 +309,9 @@ export default function CookieBanner() {
   // Lazy initializer avoids setState-in-effect lint error
   const [visible, setVisible] = useState(() => {
     if (typeof window === 'undefined') return false
+    // App-Modus (Cookie fs_app=1): kein Banner in der App-WebView, dort gibt es keine Analyse-Cookies
+    // (ohne Zustimmung bleibt Analyse aus). Im normalen Browser unverändert.
+    if (readAppModeCookie()) return false
     return !readConsent()
   })
   const [animated, setAnimated] = useState(false)

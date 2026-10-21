@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { blockPurchaseInApp } from '@/lib/app-mode'
 import { db } from '@/lib/db'
 import { users } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
@@ -22,6 +23,9 @@ async function createPortalSession(userId: string): Promise<string | null> {
 
 // POST — used by the settings page button (returns JSON { url })
 export async function POST(req: NextRequest) {
+  // App: Kauf-/Abo-Schnittstellen gesperrt (Apple 3.1.1). Browser: unverändert.
+  const appBlocked = blockPurchaseInApp(req)
+  if (appBlocked) return appBlocked
   const user = await getUserFromRequest(req)
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
@@ -40,6 +44,9 @@ export async function POST(req: NextRequest) {
 // If not logged in, redirects to /login with a returnUrl so the user lands
 // in the portal after signing in.
 export async function GET(req: NextRequest) {
+  // App: Kauf-/Abo-Schnittstellen gesperrt (Apple 3.1.1). Browser: unverändert.
+  const appBlocked = blockPurchaseInApp(req)
+  if (appBlocked) return appBlocked
   const appUrl = (process.env.NEXT_PUBLIC_APP_URL ?? 'https://app.finestsites.io').replace(/\/$/, '')
   const user = await getUserFromRequest(req)
 

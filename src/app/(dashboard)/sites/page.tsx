@@ -5,6 +5,8 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { getTemplateIntentCookie, clearTemplateIntentCookie, isValidTemplateId } from '@/lib/cookies/template-intent'
 import { downloadQrPng, copyText } from '@/lib/utils/qr-download'
+import { useAppMode, useOpenExternal } from '@/components/app-mode/AppMode'
+import { postToApp } from '@/lib/app-mode/shared'
 
 // ── Types ───────────────────────────────────────────────────────────────────
 
@@ -51,6 +53,10 @@ function SiteCard({ site, onDeleted, highlight }: { site: Site; onDeleted: (id: 
   const editHref = `/sites/${site.id}/edit`
   const title = site.templates?.title ?? 'Meine Webseite'
 
+  // App-Modus (Cookie fs_app=1): „Seite ansehen“ und QR-Code übernimmt die App (Safari-Fenster bzw. natives Teilen)
+  const appMode = useAppMode()
+  const openExternal = useOpenExternal()
+
   // Share actions for live sites: copy the link, download the QR code
   const [copyState, setCopyState] = useState<'idle' | 'copied' | 'failed'>('idle')
   const [qrBusy, setQrBusy] = useState(false)
@@ -66,6 +72,8 @@ function SiteCard({ site, onDeleted, highlight }: { site: Site; onDeleted: (id: 
 
   async function handleQrDownload() {
     if (!siteUrl || qrBusy) return
+    // In der App-WebView funktioniert der Bild-Download nicht → App erzeugt/teilt den QR-Code
+    if (appMode && postToApp({ type: 'qr', url: siteUrl })) return
     setQrBusy(true)
     try { await downloadQrPng(siteUrl) } catch { /* nothing to clean up */ } finally { setQrBusy(false) }
   }
@@ -158,6 +166,7 @@ function SiteCard({ site, onDeleted, highlight }: { site: Site; onDeleted: (id: 
         {siteUrl && (
           <div className="flex flex-wrap gap-2">
             <a href={siteUrl} target="_blank" rel="noopener noreferrer" className={secondaryBtn}
+              onClick={e => openExternal(e, siteUrl)}
               style={{ background: '#F1F5F9', color: '#111827' }}>
               <svg className="flex-shrink-0" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
@@ -223,6 +232,7 @@ function SiteCard({ site, onDeleted, highlight }: { site: Site; onDeleted: (id: 
 
 export default function SitesPage() {
   const router = useRouter()
+  const appMode = useAppMode()
   const [sites, setSites] = useState<Site[]>([])
   const [username, setUsername] = useState<string>('')
   const [firstName, setFirstName] = useState<string>('')
@@ -410,7 +420,9 @@ export default function SitesPage() {
         <section className="mb-10">
           <h2 className="text-xl font-bold text-gray-900">Offline</h2>
           <p className="text-sm mt-0.5 mb-4" style={{ color: '#64748B' }}>
-            Diese Webseiten sind gerade nicht erreichbar. Schau unter „Einstellungen“ nach deiner Zahlung.
+            {appMode
+              ? 'Diese Webseiten sind gerade nicht erreichbar.'
+              : 'Diese Webseiten sind gerade nicht erreichbar. Schau unter „Einstellungen“ nach deiner Zahlung.'}
           </p>
           <div className={GRID}>
             {offlineSites.map(site => <SiteCard key={site.id} site={site} onDeleted={removeSite} />)}

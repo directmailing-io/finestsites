@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { blockPurchaseInApp } from '@/lib/app-mode'
 import { db } from '@/lib/db'
 import { users } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
@@ -9,6 +10,7 @@ import { discountsParam } from '@/lib/affiliate/referral-model'
 import { sendEmail } from '@/lib/resend'
 import { subscriptionConfirmationEmail } from '@/lib/email/templates'
 import { referralDiscountsForPlanChange, loadInheritedCustomerDiscount, PLAN_CHANGE_SUBSCRIPTION_EXPAND } from '@/lib/affiliate/referral-offer'
+import { deletionPendingResponse } from '@/lib/account-deletion/guard'
 
 /**
  * In-place subscription upgrade with proration.
@@ -26,8 +28,14 @@ import { referralDiscountsForPlanChange, loadInheritedCustomerDiscount, PLAN_CHA
  *   item updates immediately, the invoice stays open until SEPA settles
  */
 export async function POST(req: NextRequest) {
+  // App: Kauf-/Abo-Schnittstellen gesperrt (Apple 3.1.1). Browser: unverändert.
+  const appBlocked = blockPurchaseInApp(req)
+  if (appBlocked) return appBlocked
   const user = await getUserFromRequest(req)
   if (!user) return NextResponse.json({ error: 'Nicht angemeldet.' }, { status: 401 })
+  // Kontolöschung angefragt: Veröffentlichen, neue Seiten und Kauf gesperrt
+  const deletionBlock = await deletionPendingResponse(user.id)
+  if (deletionBlock) return deletionBlock
 
   const { plan, interval = 'monthly' } = await req.json() as {
     plan: PlanKey; interval?: BillingInterval

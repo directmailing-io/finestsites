@@ -7,6 +7,8 @@ import { computePayoutAmounts } from '@/lib/affiliate/tax'
 import { PayoutModeSection, type PayoutModeState } from './PayoutModeSection'
 import { CREDIT_MINIMUM_CENTS } from '@/lib/affiliate/payout-mode'
 import { partnerReferralPitch } from '@/lib/affiliate/referral-model'
+import { useAppMode } from '@/components/app-mode/AppMode'
+import { postToApp, absoluteUrl } from '@/lib/app-mode/shared'
 
 interface Commission {
   id: string
@@ -69,6 +71,9 @@ const PLAN_LABEL: Record<string, string> = { starter: 'Starter', pro: 'Pro', unl
 
 export default function AffiliatePage() {
   const params = useSearchParams()
+  // App-Modus (Cookie fs_app=1): keine Rabatt-Werbung für Geworbene, keine Tarifnamen, kein „aktives Abo“,
+  // Verrechnung heißt „mit meinem Konto“. Stripe-Seiten öffnet die App. Ohne Cookie unverändert.
+  const appMode = useAppMode()
   const connectStatus = params.get('connect')
 
   const [stats, setStats] = useState<Stats | null>(null)
@@ -111,7 +116,10 @@ export default function AffiliatePage() {
     try {
       const res = await fetch('/api/affiliate/connect', { method: 'POST' })
       const data = await res.json()
-      if (data.url) window.location.href = data.url
+      if (data.url) {
+        if (appMode && postToApp({ type: 'open-url', url: data.url })) { setConnecting(false); return }
+        window.location.href = data.url
+      }
       else { setConnectError(data.error ?? 'Fehler beim Öffnen des Stripe-Formulars.'); setConnecting(false) }
     } catch { setConnectError('Verbindung fehlgeschlagen.'); setConnecting(false) }
   }
@@ -121,7 +129,7 @@ export default function AffiliatePage() {
     try {
       const res = await fetch('/api/affiliate/dashboard-link')
       const data = await res.json()
-      if (data.url) window.open(data.url, '_blank', 'noopener,noreferrer')
+      if (data.url && !(appMode && postToApp({ type: 'open-url', url: absoluteUrl(data.url) }))) window.open(data.url, '_blank', 'noopener,noreferrer')
     } catch { /* ignore */ }
     finally { setStripeLinkLoading(false) }
   }
@@ -218,7 +226,8 @@ export default function AffiliatePage() {
     )
   }
 
-  const pitch = stats?.referral_terms_new ? partnerReferralPitch(stats.referral_terms_new) : null
+  // App: kein Rabatt-Versprechen für Geworbene (wäre in der App eine Kaufaufforderung)
+  const pitch = stats?.referral_terms_new && !appMode ? partnerReferralPitch(stats.referral_terms_new) : null
 
   return (
     <div className="max-w-2xl mx-auto">
@@ -236,7 +245,9 @@ export default function AffiliatePage() {
         <div className="space-y-2 mb-6">
           {connectStatus === 'success' && (
             <Banner type="success">{isCredit
-              ? 'Bankkonto eingerichtet. Deine Provision wird weiter mit deinem Abo verrechnet. Möchtest du lieber Überweisungen, stell das unten um.'
+              ? (appMode
+                ? 'Bankkonto eingerichtet. Deine Provision wird weiter mit deinem Konto verrechnet. Möchtest du lieber Überweisungen, stell das unten um.'
+                : 'Bankkonto eingerichtet. Deine Provision wird weiter mit deinem Abo verrechnet. Möchtest du lieber Überweisungen, stell das unten um.')
               : 'Bankkonto eingerichtet. Du wirst automatisch ausgezahlt.'}</Banner>
           )}
           {connectStatus === 'pending' && (
@@ -258,11 +269,15 @@ export default function AffiliatePage() {
           <div className="hidden sm:flex items-center justify-center flex-shrink-0 mt-6">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#D1D5DB" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
           </div>
-          <HowStep icon="💳" n={2} title="Neukunde abonniert" desc={pitch?.step ?? 'Dein Empfohlener bucht FinestSites und bekommt einen Empfehlungsrabatt.'} />
+          {appMode
+            ? <HowStep icon="🤝" n={2} title="Neukunde kommt dazu" desc="Deine Empfehlung wird Kunde bei FinestSites." />
+            : <HowStep icon="💳" n={2} title="Neukunde abonniert" desc={pitch?.step ?? 'Dein Empfohlener bucht FinestSites und bekommt einen Empfehlungsrabatt.'} />}
           <div className="hidden sm:flex items-center justify-center flex-shrink-0 mt-6">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#D1D5DB" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
           </div>
-          <HowStep icon="💰" n={3} title="Du bekommst Geld" desc="10% vom Nettobetrag jeder Zahlung gehören dir, jeden Monat aufs Neue. Wir ziehen sie automatisch von deiner FinestSites-Rechnung ab. Oder du lässt sie dir ab 10 € aufs Bankkonto auszahlen." highlight />
+          <HowStep icon="💰" n={3} title="Du bekommst Geld" desc={appMode
+            ? '10% vom Nettobetrag jeder Zahlung gehören dir, jeden Monat aufs Neue. Wir verrechnen sie automatisch mit deinem Konto. Oder du lässt sie dir ab 10 € aufs Bankkonto auszahlen.'
+            : '10% vom Nettobetrag jeder Zahlung gehören dir, jeden Monat aufs Neue. Wir ziehen sie automatisch von deiner FinestSites-Rechnung ab. Oder du lässt sie dir ab 10 € aufs Bankkonto auszahlen.'} highlight />
         </div>
       </section>
 
@@ -310,7 +325,9 @@ export default function AffiliatePage() {
           <div className="text-center py-4">
             <p className="text-4xl mb-2">🌱</p>
             <p className="text-sm font-semibold text-gray-700 mb-1">Noch keine Einnahmen</p>
-            <p className="text-xs text-gray-400">Sobald deine erste Empfehlung abonniert, siehst du hier deine Einnahmen.</p>
+            <p className="text-xs text-gray-400">{appMode
+              ? 'Sobald deine erste Empfehlung Kunde wird, siehst du hier deine Einnahmen.'
+              : 'Sobald deine erste Empfehlung abonniert, siehst du hier deine Einnahmen.'}</p>
           </div>
         ) : (
           <div className="grid grid-cols-3 gap-4">
@@ -318,7 +335,7 @@ export default function AffiliatePage() {
             <EarningBox label="In 14 Tagen" value={euros(pendingCents)} dark={totalEarned > 0}
               tooltip="Neue Provisionen werden 14 Tage zurückgehalten, damit mögliche Rückerstattungen abgerechnet werden können." />
             <EarningBox label="Bereits erhalten" value={euros(paidCents)} dark={totalEarned > 0} muted
-              tooltip="Verrechnet mit deinem Abo oder aufs Bankkonto ausgezahlt." />
+              tooltip={appMode ? 'Mit deinem Konto verrechnet oder aufs Bankkonto ausgezahlt.' : 'Verrechnet mit deinem Abo oder aufs Bankkonto ausgezahlt.'} />
           </div>
         )}
 
@@ -341,8 +358,12 @@ export default function AffiliatePage() {
           <div className="mt-5 pt-5" style={{ borderTop: '1px solid rgba(255,255,255,0.1)' }}>
             <p className="text-sm" style={{ color: 'rgba(255,255,255,0.85)' }}>
               {payoutMode && !payoutMode.subscription_active
-                ? 'Ohne aktives Abo können wir gerade nichts verrechnen. Dein Guthaben bleibt dir erhalten.'
-                : <>Am 1. des nächsten Monats ziehen wir <strong className="text-white">{euros(payoutAmount)}</strong> automatisch von deiner FinestSites-Rechnung ab.</>}
+                ? (appMode
+                  ? 'Gerade können wir nichts verrechnen. Dein Guthaben bleibt dir erhalten.'
+                  : 'Ohne aktives Abo können wir gerade nichts verrechnen. Dein Guthaben bleibt dir erhalten.')
+                : appMode
+                  ? <>Am 1. des nächsten Monats verrechnen wir <strong className="text-white">{euros(payoutAmount)}</strong> automatisch mit deinem Konto.</>
+                  : <>Am 1. des nächsten Monats ziehen wir <strong className="text-white">{euros(payoutAmount)}</strong> automatisch von deiner FinestSites-Rechnung ab.</>}
             </p>
             {payoutAmount !== availableCents && (
               <p className="text-xs mt-1" style={{ color: 'rgba(255,255,255,0.6)' }}>
@@ -416,11 +437,15 @@ export default function AffiliatePage() {
         <p className="text-xs font-semibold uppercase tracking-widest mb-4" style={{ color: '#94A3B8' }}>Gut zu wissen</p>
         <ul className="space-y-2.5 text-sm text-gray-600">
           <RuleItem>Du bekommst <strong className="text-gray-800">10% Provision</strong> auf jede Zahlung deiner Empfehlungen. Monat für Monat, solange sie dabei sind.</RuleItem>
-          <RuleItem>Normalerweise ziehen wir deine Provision <strong className="text-gray-800">jeden Monat automatisch von deiner FinestSites-Rechnung ab</strong>. Das geht ab 1 €, ein Auszahlungskonto brauchst du dafür nicht. Wichtig: Fülle einmal deine Angaben für die Abrechnung aus, sonst bleibt das Guthaben stehen.</RuleItem>
+          {appMode
+            ? <RuleItem>Normalerweise <strong className="text-gray-800">verrechnen wir deine Provision jeden Monat automatisch mit deinem Konto</strong>. Das geht ab 1 €, ein Auszahlungskonto brauchst du dafür nicht. Wichtig: Fülle einmal deine Angaben für die Abrechnung aus, sonst bleibt das Guthaben stehen.</RuleItem>
+            : <RuleItem>Normalerweise ziehen wir deine Provision <strong className="text-gray-800">jeden Monat automatisch von deiner FinestSites-Rechnung ab</strong>. Das geht ab 1 €, ein Auszahlungskonto brauchst du dafür nicht. Wichtig: Fülle einmal deine Angaben für die Abrechnung aus, sonst bleibt das Guthaben stehen.</RuleItem>}
           <RuleItem>Lieber aufs Bankkonto? Dann überweisen wir <strong className="text-gray-800">ab 10 €</strong> einmal im Monat. Bist du drunter, verfällt nichts. Dein Guthaben sammelt sich einfach weiter an.</RuleItem>
           <RuleItem>Pro Monat gibt es <strong className="text-gray-800">eine Abrechnung</strong>. Die läuft automatisch, du musst nichts tun.</RuleItem>
           <RuleItem>Neue Provisionen haben eine <strong className="text-gray-800">Schutzfrist von 14 Tagen</strong>. So können wir Rückerstattungen sauber verrechnen, danach ist das Geld fest für dich reserviert.</RuleItem>
-          <RuleItem>Endet dein eigenes Abo, zahlen wir dir dein <strong className="text-gray-800">restliches Guthaben auf Wunsch aus</strong>. Schreib uns dafür einfach an info@finestsites.io.</RuleItem>
+          {appMode
+            ? <RuleItem>Hörst du bei FinestSites auf, zahlen wir dir dein <strong className="text-gray-800">restliches Guthaben auf Wunsch aus</strong>. Schreib uns dafür einfach an info@finestsites.io.</RuleItem>
+            : <RuleItem>Endet dein eigenes Abo, zahlen wir dir dein <strong className="text-gray-800">restliches Guthaben auf Wunsch aus</strong>. Schreib uns dafür einfach an info@finestsites.io.</RuleItem>}
           <RuleItem>Für jede Abrechnung bekommst du eine <strong className="text-gray-800">Gutschrift</strong> zum Herunterladen. Stimmt etwas nicht, sag uns bitte innerhalb von 4 Wochen Bescheid.</RuleItem>
         </ul>
       </section>
@@ -449,7 +474,9 @@ export default function AffiliatePage() {
                 </div>
                 <span className="text-xs font-semibold px-2.5 py-1 rounded-full flex-shrink-0"
                   style={{ background: u.subscription_status === 'active' ? '#ECFDF5' : '#F3F4F6', color: u.subscription_status === 'active' ? '#065F46' : '#6B7280' }}>
-                  {PLAN_LABEL[u.plan] ?? u.plan}
+                  {appMode
+                    ? (u.subscription_status === 'active' ? 'Aktiv' : 'Inaktiv')
+                    : (PLAN_LABEL[u.plan] ?? u.plan)}
                 </span>
               </div>
             ))}

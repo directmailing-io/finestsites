@@ -3,6 +3,7 @@
 import { useState, useEffect, use } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { useAppMode, useOpenExternal } from '@/components/app-mode/AppMode'
 
 interface Template {
   id: string
@@ -45,6 +46,9 @@ const FEATURES = [
 export default function TemplateDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
   const router = useRouter()
+  // App-Modus (Cookie fs_app=1): keine Tarif-/Preis-Hinweise, Links nach außen über die App
+  const appMode = useAppMode()
+  const openExternal = useOpenExternal()
 
   const [template, setTemplate] = useState<Template | null>(null)
   const [userSite, setUserSite] = useState<UserSite | null>(null)
@@ -260,7 +264,7 @@ export default function TemplateDetailPage({ params }: { params: Promise<{ id: s
           {/* Title + tags */}
           <div>
             <div className="flex items-center gap-2 flex-wrap mb-2">
-              {template.is_free && (
+              {template.is_free && !appMode && (
                 <span className="text-[11px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wide"
                   style={{ background: '#ECFDF5', color: '#065F46' }}>
                   Kostenlos
@@ -278,7 +282,7 @@ export default function TemplateDetailPage({ params }: { params: Promise<{ id: s
           </div>
 
           {/* Free template callout */}
-          {template.is_free && (
+          {template.is_free && !appMode && (
             <div className="flex items-start gap-3 px-4 py-3.5 rounded-2xl"
               style={{ background: '#F0FDF4', border: '1px solid #BBF7D0' }}>
               <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5"
@@ -356,6 +360,7 @@ export default function TemplateDetailPage({ params }: { params: Promise<{ id: s
 
                 {isLive && (
                   <a href={`https://${previewDomain}`} target="_blank" rel="noopener noreferrer"
+                    onClick={e => openExternal(e, `https://${previewDomain}`)}
                     className="flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-medium transition-colors"
                     style={{ background: '#F3F4F6', color: '#374151' }}>
                     Webseite ansehen
@@ -387,7 +392,7 @@ export default function TemplateDetailPage({ params }: { params: Promise<{ id: s
                     Webseite konfigurieren
                   </p>
                   <p className="text-sm text-gray-500">
-                    Du kommst direkt in den Editor. Inhalte, Farbthema, Bereiche. Alles personalisierbar. Plan-Limit wird erst beim Veröffentlichen verbraucht.
+                    Du kommst direkt in den Editor. Inhalte, Farbthema, Bereiche. Alles personalisierbar.{appMode ? '' : ' Plan-Limit wird erst beim Veröffentlichen verbraucht.'}
                   </p>
                 </div>
 
@@ -448,6 +453,7 @@ export default function TemplateDetailPage({ params }: { params: Promise<{ id: s
 
                 {isLive && (
                   <a href={`https://${previewDomain}`} target="_blank" rel="noopener noreferrer"
+                    onClick={e => openExternal(e, `https://${previewDomain}`)}
                     className="flex items-center justify-center gap-2 py-3 px-5 rounded-xl text-sm font-medium transition-colors hover:bg-gray-100"
                     style={{ background: '#F3F4F6', color: '#374151' }}>
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -500,7 +506,7 @@ export default function TemplateDetailPage({ params }: { params: Promise<{ id: s
                     Webseite konfigurieren
                   </p>
                   <p className="text-sm text-gray-500 leading-relaxed">
-                    Du kommst direkt in den Editor. Drei Farbthemen, drei Hero-Varianten, optionale Bereiche, persönlicher Text. Plan-Limit wird erst beim Veröffentlichen verbraucht.
+                    Du kommst direkt in den Editor. Drei Farbthemen, drei Hero-Varianten, optionale Bereiche, persönlicher Text.{appMode ? '' : ' Plan-Limit wird erst beim Veröffentlichen verbraucht.'}
                   </p>
                 </div>
                 {wouldExceedAtPublish && (
@@ -509,7 +515,9 @@ export default function TemplateDetailPage({ params }: { params: Promise<{ id: s
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="flex-shrink-0 mt-0.5">
                       <circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/>
                     </svg>
-                    <span><strong>Hinweis:</strong> Dein <strong>{plan}</strong>-Tarif erlaubt {limit} aktive {limit === 1 ? 'Webseite' : 'Webseiten'}. Zum Veröffentlichen entweder upgrade oder eine andere Seite offline nehmen.</span>
+                    {appMode
+                      ? <span><strong>Hinweis:</strong> Mit deinem Konto sind schon so viele Seiten online wie möglich. Zum Veröffentlichen nimm vorher eine andere Seite offline.</span>
+                      : <span><strong>Hinweis:</strong> Dein <strong>{plan}</strong>-Tarif erlaubt {limit} aktive {limit === 1 ? 'Webseite' : 'Webseiten'}. Zum Veröffentlichen entweder upgrade oder eine andere Seite offline nehmen.</span>}
                   </div>
                 )}
 
@@ -556,7 +564,7 @@ export default function TemplateDetailPage({ params }: { params: Promise<{ id: s
               </>
             )}
 
-            {profile && !isActivated && (
+            {profile && !isActivated && !appMode && (
               <div className="pt-4 flex items-center justify-between text-xs text-gray-400"
                 style={{ borderTop: '1px solid #F3F4F6' }}>
                 <span>Tarif: <span className="font-medium text-gray-600 capitalize">{plan}</span></span>
@@ -572,20 +580,21 @@ export default function TemplateDetailPage({ params }: { params: Promise<{ id: s
       <div
         className="lg:hidden fixed left-0 right-0 z-30 px-4 flex flex-col gap-2"
         style={{
-          bottom: 'calc(56px + env(safe-area-inset-bottom, 0px))',
+          // App-Modus: keine Handy-Navigation darunter → direkt über dem unteren Rand
+          bottom: appMode ? 0 : 'calc(56px + env(safe-area-inset-bottom, 0px))',
           background: 'rgba(250,250,250,0.96)',
           backdropFilter: 'blur(20px)',
           WebkitBackdropFilter: 'blur(20px)',
           borderTop: '0.5px solid rgba(0,0,0,0.1)',
           paddingTop: 10,
-          paddingBottom: 12,
+          paddingBottom: appMode ? 'calc(12px + env(safe-area-inset-bottom, 0px))' : 12,
         }}
       >
         {/* Context row */}
         <div className="flex items-center justify-between px-0.5">
           <span className="text-xs font-semibold text-gray-800 truncate mr-2">{template.title}</span>
           <div className="flex items-center gap-2 flex-shrink-0">
-            {template.is_free && (
+            {template.is_free && !appMode && (
               <span className="text-[10px] font-bold px-2 py-0.5 rounded-full"
                 style={{ background: '#ECFDF5', color: '#065F46' }}>Kostenlos</span>
             )}
