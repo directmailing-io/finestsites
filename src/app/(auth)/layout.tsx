@@ -1,5 +1,7 @@
 import { Logo } from '@/components/shared/Logo'
 import { unstable_noStore as noStore } from 'next/cache'
+import { isAppModeRequest } from '@/lib/app-mode/server'
+import { AppAuthRequiredSignal } from '@/components/app-mode/AppMode'
 
 // Force dynamic rendering so Vercel/Cloudflare never cache auth pages as static.
 // Without this, Next.js sets s-maxage=31536000 which causes Cloudflare to serve
@@ -7,11 +9,14 @@ import { unstable_noStore as noStore } from 'next/cache'
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
-export default function AuthLayout({ children }: { children: React.ReactNode }) {
+export default async function AuthLayout({ children }: { children: React.ReactNode }) {
   // Explicitly opt out of the Full Route Cache and Data Cache on Vercel/Next.js edge.
   // `force-dynamic` alone doesn't always prevent Vercel's ISR prerender cache from
   // serving stale HTML; noStore() ensures every request hits the origin server.
   noStore()
+  // App-Modus (Cookie fs_app=1): Anmelden passiert nativ in der App → der App Bescheid geben.
+  // Die Web-Anmeldung bleibt als Rückfall sichtbar, falls keine Brücke da ist.
+  const appMode = await isAppModeRequest()
   return (
     <div
       className="min-h-screen flex flex-col items-center justify-center px-4 py-12"
@@ -26,6 +31,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
           boxShadow: '0 2px 24px rgba(0,0,0,0.06), 0 0 0 1px rgba(0,0,0,0.04)',
         }}
       >
+        {appMode && <AppAuthRequiredSignal />}
         {children}
       </div>
     </div>
