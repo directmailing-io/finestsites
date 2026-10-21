@@ -29,10 +29,12 @@ export default function ImageCropModal({
   const dragStart = useRef<{ mx: number; my: number; crop: CropRect } | null>(null)
   const [ready, setReady] = useState(false)
 
-  // ── Image load: calculate render size ────────────────────────────────────────
-  function handleImageLoad() {
+  // ── Render size from the current window ─────────────────────────────────────
+  // Der Zuschnitt ist relativ (0–1) gespeichert, deshalb darf die Anzeige-Größe sich jederzeit
+  // ändern (iPad drehen, geteilter Bildschirm, Fenstergröße) – der gewählte Ausschnitt bleibt gleich.
+  function computeDims(): { w: number; h: number } | null {
     const img = imgRef.current
-    if (!img) return
+    if (!img || !img.naturalWidth || !img.naturalHeight) return null
     const ar  = img.naturalWidth / img.naturalHeight
     const isSmall = window.innerWidth < 640
     const modalW = Math.min(window.innerWidth * (isSmall ? 1 : 0.9), 720)
@@ -41,9 +43,37 @@ export default function ImageCropModal({
       : Math.min(window.innerHeight * 0.58, 460)
     let w = modalW, h = w / ar
     if (h > maxH) { h = maxH; w = h * ar }
-    setDims({ w: Math.round(w), h: Math.round(h) })
+    return { w: Math.round(w), h: Math.round(h) }
+  }
+
+  // ── Image load: calculate render size ────────────────────────────────────────
+  function handleImageLoad() {
+    const d = computeDims()
+    if (!d) return
+    setDims(d)
     setReady(true)
   }
+
+  // Drehen / Fenstergröße ändern → Anzeige neu berechnen
+  useEffect(() => {
+    if (!ready) return
+    let raf = 0
+    const onResize = () => {
+      cancelAnimationFrame(raf)
+      raf = requestAnimationFrame(() => {
+        const d = computeDims()
+        if (d) setDims(prev => (prev && prev.w === d.w && prev.h === d.h) ? prev : d)
+      })
+    }
+    window.addEventListener('resize', onResize)
+    window.addEventListener('orientationchange', onResize)
+    return () => {
+      cancelAnimationFrame(raf)
+      window.removeEventListener('resize', onResize)
+      window.removeEventListener('orientationchange', onResize)
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ready])
 
   useEffect(() => {
     if (!ready || !dims) return
@@ -207,7 +237,8 @@ export default function ImageCropModal({
           // On mobile: full-width sheet from bottom
           // On desktop: centered modal
           maxWidth: 720,
-          maxHeight: '96vh',
+          // dvh = tatsächlich sichtbare Höhe (Safari-Leisten, Tastatur); in Desktop-Browsern = vh
+          maxHeight: '96dvh',
         }}
       >
         {/* ── Header ── */}
@@ -223,6 +254,7 @@ export default function ImageCropModal({
           </div>
           <button
             onClick={onCancel}
+            aria-label="Schließen"
             style={{ width: 36, height: 36, borderRadius: 10, background: '#F3F4F6', color: '#6B7280', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>

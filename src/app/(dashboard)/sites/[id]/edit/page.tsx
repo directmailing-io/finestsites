@@ -743,6 +743,13 @@ const INPUT = {
   minHeight: '44px',
 }
 
+/**
+ * Hover-Effekte nur für Maus und Stift. Auf Touch-Geräten (iPad, Handy) blieben die per JS gesetzten
+ * Hover-Farben nach dem Antippen „hängen“. Mit der Maus verhält sich alles exakt wie vorher.
+ */
+const onlyHover = (fn: (e: React.PointerEvent<HTMLElement>) => void) =>
+  (e: React.PointerEvent<HTMLElement>) => { if (e.pointerType !== 'touch') fn(e) }
+
 const focusBorder = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
   (e.target.style.borderColor = '#1a1a1a')
 const blurBorder  = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
@@ -1418,8 +1425,8 @@ function ColorField({ value, onChange, placeholder }: {
                 cursor: 'pointer', padding: 0,
                 transition: 'transform 0.15s ease, box-shadow 0.15s ease',
               }}
-              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = 'scale(1.08)' }}
-              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = 'scale(1)' }}
+              onPointerEnter={onlyHover(e => { (e.currentTarget as HTMLElement).style.transform = 'scale(1.08)' })}
+              onPointerLeave={onlyHover(e => { (e.currentTarget as HTMLElement).style.transform = 'scale(1)' })}
             />
           )
         })}
@@ -1537,12 +1544,12 @@ function DateField({ value, onChange }: { value: string; onChange: (v: string) =
         }}>
           <div className="flex items-center justify-between mb-3 px-1">
             <button type="button" onClick={() => setView(v => v.m === 0 ? { y: v.y - 1, m: 11 } : { y: v.y, m: v.m - 1 })}
-              className="p-1.5 rounded-md hover:bg-gray-100">
+              className="p-1.5 pointer-coarse:p-3.5 rounded-md hover:bg-gray-100" aria-label="Vorheriger Monat">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="15 18 9 12 15 6"/></svg>
             </button>
             <div className="text-sm font-bold text-gray-900">{MONTHS_L[view.m]} {view.y}</div>
             <button type="button" onClick={() => setView(v => v.m === 11 ? { y: v.y + 1, m: 0 } : { y: v.y, m: v.m + 1 })}
-              className="p-1.5 rounded-md hover:bg-gray-100">
+              className="p-1.5 pointer-coarse:p-3.5 rounded-md hover:bg-gray-100" aria-label="Nächster Monat">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="9 18 15 12 9 6"/></svg>
             </button>
           </div>
@@ -1649,12 +1656,12 @@ function MultiDateField({ value, onChange }: { value: string; onChange: (v: stri
       }}>
         <div className="flex items-center justify-between mb-3 px-1">
           <button type="button" onClick={() => setView(v => v.m === 0 ? { y: v.y - 1, m: 11 } : { y: v.y, m: v.m - 1 })}
-            className="p-1.5 rounded-md hover:bg-gray-100" aria-label="Vorheriger Monat">
+            className="p-1.5 pointer-coarse:p-3.5 rounded-md hover:bg-gray-100" aria-label="Vorheriger Monat">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="15 18 9 12 15 6"/></svg>
           </button>
           <div className="text-sm font-bold text-gray-900">{MONTHS_L[view.m]} {view.y}</div>
           <button type="button" onClick={() => setView(v => v.m === 11 ? { y: v.y + 1, m: 0 } : { y: v.y, m: v.m + 1 })}
-            className="p-1.5 rounded-md hover:bg-gray-100" aria-label="Nächster Monat">
+            className="p-1.5 pointer-coarse:p-3.5 rounded-md hover:bg-gray-100" aria-label="Nächster Monat">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="9 18 15 12 9 6"/></svg>
           </button>
         </div>
@@ -2152,11 +2159,12 @@ function LoopField({ field, value, onChange, onItemFocus }: {
             }}>
 
             {/* Item header */}
-            <div className="flex items-center justify-between px-4 py-3 cursor-pointer select-none"
+            <div className="flex items-center justify-between px-4 py-3 pointer-coarse:py-1.5 pointer-coarse:pr-3 cursor-pointer select-none"
               onClick={() => setExpandedIdx(isOpen ? null : idx)}>
               <div className="flex items-center gap-2.5 min-w-0">
                 {items.length > 1 && (
-                  <span className="flex items-center justify-center flex-shrink-0"
+                  // Griff zum Ziehen nur mit Maus; auf Touch-Geräten gibt es stattdessen ↑/↓-Knöpfe
+                  <span className="flex pointer-coarse:hidden items-center justify-center flex-shrink-0"
                     style={{ color: '#D1D5DB', cursor: 'grab', width: 16, height: 16 }}
                     onClick={e => e.stopPropagation()}
                     title="Zum Verschieben halten und ziehen">
@@ -2174,12 +2182,30 @@ function LoopField({ field, value, onChange, onItemFocus }: {
                 <span className="text-sm font-semibold text-gray-800 truncate">{title}</span>
               </div>
               <div className="flex items-center gap-1 flex-shrink-0">
+                {items.length > 1 && (['up', 'down'] as const).map(dir => {
+                  const target = dir === 'up' ? idx - 1 : idx + 1
+                  const disabled = target < 0 || target >= items.length
+                  return (
+                    // Umsortieren per Fingertipp (Ziehen ist mit dem Finger unzuverlässig) – nur auf Touch-Geräten sichtbar
+                    <button key={dir} type="button"
+                      disabled={disabled}
+                      onClick={e => { e.stopPropagation(); if (!disabled) moveItem(idx, target) }}
+                      aria-label={dir === 'up' ? `${title} nach oben schieben` : `${title} nach unten schieben`}
+                      className="hidden pointer-coarse:flex w-11 h-11 items-center justify-center rounded-[10px]"
+                      style={{ color: disabled ? '#E5E7EB' : '#6B7280' }}>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round">
+                        {dir === 'up' ? <path d="M12 19V5M5 12l7-7 7 7"/> : <path d="M12 5v14M19 12l-7 7-7-7"/>}
+                      </svg>
+                    </button>
+                  )
+                })}
                 <button type="button"
                   onClick={e => { e.stopPropagation(); removeItem(idx) }}
-                  className="p-1.5 rounded-[8px] transition-all"
+                  aria-label={`${title} löschen`}
+                  className="p-1.5 rounded-[8px] transition-all pointer-coarse:w-11 pointer-coarse:h-11 pointer-coarse:flex pointer-coarse:items-center pointer-coarse:justify-center"
                   style={{ color: '#9CA3AF' }}
-                  onMouseEnter={e => ((e.currentTarget as HTMLElement).style.color = '#DC2626')}
-                  onMouseLeave={e => ((e.currentTarget as HTMLElement).style.color = '#9CA3AF')}>
+                  onPointerEnter={onlyHover(e => ((e.currentTarget as HTMLElement).style.color = '#DC2626'))}
+                  onPointerLeave={onlyHover(e => ((e.currentTarget as HTMLElement).style.color = '#9CA3AF'))}>
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/>
                   </svg>
@@ -2302,8 +2328,8 @@ function LoopField({ field, value, onChange, onItemFocus }: {
                             cursor: 'pointer', fontSize: 12, fontWeight: 600,
                             transition: 'all 150ms',
                           }}
-                          onMouseEnter={e => { if (pickerForIdx !== idx) { const el = e.currentTarget as HTMLElement; el.style.borderColor = '#1a1a1a'; el.style.background = '#F3F4F6' } }}
-                          onMouseLeave={e => { if (pickerForIdx !== idx) { const el = e.currentTarget as HTMLElement; el.style.borderColor = '#E5E7EB'; el.style.background = '#FAFAFA' } }}>
+                          onPointerEnter={onlyHover(e => { if (pickerForIdx !== idx) { const el = e.currentTarget as HTMLElement; el.style.borderColor = '#1a1a1a'; el.style.background = '#F3F4F6' } })}
+                          onPointerLeave={onlyHover(e => { if (pickerForIdx !== idx) { const el = e.currentTarget as HTMLElement; el.style.borderColor = '#E5E7EB'; el.style.background = '#FAFAFA' } })}>
                           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                             <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
                             <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
@@ -2340,8 +2366,8 @@ function LoopField({ field, value, onChange, onItemFocus }: {
                                   borderBottom: ei < (availableSites ?? pickerSites).length - 1 ? '1px solid #F3F4F6' : 'none',
                                   transition: 'background 100ms',
                                 }}
-                                onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = '#F9FAFB'}
-                                onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = 'none'}>
+                                onPointerEnter={onlyHover(e => (e.currentTarget as HTMLElement).style.background = '#F9FAFB')}
+                                onPointerLeave={onlyHover(e => (e.currentTarget as HTMLElement).style.background = 'none')}>
                                 {/* Colored dot = domain */}
                                 <span style={{
                                   width: 8, height: 8, borderRadius: '50%', flexShrink: 0,
@@ -2389,8 +2415,8 @@ function LoopField({ field, value, onChange, onItemFocus }: {
         <button type="button" onClick={addItem}
           className="flex items-center justify-center gap-2 py-3 text-sm font-semibold rounded-[16px] transition-all w-full mt-1"
           style={{ border: '1.5px dashed #D1D5DB', color: '#374151', background: 'transparent' }}
-          onMouseEnter={e => { const el = e.currentTarget as HTMLElement; el.style.borderColor = '#1a1a1a'; el.style.background = '#F9FAFB' }}
-          onMouseLeave={e => { const el = e.currentTarget as HTMLElement; el.style.borderColor = '#D1D5DB'; el.style.background = 'transparent' }}>
+          onPointerEnter={onlyHover(e => { const el = e.currentTarget as HTMLElement; el.style.borderColor = '#1a1a1a'; el.style.background = '#F9FAFB' })}
+          onPointerLeave={onlyHover(e => { const el = e.currentTarget as HTMLElement; el.style.borderColor = '#D1D5DB'; el.style.background = 'transparent' })}>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
             <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
           </svg>
@@ -2543,8 +2569,8 @@ function PhoneField({ field, value, onChange }: {
                   background: c.code === selectedCode ? '#F9FAFB' : 'transparent',
                   color: '#111827',
                 }}
-                onMouseEnter={e => (e.currentTarget.style.background = '#F3F4F6')}
-                onMouseLeave={e => (e.currentTarget.style.background = c.code === selectedCode ? '#F9FAFB' : 'transparent')}>
+                onPointerEnter={onlyHover(e => (e.currentTarget.style.background = '#F3F4F6'))}
+                onPointerLeave={onlyHover(e => (e.currentTarget.style.background = c.code === selectedCode ? '#F9FAFB' : 'transparent'))}>
                 <span className="text-base flex-shrink-0">{c.flag}</span>
                 <span className="flex-1 truncate">{c.name}</span>
                 <span className="text-xs flex-shrink-0" style={{ color: '#9CA3AF' }}>{c.code}</span>
@@ -2804,8 +2830,8 @@ function AboutIntroField({ field, value, onChange, siblings }: {
             background: '#fff',
             borderColor: '#E5E7EB',
           }}
-          onMouseEnter={e => (e.currentTarget.style.borderColor = '#111827')}
-          onMouseLeave={e => (e.currentTarget.style.borderColor = '#E5E7EB')}>
+          onPointerEnter={onlyHover(e => (e.currentTarget.style.borderColor = '#111827'))}
+          onPointerLeave={onlyHover(e => (e.currentTarget.style.borderColor = '#E5E7EB'))}>
           <span className="flex-1 min-w-0 text-[17px] leading-snug" style={{ color: hasCustom ? '#111827' : '#6B7280' }}>
             {displayParsed.words.map((w, i) => (
               <span key={i}>
@@ -2889,16 +2915,16 @@ function AboutIntroField({ field, value, onChange, siblings }: {
           <button type="button" onClick={cancel}
             className="text-xs px-3 py-1.5 rounded-full transition-colors"
             style={{ color: '#6B7280', background: 'transparent' }}
-            onMouseEnter={e => (e.currentTarget.style.background = '#F3F4F6')}
-            onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
+            onPointerEnter={onlyHover(e => (e.currentTarget.style.background = '#F3F4F6'))}
+            onPointerLeave={onlyHover(e => (e.currentTarget.style.background = 'transparent'))}>
             Abbrechen
           </button>
           {value.trim() && (
             <button type="button" onClick={reset}
               className="text-xs px-3 py-1.5 rounded-full transition-colors"
               style={{ color: '#6B7280', background: 'transparent' }}
-              onMouseEnter={e => (e.currentTarget.style.background = '#F3F4F6')}
-              onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
+              onPointerEnter={onlyHover(e => (e.currentTarget.style.background = '#F3F4F6'))}
+              onPointerLeave={onlyHover(e => (e.currentTarget.style.background = 'transparent'))}>
               Auf Standard zurücksetzen
             </button>
           )}
@@ -3065,10 +3091,43 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
   const [previewTooltipKey, setPreviewTooltipKey] = useState(0)
   const previewTooltipTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const [showLivePreview, setShowLivePreview] = useState(true)
-  const [livePreviewDevice, setLivePreviewDevice] = useState<'mobile' | 'tablet' | 'desktop'>('desktop')
+  // iPad quer (Touch, 1024–1279 px): schmale Vorschau → Handy-Ansicht ist dort lesbar, Desktop wäre winzig
+  const [livePreviewDevice, setLivePreviewDevice] = useState<'mobile' | 'tablet' | 'desktop'>(() =>
+    typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches && window.innerWidth >= 1024 && window.innerWidth < 1280
+      ? 'mobile' : 'desktop')
   const [livePreviewPanelW, setLivePreviewPanelW] = useState<number>(560)
   const [winW, setWinW] = useState(typeof window === 'undefined' ? 1440 : window.innerWidth)
   const [winH, setWinH] = useState(typeof window === 'undefined' ? 900 : window.innerHeight)
+  // Touch-Gerät (iPad, Handy): feste Vorschau-Größen statt Maus-Ziehen, größere Tippflächen.
+  // Mit Maus bleibt alles wie bisher.
+  const [isTouch, setIsTouch] = useState(() => typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches)
+  // iPad: Vorschau „schmal“ (ca. 40 %) oder „breit“ (ca. 55 %) – per Knopf, nicht per Ziehen
+  const [touchPreviewWide, setTouchPreviewWide] = useState(false)
+  useEffect(() => {
+    const mq = window.matchMedia('(pointer: coarse)')
+    const onChange = () => setIsTouch(mq.matches)
+    mq.addEventListener?.('change', onChange)
+    return () => mq.removeEventListener?.('change', onChange)
+  }, [])
+  // Bildschirmtastatur (iPhone/iPad): sichtbare Höhe aus visualViewport, damit die untere Leiste
+  // nicht hinter der Tastatur verschwindet bzw. mitten im Bild schwebt.
+  const [keyboardViewport, setKeyboardViewport] = useState<{ h: number; top: number } | null>(null)
+  useEffect(() => {
+    if (!isTouch) return
+    const vv = window.visualViewport
+    if (!vv) return
+    let raf = 0
+    const update = () => {
+      cancelAnimationFrame(raf)
+      raf = requestAnimationFrame(() => {
+        const open = window.innerHeight - vv.height > 140
+        setKeyboardViewport(open ? { h: Math.round(vv.height), top: Math.round(vv.offsetTop) } : null)
+      })
+    }
+    vv.addEventListener('resize', update)
+    vv.addEventListener('scroll', update)
+    return () => { cancelAnimationFrame(raf); vv.removeEventListener('resize', update); vv.removeEventListener('scroll', update) }
+  }, [isTouch])
   useEffect(() => {
     // Restore saved panel width on mount
     try {
@@ -3593,11 +3652,26 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
     .filter(f => !f.admin_only || brandCtx.isAdmin)
     .sort((a, b) => ((a as any).order ?? 0) - ((b as any).order ?? 0))
 
+  // Live-Vorschau: mit Maus ab 1280 px (Panel per Ziehen), auf Touch-Geräten schon ab 1024 px
+  // (iPad quer, iPad Pro 13" hochkant) mit festen Größen – damit Antippen sichtbar etwas bewirkt.
+  const touchPreview = isTouch && winW >= 1024
+  const TOUCH_MIN_FORM_W = 620 // Seitenleiste (220) + Formular (400) bleiben immer frei
+  const touchPanelMax = Math.max(360, winW - TOUCH_MIN_FORM_W)
+  const touchPanelCompact = Math.min(touchPanelMax, Math.max(360, Math.round(winW * 0.40)))
+  const touchPanelWide = Math.min(touchPanelMax, Math.max(360, Math.round(winW * 0.55)))
+  const touchCanWiden = touchPanelWide - touchPanelCompact >= 60
+  const previewPanelW = touchPreview ? (touchPreviewWide && touchCanWiden ? touchPanelWide : touchPanelCompact) : livePreviewPanelW
+  const previewRendered = showLivePreview && (touchPreview || winW >= 1280)
   // Collapse section nav to icon-only when the editor panel is squeezed by the preview
-  const narrowEditor = showLivePreview && (winW - livePreviewPanelW) < 520
+  // (nur wenn die Vorschau wirklich angezeigt wird – vorher klappte sie bei 1024–1079 px grundlos zu)
+  const narrowEditor = previewRendered && (winW - previewPanelW) < 520
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col" style={{ background: '#F8FAFC' }}>
+    <div className="fixed inset-0 z-50 flex flex-col" style={{
+      background: '#F8FAFC',
+      // Tastatur offen (Touch): Editor auf den sichtbaren Bereich begrenzen
+      ...(keyboardViewport ? { bottom: 'auto', top: keyboardViewport.top, height: keyboardViewport.h } : {}),
+    }}>
 
 
       {/* ── Toast notification ── */}
@@ -3632,6 +3706,10 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
         /* iOS zooms into inputs with font-size < 16px — force 16px on touch layouts */
         @media (max-width: 1023px) {
           input:not([type=range]):not([type=checkbox]):not([type=color]), textarea, select { font-size: 16px !important; }
+        }
+        /* iPad quer (ab 1024 px) und alle Touch-Geräte: auch dort zoomt iOS bei < 16 px – inkl. Textfeld „Über mich“ (contenteditable) */
+        @media (pointer: coarse) {
+          input:not([type=range]):not([type=checkbox]):not([type=color]), textarea, select, [contenteditable="true"] { font-size: 16px !important; }
         }
       `}</style>
 
@@ -3806,10 +3884,13 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
         {/* Right: actions — max 3 items in any state */}
         <div className="flex items-center gap-2 flex-shrink-0">
 
-          {/* Live-Vorschau panel toggle — icon only, xl+ */}
+          {/* Live-Vorschau panel toggle — icon only, xl+ (Touch: ab lg, 44-pt-Tippfläche) */}
           <button onClick={() => setShowLivePreview(v => !v)}
-            className="hidden xl:flex w-8 h-8 items-center justify-center rounded-full flex-shrink-0 transition-colors"
+            className={touchPreview
+              ? 'hidden lg:flex w-11 h-11 items-center justify-center rounded-full flex-shrink-0 transition-colors'
+              : 'hidden xl:flex w-8 h-8 items-center justify-center rounded-full flex-shrink-0 transition-colors'}
             title={showLivePreview ? 'Live-Vorschau ausblenden' : 'Live-Vorschau einblenden'}
+            aria-label={showLivePreview ? 'Live-Vorschau ausblenden' : 'Live-Vorschau einblenden'}
             style={{ background: showLivePreview ? '#1a1a1a' : '#F3F4F6', color: showLivePreview ? 'white' : '#6B7280' }}>
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <rect x="2" y="3" width="20" height="14" rx="2"/>
@@ -3868,8 +3949,9 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
             </button>
           )}
           <button onClick={() => setShowDeleteModal(true)}
-            className="w-8 h-8 flex items-center justify-center rounded-full transition-colors flex-shrink-0"
+            className="w-8 h-8 pointer-coarse:w-11 pointer-coarse:h-11 flex items-center justify-center rounded-full transition-colors flex-shrink-0"
             title="Website löschen"
+            aria-label="Website löschen"
             style={{ background: '#FEF2F2', color: '#DC2626' }}>
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M3 6h18M19 6l-1 14H6L5 6M10 11v6M14 11v6M9 6V4h6v2"/>
@@ -4010,8 +4092,8 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
                     background: isActive ? '#1a1a1a' : 'transparent',
                     color: isActive ? 'white' : '#374151',
                   }}
-                  onMouseEnter={e => { if (!isActive) (e.currentTarget as HTMLElement).style.background = '#F3F4F6' }}
-                  onMouseLeave={e => { if (!isActive) (e.currentTarget as HTMLElement).style.background = 'transparent' }}>
+                  onPointerEnter={onlyHover(e => { if (!isActive) (e.currentTarget as HTMLElement).style.background = '#F3F4F6' })}
+                  onPointerLeave={onlyHover(e => { if (!isActive) (e.currentTarget as HTMLElement).style.background = 'transparent' })}>
 
                   {/* Indicator: in narrow mode show step number, otherwise check/warning icon */}
                   <span className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0"
@@ -4046,8 +4128,8 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
                       background: isActive ? '#1a1a1a' : 'transparent',
                       color: isActive ? 'white' : '#374151',
                     }}
-                    onMouseEnter={e => { if (!isActive) (e.currentTarget as HTMLElement).style.background = '#F3F4F6' }}
-                    onMouseLeave={e => { if (!isActive) (e.currentTarget as HTMLElement).style.background = 'transparent' }}>
+                    onPointerEnter={onlyHover(e => { if (!isActive) (e.currentTarget as HTMLElement).style.background = '#F3F4F6' })}
+                    onPointerLeave={onlyHover(e => { if (!isActive) (e.currentTarget as HTMLElement).style.background = 'transparent' })}>
                     <span className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0"
                       style={{ background: isActive ? 'rgba(255,255,255,0.2)' : hasDomain ? '#DCFCE7' : '#EFF6FF' }}>
                       {hasDomain ? (
@@ -4506,7 +4588,11 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
 
           {/* ── Mobile Bottom Action Bar ── */}
           <div className="lg:hidden flex-shrink-0 bg-white border-t flex flex-col shadow-[0_-1px_0_0_#E5E7EB]"
-            style={{ borderColor: '#E5E7EB', paddingBottom: 'max(env(safe-area-inset-bottom, 16px), 16px)' }}>
+            style={{
+              borderColor: '#E5E7EB', paddingBottom: 'max(env(safe-area-inset-bottom, 16px), 16px)',
+              // Tastatur offen auf dem Handy: Leiste ausblenden (zu wenig Platz zum Tippen); auf dem iPad sitzt sie über der Tastatur
+              ...(keyboardViewport && keyboardViewport.h < 560 ? { display: 'none' } : {}),
+            }}>
           {/* Publish-blocked hint — shown above the button row so users on
               small screens see WHY the CTA is greyed out (desktop already
               has this hint next to the last-section publish button). */}
@@ -4707,7 +4793,7 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
              - Iframe is visually scaled with CSS transform so the whole device fits
                in the panel without horizontal scrollbars. */}
         {showLivePreview && (() => {
-          const PANEL_W = livePreviewPanelW
+          const PANEL_W = previewPanelW
           const DEVICES: Record<'mobile' | 'tablet' | 'desktop', { w: number; h: number; label: string }> = {
             mobile:  { w: 390,  h: 844,  label: '390 × 844' },
             tablet:  { w: 820,  h: 1180, label: '820 × 1180' },
@@ -4751,11 +4837,11 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
 
           return (
             <aside
-              className="hidden xl:flex flex-shrink-0 flex-col border-l overflow-hidden bg-white relative"
+              className={`${touchPreview ? 'hidden lg:flex' : 'hidden xl:flex'} flex-shrink-0 flex-col border-l overflow-hidden bg-white relative`}
               style={{ width: PANEL_W, borderColor: '#E5E7EB' }}>
 
-              {/* Drag handle on left edge — full-height, click+drag to resize */}
-              <div
+              {/* Drag handle on left edge — full-height, click+drag to resize (nur Maus; Touch: Größen-Knopf im Kopf) */}
+              {!isTouch && <div
                 onMouseDown={startDrag}
                 onDoubleClick={() => {
                   // Double-click: toggle between compact and ~50%
@@ -4775,19 +4861,20 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
                   <div className="w-1 h-1 bg-gray-500 rounded-full mb-1" />
                   <div className="w-1 h-1 bg-gray-500 rounded-full" />
                 </div>
-              </div>
+              </div>}
 
-              {/* Preview header — single bar: status + device tabs + actions */}
+              {/* Preview header — single bar: status + device tabs + actions
+                  (Touch: 44-pt-Tippflächen, Größen-Knopf statt Ziehen, „Live“-Punkt entfällt aus Platzgründen) */}
               <div className="flex items-center justify-between px-3 flex-shrink-0 border-b"
-                style={{ borderColor: '#E5E7EB', background: '#FAFAFA', height: 44 }}>
+                style={{ borderColor: '#E5E7EB', background: '#FAFAFA', height: isTouch ? 56 : 44, gap: isTouch ? 6 : undefined }}>
                 {/* Left: live indicator */}
-                <div className="flex items-center gap-1.5 flex-shrink-0">
+                {!isTouch && <div className="flex items-center gap-1.5 flex-shrink-0">
                   <span className="relative flex h-2 w-2 flex-shrink-0">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
                     <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500" />
                   </span>
                   <span className="text-xs font-semibold text-gray-500 select-none">Live</span>
-                </div>
+                </div>}
 
                 {/* Center: device tabs */}
                 <div className="flex items-center gap-0.5 rounded-lg p-0.5" style={{ background: '#EFEFEF' }}>
@@ -4797,7 +4884,10 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
                     return (
                       <button key={key}
                         onClick={() => setLivePreviewDevice(key)}
-                        className="px-3 py-1 rounded-md text-[11px] font-semibold transition-all"
+                        aria-pressed={active}
+                        className={isTouch
+                          ? 'px-3 min-h-11 rounded-md text-xs font-semibold transition-all'
+                          : 'px-3 py-1 rounded-md text-[11px] font-semibold transition-all'}
                         style={{
                           background: active ? 'white' : 'transparent',
                           color: active ? '#111' : '#9CA3AF',
@@ -4809,23 +4899,39 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
                   })}
                 </div>
 
-                {/* Right: refresh + close */}
+                {/* Right: (Touch: Größe) + refresh + close */}
                 <div className="flex items-center gap-0.5 flex-shrink-0">
+                  {isTouch && touchCanWiden && (
+                    <button
+                      onClick={() => setTouchPreviewWide(v => !v)}
+                      aria-label={touchPreviewWide ? 'Vorschau schmaler' : 'Vorschau breiter'}
+                      className="min-h-11 px-2.5 rounded-md flex items-center justify-center gap-1 text-xs font-semibold"
+                      style={{ color: '#4B5563' }}>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                        {touchPreviewWide
+                          ? <><path d="M14 10l7-7M20 10h-6V4"/><path d="M10 14l-7 7M4 14h6v6"/></>
+                          : <><path d="M21 3l-7 7M15 3h6v6"/><path d="M3 21l7-7M9 21H3v-6"/></>}
+                      </svg>
+                      {touchPreviewWide ? 'Schmaler' : 'Breiter'}
+                    </button>
+                  )}
                   <button
                     onClick={() => setPreviewKey(k => k + 1)}
                     title="Neu laden"
-                    className="w-7 h-7 rounded-md flex items-center justify-center transition-colors hover:bg-gray-200"
-                    style={{ color: '#9CA3AF' }}>
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                    aria-label="Vorschau neu laden"
+                    className={`${isTouch ? 'w-11 h-11' : 'w-7 h-7'} rounded-md flex items-center justify-center transition-colors hover:bg-gray-200`}
+                    style={{ color: isTouch ? '#6B7280' : '#9CA3AF' }}>
+                    <svg width={isTouch ? 16 : 13} height={isTouch ? 16 : 13} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
                       <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>
                     </svg>
                   </button>
                   <button
                     onClick={() => setShowLivePreview(false)}
                     title="Vorschau ausblenden"
-                    className="w-7 h-7 rounded-md flex items-center justify-center transition-colors hover:bg-gray-200"
-                    style={{ color: '#9CA3AF' }}>
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                    aria-label="Vorschau ausblenden"
+                    className={`${isTouch ? 'w-11 h-11' : 'w-7 h-7'} rounded-md flex items-center justify-center transition-colors hover:bg-gray-200`}
+                    style={{ color: isTouch ? '#6B7280' : '#9CA3AF' }}>
+                    <svg width={isTouch ? 15 : 12} height={isTouch ? 15 : 12} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                       <path d="M18 6L6 18M6 6l12 12"/>
                     </svg>
                   </button>
@@ -4878,7 +4984,7 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
       {!showLivePreview && (
         <button
           onClick={() => setShowLivePreview(true)}
-          className="hidden xl:flex items-center gap-2 fixed bottom-6 right-6 z-30 px-4 py-3 rounded-full font-semibold text-xs shadow-lg transition-all hover:scale-[1.03]"
+          className={`${touchPreview ? 'hidden lg:flex min-h-11 text-sm' : 'hidden xl:flex text-xs'} items-center gap-2 fixed bottom-6 right-6 z-30 px-4 py-3 rounded-full font-semibold shadow-lg transition-all hover:scale-[1.03]`}
           style={{ background: '#1a1a1a', color: 'white' }}>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <rect x="2" y="3" width="20" height="14" rx="2"/>
@@ -4901,14 +5007,14 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
                   { key: 'mobile'  as const, icon: <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="5" y="2" width="14" height="20" rx="2"/><circle cx="12" cy="18" r="1"/></svg> },
                 ]).map(d => (
                   <button key={d.key} onClick={() => setDeviceView(d.key)}
-                    className="p-1.5 rounded-[8px]"
+                    className="p-1.5 pointer-coarse:p-3.5 rounded-[8px]" aria-label={d.key === 'desktop' ? 'Desktop' : d.key === 'tablet' ? 'Tablet' : 'Handy'}
                     style={{ background: deviceView === d.key ? 'rgba(255,255,255,0.2)' : 'transparent', color: 'white' }}>
                     {d.icon}
                   </button>
                 ))}
               </div>
               <button onClick={() => setPreviewKey(k => k + 1)}
-                className="flex items-center gap-1 text-xs px-2.5 py-1.5 rounded-[8px]"
+                className="flex items-center gap-1 text-xs px-2.5 py-1.5 rounded-[8px] pointer-coarse:min-h-11"
                 style={{ background: 'rgba(255,255,255,0.1)', color: 'white' }}>
                 <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/>
@@ -4917,7 +5023,7 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
               </button>
             </div>
             <button onClick={() => setShowFullPreview(false)}
-              className="flex items-center gap-1.5 text-sm px-4 py-2 rounded-[12px] font-medium"
+              className="flex items-center gap-1.5 text-sm px-4 py-2 rounded-[12px] font-medium pointer-coarse:min-h-11"
               style={{ background: 'rgba(255,255,255,0.12)', color: 'white' }}>
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M18 6L6 18M6 6l12 12"/>
@@ -4926,11 +5032,14 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
             </button>
           </div>
           {site.templates?.r2_bundle_path ? (() => {
-            const FP_DEVICE_W = { desktop: 1280, tablet: 768, mobile: 390 } as const
+            // Tablet = 820 px wie in der Live-Vorschau (iPad Air), vorher 768
+            const FP_DEVICE_W = { desktop: 1280, tablet: 820, mobile: 390 } as const
             const fpTargetW = FP_DEVICE_W[deviceView]
             const fpAvailW = winW - 32 // 16px padding each side
             const fpScale = Math.min(1, fpAvailW / fpTargetW)
-            const fpIframeH = 900
+            // Touch (Handy/iPad): Vorschau füllt die Bildschirmhöhe, statt als flacher Streifen
+            // (900 px × Skalierung) zu enden. Mit Maus unverändert 900 px.
+            const fpIframeH = isTouch ? Math.max(900, Math.round((winH - 72 - 72) / fpScale)) : 900
             const fpScaledW = Math.round(fpTargetW * fpScale)
             const fpScaledH = Math.round(fpIframeH * fpScale)
             return (
@@ -5250,7 +5359,8 @@ function UpgradeModal({
           <div className="flex justify-end mb-5">
             <button
               onClick={onClose}
-              className="flex items-center justify-center w-8 h-8 rounded-full transition-colors"
+              aria-label="Schließen"
+              className="flex items-center justify-center w-8 h-8 pointer-coarse:w-11 pointer-coarse:h-11 rounded-full transition-colors"
               style={{ background: '#F3F4F6' }}
             >
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#6B7280" strokeWidth="2.5" strokeLinecap="round">
@@ -5826,8 +5936,8 @@ function PublishCelebrationModal({ publishedUrl, onClose }: {
                 textDecoration: 'none', boxShadow: '0 4px 16px rgba(0,0,0,0.2)',
                 transition: 'opacity 0.15s', boxSizing: 'border-box',
               }}
-              onMouseEnter={e => (e.currentTarget.style.opacity = '0.88')}
-              onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
+              onPointerEnter={onlyHover(e => (e.currentTarget.style.opacity = '0.88'))}
+              onPointerLeave={onlyHover(e => (e.currentTarget.style.opacity = '1'))}
             >
               Webseite öffnen →
             </a>
@@ -5840,8 +5950,8 @@ function PublishCelebrationModal({ publishedUrl, onClose }: {
                   fontSize: '14px', color: '#374151', cursor: 'pointer',
                   transition: 'background 0.15s',
                 }}
-                onMouseEnter={e => (e.currentTarget.style.background = '#E5E7EB')}
-                onMouseLeave={e => (e.currentTarget.style.background = '#F3F4F6')}
+                onPointerEnter={onlyHover(e => (e.currentTarget.style.background = '#E5E7EB'))}
+                onPointerLeave={onlyHover(e => (e.currentTarget.style.background = '#F3F4F6'))}
               >
                 Teilen ↗
               </button>
