@@ -187,9 +187,10 @@ export type ReconcileResult =
 export async function reconcileSiteAccess(userId: string, now: Date = new Date()): Promise<ReconcileResult> {
   const user = await db.query.users.findFirst({
     where: eq(users.id, userId),
-    columns: { ...recoveryColumns, deactivatedAt: true },
+    columns: { ...recoveryColumns, deactivatedAt: true, deletionRequestedAt: true, deletedAt: true },
   })
-  if (!user || user.deactivatedAt) return { action: 'unchanged' }
+  // Kontolöschung angefragt/ausgeführt: Seiten bleiben offline, egal was Stripe meldet (src/lib/account-deletion)
+  if (!user || user.deactivatedAt || user.deletionRequestedAt || user.deletedAt) return { action: 'unchanged' }
 
   if (shouldBeOffline(user, now)) {
     const sites = await suspendSites(userId)

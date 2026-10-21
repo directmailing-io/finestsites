@@ -231,12 +231,43 @@ export interface CreditNote {
 }
 
 // ── Konto löschen (/api/app/v1/account/deletion) ──────────────────────────────
+// Spiegel von src/lib/contracts/app-v1/account-deletion.ts (Server prüft seine Antworten dagegen).
 export type PartnerBalanceChoice = 'payout' | 'waive';
 
 export interface DeletionInfo {
-  partner_balance_cents: number;
-  has_payout_account: boolean;
-  scheduled_for: string | null;
+  status: 'none' | 'scheduled';
+  requestedAt: string | null;
+  scheduledFor: string | null;
+  graceDays: number;
+  /** false z. B. beim Admin-Konto */
+  canDelete: boolean;
+  blockedReason: 'admin' | null;
+  partnerBalance: {
+    currency: 'EUR';
+    availableCents: number;
+    pendingCents: number;
+    /** schon gutgeschriebenes, noch nicht verrechnetes Kundenguthaben */
+    customerCreditCents: number;
+    /** > 0 → Wahl Auszahlung/Verzicht ist Pflicht */
+    totalCents: number;
+    hasPayoutAccount: boolean;
+    taxProfileComplete: boolean;
+    choice: PartnerBalanceChoice | null;
+    /** Wortlaut der Verzichtserklärung (so wird er gespeichert) */
+    waiverText: string;
+  };
+}
+
+export interface DeletionRequestResult {
+  status: 'scheduled';
+  scheduledFor: string;
+  /** Alle Sitzungen sind beendet – lokal abmelden */
+  signedOut: true;
+}
+
+export interface DeletionCancelResult {
+  status: 'none';
+  sitesOffline: boolean;
 }
 
 // ── Fehler: feste Codes vom Server ────────────────────────────────────────────

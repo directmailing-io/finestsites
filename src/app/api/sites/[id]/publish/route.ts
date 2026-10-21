@@ -29,6 +29,7 @@ import { renderTemplate, rawKeysFromSchema } from '@/lib/utils/template-engine'
 import { shouldBeOffline } from '@/lib/billing/site-access'
 import { isAppRequest } from '@/lib/app-mode'
 import { appMessage } from '@/lib/app-api/messages'
+import { deletionPendingResponse } from '@/lib/account-deletion/guard'
 
 const r2Client = new S3Client({
   region: 'auto',
@@ -79,6 +80,9 @@ const PLAN_LIMITS: Record<string, number> = { starter: 1, pro: 3, unlimited: Inf
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const user = await getUserFromRequest(req)
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  // Kontolöschung angefragt: Veröffentlichen, neue Seiten und Kauf gesperrt
+  const deletionBlock = await deletionPendingResponse(user.id)
+  if (deletionBlock) return deletionBlock
 
   const { id } = await params
 

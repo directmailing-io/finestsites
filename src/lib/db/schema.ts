@@ -146,6 +146,11 @@ export const users = pgTable('users', {
   contentConsentUa: text('content_consent_ua'),
   contentConsentVersion: varchar('content_consent_version', { length: 20 }),
   contentConsentTextHash: varchar('content_consent_text_hash', { length: 64 }),
+  // Konto löschen (Migration 20261022100000, src/lib/account-deletion): angefragt → nach 14 Tagen
+  // ausgeführt. Nach der Löschung bleibt die Zeile als Grabstein (id + Benutzername reserviert).
+  deletionRequestedAt: timestamp('deletion_requested_at', { withTimezone: true }),
+  deletionScheduledFor: timestamp('deletion_scheduled_for', { withTimezone: true }),
+  deletedAt: timestamp('deleted_at', { withTimezone: true }),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 }, (t) => [
@@ -343,6 +348,8 @@ export const affiliateCommissions = pgTable('affiliate_commissions', {
   paidAt: timestamp('paid_at', { withTimezone: true }),
   payoutId: uuid('payout_id'),
   reversalReason: text('reversal_reason'),
+  // Aufbewahrung bis (10 Jahre ab Jahresende, § 147 Abs. 1 Nr. 1 AO); gesetzt beim Löschen eines beteiligten Kontos
+  retentionUntil: date('retention_until'),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 }, (t) => [
@@ -381,6 +388,8 @@ export const affiliatePayouts = pgTable('affiliate_payouts', {
   creditNoteStatus: text('credit_note_status'), // pending | created
   creditNoteError: text('credit_note_error'),
   failureReason: text('failure_reason'),
+  // Aufbewahrung bis (Gutschrift 8 J., Auszahlungsbuchung 10 J., jeweils ab Jahresende – der längere Wert)
+  retentionUntil: date('retention_until'),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow(),
   paidAt: timestamp('paid_at', { withTimezone: true }),
@@ -422,11 +431,44 @@ export const affiliateClicks = pgTable('affiliate_clicks', {
   ipHash: text('ip_hash'),
   userAgentShort: text('user_agent_short'),
   converted: boolean('converted').default(false),
-  convertedUserId: uuid('converted_user_id').references(() => users.id),
+  convertedUserId: uuid('converted_user_id').references(() => users.id, { onDelete: 'set null' }),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
 }, (t) => [
   index('idx_clicks_referrer').on(t.referrerUsername),
 ])
+
+/**
+ * Protokoll der Kontolöschungen (Migration 20261022100000). Eine offene Anfrage je Nutzer
+ * (status 'scheduled'); abgebrochene und ausgeführte bleiben als Nachweis stehen.
+ */
+export const accountDeletionRequests = pgTable('account_deletion_requests', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  userId: uuid('user_id').notNull().references(() => users.id, { onDelete: 'restrict' }),
+  status: text('status').notNull().default('scheduled'), // scheduled | cancelled | completed
+  source: text('source').notNull().default('web'), // web | app | admin
+  requestedAt: timestamp('requested_at', { withTimezone: true }).notNull().defaultNow(),
+  scheduledFor: timestamp('scheduled_for', { withTimezone: true }).notNull(),
+  cancelledAt: timestamp('cancelled_at', { withTimezone: true }),
+  completedAt: timestamp('completed_at', { withTimezone: true }),
+  balanceAvailableCents: integer('balance_available_cents').notNull().default(0),
+  balancePendingCents: integer('balance_pending_cents').notNull().default(0),
+  // Stripe-Kundenguthaben (Verrechnungsmodus, noch nicht verbraucht) – AGB § 16 Abs. 3: auf Anfrage auszahlbar
+  balanceCustomerCreditCents: integer('balance_customer_credit_cents').notNull().default(0),
+  balanceChoice: text('balance_choice').notNull().default('none'), // none | payout | waive
+  waiverText: text('waiver_text'),
+  waiverAcceptedAt: timestamp('waiver_accepted_at', { withTimezone: true }),
+  // not_needed | pending | settled | payable_on_request | waived | time_barred
+  settlementStatus: text('settlement_status').notNull().default('not_needed'),
+  settledAt: timestamp('settled_at', { withTimezone: true }),
+  contactEmail: text('contact_email'),
+  limitationUntil: date('limitation_until'),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [
+  index('idx_account_deletion_requests_user').on(t.userId),
+])
+
+export type AccountDeletionRequest = typeof accountDeletionRequests.$inferSelect
 
 // ─── Relations ────────────────────────────────────────────────────────────────
 

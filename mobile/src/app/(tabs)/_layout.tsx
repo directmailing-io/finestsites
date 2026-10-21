@@ -2,7 +2,7 @@ import { Redirect } from 'expo-router';
 import { NativeTabs } from 'expo-router/native-tabs';
 import { useEffect } from 'react';
 
-import { useMe, useOverview } from '@/api/queries';
+import { useDeletionStatus, useMe, useOverview } from '@/api/queries';
 import { setBadge } from '@/lib/push';
 import { colors, fonts } from '@/theme/tokens';
 
@@ -14,12 +14,18 @@ import { colors, fonts } from '@/theme/tokens';
 export default function TabsLayout() {
   const me = useMe();
   const overview = useOverview();
+  const deletion = useDeletionStatus();
   const unreadSubs = overview.data?.unread.submissions ?? 0;
   const unreadSupport = overview.data?.unread.support ?? 0;
 
   useEffect(() => {
     if (overview.data) void setBadge(unreadSubs + unreadSupport);
   }, [overview.data, unreadSubs, unreadSupport]);
+
+  // Kontolöschung vorgemerkt: nur der Bildschirm „Konto wird gelöscht am … – Löschung abbrechen“
+  if (deletion.data?.status === 'scheduled') {
+    return <Redirect href="/deletion-pending" />;
+  }
 
   if (me.data?.onboarding.needs_username || me.data?.onboarding.needs_consent) {
     return <Redirect href="/onboarding" />;

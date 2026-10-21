@@ -39,6 +39,8 @@ export const qk = {
 
 export const useConfig = () => useQuery({ queryKey: qk.config, queryFn: ep.getConfig, staleTime: 10 * 60_000 });
 export const useMe = (enabled = true) => useQuery({ queryKey: qk.me, queryFn: ep.getMe, enabled });
+/** Bedenkzeit einer Kontolöschung? (status 'scheduled' → Tabs leiten zu /deletion-pending) */
+export const useDeletionStatus = () => useQuery({ queryKey: qk.deletion, queryFn: ep.getDeletionInfo, staleTime: 60_000 });
 export const useOverview = () => useQuery({ queryKey: qk.overview, queryFn: ep.getOverview, refetchInterval: 60_000 });
 export const useSites = () => useQuery({ queryKey: qk.sites, queryFn: ep.getSites });
 export const useDomain = (id: string, enabled: boolean) =>

@@ -1204,3 +1204,71 @@ export function affiliatePayoutAdminAlertEmail({ context, paidCount, items }: {
     ${button(`${APP_URL}/admin/gutschriften`, 'Gutschriften im Admin ansehen')}
   `)
 }
+
+// ─── Konto löschen (Kategorie system) ─────────────────────────────────────────
+
+function deletionPara(html: string, last = false): string {
+  return `<p style="margin:0 0 ${last ? 24 : 16}px;font-size:15px;color:${base.body};line-height:1.65;">${html}</p>`
+}
+
+/** Bestätigung der Lösch-Anfrage: Datum, was sofort passiert ist, wie man abbricht. */
+export function accountDeletionRequestedEmail({ scheduledFor, balanceNote }: { scheduledFor: string; balanceNote?: string | null }): string {
+  return layout(`
+    <h1 style="margin:0 0 8px;font-size:22px;font-weight:700;color:${base.heading};letter-spacing:-0.02em;">
+      Dein Konto wird am ${scheduledFor} gelöscht
+    </h1>
+    ${deletionPara('Du hast die Löschung deines FinestSites-Kontos angefragt. Das haben wir sofort erledigt:')}
+    <ul style="margin:0 0 16px;padding-left:20px;font-size:15px;color:${base.body};line-height:1.65;">
+      <li>Deine Webseiten sind offline.</li>
+      <li>Dein Abo ist beendet. Es wird nichts mehr abgebucht.</li>
+      <li>Du bist auf allen Geräten abgemeldet.</li>
+    </ul>
+    ${deletionPara(`Am <strong>${scheduledFor}</strong> löschen wir dein Konto, deine Seiten, Anfragen und Bilder endgültig. Deinen Benutzernamen vergeben wir nicht neu.`)}
+    ${balanceNote ? deletionPara(balanceNote) : ''}
+    ${deletionPara('Du hast es dir anders überlegt? Melde dich bis dahin einfach wieder an und klicke auf „Löschung abbrechen“. Deine Seiten kannst du danach wieder veröffentlichen. Ein beendetes Abo musst du neu abschließen.', true)}
+    ${button(`${APP_URL}/login`, 'Anmelden und Löschung abbrechen')}
+    <p style="margin:28px 0 0;font-size:13px;color:${base.muted};line-height:1.6;">
+      Das warst nicht du? Dann melde dich bitte sofort unter <a href="mailto:info@finestsites.io" style="color:${base.muted};">info@finestsites.io</a>.
+    </p>
+  `)
+}
+
+/** Bestätigung, dass die Löschung abgebrochen wurde. */
+export function accountDeletionCancelledEmail(): string {
+  return layout(`
+    <h1 style="margin:0 0 8px;font-size:22px;font-weight:700;color:${base.heading};letter-spacing:-0.02em;">
+      Dein Konto bleibt bestehen
+    </h1>
+    ${deletionPara('Du hast die Löschung deines FinestSites-Kontos abgebrochen. Deine Daten bleiben erhalten.')}
+    ${deletionPara('Deine Webseiten sind noch offline. Du kannst sie im Dashboard jederzeit wieder veröffentlichen. Dein früheres Abo ist beendet und läuft nicht von selbst weiter.', true)}
+    ${button(`${APP_URL}/sites`, 'Zu meinen Seiten')}
+    <p style="margin:28px 0 0;font-size:13px;color:${base.muted};line-height:1.6;">
+      Das warst nicht du? Dann melde dich bitte sofort unter <a href="mailto:info@finestsites.io" style="color:${base.muted};">info@finestsites.io</a>.
+    </p>
+  `)
+}
+
+/** Interner Hinweis an den Admin (Stripe-Fehler, Schlussauszahlung, Guthaben auf Anfrage). */
+export function accountDeletionAdminEmail({ title, text }: { title: string; text: string }): string {
+  const esc = text.replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]!)).replace(/\n/g, '<br>')
+  return layout(`
+    <h1 style="margin:0 0 8px;font-size:20px;font-weight:700;color:${base.heading};letter-spacing:-0.02em;">${title}</h1>
+    ${deletionPara(esc, true)}
+    ${button(`${APP_URL}/admin/users`, 'Nutzer im Admin ansehen')}
+  `)
+}
+
+/** Letzte Mail nach der Löschung (geht noch an die alte Adresse, danach ist sie aus dem Konto gelöscht). */
+export function accountDeletionCompletedEmail({ keptNote, balanceNote }: { keptNote: string; balanceNote?: string | null }): string {
+  return layout(`
+    <h1 style="margin:0 0 8px;font-size:22px;font-weight:700;color:${base.heading};letter-spacing:-0.02em;">
+      Dein Konto ist gelöscht
+    </h1>
+    ${deletionPara('Wir haben dein FinestSites-Konto, deine Webseiten, Anfragen, Bilder und Support-Nachrichten gelöscht. Eigene Domains sind von FinestSites getrennt.')}
+    ${deletionPara(keptNote, !balanceNote)}
+    ${balanceNote ? deletionPara(balanceNote, true) : ''}
+    <p style="margin:28px 0 0;font-size:13px;color:${base.muted};line-height:1.6;">
+      Danke, dass du FinestSites genutzt hast. Fragen? <a href="mailto:info@finestsites.io" style="color:${base.muted};">info@finestsites.io</a>
+    </p>
+  `)
+}

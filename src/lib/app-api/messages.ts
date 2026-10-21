@@ -25,6 +25,12 @@ export const APP_MESSAGES: Record<AppErrorCode, string> = {
   AFFILIATE_NOT_AVAILABLE: 'Dieser Bereich ist für dein Konto nicht verfügbar.',
   CONNECT_UNAVAILABLE: 'Das Auszahlungskonto kann gerade nicht eingerichtet werden. Bitte versuch es später nochmal.',
   HANDOFF_INVALID: 'Der Link ist abgelaufen. Bitte öffne den Editor erneut.',
+  INVALID_PASSWORD: 'Das Passwort stimmt nicht.',
+  BALANCE_CHOICE_REQUIRED: 'Bitte wähle, was mit deinem Partner-Guthaben passieren soll.',
+  DELETION_NOT_ALLOWED: 'Dieses Konto kann hier nicht gelöscht werden.',
+  DELETION_ALREADY_REQUESTED: 'Die Löschung ist bereits vorgemerkt.',
+  NO_DELETION_PENDING: 'Für dein Konto ist keine Löschung vorgemerkt.',
+  ACCOUNT_DELETION_PENDING: 'Dein Konto wird gelöscht. Brich die Löschung ab, um es wieder zu nutzen.',
 }
 
 export function appMessage(code: AppErrorCode): string {

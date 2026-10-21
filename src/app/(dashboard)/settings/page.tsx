@@ -12,6 +12,7 @@ import ImageCropModal from '@/components/ImageCropModal'
 import InvoiceDetailsCard from '@/components/billing/InvoiceDetailsCard'
 import TrackingSettings from '@/components/tracking/TrackingSettings'
 import { EMAIL_CATEGORIES, type EmailCategory } from '@/lib/email/categories'
+import AccountDeletionSection from '@/components/settings/AccountDeletionSection'
 
 // ── Social media helpers ──────────────────────────────────────────────────────
 
@@ -103,7 +104,7 @@ const TABS = [
   { id: 'rechnungen',  label: 'Rechnungen'   },
   { id: 'werbung',     label: 'Werbung'      },
   { id: 'mails',       label: 'E-Mails'      },
-  { id: 'sicherheit',  label: 'Passwort & FAQ' },
+  { id: 'sicherheit',  label: 'Konto & FAQ' },
 ] as const
 type TabId = typeof TABS[number]['id']
 
@@ -372,7 +373,8 @@ function SettingsContent() {
     }
     // Direktlink aus E-Mails: /settings?tab=werbung
     // alter Link ?tab=unternehmen: der Tab ist im Profil aufgegangen
-    const wanted = searchParams.get('tab') === 'unternehmen' ? 'profil' : searchParams.get('tab')
+    const rawTab = searchParams.get('tab')
+    const wanted = rawTab === 'unternehmen' ? 'profil' : rawTab === 'konto-loeschen' ? 'sicherheit' : rawTab
     if (wanted && TABS.some(t => t.id === wanted)) setActiveTab(wanted as TabId)
 
     if (success === '1') {
@@ -1455,6 +1457,12 @@ function SettingsContent() {
               </button>
             </form>
           </TabSection>
+
+          <div id="konto-loeschen">
+            <TabSection title="Konto löschen" subtitle="Löscht dein Konto mit allen Seiten und Anfragen, nach 14 Tagen Bedenkzeit.">
+              <AccountDeletionSection />
+            </TabSection>
+          </div>
 
           <TabSection title="Häufige Fragen" subtitle="Schnelle Antworten auf die wichtigsten Fragen.">
             <div className="flex flex-col">

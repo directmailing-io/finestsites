@@ -5,7 +5,9 @@ import type {
   AppNotification,
   ConversationSummary,
   CreditNote,
+  DeletionCancelResult,
   DeletionInfo,
+  DeletionRequestResult,
   DomainInfo,
   EmailCategoryKey,
   ImpersonationState,
@@ -107,8 +109,15 @@ export const creditNotePdfPath = (id: string) => `${V1}/affiliate/credit-notes/$
 
 // Konto löschen
 export const getDeletionInfo = () => api.get<DeletionInfo>(`${V1}/account/deletion`);
-export const requestDeletion = (password: string, partner_balance: PartnerBalanceChoice | null) =>
-  api.post<{ scheduled_for: string }>(`${V1}/account/deletion`, { password, partner_balance });
+/** Falsches Passwort = 400 INVALID_PASSWORD (kein 401: das wäre „abgemeldet“). */
+export const requestDeletion = (password: string, balanceChoice: PartnerBalanceChoice | null, waiverConfirmed: boolean) =>
+  request<DeletionRequestResult>(`${V1}/account/deletion`, {
+    method: 'POST',
+    body: { password, balanceChoice, waiverConfirmed },
+    skipAuthHandling: true,
+  });
+/** Löschung abbrechen (nach erneuter Anmeldung während der Bedenkzeit). */
+export const cancelDeletion = () => api.del<DeletionCancelResult>(`${V1}/account/deletion`);
 
 // ── Bestehende Web-Routen ─────────────────────────────────────────────────────
 

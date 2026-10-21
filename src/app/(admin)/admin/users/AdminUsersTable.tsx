@@ -34,6 +34,10 @@ export interface UserRow {
   activePromoCode: string | null
   activeCouponName: string | null
   emailVerified: boolean
+  /** Kontolöschung angefragt (Bedenkzeit läuft bis …) */
+  deletionScheduledFor: Date | null
+  /** Konto gelöscht (Grabstein) */
+  deletedAt: Date | null
 }
 
 type SortKey = 'email' | 'createdAt' | 'planPrice' | 'billed' | 'revenue' | 'plan' | 'status'
@@ -462,12 +466,13 @@ export default function AdminUsersTable({ users }: { users: UserRow[] }) {
                     {user.cancelAtPeriodEnd ? `Kündigt ${user.currentPeriodEnd ? `bis ${fmtDate(user.currentPeriodEnd)}` : ''}` : statusMeta.label}
                   </span>
                 )}
-                {!user.emailVerified && (
+                {!user.emailVerified && !user.deletedAt && (
                   <span className="text-xs font-medium px-2 py-0.5 rounded-full"
                     style={{ background: '#FFF7ED', color: '#C2410C', border: '1px solid #FED7AA' }}>
                     E-Mail unbestätigt
                   </span>
                 )}
+                <DeletionBadge user={user} />
                 {user.planPriceCents > 0 && (
                   <span className="text-xs font-semibold px-2 py-1 rounded-full" style={{ background: '#F8FAFC', color: '#374151' }}>
                     {fmtEur(user.planPriceCents)}/Mo
@@ -570,7 +575,8 @@ export default function AdminUsersTable({ users }: { users: UserRow[] }) {
                       {user.username ? `@${user.username}` : <span className="italic" style={{ color: '#CBD5E1' }}>—</span>}
                     </span>
                   </span>
-                  {!user.emailVerified && (
+                  <DeletionBadge user={user} />
+                  {!user.emailVerified && !user.deletedAt && (
                     <span className="inline-flex items-center justify-center w-4 h-4 rounded-full flex-shrink-0"
                       style={{ background: '#FED7AA' }} title="E-Mail nicht bestätigt">
                       <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="#C2410C" strokeWidth="3">
@@ -726,5 +732,22 @@ export default function AdminUsersTable({ users }: { users: UserRow[] }) {
         />
       )}
     </>
+  )
+}
+
+/** „Löschung angefragt“ (mit Datum) bzw. „Gelöscht“ – in Liste und Karten gleich. */
+function DeletionBadge({ user }: { user: Pick<UserRow, 'deletionScheduledFor' | 'deletedAt'> }) {
+  if (!user.deletedAt && !user.deletionScheduledFor) return null
+  const label = user.deletedAt
+    ? 'Gelöscht'
+    : `Löschung angefragt · ${new Date(user.deletionScheduledFor!).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' })}`
+  return (
+    <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full whitespace-nowrap flex-shrink-0"
+      style={user.deletedAt
+        ? { background: '#F3F4F6', color: '#6B7280', border: '1px solid #E5E7EB' }
+        : { background: '#FEF2F2', color: '#B91C1C', border: '1px solid #FECACA' }}
+      title={user.deletedAt ? 'Konto gelöscht, Benutzername bleibt reserviert' : 'Wird nach der Bedenkzeit gelöscht'}>
+      {label}
+    </span>
   )
 }

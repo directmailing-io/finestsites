@@ -7,31 +7,43 @@ import { ApiError, humanError } from '@/api/client';
 import { getDeletionInfo, requestDeletion } from '@/api/endpoints';
 import { qk } from '@/api/queries';
 import type { PartnerBalanceChoice } from '@/api/types';
-import { Button, Card, Input, Notice, Screen, Skeleton, Text } from '@/components/ui';
+import { Button, Card, Input, LoadError, Notice, Screen, Skeleton, Text } from '@/components/ui';
 import { useAuth } from '@/lib/auth';
 import { euros, fmtDate } from '@/lib/format';
 import { colors, fonts, radius } from '@/theme/tokens';
 
 /**
- * Konto löschen (Apple 5.1.1(v)): Passwort, ausdrückliche Bestätigung, 14 Tage Bedenkzeit.
- * Offenes Partner-Guthaben verfällt NICHT stillschweigend: Auszahlung oder ausdrücklicher Verzicht.
+ * Konto löschen (Apple 5.1.1(v)): direkt in der App, ohne Support. Passwort, ausdrückliche
+ * Bestätigung, 14 Tage Bedenkzeit. Offenes Partner-Guthaben verfällt NICHT stillschweigend:
+ * Auszahlung oder ausdrücklicher Verzicht (Wortlaut vom Server).
+ * Nach dem Absenden sind alle Sitzungen beendet → lokal abmelden; nach erneuter Anmeldung zeigt
+ * die App „Konto wird gelöscht am …“ mit „Löschung abbrechen“ (deletion-pending).
  */
+const ERROR_TEXT: Record<string, string> = {
+  INVALID_PASSWORD: 'Das Passwort stimmt nicht.',
+  BALANCE_CHOICE_REQUIRED: 'Bitte wähle, was mit deinem Partner-Guthaben passieren soll.',
+  DELETION_NOT_ALLOWED: 'Dieses Konto kann in der App nicht gelöscht werden.',
+  DELETION_ALREADY_REQUESTED: 'Die Löschung ist bereits vorgemerkt.',
+  RATE_LIMITED: 'Zu viele Versuche. Bitte warte eine Minute.',
+};
+
 export default function DeleteAccountScreen() {
   const signOut = useAuth(s => s.signOut);
   const info = useQuery({ queryKey: qk.deletion, queryFn: getDeletionInfo });
   const [password, setPassword] = useState('');
   const [confirmed, setConfirmed] = useState(false);
   const [choice, setChoice] = useState<PartnerBalanceChoice | null>(null);
+  const [waiver, setWaiver] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [doneDate, setDoneDate] = useState<string | null>(null);
 
-  const balance = info.data?.partner_balance_cents ?? 0;
+  const balance = info.data?.partnerBalance.totalCents ?? 0;
   const needsChoice = balance > 0;
-  const canSubmit = !!password && confirmed && (!needsChoice || !!choice);
+  const days = info.data?.graceDays ?? 14;
+  const canSubmit = !!password && confirmed && (!needsChoice || choice === 'payout' || (choice === 'waive' && waiver));
 
   function submit() {
-    Alert.alert('Konto wirklich löschen?', 'Nach 14 Tagen werden deine Seiten und Daten endgültig gelöscht.', [
+    Alert.alert('Konto wirklich löschen?', `Deine Seiten gehen sofort offline. Nach ${days} Tagen werden dein Konto und deine Daten endgültig gelöscht.`, [
       { text: 'Abbrechen', style: 'cancel' },
       {
         text: 'Konto löschen',
@@ -40,24 +52,28 @@ export default function DeleteAccountScreen() {
           setLoading(true);
           setError('');
           try {
-            const res = await requestDeletion(password, needsChoice ? choice : null);
-            setDoneDate(res.scheduled_for);
+            const res = await requestDeletion(password, needsChoice ? choice : null, choice === 'waive' && waiver);
+            // Alle Sitzungen sind beendet: Hinweis zeigen und lokal abmelden
+            Alert.alert(
+              'Löschung ist vorgemerkt',
+              `Dein Konto wird am ${fmtDate(res.scheduledFor)} gelöscht. Du bist jetzt überall abgemeldet. Bis dahin kannst du dich wieder anmelden und die Löschung abbrechen.`,
+            );
+            await signOut();
           } catch (e) {
-            setError(e instanceof ApiError && e.status === 400 ? 'Das Passwort stimmt nicht.' : humanError(e));
+            setError(e instanceof ApiError && e.code && ERROR_TEXT[e.code] ? ERROR_TEXT[e.code] : humanError(e));
+            setLoading(false);
           }
-          setLoading(false);
         },
       },
     ]);
   }
 
-  if (doneDate) {
+  if (info.isError) return <LoadError onRetry={() => void info.refetch()} />;
+
+  if (info.data && !info.data.canDelete) {
     return (
       <Screen readable>
-        <Notice tone="success" title="Löschung ist vorgemerkt">
-          {`Dein Konto wird am ${fmtDate(doneDate)} endgültig gelöscht. Bis dahin kannst du es dir anders überlegen: Melde dich einfach wieder an und schreib uns im Hilfe-Chat.`}
-        </Notice>
-        <Button title="Abmelden" onPress={() => void signOut()} fullWidth />
+        <Notice tone="info">Dieses Konto kann in der App nicht gelöscht werden.</Notice>
       </Screen>
     );
   }
@@ -68,10 +84,11 @@ export default function DeleteAccountScreen() {
       <Card tone="plain" style={{ gap: 10 }}>
         {[
           'Deine Webseiten gehen sofort offline.',
-          'Du hast 14 Tage Bedenkzeit. In dieser Zeit kannst du die Löschung rückgängig machen.',
-          'Danach löschen wir dein Konto, deine Seiten und deine Anfragen endgültig.',
+          'Dein Abo bei FinestSites endet sofort. Bereits bezahlte Zeit wird nicht erstattet.',
+          `Du hast ${days} Tage Bedenkzeit. Melde dich in dieser Zeit wieder an, um die Löschung abzubrechen.`,
+          'Danach löschen wir dein Konto, deine Seiten, Anfragen und Bilder endgültig.',
           'Eigene Domains werden getrennt. Deinen Benutzernamen vergeben wir nicht neu.',
-          'Gutschriften und Steuerdaten müssen wir gesetzlich aufbewahren (bis zu 10 Jahre).',
+          'Gutschriften und Provisionsbuchungen müssen wir gesetzlich aufbewahren (8 bzw. 10 Jahre).',
         ].map(t => (
           <View key={t} style={styles.bullet}>
             <View style={styles.dot} />
@@ -84,7 +101,7 @@ export default function DeleteAccountScreen() {
 
       {info.isLoading ? (
         <Skeleton height={120} radius={radius.input} />
-      ) : needsChoice ? (
+      ) : needsChoice && info.data ? (
         <View style={{ gap: 10 }}>
           <Text variant="headline">Dein Partner-Guthaben: {euros(balance)}</Text>
           <Text variant="callout">Was soll mit deinem Guthaben passieren?</Text>
@@ -93,32 +110,47 @@ export default function DeleteAccountScreen() {
             onPress={() => setChoice('payout')}
             title="Guthaben auszahlen"
             text={
-              info.data?.has_payout_account
-                ? `Wir überweisen dein Guthaben auf dein Auszahlungskonto, auch unter ${euros(1000)}. Noch nicht verfügbare Beträge folgen nach Ablauf der 14 Tage.`
-                : 'Du hast noch kein Auszahlungskonto. Wir melden uns per E-Mail, um die Auszahlung mit dir zu klären.'
+              (info.data.partnerBalance.hasPayoutAccount && info.data.partnerBalance.taxProfileComplete
+                ? `Wir überweisen dein Guthaben auf dein Auszahlungskonto, auch unter ${euros(1000)}. Noch nicht verfügbare Beträge folgen nach ihrer Haltefrist.`
+                : 'Dir fehlt noch ein Auszahlungskonto oder die Angaben für die Abrechnung. Richte beides bis zur Löschung im Partnerprogramm ein. Sonst zahlen wir auf Anfrage an info@finestsites.io aus (bis zur Verjährung nach 3 Jahren).') +
+              (info.data.partnerBalance.customerCreditCents > 0
+                ? ` Schon gutgeschriebenes Guthaben (${euros(info.data.partnerBalance.customerCreditCents)}) zahlen wir auf Anfrage aus.`
+                : '')
             }
           />
-          <Choice
-            selected={choice === 'waive'}
-            onPress={() => setChoice('waive')}
-            title="Ich verzichte auf mein Guthaben"
-            text={`Ich verzichte ausdrücklich auf mein Guthaben von ${euros(balance)}. Das kann nicht rückgängig gemacht werden.`}
-          />
+          <Choice selected={choice === 'waive'} onPress={() => setChoice('waive')} title="Ich verzichte auf mein Guthaben" text="Das Guthaben verfällt mit der Löschung." />
+          {choice === 'waive' && (
+            <Checkbox checked={waiver} onToggle={() => setWaiver(w => !w)} tone="danger" text={info.data.partnerBalance.waiverText} />
+          )}
         </View>
       ) : null}
 
       <Input label="Passwort zur Bestätigung" value={password} onChangeText={setPassword} password autoComplete="current-password" textContentType="password" />
 
-      <Pressable onPress={() => setConfirmed(c => !c)} style={styles.check} accessibilityRole="checkbox" accessibilityState={{ checked: confirmed }}>
-        <View style={[styles.box, confirmed && styles.boxOn]}>{confirmed && <Check size={14} color={colors.white} strokeWidth={3} />}</View>
-        <Text variant="body" style={{ flex: 1 }}>
-          Ich möchte mein FinestSites-Konto löschen. Mir ist klar, dass meine Seiten offline gehen.
-        </Text>
-      </Pressable>
+      <Checkbox
+        checked={confirmed}
+        onToggle={() => setConfirmed(c => !c)}
+        text="Ich möchte mein FinestSites-Konto löschen. Mir ist klar, dass meine Seiten sofort offline gehen."
+      />
 
       {!!error && <Notice tone="danger">{error}</Notice>}
       <Button title="Konto löschen" variant="danger" onPress={submit} loading={loading} disabled={!canSubmit} fullWidth />
     </Screen>
+  );
+}
+
+function Checkbox({ checked, onToggle, text, tone }: { checked: boolean; onToggle: () => void; text: string; tone?: 'danger' }) {
+  return (
+    <Pressable
+      onPress={onToggle}
+      style={[styles.check, tone === 'danger' && { backgroundColor: colors.dangerSoft }]}
+      accessibilityRole="checkbox"
+      accessibilityState={{ checked }}>
+      <View style={[styles.box, checked && styles.boxOn]}>{checked && <Check size={14} color={colors.white} strokeWidth={3} />}</View>
+      <Text variant="body" style={{ flex: 1 }}>
+        {text}
+      </Text>
+    </Pressable>
   );
 }
 

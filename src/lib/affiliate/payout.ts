@@ -492,16 +492,25 @@ interface PreparedPayout { id: string; grossCents: number; netCents: number; cou
 async function preparePayout(
   referrer: ReferrerProfile,
   snapshot: TaxProfileSnapshot,
-  opts: { method: 'credit' | 'transfer'; minimumCents: number; platformAvailable: number | null; stripeCustomerId?: string | null },
+  opts: {
+    method: 'credit' | 'transfer'; minimumCents: number; platformAvailable: number | null; stripeCustomerId?: string | null
+    /** Schlussauszahlung nach Kontolöschung: ohne Monatsgrenze (Sperre + FOR UPDATE schützen weiterhin vor Doppelzahlung) */
+    final?: boolean
+  },
 ): Promise<PreparedPayout> {
   return db.transaction(async (tx) => {
     await tx.execute(sql`SELECT pg_advisory_xact_lock(hashtext(${`affiliate-payout:${referrer.id}`}))`)
 
+    // Läuft schon eine Auszahlung (processing), auch bei der Schlussauszahlung nie eine zweite starten
     const already = await tx.select({ id: affiliatePayouts.id }).from(affiliatePayouts)
       .where(and(
         eq(affiliatePayouts.referrerId, referrer.id),
-        inArray(affiliatePayouts.status, ACTIVE_PAYOUT_STATUSES),
-        sql`${affiliatePayouts.createdAt} >= (date_trunc('month', now() AT TIME ZONE 'Europe/Berlin') AT TIME ZONE 'Europe/Berlin')`,
+        opts.final
+          ? eq(affiliatePayouts.status, 'processing')
+          : and(
+            inArray(affiliatePayouts.status, ACTIVE_PAYOUT_STATUSES),
+            sql`${affiliatePayouts.createdAt} >= (date_trunc('month', now() AT TIME ZONE 'Europe/Berlin') AT TIME ZONE 'Europe/Berlin')`,
+          ),
       ))
       .limit(1)
     if (already.length > 0) throw new SkipPayout({ status: 'skipped_already_paid_this_month', method: opts.method })
@@ -567,6 +576,7 @@ async function preparePayout(
       taxStatus: snapshot.taxStatus,
       taxProfileSnapshot: snapshot,
       lineItems: buildLines(commissions),
+      ...(opts.final ? { notes: 'Schlussauszahlung nach Kontolöschung' } : {}),
       createdAt: now,
       updatedAt: now,
     }).returning({ id: affiliatePayouts.id })
@@ -621,7 +631,7 @@ async function noSubscriptionResult(referrer: ReferrerProfile, name: string): Pr
 
 /**
  * Process the payout for one referrer. All guards included.
- * There is deliberately no option to bypass the monthly limit.
+ * There is deliberately no option to bypass the monthly limit (only processFinalPayout for deleted accounts).
  *
  * Methode nach users.affiliate_payout_mode (frisch gelesen):
  *  - 'credit' + aktives Abo (nächste Rechnung > 0 €) → Verrechnung (Kundenguthaben)
@@ -739,10 +749,20 @@ async function processCreditPayout(stripe: Stripe, referrer: ReferrerProfile, cu
   }
 }
 
-/** Überweisung über Stripe Connect (ab 10 €). */
+/**
+ * Schlussauszahlung eines gelöschten Kontos (src/lib/account-deletion): nur Überweisung über Stripe
+ * Connect, OHNE Mindestbetrag von 10 € und ohne Monatsgrenze. Alle übrigen Regeln gelten unverändert
+ * (Steuerprofil + Zustimmung, verifiziertes Konto, Plattform-Guthaben, Gutschrift-Nummer, Sperren).
+ */
+export async function processFinalPayout(stripe: Stripe, referrer: ReferrerProfile): Promise<PayoutResult> {
+  return processTransferPayout(stripe, referrer, { final: true })
+}
+
+/** Überweisung über Stripe Connect (ab 10 €; Schlussauszahlung ohne Mindestbetrag). */
 async function processTransferPayout(
   stripe: Stripe,
   referrer: ReferrerProfile,
+  opts: { final?: boolean } = {},
 ): Promise<PayoutResult> {
   const name = referrer.username ?? referrer.id
 
@@ -790,7 +810,9 @@ async function processTransferPayout(
   // ── Transaction A: lock, select, create payout row `processing` ─────────────
   let payout: PreparedPayout
   try {
-    payout = await preparePayout(referrer, snapshot, { method: 'transfer', minimumCents: PAYOUT_MINIMUM_CENTS, platformAvailable })
+    payout = await preparePayout(referrer, snapshot, {
+      method: 'transfer', minimumCents: opts.final ? 1 : PAYOUT_MINIMUM_CENTS, platformAvailable, final: opts.final,
+    })
   } catch (err) {
     if (err instanceof SkipPayout) return { referrer: name, ...err.result }
     console.error(`[affiliate-payout] prepare failed for ${name}:`, err)

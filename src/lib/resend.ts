@@ -29,6 +29,7 @@ export async function sendEmail({
   category,
   from = FROM_EMAIL,
   headers,
+  logTo,
 }: {
   to: string
   subject: string
@@ -37,6 +38,8 @@ export async function sendEmail({
   category?: EmailCategory
   from?: string
   headers?: Record<string, string>
+  /** Abweichender Empfänger im email_logs-Eintrag (z. B. Grabstein-Adresse bei der Lösch-Bestätigung) */
+  logTo?: string
 }): Promise<{ status: 'sent' | 'error' | 'skipped' }> {
   // Dynamic import to avoid circular deps and keep Edge-safe
   const { db } = await import('@/lib/db')
@@ -49,7 +52,11 @@ export async function sendEmail({
   let errorMessage: string | undefined
   let extraHeaders: Record<string, string> = headers ?? {}
 
-  if (cat !== 'system') {
+  // Gelöschte Konten (Grabstein-Adresse, src/lib/account-deletion) bekommen nie Mails
+  if (/@deleted\.invalid$/i.test(to)) {
+    status = 'skipped'
+    errorMessage = 'Konto gelöscht'
+  } else if (cat !== 'system') {
     try {
       const u = await db.query.users.findFirst({ where: eq(users.email, to), columns: { id: true, emailOptOut: true } })
       if (u && !isEmailCategoryAllowed(u.emailOptOut, cat)) {
@@ -87,7 +94,7 @@ export async function sendEmail({
   }
 
   // Log regardless of success/failure — fire-and-forget
-  db.insert(emailLogs).values({ type, category: cat, to, subject, resendId, status, errorMessage })
+  db.insert(emailLogs).values({ type, category: cat, to: logTo ?? to, subject, resendId, status, errorMessage })
     .catch((e: Error) => console.error('[sendEmail] log error:', e.message))
 
   return { status }

@@ -29,6 +29,12 @@ const STATUS: Partial<Record<AppErrorCode, number>> = {
   AFFILIATE_NOT_AVAILABLE: 403,
   CONNECT_UNAVAILABLE: 503,
   HANDOFF_INVALID: 400,
+  INVALID_PASSWORD: 400,
+  BALANCE_CHOICE_REQUIRED: 400,
+  DELETION_NOT_ALLOWED: 403,
+  DELETION_ALREADY_REQUESTED: 409,
+  NO_DELETION_PENDING: 409,
+  ACCOUNT_DELETION_PENDING: 423,
 }
 
 export function appError(code: AppErrorCode, message?: string, status?: number): Response {
