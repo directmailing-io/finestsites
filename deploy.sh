@@ -7,7 +7,11 @@
 #   ssh -i ~/.ssh/finestsites_hetzner root@188.245.35.52 "/usr/local/bin/finestsites-deploy.sh"
 #
 # Baut in /tmp, tauscht das standalone-Verzeichnis atomisch und macht ein
-# PM2 Rolling-Reload (2 Cluster-Instanzen → kein Ausfall). PM2 läuft als Nutzer "finestsites":
+# PM2 Rolling-Reload (2 Cluster-Instanzen → kein Ausfall). Die vorige Version bleibt als
+# .next/standalone.prev liegen. Schlägt der Smoke-Test (mit einer Wiederholung) fehl, wird
+# automatisch auf die vorige Version zurückgesprungen. Manuell zurück: finestsites-rollback.sh
+# (danach den fehlerhaften Commit in git rückgängig machen, sonst kommt er beim nächsten Deploy wieder).
+# PM2 läuft als Nutzer "finestsites":
 #   Status/Logs auf dem Server: /usr/local/bin/finestsites-pm2 list | logs finestsites
 # Installiert KEINE Dependencies — bei neuen Paketen vorher auf dem Server:
 #   cd /var/www/finestsites && npm install --no-audit --no-fund
@@ -52,11 +56,18 @@ echo "▶ [5/5] Rolling Reload (kein Ausfall)..."
 chown -R finestsites:finestsites "${APP_DIR}/.next/standalone"
 /usr/local/bin/finestsites-pm2 reload finestsites --update-env
 
-echo "▶ Aufräumen..."
-rm -rf "$BUILD_DIR" "$BACKUP"
+echo "▶ Aufräumen (vorige Version bleibt als standalone.prev für einen Rücksprung)..."
+rm -rf "$BUILD_DIR"
 
 echo "✅ Deploy abgeschlossen. Keine Ausfallzeit."
-# Nach dem Reload: zentrale Pfade von außen prüfen (Login, Vorschau-Endpunkte, Demo-Seiten, Schutz)
+# Nach dem Reload: zentrale Pfade von außen prüfen (Login, Vorschau-Endpunkte, Demo-Seiten, Schutz).
+# Fehlschlag wird einmal wiederholt (kurze Cloudflare-Aussetzer), danach automatischer Rücksprung.
 sleep 3
 cd "$APP_DIR"
-bash "$APP_DIR/scripts/smoke-test.sh" || true
+if bash "$APP_DIR/scripts/smoke-test.sh"; then exit 0; fi
+echo "↻ Smoke-Test fehlgeschlagen, zweiter Versuch in 15 Sekunden..."
+sleep 15
+if bash "$APP_DIR/scripts/smoke-test.sh"; then exit 0; fi
+echo "⏪ Smoke-Test erneut fehlgeschlagen: automatischer Rücksprung auf die vorige Version."
+/usr/local/bin/finestsites-rollback.sh --automatisch
+exit 1
