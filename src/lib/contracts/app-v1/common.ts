@@ -1,6 +1,10 @@
 import { z } from 'zod'
 
-export const Uuid = z.string().uuid()
+/**
+ * UUID im Postgres-Format (8-4-4-4-12 Hex). Bewusst nicht z.string().uuid(): das verlangt
+ * RFC-Version/-Variante, Postgres speichert aber jede UUID (z. B. feste IDs aus Seeds/Migrationen).
+ */
+export const Uuid = z.string().regex(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i)
 /** ISO-8601-Zeitstempel (vom Server immer als String geliefert). */
 export const IsoDateTime = z.string().datetime({ offset: true })
 export const Cents = z.number().int()

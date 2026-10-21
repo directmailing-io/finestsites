@@ -19,15 +19,15 @@ export default function ReferralsScreen() {
       ) : (
         <>
           <Text variant="bodyLarge">
-            Deine Empfehlungen: {r.items.length} · {r.active} aktiv · {r.paused} pausiert
+            Deine Empfehlungen: {r.count} · {r.active} aktiv · {r.paused} pausiert
           </Text>
           <View style={styles.group}>
             {r.items.map((p, i) => (
-              <View key={p.id} style={[styles.row, i > 0 && styles.border]}>
-                <InitialsAvatar name={p.name} size={40} />
+              <View key={`${p.displayName}-${p.joinedAt}-${i}`} style={[styles.row, i > 0 && styles.border]}>
+                <InitialsAvatar name={p.displayName} size={40} />
                 <View style={{ flex: 1, gap: 2 }}>
-                  <Text style={styles.name}>{p.name}</Text>
-                  <Text variant="callout">dabei seit {fmtDate(p.since)}</Text>
+                  <Text style={styles.name}>{p.displayName}</Text>
+                  <Text variant="callout">dabei seit {fmtDate(p.joinedAt)}</Text>
                 </View>
                 <Pill label={p.status === 'active' ? 'aktiv' : 'pausiert'} tone={p.status === 'active' ? 'online' : 'draft'} />
               </View>

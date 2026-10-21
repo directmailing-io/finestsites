@@ -29,6 +29,7 @@ export const AppErrorCode = z.enum([
   // Partnerprogramm
   'AFFILIATE_NOT_AVAILABLE',
   'CONNECT_UNAVAILABLE',
+  'NOT_SELF', // nur der Kontoinhaber selbst (nicht der Support im „Anmelden als“-Modus)
   // Editor-Übergabe
   'HANDOFF_INVALID',
   // Konto löschen (/api/app/v1/account/deletion)
@@ -45,6 +46,8 @@ export type AppErrorCode = z.infer<typeof AppErrorCode>
 export const AppErrorBody = z.object({
   code: AppErrorCode,
   message: z.string(),
+  /** Bei VALIDATION_FAILED: Feld → Hinweis (z. B. Steuerprofil), sonst nicht vorhanden. */
+  fields: z.record(z.string(), z.string()).optional(),
 })
 export type AppErrorBody = z.infer<typeof AppErrorBody>
 
@@ -64,6 +67,7 @@ export const PublishErrorCode = z.enum([
   'COMPLIANCE_BLOCKED',
   'COMPLIANCE_REQUIRED',
 ])
+export type PublishErrorCode = z.infer<typeof PublishErrorCode>
 export const PublishErrorBody = z.object({
   error: z.string(),
   code: PublishErrorCode,

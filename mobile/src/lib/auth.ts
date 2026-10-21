@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-import { setBearerToken, setUnauthorizedHandler } from '@/api/client';
+import { setBearerToken, setTokenRotatedHandler, setUnauthorizedHandler } from '@/api/client';
 import * as ep from '@/api/endpoints';
 import { queryClient } from '@/api/queries';
 
@@ -54,4 +54,9 @@ export const useAuth = create<AuthState>((set, get) => ({
 
 setUnauthorizedHandler(() => {
   void useAuth.getState().signOut('expired');
+});
+
+// Neues Token vom Server (verlängerte Sitzung) sofort sicher ablegen
+setTokenRotatedHandler(token => {
+  if (useAuth.getState().status === 'signedIn') void setSecure(KEYS.sessionToken, token);
 });

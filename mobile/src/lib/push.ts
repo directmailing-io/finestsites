@@ -81,13 +81,24 @@ export async function registerPushDevice(): Promise<string | null> {
     await ep.registerPushDevice({
       token,
       platform: Platform.OS === 'android' ? 'android' : 'ios',
-      device_name: Device.deviceName?.slice(0, 100) ?? null,
-      app_version: APP_VERSION,
+      appVersion: APP_VERSION.slice(0, 32),
+      osVersion: Device.osVersion?.slice(0, 32) ?? undefined,
+      // Modell (z. B. „iPhone 16“), nie den vom Nutzer vergebenen Gerätenamen
+      deviceModel: Device.modelName?.slice(0, 80) ?? undefined,
+      locale: deviceLocale(),
     });
     await setSecure(KEYS.pushToken, token);
     return token;
   } catch {
     return null;
+  }
+}
+
+function deviceLocale(): string | undefined {
+  try {
+    return Intl.DateTimeFormat().resolvedOptions().locale?.slice(0, 16) || undefined;
+  } catch {
+    return undefined;
   }
 }
 
@@ -103,12 +114,37 @@ export async function setBadge(count: number) {
   await Notifications.setBadgeCountAsync(Math.max(0, count)).catch(() => false);
 }
 
-/** Nur App-interne Pfade zulassen. Externe Links aus Push werden nie geöffnet. */
+const ALLOWED_ROUTES = ['/inbox', '/help', '/sites', '/start', '/account', '/notifications'];
+const ID_RE = /^[A-Za-z0-9-]{1,64}$/;
+
+/**
+ * Ziel einer Mitteilung (Push-`data` bzw. `data` aus /api/app/v1/notifications).
+ * Der Server schickt `url: finestsites://submissions/<id> | support/<id> | sites/<id> | account | affiliate`
+ * (src/lib/push/triggers.ts). Nur App-interne Pfade, externe Links werden nie geöffnet.
+ */
 export function routeFromNotification(data: unknown): string | null {
-  const href = (data as { href?: unknown } | null)?.href;
+  const d = (data ?? {}) as { url?: unknown; href?: unknown };
+  if (typeof d.url === 'string' && d.url.startsWith('finestsites://')) {
+    const [kind, id] = d.url.slice('finestsites://'.length).split(/[/?#]/);
+    const withId = (base: string) => (id && ID_RE.test(id) ? `${base}/${id}` : base);
+    switch (kind) {
+      case 'submissions':
+        return withId('/inbox');
+      case 'support':
+        return withId('/help');
+      case 'sites':
+        return withId('/sites');
+      case 'affiliate':
+        return '/account/partner';
+      case 'account':
+        return '/account';
+      default:
+        return null;
+    }
+  }
+  const href = d.href;
   if (typeof href !== 'string' || !href.startsWith('/') || href.startsWith('//')) return null;
-  const allowed = ['/inbox', '/help', '/sites', '/start', '/account', '/notifications'];
-  return allowed.some(p => href === p || href.startsWith(`${p}/`)) ? href : null;
+  return ALLOWED_ROUTES.some(p => href === p || href.startsWith(`${p}/`)) ? href : null;
 }
 
 /** Wurde der Hinweis „Mitteilungen erlauben?“ schon gezeigt? */

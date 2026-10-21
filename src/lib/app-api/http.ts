@@ -28,6 +28,7 @@ const STATUS: Partial<Record<AppErrorCode, number>> = {
   APP_PURCHASE_DISABLED: 403,
   AFFILIATE_NOT_AVAILABLE: 403,
   CONNECT_UNAVAILABLE: 503,
+  NOT_SELF: 403,
   HANDOFF_INVALID: 400,
   INVALID_PASSWORD: 400,
   BALANCE_CHOICE_REQUIRED: 400,
@@ -37,9 +38,9 @@ const STATUS: Partial<Record<AppErrorCode, number>> = {
   ACCOUNT_DELETION_PENDING: 423,
 }
 
-export function appError(code: AppErrorCode, message?: string, status?: number): Response {
+export function appError(code: AppErrorCode, message?: string, status?: number, fields?: Record<string, string>): Response {
   return Response.json(
-    { code, message: message ?? appMessage(code) },
+    { code, message: message ?? appMessage(code), ...(fields ? { fields } : {}) },
     { status: status ?? STATUS[code] ?? 400, headers: NO_STORE },
   )
 }

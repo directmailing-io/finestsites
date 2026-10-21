@@ -6,19 +6,19 @@ import { Pressable, StyleSheet, View } from 'react-native';
 
 import { markNotificationsRead } from '@/api/endpoints';
 import { qk, useNotifications } from '@/api/queries';
-import type { NotificationKind } from '@/api/types';
 import { EmptyState, LoadError, Screen, Skeleton, Text } from '@/components/ui';
 import { smartTime } from '@/lib/format';
 import { routeFromNotification } from '@/lib/push';
 import { colors, fonts, radius } from '@/theme/tokens';
 
-const ICONS: Record<NotificationKind, LucideIcon> = {
-  submission: Inbox,
-  support: MessageCircle,
-  site: Globe,
-  partner: Handshake,
-  system: Bell,
-};
+/** Symbol je Mitteilungs-Typ (src/lib/push/triggers.ts); unbekannte Typen → Glocke. */
+function iconFor(type: string): LucideIcon {
+  if (type === 'submission') return Inbox;
+  if (type === 'support_reply' || type === 'impersonation_request') return MessageCircle;
+  if (type === 'domain_active' || type.startsWith('site')) return Globe;
+  if (type.startsWith('partner') || type.startsWith('commission') || type.startsWith('affiliate')) return Handshake;
+  return Bell;
+}
 
 /** Mitteilungen der letzten Zeit (dieselben Inhalte wie die Push-Mitteilungen). */
 export default function NotificationsScreen() {
@@ -26,13 +26,13 @@ export default function NotificationsScreen() {
   const qc = useQueryClient();
   const q = useNotifications();
   const items = q.data?.items ?? [];
-  const unread = items.filter(n => !n.read_at).length;
+  const unread = q.data?.unreadCount ?? 0;
 
   // Beim Verlassen alles als gelesen markieren
   useEffect(
     () => () => {
       if (unread > 0) {
-        void markNotificationsRead('all')
+        void markNotificationsRead({ all: true })
           .catch(() => {})
           .then(() => {
             void qc.invalidateQueries({ queryKey: qk.notifications });
@@ -58,8 +58,8 @@ export default function NotificationsScreen() {
       ) : (
         <View style={styles.group}>
           {items.map((n, i) => {
-            const Icon = ICONS[n.kind] ?? Bell;
-            const href = routeFromNotification({ href: n.href });
+            const Icon = iconFor(n.type);
+            const href = routeFromNotification(n.data);
             return (
               <Pressable
                 key={n.id}
@@ -67,19 +67,19 @@ export default function NotificationsScreen() {
                 onPress={() => href && router.navigate(href as Href)}
                 style={({ pressed }) => [styles.row, i > 0 && styles.border, pressed && { backgroundColor: colors.background }]}
                 accessibilityRole={href ? 'button' : undefined}>
-                <View style={[styles.icon, !n.read_at && { backgroundColor: colors.accentSoft }]}>
-                  <Icon size={18} color={n.read_at ? colors.secondary : colors.accent} />
+                <View style={[styles.icon, !n.readAt && { backgroundColor: colors.accentSoft }]}>
+                  <Icon size={18} color={n.readAt ? colors.secondary : colors.accent} />
                 </View>
                 <View style={{ flex: 1, gap: 2 }}>
                   <View style={styles.top}>
-                    <Text style={[styles.title, !n.read_at && { fontFamily: fonts.bold }]} numberOfLines={1}>
+                    <Text style={[styles.title, !n.readAt && { fontFamily: fonts.bold }]} numberOfLines={1}>
                       {n.title}
                     </Text>
-                    <Text variant="footnote">{smartTime(n.created_at)}</Text>
+                    <Text variant="footnote">{smartTime(n.createdAt)}</Text>
                   </View>
-                  <Text variant="callout">{n.body}</Text>
+                  <Text variant="callout">{n.message}</Text>
                 </View>
-                {!n.read_at && <View style={styles.dot} />}
+                {!n.readAt && <View style={styles.dot} />}
               </Pressable>
             );
           })}

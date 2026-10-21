@@ -27,7 +27,7 @@ export default function TabsLayout() {
     return <Redirect href="/deletion-pending" />;
   }
 
-  if (me.data?.onboarding.needs_username || me.data?.onboarding.needs_consent) {
+  if (me.data && !me.data.onboarding.complete) {
     return <Redirect href="/onboarding" />;
   }
 

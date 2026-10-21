@@ -24,6 +24,7 @@ export const APP_MESSAGES: Record<AppErrorCode, string> = {
   COMPLIANCE_REQUIRED: 'Bitte lass deinen Text im Editor prüfen.',
   AFFILIATE_NOT_AVAILABLE: 'Dieser Bereich ist für dein Konto nicht verfügbar.',
   CONNECT_UNAVAILABLE: 'Das Auszahlungskonto kann gerade nicht eingerichtet werden. Bitte versuch es später nochmal.',
+  NOT_SELF: 'Das kann nur der Kontoinhaber selbst ändern.',
   HANDOFF_INVALID: 'Der Link ist abgelaufen. Bitte öffne den Editor erneut.',
   INVALID_PASSWORD: 'Das Passwort stimmt nicht.',
   BALANCE_CHOICE_REQUIRED: 'Bitte wähle, was mit deinem Partner-Guthaben passieren soll.',

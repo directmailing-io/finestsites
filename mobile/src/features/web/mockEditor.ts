@@ -19,15 +19,14 @@ code{font-size:12px;color:#94A3B8}
 </style></head><body><div class="wrap">
 <h1>Editor (Beispiel)</h1>
 <p>Hier lädt in der echten App der Web-Editor <code>${next}</code>. Die Knöpfe senden die Nachrichten, die der Editor im App-Modus schickt.</p>
-<div class="card"><label>Überschrift</label><input id="t" value="Willkommen auf meiner Seite" oninput="post({type:'save-state',dirty:true})"></div>
+<div class="card"><label>Überschrift</label><input id="t" value="Willkommen auf meiner Seite" oninput="post({type:'dirty',value:true,unpublished:true})"></div>
 <div class="card">
-<button class="s" onclick="post({type:'save-state',dirty:false})">Speichern (save-state: false)</button>
-<button class="a" onclick="post({type:'published',siteId:'${siteId}',url:'${url}',first:true})">Veröffentlichen (published)</button>
-<button class="s" onclick="post({type:'publish-blocked',code:'site_limit'})">Veröffentlichen blockiert (publish-blocked)</button>
-<button class="s" onclick="post({type:'share',url:'${url}',title:'Meine Seite'})">Link teilen (share)</button>
-<button class="s" onclick="post({type:'qr',url:'${url}',title:'Meine Seite'})">QR-Code (qr)</button>
+<button class="s" onclick="post({type:'save-state',state:'saved'});post({type:'dirty',value:false})">Speichern (save-state: saved)</button>
+<button class="a" onclick="post({type:'published',siteId:'${siteId}',url:'${url}',firstTime:true})">Veröffentlichen (published)</button>
+<button class="s" onclick="post({type:'publish-blocked',code:'PLAN_LIMIT_REACHED'})">Veröffentlichen blockiert (publish-blocked)</button>
+<button class="s" onclick="post({type:'share',url:'${url}'})">Link teilen (share)</button>
+<button class="s" onclick="post({type:'qr',url:'${url}'})">QR-Code (qr)</button>
 <button class="s" onclick="post({type:'open-url',url:'https://example.com'})">Externer Link (open-url)</button>
-<button class="p" onclick="post({type:'close'})">Schließen (close)</button>
 </div></div>
 <script>function post(m){window.ReactNativeWebView&&window.ReactNativeWebView.postMessage(JSON.stringify(m))}</script>
 </body></html>`;

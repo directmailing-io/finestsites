@@ -1,3 +1,5 @@
+import { AppBridgeMessage } from '@/api/contracts/bridge';
+import type { PublishErrorCode } from '@/api/types';
 import { APP_HOST } from '@/lib/config';
 
 /**
@@ -40,45 +42,45 @@ export function decide(rawUrl: string, isTopFrame: boolean): GuardDecision {
   return 'external';
 }
 
-/** Nachrichten aus dem Web-Editor (window.ReactNativeWebView.postMessage). */
-export type BridgeMessage =
-  | { type: 'published'; siteId: string; url?: string; first?: boolean }
-  | { type: 'publish-blocked'; code: string }
-  | { type: 'save-state'; dirty: boolean }
-  | { type: 'share'; url: string; title?: string }
-  | { type: 'qr'; url: string; title?: string }
-  | { type: 'open-url'; url: string }
-  | { type: 'auth-required' }
-  | { type: 'close' };
+/**
+ * Nachrichten aus dem Web-Editor (window.ReactNativeWebView.postMessage). Form = Server-Vertrag
+ * src/lib/contracts/app-v1/bridge.ts (Absender src/lib/app-mode/shared.ts). Alles andere wird verworfen.
+ */
+export type BridgeMessage = AppBridgeMessage;
 
 export function parseBridge(data: string): BridgeMessage | null {
   try {
-    const m = JSON.parse(data) as { type?: unknown };
-    if (!m || typeof m.type !== 'string') return null;
-    const allowed = ['published', 'publish-blocked', 'save-state', 'share', 'qr', 'open-url', 'auth-required', 'close'];
-    return allowed.includes(m.type) ? (m as BridgeMessage) : null;
+    const parsed = AppBridgeMessage.safeParse(JSON.parse(data));
+    return parsed.success ? parsed.data : null;
   } catch {
     return null;
   }
 }
 
 /** Neutrale Texte, wenn Veröffentlichen nicht geht – nie ein Hinweis auf einen Kauf. */
-export function publishBlockedText(code: string): { title: string; text: string } {
+export function publishBlockedText(code: PublishErrorCode | string): { title: string; text: string } {
   switch (code) {
-    case 'site_limit':
-    case 'plan_required':
-    case 'payment_issue':
+    case 'SUBSCRIPTION_REQUIRED':
+    case 'PAYMENT_PENDING':
       return {
         title: 'Veröffentlichen geht gerade nicht',
         text: 'Mit deinem Konto kann diese Seite gerade nicht veröffentlicht werden. Deine Änderungen sind gespeichert. Bei Fragen hilft dir der Support.',
       };
-    case 'claimguard':
+    case 'PLAN_LIMIT_REACHED':
+      return {
+        title: 'Veröffentlichen geht gerade nicht',
+        text: 'Mit deinem Konto sind schon so viele Seiten online wie möglich. Nimm eine andere Seite offline, dann kannst du diese veröffentlichen. Deine Änderungen sind gespeichert.',
+      };
+    case 'COMPLIANCE_BLOCKED':
+    case 'COMPLIANCE_REQUIRED':
       return {
         title: 'Bitte prüfe deine Texte',
-        text: 'ClaimGuard hat Aussagen gefunden, die so nicht erlaubt sind. Im Editor siehst du, welche Stellen du ändern solltest.',
+        text: 'ClaimGuard hat Aussagen gefunden, die so nicht erlaubt sind, oder deine Texte sind noch nicht geprüft. Im Editor siehst du, welche Stellen du ändern solltest.',
       };
-    case 'missing_fields':
-      return { title: 'Es fehlen noch Angaben', text: 'Fülle die markierten Felder aus und versuche es dann nochmal.' };
+    case 'IMPRESSUM_REQUIRED':
+      return { title: 'Es fehlen noch Angaben', text: 'Fülle zuerst dein Impressum aus und versuche es dann nochmal.' };
+    case 'CONSENT_REQUIRED':
+      return { title: 'Bitte zuerst bestätigen', text: 'Bestätige im Editor die Hinweise zu deinen Inhalten und versuche es dann nochmal.' };
     default:
       return { title: 'Veröffentlichen hat nicht geklappt', text: 'Deine Änderungen sind gespeichert. Bitte versuche es gleich nochmal.' };
   }

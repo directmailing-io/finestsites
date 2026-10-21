@@ -2,26 +2,37 @@ import { api, rawRequest, request } from './client';
 import type {
   Affiliate,
   AppConfig,
-  AppNotification,
+  ConnectResponse,
   ConversationSummary,
-  CreditNote,
+  CreditNoteList,
   DeletionCancelResult,
   DeletionInfo,
   DeletionRequestResult,
-  DomainInfo,
+  DeviceResponse,
   EmailCategoryKey,
+  ImpersonationDecision,
   ImpersonationState,
+  ImpersonationStatus,
+  MarkReadRequest,
+  MarkReadResponse,
   Me,
   Message,
+  NotificationList,
   NotificationPreferences,
+  OneTimeToken,
   Overview,
   PartnerBalanceChoice,
   PayoutMode,
+  PayoutModeState,
+  PayoutResult,
+  RegisterDeviceRequest,
   Site,
   SubmissionList,
   SubmissionStatus,
-  TaxProfile,
+  TaxProfileInput,
+  TaxProfileState,
   Template,
+  UpdateNotificationPreferences,
 } from './types';
 
 const V1 = '/api/app/v1';
@@ -73,7 +84,7 @@ export const changePassword = (currentPassword: string, newPassword: string) =>
   });
 
 /** Einmal-Schlüssel für den Editor (BetterAuth oneTimeToken), 1 Minute gültig, nur einmal nutzbar. */
-export const createOneTimeToken = () => api.get<{ token: string }>('/api/auth/one-time-token/generate');
+export const createOneTimeToken = () => api.get<OneTimeToken>('/api/auth/one-time-token/generate');
 
 // ── App v1 ────────────────────────────────────────────────────────────────────
 
@@ -81,29 +92,26 @@ export const getConfig = () => api.get<AppConfig>(`${V1}/config`);
 export const getMe = () => api.get<Me>(`${V1}/me`);
 export const getOverview = () => api.get<Overview>(`${V1}/overview`);
 
-export const getNotifications = () => api.get<{ items: AppNotification[] }>(`${V1}/notifications`);
-export const markNotificationsRead = (ids: string[] | 'all') => api.post(`${V1}/notifications/read`, { ids });
+export const getNotifications = (before?: string) =>
+  api.get<NotificationList>(`${V1}/notifications`, { limit: 50, before });
+export const markNotificationsRead = (body: MarkReadRequest) => api.post<MarkReadResponse>(`${V1}/notifications/read`, body);
 
-export const registerPushDevice = (body: {
-  token: string;
-  platform: 'ios' | 'android';
-  device_name: string | null;
-  app_version: string;
-}) => api.post(`${V1}/push/devices`, body);
-export const unregisterPushDevice = (token: string) => api.del(`${V1}/push/devices`, { token });
+export const registerPushDevice = (body: RegisterDeviceRequest) => api.post<DeviceResponse>(`${V1}/push/devices`, body);
+export const unregisterPushDevice = (token: string) => api.del<{ ok: true }>(`${V1}/push/devices`, { token });
 
 export const getNotificationPreferences = () => api.get<NotificationPreferences>(`${V1}/notification-preferences`);
-export const saveNotificationPreferences = (prefs: NotificationPreferences) =>
+export const saveNotificationPreferences = (prefs: UpdateNotificationPreferences) =>
   api.put<NotificationPreferences>(`${V1}/notification-preferences`, prefs);
 
 // Partnerprogramm
 export const getAffiliate = () => api.get<Affiliate>(`${V1}/affiliate`);
-export const setPayoutMode = (mode: PayoutMode) => api.put(`${V1}/affiliate/payout-mode`, { mode });
-export const saveTaxProfile = (profile: Omit<TaxProfile, 'consent_at'> & { consent: boolean }) =>
-  api.put<{ complete: boolean }>(`${V1}/affiliate/tax-profile`, profile);
-export const startConnect = () => api.post<{ url: string }>(`${V1}/affiliate/connect`);
-export const requestPayout = () => api.post<{ amount_cents: number }>(`${V1}/affiliate/payout`);
-export const getCreditNotes = () => api.get<{ items: CreditNote[] }>(`${V1}/affiliate/credit-notes`);
+export const getPayoutMode = () => api.get<PayoutModeState>(`${V1}/affiliate/payout-mode`);
+export const setPayoutMode = (mode: PayoutMode) => api.put<PayoutModeState>(`${V1}/affiliate/payout-mode`, { mode });
+export const getTaxProfile = () => api.get<TaxProfileState>(`${V1}/affiliate/tax-profile`);
+export const saveTaxProfile = (profile: TaxProfileInput) => api.put<TaxProfileState>(`${V1}/affiliate/tax-profile`, profile);
+export const startConnect = () => api.post<ConnectResponse>(`${V1}/affiliate/connect`);
+export const requestPayout = () => api.post<PayoutResult>(`${V1}/affiliate/payout`);
+export const getCreditNotes = () => api.get<CreditNoteList>(`${V1}/affiliate/credit-notes`);
 /** PDF wird mit Bearer geladen (nie im Browser-Fenster ohne Anmeldung). */
 export const creditNotePdfPath = (id: string) => `${V1}/affiliate/credit-notes/${encodeURIComponent(id)}`;
 
@@ -126,7 +134,6 @@ export const getSite = (id: string) => api.get<Site>(`/api/sites/${id}`);
 export const createSite = (template_id: string) => api.post<{ id: string }>('/api/sites', { template_id });
 export const deleteSite = (id: string) => api.del(`/api/sites/${id}`);
 export const unpublishSite = (id: string) => api.del(`/api/sites/${id}/publish`);
-export const getDomain = (id: string) => api.get<DomainInfo>(`/api/sites/${id}/domain`);
 export const getTemplates = () => api.get<Template[]>('/api/templates');
 
 export const getSubmissions = (params: { status: SubmissionStatus; search?: string; siteId?: string }) =>
@@ -153,10 +160,10 @@ export function uploadSupportImage(uri: string, mimeType: string, name: string) 
   fd.append('file', { uri, type: mimeType, name } as unknown as Blob);
   return request<{ url: string }>('/api/support/upload', { method: 'POST', body: fd, timeoutMs: 60000 });
 }
-export const getImpersonationState = () =>
-  api.get<{ state: ImpersonationState | null; request: { token: string } | null }>(`${V1}/impersonation`);
-export const approveImpersonation = (token: string) => api.post('/api/impersonate/approve', { token });
-export const rejectImpersonation = (token: string) => api.post('/api/impersonate/reject', { token });
+/** Stand einer Support-Zugriffsanfrage (die App fragt nach, solange sie offen ist). */
+export const getImpersonationState = (token?: string) => api.get<ImpersonationState>(`${V1}/impersonation`, { token });
+export const decideImpersonation = (token: string, action: ImpersonationDecision) =>
+  api.post<{ status: ImpersonationStatus }>(`${V1}/impersonation`, { token, action });
 
 export interface ProfilePatch {
   first_name?: string;

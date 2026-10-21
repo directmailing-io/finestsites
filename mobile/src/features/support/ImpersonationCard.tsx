@@ -3,9 +3,9 @@ import { KeyRound, Lock, ShieldCheck } from 'lucide-react-native';
 import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
-import { approveImpersonation, getImpersonationState, rejectImpersonation } from '@/api/endpoints';
+import { decideImpersonation, getImpersonationState } from '@/api/endpoints';
 import { qk } from '@/api/queries';
-import type { ImpersonationState } from '@/api/types';
+import type { ImpersonationStatus } from '@/api/types';
 import { Button, Text } from '@/components/ui';
 import { colors, fonts, radius } from '@/theme/tokens';
 
@@ -15,29 +15,25 @@ import { colors, fonts, radius } from '@/theme/tokens';
  */
 export function ImpersonationCard({ token }: { token: string }) {
   const [acting, setActing] = useState(false);
-  const [override, setOverride] = useState<ImpersonationState | null>(null);
+  const [override, setOverride] = useState<ImpersonationStatus | null>(null);
+  // Stand genau dieser Anfrage (Token aus der Chat-Nachricht); nachfragen, solange sie offen ist
   const q = useQuery({
-    queryKey: qk.impersonation,
-    queryFn: getImpersonationState,
+    queryKey: [...qk.impersonation, token],
+    queryFn: () => getImpersonationState(token),
     refetchInterval: query => {
-      const d = query.state.data;
-      const s = d?.request?.token === token ? d.state : null;
+      const s = query.state.data?.request?.status;
       return s === 'pending' || s === 'approved' || s === 'active' ? 4000 : false;
     },
   });
 
-  const serverState: ImpersonationState | 'loading' = q.isLoading
-    ? 'loading'
-    : q.data?.request?.token === token && q.data.state
-      ? q.data.state
-      : 'expired';
+  const serverState: ImpersonationStatus | 'loading' = q.isLoading ? 'loading' : (q.data?.request?.status ?? 'expired');
   const status = override ?? serverState;
 
   async function act(approve: boolean) {
     setActing(true);
     try {
-      await (approve ? approveImpersonation(token) : rejectImpersonation(token));
-      setOverride(approve ? 'approved' : 'rejected');
+      const res = await decideImpersonation(token, approve ? 'approve' : 'deny');
+      setOverride(res.status);
       void q.refetch();
     } catch {
       /* Karte bleibt offen, Nutzer kann erneut tippen */

@@ -49,6 +49,12 @@ for pat in "${PATTERNS[@]}"; do
     file="${hit%%:*}"
     line="${hit#*:}"
     case "$line" in *'forbidden-words: allow'*) continue ;; esac
+    # Generierte Server-Verträge (scripts/sync-contracts.mjs): nur zod-Schemas, Fehlercodes und
+    # Kommentare, nie angezeigter Text. Gilt nur für Dateien mit der GENERIERT-Kopfzeile.
+    case "$file" in
+      src/api/contracts/*.ts)
+        if head -n 1 "$file" | grep -q '^// GENERIERT von mobile/scripts/sync-contracts.mjs'; then continue; fi ;;
+    esac
     allowed=0
     lower_pat=$(printf '%s' "$pat" | tr '[:upper:]' '[:lower:]')
     for a in "${ALLOW[@]}"; do

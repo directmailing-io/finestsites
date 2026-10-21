@@ -4,10 +4,10 @@ import { Check } from 'lucide-react-native';
 import { useEffect, useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 
-import { humanError } from '@/api/client';
+import { ApiError, humanError } from '@/api/client';
 import { saveTaxProfile } from '@/api/endpoints';
-import { qk, useAffiliate } from '@/api/queries';
-import type { TaxProfile } from '@/api/types';
+import { qk, useTaxProfile } from '@/api/queries';
+import type { TaxStatus } from '@/api/types';
 import { Button, Input, Notice, Screen, Text, useToast } from '@/components/ui';
 import { colors, fonts, radius } from '@/theme/tokens';
 
@@ -16,7 +16,7 @@ const TAX_CONSENT_TEXT =
   'Ich bin einverstanden, dass FinestSites meine Provisionen per Gutschrift abrechnet (§ 14 Abs. 2 Satz 2 UStG). Ich prüfe jede Gutschrift und melde mich sofort, wenn etwas nicht stimmt.';
 const ENTREPRENEUR_CONFIRMATION_TEXT = 'Ich handle als Unternehmer (§ 14 BGB) im Rahmen meiner selbständigen Tätigkeit.';
 
-const STATUS_OPTIONS: { key: TaxProfile['tax_status']; title: string; desc: string }[] = [
+const STATUS_OPTIONS: { key: TaxStatus; title: string; desc: string }[] = [
   { key: 'kleinunternehmer', title: 'Kleinunternehmer', desc: 'Du weist auf deinen Rechnungen keine Umsatzsteuer aus (§ 19 UStG).' },
   { key: 'regelbesteuert', title: 'Mit Umsatzsteuer', desc: 'Du berechnest Umsatzsteuer. Du bekommst 19 % Umsatzsteuer zusätzlich.' },
 ];
@@ -25,9 +25,9 @@ export default function TaxProfileScreen() {
   const router = useRouter();
   const qc = useQueryClient();
   const toast = useToast();
-  const a = useAffiliate();
-  const existing = a.data?.tax_profile.data;
-  const [status, setStatus] = useState<TaxProfile['tax_status'] | null>(null);
+  const tp = useTaxProfile();
+  const existing = tp.data?.profile;
+  const [status, setStatus] = useState<TaxStatus | null>(null);
   const [f, setF] = useState({ full_name: '', street: '', zip: '', city: '', tax_id: '' });
   const [entrepreneur, setEntrepreneur] = useState(false);
   const [consent, setConsent] = useState(false);
@@ -37,10 +37,10 @@ export default function TaxProfileScreen() {
 
   useEffect(() => {
     if (!existing) return;
-    setStatus(existing.tax_status);
-    setF({ full_name: existing.full_name, street: existing.street, zip: existing.zip, city: existing.city, tax_id: existing.tax_id });
-    setEntrepreneur(existing.entrepreneur_confirmed);
-    setConsent(!!existing.consent_at);
+    setStatus(existing.taxStatus);
+    setF({ full_name: existing.fullName, street: existing.street, zip: existing.zip, city: existing.city, tax_id: existing.taxId });
+    setEntrepreneur(existing.entrepreneurConfirmed);
+    setConsent(!!existing.consentAt);
   }, [existing]);
 
   async function save() {
@@ -58,12 +58,38 @@ export default function TaxProfileScreen() {
     setSaving(true);
     setError('');
     try {
-      await saveTaxProfile({ tax_status: status!, ...f, country: 'DE', entrepreneur_confirmed: entrepreneur, consent });
+      const saved = await saveTaxProfile({
+        taxStatus: status,
+        fullName: f.full_name,
+        street: f.street,
+        zip: f.zip,
+        city: f.city,
+        taxId: f.tax_id,
+        entrepreneurConfirmed: entrepreneur,
+        consent,
+      });
+      qc.setQueryData(qk.taxProfile, saved);
       await qc.invalidateQueries({ queryKey: qk.affiliate });
       toast.show('Gespeichert.', 'success');
       router.back();
     } catch (err) {
-      setError(humanError(err));
+      // Server prüft wie im Web und meldet je Feld, was fehlt
+      const fields = err instanceof ApiError ? err.fields : null;
+      if (fields) {
+        setErrors({
+          status: fields.taxStatus,
+          full_name: fields.fullName,
+          street: fields.street,
+          zip: fields.zip,
+          city: fields.city,
+          tax_id: fields.taxId,
+          entrepreneur: fields.entrepreneurConfirmed,
+          consent: fields.consent,
+        } as Record<string, string>);
+        setError('Bitte prüfe deine Angaben.');
+      } else {
+        setError(humanError(err));
+      }
     }
     setSaving(false);
   }

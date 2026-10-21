@@ -38,6 +38,7 @@
     "react-native-svg": "15.16.0",
     "react-native-webview": "14.0.1",
     "react-native-worklets": "0.13.0",
+    "zod": "^4.6.7",
     "zustand": "^5.0.15"
   },
   "devDependencies": {
@@ -51,8 +52,10 @@
     "android": "expo run:android",
     "typecheck": "tsc --noEmit",
     "check:words": "bash scripts/check-forbidden-words.sh",
+    "sync:contracts": "node scripts/sync-contracts.mjs",
+    "check:contracts": "node scripts/sync-contracts.mjs --check",
     "build:icons": "node scripts/build-icons.mjs",
-    "check": "tsc --noEmit && bash scripts/check-forbidden-words.sh && expo-doctor"
+    "check": "node scripts/sync-contracts.mjs --check && tsc --noEmit && bash scripts/check-forbidden-words.sh && expo-doctor"
   },
   "engines": {
     "node": ">=22.13.0"

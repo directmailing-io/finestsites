@@ -84,10 +84,11 @@ function NoteRow({ note, first }: { note: CreditNote; first: boolean }) {
         <View style={{ flex: 1, gap: 2 }}>
           <Text style={styles.number}>{note.number}</Text>
           <Text variant="callout">
-            {fmtDate(note.date)} · {note.method === 'credit' ? 'Verrechnet' : 'Ausgezahlt'}
+            {note.date ? `${fmtDate(note.date)} · ` : ''}
+            {note.method === 'credit' ? 'Verrechnet' : 'Ausgezahlt'}
           </Text>
         </View>
-        <Text style={styles.amount}>{euros(note.amount_cents)}</Text>
+        <Text style={styles.amount}>{euros(note.amountCents)}</Text>
       </Pressable>
       {note.ready ? (
         <Pressable ref={shareRef} onPress={share} disabled={!!busy} style={styles.share} accessibilityRole="button" accessibilityLabel="PDF teilen">
