@@ -92,3 +92,20 @@ npx tsx scripts/local-testenv/check-stripe-key-guard.ts
 - `scripts/local-testenv/env.local-test.example`: dokumentierte Variablen
 - `scripts/local-testenv/hash-password.mjs`: BetterAuth-Hash für ein anderes Testpasswort erzeugen
 - `scripts/local-testenv/check-stripe-key-guard.ts`: Prüfung des Wächters
+
+## App-Schnittstellen Ende zu Ende (ohne Simulator)
+
+Die Push-/App-Tabellen kommen aus `supabase/migrations/20261021120000_native_app_push.sql` (idempotent). Nach einem frischen `setup.sh` einmal einspielen:
+
+```bash
+PGPASSWORD=finestsites_dev_local psql -X -h localhost -U finestsites_dev -d finestsites_dev \
+  -f supabase/migrations/20261021120000_native_app_push.sql
+```
+
+Danach bei laufendem Server (`start.sh`):
+
+```bash
+npx tsx scripts/app-e2e-test.ts
+```
+
+Der Test stellt genau die Anfragen der App (Bearer, `X-FS-Client: ios`, keine Cookies, kein Origin) mit den Testkonten `qa-pro`, `qa-free` und `qa-partner` und prüft jede `/api/app/v1`-Antwort gegen die zod-Verträge. Er läuft nur gegen `localhost` und `finestsites_dev` und räumt seine Testdaten wieder ab.
