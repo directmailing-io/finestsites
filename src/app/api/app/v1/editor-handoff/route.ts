@@ -48,8 +48,8 @@ export async function GET(req: Request) {
   headers.set('Location', `${appUrl()}${safeHandoffNext(q.data.next)}`)
   for (const c of setCookies) headers.append('Set-Cookie', c)
   const secure = process.env.NODE_ENV === 'production' ? '; Secure' : ''
-  headers.append('Set-Cookie', `${APP_MODE_COOKIE}=1; Path=/; Max-Age=${60 * 60 * 24 * 30}; HttpOnly; SameSite=Lax${secure}`)
+  headers.append('Set-Cookie', `${APP_MODE_COOKIE}=1; Path=/; Max-Age=${60 * 60 * 24 * 30}; SameSite=Lax${secure}`)
   // Ein evtl. vorhandenes Support-Zugriffs-Cookie gilt im App-WebView nie (eigene Sitzung des Nutzers)
-  headers.append('Set-Cookie', `fs-impersonation=; Path=/; Max-Age=0; HttpOnly; SameSite=Lax${secure}`)
+  headers.append('Set-Cookie', `fs-impersonation=; Path=/; Max-Age=0; SameSite=Lax${secure}`)
   return new Response(null, { status: 302, headers })
 }
