@@ -3,10 +3,10 @@ import type { ConfigContext, ExpoConfig } from 'expo/config';
 /**
  * FinestSites – native App (iPhone + iPad, Android folgt).
  *
- * Kein EAS-Projekt verknüpft: `extra.eas.projectId` wird erst gesetzt, wenn das Projekt
- * angelegt ist (Lead). Bis dahin liefert Push im Gerät keinen Token (wird sauber übersprungen).
+ * EAS-Projekt @frankenberater/finestsites (angelegt 21.10.2026). Die ID ist öffentlich (kein Geheimnis),
+ * Push-Token und EAS Build/Submit/Update hängen daran.
  */
-const EAS_PROJECT_ID = process.env.EAS_PROJECT_ID;
+const EAS_PROJECT_ID = process.env.EAS_PROJECT_ID ?? 'df3f2f67-38a8-4a90-ac64-f6f42d6dd80d';
 
 // Icon-Grund weiß wie Sidebar/Wortmarke; Startbildschirm wie --background der Webapp
 const ICON_BG = '#FFFFFF';
