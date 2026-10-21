@@ -1,0 +1,2 @@
+0 3 * * * /usr/local/bin/finestsites-backup.sh >> /var/log/finestsites-backup.log 2>&1
+17 * * * * /usr/local/bin/finestsites-backup.sh stuendlich >> /var/log/finestsites-backup.log 2>&1

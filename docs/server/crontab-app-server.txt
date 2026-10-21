@@ -1,0 +1,20 @@
+CRON_SECRET=<siehe .env.production>
+APP=https://app.finestsites.io
+
+# Billing enforcement: daily 06:00 UTC = Tag-21-Deaktivierung + Abo-Kündigung + 90-Tage-Löschung; alle 15 Min = Reconcile (Schonfrist 7 Tage) + Zahlungs-Mails
+0 6 * * * curl -s "$APP/api/cron/billing-enforcement" -H "Authorization: Bearer $CRON_SECRET" >> /var/log/cron-billing.log 2>&1
+
+# Affiliate payouts: 1st of each month at 09:00 UTC
+0 9 1 * * curl -s -X POST "$APP/api/cron/affiliate-payouts" -H "Authorization: Bearer $CRON_SECRET" >> /var/log/cron-affiliate.log 2>&1
+
+# Domain status check: every 15 minutes
+*/5 * * * * curl -s "$APP/api/cron/check-domains" -H "Authorization: Bearer $CRON_SECRET" >> /var/log/cron-domains.log 2>&1
+
+# Erfahrungsbericht-Drafts aufräumen (älter 48h inkl. R2): täglich 04:30 UTC
+30 4 * * * curl -s -X POST "$APP/api/cron/cleanup-testimonials" -H "Authorization: Bearer $CRON_SECRET" >> /var/log/cron-testimonials.log 2>&1
+# Site access reconcile: hourly safety net (sites follow subscription status)
+*/15 * * * * curl -s "$APP/api/cron/billing-enforcement?only=reconcile" -H "Authorization: Bearer $CRON_SECRET" >> /var/log/cron-billing.log 2>&1
+17 4 * * 1 /usr/local/bin/finestsites-cf-firewall.sh >> /var/log/finestsites-cf-firewall.log 2>&1
+
+# Affiliate-Nachkontrolle: täglich 05:15 UTC (hängende Auszahlungen klären, fehlende Gutschrift-PDFs nachholen, überweist nie)
+15 5 * * * curl -s -X POST "$APP/api/cron/affiliate-payouts?mode=maintenance" -H "Authorization: Bearer $CRON_SECRET" >> /var/log/cron-affiliate.log 2>&1
