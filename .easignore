@@ -8,3 +8,4 @@
 /mobile/dist
 /mobile/screenshots-review
 **/.env*
+/mobile/credentials.json

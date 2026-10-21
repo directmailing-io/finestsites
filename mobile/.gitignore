@@ -48,3 +48,4 @@ example
 *.ipa
 *.aab
 *.apk
+credentials.json
