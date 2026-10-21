@@ -1,5 +1,5 @@
 import { useEffect, useState, type ReactNode } from 'react';
-import { RefreshControl, ScrollView, StyleSheet, View, type ScrollViewProps, type StyleProp, type ViewStyle } from 'react-native';
+import { Platform, RefreshControl, ScrollView, StyleSheet, View, type ScrollViewProps, type StyleProp, type ViewStyle } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useLayout } from '@/lib/layout';
@@ -34,7 +34,7 @@ export function Screen({
   topInset,
   ...rest
 }: Props) {
-  const { gutter } = useLayout();
+  const { gutter, top } = useLayout();
   const insets = useSafeAreaInsets();
   // Kreisel nur beim Herunterziehen zeigen, nicht bei jedem Nachladen im Hintergrund (Tab-Wechsel)
   const [pulling, setPulling] = useState(false);
@@ -59,7 +59,9 @@ export function Screen({
       }
       contentContainerStyle={[
         styles.content,
-        { paddingHorizontal: gutter, paddingTop: topInset ? insets.top + 16 : 16 },
+        // Ohne native Kopfzeile: iOS rückt den Inhalt selbst unter die Statusleiste (contentInsetAdjustmentBehavior),
+        // darüber kommt nur der Abstand wie im Web (pt-6/8/10) – vorher doppelt und dadurch viel zu viel Luft.
+        { paddingHorizontal: gutter, paddingTop: topInset ? top + (Platform.OS === 'android' ? insets.top : 0) : 16 },
       ]}>
       <View style={[styles.inner, { maxWidth }, contentStyle]}>{children}</View>
     </ScrollView>

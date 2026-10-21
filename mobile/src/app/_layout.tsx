@@ -85,7 +85,7 @@ export default function RootLayout() {
                   headerStyle: { backgroundColor: colors.background },
                   headerTintColor: colors.ink,
                 }}>
-                <Stack.Protected guard={!signedIn} redirectTo="/start">
+                <Stack.Protected guard={!signedIn} redirectTo="/sites">
                   <Stack.Screen name="login" />
                 </Stack.Protected>
                 <Stack.Protected guard={signedIn} redirectTo="/login">
@@ -94,10 +94,13 @@ export default function RootLayout() {
                   <Stack.Screen name="deletion-pending" options={{ gestureEnabled: false }} />
                   <Stack.Screen
                     name="editor/[id]"
-                    options={{ presentation: 'fullScreenModal', headerShown: true, gestureEnabled: false }}
+                    options={{ presentation: 'fullScreenModal', headerShown: false, gestureEnabled: false }}
                   />
                   <Stack.Screen name="web" options={{ presentation: 'fullScreenModal', headerShown: true, gestureEnabled: false }} />
-                  <Stack.Screen name="published" options={{ presentation: 'fullScreenModal', gestureEnabled: false }} />
+                  <Stack.Screen
+                    name="published"
+                    options={{ presentation: 'transparentModal', animation: 'fade', gestureEnabled: false, contentStyle: { backgroundColor: 'transparent' } }}
+                  />
                   <Stack.Screen name="push-priming" options={{ presentation: 'formSheet', sheetAllowedDetents: [0.62, 1], sheetGrabberVisible: true }} />
                 </Stack.Protected>
               </Stack>

@@ -1,31 +1,35 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Alert, BackHandler, Platform, Pressable, StyleSheet, View, type HostInstance } from 'react-native';
+import { Alert, BackHandler, Platform, StyleSheet, View, type HostInstance } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { qk } from '@/api/queries';
-import { Text, useToast } from '@/components/ui';
+import { useToast } from '@/components/ui';
 import { QrSheet } from '@/features/sites/QrSheet';
 import { AppWebView, type AppWebViewHandle } from '@/features/web/AppWebView';
 import { publishBlockedText, type BridgeMessage } from '@/features/web/guard';
 import { useAuth } from '@/lib/auth';
 import { openInBrowser } from '@/lib/links';
 import { shareLink } from '@/lib/share';
-import { colors, fonts } from '@/theme/tokens';
+import { colors } from '@/theme/tokens';
 
 /**
- * Editor im App-Rahmen (Vollbild-Fenster): native Kopfzeile mit „Fertig“, Brücke zum
- * Web-Editor, Schutz vor Kaufseiten, Rückfrage bei ungespeicherten Änderungen,
- * native Bestätigung nach dem Veröffentlichen.
+ * Editor im App-Rahmen (Vollbild-Fenster) – ohne eigene native Kopfzeile: Es erscheint genau die
+ * Kopfzeile des Web-Editors, deren Zurück-Knopf im App-Modus {type:'close'} über die Brücke schickt.
+ * Dazu: Schutz vor Kaufseiten, Rückfrage bei ungespeicherten Änderungen, native Bestätigung nach dem
+ * Veröffentlichen.
  */
 export default function EditorScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const qc = useQueryClient();
   const toast = useToast();
+  const insets = useSafeAreaInsets();
   const signOut = useAuth(s => s.signOut);
   const webRef = useRef<AppWebViewHandle>(null);
-  const doneRef = useRef<HostInstance>(null);
+  // Ankerpunkt fürs Teilen-Fenster auf dem iPad (oben rechts, wo im Web-Editor die Aktionen sitzen)
+  const anchorRef = useRef<HostInstance>(null);
   const [dirty, setDirty] = useState(false);
   const [qr, setQr] = useState<{ url: string; title: string } | null>(null);
 
@@ -59,6 +63,9 @@ export default function EditorScreen() {
 
   const onBridge = (m: BridgeMessage) => {
     switch (m.type) {
+      case 'close':
+        close();
+        break;
       case 'dirty':
         setDirty(m.value);
         break;
@@ -86,7 +93,7 @@ export default function EditorScreen() {
         break;
       }
       case 'share':
-        void shareLink(m.url, doneRef);
+        void shareLink(m.url, anchorRef);
         break;
       case 'qr':
         setQr({ url: m.url, title: 'Meine Seite' });
@@ -103,24 +110,16 @@ export default function EditorScreen() {
 
   return (
     <View style={styles.flex}>
-      <Stack.Screen
-        options={{
-          title: 'Bearbeiten',
-          headerLeft: () => (
-            <Pressable ref={doneRef} onPress={close} hitSlop={12} accessibilityRole="button" accessibilityLabel="Fertig">
-              <Text style={styles.done}>Fertig</Text>
-            </Pressable>
-          ),
-          headerRight: dirty ? () => <Text variant="footnote">Nicht gespeichert</Text> : undefined,
-        }}
-      />
-      <AppWebView ref={webRef} next={`/sites/${id}/edit`} onBridge={onBridge} />
+      <Stack.Screen options={{ headerShown: false }} />
+      <AppWebView ref={webRef} next={`/sites/${id}/edit`} onBridge={onBridge} onClose={close} />
+      <View ref={anchorRef} pointerEvents="none" style={[styles.anchor, { top: insets.top + 8 }]} />
       {qr && <QrSheet visible onClose={() => setQr(null)} url={qr.url} title={qr.title} />}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  flex: { flex: 1, backgroundColor: colors.background },
-  done: { fontFamily: fonts.semibold, fontSize: 17, color: colors.accent },
+  // weiß wie die Kopfzeile des Web-Editors, damit beim Laden unter der Statusleiste nichts aufblitzt
+  flex: { flex: 1, backgroundColor: colors.white },
+  anchor: { position: 'absolute', right: 16, width: 44, height: 44 },
 });

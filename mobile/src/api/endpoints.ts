@@ -155,6 +155,8 @@ export const sendMessage = (body: {
   mediaUrl?: string;
 }) => api.post<{ message: Message }>('/api/support/messages', body);
 export const markConversationRead = (id: string) => api.patch(`/api/support/conversation/${id}/read`);
+/** Gespräch für den Nutzer ausblenden (wie „Gespräch löschen“ im Web). */
+export const deleteConversation = (id: string) => api.del(`/api/support/conversation/${id}`);
 export function uploadSupportImage(uri: string, mimeType: string, name: string) {
   const fd = new FormData();
   fd.append('file', { uri, type: mimeType, name } as unknown as Blob);

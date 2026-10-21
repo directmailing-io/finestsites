@@ -13,13 +13,17 @@ export function useLayout() {
   const { width, height } = useWindowDimensions();
   const regular = width >= 700;
   const columns = width >= 1100 ? 3 : width >= 700 ? 2 : 1;
-  const pad = regular ? gutter.regular : gutter.compact;
+  // Ränder wie <main> im Web-Dashboard: px-5 (20) · ab 640 px sm:px-8 (32) · ab 1024 px lg:px-12 (48)
+  const pad = width >= 1024 ? gutter.wide : width >= 640 ? gutter.regular : gutter.compact;
+  // Abstand oben wie <main>: pt-6 (24) · sm:pt-8 (32) · lg:pt-10 (40)
+  const top = width >= 1024 ? 40 : width >= 640 ? 32 : 24;
   return {
     width,
     height,
     regular,
     columns,
     gutter: pad,
+    top,
     /** Breite der Liste in geteilten Ansichten */
     listWidth: Math.min(400, Math.max(320, Math.round(width * 0.36))),
     readableWidth,

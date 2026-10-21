@@ -36,7 +36,7 @@ export default function DeletionPendingScreen() {
       await cancelDeletion();
       await queryClient.invalidateQueries();
       queryClient.setQueryData(qk.deletion, undefined);
-      router.replace('/start');
+      router.replace('/sites');
     } catch (e) {
       setError(humanError(e));
       setLoading(false);

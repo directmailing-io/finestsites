@@ -1,5 +1,6 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
+import { View } from 'react-native';
 
 import { updateProfile } from '@/api/endpoints';
 import { qk, useMe } from '@/api/queries';
@@ -19,6 +20,16 @@ const CATEGORIES: { key: EmailCategoryKey; label: string; description: string; l
 ];
 
 export default function EmailsScreen() {
+  return (
+    <Screen readable>
+      <Text variant="callout">Du entscheidest, welche Mails du von uns bekommst. Von Anfang an ist alles an.</Text>
+      <EmailsContent />
+    </Screen>
+  );
+}
+
+/** Inhalt des Web-Tabs „E-Mails“ (Einstellungen). */
+export function EmailsContent() {
   const qc = useQueryClient();
   const toast = useToast();
   const me = useMe();
@@ -43,8 +54,7 @@ export default function EmailsScreen() {
   }
 
   return (
-    <Screen readable>
-      <Text variant="callout">Du entscheidest, welche Mails du von uns bekommst. Von Anfang an ist alles an.</Text>
+    <View>
       {!optOut ? (
         <Skeleton height={280} radius={radius.input} />
       ) : (
@@ -62,6 +72,6 @@ export default function EmailsScreen() {
           ))}
         </ListSection>
       )}
-    </Screen>
+    </View>
   );
 }

@@ -1,5 +1,6 @@
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
-import { ActivityIndicator, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, Pressable, StyleSheet, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import WebViewBase, { type WebViewMessageEvent, type WebViewNavigation } from 'react-native-webview';
 import type { ShouldStartLoadRequest } from 'react-native-webview/lib/WebViewTypes';
 
@@ -8,7 +9,7 @@ import { Button, EmptyState } from '@/components/ui';
 import { API_BASE, APP_HOST, APP_VERSION, CLIENT, MOCK, WEBVIEW_UA_SUFFIX } from '@/lib/config';
 import { openExternal, openInBrowser } from '@/lib/links';
 import { colors } from '@/theme/tokens';
-import { CloudOff } from 'lucide-react-native';
+import { ArrowLeft, CloudOff } from 'lucide-react-native';
 
 import { decide, parseBridge, type BridgeMessage } from './guard';
 import { mockEditorHtml } from './mockEditor';
@@ -26,8 +27,16 @@ export interface AppWebViewHandle {
  * ihrem Bearer einen Schlüssel, der Server tauscht ihn gegen ein Cookie und leitet auf `next`.
  * Nicht-persistenter Speicher (incognito): nach dem Schließen bleibt keine Web-Sitzung zurück.
  */
-export const AppWebView = forwardRef<AppWebViewHandle, { next: string; onBridge: (m: BridgeMessage) => void }>(function AppWebView(
-  { next, onBridge },
+export const AppWebView = forwardRef<
+  AppWebViewHandle,
+  {
+    next: string;
+    onBridge: (m: BridgeMessage) => void;
+    /** Vollbild ohne native Kopfzeile (Editor): solange die Seite lädt oder fehlschlägt, ein Zurück-Knopf im Web-Look */
+    onClose?: () => void;
+  }
+>(function AppWebView(
+  { next, onBridge, onClose },
   ref,
 ) {
   const webRef = useRef<WebViewBase<object>>(null);
@@ -82,11 +91,14 @@ export const AppWebView = forwardRef<AppWebViewHandle, { next: string; onBridge:
     if (m) onBridge(m);
   };
 
+  const back = onClose ? <WebBackButton onPress={onClose} /> : null;
+
   if (failed) {
     return (
       <View style={styles.center}>
         <EmptyState icon={CloudOff} title="Konnte nicht geladen werden" text="Bitte prüfe deine Internetverbindung." />
         <Button title="Nochmal versuchen" onPress={start} />
+        {back}
       </View>
     );
   }
@@ -94,6 +106,7 @@ export const AppWebView = forwardRef<AppWebViewHandle, { next: string; onBridge:
     return (
       <View style={styles.center}>
         <ActivityIndicator color={colors.faint} />
+        {back}
       </View>
     );
   }
@@ -105,7 +118,7 @@ export const AppWebView = forwardRef<AppWebViewHandle, { next: string; onBridge:
         source={uri === 'mock' ? { html: mockEditorHtml(next), baseUrl: API_BASE } : { uri }}
         style={styles.flex}
         applicationNameForUserAgent={WEBVIEW_UA_SUFFIX}
-        injectedJavaScriptBeforeContentLoaded={`window.__FS_APP__ = { client: '${CLIENT}', version: '${APP_VERSION}' }; true;`}
+        injectedJavaScriptBeforeContentLoaded={`window.__FS_APP__ = { client: '${CLIENT}', version: '${APP_VERSION}', caps: ['close'] }; true;`}
         onShouldStartLoadWithRequest={onShouldStart}
         onMessage={onMessage}
         onNavigationStateChange={(n: WebViewNavigation) => (canGoBack.current = n.canGoBack)}
@@ -124,22 +137,50 @@ export const AppWebView = forwardRef<AppWebViewHandle, { next: string; onBridge:
         allowFileAccess={false}
         originWhitelist={ORIGIN_WHITELIST}
         decelerationRate="normal"
+        // Ränder (Statusleiste, Home-Leiste) regelt die Seite selbst per env(safe-area-inset-*) (viewport-fit=cover)
+        contentInsetAdjustmentBehavior="never"
+        automaticallyAdjustContentInsets={false}
         pullToRefreshEnabled={false}
         textZoom={100}
       />
       {loading && (
-        <View style={[StyleSheet.absoluteFill, styles.center]} pointerEvents="none">
+        <View style={[StyleSheet.absoluteFill, styles.center]} pointerEvents="box-none">
           <ActivityIndicator color={colors.faint} />
+          {back}
         </View>
       )}
     </View>
   );
 });
 
+/** Zurück-Knopf exakt wie im Web-Editor (40×40, rounded-2xl, #F3F4F6, Pfeil nach links). */
+function WebBackButton({ onPress }: { onPress: () => void }) {
+  const insets = useSafeAreaInsets();
+  return (
+    <Pressable
+      onPress={onPress}
+      accessibilityRole="button"
+      accessibilityLabel="Zurück zur Übersicht"
+      hitSlop={6}
+      style={({ pressed }) => [styles.back, { top: insets.top + 12, left: insets.left + 16 }, pressed && { opacity: 0.7 }]}>
+      <ArrowLeft size={18} color={colors.foreground} strokeWidth={2.25} />
+    </Pressable>
+  );
+}
+
 // Eigener Server (lokal http://localhost:…) + https; alles andere entscheidet onShouldStart
 const ORIGIN_WHITELIST = Array.from(new Set([`${new URL(API_BASE).origin}*`, 'https://*', 'about:*', 'data:*', 'blob:*']));
 
 const styles = StyleSheet.create({
   flex: { flex: 1, backgroundColor: colors.background },
+  back: {
+    position: 'absolute',
+    width: 40,
+    height: 40,
+    borderRadius: 16,
+    backgroundColor: colors.muted,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 12, padding: 24, backgroundColor: colors.background },
 });

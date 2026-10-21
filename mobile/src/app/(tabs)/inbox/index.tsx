@@ -1,7 +1,7 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { MessageSquare, Search, X } from 'lucide-react-native';
-import { useEffect, useMemo, useState } from 'react';
-import { FlatList, Pressable, RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
+import { ChevronDown, MessageSquare, Search, X } from 'lucide-react-native';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { ActionSheetIOS, Alert, findNodeHandle, FlatList, Platform, Pressable, RefreshControl, ScrollView, StyleSheet, View, type HostInstance } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useSites, useSubmissions } from '@/api/queries';
@@ -19,7 +19,8 @@ export default function InboxScreen() {
   const router = useRouter();
   const params = useLocalSearchParams<{ site?: string }>();
   const insets = useSafeAreaInsets();
-  const { regular, gutter, listWidth } = useLayout();
+  const { regular, gutter, top, listWidth } = useLayout();
+  const pickerRef = useRef<HostInstance>(null);
   const [status, setStatus] = useState<SubmissionStatus>('all');
   const [search, setSearch] = useState('');
   const [debounced, setDebounced] = useState('');
@@ -39,6 +40,23 @@ export default function InboxScreen() {
   const unreadInList = items.filter(s => !s.read_at).length;
   const total = q.data?.total ?? 0;
   const siteOptions = (sites.data ?? []).filter(s => s.status !== 'deleted');
+  // Auswahlfeld „Alle Seiten“ wie das <select> im Web (erst ab zwei Seiten)
+  const options = [{ id: undefined as string | undefined, title: 'Alle Seiten' }, ...siteOptions.map(s => ({ id: s.id as string | undefined, title: s.templates?.title ?? 'Seite' }))];
+  const current = options.find(o => o.id === siteId) ?? options[0];
+  const pickSite = () => {
+    const titles = options.map(o => o.title);
+    if (Platform.OS === 'ios') {
+      const tag = pickerRef.current ? findNodeHandle(pickerRef.current) : null;
+      ActionSheetIOS.showActionSheetWithOptions(
+        { options: [...titles, 'Abbrechen'], cancelButtonIndex: titles.length, anchor: tag ?? undefined },
+        i => {
+          if (i < titles.length) setSiteId(options[i].id);
+        },
+      );
+    } else {
+      Alert.alert('Seite', undefined, [...options.map(o => ({ text: o.title, onPress: () => setSiteId(o.id) })), { text: 'Abbrechen', style: 'cancel' as const }]);
+    }
+  };
 
   // iPad: erste Anfrage automatisch zeigen, Auswahl bei Filterwechsel prüfen
   useEffect(() => {
@@ -88,21 +106,17 @@ export default function InboxScreen() {
         }
       />
       {siteOptions.length > 1 && (
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
-          {[{ id: undefined as string | undefined, title: 'Alle Seiten' }, ...siteOptions.map(s => ({ id: s.id as string | undefined, title: s.templates?.title ?? 'Seite' }))].map(o => {
-            const active = siteId === o.id;
-            return (
-              <Pressable
-                key={o.id ?? 'all'}
-                onPress={() => setSiteId(o.id)}
-                accessibilityRole="button"
-                accessibilityState={{ selected: active }}
-                style={[styles.chip, active && styles.chipActive]}>
-                <Text style={[styles.chipText, active && { color: colors.white }]}>{o.title}</Text>
-              </Pressable>
-            );
-          })}
-        </ScrollView>
+        <Pressable
+          ref={pickerRef}
+          onPress={pickSite}
+          accessibilityRole="button"
+          accessibilityLabel={`Seite: ${current.title}`}
+          style={({ pressed }) => [styles.select, pressed && { borderColor: colors.foreground }]}>
+          <Text style={styles.selectText} numberOfLines={1}>
+            {current.title}
+          </Text>
+          <ChevronDown size={16} color={colors.faint} strokeWidth={1.75} />
+        </Pressable>
       )}
     </View>
   );
@@ -149,7 +163,7 @@ export default function InboxScreen() {
       keyboardDismissMode="on-drag"
       keyboardShouldPersistTaps="handled"
       refreshControl={<RefreshControl refreshing={pulling && q.isRefetching} onRefresh={() => { setPulling(true); void q.refetch().finally(() => setPulling(false)); }} tintColor={colors.faint} />}
-      contentContainerStyle={{ paddingHorizontal: regular ? 20 : gutter, paddingTop: insets.top + 16, paddingBottom: 40 }}
+      contentContainerStyle={{ paddingHorizontal: regular ? 20 : gutter, paddingTop: top, paddingBottom: 40 }}
       style={{ backgroundColor: colors.background }}
     />
   );
@@ -177,17 +191,18 @@ export default function InboxScreen() {
 
 const styles = StyleSheet.create({
   sep: { height: 1, backgroundColor: colors.divider, marginLeft: 74 },
-  chip: {
-    minHeight: 40,
+  select: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    minHeight: 52,
     paddingHorizontal: 16,
-    borderRadius: radius.full,
+    borderRadius: radius.input,
     borderWidth: 1.5,
     borderColor: colors.border,
     backgroundColor: colors.white,
-    justifyContent: 'center',
   },
-  chipActive: { backgroundColor: colors.ink, borderColor: colors.ink },
-  chipText: { fontFamily: fonts.semibold, fontSize: 14, color: colors.body },
+  selectText: { flex: 1, fontFamily: fonts.regular, fontSize: 15, color: colors.foreground },
   split: { flex: 1, flexDirection: 'row', backgroundColor: colors.background },
   listPane: { borderRightWidth: 1, borderRightColor: colors.border },
   detailPane: { flex: 1 },

@@ -114,7 +114,7 @@ export async function setBadge(count: number) {
   await Notifications.setBadgeCountAsync(Math.max(0, count)).catch(() => false);
 }
 
-const ALLOWED_ROUTES = ['/inbox', '/help', '/sites', '/start', '/account', '/notifications'];
+const ALLOWED_ROUTES = ['/inbox', '/help', '/sites', '/account'];
 const ID_RE = /^[A-Za-z0-9-]{1,64}$/;
 
 /**
