@@ -1,6 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
+import { useOpenExternal } from '@/components/app-mode/AppMode'
 
 /**
  * Einstellungen → Werbung.
@@ -144,6 +145,8 @@ function Section({ title, subtitle, children }: { title: string; subtitle?: stri
 // ─────────────────────────────────────────────────────────────────────────────
 
 export default function TrackingSettings() {
+  // App-Modus (Cookie fs_app=1): Links nach außen öffnet die App im Safari-Fenster; sonst unverändert
+  const openExternal = useOpenExternal()
   const [config, setConfig] = useState<Config | null>(null)
   const [sites, setSites] = useState<Site[]>([])
   const [loaded, setLoaded] = useState(false)
@@ -313,8 +316,8 @@ export default function TrackingSettings() {
                 <div className="flex flex-col gap-2">
                   {published.map(s => (
                     <div key={s.id} className="flex items-center gap-3 flex-wrap">
-                      <a href={`${s.url}/.finestsites/notrack`} target="_blank" rel="noopener noreferrer" className="text-[15px] font-semibold underline" style={{ color: '#1a1a1a' }}>{s.host}</a>
-                      <a href={`${s.url}/.finestsites/notrack?off=1`} target="_blank" rel="noopener noreferrer" className="text-sm text-gray-500 underline">wieder mitzählen</a>
+                      <a href={`${s.url}/.finestsites/notrack`} target="_blank" rel="noopener noreferrer" onClick={e => openExternal(e, `${s.url}/.finestsites/notrack`)} className="text-[15px] font-semibold underline" style={{ color: '#1a1a1a' }}>{s.host}</a>
+                      <a href={`${s.url}/.finestsites/notrack?off=1`} target="_blank" rel="noopener noreferrer" onClick={e => openExternal(e, `${s.url}/.finestsites/notrack?off=1`)} className="text-sm text-gray-500 underline">wieder mitzählen</a>
                     </div>
                   ))}
                 </div>

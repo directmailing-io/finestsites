@@ -302,9 +302,11 @@ export function RichTextField({
             min-width: 32px; height: 32px; padding: 0 8px; border-radius: 8px;
             font-weight: 600; cursor: pointer; transition: background 0.1s, color 0.1s; border: none;
           }
-          .rt-btn:hover { background: #F3F4F6; color: #111827; }
+          @media (hover: hover) {
+            .rt-btn:hover { background: #F3F4F6; color: #111827; }
+            .rt-btn--ghost:hover { opacity: 1; background: #F3F4F6; }
+          }
           .rt-btn--ghost { opacity: 0.4; }
-          .rt-btn--ghost:hover { opacity: 1; background: #F3F4F6; }
           .rt-sep { width: 1px; height: 16px; background: #E5E7EB; margin: 0 4px; flex-shrink: 0; }
           .rt-spacer { flex: 1; }
           .rt-link-row { display: flex; gap: 6px; padding: 8px 10px; border-bottom: 1px solid #F3F4F6; background: #F9FAFB; }
@@ -323,6 +325,13 @@ export function RichTextField({
           .rt-content a:hover { text-decoration-color: #111827; }
           .rt-content p.is-editor-empty:first-child::before { content: attr(data-placeholder); color: #9CA3AF; float: left; height: 0; pointer-events: none; }
           .rt-footer { padding: 7px 14px; font-size: 11.5px; color: #9CA3AF; border-top: 1px solid #F3F4F6; background: #FAFAFA; text-align: right; }
+          /* Touch (iPhone, iPad): 44-pt-Tippflächen und 16 px Schrift, sonst zoomt iOS beim Antippen hinein */
+          @media (pointer: coarse) {
+            .rt-btn { min-width: 44px; height: 44px; }
+            .rt-content { font-size: 16px; }
+            .rt-link-input { font-size: 16px; min-height: 44px; }
+            .rt-link-apply { min-height: 44px; }
+          }
         `}</style>
       </div>
 
