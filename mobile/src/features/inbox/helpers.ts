@@ -118,8 +118,10 @@ export function processFields(data: Record<string, unknown>): Field[] {
   for (const [prefixKey, numberKey] of PHONE_PAIRS) {
     if (map[prefixKey] && map[numberKey]) {
       const prefix = map[prefixKey].trim();
-      const number = map[numberKey].trim().replace(/^0+/, '');
-      const combined = prefix ? `${prefix.startsWith('+') ? prefix : '+' + prefix} ${number}` : number;
+      const rawNumber = map[numberKey].trim();
+      const number = rawNumber.replace(/^0+/, '');
+      // Nummer bringt die Vorwahl schon mit (z. B. „+49 151 …“) → nicht doppelt voranstellen
+      const combined = rawNumber.startsWith('+') || !prefix ? rawNumber : `${prefix.startsWith('+') ? prefix : '+' + prefix} ${number}`;
       merged.push({ key: numberKey, label: 'Telefon', value: combined });
       used.add(prefixKey);
       used.add(numberKey);

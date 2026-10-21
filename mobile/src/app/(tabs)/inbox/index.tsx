@@ -23,6 +23,7 @@ export default function InboxScreen() {
   const [status, setStatus] = useState<SubmissionStatus>('all');
   const [search, setSearch] = useState('');
   const [debounced, setDebounced] = useState('');
+  const [pulling, setPulling] = useState(false);
   const [siteId, setSiteId] = useState<string | undefined>(params.site);
   const [selected, setSelected] = useState<Submission | null>(null);
 
@@ -147,7 +148,7 @@ export default function InboxScreen() {
       contentInsetAdjustmentBehavior="automatic"
       keyboardDismissMode="on-drag"
       keyboardShouldPersistTaps="handled"
-      refreshControl={<RefreshControl refreshing={q.isRefetching} onRefresh={() => void q.refetch()} tintColor={colors.faint} />}
+      refreshControl={<RefreshControl refreshing={pulling && q.isRefetching} onRefresh={() => { setPulling(true); void q.refetch().finally(() => setPulling(false)); }} tintColor={colors.faint} />}
       contentContainerStyle={{ paddingHorizontal: regular ? 20 : gutter, paddingTop: insets.top + 16, paddingBottom: 40 }}
       style={{ backgroundColor: colors.background }}
     />

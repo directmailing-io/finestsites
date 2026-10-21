@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { RefreshControl, ScrollView, StyleSheet, View, type ScrollViewProps, type StyleProp, type ViewStyle } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -36,6 +36,15 @@ export function Screen({
 }: Props) {
   const { gutter } = useLayout();
   const insets = useSafeAreaInsets();
+  // Kreisel nur beim Herunterziehen zeigen, nicht bei jedem Nachladen im Hintergrund (Tab-Wechsel)
+  const [pulling, setPulling] = useState(false);
+  useEffect(() => {
+    if (!refreshing) setPulling(false);
+  }, [refreshing]);
+  const pull = () => {
+    setPulling(true);
+    onRefresh?.();
+  };
   const maxWidth = readable ? readableWidth : wide ? 1280 : 1024;
   return (
     <ScrollView
@@ -46,7 +55,7 @@ export function Screen({
       keyboardShouldPersistTaps="handled"
       keyboardDismissMode="interactive"
       refreshControl={
-        onRefresh ? <RefreshControl refreshing={!!refreshing} onRefresh={onRefresh} tintColor={colors.faint} /> : undefined
+        onRefresh ? <RefreshControl refreshing={pulling && !!refreshing} onRefresh={pull} tintColor={colors.faint} /> : undefined
       }
       contentContainerStyle={[
         styles.content,
