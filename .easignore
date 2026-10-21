@@ -1,0 +1,10 @@
+# EAS Build lädt nur die App hoch (mobile/), nie die Web-App, Vorlagen, Skripte oder Geheimnisse
+/*
+!/mobile
+/mobile/node_modules
+/mobile/ios
+/mobile/android
+/mobile/.expo
+/mobile/dist
+/mobile/screenshots-review
+**/.env*
