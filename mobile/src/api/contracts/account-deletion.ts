@@ -29,7 +29,8 @@ export const DeletionStatusResponse = z.object({
   graceDays: z.number().int().positive(),
   /** false z. B. beim Admin-Konto; die App zeigt dann nur einen Hinweis */
   canDelete: z.boolean(),
-  blockedReason: z.enum(['admin']).nullable(),
+  /** disabled = Selbst-Löschung noch nicht freigeschaltet (app_settings account_deletion_enabled) → Hinweis auf info@ */
+  blockedReason: z.enum(['admin', 'disabled']).nullable(),
   partnerBalance: z.object({
     currency: z.literal('EUR'),
     /** sofort auszahlbar (Haltefrist vorbei) */

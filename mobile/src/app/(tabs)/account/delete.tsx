@@ -9,6 +9,7 @@ import { qk } from '@/api/queries';
 import type { PartnerBalanceChoice } from '@/api/types';
 import { Button, Card, Input, LoadError, Notice, Screen, Skeleton, Text } from '@/components/ui';
 import { useAuth } from '@/lib/auth';
+import { openExternal } from '@/lib/links';
 import { euros, fmtDate } from '@/lib/format';
 import { colors, fonts, radius } from '@/theme/tokens';
 
@@ -69,6 +70,15 @@ export default function DeleteAccountScreen() {
   }
 
   if (info.isError) return <LoadError onRetry={() => void info.refetch()} />;
+
+  if (info.data?.blockedReason === 'disabled') {
+    return (
+      <Screen readable>
+        <Notice tone="info">Du möchtest dein Konto löschen? Schreib uns an info@finestsites.io, wir kümmern uns darum.</Notice>
+        <Button title="E-Mail schreiben" variant="secondary" onPress={() => void openExternal('mailto:info@finestsites.io?subject=Konto%20l%C3%B6schen')} />
+      </Screen>
+    );
+  }
 
   if (info.data && !info.data.canDelete) {
     return (

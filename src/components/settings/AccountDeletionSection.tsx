@@ -63,6 +63,15 @@ export default function AccountDeletionSection() {
     }
   }
 
+  if (info && info.blockedReason === 'disabled') {
+    return (
+      <p className="text-sm px-4 py-3 rounded-2xl w-full sm:max-w-md" style={{ background: '#F8FAFC', color: '#64748B', border: '1px solid #E5E7EB' }}>
+        Du möchtest dein Konto löschen? Schreib uns an{' '}
+        <a href="mailto:info@finestsites.io" className="underline" style={{ color: '#0F172A' }}>info@finestsites.io</a>, wir kümmern uns darum.
+      </p>
+    )
+  }
+
   if (info && !info.canDelete) {
     return (
       <p className="text-sm px-4 py-3 rounded-2xl w-full sm:max-w-md" style={{ background: '#F8FAFC', color: '#64748B', border: '1px solid #E5E7EB' }}>

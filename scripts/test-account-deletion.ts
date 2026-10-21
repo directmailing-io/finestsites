@@ -218,6 +218,8 @@ async function main() {
   const tpls = await sql`SELECT id FROM templates WHERE r2_bundle_path IS NOT NULL ORDER BY created_at LIMIT 2`
   if (tpls.length < 2) throw new Error('Zu wenige Vorlagen in der Test-DB')
   await cleanup()
+  // Selbst-Löschung ist standardmäßig aus; in dieser Wegwerf-DB einschalten
+  await sql`INSERT INTO app_settings (key, value) VALUES ('account_deletion_enabled', 'true') ON CONFLICT (key) DO UPDATE SET value = 'true'`
   await seed({ a1: tpls[0].id, a2: tpls[1].id })
 
   // Stripe-Testabo für A

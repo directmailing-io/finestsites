@@ -52,6 +52,19 @@ export type DeletionErrorCode =
   | 'NOT_FOUND' | 'INVALID_PASSWORD' | 'BALANCE_CHOICE_REQUIRED' | 'DELETION_NOT_ALLOWED'
   | 'DELETION_ALREADY_REQUESTED' | 'NO_DELETION_PENDING'
 
+/**
+ * Selbst-Löschung ist erst aktiv, wenn app_settings.account_deletion_enabled = 'true' (nach AGB-Änderung
+ * mit Vorlauf für Bestandskunden). Bis dahin: Hinweis auf info@finestsites.io (wie bisher in den AGB).
+ */
+export async function isSelfDeletionEnabled(): Promise<boolean> {
+  try {
+    const row = await db.query.appSettings.findFirst({ where: eq(appSettings.key, 'account_deletion_enabled') })
+    return row?.value.trim() === 'true'
+  } catch {
+    return false
+  }
+}
+
 export class DeletionError extends Error {
   constructor(public code: DeletionErrorCode) { super(code) }
 }
@@ -115,15 +128,17 @@ export async function getDeletionStatus(userId: string): Promise<DeletionStatusR
     columns: { isAdmin: true, deletionRequestedAt: true, deletionScheduledFor: true, deletedAt: true },
   })
   if (!u || u.deletedAt) throw new DeletionError('NOT_FOUND')
-  const [balance, req] = await Promise.all([partnerBalance(userId), u.deletionRequestedAt ? openRequest(userId) : Promise.resolve(undefined)])
+  const [balance, req, enabled] = await Promise.all([
+    partnerBalance(userId), u.deletionRequestedAt ? openRequest(userId) : Promise.resolve(undefined), isSelfDeletionEnabled(),
+  ])
   const scheduled = !!u.deletionRequestedAt
   return {
     status: scheduled ? 'scheduled' : 'none',
     requestedAt: u.deletionRequestedAt?.toISOString() ?? null,
     scheduledFor: u.deletionScheduledFor?.toISOString() ?? null,
     graceDays: DELETION_GRACE_DAYS,
-    canDelete: !u.isAdmin,
-    blockedReason: u.isAdmin ? 'admin' : null,
+    canDelete: !u.isAdmin && enabled,
+    blockedReason: u.isAdmin ? 'admin' : enabled ? null : 'disabled',
     partnerBalance: {
       currency: 'EUR',
       availableCents: balance.availableCents,
@@ -181,6 +196,7 @@ export async function requestDeletion(params: {
   })
   if (!u || u.deletedAt) throw new DeletionError('NOT_FOUND')
   if (u.isAdmin) throw new DeletionError('DELETION_NOT_ALLOWED')
+  if (!(await isSelfDeletionEnabled())) throw new DeletionError('DELETION_NOT_ALLOWED')
   if (u.deletionRequestedAt) throw new DeletionError('DELETION_ALREADY_REQUESTED')
   if (!(await passwordMatches(u.id, params.password))) throw new DeletionError('INVALID_PASSWORD')
 
