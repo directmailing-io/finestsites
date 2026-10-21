@@ -5,6 +5,7 @@ import { appError, appJson, requireAppUser } from '@/lib/app-api/http'
 import { accountOffline, affiliateEligible, loadProfile, loadSites, quotaOf, siteStatus } from '@/lib/app-api/account'
 import { getAppRuntimeSettings } from '@/lib/app-api/settings'
 import { MeResponse } from '@/lib/contracts/app-v1/me'
+import { normalizeOptOut } from '@/lib/email/categories'
 
 export const dynamic = 'force-dynamic'
 
@@ -34,7 +35,16 @@ export async function GET(req: Request) {
       profileImageUrl: profile.profileImageUrl,
       emailVerified: profile.emailVerified,
       isInternal: profile.isInternal,
+      phone: profile.phone ?? null,
+      socials: {
+        instagram: profile.instagram ?? null,
+        tiktok: profile.tiktok ?? null,
+        facebook: profile.facebook ?? null,
+        linkedin: profile.linkedin ?? null,
+        youtube: profile.youtube ?? null,
+      },
     },
+    emailOptOut: normalizeOptOut(profile.emailOptOut),
     onboarding: {
       usernameSet: !!profile.username,
       consentGiven: !!profile.contentConsentAt,

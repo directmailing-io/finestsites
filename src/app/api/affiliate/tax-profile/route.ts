@@ -11,10 +11,8 @@ import { db } from '@/lib/db'
 import { affiliateTaxProfiles } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
 import { getClientIp, rateLimit } from '@/lib/security/request'
-import {
-  validateTaxProfile, classifyTaxId, isTaxStatus, isTaxProfileComplete,
-  TAX_CONSENT_VERSION, TAX_CONSENT_STORED_TEXT, type TaxProfileInput,
-} from '@/lib/affiliate/tax'
+import { isTaxProfileComplete } from '@/lib/affiliate/tax'
+import { taxProfileErrors, taxProfileInput, upsertTaxProfile } from '@/lib/affiliate/tax-profile-store'
 
 function toJson(p: typeof affiliateTaxProfiles.$inferSelect | undefined) {
   if (!p) return { profile: null, complete: false }
@@ -46,8 +44,6 @@ export async function GET(req: Request) {
   return NextResponse.json(toJson(p))
 }
 
-const str = (v: unknown, max = 200) => (typeof v === 'string' ? v.slice(0, max) : '')
-
 export async function PUT(req: Request) {
   const user = await getUserFromRequest(req)
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -69,44 +65,16 @@ export async function PUT(req: Request) {
     return NextResponse.json({ error: 'Ungültige Anfrage.' }, { status: 400 })
   }
 
-  const input: TaxProfileInput = {
-    taxStatus: isTaxStatus(body.tax_status) ? body.tax_status : null,
-    fullName: str(body.full_name),
-    street: str(body.street),
-    zip: str(body.zip, 10),
-    city: str(body.city),
-    taxId: str(body.tax_id, 40),
-  }
-  const errors = validateTaxProfile(input)
-  if (body.entrepreneur_confirmed !== true) errors.entrepreneurConfirmed = 'Bitte bestätige, dass du als Unternehmer handelst.'
-  if (body.consent !== true) errors.consent = 'Bitte setze den Haken beim Einverständnis.'
+  const input = taxProfileInput({
+    taxStatus: body.tax_status, fullName: body.full_name, street: body.street,
+    zip: body.zip, city: body.city, taxId: body.tax_id,
+  })
+  const errors = taxProfileErrors(input, body.entrepreneur_confirmed, body.consent)
   if (Object.keys(errors).length > 0) {
     return NextResponse.json({ error: 'Bitte prüfe deine Angaben.', errors }, { status: 400 })
   }
 
-  const { vatId, taxNumber } = classifyTaxId(input.taxId)
-  const now = new Date()
-  const values = {
-    taxStatus: input.taxStatus!,
-    fullName: input.fullName.trim().replace(/\s+/g, ' '),
-    street: input.street.trim().replace(/\s+/g, ' '),
-    zip: input.zip.trim(),
-    city: input.city.trim().replace(/\s+/g, ' '),
-    country: 'DE',
-    vatId,
-    taxNumber,
-    entrepreneurConfirmed: true,
-    consentAt: now,
-    consentVersion: TAX_CONSENT_VERSION,
-    consentText: TAX_CONSENT_STORED_TEXT,
-    consentIp: getClientIp(req)?.slice(0, 64) ?? null,
-    updatedAt: now,
-  }
-
-  const [saved] = await db.insert(affiliateTaxProfiles)
-    .values({ userId: user.id, ...values, createdAt: now })
-    .onConflictDoUpdate({ target: affiliateTaxProfiles.userId, set: values })
-    .returning()
+  const saved = await upsertTaxProfile(user.id, input, getClientIp(req))
 
   return NextResponse.json(toJson(saved))
 }
