@@ -1,6 +1,7 @@
 'use client'
 
 import { useId, useState } from 'react'
+import { useOpenExternal } from '@/components/app-mode/AppMode'
 import {
   validateTaxProfile, TAX_CONSENT_TEXT, ENTREPRENEUR_CONFIRMATION_TEXT,
   type TaxStatus,
@@ -225,6 +226,8 @@ export function TaxProfileSection({ profile, onSaved }: {
 }
 
 export function CreditNotesSection({ items }: { items: CreditNoteItem[] }) {
+  // App-Modus: Download in der WebView geht nicht → App lädt das PDF selbst ({type:'open-url'})
+  const openExternal = useOpenExternal()
   if (items.length === 0) return null
   return (
     <section className="rounded-3xl p-6 mb-5" style={{ background: '#fff', border: '1.5px solid #E5E7EB' }}>
@@ -240,6 +243,7 @@ export function CreditNotesSection({ items }: { items: CreditNoteItem[] }) {
             </div>
             <p className="hidden sm:block text-sm font-bold tabular-nums text-gray-900">{euros(n.amount_cents)}</p>
             <a href={`/api/affiliate/credit-notes/${n.id}?download=1`}
+              onClick={e => openExternal(e, `/api/affiliate/credit-notes/${n.id}?download=1`)}
               className="inline-flex items-center min-h-[44px] text-sm font-semibold px-3.5 rounded-xl flex-shrink-0 transition-opacity hover:opacity-80"
               style={{ background: '#F3F4F6', color: '#374151' }}>
               Herunterladen

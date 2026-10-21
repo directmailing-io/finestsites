@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import type { PayoutMode } from '@/lib/affiliate/payout-mode'
+import { useAppMode } from '@/components/app-mode/AppMode'
 
 export interface PayoutModeState {
   mode: PayoutMode
@@ -31,11 +32,24 @@ const OPTIONS: { key: PayoutMode; title: string; desc: string; recommended?: boo
   },
 ]
 
+/** App-Modus (Cookie fs_app=1): gleiche Optionen, aber ohne „Abo“/„Rechnung“ (keine Kauf-Hinweise in der App). */
+const APP_OPTION_TEXT: Record<PayoutMode, { title: string; desc: string }> = {
+  credit: {
+    title: 'Mit meinem Konto verrechnen',
+    desc: 'Deine Provision wird jeden Monat automatisch mit deinem FinestSites-Konto verrechnet. Kein Auszahlungskonto nötig, nur deine Angaben für die Abrechnung (unten).',
+  },
+  payout: {
+    title: 'Aufs Bankkonto auszahlen',
+    desc: 'Ab 10 € einmal im Monat. Dafür richtest du einmal ein Auszahlungskonto bei Stripe ein.',
+  },
+}
+
 /** „So bekommst du deine Provision“: Verrechnung mit dem Abo (Standard) oder Überweisung. */
 export function PayoutModeSection({ state, onChanged }: {
   state: PayoutModeState
   onChanged: (s: PayoutModeState) => void
 }) {
+  const appMode = useAppMode()
   const [saving, setSaving] = useState<PayoutMode | null>(null)
   const [msg, setMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
 
@@ -57,7 +71,7 @@ export function PayoutModeSection({ state, onChanged }: {
       setMsg({
         type: 'success',
         text: mode === 'credit'
-          ? 'Gespeichert. Ab jetzt wird deine Provision mit deinem Abo verrechnet.'
+          ? (appMode ? 'Gespeichert. Ab jetzt wird deine Provision mit deinem Konto verrechnet.' : 'Gespeichert. Ab jetzt wird deine Provision mit deinem Abo verrechnet.')
           : data.connect_ready
             ? 'Gespeichert. Ab jetzt wird deine Provision ab 10 € aufs Bankkonto überwiesen.'
             : 'Gespeichert. Richte jetzt noch einmal dein Auszahlungskonto ein, dann läuft alles automatisch.',
@@ -80,6 +94,7 @@ export function PayoutModeSection({ state, onChanged }: {
         {OPTIONS.map(o => {
           const active = state.mode === o.key
           const busy = saving === o.key
+          const text = appMode ? APP_OPTION_TEXT[o.key] : o
           return (
             <button key={o.key} type="button" role="radio" aria-checked={active}
               onClick={() => choose(o.key)}
@@ -94,13 +109,13 @@ export function PayoutModeSection({ state, onChanged }: {
               <span className="flex items-center gap-2 mb-1">
                 <span className="w-4 h-4 rounded-full flex items-center justify-center flex-shrink-0"
                   style={{ border: active ? '5px solid #1a1a1a' : '1.5px solid #D1D5DB' }} />
-                <span className="text-sm font-bold text-gray-900">{o.title}</span>
+                <span className="text-sm font-bold text-gray-900">{text.title}</span>
               </span>
               {o.recommended && (
                 <span className="inline-block ml-6 mb-1.5 text-[11px] font-semibold px-2 py-0.5 rounded-full" style={{ background: '#ECFDF5', color: '#065F46' }}>Empfohlen</span>
               )}
               <span className="block text-xs text-gray-500 leading-relaxed pl-6">
-                {busy ? 'Wird gespeichert…' : o.desc}
+                {busy ? 'Wird gespeichert…' : text.desc}
               </span>
             </button>
           )
@@ -109,14 +124,16 @@ export function PayoutModeSection({ state, onChanged }: {
 
       {showCredit && (
         <div className="flex items-center justify-between gap-3 mt-4 px-4 py-3 rounded-2xl" style={{ background: '#F8FAFC' }}>
-          <p className="text-sm text-gray-600">Guthaben für deine nächsten Rechnungen</p>
+          <p className="text-sm text-gray-600">{appMode ? 'Guthaben auf deinem Konto' : 'Guthaben für deine nächsten Rechnungen'}</p>
           <p className="text-sm font-bold tabular-nums text-gray-900 whitespace-nowrap">{euros(credit!)}</p>
         </div>
       )}
 
       {state.mode === 'credit' && !state.subscription_active && (
         <p className="text-sm mt-4 px-4 py-3 rounded-2xl leading-relaxed" style={{ background: '#FFFBEB', border: '1px solid #FDE68A', color: '#92400E' }}>
-          Du hast gerade kein aktives Abo. Solange können wir nichts verrechnen. Dein Guthaben bleibt dir erhalten.
+          {appMode
+            ? 'Gerade können wir nichts verrechnen. Dein Guthaben bleibt dir erhalten.'
+            : 'Du hast gerade kein aktives Abo. Solange können wir nichts verrechnen. Dein Guthaben bleibt dir erhalten.'}
           {state.connect_ready
             ? ' Weil du ein Auszahlungskonto hast, überweisen wir es dir ab 10 €.'
             : ' Möchtest du es lieber ausgezahlt bekommen, wähle „Aufs Bankkonto auszahlen“.'}

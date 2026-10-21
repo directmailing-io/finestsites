@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { useAppMode, useOpenExternal } from '@/components/app-mode/AppMode'
 
 interface Template {
   id: string
@@ -123,6 +124,9 @@ function TemplateGrid({
   userCompanies: string[]
   onSelect: (id: string) => void
 }) {
+  // App-Modus (Cookie fs_app=1): keine „Premium/Kostenlos“-Preisschilder, Vorschau-Link über die App
+  const appMode = useAppMode()
+  const openExternal = useOpenExternal()
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
       {list.map(tpl => {
@@ -174,10 +178,10 @@ function TemplateGrid({
                       {isDraft ? 'Entwurf vorhanden' : 'Schon online'}
                     </span>
                   )}
-                  <span className="text-xs font-bold px-2.5 py-1 rounded-full"
+                  {!appMode && <span className="text-xs font-bold px-2.5 py-1 rounded-full"
                     style={isPremium ? { background: '#F5F0FB', color: '#6D28D9' } : { background: '#ECFDF5', color: '#047857' }}>
                     {isPremium ? 'Premium' : 'Kostenlos'}
-                  </span>
+                  </span>}
                   {companyLabel && (
                     <span className="text-xs font-semibold" style={{ color: '#64748B' }}>{companyLabel}</span>
                   )}
@@ -197,6 +201,7 @@ function TemplateGrid({
               ) : (
                 <div className="flex flex-wrap gap-2">
                   <a href={`/api/templates/${tpl.id}/public-preview`} target="_blank" rel="noopener noreferrer"
+                    onClick={e => openExternal(e, `/api/templates/${tpl.id}/public-preview`)}
                     className="flex-[1_1_120px] flex items-center justify-center gap-2 min-h-12 px-3 rounded-2xl text-sm font-semibold whitespace-nowrap"
                     style={{ background: '#F1F5F9', color: '#111827' }}>
                     <svg className="flex-shrink-0" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -224,6 +229,7 @@ function TemplateGrid({
 
 export default function NewSitePage() {
   const router = useRouter()
+  const appMode = useAppMode()
   const [templates, setTemplates] = useState<Template[]>([])
   // siteMap: template_id → { id, status }
   const [siteMap, setSiteMap] = useState<Record<string, { id: string; status: string }>>({})
@@ -369,7 +375,7 @@ export default function NewSitePage() {
           value={search}
           onChange={e => setSearch(e.target.value)}
           placeholder="Vorlage suchen…"
-          className="w-full pl-10 pr-10 py-3 text-sm rounded-2xl outline-none transition-all"
+          className="w-full pl-10 pr-10 py-3 text-sm pointer-coarse:text-base rounded-2xl outline-none transition-all"
           style={{ background: '#fff', border: '1.5px solid #E5E7EB', boxShadow: '0 1px 4px rgba(0,0,0,0.04)' }}
           onFocus={e => (e.target.style.borderColor = '#111827')}
           onBlur={e => (e.target.style.borderColor = '#E5E7EB')}
@@ -404,7 +410,8 @@ export default function NewSitePage() {
             </>
           )}
 
-          {/* Price filter — order: Alle → ★ Premium → Gratis */}
+          {/* Price filter — order: Alle → ★ Premium → Gratis (nicht im App-Modus: keine Preis-Hinweise) */}
+          {!appMode && <>
           <FilterChip
             label="Alle"
             active={priceFilter === 'all'}
@@ -420,6 +427,7 @@ export default function NewSitePage() {
             active={priceFilter === 'free'}
             onClick={() => setPriceFilter(priceFilter === 'free' ? 'all' : 'free')}
           />
+          </>}
         </div>
       )}
 
@@ -456,8 +464,14 @@ export default function NewSitePage() {
 
           {priceFilter !== 'premium' && freeTemplates.length > 0 && (
             <>
-              <h2 className="text-xl font-bold text-gray-900 mt-10 mb-1">Kostenlose Vorlagen</h2>
-              <p className="text-sm mb-4" style={{ color: '#64748B' }}>Für diese Vorlagen brauchst du keinen Tarif.</p>
+              {appMode ? (
+                <h2 className="text-xl font-bold text-gray-900 mt-10 mb-4">Weitere Vorlagen</h2>
+              ) : (
+                <>
+                  <h2 className="text-xl font-bold text-gray-900 mt-10 mb-1">Kostenlose Vorlagen</h2>
+                  <p className="text-sm mb-4" style={{ color: '#64748B' }}>Für diese Vorlagen brauchst du keinen Tarif.</p>
+                </>
+              )}
               <TemplateGrid templates={freeTemplates} isFreeSection={true} siteMap={siteMap} busy={busy} userCompanies={userCompanies} onSelect={handleSelect} />
             </>
           )}
