@@ -4,6 +4,34 @@ import { db } from '@/lib/db'
 import * as schema from '@/lib/db/schema'
 import { sendEmail } from '@/lib/resend'
 import { verificationEmail, passwordResetEmail } from '@/lib/email/templates'
+import { bearer } from 'better-auth/plugins/bearer'
+import { oneTimeToken } from 'better-auth/plugins/one-time-token'
+import { isAppClientHeaders } from '@/lib/app-mode'
+
+// ── Native App (Expo) ─────────────────────────────────────────────────────────
+// Die App sendet nur `Authorization: Bearer <token>` (fetch mit credentials:'omit', keine Cookies,
+// kein Origin). Der bearer-Hook setzt daraus intern das Session-Cookie; ohne Cookie in der echten
+// Anfrage greift BetterAuths Origin-Prüfung nicht (origin-check.mjs: nur wenn `cookie` gesendet wird).
+//
+// requireSignature: nur das signierte Token (wie im Cookie) gilt, nie die rohe Session-ID aus der DB.
+//
+// Der Antwort-Header `set-auth-token` (das Token für die App) wird NUR an native App-Anfragen
+// gegeben (Header `X-FS-Client: ios|android` bzw. User-Agent `FinestSitesApp/`). Browser bekommen
+// ihn nicht – für Web-Nutzer ändert sich dadurch nichts (keine neuen Antwort-Header).
+const bearerBase = bearer({ requireSignature: true })
+type BearerAfterHook = (typeof bearerBase.hooks.after)[number]
+const appBearer: typeof bearerBase = {
+  ...bearerBase,
+  hooks: {
+    before: bearerBase.hooks.before,
+    after: bearerBase.hooks.after.map((h: BearerAfterHook) => ({
+      ...h,
+      // Typ im Plugin ist `() => true`; wir schränken bewusst auf App-Anfragen ein.
+      matcher: ((ctx: Parameters<BearerAfterHook['matcher']>[0]) =>
+        isAppClientHeaders(ctx.request?.headers ?? ctx.headers ?? null)) as unknown as BearerAfterHook['matcher'],
+    })),
+  },
+}
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
@@ -59,8 +87,17 @@ export const auth = betterAuth({
     'https://www.finestsites.io',
     'https://finestsites.de',
     'https://www.finestsites.de',
+    // Native App (Deep-Links / Rücksprünge). Custom-Schemes vergleicht BetterAuth per Präfix.
+    'finestsites://',
     // Vercel canonical URL (used if NEXT_PUBLIC_APP_URL points here)
     ...(process.env.NODE_ENV === 'production' ? [] : ['http://localhost:3000', 'http://localhost:3001']),
+  ],
+
+  plugins: [
+    appBearer,
+    // Einmal-Schlüssel für die Übergabe App → Editor-WebView (/api/app/v1/editor-handoff):
+    // 1 Minute gültig, nur gehasht gespeichert, einmalig einlösbar.
+    oneTimeToken({ expiresIn: 1, storeToken: 'hashed' }),
   ],
 
   advanced: {

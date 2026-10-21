@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { blockPurchaseInApp } from '@/lib/app-mode'
 import type Stripe from 'stripe'
 import { getStripe } from '@/lib/stripe/client'
 import { db } from '@/lib/db'
@@ -15,6 +16,9 @@ import { anonymousReferralOffer, loadReferralContext, referralOfferFor, referral
  * 2. If not, check Stripe promotion codes (action codes like BLACKFRIDAY)
  */
 export async function GET(req: NextRequest) {
+  // App: Kauf-/Abo-Schnittstellen gesperrt (Apple 3.1.1). Browser: unverändert.
+  const appBlocked = blockPurchaseInApp(req)
+  if (appBlocked) return appBlocked
   const code = req.nextUrl.searchParams.get('code')?.trim()
   if (!code) return NextResponse.json({ valid: false })
   // Ohne Anmeldung erreichbar: Code-Raten und Stripe-Abfragen bremsen (30 je IP und Minute)

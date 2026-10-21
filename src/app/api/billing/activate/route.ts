@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { blockPurchaseInApp } from '@/lib/app-mode'
 import type Stripe from 'stripe'
 import { db } from '@/lib/db'
 import { users } from '@/lib/db/schema'
@@ -15,6 +16,9 @@ import { subscriptionConfirmationEmail } from '@/lib/email/templates'
 // 2. Updates the DB + logs subscription_events
 // 3. Redirects to /dashboard (middleware then handles username check)
 export async function GET(req: NextRequest) {
+  // App: Kauf-/Abo-Schnittstellen gesperrt (Apple 3.1.1). Browser: unverändert.
+  const appBlocked = blockPurchaseInApp(req)
+  if (appBlocked) return appBlocked
   // Always use the canonical app URL for redirects.
   // req.url reflects the internal VPS address (http://0.0.0.0:3002/...) through the
   // CF Worker → Caddy proxy chain, which would send users to the wrong host.

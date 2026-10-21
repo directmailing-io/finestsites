@@ -8,6 +8,7 @@ import {
   timestamp,
   jsonb,
   integer,
+  smallint,
   bigint,
   numeric,
   date,
@@ -99,6 +100,8 @@ export const users = pgTable('users', {
   paymentFallbackSepa: boolean('payment_fallback_sepa').notNull().default(false),
   deactivatedAt: timestamp('deactivated_at', { withTimezone: true }),
   isAdmin: boolean('is_admin').notNull().default(false),
+  // Internes Konto (z. B. Apple-Demo-Konto der App), Migration 20261021120000
+  isInternal: boolean('is_internal').notNull().default(false),
   // Markenfarbe (#RRGGBB) für alle Seiten des Nutzers mit farbthema=eigene; Phase A nur Admin (14.10.2026)
   brandColor: varchar('brand_color', { length: 7 }),
   // Abbestellte Mail-Kategorien (src/lib/email/categories.ts); leer = alles erlaubt, "system" nie abwählbar
@@ -803,3 +806,80 @@ export const testimonialAssetsRelations = relations(testimonialAssets, ({ one })
 
 export type Testimonial = typeof testimonials.$inferSelect
 export type TestimonialAsset = typeof testimonialAssets.$inferSelect
+
+// ─── Native App: Push (Migration 20261021120000) ──────────────────────────────
+// Versand ist standardmäßig AUS (src/lib/push/config.ts). Auslöser schreiben nur in push_outbox,
+// der Cron /api/cron/push-drain arbeitet die Warteschlange mit FOR UPDATE SKIP LOCKED ab.
+
+export const pushDevices = pgTable('push_devices', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  userId: uuid('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  expoToken: text('expo_token').notNull().unique(),
+  platform: text('platform').notNull(), // 'ios' | 'android'
+  appVersion: text('app_version'),
+  osVersion: text('os_version'),
+  deviceModel: text('device_model'),
+  locale: text('locale'),
+  enabled: boolean('enabled').notNull().default(true),
+  disabledReason: text('disabled_reason'), // 'user' | 'device_not_registered' | 'logout' | 'limit'
+  lastSeenAt: timestamp('last_seen_at', { withTimezone: true }).notNull().defaultNow(),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [
+  index('idx_push_devices_user').on(t.userId),
+])
+
+export const notificationPreferences = pgTable('notification_preferences', {
+  userId: uuid('user_id').primaryKey().references(() => users.id, { onDelete: 'cascade' }),
+  leads: boolean('leads').notNull().default(true),
+  support: boolean('support').notNull().default(true),
+  account: boolean('account').notNull().default(true),
+  partner: boolean('partner').notNull().default(true),
+  quietHoursEnabled: boolean('quiet_hours_enabled').notNull().default(true),
+  quietStartHour: smallint('quiet_start_hour').notNull().default(21),
+  quietEndHour: smallint('quiet_end_hour').notNull().default(8),
+  timezone: text('timezone').notNull().default('Europe/Berlin'),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+})
+
+export const pushOutbox = pgTable('push_outbox', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  userId: uuid('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  category: text('category').notNull(), // 'leads' | 'support' | 'account' | 'partner'
+  type: text('type').notNull(),
+  title: text('title').notNull(),
+  body: text('body').notNull(),
+  data: jsonb('data').$type<Record<string, unknown>>().notNull().default({}),
+  collapseKey: text('collapse_key'),
+  notificationId: uuid('notification_id').references(() => userNotifications.id, { onDelete: 'set null' }),
+  status: text('status').notNull().default('pending'), // pending | processing | sent | failed | skipped
+  skipReason: text('skip_reason'),
+  attempts: integer('attempts').notNull().default(0),
+  notBefore: timestamp('not_before', { withTimezone: true }).notNull().defaultNow(),
+  lockedAt: timestamp('locked_at', { withTimezone: true }),
+  lastError: text('last_error'),
+  sentAt: timestamp('sent_at', { withTimezone: true }),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [
+  index('idx_push_outbox_user_collapse').on(t.userId, t.collapseKey, t.createdAt),
+])
+
+export const pushDeliveries = pgTable('push_deliveries', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  outboxId: uuid('outbox_id').notNull().references(() => pushOutbox.id, { onDelete: 'cascade' }),
+  deviceId: uuid('device_id').references(() => pushDevices.id, { onDelete: 'set null' }),
+  ticketId: text('ticket_id'),
+  status: text('status').notNull(), // 'ok' | 'error'
+  error: text('error'),
+  receiptStatus: text('receipt_status'), // 'ok' | 'error' | null (noch nicht geprüft)
+  receiptError: text('receipt_error'),
+  receiptCheckedAt: timestamp('receipt_checked_at', { withTimezone: true }),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [
+  index('idx_push_deliveries_outbox').on(t.outboxId),
+])
+
+export type PushDevice = typeof pushDevices.$inferSelect
+export type NotificationPreference = typeof notificationPreferences.$inferSelect
+export type PushOutboxRow = typeof pushOutbox.$inferSelect
+export type PushDelivery = typeof pushDeliveries.$inferSelect
