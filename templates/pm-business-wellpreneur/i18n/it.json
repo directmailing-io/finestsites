@@ -295,7 +295,19 @@
   "Direkt registrieren": "Registrati subito",
   "Bitte deinen Vornamen eingeben.": "Inserisci il tuo nome.",
   "Bitte eine gültige Nummer mit Ländervorwahl eingeben.": "Inserisci un numero valido con prefisso internazionale.",
-  "Die Teampartner-Nummer besteht nur aus Ziffern.": "Il numero del team partner è composto solo da cifre."
+  "Die Teampartner-Nummer besteht nur aus Ziffern.": "Il numero del team partner è composto solo da cifre.",
+  "Melde dich bei mir": "Contattami",
+  "Meldet euch bei uns": "Contattaci",
+  "3 kurze Fragen, dann melde ich mich per Telefon oder WhatsApp": "3 domande veloci, poi ti ricontatto per telefono o su WhatsApp",
+  "3 kurze Fragen, dann melden wir uns per Telefon oder WhatsApp": "3 domande veloci, poi ti ricontattiamo per telefono o su WhatsApp",
+  "Oder schreib mir auf": "Oppure scrivimi su",
+  "Oder schreib uns auf": "Oppure scrivici su",
+  "Mein YouTube-Kanal": "Il mio canale YouTube",
+  "YouTube-Kanal": "Canale YouTube",
+  "Direkt loslegen": "Inizia subito",
+  "Gespräch vereinbaren": "Fissa una chiamata",
+  "Schreib mir auf": "Scrivimi su",
+  "Schreib uns auf": "Scrivici su"
  },
  "attrs": {
   "Alleinerziehende": "Genitori single",

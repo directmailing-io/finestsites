@@ -15,7 +15,7 @@ import CampaignCard from '@/components/billing/CampaignCard'
 import type { ReferralOfferPublic } from '@/lib/affiliate/referral-model'
 import { downloadQrPng } from '@/lib/utils/qr-download'
 import { FITLINE_SHOP_PRODUCTS, FITLINE_JOGHURT_KEYS, FITLINE_AUTO_LINK_RE, buildFitlineShopLink, ensureSponsorParam } from '@/lib/utils/fitline-shop-links'
-import { pmRegistrationUrlFor, resolvePartnerNumber, buildPmRegistrationUrl, normalizeCustomPmRegLink, isPmRegistrationPilot } from '@/lib/utils/pm-registration'
+import { pmRegistrationUrlFor, resolvePartnerNumber, buildPmRegistrationUrl, normalizeCustomPmRegLink } from '@/lib/utils/pm-registration'
 import { BRAND_HEX_RE, BRAND_THEME_VALUE, SITE_COLOR_PREFIX } from '@/lib/color/brand-palette'
 
 // ─── Markenfarbe (Phase A, 14.10.2026): eine Farbe je Konto, Option „Meine Farbe“ im Farbthema ───
@@ -216,8 +216,6 @@ interface FieldSchema {
   contact?: boolean
   /** Feld nur für Admin-Konten (gestufter Rollout, z. B. PM-Registrierung erst für demo) */
   admin_only?: boolean
-  /** Feld nur für Admin-Konten und die Pilot-Allowlist PM_REG_PILOT_USERNAMES (Direkt-Registrierung) */
-  pilot_only?: boolean
   /** Hinweis-Kasten über dem Feld (z. B. warum das Impressum Pflicht ist) */
   notice?: { title: string; text: string }
   // loop fields
@@ -3047,7 +3045,6 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
   const [values, setValues] = useState<Record<string, string>>({})
   // Teampartner-Nummer aus dem Profil (Sponsor für die PM-Registrierung); '' wenn nicht hinterlegt
   const [profilePartnerNumber, setProfilePartnerNumber] = useState('')
-  const [profileUsername, setProfileUsername] = useState('')
   const [previewKey, setPreviewKey] = useState(0)
   const [previewHash, setPreviewHash] = useState<string>('')
   const lastAutosavedRef = useRef<string>('')
@@ -3104,7 +3101,6 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
     ]).then(([data, userProfile]: [SiteData, Record<string, string | null>]) => {
         setSite(data)
         setProfilePartnerNumber((userProfile?.team_partner_number ?? '').trim())
-        setProfileUsername((userProfile?.username ?? '').trim())
         // Entwurf ≠ Live: gespeicherte, aber noch nicht veröffentlichte Änderungen anzeigen
         if (data.status === 'published' && data.has_unpublished_changes) setHasChanges(true)
         const fields = data.templates?.placeholder_schema?.fields ?? []
@@ -3593,8 +3589,8 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
   const sectionFields = fields
     .filter(f => !activeSection || (f.section || 'Allgemein') === activeSection || sections.length === 1)
     .filter(f => checkShowWhen(f as unknown as LoopSubField, values, fields as unknown as LoopSubField[]))
-    // admin_only-Felder nur für Admin-Konten, pilot_only zusätzlich für die Pilot-Allowlist; für alle anderen unverändert
-    .filter(f => (!f.admin_only && !f.pilot_only) || brandCtx.isAdmin || (f.pilot_only && isPmRegistrationPilot(profileUsername)))
+    // admin_only-Felder nur für Admin-Konten; für alle anderen unverändert
+    .filter(f => !f.admin_only || brandCtx.isAdmin)
     .sort((a, b) => ((a as any).order ?? 0) - ((b as any).order ?? 0))
 
   // Collapse section nav to icon-only when the editor panel is squeezed by the preview

@@ -295,7 +295,19 @@
   "Direkt registrieren": "सीधे रजिस्टर करें",
   "Bitte deinen Vornamen eingeben.": "कृपया अपना पहला नाम दर्ज करें।",
   "Bitte eine gültige Nummer mit Ländervorwahl eingeben.": "कृपया देश कोड सहित एक मान्य नंबर दर्ज करें।",
-  "Die Teampartner-Nummer besteht nur aus Ziffern.": "टीम पार्टनर नंबर में केवल अंक होते हैं।"
+  "Die Teampartner-Nummer besteht nur aus Ziffern.": "टीम पार्टनर नंबर में केवल अंक होते हैं।",
+  "Melde dich bei mir": "मुझसे संपर्क करें",
+  "Meldet euch bei uns": "हमसे संपर्क करें",
+  "3 kurze Fragen, dann melde ich mich per Telefon oder WhatsApp": "3 छोटे सवाल, फिर फोन या WhatsApp पर मैं आपसे संपर्क करूँगा/करूँगी",
+  "3 kurze Fragen, dann melden wir uns per Telefon oder WhatsApp": "3 छोटे सवाल, फिर हम फोन या WhatsApp पर आपसे संपर्क करेंगे",
+  "Oder schreib mir auf": "या मुझे यहाँ मैसेज करें",
+  "Oder schreib uns auf": "या हमें यहाँ मैसेज करें",
+  "Mein YouTube-Kanal": "मेरा YouTube चैनल",
+  "YouTube-Kanal": "YouTube चैनल",
+  "Direkt loslegen": "शुरू करें",
+  "Gespräch vereinbaren": "कॉल तय करें",
+  "Schreib mir auf": "मुझे यहाँ मैसेज करें",
+  "Schreib uns auf": "हमें यहाँ मैसेज करें"
  },
  "attrs": {
   "Alleinerziehende": "सिंगल पैरेंट्स",

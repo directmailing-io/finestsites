@@ -4,7 +4,7 @@
  */
 import assert from 'node:assert/strict'
 import {
-  buildPmRegistrationUrl, normalizePartnerNumber, resolvePartnerNumber, pmRegCountryIso, pmRegistrationUrlFor, normalizeCustomPmRegLink, isPmRegistrationPilot,
+  buildPmRegistrationUrl, normalizePartnerNumber, resolvePartnerNumber, pmRegCountryIso, pmRegistrationUrlFor, normalizeCustomPmRegLink,
 } from '../src/lib/utils/pm-registration'
 
 // Nummer: nur Ziffern
@@ -35,7 +35,6 @@ assert.equal(buildPmRegistrationUrl('4023<script>', 'Deutschland'), '')
 // Fail-closed: Schalter aus ODER keine Nummer → kein Link
 assert.equal(pmRegistrationUrlFor({ pm_registrierung: 'ausblenden' }, '40237198'), '')
 assert.equal(pmRegistrationUrlFor({ pm_registrierung: 'zeigen' }, ''), '')
-assert.equal(pmRegistrationUrlFor({}, '40237198'), '')
 assert.equal(pmRegistrationUrlFor({ pm_registrierung: 'zeigen', pm_reg_land: 'Österreich' }, '40237198'),
   'https://registration.pm-international.com/?TP=40237198&lang=de&country=AT')
 // Demo-Fall: Nummer liegt als Alias in den Seitendaten
@@ -57,14 +56,8 @@ assert.equal(pmRegistrationUrlFor({ pm_registrierung: 'zeigen', pm_reg_link: 'ht
 assert.equal(pmRegistrationUrlFor({ pm_registrierung: 'zeigen', pm_reg_link: 'kaputt' }, '40237198'),
   'https://registration.pm-international.com/?TP=40237198&lang=de&country=DE')
 
-// Pilot: nur Allowlist-Konten bekommen einen Link, egal was in den Seitendaten steht
-assert.equal(isPmRegistrationPilot('demo'), true)
-assert.equal(isPmRegistrationPilot('Siegfried-Hartmann'), true)
-assert.equal(isPmRegistrationPilot('katharinaschwarz'), true)
-assert.equal(isPmRegistrationPilot('rene-panke'), true)
-assert.equal(isPmRegistrationPilot('rebecca-schneider'), false)
-assert.equal(isPmRegistrationPilot(''), false)
-assert.equal(pmRegistrationUrlFor({ pm_registrierung: 'zeigen' }, '40237198', 'rebecca-schneider'), '')
-assert.equal(pmRegistrationUrlFor({ pm_registrierung: 'zeigen' }, '40237198', 'demo'), 'https://registration.pm-international.com/?TP=40237198&lang=de&country=DE')
+// Seit 21.10.2026 für alle: ohne gespeicherten Schalter gilt „zeigen“, nur „ausblenden“ schaltet ab
+assert.equal(pmRegistrationUrlFor({}, '40237198'), 'https://registration.pm-international.com/?TP=40237198&lang=de&country=DE')
+assert.equal(pmRegistrationUrlFor({}, ''), '')
 
 console.log('pm-registration: all checks passed')

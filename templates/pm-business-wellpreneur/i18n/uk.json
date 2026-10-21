@@ -295,7 +295,19 @@
   "Direkt registrieren": "Зареєструйся одразу",
   "Bitte deinen Vornamen eingeben.": "Будь ласка, введи своє ім’я.",
   "Bitte eine gültige Nummer mit Ländervorwahl eingeben.": "Будь ласка, введи дійсний номер із кодом країни.",
-  "Die Teampartner-Nummer besteht nur aus Ziffern.": "Номер тім-партнера складається лише з цифр."
+  "Die Teampartner-Nummer besteht nur aus Ziffern.": "Номер тім-партнера складається лише з цифр.",
+  "Melde dich bei mir": "Зв’яжися зі мною",
+  "Meldet euch bei uns": "Зв’яжіться з нами",
+  "3 kurze Fragen, dann melde ich mich per Telefon oder WhatsApp": "3 короткі запитання — і я зв’яжуся з тобою телефоном або в WhatsApp",
+  "3 kurze Fragen, dann melden wir uns per Telefon oder WhatsApp": "3 короткі запитання — і ми зв’яжемося з вами телефоном або в WhatsApp",
+  "Oder schreib mir auf": "Або напиши мені в",
+  "Oder schreib uns auf": "Або напишіть нам у",
+  "Mein YouTube-Kanal": "Мій YouTube-канал",
+  "YouTube-Kanal": "YouTube-канал",
+  "Direkt loslegen": "Почати одразу",
+  "Gespräch vereinbaren": "Домовитися про дзвінок",
+  "Schreib mir auf": "Напиши мені в",
+  "Schreib uns auf": "Напишіть нам у"
  },
  "attrs": {
   "Alleinerziehende": "Батьки-одинаки",

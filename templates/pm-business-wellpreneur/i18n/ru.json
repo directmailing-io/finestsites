@@ -295,7 +295,19 @@
   "Direkt registrieren": "Зарегистрироваться сразу",
   "Bitte deinen Vornamen eingeben.": "Пожалуйста, введи своё имя.",
   "Bitte eine gültige Nummer mit Ländervorwahl eingeben.": "Пожалуйста, введи корректный номер с кодом страны.",
-  "Die Teampartner-Nummer besteht nur aus Ziffern.": "Номер тим-партнёра состоит только из цифр."
+  "Die Teampartner-Nummer besteht nur aus Ziffern.": "Номер тим-партнёра состоит только из цифр.",
+  "Melde dich bei mir": "Свяжись со мной",
+  "Meldet euch bei uns": "Свяжитесь с нами",
+  "3 kurze Fragen, dann melde ich mich per Telefon oder WhatsApp": "3 коротких вопроса — и я свяжусь с тобой по телефону или в WhatsApp",
+  "3 kurze Fragen, dann melden wir uns per Telefon oder WhatsApp": "3 коротких вопроса — и мы свяжемся с тобой по телефону или в WhatsApp",
+  "Oder schreib mir auf": "Или напиши мне в",
+  "Oder schreib uns auf": "Или напиши нам в",
+  "Mein YouTube-Kanal": "Мой YouTube-канал",
+  "YouTube-Kanal": "YouTube-канал",
+  "Direkt loslegen": "Начать",
+  "Gespräch vereinbaren": "Договориться о созвоне",
+  "Schreib mir auf": "Напиши мне в",
+  "Schreib uns auf": "Напиши нам в"
  },
  "attrs": {
   "Alleinerziehende": "Родители-одиночки",

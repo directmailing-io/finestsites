@@ -1478,5 +1478,65 @@
   "id": 295,
   "de": "Die Teampartner-Nummer besteht nur aus Ziffern.",
   "en": "The team partner number consists of digits only."
+ },
+ {
+  "id": 296,
+  "de": "Melde dich bei mir",
+  "en": "Get in touch with me"
+ },
+ {
+  "id": 297,
+  "de": "Meldet euch bei uns",
+  "en": "Get in touch with us"
+ },
+ {
+  "id": 298,
+  "de": "3 kurze Fragen, dann melde ich mich per Telefon oder WhatsApp",
+  "en": "3 quick questions, then I’ll get back to you by phone or WhatsApp"
+ },
+ {
+  "id": 299,
+  "de": "3 kurze Fragen, dann melden wir uns per Telefon oder WhatsApp",
+  "en": "3 quick questions, then we’ll get back to you by phone or WhatsApp"
+ },
+ {
+  "id": 300,
+  "de": "Oder schreib mir auf",
+  "en": "Or message me on"
+ },
+ {
+  "id": 301,
+  "de": "Oder schreib uns auf",
+  "en": "Or message us on"
+ },
+ {
+  "id": 302,
+  "de": "Mein YouTube-Kanal",
+  "en": "My YouTube channel"
+ },
+ {
+  "id": 303,
+  "de": "YouTube-Kanal",
+  "en": "YouTube channel"
+ },
+ {
+  "id": 304,
+  "de": "Direkt loslegen",
+  "en": "Get started"
+ },
+ {
+  "id": 305,
+  "de": "Gespräch vereinbaren",
+  "en": "Book a call"
+ },
+ {
+  "id": 306,
+  "de": "Schreib mir auf",
+  "en": "Message me on"
+ },
+ {
+  "id": 307,
+  "de": "Schreib uns auf",
+  "en": "Message us on"
  }
 ]
