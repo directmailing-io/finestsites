@@ -122,7 +122,7 @@ export const AppWebView = forwardRef<AppWebViewHandle, { next: string; onBridge:
         setSupportMultipleWindows={false}
         javaScriptCanOpenWindowsAutomatically={false}
         allowFileAccess={false}
-        originWhitelist={['https://*', 'about:*', 'data:*', 'blob:*']}
+        originWhitelist={ORIGIN_WHITELIST}
         decelerationRate="normal"
         pullToRefreshEnabled={false}
         textZoom={100}
@@ -135,6 +135,9 @@ export const AppWebView = forwardRef<AppWebViewHandle, { next: string; onBridge:
     </View>
   );
 });
+
+// Eigener Server (lokal http://localhost:…) + https; alles andere entscheidet onShouldStart
+const ORIGIN_WHITELIST = Array.from(new Set([`${new URL(API_BASE).origin}*`, 'https://*', 'about:*', 'data:*', 'blob:*']));
 
 const styles = StyleSheet.create({
   flex: { flex: 1, backgroundColor: colors.background },
