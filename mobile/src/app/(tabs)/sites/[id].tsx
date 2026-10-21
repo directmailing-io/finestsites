@@ -7,13 +7,13 @@ import { Alert, StyleSheet, View, type HostInstance } from 'react-native';
 
 import { humanError } from '@/api/client';
 import { deleteSite, getSite, unpublishSite } from '@/api/endpoints';
-import { qk, useDomain } from '@/api/queries';
+import { qk, useOverview } from '@/api/queries';
 import type { Site } from '@/api/types';
 import { Button, Card, EmptyState, ListRow, ListSection, Pill, Screen, Skeleton, Text, useToast } from '@/components/ui';
 import { QrSheet } from '@/features/sites/QrSheet';
 import { STATUS_META } from '@/features/sites/SiteCard';
 import { useLayout } from '@/lib/layout';
-import { openInBrowser, siteUrlOf } from '@/lib/links';
+import { assetUrl, openInBrowser, siteUrlOf } from '@/lib/links';
 import { shareLink } from '@/lib/share';
 import { colors, radius } from '@/theme/tokens';
 
@@ -26,7 +26,10 @@ export default function SiteDetailScreen() {
   const cached = qc.getQueryData<Site[]>(qk.sites)?.find(s => s.id === id);
   const site = useQuery({ queryKey: qk.site(id), queryFn: () => getSite(id), initialData: cached });
   const s = site.data;
-  const domain = useDomain(id, s?.status === 'published');
+  // Besucher, ungelesene Anfragen und Domain-Status kommen aus der Übersicht (/api/app/v1/overview)
+  const card = useOverview().data?.sites.find(c => c.id === id);
+  const domain = card?.domain ?? null;
+  const unread = card?.unreadSubmissions ?? s?.unread_submissions ?? 0;
   const shareRef = useRef<HostInstance>(null);
   const [qrOpen, setQrOpen] = useState(false);
 
@@ -63,7 +66,7 @@ export default function SiteDetailScreen() {
   const meta = STATUS_META[s.status];
   const { display, hasCustom, url } = siteUrlOf(s);
   const title = s.templates?.title ?? 'Meine Webseite';
-  const preview = s.templates?.preview_images?.[0];
+  const preview = assetUrl(s.templates?.preview_images?.[0] ?? card?.thumbnailUrl);
   const isDraft = s.status === 'draft';
 
   return (
@@ -121,14 +124,14 @@ export default function SiteDetailScreen() {
         <ListRow
           icon={Inbox}
           title="Anfragen"
-          value={(s.unread_submissions ?? 0) > 0 ? `${s.unread_submissions} neu` : undefined}
+          value={unread > 0 ? `${unread} neu` : undefined}
           onPress={() => router.navigate({ pathname: '/inbox', params: { site: id } })}
         />
         <ListRow
           icon={BarChart3}
           title="Besucher"
           subtitle="Letzte 7 Tage"
-          value={s.status === 'published' ? (s.visitors_7d ?? 0).toLocaleString('de-DE') : '–'}
+          value={s.status === 'published' ? (card?.visitors7d ?? 0).toLocaleString('de-DE') : '–'}
         />
       </ListSection>
 
@@ -136,23 +139,23 @@ export default function SiteDetailScreen() {
         <ListSection
           title="Adresse"
           footer={
-            domain.data?.status === 'active'
+            domain?.status === 'active'
               ? undefined
               : 'Eine eigene Domain richtest du im Editor unter „Eigene Domain“ ein.'
           }>
           <ListRow icon={Globe} title="FinestSites-Adresse" subtitle={s.username && s.templates ? `${s.username}.${s.templates.domain}` : '–'} />
           <ListRow
             icon={Globe}
-            iconBg={domain.data?.status === 'active' ? colors.successSoft : colors.muted}
-            iconColor={domain.data?.status === 'active' ? colors.success : colors.ink}
+            iconBg={domain?.status === 'active' ? colors.successSoft : colors.muted}
+            iconColor={domain?.status === 'active' ? colors.success : colors.ink}
             title="Eigene Domain"
-            subtitle={domain.data?.domain ?? 'Keine eigene Domain verbunden'}
+            subtitle={domain?.name ?? 'Keine eigene Domain verbunden'}
             right={
-              domain.data?.status === 'active' ? (
+              domain?.status === 'active' ? (
                 <Pill label="Verbunden" tone="online" />
-              ) : domain.data?.status === 'pending' ? (
+              ) : domain?.status === 'pending' ? (
                 <Pill label="Wird verbunden" tone="changes" />
-              ) : domain.data?.status === 'error' ? (
+              ) : domain?.status === 'error' ? (
                 <Pill label="Prüfen" tone="offline" />
               ) : undefined
             }

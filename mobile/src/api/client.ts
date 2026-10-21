@@ -16,10 +16,13 @@ import type { ApiErrorBody } from './types';
 export class ApiError extends Error {
   status: number;
   code: string | null;
+  /** Feld → Hinweis (VALIDATION_FAILED der App-Routen), sonst null. */
+  fields: Record<string, string> | null;
   constructor(status: number, body: ApiErrorBody | null) {
     super(body?.message ?? body?.error ?? `HTTP ${status}`);
     this.status = status;
     this.code = body?.code ?? null;
+    this.fields = body?.fields ?? null;
   }
 }
 
@@ -31,6 +34,7 @@ export class NetworkError extends Error {
 
 let bearerToken: string | null = null;
 let onUnauthorized: (() => void) | null = null;
+let onTokenRotated: ((token: string) => void) | null = null;
 
 export function setBearerToken(token: string | null) {
   bearerToken = token;
@@ -40,6 +44,10 @@ export function getBearerToken() {
 }
 export function setUnauthorizedHandler(fn: (() => void) | null) {
   onUnauthorized = fn;
+}
+/** BetterAuth kann bei Anmelde-Routen ein neues Token im Header `set-auth-token` liefern. */
+export function setTokenRotatedHandler(fn: ((token: string) => void) | null) {
+  onTokenRotated = fn;
 }
 
 export interface RequestOptions {
@@ -91,13 +99,19 @@ export async function rawRequest(path: string, opts: RequestOptions = {}): Promi
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), opts.timeoutMs ?? 15000);
   try {
-    return await fetch(url, {
+    const res = await fetch(url, {
       method: opts.method ?? 'GET',
       headers,
       body,
       credentials: 'omit',
       signal: controller.signal,
     });
+    const rotated = res.headers.get('set-auth-token');
+    if (rotated && bearerToken && rotated !== bearerToken && !opts.skipAuthHandling) {
+      bearerToken = rotated;
+      onTokenRotated?.(rotated);
+    }
+    return res;
   } catch (err) {
     throw new NetworkError(err instanceof Error && err.name === 'AbortError');
   } finally {

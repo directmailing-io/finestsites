@@ -34,6 +34,12 @@ export type AppBridgeMessage =
   | { type: 'auth-required' }
   | { type: 'dirty'; value: boolean; unpublished?: boolean }
 
+// Typ-Abgleich mit dem App-Vertrag (src/lib/contracts/app-v1/bridge.ts): bricht den Build, sobald
+// beide auseinanderlaufen. Nur Typen, nichts davon landet im ausgelieferten Code.
+type BridgeEquals<A, B> = (<T>() => T extends A ? 1 : 2) extends (<T>() => T extends B ? 1 : 2) ? true : false
+type BridgeAssert<T extends true> = T
+export type _AppBridgeContractCheck = BridgeAssert<BridgeEquals<AppBridgeMessage, import('@/lib/contracts/app-v1/bridge').AppBridgeMessage>>
+
 type RNWebViewWindow = Window & { ReactNativeWebView?: { postMessage: (msg: string) => void } }
 
 /** true, wenn die native Brücke vorhanden ist (also wirklich in der App-WebView). */

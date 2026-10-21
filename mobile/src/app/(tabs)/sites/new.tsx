@@ -12,7 +12,7 @@ import type { Template } from '@/api/types';
 import { Button, Card, EmptyState, LoadError, PageHeader, Pill, Screen, Skeleton, Text, useToast } from '@/components/ui';
 import { API_BASE } from '@/lib/config';
 import { useLayout } from '@/lib/layout';
-import { openInBrowser } from '@/lib/links';
+import { assetUrl, openInBrowser } from '@/lib/links';
 import { colors, fonts, radius } from '@/theme/tokens';
 
 /**
@@ -66,7 +66,7 @@ export default function NewSiteScreen() {
           {list.map(tpl => {
             const existing = siteMap[tpl.id];
             const isDraft = existing?.status === 'draft';
-            const preview = tpl.preview_images?.[0];
+            const preview = assetUrl(tpl.preview_images?.[0]);
             return (
               <View key={tpl.id} style={columns > 1 ? { width: columns === 3 ? '31.5%' : '48.5%' } : undefined}>
                 <Card padded={false} style={{ overflow: 'hidden', flex: 1 }}>

@@ -24,7 +24,7 @@ export default function EmailsScreen() {
   const me = useMe();
   const [optOut, setOptOut] = useState<EmailCategoryKey[] | null>(null);
   useEffect(() => {
-    if (me.data) setOptOut(me.data.email_opt_out);
+    if (me.data) setOptOut(me.data.emailOptOut);
   }, [me.data]);
 
   async function toggle(key: EmailCategoryKey, on: boolean) {

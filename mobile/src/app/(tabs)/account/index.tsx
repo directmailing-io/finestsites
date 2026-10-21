@@ -22,9 +22,10 @@ export default function AccountScreen() {
   useEffect(() => void biometricKind().then(setBio), []);
 
   const u = me.data;
-  const partnerVisible = !!u?.features.affiliate && !config.data?.kill_switches.affiliate;
-  const fullName = [u?.first_name, u?.last_name].filter(Boolean).join(' ');
-  const plan = u?.plan_label;
+  // Partnerprogramm nur, wenn das Konto teilnehmen darf UND der Bereich nicht per Notschalter aus ist
+  const partnerVisible = !!u?.features.partnerProgram && config.data?.features.partnerProgram !== false;
+  const fullName = [u?.user.firstName, u?.user.lastName].filter(Boolean).join(' ');
+  const plan = u?.account.planLabel ? { name: u.account.planLabel, quota: u.account.quota } : null;
 
   return (
     <Screen topInset readable refreshing={me.isRefetching} onRefresh={() => void me.refetch()}>
@@ -36,20 +37,22 @@ export default function AccountScreen() {
         <Skeleton height={110} radius={radius.card} />
       ) : (
         <Card tone="plain" style={styles.profile}>
-          <ProfilePhoto url={u.profile_image_url} size={64} />
+          <ProfilePhoto url={u.user.profileImageUrl} size={64} />
           <View style={{ flex: 1, gap: 2 }}>
-            <Text variant="headline">{fullName || `@${u.username ?? ''}`}</Text>
-            <Text variant="callout">{u.email}</Text>
-            {u.username && <Text variant="callout">@{u.username}</Text>}
+            <Text variant="headline">{fullName || `@${u.user.username ?? ''}`}</Text>
+            <Text variant="callout">{u.user.email}</Text>
+            {u.user.username && <Text variant="callout">@{u.user.username}</Text>}
           </View>
         </Card>
       )}
 
       {plan && (
-        <View style={styles.plan} accessibilityLabel={`Tarif ${plan.name}, ${plan.sites_used} von ${plan.sites_limit ?? 'beliebig vielen'} Webseiten`}>
+        <View
+          style={styles.plan}
+          accessibilityLabel={`Tarif ${plan.name}${plan.quota ? `, ${plan.quota.used} von ${plan.quota.limit ?? 'beliebig vielen'} Webseiten` : ''}`}>
           <Text variant="callout" color={colors.body}>
-            Tarif: {plan.name} · {plan.sites_used}
-            {plan.sites_limit ? ` von ${plan.sites_limit}` : ''} Webseiten
+            Tarif: {plan.name}
+            {plan.quota ? ` · ${plan.quota.used}${plan.quota.limit ? ` von ${plan.quota.limit}` : ''} Webseiten` : ''}
           </Text>
         </View>
       )}
@@ -58,7 +61,7 @@ export default function AccountScreen() {
         <ListRow
           icon={UserRound}
           title="Mein Profil"
-          subtitle={u?.team_partner_number ? `Teampartner-Nummer ${u.team_partner_number}` : 'Foto, Name, Kontakt, Teampartner-Nummer'}
+          subtitle={u?.user.teamPartnerNumber ? `Teampartner-Nummer ${u.user.teamPartnerNumber}` : 'Foto, Name, Kontakt, Teampartner-Nummer'}
           onPress={() => router.push('/account/profile')}
         />
         {partnerVisible ? (

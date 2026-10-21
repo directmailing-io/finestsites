@@ -20,7 +20,7 @@ export default function TeamPartnerStep() {
     await setCompany().catch(() => {});
     if (value.trim()) await updateProfile({ team_partner_number: value.trim() }).catch(() => {});
     const me = await qc.fetchQuery({ queryKey: qk.me, queryFn: getMe, staleTime: 0 }).catch(() => null);
-    router.replace(me ? nextStep({ ...me, onboarding: { ...me.onboarding, offer_team_partner: false } }, 'team-partner') : '/start');
+    router.replace(me ? nextStep(me, 'team-partner') : '/start');
     setLoading(false);
   }
 

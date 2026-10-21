@@ -59,13 +59,17 @@ export default function EditorScreen() {
 
   const onBridge = (m: BridgeMessage) => {
     switch (m.type) {
+      case 'dirty':
+        setDirty(m.value);
+        break;
       case 'save-state':
-        setDirty(m.dirty);
+        if (m.state === 'saved') setDirty(false);
+        if (m.state === 'error') toast.show('Speichern hat nicht geklappt. Bitte prüfe deine Verbindung.', 'error');
         break;
       case 'published':
         setDirty(false);
         refreshData();
-        router.replace({ pathname: '/published', params: { siteId: m.siteId || id, url: m.url ?? '', first: m.first ? '1' : '0' } });
+        router.replace({ pathname: '/published', params: { siteId: m.siteId || id, url: m.url, first: m.firstTime ? '1' : '0' } });
         break;
       case 'publish-blocked': {
         const t = publishBlockedText(m.code);
@@ -82,10 +86,10 @@ export default function EditorScreen() {
         break;
       }
       case 'share':
-        void shareLink(m.url, doneRef, m.title);
+        void shareLink(m.url, doneRef);
         break;
       case 'qr':
-        setQr({ url: m.url, title: m.title ?? 'Meine Seite' });
+        setQr({ url: m.url, title: 'Meine Seite' });
         break;
       case 'open-url':
         if (/^https:\/\//.test(m.url)) void openInBrowser(m.url);
@@ -93,9 +97,6 @@ export default function EditorScreen() {
       case 'auth-required':
         toast.show('Bitte melde dich erneut an.', 'error');
         void signOut('expired');
-        break;
-      case 'close':
-        close();
         break;
     }
   };

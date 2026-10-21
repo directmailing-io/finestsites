@@ -8,6 +8,8 @@
  *   unbestaetigt@… → E-Mail noch nicht bestätigt
  *   Passwort „falsch“ → falsches Passwort
  */
+import type { Overview, Site, Todo } from '../types';
+
 import { createMockDb, type MockDb } from './data';
 
 let db: MockDb = createMockDb();
@@ -30,27 +32,62 @@ function parseBody(body: BodyInit | undefined): Record<string, unknown> {
   return {};
 }
 
-function overview() {
-  const online = db.sites.filter(s => s.status === 'published').length;
-  const offline = db.sites.filter(s => s.status === 'deactivated').length;
-  const unreadSubs = db.submissions.filter(s => !s.read_at && !s.archived_at).length;
+const ZERO = { pageviews: 0, contacts: 0, leads: 0 };
+
+/** Gleiche Form wie GET /api/app/v1/overview (OverviewResponse). */
+function overview(): Overview {
+  const live = db.sites.filter(s => s.status !== 'deleted');
+  const status = (s: Site) => (s.status === 'published' ? 'online' : s.status === 'deactivated' ? 'offline' : 'draft') as 'online' | 'offline' | 'draft';
+  const cards = live.map(s => {
+    const domain = s.custom_domain
+      ? { name: s.custom_domain, status: (s.custom_domain_status === 'active' ? 'active' : s.custom_domain_status === 'error' ? 'error' : 'pending') as 'active' | 'pending' | 'error' }
+      : null;
+    return {
+      id: s.id,
+      title: s.templates?.title ?? 'Meine Webseite',
+      status: status(s),
+      url: domain?.status === 'active' ? `https://${domain.name}` : db.me.user.username && s.templates ? `https://${db.me.user.username}.${s.templates.domain}` : null,
+      domain,
+      thumbnailUrl: s.templates?.preview_images?.[0] ?? null,
+      unreadSubmissions: db.submissions.filter(x => x.user_site_id === s.id && !x.read_at && !x.archived_at).length,
+      visitors7d: db.visitors[s.id] ?? 0,
+      hasUnpublishedChanges: !!s.has_unpublished_changes,
+      publishedAt: s.published_at,
+      updatedAt: s.updated_at,
+    };
+  });
+  const online = cards.filter(c => c.status === 'online').length;
+  const offline = cards.filter(c => c.status === 'offline').length;
+  const unreadSubs = cards.reduce((n, c) => n + c.unreadSubmissions, 0);
   const unreadSupport = db.conversations.reduce((n, c) => n + c.unreadByUser, 0);
-  const todos = [] as { id: string; code: string; count?: number; site_id?: string; site_title?: string }[];
-  if (db.sites.length === 0) todos.push({ id: 'first', code: 'first_site' });
-  if (unreadSubs > 0) todos.push({ id: 'subs', code: 'unread_submissions', count: unreadSubs });
-  if (unreadSupport > 0) todos.push({ id: 'support', code: 'support_reply', count: unreadSupport });
-  for (const s of db.sites.filter(x => x.has_unpublished_changes)) {
-    todos.push({ id: `chg_${s.id}`, code: 'unpublished_changes', site_id: s.id, site_title: s.templates?.title });
+  const todos: Todo[] = [];
+  if (cards.length === 0) todos.push({ id: 'first_site', code: 'first_site' });
+  if (unreadSubs > 0) todos.push({ id: 'unread_submissions', code: 'unread_submissions', count: unreadSubs });
+  if (unreadSupport > 0) todos.push({ id: 'support_reply', code: 'support_reply', count: unreadSupport });
+  for (const c of cards) {
+    if (c.status === 'online' && c.hasUnpublishedChanges) todos.push({ id: `unpublished_changes:${c.id}`, code: 'unpublished_changes', siteId: c.id, siteTitle: c.title });
+    if (c.domain?.status === 'pending') todos.push({ id: `domain_pending:${c.id}`, code: 'domain_pending', siteId: c.id, siteTitle: c.title });
   }
-  if (!db.me.team_partner_number) todos.push({ id: 'tpn', code: 'team_partner_missing' });
-  if (db.me.features.affiliate && !db.affiliate.tax_profile.complete) todos.push({ id: 'tax', code: 'tax_profile_missing' });
-  const code = db.sites.length === 0 ? 'no_sites' : offline > 0 ? 'site_offline' : online === 0 ? 'drafts_only' : 'ok';
+  if (!db.me.user.teamPartnerNumber) todos.push({ id: 'team_partner_missing', code: 'team_partner_missing' });
+  if (db.me.features.partnerProgram && !db.taxProfile.complete) todos.push({ id: 'tax_profile_missing', code: 'tax_profile_missing' });
+  const code = cards.length === 0 ? 'no_sites' : offline > 0 ? 'site_offline' : online === 0 ? 'drafts_only' : 'ok';
+  const w = db.week;
   return {
-    account_status: { code, online_count: online, offline_count: offline },
+    sites: cards,
+    unread: { submissions: unreadSubs, support: unreadSupport, notifications: db.notifications.filter(n => !n.readAt).length },
+    stats: {
+      last7: { visitors: w.visitors, submissions: w.submissions, ...ZERO },
+      prev7: { visitors: w.visitorsPrev, submissions: w.submissionsPrev, ...ZERO },
+      last30: { visitors: w.visitors * 4, submissions: w.submissions * 4, ...ZERO },
+    },
+    accountStatus: { code, online, offline },
     todos,
-    week: db.week,
-    unread: { submissions: unreadSubs, support: unreadSupport, notifications: db.notifications.filter(n => !n.read_at).length },
   };
+}
+
+function syncMeAccount() {
+  db.me.account.sitesTotal = db.sites.filter(s => s.status !== 'deleted').length;
+  db.me.account.sitesOnline = db.sites.filter(s => s.status === 'published').length;
 }
 
 export async function mockFetch(url: string, init: { method: string; headers: Record<string, string>; body?: BodyInit }) {
@@ -68,24 +105,26 @@ export async function mockFetch(url: string, init: { method: string; headers: Re
     if (String(body.password) === 'falsch') return json({ code: 'INVALID_EMAIL_OR_PASSWORD' }, 401);
     if (email.startsWith('unbestaetigt')) return json({ code: 'EMAIL_NOT_VERIFIED' }, 403);
     db = createMockDb();
-    db.me.email = email || db.me.email;
+    db.me.user.email = email || db.me.user.email;
     if (email.startsWith('neu')) {
-      db.me.username = null;
-      db.me.first_name = null;
-      db.me.last_name = null;
-      db.me.team_partner_number = null;
-      db.me.plan_label = null;
-      db.me.features.affiliate = false;
-      db.me.onboarding = { needs_username: true, needs_consent: true, offer_team_partner: true, offer_photo: true };
+      db.me.user.username = null;
+      db.me.user.firstName = null;
+      db.me.user.lastName = null;
+      db.me.user.teamPartnerNumber = null;
+      db.me.account = { sitesOnline: 0, sitesTotal: 0, paymentIssue: false, planLabel: null, quota: null };
+      db.me.features.partnerProgram = false;
+      db.me.onboarding = { usernameSet: false, consentGiven: false, complete: false };
       db.sites = [];
       db.submissions = [];
       db.conversations = [];
       db.notifications = [];
     }
     if (email.startsWith('ohne-tarif')) {
-      db.me.plan_label = null;
-      db.me.features.affiliate = false;
+      db.me.account.planLabel = null;
+      db.me.account.quota = null;
+      db.me.features.partnerProgram = false;
       db.sites = db.sites.filter(s => s.status === 'draft');
+      syncMeAccount();
     }
     return json({ token: 'mock-session-token' }, 200, { 'set-auth-token': 'mock-session-token' });
   }
@@ -101,46 +140,85 @@ export async function mockFetch(url: string, init: { method: string; headers: Re
   if (path === '/api/auth/one-time-token/generate') return json({ token: 'mock-ott' });
 
   if (path === '/api/app/v1/config') {
-    return json({ min_version: '1.0.0', latest_version: '1.0.0', kill_switches: {}, support_hours: { start: 8, end: 20 } });
+    return json({
+      apiVersion: 1,
+      platforms: { ios: { minSupported: '1.0.0', latest: '1.0.0' }, android: { minSupported: '1.0.0', latest: '1.0.0' } },
+      features: { partnerProgram: true, push: true, editor: true, support: true, submissions: true },
+      maintenance: { active: false, message: null },
+      links: { privacy: 'https://finestsites.io/datenschutz', terms: 'https://finestsites.io/agb', imprint: 'https://finestsites.io/impressum' },
+      serverTime: new Date().toISOString(),
+    });
   }
 
   if (!authed) return json({ error: 'Unauthorized' }, 401);
 
   // ── App v1 ──
-  if (path === '/api/app/v1/me') return json(db.me);
-  if (path === '/api/app/v1/overview') return json(overview());
-  if (path === '/api/app/v1/notifications') return json({ items: db.notifications });
-  if (path === '/api/app/v1/notifications/read') {
-    const ids = body.ids;
-    db.notifications = db.notifications.map(n =>
-      ids === 'all' || (Array.isArray(ids) && ids.includes(n.id)) ? { ...n, read_at: n.read_at ?? new Date().toISOString() } : n,
-    );
-    return json({ ok: true });
+  if (path === '/api/app/v1/me') {
+    syncMeAccount();
+    return json(db.me);
   }
-  if (path === '/api/app/v1/push/devices') return json({ ok: true });
+  if (path === '/api/app/v1/overview') return json(overview());
+  if (path === '/api/app/v1/notifications') {
+    return json({ items: db.notifications, unreadCount: db.notifications.filter(n => !n.readAt).length, nextCursor: null });
+  }
+  if (path === '/api/app/v1/notifications/read') {
+    const ids = Array.isArray(body.ids) ? (body.ids as string[]) : null;
+    let updated = 0;
+    db.notifications = db.notifications.map(n => {
+      if (n.readAt || (ids && !ids.includes(n.id)) || (!ids && body.all !== true)) return n;
+      updated++;
+      return { ...n, readAt: new Date().toISOString() };
+    });
+    return json({ updated, unreadCount: db.notifications.filter(n => !n.readAt).length });
+  }
+  if (path === '/api/app/v1/push/devices') {
+    return method === 'DELETE' ? json({ ok: true }) : json({ id: 'd_mock', platform: 'ios', enabled: true }, method === 'POST' ? 201 : 200);
+  }
   if (path === '/api/app/v1/notification-preferences') {
-    if (method === 'PUT') db.notificationPrefs = body as unknown as MockDb['notificationPrefs'];
+    if (method === 'PUT') {
+      const b = body as Partial<MockDb['notificationPrefs']>;
+      db.notificationPrefs = { ...db.notificationPrefs, ...b, quietHours: { ...db.notificationPrefs.quietHours, ...(b.quietHours ?? {}) } };
+    }
     return json(db.notificationPrefs);
   }
-  if (path === '/api/app/v1/affiliate') {
-    if (!db.me.features.affiliate) return json({ ...db.affiliate, eligible: false });
-    return json(db.affiliate);
+  if (seg[0] === 'api' && seg[1] === 'app' && seg[3] === 'affiliate' && !db.me.features.partnerProgram) {
+    return json({ code: 'AFFILIATE_NOT_AVAILABLE', message: 'Dieser Bereich ist für dein Konto nicht verfügbar.' }, 403);
   }
+  if (path === '/api/app/v1/affiliate') return json({ ...db.affiliate, taxProfileComplete: db.taxProfile.complete });
   if (path === '/api/app/v1/affiliate/payout-mode') {
-    db.affiliate.payout_mode = body.mode === 'credit' ? 'credit' : 'payout';
-    return json({ ok: true });
+    if (method === 'PUT') db.affiliate.payout.mode = body.mode === 'credit' ? 'credit' : 'payout';
+    return json({ mode: db.affiliate.payout.mode, canChange: true, connectStatus: db.affiliate.payout.connectStatus });
   }
   if (path === '/api/app/v1/affiliate/tax-profile') {
-    db.affiliate.tax_profile = { complete: true, data: { ...(body as unknown as MockDb['affiliate']['tax_profile']['data'] & object), consent_at: new Date().toISOString() } };
-    return json({ complete: true });
+    if (method === 'PUT') {
+      const b = body as Record<string, unknown>;
+      const fields: Record<string, string> = {};
+      if (b.taxStatus !== 'kleinunternehmer' && b.taxStatus !== 'regelbesteuert') fields.taxStatus = 'Bitte wähle aus, was auf dich zutrifft.';
+      if (!/^\d{5}$/.test(String(b.zip ?? ''))) fields.zip = 'Die Postleitzahl hat 5 Ziffern.';
+      if (b.consent !== true) fields.consent = 'Bitte setze den Haken beim Einverständnis.';
+      if (Object.keys(fields).length) return json({ code: 'VALIDATION_FAILED', message: 'Bitte prüfe deine Angaben.', fields }, 400);
+      const now = new Date().toISOString();
+      db.taxProfile = {
+        profile: {
+          taxStatus: b.taxStatus as 'kleinunternehmer' | 'regelbesteuert', fullName: String(b.fullName), street: String(b.street), zip: String(b.zip),
+          city: String(b.city), country: 'DE', taxId: String(b.taxId), entrepreneurConfirmed: true, consentAt: now, consentVersion: '2026-10-16', updatedAt: now,
+        },
+        complete: true,
+      };
+    }
+    return json(db.taxProfile);
   }
-  if (path === '/api/app/v1/affiliate/connect') return json({ url: 'https://connect.stripe.com/setup/e/mock' });
+  if (path === '/api/app/v1/affiliate/connect') return json({ url: 'https://connect.stripe.com/setup/e/mock', callbackScheme: 'finestsites' });
   if (path === '/api/app/v1/affiliate/payout') {
-    const amount = db.affiliate.earnings.available_cents;
-    db.affiliate.earnings.paid_cents += amount;
-    db.affiliate.earnings.available_cents = 0;
-    db.affiliate.history = db.affiliate.history.map(h => (h.status === 'available' ? { ...h, status: 'paid' } : h));
-    return json({ amount_cents: amount });
+    const amount = db.affiliate.earnings.availableCents;
+    const min = db.affiliate.payout.minPayoutCents;
+    if (amount < min) return json({ status: 'below_minimum', amountCents: amount, minPayoutCents: min, creditNoteNumber: null });
+    db.affiliate.earnings.paidCents += amount;
+    db.affiliate.earnings.availableCents = 0;
+    db.affiliate.history.commissions = db.affiliate.history.commissions.map(h =>
+      h.status === 'available' ? { ...h, status: 'paid', paidAt: new Date().toISOString() } : h,
+    );
+    return json({ status: 'paid', amountCents: amount, minPayoutCents: min, creditNoteNumber: 'GS-2026-00099' });
   }
   if (path === '/api/app/v1/affiliate/credit-notes') return json({ items: db.creditNotes });
   if (path === '/api/app/v1/account/deletion') {
@@ -148,10 +226,21 @@ export async function mockFetch(url: string, init: { method: string; headers: Re
       if (String(body.password) === 'falsch') return json({ code: 'INVALID_PASSWORD' }, 400);
       return json({ scheduled_for: new Date(Date.now() + 14 * 864e5).toISOString() });
     }
-    return json({ partner_balance_cents: db.me.features.affiliate ? db.affiliate.earnings.available_cents + db.affiliate.earnings.pending_cents : 0, has_payout_account: true, scheduled_for: null });
+    return json({ partner_balance_cents: db.me.features.partnerProgram ? db.affiliate.earnings.availableCents + db.affiliate.earnings.pendingCents : 0, has_payout_account: true, scheduled_for: null });
   }
   if (path === '/api/app/v1/impersonation') {
-    return json({ state: db.impersonation.state, request: { token: db.impersonation.token } });
+    if (method === 'POST') {
+      if (body.token !== db.impersonation.token) return json({ code: 'NOT_FOUND', message: 'Nicht gefunden.' }, 404);
+      db.impersonation.status = body.action === 'approve' ? 'approved' : 'rejected';
+      return json({ status: db.impersonation.status });
+    }
+    const token = u.searchParams.get('token');
+    if (token && token !== db.impersonation.token) return json({ request: null });
+    const open = ['pending', 'approved', 'active'].includes(db.impersonation.status);
+    if (!token && !open) return json({ request: null });
+    return json({
+      request: { token: db.impersonation.token, status: db.impersonation.status, adminName: '@support', expiresAt: new Date(Date.now() + 30 * 60_000).toISOString() },
+    });
   }
 
   // ── Seiten ──
@@ -161,9 +250,10 @@ export async function mockFetch(url: string, init: { method: string; headers: Re
     const id = `s_${Math.random().toString(36).slice(2, 8)}`;
     db.sites.push({
       id, template_id: String(body.template_id), status: 'draft', created_at: new Date().toISOString(),
-      username: db.me.username, custom_domain: null, custom_domain_status: null, unread_submissions: 0,
-      has_unpublished_changes: false, visitors_7d: 0,
-      templates: tpl ? { title: tpl.title, domain: tpl.domain, preview_images: tpl.preview_images } : null,
+      published_at: null, updated_at: new Date().toISOString(),
+      username: db.me.user.username, custom_domain: null, custom_domain_status: null, unread_submissions: 0,
+      has_unpublished_changes: false,
+      templates: tpl ? { id: tpl.id, title: tpl.title, domain: tpl.domain, preview_images: tpl.preview_images } : null,
     });
     return json({ id });
   }
@@ -178,9 +268,6 @@ export async function mockFetch(url: string, init: { method: string; headers: Re
     if (seg[3] === 'publish' && method === 'DELETE') {
       site.status = 'deactivated';
       return json({ success: true });
-    }
-    if (seg[3] === 'domain') {
-      return json(site.custom_domain ? { domain: site.custom_domain, status: site.custom_domain_status === 'active' ? 'active' : 'pending' } : { domain: null, status: 'none' });
     }
     if (seg[3] === 'submissions' && seg[4]) {
       const sub = db.submissions.find(s => s.id === seg[4]);
@@ -250,44 +337,38 @@ export async function mockFetch(url: string, init: { method: string; headers: Re
     return json({ ok: true });
   }
   if (path === '/api/support/upload') return json({ url: 'https://app.finestsites.io/previews/business-seite.jpg' });
-  if (path === '/api/impersonate/approve') {
-    db.impersonation.state = 'approved' as never;
-    return json({ ok: true });
-  }
-  if (path === '/api/impersonate/reject') {
-    db.impersonation.state = 'rejected' as never;
-    return json({ ok: true });
-  }
 
   // ── Profil & Ersteinrichtung ──
   if (path === '/api/user/profile' && method === 'PATCH') {
     const b = body as Record<string, string>;
-    if ('first_name' in b) db.me.first_name = b.first_name;
-    if ('last_name' in b) db.me.last_name = b.last_name;
-    if ('company_name' in b) db.me.company_name = b.company_name;
-    if ('phone' in b) db.me.phone = b.phone;
-    if ('team_partner_number' in b) db.me.team_partner_number = b.team_partner_number || null;
-    if ('email_opt_out' in body) db.me.email_opt_out = body.email_opt_out as never;
+    if ('first_name' in b) db.me.user.firstName = b.first_name;
+    if ('last_name' in b) db.me.user.lastName = b.last_name;
+    if ('company_name' in b) db.me.user.companyName = b.company_name;
+    if ('phone' in b) db.me.user.phone = b.phone;
+    if ('team_partner_number' in b) db.me.user.teamPartnerNumber = b.team_partner_number || null;
+    if ('email_opt_out' in body) db.me.emailOptOut = body.email_opt_out as never;
     for (const k of ['instagram', 'tiktok', 'facebook', 'linkedin', 'youtube'] as const) {
-      if (k in b) db.me.socials[k] = b[k] || null;
+      if (k in b) db.me.user.socials[k] = b[k] || null;
     }
     return json({ ok: true });
   }
   if (path === '/api/user/profile/avatar') {
-    db.me.profile_image_url = 'https://app.finestsites.io/support-avatar.jpg';
-    return json({ url: db.me.profile_image_url });
+    db.me.user.profileImageUrl = 'https://app.finestsites.io/support-avatar.jpg';
+    return json({ url: db.me.user.profileImageUrl });
   }
   if (path === '/api/onboarding/set-username') {
     const name = String(body.username ?? '');
     if (name === 'vergeben') return json({ code: 'DUPLICATE' }, 409);
-    db.me.username = name;
-    db.me.first_name = String(body.first_name ?? '');
-    db.me.last_name = String(body.last_name ?? '');
-    db.me.onboarding.needs_username = false;
+    db.me.user.username = name;
+    db.me.user.firstName = String(body.first_name ?? '');
+    db.me.user.lastName = String(body.last_name ?? '');
+    db.me.onboarding.usernameSet = true;
+    db.me.onboarding.complete = db.me.onboarding.consentGiven;
     return json({ ok: true });
   }
   if (path === '/api/auth/consent') {
-    db.me.onboarding.needs_consent = false;
+    db.me.onboarding.consentGiven = true;
+    db.me.onboarding.complete = db.me.onboarding.usernameSet;
     return json({ ok: true });
   }
   if (path === '/api/onboarding/set-company') return json({ ok: true });

@@ -24,6 +24,7 @@ export async function loadProfile(userId: string) {
       teamPartnerNumber: true, profileImageUrl: true, emailVerified: true, isInternal: true, isAdmin: true,
       plan: true, subscriptionStatus: true, paymentFailedAt: true, paymentGraceUntil: true,
       paymentRetryProcessingAt: true, deactivatedAt: true, contentConsentAt: true,
+      phone: true, instagram: true, tiktok: true, facebook: true, linkedin: true, youtube: true, emailOptOut: true,
     },
   })
 }
@@ -37,6 +38,7 @@ export async function loadSites(userId: string) {
     updatedAt: userSites.updatedAt,
     customDomain: userSites.customDomain,
     customDomainStatus: userSites.customDomainStatus,
+    publishedData: userSites.publishedData,
     templateTitle: templates.title,
     templateDomain: templates.domain,
     templateIsFree: templates.isFree,

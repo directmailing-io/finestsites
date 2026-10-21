@@ -3,6 +3,15 @@ import * as WebBrowser from 'expo-web-browser';
 
 import { colors } from '@/theme/tokens';
 
+import { API_BASE } from './config';
+
+/** Bild-/Asset-Pfade vom Server (oft relativ, z. B. „/previews/x.jpg“) als volle Adresse. */
+export function assetUrl(path: string | null | undefined): string | null {
+  if (!path) return null;
+  if (/^https?:\/\//.test(path)) return path;
+  return path.startsWith('/') ? `${API_BASE}${path}` : null;
+}
+
 /**
  * Live-Kundenseiten, Rechtstexte, „Passwort vergessen“: immer im Safari-Fenster
  * (SFSafariViewController). Werbe-Pixel der Kundenseiten laufen so nicht in der App.

@@ -2,22 +2,21 @@ import { History } from 'lucide-react-native';
 import { StyleSheet, View } from 'react-native';
 
 import { useAffiliate } from '@/api/queries';
-import type { AffiliateHistoryItem } from '@/api/types';
+import type { CommissionStatus } from '@/api/types';
 import { EmptyState, Pill, Screen, Skeleton, Text, type PillTone } from '@/components/ui';
 import { euros, fmtDate } from '@/lib/format';
 import { colors, fonts, radius } from '@/theme/tokens';
 
-const STATUS: Record<AffiliateHistoryItem['status'], { label: string; tone: PillTone }> = {
+const STATUS: Record<CommissionStatus, { label: string; tone: PillTone }> = {
   pending: { label: 'Wartezeit 14 Tage', tone: 'warning' },
   available: { label: 'Verfügbar', tone: 'success' },
-  paid: { label: 'Ausgezahlt', tone: 'info' },
-  credited: { label: 'Verrechnet', tone: 'info' },
+  paid: { label: 'Erhalten', tone: 'info' },
   reversed: { label: 'Storniert', tone: 'neutral' },
 };
 
 export default function HistoryScreen() {
   const q = useAffiliate();
-  const items = q.data?.history ?? [];
+  const items = q.data?.history.commissions ?? [];
   return (
     <Screen readable refreshing={q.isRefetching} onRefresh={() => void q.refetch()}>
       {q.isLoading ? (
@@ -28,14 +27,14 @@ export default function HistoryScreen() {
         <View style={styles.group}>
           {items.map((h, i) => {
             const s = STATUS[h.status];
-            const negative = h.amount_cents < 0;
+            const negative = h.amountCents < 0;
             return (
               <View key={h.id} style={[styles.row, i > 0 && styles.border]}>
                 <View style={{ flex: 1, gap: 4 }}>
-                  <Text style={styles.amount}>{euros(h.amount_cents)}</Text>
+                  <Text style={styles.amount}>{euros(h.amountCents)}</Text>
                   <Text variant="callout">
-                    {fmtDate(h.date)}
-                    {h.status === 'pending' && h.available_at ? ` · verfügbar ab ${fmtDate(h.available_at)}` : ''}
+                    {fmtDate(h.createdAt)}
+                    {h.status === 'pending' ? ` · verfügbar ab ${fmtDate(h.availableAt)}` : ''}
                     {negative ? ' · wird mit neuen Provisionen verrechnet' : ''}
                   </Text>
                 </View>

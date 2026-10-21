@@ -22,7 +22,6 @@ export const qk = {
   overview: ['overview'] as const,
   sites: ['sites'] as const,
   site: (id: string) => ['sites', id] as const,
-  domain: (id: string) => ['sites', id, 'domain'] as const,
   templates: ['templates'] as const,
   submissions: (status: SubmissionStatus, search: string, siteId?: string) =>
     ['submissions', status, search, siteId ?? 'all'] as const,
@@ -34,6 +33,7 @@ export const qk = {
   notificationPrefs: ['notification-prefs'] as const,
   affiliate: ['affiliate'] as const,
   creditNotes: ['affiliate', 'credit-notes'] as const,
+  taxProfile: ['affiliate', 'tax-profile'] as const,
   deletion: ['account', 'deletion'] as const,
 };
 
@@ -41,8 +41,6 @@ export const useConfig = () => useQuery({ queryKey: qk.config, queryFn: ep.getCo
 export const useMe = (enabled = true) => useQuery({ queryKey: qk.me, queryFn: ep.getMe, enabled });
 export const useOverview = () => useQuery({ queryKey: qk.overview, queryFn: ep.getOverview, refetchInterval: 60_000 });
 export const useSites = () => useQuery({ queryKey: qk.sites, queryFn: ep.getSites });
-export const useDomain = (id: string, enabled: boolean) =>
-  useQuery({ queryKey: qk.domain(id), queryFn: () => ep.getDomain(id), enabled });
 export const useTemplates = () => useQuery({ queryKey: qk.templates, queryFn: ep.getTemplates, staleTime: 5 * 60_000 });
 
 export const useSubmissions = (status: SubmissionStatus, search: string, siteId?: string) =>
@@ -63,11 +61,12 @@ export const useMessages = (id: string | null) =>
     refetchInterval: 3_000,
   });
 
-export const useNotifications = () => useQuery({ queryKey: qk.notifications, queryFn: ep.getNotifications });
+export const useNotifications = () => useQuery({ queryKey: qk.notifications, queryFn: () => ep.getNotifications() });
 export const useNotificationPrefs = () =>
   useQuery({ queryKey: qk.notificationPrefs, queryFn: ep.getNotificationPreferences });
 export const useAffiliate = (enabled = true) => useQuery({ queryKey: qk.affiliate, queryFn: ep.getAffiliate, enabled });
 export const useCreditNotes = () => useQuery({ queryKey: qk.creditNotes, queryFn: ep.getCreditNotes });
+export const useTaxProfile = () => useQuery({ queryKey: qk.taxProfile, queryFn: ep.getTaxProfile });
 
 /** Anfrage lesen/archivieren/löschen: Liste, Zähler und Übersicht sofort aktualisieren. */
 export function useSubmissionActions() {
