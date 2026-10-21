@@ -18,7 +18,7 @@ import { FITLINE_SHOP_PRODUCTS, FITLINE_JOGHURT_KEYS, FITLINE_AUTO_LINK_RE, buil
 import { pmRegistrationUrlFor, resolvePartnerNumber, buildPmRegistrationUrl, normalizeCustomPmRegLink } from '@/lib/utils/pm-registration'
 import { BRAND_HEX_RE, BRAND_THEME_VALUE, SITE_COLOR_PREFIX } from '@/lib/color/brand-palette'
 import { useAppMode, useOpenExternal } from '@/components/app-mode/AppMode'
-import { postToApp, APP_PUBLISH_BLOCKED_TEXT } from '@/lib/app-mode/shared'
+import { postToApp, appHasCap, APP_PUBLISH_BLOCKED_TEXT } from '@/lib/app-mode/shared'
 
 // ─── Markenfarbe (Phase A, 14.10.2026): eine Farbe je Konto, Option „Meine Farbe“ im Farbthema ───
 // Nur Admin-Konten sehen die Option und dürfen die Farbe setzen; für alle anderen ist der Editor unverändert.
@@ -75,7 +75,6 @@ function OwnColorSheet({ siteId, current, start, onApply, onClose }: {
 }) {
   const [others, setOthers] = useState<{ hex: string; sites: { id: string; label: string }[] }[] | null>(null)
   const [picked, setPicked] = useState<string | null>(current)
-  const inputRef = useRef<HTMLInputElement>(null)
   useEffect(() => {
     fetch('/api/user/site-colors').then(r => r.json()).then((d: { colors?: { hex: string; sites: { id: string; label: string }[] }[] }) => {
       // Farben der ANDEREN Seiten (eigene wie Vorgaben), die aktuelle Seite zählt nicht mit; gleiche Farbe = eine Zeile
@@ -115,7 +114,10 @@ function OwnColorSheet({ siteId, current, start, onApply, onClose }: {
         <div className="flex flex-col gap-4 px-5 pb-3 overflow-y-auto" style={{ WebkitOverflowScrolling: 'touch' }}>
           <div className="flex flex-col gap-2">
             <div className="text-xs font-semibold uppercase tracking-wide" style={{ color: '#6B7280' }}>Eigene Farbe wählen</div>
-            <button type="button" onClick={() => inputRef.current?.click()} className="flex items-center gap-3 rounded-xl p-2.5 text-left" style={row(ownPicked)}>
+            {/* Der Geräte-Farbwähler liegt unsichtbar ÜBER der ganzen Zeile, damit der Finger ihn direkt trifft.
+                iPhone/iPad (Safari und App) öffnen die Farbauswahl nur bei einem echten Tippen auf das Feld,
+                nicht bei einem per Skript ausgelösten click() – so tat sich dort vorher nichts. */}
+            <div className="relative flex items-center gap-3 rounded-xl p-2.5 text-left" style={row(ownPicked)}>
               <span className="flex-shrink-0 rounded-lg flex items-center justify-center" style={{ width: 48, height: 48, background: ownPicked ? picked! : '#F3F4F6', border: '1px solid rgba(0,0,0,0.08)', color: '#1a1a1a' }}>
                 {!ownPicked && <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 3a9 9 0 1 0 0 18c1.5 0 2-1 2-2s-.5-2 1-2h2a3 3 0 0 0 3-3 9 9 0 0 0-8-11z"/><circle cx="7.5" cy="12" r="1.2"/><circle cx="10" cy="7.5" r="1.2"/><circle cx="15" cy="7.5" r="1.2"/></svg>}
               </span>
@@ -124,11 +126,13 @@ function OwnColorSheet({ siteId, current, start, onApply, onClose }: {
                 <span className="block text-xs" style={{ color: '#6B7280' }}>{ownPicked ? 'Zum Ändern nochmal antippen' : 'Öffnet die Farbauswahl'}</span>
               </span>
               {ownPicked && check}
-            </button>
-            {/* unsichtbarer Geräte-Farbwähler; startet bei der aktuellen Farbe der Seite, nie bei einer fremden */}
-            <input ref={inputRef} type="color" defaultValue={current ?? start} aria-label="Farbe wählen"
-              onChange={e => setPicked(e.target.value.toUpperCase())}
-              style={{ position: 'absolute', width: 1, height: 1, opacity: 0, pointerEvents: 'none' }} />
+              {/* startet bei der aktuellen Farbe der Seite, nie bei einer fremden */}
+              <input type="color" defaultValue={current ?? start} aria-label="Farbe aussuchen"
+                onInput={e => setPicked((e.target as HTMLInputElement).value.toUpperCase())}
+                onChange={e => setPicked(e.target.value.toUpperCase())}
+                className="absolute inset-0 w-full h-full cursor-pointer"
+                style={{ opacity: 0, border: 0, padding: 0, margin: 0, borderRadius: 12, WebkitAppearance: 'none', appearance: 'none' }} />
+            </div>
           </div>
 
           {others && others.length > 0 && (
@@ -321,6 +325,67 @@ function displayLabel(label: string): string {
   return label.replace(/^Sektion/g, 'Bereich')
 }
 
+
+/** Ein DNS-Eintrag (Typ, Name, Ziel). Breiter Platz: Tabelle wie bisher. Schmal (Handy, schmale
+ *  Editor-Spalte): untereinander, langer Zielwert bricht um, Kopieren-Knopf daneben – nie seitlich scrollen. */
+function DnsRecordTable({ type, name, value, typeWidth = 80, nameWidth = 100, copied, onCopy }: {
+  type: string; name: string; value: string; typeWidth?: number; nameWidth?: number; copied?: boolean; onCopy?: () => void
+}) {
+  const copyBtn = onCopy ? (
+    <button onClick={onCopy}
+      className="flex-shrink-0 flex items-center gap-1 text-xs px-2 py-1.5 rounded-[8px] font-medium transition-colors min-h-[32px]"
+      style={{ background: copied ? '#DCFCE7' : '#F3F4F6', color: copied ? '#16A34A' : '#374151' }}>
+      {copied ? (
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+      ) : (
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+      )}
+      {copied ? 'Kopiert!' : 'Kopieren'}
+    </button>
+  ) : null
+  const cols = `${typeWidth}px ${nameWidth}px 1fr`
+  const label = 'text-[11px] font-semibold uppercase tracking-wider'
+  return (
+    <div className="@container">
+      {/* breit: Tabelle */}
+      <div className="hidden @sm:block">
+        <div className="grid text-xs font-semibold uppercase tracking-wider px-3 py-2"
+          style={{ gridTemplateColumns: cols, background: '#F8FAFC', color: '#9CA3AF', borderBottom: '1px solid #E5E7EB' }}>
+          <span>Typ</span><span>Name</span><span>Ziel (Wert)</span>
+        </div>
+        <div className="grid items-center px-3 py-3 gap-2 bg-white" style={{ gridTemplateColumns: cols }}>
+          <span className="text-xs font-bold text-gray-700">{type}</span>
+          <span className="text-xs font-mono text-gray-700 break-all">{name}</span>
+          <div className="flex items-center gap-2 min-w-0">
+            <span className="text-xs font-mono text-gray-700 break-all flex-1">{value}</span>
+            {copyBtn}
+          </div>
+        </div>
+      </div>
+      {/* schmal: untereinander */}
+      <dl className="@sm:hidden bg-white">
+        <div className="grid grid-cols-2 gap-3 px-3 py-2.5" style={{ borderBottom: '1px solid #F1F5F9' }}>
+          <div className="min-w-0">
+            <dt className={label} style={{ color: '#9CA3AF' }}>Typ</dt>
+            <dd className="text-sm font-bold text-gray-700 mt-0.5 break-words">{type}</dd>
+          </div>
+          <div className="min-w-0">
+            <dt className={label} style={{ color: '#9CA3AF' }}>Name</dt>
+            <dd className="text-sm font-mono text-gray-700 mt-0.5 break-all">{name}</dd>
+          </div>
+        </div>
+        <div className="px-3 py-2.5">
+          <dt className={label} style={{ color: '#9CA3AF' }}>Ziel (Wert)</dt>
+          {/* Wert und Knopf nebeneinander, wenn Platz ist – sonst rutscht der Knopf darunter (Wert bleibt ganz) */}
+          <dd className="flex flex-wrap items-center gap-x-2 gap-y-1.5 mt-0.5 min-w-0">
+            <span className="text-sm font-mono text-gray-700 break-all min-w-0">{value}</span>
+            {copyBtn}
+          </dd>
+        </div>
+      </dl>
+    </div>
+  )
+}
 
 function DomainPanel({ siteId, subdomain, initialDomain, initialStatus }: {
   siteId: string
@@ -562,7 +627,7 @@ function DomainPanel({ siteId, subdomain, initialDomain, initialStatus }: {
               <p className="text-sm font-semibold text-gray-900 mb-2">
                 Erstelle diesen DNS-Eintrag
               </p>
-              {/* DNS record box — scrollable on mobile */}
+              {/* DNS-Eintrag: breit als Tabelle, schmal untereinander (kein seitliches Scrollen) */}
               {isApex ? (
                 /* Apex domain: show two options — CNAME for www (recommended) + ALIAS/ANAME */
                 <div className="flex flex-col gap-3">
@@ -572,32 +637,7 @@ function DomainPanel({ siteId, subdomain, initialDomain, initialStatus }: {
                       style={{ background: '#ECFDF5', borderBottom: '1px solid #D1FAE5' }}>
                       <span className="text-xs font-semibold" style={{ color: '#065F46' }}>✓ Option A — Empfohlen (funktioniert bei allen Anbietern)</span>
                     </div>
-                    <div className="overflow-x-auto">
-                      <div style={{ minWidth: '340px' }}>
-                        <div className="grid text-xs font-semibold uppercase tracking-wider px-3 py-2"
-                          style={{ gridTemplateColumns: '80px 100px 1fr', background: '#F8FAFC', color: '#9CA3AF', borderBottom: '1px solid #E5E7EB' }}>
-                          <span>Typ</span><span>Name</span><span>Ziel (Wert)</span>
-                        </div>
-                        <div className="grid items-center px-3 py-3 gap-2 bg-white"
-                          style={{ gridTemplateColumns: '80px 100px 1fr' }}>
-                          <span className="text-xs font-bold text-gray-700">CNAME</span>
-                          <span className="text-xs font-mono text-gray-700">www</span>
-                          <div className="flex items-center gap-2 min-w-0">
-                            <span className="text-xs font-mono text-gray-700 break-all flex-1">{fallbackHost}</span>
-                            <button onClick={copyFallback}
-                              className="flex-shrink-0 flex items-center gap-1 text-xs px-2 py-1.5 rounded-[8px] font-medium transition-colors min-h-[32px]"
-                              style={{ background: copied ? '#DCFCE7' : '#F3F4F6', color: copied ? '#16A34A' : '#374151' }}>
-                              {copied ? (
-                                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M20 6L9 17l-5-5"/></svg>
-                              ) : (
-                                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-                              )}
-                              {copied ? 'Kopiert!' : 'Kopieren'}
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+                    <DnsRecordTable type="CNAME" name="www" value={fallbackHost} copied={copied} onCopy={copyFallback} />
                     <p className="text-xs px-3 pb-2.5" style={{ color: '#6B7280' }}>
                       Gib als Name <strong>www</strong> ein. Deine Seite ist dann unter <strong>www.{domain}</strong> erreichbar. Leite zusätzlich {domain} per Redirect auf www.{domain} weiter (fast alle Anbieter bieten das an).
                     </p>
@@ -608,20 +648,7 @@ function DomainPanel({ siteId, subdomain, initialDomain, initialStatus }: {
                     <div className="px-3 py-1.5" style={{ background: '#F8FAFC', borderBottom: '1px solid #E5E7EB' }}>
                       <span className="text-xs font-semibold text-gray-500">Option B — Nur wenn dein Anbieter ALIAS oder ANAME anbietet</span>
                     </div>
-                    <div className="overflow-x-auto">
-                      <div style={{ minWidth: '340px' }}>
-                        <div className="grid text-xs font-semibold uppercase tracking-wider px-3 py-2"
-                          style={{ gridTemplateColumns: '100px 80px 1fr', background: '#F8FAFC', color: '#9CA3AF', borderBottom: '1px solid #E5E7EB' }}>
-                          <span>Typ</span><span>Name</span><span>Ziel (Wert)</span>
-                        </div>
-                        <div className="grid items-center px-3 py-3 gap-2 bg-white"
-                          style={{ gridTemplateColumns: '100px 80px 1fr' }}>
-                          <span className="text-xs font-bold text-gray-700">ALIAS / ANAME</span>
-                          <span className="text-xs font-mono text-gray-700">@</span>
-                          <span className="text-xs font-mono text-gray-700 break-all">{fallbackHost}</span>
-                        </div>
-                      </div>
-                    </div>
+                    <DnsRecordTable type="ALIAS / ANAME" name="@" value={fallbackHost} typeWidth={100} nameWidth={80} />
                     <p className="text-xs px-3 pb-2.5" style={{ color: '#9CA3AF' }}>
                       Unterstützt u.a. Cloudflare, Route 53, DNSimple. Bei checkdomain, all-inkl, Strato, IONOS → Option A verwenden.
                     </p>
@@ -629,31 +656,8 @@ function DomainPanel({ siteId, subdomain, initialDomain, initialStatus }: {
                 </div>
               ) : (
                 /* Subdomain (www etc.): simple CNAME */
-                <div className="rounded-[12px] overflow-hidden overflow-x-auto" style={{ border: '1.5px solid #E5E7EB' }}>
-                  <div style={{ minWidth: '340px' }}>
-                    <div className="grid text-xs font-semibold uppercase tracking-wider px-3 py-2"
-                      style={{ gridTemplateColumns: '80px 100px 1fr', background: '#F8FAFC', color: '#9CA3AF', borderBottom: '1px solid #E5E7EB' }}>
-                      <span>Typ</span><span>Name</span><span>Ziel (Wert)</span>
-                    </div>
-                    <div className="grid items-center px-3 py-3 gap-2 bg-white"
-                      style={{ gridTemplateColumns: '80px 100px 1fr' }}>
-                      <span className="text-xs font-bold text-gray-700">CNAME</span>
-                      <span className="text-xs font-mono text-gray-700">{hostPart}</span>
-                      <div className="flex items-center gap-2 min-w-0">
-                        <span className="text-xs font-mono text-gray-700 break-all flex-1">{fallbackHost}</span>
-                        <button onClick={copyFallback}
-                          className="flex-shrink-0 flex items-center gap-1 text-xs px-2 py-1.5 rounded-[8px] font-medium transition-colors min-h-[32px]"
-                          style={{ background: copied ? '#DCFCE7' : '#F3F4F6', color: copied ? '#16A34A' : '#374151' }}>
-                          {copied ? (
-                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M20 6L9 17l-5-5"/></svg>
-                          ) : (
-                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-                          )}
-                          {copied ? 'Kopiert!' : 'Kopieren'}
-                        </button>
-                      </div>
-                    </div>
-                  </div>
+                <div className="rounded-[12px] overflow-hidden" style={{ border: '1.5px solid #E5E7EB' }}>
+                  <DnsRecordTable type="CNAME" name={hostPart} value={fallbackHost} copied={copied} onCopy={copyFallback} />
                 </div>
               )}
               {!isApex && hostPart === 'www' && (
@@ -3066,6 +3070,15 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
   // Zurück-Navigation, Rückmeldungen an die App über die Brücke. Sonst exakt wie bisher.
   const appMode = useAppMode()
   const openExternal = useOpenExternal()
+  // App-Modus: Zurück-Knopf des Webs zeigen, sobald die App „close“ versteht (ältere Builds haben
+  // dafür ihre eigene Kopfzeile). Erst nach dem Laden prüfen, sonst weicht das Server-HTML ab.
+  const [appCanClose, setAppCanClose] = useState(false)
+  useEffect(() => { if (appMode) setAppCanClose(appHasCap('close')) }, [appMode])
+  const showBack = !appMode || appCanClose
+  const goBack = () => {
+    if (appMode) { postToApp({ type: 'close' }); return }
+    router.push('/sites')
+  }
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const iframeRef = useRef<HTMLIFrameElement>(null)
 
@@ -3099,6 +3112,8 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
   const [showPreviewTooltip, setShowPreviewTooltip] = useState(false)
   const [previewTooltipKey, setPreviewTooltipKey] = useState(0)
   const previewTooltipTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  // App-Modus: Hinweis „Schau dir die Änderung an“ zeigt genau auf den sichtbaren Vorschau-Knopf
+  const [previewTooltipAnchor, setPreviewTooltipAnchor] = useState<{ x: number; top: number } | null>(null)
   const [showLivePreview, setShowLivePreview] = useState(true)
   // iPad quer (Touch, 1024–1279 px): schmale Vorschau → Handy-Ansicht ist dort lesbar, Desktop wäre winzig
   const [livePreviewDevice, setLivePreviewDevice] = useState<'mobile' | 'tablet' | 'desktop'>(() =>
@@ -3672,6 +3687,9 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
     .filter(f => checkShowWhen(f as unknown as LoopSubField, values, fields as unknown as LoopSubField[]))
     .filter(f => !isComplianceApproved(f.key))
   const allRequiredComplete = missingRequiredFields.length === 0 && complianceBlockedFields.length === 0
+  // App-Modus: bei einer Live-Seite mit Änderungen fehlte unten die Vorschau (kein Platz neben „Weiter“ +
+  // „Änderungen veröffentlichen“) → dort zweizeilig: Vorschau + Weiter, darunter Veröffentlichen
+  const appSplitPublish = appMode && !isDomainSection && sections.length > 1 && !isLast && isPublished && hasChanges && allRequiredComplete
   // One canonical reason string, used by the mobile bottom bar hint and the
   // tap-toast fallback (so users on small screens who tap the greyed-out
   // publish button always learn WHY it's greyed out).
@@ -3729,7 +3747,9 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
       {/* ── Toast notification ── */}
       <div
         className="fixed top-4 right-4 z-[9999] pointer-events-none"
-        style={{ transition: 'all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1)' }}>
+        style={{ transition: 'all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1)',
+          // App-Modus: nicht unter Statusleiste/Dynamic Island
+          ...(appMode ? { top: 'calc(env(safe-area-inset-top, 0px) + 16px)' } : {}) }}>
         {toast && (
           <div
             className="flex items-center gap-2.5 px-4 py-3 rounded-[14px] shadow-lg pointer-events-auto"
@@ -3768,8 +3788,8 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
       {/* ── Mobile Header ── */}
       <div className="lg:hidden flex-shrink-0 flex items-center gap-2.5 px-4 py-3 bg-white border-b"
         style={{ borderColor: '#E5E7EB' }}>
-        {/* Zurück – in der App übernimmt das die native Kopfzeile */}
-        {!appMode && <button onClick={() => router.push('/sites')}
+        {/* Zurück – in der App schließt er den Editor (Brücke „close“) */}
+        {showBack && <button onClick={goBack}
           aria-label="Zurück zur Übersicht"
           className="w-10 h-10 flex items-center justify-center rounded-2xl flex-shrink-0"
           style={{ background: '#F3F4F6' }}>
@@ -3875,7 +3895,7 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
 
         {/* Left: back + title */}
         <div className="flex items-center gap-3 min-w-0">
-          {!appMode && <button onClick={() => router.push('/sites')}
+          {showBack && <button onClick={goBack}
             aria-label="Zurück zur Übersicht"
             className="w-9 h-9 pointer-coarse:w-11 pointer-coarse:h-11 flex items-center justify-center rounded-full flex-shrink-0"
             style={{ background: '#F3F4F6' }}>
@@ -4522,6 +4542,20 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
                           narrow={narrowEditor}
                           onMobileSelect={() => {
                             if (previewTooltipTimerRef.current) clearTimeout(previewTooltipTimerRef.current)
+                            if (appMode) {
+                              // Nur zeigen, wenn unten wirklich ein Vorschau-Knopf zu sehen ist – und genau darüber.
+                              // Erst nach dem nächsten Zeichnen messen: die Leiste kann durch die Änderung gerade umbauen.
+                              requestAnimationFrame(() => requestAnimationFrame(() => {
+                                const btn = Array.from(document.querySelectorAll<HTMLElement>('[data-preview-anchor]'))
+                                  .map(el => el.getBoundingClientRect()).find(r => r.width > 0 && r.height > 0)
+                                if (!btn) return
+                                setPreviewTooltipAnchor({ x: btn.left + btn.width / 2, top: btn.top })
+                                setPreviewTooltipKey(k => k + 1)
+                                setShowPreviewTooltip(true)
+                                previewTooltipTimerRef.current = setTimeout(() => setShowPreviewTooltip(false), 3200)
+                              }))
+                              return
+                            }
                             setPreviewTooltipKey(k => k + 1)
                             setShowPreviewTooltip(true)
                             previewTooltipTimerRef.current = setTimeout(() => setShowPreviewTooltip(false), 3200)
@@ -4701,6 +4735,36 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
                   {publishing ? <span className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" /> : null}
                   {publishing ? 'Bitte warten…' : isPublished ? 'Änderungen veröffentlichen' : '🚀 Jetzt veröffentlichen'}
                 </button>
+              ) : appSplitPublish ? (
+                /* App-Modus, Live-Seite mit Änderungen: Vorschau + Weiter, darunter „Änderungen veröffentlichen“ */
+                <div className="flex gap-2">
+                  <button
+                    data-preview-anchor
+                    onClick={() => { setShowFullPreview(true); setPreviewKey(k => k + 1) }}
+                    aria-label="Vorschau"
+                    className="flex items-center justify-center gap-1.5 h-12 px-4 rounded-full text-sm font-semibold flex-shrink-0"
+                    style={{ background: '#F3F4F6', color: '#374151' }}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                      <circle cx="12" cy="12" r="3"/>
+                    </svg>
+                    <span className="max-[359px]:hidden">Vorschau</span>
+                  </button>
+                  <button
+                    onClick={async () => {
+                      await handleSave()
+                      setActiveSection(sections[activeIdx + 1])
+                      document.getElementById('editor-scroll')?.scrollTo({ top: 0, behavior: 'smooth' })
+                    }}
+                    disabled={saving}
+                    className="flex-1 min-w-0 flex items-center justify-center gap-1.5 h-12 px-4 rounded-full text-sm font-semibold"
+                    style={{ background: '#F3F4F6', color: '#374151', opacity: saving ? 0.7 : 1 }}>
+                    Weiter
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.25">
+                      <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                  </button>
+                </div>
               ) : !isLast && isPublished && hasChanges && allRequiredComplete ? (
                 /* Live site with unsaved-to-live changes: save right here, then
                    optionally continue — no need to reach the last section */
@@ -4737,6 +4801,7 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
                 /* Not last: Vorschau + Weiter */
                 <div className="flex gap-2">
                   <button
+                    data-preview-anchor
                     onClick={() => { setShowFullPreview(true); setPreviewKey(k => k + 1) }}
                     aria-label="Vorschau"
                     className="flex items-center justify-center gap-1.5 h-12 px-4 rounded-full text-sm font-semibold flex-shrink-0"
@@ -4771,6 +4836,7 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
                 /* Last section: Vorschau + Publish */
                 <div className="flex gap-2">
                   <button
+                    data-preview-anchor
                     onClick={() => { setShowFullPreview(true); setPreviewKey(k => k + 1) }}
                     aria-label="Vorschau"
                     className="flex items-center justify-center gap-1.5 h-12 px-4 rounded-full text-sm font-semibold flex-shrink-0"
@@ -4798,11 +4864,72 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
               )}
             </div>
           </div>
+          {appSplitPublish && (
+            <div className="px-4 pt-2">
+              <button
+                onClick={() => handlePublish()}
+                disabled={publishing}
+                className="w-full flex items-center justify-center gap-2 h-12 px-4 text-[15px] font-bold text-white rounded-full whitespace-nowrap"
+                style={{ background: '#16A34A', boxShadow: '0 4px 14px rgba(22,163,74,0.25)', opacity: publishing ? 0.7 : 1 }}>
+                {publishing
+                  ? <span className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
+                  : <>
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+                      Änderungen veröffentlichen
+                    </>
+                }
+              </button>
+            </div>
+          )}
           </div>
         </main>
 
         {/* ── Mobile preview tooltip — fixed above bottom bar, avoids stacking-context issues ── */}
-        {showPreviewTooltip && typeof document !== 'undefined' && createPortal(
+        {/* App-Modus: genau über dem sichtbaren Vorschau-Knopf, Pfeil zeigt auf ihn, bleibt im Bild */}
+        {showPreviewTooltip && appMode && previewTooltipAnchor && typeof document !== 'undefined' && (() => {
+          const W = 224
+          const left = Math.max(12, Math.min(window.innerWidth - W - 12, previewTooltipAnchor.x - W / 2))
+          const arrowX = Math.max(16, Math.min(W - 16, previewTooltipAnchor.x - left))
+          return createPortal(
+            <div key={previewTooltipKey} className="lg:hidden pointer-events-none"
+              style={{
+                position: 'fixed', left, width: W,
+                bottom: window.innerHeight - previewTooltipAnchor.top + 10,
+                zIndex: 9998,
+                transformOrigin: `${arrowX}px 100%`,
+                animation: 'ptt-life-a 3.2s cubic-bezier(0.34,1.56,0.64,1) forwards',
+              }}>
+              <div style={{
+                background: '#FF6B2C', color: '#fff', textAlign: 'center',
+                fontSize: 13, fontWeight: 700, whiteSpace: 'nowrap',
+                padding: '8px 12px', borderRadius: 12,
+                boxShadow: '0 6px 24px rgba(255,107,44,0.40)',
+              }}>
+                Schau dir die Änderung an
+                <span style={{
+                  position: 'absolute', top: '100%', left: arrowX,
+                  transform: 'translateX(-50%)',
+                  width: 0, height: 0,
+                  borderLeft: '6px solid transparent',
+                  borderRight: '6px solid transparent',
+                  borderTop: '6px solid #FF6B2C',
+                }} />
+              </div>
+              <style>{`
+                @keyframes ptt-life-a {
+                  0%   { opacity: 0; transform: translateY(6px) scale(0.84); }
+                  10%  { opacity: 1; transform: translateY(-3px) scale(1.05); }
+                  17%  { opacity: 1; transform: translateY(0px) scale(0.99); }
+                  22%  { opacity: 1; transform: translateY(0px) scale(1); }
+                  78%  { opacity: 1; transform: translateY(0px) scale(1); }
+                  100% { opacity: 0; transform: translateY(-5px) scale(0.95); }
+                }
+              `}</style>
+            </div>,
+            document.body
+          )
+        })()}
+        {showPreviewTooltip && !appMode && typeof document !== 'undefined' && createPortal(
           <div key={previewTooltipKey} className="lg:hidden pointer-events-none"
             style={{
               position: 'fixed',
@@ -5054,7 +5181,9 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
       {/* ── Fullscreen Preview ── */}
       {showFullPreview && (
         <div className="fixed inset-0 z-50 flex flex-col" style={{ background: 'rgba(0,0,0,0.92)' }}>
-          <div className="flex items-center justify-between px-4 py-3 flex-shrink-0" style={{ background: '#1a1a1a' }}>
+          {/* App-Modus (viewport-fit=cover): Leiste unter Statusleiste/Dynamic Island, sonst ist „Schließen“ verdeckt */}
+          <div className="flex items-center justify-between px-4 py-3 flex-shrink-0" style={{ background: '#1a1a1a',
+            ...(appMode ? { paddingTop: 'calc(env(safe-area-inset-top, 0px) + 12px)', paddingLeft: 'calc(env(safe-area-inset-left, 0px) + 16px)', paddingRight: 'calc(env(safe-area-inset-right, 0px) + 16px)' } : {}) }}>
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-1 p-0.5 rounded-full" style={{ background: 'rgba(255,255,255,0.1)' }}>
                 {([

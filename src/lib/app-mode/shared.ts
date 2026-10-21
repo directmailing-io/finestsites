@@ -33,6 +33,7 @@ export type AppBridgeMessage =
   | { type: 'open-url'; url: string }
   | { type: 'auth-required' }
   | { type: 'dirty'; value: boolean; unpublished?: boolean }
+  | { type: 'close' }
 
 // Typ-Abgleich mit dem App-Vertrag (src/lib/contracts/app-v1/bridge.ts): bricht den Build, sobald
 // beide auseinanderlaufen. Nur Typen, nichts davon landet im ausgelieferten Code.
@@ -60,6 +61,18 @@ export function postToApp(msg: AppBridgeMessage): boolean {
   } catch {
     return false
   }
+}
+
+type FsAppWindow = Window & { __FS_APP__?: { caps?: unknown } }
+
+/**
+ * Fähigkeiten der App (von ihr vor dem Laden in `window.__FS_APP__.caps` gesetzt). Ältere App-Versionen
+ * kennen z. B. 'close' nicht – dann bleibt deren eigene Kopfzeile zuständig.
+ */
+export function appHasCap(cap: string): boolean {
+  if (typeof window === 'undefined') return false
+  const caps = (window as FsAppWindow).__FS_APP__?.caps
+  return Array.isArray(caps) && caps.includes(cap)
 }
 
 /** Relative Pfade (z. B. `/settings`) für die App zu absoluten URLs machen. */
