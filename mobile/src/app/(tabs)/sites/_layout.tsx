@@ -7,7 +7,7 @@ export default function SitesStack() {
     <Stack screenOptions={stackOptions}>
       <Stack.Screen name="index" options={{ headerShown: false }} />
       <Stack.Screen name="[id]" options={{ title: '' }} />
-      <Stack.Screen name="new" options={{ title: 'Neue Webseite' }} />
+      <Stack.Screen name="new" options={{ title: '' }} />
     </Stack>
   );
 }

@@ -18,7 +18,7 @@ export default function PhotoStep() {
 
   const finish = () => {
     void qc.invalidateQueries({ queryKey: qk.me });
-    router.replace('/start');
+    router.replace('/sites');
   };
 
   return (

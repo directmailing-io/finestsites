@@ -49,10 +49,20 @@ export function chatTime(iso: string): string {
 
 const MONTHS = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'];
 
+/** Titel eines Support-Gesprächs wie convTitle() im Web (support/page.tsx). */
 export function chatTitle(subject: string | null, createdAt: string) {
   if (subject) return subject;
   const d = new Date(createdAt);
-  return `Chat vom ${d.getDate()}. ${MONTHS[d.getMonth()]} ${d.getFullYear()}`;
+  return `Gespräch vom ${d.getDate()}.${d.getMonth() + 1}.${d.getFullYear()}`;
+}
+
+/** Uhrzeit in der Gesprächsliste wie formatTime() im Web: heute „HH:MM“, sonst „T.M. HH:MM“. */
+export function supportTime(iso: string) {
+  const d = new Date(iso);
+  const hh = String(d.getHours()).padStart(2, '0');
+  const mm = String(d.getMinutes()).padStart(2, '0');
+  if (d.toDateString() === new Date().toDateString()) return `${hh}:${mm}`;
+  return `${d.getDate()}.${d.getMonth() + 1}. ${hh}:${mm}`;
 }
 
 /** Begrüßung nach Uhrzeit wie sites/page.tsx */

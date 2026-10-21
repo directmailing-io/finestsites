@@ -4,7 +4,8 @@ import * as ImagePicker from 'expo-image-picker';
 import { useRouter } from 'expo-router';
 import { ArrowUp, ImagePlus } from 'lucide-react-native';
 import { useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, Alert, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, TextInput, View, type ScrollViewInstance } from 'react-native';
+import { ActivityIndicator, Alert, Keyboard, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, TextInput, View, type ScrollViewInstance } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { markConversationRead, sendMessage, startConversation, uploadSupportImage } from '@/api/endpoints';
 import { qk, useMessages } from '@/api/queries';
@@ -38,6 +39,20 @@ export function ChatThread({
   const [input, setInput] = useState('');
   const [sending, setSending] = useState(false);
   const [uploading, setUploading] = useState(false);
+  // Ohne Tastatur sitzt das Eingabefeld über der (schwebenden) Tab-Leiste, mit Tastatur direkt darüber
+  const [keyboard, setKeyboard] = useState(false);
+  // In den Tabs enthält der untere Sicherheitsabstand schon die (schwebende) Tab-Leiste – das Eingabefeld
+  // sitzt darüber statt dahinter. Mit offener Tastatur übernimmt KeyboardAvoidingView.
+  const insets = useSafeAreaInsets();
+  const tabBarSpace = insets.bottom;
+  useEffect(() => {
+    const show = Keyboard.addListener(Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow', () => setKeyboard(true));
+    const hide = Keyboard.addListener(Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide', () => setKeyboard(false));
+    return () => {
+      show.remove();
+      hide.remove();
+    };
+  }, []);
   const scrollRef = useRef<ScrollViewInstance>(null);
 
   const messages = [...(q.data?.messages ?? []), ...pending.filter(p => !(q.data?.messages ?? []).some(m => m.id === p.id))];
@@ -121,6 +136,7 @@ export function ChatThread({
   }
 
   return (
+    <View style={styles.flex}>
     <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === 'ios' ? 'padding' : undefined} keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}>
       <ScrollView
         ref={scrollRef}
@@ -149,7 +165,7 @@ export function ChatThread({
           </View>
         )}
       </ScrollView>
-      <View style={[styles.composer, { paddingBottom: 10 + bottomInset }]}>
+      <View style={[styles.composer, { paddingBottom: 10 + bottomInset + (keyboard ? 0 : tabBarSpace) }]}>
         <Pressable
           onPress={chooseImage}
           disabled={uploading}
@@ -177,6 +193,7 @@ export function ChatThread({
         </Pressable>
       </View>
     </KeyboardAvoidingView>
+    </View>
   );
 }
 

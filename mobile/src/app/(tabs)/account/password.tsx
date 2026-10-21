@@ -10,6 +10,16 @@ import { openInBrowser } from '@/lib/links';
 
 export default function PasswordScreen() {
   const router = useRouter();
+  return (
+    <Screen readable>
+      <Text variant="callout">Wähle ein starkes Passwort mit mindestens 6 Zeichen.</Text>
+      <PasswordContent onDone={() => router.back()} />
+    </Screen>
+  );
+}
+
+/** Inhalt „Passwort ändern“ (Web-Tab „Konto & FAQ“). */
+export function PasswordContent({ onDone }: { onDone?: () => void }) {
   const toast = useToast();
   const [current, setCurrent] = useState('');
   const [next, setNext] = useState('');
@@ -25,7 +35,10 @@ export default function PasswordScreen() {
     try {
       await changePassword(current, next);
       toast.show('Passwort erfolgreich geändert.', 'success');
-      router.back();
+      setCurrent('');
+      setNext('');
+      setConfirm('');
+      onDone?.();
     } catch (e) {
       setError(e instanceof ApiError && e.status === 400 ? 'Aktuelles Passwort ist falsch.' : humanError(e));
     }
@@ -33,8 +46,7 @@ export default function PasswordScreen() {
   }
 
   return (
-    <Screen readable>
-      <Text variant="callout">Wähle ein starkes Passwort mit mindestens 6 Zeichen.</Text>
+    <View style={{ gap: 24 }}>
       <View style={{ gap: 16 }}>
         <Input label="Aktuelles Passwort" value={current} onChangeText={setCurrent} password placeholder="••••••••" autoComplete="current-password" textContentType="password" />
         <Input label="Neues Passwort" value={next} onChangeText={setNext} password placeholder="Mindestens 6 Zeichen" autoComplete="new-password" textContentType="newPassword" />
@@ -43,6 +55,6 @@ export default function PasswordScreen() {
       {!!error && <Notice tone="danger">{error}</Notice>}
       <Button title="Passwort ändern" onPress={submit} loading={loading} fullWidth disabled={!current || !next || !confirm} />
       <Button title="Aktuelles Passwort vergessen?" variant="link" onPress={() => openInBrowser(WEB_LINKS.forgotPassword)} />
-    </Screen>
+    </View>
   );
 }

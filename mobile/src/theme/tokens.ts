@@ -110,8 +110,8 @@ export const space = {
   12: 48,
 } as const;
 
-/** Bildschirmränder: Dashboard nutzt px-5 (20) auf dem Handy, sm:px-8 (32) auf größeren Breiten. */
-export const gutter = { compact: 20, regular: 32 } as const;
+/** Bildschirmränder wie <main> im Dashboard: px-5 (20), sm:px-8 (32), lg:px-12 (48). */
+export const gutter = { compact: 20, regular: 32, wide: 48 } as const;
 
 /** Maximale Inhaltsbreite auf dem iPad für Formular- und Lese-Bildschirme. */
 export const readableWidth = 720;
@@ -131,7 +131,7 @@ export const fonts = fontFamilies;
  */
 export const type = {
   // h1: text-2xl sm:text-3xl font-bold tracking-tight
-  display: { fontFamily: fontFamilies.bold, fontSize: 26, lineHeight: 32, letterSpacing: -0.6, color: colors.ink },
+  display: { fontFamily: fontFamilies.bold, fontSize: 24, lineHeight: 32, letterSpacing: -0.6, color: colors.ink },
   // h2 Abschnitt: text-xl font-bold
   title: { fontFamily: fontFamilies.bold, fontSize: 20, lineHeight: 26, letterSpacing: -0.3, color: colors.ink },
   // h3 Karte: text-lg font-bold leading-snug

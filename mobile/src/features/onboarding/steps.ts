@@ -17,5 +17,5 @@ export function nextStep(me: Me, after?: Step): Href {
     if (s === 'team-partner' && offerOptional && !me.user.teamPartnerNumber) return '/onboarding/team-partner';
     if (s === 'photo' && offerOptional && !me.user.profileImageUrl) return '/onboarding/photo';
   }
-  return '/start';
+  return '/sites';
 }

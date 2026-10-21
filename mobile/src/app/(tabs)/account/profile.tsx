@@ -1,7 +1,7 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { Camera } from 'lucide-react-native';
 import { useEffect, useState } from 'react';
-import { ActivityIndicator, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, View, useWindowDimensions } from 'react-native';
 
 import { humanError } from '@/api/client';
 import { updateProfile } from '@/api/endpoints';
@@ -9,6 +9,7 @@ import { qk, useMe } from '@/api/queries';
 import type { Socials } from '@/api/types';
 import { Button, Input, Notice, ProfilePhoto, Screen, SectionHeader, Skeleton, Text, useToast } from '@/components/ui';
 import { pickAndUploadAvatar } from '@/features/account/avatar';
+import { ImageRulesHint } from '@/features/account/ImageRulesHint';
 import { colors, fonts, radius } from '@/theme/tokens';
 
 const SOCIALS: { key: keyof Socials; label: string; prefix: string; ph: string }[] = [
@@ -26,9 +27,19 @@ const toUrl = (handle: string, prefix: string) => {
   return h ? `https://${prefix}${h}` : '';
 };
 
-/** „Mein Profil“ wie im Web-Tab „Profil“, plus Teampartner-Nummer. */
+/** „Mein Profil“ als eigener Bildschirm (z. B. aus dem Onboarding/Partnerbereich). */
 export default function ProfileScreen() {
+  return (
+    <Screen readable>
+      <ProfileContent />
+    </Screen>
+  );
+}
+
+/** Inhalt des Web-Tabs „Profil“ (Einstellungen), plus Teampartner-Nummer. */
+export function ProfileContent({ hideIntro }: { hideIntro?: boolean } = {}) {
   const qc = useQueryClient();
+  const { width } = useWindowDimensions();
   const toast = useToast();
   const me = useMe();
   const u = me.data;
@@ -73,19 +84,14 @@ export default function ProfileScreen() {
     setSaving(false);
   }
 
-  if (!u) {
-    return (
-      <Screen readable>
-        <Skeleton height={300} radius={radius.card} />
-      </Screen>
-    );
-  }
+  if (!u) return <Skeleton height={300} radius={radius.card} />;
 
   const set = (k: keyof typeof form) => (v: string) => setForm(f => ({ ...f, [k]: v }));
+  const wide = width >= 640;
 
   return (
-    <Screen readable>
-      <Text variant="callout">Diese Angaben werden beim Bearbeiten deiner Webseiten automatisch vorausgefüllt.</Text>
+    <View style={{ gap: 24 }}>
+      {!hideIntro && <Text variant="callout">Diese Angaben werden beim Bearbeiten deiner Webseiten automatisch vorausgefüllt.</Text>}
 
       <View style={styles.photoRow}>
         <View>
@@ -120,15 +126,27 @@ export default function ProfileScreen() {
           <Text variant="footnote">JPG, PNG, WebP · max. 5 MB · wird zugeschnitten</Text>
         </View>
       </View>
+      <ImageRulesHint />
 
-      <View style={styles.readonlyGrid}>
-        <Input label="E-Mail-Adresse" value={u.user.email} editable={false} />
-        <Input label="Benutzername" value={u.user.username ? `@${u.user.username}` : '–'} editable={false} />
+      {/* wie im Web: ab 640 pt zwei Spalten (sm:grid-cols-2) */}
+      <View style={[styles.readonlyGrid, wide && styles.pair]}>
+        <View style={wide && styles.half}>
+          <Input label="E-Mail-Adresse" value={u.user.email} editable={false} />
+        </View>
+        <View style={wide && styles.half}>
+          <Input label="Benutzername" value={u.user.username ? `@${u.user.username}` : '–'} editable={false} />
+        </View>
       </View>
 
       <View style={{ gap: 16 }}>
-        <Input label="Vorname" value={form.first_name} onChangeText={set('first_name')} placeholder="Max" autoComplete="given-name" />
-        <Input label="Nachname" value={form.last_name} onChangeText={set('last_name')} placeholder="Mustermann" autoComplete="family-name" />
+        <View style={[{ gap: 16 }, wide && styles.pair]}>
+          <View style={wide && styles.half}>
+            <Input label="Vorname" value={form.first_name} onChangeText={set('first_name')} placeholder="Max" autoComplete="given-name" />
+          </View>
+          <View style={wide && styles.half}>
+            <Input label="Nachname" value={form.last_name} onChangeText={set('last_name')} placeholder="Mustermann" autoComplete="family-name" />
+          </View>
+        </View>
         <Input
           label="Firma (freiwillig)"
           value={form.company_name}
@@ -182,7 +200,7 @@ export default function ProfileScreen() {
 
       {!!error && <Notice tone="danger">{error}</Notice>}
       <Button title="Profil speichern" onPress={save} loading={saving} fullWidth />
-    </Screen>
+    </View>
   );
 }
 
@@ -196,6 +214,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   readonlyGrid: { gap: 16 },
+  pair: { flexDirection: 'row' },
+  half: { flex: 1 },
   label: { fontFamily: fonts.semibold, fontSize: 14, color: colors.label },
   prefix: {
     paddingHorizontal: 12,
