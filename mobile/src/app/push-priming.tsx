@@ -38,7 +38,7 @@ export default function PushPrimingScreen() {
         {reason === 'support'
           ? 'Wir sagen dir Bescheid, sobald der Support geantwortet hat.'
           : reason === 'chat'
-            ? 'Wir sagen dir Bescheid, sobald ein Besucher dir im Chat schreibt. Namen und Nachrichten stehen nie auf dem Sperrbildschirm.'
+            ? 'Wir sagen dir Bescheid, sobald ein Besucher dir im Chat schreibt – mit Name und Nachricht, wie bei WhatsApp.'
             : 'Wir sagen dir Bescheid, sobald jemand über deine Seite eine Anfrage schickt. Namen und Nachrichten stehen nie auf dem Sperrbildschirm.'}
       </Text>
       <View style={{ gap: 8, alignSelf: 'stretch', marginTop: 12 }}>

@@ -7,6 +7,8 @@ import { expoAccessToken, expoReceiptsUrl, expoSendUrl } from './config'
 export type ExpoMessage = {
   to: string
   title: string
+  /** iOS: zweite Zeile unter dem Titel (z. B. Name der Webseite) */
+  subtitle?: string
   body: string
   data?: Record<string, unknown>
   sound?: 'default' | null

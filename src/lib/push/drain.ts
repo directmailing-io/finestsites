@@ -146,6 +146,7 @@ export async function drainPushOutbox(opts: { limit?: number; now?: Date } = {})
           message: {
             to: d.token,
             title: row.title,
+            ...(typeof data.subtitle === 'string' && data.subtitle ? { subtitle: data.subtitle } : {}),
             body: row.body,
             data: { ...data, outboxId: row.id },
             sound: 'default',

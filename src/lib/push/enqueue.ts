@@ -19,7 +19,11 @@ export type EnqueueInput = {
   userId: string
   category: PushCategory
   type: string
-  /** Sichtbar auf dem Sperrbildschirm → NIE Interessenten-Daten, Preise oder Kauf-Hinweise */
+  /**
+   * Sichtbar auf dem Sperrbildschirm → keine Preise oder Kauf-Hinweise. Interessenten-Daten nur im
+   * Besucher-Chat (Name + Nachrichtentext wie bei WhatsApp, Daniels Entscheidung 22.10.2026); die
+   * Vorschau lässt sich in iOS unter Mitteilungen → „Vorschauen zeigen“ systemweit abschalten.
+   */
   title: string
   body: string
   data?: Record<string, unknown>
@@ -34,10 +38,42 @@ export type EnqueueInput = {
 
 export type EnqueueResult = 'disabled' | 'queued' | 'throttled' | 'error'
 
+/**
+ * Sofortversand: nach dem Einreihen wird die Warteschlange direkt im selben Prozess abgearbeitet
+ * (statt auf den Minuten-Cron zu warten – Daniel: Push kam erst nach 30 s+). Mehrere Auslöser in
+ * kurzer Folge werden zu einem Lauf zusammengefasst; läuft gerade ein Lauf, folgt danach genau
+ * ein weiterer. Der Cron bleibt als Netz (Nachtruhe-Verschiebungen, Neustarts, Fehler).
+ */
+let drainTimer: ReturnType<typeof setTimeout> | null = null
+let draining = false
+let drainAgain = false
+function scheduleImmediateDrain(): void {
+  if (drainTimer) return
+  drainTimer = setTimeout(() => {
+    drainTimer = null
+    void runImmediateDrain()
+  }, 150)
+}
+async function runImmediateDrain(): Promise<void> {
+  if (draining) { drainAgain = true; return }
+  draining = true
+  try {
+    const { drainPushOutbox } = await import('./drain')
+    await drainPushOutbox({ limit: 100 })
+  } catch (err) {
+    console.error('[push/enqueue] immediate drain failed:', err instanceof Error ? err.message : err)
+  } finally {
+    draining = false
+    if (drainAgain) { drainAgain = false; scheduleImmediateDrain() }
+  }
+}
+
 export async function enqueuePush(input: EnqueueInput): Promise<EnqueueResult> {
   try {
     if (!(await isPushEnabled())) return 'disabled'
-    return await enqueueUnchecked(input)
+    const result = await enqueueUnchecked(input)
+    if (result === 'queued') scheduleImmediateDrain()
+    return result
   } catch (err) {
     console.error('[push/enqueue] failed:', err instanceof Error ? err.message : err)
     return 'error'

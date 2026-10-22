@@ -6,12 +6,14 @@
  * - wirft nie, gibt nie einen abgelehnten Promise zurück
  * - prüft ZUERST den Schalter; solange Push aus ist, passiert nichts (auch keine DB-Abfrage)
  *
- * Texte: neutral, keine Interessenten-Daten (Sperrbildschirm), keine Preise, keine Zahl-Links,
- * keine Kauf-Aufforderung (Apple 3.1.1). Deep-Links über data.url (finestsites://…).
+ * Texte: keine Preise, keine Zahl-Links, keine Kauf-Aufforderung (Apple 3.1.1). Anfragen/Support
+ * bleiben neutral; der Besucher-Chat zeigt Name + Nachricht wie WhatsApp (Daniel, 22.10.2026).
+ * Deep-Links über data.url (finestsites://…).
  */
 import { db } from '@/lib/db'
-import { chatConversations, userSites } from '@/lib/db/schema'
+import { chatConversations, templates, userSites } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
+import { displayNameOf } from '@/lib/chat/service'
 import { isPushEnabled } from './config'
 import { enqueuePush } from './enqueue'
 
@@ -51,17 +53,30 @@ export const pushTriggers = {
    */
   newChatMessage(conversationId: string): Promise<void> {
     return guarded('chat', async () => {
-      const conv = await db.query.chatConversations.findFirst({ where: eq(chatConversations.id, conversationId), columns: { userId: true } })
+      const [conv] = await db.select({
+        userId: chatConversations.userId,
+        visitorName: chatConversations.visitorName,
+        visitorKey: chatConversations.visitorKey,
+        preview: chatConversations.lastMessagePreview,
+        siteTitle: templates.title,
+      })
+        .from(chatConversations)
+        .innerJoin(userSites, eq(chatConversations.siteId, userSites.id))
+        .innerJoin(templates, eq(userSites.templateId, templates.id))
+        .where(eq(chatConversations.id, conversationId))
+        .limit(1)
       if (!conv) return
+      // Wie bei WhatsApp (Daniel, 22.10.2026): Absender als Titel, Webseite als Untertitel, Nachricht als Text
+      const text = (conv.preview ?? '').replace(/\s+/g, ' ').trim()
       await enqueuePush({
         userId: conv.userId,
         category: 'chat',
         type: 'chat_message',
-        title: 'Neue Chat-Nachricht',
-        body: 'Ein Besucher deiner Webseite hat dir geschrieben.',
-        data: { url: `finestsites://chats/${conversationId}`, conversationId },
+        title: displayNameOf(conv.visitorName, conv.visitorKey),
+        body: text ? (text.length > 160 ? text.slice(0, 159) + '…' : text) : 'Neue Nachricht',
+        data: { url: `finestsites://chats/${conversationId}`, conversationId, subtitle: conv.siteTitle },
         collapseKey: `chat:${conversationId}`,
-        throttleSeconds: 120,
+        throttleSeconds: 5,
       })
     })
   },
