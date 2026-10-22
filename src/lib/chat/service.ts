@@ -481,18 +481,26 @@ export async function markReadByVisitor(conversationId: string): Promise<void> {
  * Steigt zuverlässig bei jedem „read“ des Betreibers (auch ohne Antwort) – fürs ✓✓ im Widget.
  */
 /** Leichter Zustands-Abdruck fürs Long-Polling (ein Primärschlüssel-Lookup). */
-export type ConversationSnapshot = { lastMessageAt: number; status: string; ownerUnread: number; visitorUnread: number }
+export type ConversationSnapshot = { lastMessageAt: number; updatedAt: number; status: string; ownerUnread: number; visitorUnread: number }
 export async function conversationSnapshot(conversationId: string): Promise<ConversationSnapshot | null> {
   const [row] = await db.select({
-    lastMessageAt: chatConversations.lastMessageAt, status: chatConversations.status,
+    lastMessageAt: chatConversations.lastMessageAt, updatedAt: chatConversations.updatedAt, status: chatConversations.status,
     ownerUnread: chatConversations.ownerUnread, visitorUnread: chatConversations.visitorUnread,
   }).from(chatConversations).where(eq(chatConversations.id, conversationId)).limit(1)
   if (!row) return null
-  return { lastMessageAt: row.lastMessageAt?.getTime() ?? 0, status: row.status, ownerUnread: row.ownerUnread, visitorUnread: row.visitorUnread }
+  return {
+    lastMessageAt: row.lastMessageAt?.getTime() ?? 0, updatedAt: row.updatedAt?.getTime() ?? 0,
+    status: row.status, ownerUnread: row.ownerUnread, visitorUnread: row.visitorUnread,
+  }
 }
-/** Neue Nachricht, Statuswechsel oder Lesebestätigung des Betreibers (owner_unread sinkt)? */
+/**
+ * Neue Nachricht, Statuswechsel, Lesebestätigung des Betreibers (owner_unread sinkt) oder sonstige Änderung
+ * (updated_at: Systemzeile „weiteres Gerät“, Profil, Übergabe)? Die Seen-Stempel setzen updated_at bewusst nicht,
+ * sonst würde der Long-Poll alle 20 s grundlos aufwachen.
+ */
 export function snapshotChanged(a: ConversationSnapshot, b: ConversationSnapshot): boolean {
-  return a.lastMessageAt !== b.lastMessageAt || a.status !== b.status || b.ownerUnread < a.ownerUnread || a.visitorUnread !== b.visitorUnread
+  return a.lastMessageAt !== b.lastMessageAt || a.updatedAt !== b.updatedAt || a.status !== b.status
+    || b.ownerUnread < a.ownerUnread || a.visitorUnread !== b.visitorUnread
 }
 
 export async function ownerReadAtOf(conversationId: string): Promise<string | null> {
@@ -622,8 +630,13 @@ async function attachVisitorTokenTx(tx: Tx, conv: ChatConversationRow, newTokenH
  * Hinweiszeile im Verlauf (sender 'system'), z. B. „Gespräch auf einem weiteren Gerät geöffnet.“
  * Zählt nicht als ungelesen, ändert keine Vorschau, löst keinen Push aus – nur Transparenz für beide Seiten.
  */
+/**
+ * Systemzeile (z. B. „Gespräch auf einem weiteren Gerät geöffnet.“): kein Ungelesen-Zähler, keine Vorschau, kein Push,
+ * aber updated_at wird gesetzt, damit offene Long-Polls (Widget, App) sofort statt erst nach ≤ 25 s antworten.
+ */
 export async function addSystemMessage(conversationId: string, body: string): Promise<ChatMessageRow> {
   const [row] = await db.insert(chatMessages).values({ conversationId, sender: 'system', body }).returning()
+  await db.update(chatConversations).set({ updatedAt: new Date() }).where(eq(chatConversations.id, conversationId))
   return row
 }
 

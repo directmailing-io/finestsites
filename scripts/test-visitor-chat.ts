@@ -668,8 +668,18 @@ async function main() {
   await step('resume mit Code (klein, ohne Bindestrich) → gleiches Gespräch, Alias angehängt, Systemzeile „weiteres Gerät“, alte Browser behalten Zugang', async () => {
     await visitor4.session({ visitorToken: token4 })
     const before = (await sql`select count(*)::int as n from chat_messages where conversation_id = ${conversationId} and sender = 'system'`)[0].n
+    // Der alte Browser wartet gerade im Long-Poll: die Systemzeile muss ihn sofort wecken (nicht erst nach ≤ 25 s)
+    const lastId = ((await visitor.messages()).json as { messages: { id: string }[] }).messages.at(-1)!.id
+    const t0 = Date.now()
+    const pending = visitor.call('GET', 'messages', undefined, { after: lastId, wait: '20' })
+    await sleep(1200)
     const res = await visitor4.call('POST', 'resume', { code: ` ${resumeCode.toLowerCase().replace('-', '')} `, visitorToken: token4 })
     assert.equal(res.status, 200, res.text)
+    const woke = await pending
+    const wokeMs = Date.now() - t0
+    assert.equal(woke.status, 200, woke.text)
+    assert.ok((woke.json as { messages: { sender: string; body: string }[] }).messages.some(m => m.sender === 'system' && m.body.includes('weiteren Gerät')), woke.text.slice(0, 200))
+    assert.ok(wokeMs < 8000, `Long-Poll dauerte ${wokeMs} ms (Systemzeile hat nicht geweckt)`)
     const j = res.json as { conversationId: string; resumeCode: string; messages: { sender: string; body: string }[]; ticket: string }
     assert.equal(j.conversationId, conversationId)
     assert.equal(j.resumeCode, resumeCode)
