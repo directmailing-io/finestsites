@@ -27,6 +27,7 @@ export function NotificationRouter() {
       void qc.invalidateQueries({ queryKey: ['notifications'] });
       void qc.invalidateQueries({ queryKey: ['submissions'] });
       void qc.invalidateQueries({ queryKey: ['support'] });
+      void qc.invalidateQueries({ queryKey: ['chat'] });
     });
     return () => sub.remove();
   }, [qc]);

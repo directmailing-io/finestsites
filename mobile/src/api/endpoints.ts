@@ -2,6 +2,14 @@ import { api, rawRequest, request } from './client';
 import type {
   Affiliate,
   AppConfig,
+  BlockChatVisitorRequest,
+  ChatConversationDetail,
+  ChatConversationList,
+  ChatConversationStatus,
+  ChatMessage,
+  ChatMessagePage,
+  ChatOk,
+  ChatUnread,
   ConnectResponse,
   ConversationSummary,
   CreditNoteList,
@@ -26,6 +34,7 @@ import type {
   PayoutModeState,
   PayoutResult,
   RegisterDeviceRequest,
+  ReportChatRequest,
   Site,
   SubmissionList,
   SubmissionStatus,
@@ -114,6 +123,29 @@ export const requestPayout = () => api.post<PayoutResult>(`${V1}/affiliate/payou
 export const getCreditNotes = () => api.get<CreditNoteList>(`${V1}/affiliate/credit-notes`);
 /** PDF wird mit Bearer geladen (nie im Browser-Fenster ohne Anmeldung). */
 export const creditNotePdfPath = (id: string) => `${V1}/affiliate/credit-notes/${encodeURIComponent(id)}`;
+
+// Besucher-Chat (Vertrag: contracts/chat.ts). Nur freigeschaltete Konten (me.features.visitorChat),
+// sonst antwortet der Server mit FEATURE_DISABLED (403).
+const CHAT = `${V1}/chat`;
+const conv = (id: string) => `${CHAT}/conversations/${encodeURIComponent(id)}`;
+export const chat = {
+  conversations: (params: { status: ChatConversationStatus; q?: string; cursor?: string }) =>
+    api.get<ChatConversationList>(`${CHAT}/conversations`, params),
+  /** Gespräch + letzte 100 Nachrichten (älteste zuerst). */
+  conversation: (id: string) => api.get<ChatConversationDetail>(conv(id)),
+  /** after = neue Nachrichten (Polling), before = Verlauf nachladen. */
+  messages: (id: string, params: { after?: string; before?: string }) => api.get<ChatMessagePage>(`${conv(id)}/messages`, params),
+  send: (id: string, body: { body: string; clientId: string }) => api.post<{ message: ChatMessage }>(`${conv(id)}/messages`, body),
+  read: (id: string) => api.post<ChatOk>(`${conv(id)}/read`),
+  archive: (id: string) => api.post<ChatOk>(`${conv(id)}/archive`),
+  unarchive: (id: string) => api.post<ChatOk>(`${conv(id)}/unarchive`),
+  block: (id: string, body: BlockChatVisitorRequest = {}) => api.post<ChatOk>(`${conv(id)}/block`, body),
+  unblock: (id: string) => api.post<ChatOk>(`${conv(id)}/unblock`),
+  report: (id: string, body: ReportChatRequest) => api.post<ChatOk>(`${conv(id)}/report`, body),
+  /** Entfernt Gespräch + Nachrichten endgültig. */
+  remove: (id: string) => api.del<ChatOk>(conv(id)),
+  unread: () => api.get<ChatUnread>(`${CHAT}/unread`),
+};
 
 // Konto löschen
 export const getDeletionInfo = () => api.get<DeletionInfo>(`${V1}/account/deletion`);
