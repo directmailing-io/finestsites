@@ -35,7 +35,7 @@ export default function PublishedScreen() {
 
   async function finish() {
     const prime = isFirst && (await shouldPrimePush());
-    router.dismissTo({ pathname: '/sites', params: { live: siteId } });
+    router.dismissTo({ pathname: '/sites', params: { live: siteId, at: String(Date.now()) } });
     if (prime) setTimeout(() => router.push({ pathname: '/push-priming', params: { reason: 'publish' } }), 400);
   }
 

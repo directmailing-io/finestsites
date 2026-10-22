@@ -16,13 +16,18 @@ import { colors, fonts, radius, shadows } from '@/theme/tokens';
  * Begrüßung, „Neue Webseite erstellen“, Abschnitte Online / Offline / Entwürfe mit denselben Karten,
  * am Ende „Noch eine Webseite erstellen“. Raster wie im Web: 1 Spalte, ab 768 pt 2, ab 1280 pt 3.
  */
+// Welche Veröffentlichung schon angezeigt wurde (Tab-Routen behalten ihre Parameter, auch nach
+// setParams – ohne dieses Merkmal käme „Deine Seite ist online.“ bei jedem Tab-Wechsel wieder).
+let shownLiveKey = '';
+
 export default function SitesScreen() {
   const router = useRouter();
-  const { live } = useLocalSearchParams<{ live?: string }>();
+  const { live, at } = useLocalSearchParams<{ live?: string; at?: string }>();
   const sites = useSites();
   const me = useMe();
   const { width } = useLayout();
-  const [liveId, setLiveId] = useState<string | null>(live ?? null);
+  const liveKey = live ? `${live}:${at ?? ''}` : '';
+  const [liveId, setLiveId] = useState<string | null>(live && liveKey !== shownLiveKey ? live : null);
   const [hour, setHour] = useState(() => new Date().getHours());
 
   // Begrüßung folgt der Uhr (wie im Web, auch wenn die App offen bleibt)
@@ -33,12 +38,12 @@ export default function SitesScreen() {
 
   // Nach dem Veröffentlichen (…/sites?live=<id>): Hinweis oben + die Karte leuchtet kurz grün
   useEffect(() => {
-    if (!live) return;
+    if (!live || liveKey === shownLiveKey) return;
+    shownLiveKey = liveKey;
     setLiveId(live);
-    router.setParams({ live: undefined });
     const t = setTimeout(() => setLiveId(null), 6000);
     return () => clearTimeout(t);
-  }, [live, router]);
+  }, [live, liveKey]);
 
   const loading = sites.isLoading || me.isLoading;
   const list = (sites.data ?? []).filter(s => s.status !== 'deleted');
