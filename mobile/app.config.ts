@@ -10,7 +10,8 @@ const EAS_PROJECT_ID = process.env.EAS_PROJECT_ID ?? 'df3f2f67-38a8-4a90-ac64-f6
 
 // Icon-Grund weiß wie Sidebar/Wortmarke; Startbildschirm wie --background der Webapp
 const ICON_BG = '#FFFFFF';
-const SPLASH_BG = '#FAFAFA';
+// Gleich dem Hintergrund des Logo-Intros (assets/brand/intro.mp4), damit der Übergang nahtlos ist
+const SPLASH_BG = '#FDFDFD';
 export const SPLASH_BG_DARK = '#1a1a1a';
 
 export default ({ config }: ConfigContext): ExpoConfig => ({
@@ -80,8 +81,10 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
         // Design (userInterfaceStyle light) und expo-splash-screen meldet dann, dass ein dunkler
         // Startbildschirm nicht sauber funktioniert. Eintragen, sobald die App einen Dark Mode bekommt:
         //   dark: { backgroundColor: SPLASH_BG_DARK, image: './assets/brand/splash-logo-dark.png' }
+        // Seit 22.10.2026 leer: das animierte Logo-Intro (src/features/intro/IntroOverlay.tsx) beginnt
+        // mit einer leeren Fläche und zeichnet das Logo selbst – ein statisches Logo davor würde springen.
         backgroundColor: SPLASH_BG,
-        image: './assets/brand/splash-logo.png',
+        image: './assets/brand/splash-blank.png',
         imageWidth: 200,
         resizeMode: 'contain',
       },

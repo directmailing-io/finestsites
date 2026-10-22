@@ -8,14 +8,15 @@ import * as Network from 'expo-network';
 import { DefaultTheme, Stack, ThemeProvider } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
-import { useEffect } from 'react';
-import { AppState } from 'react-native';
+import { useEffect, useState } from 'react';
+import { AppState, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { queryClient } from '@/api/queries';
 import { LockScreen } from '@/components/LockScreen';
 import { ToastProvider } from '@/components/ui';
+import { IntroOverlay, shouldPlayIntro } from '@/features/intro/IntroOverlay';
 import { NotificationRouter } from '@/features/push/NotificationRouter';
 import { useAuth } from '@/lib/auth';
 import { startLockWatcher, useLock } from '@/lib/lock';
@@ -42,6 +43,9 @@ const theme = {
   colors: { ...DefaultTheme.colors, background: colors.background, primary: colors.ink, card: colors.background, text: colors.ink },
 };
 
+/** Hintergrund des Logo-Intros und des (leeren) nativen Startbildschirms */
+const INTRO_BG = '#FDFDFD';
+
 export const unstable_settings = { anchor: '(tabs)' };
 
 export default function RootLayout() {
@@ -57,59 +61,66 @@ export default function RootLayout() {
   }, [bootstrap]);
 
   const ready = fontsLoaded && status !== 'loading' && lock.hydrated;
+  // Logo-Intro beim Kaltstart (src/features/intro/IntroOverlay.tsx); ohne Intro blendet der Startbildschirm wie bisher aus
+  const [intro, setIntro] = useState(shouldPlayIntro);
   useEffect(() => {
-    if (ready) void SplashScreen.hideAsync().catch(() => {});
-  }, [ready]);
+    if (ready && !intro) void SplashScreen.hideAsync().catch(() => {});
+  }, [ready, intro]);
 
   useEffect(() => {
     if (status === 'signedIn') void registerPushDevice();
   }, [status]);
 
-  if (!ready) return null;
   const signedIn = status === 'signedIn';
 
+  // Feste Reihenfolge der Kinder (App-Platz, Intro-Platz), damit das Intro beim Umschalten auf „bereit“ nicht neu startet
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <SafeAreaProvider>
-        <QueryClientProvider client={queryClient}>
-          <ThemeProvider value={theme}>
-            <ToastProvider>
-              <StatusBar style="dark" />
-              <Stack
-                screenOptions={{
-                  headerShown: false,
-                  contentStyle: { backgroundColor: colors.background },
-                  headerTitleStyle: { fontFamily: fonts.semibold, color: colors.ink },
-                  headerTransparent: false,
-                  headerShadowVisible: false,
-                  headerStyle: { backgroundColor: colors.background },
-                  headerTintColor: colors.ink,
-                }}>
-                <Stack.Protected guard={!signedIn} redirectTo="/sites">
-                  <Stack.Screen name="login" />
-                </Stack.Protected>
-                <Stack.Protected guard={signedIn} redirectTo="/login">
-                  <Stack.Screen name="(tabs)" />
-                  <Stack.Screen name="onboarding" options={{ gestureEnabled: false }} />
-                  <Stack.Screen name="deletion-pending" options={{ gestureEnabled: false }} />
-                  <Stack.Screen
-                    name="editor/[id]"
-                    options={{ presentation: 'fullScreenModal', headerShown: false, gestureEnabled: false }}
-                  />
-                  <Stack.Screen name="web" options={{ presentation: 'fullScreenModal', headerShown: true, gestureEnabled: false }} />
-                  <Stack.Screen
-                    name="published"
-                    options={{ presentation: 'transparentModal', animation: 'fade', gestureEnabled: false, contentStyle: { backgroundColor: 'transparent' } }}
-                  />
-                  <Stack.Screen name="push-priming" options={{ presentation: 'formSheet', sheetAllowedDetents: [0.62, 1], sheetGrabberVisible: true }} />
-                </Stack.Protected>
-              </Stack>
-              {signedIn && <NotificationRouter />}
-              {signedIn && lock.enabled && lock.locked && <LockScreen />}
-            </ToastProvider>
-          </ThemeProvider>
-        </QueryClientProvider>
-      </SafeAreaProvider>
-    </GestureHandlerRootView>
+    <View style={{ flex: 1, backgroundColor: INTRO_BG }}>
+      {ready ? (
+        <GestureHandlerRootView style={{ flex: 1 }}>
+          <SafeAreaProvider>
+            <QueryClientProvider client={queryClient}>
+              <ThemeProvider value={theme}>
+                <ToastProvider>
+                  <StatusBar style="dark" />
+                  <Stack
+                    screenOptions={{
+                      headerShown: false,
+                      contentStyle: { backgroundColor: colors.background },
+                      headerTitleStyle: { fontFamily: fonts.semibold, color: colors.ink },
+                      headerTransparent: false,
+                      headerShadowVisible: false,
+                      headerStyle: { backgroundColor: colors.background },
+                      headerTintColor: colors.ink,
+                    }}>
+                    <Stack.Protected guard={!signedIn} redirectTo="/sites">
+                      <Stack.Screen name="login" />
+                    </Stack.Protected>
+                    <Stack.Protected guard={signedIn} redirectTo="/login">
+                      <Stack.Screen name="(tabs)" />
+                      <Stack.Screen name="onboarding" options={{ gestureEnabled: false }} />
+                      <Stack.Screen name="deletion-pending" options={{ gestureEnabled: false }} />
+                      <Stack.Screen
+                        name="editor/[id]"
+                        options={{ presentation: 'fullScreenModal', headerShown: false, gestureEnabled: false }}
+                      />
+                      <Stack.Screen name="web" options={{ presentation: 'fullScreenModal', headerShown: true, gestureEnabled: false }} />
+                      <Stack.Screen
+                        name="published"
+                        options={{ presentation: 'transparentModal', animation: 'fade', gestureEnabled: false, contentStyle: { backgroundColor: 'transparent' } }}
+                      />
+                      <Stack.Screen name="push-priming" options={{ presentation: 'formSheet', sheetAllowedDetents: [0.62, 1], sheetGrabberVisible: true }} />
+                    </Stack.Protected>
+                  </Stack>
+                  {signedIn && <NotificationRouter />}
+                  {signedIn && lock.enabled && lock.locked && <LockScreen />}
+                </ToastProvider>
+              </ThemeProvider>
+            </QueryClientProvider>
+          </SafeAreaProvider>
+        </GestureHandlerRootView>
+      ) : null}
+      {intro ? <IntroOverlay appReady={ready} onDone={() => setIntro(false)} /> : null}
+    </View>
   );
 }
