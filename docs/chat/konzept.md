@@ -62,6 +62,11 @@ chat_blocks
 chat_resume_tokens
   token_hash varchar(64) pk, conversation_id uuid → chat_conversations (cascade)
   expires_at timestamptz not null, used_at timestamptz
+  kind text not null default 'reply'              -- reply | handoff | handoff_mail (Migration 20261022230000)
+
+chat_visitor_tokens                                -- weitere Browser-Token je Gespräch (Migration 20261022230000)
+  token_hash varchar(64) pk, conversation_id uuid → chat_conversations (cascade)
+  created_at, last_used_at
 
 notification_preferences: + chat boolean not null default true
 ```
@@ -98,7 +103,20 @@ Der Worker reicht nie den echten IP durch. Antworten des App-Servers werden 1:1 
 Token-Regeln:
 - `visitorToken`: 32 Byte Zufall, vom Widget erzeugt (`crypto.getRandomValues`), im Browser **erst ab der ersten gesendeten Nachricht** gespeichert (localStorage `fs_chat_token`, Fallback Cookie `fs_chat_token`, 180 Tage, SameSite=Lax). Server speichert nur sha256.
 - Ohne Token darf `session` nur `enabled`/Konfiguration liefern; erst `POST messages` ohne bekanntes Gespräch legt eines an (Token dann Pflicht).
-- `resumeToken` (Link aus der Antwort-Mail `https://<host>/?fs_chat=<token>`): einmalig gültig 30 Tage, hashed; `session` mit gültigem Token übernimmt das Gespräch für den neuen `visitorToken` (alter Hash wird ersetzt) und markiert den Token benutzt.
+- `resumeToken` (Link aus der Antwort-Mail `https://<host>/?fs_chat=<token>`, 30 Tage, `kind='reply'`; Übergabe-Link 7 Tage, `kind='handoff'|'handoff_mail'`): einmalig, hashed; `session` mit gültigem Token hängt den neuen `visitorToken` als **weiteren Zugang** (`chat_visitor_tokens`, seit 22.10.2026 abends) an das Gespräch – der bisherige Browser behält seinen Zugang – und markiert den Token benutzt. Ein Token zeigt immer auf genau ein Gespräch; hatte der neue Browser auf derselben Seite schon ein eigenes Gespräch, wird dessen Token-Hash verwaist (`orphan:`).
+
+### Übergabe zwischen Browsern (`POST /.finestsites/chat/handoff`, seit 22.10.2026)
+
+Problem: Instagram/Facebook/TikTok öffnen Seiten im eigenen In-App-Browser mit eigenem Speicher. Beginnt ein Besucher dort den Chat und öffnet die Seite später in Safari/Chrome, fehlt der Token. Lösung:
+
+| Body | Antwort |
+|---|---|
+| `{ via: 'link', pageUrl }` | `{ url: 'https://<host><pfad>?fs_chat=<token>', expiresAt }` – Token 7 Tage, einmalig; Pfad = `pathOf(pageUrl)` auf dem Host der Anfrage; 20 Links/h je IP-Hash |
+| `{ via: 'email' }` | `{ ok: true }` – Link per Mail (`chatHandoffEmail`, Typ `chat_handoff`, Kategorie system) an `visitor_email`; 400 `NO_EMAIL`, 429 ab der 4. Mail je Gespräch und 24 h, 502 `MAIL_FAILED` |
+
+Beide: 400 `TOKEN_REQUIRED`/`VALIDATION_FAILED`, 403 `BLOCKED`, 404 `NO_CONVERSATION`. Sperren (`chat_blocks`) erfassen alle Token-Hashes eines Gesprächs (ursprünglicher + Aliase).
+
+Widget: erkennt In-App-Browser am User-Agent (`Instagram|FBAN|FBAV|FB_IAB|FB4A|Threads|Barcelona|TikTok|musical_ly|Snapchat|LinkedInApp|Pinterest|Line/`) und zeigt nach der ersten Nachricht eine Hinweiskarte „In Safari öffnen“ / „Im Browser öffnen“ + „Link kopieren“. iOS: `history.replaceState` auf die Link-URL (damit auch Instagrams ⋯-Menü „In Safari öffnen“ den Token mitnimmt), dann `window.open('x-safari-https://…')`; Android: `intent://…#Intent;scheme=https;end`; nach 1,2 s ohne Wechsel Fallback mit Link-Feld. In der Profilkarte bei hinterlegter E-Mail „Chat-Link per E-Mail schicken“. Der Token wird nie ohne Klick in die URL geschrieben.
 - Gesperrte Besucher (Token-Hash **oder** IP-Hash in `chat_blocks` des Betreibers): alle Endpunkte 403 `BLOCKED`; das Widget zeigt „Dieser Chat ist nicht verfügbar.“ und bietet nur noch WhatsApp/E-Mail an, falls vorhanden.
 
 Ratenbegrenzung (im App-Server, `rateLimit` aus `src/lib/app-api/http.ts` oder gleichwertig): pro IP-Hash 60 Anfragen/Minute; Nachrichten pro Gespräch 20 pro 10 Minuten und frühestens alle 1,5 s; `session`-Anlagen pro IP-Hash 10 pro Stunde.
@@ -127,16 +145,20 @@ Antwort-Mail an den Besucher (`src/lib/chat/notify.ts`): nur wenn `visitor_email
 
 ## Widget (`public/chat-widget/v1.js`, Vanilla JS, kein Build-Schritt, Shadow DOM)
 
-- Start-Knopf unten rechts (56 px, Markenfarbe `brandColor` der Seite, sonst `#111`), Sprechblasen-Symbol, ungelesen-Badge, sanfte Einblendung nach 1,5 s, Tastatur-/Screenreader-tauglich (`aria-label`, `role="dialog"`, Esc schließt).
-- Fenster: Handy = Vollbild-Sheet (respektiert `env(safe-area-inset-*)`), Desktop = 380×620 px unten rechts, abgerundet, Schatten. Kopf: Avatar (Bild oder Initialen), Name, Status („Antwortet meist schnell“ / „online“ wenn `ownerLastSeenAt` < 90 s). Verlauf: WhatsApp-artiger Hintergrund in Hell, Blasen (Besucher rechts in Markenfarbe-Abstufung, Betreiber links weiß), Zeit je Blase, Haken (✓ gesendet, ✓✓ gelesen), Tag-Trenner („Heute“, „Gestern“, Datum), Links anklickbar (`rel="noopener"`, `target="_blank"`), lange Links gekürzt, „Link kopiert“-Hinweis bei Tipp auf Teilen-Symbol neben einem Link.
-- Eingabe: mehrzeilig, Enter sendet (Shift+Enter Umbruch), Senden-Knopf in Markenfarbe, optimistische Anzeige mit `clientId`, Fehler als dezente Zeile mit „Erneut senden“.
+- **Markenfarbe = Farbe der Webseite** (seit 22.10.2026): vor dem Einhängen liest das Widget die erste gültige CSS-Variable auf `body` **und** `html` in dieser Reihenfolge: `--fs-primary`, `--primary`, `--accent`, `--green`, `--blue`, `--brand` (Werte `#rgb`, `#rrggbb`, `rgb()`, `rgba()`; ungültig/leer → nächste). Fallback `owner.brandColor`, dann `#111`. Textfarbe auf der Marke per Luminanz; sehr helle Markenfarben (Luminanz > 0,75) werden für Blasen/Knöpfe um 22 % abgedunkelt. Keine Vorlagen-IDs, nur Variablen.
+- Gestaltung (seit 22.10.2026 minimal, Apple-/Linear-artig): Kopf weiß mit Hairline (1 px rgba(0,0,0,.06)), Avatar 36 px, Name 15 px/600, Status 12 px grau mit 6-px-Punkt (grün bei online, sonst grau), Schließen als graues Chevron (Handy) bzw. X (Desktop), 40 px Tapfläche. Markenfarbe nur als Akzent: eigene Blasen, Senden-Knopf, Fokus-Ring, Links in Betreiber-Blasen, Speichern-Pille. Betreiber-Blasen `#F2F3F5`/Text `#111`, Fläche weiß ohne Muster, Blasen-Radius 18 px mit 6 px an der Sprechseite (unten, nur letzte Blase einer Gruppe), Zeit 11 px rechts unten in der Blase, Häkchen daneben. Tages-Trenner und Systemmeldungen als grauer Text 12 px ohne Pille. Keine Schriften nachladen (`system-ui`).
+- Start-Knopf unten rechts (56 px Kreis in Markenfarbe, Schatten `0 8px 24px rgba(0,0,0,.18)`), Chat-Glyph 26 px, rotes Badge 20 px, geöffnet → Chevron-Down, sanfte Einblendung nach 1,5 s, Tastatur-/Screenreader-tauglich (`aria-label`, `role="dialog"`, `role="log"`, Esc schließt).
+- Fenster: Handy = Vollbild-Sheet (respektiert `env(safe-area-inset-*)`), Desktop = 380 × min(640 px, 100vh − 40 px) unten rechts, Radius 20, Schatten `0 24px 64px rgba(0,0,0,.18) + 0 0 0 1px rgba(0,0,0,.04)`; Öffnen 200 ms (scale .96 → 1 + fade), `prefers-reduced-motion` ohne Animation. Verlauf: Haken (✓ gesendet, ✓✓ gelesen), Tag-Trenner („Heute“, „Gestern“, Datum), Links anklickbar (`rel="noopener"`, `target="_blank"`), lange Links gekürzt, „Link kopiert“-Hinweis bei Tipp auf Kopier-Symbol neben einem Link.
+- Eingabe: weiche Füllung `#F2F3F5` ohne Rahmen, Radius 22, 16 px (Desktop 15 px), mehrzeilig, Enter sendet (Shift+Enter Umbruch), Senden-Knopf 38 px Kreis in Markenfarbe (40 % Deckkraft bei leerem Feld), optimistische Anzeige mit `clientId`, Fehler als dezente rote Zeile mit „Erneut senden“. Hinweiszeile 11 px grau, „Datenschutz“ unterstrichen.
 - Erster Besuch: Begrüßungsblase (`welcome`) + Hinweiszeile unter der Eingabe: „Mit dem Senden wird dein Chat auf dieser Seite gespeichert. [Datenschutz](/datenschutz)“. Kein Cookie/Storage vor dem ersten Senden (§ 25 Abs. 2 Nr. 2 TDDDG: technisch erforderlich für die ausdrücklich angeforderte Funktion).
-- Nach der ersten Nachricht: einklappbare Karte „Damit ich dich erreiche (optional)“ mit Name, E-Mail, Telefon/WhatsApp und Schalter „Antworten per E-Mail erhalten“ (nur aktiv, wenn E-Mail eingetragen; Standard an, sobald eine E-Mail eingetragen wird). Speichern → `profile`.
-- `whatsappUrl` vorhanden: Zeile im Kopf oder unter der Begrüßung „Schreib mir direkt in WhatsApp“ (grüner Knopf, ruhiges Dunkelgrün `#128C7E`-Stil, nie grelles #25D366).
+- Nach der ersten Nachricht: einklappbare Karte „Damit ich dich erreiche (optional)“ (eingeklappt eine Zeile 13 px grau mit Chevron; Felder `#F2F3F5` ohne Rahmen, Radius 12, Höhe 40; Toggle 36 × 22; Speichern als kleine Marken-Pille) mit Name, E-Mail, Telefon/WhatsApp und Schalter „Antworten per E-Mail erhalten“ (nur aktiv, wenn E-Mail eingetragen; Standard an, sobald eine E-Mail eingetragen wird). Speichern → `profile`. Klappt nach der ersten Nachricht einmal automatisch auf. Ist eine E-Mail gespeichert, erscheint die Textschaltfläche „Chat-Link per E-Mail schicken“ (`handoff {via:'email'}`, Toast „E-Mail ist unterwegs“ / bei 429 „Bitte später nochmal“) – nützlich Desktop → Handy.
+- `whatsappUrl` vorhanden: unter der Begrüßung „Schreib mir direkt in WhatsApp“ als ruhige weiße Pille mit Hairline, WA-Glyph in `#25D366`, Text dunkel 14 px/500 (kein grüner Block). Im Gesperrt-Zustand zentriert unter „Dieser Chat ist nicht verfügbar.“
+- **Übergabe aus In-App-Browsern** (`POST /.finestsites/chat/handoff`, nur mit bestehendem Gespräch): UA-Erkennung `/Instagram|FBAN|FBAV|FB_IAB|FB4A|Threads|Barcelona|TikTok|musical_ly|Snapchat|LinkedInApp|Pinterest|Line\//i`, Plattform iOS (`iPhone|iPad|iPod`) / Android. Sobald dort ein Gespräch existiert, steht am Ende des Verlaufs eine ruhige Hinweiskarte (hell, Hairline, 13 px): „Du bist im Instagram-Browser. Damit du später wieder in diesen Chat kommst, öffne ihn in Safari.“ (App-Name aus dem UA, sonst „In-App-Browser“; Android „deinem Browser“), Knöpfe „In Safari öffnen“/„Im Browser öffnen“ (Marken-Pille) und „Link kopieren“ (weiße Pille), Schließen-X → `localStorage fs_chat_handoff_dismissed=<convId>`. Primär-Knopf: `handoff {via:'link', pageUrl}` → URL; iOS: erst `history.replaceState` auf die URL mit `?fs_chat=<token>` (damit auch das ⋯-Menü „In Safari öffnen“ den Token mitnimmt), dann `window.open('x-safari-' + url)`; Android: `location.href = 'intent://…#Intent;scheme=https;end'`. Ist die Seite nach 1,2 s noch sichtbar, zeigt die Karte das Link-Feld + „Oder tippe oben rechts auf ⋯ und „In Safari öffnen“.“ Jeder Klick holt einen frischen Link (einmal einlösbar); der Link wird nie ohne Klick in die URL geschrieben; nur same-origin-URLs werden akzeptiert. „Link kopieren“: frischer Link → Zwischenablage → Toast „Link kopiert“ (schlägt die Zwischenablage fehl, erscheint das Link-Feld markiert). Die Karte erscheint nur in In-App-Browsern, nie in Safari/Chrome – auch nicht nach Einlösen eines Links.
 - Polling: 3 s bei offenem Fenster, 20 s geschlossen mit bekanntem Gespräch, pausiert bei `document.hidden`; `read` beim Öffnen und bei neuer Betreiber-Nachricht im sichtbaren Fenster. Badge am Start-Knopf = ungelesene Betreiber-Nachrichten; Titel-Blinken nicht.
 - `?fs_chat=<token>` in der URL → `session` mit `resumeToken`, Fenster öffnet sich, Parameter aus der URL entfernt (`history.replaceState`). `&unsubscribe=1` → `profile {notifyByEmail:false}` + Hinweis.
 - Sprache: `document.documentElement.lang` beginnt mit `en` → Englisch, sonst Deutsch. Alle Texte in einem Objekt `T.de`/`T.en`.
-- Kein externes Laden (keine Schriften, keine CDN); Schrift = `system-ui`. Größe ≤ 40 kB unminifiziert.
+- Kein externes Laden (keine Schriften, keine CDN); Schrift = `system-ui`. Größe ≤ 52 kB unminifiziert (`npm run check:chat-widget`; seit 22.10.2026 mit Übergabe-Karte und Seitenfarbe, vorher 40 kB).
+- Screenshots: `docs/chat/screenshots/01–07` (Handy 390×844 @2x, Desktop 1280×800 @2x; 07 = Instagram-Hinweiskarte).
 
 ## App (mobile/) und Web-Dashboard
 

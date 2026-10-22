@@ -993,8 +993,20 @@ export const chatResumeTokens = pgTable('chat_resume_tokens', {
   conversationId: uuid('conversation_id').notNull().references(() => chatConversations.id, { onDelete: 'cascade' }),
   expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(),
   usedAt: timestamp('used_at', { withTimezone: true }),
+  /** reply (Antwort-Mail, 30 Tage) | handoff (Übergabe-Link, 7 Tage) | handoff_mail (Übergabe-Link per Mail, 7 Tage) */
+  kind: text('kind').notNull().default('reply'),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
 })
+
+/** Weitere Besucher-Token (Alias) je Gespräch – Übergabe zwischen Browsern; nur sha256-Hashes. */
+export const chatVisitorTokens = pgTable('chat_visitor_tokens', {
+  tokenHash: varchar('token_hash', { length: 64 }).primaryKey(),
+  conversationId: uuid('conversation_id').notNull().references(() => chatConversations.id, { onDelete: 'cascade' }),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  lastUsedAt: timestamp('last_used_at', { withTimezone: true }),
+}, (t) => [
+  index('idx_chat_visitor_tokens_conversation').on(t.conversationId),
+])
 
 export const chatConversationsRelations = relations(chatConversations, ({ one, many }) => ({
   user: one(users, { fields: [chatConversations.userId], references: [users.id] }),

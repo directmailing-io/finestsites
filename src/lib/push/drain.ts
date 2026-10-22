@@ -11,6 +11,7 @@ import { db } from '@/lib/db'
 import { pushDeliveries, pushDevices, pushOutbox } from '@/lib/db/schema'
 import { and, eq, inArray, sql } from 'drizzle-orm'
 import { isPushEnabled, PUSH_LIMITS } from './config'
+import { badgeCountFor } from './badge'
 import { categoryAllowed, getPreferencesMap, quietHoursOf } from './preferences'
 import { isInQuietHours, nextAllowedTime } from './quiet-hours'
 import { getExpoReceipts, sendExpoChunk, type ExpoMessage, type ExpoTicket } from './expo'
@@ -98,6 +99,9 @@ export async function drainPushOutbox(opts: { limit?: number; now?: Date } = {})
     list.push({ id: d.id, token: d.token })
     devicesByUser.set(d.userId, list)
   }
+  // Badge fürs App-Symbol: nur für Nutzer mit Geräten, einmal je Lauf
+  const badges = new Map<string, number | null>()
+  await Promise.all([...devicesByUser.keys()].map(async uid => badges.set(uid, await badgeCountFor(uid))))
 
   // 3. Je Zeile entscheiden: überspringen, verschieben (Nachtruhe) oder senden
   type Pending = { outboxId: string; deviceId: string; message: ExpoMessage }
@@ -148,6 +152,7 @@ export async function drainPushOutbox(opts: { limit?: number; now?: Date } = {})
             priority: 'high',
             channelId: row.category,
             ttl: PUSH_LIMITS.maxAgeHours * 3600,
+            ...(typeof badges.get(row.user_id) === 'number' ? { badge: badges.get(row.user_id) as number } : {}),
           },
         })
       }

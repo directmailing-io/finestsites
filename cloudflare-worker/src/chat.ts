@@ -22,6 +22,7 @@ const ENDPOINTS: Record<string, ReadonlySet<string>> = {
   messages: new Set(['GET', 'POST']),
   read: new Set(['POST']),
   profile: new Set(['POST']),
+  handoff: new Set(['POST']),
 }
 const MAX_BODY_BYTES = 16 * 1024
 const WIDGET_CACHE_SECONDS = 300

@@ -1290,6 +1290,28 @@ export function chatReplyEmail({ ownerName, preview, openUrl, unsubscribeUrl, si
   `)
 }
 
+/** Vom Besucher angeforderter Link, um das Gespräch in einem anderen Browser/Gerät fortzusetzen. */
+export function chatHandoffEmail({ ownerName, openUrl, siteHost, validDays }: {
+  ownerName: string; openUrl: string; siteHost: string; validDays: number
+}): string {
+  const name = escapeHtml(ownerName)
+  return layout(`
+    <h1 style="margin:0 0 8px;font-size:22px;font-weight:700;color:${base.heading};letter-spacing:-0.02em;">
+      Dein Chat mit ${name}
+    </h1>
+    <p style="margin:0 0 0;font-size:15px;color:${base.body};line-height:1.65;">
+      Du hast dir im Chat auf ${escapeHtml(siteHost)} diesen Link schicken lassen. Damit kommst du auf jedem Gerät
+      und in jedem Browser wieder in euer Gespräch.
+    </p>
+    ${button(openUrl, 'Chat fortsetzen')}
+    ${fallbackLink(openUrl)}
+    <p style="margin:28px 0 0;font-size:13px;color:${base.muted};line-height:1.6;">
+      Der Link ist ${validDays} Tage gültig und kann einmal benutzt werden. Wer ihn hat, kann das Gespräch lesen – gib ihn
+      deshalb nicht weiter. Du bekommst diese E-Mail, weil du im Chat auf „Chat-Link per E-Mail schicken“ getippt hast.
+    </p>
+  `)
+}
+
 /** Meldung eines Gesprächs an FinestSites (info@finestsites.io): Konto, Seite, Grund, letzte Nachrichten. */
 export function chatReportEmail({ reasonLabel, note, accountLabel, siteLabel, conversationId, blocked, adminUrl, messages }: {
   reasonLabel: string

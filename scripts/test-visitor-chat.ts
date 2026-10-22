@@ -554,23 +554,109 @@ async function main() {
     assert.equal(j.conversationId, conversationId)
     assert.equal(j.visitor.name, 'Anna Beispiel')
     assert.ok(j.messages.length >= 4)
+    // Ursprünglicher Token bleibt, der neue kommt als Alias dazu (beide Browser behalten den Zugang)
     const [row] = await sql`select visitor_token_hash from chat_conversations where id = ${conversationId}`
-    assert.equal(row.visitor_token_hash, sha256(token2))
-    const [t] = await sql`select used_at from chat_resume_tokens where token_hash = ${sha256(rawResume)}`
+    assert.equal(row.visitor_token_hash, sha256(token1))
+    const [alias] = await sql`select conversation_id from chat_visitor_tokens where token_hash = ${sha256(token2)}`
+    assert.equal(alias?.conversation_id, conversationId)
+    const [t] = await sql`select used_at, kind from chat_resume_tokens where token_hash = ${sha256(rawResume)}`
     assert.ok(t.used_at)
-    // Alter Browser kennt das Gespräch nicht mehr, neuer schon
+    assert.equal(t.kind, 'reply')
     const old = await visitor.session({})
-    assert.equal((old.json as { conversationId: string | null }).conversationId, null)
+    assert.equal((old.json as { conversationId: string | null }).conversationId, conversationId)
+    // Link ein zweites Mal im selben Browser: verbraucht, aber der Browser kennt das Gespräch → 200
     const again = await visitor2.session({ visitorToken: token2, resumeToken: rawResume })
-    assert.equal(again.status, 410, again.text)
+    assert.equal(again.status, 200, again.text)
+    assert.equal((again.json as { conversationId: string }).conversationId, conversationId)
     const fresh = await visitor2.messages()
     assert.ok((fresh.json as { messages: unknown[] }).messages.length >= 4)
   })
-  await step('Resume-Token ohne visitorToken → 400, unbekannt → 410', async () => {
+  await step('Resume-Token ohne visitorToken → 400, verbraucht/unbekannt in fremdem Browser → 410', async () => {
     const a = await probe.session({ resumeToken: rawResume })
     assert.equal(a.status, 400)
-    const b = await visitor2.session({ visitorToken: token2, resumeToken: randomBytes(32).toString('base64url') })
-    assert.equal(b.status, 410)
+    const stranger = newToken()
+    const b = await new Visitor(site.id, host, stranger).session({ visitorToken: stranger, resumeToken: rawResume })
+    assert.equal(b.status, 410, b.text)
+    const c = await new Visitor(site.id, host, stranger).session({ visitorToken: stranger, resumeToken: randomBytes(32).toString('base64url') })
+    assert.equal(c.status, 410)
+  })
+
+  console.log('▶ Übergabe zwischen Browsern (Instagram → Safari)')
+  const token3 = newToken()
+  const visitor3 = new Visitor(site.id, host, token3)
+  await step('handoff ohne Gespräch → 404 NO_CONVERSATION, ohne Token → 400, falsches via → 400', async () => {
+    const a = await visitor3.call('POST', 'handoff', { via: 'link' })
+    assert.equal(a.status, 404, a.text)
+    assert.equal((a.json as { error: string }).error, 'NO_CONVERSATION')
+    assert.equal((await probe.call('POST', 'handoff', { via: 'link' })).status, 400)
+    assert.equal((await visitor.call('POST', 'handoff', { via: 'sms' })).status, 400)
+  })
+  let handoffLink = ''
+  await step('handoff via link → URL derselben Seite mit ?fs_chat=, Token 7 Tage, kind handoff', async () => {
+    const res = await visitor.call('POST', 'handoff', { via: 'link', pageUrl: `https://${host}/angebot?x=1&fs_chat=alt#oben` })
+    assert.equal(res.status, 200, res.text)
+    const j = res.json as { url: string; expiresAt: string }
+    const u = new URL(j.url)
+    assert.equal(u.host, host)
+    assert.equal(u.pathname, '/angebot')
+    assert.equal(u.searchParams.get('x'), '1')
+    assert.equal(u.hash, '')
+    const tok = u.searchParams.get('fs_chat') ?? ''
+    assert.ok(tok.length >= 32)
+    handoffLink = tok
+    const [t] = await sql`select kind, used_at, expires_at from chat_resume_tokens where token_hash = ${sha256(tok)}`
+    assert.equal(t.kind, 'handoff')
+    assert.equal(t.used_at, null)
+    const days = (new Date(t.expires_at).getTime() - Date.now()) / 86_400_000
+    assert.ok(days > 6.9 && days <= 7, String(days))
+    assert.ok(Math.abs(new Date(j.expiresAt).getTime() - new Date(t.expires_at).getTime()) < 5000)
+  })
+  await step('Link in Safari einlösen → gleiches Gespräch; Instagram-Browser behält den Zugang; Alias kann schreiben', async () => {
+    const res = await visitor3.session({ visitorToken: token3, resumeToken: handoffLink })
+    assert.equal(res.status, 200, res.text)
+    assert.equal((res.json as { conversationId: string }).conversationId, conversationId)
+    const old = await visitor.session({})
+    assert.equal((old.json as { conversationId: string | null }).conversationId, conversationId)
+    await sleep(1600)
+    const sent = await visitor3.send('Jetzt schreibe ich aus Safari weiter.')
+    assert.equal(sent.status, 200, sent.text)
+    assert.equal((sent.json as { message: { conversationId: string } }).message.conversationId, conversationId)
+    const seen = await visitor.messages()
+    assert.ok((seen.json as { messages: { body: string }[] }).messages.some(m => m.body.includes('aus Safari')))
+    // Der Alias darf selbst wieder einen Übergabe-Link erzeugen
+    const again = await visitor3.call('POST', 'handoff', { via: 'link', pageUrl: `https://${host}/` })
+    assert.equal(again.status, 200, again.text)
+    // Einmalig
+    const reuse = await new Visitor(site.id, host, newToken()).session({ visitorToken: newToken(), resumeToken: handoffLink })
+    assert.equal(reuse.status, 410)
+  })
+  await step('handoff via email: ohne E-Mail 400 NO_EMAIL; mit E-Mail → email_logs chat_handoff; 4. Mail/Tag → 429', async () => {
+    const saved = await sql`select visitor_email from chat_conversations where id = ${conversationId}`
+    await sql`update chat_conversations set visitor_email = null where id = ${conversationId}`
+    const none = await visitor.call('POST', 'handoff', { via: 'email' })
+    assert.equal(none.status, 400, none.text)
+    assert.equal((none.json as { error: string }).error, 'NO_EMAIL')
+    await sql`update chat_conversations set visitor_email = ${saved[0].visitor_email} where id = ${conversationId}`
+    const before = (await sql`select count(*)::int as n from email_logs where type = 'chat_handoff'`)[0].n
+    for (let i = 0; i < 3; i++) {
+      const r = await visitor.call('POST', 'handoff', { via: 'email', pageUrl: `https://${host}/` })
+      // Lokal ist Resend ein Dummy → 502 MAIL_FAILED, der Eintrag in email_logs entsteht trotzdem
+      assert.ok(r.status === 200 || r.status === 502, r.text)
+    }
+    for (let i = 0; i < 20; i++) {
+      const n = (await sql`select count(*)::int as n from email_logs where type = 'chat_handoff'`)[0].n
+      if (n >= before + 3) break
+      await sleep(200)
+    }
+    const logs = await sql`select "to", subject, category from email_logs where type = 'chat_handoff' order by sent_at desc limit 3`
+    assert.equal(logs.length, 3)
+    assert.equal(logs[0].to, 'anna@example.invalid')
+    assert.equal(logs[0].category, 'system')
+    assert.match(String(logs[0].subject), /^Dein Chat mit /)
+    const [{ n: mails }] = await sql`select count(*)::int as n from chat_resume_tokens where conversation_id = ${conversationId} and kind = 'handoff_mail'`
+    assert.equal(mails, 3)
+    const fourth = await visitor.call('POST', 'handoff', { via: 'email' })
+    assert.equal(fourth.status, 429, fourth.text)
   })
 
   console.log('▶ Filter + Ratenbegrenzung')

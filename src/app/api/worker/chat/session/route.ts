@@ -34,6 +34,8 @@ export async function POST(req: NextRequest) {
   if (resumeToken) {
     if (!tokenHash) return visitorError('TOKEN_REQUIRED', 400)
     conv = await consumeResumeToken(resumeToken, site.siteId, tokenHash)
+    // Verbrauchter/abgelaufener Link, aber dieser Browser kennt das Gespräch schon (z. B. Link zweimal geöffnet)
+    if (!conv) conv = await findConversationByToken(site.siteId, tokenHash)
     if (!conv) return visitorError('RESUME_INVALID', 410)
   } else if (tokenHash) {
     conv = await findConversationByToken(site.siteId, tokenHash)

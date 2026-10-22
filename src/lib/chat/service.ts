@@ -10,7 +10,7 @@
 import { createHash, randomBytes } from 'node:crypto'
 import { db } from '@/lib/db'
 import {
-  chatBlocks, chatConversations, chatMessages, chatResumeTokens, templates, userSites, users,
+  chatBlocks, chatConversations, chatMessages, chatResumeTokens, chatVisitorTokens, templates, userSites, users,
   type ChatConversationRow, type ChatMessageRow,
 } from '@/lib/db/schema'
 import { and, asc, desc, eq, gt, ilike, inArray, isNull, lt, or, sql } from 'drizzle-orm'
@@ -20,6 +20,11 @@ import { normalizeWhatsAppNumber } from '@/lib/utils/social-links'
 export const ONLINE_WINDOW_MS = 90_000
 export const PREVIEW_LENGTH = 140
 export const RESUME_TOKEN_DAYS = 30
+/** Übergabe-Links (In-App-Browser → Safari, „Link per E-Mail“): kürzer gültig als die Antwort-Mail. */
+export const HANDOFF_TOKEN_DAYS = 7
+/** Höchstens so viele Übergabe-Mails je Gespräch und 24 Stunden. */
+export const HANDOFF_MAILS_PER_DAY = 3
+export type ResumeTokenKind = 'reply' | 'handoff' | 'handoff_mail'
 export const RETENTION_DAYS = 180
 export const BLOCK_RETENTION_DAYS = 365
 export const WELCOME_TEXT = 'Hi! Schreib mir gern, ich antworte so schnell ich kann.'
@@ -175,11 +180,36 @@ function conversationQuery() {
     .innerJoin(users, eq(chatConversations.userId, users.id))
 }
 
+/**
+ * Gespräch zu einem Besucher-Token auf dieser Seite: zuerst der ursprüngliche Token des Gesprächs,
+ * sonst ein Alias aus chat_visitor_tokens (Übergabe zwischen Browsern, docs/chat/konzept.md).
+ */
 export async function findConversationByToken(siteId: string, tokenHash: string): Promise<ChatConversationRow | null> {
   const row = await db.query.chatConversations.findFirst({
     where: and(eq(chatConversations.siteId, siteId), eq(chatConversations.visitorTokenHash, tokenHash)),
   })
-  return row ?? null
+  if (row) return row
+  const [alias] = await db.select({ conv: chatConversations })
+    .from(chatVisitorTokens)
+    .innerJoin(chatConversations, eq(chatVisitorTokens.conversationId, chatConversations.id))
+    .where(and(eq(chatVisitorTokens.tokenHash, tokenHash), eq(chatConversations.siteId, siteId)))
+    .limit(1)
+  if (!alias) return null
+  // Nicht auf jedem Poll schreiben: reicht einmal pro Stunde
+  void db.update(chatVisitorTokens).set({ lastUsedAt: new Date() })
+    .where(and(
+      eq(chatVisitorTokens.tokenHash, tokenHash),
+      or(isNull(chatVisitorTokens.lastUsedAt), lt(chatVisitorTokens.lastUsedAt, new Date(Date.now() - 3_600_000))),
+    ))
+    .catch(() => {})
+  return alias.conv
+}
+
+/** Alle Token-Hashes eines Gesprächs (ursprünglicher + Aliase) – für Sperren. */
+export async function tokenHashesOf(conv: ChatConversationRow): Promise<string[]> {
+  const rows = await db.select({ h: chatVisitorTokens.tokenHash }).from(chatVisitorTokens)
+    .where(eq(chatVisitorTokens.conversationId, conv.id))
+  return [conv.visitorTokenHash, ...rows.map(r => r.h)]
 }
 
 export async function getConversationById(id: string): Promise<ChatConversationRow | null> {
@@ -496,17 +526,18 @@ export async function isBlocked(userId: string, tokenHash: string | null, ipHash
 
 /** Sperrt den Besucher (Token-Hash + IP-Hash) für alle Seiten dieses Kontos; Gespräch → blocked. */
 export async function blockConversation(conv: ChatConversationRow, reason: string | null): Promise<void> {
-  await db.insert(chatBlocks).values({
+  const hashes = await tokenHashesOf(conv)
+  await db.insert(chatBlocks).values(hashes.map((h, i) => ({
     userId: conv.userId,
-    visitorTokenHash: conv.visitorTokenHash,
-    ipHash: conv.ipHash,
+    visitorTokenHash: h,
+    ipHash: i === 0 ? conv.ipHash : null,
     reason: reason?.slice(0, 200) ?? null,
-  })
+  })))
   await setConversationStatus(conv.id, 'blocked')
 }
 
 export async function unblockConversation(conv: ChatConversationRow): Promise<void> {
-  const conds = [eq(chatBlocks.visitorTokenHash, conv.visitorTokenHash)]
+  const conds = [inArray(chatBlocks.visitorTokenHash, await tokenHashesOf(conv))]
   if (conv.ipHash) conds.push(eq(chatBlocks.ipHash, conv.ipHash))
   await db.delete(chatBlocks).where(and(eq(chatBlocks.userId, conv.userId), or(...conds)))
   await setConversationStatus(conv.id, 'open')
@@ -514,20 +545,34 @@ export async function unblockConversation(conv: ChatConversationRow): Promise<vo
 
 // ─── Resume-Tokens (Link aus der Antwort-Mail) ────────────────────────────────
 
-export async function createResumeToken(conversationId: string): Promise<string> {
+export async function createResumeToken(conversationId: string, kind: ResumeTokenKind = 'reply'): Promise<string> {
   const raw = randomBytes(32).toString('base64url')
+  const days = kind === 'reply' ? RESUME_TOKEN_DAYS : HANDOFF_TOKEN_DAYS
   await db.insert(chatResumeTokens).values({
     tokenHash: sha256(raw),
     conversationId,
-    expiresAt: new Date(Date.now() + RESUME_TOKEN_DAYS * 86_400_000),
+    kind,
+    expiresAt: new Date(Date.now() + days * 86_400_000),
   })
   return raw
 }
 
+/** Übergabe-Mails der letzten 24 Stunden (Drossel HANDOFF_MAILS_PER_DAY). */
+export async function countHandoffMails(conversationId: string): Promise<number> {
+  const [row] = await db.select({ n: sql<number>`count(*)::int`.mapWith(Number) }).from(chatResumeTokens)
+    .where(and(
+      eq(chatResumeTokens.conversationId, conversationId),
+      eq(chatResumeTokens.kind, 'handoff_mail'),
+      gt(chatResumeTokens.createdAt, new Date(Date.now() - 86_400_000)),
+    ))
+  return row?.n ?? 0
+}
+
 /**
- * Löst einen Resume-Token ein: das Gespräch gehört danach dem neuen Besucher-Token (alter Hash wird
- * ersetzt), der Token ist verbraucht. Gibt null zurück bei unbekanntem/abgelaufenem/benutztem Token
- * oder wenn das Gespräch nicht zu dieser Seite gehört.
+ * Löst einen Resume-/Übergabe-Token ein: der neue Besucher-Token wird als weiterer Zugang (Alias) an das
+ * Gespräch gehängt – der bisherige Browser behält seinen Zugang (Instagram-Browser UND Safari kennen das
+ * Gespräch). Der Token ist danach verbraucht. Gibt null zurück bei unbekanntem/abgelaufenem/benutztem
+ * Token oder wenn das Gespräch nicht zu dieser Seite gehört.
  */
 export async function consumeResumeToken(rawToken: string, siteId: string, newTokenHash: string): Promise<ChatConversationRow | null> {
   const tokenHash = sha256(rawToken)
@@ -548,14 +593,29 @@ export async function consumeResumeToken(rawToken: string, siteId: string, newTo
           .set({ visitorTokenHash: sha256(`orphan:${randomBytes(16).toString('hex')}`), updatedAt: new Date() })
           .where(eq(chatConversations.id, clash.id))
       }
-      await tx.update(chatConversations)
-        .set({ visitorTokenHash: newTokenHash, updatedAt: new Date() })
-        .where(eq(chatConversations.id, conv.id))
+      // Ein Token zeigt immer auf genau ein Gespräch
+      await tx.insert(chatVisitorTokens)
+        .values({ tokenHash: newTokenHash, conversationId: conv.id, lastUsedAt: new Date() })
+        .onConflictDoUpdate({ target: chatVisitorTokens.tokenHash, set: { conversationId: conv.id, lastUsedAt: new Date() } })
+      await tx.update(chatConversations).set({ updatedAt: new Date() }).where(eq(chatConversations.id, conv.id))
     }
     await tx.update(chatResumeTokens).set({ usedAt: new Date() }).where(eq(chatResumeTokens.tokenHash, tokenHash))
     const [fresh] = await tx.select().from(chatConversations).where(eq(chatConversations.id, conv.id)).limit(1)
     return fresh ?? null
   })
+}
+
+/**
+ * Adresse eines Übergabe-Links: dieselbe Seite (Host der Anfrage), derselbe Pfad, `?fs_chat=<token>`.
+ * Alte fs_chat-/unsubscribe-Parameter werden entfernt, Fragment verworfen.
+ */
+export function handoffUrl(host: string, path: string | null, token: string): string {
+  const u = new URL(path || '/', `https://${host}`)
+  u.searchParams.delete('fs_chat')
+  u.searchParams.delete('unsubscribe')
+  u.searchParams.set('fs_chat', token)
+  u.hash = ''
+  return u.toString()
 }
 
 // ─── Aufbewahrung (Cron) ──────────────────────────────────────────────────────

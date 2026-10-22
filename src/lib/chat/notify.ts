@@ -14,9 +14,9 @@ import { db } from '@/lib/db'
 import { chatConversations, type ChatConversationRow, type ChatMessageRow } from '@/lib/db/schema'
 import { and, eq, isNull, lt, or } from 'drizzle-orm'
 import { sendEmail } from '@/lib/resend'
-import { chatReplyEmail, chatReportEmail } from '@/lib/email/templates'
+import { chatHandoffEmail, chatReplyEmail, chatReportEmail } from '@/lib/email/templates'
 import { appUrl } from '@/lib/app-api/http'
-import { createResumeToken, previewOf } from './service'
+import { createResumeToken, HANDOFF_TOKEN_DAYS, previewOf } from './service'
 
 export const REPLY_MAIL_MIN_OFFLINE_MS = 2 * 60_000
 export const REPLY_MAIL_THROTTLE_MS = 30 * 60_000
@@ -77,6 +77,33 @@ export async function notifyVisitorOfReply(input: {
     return r.status === 'sent' ? 'sent' : 'error'
   } catch (err) {
     console.error('[chat/notify] reply mail failed:', err instanceof Error ? err.message : err)
+    return 'error'
+  }
+}
+
+/**
+ * Vom Besucher ausdrücklich angefordert („Chat-Link per E-Mail schicken“): Übergabe-Link an die im Chat
+ * hinterlegte Adresse. Drossel (HANDOFF_MAILS_PER_DAY) prüft die Route vorher. Wirft nie.
+ */
+export async function sendHandoffMail(input: {
+  conversationId: string
+  to: string
+  ownerName: string
+  siteHost: string
+  openUrl: string
+}): Promise<'sent' | 'error'> {
+  try {
+    const html = chatHandoffEmail({ ownerName: input.ownerName, openUrl: input.openUrl, siteHost: input.siteHost, validDays: HANDOFF_TOKEN_DAYS })
+    const r = await sendEmail({
+      to: input.to,
+      subject: `Dein Chat mit ${input.ownerName}`,
+      html,
+      type: 'chat_handoff',
+      category: 'system',
+    })
+    return r.status === 'sent' ? 'sent' : 'error'
+  } catch (err) {
+    console.error('[chat/notify] handoff mail failed:', err instanceof Error ? err.message : err)
     return 'error'
   }
 }
