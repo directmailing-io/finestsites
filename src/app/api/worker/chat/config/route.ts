@@ -6,6 +6,7 @@
 import type { NextRequest } from 'next/server'
 import { resolveVisitor, visitorError, visitorJson } from '@/lib/chat/visitor'
 import { ownerNameOf, ownerWhatsappUrlOf, siteHostOf, WELCOME_TEXT } from '@/lib/chat/service'
+import { effectiveBrandColor } from '@/lib/color/brand-palette'
 
 export const dynamic = 'force-dynamic'
 
@@ -22,7 +23,8 @@ export async function GET(req: NextRequest) {
     owner: {
       name: ownerNameOf(site),
       avatarUrl: site.ownerProfileImageUrl || null,
-      brandColor: site.ownerBrandColor || null,
+      // Farbe DIESER Seite (farbthema „eigene“/seite:#hex), sonst Kontofarbe; das Widget liest zusätzlich die Seiten-CSS-Variablen
+      brandColor: effectiveBrandColor(site.publishedData ?? {}) || site.ownerBrandColor || null,
     },
     whatsappUrl,
     welcome: WELCOME_TEXT,
