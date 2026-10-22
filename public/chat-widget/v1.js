@@ -177,6 +177,7 @@
   // ── Symbole ────────────────────────────────────────────────────────────────
   var ICON = {
     chat: '<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 0 1-8.5 8.3 9 9 0 0 1-3.9-.9L3 20l1.3-4.1A8 8 0 0 1 3.5 11.5 8.4 8.4 0 0 1 12 3.2a8.4 8.4 0 0 1 9 8.3z"/></svg>',
+    chatf: '<svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor" aria-hidden="true"><path d="M12 3C6.9 3 3 6.5 3 11c0 2 .8 3.8 2.1 5.2L4 21l4.6-1.7c1 .3 2.2.5 3.4.5 5.1 0 9-3.5 9-8s-3.9-8-9-8z"/></svg>',
     close: '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>',
     down: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>',
     send: '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5.5 11.5L12 5l6.5 6.5"/></svg>',
@@ -194,6 +195,7 @@
     '*,*::before,*::after{box-sizing:border-box}button,input,textarea{font:inherit;color:inherit}button{cursor:pointer;background:none;border:0;padding:0;margin:0}a{color:inherit}' +
     'button:focus-visible,a:focus-visible,summary:focus-visible{outline:2px solid var(--b);outline-offset:2px}' +
     '.fab{position:fixed;right:max(20px,env(safe-area-inset-right));bottom:max(20px,env(safe-area-inset-bottom));width:56px;height:56px;border-radius:50%;background:var(--b);color:var(--bt);display:flex;align-items:center;justify-content:center;box-shadow:0 8px 24px rgba(0,0,0,.18);opacity:0;transform:scale(.8);transition:transform .3s cubic-bezier(.2,.8,.3,1),opacity .3s,box-shadow .2s}' +
+    '.fab.photo{background:#fff;color:#111;box-shadow:0 8px 24px rgba(0,0,0,.2),0 0 0 2px #fff}.fab.photo.open{background:var(--b);color:var(--bt)}.fab .c0{position:relative;width:100%;height:100%;align-items:center;justify-content:center}.fab .ph{width:100%;height:100%;border-radius:50%;object-fit:cover;display:block}.fab .bd{position:absolute;right:-3px;bottom:-3px;width:24px;height:24px;border-radius:50%;background:var(--b);color:var(--bt);display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 2.5px #fff}.fab .bd svg{width:13px;height:13px}.fab .in{font-weight:600;font-size:17px;letter-spacing:.02em}' +
     '.fab.in{opacity:1;transform:scale(1)}.fab:hover{box-shadow:0 10px 28px rgba(0,0,0,.22)}.fab:active{transform:scale(.96)}.fab:focus-visible{outline-offset:3px}' +
     '.fab .i{display:flex;transition:transform .25s,opacity .2s}.fab.open .i.c0{transform:rotate(90deg) scale(.4);opacity:0;position:absolute}.fab .i.c1{position:absolute;transform:rotate(-90deg) scale(.4);opacity:0}.fab.open .i.c1{transform:none;opacity:1;position:static}' +
     '.badge{position:absolute;top:-2px;right:-2px;min-width:20px;height:20px;padding:0 5px;border-radius:10px;background:#E5484D;color:#fff;font-size:11px;font-weight:700;line-height:20px;text-align:center;border:2px solid #fff;display:none}.badge.on{display:block}' +
@@ -255,8 +257,9 @@
     var avatar = owner.avatarUrl ? '<img src="' + esc(owner.avatarUrl) + '" alt="">' : esc(initials(owner.name));
     var wrap = document.createElement('div');
     wrap.innerHTML =
-      '<button type="button" class="fab" aria-label="' + t.open + '" aria-expanded="false" aria-haspopup="dialog" aria-controls="win">' +
-        '<span class="i c0">' + ICON.chat + '</span><span class="i c1">' + ICON.down + '</span>' +
+      '<button type="button" class="fab' + (owner.avatarUrl ? ' photo' : '') + '" aria-label="' + t.open + '" aria-expanded="false" aria-haspopup="dialog" aria-controls="win">' +
+        // Starter: Profilbild + kleiner Chat-Punkt in der Seitenfarbe; ohne Bild Initialen auf der Seitenfarbe
+        '<span class="i c0">' + (owner.avatarUrl ? '<img class="ph" src="' + esc(owner.avatarUrl) + '" alt=""><span class="bd">' + ICON.chatf + '</span>' : '<span class="in">' + esc(initials(owner.name)) + '</span>') + '</span><span class="i c1">' + ICON.down + '</span>' +
         '<span class="badge" aria-hidden="true"></span><span class="sr" id="sr"></span></button>' +
       '<section class="win" id="win" role="dialog" aria-modal="true" aria-label="Chat" tabindex="-1">' +
         '<div class="hd"><div class="av">' + avatar + '</div><div class="who"><div class="nm">' + esc(owner.name || 'Chat') + '</div>' +
