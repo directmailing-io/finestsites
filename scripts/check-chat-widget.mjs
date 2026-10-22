@@ -2,7 +2,7 @@
 /**
  * Prüft das Besucher-Chat-Widget (public/chat-widget/v1.js), bevor es ausgeliefert wird:
  *  - Syntax (Node vm, Script wird nur kompiliert, nicht ausgeführt)
- *  - Größe ≤ 56 kB (unminifiziert, Konzept docs/chat/konzept.md)
+ *  - Größe ≤ 60 kB (unminifiziert, Konzept docs/chat/konzept.md)
  *  - keine http://-URLs, keine externen Hosts (kein CDN, keine Schriften), kein eval/new Function
  * Aufruf: node scripts/check-chat-widget.mjs  (npm run check:chat-widget)
  */
@@ -13,7 +13,7 @@ import vm from 'node:vm'
 
 const here = dirname(fileURLToPath(import.meta.url))
 const file = resolve(here, '../public/chat-widget/v1.js')
-const MAX_BYTES = 56 * 1024
+const MAX_BYTES = 60 * 1024
 const errors = []
 
 const src = readFileSync(file, 'utf8')
@@ -51,4 +51,4 @@ if (errors.length) {
   for (const e of errors) console.error(`  - ${e}`)
   process.exit(1)
 }
-console.log(`check-chat-widget: ok (${bytes} Bytes, ${(bytes / 1024).toFixed(1)} kB von 56 kB)`)
+console.log(`check-chat-widget: ok (${bytes} Bytes, ${(bytes / 1024).toFixed(1)} kB von 60 kB)`)

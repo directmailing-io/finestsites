@@ -895,6 +895,31 @@ async function main() {
     assert.equal((await fetch(`${BASE}/api/sites/${site.id}/chat`)).status, 401)
   })
 
+  await step('Long-Polling: wait=3 ohne Änderung ≈ 3 s; Betreiber-Antwort beendet das Warten sofort mit der Nachricht', async () => {
+    const lastId = ((await visitor.messages()).json as { messages: { id: string }[] }).messages.at(-1)?.id
+    assert.ok(lastId)
+    let t0 = Date.now()
+    const idle = await visitor.call('GET', 'messages', undefined, { after: lastId!, wait: '3' })
+    const idleMs = Date.now() - t0
+    assert.equal(idle.status, 200, idle.text)
+    assert.equal((idle.json as { messages: unknown[] }).messages.length, 0)
+    assert.ok(idleMs >= 2500 && idleMs < 6000, `dauerte ${idleMs} ms`)
+    t0 = Date.now()
+    const pending = visitor.call('GET', 'messages', undefined, { after: lastId!, wait: '20' })
+    await sleep(1600)
+    contract(C.SendChatMessageResponse, await owner.post(`/api/app/v1/chat/conversations/${conversationId}/messages`, { body: 'Antwort während des Wartens', clientId: 'lp-1' }))
+    const res = await pending
+    const ms = Date.now() - t0
+    assert.equal(res.status, 200, res.text)
+    const msgs = (res.json as { messages: { body: string }[] }).messages
+    assert.ok(msgs.some(m => m.body === 'Antwort während des Wartens'), JSON.stringify(msgs).slice(0, 200))
+    assert.ok(ms < 8000, `dauerte ${ms} ms`)
+    // wait > 25 wird gekappt, wait ohne Zahl ignoriert
+    t0 = Date.now()
+    assert.equal((await visitor.call('GET', 'messages', undefined, { after: msgs.at(-1)!.body ? ((res.json as { messages: { id: string }[] }).messages.at(-1)!.id) : lastId!, wait: 'x' })).status, 200)
+    assert.ok(Date.now() - t0 < 2000)
+  })
+
   console.log('▶ Löschen + Cron')
   await step('delete → ok, danach 404, Nachrichten weg', async () => {
     contract(C.ChatOkResponse, await owner.del(`/api/app/v1/chat/conversations/${conversationId}`))

@@ -35,7 +35,7 @@
       hoText: 'Damit du später wieder in diesen Chat kommst, öffne ihn in {browser}.',
       hoOpenIos: 'In Safari öffnen', hoOpen: 'Im Browser öffnen', dismiss: 'Hinweis schließen',
       hoMenuIos: 'Oder tippe oben rechts auf ⋯ und „In Safari öffnen“.', hoMenu: 'Oder tippe oben rechts auf ⋮ und „Im Browser öffnen“.',
-      hoFail: 'Link konnte nicht erstellt werden.'
+      hoFail: 'Link konnte nicht erstellt werden.', paused: 'Pausiert – tippe, um zu aktualisieren'
     },
     en: {
       open: 'Open chat', close: 'Close chat', online: 'online',
@@ -55,7 +55,7 @@
       hoText: 'To get back to this chat later, open it in {browser}.',
       hoOpenIos: 'Open in Safari', hoOpen: 'Open in browser', dismiss: 'Dismiss',
       hoMenuIos: 'Or tap ⋯ at the top right and choose “Open in Safari”.', hoMenu: 'Or tap ⋮ at the top right and choose “Open in browser”.',
-      hoFail: 'The link could not be created.'
+      hoFail: 'The link could not be created.', paused: 'Paused – tap to refresh'
     }
   };
   var t = T[LANG];
@@ -63,12 +63,16 @@
   // ── Zustand ────────────────────────────────────────────────────────────────
   var cfg = null, token = null, tokenStored = false, convId = null, status = 'open';
   var ticket = null, sessionDone = false; // Ticket aus `session` (nur im Speicher), Header X-FS-Ticket bei schreibenden Aufrufen
-  var lastActivity = Date.now();          // letzte eigene/neue Nachricht → Polling-Abstand (schedulePoll)
+  var lastActivity = Date.now();          // letzte Interaktion/Nachricht → Polling-Abstand (geschlossen) + Ruhestopp
   var visitor = { name: null, email: null, phone: null, notifyByEmail: false };
   var messages = [];          // {id, sender, body, createdAt, readAt, clientId, state}
   var ownerSeen = null;       // ISO
   var ownerRead = null;       // ISO: bis hierhin hat der Betreiber gelesen (Feld ownerReadAt)
   var isOpen = false, pollTimer = null, started = false, blocked = false, mounted = false;
+  // Polling: offen = Long-Poll-Schleife (wait=25), geschlossen = Timer 20/60 s; Ruhestopp nach 15/30 min ohne Interaktion
+  var LONG_WAIT = 25, IDLE_OPEN = 15 * 60000, IDLE_CLOSED = 30 * 60000;
+  var polling = false, pollAgain = false, pollCtl = null, pollGen = 0, pollFails = 0;
+  var paused = false, idleTimer = null, pauseEl = null;
   var hoUrl = null, hoBusy = false, hoGone = false; // Übergabe-Karte (In-App-Browser)
   var root, host, btn, badge, win, list, ta, sendBtn, hintEl, profileEl, statusEl, toastEl;
 
@@ -159,6 +163,7 @@
     if (token) h['X-FS-Visitor'] = token;
     if (ticket && opts.method === 'POST' && name !== 'session') h['X-FS-Ticket'] = ticket;
     var init = { method: opts.method || 'GET', headers: h, credentials: 'same-origin' };
+    if (opts.signal) init.signal = opts.signal;
     if (opts.body !== undefined) { h['Content-Type'] = 'application/json'; init.body = JSON.stringify(opts.body); }
     return fetch(API + name + (opts.query || ''), init).then(function (r) {
       return r.text().then(function (txt) {
@@ -246,7 +251,7 @@
     '.mt{display:inline-flex;align-items:center;gap:4px;float:right;margin:7px 0 0 10px;font-size:11px;line-height:1;opacity:.6;position:relative;top:1px}.m.me .mt{opacity:.78}.mt .tk{display:inline-flex}' +
     '.lk a{color:var(--b);text-decoration:underline;text-underline-offset:2px;word-break:break-all}.m.me .lk a{color:inherit}.cp{display:inline-flex;vertical-align:-2px;margin-left:5px;padding:2px;border-radius:5px;opacity:.6}.cp:hover{opacity:1;background:rgba(0,0,0,.08)}.m.me .cp:hover{background:rgba(255,255,255,.2)}' +
     '.err{clear:both;display:flex;justify-content:flex-end;align-items:center;gap:5px;font-size:12px;color:#C0392B;margin:-3px 2px 8px}.err button{text-decoration:underline;text-underline-offset:2px;font-weight:500;color:#C0392B}' +
-    '.sys{text-align:center;font-size:12px;color:var(--ln);margin:6px 20px 12px}.sys.note{margin:0 6px 16px;line-height:1.45}' +
+    '.sys{text-align:center;font-size:12px;color:var(--ln);margin:6px 20px 12px}.sys.note{margin:0 6px 16px;line-height:1.45}.sys.pause{margin:4px 20px 10px;color:#9CA3AF}' +
     '.war{display:flex;margin:0 0 14px}.war.mid{justify-content:center}.wab{display:inline-flex;align-items:center;gap:8px;height:38px;padding:0 14px 0 12px;border-radius:999px;background:#fff;border:1px solid rgba(0,0,0,.1);color:#111;font-weight:500;font-size:14px;text-decoration:none;transition:background .15s,border-color .15s}.wab svg{color:#25D366}.wab:hover{background:#FAFAFA;border-color:rgba(0,0,0,.18)}' +
     '.blk{text-align:center;padding:32px 20px 16px;color:var(--mu);font-size:14px}' +
     '.ft{flex:none;background:#fff;border-top:1px solid var(--hl)}' +
@@ -347,7 +352,12 @@
     });
     form.addEventListener('submit', function (e) { e.preventDefault(); saveProfile(form); });
     form.querySelector('.ml').addEventListener('click', mailLink);
-    document.addEventListener('visibilitychange', function () { if (!document.hidden) schedulePoll(0); });
+    // Ruhestopp: jede Interaktion im Widget zählt (kein `scroll`: das feuert auch bei programmatischem scrollBottom);
+    // Tab versteckt → alles anhalten (laufenden Long-Poll abbrechen); sichtbar/Fokus → weiter
+    var evs = ['pointerdown', 'touchstart', 'keydown', 'input', 'wheel'];
+    for (var i = 0; i < evs.length; i++) root.addEventListener(evs[i], interact, { passive: true, capture: true });
+    document.addEventListener('visibilitychange', function () { if (document.hidden) stopPoll(); else wake(); });
+    window.addEventListener('focus', function () { touch(); if (paused) wake(); });
 
     renderAll();
     setTimeout(function () { btn.classList.add('in'); }, REDUCED ? 0 : 1500);
@@ -365,14 +375,14 @@
     scrollBottom(true);
     setTimeout(function () { if (!blocked && window.innerWidth >= 640) ta.focus(); else win.focus(); }, REDUCED ? 0 : 80);
     markRead();
-    touch(); schedulePoll(0); // Öffnen = sofort ein Poll, Abstand wieder 3 s
+    wake(); // Öffnen = sofort eine Anfrage, dann Long-Poll-Schleife
   }
   function close() {
     if (!isOpen) return; isOpen = false;
     win.classList.remove('in'); btn.classList.remove('open'); btn.setAttribute('aria-expanded', 'false'); btn.setAttribute('aria-label', t.open);
     setTimeout(function () { if (!isOpen) win.classList.remove('show'); }, REDUCED ? 0 : 220);
     btn.focus();
-    schedulePoll();
+    stopPoll(); touch(); schedulePoll(); // Long-Poll abbrechen, geschlossen weiter mit 20 s
   }
   function scrollBottom(instant) {
     if (instant) list.style.scrollBehavior = 'auto';
@@ -407,7 +417,7 @@
     root.getElementById('sr').textContent = n > 0 ? n + ' ' + t.unread : '';
   }
   function renderStatus() {
-    var on = ownerSeen && (Date.now() - new Date(ownerSeen).getTime()) < 90000;
+    var on = !paused && ownerSeen && (Date.now() - new Date(ownerSeen).getTime()) < 90000;
     statusEl.classList.toggle('on', !!on);
   }
   function ticks(m) {
@@ -468,6 +478,7 @@
       h += handoffCard();
     }
     list.innerHTML = h;
+    if (paused && pauseEl) list.appendChild(pauseEl);
     renderBadge(); renderStatus();
     var hasConv = !!convId;
     hintEl.hidden = hasConv || blocked;
@@ -534,25 +545,73 @@
     }
     return { added: added, ownerNew: ownerNew };
   }
-  /** Abstand: offen 3 s, nach 2 min ohne neue Nachricht 6 s, nach 10 min 15 s; geschlossen 20 s, nach 10 min 60 s */
-  function pollDelay() {
-    var idle = Date.now() - lastActivity;
-    if (isOpen) return idle > 600000 ? 15000 : idle > 120000 ? 6000 : 3000;
-    return idle > 600000 ? 60000 : 20000;
+  // ── Polling ────────────────────────────────────────────────────────────────
+  // Offen: Long-Poll-Schleife `GET messages?after=&wait=25` (Server antwortet sofort bei Neuem, sonst nach ≤ 25 s),
+  //   300 ms Pause zwischen den Anfragen; kommt die Antwort trotz wait in < 1 s (alter Server/Proxy) → 3 s Abstand.
+  // Geschlossen mit Gespräch: 20 s, nach 10 min 60 s (ohne wait). Fehler: 5 → 10 → 20 → 30 s.
+  // Ruhestopp: 15 min (offen) / 30 min (geschlossen) ohne Interaktion → keine Anfragen mehr, Hinweis im Verlauf.
+  // Nur eine Anfrage gleichzeitig (polling); stopPoll() bricht sie ab (AbortController) und entwertet die Antwort (pollGen).
+  function pollDelay() { return Date.now() - lastActivity > 600000 ? 60000 : 20000; }
+  function idleLimit() {
+    var h = window.__fsChatIdleMs; // Test-Hook: nur wirksam, wenn gesetzt
+    if (typeof h === 'number' && h > 0) return isOpen ? h : h * 2;
+    return isOpen ? IDLE_OPEN : IDLE_CLOSED;
   }
+  function backoff() { return Math.min(30000, 5000 * Math.pow(2, Math.min(pollFails, 4) - 1)); }
   function schedulePoll(ms) {
-    clearTimeout(pollTimer);
-    if (!mounted || blocked) return;
-    if (ms === undefined) ms = pollDelay();
+    clearTimeout(pollTimer); pollTimer = null;
+    if (!mounted || blocked || paused) return;
     if (!isOpen && !convId) return;
+    if (ms === undefined) ms = pollDelay();
     pollTimer = setTimeout(poll, ms);
   }
-  function touch() { lastActivity = Date.now(); }
+  function stopPoll() {
+    clearTimeout(pollTimer); pollTimer = null;
+    pollGen++; polling = false; pollAgain = false;
+    if (pollCtl) { try { pollCtl.abort(); } catch (e) {} pollCtl = null; }
+  }
+  function touch() { lastActivity = Date.now(); armIdle(); }
+  function interact() { touch(); if (paused) wake(); }
+  function armIdle() {
+    clearTimeout(idleTimer); idleTimer = null;
+    if (!mounted || paused || blocked) return;
+    idleTimer = setTimeout(checkIdle, Math.max(50, idleLimit() - (Date.now() - lastActivity) + 50));
+  }
+  function checkIdle() {
+    idleTimer = null;
+    if (paused || !convId) return;
+    if (Date.now() - lastActivity >= idleLimit()) pause(); else armIdle();
+  }
+  /** Ruhestopp: keine Anfragen mehr, Status wie offline, grauer Hinweis ganz unten im Verlauf */
+  function pause() {
+    if (paused) return; paused = true;
+    stopPoll(); clearTimeout(idleTimer); idleTimer = null;
+    if (!pauseEl) { pauseEl = document.createElement('div'); pauseEl.className = 'sys pause'; pauseEl.setAttribute('role', 'status'); pauseEl.textContent = t.paused; }
+    list.appendChild(pauseEl);
+    renderStatus();
+    if (isOpen) scrollBottom();
+  }
+  /** Wiederaufnahme (Interaktion, Öffnen, sichtbar, Fokus): Hinweis weg, sofort eine Anfrage */
+  function wake() {
+    if (paused) { paused = false; if (pauseEl && pauseEl.parentNode) pauseEl.parentNode.removeChild(pauseEl); renderStatus(); }
+    touch(); stopPoll(); schedulePoll(0);
+  }
   function poll() {
-    if (document.hidden || !convId || !token) { schedulePoll(); return; }
-    var after = lastId();
-    api('messages', { query: after ? '?after=' + encodeURIComponent(after) : '' }).then(function (r) {
+    clearTimeout(pollTimer); pollTimer = null;
+    if (!mounted || blocked || paused || document.hidden || !convId || !token) return;
+    if (Date.now() - lastActivity >= idleLimit()) { pause(); return; }
+    if (polling) { pollAgain = true; return; }
+    var wait = isOpen ? LONG_WAIT : 0, after = lastId(), gen = pollGen, t0 = Date.now();
+    var q = after ? '?after=' + encodeURIComponent(after) : '';
+    if (wait) q += (q ? '&' : '?') + 'wait=' + wait;
+    var ctl = typeof AbortController === 'function' ? new AbortController() : null;
+    pollCtl = ctl; polling = true;
+    api('messages', { query: q, signal: ctl && ctl.signal }).then(function (r) {
+      if (gen !== pollGen) return; // abgebrochen/veraltet
+      polling = false; pollCtl = null;
+      var again = pollAgain; pollAgain = false;
       if (r.ok) {
+        pollFails = 0;
         if (r.json.status) { status = r.json.status; if (status === 'blocked') { setBlocked(); return; } }
         if (r.json.ownerLastSeenAt !== undefined) ownerSeen = r.json.ownerLastSeenAt;
         var res = mergeNew(r.json.messages || []);
@@ -560,9 +619,18 @@
         if (res.ownerNew) touch();
         if (res.added || readChanged) renderAll(); else { renderStatus(); renderBadge(); }
         if (res.ownerNew && isOpen && !document.hidden) markRead();
+        // Schnelle Antwort ohne Änderung trotz wait (Server/Proxy kennt kein wait) → 3 s statt 300 ms, kein Dauerfeuer
+        var fast = wait && Date.now() - t0 < 1000 && !res.added && !readChanged;
+        schedulePoll(again ? 0 : isOpen ? (fast ? 3000 : 300) : undefined);
+        return;
       }
-      schedulePoll();
-    }, function () { schedulePoll(); });
+      pollFails++;
+      schedulePoll(Math.max(backoff(), isOpen ? 0 : pollDelay()));
+    }, function () {
+      if (gen !== pollGen) return;
+      polling = false; pollCtl = null; pollAgain = false; pollFails++;
+      schedulePoll(Math.max(backoff(), isOpen ? 0 : pollDelay()));
+    });
   }
   function markRead() {
     if (!convId || !token || !unreadCount()) { renderBadge(); return; }
@@ -574,7 +642,7 @@
     }, function () {});
   }
   function setBlocked() {
-    if (blocked) return; blocked = true; clearTimeout(pollTimer);
+    if (blocked) return; blocked = true; stopPoll(); clearTimeout(idleTimer);
     if (mounted) renderAll();
   }
 
@@ -600,7 +668,8 @@
         renderAll();
         if (first) { fillProfile(); profileEl.open = true; }
         touch();
-        schedulePoll(isOpen ? 3000 : undefined);
+        // laufende Long-Poll-Anfrage nicht abbrechen (Antwort kam über den POST); lastId() gilt beim nächsten Durchlauf
+        if (!polling) schedulePoll(isOpen ? 300 : undefined);
         return;
       }
       if (r.status === 403 && r.json.error === 'BLOCKED') return;
@@ -704,7 +773,7 @@
       var mountNow = function (openAfter) {
         mount();
         if (openAfter) setTimeout(open, REDUCED ? 0 : 300);
-        schedulePoll();
+        touch(); schedulePoll();
       };
       if (!token && !resume) { mountNow(false); return; }
       if (resume && !token) token = rnd(32);

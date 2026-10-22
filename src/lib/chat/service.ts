@@ -444,6 +444,21 @@ export async function markReadByVisitor(conversationId: string): Promise<void> {
  * Bis wann hat der Betreiber die Besucher-Nachrichten gelesen? = max(read_at) der Besucher-Nachrichten.
  * Steigt zuverlässig bei jedem „read“ des Betreibers (auch ohne Antwort) – fürs ✓✓ im Widget.
  */
+/** Leichter Zustands-Abdruck fürs Long-Polling (ein Primärschlüssel-Lookup). */
+export type ConversationSnapshot = { lastMessageAt: number; status: string; ownerUnread: number; visitorUnread: number }
+export async function conversationSnapshot(conversationId: string): Promise<ConversationSnapshot | null> {
+  const [row] = await db.select({
+    lastMessageAt: chatConversations.lastMessageAt, status: chatConversations.status,
+    ownerUnread: chatConversations.ownerUnread, visitorUnread: chatConversations.visitorUnread,
+  }).from(chatConversations).where(eq(chatConversations.id, conversationId)).limit(1)
+  if (!row) return null
+  return { lastMessageAt: row.lastMessageAt?.getTime() ?? 0, status: row.status, ownerUnread: row.ownerUnread, visitorUnread: row.visitorUnread }
+}
+/** Neue Nachricht, Statuswechsel oder Lesebestätigung des Betreibers (owner_unread sinkt)? */
+export function snapshotChanged(a: ConversationSnapshot, b: ConversationSnapshot): boolean {
+  return a.lastMessageAt !== b.lastMessageAt || a.status !== b.status || b.ownerUnread < a.ownerUnread || a.visitorUnread !== b.visitorUnread
+}
+
 export async function ownerReadAtOf(conversationId: string): Promise<string | null> {
   const [row] = await db.select({ at: sql<Date | null>`max(${chatMessages.readAt})` }).from(chatMessages)
     .where(and(eq(chatMessages.conversationId, conversationId), eq(chatMessages.sender, 'visitor')))

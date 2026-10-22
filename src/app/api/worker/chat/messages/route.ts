@@ -1,7 +1,8 @@
 /**
  * Besucher-Nachrichten (Widget: /.finestsites/chat/messages)
  *
- * GET  ?after=<messageId>  Polling → { messages, status, ownerLastSeenAt, ownerReadAt }; setzt visitor_last_seen_at
+ * GET  ?after=<messageId>[&wait=1..25]  Polling → { messages, status, ownerLastSeenAt, ownerReadAt }; setzt visitor_last_seen_at
+ *      wait = Long-Polling: Antwort erst bei Änderung (neue Nachricht, Lesebestätigung, Status) oder nach wait Sekunden
  * POST { body, clientId?, pageUrl? } → { message, conversationId }
  *      Erste Nachricht ohne bekanntes Gespräch legt eines an (Token Pflicht).
  *      422 MESSAGE_REJECTED (Filter), 429 RATE_LIMITED, 403 BLOCKED | TICKET_REQUIRED | TICKET_INVALID, 400 TOKEN_REQUIRED
@@ -11,17 +12,21 @@
 import type { NextRequest } from 'next/server'
 import { resolveVisitor, visitorError, visitorJson } from '@/lib/chat/visitor'
 import {
-  blockConversation, blockVisitor, createConversation, findConversationByToken, findMessageByClientId, listMessages, ownerReadAtOf, pathOf, recentBodies, recordMessage,
+  blockConversation, blockVisitor, conversationSnapshot, createConversation, findConversationByToken, findMessageByClientId, listMessages, ownerReadAtOf, pathOf, recentBodies, recordMessage, snapshotChanged,
   toContractMessage, touchVisitorSeen,
 } from '@/lib/chat/service'
 import { checkChatMessage, CHAT_REJECT_MESSAGE } from '@/lib/chat/filter'
 import { allowNewConversation, allowNewConversationForSite, checkMessageRate, countRejection } from '@/lib/chat/rate-limit'
 import { randomUUID } from 'node:crypto'
 import { pushTriggers } from '@/lib/push/triggers'
+import type { ChatMessageRow } from '@/lib/db/schema'
 
 export const dynamic = 'force-dynamic'
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+const LONGPOLL_MAX_S = 25
+const LONGPOLL_STEP_MS = 2000
+export const maxDuration = 30
 
 /** Antwort für Honigtopf-Treffer: sieht aus wie Erfolg, es wird nichts gespeichert und niemand benachrichtigt. */
 function fakeAccepted(text: string, clientId: string | null) {
@@ -35,17 +40,39 @@ export async function GET(req: NextRequest) {
   const { h, site } = r.ctx
   if (!h.tokenHash) return visitorJson({ messages: [], status: null, ownerLastSeenAt: null, ownerReadAt: null })
 
-  const conv = await findConversationByToken(site.siteId, h.tokenHash)
+  let conv = await findConversationByToken(site.siteId, h.tokenHash)
   if (!conv) return visitorJson({ messages: [], status: null, ownerLastSeenAt: null, ownerReadAt: null })
   if (conv.status === 'blocked') return visitorError('BLOCKED', 403)
 
   const afterRaw = req.nextUrl.searchParams.get('after') ?? ''
   const after = UUID_RE.test(afterRaw) ? afterRaw : undefined
-  const [{ messages }, ownerReadAt] = await Promise.all([
+  // Long-Polling (?wait=1..25): Antwort offen halten, bis sich am Gespräch etwas ändert (neue Nachricht,
+  // Lesebestätigung, Status) oder die Zeit abläuft. Je Durchlauf nur ein Primärschlüssel-Lookup alle 2 s –
+  // statt 20 vollen Abfragen pro Minute bei 3-s-Polling. Begrenzt auf 25 s (Cloudflare bricht bei 100 s ab).
+  const waitRaw = Number(req.nextUrl.searchParams.get('wait') ?? '0')
+  const waitMs = Number.isFinite(waitRaw) && waitRaw > 0 ? Math.min(waitRaw, LONGPOLL_MAX_S) * 1000 : 0
+  void touchVisitorSeen(conv.id).catch(() => {})
+  if (waitMs > 0) {
+    const first = await conversationSnapshot(conv.id)
+    const deadline = Date.now() + waitMs
+    // Gibt es schon Neues seit `after`, sofort antworten
+    const probe = after ? await listMessages(conv.id, { after, limit: 1 }) : { messages: [] as ChatMessageRow[] }
+    if (probe.messages.length === 0 && first) {
+      while (Date.now() < deadline) {
+        await new Promise(r => setTimeout(r, Math.min(LONGPOLL_STEP_MS, Math.max(0, deadline - Date.now()))))
+        if (req.signal.aborted) return visitorJson({ messages: [], status: conv.status, ownerLastSeenAt: null, ownerReadAt: null })
+        const now = await conversationSnapshot(conv.id)
+        if (!now || snapshotChanged(first, now)) break
+      }
+    }
+  }
+  const [{ messages }, ownerReadAt, fresh] = await Promise.all([
     listMessages(conv.id, after ? { after, limit: 100 } : { limit: 50 }),
     ownerReadAtOf(conv.id),
-    touchVisitorSeen(conv.id),
+    waitMs > 0 ? findConversationByToken(site.siteId, h.tokenHash) : Promise.resolve(conv),
   ])
+  if (fresh) conv = fresh
+  if (conv.status === 'blocked') return visitorError('BLOCKED', 403)
   return visitorJson({
     messages: messages.map(m => toContractMessage(m, 'visitor')),
     status: conv.status,
