@@ -44,6 +44,7 @@
   var visitor = { name: null, email: null, phone: null, notifyByEmail: false };
   var messages = [];          // {id, sender, body, createdAt, readAt, clientId, state}
   var ownerSeen = null;       // ISO
+  var ownerRead = null;       // ISO: bis hierhin hat der Betreiber gelesen (Feld ownerReadAt)
   var isOpen = false, pollTimer = null, started = false, blocked = false, mounted = false;
   var root, host, btn, badge, win, list, ta, sendBtn, hintEl, profileEl, statusEl, toastEl, errEl;
 
@@ -384,7 +385,20 @@
     if (j.visitor) { visitor = j.visitor; }
     if (Array.isArray(j.messages)) messages = j.messages.map(function (m) { m.state = 'sent'; return m; });
     if (j.ownerLastSeenAt !== undefined) ownerSeen = j.ownerLastSeenAt;
+    applyOwnerRead(j.ownerReadAt);
     if (status === 'blocked') blocked = true;
+  }
+  /** ownerReadAt vom Server: eigene Nachrichten bis zu diesem Zeitpunkt gelten als gelesen (✓✓). Fehlt das Feld, bleibt die Heuristik in mergeNew. */
+  function applyOwnerRead(iso) {
+    if (iso === undefined) return;
+    ownerRead = iso || null;
+    if (!ownerRead) return;
+    var changed = false;
+    for (var i = 0; i < messages.length; i++) {
+      var m = messages[i];
+      if (m.sender === 'visitor' && m.state === 'sent' && !m.readAt && m.createdAt <= ownerRead) { m.readAt = ownerRead; changed = true; }
+    }
+    return changed;
   }
   function lastId() {
     for (var i = messages.length - 1; i >= 0; i--) if (messages[i].id && messages[i].state === 'sent') return messages[i].id;
@@ -425,7 +439,8 @@
         if (r.json.status) { status = r.json.status; if (status === 'blocked') { setBlocked(); return; } }
         if (r.json.ownerLastSeenAt !== undefined) ownerSeen = r.json.ownerLastSeenAt;
         var res = mergeNew(r.json.messages || []);
-        if (res.added) renderAll(); else { renderStatus(); renderBadge(); }
+        var readChanged = applyOwnerRead(r.json.ownerReadAt);
+        if (res.added || readChanged) renderAll(); else { renderStatus(); renderBadge(); }
         if (res.ownerNew && isOpen && !document.hidden) markRead();
       }
       schedulePoll();
