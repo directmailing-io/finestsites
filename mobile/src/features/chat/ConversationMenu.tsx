@@ -1,6 +1,7 @@
+import * as Clipboard from 'expo-clipboard';
 import * as Device from 'expo-device';
 import * as Linking from 'expo-linking';
-import { Archive, ArchiveRestore, Flag, Mail, MessageCircle, Phone, ShieldBan, ShieldCheck, Trash2, type LucideIcon } from 'lucide-react-native';
+import { Archive, ArchiveRestore, Flag, KeyRound, Mail, MessageCircle, Phone, ShieldBan, ShieldCheck, Trash2, type LucideIcon } from 'lucide-react-native';
 import { useEffect, useMemo, useRef, useState, type RefObject } from 'react';
 import { ActionSheetIOS, Alert, findNodeHandle, Platform, Pressable, StyleSheet, View, type HostInstance } from 'react-native';
 
@@ -64,8 +65,9 @@ export function confirmDelete(
 }
 
 /**
- * „…“-Menü eines Gesprächs: Anrufen, E-Mail, WhatsApp (nur mit Daten), Archivieren/Wiederherstellen,
- * Besucher sperren/Sperre aufheben (Bestätigung), Melden (eigener Punkt, Apple/Google UGC), Gespräch löschen.
+ * „…“-Menü eines Gesprächs: Anrufen, E-Mail, WhatsApp (nur mit Daten), Gesprächs-Code (kopieren / neu erzeugen),
+ * Archivieren/Wiederherstellen, Besucher sperren/Sperre aufheben (Bestätigung), Melden (eigener Punkt, Apple/Google UGC),
+ * Gespräch löschen.
  * iOS: natives ActionSheet (am Knopf verankert, iPad). Android: Sheet mit Zeilen (Alert kann nur 3 Knöpfe).
  *
  * onLeave: nach Archivieren/Wiederherstellen/Löschen (iPhone: zurück zur Liste).
@@ -97,6 +99,28 @@ export function useConversationMenu(c: ChatConversation | null, opts: { onLeave?
     if (c.visitor.whatsappUrl) {
       const wa = c.visitor.whatsappUrl;
       list.push({ label: 'WhatsApp', icon: MessageCircle, run: () => void open(wa) });
+    }
+    // Gesprächs-Code: damit öffnet der Besucher das Gespräch auf einem anderen Gerät – den Code kann der
+    // Betreiber ihm nennen (z. B. per WhatsApp), wenn der Chat im Browser „verloren“ ging.
+    if (c.resumeCode && c.status !== 'blocked') {
+      const code = c.resumeCode;
+      list.push({
+        label: `Gesprächs-Code ${code}`,
+        icon: KeyRound,
+        run: () =>
+          Alert.alert(`Gesprächs-Code ${code}`, 'Mit diesem Code kann der Besucher das Gespräch auf jedem Gerät wieder öffnen. Wer den Code kennt, kann mitlesen – also nur dem Besucher selbst nennen.', [
+            { text: 'Code kopieren', onPress: () => void Clipboard.setStringAsync(code).then(() => toast.show('Code kopiert', 'success')) },
+            {
+              text: 'Neuen Code erzeugen',
+              onPress: () =>
+                actions.newCode.mutate(c.id, {
+                  onSuccess: res => toast.show(res.conversation?.resumeCode ? `Neuer Code: ${res.conversation.resumeCode}` : 'Neuer Code erzeugt', 'success'),
+                  onError: failed,
+                }),
+            },
+            { text: 'Abbrechen', style: 'cancel' },
+          ]),
+      });
     }
     if (c.status === 'archived') {
       list.push({

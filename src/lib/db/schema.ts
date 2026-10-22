@@ -958,6 +958,7 @@ export const chatConversations = pgTable('chat_conversations', {
   reportedAt: timestamp('reported_at', { withTimezone: true }),
   reportReason: text('report_reason'),
   visitorNotifiedAt: timestamp('visitor_notified_at', { withTimezone: true }), // Drossel der Antwort-Mail
+  resumeCode: varchar('resume_code', { length: 8 }), // Gesprächs-Code (8 Zeichen, Migration 20261022250000); je Seite eindeutig
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 }, (t) => [

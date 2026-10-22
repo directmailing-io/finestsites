@@ -3,6 +3,7 @@
  *   - je IP-Hash 60 Anfragen/Minute                     (In-Memory, je Prozess)
  *   - Gesprächs-Anlagen je IP-Hash 10/Stunde             (In-Memory, je Prozess)
  *   - Nachrichten je Gespräch 20 pro 10 Minuten          (DB, damit beide PM2-Prozesse dasselbe sehen)
+ *   - Gesprächs-Code-Eingaben je IP-Hash 5 pro 10 Minuten (In-Memory, je Prozess)
  *   - frühestens alle 1,5 s eine Nachricht desselben Absenders (DB)
  *
  * Der In-Memory-Limiter ist `rateLimit` aus src/lib/security/request.ts (dasselbe, das
@@ -31,6 +32,8 @@ export const CHAT_LIMITS = {
   messagesPerWindowAutomation: 5,
   messageWindowMs: 10 * 60_000,
   minIntervalMs: 1_500,
+  /** Gesprächs-Code-Eingaben je IP-Hash in 10 min (8 Zeichen aus 31 → Raten aussichtslos, niemand wird ausgesperrt) */
+  resumeCodeAttemptsPer10Min: 5,
 } as const
 
 /**
@@ -54,6 +57,11 @@ export function allowNewConversationForSite(siteId: string): boolean {
 /** Zählt eine vom Filter abgelehnte Nachricht; true = Grenze erreicht → Besucher automatisch sperren. */
 export function countRejection(tokenHash: string): boolean {
   return !rateLimit('chat-reject', tokenHash, CHAT_LIMITS.rejectionsBeforeAutoBlock, 10 * 60_000)
+}
+
+/** Eingaben des Gesprächs-Codes je IP-Hash (jeder Versuch zählt, auch der richtige). */
+export function allowResumeCodeAttempt(ipHash: string | null): boolean {
+  return rateLimit('chat-code', ipHash, CHAT_LIMITS.resumeCodeAttemptsPer10Min, 10 * 60_000)
 }
 
 /** Neue Gespräche je IP-Hash. */

@@ -248,6 +248,16 @@ export default function ChatsView() {
     } catch { showToast('Das hat nicht geklappt. Bitte versuch es noch einmal.') } finally { setBusy(false) }
   }
 
+  async function newCode() {
+    if (!conversation) return
+    setBusy(true)
+    try {
+      const c = await chatApi.newCode(conversation.id)
+      applyConversation(c, c ? { resumeCode: c.resumeCode } : {})
+      showToast(c?.resumeCode ? `Neuer Code: ${c.resumeCode}` : 'Neuer Code erzeugt')
+    } catch { showToast('Das hat nicht geklappt. Bitte versuch es noch einmal.') } finally { setBusy(false) }
+  }
+
   async function report(input: { reason: ReportReason; note?: string; block: boolean }) {
     if (!conversation) return
     setBusy(true)
@@ -358,6 +368,7 @@ export default function ChatsView() {
                 onArchive: archive,
                 onBlock: () => setDialog({ kind: 'block' }),
                 onUnblock: unblock,
+                onNewCode: newCode,
                 onReport: () => { setDialogError(null); setDialog({ kind: 'report' }) },
                 onDelete: () => setDialog({ kind: 'delete' }),
               }}

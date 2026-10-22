@@ -169,6 +169,7 @@ export function createMockDb() {
       status: 'open', unread: 2,
       lastMessage: { preview: 'Super, dann melde ich mich morgen nochmal. Hast du auch Infos zum Einstieg als Teampartner?', sender: 'visitor', at: ago(4) },
       reportedAt: null, createdAt: ago(32), updatedAt: ago(4),
+      resumeCode: '7K4M-2P9X',
     },
     {
       id: 'ch_2', siteId: 's_kur', siteTitle: 'Stoffwechselkur', siteHost: 'www.sabine-keller.de', startedOnPath: '/#ablauf',
@@ -176,6 +177,7 @@ export function createMockDb() {
       status: 'open', unread: 0,
       lastMessage: { preview: 'Gern, schreib mir einfach auf WhatsApp, dann schicke ich dir den Ablauf.', sender: 'owner', at: ago(60 * 19) },
       reportedAt: null, createdAt: days(1.1), updatedAt: ago(60 * 19),
+      resumeCode: 'Q3WX-8HTB',
     },
     {
       id: 'ch_3', siteId: 's_business', siteTitle: 'Business-Seite', siteHost: 'sabine-keller.wellpreneur.io', startedOnPath: '/#kontakt',
@@ -183,6 +185,7 @@ export function createMockDb() {
       status: 'archived', unread: 0,
       lastMessage: { preview: 'Danke dir, das hat mir sehr geholfen!', sender: 'visitor', at: days(6) },
       reportedAt: null, createdAt: days(7), updatedAt: days(6),
+      resumeCode: 'N5RK-2VYD',
     },
   ];
 

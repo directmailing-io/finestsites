@@ -69,6 +69,12 @@ export const ChatConversation = z.object({
   }).nullable(),
   /** Vom Betreiber gemeldet (Datum), null = nicht gemeldet. */
   reportedAt: IsoDateTime.nullable(),
+  /**
+   * Gesprächs-Code, formatiert „7K4M-2P9X“: damit öffnet der Besucher das Gespräch auf einem anderen Gerät
+   * (Widget „Gespräch fortsetzen“). Der Betreiber kann ihn dem Besucher nennen. 90 Tage nach der letzten
+   * Nachricht ungültig; POST …/code erzeugt einen neuen. null nur bei Gesprächen ohne Code (Altbestand).
+   */
+  resumeCode: z.string().nullable(),
   createdAt: IsoDateTime,
   updatedAt: IsoDateTime,
 })

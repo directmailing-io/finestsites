@@ -50,6 +50,8 @@ export interface ChatApi {
   setArchived(id: string, archived: boolean): Promise<ChatConversation | null>
   block(id: string): Promise<ChatConversation | null>
   unblock(id: string): Promise<ChatConversation | null>
+  /** Neuen Gesprächs-Code erzeugen (der alte gilt sofort nicht mehr). */
+  newCode(id: string): Promise<ChatConversation | null>
   report(id: string, input: { reason: ReportReason; note?: string; block: boolean }): Promise<ChatConversation | null>
   deleteConversation(id: string): Promise<void>
   getUnread(): Promise<ChatUnreadResponse>
@@ -126,6 +128,10 @@ const realApi: ChatApi = {
     const r = await call<{ ok: true; conversation?: ChatConversation }>(`${BASE}/conversations/${id}/unblock`, { method: 'POST' })
     return r.conversation ?? null
   },
+  async newCode(id) {
+    const r = await call<{ ok: true; conversation?: ChatConversation }>(`${BASE}/conversations/${id}/code`, { method: 'POST' })
+    return r.conversation ?? null
+  },
   async report(id, input) {
     const r = await call<{ ok: true; conversation?: ChatConversation }>(`${BASE}/conversations/${id}/report`, {
       method: 'POST', body: JSON.stringify(input),
@@ -198,6 +204,7 @@ function mkConv(input: {
     unread: 0,
     lastMessage: null,
     reportedAt: null,
+    resumeCode: '7K4M-2P9X',
     createdAt: daysAgo(input.createdDays),
     updatedAt: minutesAgo(input.lastSeenMin),
   }
@@ -335,6 +342,16 @@ const mockApi: ChatApi = {
     conv.status = 'open'
     return clone(conv)
   },
+  async newCode(id) {
+    await delay()
+    const conv = mockState.conversations.find(c => c.id === id)
+    if (!conv) throw new ChatApiError(404, 'NOT_FOUND')
+    const a = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789'
+    let code = ''
+    for (let i = 0; i < 8; i++) code += a[Math.floor(Math.random() * a.length)]
+    conv.resumeCode = `${code.slice(0, 4)}-${code.slice(4)}`
+    return clone(conv)
+  },
   async report(id, input) {
     await delay(300)
     const conv = mockState.conversations.find(c => c.id === id)
@@ -373,6 +390,7 @@ const mockApi: ChatApi = {
         reason: 'spam',
         note: 'Schickt immer wieder denselben Link zu einer fremden Seite.',
         reportedAt: minutesAgo(140),
+        resumeCode: 'Q3WX-8HTB',
         status: 'blocked',
         lastMessages: [
           { sender: 'visitor', body: 'Schau dir mal dieses Angebot an: https://example.invalid/angebot', createdAt: minutesAgo(160) },
@@ -388,6 +406,7 @@ const mockApi: ChatApi = {
         reason: 'abuse',
         note: null,
         reportedAt: daysAgo(1, 22, 5),
+        resumeCode: 'N5RK-2VYD',
         status: 'blocked',
         lastMessages: [
           { sender: 'visitor', body: 'Hallo, ist das hier seriös?', createdAt: daysAgo(1, 21, 50) },

@@ -13,7 +13,7 @@ import type { NextRequest } from 'next/server'
 import { resolveVisitor, visitorError, visitorJson } from '@/lib/chat/visitor'
 import {
   blockConversation, blockVisitor, conversationSnapshot, createConversation, findConversationByToken, findMessageByClientId, listMessages, ownerReadAtOf, pathOf, recentBodies, recordMessage, snapshotChanged,
-  toContractMessage, touchVisitorSeen,
+  toContractMessage, touchVisitorSeen, formatResumeCode,
 } from '@/lib/chat/service'
 import { checkChatMessage, CHAT_REJECT_MESSAGE } from '@/lib/chat/filter'
 import { allowNewConversation, allowNewConversationForSite, checkMessageRate, countRejection } from '@/lib/chat/rate-limit'
@@ -137,5 +137,6 @@ export async function POST(req: NextRequest) {
 
   const { message, created } = await recordMessage(conv, 'visitor', check.body, clientId)
   if (created) void pushTriggers.newChatMessage(conv.id)
-  return visitorJson({ message: toContractMessage(message, 'visitor'), conversationId: conv.id })
+  // resumeCode: das Widget zeigt nach der ersten Nachricht die Karte „Dein Gesprächs-Code“
+  return visitorJson({ message: toContractMessage(message, 'visitor'), conversationId: conv.id, resumeCode: formatResumeCode(conv.resumeCode) })
 }

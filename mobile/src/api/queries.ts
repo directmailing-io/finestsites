@@ -209,6 +209,7 @@ export function useChatActions() {
     unarchive: useSimple(ep.chat.unarchive),
     block: useSimple(id => ep.chat.block(id)),
     unblock: useSimple(ep.chat.unblock),
+    newCode: useSimple(ep.chat.newCode),
     report: useMutation({
       mutationFn: (v: { id: string } & ReportChatRequest) => ep.chat.report(v.id, { reason: v.reason, note: v.note, block: v.block }),
       onSuccess: (res, v) => applyConversation(qc, v.id, res.conversation),

@@ -15,8 +15,12 @@ import { NextResponse, type NextRequest } from 'next/server'
 import { checkWorkerSecret } from '@/lib/tracking/worker-auth'
 import { isVisitorChatEnabledForUsername } from './flags'
 import { allowVisitorRequest } from './rate-limit'
-import { isBlocked, isValidVisitorToken, loadSiteContext, ownerWhatsappUrlOf, sha256, type ChatSiteContext } from './service'
-import { verifyTicket } from './ticket'
+import {
+  ensureResumeCode, isBlocked, isValidVisitorToken, listMessages, loadSiteContext, ownerReadAtOf, ownerWhatsappUrlOf, sha256,
+  toContractMessage, touchVisitorSeen, type ChatSiteContext, type ConversationState,
+} from './service'
+import { issueTicket, verifyTicket } from './ticket'
+import type { ChatConversationRow } from '@/lib/db/schema'
 
 const NO_STORE = { 'Cache-Control': 'no-store' }
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
@@ -95,4 +99,23 @@ export async function resolveVisitor(req: NextRequest, opts: { allowDisabled?: b
     return { ok: false, response: visitorError('BLOCKED', 403, { whatsappUrl: ownerWhatsappUrlOf(site.publishedData) }) }
   }
   return { ok: true, ctx: { h, site, enabled, blocked } }
+}
+
+/** Antwort von `session`/`resume` für ein bekanntes, nicht gesperrtes Gespräch (ConversationState). */
+export async function conversationState(conv: ChatConversationRow, siteId: string, visitorToken: string | null): Promise<ConversationState> {
+  const [{ messages }, ownerReadAt, resumeCode] = await Promise.all([
+    listMessages(conv.id, { limit: 50 }), ownerReadAtOf(conv.id), ensureResumeCode(conv), touchVisitorSeen(conv.id),
+  ])
+  return {
+    enabled: true,
+    ticket: issueTicket(siteId),
+    conversationId: conv.id,
+    visitorToken,
+    status: conv.status,
+    visitor: { name: conv.visitorName, email: conv.visitorEmail, phone: conv.visitorPhone, notifyByEmail: conv.notifyByEmail },
+    messages: messages.map(m => toContractMessage(m, 'visitor')),
+    ownerLastSeenAt: conv.ownerLastSeenAt?.toISOString() ?? null,
+    ownerReadAt,
+    resumeCode,
+  }
 }

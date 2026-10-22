@@ -639,6 +639,126 @@ async function main() {
     const reuse = await new Visitor(site.id, host, newToken()).session({ visitorToken: newToken(), resumeToken: handoffLink })
     assert.equal(reuse.status, 410)
   })
+  // ── Gesprächs-Code (Besucher öffnet das Gespräch per Code auf einem anderen Gerät) ──
+  let resumeCode = ''
+  await step('Gesprächs-Code: session liefert resumeCode (XXXX-XXXX, Alphabet ohne 0/O/1/I/L); Betreiber sieht denselben', async () => {
+    const s = await visitor.session({})
+    assert.equal(s.status, 200, s.text)
+    resumeCode = (s.json as { resumeCode: string }).resumeCode
+    assert.match(resumeCode, /^[A-HJ-NP-Z2-9]{4}-[A-HJ-NP-Z2-9]{4}$/, resumeCode)
+    const r = contract(C.ChatConversationResponse, await owner.get(`/api/app/v1/chat/conversations/${conversationId}`))
+    assert.equal(r.conversation.resumeCode, resumeCode)
+    const [row] = await sql`select resume_code from chat_conversations where id = ${conversationId}`
+    assert.equal(row.resume_code, resumeCode.replace('-', ''))
+  })
+  await step('resume: ohne Ticket 403, ohne Token 400, falsches Format 400, unbekannter Code 404 CODE_INVALID', async () => {
+    const fresh = new Visitor(site.id, host, newToken())
+    const noTicket = await fresh.call('POST', 'resume', { code: resumeCode }, undefined, { noTicket: true })
+    assert.equal(noTicket.status, 403, noTicket.text)
+    await fresh.session({})
+    assert.equal((await new Visitor(site.id, host, null).call('POST', 'resume', { code: resumeCode })).status, 400)
+    assert.equal((await fresh.call('POST', 'resume', { code: 'ABC' })).status, 400)
+    assert.equal((await fresh.call('POST', 'resume', { code: 'OOOO-0000' })).status, 400) // O/0 nicht im Alphabet
+    const wrong = await fresh.call('POST', 'resume', { code: 'ZZZZ-ZZZ9' })
+    assert.equal(wrong.status, 404, wrong.text)
+    assert.equal((wrong.json as { error: string }).error, 'CODE_INVALID')
+  })
+  const token4 = newToken()
+  const visitor4 = new Visitor(site.id, host, token4)
+  await step('resume mit Code (klein, ohne Bindestrich) → gleiches Gespräch, Alias angehängt, Systemzeile „weiteres Gerät“, alte Browser behalten Zugang', async () => {
+    await visitor4.session({ visitorToken: token4 })
+    const before = (await sql`select count(*)::int as n from chat_messages where conversation_id = ${conversationId} and sender = 'system'`)[0].n
+    const res = await visitor4.call('POST', 'resume', { code: ` ${resumeCode.toLowerCase().replace('-', '')} `, visitorToken: token4 })
+    assert.equal(res.status, 200, res.text)
+    const j = res.json as { conversationId: string; resumeCode: string; messages: { sender: string; body: string }[]; ticket: string }
+    assert.equal(j.conversationId, conversationId)
+    assert.equal(j.resumeCode, resumeCode)
+    assert.ok(j.messages.some(m => m.sender === 'system' && m.body.includes('weiteren Gerät')), JSON.stringify(j.messages.slice(-2)))
+    const after = (await sql`select count(*)::int as n from chat_messages where conversation_id = ${conversationId} and sender = 'system'`)[0].n
+    assert.equal(after, before + 1)
+    const [alias] = await sql`select conversation_id from chat_visitor_tokens where token_hash = ${sha256(token4)}`
+    assert.equal(alias.conversation_id, conversationId)
+    // Alte Browser (ursprünglich + Safari-Alias) sehen das Gespräch weiterhin
+    assert.equal(((await visitor.session({})).json as { conversationId: string }).conversationId, conversationId)
+    assert.equal(((await visitor3.session({})).json as { conversationId: string }).conversationId, conversationId)
+    // Zweiter resume desselben Browsers: kein zweiter Alias, keine zweite Systemzeile
+    const again = await visitor4.call('POST', 'resume', { code: resumeCode, visitorToken: token4 })
+    assert.equal(again.status, 200, again.text)
+    assert.equal((await sql`select count(*)::int as n from chat_messages where conversation_id = ${conversationId} and sender = 'system'`)[0].n, after)
+    // Der neue Browser kann schreiben; Betreiber sieht die Systemzeile im Verlauf, ohne dass sie als ungelesen zählt
+    await sleep(1600)
+    const sent = await visitor4.send('Jetzt vom Laptop aus.')
+    assert.equal(sent.status, 200, sent.text)
+    const det = contract(C.ChatConversationResponse, await owner.get(`/api/app/v1/chat/conversations/${conversationId}`))
+    assert.ok(det.messages.some(m => m.sender === 'system'))
+    const unreadBefore = det.conversation.unread
+    assert.equal(unreadBefore, (await sql`select count(*)::int as n from chat_messages where conversation_id = ${conversationId} and sender = 'visitor' and read_at is null`)[0].n)
+  })
+  await step('resume: Browser mit eigenem frischem Gespräch wechselt per Code → altes Gespräch verwaist, kein Datenverlust', async () => {
+    const token5 = newToken()
+    const v5 = new Visitor(site.id, host, token5)
+    await v5.session({ visitorToken: token5 })
+    const own = await v5.send('Ich bin ein anderes Gespräch.')
+    assert.equal(own.status, 200, own.text)
+    const ownId = (own.json as { conversationId: string }).conversationId
+    assert.notEqual(ownId, conversationId)
+    const res = await v5.call('POST', 'resume', { code: resumeCode, visitorToken: token5 })
+    assert.equal(res.status, 200, res.text)
+    assert.equal((res.json as { conversationId: string }).conversationId, conversationId)
+    const [orphan] = await sql`select visitor_token_hash from chat_conversations where id = ${ownId}`
+    assert.ok(orphan && orphan.visitor_token_hash !== sha256(token5))
+    await sql`delete from chat_conversations where id = ${ownId}`
+  })
+  await step('resume: 5 Eingaben je IP in 10 min, die 6. → 429 (auch richtige Codes zählen)', async () => {
+    const ip = sha256(`ip-code-${randomBytes(4).toString('hex')}`)
+    let last = 0
+    for (let i = 0; i < 6; i++) {
+      const v = new Visitor(site.id, host, newToken(), ip)
+      await v.session({})
+      last = (await v.call('POST', 'resume', { code: 'ZZZZ-ZZZ9' })).status
+      if (i < 5) assert.equal(last, 404, `Versuch ${i + 1}: ${last}`)
+    }
+    assert.equal(last, 429)
+  })
+  await step('Betreiber: POST …/code erzeugt neuen Code; alter Code → 404, neuer funktioniert; bekannte Browser bleiben drin', async () => {
+    const r = contract(C.ChatOkResponse, await owner.post(`/api/app/v1/chat/conversations/${conversationId}/code`, {}))
+    const next = r.conversation?.resumeCode ?? ''
+    assert.match(next, /^[A-HJ-NP-Z2-9]{4}-[A-HJ-NP-Z2-9]{4}$/)
+    assert.notEqual(next, resumeCode)
+    const v6 = new Visitor(site.id, host, newToken())
+    await v6.session({})
+    assert.equal((await v6.call('POST', 'resume', { code: resumeCode })).status, 404)
+    const ok = await v6.call('POST', 'resume', { code: next })
+    assert.equal(ok.status, 200, ok.text)
+    assert.equal(((await visitor4.session({})).json as { conversationId: string }).conversationId, conversationId)
+    assert.equal(((await visitor4.session({})).json as { resumeCode: string }).resumeCode, next)
+    resumeCode = next
+  })
+  await step('resume: Code 90 Tage nach letzter Nachricht → 410 CODE_EXPIRED; gesperrtes Gespräch → 403 BLOCKED', async () => {
+    const [saved] = await sql`select last_message_at, status from chat_conversations where id = ${conversationId}`
+    await sql`update chat_conversations set last_message_at = now() - interval '91 days' where id = ${conversationId}`
+    const v7 = new Visitor(site.id, host, newToken())
+    await v7.session({})
+    const old = await v7.call('POST', 'resume', { code: resumeCode })
+    assert.equal(old.status, 410, old.text)
+    assert.equal((old.json as { error: string }).error, 'CODE_EXPIRED')
+    await sql`update chat_conversations set last_message_at = ${saved.last_message_at}, status = 'blocked' where id = ${conversationId}`
+    const blocked = await v7.call('POST', 'resume', { code: resumeCode })
+    assert.equal(blocked.status, 403, blocked.text)
+    await sql`update chat_conversations set status = ${saved.status} where id = ${conversationId}`
+  })
+  await step('Übergabe-Link in neuem Browser → ebenfalls Systemzeile „weiteres Gerät“ (nur beim ersten Mal)', async () => {
+    const link = await visitor.call('POST', 'handoff', { via: 'link', pageUrl: `https://${host}/` })
+    assert.equal(link.status, 200, link.text)
+    const tok = new URL((link.json as { url: string }).url).searchParams.get('fs_chat') ?? ''
+    const before = (await sql`select count(*)::int as n from chat_messages where conversation_id = ${conversationId} and sender = 'system'`)[0].n
+    const t8 = newToken()
+    const res = await new Visitor(site.id, host, t8).session({ visitorToken: t8, resumeToken: tok })
+    assert.equal(res.status, 200, res.text)
+    const after = (await sql`select count(*)::int as n from chat_messages where conversation_id = ${conversationId} and sender = 'system'`)[0].n
+    assert.equal(after, before + 1)
+  })
+
   await step('handoff via email: ohne E-Mail 400 NO_EMAIL; mit E-Mail → email_logs chat_handoff; 4. Mail/Tag → 429', async () => {
     const saved = await sql`select visitor_email from chat_conversations where id = ${conversationId}`
     await sql`update chat_conversations set visitor_email = null where id = ${conversationId}`

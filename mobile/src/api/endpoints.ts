@@ -141,6 +141,8 @@ export const chat = {
   unarchive: (id: string) => api.post<ChatOk>(`${conv(id)}/unarchive`),
   block: (id: string, body: BlockChatVisitorRequest = {}) => api.post<ChatOk>(`${conv(id)}/block`, body),
   unblock: (id: string) => api.post<ChatOk>(`${conv(id)}/unblock`),
+  /** Neuen Gesprächs-Code erzeugen (der alte gilt sofort nicht mehr). */
+  newCode: (id: string) => api.post<ChatOk>(`${conv(id)}/code`),
   report: (id: string, body: ReportChatRequest) => api.post<ChatOk>(`${conv(id)}/report`, body),
   /** Entfernt Gespräch + Nachrichten endgültig. */
   remove: (id: string) => api.del<ChatOk>(conv(id)),

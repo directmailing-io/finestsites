@@ -27,6 +27,13 @@ export const HANDOFF_MAILS_PER_DAY = 3
 export type ResumeTokenKind = 'reply' | 'handoff' | 'handoff_mail'
 export const RETENTION_DAYS = 180
 export const BLOCK_RETENTION_DAYS = 365
+/** Gesprächs-Code: gültig bis 90 Tage nach der letzten Nachricht (Gespräche selbst leben 180 Tage) */
+export const RESUME_CODE_DAYS = 90
+export const RESUME_CODE_LENGTH = 8
+/** Alphabet ohne 0/O, 1/I/L – nichts, was man beim Abschreiben verwechselt (auch Migration 20261022250000) */
+export const RESUME_CODE_ALPHABET = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789'
+/** Im Gespräch sichtbare Zeile, wenn ein weiterer Browser per Code oder Link dazukommt */
+export const DEVICE_ADDED_TEXT = 'Gespräch auf einem weiteren Gerät geöffnet.'
 export const WELCOME_TEXT = 'Hi! Schreib mir gern, ich antworte so schnell ich kann.'
 
 // ─── Kleine Helfer ────────────────────────────────────────────────────────────
@@ -68,6 +75,32 @@ export function whatsappUrlOf(phone: string | null | undefined): string | null {
 }
 
 /** Nur Pfad + Suche einer Seiten-URL (kein Host, kein Fragment), max. 300 Zeichen. */
+/** Zufälliger Gesprächs-Code (8 Zeichen aus RESUME_CODE_ALPHABET, unformatiert). */
+export function generateResumeCode(): string {
+  const bytes = randomBytes(RESUME_CODE_LENGTH)
+  let out = ''
+  for (let i = 0; i < RESUME_CODE_LENGTH; i++) out += RESUME_CODE_ALPHABET[bytes[i] % RESUME_CODE_ALPHABET.length]
+  return out
+}
+
+/** „7K4M2P9X“ → „7K4M-2P9X“ (so steht er im Widget, in App und Web). */
+export function formatResumeCode(code: string | null | undefined): string | null {
+  if (!code || code.length !== RESUME_CODE_LENGTH) return null
+  return `${code.slice(0, 4)}-${code.slice(4)}`
+}
+
+/**
+ * Eingabe des Besuchers → unformatierter Code oder null. Groß-/Kleinschreibung, Bindestriche und
+ * Leerzeichen sind egal; O/0 und I/1/L kommen im Alphabet nicht vor und gelten damit als Tippfehler.
+ */
+export function normalizeResumeCode(input: unknown): string | null {
+  if (typeof input !== 'string') return null
+  const code = input.toUpperCase().replace(/[^A-Z0-9]/g, '')
+  if (code.length !== RESUME_CODE_LENGTH) return null
+  for (const ch of code) if (!RESUME_CODE_ALPHABET.includes(ch)) return null
+  return code
+}
+
 export function pathOf(pageUrl: unknown): string | null {
   if (typeof pageUrl !== 'string' || !pageUrl.trim()) return null
   try {
@@ -280,6 +313,8 @@ export type ConversationState = {
   ownerLastSeenAt: string | null
   /** Bis wann der Betreiber die Besucher-Nachrichten gelesen hat (✓✓ im Widget), null = noch nicht. */
   ownerReadAt: string | null
+  /** Gesprächs-Code „7K4M-2P9X“ (nur mit Gespräch): Widget-Karte „Dein Gesprächs-Code“ */
+  resumeCode: string | null
 }
 
 export function toContractConversation(r: ConversationWithSite, now = Date.now()): ChatConversation {
@@ -308,6 +343,7 @@ export function toContractConversation(r: ConversationWithSite, now = Date.now()
       ? { preview: c.lastMessagePreview ?? '', sender: c.lastMessageSender as ChatSender, at: c.lastMessageAt.toISOString() }
       : null,
     reportedAt: iso(c.reportedAt),
+    resumeCode: formatResumeCode(c.resumeCode),
     createdAt: c.createdAt.toISOString(),
     updatedAt: c.updatedAt.toISOString(),
   }
@@ -490,23 +526,105 @@ export async function createConversation(input: {
   userAgent: string | null
   startedOnPath: string | null
 }): Promise<ChatConversationRow> {
-  try {
-    const [row] = await db.insert(chatConversations).values({
-      siteId: input.siteId,
-      userId: input.userId,
-      visitorTokenHash: input.tokenHash,
-      visitorKey: visitorKeyFromHash(input.tokenHash),
-      ipHash: input.ipHash,
-      userAgent: input.userAgent,
-      startedOnPath: input.startedOnPath,
-    }).returning()
-    return row
-  } catch (err) {
-    if (!isUniqueViolation(err)) throw err
-    const existing = await findConversationByToken(input.siteId, input.tokenHash)
-    if (!existing) throw err
-    return existing
+  // Code-Kollision je Seite ist bei 31^8 Möglichkeiten praktisch ausgeschlossen – trotzdem einmal neu würfeln
+  for (let attempt = 0; ; attempt++) {
+    try {
+      const [row] = await db.insert(chatConversations).values({
+        siteId: input.siteId,
+        userId: input.userId,
+        visitorTokenHash: input.tokenHash,
+        visitorKey: visitorKeyFromHash(input.tokenHash),
+        ipHash: input.ipHash,
+        userAgent: input.userAgent,
+        startedOnPath: input.startedOnPath,
+        resumeCode: generateResumeCode(),
+      }).returning()
+      return row
+    } catch (err) {
+      if (!isUniqueViolation(err)) throw err
+      const existing = await findConversationByToken(input.siteId, input.tokenHash)
+      if (existing) return existing
+      if (attempt >= 2) throw err
+    }
   }
+}
+
+// ─── Gesprächs-Code (Besucher öffnet das Gespräch auf einem anderen Gerät) ────
+
+/** Code eines Gesprächs; Altbestand ohne Code bekommt hier einen. Rückgabe formatiert („7K4M-2P9X“). */
+export async function ensureResumeCode(conv: ChatConversationRow): Promise<string> {
+  if (conv.resumeCode) return formatResumeCode(conv.resumeCode)!
+  const code = await rotateResumeCode(conv.id)
+  conv.resumeCode = code.replace('-', '')
+  return code
+}
+
+/** Neuer Code (Betreiber: „Neuen Code erzeugen“, z. B. nach versehentlichem Weitergeben). Formatiert. */
+export async function rotateResumeCode(conversationId: string): Promise<string> {
+  for (let attempt = 0; ; attempt++) {
+    const code = generateResumeCode()
+    try {
+      await db.update(chatConversations).set({ resumeCode: code }).where(eq(chatConversations.id, conversationId))
+      return formatResumeCode(code)!
+    } catch (err) {
+      if (!isUniqueViolation(err) || attempt >= 2) throw err
+    }
+  }
+}
+
+/** Code noch gültig? Nicht gesperrt und letzte Nachricht (sonst Anlage) jünger als RESUME_CODE_DAYS. */
+export function isResumeCodeValid(conv: ChatConversationRow, now = Date.now()): boolean {
+  if (conv.status === 'blocked') return false
+  const last = (conv.lastMessageAt ?? conv.createdAt).getTime()
+  return now - last < RESUME_CODE_DAYS * 86_400_000
+}
+
+export async function findConversationByResumeCode(siteId: string, code: string): Promise<ChatConversationRow | null> {
+  const row = await db.query.chatConversations.findFirst({
+    where: and(eq(chatConversations.siteId, siteId), eq(chatConversations.resumeCode, code)),
+  })
+  return row ?? null
+}
+
+/**
+ * Hängt den Browser (Token-Hash) als weiteren Zugang an das Gespräch (Alias in chat_visitor_tokens) –
+ * gemeinsamer Kern von Resume-/Übergabe-Link und Gesprächs-Code. Kennt der Browser das Gespräch schon,
+ * passiert nichts. Rückgabe: true, wenn ein neuer Zugang entstanden ist.
+ */
+export async function attachVisitorToken(conv: ChatConversationRow, newTokenHash: string): Promise<boolean> {
+  return await db.transaction(async (tx) => attachVisitorTokenTx(tx, conv, newTokenHash))
+}
+
+type Tx = Parameters<Parameters<typeof db.transaction>[0]>[0]
+
+async function attachVisitorTokenTx(tx: Tx, conv: ChatConversationRow, newTokenHash: string): Promise<boolean> {
+  if (conv.visitorTokenHash === newTokenHash) return false
+  const [known] = await tx.select({ id: chatVisitorTokens.conversationId }).from(chatVisitorTokens)
+    .where(eq(chatVisitorTokens.tokenHash, newTokenHash)).limit(1)
+  if (known && known.id === conv.id) return false
+  // Ein anderes (frisches) Gespräch dieses Browsers auf derselben Seite darf den Platz nicht blockieren
+  const [clash] = await tx.select({ id: chatConversations.id }).from(chatConversations)
+    .where(and(eq(chatConversations.siteId, conv.siteId), eq(chatConversations.visitorTokenHash, newTokenHash))).limit(1)
+  if (clash && clash.id !== conv.id) {
+    await tx.update(chatConversations)
+      .set({ visitorTokenHash: sha256(`orphan:${randomBytes(16).toString('hex')}`), updatedAt: new Date() })
+      .where(eq(chatConversations.id, clash.id))
+  }
+  // Ein Token zeigt immer auf genau ein Gespräch
+  await tx.insert(chatVisitorTokens)
+    .values({ tokenHash: newTokenHash, conversationId: conv.id, lastUsedAt: new Date() })
+    .onConflictDoUpdate({ target: chatVisitorTokens.tokenHash, set: { conversationId: conv.id, lastUsedAt: new Date() } })
+  await tx.update(chatConversations).set({ updatedAt: new Date() }).where(eq(chatConversations.id, conv.id))
+  return true
+}
+
+/**
+ * Hinweiszeile im Verlauf (sender 'system'), z. B. „Gespräch auf einem weiteren Gerät geöffnet.“
+ * Zählt nicht als ungelesen, ändert keine Vorschau, löst keinen Push aus – nur Transparenz für beide Seiten.
+ */
+export async function addSystemMessage(conversationId: string, body: string): Promise<ChatMessageRow> {
+  const [row] = await db.insert(chatMessages).values({ conversationId, sender: 'system', body }).returning()
+  return row
 }
 
 export async function updateVisitorProfile(conversationId: string, patch: {
@@ -602,9 +720,9 @@ export async function countHandoffMails(conversationId: string): Promise<number>
  * Löst einen Resume-/Übergabe-Token ein: der neue Besucher-Token wird als weiterer Zugang (Alias) an das
  * Gespräch gehängt – der bisherige Browser behält seinen Zugang (Instagram-Browser UND Safari kennen das
  * Gespräch). Der Token ist danach verbraucht. Gibt null zurück bei unbekanntem/abgelaufenem/benutztem
- * Token oder wenn das Gespräch nicht zu dieser Seite gehört.
+ * Token oder wenn das Gespräch nicht zu dieser Seite gehört. `attached` = dieser Browser ist neu dazugekommen.
  */
-export async function consumeResumeToken(rawToken: string, siteId: string, newTokenHash: string): Promise<ChatConversationRow | null> {
+export async function consumeResumeToken(rawToken: string, siteId: string, newTokenHash: string): Promise<{ conv: ChatConversationRow; attached: boolean } | null> {
   const tokenHash = sha256(rawToken)
   return await db.transaction(async (tx) => {
     const [t] = await tx.select().from(chatResumeTokens)
@@ -614,24 +732,10 @@ export async function consumeResumeToken(rawToken: string, siteId: string, newTo
     const [conv] = await tx.select().from(chatConversations).where(eq(chatConversations.id, t.conversationId)).for('update').limit(1)
     if (!conv || conv.siteId !== siteId) return null
 
-    if (conv.visitorTokenHash !== newTokenHash) {
-      // Ein anderes (frisches) Gespräch dieses Browsers auf derselben Seite darf den Platz nicht blockieren
-      const [clash] = await tx.select({ id: chatConversations.id }).from(chatConversations)
-        .where(and(eq(chatConversations.siteId, siteId), eq(chatConversations.visitorTokenHash, newTokenHash))).limit(1)
-      if (clash && clash.id !== conv.id) {
-        await tx.update(chatConversations)
-          .set({ visitorTokenHash: sha256(`orphan:${randomBytes(16).toString('hex')}`), updatedAt: new Date() })
-          .where(eq(chatConversations.id, clash.id))
-      }
-      // Ein Token zeigt immer auf genau ein Gespräch
-      await tx.insert(chatVisitorTokens)
-        .values({ tokenHash: newTokenHash, conversationId: conv.id, lastUsedAt: new Date() })
-        .onConflictDoUpdate({ target: chatVisitorTokens.tokenHash, set: { conversationId: conv.id, lastUsedAt: new Date() } })
-      await tx.update(chatConversations).set({ updatedAt: new Date() }).where(eq(chatConversations.id, conv.id))
-    }
+    const attached = await attachVisitorTokenTx(tx, conv, newTokenHash)
     await tx.update(chatResumeTokens).set({ usedAt: new Date() }).where(eq(chatResumeTokens.tokenHash, tokenHash))
     const [fresh] = await tx.select().from(chatConversations).where(eq(chatConversations.id, conv.id)).limit(1)
-    return fresh ?? null
+    return fresh ? { conv: fresh, attached } : null
   })
 }
 

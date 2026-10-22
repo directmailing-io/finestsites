@@ -21,7 +21,11 @@
       open: 'Chat öffnen', close: 'Chat schließen', online: 'online',
       wa: 'Schreib mir direkt in WhatsApp', placeholder: 'Nachricht schreiben …', send: 'Senden',
       hint: 'Nur in diesem Browser gespeichert.', privacy: 'Datenschutz',
-      notice: 'Dieser Chat wird nur in diesem Browser gespeichert und kann verloren gehen, wenn du die Seite verlässt. Wichtiges schickst du mir am besten {via}.',
+      notice: 'Dieser Chat wird in diesem Browser gespeichert. Nach deiner ersten Nachricht bekommst du einen Code, mit dem du ihn auf jedem Gerät wieder öffnen kannst. Wichtiges schickst du mir am besten {via}.',
+      ccTitle: 'Dein Gesprächs-Code', ccText: 'Damit öffnest du dieses Gespräch auf jedem Gerät wieder – am besten einen Screenshot machen. Gib den Code nicht weiter.',
+      ccCopy: 'Code kopieren', ccCopied: 'Code kopiert', rsQ: 'Schon ein Gespräch begonnen?', rsLink: 'Mit Code fortsetzen',
+      rsPh: 'Code, z. B. 7K4M-2P9X', rsGo: 'Fortsetzen', rsBad: 'Code nicht gefunden – bitte prüfen.', rsOld: 'Dieser Code ist abgelaufen.',
+      rsMany: 'Zu viele Versuche. Bitte in 10 Minuten nochmal.', rsDone: 'Gespräch fortgesetzt',
       viaWa: 'per WhatsApp oder über das Kontaktformular', viaForm: 'über das Kontaktformular',
       today: 'Heute', yesterday: 'Gestern', failed: 'Nicht gesendet', retry: 'Erneut senden',
       rejected: 'Diese Nachricht kann nicht gesendet werden.', wait: 'Bitte kurz warten.',
@@ -41,7 +45,11 @@
       open: 'Open chat', close: 'Close chat', online: 'online',
       wa: 'Message me directly on WhatsApp', placeholder: 'Write a message …', send: 'Send',
       hint: 'Stored only in this browser.', privacy: 'Privacy',
-      notice: 'This chat is only stored in this browser and may be lost when you leave the page. For anything important, use {via}.',
+      notice: 'This chat is stored in this browser. After your first message you get a code that reopens it on any device. For anything important, use {via}.',
+      ccTitle: 'Your conversation code', ccText: 'Use it to reopen this chat on any device – a screenshot is the easiest way to keep it. Do not share the code.',
+      ccCopy: 'Copy code', ccCopied: 'Code copied', rsQ: 'Already started a chat?', rsLink: 'Continue with code',
+      rsPh: 'Code, e.g. 7K4M-2P9X', rsGo: 'Continue', rsBad: 'Code not found – please check it.', rsOld: 'This code has expired.',
+      rsMany: 'Too many attempts. Please try again in 10 minutes.', rsDone: 'Conversation restored',
       viaWa: 'WhatsApp or the contact form', viaForm: 'the contact form',
       today: 'Today', yesterday: 'Yesterday', failed: 'Not sent', retry: 'Send again',
       rejected: 'This message cannot be sent.', wait: 'Please wait a moment.',
@@ -74,6 +82,7 @@
   var polling = false, pollAgain = false, pollCtl = null, pollGen = 0, pollFails = 0;
   var paused = false, idleTimer = null, pauseEl = null;
   var hoUrl = null, hoBusy = false, hoGone = false; // Übergabe-Karte (In-App-Browser)
+  var code = null, rsOpen = false, rsBusy = false, rsErr = null, rsVal = ''; // Gesprächs-Code (Karte) + „Mit Code fortsetzen“
   var root, host, btn, badge, win, list, ta, sendBtn, hintEl, profileEl, statusEl, toastEl;
 
   // ── Helfer ─────────────────────────────────────────────────────────────────
@@ -271,6 +280,8 @@
     '.hx{position:absolute;top:6px;right:6px;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#9CA3AF}.hx:hover{background:var(--fl);color:#111}.hx svg{width:15px;height:15px}' +
     '.hb{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.sec{height:34px;padding:0 14px;border-radius:999px;border:1px solid rgba(0,0,0,.1);background:#fff;color:#111;font-size:13px;font-weight:500}.sec:hover{background:#FAFAFA}.sec:disabled{opacity:.5;cursor:default}' +
     '.fb{display:grid;gap:6px;margin-top:10px}.fb input{width:100%;height:36px;border:0;border-radius:10px;padding:0 10px;font-size:12px;background:var(--fl);color:#374151;outline:none}.fb input:focus{box-shadow:0 0 0 3px var(--bs)}.fb p{margin:0;font-size:12px;color:var(--mu)}' +
+    '.cc{border:1px solid rgba(0,0,0,.08);border-radius:14px;padding:12px 14px;margin:0 0 14px;font-size:13px;line-height:1.45;color:#374151;animation:up .2s ease-out both}.cc b{display:block;color:#111;font-weight:600;margin-bottom:6px}.cv{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px}.cd{font:600 20px/1.2 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.08em;color:var(--b);user-select:all;-webkit-user-select:all}.cc p{margin:0;font-size:12px;color:var(--mu)}' +
+    '.rs{margin:0 0 14px;font-size:13px;color:var(--mu);text-align:center}.rs .lk2{color:var(--b);font-weight:500;text-decoration:underline;text-underline-offset:2px}.rf{display:flex;gap:8px;margin-top:8px}.rf input{flex:1;min-width:0;height:40px;border:0;border-radius:12px;padding:0 12px;font:600 16px/1 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.06em;text-transform:uppercase;background:var(--fl);color:#111;outline:none}.rf input:focus{box-shadow:0 0 0 3px var(--bs)}.rf input::placeholder{font-weight:400;letter-spacing:0;text-transform:none;color:#9CA3AF}.rf .pb{height:40px}.re{color:#C0392B;font-size:12px;margin-top:6px;text-align:left}' +
     '.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}';
   }
 
@@ -342,6 +353,19 @@
       else if (b.dataset.retry) { retry(b.dataset.retry); }
       else if (b.dataset.drop) { dropMessage(b.dataset.drop); }
       else if (b.dataset.ho) { handoff(b.dataset.ho); }
+      else if (b.dataset.cc) { copyLink(code, null, t.ccCopied); }
+      else if (b.dataset.rs === 'open') { rsOpen = true; rsErr = null; renderAll(); focusRs(); }
+      else if (b.dataset.rs === 'go') { resumeByCode(); }
+    });
+    list.addEventListener('input', function (e) {
+      var inp = e.target;
+      if (!inp || !inp.classList || !inp.classList.contains('ri')) return;
+      var v = inp.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 8);
+      rsVal = v.length > 4 ? v.slice(0, 4) + '-' + v.slice(4) : v;
+      if (inp.value !== rsVal) inp.value = rsVal;
+    });
+    list.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' && e.target && e.target.classList && e.target.classList.contains('ri')) { e.preventDefault(); resumeByCode(); }
     });
     var form = profileEl.querySelector('form');
     var emailIn = form.email, notifyIn = form.notify;
@@ -393,8 +417,8 @@
     toastEl.textContent = msg; toastEl.classList.add('on');
     clearTimeout(toastEl._t); toastEl._t = setTimeout(function () { toastEl.classList.remove('on'); }, 1800);
   }
-  function copyLink(url, fail) {
-    var done = function () { toast(t.copied); };
+  function copyLink(url, fail, msg) {
+    var done = function () { toast(msg || t.copied); };
     if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(url).then(done, function () { fallbackCopy(url) ? done() : fail && fail(); });
     else { fallbackCopy(url) ? done() : fail && fail(); }
   }
@@ -456,15 +480,36 @@
     if (hoUrl) h += '<div class="fb"><input readonly value="' + esc(hoUrl) + '" aria-label="Link"><p>' + esc(IOS ? t.hoMenuIos : t.hoMenu) + '</p></div>';
     return h + '</div>';
   }
+  /** Karte „Dein Gesprächs-Code“ (mit Gespräch, ganz oben) */
+  function codeCard() {
+    if (!convId || !code) return '';
+    return '<div class="cc" role="note"><b>' + t.ccTitle + '</b><div class="cv"><span class="cd" aria-label="' + t.ccTitle + '">' + esc(code) + '</span>' +
+      '<button type="button" class="sec" data-cc="copy">' + ICON.copy + ' ' + t.ccCopy + '</button></div><p>' + esc(t.ccText) + '</p></div>';
+  }
+  /** „Schon ein Gespräch begonnen? Mit Code fortsetzen“ (ohne Gespräch, unter der Begrüßung) */
+  function resumeCard() {
+    if (convId) return '';
+    var h = '<div class="rs">' + esc(t.rsQ) + ' ';
+    if (!rsOpen) return h + '<button type="button" class="lk2" data-rs="open">' + t.rsLink + '</button></div>';
+    h += '<div class="rf"><input class="ri" value="' + esc(rsVal) + '" placeholder="' + t.rsPh + '" maxlength="9" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="' + t.rsPh + '"' + (rsBusy ? ' disabled' : '') + '>' +
+      '<button type="button" class="pb" data-rs="go"' + (rsBusy ? ' disabled' : '') + '>' + t.rsGo + '</button></div>';
+    if (rsErr) h += '<div class="re" role="alert">' + esc(rsErr) + '</div>';
+    return h + '</div>';
+  }
+  function focusRs() {
+    var inp = list.querySelector('.ri');
+    if (inp) { try { inp.focus(); } catch (e) {} }
+  }
   function renderAll() {
     var h = '';
     if (blocked) {
       h = '<div class="blk">' + esc(t.blocked) + '</div>' + waButton(true);
     } else {
-      // Ehrlicher Hinweis ganz oben (nur dieser Browser, Wichtiges per WhatsApp/Kontaktformular), dann Begrüßung ohne Zeitstempel, darunter der WhatsApp-Knopf (falls vorhanden)
-      h += '<div class="sys note">' + esc(t.notice.replace('{via}', cfg.whatsappUrl ? t.viaWa : t.viaForm)) + '</div>';
+      // Mit Gespräch: Karte „Dein Gesprächs-Code“ ganz oben; davor ehrlicher Hinweis (dieser Browser, Code kommt, Wichtiges per WhatsApp/Kontaktformular).
+      // Dann Begrüßung ohne Zeitstempel, WhatsApp-Knopf (falls vorhanden), ohne Gespräch „Mit Code fortsetzen“.
+      h += codeCard() || '<div class="sys note">' + esc(t.notice.replace('{via}', cfg.whatsappUrl ? t.viaWa : t.viaForm)) + '</div>';
       if (cfg.welcome) h += '<div class="m them tl"><div class="bb">' + linkify(cfg.welcome) + '</div></div>';
-      h += waButton();
+      h += waButton() + resumeCard();
       var lastDay = null, prev = null;
       for (var i = 0; i < messages.length; i++) {
         var m = messages[i];
@@ -506,6 +551,7 @@
     if (j.visitor) { visitor = j.visitor; }
     if (Array.isArray(j.messages)) messages = j.messages.map(function (m) { m.state = 'sent'; return m; });
     if (j.ownerLastSeenAt !== undefined) ownerSeen = j.ownerLastSeenAt;
+    if (typeof j.resumeCode === 'string') code = j.resumeCode;
     applyOwnerRead(j.ownerReadAt);
     if (status === 'blocked') blocked = true;
   }
@@ -664,6 +710,7 @@
         var first = !convId;
         if (r.json.conversationId) convId = r.json.conversationId;
         else if (r.json.message.conversationId) convId = r.json.message.conversationId;
+        if (typeof r.json.resumeCode === 'string') code = r.json.resumeCode;
         mergeNew([r.json.message]);
         renderAll();
         if (first) { fillProfile(); profileEl.open = true; }
@@ -702,6 +749,27 @@
       var ok = form.querySelector('.ok'); ok.hidden = false;
       setTimeout(function () { ok.hidden = true; profileEl.open = false; }, 1200);
     }, function () {});
+  }
+
+  // ── Gespräch per Code fortsetzen (`POST resume`): dieser Browser kommt als weiterer Zugang dazu ──
+  function resumeByCode() {
+    var v = rsVal.replace('-', '');
+    if (rsBusy) return;
+    if (v.length !== 8) { rsErr = t.rsBad; renderAll(); focusRs(); return; }
+    rsBusy = true; rsErr = null; renderAll();
+    if (!token) token = rnd(32);
+    apiT('resume', { method: 'POST', body: { code: v, visitorToken: token } }).then(function (r) {
+      rsBusy = false;
+      if (r.ok && r.json.conversationId) {
+        applySession(r.json); storeToken(token);
+        rsOpen = false; rsVal = '';
+        renderAll(); fillProfile(); toast(t.rsDone); wake();
+        return;
+      }
+      if (r.status === 403 && r.json.error === 'BLOCKED') return;
+      rsErr = r.status === 404 ? t.rsBad : r.status === 410 ? t.rsOld : r.status === 429 ? t.rsMany : t.failed;
+      renderAll(); focusRs();
+    }, function () { rsBusy = false; rsErr = t.offline; renderAll(); });
   }
 
   // ── Übergabe (In-App-Browser → Safari/Browser, Desktop → Handy per Mail) ───

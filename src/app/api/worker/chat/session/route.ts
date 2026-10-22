@@ -1,7 +1,7 @@
 /**
  * POST /api/worker/chat/session  (Widget: POST /.finestsites/chat/session)
  * Body { visitorToken?, resumeToken?, pageUrl? }
- * → { enabled, ticket, conversationId, visitorToken, status, visitor:{name,email,phone,notifyByEmail}, messages:[…letzte 50], ownerLastSeenAt }
+ * → { enabled, ticket, conversationId, visitorToken, status, visitor:{name,email,phone,notifyByEmail}, messages:[…letzte 50], ownerLastSeenAt, ownerReadAt, resumeCode }
  *   ticket: Pflicht-Header X-FS-Ticket für messages/profile/handoff/read (2 h, src/lib/chat/ticket.ts)
  *
  * Ohne Token (oder ohne bekanntes Gespräch) nur enabled + leere Felder – ein Gespräch entsteht erst
@@ -9,9 +9,9 @@
  * Gespräch für den neuen visitorToken und ist danach verbraucht.
  */
 import type { NextRequest } from 'next/server'
-import { resolveVisitor, visitorError, visitorJson } from '@/lib/chat/visitor'
+import { conversationState, resolveVisitor, visitorError, visitorJson } from '@/lib/chat/visitor'
 import {
-  consumeResumeToken, findConversationByToken, isValidVisitorToken, listMessages, ownerReadAtOf, sha256, toContractMessage, touchVisitorSeen,
+  addSystemMessage, consumeResumeToken, DEVICE_ADDED_TEXT, findConversationByToken, isValidVisitorToken, sha256,
   type ConversationState,
 } from '@/lib/chat/service'
 import type { ChatConversationRow } from '@/lib/db/schema'
@@ -35,7 +35,10 @@ export async function POST(req: NextRequest) {
   let conv: ChatConversationRow | null = null
   if (resumeToken) {
     if (!tokenHash) return visitorError('TOKEN_REQUIRED', 400)
-    conv = await consumeResumeToken(resumeToken, site.siteId, tokenHash)
+    const used = await consumeResumeToken(resumeToken, site.siteId, tokenHash)
+    conv = used?.conv ?? null
+    // Neuer Browser am Gespräch → Hinweiszeile für beide Seiten (wie beim Gesprächs-Code)
+    if (used?.attached && used.conv.status !== 'blocked') await addSystemMessage(used.conv.id, DEVICE_ADDED_TEXT)
     // Verbrauchter/abgelaufener Link, aber dieser Browser kennt das Gespräch schon (z. B. Link zweimal geöffnet)
     if (!conv) conv = await findConversationByToken(site.siteId, tokenHash)
     if (!conv) return visitorError('RESUME_INVALID', 410)
@@ -45,21 +48,10 @@ export async function POST(req: NextRequest) {
 
   if (!conv) {
     return visitorJson({
-      enabled: true, ticket: issueTicket(site.siteId), conversationId: null, visitorToken, status: null, visitor: null, messages: [], ownerLastSeenAt: null, ownerReadAt: null,
+      enabled: true, ticket: issueTicket(site.siteId), conversationId: null, visitorToken, status: null, visitor: null, messages: [], ownerLastSeenAt: null, ownerReadAt: null, resumeCode: null,
     } satisfies ConversationState)
   }
   if (conv.status === 'blocked') return visitorError('BLOCKED', 403)
 
-  const [{ messages }, ownerReadAt] = await Promise.all([listMessages(conv.id, { limit: 50 }), ownerReadAtOf(conv.id), touchVisitorSeen(conv.id)])
-  return visitorJson({
-    enabled: true,
-    ticket: issueTicket(site.siteId),
-    conversationId: conv.id,
-    visitorToken,
-    status: conv.status,
-    visitor: { name: conv.visitorName, email: conv.visitorEmail, phone: conv.visitorPhone, notifyByEmail: conv.notifyByEmail },
-    messages: messages.map(m => toContractMessage(m, 'visitor')),
-    ownerLastSeenAt: conv.ownerLastSeenAt?.toISOString() ?? null,
-    ownerReadAt,
-  } satisfies ConversationState)
+  return visitorJson(await conversationState(conv, site.siteId, visitorToken))
 }

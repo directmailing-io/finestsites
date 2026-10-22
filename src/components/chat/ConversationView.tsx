@@ -17,6 +17,8 @@ export interface ConversationActions {
   onArchive: (archived: boolean) => void
   onBlock: () => void
   onUnblock: () => void
+  /** Neuen Gesprächs-Code erzeugen (nach versehentlichem Weitergeben). */
+  onNewCode: () => void
   onReport: () => void
   onDelete: () => void
 }
@@ -49,6 +51,7 @@ export function ConversationView({ conversation, messages, loading, actions, bus
   const blocked = conversation.status === 'blocked'
   const archived = conversation.status === 'archived'
   const [menuOpen, setMenuOpen] = useState(false)
+  const [codeCopied, setCodeCopied] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
   const scrollRef = useRef<HTMLDivElement>(null)
   const endRef = useRef<HTMLDivElement>(null)
@@ -150,6 +153,9 @@ export function ConversationView({ conversation, messages, loading, actions, bus
                 <MenuItem onClick={() => { setMenuOpen(false); actions.onReport() }} icon={<FlagIcon />}>
                   {conversation.reportedAt ? 'Erneut melden' : 'Melden'}
                 </MenuItem>
+                {!blocked && (
+                  <MenuItem onClick={() => { setMenuOpen(false); actions.onNewCode() }} icon={<KeyIcon />}>Neuen Gesprächs-Code erzeugen</MenuItem>
+                )}
                 <div className="h-px mx-3 my-1" style={{ background: '#F3F4F6' }} />
                 <MenuItem onClick={() => { setMenuOpen(false); actions.onDelete() }} icon={<TrashIcon />} danger>Gespräch löschen</MenuItem>
               </div>
@@ -157,9 +163,25 @@ export function ConversationView({ conversation, messages, loading, actions, bus
           </div>
         </div>
 
-        {/* Kontaktzeile */}
-        {contacts.length > 0 && (
+        {/* Kontaktzeile + Gesprächs-Code (Klick kopiert; den Code kann man dem Besucher nennen, wenn er den Chat „verloren“ hat) */}
+        {(contacts.length > 0 || conversation.resumeCode) && (
           <div className="flex items-center gap-2 px-3 sm:px-4 pb-3 overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
+            {conversation.resumeCode && !blocked && (
+              <button
+                type="button"
+                onClick={async () => {
+                  try { await navigator.clipboard.writeText(conversation.resumeCode ?? '') ; setCodeCopied(true); setTimeout(() => setCodeCopied(false), 1500) } catch { /* Zwischenablage gesperrt */ }
+                }}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12.5px] font-semibold whitespace-nowrap transition-colors hover:bg-gray-200"
+                style={{ background: '#F3F4F6', color: '#374151' }}
+                title="Gesprächs-Code – damit öffnet der Besucher das Gespräch auf einem anderen Gerät. Klick kopiert."
+                aria-label={`Gesprächs-Code ${conversation.resumeCode} kopieren`}
+              >
+                <span style={{ color: '#6B7280' }}><KeyIcon /></span>
+                <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace', letterSpacing: '0.04em' }}>{conversation.resumeCode}</span>
+                {codeCopied && <span style={{ color: '#16A34A', fontWeight: 500 }}>kopiert</span>}
+              </button>
+            )}
             {contacts.map(c => (
               <a
                 key={c.href}
@@ -392,6 +414,14 @@ function Composer({ onSend, disabled, archived, onRestore }: { onSend: (body: st
 }
 
 // ─── Menü + Symbole ──────────────────────────────────────────────────────────
+
+function KeyIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <circle cx="8" cy="15" r="4" /><path d="M10.9 12.1 20 3M15 8l3 3M18 5l2 2" />
+    </svg>
+  )
+}
 
 function MenuItem({ children, onClick, icon, danger }: { children: React.ReactNode; onClick: () => void; icon: React.ReactNode; danger?: boolean }) {
   return (
