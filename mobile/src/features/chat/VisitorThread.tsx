@@ -1,7 +1,7 @@
-import { useRouter } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
 import { ArrowUp, Check, CheckCheck, Clock, Globe, MessagesSquare, ShieldBan } from 'lucide-react-native';
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
-import { ActivityIndicator, FlatList, Keyboard, KeyboardAvoidingView, Platform, Pressable, StyleSheet, TextInput, View } from 'react-native';
+import { ActivityIndicator, AppState, FlatList, Pressable, StyleSheet, TextInput, View, type AppStateStatus } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { ApiError } from '@/api/client';
@@ -9,8 +9,9 @@ import { useChatActions, useChatMessages } from '@/api/queries';
 import type { ChatConversation, ChatMessage } from '@/api/types';
 import { Button, EmptyState, Text, useToast } from '@/components/ui';
 import { copyText } from '@/lib/clipboard';
+import { useKeyboardInset } from '@/lib/keyboard';
 import { openInBrowser } from '@/lib/links';
-import { shouldPrimePush } from '@/lib/push';
+import { getActiveChatConversation, setActiveChatConversation, shouldPrimePush } from '@/lib/push';
 import { colors, fonts, radius } from '@/theme/tokens';
 
 import { buildThreadItems, hhmm, startedOnUrl, type ThreadItem } from './helpers';
@@ -32,19 +33,26 @@ export function VisitorThread({ conversationId, header, bottomInset = 0 }: { con
   const [pending, setPending] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
   const [sending, setSending] = useState(false);
-  const [keyboard, setKeyboard] = useState(false);
   const insets = useSafeAreaInsets();
   const tabBarSpace = insets.bottom;
+  // Tastatur-Abstand gemessen statt fester keyboardVerticalOffset=90 (siehe lib/keyboard)
+  const kb = useKeyboardInset();
+  const keyboard = kb.visible;
   const listRef = useRef<FlatList<ThreadItem>>(null);
 
-  useEffect(() => {
-    const show = Keyboard.addListener(Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow', () => setKeyboard(true));
-    const hide = Keyboard.addListener(Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide', () => setKeyboard(false));
-    return () => {
-      show.remove();
-      hide.remove();
-    };
-  }, []);
+  // Sichtbares Gespräch merken: solange es im Vordergrund offen ist, unterdrückt der Mitteilungs-Handler
+  // (lib/push) den Banner zu genau diesem Gespräch. Im Hintergrund (AppState) soll die Mitteilung kommen.
+  useFocusEffect(
+    useCallback(() => {
+      const sync = (state: AppStateStatus | string | null | undefined) => setActiveChatConversation(state === 'active' ? conversationId : null);
+      sync(AppState.currentState);
+      const sub = AppState.addEventListener('change', sync);
+      return () => {
+        sub.remove();
+        if (getActiveChatConversation() === conversationId) setActiveChatConversation(null);
+      };
+    }, [conversationId]),
+  );
 
   // Optimistische Nachrichten verschwinden, sobald der Server dieselbe clientId liefert
   const all = useMemo(
@@ -147,9 +155,9 @@ export function VisitorThread({ conversationId, header, bottomInset = 0 }: { con
   }
 
   return (
-    <View style={styles.flex}>
+    <View ref={kb.ref} style={styles.flex}>
       {header}
-      <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === 'ios' ? 'padding' : undefined} keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}>
+      <View style={[styles.flex, { paddingBottom: kb.inset }]}>
         <FlatList
           ref={listRef}
           data={items}
@@ -166,7 +174,7 @@ export function VisitorThread({ conversationId, header, bottomInset = 0 }: { con
           maxToRenderPerBatch={30}
         />
         {blocked ? (
-          <View style={[styles.blockedBar, { paddingBottom: 12 + bottomInset + (keyboard ? 0 : tabBarSpace) }]} accessibilityRole="summary">
+          <View style={[styles.blockedBar, { paddingBottom: keyboard ? 12 : 12 + bottomInset + tabBarSpace }]} accessibilityRole="summary">
             <ShieldBan size={18} color={colors.dangerInk} strokeWidth={2} />
             <Text style={styles.blockedText}>Besucher gesperrt – er kann dir nicht mehr schreiben.</Text>
             <Button
@@ -178,7 +186,8 @@ export function VisitorThread({ conversationId, header, bottomInset = 0 }: { con
             />
           </View>
         ) : (
-          <View style={[styles.composer, { paddingBottom: 10 + bottomInset + (keyboard ? 0 : tabBarSpace) }]}>
+          // Mit Tastatur: 8 pt Luft über der Tastatur (sie verdeckt die Home-Indicator-Zone), sonst über der Tab-Leiste
+          <View style={[styles.composer, { paddingBottom: keyboard ? 8 : 10 + bottomInset + tabBarSpace }]}>
             <TextInput
               value={input}
               onChangeText={t => setInput(t.slice(0, 2000))}
@@ -200,7 +209,7 @@ export function VisitorThread({ conversationId, header, bottomInset = 0 }: { con
             </Pressable>
           </View>
         )}
-      </KeyboardAvoidingView>
+      </View>
     </View>
   );
 }
@@ -288,18 +297,21 @@ const styles = StyleSheet.create({
     borderTopColor: '#EBEBEB',
     backgroundColor: colors.white,
   },
+  // 12 + 20 + 12 = 44 → eine Zeile füllt die Mindesthöhe exakt, nichts wird abgeschnitten; ab 5 Zeilen scrollt das Feld
   input: {
     flex: 1,
     minHeight: 44,
     maxHeight: 120,
     paddingHorizontal: 14,
-    paddingTop: 11,
-    paddingBottom: 11,
+    paddingTop: 12,
+    paddingBottom: 12,
     borderRadius: 22,
     backgroundColor: '#F5F5F5',
     fontFamily: fonts.regular,
     fontSize: 16,
+    lineHeight: 20,
     color: colors.ink,
+    textAlignVertical: 'top',
   },
   send: { width: 44, height: 44, borderRadius: 22, backgroundColor: colors.foreground, alignItems: 'center', justifyContent: 'center' },
   blockedBar: {

@@ -16,15 +16,40 @@ import { Platform } from 'react-native';
 import * as ep from '@/api/endpoints';
 
 import { APP_VERSION, MOCK } from './config';
+import { useLock } from './lock';
 import { deleteSecure, getSecure, KEYS, setSecure } from './secure';
 
+/**
+ * Gerade sichtbares Besucher-Gespräch (gesetzt vom Thread-Bildschirm, solange er fokussiert und die App
+ * im Vordergrund ist). Zweite Schicht neben dem Server (der lässt den Push weg, wenn das Gespräch in den
+ * letzten 20 s abgerufen wurde): kommt die Mitteilung trotzdem an, erscheint kein Banner und kein Ton –
+ * die Nachricht steht ja schon auf dem Bildschirm. Andere Mitteilungen bleiben unverändert.
+ */
+let activeChatConversationId: string | null = null;
+
+export function setActiveChatConversation(id: string | null) {
+  activeChatConversationId = id;
+}
+
+export function getActiveChatConversation(): string | null {
+  return activeChatConversationId;
+}
+
+/** Ist die Mitteilung eine Chat-Nachricht zu dem Gespräch, das der Nutzer gerade vor sich hat? */
+export function isForVisibleChat(data: unknown): boolean {
+  if (!activeChatConversationId) return false;
+  const d = (data ?? {}) as { type?: unknown; conversationId?: unknown };
+  if (d.type !== 'chat_message' || d.conversationId !== activeChatConversationId) return false;
+  // Hinter der Face-ID-Sperre ist das Gespräch nicht zu sehen → Banner wie gewohnt
+  const lock = useLock.getState();
+  return !(lock.enabled && lock.locked);
+}
+
 Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowBanner: true,
-    shouldShowList: true,
-    shouldPlaySound: true,
-    shouldSetBadge: true,
-  }),
+  handleNotification: async notification =>
+    isForVisibleChat(notification.request.content.data)
+      ? { shouldShowBanner: false, shouldShowList: false, shouldPlaySound: false, shouldSetBadge: true }
+      : { shouldShowBanner: true, shouldShowList: true, shouldPlaySound: true, shouldSetBadge: true },
 });
 
 export async function ensureAndroidChannel() {

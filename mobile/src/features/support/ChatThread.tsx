@@ -4,7 +4,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { useRouter } from 'expo-router';
 import { ArrowUp, ImagePlus } from 'lucide-react-native';
 import { useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, Alert, Keyboard, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, TextInput, View, type ScrollViewInstance } from 'react-native';
+import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, TextInput, View, type ScrollViewInstance } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { markConversationRead, sendMessage, startConversation, uploadSupportImage } from '@/api/endpoints';
@@ -12,6 +12,7 @@ import { qk, useMessages } from '@/api/queries';
 import type { Message } from '@/api/types';
 import { Text, useToast } from '@/components/ui';
 import { chatTime } from '@/lib/format';
+import { useKeyboardInset } from '@/lib/keyboard';
 import { shouldPrimePush } from '@/lib/push';
 import { colors, fonts, radius } from '@/theme/tokens';
 
@@ -39,20 +40,13 @@ export function ChatThread({
   const [input, setInput] = useState('');
   const [sending, setSending] = useState(false);
   const [uploading, setUploading] = useState(false);
-  // Ohne Tastatur sitzt das Eingabefeld über der (schwebenden) Tab-Leiste, mit Tastatur direkt darüber
-  const [keyboard, setKeyboard] = useState(false);
   // In den Tabs enthält der untere Sicherheitsabstand schon die (schwebende) Tab-Leiste – das Eingabefeld
-  // sitzt darüber statt dahinter. Mit offener Tastatur übernimmt KeyboardAvoidingView.
+  // sitzt darüber statt dahinter. Mit offener Tastatur sitzt es direkt über der Tastatur.
   const insets = useSafeAreaInsets();
   const tabBarSpace = insets.bottom;
-  useEffect(() => {
-    const show = Keyboard.addListener(Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow', () => setKeyboard(true));
-    const hide = Keyboard.addListener(Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide', () => setKeyboard(false));
-    return () => {
-      show.remove();
-      hide.remove();
-    };
-  }, []);
+  // Tastatur-Abstand gemessen statt fester keyboardVerticalOffset=90 (siehe lib/keyboard)
+  const kb = useKeyboardInset();
+  const keyboard = kb.visible;
   const scrollRef = useRef<ScrollViewInstance>(null);
 
   const messages = [...(q.data?.messages ?? []), ...pending.filter(p => !(q.data?.messages ?? []).some(m => m.id === p.id))];
@@ -136,8 +130,8 @@ export function ChatThread({
   }
 
   return (
-    <View style={styles.flex}>
-    <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === 'ios' ? 'padding' : undefined} keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}>
+    <View ref={kb.ref} style={styles.flex}>
+    <View style={[styles.flex, { paddingBottom: kb.inset }]}>
       <ScrollView
         ref={scrollRef}
         style={styles.messages}
@@ -165,7 +159,8 @@ export function ChatThread({
           </View>
         )}
       </ScrollView>
-      <View style={[styles.composer, { paddingBottom: 10 + bottomInset + (keyboard ? 0 : tabBarSpace) }]}>
+      {/* Mit Tastatur: 8 pt Luft über der Tastatur (sie verdeckt die Home-Indicator-Zone), sonst über der Tab-Leiste */}
+      <View style={[styles.composer, { paddingBottom: keyboard ? 8 : 10 + bottomInset + tabBarSpace }]}>
         <Pressable
           onPress={chooseImage}
           disabled={uploading}
@@ -192,7 +187,7 @@ export function ChatThread({
           <ArrowUp size={18} color={colors.white} strokeWidth={2.25} />
         </Pressable>
       </View>
-    </KeyboardAvoidingView>
+    </View>
     </View>
   );
 }
@@ -248,18 +243,21 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
   },
   tool: { width: 44, height: 44, borderRadius: radius.buttonSmall, alignItems: 'center', justifyContent: 'center' },
+  // 12 + 20 + 12 = 44 → eine Zeile füllt die Mindesthöhe exakt, nichts wird abgeschnitten; ab 5 Zeilen scrollt das Feld
   input: {
     flex: 1,
     minHeight: 44,
     maxHeight: 120,
     paddingHorizontal: 14,
-    paddingTop: 11,
-    paddingBottom: 11,
+    paddingTop: 12,
+    paddingBottom: 12,
     borderRadius: 22,
     backgroundColor: '#F5F5F5',
     fontFamily: fonts.regular,
     fontSize: 16,
+    lineHeight: 20,
     color: colors.ink,
+    textAlignVertical: 'top',
   },
   send: { width: 44, height: 44, borderRadius: 22, backgroundColor: '#111', alignItems: 'center', justifyContent: 'center' },
 });
