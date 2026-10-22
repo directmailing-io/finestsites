@@ -1,0 +1,466 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Android-Start FinestSites</title>
+<style>
+:root{
+  --bg:#f6f6f4;--card:#ffffff;--ink:#1a1a1a;--muted:#6b6b6b;--line:#e7e5e1;--soft:#f1f0ed;
+  --accent:#7c3aed;--accent-soft:#f3edff;--ok:#16794c;--ok-soft:#e8f6ee;--warn:#9a5b00;--warn-soft:#fff4e0;
+  --you:#0b62d6;--you-soft:#e8f1ff;--me:#7c3aed;--me-soft:#f3edff;
+  --r:16px;--shadow:0 1px 2px rgba(0,0,0,.04),0 4px 16px rgba(0,0,0,.04);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#121212;--card:#1c1c1c;--ink:#f2f2f2;--muted:#a3a3a3;--line:#2c2c2c;--soft:#242424;
+  --accent:#a78bfa;--accent-soft:#2a2140;--ok:#4ade80;--ok-soft:#14281c;--warn:#fbbf24;--warn-soft:#2d2410;
+  --you:#60a5fa;--you-soft:#132338;--me:#a78bfa;--me-soft:#2a2140;--shadow:none}}
+:root[data-theme="dark"]{
+  --bg:#121212;--card:#1c1c1c;--ink:#f2f2f2;--muted:#a3a3a3;--line:#2c2c2c;--soft:#242424;
+  --accent:#a78bfa;--accent-soft:#2a2140;--ok:#4ade80;--ok-soft:#14281c;--warn:#fbbf24;--warn-soft:#2d2410;
+  --you:#60a5fa;--you-soft:#132338;--me:#a78bfa;--me-soft:#2a2140;--shadow:none}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 -apple-system,BlinkMacSystemFont,"Inter","Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased}
+.wrap{max-width:920px;margin:0 auto;padding:32px 16px 96px}
+header{display:flex;gap:16px;align-items:center;margin-bottom:8px}
+.logo{width:48px;height:48px;border-radius:12px;background:#fff;border:1px solid var(--line);display:grid;place-items:center;flex:none}
+h1{font-size:26px;line-height:1.2;margin:0;letter-spacing:-.01em}
+.sub{color:var(--muted);margin:4px 0 0}
+nav.toc{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);margin:20px -16px 8px;padding:10px 16px;display:flex;gap:8px;overflow-x:auto;scrollbar-width:none}
+nav.toc a{white-space:nowrap;text-decoration:none;color:var(--ink);background:var(--card);border:1px solid var(--line);padding:6px 12px;border-radius:999px;font-size:13px;font-weight:500}
+nav.toc a:hover{border-color:var(--accent)}
+section{margin-top:36px}
+h2{font-size:20px;margin:0 0 4px;letter-spacing:-.01em}
+h2 .n{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:8px;background:var(--ink);color:var(--bg);font-size:13px;margin-right:8px;vertical-align:2px}
+.lead{color:var(--muted);margin:0 0 16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:20px;box-shadow:var(--shadow)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:680px){.grid2{grid-template-columns:1fr}}
+.answer{display:flex;gap:14px;align-items:flex-start}
+.answer .big{font-size:22px;font-weight:700;color:var(--ok);flex:none}
+.pill{display:inline-block;font-size:12px;font-weight:600;padding:2px 9px;border-radius:999px;vertical-align:1px}
+.pill.you{background:var(--you-soft);color:var(--you)}
+.pill.me{background:var(--me-soft);color:var(--me)}
+.pill.ok{background:var(--ok-soft);color:var(--ok)}
+.pill.warn{background:var(--warn-soft);color:var(--warn)}
+.pill.rec{background:var(--accent);color:#fff}
+.opt{position:relative;display:block;cursor:pointer;border:1.5px solid var(--line);border-radius:var(--r);padding:16px 16px 14px;background:var(--card);transition:border-color .15s,box-shadow .15s}
+.opt:hover{border-color:color-mix(in srgb,var(--accent) 50%,var(--line))}
+.opt input{position:absolute;opacity:0;pointer-events:none}
+.opt:has(input:checked){border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.opt h3{margin:0 0 6px;font-size:16px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.opt ul{margin:8px 0 0;padding-left:18px;color:var(--muted);font-size:14px}
+.opt li{margin:3px 0}
+.opt li.plus::marker{content:"+  ";color:var(--ok);font-weight:700}
+.opt li.minus::marker{content:"–  ";color:var(--warn);font-weight:700}
+.check{width:20px;height:20px;border-radius:50%;border:1.5px solid var(--line);flex:none;display:grid;place-items:center;margin-left:auto}
+.opt:has(input:checked) .check{background:var(--accent);border-color:var(--accent)}
+.opt:has(input:checked) .check::after{content:"";width:8px;height:8px;border-radius:50%;background:#fff}
+.steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.step{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden}
+.step summary{list-style:none;cursor:pointer;display:flex;gap:12px;align-items:center;padding:16px}
+.step summary::-webkit-details-marker{display:none}
+.step .box{width:24px;height:24px;border-radius:8px;border:1.5px solid var(--line);flex:none;display:grid;place-items:center;cursor:pointer;background:var(--card)}
+.step.done .box{background:var(--ok);border-color:var(--ok)}
+.step.done .box::after{content:"";width:6px;height:11px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg) translate(-1px,-1px)}
+.step.done .ttl{text-decoration:line-through;color:var(--muted)}
+.step .ttl{font-weight:600;flex:1}
+.step .meta{font-size:12px;color:var(--muted);white-space:nowrap}
+.step .chev{width:18px;height:18px;color:var(--muted);transition:transform .2s;flex:none}
+.step[open] .chev{transform:rotate(90deg)}
+.step .body{padding:0 16px 18px 52px;font-size:14.5px}
+@media (max-width:560px){.step .body{padding-left:16px}.step .meta{display:none}}
+.step ol{margin:4px 0 0;padding-left:20px}
+.step ol li{margin:6px 0}
+.step a{color:var(--accent)}
+code,kbd{font:13px/1.4 ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--soft);border:1px solid var(--line);border-radius:6px;padding:1px 6px;word-break:break-word}
+.give{margin-top:12px;padding:12px 14px;border-radius:12px;background:var(--you-soft);color:var(--ink);font-size:14px}
+.give b{color:var(--you)}
+.note{margin-top:12px;padding:12px 14px;border-radius:12px;background:var(--warn-soft);font-size:14px}
+.table{width:100%;border-collapse:collapse;font-size:14px}
+.table td,.table th{text-align:left;padding:10px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+.table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:600}
+.table tr:last-child td{border-bottom:0}
+.scroll{overflow-x:auto}
+/* Icons */
+.icons{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+@media (max-width:760px){.icons{grid-template-columns:repeat(2,1fr)}}
+.icons .opt{padding:14px 10px 12px;text-align:center}
+.icons .opt h3{justify-content:center;font-size:14px;margin:10px 0 2px}
+.icons .opt p{margin:0;font-size:12.5px;color:var(--muted)}
+.preview{display:flex;gap:14px;justify-content:center;align-items:flex-end}
+.ios{width:62px;height:62px;border-radius:14px;overflow:hidden;box-shadow:0 0 0 .5px rgba(0,0,0,.12)}
+.andr{width:52px;height:52px;border-radius:50%;overflow:hidden;box-shadow:0 0 0 .5px rgba(0,0,0,.12)}
+.ios svg,.andr svg{display:block;width:100%;height:100%}
+.cap{font-size:10.5px;color:var(--muted);margin-top:4px}
+.home{margin-top:14px;border-radius:24px;padding:22px 18px;background:linear-gradient(160deg,#5b6cff,#c06cff 55%,#ff9a8b);display:flex;gap:22px;justify-content:center;flex-wrap:wrap}
+.home .app{display:flex;flex-direction:column;align-items:center;gap:5px;color:#fff;font-size:11px;text-shadow:0 1px 2px rgba(0,0,0,.25)}
+.home .ios{width:60px;height:60px;border-radius:13.5px;box-shadow:none}
+/* timeline */
+.tl{display:flex;gap:0;margin-top:10px;font-size:13px}
+.tl div{flex:1;padding:10px;border-top:3px solid var(--line)}
+.tl div.a{border-color:var(--ok)}.tl div.b{border-color:var(--warn)}.tl div.c{border-color:#c0392b}
+.tl b{display:block;font-size:13px}
+@media (max-width:560px){.tl{flex-direction:column}.tl div{border-top:0;border-left:3px solid var(--line)}.tl div.a{border-color:var(--ok)}.tl div.b{border-color:var(--warn)}.tl div.c{border-color:#c0392b}}
+/* summary */
+.sumbar{position:fixed;left:0;right:0;bottom:0;z-index:10;background:var(--card);border-top:1px solid var(--line);padding:12px 16px}
+.sumbar .in{max-width:920px;margin:0 auto;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.progress{flex:1;min-width:160px}
+.bar{height:6px;border-radius:99px;background:var(--soft);overflow:hidden;margin-top:6px}
+.bar i{display:block;height:100%;width:0;background:var(--ok);transition:width .3s}
+.btn{appearance:none;border:0;background:var(--ink);color:var(--bg);font:600 14px/1 inherit;padding:12px 16px;border-radius:16px;cursor:pointer}
+.btn:active{transform:scale(.98)}
+.btn.ghost{background:var(--soft);color:var(--ink)}
+.small{font-size:13px;color:var(--muted)}
+.who{display:flex;gap:10px;flex-wrap:wrap;margin:8px 0 0}
+footer{margin-top:40px;font-size:13px;color:var(--muted)}
+footer a{color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="logo"><svg viewBox="0 0 68.71 126" width="16" height="30"><path fill="#1a1a1a" d="M18.33,126a18.31,18.31,0,0,1-9.26-2.58c-6.17-3.73-9.36-10.86-9-17.94C.87,85.92,14.13,77.23,28.63,71.84c-.06-2.72-.13-5.61-.21-8.9A59.28,59.28,0,0,1,1,64.07L3.75,50.56a46.28,46.28,0,0,0,24.32-2c-.07-3.32-.14-6.67-.19-10,0-1.3-.07-2.62-.12-4-.23-6.6-.49-14.08,2-21.06C32.77,5,40.25-.32,48.8,0S64.16,6.18,66.48,14.88c2.45,9.17-1,17.83-4.32,23.48a52.69,52.69,0,0,1-20.09,19c.09,3.38.17,6.76.26,10.14a88,88,0,0,0,14.31-5.26q2.56-1.24,5-2.69,2.59,4.47,5.21,8.9l1.76,3a84.83,84.83,0,0,1-21.4,9c-1.57.45-3.09.89-4.56,1.33.09,3.45.19,7.11.32,11.45.31,10.12-2.9,22.3-11.48,28.5A22.28,22.28,0,0,1,18.33,126ZM29,86.59c-9.35,4.18-14.77,9.59-15.2,19.49-.1,2.34.65,4.53,1.88,5.42a4.81,4.81,0,0,0,3.19.72c8.6-.72,10.52-12.46,10.33-18.56C29.13,91.1,29.06,88.78,29,86.59Zm19.08-72.8c-1.87,0-4.2,1.14-5.34,4.37-1.6,4.51-1.39,10.33-1.19,16,.05,1.43.1,2.84.12,4.22,0,.91,0,1.83,0,2.74a36.14,36.14,0,0,0,8.55-9.72c1.63-2.77,4.17-8.12,2.89-12.91-.77-2.86-2.55-4.56-4.9-4.65Z"/></svg></div>
+  <div>
+    <h1>FinestSites für Android</h1>
+    <p class="sub">Was du tun musst, was ich von dir brauche – und drei kurze Entscheidungen. Stand 22.10.2026.</p>
+  </div>
+</header>
+
+<nav class="toc">
+  <a href="#duns">D-U-N-S?</a>
+  <a href="#konto">1 · Konto-Art</a>
+  <a href="#schritte">2 · Deine Schritte</a>
+  <a href="#brauche">3 · Was ich brauche</a>
+  <a href="#ich">4 · Was ich mache</a>
+  <a href="#icon">5 · App-Icon</a>
+  <a href="#loeschen">6 · Konto löschen</a>
+</nav>
+
+<!-- D-U-N-S -->
+<section id="duns">
+  <div class="card answer">
+    <div class="big">Nein.</div>
+    <div>
+      <b>Für die Veröffentlichung brauchst du keine D-U-N-S-Nummer.</b> Google verlangt sie nur, wenn du das Konto als <i>Organisation</i> anlegst. Mit einem <i>persönlichen</i> Konto (dein Name, wie bei Apple „Daniel Kurzeja“) geht es ohne.
+      <p class="small" style="margin:8px 0 0">Schneller geht die D-U-N-S übrigens kaum: Sie ist kostenlos, am schnellsten über Apples D-U-N-S-Suche (meist 5–7 Werktage), über Dun &amp; Bradstreet direkt bis zu 30 Tage. Die bezahlte Express-Bearbeitung von D&amp;B bringt laut mehreren Berichten wenig – andere Anbieter, die „schneller“ versprechen, leiten auch nur an D&amp;B weiter.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 1 Konto-Art -->
+<section id="konto">
+  <h2><span class="n">1</span>Welche Konto-Art?</h2>
+  <p class="lead">Der Unterschied: Bei einem neuen persönlichen Konto verlangt Google vor dem Start einen Test mit mindestens 12 Personen über 14 Tage. Das Organisationskonto braucht dafür die D-U-N-S.</p>
+  <div class="grid2" data-group="konto">
+    <label class="opt">
+      <input type="radio" name="konto" value="Persönliches Konto (ohne D-U-N-S, 12 Tester 14 Tage)">
+      <h3>Persönliches Konto <span class="pill rec">Empfehlung</span><span class="check"></span></h3>
+      <div class="small">Bis Store-Start: ca. 3 Wochen</div>
+      <ul>
+        <li class="plus">Sofort anlegbar, nur Ausweis + 25 $</li>
+        <li class="plus">Gleicher Name wie bei Apple („Daniel Kurzeja“)</li>
+        <li class="plus">Der Pflicht-Test ist gleich ein echter Beta-Test mit deinen Kunden</li>
+        <li class="minus">Du brauchst 12 Android-Nutzer, die 14 Tage dabeibleiben</li>
+        <li class="minus">Ein Android-Handy für die Konto-Bestätigung</li>
+      </ul>
+    </label>
+    <label class="opt">
+      <input type="radio" name="konto" value="Organisationskonto (mit D-U-N-S, ohne Pflicht-Test)">
+      <h3>Organisationskonto<span class="check"></span></h3>
+      <div class="small">Bis Store-Start: ca. 2–5 Wochen (je nach D-U-N-S)</div>
+      <ul>
+        <li class="plus">Kein Pflicht-Test mit 12 Personen</li>
+        <li class="plus">Name „FinestSites“ im Store möglich</li>
+        <li class="minus">Erst D-U-N-S beantragen (kostenlos, 1–4 Wochen)</li>
+        <li class="minus">Firmennachweis (Gewerbeanmeldung) nötig</li>
+        <li class="minus">Weicht von Apple ab (dort bist du Einzelperson)</li>
+      </ul>
+    </label>
+  </div>
+  <p class="small" style="margin-top:10px">Wichtig: Ein späterer Wechsel der Konto-Art geht nur über eine App-Übertragung auf ein neues Konto. Wähle also bewusst – ich empfehle das persönliche Konto, weil du ohnehin Testnutzer für Android brauchst.</p>
+</section>
+
+<!-- 2 Schritte -->
+<section id="schritte">
+  <h2><span class="n">2</span>Deine Schritte</h2>
+  <p class="lead">Hake ab, was erledigt ist – die Seite merkt es sich in diesem Browser. Klick auf einen Schritt öffnet die genaue Anleitung.</p>
+  <ul class="steps">
+
+    <li><details class="step" data-id="s1">
+      <summary><span class="box" role="checkbox" aria-label="erledigt"></span><span class="ttl">Google-Play-Entwicklerkonto anlegen</span><span class="meta">15 Min · 25 $</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 6 6 6-6 6"/></svg></summary>
+      <div class="body">
+        <ol>
+          <li>Öffne <a href="https://play.google.com/console/signup" target="_blank" rel="noopener">play.google.com/console/signup</a> und melde dich mit dem Google-Konto an, das dauerhaft zur Firma gehören soll (am besten eins, das nicht dein privates Gmail ist).</li>
+          <li>Konto-Art wählen (siehe Entscheidung 1). Bei „Persönlich“: dein vollständiger Name, Adresse, Telefonnummer.</li>
+          <li>Frage „Wirst du Apps an Kunden verkaufen / bist du Händler?“ → <b>Ja, Händler (Unternehmer)</b>. Pflicht nach EU-Recht – Adresse, Telefon und E-Mail <code>info@finestsites.io</code> werden dann im Store angezeigt.</li>
+          <li>Ausweis hochladen und 25 $ einmalig zahlen.</li>
+          <li>Google bittet bei neuen Konten, die <b>Play Console App auf einem Android-Handy</b> zu installieren und dich dort anzumelden (Nachweis eines echten Geräts). Ein günstiges Gebrauchtgerät oder das Handy eines Bekannten reicht.</li>
+          <li>Prüfung durch Google: meist 1–3 Tage, du bekommst eine Mail.</li>
+        </ol>
+      </div>
+    </details></li>
+
+    <li><details class="step" data-id="s2">
+      <summary><span class="box"></span><span class="ttl">Firebase-Projekt für Push-Mitteilungen</span><span class="meta">10 Min · kostenlos</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 6 6 6-6 6"/></svg></summary>
+      <div class="body">
+        <ol>
+          <li>Öffne <a href="https://console.firebase.google.com" target="_blank" rel="noopener">console.firebase.google.com</a> (gleiches Google-Konto) → <b>Projekt erstellen</b> → Name <code>FinestSites</code> → Google Analytics <b>ausschalten</b> → Erstellen.</li>
+          <li>Auf der Projektseite das <b>Android-Symbol</b> klicken → Paketname <code>io.finestsites.app</code> → App-Name <code>FinestSites</code> → „App registrieren“.</li>
+          <li><b>google-services.json herunterladen</b>. Alle weiteren Schritte im Assistenten (SDK einbinden usw.) überspringen – das mache ich.</li>
+          <li>Oben links Zahnrad → <b>Projekteinstellungen</b> → Reiter <b>Dienstkonten</b> → <b>Neuen privaten Schlüssel generieren</b> → bestätigen. Es lädt eine JSON-Datei herunter.</li>
+        </ol>
+        <div class="give"><b>An mich:</b> Beide Dateien in <code>~/Downloads</code> liegen lassen und mir die Dateinamen sagen. Nicht in den Chat kopieren. Ich lege sie nur verschlüsselt bei Expo ab, nie im Code.</div>
+      </div>
+    </details></li>
+
+    <li><details class="step" data-id="s3">
+      <summary><span class="box"></span><span class="ttl">Upload-Schlüssel, damit ich Builds selbst einreichen kann</span><span class="meta">10 Min</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 6 6 6-6 6"/></svg></summary>
+      <div class="body">
+        <p style="margin:0 0 6px">Das ist das Gegenstück zum App-Store-Connect-Schlüssel bei Apple.</p>
+        <ol>
+          <li>Öffne <a href="https://console.cloud.google.com/iam-admin/serviceaccounts" target="_blank" rel="noopener">console.cloud.google.com → IAM → Dienstkonten</a> und wähle oben das Projekt <b>FinestSites</b> (wurde von Firebase angelegt).</li>
+          <li><b>Dienstkonto erstellen</b> → Name <code>play-upload</code> → „Erstellen und fortfahren“ → Rolle leer lassen → Fertig.</li>
+          <li>Das neue Konto anklicken → Reiter <b>Schlüssel</b> → <b>Schlüssel hinzufügen → Neuen Schlüssel erstellen → JSON</b>. Datei wird heruntergeladen.</li>
+          <li>E-Mail-Adresse des Dienstkontos kopieren (endet auf <code>…iam.gserviceaccount.com</code>).</li>
+          <li>In der <a href="https://play.google.com/console" target="_blank" rel="noopener">Play Console</a> → <b>Nutzer und Berechtigungen</b> → <b>Neue Nutzer einladen</b> → diese Adresse eintragen → unter Kontoberechtigungen <b>„Releases für Testtracks freigeben“</b>, <b>„Testtracks verwalten“</b> und <b>„Releases in Produktion freigeben“</b> anhaken → Nutzer einladen.</li>
+        </ol>
+        <div class="give"><b>An mich:</b> den Dateinamen der JSON-Datei in <code>~/Downloads</code>.</div>
+      </div>
+    </details></li>
+
+    <li><details class="step" data-id="s4">
+      <summary><span class="box"></span><span class="ttl">App in der Play Console anlegen + ersten Build hochladen</span><span class="meta">15 Min</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 6 6 6-6 6"/></svg></summary>
+      <div class="body">
+        <ol>
+          <li>Play Console → <b>App erstellen</b> → Name <code>FinestSites</code>, Standardsprache <b>Deutsch</b>, <b>App</b>, <b>Kostenlos</b> → Erklärungen anhaken → Erstellen.</li>
+          <li>Google lässt den <b>allerersten</b> Build nur von Hand hochladen (danach mache ich das automatisch). Ich lege dir dafür eine Datei <code>finestsites.aab</code> in <code>~/Downloads</code>.</li>
+          <li>Links <b>Testen → Interner Test</b> → <b>Neuen Release erstellen</b> → bei „App-Signatur durch Google Play“ <b>Weiter/Akzeptieren</b> → die <code>.aab</code>-Datei ins Feld ziehen → Release-Name stehen lassen → <b>Weiter → Speichern und veröffentlichen</b>.</li>
+          <li>Unter <b>Tester</b> eine Liste „Team“ mit deiner Google-Mail anlegen. Dann kannst du die App über den Testlink auf einem Android-Gerät installieren.</li>
+        </ol>
+      </div>
+    </details></li>
+
+    <li><details class="step" data-id="s5">
+      <summary><span class="box"></span><span class="ttl">Pflichtangaben „App-Inhalte“ ausfüllen</span><span class="meta">30 Min · ich gebe dir die Antworten</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 6 6 6-6 6"/></svg></summary>
+      <div class="body">
+        <p style="margin:0 0 8px">Play Console → links ganz unten <b>Richtlinien → App-Inhalte</b>. Ich schicke dir vorher für jedes Formular die fertigen Antworten zum Abtippen.</p>
+        <div class="scroll"><table class="table">
+          <tr><th>Formular</th><th>Antwort (Vorschlag)</th></tr>
+          <tr><td>Datenschutzerklärung</td><td><code>https://finestsites.io/datenschutz</code> (Abschnitt App ist enthalten)</td></tr>
+          <tr><td>App-Zugriff</td><td>„Anmeldung erforderlich“ + Testzugang, den ich anlege</td></tr>
+          <tr><td>Werbung</td><td>Nein, keine Werbung</td></tr>
+          <tr><td>Einstufung (Altersfreigabe)</td><td>Fragebogen „Hilfsprogramm/Produktivität“ – alles Nein → ab 0 / USK 0</td></tr>
+          <tr><td>Zielgruppe</td><td>18 Jahre und älter</td></tr>
+          <tr><td>Datensicherheit</td><td>Fertige Liste von mir (Konto, Kontaktdaten, Fotos, Absturzberichte; verschlüsselt; Löschung möglich)</td></tr>
+          <tr><td>Konto löschen (Weblink)</td><td>Neue Seite <code>finestsites.io/konto-loeschen</code>, die ich baue</td></tr>
+          <tr><td>Behörden / Finanzen / Gesundheit / Nachrichten</td><td>jeweils Nein</td></tr>
+        </table></div>
+      </div>
+    </details></li>
+
+    <li><details class="step" data-id="s6">
+      <summary><span class="box"></span><span class="ttl">12 Tester für 14 Tage (nur persönliches Konto)</span><span class="meta">14 Tage</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 6 6 6-6 6"/></svg></summary>
+      <div class="body">
+        <ol>
+          <li>Play Console → <b>Testen → Geschlossener Test</b> → Track anlegen → Testerliste mit mindestens <b>12 Google-Mail-Adressen</b> (lieber 15–20, falls jemand abspringt).</li>
+          <li>Jeder Tester öffnet den Einladungslink, tippt „Tester werden“ und installiert die App. Sie müssen <b>14 Tage am Stück</b> dabeibleiben und die App ab und zu nutzen.</li>
+          <li>Danach in der Play Console <b>„Produktionszugriff beantragen“</b> – ein kurzer Fragebogen (ich formuliere die Antworten). Google antwortet meist innerhalb von 7 Tagen.</li>
+        </ol>
+        <div class="note">Tester finden: Am einfachsten aus deinen Kunden mit Android-Handy. Eine Einladungs-Mail schreibe ich gern vor – verschickt wird sie aber nur mit deiner ausdrücklichen Freigabe.</div>
+      </div>
+    </details></li>
+
+    <li><details class="step" data-id="s7">
+      <summary><span class="box"></span><span class="ttl">Store-Eintrag prüfen und veröffentlichen</span><span class="meta">10 Min</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 6 6 6-6 6"/></svg></summary>
+      <div class="body">
+        Texte, Screenshots (Handy + Tablet) und die Grafik 1024 × 500 lade ich vorbereitet in <code>~/Downloads/play-store</code>. Du prüfst unter <b>Wachstum → Store-Eintrag</b>, ob dir alles gefällt, und klickst am Ende auf <b>„An Google senden“</b>. Erste Prüfung: meist 1–7 Tage.
+      </div>
+    </details></li>
+
+  </ul>
+</section>
+
+<!-- 3 Brauche -->
+<section id="brauche">
+  <h2><span class="n">3</span>Was ich von dir brauche</h2>
+  <p class="lead">Kurz zusammengefasst – alles andere erledige ich.</p>
+  <div class="card scroll">
+    <table class="table">
+      <tr><th>#</th><th>Was</th><th>Wann</th></tr>
+      <tr><td>1</td><td>Entscheidung Konto-Art (oben)</td><td><span class="pill you">jetzt</span></td></tr>
+      <tr><td>2</td><td>Entscheidung App-Icon und Ablauf „Konto löschen“ (unten)</td><td><span class="pill you">jetzt</span></td></tr>
+      <tr><td>3</td><td>Freigabe für einen Android-Build bei Expo (wie bei TestFlight)</td><td><span class="pill you">jetzt</span></td></tr>
+      <tr><td>4</td><td>Dateinamen von <code>google-services.json</code> + Firebase-Schlüssel (Schritt 2)</td><td>wenn erledigt</td></tr>
+      <tr><td>5</td><td>Dateiname des Upload-Schlüssels (Schritt 3)</td><td>wenn Konto bestätigt</td></tr>
+      <tr><td>6</td><td>Einmal die <code>.aab</code>-Datei hochladen (Schritt 4)</td><td>wenn Konto bestätigt</td></tr>
+      <tr><td>7</td><td>Zugang zu einem Android-Gerät (Konto-Bestätigung + eigener Test)</td><td>Schritt 1</td></tr>
+      <tr><td>8</td><td>12+ Tester bzw. Freigabe der Einladungs-Mail</td><td>nach Schritt 4</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- 4 Ich -->
+<section id="ich">
+  <h2><span class="n">4</span>Was ich parallel mache</h2>
+  <p class="lead">Das meiste geht schon ohne Google-Konto. Ich teste im Android-Emulator.</p>
+  <div class="grid2">
+    <div class="card"><span class="pill me">App</span>
+      <ul style="margin:10px 0 0;padding-left:18px">
+        <li>Mitteilungs-Kanäle anlegen (Chat, Anfragen, Support, Konto, Partner) – sonst kommen Push-Mitteilungen auf Android ohne Banner an</li>
+        <li>Tastatur-Abstand für Android (Chat, Anmelden)</li>
+        <li>„Face ID“-Texte neutral (Fingerabdruck/Gesicht), Zurück-Taste, Logo-Intro prüfen</li>
+        <li>Neues App-Icon nach deiner Wahl (Apple + Android)</li>
+      </ul>
+    </div>
+    <div class="card"><span class="pill me">Server &amp; Store</span>
+      <ul style="margin:10px 0 0;padding-left:18px">
+        <li>Links aus Mails öffnen direkt die App – Android <i>und</i> iPhone (beide Dateien fehlen gerade)</li>
+        <li>Öffentliche Seite <code>finestsites.io/konto-loeschen</code></li>
+        <li>Antworten für alle Play-Formulare, Store-Texte, Screenshots</li>
+        <li>Testzugang für Googles Prüfer</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 5 Icon -->
+<section id="icon">
+  <h2><span class="n">5</span>App-Icon</h2>
+  <p class="lead">Die Datei selbst ist gestochen scharf (aus der Vektorgrafik). Auf dem Homescreen wirkt das f aber unscharf, weil es klein ist (52 % der Fläche) und dünne Linien hat – bei 60 Pixeln verschwimmen die Kanten. Größer und kräftiger hilft. Wähle eine Variante:</p>
+  <div class="icons" id="iconGrid"></div>
+  <div class="home" id="home"></div>
+  <p class="small" style="margin-top:8px">Vorschau oben: links iPhone, rechts Android. Die Startbildschirm-Animation bleibt unverändert.</p>
+</section>
+
+<!-- 6 Löschen -->
+<section id="loeschen">
+  <h2><span class="n">6</span>Konto löschen – wann genau?</h2>
+  <p class="lead">Apple und Google verlangen, dass man das Konto in der App selbst löschen kann – und Google zusätzlich über einen Weblink. „Nur zum Laufzeitende“ ist dabei heikel: Wer jährlich zahlt, müsste bis zu 11 Monate warten, und Google verlangt eine zügige Löschung.</p>
+
+  <div class="card" style="margin-bottom:12px">
+    <b>So ist es heute gebaut (noch ausgeschaltet):</b>
+    <div class="tl">
+      <div class="a"><b>Tag 0 · Antrag</b>Passwort bestätigen. Abo endet sofort, keine Erstattung. Seiten sofort offline.</div>
+      <div class="b"><b>Tag 1–14 · Bedenkzeit</b>Anmelden geht, nur „Löschung abbrechen“ sichtbar.</div>
+      <div class="c"><b>Tag 14 · Gelöscht</b>Daten, Seiten, Bilder, Domains weg. Rechnungen/Gutschriften bleiben 8–10 Jahre (Steuerrecht).</div>
+    </div>
+  </div>
+
+  <div class="grid2" data-group="loeschen">
+    <label class="opt">
+      <input type="radio" name="loeschen" value="Wahl beim Löschen: zum Laufzeitende (Standard) oder sofort">
+      <h3>Wahl: zum Laufzeitende <i>oder</i> sofort <span class="pill rec">Empfehlung</span><span class="check"></span></h3>
+      <ul>
+        <li class="plus">Bei laufendem Tarif vorausgewählt: „Am Ende der Laufzeit löschen (am 14.03.2027)“ – Seite bleibt bis dahin online, nichts wird mehr abgebucht, Löschung bis dahin abbrechbar</li>
+        <li class="plus">Daneben „Sofort löschen“ (wie heute gebaut) – erfüllt Apple/Google</li>
+        <li class="plus">Fair: bezahlte Zeit geht nicht verloren, passt zu AGB § 10 (Kündigung zum Laufzeitende)</li>
+        <li class="minus">Etwas mehr Umbau (ca. ½ Tag)</li>
+      </ul>
+    </label>
+    <label class="opt">
+      <input type="radio" name="loeschen" value="Immer sofort (wie gebaut)">
+      <h3>Immer sofort<span class="check"></span></h3>
+      <ul>
+        <li class="plus">Fertig gebaut, einfach und eindeutig</li>
+        <li class="minus">Restlaufzeit verfällt ohne Erstattung – führt zu Rückfragen, wer jährlich gezahlt hat</li>
+        <li class="minus">Deutlicher Warnhinweis nötig</li>
+      </ul>
+    </label>
+  </div>
+  <div class="note">Vor dem Einschalten (egal welche Variante): AGB § 11 Abs. 2 sagt heute „Löschung per Mail an info@“. Die Änderung kündige ich mit 6 Wochen Vorlauf an – die Mail an Kunden geht nur mit deiner Freigabe raus. Für den Store-Start genügt bis dahin, dass der Knopf in der App sichtbar ist und die Löschung anstößt.</div>
+</section>
+
+<footer>Quellen: <a href="https://support.google.com/googleplay/android-developer/answer/13628312" target="_blank" rel="noopener">Play Console: benötigte Angaben</a> · <a href="https://support.google.com/googleplay/android-developer/answer/13327111" target="_blank" rel="noopener">Play: Konto-Löschung</a> · <a href="https://developer.android.com/google/play/requirements/target-sdk" target="_blank" rel="noopener">Ziel-API 36</a> · <a href="https://docs.expo.dev/push-notifications/fcm-credentials/" target="_blank" rel="noopener">Expo: FCM</a> · <a href="https://developer.apple.com/enroll/duns-lookup/" target="_blank" rel="noopener">Apple D-U-N-S-Suche</a> · <a href="https://primetestlab.com/blog/personal-vs-organization-google-play-account-12-testers" target="_blank" rel="noopener">Persönlich vs. Organisation</a></footer>
+</div>
+
+<div class="sumbar"><div class="in">
+  <div class="progress"><div class="small"><b id="pcount">0 von 7</b> Schritten erledigt · <span id="dcount">0 von 3</span> Entscheidungen</div><div class="bar"><i id="pbar"></i></div></div>
+  <button class="btn" id="copy">Antworten kopieren</button>
+</div></div>
+
+<script>
+const F = "M18.33,126a18.31,18.31,0,0,1-9.26-2.58c-6.17-3.73-9.36-10.86-9-17.94C.87,85.92,14.13,77.23,28.63,71.84c-.06-2.72-.13-5.61-.21-8.9A59.28,59.28,0,0,1,1,64.07L3.75,50.56a46.28,46.28,0,0,0,24.32-2c-.07-3.32-.14-6.67-.19-10,0-1.3-.07-2.62-.12-4-.23-6.6-.49-14.08,2-21.06C32.77,5,40.25-.32,48.8,0S64.16,6.18,66.48,14.88c2.45,9.17-1,17.83-4.32,23.48a52.69,52.69,0,0,1-20.09,19c.09,3.38.17,6.76.26,10.14a88,88,0,0,0,14.31-5.26q2.56-1.24,5-2.69,2.59,4.47,5.21,8.9l1.76,3a84.83,84.83,0,0,1-21.4,9c-1.57.45-3.09.89-4.56,1.33.09,3.45.19,7.11.32,11.45.31,10.12-2.9,22.3-11.48,28.5A22.28,22.28,0,0,1,18.33,126ZM29,86.59c-9.35,4.18-14.77,9.59-15.2,19.49-.1,2.34.65,4.53,1.88,5.42a4.81,4.81,0,0,0,3.19.72c8.6-.72,10.52-12.46,10.33-18.56C29.13,91.1,29.06,88.78,29,86.59Zm19.08-72.8c-1.87,0-4.2,1.14-5.34,4.37-1.6,4.51-1.39,10.33-1.19,16,.05,1.43.1,2.84.12,4.22,0,.91,0,1.83,0,2.74a36.14,36.14,0,0,0,8.55-9.72c1.63-2.77,4.17-8.12,2.89-12.91-.77-2.86-2.55-4.56-4.9-4.65Z";
+const FW = 68.71, FH = 126;
+const ICONS = [
+  { k:'A', name:'Aktuell', desc:'52 %, dünn', g:.52, c:'#1a1a1a', s:0, bg:'#fff' },
+  { k:'B', name:'Größer', desc:'62 %, gleiche Linie', g:.62, c:'#1a1a1a', s:0, bg:'#fff' },
+  { k:'C', name:'Größer + kräftiger', desc:'62 %, Linie +20 %', g:.62, c:'#1a1a1a', s:2.6, bg:'#fff', rec:true },
+  { k:'D', name:'Kräftig schwarz', desc:'66 %, Linie +25 %', g:.66, c:'#000', s:3.4, bg:'#fff' },
+  { k:'E', name:'Dunkel', desc:'weißes f auf Schwarz', g:.62, c:'#fff', s:2.2, bg:'#1a1a1a' },
+];
+function iconSvg(v, pad = 1){
+  const S = 100, h = S*v.g*pad, sc = h/FH, w = FW*sc;
+  const st = v.s ? ` stroke="${v.c}" stroke-width="${v.s}" stroke-linejoin="round"` : '';
+  return `<svg viewBox="0 0 ${S} ${S}" aria-hidden="true"><rect width="${S}" height="${S}" fill="${v.bg}"/><g transform="translate(${(S-w)/2} ${(S-h)/2}) scale(${sc})"><path fill="${v.c}"${st} d="${F}"/></g></svg>`;
+}
+const grid = document.getElementById('iconGrid');
+grid.dataset.group = 'icon';
+grid.innerHTML = ICONS.map(v => `
+  <label class="opt"><input type="radio" name="icon" value="Variante ${v.k} – ${v.name}">
+    <div class="preview"><div><div class="ios">${iconSvg(v)}</div><div class="cap">iPhone</div></div><div><div class="andr">${iconSvg(v, .78)}</div><div class="cap">Android</div></div></div>
+    <h3>${v.k} · ${v.name}${v.rec ? ' <span class="pill rec">Empf.</span>' : ''}</h3><p>${v.desc}</p>
+  </label>`).join('');
+const home = document.getElementById('home');
+function renderHome(){
+  const sel = document.querySelector('input[name=icon]:checked');
+  const v = ICONS.find(i => sel && sel.value.startsWith('Variante ' + i.k)) || ICONS[2];
+  const other = (bg, ch) => `<div class="app"><div class="ios" style="background:${bg};display:grid;place-items:center;color:#fff;font:600 26px/1 -apple-system,sans-serif">${ch}</div>App</div>`;
+  home.innerHTML = other('#34c759','✓') + `<div class="app"><div class="ios">${iconSvg(v)}</div>FinestSites</div>` + other('#0a84ff','✉') + other('#ff9500','★');
+}
+
+const store = { get(k){ try { return JSON.parse(localStorage.getItem('fs-android-' + k)); } catch { return null; } }, set(k, v){ try { localStorage.setItem('fs-android-' + k, JSON.stringify(v)); } catch {} } };
+
+// Schritte abhaken
+const done = new Set(store.get('done') || []);
+document.querySelectorAll('.step').forEach(st => {
+  const id = st.dataset.id, box = st.querySelector('.box');
+  if (done.has(id)) st.classList.add('done');
+  box.addEventListener('click', e => {
+    e.preventDefault(); e.stopPropagation();
+    st.classList.toggle('done');
+    st.classList.contains('done') ? done.add(id) : done.delete(id);
+    store.set('done', [...done]); update();
+  });
+});
+
+// Entscheidungen
+const choices = store.get('choices') || {};
+for (const [name, val] of Object.entries(choices)) {
+  const el = [...document.querySelectorAll(`input[name="${name}"]`)].find(i => i.value === val);
+  if (el) el.checked = true;
+}
+document.addEventListener('change', e => {
+  if (e.target.type !== 'radio') return;
+  choices[e.target.name] = e.target.value; store.set('choices', choices);
+  if (e.target.name === 'icon') renderHome();
+  update();
+});
+
+function update(){
+  const n = document.querySelectorAll('.step.done').length, t = document.querySelectorAll('.step').length;
+  document.getElementById('pcount').textContent = `${n} von ${t}`;
+  document.getElementById('pbar').style.width = (n / t * 100) + '%';
+  const d = ['konto','icon','loeschen'].filter(k => choices[k]).length;
+  document.getElementById('dcount').textContent = `${d} von 3`;
+}
+
+document.getElementById('copy').addEventListener('click', async () => {
+  const lines = [
+    'Android – meine Entscheidungen:',
+    `• Konto-Art: ${choices.konto || 'noch offen'}`,
+    `• App-Icon: ${choices.icon || 'noch offen'}`,
+    `• Konto löschen: ${choices.loeschen || 'noch offen'}`,
+    `• Erledigte Schritte: ${[...document.querySelectorAll('.step.done .ttl')].map(x => x.textContent).join(', ') || 'keine'}`,
+  ];
+  const btn = document.getElementById('copy');
+  try { await navigator.clipboard.writeText(lines.join('\n')); btn.textContent = 'Kopiert ✓ – einfach an Claude schicken'; }
+  catch { prompt('Kopieren und an Claude schicken:', lines.join(' ')); }
+  setTimeout(() => (btn.textContent = 'Antworten kopieren'), 2600);
+});
+
+renderHome(); update();
+</script>
+</body>
+</html>
