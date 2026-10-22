@@ -1,5 +1,5 @@
 import { memo } from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet, View, type AccessibilityActionEvent, type AccessibilityActionInfo } from 'react-native';
 
 import type { ChatConversation } from '@/api/types';
 import { Text } from '@/components/ui';
@@ -11,15 +11,20 @@ import { listTime, previewOf } from './helpers';
 /**
  * Zeile wie WhatsApp mit den Werten aus „Anfragen“: Avatar 52 mit Online-Punkt, Name fett bei ungelesen,
  * Zeit rechts, Vorschau einzeilig („Du: “ bei eigener Nachricht), Badge mit Zahl, Seitentitel klein.
+ * accessibilityActions: VoiceOver-Aktionen (Archivieren/Löschen/Gelesen) ohne Wischen – siehe SwipeableConversationRow.
  */
 export const ChatConversationRow = memo(function ChatConversationRow({
   c,
   selected,
   onPress,
+  accessibilityActions,
+  onAccessibilityAction,
 }: {
   c: ChatConversation;
   selected?: boolean;
   onPress: () => void;
+  accessibilityActions?: readonly AccessibilityActionInfo[];
+  onAccessibilityAction?: (e: AccessibilityActionEvent) => void;
 }) {
   const unread = c.unread > 0;
   const name = c.visitor.displayName;
@@ -32,6 +37,8 @@ export const ChatConversationRow = memo(function ChatConversationRow({
       accessibilityRole="button"
       accessibilityLabel={`${unread ? `${c.unread} ungelesen. ` : ''}${name}, ${time}. ${preview}. ${c.siteTitle}`}
       accessibilityState={{ selected: !!selected }}
+      accessibilityActions={accessibilityActions}
+      onAccessibilityAction={onAccessibilityAction}
       style={({ pressed }) => [styles.row, (pressed || selected) && styles.active]}>
       <ChatAvatar visitor={c.visitor} size={52} />
       <View style={styles.content}>

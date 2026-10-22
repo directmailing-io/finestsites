@@ -7,7 +7,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useChatConversations, useMe } from '@/api/queries';
 import type { ChatConversation, ChatConversationStatus } from '@/api/types';
 import { EmptyState, Input, LoadError, PageHeader, Screen, SegmentedControl, Skeleton } from '@/components/ui';
-import { ChatConversationRow } from '@/features/chat/ChatConversationRow';
+import { SwipeableConversationRow, useSwipeRegistry } from '@/features/chat/SwipeableConversationRow';
 import { ThreadPane } from '@/features/chat/ThreadPane';
 import { useLayout } from '@/lib/layout';
 import { colors } from '@/theme/tokens';
@@ -27,6 +27,8 @@ export default function ChatsScreen() {
   const [debounced, setDebounced] = useState('');
   const [pulling, setPulling] = useState(false);
   const [selected, setSelected] = useState<string | null>(null);
+  // Wischen: nur eine Zeile gleichzeitig offen, beim Scrollen und Filterwechsel schließen
+  const { registry, closeOpen } = useSwipeRegistry();
 
   useEffect(() => {
     const t = setTimeout(() => setDebounced(search.trim()), 300);
@@ -76,7 +78,10 @@ export default function ChatsScreen() {
           { key: 'blocked', label: 'Gesperrt' },
         ]}
         value={status}
-        onChange={setStatus}
+        onChange={s => {
+          closeOpen();
+          setStatus(s);
+        }}
       />
       <Input
         value={search}
@@ -128,13 +133,23 @@ export default function ChatsScreen() {
     <FlatList
       data={items}
       keyExtractor={c => c.id}
-      renderItem={({ item }) => <ChatConversationRow c={item} selected={regular && selected === item.id} onPress={() => open(item)} />}
+      renderItem={({ item }) => (
+        <SwipeableConversationRow
+          c={item}
+          selected={regular && selected === item.id}
+          onPress={() => open(item)}
+          registry={registry}
+          onDeleted={id => setSelected(prev => (prev === id ? null : prev))}
+        />
+      )}
       ItemSeparatorComponent={() => <View style={styles.sep} />}
       ListHeaderComponent={header}
       ListEmptyComponent={empty}
       contentInsetAdjustmentBehavior="automatic"
       keyboardDismissMode="on-drag"
       keyboardShouldPersistTaps="handled"
+      onScrollBeginDrag={closeOpen}
+      removeClippedSubviews={false}
       refreshControl={
         <RefreshControl
           refreshing={pulling && q.isRefetching}

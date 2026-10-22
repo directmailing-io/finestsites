@@ -26,6 +26,43 @@ const REASONS: { key: ChatReportReason; label: string; hint: string }[] = [
   { key: 'other', label: 'Etwas anderes', hint: 'Beschreib es kurz in der Notiz.' },
 ];
 
+export const CHAT_ACTION_FAILED = 'Das hat leider nicht geklappt. Bitte versuche es nochmal.';
+
+/**
+ * Bestätigung „Gespräch löschen?“ – gleicher Text und Ablauf im „…“-Menü und beim Wegwischen.
+ * onCancel: nach Abbrechen (Wisch-Zeile schließen). onError: nach Fehler (Toast zeigt diese Funktion selbst).
+ */
+export function confirmDelete(
+  c: ChatConversation,
+  actions: ReturnType<typeof useChatActions>,
+  toast: ReturnType<typeof useToast>,
+  opts: { onCancel?: () => void; onSuccess?: () => void; onError?: () => void } = {},
+) {
+  Alert.alert(
+    'Gespräch löschen?',
+    'Das Gespräch und alle Nachrichten werden endgültig gelöscht.',
+    [
+      { text: 'Abbrechen', style: 'cancel', onPress: opts.onCancel },
+      {
+        text: 'Löschen',
+        style: 'destructive',
+        onPress: () =>
+          actions.remove.mutate(c.id, {
+            onSuccess: () => {
+              toast.show('Gespräch gelöscht', 'success');
+              opts.onSuccess?.();
+            },
+            onError: () => {
+              toast.show(CHAT_ACTION_FAILED, 'error');
+              opts.onError?.();
+            },
+          }),
+      },
+    ],
+    { cancelable: true, onDismiss: opts.onCancel },
+  );
+}
+
 /**
  * „…“-Menü eines Gesprächs: Anrufen, E-Mail, WhatsApp (nur mit Daten), Archivieren/Wiederherstellen,
  * Besucher sperren/Sperre aufheben (Bestätigung), Melden (eigener Punkt, Apple/Google UGC), Gespräch löschen.
@@ -46,7 +83,7 @@ export function useConversationMenu(c: ChatConversation | null, opts: { onLeave?
   }, []);
 
   const open = (url: string) => Linking.openURL(url).catch(() => toast.show('Konnte nicht geöffnet werden.', 'error'));
-  const failed = () => toast.show('Das hat leider nicht geklappt. Bitte versuche es nochmal.', 'error');
+  const failed = () => toast.show(CHAT_ACTION_FAILED, 'error');
 
   const items = useMemo<MenuItem[]>(() => {
     if (!c) return [];
@@ -97,22 +134,12 @@ export function useConversationMenu(c: ChatConversation | null, opts: { onLeave?
       icon: Trash2,
       destructive: true,
       run: () =>
-        Alert.alert('Gespräch löschen?', 'Das Gespräch und alle Nachrichten werden endgültig gelöscht.', [
-          { text: 'Abbrechen', style: 'cancel' },
-          {
-            text: 'Löschen',
-            style: 'destructive',
-            onPress: () =>
-              actions.remove.mutate(c.id, {
-                onSuccess: () => {
-                  toast.show('Gespräch gelöscht', 'success');
-                  opts.onDeleted?.();
-                  opts.onLeave?.();
-                },
-                onError: failed,
-              }),
+        confirmDelete(c, actions, toast, {
+          onSuccess: () => {
+            opts.onDeleted?.();
+            opts.onLeave?.();
           },
-        ]),
+        }),
     });
     return list;
     // eslint-disable-next-line react-hooks/exhaustive-deps
