@@ -3,13 +3,14 @@ import Link from 'next/link'
 
 /* ── Changelog: nicht verlinkte Unterseite auf finestsites.io ──
  * Eine durchgehende Zeitleiste: oben gestrichelt das Geplante, dann „Heute“, darunter
- * alles, was seit dem Start live gegangen ist (neueste zuerst). Jeder größere Schritt
+ * alles, was seit Oktober 2026 live gegangen ist (neueste zuerst). Texte neutral und für Laien:
+ * „Wir haben X umgesetzt. Damit kannst du Y.“ Keine Preise, nichts rein Internes. Jeder größere Schritt
  * bekommt eine kleine, aus CSS gebaute UI-Grafik statt eines Screenshots.
  * Nicht in sitemap.ts, robots.ts sperrt alles außer / und /webinar, dazu noindex. */
 
 export const metadata: Metadata = {
   title: 'Changelog · FinestSites',
-  description: 'Was bei FinestSites neu ist und was als Nächstes kommt.',
+  description: 'Was wir bei FinestSites zuletzt umgesetzt haben und woran wir gerade arbeiten.',
   robots: { index: false, follow: false },
 }
 
@@ -23,105 +24,67 @@ type Planned = { title: string; text: string; status: 'Im Test' | 'In Arbeit' | 
 
 const PLANNED: Planned[] = [
   { title: 'Chat auf deiner Webseite', status: 'Im Test', visual: 'chat',
-    text: 'Besucher schreiben dir direkt auf deiner Seite. Du antwortest aus der App oder vom Computer, wie bei WhatsApp.' },
-  { title: 'Die FinestSites-App', status: 'In Arbeit', visual: 'app',
-    text: 'Deine Seiten bearbeiten, Anfragen sehen und Nachrichten beantworten. Zuerst für iPhone und iPad, danach für Android.' },
-  { title: 'Statistiken für deine Seite', status: 'Geplant', visual: 'stats',
-    text: 'Wie viele Menschen deine Seite besuchen, wie lange sie bleiben und wie viele dir schreiben. Auf einen Blick.' },
-  { title: 'Erfahrungsbericht per Sprachnachricht', status: 'Geplant', visual: 'mic',
-    text: 'Deine Kunden erzählen einfach ins Handy. Daraus entsteht ein fertiger, geprüfter Erfahrungsbericht für deine Seite.' },
+    text: 'Wir bauen ein kleines Chatfenster in deine Seite ein. Damit können dir Besucher direkt schreiben, und du antwortest am Handy oder am Computer.' },
+  { title: 'Eigene App', status: 'In Arbeit', visual: 'app',
+    text: 'Wir bauen eine FinestSites-App, zuerst für iPhone und iPad, danach für Android. Damit kannst du deine Seiten unterwegs bearbeiten und Nachrichten beantworten.' },
+  { title: 'Statistiken', status: 'Geplant', visual: 'stats',
+    text: 'Wir planen eine Übersicht mit den wichtigsten Zahlen. Damit siehst du, wie viele Leute deine Seite besuchen, wie lange sie bleiben und wie viele dir schreiben.' },
+  { title: 'Erfahrungsbericht per Sprachaufnahme', status: 'Geplant', visual: 'mic',
+    text: 'Deine Kunden sprechen ihre Erfahrung einfach ins Handy. Daraus entsteht ein fertiger Text, den du auf deine Seite stellen kannst.' },
   { title: 'Visitenkarten-Generator', status: 'Geplant', visual: 'card',
-    text: 'Deine Visitenkarte im Stil deiner Webseite, mit QR-Code. Als Druckdatei zum Herunterladen.' },
-  { title: 'Alle Landessprachen', status: 'Geplant', visual: 'flags',
-    text: 'Heute sind es bis zu acht Sprachen. Als Nächstes jede Sprache, die deine Besucher sprechen.' },
+    text: 'Damit erstellst du eine Visitenkarte, die zu deiner Webseite passt, mit QR-Code darauf. Du lädst sie als Druckdatei herunter.' },
+  { title: 'Mehr Sprachen', status: 'Geplant', visual: 'flags',
+    text: 'Bisher gibt es Optimalset- und Business-Seite in 8 Sprachen, die übrigen Vorlagen auf Deutsch und Englisch. Wir wollen alle Vorlagen in möglichst vielen Landessprachen anbieten.' },
   { title: 'Weitere Vorlagen', status: 'In Arbeit', visual: 'templates',
-    text: 'Neue Seiten für weitere Produkte, Anlässe und Geschäftsideen. Laufend, ohne Aufpreis.' },
+    text: 'Wir arbeiten an neuen Vorlagen für weitere Produkte und Anlässe. Du findest sie dann direkt bei „Neue Webseite“.' },
 ]
 
 const HISTORY: Month[] = [
   { label: 'Oktober 2026', entries: [
-    { date: '21. Okt', title: 'Kontakt mit einem Tipp', visual: 'chat',
-      text: 'Neue Leiste in den Vorlagen: „Kontakt“ öffnet ein kleines Fenster mit WhatsApp, Anfrage und deinen Kanälen.' },
-    { date: '16. Okt', title: 'Neues Partnerprogramm', tag: 'Partner',
-      text: 'Wer über deine Empfehlung startet, spart im ersten Monat 20 %. Deine Provision bekommst du als Guthaben mit Gutschrift.' },
+    { date: '21. Okt', title: 'Kontakt-Knopf oben auf der Seite', visual: 'chat',
+      text: 'Auf der Optimalset-, Business- und cellRESET-Seite gibt es oben jetzt einen Knopf „Kontakt“. Darüber erreichen dich Besucher per WhatsApp, über das Anfrage-Formular oder auf deinen Social-Media-Kanälen.' },
+    { date: '21. Okt', title: 'Direkt-Registrierung auf der Business-Seite', tag: 'Business',
+      text: 'Wir haben den Bereich „Direkt starten“ für alle freigeschaltet. Damit können sich Interessenten direkt unter deiner Teampartner-Nummer registrieren. Du trägst die Nummer einmal in deinem Profil ein.' },
+    { date: '16. Okt', title: 'Partnerprogramm überarbeitet',
+      text: 'Wenn du FinestSites weiterempfiehlst, bekommst du deine Provision jetzt als Guthaben in deinem Konto. Zu jeder Provision gibt es eine Gutschrift als PDF.' },
+    { date: '15. Okt', title: 'Eigene Farbe für deine Seiten', visual: 'colors',
+      text: 'Im Editor gibt es die Kachel „Eigene Farbe“. Damit wählst du deine Lieblingsfarbe, und die ganze Seite passt sich an. Texte bleiben dabei gut lesbar.' },
     { date: '15. Okt', title: 'Du entscheidest, welche Mails du bekommst', visual: 'mail',
-      text: 'Neuigkeiten, Tipps und Angebote lassen sich in den Einstellungen einzeln abbestellen.' },
-    { date: '14. Okt', title: 'ClaimGuard', visual: 'shield', tag: 'KI',
-      text: 'Die KI prüft deine eigenen Texte auf unzulässige Heil- und Wirkaussagen, bevor sie online gehen.' },
-    { date: '14. Okt', title: 'Deine eigene Farbe', visual: 'colors',
-      text: 'Wähl deine Markenfarbe einmal aus. Alle Vorlagen passen sich an und bleiben trotzdem gut lesbar.' },
-    { date: '13. Okt', title: 'Business-Seite in 8 Sprachen',
-      text: 'Inklusive Vorstellungsvideo auf Italienisch, Russisch, Ukrainisch, Polnisch, Bulgarisch und Hindi.' },
-    { date: '12. Okt', title: 'Eigene Domain noch einfacher', visual: 'domain',
-      text: 'Ein einziger DNS-Eintrag reicht. Funktioniert jetzt auch bei Strato, IONOS und all-inkl ohne Umwege.' },
-    { date: '10. Okt', title: '8 Sprachen, automatisch übersetzt', visual: 'flags',
-      text: 'Deine Texte werden beim Veröffentlichen übersetzt. Besucher sehen die Seite in ihrer Sprache.' },
-    { date: '10. Okt', title: 'Entwurf und Live getrennt',
-      text: 'Du kannst in Ruhe ändern. Online geht es erst, wenn du auf „Änderungen veröffentlichen“ tippst.' },
-    { date: '9. Okt', title: 'Werbe-Tracking', visual: 'chart',
-      text: 'Meta, Google Ads und TikTok mit wenigen Klicks verbinden und sehen, was deine Werbung bringt.' },
-    { date: '8. Okt', title: 'Partner-Modus mit eigenen Kontakten', visual: 'duo',
-      text: 'Zu zweit auf einer Seite: Jede Person mit eigenem Foto, eigenen Social-Links und eigener Nummer.' },
-    { date: '7. Okt', title: 'Neue Vorlage: Vitalprofil', visual: 'templates', tag: 'Vorlage',
-      text: 'Ein kurzer Selbst-Check für deine Besucher, mit persönlicher Auswertung und Einladung zum Gespräch.' },
-    { date: '7. Okt', title: 'Schonfrist bei Zahlungsproblemen',
-      text: 'Klappt eine Abbuchung nicht, bleibt deine Seite erst einmal online. Du hast genug Zeit, es zu klären.' },
-    { date: '5. Okt', title: 'Übersicht neu gestaltet',
-      text: 'Deine Webseiten als klare Karten, getrennt nach Online und Entwürfen, mit beschrifteten Knöpfen.' },
-  ]},
-  { label: 'September 2026', entries: [
-    { date: '24. Sep', title: 'QR-Code für deine Seite', visual: 'qr',
-      text: 'Herunterladen und auf Flyer oder Visitenkarte drucken. Er führt direkt zu deiner Webseite.' },
-    { date: '24. Sep', title: 'Speichern mit einem Tipp',
-      text: 'Im Editor am Handy sicherst du Änderungen jetzt mit einem einzigen Tipp.' },
-  ]},
-  { label: 'August 2026', entries: [
-    { date: '26. Aug', title: 'Erfahrungsberichte sammeln', visual: 'mic',
-      text: 'Ein Assistent führt deine Kunden mit Fragen durch ihren Bericht, auf Wunsch mit Video.' },
-    { date: '6. Aug', title: 'Neue Preise ab 17 €',
-      text: 'Starter, Pro und Unlimited wurden günstiger. Monatlich oder jährlich, jederzeit kündbar.' },
-    { date: '5. Aug', title: 'Neue Vorlage mit sechs Farbthemen', visual: 'templates', tag: 'Vorlage',
-      text: 'Eine Seite für deine Stoffwechselkur, mit Beispiel-Woche, Duo-Modus und deutsch/englisch.' },
-  ]},
-  { label: 'Juli 2026', entries: [
-    { date: '31. Jul', title: 'Zweisprachige Seiten', visual: 'flags',
-      text: 'Deutsch und Englisch auf einer Seite, mit Sprachschalter für deine Besucher.' },
-    { date: '28. Jul', title: 'Duo-Modus', visual: 'duo',
-      text: 'Du trittst mit deinem Partner auf? Dann steht ihr beide auf der Seite.' },
-    { date: '27. Jul', title: 'Farbthemen zum Antippen', visual: 'colors',
-      text: 'Jede Vorlage bringt mehrere fertige Farbwelten mit. Ein Tipp, und die ganze Seite wechselt.' },
-    { date: '24. Jul', title: 'Jederzeit upgraden',
-      text: 'Wechsel in einen größeren Tarif, der Rest des Monats wird genau verrechnet.' },
-    { date: '13. Jul', title: 'KI-Textprüfung', visual: 'shield', tag: 'KI',
-      text: 'Deine Texte werden vor dem Veröffentlichen geprüft, mit konkreten Vorschlägen zum Umformulieren.' },
-    { date: '8. Jul', title: 'Erst gestalten, dann bezahlen', visual: 'publish',
-      text: 'Du baust deine Seite kostenlos. Bezahlt wird erst, wenn du sie veröffentlichst.' },
-    { date: '8. Jul', title: 'Rechtstexte inklusive', visual: 'legal',
-      text: 'Impressum und Datenschutzerklärung sind auf jeder Seite schon drauf.' },
-    { date: '1. Jul', title: 'Support-Chat in der App', visual: 'chat',
-      text: 'Fragen stellst du direkt im Dashboard, mit Bildern und Verlauf.' },
-  ]},
-  { label: 'Juni 2026', entries: [
-    { date: '27. Jun', title: 'Vorlagen live ausprobieren', visual: 'editor',
-      text: 'Auf finestsites.io kannst du jede Vorlage vorab anpassen und siehst sofort das Ergebnis.' },
-    { date: '24. Jun', title: 'finestsites.io ist online',
-      text: 'Die neue Startseite mit allen Vorlagen und Preisen auf einen Blick.' },
-    { date: '23. Jun', title: 'Bezahlen per Lastschrift',
-      text: 'Neben Karte jetzt auch SEPA-Lastschrift. Dazu startet das Partnerprogramm.' },
-    { date: '9. Jun', title: 'Automatisches Speichern', visual: 'editor',
-      text: 'Der Editor sichert jede Änderung von selbst. Dazu kommt die Event-Seite als neue Vorlage.' },
-  ]},
-  { label: 'Mai 2026', entries: [
-    { date: '4. Mai', title: 'Gemacht fürs Handy', visual: 'phone',
-      text: 'Dashboard und Editor funktionieren auf Smartphone und Tablet genauso gut wie am Computer.' },
-  ]},
-  { label: 'April 2026', entries: [
-    { date: '12. Apr', title: 'Der Start', visual: 'editor', tag: 'Start',
-      text: 'Vorlage wählen, Texte und Bilder eintragen, online. Mit eigener Domain und SSL von Anfang an.' },
+      text: 'Unter Einstellungen → E-Mails kannst du Neuigkeiten, Tipps und Angebote einzeln abbestellen. Wichtige Mails zu deinem Konto bekommst du weiterhin.' },
+    { date: '15. Okt', title: 'Einstellungen aufgeräumt',
+      text: 'Die Einstellungen haben jetzt sechs Reiter, die ohne Scrollen auf den Bildschirm passen. Deine Teampartner-Nummer findest du im Reiter „Profil“.' },
+    { date: '14. Okt', title: 'Hintergrundbilder zum Auswählen', visual: 'templates',
+      text: 'Für die Optimalset-Seite kannst du jetzt aus sieben Hintergrundbildern wählen, für die cellRESET-Seite ebenfalls. Nach dem Veröffentlichen landest du wieder in deiner Übersicht.' },
+    { date: '14. Okt', title: 'Business-Video in sechs weiteren Sprachen',
+      text: 'Das Video auf der Business-Seite gibt es jetzt auch auf Italienisch, Russisch, Ukrainisch, Polnisch, Bulgarisch und Hindi. Besucher sehen automatisch die passende Fassung.' },
+    { date: '13. Okt', title: 'Business-Seite in 8 Sprachen', visual: 'flags',
+      text: 'Die Business-Seite gibt es jetzt auf Deutsch, Englisch, Italienisch, Russisch, Ukrainisch, Polnisch, Bulgarisch und Hindi. Besucher können die Sprache oben auf der Seite wechseln.' },
+    { date: '13. Okt', title: 'Linkseite übersichtlicher',
+      text: 'Wir haben die Abstände auf der Linkseite überarbeitet, Texte lassen sich leichter lesen. Das Vorschaubild zeigt jetzt dein gewähltes Farbthema.' },
+    { date: '12. Okt', title: 'Eigene Domain einfacher verbinden', visual: 'domain',
+      text: 'Du brauchst nur noch einen einzigen DNS-Eintrag bei deinem Anbieter. Das klappt jetzt auch bei Strato, IONOS und all-inkl. Deine Seite ist danach unter www.deine-domain.de erreichbar.' },
+    { date: '10. Okt', title: 'Optimalset-Seite in 8 Sprachen', visual: 'flags',
+      text: 'Die Optimalset-Seite gibt es jetzt auf Deutsch, Englisch, Italienisch, Russisch, Ukrainisch, Polnisch, Bulgarisch und Hindi, inklusive Impressum und Datenschutz. Besucher sehen die Seite automatisch in ihrer Sprache und können sie über ein Menü mit Flaggen wechseln.' },
+    { date: '10. Okt', title: 'Deine Texte werden mitübersetzt',
+      text: 'Was du selbst schreibst, zum Beispiel deine Begrüßung, übersetzen wir beim Veröffentlichen automatisch in alle Sprachen deiner Vorlage. Du musst dafür nichts tun.' },
+    { date: '10. Okt', title: 'Erst ändern, dann veröffentlichen', visual: 'publish',
+      text: 'Änderungen im Editor gehen nicht mehr sofort online. Du kannst in Ruhe ausprobieren, und erst mit „Änderungen veröffentlichen“ sehen Besucher die neue Fassung.' },
+    { date: '9. Okt', title: 'Werbung messen', visual: 'chart',
+      text: 'Unter Einstellungen → Werbung verbindest du deine Seite mit Meta (Facebook und Instagram), Google Ads oder TikTok. Damit siehst du, wie viele Anfragen über deine Werbung kommen.' },
+    { date: '9. Okt', title: 'Schöne Vorschau beim Teilen',
+      text: 'Wenn du deinen Link bei WhatsApp oder Instagram teilst, erscheint jetzt eine Vorschau mit deinem Namen und einem passenden Satz zur Seite.' },
+    { date: '8. Okt', title: 'Vitalprofil für alle', visual: 'shield', tag: 'Vorlage',
+      text: 'Die neue Vorlage Vitalprofil ist freigeschaltet. Deine Besucher machen einen kurzen Selbst-Check und bekommen eine persönliche Auswertung. Danach können sie direkt mit dir Kontakt aufnehmen.' },
+    { date: '8. Okt', title: 'Zu zweit mit eigenen Kontakten', visual: 'duo',
+      text: 'Wenn ihr zu zweit auf einer Seite steht, kann jetzt jede Person eigene Social-Media-Links und eine eigene Telefonnummer eintragen. Das geht auf der Linkseite und auf der Business-, cellRESET- und Optimalset-Seite.' },
+    { date: '5. Okt', title: 'Neue Übersicht', visual: 'editor',
+      text: 'Deine Webseiten erscheinen jetzt als Karten, getrennt nach „Online“ und „Entwürfe“. Die Knöpfe sind beschriftet, damit du sofort siehst, was sie tun.' },
+    { date: '4. Okt', title: 'Social-Media-Links automatisch eingetragen',
+      text: 'Die Links aus deinem Profil, zum Beispiel Instagram oder Facebook, werden in neuen Seiten automatisch eingetragen. Du musst sie nicht jedes Mal neu eingeben.' },
   ]},
 ]
 
-const FLAGS = ['🇩🇪', '🇬🇧', '🇮🇹', '🇵🇱', '🇺🇦', '🇧🇬', '🇷🇺', '🇮🇳']
+const FLAGS = ['🇩🇪', '🇬🇧', '🇮🇹', '🇷🇺', '🇺🇦', '🇵🇱', '🇧🇬', '🇮🇳']
 
 /** Kleine UI-Grafiken, rein aus CSS, je ca. 132×88 px */
 function Viz({ kind }: { kind: Visual }) {
@@ -171,8 +134,8 @@ function Viz({ kind }: { kind: Visual }) {
     case 'chat':
       return (
         <div className="v v-chat" aria-hidden>
-          <div className="v-bub in">Hallo! Ist das auch vegan?</div>
-          <div className="v-bub out">Ja, komplett 🌱</div>
+          <div className="v-bub in">Hallo! Hast du kurz Zeit?</div>
+          <div className="v-bub out">Klar, schreib mir gern</div>
         </div>
       )
     case 'flags':
@@ -441,12 +404,11 @@ export default function ChangelogPage() {
         </header>
 
         <section className="cl-hero">
-          <p className="cl-eyebrow">Was ist neu</p>
-          <h1 className="cl-h1">Jede Woche ein<br />bisschen besser.</h1>
-          <p className="cl-lead">Alles, was seit dem Start dazugekommen ist, und was wir als Nächstes bauen. Neueste Änderungen zuerst.</p>
+          <p className="cl-eyebrow">Changelog</p>
+          <h1 className="cl-h1">Was sich bei<br />FinestSites getan hat</h1>
+          <p className="cl-lead">Hier siehst du, was wir seit Oktober umgesetzt haben und woran wir gerade arbeiten. Das Neueste steht jeweils oben.</p>
           <div className="cl-facts">
-            <div><b>April 2026</b>Start</div>
-            <div><b>{total}</b>große Neuerungen</div>
+            <div><b>{total}</b>Neuerungen seit Oktober</div>
             <div><b>{PLANNED.length}</b>Projekte in Planung</div>
           </div>
         </section>
