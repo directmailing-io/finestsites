@@ -7,11 +7,13 @@ import { Logo } from '@/components/shared/Logo'
 import { signOut } from '@/lib/auth/client'
 import { useRouter } from 'next/navigation'
 import { usePlanQuota } from '@/components/dashboard/PlanQuotaContext'
+import { useVisitorChat } from '@/components/chat/VisitorChatContext'
 
 export function DashboardSidebar() {
   const pathname = usePathname()
   const router = useRouter()
   const quota = usePlanQuota()
+  const visitorChat = useVisitorChat()
 
   const [unreadCount, setUnreadCount] = useState(0)
 
@@ -66,6 +68,11 @@ export function DashboardSidebar() {
         <NavItem href="/submissions" active={isActive('/submissions')} icon={<InboxIcon />} badge={unreadCount}>
           Anfragen
         </NavItem>
+        {visitorChat.enabled && (
+          <NavItem href="/chats" active={isActive('/chats')} icon={<ChatsIcon />} badge={visitorChat.unread}>
+            Chats
+          </NavItem>
+        )}
       </nav>
 
       {/* Divider */}
@@ -279,6 +286,14 @@ function InboxIcon() {
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
       <polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/>
       <path d="M5.45 5.11L2 12v6a2 2 0 002 2h16a2 2 0 002-2v-6l-3.45-6.89A2 2 0 0016.76 4H7.24a2 2 0 00-1.79 1.11z"/>
+    </svg>
+  )
+}
+function ChatsIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M14 9a2 2 0 0 1-2 2H6l-4 4V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2z"/>
+      <path d="M18 9h2a2 2 0 0 1 2 2v11l-4-4h-6a2 2 0 0 1-2-2v-1"/>
     </svg>
   )
 }

@@ -15,6 +15,8 @@ import type { Viewport } from 'next'
 import { isAppModeRequest } from '@/lib/app-mode/server'
 import { AppModeProvider } from '@/components/app-mode/AppMode'
 import { DeletionPendingScreen } from '@/components/settings/AccountDeletionSection'
+import { VisitorChatProvider } from '@/components/chat/VisitorChatContext'
+import { isVisitorChatEnabledForUser } from '@/lib/chat/flags'
 
 /**
  * App-Modus (Cookie `fs_app=1`, Dashboard in der nativen App): Inhalt bis an die Ränder
@@ -42,12 +44,14 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   if (!user) redirect('/login')
 
-  const [profile, notice] = await Promise.all([
+  const [profile, notice, visitorChat] = await Promise.all([
     db.query.users.findFirst({
       where: eq(users.id, user.id),
       columns: { username: true, subscriptionStatus: true, cancelAtPeriodEnd: true, currentPeriodEnd: true, deletionScheduledFor: true, deletedAt: true },
     }),
     loadDashboardNotice(),
+    // Besucher-Chat freigeschaltet? Fehler = aus (darf das Dashboard nie blockieren).
+    isVisitorChatEnabledForUser(user.id).catch(() => false),
   ])
 
   const ADMIN_EMAIL = 'info@daniel-kurzeja.de'
@@ -75,14 +79,16 @@ export default async function DashboardLayout({ children }: { children: React.Re
     return (
       <AppModeProvider value>
         <PlanQuotaProvider>
-          <div className="flex min-h-screen" style={{ background: 'var(--background)' }}>
-            <div className="flex-1 min-w-0 flex flex-col">
-              <main className="flex-1 px-5 pt-6 sm:px-8 sm:pt-8 lg:px-12 lg:pt-10"
-                style={{ paddingBottom: 'max(40px, calc(env(safe-area-inset-bottom, 0px) + 24px))' }}>
-                {children}
-              </main>
+          <VisitorChatProvider enabled={visitorChat}>
+            <div className="flex min-h-screen" style={{ background: 'var(--background)' }}>
+              <div className="flex-1 min-w-0 flex flex-col">
+                <main className="flex-1 px-5 pt-6 sm:px-8 sm:pt-8 lg:px-12 lg:pt-10"
+                  style={{ paddingBottom: 'max(40px, calc(env(safe-area-inset-bottom, 0px) + 24px))' }}>
+                  {children}
+                </main>
+              </div>
             </div>
-          </div>
+          </VisitorChatProvider>
         </PlanQuotaProvider>
       </AppModeProvider>
     )
@@ -90,6 +96,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   return (
     <PlanQuotaProvider>
+    <VisitorChatProvider enabled={visitorChat}>
       <div className="flex min-h-screen" style={{ background: 'var(--background)' }}>
         <DashboardSidebar />
         <div className="flex-1 min-w-0 flex flex-col">
@@ -147,6 +154,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
         <MobileNav />
         {!impersonation && <SupportChat />}
       </div>
+    </VisitorChatProvider>
     </PlanQuotaProvider>
   )
 }

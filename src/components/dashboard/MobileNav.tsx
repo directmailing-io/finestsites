@@ -5,11 +5,13 @@ import { usePathname, useRouter } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import { signOut } from '@/lib/auth/client'
 import { usePlanQuota } from '@/components/dashboard/PlanQuotaContext'
+import { useVisitorChat } from '@/components/chat/VisitorChatContext'
 
 export function MobileNav() {
   const pathname = usePathname()
   const router = useRouter()
   const quota = usePlanQuota()
+  const visitorChat = useVisitorChat()
   const [showMore, setShowMore] = useState(false)
   const [unreadCount, setUnreadCount] = useState(0)
   const [chatUnread, setChatUnread] = useState(0)
@@ -59,6 +61,7 @@ export function MobileNav() {
 
   const activeSites = isActive('/sites')
   const activeSubmissions = isActive('/submissions')
+  const activeChats = isActive('/chats')
 
   return (
     <>
@@ -177,6 +180,29 @@ export function MobileNav() {
           </span>
         </Link>
 
+        {visitorChat.enabled && (
+          <Link
+            href="/chats"
+            onClick={() => setShowMore(false)}
+            className="flex-1 flex flex-col items-center justify-center gap-0.5 relative active:opacity-60 transition-opacity"
+          >
+            <span className="relative">
+              <TabChatsIcon active={activeChats} />
+              {visitorChat.unread > 0 && (
+                <span
+                  className="absolute -top-1 -right-2 min-w-[16px] h-4 px-1 rounded-full text-[10px] font-bold flex items-center justify-center"
+                  style={{ background: '#DC2626', color: 'white' }}
+                >
+                  {visitorChat.unread > 99 ? '99+' : visitorChat.unread}
+                </span>
+              )}
+            </span>
+            <span className="text-[10px] font-medium" style={{ color: activeChats ? '#1a1a1a' : '#9CA3AF' }}>
+              Chats
+            </span>
+          </Link>
+        )}
+
         <Link
           href="/support"
           onClick={() => setShowMore(false)}
@@ -229,6 +255,15 @@ function TabInboxIcon({ active }: { active: boolean }) {
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={active ? '#1a1a1a' : '#9CA3AF'} strokeWidth={active ? 2 : 1.75}>
       <polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/>
       <path d="M5.45 5.11L2 12v6a2 2 0 002 2h16a2 2 0 002-2v-6l-3.45-6.89A2 2 0 0016.76 4H7.24a2 2 0 00-1.79 1.11z"/>
+    </svg>
+  )
+}
+
+function TabChatsIcon({ active }: { active: boolean }) {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={active ? '#1a1a1a' : '#9CA3AF'} strokeWidth={active ? 2 : 1.75} strokeLinecap="round" strokeLinejoin="round">
+      <path d="M14 9a2 2 0 0 1-2 2H6l-4 4V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2z"/>
+      <path d="M18 9h2a2 2 0 0 1 2 2v11l-4-4h-6a2 2 0 0 1-2-2v-1"/>
     </svg>
   )
 }
