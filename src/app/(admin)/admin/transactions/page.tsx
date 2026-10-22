@@ -38,6 +38,9 @@ interface Transaction {
   paymentMethod: 'card' | 'sepa_debit' | null
   paymentMethodLast4: string | null
   status: 'paid' | 'pending' | 'failed' | 'void' | 'uncollectible'
+  /** Neuabschluss / Verlängerung / Tarifwechsel – aus Stripe billing_reason */
+  kind?: 'new' | 'renewal' | 'change' | 'other'
+  billingReason?: string | null
   stripeInvoiceUrl: string | null
 }
 
@@ -92,6 +95,20 @@ const PERIODS = [
   { key: 'all',           label: 'Alles' },
 ]
 
+const KIND_STYLE: Record<string, { bg: string; color: string; label: string; title: string }> = {
+  new:     { bg: '#DCFCE7', color: '#166534', label: 'Neuabschluss', title: 'Erste Zahlung eines Abos (auch nach vorheriger Kündigung)' },
+  renewal: { bg: '#F1F5F9', color: '#475569', label: 'Verlängerung', title: 'Regelmäßige Verlängerung eines laufenden Abos' },
+  change:  { bg: '#FEF3C7', color: '#92400E', label: 'Tarifwechsel', title: 'Zahlung durch Upgrade oder Wechsel des Zahlungsintervalls' },
+  other:   { bg: '#F3F4F6', color: '#6B7280', label: 'Sonstiges', title: 'Manuelle oder sonstige Rechnung' },
+}
+
+const KINDS = [
+  { key: 'all', label: 'Alle' },
+  { key: 'new', label: 'Neuabschluss' },
+  { key: 'renewal', label: 'Verlängerung' },
+  { key: 'change', label: 'Tarifwechsel' },
+]
+
 const STATUSES = [
   { key: 'all',           label: 'Alle' },
   { key: 'paid',          label: 'Erfolgreich' },
@@ -135,6 +152,7 @@ function AmountCell({ cents, muted, negative }: { cents: number; muted?: boolean
 export default function TransactionsPage() {
   const [period, setPeriod] = useState('this_month')
   const [statusFilter, setStatusFilter] = useState('all')
+  const [kindFilter, setKindFilter] = useState('all')
   const [showPlanned, setShowPlanned] = useState(true)
   const [data, setData] = useState<{ transactions: Transaction[]; planned: PlannedPayment[] } | null>(null)
   const [loading, setLoading] = useState(true)
@@ -149,9 +167,10 @@ export default function TransactionsPage() {
 
   const filtered = useMemo(() => {
     if (!data) return []
-    if (statusFilter === 'all') return data.transactions
-    return data.transactions.filter(t => t.status === statusFilter)
-  }, [data, statusFilter])
+    return data.transactions.filter(t =>
+      (statusFilter === 'all' || t.status === statusFilter) &&
+      (kindFilter === 'all' || (t.kind ?? 'other') === kindFilter))
+  }, [data, statusFilter, kindFilter])
 
   // ── Summary computations (always from full data, not filtered) ────────────
   const allTx = data?.transactions ?? []
@@ -293,6 +312,24 @@ export default function TransactionsPage() {
           <div className="flex-1" />
           <span className="text-xs" style={{ color: '#94A3B8' }}>{filtered.length} Einträge</span>
         </div>
+        <div className="flex items-center gap-2 px-4 py-2.5 flex-wrap" style={{ background: '#F8FAFC', borderBottom: '1px solid #F1F5F9' }}>
+          <span className="text-xs font-semibold uppercase tracking-widest mr-2" style={{ color: '#94A3B8' }}>Art:</span>
+          {KINDS.map(k => (
+            <button key={k.key} onClick={() => setKindFilter(k.key)}
+              className="px-3 py-1 text-xs font-medium rounded-lg transition-all"
+              style={{
+                background: kindFilter === k.key ? '#1a1a1a' : 'transparent',
+                color: kindFilter === k.key ? '#fff' : '#64748B',
+              }}>
+              {k.label}
+              {k.key !== 'all' && data && (
+                <span className="ml-1.5 tabular-nums" style={{ opacity: 0.7 }}>
+                  ({allTx.filter(t => (t.kind ?? 'other') === k.key).length})
+                </span>
+              )}
+            </button>
+          ))}
+        </div>
 
         {/* Table */}
         <div className="overflow-x-auto">
@@ -302,6 +339,7 @@ export default function TransactionsPage() {
                 <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wide" style={{ color: '#94A3B8' }}>Datum</th>
                 <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wide" style={{ color: '#94A3B8' }}>Nutzer</th>
                 <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wide" style={{ color: '#94A3B8' }}>Plan</th>
+                <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wide" style={{ color: '#94A3B8' }}>Art</th>
                 <th className="text-right px-4 py-3 text-xs font-semibold uppercase tracking-wide" style={{ color: '#94A3B8' }}>Brutto</th>
                 <th className="text-right px-4 py-3 text-xs font-semibold uppercase tracking-wide" style={{ color: '#94A3B8' }}>MwSt</th>
                 <th className="text-right px-4 py-3 text-xs font-semibold uppercase tracking-wide" style={{ color: '#94A3B8' }}>Stripe</th>
@@ -314,12 +352,12 @@ export default function TransactionsPage() {
             </thead>
             <tbody>
               {loading && (
-                <tr><td colSpan={11} className="text-center py-12" style={{ color: '#94A3B8' }}>
+                <tr><td colSpan={12} className="text-center py-12" style={{ color: '#94A3B8' }}>
                   <div className="flex items-center justify-center gap-2"><Spinner /> Lade Stripe-Daten…</div>
                 </td></tr>
               )}
               {!loading && filtered.length === 0 && (
-                <tr><td colSpan={11} className="text-center py-12 text-sm" style={{ color: '#94A3B8' }}>
+                <tr><td colSpan={12} className="text-center py-12 text-sm" style={{ color: '#94A3B8' }}>
                   Keine Transaktionen im gewählten Zeitraum.
                 </td></tr>
               )}
@@ -352,6 +390,18 @@ export default function TransactionsPage() {
                           {tx.billingInterval === 'yearly' ? '12M' : '1M'}
                         </span>
                       </div>
+                    </td>
+
+                    {/* Art: Neuabschluss / Verlängerung / Tarifwechsel */}
+                    <td className="px-4 py-3 whitespace-nowrap">
+                      {(() => {
+                        const k = KIND_STYLE[tx.kind ?? 'other'] ?? KIND_STYLE.other
+                        return (
+                          <span className="text-xs font-semibold px-2 py-0.5 rounded-lg" title={k.title} style={{ background: k.bg, color: k.color }}>
+                            {k.label}
+                          </span>
+                        )
+                      })()}
                     </td>
 
                     {/* Brutto */}
@@ -441,7 +491,7 @@ export default function TransactionsPage() {
             {filtered.length > 0 && (
               <tfoot>
                 <tr style={{ borderTop: '2px solid #E2E8F0', background: '#F8FAFC' }}>
-                  <td colSpan={3} className="px-4 py-3 text-xs font-bold uppercase tracking-wide" style={{ color: '#64748B' }}>
+                  <td colSpan={4} className="px-4 py-3 text-xs font-bold uppercase tracking-wide" style={{ color: '#64748B' }}>
                     Summe ({filtered.length} Einträge)
                   </td>
                   <td className="px-4 py-3 text-right">

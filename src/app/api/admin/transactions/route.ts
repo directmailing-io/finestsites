@@ -248,6 +248,16 @@ export async function GET(req: NextRequest) {
       const plan = userInfo?.plan || ''
       const billingInterval = (userInfo?.billingInterval || 'monthly') as 'monthly' | 'yearly'
 
+      // ── Art der Zahlung (Stripe billing_reason) ─────────────────────────
+      // subscription_create = erster Rechnungslauf eines Abos (Neuabschluss, auch Wiederabschluss nach Kündigung)
+      // subscription_cycle  = regulärer Verlängerungslauf; subscription_update = Tarif-/Intervallwechsel (Upgrade)
+      const reason = inv.billing_reason ?? null
+      const kind: 'new' | 'renewal' | 'change' | 'other' =
+        reason === 'subscription_create' ? 'new'
+        : reason === 'subscription_cycle' ? 'renewal'
+        : reason === 'subscription_update' ? 'change'
+        : 'other'
+
       return {
         id: inv.id,
         date: inv.created,
@@ -267,6 +277,8 @@ export async function GET(req: NextRequest) {
         paymentMethod,
         paymentMethodLast4,
         status,
+        kind,
+        billingReason: reason,
         stripeInvoiceUrl: inv.hosted_invoice_url || null,
       }
     })
