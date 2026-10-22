@@ -40,6 +40,7 @@ export type AccountStatusCode = z.infer<typeof AccountStatusCode>
 export const TodoCode = z.enum([
   'first_site',
   'unread_submissions',
+  'unread_chats',
   'support_reply',
   'unpublished_changes',
   'complete_profile',
@@ -65,6 +66,8 @@ export const OverviewResponse = z.object({
     submissions: z.number().int().nonnegative(),
     support: z.number().int().nonnegative(),
     notifications: z.number().int().nonnegative(),
+    /** Ungelesene Besucher-Chat-Nachrichten (0, wenn der Chat für das Konto nicht freigeschaltet ist). */
+    chat: z.number().int().nonnegative(),
   }),
   /** last7 = letzte 7 Tage, prev7 = die 7 Tage davor (Vergleich „zur Vorwoche“), last30 = letzte 30 Tage. */
   stats: z.object({ last7: PeriodStats, prev7: PeriodStats, last30: PeriodStats }),

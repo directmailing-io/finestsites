@@ -1,0 +1,175 @@
+# Besucher-Chat (Seitenbesucher ↔ Seitenbetreiber)
+
+Stand: 22.10.2026. Erst nur für das Konto `demo` freigeschaltet, jederzeit zentral abschaltbar.
+
+## Ziele
+
+- Besucher einer Kundenseite sehen ein hochwertiges Chat-Symbol und können direkt mit dem Betreiber chatten; Gefühl wie WhatsApp (Blasen, Haken, Tag-Trenner, Links anklickbar, „online“).
+- Angaben Name / E-Mail / Telefon (WhatsApp) sind **freiwillig**. Hat der Betreiber eine WhatsApp-Nummer in seiner Seite hinterlegt, zeigt der Chat „Schreib mir direkt in WhatsApp“.
+- Ein Besucher findet sein Gespräch beim nächsten Besuch wieder (gleicher Browser automatisch; anderes Gerät über den Link in der Antwort-Mail).
+- Betreiber sehen in App **und** Web-Dashboard einen Bereich „Chats“ (Liste wie WhatsApp/Messenger), ungelesene Nachrichten sofort (Badge am Tab, App-Symbol), Push-Mitteilung, sobald Push eingeschaltet ist.
+- Apple-/Google-Vorgaben für nutzergenerierte Inhalte: Filter, Melden, Sperren, Kontakt (siehe unten).
+
+## Schalter (Notaus)
+
+`app_settings`:
+
+| Schlüssel | Wert | Wirkung |
+|---|---|---|
+| `visitor_chat_enabled` | `true` / fehlt = aus | Globaler Hauptschalter |
+| `visitor_chat_users` | `demo` (Kommaliste von Benutzernamen) | Nur diese Konten |
+
+Helfer: `src/lib/chat/flags.ts` → `isVisitorChatEnabledForUser(userId)`, `isVisitorChatEnabledForUsername(username)`, 30 s Cache wie `readAppSettings`.
+
+Wirkung beim Abschalten (doppelte Sicherung):
+1. `GET /api/worker/site-meta` liefert `chat` nicht mehr → der Worker hängt das Skript nicht mehr an (SiteMeta-Cache 60 s).
+2. Der Widget-Aufruf `GET /.finestsites/chat/config` antwortet `enabled:false` → ein bereits geladenes Skript zeigt nichts. Alle Besucher-Endpunkte antworten 404 bei ausgeschaltetem Chat.
+3. App/Web: `MeResponse.features.visitorChat=false` → Bereich „Chats“ verschwindet; Endpunkte antworten `FEATURE_DISABLED`.
+
+Admin: Seite `/admin/besucher-chat` (nur Admin) mit Ein/Aus und Benutzerliste (schreibt die beiden Schlüssel).
+
+## Datenmodell (`supabase/migrations/20261022200000_visitor_chat.sql`)
+
+```
+chat_conversations
+  id uuid pk, user_id uuid → users (cascade), site_id uuid → user_sites (cascade)
+  visitor_token_hash varchar(64) not null        -- sha256 des Browser-Tokens
+  visitor_name text, visitor_email text, visitor_phone text, notify_by_email bool default false
+  visitor_key varchar(8) not null                 -- Kurzkennung für „Besucher 4F2A“ (aus dem Hash)
+  status text not null default 'open'             -- open | archived | blocked
+  started_on_path text, user_agent text, ip_hash varchar(64)
+  owner_unread int not null default 0, visitor_unread int not null default 0
+  last_message_at timestamptz, last_message_preview text, last_message_sender text
+  visitor_last_seen_at timestamptz, owner_last_seen_at timestamptz
+  reported_at timestamptz, report_reason text
+  visitor_notified_at timestamptz                 -- Drossel der Antwort-Mail
+  created_at, updated_at
+  unique (site_id, visitor_token_hash)
+  index (user_id, status, updated_at desc), index (site_id, visitor_token_hash)
+
+chat_messages
+  id uuid pk, conversation_id uuid → chat_conversations (cascade)
+  sender text not null ('visitor'|'owner'|'system'), body text not null (≤ 2000)
+  client_id varchar(64), created_at timestamptz default now(), read_at timestamptz
+  unique (conversation_id, sender, client_id) where client_id is not null
+  index (conversation_id, created_at)
+
+chat_blocks
+  id uuid pk, user_id uuid → users (cascade)
+  visitor_token_hash varchar(64), ip_hash varchar(64), reason text, created_at
+  index (user_id, visitor_token_hash), index (user_id, ip_hash)
+
+chat_resume_tokens
+  token_hash varchar(64) pk, conversation_id uuid → chat_conversations (cascade)
+  expires_at timestamptz not null, used_at timestamptz
+
+notification_preferences: + chat boolean not null default true
+```
+
+Alle Tabellen: `GRANT SELECT, INSERT, UPDATE, DELETE … TO finestsites` (wie in `20261021120000_native_app_push.sql`).
+
+Aufbewahrung: Cron `GET /api/cron/chat-cleanup` (Bearer `CRON_SECRET`, täglich): Gespräche ohne Nachricht seit 180 Tagen löschen, abgelaufene Resume-Tokens löschen, Sperren älter als 365 Tage löschen.
+
+## Besucher-API (Widget → Worker → App)
+
+Das Widget spricht **nur same-origin** `/.finestsites/chat/*` auf der Kundenseite. Der Worker leitet an `${APP_URL}/api/worker/chat/*` weiter und setzt Header:
+
+```
+x-worker-secret: <WORKER_SECRET>
+x-fs-site-id: <meta.siteId>
+x-fs-host: <hostname>
+x-fs-ip-hash: <hashIP(ip)>
+x-fs-ua: <User-Agent, gekürzt 200>
+x-fs-visitor: <Besucher-Token, aus Header X-FS-Visitor des Widgets>
+```
+
+Der Worker reicht nie den echten IP durch. Antworten des App-Servers werden 1:1 zurückgegeben (JSON, `Cache-Control: no-store`). Bei Fehler des App-Servers antwortet der Worker `503 {"error":"unavailable"}`.
+
+| Pfad (Widget) | App-Route | Zweck |
+|---|---|---|
+| `GET  /.finestsites/chat/widget.js` | `GET /chat-widget/v1.js` (statisch, `public/`) | Skript, Worker-Cache 5 min |
+| `GET  /.finestsites/chat/config` | `GET /api/worker/chat/config` | `{enabled, owner:{name, avatarUrl, brandColor}, whatsappUrl, welcome, siteHost}` |
+| `POST /.finestsites/chat/session` | `POST /api/worker/chat/session` | Body `{visitorToken?, resumeToken?, pageUrl?}` → `{enabled, conversationId, visitorToken, status, visitor:{name,email,phone,notifyByEmail}, messages:[…letzte 50], ownerLastSeenAt}` |
+| `GET  /.finestsites/chat/messages?after=<id>` | `GET /api/worker/chat/messages` | Polling; aktualisiert `visitor_last_seen_at`; liefert `{messages, status, ownerLastSeenAt}` |
+| `POST /.finestsites/chat/messages` | `POST /api/worker/chat/messages` | `{body, clientId, pageUrl?}` → `{message}`; 422 `MESSAGE_REJECTED` (Filter), 429 `RATE_LIMITED`, 403 `BLOCKED` |
+| `POST /.finestsites/chat/read` | `POST /api/worker/chat/read` | Betreiber-Nachrichten als gelesen |
+| `POST /.finestsites/chat/profile` | `POST /api/worker/chat/profile` | `{name?, email?, phone?, notifyByEmail?}` → `{visitor}` |
+
+Token-Regeln:
+- `visitorToken`: 32 Byte Zufall, vom Widget erzeugt (`crypto.getRandomValues`), im Browser **erst ab der ersten gesendeten Nachricht** gespeichert (localStorage `fs_chat_token`, Fallback Cookie `fs_chat_token`, 180 Tage, SameSite=Lax). Server speichert nur sha256.
+- Ohne Token darf `session` nur `enabled`/Konfiguration liefern; erst `POST messages` ohne bekanntes Gespräch legt eines an (Token dann Pflicht).
+- `resumeToken` (Link aus der Antwort-Mail `https://<host>/?fs_chat=<token>`): einmalig gültig 30 Tage, hashed; `session` mit gültigem Token übernimmt das Gespräch für den neuen `visitorToken` (alter Hash wird ersetzt) und markiert den Token benutzt.
+- Gesperrte Besucher (Token-Hash **oder** IP-Hash in `chat_blocks` des Betreibers): alle Endpunkte 403 `BLOCKED`; das Widget zeigt „Dieser Chat ist nicht verfügbar.“ und bietet nur noch WhatsApp/E-Mail an, falls vorhanden.
+
+Ratenbegrenzung (im App-Server, `rateLimit` aus `src/lib/app-api/http.ts` oder gleichwertig): pro IP-Hash 60 Anfragen/Minute; Nachrichten pro Gespräch 20 pro 10 Minuten und frühestens alle 1,5 s; `session`-Anlagen pro IP-Hash 10 pro Stunde.
+
+Filter (`src/lib/chat/filter.ts`): Länge ≤ 2000, max. 3 Links, Sperrliste grober Beleidigungen/Drohungen DE/EN (kleine, gepflegte Liste), Wiederholung derselben Nachricht 3× hintereinander → 422 `MESSAGE_REJECTED` mit neutraler Meldung „Diese Nachricht kann nicht gesendet werden.“ Gilt für Besucher **und** Betreiber.
+
+Antwort-Mail an den Besucher (`src/lib/chat/notify.ts`): nur wenn `visitor_email` gesetzt **und** `notify_by_email=true` **und** der Besucher seit ≥ 2 min nicht online war **und** `visitor_notified_at` älter als 30 min (oder null). Inhalt: „{Betreibername} hat dir geantwortet“ + Vorschau (gekürzt 140) + Knopf „Chat öffnen“ (Resume-Link) + Hinweis, wie man sich abmeldet (Link mit `?fs_chat=<token>&unsubscribe=1` setzt `notify_by_email=false`). Layout `layout()` aus `src/lib/email/templates.ts`, Kategorie `system`, Absender wie Formular-Benachrichtigungen, Reply-To **nicht** die Betreiber-Adresse (Besucher antwortet im Chat). Lokal/Test: kein Versand (Resend-Dummy).
+
+## Betreiber-API
+
+`src/lib/contracts/app-v1/chat.ts` (verbindlich). Routen unter `src/app/api/app/v1/chat/…`, Auth `requireAppUser` (Bearer **und** Cookie-Sitzung funktionieren). Jede Route prüft zuerst `isVisitorChatEnabledForUser` → sonst `FEATURE_DISABLED`.
+
+- Senden durch den Betreiber: `owner_unread` unberührt, `visitor_unread+1`, `last_message_*`, ggf. Antwort-Mail (siehe oben).
+- Besucher-Nachricht: `owner_unread+1`, Push `pushTriggers.newChatMessage(conversationId)` (Kategorie `chat`, Titel „Neue Chat-Nachricht“, Text „Ein Besucher deiner Webseite hat dir geschrieben.“, `data: {type:'chat_message', url:'finestsites://chats/<id>', conversationId}`, `collapseKey: chat:<id>`, `throttleSeconds: 120`). Nie Besucherdaten im Sperrbildschirm-Text.
+- `overview.unread.chat` = Summe `owner_unread` offener Gespräche (0 wenn nicht freigeschaltet); Todo `unread_chats` mit count.
+- `me.features.visitorChat`.
+- Melden: speichert `reported_at`/`report_reason`, sendet Mail an **info@finestsites.io** (Betreff „Chat gemeldet: <Grund>“, Konto, Seite, Gesprächs-ID, letzte 20 Nachrichten), optional Sperre. Verwendet `layout()`.
+- Löschen (`DELETE …/conversations/[id]`): entfernt Gespräch + Nachrichten endgültig.
+
+## Worker (`cloudflare-worker/src/chat.ts`)
+
+- `SiteMeta.chat?: { enabled: true }` kommt aus `site-meta` (nur wenn für den Besitzer freigeschaltet).
+- `injectChatWidget(html, meta)` in `finalizeHtml`: hängt `<script data-fs-chat src="/.finestsites/chat/widget.js" defer></script>` vor `</body>`; nie doppelt (`data-fs-chat`-Marker); nicht auf `/impressum`, `/datenschutz`, `/agb`.
+- Route `/.finestsites/chat/*` nach `meta`-Auflösung (vor den Rechtsseiten). Nur `GET`/`POST`, JSON, `Cache-Control: no-store`, keine CORS-Freigabe nötig (same-origin).
+- Datenschutzseite: eigener Abschnitt „Chat“ DE/EN, nur wenn `meta.chat?.enabled` (Text siehe unten).
+
+## Widget (`public/chat-widget/v1.js`, Vanilla JS, kein Build-Schritt, Shadow DOM)
+
+- Start-Knopf unten rechts (56 px, Markenfarbe `brandColor` der Seite, sonst `#111`), Sprechblasen-Symbol, ungelesen-Badge, sanfte Einblendung nach 1,5 s, Tastatur-/Screenreader-tauglich (`aria-label`, `role="dialog"`, Esc schließt).
+- Fenster: Handy = Vollbild-Sheet (respektiert `env(safe-area-inset-*)`), Desktop = 380×620 px unten rechts, abgerundet, Schatten. Kopf: Avatar (Bild oder Initialen), Name, Status („Antwortet meist schnell“ / „online“ wenn `ownerLastSeenAt` < 90 s). Verlauf: WhatsApp-artiger Hintergrund in Hell, Blasen (Besucher rechts in Markenfarbe-Abstufung, Betreiber links weiß), Zeit je Blase, Haken (✓ gesendet, ✓✓ gelesen), Tag-Trenner („Heute“, „Gestern“, Datum), Links anklickbar (`rel="noopener"`, `target="_blank"`), lange Links gekürzt, „Link kopiert“-Hinweis bei Tipp auf Teilen-Symbol neben einem Link.
+- Eingabe: mehrzeilig, Enter sendet (Shift+Enter Umbruch), Senden-Knopf in Markenfarbe, optimistische Anzeige mit `clientId`, Fehler als dezente Zeile mit „Erneut senden“.
+- Erster Besuch: Begrüßungsblase (`welcome`) + Hinweiszeile unter der Eingabe: „Mit dem Senden wird dein Chat auf dieser Seite gespeichert. [Datenschutz](/datenschutz)“. Kein Cookie/Storage vor dem ersten Senden (§ 25 Abs. 2 Nr. 2 TDDDG: technisch erforderlich für die ausdrücklich angeforderte Funktion).
+- Nach der ersten Nachricht: einklappbare Karte „Damit ich dich erreiche (optional)“ mit Name, E-Mail, Telefon/WhatsApp und Schalter „Antworten per E-Mail erhalten“ (nur aktiv, wenn E-Mail eingetragen; Standard an, sobald eine E-Mail eingetragen wird). Speichern → `profile`.
+- `whatsappUrl` vorhanden: Zeile im Kopf oder unter der Begrüßung „Schreib mir direkt in WhatsApp“ (grüner Knopf, ruhiges Dunkelgrün `#128C7E`-Stil, nie grelles #25D366).
+- Polling: 3 s bei offenem Fenster, 20 s geschlossen mit bekanntem Gespräch, pausiert bei `document.hidden`; `read` beim Öffnen und bei neuer Betreiber-Nachricht im sichtbaren Fenster. Badge am Start-Knopf = ungelesene Betreiber-Nachrichten; Titel-Blinken nicht.
+- `?fs_chat=<token>` in der URL → `session` mit `resumeToken`, Fenster öffnet sich, Parameter aus der URL entfernt (`history.replaceState`). `&unsubscribe=1` → `profile {notifyByEmail:false}` + Hinweis.
+- Sprache: `document.documentElement.lang` beginnt mit `en` → Englisch, sonst Deutsch. Alle Texte in einem Objekt `T.de`/`T.en`.
+- Kein externes Laden (keine Schriften, keine CDN); Schrift = `system-ui`. Größe ≤ 40 kB unminifiziert.
+
+## App (mobile/) und Web-Dashboard
+
+- Bereich „Chats“ nur bei `me.features.visitorChat`. App: fünfter Tab „Chats“ (Symbol `message`/`bubble.left.and.bubble.right`), Badge `overview.unread.chat`, App-Symbol-Badge zählt Chat mit. Web: Eintrag „Chats“ in Sidebar und MobileNav mit Badge (Polling `GET /api/app/v1/chat/unread` alle 30 s, wie `supportUnreadUpdate`).
+- Liste (wie WhatsApp): Avatar mit Initialen in stabiler Farbe aus `visitor_key`, Name, Seitentitel klein, Vorschau (eigene Nachricht mit „Du: “), Zeit (Heute → Uhrzeit, gestern → „Gestern“, sonst Datum), ungelesen-Punkt mit Zahl, Fettdruck bei ungelesen; Suche; Filter offen/archiviert/gesperrt; Pull-to-refresh; Polling 5 s im Vordergrund.
+- Gespräch: Kopf mit Avatar, Name, „online“/„zuletzt online …“, Seitenlink; Aktionen (…-Menü): Anrufen, E-Mail, WhatsApp (falls Daten), Archivieren, Besucher sperren, Melden (Grund wählen), Gespräch löschen (Bestätigung). Verlauf wie WhatsApp (Tag-Trenner, Blasen, Haken ✓/✓✓ für eigene, Links anklickbar, langes Drücken = kopieren), Eingabe am unteren Rand mit Tastatur-Vermeidung, optimistisches Senden, Polling 3 s, Lesen beim Öffnen. Nie Preise/Kauf-Wörter (`check:words`).
+- Push: `routeFromNotification` kennt `finestsites://chats/<id>` → Gespräch öffnen. Einstellungen: Schalter „Chat“ bei den Mitteilungen (nur sichtbar bei `features.visitorChat`).
+- Mock-Modus der App bekommt 3 Beispielgespräche.
+
+## Apple / Google (UGC)
+
+Apple 1.2 verlangt für Apps mit nutzergenerierten Inhalten: Filter, Melden mit zeitnaher Reaktion, Sperren, veröffentlichte Kontaktdaten. Google Play „User Generated Content“: Nutzungsbedingungen vor dem Erstellen, laufende Moderation, In-App-Melden **und** -Sperren bei 1:1-Nachrichten, klar getrennte Knöpfe. Umsetzung:
+
+- Filter: serverseitig (`filter.ts`) für beide Richtungen.
+- Melden: „Melden“ im Gesprächsmenü (eigener Knopf, nicht mit Sperren vermischt), Mail an info@finestsites.io, Bearbeitung innerhalb 24 h (Admin sieht gemeldete Gespräche unter `/admin/besucher-chat`).
+- Sperren: „Besucher sperren“ (Token + IP-Hash).
+- Kontakt: Impressum/Datenschutz der Plattform und der Kundenseite; in der App unter „Mehr“ bereits vorhanden.
+- Bedingungen: Besucher akzeptiert beim Senden den Hinweis (Datenschutz-Link); Betreiber sind an AGB gebunden (§ Inhalte). App Review Notes: Demokonto mit Beispielgesprächen.
+- Keine anonyme/zufällige Chat-Vermittlung (1.1.6/1.2 Chatroulette-Verbot nicht berührt: immer Besucher ↔ konkreter Betreiber).
+
+## Datenschutztext (Kundenseite, nur bei aktiviertem Chat)
+
+DE: **Chat-Funktion.** Auf dieser Webseite kannst du mir über ein Chat-Fenster Nachrichten schreiben. Dabei werden deine Nachrichten, der Zeitpunkt, die aufgerufene Seite sowie – nur wenn du sie freiwillig angibst – Name, E-Mail-Adresse und Telefonnummer gespeichert. Deine IP-Adresse wird ausschließlich in gekürzter, nicht rückrechenbarer Form (Hash) zum Schutz vor Missbrauch verarbeitet. Damit du dein Gespräch beim nächsten Besuch fortsetzen kannst, speichert dein Browser eine zufällige Chat-Kennung (lokaler Speicher bzw. Cookie „fs_chat_token“, 180 Tage). Diese Speicherung ist technisch erforderlich, um die von dir ausdrücklich gewünschte Chat-Funktion bereitzustellen (§ 25 Abs. 2 Nr. 2 TDDDG); sie erfolgt erst, wenn du die erste Nachricht sendest. Rechtsgrundlage der Verarbeitung ist Art. 6 Abs. 1 lit. b DSGVO (Anbahnung bzw. Durchführung eines Vertrags oder Beantwortung deiner Anfrage) sowie Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an einer einfachen Kontaktmöglichkeit und am Schutz vor Missbrauch). Wenn du eine E-Mail-Adresse angibst und „Antworten per E-Mail erhalten“ aktivierst, informieren wir dich per E-Mail über neue Antworten; das kannst du jederzeit über den Link in der E-Mail oder im Chat beenden. Die Chat-Daten werden auf Servern von FinestSites (Hetzner Online GmbH, Deutschland) im Rahmen einer Auftragsverarbeitung gespeichert und 180 Tage nach der letzten Nachricht automatisch gelöscht; auf Wunsch lösche ich dein Gespräch auch früher. Für WhatsApp gilt der Abschnitt „WhatsApp“.
+
+EN: **Chat.** You can send me messages through the chat window on this website. We store your messages, the time, the page you were on and, only if you provide them voluntarily, your name, e-mail address and phone number. Your IP address is processed only in truncated, irreversibly hashed form to prevent abuse. So you can continue your conversation on your next visit, your browser stores a random chat identifier (local storage or cookie "fs_chat_token", 180 days). This is technically necessary to provide the chat you explicitly requested (Section 25 (2) no. 2 TDDDG) and only happens once you send your first message. The legal basis is Art. 6 (1) (b) GDPR (initiating or performing a contract or answering your enquiry) and Art. 6 (1) (f) GDPR (legitimate interest in an easy way to get in touch and in preventing abuse). If you provide an e-mail address and enable "receive replies by e-mail", we notify you about new replies by e-mail; you can stop this at any time via the link in the e-mail or in the chat. Chat data is stored on FinestSites servers (Hetzner Online GmbH, Germany) under a data processing agreement and deleted automatically 180 days after the last message; on request I will delete your conversation earlier. For WhatsApp, see the "WhatsApp" section.
+
+## Dateizuständigkeit (parallele Umsetzung)
+
+| Bereich | Dateien |
+|---|---|
+| Backend | `supabase/migrations/20261022200000_visitor_chat.sql`, `src/lib/db/schema.ts` (nur neue Tabellen + `chat` in notification_preferences), `src/lib/chat/*`, `src/app/api/worker/chat/*`, `src/app/api/app/v1/chat/*`, `src/app/api/cron/chat-cleanup/route.ts`, `src/app/api/worker/site-meta/route.ts` (+`chat`), `src/app/api/app/v1/{me,overview,notification-preferences}` (+Felder), `src/lib/push/{triggers,preferences,enqueue}.ts` (+`chat`), `src/lib/email/templates.ts` (+2 Mails), `scripts/test-visitor-chat.ts` |
+| Worker + Widget | `cloudflare-worker/src/chat.ts`, `cloudflare-worker/src/index.ts` (Einhängepunkte, SiteMeta, Datenschutz-Abschnitt), `public/chat-widget/v1.js`, `scripts/check-chat-widget.mjs` (Syntax + Größe) |
+| App | `mobile/src/app/(tabs)/chats/*`, `mobile/src/features/chat/*`, `mobile/src/api/{endpoints,queries,types,mock}.ts` (+Chat), `mobile/src/app/(tabs)/_layout.tsx` (+Tab), `mobile/src/lib/push.ts` (+Route), Einstellungen (+Schalter), `mobile/src/api/contracts/*` (sync) |
+| Web | `src/app/(dashboard)/chats/*`, `src/components/chat/*`, `src/components/dashboard/{Sidebar,MobileNav}.tsx` (+Eintrag), `src/app/(dashboard)/layout.tsx` (Flag), `src/app/(admin)/admin/besucher-chat/*`, `src/app/api/admin/chat/*` |
+
+Gemeinsame Verträge: `src/lib/contracts/app-v1/chat.ts` (fertig, nicht ändern ohne Absprache).

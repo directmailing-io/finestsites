@@ -7,6 +7,8 @@ export const NotificationPreferences = z.object({
   support: z.boolean(),
   account: z.boolean(),
   partner: z.boolean(),
+  /** Besucher-Chat (nur sichtbar, wenn der Chat für das Konto freigeschaltet ist). */
+  chat: z.boolean(),
   quietHours: z.object({
     enabled: z.boolean(),
     /** Beginn der Nachtruhe (Stunde, Ortszeit), Standard 21 */
@@ -27,6 +29,7 @@ export const UpdateNotificationPreferencesRequest = z.object({
   support: z.boolean().optional(),
   account: z.boolean().optional(),
   partner: z.boolean().optional(),
+  chat: z.boolean().optional(),
   quietHours: z.object({
     enabled: z.boolean().optional(),
     start: Hour.optional(),
