@@ -9,6 +9,10 @@ import {
   shouldInject, injectTracking, handleTrackingBeacon, handleNoTrack, recordEvent, sendServerEvent,
   hasMarketingConsent, isNoTrack, privacySectionDe, privacySectionEn,
 } from './tracking'
+import {
+  handleChatRequest, injectChatWidget, shouldInjectChat,
+  chatPrivacySectionDe, chatPrivacySectionEn, insertChatPrivacySection,
+} from './chat'
 
 /**
  * FinestSites Cloudflare Worker
@@ -31,6 +35,13 @@ import {
  *   POST /.finestsites/kv           → internal cache management (purge / offline)
  *   GET  /.finestsites/demo/{slug}  → serve pre-rendered admin preview from KV
  *   GET  /.finestsites/health       → liveness check
+ *   GET  /.finestsites/chat/widget.js        → Besucher-Chat-Skript (aus der App, 5 min Edge-Cache)
+ *   GET  /.finestsites/chat/config           → Chat-Konfiguration (Proxy → App /api/worker/chat/config)
+ *   POST /.finestsites/chat/session          → Gespräch laden/fortsetzen (Proxy)
+ *   GET/POST /.finestsites/chat/messages     → Nachrichten abrufen (?after=) / senden (Proxy)
+ *   POST /.finestsites/chat/read             → Betreiber-Nachrichten als gelesen markieren (Proxy)
+ *   POST /.finestsites/chat/profile          → freiwillige Besucher-Angaben (Proxy)
+ *   (alle Chat-Routen: nur wenn meta.chat.enabled, sonst 404 — siehe chat.ts)
  *
  * All database reads/writes go through the FinestSites app API (APP_URL), not directly
  * to PostgreSQL. The Worker authenticates those calls with WORKER_SECRET.
@@ -306,6 +317,8 @@ export interface SiteMeta {
   r2BasePath: string
   /** Werbung & Tracking des Besitzers (nur IDs) — fehlt, wenn nicht eingerichtet */
   tracking?: PublicTrackingConfig
+  /** Besucher-Chat (docs/chat/konzept.md) — fehlt, wenn für den Besitzer nicht freigeschaltet */
+  chat?: { enabled: boolean }
 }
 
 // In-memory copy of site meta per Worker instance (same 60 s lifetime as the KV entry).
@@ -490,7 +503,7 @@ async function handleKvAdmin(request: Request, username: string, domain: string,
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
-async function hashIP(ip: string): Promise<string> {
+export async function hashIP(ip: string): Promise<string> {
   const encoded = new TextEncoder().encode(ip)
   const hashBuffer = await crypto.subtle.digest('SHA-256', encoded)
   return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('')
@@ -640,9 +653,15 @@ async function trackPageview(
 // sendBeacon — the only reliable delivery on unload, especially mobile.
 const BEACON_SNIPPET = `<script data-fs-beacon>(function(){var t0=Date.now(),sent=0;function send(){if(sent)return;sent=1;var d=Math.round((Date.now()-t0)/1e3);if(d<3||d>1800)return;try{navigator.sendBeacon('/.finestsites/e',JSON.stringify({d:d,p:location.pathname}))}catch(e){}}document.addEventListener('visibilitychange',function(){if(document.visibilityState==='hidden')send()});addEventListener('pagehide',send)})();</script>`
 
-/** Werbe-Tracking anhängen — nur wenn eingerichtet, nicht auf Rechtsseiten, nicht für Bots/„nicht mitzählen“. */
+/**
+ * Letzte Schritte vor der Auslieferung (wirkt auf Cache-Treffer, frische Seiten und /agb):
+ *  - Werbe-Tracking — nur wenn eingerichtet, nicht auf Rechtsseiten, nicht für Bots/„nicht mitzählen“
+ *  - Besucher-Chat-Skript — nur wenn für den Besitzer freigeschaltet, nicht auf /impressum, /datenschutz
+ */
 function finalizeHtml(html: string, pathname: string, request: Request, meta: SiteMeta): string {
-  return shouldInject(pathname, request, meta) ? injectTracking(html, meta) : html
+  if (shouldInject(pathname, request, meta)) html = injectTracking(html, meta)
+  if (shouldInjectChat(pathname, meta)) html = injectChatWidget(html, meta)
+  return html
 }
 
 function injectBeacon(html: string): string {
@@ -1102,8 +1121,10 @@ async function handleFormSubmission(request: Request, pathname: string, meta: Si
   }
 
   // Nur relative Pfade (kein "//evil.tld"), immer auf den eigenen Host aufgelöst
-  if (redirectUrl && /^\/(?!\/)/.test(redirectUrl) && redirectUrl.length < 512) {
-    return Response.redirect(`https://${hostname}${redirectUrl}`, 302)
+  // (Zuweisung in `take` sieht TypeScript nicht → Typ hier ausdrücklich nennen)
+  const redirectTarget = redirectUrl as string | null
+  if (redirectTarget && /^\/(?!\/)/.test(redirectTarget) && redirectTarget.length < 512) {
+    return Response.redirect(`https://${hostname}${redirectTarget}`, 302)
   }
 
   return new Response(successPage(), { headers: htmlHeaders() })
@@ -1221,6 +1242,12 @@ export default {
       // ── Scanner-/Dotfile-Pfade ───────────────────────────────────────────
       if (isBlockedPath(pathname)) return plain404()
 
+      // ── Besucher-Chat (Widget → Worker → App) ────────────────────────────
+      // Ohne Freischaltung sofort 404, ohne Aufruf des App-Servers (chat.ts).
+      if (pathname.startsWith('/.finestsites/chat/')) {
+        return handleChatRequest(request, pathname, meta, env, hostname)
+      }
+
       // ── Form submission ──────────────────────────────────────────────────
       if (request.method === 'POST' && pathname.startsWith('/.finestsites/forms/')) {
         return handleFormSubmission(request, pathname, meta, env, ctx, hostname)
@@ -1284,7 +1311,7 @@ export default {
           boxBorder: ta.boxBorder,
           logoHtml: baseDesign.logoHtml.replace(/#[0-9A-Fa-f]{6}/g, ta.logo),
         }
-        const legalHtml = pathname === '/impressum' ? renderImpressum(design, domain) : renderDatenschutz(design, domain, meta.tracking)
+        const legalHtml = pathname === '/impressum' ? renderImpressum(design, domain) : renderDatenschutz(design, domain, meta.tracking, !!meta.chat?.enabled)
         if (shouldTrack(pathname)) ctx.waitUntil(trackPageview(request, url, hostname, pathname, meta, env))
         return new Response(injectBeacon(render(legalHtml, pageDataMap)), {
           headers: htmlHeaders(),
@@ -1589,7 +1616,7 @@ const legalLangsFor = (domain: string): LegalLang[] =>
 /** Übersetzter Rechtstext-Chunk; fehlt er, deutscher Text. */
 const legalChunk = (lang: string, key: string, de: string) => LEGAL_I18N[lang]?.[key] ?? de
 /** Blöcke der Zusatzsprachen (it, ru, …) für Impressum/Datenschutz aus den Übersetzungen. */
-function extraLegalBlocks(domain: string, page: 'impressum' | 'datenschutz', tracking?: PublicTrackingConfig): string {
+function extraLegalBlocks(domain: string, page: 'impressum' | 'datenschutz', tracking?: PublicTrackingConfig, chat = false): string {
   if (!MULTI_LANG_DOMAINS.has(domain)) return ''
   let out = ''
   for (const lang of LEGAL_LANGS) {
@@ -1605,6 +1632,8 @@ function extraLegalBlocks(domain: string, page: 'impressum' | 'datenschutz', tra
         privacy = (t.privacy_tracking ?? '').replace('§§PROVIDERS§§', providers)
       }
       html = html.replace('§§PRIVACY§§', privacy)
+      // Chat-Abschnitt: übersetzter Chunk (de.json → translate.py), sonst Englisch
+      if (chat) html = insertChatPrivacySection(html, t.privacy_chat ?? chatPrivacySectionEn())
     }
     // Hinweis „Übersetzung zur Orientierung“ nach dem Untertitel
     html = html.replace(/(<p class="page-subtitle">[\s\S]*?<\/p>)/, `$1\n<div class="binding-note">${t.binding_note ?? ''}</div>`)
@@ -1850,8 +1879,11 @@ function vitalprofilSectionEn(): string {
 `
 }
 
-function renderDatenschutz(d: LegalDesign, domain = '', tracking?: PublicTrackingConfig): string {
+function renderDatenschutz(d: LegalDesign, domain = '', tracking?: PublicTrackingConfig, chat = false): string {
   const vital = domain === 'vitalprofil.net'
+  // Abschnitt „Chat“ nur bei freigeschaltetem Besucher-Chat, direkt vor dem WhatsApp-Abschnitt
+  const chatDe = chat ? `${chatPrivacySectionDe()}\n\n<hr class="divider">\n\n` : ''
+  const chatEn = chat ? `${chatPrivacySectionEn()}\n\n<hr class="divider">\n\n` : ''
   return `${legalHead('Datenschutzerkl\u00E4rung', d, domain)}
 <body>
 <nav class="top-nav"><a class="logo" href="/">${d.logoHtml}</a></nav>
@@ -1895,7 +1927,7 @@ ${vital ? vitalprofilSectionDe() : ''}<section>
 
 <hr class="divider">
 
-<section>
+${chatDe}<section>
 <h2>Anfragen über Werbeanzeigen und WhatsApp</h2>
 <p>Der auf dieser Website genannte Betreiber ({{#if firma}}{{firma}}, {{/if}}{{vorname}} {{nachname}}{{#if partner_modus=duo}} &amp; {{vorname2}} {{nachname2}}{{/if}}) kann für diese Website Werbeanzeigen schalten, zum Beispiel bei Facebook, Instagram, Google oder TikTok. Wenn Sie dort in einem Formular (z.&nbsp;B. einem Lead-Formular bei Meta) Ihre Kontaktdaten hinterlassen, werden diese Angaben von der jeweiligen Plattform an den Betreiber übermittelt. Er verwendet sie ausschließlich, um die von Ihnen gewünschte Beratung oder Kontaktaufnahme durchzuführen; eine Weitergabe an Dritte findet nicht statt. Für die Erhebung auf der Plattform gelten zusätzlich deren Datenschutzbestimmungen (Meta: <a href="https://www.facebook.com/privacy/policy/" target="_blank" rel="noopener">facebook.com/privacy/policy</a>).</p>
 <p>Wenn Sie freiwillig über <strong>WhatsApp</strong> Kontakt aufnehmen, werden Ihre Telefonnummer und Nachrichteninhalte von WhatsApp (WhatsApp Ireland Ltd.) nach deren Datenschutzrichtlinie verarbeitet (<a href="https://www.whatsapp.com/legal/privacy-policy-eea" target="_blank" rel="noopener">whatsapp.com/legal/privacy-policy-eea</a>). Der Betreiber nutzt die Unterhaltung nur für die Beantwortung Ihres Anliegens.</p>
@@ -1971,7 +2003,7 @@ ${vital ? vitalprofilSectionEn() : ''}<section>
 
 <hr class="divider">
 
-<section>
+${chatEn}<section>
 <h2>Enquiries via advertisements and WhatsApp</h2>
 <p>The operator named on this website ({{#if firma}}{{firma}}, {{/if}}{{vorname}} {{nachname}}{{#if partner_modus=duo}} &amp; {{vorname2}} {{nachname2}}{{/if}}) may run advertisements for this website, for example on Facebook, Instagram, Google or TikTok. If you leave your contact details in a form there (e.g. a Meta lead form), the platform transmits them to the operator, who uses them solely to carry out the consultation or contact you requested; they are not passed on to third parties. The platform's own privacy policy applies to the collection there (Meta: <a href="https://www.facebook.com/privacy/policy/" target="_blank" rel="noopener">facebook.com/privacy/policy</a>).</p>
 <p>If you voluntarily get in touch via <strong>WhatsApp</strong>, your phone number and message contents are processed by WhatsApp (WhatsApp Ireland Ltd.) under its privacy policy (<a href="https://www.whatsapp.com/legal/privacy-policy-eea" target="_blank" rel="noopener">whatsapp.com/legal/privacy-policy-eea</a>). The operator uses the conversation only to answer your enquiry.</p>
@@ -2007,7 +2039,7 @@ ${vital ? vitalprofilSectionEn() : ''}<section>
 
 <p class="footnote">Last updated: October 2026</p>
 </div>
-${extraLegalBlocks(domain, 'datenschutz', tracking)}
+${extraLegalBlocks(domain, 'datenschutz', tracking, chat)}
 ${legalLangScript('Datenschutzerklärung', 'Privacy Policy', domain, 'title_privacy')}
 </main>
 ${legalFooterHtml(domain)}
