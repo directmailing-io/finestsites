@@ -6,6 +6,7 @@ import { accountOffline, affiliateEligible, loadProfile, loadSites, quotaOf, sit
 import { getAppRuntimeSettings } from '@/lib/app-api/settings'
 import { MeResponse } from '@/lib/contracts/app-v1/me'
 import { normalizeOptOut } from '@/lib/email/categories'
+import { isVisitorChatEnabledForUser } from '@/lib/chat/flags'
 
 export const dynamic = 'force-dynamic'
 
@@ -21,7 +22,10 @@ export async function GET(req: Request) {
   if (!profile) return appError('UNAUTHORIZED')
 
   const { planLabel, quota } = quotaOf(profile, sites)
-  const partner = settings.features.partnerProgram && await affiliateEligible(profile)
+  const [partner, visitorChat] = await Promise.all([
+    settings.features.partnerProgram ? affiliateEligible(profile) : Promise.resolve(false),
+    isVisitorChatEnabledForUser(profile.id),
+  ])
 
   return appJson(MeResponse, {
     user: {
@@ -57,6 +61,6 @@ export async function GET(req: Request) {
       planLabel,
       quota,
     },
-    features: { partnerProgram: partner },
+    features: { partnerProgram: partner, visitorChat },
   })
 }

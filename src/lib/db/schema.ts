@@ -877,6 +877,8 @@ export const notificationPreferences = pgTable('notification_preferences', {
   support: boolean('support').notNull().default(true),
   account: boolean('account').notNull().default(true),
   partner: boolean('partner').notNull().default(true),
+  // Besucher-Chat (Migration 20261022200000)
+  chat: boolean('chat').notNull().default(true),
   quietHoursEnabled: boolean('quiet_hours_enabled').notNull().default(true),
   quietStartHour: smallint('quiet_start_hour').notNull().default(21),
   quietEndHour: smallint('quiet_end_hour').notNull().default(8),
@@ -887,7 +889,7 @@ export const notificationPreferences = pgTable('notification_preferences', {
 export const pushOutbox = pgTable('push_outbox', {
   id: uuid('id').primaryKey().defaultRandom(),
   userId: uuid('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
-  category: text('category').notNull(), // 'leads' | 'support' | 'account' | 'partner'
+  category: text('category').notNull(), // 'leads' | 'support' | 'account' | 'partner' | 'chat'
   type: text('type').notNull(),
   title: text('title').notNull(),
   body: text('body').notNull(),
@@ -925,3 +927,86 @@ export type PushDevice = typeof pushDevices.$inferSelect
 export type NotificationPreference = typeof notificationPreferences.$inferSelect
 export type PushOutboxRow = typeof pushOutbox.$inferSelect
 export type PushDelivery = typeof pushDeliveries.$inferSelect
+
+// ─── Besucher-Chat (Migration 20261022200000) ─────────────────────────────────
+// Seitenbesucher ↔ Seitenbetreiber, siehe docs/chat/konzept.md. Vom Besucher-Token und der IP
+// werden nur Hashes gespeichert. Schalter: app_settings visitor_chat_enabled / visitor_chat_users.
+
+export const chatConversations = pgTable('chat_conversations', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  userId: uuid('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  siteId: uuid('site_id').notNull().references(() => userSites.id, { onDelete: 'cascade' }),
+  visitorTokenHash: varchar('visitor_token_hash', { length: 64 }).notNull(), // sha256 des Browser-Tokens
+  visitorName: text('visitor_name'),
+  visitorEmail: text('visitor_email'),
+  visitorPhone: text('visitor_phone'),
+  notifyByEmail: boolean('notify_by_email').notNull().default(false),
+  visitorKey: varchar('visitor_key', { length: 8 }).notNull(), // Kurzkennung „Besucher 4F2A“
+  status: text('status').notNull().default('open'), // open | archived | blocked
+  startedOnPath: text('started_on_path'),
+  userAgent: text('user_agent'),
+  ipHash: varchar('ip_hash', { length: 64 }),
+  ownerUnread: integer('owner_unread').notNull().default(0),
+  visitorUnread: integer('visitor_unread').notNull().default(0),
+  lastMessageAt: timestamp('last_message_at', { withTimezone: true }),
+  lastMessagePreview: text('last_message_preview'),
+  lastMessageSender: text('last_message_sender'),
+  visitorLastSeenAt: timestamp('visitor_last_seen_at', { withTimezone: true }),
+  ownerLastSeenAt: timestamp('owner_last_seen_at', { withTimezone: true }),
+  reportedAt: timestamp('reported_at', { withTimezone: true }),
+  reportReason: text('report_reason'),
+  visitorNotifiedAt: timestamp('visitor_notified_at', { withTimezone: true }), // Drossel der Antwort-Mail
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [
+  uniqueIndex('chat_conversations_site_visitor_unique').on(t.siteId, t.visitorTokenHash),
+  index('idx_chat_conversations_user_status_updated').on(t.userId, t.status, t.updatedAt),
+  index('idx_chat_conversations_site_token').on(t.siteId, t.visitorTokenHash),
+])
+
+export const chatMessages = pgTable('chat_messages', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  conversationId: uuid('conversation_id').notNull().references(() => chatConversations.id, { onDelete: 'cascade' }),
+  sender: text('sender').notNull(), // 'visitor' | 'owner' | 'system'
+  body: text('body').notNull(), // ≤ 2000 Zeichen
+  clientId: varchar('client_id', { length: 64 }),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  readAt: timestamp('read_at', { withTimezone: true }),
+}, (t) => [
+  index('idx_chat_messages_conversation_created').on(t.conversationId, t.createdAt),
+])
+
+export const chatBlocks = pgTable('chat_blocks', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  userId: uuid('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  visitorTokenHash: varchar('visitor_token_hash', { length: 64 }),
+  ipHash: varchar('ip_hash', { length: 64 }),
+  reason: text('reason'),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [
+  index('idx_chat_blocks_user_token').on(t.userId, t.visitorTokenHash),
+  index('idx_chat_blocks_user_ip').on(t.userId, t.ipHash),
+])
+
+export const chatResumeTokens = pgTable('chat_resume_tokens', {
+  tokenHash: varchar('token_hash', { length: 64 }).primaryKey(),
+  conversationId: uuid('conversation_id').notNull().references(() => chatConversations.id, { onDelete: 'cascade' }),
+  expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(),
+  usedAt: timestamp('used_at', { withTimezone: true }),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+})
+
+export const chatConversationsRelations = relations(chatConversations, ({ one, many }) => ({
+  user: one(users, { fields: [chatConversations.userId], references: [users.id] }),
+  site: one(userSites, { fields: [chatConversations.siteId], references: [userSites.id] }),
+  messages: many(chatMessages),
+}))
+
+export const chatMessagesRelations = relations(chatMessages, ({ one }) => ({
+  conversation: one(chatConversations, { fields: [chatMessages.conversationId], references: [chatConversations.id] }),
+}))
+
+export type ChatConversationRow = typeof chatConversations.$inferSelect
+export type ChatMessageRow = typeof chatMessages.$inferSelect
+export type ChatBlockRow = typeof chatBlocks.$inferSelect
+export type ChatResumeTokenRow = typeof chatResumeTokens.$inferSelect

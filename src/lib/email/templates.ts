@@ -1259,6 +1259,73 @@ export function accountDeletionAdminEmail({ title, text }: { title: string; text
 }
 
 /** Letzte Mail nach der Löschung (geht noch an die alte Adresse, danach ist sie aus dem Konto gelöscht). */
+// ─── Besucher-Chat (docs/chat/konzept.md) ──────────────────────────────────────
+
+/** Antwort-Mail an den Besucher: Betreiber hat geantwortet, Knopf „Chat öffnen“ (Resume-Link). Kategorie system. */
+export function chatReplyEmail({ ownerName, preview, openUrl, unsubscribeUrl, siteHost }: {
+  ownerName: string; preview: string; openUrl: string; unsubscribeUrl: string; siteHost: string
+}): string {
+  const name = escapeHtml(ownerName)
+  const text = escapeHtml(preview)
+  return layout(`
+    <h1 style="margin:0 0 8px;font-size:22px;font-weight:700;color:${base.heading};letter-spacing:-0.02em;">
+      ${name} hat dir geantwortet
+    </h1>
+    <p style="margin:0 0 20px;font-size:15px;color:${base.body};line-height:1.65;">
+      Du hast auf ${escapeHtml(siteHost)} eine Nachricht geschrieben. Hier ist die Antwort:
+    </p>
+    <table cellpadding="0" cellspacing="0" role="presentation" width="100%">
+      <tr>
+        <td style="background:${base.bg};border-radius:14px;padding:16px 18px;font-size:15px;color:${base.heading};line-height:1.6;">
+          ${text}
+        </td>
+      </tr>
+    </table>
+    ${button(openUrl, 'Chat öffnen')}
+    ${fallbackLink(openUrl)}
+    <p style="margin:28px 0 0;font-size:13px;color:${base.muted};line-height:1.6;">
+      Du bekommst diese E-Mail, weil du im Chat „Antworten per E-Mail erhalten“ eingeschaltet hast.
+      <a href="${unsubscribeUrl}" style="color:${base.muted};text-decoration:underline;">Keine E-Mails mehr zu diesem Chat</a>
+    </p>
+  `)
+}
+
+/** Meldung eines Gesprächs an FinestSites (info@finestsites.io): Konto, Seite, Grund, letzte Nachrichten. */
+export function chatReportEmail({ reasonLabel, note, accountLabel, siteLabel, conversationId, blocked, adminUrl, messages }: {
+  reasonLabel: string
+  note: string | null
+  accountLabel: string
+  siteLabel: string
+  conversationId: string
+  blocked: boolean
+  adminUrl: string
+  messages: { sender: string; body: string; at: string }[]
+}): string {
+  const rows = messages.length === 0
+    ? `<tr><td style="font-size:14px;color:${base.muted};">Keine Nachrichten.</td></tr>`
+    : messages.map(m => `
+      <tr>
+        <td style="padding:6px 0;border-bottom:1px solid ${base.border};vertical-align:top;font-size:12px;color:${base.muted};white-space:nowrap;">${escapeHtml(m.at)}</td>
+        <td style="padding:6px 8px;border-bottom:1px solid ${base.border};vertical-align:top;font-size:12px;font-weight:600;color:${base.heading};white-space:nowrap;">${escapeHtml(m.sender)}</td>
+        <td style="padding:6px 0;border-bottom:1px solid ${base.border};vertical-align:top;font-size:14px;color:${base.body};line-height:1.5;">${escapeHtml(m.body).replace(/\n/g, '<br />')}</td>
+      </tr>`).join('')
+  return layout(`
+    <h1 style="margin:0 0 8px;font-size:22px;font-weight:700;color:${base.heading};letter-spacing:-0.02em;">
+      Chat gemeldet: ${escapeHtml(reasonLabel)}
+    </h1>
+    <p style="margin:0 0 16px;font-size:15px;color:${base.body};line-height:1.65;">
+      <strong>Konto:</strong> ${escapeHtml(accountLabel)}<br />
+      <strong>Seite:</strong> ${escapeHtml(siteLabel)}<br />
+      <strong>Gespräch:</strong> ${escapeHtml(conversationId)}<br />
+      <strong>Besucher gesperrt:</strong> ${blocked ? 'ja' : 'nein'}
+      ${note ? `<br /><strong>Hinweis:</strong> ${escapeHtml(note)}` : ''}
+    </p>
+    <p style="margin:0 0 8px;font-size:13px;color:${base.muted};">Letzte Nachrichten (älteste zuerst):</p>
+    <table cellpadding="0" cellspacing="0" role="presentation" width="100%">${rows}</table>
+    ${button(adminUrl, 'Im Admin ansehen')}
+  `)
+}
+
 export function accountDeletionCompletedEmail({ keptNote, balanceNote }: { keptNote: string; balanceNote?: string | null }): string {
   return layout(`
     <h1 style="margin:0 0 8px;font-size:22px;font-weight:700;color:${base.heading};letter-spacing:-0.02em;">

@@ -1,6 +1,6 @@
 /**
  * GET /api/app/v1/notification-preferences — Push-Einstellungen (fehlende Zeile = Standardwerte)
- * PUT /api/app/v1/notification-preferences — Teilupdate { leads?, support?, account?, partner?, quietHours?, timezone? }
+ * PUT /api/app/v1/notification-preferences — Teilupdate { leads?, support?, account?, partner?, chat?, quietHours?, timezone? }
  */
 import { db } from '@/lib/db'
 import { notificationPreferences } from '@/lib/db/schema'
@@ -30,6 +30,7 @@ export async function PUT(req: Request) {
     support: u.support ?? cur.support,
     account: u.account ?? cur.account,
     partner: u.partner ?? cur.partner,
+    chat: u.chat ?? cur.chat,
     quietHours: {
       enabled: u.quietHours?.enabled ?? cur.quietHours.enabled,
       start: u.quietHours?.start ?? cur.quietHours.start,
@@ -42,6 +43,7 @@ export async function PUT(req: Request) {
     support: next.support,
     account: next.account,
     partner: next.partner,
+    chat: next.chat,
     quietHoursEnabled: next.quietHours.enabled,
     quietStartHour: next.quietHours.start,
     quietEndHour: next.quietHours.end,

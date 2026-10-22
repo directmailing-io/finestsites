@@ -10,7 +10,7 @@
  * keine Kauf-Aufforderung (Apple 3.1.1). Deep-Links über data.url (finestsites://…).
  */
 import { db } from '@/lib/db'
-import { userSites } from '@/lib/db/schema'
+import { chatConversations, userSites } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
 import { isPushEnabled } from './config'
 import { enqueuePush } from './enqueue'
@@ -41,6 +41,27 @@ export const pushTriggers = {
         data: { url: `finestsites://submissions/${submissionId}`, siteId: userSiteId, submissionId },
         collapseKey: `submission:${userSiteId}`,
         throttleSeconds: 60,
+      })
+    })
+  },
+
+  /**
+   * Neue Nachricht eines Seitenbesuchers im Besucher-Chat (docs/chat/konzept.md).
+   * Nie Besucherdaten oder Nachrichtentext im Sperrbildschirm.
+   */
+  newChatMessage(conversationId: string): Promise<void> {
+    return guarded('chat', async () => {
+      const conv = await db.query.chatConversations.findFirst({ where: eq(chatConversations.id, conversationId), columns: { userId: true } })
+      if (!conv) return
+      await enqueuePush({
+        userId: conv.userId,
+        category: 'chat',
+        type: 'chat_message',
+        title: 'Neue Chat-Nachricht',
+        body: 'Ein Besucher deiner Webseite hat dir geschrieben.',
+        data: { url: `finestsites://chats/${conversationId}`, conversationId },
+        collapseKey: `chat:${conversationId}`,
+        throttleSeconds: 120,
       })
     })
   },

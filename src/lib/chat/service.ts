@@ -1,0 +1,602 @@
+/**
+ * Besucher-Chat – Datenzugriff und Abbildung auf die Verträge (src/lib/contracts/app-v1/chat.ts).
+ *
+ * Grundsätze (docs/chat/konzept.md):
+ *   - Vom Besucher-Token und von Resume-Tokens wird nur der sha256-Hash gespeichert.
+ *   - Die IP kommt bereits als Hash vom Worker (x-fs-ip-hash) – hier wird nie eine IP gelesen.
+ *   - Kurzkennung `visitor_key` = erste 4 Zeichen des Token-Hashes („Besucher 4F2A“).
+ *   - Vorschau = erste 140 Zeichen, einzeilig.
+ */
+import { createHash, randomBytes } from 'node:crypto'
+import { db } from '@/lib/db'
+import {
+  chatBlocks, chatConversations, chatMessages, chatResumeTokens, templates, userSites, users,
+  type ChatConversationRow, type ChatMessageRow,
+} from '@/lib/db/schema'
+import { and, asc, desc, eq, gt, ilike, inArray, isNull, lt, or, sql } from 'drizzle-orm'
+import type { ChatConversation, ChatMessage, ChatSender } from '@/lib/contracts/app-v1/chat'
+import { normalizeWhatsAppNumber } from '@/lib/utils/social-links'
+
+export const ONLINE_WINDOW_MS = 90_000
+export const PREVIEW_LENGTH = 140
+export const RESUME_TOKEN_DAYS = 30
+export const RETENTION_DAYS = 180
+export const BLOCK_RETENTION_DAYS = 365
+export const WELCOME_TEXT = 'Hi! Schreib mir gern, ich antworte so schnell ich kann.'
+
+// ─── Kleine Helfer ────────────────────────────────────────────────────────────
+
+export function sha256(value: string): string {
+  return createHash('sha256').update(value, 'utf8').digest('hex')
+}
+
+/** Besucher-Token des Widgets: 32 Byte Zufall als Hex oder base64url. */
+export function isValidVisitorToken(token: unknown): token is string {
+  return typeof token === 'string' && /^[A-Za-z0-9_-]{16,128}$/.test(token)
+}
+
+export function visitorKeyFromHash(hash: string): string {
+  return hash.slice(0, 4).toUpperCase()
+}
+
+export function previewOf(body: string): string {
+  const flat = body.replace(/\s+/g, ' ').trim()
+  return flat.length > PREVIEW_LENGTH ? `${flat.slice(0, PREVIEW_LENGTH - 1).trimEnd()}…` : flat
+}
+
+export function displayNameOf(name: string | null | undefined, visitorKey: string): string {
+  const n = (name ?? '').trim()
+  return n || `Besucher ${visitorKey}`
+}
+
+export function initialsOf(displayName: string): string {
+  const parts = displayName.trim().split(/\s+/).filter(Boolean)
+  if (parts.length === 0) return '??'
+  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase()
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
+}
+
+export function whatsappUrlOf(phone: string | null | undefined): string | null {
+  if (!phone) return null
+  const digits = normalizeWhatsAppNumber(phone).replace(/\D/g, '')
+  return digits.length >= 6 ? `https://wa.me/${digits}` : null
+}
+
+/** Nur Pfad + Suche einer Seiten-URL (kein Host, kein Fragment), max. 300 Zeichen. */
+export function pathOf(pageUrl: unknown): string | null {
+  if (typeof pageUrl !== 'string' || !pageUrl.trim()) return null
+  try {
+    const u = new URL(pageUrl, 'https://placeholder.invalid')
+    const p = `${u.pathname}${u.search}`
+    return p.slice(0, 300) || '/'
+  } catch {
+    return null
+  }
+}
+
+const iso = (d: Date | null | undefined): string | null => (d ? d.toISOString() : null)
+
+// ─── Seite + Besitzer ─────────────────────────────────────────────────────────
+
+export type ChatSiteContext = {
+  siteId: string
+  siteStatus: string
+  siteTitle: string
+  templateDomain: string
+  customDomain: string | null
+  customDomainStatus: string | null
+  publishedData: Record<string, string> | null
+  userId: string
+  username: string | null
+  ownerEmail: string
+  ownerFirstName: string | null
+  ownerProfileImageUrl: string | null
+  ownerBrandColor: string | null
+}
+
+export async function loadSiteContext(siteId: string): Promise<ChatSiteContext | null> {
+  const [row] = await db.select({
+    siteId: userSites.id,
+    siteStatus: userSites.status,
+    siteTitle: templates.title,
+    templateDomain: templates.domain,
+    customDomain: userSites.customDomain,
+    customDomainStatus: userSites.customDomainStatus,
+    publishedData: userSites.publishedData,
+    userId: users.id,
+    username: users.username,
+    ownerEmail: users.email,
+    ownerFirstName: users.firstName,
+    ownerProfileImageUrl: users.profileImageUrl,
+    ownerBrandColor: users.brandColor,
+  })
+    .from(userSites)
+    .innerJoin(users, eq(userSites.userId, users.id))
+    .innerJoin(templates, eq(userSites.templateId, templates.id))
+    .where(eq(userSites.id, siteId))
+    .limit(1)
+  if (!row) return null
+  return { ...row, publishedData: (row.publishedData ?? null) as Record<string, string> | null }
+}
+
+export function siteHostOf(s: { customDomain: string | null; customDomainStatus: string | null; username: string | null; templateDomain: string }): string {
+  if (s.customDomain && s.customDomainStatus === 'active') return s.customDomain
+  return `${s.username ?? 'www'}.${s.templateDomain}`
+}
+
+/** Anzeigename des Betreibers für Widget und Mails: published_data.vorname, sonst Vorname, sonst „Inhaber“. */
+export function ownerNameOf(s: { publishedData: Record<string, string> | null; ownerFirstName: string | null }): string {
+  const fromSite = (s.publishedData?.vorname ?? '').trim()
+  if (fromSite) return fromSite.slice(0, 60)
+  const first = (s.ownerFirstName ?? '').trim()
+  return first ? first.slice(0, 60) : 'Inhaber'
+}
+
+/** Erster nicht-leerer published_data-Schlüssel, der /whatsapp/i enthält → https://wa.me/<ziffern>. */
+export function ownerWhatsappUrlOf(publishedData: Record<string, string> | null): string | null {
+  if (!publishedData) return null
+  for (const [key, value] of Object.entries(publishedData)) {
+    if (!/whatsapp/i.test(key) || typeof value !== 'string' || !value.trim()) continue
+    const v = value.trim()
+    if (/^https?:\/\//i.test(v)) {
+      try { if (/(^|\.)wa\.me$|whatsapp\.com$/i.test(new URL(v).hostname)) return v } catch { /* weiter */ }
+      continue
+    }
+    const digits = normalizeWhatsAppNumber(v).replace(/\D/g, '')
+    if (digits.length >= 6) return `https://wa.me/${digits}`
+  }
+  return null
+}
+
+// ─── Gespräche lesen ──────────────────────────────────────────────────────────
+
+const conversationSelect = {
+  conv: chatConversations,
+  siteTitle: templates.title,
+  templateDomain: templates.domain,
+  customDomain: userSites.customDomain,
+  customDomainStatus: userSites.customDomainStatus,
+  username: users.username,
+}
+export type ConversationWithSite = {
+  conv: ChatConversationRow
+  siteTitle: string
+  templateDomain: string
+  customDomain: string | null
+  customDomainStatus: string | null
+  username: string | null
+}
+
+function conversationQuery() {
+  return db.select(conversationSelect)
+    .from(chatConversations)
+    .innerJoin(userSites, eq(chatConversations.siteId, userSites.id))
+    .innerJoin(templates, eq(userSites.templateId, templates.id))
+    .innerJoin(users, eq(chatConversations.userId, users.id))
+}
+
+export async function findConversationByToken(siteId: string, tokenHash: string): Promise<ChatConversationRow | null> {
+  const row = await db.query.chatConversations.findFirst({
+    where: and(eq(chatConversations.siteId, siteId), eq(chatConversations.visitorTokenHash, tokenHash)),
+  })
+  return row ?? null
+}
+
+export async function getConversationById(id: string): Promise<ChatConversationRow | null> {
+  const row = await db.query.chatConversations.findFirst({ where: eq(chatConversations.id, id) })
+  return row ?? null
+}
+
+/** Gespräch samt Seite – nur wenn es dem Betreiber gehört. */
+export async function getConversationForOwner(id: string, userId: string): Promise<ConversationWithSite | null> {
+  const [row] = await conversationQuery()
+    .where(and(eq(chatConversations.id, id), eq(chatConversations.userId, userId)))
+    .limit(1)
+  return row ?? null
+}
+
+export async function listConversationsForOwner(userId: string, opts: {
+  status: 'open' | 'archived' | 'blocked'
+  q?: string
+  cursor?: string
+  limit: number
+}): Promise<{ rows: ConversationWithSite[]; nextCursor: string | null }> {
+  const conds = [eq(chatConversations.userId, userId), eq(chatConversations.status, opts.status)]
+  if (opts.cursor) conds.push(lt(chatConversations.updatedAt, new Date(opts.cursor)))
+  const q = (opts.q ?? '').trim()
+  if (q) {
+    const like = `%${q.replace(/[%_\\]/g, m => `\\${m}`)}%`
+    conds.push(or(
+      ilike(chatConversations.visitorName, like),
+      ilike(chatConversations.visitorEmail, like),
+      ilike(chatConversations.visitorPhone, like),
+      ilike(chatConversations.lastMessagePreview, like),
+      ilike(chatConversations.visitorKey, like),
+    )!)
+  }
+  const rows = await conversationQuery()
+    .where(and(...conds))
+    .orderBy(desc(chatConversations.updatedAt), desc(chatConversations.id))
+    .limit(opts.limit + 1)
+  const page = rows.slice(0, opts.limit)
+  return { rows: page, nextCursor: rows.length > opts.limit ? iso(page[page.length - 1].conv.updatedAt) : null }
+}
+
+/** Ungelesene Besucher-Nachrichten über alle offenen Gespräche. */
+export async function ownerUnread(userId: string): Promise<{ count: number; conversations: number }> {
+  const [row] = await db.select({
+    count: sql<number>`coalesce(sum(${chatConversations.ownerUnread}), 0)::int`.mapWith(Number),
+    conversations: sql<number>`count(*) filter (where ${chatConversations.ownerUnread} > 0)::int`.mapWith(Number),
+  }).from(chatConversations)
+    .where(and(eq(chatConversations.userId, userId), eq(chatConversations.status, 'open')))
+  return { count: row?.count ?? 0, conversations: row?.conversations ?? 0 }
+}
+
+// ─── Abbildung auf die Verträge ───────────────────────────────────────────────
+
+/** Antwort von POST /api/worker/chat/session (Besucher-Sicht, docs/chat/konzept.md). */
+export type ConversationState = {
+  enabled: true
+  conversationId: string | null
+  visitorToken: string | null
+  status: string | null
+  visitor: { name: string | null; email: string | null; phone: string | null; notifyByEmail: boolean } | null
+  messages: ChatMessage[]
+  ownerLastSeenAt: string | null
+  /** Bis wann der Betreiber die Besucher-Nachrichten gelesen hat (✓✓ im Widget), null = noch nicht. */
+  ownerReadAt: string | null
+}
+
+export function toContractConversation(r: ConversationWithSite, now = Date.now()): ChatConversation {
+  const c = r.conv
+  const displayName = displayNameOf(c.visitorName, c.visitorKey)
+  const lastSeen = c.visitorLastSeenAt
+  return {
+    id: c.id,
+    siteId: c.siteId,
+    siteTitle: r.siteTitle,
+    siteHost: siteHostOf(r),
+    startedOnPath: c.startedOnPath,
+    visitor: {
+      name: c.visitorName,
+      email: c.visitorEmail,
+      phone: c.visitorPhone,
+      displayName,
+      initials: initialsOf(displayName),
+      whatsappUrl: whatsappUrlOf(c.visitorPhone),
+      online: !!lastSeen && now - lastSeen.getTime() < ONLINE_WINDOW_MS,
+      lastSeenAt: iso(lastSeen),
+    },
+    status: c.status as ChatConversation['status'],
+    unread: c.ownerUnread,
+    lastMessage: c.lastMessageAt && c.lastMessageSender
+      ? { preview: c.lastMessagePreview ?? '', sender: c.lastMessageSender as ChatSender, at: c.lastMessageAt.toISOString() }
+      : null,
+    reportedAt: iso(c.reportedAt),
+    createdAt: c.createdAt.toISOString(),
+    updatedAt: c.updatedAt.toISOString(),
+  }
+}
+
+/** clientId nur bei eigenen Nachrichten des Betrachters (Vertrag). */
+export function toContractMessage(m: ChatMessageRow, viewer: 'owner' | 'visitor'): ChatMessage {
+  return {
+    id: m.id,
+    conversationId: m.conversationId,
+    sender: m.sender as ChatSender,
+    body: m.body,
+    createdAt: m.createdAt.toISOString(),
+    readAt: iso(m.readAt),
+    clientId: m.sender === viewer ? (m.clientId ?? null) : null,
+  }
+}
+
+// ─── Nachrichten ──────────────────────────────────────────────────────────────
+
+export async function listMessages(conversationId: string, opts: { after?: string; before?: string; limit: number }): Promise<{ messages: ChatMessageRow[]; hasMore: boolean }> {
+  const anchorId = opts.after ?? opts.before
+  let anchor: { createdAt: Date; id: string } | null = null
+  if (anchorId) {
+    const a = await db.query.chatMessages.findFirst({
+      where: and(eq(chatMessages.id, anchorId), eq(chatMessages.conversationId, conversationId)),
+      columns: { createdAt: true, id: true },
+    })
+    anchor = a ?? null
+  }
+
+  if (opts.after) {
+    // Polling: alles nach dem Anker (älteste zuerst). Unbekannter Anker = alles liefern.
+    const where = anchor
+      ? and(eq(chatMessages.conversationId, conversationId),
+        sql`(${chatMessages.createdAt}, ${chatMessages.id}) > (select m.created_at, m.id from chat_messages m where m.id = ${anchor.id}::uuid)`)
+      : eq(chatMessages.conversationId, conversationId)
+    const rows = await db.select().from(chatMessages).where(where)
+      .orderBy(asc(chatMessages.createdAt), asc(chatMessages.id)).limit(opts.limit + 1)
+    return { messages: rows.slice(0, opts.limit), hasMore: rows.length > opts.limit }
+  }
+
+  // Verlauf: die letzten N (vor dem Anker), geliefert älteste zuerst
+  const where = anchor
+    ? and(eq(chatMessages.conversationId, conversationId),
+      sql`(${chatMessages.createdAt}, ${chatMessages.id}) < (select m.created_at, m.id from chat_messages m where m.id = ${anchor.id}::uuid)`)
+    : eq(chatMessages.conversationId, conversationId)
+  const rows = await db.select().from(chatMessages).where(where)
+    .orderBy(desc(chatMessages.createdAt), desc(chatMessages.id)).limit(opts.limit + 1)
+  return { messages: rows.slice(0, opts.limit).reverse(), hasMore: rows.length > opts.limit }
+}
+
+/** Letzte Nachrichten eines Absenders (neueste zuerst) – für den Wiederholungsfilter. */
+export async function recentBodies(conversationId: string, sender: 'visitor' | 'owner', n = 2): Promise<string[]> {
+  const rows = await db.select({ body: chatMessages.body }).from(chatMessages)
+    .where(and(eq(chatMessages.conversationId, conversationId), eq(chatMessages.sender, sender)))
+    .orderBy(desc(chatMessages.createdAt)).limit(n)
+  return rows.map(r => r.body)
+}
+
+function isUniqueViolation(err: unknown): boolean {
+  return !!err && typeof err === 'object' && (err as { code?: string }).code === '23505'
+}
+
+/**
+ * Nachricht speichern + Gesprächszeile fortschreiben. Dieselbe clientId desselben Absenders liefert
+ * die vorhandene Nachricht zurück (created=false), ohne Zähler erneut zu erhöhen.
+ */
+export async function findMessageByClientId(conversationId: string, sender: 'visitor' | 'owner', clientId: string | null): Promise<ChatMessageRow | null> {
+  if (!clientId) return null
+  const row = await db.query.chatMessages.findFirst({
+    where: and(eq(chatMessages.conversationId, conversationId), eq(chatMessages.sender, sender), eq(chatMessages.clientId, clientId)),
+  })
+  return row ?? null
+}
+
+export async function recordMessage(conv: ChatConversationRow, sender: 'visitor' | 'owner', body: string, clientId: string | null): Promise<{ message: ChatMessageRow; created: boolean }> {
+  const existing = () => findMessageByClientId(conv.id, sender, clientId)
+
+  const dup = await existing()
+  if (dup) return { message: dup, created: false }
+
+  let message: ChatMessageRow
+  try {
+    const [row] = await db.insert(chatMessages).values({ conversationId: conv.id, sender, body, clientId }).returning()
+    message = row
+  } catch (err) {
+    if (!isUniqueViolation(err)) throw err
+    const again = await existing()
+    if (!again) throw err
+    return { message: again, created: false }
+  }
+
+  const now = new Date()
+  await db.update(chatConversations).set({
+    lastMessageAt: now,
+    lastMessagePreview: previewOf(body),
+    lastMessageSender: sender,
+    updatedAt: now,
+    ...(sender === 'visitor'
+      ? {
+        ownerUnread: sql`${chatConversations.ownerUnread} + 1`,
+        visitorLastSeenAt: now,
+        // Ein archiviertes Gespräch wird durch eine neue Besucher-Nachricht wieder offen
+        ...(conv.status === 'archived' ? { status: 'open' } : {}),
+      }
+      : { visitorUnread: sql`${chatConversations.visitorUnread} + 1`, ownerLastSeenAt: now }),
+  }).where(eq(chatConversations.id, conv.id))
+
+  return { message, created: true }
+}
+
+export async function markReadByOwner(conversationId: string): Promise<void> {
+  const now = new Date()
+  await Promise.all([
+    db.update(chatMessages).set({ readAt: now })
+      .where(and(eq(chatMessages.conversationId, conversationId), eq(chatMessages.sender, 'visitor'), isNull(chatMessages.readAt))),
+    db.update(chatConversations).set({ ownerUnread: 0, ownerLastSeenAt: now })
+      .where(eq(chatConversations.id, conversationId)),
+  ])
+}
+
+export async function markReadByVisitor(conversationId: string): Promise<void> {
+  const now = new Date()
+  await Promise.all([
+    db.update(chatMessages).set({ readAt: now })
+      .where(and(eq(chatMessages.conversationId, conversationId), eq(chatMessages.sender, 'owner'), isNull(chatMessages.readAt))),
+    db.update(chatConversations).set({ visitorUnread: 0, visitorLastSeenAt: now })
+      .where(eq(chatConversations.id, conversationId)),
+  ])
+}
+
+/**
+ * Bis wann hat der Betreiber die Besucher-Nachrichten gelesen? = max(read_at) der Besucher-Nachrichten.
+ * Steigt zuverlässig bei jedem „read“ des Betreibers (auch ohne Antwort) – fürs ✓✓ im Widget.
+ */
+export async function ownerReadAtOf(conversationId: string): Promise<string | null> {
+  const [row] = await db.select({ at: sql<Date | null>`max(${chatMessages.readAt})` }).from(chatMessages)
+    .where(and(eq(chatMessages.conversationId, conversationId), eq(chatMessages.sender, 'visitor')))
+  const at = row?.at
+  if (!at) return null
+  return (at instanceof Date ? at : new Date(at)).toISOString()
+}
+
+export async function touchVisitorSeen(conversationId: string): Promise<void> {
+  await db.update(chatConversations).set({ visitorLastSeenAt: new Date() }).where(eq(chatConversations.id, conversationId))
+}
+
+export async function touchOwnerSeen(conversationId: string): Promise<void> {
+  await db.update(chatConversations).set({ ownerLastSeenAt: new Date() }).where(eq(chatConversations.id, conversationId))
+}
+
+// ─── Gespräche anlegen / Besucherprofil ───────────────────────────────────────
+
+export async function createConversation(input: {
+  siteId: string
+  userId: string
+  tokenHash: string
+  ipHash: string | null
+  userAgent: string | null
+  startedOnPath: string | null
+}): Promise<ChatConversationRow> {
+  try {
+    const [row] = await db.insert(chatConversations).values({
+      siteId: input.siteId,
+      userId: input.userId,
+      visitorTokenHash: input.tokenHash,
+      visitorKey: visitorKeyFromHash(input.tokenHash),
+      ipHash: input.ipHash,
+      userAgent: input.userAgent,
+      startedOnPath: input.startedOnPath,
+    }).returning()
+    return row
+  } catch (err) {
+    if (!isUniqueViolation(err)) throw err
+    const existing = await findConversationByToken(input.siteId, input.tokenHash)
+    if (!existing) throw err
+    return existing
+  }
+}
+
+export async function updateVisitorProfile(conversationId: string, patch: {
+  name?: string | null
+  email?: string | null
+  phone?: string | null
+  notifyByEmail?: boolean
+}): Promise<ChatConversationRow | null> {
+  const set: Partial<typeof chatConversations.$inferInsert> = { updatedAt: new Date() }
+  if (patch.name !== undefined) set.visitorName = patch.name
+  if (patch.email !== undefined) set.visitorEmail = patch.email
+  if (patch.phone !== undefined) set.visitorPhone = patch.phone
+  if (patch.notifyByEmail !== undefined) set.notifyByEmail = patch.notifyByEmail
+  const [row] = await db.update(chatConversations).set(set).where(eq(chatConversations.id, conversationId)).returning()
+  return row ?? null
+}
+
+export async function setConversationStatus(conversationId: string, status: 'open' | 'archived' | 'blocked'): Promise<void> {
+  await db.update(chatConversations).set({ status, updatedAt: new Date() }).where(eq(chatConversations.id, conversationId))
+}
+
+export async function deleteConversation(conversationId: string): Promise<void> {
+  await db.delete(chatConversations).where(eq(chatConversations.id, conversationId))
+}
+
+export async function markReported(conversationId: string, reason: string): Promise<void> {
+  await db.update(chatConversations).set({ reportedAt: new Date(), reportReason: reason.slice(0, 600), updatedAt: new Date() })
+    .where(eq(chatConversations.id, conversationId))
+}
+
+// ─── Sperren ──────────────────────────────────────────────────────────────────
+
+export async function isBlocked(userId: string, tokenHash: string | null, ipHash: string | null): Promise<boolean> {
+  const conds = []
+  if (tokenHash) conds.push(eq(chatBlocks.visitorTokenHash, tokenHash))
+  if (ipHash) conds.push(eq(chatBlocks.ipHash, ipHash))
+  if (conds.length === 0) return false
+  const [row] = await db.select({ id: chatBlocks.id }).from(chatBlocks)
+    .where(and(eq(chatBlocks.userId, userId), or(...conds))).limit(1)
+  return !!row
+}
+
+/** Sperrt den Besucher (Token-Hash + IP-Hash) für alle Seiten dieses Kontos; Gespräch → blocked. */
+export async function blockConversation(conv: ChatConversationRow, reason: string | null): Promise<void> {
+  await db.insert(chatBlocks).values({
+    userId: conv.userId,
+    visitorTokenHash: conv.visitorTokenHash,
+    ipHash: conv.ipHash,
+    reason: reason?.slice(0, 200) ?? null,
+  })
+  await setConversationStatus(conv.id, 'blocked')
+}
+
+export async function unblockConversation(conv: ChatConversationRow): Promise<void> {
+  const conds = [eq(chatBlocks.visitorTokenHash, conv.visitorTokenHash)]
+  if (conv.ipHash) conds.push(eq(chatBlocks.ipHash, conv.ipHash))
+  await db.delete(chatBlocks).where(and(eq(chatBlocks.userId, conv.userId), or(...conds)))
+  await setConversationStatus(conv.id, 'open')
+}
+
+// ─── Resume-Tokens (Link aus der Antwort-Mail) ────────────────────────────────
+
+export async function createResumeToken(conversationId: string): Promise<string> {
+  const raw = randomBytes(32).toString('base64url')
+  await db.insert(chatResumeTokens).values({
+    tokenHash: sha256(raw),
+    conversationId,
+    expiresAt: new Date(Date.now() + RESUME_TOKEN_DAYS * 86_400_000),
+  })
+  return raw
+}
+
+/**
+ * Löst einen Resume-Token ein: das Gespräch gehört danach dem neuen Besucher-Token (alter Hash wird
+ * ersetzt), der Token ist verbraucht. Gibt null zurück bei unbekanntem/abgelaufenem/benutztem Token
+ * oder wenn das Gespräch nicht zu dieser Seite gehört.
+ */
+export async function consumeResumeToken(rawToken: string, siteId: string, newTokenHash: string): Promise<ChatConversationRow | null> {
+  const tokenHash = sha256(rawToken)
+  return await db.transaction(async (tx) => {
+    const [t] = await tx.select().from(chatResumeTokens)
+      .where(and(eq(chatResumeTokens.tokenHash, tokenHash), isNull(chatResumeTokens.usedAt), gt(chatResumeTokens.expiresAt, new Date())))
+      .for('update').limit(1)
+    if (!t) return null
+    const [conv] = await tx.select().from(chatConversations).where(eq(chatConversations.id, t.conversationId)).for('update').limit(1)
+    if (!conv || conv.siteId !== siteId) return null
+
+    if (conv.visitorTokenHash !== newTokenHash) {
+      // Ein anderes (frisches) Gespräch dieses Browsers auf derselben Seite darf den Platz nicht blockieren
+      const [clash] = await tx.select({ id: chatConversations.id }).from(chatConversations)
+        .where(and(eq(chatConversations.siteId, siteId), eq(chatConversations.visitorTokenHash, newTokenHash))).limit(1)
+      if (clash && clash.id !== conv.id) {
+        await tx.update(chatConversations)
+          .set({ visitorTokenHash: sha256(`orphan:${randomBytes(16).toString('hex')}`), updatedAt: new Date() })
+          .where(eq(chatConversations.id, clash.id))
+      }
+      await tx.update(chatConversations)
+        .set({ visitorTokenHash: newTokenHash, updatedAt: new Date() })
+        .where(eq(chatConversations.id, conv.id))
+    }
+    await tx.update(chatResumeTokens).set({ usedAt: new Date() }).where(eq(chatResumeTokens.tokenHash, tokenHash))
+    const [fresh] = await tx.select().from(chatConversations).where(eq(chatConversations.id, conv.id)).limit(1)
+    return fresh ?? null
+  })
+}
+
+// ─── Aufbewahrung (Cron) ──────────────────────────────────────────────────────
+
+export async function cleanupChat(): Promise<{ conversations: number; tokens: number; blocks: number }> {
+  const now = Date.now()
+  const convCutoff = new Date(now - RETENTION_DAYS * 86_400_000)
+  const blockCutoff = new Date(now - BLOCK_RETENTION_DAYS * 86_400_000)
+  const [convs, tokens, blocks] = await Promise.all([
+    db.delete(chatConversations)
+      .where(sql`coalesce(${chatConversations.lastMessageAt}, ${chatConversations.createdAt}) < ${convCutoff.toISOString()}::timestamptz`)
+      .returning({ id: chatConversations.id }),
+    db.delete(chatResumeTokens)
+      .where(or(lt(chatResumeTokens.expiresAt, new Date(now)), lt(chatResumeTokens.usedAt, new Date(now - 86_400_000)))!)
+      .returning({ h: chatResumeTokens.tokenHash }),
+    db.delete(chatBlocks).where(lt(chatBlocks.createdAt, blockCutoff)).returning({ id: chatBlocks.id }),
+  ])
+  return { conversations: convs.length, tokens: tokens.length, blocks: blocks.length }
+}
+
+// ─── Admin ────────────────────────────────────────────────────────────────────
+
+export async function listReportedConversations(limit = 100): Promise<Array<ConversationWithSite & { ownerEmail: string; messages: ChatMessageRow[] }>> {
+  const rows = await db.select({ ...conversationSelect, ownerEmail: users.email })
+    .from(chatConversations)
+    .innerJoin(userSites, eq(chatConversations.siteId, userSites.id))
+    .innerJoin(templates, eq(userSites.templateId, templates.id))
+    .innerJoin(users, eq(chatConversations.userId, users.id))
+    .where(sql`${chatConversations.reportedAt} is not null`)
+    .orderBy(desc(chatConversations.reportedAt))
+    .limit(limit)
+  if (rows.length === 0) return []
+  const ids = rows.map(r => r.conv.id)
+  const msgs = await db.select().from(chatMessages)
+    .where(inArray(chatMessages.conversationId, ids))
+    .orderBy(desc(chatMessages.createdAt))
+  const byConv = new Map<string, ChatMessageRow[]>()
+  for (const m of msgs) {
+    const list = byConv.get(m.conversationId) ?? []
+    if (list.length < 20) list.push(m)
+    byConv.set(m.conversationId, list)
+  }
+  return rows.map(r => ({ ...r, messages: (byConv.get(r.conv.id) ?? []).reverse() }))
+}

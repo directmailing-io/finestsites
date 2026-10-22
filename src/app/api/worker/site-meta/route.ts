@@ -26,6 +26,7 @@ import { db } from '@/lib/db'
 import { users, userSites, templates } from '@/lib/db/schema'
 import { eq, and, inArray } from 'drizzle-orm'
 import { trackingForSite, toPublicConfig, type PublicTrackingConfig } from '@/lib/tracking/config'
+import { isVisitorChatEnabledForUsername } from '@/lib/chat/flags'
 
 const WORKER_SECRET = process.env.WORKER_SECRET
 
@@ -58,6 +59,7 @@ export async function GET(req: NextRequest) {
         siteId: userSites.id,
         templateId: templates.id,
         r2BundlePath: templates.r2BundlePath,
+        username: users.username,
       })
       .from(userSites)
       .innerJoin(users, eq(userSites.userId, users.id))
@@ -95,12 +97,16 @@ export async function GET(req: NextRequest) {
     // Werbung & Tracking: nur IDs (keine Tokens) — der Worker fügt damit Pixel + Einwilligung ein
     let tracking: PublicTrackingConfig | null = null
     try { tracking = toPublicConfig(await trackingForSite(row.siteId), row.siteId) } catch (err) { console.error('[site-meta] tracking', err) }
+    // Besucher-Chat: nur wenn der Besitzer freigeschaltet ist, hängt der Worker das Widget an (docs/chat/konzept.md)
+    let chat = false
+    try { chat = await isVisitorChatEnabledForUsername(row.username) } catch (err) { console.error('[site-meta] chat', err) }
 
     return NextResponse.json({
       siteId: row.siteId,
       templateId: row.templateId,
       r2BasePath: row.r2BundlePath.replace('/index.html', ''),
       ...(tracking ? { tracking } : {}),
+      ...(chat ? { chat: { enabled: true } } : {}),
     })
   } catch {
     return NextResponse.json({ error: 'internal error' }, { status: 500 })

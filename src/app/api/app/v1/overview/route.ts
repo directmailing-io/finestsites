@@ -13,6 +13,8 @@ import { getAppRuntimeSettings } from '@/lib/app-api/settings'
 import { unpublishedChangesFor } from '@/lib/sites/published-data'
 import { isTaxProfileComplete } from '@/lib/affiliate/tax'
 import { OverviewResponse, type PeriodStats, type Todo, type AccountStatusCode } from '@/lib/contracts/app-v1/overview'
+import { isVisitorChatEnabledForUser } from '@/lib/chat/flags'
+import { ownerUnread } from '@/lib/chat/service'
 
 export const dynamic = 'force-dynamic'
 
@@ -80,7 +82,7 @@ export async function GET(req: Request) {
   if (!profile) return appError('UNAUTHORIZED')
   const siteIds = sites.map(s => s.id)
 
-  const [unreadBySite, supportRow, notifRow, last7, prev7, last30, visitors, changes] = await Promise.all([
+  const [unreadBySite, supportRow, notifRow, last7, prev7, last30, visitors, changes, chatUnread] = await Promise.all([
     siteIds.length === 0 ? Promise.resolve([] as { siteId: string; n: number }[]) :
       db.select({ siteId: formSubmissions.userSiteId, n: sql<number>`count(*)::int`.mapWith(Number) })
         .from(formSubmissions)
@@ -102,6 +104,8 @@ export async function GET(req: Request) {
     periodStats(siteIds, 30),
     visitorsBySite(siteIds),
     unpublishedChangesFor(sites.map(s => ({ id: s.id, status: s.status, publishedData: (s.publishedData ?? null) as Record<string, string> | null }))),
+    // Besucher-Chat: 0, wenn das Konto nicht freigeschaltet ist (dann gibt es auch kein Todo)
+    isVisitorChatEnabledForUser(userId).then(on => on ? ownerUnread(userId) : { count: 0, conversations: 0 }),
   ])
 
   const unreadMap = new Map(unreadBySite.map(r => [r.siteId, r.n]))
@@ -138,6 +142,7 @@ export async function GET(req: Request) {
   const todos: Todo[] = []
   if (cards.length === 0) todos.push({ id: 'first_site', code: 'first_site' })
   if (unreadSubmissions > 0) todos.push({ id: 'unread_submissions', code: 'unread_submissions', count: unreadSubmissions })
+  if (chatUnread.count > 0) todos.push({ id: 'unread_chats', code: 'unread_chats', count: chatUnread.count })
   if (unreadSupport > 0) todos.push({ id: 'support_reply', code: 'support_reply', count: unreadSupport })
   for (const c of cards) {
     if (c.status === 'online' && c.hasUnpublishedChanges) {
@@ -159,6 +164,7 @@ export async function GET(req: Request) {
       submissions: unreadSubmissions,
       support: unreadSupport,
       notifications: notifRow[0]?.n ?? 0,
+      chat: chatUnread.count,
     },
     stats: { last7, prev7, last30 },
     accountStatus: { code, online, offline },

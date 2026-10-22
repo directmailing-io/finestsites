@@ -10,6 +10,7 @@ export const DEFAULT_PREFERENCES: NotificationPreferences = {
   support: true,
   account: true,
   partner: true,
+  chat: true,
   quietHours: { enabled: DEFAULT_QUIET_HOURS.enabled, start: DEFAULT_QUIET_HOURS.start, end: DEFAULT_QUIET_HOURS.end },
   timezone: DEFAULT_QUIET_HOURS.timezone,
 }
@@ -21,6 +22,7 @@ export function rowToPreferences(row: NotificationPreference | null | undefined)
     support: row.support,
     account: row.account,
     partner: row.partner,
+    chat: row.chat,
     quietHours: { enabled: row.quietHoursEnabled, start: row.quietStartHour, end: row.quietEndHour },
     timezone: row.timezone,
   }
