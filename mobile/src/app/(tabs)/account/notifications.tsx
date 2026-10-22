@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { AppState, Linking, Pressable, StyleSheet, View } from 'react-native';
 
 import { saveNotificationPreferences } from '@/api/endpoints';
-import { qk, useNotificationPrefs } from '@/api/queries';
+import { qk, useMe, useNotificationPrefs } from '@/api/queries';
 import type { NotificationPreferences } from '@/api/types';
 import { Button, ListRow, ListSection, LoadError, Notice, Screen, Sheet, Skeleton, SwitchRow, Text, useToast } from '@/components/ui';
 import { getPushPermission, registerPushDevice, requestPushPermission, type PushPermission } from '@/lib/push';
@@ -26,6 +26,7 @@ export default function NotificationSettingsScreen() {
   const qc = useQueryClient();
   const toast = useToast();
   const q = useNotificationPrefs();
+  const chatVisible = useMe().data?.features.visitorChat === true;
   const [prefs, setPrefs] = useState<NotificationPreferences | null>(null);
   const [perm, setPerm] = useState<PushPermission>('undetermined');
   const [picker, setPicker] = useState<'start' | 'end' | null>(null);
@@ -60,6 +61,7 @@ export default function NotificationSettingsScreen() {
         support: next.support,
         account: next.account,
         partner: next.partner,
+        chat: next.chat,
         quietHours: next.quietHours,
       });
       setPrefs(saved);
@@ -113,6 +115,14 @@ export default function NotificationSettingsScreen() {
               value={prefs.leads}
               onValueChange={v => update({ ...prefs, leads: v })}
             />
+            {chatVisible ? (
+              <SwitchRow
+                title="Chat"
+                subtitle="Neue Nachrichten von Besuchern deiner Webseite."
+                value={prefs.chat}
+                onValueChange={v => update({ ...prefs, chat: v })}
+              />
+            ) : null}
             <SwitchRow
               title="Antworten vom Support"
               value={prefs.support}

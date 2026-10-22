@@ -8,7 +8,7 @@
  *   unbestaetigt@… → E-Mail noch nicht bestätigt
  *   Passwort „falsch“ → falsches Passwort
  */
-import type { Overview, Site, Todo } from '../types';
+import type { ChatConversation, ChatMessage, Overview, Site, Todo } from '../types';
 
 import { waiverText } from '../contracts/account-deletion';
 import { createMockDb, type MockDb } from './data';
@@ -61,9 +61,11 @@ function overview(): Overview {
   const offline = cards.filter(c => c.status === 'offline').length;
   const unreadSubs = cards.reduce((n, c) => n + c.unreadSubmissions, 0);
   const unreadSupport = db.conversations.reduce((n, c) => n + c.unreadByUser, 0);
+  const unreadChat = db.me.features.visitorChat ? db.chatConversations.filter(c => c.status === 'open').reduce((n, c) => n + c.unread, 0) : 0;
   const todos: Todo[] = [];
   if (cards.length === 0) todos.push({ id: 'first_site', code: 'first_site' });
   if (unreadSubs > 0) todos.push({ id: 'unread_submissions', code: 'unread_submissions', count: unreadSubs });
+  if (unreadChat > 0) todos.push({ id: 'unread_chats', code: 'unread_chats', count: unreadChat });
   if (unreadSupport > 0) todos.push({ id: 'support_reply', code: 'support_reply', count: unreadSupport });
   for (const c of cards) {
     if (c.status === 'online' && c.hasUnpublishedChanges) todos.push({ id: `unpublished_changes:${c.id}`, code: 'unpublished_changes', siteId: c.id, siteTitle: c.title });
@@ -75,7 +77,7 @@ function overview(): Overview {
   const w = db.week;
   return {
     sites: cards,
-    unread: { submissions: unreadSubs, support: unreadSupport, notifications: db.notifications.filter(n => !n.readAt).length },
+    unread: { submissions: unreadSubs, support: unreadSupport, chat: unreadChat, notifications: db.notifications.filter(n => !n.readAt).length },
     stats: {
       last7: { visitors: w.visitors, submissions: w.submissions, ...ZERO },
       prev7: { visitors: w.visitorsPrev, submissions: w.submissionsPrev, ...ZERO },
@@ -84,6 +86,50 @@ function overview(): Overview {
     accountStatus: { code, online, offline },
     todos,
   };
+}
+
+// ── Besucher-Chat: Antworten simulieren ──
+const VISITOR_REPLIES = [
+  'Danke dir, das hilft mir weiter!',
+  'Okay, ich schaue mir das an und melde mich dann.',
+  'Klingt gut. Wann hättest du Zeit für ein kurzes Telefonat?',
+  'Perfekt, vielen Dank!',
+];
+let replyIndex = 0;
+
+function chatConv(id: string) {
+  return db.chatConversations.find(c => c.id === id) ?? null;
+}
+
+function touchChat(c: ChatConversation, m: ChatMessage) {
+  c.lastMessage = { preview: m.body.replace(/\s*\n\s*/g, ' ').slice(0, 140), sender: m.sender, at: m.createdAt };
+  c.updatedAt = m.createdAt;
+}
+
+/** Nach einer Antwort des Betreibers: Besucher liest (✓✓) und antwortet kurz darauf, solange das Gespräch offen ist. */
+function scheduleVisitorReply(conversationId: string, ownerMessageId: string) {
+  const snapshot = db;
+  setTimeout(() => {
+    if (db !== snapshot) return; // neu angemeldet, alte Daten verworfen
+    const c = chatConv(conversationId);
+    const m = db.chatMessages[conversationId]?.find(x => x.id === ownerMessageId);
+    if (!c || !m || c.status !== 'open') return;
+    m.readAt = new Date().toISOString();
+    c.visitor.online = true;
+    c.visitor.lastSeenAt = m.readAt;
+  }, 2500);
+  setTimeout(() => {
+    if (db !== snapshot) return;
+    const c = chatConv(conversationId);
+    if (!c || c.status !== 'open') return;
+    const reply: ChatMessage = {
+      id: `cm_${Date.now()}`, conversationId, sender: 'visitor',
+      body: VISITOR_REPLIES[replyIndex++ % VISITOR_REPLIES.length], createdAt: new Date().toISOString(), readAt: null, clientId: null,
+    };
+    (db.chatMessages[conversationId] ??= []).push(reply);
+    c.unread += 1;
+    touchChat(c, reply);
+  }, 6500);
 }
 
 function syncMeAccount() {
@@ -120,6 +166,7 @@ export async function mockFetch(url: string, init: { method: string; headers: Re
       db.conversations = [];
       db.notifications = [];
     }
+    if (email.startsWith('ohne-chat')) db.me.features.visitorChat = false;
     if (email.startsWith('ohne-tarif')) {
       db.me.account.planLabel = null;
       db.me.account.quota = null;
@@ -182,6 +229,84 @@ export async function mockFetch(url: string, init: { method: string; headers: Re
     }
     return json(db.notificationPrefs);
   }
+  // ── Besucher-Chat ──
+  if (seg[0] === 'api' && seg[1] === 'app' && seg[2] === 'v1' && seg[3] === 'chat') {
+    if (!db.me.features.visitorChat) return json({ code: 'FEATURE_DISABLED', message: 'Dieser Bereich ist für dein Konto nicht freigeschaltet.' }, 403);
+    if (seg[4] === 'unread') {
+      const open = db.chatConversations.filter(c => c.status === 'open' && c.unread > 0);
+      return json({ count: open.reduce((n, c) => n + c.unread, 0), conversations: open.length });
+    }
+    if (seg[4] !== 'conversations') return json({ code: 'NOT_FOUND', message: 'Nicht gefunden.' }, 404);
+    const unreadTotal = db.chatConversations.filter(c => c.status === 'open').reduce((n, c) => n + c.unread, 0);
+    if (!seg[5]) {
+      const status = (u.searchParams.get('status') ?? 'open') as ChatConversation['status'];
+      const q = (u.searchParams.get('q') ?? '').toLowerCase();
+      const list = db.chatConversations
+        .filter(c => c.status === status)
+        .filter(c => !q || [c.visitor.displayName, c.visitor.email, c.visitor.phone, c.siteTitle, c.lastMessage?.preview].some(v => v?.toLowerCase().includes(q)))
+        .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
+      return json({ conversations: list, nextCursor: null, unreadTotal });
+    }
+    const c = chatConv(seg[5]);
+    if (!c) return json({ code: 'NOT_FOUND', message: 'Das Gespräch gibt es nicht mehr.' }, 404);
+    const all = db.chatMessages[c.id] ?? [];
+    const action = seg[6];
+    if (!action && method === 'GET') return json({ conversation: c, messages: all.slice(-100), hasMore: all.length > 100 });
+    if (!action && method === 'DELETE') {
+      db.chatConversations = db.chatConversations.filter(x => x.id !== c.id);
+      delete db.chatMessages[c.id];
+      return json({ ok: true });
+    }
+    if (action === 'messages' && method === 'GET') {
+      const after = u.searchParams.get('after');
+      const before = u.searchParams.get('before');
+      let list = all;
+      if (after) {
+        const i = all.findIndex(m => m.id === after);
+        list = i >= 0 ? all.slice(i + 1) : all;
+      } else if (before) {
+        const i = all.findIndex(m => m.id === before);
+        list = (i >= 0 ? all.slice(0, i) : all).slice(-100);
+      }
+      return json({ messages: list, conversation: c, hasMore: false });
+    }
+    if (action === 'messages' && method === 'POST') {
+      if (c.status === 'blocked') return json({ code: 'CONVERSATION_BLOCKED', message: 'Der Besucher ist gesperrt.' }, 409);
+      const clientId = typeof body.clientId === 'string' ? body.clientId : null;
+      const existing = clientId ? all.find(m => m.clientId === clientId) : null;
+      if (existing) return json({ message: existing });
+      const m: ChatMessage = {
+        id: `cm_${Date.now()}`, conversationId: c.id, sender: 'owner', body: String(body.body ?? '').trim(),
+        createdAt: new Date().toISOString(), readAt: null, clientId,
+      };
+      (db.chatMessages[c.id] ??= []).push(m);
+      touchChat(c, m);
+      if (c.status === 'archived') c.status = 'open';
+      scheduleVisitorReply(c.id, m.id);
+      return json({ message: m }, 201);
+    }
+    if (action === 'read') {
+      const now = new Date().toISOString();
+      for (const m of all) if (m.sender === 'visitor' && !m.readAt) m.readAt = now;
+      c.unread = 0;
+      return json({ ok: true, conversation: c });
+    }
+    if (action === 'archive' || action === 'unarchive' || action === 'block' || action === 'unblock') {
+      c.status = action === 'archive' ? 'archived' : action === 'block' ? 'blocked' : 'open';
+      if (action === 'block') c.unread = 0;
+      return json({ ok: true, conversation: c });
+    }
+    if (action === 'report') {
+      c.reportedAt = new Date().toISOString();
+      if (body.block !== false) {
+        c.status = 'blocked';
+        c.unread = 0;
+      }
+      return json({ ok: true, conversation: c });
+    }
+    return json({ code: 'NOT_FOUND', message: 'Nicht gefunden.' }, 404);
+  }
+
   if (seg[0] === 'api' && seg[1] === 'app' && seg[3] === 'affiliate' && !db.me.features.partnerProgram) {
     return json({ code: 'AFFILIATE_NOT_AVAILABLE', message: 'Dieser Bereich ist für dein Konto nicht verfügbar.' }, 403);
   }

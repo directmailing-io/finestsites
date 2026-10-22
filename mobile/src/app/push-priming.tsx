@@ -32,12 +32,14 @@ export default function PushPrimingScreen() {
         <BellRing size={30} color={colors.accent} strokeWidth={1.75} />
       </View>
       <Text variant="title" align="center">
-        {reason === 'support' ? 'Antwort sofort sehen?' : 'Neue Anfragen sofort sehen?'}
+        {reason === 'support' ? 'Antwort sofort sehen?' : reason === 'chat' ? 'Neue Nachrichten sofort sehen?' : 'Neue Anfragen sofort sehen?'}
       </Text>
       <Text variant="body" align="center" color={colors.secondary} style={{ maxWidth: 380 }}>
         {reason === 'support'
           ? 'Wir sagen dir Bescheid, sobald der Support geantwortet hat.'
-          : 'Wir sagen dir Bescheid, sobald jemand über deine Seite eine Anfrage schickt. Namen und Nachrichten stehen nie auf dem Sperrbildschirm.'}
+          : reason === 'chat'
+            ? 'Wir sagen dir Bescheid, sobald ein Besucher dir im Chat schreibt. Namen und Nachrichten stehen nie auf dem Sperrbildschirm.'
+            : 'Wir sagen dir Bescheid, sobald jemand über deine Seite eine Anfrage schickt. Namen und Nachrichten stehen nie auf dem Sperrbildschirm.'}
       </Text>
       <View style={{ gap: 8, alignSelf: 'stretch', marginTop: 12 }}>
         <Button title="Mitteilungen erlauben" onPress={allow} fullWidth />

@@ -5,6 +5,8 @@
 import type {
   Affiliate,
   AppNotification,
+  ChatConversation,
+  ChatMessage,
   ConversationSummary,
   CreditNote,
   ImpersonationStatus,
@@ -42,7 +44,7 @@ export function createMockDb() {
     emailOptOut: ['offers'],
     onboarding: { usernameSet: true, consentGiven: true, complete: true },
     account: { sitesOnline: 2, sitesTotal: 3, paymentIssue: false, planLabel: 'Pro', quota: { used: 2, limit: 3 } },
-    features: { partnerProgram: true },
+    features: { partnerProgram: true, visitorChat: true },
   };
 
   const sites: Site[] = [
@@ -153,16 +155,65 @@ export function createMockDb() {
 
   const notifications: AppNotification[] = [
     { id: 'n_1', type: 'submission', title: 'Neue Anfrage', message: 'Über deine Webseite ist eine neue Anfrage eingegangen.', data: { url: 'finestsites://submissions/sub_1' }, readAt: null, createdAt: ago(18) },
+    { id: 'n_5', type: 'chat_message', title: 'Neue Chat-Nachricht', message: 'Ein Besucher deiner Webseite hat dir geschrieben.', data: { url: 'finestsites://chats/ch_1', type: 'chat_message', conversationId: 'ch_1' }, readAt: null, createdAt: ago(4) },
     { id: 'n_2', type: 'support_reply', title: 'Neue Nachricht vom Support', message: 'Du hast eine neue Antwort im Hilfe-Chat.', data: { url: 'finestsites://support/c_1' }, readAt: null, createdAt: ago(35) },
     { id: 'n_3', type: 'domain_active', title: 'Deine Domain ist verbunden', message: 'www.sabine-keller.de zeigt jetzt auf deine Webseite.', data: { url: 'finestsites://sites/s_kur' }, readAt: days(2), createdAt: days(2) },
     { id: 'n_4', type: 'partner_commission', title: 'Neue Provision', message: 'Eine neue Provision ist eingegangen. Sie ist in 14 Tagen verfügbar.', data: { url: 'finestsites://affiliate' }, readAt: days(5), createdAt: days(5) },
   ];
+
+  // Besucher-Chat: ein ungelesenes Gespräch, eines mit WhatsApp-Nummer, eines archiviert
+  const chatConversations: ChatConversation[] = [
+    {
+      id: 'ch_1', siteId: 's_business', siteTitle: 'Business-Seite', siteHost: 'sabine-keller.wellpreneur.io', startedOnPath: '/',
+      visitor: { name: 'Lena Hoffmann', email: 'lena.hoffmann@example.de', phone: null, displayName: 'Lena Hoffmann', initials: 'LH', whatsappUrl: null, online: true, lastSeenAt: ago(0.5) },
+      status: 'open', unread: 2,
+      lastMessage: { preview: 'Super, dann melde ich mich morgen nochmal. Hast du auch Infos zum Einstieg als Teampartner?', sender: 'visitor', at: ago(4) },
+      reportedAt: null, createdAt: ago(32), updatedAt: ago(4),
+    },
+    {
+      id: 'ch_2', siteId: 's_kur', siteTitle: 'Stoffwechselkur', siteHost: 'www.sabine-keller.de', startedOnPath: '/#ablauf',
+      visitor: { name: 'Besucher 4F2A', email: null, phone: '+49 160 5557821', displayName: 'Besucher 4F2A', initials: 'B4', whatsappUrl: 'https://wa.me/491605557821', online: false, lastSeenAt: ago(60 * 20) },
+      status: 'open', unread: 0,
+      lastMessage: { preview: 'Gern, schreib mir einfach auf WhatsApp, dann schicke ich dir den Ablauf.', sender: 'owner', at: ago(60 * 19) },
+      reportedAt: null, createdAt: days(1.1), updatedAt: ago(60 * 19),
+    },
+    {
+      id: 'ch_3', siteId: 's_business', siteTitle: 'Business-Seite', siteHost: 'sabine-keller.wellpreneur.io', startedOnPath: '/#kontakt',
+      visitor: { name: 'Tobias Krüger', email: 'tobias.k@example.de', phone: null, displayName: 'Tobias Krüger', initials: 'TK', whatsappUrl: null, online: false, lastSeenAt: days(6) },
+      status: 'archived', unread: 0,
+      lastMessage: { preview: 'Danke dir, das hat mir sehr geholfen!', sender: 'visitor', at: days(6) },
+      reportedAt: null, createdAt: days(7), updatedAt: days(6),
+    },
+  ];
+
+  const chatMessages: Record<string, ChatMessage[]> = {
+    ch_1: [
+      { id: 'cm_1', conversationId: 'ch_1', sender: 'visitor', body: 'Hallo Sabine! Ich bin über deine Seite gestolpert und finde das Thema spannend.', createdAt: ago(32), readAt: ago(30), clientId: null },
+      { id: 'cm_2', conversationId: 'ch_1', sender: 'owner', body: 'Hallo Lena, schön, dass du schreibst! Was interessiert dich am meisten?', createdAt: ago(29), readAt: ago(28), clientId: null },
+      { id: 'cm_3', conversationId: 'ch_1', sender: 'visitor', body: 'Vor allem, wie der Alltag damit aussieht. Ich arbeite Vollzeit und habe zwei Kinder.', createdAt: ago(27), readAt: ago(26), clientId: null },
+      { id: 'cm_4', conversationId: 'ch_1', sender: 'owner', body: 'Das kenne ich gut. Ich habe auch so angefangen – 30 Minuten am Tag reichen am Anfang völlig. Mehr dazu findest du hier: https://finestsites.io', createdAt: ago(25), readAt: ago(24), clientId: null },
+      { id: 'cm_5', conversationId: 'ch_1', sender: 'visitor', body: 'Das klingt machbar.', createdAt: ago(5), readAt: null, clientId: null },
+      { id: 'cm_6', conversationId: 'ch_1', sender: 'visitor', body: 'Super, dann melde ich mich morgen nochmal. Hast du auch Infos zum Einstieg als Teampartner?', createdAt: ago(4), readAt: null, clientId: null },
+    ],
+    ch_2: [
+      { id: 'cm_7', conversationId: 'ch_2', sender: 'visitor', body: 'Hi, wie lange dauert die Kur genau?', createdAt: days(1.1), readAt: days(1.05), clientId: null },
+      { id: 'cm_8', conversationId: 'ch_2', sender: 'owner', body: 'Hallo! In der Regel 8 Wochen, in drei Phasen. Magst du mir sagen, was dein Ziel ist?', createdAt: days(1.04), readAt: days(1.0), clientId: null },
+      { id: 'cm_9', conversationId: 'ch_2', sender: 'visitor', body: 'Mehr Energie, weniger Heißhunger. Kannst du mir den Ablauf schicken? Meine Nummer: +49 160 5557821', createdAt: ago(60 * 21), readAt: ago(60 * 20), clientId: null },
+      { id: 'cm_10', conversationId: 'ch_2', sender: 'owner', body: 'Gern, schreib mir einfach auf WhatsApp, dann schicke ich dir den Ablauf.', createdAt: ago(60 * 19), readAt: null, clientId: null },
+    ],
+    ch_3: [
+      { id: 'cm_11', conversationId: 'ch_3', sender: 'visitor', body: 'Hallo, gibt es ein Treffen in Würzburg?', createdAt: days(7), readAt: days(6.9), clientId: null },
+      { id: 'cm_12', conversationId: 'ch_3', sender: 'owner', body: 'Ja, jeden ersten Donnerstag im Monat. Ich schicke dir die Einladung per Mail.', createdAt: days(6.5), readAt: days(6.4), clientId: null },
+      { id: 'cm_13', conversationId: 'ch_3', sender: 'visitor', body: 'Danke dir, das hat mir sehr geholfen!', createdAt: days(6), readAt: days(5.9), clientId: null },
+    ],
+  };
 
   const notificationPrefs: NotificationPreferences = {
     leads: true,
     support: true,
     account: true,
     partner: true,
+    chat: true,
     quietHours: { enabled: true, start: 22, end: 7 },
     timezone: 'Europe/Berlin',
   };
@@ -225,6 +276,8 @@ export function createMockDb() {
     submissions,
     conversations,
     messages,
+    chatConversations,
+    chatMessages,
     notifications,
     notificationPrefs,
     affiliate,

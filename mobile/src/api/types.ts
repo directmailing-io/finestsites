@@ -54,6 +54,22 @@ export type OneTimeToken = z.infer<typeof C.OneTimeTokenResponse>;
 export type AppErrorCode = z.infer<typeof C.AppErrorCode>;
 export type PublishErrorCode = z.infer<typeof C.PublishErrorCode>;
 
+// ── Besucher-Chat (/api/app/v1/chat/*, aus contracts/chat.ts) ─────────────────
+export type ChatConversationStatus = z.infer<typeof C.ChatConversationStatus>;
+export type ChatSender = z.infer<typeof C.ChatSender>;
+export type ChatMessage = z.infer<typeof C.ChatMessage>;
+export type ChatVisitor = z.infer<typeof C.ChatVisitor>;
+export type ChatConversation = z.infer<typeof C.ChatConversation>;
+export type ChatConversationList = z.infer<typeof C.ChatConversationsResponse>;
+export type ChatConversationDetail = z.infer<typeof C.ChatConversationResponse>;
+export type ChatMessagePage = z.infer<typeof C.ChatMessagesResponse>;
+export type SendChatMessageRequest = z.infer<typeof C.SendChatMessageRequest>;
+export type ChatOk = z.infer<typeof C.ChatOkResponse>;
+export type BlockChatVisitorRequest = z.infer<typeof C.BlockChatVisitorRequest>;
+export type ReportChatRequest = z.infer<typeof C.ReportChatRequest>;
+export type ChatReportReason = ReportChatRequest['reason'];
+export type ChatUnread = z.infer<typeof C.ChatUnreadResponse>;
+
 // ── /api/sites (Web-Route) ────────────────────────────────────────────────────
 export type SiteStatus = 'draft' | 'published' | 'deactivated' | 'deleted';
 

@@ -114,12 +114,12 @@ export async function setBadge(count: number) {
   await Notifications.setBadgeCountAsync(Math.max(0, count)).catch(() => false);
 }
 
-const ALLOWED_ROUTES = ['/inbox', '/help', '/sites', '/account'];
+const ALLOWED_ROUTES = ['/inbox', '/help', '/chats', '/sites', '/account'];
 const ID_RE = /^[A-Za-z0-9-]{1,64}$/;
 
 /**
  * Ziel einer Mitteilung (Push-`data` bzw. `data` aus /api/app/v1/notifications).
- * Der Server schickt `url: finestsites://submissions/<id> | support/<id> | sites/<id> | account | affiliate`
+ * Der Server schickt `url: finestsites://submissions/<id> | support/<id> | chats/<id> | sites/<id> | account | affiliate`
  * (src/lib/push/triggers.ts). Nur App-interne Pfade, externe Links werden nie geöffnet.
  */
 export function routeFromNotification(data: unknown): string | null {
@@ -132,6 +132,8 @@ export function routeFromNotification(data: unknown): string | null {
         return withId('/inbox');
       case 'support':
         return withId('/help');
+      case 'chats':
+        return withId('/chats');
       case 'sites':
         return withId('/sites');
       case 'affiliate':
