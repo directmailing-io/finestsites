@@ -26,6 +26,9 @@ async function guarded(name: string, fn: () => Promise<unknown>): Promise<void> 
   }
 }
 
+/** Gespräch gilt als „gerade offen“, wenn der Betreiber es in diesem Zeitraum abgerufen hat. */
+export const OWNER_ACTIVE_MS = 20_000
+
 export type PaymentPushKind = 'notice' | 'reminder' | 'offline'
 
 export const pushTriggers = {
@@ -58,6 +61,7 @@ export const pushTriggers = {
         visitorName: chatConversations.visitorName,
         visitorKey: chatConversations.visitorKey,
         preview: chatConversations.lastMessagePreview,
+        ownerLastSeenAt: chatConversations.ownerLastSeenAt,
         siteTitle: templates.title,
       })
         .from(chatConversations)
@@ -66,6 +70,8 @@ export const pushTriggers = {
         .where(eq(chatConversations.id, conversationId))
         .limit(1)
       if (!conv) return
+      // Betreiber hat das Gespräch gerade offen (App ruft alle 3 s ab) → keine Mitteilung (Daniel: störend)
+      if (conv.ownerLastSeenAt && Date.now() - conv.ownerLastSeenAt.getTime() < OWNER_ACTIVE_MS) return
       // Wie bei WhatsApp (Daniel, 22.10.2026): Absender als Titel, Webseite als Untertitel, Nachricht als Text
       const text = (conv.preview ?? '').replace(/\s+/g, ' ').trim()
       await enqueuePush({

@@ -1,7 +1,8 @@
 /**
  * POST /api/worker/chat/session  (Widget: POST /.finestsites/chat/session)
  * Body { visitorToken?, resumeToken?, pageUrl? }
- * → { enabled, conversationId, visitorToken, status, visitor:{name,email,phone,notifyByEmail}, messages:[…letzte 50], ownerLastSeenAt }
+ * → { enabled, ticket, conversationId, visitorToken, status, visitor:{name,email,phone,notifyByEmail}, messages:[…letzte 50], ownerLastSeenAt }
+ *   ticket: Pflicht-Header X-FS-Ticket für messages/profile/handoff/read (2 h, src/lib/chat/ticket.ts)
  *
  * Ohne Token (oder ohne bekanntes Gespräch) nur enabled + leere Felder – ein Gespräch entsteht erst
  * mit der ersten Nachricht (POST messages). Ein gültiger resumeToken (Antwort-Mail) übernimmt das
@@ -14,6 +15,7 @@ import {
   type ConversationState,
 } from '@/lib/chat/service'
 import type { ChatConversationRow } from '@/lib/db/schema'
+import { issueTicket } from '@/lib/chat/ticket'
 
 export const dynamic = 'force-dynamic'
 
@@ -43,7 +45,7 @@ export async function POST(req: NextRequest) {
 
   if (!conv) {
     return visitorJson({
-      enabled: true, conversationId: null, visitorToken, status: null, visitor: null, messages: [], ownerLastSeenAt: null, ownerReadAt: null,
+      enabled: true, ticket: issueTicket(site.siteId), conversationId: null, visitorToken, status: null, visitor: null, messages: [], ownerLastSeenAt: null, ownerReadAt: null,
     } satisfies ConversationState)
   }
   if (conv.status === 'blocked') return visitorError('BLOCKED', 403)
@@ -51,6 +53,7 @@ export async function POST(req: NextRequest) {
   const [{ messages }, ownerReadAt] = await Promise.all([listMessages(conv.id, { limit: 50 }), ownerReadAtOf(conv.id), touchVisitorSeen(conv.id)])
   return visitorJson({
     enabled: true,
+    ticket: issueTicket(site.siteId),
     conversationId: conv.id,
     visitorToken,
     status: conv.status,

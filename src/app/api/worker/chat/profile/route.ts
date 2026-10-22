@@ -14,7 +14,7 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
 const PHONE_RE = /^[+0-9 \-]{3,30}$/
 
 export async function POST(req: NextRequest) {
-  const r = await resolveVisitor(req)
+  const r = await resolveVisitor(req, { requireTicket: true })
   if (!r.ok) return r.response
   const { h, site } = r.ctx
   if (!h.tokenHash) return visitorError('TOKEN_REQUIRED', 400)
@@ -22,8 +22,10 @@ export async function POST(req: NextRequest) {
   if (!conv) return visitorError('not_found', 404)
   if (conv.status === 'blocked') return visitorError('BLOCKED', 403)
 
-  let body: { name?: unknown; email?: unknown; phone?: unknown; notifyByEmail?: unknown } = {}
+  let body: { name?: unknown; email?: unknown; phone?: unknown; notifyByEmail?: unknown; hp?: unknown } = {}
   try { body = await req.json() } catch { body = {} }
+  // Honigtopf gefüllt → Bot: Profil nicht speichern, aber unauffällig antworten
+  if (typeof body.hp === 'string' && body.hp.trim()) return visitorJson({ visitor: { name: null, email: null, phone: null, notifyByEmail: false } })
 
   const patch: { name?: string | null; email?: string | null; phone?: string | null; notifyByEmail?: boolean } = {}
   const fields: Record<string, string> = {}

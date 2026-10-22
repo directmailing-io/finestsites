@@ -97,6 +97,8 @@ export type ChatSiteContext = {
   ownerFirstName: string | null
   ownerProfileImageUrl: string | null
   ownerBrandColor: string | null
+  /** Editor-Schalter dieser Seite */
+  visitorChatEnabled: boolean
 }
 
 export async function loadSiteContext(siteId: string): Promise<ChatSiteContext | null> {
@@ -114,6 +116,7 @@ export async function loadSiteContext(siteId: string): Promise<ChatSiteContext |
     ownerFirstName: users.firstName,
     ownerProfileImageUrl: users.profileImageUrl,
     ownerBrandColor: users.brandColor,
+    visitorChatEnabled: userSites.visitorChatEnabled,
   })
     .from(userSites)
     .innerJoin(users, eq(userSites.userId, users.id))
@@ -267,6 +270,8 @@ export async function ownerUnread(userId: string): Promise<{ count: number; conv
 /** Antwort von POST /api/worker/chat/session (Besucher-Sicht, docs/chat/konzept.md). */
 export type ConversationState = {
   enabled: true
+  /** Pflicht-Header X-FS-Ticket für schreibende Aufrufe (src/lib/chat/ticket.ts) */
+  ticket: string
   conversationId: string | null
   visitorToken: string | null
   status: string | null
@@ -447,8 +452,13 @@ export async function ownerReadAtOf(conversationId: string): Promise<string | nu
   return (at instanceof Date ? at : new Date(at)).toISOString()
 }
 
+/** Höchstens alle 20 s schreiben (Polling alle 3 s wäre sonst ein UPDATE je Poll). */
 export async function touchVisitorSeen(conversationId: string): Promise<void> {
-  await db.update(chatConversations).set({ visitorLastSeenAt: new Date() }).where(eq(chatConversations.id, conversationId))
+  await db.update(chatConversations).set({ visitorLastSeenAt: new Date() })
+    .where(and(
+      eq(chatConversations.id, conversationId),
+      or(isNull(chatConversations.visitorLastSeenAt), lt(chatConversations.visitorLastSeenAt, new Date(Date.now() - 20_000))),
+    ))
 }
 
 export async function touchOwnerSeen(conversationId: string): Promise<void> {
@@ -534,6 +544,11 @@ export async function blockConversation(conv: ChatConversationRow, reason: strin
     reason: reason?.slice(0, 200) ?? null,
   })))
   await setConversationStatus(conv.id, 'blocked')
+}
+
+/** Sperre ohne Gespräch (z. B. automatische Sperre vor der ersten gespeicherten Nachricht). */
+export async function blockVisitor(userId: string, tokenHash: string, ipHash: string | null, reason: string | null): Promise<void> {
+  await db.insert(chatBlocks).values({ userId, visitorTokenHash: tokenHash, ipHash, reason: reason?.slice(0, 200) ?? null })
 }
 
 export async function unblockConversation(conv: ChatConversationRow): Promise<void> {

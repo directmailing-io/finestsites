@@ -209,6 +209,8 @@ export const userSites = pgTable('user_sites', {
   // liefert nur diesen aus; der Editor arbeitet am Entwurf in site_data. Siehe src/lib/sites/published-data.ts
   publishedData: jsonb('published_data').$type<Record<string, string> | null>(),
   publishedDataAt: timestamp('published_data_at', { withTimezone: true }),
+  /** Besucher-Chat auf dieser Seite (Editor-Schalter); wirkt nur, wenn das Konto freigeschaltet ist */
+  visitorChatEnabled: boolean('visitor_chat_enabled').notNull().default(true),
   // @deprecated — per-site consent fields (replaced by users.content_consent_at onboarding step)
   // Kept for historical data; no longer written by the publish flow. Admin panel still reads them.
   contentConsentGivenAt: timestamp('content_consent_given_at', { withTimezone: true }),

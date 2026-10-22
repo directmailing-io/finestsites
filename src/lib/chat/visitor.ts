@@ -16,6 +16,7 @@ import { checkWorkerSecret } from '@/lib/tracking/worker-auth'
 import { isVisitorChatEnabledForUsername } from './flags'
 import { allowVisitorRequest } from './rate-limit'
 import { isBlocked, isValidVisitorToken, loadSiteContext, ownerWhatsappUrlOf, sha256, type ChatSiteContext } from './service'
+import { verifyTicket } from './ticket'
 
 const NO_STORE = { 'Cache-Control': 'no-store' }
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
@@ -35,6 +36,8 @@ export type VisitorHeaders = {
   userAgent: string | null
   visitorToken: string | null
   tokenHash: string | null
+  /** Ticket aus `POST session` (Header X-FS-Ticket, vom Worker als x-fs-ticket weitergereicht) */
+  ticket: string | null
 }
 
 export function readVisitorHeaders(req: NextRequest): VisitorHeaders | null {
@@ -50,6 +53,7 @@ export function readVisitorHeaders(req: NextRequest): VisitorHeaders | null {
     userAgent: (req.headers.get('x-fs-ua') ?? '').trim().slice(0, 200) || null,
     visitorToken,
     tokenHash: visitorToken ? sha256(visitorToken) : null,
+    ticket: (req.headers.get('x-fs-ticket') ?? '').trim().slice(0, 400) || null,
   }
 }
 
@@ -65,18 +69,26 @@ export type VisitorContext = {
  * Standard: nicht freigeschaltet → 404 { error: 'disabled' }, gesperrt → 403 { error: 'BLOCKED' }.
  * `config` setzt allowDisabled/allowBlocked und entscheidet selbst.
  */
-export async function resolveVisitor(req: NextRequest, opts: { allowDisabled?: boolean; allowBlocked?: boolean } = {}):
+export async function resolveVisitor(req: NextRequest, opts: { allowDisabled?: boolean; allowBlocked?: boolean; requireTicket?: boolean } = {}):
   Promise<{ ok: true; ctx: VisitorContext } | { ok: false; response: NextResponse }> {
   if (!checkWorkerSecret(req)) return { ok: false, response: visitorError('unauthorized', 401) }
   const h = readVisitorHeaders(req)
   if (!h) return { ok: false, response: visitorError('bad_request', 400) }
-  if (!allowVisitorRequest(h.ipHash)) return { ok: false, response: visitorError('RATE_LIMITED', 429) }
+  if (!allowVisitorRequest(h.ipHash, h.tokenHash)) return { ok: false, response: visitorError('RATE_LIMITED', 429) }
 
   const site = await loadSiteContext(h.siteId)
   if (!site || site.siteStatus !== 'published') return { ok: false, response: visitorError('not_found', 404) }
 
-  const enabled = await isVisitorChatEnabledForUsername(site.username)
+  // Konto freigeschaltet UND Schalter dieser Seite im Editor an
+  const enabled = site.visitorChatEnabled && await isVisitorChatEnabledForUsername(site.username)
   if (!enabled && !opts.allowDisabled) return { ok: false, response: visitorError('disabled', 404) }
+
+  // Schreibende Aufrufe nur mit Ticket aus `POST session` (Spam-Schutz; docs/chat/konzept.md)
+  if (opts.requireTicket) {
+    const t = verifyTicket(h.ticket, h.siteId)
+    if (t === 'missing') return { ok: false, response: visitorError('TICKET_REQUIRED', 403) }
+    if (t !== 'ok') return { ok: false, response: visitorError('TICKET_INVALID', 403) }
+  }
 
   const blocked = enabled && await isBlocked(site.userId, h.tokenHash, h.ipHash)
   if (blocked && !opts.allowBlocked) {

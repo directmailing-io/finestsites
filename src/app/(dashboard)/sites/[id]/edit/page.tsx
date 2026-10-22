@@ -387,6 +387,95 @@ function DnsRecordTable({ type, name, value, typeWidth = 80, nameWidth = 100, co
   )
 }
 
+/**
+ * Besucher-Chat je Webseite (Schalter). Erscheint nur, wenn das Konto freigeschaltet ist
+ * (`GET /api/sites/[id]/chat` → available=true); sonst wird nichts gerendert – andere Nutzer
+ * sollen vom Feature nichts mitbekommen. Wirkt sofort auf die Live-Seite, unabhängig vom Veröffentlichen.
+ */
+function VisitorChatPanel({ siteId }: { siteId: string }) {
+  const [state, setState] = useState<{ available: boolean; enabled: boolean } | null>(null)
+  const [saving, setSaving] = useState(false)
+  const [error, setError] = useState('')
+
+  useEffect(() => {
+    let cancelled = false
+    fetch(`/api/sites/${siteId}/chat`)
+      .then(r => (r.ok ? r.json() : null))
+      .then(data => {
+        if (cancelled || !data || typeof data.available !== 'boolean') return
+        setState({ available: data.available, enabled: data.enabled === true })
+      })
+      .catch(() => {})
+    return () => { cancelled = true }
+  }, [siteId])
+
+  if (!state?.available) return null
+  const enabled = state.enabled
+
+  async function handleToggle() {
+    if (saving) return
+    const next = !enabled
+    setError('')
+    setSaving(true)
+    setState({ available: true, enabled: next })
+    try {
+      const res = await fetch(`/api/sites/${siteId}/chat`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ enabled: next }),
+      })
+      const data = await res.json().catch(() => null)
+      if (!res.ok || typeof data?.enabled !== 'boolean') throw new Error('save failed')
+      setState({ available: data.available !== false, enabled: data.enabled })
+    } catch {
+      setState({ available: true, enabled: !next })
+      setError('Konnte nicht gespeichert werden.')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  return (
+    <div className="bg-white rounded-[20px] p-6 mt-5"
+      style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.05)', border: '1px solid #F0F0F0' }}>
+      <div className="flex items-start gap-4">
+        <div className="w-10 h-10 rounded-[13px] flex items-center justify-center flex-shrink-0"
+          style={{ background: '#F0FDF4' }}>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#16A34A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
+          </svg>
+        </div>
+        <div className="flex-1 min-w-0">
+          <h3 id="visitor-chat-title" className="text-base font-bold text-gray-900 mb-1">Besucher-Chat</h3>
+          <p className="text-sm leading-relaxed" style={{ color: '#6B7280' }}>
+            Besucher können dir direkt auf deiner Webseite schreiben. Du antwortest in der App oder unter „Chats“.
+          </p>
+        </div>
+        <button
+          type="button"
+          role="switch"
+          aria-checked={enabled}
+          aria-labelledby="visitor-chat-title"
+          disabled={saving}
+          onClick={handleToggle}
+          className="relative flex-shrink-0 w-12 h-7 rounded-full transition-colors disabled:opacity-60 mt-0.5"
+          style={{ background: enabled ? '#16A34A' : '#D1D5DB' }}>
+          <span className="absolute top-0.5 w-6 h-6 rounded-full bg-white shadow transition-all" style={{ left: enabled ? 22 : 2 }} />
+        </button>
+      </div>
+      <p className="mt-4 text-xs leading-relaxed" style={{ color: '#9CA3AF' }}>
+        Gilt sofort für die veröffentlichte Seite, unabhängig vom Veröffentlichen.
+      </p>
+      {!enabled && !error && (
+        <p className="mt-1.5 text-xs leading-relaxed" style={{ color: '#6B7280' }}>
+          Das Chat-Symbol ist auf deiner Seite ausgeblendet.
+        </p>
+      )}
+      {error && <p className="mt-1.5 text-sm text-red-600">{error}</p>}
+    </div>
+  )
+}
+
 function DomainPanel({ siteId, subdomain, initialDomain, initialStatus }: {
   siteId: string
   subdomain: string
@@ -4258,6 +4347,7 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
                   initialDomain={site.custom_domain ?? null}
                   initialStatus={site.custom_domain_status ?? null}
                 />
+                <VisitorChatPanel siteId={site.id} />
               </>
             )}
 

@@ -60,6 +60,7 @@ export async function GET(req: NextRequest) {
         templateId: templates.id,
         r2BundlePath: templates.r2BundlePath,
         username: users.username,
+        visitorChatEnabled: userSites.visitorChatEnabled,
       })
       .from(userSites)
       .innerJoin(users, eq(userSites.userId, users.id))
@@ -99,7 +100,7 @@ export async function GET(req: NextRequest) {
     try { tracking = toPublicConfig(await trackingForSite(row.siteId), row.siteId) } catch (err) { console.error('[site-meta] tracking', err) }
     // Besucher-Chat: nur wenn der Besitzer freigeschaltet ist, hängt der Worker das Widget an (docs/chat/konzept.md)
     let chat = false
-    try { chat = await isVisitorChatEnabledForUsername(row.username) } catch (err) { console.error('[site-meta] chat', err) }
+    try { chat = row.visitorChatEnabled && await isVisitorChatEnabledForUsername(row.username) } catch (err) { console.error('[site-meta] chat', err) }
 
     return NextResponse.json({
       siteId: row.siteId,

@@ -24,7 +24,7 @@ import { rateLimit } from '@/lib/security/request'
 export const dynamic = 'force-dynamic'
 
 export async function POST(req: NextRequest) {
-  const r = await resolveVisitor(req)
+  const r = await resolveVisitor(req, { requireTicket: true })
   if (!r.ok) return r.response
   const { h, site } = r.ctx
   if (!h.tokenHash) return visitorError('TOKEN_REQUIRED', 400)

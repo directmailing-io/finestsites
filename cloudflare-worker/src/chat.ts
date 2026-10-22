@@ -62,6 +62,7 @@ export async function handleChatRequest(request: Request, pathname: string, meta
   const ip = request.headers.get('cf-connecting-ip') ?? ''
   const ua = (request.headers.get('user-agent') ?? '').slice(0, 200)
   const visitor = (request.headers.get('x-fs-visitor') ?? '').trim().slice(0, 128)
+  const ticket = (request.headers.get('x-fs-ticket') ?? '').trim().slice(0, 400)
   const search = new URL(request.url).search
 
   const headers: Record<string, string> = {
@@ -71,6 +72,7 @@ export async function handleChatRequest(request: Request, pathname: string, meta
     'x-fs-ip-hash': ip ? await hashIP(ip) : '',
     'x-fs-ua': ua,
     'x-fs-visitor': visitor,
+    'x-fs-ticket': ticket,
     Accept: 'application/json',
   }
   if (body !== undefined) headers['Content-Type'] = 'application/json'

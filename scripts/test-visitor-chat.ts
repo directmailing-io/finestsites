@@ -124,8 +124,15 @@ class AppClient {
 // ─── Besucher-Client (so, wie der Worker die App ruft) ────────────────────────
 
 class Visitor {
+  /** Ticket aus `session` (Spam-Schutz) – wird bei schreibenden Aufrufen automatisch geholt, außer noTicket */
+  ticket: string | null = null
   constructor(readonly siteId: string, readonly host: string, public token: string | null, readonly ipHash = sha256(`ip:${randomBytes(4).toString('hex')}`)) {}
-  async call(method: 'GET' | 'POST', path: string, body?: unknown, query?: Record<string, string>): Promise<Res> {
+  async call(method: 'GET' | 'POST', path: string, body?: unknown, query?: Record<string, string>, opts: { noTicket?: boolean } = {}): Promise<Res> {
+    if (method === 'POST' && path !== 'session' && !this.ticket && !opts.noTicket) {
+      const s = await this.call('POST', 'session', this.token ? { visitorToken: this.token } : {})
+      const t = (s.json as { ticket?: string } | null)?.ticket
+      if (t) this.ticket = t
+    }
     const url = new URL(`${BASE}/api/worker/chat/${path}`)
     for (const [k, v] of Object.entries(query ?? {})) url.searchParams.set(k, v)
     const headers: Record<string, string> = {
@@ -137,11 +144,13 @@ class Visitor {
       Accept: 'application/json',
     }
     if (this.token) headers['x-fs-visitor'] = this.token
+    if (this.ticket && !opts.noTicket) headers['x-fs-ticket'] = this.ticket
     if (body !== undefined) headers['Content-Type'] = 'application/json'
     const r = await fetch(url, { method, headers, body: body !== undefined ? JSON.stringify(body) : undefined })
     const text = await r.text()
     let json: unknown = null
     try { json = text ? JSON.parse(text) : null } catch { json = null }
+    if (path === 'session' && r.ok) { const t = (json as { ticket?: string } | null)?.ticket; if (t) this.ticket = t }
     return { status: r.status, headers: r.headers, text, json }
   }
   config() { return this.call('GET', 'config') }
@@ -815,6 +824,75 @@ async function main() {
     assert.equal(p2.nextCursor, null)
     const u = contract(C.ChatUnreadResponse, await owner.get('/api/app/v1/chat/unread'))
     assert.equal(u.conversations, 2)
+  })
+
+  console.log('▶ Spam-Schutz + Seiten-Schalter')
+  await step('Ticket: POST messages ohne Ticket → 403 TICKET_REQUIRED, Müll → TICKET_INVALID, session liefert Ticket', async () => {
+    const fresh = new Visitor(site.id, host, newToken())
+    const a = await fresh.call('POST', 'messages', { body: 'Hallo ohne Ticket', clientId: 'nt1' }, undefined, { noTicket: true })
+    assert.equal(a.status, 403, a.text)
+    assert.equal((a.json as { error: string }).error, 'TICKET_REQUIRED')
+    fresh.ticket = 'abc.def'
+    const b = await fresh.call('POST', 'messages', { body: 'Hallo mit Müll-Ticket', clientId: 'nt2' })
+    assert.equal(b.status, 403, b.text)
+    assert.equal((b.json as { error: string }).error, 'TICKET_INVALID')
+    fresh.ticket = null
+    const s = await fresh.session({ visitorToken: fresh.token })
+    assert.equal(s.status, 200)
+    assert.ok(typeof (s.json as { ticket?: string }).ticket === 'string' && (s.json as { ticket: string }).ticket.includes('.'))
+    const c = await fresh.send('Hallo mit echtem Ticket')
+    assert.equal(c.status, 200, c.text)
+    // Ticket einer anderen Seite gilt nicht
+    const other = new Visitor('00000000-0000-4000-b000-0000000000ff', host, newToken())
+    other.ticket = fresh.ticket
+    const d = await other.call('POST', 'messages', { body: 'x', clientId: 'nt3' })
+    assert.ok(d.status === 403 || d.status === 404, d.text)
+  })
+  await step('Honigtopf: hp gefüllt → scheinbar 200, aber kein Gespräch; wd → engere Nachrichtengrenze (5/10 min)', async () => {
+    const bot = new Visitor(site.id, host, newToken())
+    const before = (await sql`select count(*)::int as n from chat_conversations where user_id = ${pro.id}`)[0].n
+    const r = await bot.call('POST', 'messages', { body: 'Buy now!!!', clientId: 'hp1', hp: 'http://spam.invalid' })
+    assert.equal(r.status, 200, r.text)
+    assert.equal((r.json as { conversationId: string | null }).conversationId, null)
+    const after = (await sql`select count(*)::int as n from chat_conversations where user_id = ${pro.id}`)[0].n
+    assert.equal(after, before)
+    const auto = new Visitor(site.id, host, newToken())
+    let last = 0
+    for (let i = 0; i < 6; i++) {
+      await sleep(1600)
+      last = (await auto.call('POST', 'messages', { body: `Automatisiert ${i}`, clientId: `wd${i}`, wd: true })).status
+    }
+    assert.equal(last, 429)
+  })
+  await step('Automatische Sperre nach 5 abgelehnten Nachrichten (Filter)', async () => {
+    const troll = new Visitor(site.id, host, newToken())
+    let status = 0
+    for (let i = 0; i < 6; i++) {
+      status = (await troll.call('POST', 'messages', { body: `Du Hurensohn ${i}`, clientId: `tr${i}` })).status
+      if (status === 403) break
+    }
+    assert.equal(status, 403)
+    const [{ n }] = await sql`select count(*)::int as n from chat_blocks where user_id = ${pro.id} and visitor_token_hash = ${sha256(troll.token!)}`
+    assert.equal(n, 1)
+    assert.equal((await troll.config()).status, 403)
+    await sql`delete from chat_blocks where user_id = ${pro.id} and visitor_token_hash = ${sha256(troll.token!)}`
+  })
+  await step('Seiten-Schalter: PUT /api/sites/[id]/chat {enabled:false} → config enabled:false + site-meta ohne chat; wieder an', async () => {
+    const g = await owner.get(`/api/sites/${site.id}/chat`)
+    assert.equal(g.status, 200, g.text)
+    assert.deepEqual(g.json, { available: true, enabled: true })
+    const off = await owner.put(`/api/sites/${site.id}/chat`, { enabled: false })
+    assert.equal(off.status, 200, off.text)
+    assert.deepEqual(off.json, { available: true, enabled: false })
+    assert.deepEqual((await visitor.config()).json, { enabled: false })
+    const meta = await (await fetch(`${BASE}/api/worker/site-meta?username=${pro.username}&domain=${site.domain}`, { headers: { 'x-worker-secret': WORKER_SECRET } })).json() as { chat?: unknown }
+    assert.equal(meta.chat, undefined)
+    assert.equal((await visitor.messages()).status, 404)
+    const on = await owner.put(`/api/sites/${site.id}/chat`, { enabled: true })
+    assert.deepEqual(on.json, { available: true, enabled: true })
+    assert.equal(((await visitor.config()).json as { enabled: boolean }).enabled, true)
+    assert.equal((await owner.put(`/api/sites/${site.id}/chat`, { enabled: 'ja' })).status, 400)
+    assert.equal((await fetch(`${BASE}/api/sites/${site.id}/chat`)).status, 401)
   })
 
   console.log('▶ Löschen + Cron')

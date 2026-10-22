@@ -4,21 +4,30 @@
  * GET  ?after=<messageId>  Polling → { messages, status, ownerLastSeenAt, ownerReadAt }; setzt visitor_last_seen_at
  * POST { body, clientId?, pageUrl? } → { message, conversationId }
  *      Erste Nachricht ohne bekanntes Gespräch legt eines an (Token Pflicht).
- *      422 MESSAGE_REJECTED (Filter), 429 RATE_LIMITED, 403 BLOCKED, 400 TOKEN_REQUIRED
+ *      422 MESSAGE_REJECTED (Filter), 429 RATE_LIMITED, 403 BLOCKED | TICKET_REQUIRED | TICKET_INVALID, 400 TOKEN_REQUIRED
+ *      Spam-Schutz: Ticket aus `session` Pflicht, Honigtopf `hp`, `wd` (navigator.webdriver) → engere Grenzen,
+ *      Gespräche je Seite begrenzt, automatische Sperre nach wiederholt abgelehnten Nachrichten.
  */
 import type { NextRequest } from 'next/server'
 import { resolveVisitor, visitorError, visitorJson } from '@/lib/chat/visitor'
 import {
-  createConversation, findConversationByToken, findMessageByClientId, listMessages, ownerReadAtOf, pathOf, recentBodies, recordMessage,
+  blockConversation, blockVisitor, createConversation, findConversationByToken, findMessageByClientId, listMessages, ownerReadAtOf, pathOf, recentBodies, recordMessage,
   toContractMessage, touchVisitorSeen,
 } from '@/lib/chat/service'
 import { checkChatMessage, CHAT_REJECT_MESSAGE } from '@/lib/chat/filter'
-import { allowNewConversation, checkMessageRate } from '@/lib/chat/rate-limit'
+import { allowNewConversation, allowNewConversationForSite, checkMessageRate, countRejection } from '@/lib/chat/rate-limit'
+import { randomUUID } from 'node:crypto'
 import { pushTriggers } from '@/lib/push/triggers'
 
 export const dynamic = 'force-dynamic'
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+
+/** Antwort für Honigtopf-Treffer: sieht aus wie Erfolg, es wird nichts gespeichert und niemand benachrichtigt. */
+function fakeAccepted(text: string, clientId: string | null) {
+  const now = new Date().toISOString()
+  return { message: { id: randomUUID(), conversationId: randomUUID(), sender: 'visitor', body: text.slice(0, 2000), createdAt: now, readAt: null, clientId }, conversationId: null }
+}
 
 export async function GET(req: NextRequest) {
   const r = await resolveVisitor(req)
@@ -46,15 +55,20 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  const r = await resolveVisitor(req)
+  const r = await resolveVisitor(req, { requireTicket: true })
   if (!r.ok) return r.response
   const { h, site } = r.ctx
   if (!h.tokenHash) return visitorError('TOKEN_REQUIRED', 400)
 
-  let body: { body?: unknown; clientId?: unknown; pageUrl?: unknown } = {}
+  let body: { body?: unknown; clientId?: unknown; pageUrl?: unknown; hp?: unknown; wd?: unknown } = {}
   try { body = await req.json() } catch { body = {} }
   if (typeof body.body !== 'string') return visitorError('VALIDATION_FAILED', 400)
   const clientId = typeof body.clientId === 'string' && body.clientId.length > 0 && body.clientId.length <= 64 ? body.clientId : null
+
+  // Honigtopf (verstecktes Feld „website“ im Widget): nur Bots füllen es → scheinbar erfolgreich, nichts gespeichert
+  if (typeof body.hp === 'string' && body.hp.trim()) return visitorJson(fakeAccepted(body.body, clientId))
+  // navigator.webdriver = Automatisierung: nicht blockieren (Tests, Hilfstechnik), aber enger begrenzen
+  const automation = body.wd === true
 
   let conv = await findConversationByToken(site.siteId, h.tokenHash)
   if (conv?.status === 'blocked') return visitorError('BLOCKED', 403)
@@ -68,10 +82,19 @@ export async function POST(req: NextRequest) {
   // Filter VOR dem Anlegen eines Gesprächs (kein leeres Gespräch durch abgelehnte Nachrichten)
   const recent = conv ? await recentBodies(conv.id, 'visitor') : []
   const check = checkChatMessage(body.body, recent)
-  if (!check.ok) return visitorError('MESSAGE_REJECTED', 422, { message: CHAT_REJECT_MESSAGE })
+  if (!check.ok) {
+    // Wer den Filter wiederholt auslöst, wird automatisch gesperrt (Konto-weit, wie „Besucher sperren“)
+    if (countRejection(h.tokenHash)) {
+      if (conv) await blockConversation(conv, 'automatisch: Filter mehrfach ausgelöst')
+      else await blockVisitor(site.userId, h.tokenHash, h.ipHash, 'automatisch: Filter mehrfach ausgelöst')
+      return visitorError('BLOCKED', 403)
+    }
+    return visitorError('MESSAGE_REJECTED', 422, { message: CHAT_REJECT_MESSAGE })
+  }
 
   if (!conv) {
     if (!allowNewConversation(h.ipHash)) return visitorError('RATE_LIMITED', 429)
+    if (!allowNewConversationForSite(site.siteId)) return visitorError('RATE_LIMITED', 429)
     conv = await createConversation({
       siteId: site.siteId,
       userId: site.userId,
@@ -81,7 +104,7 @@ export async function POST(req: NextRequest) {
       startedOnPath: pathOf(body.pageUrl),
     })
   } else {
-    const rate = await checkMessageRate(conv.id, 'visitor')
+    const rate = await checkMessageRate(conv.id, 'visitor', { automation })
     if (rate !== 'ok') return visitorError('RATE_LIMITED', 429)
   }
 

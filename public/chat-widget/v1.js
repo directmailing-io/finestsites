@@ -18,9 +18,11 @@
 
   var T = {
     de: {
-      open: 'Chat öffnen', close: 'Chat schließen', online: 'online', fast: 'Antwortet meist schnell',
+      open: 'Chat öffnen', close: 'Chat schließen', online: 'online',
       wa: 'Schreib mir direkt in WhatsApp', placeholder: 'Nachricht schreiben …', send: 'Senden',
-      hint: 'Mit dem Senden wird dein Chat auf dieser Seite gespeichert.', privacy: 'Datenschutz',
+      hint: 'Nur in diesem Browser gespeichert.', privacy: 'Datenschutz',
+      notice: 'Dieser Chat wird nur in diesem Browser gespeichert und kann verloren gehen, wenn du die Seite verlässt. Wichtiges schickst du mir am besten {via}.',
+      viaWa: 'per WhatsApp oder über das Kontaktformular', viaForm: 'über das Kontaktformular',
       today: 'Heute', yesterday: 'Gestern', failed: 'Nicht gesendet', retry: 'Erneut senden',
       rejected: 'Diese Nachricht kann nicht gesendet werden.', wait: 'Bitte kurz warten.',
       blocked: 'Dieser Chat ist nicht verfügbar.', copied: 'Link kopiert', copy: 'Link kopieren',
@@ -36,9 +38,11 @@
       hoFail: 'Link konnte nicht erstellt werden.'
     },
     en: {
-      open: 'Open chat', close: 'Close chat', online: 'online', fast: 'Usually replies quickly',
+      open: 'Open chat', close: 'Close chat', online: 'online',
       wa: 'Message me directly on WhatsApp', placeholder: 'Write a message …', send: 'Send',
-      hint: 'By sending, your chat is stored on this site.', privacy: 'Privacy',
+      hint: 'Stored only in this browser.', privacy: 'Privacy',
+      notice: 'This chat is only stored in this browser and may be lost when you leave the page. For anything important, use {via}.',
+      viaWa: 'WhatsApp or the contact form', viaForm: 'the contact form',
       today: 'Today', yesterday: 'Yesterday', failed: 'Not sent', retry: 'Send again',
       rejected: 'This message cannot be sent.', wait: 'Please wait a moment.',
       blocked: 'This chat is not available.', copied: 'Link copied', copy: 'Copy link',
@@ -58,6 +62,8 @@
 
   // ── Zustand ────────────────────────────────────────────────────────────────
   var cfg = null, token = null, tokenStored = false, convId = null, status = 'open';
+  var ticket = null, sessionDone = false; // Ticket aus `session` (nur im Speicher), Header X-FS-Ticket bei schreibenden Aufrufen
+  var lastActivity = Date.now();          // letzte eigene/neue Nachricht → Polling-Abstand (schedulePoll)
   var visitor = { name: null, email: null, phone: null, notifyByEmail: false };
   var messages = [];          // {id, sender, body, createdAt, readAt, clientId, state}
   var ownerSeen = null;       // ISO
@@ -151,6 +157,7 @@
     opts = opts || {};
     var h = { Accept: 'application/json' };
     if (token) h['X-FS-Visitor'] = token;
+    if (ticket && opts.method === 'POST' && name !== 'session') h['X-FS-Ticket'] = ticket;
     var init = { method: opts.method || 'GET', headers: h, credentials: 'same-origin' };
     if (opts.body !== undefined) { h['Content-Type'] = 'application/json'; init.body = JSON.stringify(opts.body); }
     return fetch(API + name + (opts.query || ''), init).then(function (r) {
@@ -160,6 +167,29 @@
         return { ok: r.ok, status: r.status, json: j || {} };
       });
     });
+  }
+  /** Ticket per `session` holen (fehlt es in der Antwort, läuft alles ohne Header weiter). Lehnt nie ab. */
+  function fetchTicket() {
+    sessionDone = true;
+    return api('session', { method: 'POST', body: { visitorToken: token, pageUrl: location.href } }).then(function (s) {
+      if (s.ok) {
+        if (typeof s.json.ticket === 'string' && s.json.ticket) ticket = s.json.ticket;
+        if (s.json.conversationId && !convId) convId = s.json.conversationId;
+      }
+    }, function () {});
+  }
+  /** Schreibender Aufruf mit Ticket; bei 403 TICKET_REQUIRED/TICKET_INVALID einmal neues Ticket holen und wiederholen. */
+  function apiT(name, opts) {
+    var pre = (ticket || sessionDone) ? Promise.resolve() : fetchTicket();
+    return pre.then(function () { return api(name, opts); }).then(function (r) {
+      if (r.status !== 403 || !r.json || (r.json.error !== 'TICKET_REQUIRED' && r.json.error !== 'TICKET_INVALID')) return r;
+      ticket = null;
+      return fetchTicket().then(function () { return api(name, opts); });
+    });
+  }
+  function hp() {
+    var f = profileEl && profileEl.querySelector('form');
+    return f && f.website ? String(f.website.value || '') : '';
   }
   function appName() {
     var s = IAB ? IAB[0].toLowerCase() : '';
@@ -204,7 +234,8 @@
     '@media(min-width:640px){.win{inset:auto max(20px,env(safe-area-inset-right)) max(88px,calc(env(safe-area-inset-bottom) + 88px)) auto;width:380px;height:min(640px,calc(100vh - 40px));max-height:calc(100vh - 108px);border-radius:20px;box-shadow:0 24px 64px rgba(0,0,0,.18),0 0 0 1px rgba(0,0,0,.04);padding:0;transform-origin:100% 100%}}' +
     '.hd{display:flex;align-items:center;gap:12px;padding:12px 8px 12px 16px;border-bottom:1px solid var(--hl);background:#fff;flex:none}' +
     '.av{width:36px;height:36px;border-radius:50%;background:var(--fl);color:#111;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:13px;overflow:hidden;flex:none;letter-spacing:.02em}.av img{width:100%;height:100%;object-fit:cover;display:block}' +
-    '.who{flex:1;min-width:0}.nm{font-weight:600;font-size:15px;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.st{font-size:12px;line-height:1.3;color:var(--mu);display:flex;align-items:center;gap:6px;margin-top:2px}.st .dot{width:6px;height:6px;border-radius:50%;background:#C4C7CC;flex:none}.st.on .dot{background:#22C55E}' +
+    // Kopf: Höhe immer 40 px (Schließen-Knopf) → Name mittig; Statuszeile nur bei „online“, kein Springen
+    '.who{flex:1;min-width:0}.nm{font-weight:600;font-size:15px;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.st{display:none;font-size:12px;line-height:1.3;color:var(--mu);align-items:center;gap:6px;margin-top:2px}.st.on{display:flex}.st .dot{width:6px;height:6px;border-radius:50%;background:#22C55E;flex:none}' +
     '.x{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--mu);flex:none}.x:hover{background:var(--fl);color:#111}.x .c{display:none}.x .d{display:flex}@media(min-width:640px){.x .c{display:flex}.x .d{display:none}}' +
     '.list{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px 16px 6px;background:#fff;scroll-behavior:smooth}' +
     '@media(prefers-reduced-motion:reduce){.list{scroll-behavior:auto}.fab,.win,.m,.ho,.fab .i{transition:none!important;animation:none!important}}' +
@@ -215,12 +246,14 @@
     '.mt{display:inline-flex;align-items:center;gap:4px;float:right;margin:7px 0 0 10px;font-size:11px;line-height:1;opacity:.6;position:relative;top:1px}.m.me .mt{opacity:.78}.mt .tk{display:inline-flex}' +
     '.lk a{color:var(--b);text-decoration:underline;text-underline-offset:2px;word-break:break-all}.m.me .lk a{color:inherit}.cp{display:inline-flex;vertical-align:-2px;margin-left:5px;padding:2px;border-radius:5px;opacity:.6}.cp:hover{opacity:1;background:rgba(0,0,0,.08)}.m.me .cp:hover{background:rgba(255,255,255,.2)}' +
     '.err{clear:both;display:flex;justify-content:flex-end;align-items:center;gap:5px;font-size:12px;color:#C0392B;margin:-3px 2px 8px}.err button{text-decoration:underline;text-underline-offset:2px;font-weight:500;color:#C0392B}' +
-    '.sys{text-align:center;font-size:12px;color:var(--ln);margin:6px 20px 12px}' +
+    '.sys{text-align:center;font-size:12px;color:var(--ln);margin:6px 20px 12px}.sys.note{margin:0 6px 16px;line-height:1.45}' +
     '.war{display:flex;margin:0 0 14px}.war.mid{justify-content:center}.wab{display:inline-flex;align-items:center;gap:8px;height:38px;padding:0 14px 0 12px;border-radius:999px;background:#fff;border:1px solid rgba(0,0,0,.1);color:#111;font-weight:500;font-size:14px;text-decoration:none;transition:background .15s,border-color .15s}.wab svg{color:#25D366}.wab:hover{background:#FAFAFA;border-color:rgba(0,0,0,.18)}' +
     '.blk{text-align:center;padding:32px 20px 16px;color:var(--mu);font-size:14px}' +
     '.ft{flex:none;background:#fff;border-top:1px solid var(--hl)}' +
     '.pf{border-bottom:1px solid var(--hl)}.pf summary{list-style:none;display:flex;align-items:center;justify-content:space-between;padding:9px 16px;font-size:13px;color:var(--mu);cursor:pointer;user-select:none}.pf[open] summary{color:#111}.pf summary::-webkit-details-marker{display:none}.pf summary .ar{display:flex;color:#9CA3AF;transition:transform .2s}.pf[open] summary .ar{transform:rotate(180deg)}' +
     '.pf .fm{padding:2px 16px 12px;display:grid;gap:8px}.pf input:not([type=checkbox]){width:100%;height:40px;border:0;border-radius:12px;padding:0 12px;font-size:15px;background:var(--fl);outline:none;transition:box-shadow .15s}.pf input:focus{box-shadow:0 0 0 3px var(--bs)}' +
+    // Honeypot: für Menschen unsichtbar (nicht display:none, sonst lassen Bots es aus), nie im Tab-Fluss
+    '.pf input.hp{position:absolute;left:-9999px;top:0;width:1px;height:0;opacity:0;pointer-events:none}' +
     '.sw{display:flex;align-items:center;gap:10px;font-size:13px;color:#374151;margin:2px 0}.sw.off{opacity:.5}.pf input[type=checkbox]{appearance:none;-webkit-appearance:none;width:36px;height:22px;border-radius:11px;background:#D1D5DB;position:relative;flex:none;border:0;padding:0;margin:0;cursor:pointer;transition:background .2s}.pf input[type=checkbox]::after{content:"";position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.2);transition:transform .2s}.pf input[type=checkbox]:checked{background:var(--b)}.pf input[type=checkbox]:checked::after{transform:translateX(14px)}' +
     '.row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}.pb{height:34px;padding:0 16px;border-radius:999px;background:var(--b);color:var(--bt);font-weight:600;font-size:13px;transition:opacity .15s}.pb:hover{opacity:.9}.pb:disabled{opacity:.5;cursor:default}.ok{font-size:12px;color:#16A34A}' +
     '.lnk{font-size:13px;color:var(--mu);text-decoration:underline;text-underline-offset:2px;margin-left:auto}.lnk:hover{color:#111}.lnk:disabled{opacity:.5}' +
@@ -263,13 +296,14 @@
         '<span class="badge" aria-hidden="true"></span><span class="sr" id="sr"></span></button>' +
       '<section class="win" id="win" role="dialog" aria-modal="true" aria-label="Chat" tabindex="-1">' +
         '<div class="hd"><div class="av">' + avatar + '</div><div class="who"><div class="nm">' + esc(owner.name || 'Chat') + '</div>' +
-        '<div class="st"><span class="dot"></span><span class="stt">' + t.fast + '</span></div></div>' +
+        '<div class="st"><span class="dot"></span><span class="stt">' + t.online + '</span></div></div>' +
         '<button type="button" class="x" aria-label="' + t.close + '"><span class="d">' + ICON.down + '</span><span class="c">' + ICON.close + '</span></button></div>' +
         '<div class="list" role="log" aria-live="polite" aria-relevant="additions"></div>' +
         '<div class="toast" role="status"></div>' +
         '<div class="ft">' +
           '<details class="pf" hidden><summary><span>' + t.profile + '</span><span class="ar">' + ICON.down + '</span></summary>' +
-          '<form class="fm" novalidate><input name="name" autocomplete="name" placeholder="' + t.name + '" maxlength="100">' +
+          '<form class="fm" novalidate><input name="website" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">' +
+          '<input name="name" autocomplete="name" placeholder="' + t.name + '" maxlength="100">' +
           '<input name="email" type="email" autocomplete="email" inputmode="email" placeholder="' + t.email + '" maxlength="200">' +
           '<input name="phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="' + t.phone + '" maxlength="40">' +
           '<label class="sw off"><input type="checkbox" name="notify" disabled><span>' + t.notify + '</span></label>' +
@@ -331,7 +365,7 @@
     scrollBottom(true);
     setTimeout(function () { if (!blocked && window.innerWidth >= 640) ta.focus(); else win.focus(); }, REDUCED ? 0 : 80);
     markRead();
-    schedulePoll(0);
+    touch(); schedulePoll(0); // Öffnen = sofort ein Poll, Abstand wieder 3 s
   }
   function close() {
     if (!isOpen) return; isOpen = false;
@@ -375,7 +409,6 @@
   function renderStatus() {
     var on = ownerSeen && (Date.now() - new Date(ownerSeen).getTime()) < 90000;
     statusEl.classList.toggle('on', !!on);
-    statusEl.querySelector('.stt').textContent = on ? t.online : t.fast;
   }
   function ticks(m) {
     if (m.state === 'sending') return '<span class="tk" title="' + t.sending + '">' + ICON.clock + '</span>';
@@ -418,7 +451,8 @@
     if (blocked) {
       h = '<div class="blk">' + esc(t.blocked) + '</div>' + waButton(true);
     } else {
-      // Begrüßung ohne Zeitstempel ganz oben, darunter der WhatsApp-Knopf (falls vorhanden)
+      // Ehrlicher Hinweis ganz oben (nur dieser Browser, Wichtiges per WhatsApp/Kontaktformular), dann Begrüßung ohne Zeitstempel, darunter der WhatsApp-Knopf (falls vorhanden)
+      h += '<div class="sys note">' + esc(t.notice.replace('{via}', cfg.whatsappUrl ? t.viaWa : t.viaForm)) + '</div>';
       if (cfg.welcome) h += '<div class="m them tl"><div class="bb">' + linkify(cfg.welcome) + '</div></div>';
       h += waButton();
       var lastDay = null, prev = null;
@@ -453,6 +487,8 @@
 
   // ── Daten ──────────────────────────────────────────────────────────────────
   function applySession(j) {
+    sessionDone = true;
+    if (typeof j.ticket === 'string' && j.ticket) ticket = j.ticket;
     if (j.conversationId) convId = j.conversationId;
     if (j.visitorToken) { token = j.visitorToken; }
     if (j.status) status = j.status;
@@ -498,13 +534,20 @@
     }
     return { added: added, ownerNew: ownerNew };
   }
+  /** Abstand: offen 3 s, nach 2 min ohne neue Nachricht 6 s, nach 10 min 15 s; geschlossen 20 s, nach 10 min 60 s */
+  function pollDelay() {
+    var idle = Date.now() - lastActivity;
+    if (isOpen) return idle > 600000 ? 15000 : idle > 120000 ? 6000 : 3000;
+    return idle > 600000 ? 60000 : 20000;
+  }
   function schedulePoll(ms) {
     clearTimeout(pollTimer);
     if (!mounted || blocked) return;
-    if (ms === undefined) ms = isOpen ? 3000 : 20000;
+    if (ms === undefined) ms = pollDelay();
     if (!isOpen && !convId) return;
     pollTimer = setTimeout(poll, ms);
   }
+  function touch() { lastActivity = Date.now(); }
   function poll() {
     if (document.hidden || !convId || !token) { schedulePoll(); return; }
     var after = lastId();
@@ -514,6 +557,7 @@
         if (r.json.ownerLastSeenAt !== undefined) ownerSeen = r.json.ownerLastSeenAt;
         var res = mergeNew(r.json.messages || []);
         var readChanged = applyOwnerRead(r.json.ownerReadAt);
+        if (res.ownerNew) touch();
         if (res.added || readChanged) renderAll(); else { renderStatus(); renderBadge(); }
         if (res.ownerNew && isOpen && !document.hidden) markRead();
       }
@@ -522,7 +566,7 @@
   }
   function markRead() {
     if (!convId || !token || !unreadCount()) { renderBadge(); return; }
-    api('read', { method: 'POST', body: {} }).then(function (r) {
+    apiT('read', { method: 'POST', body: {} }).then(function (r) {
       if (!r.ok) return;
       var now = new Date().toISOString();
       for (var i = 0; i < messages.length; i++) if (messages[i].sender === 'owner' && !messages[i].readAt) messages[i].readAt = now;
@@ -545,7 +589,8 @@
   }
   function send(m) {
     if (!token) token = rnd(32);
-    api('messages', { method: 'POST', body: { body: m.body, clientId: m.clientId, pageUrl: location.href } }).then(function (r) {
+    // Vor der ersten Nachricht holt apiT einmal `session` (Ticket); hp = Honeypot, wd = Automations-Signal
+    apiT('messages', { method: 'POST', body: { body: m.body, clientId: m.clientId, pageUrl: location.href, hp: hp(), wd: !!navigator.webdriver } }).then(function (r) {
       if (r.ok && r.json.message) {
         if (!tokenStored) storeToken(token);
         var first = !convId;
@@ -554,6 +599,7 @@
         mergeNew([r.json.message]);
         renderAll();
         if (first) { fillProfile(); profileEl.open = true; }
+        touch();
         schedulePoll(isOpen ? 3000 : undefined);
         return;
       }
@@ -578,9 +624,9 @@
   function saveProfile(form) {
     var body = {
       name: form.name.value.trim() || null, email: form.email.value.trim() || null,
-      phone: form.phone.value.trim() || null, notifyByEmail: !!(form.email.value.trim() && form.notify.checked)
+      phone: form.phone.value.trim() || null, notifyByEmail: !!(form.email.value.trim() && form.notify.checked), hp: hp()
     };
-    api('profile', { method: 'POST', body: body }).then(function (r) {
+    apiT('profile', { method: 'POST', body: body }).then(function (r) {
       if (!r.ok) return;
       if (r.json.visitor) visitor = r.json.visitor;
       form.querySelector('.ml').hidden = !(visitor.email || '').trim();
@@ -593,7 +639,7 @@
   /** Holt einen frischen Einmal-Link (`?fs_chat=<token>`) für diese Seite; null bei Fehler. */
   function handoffLink() {
     if (!convId || !token) return Promise.resolve(null);
-    return api('handoff', { method: 'POST', body: { via: 'link', pageUrl: location.href } }).then(function (r) {
+    return apiT('handoff', { method: 'POST', body: { via: 'link', pageUrl: location.href } }).then(function (r) {
       return r.ok && typeof r.json.url === 'string' && r.json.url.indexOf(location.origin + '/') === 0 ? r.json.url : null; // nur same-origin
     }, function () { return null; });
   }
@@ -636,7 +682,7 @@
     var b = profileEl.querySelector('.ml');
     if (b.disabled) return;
     b.disabled = true;
-    api('handoff', { method: 'POST', body: { via: 'email' } }).then(function (r) {
+    apiT('handoff', { method: 'POST', body: { via: 'email' } }).then(function (r) {
       b.disabled = false;
       if (r.ok) { toast(t.mailSent); profileEl.open = false; }
       else if (r.status === 429) toast(t.later);
@@ -675,7 +721,7 @@
         mountNow(!!(resume && convId));
         fillProfile();
         if (unsub && resume && convId) {
-          api('profile', { method: 'POST', body: { notifyByEmail: false } }).then(function (p) {
+          apiT('profile', { method: 'POST', body: { notifyByEmail: false, hp: hp() } }).then(function (p) {
             if (p.ok) { visitor.notifyByEmail = false; fillProfile(); messages.push({ sender: 'system', body: t.unsub, createdAt: new Date().toISOString() }); renderAll(); }
           }, function () {});
         }

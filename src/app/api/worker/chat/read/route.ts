@@ -9,7 +9,7 @@ import { findConversationByToken, markReadByVisitor } from '@/lib/chat/service'
 export const dynamic = 'force-dynamic'
 
 export async function POST(req: NextRequest) {
-  const r = await resolveVisitor(req)
+  const r = await resolveVisitor(req, { requireTicket: true })
   if (!r.ok) return r.response
   const { h, site } = r.ctx
   if (!h.tokenHash) return visitorJson({ ok: true })
