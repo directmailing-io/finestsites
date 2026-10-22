@@ -11,7 +11,7 @@ const EAS_PROJECT_ID = process.env.EAS_PROJECT_ID ?? 'df3f2f67-38a8-4a90-ac64-f6
 // Icon-Grund weiß wie Sidebar/Wortmarke; Startbildschirm wie --background der Webapp
 const ICON_BG = '#FFFFFF';
 // Gleich dem Hintergrund des Logo-Intros (assets/brand/intro.mp4), damit der Übergang nahtlos ist
-const SPLASH_BG = '#FDFDFD';
+const SPLASH_BG = '#FFFFFF';
 export const SPLASH_BG_DARK = '#1a1a1a';
 
 export default ({ config }: ConfigContext): ExpoConfig => ({

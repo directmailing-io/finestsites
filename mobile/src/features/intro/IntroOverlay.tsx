@@ -7,7 +7,7 @@ import { AccessibilityInfo, Animated, Pressable, StyleSheet } from 'react-native
 /**
  * Animiertes Logo-Intro beim Kaltstart (Daniel, 22.10.2026: „wie das Logo-Intro, 1,5-fach“).
  *
- * Ablauf: nativer Startbildschirm (leer, #FDFDFD wie der Videohintergrund) → sobald das erste
+ * Ablauf: nativer Startbildschirm (leer, #FFFFFF – exakt das Weiß des Videos: Y 235 im TV-Bereich) → sobald das erste
  * Videobild steht, wird er ausgeblendet und das Intro läuft (3,1 s: „f“ zeichnet sich bunt, wird
  * schwarz, Wortmarke blendet ein) → letztes Bild bleibt stehen, bis die App bereit ist → sanftes
  * Ausblenden in die App.
@@ -19,7 +19,7 @@ import { AccessibilityInfo, Animated, Pressable, StyleSheet } from 'react-native
  *   Fehler, geht es ohne Intro weiter – der Start hängt nie am Video.
  */
 const INTRO = require('../../../assets/brand/intro.mp4');
-const BG = '#FDFDFD';
+const BG = '#FFFFFF';
 const LOAD_TIMEOUT_MS = 1500;
 const FADE_MS = 280;
 /** Länge von intro.mp4 (Original 0–4,6 s, 1,5-fach) */

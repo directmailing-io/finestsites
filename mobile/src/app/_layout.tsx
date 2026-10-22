@@ -44,7 +44,7 @@ const theme = {
 };
 
 /** Hintergrund des Logo-Intros und des (leeren) nativen Startbildschirms */
-const INTRO_BG = '#FDFDFD';
+const INTRO_BG = '#FFFFFF';
 
 export const unstable_settings = { anchor: '(tabs)' };
 
