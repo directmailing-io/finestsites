@@ -67,7 +67,7 @@ export const OverviewResponse = z.object({
     support: z.number().int().nonnegative(),
     notifications: z.number().int().nonnegative(),
     /** Ungelesene Besucher-Chat-Nachrichten (0, wenn der Chat für das Konto nicht freigeschaltet ist). */
-    chat: z.number().int().nonnegative(),
+    chat: z.number().int().nonnegative().default(0),
   }),
   /** last7 = letzte 7 Tage, prev7 = die 7 Tage davor (Vergleich „zur Vorwoche“), last30 = letzte 30 Tage. */
   stats: z.object({ last7: PeriodStats, prev7: PeriodStats, last30: PeriodStats }),

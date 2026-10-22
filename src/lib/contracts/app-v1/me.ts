@@ -54,7 +54,7 @@ export const MeResponse = z.object({
   features: z.object({
     partnerProgram: z.boolean(),
     /** Besucher-Chat für dieses Konto freigeschaltet (Bereich „Chats“ anzeigen). */
-    visitorChat: z.boolean(),
+    visitorChat: z.boolean().default(false),
   }),
 })
 export type MeResponse = z.infer<typeof MeResponse>
