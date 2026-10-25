@@ -538,7 +538,11 @@
   "Milchsäurekultur": "Молочнокисла культура",
   "Eiweißangereichertes Molkenpulver": "Сироватковий порошок, збагачений білком",
   "19,8 % im Pulver, Ballaststoff": "19,8 % у порошку, клітковина",
-  "NRV = Prozentwert der Referenzmenge für die tägliche Zufuhr (Erwachsene). Nährwerte für 200 ml, zubereitet mit entrahmter Milch (0,3 % Fett). Enthält Milch und Laktose. Quelle: offizielles Datenblatt PM-International AG.": "NRV = відсоток референтної величини добового споживання (дорослі). Поживна цінність для 200 ml, приготовлено зі знежиреним молоком (0,3 % жиру). Містить молоко та лактозу. Джерело: офіційний технічний опис PM-International AG."
+  "NRV = Prozentwert der Referenzmenge für die tägliche Zufuhr (Erwachsene). Nährwerte für 200 ml, zubereitet mit entrahmter Milch (0,3 % Fett). Enthält Milch und Laktose. Quelle: offizielles Datenblatt PM-International AG.": "NRV = відсоток референтної величини добового споживання (дорослі). Поживна цінність для 200 ml, приготовлено зі знежиреним молоком (0,3 % жиру). Містить молоко та лактозу. Джерело: офіційний технічний опис PM-International AG.",
+  "Vier Milchsäurekulturen direkt im Pulver": "Чотири молочнокислі культури прямо в порошку",
+  "Bringt Wärme und feines Aroma in den Drink.": "Додає напою тепло й тонкий аромат.",
+  "<strong>Tagesportion:</strong> 1 Beutel (6,7 g Pulver) in 250 ml stillem Wasser, idealerweise am Abend. Sorten: Citrus (Orange-Zitrone) und Exotic (Kaktusfeige), beide mit denselben Werten.": "<strong>Денна порція:</strong> 1 пакетик (6,7 g порошку) у 250 ml негазованої води, в ідеалі ввечері. Смаки: Citrus (апельсин-лимон) та Exotic (опунція), обидва з однаковими показниками.",
+  "je nach Sorte": "залежно від смаку"
  },
  "attrs": {
   "5 von 5 Sternen": "5 із 5 зірок",

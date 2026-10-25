@@ -2693,5 +2693,25 @@
   "id": 538,
   "de": "NRV = Prozentwert der Referenzmenge für die tägliche Zufuhr (Erwachsene). Nährwerte für 200 ml, zubereitet mit entrahmter Milch (0,3 % Fett). Enthält Milch und Laktose. Quelle: offizielles Datenblatt PM-International AG.",
   "en": "NRV = percent of the daily reference intake (adults). Values per 200 ml prepared with skimmed milk (0.3% fat). Contains milk and lactose. Source: official data sheet, PM-International AG."
+ },
+ {
+  "id": 539,
+  "de": "Vier Milchsäurekulturen direkt im Pulver",
+  "en": "Four lactic acid cultures right in the powder"
+ },
+ {
+  "id": 540,
+  "de": "Bringt Wärme und feines Aroma in den Drink.",
+  "en": "Adds warmth and a fine aroma to the drink."
+ },
+ {
+  "id": 541,
+  "de": "<strong>Tagesportion:</strong> 1 Beutel (6,7 g Pulver) in 250 ml stillem Wasser, idealerweise am Abend. Sorten: Citrus (Orange-Zitrone) und Exotic (Kaktusfeige), beide mit denselben Werten.",
+  "en": "<strong>Daily serving:</strong> 1 sachet (6.7 g powder) in 250 ml still water, ideally in the evening. Flavors: Citrus (orange-lemon) and Exotic (prickly pear), both with the same values."
+ },
+ {
+  "id": 542,
+  "de": "je nach Sorte",
+  "en": "depending on flavor"
  }
 ]
