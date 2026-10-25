@@ -5,7 +5,7 @@ export default function robots(): MetadataRoute.Robots {
     rules: [
       {
         userAgent: '*',
-        allow: ['/$', '/webinar$'],
+        allow: ['/$', '/webinar$', '/app$', '/konto-loeschen$'],
         disallow: ['/'],
       },
     ],
