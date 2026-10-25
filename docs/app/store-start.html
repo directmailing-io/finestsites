@@ -1,0 +1,535 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Store-Start FinestSites</title>
+<style>
+:root{
+  --bg:#f6f6f4;--card:#ffffff;--ink:#1a1a1a;--muted:#6b6b6b;--line:#e7e5e1;--soft:#f1f0ed;
+  --accent:#7c3aed;--accent-soft:#f3edff;--ok:#16794c;--ok-soft:#e8f6ee;--warn:#9a5b00;--warn-soft:#fff4e0;--bad:#b42318;--bad-soft:#fdecea;
+  --you:#0b62d6;--you-soft:#e8f1ff;--me:#7c3aed;--me-soft:#f3edff;
+  --r:16px;--shadow:0 1px 2px rgba(0,0,0,.04),0 4px 16px rgba(0,0,0,.04);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#121212;--card:#1c1c1c;--ink:#f2f2f2;--muted:#a3a3a3;--line:#2c2c2c;--soft:#242424;
+  --accent:#a78bfa;--accent-soft:#2a2140;--ok:#4ade80;--ok-soft:#14281c;--warn:#fbbf24;--warn-soft:#2d2410;--bad:#f87171;--bad-soft:#3a1a18;
+  --you:#60a5fa;--you-soft:#132338;--me:#a78bfa;--me-soft:#2a2140;--shadow:none}}
+:root[data-theme="dark"]{
+  --bg:#121212;--card:#1c1c1c;--ink:#f2f2f2;--muted:#a3a3a3;--line:#2c2c2c;--soft:#242424;
+  --accent:#a78bfa;--accent-soft:#2a2140;--ok:#4ade80;--ok-soft:#14281c;--warn:#fbbf24;--warn-soft:#2d2410;--bad:#f87171;--bad-soft:#3a1a18;
+  --you:#60a5fa;--you-soft:#132338;--me:#a78bfa;--me-soft:#2a2140;--shadow:none}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 -apple-system,BlinkMacSystemFont,"Inter","Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased}
+.wrap{max-width:940px;margin:0 auto;padding:32px 16px 110px}
+header{display:flex;gap:16px;align-items:center;margin-bottom:8px}
+.logo{width:48px;height:48px;border-radius:12px;background:#fff;border:1px solid var(--line);display:grid;place-items:center;flex:none}
+h1{font-size:26px;line-height:1.2;margin:0;letter-spacing:-.01em}
+.sub{color:var(--muted);margin:4px 0 0}
+nav.toc{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);margin:20px -16px 8px;padding:10px 16px;display:flex;gap:8px;overflow-x:auto;scrollbar-width:none}
+nav.toc a{white-space:nowrap;text-decoration:none;color:var(--ink);background:var(--card);border:1px solid var(--line);padding:6px 12px;border-radius:999px;font-size:13px;font-weight:500}
+nav.toc a:hover{border-color:var(--accent)}
+section{margin-top:40px}
+h2{font-size:20px;margin:0 0 4px;letter-spacing:-.01em}
+h2 .n{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:8px;background:var(--ink);color:var(--bg);font-size:13px;margin-right:8px;vertical-align:2px}
+h3{font-size:16px;margin:18px 0 8px}
+.lead{color:var(--muted);margin:0 0 16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:20px;box-shadow:var(--shadow)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+@media (max-width:760px){.grid2,.grid3{grid-template-columns:1fr}}
+.pill{display:inline-block;font-size:12px;font-weight:600;padding:2px 9px;border-radius:999px;vertical-align:1px}
+.pill.you{background:var(--you-soft);color:var(--you)}
+.pill.me{background:var(--me-soft);color:var(--me)}
+.pill.ok{background:var(--ok-soft);color:var(--ok)}
+.pill.warn{background:var(--warn-soft);color:var(--warn)}
+.pill.bad{background:var(--bad-soft);color:var(--bad)}
+.pill.rec{background:var(--accent);color:#fff}
+.ans{display:flex;flex-direction:column;gap:6px}
+.ans .q{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:600}
+.ans .a{font-size:17px;font-weight:700;line-height:1.3}
+.ans p{margin:0;color:var(--muted);font-size:14px}
+.opt{position:relative;display:block;cursor:pointer;border:1.5px solid var(--line);border-radius:var(--r);padding:16px 16px 14px;background:var(--card);transition:border-color .15s,box-shadow .15s}
+.opt:hover{border-color:color-mix(in srgb,var(--accent) 50%,var(--line))}
+.opt input{position:absolute;opacity:0;pointer-events:none}
+.opt:has(input:checked){border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.opt h3{margin:0 0 6px;font-size:16px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.opt ul{margin:8px 0 0;padding-left:18px;color:var(--muted);font-size:14px}
+.opt li{margin:3px 0}
+.opt li.plus::marker{content:"+  ";color:var(--ok);font-weight:700}
+.opt li.minus::marker{content:"–  ";color:var(--warn);font-weight:700}
+.check{width:20px;height:20px;border-radius:50%;border:1.5px solid var(--line);flex:none;display:grid;place-items:center;margin-left:auto}
+.opt:has(input:checked) .check{background:var(--accent);border-color:var(--accent)}
+.opt:has(input:checked) .check::after{content:"";width:8px;height:8px;border-radius:50%;background:#fff}
+.steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.step{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden}
+.step summary{list-style:none;cursor:pointer;display:flex;gap:12px;align-items:center;padding:16px}
+.step summary::-webkit-details-marker{display:none}
+.step .box{width:24px;height:24px;border-radius:8px;border:1.5px solid var(--line);flex:none;display:grid;place-items:center;cursor:pointer;background:var(--card)}
+.step.done .box{background:var(--ok);border-color:var(--ok)}
+.step.done .box::after{content:"";width:6px;height:11px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg) translate(-1px,-1px)}
+.step.done .ttl{text-decoration:line-through;color:var(--muted)}
+.step .ttl{font-weight:600;flex:1}
+.step .meta{font-size:12px;color:var(--muted);white-space:nowrap}
+.step .chev{width:18px;height:18px;color:var(--muted);transition:transform .2s;flex:none}
+.step[open] .chev{transform:rotate(90deg)}
+.step .body{padding:0 16px 18px 52px;font-size:14.5px}
+@media (max-width:560px){.step .body{padding-left:16px}.step .meta{display:none}}
+.step ol{margin:4px 0 0;padding-left:20px}
+.step ol li{margin:6px 0}
+.step a,.card a,.body a{color:var(--accent)}
+code,kbd{font:13px/1.4 ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--soft);border:1px solid var(--line);border-radius:6px;padding:1px 6px;word-break:break-word}
+.give{margin-top:12px;padding:12px 14px;border-radius:12px;background:var(--you-soft);color:var(--ink);font-size:14px}
+.give b{color:var(--you)}
+.note{margin-top:12px;padding:12px 14px;border-radius:12px;background:var(--warn-soft);font-size:14px}
+.good{margin-top:12px;padding:12px 14px;border-radius:12px;background:var(--ok-soft);font-size:14px}
+.table{width:100%;border-collapse:collapse;font-size:14px}
+.table td,.table th{text-align:left;padding:10px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+.table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:600}
+.table tr:last-child td{border-bottom:0}
+.scroll{overflow-x:auto}
+.tl{display:flex;gap:0;margin-top:10px;font-size:13.5px}
+.tl div{flex:1;padding:10px 12px;border-top:3px solid var(--line)}
+.tl div.a{border-color:var(--ok)}.tl div.b{border-color:var(--warn)}.tl div.c{border-color:var(--bad)}.tl div.d{border-color:var(--muted)}
+.tl b{display:block;font-size:13px;margin-bottom:2px}
+@media (max-width:640px){.tl{flex-direction:column}.tl div{border-top:0;border-left:3px solid var(--line)}.tl div.a{border-color:var(--ok)}.tl div.b{border-color:var(--warn)}.tl div.c{border-color:var(--bad)}.tl div.d{border-color:var(--muted)}}
+.status{display:grid;grid-template-columns:auto 1fr;gap:6px 12px;font-size:14px;align-items:start}
+.dot{width:10px;height:10px;border-radius:50%;margin-top:7px}
+.dot.ok{background:var(--ok)}.dot.warn{background:var(--warn)}.dot.bad{background:var(--bad)}.dot.me{background:var(--me)}
+pre.copy{position:relative;white-space:pre-wrap;font:13px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--soft);border:1px solid var(--line);border-radius:12px;padding:14px 14px 14px;margin:8px 0 0}
+pre.copy button{position:absolute;top:8px;right:8px;font:600 12px/1 inherit;padding:7px 10px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer}
+.sumbar{position:fixed;left:0;right:0;bottom:0;z-index:10;background:var(--card);border-top:1px solid var(--line);padding:12px 16px}
+.sumbar .in{max-width:940px;margin:0 auto;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.progress{flex:1;min-width:160px}
+.bar{height:6px;border-radius:99px;background:var(--soft);overflow:hidden;margin-top:6px}
+.bar i{display:block;height:100%;width:0;background:var(--ok);transition:width .3s}
+.btn{appearance:none;border:0;background:var(--ink);color:var(--bg);font:600 14px/1 inherit;padding:12px 16px;border-radius:16px;cursor:pointer}
+.btn:active{transform:scale(.98)}
+.btn.ghost{background:var(--soft);color:var(--ink)}
+.small{font-size:13px;color:var(--muted)}
+footer{margin-top:40px;font-size:13px;color:var(--muted)}
+footer a{color:var(--muted)}
+.day{display:grid;grid-template-columns:72px 1fr;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.day:last-child{border-bottom:0}
+.day b{font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;padding-top:2px}
+.day ul{margin:4px 0 0;padding-left:18px;font-size:14px}
+.day li{margin:3px 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="logo"><svg viewBox="0 0 68.71 126" width="16" height="30"><path fill="#1a1a1a" d="M18.33,126a18.31,18.31,0,0,1-9.26-2.58c-6.17-3.73-9.36-10.86-9-17.94C.87,85.92,14.13,77.23,28.63,71.84c-.06-2.72-.13-5.61-.21-8.9A59.28,59.28,0,0,1,1,64.07L3.75,50.56a46.28,46.28,0,0,0,24.32-2c-.07-3.32-.14-6.67-.19-10,0-1.3-.07-2.62-.12-4-.23-6.6-.49-14.08,2-21.06C32.77,5,40.25-.32,48.8,0S64.16,6.18,66.48,14.88c2.45,9.17-1,17.83-4.32,23.48a52.69,52.69,0,0,1-20.09,19c.09,3.38.17,6.76.26,10.14a88,88,0,0,0,14.31-5.26q2.56-1.24,5-2.69,2.59,4.47,5.21,8.9l1.76,3a84.83,84.83,0,0,1-21.4,9c-1.57.45-3.09.89-4.56,1.33.09,3.45.19,7.11.32,11.45.31,10.12-2.9,22.3-11.48,28.5A22.28,22.28,0,0,1,18.33,126ZM29,86.59c-9.35,4.18-14.77,9.59-15.2,19.49-.1,2.34.65,4.53,1.88,5.42a4.81,4.81,0,0,0,3.19.72c8.6-.72,10.52-12.46,10.33-18.56C29.13,91.1,29.06,88.78,29,86.59Zm19.08-72.8c-1.87,0-4.2,1.14-5.34,4.37-1.6,4.51-1.39,10.33-1.19,16,.05,1.43.1,2.84.12,4.22,0,.91,0,1.83,0,2.74a36.14,36.14,0,0,0,8.55-9.72c1.63-2.77,4.17-8.12,2.89-12.91-.77-2.86-2.55-4.56-4.9-4.65Z"/></svg></div>
+  <div>
+    <h1>App in die Stores: Apple + Android</h1>
+    <p class="sub">Konto löschen, Laufzeit, und was bis zur Veröffentlichung noch fehlt. Stand 25.10.2026, geprüft gegen Code, Datenbank und App Store Connect.</p>
+  </div>
+</header>
+
+<nav class="toc">
+  <a href="#kurz">Kurz beantwortet</a>
+  <a href="#loeschen">1 · Konto löschen heute</a>
+  <a href="#laufzeit">2 · Laufzeit</a>
+  <a href="#apple">3 · Apple</a>
+  <a href="#google">4 · Android</a>
+  <a href="#brauche">5 · Was ich brauche</a>
+  <a href="#ich">6 · Was ich mache</a>
+  <a href="#zeit">7 · Zeitplan</a>
+</nav>
+
+<!-- Kurz -->
+<section id="kurz">
+  <h2>Kurz beantwortet</h2>
+  <div class="grid3">
+    <div class="card ans">
+      <span class="q">Wie läuft Konto löschen?</span>
+      <span class="a">Fertig gebaut, aber ausgeschaltet.</span>
+      <p>Passwort → Seiten sofort offline, Abo sofort beendet → 14 Tage Bedenkzeit mit „Löschung abbrechen“ → endgültig gelöscht. Heute sehen Nutzer stattdessen „Schreib an info@finestsites.io“.</p>
+    </div>
+    <div class="card ans">
+      <span class="q">Und bei laufender Laufzeit?</span>
+      <span class="a">Heute: verfällt ohne Erstattung.</span>
+      <p>Das passt nicht zu AGB § 10 Abs. 2 (Kündigung zum Ende des Abrechnungszeitraums). Empfehlung: beim Löschen wählen lassen – „zum Laufzeitende“ (Standard) oder „sofort“. Umbau ca. 1 Tag.</p>
+    </div>
+    <div class="card ans">
+      <span class="q">Was fehlt für die Stores?</span>
+      <span class="a">Apple: Store-Seite leer. Google: noch nichts angelegt.</span>
+      <p>Die App selbst ist bei Apple als Build 7 in TestFlight. Realistisch: Apple in 2 Wochen live, Android in 5–6 Wochen (Google verlangt 14 Tage Test mit 12 Testern).</p>
+    </div>
+  </div>
+</section>
+
+<!-- 1 Löschen -->
+<section id="loeschen">
+  <h2><span class="n">1</span>Konto löschen – so ist es heute gebaut</h2>
+  <p class="lead">Ein Ablauf für Web (<i>Einstellungen → Konto &amp; FAQ → Konto löschen</i>), App (<i>Konto → Konto löschen</i>) und den nächtlichen Cron. Code: <code>src/lib/account-deletion/</code>. Schalter: <code>app_settings.account_deletion_enabled</code> – fehlt in der Datenbank, also <b>aus</b>. Bisher 0 Anfragen, 0 Löschungen.</p>
+
+  <div class="card">
+    <div class="tl">
+      <div class="a"><b>Tag 0 · Anfrage</b>Passwort eingeben. Admin-Konten können nicht. Bei Partner-Guthaben Pflichtwahl: Auszahlung oder ausdrücklicher Verzicht.</div>
+      <div class="b"><b>sofort danach</b>Alle Seiten offline (auch eigene Domains). Stripe-Abo <b>sofort</b> beendet, keine Erstattung, keine Schlussrechnung. Überall abgemeldet, Push-Geräte gelöscht. Bestätigungs-Mail.</div>
+      <div class="d"><b>Tag 1–14 · Bedenkzeit</b>Anmelden geht; Dashboard und App zeigen nur „Konto wird gelöscht am … – Löschung abbrechen“. Veröffentlichen, neue Seiten, Kauf gesperrt. Keine Newsletter.</div>
+      <div class="c"><b>Tag 14 · Gelöscht</b>Profil, Seiten, Bilder, Anfragen, Support-Chats, Tracking, Domain-Verknüpfungen, Logins weg. Letzte Mail „Dein Konto ist gelöscht“.</div>
+    </div>
+
+    <h3>Abbrechen in der Bedenkzeit</h3>
+    <p style="margin:0;font-size:14.5px">Konto wie vorher, Seiten bleiben aber offline (werden zu Entwürfen, Nutzer veröffentlicht neu). Das beendete Abo kommt <b>nicht</b> zurück – der Nutzer müsste neu buchen. Ein Verzicht auf Guthaben gilt nach Abbruch nicht.</p>
+
+    <h3>Was bleibt (gesetzlich oder zum Schutz)</h3>
+    <ul style="margin:0;padding-left:18px;font-size:14.5px">
+      <li><b>Benutzername</b> bleibt reserviert (Grabstein-Zeile mit <code>deleted-…@deleted.invalid</code>), damit alte Links und Empfehlungslinks nie auf jemand anderen zeigen.</li>
+      <li><b>Stripe-Kundennummer</b> für spätere Rückbuchungen; Rechnungen liegen bei Stripe.</li>
+      <li><b>Partnerprogramm:</b> Gutschriften 8 Jahre, Provisions-/Auszahlungsbuchungen 10 Jahre (§ 147 AO). Offenes Guthaben wird nach der Löschung ausgezahlt (auch unter 10 €) oder bleibt 3 Jahre auf Anfrage auszahlbar – nie stiller Verfall.</li>
+      <li>Je Anfrage: Zeitpunkte und ggf. Verzichtstext als Nachweis.</li>
+    </ul>
+
+    <div class="note"><b>Warum aus?</b> AGB § 11 Abs. 2 sagt heute „Löschung per Mail an info@“, und der gebaute Weg beendet das Abo sofort – AGB § 10 Abs. 2 verspricht aber Zugang bis zum Ende des Abrechnungszeitraums. Darum Abschnitt 2.</div>
+  </div>
+</section>
+
+<!-- 2 Laufzeit -->
+<section id="laufzeit">
+  <h2><span class="n">2</span>Laufzeit: was mit bezahlter Zeit passieren soll</h2>
+  <p class="lead">Heute kündigen Nutzer über das Stripe-Kundenportal zum Laufzeitende; am Ende gehen die Seiten offline und werden nach 90 Tagen gelöscht, das Konto bleibt. Das Löschen soll dazu passen. Wähle eine Variante:</p>
+
+  <div class="grid3" id="delOpts">
+    <label class="opt"><input type="radio" name="del" value="wahl" checked>
+      <h3>Wahl beim Löschen <span class="pill rec">Empfehlung</span><span class="check"></span></h3>
+      <ul>
+        <li class="plus">Bei laufendem Abo vorausgewählt: <b>„Zum Laufzeitende löschen (am 14.03.2027)“</b> – Seiten bleiben bis dahin online, nichts wird mehr abgebucht, bis dahin abbrechbar (dann läuft das Abo einfach weiter)</li>
+        <li class="plus">Daneben <b>„Sofort löschen“</b> mit klarem Satz: „Dein bezahltes Abo endet heute, Restzeit wird nicht erstattet.“ Abbruch dann wie heute (Abo kommt nicht zurück)</li>
+        <li class="plus">Ohne Abo (kostenloses Konto) oder bei Zahlungsstörung: nur „sofort“, 14 Tage Bedenkzeit</li>
+        <li class="plus">Erfüllt Apple und Google (Löschung in der App auslösbar) und passt zu AGB § 10 Abs. 2</li>
+        <li class="minus">Umbau ca. 1 Tag inkl. Tests (Stripe <code>cancel_at_period_end</code>, Löschtermin = Laufzeitende, mindestens 14 Tage)</li>
+      </ul>
+    </label>
+    <label class="opt"><input type="radio" name="del" value="sofort">
+      <h3>Immer sofort<span class="check"></span></h3>
+      <ul>
+        <li class="plus">Fertig, einfach, eindeutig</li>
+        <li class="minus">Jahreszahler verlieren bis zu 11 Monate ohne Erstattung – Rückfragen und Ärger, bei Unternehmer-AGB vertretbar, aber heikel</li>
+        <li class="minus">Braucht die AGB-Ergänzung § 10 Abs. 6 (6 Wochen Vorlauf), bevor eingeschaltet wird</li>
+      </ul>
+    </label>
+    <label class="opt"><input type="radio" name="del" value="ende">
+      <h3>Immer zum Laufzeitende<span class="check"></span></h3>
+      <ul>
+        <li class="plus">Fair für Zahler</li>
+        <li class="minus">Google verlangt eine Löschung ohne unnötige Verzögerung; „erst in 11 Monaten“ fällt im Review durch</li>
+        <li class="minus">Kostenlose Konten hätten gar keinen Weg</li>
+      </ul>
+    </label>
+  </div>
+
+  <div class="card" style="margin-top:12px">
+    <h3 style="margin-top:0">Rechtstexte dazu</h3>
+    <div class="status">
+      <span class="dot me"></span><div><b>Datenschutzerklärung:</b> Abschnitt „Löschung deines Kontos“ (Entwurf liegt in <code>docs/app/rechtstexte-kontoloeschung.md</code>). Kann sofort online, braucht keinen Vorlauf. Dazu fehlt der Datenschutzerklärung heute <b>komplett ein App-Abschnitt</b> (Push-Token, Face ID, Kamera/Fotos, Apple/Google) – den braucht der Store ohnehin. Mache ich.</div>
+      <span class="dot warn"></span><div><b>AGB:</b> § 10 neuer Abs. 6 (Kündigung durch Löschung), § 11 Abs. 2 Satz 4 („Löschung per Mail“ → „selbst löschen“), § 16 Guthaben bei Löschung. Änderungen brauchen laut § 15 <b>6 Wochen Vorlauf per Mail</b>. Die Mail geht nur mit deiner Freigabe. Meine Einschätzung: Mit Variante „Wahl“ kann der Lösch-Knopf schon vorher an, weil er nur einen zusätzlichen Weg bietet und der Standard „zum Laufzeitende“ den AGB entspricht; die „Sofort“-Option ist eine ausdrückliche Entscheidung des Nutzers. Wenn du ganz sicher gehen willst: Anwalt kurz gegenlesen lassen.</div>
+      <span class="dot warn"></span><div><b>Steuerberater:</b> Fristen 8/10 Jahre bestätigen (Punkt C1 im Entwurf).</div>
+    </div>
+  </div>
+</section>
+
+<!-- 3 Apple -->
+<section id="apple">
+  <h2><span class="n">3</span>Apple App Store</h2>
+  <p class="lead">So sieht App Store Connect heute aus (per Schnittstelle geprüft, 25.10.2026):</p>
+  <div class="card">
+    <div class="status">
+      <span class="dot ok"></span><div>App „FinestSites“ angelegt (Apple-ID 6825371773, Bundle <code>io.finestsites.app</code>), Version 1.0 im Zustand „Zur Einreichung vorbereiten“, Name + Untertitel „Websites für Network Marketing“ gesetzt</div>
+      <span class="dot ok"></span><div>Builds 3–7 verarbeitet, TestFlight intern (Gruppe „Team (Expo)“), Verschlüsselungs-Angabe „keine“ ist im Build hinterlegt, Mindest-iOS 16.4</div>
+      <span class="dot bad"></span><div>Kein Build der Version zugeordnet, keine Screenshots, keine Beschreibung/Schlüsselwörter, keine Support- und Marketing-URL, keine Datenschutz-URL</div>
+      <span class="dot bad"></span><div>Kategorie leer, Altersfreigabe-Fragebogen unbeantwortet, Inhaltsrechte nicht erklärt, App-Datenschutz („Nutrition Label“) nicht ausgefüllt, Prüfer-Kontakt und Testzugang fehlen</div>
+      <span class="dot warn"></span><div>Basisland für Preise steht auf <b>USA/USD</b> – bei einer kostenlosen App egal, trotzdem auf Deutschland stellen. Verfügbarkeit (Länder) noch nicht eingerichtet</div>
+    </div>
+  </div>
+
+  <h3>Deine Schritte bei Apple</h3>
+  <p class="small" style="margin:-4px 0 10px">Hake ab, was erledigt ist – die Seite merkt es sich in diesem Browser. Klick auf einen Schritt öffnet die Klickanleitung. Alle Schritte in <a href="https://appstoreconnect.apple.com/apps/6825371773" target="_blank" rel="noopener">App Store Connect → FinestSites</a>.</p>
+  <ul class="steps">
+
+    <li><details class="step" data-id="a0">
+      <summary><span class="box" role="checkbox" aria-label="erledigt"></span><span class="ttl">Drei Entscheidungen an mich</span><span class="meta">5 Min</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 6 6 6-6 6"/></svg></summary>
+      <div class="body">
+        <ol>
+          <li>Variante „Konto löschen“ (Abschnitt 2, oben anklicken).</li>
+          <li>App-Icon-Variante (A–E in der <a href="android-start.html#icon">Android-Seite</a>; meine Empfehlung C). Gilt für Apple und Android.</li>
+          <li>Freigabe: „Produktions-Build bei Expo bauen und bei Apple einreichen“ – ich starte nichts ohne dein Wort.</li>
+        </ol>
+        <div class="give"><b>An mich:</b> Unten „Antworten kopieren“ und in den Chat einfügen.</div>
+      </div>
+    </details></li>
+
+    <li><details class="step" data-id="a1">
+      <summary><span class="box"></span><span class="ttl">EU-Händlerstatus bestätigen</span><span class="meta">5 Min · Pflicht</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 6 6 6-6 6"/></svg></summary>
+      <div class="body">
+        <ol>
+          <li>App Store Connect → oben <b>Geschäftliches</b> (Business) → <b>Händlerstatus</b> / „Digital Services Act“.</li>
+          <li>Als <b>Händler</b> angeben (du bietest einen bezahlten Dienst an). Adresse <code>Herrleinstr. 39, 97437 Haßfurt</code>, Telefon <code>+49 151 51005561</code>, E-Mail <code>info@finestsites.io</code>. Apple schickt Bestätigungscodes an Mail und Telefon.</li>
+          <li>Diese Angaben erscheinen öffentlich auf der Store-Seite – so will es die EU.</li>
+        </ol>
+        <div class="note">Ohne bestätigten Händlerstatus kann die App in der EU nicht veröffentlicht werden. Falls du das am 21.10. schon erledigt hast (Anleitung Zugänge, Schritt 6): abhaken.</div>
+      </div>
+    </details></li>
+
+    <li><details class="step" data-id="a2">
+      <summary><span class="box"></span><span class="ttl">App-Informationen: Kategorie, Inhaltsrechte, Altersfreigabe, Datenschutz-URL</span><span class="meta">15 Min</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 6 6 6-6 6"/></svg></summary>
+      <div class="body">
+        <p style="margin:0 0 6px">Linke Spalte → <b>App-Informationen</b>.</p>
+        <ol>
+          <li><b>Kategorie:</b> primär <b>Business</b>, sekundär <b>Produktivität</b>.</li>
+          <li><b>Inhaltsrechte:</b> „Enthält, zeigt oder greift auf Inhalte Dritter zu?“ → <b>Nein</b>. (Vorlagen, Texte, Bilder und Videos sind deine eigenen; Nutzer laden nur eigene Bilder hoch.)</li>
+          <li><b>Datenschutzerklärung (URL):</b> <code>https://finestsites.io/datenschutz</code> – erst eintragen, wenn ich den App-Abschnitt veröffentlicht habe (sage ich dir).</li>
+          <li><b>Altersfreigabe → Bearbeiten.</b> Der neue Fragebogen (seit 2025). Antworten:</li>
+        </ol>
+        <div class="scroll"><table class="table">
+          <tr><th>Frage</th><th>Antwort</th></tr>
+          <tr><td>Gewalt (Cartoon / realistisch), Horror, Sex/Nacktheit, Schimpfwörter, Alkohol/Tabak/Drogen, Glücksspiel, Waffen, Wettbewerbe, Lootboxen</td><td>jeweils <b>Nein / Keine</b></td></tr>
+          <tr><td>Medizinische oder Behandlungsinformationen, Gesundheit/Wellness</td><td><b>Nein</b> (die App verwaltet Webseiten; Inhalte der Seiten liegen beim Nutzer)</td></tr>
+          <tr><td>Uneingeschränkter Webzugriff</td><td><b>Nein</b> (öffnet nur die eigenen Seiten in einem Safari-Fenster, kein Browser)</td></tr>
+          <tr><td>Nutzergenerierte Inhalte</td><td><b>Ja</b> – Nutzer erstellen Webseiten und können Besucher-Chats führen. Bei Nachfrage nach Moderation: Melden + Sperren je Gespräch, Prüfung von Texten vor dem Veröffentlichen (ClaimGuard), Impressumspflicht</td></tr>
+          <tr><td>Messaging und Chat</td><td><b>Ja</b> (Support-Chat mit uns, Besucher-Chat)</td></tr>
+          <tr><td>Soziale Medien, Elternkontrollen, Altersprüfung</td><td><b>Nein</b></td></tr>
+          <tr><td>Werbung</td><td><b>Nein</b></td></tr>
+        </table></div>
+        <p class="small" style="margin:8px 0 0">Apple berechnet die Einstufung daraus; erwartet 4+ oder 13+. Beides ist für eine Business-App unproblematisch.</p>
+      </div>
+    </details></li>
+
+    <li><details class="step" data-id="a3">
+      <summary><span class="box"></span><span class="ttl">App-Datenschutz („Welche Daten erhebt die App?“)</span><span class="meta">15 Min</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 6 6 6-6 6"/></svg></summary>
+      <div class="body">
+        <p style="margin:0 0 6px">Linke Spalte → <b>App-Datenschutz</b> → „Erste Schritte“ → „Ja, wir erheben Daten“. Für jede Datenart: <b>mit dem Nutzer verknüpft: Ja</b>, <b>Tracking: Nein</b>, Zweck <b>App-Funktionalität</b>.</p>
+        <div class="scroll"><table class="table">
+          <tr><th>Datenart</th><th>Was genau</th></tr>
+          <tr><td>Kontaktinformationen</td><td>Name, E-Mail-Adresse, Telefonnummer (Profil); Anschrift (nur im Partnerprogramm für Gutschriften)</td></tr>
+          <tr><td>Finanzinformationen → Sonstige</td><td>Steuernummer / USt-IdNr. und Auszahlungsstatus im Partnerprogramm. <b>Keine</b> Zahlungsdaten, kein Kauf in der App</td></tr>
+          <tr><td>Nutzerinhalte</td><td>Fotos (Profilbild, Support-Bilder), Kundensupport (Support-Chat), Sonstige Nutzerinhalte (Webseiten-Texte, Chat-Nachrichten)</td></tr>
+          <tr><td>Kennungen</td><td>Nutzer-ID, Geräte-ID (Push-Token)</td></tr>
+          <tr><td>Nicht erhoben</td><td>Standort, Kontakte, Browser-/Suchverlauf, Gesundheit, Nutzungsdaten, Diagnose (es gibt noch keine Absturzberichte; sobald Sentry in der App ist, „Diagnose → Absturzdaten“ nachtragen), Face ID (bleibt auf dem Gerät)</td></tr>
+        </table></div>
+        <p class="small" style="margin:8px 0 0">Zum Schluss „Veröffentlichen“ klicken – sonst gilt das Label nicht.</p>
+      </div>
+    </details></li>
+
+    <li><details class="step" data-id="a4">
+      <summary><span class="box"></span><span class="ttl">Preise und Verfügbarkeit</span><span class="meta">5 Min</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 6 6 6-6 6"/></svg></summary>
+      <div class="body">
+        <ol>
+          <li>Linke Spalte → <b>Preise und Verfügbarkeit</b> → Preis <b>0 € (Kostenlos)</b>, Basisland <b>Deutschland</b>.</li>
+          <li>Verfügbarkeit: <b>alle Länder</b> (die Seiten gibt es in 8 Sprachen, Nutzer sitzen auch in Österreich, Schweiz, Italien usw.). Vorbestellung: aus.</li>
+          <li>Vertriebsmethoden: nur „Öffentlich“. Kein Bedarf an Volumenkauf (Apple Business Manager).</li>
+        </ol>
+        <p class="small" style="margin:8px 0 0">Der Vertrag für kostenpflichtige Apps ist nicht nötig. Du verkaufst nichts über Apple.</p>
+      </div>
+    </details></li>
+
+    <li><details class="step" data-id="a5">
+      <summary><span class="box"></span><span class="ttl">Version 1.0 füllen: Screenshots, Texte, Build, Prüfer-Infos</span><span class="meta">20 Min · nach meinem Paket</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 6 6 6-6 6"/></svg></summary>
+      <div class="body">
+        <p style="margin:0 0 6px">Ich lege dir alles in <code>~/Downloads/app-store</code>: Screenshots, Texte als Datei zum Kopieren. Dann in App Store Connect → Version <b>1.0 Zur Einreichung vorbereiten</b>:</p>
+        <ol>
+          <li><b>Screenshots:</b> iPhone 6,9" (1320 × 2868) und iPad 13" (2064 × 2752) hochziehen – je 4–6 Bilder. Beide Pflicht, weil die App iPad unterstützt. Kleinere Geräte übernimmt Apple automatisch.</li>
+          <li><b>Werbetext</b> (optional, änderbar ohne Review), <b>Beschreibung</b>, <b>Schlüsselwörter</b> (100 Zeichen, mit Komma), <b>Support-URL</b> <code>https://finestsites.io/app</code> (Seite baue ich; bis dahin <code>https://finestsites.io/impressum</code>), <b>Marketing-URL</b> <code>https://finestsites.io</code>.</li>
+          <li><b>Build:</b> „+“ neben Build → den Produktions-Build wählen, den ich nach deiner Freigabe hochlade (höhere Nummer als 7). Beim Hinzufügen fragt Apple nach Verschlüsselung → ist im Build schon mit „Nein“ beantwortet.</li>
+          <li><b>Allgemeine App-Informationen:</b> Copyright <code>© 2026 Daniel Kurzeja</code>, Version <code>1.0.0</code>.</li>
+          <li><b>App-Review-Informationen:</b> Anmeldung erforderlich → <b>Ja</b>, Testzugang eintragen (Benutzername/Passwort kommen von mir – eigenes Prüfer-Konto mit Beispielseiten, keine echten Kundendaten). Kontakt: dein Name, <code>+49 151 51005561</code>, <code>info@finestsites.io</code>. <b>Notizen:</b> meinen englischen Text einfügen (unten).</li>
+          <li><b>Versionsfreigabe:</b> <b>Manuell</b> („Diese Version manuell veröffentlichen“) – dann entscheidest du den Tag; empfohlen, damit wir vorher Push, Login und Server prüfen.</li>
+          <li>Oben rechts <b>Speichern</b>, dann <b>Zur Prüfung hinzufügen</b> → <b>Einreichen</b>.</li>
+        </ol>
+        <details style="margin-top:10px"><summary style="cursor:pointer;font-weight:600">Entwurf: Notizen für den Prüfer (Englisch)</summary>
+<pre class="copy"><button data-copy>Kopieren</button>FinestSites is the companion app to our web service finestsites.io, a website builder for independent distributors (network marketing). Customers subscribe and pay on our website; the app contains no purchases, prices or upgrade links (Guideline 3.1.3(f)). Accounts are created on the website; the app signs in existing users.
+
+Demo account: see credentials above. It already has published demo websites, sample enquiries, a support conversation and the partner programme section.
+
+Features to test: dashboard, "Meine Webseiten" (open the editor, preview a site), "Anfragen" (contact form enquiries with call/WhatsApp/mail), push notifications (opt-in on first start, settings under Konto → Mitteilungen), "Hilfe" (support chat with our team), Konto → Konto löschen (account deletion with 14-day grace period), Face ID lock (optional).
+
+User-generated content (websites, chat) is moderated: every published text is checked by our compliance filter, chat conversations can be reported and blocked, legal notice is mandatory on every site.</pre>
+        </details>
+        <details style="margin-top:10px"><summary style="cursor:pointer;font-weight:600">Entwurf: Beschreibung + Schlüsselwörter (Deutsch)</summary>
+<pre class="copy"><button data-copy>Kopieren</button>Deine FinestSites-Webseiten in der Tasche.
+
+Mit der FinestSites-App behältst du deine Webseiten, Anfragen und Besucher-Nachrichten immer im Blick – auf iPhone und iPad.
+
+• Anfragen sofort sehen: Jede Kontaktanfrage von deiner Webseite kommt als Mitteilung aufs Handy. Anrufen, WhatsApp schreiben oder antworten – mit einem Tipp.
+• Webseiten bearbeiten und veröffentlichen: Texte, Bilder, Farben und Kontaktdaten ändern, Vorschau ansehen, live stellen.
+• Partnerprogramm: Empfehlungslink teilen, Stand deiner Empfehlungen und Gutschriften einsehen.
+• Hilfe direkt in der App: Unser Team antwortet im Support-Chat.
+• Sicher: Optional mit Face ID oder Touch ID sperren.
+
+Die App ergänzt dein FinestSites-Konto. Ein Konto erstellst du auf finestsites.io.
+
+---
+Schlüsselwörter: Website,Webseite,Homepage,Network Marketing,Vertrieb,Anfragen,Kontaktformular,Landingpage,Visitenkarte,Partner</pre>
+        </details>
+      </div>
+    </details></li>
+
+    <li><details class="step" data-id="a6">
+      <summary><span class="box"></span><span class="ttl">Prüfung begleiten und veröffentlichen</span><span class="meta">1–3 Tage</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 6 6 6-6 6"/></svg></summary>
+      <div class="body">
+        <ol>
+          <li>Apple antwortet meist innerhalb von 24–48 Stunden per Mail. Rückfragen kommen im App Store Connect unter <b>App-Review</b> – Nachricht an mich weiterleiten, ich formuliere die Antwort.</li>
+          <li>Typische Rückfragen bei uns: „Wo kann man ein Konto erstellen?“ (Antwort: auf der Website, Notizen verweisen darauf) und „Bitte Testzugang prüfen“ (ich halte das Prüfer-Konto bereit).</li>
+          <li>Nach „Zur Veröffentlichung bereit“: Knopf <b>Diese Version veröffentlichen</b>. Ich prüfe vorher Push und Server. 1–24 Stunden später ist sie im Store.</li>
+          <li>Danach: TestFlight-Gruppe bleibt für neue Builds; Updates gehen über denselben Weg (Version 1.0.1 anlegen, Build wählen, „Neue Funktionen“ ausfüllen).</li>
+        </ol>
+        <div class="good">Nicht nötig: „Mit Apple anmelden“ (es gibt keinen Google-/Facebook-Login), Vertrag für kostenpflichtige Apps, App-Vorschau-Video.</div>
+      </div>
+    </details></li>
+  </ul>
+</section>
+
+<!-- 4 Google -->
+<section id="google">
+  <h2><span class="n">4</span>Google Play (Android)</h2>
+  <p class="lead">Hier gibt es noch nichts: kein Play-Konto, kein Firebase-Projekt, kein Android-Build. Die Klick-Anleitung mit allen Details steht in <a href="android-start.html">android-start.html</a>; hier die Reihenfolge und die Zeit.</p>
+  <div class="card">
+    <div class="scroll"><table class="table">
+      <tr><th>#</th><th>Schritt</th><th>Wer</th><th>Dauer</th></tr>
+      <tr><td>1</td><td>Entscheidung Konto-Art: <b>persönliches Konto</b> (empfohlen, ohne D-U-N-S) oder Organisation (D-U-N-S nötig, 1–4 Wochen)</td><td><span class="pill you">du</span></td><td>jetzt</td></tr>
+      <tr><td>2</td><td>Play-Entwicklerkonto anlegen: 25 $, Ausweis, Händlerstatus (Adresse/Telefon/Mail öffentlich), Bestätigung über die Play-Console-App auf einem Android-Gerät</td><td><span class="pill you">du</span></td><td>15 Min + 1–3 Tage Prüfung</td></tr>
+      <tr><td>3</td><td>Firebase-Projekt (Push): <code>google-services.json</code> + Dienstkonto-Schlüssel herunterladen</td><td><span class="pill you">du</span></td><td>10 Min</td></tr>
+      <tr><td>4</td><td>Android-Fassung fertig machen: Mitteilungs-Kanäle, Tastatur, Zurück-Taste, Icon, Intro; Test im Emulator; erster <code>.aab</code>-Build bei Expo (mit deiner Freigabe)</td><td><span class="pill me">ich</span></td><td>2–3 Tage</td></tr>
+      <tr><td>5</td><td>App in der Play Console anlegen, ersten Build von Hand hochladen (Google verlangt das), Upload-Dienstkonto für mich</td><td><span class="pill you">du</span></td><td>25 Min</td></tr>
+      <tr><td>6</td><td>Formulare „App-Inhalte“ (Datenschutz-URL, Datensicherheit, Altersfreigabe, Zielgruppe 18+, Werbung nein, Konto-löschen-Weblink) – Antworten kommen fertig von mir</td><td><span class="pill you">du</span></td><td>30 Min</td></tr>
+      <tr><td>7</td><td>Geschlossener Test: <b>12 Tester, 14 Tage am Stück</b> (nur bei persönlichem Konto). Tester = Kunden mit Android; Einladungs-Mail nur mit deiner Freigabe</td><td><span class="pill you">du</span> + <span class="pill me">ich</span></td><td>14 Tage</td></tr>
+      <tr><td>8</td><td>„Produktionszugriff beantragen“ (Fragebogen, Antworten von mir), dann Store-Eintrag (Texte, Screenshots Handy + Tablet, Grafik 1024 × 500 – alles von mir) → „An Google senden“</td><td><span class="pill you">du</span></td><td>Google 1–7 Tage</td></tr>
+    </table></div>
+    <div class="note"><b>Technik-Stand:</b> Expo SDK 58 erfüllt Googles Ziel-API 36 (Pflicht seit 31.08.2026). Offene Lücken im Code: Push-Kanäle (Server sendet Kanal je Kategorie, App kennt nur „default“), Tastatur-Abstand nur für iOS gebaut, <code>assetlinks.json</code> und <code>apple-app-site-association</code> liefern 404 (Links aus Mails öffnen die App nicht), kein Android-Build bisher gemacht.</div>
+  </div>
+</section>
+
+<!-- 5 Brauche -->
+<section id="brauche">
+  <h2><span class="n">5</span>Was ich von dir brauche</h2>
+  <p class="lead">Alles andere erledige ich. Reihenfolge nach Dringlichkeit.</p>
+  <div class="card scroll">
+    <table class="table">
+      <tr><th>#</th><th>Was</th><th>Wofür</th><th>Wann</th></tr>
+      <tr><td>1</td><td>Entscheidung „Konto löschen“ (Abschnitt 2) und Icon-Variante</td><td>Apple + Android</td><td><span class="pill you">jetzt</span></td></tr>
+      <tr><td>2</td><td>Freigabe: Produktions-Build iOS bei Expo bauen + bei Apple einreichen</td><td>Apple</td><td><span class="pill you">jetzt</span></td></tr>
+      <tr><td>3</td><td>Freigabe: Datenschutz-Abschnitte „App“ und „Konto löschen“ veröffentlichen (ich schreibe sie rechtlich sauber, du liest 5 Minuten gegen)</td><td>Apple + Android</td><td>diese Woche</td></tr>
+      <tr><td>4</td><td>Händlerstatus bei Apple bestätigen (Schritt 1 oben) – oder mir sagen, dass es erledigt ist</td><td>Apple</td><td>diese Woche</td></tr>
+      <tr><td>5</td><td>Klickschritte 2–5 bei Apple (ca. 1 Stunde insgesamt, mit meinem Paket)</td><td>Apple</td><td>wenn Paket da</td></tr>
+      <tr><td>6</td><td>Freigabe für die AGB-Änderungsmail (6 Wochen Vorlauf) – optional, aber empfohlen</td><td>Konto löschen</td><td>wenn du willst</td></tr>
+      <tr><td>7</td><td>Entscheidung Play-Konto-Art, dann Play-Konto + Firebase anlegen (Android-Seite, Schritte 1–2)</td><td>Android</td><td>parallel</td></tr>
+      <tr><td>8</td><td>Android-Gerät (Konto-Bestätigung + eigener Test), 12–20 Tester bzw. Freigabe der Einladungs-Mail</td><td>Android</td><td>nach Play-Konto</td></tr>
+      <tr><td>9</td><td>Optional: Steuerberater zu Fristen 8/10 Jahre, Anwalt zu „Sofort löschen ohne Erstattung“</td><td>Konto löschen</td><td>wenn du willst</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- 6 Ich -->
+<section id="ich">
+  <h2><span class="n">6</span>Was ich mache</h2>
+  <p class="lead">Nach deinen Entscheidungen. Kernänderungen (Datenbank, Worker) wie immer nur um 06:00 oder 23:00.</p>
+  <div class="grid2">
+    <div class="card"><span class="pill me">Konto löschen</span>
+      <ul style="margin:10px 0 0;padding-left:18px;font-size:14.5px">
+        <li>Wahl „zum Laufzeitende / sofort“ in Web und App, Stripe-Kündigung zum Laufzeitende, Löschtermin = Laufzeitende (mind. 14 Tage), Abbruch stellt Abo wieder her (ca. 1 Tag, Tests mit Stripe-Testmodus)</li>
+        <li>Öffentliche Seite <code>finestsites.io/konto-loeschen</code> (Google verlangt einen Weblink; beschreibt den Weg in App/Web und per Mail)</li>
+        <li>Datenschutz: Abschnitte „App“ (Push, Face ID, Kamera/Fotos, Apple/Google als Empfänger) und „Löschung deines Kontos“</li>
+        <li>AGB-Entwurf § 10 Abs. 6, § 11 Abs. 2, § 16 fertig zur Freigabe; Mail nur mit deinem Ja</li>
+        <li>Einschalten: <code>account_deletion_enabled = true</code> im 23-Uhr-Fenster, danach Überwachung der ersten Anfragen</li>
+      </ul>
+    </div>
+    <div class="card"><span class="pill me">Apple</span>
+      <ul style="margin:10px 0 0;padding-left:18px;font-size:14.5px">
+        <li>Prüfer-Konto <code>apple-review</code> (internes Konto, keine Gutschriften, keine Rundmails) mit 2 veröffentlichten Beispielseiten, Anfragen, Support-Verlauf, Partnerbereich</li>
+        <li>Screenshots iPhone 6,9" + iPad 13" (6 Motive), Texte, Prüfer-Notizen → <code>~/Downloads/app-store</code></li>
+        <li>Seite <code>finestsites.io/app</code> als Support- und Marketing-URL (was die App kann, Hilfe-Kontakt, Link zu Konto löschen)</li>
+        <li><code>apple-app-site-association</code> ausliefern, damit Links aus Mails die App öffnen</li>
+        <li>Neues Icon, Build 8 als Produktions-Build (Expo), Einreichen – nur nach deiner Freigabe; Antworten auf Prüfer-Rückfragen</li>
+      </ul>
+    </div>
+    <div class="card"><span class="pill me">Android</span>
+      <ul style="margin:10px 0 0;padding-left:18px;font-size:14.5px">
+        <li>Push-Kanäle (Anfragen, Support, Konto, Partner, Chat) mit Ton/Banner, Firebase-Dateien verschlüsselt bei Expo hinterlegen</li>
+        <li>Tastatur-Abstand, Zurück-Taste, Biometrie-Texte („Fingerabdruck oder Gesicht“), Intro, edge-to-edge prüfen – im Emulator</li>
+        <li><code>assetlinks.json</code> ausliefern</li>
+        <li>Erster <code>.aab</code> für deinen Hand-Upload; danach Uploads über Dienstkonto</li>
+        <li>Antworten für alle Play-Formulare (Datensicherheit, Einstufung, Produktionszugriff), Store-Texte, Screenshots Handy + Tablet, Grafik 1024 × 500</li>
+      </ul>
+    </div>
+    <div class="card"><span class="pill me">Beide Stores, laufend</span>
+      <ul style="margin:10px 0 0;padding-left:18px;font-size:14.5px">
+        <li>Fehlerberichte (Sentry EU) in die App einbauen – dann „Diagnose“ im Datenschutz-Label nachtragen</li>
+        <li>Registrieren in der App als Update nach der ersten Freigabe (dann ist Konto löschen in der App Pflicht bei Apple <i>und</i> Google)</li>
+        <li>Changelog-Seite und Dashboard-Hinweis pflegen</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 7 Zeit -->
+<section id="zeit">
+  <h2><span class="n">7</span>Zeitplan, wenn du heute entscheidest</h2>
+  <div class="card">
+    <div class="day"><b>Tag 1–2</b><ul><li>Konto-löschen-Umbau + Tests, Datenschutz-Abschnitte, <code>/konto-loeschen</code>, <code>/app</code>, Prüfer-Konto, Icon</li><li>Du: Händlerstatus, App-Informationen, App-Datenschutz, Preise</li></ul></div>
+    <div class="day"><b>Tag 3</b><ul><li>Screenshots + Texte in <code>~/Downloads/app-store</code>; Produktions-Build iOS (nach Freigabe) → TestFlight-Kurztest</li><li>Du: Version 1.0 füllen, einreichen</li></ul></div>
+    <div class="day"><b>Tag 4–7</b><ul><li>Apple-Prüfung, Rückfragen beantworten. Parallel: Android-Fassung im Emulator, Push-Kanäle, assetlinks</li><li>Du: Play-Konto + Firebase anlegen</li></ul></div>
+    <div class="day"><b>Tag 7–10</b><ul><li><b>Apple live</b> (nach deinem Klick „Veröffentlichen“)</li><li>Erster Android-Build, dein Hand-Upload, Formulare, Tester einladen (Mail mit Freigabe)</li></ul></div>
+    <div class="day"><b>Tag 10–24</b><ul><li>14 Tage geschlossener Test auf Android; ich sammle Fehler aus dem Test</li></ul></div>
+    <div class="day"><b>Tag 25–35</b><ul><li>Produktionszugriff beantragen, Store-Eintrag, Google-Prüfung → <b>Android live</b></li></ul></div>
+  </div>
+  <p class="small" style="margin-top:10px">Mit Organisationskonto bei Google entfällt der 14-Tage-Test, dafür kommt die D-U-N-S-Wartezeit (1–4 Wochen) davor – im Ergebnis ähnlich lang, aber ohne Tester-Suche.</p>
+</section>
+
+<footer>
+  Quellen: <code>src/lib/account-deletion/service.ts</code>, <code>docs/app/rechtstexte-kontoloeschung.md</code>, <code>src/app/agb/page.tsx</code> (§ 10, § 11, § 15), <code>mobile/app.config.ts</code>, App Store Connect API (25.10.2026), Live-Datenbank (nur lesend). Verwandt: <a href="android-start.html">android-start.html</a>, <a href="anleitung-zugaenge.html">anleitung-zugaenge.html</a>, <a href="umsetzungsplan.html">umsetzungsplan.html</a>.
+</footer>
+</div>
+
+<div class="sumbar"><div class="in">
+  <div class="progress"><div class="small" id="progText">0 von 7 Apple-Schritten erledigt</div><div class="bar"><i id="progBar"></i></div></div>
+  <button class="btn ghost" id="resetBtn" type="button">Zurücksetzen</button>
+  <button class="btn" id="copyBtn" type="button">Antworten kopieren</button>
+</div></div>
+
+<script>
+(function(){
+  var KEY='fs-store-start-v1';
+  var state={}; try{state=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}}
+  var steps=[].slice.call(document.querySelectorAll('.step'));
+  function render(){
+    var done=0;
+    steps.forEach(function(s){var id=s.getAttribute('data-id');var d=!!state[id];s.classList.toggle('done',d);if(d)done++;});
+    document.getElementById('progText').textContent=done+' von '+steps.length+' Apple-Schritten erledigt';
+    document.getElementById('progBar').style.width=(steps.length?Math.round(done/steps.length*100):0)+'%';
+  }
+  steps.forEach(function(s){
+    var box=s.querySelector('.box');
+    box.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();var id=s.getAttribute('data-id');state[id]=!state[id];save();render();});
+  });
+  document.querySelectorAll('#delOpts input').forEach(function(i){
+    if(state.del){i.checked=(i.value===state.del);}
+    i.addEventListener('change',function(){state.del=i.value;save();});
+  });
+  document.getElementById('resetBtn').addEventListener('click',function(){if(confirm('Alle Haken und Antworten auf dieser Seite zurücksetzen?')){state={};save();document.querySelectorAll('#delOpts input').forEach(function(i){i.checked=(i.value==='wahl')});render();}});
+  var labels={wahl:'Wahl beim Löschen: zum Laufzeitende (Standard) oder sofort',sofort:'Immer sofort (wie heute gebaut)',ende:'Immer zum Laufzeitende'};
+  document.getElementById('copyBtn').addEventListener('click',function(){
+    var del=(document.querySelector('#delOpts input:checked')||{}).value||'wahl';
+    var done=steps.filter(function(s){return state[s.getAttribute('data-id')]}).map(function(s){return s.querySelector('.ttl').textContent});
+    var txt='Store-Start – meine Antworten ('+new Date().toLocaleDateString('de-DE')+')\n'+
+      '1. Konto löschen: '+labels[del]+'\n'+
+      '2. Icon-Variante: ___ (A–E, siehe android-start.html)\n'+
+      '3. Freigabe iOS-Produktions-Build + Einreichen bei Apple: ja / nein\n'+
+      '4. Händlerstatus bei Apple bestätigt: ja / nein\n'+
+      '5. Datenschutz-Abschnitte App + Konto löschen veröffentlichen: ja / nein\n'+
+      '6. AGB-Änderungsmail (6 Wochen Vorlauf) freigeben: ja / später\n'+
+      '7. Play-Konto-Art: persönlich / Organisation\n'+
+      (done.length?'\nErledigt bei Apple: '+done.join('; '):'');
+    navigator.clipboard.writeText(txt).then(function(){var b=document.getElementById('copyBtn');var o=b.textContent;b.textContent='Kopiert';setTimeout(function(){b.textContent=o},1500)});
+  });
+  document.querySelectorAll('pre.copy button[data-copy]').forEach(function(b){
+    b.addEventListener('click',function(){var pre=b.parentNode;var t=pre.cloneNode(true);t.querySelector('button').remove();navigator.clipboard.writeText(t.textContent.trim()).then(function(){var o=b.textContent;b.textContent='Kopiert';setTimeout(function(){b.textContent=o},1500)});});
+  });
+  render();
+})();
+</script>
+</body>
+</html>
