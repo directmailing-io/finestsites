@@ -352,11 +352,13 @@ export async function mockFetch(url: string, init: { method: string; headers: Re
     if (method === 'POST') {
       if (String(body.password) === 'falsch') return json({ code: 'INVALID_PASSWORD', message: 'Das Passwort stimmt nicht.' }, 400);
       if (total > 0 && !body.balanceChoice) return json({ code: 'BALANCE_CHOICE_REQUIRED', message: '' }, 400);
-      return json({ status: 'scheduled', scheduledFor: new Date(Date.now() + 14 * 864e5).toISOString(), signedOut: true });
+      const periodEnd = body.timing === 'period_end';
+      return json({ status: 'scheduled', mode: periodEnd ? 'period_end' : 'now', scheduledFor: new Date(Date.now() + (periodEnd ? 47 : 14) * 864e5).toISOString(), signedOut: !periodEnd });
     }
-    if (method === 'DELETE') return json({ status: 'none', sitesOffline: true });
+    if (method === 'DELETE') return json({ status: 'none', sitesOffline: false, subscriptionContinues: true });
     return json({
-      status: 'none', requestedAt: null, scheduledFor: null, graceDays: 14, canDelete: true, blockedReason: null,
+      status: 'none', requestedAt: null, scheduledFor: null, mode: null, graceDays: 14, canDelete: true, blockedReason: null,
+      periodEnd: { available: true, at: new Date(Date.now() + 47 * 864e5).toISOString() },
       partnerBalance: {
         currency: 'EUR',
         availableCents: db.me.features.partnerProgram ? db.affiliate.earnings.availableCents : 0,

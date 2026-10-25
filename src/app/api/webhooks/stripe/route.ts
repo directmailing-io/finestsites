@@ -683,9 +683,11 @@ export async function POST(req: NextRequest) {
           : 'Ende des Abrechnungszeitraums'
         const userRow = await db.query.users.findFirst({
           where: eq(users.id, userId),
-          columns: { email: true },
+          columns: { email: true, deletionRequestedAt: true },
         })
-        if (userRow?.email) {
+        // Kontolöschung „zum Laufzeitende“ setzt cancel_at_period_end selbst – der Nutzer hat dafür schon
+        // die Lösch-Bestätigung bekommen, keine zweite „gekündigt“-Mail.
+        if (userRow?.email && !userRow.deletionRequestedAt) {
           sendEmail({ to: userRow.email, subject: 'Dein Abo wurde gekündigt', html: accountCanceledEmail({ periodEnd: periodEndStr }), type: 'account_canceled' }).catch(() => {})
         }
       }
@@ -714,19 +716,25 @@ export async function POST(req: NextRequest) {
 
       const userRow = await db.query.users.findFirst({
         where: eq(users.id, userId),
-        columns: { email: true, deactivatedAt: true, subscriptionStatus: true, paymentFailedAt: true, deletionRequestedAt: true, deletedAt: true },
+        columns: { email: true, deactivatedAt: true, subscriptionStatus: true, paymentFailedAt: true, deletionRequestedAt: true, deletionMode: true, deletedAt: true },
       })
 
       // Kontolöschung: Abo wurde von uns sofort beendet, Seiten sind schon offline. Kein 90-Tage-Timer,
       // keine „Abo ausgelaufen/pausiert“-Mail (der Nutzer hat die Lösch-Bestätigung bekommen).
+      // Kontolöschung vorgemerkt: keine „Abo ausgelaufen/pausiert“-Mail (der Nutzer hat die Lösch-Bestätigung),
+      // kein 90-Tage-Timer (der Lösch-Cron räumt auf). Weg „sofort“: Abo wurde von uns beendet, Seiten sind
+      // schon offline. Weg „zum Laufzeitende“: jetzt ist die Laufzeit vorbei → Seiten offline nehmen.
       if (userRow?.deletionRequestedAt || userRow?.deletedAt) {
+        const sitesDeactivated = userRow.deletedAt ? 0 : await suspendSites(userId)
         await db.update(users).set({
           plan: 'starter', subscriptionStatus: userRow.deletedAt ? null : 'canceled', stripeSubscriptionId: null,
           cancelAtPeriodEnd: false, ...recoveryCleared,
+          // Nur „zum Laufzeitende“: jetzt endet der bezahlte Zeitraum → Konto gilt als deaktiviert
+          ...(!userRow.deletedAt && userRow.deletionMode === 'period_end' ? { deactivatedAt: userRow.deactivatedAt ?? now } : {}),
         }).where(eq(users.id, userId))
         await logEvent({
           userId, eventType: 'subscription_deleted', stripeEventId: event.id, stripeSubscriptionId: sub.id,
-          metadata: { account_deletion: true },
+          metadata: { account_deletion: true, sites_deactivated: sitesDeactivated },
         })
         break
       }

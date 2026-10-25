@@ -1212,21 +1212,30 @@ function deletionPara(html: string, last = false): string {
 }
 
 /** Bestätigung der Lösch-Anfrage: Datum, was sofort passiert ist, wie man abbricht. */
-export function accountDeletionRequestedEmail({ scheduledFor, balanceNote }: { scheduledFor: string; balanceNote?: string | null }): string {
+export function accountDeletionRequestedEmail({ scheduledFor, balanceNote, mode = 'now' }: { scheduledFor: string; balanceNote?: string | null; mode?: 'now' | 'period_end' }): string {
+  const periodEnd = mode === 'period_end'
   return layout(`
     <h1 style="margin:0 0 8px;font-size:22px;font-weight:700;color:${base.heading};letter-spacing:-0.02em;">
       Dein Konto wird am ${scheduledFor} gelöscht
     </h1>
-    ${deletionPara('Du hast die Löschung deines FinestSites-Kontos angefragt. Das haben wir sofort erledigt:')}
+    ${periodEnd
+      ? deletionPara('Du hast die Löschung deines FinestSites-Kontos zum Ende deiner Laufzeit angefragt. Das bedeutet:')
+      : deletionPara('Du hast die Löschung deines FinestSites-Kontos angefragt. Das haben wir sofort erledigt:')}
     <ul style="margin:0 0 16px;padding-left:20px;font-size:15px;color:${base.body};line-height:1.65;">
+      ${periodEnd ? `
+      <li>Dein Abo ist zum <strong>${scheduledFor}</strong> gekündigt. Es wird nichts mehr abgebucht; bereits bezahlte Zeit wird nicht erstattet.</li>
+      <li>Deine Webseiten bleiben bis dahin online, dein Konto kannst du bis dahin wie gewohnt nutzen.</li>
+      <li>Du bleibst angemeldet.</li>` : `
       <li>Deine Webseiten sind offline.</li>
-      <li>Dein Abo ist beendet. Es wird nichts mehr abgebucht.</li>
-      <li>Du bist auf allen Geräten abgemeldet.</li>
+      <li>Dein Abo ist beendet. Es wird nichts mehr abgebucht; bereits bezahlte Zeit wird nicht erstattet.</li>
+      <li>Du bist auf allen Geräten abgemeldet.</li>`}
     </ul>
     ${deletionPara(`Am <strong>${scheduledFor}</strong> löschen wir dein Konto, deine Seiten, Anfragen und Bilder endgültig. Deinen Benutzernamen vergeben wir nicht neu.`)}
     ${balanceNote ? deletionPara(balanceNote) : ''}
-    ${deletionPara('Du hast es dir anders überlegt? Melde dich bis dahin einfach wieder an und klicke auf „Löschung abbrechen“. Deine Seiten kannst du danach wieder veröffentlichen. Ein beendetes Abo musst du neu abschließen.', true)}
-    ${button(`${APP_URL}/login`, 'Anmelden und Löschung abbrechen')}
+    ${periodEnd
+      ? deletionPara('Du hast es dir anders überlegt? Klicke bis dahin im Dashboard oder in der App auf „Löschung abbrechen“ – dann läuft dein Abo einfach weiter wie vorher.', true)
+      : deletionPara('Du hast es dir anders überlegt? Melde dich bis dahin einfach wieder an und klicke auf „Löschung abbrechen“. Deine Seiten kannst du danach wieder veröffentlichen. Ein beendetes Abo musst du neu abschließen.', true)}
+    ${button(periodEnd ? `${APP_URL}/sites` : `${APP_URL}/login`, periodEnd ? 'Zum Dashboard' : 'Anmelden und Löschung abbrechen')}
     <p style="margin:28px 0 0;font-size:13px;color:${base.muted};line-height:1.6;">
       Das warst nicht du? Dann melde dich bitte sofort unter <a href="mailto:info@finestsites.io" style="color:${base.muted};">info@finestsites.io</a>.
     </p>
@@ -1234,13 +1243,15 @@ export function accountDeletionRequestedEmail({ scheduledFor, balanceNote }: { s
 }
 
 /** Bestätigung, dass die Löschung abgebrochen wurde. */
-export function accountDeletionCancelledEmail(): string {
+export function accountDeletionCancelledEmail({ subscriptionContinues = false, sitesOffline = true }: { subscriptionContinues?: boolean; sitesOffline?: boolean } = {}): string {
   return layout(`
     <h1 style="margin:0 0 8px;font-size:22px;font-weight:700;color:${base.heading};letter-spacing:-0.02em;">
       Dein Konto bleibt bestehen
     </h1>
     ${deletionPara('Du hast die Löschung deines FinestSites-Kontos abgebrochen. Deine Daten bleiben erhalten.')}
-    ${deletionPara('Deine Webseiten sind noch offline. Du kannst sie im Dashboard jederzeit wieder veröffentlichen. Dein früheres Abo ist beendet und läuft nicht von selbst weiter.', true)}
+    ${subscriptionContinues
+      ? deletionPara('Die Kündigung deines Abos haben wir zurückgenommen – es läuft weiter wie vorher, deine Webseiten bleiben online.', true)
+      : deletionPara(`${sitesOffline ? 'Deine Webseiten sind noch offline. Du kannst sie im Dashboard jederzeit wieder veröffentlichen. ' : ''}Dein früheres Abo ist beendet und läuft nicht von selbst weiter.`, true)}
     ${button(`${APP_URL}/sites`, 'Zu meinen Seiten')}
     <p style="margin:28px 0 0;font-size:13px;color:${base.muted};line-height:1.6;">
       Das warst nicht du? Dann melde dich bitte sofort unter <a href="mailto:info@finestsites.io" style="color:${base.muted};">info@finestsites.io</a>.

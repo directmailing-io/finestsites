@@ -1,12 +1,13 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useRouter } from 'expo-router';
 import { Check } from 'lucide-react-native';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Alert, Pressable, StyleSheet, View } from 'react-native';
 
 import { ApiError, humanError } from '@/api/client';
 import { getDeletionInfo, requestDeletion } from '@/api/endpoints';
 import { qk } from '@/api/queries';
-import type { PartnerBalanceChoice } from '@/api/types';
+import type { DeletionTiming, PartnerBalanceChoice } from '@/api/types';
 import { Button, Card, Input, LoadError, Notice, Screen, Skeleton, Text } from '@/components/ui';
 import { useAuth } from '@/lib/auth';
 import { openExternal } from '@/lib/links';
@@ -14,15 +15,17 @@ import { euros, fmtDate } from '@/lib/format';
 import { colors, fonts, radius } from '@/theme/tokens';
 
 /**
- * Konto löschen (Apple 5.1.1(v)): direkt in der App, ohne Support. Passwort, ausdrückliche
- * Bestätigung, 14 Tage Bedenkzeit. Offenes Partner-Guthaben verfällt NICHT stillschweigend:
- * Auszahlung oder ausdrücklicher Verzicht (Wortlaut vom Server).
- * Nach dem Absenden sind alle Sitzungen beendet → lokal abmelden; nach erneuter Anmeldung zeigt
- * die App „Konto wird gelöscht am …“ mit „Löschung abbrechen“ (deletion-pending).
+ * Konto löschen (Apple 5.1.1(v), Google Play): direkt in der App, ohne Support. Passwort, ausdrückliche
+ * Bestätigung, bei Partner-Guthaben Auszahlung oder ausdrücklicher Verzicht (Wortlaut vom Server).
+ * Zeitpunkt (nur mit laufendem Abo wählbar, sonst immer „sofort“):
+ *   • zum Laufzeitende (Standard): Seiten bleiben online, Abo gekündigt, Löschung am Laufzeitende, Konto bleibt nutzbar
+ *   • sofort: Seiten offline, Abo endet sofort, 14 Tage Bedenkzeit, alle Sitzungen beendet → lokal abmelden
+ * In beiden Fällen wird bereits bezahlte Zeit nicht erstattet.
  */
 const ERROR_TEXT: Record<string, string> = {
   INVALID_PASSWORD: 'Das Passwort stimmt nicht.',
   BALANCE_CHOICE_REQUIRED: 'Bitte wähle, was mit deinem Partner-Guthaben passieren soll.',
+  PERIOD_END_NOT_AVAILABLE: 'Löschen zum Laufzeitende geht gerade nicht. Bitte wähle „Sofort löschen“ oder versuch es später nochmal.',
   DELETION_NOT_ALLOWED: 'Dieses Konto kann in der App nicht gelöscht werden.',
   DELETION_ALREADY_REQUESTED: 'Die Löschung ist bereits vorgemerkt.',
   RATE_LIMITED: 'Zu viele Versuche. Bitte warte eine Minute.',
@@ -30,36 +33,57 @@ const ERROR_TEXT: Record<string, string> = {
 
 export default function DeleteAccountScreen() {
   const signOut = useAuth(s => s.signOut);
+  const router = useRouter();
+  const queryClient = useQueryClient();
   const info = useQuery({ queryKey: qk.deletion, queryFn: getDeletionInfo });
   const [password, setPassword] = useState('');
   const [confirmed, setConfirmed] = useState(false);
   const [choice, setChoice] = useState<PartnerBalanceChoice | null>(null);
   const [waiver, setWaiver] = useState(false);
+  const [timing, setTiming] = useState<DeletionTiming>('now');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  const periodEnd = info.data?.periodEnd.available ? info.data.periodEnd.at : null;
+  useEffect(() => {
+    if (periodEnd) setTiming('period_end');
+  }, [periodEnd]);
 
   const balance = info.data?.partnerBalance.totalCents ?? 0;
   const needsChoice = balance > 0;
   const days = info.data?.graceDays ?? 14;
+  const immediate = !periodEnd || timing === 'now';
   const canSubmit = !!password && confirmed && (!needsChoice || choice === 'payout' || (choice === 'waive' && waiver));
 
   function submit() {
-    Alert.alert('Konto wirklich löschen?', `Deine Seiten gehen sofort offline. Nach ${days} Tagen werden dein Konto und deine Daten endgültig gelöscht.`, [
+    const question = immediate
+      ? `Deine Seiten gehen sofort offline und dein Abo endet heute. Bezahlte Zeit wird nicht erstattet. Nach ${days} Tagen werden dein Konto und deine Daten endgültig gelöscht.`
+      : `Dein Abo endet am ${fmtDate(periodEnd!)}, deine Seiten bleiben bis dahin online. Danach werden dein Konto und deine Daten endgültig gelöscht.`;
+    Alert.alert('Konto wirklich löschen?', question, [
       { text: 'Abbrechen', style: 'cancel' },
       {
-        text: 'Konto löschen',
+        text: immediate ? 'Sofort löschen' : 'Zum Laufzeitende löschen',
         style: 'destructive',
         onPress: async () => {
           setLoading(true);
           setError('');
           try {
-            const res = await requestDeletion(password, needsChoice ? choice : null, choice === 'waive' && waiver);
-            // Alle Sitzungen sind beendet: Hinweis zeigen und lokal abmelden
-            Alert.alert(
-              'Löschung ist vorgemerkt',
-              `Dein Konto wird am ${fmtDate(res.scheduledFor)} gelöscht. Du bist jetzt überall abgemeldet. Bis dahin kannst du dich wieder anmelden und die Löschung abbrechen.`,
-            );
-            await signOut();
+            const res = await requestDeletion(password, periodEnd ? timing : 'now', needsChoice ? choice : null, choice === 'waive' && waiver);
+            if (res.signedOut) {
+              // Alle Sitzungen sind beendet: Hinweis zeigen und lokal abmelden
+              Alert.alert(
+                'Löschung ist vorgemerkt',
+                `Dein Konto wird am ${fmtDate(res.scheduledFor)} gelöscht. Du bist jetzt überall abgemeldet. Bis dahin kannst du dich wieder anmelden und die Löschung abbrechen.`,
+              );
+              await signOut();
+            } else {
+              await queryClient.invalidateQueries();
+              Alert.alert(
+                'Löschung ist vorgemerkt',
+                `Dein Konto wird am ${fmtDate(res.scheduledFor)} gelöscht. Bis dahin bleibt alles wie gewohnt – und du kannst die Löschung unter „Mehr“ jederzeit abbrechen.`,
+              );
+              router.replace('/account');
+            }
           } catch (e) {
             setError(e instanceof ApiError && e.code && ERROR_TEXT[e.code] ? ERROR_TEXT[e.code] : humanError(e));
             setLoading(false);
@@ -88,18 +112,56 @@ export default function DeleteAccountScreen() {
     );
   }
 
+  if (info.data?.status === 'scheduled') {
+    return (
+      <Screen readable>
+        <Notice tone="info">
+          {`Die Löschung ist bereits vorgemerkt: Dein Konto wird am ${info.data.scheduledFor ? fmtDate(info.data.scheduledFor) : '…'} gelöscht.`}
+        </Notice>
+        <Button title="Löschung ansehen oder abbrechen" variant="secondary" onPress={() => router.push('/deletion-pending')} fullWidth />
+      </Screen>
+    );
+  }
+
+  const bullets = immediate
+    ? [
+        'Deine Webseiten gehen sofort offline.',
+        'Dein Abo bei FinestSites endet sofort. Bereits bezahlte Zeit wird nicht erstattet.',
+        `Du hast ${days} Tage Bedenkzeit. Melde dich in dieser Zeit wieder an, um die Löschung abzubrechen.`,
+        'Danach löschen wir dein Konto, deine Seiten, Anfragen und Bilder endgültig.',
+      ]
+    : [
+        `Dein Abo endet am ${fmtDate(periodEnd!)}. Es wird nichts mehr abgebucht, bereits bezahlte Zeit wird nicht erstattet.`,
+        'Deine Webseiten bleiben bis dahin online, und du kannst die App wie gewohnt nutzen.',
+        `Am ${fmtDate(periodEnd!)} löschen wir dein Konto, deine Seiten, Anfragen und Bilder endgültig.`,
+        'Bis dahin kannst du die Löschung jederzeit abbrechen – dann läuft dein Abo einfach weiter.',
+      ];
+
   return (
     <Screen readable>
-      <Text variant="bodyLarge">Schade, dass du gehst. Bevor du dein Konto löschst, lies bitte kurz, was passiert:</Text>
+      <Text variant="bodyLarge">Schade, dass du gehst. {periodEnd ? 'Wann soll dein Konto gelöscht werden?' : 'Bevor du dein Konto löschst, lies bitte kurz, was passiert:'}</Text>
+
+      {info.isLoading ? (
+        <Skeleton height={120} radius={radius.input} />
+      ) : periodEnd ? (
+        <View style={{ gap: 10 }} accessibilityRole="radiogroup">
+          <Choice
+            selected={timing === 'period_end'}
+            onPress={() => setTiming('period_end')}
+            title={`Zum Laufzeitende (${fmtDate(periodEnd)})`}
+            text="Deine Seiten bleiben bis dahin online, es wird nichts mehr abgebucht. Bis dahin kannst du die Löschung abbrechen."
+          />
+          <Choice
+            selected={timing === 'now'}
+            onPress={() => setTiming('now')}
+            title="Sofort"
+            text={`Seiten sofort offline, Abo endet heute – bezahlte Restzeit wird nicht erstattet. Endgültig gelöscht nach ${days} Tagen Bedenkzeit.`}
+          />
+        </View>
+      ) : null}
+
       <Card tone="plain" style={{ gap: 10 }}>
-        {[
-          'Deine Webseiten gehen sofort offline.',
-          'Dein Abo bei FinestSites endet sofort. Bereits bezahlte Zeit wird nicht erstattet.',
-          `Du hast ${days} Tage Bedenkzeit. Melde dich in dieser Zeit wieder an, um die Löschung abzubrechen.`,
-          'Danach löschen wir dein Konto, deine Seiten, Anfragen und Bilder endgültig.',
-          'Eigene Domains werden getrennt. Deinen Benutzernamen vergeben wir nicht neu.',
-          'Gutschriften und Provisionsbuchungen müssen wir gesetzlich aufbewahren (8 bzw. 10 Jahre).',
-        ].map(t => (
+        {[...bullets, 'Eigene Domains werden getrennt. Deinen Benutzernamen vergeben wir nicht neu.', 'Gutschriften und Provisionsbuchungen müssen wir gesetzlich aufbewahren (8 bzw. 10 Jahre).'].map(t => (
           <View key={t} style={styles.bullet}>
             <View style={styles.dot} />
             <Text variant="body" style={{ flex: 1 }}>
@@ -109,9 +171,7 @@ export default function DeleteAccountScreen() {
         ))}
       </Card>
 
-      {info.isLoading ? (
-        <Skeleton height={120} radius={radius.input} />
-      ) : needsChoice && info.data ? (
+      {info.isLoading ? null : needsChoice && info.data ? (
         <View style={{ gap: 10 }}>
           <Text variant="headline">Dein Partner-Guthaben: {euros(balance)}</Text>
           <Text variant="callout">Was soll mit deinem Guthaben passieren?</Text>
@@ -140,11 +200,15 @@ export default function DeleteAccountScreen() {
       <Checkbox
         checked={confirmed}
         onToggle={() => setConfirmed(c => !c)}
-        text="Ich möchte mein FinestSites-Konto löschen. Mir ist klar, dass meine Seiten sofort offline gehen."
+        text={
+          immediate
+            ? 'Ich möchte mein FinestSites-Konto löschen. Mir ist klar, dass meine Seiten sofort offline gehen, mein Abo sofort endet und bezahlte Zeit nicht erstattet wird.'
+            : 'Ich möchte mein FinestSites-Konto zum Laufzeitende löschen. Mir ist klar, dass mein Abo dann endet und bezahlte Zeit nicht erstattet wird.'
+        }
       />
 
       {!!error && <Notice tone="danger">{error}</Notice>}
-      <Button title="Konto löschen" variant="danger" onPress={submit} loading={loading} disabled={!canSubmit} fullWidth />
+      <Button title={immediate ? 'Sofort löschen' : 'Zum Laufzeitende löschen'} variant="danger" onPress={submit} loading={loading} disabled={!canSubmit} fullWidth />
     </Screen>
   );
 }

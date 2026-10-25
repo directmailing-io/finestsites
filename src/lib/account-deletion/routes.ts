@@ -56,14 +56,15 @@ export async function handleDeletionPost(req: Request, source: Source): Promise<
   const body = await readJson(req, DeletionRequestBody)
   if (body.response) return body.response
   try {
-    const { scheduledFor } = await requestDeletion({
+    const { scheduledFor, mode, signedOut } = await requestDeletion({
       userId: auth.id,
       password: body.data.password,
+      timing: body.data.timing ?? 'now',
       balanceChoice: body.data.balanceChoice ?? null,
       waiverConfirmed: body.data.waiverConfirmed,
       source,
     })
-    return appJson(DeletionRequestResponse, { status: 'scheduled', scheduledFor: scheduledFor.toISOString(), signedOut: true })
+    return appJson(DeletionRequestResponse, { status: 'scheduled', mode, scheduledFor: scheduledFor.toISOString(), signedOut })
   } catch (err) {
     return mapError(err)
   }
@@ -73,8 +74,8 @@ export async function handleDeletionDelete(req: Request): Promise<Response> {
   const auth = await realUser(req, 'cancel', 10)
   if (auth instanceof Response) return auth
   try {
-    const { sitesOffline } = await cancelDeletion(auth.id)
-    return appJson(DeletionCancelResponse, { status: 'none', sitesOffline })
+    const { sitesOffline, subscriptionContinues } = await cancelDeletion(auth.id)
+    return appJson(DeletionCancelResponse, { status: 'none', sitesOffline, subscriptionContinues })
   } catch (err) {
     return mapError(err)
   }

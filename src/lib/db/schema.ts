@@ -150,6 +150,9 @@ export const users = pgTable('users', {
   // ausgeführt. Nach der Löschung bleibt die Zeile als Grabstein (id + Benutzername reserviert).
   deletionRequestedAt: timestamp('deletion_requested_at', { withTimezone: true }),
   deletionScheduledFor: timestamp('deletion_scheduled_for', { withTimezone: true }),
+  // now = Seiten sofort offline, Abo sofort beendet; period_end = Abo zum Laufzeitende gekündigt, Seiten bis dahin
+  // online, Löschung zum Laufzeitende (Migration 20261026060000). NULL = keine Anfrage.
+  deletionMode: text('deletion_mode'),
   deletedAt: timestamp('deleted_at', { withTimezone: true }),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
@@ -457,6 +460,7 @@ export const accountDeletionRequests = pgTable('account_deletion_requests', {
   // Stripe-Kundenguthaben (Verrechnungsmodus, noch nicht verbraucht) – AGB § 16 Abs. 3: auf Anfrage auszahlbar
   balanceCustomerCreditCents: integer('balance_customer_credit_cents').notNull().default(0),
   balanceChoice: text('balance_choice').notNull().default('none'), // none | payout | waive
+  mode: text('mode').notNull().default('now'), // now | period_end
   waiverText: text('waiver_text'),
   waiverAcceptedAt: timestamp('waiver_accepted_at', { withTimezone: true }),
   // not_needed | pending | settled | payable_on_request | waived | time_barred

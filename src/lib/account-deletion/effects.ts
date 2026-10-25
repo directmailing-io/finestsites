@@ -64,6 +64,27 @@ export function userR2Prefixes(userId: string): string[] {
   return [`user-images/${userId}/`, `profile-images/${userId}/`, `support-media/${userId}/`]
 }
 
+/**
+ * Weg „zum Laufzeitende“: Abo bei Stripe zum Ende des bezahlten Zeitraums kündigen (flag=true) bzw. die
+ * Kündigung zurücknehmen (flag=false, beim Abbruch der Löschung). Keine Erstattung, keine Stripe-Kundenmails.
+ * Liefert das aktuelle Periodenende; null, wenn das Abo nicht (mehr) läuft.
+ */
+export async function setCancelAtPeriodEnd(subscriptionId: string | null, flag: boolean): Promise<{ ok: boolean; periodEnd: Date | null; error?: string }> {
+  if (!subscriptionId) return { ok: false, periodEnd: null, error: 'kein Abo' }
+  try {
+    assertStripeKeyAllowed()
+    const stripe = getStripe()
+    const sub = await stripe.subscriptions.retrieve(subscriptionId)
+    if (sub.status === 'canceled' || sub.status === 'incomplete_expired') return { ok: false, periodEnd: null, error: 'Abo bereits beendet' }
+    const updated = sub.cancel_at_period_end === flag ? sub : await stripe.subscriptions.update(subscriptionId, { cancel_at_period_end: flag })
+    const endSec = updated.items.data[0]?.current_period_end ?? (updated as unknown as { current_period_end?: number }).current_period_end
+    return { ok: true, periodEnd: endSec ? new Date(endSec * 1000) : null }
+  } catch (err) {
+    console.error('[account-deletion] cancel_at_period_end setzen:', errMsg(err))
+    return { ok: false, periodEnd: null, error: errMsg(err) }
+  }
+}
+
 export type StripeCancelResult = {
   ok: boolean
   cancelled: string[]

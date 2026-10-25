@@ -137,6 +137,7 @@ export interface Message {
 
 // ── Konto löschen (/api/app/v1/account/deletion, aus contracts/account-deletion.ts) ──────
 export type PartnerBalanceChoice = z.infer<typeof C.BalanceChoice>;
+export type DeletionTiming = z.infer<typeof C.DeletionTiming>;
 export type DeletionInfo = z.infer<typeof C.DeletionStatusResponse>;
 export type DeletionRequestBody = z.infer<typeof C.DeletionRequestBody>;
 export type DeletionRequestResult = z.infer<typeof C.DeletionRequestResponse>;

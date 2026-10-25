@@ -3,13 +3,21 @@
  * und Cron (/api/cron/account-deletion).
  *
  * 1. Anfrage (requestDeletion): Passwort prüfen, Admin-Konten sperren, Partner-Guthaben → ausdrückliche
- *    Wahl (Auszahlung oder Verzicht). Sofort: Seiten offline (published → deactivated, KV-Offline-Marker,
- *    Custom-Domain-Zuordnung raus), Stripe-Abo sofort beenden (ohne Erstattung, ohne Schlussrechnung),
- *    alle Sitzungen beendet, Push-Geräte entfernt, Bestätigungsmail (Kategorie system).
- * 2. Bedenkzeit 14 Tage: Anmelden geht, Dashboard/App zeigen nur „Konto wird gelöscht am … –
- *    Löschung abbrechen“. Veröffentlichen, neue Seiten und Kauf sind gesperrt (guard.ts).
- *    Abbrechen (cancelDeletion): Konto wie vorher, Seiten bleiben offline (→ Entwurf, neu veröffentlichen),
- *    das beendete Abo kommt nicht zurück.
+ *    Wahl (Auszahlung oder Verzicht). Zwei Wege (timing), in beiden wird NICHTS erstattet:
+ *    a) 'now': Seiten sofort offline (published → deactivated, KV-Offline-Marker, Custom-Domain-Zuordnung
+ *       raus), Stripe-Abo sofort beenden (ohne Erstattung, ohne Schlussrechnung), alle Sitzungen beendet,
+ *       Push-Geräte entfernt, Löschung nach 14 Tagen.
+ *    b) 'period_end' (nur mit laufendem, bezahltem Abo ohne Zahlungsstörung): Stripe cancel_at_period_end,
+ *       Seiten bleiben online, Konto bleibt nutzbar (nur Tarifkauf gesperrt, guard.ts), Sitzungen bleiben,
+ *       Löschung zum Ende des bezahlten Zeitraums (frühestens nach 14 Tagen). Läuft das Abo aus, nimmt der
+ *       Stripe-Webhook (customer.subscription.deleted) die Seiten offline.
+ *    Bestätigungsmail (Kategorie system) in beiden Fällen.
+ * 2. Bedenkzeit: Anmelden geht. Bei 'now' zeigen Dashboard/App nur „Konto wird gelöscht am … – Löschung
+ *    abbrechen“; Veröffentlichen, neue Seiten und Kauf sind gesperrt. Bei 'period_end' ein Banner.
+ *    Abbrechen (cancelDeletion): 'now' → Konto wie vorher, Seiten bleiben offline (→ Entwurf, neu
+ *    veröffentlichen), das beendete Abo kommt nicht zurück. 'period_end' → Kündigung bei Stripe zurück-
+ *    genommen, Abo läuft weiter, Seiten unverändert (waren sie schon offline, weil die Laufzeit vorbei
+ *    ist: → Entwurf wie bei 'now').
  * 3. Cron nach Ablauf (runAccountDeletionCron → executeDeletion): persönliche Daten, Seiten, Anfragen,
  *    Support, Bilder (R2), Tracking, eigene Domains (CF Custom Hostname), Sitzungen/Logins gelöscht.
  *    Die users-Zeile bleibt als Grabstein (id, Benutzername reserviert, E-Mail deleted-<id>@deleted.invalid).
@@ -37,8 +45,8 @@ import { sendEmail } from '@/lib/resend'
 import {
   accountDeletionRequestedEmail, accountDeletionCancelledEmail, accountDeletionCompletedEmail, accountDeletionAdminEmail,
 } from '@/lib/email/templates'
-import { waiverText, type BalanceChoice, type DeletionStatusResponse } from '@/lib/contracts/app-v1/account-deletion'
-import { effects, cancelStripeSubscriptions, userR2Prefixes } from './effects'
+import { waiverText, type BalanceChoice, type DeletionStatusResponse, type DeletionTiming } from '@/lib/contracts/app-v1/account-deletion'
+import { effects, cancelStripeSubscriptions, setCancelAtPeriodEnd, userR2Prefixes } from './effects'
 import {
   DELETION_GRACE_DAYS, tombstoneEmail, graceEnd, endOfYearPlus, formatDateLongDe, formatEurDe,
   RETENTION_YEARS_BOOKINGS, LIMITATION_YEARS,
@@ -49,7 +57,7 @@ const ADMIN_EMAIL = process.env.ADMIN_NOTIFY_EMAIL ?? process.env.ADMIN_EMAIL ??
 // ─── Fehler ──────────────────────────────────────────────────────────────────
 
 export type DeletionErrorCode =
-  | 'NOT_FOUND' | 'INVALID_PASSWORD' | 'BALANCE_CHOICE_REQUIRED' | 'DELETION_NOT_ALLOWED'
+  | 'NOT_FOUND' | 'INVALID_PASSWORD' | 'BALANCE_CHOICE_REQUIRED' | 'PERIOD_END_NOT_AVAILABLE' | 'DELETION_NOT_ALLOWED'
   | 'DELETION_ALREADY_REQUESTED' | 'NO_DELETION_PENDING'
 
 /**
@@ -122,23 +130,47 @@ async function openRequest(userId: string) {
   })
 }
 
+type PeriodEndUser = {
+  stripeSubscriptionId: string | null
+  subscriptionStatus: string | null
+  currentPeriodEnd: Date | null
+  paymentFailedAt: Date | null
+}
+
+/**
+ * Option „zum Laufzeitende“ nur mit laufendem, bezahltem Abo ohne Zahlungsstörung und mit bekanntem
+ * Periodenende in der Zukunft. Der Löschtermin ist das Periodenende, mindestens aber die Bedenkzeit.
+ */
+export function periodEndOption(u: PeriodEndUser, now: Date = new Date()): { available: boolean; at: Date | null } {
+  const active = !!u.stripeSubscriptionId && (u.subscriptionStatus === 'active' || u.subscriptionStatus === 'trialing') && !u.paymentFailedAt
+  if (!active || !u.currentPeriodEnd || u.currentPeriodEnd.getTime() <= now.getTime()) return { available: false, at: null }
+  const at = new Date(Math.max(u.currentPeriodEnd.getTime(), graceEnd(now).getTime()))
+  return { available: true, at }
+}
+
 export async function getDeletionStatus(userId: string): Promise<DeletionStatusResponse> {
   const u = await db.query.users.findFirst({
     where: eq(users.id, userId),
-    columns: { isAdmin: true, deletionRequestedAt: true, deletionScheduledFor: true, deletedAt: true },
+    columns: {
+      isAdmin: true, deletionRequestedAt: true, deletionScheduledFor: true, deletionMode: true, deletedAt: true,
+      stripeSubscriptionId: true, subscriptionStatus: true, currentPeriodEnd: true, paymentFailedAt: true,
+    },
   })
   if (!u || u.deletedAt) throw new DeletionError('NOT_FOUND')
   const [balance, req, enabled] = await Promise.all([
     partnerBalance(userId), u.deletionRequestedAt ? openRequest(userId) : Promise.resolve(undefined), isSelfDeletionEnabled(),
   ])
   const scheduled = !!u.deletionRequestedAt
+  const pe = periodEndOption(u)
   return {
     status: scheduled ? 'scheduled' : 'none',
     requestedAt: u.deletionRequestedAt?.toISOString() ?? null,
     scheduledFor: u.deletionScheduledFor?.toISOString() ?? null,
+    mode: scheduled ? (u.deletionMode === 'period_end' ? 'period_end' : 'now') : null,
     graceDays: DELETION_GRACE_DAYS,
     canDelete: !u.isAdmin && enabled,
     blockedReason: u.isAdmin ? 'admin' : enabled ? null : 'disabled',
+    periodEnd: { available: pe.available, at: pe.at?.toISOString() ?? null },
     partnerBalance: {
       currency: 'EUR',
       availableCents: balance.availableCents,
@@ -181,17 +213,19 @@ function balanceNoteForRequest(choice: 'none' | BalanceChoice, b: PartnerBalance
 export async function requestDeletion(params: {
   userId: string
   password: string
+  timing?: DeletionTiming | null
   balanceChoice?: BalanceChoice | null
   waiverConfirmed?: boolean
   source: 'web' | 'app'
   now?: Date
-}): Promise<{ scheduledFor: Date }> {
+}): Promise<{ scheduledFor: Date; mode: DeletionTiming; signedOut: boolean }> {
   const now = params.now ?? new Date()
   const u = await db.query.users.findFirst({
     where: eq(users.id, params.userId),
     columns: {
       id: true, email: true, isAdmin: true, deletionRequestedAt: true, deletedAt: true,
       stripeCustomerId: true, stripeSubscriptionId: true, paymentFailedInvoiceId: true, subscriptionStatus: true,
+      currentPeriodEnd: true, paymentFailedAt: true,
     },
   })
   if (!u || u.deletedAt) throw new DeletionError('NOT_FOUND')
@@ -208,19 +242,25 @@ export async function requestDeletion(params: {
     choice = params.balanceChoice
   }
 
+  const mode: DeletionTiming = params.timing === 'period_end' ? 'period_end' : 'now'
+  const pe = periodEndOption(u, now)
+  if (mode === 'period_end' && !pe.available) throw new DeletionError('PERIOD_END_NOT_AVAILABLE')
+  if (mode === 'period_end') return requestDeletionAtPeriodEnd({ u, now, balance, choice, source: params.source, periodEndAt: pe.at! })
+
   const scheduledFor = graceEnd(now)
 
   // 1) Vormerken (eindeutiger Index „eine offene Anfrage je Nutzer“ schützt vor Doppelklick)
   try {
     await db.transaction(async (tx) => {
       const updated = await tx.update(users)
-        .set({ deletionRequestedAt: now, deletionScheduledFor: scheduledFor, updatedAt: now })
+        .set({ deletionRequestedAt: now, deletionScheduledFor: scheduledFor, deletionMode: 'now', updatedAt: now })
         .where(and(eq(users.id, u.id), isNull(users.deletionRequestedAt), isNull(users.deletedAt)))
         .returning({ id: users.id })
       if (updated.length !== 1) throw new DeletionError('DELETION_ALREADY_REQUESTED')
       await tx.insert(accountDeletionRequests).values({
         userId: u.id,
         source: params.source,
+        mode: 'now',
         requestedAt: now,
         scheduledFor,
         balanceAvailableCents: balance.availableCents,
@@ -264,12 +304,74 @@ export async function requestDeletion(params: {
   await sendEmail({
     to: u.email,
     subject: `Dein Konto wird am ${formatDateLongDe(scheduledFor)} gelöscht – FinestSites`,
-    html: accountDeletionRequestedEmail({ scheduledFor: formatDateLongDe(scheduledFor), balanceNote: balanceNoteForRequest(choice, balance) }),
+    html: accountDeletionRequestedEmail({ scheduledFor: formatDateLongDe(scheduledFor), balanceNote: balanceNoteForRequest(choice, balance), mode: 'now' }),
     type: 'account_deletion_requested',
     category: 'system',
   }).catch(() => {})
 
-  return { scheduledFor }
+  return { scheduledFor, mode: 'now', signedOut: true }
+}
+
+/**
+ * Weg „zum Laufzeitende“: Abo bei Stripe zum Periodenende kündigen (keine Erstattung), Seiten und
+ * Sitzungen bleiben, Löschtermin = Periodenende (mindestens Bedenkzeit). Schlägt die Stripe-Kündigung
+ * fehl, wird NICHT vorgemerkt (der Nutzer bekommt einen Fehler und kann „sofort“ wählen).
+ */
+async function requestDeletionAtPeriodEnd(p: {
+  u: { id: string; email: string; stripeSubscriptionId: string | null }
+  now: Date
+  balance: PartnerBalance
+  choice: 'none' | BalanceChoice
+  source: 'web' | 'app'
+  periodEndAt: Date
+}): Promise<{ scheduledFor: Date; mode: DeletionTiming; signedOut: boolean }> {
+  const { u, now, balance, choice } = p
+  const stripeResult = await setCancelAtPeriodEnd(u.stripeSubscriptionId, true)
+  if (!stripeResult.ok) {
+    await notifyAdmin('Kontolöschung zum Laufzeitende: Stripe-Kündigung fehlgeschlagen',
+      `Nutzer ${u.id}: ${stripeResult.error ?? 'unbekannter Fehler'}. Die Anfrage wurde nicht vorgemerkt.`)
+    throw new DeletionError('PERIOD_END_NOT_AVAILABLE')
+  }
+  // Stripe kennt das Periodenende am genauesten; nie vor Ablauf der Bedenkzeit
+  const scheduledFor = new Date(Math.max((stripeResult.periodEnd ?? p.periodEndAt).getTime(), graceEnd(now).getTime()))
+
+  try {
+    await db.transaction(async (tx) => {
+      const updated = await tx.update(users)
+        .set({ deletionRequestedAt: now, deletionScheduledFor: scheduledFor, deletionMode: 'period_end', cancelAtPeriodEnd: true, updatedAt: now })
+        .where(and(eq(users.id, u.id), isNull(users.deletionRequestedAt), isNull(users.deletedAt)))
+        .returning({ id: users.id })
+      if (updated.length !== 1) throw new DeletionError('DELETION_ALREADY_REQUESTED')
+      await tx.insert(accountDeletionRequests).values({
+        userId: u.id,
+        source: p.source,
+        mode: 'period_end',
+        requestedAt: now,
+        scheduledFor,
+        balanceAvailableCents: balance.availableCents,
+        balancePendingCents: balance.pendingCents,
+        balanceCustomerCreditCents: balance.customerCreditCents,
+        balanceChoice: choice,
+        ...(choice === 'waive' ? { waiverText: waiverText(balance.totalCents), waiverAcceptedAt: now } : {}),
+      })
+    })
+  } catch (err) {
+    // Vormerken fehlgeschlagen → Kündigung bei Stripe wieder zurücknehmen, damit nichts hängen bleibt
+    await setCancelAtPeriodEnd(u.stripeSubscriptionId, false)
+    if (err instanceof DeletionError) throw err
+    if (String((err as { code?: string })?.code) === '23505') throw new DeletionError('DELETION_ALREADY_REQUESTED')
+    throw err
+  }
+
+  await sendEmail({
+    to: u.email,
+    subject: `Dein Konto wird am ${formatDateLongDe(scheduledFor)} gelöscht – FinestSites`,
+    html: accountDeletionRequestedEmail({ scheduledFor: formatDateLongDe(scheduledFor), balanceNote: balanceNoteForRequest(choice, balance), mode: 'period_end' }),
+    type: 'account_deletion_requested',
+    category: 'system',
+  }).catch(() => {})
+
+  return { scheduledFor, mode: 'period_end', signedOut: false }
 }
 
 /** published → deactivated, Offline-Marker in KV, Custom-Domain-Zuordnung entfernen (CF-Hostname bleibt bis zur Löschung). */
@@ -301,41 +403,55 @@ async function revokeAccess(userId: string): Promise<void> {
 
 // ─── Abbrechen ───────────────────────────────────────────────────────────────
 
-export async function cancelDeletion(userId: string, now: Date = new Date()): Promise<{ sitesOffline: boolean }> {
+export async function cancelDeletion(userId: string, now: Date = new Date()): Promise<{ sitesOffline: boolean; subscriptionContinues: boolean }> {
   const u = await db.query.users.findFirst({
     where: eq(users.id, userId),
-    columns: { id: true, email: true, deletionRequestedAt: true, deletedAt: true },
+    columns: { id: true, email: true, deletionRequestedAt: true, deletionMode: true, deletedAt: true, stripeSubscriptionId: true },
   })
   if (!u || u.deletedAt) throw new DeletionError('NOT_FOUND')
   if (!u.deletionRequestedAt) throw new DeletionError('NO_DELETION_PENDING')
 
+  // Weg „zum Laufzeitende“: Kündigung bei Stripe zurücknehmen – das Abo läuft weiter wie vorher.
+  // Ist die Laufzeit schon vorbei (Abo bei Stripe beendet), gibt es nichts zurückzunehmen.
+  let subscriptionContinues = false
+  if (u.deletionMode === 'period_end') {
+    const res = await setCancelAtPeriodEnd(u.stripeSubscriptionId, false)
+    subscriptionContinues = res.ok
+  }
+
   let offline = 0
   await db.transaction(async (tx) => {
     const updated = await tx.update(users)
-      .set({ deletionRequestedAt: null, deletionScheduledFor: null, updatedAt: now })
+      .set({
+        deletionRequestedAt: null, deletionScheduledFor: null, deletionMode: null, updatedAt: now,
+        ...(subscriptionContinues ? { cancelAtPeriodEnd: false } : {}),
+      })
       .where(and(eq(users.id, userId), isNotNull(users.deletionRequestedAt), isNull(users.deletedAt)))
       .returning({ id: users.id })
     if (updated.length !== 1) throw new DeletionError('NO_DELETION_PENDING')
     await tx.update(accountDeletionRequests)
       .set({ status: 'cancelled', cancelledAt: now, updatedAt: now })
       .where(and(eq(accountDeletionRequests.userId, userId), eq(accountDeletionRequests.status, 'scheduled')))
-    // Seiten bleiben offline: als Entwurf zurück (frisches updatedAt, damit die Entwurfs-Aufräumung
-    // sie nicht sofort erfasst); der Nutzer veröffentlicht neu.
-    const rows = await tx.update(userSites)
-      .set({ status: 'draft', deactivatedAt: null, scheduledDeletionAt: null, updatedAt: now })
-      .where(and(eq(userSites.userId, userId), eq(userSites.status, 'deactivated')))
-      .returning({ id: userSites.id })
-    offline = rows.length
+    // Offline genommene Seiten bleiben offline: als Entwurf zurück (frisches updatedAt, damit die
+    // Entwurfs-Aufräumung sie nicht sofort erfasst); der Nutzer veröffentlicht neu. Beim Weg
+    // „zum Laufzeitende“ mit laufendem Abo sind die Seiten noch online – dann passiert hier nichts.
+    if (!subscriptionContinues) {
+      const rows = await tx.update(userSites)
+        .set({ status: 'draft', deactivatedAt: null, scheduledDeletionAt: null, updatedAt: now })
+        .where(and(eq(userSites.userId, userId), eq(userSites.status, 'deactivated')))
+        .returning({ id: userSites.id })
+      offline = rows.length
+    }
   })
 
   await sendEmail({
     to: u.email,
     subject: 'Dein Konto bleibt bestehen – FinestSites',
-    html: accountDeletionCancelledEmail(),
+    html: accountDeletionCancelledEmail({ subscriptionContinues, sitesOffline: offline > 0 }),
     type: 'account_deletion_cancelled',
     category: 'system',
   }).catch(() => {})
-  return { sitesOffline: offline > 0 }
+  return { sitesOffline: offline > 0, subscriptionContinues }
 }
 
 // ─── Ausführen (Cron) ────────────────────────────────────────────────────────

@@ -64,10 +64,11 @@ const U = {
   A: { id: id(1), email: 'deltest-a@example.invalid', username: 'deltest-a' },        // Partner, Verzicht, Seiten, Abo
   B: { id: id(2), email: 'deltest-b@example.invalid', username: 'deltest-b' },        // von A geworben
   C: { id: id(3), email: 'deltest-c@example.invalid', username: 'deltest-c' },        // Partner, Auszahlung, Gutschrift (App)
+  D: { id: id(4), email: 'deltest-d@example.invalid', username: 'deltest-d' },        // Abo, löscht „zum Laufzeitende“
   E: { id: id(5), email: 'deltest-admin@example.invalid', username: 'deltest-admin' }, // Admin
   F: { id: id(6), email: 'deltest-f@example.invalid', username: null as string | null }, // Neuer Nutzer ohne Namen
 }
-const SITE_A1 = id(101), SITE_A2 = id(102), SITE_B1 = id(103)
+const SITE_A1 = id(101), SITE_A2 = id(102), SITE_B1 = id(103), SITE_D1 = id(104)
 const PAYOUT_C = id(201)
 const CN_NUMBER = 'GS-2026-99901'
 const ALL_IDS = Object.values(U).map(u => u.id)
@@ -81,7 +82,7 @@ async function cleanup() {
   await sql`DELETE FROM affiliate_commissions WHERE referrer_id = ANY(${ids}::uuid[]) OR referee_id = ANY(${ids}::uuid[]) OR stripe_invoice_id LIKE 'in_deltest_%'`
   await sql`DELETE FROM account_deletion_requests WHERE user_id = ANY(${ids}::uuid[])`
   await sql`DELETE FROM affiliate_clicks WHERE referrer_username LIKE 'deltest-%' OR converted_user_id = ANY(${ids}::uuid[])`
-  await sql`DELETE FROM site_events WHERE site_id = ANY(${[SITE_A1, SITE_A2, SITE_B1]}::uuid[])`
+  await sql`DELETE FROM site_events WHERE site_id = ANY(${[SITE_A1, SITE_A2, SITE_B1, SITE_D1]}::uuid[])`
   await sql`DELETE FROM email_logs WHERE "to" = ANY(${emails}) OR "to" LIKE 'deleted-00000000-0000-4000-d000-%'`
   await sql`DELETE FROM verifications WHERE identifier = ANY(${emails})`
   await sql`DELETE FROM users WHERE id = ANY(${ids}::uuid[]) OR email = ANY(${emails}) OR username LIKE 'deltest-%'`
@@ -105,7 +106,8 @@ async function seed(templates: { a1: string; a2: string }) {
   await sql`INSERT INTO user_sites (id, user_id, template_id, status, published_at, custom_domain, custom_domain_status, cf_custom_hostname_id, r2_published_path)
             VALUES (${SITE_A1}::uuid, ${U.A.id}::uuid, ${templates.a1}::uuid, 'published', ${now}, 'www.deltest-a.example', 'active', 'cfh_deltest_a', 'published/deltest-a/index.html'),
                    (${SITE_A2}::uuid, ${U.A.id}::uuid, ${templates.a2}::uuid, 'draft', NULL, NULL, NULL, NULL, NULL),
-                   (${SITE_B1}::uuid, ${U.B.id}::uuid, ${templates.a1}::uuid, 'published', ${now}, NULL, NULL, NULL, NULL)`
+                   (${SITE_B1}::uuid, ${U.B.id}::uuid, ${templates.a1}::uuid, 'published', ${now}, NULL, NULL, NULL, NULL),
+                   (${SITE_D1}::uuid, ${U.D.id}::uuid, ${templates.a1}::uuid, 'published', ${now}, NULL, NULL, NULL, NULL)`
   await sql`INSERT INTO site_data (user_site_id, field_key, field_value) VALUES (${SITE_A1}::uuid, 'hero_name', 'Vor A Nach A'), (${SITE_B1}::uuid, 'hero_name', 'B')`
   await sql`INSERT INTO site_images (user_site_id, field_key, r2_path, public_url) VALUES (${SITE_A1}::uuid, 'hero_image', ${'user-images/' + U.A.id + '/x.jpg'}, 'https://example.invalid/x.jpg')`
   await sql`INSERT INTO form_submissions (user_site_id, form_name, data) VALUES (${SITE_A1}::uuid, 'kontakt', ${sql.json({ name: 'Interessent', email: 'lead@example.invalid' })})`
@@ -224,6 +226,7 @@ async function main() {
 
   // Stripe-Testabo für A
   let subId: string | null = null
+  let subIdD: string | null = null
   if (stripe) {
     const product = await stripe.products.create({ name: 'deltest product' })
     const price = await stripe.prices.create({ product: product.id, currency: 'eur', unit_amount: 1700, recurring: { interval: 'month' } })
@@ -234,6 +237,13 @@ async function main() {
     subId = sub.id
     await sql`UPDATE users SET stripe_customer_id = ${customer.id}, stripe_subscription_id = ${sub.id}, subscription_status = ${sub.status} WHERE id = ${U.A.id}::uuid`
     console.log(`  (Stripe-Testabo ${sub.id}: ${sub.status})`)
+    // D: laufendes Monatsabo für den Weg „zum Laufzeitende“
+    const customerD = await stripe.customers.create({ email: U.D.email, name: 'deltest D', payment_method: 'pm_card_visa', invoice_settings: { default_payment_method: 'pm_card_visa' } })
+    const subD = await stripe.subscriptions.create({ customer: customerD.id, items: [{ price: price.id }] })
+    subIdD = subD.id
+    const endD = new Date(((subD.items.data[0] as unknown as { current_period_end?: number })?.current_period_end ?? (subD as unknown as { current_period_end: number }).current_period_end) * 1000)
+    await sql`UPDATE users SET stripe_customer_id = ${customerD.id}, stripe_subscription_id = ${subD.id}, subscription_status = ${subD.status}, current_period_end = ${endD} WHERE id = ${U.D.id}::uuid`
+    console.log(`  (Stripe-Testabo D ${subD.id}: ${subD.status}, Periodenende ${endD.toISOString()})`)
   } else {
     console.log('  (kein Stripe-Testschlüssel – Abo-Teil wird übersprungen)')
   }
@@ -438,13 +448,91 @@ async function main() {
   check('B: eigene Seite + Daten unberührt', await count(sql`SELECT count(*)::int n FROM site_data WHERE user_site_id = ${SITE_B1}::uuid`) === 1)
   check('Provisionen mit B als Geworbenem bleiben (referee_id)', await count(sql`SELECT count(*)::int n FROM affiliate_commissions WHERE referee_id = ${U.B.id}::uuid`) === 2)
 
+  section('Weg „zum Laufzeitende“ (D): Abo gekündigt, Seiten online, Konto nutzbar, Abbruch stellt Abo wieder her')
+  {
+    const sB = await login(U.B.email)
+    const noSub = await call(sB, 'POST', '/api/account/deletion', { password: PW, timing: 'period_end' })
+    check('B ohne Abo: timing period_end → 400 PERIOD_END_NOT_AVAILABLE', noSub.status === 400 && noSub.json?.code === 'PERIOD_END_NOT_AVAILABLE', noSub)
+    check('… nichts vorgemerkt', (await one(sql`SELECT deletion_requested_at FROM users WHERE id = ${U.B.id}::uuid`))?.deletion_requested_at === null)
+    const stB = await call(sB, 'GET', '/api/account/deletion')
+    check('B: Status nennt periodEnd.available=false, mode null', stB.json?.periodEnd?.available === false && stB.json?.mode === null, stB.json?.periodEnd)
+
+    if (stripe && subIdD) {
+      const sD = await login(U.D.email)
+      const stD = await call(sD, 'GET', '/api/account/deletion')
+      const minAt = Date.now() + 14 * 864e5 - 60_000
+      check('D: periodEnd.available=true, Termin ≥ 14 Tage', stD.json?.periodEnd?.available === true && new Date(stD.json?.periodEnd?.at).getTime() >= minAt, stD.json?.periodEnd)
+      const reqD = await call(sD, 'POST', '/api/account/deletion', { password: PW, timing: 'period_end' })
+      check('D POST period_end → 200, mode period_end, signedOut=false', reqD.status === 200 && reqD.json?.mode === 'period_end' && reqD.json?.signedOut === false, reqD)
+      const stillD = await call(sD, 'GET', '/api/account/deletion')
+      check('D: Sitzung bleibt gültig, Status scheduled/period_end', stillD.status === 200 && stillD.json?.status === 'scheduled' && stillD.json?.mode === 'period_end', stillD)
+      const udD = await one(sql`SELECT deletion_mode, deletion_scheduled_for, cancel_at_period_end FROM users WHERE id = ${U.D.id}::uuid`)
+      check('D: deletion_mode=period_end, cancel_at_period_end=true', udD.deletion_mode === 'period_end' && udD.cancel_at_period_end === true, udD)
+      check('D: Anfrage-Zeile mode=period_end', (await one(sql`SELECT mode FROM account_deletion_requests WHERE user_id = ${U.D.id}::uuid AND status = 'scheduled'`))?.mode === 'period_end')
+      const subNow = await stripe.subscriptions.retrieve(subIdD)
+      check('Stripe: cancel_at_period_end=true, Abo weiter aktiv', subNow.cancel_at_period_end === true && subNow.status === 'active', { c: subNow.cancel_at_period_end, s: subNow.status })
+      check('D: Seite bleibt veröffentlicht', (await one(sql`SELECT status FROM user_sites WHERE id = ${SITE_D1}::uuid`))?.status === 'published')
+      check('D: Push-Gerät/Sitzungen nicht entfernt (Sitzung oben gültig)', (await count(sql`SELECT count(*)::int n FROM sessions WHERE user_id = ${U.D.id}::uuid`)) >= 1)
+      check('D: Bestätigungsmail (Laufzeitende) ausgelöst', await eventually(async () => (await count(sql`SELECT count(*)::int n FROM email_logs WHERE "to" = ${U.D.email} AND type = 'account_deletion_requested'`)) === 1))
+      const buy = await call(sD, 'POST', '/api/billing/checkout', { plan: 'pro', interval: 'monthly' })
+      check('D: Tarifkauf gesperrt (423)', buy.status === 423 && buy.json?.code === 'ACCOUNT_DELETION_PENDING', buy)
+      const site = await call(sD, 'POST', '/api/sites', {})
+      check('D: neue Seite NICHT gesperrt (kein 423)', site.status !== 423, site.status)
+      const dash = await fetch(`${BASE}/sites`, { headers: { Cookie: sD!.cookie! } }).then(async r => ({ status: r.status, html: await r.text() }))
+      check('D: Dashboard nutzbar mit Banner (kein Sperrbildschirm)', dash.status === 200 && dash.html.includes('Bis dahin bleiben deine Seiten online') && !dash.html.includes('Deine Webseiten sind offline und dein Abo ist beendet'), dash.status)
+      const cr = await cron()
+      check('Cron: D nicht fällig', cr.status === 200 && !(cr.json?.deleted ?? []).includes(U.D.id), cr.json)
+
+      const cancelD = await call(sD, 'DELETE', '/api/account/deletion')
+      check('D Abbruch → subscriptionContinues=true, sitesOffline=false', cancelD.status === 200 && cancelD.json?.subscriptionContinues === true && cancelD.json?.sitesOffline === false, cancelD)
+      const subBack = await stripe.subscriptions.retrieve(subIdD)
+      check('Stripe: cancel_at_period_end wieder false', subBack.cancel_at_period_end === false)
+      const udBack = await one(sql`SELECT deletion_mode, deletion_requested_at, cancel_at_period_end FROM users WHERE id = ${U.D.id}::uuid`)
+      check('D: Lösch-Felder leer, cancel_at_period_end=false', udBack.deletion_mode === null && udBack.deletion_requested_at === null && udBack.cancel_at_period_end === false, udBack)
+      check('D: Seite weiterhin veröffentlicht', (await one(sql`SELECT status FROM user_sites WHERE id = ${SITE_D1}::uuid`))?.status === 'published')
+      check('D: Abbruch-Mail ausgelöst', await eventually(async () => (await count(sql`SELECT count(*)::int n FROM email_logs WHERE "to" = ${U.D.email} AND type = 'account_deletion_cancelled'`)) === 1))
+
+      // Nochmal anfragen, dann läuft die Laufzeit ab (Stripe-Webhook „Abo beendet“) → Seiten offline, dann Cron löscht
+      const req2 = await call(sD, 'POST', '/api/account/deletion', { password: PW, timing: 'period_end' })
+      check('D zweite Anfrage period_end → 200', req2.status === 200 && req2.json?.mode === 'period_end', req2)
+      const custD = (await one(sql`SELECT stripe_customer_id FROM users WHERE id = ${U.D.id}::uuid`)).stripe_customer_id
+      const payload = JSON.stringify({
+        id: `evt_deltest_d_${Date.now()}`, object: 'event', type: 'customer.subscription.deleted', api_version: '2025-01-27.acacia',
+        created: Math.floor(Date.now() / 1000), livemode: false, pending_webhooks: 0, request: { id: null, idempotency_key: null },
+        data: { object: { id: subIdD, object: 'subscription', customer: custD, status: 'canceled', cancel_at_period_end: true, items: { object: 'list', data: [] } } },
+      })
+      const header = Stripe.webhooks.generateTestHeaderString({ payload, secret: process.env.TEST_STRIPE_WEBHOOK_SECRET ?? 'whsec_local_dummy' } as Parameters<typeof Stripe.webhooks.generateTestHeaderString>[0])
+      const wh = await fetch(`${BASE}/api/webhooks/stripe`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'stripe-signature': header }, body: payload })
+      check('Webhook „Abo beendet“ angenommen', wh.status === 200, wh.status)
+      const siteAfter = await one(sql`SELECT status, scheduled_deletion_at FROM user_sites WHERE id = ${SITE_D1}::uuid`)
+      check('D: Seite jetzt offline, ohne 90-Tage-Timer', siteAfter.status === 'deactivated' && siteAfter.scheduled_deletion_at === null, siteAfter)
+      const udEnd = await one(sql`SELECT deactivated_at, deletion_requested_at, subscription_status FROM users WHERE id = ${U.D.id}::uuid`)
+      check('D: deactivated_at gesetzt, Löschung weiter vorgemerkt', udEnd.deactivated_at !== null && udEnd.deletion_requested_at !== null, udEnd)
+      await new Promise(r => setTimeout(r, 500))
+      check('D: keine „Abo ausgelaufen“-Mail', await count(sql`SELECT count(*)::int n FROM email_logs WHERE "to" = ${U.D.email} AND type IN ('account_expired','account_deactivated','account_canceled')`) === 0)
+      const dashEnd = await fetch(`${BASE}/sites`, { headers: { Cookie: sD!.cookie! } }).then(async r => ({ status: r.status, html: await r.text() }))
+      check('D: Dashboard weiter mit Banner (Weg bleibt period_end)', dashEnd.status === 200 && dashEnd.html.includes('Bis dahin bleiben deine Seiten online'), dashEnd.status)
+      await sql`UPDATE users SET deletion_scheduled_for = now() - interval '1 minute' WHERE id = ${U.D.id}::uuid`
+      const cr2 = await cron()
+      check('Cron nach Laufzeitende: D gelöscht', (cr2.json?.deleted ?? []).includes(U.D.id), cr2.json)
+      const tombD = await one(sql`SELECT email, deleted_at, username FROM users WHERE id = ${U.D.id}::uuid`)
+      check('D: Grabstein (E-Mail ersetzt, Benutzername bleibt)', /@deleted\.invalid$/.test(tombD.email) && tombD.deleted_at !== null && tombD.username === U.D.username, tombD)
+      check('D: Seite gelöscht', (await count(sql`SELECT count(*)::int n FROM user_sites WHERE user_id = ${U.D.id}::uuid`)) === 0)
+    } else {
+      console.log('  (kein Stripe-Testschlüssel – Laufzeitende-Teil wird übersprungen)')
+    }
+  }
+
   section('Ergebnis')
   console.log(`  ${passed} bestanden, ${failed} fehlgeschlagen`)
   if (failed) console.log('  Fehlgeschlagen:\n   - ' + failures.join('\n   - '))
-  if (stripe && subId) {
+  if (stripe) {
     // Testmodus-Aufräumen (nur Test-Objekte dieses Laufs)
-    const s = await stripe.subscriptions.retrieve(subId).catch(() => null)
-    if (s && typeof s.customer === 'string') await stripe.customers.del(s.customer).catch(() => {})
+    for (const sid of [subId, subIdD]) {
+      if (!sid) continue
+      const s = await stripe.subscriptions.retrieve(sid).catch(() => null)
+      if (s && typeof s.customer === 'string') await stripe.customers.del(s.customer).catch(() => {})
+    }
   }
   if (process.env.KEEP_TEST_DATA !== '1') await cleanup()
   await sql.end()

@@ -2,8 +2,9 @@ import { useRouter, type Href } from 'expo-router';
 import { Bell, ChevronRight, Lock, LogOut, Settings, Users, type LucideIcon } from 'lucide-react-native';
 import { Alert, Pressable, StyleSheet, View } from 'react-native';
 
-import { useConfig, useMe, useOverview } from '@/api/queries';
-import { Screen, Text } from '@/components/ui';
+import { useConfig, useDeletionStatus, useMe, useOverview } from '@/api/queries';
+import { fmtDate } from '@/lib/format';
+import { Notice, Screen, Text } from '@/components/ui';
 import { useAuth } from '@/lib/auth';
 import { colors, fonts, radius, shadows } from '@/theme/tokens';
 
@@ -17,6 +18,7 @@ export default function MoreScreen() {
   const me = useMe();
   const config = useConfig();
   const overview = useOverview();
+  const deletion = useDeletionStatus();
   const signOut = useAuth(s => s.signOut);
   const u = me.data;
   // Partnerbereich nur, wenn das Konto teilnehmen darf UND der Bereich nicht per Notschalter aus ist
@@ -34,6 +36,14 @@ export default function MoreScreen() {
       <Text style={styles.h1} accessibilityRole="header">
         Mehr
       </Text>
+
+      {deletion.data?.status === 'scheduled' && deletion.data.mode === 'period_end' && deletion.data.scheduledFor ? (
+        <Pressable onPress={() => router.push('/deletion-pending')} accessibilityRole="button">
+          <Notice tone="danger">
+            {`Dein Konto wird am ${fmtDate(deletion.data.scheduledFor)} gelöscht. Bis dahin bleiben deine Seiten online. Tippen, um die Löschung abzubrechen.`}
+          </Notice>
+        </Pressable>
+      ) : null}
 
       <View style={styles.card}>
         {partnerVisible ? (

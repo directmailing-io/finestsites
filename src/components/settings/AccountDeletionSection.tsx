@@ -1,11 +1,13 @@
 'use client'
 /**
  * Einstellungen → „Konto & FAQ“ → Konto löschen (gleicher Ablauf wie in der App):
- * Passwort, ausdrückliche Bestätigung, bei Partner-Guthaben Auszahlung oder Verzicht, 14 Tage Bedenkzeit.
- * Nach dem Absenden sind alle Sitzungen beendet → weiter zur Anmeldung.
+ * Passwort, ausdrückliche Bestätigung, bei Partner-Guthaben Auszahlung oder Verzicht, dazu die Wahl
+ *   • zum Laufzeitende (nur mit laufendem Abo; Standard): Seiten bleiben online, Abo gekündigt, Löschung am Laufzeitende
+ *   • sofort: Seiten offline, Abo endet sofort, 14 Tage Bedenkzeit, alle Sitzungen beendet
+ * In beiden Fällen wird bereits bezahlte Zeit nicht erstattet.
  */
 import { useEffect, useState } from 'react'
-import type { DeletionStatusResponse, BalanceChoice } from '@/lib/contracts/app-v1/account-deletion'
+import type { DeletionStatusResponse, BalanceChoice, DeletionTiming } from '@/lib/contracts/app-v1/account-deletion'
 
 const eur = (cents: number) => (cents / 100).toLocaleString('de-DE', { style: 'currency', currency: 'EUR' })
 const day = (iso: string) => new Date(iso).toLocaleDateString('de-DE', { day: 'numeric', month: 'long', year: 'numeric' })
@@ -13,6 +15,7 @@ const day = (iso: string) => new Date(iso).toLocaleDateString('de-DE', { day: 'n
 const ERRORS: Record<string, string> = {
   INVALID_PASSWORD: 'Das Passwort stimmt nicht.',
   BALANCE_CHOICE_REQUIRED: 'Bitte wähle, was mit deinem Partner-Guthaben passieren soll.',
+  PERIOD_END_NOT_AVAILABLE: 'Löschen zum Laufzeitende geht gerade nicht. Bitte wähle „sofort löschen“ oder versuch es später nochmal.',
   DELETION_NOT_ALLOWED: 'Dieses Konto kann hier nicht gelöscht werden.',
   DELETION_ALREADY_REQUESTED: 'Die Löschung ist bereits vorgemerkt.',
   RATE_LIMITED: 'Zu viele Versuche. Bitte warte eine Minute.',
@@ -26,18 +29,24 @@ export default function AccountDeletionSection() {
   const [confirmed, setConfirmed] = useState(false)
   const [choice, setChoice] = useState<BalanceChoice | null>(null)
   const [waiver, setWaiver] = useState(false)
+  const [timing, setTiming] = useState<DeletionTiming>('now')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     fetch('/api/account/deletion', { cache: 'no-store' })
       .then(r => (r.ok ? r.json() : null))
-      .then(d => setInfo(d))
+      .then((d: DeletionStatusResponse | null) => {
+        setInfo(d)
+        if (d?.periodEnd.available) setTiming('period_end')
+      })
       .catch(() => setInfo(null))
   }, [])
 
   const balance = info?.partnerBalance.totalCents ?? 0
   const needsChoice = balance > 0
+  const periodEnd = info?.periodEnd.available ? info.periodEnd.at : null
+  const graceDays = info?.graceDays ?? 14
   const canSubmit = !!password && confirmed && (!needsChoice || choice === 'payout' || (choice === 'waive' && waiver))
 
   async function submit() {
@@ -47,7 +56,12 @@ export default function AccountDeletionSection() {
       const res = await fetch('/api/account/deletion', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password, balanceChoice: needsChoice ? choice : null, waiverConfirmed: choice === 'waive' ? waiver : undefined }),
+        body: JSON.stringify({
+          password,
+          timing: periodEnd ? timing : 'now',
+          balanceChoice: needsChoice ? choice : null,
+          waiverConfirmed: choice === 'waive' ? waiver : undefined,
+        }),
       })
       const data = await res.json().catch(() => ({}))
       if (!res.ok) {
@@ -55,8 +69,13 @@ export default function AccountDeletionSection() {
         setLoading(false)
         return
       }
-      // Alle Sitzungen sind beendet → Anmeldung zeigt danach „Konto wird gelöscht am …“
-      window.location.href = `/login?deletion=${encodeURIComponent(data.scheduledFor ?? '')}`
+      if (data.signedOut) {
+        // Alle Sitzungen sind beendet → Anmeldung zeigt danach „Konto wird gelöscht am …“
+        window.location.href = `/login?deletion=${encodeURIComponent(data.scheduledFor ?? '')}`
+      } else {
+        // Zum Laufzeitende: Konto bleibt nutzbar, das Dashboard zeigt das Banner mit „Löschung abbrechen“
+        window.location.href = '/sites'
+      }
     } catch {
       setError('Verbindungsfehler. Bitte prüfe deine Internetverbindung.')
       setLoading(false)
@@ -80,11 +99,27 @@ export default function AccountDeletionSection() {
     )
   }
 
+  const immediate = !periodEnd || timing === 'now'
+  const bullets = immediate
+    ? [
+      'Deine Webseiten gehen sofort offline.',
+      'Dein Abo endet sofort. Es wird nichts mehr abgebucht. Bereits bezahlte Zeit wird nicht erstattet.',
+      `Du hast ${graceDays} Tage Bedenkzeit. In dieser Zeit kannst du die Löschung nach dem Anmelden abbrechen.`,
+      'Danach löschen wir dein Konto, deine Seiten, Anfragen und Bilder endgültig. Eigene Domains werden getrennt.',
+    ]
+    : [
+      `Dein Abo endet am ${day(periodEnd)}. Bis dahin wird nichts mehr abgebucht. Bereits bezahlte Zeit wird nicht erstattet.`,
+      'Deine Webseiten bleiben bis dahin online, und du kannst dein Konto wie gewohnt nutzen.',
+      `Am ${day(periodEnd)} löschen wir dein Konto, deine Seiten, Anfragen und Bilder endgültig. Eigene Domains werden getrennt.`,
+      'Bis dahin kannst du die Löschung jederzeit abbrechen – dann läuft dein Abo einfach weiter.',
+    ]
+
   return (
     <div className="w-full sm:max-w-md flex flex-col gap-4">
       <p className="text-sm leading-relaxed" style={{ color: '#64748B' }}>
-        Deine Webseiten gehen sofort offline und dein Abo endet sofort. Du hast {info?.graceDays ?? 14} Tage Bedenkzeit, danach
-        löschen wir dein Konto endgültig.
+        {periodEnd
+          ? `Du kannst dein Konto zum Ende deiner Laufzeit (${day(periodEnd)}) oder sofort löschen. Bereits bezahlte Zeit wird in beiden Fällen nicht erstattet.`
+          : `Deine Webseiten gehen sofort offline und dein Abo endet sofort. Du hast ${graceDays} Tage Bedenkzeit, danach löschen wir dein Konto endgültig.`}
       </p>
       <button type="button" onClick={() => setOpen(true)}
         className="self-start px-5 py-3 text-sm font-bold rounded-xl transition-colors hover:bg-red-50"
@@ -106,16 +141,25 @@ export default function AccountDeletionSection() {
               </div>
               <div className="flex-1">
                 <h3 id="delete-title" className="font-bold text-gray-900 text-lg tracking-tight">Konto wirklich löschen?</h3>
-                <p className="text-sm mt-1.5 leading-relaxed" style={{ color: '#64748B' }}>Bitte lies kurz, was passiert:</p>
+                <p className="text-sm mt-1.5 leading-relaxed" style={{ color: '#64748B' }}>
+                  {periodEnd ? 'Wann soll dein Konto gelöscht werden?' : 'Bitte lies kurz, was passiert:'}
+                </p>
               </div>
             </div>
 
+            {periodEnd && (
+              <div className="flex flex-col gap-2.5" role="radiogroup" aria-label="Zeitpunkt der Löschung">
+                <ChoiceCard selected={timing === 'period_end'} onSelect={() => setTiming('period_end')}
+                  title={`Zum Laufzeitende löschen (${day(periodEnd)})`}
+                  text="Deine Seiten bleiben bis dahin online, es wird nichts mehr abgebucht. Bis dahin kannst du die Löschung abbrechen." />
+                <ChoiceCard selected={timing === 'now'} onSelect={() => setTiming('now')}
+                  title="Sofort löschen"
+                  text={`Seiten sofort offline, Abo endet heute – bezahlte Restzeit wird nicht erstattet. Endgültig gelöscht nach ${graceDays} Tagen Bedenkzeit.`} />
+              </div>
+            )}
+
             <ul className="flex flex-col gap-2 text-sm leading-relaxed" style={{ color: '#374151' }}>
-              {[
-                'Deine Webseiten gehen sofort offline.',
-                'Dein Abo endet sofort. Es wird nichts mehr abgebucht, bereits bezahlte Zeit wird nicht erstattet.',
-                `Du hast ${info?.graceDays ?? 14} Tage Bedenkzeit. In dieser Zeit kannst du die Löschung nach dem Anmelden abbrechen.`,
-                'Danach löschen wir dein Konto, deine Seiten, Anfragen und Bilder endgültig. Eigene Domains werden getrennt.',
+              {[...bullets,
                 'Deinen Benutzernamen vergeben wir nicht neu.',
                 'Gutschriften und Provisionsbuchungen müssen wir gesetzlich aufbewahren (8 bzw. 10 Jahre).',
               ].map(t => (
@@ -154,7 +198,11 @@ export default function AccountDeletionSection() {
 
             <label className="flex gap-3 items-start text-sm px-4 py-3 rounded-2xl cursor-pointer" style={{ background: '#F8FAFC', color: '#374151' }}>
               <input type="checkbox" checked={confirmed} onChange={e => setConfirmed(e.target.checked)} className="mt-0.5 w-4 h-4 accent-gray-900" />
-              <span>Ich möchte mein FinestSites-Konto löschen. Mir ist klar, dass meine Seiten sofort offline gehen und mein Abo endet.</span>
+              <span>
+                {immediate
+                  ? 'Ich möchte mein FinestSites-Konto löschen. Mir ist klar, dass meine Seiten sofort offline gehen, mein Abo sofort endet und bezahlte Zeit nicht erstattet wird.'
+                  : 'Ich möchte mein FinestSites-Konto zum Laufzeitende löschen. Mir ist klar, dass mein Abo dann endet und bezahlte Zeit nicht erstattet wird.'}
+              </span>
             </label>
 
             {error && (
@@ -171,7 +219,7 @@ export default function AccountDeletionSection() {
                 className="flex-1 flex items-center justify-center gap-2 px-4 py-3 text-sm font-semibold text-white rounded-xl transition-opacity disabled:opacity-50"
                 style={{ background: '#DC2626' }}>
                 {loading && <span className="w-3.5 h-3.5 rounded-full border-2 border-white/30 border-t-white animate-spin" />}
-                Konto löschen
+                {immediate ? 'Sofort löschen' : 'Zum Laufzeitende löschen'}
               </button>
             </div>
           </div>
@@ -198,7 +246,14 @@ function ChoiceCard({ selected, onSelect, title, text }: { selected: boolean; on
   )
 }
 
-/** Vollbild während der Bedenkzeit (Dashboard-Layout): Datum + „Löschung abbrechen“. */
+async function cancelDeletionRequest(): Promise<{ ok: boolean; subscriptionContinues: boolean }> {
+  const res = await fetch('/api/account/deletion', { method: 'DELETE' })
+  if (!res.ok && res.status !== 409) throw new Error()
+  const data = await res.json().catch(() => ({}))
+  return { ok: true, subscriptionContinues: !!data?.subscriptionContinues }
+}
+
+/** Vollbild während der Bedenkzeit (Weg „sofort“, Dashboard-Layout): Datum + „Löschung abbrechen“. */
 export function DeletionPendingScreen({ scheduledFor }: { scheduledFor: string }) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -207,8 +262,7 @@ export function DeletionPendingScreen({ scheduledFor }: { scheduledFor: string }
   async function cancel() {
     setLoading(true); setError('')
     try {
-      const res = await fetch('/api/account/deletion', { method: 'DELETE' })
-      if (!res.ok && res.status !== 409) throw new Error()
+      await cancelDeletionRequest()
       setDone(true)
       window.location.href = '/sites'
     } catch {
@@ -254,6 +308,40 @@ export function DeletionPendingScreen({ scheduledFor }: { scheduledFor: string }
           Abmelden
         </button>
       </div>
+    </div>
+  )
+}
+
+/** Banner oben im Dashboard (Weg „zum Laufzeitende“): Konto bleibt nutzbar, Löschung bis zum Termin abbrechbar. */
+export function DeletionPeriodEndBanner({ scheduledFor }: { scheduledFor: string }) {
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(false)
+
+  async function cancel() {
+    if (!window.confirm('Löschung abbrechen? Dein Abo läuft dann weiter wie vorher.')) return
+    setLoading(true); setError(false)
+    try {
+      await cancelDeletionRequest()
+      window.location.reload()
+    } catch {
+      setError(true)
+      setLoading(false)
+    }
+  }
+
+  return (
+    <div role="status" style={{
+      background: '#FEF2F2', color: '#7F1D1D', borderBottom: '1px solid #FECACA',
+      padding: '10px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap', fontSize: 13, fontWeight: 500,
+    }}>
+      <span>
+        Dein Konto wird am <strong>{day(scheduledFor)}</strong> gelöscht. Bis dahin bleiben deine Seiten online und dein Abo läuft aus.
+        {error && <span style={{ color: '#DC2626' }}> Abbrechen hat nicht geklappt, bitte nochmal versuchen.</span>}
+      </span>
+      <button type="button" onClick={cancel} disabled={loading}
+        style={{ background: '#1a1a1a', color: '#fff', border: 0, borderRadius: 10, padding: '7px 14px', fontSize: 12, fontWeight: 600, cursor: 'pointer', opacity: loading ? 0.7 : 1 }}>
+        {loading ? 'Einen Moment …' : 'Löschung abbrechen'}
+      </button>
     </div>
   )
 }

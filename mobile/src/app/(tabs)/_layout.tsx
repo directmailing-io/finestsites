@@ -30,8 +30,9 @@ export default function TabsLayout() {
   // deshalb erst zeichnen, wenn /me einmal da ist (oder fehlgeschlagen; dann ohne „Chats“).
   if (me.isPending && !me.data) return null;
 
-  // Kontolöschung vorgemerkt: nur der Bildschirm „Konto wird gelöscht am … – Löschung abbrechen“
-  if (deletion.data?.status === 'scheduled') {
+  // Kontolöschung „sofort“ vorgemerkt: nur der Bildschirm „Konto wird gelöscht am … – Löschung abbrechen“.
+  // „Zum Laufzeitende“: App bleibt nutzbar, Hinweis unter „Mehr“ (account/index.tsx).
+  if (deletion.data?.status === 'scheduled' && deletion.data.mode !== 'period_end') {
     return <Redirect href="/deletion-pending" />;
   }
 

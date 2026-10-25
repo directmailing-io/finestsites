@@ -81,7 +81,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   const user = await getUserFromRequest(req)
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   // Kontolöschung angefragt: Veröffentlichen, neue Seiten und Kauf gesperrt
-  const deletionBlock = await deletionPendingResponse(user.id)
+  const deletionBlock = await deletionPendingResponse(user.id, { allowPeriodEnd: true })
   if (deletionBlock) return deletionBlock
 
   const { id } = await params

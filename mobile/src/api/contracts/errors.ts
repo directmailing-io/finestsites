@@ -37,6 +37,7 @@ export const AppErrorCode = z.enum([
   // Konto löschen (/api/app/v1/account/deletion)
   'INVALID_PASSWORD',
   'BALANCE_CHOICE_REQUIRED',
+  'PERIOD_END_NOT_AVAILABLE',
   'DELETION_NOT_ALLOWED',
   'DELETION_ALREADY_REQUESTED',
   'NO_DELETION_PENDING',

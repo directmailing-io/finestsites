@@ -28,6 +28,7 @@ export const APP_MESSAGES: Record<AppErrorCode, string> = {
   HANDOFF_INVALID: 'Der Link ist abgelaufen. Bitte öffne den Editor erneut.',
   INVALID_PASSWORD: 'Das Passwort stimmt nicht.',
   BALANCE_CHOICE_REQUIRED: 'Bitte wähle, was mit deinem Partner-Guthaben passieren soll.',
+  PERIOD_END_NOT_AVAILABLE: 'Löschen zum Laufzeitende geht nur mit einem laufenden Abo. Bitte wähle „sofort“.',
   DELETION_NOT_ALLOWED: 'Dieses Konto kann hier nicht gelöscht werden.',
   DELETION_ALREADY_REQUESTED: 'Die Löschung ist bereits vorgemerkt.',
   NO_DELETION_PENDING: 'Für dein Konto ist keine Löschung vorgemerkt.',

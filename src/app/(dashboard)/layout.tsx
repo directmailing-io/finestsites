@@ -14,7 +14,7 @@ import DashboardNotice from '@/components/dashboard/DashboardNotice'
 import type { Viewport } from 'next'
 import { isAppModeRequest } from '@/lib/app-mode/server'
 import { AppModeProvider } from '@/components/app-mode/AppMode'
-import { DeletionPendingScreen } from '@/components/settings/AccountDeletionSection'
+import { DeletionPendingScreen, DeletionPeriodEndBanner } from '@/components/settings/AccountDeletionSection'
 import { VisitorChatProvider } from '@/components/chat/VisitorChatContext'
 import { isVisitorChatEnabledForUser } from '@/lib/chat/flags'
 
@@ -47,7 +47,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const [profile, notice, visitorChat] = await Promise.all([
     db.query.users.findFirst({
       where: eq(users.id, user.id),
-      columns: { username: true, subscriptionStatus: true, cancelAtPeriodEnd: true, currentPeriodEnd: true, deletionScheduledFor: true, deletedAt: true },
+      columns: { username: true, subscriptionStatus: true, cancelAtPeriodEnd: true, currentPeriodEnd: true, deletionScheduledFor: true, deletionMode: true, deletedAt: true },
     }),
     loadDashboardNotice(),
     // Besucher-Chat freigeschaltet? Fehler = aus (darf das Dashboard nie blockieren).
@@ -57,10 +57,12 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const ADMIN_EMAIL = 'info@daniel-kurzeja.de'
   const appMode = await isAppModeRequest()
 
-  // Bedenkzeit einer Kontolöschung: nur „Konto wird gelöscht am … – Löschung abbrechen“ (Web und App-Modus).
+  // Kontolöschung vorgemerkt – Weg „sofort“: nur „Konto wird gelöscht am … – Löschung abbrechen“ (Web und
+  // App-Modus). Weg „zum Laufzeitende“: Dashboard bleibt nutzbar, oben ein Banner mit „Löschung abbrechen“.
   // Admin-Impersonation sieht das normale Dashboard.
   if (!impersonation && profile?.deletedAt) redirect('/login')
-  if (!impersonation && profile?.deletionScheduledFor) {
+  const deletionPeriodEnd = !impersonation && !!profile?.deletionScheduledFor && profile.deletionMode === 'period_end'
+  if (!impersonation && profile?.deletionScheduledFor && !deletionPeriodEnd) {
     return <DeletionPendingScreen scheduledFor={profile.deletionScheduledFor.toISOString()} />
   }
 
@@ -101,6 +103,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
         <DashboardSidebar />
         <div className="flex-1 min-w-0 flex flex-col">
           {notice && <DashboardNotice text={notice} />}
+          {deletionPeriodEnd && profile?.deletionScheduledFor && <DeletionPeriodEndBanner scheduledFor={profile.deletionScheduledFor.toISOString()} />}
           {!impersonation && <ImpersonationBanner />}
           {!impersonation && (
             <CancellationBanner

@@ -16,6 +16,7 @@ import type {
   DeletionCancelResult,
   DeletionInfo,
   DeletionRequestResult,
+  DeletionTiming,
   DeviceResponse,
   EmailCategoryKey,
   ImpersonationDecision,
@@ -152,10 +153,10 @@ export const chat = {
 // Konto löschen
 export const getDeletionInfo = () => api.get<DeletionInfo>(`${V1}/account/deletion`);
 /** Falsches Passwort = 400 INVALID_PASSWORD (kein 401: das wäre „abgemeldet“). */
-export const requestDeletion = (password: string, balanceChoice: PartnerBalanceChoice | null, waiverConfirmed: boolean) =>
+export const requestDeletion = (password: string, timing: DeletionTiming, balanceChoice: PartnerBalanceChoice | null, waiverConfirmed: boolean) =>
   request<DeletionRequestResult>(`${V1}/account/deletion`, {
     method: 'POST',
-    body: { password, balanceChoice, waiverConfirmed },
+    body: { password, timing, balanceChoice, waiverConfirmed },
     skipAuthHandling: true,
   });
 /** Löschung abbrechen (nach erneuter Anmeldung während der Bedenkzeit). */
