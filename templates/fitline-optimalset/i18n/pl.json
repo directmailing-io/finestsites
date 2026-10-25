@@ -542,7 +542,10 @@
   "Vier Milchsäurekulturen direkt im Pulver": "Cztery kultury bakterii kwasu mlekowego bezpośrednio w proszku",
   "Bringt Wärme und feines Aroma in den Drink.": "Dodaje napojowi ciepła i delikatnego aromatu.",
   "<strong>Tagesportion:</strong> 1 Beutel (6,7 g Pulver) in 250 ml stillem Wasser, idealerweise am Abend. Sorten: Citrus (Orange-Zitrone) und Exotic (Kaktusfeige), beide mit denselben Werten.": "<strong>Dzienna porcja:</strong> 1 saszetka (6,7 g proszku) w 250 ml niegazowanej wody, najlepiej wieczorem. Smaki: Citrus (pomarańcza-cytryna) i Exotic (opuncja figowa), oba o tych samych wartościach.",
-  "je nach Sorte": "w zależności od smaku"
+  "je nach Sorte": "w zależności od smaku",
+  "Vier Milchsäurekulturen direkt im Pulver, ohne Konservierungsstoffe": "Cztery kultury bakterii kwasu mlekowego bezpośrednio w proszku, bez konserwantów",
+  "Mit Inulin und Molkeprotein": "Z inuliną i białkiem serwatkowym",
+  "Sorgt für eine feine, würzige Note im Geschmack.": "Nadaje smakowi delikatną, wyrazistą nutę"
  },
  "attrs": {
   "5 von 5 Sternen": "5 z 5 gwiazdek",
