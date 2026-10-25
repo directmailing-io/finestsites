@@ -37,15 +37,18 @@ const [, , F_W, F_H] = /viewBox="([^"]+)"/.exec(fSvg)[1].split(/\s+/).map(Number
  * Das f ist hoch und schmal; optisch mittig heißt hier: Begrenzungsrahmen exakt mittig
  * (die beiden Schlaufen gleichen sich oben/unten aus).
  */
-function fCanvas(size, { bg, fill, glyphHeight }) {
+function fCanvas(size, { bg, fill, glyphHeight, stroke = 0 }) {
   const h = size * glyphHeight;
   const scale = h / F_H;
   const w = F_W * scale;
   const x = (size - w) / 2;
   const y = (size - h) / 2;
+  // stroke (Pfad-Einheiten der viewBox 68.71×126): kräftigere Linien, damit das f auf dem Homescreen
+  // (≈ 60 px) nicht verschwimmt – Variante C aus docs/app/android-start.html (Daniel 25.10.2026)
+  const strokeAttr = stroke > 0 ? ` stroke="${fill}" stroke-width="${stroke}" stroke-linejoin="round" stroke-linecap="round"` : '';
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
 ${bg ? `<rect width="${size}" height="${size}" fill="${bg}"/>` : ''}
-<g transform="translate(${x.toFixed(3)} ${y.toFixed(3)}) scale(${scale.toFixed(5)})"><path fill="${fill}" d="${fPath}"/></g>
+<g transform="translate(${x.toFixed(3)} ${y.toFixed(3)}) scale(${scale.toFixed(5)})"><path fill="${fill}"${strokeAttr} d="${fPath}"/></g>
 </svg>`;
 }
 
@@ -59,15 +62,17 @@ function render(svg, out, { opaque = false, width } = {}) {
   console.log('✓', out);
 }
 
-// iOS: Innenabstand oben/unten je 24 % → f ist 52 % der Kantenlänge hoch (Breite ≈ 28 %).
-render(fCanvas(1024, { bg: '#FFFFFF', fill: INK, glyphHeight: 0.52 }), 'icon.png', { opaque: true });
-render(fCanvas(1024, { fill: '#FFFFFF', glyphHeight: 0.52 }), 'icon-dark.png');
-render(fCanvas(1024, { fill: '#FFFFFF', glyphHeight: 0.52 }), 'icon-tinted.png');
+// iOS (Variante C): f ist 62 % der Kantenlänge hoch (Breite ≈ 34 %), Kontur 2,6 Pfad-Einheiten –
+// größer und kräftiger als vorher (52 %, ohne Kontur), damit es bei 60 px scharf wirkt.
+const IOS = { glyphHeight: 0.62, stroke: 2.6 };
+render(fCanvas(1024, { bg: '#FFFFFF', fill: INK, ...IOS }), 'icon.png', { opaque: true });
+render(fCanvas(1024, { fill: '#FFFFFF', ...IOS }), 'icon-dark.png');
+render(fCanvas(1024, { fill: '#FFFFFF', ...IOS }), 'icon-tinted.png');
 
-// Android adaptiv: sichtbarer Kreis ≈ 66 % → f 40 % hoch bleibt sicher innen.
-render(fCanvas(1024, { fill: INK, glyphHeight: 0.4 }), 'adaptive-foreground.png');
-render(fCanvas(1024, { fill: '#000000', glyphHeight: 0.4 }), 'adaptive-monochrome.png');
-render(fCanvas(96, { fill: '#FFFFFF', glyphHeight: 0.8 }), 'notification-icon.png');
+// Android adaptiv: sichtbarer Kreis ≈ 66 % → f 46 % hoch bleibt sicher innen (gleiche Kontur).
+render(fCanvas(1024, { fill: INK, glyphHeight: 0.46, stroke: 2.6 }), 'adaptive-foreground.png');
+render(fCanvas(1024, { fill: '#000000', glyphHeight: 0.46, stroke: 2.6 }), 'adaptive-monochrome.png');
+render(fCanvas(96, { fill: '#FFFFFF', glyphHeight: 0.8, stroke: 2 }), 'notification-icon.png');
 
 // Startbildschirm: Wortmarke, 600 px breit (= 200 pt @3x)
 render(readFileSync(join(brand, 'logo-black.svg'), 'utf8'), 'splash-logo.png', { width: 600 });
