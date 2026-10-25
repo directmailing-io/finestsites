@@ -2443,5 +2443,255 @@
   "id": 488,
   "de": "Schreib uns direkt",
   "en": "Message us directly"
+ },
+ {
+  "id": 489,
+  "de": "Kurz vor dem Schlafen für eine bessere Regeneration. Mit Calcium, Magnesium, Zink, weiteren Spurenelementen und Vitamin D.",
+  "en": "Right before bed for better recovery. With calcium, magnesium, zinc, other trace elements and vitamin D."
+ },
+ {
+  "id": 490,
+  "de": "11 Vitamine plus Selen in einer Portion",
+  "en": "11 vitamins plus selenium in one serving"
+ },
+ {
+  "id": 491,
+  "de": "30 mg Koffein am Tag, unter anderem aus Guarana",
+  "en": "30 mg caffeine a day, partly from guarana"
+ },
+ {
+  "id": 492,
+  "de": "Das Mineralstoff-Pulver für deinen Abend. Mit Calcium, Magnesium, Zink und Vitamin D.",
+  "en": "The mineral powder for your evening. With calcium, magnesium, zinc and vitamin D."
+ },
+ {
+  "id": 493,
+  "de": "Plus Vitamin D und 6 Spurenelemente",
+  "en": "Plus vitamin D and 6 trace elements"
+ },
+ {
+  "id": 494,
+  "de": "Liefert einen Teil des Koffeins im Drink. Guarana ist eine Frucht aus dem Amazonasgebiet.",
+  "en": "Provides part of the caffeine in the drink. Guarana is a fruit from the Amazon region."
+ },
+ {
+  "id": 495,
+  "de": "<strong>Tagesportion:</strong> 1 Beutel (15 g Pulver) in 180 ml stillem Wasser. Geschmack: Orange-Cassis.",
+  "en": "<strong>Daily serving:</strong> 1 sachet (15 g powder) in 180 ml still water. Flavor: orange-blackcurrant."
+ },
+ {
+  "id": 496,
+  "de": "Spurenelement",
+  "en": "Trace element"
+ },
+ {
+  "id": 497,
+  "de": "Ballaststoffe & Koffein",
+  "en": "Fiber & caffeine"
+ },
+ {
+  "id": 498,
+  "de": "Ballaststoffe",
+  "en": "Dietary fiber"
+ },
+ {
+  "id": 499,
+  "de": "Koffein",
+  "en": "Caffeine"
+ },
+ {
+  "id": 500,
+  "de": "Pflanzliche Zutaten",
+  "en": "Plant-based ingredients"
+ },
+ {
+  "id": 501,
+  "de": "Traubenkernextrakt",
+  "en": "Grape seed extract"
+ },
+ {
+  "id": 502,
+  "de": "Weitere Zutaten",
+  "en": "Other ingredients"
+ },
+ {
+  "id": 503,
+  "de": "Hafer-, Erbsen- und Apfelfaser",
+  "en": "Oat, pea and apple fiber"
+ },
+ {
+  "id": 504,
+  "de": "Zucker",
+  "en": "sugar"
+ },
+ {
+  "id": 505,
+  "de": "Süßungsmittel aus Stevia",
+  "en": "sweetener from stevia"
+ },
+ {
+  "id": 506,
+  "de": "<strong>Hinweis:</strong> Enthält Koffein (30 mg pro Tagesportion). Für Kinder und schwangere Frauen nicht empfohlen. Glutenfrei, laktosefrei, vegan.",
+  "en": "<strong>Note:</strong> Contains caffeine (30 mg per daily serving). Not recommended for children or pregnant women. Gluten-free, lactose-free, vegan."
+ },
+ {
+  "id": 507,
+  "de": "NRV = Prozentwert der Referenzmenge für die tägliche Zufuhr (Erwachsene). Quelle: offizielles Datenblatt PM-International AG (LMIV).",
+  "en": "NRV = percent of the daily reference intake (adults). Source: official data sheet, PM-International AG (food information label)."
+ },
+ {
+  "id": 508,
+  "de": "<strong>Tagesportion:</strong> 3× täglich 1 gestrichener Messlöffel (1,67 g) in 40 ml stillem Wasser, zusammen 5 g Pulver. Geschmack: Cassis.",
+  "en": "<strong>Daily serving:</strong> 1 level scoop (1.67 g) in 40 ml still water, 3 times a day, 5 g powder in total. Flavor: blackcurrant."
+ },
+ {
+  "id": 509,
+  "de": "Koffein (aus Guaranaextrakt und Koffein)",
+  "en": "Caffeine (from guarana extract and caffeine)"
+ },
+ {
+  "id": 510,
+  "de": "Guaranaextrakt",
+  "en": "Guarana extract"
+ },
+ {
+  "id": 511,
+  "de": "Rote-Bete-Konzentrat",
+  "en": "Beetroot concentrate"
+ },
+ {
+  "id": 512,
+  "de": "Kurkumaextrakt",
+  "en": "Turmeric extract"
+ },
+ {
+  "id": 513,
+  "de": "Ingwerextrakt",
+  "en": "Ginger extract"
+ },
+ {
+  "id": 514,
+  "de": "Kohlenhydrat",
+  "en": "carbohydrate"
+ },
+ {
+  "id": 515,
+  "de": "Cassis",
+  "en": "blackcurrant"
+ },
+ {
+  "id": 516,
+  "de": "<strong>Hinweis:</strong> Enthält Koffein (30 mg pro Tagesportion). Für Kinder und schwangere Frauen nicht empfohlen. Nicht mehr als einen Messlöffel pro Einzeldosis und drei Messlöffel am Tag. Glutenfrei, vegan.",
+  "en": "<strong>Note:</strong> Contains caffeine (30 mg per daily serving). Not recommended for children or pregnant women. No more than one scoop at a time and three scoops a day. Gluten-free, vegan."
+ },
+ {
+  "id": 517,
+  "de": "<strong>Tagesportion:</strong> 1 Beutel (6,7 g Pulver) in 250 ml stillem Wasser, idealerweise am Abend. Geschmack der Sorte Citrus: Orange-Zitrone.",
+  "en": "<strong>Daily serving:</strong> 1 sachet (6.7 g powder) in 250 ml still water, ideally in the evening. Citrus flavor: orange-lemon."
+ },
+ {
+  "id": 518,
+  "de": "Mineralstoffe & Spurenelemente",
+  "en": "Minerals & trace elements"
+ },
+ {
+  "id": 519,
+  "de": "Kaliumcitrat",
+  "en": "Potassium citrate"
+ },
+ {
+  "id": 520,
+  "de": "Mineralsalz",
+  "en": "mineral salt"
+ },
+ {
+  "id": 521,
+  "de": "Farbstoff",
+  "en": "colour"
+ },
+ {
+  "id": 522,
+  "de": "Orange-Zitrone",
+  "en": "orange-lemon"
+ },
+ {
+  "id": 523,
+  "de": "NRV = Prozentwert der Referenzmenge für die tägliche Zufuhr (Erwachsene). Quelle: offizielles Datenblatt PM-International AG (LMIV), Sorte Citrus.",
+  "en": "NRV = percent of the daily reference intake (adults). Source: official data sheet, PM-International AG (food information label), Citrus flavor."
+ },
+ {
+  "id": 524,
+  "de": "<strong>Portion:</strong> 200 ml fertiger Drink pro Tag. Aus 1 Beutel (50,5 g) und 1 Liter Milch werden im FitLine Joghurtbereiter 5 Portionen.",
+  "en": "<strong>Serving:</strong> 200 ml of the finished drink per day. 1 sachet (50.5 g) and 1 liter of milk make 5 servings in the FitLine yoghurt maker."
+ },
+ {
+  "id": 525,
+  "de": "Nährwerte pro Portion (200 ml)",
+  "en": "Nutrition per serving (200 ml)"
+ },
+ {
+  "id": 526,
+  "de": "Eiweiß",
+  "en": "Protein"
+ },
+ {
+  "id": 527,
+  "de": "Kohlenhydrate",
+  "en": "Carbohydrate"
+ },
+ {
+  "id": 528,
+  "de": "11 g, davon Zucker 11 g",
+  "en": "11 g, of which sugars 11 g"
+ },
+ {
+  "id": 529,
+  "de": "Fett",
+  "en": "Fat"
+ },
+ {
+  "id": 530,
+  "de": "0,75 g, davon gesättigt 0,47 g",
+  "en": "0.75 g, of which saturates 0.47 g"
+ },
+ {
+  "id": 531,
+  "de": "Salz",
+  "en": "Salt"
+ },
+ {
+  "id": 532,
+  "de": "Phosphor",
+  "en": "Phosphorus"
+ },
+ {
+  "id": 533,
+  "de": "Vier Milchsäurekulturen",
+  "en": "Four lactic acid cultures"
+ },
+ {
+  "id": 534,
+  "de": "Bifidus-Kultur",
+  "en": "bifidus culture"
+ },
+ {
+  "id": 535,
+  "de": "Milchsäurekultur",
+  "en": "lactic acid culture"
+ },
+ {
+  "id": 536,
+  "de": "Eiweißangereichertes Molkenpulver",
+  "en": "Protein-enriched whey powder"
+ },
+ {
+  "id": 537,
+  "de": "19,8 % im Pulver, Ballaststoff",
+  "en": "19.8% of the powder, dietary fiber"
+ },
+ {
+  "id": 538,
+  "de": "NRV = Prozentwert der Referenzmenge für die tägliche Zufuhr (Erwachsene). Nährwerte für 200 ml, zubereitet mit entrahmter Milch (0,3 % Fett). Enthält Milch und Laktose. Quelle: offizielles Datenblatt PM-International AG.",
+  "en": "NRV = percent of the daily reference intake (adults). Values per 200 ml prepared with skimmed milk (0.3% fat). Contains milk and lactose. Source: official data sheet, PM-International AG."
  }
 ]
