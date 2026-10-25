@@ -226,7 +226,7 @@ export function createMockDb() {
     code: 'sabine-keller',
     texts: {
       title: 'Partnerprogramm',
-      description: 'Du erhältst 10 % Provision auf die Zahlungen deiner Empfehlungen, solange sie dabei sind.',
+      description: 'Du erhältst eine Provision auf die Zahlungen deiner Empfehlungen, solange sie dabei sind.',
       holdInfo: 'Provisionen sind nach 14 Tagen verfügbar.',
     },
     commissionPercent: 10,
