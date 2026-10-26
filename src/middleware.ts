@@ -137,7 +137,7 @@ export async function middleware(request: NextRequest) {
   }
 
   // Not logged in + protected routes → login
-  const protectedPaths = ['/dashboard', '/sites', '/settings', '/admin', '/onboarding', '/billing']
+  const protectedPaths = ['/dashboard', '/sites', '/settings', '/admin', '/onboarding', '/billing', '/neuigkeiten']
   if (!user && protectedPaths.some(p => pathname.startsWith(p))) {
     return NextResponse.redirect(new URL('/login', request.url))
   }

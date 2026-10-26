@@ -15,6 +15,7 @@ import { isTaxProfileComplete } from '@/lib/affiliate/tax'
 import { OverviewResponse, type PeriodStats, type Todo, type AccountStatusCode } from '@/lib/contracts/app-v1/overview'
 import { isVisitorChatEnabledForUser } from '@/lib/chat/flags'
 import { ownerUnread } from '@/lib/chat/service'
+import { overviewFor as newsOverviewFor } from '@/lib/news/service'
 
 export const dynamic = 'force-dynamic'
 
@@ -82,7 +83,7 @@ export async function GET(req: Request) {
   if (!profile) return appError('UNAUTHORIZED')
   const siteIds = sites.map(s => s.id)
 
-  const [unreadBySite, supportRow, notifRow, last7, prev7, last30, visitors, changes, chatUnread] = await Promise.all([
+  const [unreadBySite, supportRow, notifRow, last7, prev7, last30, visitors, changes, chatUnread, news] = await Promise.all([
     siteIds.length === 0 ? Promise.resolve([] as { siteId: string; n: number }[]) :
       db.select({ siteId: formSubmissions.userSiteId, n: sql<number>`count(*)::int`.mapWith(Number) })
         .from(formSubmissions)
@@ -106,6 +107,11 @@ export async function GET(req: Request) {
     unpublishedChangesFor(sites.map(s => ({ id: s.id, status: s.status, publishedData: (s.publishedData ?? null) as Record<string, string> | null }))),
     // Besucher-Chat: 0, wenn das Konto nicht freigeschaltet ist (dann gibt es auch kein Todo)
     isVisitorChatEnabledForUser(userId).then(on => on ? ownerUnread(userId) : { count: 0, conversations: 0 }),
+    // Neuigkeiten: Ungelesen-Zähler + Startkarte (neueste weder gelesene noch weggewischte); Fehler = leer, nie 500
+    newsOverviewFor(userId, { plan: profile.plan }).catch(err => {
+      console.error('[overview] news failed:', err instanceof Error ? err.message : err)
+      return { unread: 0, latest: null }
+    }),
   ])
 
   const unreadMap = new Map(unreadBySite.map(r => [r.siteId, r.n]))
@@ -169,5 +175,6 @@ export async function GET(req: Request) {
     stats: { last7, prev7, last30 },
     accountStatus: { code, online, offline },
     todos,
+    news,
   })
 }
