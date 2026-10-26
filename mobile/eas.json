@@ -13,10 +13,12 @@
     "preview": {
       "distribution": "internal",
       "autoIncrement": true,
+      "channel": "preview",
       "env": { "EXPO_PUBLIC_API_MOCK": "0" }
     },
     "production": {
       "autoIncrement": true,
+      "channel": "production",
       "env": { "EXPO_PUBLIC_API_MOCK": "0" },
       "ios": {
         "buildConfiguration": "Release"

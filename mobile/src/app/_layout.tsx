@@ -20,6 +20,7 @@ import { IntroOverlay, shouldPlayIntro } from '@/features/intro/IntroOverlay';
 import { NotificationRouter } from '@/features/push/NotificationRouter';
 import { useAuth } from '@/lib/auth';
 import { startLockWatcher, useLock } from '@/lib/lock';
+import { startOtaWatcher } from '@/lib/ota';
 import { registerPushDevice } from '@/lib/push';
 import { colors, fonts } from '@/theme/tokens';
 
@@ -59,6 +60,9 @@ export default function RootLayout() {
     void useLock.getState().hydrate();
     return startLockWatcher();
   }, [bootstrap]);
+
+  // OTA-Updates (src/lib/ota.ts): im Vordergrund still nachladen, wirksam erst beim nächsten Kaltstart
+  useEffect(() => startOtaWatcher(), []);
 
   const ready = fontsLoaded && status !== 'loading' && lock.hydrated;
   // Logo-Intro beim Kaltstart (src/features/intro/IntroOverlay.tsx); ohne Intro blendet der Startbildschirm wie bisher aus

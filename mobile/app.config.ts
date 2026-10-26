@@ -25,7 +25,19 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   userInterfaceStyle: 'light',
   icon: './assets/brand/icon.png',
   platforms: ['ios', 'android'],
+  // Over-the-Air-Updates (EAS Update, seit Build 9): JS/UI-Änderungen kommen ohne Store-Build zum Nutzer.
+  // Die Laufzeit ist der native Fingerabdruck: ein Update erreicht nur Builds mit identischem Fingerprint,
+  // jede native Änderung (Modul, Berechtigung, Icon, Plugin) braucht also weiter einen Store-Build.
+  // Ablauf: siehe mobile/README.md und src/lib/ota.ts. Das Config-Plugin von expo-updates wird von
+  // @expo/prebuild-config automatisch angewendet (kein Eintrag unter plugins nötig).
   runtimeVersion: { policy: 'fingerprint' },
+  updates: {
+    url: `https://u.expo.dev/${EAS_PROJECT_ID}`,
+    // Beim Kaltstart im Hintergrund prüfen, aber nie auf den Download warten (Timeout 0): die App
+    // startet sofort mit der vorhandenen Fassung, das neue Bündel läuft beim nächsten Kaltstart.
+    checkAutomatically: 'ON_LOAD',
+    fallbackToCacheTimeout: 0,
+  },
   ios: {
     bundleIdentifier: 'io.finestsites.app',
     // iOS 18+: helles, dunkles und getöntes Icon (erzeugt von scripts/build-icons.mjs)
