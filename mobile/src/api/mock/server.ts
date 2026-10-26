@@ -85,6 +85,7 @@ function overview(): Overview {
     },
     accountStatus: { code, online, offline },
     todos,
+    news: { unread: 0, latest: null },
   };
 }
 

@@ -33,7 +33,7 @@ export const UpdateDeviceRequest = z.object({
 export const DeleteDeviceRequest = z.object({ token: ExpoPushToken })
 
 /** Kategorien für Mitteilungen und Einstellungen. */
-export const PushCategory = z.enum(['leads', 'support', 'account', 'partner', 'chat'])
+export const PushCategory = z.enum(['leads', 'support', 'account', 'partner', 'chat', 'news'])
 export type PushCategory = z.infer<typeof PushCategory>
 
 /** `data` jeder Push-Mitteilung (für Deep-Links in der App). Nie Interessenten-Daten. */

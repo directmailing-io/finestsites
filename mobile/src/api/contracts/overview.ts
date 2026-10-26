@@ -1,6 +1,7 @@
 // GENERIERT von mobile/scripts/sync-contracts.mjs aus src/lib/contracts/app-v1/ – NICHT BEARBEITEN.
 // Änderungen immer im Server-Vertrag machen und danach `npm run sync:contracts` ausführen.
 import { z } from 'zod'
+import { NewsCard } from './news'
 import { Uuid, IsoDateTime } from './common'
 
 export const SiteStatus = z.enum(['online', 'offline', 'draft'])
@@ -79,5 +80,10 @@ export const OverviewResponse = z.object({
     offline: z.number().int().nonnegative(),
   }),
   todos: z.array(Todo),
+  /** Neuigkeiten: ungelesene Anzahl + neueste, noch nicht weggewischte Neuigkeit für die Startkarte. */
+  news: z.object({
+    unread: z.number().int().nonnegative(),
+    latest: NewsCard.nullable(),
+  }).default({ unread: 0, latest: null }),
 })
 export type OverviewResponse = z.infer<typeof OverviewResponse>

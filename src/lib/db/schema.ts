@@ -1,20 +1,4 @@
-import {
-  pgTable,
-  pgEnum,
-  uuid,
-  text,
-  varchar,
-  boolean,
-  timestamp,
-  jsonb,
-  integer,
-  smallint,
-  bigint,
-  numeric,
-  date,
-  index,
-  uniqueIndex,
-} from 'drizzle-orm/pg-core'
+import { pgTable, pgEnum, uuid, text, varchar, boolean, timestamp, jsonb, integer, smallint, bigint, numeric, date, index, uniqueIndex, primaryKey } from 'drizzle-orm/pg-core'
 import { relations } from 'drizzle-orm'
 
 // ─── Enums ────────────────────────────────────────────────────────────────────
@@ -885,6 +869,8 @@ export const notificationPreferences = pgTable('notification_preferences', {
   partner: boolean('partner').notNull().default(true),
   // Besucher-Chat (Migration 20261022200000)
   chat: boolean('chat').notNull().default(true),
+  // Neuigkeiten von FinestSites (Migration 20261027060000)
+  news: boolean('news').notNull().default(true),
   quietHoursEnabled: boolean('quiet_hours_enabled').notNull().default(true),
   quietStartHour: smallint('quiet_start_hour').notNull().default(21),
   quietEndHour: smallint('quiet_end_hour').notNull().default(8),
@@ -928,6 +914,42 @@ export const pushDeliveries = pgTable('push_deliveries', {
 }, (t) => [
   index('idx_push_deliveries_outbox').on(t.outboxId),
 ])
+
+// ─── Neuigkeiten / Ankündigungen (Migration 20261027060000, docs/news/spec.md) ───────────────
+export const newsPosts = pgTable('news_posts', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  status: text('status').notNull().default('draft'), // 'draft' | 'published' | 'archived'
+  title: text('title').notNull(),
+  pushTitle: text('push_title').notNull(),
+  pushBody: text('push_body').notNull(),
+  body: text('body').notNull(),
+  ctaLabel: text('cta_label'),
+  ctaKind: text('cta_kind'), // 'sites' | 'submissions' | 'chats' | 'affiliate' | 'settings' | 'url' | null
+  ctaUrl: text('cta_url'),
+  audience: text('audience').notNull().default('all'), // 'all' | 'plan:starter' | 'plan:pro' | 'plan:unlimited'
+  publishedAt: timestamp('published_at', { withTimezone: true }),
+  pushSentAt: timestamp('push_sent_at', { withTimezone: true }),
+  pushQueued: integer('push_queued').notNull().default(0),
+  createdBy: uuid('created_by').references(() => users.id, { onDelete: 'set null' }),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [
+  index('idx_news_posts_published').on(t.publishedAt),
+])
+
+export const newsReads = pgTable('news_reads', {
+  newsId: uuid('news_id').notNull().references(() => newsPosts.id, { onDelete: 'cascade' }),
+  userId: uuid('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  readAt: timestamp('read_at', { withTimezone: true }),
+  ctaClickedAt: timestamp('cta_clicked_at', { withTimezone: true }),
+  dismissedAt: timestamp('dismissed_at', { withTimezone: true }),
+}, (t) => [
+  primaryKey({ columns: [t.newsId, t.userId] }),
+  index('idx_news_reads_user').on(t.userId),
+])
+
+export type NewsPost = typeof newsPosts.$inferSelect
+export type NewsRead = typeof newsReads.$inferSelect
 
 export type PushDevice = typeof pushDevices.$inferSelect
 export type NotificationPreference = typeof notificationPreferences.$inferSelect

@@ -216,7 +216,7 @@ export function createMockDb() {
     support: true,
     account: true,
     partner: true,
-    chat: true,
+    chat: true, news: true,
     quietHours: { enabled: true, start: 22, end: 7 },
     timezone: 'Europe/Berlin',
   };

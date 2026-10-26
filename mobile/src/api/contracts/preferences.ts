@@ -11,6 +11,8 @@ export const NotificationPreferences = z.object({
   partner: z.boolean(),
   /** Besucher-Chat (nur sichtbar, wenn der Chat für das Konto freigeschaltet ist). */
   chat: z.boolean().default(true),
+  /** Neuigkeiten von FinestSites (neue Funktionen, Aktionen; höchstens eine am Tag). Standard an. */
+  news: z.boolean().default(true),
   quietHours: z.object({
     enabled: z.boolean(),
     /** Beginn der Nachtruhe (Stunde, Ortszeit), Standard 21 */
@@ -32,6 +34,7 @@ export const UpdateNotificationPreferencesRequest = z.object({
   account: z.boolean().optional(),
   partner: z.boolean().optional(),
   chat: z.boolean().optional(),
+  news: z.boolean().optional(),
   quietHours: z.object({
     enabled: z.boolean().optional(),
     start: Hour.optional(),
