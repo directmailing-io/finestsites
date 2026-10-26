@@ -3,6 +3,7 @@ import { users, userSites } from '@/lib/db/schema'
 import { desc, inArray } from 'drizzle-orm'
 import { getStripe } from '@/lib/stripe/client'
 import type { BillingInterval } from '@/lib/plans'
+import { getAppUsageByUser, NO_APP_USAGE } from '@/lib/admin/app-usage'
 import AdminUsersTable from './AdminUsersTable'
 import type { UserRow } from './AdminUsersTable'
 
@@ -16,7 +17,7 @@ function monthlyEquiv(cents: number, interval: string): number {
 }
 
 export default async function AdminUsersPage() {
-  const [allUsers, allSites] = await Promise.all([
+  const [allUsers, allSites, appUsageByUser] = await Promise.all([
     db
       .select({
         id: users.id,
@@ -40,6 +41,9 @@ export default async function AdminUsersPage() {
       .select({ userId: userSites.userId, status: userSites.status })
       .from(userSites)
       .where(inArray(userSites.status, ['draft', 'published'])),
+
+    // Native App: push_devices + App-Sitzungen, je Nutzer aggregiert (2 Abfragen)
+    getAppUsageByUser(),
   ])
 
   // Per-user data fetched live from Stripe (single source of truth).
@@ -144,6 +148,7 @@ export default async function AdminUsersPage() {
     emailVerified: u.emailVerified,
     deletionScheduledFor: u.deletionScheduledFor,
     deletedAt: u.deletedAt,
+    app: appUsageByUser.get(u.id) ?? NO_APP_USAGE,
   }))
 
   return (

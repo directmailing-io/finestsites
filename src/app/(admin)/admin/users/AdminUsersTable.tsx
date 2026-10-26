@@ -2,6 +2,7 @@
 
 import { useState, useMemo, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
+import type { AppUsage } from '@/lib/admin/app-usage'
 
 const PLAN_META: Record<string, { label: string; bg: string; text: string }> = {
   starter:   { label: 'Starter',   bg: '#EFF6FF', text: '#1D4ED8' },
@@ -38,9 +39,11 @@ export interface UserRow {
   deletionScheduledFor: Date | null
   /** Konto gelöscht (Grabstein) */
   deletedAt: Date | null
+  /** Nutzung der nativen FinestSites-App (push_devices bzw. App-Sitzungen) */
+  app: AppUsage
 }
 
-type SortKey = 'email' | 'createdAt' | 'planPrice' | 'billed' | 'revenue' | 'plan' | 'status'
+type SortKey = 'email' | 'createdAt' | 'planPrice' | 'billed' | 'revenue' | 'plan' | 'status' | 'app'
 type SortDir = 'asc' | 'desc'
 
 function fmtEur(cents: number, showZero = false): string {
@@ -51,6 +54,40 @@ function fmtEur(cents: number, showZero = false): string {
 function fmtDate(d: Date | null | undefined): string {
   if (!d) return ''
   return new Date(d).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: '2-digit' })
+}
+
+const APP_PLATFORM_META: Record<string, { label: string; bg: string; text: string }> = {
+  ios:     { label: 'iOS',     bg: '#F0F9FF', text: '#0369A1' },
+  android: { label: 'Android', bg: '#ECFDF5', text: '#047857' },
+  // App-Sitzung erkannt, aber kein Gerät registriert → Plattform unbekannt
+  unknown: { label: 'App',     bg: '#F1F5F9', text: '#475569' },
+}
+
+/** Pill „iOS 1.0.0“ / „Android“ / „App“ mit Tooltip „Zuletzt: dd.MM.yyyy“; „–“ wenn nicht installiert. */
+function AppPill({ app, compact = false }: { app: AppUsage; compact?: boolean }) {
+  if (!app.installed) {
+    return compact
+      ? null
+      : <span className="text-xs" style={{ color: '#CBD5E1' }} title="App nicht installiert">–</span>
+  }
+  const platforms = app.platforms.length > 0 ? app.platforms : ['unknown']
+  const lastSeen = app.lastSeenAt
+    ? new Date(app.lastSeenAt).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' })
+    : null
+  const title = lastSeen ? `Zuletzt: ${lastSeen}` : 'App installiert'
+  return (
+    <span className="flex items-center gap-1 flex-wrap" title={title}>
+      {platforms.map((p, i) => {
+        const meta = APP_PLATFORM_META[p] ?? APP_PLATFORM_META.unknown
+        return (
+          <span key={p} className="text-xs font-semibold px-2.5 py-1 rounded-full whitespace-nowrap"
+            style={{ background: meta.bg, color: meta.text }}>
+            {meta.label}{i === 0 && app.appVersion ? ` ${app.appVersion}` : ''}
+          </span>
+        )
+      })}
+    </span>
+  )
 }
 
 function SortIcon({ active, dir }: { active: boolean; dir: SortDir }) {
@@ -246,6 +283,7 @@ export default function AdminUsersTable({ users }: { users: UserRow[] }) {
   const [planFilter, setPlanFilter] = useState('all')
   const [statusFilter, setStatusFilter] = useState('all')
   const [verifiedFilter, setVerifiedFilter] = useState<'all' | 'verified' | 'unverified'>('all')
+  const [appOnly, setAppOnly]       = useState(false)
   const [sortKey, setSortKey]       = useState<SortKey>('createdAt')
   const [sortDir, setSortDir]       = useState<SortDir>('desc')
 
@@ -269,6 +307,7 @@ export default function AdminUsersTable({ users }: { users: UserRow[] }) {
       }
       if (verifiedFilter === 'verified' && !u.emailVerified) return false
       if (verifiedFilter === 'unverified' && u.emailVerified) return false
+      if (appOnly && !u.app.installed) return false
       return true
     })
     rows = [...rows].sort((a, b) => {
@@ -280,10 +319,15 @@ export default function AdminUsersTable({ users }: { users: UserRow[] }) {
       if (sortKey === 'revenue')   v = a.totalRevenueCents - b.totalRevenueCents
       if (sortKey === 'plan')      v = a.plan.localeCompare(b.plan)
       if (sortKey === 'status')    v = (a.subscriptionStatus ?? '').localeCompare(b.subscriptionStatus ?? '')
+      if (sortKey === 'app') {
+        // Installiert vor nicht installiert, darin nach „zuletzt gesehen“
+        v = Number(a.app.installed) - Number(b.app.installed)
+        if (v === 0) v = (a.app.lastSeenAt ? new Date(a.app.lastSeenAt).getTime() : 0) - (b.app.lastSeenAt ? new Date(b.app.lastSeenAt).getTime() : 0)
+      }
       return sortDir === 'asc' ? v : -v
     })
     return rows
-  }, [users, search, planFilter, statusFilter, verifiedFilter, sortKey, sortDir])
+  }, [users, search, planFilter, statusFilter, verifiedFilter, appOnly, sortKey, sortDir])
 
   const filteredIds = useMemo(() => new Set(filtered.map(u => u.id)), [filtered])
   const allFilteredSelected = filtered.length > 0 && filtered.every(u => selectedIds.has(u.id))
@@ -309,13 +353,14 @@ export default function AdminUsersTable({ users }: { users: UserRow[] }) {
   const totalRevenue    = users.reduce((s, u) => s + u.totalRevenueCents, 0)
   const activeCount     = users.filter(u => u.subscriptionStatus === 'active').length
   const unverifiedCount = users.filter(u => !u.emailVerified).length
+  const appUserCount    = users.filter(u => u.app.installed).length
 
   const thStyle = (key: SortKey): React.CSSProperties => ({
     cursor: 'pointer', userSelect: 'none', whiteSpace: 'nowrap',
     color: sortKey === key ? '#1D4ED8' : '#94A3B8',
   })
 
-  const GRID = '28px 2fr 1fr 1fr 0.85fr 0.85fr 0.9fr 0.5fr 0.55fr 28px'
+  const GRID = '28px 2fr 1fr 1fr 0.85fr 0.85fr 0.9fr 0.5fr 0.8fr 0.55fr 28px'
 
   return (
     <>
@@ -327,6 +372,7 @@ export default function AdminUsersTable({ users }: { users: UserRow[] }) {
           { label: 'Eingenommen',    value: fmtEur(totalRevenue),   note: 'Gesamtumsatz' },
           { label: 'Abo-Wert/Mon',   value: fmtEur(totalPlanValue), note: 'Katalogpreis, ohne Rabatt' },
           { label: 'Unbestätigt',    value: String(unverifiedCount) },
+          { label: 'App-Nutzer',     value: String(appUserCount),   note: 'Native App installiert' },
         ].map(kpi => (
           <div key={kpi.label} style={{
             flex: '1 1 130px', background: '#fff', borderRadius: 14, padding: '14px 18px',
@@ -387,6 +433,23 @@ export default function AdminUsersTable({ users }: { users: UserRow[] }) {
           <option value="verified">Bestätigt</option>
           <option value="unverified">Unbestätigt</option>
         </select>
+
+        <label
+          title="Nur Nutzer mit installierter FinestSites-App anzeigen"
+          style={{
+            display: 'flex', alignItems: 'center', gap: 8, height: 36, padding: '0 12px',
+            borderRadius: 10, border: '1px solid #E2E8F0', fontSize: 13,
+            background: appOnly ? '#F0F9FF' : '#fff', color: appOnly ? '#0369A1' : '#374151',
+            cursor: 'pointer', userSelect: 'none', whiteSpace: 'nowrap',
+          }}>
+          <input
+            type="checkbox"
+            checked={appOnly}
+            onChange={e => setAppOnly(e.target.checked)}
+            style={{ width: 14, height: 14, cursor: 'pointer', accentColor: '#0369A1', margin: 0 }}
+          />
+          Nur App-Nutzer
+        </label>
 
         <span style={{ marginLeft: 'auto', fontSize: 12, color: '#94A3B8', whiteSpace: 'nowrap' }}>
           {filtered.length} von {users.length}
@@ -473,6 +536,7 @@ export default function AdminUsersTable({ users }: { users: UserRow[] }) {
                   </span>
                 )}
                 <DeletionBadge user={user} />
+                <AppPill app={user.app} compact />
                 {user.planPriceCents > 0 && (
                   <span className="text-xs font-semibold px-2 py-1 rounded-full" style={{ background: '#F8FAFC', color: '#374151' }}>
                     {fmtEur(user.planPriceCents)}/Mo
@@ -528,6 +592,9 @@ export default function AdminUsersTable({ users }: { users: UserRow[] }) {
             Eingenommen <SortIcon active={sortKey === 'revenue'} dir={sortDir} />
           </span>
           <span className="text-center" style={{ color: '#94A3B8' }}>Seiten</span>
+          <span style={thStyle('app')} onClick={() => toggleSort('app')} title="Native FinestSites-App (Gerät registriert oder App-Sitzung)">
+            App <SortIcon active={sortKey === 'app'} dir={sortDir} />
+          </span>
           <span style={thStyle('createdAt')} onClick={() => toggleSort('createdAt')}>
             Seit <SortIcon active={sortKey === 'createdAt'} dir={sortDir} />
           </span>
@@ -661,6 +728,10 @@ export default function AdminUsersTable({ users }: { users: UserRow[] }) {
                 ) : (
                   <span className="text-xs" style={{ color: '#CBD5E1' }}>—</span>
                 )}
+              </span>
+
+              <span className="flex items-center" onClick={() => router.push(`/admin/users/${user.id}`)}>
+                <AppPill app={user.app} />
               </span>
 
               <span className="text-xs tabular-nums" style={{ color: '#94A3B8' }}

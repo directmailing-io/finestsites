@@ -6,6 +6,7 @@ import { CONSENT_TEXTS, hashConsentText } from '@/lib/constants/consent'
 import DomainDnsPanel from './DomainDnsPanel'
 import AdminDomainConnect from './AdminDomainConnect'
 import { EMAIL_CATEGORIES } from '@/lib/email/categories'
+import type { AppUsage } from '@/lib/admin/app-usage'
 
 interface UserProfile {
   id: string
@@ -146,6 +147,20 @@ interface UserDetail {
   events: SubscriptionEvent[]
   subscriptionDiscount: { couponName: string | null; promoCode: string | null } | null
   deletion?: DeletionInfo | null
+  /** Nutzung der nativen FinestSites-App */
+  app?: AppUsage | null
+}
+
+const APP_PLATFORM_LABEL: Record<string, string> = { ios: 'iOS', android: 'Android' }
+
+/** „iOS 1.0.0, zuletzt 25.10.2026“ bzw. „nicht installiert“ */
+function fmtAppUsage(app: AppUsage | null | undefined): string {
+  if (!app?.installed) return 'nicht installiert'
+  const platforms = app.platforms.map(p => APP_PLATFORM_LABEL[p] ?? p)
+  const head = platforms.length > 0 ? platforms.join(' + ') : 'App'
+  const version = app.appVersion ? ` ${app.appVersion}` : ''
+  const last = app.lastSeenAt ? `, zuletzt ${fmtDay(app.lastSeenAt)}` : ''
+  return `${head}${version}${last}`
 }
 
 interface SupportConv {
@@ -497,6 +512,13 @@ export default function AdminUserDetailPage({ params }: { params: Promise<{ id: 
             <div>
               <p className="text-xs font-medium mb-0.5" style={{ color: 'var(--muted-foreground)' }}>Registriert</p>
               <p className="text-sm text-gray-900">{new Date(profile.createdAt).toLocaleDateString('de-DE', { day: '2-digit', month: 'long', year: 'numeric' })}</p>
+            </div>
+            <div>
+              <p className="text-xs font-medium mb-0.5" style={{ color: 'var(--muted-foreground)' }}>App</p>
+              <p className="text-sm" style={{ color: data.app?.installed ? '#111827' : 'var(--muted-foreground)' }}
+                title={data.app?.source === 'session' ? 'Erkannt über App-Sitzung (kein Gerät registriert)' : undefined}>
+                {fmtAppUsage(data.app)}
+              </p>
             </div>
             {profile.currentPeriodEnd && profile.subscriptionStatus && (
               <div>

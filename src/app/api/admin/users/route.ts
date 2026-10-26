@@ -3,6 +3,7 @@ import { db } from '@/lib/db'
 import { users } from '@/lib/db/schema'
 import { eq, desc } from 'drizzle-orm'
 import { getRealUserFromRequest } from '@/lib/auth/server'
+import { getAppUsageByUser, NO_APP_USAGE } from '@/lib/admin/app-usage'
 
 export async function GET(req: NextRequest) {
   const user = await getRealUserFromRequest(req)
@@ -15,19 +16,23 @@ export async function GET(req: NextRequest) {
   if (!profile?.isAdmin) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
 
   try {
-    const data = await db.query.users.findMany({
-      orderBy: desc(users.createdAt),
-      columns: {
-        id: true,
-        email: true,
-        username: true,
-        plan: true,
-        billingInterval: true,
-        subscriptionStatus: true,
-        createdAt: true,
-      },
-    })
-    return NextResponse.json(data)
+    // Nutzerliste + App-Nutzung (zwei Aggregat-Abfragen, kein N+1)
+    const [data, appUsage] = await Promise.all([
+      db.query.users.findMany({
+        orderBy: desc(users.createdAt),
+        columns: {
+          id: true,
+          email: true,
+          username: true,
+          plan: true,
+          billingInterval: true,
+          subscriptionStatus: true,
+          createdAt: true,
+        },
+      }),
+      getAppUsageByUser(),
+    ])
+    return NextResponse.json(data.map(u => ({ ...u, app: appUsage.get(u.id) ?? NO_APP_USAGE })))
   } catch {
     return NextResponse.json({ error: 'Interner Fehler.' }, { status: 500 })
   }

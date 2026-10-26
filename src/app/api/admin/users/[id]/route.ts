@@ -6,6 +6,7 @@ import { getRealUserFromRequest } from '@/lib/auth/server'
 import type Stripe from 'stripe'
 import { getStripe } from '@/lib/stripe/client'
 import { purgeUsernameKV, setCustomDomainKV } from '@/lib/cloudflare/kv-api'
+import { getAppUsageForUser } from '@/lib/admin/app-usage'
 
 async function checkAdmin(req: Request) {
   const user = await getRealUserFromRequest(req)
@@ -23,7 +24,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
 
   const { id } = await params
 
-  const [profile, sites, events] = await Promise.all([
+  const [profile, sites, events, app] = await Promise.all([
     db.query.users.findFirst({ where: eq(users.id, id) }),
     db.query.userSites.findMany({
       where: (s, { and, ne }) => and(eq(s.userId, id), ne(s.status, 'deleted')),
@@ -45,6 +46,8 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
         metadata: true,
       },
     }),
+    // Native App: registrierte Geräte bzw. App-Sitzungen dieses Kontos
+    getAppUsageForUser(id),
   ])
 
   if (!profile) return NextResponse.json({ error: 'Not found' }, { status: 404 })
@@ -87,7 +90,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     },
   }).catch(() => null)
 
-  return NextResponse.json({ profile, sites, invoices, events, subscriptionDiscount, deletion: deletion ?? null })
+  return NextResponse.json({ profile, sites, invoices, events, subscriptionDiscount, deletion: deletion ?? null, app })
 }
 
 // ── Username change ───────────────────────────────────────────────────────────
