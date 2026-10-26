@@ -1,0 +1,354 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Konzept: Angebot sichern beim Event (08.11.2026)</title>
+<style>
+  :root {
+    --ink: #111827; --body: #374151; --muted: #6B7280; --faint: #9CA3AF;
+    --line: #E5E7EB; --line-soft: #F1F5F9; --bg: #FFFFFF; --panel: #FAFAFA;
+    --accent: #7C3AED; --accent-soft: #F5F0FB; --accent-line: #E4D7F5;
+    --ok: #15803D; --ok-soft: #F0FDF4; --warn: #9A3412; --warn-soft: #FFF7ED;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; font-family: Geist, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; color: var(--body); background: var(--bg); line-height: 1.6; -webkit-font-smoothing: antialiased; }
+  main { max-width: 880px; margin: 0 auto; padding: 56px 24px 96px; }
+  h1 { font-size: 34px; line-height: 1.15; letter-spacing: -0.8px; color: var(--ink); margin: 0 0 10px; font-weight: 700; }
+  h2 { font-size: 22px; line-height: 1.25; letter-spacing: -0.4px; color: var(--ink); margin: 64px 0 14px; font-weight: 700; padding-top: 24px; border-top: 1px solid var(--line); }
+  h2 small { display: block; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--faint); font-weight: 600; margin-bottom: 8px; }
+  h3 { font-size: 16px; color: var(--ink); margin: 28px 0 8px; font-weight: 600; letter-spacing: -0.1px; }
+  p { margin: 0 0 14px; font-size: 16px; }
+  .lead { font-size: 18px; line-height: 1.55; color: var(--ink); }
+  .meta { font-size: 13px; color: var(--faint); margin-bottom: 36px; }
+  ul, ol { padding-left: 22px; margin: 0 0 14px; }
+  li { margin: 4px 0; }
+  li::marker { color: var(--faint); }
+  code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px; background: var(--line-soft); padding: 2px 6px; border-radius: 6px; color: var(--ink); }
+  table { width: 100%; border-collapse: collapse; font-size: 14.5px; margin: 12px 0 20px; }
+  th { text-align: left; font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--faint); font-weight: 600; padding: 8px 10px 8px 0; border-bottom: 1px solid var(--line); }
+  td { padding: 10px 10px 10px 0; border-bottom: 1px solid var(--line-soft); vertical-align: top; }
+  td:first-child { color: var(--ink); font-weight: 500; white-space: nowrap; }
+  .note { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 14px 18px; font-size: 15px; margin: 18px 0; }
+  .note.accent { background: var(--accent-soft); border-color: var(--accent-line); }
+  .note.warn { background: var(--warn-soft); border-color: #FED7AA; color: var(--warn); }
+  .note b { color: var(--ink); }
+  .steps { counter-reset: s; list-style: none; padding: 0; margin: 18px 0 8px; }
+  .steps li { counter-increment: s; display: grid; grid-template-columns: 36px 1fr; column-gap: 14px; row-gap: 2px; padding: 14px 0; border-top: 1px solid var(--line-soft); margin: 0; }
+  .steps li > b, .steps li > span { grid-column: 2; }
+  .steps li:first-child { border-top: 0; }
+  .steps li::before { content: counter(s); width: 30px; height: 30px; border-radius: 999px; background: var(--ink); color: #fff; font-weight: 600; font-size: 14px; display: flex; align-items: center; justify-content: center; margin-top: 2px; grid-row: 1 / span 2; }
+  .steps b { display: block; color: var(--ink); font-weight: 600; margin-bottom: 2px; }
+  .steps span { font-size: 15px; color: var(--body); }
+  .pill { display: inline-block; font-size: 11.5px; font-weight: 600; padding: 3px 9px; border-radius: 999px; background: var(--line-soft); color: var(--muted); vertical-align: middle; margin-left: 6px; }
+  .pill.new { background: var(--accent-soft); color: var(--accent); }
+  .pill.ok { background: var(--ok-soft); color: var(--ok); }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin: 18px 0; }
+  .col { border: 1px solid var(--line); border-radius: 16px; padding: 18px 20px; }
+  .col h4 { margin: 0 0 8px; font-size: 15px; color: var(--ink); }
+  .col.rec { border-color: var(--ink); }
+  .col ul { font-size: 14.5px; }
+  .verdict { font-size: 14px; color: var(--ink); font-weight: 600; margin-top: 10px; }
+
+  /* Mockups */
+  .mocks { display: flex; flex-wrap: wrap; gap: 28px; margin: 24px 0 8px; align-items: flex-start; }
+  .mock-wrap { width: 390px; }
+  .mock-wrap figcaption { font-size: 12.5px; color: var(--faint); margin-top: 10px; letter-spacing: 0.02em; }
+  .phone { width: 390px; border: 1px solid var(--line); border-radius: 32px; background: #FAFAFA; overflow: hidden; box-shadow: 0 1px 2px rgba(16,24,40,.04), 0 12px 32px rgba(16,24,40,.06); }
+  .phone .bar { height: 44px; display: flex; align-items: center; justify-content: space-between; padding: 0 22px; font-size: 13px; font-weight: 600; color: var(--ink); }
+  .phone .bar i { display: block; width: 90px; height: 24px; background: #111; border-radius: 999px; margin: 0 auto; }
+  .screen { padding: 8px 20px 28px; min-height: 560px; }
+  .wordmark { font-weight: 700; letter-spacing: -0.6px; font-size: 20px; color: var(--ink); margin: 4px 0 18px; }
+  .wordmark i { font-style: normal; color: var(--accent); }
+  .m-kicker { font-size: 11.5px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--faint); }
+  .m-h { font-size: 24px; line-height: 1.15; letter-spacing: -0.5px; color: var(--ink); font-weight: 700; margin: 8px 0 10px; }
+  .m-p { font-size: 14.5px; line-height: 1.5; color: var(--body); margin: 0 0 14px; }
+  .m-card { background: #fff; border: 1px solid var(--line); border-radius: 18px; padding: 16px; margin: 12px 0; }
+  .m-card .t { font-weight: 600; color: var(--ink); font-size: 15px; }
+  .m-card .s { font-size: 13.5px; color: var(--muted); }
+  .m-row { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+  .m-price { font-size: 22px; font-weight: 700; color: var(--ink); letter-spacing: -0.4px; }
+  .m-price small { font-size: 13px; color: var(--muted); font-weight: 500; }
+  .m-strike { font-size: 13px; color: var(--faint); text-decoration: line-through; margin-right: 6px; }
+  .m-seg { display: flex; background: var(--line-soft); border-radius: 999px; padding: 3px; margin: 12px 0; font-size: 13px; font-weight: 600; }
+  .m-seg span { flex: 1; text-align: center; padding: 7px 0; border-radius: 999px; color: var(--muted); }
+  .m-seg span.on { background: #fff; color: var(--ink); box-shadow: 0 1px 2px rgba(0,0,0,.06); }
+  .m-input { border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; font-size: 14.5px; color: var(--faint); background: #fff; margin: 8px 0; }
+  .m-input.filled { color: var(--ink); }
+  .m-btn { display: block; text-align: center; background: var(--ink); color: #fff; border-radius: 999px; padding: 14px; font-weight: 600; font-size: 15.5px; margin: 14px 0 8px; }
+  .m-btn.ghost { background: transparent; color: var(--muted); font-weight: 500; padding: 8px; font-size: 14px; margin: 0; }
+  .m-btn.accent { background: var(--accent); }
+  .m-fine { font-size: 12px; color: var(--faint); text-align: center; line-height: 1.45; }
+  .m-sep { display: flex; align-items: center; gap: 10px; color: var(--faint); font-size: 12px; margin: 16px 0 10px; }
+  .m-sep::before, .m-sep::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+  .m-timer { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 600; color: var(--accent); background: var(--accent-soft); border-radius: 999px; padding: 5px 10px; margin-bottom: 10px; }
+  .m-timer::before { content: ""; width: 6px; height: 6px; border-radius: 999px; background: var(--accent); }
+  .m-check { display: flex; gap: 10px; align-items: flex-start; font-size: 14px; color: var(--body); margin: 6px 0; }
+  .m-check::before { content: "✓"; font-weight: 700; color: var(--ink); width: 18px; height: 18px; border-radius: 999px; background: var(--line-soft); display: inline-flex; align-items: center; justify-content: center; font-size: 11px; flex-shrink: 0; margin-top: 2px; }
+  .m-done { width: 56px; height: 56px; border-radius: 999px; background: var(--ok-soft); color: var(--ok); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 22px; margin: 24px auto 14px; }
+  .m-mail { background: #F3F4F6; padding: 18px; }
+  .m-mail .paper { background: #fff; border-radius: 14px; padding: 18px; border: 1px solid var(--line); }
+  .m-mail .from { font-size: 12.5px; color: var(--muted); margin-bottom: 12px; }
+  .m-mail .from b { color: var(--ink); }
+  .m-stripe { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 14px; font-size: 13.5px; }
+  .m-stripe .line { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid var(--line-soft); }
+  .m-stripe .line:last-child { border-bottom: 0; font-weight: 600; color: var(--ink); }
+  .m-stripe .brand { font-size: 11.5px; color: var(--faint); margin-bottom: 8px; letter-spacing: 0.04em; }
+  .m-field { border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; font-size: 13.5px; color: var(--ink); margin: 8px 0; display: flex; justify-content: space-between; }
+  .m-field span { color: var(--faint); }
+  .m-banner { background: var(--ok-soft); border: 1px solid #BBF7D0; border-radius: 16px; padding: 14px 16px; margin: 10px 0 16px; }
+  .m-banner .t { color: var(--ok); font-weight: 600; font-size: 14.5px; }
+  .m-banner .s { color: #166534; font-size: 13.5px; }
+  .m-progress { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin: 8px 0 16px; }
+  .m-progress i { display: block; height: 4px; border-radius: 999px; background: var(--line); }
+  .m-progress i.on { background: var(--ink); }
+  .timeline { list-style: none; padding: 0; margin: 14px 0; }
+  .timeline li { display: grid; grid-template-columns: 120px 1fr; gap: 16px; padding: 10px 0; border-top: 1px solid var(--line-soft); font-size: 15px; }
+  .timeline li:first-child { border-top: 0; }
+  .timeline b { color: var(--ink); font-weight: 600; }
+  .q { padding-left: 0; list-style: none; }
+  .q li { display: grid; grid-template-columns: 28px 1fr; gap: 10px; padding: 10px 0; border-top: 1px solid var(--line-soft); }
+  .q li:first-child { border-top: 0; }
+  .q li span { color: var(--accent); font-weight: 700; }
+  .q li b { color: var(--ink); }
+  .q li em { display: block; font-style: normal; font-size: 14px; color: var(--muted); margin-top: 2px; }
+  @media (max-width: 720px) { .two { grid-template-columns: 1fr; } .timeline li { grid-template-columns: 1fr; gap: 2px; } }
+</style>
+</head>
+<body>
+<main>
+  <div class="meta">Konzept · Stand 26.10.2026 · für Daniel · nicht veröffentlicht</div>
+  <h1>Angebot sichern beim Event am 08.11.</h1>
+  <p class="lead">Beim letzten Event wollte niemand vor Ort buchen, weil der Weg zu lang ist: registrieren, E-Mail bestätigen, Webseite bearbeiten, erst beim Veröffentlichen bezahlen. Am nächsten Tag ist es vergessen. Ziel: Wer im Saal sitzt, sichert sich das Angebot in unter zwei Minuten mit dem Handy, und richtet die Webseite später in Ruhe ein. Der bisherige Weg (erst ansehen, später entscheiden) bleibt daneben bestehen.</p>
+
+  <div class="note accent"><b>Kern der Empfehlung:</b> Eine Event-Seite unter <code>finestsites.io/event</code> mit zwei Knöpfen. „Jetzt sichern“ führt direkt in den Stripe-Checkout, das Konto entsteht automatisch nach der Zahlung. „Erst ansehen“ führt in die bestehende Registrierung, der Aktionsrabatt bleibt 48 Stunden gespeichert. Beides nutzt die vorhandene Aktion (Stripe-Promotion-Code mit <code>sitewide=true</code>), nur der Einstieg ist neu.</div>
+
+  <!-- ───────────────────────────── 1 ───────────────────────────── -->
+  <h2><small>1</small>Der neue Weg: „Jetzt sichern“ in drei Schritten</h2>
+  <p>Für Teilnehmer während des Vortrags. Jeder Schritt ist eine Seite, keine E-Mail-Bestätigung dazwischen, kein Passwort, keine Webseite.</p>
+  <ol class="steps">
+    <li><b>QR-Code auf der Bühne → <code>finestsites.io/event</code></b><span>Eine Seite: Angebot, Ablaufzeit, Vorname + E-Mail, Tarif monatlich/jährlich. Aktionsrabatt ist bereits eingerechnet, kein Code nötig. Partnerlink bleibt möglich (<code>/event?ref=…</code>), dann gilt wie heute der Empfehlungsrabatt statt der Aktion.</span></li>
+    <li><b>Bezahlen mit Stripe Checkout</b><span>Karte, Apple Pay, Google Pay oder SEPA, Rechnungsadresse. E-Mail ist vorausgefüllt, Rabatt steht sichtbar auf der Rechnung. Dauert mit Apple Pay unter 30 Sekunden.</span></li>
+    <li><b>„Gesichert.“ Seite + Willkommens-Mail</b><span>Der Webhook legt das Konto an und verknüpft das Abo. Die Mail enthält einen Link „Passwort festlegen und Webseite einrichten“ (gültig 7 Tage, danach „Passwort vergessen“). Im Dashboard steht der Zustand „Angebot gesichert, richte jetzt deine Webseite ein“, bis die erste Seite veröffentlicht ist.</span></li>
+  </ol>
+
+  <div class="mocks">
+    <figure class="mock-wrap">
+      <div class="phone">
+        <div class="bar"><span>9:41</span><i></i><span>●●●</span></div>
+        <div class="screen">
+          <div class="wordmark"><i>f</i>inestsites</div>
+          <div class="m-timer">Angebot gilt noch 47 Std. 12 Min.</div>
+          <div class="m-kicker">InnerVisionDay · 08.11.2026</div>
+          <div class="m-h">Deine Webseite, heute gesichert.</div>
+          <p class="m-p">Jetzt sichern, später in Ruhe einrichten. Du bekommst sofort eine Mail mit deinem Zugang.</p>
+          <div class="m-seg"><span class="on">Monatlich</span><span>Jährlich · 2 Monate geschenkt</span></div>
+          <div class="m-card">
+            <div class="m-row"><div><div class="t">Pro</div><div class="s">3 Webseiten, Besucher-Chat, ClaimGuard</div></div>
+              <div><span class="m-strike">27 €</span><span class="m-price">22,95 €<small> /Monat</small></span></div></div>
+          </div>
+          <div class="m-input filled">Sabine</div>
+          <div class="m-input filled">sabine@beispiel.de</div>
+          <div class="m-btn">Jetzt sichern und bezahlen</div>
+          <div class="m-fine">15 % Event-Rabatt ist eingerechnet. Für Unternehmer, Preise inkl. MwSt.</div>
+          <div class="m-sep">oder</div>
+          <div class="m-btn ghost">Erst ansehen, später entscheiden ›</div>
+          <div class="m-fine">Konto anlegen, Webseite bauen, beim Veröffentlichen bezahlen. Dein Event-Rabatt bleibt 48 Stunden gespeichert.</div>
+        </div>
+      </div>
+      <figcaption>Event-Seite: beide Wege auf einer Seite, der schnelle groß.</figcaption>
+    </figure>
+
+    <figure class="mock-wrap">
+      <div class="phone">
+        <div class="bar"><span>9:41</span><i></i><span>●●●</span></div>
+        <div class="screen">
+          <div class="m-kicker">Schritt 2 von 3 · Stripe</div>
+          <div class="m-progress"><i class="on"></i><i class="on"></i><i></i></div>
+          <div class="m-stripe">
+            <div class="brand">FINESTSITES · ABONNEMENT</div>
+            <div class="line"><span>Pro, monatlich</span><span>27,00 €</span></div>
+            <div class="line"><span>Event-Rabatt INNERVISIONDAY, 3 Monate</span><span>−4,05 €</span></div>
+            <div class="line"><span>Heute fällig</span><span>22,95 €</span></div>
+          </div>
+          <div class="m-btn" style="background:#000;margin-top:14px">Mit Apple Pay bezahlen</div>
+          <div class="m-sep">oder mit Karte / SEPA</div>
+          <div class="m-field">E-Mail <span>sabine@beispiel.de</span></div>
+          <div class="m-field">Kartennummer <span>1234 1234 1234 1234</span></div>
+          <div class="m-field">Name auf der Karte <span></span></div>
+          <div class="m-field">Rechnungsadresse <span>Deutschland</span></div>
+          <div class="m-btn">22,95 € bezahlen</div>
+          <div class="m-fine">Danach jeden Monat 27 € nach den 3 Rabatt-Monaten, monatlich kündbar.</div>
+        </div>
+      </div>
+      <figcaption>Checkout: das bestehende Stripe-Fenster, nur ohne vorheriges Konto.</figcaption>
+    </figure>
+
+    <figure class="mock-wrap">
+      <div class="phone">
+        <div class="bar"><span>9:41</span><i></i><span>●●●</span></div>
+        <div class="screen m-mail">
+          <div class="paper">
+            <div class="from"><b>FinestSites</b> · info@finestsites.io<br>Dein Angebot ist gesichert</div>
+            <div class="m-h" style="font-size:20px">Willkommen, Sabine.</div>
+            <p class="m-p">Dein Pro-Tarif zum Event-Preis ist gesichert. Jetzt fehlt nur noch deine Webseite. Das dauert etwa 15 Minuten, du kannst jederzeit unterbrechen.</p>
+            <div class="m-btn accent">Passwort festlegen und loslegen</div>
+            <div class="m-fine">Link gültig 7 Tage. Danach einfach „Passwort vergessen“ nutzen.</div>
+            <div class="m-sep">Was dich erwartet</div>
+            <div class="m-check">Vorlage wählen, Texte und Bilder eintragen</div>
+            <div class="m-check">Veröffentlichen, deine Adresse steht sofort</div>
+            <div class="m-check">Rechnung liegt in deinem Konto unter Einstellungen</div>
+          </div>
+        </div>
+      </div>
+      <figcaption>Willkommens-Mail: ein Knopf, der Passwort und Einrichtung verbindet.</figcaption>
+    </figure>
+
+    <figure class="mock-wrap">
+      <div class="phone">
+        <div class="bar"><span>9:41</span><i></i><span>●●●</span></div>
+        <div class="screen">
+          <div class="m-h" style="font-size:26px;margin-top:10px">Guten Abend, Sabine</div>
+          <p class="m-p">Hier findest du deine Webseiten.</p>
+          <div class="m-banner">
+            <div class="t">Angebot gesichert · Pro zum Event-Preis</div>
+            <div class="s">Richte jetzt deine Webseite ein. Deine Laufzeit läuft seit dem 08.11., die nächste Rechnung kommt am 08.12.</div>
+          </div>
+          <div class="m-btn accent" style="margin-top:0">+ Neue Webseite erstellen</div>
+          <div class="m-card" style="text-align:center;padding:28px 16px">
+            <div class="t">Noch keine Webseite</div>
+            <div class="s">Wähle eine Vorlage, der Rest geht Schritt für Schritt.</div>
+          </div>
+        </div>
+      </div>
+      <figcaption>Dashboard-Zustand nach dem Kauf, bis die erste Seite veröffentlicht ist.</figcaption>
+    </figure>
+  </div>
+
+  <h3>Wann beginnt die bezahlte Laufzeit?</h3>
+  <div class="two">
+    <div class="col rec">
+      <h4>A · Sofort beim Kauf <span class="pill ok">Empfehlung</span></h4>
+      <ul>
+        <li>Stripe-Abo startet mit der Zahlung, Rechnung entsteht sofort, Buchhaltung bleibt wie heute.</li>
+        <li>Der Rabatt greift genau auf die bezahlten Monate (Coupon mit <code>duration_in_months</code>), keine Sonderlogik.</li>
+        <li>Partnerprovision wird wie heute an der Rechnung gebucht.</li>
+        <li>Nachteil: Wer die Seite erst nach 3 Wochen baut, „verliert“ drei Wochen. Ausgleich: Jahreskäufer bekommen sowieso 2 Monate geschenkt; für Monatskäufer siehe Kulanz unten.</li>
+      </ul>
+      <div class="verdict">Einfach, ehrlich, kein neuer Zustand im Billing.</div>
+    </div>
+    <div class="col">
+      <h4>B · Erst beim Veröffentlichen</h4>
+      <ul>
+        <li>Technisch: Checkout im Modus „Zahlungsmethode speichern“ (<code>setup</code>) oder Abo mit <code>trial_end</code>, Abo-Start beim ersten Veröffentlichen.</li>
+        <li>Problem: Es gibt keine Rechnung am Event-Tag, also auch kein echtes „gesichert“. Rabatt-Coupons mit Ablaufdatum greifen beim späteren Start nicht mehr, Stripe müsste den Coupon am Abo halten.</li>
+        <li>Neuer Zustand „gesichert, aber nicht gestartet“ zieht sich durch Dashboard, Schonfrist (<code>shouldBeOffline</code>), Partnerprovision, Admin.</li>
+        <li>Menschlich: Wer nicht bezahlt hat, hat sich auch nicht festgelegt. Genau das Problem vom letzten Mal.</li>
+      </ul>
+      <div class="verdict">Mehr Technik, weniger Verbindlichkeit.</div>
+    </div>
+  </div>
+  <div class="note"><b>Kulanz statt Trial:</b> In der Willkommens-Mail und im Dashboard: „Du hast 14 Tage Zeit, deine Seite einzurichten. Wenn es nicht passt, erstatten wir den ersten Monat.“ Das kostet im Zweifel 23 €, nimmt aber die Angst vor „ich zahle und baue nie“. Für Unternehmer gibt es kein gesetzliches Widerrufsrecht (AGB, § 14 BGB), die Kulanz ist freiwillig und steht so im Text.</div>
+
+  <!-- ───────────────────────────── 2 ───────────────────────────── -->
+  <h2><small>2</small>Der bisherige Weg bleibt: „Erst ansehen, später entscheiden“</h2>
+  <p>Zweiter Knopf auf derselben Event-Seite, bewusst kleiner. Er führt in die vorhandene Registrierung (<code>app.finestsites.io/register</code>), danach E-Mail bestätigen, Benutzername, Vorlage, bearbeiten, beim Veröffentlichen bezahlen. Nichts daran ändert sich.</p>
+  <h3>So bleibt der Event-Rabatt erhalten</h3>
+  <ul>
+    <li><b>Heute schon:</b> Die Aktion ist ein Stripe-Promotion-Code mit <code>sitewide=true</code>. Solange er aktiv ist, zeigt ihn die Startseite und der Checkout rechnet ihn automatisch ein. Wer innerhalb der Aktionszeit veröffentlicht, bekommt ihn ohne Code.</li>
+    <li><b>Neu:</b> Ein Cookie <code>fs_event_offer</code> (Aktionscode + Ablaufzeit, 48 h, gleiche Technik wie <code>fs_template_intent</code>) wird beim Klick gesetzt und bei der Registrierung ins Konto geschrieben (<code>users.event_offer_code</code>, <code>event_offer_until</code>). Der Checkout nimmt den Konto-Merker, auch wenn die Aktion in Stripe schon abgelaufen ist, solange <code>event_offer_until</code> noch nicht erreicht ist. So kann die Aktion auf Stripe-Seite kurz sein, der Teilnehmer behält trotzdem seine 48 Stunden.</li>
+    <li><b>Sichtbar:</b> Im Editor am Veröffentlichen-Knopf und im Dashboard steht „Dein Event-Rabatt gilt noch bis Mo. 10.11., 14:00“. Das Countdown-Bauteil gibt es bereits (<code>useCampaignCountdown</code>).</li>
+    <li>Partnerlinks gehen vor: Wer über <code>?ref=</code> kommt, bekommt wie heute den Empfehlungsrabatt und keinen Aktionscode (sonst verlöre der Partner die Provision). Das ist die bestehende Regel in <code>getCampaignForProfile</code>.</li>
+  </ul>
+
+  <!-- ───────────────────────────── 3 ───────────────────────────── -->
+  <h2><small>3</small>Erinnerungen für Unentschlossene</h2>
+  <p>Nur an Personen, die auf der Event-Seite ihre E-Mail eingetragen und das Häkchen „Erinnere mich an das Angebot“ gesetzt haben (Einwilligung mit Zeitstempel und IP-Hash gespeichert). Keine Mails an Nutzer ohne deine ausdrückliche Freigabe: Die drei Texte liegen vorher als Datei bei dir, der Versand läuft über <code>sendCategoryMail</code> mit Kategorie <code>offers</code> und Abmeldelink.</p>
+  <table>
+    <tr><th>Wann</th><th>Betreff</th><th>Inhalt</th></tr>
+    <tr><td>Tag 0, 20:00</td><td>Dein Event-Angebot, in Ruhe nachgelesen</td><td>Kurz, was heute gezeigt wurde, ein Knopf „Jetzt sichern“, Restzeit. Zwei Sätze, kein Marketing.</td></tr>
+    <tr><td>Tag 1, 10:00</td><td>Noch 24 Stunden</td><td>Ein konkretes Beispiel (Vorlage, fertige Seite eines Teilnehmers), Knopf, Restzeit.</td></tr>
+    <tr><td>Tag 2, 10:00 (Ablauf 14:00)</td><td>Heute um 14 Uhr endet dein Event-Preis</td><td>Nur der Knopf und die Zeit. Danach keine weitere Mail.</td></tr>
+  </table>
+  <p>Wer gekauft oder sich registriert hat, fällt automatisch aus der Kette. Wer nach Ablauf kommt, sieht die normale Startseite mit normalen Preisen.</p>
+
+  <!-- ───────────────────────────── 4 ───────────────────────────── -->
+  <h2><small>4</small>Vor Ort</h2>
+  <ul>
+    <li><b>Bühnen-Slide:</b> links großer QR-Code, rechts der Kurzlink <code>finestsites.io/event</code> in Schriftgröße, die von hinten lesbar ist. Darunter in einem Satz: „Heute sichern, zu Hause einrichten. Angebot gilt bis Montag 14 Uhr.“ Nichts weiter auf dem Slide.</li>
+    <li><b>Ablauf des Angebots:</b> 48 Stunden ab Event-Beginn (bis Mo. 10.11., 14:00). Kurz genug, dass es heute entschieden wird, lang genug für „ich mach das heute Abend“. Die Zeit steht auf der Event-Seite als Countdown.</li>
+    <li><b>Live-Zähler (optional):</b> Auf der Event-Seite „Heute schon 14 Seiten gesichert“, aus den Event-Buchungen gezählt, erst ab 5 sichtbar. Hebt die Hemmschwelle im Saal, kostet einen halben Tag.</li>
+    <li><b>Tisch-Aufsteller / Flyer:</b> derselbe QR-Code, dazu die drei Schritte als Zeile: „Scannen · Bezahlen · Mail öffnen“.</li>
+    <li><b>Dein Handy:</b> Admin-Seite „Event-Buchungen“ zeigt dir live, wer gerade gesichert hat (Vorname, Tarif, Uhrzeit), damit du auf der Bühne reagieren kannst.</li>
+  </ul>
+
+  <!-- ───────────────────────────── 5 ───────────────────────────── -->
+  <h2><small>5</small>Technischer Plan</h2>
+  <h3>Was es schon gibt</h3>
+  <table>
+    <tr><th>Baustein</th><th>Stand</th></tr>
+    <tr><td>Stripe Checkout</td><td><code>POST /api/billing/checkout</code>: Abo, Karte + SEPA, automatische Steuer, Adresse, Promotion-Codes, Partner-Zuordnung, Erfolg über <code>/api/billing/activate</code>. Braucht heute ein angemeldetes Konto.</td></tr>
+    <tr><td>Aktion (Kampagne)</td><td>Stripe-Promotion-Code mit <code>metadata.sitewide=true</code>, Ablauf aus Stripe, Anzeige auf Startseite und im Editor, automatische Anwendung im Checkout (<code>src/lib/billing/campaign.ts</code>). INNERVISIONDAY war genau so angelegt.</td></tr>
+    <tr><td>Partnerprogramm</td><td><code>?ref=</code>-Links, Modell C, Provision an der Rechnung im Webhook. Unverändert nutzbar.</td></tr>
+    <tr><td>Registrierung</td><td>BetterAuth, E-Mail-Bestätigung, Onboarding Benutzername → Einwilligung → Profil → Webseiten. Bleibt der zweite Weg.</td></tr>
+    <tr><td>Webhook</td><td><code>checkout.session.completed</code>, <code>invoice.payment_succeeded</code>, Provisionen, Schonfrist. Wird um den Fall „Session ohne Konto“ erweitert.</td></tr>
+    <tr><td>Cookie-Technik</td><td><code>fs_template_intent</code> (7 Tage) als Vorlage für den Event-Merker.</td></tr>
+  </table>
+
+  <h3>Was neu gebaut wird</h3>
+  <table>
+    <tr><th>Teil</th><th>Beschreibung</th><th>Aufwand</th></tr>
+    <tr><td>Event-Seite</td><td><code>finestsites.io/event</code> (Marketing-Domain, in <code>FINESTSITES_IO_PATHS</code>), Inhalt aus <code>app_settings</code> (Name, Datum, Ablaufzeit, Code), Countdown, Tarifwahl, Vorname + E-Mail, zwei Knöpfe. Ohne Konto erreichbar, Rate-Limit wie <code>validate-promo</code>.</td><td>1 Tag</td></tr>
+    <tr><td>Pay-first-Checkout</td><td><code>POST /api/billing/event-checkout</code>: ohne Anmeldung, prüft E-Mail. Bestehendes Konto → Antwort „Bitte anmelden“, Weiterleitung zum Login mit Rücksprung in den normalen Checkout (keine Doppelkonten). Neu → Stripe-Session mit <code>customer_creation: 'always'</code>, <code>customer_email</code>, Promotion-Code der Aktion, <code>metadata.event_signup=1</code>, <code>metadata.first_name</code>, Erfolgs-URL <code>/event/gesichert?session_id=…</code>.</td><td>1 Tag</td></tr>
+    <tr><td>Konto aus dem Webhook</td><td><code>checkout.session.completed</code> mit <code>event_signup</code>: Nutzer anlegen (BetterAuth, E-Mail als bestätigt markiert, da Stripe sie geprüft hat), <code>stripe_customer_id</code>, Abo, Tarif, Status setzen, <code>subscription_events</code> loggen, Partner aus Metadaten übernehmen, Willkommens-Mail mit Passwort-Link (BetterAuth „Passwort vergessen“-Token, 7 Tage). Idempotent über <code>stripe_event_id</code>.</td><td>1,5 Tage</td></tr>
+    <tr><td>„Gesichert“-Seite</td><td>Nach Stripe: Bestätigung, „Mail ist unterwegs“, Knopf „Passwort jetzt festlegen“ (gleicher Link wie in der Mail), Hinweis auf 14-Tage-Kulanz.</td><td>0,5 Tag</td></tr>
+    <tr><td>Dashboard-Zustand</td><td>Banner „Angebot gesichert, richte jetzt deine Webseite ein“ solange <code>published_sites = 0</code> und Abo aktiv. Web und App (gleiche Regel wie Startkarte Neuigkeiten; App bekommt es per OTA).</td><td>0,5 Tag</td></tr>
+    <tr><td>Event-Merker für Weg 2</td><td>Cookie <code>fs_event_offer</code>, Spalten <code>event_offer_code</code>/<code>event_offer_until</code>, Checkout nimmt den Merker vor der Stripe-Ablaufprüfung, Countdown im Editor.</td><td>0,5 Tag</td></tr>
+    <tr><td>Admin „Event-Buchungen“</td><td>Liste aus <code>subscription_events</code> mit <code>event_signup</code>: Name, Tarif, Zeit, Status (bezahlt, Passwort gesetzt, erste Seite online). Dazu Export.</td><td>0,5 Tag</td></tr>
+    <tr><td>Erinnerungs-Kette</td><td>Tabelle <code>event_leads</code> (E-Mail, Vorname, Einwilligung, Zeit, Status), Cron mit den drei Mails über <code>sendCategoryMail</code>, Ausschluss von Käufern/Registrierten. Versand nur nach Freigabe.</td><td>1 Tag</td></tr>
+    <tr><td>Tests + Smoke</td><td>Script wie <code>scripts/test-news.ts</code>: Doppelkonto, Partner vor Aktion, abgelaufene Aktion mit gültigem Merker, Webhook doppelt, Mail-Link abgelaufen. Smoke-Test-Eintrag für <code>/event</code>.</td><td>1 Tag</td></tr>
+  </table>
+  <p><b>Summe:</b> etwa 7,5 Arbeitstage ohne Live-Zähler, 8 mit. Realistisch in zwei Wochen, wenn du die Entscheidungen unten bis 28.10. triffst.</p>
+
+  <h3>Risiken und wie wir sie abfangen</h3>
+  <ul>
+    <li><b>E-Mail existiert schon:</b> kein zweites Konto. Die Event-Seite antwortet „Du hast schon ein Konto, melde dich an“, Login, danach direkt der normale Checkout mit Aktionsrabatt (Konto-Merker gesetzt). Bestehende Kunden mit Abo sind von der Aktion ausgeschlossen (bestehende Regel).</li>
+    <li><b>Zahlung ohne Konto (Webhook hängt):</b> Die Stripe-Session trägt alle Daten, der Webhook ist idempotent und wird von Stripe wiederholt. Zusätzlich prüft die „Gesichert“-Seite die Session und legt das Konto notfalls selbst an (gleiche Funktion, gleicher Schlüssel).</li>
+    <li><b>Tippfehler in der E-Mail:</b> Stripe prüft die Form, nicht die Existenz. Auf der „Gesichert“-Seite steht die Adresse groß, mit „Falsche Adresse? Hier korrigieren“ (ändert Konto und Stripe-Kunde, solange kein Passwort gesetzt ist).</li>
+    <li><b>Widerruf:</b> Alle Nutzer sind Unternehmer (AGB, § 14 BGB), es gibt kein gesetzliches Widerrufsrecht. Trotzdem: 14-Tage-Kulanz ausdrücklich zusagen, Erstattung über Stripe, Abo beenden. Das nimmt Druck aus dem Saal und kostet im Zweifel einen Monatsbeitrag.</li>
+    <li><b>Rechnung:</b> entsteht sofort bei Stripe mit Rechnungsadresse aus dem Checkout, USt-ID kann wie heute nachträglich unter Einstellungen → Rechnungen eingetragen werden.</li>
+    <li><b>Apple:</b> Alles läuft im Browser auf finestsites.io, nichts davon in der App. Die App zeigt nur den Dashboard-Zustand ohne Preise (<code>check:words</code>).</li>
+    <li><b>Aktion läuft ab, während jemand im Checkout ist:</b> Die Stripe-Session trägt den Rabatt fest, Ablauf betrifft nur neue Sessions. Dazu 15 Minuten Puffer im Konto-Merker.</li>
+  </ul>
+
+  <h3>Was du entscheiden musst</h3>
+  <ol class="q">
+    <li><span>1</span><div><b>Laufzeit ab Kauf (A) oder ab Veröffentlichen (B)?</b><em>Empfehlung A mit 14-Tage-Kulanz. B kostet zwei Tage mehr und bringt genau die Unverbindlichkeit zurück, die das Problem war.</em></div></li>
+    <li><span>2</span><div><b>Welcher Rabatt, wie lange, welche Tarife?</b><em>Vorschlag: 15 % auf die ersten 3 Monate (monatlich) bzw. 15 % auf das erste Jahr (jährlich), alle drei Tarife. Gleiche Form wie ANNETT15, also bekannte Technik.</em></div></li>
+    <li><span>3</span><div><b>Angebotsfenster 48 Stunden ab Event-Beginn?</b><em>Alternativ bis Sonntagabend 23:59. Kürzer als 24 h bestraft Leute, die abends noch unterwegs sind.</em></div></li>
+    <li><span>4</span><div><b>Kurzlink: <code>/event</code> oder <code>/innervisionday</code>?</b><em><code>/event</code> ist wiederverwendbar, der Inhalt kommt aus den Einstellungen. Für den Vortrag kann beides auf dieselbe Seite zeigen.</em></div></li>
+    <li><span>5</span><div><b>Erinnerungs-Mails ja oder nein?</b><em>Wenn ja: die drei Texte bekommst du vorab als Datei, Versand nur nach deiner Freigabe. Ohne Häkchen auf der Event-Seite geht keine Mail raus.</em></div></li>
+    <li><span>6</span><div><b>Live-Zähler auf der Bühne?</b><em>Wirkt im Saal, braucht aber mindestens 5 Buchungen, sonst wirkt er gegen dich. Halber Tag Aufwand.</em></div></li>
+    <li><span>7</span><div><b>Partner vor Ort:</b> Soll ein Teampartner den QR-Code mit seinem <code>?ref=</code> verteilen dürfen?<em>Dann gilt für diese Leute der Empfehlungsrabatt statt der Event-Aktion (Provision bleibt). Beides zusammen geht technisch nicht, ohne das Partnermodell zu ändern.</em></div></li>
+  </ol>
+
+  <!-- ───────────────────────────── 6 ───────────────────────────── -->
+  <h2><small>6</small>Zeitplan bis 08.11.2026</h2>
+  <ul class="timeline">
+    <li><b>Di 27.10.</b><span>Konzept besprechen, Entscheidungen 1 bis 7. Danach lege ich den Aktionscode in Stripe an (Testmodus zuerst).</span></li>
+    <li><b>Mi 28. – Fr 30.10.</b><span>Event-Seite, Pay-first-Checkout, Konto aus dem Webhook, „Gesichert“-Seite. Erste Durchläufe mit Stripe-Testkarten lokal.</span></li>
+    <li><b>Sa 31.10. – So 1.11.</b><span>Dashboard-Zustand (Web + App), Event-Merker für Weg 2, Admin „Event-Buchungen“.</span></li>
+    <li><b>Mo 2.11.</b><span>Tests, Smoke-Test, Deploy um 23:00 mit Aktion im Stripe-Livemodus, aber noch ohne Link auf der Startseite.</span></li>
+    <li><b>Di 3.11.</b><span><b>Testlauf mit deinem Testkonto:</b> echter Kauf mit 100 %-Gutschein (ADMIN100) über die Event-Seite, Mail prüfen, Passwort setzen, Seite veröffentlichen, Rechnung ansehen, Erstattung durchspielen. Zweiter Lauf über „Erst ansehen“ mit Rabatt-Merker.</span></li>
+    <li><b>Mi 4.11.</b><span>Korrekturen, Erinnerungs-Mails (falls freigegeben) als Texte zur Freigabe, QR-Code und Bühnen-Slide fertig.</span></li>
+    <li><b>Do 5.11.</b><span>Reserve. Aktion in Stripe mit Ablauf Mo. 10.11., 14:00 scharf stellen, Smoke-Test, Backup-Stand notiert.</span></li>
+    <li><b>Sa 8.11.</b><span>Event. Admin „Event-Buchungen“ auf deinem Handy, ich bin erreichbar. Kein Deploy an diesem Tag.</span></li>
+    <li><b>Mo 10.11., 14:00</b><span>Angebot endet automatisch (Stripe-Ablauf + Konto-Merker). Danach Auswertung: gesichert, Passwort gesetzt, veröffentlicht.</span></li>
+  </ul>
+
+  <div class="note warn">Noch nichts davon ist gebaut oder deployt. Diese Seite ist nur eine Datei im Repo (<code>docs/event/anmeldung-konzept.html</code>). Sobald du die Entscheidungen gibst, fange ich mit der Event-Seite an.</div>
+</main>
+</body>
+</html>

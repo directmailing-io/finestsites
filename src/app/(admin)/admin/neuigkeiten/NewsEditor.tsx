@@ -7,7 +7,7 @@ import type { NewsColor, NewsCtaKind } from '@/lib/contracts/app-v1/news'
 import { NEWS_LIMITS, type NewsAudience } from '@/lib/news/admin-schema'
 import { findBlockedWords } from '@/components/news/blocked-words'
 import { NEWS_CTA_KIND_LABELS, NEWS_PALETTES, NEWS_TOKENS, formatNewsDateTime, newsPalette } from '@/components/news/news-ui'
-import { NewsDetailCard, newsPrimaryButtonStyle, newsQuietLinkStyle } from '@/components/news/NewsDetailCard'
+import { NewsCard, newsPrimaryButtonStyle } from '@/components/news/NewsCard'
 import { AndroidCardPreview, IphoneLockPreview } from '@/components/news/NewsPreview'
 import { adminFetch, AdminApiError, ConfirmDialog, StatusPill, expiresToDay, formatExpiresShort, isExpired, type AdminNewsItem, type AudienceUser } from './_lib'
 
@@ -281,7 +281,6 @@ export function NewsEditor({ id: initialId }: { id?: string }) {
       {form.ctaLabel.trim() || 'Text auf dem Knopf'}
     </span>
   ) : null
-  const previewSecondary = <span style={{ ...newsQuietLinkStyle, minHeight: 32, fontSize: 13.5, cursor: 'default' }}>{hasCta ? 'Später' : 'Zurück zu den Neuigkeiten'}</span>
 
   const warnings = useMemo(() => ({
     pushTitle: findBlockedWords(form.pushTitle),
@@ -399,7 +398,7 @@ export function NewsEditor({ id: initialId }: { id?: string }) {
 
               {/* Farbe der Karte */}
               <fieldset className="flex flex-col gap-3" style={{ border: 0, margin: 0, padding: 0, minWidth: 0 }} data-testid="color-section">
-                <SectionTitle title="Farbe" hint="Die neueste Neuigkeit erscheint in Web und App als Vollton-Karte in dieser Farbe, ältere bekommen sie als feinen Rahmen. „Automatisch“ wählt fest aus der Kennung." />
+                <SectionTitle title="Farbe" hint="Jede Neuigkeit ist in Web und App eine Karte in diesem Pastellverlauf – wechsle die Farbe, damit sich aufeinanderfolgende Neuigkeiten unterscheiden. „Automatisch“ wählt fest aus der Kennung." />
                 <div className="flex flex-wrap items-center gap-2" role="radiogroup" aria-label="Farbe der Karte">
                   <ColorSwatch label="Automatisch" selected={form.color === ''} disabled={readOnly} auto onClick={() => set('color', '')} />
                   {NEWS_PALETTES.map(p => (
@@ -583,7 +582,7 @@ export function NewsEditor({ id: initialId }: { id?: string }) {
           <div>
             <PreviewTitle>Die Neuigkeit in der App</PreviewTitle>
             <div style={{ maxWidth: 360 }}>
-              <NewsDetailCard title={form.title} body={form.body} publishedAt={previewDate} cta={previewCta} secondary={previewSecondary} compact paletteKey={id} color={form.color || null} />
+              <NewsCard id={id ?? 'vorschau'} title={form.title} summary={form.pushBody} body={form.body} publishedAt={previewDate} color={form.color || null} unread expanded cta={previewCta} compact />
             </div>
           </div>
 

@@ -18,7 +18,7 @@ const CARD_RADIUS = 20;
  * Startkarte: die neueste Neuigkeit, die weder gelesen noch weggewischt ist – über
  * „Neue Webseite erstellen“. Vollton-Karte im Pastellverlauf der Neuigkeit (sie ist immer die
  * neueste): Kicker „Neu bei FinestSites“, Titel, eine Zeile Kurztext, „Mehr erfahren ›“.
- * Tipp → Detail, Kreuz → weggewischt (gilt auch für das Web-Dashboard).
+ * Tipp → Liste mit dieser Neuigkeit aufgeklappt, Kreuz → weggewischt (gilt auch für das Web-Dashboard).
  */
 export function NewsStartCard({ card }: { card: NewsCard }) {
   const router = useRouter();
@@ -39,7 +39,7 @@ export function NewsStartCard({ card }: { card: NewsCard }) {
   return (
     <Animated.View entering={FadeIn.duration(260)} exiting={FadeOut.duration(200)} layout={LinearTransition.duration(220)}>
       <Pressable
-        onPress={() => router.push({ pathname: '/account/news/[id]', params: { id: card.id } })}
+        onPress={() => router.push({ pathname: '/account/news', params: { open: card.id } })}
         accessibilityRole="button"
         accessibilityLabel={`Neu bei FinestSites: ${card.title}. ${card.summary} Mehr erfahren`}
         style={({ pressed }) => pressed && styles.pressed}>

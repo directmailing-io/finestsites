@@ -7,9 +7,9 @@ import type { NewsColor } from '@/api/types';
 
 /**
  * Fünf Pastell-Verläufe für die Neuigkeiten (1:1 mit dem Web, src/components/news/news-ui.ts).
- * Die neueste Neuigkeit ist eine Vollton-Karte im Verlauf, alle weiteren weiße Blätter mit feinem
- * Verlaufsrahmen (Daniel 26.10.2026). Der Verlauf wandert in 18 s kaum merklich hin und her.
- * `tint` = helle Fläche der Pille „Neu“ auf weißen Karten, `ink` bleibt für das Web (Admin) reserviert.
+ * Jede Neuigkeit ist eine Vollton-Karte in ihrem Verlauf (Daniel 26.10.2026: nur Vollton, fünf Farben
+ * zur Auswahl, damit keine untergeht). Der Verlauf wandert in 18 s kaum merklich hin und her.
+ * `tint`/`ink` bleiben für das Web (Admin) reserviert.
  */
 export const NEWS_PALETTES = [
   { name: 'peach', from: '#F7C4B4', to: '#F6DFA9', tint: '#FDF3EF', ink: '#B45F4A' },
@@ -47,12 +47,14 @@ export const NEWS_UI = {
 export const NEWS_ON_SOLID = {
   kicker: 'rgba(17,24,39,0.62)',
   text: 'rgba(17,24,39,0.78)',
+  body: 'rgba(17,24,39,0.84)',
   pill: 'rgba(255,255,255,0.72)',
+  /** Häkchen-Kreis der Aufzählungen auf dem Verlauf */
+  check: 'rgba(255,255,255,0.62)',
   wash: 'rgba(255,255,255,0.5)',
+  /** Feine Trennlinie zwischen Vorschau und Inhalt */
+  line: 'rgba(17,24,39,0.1)',
 } as const;
-
-/** Breite des Verlaufsrahmens (wie im Web 1,5 px). */
-export const NEWS_FRAME_WIDTH = 1.5;
 
 /** Sehr weicher Karten-Schatten (gleicher Wert für Vollton und Rahmen). */
 export const newsCardShadow: ViewStyle = Platform.select<ViewStyle>({
@@ -126,7 +128,7 @@ function DriftGradient({ palette }: { palette: NewsPalette }) {
 }
 
 /**
- * Vollton: die ganze Karte im wandernden Pastellverlauf (neueste Neuigkeit, Startkarte).
+ * Vollton: die ganze Karte im wandernden Pastellverlauf (jede Neuigkeit, Startkarte).
  * Zwei Schichten, weil `overflow: 'hidden'` auf iOS den Schatten derselben View löscht:
  * außen Schatten + Rundung, innen die geclippte Fläche mit Verlauf und Inhalt.
  */
@@ -138,26 +140,6 @@ export function NewsSolid({ palette, radius, style, contentStyle, children }: {
       <View style={{ borderRadius: radius, overflow: 'hidden' }}>
         <DriftGradient palette={palette} />
         <View style={contentStyle}>{children}</View>
-      </View>
-    </View>
-  );
-}
-
-/**
- * Verlaufsrahmen: weißes Blatt mit 1,5 pt Rahmen im wandernden Pastellverlauf (alle weiteren
- * Neuigkeiten, Detail). Außen Schatten + Rundung, dann die geclippte Verlauffläche, darin das
- * weiße Blatt mit 1,5 pt Abstand (Radius minus Rahmen, damit die Ecken konzentrisch bleiben).
- */
-export function NewsFramed({ palette, radius, style, contentStyle, children }: {
-  palette: NewsPalette; radius: number; style?: ViewStyle; contentStyle?: ViewStyle; children: ReactNode;
-}) {
-  return (
-    <View style={[{ borderRadius: radius, backgroundColor: '#FFFFFF' }, newsCardShadow, style]}>
-      <View style={{ borderRadius: radius, overflow: 'hidden' }}>
-        <DriftGradient palette={palette} />
-        <View style={[{ margin: NEWS_FRAME_WIDTH, borderRadius: Math.max(0, radius - NEWS_FRAME_WIDTH), backgroundColor: '#FFFFFF', overflow: 'hidden' }, contentStyle]}>
-          {children}
-        </View>
       </View>
     </View>
   );

@@ -52,7 +52,7 @@ export function DashboardNewsCard() {
 
   if (!item) return null
   const palette = newsPalette(item.id, item.color)
-  const href = `/neuigkeiten/${item.id}`
+  const href = `/neuigkeiten?open=${item.id}`
 
   return (
     <div

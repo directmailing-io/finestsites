@@ -1,16 +1,36 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import type { NewsItem, NewsListResponse } from '@/lib/contracts/app-v1/news'
-import { NewsCard } from '@/components/news/NewsCard'
+import { Suspense, useCallback, useEffect, useState } from 'react'
+import Link from 'next/link'
+import { useRouter, useSearchParams } from 'next/navigation'
+import type { NewsItem, NewsListResponse, NewsActionResponse } from '@/lib/contracts/app-v1/news'
+import { NewsCard, newsPrimaryButtonStyle } from '@/components/news/NewsCard'
 import { NewsLogoGlyphRainbow } from '@/components/news/NewsLogoGlyph'
-import { NEWS_SHEET_CLASS, NEWS_TOKENS } from '@/components/news/news-ui'
+import { NEWS_CTA_ROUTES, NEWS_SHEET_CLASS, NEWS_TOKENS } from '@/components/news/news-ui'
 import { broadcastNewsUnread } from '@/components/news/useNewsUnread'
+import { useOpenExternal } from '@/components/app-mode/AppMode'
 
-/** Liste aller sichtbaren Neuigkeiten (neueste zuerst), Quelle `GET /api/news`. */
+/**
+ * Neuigkeiten – die einzige Ansicht (Daniel 26.10.2026): alle sichtbaren Neuigkeiten als Vollton-Karten,
+ * neueste zuerst, Quelle `GET /api/news`. Eine Karte klappt auf (eine zur Zeit) und zeigt Inhalt + Knopf;
+ * Aufklappen meldet `POST /api/news/[id]/read`. `?open=<id>` (Startkarte, alte Detail-Links) klappt
+ * diese Neuigkeit direkt auf. Knopf → `POST /api/news/[id]/cta`, dann Ziel öffnen.
+ */
 export default function NewsListPage() {
+  return (
+    <Suspense fallback={null}>
+      <NewsList />
+    </Suspense>
+  )
+}
+
+function NewsList() {
+  const router = useRouter()
+  const params = useSearchParams()
+  const openExternal = useOpenExternal()
   const [items, setItems] = useState<NewsItem[] | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [openId, setOpenId] = useState<string | null>(() => params.get('open'))
 
   useEffect(() => {
     let alive = true
@@ -28,6 +48,41 @@ export default function NewsListPage() {
     return () => { alive = false }
   }, [])
 
+  // ?open=<id> aus der Adresse übernehmen (z. B. Tipp auf die Startkarte), danach die Adresse säubern
+  useEffect(() => {
+    const open = params.get('open')
+    if (!open) return
+    setOpenId(open)
+    router.replace('/neuigkeiten', { scroll: false })
+  }, [params, router])
+
+  const markRead = useCallback((id: string) => {
+    fetch(`/api/news/${id}/read`, { method: 'POST' })
+      .then(async r => {
+        if (!r.ok) return
+        const d = (await r.json()) as NewsActionResponse
+        setItems(prev => prev ? prev.map(n => (n.id === id ? d.item : n)) : prev)
+        broadcastNewsUnread(d.unreadCount)
+      })
+      .catch(() => {})
+  }, [])
+
+  // Beim Aufklappen als gelesen melden (auch für ?open=<id>, sobald die Liste da ist)
+  useEffect(() => {
+    if (!openId || !items) return
+    const it = items.find(n => n.id === openId)
+    if (it && !it.readAt) markRead(openId)
+  }, [openId, items, markRead])
+
+  function toggle(id: string) {
+    setOpenId(prev => (prev === id ? null : id))
+  }
+
+  function trackCta(id: string) {
+    // keepalive: der Klick darf das Verlassen der Seite nicht aufhalten
+    fetch(`/api/news/${id}/cta`, { method: 'POST', keepalive: true }).catch(() => {})
+  }
+
   const unread = items?.filter(i => !i.readAt).length ?? 0
   const subtitle = items === null
     ? ' '
@@ -36,6 +91,34 @@ export default function NewsListPage() {
       : unread > 0
         ? unread === 1 ? 'Eine neue Neuigkeit' : `${unread} neue Neuigkeiten`
         : 'Du bist auf dem neuesten Stand.'
+
+  const arrow = (
+    <svg className="transition-transform duration-[180ms] group-hover:translate-x-0.5" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round" aria-hidden style={{ opacity: 0.8, marginRight: -4 }}>
+      <path d="M9 18l6-6-6-6" />
+    </svg>
+  )
+
+  function ctaFor(item: NewsItem) {
+    const cta = item.cta
+    if (!cta) return null
+    if (cta.kind === 'url' && cta.url) {
+      return (
+        <a href={cta.url} target="_blank" rel="noopener noreferrer" style={newsPrimaryButtonStyle}
+          className="group transition-[transform,background-color] duration-[180ms] hover:bg-black active:scale-[0.985]"
+          onClick={e => { trackCta(item.id); openExternal(e, cta.url!) }}>
+          {cta.label}
+          {arrow}
+        </a>
+      )
+    }
+    return (
+      <Link href={NEWS_CTA_ROUTES[cta.kind as keyof typeof NEWS_CTA_ROUTES] ?? '/sites'} style={newsPrimaryButtonStyle}
+        className="group transition-[transform,background-color] duration-[180ms] hover:bg-black active:scale-[0.985]" onClick={() => trackCta(item.id)}>
+        {cta.label}
+        {arrow}
+      </Link>
+    )
+  }
 
   return (
     <div className="mx-auto" style={{ maxWidth: 720 }}>
@@ -84,8 +167,21 @@ export default function NewsListPage() {
 
       {items && items.length > 0 && (
         <div className="flex flex-col gap-5 sm:gap-6">
-          {/* Die neueste als Vollton, alle weiteren mit Verlaufsrahmen */}
-          {items.map((item, i) => <NewsCard key={item.id} item={item} prominent={i === 0} />)}
+          {items.map(item => (
+            <NewsCard
+              key={item.id}
+              id={item.id}
+              title={item.title}
+              summary={item.summary}
+              body={item.body}
+              publishedAt={item.publishedAt}
+              color={item.color}
+              unread={!item.readAt}
+              expanded={openId === item.id}
+              onToggle={() => toggle(item.id)}
+              cta={ctaFor(item)}
+            />
+          ))}
         </div>
       )}
     </div>

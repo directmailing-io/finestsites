@@ -90,7 +90,7 @@ export async function middleware(request: NextRequest) {
 
   // finestsites.io is marketing only.
   // Legal + marketing content stays on finestsites.io; app routes → app subdomain.
-  const FINESTSITES_IO_PATHS = ['/impressum', '/datenschutz', '/agb', '/cookies', '/vorlagen', '/webinar', '/changelog', '/konto-loeschen', '/app', '/exemplare', '/sitemap.xml', '/robots.txt']
+  const FINESTSITES_IO_PATHS = ['/impressum', '/datenschutz', '/agb', '/cookies', '/vorlagen', '/webinar', '/changelog', '/konto-loeschen', '/app', '/sitemap.xml', '/robots.txt']
   if (
     (host === 'finestsites.io' || host === 'www.finestsites.io') &&
     pathname !== '/' &&
