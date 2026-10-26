@@ -2,14 +2,13 @@
 
 import type { ReactNode } from 'react'
 import { NewsBodyBlocks } from './NewsBodyBlocks'
-import { NewsHeroBand } from './NewsHeroBand'
-import { NEWS_SHADOW_CLASS, NEWS_TOKENS, formatNewsDate, newsPalette } from './news-ui'
+import { NEWS_SHEET_CLASS, NEWS_TOKENS, formatNewsDate, newsPalette } from './news-ui'
 
 /**
  * Die Neuigkeit, wie sie Nutzer sehen (Web-Detail; die Admin-Vorschau nutzt `compact`):
- * hohes Kopfband im Markenverlauf der Neuigkeit, darunter im Weißen der Datums-Kicker, die große
- * Schlagzeile, der Vorspann und der Inhalt (newsBodyBlocks), zum Schluss Knopf + leiser Zweitlink.
- * `cta` und `secondary` sind fertige Elemente, damit Web-Routen/Links außen entschieden werden.
+ * ein weißes Blatt – Datums-Kicker in der Farbe der Neuigkeit, große Schlagzeile, darunter die kurze
+ * Pastell-Linie, dann Vorspann und Inhalt (newsBodyBlocks), zum Schluss Knopf + leiser Zweitlink.
+ * Kein Band, kein Logo, kein Bild. `cta` und `secondary` sind fertige Elemente, damit Web-Routen/Links außen entschieden werden.
  */
 export function NewsDetailCard({
   title, body, publishedAt, cta, secondary, compact = false, paletteKey,
@@ -21,63 +20,60 @@ export function NewsDetailCard({
   secondary?: ReactNode
   /** Admin-Vorschau: kleinere Maße, gleicher Aufbau */
   compact?: boolean
-  /** ID der Neuigkeit – bestimmt den Verlauf des Kopfbands (ohne ID: Standardverlauf) */
+  /** ID der Neuigkeit – bestimmt die Pastell-Linie (ohne ID: erste Palette) */
   paletteKey?: string | null
 }) {
   const palette = newsPalette(paletteKey)
   const date = publishedAt ? formatNewsDate(publishedAt) : ''
   return (
     <article
-      className={`overflow-hidden bg-white ${NEWS_SHADOW_CLASS}`}
-      style={{ borderRadius: compact ? 22 : NEWS_TOKENS.detailRadius }}
+      className={`${NEWS_SHEET_CLASS} ${compact ? 'px-[22px] pt-6 pb-6' : 'px-6 pt-8 pb-8 sm:px-10 sm:pt-10 sm:pb-10'}`}
+      style={{ borderRadius: compact ? 20 : NEWS_TOKENS.detailRadius }}
     >
-      <NewsHeroBand
-        palette={palette}
-        className={compact ? 'h-[112px]' : 'h-[150px] sm:h-[200px]'}
-        wordmarkHeight={compact ? 12 : 15}
-        inset={compact ? 18 : 28}
-      />
+      {date && (
+        <time dateTime={publishedAt ?? undefined} style={{
+          display: 'block', fontSize: compact ? 11 : 12, fontWeight: 600, letterSpacing: '0.08em',
+          textTransform: 'uppercase', color: palette.ink, lineHeight: 1,
+        }}>
+          {date}
+        </time>
+      )}
 
-      <div className={compact ? 'px-[18px] pt-5 pb-5' : 'px-5 pt-6 pb-6 sm:px-8 sm:pt-7 sm:pb-8'}>
-        {date && (
-          <time dateTime={publishedAt ?? undefined} style={{
-            display: 'block', fontSize: compact ? 11 : 12, fontWeight: 600, letterSpacing: '0.06em',
-            textTransform: 'uppercase', color: NEWS_TOKENS.accent,
-          }}>
-            {date}
-          </time>
-        )}
+      <h1
+        className={compact ? 'text-[21px]' : 'text-[28px] sm:text-[34px]'}
+        style={{
+          margin: compact ? '10px 0 0' : '14px 0 0', fontWeight: 700, lineHeight: 1.12,
+          letterSpacing: compact ? '-0.5px' : '-0.8px', color: NEWS_TOKENS.ink, overflowWrap: 'anywhere',
+        }}
+      >
+        {title || <span style={{ color: NEWS_TOKENS.tertiary, fontWeight: 600 }}>Überschrift der Neuigkeit</span>}
+      </h1>
 
-        <h1
-          className={compact ? 'text-[20px]' : 'text-[26px] sm:text-[32px]'}
-          style={{
-            margin: compact ? '8px 0 12px' : '10px 0 16px', fontWeight: 700, lineHeight: 1.15,
-            letterSpacing: compact ? '-0.4px' : '-0.6px', color: NEWS_TOKENS.ink, overflowWrap: 'anywhere',
-          }}
-        >
-          {title || <span style={{ color: NEWS_TOKENS.tertiary, fontWeight: 600 }}>Überschrift der Neuigkeit</span>}
-        </h1>
+      {/* Die Pastell-Linie unter der Schlagzeile – kurz, linksbündig */}
+      <span aria-hidden style={{
+        display: 'block', width: compact ? 48 : 72, height: 3, borderRadius: 999, background: palette.gradient,
+        margin: compact ? '12px 0 16px' : '18px 0 24px',
+      }} />
 
-        {body.trim() ? (
-          <NewsBodyBlocks body={body} size={compact ? 'sm' : 'md'} />
-        ) : (
-          <p style={{ margin: 0, color: NEWS_TOKENS.tertiary, fontSize: compact ? 13.5 : 16 }}>
-            Der Inhalt erscheint hier, sobald du ihn schreibst.
-          </p>
-        )}
+      {body.trim() ? (
+        <NewsBodyBlocks body={body} size={compact ? 'sm' : 'md'} palette={palette} />
+      ) : (
+        <p style={{ margin: 0, color: NEWS_TOKENS.tertiary, fontSize: compact ? 13.5 : 16 }}>
+          Der Inhalt erscheint hier, sobald du ihn schreibst.
+        </p>
+      )}
 
-        {(cta || secondary) && (
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'stretch', gap: compact ? 10 : 14, marginTop: compact ? 20 : 30 }}>
-            {cta}
-            {secondary && <div style={{ display: 'flex', justifyContent: 'center' }}>{secondary}</div>}
-          </div>
-        )}
-      </div>
+      {(cta || secondary) && (
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'stretch', gap: compact ? 8 : 12, marginTop: compact ? 22 : 36 }}>
+          {cta}
+          {secondary && <div style={{ display: 'flex', justifyContent: 'center' }}>{secondary}</div>}
+        </div>
+      )}
     </article>
   )
 }
 
-/** Hauptknopf der Neuigkeit: schwarze Pille, volle Kartenbreite. Als Button, Link oder reines Element nutzbar. */
+/** Hauptknopf der Neuigkeit: schwarze Pille, volle Blattbreite. Als Button, Link oder reines Element nutzbar. */
 export const newsPrimaryButtonStyle: React.CSSProperties = {
   display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, width: '100%', minHeight: 52,
   padding: '14px 22px', borderRadius: 999, background: NEWS_TOKENS.ink, color: '#fff',
@@ -88,6 +84,6 @@ export const newsPrimaryButtonStyle: React.CSSProperties = {
 /** Leiser Zweitlink unter dem Knopf („Später“) – reiner Text, kein Kasten. */
 export const newsQuietLinkStyle: React.CSSProperties = {
   display: 'inline-flex', alignItems: 'center', justifyContent: 'center', minHeight: 40,
-  padding: '8px 14px', borderRadius: 999, background: 'transparent', color: NEWS_TOKENS.secondary,
-  fontWeight: 600, fontSize: 14.5, border: 'none', cursor: 'pointer', textDecoration: 'none',
+  padding: '8px 14px', borderRadius: 999, background: 'transparent', color: NEWS_TOKENS.muted,
+  fontWeight: 500, fontSize: 14.5, border: 'none', cursor: 'pointer', textDecoration: 'none',
 }

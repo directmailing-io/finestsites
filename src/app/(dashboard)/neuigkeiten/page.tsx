@@ -3,8 +3,8 @@
 import { useEffect, useState } from 'react'
 import type { NewsItem, NewsListResponse } from '@/lib/contracts/app-v1/news'
 import { NewsCard } from '@/components/news/NewsCard'
-import { NewsHeroMini } from '@/components/news/NewsHeroBand'
-import { NEWS_PALETTES, NEWS_SHADOW_CLASS, NEWS_TOKENS } from '@/components/news/news-ui'
+import { NewsLogoGlyphRainbow } from '@/components/news/NewsLogoGlyph'
+import { NEWS_SHEET_CLASS, NEWS_TOKENS } from '@/components/news/news-ui'
 import { broadcastNewsUnread } from '@/components/news/useNewsUnread'
 
 /** Liste aller sichtbaren Neuigkeiten (neueste zuerst), Quelle `GET /api/news`. */
@@ -30,7 +30,7 @@ export default function NewsListPage() {
 
   const unread = items?.filter(i => !i.readAt).length ?? 0
   const subtitle = items === null
-    ? ' '
+    ? ' '
     : items.length === 0
       ? 'Was es Neues bei FinestSites gibt.'
       : unread > 0
@@ -39,26 +39,23 @@ export default function NewsListPage() {
 
   return (
     <div className="mx-auto" style={{ maxWidth: 720 }}>
-      <header className="mb-7 sm:mb-9">
+      <header className="mb-8 sm:mb-10">
         <h1 className="text-[28px] sm:text-[30px]" style={{ margin: 0, fontWeight: 700, letterSpacing: '-0.6px', lineHeight: 1.15, color: NEWS_TOKENS.ink }}>
           Neuigkeiten
         </h1>
-        <p style={{ margin: '6px 0 0', fontSize: 16, lineHeight: 1.5, color: NEWS_TOKENS.secondary }}>
+        <p style={{ margin: '6px 0 0', fontSize: 16, lineHeight: 1.5, color: NEWS_TOKENS.muted }}>
           {subtitle}
         </p>
       </header>
 
       {items === null && !error && (
-        <div className="flex flex-col gap-6" aria-hidden>
+        <div className="flex flex-col gap-5 sm:gap-6" aria-hidden>
           {[1, 2].map(i => (
-            <div key={i} className={`animate-pulse overflow-hidden bg-white ${NEWS_SHADOW_CLASS}`} style={{ borderRadius: NEWS_TOKENS.cardRadius }}>
-              <div className="h-24 sm:h-[120px]" style={{ background: '#EDE9FE' }} />
-              <div className="px-5 pt-5 pb-5 sm:px-7 sm:pb-6 flex flex-col gap-3">
-                <div className="h-2.5 rounded-full bg-gray-100 w-1/4" />
-                <div className="h-4 rounded-full bg-gray-100 w-2/3" />
-                <div className="h-3 rounded-full bg-gray-100 w-full" />
-                <div className="h-3 rounded-full bg-gray-100 w-5/6" />
-              </div>
+            <div key={i} className={`animate-pulse ${NEWS_SHEET_CLASS} px-5 pt-5 pb-6 sm:px-7 sm:pt-7 sm:pb-7 flex flex-col gap-3.5`} style={{ borderRadius: NEWS_TOKENS.cardRadius }}>
+              <div className="h-2.5 rounded-full bg-gray-100 w-1/4" />
+              <div className="h-4 rounded-full bg-gray-100 w-2/3" />
+              <div className="h-3 rounded-full bg-gray-100 w-full" />
+              <div className="h-3 rounded-full bg-gray-100 w-5/6" />
             </div>
           ))}
         </div>
@@ -72,22 +69,21 @@ export default function NewsListPage() {
 
       {items && items.length === 0 && (
         <div
-          className={`flex flex-col items-center justify-center text-center bg-white px-6 py-14 sm:py-16 ${NEWS_SHADOW_CLASS}`}
-          style={{ borderRadius: NEWS_TOKENS.cardRadius }}
+          className="flex flex-col items-center justify-center text-center px-6 py-16 sm:py-24"
           data-testid="news-empty"
         >
-          <NewsHeroMini palette={NEWS_PALETTES[0]} width={60} height={36} radius={10} />
-          <h2 style={{ margin: '18px 0 6px', fontSize: 18, fontWeight: 700, letterSpacing: '-0.3px', color: NEWS_TOKENS.ink }}>
+          <NewsLogoGlyphRainbow height={44} />
+          <h2 style={{ margin: '22px 0 8px', fontSize: 20, fontWeight: 600, letterSpacing: '-0.3px', color: NEWS_TOKENS.ink }}>
             Noch keine Neuigkeiten
           </h2>
-          <p style={{ margin: 0, maxWidth: 360, fontSize: 15, lineHeight: 1.55, color: NEWS_TOKENS.secondary }}>
+          <p style={{ margin: 0, maxWidth: 380, fontSize: 15, lineHeight: 1.6, color: NEWS_TOKENS.muted }}>
             Sobald es etwas Neues gibt, findest du es hier – und auf Wunsch als Mitteilung in der App.
           </p>
         </div>
       )}
 
       {items && items.length > 0 && (
-        <div className="flex flex-col gap-6 sm:gap-7">
+        <div className="flex flex-col gap-5 sm:gap-6">
           {items.map(item => <NewsCard key={item.id} item={item} />)}
         </div>
       )}

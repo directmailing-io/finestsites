@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { useParams, useRouter } from 'next/navigation'
 import type { NewsItem, NewsActionResponse } from '@/lib/contracts/app-v1/news'
 import { NewsDetailCard, newsPrimaryButtonStyle, newsQuietLinkStyle } from '@/components/news/NewsDetailCard'
-import { NEWS_CTA_ROUTES, NEWS_SHADOW_CLASS, NEWS_TOKENS } from '@/components/news/news-ui'
+import { NEWS_CTA_ROUTES, NEWS_SHEET_CLASS, NEWS_TOKENS } from '@/components/news/news-ui'
 import { broadcastNewsUnread } from '@/components/news/useNewsUnread'
 import { useOpenExternal } from '@/components/app-mode/AppMode'
 
@@ -58,8 +58,8 @@ export default function NewsDetailPage() {
   const cta = item?.cta
   // Pfeil rechts vom Text: ruht leicht zurückgenommen, rückt beim Schweben 2 px nach rechts
   const arrow = (
-    <svg className="transition-transform duration-[180ms] group-hover:translate-x-0.5" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round" aria-hidden style={{ opacity: 0.85 }}>
-      <path d="M5 12h14M13 6l6 6-6 6" />
+    <svg className="transition-transform duration-[180ms] group-hover:translate-x-0.5" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round" aria-hidden style={{ opacity: 0.8, marginRight: -4 }}>
+      <path d="M9 18l6-6-6-6" />
     </svg>
   )
   const ctaEl = cta ? (
@@ -88,30 +88,28 @@ export default function NewsDetailPage() {
 
   return (
     <div className="mx-auto" style={{ maxWidth: 680 }}>
-      <Link href="/neuigkeiten" className="group inline-flex items-center gap-1 mb-5 sm:mb-6"
-        style={{ fontSize: 14.5, fontWeight: 600, color: NEWS_TOKENS.secondary, textDecoration: 'none', marginLeft: -4, padding: '6px 8px 6px 4px', borderRadius: 999 }}>
-        <svg className="transition-transform duration-[180ms] group-hover:-translate-x-0.5" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden><path d="M15 18l-6-6 6-6" /></svg>
+      <Link href="/neuigkeiten" className="group inline-flex items-center gap-1 mb-5 sm:mb-6 transition-colors duration-150 hover:text-gray-900"
+        style={{ fontSize: 14.5, fontWeight: 500, color: NEWS_TOKENS.muted, textDecoration: 'none', marginLeft: -4, padding: '6px 8px 6px 4px', borderRadius: 999 }}>
+        <svg className="transition-transform duration-[180ms] group-hover:-translate-x-0.5" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round" aria-hidden style={{ opacity: 0.8 }}><path d="M15 18l-6-6 6-6" /></svg>
         Neuigkeiten
       </Link>
 
       {state === 'loading' && (
-        <div className={`animate-pulse bg-white overflow-hidden ${NEWS_SHADOW_CLASS}`} style={{ borderRadius: NEWS_TOKENS.detailRadius }} aria-hidden>
-          <div className="h-[150px] sm:h-[200px]" style={{ background: '#EDE9FE' }} />
-          <div className="px-5 py-6 sm:px-8 sm:py-8 flex flex-col gap-3.5">
-            <div className="h-2.5 rounded-full bg-gray-100 w-1/4" />
-            <div className="h-6 rounded-full bg-gray-100 w-4/5" />
-            <div className="h-3.5 rounded-full bg-gray-100 w-full mt-2" />
-            <div className="h-3.5 rounded-full bg-gray-100 w-11/12" />
-            <div className="h-3.5 rounded-full bg-gray-100 w-2/3" />
-            <div className="h-[52px] rounded-full bg-gray-100 w-full mt-5" />
-          </div>
+        <div className={`animate-pulse ${NEWS_SHEET_CLASS} px-6 py-8 sm:px-10 sm:py-10 flex flex-col gap-3.5`} style={{ borderRadius: NEWS_TOKENS.detailRadius }} aria-hidden>
+          <div className="h-2.5 rounded-full bg-gray-100 w-1/4" />
+          <div className="h-7 rounded-full bg-gray-100 w-4/5" />
+          <div className="h-[3px] rounded-full bg-gray-100 w-[72px] my-2" />
+          <div className="h-3.5 rounded-full bg-gray-100 w-full" />
+          <div className="h-3.5 rounded-full bg-gray-100 w-11/12" />
+          <div className="h-3.5 rounded-full bg-gray-100 w-2/3" />
+          <div className="h-[52px] rounded-full bg-gray-100 w-full mt-5" />
         </div>
       )}
 
       {state === 'missing' && (
-        <div className={`bg-white text-center px-6 py-14 ${NEWS_SHADOW_CLASS}`} style={{ borderRadius: NEWS_TOKENS.detailRadius }}>
-          <h1 style={{ margin: 0, fontSize: 20, fontWeight: 700, letterSpacing: '-0.3px', color: NEWS_TOKENS.ink }}>Diese Neuigkeit gibt es nicht mehr.</h1>
-          <p style={{ margin: '6px 0 0', fontSize: 15, color: NEWS_TOKENS.secondary }}>Vielleicht wurde sie inzwischen zurückgezogen.</p>
+        <div className={`text-center px-6 py-14 ${NEWS_SHEET_CLASS}`} style={{ borderRadius: NEWS_TOKENS.detailRadius }}>
+          <h1 style={{ margin: 0, fontSize: 20, fontWeight: 600, letterSpacing: '-0.3px', color: NEWS_TOKENS.ink }}>Diese Neuigkeit gibt es nicht mehr.</h1>
+          <p style={{ margin: '6px 0 0', fontSize: 15, color: NEWS_TOKENS.muted }}>Vielleicht wurde sie inzwischen zurückgezogen.</p>
           <Link href="/neuigkeiten" className="inline-flex items-center justify-center mt-6 px-6" style={{ ...newsPrimaryButtonStyle, width: 'auto', minHeight: 46, fontSize: 15 }}>
             Zu den Neuigkeiten
           </Link>

@@ -4,16 +4,15 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import type { NewsItem, NewsListResponse, NewsActionResponse } from '@/lib/contracts/app-v1/news'
 import { isRecentEnoughForCard } from '@/lib/news/constants'
-import { NewsHeroMini } from './NewsHeroBand'
-import { NEWS_SHADOW_CLASS, NEWS_TOKENS, newsPalette } from './news-ui'
+import { NEWS_SHEET_CLASS, NEWS_TOKENS, newsPalette, newsPaletteVertical } from './news-ui'
 import { broadcastNewsUnread } from './useNewsUnread'
 
 /**
  * Startkarte auf /sites: neueste veröffentlichte Neuigkeit, die weder gelesen noch weggewischt ist
  * und höchstens NEWS_CARD_MAX_AGE_DAYS alt (wie overviewFor() für die App – ein neues Konto bekommt
  * keine alte Karte). Quelle `GET /api/news`; Kreuz → `POST /api/news/[id]/dismiss`.
- * Schlanke „Tipp“-Karte: links die Verlaufs-Kachel der Neuigkeit, rechts Kicker, Titel, eine Zeile Text.
- * Rendert erst nach dem Laden (kein Platzhalter, kein Springen), blendet sanft ein und aus.
+ * Weißes Blatt mit einem senkrechten Pastell-Strich links (die Farbe der Neuigkeit), daneben Kicker,
+ * Titel, eine Zeile Text. Kein Bild, kein Icon. Rendert erst nach dem Laden, blendet sanft ein und aus.
  */
 export function DashboardNewsCard() {
   const [item, setItem] = useState<NewsItem | null>(null)
@@ -68,42 +67,41 @@ export function DashboardNewsCard() {
       {/* Innenabstand unten, damit der weiche Schatten nicht am overflow:hidden abgeschnitten wird */}
       <div style={{ overflow: 'hidden', padding: '2px 0 20px' }}>
         <div
-          className={`group relative bg-white ${NEWS_SHADOW_CLASS}`}
-          style={{ borderRadius: 20, padding: '14px 44px 14px 14px', maxWidth: 680 }}
+          className={`group relative ${NEWS_SHEET_CLASS}`}
+          style={{ borderRadius: 20, padding: '18px 48px 18px 40px', maxWidth: 680 }}
         >
+          {/* Der Pastell-Strich der Neuigkeit */}
+          <span aria-hidden style={{ position: 'absolute', left: 20, top: 14, bottom: 14, width: 4, borderRadius: 999, background: newsPaletteVertical(palette) }} />
+
           <button
             type="button"
             onClick={dismiss}
             aria-label="Hinweis ausblenden"
-            className="absolute flex items-center justify-center opacity-50 transition-[opacity,background-color,color] duration-150 group-hover:opacity-100 focus-visible:opacity-100"
-            style={{ top: 10, right: 10, width: 30, height: 30, borderRadius: 999, background: 'transparent', border: 'none', color: NEWS_TOKENS.tertiary, cursor: 'pointer' }}
-            onMouseEnter={e => { e.currentTarget.style.background = '#F1F5F9'; e.currentTarget.style.color = NEWS_TOKENS.ink }}
+            className="absolute flex items-center justify-center opacity-0 max-sm:opacity-60 transition-[opacity,background-color,color] duration-150 group-hover:opacity-100 focus-visible:opacity-100"
+            style={{ top: 12, right: 12, width: 30, height: 30, borderRadius: 999, background: 'transparent', border: 'none', color: NEWS_TOKENS.tertiary, cursor: 'pointer' }}
+            onMouseEnter={e => { e.currentTarget.style.background = '#F3F4F6'; e.currentTarget.style.color = NEWS_TOKENS.ink }}
             onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = NEWS_TOKENS.tertiary }}
           >
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" aria-hidden><path d="M18 6L6 18M6 6l12 12" /></svg>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" aria-hidden><path d="M18 6L6 18M6 6l12 12" /></svg>
           </button>
 
-          <div className="flex items-start gap-3.5">
-            <Link href={href} aria-hidden tabIndex={-1} className="flex-shrink-0" style={{ marginTop: 1 }}>
-              <NewsHeroMini palette={palette} width={44} height={44} radius={13} glyph />
-            </Link>
-            <div className="min-w-0 flex-1">
-              <div style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: NEWS_TOKENS.accent, lineHeight: 1, marginTop: 2 }}>
-                Neu bei FinestSites
-              </div>
-              <Link href={href} className="block hover:underline" style={{ textDecoration: 'none', color: 'inherit' }}>
-                <div style={{ fontWeight: 600, color: NEWS_TOKENS.ink, fontSize: 15.5, lineHeight: 1.3, margin: '5px 0 2px', letterSpacing: '-0.2px', overflowWrap: 'anywhere' }}>
-                  {item.title}
-                </div>
-              </Link>
-              {/* Desktop: eine Zeile Text + Link daneben · Handy: zwei Zeilen Text, Link darunter */}
-              <p className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:gap-2" style={{ margin: 0, fontSize: 14, lineHeight: 1.5, color: NEWS_TOKENS.secondary, minWidth: 0 }}>
-                <span className="min-w-0 line-clamp-2 sm:line-clamp-1" style={{ overflowWrap: 'anywhere' }}>{item.summary}</span>
-                <Link href={href} className="whitespace-nowrap flex-shrink-0 self-start hover:underline" style={{ color: NEWS_TOKENS.accent, fontWeight: 600 }}>
-                  Mehr erfahren ›
-                </Link>
-              </p>
+          <div className="min-w-0">
+            <div style={{ fontSize: 12, fontWeight: 600, color: palette.ink, lineHeight: 1, letterSpacing: '-0.05px' }}>
+              Neu bei FinestSites
             </div>
+            <Link href={href} className="block hover:underline" style={{ textDecoration: 'none', color: 'inherit' }}>
+              <div style={{ fontWeight: 600, color: NEWS_TOKENS.ink, fontSize: 15.5, lineHeight: 1.3, margin: '7px 0 3px', letterSpacing: '-0.2px', overflowWrap: 'anywhere' }}>
+                {item.title}
+              </div>
+            </Link>
+            {/* Desktop: eine Zeile Text + Link daneben · Handy: zwei Zeilen Text, Link darunter */}
+            <p className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:gap-2.5" style={{ margin: 0, fontSize: 14.5, lineHeight: 1.5, color: NEWS_TOKENS.secondary, minWidth: 0 }}>
+              <span className="min-w-0 line-clamp-2 sm:line-clamp-1" style={{ overflowWrap: 'anywhere' }}>{item.summary}</span>
+              <Link href={href} className="group/more whitespace-nowrap flex-shrink-0 self-start inline-flex items-baseline hover:underline" style={{ color: NEWS_TOKENS.ink, fontWeight: 600, textDecoration: 'none', gap: 5 }}>
+                Mehr erfahren
+                <span aria-hidden className="transition-transform duration-[180ms] group-hover/more:translate-x-0.5" style={{ opacity: 0.7, fontSize: 16, lineHeight: 1 }}>›</span>
+              </Link>
+            </p>
           </div>
         </div>
       </div>
