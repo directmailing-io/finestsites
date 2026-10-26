@@ -7,6 +7,7 @@ import { getTemplateIntentCookie, clearTemplateIntentCookie, isValidTemplateId }
 import { downloadQrPng, copyText } from '@/lib/utils/qr-download'
 import { useAppMode, useOpenExternal } from '@/components/app-mode/AppMode'
 import { postToApp } from '@/lib/app-mode/shared'
+import { DashboardNewsCard } from '@/components/news/DashboardNewsCard'
 
 // ── Types ───────────────────────────────────────────────────────────────────
 
@@ -371,6 +372,8 @@ export default function SitesPage() {
             ? 'Hier findest du deine Webseiten.'
             : 'Du hast noch keine Webseite. Leg jetzt deine erste an.'}
         </p>
+        {/* Neueste ungelesene Neuigkeit (Konzept Bild 4) – erscheint erst, wenn geladen */}
+        {!loading && <DashboardNewsCard />}
         {!loading && newSiteButton}
       </div>
 

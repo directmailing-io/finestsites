@@ -8,12 +8,14 @@ import { signOut } from '@/lib/auth/client'
 import { useRouter } from 'next/navigation'
 import { usePlanQuota } from '@/components/dashboard/PlanQuotaContext'
 import { useVisitorChat } from '@/components/chat/VisitorChatContext'
+import { useNewsUnread } from '@/components/news/useNewsUnread'
 
 export function DashboardSidebar() {
   const pathname = usePathname()
   const router = useRouter()
   const quota = usePlanQuota()
   const visitorChat = useVisitorChat()
+  const newsUnread = useNewsUnread()
 
   const [unreadCount, setUnreadCount] = useState(0)
 
@@ -106,6 +108,9 @@ export function DashboardSidebar() {
             </div>
           </div>
         )}
+        <NavItem href="/neuigkeiten" active={isActive('/neuigkeiten')} icon={<NewsIcon />} badge={newsUnread} badgeTone="accent" secondary>
+          Neuigkeiten
+        </NavItem>
         <NavItem href="/settings" active={isActive('/settings')} icon={<SettingsIcon />} secondary>
           Einstellungen
         </NavItem>
@@ -242,15 +247,19 @@ export function DashboardSidebar() {
 // ── Sub-components ────────────────────────────────────────────────────────────
 
 function NavItem({
-  href, active, icon, badge, secondary, children,
+  href, active, icon, badge, badgeTone = 'alert', secondary, children,
 }: {
   href: string
   active: boolean
   icon: React.ReactNode
   badge?: number
+  /** alert = rot (Anfragen/Chats), accent = lila (Neuigkeiten) */
+  badgeTone?: 'alert' | 'accent'
   secondary?: boolean
   children: React.ReactNode
 }) {
+  const badgeBg = badgeTone === 'accent' ? '#EDE9FE' : '#FEE2E2'
+  const badgeFg = badgeTone === 'accent' ? '#6D28D9' : '#DC2626'
   return (
     <Link
       href={href}
@@ -265,7 +274,7 @@ function NavItem({
       <span className="flex-1">{children}</span>
       {badge != null && badge > 0 && (
         <span className="min-w-[20px] h-5 px-1.5 rounded-full text-[11px] font-bold flex items-center justify-center"
-          style={{ background: active ? 'rgba(255,255,255,0.25)' : '#FEE2E2', color: active ? '#fff' : '#DC2626' }}>
+          style={{ background: active ? 'rgba(255,255,255,0.25)' : badgeBg, color: active ? '#fff' : badgeFg }}>
           {badge > 99 ? '99+' : badge}
         </span>
       )}
@@ -302,6 +311,14 @@ function PartnerIcon() {
     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
       <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/>
       <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>
+    </svg>
+  )
+}
+function NewsIcon() {
+  return (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/>
+      <path d="M19 17l.7 1.8 1.8.7-1.8.7L19 22l-.7-1.8-1.8-.7 1.8-.7z"/>
     </svg>
   )
 }

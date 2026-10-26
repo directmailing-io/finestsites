@@ -6,6 +6,7 @@ import { useState, useEffect } from 'react'
 import { signOut } from '@/lib/auth/client'
 import { usePlanQuota } from '@/components/dashboard/PlanQuotaContext'
 import { useVisitorChat } from '@/components/chat/VisitorChatContext'
+import { useNewsUnread } from '@/components/news/useNewsUnread'
 
 export function MobileNav() {
   const pathname = usePathname()
@@ -18,6 +19,7 @@ export function MobileNav() {
 
   // Hide on editor pages — must be after all hooks
   const isEditorPage = /^\/sites\/[^/]+\/edit/.test(pathname)
+  const newsUnread = useNewsUnread(!isEditorPage)
 
   useEffect(() => {
     if (isEditorPage) return
@@ -111,6 +113,23 @@ export function MobileNav() {
               </svg>
             </div>
           )}
+
+          <Link
+            href="/neuigkeiten"
+            className="flex items-center gap-4 px-4 py-4 rounded-2xl active:bg-gray-50"
+          >
+            <span style={{ color: '#6B7280' }}><DrawerNewsIcon /></span>
+            <span className="text-base font-medium text-gray-800 flex-1">Neuigkeiten</span>
+            {newsUnread > 0 && (
+              <span className="min-w-[22px] h-[22px] px-1.5 rounded-full text-[11px] font-bold flex items-center justify-center"
+                style={{ background: '#7C3AED', color: '#fff' }}>
+                {newsUnread > 99 ? '99+' : newsUnread}
+              </span>
+            )}
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#D1D5DB" strokeWidth="2.5">
+              <path d="M9 18l6-6-6-6"/>
+            </svg>
+          </Link>
 
           <Link
             href="/settings"
@@ -228,7 +247,13 @@ export function MobileNav() {
           onClick={() => setShowMore(s => !s)}
           className="flex-1 flex flex-col items-center justify-center gap-0.5 active:opacity-60 transition-opacity"
         >
-          <TabMoreIcon active={showMore} />
+          <span className="relative">
+            <TabMoreIcon active={showMore} />
+            {newsUnread > 0 && (
+              /* ungelesene Neuigkeiten: lila Punkt am „Mehr“-Reiter */
+              <span className="absolute -top-0.5 -right-1.5 w-2 h-2 rounded-full" style={{ background: '#7C3AED', boxShadow: '0 0 0 2px rgba(250,250,250,0.94)' }} />
+            )}
+          </span>
           <span className="text-[10px] font-medium" style={{ color: showMore ? '#1a1a1a' : '#9CA3AF' }}>
             Mehr
           </span>
@@ -293,6 +318,15 @@ function DrawerPartnerIcon() {
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75">
       <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/>
       <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>
+    </svg>
+  )
+}
+
+function DrawerNewsIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/>
+      <path d="M19 17l.7 1.8 1.8.7-1.8.7L19 22l-.7-1.8-1.8-.7 1.8-.7z"/>
     </svg>
   )
 }

@@ -79,6 +79,11 @@ export function AdminMobileNav() {
               icon: <DrawerNewsletterIcon />,
             },
             {
+              href: '/admin/neuigkeiten',
+              label: 'Neuigkeiten',
+              icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><path d="M3 11v2a1 1 0 0 0 1 1h2l5 4V6L6 10H4a1 1 0 0 0-1 1z"/><path d="M11 6l8-3v18l-8-3"/><path d="M6 14v4a1 1 0 0 0 1 1h1"/></svg>,
+            },
+            {
               href: '/admin/besucher-chat',
               label: 'Besucher-Chat',
               icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><path d="M14 9a2 2 0 0 1-2 2H6l-4 4V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2z"/><path d="M18 9h2a2 2 0 0 1 2 2v11l-4-4h-6a2 2 0 0 1-2-2v-1"/></svg>,

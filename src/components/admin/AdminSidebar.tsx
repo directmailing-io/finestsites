@@ -121,6 +121,17 @@ const navItems = [
     ),
   },
   {
+    href: '/admin/neuigkeiten',
+    label: 'Neuigkeiten',
+    icon: (_active: boolean) => (
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M3 11v2a1 1 0 0 0 1 1h2l5 4V6L6 10H4a1 1 0 0 0-1 1z"/>
+        <path d="M11 6l8-3v18l-8-3"/>
+        <path d="M6 14v4a1 1 0 0 0 1 1h1"/>
+      </svg>
+    ),
+  },
+  {
     href: '/admin/support',
     label: 'Support',
     icon: (_active: boolean) => (
