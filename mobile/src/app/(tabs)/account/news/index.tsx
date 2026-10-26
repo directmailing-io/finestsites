@@ -1,5 +1,5 @@
 import { Stack, useRouter } from 'expo-router';
-import { Sparkles } from 'lucide-react-native';
+import { Megaphone } from 'lucide-react-native';
 import { StyleSheet, View } from 'react-native';
 
 import { useNews } from '@/api/queries';
@@ -30,7 +30,7 @@ export default function NewsListScreen() {
           <Skeleton height={118} radius={radius.card} />
         </View>
       ) : items.length === 0 ? (
-        <EmptyState icon={Sparkles} title="Noch keine Neuigkeiten" text="Neue Funktionen und Aktionen von FinestSites erscheinen hier." />
+        <EmptyState icon={Megaphone} title="Noch keine Neuigkeiten" text="Neue Funktionen und Aktionen von FinestSites erscheinen hier." />
       ) : (
         <View style={styles.list}>
           <Text variant="callout" style={styles.lead}>

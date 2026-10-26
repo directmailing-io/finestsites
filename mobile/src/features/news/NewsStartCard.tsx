@@ -1,6 +1,6 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
-import { Sparkles, X } from 'lucide-react-native';
+import { Megaphone, X } from 'lucide-react-native';
 import { Pressable, StyleSheet, View } from 'react-native';
 import Animated, { FadeIn, FadeOut, LinearTransition } from 'react-native-reanimated';
 
@@ -38,7 +38,7 @@ export function NewsStartCard({ card }: { card: NewsCard }) {
         accessibilityLabel={`Neu bei FinestSites: ${card.title}. ${card.summary} Mehr erfahren`}
         style={({ pressed }) => [styles.card, pressed && styles.pressed]}>
         <View style={styles.kicker}>
-          <Sparkles size={13} color={colors.accent} strokeWidth={2.5} />
+          <Megaphone size={13} color={colors.accent} strokeWidth={2.5} />
           <Text variant="overline" color={colors.accent}>
             Neu bei FinestSites
           </Text>

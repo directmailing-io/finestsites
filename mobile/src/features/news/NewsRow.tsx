@@ -1,4 +1,4 @@
-import { ChevronRight, Sparkles } from 'lucide-react-native';
+import { ChevronRight, Megaphone } from 'lucide-react-native';
 import { memo } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 
@@ -18,7 +18,7 @@ export const NewsRow = memo(function NewsRow({ item, onPress }: { item: NewsItem
       accessibilityLabel={`${unread ? 'Ungelesen. ' : ''}${item.title}, ${date}. ${item.summary}`}
       style={({ pressed }) => [styles.card, unread && styles.cardUnread, pressed && styles.pressed]}>
       <View style={[styles.icon, unread && styles.iconUnread]}>
-        <Sparkles size={18} color={unread ? colors.accent : colors.secondary} strokeWidth={2} />
+        <Megaphone size={18} color={unread ? colors.accent : colors.secondary} strokeWidth={2} />
       </View>
       <View style={styles.content}>
         <View style={styles.top}>

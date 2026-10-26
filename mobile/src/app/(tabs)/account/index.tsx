@@ -1,5 +1,5 @@
 import { useRouter, type Href } from 'expo-router';
-import { Bell, ChevronRight, Lock, LogOut, Settings, Sparkles, Users, type LucideIcon } from 'lucide-react-native';
+import { Bell, ChevronRight, Lock, LogOut, Settings, Megaphone, Users, type LucideIcon } from 'lucide-react-native';
 import { Alert, Pressable, StyleSheet, View } from 'react-native';
 
 import { useConfig, useDeletionStatus, useMe, useOverview } from '@/api/queries';
@@ -58,7 +58,7 @@ export default function MoreScreen() {
           </View>
         )}
         <Row icon={Settings} label="Einstellungen" href="/account/settings" />
-        <Row icon={Sparkles} label="Neuigkeiten" href="/account/news" badge={unreadNews} tone="accent" />
+        <Row icon={Megaphone} label="Neuigkeiten" href="/account/news" badge={unreadNews} tone="accent" />
         <Row icon={Bell} label="Mitteilungen" href="/account/messages" badge={unreadNotifications} />
 
         <View style={styles.divider} />

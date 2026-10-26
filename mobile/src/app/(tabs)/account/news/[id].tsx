@@ -10,7 +10,7 @@ import type { NewsAction, NewsList, Overview } from '@/api/types';
 import { EmptyState, LoadError, Screen, Skeleton } from '@/components/ui';
 import { NewsDetailCard } from '@/features/news/NewsDetailCard';
 import { radius } from '@/theme/tokens';
-import { Sparkles } from 'lucide-react-native';
+import { Megaphone } from 'lucide-react-native';
 
 /**
  * Eine Neuigkeit (Ziel der Push-Mitteilung finestsites://news/<id>). Beim Öffnen wird sie als
@@ -54,7 +54,7 @@ export default function NewsDetailScreen() {
       {q.data ? (
         <NewsDetailCard item={q.data} onLater={back} />
       ) : gone ? (
-        <EmptyState icon={Sparkles} title="Diese Neuigkeit gibt es nicht mehr" text="Alle aktuellen Neuigkeiten findest du in der Liste." actionTitle="Zu den Neuigkeiten" onAction={back} />
+        <EmptyState icon={Megaphone} title="Diese Neuigkeit gibt es nicht mehr" text="Alle aktuellen Neuigkeiten findest du in der Liste." actionTitle="Zu den Neuigkeiten" onAction={back} />
       ) : q.isError ? (
         <LoadError onRetry={() => void q.refetch()} />
       ) : (
