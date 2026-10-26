@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Neuigkeiten per Push – Konzept</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#111827;--body:#374151;--sec:#64748B;--ter:#94A3B8;--line:#E5E7EB;--card:#fff;--bg:#FAFAFA;--soft:#F3F4F6;--accent:#7C3AED;--accent-soft:#F5F0FB;--accent-border:#E4D7F5;--ok:#15803D;--ok-bg:#F0FDF4;--warn:#C2410C;--warn-bg:#FFF7ED;--you:#1D4ED8;--me:#6D28D9}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--body);font-family:Geist,-apple-system,system-ui,sans-serif;font-size:15px;line-height:1.55}
+.wrap{max-width:1180px;margin:0 auto;padding:28px 16px 120px}
+h1{font-size:28px;letter-spacing:-.6px;color:var(--ink);margin:0 0 6px}
+h2{font-size:21px;letter-spacing:-.3px;color:var(--ink);margin:40px 0 10px;display:flex;align-items:center;gap:10px}
+h3{font-size:16px;color:var(--ink);margin:0 0 8px}
+.n{display:inline-flex;width:28px;height:28px;border-radius:999px;background:var(--ink);color:#fff;align-items:center;justify-content:center;font-size:13px;font-weight:700}
+.sub{color:var(--sec);margin:0 0 18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media (max-width:900px){.grid2,.grid3{grid-template-columns:1fr}}
+.pill{display:inline-block;font-size:11px;font-weight:700;padding:2px 9px;border-radius:999px;letter-spacing:.02em}
+.pill.rec{background:var(--ok-bg);color:var(--ok)}.pill.alt{background:var(--soft);color:var(--sec)}.pill.you{background:#EFF6FF;color:var(--you)}.pill.warn{background:var(--warn-bg);color:var(--warn)}
+.note{background:var(--accent-soft);border:1px solid var(--accent-border);border-radius:12px;padding:12px 14px;font-size:14px}
+.good{background:var(--ok-bg);border:1px solid #BBF7D0;border-radius:12px;padding:12px 14px;font-size:14px}
+.table{width:100%;border-collapse:collapse;font-size:14px}.table th,.table td{text-align:left;padding:9px 8px;border-bottom:1px solid var(--line);vertical-align:top}.table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--sec);font-weight:600}
+code{background:var(--soft);border-radius:6px;padding:1px 6px;font-size:13px}
+.small{font-size:13px;color:var(--sec)}
+/* ─ Geräte ─ */
+.devices{display:flex;flex-wrap:wrap;gap:22px;align-items:flex-start;justify-content:center}
+.phone{width:300px;height:620px;border-radius:44px;background:#111;padding:10px;box-shadow:0 20px 50px rgba(0,0,0,.18);flex:none;position:relative}
+.phone .scr{width:100%;height:100%;border-radius:36px;overflow:hidden;background:#FAFAFA;position:relative;font-size:12.5px}
+.island{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:92px;height:26px;border-radius:999px;background:#000;z-index:5}
+.sb{display:flex;justify-content:space-between;padding:14px 22px 0;font-weight:600;color:#111;font-size:12px}
+.cap{text-align:center;font-size:13px;color:var(--sec);margin-top:10px;width:300px}
+/* Sperrbildschirm */
+.lock{background:linear-gradient(180deg,#2b1a5e 0%,#5b3bb0 45%,#b48be6 100%);height:100%;color:#fff}
+.lock .time{text-align:center;margin-top:62px;font-size:64px;font-weight:600;letter-spacing:-2px;line-height:1}
+.lock .date{text-align:center;font-size:14px;margin-top:2px;opacity:.9}
+.notif{margin:150px 10px 0;background:rgba(255,255,255,.82);backdrop-filter:blur(20px);border-radius:20px;padding:10px 12px;color:#111;display:flex;gap:10px}
+.notif .ic{width:36px;height:36px;border-radius:9px;background:#fff;display:flex;align-items:center;justify-content:center;flex:none;border:1px solid #eee}
+.notif .t{font-weight:600;font-size:12.5px;display:flex;justify-content:space-between}.notif .t span{font-weight:400;color:#555;font-size:11px}
+.notif .b{font-size:12.5px;line-height:1.35;color:#222;margin-top:1px}
+/* App-Screens */
+.app{padding:52px 16px 0;height:100%}
+.app h1{font-size:22px;margin:0 0 4px;letter-spacing:-.4px}
+.app .lead{font-size:12.5px;color:var(--sec);margin:0 0 12px}
+.row{display:flex;align-items:center;gap:12px;padding:13px 2px;border-bottom:1px solid #F1F5F9;color:var(--ink);font-size:14px}
+.row:last-child{border-bottom:0}.row .chev{margin-left:auto;color:#CBD5E1}.badge{background:#DC2626;color:#fff;border-radius:999px;font-size:10px;font-weight:700;padding:2px 6px;margin-left:auto}
+.row .chev.b{margin-left:6px}
+.white{background:#fff;border:1px solid #E2E8F0;border-radius:20px;padding:4px 14px;box-shadow:0 4px 20px rgba(0,0,0,.05)}
+.tabbar{position:absolute;left:14px;right:14px;bottom:12px;height:58px;border-radius:999px;background:rgba(255,255,255,.95);border:1px solid #eee;display:flex;align-items:center;justify-content:space-around;font-size:9.5px;color:#111}
+.tabbar div{text-align:center}.tabbar i{display:block;width:20px;height:16px;margin:0 auto 2px;border:2px solid #111;border-radius:5px}
+.tabbar .on{background:#EEE;border-radius:999px;padding:6px 10px}
+.newscard{background:#fff;border:1px solid #E2E8F0;border-radius:20px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,.05)}
+.newscard .hero{height:96px;background:linear-gradient(135deg,#7C3AED,#C4B5FD);display:flex;align-items:flex-end;padding:10px 14px;color:#fff;font-weight:700;font-size:13px}
+.newscard .in{padding:12px 14px}
+.kicker{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+.btn{display:block;text-align:center;background:#111827;color:#fff;border-radius:16px;padding:12px;font-weight:600;font-size:14px;margin-top:12px}
+.btn.soft{background:#F1F5F9;color:#111827}
+.toggle{width:40px;height:24px;border-radius:999px;background:#34C759;margin-left:auto;position:relative;flex:none}.toggle:after{content:"";position:absolute;top:2px;right:2px;width:20px;height:20px;border-radius:999px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.3)}
+.toggle.off{background:#E5E7EB}.toggle.off:after{right:auto;left:2px}
+.startnews{background:var(--accent-soft);border:1px solid var(--accent-border);border-radius:16px;padding:12px 14px;margin:0 0 14px;position:relative}
+.startnews .x{position:absolute;right:10px;top:8px;color:var(--ter)}
+/* Admin */
+.admin{background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.admin .top{padding:16px 20px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}
+.admin .top b{font-size:18px;color:var(--ink)}
+.admin .cols{display:grid;grid-template-columns:1.1fr .9fr}
+@media (max-width:900px){.admin .cols{grid-template-columns:1fr}}
+.form{padding:18px 20px;border-right:1px solid var(--line)}
+.f{margin-bottom:14px}.f label{display:block;font-size:12px;font-weight:600;color:var(--sec);margin-bottom:5px;display:flex;justify-content:space-between}
+.f .in{border:1px solid var(--line);border-radius:10px;padding:9px 11px;font-size:14px;color:var(--ink);background:#fff;min-height:38px}
+.f .in.area{min-height:110px;white-space:pre-wrap;color:var(--body)}
+.cnt{font-weight:500}.cnt.ok{color:var(--ok)}.cnt.warn{color:var(--warn)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;font-size:13px}.seg span{padding:7px 12px;color:var(--sec)}.seg span.on{background:#111827;color:#fff}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}.actions .a{border-radius:12px;padding:10px 14px;font-weight:600;font-size:14px}.a.primary{background:#111827;color:#fff}.a.ghost{background:var(--soft);color:var(--ink)}
+.prev{padding:18px 20px;background:#F8FAFC}
+.prev h4{margin:0 0 10px;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--sec)}
+.mini{width:100%;max-width:330px;margin:0 auto 18px}
+.mini .ios{background:linear-gradient(180deg,#3b2a7a,#8b6bd1);border-radius:22px;padding:14px 10px}
+.mini .and{background:#1f1f1f;border-radius:16px;padding:10px 12px;color:#eee;font-size:12.5px}
+.and .h{display:flex;gap:6px;align-items:center;font-size:11px;color:#bbb;margin-bottom:3px}.and .h i{width:12px;height:12px;border-radius:3px;background:#7C3AED;display:inline-block}
+.and b{display:block;color:#fff;font-size:13px}
+.deliv{font-size:13px;color:var(--sec);margin-top:4px}
+.flow{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;counter-reset:s}
+@media (max-width:900px){.flow{grid-template-columns:1fr 1fr}}
+.flow div{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px;font-size:13.5px}
+.flow div:before{counter-increment:s;content:counter(s);display:inline-flex;width:22px;height:22px;border-radius:999px;background:var(--accent);color:#fff;font-size:12px;font-weight:700;align-items:center;justify-content:center;margin-bottom:6px}
+.dec{border-left:3px solid var(--accent);padding:8px 14px;background:#fff;border-radius:0 12px 12px 0;margin-bottom:10px}
+.dec b{color:var(--ink)}
+</style>
+</head>
+<body><div class="wrap">
+
+<h1>Neuigkeiten per Push: Konzept zum Entscheiden</h1>
+<p class="sub">Stand 26.10.2026. Du schreibst eine Neuigkeit im Admin, alle App-Nutzer bekommen eine Mitteilung, ein Tipp darauf öffnet die Neuigkeit in der App. Im Web erscheint dieselbe Neuigkeit im Dashboard. Alle Bilder unten sind im echten Stil von App und Admin gebaut, aber noch Entwürfe.</p>
+
+<div class="good"><b>Kurzfassung meiner Empfehlung:</b> Eigener Bereich „Neuigkeiten“ (Variante A), erreichbar unter „Mehr“ und als Karte auf dem Startbildschirm; Push-Titel bis 40 Zeichen, Push-Text bis 110 Zeichen, der eigentliche Inhalt ist in der Neuigkeit beliebig lang; Schalter „Neuigkeiten von FinestSites“ standardmäßig an; Versand nur aus dem Admin mit Vorschau, Testversand an dich und deiner Freigabe-Datei wie bei Mails.</div>
+
+<h2><span class="n">1</span>So läuft es ab</h2>
+<div class="flow">
+  <div><b>Du schreibst</b> im Admin eine Neuigkeit: Titel, Push-Text, Inhalt, optional ein Knopf mit Link. Live-Vorschau daneben.</div>
+  <div><b>Testversand</b> an dein iPhone. Erst wenn es gut aussieht: „An alle senden“ (Sperre wie bei Mails, Freigabe-Datei).</div>
+  <div><b>Push</b> an alle App-Nutzer, die Neuigkeiten nicht abgeschaltet haben. Ruhezeiten werden eingehalten (nachts erst um 8 Uhr).</div>
+  <div><b>Tipp auf die Mitteilung</b> öffnet die App direkt auf der Neuigkeit. Knopf darin führt z. B. zum Editor, zum Partnerbereich oder auf eine Webseite.</div>
+  <div><b>Web</b>: dieselbe Neuigkeit als Karte im Dashboard und in der Liste „Neuigkeiten“. Wer die App nicht hat, sieht sie dort.</div>
+</div>
+
+<h2><span class="n">2</span>Was der Nutzer sieht</h2>
+<div class="devices">
+
+  <div><div class="phone"><div class="island"></div><div class="scr"><div class="lock">
+    <div class="time">9:41</div><div class="date">Dienstag, 4. November</div>
+    <div class="notif"><div class="ic"><svg viewBox="0 0 68.71 126" width="12" height="22"><path fill="#1a1a1a" d="M18.33,126a18.31,18.31,0,0,1-9.26-2.58c-6.17-3.73-9.36-10.86-9-17.94C.87,85.92,14.13,77.23,28.63,71.84c-.06-2.72-.13-5.61-.21-8.9A59.28,59.28,0,0,1,1,64.07L3.75,50.56a46.28,46.28,0,0,0,24.32-2c-.07-3.32-.14-6.67-.19-10,0-1.3-.07-2.62-.12-4-.23-6.6-.49-14.08,2-21.06C32.77,5,40.25-.32,48.8,0S64.16,6.18,66.48,14.88c2.45,9.17-1,17.83-4.32,23.48a52.69,52.69,0,0,1-20.09,19c.09,3.38.17,6.76.26,10.14a88,88,0,0,0,14.31-5.26q2.56-1.24,5-2.69,2.59,4.47,5.21,8.9l1.76,3a84.83,84.83,0,0,1-21.4,9c-1.57.45-3.09.89-4.56,1.33.09,3.45.19,7.11.32,11.45.31,10.12-2.9,22.3-11.48,28.5A22.28,22.28,0,0,1,18.33,126ZM29,86.59c-9.35,4.18-14.77,9.59-15.2,19.49-.1,2.34.65,4.53,1.88,5.42a4.81,4.81,0,0,0,3.19.72c8.6-.72,10.52-12.46,10.33-18.56C29.13,91.1,29.06,88.78,29,86.59Zm19.08-72.8c-1.87,0-4.2,1.14-5.34,4.37-1.6,4.51-1.39,10.33-1.19,16,.05,1.43.1,2.84.12,4.22,0,.91,0,1.83,0,2.74a36.14,36.14,0,0,0,8.55-9.72c1.63-2.77,4.17-8.12,2.89-12.91-.77-2.86-2.55-4.56-4.9-4.65Z"/></svg></div>
+      <div><div class="t">Neu: Besucher-Chat für alle <span>jetzt</span></div><div class="b">Besucher schreiben dir direkt auf deiner Webseite, du antwortest aus der App. Jetzt im Editor einschalten.</div></div></div>
+  </div></div></div><div class="cap"><b>1 · Sperrbildschirm iPhone.</b> Titel 27 Zeichen, Text 106 Zeichen: passt ohne Abschneiden.</div></div>
+
+  <div><div class="phone"><div class="island"></div><div class="scr">
+    <div class="sb"><span>9:41</span><span>●●● ᯤ ▮</span></div>
+    <div class="app" style="padding-top:12px">
+      <div style="display:flex;align-items:center;gap:8px;margin:0 0 12px;color:var(--ink);font-weight:600;font-size:14px"><span style="color:var(--accent)">‹ Zurück</span></div>
+      <div class="newscard">
+        <div class="hero">FinestSites</div>
+        <div class="in">
+          <div class="kicker">Neuigkeit · 4. November 2026</div>
+          <div style="font-size:18px;font-weight:700;color:var(--ink);letter-spacing:-.2px;margin:4px 0 8px;line-height:1.25">Neu: Besucher-Chat für alle</div>
+          <div style="font-size:13px;color:var(--body);line-height:1.5">Ab heute können Besucher dir direkt auf deiner Webseite schreiben. Du bekommst jede Nachricht als Mitteilung und antwortest hier in der App unter „Chats“.<br><br>So schaltest du ihn ein: Webseite bearbeiten → Sektionen → „Besucher-Chat“ → Speichern und veröffentlichen.<br><br>Tipp: Lege unter Einstellungen eine Ruhezeit fest, dann klingelt nachts nichts.</div>
+          <div class="btn">Jetzt im Editor einschalten</div>
+          <div class="btn soft">Später</div>
+        </div>
+      </div>
+    </div>
+    <div class="tabbar"><div><i></i>Webseite</div><div><i></i>Anfragen</div><div><i></i>Chats</div><div><i></i>Support</div><div class="on"><i style="border:0;letter-spacing:2px">•••</i>Mehr</div></div>
+  </div></div><div class="cap"><b>2 · Nach dem Tipp: die Neuigkeit.</b> Beliebig langer Text, ein Knopf mit Ziel (Editor, Partnerbereich, Webseite, Link).</div></div>
+
+  <div><div class="phone"><div class="island"></div><div class="scr">
+    <div class="sb"><span>9:41</span><span>●●● ᯤ ▮</span></div>
+    <div class="app" style="padding-top:22px">
+      <h1>Mehr</h1>
+      <div class="white" style="margin-top:14px">
+        <div class="row">👥&nbsp; Partnerbereich<span class="chev">›</span></div>
+        <div class="row">⚙️&nbsp; Einstellungen<span class="chev">›</span></div>
+        <div class="row">🔔&nbsp; Mitteilungen<span class="badge">3</span><span class="chev b">›</span></div>
+        <div class="row" style="background:var(--accent-soft);margin:0 -14px;padding-left:16px;padding-right:16px">✨&nbsp; <b>Neuigkeiten</b><span class="badge" style="background:var(--accent)">1</span><span class="chev b">›</span></div>
+        <div class="row" style="color:#DC2626;border-top:1px solid #F1F5F9">↪&nbsp; Abmelden</div>
+      </div>
+    </div>
+    <div class="tabbar"><div><i></i>Webseite</div><div><i></i>Anfragen</div><div><i></i>Chats</div><div><i></i>Support</div><div class="on"><i style="border:0;letter-spacing:2px">•••</i>Mehr</div></div>
+  </div></div><div class="cap"><b>3 · Variante A: eigener Eintrag „Neuigkeiten“</b> unter Mehr, mit Zähler für Ungelesenes. <span class="pill rec">Empfehlung</span></div></div>
+
+  <div><div class="phone"><div class="island"></div><div class="scr">
+    <div class="sb"><span>9:41</span><span>●●● ᯤ ▮</span></div>
+    <div class="app" style="padding-top:22px">
+      <h1>Guten Morgen, Sabine</h1>
+      <p class="lead">Hier findest du deine Webseiten.</p>
+      <div class="startnews"><span class="x">✕</span><div class="kicker">Neu bei FinestSites</div><div style="font-weight:700;color:var(--ink);font-size:14px;margin:2px 0 2px">Besucher-Chat für alle</div><div style="font-size:12.5px;color:var(--body)">Besucher schreiben dir direkt auf deiner Webseite. <b style="color:var(--accent)">Mehr erfahren ›</b></div></div>
+      <div style="background:var(--accent);color:#fff;border-radius:16px;padding:14px;text-align:center;font-weight:700;font-size:15px;box-shadow:0 8px 24px rgba(124,58,237,.35)">＋ Neue Webseite erstellen</div>
+      <div style="margin-top:18px;font-weight:700;color:var(--ink);font-size:17px">Online</div>
+      <div style="font-size:12.5px;color:var(--sec)">Diese Webseiten sind veröffentlicht und für alle sichtbar.</div>
+      <div style="margin-top:10px;height:150px;border-radius:20px;background:linear-gradient(135deg,#0f2a5a,#1f4e9c);border:1px solid #E2E8F0"></div>
+    </div>
+    <div class="tabbar"><div class="on"><i></i>Webseite</div><div><i></i>Anfragen</div><div><i></i>Chats</div><div><i></i>Support</div><div><i style="border:0;letter-spacing:2px">•••</i>Mehr</div></div>
+  </div></div><div class="cap"><b>4 · Startbildschirm:</b> die neueste Neuigkeit als Karte, wegwischbar. Wer die Mitteilung verpasst hat, sieht sie hier trotzdem.</div></div>
+
+  <div><div class="phone"><div class="island"></div><div class="scr">
+    <div class="sb"><span>9:41</span><span>●●● ᯤ ▮</span></div>
+    <div class="app" style="padding-top:12px">
+      <div style="display:flex;align-items:center;gap:8px;margin:0 0 12px;color:var(--ink);font-weight:600;font-size:14px"><span style="color:var(--accent)">‹ Einstellungen</span></div>
+      <h1 style="font-size:20px">Mitteilungen</h1>
+      <div class="small" style="margin:8px 0 6px;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--sec)">Mitteilungen bei</div>
+      <div class="white">
+        <div class="row">Neue Anfragen<span class="toggle"></span></div>
+        <div class="row">Besucher-Chat<span class="toggle"></span></div>
+        <div class="row">Antworten vom Support<span class="toggle"></span></div>
+        <div class="row">Konto und Zahlung<span class="toggle"></span></div>
+        <div class="row">Partnerprogramm<span class="toggle"></span></div>
+        <div class="row" style="background:var(--accent-soft);margin:0 -14px;padding-left:16px;padding-right:16px"><div><b>Neuigkeiten von FinestSites</b><div style="font-size:11px;color:var(--sec)">Neue Funktionen und Aktionen, höchstens einmal pro Woche</div></div><span class="toggle"></span></div>
+      </div>
+      <div class="small" style="margin:8px 0 6px;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--sec)">Ruhezeit</div>
+      <div class="white"><div class="row">Nachts stumm (21–8 Uhr)<span class="toggle"></span></div></div>
+    </div>
+  </div></div><div class="cap"><b>5 · Schalter in den Mitteilungs-Einstellungen.</b> Standardmäßig an, jederzeit aus. Das ist die Einwilligung, die Apple für solche Mitteilungen verlangt.</div></div>
+
+</div>
+
+<h2><span class="n">3</span>Was du im Admin siehst</h2>
+<div class="admin">
+  <div class="top"><div><b>Neuigkeit senden</b><div class="small">Admin → Neuigkeiten → Neu</div></div><span class="pill warn">Entwurf</span></div>
+  <div class="cols">
+    <div class="form">
+      <div class="f"><label>Titel der Mitteilung <span class="cnt ok">27 / 40</span></label><div class="in">Neu: Besucher-Chat für alle</div></div>
+      <div class="f"><label>Text der Mitteilung <span class="cnt ok">106 / 110</span></label><div class="in area" style="min-height:64px">Besucher schreiben dir direkt auf deiner Webseite, du antwortest aus der App. Jetzt im Editor einschalten.</div></div>
+      <div class="f"><label>Inhalt der Neuigkeit (in der App und im Web) <span class="cnt">ohne Grenze</span></label><div class="in area">Ab heute können Besucher dir direkt auf deiner Webseite schreiben. Du bekommst jede Nachricht als Mitteilung und antwortest in der App unter „Chats“.
+
+So schaltest du ihn ein: Webseite bearbeiten → Sektionen → „Besucher-Chat“ → Speichern und veröffentlichen.</div></div>
+      <div class="grid2">
+        <div class="f"><label>Knopf (optional)</label><div class="in">Jetzt im Editor einschalten</div></div>
+        <div class="f"><label>Ziel des Knopfs</label><div class="in">Meine Webseiten (Editor)</div><div class="small" style="margin-top:4px">Auswahl: Webseiten · Anfragen · Chats · Partnerbereich · Einstellungen · eigener Link</div></div>
+      </div>
+      <div class="f"><label>Empfänger</label><div class="seg"><span class="on">Alle Nutzer</span><span>Nur App-Nutzer</span><span>Nur Tarif …</span><span>Nur Test (ich)</span></div><div class="small" style="margin-top:6px">Push geht nur an Geräte mit eingeschalteten Neuigkeiten. Alle anderen sehen die Neuigkeit im Web und in der App-Liste.</div></div>
+      <div class="actions"><span class="a ghost">Entwurf speichern</span><span class="a ghost">Test an mein iPhone</span><span class="a primary">An alle senden …</span></div>
+      <div class="small" style="margin-top:10px">„An alle senden“ fragt nach Bestätigung und ist wie der Mailversand gesperrt, solange keine Freigabe-Datei von dir vorliegt. Höchstens eine Neuigkeit pro Tag.</div>
+    </div>
+    <div class="prev">
+      <h4>Live-Vorschau</h4>
+      <div class="mini"><div class="ios"><div class="notif" style="margin:0"><div class="ic"><svg viewBox="0 0 68.71 126" width="12" height="22"><path fill="#1a1a1a" d="M18.33,126a18.31,18.31,0,0,1-9.26-2.58c-6.17-3.73-9.36-10.86-9-17.94C.87,85.92,14.13,77.23,28.63,71.84c-.06-2.72-.13-5.61-.21-8.9A59.28,59.28,0,0,1,1,64.07L3.75,50.56a46.28,46.28,0,0,0,24.32-2c-.07-3.32-.14-6.67-.19-10,0-1.3-.07-2.62-.12-4-.23-6.6-.49-14.08,2-21.06C32.77,5,40.25-.32,48.8,0S64.16,6.18,66.48,14.88c2.45,9.17-1,17.83-4.32,23.48a52.69,52.69,0,0,1-20.09,19c.09,3.38.17,6.76.26,10.14a88,88,0,0,0,14.31-5.26q2.56-1.24,5-2.69,2.59,4.47,5.21,8.9l1.76,3a84.83,84.83,0,0,1-21.4,9c-1.57.45-3.09.89-4.56,1.33.09,3.45.19,7.11.32,11.45.31,10.12-2.9,22.3-11.48,28.5A22.28,22.28,0,0,1,18.33,126ZM29,86.59c-9.35,4.18-14.77,9.59-15.2,19.49-.1,2.34.65,4.53,1.88,5.42a4.81,4.81,0,0,0,3.19.72c8.6-.72,10.52-12.46,10.33-18.56C29.13,91.1,29.06,88.78,29,86.59Zm19.08-72.8c-1.87,0-4.2,1.14-5.34,4.37-1.6,4.51-1.39,10.33-1.19,16,.05,1.43.1,2.84.12,4.22,0,.91,0,1.83,0,2.74a36.14,36.14,0,0,0,8.55-9.72c1.63-2.77,4.17-8.12,2.89-12.91-.77-2.86-2.55-4.56-4.9-4.65Z"/></svg></div><div><div class="t">Neu: Besucher-Chat für alle <span>jetzt</span></div><div class="b">Besucher schreiben dir direkt auf deiner Webseite, du antwortest aus der App. Jetzt im Editor einschalten.</div></div></div></div><div class="deliv">iPhone, Sperrbildschirm · vollständig sichtbar</div></div>
+      <div class="mini"><div class="and"><div class="h"><i></i>FinestSites · jetzt</div><b>Neu: Besucher-Chat für alle</b>Besucher schreiben dir direkt auf deiner Webseite, du antwortest aus der App. Jetzt im Editor einschalten.</div><div class="deliv">Android, aufgeklappt · zugeklappt zeigt Android nur die erste Zeile</div></div>
+      <h4 style="margin-top:6px">Reichweite jetzt</h4>
+      <table class="table"><tr><td>App-Nutzer mit Neuigkeiten an</td><td style="text-align:right"><b>1</b></td></tr><tr><td>Nutzer gesamt (Web-Postfach)</td><td style="text-align:right"><b>221</b></td></tr><tr><td>Zustellung</td><td style="text-align:right">sofort, außer Ruhezeit</td></tr></table>
+      <h4 style="margin-top:14px">Danach</h4>
+      <div class="small">Zugestellt · geöffnet · Knopf getippt, je Neuigkeit, wie bei den Mails.</div>
+    </div>
+  </div>
+</div>
+
+<h2><span class="n">4</span>Zeichen: was wirklich sichtbar ist</h2>
+<div class="card">
+  <table class="table">
+    <tr><th>Wo</th><th>Titel</th><th>Text</th><th>Quelle</th></tr>
+    <tr><td>iPhone, Sperrbildschirm</td><td>1 Zeile, etwa 40 Zeichen, danach „…“</td><td>4 Zeilen, etwa 178 Zeichen; Apple nennt keine offizielle Zahl, Berichte reichen bis 256</td><td>Apple-Forum, Push-Anbieter</td></tr>
+    <tr><td>Android, zugeklappt</td><td>etwa 65 Zeichen</td><td>1 Zeile, etwa 40–50 Zeichen</td><td>Push-Anbieter, je nach Hersteller</td></tr>
+    <tr><td>Android, aufgeklappt</td><td>etwa 65 Zeichen</td><td>etwa 240 Zeichen</td><td>Push-Anbieter</td></tr>
+    <tr><td>Technische Grenze</td><td colspan="2">4 KB für die ganze Mitteilung (Apple und Expo), also kein praktisches Limit</td><td>Apple, Expo</td></tr>
+  </table>
+  <div class="note" style="margin-top:12px"><b>Vorgabe fürs Admin-Formular:</b> Titel bis <b>40</b> Zeichen (Zähler wird ab 35 orange), Text bis <b>110</b> Zeichen (orange ab 100, harte Grenze 170). Damit ist alles auf iPhone und Android aufgeklappt vollständig lesbar. Alles, was länger sein soll, gehört in den Inhalt der Neuigkeit, nicht in die Mitteilung. Keine Preise, keine Tarifnamen in Mitteilungen (Apple sieht den Sperrbildschirm als Teil der App).</div>
+  <p class="small" style="margin:10px 0 0">Quellen: <a href="https://developer.apple.com/forums/thread/709671">Apple Developer Forum zur Textlänge</a>, <a href="https://help.pushwoosh.com/hc/en-us/articles/360000440366-Limit-of-characters-that-can-be-sent-through-a-push-notification">Pushwoosh</a>, <a href="https://clevertap.com/blog/what-are-push-notification-character-limits/">CleverTap</a>, <a href="https://gravitec.net/blog/push-notification-character-limit-for-ios-android-and-web/">Gravitec</a>.</p>
+</div>
+
+<h2><span class="n">5</span>Deine Entscheidungen</h2>
+<div class="dec"><b>A · Wo wohnen die Neuigkeiten in der App?</b><br>
+<span class="pill rec">Empfehlung</span> <b>Eigener Bereich „Neuigkeiten“</b> unter Mehr (Bild 3) plus Karte auf dem Startbildschirm (Bild 4). Vorteil: sauber getrennt von Anfragen- und Support-Mitteilungen, wirkt wie ein kleines Magazin, bleibt nachlesbar.<br>
+<span class="pill alt">Alternative B</span> Nur in der bestehenden Liste „Mitteilungen“ als Eintrag mit Markierung „Neu“. Weniger Aufwand, aber geht zwischen Anfragen unter.</div>
+<div class="dec"><b>B · Schalter standardmäßig an oder aus?</b><br>
+<span class="pill rec">Empfehlung</span> <b>An</b>, mit klarer Beschriftung „Neue Funktionen und Aktionen, höchstens einmal pro Woche“ und jederzeit abschaltbar (Bild 5). Apple akzeptiert das, solange der Schalter sichtbar ist und die Mitteilungen keine reine Werbung sind. Wenn du reine Rabattaktionen pushen willst, müsste der Schalter standardmäßig aus sein; dann erreichen wir fast niemanden.</div>
+<div class="dec"><b>C · Web gleichziehen?</b><br>
+<span class="pill rec">Empfehlung</span> <b>Ja</b>: Karte oben im Dashboard und Seite „Neuigkeiten“ in der Seitenleiste, gleiche Inhalte, gleiches Lesen-Datum. So gilt die Gleichlauf-Regel Web + App auch hier und die 220 Nutzer ohne App sehen die Neuigkeit ebenfalls.</div>
+<div class="dec"><b>D · Was darf der Knopf?</b><br>
+<span class="pill rec">Empfehlung</span> Feste Ziele in der App (Webseiten, Anfragen, Chats, Partnerbereich, Einstellungen) plus freie Links (öffnen im Browser, z. B. Webinar). Keine Tarif- oder Kaufseiten als Ziel aus der App heraus (Apple-Regel 3.1.3).</div>
+<div class="dec"><b>E · Build 9 jetzt oder nach der Freigabe?</b><br>
+Die App-Teile (Bereich Neuigkeiten, Schalter, Tipp-Weiterleitung) kommen nur mit einem neuen Build. Meine Empfehlung steht in der Nachricht: Build 8 durchlaufen lassen, Build 9 mit Neuigkeiten und Over-the-Air-Updates direkt danach einreichen.</div>
+
+<h2><span class="n">6</span>Was ich dafür baue (nach deinem Go)</h2>
+<div class="grid2">
+  <div class="card"><h3>Server + Web <span class="pill">ca. 1 Tag</span></h3>
+    <ul style="margin:0;padding-left:18px;font-size:14px"><li>Tabelle <code>news_posts</code> (Titel, Push-Titel, Push-Text, Inhalt, Knopf, Ziel, Empfänger, gesendet am, Kennzahlen).</li><li>Admin-Seite „Neuigkeiten“: Liste, Formular mit Live-Vorschau und Zählern, Testversand, Freigabe-Sperre, Statistik je Neuigkeit.</li><li>Versand über die bestehende Push-Warteschlange (Kategorie <code>news</code>, Ruhezeiten, höchstens eine pro Tag, Sammelschlüssel).</li><li>Web: Karte im Dashboard, Seite „Neuigkeiten“, Gelesen-Status.</li><li>API für die App: Liste, Detail, gelesen; Schalter in den Einstellungen.</li></ul></div>
+  <div class="card"><h3>App (Build 9) <span class="pill">ca. ½ Tag</span></h3>
+    <ul style="margin:0;padding-left:18px;font-size:14px"><li>Bereich „Neuigkeiten“ unter Mehr mit Zähler, Detailansicht mit Knopf.</li><li>Karte auf dem Startbildschirm, wegwischbar.</li><li>Schalter „Neuigkeiten von FinestSites“ in den Mitteilungs-Einstellungen.</li><li>Tipp auf die Mitteilung öffnet die Neuigkeit (Deep-Link <code>finestsites://news/&lt;id&gt;</code>).</li><li>Dazu Over-the-Air-Updates (EAS Update), damit spätere Oberflächen-Änderungen ohne Store-Prüfung ankommen.</li></ul></div>
+</div>
+
+</div></body></html>
