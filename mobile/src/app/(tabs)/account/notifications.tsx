@@ -143,7 +143,7 @@ export default function NotificationSettingsScreen() {
             />
             <SwitchRow
               title="Neuigkeiten von FinestSites"
-              subtitle="Neue Funktionen und Aktionen, höchstens einmal am Tag"
+              subtitle="Neue Funktionen und Aktionen von FinestSites"
               value={prefs.news}
               onValueChange={v => update({ ...prefs, news: v })}
             />

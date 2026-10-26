@@ -10,18 +10,20 @@ import type { NewsCard, Overview } from '@/api/types';
 import { Text } from '@/components/ui';
 import { colors, fonts } from '@/theme/tokens';
 
-import { NEWS_UI, newsCardShadow, NewsAccentLine, newsPalette } from './NewsAccent';
+import { NEWS_UI, NewsEdge, newsSheetInner, newsSheetOuter } from './NewsAccent';
+
+const CARD_RADIUS = 20;
 
 /**
  * Startkarte: die neueste Neuigkeit, die weder gelesen noch weggewischt ist – über
- * „Neue Webseite erstellen“. Weiße Karte ohne Bild: links ein 4 pt schmaler Pastell-Balken in der
- * Farbe der Neuigkeit, Kicker „Neu bei FinestSites“ in ihrer Tinte, Titel, eine Zeile Kurztext,
- * „Mehr erfahren ›“. Tipp → Detail, Kreuz → weggewischt (gilt auch für das Web-Dashboard).
+ * „Neue Webseite erstellen“. Weiße Karte ohne Bild: Kicker „Neu bei FinestSites“ in Grau, Titel,
+ * eine Zeile Kurztext, „Mehr erfahren ›“. Einziges Gestaltungselement ist die Pastell-Unterkante
+ * der Neuigkeit (volle Breite, folgt den Rundungen). Tipp → Detail, Kreuz → weggewischt (gilt auch
+ * für das Web-Dashboard).
  */
 export function NewsStartCard({ card }: { card: NewsCard }) {
   const router = useRouter();
   const qc = useQueryClient();
-  const p = newsPalette(card.id);
 
   const dismiss = () => {
     // Sofort aus der Übersicht nehmen (sonst käme die Karte bis zur nächsten Antwort kurz zurück)
@@ -41,9 +43,8 @@ export function NewsStartCard({ card }: { card: NewsCard }) {
         accessibilityRole="button"
         accessibilityLabel={`Neu bei FinestSites: ${card.title}. ${card.summary} Mehr erfahren`}
         style={({ pressed }) => [styles.card, pressed && styles.pressed]}>
-        <NewsAccentLine seed={card.id} vertical thickness={4} style={styles.bar} />
-        <View style={styles.content}>
-          <Text style={[styles.kicker, { color: p.ink }]}>Neu bei FinestSites</Text>
+        <View style={styles.sheet}>
+          <Text style={styles.kicker}>Neu bei FinestSites</Text>
           <Text style={styles.title} numberOfLines={2}>
             {card.title}
           </Text>
@@ -51,6 +52,7 @@ export function NewsStartCard({ card }: { card: NewsCard }) {
             {card.summary}
           </Text>
           <Text style={styles.more}>Mehr erfahren ›</Text>
+          <NewsEdge seed={card.id} />
         </View>
       </Pressable>
       <Pressable
@@ -66,21 +68,11 @@ export function NewsStartCard({ card }: { card: NewsCard }) {
 }
 
 const styles = StyleSheet.create({
-  card: {
-    backgroundColor: colors.white,
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: NEWS_UI.line,
-    paddingVertical: 16,
-    paddingLeft: 32,
-    paddingRight: 44,
-    ...newsCardShadow,
-  },
+  card: newsSheetOuter(CARD_RADIUS),
+  // rechts Platz für das Kreuz (28 pt + 8 pt Rand)
+  sheet: { ...newsSheetInner(CARD_RADIUS), paddingVertical: 16, paddingLeft: 18, paddingRight: 44, gap: 2 },
   pressed: { transform: [{ scale: 0.985 }], opacity: 0.96 },
-  // Schmaler Pastell-Balken innen am linken Rand, oben/unten 12 pt eingerückt
-  bar: { position: 'absolute', left: 16, top: 14, bottom: 14, alignSelf: 'auto' },
-  content: { gap: 2 },
-  kicker: { fontFamily: fonts.semibold, fontSize: 12, lineHeight: 16, marginBottom: 2 },
+  kicker: { fontFamily: fonts.semibold, fontSize: 12, lineHeight: 16, color: colors.mutedForeground, marginBottom: 2 },
   title: { fontFamily: fonts.semibold, fontSize: 15.5, lineHeight: 21, letterSpacing: -0.15, color: colors.ink },
   summary: { fontFamily: fonts.regular, fontSize: 14, lineHeight: 20, color: NEWS_UI.summary },
   more: { fontFamily: fonts.semibold, fontSize: 14, lineHeight: 20, color: colors.ink, marginTop: 4 },

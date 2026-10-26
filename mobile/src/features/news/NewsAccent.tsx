@@ -1,11 +1,11 @@
 import { useState } from 'react';
-import { Platform, StyleSheet, View, type StyleProp, type ViewStyle } from 'react-native';
+import { Platform, StyleSheet, View, type ViewStyle } from 'react-native';
 import Svg, { Defs, LinearGradient, Path, Rect, Stop } from 'react-native-svg';
 
 /**
  * Fünf Pastell-Verläufe für die Neuigkeiten (1:1 mit dem Web, src/components/news/news-ui.ts):
- * jede Neuigkeit bekommt eine Farbe – als feine Linie, nie als Fläche, Bild oder Symbol.
- * `tint` = helle Fläche (Pille „Neu“, Häkchen-Kreis), `ink` = lesbare Schriftfarbe desselben Tons.
+ * jede Neuigkeit bekommt eine Farbe – ausschließlich als Unterkante ihrer Karte, nie als Fläche,
+ * Bild oder Symbol. `tint` = helle Fläche der Pille „Neu“, `ink` bleibt für das Web reserviert.
  */
 export const NEWS_PALETTES = [
   { name: 'peach', from: '#F7C4B4', to: '#F6DFA9', tint: '#FDF3EF', ink: '#B45F4A' },
@@ -38,6 +38,19 @@ export const newsCardShadow: ViewStyle = Platform.select<ViewStyle>({
   default: { elevation: 3 },
 });
 
+/**
+ * Aufbau jeder Neuigkeiten-Karte in zwei Schichten, weil `overflow: 'hidden'` auf iOS den Schatten
+ * derselben View löscht: außen die Karte (weiß, Rahmen 1 pt, Radius, Schatten – ohne Innenabstand),
+ * innen die Fläche mit Inhalt, Innenabstand und der Pastell-Unterkante (gleicher Radius minus Rahmen,
+ * `overflow: 'hidden'` schneidet die Kante an den Ecken weich ab).
+ */
+export function newsSheetOuter(borderRadius: number): ViewStyle {
+  return { backgroundColor: '#FFFFFF', borderRadius, borderWidth: 1, borderColor: NEWS_UI.line, ...newsCardShadow };
+}
+export function newsSheetInner(borderRadius: number): ViewStyle {
+  return { borderRadius: Math.max(0, borderRadius - 1), overflow: 'hidden' };
+}
+
 /** Regenbogen des Leerzustands (Pfirsich → Aprikose → Minze → Himmel), oben links nach unten rechts. */
 const RAINBOW = [
   { offset: 0, color: '#F4B9AE' },
@@ -54,37 +67,24 @@ function useGradientId(prefix: string) {
 }
 
 /**
- * Die Pastell-Linie einer Neuigkeit: 3 pt hoch (oder 4 pt breit, `vertical`), beide Enden rund,
- * Zwei-Stopp-Verlauf von `from` nach `to`. Füllt die Breite/Höhe des Elternrahmens.
+ * Die Pastell-Unterkante einer Neuigkeit (wie NewsEdge im Web): 3 pt hoch, volle Breite, ohne eigene
+ * Rundung, Zwei-Stopp-Verlauf von `from` nach `to`. Liegt absolut am unteren Rand der inneren Fläche
+ * (newsSheetInner) – deren Rundung schneidet sie an den Ecken ab, sie wirkt wie ein farbiger Sockel,
+ * auf dem das weiße Blatt steht, nicht wie ein aufgelegter Strich.
  */
-export function NewsAccentLine({
-  seed,
-  thickness = 3,
-  vertical = false,
-  style,
-}: {
-  seed: string;
-  thickness?: number;
-  vertical?: boolean;
-  style?: StyleProp<ViewStyle>;
-}) {
-  const id = useGradientId('news-line');
+export function NewsEdge({ seed, height = 3 }: { seed: string; height?: number }) {
+  const id = useGradientId('news-edge');
   const p = newsPalette(seed);
-  const r = thickness / 2;
   return (
-    <View
-      style={[vertical ? { width: thickness, alignSelf: 'stretch' } : { height: thickness, alignSelf: 'stretch' }, style]}
-      pointerEvents="none"
-      accessibilityElementsHidden
-      importantForAccessibility="no-hide-descendants">
+    <View style={[styles.edge, { height }]} pointerEvents="none" accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
       <Svg width="100%" height="100%">
         <Defs>
-          <LinearGradient id={id} x1="0" y1="0" x2={vertical ? '0' : '1'} y2={vertical ? '1' : '0'}>
+          <LinearGradient id={id} x1="0" y1="0" x2="1" y2="0">
             <Stop offset="0" stopColor={p.from} />
             <Stop offset="1" stopColor={p.to} />
           </LinearGradient>
         </Defs>
-        <Rect x="0" y="0" width="100%" height="100%" rx={r} ry={r} fill={`url(#${id})`} />
+        <Rect x="0" y="0" width="100%" height="100%" fill={`url(#${id})`} />
       </Svg>
     </View>
   );
@@ -114,5 +114,6 @@ export function NewsGlyph({ height = 44 }: { height?: number }) {
 }
 
 const styles = StyleSheet.create({
+  edge: { position: 'absolute', left: 0, right: 0, bottom: 0 },
   glyph: { alignItems: 'center', justifyContent: 'center' },
 });
