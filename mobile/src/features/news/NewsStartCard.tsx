@@ -1,6 +1,6 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
-import { Megaphone, X } from 'lucide-react-native';
+import { X } from 'lucide-react-native';
 import { Pressable, StyleSheet, View } from 'react-native';
 import Animated, { FadeIn, FadeOut, LinearTransition } from 'react-native-reanimated';
 
@@ -8,12 +8,15 @@ import { dismissNews } from '@/api/endpoints';
 import { qk } from '@/api/queries';
 import type { NewsCard, Overview } from '@/api/types';
 import { Text } from '@/components/ui';
-import { colors, fonts, radius } from '@/theme/tokens';
+import { colors, fonts } from '@/theme/tokens';
+
+import { newsCardShadow, NewsGradient } from './NewsHero';
 
 /**
  * Startkarte (Konzept Bild 4): die neueste Neuigkeit, die weder gelesen noch weggewischt ist – über
- * „Neue Webseite erstellen“. Tipp → Detail, Kreuz → weggewischt (gilt auch für das Web-Dashboard).
- * Erscheint und verschwindet mit sanftem Ein-/Ausblenden; der Knopf darunter rückt weich nach.
+ * „Neue Webseite erstellen“. Schlanke „Tipp“-Karte: links die Verlauf-Kachel der Neuigkeit (ohne Symbol),
+ * Kicker „NEU BEI FINESTSITES“, Titel, eine Zeile Kurztext, „Mehr erfahren ›“. Tipp → Detail,
+ * Kreuz → weggewischt (gilt auch für das Web-Dashboard). Ein-/Ausblenden bleibt sanft.
  */
 export function NewsStartCard({ card }: { card: NewsCard }) {
   const router = useRouter();
@@ -37,29 +40,27 @@ export function NewsStartCard({ card }: { card: NewsCard }) {
         accessibilityRole="button"
         accessibilityLabel={`Neu bei FinestSites: ${card.title}. ${card.summary} Mehr erfahren`}
         style={({ pressed }) => [styles.card, pressed && styles.pressed]}>
-        <View style={styles.kicker}>
-          <Megaphone size={13} color={colors.accent} strokeWidth={2.5} />
-          <Text variant="overline" color={colors.accent}>
-            Neu bei FinestSites
-          </Text>
+        <View style={styles.tile} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
+          <NewsGradient seed={card.id} />
         </View>
-        <Text style={styles.title} numberOfLines={2}>
-          {card.title}
-        </Text>
-        <Text variant="callout" color={colors.body} style={styles.summary}>
-          {card.summary}
-          <Text variant="calloutStrong" color={colors.accent}>
-            {'  Mehr erfahren ›'}
+        <View style={styles.content}>
+          <Text style={styles.kicker}>NEU BEI FINESTSITES</Text>
+          <Text style={styles.title} numberOfLines={2}>
+            {card.title}
           </Text>
-        </Text>
+          <Text style={styles.summary} numberOfLines={1}>
+            {card.summary}
+          </Text>
+          <Text style={styles.more}>Mehr erfahren ›</Text>
+        </View>
       </Pressable>
       <Pressable
         onPress={dismiss}
         hitSlop={10}
         accessibilityRole="button"
         accessibilityLabel="Hinweis ausblenden"
-        style={({ pressed }) => [styles.close, pressed && { backgroundColor: colors.accentSoftBorder }]}>
-        <X size={15} color={colors.secondary} strokeWidth={2.25} />
+        style={({ pressed }) => [styles.close, pressed && { backgroundColor: colors.muted }]}>
+        <X size={14} color={colors.tertiary} strokeWidth={2.25} />
       </Pressable>
     </Animated.View>
   );
@@ -67,23 +68,27 @@ export function NewsStartCard({ card }: { card: NewsCard }) {
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: colors.accentSoft,
-    borderWidth: 1.5,
-    borderColor: colors.accentSoftBorder,
-    borderRadius: radius.input,
-    paddingHorizontal: 16,
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 14,
+    backgroundColor: colors.white,
+    borderRadius: 20,
+    paddingLeft: 14,
+    paddingRight: 40,
     paddingVertical: 14,
-    paddingRight: 44,
-    gap: 3,
+    ...newsCardShadow,
   },
-  pressed: { backgroundColor: colors.accentWash },
-  kicker: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 2 },
-  title: { fontFamily: fonts.bold, fontSize: 15, lineHeight: 21, letterSpacing: -0.1, color: colors.ink },
-  summary: { lineHeight: 20 },
+  pressed: { transform: [{ scale: 0.985 }], opacity: 0.96 },
+  tile: { width: 44, height: 44, borderRadius: 14, overflow: 'hidden', marginTop: 1 },
+  content: { flex: 1, gap: 2 },
+  kicker: { fontFamily: fonts.bold, fontSize: 10.5, lineHeight: 14, letterSpacing: 0.8, color: colors.accent, marginBottom: 1 },
+  title: { fontFamily: fonts.semibold, fontSize: 15.5, lineHeight: 21, letterSpacing: -0.15, color: colors.ink },
+  summary: { fontFamily: fonts.regular, fontSize: 14, lineHeight: 20, color: colors.secondary },
+  more: { fontFamily: fonts.semibold, fontSize: 14, lineHeight: 20, color: colors.accent, marginTop: 4 },
   close: {
     position: 'absolute',
-    top: 10,
-    right: 10,
+    top: 8,
+    right: 8,
     width: 28,
     height: 28,
     borderRadius: 14,

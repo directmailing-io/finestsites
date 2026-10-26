@@ -1,43 +1,53 @@
+import { Check } from 'lucide-react-native';
 import { StyleSheet, View } from 'react-native';
 
 import { newsBodyBlocks } from '@/api/contracts/news';
 import { Text } from '@/components/ui';
-import { colors } from '@/theme/tokens';
+import { colors, fonts } from '@/theme/tokens';
 
 /**
  * Inhalt einer Neuigkeit, gerendert AUSSCHLIESSLICH über newsBodyBlocks() aus dem Vertrag
- * (Web und App lesen identisch): Absätze in typography.body, Aufzählung mit Punkt in Akzentfarbe.
+ * (Web und App lesen identisch). Erster Absatz als Vorspann (17/26), weitere 15.5/24,
+ * Aufzählungen als Merkmal-Zeilen: Kreis in Akzent-Hell mit Häkchen + Text.
  */
 export function NewsBody({ body }: { body: string }) {
   const blocks = newsBodyBlocks(body);
+  let paragraphs = 0;
   return (
     <View style={styles.body}>
-      {blocks.map((b, i) =>
-        b.type === 'paragraph' ? (
-          <Text key={i} variant="body">
-            {b.text}
-          </Text>
-        ) : (
+      {blocks.map((b, i) => {
+        if (b.type === 'paragraph') {
+          const lead = paragraphs++ === 0;
+          return (
+            <Text key={i} style={lead ? styles.lead : styles.paragraph}>
+              {b.text}
+            </Text>
+          );
+        }
+        return (
           <View key={i} style={styles.list} accessibilityRole="list">
             {b.items.map((item, j) => (
               <View key={j} style={styles.item}>
-                <View style={styles.dot} />
-                <Text variant="body" style={{ flex: 1 }}>
-                  {item}
-                </Text>
+                <View style={styles.check} accessibilityElementsHidden>
+                  <Check size={13} color={colors.accent} strokeWidth={3} />
+                </View>
+                <Text style={styles.itemText}>{item}</Text>
               </View>
             ))}
           </View>
-        ),
-      )}
+        );
+      })}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  body: { gap: 14 },
-  list: { gap: 8 },
+  body: { gap: 16 },
+  lead: { fontFamily: fonts.regular, fontSize: 17, lineHeight: 26, letterSpacing: -0.1, color: colors.body },
+  paragraph: { fontFamily: fonts.regular, fontSize: 15.5, lineHeight: 24, color: colors.body },
+  list: { gap: 10, paddingVertical: 2 },
   item: { flexDirection: 'row', gap: 12, alignItems: 'flex-start' },
-  // Punkt mittig zur ersten Zeile (lineHeight 22)
-  dot: { width: 7, height: 7, borderRadius: 4, backgroundColor: colors.accent, marginTop: 8, marginLeft: 2 },
+  // Kreis 22 pt, mittig zur ersten Zeile (lineHeight 24)
+  check: { width: 22, height: 22, borderRadius: 11, backgroundColor: colors.accentSoft, alignItems: 'center', justifyContent: 'center', marginTop: 1 },
+  itemText: { flex: 1, fontFamily: fonts.regular, fontSize: 15.5, lineHeight: 24, color: colors.body },
 });

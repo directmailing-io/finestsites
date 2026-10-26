@@ -81,7 +81,7 @@ function Row({ icon: Icon, label, href, badge = 0, tone = 'danger' }: { icon: Lu
       onPress={() => router.push(href)}
       accessibilityRole="button"
       accessibilityLabel={badge > 0 ? `${label}, ${badge} neu` : label}
-      style={({ pressed }) => [styles.row, accent && { backgroundColor: colors.accentSoft }, pressed && { backgroundColor: accent ? colors.accentSoftBorder : '#F9FAFB' }]}>
+      style={({ pressed }) => [styles.row, accent && { backgroundColor: colors.accentWash }, pressed && { backgroundColor: accent ? colors.accentSoft : '#F9FAFB' }]}>
       <Icon size={20} color={accent ? colors.accent : colors.mutedForeground} strokeWidth={1.75} />
       <Text style={[styles.label, accent && { fontFamily: fonts.semibold }]}>{label}</Text>
       {badge > 0 && (

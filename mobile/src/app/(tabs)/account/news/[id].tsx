@@ -59,13 +59,13 @@ export default function NewsDetailScreen() {
         <LoadError onRetry={() => void q.refetch()} />
       ) : (
         <View style={{ gap: 12 }}>
-          <Skeleton height={112} radius={radius.card} />
-          <Skeleton width="40%" height={12} />
-          <Skeleton width="85%" height={22} />
-          <Skeleton height={14} />
+          <Skeleton height={160} radius={28} />
+          <Skeleton width="36%" height={12} style={{ marginTop: 8 }} />
+          <Skeleton width="88%" height={26} radius={radius.sm} />
+          <Skeleton height={14} style={{ marginTop: 8 }} />
           <Skeleton height={14} />
           <Skeleton width="70%" height={14} />
-          <Skeleton height={48} radius={radius.button} style={{ marginTop: 12 }} />
+          <Skeleton height={52} radius={radius.full} style={{ marginTop: 16 }} />
         </View>
       )}
     </Screen>
