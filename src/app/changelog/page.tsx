@@ -25,8 +25,8 @@ type Planned = { title: string; text: string; status: 'Im Test' | 'In Arbeit' | 
 const PLANNED: Planned[] = [
   { title: 'Chat auf deiner Webseite', status: 'Im Test', visual: 'chat',
     text: 'Wir bauen ein kleines Chatfenster in deine Seite ein. Damit können dir Besucher direkt schreiben, und du antwortest am Handy oder am Computer.' },
-  { title: 'Eigene App', status: 'In Arbeit', visual: 'app',
-    text: 'Wir bauen eine FinestSites-App, zuerst für iPhone und iPad, danach für Android. Damit kannst du deine Seiten unterwegs bearbeiten und Nachrichten beantworten.' },
+  { title: 'Eigene App', status: 'Im Test', visual: 'app',
+    text: 'Die FinestSites-App für iPhone und iPad liegt Apple zur Prüfung vor, Android folgt. Damit bearbeitest du deine Seiten unterwegs, beantwortest Anfragen und Nachrichten und bekommst Mitteilungen aufs Handy.' },
   { title: 'Statistiken', status: 'Geplant', visual: 'stats',
     text: 'Wir planen eine Übersicht mit den wichtigsten Zahlen. Damit siehst du, wie viele Leute deine Seite besuchen, wie lange sie bleiben und wie viele dir schreiben.' },
   { title: 'Erfahrungsbericht per Sprachaufnahme', status: 'Geplant', visual: 'mic',
@@ -41,6 +41,10 @@ const PLANNED: Planned[] = [
 
 const HISTORY: Month[] = [
   { label: 'Oktober 2026', entries: [
+    { date: '26. Okt', title: 'Neuigkeiten direkt im Dashboard', visual: 'mail',
+      text: 'Unter „Neuigkeiten“ in der Seitenleiste siehst du jetzt, was es bei FinestSites Neues gibt. Die neueste Neuigkeit erscheint als Karte über deinen Webseiten; in der App bekommst du sie auf Wunsch als Mitteilung.' },
+    { date: '26. Okt', title: 'Konto löschen: zum Laufzeitende oder sofort',
+      text: 'Wenn du dein Konto löschen möchtest, kannst du jetzt wählen: zum Ende deiner bezahlten Laufzeit (deine Seite bleibt bis dahin online, du kannst es dir anders überlegen) oder sofort. Du findest es unter Einstellungen → Konto.' },
     { date: '21. Okt', title: 'Kontakt-Knopf oben auf der Seite', visual: 'chat',
       text: 'Auf der Optimalset-, Business- und cellRESET-Seite gibt es oben jetzt einen Knopf „Kontakt“. Darüber erreichen dich Besucher per WhatsApp, über das Anfrage-Formular oder auf deinen Social-Media-Kanälen.' },
     { date: '21. Okt', title: 'Direkt-Registrierung auf der Business-Seite', tag: 'Business',
