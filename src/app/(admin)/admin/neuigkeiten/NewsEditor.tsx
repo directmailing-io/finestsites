@@ -7,7 +7,7 @@ import type { NewsCtaKind } from '@/lib/contracts/app-v1/news'
 import { NEWS_LIMITS, type NewsAudience } from '@/lib/news/admin-schema'
 import { findBlockedWords } from '@/components/news/blocked-words'
 import { NEWS_CTA_KIND_LABELS, NEWS_TOKENS, formatNewsDateTime } from '@/components/news/news-ui'
-import { NewsDetailCard, newsPrimaryButtonStyle, newsSoftButtonStyle } from '@/components/news/NewsDetailCard'
+import { NewsDetailCard, newsPrimaryButtonStyle, newsQuietLinkStyle } from '@/components/news/NewsDetailCard'
 import { AndroidCardPreview, IphoneLockPreview } from '@/components/news/NewsPreview'
 import { adminFetch, AdminApiError, ConfirmDialog, StatusPill, expiresToDay, formatExpiresShort, isExpired, type AdminNewsItem, type AudienceUser } from './_lib'
 
@@ -273,11 +273,11 @@ export function NewsEditor({ id: initialId }: { id?: string }) {
   const hasCta = form.showCta
   // Der Knopf erscheint in der Vorschau sofort mit dem Häkchen und ändert sich beim Tippen (leer = grauer Platzhalter)
   const previewCta = hasCta ? (
-    <span style={{ ...newsPrimaryButtonStyle, minHeight: 42, fontSize: 14, cursor: 'default', opacity: form.ctaLabel.trim() ? 1 : 0.55, transition: 'opacity 0.15s ease' }}>
+    <span style={{ ...newsPrimaryButtonStyle, minHeight: 44, fontSize: 14.5, cursor: 'default', opacity: form.ctaLabel.trim() ? 1 : 0.55, transition: 'opacity 0.15s ease' }}>
       {form.ctaLabel.trim() || 'Text auf dem Knopf'}
     </span>
   ) : null
-  const previewSecondary = <span style={{ ...newsSoftButtonStyle, minHeight: 42, fontSize: 14, cursor: 'default' }}>{hasCta ? 'Später' : 'Zurück'}</span>
+  const previewSecondary = <span style={{ ...newsQuietLinkStyle, minHeight: 32, fontSize: 13.5, cursor: 'default' }}>{hasCta ? 'Später' : 'Zurück zu den Neuigkeiten'}</span>
 
   const warnings = useMemo(() => ({
     pushTitle: findBlockedWords(form.pushTitle),
@@ -563,7 +563,7 @@ export function NewsEditor({ id: initialId }: { id?: string }) {
           <div>
             <PreviewTitle>Die Neuigkeit in der App</PreviewTitle>
             <div style={{ maxWidth: 360 }}>
-              <NewsDetailCard title={form.title} body={form.body} publishedAt={previewDate} cta={previewCta} secondary={previewSecondary} compact />
+              <NewsDetailCard title={form.title} body={form.body} publishedAt={previewDate} cta={previewCta} secondary={previewSecondary} compact paletteKey={id} />
             </div>
           </div>
 

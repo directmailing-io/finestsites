@@ -2,69 +2,74 @@
 
 import type { ReactNode } from 'react'
 import { NewsBodyBlocks } from './NewsBodyBlocks'
-import { NewsLogoGlyph } from './NewsLogoGlyph'
-import { NEWS_TOKENS, formatNewsDate } from './news-ui'
+import { NewsHeroBand } from './NewsHeroBand'
+import { NEWS_SHADOW_CLASS, NEWS_TOKENS, formatNewsDate, newsPalette } from './news-ui'
 
 /**
- * Die Neuigkeit, wie sie Nutzer sehen (Web-Detail und App identisch): Karte mit Lila-Verlauf-Kopf
- * „FinestSites“, Kicker „NEUIGKEIT · Datum“, Überschrift, Inhalt (newsBodyBlocks), Knopf.
+ * Die Neuigkeit, wie sie Nutzer sehen (Web-Detail; die Admin-Vorschau nutzt `compact`):
+ * hohes Kopfband im Markenverlauf der Neuigkeit, darunter im Weißen der Datums-Kicker, die große
+ * Schlagzeile, der Vorspann und der Inhalt (newsBodyBlocks), zum Schluss Knopf + leiser Zweitlink.
  * `cta` und `secondary` sind fertige Elemente, damit Web-Routen/Links außen entschieden werden.
  */
 export function NewsDetailCard({
-  title, body, publishedAt, cta, secondary, compact = false,
+  title, body, publishedAt, cta, secondary, compact = false, paletteKey,
 }: {
   title: string
   body: string
   publishedAt: string | null
   cta?: ReactNode
   secondary?: ReactNode
-  /** Admin-Vorschau: etwas kleiner */
+  /** Admin-Vorschau: kleinere Maße, gleicher Aufbau */
   compact?: boolean
+  /** ID der Neuigkeit – bestimmt den Verlauf des Kopfbands (ohne ID: Standardverlauf) */
+  paletteKey?: string | null
 }) {
-  const pad = compact ? '16px 18px 18px' : '22px 24px 24px'
+  const palette = newsPalette(paletteKey)
+  const date = publishedAt ? formatNewsDate(publishedAt) : ''
   return (
-    <article style={{
-      background: '#fff', border: `1px solid ${NEWS_TOKENS.line}`, borderRadius: NEWS_TOKENS.cardRadius,
-      overflow: 'hidden', boxShadow: '0 4px 20px rgba(15,23,42,0.05)',
-    }}>
-      <div style={{
-        height: compact ? 92 : 128, background: NEWS_TOKENS.heroGradient, position: 'relative',
-        display: 'flex', alignItems: 'flex-end', padding: compact ? '0 18px 12px' : '0 24px 16px',
-      }}>
-        {/* weiche Lichtflecken, damit der Verlauf nicht flach wirkt */}
-        <div aria-hidden style={{ position: 'absolute', inset: 0, background: 'radial-gradient(120% 90% at 100% 0%, rgba(255,255,255,0.28), transparent 55%)' }} />
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, position: 'relative' }}>
-          <span style={{
-            width: compact ? 28 : 34, height: compact ? 28 : 34, borderRadius: compact ? 8 : 10, background: '#fff',
-            display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.12)',
+    <article
+      className={`overflow-hidden bg-white ${NEWS_SHADOW_CLASS}`}
+      style={{ borderRadius: compact ? 22 : NEWS_TOKENS.detailRadius }}
+    >
+      <NewsHeroBand
+        palette={palette}
+        className={compact ? 'h-[112px]' : 'h-[150px] sm:h-[200px]'}
+        wordmarkHeight={compact ? 12 : 15}
+        inset={compact ? 18 : 28}
+      />
+
+      <div className={compact ? 'px-[18px] pt-5 pb-5' : 'px-5 pt-6 pb-6 sm:px-8 sm:pt-7 sm:pb-8'}>
+        {date && (
+          <time dateTime={publishedAt ?? undefined} style={{
+            display: 'block', fontSize: compact ? 11 : 12, fontWeight: 600, letterSpacing: '0.06em',
+            textTransform: 'uppercase', color: NEWS_TOKENS.accent,
           }}>
-            <NewsLogoGlyph height={compact ? 16 : 19} />
-          </span>
-          <span style={{ color: '#fff', fontWeight: 700, fontSize: compact ? 14 : 16, letterSpacing: '-0.01em', textShadow: '0 1px 2px rgba(0,0,0,0.12)' }}>
-            FinestSites
-          </span>
-        </div>
-      </div>
-      <div style={{ padding: pad }}>
-        <div style={{ fontSize: compact ? 10.5 : 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: NEWS_TOKENS.accent }}>
-          Neuigkeit{publishedAt ? ` · ${formatNewsDate(publishedAt)}` : ''}
-        </div>
-        <h1 style={{
-          margin: compact ? '6px 0 10px' : '8px 0 14px', fontSize: compact ? 18 : 24, lineHeight: 1.25, fontWeight: 700,
-          color: NEWS_TOKENS.ink, letterSpacing: '-0.02em', overflowWrap: 'anywhere',
-        }}>
-          {title || <span style={{ color: NEWS_TOKENS.tertiary }}>Überschrift der Neuigkeit</span>}
+            {date}
+          </time>
+        )}
+
+        <h1
+          className={compact ? 'text-[20px]' : 'text-[26px] sm:text-[32px]'}
+          style={{
+            margin: compact ? '8px 0 12px' : '10px 0 16px', fontWeight: 700, lineHeight: 1.15,
+            letterSpacing: compact ? '-0.4px' : '-0.6px', color: NEWS_TOKENS.ink, overflowWrap: 'anywhere',
+          }}
+        >
+          {title || <span style={{ color: NEWS_TOKENS.tertiary, fontWeight: 600 }}>Überschrift der Neuigkeit</span>}
         </h1>
+
         {body.trim() ? (
           <NewsBodyBlocks body={body} size={compact ? 'sm' : 'md'} />
         ) : (
-          <p style={{ margin: 0, color: NEWS_TOKENS.tertiary, fontSize: compact ? 13 : 15 }}>Der Inhalt erscheint hier, sobald du ihn schreibst.</p>
+          <p style={{ margin: 0, color: NEWS_TOKENS.tertiary, fontSize: compact ? 13.5 : 16 }}>
+            Der Inhalt erscheint hier, sobald du ihn schreibst.
+          </p>
         )}
+
         {(cta || secondary) && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: compact ? 14 : 20 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'stretch', gap: compact ? 10 : 14, marginTop: compact ? 20 : 30 }}>
             {cta}
-            {secondary}
+            {secondary && <div style={{ display: 'flex', justifyContent: 'center' }}>{secondary}</div>}
           </div>
         )}
       </div>
@@ -72,15 +77,17 @@ export function NewsDetailCard({
   )
 }
 
-/** Hauptknopf der Neuigkeit (dunkel, Radius 16). Als Button, Link oder reines Element nutzbar. */
+/** Hauptknopf der Neuigkeit: schwarze Pille, volle Kartenbreite. Als Button, Link oder reines Element nutzbar. */
 export const newsPrimaryButtonStyle: React.CSSProperties = {
-  display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', minHeight: 48,
-  padding: '12px 16px', borderRadius: 16, background: NEWS_TOKENS.ink, color: '#fff',
-  fontWeight: 600, fontSize: 15, border: 'none', cursor: 'pointer', textDecoration: 'none',
+  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, width: '100%', minHeight: 52,
+  padding: '14px 22px', borderRadius: 999, background: NEWS_TOKENS.ink, color: '#fff',
+  fontWeight: 600, fontSize: 16, letterSpacing: '-0.1px', border: 'none', cursor: 'pointer', textDecoration: 'none',
   boxSizing: 'border-box',
 }
 
-export const newsSoftButtonStyle: React.CSSProperties = {
-  ...newsPrimaryButtonStyle,
-  background: '#F1F5F9', color: NEWS_TOKENS.ink,
+/** Leiser Zweitlink unter dem Knopf („Später“) – reiner Text, kein Kasten. */
+export const newsQuietLinkStyle: React.CSSProperties = {
+  display: 'inline-flex', alignItems: 'center', justifyContent: 'center', minHeight: 40,
+  padding: '8px 14px', borderRadius: 999, background: 'transparent', color: NEWS_TOKENS.secondary,
+  fontWeight: 600, fontSize: 14.5, border: 'none', cursor: 'pointer', textDecoration: 'none',
 }

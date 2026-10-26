@@ -1,10 +1,10 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Megaphone } from "lucide-react"
 import type { NewsItem, NewsListResponse } from '@/lib/contracts/app-v1/news'
 import { NewsCard } from '@/components/news/NewsCard'
-import { NEWS_TOKENS } from '@/components/news/news-ui'
+import { NewsHeroMini } from '@/components/news/NewsHeroBand'
+import { NEWS_PALETTES, NEWS_SHADOW_CLASS, NEWS_TOKENS } from '@/components/news/news-ui'
 import { broadcastNewsUnread } from '@/components/news/useNewsUnread'
 
 /** Liste aller sichtbaren Neuigkeiten (neueste zuerst), Quelle `GET /api/news`. */
@@ -29,33 +29,35 @@ export default function NewsListPage() {
   }, [])
 
   const unread = items?.filter(i => !i.readAt).length ?? 0
+  const subtitle = items === null
+    ? ' '
+    : items.length === 0
+      ? 'Was es Neues bei FinestSites gibt.'
+      : unread > 0
+        ? unread === 1 ? 'Eine neue Neuigkeit' : `${unread} neue Neuigkeiten`
+        : 'Du bist auf dem neuesten Stand.'
 
   return (
-    <div className="max-w-3xl mx-auto">
-      <div className="mb-6 sm:mb-8">
-        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight">Neuigkeiten</h1>
-        <p className="text-base mt-1.5" style={{ color: NEWS_TOKENS.secondary }}>
-          {items === null
-            ? ' '
-            : items.length === 0
-              ? 'Hier erfährst du, was es Neues bei FinestSites gibt.'
-              : unread > 0
-                ? `Was es Neues bei FinestSites gibt. ${unread === 1 ? 'Eine Neuigkeit ist' : `${unread} Neuigkeiten sind`} noch ungelesen.`
-                : 'Was es Neues bei FinestSites gibt. Du bist auf dem neuesten Stand.'}
+    <div className="mx-auto" style={{ maxWidth: 720 }}>
+      <header className="mb-7 sm:mb-9">
+        <h1 className="text-[28px] sm:text-[30px]" style={{ margin: 0, fontWeight: 700, letterSpacing: '-0.6px', lineHeight: 1.15, color: NEWS_TOKENS.ink }}>
+          Neuigkeiten
+        </h1>
+        <p style={{ margin: '6px 0 0', fontSize: 16, lineHeight: 1.5, color: NEWS_TOKENS.secondary }}>
+          {subtitle}
         </p>
-      </div>
+      </header>
 
       {items === null && !error && (
-        <div className="flex flex-col gap-3">
-          {[1, 2, 3].map(i => (
-            <div key={i} className="animate-pulse bg-white" style={{ borderRadius: NEWS_TOKENS.cardRadius, border: `1.5px solid ${NEWS_TOKENS.line}`, padding: '18px 20px' }}>
-              <div className="flex gap-4">
-                <div className="rounded-2xl bg-gray-100" style={{ width: 42, height: 42 }} />
-                <div className="flex-1 flex flex-col gap-2 pt-1">
-                  <div className="h-2.5 rounded-full bg-gray-100 w-1/4" />
-                  <div className="h-3.5 rounded-full bg-gray-100 w-2/3" />
-                  <div className="h-3 rounded-full bg-gray-100 w-full" />
-                </div>
+        <div className="flex flex-col gap-6" aria-hidden>
+          {[1, 2].map(i => (
+            <div key={i} className={`animate-pulse overflow-hidden bg-white ${NEWS_SHADOW_CLASS}`} style={{ borderRadius: NEWS_TOKENS.cardRadius }}>
+              <div className="h-24 sm:h-[120px]" style={{ background: '#EDE9FE' }} />
+              <div className="px-5 pt-5 pb-5 sm:px-7 sm:pb-6 flex flex-col gap-3">
+                <div className="h-2.5 rounded-full bg-gray-100 w-1/4" />
+                <div className="h-4 rounded-full bg-gray-100 w-2/3" />
+                <div className="h-3 rounded-full bg-gray-100 w-full" />
+                <div className="h-3 rounded-full bg-gray-100 w-5/6" />
               </div>
             </div>
           ))}
@@ -68,22 +70,24 @@ export default function NewsListPage() {
         </div>
       )}
 
-      {/* Leerzustand im ruhigen Stil von „Noch keine Anfragen“ (submissions/page.tsx) */}
       {items && items.length === 0 && (
-        <div className="flex flex-col items-center justify-center py-24 rounded-3xl text-center" style={{ background: '#FAFAFA' }} data-testid="news-empty">
-          <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-5"
-            style={{ background: 'white', boxShadow: '0 4px 20px rgba(0,0,0,0.06)' }}>
-            <Megaphone size={26} strokeWidth={1.5} color="#CBD5E1" aria-hidden />
-          </div>
-          <h2 className="font-semibold text-gray-900 text-lg mb-2">Noch keine Neuigkeiten</h2>
-          <p className="text-sm max-w-xs leading-relaxed m-0" style={{ color: '#94A3B8' }}>
-            Sobald es etwas Neues bei FinestSites gibt, findest du es hier.
+        <div
+          className={`flex flex-col items-center justify-center text-center bg-white px-6 py-14 sm:py-16 ${NEWS_SHADOW_CLASS}`}
+          style={{ borderRadius: NEWS_TOKENS.cardRadius }}
+          data-testid="news-empty"
+        >
+          <NewsHeroMini palette={NEWS_PALETTES[0]} width={60} height={36} radius={10} />
+          <h2 style={{ margin: '18px 0 6px', fontSize: 18, fontWeight: 700, letterSpacing: '-0.3px', color: NEWS_TOKENS.ink }}>
+            Noch keine Neuigkeiten
+          </h2>
+          <p style={{ margin: 0, maxWidth: 360, fontSize: 15, lineHeight: 1.55, color: NEWS_TOKENS.secondary }}>
+            Sobald es etwas Neues gibt, findest du es hier – und auf Wunsch als Mitteilung in der App.
           </p>
         </div>
       )}
 
       {items && items.length > 0 && (
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-6 sm:gap-7">
           {items.map(item => <NewsCard key={item.id} item={item} />)}
         </div>
       )}

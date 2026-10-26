@@ -4,8 +4,8 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useParams, useRouter } from 'next/navigation'
 import type { NewsItem, NewsActionResponse } from '@/lib/contracts/app-v1/news'
-import { NewsDetailCard, newsPrimaryButtonStyle, newsSoftButtonStyle } from '@/components/news/NewsDetailCard'
-import { NEWS_CTA_ROUTES, NEWS_TOKENS } from '@/components/news/news-ui'
+import { NewsDetailCard, newsPrimaryButtonStyle, newsQuietLinkStyle } from '@/components/news/NewsDetailCard'
+import { NEWS_CTA_ROUTES, NEWS_SHADOW_CLASS, NEWS_TOKENS } from '@/components/news/news-ui'
 import { broadcastNewsUnread } from '@/components/news/useNewsUnread'
 import { useOpenExternal } from '@/components/app-mode/AppMode'
 
@@ -56,57 +56,63 @@ export default function NewsDetailPage() {
   }
 
   const cta = item?.cta
+  // Pfeil rechts vom Text: ruht leicht zurückgenommen, rückt beim Schweben 2 px nach rechts
+  const arrow = (
+    <svg className="transition-transform duration-[180ms] group-hover:translate-x-0.5" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round" aria-hidden style={{ opacity: 0.85 }}>
+      <path d="M5 12h14M13 6l6 6-6 6" />
+    </svg>
+  )
   const ctaEl = cta ? (
     cta.kind === 'url' && cta.url ? (
       <a href={cta.url} target="_blank" rel="noopener noreferrer" style={newsPrimaryButtonStyle}
-        className="transition-transform active:scale-[0.98]"
+        className="group transition-[transform,background-color] duration-[180ms] hover:bg-black active:scale-[0.985]"
         onClick={e => { trackCta(); openExternal(e, cta.url!) }}>
         {cta.label}
-        <svg className="ml-2" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
-        </svg>
+        {arrow}
       </a>
     ) : (
       <Link href={NEWS_CTA_ROUTES[cta.kind as keyof typeof NEWS_CTA_ROUTES] ?? '/sites'} style={newsPrimaryButtonStyle}
-        className="transition-transform active:scale-[0.98]" onClick={trackCta}>
+        className="group transition-[transform,background-color] duration-[180ms] hover:bg-black active:scale-[0.985]" onClick={trackCta}>
         {cta.label}
+        {arrow}
       </Link>
     )
   ) : null
 
   const backEl = (
-    <button type="button" style={newsSoftButtonStyle} className="transition-transform active:scale-[0.98]"
+    <button type="button" style={newsQuietLinkStyle} className="transition-colors duration-150 hover:text-gray-900 hover:bg-gray-50"
       onClick={() => router.push('/neuigkeiten')}>
       {cta ? 'Später' : 'Zurück zu den Neuigkeiten'}
     </button>
   )
 
   return (
-    <div className="max-w-2xl mx-auto">
-      <Link href="/neuigkeiten" className="inline-flex items-center gap-1 text-sm font-semibold mb-5 hover:underline"
-        style={{ color: NEWS_TOKENS.accent }}>
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+    <div className="mx-auto" style={{ maxWidth: 680 }}>
+      <Link href="/neuigkeiten" className="group inline-flex items-center gap-1 mb-5 sm:mb-6"
+        style={{ fontSize: 14.5, fontWeight: 600, color: NEWS_TOKENS.secondary, textDecoration: 'none', marginLeft: -4, padding: '6px 8px 6px 4px', borderRadius: 999 }}>
+        <svg className="transition-transform duration-[180ms] group-hover:-translate-x-0.5" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden><path d="M15 18l-6-6 6-6" /></svg>
         Neuigkeiten
       </Link>
 
       {state === 'loading' && (
-        <div className="animate-pulse bg-white overflow-hidden" style={{ borderRadius: NEWS_TOKENS.cardRadius, border: `1px solid ${NEWS_TOKENS.line}` }}>
-          <div style={{ height: 128, background: '#EDE9FE' }} />
-          <div className="p-6 flex flex-col gap-3">
-            <div className="h-2.5 rounded-full bg-gray-100 w-1/3" />
-            <div className="h-5 rounded-full bg-gray-100 w-3/4" />
-            <div className="h-3 rounded-full bg-gray-100 w-full" />
-            <div className="h-3 rounded-full bg-gray-100 w-5/6" />
-            <div className="h-12 rounded-2xl bg-gray-100 w-full mt-3" />
+        <div className={`animate-pulse bg-white overflow-hidden ${NEWS_SHADOW_CLASS}`} style={{ borderRadius: NEWS_TOKENS.detailRadius }} aria-hidden>
+          <div className="h-[150px] sm:h-[200px]" style={{ background: '#EDE9FE' }} />
+          <div className="px-5 py-6 sm:px-8 sm:py-8 flex flex-col gap-3.5">
+            <div className="h-2.5 rounded-full bg-gray-100 w-1/4" />
+            <div className="h-6 rounded-full bg-gray-100 w-4/5" />
+            <div className="h-3.5 rounded-full bg-gray-100 w-full mt-2" />
+            <div className="h-3.5 rounded-full bg-gray-100 w-11/12" />
+            <div className="h-3.5 rounded-full bg-gray-100 w-2/3" />
+            <div className="h-[52px] rounded-full bg-gray-100 w-full mt-5" />
           </div>
         </div>
       )}
 
       {state === 'missing' && (
-        <div className="bg-white text-center px-6 py-12" style={{ borderRadius: NEWS_TOKENS.cardRadius, border: `1px solid ${NEWS_TOKENS.line}` }}>
-          <h1 className="text-lg font-bold text-gray-900">Diese Neuigkeit gibt es nicht mehr.</h1>
-          <p className="text-sm mt-1" style={{ color: NEWS_TOKENS.secondary }}>Vielleicht wurde sie inzwischen zurückgezogen.</p>
-          <Link href="/neuigkeiten" className="inline-flex mt-5 px-5 min-h-11 items-center rounded-2xl text-sm font-semibold" style={{ background: '#F1F5F9', color: NEWS_TOKENS.ink }}>
+        <div className={`bg-white text-center px-6 py-14 ${NEWS_SHADOW_CLASS}`} style={{ borderRadius: NEWS_TOKENS.detailRadius }}>
+          <h1 style={{ margin: 0, fontSize: 20, fontWeight: 700, letterSpacing: '-0.3px', color: NEWS_TOKENS.ink }}>Diese Neuigkeit gibt es nicht mehr.</h1>
+          <p style={{ margin: '6px 0 0', fontSize: 15, color: NEWS_TOKENS.secondary }}>Vielleicht wurde sie inzwischen zurückgezogen.</p>
+          <Link href="/neuigkeiten" className="inline-flex items-center justify-center mt-6 px-6" style={{ ...newsPrimaryButtonStyle, width: 'auto', minHeight: 46, fontSize: 15 }}>
             Zu den Neuigkeiten
           </Link>
         </div>
@@ -119,7 +125,7 @@ export default function NewsDetailPage() {
       )}
 
       {state === 'ready' && item && (
-        <NewsDetailCard title={item.title} body={item.body} publishedAt={item.publishedAt} cta={ctaEl} secondary={backEl} />
+        <NewsDetailCard title={item.title} body={item.body} publishedAt={item.publishedAt} cta={ctaEl} secondary={backEl} paletteKey={item.id} />
       )}
     </div>
   )
