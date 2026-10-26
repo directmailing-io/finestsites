@@ -8,52 +8,52 @@ import { longDate } from '@/lib/format';
 import { colors, fonts, radius } from '@/theme/tokens';
 
 import { openNewsCta } from './cta';
+import { NEWS_UI, newsCardShadow, NewsAccentLine, newsPalette } from './NewsAccent';
 import { NewsBody } from './NewsBody';
-import { newsCardShadow, NewsHero } from './NewsHero';
 
 /**
- * Die Neuigkeit wie im Web: Karte (Radius 28) mit hohem Verlauf-Kopf (160 pt), Datum-Kicker,
- * große Überschrift (26/700), Vorspann, Inhalt, schwarzer Pillen-Knopf, „Später“ als stiller Textlink.
+ * Die Neuigkeit wie im Web: weißes Blatt (Radius 28) ohne Kopfbild – Datum-Kicker in der Tinte der
+ * Neuigkeit, große Überschrift (28/700), darunter die kurze Pastell-Linie (64 × 3), Vorspann, Inhalt,
+ * schwarzer Pillen-Knopf, „Später“ als stiller Textlink.
  */
 export function NewsDetailCard({ item, onLater }: { item: NewsItem; onLater: () => void }) {
   const router = useRouter();
   const date = longDate(item.publishedAt);
+  const p = newsPalette(item.id);
   return (
     <View style={styles.card}>
-      <NewsHero seed={item.id} height={160} logoHeight={14} />
-      <View style={styles.inner}>
-        <Text style={styles.kicker} accessibilityLabel={`Neuigkeit vom ${date}`}>
-          {date}
-        </Text>
-        <Text style={styles.title} accessibilityRole="header">
-          {item.title}
-        </Text>
-        <NewsBody body={item.body} />
-        <View style={[styles.actions, !item.cta && { marginTop: 20 }]}>
-          {item.cta ? (
-            <Pressable
-              onPress={() => {
-                void Haptics.selectionAsync().catch(() => {});
-                openNewsCta(item.id, item.cta!, router);
-              }}
-              accessibilityRole="button"
-              accessibilityLabel={item.cta.label}
-              style={({ pressed }) => [styles.cta, pressed && styles.ctaPressed]}>
-              <Text style={styles.ctaText} numberOfLines={1}>
-                {item.cta.label}
-              </Text>
-            </Pressable>
-          ) : null}
+      <Text style={[styles.kicker, { color: p.ink }]} accessibilityLabel={`Neuigkeit vom ${date}`}>
+        {date}
+      </Text>
+      <Text style={styles.title} accessibilityRole="header">
+        {item.title}
+      </Text>
+      <NewsAccentLine seed={item.id} style={styles.line} />
+      <NewsBody body={item.body} palette={p} />
+      <View style={[styles.actions, !item.cta && { marginTop: 20 }]}>
+        {item.cta ? (
           <Pressable
-            onPress={onLater}
-            hitSlop={8}
+            onPress={() => {
+              void Haptics.selectionAsync().catch(() => {});
+              openNewsCta(item.id, item.cta!, router);
+            }}
             accessibilityRole="button"
-            accessibilityLabel="Später"
-            accessibilityHint="Schließt die Neuigkeit"
-            style={({ pressed }) => [styles.later, pressed && { opacity: 0.5 }]}>
-            <Text style={styles.laterText}>Später</Text>
+            accessibilityLabel={item.cta.label}
+            style={({ pressed }) => [styles.cta, pressed && styles.ctaPressed]}>
+            <Text style={styles.ctaText} numberOfLines={1}>
+              {item.cta.label}
+            </Text>
           </Pressable>
-        </View>
+        ) : null}
+        <Pressable
+          onPress={onLater}
+          hitSlop={8}
+          accessibilityRole="button"
+          accessibilityLabel="Später"
+          accessibilityHint="Schließt die Neuigkeit"
+          style={({ pressed }) => [styles.later, pressed && { opacity: 0.5 }]}>
+          <Text style={styles.laterText}>Später</Text>
+        </Pressable>
       </View>
     </View>
   );
@@ -63,13 +63,16 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: colors.white,
     borderRadius: 28,
-    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: NEWS_UI.line,
+    padding: 24,
+    paddingTop: 26,
     ...newsCardShadow,
   },
-  inner: { padding: 24, paddingTop: 22 },
-  kicker: { fontFamily: fonts.semibold, fontSize: 11, lineHeight: 14, letterSpacing: 0.8, textTransform: 'uppercase', color: colors.accent, marginBottom: 10 },
-  title: { fontFamily: fonts.bold, fontSize: 26, lineHeight: 32, letterSpacing: -0.6, color: colors.ink, marginBottom: 16 },
-  actions: { marginTop: 28, gap: 4 },
+  kicker: { fontFamily: fonts.semibold, fontSize: 12, lineHeight: 16, letterSpacing: 0.8, textTransform: 'uppercase', marginBottom: 12 },
+  title: { fontFamily: fonts.bold, fontSize: 28, lineHeight: 34, letterSpacing: -0.8, color: colors.ink },
+  line: { width: 64, alignSelf: 'flex-start', marginTop: 14, marginBottom: 20 },
+  actions: { marginTop: 32, gap: 4 },
   cta: {
     height: 52,
     borderRadius: radius.full,

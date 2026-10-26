@@ -10,17 +10,18 @@ import type { NewsCard, Overview } from '@/api/types';
 import { Text } from '@/components/ui';
 import { colors, fonts } from '@/theme/tokens';
 
-import { newsCardShadow, NewsGradient } from './NewsHero';
+import { NEWS_UI, newsCardShadow, NewsAccentLine, newsPalette } from './NewsAccent';
 
 /**
- * Startkarte (Konzept Bild 4): die neueste Neuigkeit, die weder gelesen noch weggewischt ist – über
- * „Neue Webseite erstellen“. Schlanke „Tipp“-Karte: links die Verlauf-Kachel der Neuigkeit (ohne Symbol),
- * Kicker „NEU BEI FINESTSITES“, Titel, eine Zeile Kurztext, „Mehr erfahren ›“. Tipp → Detail,
- * Kreuz → weggewischt (gilt auch für das Web-Dashboard). Ein-/Ausblenden bleibt sanft.
+ * Startkarte: die neueste Neuigkeit, die weder gelesen noch weggewischt ist – über
+ * „Neue Webseite erstellen“. Weiße Karte ohne Bild: links ein 4 pt schmaler Pastell-Balken in der
+ * Farbe der Neuigkeit, Kicker „Neu bei FinestSites“ in ihrer Tinte, Titel, eine Zeile Kurztext,
+ * „Mehr erfahren ›“. Tipp → Detail, Kreuz → weggewischt (gilt auch für das Web-Dashboard).
  */
 export function NewsStartCard({ card }: { card: NewsCard }) {
   const router = useRouter();
   const qc = useQueryClient();
+  const p = newsPalette(card.id);
 
   const dismiss = () => {
     // Sofort aus der Übersicht nehmen (sonst käme die Karte bis zur nächsten Antwort kurz zurück)
@@ -40,11 +41,9 @@ export function NewsStartCard({ card }: { card: NewsCard }) {
         accessibilityRole="button"
         accessibilityLabel={`Neu bei FinestSites: ${card.title}. ${card.summary} Mehr erfahren`}
         style={({ pressed }) => [styles.card, pressed && styles.pressed]}>
-        <View style={styles.tile} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
-          <NewsGradient seed={card.id} />
-        </View>
+        <NewsAccentLine seed={card.id} vertical thickness={4} style={styles.bar} />
         <View style={styles.content}>
-          <Text style={styles.kicker}>NEU BEI FINESTSITES</Text>
+          <Text style={[styles.kicker, { color: p.ink }]}>Neu bei FinestSites</Text>
           <Text style={styles.title} numberOfLines={2}>
             {card.title}
           </Text>
@@ -68,23 +67,23 @@ export function NewsStartCard({ card }: { card: NewsCard }) {
 
 const styles = StyleSheet.create({
   card: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: 14,
     backgroundColor: colors.white,
     borderRadius: 20,
-    paddingLeft: 14,
-    paddingRight: 40,
-    paddingVertical: 14,
+    borderWidth: 1,
+    borderColor: NEWS_UI.line,
+    paddingVertical: 16,
+    paddingLeft: 32,
+    paddingRight: 44,
     ...newsCardShadow,
   },
   pressed: { transform: [{ scale: 0.985 }], opacity: 0.96 },
-  tile: { width: 44, height: 44, borderRadius: 14, overflow: 'hidden', marginTop: 1 },
-  content: { flex: 1, gap: 2 },
-  kicker: { fontFamily: fonts.bold, fontSize: 10.5, lineHeight: 14, letterSpacing: 0.8, color: colors.accent, marginBottom: 1 },
+  // Schmaler Pastell-Balken innen am linken Rand, oben/unten 12 pt eingerückt
+  bar: { position: 'absolute', left: 16, top: 14, bottom: 14, alignSelf: 'auto' },
+  content: { gap: 2 },
+  kicker: { fontFamily: fonts.semibold, fontSize: 12, lineHeight: 16, marginBottom: 2 },
   title: { fontFamily: fonts.semibold, fontSize: 15.5, lineHeight: 21, letterSpacing: -0.15, color: colors.ink },
-  summary: { fontFamily: fonts.regular, fontSize: 14, lineHeight: 20, color: colors.secondary },
-  more: { fontFamily: fonts.semibold, fontSize: 14, lineHeight: 20, color: colors.accent, marginTop: 4 },
+  summary: { fontFamily: fonts.regular, fontSize: 14, lineHeight: 20, color: NEWS_UI.summary },
+  more: { fontFamily: fonts.semibold, fontSize: 14, lineHeight: 20, color: colors.ink, marginTop: 4 },
   close: {
     position: 'absolute',
     top: 8,

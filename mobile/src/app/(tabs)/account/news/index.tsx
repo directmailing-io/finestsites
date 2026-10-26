@@ -3,7 +3,7 @@ import { StyleSheet, View } from 'react-native';
 
 import { useNews } from '@/api/queries';
 import { LoadError, Screen, Skeleton, Text } from '@/components/ui';
-import { NewsGradient } from '@/features/news/NewsHero';
+import { NewsGlyph } from '@/features/news/NewsAccent';
 import { NewsRow } from '@/features/news/NewsRow';
 import { plural } from '@/lib/format';
 import { colors, fonts, radius } from '@/theme/tokens';
@@ -26,8 +26,8 @@ export default function NewsListScreen() {
       ) : q.isLoading ? (
         <View style={styles.list}>
           <Skeleton width="40%" height={14} style={styles.leadSkeleton} />
-          <Skeleton height={248} radius={radius.card} />
-          <Skeleton height={248} radius={radius.card} />
+          <Skeleton height={176} radius={radius.card} />
+          <Skeleton height={176} radius={radius.card} />
         </View>
       ) : items.length === 0 ? (
         <NewsEmpty />
@@ -45,12 +45,12 @@ export default function NewsListScreen() {
   );
 }
 
-/** Ruhiger Leerzustand: kleine Verlauf-Miniatur statt Symbol, Titel, ein Satz. */
+/** Ruhiger Leerzustand ohne Karte: das „f“ der Wortmarke im Pastell-Regenbogen, Titel, ein Satz. */
 function NewsEmpty() {
   return (
     <View style={styles.empty}>
-      <View style={styles.emptyBand} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
-        <NewsGradient seed="finestsites" />
+      <View style={styles.emptyGlyph}>
+        <NewsGlyph height={44} />
       </View>
       <Text variant="headline" align="center" style={styles.emptyTitle}>
         Noch keine Neuigkeiten
@@ -67,7 +67,7 @@ const styles = StyleSheet.create({
   lead: { fontFamily: fonts.regular, fontSize: 15, lineHeight: 20, color: colors.secondary, paddingHorizontal: 4, marginBottom: -4 },
   leadSkeleton: { marginLeft: 4, marginBottom: -4 },
   empty: { alignItems: 'center', paddingVertical: 72, paddingHorizontal: 24 },
-  emptyBand: { width: 60, height: 36, borderRadius: 10, overflow: 'hidden', marginBottom: 20 },
+  emptyGlyph: { marginBottom: 24 },
   emptyTitle: { fontFamily: fonts.semibold, marginBottom: 6 },
   emptyText: { color: colors.tertiary, maxWidth: 300, lineHeight: 21 },
 });

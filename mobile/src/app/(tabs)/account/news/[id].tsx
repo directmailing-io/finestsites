@@ -58,11 +58,11 @@ export default function NewsDetailScreen() {
       ) : q.isError ? (
         <LoadError onRetry={() => void q.refetch()} />
       ) : (
-        <View style={{ gap: 12 }}>
-          <Skeleton height={160} radius={28} />
+        <View style={{ gap: 12, paddingHorizontal: 4 }}>
           <Skeleton width="36%" height={12} style={{ marginTop: 8 }} />
-          <Skeleton width="88%" height={26} radius={radius.sm} />
-          <Skeleton height={14} style={{ marginTop: 8 }} />
+          <Skeleton width="88%" height={28} radius={radius.sm} />
+          <Skeleton width={64} height={3} style={{ marginBottom: 8 }} />
+          <Skeleton height={14} />
           <Skeleton height={14} />
           <Skeleton width="70%" height={14} />
           <Skeleton height={52} radius={radius.full} style={{ marginTop: 16 }} />

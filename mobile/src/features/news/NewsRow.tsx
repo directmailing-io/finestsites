@@ -6,16 +6,18 @@ import { Text } from '@/components/ui';
 import { longDate } from '@/lib/format';
 import { colors, fonts, radius } from '@/theme/tokens';
 
-import { newsCardShadow, NewsHero } from './NewsHero';
+import { NEWS_UI, newsCardShadow, NewsAccentLine, newsPalette } from './NewsAccent';
 
 /**
- * Eine Neuigkeit in der Liste – redaktionelle Karte wie Apples „Das ist neu“: Verlauf-Kopf (96 pt)
- * mit Wortmarke, darunter Kicker (Punkt + „NEU“ solange ungelesen, Datum), Überschrift, Kurztext
- * in zwei Zeilen und „Weiterlesen ›“ rechts unten. Gleiche Karte wie /neuigkeiten im Web.
+ * Eine Neuigkeit in der Liste – weiße, typografische Karte ohne Bild: Datum klein in Versalien,
+ * solange ungelesen rechts die Pille „Neu“ im Pastellton der Neuigkeit, Überschrift, Kurztext in
+ * zwei Zeilen, „Weiterlesen ›“ rechts unten. Die Farbe der Neuigkeit ist nur die feine Verlauf-Linie
+ * am unteren Rand. Gleiche Karte wie /neuigkeiten im Web.
  */
 export const NewsRow = memo(function NewsRow({ item, onPress }: { item: NewsItem; onPress: () => void }) {
   const unread = !item.readAt;
   const date = longDate(item.publishedAt);
+  const p = newsPalette(item.id);
   return (
     <Pressable
       onPress={onPress}
@@ -23,28 +25,28 @@ export const NewsRow = memo(function NewsRow({ item, onPress }: { item: NewsItem
       accessibilityLabel={`${unread ? 'Ungelesen. ' : ''}${item.title}, ${date}. ${item.summary}`}
       accessibilityHint="Öffnet die Neuigkeit"
       style={({ pressed }) => [styles.card, pressed && styles.pressed]}>
-      <NewsHero seed={item.id} height={96} />
-      <View style={styles.body}>
-        <View style={styles.kicker}>
-          {unread && <View style={styles.dot} accessibilityElementsHidden />}
-          {unread && (
-            <View style={styles.pill}>
-              <Text style={styles.pillText}>NEU</Text>
-            </View>
-          )}
-          <Text style={[styles.date, unread && { color: colors.secondary }]} numberOfLines={1}>
-            {date}
-          </Text>
-        </View>
-        <Text variant="headline" style={[styles.title, unread && { color: colors.inkStrong }]} numberOfLines={2}>
-          {item.title}
+      <View style={styles.kicker}>
+        <Text style={styles.date} numberOfLines={1}>
+          {date}
         </Text>
-        <Text variant="callout" numberOfLines={2} color={unread ? colors.body : colors.secondary} style={styles.summary}>
-          {item.summary}
-        </Text>
-        <View style={styles.more}>
-          <Text style={styles.moreText}>Weiterlesen ›</Text>
-        </View>
+        {unread && (
+          <View style={[styles.pill, { backgroundColor: p.tint }]}>
+            <View style={[styles.dot, { backgroundColor: p.ink }]} />
+            <Text style={[styles.pillText, { color: p.ink }]}>Neu</Text>
+          </View>
+        )}
+      </View>
+      <Text style={styles.title} numberOfLines={2}>
+        {item.title}
+      </Text>
+      <Text style={styles.summary} numberOfLines={2}>
+        {item.summary}
+      </Text>
+      <View style={styles.more}>
+        <Text style={styles.moreText}>Weiterlesen ›</Text>
+      </View>
+      <View style={styles.line}>
+        <NewsAccentLine seed={item.id} />
       </View>
     </Pressable>
   );
@@ -54,25 +56,22 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: colors.white,
     borderRadius: radius.card,
-    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: NEWS_UI.line,
+    padding: 22,
+    paddingBottom: 20,
     ...newsCardShadow,
   },
   pressed: { transform: [{ scale: 0.985 }], opacity: 0.96 },
-  body: { paddingHorizontal: 20, paddingTop: 16, paddingBottom: 14 },
-  kicker: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 8, minHeight: 18 },
-  dot: { width: 6, height: 6, borderRadius: 3, backgroundColor: colors.accent },
-  pill: {
-    height: 18,
-    paddingHorizontal: 7,
-    borderRadius: radius.full,
-    backgroundColor: colors.accentSoft,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  pillText: { fontFamily: fonts.bold, fontSize: 10.5, lineHeight: 14, letterSpacing: 0.7, color: colors.accentDeep },
-  date: { fontFamily: fonts.semibold, fontSize: 11, lineHeight: 14, letterSpacing: 0.8, textTransform: 'uppercase', color: colors.tertiary },
-  title: { marginBottom: 4 },
-  summary: { lineHeight: 21 },
-  more: { alignItems: 'flex-end', marginTop: 10 },
-  moreText: { fontFamily: fonts.semibold, fontSize: 14, lineHeight: 20, color: colors.accent },
+  kicker: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 12, marginBottom: 10, minHeight: 22 },
+  date: { flexShrink: 1, fontFamily: fonts.semibold, fontSize: 11, lineHeight: 14, letterSpacing: 0.8, textTransform: 'uppercase', color: NEWS_UI.date },
+  pill: { flexDirection: 'row', alignItems: 'center', gap: 6, height: 22, paddingLeft: 8, paddingRight: 9, borderRadius: radius.full },
+  dot: { width: 6, height: 6, borderRadius: 3 },
+  pillText: { fontFamily: fonts.semibold, fontSize: 12, lineHeight: 16 },
+  title: { fontFamily: fonts.semibold, fontSize: 19, lineHeight: 25, letterSpacing: -0.3, color: colors.ink, marginBottom: 4 },
+  summary: { fontFamily: fonts.regular, fontSize: 15, lineHeight: 22, color: NEWS_UI.summary },
+  more: { alignItems: 'flex-end', marginTop: 16 },
+  moreText: { fontFamily: fonts.semibold, fontSize: 14, lineHeight: 20, color: colors.ink },
+  // Pastell-Linie am unteren Rand, 22 pt eingerückt (bündig mit dem Text)
+  line: { position: 'absolute', left: 22, right: 22, bottom: 0, height: 3 },
 });
