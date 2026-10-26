@@ -1,6 +1,6 @@
 /**
  * POST /api/admin/news/[id]/publish — Body { push: boolean }.
- * Mit Push: 409 NEWS_PUSH_LIMIT, wenn heute (Europe/Berlin) schon eine Neuigkeit mit Push veröffentlicht wurde.
+ * Mit Push: Mitteilung an alle Empfänger der Zielgruppe (kein Tageslimit; die Antwort von /recipients nennt den letzten Push).
  */
 import { z } from 'zod'
 import { isUuid, jsonError, jsonOk, newsErrorResponse, requireNewsAdmin } from '@/lib/news/http'

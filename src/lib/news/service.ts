@@ -364,26 +364,19 @@ function pushPayload(p: NewsPost) {
 }
 
 /**
- * Veröffentlichen (nur Entwürfe). Mit Push: Tageslimit prüfen (409 NEWS_PUSH_LIMIT), je Empfänger eine
- * Mitteilung einreihen, push_sent_at + push_queued setzen. Ohne Push: nur sichtbar schalten.
+ * Veröffentlichen (nur Entwürfe). Mit Push: je Empfänger eine Mitteilung einreihen, push_sent_at + push_queued
+ * setzen. Ohne Push: nur sichtbar schalten. Kein Tageslimit (Daniel 26.10.2026): weder Apple noch Google
+ * begrenzen die Anzahl; die Verantwortung liegt beim Admin, der Dialog zeigt den letzten Push-Zeitpunkt.
  */
 export async function publish(id: string, opts: { push: boolean }, adminId: string): Promise<AdminNewsItem> {
   const now = new Date()
   const post = await db.transaction(async (tx) => {
-    // Zwei Admins gleichzeitig → nacheinander (Tageslimit sicher)
+    // Zwei Admins gleichzeitig → nacheinander
     await tx.execute(sql`select pg_advisory_xact_lock(hashtext('news-publish'))`)
     const [p] = await tx.select().from(newsPosts).where(eq(newsPosts.id, id)).limit(1)
     if (!p) throw new NewsError('NOT_FOUND', 404, 'Neuigkeit nicht gefunden.')
     if (p.status !== 'draft') {
       throw new NewsError('NEWS_NOT_DRAFT', 409, p.status === 'published' ? 'Diese Neuigkeit ist bereits veröffentlicht.' : 'Archivierte Neuigkeiten können nicht veröffentlicht werden.')
-    }
-    if (opts.push) {
-      const rows = await tx.select({ at: newsPosts.pushSentAt }).from(newsPosts)
-        .where(and(isNotNull(newsPosts.pushSentAt), sql`${newsPosts.pushSentAt} > now() - interval '2 days'`))
-      const today = berlinDay(now)
-      if (rows.some(r => r.at && berlinDay(r.at) === today)) {
-        throw new NewsError('NEWS_PUSH_LIMIT', 409, 'Heute wurde bereits eine Neuigkeit mit Push-Mitteilung veröffentlicht. Höchstens eine am Tag – veröffentliche ohne Push oder morgen wieder mit Push.')
-      }
     }
     const [updated] = await tx.update(newsPosts).set({
       status: 'published',

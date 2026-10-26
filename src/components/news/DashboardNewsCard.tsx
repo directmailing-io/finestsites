@@ -4,15 +4,16 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import type { NewsItem, NewsListResponse, NewsActionResponse } from '@/lib/contracts/app-v1/news'
 import { isRecentEnoughForCard } from '@/lib/news/constants'
-import { NEWS_SHEET_CLASS, NEWS_TOKENS, newsPalette, newsPaletteVertical } from './news-ui'
+import { NewsEdge } from './NewsEdge'
+import { NEWS_SHEET_CLASS, NEWS_TOKENS, newsPalette } from './news-ui'
 import { broadcastNewsUnread } from './useNewsUnread'
 
 /**
  * Startkarte auf /sites: neueste veröffentlichte Neuigkeit, die weder gelesen noch weggewischt ist
  * und höchstens NEWS_CARD_MAX_AGE_DAYS alt (wie overviewFor() für die App – ein neues Konto bekommt
  * keine alte Karte). Quelle `GET /api/news`; Kreuz → `POST /api/news/[id]/dismiss`.
- * Weißes Blatt mit einem senkrechten Pastell-Strich links (die Farbe der Neuigkeit), daneben Kicker,
- * Titel, eine Zeile Text. Kein Bild, kein Icon. Rendert erst nach dem Laden, blendet sanft ein und aus.
+ * Weißes Blatt: Kicker, Titel, eine Zeile Text, „Mehr erfahren“. Einziges Gestaltungselement ist die
+ * Pastell-Unterkante der Neuigkeit. Rendert erst nach dem Laden, blendet sanft ein und aus.
  */
 export function DashboardNewsCard() {
   const [item, setItem] = useState<NewsItem | null>(null)
@@ -67,12 +68,9 @@ export function DashboardNewsCard() {
       {/* Innenabstand unten, damit der weiche Schatten nicht am overflow:hidden abgeschnitten wird */}
       <div style={{ overflow: 'hidden', padding: '2px 0 20px' }}>
         <div
-          className={`group relative ${NEWS_SHEET_CLASS}`}
-          style={{ borderRadius: 20, padding: '18px 48px 18px 40px', maxWidth: 680 }}
+          className={`group relative overflow-hidden ${NEWS_SHEET_CLASS}`}
+          style={{ borderRadius: 20, padding: '18px 48px 21px 24px', maxWidth: 680 }}
         >
-          {/* Der Pastell-Strich der Neuigkeit */}
-          <span aria-hidden style={{ position: 'absolute', left: 20, top: 14, bottom: 14, width: 4, borderRadius: 999, background: newsPaletteVertical(palette) }} />
-
           <button
             type="button"
             onClick={dismiss}
@@ -86,7 +84,7 @@ export function DashboardNewsCard() {
           </button>
 
           <div className="min-w-0">
-            <div style={{ fontSize: 12, fontWeight: 600, color: palette.ink, lineHeight: 1, letterSpacing: '-0.05px' }}>
+            <div style={{ fontSize: 12, fontWeight: 600, color: NEWS_TOKENS.muted, lineHeight: 1, letterSpacing: '0.02em' }}>
               Neu bei FinestSites
             </div>
             <Link href={href} className="block hover:underline" style={{ textDecoration: 'none', color: 'inherit' }}>
@@ -103,6 +101,8 @@ export function DashboardNewsCard() {
               </Link>
             </p>
           </div>
+
+          <NewsEdge palette={palette} />
         </div>
       </div>
     </div>

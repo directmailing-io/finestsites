@@ -588,7 +588,7 @@ export function NewsEditor({ id: initialId }: { id?: string }) {
               )}
             </div>
             <PreviewNote>
-              Push nur an Nutzer mit der App, aktivem Gerät und eingeschalteten Neuigkeiten. Höchstens eine Veröffentlichung mit Push pro Tag. Neue Nutzer sehen die Neuigkeit später auch in der Liste.
+              Push nur an Nutzer mit der App, aktivem Gerät und eingeschalteten Neuigkeiten. Es gibt kein technisches Limit – schick nur, was den Nutzern wirklich etwas bringt. Neue Nutzer sehen die Neuigkeit später auch in der Liste.
             </PreviewNote>
           </div>
         </aside>
@@ -873,7 +873,7 @@ function PublishDialog({ reach, busy, onCancel, onConfirm }: {
             badge={reach ? `${reach.users} ${reach.users === 1 ? 'Nutzer' : 'Nutzer'} · ${reach.devices} ${reach.devices === 1 ? 'Gerät' : 'Geräte'}` : 'Reichweite wird geladen …'}
             text={noDevices
               ? 'Gerade hat niemand aus dieser Zielgruppe ein Gerät mit Push. Die Mitteilung würde ins Leere gehen.'
-              : 'Geht an alle Nutzer mit App und aktivem Gerät, die Neuigkeiten eingeschaltet haben. Ruhezeiten werden eingehalten. Höchstens einmal am Tag.'} />
+              : 'Geht an alle Nutzer mit App und aktivem Gerät, die Neuigkeiten eingeschaltet haben. Ruhezeiten werden eingehalten.'} />
           <PublishOption value={false} selected={push} busy={busy} onSelect={v => { setPush(v); setError(null) }}
             title="Ohne Push"
             text="Nur im Web und in der App zeigen – in der Liste „Neuigkeiten“ und als Karte auf der Startseite." />

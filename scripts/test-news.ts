@@ -251,23 +251,17 @@ async function main() {
     check('Push-Text = pushTitle/pushBody', received.filter(m => m.data?.newsId === p1.id).every(m => m.title === 'Neu: Besucher-Chat' && m.body.startsWith('Besucher schreiben')))
   }
 
-  section('Tageslimit: eine Veröffentlichung mit Push je Kalendertag (Europe/Berlin)')
+  section('Kein Tageslimit: mehrere Veröffentlichungen mit Push am selben Tag sind erlaubt')
   const p2 = await service.createDraft(baseInput({ title: 'Nur für Starter', pushTitle: 'Starter-Info', pushBody: 'Eine Info nur für Starter-Konten.', audience: 'plan:starter', ctaLabel: 'Zu den Webseiten', ctaKind: 'sites' }), U.ADMIN.id)
-  await expectNewsError('zweiter Push am selben Tag → NEWS_PUSH_LIMIT 409', () => service.publish(p2.id, { push: true }, U.ADMIN.id), 'NEWS_PUSH_LIMIT', 409)
-  check('Entwurf blieb nach Ablehnung Entwurf', (await service.getAdmin(p2.id))?.status === 'draft')
   const pub2 = await service.publish(p2.id, { push: false }, U.ADMIN.id)
   check('ohne Push jederzeit möglich', pub2.status === 'published' && pub2.pushSentAt === null && pub2.pushQueued === 0)
   {
-    // Gestern 23:30 Berlin = anderer Kalendertag → heute ist wieder ein Push frei
-    const yesterday = new Date(Date.now() - 86400_000)
-    await sql`UPDATE news_posts SET push_sent_at = ${yesterday} WHERE id = ${p1.id}::uuid`
     const p3 = await service.createDraft(baseInput({ title: 'Dritte', pushTitle: 'Dritte', pushBody: 'Dritte Mitteilung.', audience: 'plan:unlimited', ctaLabel: '', ctaKind: null }), U.ADMIN.id)
     const pub3 = await service.publish(p3.id, { push: true }, U.ADMIN.id)
-    check('Vortag zählt nicht: Push heute wieder möglich (nur Unlimited = ADMIN)', pub3.status === 'published' && pub3.pushQueued === 1, pub3.pushQueued)
+    check('zweiter Push am selben Tag geht durch (nur Unlimited = ADMIN)', pub3.status === 'published' && pub3.pushQueued === 1, pub3.pushQueued)
     check('berlinDay liefert YYYY-MM-DD', /^\d{4}-\d{2}-\d{2}$/.test(service.berlinDay(new Date())))
     // 23:30 UTC = 00:30/01:30 Berlin am Folgetag → Berlin-Datum, nicht UTC-Datum
     check('berlinDay rechnet in Europe/Berlin', service.berlinDay(new Date('2026-06-30T23:30:00Z')) === '2026-07-01')
-    await sql`UPDATE news_posts SET push_sent_at = ${new Date()} WHERE id = ${p1.id}::uuid`
     await service.archive(p3.id)
   }
 

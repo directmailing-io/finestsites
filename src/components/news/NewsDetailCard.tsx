@@ -2,13 +2,14 @@
 
 import type { ReactNode } from 'react'
 import { NewsBodyBlocks } from './NewsBodyBlocks'
+import { NewsEdge } from './NewsEdge'
 import { NEWS_SHEET_CLASS, NEWS_TOKENS, formatNewsDate, newsPalette } from './news-ui'
 
 /**
  * Die Neuigkeit, wie sie Nutzer sehen (Web-Detail; die Admin-Vorschau nutzt `compact`):
- * ein weißes Blatt – Datums-Kicker in der Farbe der Neuigkeit, große Schlagzeile, darunter die kurze
- * Pastell-Linie, dann Vorspann und Inhalt (newsBodyBlocks), zum Schluss Knopf + leiser Zweitlink.
- * Kein Band, kein Logo, kein Bild. `cta` und `secondary` sind fertige Elemente, damit Web-Routen/Links außen entschieden werden.
+ * ein weißes Blatt – Datum, große Schlagzeile, Vorspann und Inhalt (newsBodyBlocks), Knopf, leiser
+ * Zweitlink. Einziges Gestaltungselement ist die Pastell-Unterkante des Blatts, dieselbe wie in der Liste.
+ * `cta` und `secondary` sind fertige Elemente, damit Web-Routen/Links außen entschieden werden.
  */
 export function NewsDetailCard({
   title, body, publishedAt, cta, secondary, compact = false, paletteKey,
@@ -20,20 +21,20 @@ export function NewsDetailCard({
   secondary?: ReactNode
   /** Admin-Vorschau: kleinere Maße, gleicher Aufbau */
   compact?: boolean
-  /** ID der Neuigkeit – bestimmt die Pastell-Linie (ohne ID: erste Palette) */
+  /** ID der Neuigkeit – bestimmt die Pastell-Unterkante (ohne ID: erste Palette) */
   paletteKey?: string | null
 }) {
   const palette = newsPalette(paletteKey)
   const date = publishedAt ? formatNewsDate(publishedAt) : ''
   return (
     <article
-      className={`${NEWS_SHEET_CLASS} ${compact ? 'px-[22px] pt-6 pb-6' : 'px-6 pt-8 pb-8 sm:px-10 sm:pt-10 sm:pb-10'}`}
+      className={`relative overflow-hidden ${NEWS_SHEET_CLASS} ${compact ? 'px-[22px] pt-6 pb-7' : 'px-6 pt-8 pb-9 sm:px-10 sm:pt-10 sm:pb-11'}`}
       style={{ borderRadius: compact ? 20 : NEWS_TOKENS.detailRadius }}
     >
       {date && (
         <time dateTime={publishedAt ?? undefined} style={{
           display: 'block', fontSize: compact ? 11 : 12, fontWeight: 600, letterSpacing: '0.08em',
-          textTransform: 'uppercase', color: palette.ink, lineHeight: 1,
+          textTransform: 'uppercase', color: NEWS_TOKENS.tertiary, lineHeight: 1,
         }}>
           {date}
         </time>
@@ -42,21 +43,15 @@ export function NewsDetailCard({
       <h1
         className={compact ? 'text-[21px]' : 'text-[28px] sm:text-[34px]'}
         style={{
-          margin: compact ? '10px 0 0' : '14px 0 0', fontWeight: 700, lineHeight: 1.12,
+          margin: compact ? '10px 0 16px' : '14px 0 24px', fontWeight: 700, lineHeight: 1.12,
           letterSpacing: compact ? '-0.5px' : '-0.8px', color: NEWS_TOKENS.ink, overflowWrap: 'anywhere',
         }}
       >
         {title || <span style={{ color: NEWS_TOKENS.tertiary, fontWeight: 600 }}>Überschrift der Neuigkeit</span>}
       </h1>
 
-      {/* Die Pastell-Linie unter der Schlagzeile – kurz, linksbündig */}
-      <span aria-hidden style={{
-        display: 'block', width: compact ? 48 : 72, height: 3, borderRadius: 999, background: palette.gradient,
-        margin: compact ? '12px 0 16px' : '18px 0 24px',
-      }} />
-
       {body.trim() ? (
-        <NewsBodyBlocks body={body} size={compact ? 'sm' : 'md'} palette={palette} />
+        <NewsBodyBlocks body={body} size={compact ? 'sm' : 'md'} />
       ) : (
         <p style={{ margin: 0, color: NEWS_TOKENS.tertiary, fontSize: compact ? 13.5 : 16 }}>
           Der Inhalt erscheint hier, sobald du ihn schreibst.
@@ -69,6 +64,8 @@ export function NewsDetailCard({
           {secondary && <div style={{ display: 'flex', justifyContent: 'center' }}>{secondary}</div>}
         </div>
       )}
+
+      <NewsEdge palette={palette} />
     </article>
   )
 }

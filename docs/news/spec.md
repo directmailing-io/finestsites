@@ -18,7 +18,7 @@ Stand 26.10.2026. Entschieden von Daniel nach `docs/app/neuigkeiten-konzept.html
 | Sichtbarkeit | `audience = all` → alle Konten. `plan:x` → nur Konten mit `users.plan = x`. `users` → nur Konten in `audience_user_ids` (zum Testen vor dem Rollout; die Konto-Liste darf auch nach dem Veröffentlichen geändert werden, ohne neuen Push). Zusätzlich `expires_at IS NULL OR expires_at > now()` – nach „Sichtbar bis“ verschwindet die Neuigkeit in Web und App von selbst (Admin sieht sie weiter, Pill „abgelaufen“). Neue Nutzer sehen auch ältere veröffentlichte Neuigkeiten (Liste zeigt höchstens 50, neueste zuerst). |
 | Inhalt | Reiner Text. Leerzeile = Absatz, Zeilen mit `- ` = Aufzählung. Rendern **ausschließlich** über `newsBodyBlocks()` aus dem Vertrag (Web und App identisch). Kein HTML, kein Markdown. |
 | Push | Kategorie `news`, `type: 'news'`, `title = pushTitle`, `body = pushBody`, `data = { type: 'news', url: 'finestsites://news/<id>', newsId }`, `collapseKey: 'news'`, `inbox: false` (keine Doppelung im Mitteilungs-Postfach; Neuigkeiten haben ihren eigenen Bereich). Nur an Nutzer mit mindestens einem aktiven Gerät (`push_devices.enabled`) **und** Audience-Treffer **und** ohne laufende Löschanfrage (`users.deletion_requested_at IS NULL`). Die Schalter-Prüfung (`news = false`) übernimmt der Drain; Ruhezeiten ebenfalls. |
-| Häufigkeit | Höchstens **eine** Veröffentlichung mit Push pro Kalendertag (Europe/Berlin). Server lehnt eine zweite ab (`NEWS_PUSH_LIMIT`, HTTP 409, deutsche Meldung). Veröffentlichen **ohne** Push ist jederzeit möglich. |
+| Häufigkeit | Kein Tageslimit (Daniel 26.10.2026). Weder Apple noch Google begrenzen die Anzahl an Push-Mitteilungen; Apple verlangt nur Einwilligung und Abschaltbarkeit, Google drosselt erst bei 240/Minute je Gerät. Der Admin entscheidet; der Dialog nennt den letzten Push. |
 | Testversand | Schickt die Push-Mitteilung nur an die Geräte des angemeldeten Admins, veröffentlicht nichts, zählt nicht. Enqueue mit `collapseKey: 'news-test'`, `throttleSeconds: 30`. |
 | Gelesen | `news_reads.read_at` beim Öffnen des Details (Web und App). `cta_clicked_at` beim Tipp auf den Knopf. `dismissed_at` beim Wegwischen der Startkarte (Web-Dashboard und App-Startbildschirm teilen sich den Wert). |
 | Ungelesen | Anzahl veröffentlichter, sichtbarer Neuigkeiten ohne `read_at`. Für die Zähler unter „Mehr → Neuigkeiten“ (App), in der Seitenleiste (Web) und in `/overview`. |
@@ -57,7 +57,7 @@ Fehlerform überall wie im Projekt üblich (App: `appError`, Web/Admin: `NextRes
 - `GET /api/admin/news` → Liste mit Statistik
 - `POST /api/admin/news` → Entwurf anlegen (Body = `NewsAdminInput`)
 - `GET /api/admin/news/[id]` · `PUT` (Update) · `DELETE` (nur Entwurf)
-- `POST /api/admin/news/[id]/publish` Body `{ push: boolean }` → 409 `NEWS_PUSH_LIMIT` bei zweitem Push am selben Tag
+- `POST /api/admin/news/[id]/publish` Body `{ push: boolean }` (kein Tageslimit)
 - `POST /api/admin/news/[id]/test` → Testpush an den Admin, Antwort `{ devices: number }` (0 = „Du hast kein Gerät mit Push angemeldet“)
 - `POST /api/admin/news/[id]/archive`
 - `GET /api/admin/news/[id]/recipients` → `{ users, devices }`

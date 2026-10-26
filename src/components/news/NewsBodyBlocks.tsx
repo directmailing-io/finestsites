@@ -1,13 +1,13 @@
 import { Check } from 'lucide-react'
 import { newsBodyBlocks } from '@/lib/contracts/app-v1/news'
-import { NEWS_PALETTES, NEWS_TOKENS, type NewsPalette } from './news-ui'
+import { NEWS_TOKENS } from './news-ui'
 
 /**
  * Inhalt einer Neuigkeit – ausschließlich über `newsBodyBlocks()` aus dem Vertrag gerendert,
  * damit Web und App denselben Text identisch lesen. Der erste Absatz ist der Vorspann (größer),
- * Aufzählungen werden zu „Feature-Zeilen“: Häkchen in der Farbe der Neuigkeit auf ihrem fast weißen Kreis.
+ * Aufzählungen werden zu ruhigen Zeilen mit einem dunklen Häkchen auf hellgrauem Kreis – keine Farbe.
  */
-export function NewsBodyBlocks({ body, size = 'md', palette = NEWS_PALETTES[0] }: { body: string; size?: 'sm' | 'md'; palette?: NewsPalette }) {
+export function NewsBodyBlocks({ body, size = 'md' }: { body: string; size?: 'sm' | 'md' }) {
   const blocks = newsBodyBlocks(body)
   if (blocks.length === 0) return null
   const sm = size === 'sm'
@@ -39,11 +39,11 @@ export function NewsBodyBlocks({ body, size = 'md', palette = NEWS_PALETTES[0] }
             {b.items.map((item, j) => (
               <li key={j} style={{ display: 'flex', gap: sm ? 10 : 14, alignItems: 'flex-start', overflowWrap: 'anywhere' }}>
                 <span aria-hidden style={{
-                  width: check, height: check, borderRadius: 999, background: palette.tint,
+                  width: check, height: check, borderRadius: 999, background: '#F3F4F6',
                   display: 'inline-flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
                   marginTop: sm ? 1 : 3,
                 }}>
-                  <Check size={sm ? 11 : 13} strokeWidth={2.75} color={palette.ink} />
+                  <Check size={sm ? 11 : 13} strokeWidth={2.75} color={NEWS_TOKENS.ink} />
                 </span>
                 <span style={{ fontSize: textSize, lineHeight: sm ? 1.5 : 1.65, color: NEWS_TOKENS.body }}>{item}</span>
               </li>

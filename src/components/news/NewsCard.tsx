@@ -2,12 +2,13 @@
 
 import Link from 'next/link'
 import type { NewsItem } from '@/lib/contracts/app-v1/news'
+import { NewsEdge } from './NewsEdge'
 import { NEWS_SHEET_CLASS, NEWS_SHEET_HOVER_CLASS, NEWS_TOKENS, formatNewsDate, newsPalette } from './news-ui'
 
 /**
- * Eine Neuigkeit in der Liste `/neuigkeiten` – ein weißes, typografisches Blatt: Datum, Überschrift,
- * zwei Zeilen Kurztext, „Weiterlesen“. Die einzige Farbe ist die 3 px dünne Pastell-Linie an der
- * Unterkante (je ID fest gewählt), 28 px von beiden Seiten eingerückt – ein Unterstrich, kein Rahmen.
+ * Eine Neuigkeit in der Liste `/neuigkeiten`: weißes Blatt mit Datum, Überschrift, zwei Zeilen
+ * Kurztext und „Weiterlesen“. Einziges Gestaltungselement ist die Pastell-Unterkante der Karte
+ * (volle Breite, folgt den Rundungen). Kein Punkt, kein Icon, kein Bild.
  */
 export function NewsCard({ item }: { item: NewsItem }) {
   const unread = !item.readAt
@@ -15,13 +16,11 @@ export function NewsCard({ item }: { item: NewsItem }) {
   return (
     <Link
       href={`/neuigkeiten/${item.id}`}
-      className={`group relative block transition-[transform,box-shadow,border-color] duration-[180ms] ease-out active:scale-[0.995] ${NEWS_SHEET_CLASS} ${NEWS_SHEET_HOVER_CLASS}`}
+      className={`group relative block overflow-hidden transition-[transform,box-shadow,border-color] duration-[180ms] ease-out active:scale-[0.995] ${NEWS_SHEET_CLASS} ${NEWS_SHEET_HOVER_CLASS}`}
       style={{ borderRadius: NEWS_TOKENS.cardRadius, textDecoration: 'none', color: 'inherit' }}
     >
-      <div className="px-5 pt-5 pb-6 sm:px-7 sm:pt-7 sm:pb-6">
-        {/* Kopfzeile: Punkt (ungelesen) · Datum · „Neu“ */}
+      <div className="px-5 pt-5 pb-6 sm:px-7 sm:pt-7 sm:pb-7">
         <div className="flex items-center gap-2.5" style={{ minHeight: 20 }}>
-          {unread && <span aria-hidden style={{ width: 6, height: 6, borderRadius: 999, background: palette.ink, flexShrink: 0 }} />}
           <time dateTime={item.publishedAt ?? undefined} style={{
             fontSize: 12, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase',
             color: NEWS_TOKENS.tertiary, lineHeight: 1,
@@ -31,7 +30,7 @@ export function NewsCard({ item }: { item: NewsItem }) {
           {unread && (
             <span style={{
               fontSize: 11.5, fontWeight: 600, letterSpacing: '0.01em', lineHeight: 1,
-              padding: '5px 9px', borderRadius: 999, background: palette.tint, color: palette.ink,
+              padding: '5px 9px', borderRadius: 999, background: palette.tint, color: NEWS_TOKENS.ink,
             }}>
               Neu
             </span>
@@ -61,8 +60,7 @@ export function NewsCard({ item }: { item: NewsItem }) {
         </div>
       </div>
 
-      {/* Die Pastell-Linie: Unterkante, eingerückt – liegt auf der Haarlinie */}
-      <span aria-hidden className="absolute left-5 right-5 sm:left-7 sm:right-7" style={{ bottom: -1, height: 3, borderRadius: 999, background: palette.gradient }} />
+      <NewsEdge palette={palette} />
     </Link>
   )
 }

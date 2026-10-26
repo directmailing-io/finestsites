@@ -60,7 +60,7 @@ export default function AdminNewsListPage() {
         <div>
           <h1 className="text-2xl font-semibold text-gray-900 tracking-tight">Neuigkeiten</h1>
           <p className="text-sm mt-1" style={{ color: '#94A3B8' }}>
-            Ankündigungen für Web und App · Push höchstens einmal am Tag
+            Ankündigungen für Web und App · auf Wunsch mit Push-Mitteilung
           </p>
         </div>
         <Link href="/admin/neuigkeiten/neu"
