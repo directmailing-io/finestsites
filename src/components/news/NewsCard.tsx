@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { Megaphone } from "lucide-react"
 import type { NewsItem } from '@/lib/contracts/app-v1/news'
 import { NEWS_TOKENS, formatNewsDate } from './news-ui'
 
@@ -24,10 +25,7 @@ export function NewsCard({ item }: { item: NewsItem }) {
           background: unread ? NEWS_TOKENS.heroGradient : '#F1F5F9',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
         }}>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={unread ? '#fff' : NEWS_TOKENS.tertiary} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/>
-            <path d="M19 17l.7 1.8 1.8.7-1.8.7L19 22l-.7-1.8-1.8-.7 1.8-.7z"/>
-          </svg>
+          <Megaphone size={18} strokeWidth={2} color={unread ? '#fff' : NEWS_TOKENS.tertiary} aria-hidden />
         </span>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">

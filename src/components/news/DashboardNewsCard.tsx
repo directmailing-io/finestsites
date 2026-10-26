@@ -2,13 +2,16 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { Megaphone } from "lucide-react"
 import type { NewsItem, NewsListResponse, NewsActionResponse } from '@/lib/contracts/app-v1/news'
+import { isRecentEnoughForCard } from '@/lib/news/constants'
 import { NEWS_TOKENS } from './news-ui'
 import { broadcastNewsUnread } from './useNewsUnread'
 
 /**
  * Startkarte auf /sites (Konzept Bild 4): neueste veröffentlichte Neuigkeit, die weder gelesen noch
- * weggewischt ist. Quelle `GET /api/news`; Kreuz → `POST /api/news/[id]/dismiss`.
+ * weggewischt ist und höchstens NEWS_CARD_MAX_AGE_DAYS alt (wie overviewFor() für die App – ein neues
+ * Konto bekommt keine alte Karte). Quelle `GET /api/news`; Kreuz → `POST /api/news/[id]/dismiss`.
  * Rendert erst nach dem Laden (kein Platzhalter, kein Springen), blendet sanft ein und aus.
  */
 export function DashboardNewsCard() {
@@ -22,7 +25,7 @@ export function DashboardNewsCard() {
       .then(r => (r.ok ? (r.json() as Promise<NewsListResponse>) : null))
       .then(d => {
         if (!alive || !d?.items) return
-        const latest = d.items.find(n => !n.readAt && !n.dismissedAt) ?? null
+        const latest = d.items.find(n => !n.readAt && !n.dismissedAt && isRecentEnoughForCard(n.publishedAt)) ?? null
         if (latest) {
           setItem(latest)
           requestAnimationFrame(() => { if (alive) setVisible(true) })
@@ -78,7 +81,8 @@ export function DashboardNewsCard() {
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
           </button>
-          <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: NEWS_TOKENS.accent }}>
+          <div className="inline-flex items-center gap-1.5" style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: NEWS_TOKENS.accent }}>
+            <Megaphone size={13} strokeWidth={2.25} aria-hidden />
             Neu bei FinestSites
           </div>
           <div style={{ fontWeight: 700, color: NEWS_TOKENS.ink, fontSize: 16, lineHeight: 1.3, margin: '4px 0 3px', letterSpacing: '-0.01em', overflowWrap: 'anywhere' }}>

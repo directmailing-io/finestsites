@@ -1,10 +1,10 @@
 'use client'
 
-import type { AdminNewsItem } from '@/lib/news/service'
+import type { AdminNewsItem, AudienceUser } from '@/lib/news/service'
 
 /** Gemeinsame Hilfen der Admin-Seiten „Neuigkeiten“ (nur Typen + reine Funktionen, kein Server-Code). */
 
-export type { AdminNewsItem }
+export type { AdminNewsItem, AudienceUser }
 
 export const STATUS_META: Record<AdminNewsItem['status'], { label: string; bg: string; text: string; dot: string }> = {
   draft:     { label: 'Entwurf',        bg: '#FFF7ED', text: '#C2410C', dot: '#F97316' },
@@ -17,6 +17,39 @@ export const AUDIENCE_LABELS: Record<AdminNewsItem['audience'], string> = {
   'plan:starter': 'Nur Starter',
   'plan:pro': 'Nur Pro',
   'plan:unlimited': 'Nur Unlimited',
+  'users': 'Bestimmte Nutzer',
+}
+
+/** Kurzform für Pills in der Liste: „Alle“, „Starter“, „Pro“, „Unlimited“, „3 Nutzer“. */
+export function audienceShort(item: Pick<AdminNewsItem, 'audience' | 'audienceUserIds'>): string {
+  switch (item.audience) {
+    case 'all': return 'Alle'
+    case 'plan:starter': return 'Starter'
+    case 'plan:pro': return 'Pro'
+    case 'plan:unlimited': return 'Unlimited'
+    case 'users': { const n = item.audienceUserIds.length; return `${n} ${n === 1 ? 'Nutzer' : 'Nutzer'}` }
+  }
+}
+
+/** „bis 04.11.“ – Kurzform von „Sichtbar bis“ für die Liste. */
+export function formatExpiresShort(iso: string | null): string {
+  if (!iso) return ''
+  // expires_at ist der Beginn des Folgetags (00:00 Berlin) → den sichtbaren Kalendertag eine Minute davor ablesen
+  const d = new Date(new Date(iso).getTime() - 60_000)
+  if (Number.isNaN(d.getTime())) return ''
+  return `bis ${d.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', timeZone: 'Europe/Berlin' })}`
+}
+
+/** Datumsfeld-Wert (YYYY-MM-DD, Europe/Berlin) aus expires_at – Umkehrung von berlinEndOfDay(). */
+export function expiresToDay(iso: string | null): string {
+  if (!iso) return ''
+  const d = new Date(new Date(iso).getTime() - 60_000)
+  if (Number.isNaN(d.getTime())) return ''
+  return new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Berlin', year: 'numeric', month: '2-digit', day: '2-digit' }).format(d)
+}
+
+export function isExpired(iso: string | null, now: Date = new Date()): boolean {
+  return !!iso && new Date(iso).getTime() <= now.getTime()
 }
 
 export function StatusPill({ status }: { status: AdminNewsItem['status'] }) {

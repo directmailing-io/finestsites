@@ -8,9 +8,11 @@
  *   TEST_DATABASE_URL=postgresql://finestsites_dev:finestsites_dev_local@localhost:5432/finestsites_news_test \
  *   node --import tsx scripts/test-news.ts
  *
- * Prüft: Audience, Gelesen/Ungelesen, Startkarte verschwindet nach Lesen oder Wegwischen, Tageslimit
- * (Europe/Berlin), Testversand nur an eigene Geräte, Push nur mit aktivem Gerät und ohne Löschanfrage,
- * Archivieren versteckt, Löschen nur Entwurf, Nutzer mit news = false bekommt durch den Drain keinen Push.
+ * Prüft: Audience (auch „Bestimmte Nutzer“ mit Konto-Liste, Reichweite, Push), Gelesen/Ungelesen, Startkarte
+ * verschwindet nach Lesen oder Wegwischen und ignoriert Neuigkeiten älter als 14 Tage, „Sichtbar bis“ (expires_at,
+ * Ende des Tages Europe/Berlin) versteckt nach Ablauf, Tageslimit (Europe/Berlin), Testversand nur an eigene Geräte,
+ * Push nur mit aktivem Gerät und ohne Löschanfrage, Archivieren versteckt, Löschen nur Entwurf, Nutzer mit
+ * news = false bekommt durch den Drain keinen Push.
  *
  * Sicherheit: bricht ab, wenn die DB nicht lokal ist oder `finestsites`/`finestsites_dev` heißt. Push geht
  * an einen eingebauten Schein-Expo-Server auf 127.0.0.1 (PUSH_EXPO_URL) – nichts verlässt den Rechner.
@@ -52,6 +54,8 @@ type Service = typeof import('../src/lib/news/service')
 type AdminSchema = typeof import('../src/lib/news/admin-schema')
 let service: Service
 let NewsAdminInput: AdminSchema['NewsAdminInput']
+let berlinEndOfDay: AdminSchema['berlinEndOfDay']
+let isRecentEnoughForCard: typeof import('../src/lib/news/constants')['isRecentEnoughForCard']
 let drainPushOutbox: typeof import('../src/lib/push/drain')['drainPushOutbox']
 let resetPushEnabledCache: typeof import('../src/lib/push/config')['resetPushEnabledCache']
 
@@ -61,7 +65,8 @@ async function boot() {
   process.env.PUSH_EXPO_URL = `http://127.0.0.1:${port}/push`
   process.env.PUSH_EXPO_RECEIPTS_URL = `http://127.0.0.1:${port}/receipts`
   service = await import('../src/lib/news/service')
-  ;({ NewsAdminInput } = await import('../src/lib/news/admin-schema'))
+  ;({ NewsAdminInput, berlinEndOfDay } = await import('../src/lib/news/admin-schema'))
+  ;({ isRecentEnoughForCard } = await import('../src/lib/news/constants'))
   ;({ drainPushOutbox } = await import('../src/lib/push/drain'))
   ;({ resetPushEnabledCache } = await import('../src/lib/push/config'))
 }
@@ -162,6 +167,24 @@ async function main() {
     check('leerer Knopf → cta null', noCta.ctaLabel === null && noCta.ctaKind === null && noCta.ctaUrl === null)
     const badAudience = NewsAdminInput.safeParse({ ...baseInput(), audience: 'plan:secret' })
     check('unbekannte Audience → Fehler', !badAudience.success)
+    const usersEmpty = NewsAdminInput.safeParse({ ...baseInput(), audience: 'users', audienceUserIds: [] })
+    check('audience users ohne Konten → Fehler bei audienceUserIds', !usersEmpty.success && usersEmpty.error.issues.some(i => i.path[0] === 'audienceUserIds'))
+    const usersOk = NewsAdminInput.parse({ ...baseInput(), audience: 'users', audienceUserIds: [U.A.id, U.A.id.toUpperCase(), U.B.id] })
+    check('audience users: Konten ohne Dubletten, kleingeschrieben', JSON.stringify(usersOk.audienceUserIds) === JSON.stringify([U.A.id, U.B.id]), usersOk.audienceUserIds)
+    const allWithIds = NewsAdminInput.parse({ ...baseInput(), audience: 'all', audienceUserIds: [U.A.id] })
+    check('audience all: mitgeschickte Konten werden verworfen', allWithIds.audienceUserIds.length === 0)
+    const badId = NewsAdminInput.safeParse({ ...baseInput(), audience: 'users', audienceUserIds: ['nicht-uuid'] })
+    check('ungültige Konto-ID → Fehler', !badId.success)
+    const tooMany = NewsAdminInput.safeParse({ ...baseInput(), audience: 'users', audienceUserIds: Array.from({ length: 201 }, (_, i) => id(1000 + i)) })
+    check('mehr als 200 Konten → Fehler', !tooMany.success)
+    check('expiresAt leer → null', baseInput().expiresAt === null && NewsAdminInput.parse({ ...baseInput(), expiresAt: '' }).expiresAt === null)
+    const exp = NewsAdminInput.parse({ ...baseInput(), expiresAt: '2026-11-04' })
+    check('expiresAt 2026-11-04 → Ende des Tages Berlin (Winter, 23:00Z)', exp.expiresAt?.toISOString() === '2026-11-04T23:00:00.000Z', exp.expiresAt)
+    check('berlinEndOfDay Sommer: 2026-07-01 → 22:00Z', berlinEndOfDay('2026-07-01').toISOString() === '2026-07-01T22:00:00.000Z')
+    check('berlinEndOfDay Zeitumstellung Ende: 2026-10-25 → 23:00Z', berlinEndOfDay('2026-10-25').toISOString() === '2026-10-25T23:00:00.000Z')
+    check('berlinEndOfDay Zeitumstellung Anfang: 2026-03-29 → 22:00Z', berlinEndOfDay('2026-03-29').toISOString() === '2026-03-29T22:00:00.000Z')
+    const badDay = NewsAdminInput.safeParse({ ...baseInput(), expiresAt: '04.11.2026' })
+    check('expiresAt im falschen Format → Fehler', !badDay.success && badDay.error.issues.some(i => i.path[0] === 'expiresAt'))
   }
 
   section('Entwurf: unsichtbar für Nutzer')
@@ -330,6 +353,80 @@ async function main() {
     await service.deleteDraft(d.id)
     check('Entwurf gelöscht', (await service.getAdmin(d.id)) === null)
     await expectNewsError('unbekannte ID → NOT_FOUND 404', () => service.deleteDraft(id(999)), 'NOT_FOUND', 404)
+  }
+
+  section('Zielgruppe „Bestimmte Nutzer“ (zum Testen)')
+  {
+    const before = Number((await sql`SELECT count(*)::int n FROM push_outbox WHERE collapse_key = 'news'`)[0].n)
+    const pu = await service.createDraft(baseInput({ title: 'Nur für Tester', pushTitle: 'Tester-Info', pushBody: 'Nur für ausgewählte Konten.', audience: 'users', audienceUserIds: [U.A.id, U.D.id] }), U.ADMIN.id)
+    check('Entwurf: audience users, zwei Konten', pu.audience === 'users' && JSON.stringify(pu.audienceUserIds) === JSON.stringify([U.A.id, U.D.id]), pu.audienceUserIds)
+    check('Admin-Form: audienceUsers mit E-Mail + Benutzername aufgelöst', pu.audienceUsers.length === 2 && pu.audienceUsers[0].email === 'newstest-a@example.invalid' && pu.audienceUsers[0].username === 'newstest-a' && pu.audienceUsers[1].email === 'newstest-d@example.invalid', pu.audienceUsers)
+    const r = await service.recipientPreview(pu.id)
+    check('Reichweite users: nur A mit Gerät (1 Nutzer, 2 Geräte; D hat keins)', r.users === 1 && r.devices === 2, r)
+    check('Entwurf für A unsichtbar', (await service.listForUser(U.A.id, ctx('A'))).items.every(i => i.id !== pu.id))
+    await service.publish(pu.id, { push: false }, U.ADMIN.id)
+    const a = await service.listForUser(U.A.id, ctx('A'))
+    check('A (in der Liste) sieht die Neuigkeit, unread 1', a.items.some(i => i.id === pu.id) && a.unreadCount === 1, a.items.map(i => i.title))
+    check('D (in der Liste, ohne Gerät) sieht sie ebenfalls', (await service.getForUser(U.D.id, pu.id, ctx('D')))?.id === pu.id)
+    check('B (nicht in der Liste) sieht sie nicht – Liste wie zuvor, Detail null', (await service.listForUser(U.B.id, ctx('B'))).items.every(i => i.id !== pu.id) && (await service.getForUser(U.B.id, pu.id, ctx('B'))) === null)
+    check('B: markRead für fremde Tester-Neuigkeit liefert null', (await service.markRead(U.B.id, pu.id, ctx('B'))) === null)
+    check('B: unread zählt sie nicht', (await service.unreadCountFor(U.B.id, ctx('B'))) === 1)
+    check('audienceMatches users: A ja, B nein, ohne userId nein', service.audienceMatches('users', 'pro', U.A.id, [U.A.id]) && !service.audienceMatches('users', 'starter', U.B.id, [U.A.id]) && !service.audienceMatches('users', 'pro', null, [U.A.id]))
+    check('audienceMatches Groß-/Kleinschreibung der ID egal', service.audienceMatches('users', null, U.A.id.toUpperCase(), [U.A.id]))
+    const ovA = await service.overviewFor(U.A.id, ctx('A'))
+    check('A: Startkarte = Tester-Neuigkeit', ovA.latest?.id === pu.id && ovA.unread === 1, ovA)
+    // Veröffentlicht: Zielgruppen-Art bleibt, aber die Konto-Liste darf geändert werden – ohne neuen Push
+    const keep = await service.updateDraft(pu.id, baseInput({ audience: 'plan:pro', audienceUserIds: [U.B.id] }))
+    check('veröffentlicht: Wechsel der Zielgruppen-Art wird ignoriert, Konten bleiben', keep.audience === 'users' && JSON.stringify(keep.audienceUserIds) === JSON.stringify([U.A.id, U.D.id]), keep)
+    const upd = await service.updateDraft(pu.id, baseInput({ audience: 'users', audienceUserIds: [U.A.id, U.B.id] }))
+    check('veröffentlicht: Konto-Liste geändert (D raus, B rein)', JSON.stringify(upd.audienceUserIds) === JSON.stringify([U.A.id, U.B.id]) && upd.audienceUsers.map(u => u.username).join(',') === 'newstest-a,newstest-b', upd)
+    check('B sieht sie jetzt, D nicht mehr', (await service.getForUser(U.B.id, pu.id, ctx('B')))?.id === pu.id && (await service.getForUser(U.D.id, pu.id, ctx('D'))) === null)
+    const after = Number((await sql`SELECT count(*)::int n FROM push_outbox WHERE collapse_key = 'news'`)[0].n)
+    check('kein zusätzlicher Push durch die Listenänderung', after === before, { before, after })
+    const list = await service.listAdmin()
+    check('listAdmin: audienceUsers je Eintrag aufgelöst (eine Abfrage), andere leer', list.find(i => i.id === pu.id)?.audienceUsers.length === 2 && list.filter(i => i.audience !== 'users').every(i => i.audienceUsers.length === 0 && i.audienceUserIds.length === 0))
+
+    // Push an bestimmte Nutzer: Tageslimit freimachen, dann B (Gerät an), C (Gerät aus), F (Löschanfrage)
+    await sql`UPDATE news_posts SET push_sent_at = push_sent_at - interval '1 day' WHERE push_sent_at IS NOT NULL`
+    const pu2 = await service.createDraft(baseInput({ title: 'Tester-Push', pushTitle: 'Tester-Push', pushBody: 'Push nur an bestimmte Konten.', audience: 'users', audienceUserIds: [U.B.id, U.C.id, U.F.id] }), U.ADMIN.id)
+    const r2 = await service.recipientPreview(pu2.id)
+    check('Reichweite users [B, C, F]: nur B (1 Nutzer, 1 Gerät)', r2.users === 1 && r2.devices === 1, r2)
+    const pub = await service.publish(pu2.id, { push: true }, U.ADMIN.id)
+    check('Push an bestimmte Nutzer: push_queued 1', pub.pushQueued === 1 && !!pub.pushSentAt, pub.pushQueued)
+    const rows = await outbox(sql`collapse_key = 'news' AND data->>'newsId' = ${pu2.id}`)
+    check('Outbox: genau eine Zeile, für B', rows.length === 1 && rows[0].user_id === U.B.id, rows.map(r => r.user_id))
+    check('A (nicht in der Liste) sieht Tester-Push nicht', (await service.getForUser(U.A.id, pu2.id, ctx('A'))) === null)
+    await service.archive(pu2.id)
+    await service.archive(pu.id)
+  }
+
+  section('Sichtbar bis (expires_at) versteckt nach Ablauf')
+  {
+    const pe = await service.createDraft(baseInput({ title: 'Nur bis Jahresende', expiresAt: '2030-12-31' }), U.ADMIN.id)
+    check('Entwurf: expiresAt = Ende des Tages Berlin', pe.expiresAt === '2030-12-31T23:00:00.000Z', pe.expiresAt)
+    await service.publish(pe.id, { push: false }, U.ADMIN.id)
+    check('vor Ablauf: A sieht sie, unread 1', (await service.getForUser(U.A.id, pe.id, ctx('A')))?.id === pe.id && (await service.unreadCountFor(U.A.id, ctx('A'))) === 1)
+    await sql`UPDATE news_posts SET expires_at = now() - interval '1 minute' WHERE id = ${pe.id}::uuid`
+    check('nach Ablauf: Liste leer, Detail null, unread 0', (await service.listForUser(U.A.id, ctx('A'))).items.every(i => i.id !== pe.id) && (await service.getForUser(U.A.id, pe.id, ctx('A'))) === null && (await service.unreadCountFor(U.A.id, ctx('A'))) === 0)
+    check('nach Ablauf: Startkarte null', (await service.overviewFor(U.A.id, ctx('A'))).latest === null)
+    check('nach Ablauf: markRead null', (await service.markRead(U.A.id, pe.id, ctx('A'))) === null)
+    check('Admin sieht sie weiterhin (status published, expiresAt gesetzt)', (await service.getAdmin(pe.id))?.status === 'published' && !!(await service.getAdmin(pe.id))?.expiresAt)
+    const cleared = await service.updateDraft(pe.id, baseInput({ title: 'Nur bis Jahresende', expiresAt: null }))
+    check('veröffentlicht: „Sichtbar bis“ entfernen → wieder sichtbar', cleared.expiresAt === null && (await service.getForUser(U.A.id, pe.id, ctx('A')))?.id === pe.id)
+    const later = await service.updateDraft(pe.id, baseInput({ title: 'Nur bis Jahresend', expiresAt: '2031-06-30' }))
+    check('veröffentlicht: neues Datum setzen (Sommer → 22:00Z)', later.expiresAt === '2031-06-30T22:00:00.000Z', later.expiresAt)
+
+    section('Startkarte ignoriert Neuigkeiten älter als 14 Tage')
+    const ov1 = await service.overviewFor(U.D.id, ctx('D'))
+    check('D: frisch veröffentlicht → Startkarte da, unread 1', ov1.latest?.id === pe.id && ov1.unread === 1, ov1)
+    await sql`UPDATE news_posts SET published_at = now() - interval '15 days' WHERE id = ${pe.id}::uuid`
+    const ov2 = await service.overviewFor(U.D.id, ctx('D'))
+    check('15 Tage alt: Startkarte null, unread bleibt 1, Liste zeigt sie weiter', ov2.latest === null && ov2.unread === 1 && (await service.listForUser(U.D.id, ctx('D'))).items.some(i => i.id === pe.id), ov2)
+    await sql`UPDATE news_posts SET published_at = now() - interval '13 days' WHERE id = ${pe.id}::uuid`
+    check('13 Tage alt: Startkarte wieder da', (await service.overviewFor(U.D.id, ctx('D'))).latest?.id === pe.id)
+    check('isRecentEnoughForCard (Web-Karte): 13 Tage ja, 15 Tage nein, Müll nein', isRecentEnoughForCard(new Date(Date.now() - 13 * 86400_000).toISOString()) && !isRecentEnoughForCard(new Date(Date.now() - 15 * 86400_000).toISOString()) && !isRecentEnoughForCard('x'))
+    check('NEWS_CARD_MAX_AGE_DAYS = 14', service.NEWS_CARD_MAX_AGE_DAYS === 14)
+    await service.archive(pe.id)
   }
 
   section('Ergebnis')

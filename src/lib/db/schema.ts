@@ -1,5 +1,5 @@
 import { pgTable, pgEnum, uuid, text, varchar, boolean, timestamp, jsonb, integer, smallint, bigint, numeric, date, index, uniqueIndex, primaryKey } from 'drizzle-orm/pg-core'
-import { relations } from 'drizzle-orm'
+import { relations, sql } from 'drizzle-orm'
 
 // ─── Enums ────────────────────────────────────────────────────────────────────
 
@@ -926,8 +926,12 @@ export const newsPosts = pgTable('news_posts', {
   ctaLabel: text('cta_label'),
   ctaKind: text('cta_kind'), // 'sites' | 'submissions' | 'chats' | 'affiliate' | 'settings' | 'url' | null
   ctaUrl: text('cta_url'),
-  audience: text('audience').notNull().default('all'), // 'all' | 'plan:starter' | 'plan:pro' | 'plan:unlimited'
+  audience: text('audience').notNull().default('all'), // 'all' | 'plan:starter' | 'plan:pro' | 'plan:unlimited' | 'users'
+  // Migration 20261027120000: nur bei audience = 'users' gefüllt (Konten, die die Neuigkeit sehen – zum Testen)
+  audienceUserIds: uuid('audience_user_ids').array().notNull().default(sql`'{}'::uuid[]`),
   publishedAt: timestamp('published_at', { withTimezone: true }),
+  // „Sichtbar bis“ (Ende des Tages Europe/Berlin); NULL = sichtbar bis zum Archivieren
+  expiresAt: timestamp('expires_at', { withTimezone: true }),
   pushSentAt: timestamp('push_sent_at', { withTimezone: true }),
   pushQueued: integer('push_queued').notNull().default(0),
   createdBy: uuid('created_by').references(() => users.id, { onDelete: 'set null' }),

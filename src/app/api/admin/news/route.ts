@@ -1,5 +1,6 @@
 /**
  * GET  /api/admin/news — alle Neuigkeiten mit Statistik (pushQueued, readCount, ctaCount, dismissedCount)
+ *      sowie audienceUserIds + audienceUsers { id, email, username }[] (bei Zielgruppe „Bestimmte Nutzer“) und expiresAt
  * POST /api/admin/news — Entwurf anlegen (Body = NewsAdminInput, deutsche Feldfehler in `fields`)
  */
 import { NewsAdminInput, newsInputErrors } from '@/lib/news/admin-schema'

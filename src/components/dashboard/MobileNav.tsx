@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { Megaphone } from "lucide-react"
 import { usePathname, useRouter } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import { signOut } from '@/lib/auth/client'
@@ -323,12 +324,7 @@ function DrawerPartnerIcon() {
 }
 
 function DrawerNewsIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/>
-      <path d="M19 17l.7 1.8 1.8.7-1.8.7L19 22l-.7-1.8-1.8-.7 1.8-.7z"/>
-    </svg>
-  )
+  return <Megaphone size={20} strokeWidth={1.75} aria-hidden />
 }
 
 function DrawerSettingsIcon() {

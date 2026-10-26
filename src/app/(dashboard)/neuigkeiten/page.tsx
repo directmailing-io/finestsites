@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { Megaphone } from "lucide-react"
 import type { NewsItem, NewsListResponse } from '@/lib/contracts/app-v1/news'
 import { NewsCard } from '@/components/news/NewsCard'
 import { NEWS_TOKENS } from '@/components/news/news-ui'
@@ -67,17 +68,15 @@ export default function NewsListPage() {
         </div>
       )}
 
+      {/* Leerzustand im ruhigen Stil von „Noch keine Anfragen“ (submissions/page.tsx) */}
       {items && items.length === 0 && (
-        <div className="flex flex-col items-center text-center px-6 py-14 bg-white"
-          style={{ borderRadius: NEWS_TOKENS.cardRadius, border: `1.5px dashed ${NEWS_TOKENS.accentSoftBorder}`, background: '#FBF9FE' }}>
-          <span style={{ width: 56, height: 56, borderRadius: 18, background: NEWS_TOKENS.heroGradient, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 8px 24px rgba(124,58,237,0.25)' }}>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/>
-              <path d="M19 17l.7 1.8 1.8.7-1.8.7L19 22l-.7-1.8-1.8-.7 1.8-.7z"/>
-            </svg>
-          </span>
-          <h2 className="text-lg font-bold text-gray-900 mt-4">Noch keine Neuigkeiten</h2>
-          <p className="text-sm mt-1 max-w-sm" style={{ color: NEWS_TOKENS.secondary }}>
+        <div className="flex flex-col items-center justify-center py-24 rounded-3xl text-center" style={{ background: '#FAFAFA' }} data-testid="news-empty">
+          <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-5"
+            style={{ background: 'white', boxShadow: '0 4px 20px rgba(0,0,0,0.06)' }}>
+            <Megaphone size={26} strokeWidth={1.5} color="#CBD5E1" aria-hidden />
+          </div>
+          <h2 className="font-semibold text-gray-900 text-lg mb-2">Noch keine Neuigkeiten</h2>
+          <p className="text-sm max-w-xs leading-relaxed m-0" style={{ color: '#94A3B8' }}>
             Sobald es etwas Neues bei FinestSites gibt, findest du es hier.
           </p>
         </div>

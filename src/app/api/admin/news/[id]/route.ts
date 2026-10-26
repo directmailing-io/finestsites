@@ -1,6 +1,7 @@
 /**
- * GET    /api/admin/news/[id] — eine Neuigkeit mit Statistik
- * PUT    /api/admin/news/[id] — ändern (Body = NewsAdminInput; nach Push bleiben pushTitle/pushBody fest)
+ * GET    /api/admin/news/[id] — eine Neuigkeit mit Statistik (+ audienceUserIds, audienceUsers, expiresAt)
+ * PUT    /api/admin/news/[id] — ändern (Body = NewsAdminInput; nach Push bleiben pushTitle/pushBody fest; veröffentlicht:
+ *        Zielgruppen-Art fest, Konto-Liste bei „Bestimmte Nutzer“ und „Sichtbar bis“ weiter änderbar)
  * DELETE /api/admin/news/[id] — nur Entwürfe (409 sonst)
  */
 import { NewsAdminInput, newsInputErrors } from '@/lib/news/admin-schema'

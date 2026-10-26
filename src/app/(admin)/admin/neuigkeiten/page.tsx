@@ -4,10 +4,10 @@ import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { formatNewsDateTime } from '@/components/news/news-ui'
-import { adminFetch, AdminApiError, AUDIENCE_LABELS, StatusPill, ConfirmDialog, type AdminNewsItem } from './_lib'
+import { adminFetch, AdminApiError, audienceShort, formatExpiresShort, isExpired, StatusPill, ConfirmDialog, type AdminNewsItem } from './_lib'
 
 /**
- * Admin → Neuigkeiten: Kennzahlen, Tabelle mit Status/Push/Gelesen/Knopf, Knopf „Neue Neuigkeit“.
+ * Admin → Neuigkeiten: Kennzahlen, Tabelle mit Status/Empfänger/Sichtbar bis/Push/Gelesen/Knopf, Knopf „Neue Neuigkeit“.
  * Quelle: GET /api/admin/news (mit Statistik je Neuigkeit).
  */
 export default function AdminNewsListPage() {
@@ -98,7 +98,7 @@ export default function AdminNewsListPage() {
           <thead>
             <tr style={{ background: '#F8FAFC' }}>
               {[
-                { label: 'Titel' }, { label: 'Status' }, { label: 'Veröffentlicht am' },
+                { label: 'Titel' }, { label: 'Status' }, { label: 'Empfänger' }, { label: 'Veröffentlicht am' },
                 { label: 'Push', right: true }, { label: 'Gelesen', right: true }, { label: 'Knopf getippt', right: true }, { label: '', right: true },
               ].map((h, i) => (
                 <th key={i} className={`px-4 py-2.5 text-[11px] font-semibold uppercase tracking-wide ${h.right ? 'text-right' : 'text-left'}`}
@@ -110,12 +110,12 @@ export default function AdminNewsListPage() {
             {items === null && !error && (
               [1, 2, 3].map(i => (
                 <tr key={i} className="animate-pulse" style={{ borderTop: '1px solid #F3F4F6' }}>
-                  <td className="px-4 py-3.5" colSpan={7}><div className="h-3.5 rounded-full bg-gray-100 w-1/2" /></td>
+                  <td className="px-4 py-3.5" colSpan={8}><div className="h-3.5 rounded-full bg-gray-100 w-1/2" /></td>
                 </tr>
               ))
             )}
             {items && items.length === 0 && (
-              <tr><td colSpan={7} className="px-4 py-14 text-center">
+              <tr><td colSpan={8} className="px-4 py-14 text-center">
                 <div className="text-sm font-semibold text-gray-900">Noch keine Neuigkeit</div>
                 <div className="text-sm mt-1" style={{ color: '#94A3B8' }}>Schreib die erste – mit Live-Vorschau für iPhone, Android und App.</div>
                 <Link href="/admin/neuigkeiten/neu" className="inline-flex mt-4 px-4 h-9 items-center rounded-xl text-sm font-semibold" style={{ background: '#F1F5F9', color: '#111827' }}>Neue Neuigkeit</Link>
@@ -128,13 +128,26 @@ export default function AdminNewsListPage() {
                   onClick={() => router.push(`/admin/neuigkeiten/${item.id}`)}>
                   <td className="px-4 py-3 text-left" style={{ maxWidth: 360 }}>
                     <div className="font-medium text-gray-900 truncate">{item.title}</div>
-                    <div className="text-xs mt-0.5 truncate" style={{ color: '#94A3B8' }}>
-                      {item.pushTitle}{item.audience !== 'all' ? ` · ${AUDIENCE_LABELS[item.audience]}` : ''}
+                    <div className="text-xs mt-0.5 truncate" style={{ color: '#94A3B8' }}>{item.pushTitle}</div>
+                  </td>
+                  <td className="px-4 py-3 text-left">
+                    <div className="inline-flex items-center gap-1.5 flex-wrap">
+                      <StatusPill status={item.status} />
+                      {item.expiresAt && isExpired(item.expiresAt) && item.status === 'published' && (
+                        <span className="text-xs font-semibold px-2 py-0.5 rounded-full" style={{ background: '#F1F5F9', color: '#64748B' }}>abgelaufen</span>
+                      )}
                     </div>
                   </td>
-                  <td className="px-4 py-3 text-left"><StatusPill status={item.status} /></td>
+                  <td className="px-4 py-3 text-left whitespace-nowrap">
+                    <AudiencePill item={item} />
+                  </td>
                   <td className="px-4 py-3 text-left whitespace-nowrap" style={{ color: item.publishedAt ? '#111827' : '#94A3B8' }}>
                     {item.publishedAt ? formatNewsDateTime(item.publishedAt) : '–'}
+                    {item.expiresAt && (
+                      <div className="text-xs mt-0.5" style={{ color: isExpired(item.expiresAt) ? '#94A3B8' : '#64748B' }}>
+                        {isExpired(item.expiresAt) ? 'abgelaufen' : formatExpiresShort(item.expiresAt)}
+                      </div>
+                    )}
                   </td>
                   <td className="px-4 py-3 text-right whitespace-nowrap">
                     {item.status === 'draft' ? <span style={{ color: '#CBD5E1' }}>–</span>
@@ -195,6 +208,21 @@ export default function AdminNewsListPage() {
 }
 
 function truncate(s: string, n: number) { return s.length > n ? s.slice(0, n - 1).trimEnd() + '…' : s }
+
+/** Pill „Alle“ · „Starter“ · „Pro“ · „Unlimited“ · „3 Nutzer“ (bei bestimmten Nutzern mit E-Mails als Tooltip). */
+function AudiencePill({ item }: { item: AdminNewsItem }) {
+  const users = item.audience === 'users'
+  return (
+    <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full"
+      title={users ? item.audienceUsers.map(u => u.email).join(', ') : undefined}
+      style={users ? { background: '#EDE9FE', color: '#6D28D9' } : item.audience === 'all' ? { background: '#F1F5F9', color: '#475569' } : { background: '#EFF6FF', color: '#1D4ED8' }}>
+      {users && (
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0113 0"/><path d="M16 11.5a3 3 0 100-6"/><path d="M17.5 14.5a5 5 0 014 5.5"/></svg>
+      )}
+      {audienceShort(item)}
+    </span>
+  )
+}
 
 function Kpi({ label, value, hint, accent }: { label: string; value: string; hint?: string; accent?: boolean }) {
   return (
