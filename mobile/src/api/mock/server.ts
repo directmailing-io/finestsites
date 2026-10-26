@@ -85,7 +85,20 @@ function overview(): Overview {
     },
     accountStatus: { code, online, offline },
     todos,
-    news: { unread: 0, latest: null },
+    news: newsOverview(),
+  };
+}
+
+// ── Neuigkeiten ──
+const newsSorted = () => [...db.news].sort((a, b) => b.publishedAt.localeCompare(a.publishedAt));
+const newsUnread = () => db.news.filter(n => !n.readAt).length;
+
+/** Wie overviewFor(): ungelesene Anzahl + neueste Neuigkeit, die weder gelesen noch weggewischt ist. */
+function newsOverview(): Overview['news'] {
+  const latest = newsSorted().find(n => !n.readAt && !n.dismissedAt) ?? null;
+  return {
+    unread: newsUnread(),
+    latest: latest ? { id: latest.id, title: latest.title, summary: latest.summary, publishedAt: latest.publishedAt } : null,
   };
 }
 
@@ -230,6 +243,21 @@ export async function mockFetch(url: string, init: { method: string; headers: Re
     }
     return json(db.notificationPrefs);
   }
+  // ── Neuigkeiten ──
+  if (seg[0] === 'api' && seg[1] === 'app' && seg[2] === 'v1' && seg[3] === 'news') {
+    if (!seg[4]) return json({ items: newsSorted(), unreadCount: newsUnread() });
+    const item = db.news.find(n => n.id === seg[4]);
+    if (!item) return json({ code: 'NOT_FOUND', message: 'Diese Neuigkeit gibt es nicht mehr.' }, 404);
+    const action = seg[5];
+    if (!action) return json(item);
+    if (method !== 'POST') return json({ code: 'NOT_FOUND', message: 'Nicht gefunden.' }, 404);
+    const now = new Date().toISOString();
+    if (action === 'read') item.readAt ??= now;
+    else if (action === 'dismiss') item.dismissedAt ??= now;
+    else if (action !== 'cta') return json({ code: 'NOT_FOUND', message: 'Nicht gefunden.' }, 404);
+    return json({ item, unreadCount: newsUnread() });
+  }
+
   // ── Besucher-Chat ──
   if (seg[0] === 'api' && seg[1] === 'app' && seg[2] === 'v1' && seg[3] === 'chat') {
     if (!db.me.features.visitorChat) return json({ code: 'FEATURE_DISABLED', message: 'Dieser Bereich ist für dein Konto nicht freigeschaltet.' }, 403);

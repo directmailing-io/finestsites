@@ -54,6 +54,14 @@ export type OneTimeToken = z.infer<typeof C.OneTimeTokenResponse>;
 export type AppErrorCode = z.infer<typeof C.AppErrorCode>;
 export type PublishErrorCode = z.infer<typeof C.PublishErrorCode>;
 
+// ── Neuigkeiten (/api/app/v1/news/*, aus contracts/news.ts) ───────────────────
+export type NewsItem = z.infer<typeof C.NewsItem>;
+export type NewsList = z.infer<typeof C.NewsListResponse>;
+export type NewsAction = z.infer<typeof C.NewsActionResponse>;
+export type NewsCard = z.infer<typeof C.NewsCard>;
+export type NewsCta = z.infer<typeof C.NewsCta>;
+export type NewsCtaKind = z.infer<typeof C.NewsCtaKind>;
+
 // ── Besucher-Chat (/api/app/v1/chat/*, aus contracts/chat.ts) ─────────────────
 export type ChatConversationStatus = z.infer<typeof C.ChatConversationStatus>;
 export type ChatSender = z.infer<typeof C.ChatSender>;

@@ -12,6 +12,7 @@ import type {
   ImpersonationStatus,
   Me,
   Message,
+  NewsItem,
   NotificationPreferences,
   Site,
   Submission,
@@ -211,6 +212,54 @@ export function createMockDb() {
     ],
   };
 
+  // Neuigkeiten von FinestSites: die neueste ungelesen (Startkarte + Zähler), eine mit Link, eine ohne Knopf
+  const news: NewsItem[] = [
+    {
+      id: 'nw-chat',
+      title: 'Neu: Besucher-Chat für alle',
+      summary: 'Besucher schreiben dir direkt auf deiner Webseite, du antwortest aus der App. Jetzt im Editor einschalten.',
+      body: [
+        'Ab heute können Besucher dir direkt auf deiner Webseite schreiben. Du bekommst jede Nachricht als Mitteilung und antwortest hier in der App unter „Chats“.',
+        'So schaltest du ihn ein:',
+        '- Webseite bearbeiten\n- Sektion „Besucher-Chat“ einschalten\n- Speichern und veröffentlichen',
+        'Tipp: Lege unter Einstellungen eine Ruhezeit fest, dann klingelt nachts nichts.',
+      ].join('\n\n'),
+      cta: { label: 'Jetzt im Editor einschalten', kind: 'sites', url: null },
+      publishedAt: days(1.3),
+      readAt: null,
+      dismissedAt: null,
+    },
+    {
+      id: 'nw-webinar',
+      title: 'Live-Webinar: So gewinnst du Anfragen über deine Seite',
+      summary: 'Am Donnerstag um 19 Uhr zeigen wir dir live, wie du aus Besuchern Anfragen machst. Platz sichern.',
+      body: [
+        'Am Donnerstag um 19 Uhr zeigen wir dir in einer Stunde, wie du deine Webseite so aufbaust, dass Besucher dir schreiben.',
+        'Das erwartet dich:',
+        '- Welche Sektionen wirklich Anfragen bringen\n- Wie du deinen Link auf Instagram richtig setzt\n- Fragen und Antworten am Ende',
+        'Die Teilnahme läuft über Zoom. Du bekommst die Aufzeichnung danach als Neuigkeit.',
+      ].join('\n\n'),
+      cta: { label: 'Platz sichern', kind: 'url', url: 'https://finestsites.io/webinar' },
+      publishedAt: days(9),
+      readAt: days(8.7),
+      dismissedAt: null,
+    },
+    {
+      id: 'nw-vitalprofil',
+      title: 'Neue Vorlage: Dein Vitalprofil',
+      summary: 'Ein kurzer Check für deine Besucher. Die Ergebnisse landen bei dir als Anfrage.',
+      body: [
+        'Mit der neuen Vorlage „Dein Vitalprofil“ beantworten Besucher ein paar Fragen zu Energie, Schlaf und Ernährung und bekommen ihr persönliches Profil.',
+        'Jede Auswertung landet bei dir als Anfrage, mit Namen und E-Mail. So weißt du genau, worüber du beim ersten Gespräch sprechen kannst.',
+        'Du findest die Vorlage unter „Neue Webseite erstellen“.',
+      ].join('\n\n'),
+      cta: null,
+      publishedAt: days(23),
+      readAt: days(22.5),
+      dismissedAt: null,
+    },
+  ];
+
   const notificationPrefs: NotificationPreferences = {
     leads: true,
     support: true,
@@ -282,6 +331,7 @@ export function createMockDb() {
     chatConversations,
     chatMessages,
     notifications,
+    news,
     notificationPrefs,
     affiliate,
     taxProfile,

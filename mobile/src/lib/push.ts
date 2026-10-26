@@ -139,13 +139,13 @@ export async function setBadge(count: number) {
   await Notifications.setBadgeCountAsync(Math.max(0, count)).catch(() => false);
 }
 
-const ALLOWED_ROUTES = ['/inbox', '/help', '/chats', '/sites', '/account'];
+const ALLOWED_ROUTES = ['/inbox', '/help', '/chats', '/sites', '/account', '/account/news'];
 const ID_RE = /^[A-Za-z0-9-]{1,64}$/;
 
 /**
  * Ziel einer Mitteilung (Push-`data` bzw. `data` aus /api/app/v1/notifications).
- * Der Server schickt `url: finestsites://submissions/<id> | support/<id> | chats/<id> | sites/<id> | account | affiliate`
- * (src/lib/push/triggers.ts). Nur App-interne Pfade, externe Links werden nie geöffnet.
+ * Der Server schickt `url: finestsites://submissions/<id> | support/<id> | chats/<id> | sites/<id> | news/<id> | account | affiliate`
+ * (src/lib/push/triggers.ts, src/lib/news/service.ts). Nur App-interne Pfade, externe Links werden nie geöffnet.
  */
 export function routeFromNotification(data: unknown): string | null {
   const d = (data ?? {}) as { url?: unknown; href?: unknown };
@@ -161,6 +161,9 @@ export function routeFromNotification(data: unknown): string | null {
         return withId('/chats');
       case 'sites':
         return withId('/sites');
+      case 'news':
+        // Tipp auf die Push-Mitteilung „Neuigkeit“ → direkt ins Detail (ohne id: die Liste)
+        return withId('/account/news');
       case 'affiliate':
         return '/account/partner';
       case 'account':

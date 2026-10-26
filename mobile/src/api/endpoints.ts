@@ -26,6 +26,9 @@ import type {
   MarkReadResponse,
   Me,
   Message,
+  NewsAction,
+  NewsItem,
+  NewsList,
   NotificationList,
   NotificationPreferences,
   OneTimeToken,
@@ -112,6 +115,18 @@ export const unregisterPushDevice = (token: string) => api.del<{ ok: true }>(`${
 export const getNotificationPreferences = () => api.get<NotificationPreferences>(`${V1}/notification-preferences`);
 export const saveNotificationPreferences = (prefs: UpdateNotificationPreferences) =>
   api.put<NotificationPreferences>(`${V1}/notification-preferences`, prefs);
+
+// Neuigkeiten (Vertrag: contracts/news.ts) – Ankündigungen von FinestSites, gleiche Formen wie im Web
+const NEWS = `${V1}/news`;
+const newsPath = (id: string) => `${NEWS}/${encodeURIComponent(id)}`;
+export const getNews = () => api.get<NewsList>(NEWS);
+export const getNewsItem = (id: string) => api.get<NewsItem>(newsPath(id));
+/** Beim Öffnen des Details (read_at) */
+export const markNewsRead = (id: string) => api.post<NewsAction>(`${newsPath(id)}/read`);
+/** Beim Tipp auf den Knopf (cta_clicked_at) */
+export const markNewsCta = (id: string) => api.post<NewsAction>(`${newsPath(id)}/cta`);
+/** Startkarte weggewischt (dismissed_at) – gilt auch für das Web-Dashboard */
+export const dismissNews = (id: string) => api.post<NewsAction>(`${newsPath(id)}/dismiss`);
 
 // Partnerprogramm
 export const getAffiliate = () => api.get<Affiliate>(`${V1}/affiliate`);

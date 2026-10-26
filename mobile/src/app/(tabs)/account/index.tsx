@@ -1,5 +1,5 @@
 import { useRouter, type Href } from 'expo-router';
-import { Bell, ChevronRight, Lock, LogOut, Settings, Users, type LucideIcon } from 'lucide-react-native';
+import { Bell, ChevronRight, Lock, LogOut, Settings, Sparkles, Users, type LucideIcon } from 'lucide-react-native';
 import { Alert, Pressable, StyleSheet, View } from 'react-native';
 
 import { useConfig, useDeletionStatus, useMe, useOverview } from '@/api/queries';
@@ -11,7 +11,8 @@ import { colors, fonts, radius, shadows } from '@/theme/tokens';
 /**
  * „Mehr“ wie das Mehr-Fenster der Handy-Navigation im Web (MobileNav.tsx): Partnerbereich,
  * Einstellungen, Trennlinie, Abmelden – gleiche Namen, Symbole und Reihenfolge. Dazu (nur App)
- * „Mitteilungen“, die Liste der Push-Mitteilungen.
+ * „Mitteilungen“, die Liste der Push-Mitteilungen, und „Neuigkeiten“ (im Web in der Seitenleiste)
+ * mit Zähler für Ungelesenes.
  */
 export default function MoreScreen() {
   const router = useRouter();
@@ -24,6 +25,7 @@ export default function MoreScreen() {
   // Partnerbereich nur, wenn das Konto teilnehmen darf UND der Bereich nicht per Notschalter aus ist
   const partnerVisible = !!u?.features.partnerProgram && config.data?.features.partnerProgram !== false;
   const unreadNotifications = overview.data?.unread.notifications ?? 0;
+  const unreadNews = overview.data?.news.unread ?? 0;
 
   const logout = () =>
     Alert.alert('Abmelden?', 'Du kannst dich jederzeit wieder anmelden.', [
@@ -56,6 +58,7 @@ export default function MoreScreen() {
           </View>
         )}
         <Row icon={Settings} label="Einstellungen" href="/account/settings" />
+        <Row icon={Sparkles} label="Neuigkeiten" href="/account/news" badge={unreadNews} tone="accent" />
         <Row icon={Bell} label="Mitteilungen" href="/account/messages" badge={unreadNotifications} />
 
         <View style={styles.divider} />
@@ -69,18 +72,20 @@ export default function MoreScreen() {
   );
 }
 
-function Row({ icon: Icon, label, href, badge = 0 }: { icon: LucideIcon; label: string; href: Href; badge?: number }) {
+/** tone 'accent': violette Zähl-Badge und sanft getönte Zeile, solange etwas ungelesen ist (Neuigkeiten, Konzept Bild 3). */
+function Row({ icon: Icon, label, href, badge = 0, tone = 'danger' }: { icon: LucideIcon; label: string; href: Href; badge?: number; tone?: 'danger' | 'accent' }) {
   const router = useRouter();
+  const accent = tone === 'accent' && badge > 0;
   return (
     <Pressable
       onPress={() => router.push(href)}
       accessibilityRole="button"
       accessibilityLabel={badge > 0 ? `${label}, ${badge} neu` : label}
-      style={({ pressed }) => [styles.row, pressed && { backgroundColor: '#F9FAFB' }]}>
-      <Icon size={20} color={colors.mutedForeground} strokeWidth={1.75} />
-      <Text style={styles.label}>{label}</Text>
+      style={({ pressed }) => [styles.row, accent && { backgroundColor: colors.accentSoft }, pressed && { backgroundColor: accent ? colors.accentSoftBorder : '#F9FAFB' }]}>
+      <Icon size={20} color={accent ? colors.accent : colors.mutedForeground} strokeWidth={1.75} />
+      <Text style={[styles.label, accent && { fontFamily: fonts.semibold }]}>{label}</Text>
       {badge > 0 && (
-        <View style={styles.badge}>
+        <View style={[styles.badge, accent && { backgroundColor: colors.accent }]}>
           <Text style={styles.badgeText}>{badge > 99 ? '99+' : badge}</Text>
         </View>
       )}

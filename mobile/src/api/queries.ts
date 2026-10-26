@@ -3,7 +3,7 @@ import { useCallback, useMemo, useState } from 'react';
 
 import { ApiError } from './client';
 import * as ep from './endpoints';
-import type { ChatConversation, ChatConversationDetail, ChatConversationStatus, ChatMessage, ReportChatRequest, SubmissionStatus } from './types';
+import type { ChatConversation, ChatConversationDetail, ChatConversationStatus, ChatMessage, NewsList, ReportChatRequest, SubmissionStatus } from './types';
 
 export const queryClient = new QueryClient({
   defaultOptions: {
@@ -32,6 +32,8 @@ export const qk = {
   impersonation: ['support', 'impersonation'] as const,
   notifications: ['notifications'] as const,
   notificationPrefs: ['notification-prefs'] as const,
+  news: ['news'] as const,
+  newsItem: (id: string) => ['news', 'item', id] as const,
   affiliate: ['affiliate'] as const,
   creditNotes: ['affiliate', 'credit-notes'] as const,
   taxProfile: ['affiliate', 'tax-profile'] as const,
@@ -71,6 +73,21 @@ export const useMessages = (id: string | null) =>
 export const useNotifications = () => useQuery({ queryKey: qk.notifications, queryFn: () => ep.getNotifications() });
 export const useNotificationPrefs = () =>
   useQuery({ queryKey: qk.notificationPrefs, queryFn: ep.getNotificationPreferences });
+
+// ── Neuigkeiten ───────────────────────────────────────────────────────────────
+/** Liste (neueste zuerst, höchstens 50) + ungelesene Anzahl. */
+export const useNews = () => useQuery({ queryKey: qk.news, queryFn: ep.getNews });
+
+/** Eine Neuigkeit; zeigt sofort den Stand aus der Liste, falls schon geladen. */
+export function useNewsItem(id: string | null) {
+  const qc = useQueryClient();
+  return useQuery({
+    queryKey: qk.newsItem(id ?? 'none'),
+    queryFn: () => ep.getNewsItem(id!),
+    enabled: !!id,
+    placeholderData: () => qc.getQueryData<NewsList>(qk.news)?.items.find(n => n.id === id),
+  });
+}
 export const useAffiliate = (enabled = true) => useQuery({ queryKey: qk.affiliate, queryFn: ep.getAffiliate, enabled });
 export const useCreditNotes = () => useQuery({ queryKey: qk.creditNotes, queryFn: ep.getCreditNotes });
 export const useTaxProfile = () => useQuery({ queryKey: qk.taxProfile, queryFn: ep.getTaxProfile });

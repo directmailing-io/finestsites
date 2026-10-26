@@ -2,10 +2,12 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Check, Plus } from 'lucide-react-native';
 import { useEffect, useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
+import Animated, { LinearTransition } from 'react-native-reanimated';
 
-import { useMe, useSites } from '@/api/queries';
+import { useMe, useOverview, useSites } from '@/api/queries';
 import type { Site } from '@/api/types';
 import { LoadError, Screen, Skeleton, Text } from '@/components/ui';
+import { NewsStartCard } from '@/features/news/NewsStartCard';
 import { SiteCard } from '@/features/sites/SiteCard';
 import { greeting } from '@/lib/format';
 import { useLayout } from '@/lib/layout';
@@ -25,6 +27,7 @@ export default function SitesScreen() {
   const { live, at } = useLocalSearchParams<{ live?: string; at?: string }>();
   const sites = useSites();
   const me = useMe();
+  const overview = useOverview();
   const { width } = useLayout();
   const liveKey = live ? `${live}:${at ?? ''}` : '';
   const [liveId, setLiveId] = useState<string | null>(live && liveKey !== shownLiveKey ? live : null);
@@ -55,6 +58,9 @@ export default function SitesScreen() {
   const columns = width >= 1280 ? 3 : width >= 768 ? 2 : 1;
   const gap = width >= 640 ? 24 : 20;
   const sm = width >= 640;
+  // Startkarte „Neu bei FinestSites“: neueste Neuigkeit, weder gelesen noch weggewischt (Konzept Bild 4).
+  // Erst zeichnen, wenn die Übersicht geladen ist – die Seite soll nicht springen.
+  const newsCard = loading ? null : (overview.data?.news.latest ?? null);
 
   return (
     <Screen
@@ -64,6 +70,7 @@ export default function SitesScreen() {
       onRefresh={() => {
         void sites.refetch();
         void me.refetch();
+        void overview.refetch();
       }}
       contentStyle={{ gap: 0 }}>
       {/* Begrüßung + die eine Hauptaktion, ganz oben */}
@@ -74,14 +81,21 @@ export default function SitesScreen() {
         <Text style={styles.lead}>
           {loading ? ' ' : hasSites ? 'Hier findest du deine Webseiten.' : 'Du hast noch keine Webseite. Leg jetzt deine erste an.'}
         </Text>
+        {newsCard && (
+          <View style={{ marginBottom: 16 }}>
+            <NewsStartCard key={newsCard.id} card={newsCard} />
+          </View>
+        )}
         {!loading && (
-          <Pressable
-            onPress={() => router.push('/sites/new')}
-            accessibilityRole="button"
-            style={({ pressed }) => [styles.newBtn, sm && styles.newBtnInline, pressed && styles.pressed]}>
-            <Plus size={20} color={colors.white} strokeWidth={2.75} />
-            <Text style={styles.newBtnText}>Neue Webseite erstellen</Text>
-          </Pressable>
+          <Animated.View layout={LinearTransition.duration(220)} style={sm && styles.newBtnInline}>
+            <Pressable
+              onPress={() => router.push('/sites/new')}
+              accessibilityRole="button"
+              style={({ pressed }) => [styles.newBtn, pressed && styles.pressed]}>
+              <Plus size={20} color={colors.white} strokeWidth={2.75} />
+              <Text style={styles.newBtnText}>Neue Webseite erstellen</Text>
+            </Pressable>
+          </Animated.View>
         )}
       </View>
 

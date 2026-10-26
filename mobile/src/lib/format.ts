@@ -19,6 +19,11 @@ export function fullDate(iso: string) {
   }).format(new Date(iso));
 }
 
+/** Ausgeschriebenes Datum ohne Uhrzeit, z. B. „4. November 2026“ (Kicker der Neuigkeiten, Web und App gleich). */
+export function longDate(iso: string) {
+  return new Intl.DateTimeFormat('de-DE', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(iso));
+}
+
 /** Wie submissions/page.tsx: heute Uhrzeit, gestern „Gestern“, sonst Wochentag/Datum. */
 export function smartTime(iso: string): string {
   const d = new Date(iso);

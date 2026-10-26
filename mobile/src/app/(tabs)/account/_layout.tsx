@@ -8,6 +8,8 @@ export default function AccountStack() {
       <Stack.Screen name="index" options={{ headerShown: false }} />
       <Stack.Screen name="settings" options={{ title: '' }} />
       <Stack.Screen name="messages" options={{ title: 'Mitteilungen' }} />
+      <Stack.Screen name="news/index" options={{ title: 'Neuigkeiten' }} />
+      <Stack.Screen name="news/[id]" options={{ title: 'Neuigkeit' }} />
       <Stack.Screen name="profile" options={{ title: 'Mein Profil' }} />
       <Stack.Screen name="notifications" options={{ title: 'Push-Mitteilungen' }} />
       <Stack.Screen name="emails" options={{ title: 'E-Mails' }} />

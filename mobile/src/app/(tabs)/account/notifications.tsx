@@ -62,6 +62,7 @@ export default function NotificationSettingsScreen() {
         account: next.account,
         partner: next.partner,
         chat: next.chat,
+        news: next.news,
         quietHours: next.quietHours,
       });
       setPrefs(saved);
@@ -139,6 +140,12 @@ export default function NotificationSettingsScreen() {
               subtitle="Neue Provisionen und Abrechnungen."
               value={prefs.partner}
               onValueChange={v => update({ ...prefs, partner: v })}
+            />
+            <SwitchRow
+              title="Neuigkeiten von FinestSites"
+              subtitle="Neue Funktionen und Aktionen, höchstens einmal am Tag"
+              value={prefs.news}
+              onValueChange={v => update({ ...prefs, news: v })}
             />
           </ListSection>
 
