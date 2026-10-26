@@ -123,7 +123,7 @@ export default function NewsDetailPage() {
       )}
 
       {state === 'ready' && item && (
-        <NewsDetailCard title={item.title} body={item.body} publishedAt={item.publishedAt} cta={ctaEl} secondary={backEl} paletteKey={item.id} />
+        <NewsDetailCard title={item.title} body={item.body} publishedAt={item.publishedAt} cta={ctaEl} secondary={backEl} paletteKey={item.id} color={item.color} />
       )}
     </div>
   )

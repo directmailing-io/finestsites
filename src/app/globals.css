@@ -45,3 +45,16 @@ body {
 /* Hide scrollbar but keep scrolling (horizontal strips on mobile) */
 .scrollbar-none { scrollbar-width: none; -ms-overflow-style: none; }
 .scrollbar-none::-webkit-scrollbar { display: none; }
+
+/* Neuigkeiten: der Pastellverlauf (Vollton-Karte, Verlaufsrahmen) wandert ganz langsam – kaum merklich, nie unruhig */
+@keyframes news-drift {
+  from { background-position: 0% 0%; }
+  to { background-position: 100% 100%; }
+}
+.news-drift {
+  background-size: 200% 200%;
+  animation: news-drift 18s ease-in-out infinite alternate;
+}
+@media (prefers-reduced-motion: reduce) {
+  .news-drift { animation: none; background-position: 50% 50%; }
+}

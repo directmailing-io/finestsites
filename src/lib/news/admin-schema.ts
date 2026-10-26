@@ -7,7 +7,7 @@
  * Deutsche Fehlermeldungen je Feld; leere Knopf-Felder werden zu null.
  */
 import { z } from 'zod'
-import { NewsCtaKind } from '@/lib/contracts/app-v1/news'
+import { NewsColor, NewsCtaKind } from '@/lib/contracts/app-v1/news'
 import { Uuid } from '@/lib/contracts/app-v1/common'
 
 export const NewsAudience = z.enum(['all', 'plan:starter', 'plan:pro', 'plan:unlimited', 'users'])
@@ -56,6 +56,8 @@ export const NewsAdminInput = z.object({
     .max(NEWS_LIMITS.audienceUsers, `Höchstens ${NEWS_LIMITS.audienceUsers} Konten.`)
     .default([]),
   expiresAt: ExpiresDay,
+  /** Pastellfarbe der Karte; leer/null = automatisch aus der ID */
+  color: z.union([NewsColor, z.literal(''), z.null(), z.undefined()], { error: 'Unbekannte Farbe.' }).transform(v => (v ? v : null)),
 }).strict().superRefine((v, ctx) => {
   if (v.ctaLabel && !v.ctaKind) {
     ctx.addIssue({ code: 'custom', path: ['ctaKind'], message: 'Bitte wählen, wohin der Knopf führt.' })
@@ -88,6 +90,7 @@ export const NewsAdminInput = z.object({
   // Nur bei „Bestimmte Nutzer“ gefüllt, ohne Dubletten (Reihenfolge der Auswahl bleibt)
   audienceUserIds: v.audience === 'users' ? Array.from(new Set(v.audienceUserIds.map(id => id.toLowerCase()))) : [],
   expiresAt: v.expiresAt ? berlinEndOfDay(v.expiresAt) : null,
+  color: v.color,
 }))
 export type NewsAdminInput = z.output<typeof NewsAdminInput>
 

@@ -1,11 +1,12 @@
-import type { NewsCtaKind } from '@/lib/contracts/app-v1/news'
+import type { NewsColor, NewsCtaKind } from '@/lib/contracts/app-v1/news'
 
 /**
- * Gestaltung der Neuigkeiten (Web): weiße, typografische Blätter – die einzige Farbe ist eine
- * zarte Pastell-Linie je Neuigkeit. Keine Bilder, keine Icons, keine Verlaufsbänder.
+ * Gestaltung der Neuigkeiten (Web, Daniel 26.10.2026): die neueste Neuigkeit als Vollton-Karte im
+ * Pastellverlauf, alle weiteren als weiße Blätter mit feinem Verlaufsrahmen; der Verlauf wandert
+ * kaum merklich. Keine Bilder, keine Icons, keine Verlaufsbänder, Typografie trägt.
  */
 export const NEWS_TOKENS = {
-  /** Lila nur noch im Admin-Editor (Schalter, Chips) – Nutzerseiten sind farblos bis auf die Pastell-Linie */
+  /** Lila nur noch im Admin-Editor (Schalter, Chips) – Nutzerseiten kennen nur Weiß, Tinte und die Pastellverläufe */
   accent: '#7C3AED',
   accentSoft: '#F5F0FB',
   accentSoftBorder: '#E4D7F5',
@@ -33,36 +34,45 @@ export const NEWS_SHEET_CLASS = `bg-white border border-[#ECEEF2] ${NEWS_SHADOW_
 export const NEWS_SHEET_HOVER_CLASS = `hover:border-[#E3E6EB] ${NEWS_SHADOW_HOVER_CLASS}`
 
 /**
- * Fünf Pastellpaare. Welche Neuigkeit welches bekommt, entscheidet deterministisch ihre ID
- * (`newsPalette`), damit Liste, Detail und Startkarte dieselbe Linie zeigen.
- * `gradient` ist die Linie (links → rechts), `tint` eine fast weiße Fläche (Pille, Häkchen-Kreis),
- * `ink` ein kräftigerer Ton derselben Familie für kleine Akzente (Punkt, Kicker, Häkchen).
+ * Fünf Pastellpaare. Welche Neuigkeit welches bekommt, wählt der Admin je Neuigkeit (`color`);
+ * ohne Wahl entscheidet deterministisch ihre ID (`newsPalette`), damit Liste, Detail und Startkarte
+ * dieselbe Farbe zeigen – Web und App rechnen identisch (mobile/src/features/news/NewsAccent.tsx).
+ * `surface` ist die Fläche (oben links → unten rechts) für Vollton und Verlaufsrahmen,
+ * `tint` eine fast weiße Fläche (Pille „Neu“), `ink` ein kräftigerer Ton derselben Familie (nur Admin).
  */
-export type NewsPalette = { name: string; gradient: string; from: string; to: string; tint: string; ink: string }
+export type NewsPalette = { name: NewsColor; label: string; surface: string; from: string; to: string; tint: string; ink: string }
 
-const pastel = (name: string, from: string, to: string, tint: string, ink: string): NewsPalette =>
-  ({ name, from, to, tint, ink, gradient: `linear-gradient(90deg, ${from}, ${to})` })
+const pastel = (name: NewsColor, label: string, from: string, to: string, tint: string, ink: string): NewsPalette =>
+  ({ name, label, from, to, tint, ink, surface: `linear-gradient(135deg, ${from}, ${to})` })
 
 export const NEWS_PALETTES: readonly NewsPalette[] = [
-  pastel('peach', '#F7C4B4', '#F6DFA9', '#FDF3EF', '#B45F4A'),
-  pastel('mint', '#CDE8D3', '#BBD6F2', '#F0F8F2', '#3F7A5A'),
-  pastel('lavender', '#D9D3F3', '#F5C9DC', '#F4F1FB', '#6B5BB5'),
-  pastel('apricot', '#F6DFA9', '#CDE8D3', '#FCF6EA', '#9A7A2C'),
-  pastel('sky', '#BBD6F2', '#D9D3F3', '#EFF5FC', '#3F6BA8'),
+  pastel('peach', 'Pfirsich', '#F7C4B4', '#F6DFA9', '#FDF3EF', '#B45F4A'),
+  pastel('mint', 'Minze', '#CDE8D3', '#BBD6F2', '#F0F8F2', '#3F7A5A'),
+  pastel('lavender', 'Lavendel', '#D9D3F3', '#F5C9DC', '#F4F1FB', '#6B5BB5'),
+  pastel('apricot', 'Aprikose', '#F6DFA9', '#CDE8D3', '#FCF6EA', '#9A7A2C'),
+  pastel('sky', 'Himmel', '#BBD6F2', '#D9D3F3', '#EFF5FC', '#3F6BA8'),
 ] as const
 
-export function newsPalette(key: string | null | undefined): NewsPalette {
+/**
+ * Palette einer Neuigkeit: gewählte Farbe, sonst aus der ID (gleiche Formel wie in der App:
+ * gewichtete Zeichensumme modulo 9973, dann modulo Tabellenlänge).
+ */
+export function newsPalette(key: string | null | undefined, color?: NewsColor | null): NewsPalette {
+  if (color) {
+    const chosen = NEWS_PALETTES.find(p => p.name === color)
+    if (chosen) return chosen
+  }
   if (!key) return NEWS_PALETTES[0]
-  // Gleiche Formel wie in der App (mobile/src/features/news/NewsHero.tsx): dieselbe Neuigkeit, derselbe Verlauf.
   let h = 0
   for (let i = 0; i < key.length; i++) h = (h + key.charCodeAt(i) * (i + 1)) % 9973
   return NEWS_PALETTES[h % NEWS_PALETTES.length]
 }
 
-/** Die Pastell-Linie als senkrechter Balken (Startkarte) */
-export function newsPaletteVertical(p: NewsPalette): string {
-  return `linear-gradient(180deg, ${p.from}, ${p.to})`
-}
+/**
+ * Der Verlauf wandert ganz langsam (Klasse in globals.css: Hintergrund doppelt so groß, Position
+ * pendelt in 18 s hin und her; bei „Bewegung reduzieren“ steht er still). Für Vollton und Rahmen gleich.
+ */
+export const NEWS_DRIFT_CLASS = 'news-drift'
 
 /** Der Pastell-Regenbogen, den das „f“ im Leerzustand trägt (Pfirsich → Aprikose → Mint → Himmel) */
 export const NEWS_RAINBOW_STOPS: readonly { offset: string; color: string }[] = [

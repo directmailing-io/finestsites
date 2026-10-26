@@ -932,6 +932,8 @@ export const newsPosts = pgTable('news_posts', {
   publishedAt: timestamp('published_at', { withTimezone: true }),
   // „Sichtbar bis“ (Ende des Tages Europe/Berlin); NULL = sichtbar bis zum Archivieren
   expiresAt: timestamp('expires_at', { withTimezone: true }),
+  // Migration 20261027140000: Pastellfarbe der Karte ('peach' | 'mint' | 'lavender' | 'apricot' | 'sky'); NULL = automatisch aus der ID
+  color: text('color'),
   pushSentAt: timestamp('push_sent_at', { withTimezone: true }),
   pushQueued: integer('push_queued').notNull().default(0),
   createdBy: uuid('created_by').references(() => users.id, { onDelete: 'set null' }),

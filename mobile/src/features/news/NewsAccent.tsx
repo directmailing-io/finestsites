@@ -1,11 +1,15 @@
-import { useState } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { Platform, StyleSheet, View, type ViewStyle } from 'react-native';
+import Animated, { Easing, cancelAnimation, useAnimatedStyle, useReducedMotion, useSharedValue, withRepeat, withTiming } from 'react-native-reanimated';
 import Svg, { Defs, LinearGradient, Path, Rect, Stop } from 'react-native-svg';
 
+import type { NewsColor } from '@/api/types';
+
 /**
- * Fünf Pastell-Verläufe für die Neuigkeiten (1:1 mit dem Web, src/components/news/news-ui.ts):
- * jede Neuigkeit bekommt eine Farbe – ausschließlich als Unterkante ihrer Karte, nie als Fläche,
- * Bild oder Symbol. `tint` = helle Fläche der Pille „Neu“, `ink` bleibt für das Web reserviert.
+ * Fünf Pastell-Verläufe für die Neuigkeiten (1:1 mit dem Web, src/components/news/news-ui.ts).
+ * Die neueste Neuigkeit ist eine Vollton-Karte im Verlauf, alle weiteren weiße Blätter mit feinem
+ * Verlaufsrahmen (Daniel 26.10.2026). Der Verlauf wandert in 18 s kaum merklich hin und her.
+ * `tint` = helle Fläche der Pille „Neu“ auf weißen Karten, `ink` bleibt für das Web (Admin) reserviert.
  */
 export const NEWS_PALETTES = [
   { name: 'peach', from: '#F7C4B4', to: '#F6DFA9', tint: '#FDF3EF', ink: '#B45F4A' },
@@ -13,12 +17,19 @@ export const NEWS_PALETTES = [
   { name: 'lavender', from: '#D9D3F3', to: '#F5C9DC', tint: '#F4F1FB', ink: '#6B5BB5' },
   { name: 'apricot', from: '#F6DFA9', to: '#CDE8D3', tint: '#FCF6EA', ink: '#9A7A2C' },
   { name: 'sky', from: '#BBD6F2', to: '#D9D3F3', tint: '#EFF5FC', ink: '#3F6BA8' },
-] as const;
+] as const satisfies readonly { name: NewsColor; from: string; to: string; tint: string; ink: string }[];
 
 export type NewsPalette = (typeof NEWS_PALETTES)[number];
 
-/** Deterministisch aus der Kennung (gleiche Formel wie im Web): gewichtete Zeichensumme modulo Tabellenlänge. */
-export function newsPalette(seed: string): NewsPalette {
+/**
+ * Palette einer Neuigkeit: die im Admin gewählte Farbe, sonst deterministisch aus der Kennung
+ * (gleiche Formel wie im Web: gewichtete Zeichensumme modulo 9973, dann modulo Tabellenlänge).
+ */
+export function newsPalette(seed: string, color?: NewsColor | null): NewsPalette {
+  if (color) {
+    const chosen = NEWS_PALETTES.find(p => p.name === color);
+    if (chosen) return chosen;
+  }
   let h = 0;
   for (let i = 0; i < seed.length; i++) h = (h + seed.charCodeAt(i) * (i + 1)) % 9973;
   return NEWS_PALETTES[h % NEWS_PALETTES.length];
@@ -32,23 +43,124 @@ export const NEWS_UI = {
   lead: '#1F2937',
 } as const;
 
-/** Sehr weicher Karten-Schatten: weiße Karte auf #FAFAFA, Rahmen 1 pt trägt die Kontur. */
+/** Textfarben auf dem Vollton (wie NEWS_ON_SOLID im Web): Tinte bleibt, Nebentexte über Deckkraft zurückgenommen. */
+export const NEWS_ON_SOLID = {
+  kicker: 'rgba(17,24,39,0.62)',
+  text: 'rgba(17,24,39,0.78)',
+  pill: 'rgba(255,255,255,0.72)',
+  wash: 'rgba(255,255,255,0.5)',
+} as const;
+
+/** Breite des Verlaufsrahmens (wie im Web 1,5 px). */
+export const NEWS_FRAME_WIDTH = 1.5;
+
+/** Sehr weicher Karten-Schatten (gleicher Wert für Vollton und Rahmen). */
 export const newsCardShadow: ViewStyle = Platform.select<ViewStyle>({
   ios: { shadowColor: '#101828', shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.06, shadowRadius: 14 },
   default: { elevation: 3 },
 });
 
-/**
- * Aufbau jeder Neuigkeiten-Karte in zwei Schichten, weil `overflow: 'hidden'` auf iOS den Schatten
- * derselben View löscht: außen die Karte (weiß, Rahmen 1 pt, Radius, Schatten – ohne Innenabstand),
- * innen die Fläche mit Inhalt, Innenabstand und der Pastell-Unterkante (gleicher Radius minus Rahmen,
- * `overflow: 'hidden'` schneidet die Kante an den Ecken weich ab).
- */
-export function newsSheetOuter(borderRadius: number): ViewStyle {
-  return { backgroundColor: '#FFFFFF', borderRadius, borderWidth: 1, borderColor: NEWS_UI.line, ...newsCardShadow };
+let gradientCount = 0;
+/** Eigene Verlauf-Kennung je Instanz (mehrere Verläufe auf einem Bildschirm dürfen sich nicht teilen). */
+function useGradientId(prefix: string) {
+  const [id] = useState(() => `${prefix}-${(gradientCount = (gradientCount + 1) % 100000)}`);
+  return id;
 }
-export function newsSheetInner(borderRadius: number): ViewStyle {
-  return { borderRadius: Math.max(0, borderRadius - 1), overflow: 'hidden' };
+
+const DRIFT_MS = 18000;
+
+/**
+ * Der wandernde Pastellverlauf: ein Verlauf in doppelter Größe (oben links → unten rechts) wird
+ * in 18 s langsam hin- und hergeschoben – das Gegenstück zur CSS-Klasse `news-drift` im Web
+ * (background-size 200 %, Position pendelt). Bei „Bewegung reduzieren“ steht er in der Mitte.
+ * Füllt den Elternteil (der `overflow: 'hidden'` und die Rundung trägt).
+ */
+function DriftGradient({ palette }: { palette: NewsPalette }) {
+  const id = useGradientId('news-drift');
+  const reduceMotion = useReducedMotion();
+  const [size, setSize] = useState({ w: 0, h: 0 });
+  const t = useSharedValue(reduceMotion ? 0.5 : 0);
+
+  useEffect(() => {
+    if (reduceMotion) {
+      cancelAnimation(t);
+      t.value = 0.5;
+      return;
+    }
+    t.value = withRepeat(withTiming(1, { duration: DRIFT_MS, easing: Easing.inOut(Easing.sin) }), -1, true);
+    return () => cancelAnimation(t);
+  }, [reduceMotion, t]);
+
+  const shift = useAnimatedStyle(() => ({
+    transform: [{ translateX: -t.value * size.w }, { translateY: -t.value * size.h }],
+  }), [size.w, size.h]);
+
+  return (
+    <View
+      style={StyleSheet.absoluteFill}
+      pointerEvents="none"
+      accessibilityElementsHidden
+      importantForAccessibility="no-hide-descendants"
+      onLayout={e => {
+        const { width, height } = e.nativeEvent.layout;
+        setSize(prev => (prev.w === width && prev.h === height ? prev : { w: width, h: height }));
+      }}>
+      {size.w > 0 && size.h > 0 ? (
+        <Animated.View style={[{ width: size.w * 2, height: size.h * 2 }, shift]}>
+          <Svg width="100%" height="100%">
+            <Defs>
+              <LinearGradient id={id} x1="0" y1="0" x2="1" y2="1">
+                <Stop offset="0" stopColor={palette.from} />
+                <Stop offset="1" stopColor={palette.to} />
+              </LinearGradient>
+            </Defs>
+            <Rect x="0" y="0" width="100%" height="100%" fill={`url(#${id})`} />
+          </Svg>
+        </Animated.View>
+      ) : (
+        // Erster Frame vor onLayout: ruhige Mischfarbe, damit nichts aufblitzt
+        <View style={[StyleSheet.absoluteFill, { backgroundColor: palette.from }]} />
+      )}
+    </View>
+  );
+}
+
+/**
+ * Vollton: die ganze Karte im wandernden Pastellverlauf (neueste Neuigkeit, Startkarte).
+ * Zwei Schichten, weil `overflow: 'hidden'` auf iOS den Schatten derselben View löscht:
+ * außen Schatten + Rundung, innen die geclippte Fläche mit Verlauf und Inhalt.
+ */
+export function NewsSolid({ palette, radius, style, contentStyle, children }: {
+  palette: NewsPalette; radius: number; style?: ViewStyle; contentStyle?: ViewStyle; children: ReactNode;
+}) {
+  return (
+    <View style={[{ borderRadius: radius, backgroundColor: palette.from }, newsCardShadow, style]}>
+      <View style={{ borderRadius: radius, overflow: 'hidden' }}>
+        <DriftGradient palette={palette} />
+        <View style={contentStyle}>{children}</View>
+      </View>
+    </View>
+  );
+}
+
+/**
+ * Verlaufsrahmen: weißes Blatt mit 1,5 pt Rahmen im wandernden Pastellverlauf (alle weiteren
+ * Neuigkeiten, Detail). Außen Schatten + Rundung, dann die geclippte Verlauffläche, darin das
+ * weiße Blatt mit 1,5 pt Abstand (Radius minus Rahmen, damit die Ecken konzentrisch bleiben).
+ */
+export function NewsFramed({ palette, radius, style, contentStyle, children }: {
+  palette: NewsPalette; radius: number; style?: ViewStyle; contentStyle?: ViewStyle; children: ReactNode;
+}) {
+  return (
+    <View style={[{ borderRadius: radius, backgroundColor: '#FFFFFF' }, newsCardShadow, style]}>
+      <View style={{ borderRadius: radius, overflow: 'hidden' }}>
+        <DriftGradient palette={palette} />
+        <View style={[{ margin: NEWS_FRAME_WIDTH, borderRadius: Math.max(0, radius - NEWS_FRAME_WIDTH), backgroundColor: '#FFFFFF', overflow: 'hidden' }, contentStyle]}>
+          {children}
+        </View>
+      </View>
+    </View>
+  );
 }
 
 /** Regenbogen des Leerzustands (Pfirsich → Aprikose → Minze → Himmel), oben links nach unten rechts. */
@@ -58,37 +170,6 @@ const RAINBOW = [
   { offset: 0.68, color: '#CBE6CD' },
   { offset: 1, color: '#B8D2F1' },
 ] as const;
-
-let gradientCount = 0;
-/** Eigene Verlauf-Kennung je Instanz (mehrere Verläufe auf einem Bildschirm dürfen sich nicht teilen). */
-function useGradientId(prefix: string) {
-  const [id] = useState(() => `${prefix}-${(gradientCount = (gradientCount + 1) % 100000)}`);
-  return id;
-}
-
-/**
- * Die Pastell-Unterkante einer Neuigkeit (wie NewsEdge im Web): 3 pt hoch, volle Breite, ohne eigene
- * Rundung, Zwei-Stopp-Verlauf von `from` nach `to`. Liegt absolut am unteren Rand der inneren Fläche
- * (newsSheetInner) – deren Rundung schneidet sie an den Ecken ab, sie wirkt wie ein farbiger Sockel,
- * auf dem das weiße Blatt steht, nicht wie ein aufgelegter Strich.
- */
-export function NewsEdge({ seed, height = 3 }: { seed: string; height?: number }) {
-  const id = useGradientId('news-edge');
-  const p = newsPalette(seed);
-  return (
-    <View style={[styles.edge, { height }]} pointerEvents="none" accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
-      <Svg width="100%" height="100%">
-        <Defs>
-          <LinearGradient id={id} x1="0" y1="0" x2="1" y2="0">
-            <Stop offset="0" stopColor={p.from} />
-            <Stop offset="1" stopColor={p.to} />
-          </LinearGradient>
-        </Defs>
-        <Rect x="0" y="0" width="100%" height="100%" fill={`url(#${id})`} />
-      </Svg>
-    </View>
-  );
-}
 
 /** Das „f“ der Wortmarke (public/logos/logo-black.svg, Seitenverhältnis 68.71:126), gefüllt mit dem Pastell-Regenbogen. */
 export function NewsGlyph({ height = 44 }: { height?: number }) {
@@ -114,6 +195,5 @@ export function NewsGlyph({ height = 44 }: { height?: number }) {
 }
 
 const styles = StyleSheet.create({
-  edge: { position: 'absolute', left: 0, right: 0, bottom: 0 },
   glyph: { alignItems: 'center', justifyContent: 'center' },
 });

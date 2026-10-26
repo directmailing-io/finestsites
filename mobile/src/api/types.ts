@@ -56,6 +56,7 @@ export type PublishErrorCode = z.infer<typeof C.PublishErrorCode>;
 
 // ── Neuigkeiten (/api/app/v1/news/*, aus contracts/news.ts) ───────────────────
 export type NewsItem = z.infer<typeof C.NewsItem>;
+export type NewsColor = z.infer<typeof C.NewsColor>;
 export type NewsList = z.infer<typeof C.NewsListResponse>;
 export type NewsAction = z.infer<typeof C.NewsActionResponse>;
 export type NewsCard = z.infer<typeof C.NewsCard>;

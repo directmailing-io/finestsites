@@ -14,7 +14,7 @@ import { newsPosts, newsReads, pushDevices, users, type NewsPost } from '@/lib/d
 import { and, desc, eq, gt, inArray, isNotNull, isNull, or, sql } from 'drizzle-orm'
 import { enqueuePush, type EnqueueResult } from '@/lib/push/enqueue'
 import type { NewsCard, NewsCta, NewsItem } from '@/lib/contracts/app-v1/news'
-import { NewsCtaKind } from '@/lib/contracts/app-v1/news'
+import { NewsColor, NewsCtaKind } from '@/lib/contracts/app-v1/news'
 import { NEWS_CARD_MAX_AGE_DAYS } from './constants'
 import type { NewsAdminInput, NewsAudience } from './admin-schema'
 
@@ -94,6 +94,7 @@ function toItem(p: NewsPost, r: Partial<ReadCols> | null | undefined): NewsItem 
     summary: p.pushBody,
     body: p.body,
     cta: ctaOf(p),
+    color: colorOf(p),
     publishedAt: toIso(p.publishedAt) ?? toIso(p.createdAt)!,
     readAt: toIso(r?.readAt),
     dismissedAt: toIso(r?.dismissedAt),
@@ -101,7 +102,13 @@ function toItem(p: NewsPost, r: Partial<ReadCols> | null | undefined): NewsItem 
 }
 
 function toCard(p: NewsPost): NewsCard {
-  return { id: p.id, title: p.title, summary: p.pushBody, publishedAt: toIso(p.publishedAt) ?? toIso(p.createdAt)! }
+  return { id: p.id, title: p.title, summary: p.pushBody, color: colorOf(p), publishedAt: toIso(p.publishedAt) ?? toIso(p.createdAt)! }
+}
+
+/** Gewählte Pastellfarbe oder null (= automatisch); unbekannte Werte aus der DB werden zu null. */
+function colorOf(p: Pick<NewsPost, 'color'>): NewsColor | null {
+  const c = NewsColor.safeParse(p.color)
+  return c.success ? c.data : null
 }
 
 /** Beitrag + Lese-Zeile des Nutzers (LEFT JOIN) – Grundform für Liste, Detail und Aktionen. */
@@ -198,6 +205,8 @@ export type AdminNewsItem = {
   publishedAt: string | null
   /** „Sichtbar bis“ (Ende des Tages Europe/Berlin), null = bis zum Archivieren. */
   expiresAt: string | null
+  /** Pastellfarbe der Karte, null = automatisch aus der ID. */
+  color: NewsColor | null
   pushSentAt: string | null
   pushQueued: number
   readCount: number
@@ -228,6 +237,7 @@ function toAdmin(p: NewsPost, s: { readCount: number; ctaCount: number; dismisse
     audienceUsers: audienceUserIds.flatMap(id => { const u = usersById.get(id); return u ? [u] : [] }),
     publishedAt: toIso(p.publishedAt),
     expiresAt: toIso(p.expiresAt),
+    color: colorOf(p),
     pushSentAt: toIso(p.pushSentAt),
     pushQueued: p.pushQueued,
     readCount: s.readCount,
@@ -295,6 +305,7 @@ export async function createDraft(input: NewsAdminInput, adminId: string): Promi
     audience: input.audience,
     audienceUserIds: input.audienceUserIds,
     expiresAt: input.expiresAt,
+    color: input.color,
     createdBy: adminId,
   }).returning()
   return (await getAdmin(p.id))!
@@ -324,6 +335,8 @@ export async function updateDraft(id: string, input: NewsAdminInput): Promise<Ad
     audience,
     audienceUserIds: audience === 'users' ? (input.audience === 'users' ? input.audienceUserIds : p.audienceUserIds) : [],
     expiresAt: input.expiresAt,
+    // Farbe ist rein gestalterisch und jederzeit änderbar (auch nach Push)
+    color: input.color,
     updatedAt: new Date(),
   }).where(eq(newsPosts.id, id))
   return (await getAdmin(id))!

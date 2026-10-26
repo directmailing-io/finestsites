@@ -423,6 +423,27 @@ async function main() {
     await service.archive(pe.id)
   }
 
+  section('Farbe der Karte (color)')
+  {
+    check('Eingabe: mint → mint, leer → null, fehlt → null', baseInput({ color: 'mint' }).color === 'mint' && baseInput({ color: '' }).color === null && baseInput().color === null)
+    const bad = NewsAdminInput.safeParse({ ...baseInput(), color: 'neon' })
+    check('Eingabe: unbekannte Farbe → Fehler bei color', !bad.success && bad.error.issues.some(i => i.path[0] === 'color'))
+    const pc = await service.createDraft(baseInput({ title: 'Mit Farbe', color: 'lavender' }), U.ADMIN.id)
+    check('Entwurf speichert Farbe', pc.color === 'lavender')
+    await service.publish(pc.id, { push: false }, U.ADMIN.id)
+    const li = (await service.listForUser(U.A.id, ctx('A'))).items.find(i => i.id === pc.id)
+    check('Liste/Detail liefern color', li?.color === 'lavender' && (await service.getForUser(U.A.id, pc.id, ctx('A')))?.color === 'lavender')
+    check('Startkarte liefert color', (await service.overviewFor(U.A.id, ctx('A'))).latest?.color === 'lavender')
+    const auto = await service.updateDraft(pc.id, baseInput({ title: 'Mit Farbe', color: null }))
+    check('veröffentlicht: Farbe auf automatisch (null) änderbar', auto.color === null && (await service.getForUser(U.A.id, pc.id, ctx('A')))?.color === null)
+    await sql`UPDATE news_posts SET color = 'sky' WHERE id = ${pc.id}::uuid`
+    check('DB-Wert kommt an', (await service.getAdmin(pc.id))?.color === 'sky')
+    let rejected = false
+    try { await sql`UPDATE news_posts SET color = 'neon' WHERE id = ${pc.id}::uuid` } catch { rejected = true }
+    check('DB-Check verhindert unbekannte Farbe', rejected)
+    await service.archive(pc.id)
+  }
+
   section('Ergebnis')
   console.log(`  ${passed} bestanden, ${failed} fehlgeschlagen`)
   if (failed) console.log('  Fehlgeschlagen:\n   - ' + failures.join('\n   - '))

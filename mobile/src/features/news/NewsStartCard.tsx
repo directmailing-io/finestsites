@@ -1,7 +1,7 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
 import { X } from 'lucide-react-native';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet } from 'react-native';
 import Animated, { FadeIn, FadeOut, LinearTransition } from 'react-native-reanimated';
 
 import { dismissNews } from '@/api/endpoints';
@@ -10,20 +10,20 @@ import type { NewsCard, Overview } from '@/api/types';
 import { Text } from '@/components/ui';
 import { colors, fonts } from '@/theme/tokens';
 
-import { NEWS_UI, NewsEdge, newsSheetInner, newsSheetOuter } from './NewsAccent';
+import { NEWS_ON_SOLID, NewsSolid, newsPalette } from './NewsAccent';
 
 const CARD_RADIUS = 20;
 
 /**
  * Startkarte: die neueste Neuigkeit, die weder gelesen noch weggewischt ist – über
- * „Neue Webseite erstellen“. Weiße Karte ohne Bild: Kicker „Neu bei FinestSites“ in Grau, Titel,
- * eine Zeile Kurztext, „Mehr erfahren ›“. Einziges Gestaltungselement ist die Pastell-Unterkante
- * der Neuigkeit (volle Breite, folgt den Rundungen). Tipp → Detail, Kreuz → weggewischt (gilt auch
- * für das Web-Dashboard).
+ * „Neue Webseite erstellen“. Vollton-Karte im Pastellverlauf der Neuigkeit (sie ist immer die
+ * neueste): Kicker „Neu bei FinestSites“, Titel, eine Zeile Kurztext, „Mehr erfahren ›“.
+ * Tipp → Detail, Kreuz → weggewischt (gilt auch für das Web-Dashboard).
  */
 export function NewsStartCard({ card }: { card: NewsCard }) {
   const router = useRouter();
   const qc = useQueryClient();
+  const p = newsPalette(card.id, card.color);
 
   const dismiss = () => {
     // Sofort aus der Übersicht nehmen (sonst käme die Karte bis zur nächsten Antwort kurz zurück)
@@ -42,8 +42,8 @@ export function NewsStartCard({ card }: { card: NewsCard }) {
         onPress={() => router.push({ pathname: '/account/news/[id]', params: { id: card.id } })}
         accessibilityRole="button"
         accessibilityLabel={`Neu bei FinestSites: ${card.title}. ${card.summary} Mehr erfahren`}
-        style={({ pressed }) => [styles.card, pressed && styles.pressed]}>
-        <View style={styles.sheet}>
+        style={({ pressed }) => pressed && styles.pressed}>
+        <NewsSolid palette={p} radius={CARD_RADIUS} contentStyle={styles.sheet}>
           <Text style={styles.kicker}>Neu bei FinestSites</Text>
           <Text style={styles.title} numberOfLines={2}>
             {card.title}
@@ -52,29 +52,27 @@ export function NewsStartCard({ card }: { card: NewsCard }) {
             {card.summary}
           </Text>
           <Text style={styles.more}>Mehr erfahren ›</Text>
-          <NewsEdge seed={card.id} />
-        </View>
+        </NewsSolid>
       </Pressable>
       <Pressable
         onPress={dismiss}
         hitSlop={10}
         accessibilityRole="button"
         accessibilityLabel="Hinweis ausblenden"
-        style={({ pressed }) => [styles.close, pressed && { backgroundColor: colors.muted }]}>
-        <X size={14} color={colors.tertiary} strokeWidth={2.25} />
+        style={({ pressed }) => [styles.close, pressed && { backgroundColor: NEWS_ON_SOLID.wash }]}>
+        <X size={14} color={colors.ink} strokeWidth={2.25} />
       </Pressable>
     </Animated.View>
   );
 }
 
 const styles = StyleSheet.create({
-  card: newsSheetOuter(CARD_RADIUS),
   // rechts Platz für das Kreuz (28 pt + 8 pt Rand)
-  sheet: { ...newsSheetInner(CARD_RADIUS), paddingVertical: 16, paddingLeft: 18, paddingRight: 44, gap: 2 },
+  sheet: { paddingVertical: 16, paddingLeft: 18, paddingRight: 44, gap: 2 },
   pressed: { transform: [{ scale: 0.985 }], opacity: 0.96 },
-  kicker: { fontFamily: fonts.semibold, fontSize: 12, lineHeight: 16, color: colors.mutedForeground, marginBottom: 2 },
+  kicker: { fontFamily: fonts.semibold, fontSize: 12, lineHeight: 16, color: NEWS_ON_SOLID.kicker, marginBottom: 2 },
   title: { fontFamily: fonts.semibold, fontSize: 15.5, lineHeight: 21, letterSpacing: -0.15, color: colors.ink },
-  summary: { fontFamily: fonts.regular, fontSize: 14, lineHeight: 20, color: NEWS_UI.summary },
+  summary: { fontFamily: fonts.regular, fontSize: 14, lineHeight: 20, color: NEWS_ON_SOLID.text },
   more: { fontFamily: fonts.semibold, fontSize: 14, lineHeight: 20, color: colors.ink, marginTop: 4 },
   close: {
     position: 'absolute',

@@ -18,6 +18,14 @@ export const NewsCta = z.object({
 })
 export type NewsCta = z.infer<typeof NewsCta>
 
+/**
+ * Pastellfarbe der Karte, im Admin je Neuigkeit wählbar. `null` = automatisch (deterministisch aus
+ * der ID, Web und App rechnen gleich). Neue Werte nur ergänzen – ältere Apps lesen Unbekanntes als null.
+ */
+export const NewsColor = z.enum(['peach', 'mint', 'lavender', 'apricot', 'sky'])
+export type NewsColor = z.infer<typeof NewsColor>
+const ColorField = NewsColor.nullable().catch(null)
+
 /** Eine Neuigkeit aus Sicht des Nutzers (Liste + Detail). */
 export const NewsItem = z.object({
   id: Uuid,
@@ -27,6 +35,8 @@ export const NewsItem = z.object({
   /** Inhalt: Absätze durch Leerzeile, Zeilen mit "- " sind Aufzählungspunkte (siehe newsBodyBlocks) */
   body: z.string(),
   cta: NewsCta.nullable(),
+  /** Seit 26.10.2026 (Build 9 kennt das Feld nicht und ignoriert es) */
+  color: ColorField,
   publishedAt: z.string(),
   readAt: z.string().nullable(),
   dismissedAt: z.string().nullable(),
@@ -55,6 +65,7 @@ export const NewsCard = z.object({
   id: Uuid,
   title: z.string(),
   summary: z.string(),
+  color: ColorField,
   publishedAt: z.string(),
 })
 export type NewsCard = z.infer<typeof NewsCard>

@@ -98,7 +98,7 @@ function newsOverview(): Overview['news'] {
   const latest = newsSorted().find(n => !n.readAt && !n.dismissedAt) ?? null;
   return {
     unread: newsUnread(),
-    latest: latest ? { id: latest.id, title: latest.title, summary: latest.summary, publishedAt: latest.publishedAt } : null,
+    latest: latest ? { id: latest.id, title: latest.title, summary: latest.summary, color: latest.color, publishedAt: latest.publishedAt } : null,
   };
 }
 

@@ -84,7 +84,8 @@ export default function NewsListPage() {
 
       {items && items.length > 0 && (
         <div className="flex flex-col gap-5 sm:gap-6">
-          {items.map(item => <NewsCard key={item.id} item={item} />)}
+          {/* Die neueste als Vollton, alle weiteren mit Verlaufsrahmen */}
+          {items.map((item, i) => <NewsCard key={item.id} item={item} prominent={i === 0} />)}
         </div>
       )}
     </div>

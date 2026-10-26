@@ -8,22 +8,22 @@ import { longDate } from '@/lib/format';
 import { colors, fonts, radius } from '@/theme/tokens';
 
 import { openNewsCta } from './cta';
-import { NEWS_UI, NewsEdge, newsSheetInner, newsSheetOuter } from './NewsAccent';
+import { NEWS_UI, NewsFramed, newsPalette } from './NewsAccent';
 import { NewsBody } from './NewsBody';
 
 const SHEET_RADIUS = 28;
 
 /**
- * Die Neuigkeit wie im Web: weißes Blatt (Radius 28) ohne Kopfbild – Datum-Kicker in Grau, große
- * Überschrift (28/700), Vorspann, Inhalt, schwarzer Pillen-Knopf, „Später“ als stiller Textlink.
- * Einziges Gestaltungselement ist die Pastell-Unterkante des Blatts, dieselbe wie in der Liste.
+ * Die Neuigkeit wie im Web: weißes Blatt (Radius 28) mit feinem Verlaufsrahmen in der Farbe der
+ * Neuigkeit, ohne Kopfbild – Datum-Kicker in Grau, große Überschrift (28/700), Vorspann, Inhalt,
+ * schwarzer Pillen-Knopf, „Später“ als stiller Textlink.
  */
 export function NewsDetailCard({ item, onLater }: { item: NewsItem; onLater: () => void }) {
   const router = useRouter();
   const date = longDate(item.publishedAt);
   return (
-    <View style={styles.card}>
-      <View style={styles.sheet}>
+    <NewsFramed palette={newsPalette(item.id, item.color)} radius={SHEET_RADIUS} contentStyle={styles.sheet}>
+      <View>
         <Text style={styles.kicker} accessibilityLabel={`Neuigkeit vom ${date}`}>
           {date}
         </Text>
@@ -56,15 +56,13 @@ export function NewsDetailCard({ item, onLater }: { item: NewsItem; onLater: () 
             <Text style={styles.laterText}>Später</Text>
           </Pressable>
         </View>
-        <NewsEdge seed={item.id} />
       </View>
-    </View>
+    </NewsFramed>
   );
 }
 
 const styles = StyleSheet.create({
-  card: newsSheetOuter(SHEET_RADIUS),
-  sheet: { ...newsSheetInner(SHEET_RADIUS), padding: 24, paddingTop: 26, paddingBottom: 28 },
+  sheet: { padding: 24, paddingTop: 26, paddingBottom: 28 },
   kicker: { fontFamily: fonts.semibold, fontSize: 12, lineHeight: 16, letterSpacing: 0.8, textTransform: 'uppercase', color: NEWS_UI.date, marginBottom: 12 },
   title: { fontFamily: fonts.bold, fontSize: 28, lineHeight: 34, letterSpacing: -0.8, color: colors.ink, marginBottom: 20 },
   actions: { marginTop: 32, gap: 4 },

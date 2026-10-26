@@ -42,7 +42,7 @@ const PLANNED: Planned[] = [
 const HISTORY: Month[] = [
   { label: 'Oktober 2026', entries: [
     { date: '26. Okt', title: 'Neuigkeiten direkt im Dashboard', visual: 'mail',
-      text: 'Unter „Neuigkeiten“ in der Seitenleiste siehst du jetzt, was es bei FinestSites Neues gibt. Die neueste Neuigkeit erscheint als Karte über deinen Webseiten; in der App bekommst du sie auf Wunsch als Mitteilung.' },
+      text: 'Unter „Neuigkeiten“ in der Seitenleiste siehst du jetzt, was es bei FinestSites Neues gibt. Die neueste Neuigkeit erscheint farbig hervorgehoben als Karte über deinen Webseiten; in der App bekommst du sie auf Wunsch als Mitteilung.' },
     { date: '26. Okt', title: 'Konto löschen: zum Laufzeitende oder sofort',
       text: 'Wenn du dein Konto löschen möchtest, kannst du jetzt wählen: zum Ende deiner bezahlten Laufzeit (deine Seite bleibt bis dahin online, du kannst es dir anders überlegen) oder sofort. Du findest es unter Einstellungen → Konto.' },
     { date: '21. Okt', title: 'Kontakt-Knopf oben auf der Seite', visual: 'chat',

@@ -3,10 +3,10 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import type { NewsCtaKind } from '@/lib/contracts/app-v1/news'
+import type { NewsColor, NewsCtaKind } from '@/lib/contracts/app-v1/news'
 import { NEWS_LIMITS, type NewsAudience } from '@/lib/news/admin-schema'
 import { findBlockedWords } from '@/components/news/blocked-words'
-import { NEWS_CTA_KIND_LABELS, NEWS_TOKENS, formatNewsDateTime } from '@/components/news/news-ui'
+import { NEWS_CTA_KIND_LABELS, NEWS_PALETTES, NEWS_TOKENS, formatNewsDateTime, newsPalette } from '@/components/news/news-ui'
 import { NewsDetailCard, newsPrimaryButtonStyle, newsQuietLinkStyle } from '@/components/news/NewsDetailCard'
 import { AndroidCardPreview, IphoneLockPreview } from '@/components/news/NewsPreview'
 import { adminFetch, AdminApiError, ConfirmDialog, StatusPill, expiresToDay, formatExpiresShort, isExpired, type AdminNewsItem, type AudienceUser } from './_lib'
@@ -35,12 +35,14 @@ type Form = {
   audienceUsers: AudienceUser[]
   /** „Sichtbar bis“ als YYYY-MM-DD (leer = bis zum Archivieren) */
   expiresAt: string
+  /** Pastellfarbe der Karte ('' = automatisch aus der ID) */
+  color: NewsColor | ''
 }
 
 const EMPTY: Form = {
   pushTitle: '', pushBody: '', title: '', body: '',
   showCta: false, ctaLabel: '', ctaKind: 'sites', ctaUrl: '',
-  audience: 'all', audienceUsers: [], expiresAt: '',
+  audience: 'all', audienceUsers: [], expiresAt: '', color: '',
 }
 
 const AUDIENCES: { value: NewsAudience; label: string }[] = [
@@ -72,6 +74,7 @@ function fromItem(i: AdminNewsItem): Form {
     // Konten, die der Server nicht mehr auflösen konnte (gelöscht), nur mit ID zeigen
     audienceUsers: i.audienceUserIds.map(id => i.audienceUsers.find(u => u.id === id) ?? { id, email: 'Konto gelöscht', username: null }),
     expiresAt: expiresToDay(i.expiresAt),
+    color: i.color ?? '',
   }
 }
 
@@ -85,6 +88,7 @@ function toInput(f: Form) {
     audience: f.audience,
     audienceUserIds: f.audience === 'users' ? f.audienceUsers.map(u => u.id) : [],
     expiresAt: f.expiresAt || null,
+    color: f.color || null,
   }
 }
 
@@ -393,6 +397,22 @@ export function NewsEditor({ id: initialId }: { id?: string }) {
 
               <Divider />
 
+              {/* Farbe der Karte */}
+              <fieldset className="flex flex-col gap-3" style={{ border: 0, margin: 0, padding: 0, minWidth: 0 }} data-testid="color-section">
+                <SectionTitle title="Farbe" hint="Die neueste Neuigkeit erscheint in Web und App als Vollton-Karte in dieser Farbe, ältere bekommen sie als feinen Rahmen. „Automatisch“ wählt fest aus der Kennung." />
+                <div className="flex flex-wrap items-center gap-2" role="radiogroup" aria-label="Farbe der Karte">
+                  <ColorSwatch label="Automatisch" selected={form.color === ''} disabled={readOnly} auto onClick={() => set('color', '')} />
+                  {NEWS_PALETTES.map(p => (
+                    <ColorSwatch key={p.name} label={p.label} surface={p.surface} selected={form.color === p.name} disabled={readOnly} onClick={() => set('color', p.name)} />
+                  ))}
+                  <span className="text-xs ml-1" style={{ color: '#94A3B8' }}>
+                    {form.color ? NEWS_PALETTES.find(p => p.name === form.color)?.label : `Automatisch${id ? ` (${newsPalette(id).label})` : ''}`}
+                  </span>
+                </div>
+              </fieldset>
+
+              <Divider />
+
               {/* Knopf */}
               <fieldset className="flex flex-col gap-4" style={{ border: 0, margin: 0, padding: 0, minWidth: 0 }} data-testid="cta-section">
                 <SectionTitle title="Knopf (optional)" />
@@ -563,7 +583,7 @@ export function NewsEditor({ id: initialId }: { id?: string }) {
           <div>
             <PreviewTitle>Die Neuigkeit in der App</PreviewTitle>
             <div style={{ maxWidth: 360 }}>
-              <NewsDetailCard title={form.title} body={form.body} publishedAt={previewDate} cta={previewCta} secondary={previewSecondary} compact paletteKey={id} />
+              <NewsDetailCard title={form.title} body={form.body} publishedAt={previewDate} cta={previewCta} secondary={previewSecondary} compact paletteKey={id} color={form.color || null} />
             </div>
           </div>
 
@@ -656,6 +676,27 @@ function SectionTitle({ title, hint }: { title: string; hint?: string }) {
 }
 
 function Divider() { return <div style={{ height: 1, background: '#F1F5F9' }} /> }
+
+/** Runde Farbprobe (Pastellverlauf) bzw. „Automatisch“ als weißer Kreis mit Haarlinie; gewählt = dunkler Ring. */
+function ColorSwatch({ label, surface, auto, selected, disabled, onClick }: {
+  label: string; surface?: string; auto?: boolean; selected: boolean; disabled: boolean; onClick: () => void
+}) {
+  return (
+    <button type="button" role="radio" aria-checked={selected} aria-label={label} title={label} disabled={disabled} onClick={onClick}
+      className="flex items-center justify-center rounded-full transition-[box-shadow,transform] duration-150 hover:scale-105 focus-visible:outline-none"
+      style={{
+        width: 34, height: 34, border: 'none', background: 'transparent', cursor: disabled ? 'default' : 'pointer', padding: 0,
+        boxShadow: selected ? `0 0 0 2px #fff, 0 0 0 4px ${NEWS_TOKENS.ink}` : '0 0 0 2px #fff, 0 0 0 3px #E5E7EB',
+        opacity: disabled && !selected ? 0.5 : 1,
+      }}>
+      <span aria-hidden style={{
+        width: 34, height: 34, borderRadius: 999, display: 'block', boxSizing: 'border-box',
+        background: auto ? 'linear-gradient(135deg, #fff 47%, #D1D5DB 47%, #D1D5DB 53%, #fff 53%)' : surface,
+        border: auto ? '1px solid #E5E7EB' : 'none',
+      }} />
+    </button>
+  )
+}
 
 /** „YYYY-MM-DD“ → „04.11.2026“ (reine Textumformung, keine Zeitzone). */
 function formatDayShort(day: string): string {

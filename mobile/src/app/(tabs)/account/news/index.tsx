@@ -36,8 +36,9 @@ export default function NewsListScreen() {
           <Text style={styles.lead} accessibilityRole="summary">
             {unread > 0 ? plural(unread, 'neue Neuigkeit', 'neue Neuigkeiten') : 'Alles gelesen'}
           </Text>
-          {items.map(n => (
-            <NewsRow key={n.id} item={n} onPress={() => router.push({ pathname: '/account/news/[id]', params: { id: n.id } })} />
+          {/* Die neueste als Vollton, alle weiteren mit Verlaufsrahmen (wie im Web) */}
+          {items.map((n, i) => (
+            <NewsRow key={n.id} item={n} prominent={i === 0} onPress={() => router.push({ pathname: '/account/news/[id]', params: { id: n.id } })} />
           ))}
         </View>
       )}
