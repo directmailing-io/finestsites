@@ -491,9 +491,6 @@
       "display_mode": "position",
       "default_value": "unten",
       "placeholder_text": "Foto, Begrüßung und Text bleiben gleich, nur die Stelle auf der Seite ändert sich. Du siehst es sofort in der Vorschau.",
-      "only_usernames": [
-        "demo"
-      ],
       "preview_anchor": "about"
     },
     {

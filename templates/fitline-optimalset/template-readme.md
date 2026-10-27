@@ -65,7 +65,7 @@ Hero + Betreiber-Zeile, vor der Glow-Zone; Kanal-Zeile ausgeblendet, weil die Ko
   die Stelle `<!-- @@about-slot:oben -->` ist nur ein Marker.
 - `i18n/build.py` kopiert die Sektion beim Bauen an beide Stellen und umschließt sie mit
   `{{#if about_position=oben}}` bzw. `{{#unless about_position=oben}}` (ohne Wert = unten). Jede Kopie bekommt `about-pos-<pos>` als Klasse.
-- Gestufter Rollout: das Schemafeld trägt `only_usernames: ["demo"]`, solange Daniel testet. Für alle anderen bleibt der Wert leer → unten.
+- Seit 27.10.2026 abends für alle Konten freigeschaltet (vorher nur demo über `only_usernames`). Ohne Wert → unten.
 - Vorschau je Position: `npx tsx scripts/render-template-preview.ts fitline-optimalset --set about_position=oben`.
 
 ## Drei Stilrichtungen (`stilrichtung`)
