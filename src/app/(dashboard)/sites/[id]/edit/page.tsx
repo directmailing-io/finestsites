@@ -870,7 +870,8 @@ function PositionSelectField({ field, value, onChange, onMobileSelect }: {
   field: FieldSchema; value: string; onChange: (v: string) => void; onMobileSelect?: () => void
 }) {
   const opts = field.card_options ?? []
-  const current = value || field.default_value || opts[0]?.value || ''
+  // Kein oder ein unbekannter Wert (z. B. eine entfernte Wahl) → Standard gilt als ausgewählt
+  const current = opts.some(o => o.value === value) ? value : (field.default_value || opts[0]?.value || '')
   return (
     <div className="flex flex-col gap-2" role="radiogroup" aria-label={field.label}>
       {opts.map(opt => {
@@ -4557,7 +4558,8 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
                     }
                     const visible = sectionKeySet.has(field.key)
                     // Toggles: no Optional badge, no collapse chevron — the switch itself is the whole UI
-                    const isOptional = visible && !field.required && field.type !== 'toggle'
+                    // Positionswahl ebenso: hat immer einen Wert, nichts zum Zuklappen (Daniel 27.10.2026)
+                    const isOptional = visible && !field.required && field.type !== 'toggle' && field.display_mode !== 'position'
                     const isCollapsed = isOptional && collapsedOptionals.has(field.key)
                     // Partner field: show_when targets team_modus=team and team mode is active
                     const isPartnerField = visible
