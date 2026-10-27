@@ -62,9 +62,9 @@ Hero + Betreiber-Zeile, vor der Glow-Zone; Kanal-Zeile ausgeblendet, weil die Ko
 `mitte` (nach dem Tagesablauf, vor dem Cocktail) oder `unten`/leer (vor dem Kontakt, wie bisher).
 
 - In `index.de-en.html` steht die Sektion **genau einmal** (zwischen `<!-- @@about:start -->` und `<!-- @@about:end -->`);
-  die beiden Stellen `<!-- @@about-slot:oben -->` / `<!-- @@about-slot:mitte -->` sind nur Marker.
-- `i18n/build.py` kopiert die Sektion beim Bauen an alle drei Stellen und umschließt sie mit
-  `{{#if about_position=…}}` bzw. `{{#unless …}}{{#unless …}}` (ohne Wert = unten). Jede Kopie bekommt `about-pos-<pos>` als Klasse.
+  die Stelle `<!-- @@about-slot:oben -->` ist nur ein Marker.
+- `i18n/build.py` kopiert die Sektion beim Bauen an beide Stellen und umschließt sie mit
+  `{{#if about_position=oben}}` bzw. `{{#unless about_position=oben}}` (ohne Wert = unten). Jede Kopie bekommt `about-pos-<pos>` als Klasse.
 - Gestufter Rollout: das Schemafeld trägt `only_usernames: ["demo"]`, solange Daniel testet. Für alle anderen bleibt der Wert leer → unten.
 - Vorschau je Position: `npx tsx scripts/render-template-preview.ts fitline-optimalset --set about_position=oben`.
 

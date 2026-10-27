@@ -30,20 +30,20 @@ USER_FIELDS=['about_me_html']                   # Nutzertexte mit Sprachvariante
 
 html=open(SRC,encoding='utf-8').read()
 
-# 0a) „Über mich“ an drei Positionen (Editor-Feld about_position: oben | mitte | leer/unten).
-#     Die Quelle enthält die Sektion genau EINMAL (zwischen @@about:start/@@about:end) plus zwei Slot-Marker;
+# 0a) „Über mich“ an zwei Positionen (Editor-Feld about_position: oben | leer/unten; „mitte“ am 27.10.2026 auf Daniels Wunsch gestrichen).
+#     Die Quelle enthält die Sektion genau EINMAL (zwischen @@about:start/@@about:end) plus den Slot-Marker für oben;
 #     hier wird sie an jede Stelle kopiert und per Bedingung nur an der gewählten gezeigt (ohne Wert = unten, wie bisher).
 m=re.search(r'<!-- @@about:start[^>]*-->\n?(.*?)\n?<!-- @@about:end -->', html, flags=re.S)
 assert m, 'about-Marker (@@about:start/@@about:end) fehlen'
 about_block=m.group(1)
 assert about_block.count('class="section about-wrap"')==1, 'about-Sektion ohne eindeutige Klasse'
 def about_at(pos): return about_block.replace('class="section about-wrap"', 'class="section about-wrap about-pos-%s"'%pos, 1)
-html=html.replace(m.group(0), '{{#unless about_position=oben}}{{#unless about_position=mitte}}\n'+about_at('unten')+'\n{{/unless}}{{/unless}}')
-for pos in ('oben','mitte'):
+html=html.replace(m.group(0), '{{#unless about_position=oben}}\n'+about_at('unten')+'\n{{/unless}}')
+for pos in ('oben',):
     slot='<!-- @@about-slot:%s -->'%pos
     assert html.count(slot)==1, slot+' fehlt oder mehrfach'
     html=html.replace(slot, '{{#if about_position=%s}}\n'%pos+about_at(pos)+'\n{{/if}}')
-assert html.count('class="section about-wrap')==3
+assert html.count('class="section about-wrap')==2
 tr={l:json.load(open(os.path.join(HERE,f'{l}.json'))) for l in LANGS if os.path.exists(os.path.join(HERE,f'{l}.json'))}
 missing={l:0 for l in LANGS}
 

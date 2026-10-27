@@ -5163,8 +5163,8 @@ html.js .food-card { opacity: 1; }
 .about-content p { font-size: var(--text-lead); line-height: 1.7; margin-bottom: 14px; color: var(--text); }
 .about-meta { margin-top: 28px; display: flex; gap: 24px; flex-wrap: wrap; font-size: var(--text-sm); }
 .about-meta-item { display: flex; align-items: center; gap: 8px; color: var(--text-muted); }
-/* Position „Über mich“ (Editor: about_position). Ganz oben: Kontaktwege stehen schon im Kopfbereich,
-   deshalb ohne die Kanal-Zeile; weiche Linie zur Glow-Zone darunter. In der Mitte: zwischen Tagesablauf und Produkten. */
+/* Position „Über mich“ (Editor: about_position = oben | leer/unten). Oben: Kontaktwege stehen schon im Kopfbereich,
+   deshalb ohne die Kanal-Zeile; weiche Linie zur Glow-Zone darunter. */
 .about-pos-oben { border-bottom: 1px solid var(--border-soft); }
 .about-pos-oben .about-meta { display: none; }
 
@@ -6852,8 +6852,6 @@ section.section.reviews {
     <p class="routine-footnotes reveal"><span class="l-de">¹ Vitamin B6 trägt zu einem normalen Energiestoffwechsel bei. ² Vitamin B6, B12 und C tragen zu einer normalen psychologischen Funktion bei.</span><span class="l-en">¹ Vitamin B6 contributes to normal energy-yielding metabolism. ² Vitamins B6, B12 and C contribute to normal psychological function.</span></p>
   </div>
 </section>
-
-<!-- @@about-slot:mitte -->
 
 <!-- COCKTAIL: Scroll-Scrub Mixology -->
 {{#unless joghurt_anzeigen=nein}}

@@ -5169,8 +5169,8 @@ html.js .food-card { opacity: 1; }
 .about-content p { font-size: var(--text-lead); line-height: 1.7; margin-bottom: 14px; color: var(--text); }
 .about-meta { margin-top: 28px; display: flex; gap: 24px; flex-wrap: wrap; font-size: var(--text-sm); }
 .about-meta-item { display: flex; align-items: center; gap: 8px; color: var(--text-muted); }
-/* Position „Über mich“ (Editor: about_position). Ganz oben: Kontaktwege stehen schon im Kopfbereich,
-   deshalb ohne die Kanal-Zeile; weiche Linie zur Glow-Zone darunter. In der Mitte: zwischen Tagesablauf und Produkten. */
+/* Position „Über mich“ (Editor: about_position = oben | leer/unten). Oben: Kontaktwege stehen schon im Kopfbereich,
+   deshalb ohne die Kanal-Zeile; weiche Linie zur Glow-Zone darunter. */
 .about-pos-oben { border-bottom: 1px solid var(--border-soft); }
 .about-pos-oben .about-meta { display: none; }
 
@@ -6933,50 +6933,6 @@ html[data-lang="hi"] .lang-item[data-lang="hi"] { background: #F3F4F6; font-weig
   </div>
 </section>
 
-{{#if about_position=mitte}}
-<!-- ABOUT ME -->
-<section id="about" class="section about-wrap about-pos-mitte">
-  <div class="container about">
-    <div class="about-photo reveal">
-      <img src="{{about_bild}}" alt="{{vorname}} {{nachname}}" loading="lazy">
-    </div>
-    <div class="about-content">
-      <span class="section-eyebrow reveal"><span class="l-de">{{#unless team_modus=team}}Wer ich bin{{/unless}}{{#if team_modus=team}}Wer wir sind{{/if}}</span><span class="l-en">{{#unless team_modus=team}}Who I am{{/unless}}{{#if team_modus=team}}Who we are{{/if}}</span><span class="l-it">{{#unless team_modus=team}}Chi sono{{/unless}}{{#if team_modus=team}}Chi siamo{{/if}}</span><span class="l-ru">{{#unless team_modus=team}}Кто я{{/unless}}{{#if team_modus=team}}Кто мы{{/if}}</span><span class="l-uk">{{#unless team_modus=team}}Хто я{{/unless}}{{#if team_modus=team}}Хто ми{{/if}}</span><span class="l-pl">{{#unless team_modus=team}}Kim jestem{{/unless}}{{#if team_modus=team}}Kim jesteśmy{{/if}}</span><span class="l-bg">{{#unless team_modus=team}}За мен{{/unless}}{{#if team_modus=team}}За нас{{/if}}</span><span class="l-hi">{{#unless team_modus=team}}मैं कौन हूँ{{/unless}}{{#if team_modus=team}}हम कौन हैं{{/if}}</span></span>
-      <h2 class="reveal"><span class="l-de">{{{about_intro_de_html}}}</span><span class="l-en">{{{about_intro_en_html}}}</span><span class="l-it">{{{about_intro_it_html}}}</span><span class="l-ru">{{{about_intro_ru_html}}}</span><span class="l-uk">{{{about_intro_uk_html}}}</span><span class="l-pl">{{{about_intro_pl_html}}}</span><span class="l-bg">{{{about_intro_bg_html}}}</span><span class="l-hi">{{{about_intro_hi_html}}}</span></h2>
-      <div class="about-me-richtext reveal"><div class="l-de">{{about_me_html}}</div><div class="l-en">{{about_me_html_en}}</div><div class="l-it">{{#if about_me_html_it}}{{about_me_html_it}}{{/if}}{{#unless about_me_html_it}}{{about_me_html}}{{/unless}}</div><div class="l-ru">{{#if about_me_html_ru}}{{about_me_html_ru}}{{/if}}{{#unless about_me_html_ru}}{{about_me_html}}{{/unless}}</div><div class="l-uk">{{#if about_me_html_uk}}{{about_me_html_uk}}{{/if}}{{#unless about_me_html_uk}}{{about_me_html}}{{/unless}}</div><div class="l-pl">{{#if about_me_html_pl}}{{about_me_html_pl}}{{/if}}{{#unless about_me_html_pl}}{{about_me_html}}{{/unless}}</div><div class="l-bg">{{#if about_me_html_bg}}{{about_me_html_bg}}{{/if}}{{#unless about_me_html_bg}}{{about_me_html}}{{/unless}}</div><div class="l-hi">{{#if about_me_html_hi}}{{about_me_html_hi}}{{/if}}{{#unless about_me_html_hi}}{{about_me_html}}{{/unless}}</div></div>
-{{#unless team_modus=team}}
-      <div class="about-meta reveal">
-{{#if instagram_url}}
-        <a href="{{instagram_url}}" target="_blank" rel="noopener" class="about-meta-item" style="color:inherit;text-decoration:none;display:flex;align-items:center;gap:6px;">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
-          Instagram
-        </a>
-{{/if}}
-{{#if facebook_url}}
-        <a href="{{facebook_url}}" target="_blank" rel="noopener" class="about-meta-item" style="color:inherit;text-decoration:none;display:flex;align-items:center;gap:6px;">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
-          Facebook
-        </a>
-{{/if}}
-{{#if whatsapp_number}}
-        <a href="https://wa.me/{{whatsapp_number}}" target="_blank" rel="noopener" class="about-meta-item" style="color:inherit;text-decoration:none;display:flex;align-items:center;gap:6px;">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21l1.65-3.8a9 9 0 1 1 3.4 2.9z"/><path d="M9 10a.5.5 0 0 0 1 0V9a.5.5 0 0 0-1 0v1a5 5 0 0 0 5 5h1a.5.5 0 0 0 0-1h-1a.5.5 0 0 0 0 1"/></svg>
-          WhatsApp
-        </a>
-{{/if}}
-{{#if telefon}}
-        <a href="tel:{{telefon}}" class="about-meta-item" style="color:inherit;text-decoration:none;display:flex;align-items:center;gap:6px;">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-          {{telefon}}
-        </a>
-{{/if}}
-      </div>
-{{/unless}}
-    </div>
-  </div>
-</section>
-{{/if}}
-
 <!-- COCKTAIL: Scroll-Scrub Mixology -->
 {{#unless joghurt_anzeigen=nein}}
 <section id="cocktail" class="cocktail">
@@ -7813,7 +7769,7 @@ html[data-lang="hi"] .lang-item[data-lang="hi"] { background: #F3F4F6; font-weig
   </div>
 </section>
 
-{{#unless about_position=oben}}{{#unless about_position=mitte}}
+{{#unless about_position=oben}}
 <!-- ABOUT ME -->
 <section id="about" class="section about-wrap about-pos-unten">
   <div class="container about">
@@ -7855,7 +7811,7 @@ html[data-lang="hi"] .lang-item[data-lang="hi"] { background: #F3F4F6; font-weig
     </div>
   </div>
 </section>
-{{/unless}}{{/unless}}
+{{/unless}}
 
 <!-- FORM -->
 <section id="kontakt" class="section form-section">

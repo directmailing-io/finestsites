@@ -473,19 +473,11 @@
       "card_options": [
         {
           "color": "",
-          "label": "Ganz oben",
+          "label": "Weiter oben",
           "value": "oben",
           "card_type": "image",
           "image_url": "/templates/fitline-optimalset/section-previews/position-oben.svg",
-          "description": "Direkt nach dem Startbereich. Besucher lernen dich zuerst kennen."
-        },
-        {
-          "color": "",
-          "label": "In der Mitte",
-          "value": "mitte",
-          "card_type": "image",
-          "image_url": "/templates/fitline-optimalset/section-previews/position-mitte.svg",
-          "description": "Nach dem Tagesablauf, vor den Produkten."
+          "description": "Du stehst im Vordergrund. Besucher wissen sofort, wer du bist."
         },
         {
           "color": "",
@@ -493,12 +485,12 @@
           "value": "unten",
           "card_type": "image",
           "image_url": "/templates/fitline-optimalset/section-previews/position-unten.svg",
-          "description": "Kurz vor dem Kontakt. So war es bisher."
+          "description": "Erst das Konzept und der Nutzen der Produkte, dann du. So war es bisher."
         }
       ],
       "display_mode": "position",
       "default_value": "unten",
-      "placeholder_text": "Dein „Über mich“-Bereich (Foto, Begrüßung und Text) bleibt gleich, nur die Stelle auf der Seite ändert sich. Du siehst es sofort in der Vorschau.",
+      "placeholder_text": "Foto, Begrüßung und Text bleiben gleich, nur die Stelle auf der Seite ändert sich. Du siehst es sofort in der Vorschau.",
       "only_usernames": [
         "demo"
       ],
