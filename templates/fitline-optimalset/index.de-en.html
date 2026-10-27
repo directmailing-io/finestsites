@@ -5163,6 +5163,10 @@ html.js .food-card { opacity: 1; }
 .about-content p { font-size: var(--text-lead); line-height: 1.7; margin-bottom: 14px; color: var(--text); }
 .about-meta { margin-top: 28px; display: flex; gap: 24px; flex-wrap: wrap; font-size: var(--text-sm); }
 .about-meta-item { display: flex; align-items: center; gap: 8px; color: var(--text-muted); }
+/* Position „Über mich“ (Editor: about_position). Ganz oben: Kontaktwege stehen schon im Kopfbereich,
+   deshalb ohne die Kanal-Zeile; weiche Linie zur Glow-Zone darunter. In der Mitte: zwischen Tagesablauf und Produkten. */
+.about-pos-oben { border-bottom: 1px solid var(--border-soft); }
+.about-pos-oben .about-meta { display: none; }
 
 /* ============ FORM ============ */
 .form-section { background: var(--primary-deep); color: #fff; }
@@ -6541,6 +6545,8 @@ section.section.reviews {
   </div>
 </section>
 
+<!-- @@about-slot:oben -->
+
 
 <!-- ============================================================ -->
 <!-- ============================================================ -->
@@ -6846,6 +6852,8 @@ section.section.reviews {
     <p class="routine-footnotes reveal"><span class="l-de">¹ Vitamin B6 trägt zu einem normalen Energiestoffwechsel bei. ² Vitamin B6, B12 und C tragen zu einer normalen psychologischen Funktion bei.</span><span class="l-en">¹ Vitamin B6 contributes to normal energy-yielding metabolism. ² Vitamins B6, B12 and C contribute to normal psychological function.</span></p>
   </div>
 </section>
+
+<!-- @@about-slot:mitte -->
 
 <!-- COCKTAIL: Scroll-Scrub Mixology -->
 {{#unless joghurt_anzeigen=nein}}
@@ -7683,6 +7691,7 @@ section.section.reviews {
   </div>
 </section>
 
+<!-- @@about:start  („Über mich“: Position wählbar – i18n/build.py setzt diese Sektion an alle drei Stellen, hier nur EINMAL pflegen) -->
 <!-- ABOUT ME -->
 <section id="about" class="section about-wrap">
   <div class="container about">
@@ -7724,6 +7733,7 @@ section.section.reviews {
     </div>
   </div>
 </section>
+<!-- @@about:end -->
 
 <!-- FORM -->
 <section id="kontakt" class="section form-section">

@@ -319,6 +319,16 @@ Das `placeholder_schema`-JSON hat folgende Struktur:
 
 ---
 
+### 5.x Sichtbarkeit und Rollout von Feldern
+
+| Attribut | Wirkung |
+|---|---|
+| `show_when: { field, value }` | Feld nur zeigen, wenn ein anderes Feld den Wert hat (z. B. Partner-Felder bei `team_modus=team`). |
+| `admin_only: true` | Feld nur für Admin-Konten (gestufter Rollout). |
+| `only_usernames: ["demo"]` | Feld nur für genau diese Benutzernamen; alle anderen sehen es nicht, der Wert bleibt leer. Das Template muss ohne Wert das bisherige Verhalten zeigen (z. B. `{{#unless key=…}}`). Zum Freischalten für alle das Attribut entfernen und das Schema neu hochladen (`scripts/template-schema-upload.ts`). |
+| `preview_anchor: "about"` | Nach einer Änderung springt die Live-Vorschau zu `#about`. |
+| `display_mode: "position"` | Für `card_select`: eine Zeile je Wahl mit kleiner Seiten-Skizze (`image_url`, SVG) – „Wo soll … stehen?“. Beispiel: `about_position` im Optimalset-Template. |
+
 ## 6. Deployment-Workflow
 
 ### Neues Template anlegen

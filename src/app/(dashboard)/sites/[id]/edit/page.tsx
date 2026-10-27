@@ -211,7 +211,7 @@ interface FieldSchema {
   aspect_ratio?: string
   /** Enables AI compliance check (EU Health Claims Regulation) for richtext fields */
   compliance_check?: boolean
-  display_mode?: 'chips' | 'toggle' | 'section_toggle'
+  display_mode?: 'chips' | 'toggle' | 'section_toggle' | 'position'
   toggle_on_value?: string
   toggle_off_value?: string
   show_when?: { field: string; value: string | string[] }
@@ -222,6 +222,10 @@ interface FieldSchema {
   contact?: boolean
   /** Feld nur für Admin-Konten (gestufter Rollout, z. B. PM-Registrierung erst für demo) */
   admin_only?: boolean
+  /** Feld nur für diese Benutzernamen (gestufter Rollout, z. B. „Über mich“-Position erst für demo) */
+  only_usernames?: string[]
+  /** Nach einer Änderung springt die Live-Vorschau zu diesem Anker (z. B. „about“) */
+  preview_anchor?: string
   /** Hinweis-Kasten über dem Feld (z. B. warum das Impressum Pflicht ist) */
   notice?: { title: string; text: string }
   // loop fields
@@ -857,6 +861,60 @@ const blurBorder  = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement 
 // preview image + iOS toggle in one card. Tapping the image opens a fullscreen
 // lightbox so the user can clearly see what the section contains before deciding.
 
+/**
+ * Wo soll eine Sektion stehen? Eine Zeile je Wahl: links eine kleine Seiten-Skizze (SVG aus card_options.image_url,
+ * der grüne Block zeigt die Stelle), rechts Name und ein Satz. Funktioniert am Handy und am Desktop gleich,
+ * ohne Hover, ohne Zoom – für Laien reicht ein Blick auf die Skizze.
+ */
+function PositionSelectField({ field, value, onChange, onMobileSelect }: {
+  field: FieldSchema; value: string; onChange: (v: string) => void; onMobileSelect?: () => void
+}) {
+  const opts = field.card_options ?? []
+  const current = value || field.default_value || opts[0]?.value || ''
+  return (
+    <div className="flex flex-col gap-2" role="radiogroup" aria-label={field.label}>
+      {opts.map(opt => {
+        const selected = current === opt.value
+        return (
+          <button key={opt.value} type="button" role="radio" aria-checked={selected}
+            onClick={() => {
+              if (!selected) onChange(opt.value)
+              if (window.matchMedia('(pointer: coarse)').matches) onMobileSelect?.()
+            }}
+            className="flex items-center gap-3.5 text-left rounded-2xl px-3.5 py-3 transition-all"
+            style={{
+              border: `2px solid ${selected ? '#1a1a1a' : '#E5E7EB'}`,
+              background: '#fff',
+              boxShadow: selected ? '0 0 0 4px rgba(26,26,26,0.08)' : '0 1px 2px rgba(0,0,0,0.03)',
+              cursor: 'pointer', minHeight: 72,
+            }}>
+            {opt.image_url && (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={opt.image_url} alt="" aria-hidden="true" width={48} height={64}
+                className="flex-shrink-0"
+                style={{ width: 48, height: 64, objectFit: 'contain', opacity: selected ? 1 : 0.75, transition: 'opacity 0.2s' }} />
+            )}
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-bold text-gray-900 leading-tight">{opt.label}</p>
+              {opt.description && (
+                <p className="text-xs leading-snug mt-0.5" style={{ color: '#6B7280' }}>{opt.description}</p>
+              )}
+            </div>
+            <span className="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center"
+              style={{ background: selected ? '#1a1a1a' : '#fff', border: `1.5px solid ${selected ? '#1a1a1a' : '#D1D5DB'}`, transition: 'background 0.2s, border-color 0.2s' }}>
+              {selected && (
+                <svg width="11" height="9" viewBox="0 0 10 8" fill="none">
+                  <path d="M1 4L3.5 6.5L9 1" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              )}
+            </span>
+          </button>
+        )
+      })}
+    </div>
+  )
+}
+
 function SectionToggleCard({ field, value, onChange, onMobileSelect }: {
   field: FieldSchema; value: string; onChange: (v: string) => void; onMobileSelect?: () => void
 }) {
@@ -1023,6 +1081,11 @@ function CardSelectField({ field, value, onChange, narrow, onMobileSelect }: {
   // ── Section visibility toggle (display_mode: 'section_toggle') ──
   if (field.display_mode === 'section_toggle') {
     return <SectionToggleCard field={field} value={value} onChange={onChange} onMobileSelect={onMobileSelect} />
+  }
+
+  // ── Position einer Sektion (display_mode: 'position'): Liste mit Seiten-Skizze je Wahl ──
+  if (field.display_mode === 'position') {
+    return <PositionSelectField field={field} value={value} onChange={onChange} onMobileSelect={onMobileSelect} />
   }
 
   // ── iOS-style toggle (2 binary options, opt-in via display_mode) ──
@@ -3736,7 +3799,9 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
   }
   if (!site) return <div className="p-8 text-center text-gray-500">Website nicht gefunden.</div>
 
-  const fields = site.templates?.placeholder_schema?.fields ?? []
+  // only_usernames: Felder im gestuften Rollout (z. B. erst „demo“) sehen nur die genannten Konten
+  const fields = (site.templates?.placeholder_schema?.fields ?? [])
+    .filter(f => !f.only_usernames?.length || (!!site.username && f.only_usernames.includes(site.username)))
   const sections = [...new Set(fields.map(f => f.section || 'Allgemein'))]
   // Add the virtual Domain section at the end of the sidebar
   const allSections = [...sections, DOMAIN_SECTION]
@@ -4627,7 +4692,12 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
                         {!isCollapsed && <FieldRenderer
                           field={field}
                           value={values[field.key] ?? ''}
-                          onChange={v => handleChange(field.key, v)}
+                          onChange={v => {
+                            handleChange(field.key, v)
+                            // Vorschau zur betroffenen Stelle springen lassen (z. B. „Über mich“-Position); danach wieder frei
+                            if (field.preview_anchor) setPreviewHash(field.preview_anchor)
+                            else if (previewHash && field.section !== 'Events') setPreviewHash('')
+                          }}
                           siblings={values}
                           narrow={narrowEditor}
                           onMobileSelect={() => {

@@ -15,7 +15,7 @@ export interface LoopSubField {
   aspect_ratio?: string
   options?: string[]
   card_options?: CardOption[]
-  display_mode?: 'chips' | 'toggle'
+  display_mode?: 'chips' | 'toggle' | 'section_toggle' | 'position'
   // for toggle: which value means "on"
   toggle_on_value?: string
   toggle_off_value?: string
@@ -89,7 +89,7 @@ export interface PlaceholderField {
   min_length?: number
   options?: string[]         // for select / dropdown type
   card_options?: CardOption[] // for card_select type
-  display_mode?: 'chips' | 'toggle' // for card_select type
+  display_mode?: 'chips' | 'toggle' | 'section_toggle' | 'position' // for card_select type
   section?: string
   order: number
   aspect_ratio?: string       // for image type
@@ -105,6 +105,10 @@ export interface PlaceholderField {
   show_when?: { field: string; value: string | string[] }
   /** Farbthema-Feld: zusätzlich „Meine Farbe“ (Konto) und „Eigene Farbe“ (nur diese Seite) anbieten */
   brand_color?: boolean
+  /** Nur für diese Benutzernamen sichtbar (gestufter Rollout, z. B. erst „demo“); alle anderen sehen das Feld nicht und der Wert bleibt leer */
+  only_usernames?: string[]
+  /** Nach einer Änderung springt die Vorschau zu diesem Anker (z. B. „about“) */
+  preview_anchor?: string
 }
 
 export interface CardOption {

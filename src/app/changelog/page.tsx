@@ -23,6 +23,8 @@ type Month = { label: string; entries: Entry[] }
 type Planned = { title: string; text: string; status: 'Im Test' | 'In Arbeit' | 'Geplant'; visual: Visual }
 
 const PLANNED: Planned[] = [
+  { title: '„Über mich“ weiter oben', status: 'Im Test', visual: 'editor',
+    text: 'Viele wünschen sich den „Über mich“-Bereich weiter oben auf der Seite. Bald legst du im Editor selbst fest, ob er ganz oben, in der Mitte oder wie bisher weiter unten steht.' },
   { title: 'Chat auf deiner Webseite', status: 'Im Test', visual: 'chat',
     text: 'Wir bauen ein kleines Chatfenster in deine Seite ein. Damit können dir Besucher direkt schreiben, und du antwortest am Handy oder am Computer.' },
   { title: 'Eigene App', status: 'Im Test', visual: 'app',

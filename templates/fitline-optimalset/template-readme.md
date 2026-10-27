@@ -55,6 +55,19 @@ Im Schema ist jedes Bild ein Image-Feld mit dem entsprechenden `assets/...` als 
 14. FAQ
 15. Footer mit Disclaimer-Block
 
+## „Über mich“: Position wählbar (`about_position`)
+
+Seit 27.10.2026 kann der Nutzer im Editor (Bereich „Sektionen“) wählen, wo „Über mich“ steht: `oben` (direkt nach
+Hero + Betreiber-Zeile, vor der Glow-Zone; Kanal-Zeile ausgeblendet, weil die Kontaktwege schon im Kopf stehen),
+`mitte` (nach dem Tagesablauf, vor dem Cocktail) oder `unten`/leer (vor dem Kontakt, wie bisher).
+
+- In `index.de-en.html` steht die Sektion **genau einmal** (zwischen `<!-- @@about:start -->` und `<!-- @@about:end -->`);
+  die beiden Stellen `<!-- @@about-slot:oben -->` / `<!-- @@about-slot:mitte -->` sind nur Marker.
+- `i18n/build.py` kopiert die Sektion beim Bauen an alle drei Stellen und umschließt sie mit
+  `{{#if about_position=…}}` bzw. `{{#unless …}}{{#unless …}}` (ohne Wert = unten). Jede Kopie bekommt `about-pos-<pos>` als Klasse.
+- Gestufter Rollout: das Schemafeld trägt `only_usernames: ["demo"]`, solange Daniel testet. Für alle anderen bleibt der Wert leer → unten.
+- Vorschau je Position: `npx tsx scripts/render-template-preview.ts fitline-optimalset --set about_position=oben`.
+
 ## Drei Stilrichtungen (`stilrichtung`)
 
 - `weiss` (Default): Cream-Background, warm und freundlich, Apple-Style

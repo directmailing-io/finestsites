@@ -12,7 +12,7 @@ import path from 'node:path'
 import { renderTemplate, rawKeysFromSchema } from '../src/lib/utils/template-engine'
 
 const slug = process.argv[2]
-if (!slug) { console.error('usage: render-template-preview.ts <template-slug> [--theme x] [--result] [--nolinks] [--intro]'); process.exit(1) }
+if (!slug) { console.error('usage: render-template-preview.ts <template-slug> [--theme x] [--result] [--nolinks] [--intro] [--set key=value …]'); process.exit(1) }
 const argv = process.argv.slice(3)
 const opt = (k: string) => { const i = argv.indexOf(k); return i > -1 ? argv[i + 1] : undefined }
 const flag = (k: string) => argv.includes(k)
@@ -28,6 +28,9 @@ for (const f of schema.fields) {
 }
 Object.assign(data, schema.preview_values ?? {})
 if (opt('--theme')) data.farbthema = opt('--theme')!
+// Beliebige Werte setzen: --set about_position=oben --set team_modus=team (mehrfach möglich)
+const sets: string[] = []
+argv.forEach((a, i) => { if (a === '--set' && argv[i + 1]) { const [k, ...v] = argv[i + 1].split('='); data[k] = v.join('='); sets.push(k + '-' + v.join('=')) } })
 if (flag('--nolinks')) delete data.links
 if (flag('--duo')) Object.assign(data, {
   partner_modus: 'duo', team_modus: 'team',
@@ -56,6 +59,6 @@ if (flag('--result')) {
 
 const outDir = path.join(dir, 'preview-lokal')
 fs.mkdirSync(outDir, { recursive: true })
-const name = `${slug}-${data.farbthema ?? 'default'}${flag('--result') ? '-' + (opt('--step') ?? 'result').replace(':', '') : ''}${flag('--nolinks') ? '-nolinks' : ''}${flag('--duo') ? '-duo' : ''}${flag('--split') ? '-split' : ''}${flag('--intro') ? '-intro' : ''}.html`
+const name = `${slug}-${data.farbthema ?? 'default'}${flag('--result') ? '-' + (opt('--step') ?? 'result').replace(':', '') : ''}${flag('--nolinks') ? '-nolinks' : ''}${flag('--duo') ? '-duo' : ''}${flag('--split') ? '-split' : ''}${flag('--intro') ? '-intro' : ''}${sets.length ? '-' + sets.join('-').replace(/[^\w-]/g, '') : ''}.html`
 fs.writeFileSync(path.join(outDir, name), out)
 console.log('wrote', path.relative(process.cwd(), path.join(outDir, name)))
