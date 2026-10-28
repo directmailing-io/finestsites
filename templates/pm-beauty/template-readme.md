@@ -21,7 +21,9 @@ npx tsx scripts/render-template-preview.ts pm-beauty [--theme sand|salbei|pflaum
 
 Hero (4 KI-Bilder, `hero_variante`, Fraunces-Headline, kein Pill) → PM-Hinweis → Innen & außen (Bild-Bogen „key.webp“ zwischen zwei Typo-Spalten) → Routine (zwei Listen Morgens/Abends + zwei Stillleben) → Beauty-Check (Scan-Ergebnis-Bild bei `scanner_anzeigen=an`, sonst Selfie-Bild) → Drei Gründe (typografische Zeilen) → Produkte (ruhige Liste in Gruppen, ohne Preise/Shop-Knöpfe; Fenster mit Hersteller-Text, Preis + Shop-Link) → Über mich → FAQ (5) → Kontakt (einstufiges Formular: Name, E-Mail, Telefon/WhatsApp, Vor Ort/Video/Telefon, Nachricht) → Footer.
 
-**Design-Feedback Daniel 28.10.2026 (eingearbeitet):** nicht wie cellRESET aussehen, keine Tagline mit Punkt, Innen/außen-Visual nicht langweilig, echtes Scan-Bild, Vorteile kürzer und überzeugender, insgesamt viel weniger Text, Formular nicht aus cellRESET, kein „AI generated“-Badge, Produkte ohne Shop-Gefühl.
+**Runde 3 (28.10.2026, 20:30):** Schrift Geist statt Fraunces, Squircle (`corner-shape: squircle` + große Radien), Innen & außen als breites Visual mit den Wörtern im Bild, Skinscan-Sektion mit Gesichts-Mesh-Bild (gpt-image-2 Edit nach Daniels Referenz-Screenshot), Vorteile als Bento wie Dailyoptimal (NTC®, Hauttypen, Wirkstoffe, Von innen, Hersteller seit 1993, 30-Tage-Garantie), Produkte „Was zur Auswahl steht“ + CTA-Karte „Du weißt nicht, was du nehmen sollst?“, Formular dreistufig (Anliegen → Wünsche → Kontakt) wie Dailyoptimal.
+
+**Design-Feedback Daniel 28.10.2026 (Runde 2, eingearbeitet):** nicht wie cellRESET aussehen, keine Tagline mit Punkt, Innen/außen-Visual nicht langweilig, echtes Scan-Bild, Vorteile kürzer und überzeugender, insgesamt viel weniger Text, Formular nicht aus cellRESET, kein „AI generated“-Badge, Produkte ohne Shop-Gefühl.
 
 ## Shop-Links
 
@@ -30,7 +32,7 @@ Direkt im Template: `https://www.fitline.com/de/de-de/products/{Artikelnr}?spons
 ## Bilder
 
 - `assets/hero/*.webp`, `assets/key|innen|aussen|routine-morgen|routine-abend|scan-result|scan-selfie.webp`: mit OpenAI `gpt-image-2` erzeugt (28.10.2026, zweite Serie „Beauty-Kampagne, editorial“), ohne Marken/Verpackungen. `scan-result` per Edits-Endpoint mit zwei Standbildern des PM-Tutorials als Referenz (Skript war `scratchpad/img/gen2.py`). Kein KI-Badge im Bild (Daniels Wunsch).
-- `assets/produkte/*.webp` FEHLEN noch (Daniel liefert, nicht per API): `cleansing-lotion, tonic, 4ever, 4ever-enriched, 4ever-overnight, beauty-drink, activize-serum, dark-spot-corrector, augencreme, ultimate-young, men-face, set-young-care, set-4ever, set-4ever-enriched`. Bis dahin zeigt die Karte eine Farbfläche mit Symbol (`onerror` → `.noimg`).
+- `assets/produkte/*.webp` (14 Stück, 600×600): mit `gpt-image-2` Edits-Endpoint aus den offiziellen Shop-Fotos erzeugt (Form/Farbe/Material wie das Original, ALLE Texte und Logos entfernt, auf Cremestein). Daniels Vorgabe 28.10.2026: „1:1 wie die echten Produkte, aber ohne Logo“. Hinweis: Verpackungsdesigns sind laut PM-Richtlinie geschützt; die Bilder zeigen nur die Form ohne Etikett. Fehlt ein Bild, zeigt die Zeile ein Symbol (`onerror` → `.noimg`).
 - Editor-Vorschauen: `public/templates/pm-beauty/hero-previews/*.webp`, `section-previews/section-scanner|men.webp`, Galerie `public/previews/beauty.jpg`.
 
 ## Compliance (PM-Richtlinien + HCVO/Kosmetik-VO)

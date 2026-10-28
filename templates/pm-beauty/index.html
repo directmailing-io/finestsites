@@ -24,12 +24,13 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" as="image" href="assets/hero/{{hero_variante}}.webp" fetchpriority="high" type="image/webp">
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300..700&display=swap" rel="stylesheet">
 
 <style>
 :root {
-  --font: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-  --serif: 'Fraunces', Georgia, 'Times New Roman', serif;
+  --font: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --serif: var(--font);
+  --r: 28px; --r-sm: 18px;
   --pad-x: clamp(20px, 5vw, 72px);
   --max: 1240px;
   --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
@@ -85,10 +86,12 @@ body { font-family: var(--font); background: var(--bg); color: var(--ink); line-
 img { display: block; max-width: 100%; }
 a { color: inherit; text-decoration: none; }
 button { font-family: inherit; cursor: pointer; border: 0; background: none; color: inherit; }
-h1, h2, h3 { font-family: var(--serif); font-weight: 400; letter-spacing: -0.015em; line-height: 1.05; color: var(--ink); font-variation-settings: 'opsz' 144; }
-h1 { font-size: clamp(46px, 6.2vw, 86px); }
-h2 { font-size: clamp(36px, 4.6vw, 64px); }
-h3 { font-size: clamp(22px, 2.2vw, 30px); line-height: 1.2; }
+h1, h2, h3 { font-weight: 500; letter-spacing: -0.03em; line-height: 1.04; color: var(--ink); }
+h1 { font-size: clamp(42px, 5.6vw, 76px); }
+h2 { font-size: clamp(32px, 4vw, 54px); }
+h3 { font-size: clamp(20px, 2vw, 26px); line-height: 1.2; letter-spacing: -0.02em; }
+/* Squircle: moderne Browser runden weicher, ältere bekommen normale Rundung */
+.btn, .nav-cta, .kc-drop, .kc-btn, .pm-sheet, .pr-row, .pr-thumb, .bento-card, .cform, .f-opt, .chip, .check-phone, .rt-col, .rt-banner figure, .about-photo, .faq-list, .contact-card, .pr-cta, .cform input, .cform textarea, .ok-ico, .duo-stage { corner-shape: squircle; }
 .mark { color: var(--green-dark); }
 p { color: var(--ink-2); }
 .arr { display: inline-block; transition: transform .2s var(--ease); }
@@ -98,9 +101,9 @@ p { color: var(--ink-2); }
 .foot-note { font-size: 13px; line-height: 1.55; color: var(--ink-3); }
 section { padding: clamp(72px, 10vh, 130px) var(--pad-x); position: relative; }
 .s-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 32px; margin-bottom: clamp(36px, 5vh, 64px); }
-.s-head h2 { max-width: 14ch; }
+.s-head h2 { max-width: 20ch; }
 .s-head p { max-width: 420px; font-size: 16.5px; }
-.s-num { display: block; font-size: 13px; letter-spacing: 0.08em; color: var(--ink-3); margin-bottom: 14px; font-weight: 500; }
+.s-num { display: none; }
 
 /* ============ SPRACHSCHALTER — Dual-DOM DE/EN ============ */
 
@@ -803,7 +806,8 @@ img {
 
 
 
-/* Übernommene Leiste: etwas ruhiger */
+/* Übernommene Regeln anpassen */
+.wrap { padding: 0; }
 .brand { font-weight: 600; }
 .nav-cta { font-weight: 600; }
 .btn-primary { font-weight: 600; }
@@ -815,7 +819,7 @@ img {
 .hero-media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 78% 18%; }
 .hero-media::before { content: ''; position: absolute; inset: 0; z-index: 1; background: linear-gradient(90deg, var(--bg) 0%, color-mix(in oklab, var(--bg) 55%, transparent) 18%, transparent 45%); pointer-events: none; }
 .hero h1 { margin-bottom: 26px; }
-.hero h1 em { font-style: italic; font-weight: 300; }
+.hero h1 em { font-style: normal; font-weight: 300; color: var(--green-dark); }
 .hero p.sub { font-size: clamp(17px, 1.4vw, 20px); color: var(--ink-2); max-width: 520px; margin-bottom: 36px; line-height: 1.55; }
 .hero-ctas { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; margin-bottom: 30px; }
 .link-more { font-weight: 500; color: var(--ink); border-bottom: 1px solid var(--line-2); padding-bottom: 2px; transition: border-color .2s; }
@@ -825,35 +829,29 @@ img {
 
 /* ============ INNEN & AUSSEN ============ */
 .duo { background: var(--paper); }
-.duo-grid { display: grid; grid-template-columns: 1fr minmax(320px, 460px) 1fr; gap: clamp(28px, 4vw, 64px); align-items: center; max-width: var(--max); margin: 0 auto; }
-.duo-col h2 { font-size: clamp(44px, 5.4vw, 80px); line-height: 0.98; margin-bottom: 22px; }
-.duo-col h2 small { display: block; font-family: var(--font); font-size: 13px; letter-spacing: 0.08em; color: var(--ink-3); margin-bottom: 14px; font-weight: 500; }
-.duo-col p { font-size: 17px; max-width: 360px; }
-.duo-col ul { list-style: none; margin-top: 22px; display: grid; gap: 10px; max-width: 360px; }
-.duo-col li { padding: 12px 0; border-top: 1px solid var(--line); font-size: 16px; color: var(--ink); }
-.duo-col li:last-child { border-bottom: 1px solid var(--line); }
-.duo-col.right { text-align: right; }
-.duo-col.right p, .duo-col.right ul { margin-left: auto; }
-.duo-media { position: relative; aspect-ratio: 2 / 3; border-radius: 240px 240px 28px 28px; overflow: hidden; background: var(--bg-2); }
-.duo-media img { width: 100%; height: 100%; object-fit: cover; }
-.duo-amp { position: absolute; left: 50%; bottom: 26px; transform: translateX(-50%); width: 64px; height: 64px; border-radius: 50%; background: var(--paper); color: var(--green-dark); font-family: var(--serif); font-size: 36px; display: flex; align-items: center; justify-content: center; box-shadow: 0 12px 30px -8px rgba(0,0,0,0.25); }
-.duo-line { text-align: center; max-width: 720px; margin: clamp(40px, 6vh, 72px) auto 0; }
-.duo-line p { font-family: var(--serif); font-size: clamp(22px, 2.4vw, 32px); line-height: 1.3; color: var(--ink); }
-.duo-line .foot-note { font-family: var(--font); font-size: 12.5px; margin-top: 22px; }
+.duo-stage { position: relative; max-width: var(--max); margin: 0 auto; aspect-ratio: 16 / 9; border-radius: var(--r); overflow: hidden; background: var(--bg-2); }
+.duo-stage img { width: 100%; height: 100%; object-fit: cover; object-position: center 20%; }
+.duo-word { position: absolute; top: 50%; transform: translateY(-50%); font-size: clamp(44px, 9vw, 150px); font-weight: 500; letter-spacing: -0.04em; line-height: 1; color: var(--ink); mix-blend-mode: multiply; opacity: .85; }
+.duo-word.left { left: clamp(20px, 5vw, 72px); }
+.duo-word.right { right: clamp(20px, 5vw, 72px); }
+.duo-cols { max-width: var(--max); margin: clamp(28px, 4vh, 48px) auto 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(20px, 3vw, 48px); }
+.duo-col h3 { margin-bottom: 8px; }
+.duo-col p { font-size: 16.5px; max-width: 360px; }
+.duo-note { max-width: var(--max); margin: 28px auto 0; }
 
 /* ============ ROUTINE ============ */
 .routine { background: var(--bg); }
 .rt-banner { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; max-width: var(--max); margin: 0 auto clamp(28px, 4vh, 48px); }
-.rt-banner figure { position: relative; aspect-ratio: 16 / 9; border-radius: 22px; overflow: hidden; background: var(--bg-2); }
+.rt-banner figure { position: relative; aspect-ratio: 16 / 9; border-radius: var(--r); overflow: hidden; background: var(--bg-2); }
 .rt-banner img { width: 100%; height: 100%; object-fit: cover; }
 .rt-banner figcaption { position: absolute; left: 18px; bottom: 16px; padding: 7px 13px; border-radius: 100px; background: rgba(255,255,255,0.88); backdrop-filter: blur(8px); font-size: 13px; font-weight: 600; color: var(--ink); }
 .rt-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; max-width: var(--max); margin: 0 auto; }
-.rt-col { background: var(--paper); border-radius: 22px; padding: 28px 28px 16px; }
+.rt-col { background: var(--paper); border-radius: var(--r); padding: 28px 28px 16px; }
 .rt-col h3 { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid var(--line); }
-.rt-col h3 span.t { font-family: var(--font); font-size: 13px; color: var(--ink-3); font-weight: 500; }
+.rt-col h3 span.t { font-size: 13px; color: var(--ink-3); font-weight: 500; }
 .rt-step { display: grid; grid-template-columns: 34px 1fr auto; gap: 14px; align-items: baseline; padding: 13px 0; border-bottom: 1px solid var(--line); }
 .rt-step:last-child { border-bottom: 0; }
-.rt-step i { font-family: var(--serif); font-style: normal; font-size: 22px; color: var(--green-dark); line-height: 1; }
+.rt-step i { font-style: normal; font-size: 15px; font-weight: 600; color: var(--green-dark); line-height: 1; }
 .rt-step b { font-weight: 500; font-size: 17px; color: var(--ink); }
 .rt-step small { font-size: 13px; color: var(--ink-3); text-align: right; white-space: nowrap; }
 .rt-foot { max-width: var(--max); margin: 22px auto 0; font-size: 15px; color: var(--ink-2); }
@@ -861,37 +859,56 @@ img {
 /* ============ BEAUTY-CHECK ============ */
 .check { background: var(--paper); }
 .check-grid { max-width: var(--max); margin: 0 auto; display: grid; grid-template-columns: minmax(300px, 440px) 1fr; gap: clamp(32px, 6vw, 96px); align-items: center; }
-.check-phone { position: relative; aspect-ratio: 2 / 3; border-radius: 28px; overflow: hidden; background: var(--bg-2); }
+.check-phone { position: relative; aspect-ratio: 2 / 3; border-radius: var(--r); overflow: hidden; background: var(--bg-2); }
 .check-phone img { width: 100%; height: 100%; object-fit: cover; }
 .check-copy h2 { margin: 14px 0 20px; max-width: 12ch; }
 .check-copy .lead { margin-bottom: 30px; max-width: 480px; }
 .ck-steps { list-style: none; display: grid; gap: 0; margin-bottom: 30px; max-width: 520px; }
 .ck-steps li { display: grid; grid-template-columns: 40px 1fr; gap: 14px; align-items: baseline; padding: 14px 0; border-top: 1px solid var(--line); font-size: 17px; color: var(--ink); }
 .ck-steps li:last-child { border-bottom: 1px solid var(--line); }
-.ck-steps i { font-family: var(--serif); font-style: normal; font-size: 24px; color: var(--green-dark); line-height: 1; }
+.ck-steps i { font-style: normal; font-size: 15px; font-weight: 600; color: var(--green-dark); line-height: 1; }
 .ck-steps li span { display: block; font-size: 14.5px; color: var(--ink-3); margin-top: 2px; }
 .ck-ctas { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; }
 .ck-note { margin-top: 18px; font-size: 13.5px; color: var(--ink-3); max-width: 520px; }
 
-/* ============ DREI DINGE ============ */
+/* ============ VORTEILE · Bento ============ */
 .why { background: var(--bg); }
-.why-rows { max-width: var(--max); margin: 0 auto; }
-.why-row { display: grid; grid-template-columns: 1fr 1.2fr; gap: 32px; align-items: baseline; padding: clamp(26px, 4vh, 42px) 0; border-top: 1px solid var(--line-2); }
-.why-row:last-child { border-bottom: 1px solid var(--line-2); }
-.why-row h3 { font-size: clamp(34px, 4.4vw, 60px); line-height: 1; }
-.why-row h3 .mark { font-style: italic; font-weight: 300; }
-.why-row p { font-size: clamp(16px, 1.3vw, 19px); max-width: 520px; }
-.why-foot { max-width: var(--max); margin: 18px auto 0; }
+.bento { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.bento-card { background: var(--paper); border: 1px solid var(--line); border-radius: var(--r); padding: 30px 28px; display: flex; flex-direction: column; gap: 12px; min-height: 280px; position: relative; overflow: hidden; }
+.bento-card.span2 { grid-column: span 2; }
+.bento-card.span3 { grid-column: span 3; }
+.bento-card .eyebrow { font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; color: var(--ink-3); }
+.bento-card h3 { font-size: clamp(22px, 2.1vw, 30px); max-width: 22ch; }
+.bento-card p { font-size: 15.5px; line-height: 1.55; max-width: 560px; }
+.bento-card p.small { font-size: 13.5px; color: var(--ink-3); margin-top: auto; }
+.bento-card.dark { background: radial-gradient(circle at 80% 20%, color-mix(in oklab, var(--green) 35%, transparent), transparent 55%), var(--green-deep); color: #fff; border-color: transparent; justify-content: center; padding: 44px 40px; }
+.bento-card.dark .eyebrow { color: var(--accent); }
+.bento-card.dark h3, .bento-card.dark p { color: #fff; }
+.bento-card.dark p { color: rgba(255,255,255,0.8); }
+.bento-list { list-style: none; display: grid; gap: 0; margin-top: 6px; }
+.bento-list li { display: flex; justify-content: space-between; gap: 12px; padding: 11px 0; border-top: 1px solid var(--line); font-size: 14.5px; color: var(--ink-2); }
+.bento-list li b { font-weight: 600; color: var(--ink); }
+.bento-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+.bento-chips span { padding: 7px 12px; border-radius: 100px; background: var(--green-soft); color: var(--green-deep); font-size: 13.5px; font-weight: 500; }
+.bento-card.photo { padding: 0; min-height: 320px; display: grid; grid-template-columns: 1fr 1.2fr; }
+.bento-card.photo img { width: 100%; height: 100%; object-fit: cover; }
+.bento-photo-copy { padding: 30px 28px; display: flex; flex-direction: column; gap: 12px; justify-content: center; }
+.bento-card.sand { background: linear-gradient(135deg, var(--green-soft), color-mix(in oklab, var(--green-soft) 60%, var(--paper))); border-color: transparent; min-height: 0; }
+.bento-guar { display: grid; grid-template-columns: 1fr auto; gap: 32px; align-items: center; }
+.bento-guar h3 { font-size: clamp(24px, 2.4vw, 34px); }
+.guar-badge { width: 150px; height: 150px; border-radius: 50%; border: 2px solid var(--green-dark); color: var(--green-deep); display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.guar-badge b { font-size: 56px; font-weight: 500; letter-spacing: -0.04em; line-height: 1; }
+.guar-badge span { font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 600; margin-top: 4px; }
 
 /* ============ PRODUKTE ============ */
 .products { background: var(--paper); }
 .pr-groups { max-width: var(--max); margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: clamp(24px, 4vw, 56px) clamp(32px, 5vw, 80px); }
 .pr-group h3 { font-size: 15px; font-family: var(--font); font-weight: 500; letter-spacing: 0.06em; color: var(--ink-3); margin-bottom: 6px; padding-bottom: 10px; border-bottom: 1px solid var(--line-2); display: flex; justify-content: space-between; }
 .pr-group h3 em { font-style: normal; color: var(--ink-3); letter-spacing: 0; font-weight: 400; }
-.pr-row { width: 100%; display: grid; grid-template-columns: 56px 1fr 22px; gap: 16px; align-items: center; padding: 13px 0; border-bottom: 1px solid var(--line); text-align: left; transition: background .15s; border-radius: 10px; }
+.pr-row { width: 100%; display: grid; grid-template-columns: 64px 1fr 22px; gap: 16px; align-items: center; padding: 13px 0; border-bottom: 1px solid var(--line); text-align: left; transition: background .15s; border-radius: 10px; }
 .pr-row:hover { background: var(--bg); }
 .pr-row:last-child { border-bottom: 0; }
-.pr-thumb { width: 56px; height: 56px; border-radius: 14px; background: linear-gradient(160deg, var(--bg-2), var(--green-soft)); overflow: hidden; display: flex; align-items: center; justify-content: center; color: var(--green-dark); }
+.pr-thumb { width: 64px; height: 64px; border-radius: 16px; background: var(--bg); overflow: hidden; display: flex; align-items: center; justify-content: center; color: var(--green-dark); }
 .pr-thumb img { width: 100%; height: 100%; object-fit: cover; }
 .pr-thumb.noimg img { display: none; }
 .pr-thumb svg { width: 20px; height: 20px; opacity: .55; display: none; }
@@ -899,7 +916,12 @@ img {
 .pr-row b { display: block; font-weight: 500; font-size: 17px; color: var(--ink); }
 .pr-row span { display: block; font-size: 14px; color: var(--ink-3); margin-top: 1px; }
 .pr-row .chev { width: 22px; height: 22px; color: var(--ink-3); }
-.pr-foot { max-width: var(--max); margin: clamp(28px, 4vh, 44px) auto 0; display: flex; justify-content: space-between; gap: 20px; align-items: center; flex-wrap: wrap; }
+.pr-cta { max-width: var(--max); margin: clamp(28px, 4vh, 48px) auto 0; background: var(--green-deep); color: #fff; border-radius: var(--r); padding: clamp(28px, 4vw, 48px); display: grid; grid-template-columns: 1fr auto; gap: 28px; align-items: center; }
+.pr-cta h3 { color: #fff; font-size: clamp(24px, 2.6vw, 36px); max-width: 18ch; margin-bottom: 8px; }
+.pr-cta p { color: rgba(255,255,255,0.78); font-size: 16px; max-width: 520px; }
+.pr-cta .btn-primary { background: #fff; color: var(--green-deep); }
+.pr-cta .btn-primary:hover { background: var(--green-soft); color: var(--green-deep); }
+.pr-foot { max-width: var(--max); margin: 22px auto 0; display: flex; justify-content: space-between; gap: 20px; align-items: center; flex-wrap: wrap; }
 .pr-foot .foot-note { max-width: 640px; }
 
 /* Produkt-Fenster */
@@ -940,40 +962,61 @@ img {
 #faq { background: var(--paper); }
 #faq h2 { margin-bottom: 28px; }
 
-/* ============ KONTAKT ============ */
+/* ============ KONTAKT · 3 Schritte ============ */
 .contact { background: var(--green-deep); color: #fff; }
-.contact-grid { max-width: var(--max); margin: 0 auto; display: grid; grid-template-columns: 1fr minmax(320px, 520px); gap: clamp(32px, 6vw, 96px); align-items: start; }
-.contact h2 { color: #fff; max-width: 12ch; margin: 14px 0 22px; }
-.contact h2 .mark { color: var(--accent); font-style: italic; font-weight: 300; }
-.contact .s-num { color: rgba(255,255,255,0.55); }
-.contact .lead { color: rgba(255,255,255,0.78); max-width: 440px; margin-bottom: 28px; }
-.contact ul { list-style: none; display: grid; gap: 10px; margin-bottom: 30px; }
-.contact li { display: flex; gap: 12px; align-items: center; font-size: 16px; color: rgba(255,255,255,0.9); }
-.contact li::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
-.btn-wa { display: inline-flex; align-items: center; gap: 10px; padding: 13px 20px; border-radius: 100px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.22); color: #fff; font-weight: 600; font-size: 15px; transition: background .2s; }
-.btn-wa:hover { background: rgba(255,255,255,0.18); }
-.btn-wa svg { width: 18px; height: 18px; }
-.cform { background: var(--paper); color: var(--ink); border-radius: 24px; padding: 28px; }
-.cform .f-row { margin-bottom: 14px; }
-.cform label { display: block; font-size: 13px; font-weight: 600; color: var(--ink-2); margin-bottom: 6px; }
-.cform input, .cform textarea { width: 100%; font: inherit; font-size: 16px; padding: 13px 14px; border-radius: 12px; border: 1px solid var(--line-2); background: var(--bg); color: var(--ink); outline: none; transition: border-color .2s, box-shadow .2s; }
-.cform input:focus, .cform textarea:focus { border-color: var(--green); box-shadow: 0 0 0 3px var(--green-soft); background: var(--paper); }
-.cform textarea { resize: vertical; min-height: 84px; }
+.contact-head { max-width: 640px; margin: 0 auto clamp(28px, 4vh, 44px); text-align: center; }
+.contact-head h2 { color: #fff; margin-bottom: 14px; }
+.contact-head .lead { color: rgba(255,255,255,0.75); }
+.cform { background: var(--paper); color: var(--ink); border-radius: var(--r); padding: 30px; max-width: 640px; margin: 0 auto; }
+.f-progress { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 26px; }
+.f-progress span { height: 4px; border-radius: 100px; background: var(--bg-2); }
+.f-progress span.on { background: var(--green); }
+.f-step { display: none; }
+.f-step.on { display: block; animation: stepIn .3s var(--ease); }
+@keyframes stepIn { from { opacity: 0; transform: translateX(10px); } to { opacity: 1; transform: none; } }
+.f-step h3 { text-align: center; font-size: clamp(22px, 2.2vw, 28px); margin-bottom: 6px; }
+.f-hint { text-align: center; font-size: 14px; color: var(--ink-3); margin-bottom: 20px; }
+.f-opts { display: grid; gap: 10px; }
+.f-opts-grid { grid-template-columns: 1fr 1fr; }
+.f-opt { text-align: left; padding: 16px 18px 16px 48px; border-radius: var(--r-sm); border: 1px solid var(--line); background: var(--bg); position: relative; transition: all .15s; }
+.f-opt::before { content: ''; position: absolute; left: 16px; top: 19px; width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid var(--line-2); background: var(--paper); transition: all .15s; }
+.f-opt.on { background: var(--green-soft); border-color: var(--green); }
+.f-opt.on::before { background: var(--green); border-color: var(--green); box-shadow: inset 0 0 0 3px var(--paper); }
+.f-opt b { display: block; font-weight: 600; font-size: 15px; color: var(--ink); }
+.f-opt > span { display: block; font-size: 13px; color: var(--ink-3); margin-top: 2px; }
+.f-opts-grid .f-opt { padding: 14px 14px 14px 44px; }
+.f-opts-grid .f-opt::before { top: 15px; left: 14px; }
+.f-nav { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 22px; }
+.f-back { font-size: 14px; font-weight: 500; color: var(--ink-3); padding: 10px 0; }
+.f-back:hover { color: var(--ink); }
+.f-nav .btn[disabled] { opacity: .45; cursor: not-allowed; }
+.cform .f-row { margin-bottom: 12px; }
+.cform input[type="text"], .cform input[type="email"], .cform input[type="tel"] { width: 100%; font: inherit; font-size: 16px; padding: 14px 16px; border-radius: var(--r-sm); border: 1px solid var(--line-2); background: var(--bg); color: var(--ink); outline: none; transition: border-color .2s, box-shadow .2s; }
+.cform input:focus { border-color: var(--green); box-shadow: 0 0 0 3px var(--green-soft); background: var(--paper); }
+.f-label { display: block; font-size: 13px; font-weight: 600; color: var(--ink-2); margin: 4px 0 8px; }
 .chips { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-.chip { padding: 11px 8px; border-radius: 12px; border: 1px solid var(--line-2); background: var(--bg); font-size: 14px; font-weight: 500; color: var(--ink-2); text-align: center; transition: all .15s; }
+.chip { padding: 11px 8px; border-radius: var(--r-sm); border: 1px solid var(--line-2); background: var(--bg); font-size: 14px; font-weight: 500; color: var(--ink-2); text-align: center; transition: all .15s; }
 .chip.on { background: var(--green-soft); border-color: var(--green); color: var(--green-deep); }
-.cform .btn-primary { width: 100%; justify-content: center; margin-top: 6px; padding: 15px 20px; font-size: 16px; }
-.cform .foot-note { margin-top: 12px; text-align: center; }
+.f-check { display: flex; gap: 10px; align-items: flex-start; font-size: 13.5px; color: var(--ink-2); margin-top: 14px; cursor: pointer; }
+.f-check input { margin-top: 3px; accent-color: var(--green); width: 16px; height: 16px; }
+.f-privacy { margin-top: 12px; text-align: center; }
 .cform-ok { display: none; text-align: center; padding: 20px 6px; }
-.cform.sent form { display: none; }
+.cform.sent form, .cform.sent .f-progress { display: none; }
 .cform.sent .cform-ok { display: block; }
-.cform-ok .ok-ico { width: 56px; height: 56px; border-radius: 50%; background: var(--green-soft); color: var(--green-dark); display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; }
-.cform-ok .ok-ico svg { width: 26px; height: 26px; }
+.ok-ico { width: 56px; height: 56px; border-radius: 50%; background: var(--green-soft); color: var(--green-dark); display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; }
+.ok-ico svg { width: 26px; height: 26px; }
 .cform-ok h3 { margin-bottom: 8px; }
 .cform-ok p { font-size: 15.5px; }
-.contact-shop { max-width: var(--max); margin: clamp(28px, 4vh, 44px) auto 0; padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.14); display: flex; justify-content: space-between; gap: 16px; align-items: center; flex-wrap: wrap; }
-.contact-shop p { color: rgba(255,255,255,0.72); font-size: 15px; }
-.contact-shop a { color: #fff; font-weight: 500; border-bottom: 1px solid rgba(255,255,255,0.4); padding-bottom: 2px; }
+.contact-card { max-width: 640px; margin: 18px auto 0; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.14); border-radius: var(--r); padding: 16px 18px; display: grid; grid-template-columns: 52px 1fr auto; gap: 14px; align-items: center; }
+.contact-card img { width: 52px; height: 52px; border-radius: 50%; object-fit: cover; }
+.contact-card b { display: block; font-weight: 600; font-size: 15.5px; }
+.contact-card > div > span { display: block; font-size: 13px; color: rgba(255,255,255,0.65); }
+.contact-card-btns { display: flex; gap: 8px; }
+.contact-card-btns a { display: inline-flex; align-items: center; gap: 7px; padding: 9px 14px; border-radius: 100px; border: 1px solid rgba(255,255,255,0.22); font-size: 13.5px; font-weight: 600; color: #fff; }
+.contact-card-btns svg { width: 15px; height: 15px; }
+.contact-shop { max-width: 640px; margin: 26px auto 0; padding-top: 22px; border-top: 1px solid rgba(255,255,255,0.14); display: flex; justify-content: space-between; gap: 16px; align-items: center; flex-wrap: wrap; }
+.contact-shop p { color: rgba(255,255,255,0.72); font-size: 14.5px; max-width: 420px; }
+.contact-shop a { color: #fff; font-weight: 500; border-bottom: 1px solid rgba(255,255,255,0.4); padding-bottom: 2px; white-space: nowrap; }
 
 /* Sticky CTA (übernommen) sitzt auf dunkler Sektion */
 .sticky-cta { font-weight: 600; }
@@ -985,10 +1028,9 @@ img {
   .hero-media::before { background: linear-gradient(180deg, transparent 55%, var(--bg) 100%); }
   .hero-media img { object-position: 72% 8%; }
   .hero-copy { order: 2; padding: 28px var(--pad-x) 56px; justify-self: stretch; max-width: 100%; }
-  .duo-grid { grid-template-columns: 1fr 1fr; }
-  .duo-media { grid-column: 1 / -1; order: -1; max-width: 420px; margin: 0 auto; width: 100%; }
-  .duo-col.right { text-align: left; }
-  .duo-col.right p, .duo-col.right ul { margin-left: 0; }
+  .bento { grid-template-columns: 1fr 1fr; }
+  .bento-card.span2, .bento-card.span3 { grid-column: span 2; }
+  .pr-cta { grid-template-columns: 1fr; }
   .check-grid { grid-template-columns: 1fr; }
   .check-phone { max-width: 420px; }
   .why-row { grid-template-columns: 1fr; gap: 10px; }
@@ -1005,16 +1047,27 @@ img {
   .hero-ctas { flex-direction: column; align-items: stretch; gap: 12px; }
   .hero-ctas .btn { justify-content: center; }
   .hero-ctas .link-more { text-align: center; border: 0; }
-  .duo-grid { grid-template-columns: 1fr; gap: 28px; }
-  .duo-col h2 { font-size: clamp(40px, 12vw, 56px); }
-  .duo-media { border-radius: 200px 200px 22px 22px; }
+  .duo-stage { aspect-ratio: 4 / 5; border-radius: 22px; }
+  .duo-stage img { object-position: center 25%; }
+  .duo-word { display: none; }
+  .duo-cols { grid-template-columns: 1fr; gap: 18px; }
+  .bento { grid-template-columns: 1fr; }
+  .bento-card, .bento-card.span2, .bento-card.span3 { grid-column: span 1; min-height: 0; }
+  .bento-card.photo { grid-template-columns: 1fr; }
+  .bento-card.photo img { aspect-ratio: 16 / 10; }
+  .bento-guar { grid-template-columns: 1fr; }
+  .guar-badge { width: 120px; height: 120px; }
+  .guar-badge b { font-size: 44px; }
+  .f-opts-grid { grid-template-columns: 1fr; }
+  .contact-card { grid-template-columns: 44px 1fr; }
+  .contact-card img { width: 44px; height: 44px; }
+  .contact-card-btns { grid-column: 1 / -1; }
   .rt-banner { grid-template-columns: 1fr; }
   .rt-cols { grid-template-columns: 1fr; }
   .rt-col { padding: 22px 20px 10px; }
   .rt-step { grid-template-columns: 30px 1fr; }
   .rt-step small { grid-column: 2; text-align: left; white-space: normal; }
-  .chips { grid-template-columns: 1fr; }
-  .cform { padding: 22px 18px; }
+  .cform { padding: 22px 16px; }
   .pr-foot { flex-direction: column; align-items: flex-start; }
 }
 @media (prefers-reduced-motion: reduce) { .arr, .btn { transition: none; } }
@@ -1117,40 +1170,32 @@ img {
 
 <!-- INNEN & AUSSEN -->
 <section class="duo" id="konzept">
-  <div class="duo-grid reveal">
+  <div class="duo-stage reveal">
+    <img loading="lazy" decoding="async" src="assets/key-wide.webp" alt="" width="1536" height="1024">
+    <div class="duo-word left"><span class="l-de">Außen</span><span class="l-en">Outside</span></div>
+    <div class="duo-word right"><span class="l-de">Innen</span><span class="l-en">Inside</span></div>
+  </div>
+  <div class="duo-cols">
     <div class="duo-col">
-      <h2><small>01</small><span class="l-de">Außen</span><span class="l-en">Outside</span></h2>
-      <p><span class="l-de">Reinigen, klären, pflegen. Morgens und abends, fertig.</span><span class="l-en">Cleanse, tone, nourish. Morning and night, done.</span></p>
-      <ul>
-        <li><span class="l-de">Tagespflege nach Hauttyp</span><span class="l-en">Day cream by skin type</span></li>
-        <li><span class="l-de">Eine Nachtpflege für alle</span><span class="l-en">One night cream for everyone</span></li>
-        <li><span class="l-de">Extras nur, wenn du sie willst</span><span class="l-en">Extras only if you want them</span></li>
-      </ul>
+      <h3><span class="l-de">Außen</span><span class="l-en">Outside</span></h3>
+      <p><span class="l-de">Reinigen, klären, pflegen. Morgens und abends ein paar Minuten.</span><span class="l-en">Cleanse, tone, nourish. A few minutes morning and night.</span></p>
     </div>
-    <div class="duo-media">
-      <img loading="lazy" decoding="async" src="assets/key.webp" alt="" width="1024" height="1536">
-      <div class="duo-amp" aria-hidden="true">&amp;</div>
+    <div class="duo-col">
+      <h3><span class="l-de">Innen</span><span class="l-en">Inside</span></h3>
+      <p><span class="l-de">Ein Glas am Tag mit Vitamin C, Biotin und Zink.¹ Beerengeschmack, dauert eine Minute.</span><span class="l-en">One glass a day with vitamin C, biotin and zinc.¹ Berry flavour, takes a minute.</span></p>
     </div>
-    <div class="duo-col right">
-      <h2><small>02</small><span class="l-de">Innen</span><span class="l-en">Inside</span></h2>
-      <p><span class="l-de">Ein Glas am Tag. Beerengeschmack, in Wasser angerührt.</span><span class="l-en">One glass a day. Berry flavour, stirred into water.</span></p>
-      <ul>
-        <li><span class="l-de">Vitamin C, Biotin und Zink¹</span><span class="l-en">Vitamin C, biotin and zinc¹</span></li>
-        <li><span class="l-de">Mit Kollagenpeptiden</span><span class="l-en">With collagen peptides</span></li>
-        <li><span class="l-de">Dauert eine Minute</span><span class="l-en">Takes a minute</span></li>
-      </ul>
+    <div class="duo-col">
+      <h3><span class="l-de">Zusammen</span><span class="l-en">Together</span></h3>
+      <p><span class="l-de">Kein Hexenwerk. Eine Routine, die du wirklich durchhältst.</span><span class="l-en">No magic. A routine you'll actually keep.</span></p>
     </div>
   </div>
-  <div class="duo-line reveal">
-    <p><span class="l-de">Kein Hexenwerk. Nur eine Routine, die du wirklich durchhältst.</span><span class="l-en">No magic. Just a routine you'll actually keep.</span></p>
-    <p class="foot-note"><span class="l-de">¹ Vitamin C trägt zu einer normalen Kollagenbildung für eine normale Funktion der Haut bei. Biotin und Zink tragen zur Erhaltung normaler Haut und Haare bei, Zink zur Erhaltung normaler Nägel. Nahrungsergänzungsmittel sind kein Ersatz für eine ausgewogene, abwechslungsreiche Ernährung und eine gesunde Lebensweise.</span><span class="l-en">¹ Vitamin C contributes to normal collagen formation for the normal function of the skin. Biotin and zinc contribute to the maintenance of normal skin and hair, zinc to the maintenance of normal nails. Food supplements are not a substitute for a balanced, varied diet and a healthy lifestyle.</span></p>
-  </div>
+  <p class="foot-note duo-note"><span class="l-de">¹ Vitamin C trägt zu einer normalen Kollagenbildung für eine normale Funktion der Haut bei. Biotin und Zink tragen zur Erhaltung normaler Haut und Haare bei, Zink zur Erhaltung normaler Nägel. Nahrungsergänzungsmittel sind kein Ersatz für eine ausgewogene, abwechslungsreiche Ernährung und eine gesunde Lebensweise.</span><span class="l-en">¹ Vitamin C contributes to normal collagen formation for the normal function of the skin. Biotin and zinc contribute to the maintenance of normal skin and hair, zinc to the maintenance of normal nails. Food supplements are not a substitute for a balanced, varied diet and a healthy lifestyle.</span></p>
 </section>
 
 <!-- ROUTINE -->
 <section class="routine" id="routine">
   <div class="s-head wrap">
-    <h2><span class="s-num">03</span><span class="l-de">Meine Routine</span><span class="l-en">My routine</span></h2>
+    <h2><span class="l-de">Meine Routine</span><span class="l-en">My routine</span></h2>
     <p><span class="l-de">Fünf Minuten morgens, drei abends. Mehr ist es nicht.</span><span class="l-en">Five minutes in the morning, three at night. That's all.</span></p>
   </div>
 
@@ -1179,58 +1224,101 @@ img {
   <p class="rt-foot"><span class="l-de">Das ist die Basis. Ob du alles davon brauchst, klären wir im Beauty-Check.</span><span class="l-en">That's the basics. Whether you need all of it, we'll sort out in the beauty check.</span></p>
 </section>
 
-<!-- BEAUTY-CHECK -->
+<!-- SKINSCAN / BEAUTY-CHECK -->
 <section class="check" id="check">
   <div class="check-grid">
     <div class="check-phone reveal">
-      {{#if scanner_anzeigen=an}}<img loading="lazy" decoding="async" src="assets/scan-result.webp" alt="" width="1024" height="1536">{{/if}}
+      {{#if scanner_anzeigen=an}}<img loading="lazy" decoding="async" src="assets/scan-face.webp" alt="" width="1024" height="1536">{{/if}}
       {{#unless scanner_anzeigen=an}}<img loading="lazy" decoding="async" src="assets/scan-selfie.webp" alt="" width="1024" height="1024">{{/unless}}
     </div>
     <div class="check-copy">
-      <span class="s-num">04</span>
-      <h2><span class="l-de">Erst schauen, <span class="mark">dann entscheiden.</span></span><span class="l-en">Look first, <span class="mark">then decide.</span></span></h2>
-      <p class="lead"><span class="l-de">{{#if scanner_anzeigen=an}}Ein Selfie bei Tageslicht, und der FitLine AI Scanner zeigt dir, wie es deiner Haut geht: Feuchtigkeit, Poren, Fältchen, Ausstrahlung. Danach reden wir darüber, was du davon wirklich brauchst.{{/if}}{{#unless scanner_anzeigen=an}}Eine halbe Stunde für deine Haut. Du erzählst, ich höre zu, und am Ende weißt du, was du wirklich brauchst und was nicht.{{/unless}}</span><span class="l-en">{{#if scanner_anzeigen=an}}One daylight selfie, and the FitLine AI Scanner shows how your skin is doing: hydration, pores, fine lines, radiance. Then we talk about what you really need.{{/if}}{{#unless scanner_anzeigen=an}}Half an hour for your skin. You talk, I listen, and in the end you know what you really need and what you don't.{{/unless}}</span></p>
+      <h2>{{#if scanner_anzeigen=an}}<span class="l-de">Dein Skinscan</span><span class="l-en">Your skin scan</span>{{/if}}{{#unless scanner_anzeigen=an}}<span class="l-de">Dein Beauty-Check</span><span class="l-en">Your beauty check</span>{{/unless}}</h2>
+      <p class="lead"><span class="l-de">{{#if scanner_anzeigen=an}}Ein Selfie bei Tageslicht. Die App schaut auf Feuchtigkeit, Poren, Fältchen und Ausstrahlung. Danach schauen wir gemeinsam, was du wirklich brauchst.{{/if}}{{#unless scanner_anzeigen=an}}Eine halbe Stunde für deine Haut. Du erzählst, ich höre zu, und am Ende weißt du, was du brauchst und was nicht.{{/unless}}</span><span class="l-en">{{#if scanner_anzeigen=an}}One daylight selfie. The app looks at hydration, pores, fine lines and radiance. Then we look together at what you really need.{{/if}}{{#unless scanner_anzeigen=an}}Half an hour for your skin. You talk, I listen, and in the end you know what you need and what you don't.{{/unless}}</span></p>
       <ol class="ck-steps">
         <li><i>1</i><div><span class="l-de">Kurz kennenlernen</span><span class="l-en">A quick hello</span><span><span class="l-de">Wie fühlt sich deine Haut an, was wünschst du dir?</span><span class="l-en">How does your skin feel, what do you wish for?</span></span></div></li>
-        <li><i>2</i><div>{{#if scanner_anzeigen=an}}<span class="l-de">Selfie und Auswertung</span><span class="l-en">Selfie and analysis</span><span><span class="l-de">Elf Werte in der App, wir schauen sie gemeinsam an.</span><span class="l-en">Eleven values in the app, we look at them together.</span></span>{{/if}}{{#unless scanner_anzeigen=an}}<span class="l-de">Gemeinsam hinschauen</span><span class="l-en">Take a closer look</span><span><span class="l-de">Vor Ort, per Video oder am Telefon.</span><span class="l-en">In person, by video or on the phone.</span></span>{{/unless}}</div></li>
+        <li><i>2</i><div>{{#if scanner_anzeigen=an}}<span class="l-de">Selfie und Auswertung</span><span class="l-en">Selfie and analysis</span><span><span class="l-de">Elf Werte in der App. Wir schauen sie gemeinsam an.</span><span class="l-en">Eleven values in the app. We look at them together.</span></span>{{/if}}{{#unless scanner_anzeigen=an}}<span class="l-de">Gemeinsam hinschauen</span><span class="l-en">Take a closer look</span><span><span class="l-de">Vor Ort, per Video oder am Telefon.</span><span class="l-en">In person, by video or on the phone.</span></span>{{/unless}}</div></li>
         <li><i>3</i><div><span class="l-de">Deine Routine</span><span class="l-en">Your routine</span><span><span class="l-de">Morgens, abends, innen. Ob du startest, entscheidest du.</span><span class="l-en">Morning, evening, inside. Whether you start is up to you.</span></span></div></li>
       </ol>
       <div class="ck-ctas">
-        <a href="#kontakt" class="btn btn-primary"><span class="l-de">Beauty-Check vereinbaren</span><span class="l-en">Book a beauty check</span> <span class="arr">→</span></a>
-        {{#if whatsapp_nummer}}<a href="https://wa.me/{{whatsapp_nummer}}?text=Hi%20{{vorname}}%2C%20ich%20interessiere%20mich%20f%C3%BCr%20den%20Beauty-Check." target="_blank" rel="noopener" class="link-more"><span class="l-de">Lieber per WhatsApp</span><span class="l-en">Rather on WhatsApp</span></a>{{/if}}
+        <a href="#kontakt" class="btn btn-primary">{{#if scanner_anzeigen=an}}<span class="l-de">Skinscan vereinbaren</span><span class="l-en">Book a skin scan</span>{{/if}}{{#unless scanner_anzeigen=an}}<span class="l-de">Beauty-Check vereinbaren</span><span class="l-en">Book a beauty check</span>{{/unless}} <span class="arr">→</span></a>
+        {{#if whatsapp_nummer}}<a href="https://wa.me/{{whatsapp_nummer}}?text=Hi%20{{vorname}}%2C%20ich%20interessiere%20mich%20f%C3%BCr%20den%20Skinscan." target="_blank" rel="noopener" class="link-more"><span class="l-de">Lieber per WhatsApp</span><span class="l-en">Rather on WhatsApp</span></a>{{/if}}
       </div>
-      <p class="ck-note"><span class="l-de">Kostenlos und unverbindlich.{{#if region}} Vor Ort {{region}}, sonst per Video oder Telefon.{{/if}}{{#if scanner_anzeigen=an}} Die Hautanalyse ist eine kosmetische Einschätzung per App, keine medizinische Untersuchung.{{/if}}</span><span class="l-en">Free and without obligation.{{#if region}} In person {{region}}, otherwise by video or phone.{{/if}}{{#if scanner_anzeigen=an}} The skin analysis is a cosmetic assessment via the app, not a medical examination.{{/if}}</span></p>
+      <p class="ck-note"><span class="l-de">Kostenlos und unverbindlich.{{#if region}} Vor Ort {{region}}, sonst per Video oder Telefon.{{/if}}{{#if scanner_anzeigen=an}} Der Skinscan ist eine kosmetische Einschätzung per App, keine medizinische Untersuchung.{{/if}}</span><span class="l-en">Free and without obligation.{{#if region}} In person {{region}}, otherwise by video or phone.{{/if}}{{#if scanner_anzeigen=an}} The skin scan is a cosmetic assessment via the app, not a medical examination.{{/if}}</span></p>
     </div>
   </div>
 </section>
 
-<!-- DREI DINGE -->
+<!-- VORTEILE · Bento wie Dailyoptimal -->
 <section class="why" id="vorteile">
   <div class="s-head wrap">
-    <h2><span class="s-num">05</span><span class="l-de">Warum gerade das</span><span class="l-en">Why this of all things</span></h2>
-    <p><span class="l-de">Ich habe lange gesucht. Drei Dinge haben den Unterschied gemacht.</span><span class="l-en">I searched for a long time. Three things made the difference.</span></p>
+    <h2><span class="l-de">Warum diese Linie</span><span class="l-en">Why this line</span></h2>
+    <p><span class="l-de">Sechs Gründe, die den Unterschied machen.</span><span class="l-en">Six reasons that make the difference.</span></p>
   </div>
-  <div class="why-rows reveal">
-    <div class="why-row">
-      <h3><span class="l-de">Eine Routine. <span class="mark">Fünf Minuten.</span></span><span class="l-en">One routine. <span class="mark">Five minutes.</span></span></h3>
-      <p><span class="l-de">Reinigen, pflegen, trinken. Keine zehn Tiegel, keine App, die dich erinnert. Du machst es, weil es so kurz ist.</span><span class="l-en">Cleanse, nourish, drink. No ten jars, no app reminding you. You do it because it's that short.</span></p>
-    </div>
-    <div class="why-row">
-      <h3><span class="l-de">Innen <span class="mark">&amp; außen.</span></span><span class="l-en">Inside <span class="mark">&amp; out.</span></span></h3>
-      <p><span class="l-de">Pflege für die Haut und ein Glas mit Vitamin C, Biotin und Zink, aus einer Hand. Der Hersteller nennt es „Beauty von innen und außen“, mit seinem Nährstoff-Transportkonzept NTC®.</span><span class="l-en">Skin care and a glass with vitamin C, biotin and zinc, from one source. The manufacturer calls it "beauty from the inside and out", built on its NTC® nutrient transport concept.</span></p>
-    </div>
-    <div class="why-row">
-      <h3><span class="l-de">Du bestellst <span class="mark">beim Hersteller.</span></span><span class="l-en">You order <span class="mark">from the maker.</span></span></h3>
-      <p><span class="l-de">Offizieller Shop, offizielle Preise, 30 Tage Geld-zurück-Garantie. Ich berate, ich verkaufe nichts aus dem Kofferraum.</span><span class="l-en">Official shop, official prices, 30-day money-back guarantee. I advise, I don't sell anything out of the trunk.</span></p>
-    </div>
+
+  <div class="bento wrap">
+    <article class="bento-card dark span2 reveal">
+      <span class="eyebrow"><span class="l-de">Patentierte Technologie</span><span class="l-en">Patented technology</span></span>
+      <h3><span class="l-de">Das NTC®. Damit Nährstoffe ankommen, wo sie gebraucht werden.</span><span class="l-en">NTC®. So nutrients arrive where they're needed.</span></h3>
+      <p><span class="l-de">Das Nährstoff-Transportkonzept von PM-International bringt die Nährstoffe dann, wenn sie gebraucht werden, dorthin, wo sie gebraucht werden: auf die Zellebene, von innen und außen. Über 100 nationale und internationale Patente stehen hinter diesem Ansatz.</span><span class="l-en">PM-International's nutrient transport concept delivers nutrients when they're needed, to where they're needed: to the cellular level, from the inside and out. More than 100 national and international patents stand behind this approach.</span></p>
+    </article>
+
+    <article class="bento-card reveal">
+      <span class="eyebrow"><span class="l-de">Für jede Haut</span><span class="l-en">For every skin</span></span>
+      <h3><span class="l-de">Zwei Tagescremes. Eine Nacht.</span><span class="l-en">Two day creams. One night.</span></h3>
+      <ul class="bento-list">
+        <li><b>4ever</b><span class="l-de">normale bis Mischhaut</span><span class="l-en">normal to combination</span></li>
+        <li><b>4ever enriched</b><span class="l-de">trockene bis reife Haut</span><span class="l-en">dry to mature</span></li>
+        <li><b>overnight enriched</b><span class="l-de">nachts, für alle</span><span class="l-en">at night, for everyone</span></li>
+      </ul>
+    </article>
+
+    <article class="bento-card reveal">
+      <span class="eyebrow"><span class="l-de">Was drin ist</span><span class="l-en">What's inside</span></span>
+      <h3><span class="l-de">Moderne Wirkstoffe.</span><span class="l-en">Modern actives.</span></h3>
+      <div class="bento-chips">
+        <span>Hyaluron</span><span>Ceramid</span><span>Peptid</span><span>Bakuchiol</span><span>Ectoin</span><span>Niacinamid</span><span>Q10</span><span>Koffein</span>
+      </div>
+      <p class="small"><span class="l-de">In Tagespflege, Nachtpflege, Serum und Dark Spot Corrector, laut Hersteller.</span><span class="l-en">In day cream, night cream, serum and Dark Spot Corrector, according to the manufacturer.</span></p>
+    </article>
+
+    <article class="bento-card reveal">
+      <span class="eyebrow"><span class="l-de">Von innen</span><span class="l-en">From the inside</span></span>
+      <h3><span class="l-de">Ein Glas am Tag.</span><span class="l-en">One glass a day.</span></h3>
+      <ul class="bento-list">
+        <li><b>Vitamin C</b><span class="l-de">normale Kollagenbildung für die Haut¹</span><span class="l-en">normal collagen formation for the skin¹</span></li>
+        <li><b>Biotin, Zink</b><span class="l-de">Erhaltung normaler Haut und Haare¹</span><span class="l-en">maintenance of normal skin and hair¹</span></li>
+        <li><b>Zink</b><span class="l-de">Erhaltung normaler Nägel¹</span><span class="l-en">maintenance of normal nails¹</span></li>
+      </ul>
+    </article>
+
+    <article class="bento-card photo span2 reveal">
+      <img loading="lazy" decoding="async" src="assets/aussen.webp" alt="" width="1024" height="1024">
+      <div class="bento-photo-copy">
+        <span class="eyebrow"><span class="l-de">Der Hersteller</span><span class="l-en">The manufacturer</span></span>
+        <h3><span class="l-de">Seit 1993. Entwickelt und hergestellt für PM-International.</span><span class="l-en">Since 1993. Developed and made for PM-International.</span></h3>
+        <p><span class="l-de">Alle Produkte werden exklusiv für die PM-International Gruppe entwickelt und hergestellt. Du bestellst direkt dort, zu offiziellen Preisen.</span><span class="l-en">All products are developed and manufactured exclusively for the PM-International group. You order directly from them, at official prices.</span></p>
+      </div>
+    </article>
+
+    <article class="bento-card sand span3 reveal">
+      <div class="bento-guar">
+        <div>
+          <span class="eyebrow"><span class="l-de">Volle Zufriedenheit oder Geld zurück</span><span class="l-en">Full satisfaction or your money back</span></span>
+          <h3><span class="l-de">30 Tage Geld-zurück-Garantie.</span><span class="l-en">30-day money-back guarantee.</span></h3>
+          <p><span class="l-de">Wenn dir ein Produkt nicht passt, schickst du es innerhalb von 30 Tagen zurück und bekommst dein Geld wieder. Garantiegeber: PM-International AG, Bedingungen laut Hersteller-Shop.</span><span class="l-en">If a product isn't right for you, send it back within 30 days and get your money back. Guarantor: PM-International AG, terms as per the manufacturer's shop.</span></p>
+        </div>
+        <div class="guar-badge"><b>30</b><span class="l-de">Tage</span><span class="l-en">days</span></div>
+      </div>
+    </article>
   </div>
+  <p class="foot-note wrap" style="margin-top:18px"><span class="l-de">¹ Zugelassene Angaben nach VO (EU) 432/2012 für den Beauty-Drink (Nahrungsergänzungsmittel). NTC® ist eine eingetragene Marke der PM-International AG.</span><span class="l-en">¹ Authorised claims under Regulation (EU) 432/2012 for the beauty drink (food supplement). NTC® is a registered trademark of PM-International AG.</span></p>
 </section>
 
 <!-- PRODUKTE -->
 <section class="products" id="produkte">
   <div class="s-head wrap">
-    <h2><span class="s-num">06</span><span class="l-de">Was ich benutze</span><span class="l-en">What I use</span></h2>
-    <p><span class="l-de">Alles aus einer Linie. Tipp auf ein Produkt, dann siehst du, wofür es ist und wie du es benutzt.</span><span class="l-en">All from one line. Tap a product to see what it's for and how to use it.</span></p>
+    <h2><span class="l-de">Was zur Auswahl steht</span><span class="l-en">What there is to choose from</span></h2>
+    <p><span class="l-de">Nicht alles davon ist für dich. Was zu deiner Haut passt, klären wir gemeinsam. Tipp auf ein Produkt für Details.</span><span class="l-en">Not all of this is for you. What suits your skin, we'll sort out together. Tap a product for details.</span></p>
   </div>
 
   <div class="pr-groups">
@@ -1271,6 +1359,14 @@ img {
     </div>
   </div>
 
+  <div class="pr-cta reveal">
+    <div>
+      <h3>{{#if scanner_anzeigen=an}}<span class="l-de">Du weißt nicht, was du nehmen sollst?</span><span class="l-en">Not sure what to pick?</span>{{/if}}{{#unless scanner_anzeigen=an}}<span class="l-de">Du weißt nicht, was zu dir passt?</span><span class="l-en">Not sure what suits you?</span>{{/unless}}</h3>
+      <p>{{#if scanner_anzeigen=an}}<span class="l-de">Melde dich, wir machen zusammen den Skinscan. Danach weißt du, was deine Haut braucht und was nicht.</span><span class="l-en">Get in touch and we'll do the skin scan together. Afterwards you'll know what your skin needs and what it doesn't.</span>{{/if}}{{#unless scanner_anzeigen=an}}<span class="l-de">Melde dich, wir schauen gemeinsam auf deine Haut. Danach weißt du, was du brauchst und was nicht.</span><span class="l-en">Get in touch and we'll look at your skin together. Afterwards you'll know what you need and what you don't.</span>{{/unless}}</p>
+    </div>
+    <a href="#kontakt" class="btn btn-primary">{{#if scanner_anzeigen=an}}<span class="l-de">Skinscan vereinbaren</span><span class="l-en">Book a skin scan</span>{{/if}}{{#unless scanner_anzeigen=an}}<span class="l-de">Beauty-Check vereinbaren</span><span class="l-en">Book a beauty check</span>{{/unless}} <span class="arr">→</span></a>
+  </div>
+
   <div class="pr-foot">
     <p class="foot-note"><span class="l-de">Verkauf und Versand ausschließlich über den offiziellen Shop der PM-International AG, dort stehen Preise und alle Inhaltsstoffe. ¹ Vitamin C trägt zu einer normalen Kollagenbildung für eine normale Funktion der Haut bei; Biotin und Zink tragen zur Erhaltung normaler Haut und Haare bei; Zink trägt zur Erhaltung normaler Nägel bei.</span><span class="l-en">Sales and shipping exclusively via the official PM-International AG shop, where prices and full ingredients are listed. ¹ Vitamin C contributes to normal collagen formation for the normal function of the skin; biotin and zinc contribute to the maintenance of normal skin and hair; zinc contributes to the maintenance of normal nails.</span></p>
     <a class="link-more" data-shop="" href="#" target="_blank" rel="noopener"><span class="l-de">Alle Produkte im Hersteller-Shop</span><span class="l-en">All products in the manufacturer's shop</span> →</a>
@@ -1293,7 +1389,6 @@ img {
       <img loading="lazy" decoding="async" width="600" height="750" src="{{about_bild}}" alt="{{vorname}} {{nachname}}">
     </div>
     <div class="about-copy">
-      <span class="s-num">07</span>
       <h2><span class="l-de">{{{about_intro_de_html}}}</span><span class="l-en">{{{about_intro_en_html}}}</span></h2>
       <div class="about-text">
         <span class="l-de">{{about_me_html}}</span>
@@ -1307,7 +1402,7 @@ img {
 <!-- FAQ -->
 <section id="faq">
   <div class="faq-wrap">
-    <h2><span class="s-num">08</span><span class="l-de">Kurz gefragt</span><span class="l-en">Quick questions</span></h2>
+    <h2><span class="l-de">Kurz gefragt</span><span class="l-en">Quick questions</span></h2>
     <div class="faq-list">
       <div class="faq-item">
         <button class="faq-q"><span class="l-de">Muss ich alles kaufen?</span><span class="l-en">Do I have to buy everything?</span> <span class="faq-plus"></span></button>
@@ -1333,58 +1428,84 @@ img {
   </div>
 </section>
 
-<!-- KONTAKT -->
+<!-- KONTAKT: drei Schritte wie bei Dailyoptimal -->
 <section class="contact" id="kontakt">
-  <div class="contact-grid">
-    <div>
-      <span class="s-num">09</span>
-      <h2><span class="l-de">Lass uns über <span class="mark">deine Haut</span> reden.</span><span class="l-en">Let's talk about <span class="mark">your skin.</span></span></h2>
-      <p class="lead"><span class="l-de">Schreib mir, wie ich dich erreiche. Ich melde mich persönlich, und wir machen einen Termin aus.</span><span class="l-en">Tell me how to reach you. I'll get back to you personally and we'll set a date.</span></p>
-      <ul>
-        <li><span class="l-de">Kostenlos und unverbindlich</span><span class="l-en">Free and without obligation</span></li>
-        <li><span class="l-de">Etwa eine halbe Stunde</span><span class="l-en">About half an hour</span></li>
-        <li><span class="l-de">Vor Ort, per Video oder Telefon</span><span class="l-en">In person, by video or phone</span></li>
-      </ul>
-      {{#if whatsapp_nummer}}<a class="btn-wa" href="https://wa.me/{{whatsapp_nummer}}?text=Hi%20{{vorname}}%2C%20ich%20interessiere%20mich%20f%C3%BCr%20den%20Beauty-Check." target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91C21.95 6.45 17.5 2 12.04 2zm0 18.15c-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.2 8.2 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.25-8.24 4.54 0 8.24 3.7 8.24 8.24 0 4.55-3.7 8.24-8.24 8.24z"/></svg><span class="l-de">Oder direkt per WhatsApp</span><span class="l-en">Or directly on WhatsApp</span></a>{{/if}}
-    </div>
+  <div class="contact-head">
+    <h2><span class="l-de">Wie kann ich dir helfen?</span><span class="l-en">How can I help you?</span></h2>
+    <p class="lead"><span class="l-de">Drei kurze Fragen, dann weiß ich, worauf wir schauen. Kostenlos und unverbindlich.</span><span class="l-en">Three short questions, then I know what we'll look at. Free and without obligation.</span></p>
+  </div>
 
-    <div class="cform" id="cform">
-      <form id="contactForm" action="/.finestsites/forms/kontakt" method="POST">
-        <input type="hidden" name="_recipient" value="{{email_benachrichtigung}}">
-        <input type="text" name="_honeypot" style="position:absolute;left:-9999px;opacity:0" tabindex="-1" autocomplete="off">
-        <input type="hidden" name="beratungsart" id="beratungsart" value="video">
-        <div class="f-row">
-          <label for="cf-name"><span class="l-de">Dein Name</span><span class="l-en">Your name</span></label>
-          <input type="text" id="cf-name" name="name" required autocomplete="name" data-de-placeholder="Vor- und Nachname" data-en-placeholder="First and last name" placeholder="Vor- und Nachname">
+  <div class="cform" id="cform" data-step="1">
+    <div class="f-progress"><span class="on"></span><span></span><span></span></div>
+
+    <form id="contactForm" action="/.finestsites/forms/kontakt" method="POST" novalidate>
+      <input type="hidden" name="_recipient" value="{{email_benachrichtigung}}">
+      <input type="text" name="_honeypot" style="position:absolute;left:-9999px;opacity:0" tabindex="-1" autocomplete="off">
+      <input type="hidden" name="anliegen" id="f-anliegen" value="">
+      <input type="hidden" name="wuensche" id="f-wuensche" value="">
+      <input type="hidden" name="beratungsart" id="beratungsart" value="video">
+
+      <!-- Schritt 1 -->
+      <div class="f-step on" data-step="1">
+        <h3><span class="l-de">Was trifft auf dich zu?</span><span class="l-en">What applies to you?</span></h3>
+        <p class="f-hint"><span class="l-de">Damit ich dich besser vorbereitet beraten kann.</span><span class="l-en">So I can prepare better for you.</span></p>
+        <div class="f-opts" data-single>
+          <button type="button" class="f-opt" data-val="einfacher"><b><span class="l-de">Ich will meine Pflege einfacher machen</span><span class="l-en">I want to simplify my skin care</span></b><span><span class="l-de">Weniger Tiegel, klare Reihenfolge</span><span class="l-en">Fewer jars, a clear order</span></span></button>
+          <button type="button" class="f-opt" data-val="passend"><b><span class="l-de">Ich will wissen, was zu meiner Haut passt</span><span class="l-en">I want to know what suits my skin</span></b><span><span class="l-de">Hauttyp, Routine, Empfehlung</span><span class="l-en">Skin type, routine, recommendation</span></span></button>
+          <button type="button" class="f-opt" data-val="kennenlernen"><b><span class="l-de">Ich will das erst mal kennenlernen</span><span class="l-en">I'd like to get to know it first</span></b><span><span class="l-de">Was steckt dahinter, was kostet es</span><span class="l-en">What's behind it, what it costs</span></span></button>
         </div>
-        <div class="f-row">
-          <label for="cf-email"><span class="l-de">E-Mail</span><span class="l-en">Email</span></label>
-          <input type="email" id="cf-email" name="email" required autocomplete="email" placeholder="anna@beispiel.de">
+        <div class="f-nav"><span></span><button type="button" class="btn btn-primary f-next" disabled><span class="l-de">Weiter</span><span class="l-en">Next</span> <span class="arr">→</span></button></div>
+      </div>
+
+      <!-- Schritt 2 -->
+      <div class="f-step" data-step="2">
+        <h3><span class="l-de">Was wünschst du dir?</span><span class="l-en">What do you wish for?</span></h3>
+        <p class="f-hint"><span class="l-de">Mehrere Antworten möglich.</span><span class="l-en">Several answers possible.</span></p>
+        <div class="f-opts f-opts-grid" data-multi>
+          <button type="button" class="f-opt" data-val="Feuchtigkeit & Frische"><b><span class="l-de">Mehr Feuchtigkeit und Frische</span><span class="l-en">More hydration and freshness</span></b></button>
+          <button type="button" class="f-opt" data-val="Ebenmäßiger Teint"><b><span class="l-de">Ein gleichmäßigeres Hautbild</span><span class="l-en">A more even complexion</span></b></button>
+          <button type="button" class="f-opt" data-val="Augenpartie"><b><span class="l-de">Eine wache Augenpartie</span><span class="l-en">A fresh eye area</span></b></button>
+          <button type="button" class="f-opt" data-val="Pflege von innen"><b><span class="l-de">Pflege von innen kennenlernen</span><span class="l-en">Discover care from the inside</span></b></button>
+          <button type="button" class="f-opt" data-val="Weniger Aufwand"><b><span class="l-de">Weniger Aufwand im Alltag</span><span class="l-en">Less effort day to day</span></b></button>
+          <button type="button" class="f-opt" data-val="Für Männer"><b><span class="l-de">Etwas Passendes für Männer</span><span class="l-en">Something suitable for men</span></b></button>
         </div>
+        <div class="f-nav"><button type="button" class="f-back"><span class="l-de">← Zurück</span><span class="l-en">← Back</span></button><button type="button" class="btn btn-primary f-next" disabled><span class="l-de">Weiter</span><span class="l-en">Next</span> <span class="arr">→</span></button></div>
+      </div>
+
+      <!-- Schritt 3 -->
+      <div class="f-step" data-step="3">
+        <h3><span class="l-de">Wie erreiche ich dich?</span><span class="l-en">How do I reach you?</span></h3>
+        <p class="f-hint"><span class="l-de">Name und E-Mail reichen, der Rest ist optional.</span><span class="l-en">Name and email are enough, the rest is optional.</span></p>
+        <div class="f-row"><input type="text" id="cf-name" name="name" required autocomplete="name" data-de-placeholder="Dein Name" data-en-placeholder="Your name" placeholder="Dein Name"></div>
+        <div class="f-row"><input type="email" id="cf-email" name="email" required autocomplete="email" data-de-placeholder="Deine E-Mail" data-en-placeholder="Your email" placeholder="Deine E-Mail"></div>
+        <div class="f-row"><input type="tel" id="cf-phone" name="phone" autocomplete="tel" data-de-placeholder="Telefon oder WhatsApp (optional)" data-en-placeholder="Phone or WhatsApp (optional)" placeholder="Telefon oder WhatsApp (optional)"></div>
         <div class="f-row">
-          <label for="cf-phone"><span class="l-de">Telefon oder WhatsApp</span><span class="l-en">Phone or WhatsApp</span></label>
-          <input type="tel" id="cf-phone" name="phone" required autocomplete="tel" placeholder="+49 170 1234567">
-        </div>
-        <div class="f-row">
-          <label><span class="l-de">Wie am liebsten?</span><span class="l-en">How do you prefer?</span></label>
+          <span class="f-label"><span class="l-de">Am liebsten</span><span class="l-en">Preferably</span></span>
           <div class="chips" id="chips">
             <button type="button" class="chip" data-val="vor-ort"><span class="l-de">Vor Ort</span><span class="l-en">In person</span></button>
             <button type="button" class="chip on" data-val="video"><span class="l-de">Videocall</span><span class="l-en">Video call</span></button>
             <button type="button" class="chip" data-val="telefon"><span class="l-de">Telefon</span><span class="l-en">Phone</span></button>
           </div>
         </div>
-        <div class="f-row">
-          <label for="cf-msg"><span class="l-de">Was möchtest du wissen? <span style="font-weight:400;color:var(--ink-3)">(optional)</span></span><span class="l-en">What would you like to know? <span style="font-weight:400;color:var(--ink-3)">(optional)</span></span></label>
-          <textarea id="cf-msg" name="message" rows="3" data-de-placeholder="Zum Beispiel: Wann passt es dir am besten?" data-en-placeholder="For example: when suits you best?" placeholder="Zum Beispiel: Wann passt es dir am besten?"></textarea>
-        </div>
-        <button type="submit" class="btn btn-primary"><span class="l-de">Beauty-Check anfragen</span><span class="l-en">Request beauty check</span> <span class="arr">→</span></button>
-        <p class="foot-note"><span class="l-de">Kein Newsletter, keine Weitergabe. Nur ich melde mich.</span><span class="l-en">No newsletter, no sharing. Only I will reply.</span></p>
-      </form>
-      <div class="cform-ok">
-        <div class="ok-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
-        <h3><span class="l-de">Danke<span id="successNameDe"></span>!</span><span class="l-en">Thanks<span id="successNameEn"></span>!</span></h3>
-        <p><span class="l-de">Deine Anfrage ist bei mir. Ich melde mich innerhalb von 24 Stunden persönlich, und wir machen einen Termin aus.</span><span class="l-en">Your request has reached me. I'll get back to you personally within 24 hours and we'll set a date.</span></p>
+        <label class="f-check"><input type="checkbox" id="cf-consent" required><span><span class="l-de">Ich bin einverstanden, dass meine Angaben zur Kontaktaufnahme verwendet werden.</span><span class="l-en">I agree that my details may be used to contact me.</span></span></label>
+        <div class="f-nav"><button type="button" class="f-back"><span class="l-de">← Zurück</span><span class="l-en">← Back</span></button><button type="submit" class="btn btn-primary"><span class="l-de">Anfrage senden</span><span class="l-en">Send request</span> <span class="arr">→</span></button></div>
+        <p class="foot-note f-privacy"><span class="l-de">Kein Newsletter, keine Weitergabe. Nur ich melde mich.</span><span class="l-en">No newsletter, no sharing. Only I will reply.</span></p>
       </div>
+    </form>
+
+    <div class="cform-ok">
+      <div class="ok-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
+      <h3><span class="l-de">Danke<span id="successNameDe"></span>!</span><span class="l-en">Thanks<span id="successNameEn"></span>!</span></h3>
+      <p><span class="l-de">Deine Anfrage ist bei mir. Ich melde mich innerhalb von 24 Stunden persönlich, und wir machen einen Termin aus.</span><span class="l-en">Your request has reached me. I'll get back to you personally within 24 hours and we'll set a date.</span></p>
+    </div>
+  </div>
+
+  <div class="contact-card">
+    <img loading="lazy" decoding="async" src="{{profilbild}}" alt="{{vorname}} {{nachname}}">
+    <div><b>{{vorname}} {{nachname}}</b><span class="l-de">{{#if geschlecht=weiblich}}Deine persönliche Beraterin{{/if}}{{#if geschlecht=maennlich}}Dein persönlicher Berater{{/if}}</span><span class="l-en">Your personal advisor</span></div>
+    <div class="contact-card-btns">
+      {{#if whatsapp_nummer}}<a href="https://wa.me/{{whatsapp_nummer}}?text=Hi%20{{vorname}}%2C%20ich%20interessiere%20mich%20f%C3%BCr%20den%20Skinscan." target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91C21.95 6.45 17.5 2 12.04 2zm0 18.15c-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.2 8.2 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.25-8.24 4.54 0 8.24 3.7 8.24 8.24 0 4.55-3.7 8.24-8.24 8.24z"/></svg>WhatsApp</a>{{/if}}
+      <a href="mailto:{{email_benachrichtigung}}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M3 7l9 6 9-6"/></svg>E-Mail</a>
     </div>
   </div>
 
@@ -1396,7 +1517,7 @@ img {
 
 <!-- Sticky Mobile CTA -->
 <a href="#kontakt" class="sticky-cta" id="stickyCta">
-  <span class="l-de">Beauty-Check anfragen</span><span class="l-en">Request beauty check</span>
+  <span class="l-de">Skinscan anfragen</span><span class="l-en">Request skin scan</span>
   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
 </a>
 
@@ -1612,33 +1733,62 @@ document.querySelectorAll('[data-open]').forEach(b => b.addEventListener('click'
 pmModal.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', closeModal));
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && pmModal.classList.contains('open')) closeModal(); });
 
-// ============ Kontakt: Beratungsart + Absenden ============
+// ============ Kontakt: 3 Schritte ============
 (function () {
-  const hidden = document.getElementById('beratungsart');
-  const chips = document.querySelectorAll('#chips .chip');
-  chips.forEach(c => c.addEventListener('click', () => { chips.forEach(x => x.classList.remove('on')); c.classList.add('on'); hidden.value = c.dataset.val; }));
-})();
-document.getElementById('contactForm')?.addEventListener('submit', (e) => {
-  e.preventDefault();
-  const form = e.target;
-  const submitBtn = form.querySelector('button[type="submit"]');
-  const body = {};
-  new FormData(form).forEach((v, k) => { body[k] = String(v); });
-  body.sprache = fsLang();
-  if (submitBtn) { submitBtn.disabled = true; submitBtn.style.opacity = '0.6'; }
-  fetch(form.action, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: JSON.stringify(body) })
-  .then(r => {
-    if (!r.ok) throw new Error('submit_failed');
-    const firstName = String(body.name || '').trim().split(/\s+/)[0];
-    if (firstName) { const de = document.getElementById('successNameDe'), en = document.getElementById('successNameEn'); if (de) de.textContent = ', ' + firstName; if (en) en.textContent = ', ' + firstName; }
-    document.getElementById('cform').classList.add('sent');
-    document.getElementById('cform').scrollIntoView({ behavior: 'smooth', block: 'center' });
-  })
-  .catch(() => {
-    if (submitBtn) { submitBtn.disabled = false; submitBtn.style.opacity = '1'; }
-    alert(fsLang() === 'en' ? 'Something went wrong. Please try again.' : 'Da ist etwas schiefgegangen. Bitte versuch es noch einmal.');
+  const card = document.getElementById('cform'); if (!card) return;
+  const form = document.getElementById('contactForm');
+  const steps = [...card.querySelectorAll('.f-step')];
+  const bars = [...card.querySelectorAll('.f-progress span')];
+  const fAnliegen = document.getElementById('f-anliegen'), fWuensche = document.getElementById('f-wuensche'), fArt = document.getElementById('beratungsart');
+  function go(n) {
+    card.dataset.step = n;
+    steps.forEach(st => st.classList.toggle('on', st.dataset.step === String(n)));
+    bars.forEach((b, i) => b.classList.toggle('on', i < n));
+    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    if (n === 3) setTimeout(() => document.getElementById('cf-name')?.focus(), 250);
+  }
+  card.querySelectorAll('.f-opts').forEach(group => {
+    const single = group.hasAttribute('data-single');
+    const next = group.closest('.f-step').querySelector('.f-next');
+    group.querySelectorAll('.f-opt').forEach(o => o.addEventListener('click', () => {
+      if (single) group.querySelectorAll('.f-opt').forEach(x => x.classList.remove('on'));
+      o.classList.toggle('on');
+      const vals = [...group.querySelectorAll('.f-opt.on')].map(x => x.dataset.val);
+      if (single) fAnliegen.value = vals[0] || ''; else fWuensche.value = vals.join(' · ');
+      if (next) next.disabled = vals.length === 0;
+    }));
   });
-});
+  card.querySelectorAll('.f-next').forEach(b => b.addEventListener('click', () => go(Number(b.closest('.f-step').dataset.step) + 1)));
+  card.querySelectorAll('.f-back').forEach(b => b.addEventListener('click', () => go(Number(b.closest('.f-step').dataset.step) - 1)));
+  const chips = card.querySelectorAll('#chips .chip');
+  chips.forEach(c => c.addEventListener('click', () => { chips.forEach(x => x.classList.remove('on')); c.classList.add('on'); fArt.value = c.dataset.val; }));
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const name = document.getElementById('cf-name'), mail = document.getElementById('cf-email'), consent = document.getElementById('cf-consent');
+    if (!name.value.trim() || !mail.checkValidity() || !consent.checked) {
+      [name, mail].forEach(i => i.style.borderColor = i.checkValidity() && i.value.trim() ? '' : 'var(--warn)');
+      if (!consent.checked) consent.focus();
+      return;
+    }
+    const submitBtn = form.querySelector('button[type="submit"]');
+    const body = {};
+    new FormData(form).forEach((v, k) => { body[k] = String(v); });
+    body.sprache = fsLang();
+    if (submitBtn) { submitBtn.disabled = true; submitBtn.style.opacity = '0.6'; }
+    fetch(form.action, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: JSON.stringify(body) })
+    .then(r => {
+      if (!r.ok) throw new Error('submit_failed');
+      const firstName = String(body.name || '').trim().split(/\s+/)[0];
+      if (firstName) { const de = document.getElementById('successNameDe'), en = document.getElementById('successNameEn'); if (de) de.textContent = ', ' + firstName; if (en) en.textContent = ', ' + firstName; }
+      card.classList.add('sent');
+      card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    })
+    .catch(() => {
+      if (submitBtn) { submitBtn.disabled = false; submitBtn.style.opacity = '1'; }
+      alert(fsLang() === 'en' ? 'Something went wrong. Please try again.' : 'Da ist etwas schiefgegangen. Bitte versuch es noch einmal.');
+    });
+  });
+})();
 
 // ============ Sprachschalter — global fsSetLang(lang) ============
 function fsSetLang(lang) {

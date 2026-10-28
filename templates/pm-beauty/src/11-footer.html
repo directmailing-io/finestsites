@@ -210,33 +210,62 @@ document.querySelectorAll('[data-open]').forEach(b => b.addEventListener('click'
 pmModal.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', closeModal));
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && pmModal.classList.contains('open')) closeModal(); });
 
-// ============ Kontakt: Beratungsart + Absenden ============
+// ============ Kontakt: 3 Schritte ============
 (function () {
-  const hidden = document.getElementById('beratungsart');
-  const chips = document.querySelectorAll('#chips .chip');
-  chips.forEach(c => c.addEventListener('click', () => { chips.forEach(x => x.classList.remove('on')); c.classList.add('on'); hidden.value = c.dataset.val; }));
-})();
-document.getElementById('contactForm')?.addEventListener('submit', (e) => {
-  e.preventDefault();
-  const form = e.target;
-  const submitBtn = form.querySelector('button[type="submit"]');
-  const body = {};
-  new FormData(form).forEach((v, k) => { body[k] = String(v); });
-  body.sprache = fsLang();
-  if (submitBtn) { submitBtn.disabled = true; submitBtn.style.opacity = '0.6'; }
-  fetch(form.action, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: JSON.stringify(body) })
-  .then(r => {
-    if (!r.ok) throw new Error('submit_failed');
-    const firstName = String(body.name || '').trim().split(/\s+/)[0];
-    if (firstName) { const de = document.getElementById('successNameDe'), en = document.getElementById('successNameEn'); if (de) de.textContent = ', ' + firstName; if (en) en.textContent = ', ' + firstName; }
-    document.getElementById('cform').classList.add('sent');
-    document.getElementById('cform').scrollIntoView({ behavior: 'smooth', block: 'center' });
-  })
-  .catch(() => {
-    if (submitBtn) { submitBtn.disabled = false; submitBtn.style.opacity = '1'; }
-    alert(fsLang() === 'en' ? 'Something went wrong. Please try again.' : 'Da ist etwas schiefgegangen. Bitte versuch es noch einmal.');
+  const card = document.getElementById('cform'); if (!card) return;
+  const form = document.getElementById('contactForm');
+  const steps = [...card.querySelectorAll('.f-step')];
+  const bars = [...card.querySelectorAll('.f-progress span')];
+  const fAnliegen = document.getElementById('f-anliegen'), fWuensche = document.getElementById('f-wuensche'), fArt = document.getElementById('beratungsart');
+  function go(n) {
+    card.dataset.step = n;
+    steps.forEach(st => st.classList.toggle('on', st.dataset.step === String(n)));
+    bars.forEach((b, i) => b.classList.toggle('on', i < n));
+    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    if (n === 3) setTimeout(() => document.getElementById('cf-name')?.focus(), 250);
+  }
+  card.querySelectorAll('.f-opts').forEach(group => {
+    const single = group.hasAttribute('data-single');
+    const next = group.closest('.f-step').querySelector('.f-next');
+    group.querySelectorAll('.f-opt').forEach(o => o.addEventListener('click', () => {
+      if (single) group.querySelectorAll('.f-opt').forEach(x => x.classList.remove('on'));
+      o.classList.toggle('on');
+      const vals = [...group.querySelectorAll('.f-opt.on')].map(x => x.dataset.val);
+      if (single) fAnliegen.value = vals[0] || ''; else fWuensche.value = vals.join(' · ');
+      if (next) next.disabled = vals.length === 0;
+    }));
   });
-});
+  card.querySelectorAll('.f-next').forEach(b => b.addEventListener('click', () => go(Number(b.closest('.f-step').dataset.step) + 1)));
+  card.querySelectorAll('.f-back').forEach(b => b.addEventListener('click', () => go(Number(b.closest('.f-step').dataset.step) - 1)));
+  const chips = card.querySelectorAll('#chips .chip');
+  chips.forEach(c => c.addEventListener('click', () => { chips.forEach(x => x.classList.remove('on')); c.classList.add('on'); fArt.value = c.dataset.val; }));
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const name = document.getElementById('cf-name'), mail = document.getElementById('cf-email'), consent = document.getElementById('cf-consent');
+    if (!name.value.trim() || !mail.checkValidity() || !consent.checked) {
+      [name, mail].forEach(i => i.style.borderColor = i.checkValidity() && i.value.trim() ? '' : 'var(--warn)');
+      if (!consent.checked) consent.focus();
+      return;
+    }
+    const submitBtn = form.querySelector('button[type="submit"]');
+    const body = {};
+    new FormData(form).forEach((v, k) => { body[k] = String(v); });
+    body.sprache = fsLang();
+    if (submitBtn) { submitBtn.disabled = true; submitBtn.style.opacity = '0.6'; }
+    fetch(form.action, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: JSON.stringify(body) })
+    .then(r => {
+      if (!r.ok) throw new Error('submit_failed');
+      const firstName = String(body.name || '').trim().split(/\s+/)[0];
+      if (firstName) { const de = document.getElementById('successNameDe'), en = document.getElementById('successNameEn'); if (de) de.textContent = ', ' + firstName; if (en) en.textContent = ', ' + firstName; }
+      card.classList.add('sent');
+      card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    })
+    .catch(() => {
+      if (submitBtn) { submitBtn.disabled = false; submitBtn.style.opacity = '1'; }
+      alert(fsLang() === 'en' ? 'Something went wrong. Please try again.' : 'Da ist etwas schiefgegangen. Bitte versuch es noch einmal.');
+    });
+  });
+})();
 
 // ============ Sprachschalter — global fsSetLang(lang) ============
 function fsSetLang(lang) {
