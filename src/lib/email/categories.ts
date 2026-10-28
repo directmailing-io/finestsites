@@ -84,6 +84,8 @@ export const EMAIL_TYPE_CATEGORY: Record<string, EmailCategory> = {
   password_reset: 'system',
   subscription_confirmation: 'system',
   account_canceled: 'system',
+  plan_change_scheduled: 'system',
+  plan_change_done: 'system',
   account_deactivated: 'system',
   account_reactivated: 'system',
   payment_failed: 'system',

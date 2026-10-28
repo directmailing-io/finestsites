@@ -27,6 +27,8 @@ export default async function AdminUsersPage() {
         billingInterval: users.billingInterval,
         subscriptionStatus: users.subscriptionStatus,
         currentPeriodEnd: users.currentPeriodEnd,
+        pendingPlan: users.pendingPlan,
+        pendingPlanAt: users.pendingPlanAt,
         createdAt: users.createdAt,
         stripeCustomerId: users.stripeCustomerId,
         stripeSubscriptionId: users.stripeSubscriptionId,
@@ -134,6 +136,8 @@ export default async function AdminUsersPage() {
     subscriptionStatus: u.subscriptionStatus,
     currentPeriodEnd: u.currentPeriodEnd,
     cancelAtPeriodEnd: cancelAtPeriodEndByUser[u.id] ?? false,
+    pendingPlan: u.pendingPlan,
+    pendingPlanAt: u.pendingPlanAt,
     createdAt: u.createdAt,
     siteCount: siteCountByUser[u.id] ?? 0,
     // Catalog monthly price — what this plan costs without discounts (direct from Stripe)

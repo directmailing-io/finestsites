@@ -632,6 +632,55 @@ export function accountCanceledEmail({ periodEnd }: { periodEnd: string }): stri
   `)
 }
 
+/** Tarifwechsel nach unten eingeplant: bis zum Datum bleibt alles, danach kleinerer Tarif (plan-change.ts). */
+export function planChangeScheduledEmail({ plan, interval, date, offlineSites }: {
+  plan: 'starter' | 'pro' | 'unlimited'; interval: 'monthly' | 'yearly'; date: string; offlineSites: string[]
+}): string {
+  const planLabel: Record<string, string> = { starter: 'Starter', pro: 'Pro', unlimited: 'Unlimited' }
+  const settingsUrl = `${APP_URL}/settings?tab=zahlung`
+  const offline = offlineSites.length
+    ? `<p style="margin:0 0 16px;font-size:15px;color:${base.body};line-height:1.65;">
+        Ab dann ${offlineSites.length === 1 ? 'geht diese Webseite offline' : 'gehen diese Webseiten offline'}, bleibt aber als Entwurf gespeichert: <strong>${offlineSites.map(escapeHtml).join('</strong>, <strong>')}</strong>. Du kannst ${offlineSites.length === 1 ? 'sie' : 'sie'} jederzeit wieder veröffentlichen, sobald dein Tarif es erlaubt.
+      </p>`
+    : ''
+  return layout(`
+    <h1 style="margin:0 0 8px;font-size:22px;font-weight:700;color:${base.heading};letter-spacing:-0.02em;">
+      Dein Wechsel zu ${planLabel[plan] ?? plan} ist eingeplant
+    </h1>
+    <p style="margin:0 0 16px;font-size:15px;color:${base.body};line-height:1.65;">
+      Bis zum <strong>${date}</strong> bleibt alles wie bisher. Ab dann läuft dein Abo im <strong>${planLabel[plan] ?? plan}-Tarif</strong> (${interval === 'yearly' ? 'jährlich' : 'monatlich'}) weiter – ohne Kündigung, ohne neue Buchung.
+    </p>
+    ${offline}
+    <p style="margin:0 0 24px;font-size:15px;color:${base.body};line-height:1.65;">
+      Überlegst du es dir anders? Bis zum ${date} kannst du den Wechsel in den Einstellungen mit einem Klick zurückziehen.
+    </p>
+    ${button(settingsUrl, 'Zu den Einstellungen')}
+  `)
+}
+
+/** Tarifwechsel nach unten vollzogen (Webhook am Laufzeitende). */
+export function planChangeDoneEmail({ plan, interval, offlineSites }: {
+  plan: 'starter' | 'pro' | 'unlimited'; interval: 'monthly' | 'yearly'; offlineSites: string[]
+}): string {
+  const planLabel: Record<string, string> = { starter: 'Starter', pro: 'Pro', unlimited: 'Unlimited' }
+  const dashboardUrl = `${APP_URL}/sites`
+  const offline = offlineSites.length
+    ? `<p style="margin:0 0 16px;font-size:15px;color:${base.body};line-height:1.65;">
+        Wie von dir gewählt ${offlineSites.length === 1 ? 'ist diese Webseite jetzt offline' : 'sind diese Webseiten jetzt offline'} und als Entwurf gespeichert: <strong>${offlineSites.map(escapeHtml).join('</strong>, <strong>')}</strong>.
+      </p>`
+    : ''
+  return layout(`
+    <h1 style="margin:0 0 8px;font-size:22px;font-weight:700;color:${base.heading};letter-spacing:-0.02em;">
+      Dein Tarif ist jetzt ${planLabel[plan] ?? plan}
+    </h1>
+    <p style="margin:0 0 16px;font-size:15px;color:${base.body};line-height:1.65;">
+      Dein Abo läuft ab heute im <strong>${planLabel[plan] ?? plan}-Tarif</strong> (${interval === 'yearly' ? 'jährlich' : 'monatlich'}) weiter. Die nächste Rechnung kommt wie gewohnt automatisch.
+    </p>
+    ${offline}
+    ${button(dashboardUrl, 'Zu meinen Webseiten')}
+  `)
+}
+
 export function accountReactivatedEmail(): string {
   const dashboardUrl = `${APP_URL}/sites`
   return layout(`

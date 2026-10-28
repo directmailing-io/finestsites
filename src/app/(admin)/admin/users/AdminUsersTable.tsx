@@ -27,6 +27,9 @@ export interface UserRow {
   subscriptionStatus: string | null
   currentPeriodEnd: Date | null
   cancelAtPeriodEnd: boolean
+  /** Geplanter Wechsel nach unten zum Laufzeitende (src/lib/billing/plan-change.ts) */
+  pendingPlan: string | null
+  pendingPlanAt: Date | null
   createdAt: Date
   siteCount: number
   planPriceCents: number
@@ -519,6 +522,12 @@ export default function AdminUsersTable({ users }: { users: UserRow[] }) {
                 {['active', 'trialing', 'past_due', 'canceled'].includes(user.subscriptionStatus ?? '') && (
                   <span className="text-xs font-semibold px-2.5 py-1 rounded-full" style={{ background: planMeta.bg, color: planMeta.text }}>
                     {planMeta.label}{['active', 'trialing', 'past_due'].includes(user.subscriptionStatus ?? '') ? (user.billingInterval === 'yearly' ? ' · jährl.' : ' · monatl.') : ''}
+                  </span>
+                )}
+                {user.pendingPlan && (
+                  <span className="text-xs font-medium px-2.5 py-1 rounded-full" title="Wechselt zum Laufzeitende in den kleineren Tarif"
+                    style={{ background: '#FFF7ED', color: '#C2410C', border: '1px solid #FED7AA' }}>
+                    → {PLAN_META[user.pendingPlan]?.label ?? user.pendingPlan}{user.pendingPlanAt ? ` ab ${fmtDate(user.pendingPlanAt)}` : ''}
                   </span>
                 )}
                 {statusMeta && (

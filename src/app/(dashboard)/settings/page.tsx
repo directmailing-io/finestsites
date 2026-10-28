@@ -6,7 +6,7 @@ import { useState, useEffect, Suspense, useRef } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { authClient } from '@/lib/auth/client'
 import { useRouter } from 'next/navigation'
-import { PLAN_LIST, PLAN_LABELS, COMMON_FEATURES, canUpgradeTo } from '@/lib/plans'
+import { PLAN_LIST, PLAN_LABELS, PLANS, COMMON_FEATURES, canUpgradeTo, getPlanMaxSites } from '@/lib/plans'
 import { discountedTotal, formatEur } from '@/lib/billing/promo-duration'
 import ImageCropModal from '@/components/ImageCropModal'
 import InvoiceDetailsCard from '@/components/billing/InvoiceDetailsCard'
@@ -125,7 +125,7 @@ const FAQ = [
   ],
   [
     'Kann ich auf einen kleineren Plan wechseln?',
-    'Nein, das geht aktuell nicht. Du kannst dein Abo kündigen und danach einen neuen, kleineren Plan buchen.',
+    'Ja, zum Ende deiner bezahlten Laufzeit. Bis dahin bleibt alles wie bisher, danach läuft dein Abo im kleineren Tarif weiter – ohne Kündigung und ohne neue Buchung. Du findest es oben in der Tarifliste beim jeweiligen Tarif.',
   ],
   [
     'Wie lange dauert eine SEPA-Lastschrift?',
@@ -145,6 +145,13 @@ interface RecoveryInfo {
   amount_cents: number
 }
 
+interface PendingPlanChange {
+  plan: string
+  interval: 'monthly' | 'yearly'
+  at: string | null
+  keep_site_ids: string[]
+}
+
 interface SubscriptionInfo {
   status: string
   current_period_end: number
@@ -156,7 +163,11 @@ interface SubscriptionInfo {
   discount_name: string | null
   discount_duration?: string | null
   recovery: RecoveryInfo | null
+  /** Geplanter Wechsel nach unten zum Laufzeitende (null = keiner) */
+  pending_change?: PendingPlanChange | null
 }
+
+interface PaidSite { id: string; title: string; url: string | null }
 
 interface UserProfile {
   plan: string
@@ -223,6 +234,13 @@ function recoveryBody(r: RecoveryInfo | null): string {
   if (r.sites_offline) return `Sobald die Zahlung da ist, gehen deine Seiten automatisch wieder online. Bleibt sie bis ${fmtDate(r.hard_deadline)} aus, pausieren wir dein Konto.`
   if (r.retry_processing) return 'Per SEPA dauert die Bestätigung ein bis zwei Wochen. Deine Seiten bleiben so lange online. Mit Karte wäre es sofort erledigt.'
   return 'Mit Karte ist die Zahlung in Sekunden bestätigt. Oder hinterleg eine Karte als Ersatz, dann holen wir die Zahlung automatisch darüber nach.'
+}
+
+/** ISO-Zeitpunkt → „04. November 2026“ */
+function fmtDateIso(iso: string | null | undefined): string {
+  if (!iso) return ''
+  const d = new Date(iso)
+  return Number.isNaN(d.getTime()) ? '' : d.toLocaleDateString('de-DE', { day: '2-digit', month: 'long', year: 'numeric' })
 }
 
 function fmtCents(cents: number) {
@@ -293,6 +311,13 @@ function SettingsContent() {
   const [upgradePreview, setUpgradePreview] = useState<UpgradePreview | null>(null)
   const [upgradePreviewError, setUpgradePreviewError] = useState('')
   const [upgradeLoading, setUpgradeLoading] = useState(false)
+  // Wechsel nach unten zum Laufzeitende (src/lib/billing/plan-change.ts) – bewusst leise gehalten
+  const [planChangeTarget, setPlanChangeTarget] = useState<string | null>(null)
+  const [planChangeSites, setPlanChangeSites] = useState<PaidSite[] | null>(null)
+  const [planChangeKeep, setPlanChangeKeep] = useState<string[]>([])
+  const [planChangeLoading, setPlanChangeLoading] = useState(false)
+  const [planChangeError, setPlanChangeError] = useState('')
+  const [planChangeUndoLoading, setPlanChangeUndoLoading] = useState(false)
   const [toast, setToast] = useState('')
 
   // ── Invoices state ─────────────────────────────────────────────
@@ -515,6 +540,58 @@ function SettingsContent() {
     setReactivateLoading(false)
   }
 
+  async function openPlanChange(plan: string) {
+    setPlanChangeTarget(plan)
+    setPlanChangeSites(null)
+    setPlanChangeKeep([])
+    setPlanChangeError('')
+    try {
+      const res = await fetch('/api/billing/plan-change')
+      const data = await res.json()
+      if (!res.ok) throw new Error(data?.error || 'Fehler')
+      const sites: PaidSite[] = data.sites ?? []
+      setPlanChangeSites(sites)
+      // Passt alles ins Limit, ist nichts zu wählen; sonst die älteste Seite vorschlagen
+      const limit = getPlanMaxSites(plan)
+      if (limit >= 0 && sites.length > limit) setPlanChangeKeep(sites.slice(0, limit).map(s => s.id))
+    } catch (e) {
+      setPlanChangeError(e instanceof Error && !/json|fetch|network|Fehler$/i.test(e.message) ? e.message : 'Die Webseiten konnten gerade nicht geladen werden. Bitte versuch es gleich noch einmal.')
+    }
+  }
+
+  async function confirmPlanChange() {
+    if (!planChangeTarget) return
+    setPlanChangeLoading(true); setPlanChangeError('')
+    const res = await fetch('/api/billing/plan-change', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ plan: planChangeTarget, keepSiteIds: planChangeKeep }),
+    })
+    const data = await res.json().catch(() => null)
+    if (!res.ok || !data?.pending_change) {
+      setPlanChangeError(data?.error || 'Der Wechsel konnte gerade nicht eingeplant werden. Es wurde nichts geändert.')
+    } else {
+      setSubscription(prev => prev ? { ...prev, pending_change: data.pending_change } : prev)
+      setPlanChangeTarget(null)
+      setToast(`Eingeplant: ab dem ${fmtDateIso(data.pending_change.at)} läuft dein Abo im ${PLAN_LABELS[data.pending_change.plan] ?? data.pending_change.plan}-Tarif.`)
+      setTimeout(() => setToast(''), 6000)
+    }
+    setPlanChangeLoading(false)
+  }
+
+  async function undoPlanChange() {
+    setPlanChangeUndoLoading(true)
+    const res = await fetch('/api/billing/plan-change', { method: 'DELETE' })
+    const data = await res.json().catch(() => null)
+    if (!res.ok) {
+      setToast(data?.error || 'Das hat gerade nicht geklappt. Bitte versuch es gleich noch einmal.')
+    } else {
+      setSubscription(prev => prev ? { ...prev, pending_change: null } : prev)
+      setToast('Der Wechsel wurde zurückgezogen. Dein Tarif bleibt, wie er ist.')
+    }
+    setTimeout(() => setToast(''), 5000)
+    setPlanChangeUndoLoading(false)
+  }
+
   async function handleCheckout(plan: string, iv: 'monthly' | 'yearly' = billingInterval) {
     // Existing active subscription → show the exact prorated amount FIRST.
     // The actual upgrade only happens in confirmUpgrade() after the user confirms.
@@ -595,6 +672,10 @@ function SettingsContent() {
     : null
 
   const hasActiveSubscription = !!subscription && subscription.status === 'active'
+  const pendingChange = subscription?.pending_change ?? null
+  const pendingChangeDate = pendingChange?.at ? fmtDateIso(pendingChange.at) : periodEnd
+  // Wechsel nach unten nur bei laufendem, nicht gekündigtem Abo ohne offene Zahlung
+  const canScheduleDowngrade = hasActiveSubscription && !subscription?.cancel_at_period_end && subscription?.status !== 'past_due'
   const currentPlan: string | null = hasActiveSubscription
     ? (profile?.plan ?? subscription?.plan ?? null)
     : null
@@ -1112,10 +1193,24 @@ function SettingsContent() {
                               Aktuell
                             </div>
                           ) : isLower ? (
-                            <div className="text-xs font-medium px-3 py-2 rounded-xl text-center hidden sm:block"
-                              style={{ color: '#CBD5E1' }}>
-                              Downgrade n. mgl.
-                            </div>
+                            pendingChange?.plan === plan.key ? (
+                              <div className="text-xs font-semibold px-3 py-2 rounded-xl text-center whitespace-nowrap"
+                                style={{ background: '#FFF7ED', color: '#C2410C' }}>
+                                Ab {pendingChangeDate}
+                              </div>
+                            ) : canScheduleDowngrade && !pendingChange && currentInterval === billingInterval ? (
+                              <button onClick={() => openPlanChange(plan.key)}
+                                className="text-xs font-medium px-2 py-2 rounded-xl text-right transition-colors whitespace-nowrap"
+                                style={{ color: '#94A3B8' }}
+                                onMouseEnter={e => (e.currentTarget.style.color = '#374151')}
+                                onMouseLeave={e => (e.currentTarget.style.color = '#94A3B8')}>
+                                Zum Laufzeitende wechseln
+                              </button>
+                            ) : (
+                              <div className="text-xs font-medium px-3 py-2 rounded-xl text-center hidden sm:block" style={{ color: '#CBD5E1' }}>
+                                {pendingChange ? 'Wechsel geplant' : 'Nur zum Laufzeitende'}
+                              </div>
+                            )
                           ) : (
                             <button onClick={() => handleCheckout(plan.key)} disabled={checkoutLoading === plan.key}
                               className="flex items-center gap-1.5 px-4 py-2.5 text-sm font-bold rounded-xl transition-opacity hover:opacity-90 disabled:opacity-70 text-white whitespace-nowrap"
@@ -1201,6 +1296,23 @@ function SettingsContent() {
                       style={{ background: '#15803D', color: '#fff' }}>
                       {reactivateLoading ? <Spinner /> : null}
                       Kündigung zurückziehen
+                    </button>
+                  </div>
+                ) : pendingChange ? (
+                  <div>
+                    <p className="text-sm" style={{ color: '#15803D' }}>
+                      Nächste Abrechnung am <strong>{periodEnd}</strong>.
+                    </p>
+                    <p className="text-sm mt-2" style={{ color: '#374151' }}>
+                      Ab dem <strong>{pendingChangeDate}</strong> läuft dein Abo im <strong>{PLAN_LABELS[pendingChange.plan] ?? pendingChange.plan}</strong>-Tarif weiter
+                      {PLANS[pendingChange.plan as keyof typeof PLANS] ? ` (€${pendingChange.interval === 'yearly' ? PLANS[pendingChange.plan as keyof typeof PLANS].yearly_eur : PLANS[pendingChange.plan as keyof typeof PLANS].monthly_eur}${pendingChange.interval === 'yearly' ? ' pro Jahr' : ' pro Monat'})` : ''}. Bis dahin bleibt alles wie bisher.
+                    </p>
+                    <button onClick={undoPlanChange} disabled={planChangeUndoLoading}
+                      className="mt-3 text-sm underline underline-offset-2 transition-colors disabled:opacity-60"
+                      style={{ color: '#6B7280' }}
+                      onMouseEnter={e => (e.currentTarget.style.color = '#374151')}
+                      onMouseLeave={e => (e.currentTarget.style.color = '#6B7280')}>
+                      {planChangeUndoLoading ? 'Bitte warten…' : 'Wechsel zurückziehen'}
                     </button>
                   </div>
                 ) : (
@@ -1579,6 +1691,96 @@ function SettingsContent() {
                   {upgradePreview
                     ? `Für ${fmtCents(upgradePreview.due_cents)} ${upgradeTarget === currentPlan ? 'wechseln' : 'upgraden'}`
                     : upgradeTarget === currentPlan ? 'Jetzt wechseln' : 'Jetzt upgraden'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )
+      })()}
+
+      {planChangeTarget && (() => {
+        const target = PLANS[planChangeTarget as keyof typeof PLANS]
+        const limit = getPlanMaxSites(planChangeTarget)
+        const sites = planChangeSites ?? []
+        const mustChoose = limit >= 0 && sites.length > limit
+        const price = target ? (currentInterval === 'yearly' ? target.yearly_eur : target.monthly_eur) : null
+        const unit = currentInterval === 'yearly' ? 'pro Jahr' : 'pro Monat'
+        const toggleKeep = (id: string) => setPlanChangeKeep(prev => {
+          if (prev.includes(id)) return prev.filter(x => x !== id)
+          if (limit === 1) return [id]
+          return prev.length >= limit ? prev : [...prev, id]
+        })
+        const ready = !!planChangeSites && (!mustChoose || planChangeKeep.length === limit)
+        return (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4"
+            style={{ background: 'rgba(15,23,42,0.5)', backdropFilter: 'blur(4px)' }}>
+            <div className="bg-white rounded-3xl p-7 max-w-md w-full flex flex-col gap-5"
+              style={{ boxShadow: '0 24px 64px rgba(0,0,0,0.20)' }}>
+              <div>
+                <h3 className="font-bold text-gray-900 text-lg tracking-tight">
+                  Wechsel zu {target?.name ?? planChangeTarget} zum Laufzeitende
+                </h3>
+                <p className="text-sm mt-1.5 leading-relaxed" style={{ color: '#64748B' }}>
+                  Bis zum <strong className="text-gray-900">{periodEnd}</strong> bleibt alles wie bisher. Ab dann läuft dein Abo im {target?.name ?? planChangeTarget}-Tarif weiter
+                  {price != null ? <> und kostet <strong className="text-gray-900">€{price} {unit}</strong></> : null}. Keine Kündigung, keine neue Buchung, keine Zwischenrechnung.
+                </p>
+              </div>
+
+              {planChangeError ? (
+                <p className="text-sm font-medium px-4 py-3 rounded-2xl" style={{ background: '#FEF2F2', color: '#DC2626' }}>
+                  {planChangeError}
+                </p>
+              ) : !planChangeSites ? (
+                <div className="h-24 rounded-2xl bg-gray-100 animate-pulse" />
+              ) : mustChoose ? (
+                <div className="rounded-2xl p-4" style={{ background: '#F8FAFC', border: '1px solid #E5E7EB' }}>
+                  <p className="text-sm font-semibold text-gray-900">
+                    {limit === 1 ? 'Welche Webseite soll online bleiben?' : `Welche ${limit} Webseiten sollen online bleiben?`}
+                  </p>
+                  <p className="text-xs mt-1 mb-3" style={{ color: '#64748B' }}>
+                    Der {target?.name}-Tarif erlaubt {limit === 1 ? 'eine aktive Premium-Webseite' : `${limit} aktive Premium-Webseiten`}. Die anderen gehen am {periodEnd} offline und bleiben als Entwurf gespeichert.
+                  </p>
+                  <div className="flex flex-col gap-2">
+                    {sites.map(site => {
+                      const on = planChangeKeep.includes(site.id)
+                      return (
+                        <label key={site.id} className="flex items-start gap-3 rounded-xl px-3 py-2.5 cursor-pointer transition-colors"
+                          style={{ background: on ? '#fff' : 'transparent', border: on ? '1px solid #111827' : '1px solid #E5E7EB' }}>
+                          <input type={limit === 1 ? 'radio' : 'checkbox'} name="keep-site" checked={on} onChange={() => toggleKeep(site.id)} className="mt-0.5" />
+                          <span className="min-w-0">
+                            <span className="block text-sm font-medium text-gray-900">{site.title}</span>
+                            {site.url && <span className="block text-xs truncate" style={{ color: '#94A3B8' }}>{site.url.replace(/^https:\/\//, '')}</span>}
+                          </span>
+                        </label>
+                      )
+                    })}
+                  </div>
+                </div>
+              ) : (
+                <p className="text-sm leading-relaxed" style={{ color: '#64748B' }}>
+                  Deine {sites.length === 1 ? 'Webseite bleibt' : 'Webseiten bleiben'} online – {sites.length === 0 ? 'du hast aktuell keine veröffentlichte Premium-Webseite.' : `${sites.length === 1 ? 'sie passt' : 'sie passen'} in den ${target?.name}-Tarif.`}
+                </p>
+              )}
+
+              <p className="text-xs leading-relaxed" style={{ color: '#94A3B8' }}>
+                Du kannst den Wechsel bis zum {periodEnd} jederzeit zurückziehen. Ein Upgrade geht danach weiterhin sofort.
+              </p>
+
+              <div className="flex gap-3">
+                <button
+                  onClick={() => { setPlanChangeTarget(null); setPlanChangeError('') }}
+                  disabled={planChangeLoading}
+                  className="flex-1 px-4 py-3 text-sm font-semibold rounded-xl transition-colors hover:bg-gray-200 disabled:opacity-60"
+                  style={{ background: '#F3F4F6', color: '#374151' }}>
+                  Abbrechen
+                </button>
+                <button
+                  onClick={confirmPlanChange}
+                  disabled={planChangeLoading || !ready}
+                  className="flex-1 flex items-center justify-center gap-2 px-4 py-3 text-sm font-semibold text-white rounded-xl transition-opacity hover:opacity-90 disabled:opacity-60"
+                  style={{ background: '#111827' }}>
+                  {planChangeLoading && <Spinner />}
+                  Wechsel einplanen
                 </button>
               </div>
             </div>

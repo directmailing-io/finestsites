@@ -43,6 +43,8 @@ const PLANNED: Planned[] = [
 
 const HISTORY: Month[] = [
   { label: 'Oktober 2026', entries: [
+    { date: '28. Okt', title: 'Kleinerer Tarif zum Laufzeitende',
+      text: 'Du kannst jetzt zum Ende deiner bezahlten Laufzeit in einen kleineren Tarif wechseln, ohne zu kündigen und neu zu buchen. Bis dahin bleibt alles wie bisher. Du findest es unter Einstellungen → Zahlung & Plan beim jeweiligen Tarif.' },
     { date: '26. Okt', title: 'Neuigkeiten direkt im Dashboard', visual: 'mail',
       text: 'Unter „Neuigkeiten“ in der Seitenleiste siehst du jetzt, was es bei FinestSites Neues gibt. Die neueste Neuigkeit erscheint farbig hervorgehoben als Karte über deinen Webseiten; in der App bekommst du sie auf Wunsch als Mitteilung.' },
     { date: '26. Okt', title: 'Konto löschen: zum Laufzeitende oder sofort',

@@ -14,6 +14,7 @@ import { setSiteOfflineKV, deleteCustomDomainKV, purgeUsernameKV } from '@/lib/c
 import { deleteCustomHostname } from '@/lib/cloudflare/custom-hostnames'
 import { deleteFromR2, deletePrefixFromR2 } from '@/lib/r2/client'
 import { getStripe } from '@/lib/stripe/client'
+import { releaseScheduleOf } from '@/lib/billing/plan-change'
 
 export type EffectRecord = { kind: string; target: string; at: string }
 
@@ -76,6 +77,8 @@ export async function setCancelAtPeriodEnd(subscriptionId: string | null, flag: 
     const stripe = getStripe()
     const sub = await stripe.subscriptions.retrieve(subscriptionId)
     if (sub.status === 'canceled' || sub.status === 'incomplete_expired') return { ok: false, periodEnd: null, error: 'Abo bereits beendet' }
+    // Geplanter Tarifwechsel (Subscription Schedule) würde die Änderung blockieren – Löschung geht vor
+    if (flag && sub.schedule) await releaseScheduleOf(stripe, sub)
     const updated = sub.cancel_at_period_end === flag ? sub : await stripe.subscriptions.update(subscriptionId, { cancel_at_period_end: flag })
     const endSec = updated.items.data[0]?.current_period_end ?? (updated as unknown as { current_period_end?: number }).current_period_end
     return { ok: true, periodEnd: endSec ? new Date(endSec * 1000) : null }

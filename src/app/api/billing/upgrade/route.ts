@@ -11,6 +11,7 @@ import { sendEmail } from '@/lib/resend'
 import { subscriptionConfirmationEmail } from '@/lib/email/templates'
 import { referralDiscountsForPlanChange, loadInheritedCustomerDiscount, PLAN_CHANGE_SUBSCRIPTION_EXPAND } from '@/lib/affiliate/referral-offer'
 import { deletionPendingResponse } from '@/lib/account-deletion/guard'
+import { releasePendingPlanChange } from '@/lib/billing/plan-change'
 
 /**
  * In-place subscription upgrade with proration.
@@ -82,6 +83,10 @@ export async function POST(req: NextRequest) {
   }
 
   try {
+    // Ein geplanter Wechsel nach unten (Subscription Schedule) wird durch das Upgrade hinfällig
+    // und würde die Positionsänderung blockieren – vorher lösen.
+    await releasePendingPlanChange(stripe, user.id, sub)
+
     // Modell C: beim Wechsel ins Jahresabo 10 % Partnerpreis ergänzen (bestehende Rabatte bleiben)
     // Intervallwechsel: immer explizite Rabattliste (Intervall-beschränkte Coupons fallen weg,
     // ein geerbter Kunden-Rabatt wird übernommen) – Vorschau und Upgrade identisch.

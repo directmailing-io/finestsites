@@ -7,6 +7,7 @@ import { eq } from 'drizzle-orm'
 import { getUserFromRequest } from '@/lib/auth/server'
 import { getStripe } from '@/lib/stripe/client'
 import { shouldBeOffline, hardDeadlineFor, trackedInvoiceInfo, recoveryColumns } from '@/lib/billing/payment-recovery'
+import { PENDING_PLAN_COLUMNS, pendingChangeOf, releasePendingPlanChange, type PendingPlanChange } from '@/lib/billing/plan-change'
 
 type RecoveryProfile = {
   subscriptionStatus: string | null
@@ -36,7 +37,7 @@ async function getRecoveryInfo(profile: RecoveryProfile) {
   }
 }
 
-function getSubInfo(sub: Stripe.Subscription, plan: string, billingInterval: string | null, couponObj: { percent_off?: number | null; name?: string | null; id?: string; duration?: string | null } | null | undefined, recovery: Awaited<ReturnType<typeof getRecoveryInfo>>) {
+function getSubInfo(sub: Stripe.Subscription, plan: string, billingInterval: string | null, couponObj: { percent_off?: number | null; name?: string | null; id?: string; duration?: string | null } | null | undefined, recovery: Awaited<ReturnType<typeof getRecoveryInfo>>, pendingChange: PendingPlanChange | null = null) {
   // In Stripe v22+, current_period_end is per subscription item
   const item = sub.items?.data?.[0]
   const currentPeriodEnd = (item as any)?.current_period_end ?? null
@@ -60,6 +61,8 @@ function getSubInfo(sub: Stripe.Subscription, plan: string, billingInterval: str
     // 'once' (z. B. Startbonus 1. Monat) | 'repeating' | 'forever'
     discount_duration: couponObj?.duration ?? null,
     recovery,
+    // Geplanter Wechsel nach unten zum Laufzeitende (null = keiner)
+    pending_change: pendingChange,
   }
 }
 
@@ -72,7 +75,7 @@ export async function GET(req: NextRequest) {
 
   const profile = await db.query.users.findFirst({
     where: eq(users.id, user.id),
-    columns: { stripeCustomerId: true, plan: true, billingInterval: true, paymentFailedInvoiceId: true, ...recoveryColumns },
+    columns: { stripeCustomerId: true, plan: true, billingInterval: true, paymentFailedInvoiceId: true, ...recoveryColumns, ...PENDING_PLAN_COLUMNS },
   })
 
   if (!profile?.stripeCustomerId) {
@@ -82,6 +85,7 @@ export async function GET(req: NextRequest) {
   try {
     const stripe = getStripe()
     const recovery = await getRecoveryInfo(profile)
+    const pendingChange = pendingChangeOf(profile)
 
     async function resolveCoupon(sub: Stripe.Subscription) {
       // Stripe v22+: discount coupon lives in discounts[0].source.coupon (string ID)
@@ -111,13 +115,13 @@ export async function GET(req: NextRequest) {
       })
       if (!allSubs.data.length) return NextResponse.json({ subscription: null })
       const coupon = await resolveCoupon(allSubs.data[0])
-      return NextResponse.json({ subscription: getSubInfo(allSubs.data[0], profile.plan, profile.billingInterval, coupon, recovery) })
+      return NextResponse.json({ subscription: getSubInfo(allSubs.data[0], profile.plan, profile.billingInterval, coupon, recovery, pendingChange) })
     }
 
     const sub0 = subscriptions.data[0]
     const coupon = await resolveCoupon(sub0)
     return NextResponse.json({
-      subscription: getSubInfo(sub0, profile.plan, profile.billingInterval, coupon, recovery)
+      subscription: getSubInfo(sub0, profile.plan, profile.billingInterval, coupon, recovery, pendingChange),
     })
   } catch {
     return NextResponse.json({ subscription: null })
@@ -202,6 +206,8 @@ export async function DELETE(req: NextRequest) {
     }
 
     const sub = subscriptions.data[0]
+    // Ein geplanter Tarifwechsel (Subscription Schedule) würde die Kündigung blockieren – Kündigung geht vor
+    await releasePendingPlanChange(stripe, user.id, sub)
     const updated = await stripe.subscriptions.update(sub.id, {
       cancel_at_period_end: true,
     })

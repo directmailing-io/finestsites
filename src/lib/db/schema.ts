@@ -69,6 +69,13 @@ export const users = pgTable('users', {
   subscriptionStatus: text('subscription_status'),
   currentPeriodEnd: timestamp('current_period_end', { withTimezone: true }),
   cancelAtPeriodEnd: boolean('cancel_at_period_end').notNull().default(false),
+  // Tarifwechsel nach unten zum Laufzeitende (Migration 20261028120000, src/lib/billing/plan-change.ts):
+  // Zieltarif + Intervall, Zeitpunkt, Stripe-Zeitplan und die Webseiten, die online bleiben.
+  pendingPlan: text('pending_plan'),
+  pendingPlanInterval: text('pending_plan_interval'),
+  pendingPlanAt: timestamp('pending_plan_at', { withTimezone: true }),
+  pendingPlanScheduleId: text('pending_plan_schedule_id'),
+  pendingKeepSiteIds: uuid('pending_keep_site_ids').array().notNull().default(sql`'{}'::uuid[]`),
   paymentFailedAt: timestamp('payment_failed_at', { withTimezone: true }),
   // Payment recovery (see src/lib/billing/payment-recovery.ts):
   // the open invoice behind paymentFailedAt, how long the sites stay online

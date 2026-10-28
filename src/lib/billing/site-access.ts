@@ -166,6 +166,45 @@ export async function restoreSites(
   return suspended.length
 }
 
+/**
+ * Tarifwechsel nach unten (src/lib/billing/plan-change.ts): der neue Tarif erlaubt `limit`
+ * veröffentlichte Premium-Seiten. Die in `keepIds` gewählten bleiben online; alle weiteren
+ * veröffentlichten Premium-Seiten werden zu Entwürfen (nichts wird gelöscht, der Nutzer kann sie
+ * nach einem Upgrade wieder veröffentlichen). Reicht die Auswahl nicht, bleiben die ältesten.
+ * Bewusst `draft` statt `deactivated`: reconcile()/restoreSites() würden `deactivated` bei aktivem
+ * Abo sofort wieder online nehmen. Liefert die Titel der offline genommenen Seiten.
+ */
+export async function unpublishSitesBeyondLimit(userId: string, keepIds: readonly string[], limit: number): Promise<string[]> {
+  if (limit < 0) return []
+  const live = await db.query.userSites.findMany({
+    where: and(eq(userSites.userId, userId), eq(userSites.status, 'published')),
+    columns: { id: true, customDomain: true, createdAt: true },
+    with: { template: { columns: { domain: true, title: true, isFree: true } }, user: { columns: { username: true } } },
+    orderBy: (t, { asc }) => [asc(t.createdAt)],
+  })
+  const paid = live.filter(s => s.template && !s.template.isFree)
+  if (paid.length <= limit) return []
+  const keep = new Set(keepIds)
+  const chosen = paid.filter(s => keep.has(s.id)).slice(0, limit)
+  for (const s of paid) { if (chosen.length >= limit) break; if (!keep.has(s.id)) chosen.push(s) }
+  const chosenIds = new Set(chosen.map(s => s.id))
+  const extra = paid.filter(s => !chosenIds.has(s.id))
+  if (extra.length === 0) return []
+
+  await db.update(userSites)
+    .set({ status: 'draft', deactivatedAt: null, updatedAt: new Date() })
+    .where(inArray(userSites.id, extra.map(s => s.id)))
+
+  for (const site of extra) {
+    const username = site.user?.username
+    const domain = site.template?.domain
+    if (username && domain) await setSiteOfflineKV(username, domain).catch(logKvError('offline (plan limit)', site.id))
+    if (site.customDomain) await deleteCustomDomainKV(site.customDomain).catch(logKvError('custom-domain delete (plan limit)', site.id))
+  }
+  console.info('[site-access] plan limit: sites set to draft:', userId, extra.map(s => s.id))
+  return extra.map(s => s.template?.title ?? 'Webseite')
+}
+
 export type ReconcileResult =
   | { action: 'suspended'; sites: number }
   | { action: 'restored'; sites: number }

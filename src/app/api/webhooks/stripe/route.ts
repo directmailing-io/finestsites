@@ -15,6 +15,7 @@ import {
   accountReactivatedEmail,
 } from '@/lib/email/templates'
 import { suspendSites, restoreSites, reconcileSiteAccess } from '@/lib/billing/site-access'
+import { applyPendingPlanIfDue } from '@/lib/billing/plan-change'
 import {
   recoveryCleared,
   recordPaymentFailure,
@@ -659,6 +660,10 @@ export async function POST(req: NextRequest) {
       if (fullReactivation) {
         await restoreSites(userId, { includeScheduledDeletion: true })
       }
+
+      // Geplanter Wechsel nach unten (src/lib/billing/plan-change.ts): ist der Zieltarif jetzt aktiv,
+      // überzählige Seiten zu Entwürfen machen, Merker löschen, Mail. Ohne Merker ein No-op.
+      await applyPendingPlanIfDue(userId, plan).catch(err => console.error('[webhook] plan change apply failed:', userId, err))
 
       // Sites follow the subscription status — idempotent, order-independent.
       // Stripe delivers this event BEFORE invoice.payment_succeeded, so after a
