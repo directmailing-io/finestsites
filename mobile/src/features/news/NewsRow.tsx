@@ -1,4 +1,4 @@
-import { ChevronRight } from 'lucide-react-native';
+import { ChevronDown } from 'lucide-react-native';
 import { memo } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import Animated, { FadeIn, FadeOut, LinearTransition } from 'react-native-reanimated';
@@ -12,10 +12,11 @@ import { NEWS_ON_SOLID, NewsSolid, newsPalette } from './NewsAccent';
 import { NewsBody } from './NewsBody';
 
 /**
- * Eine Neuigkeit in der Liste – gleiche Karte wie /neuigkeiten im Web (Daniel 26.10.2026: nur eine
- * Ansicht, Vorschau aufklappen). Vollton-Karte im Pastellverlauf: Datum, solange ungelesen „Neu“,
- * Überschrift, zwei Zeilen Kurztext, „Weiterlesen“ als schwarze Pille. Aufgeklappt zeigt dieselbe
- * Karte darunter den ganzen Inhalt, den Knopf und „Zuklappen“; die Höhe gleitet (LinearTransition).
+ * Eine Neuigkeit in der Liste – gleiche Karte wie /neuigkeiten im Web (Daniel 28.10.2026: kein Knopf
+ * am Rand, Aufklappen nur nach unten). Vollton-Karte im Pastellverlauf: Datum, solange ungelesen „Neu“,
+ * Überschrift, zwei Zeilen Kurztext, darunter der stille Textlink „Weiterlesen“. Aufgeklappt bleibt
+ * alles stehen (Kurztext in voller Länge), darunter wachsen Inhalt und Knopf auf, der Link wird zu
+ * „Zuklappen“. Höhe gleitet per LinearTransition.
  */
 export const NewsRow = memo(function NewsRow({ item, expanded, onToggle, onCta }: {
   item: NewsItem;
@@ -50,23 +51,19 @@ export const NewsRow = memo(function NewsRow({ item, expanded, onToggle, onCta }
           <Text style={styles.title} numberOfLines={expanded ? undefined : 2}>
             {item.title}
           </Text>
+          <Text style={styles.summary} numberOfLines={expanded ? undefined : 2}>
+            {item.summary}
+          </Text>
           {!expanded && (
-            <Animated.View exiting={FadeOut.duration(120)}>
-              <Text style={styles.summary} numberOfLines={2}>
-                {item.summary}
-              </Text>
-              <View style={styles.more}>
-                <View style={styles.moreButton}>
-                  <Text style={styles.moreButtonText}>Weiterlesen</Text>
-                  <ChevronRight size={15} color={colors.white} strokeWidth={2.5} style={{ opacity: 0.85 }} />
-                </View>
-              </View>
+            <Animated.View exiting={FadeOut.duration(100)} style={styles.moreRow}>
+              <Text style={styles.moreText}>Weiterlesen</Text>
+              <ChevronDown size={15} color={colors.ink} strokeWidth={2.5} style={{ opacity: 0.8 }} />
             </Animated.View>
           )}
         </Pressable>
 
         {expanded && (
-          <Animated.View entering={FadeIn.duration(220).delay(60)} exiting={FadeOut.duration(120)} style={styles.bodyWrap}>
+          <Animated.View entering={FadeIn.duration(220).delay(40)} exiting={FadeOut.duration(100)} style={styles.bodyWrap}>
             <View style={styles.line} />
             <NewsBody body={item.body} onSolid />
             <View style={styles.actions}>
@@ -86,8 +83,9 @@ export const NewsRow = memo(function NewsRow({ item, expanded, onToggle, onCta }
                 hitSlop={8}
                 accessibilityRole="button"
                 accessibilityLabel="Zuklappen"
-                style={({ pressed }) => [styles.collapse, pressed && { backgroundColor: NEWS_ON_SOLID.wash }]}>
-                <Text style={styles.collapseText}>Zuklappen</Text>
+                style={({ pressed }) => [styles.collapse, pressed && { opacity: 0.5 }]}>
+                <Text style={styles.moreText}>Zuklappen</Text>
+                <ChevronDown size={15} color={colors.ink} strokeWidth={2.5} style={{ opacity: 0.8, transform: [{ rotate: '180deg' }] }} />
               </Pressable>
             </View>
           </Animated.View>
@@ -98,7 +96,7 @@ export const NewsRow = memo(function NewsRow({ item, expanded, onToggle, onCta }
 });
 
 const styles = StyleSheet.create({
-  head: { padding: 24, paddingBottom: 24 },
+  head: { padding: 24 },
   headOpen: { paddingBottom: 0 },
   pressed: { opacity: 0.92 },
   kicker: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 12, marginBottom: 10, minHeight: 22 },
@@ -107,15 +105,13 @@ const styles = StyleSheet.create({
   pillText: { fontFamily: fonts.semibold, fontSize: 12, lineHeight: 16, color: colors.ink },
   title: { fontFamily: fonts.semibold, fontSize: 21, lineHeight: 27, letterSpacing: -0.4, color: colors.ink, marginBottom: 4 },
   summary: { fontFamily: fonts.regular, fontSize: 15, lineHeight: 22, color: NEWS_ON_SOLID.text },
-  more: { alignItems: 'flex-end', marginTop: 18 },
-  moreButton: { flexDirection: 'row', alignItems: 'center', gap: 3, height: 38, paddingLeft: 16, paddingRight: 12, borderRadius: radius.full, backgroundColor: colors.ink },
-  moreButtonText: { fontFamily: fonts.semibold, fontSize: 14, lineHeight: 20, color: colors.white },
-  bodyWrap: { paddingHorizontal: 24, paddingBottom: 24 },
-  line: { height: StyleSheet.hairlineWidth * 2, backgroundColor: NEWS_ON_SOLID.line, marginTop: 10, marginBottom: 20 },
-  actions: { marginTop: 24, gap: 6 },
+  moreRow: { flexDirection: 'row', alignItems: 'center', gap: 5, marginTop: 16 },
+  moreText: { fontFamily: fonts.semibold, fontSize: 14.5, lineHeight: 20, letterSpacing: -0.1, color: colors.ink },
+  bodyWrap: { paddingHorizontal: 24, paddingBottom: 22 },
+  line: { height: StyleSheet.hairlineWidth * 2, backgroundColor: NEWS_ON_SOLID.line, marginTop: 20, marginBottom: 20 },
+  actions: { marginTop: 24, gap: 14 },
   cta: { height: 50, borderRadius: radius.full, backgroundColor: colors.ink, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 24 },
   ctaPressed: { transform: [{ scale: 0.98 }], opacity: 0.92 },
   ctaText: { fontFamily: fonts.semibold, fontSize: 15.5, lineHeight: 21, color: colors.white },
-  collapse: { alignSelf: 'center', minHeight: 40, paddingHorizontal: 16, justifyContent: 'center', borderRadius: radius.full },
-  collapseText: { fontFamily: fonts.medium, fontSize: 14, lineHeight: 20, color: colors.ink, opacity: 0.75 },
+  collapse: { flexDirection: 'row', alignItems: 'center', gap: 5, alignSelf: 'flex-start', minHeight: 32 },
 });

@@ -9,8 +9,9 @@ import { NEWS_ON_SOLID, newsSolidClass, newsSolidStyle } from './NewsSurface'
 /**
  * Eine Neuigkeit in der Liste `/neuigkeiten` (Daniel 26.10.2026: nur eine Ansicht, Vorschau aufklappen).
  * Vollton-Karte im Pastellverlauf der Neuigkeit: Datum, „Neu“, Überschrift, zwei Zeilen Kurztext,
- * „Weiterlesen“ als schwarze Pille. Aufgeklappt zeigt dieselbe Karte darunter den ganzen Inhalt
- * (newsBodyBlocks), den Knopf und „Zuklappen“. Die Höhe gleitet (grid-template-rows 0fr → 1fr).
+ * darunter ein stiller Textlink „Weiterlesen“ (kein Knopf am Rand). Aufgeklappt bleibt alles stehen,
+ * der ganze Inhalt (newsBodyBlocks) und der Knopf wachsen darunter einfach nach unten auf
+ * (grid-template-rows 0fr → 1fr), der Textlink wird zu „Zuklappen“.
  * Gleiche Karte in der App (mobile/src/features/news/NewsRow.tsx) und in der Admin-Vorschau.
  */
 export function NewsCard({
@@ -46,9 +47,9 @@ export function NewsCard({
     return () => window.clearTimeout(t)
   }, [expanded, interactive])
 
-  const pad = compact ? '18px 20px' : undefined
+  const pad = compact ? '18px 20px 20px' : undefined
   const chevron = (
-    <svg className={`transition-transform duration-[200ms] ${expanded ? 'rotate-90' : 'group-hover:translate-x-0.5'}`} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round" aria-hidden style={{ opacity: 0.85 }}>
+    <svg className={`transition-transform duration-[220ms] ${expanded ? '-rotate-90' : 'rotate-90 group-hover:translate-y-0.5'}`} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round" aria-hidden style={{ opacity: 0.8 }}>
       <path d="M9 18l6-6-6-6" />
     </svg>
   )
@@ -68,10 +69,10 @@ export function NewsCard({
         aria-expanded={expanded}
         aria-controls={`news-body-${id}`}
         disabled={!interactive || expanded}
-        className={compact ? '' : 'px-6 pt-6 sm:px-8 sm:pt-7'}
+        className={compact ? '' : 'px-6 pt-6 pb-6 sm:px-8 sm:pt-7 sm:pb-7'}
         style={{
           display: 'block', width: '100%', textAlign: 'left', background: 'transparent', border: 'none', color: 'inherit', font: 'inherit',
-          padding: pad, paddingBottom: expanded ? 0 : undefined, cursor: interactive && !expanded ? 'pointer' : 'default',
+          padding: pad, ...(expanded ? { paddingBottom: 0 } : {}), cursor: interactive && !expanded ? 'pointer' : 'default',
         }}
       >
         <div className="flex items-center gap-2.5" style={{ minHeight: 20 }}>
@@ -98,29 +99,20 @@ export function NewsCard({
           {title || <span style={{ color: NEWS_ON_SOLID.kicker }}>Überschrift der Neuigkeit</span>}
         </h2>
 
-        {/* Zugeklappt: zwei Zeilen Kurztext + Pille · aufgeklappt: Kurztext weicht dem Inhalt */}
-        <div
-          style={{
-            display: 'grid', gridTemplateRows: expanded ? '0fr' : '1fr', opacity: expanded ? 0 : 1,
-            transition: 'grid-template-rows 0.28s ease, opacity 0.2s ease',
-          }}
-          aria-hidden={expanded}
-        >
-          <div style={{ overflow: 'hidden', minHeight: 0 }}>
-            <p style={{
-              margin: 0, fontSize: compact ? 14 : 15.5, lineHeight: 1.6, color: NEWS_ON_SOLID.text, overflowWrap: 'anywhere',
-              display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden',
-            }}>
-              {summary}
-            </p>
-            <div className="flex justify-end" style={{ marginTop: compact ? 14 : 20, paddingBottom: compact ? 0 : 4 }}>
-              <span className="inline-flex items-center gap-1" style={{ fontSize: 14, fontWeight: 600, color: '#fff', background: NEWS_TOKENS.ink, padding: '10px 14px 10px 16px', borderRadius: 999, letterSpacing: '-0.1px' }}>
-                Weiterlesen
-                {chevron}
-              </span>
-            </div>
-          </div>
-        </div>
+        {/* Kurztext bleibt auch aufgeklappt stehen (Vorspann), aufgeklappt in voller Länge */}
+        <p style={{
+          margin: 0, fontSize: compact ? 14 : 15.5, lineHeight: 1.6, color: NEWS_ON_SOLID.text, overflowWrap: 'anywhere',
+          ...(expanded ? {} : { display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' as const, overflow: 'hidden' }),
+        }}>
+          {summary}
+        </p>
+        {interactive && !expanded && (
+          <span className="inline-flex items-center gap-1.5" style={{ marginTop: compact ? 12 : 16, fontSize: 14.5, fontWeight: 600, color: NEWS_TOKENS.ink, letterSpacing: '-0.1px' }}>
+            Weiterlesen
+            {chevron}
+          </span>
+        )}
+        {!interactive && !expanded && <span style={{ display: 'block', height: compact ? 4 : 8 }} />}
       </button>
 
       {/* Aufgeklappt: Inhalt, Knopf, Zuklappen */}
@@ -134,7 +126,7 @@ export function NewsCard({
       >
         <div style={{ overflow: 'hidden', minHeight: 0 }}>
           <div className={compact ? '' : 'px-6 pb-6 sm:px-8 sm:pb-8'} style={compact ? { padding: '0 20px 20px' } : undefined}>
-            <div style={{ height: 1, background: NEWS_ON_SOLID.line, margin: compact ? '4px 0 16px' : '6px 0 22px' }} />
+            <div style={{ height: 1, background: NEWS_ON_SOLID.line, margin: compact ? '16px 0 16px' : '22px 0 22px' }} />
             {body.trim() ? (
               <NewsBodyBlocks body={body} size={compact ? 'sm' : 'md'} onSolid />
             ) : (
@@ -146,11 +138,11 @@ export function NewsCard({
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'stretch', gap: compact ? 6 : 10, marginTop: compact ? 18 : 26 }}>
                 {cta}
                 {interactive && (
-                  <div style={{ display: 'flex', justifyContent: 'center' }}>
-                    <button type="button" onClick={onToggle} className="transition-colors duration-150" style={{ ...newsQuietLinkStyle, color: NEWS_TOKENS.ink, opacity: 0.75 }}
-                      onMouseEnter={e => { e.currentTarget.style.background = NEWS_ON_SOLID.wash; e.currentTarget.style.opacity = '1' }}
-                      onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.opacity = '0.75' }}>
+                  <div style={{ display: 'flex', justifyContent: 'flex-start', marginTop: cta ? 2 : 0 }}>
+                    <button type="button" onClick={onToggle} className="group inline-flex items-center gap-1.5 transition-opacity duration-150 hover:opacity-100"
+                      style={{ background: 'transparent', border: 'none', padding: '6px 0', cursor: 'pointer', fontSize: 14.5, fontWeight: 600, color: NEWS_TOKENS.ink, letterSpacing: '-0.1px', opacity: 0.8 }}>
                       Zuklappen
+                      {chevron}
                     </button>
                   </div>
                 )}

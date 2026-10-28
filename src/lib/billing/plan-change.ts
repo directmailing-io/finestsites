@@ -9,8 +9,9 @@
  * Mechanik: ein Stripe Subscription Schedule (`from_subscription`) mit zwei Phasen –
  *   Phase 1 = der laufende Zeitraum unverändert (Preis, Rabatte),
  *   Phase 2 = der neue Preis ab dem Periodenende (ein Zyklus), `end_behavior: 'release'`,
- * danach läuft das Abo normal weiter. Bestehende Rabatte, die über das Periodenende hinaus
- * gelten (z. B. 3-Monats-Aktion, Partner 10 % dauerhaft), werden per Discount-ID übernommen.
+ * danach läuft das Abo normal weiter. Bestehende Rabatte, die über das Periodenende hinaus gelten,
+ * werden übernommen: dauerhafte (Partner 10 %) ganz, befristete (3-Monats-Aktion) nur für ihre
+ * Restlaufzeit – ggf. als eigene Phase (siehe splitCarryOverDiscounts).
  * Beim Wechsel schickt Stripe `customer.subscription.updated` mit dem neuen Preis → der Webhook
  * setzt den Tarif in der DB wie bisher und ruft `applyPendingPlanIfDue()` auf: überzählige
  * Webseiten werden zu Entwürfen (die vom Nutzer gewählten bleiben online), Merker gelöscht, Mail.
@@ -100,15 +101,21 @@ function periodEndOf(sub: Stripe.Subscription): number | null {
 }
 
 /**
- * Rabatte des Abos, die über `switchAt` hinaus gelten, als Phasen-Discounts – per Gutschein-Kennung
- * (eine bestehende Discount-ID nimmt Stripe in Zeitplänen nicht an, geprüft 28.10.2026).
- * `once` ist mit der ersten Rechnung verbraucht; `repeating` nur, wenn das Ende hinter dem Wechsel liegt.
- * Hinweis: ein neu angewandter `repeating`-Gutschein beginnt seine Laufzeit in der neuen Phase von vorn –
- * der Kunde bekommt also eher einen Monat Rabatt zu viel als zu wenig (bewusst zu seinen Gunsten).
+ * Rabatte, die über den Wechsel hinaus gelten – getrennt nach dauerhaft (`forever`) und befristet
+ * (`repeating`). Stripe nimmt in Zeitplänen keine bestehende Discount-ID an, nur Gutschein-Kennungen;
+ * ein neu angewandter befristeter Gutschein würde seine Laufzeit von vorn beginnen. Deshalb wird die
+ * Restlaufzeit selbst begrenzt: befristete Gutscheine gelten nur für so viele Abrechnungen nach dem
+ * Wechsel, wie noch vor ihrem ursprünglichen Ende liegen (Daniel 28.10.2026: 3-Monats-Rabatt, ein
+ * Monat genutzt → nach dem Wechsel genau 2 Monate, nicht 3). `once` ist mit der ersten Rechnung verbraucht.
  */
-function carryOverDiscounts(sub: Stripe.Subscription, switchAt: number): Stripe.SubscriptionScheduleUpdateParams.Phase.Discount[] {
+function splitCarryOverDiscounts(sub: Stripe.Subscription, switchAt: number, interval: BillingInterval): {
+  forever: Stripe.SubscriptionScheduleUpdateParams.Phase.Discount[]
+  limited: { discounts: Stripe.SubscriptionScheduleUpdateParams.Phase.Discount[]; cycles: number }
+} {
   const list = (sub as unknown as { discounts?: unknown[] }).discounts ?? []
-  const out: Stripe.SubscriptionScheduleUpdateParams.Phase.Discount[] = []
+  const forever: Stripe.SubscriptionScheduleUpdateParams.Phase.Discount[] = []
+  const limited: Stripe.SubscriptionScheduleUpdateParams.Phase.Discount[] = []
+  let cycles = Infinity
   for (const d of list) {
     if (!d || typeof d !== 'object') continue
     const disc = d as { end?: number | null; coupon?: unknown; source?: { coupon?: unknown } }
@@ -116,10 +123,70 @@ function carryOverDiscounts(sub: Stripe.Subscription, switchAt: number): Stripe.
     const couponId = typeof couponRaw === 'string' ? couponRaw : couponRaw && typeof couponRaw === 'object' ? (couponRaw as { id?: string }).id ?? null : null
     const duration = couponRaw && typeof couponRaw === 'object' ? (couponRaw as { duration?: string }).duration : undefined
     if (!couponId || duration === 'once') continue
-    if (disc.end && disc.end <= switchAt) continue
-    out.push({ coupon: couponId })
+    if (duration === 'forever' || !disc.end) { forever.push({ coupon: couponId }); continue }
+    const n = billingCyclesBefore(switchAt, disc.end, interval)
+    if (n <= 0) continue
+    limited.push({ coupon: couponId })
+    cycles = Math.min(cycles, n)
+  }
+  return { forever, limited: { discounts: limited, cycles: limited.length ? cycles : 0 } }
+}
+
+type OriginalDiscount = { coupon: string; end: number | null; duration: string }
+
+/** Rabatte des Abos in kompakter Form (für die Zeitplan-Metadaten). */
+function originalDiscountsOf(sub: Stripe.Subscription): OriginalDiscount[] {
+  const list = (sub as unknown as { discounts?: unknown[] }).discounts ?? []
+  const out: OriginalDiscount[] = []
+  for (const d of list) {
+    if (!d || typeof d !== 'object') continue
+    const disc = d as { end?: number | null; coupon?: unknown; source?: { coupon?: unknown } }
+    const raw = disc.source?.coupon ?? disc.coupon
+    const coupon = typeof raw === 'string' ? raw : raw && typeof raw === 'object' ? (raw as { id?: string }).id ?? null : null
+    const duration = raw && typeof raw === 'object' ? (raw as { duration?: string }).duration ?? 'forever' : 'forever'
+    if (coupon) out.push({ coupon, end: disc.end ?? null, duration })
   }
   return out
+}
+
+/**
+ * Nach dem Lösen eines Zeitplans die Rabatte so wiederherstellen, wie sie ohne den Zeitplan gewesen
+ * wären: dauerhafte Gutscheine unverändert, befristete mit genau der Restlaufzeit (abgeleiteter Gutschein
+ * mit gleichem Namen/Prozent, `duration_in_months` = verbleibende Abrechnungen). `once` ist verbraucht.
+ */
+async function restoreOriginalDiscounts(stripe: Stripe, sub: Stripe.Subscription, originals: OriginalDiscount[]): Promise<void> {
+  const interval: BillingInterval = sub.items.data[0]?.price.recurring?.interval === 'year' ? 'yearly' : 'monthly'
+  const nextInvoice = periodEndOf(sub)
+  const discounts: { coupon: string }[] = []
+  for (const o of originals) {
+    if (o.duration === 'once') continue
+    if (o.duration === 'forever' || !o.end) { discounts.push({ coupon: o.coupon }); continue }
+    const n = nextInvoice ? billingCyclesBefore(nextInvoice, o.end, interval) : 0
+    if (n <= 0) continue
+    const src = await stripe.coupons.retrieve(o.coupon)
+    const derived = await stripe.coupons.create({
+      name: src.name ?? undefined,
+      ...(src.percent_off != null ? { percent_off: src.percent_off } : { amount_off: src.amount_off ?? 0, currency: src.currency ?? 'eur' }),
+      duration: 'repeating',
+      duration_in_months: interval === 'yearly' ? n * 12 : n,
+      metadata: { ...(src.metadata ?? {}), derived_from: src.id, reason: 'restlaufzeit-nach-tarifwechsel-zurueckgezogen' },
+    })
+    discounts.push({ coupon: derived.id })
+  }
+  await stripe.subscriptions.update(sub.id, { discounts: discounts.length ? discounts : '', proration_behavior: 'none' })
+  console.info('[plan-change] discounts restored:', sub.id, discounts.map(d => d.coupon))
+}
+
+/** Anzahl der Abrechnungen ab `fromSec` (inklusive), die VOR `endSec` liegen – im Takt des Intervalls (Kalendermonate/-jahre, UTC). */
+export function billingCyclesBefore(fromSec: number, endSec: number, interval: BillingInterval): number {
+  let n = 0
+  const d = new Date(fromSec * 1000)
+  while (d.getTime() / 1000 < endSec && n < 120) {
+    n++
+    if (interval === 'yearly') d.setUTCFullYear(d.getUTCFullYear() + 1)
+    else d.setUTCMonth(d.getUTCMonth() + 1)
+  }
+  return n
 }
 
 /** Phase-1-Discounts aus dem per `from_subscription` erzeugten Zeitplan (nur gesetzte Felder). */
@@ -202,9 +269,26 @@ export async function schedulePlanChange(userId: string, targetPlan: string, kee
     throw new PlanChangeError('SCHEDULE', 500, 'Der Wechsel konnte nicht eingeplant werden.')
   }
   try {
+    const carry = splitCarryOverDiscounts(sub, switchAt, interval)
+    // Stripe schreibt beim Setzen der Phasen-Rabatte die Rabatte des Abos neu (Laufzeit beginnt von vorn).
+    // Die Original-Rabatte wandern deshalb in die Metadaten des Zeitplans – beim Zurückziehen werden sie
+    // mit ihrer Restlaufzeit wiederhergestellt (restoreOriginalDiscounts).
+    const originals = JSON.stringify(originalDiscountsOf(sub)).slice(0, 500)
+    const cycleUnit = interval === 'yearly' ? 'year' : 'month'
+    const newItems = [{ price: newPriceId, quantity: 1 }]
+    // Phase 2: neuer Preis mit allen weiterlaufenden Rabatten für die Restlaufzeit der befristeten;
+    // Phase 3 (nur bei befristeten): neuer Preis, nur noch dauerhafte Rabatte, ein Zyklus; dann release.
+    const laterPhases: Stripe.SubscriptionScheduleUpdateParams.Phase[] = carry.limited.cycles > 0
+      ? [
+          { items: newItems, duration: { interval: cycleUnit, interval_count: carry.limited.cycles }, discounts: [...carry.forever, ...carry.limited.discounts], proration_behavior: 'none' },
+          { items: newItems, duration: { interval: cycleUnit, interval_count: 1 }, discounts: carry.forever, proration_behavior: 'none' },
+        ]
+      : [
+          { items: newItems, duration: { interval: cycleUnit, interval_count: 1 }, discounts: carry.forever, proration_behavior: 'none' },
+        ]
     await stripe.subscriptionSchedules.update(created.id, {
       end_behavior: 'release',
-      metadata: { finestsites_user_id: userId, finestsites_plan_change: `${u.plan}->${target}` },
+      metadata: { finestsites_user_id: userId, finestsites_plan_change: `${u.plan}->${target}`, fs_discounts: originals },
       phases: [
         {
           // laufender Zeitraum 1:1 (Preis, Menge, Rabatte), nichts wird neu berechnet
@@ -214,13 +298,7 @@ export async function schedulePlanChange(userId: string, targetPlan: string, kee
           discounts: phaseDiscountsAsParams(p0),
           proration_behavior: 'none',
         },
-        {
-          items: [{ price: newPriceId, quantity: 1 }],
-          // genau ein Abrechnungszyklus im neuen Tarif, danach `release`: das Abo läuft normal weiter
-          duration: { interval: interval === 'yearly' ? 'year' : 'month', interval_count: 1 },
-          discounts: carryOverDiscounts(sub, switchAt),
-          proration_behavior: 'none',
-        },
+        ...laterPhases,
       ],
     })
   } catch (err) {
@@ -287,6 +365,18 @@ async function releaseScheduleById(stripe: Stripe, id: string): Promise<boolean>
     const sched = await stripe.subscriptionSchedules.retrieve(id)
     if (sched.status === 'active' || sched.status === 'not_started') {
       await stripe.subscriptionSchedules.release(id)
+      // Rabatte wie vor dem Zeitplan (Restlaufzeit), falls wir sie beim Einplanen festgehalten haben
+      const raw = sched.metadata?.fs_discounts
+      const subId = typeof sched.subscription === 'string' ? sched.subscription : sched.subscription?.id
+      if (raw && subId) {
+        try {
+          const originals = JSON.parse(raw) as OriginalDiscount[]
+          const sub = await stripe.subscriptions.retrieve(subId, { expand: ['discounts'] })
+          if (sub.status !== 'canceled') await restoreOriginalDiscounts(stripe, sub, originals)
+        } catch (err) {
+          console.error('[plan-change] discount restore failed:', subId, err instanceof Error ? err.message : err)
+        }
+      }
       return true
     }
     return false
