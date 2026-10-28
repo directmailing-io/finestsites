@@ -24,12 +24,12 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" as="image" href="assets/hero/{{hero_variante}}.webp" fetchpriority="high" type="image/webp">
-<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300..700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
 
 <style>
 :root {
-  --font: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --serif: var(--font);
+  --font: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --display: 'Jost', 'Futura', 'Avenir Next', sans-serif;
   --r: 28px; --r-sm: 18px;
   --pad-x: clamp(20px, 5vw, 72px);
   --max: 1240px;
@@ -86,10 +86,11 @@ body { font-family: var(--font); background: var(--bg); color: var(--ink); line-
 img { display: block; max-width: 100%; }
 a { color: inherit; text-decoration: none; }
 button { font-family: inherit; cursor: pointer; border: 0; background: none; color: inherit; }
-h1, h2, h3 { font-weight: 500; letter-spacing: -0.03em; line-height: 1.04; color: var(--ink); }
-h1 { font-size: clamp(42px, 5.6vw, 76px); }
-h2 { font-size: clamp(32px, 4vw, 54px); }
-h3 { font-size: clamp(20px, 2vw, 26px); line-height: 1.2; letter-spacing: -0.02em; }
+h1, h2, h3 { font-family: var(--display); font-weight: 400; letter-spacing: -0.01em; line-height: 1.06; color: var(--ink); }
+h1 { font-size: clamp(44px, 5.8vw, 80px); font-weight: 300; letter-spacing: -0.015em; }
+h2 { font-size: clamp(34px, 4.2vw, 58px); font-weight: 300; }
+h3 { font-size: clamp(21px, 2vw, 27px); line-height: 1.22; font-weight: 400; }
+h1 strong, h2 strong { font-weight: 500; }
 /* Squircle: moderne Browser runden weicher, ältere bekommen normale Rundung */
 .btn, .nav-cta, .kc-drop, .kc-btn, .pm-sheet, .pr-row, .pr-thumb, .bento-card, .cform, .f-opt, .chip, .check-phone, .rt-col, .rt-banner figure, .about-photo, .faq-list, .contact-card, .pr-cta, .cform input, .cform textarea, .ok-ico, .duo-stage { corner-shape: squircle; }
 .mark { color: var(--green-dark); }
@@ -819,7 +820,7 @@ img {
 .hero-media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 78% 18%; }
 .hero-media::before { content: ''; position: absolute; inset: 0; z-index: 1; background: linear-gradient(90deg, var(--bg) 0%, color-mix(in oklab, var(--bg) 55%, transparent) 18%, transparent 45%); pointer-events: none; }
 .hero h1 { margin-bottom: 26px; }
-.hero h1 em { font-style: normal; font-weight: 300; color: var(--green-dark); }
+.hero h1 em { font-style: normal; font-weight: 500; color: var(--green-dark); }
 .hero p.sub { font-size: clamp(17px, 1.4vw, 20px); color: var(--ink-2); max-width: 520px; margin-bottom: 36px; line-height: 1.55; }
 .hero-ctas { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; margin-bottom: 30px; }
 .link-more { font-weight: 500; color: var(--ink); border-bottom: 1px solid var(--line-2); padding-bottom: 2px; transition: border-color .2s; }
@@ -827,11 +828,19 @@ img {
 .hero-facts { font-size: 14px; color: var(--ink-3); display: flex; gap: 12px; flex-wrap: wrap; }
 .hero-facts span + span::before { content: '·'; margin-right: 12px; }
 
+/* ============ KENNST DU DAS ============ */
+.know { background: var(--bg); padding-bottom: clamp(40px, 6vh, 72px); }
+.know-grid { max-width: var(--max); margin: 0 auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.know-card { background: var(--paper); border: 1px solid var(--line); border-radius: var(--r); padding: 28px 26px; display: flex; flex-direction: column; gap: 10px; }
+.know-card .q { font-family: var(--display); font-size: clamp(22px, 2.1vw, 28px); line-height: 1.2; color: var(--ink); }
+.know-card p { font-size: 15px; }
+.know-bridge { max-width: var(--max); margin: 26px auto 0; font-family: var(--display); font-size: clamp(20px, 2vw, 28px); font-weight: 300; color: var(--ink); line-height: 1.35; }
+
 /* ============ INNEN & AUSSEN ============ */
 .duo { background: var(--paper); }
 .duo-stage { position: relative; max-width: var(--max); margin: 0 auto; aspect-ratio: 16 / 9; border-radius: var(--r); overflow: hidden; background: var(--bg-2); }
 .duo-stage img { width: 100%; height: 100%; object-fit: cover; object-position: center 20%; }
-.duo-word { position: absolute; top: 50%; transform: translateY(-50%); font-size: clamp(44px, 9vw, 150px); font-weight: 500; letter-spacing: -0.04em; line-height: 1; color: var(--ink); mix-blend-mode: multiply; opacity: .85; }
+.duo-word { position: absolute; top: 50%; transform: translateY(-50%); font-family: var(--display); font-size: clamp(44px, 9vw, 150px); font-weight: 300; letter-spacing: -0.02em; line-height: 1; color: var(--ink); mix-blend-mode: multiply; opacity: .85; }
 .duo-word.left { left: clamp(20px, 5vw, 72px); }
 .duo-word.right { right: clamp(20px, 5vw, 72px); }
 .duo-cols { max-width: var(--max); margin: clamp(28px, 4vh, 48px) auto 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(20px, 3vw, 48px); }
@@ -861,6 +870,11 @@ img {
 .check-grid { max-width: var(--max); margin: 0 auto; display: grid; grid-template-columns: minmax(300px, 440px) 1fr; gap: clamp(32px, 6vw, 96px); align-items: center; }
 .check-phone { position: relative; aspect-ratio: 2 / 3; border-radius: var(--r); overflow: hidden; background: var(--bg-2); }
 .check-phone img { width: 100%; height: 100%; object-fit: cover; }
+/* Skinscan: Ring aus kurzen grünen Strichen um das Gesicht, das Leuchten wandert im Kreis */
+.scan-ring { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; }
+.scan-ring line { stroke: #3DD27A; stroke-linecap: round; vector-effect: non-scaling-stroke; stroke-width: 4px; opacity: .35; animation: scanPulse 3.2s linear infinite; filter: drop-shadow(0 0 2px rgba(61,210,122,0.6)); }
+@keyframes scanPulse { 0% { opacity: .3; } 8% { opacity: 1; } 22% { opacity: .55; } 100% { opacity: .3; } }
+@media (prefers-reduced-motion: reduce) { .scan-ring line { animation: none; opacity: .8; } }
 .check-copy h2 { margin: 14px 0 20px; max-width: 12ch; }
 .check-copy .lead { margin-bottom: 30px; max-width: 480px; }
 .ck-steps { list-style: none; display: grid; gap: 0; margin-bottom: 30px; max-width: 520px; }
@@ -890,9 +904,6 @@ img {
 .bento-list li b { font-weight: 600; color: var(--ink); }
 .bento-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
 .bento-chips span { padding: 7px 12px; border-radius: 100px; background: var(--green-soft); color: var(--green-deep); font-size: 13.5px; font-weight: 500; }
-.bento-card.photo { padding: 0; min-height: 320px; display: grid; grid-template-columns: 1fr 1.2fr; }
-.bento-card.photo img { width: 100%; height: 100%; object-fit: cover; }
-.bento-photo-copy { padding: 30px 28px; display: flex; flex-direction: column; gap: 12px; justify-content: center; }
 .bento-card.sand { background: linear-gradient(135deg, var(--green-soft), color-mix(in oklab, var(--green-soft) 60%, var(--paper))); border-color: transparent; min-height: 0; }
 .bento-guar { display: grid; grid-template-columns: 1fr auto; gap: 32px; align-items: center; }
 .bento-guar h3 { font-size: clamp(24px, 2.4vw, 34px); }
@@ -915,8 +926,19 @@ img {
 .pr-thumb.noimg svg { display: block; }
 .pr-row b { display: block; font-weight: 500; font-size: 17px; color: var(--ink); }
 .pr-row span { display: block; font-size: 14px; color: var(--ink-3); margin-top: 1px; }
+.pr-row .meta { display: flex; flex-wrap: wrap; gap: 4px 10px; margin-top: 5px; font-size: 12.5px; color: var(--ink-2); }
+.pr-row .meta i { font-style: normal; display: inline-flex; align-items: center; gap: 5px; }
+.pr-row .meta i::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: var(--green); }
 .pr-row .chev { width: 22px; height: 22px; color: var(--ink-3); }
-.pr-cta { max-width: var(--max); margin: clamp(28px, 4vh, 48px) auto 0; background: var(--green-deep); color: #fff; border-radius: var(--r); padding: clamp(28px, 4vw, 48px); display: grid; grid-template-columns: 1fr auto; gap: 28px; align-items: center; }
+.pr-cta { max-width: var(--max); margin: clamp(28px, 4vh, 48px) auto 0; background: var(--green-deep); color: #fff; border-radius: var(--r); padding: clamp(28px, 4vw, 44px); display: grid; grid-template-columns: 1fr minmax(260px, 340px); gap: 32px; align-items: center; }
+.pr-cta-side { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.14); border-radius: var(--r-sm); padding: 20px; display: grid; gap: 12px; }
+.pr-cta-side .who { display: flex; align-items: center; gap: 12px; }
+.pr-cta-side .who img { width: 48px; height: 48px; border-radius: 50%; object-fit: cover; }
+.pr-cta-side .who b { display: block; font-size: 15px; }
+.pr-cta-side .who span { font-size: 13px; color: rgba(255,255,255,0.65); }
+.pr-cta-side ul { list-style: none; display: grid; gap: 6px; font-size: 14px; color: rgba(255,255,255,0.85); }
+.pr-cta-side li { display: flex; gap: 8px; align-items: center; }
+.pr-cta-side li::before { content: '✓'; color: var(--accent); font-weight: 700; }
 .pr-cta h3 { color: #fff; font-size: clamp(24px, 2.6vw, 36px); max-width: 18ch; margin-bottom: 8px; }
 .pr-cta p { color: rgba(255,255,255,0.78); font-size: 16px; max-width: 520px; }
 .pr-cta .btn-primary { background: #fff; color: var(--green-deep); }
@@ -942,6 +964,12 @@ img {
 .pm-block ul { list-style: none; display: grid; gap: 6px; }
 .pm-block li { display: flex; gap: 9px; }
 .pm-block li::before { content: '–'; color: var(--green-dark); flex-shrink: 0; }
+.pm-facts { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px; }
+.pm-fact { background: var(--bg); border-radius: var(--r-sm); padding: 12px 14px; }
+.pm-fact small { display: block; font-size: 11.5px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 3px; font-weight: 600; }
+.pm-fact span { font-size: 14.5px; color: var(--ink); }
+.pm-actives { display: flex; flex-wrap: wrap; gap: 6px; }
+.pm-actives span { padding: 6px 11px; border-radius: 100px; background: var(--green-soft); color: var(--green-deep); font-size: 13px; font-weight: 500; }
 .pm-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 24px; }
 .pm-src { margin-top: 16px; }
 .pm-src a { text-decoration: underline; text-underline-offset: 3px; }
@@ -1033,6 +1061,8 @@ img {
   .pr-cta { grid-template-columns: 1fr; }
   .check-grid { grid-template-columns: 1fr; }
   .check-phone { max-width: 420px; }
+  .know-grid { grid-template-columns: 1fr; }
+  .pr-cta { grid-template-columns: 1fr; }
   .why-row { grid-template-columns: 1fr; gap: 10px; }
   .pr-groups { grid-template-columns: 1fr; }
   .about-grid { grid-template-columns: 1fr; }
@@ -1053,8 +1083,6 @@ img {
   .duo-cols { grid-template-columns: 1fr; gap: 18px; }
   .bento { grid-template-columns: 1fr; }
   .bento-card, .bento-card.span2, .bento-card.span3 { grid-column: span 1; min-height: 0; }
-  .bento-card.photo { grid-template-columns: 1fr; }
-  .bento-card.photo img { aspect-ratio: 16 / 10; }
   .bento-guar { grid-template-columns: 1fr; }
   .guar-badge { width: 120px; height: 120px; }
   .guar-badge b { font-size: 44px; }
@@ -1084,9 +1112,9 @@ img {
       <span class="brand-text">{{vorname}} {{nachname}}</span>
     </a>
     <div class="nav-links">
-      <a href="#konzept"><span class="l-de">Innen &amp; außen</span><span class="l-en">Inside &amp; out</span></a>
+      <a href="#prinzip"><span class="l-de">Innen &amp; außen</span><span class="l-en">Inside &amp; out</span></a>
+      <a href="#check"><span class="l-de">Skinscan</span><span class="l-en">Skin scan</span></a>
       <a href="#routine"><span class="l-de">Die Routine</span><span class="l-en">The routine</span></a>
-      <a href="#check"><span class="l-de">Beauty-Check</span><span class="l-en">Beauty check</span></a>
       <a href="#produkte"><span class="l-de">Produkte</span><span class="l-en">Products</span></a>
       <a href="#ueber"><span class="l-de">Über mich</span><span class="l-en">About me</span></a>
     </div>
@@ -1094,7 +1122,7 @@ img {
       <button type="button" class="kc-btn" id="kcBtn" aria-expanded="false" aria-controls="kcDrop"><span class="l-de">Kontakt</span><span class="l-en">Contact</span><svg class="kc-chev" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5l3 3 3-3" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button>
       <div class="kc-drop" id="kcDrop">
         {{#if whatsapp_nummer}}<a class="kc-item kc-ch" href="https://wa.me/{{whatsapp_nummer}}?text=Hi%20{{vorname}}%2C%20ich%20interessiere%20mich%20f%C3%BCr%20den%20Beauty-Check." target="_blank" rel="noopener"><span class="kc-ic kc-wa"><svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91C21.95 6.45 17.5 2 12.04 2zm0 18.15c-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.2 8.2 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.25-8.24 4.54 0 8.24 3.7 8.24 8.24 0 4.55-3.7 8.24-8.24 8.24zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.12-.17.25-.64.81-.78.97-.14.17-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.02-.38.11-.51.11-.11.25-.29.37-.43.13-.15.17-.25.25-.42.08-.17.04-.31-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.41-.42-.56-.43h-.48c-.17 0-.43.06-.66.31-.22.25-.86.85-.86 2.07 0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.67-1.18.21-.58.21-1.07.14-1.18-.06-.1-.22-.16-.47-.28z"/></svg></span><span><b><span class="l-de">Schreib mir auf WhatsApp</span><span class="l-en">Message me on WhatsApp</span></b><small><span class="l-de">Kurze Frage? Gern direkt.</span><span class="l-en">Quick question? Go ahead.</span></small></span></a>{{/if}}
-        <a class="kc-item" href="#kontakt"><span class="kc-ic kc-check"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg></span><span><b><span class="l-de">Beauty-Check vereinbaren</span><span class="l-en">Book a beauty check</span></b><small><span class="l-de">Kostenlos, unverbindlich, persönlich.</span><span class="l-en">Free, no strings, personal.</span></small></span></a>
+        <a class="kc-item" href="#kontakt"><span class="kc-ic kc-check"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg></span><span><b><span class="l-de">Skinscan vereinbaren</span><span class="l-en">Book a skin scan</span></b><small><span class="l-de">Kostenlos, unverbindlich, persönlich.</span><span class="l-en">Free, no strings, personal.</span></small></span></a>
         <div class="kc-soc"><div class="kc-sep"></div><div class="kc-title"><span class="l-de">Folge mir auf</span><span class="l-en">Follow me on</span></div><div class="kc-pills">{{#if instagram_url}}<a class="kc-pill kc-ch" href="{{instagram_url}}" target="_blank" rel="noopener"><span class="kc-sic kc-ig"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><rect x="2.5" y="2.5" width="19" height="19" rx="5.5"/><circle cx="12" cy="12" r="4.3"/><circle cx="17.6" cy="6.4" r="1.2" fill="currentColor" stroke="none"/></svg></span>Instagram</a>{{/if}}{{#if facebook_url}}<a class="kc-pill kc-ch" href="{{facebook_url}}" target="_blank" rel="noopener"><span class="kc-sic kc-fb"><svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M13.9 21.8v-8.2h2.8l.4-3.3h-3.2V8.2c0-.9.3-1.6 1.6-1.6h1.7V3.7c-.3 0-1.3-.1-2.5-.1-2.5 0-4.2 1.5-4.2 4.3v2.4H7.7v3.3h2.8v8.2z"/></svg></span>Facebook</a>{{/if}}</div></div>
       </div>
     </div>
@@ -1108,7 +1136,7 @@ img {
         <span>EN</span>
       </button>
     </div>
-    <a href="#kontakt" class="nav-cta"><span class="l-de">Beauty-Check vereinbaren</span><span class="l-en">Book a beauty check</span></a>
+    <a href="#kontakt" class="nav-cta"><span class="l-de">Skinscan vereinbaren</span><span class="l-en">Book a skin scan</span></a>
     <button type="button" class="nav-burger" id="navBurger" aria-label="Menü öffnen" aria-expanded="false">
       <span></span><span></span><span></span>
     </button>
@@ -1128,29 +1156,29 @@ img {
       </button>
     </div>
     <nav class="nav-mobile-links">
-      <a href="#konzept"><span class="l-de">Innen &amp; außen</span><span class="l-en">Inside &amp; out</span></a>
+      <a href="#prinzip"><span class="l-de">Innen &amp; außen</span><span class="l-en">Inside &amp; out</span></a>
+      <a href="#check"><span class="l-de">Skinscan</span><span class="l-en">Skin scan</span></a>
       <a href="#routine"><span class="l-de">Die Routine</span><span class="l-en">The routine</span></a>
-      <a href="#check"><span class="l-de">Beauty-Check</span><span class="l-en">Beauty check</span></a>
       <a href="#produkte"><span class="l-de">Produkte</span><span class="l-en">Products</span></a>
       <a href="#ueber"><span class="l-de">Über mich</span><span class="l-en">About me</span></a>
       <a href="#faq"><span class="l-de">Fragen</span><span class="l-en">FAQ</span></a>
     </nav>
     <div class="menu-contacts"><p class="mc-title"><span class="l-de">Schreib mir direkt</span><span class="l-en">Message me directly</span></p><div class="mc-grid">{{#if whatsapp_nummer}}<a class="mc-wa kc-ch" href="https://wa.me/{{whatsapp_nummer}}?text=Hi%20{{vorname}}%2C%20ich%20interessiere%20mich%20f%C3%BCr%20den%20Beauty-Check." target="_blank" rel="noopener"><span class="mc-ic"><svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91C21.95 6.45 17.5 2 12.04 2zm0 18.15c-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.2 8.2 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.25-8.24 4.54 0 8.24 3.7 8.24 8.24 0 4.55-3.7 8.24-8.24 8.24zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.12-.17.25-.64.81-.78.97-.14.17-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.02-.38.11-.51.11-.11.25-.29.37-.43.13-.15.17-.25.25-.42.08-.17.04-.31-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.41-.42-.56-.43h-.48c-.17 0-.43.06-.66.31-.22.25-.86.85-.86 2.07 0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.67-1.18.21-.58.21-1.07.14-1.18-.06-.1-.22-.16-.47-.28z"/></svg></span><span class="l-de">Schreib mir auf WhatsApp</span><span class="l-en">Message me on WhatsApp</span></a>{{/if}}{{#if instagram_url}}<a class="mc-pill kc-ch" href="{{instagram_url}}" target="_blank" rel="noopener"><span class="kc-sic kc-ig"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><rect x="2.5" y="2.5" width="19" height="19" rx="5.5"/><circle cx="12" cy="12" r="4.3"/><circle cx="17.6" cy="6.4" r="1.2" fill="currentColor" stroke="none"/></svg></span><span class="mc-lbl">Instagram</span></a>{{/if}}{{#if facebook_url}}<a class="mc-pill kc-ch" href="{{facebook_url}}" target="_blank" rel="noopener"><span class="kc-sic kc-fb"><svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M13.9 21.8v-8.2h2.8l.4-3.3h-3.2V8.2c0-.9.3-1.6 1.6-1.6h1.7V3.7c-.3 0-1.3-.1-2.5-.1-2.5 0-4.2 1.5-4.2 4.3v2.4H7.7v3.3h2.8v8.2z"/></svg></span><span class="mc-lbl">Facebook</span></a>{{/if}}</div></div>
-    <a href="#kontakt" class="btn btn-primary nav-mobile-cta"><span class="l-de">Beauty-Check vereinbaren</span><span class="l-en">Book a beauty check</span> <span class="arr">→</span></a>
+    <a href="#kontakt" class="btn btn-primary nav-mobile-cta"><span class="l-de">Skinscan vereinbaren</span><span class="l-en">Book a skin scan</span> <span class="arr">→</span></a>
   </div>
 </div>
 
 <!-- HERO -->
 <section class="hero">
   <div class="hero-copy">
-    <h1 class="reveal"><span class="l-de">Schönheit von innen <em>&amp;</em> außen</span><span class="l-en">Beauty from the inside <em>&amp;</em> out</span></h1>
-    <p class="sub reveal"><span class="l-de">Eine Routine, die in fünf Minuten erledigt ist. Ein Glas am Tag, das dazugehört. Und jemand, der dir ehrlich sagt, was zu deiner Haut passt.</span><span class="l-en">A routine that takes five minutes. One glass a day that goes with it. And someone who tells you honestly what suits your skin.</span></p>
+    <h1 class="reveal"><span class="l-de">Du wünschst dir <em>bessere Haut?</em></span><span class="l-en">Wishing for <em>better skin?</em></span></h1>
+    <p class="sub reveal"><span class="l-de">Dann fang nicht mit zehn Tiegeln an, sondern mit einem Blick auf deine Haut. Ich zeig dir, was sie braucht: von außen, von innen, in fünf Minuten am Tag.</span><span class="l-en">Then don't start with ten jars, start with a look at your skin. I'll show you what it needs: outside, inside, five minutes a day.</span></p>
     <div class="hero-ctas reveal">
-      <a href="#kontakt" class="btn btn-primary"><span class="l-de">Beauty-Check vereinbaren</span><span class="l-en">Book a beauty check</span> <span class="arr">→</span></a>
-      <a href="#konzept" class="link-more"><span class="l-de">Wie das funktioniert</span><span class="l-en">How it works</span></a>
+      <a href="#kontakt" class="btn btn-primary"><span class="l-de">Skinscan vereinbaren</span><span class="l-en">Book a skin scan</span> <span class="arr">→</span></a>
+      <a href="#konzept" class="link-more"><span class="l-de">Erst mal lesen</span><span class="l-en">Read first</span></a>
     </div>
     <div class="hero-contacts"><p class="mc-title"><span class="l-de">Schreib mir direkt</span><span class="l-en">Message me directly</span></p><div class="mc-grid">{{#if whatsapp_nummer}}<a class="mc-wa kc-ch" href="https://wa.me/{{whatsapp_nummer}}?text=Hi%20{{vorname}}%2C%20ich%20interessiere%20mich%20f%C3%BCr%20den%20Beauty-Check." target="_blank" rel="noopener"><span class="mc-ic"><svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91C21.95 6.45 17.5 2 12.04 2zm0 18.15c-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.2 8.2 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.25-8.24 4.54 0 8.24 3.7 8.24 8.24 0 4.55-3.7 8.24-8.24 8.24zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.12-.17.25-.64.81-.78.97-.14.17-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.02-.38.11-.51.11-.11.25-.29.37-.43.13-.15.17-.25.25-.42.08-.17.04-.31-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.41-.42-.56-.43h-.48c-.17 0-.43.06-.66.31-.22.25-.86.85-.86 2.07 0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.67-1.18.21-.58.21-1.07.14-1.18-.06-.1-.22-.16-.47-.28z"/></svg></span><span class="l-de">Schreib mir auf WhatsApp</span><span class="l-en">Message me on WhatsApp</span></a>{{/if}}{{#if instagram_url}}<a class="mc-pill kc-ch" href="{{instagram_url}}" target="_blank" rel="noopener"><span class="kc-sic kc-ig"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><rect x="2.5" y="2.5" width="19" height="19" rx="5.5"/><circle cx="12" cy="12" r="4.3"/><circle cx="17.6" cy="6.4" r="1.2" fill="currentColor" stroke="none"/></svg></span><span class="mc-lbl">Instagram</span></a>{{/if}}{{#if facebook_url}}<a class="mc-pill kc-ch" href="{{facebook_url}}" target="_blank" rel="noopener"><span class="kc-sic kc-fb"><svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M13.9 21.8v-8.2h2.8l.4-3.3h-3.2V8.2c0-.9.3-1.6 1.6-1.6h1.7V3.7c-.3 0-1.3-.1-2.5-.1-2.5 0-4.2 1.5-4.2 4.3v2.4H7.7v3.3h2.8v8.2z"/></svg></span><span class="mc-lbl">Facebook</span></a>{{/if}}</div></div>
-    <div class="hero-facts reveal"><span class="l-de">Kostenlos</span><span class="l-en">Free</span><span class="l-de">Unverbindlich</span><span class="l-en">No strings</span><span class="l-de">Persönlich</span><span class="l-en">Personal</span></div>
+    <div class="hero-facts reveal"><span class="l-de">Kostenlos</span><span class="l-en">Free</span><span class="l-de">30 Minuten</span><span class="l-en">30 minutes</span><span class="l-de">Keine Kaufpflicht</span><span class="l-en">No obligation to buy</span></div>
   </div>
   <div class="hero-media">
     <img loading="eager" fetchpriority="high" decoding="async" src="assets/hero/{{hero_variante}}.webp" alt="" width="1536" height="1024">
@@ -1168,8 +1196,21 @@ img {
   </div>
 </div>
 
+<!-- KENNST DU DAS -->
+<section class="know" id="konzept">
+  <div class="s-head wrap">
+    <h2><span class="l-de">Kennst du das?</span><span class="l-en">Sound familiar?</span></h2>
+  </div>
+  <div class="know-grid reveal">
+    <div class="know-card"><div class="q"><span class="l-de">„Zehn Tiegel im Bad, und ich weiß nicht, was zuerst kommt.“</span><span class="l-en">"Ten jars in the bathroom and no idea what goes first."</span></div><p><span class="l-de">Viel gekauft, wenig System. Die Hälfte steht nach zwei Wochen nur noch rum.</span><span class="l-en">Lots bought, no system. Half of it just sits there after two weeks.</span></p></div>
+    <div class="know-card"><div class="q"><span class="l-de">„Jede Woche ein neuer Tipp, und keiner passt zu mir.“</span><span class="l-en">"A new tip every week, and none of them fit me."</span></div><p><span class="l-de">Was der einen hilft, muss bei dir nicht passen. Deine Haut ist nicht der Algorithmus.</span><span class="l-en">What works for one person may not fit you. Your skin isn't the algorithm.</span></p></div>
+    <div class="know-card"><div class="q"><span class="l-de">„Ich will etwas, das ich wirklich durchhalte.“</span><span class="l-en">"I want something I'll actually stick with."</span></div><p><span class="l-de">Pflege wirkt nur, wenn du sie machst. Also muss sie kurz sein und zu deinem Alltag passen.</span><span class="l-en">Skin care only works if you do it. So it has to be short and fit your day.</span></p></div>
+  </div>
+  <p class="know-bridge reveal"><span class="l-de">Genau da setze ich an: erst schauen, was deine Haut braucht. Dann eine Routine, die bleibt.</span><span class="l-en">That's exactly where I start: first see what your skin needs. Then a routine that stays.</span></p>
+</section>
+
 <!-- INNEN & AUSSEN -->
-<section class="duo" id="konzept">
+<section class="duo" id="prinzip">
   <div class="duo-stage reveal">
     <img loading="lazy" decoding="async" src="assets/key-wide.webp" alt="" width="1536" height="1024">
     <div class="duo-word left"><span class="l-de">Außen</span><span class="l-en">Outside</span></div>
@@ -1190,6 +1231,30 @@ img {
     </div>
   </div>
   <p class="foot-note duo-note"><span class="l-de">¹ Vitamin C trägt zu einer normalen Kollagenbildung für eine normale Funktion der Haut bei. Biotin und Zink tragen zur Erhaltung normaler Haut und Haare bei, Zink zur Erhaltung normaler Nägel. Nahrungsergänzungsmittel sind kein Ersatz für eine ausgewogene, abwechslungsreiche Ernährung und eine gesunde Lebensweise.</span><span class="l-en">¹ Vitamin C contributes to normal collagen formation for the normal function of the skin. Biotin and zinc contribute to the maintenance of normal skin and hair, zinc to the maintenance of normal nails. Food supplements are not a substitute for a balanced, varied diet and a healthy lifestyle.</span></p>
+</section>
+
+<!-- SKINSCAN / BEAUTY-CHECK -->
+<section class="check" id="check">
+  <div class="check-grid">
+    <div class="check-phone reveal">
+      {{#if scanner_anzeigen=an}}<img loading="lazy" decoding="async" src="assets/scan-face.webp" alt="" width="1024" height="1536"><svg class="scan-ring" id="scanRing" viewBox="0 0 100 150" preserveAspectRatio="none" aria-hidden="true"></svg>{{/if}}
+      {{#unless scanner_anzeigen=an}}<img loading="lazy" decoding="async" src="assets/scan-selfie.webp" alt="" width="1024" height="1024">{{/unless}}
+    </div>
+    <div class="check-copy">
+      <h2>{{#if scanner_anzeigen=an}}<span class="l-de">Dein Skinscan</span><span class="l-en">Your skin scan</span>{{/if}}{{#unless scanner_anzeigen=an}}<span class="l-de">Dein Beauty-Check</span><span class="l-en">Your beauty check</span>{{/unless}}</h2>
+      <p class="lead"><span class="l-de">{{#if scanner_anzeigen=an}}Ein Selfie bei Tageslicht. Die App schaut auf Feuchtigkeit, Poren, Fältchen und Ausstrahlung. Danach schauen wir gemeinsam, was du wirklich brauchst.{{/if}}{{#unless scanner_anzeigen=an}}Eine halbe Stunde für deine Haut. Du erzählst, ich höre zu, und am Ende weißt du, was du brauchst und was nicht.{{/unless}}</span><span class="l-en">{{#if scanner_anzeigen=an}}One daylight selfie. The app looks at hydration, pores, fine lines and radiance. Then we look together at what you really need.{{/if}}{{#unless scanner_anzeigen=an}}Half an hour for your skin. You talk, I listen, and in the end you know what you need and what you don't.{{/unless}}</span></p>
+      <ol class="ck-steps">
+        <li><i>1</i><div><span class="l-de">Kurz kennenlernen</span><span class="l-en">A quick hello</span><span><span class="l-de">Wie fühlt sich deine Haut an, was wünschst du dir?</span><span class="l-en">How does your skin feel, what do you wish for?</span></span></div></li>
+        <li><i>2</i><div>{{#if scanner_anzeigen=an}}<span class="l-de">Selfie und Auswertung</span><span class="l-en">Selfie and analysis</span><span><span class="l-de">Elf Werte in der App. Wir schauen sie gemeinsam an.</span><span class="l-en">Eleven values in the app. We look at them together.</span></span>{{/if}}{{#unless scanner_anzeigen=an}}<span class="l-de">Gemeinsam hinschauen</span><span class="l-en">Take a closer look</span><span><span class="l-de">Vor Ort, per Video oder am Telefon.</span><span class="l-en">In person, by video or on the phone.</span></span>{{/unless}}</div></li>
+        <li><i>3</i><div><span class="l-de">Deine Routine</span><span class="l-en">Your routine</span><span><span class="l-de">Morgens, abends, innen. Ob du startest, entscheidest du.</span><span class="l-en">Morning, evening, inside. Whether you start is up to you.</span></span></div></li>
+      </ol>
+      <div class="ck-ctas">
+        <a href="#kontakt" class="btn btn-primary">{{#if scanner_anzeigen=an}}<span class="l-de">Skinscan vereinbaren</span><span class="l-en">Book a skin scan</span>{{/if}}{{#unless scanner_anzeigen=an}}<span class="l-de">Beauty-Check vereinbaren</span><span class="l-en">Book a beauty check</span>{{/unless}} <span class="arr">→</span></a>
+        {{#if whatsapp_nummer}}<a href="https://wa.me/{{whatsapp_nummer}}?text=Hi%20{{vorname}}%2C%20ich%20interessiere%20mich%20f%C3%BCr%20den%20Skinscan." target="_blank" rel="noopener" class="link-more"><span class="l-de">Lieber per WhatsApp</span><span class="l-en">Rather on WhatsApp</span></a>{{/if}}
+      </div>
+      <p class="ck-note"><span class="l-de">Kostenlos und unverbindlich.{{#if region}} Vor Ort {{region}}, sonst per Video oder Telefon.{{/if}}{{#if scanner_anzeigen=an}} Der Skinscan ist eine kosmetische Einschätzung per App, keine medizinische Untersuchung.{{/if}}</span><span class="l-en">Free and without obligation.{{#if region}} In person {{region}}, otherwise by video or phone.{{/if}}{{#if scanner_anzeigen=an}} The skin scan is a cosmetic assessment via the app, not a medical examination.{{/if}}</span></p>
+    </div>
+  </div>
 </section>
 
 <!-- ROUTINE -->
@@ -1224,35 +1289,87 @@ img {
   <p class="rt-foot"><span class="l-de">Das ist die Basis. Ob du alles davon brauchst, klären wir im Beauty-Check.</span><span class="l-en">That's the basics. Whether you need all of it, we'll sort out in the beauty check.</span></p>
 </section>
 
-<!-- SKINSCAN / BEAUTY-CHECK -->
-<section class="check" id="check">
-  <div class="check-grid">
-    <div class="check-phone reveal">
-      {{#if scanner_anzeigen=an}}<img loading="lazy" decoding="async" src="assets/scan-face.webp" alt="" width="1024" height="1536">{{/if}}
-      {{#unless scanner_anzeigen=an}}<img loading="lazy" decoding="async" src="assets/scan-selfie.webp" alt="" width="1024" height="1024">{{/unless}}
+<!-- PRODUKTE -->
+<section class="products" id="produkte">
+  <div class="s-head wrap">
+    <h2><span class="l-de">Was zur Auswahl steht</span><span class="l-en">What there is to choose from</span></h2>
+    <p><span class="l-de">Nicht alles davon ist für dich. Tipp auf ein Produkt: Was drin ist, wann du es nimmst und für welche Haut es passt.</span><span class="l-en">Not all of this is for you. Tap a product: what's in it, when to use it and which skin it suits.</span></p>
+  </div>
+
+  <div class="pr-groups">
+    <div class="pr-group">
+      <h3><span class="l-de">Reinigen</span><span class="l-en">Cleanse</span><em><span class="l-de">morgens &amp; abends</span><span class="l-en">morning &amp; night</span></em></h3>
+      <button type="button" class="pr-row" data-open="cleansing"><span class="pr-thumb"><img loading="lazy" decoding="async" src="assets/produkte/cleansing-lotion.webp" alt="" onerror="this.parentNode.classList.add('noimg')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 3c-3 4-6 6.5-6 10a6 6 0 0 0 12 0c0-3.5-3-6-6-10z"/></svg></span><span><b>Cleansing Lotion</b><span><span class="l-de">Milde Reinigung, ohne Spannungsgefühl</span><span class="l-en">Mild cleanser, no tight feeling</span></span><span class="meta"><i><span class="l-de">Morgens &amp; abends</span><span class="l-en">Morning &amp; night</span></i><i><span class="l-de">Alle Hauttypen</span><span class="l-en">All skin types</span></i></span></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
+      <button type="button" class="pr-row" data-open="tonic"><span class="pr-thumb"><img loading="lazy" decoding="async" src="assets/produkte/tonic.webp" alt="" onerror="this.parentNode.classList.add('noimg')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 3c-3 4-6 6.5-6 10a6 6 0 0 0 12 0c0-3.5-3-6-6-10z"/></svg></span><span><b>Tonic</b><span><span class="l-de">Klärt und bereitet die Haut vor</span><span class="l-en">Clarifies and preps the skin</span></span><span class="meta"><i><span class="l-de">Morgens &amp; abends</span><span class="l-en">Morning &amp; night</span></i><i><span class="l-de">Alle Hauttypen</span><span class="l-en">All skin types</span></i></span></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
     </div>
-    <div class="check-copy">
-      <h2>{{#if scanner_anzeigen=an}}<span class="l-de">Dein Skinscan</span><span class="l-en">Your skin scan</span>{{/if}}{{#unless scanner_anzeigen=an}}<span class="l-de">Dein Beauty-Check</span><span class="l-en">Your beauty check</span>{{/unless}}</h2>
-      <p class="lead"><span class="l-de">{{#if scanner_anzeigen=an}}Ein Selfie bei Tageslicht. Die App schaut auf Feuchtigkeit, Poren, Fältchen und Ausstrahlung. Danach schauen wir gemeinsam, was du wirklich brauchst.{{/if}}{{#unless scanner_anzeigen=an}}Eine halbe Stunde für deine Haut. Du erzählst, ich höre zu, und am Ende weißt du, was du brauchst und was nicht.{{/unless}}</span><span class="l-en">{{#if scanner_anzeigen=an}}One daylight selfie. The app looks at hydration, pores, fine lines and radiance. Then we look together at what you really need.{{/if}}{{#unless scanner_anzeigen=an}}Half an hour for your skin. You talk, I listen, and in the end you know what you need and what you don't.{{/unless}}</span></p>
-      <ol class="ck-steps">
-        <li><i>1</i><div><span class="l-de">Kurz kennenlernen</span><span class="l-en">A quick hello</span><span><span class="l-de">Wie fühlt sich deine Haut an, was wünschst du dir?</span><span class="l-en">How does your skin feel, what do you wish for?</span></span></div></li>
-        <li><i>2</i><div>{{#if scanner_anzeigen=an}}<span class="l-de">Selfie und Auswertung</span><span class="l-en">Selfie and analysis</span><span><span class="l-de">Elf Werte in der App. Wir schauen sie gemeinsam an.</span><span class="l-en">Eleven values in the app. We look at them together.</span></span>{{/if}}{{#unless scanner_anzeigen=an}}<span class="l-de">Gemeinsam hinschauen</span><span class="l-en">Take a closer look</span><span><span class="l-de">Vor Ort, per Video oder am Telefon.</span><span class="l-en">In person, by video or on the phone.</span></span>{{/unless}}</div></li>
-        <li><i>3</i><div><span class="l-de">Deine Routine</span><span class="l-en">Your routine</span><span><span class="l-de">Morgens, abends, innen. Ob du startest, entscheidest du.</span><span class="l-en">Morning, evening, inside. Whether you start is up to you.</span></span></div></li>
-      </ol>
-      <div class="ck-ctas">
-        <a href="#kontakt" class="btn btn-primary">{{#if scanner_anzeigen=an}}<span class="l-de">Skinscan vereinbaren</span><span class="l-en">Book a skin scan</span>{{/if}}{{#unless scanner_anzeigen=an}}<span class="l-de">Beauty-Check vereinbaren</span><span class="l-en">Book a beauty check</span>{{/unless}} <span class="arr">→</span></a>
-        {{#if whatsapp_nummer}}<a href="https://wa.me/{{whatsapp_nummer}}?text=Hi%20{{vorname}}%2C%20ich%20interessiere%20mich%20f%C3%BCr%20den%20Skinscan." target="_blank" rel="noopener" class="link-more"><span class="l-de">Lieber per WhatsApp</span><span class="l-en">Rather on WhatsApp</span></a>{{/if}}
-      </div>
-      <p class="ck-note"><span class="l-de">Kostenlos und unverbindlich.{{#if region}} Vor Ort {{region}}, sonst per Video oder Telefon.{{/if}}{{#if scanner_anzeigen=an}} Der Skinscan ist eine kosmetische Einschätzung per App, keine medizinische Untersuchung.{{/if}}</span><span class="l-en">Free and without obligation.{{#if region}} In person {{region}}, otherwise by video or phone.{{/if}}{{#if scanner_anzeigen=an}} The skin scan is a cosmetic assessment via the app, not a medical examination.{{/if}}</span></p>
+
+    <div class="pr-group">
+      <h3><span class="l-de">Innen</span><span class="l-en">Inside</span><em><span class="l-de">einmal am Tag</span><span class="l-en">once a day</span></em></h3>
+      <button type="button" class="pr-row" data-open="beauty"><span class="pr-thumb"><img loading="lazy" decoding="async" src="assets/produkte/beauty-drink.webp" alt="" onerror="this.parentNode.classList.add('noimg')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 3h10l-1 18H8z"/><path d="M7.5 10h9"/></svg></span><span><b>Beauty-Drink</b><span><span class="l-de">Beerengeschmack, Vitamin C, Biotin, Zink¹</span><span class="l-en">Berry flavour, vitamin C, biotin, zinc¹</span></span><span class="meta"><i><span class="l-de">1 × täglich</span><span class="l-en">Once a day</span></i><i><span class="l-de">Für alle</span><span class="l-en">For everyone</span></i></span></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
+    </div>
+
+    <div class="pr-group">
+      <h3><span class="l-de">Pflegen</span><span class="l-en">Nourish</span><em><span class="l-de">Tag &amp; Nacht</span><span class="l-en">day &amp; night</span></em></h3>
+      <button type="button" class="pr-row" data-open="serum"><span class="pr-thumb"><img loading="lazy" decoding="async" src="assets/produkte/activize-serum.webp" alt="" onerror="this.parentNode.classList.add('noimg')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 3c-3 4-6 6.5-6 10a6 6 0 0 0 12 0c0-3.5-3-6-6-10z"/></svg></span><span><b>Activize Serum</b><span><span class="l-de">Frische und Glow, vor der Creme</span><span class="l-en">Freshness and glow, before the cream</span></span><span class="meta"><i><span class="l-de">Morgens &amp; abends</span><span class="l-en">Morning &amp; night</span></i><i><span class="l-de">Alle Hauttypen</span><span class="l-en">All skin types</span></i></span></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
+      <button type="button" class="pr-row" data-open="4ever"><span class="pr-thumb"><img loading="lazy" decoding="async" src="assets/produkte/4ever.webp" alt="" onerror="this.parentNode.classList.add('noimg')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 3c-3 4-6 6.5-6 10a6 6 0 0 0 12 0c0-3.5-3-6-6-10z"/></svg></span><span><b>4ever</b><span><span class="l-de">Tagespflege, normale bis Mischhaut</span><span class="l-en">Day cream, normal to combination skin</span></span><span class="meta"><i><span class="l-de">Morgens</span><span class="l-en">Morning</span></i><i><span class="l-de">Normal bis Mischhaut</span><span class="l-en">Normal to combination</span></i></span></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
+      <button type="button" class="pr-row" data-open="4ever-enriched"><span class="pr-thumb"><img loading="lazy" decoding="async" src="assets/produkte/4ever-enriched.webp" alt="" onerror="this.parentNode.classList.add('noimg')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 3c-3 4-6 6.5-6 10a6 6 0 0 0 12 0c0-3.5-3-6-6-10z"/></svg></span><span><b>4ever enriched</b><span><span class="l-de">Tagespflege, trockene bis reife Haut</span><span class="l-en">Day cream, dry to mature skin</span></span><span class="meta"><i><span class="l-de">Morgens</span><span class="l-en">Morning</span></i><i><span class="l-de">Trocken bis reif</span><span class="l-en">Dry to mature</span></i></span></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
+      <button type="button" class="pr-row" data-open="overnight"><span class="pr-thumb"><img loading="lazy" decoding="async" src="assets/produkte/4ever-overnight.webp" alt="" onerror="this.parentNode.classList.add('noimg')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></span><span><b>4ever overnight enriched</b><span><span class="l-de">Nachtpflege für alle Hauttypen</span><span class="l-en">Night cream for all skin types</span></span><span class="meta"><i><span class="l-de">Abends</span><span class="l-en">Evening</span></i><i><span class="l-de">Alle Hauttypen</span><span class="l-en">All skin types</span></i></span></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
+    </div>
+
+    <div class="pr-group">
+      <h3><span class="l-de">Wenn du magst</span><span class="l-en">If you like</span><em><span class="l-de">Ergänzungen</span><span class="l-en">extras</span></em></h3>
+      <button type="button" class="pr-row" data-open="augen"><span class="pr-thumb"><img loading="lazy" decoding="async" src="assets/produkte/augencreme.webp" alt="" onerror="this.parentNode.classList.add('noimg')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6z"/><circle cx="12" cy="12" r="3"/></svg></span><span><b><span class="l-de">Augencreme</span><span class="l-en">Eye cream</span></b><span><span class="l-de">Für die Augenpartie</span><span class="l-en">For the eye area</span></span><span class="meta"><i><span class="l-de">Morgens &amp; abends</span><span class="l-en">Morning &amp; night</span></i><i><span class="l-de">Alle Hauttypen</span><span class="l-en">All skin types</span></i></span></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
+      <button type="button" class="pr-row" data-open="darkspot"><span class="pr-thumb"><img loading="lazy" decoding="async" src="assets/produkte/dark-spot-corrector.webp" alt="" onerror="this.parentNode.classList.add('noimg')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 3c-3 4-6 6.5-6 10a6 6 0 0 0 12 0c0-3.5-3-6-6-10z"/></svg></span><span><b>Dark Spot Corrector</b><span><span class="l-de">Für einen ebenmäßigeren Teint</span><span class="l-en">For a more even complexion</span></span><span class="meta"><i><span class="l-de">Morgens &amp; abends</span><span class="l-en">Morning &amp; night</span></i><i><span class="l-de">Alle Hauttypen</span><span class="l-en">All skin types</span></i></span></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
+      <button type="button" class="pr-row" data-open="ultimate"><span class="pr-thumb"><img loading="lazy" decoding="async" src="assets/produkte/ultimate-young.webp" alt="" onerror="this.parentNode.classList.add('noimg')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2.5l2.3 4.7 5.2.8-3.7 3.6.9 5.2L12 14.3l-4.7 2.5.9-5.2L4.5 8l5.2-.8z"/></svg></span><span><b>Ultimate Young</b><span><span class="l-de">Soforteffekt für besondere Anlässe</span><span class="l-en">Instant effect for special occasions</span></span><span class="meta"><i><span class="l-de">Bei Bedarf</span><span class="l-en">As needed</span></i><i><span class="l-de">Alle Hauttypen</span><span class="l-en">All skin types</span></i></span></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
+      {{#if maenner_anzeigen=an}}
+      <button type="button" class="pr-row" data-open="men"><span class="pr-thumb"><img loading="lazy" decoding="async" src="assets/produkte/men-face.webp" alt="" onerror="this.parentNode.classList.add('noimg')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg></span><span><b>Men Face Rich &amp; Hydrating</b><span><span class="l-de">Alles in einem Schritt, für Männer</span><span class="l-en">All in one step, for men</span></span><span class="meta"><i><span class="l-de">Morgens &amp; abends</span><span class="l-en">Morning &amp; night</span></i><i><span class="l-de">Männerhaut</span><span class="l-en">Men's skin</span></i></span></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
+      {{/if}}
+    </div>
+
+    <div class="pr-group">
+      <h3><span class="l-de">Zum Starten</span><span class="l-en">To get started</span><em><span class="l-de">Sets</span><span class="l-en">sets</span></em></h3>
+      <button type="button" class="pr-row" data-open="set-young"><span class="pr-thumb"><img loading="lazy" decoding="async" src="assets/produkte/set-young-care.webp" alt="" onerror="this.parentNode.classList.add('noimg')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a4 4 0 0 1 8 0v2"/></svg></span><span><b><span class="l-de">Einsteiger-Set Young Care</span><span class="l-en">Young Care starter set</span></b><span><span class="l-de">Reinigung, Tonic und Creme für den Anfang</span><span class="l-en">Cleanser, tonic and cream to start</span></span><span class="meta"><i><span class="l-de">Morgens &amp; abends</span><span class="l-en">Morning &amp; night</span></i><i><span class="l-de">Jüngere Haut, Einstieg</span><span class="l-en">Younger skin, starter</span></i></span></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
+      <button type="button" class="pr-row" data-open="set-4ever"><span class="pr-thumb"><img loading="lazy" decoding="async" src="assets/produkte/set-4ever.webp" alt="" onerror="this.parentNode.classList.add('noimg')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a4 4 0 0 1 8 0v2"/></svg></span><span><b>Starter Set 4ever</b><span><span class="l-de">Tag und Nacht, normale bis Mischhaut</span><span class="l-en">Day and night, normal to combination skin</span></span><span class="meta"><i><span class="l-de">Tag &amp; Nacht</span><span class="l-en">Day &amp; night</span></i><i><span class="l-de">Normal bis Mischhaut</span><span class="l-en">Normal to combination</span></i></span></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
+      <button type="button" class="pr-row" data-open="set-enriched"><span class="pr-thumb"><img loading="lazy" decoding="async" src="assets/produkte/set-4ever-enriched.webp" alt="" onerror="this.parentNode.classList.add('noimg')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a4 4 0 0 1 8 0v2"/></svg></span><span><b>Starter Set 4ever enriched</b><span><span class="l-de">Tag und Nacht, trockene bis reife Haut</span><span class="l-en">Day and night, dry to mature skin</span></span><span class="meta"><i><span class="l-de">Tag &amp; Nacht</span><span class="l-en">Day &amp; night</span></i><i><span class="l-de">Trocken bis reif</span><span class="l-en">Dry to mature</span></i></span></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
     </div>
   </div>
+
+  <div class="pr-cta reveal">
+    <div>
+      <h3>{{#if scanner_anzeigen=an}}<span class="l-de">Du weißt nicht, was du nehmen sollst?</span><span class="l-en">Not sure what to pick?</span>{{/if}}{{#unless scanner_anzeigen=an}}<span class="l-de">Du weißt nicht, was zu dir passt?</span><span class="l-en">Not sure what suits you?</span>{{/unless}}</h3>
+      <p>{{#if scanner_anzeigen=an}}<span class="l-de">Melde dich, wir machen zusammen den Skinscan. Danach weißt du, was deine Haut braucht und was nicht.</span><span class="l-en">Get in touch and we'll do the skin scan together. Afterwards you'll know what your skin needs and what it doesn't.</span>{{/if}}{{#unless scanner_anzeigen=an}}<span class="l-de">Melde dich, wir schauen gemeinsam auf deine Haut. Danach weißt du, was du brauchst und was nicht.</span><span class="l-en">Get in touch and we'll look at your skin together. Afterwards you'll know what you need and what you don't.</span>{{/unless}}</p>
+    </div>
+    <div class="pr-cta-side">
+      <div class="who"><img loading="lazy" decoding="async" src="{{profilbild}}" alt="{{vorname}} {{nachname}}"><div><b>{{vorname}} {{nachname}}</b><span class="l-de">{{#if geschlecht=weiblich}}Deine Beraterin{{/if}}{{#if geschlecht=maennlich}}Dein Berater{{/if}}</span><span class="l-en">Your advisor</span></div></div>
+      <ul>
+        <li><span class="l-de">Kostenlos und unverbindlich</span><span class="l-en">Free and without obligation</span></li>
+        <li><span class="l-de">Etwa 30 Minuten</span><span class="l-en">About 30 minutes</span></li>
+        <li><span class="l-de">Vor Ort, per Video oder Telefon</span><span class="l-en">In person, by video or phone</span></li>
+      </ul>
+      <a href="#kontakt" class="btn btn-primary">{{#if scanner_anzeigen=an}}<span class="l-de">Skinscan vereinbaren</span><span class="l-en">Book a skin scan</span>{{/if}}{{#unless scanner_anzeigen=an}}<span class="l-de">Beauty-Check vereinbaren</span><span class="l-en">Book a beauty check</span>{{/unless}} <span class="arr">→</span></a>
+    </div>
+  </div>
+
+  <div class="pr-foot">
+    <p class="foot-note"><span class="l-de">Verkauf und Versand ausschließlich über den offiziellen Shop der PM-International AG, dort stehen Preise und alle Inhaltsstoffe. ¹ Vitamin C trägt zu einer normalen Kollagenbildung für eine normale Funktion der Haut bei; Biotin und Zink tragen zur Erhaltung normaler Haut und Haare bei; Zink trägt zur Erhaltung normaler Nägel bei.</span><span class="l-en">Sales and shipping exclusively via the official PM-International AG shop, where prices and full ingredients are listed. ¹ Vitamin C contributes to normal collagen formation for the normal function of the skin; biotin and zinc contribute to the maintenance of normal skin and hair; zinc contributes to the maintenance of normal nails.</span></p>
+    <a class="link-more" data-shop="" href="#" target="_blank" rel="noopener"><span class="l-de">Alle Produkte im Hersteller-Shop</span><span class="l-en">All products in the manufacturer's shop</span> →</a>
+  </div>
 </section>
+
+<!-- Produkt-Fenster -->
+<div class="pm-modal" id="pmModal" aria-hidden="true">
+  <div class="pm-modal-bg" data-close></div>
+  <div class="pm-sheet" role="dialog" aria-modal="true" aria-labelledby="pmTitle">
+    <button type="button" class="pm-close" data-close aria-label="Schließen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+    <div id="pmBody"></div>
+  </div>
+</div>
 
 <!-- VORTEILE · Bento wie Dailyoptimal -->
 <section class="why" id="vorteile">
   <div class="s-head wrap">
-    <h2><span class="l-de">Warum diese Linie</span><span class="l-en">Why this line</span></h2>
-    <p><span class="l-de">Sechs Gründe, die den Unterschied machen.</span><span class="l-en">Six reasons that make the difference.</span></p>
+    <h2><span class="l-de">Warum ich genau <strong>diese Linie</strong> nehme</span><span class="l-en">Why I use <strong>this line</strong></span></h2>
+    <p><span class="l-de">Sechs Gründe, die den Unterschied gemacht haben.</span><span class="l-en">Six reasons that made the difference.</span></p>
   </div>
 
   <div class="bento wrap">
@@ -1291,13 +1408,10 @@ img {
       </ul>
     </article>
 
-    <article class="bento-card photo span2 reveal">
-      <img loading="lazy" decoding="async" src="assets/aussen.webp" alt="" width="1024" height="1024">
-      <div class="bento-photo-copy">
-        <span class="eyebrow"><span class="l-de">Der Hersteller</span><span class="l-en">The manufacturer</span></span>
-        <h3><span class="l-de">Seit 1993. Entwickelt und hergestellt für PM-International.</span><span class="l-en">Since 1993. Developed and made for PM-International.</span></h3>
-        <p><span class="l-de">Alle Produkte werden exklusiv für die PM-International Gruppe entwickelt und hergestellt. Du bestellst direkt dort, zu offiziellen Preisen.</span><span class="l-en">All products are developed and manufactured exclusively for the PM-International group. You order directly from them, at official prices.</span></p>
-      </div>
+    <article class="bento-card reveal">
+      <span class="eyebrow"><span class="l-de">Der Hersteller</span><span class="l-en">The manufacturer</span></span>
+      <h3><span class="l-de">Seit 1993. Direkt vom Hersteller.</span><span class="l-en">Since 1993. Straight from the maker.</span></h3>
+      <p><span class="l-de">Alle Produkte werden exklusiv für die PM-International Gruppe entwickelt und hergestellt. Du bestellst direkt dort, zu offiziellen Preisen, Lieferung in 2 bis 4 Werktagen.</span><span class="l-en">All products are developed and made exclusively for the PM-International group. You order directly from them, at official prices, delivery in 2 to 4 working days.</span></p>
     </article>
 
     <article class="bento-card sand span3 reveal">
@@ -1313,74 +1427,6 @@ img {
   </div>
   <p class="foot-note wrap" style="margin-top:18px"><span class="l-de">¹ Zugelassene Angaben nach VO (EU) 432/2012 für den Beauty-Drink (Nahrungsergänzungsmittel). NTC® ist eine eingetragene Marke der PM-International AG.</span><span class="l-en">¹ Authorised claims under Regulation (EU) 432/2012 for the beauty drink (food supplement). NTC® is a registered trademark of PM-International AG.</span></p>
 </section>
-
-<!-- PRODUKTE -->
-<section class="products" id="produkte">
-  <div class="s-head wrap">
-    <h2><span class="l-de">Was zur Auswahl steht</span><span class="l-en">What there is to choose from</span></h2>
-    <p><span class="l-de">Nicht alles davon ist für dich. Was zu deiner Haut passt, klären wir gemeinsam. Tipp auf ein Produkt für Details.</span><span class="l-en">Not all of this is for you. What suits your skin, we'll sort out together. Tap a product for details.</span></p>
-  </div>
-
-  <div class="pr-groups">
-    <div class="pr-group">
-      <h3><span class="l-de">Reinigen</span><span class="l-en">Cleanse</span><em><span class="l-de">morgens &amp; abends</span><span class="l-en">morning &amp; night</span></em></h3>
-      <button type="button" class="pr-row" data-open="cleansing"><span class="pr-thumb"><img loading="lazy" decoding="async" src="assets/produkte/cleansing-lotion.webp" alt="" onerror="this.parentNode.classList.add('noimg')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 3c-3 4-6 6.5-6 10a6 6 0 0 0 12 0c0-3.5-3-6-6-10z"/></svg></span><span><b>Cleansing Lotion</b><span><span class="l-de">Milde Reinigung, ohne Spannungsgefühl</span><span class="l-en">Mild cleanser, no tight feeling</span></span></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
-      <button type="button" class="pr-row" data-open="tonic"><span class="pr-thumb"><img loading="lazy" decoding="async" src="assets/produkte/tonic.webp" alt="" onerror="this.parentNode.classList.add('noimg')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 3c-3 4-6 6.5-6 10a6 6 0 0 0 12 0c0-3.5-3-6-6-10z"/></svg></span><span><b>Tonic</b><span><span class="l-de">Klärt und bereitet die Haut vor</span><span class="l-en">Clarifies and preps the skin</span></span></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
-    </div>
-
-    <div class="pr-group">
-      <h3><span class="l-de">Innen</span><span class="l-en">Inside</span><em><span class="l-de">einmal am Tag</span><span class="l-en">once a day</span></em></h3>
-      <button type="button" class="pr-row" data-open="beauty"><span class="pr-thumb"><img loading="lazy" decoding="async" src="assets/produkte/beauty-drink.webp" alt="" onerror="this.parentNode.classList.add('noimg')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 3h10l-1 18H8z"/><path d="M7.5 10h9"/></svg></span><span><b>Beauty-Drink</b><span><span class="l-de">Beerengeschmack, Vitamin C, Biotin, Zink¹</span><span class="l-en">Berry flavour, vitamin C, biotin, zinc¹</span></span></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
-    </div>
-
-    <div class="pr-group">
-      <h3><span class="l-de">Pflegen</span><span class="l-en">Nourish</span><em><span class="l-de">Tag &amp; Nacht</span><span class="l-en">day &amp; night</span></em></h3>
-      <button type="button" class="pr-row" data-open="serum"><span class="pr-thumb"><img loading="lazy" decoding="async" src="assets/produkte/activize-serum.webp" alt="" onerror="this.parentNode.classList.add('noimg')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 3c-3 4-6 6.5-6 10a6 6 0 0 0 12 0c0-3.5-3-6-6-10z"/></svg></span><span><b>Activize Serum</b><span><span class="l-de">Frische und Glow, vor der Creme</span><span class="l-en">Freshness and glow, before the cream</span></span></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
-      <button type="button" class="pr-row" data-open="4ever"><span class="pr-thumb"><img loading="lazy" decoding="async" src="assets/produkte/4ever.webp" alt="" onerror="this.parentNode.classList.add('noimg')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 3c-3 4-6 6.5-6 10a6 6 0 0 0 12 0c0-3.5-3-6-6-10z"/></svg></span><span><b>4ever</b><span><span class="l-de">Tagespflege, normale bis Mischhaut</span><span class="l-en">Day cream, normal to combination skin</span></span></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
-      <button type="button" class="pr-row" data-open="4ever-enriched"><span class="pr-thumb"><img loading="lazy" decoding="async" src="assets/produkte/4ever-enriched.webp" alt="" onerror="this.parentNode.classList.add('noimg')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 3c-3 4-6 6.5-6 10a6 6 0 0 0 12 0c0-3.5-3-6-6-10z"/></svg></span><span><b>4ever enriched</b><span><span class="l-de">Tagespflege, trockene bis reife Haut</span><span class="l-en">Day cream, dry to mature skin</span></span></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
-      <button type="button" class="pr-row" data-open="overnight"><span class="pr-thumb"><img loading="lazy" decoding="async" src="assets/produkte/4ever-overnight.webp" alt="" onerror="this.parentNode.classList.add('noimg')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></span><span><b>4ever overnight enriched</b><span><span class="l-de">Nachtpflege für alle Hauttypen</span><span class="l-en">Night cream for all skin types</span></span></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
-    </div>
-
-    <div class="pr-group">
-      <h3><span class="l-de">Wenn du magst</span><span class="l-en">If you like</span><em><span class="l-de">Ergänzungen</span><span class="l-en">extras</span></em></h3>
-      <button type="button" class="pr-row" data-open="augen"><span class="pr-thumb"><img loading="lazy" decoding="async" src="assets/produkte/augencreme.webp" alt="" onerror="this.parentNode.classList.add('noimg')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6z"/><circle cx="12" cy="12" r="3"/></svg></span><span><b><span class="l-de">Augencreme</span><span class="l-en">Eye cream</span></b><span><span class="l-de">Für die Augenpartie</span><span class="l-en">For the eye area</span></span></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
-      <button type="button" class="pr-row" data-open="darkspot"><span class="pr-thumb"><img loading="lazy" decoding="async" src="assets/produkte/dark-spot-corrector.webp" alt="" onerror="this.parentNode.classList.add('noimg')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 3c-3 4-6 6.5-6 10a6 6 0 0 0 12 0c0-3.5-3-6-6-10z"/></svg></span><span><b>Dark Spot Corrector</b><span><span class="l-de">Für einen ebenmäßigeren Teint</span><span class="l-en">For a more even complexion</span></span></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
-      <button type="button" class="pr-row" data-open="ultimate"><span class="pr-thumb"><img loading="lazy" decoding="async" src="assets/produkte/ultimate-young.webp" alt="" onerror="this.parentNode.classList.add('noimg')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2.5l2.3 4.7 5.2.8-3.7 3.6.9 5.2L12 14.3l-4.7 2.5.9-5.2L4.5 8l5.2-.8z"/></svg></span><span><b>Ultimate Young</b><span><span class="l-de">Soforteffekt für besondere Anlässe</span><span class="l-en">Instant effect for special occasions</span></span></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
-      {{#if maenner_anzeigen=an}}
-      <button type="button" class="pr-row" data-open="men"><span class="pr-thumb"><img loading="lazy" decoding="async" src="assets/produkte/men-face.webp" alt="" onerror="this.parentNode.classList.add('noimg')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg></span><span><b>Men Face Rich &amp; Hydrating</b><span><span class="l-de">Alles in einem Schritt, für Männer</span><span class="l-en">All in one step, for men</span></span></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
-      {{/if}}
-    </div>
-
-    <div class="pr-group">
-      <h3><span class="l-de">Zum Starten</span><span class="l-en">To get started</span><em><span class="l-de">Sets</span><span class="l-en">sets</span></em></h3>
-      <button type="button" class="pr-row" data-open="set-young"><span class="pr-thumb"><img loading="lazy" decoding="async" src="assets/produkte/set-young-care.webp" alt="" onerror="this.parentNode.classList.add('noimg')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a4 4 0 0 1 8 0v2"/></svg></span><span><b><span class="l-de">Einsteiger-Set Young Care</span><span class="l-en">Young Care starter set</span></b><span><span class="l-de">Reinigung, Tonic und Creme für den Anfang</span><span class="l-en">Cleanser, tonic and cream to start</span></span></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
-      <button type="button" class="pr-row" data-open="set-4ever"><span class="pr-thumb"><img loading="lazy" decoding="async" src="assets/produkte/set-4ever.webp" alt="" onerror="this.parentNode.classList.add('noimg')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a4 4 0 0 1 8 0v2"/></svg></span><span><b>Starter Set 4ever</b><span><span class="l-de">Tag und Nacht, normale bis Mischhaut</span><span class="l-en">Day and night, normal to combination skin</span></span></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
-      <button type="button" class="pr-row" data-open="set-enriched"><span class="pr-thumb"><img loading="lazy" decoding="async" src="assets/produkte/set-4ever-enriched.webp" alt="" onerror="this.parentNode.classList.add('noimg')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a4 4 0 0 1 8 0v2"/></svg></span><span><b>Starter Set 4ever enriched</b><span><span class="l-de">Tag und Nacht, trockene bis reife Haut</span><span class="l-en">Day and night, dry to mature skin</span></span></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
-    </div>
-  </div>
-
-  <div class="pr-cta reveal">
-    <div>
-      <h3>{{#if scanner_anzeigen=an}}<span class="l-de">Du weißt nicht, was du nehmen sollst?</span><span class="l-en">Not sure what to pick?</span>{{/if}}{{#unless scanner_anzeigen=an}}<span class="l-de">Du weißt nicht, was zu dir passt?</span><span class="l-en">Not sure what suits you?</span>{{/unless}}</h3>
-      <p>{{#if scanner_anzeigen=an}}<span class="l-de">Melde dich, wir machen zusammen den Skinscan. Danach weißt du, was deine Haut braucht und was nicht.</span><span class="l-en">Get in touch and we'll do the skin scan together. Afterwards you'll know what your skin needs and what it doesn't.</span>{{/if}}{{#unless scanner_anzeigen=an}}<span class="l-de">Melde dich, wir schauen gemeinsam auf deine Haut. Danach weißt du, was du brauchst und was nicht.</span><span class="l-en">Get in touch and we'll look at your skin together. Afterwards you'll know what you need and what you don't.</span>{{/unless}}</p>
-    </div>
-    <a href="#kontakt" class="btn btn-primary">{{#if scanner_anzeigen=an}}<span class="l-de">Skinscan vereinbaren</span><span class="l-en">Book a skin scan</span>{{/if}}{{#unless scanner_anzeigen=an}}<span class="l-de">Beauty-Check vereinbaren</span><span class="l-en">Book a beauty check</span>{{/unless}} <span class="arr">→</span></a>
-  </div>
-
-  <div class="pr-foot">
-    <p class="foot-note"><span class="l-de">Verkauf und Versand ausschließlich über den offiziellen Shop der PM-International AG, dort stehen Preise und alle Inhaltsstoffe. ¹ Vitamin C trägt zu einer normalen Kollagenbildung für eine normale Funktion der Haut bei; Biotin und Zink tragen zur Erhaltung normaler Haut und Haare bei; Zink trägt zur Erhaltung normaler Nägel bei.</span><span class="l-en">Sales and shipping exclusively via the official PM-International AG shop, where prices and full ingredients are listed. ¹ Vitamin C contributes to normal collagen formation for the normal function of the skin; biotin and zinc contribute to the maintenance of normal skin and hair; zinc contributes to the maintenance of normal nails.</span></p>
-    <a class="link-more" data-shop="" href="#" target="_blank" rel="noopener"><span class="l-de">Alle Produkte im Hersteller-Shop</span><span class="l-en">All products in the manufacturer's shop</span> →</a>
-  </div>
-</section>
-
-<!-- Produkt-Fenster -->
-<div class="pm-modal" id="pmModal" aria-hidden="true">
-  <div class="pm-modal-bg" data-close></div>
-  <div class="pm-sheet" role="dialog" aria-modal="true" aria-labelledby="pmTitle">
-    <button type="button" class="pm-close" data-close aria-label="Schließen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
-    <div id="pmBody"></div>
-  </div>
-</div>
 
 <!-- ÜBER MICH -->
 <section class="about" id="ueber">
@@ -1633,81 +1679,81 @@ document.querySelectorAll('.faq-item').forEach(item => {
 // ============ Produkt-Fenster ============
 /* Produkttexte nah am offiziellen Wortlaut des Herstellers (fitline.com DE, Oktober 2026). */
 const PRODUCTS = {
-  cleansing: { id: '0116127', name: 'Cleansing Lotion', tag: { de: 'Schritt 1 · Reinigen', en: 'Step 1 · Cleanse' }, price: '26,90 €', size: '200 ml',
+  cleansing: { id: '0116127', name: 'Cleansing Lotion', tag: { de: 'Schritt 1 · Reinigen', en: 'Step 1 · Cleanse' }, when: { de: "Morgens & abends", en: "Morning & night" }, actives: ["Sonnenblumenöl", "Milde Zucker-Tenside", "Kamillenextrakt", "Glycerin", "Ergothionein"], price: '26,90 €', size: '200 ml',
     desc: { de: 'Die milde Reinigungslotion entfernt Make-up und Schmutz, ohne die Haut auszutrocknen. Für ein frisches, seidig-zartes Hautgefühl ohne Spannungsgefühl.', en: 'The mild cleansing lotion removes make-up and dirt without drying out the skin. For a fresh, silky-soft skin feeling without tightness.' },
     use: { de: 'Morgens und abends auf das feuchte Gesicht geben, sanft einmassieren und mit lauwarmem Wasser abspülen.', en: 'Morning and evening, apply to damp skin, massage in gently and rinse off with lukewarm water.' },
     skin: { de: 'Für alle Hauttypen, auch trockene und sensible Haut.', en: 'For all skin types, including dry and sensitive skin.' },
     pros: { de: ['Optimale Reinigung', 'Frisches Hautgefühl', 'Verfeinertes & geklärtes Hautbild', 'Ohne Spannungsgefühl', 'Vegan'], en: ['Thorough cleansing', 'Fresh skin feeling', 'Refined & clarified complexion', 'No tight feeling', 'Vegan'] } },
-  tonic: { id: '0116007', name: 'Tonic', tag: { de: 'Schritt 2 · Klären', en: 'Step 2 · Tone' }, price: '26,90 €', size: '200 ml',
+  tonic: { id: '0116007', name: 'Tonic', tag: { de: 'Schritt 2 · Klären', en: 'Step 2 · Tone' }, when: { de: "Morgens & abends", en: "Morning & night" }, actives: ["Kamillenextrakt", "Glycerin", "Squalan", "Vitamin E", "Ergothionein"], price: '26,90 €', size: '200 ml',
     desc: { de: 'Das erfrischende und klärende Tonic schließt den Säureschutzmantel der Haut und bereitet sie optimal auf die nachfolgende Pflege vor.', en: 'The refreshing, clarifying tonic closes the skin\'s acid mantle and prepares it for the care that follows.' },
     use: { de: 'Morgens und abends nach der Reinigung auf ein Wattepad geben und Gesicht, Hals und Dekolleté sanft abreiben.', en: 'Morning and evening after cleansing, apply to a cotton pad and gently wipe over face, neck and décolleté.' },
     skin: { de: 'Für alle Hauttypen.', en: 'For all skin types.' },
     pros: { de: ['Frisches Hautgefühl', 'Verfeinertes & geklärtes Hautbild', 'Bereitet die Haut auf die Pflege vor'], en: ['Fresh skin feeling', 'Refined & clarified complexion', 'Prepares the skin for care'] } },
-  '4ever': { id: '0116122', name: '4ever', tag: { de: 'Tagespflege · normale bis Mischhaut', en: 'Day cream · normal to combination skin' }, price: '64,90 €', size: '50 ml',
+  '4ever': { id: '0116122', name: '4ever', tag: { de: 'Tagespflege · normale bis Mischhaut', en: 'Day cream · normal to combination skin' }, when: { de: "Morgens", en: "Morning" }, actives: ["Hyaluron", "Ceramid NP", "Peptid", "Bakuchiol", "Goji-Extrakt", "Squalan", "UV-Filter (Anti-Pollution)"], price: '64,90 €', size: '50 ml',
     desc: { de: 'Die Tagespflege mit Hyaluron, Ceramid, Peptid, Bakuchiol und Goji-Extrakt. Versorgt die Haut intensiv mit Feuchtigkeit, unterstützt die Hautbarriere und schützt mit Anti-Pollution-Filter vor Umwelteinflüssen.', en: 'The day cream with hyaluronic acid, ceramide, peptide, bakuchiol and goji extract. Intensively hydrates, supports the skin barrier and protects against environmental influences with an anti-pollution filter.' },
     use: { de: 'Morgens nach Reinigung, Tonic und Serum auf Gesicht, Hals und Dekolleté auftragen.', en: 'In the morning after cleanser, tonic and serum, apply to face, neck and décolleté.' },
     skin: { de: 'Normale bis Mischhaut. Vegan.', en: 'Normal to combination skin. Vegan.' },
     pros: { de: ['Intensive Feuchtigkeitsversorgung', 'Unterstützung der Hautbarriere', 'Anti-Pollution-Filter', 'Anti-Aging'], en: ['Intensive hydration', 'Skin barrier support', 'Anti-pollution filter', 'Anti-ageing'] } },
-  '4ever-enriched': { id: '0116220', name: '4ever enriched', tag: { de: 'Tagespflege · trockene bis reife Haut', en: 'Day cream · dry to mature skin' }, price: '64,90 €', size: '50 ml',
+  '4ever-enriched': { id: '0116220', name: '4ever enriched', tag: { de: 'Tagespflege · trockene bis reife Haut', en: 'Day cream · dry to mature skin' }, when: { de: "Morgens", en: "Morning" }, actives: ["Peptid", "Sheabutter", "Ectoin", "Hafer", "Avocadoöl", "Hyaluron", "Ceramid NP", "Q10"], price: '64,90 €', size: '50 ml',
     desc: { de: 'Die reichhaltige Tagespflege mit Peptid, Sheabutter und Ectoin. Intensive, hautberuhigende Pflege mit langanhaltender Feuchtigkeit und Anti-Pollution-Schutz.', en: 'The rich day cream with peptide, shea butter and ectoin. Intensive, soothing care with long-lasting hydration and anti-pollution protection.' },
     use: { de: 'Morgens nach Reinigung, Tonic und Serum auf Gesicht, Hals und Dekolleté auftragen.', en: 'In the morning after cleanser, tonic and serum, apply to face, neck and décolleté.' },
     skin: { de: 'Trockene und reife Haut.', en: 'Dry and mature skin.' },
     pros: { de: ['Intensive & hautberuhigende Pflege', 'Langanhaltende Feuchtigkeit', 'Anti-Pollution', 'Anti-Aging'], en: ['Intensive & soothing care', 'Long-lasting hydration', 'Anti-pollution', 'Anti-ageing'] } },
-  overnight: { id: '0116223', name: '4ever overnight enriched', tag: { de: 'Nachtpflege · alle Hauttypen', en: 'Night cream · all skin types' }, price: '64,90 €', size: '50 ml',
+  overnight: { id: '0116223', name: '4ever overnight enriched', tag: { de: 'Nachtpflege · alle Hauttypen', en: 'Night cream · all skin types' }, when: { de: "Abends", en: "Evening" }, actives: ["Lactobacillus-Ferment", "Betain", "Spilanthes-Extrakt", "Jojobaöl", "Squalan", "Q10", "Vitamin E"], price: '64,90 €', size: '50 ml',
     desc: { de: 'Die Nachtpflege zu beiden Tagescremes. Unterstützt über Nacht das Mikrobiom und die Hautbarriere, ohne Lichtschutzfilter, damit die Haut regenerieren kann.', en: 'The night cream for both day creams. Supports the microbiome and skin barrier overnight, without UV filters, so the skin can regenerate.' },
     use: { de: 'Abends nach Reinigung, Tonic und Serum auf Gesicht, Hals und Dekolleté auftragen.', en: 'In the evening after cleanser, tonic and serum, apply to face, neck and décolleté.' },
     skin: { de: 'Für alle Hauttypen, besonders normale bis trockene Haut.', en: 'For all skin types, especially normal to dry skin.' },
     pros: { de: ['Unterstützung des Mikrobioms', 'Unterstützung der Hautbarriere', 'Anti-Aging'], en: ['Microbiome support', 'Skin barrier support', 'Anti-ageing'] } },
-  beauty: { id: '0709028', name: 'Beauty-Drink', tag: { de: 'Von innen · Nahrungsergänzung', en: 'From the inside · food supplement' }, price: '47,50 €', size: '30 Portionen',
+  beauty: { id: '0709028', name: 'Beauty-Drink', tag: { de: 'Von innen · Nahrungsergänzung', en: 'From the inside · food supplement' }, when: { de: "1 × täglich, z. B. morgens", en: "Once a day, e.g. in the morning" }, actives: ["Kollagenpeptide (Rind)", "Vitamin C", "Biotin", "Zink", "Niacin", "Vitamin B2", "Vitamin E", "Kupfer"], price: '47,50 €', size: '30 Portionen',
     desc: { de: 'Trinkpulver mit fruchtigem Beerengeschmack, Kollagenpeptiden, Vitaminen und Mineralstoffen. Vitamin C trägt zu einer normalen Kollagenbildung für eine normale Funktion der Haut bei. Biotin und Zink tragen zur Erhaltung normaler Haut und Haare bei, Zink zur Erhaltung normaler Nägel.', en: 'Drink powder with fruity berry flavour, collagen peptides, vitamins and minerals. Vitamin C contributes to normal collagen formation for the normal function of the skin. Biotin and zinc contribute to the maintenance of normal skin and hair, zinc to the maintenance of normal nails.' },
     use: { de: '1 × täglich 5 gestrichene Messlöffel (6,5 g) in 150 ml stilles Wasser einrühren. Die empfohlene tägliche Verzehrmenge nicht überschreiten.', en: 'Once a day, stir 5 level scoops (6.5 g) into 150 ml of still water. Do not exceed the recommended daily intake.' },
     skin: { de: 'Nahrungsergänzungsmittel sind kein Ersatz für eine ausgewogene, abwechslungsreiche Ernährung und eine gesunde Lebensweise. Enthält Kollagenpeptide vom Rind.', en: 'Food supplements are not a substitute for a balanced, varied diet and a healthy lifestyle. Contains bovine collagen peptides.' },
     pros: { de: ['Beerengeschmack, ohne Zuckerzusatz, mit Stevia', 'Vitamin C, Biotin, Zink, Niacin, Vitamin B2, Vitamin E', 'Mit NTC® Nährstoff-Transportkonzept'], en: ['Berry flavour, no added sugar, with stevia', 'Vitamin C, biotin, zinc, niacin, vitamin B2, vitamin E', 'With the NTC® nutrient transport concept'] } },
-  serum: { id: '0116116', name: 'Activize Serum', tag: { de: 'Ergänzung · Frische & Glow', en: 'Extra · freshness & glow' }, price: '48,90 €', size: '30 ml',
+  serum: { id: '0116116', name: 'Activize Serum', tag: { de: 'Ergänzung · Frische & Glow', en: 'Extra · freshness & glow' }, when: { de: "Morgens & abends, vor der Creme", en: "Morning & night, before the cream" }, actives: ["Guarana", "Vitamin C (Ascorbyl Glucoside)", "Niacinamid (B3)", "Panthenol (B5)", "Biotin", "Koffein", "Hyaluron", "Q10"], price: '48,90 €', size: '30 ml',
     desc: { de: 'Das Serum überträgt den Wirkstoffkomplex aus Guarana, Vitamin C und B-Vitaminen in die Hautpflege. Für natürlichen Glow, ein verfeinertes Hautbild und einen ebenmäßigen Hautton.', en: 'The serum brings the active complex of guarana, vitamin C and B vitamins into skin care. For a natural glow, refined pores and an even skin tone.' },
     use: { de: 'Morgens und abends nach Reinigung und Tonic auftragen, 1 bis 2 Minuten einziehen lassen, dann die Tages- oder Nachtpflege.', en: 'Morning and evening after cleanser and tonic, let it absorb for 1 to 2 minutes, then apply day or night cream.' },
     skin: { de: 'Für alle Hauttypen.', en: 'For all skin types.' },
     pros: { de: ['Natürlicher Glow', 'Porenverfeinernd', 'Ebenmäßiger Hautton', 'Energie & Vitalisierung'], en: ['Natural glow', 'Pore-refining', 'Even skin tone', 'Energy & vitalisation'] } },
-  darkspot: { id: '0116222', name: 'Dark Spot Corrector', tag: { de: 'Ergänzung · ebenmäßiger Teint', en: 'Extra · even complexion' }, price: '58,90 €', size: '30 ml',
+  darkspot: { id: '0116222', name: 'Dark Spot Corrector', tag: { de: 'Ergänzung · ebenmäßiger Teint', en: 'Extra · even complexion' }, when: { de: "Morgens & abends, vor dem Serum", en: "Morning & night, before the serum" }, actives: ["Niacinamid", "Kojisäure", "Gluconolacton (PHA)", "Allantoin", "Gerstenextrakt", "Jojobaöl", "Squalan"], price: '58,90 €', size: '30 ml',
     desc: { de: 'Mit Niacinamid. Kann dazu beitragen, das Erscheinungsbild von Pigmentflecken zu reduzieren, unterstützt die natürliche Hauterneuerung, spendet Feuchtigkeit und unterstützt die Hautbarriere.', en: 'With niacinamide. Can help reduce the appearance of dark spots, supports natural skin renewal, hydrates and supports the skin barrier.' },
     use: { de: 'Morgens und abends auf die gereinigte Haut auftragen, danach Serum und Pflege wie gewohnt.', en: 'Morning and evening on cleansed skin, then serum and cream as usual.' },
     skin: { de: 'Für alle Hauttypen mit Wunsch nach einem gleichmäßigeren Teint.', en: 'For all skin types wishing for a more even complexion.' },
     pros: { de: ['Unterstützt die natürliche Hauterneuerung', 'Feuchtigkeit', 'Unterstützung der Hautbarriere', 'Strahlkraft & Reinheit'], en: ['Supports natural skin renewal', 'Hydration', 'Skin barrier support', 'Radiance & clarity'] } },
-  augen: { id: '0116093', name: 'Augencreme', tag: { de: 'Ergänzung · Augenpartie', en: 'Extra · eye area' }, price: '49,90 €', size: '15 ml',
+  augen: { id: '0116093', name: 'Augencreme', tag: { de: 'Ergänzung · Augenpartie', en: 'Extra · eye area' }, when: { de: "Morgens & abends", en: "Morning & night" }, actives: ["Hyaluron", "Peptide", "Rosskastanie", "Süßholzwurzel", "Grüntee", "Glycerin"], price: '49,90 €', size: '15 ml',
     desc: { de: 'Die leichte Augenpflege hilft, dunkle Augenringe sowie Linien und Fältchen abzumildern. Frei von Kriechölen, damit nichts ins Auge wandert.', en: 'The light eye cream helps to soften dark circles as well as lines and wrinkles. Free from creeping oils, so nothing migrates into the eye.' },
     use: { de: 'Morgens und abends nach der Reinigung sanft um die Augenpartie eintupfen, danach die Tages- oder Nachtpflege.', en: 'Morning and evening after cleansing, gently pat around the eye area, then apply day or night cream.' },
     skin: { de: 'Für alle Hauttypen.', en: 'For all skin types.' },
     pros: { de: ['Anti-Augenringe', 'Schutz', 'Frei von Kriechölen', 'Anti-Aging'], en: ['Anti dark circles', 'Protection', 'Free from creeping oils', 'Anti-ageing'] } },
-  ultimate: { id: '0116050', name: 'Ultimate Young', tag: { de: 'Ergänzung · Soforteffekt', en: 'Extra · instant effect' }, price: '79,00 €', size: '15 ml',
+  ultimate: { id: '0116050', name: 'Ultimate Young', tag: { de: 'Ergänzung · Soforteffekt', en: 'Extra · instant effect' }, when: { de: "Bei Bedarf, über Creme oder Make-up", en: "As needed, over cream or make-up" }, actives: ["Silikate (Soforteffekt)", "Mineralpigmente (Skin Tone Matcher)", "Q10", "Grüntee", "Rooibos", "Granatapfel", "Vitamin E"], price: '79,00 €', size: '15 ml',
     desc: { de: 'Das Highlight mit Soforteffekt für besondere Anlässe: seidig glatte, ebenmäßige Haut für ein paar Stunden. Kein Langzeitprodukt, sondern der Feinschliff obendrauf.', en: 'The highlight with an instant effect for special occasions: silky smooth, even skin for a few hours. Not a long-term product, but the finishing touch on top.' },
     use: { de: 'Eine kleine Menge über der Tagespflege oder dem Make-up auftragen und einziehen lassen.', en: 'Apply a small amount over your day cream or make-up and let it absorb.' },
     skin: { de: 'Für alle Hauttypen.', en: 'For all skin types.' },
     pros: { de: ['Seidig glatte & ebenmäßige Haut', 'Einfache Anwendung', 'Straffend'], en: ['Silky smooth & even skin', 'Easy to use', 'Firming'] } },
-  men: { id: '0116109', name: 'Men Face Rich & Hydrating', tag: { de: 'Für Männer · All-in-One', en: 'For men · all-in-one' }, price: '29,90 €', size: '50 ml',
+  men: { id: '0116109', name: 'Men Face Rich & Hydrating', tag: { de: 'Für Männer · All-in-One', en: 'For men · all-in-one' }, when: { de: "Morgens & abends", en: "Morning & night" }, actives: ["Hyaluron", "Niacinamid", "Koffein", "Panthenol", "Ceramid NP", "Q10", "Oligopeptid"], price: '29,90 €', size: '50 ml',
     desc: { de: 'Die All-in-One-Gesichtspflege für Männer: Feuchtigkeit und Pflege in einem Schritt, mit Niacinamid, Koffein, Ceramid und Q10 und dem NTC® Nährstoff-Transportkonzept.', en: 'The all-in-one face care for men: hydration and care in one step, with niacinamide, caffeine, ceramide and Q10 and the NTC® nutrient transport concept.' },
     use: { de: 'Morgens und abends nach der Reinigung auf Gesicht und Hals auftragen.', en: 'Morning and evening after cleansing, apply to face and neck.' },
     skin: { de: 'Für alle Hauttypen. Vegan, glutenfrei.', en: 'For all skin types. Vegan, gluten-free.' },
     pros: { de: ['Feuchtigkeit und Pflege in einem Schritt', 'Mit Niacinamid, Koffein, Ceramid, Q10', 'Vegan'], en: ['Hydration and care in one step', 'With niacinamide, caffeine, ceramide, Q10', 'Vegan'] } },
-  'set-young': { id: '9116472', name: 'Einsteiger-Set Young Care', tag: { de: 'Set · Einstieg', en: 'Set · starter' }, price: '59,90 €', size: '3 Produkte',
+  'set-young': { id: '9116472', name: 'Einsteiger-Set Young Care', tag: { de: 'Set · Einstieg', en: 'Set · starter' }, when: { de: "Morgens & abends", en: "Morning & night" }, actives: ["Reinigungsschaum", "Tonic", "Balancing Creme"], price: '59,90 €', size: '3 Produkte',
     desc: { de: 'Die komplette, leichte Routine für den Anfang: Reinigungsschaum, Tonic und Balancing Creme. Einzeln 63,50 €.', en: 'The complete, light routine for starting out: cleansing foam, tonic and balancing cream. 63.50 € if bought separately.' },
     use: { de: 'Morgens und abends: Reinigungsschaum, dann Tonic auf ein Wattepad, dann die Balancing Creme.', en: 'Morning and evening: cleansing foam, then tonic on a cotton pad, then the balancing cream.' },
     skin: { de: 'Für jüngere Haut und alle, die erst einmal einfach starten wollen.', en: 'For younger skin and anyone who wants to start simply.' },
     pros: { de: ['Reinigungsschaum', 'Tonic', 'Balancing Creme'], en: ['Cleansing foam', 'Tonic', 'Balancing cream'] } },
-  'set-4ever': { id: '9116562', name: 'Starter Set 4ever', tag: { de: 'Set · Tag + Nacht', en: 'Set · day + night' }, price: '123,90 €', size: '2 × 50 ml',
+  'set-4ever': { id: '9116562', name: 'Starter Set 4ever', tag: { de: 'Set · Tag + Nacht', en: 'Set · day + night' }, when: { de: "Morgens 4ever, abends overnight", en: "4ever in the morning, overnight at night" }, actives: ["4ever (Tag)", "4ever overnight enriched (Nacht)"], price: '123,90 €', size: '2 × 50 ml',
     desc: { de: '4ever Tagespflege und 4ever overnight enriched Nachtpflege im Set. Einzeln 129,80 €.', en: '4ever day cream and 4ever overnight enriched night cream as a set. 129.80 € if bought separately.' },
     use: { de: 'Morgens 4ever, abends 4ever overnight enriched, jeweils nach Reinigung und Tonic.', en: '4ever in the morning, 4ever overnight enriched in the evening, each after cleanser and tonic.' },
     skin: { de: 'Normale bis Mischhaut.', en: 'Normal to combination skin.' },
     pros: { de: ['4ever (Tag)', '4ever overnight enriched (Nacht)'], en: ['4ever (day)', '4ever overnight enriched (night)'] } },
-  'set-enriched': { id: '9116563', name: 'Starter Set 4ever enriched', tag: { de: 'Set · Tag + Nacht', en: 'Set · day + night' }, price: '123,90 €', size: '2 × 50 ml',
+  'set-enriched': { id: '9116563', name: 'Starter Set 4ever enriched', tag: { de: 'Set · Tag + Nacht', en: 'Set · day + night' }, when: { de: "Morgens enriched, abends overnight", en: "enriched in the morning, overnight at night" }, actives: ["4ever enriched (Tag)", "4ever overnight enriched (Nacht)"], price: '123,90 €', size: '2 × 50 ml',
     desc: { de: '4ever enriched Tagespflege und 4ever overnight enriched Nachtpflege im Set, für trockene und reifere Haut. Einzeln 129,80 €.', en: '4ever enriched day cream and 4ever overnight enriched night cream as a set, for dry and mature skin. 129.80 € if bought separately.' },
     use: { de: 'Morgens 4ever enriched, abends 4ever overnight enriched, jeweils nach Reinigung und Tonic.', en: '4ever enriched in the morning, 4ever overnight enriched in the evening, each after cleanser and tonic.' },
     skin: { de: 'Trockene und reife Haut.', en: 'Dry and mature skin.' },
     pros: { de: ['4ever enriched (Tag)', '4ever overnight enriched (Nacht)'], en: ['4ever enriched (day)', '4ever overnight enriched (night)'] } }
 };
 const LBL = {
-  desc: { de: 'Was es ist', en: 'What it is' }, use: { de: 'Anwendung', en: 'How to use' }, skin: { de: 'Für wen', en: 'Who it\'s for' },
+  desc: { de: 'Was es ist', en: 'What it is' }, use: { de: 'So wendest du es an', en: 'How to use' }, skin: { de: 'Hauttyp', en: 'Skin type' }, when: { de: 'Wann', en: 'When' }, actives: { de: 'Was drin ist (Auswahl)', en: 'What\'s inside (selection)' },
   pros: { de: 'Laut Hersteller', en: 'According to the manufacturer' }, shop: { de: 'Im Hersteller-Shop ansehen', en: 'View in manufacturer\'s shop' },
-  src: { de: 'Vollständige Inhaltsstoffe und alle Angaben auf der offiziellen Produktseite.', en: 'Full ingredients and all details on the official product page.' }
+  src: { de: 'Auswahl der Inhaltsstoffe laut Hersteller. Die vollständige Liste steht auf der offiziellen Produktseite.', en: 'Selected ingredients as listed by the manufacturer. The full list is on the official product page.' }
 };
 function fsLang() { return document.documentElement.getAttribute('data-lang') === 'en' ? 'en' : 'de'; }
 function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
@@ -1720,9 +1766,10 @@ function renderModal() {
     '<span class="pm-tag">' + esc(p.tag[L]) + '</span>' +
     '<h3 id="pmTitle">' + esc(p.name) + '</h3>' +
     '<div class="pm-price"><strong>' + esc(p.price) + '</strong> · ' + esc(p.size) + '</div>' +
+    '<div class="pm-facts"><div class="pm-fact"><small>' + LBL.when[L] + '</small><span>' + esc(p.when[L]) + '</span></div><div class="pm-fact"><small>' + LBL.skin[L] + '</small><span>' + esc(p.skin[L]) + '</span></div></div>' +
     '<div class="pm-block"><h4>' + LBL.desc[L] + '</h4><p>' + esc(p.desc[L]) + '</p></div>' +
+    '<div class="pm-block"><h4>' + LBL.actives[L] + '</h4><div class="pm-actives">' + p.actives.map(x => '<span>' + esc(x) + '</span>').join('') + '</div></div>' +
     '<div class="pm-block"><h4>' + LBL.use[L] + '</h4><p>' + esc(p.use[L]) + '</p></div>' +
-    '<div class="pm-block"><h4>' + LBL.skin[L] + '</h4><p>' + esc(p.skin[L]) + '</p></div>' +
     '<div class="pm-block"><h4>' + LBL.pros[L] + '</h4><ul>' + p.pros[L].map(x => '<li>' + esc(x) + '</li>').join('') + '</ul></div>' +
     '<div class="pm-actions"><a class="btn btn-primary" href="' + fsShopUrl(p.id) + '" target="_blank" rel="noopener">' + LBL.shop[L] + ' <span class="arr">→</span></a></div>' +
     '<p class="pm-src foot-note">' + LBL.src[L] + '</p>';
@@ -1732,6 +1779,23 @@ function closeModal() { pmModal.classList.remove('open'); pmModal.setAttribute('
 document.querySelectorAll('[data-open]').forEach(b => b.addEventListener('click', () => openModal(b.dataset.open)));
 pmModal.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', closeModal));
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && pmModal.classList.contains('open')) closeModal(); });
+
+// ============ Skinscan: Ring aus kurzen Strichen, das Leuchten läuft im Kreis ============
+(function () {
+  const svg = document.getElementById('scanRing'); if (!svg) return;
+  const cx = 50, cy = 70, rx = 33, ry = 40, N = 64, ns = 'http://www.w3.org/2000/svg';
+  for (let i = 0; i < N; i++) {
+    const a = (i / N) * Math.PI * 2;
+    const nx = Math.cos(a) / rx, ny = Math.sin(a) / ry, len = Math.hypot(nx, ny);
+    const ux = nx / len, uy = ny / len;
+    const px = cx + rx * Math.cos(a), py = cy + ry * Math.sin(a);
+    const l = document.createElementNS(ns, 'line');
+    l.setAttribute('x1', px - ux * 1.2); l.setAttribute('y1', py - uy * 1.2);
+    l.setAttribute('x2', px + ux * 2.4); l.setAttribute('y2', py + uy * 2.4);
+    l.style.animationDelay = (-(i / N) * 3.2) + 's';
+    svg.appendChild(l);
+  }
+})();
 
 // ============ Kontakt: 3 Schritte ============
 (function () {

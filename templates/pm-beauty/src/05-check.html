@@ -2,7 +2,7 @@
 <section class="check" id="check">
   <div class="check-grid">
     <div class="check-phone reveal">
-      {{#if scanner_anzeigen=an}}<img loading="lazy" decoding="async" src="assets/scan-face.webp" alt="" width="1024" height="1536">{{/if}}
+      {{#if scanner_anzeigen=an}}<img loading="lazy" decoding="async" src="assets/scan-face.webp" alt="" width="1024" height="1536"><svg class="scan-ring" id="scanRing" viewBox="0 0 100 150" preserveAspectRatio="none" aria-hidden="true"></svg>{{/if}}
       {{#unless scanner_anzeigen=an}}<img loading="lazy" decoding="async" src="assets/scan-selfie.webp" alt="" width="1024" height="1024">{{/unless}}
     </div>
     <div class="check-copy">
