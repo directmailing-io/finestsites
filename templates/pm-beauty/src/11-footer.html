@@ -46,7 +46,7 @@
 </footer>
 
 <script>
-// ============ Shop-Links: offizieller Hersteller-Shop mit Sponsor-Nummer der Partnerin ============
+// ============ Shop-Links: offizieller Hersteller-Shop mit Sponsor-Nummer ============
 var FS_SPONSOR = "{{team_partner_number}}";
 function fsShopUrl(productId) {
   var base = productId ? 'https://www.fitline.com/de/de-de/products/' + productId : 'https://www.fitline.com/de/de-de/products?category=beauty';
@@ -56,22 +56,17 @@ document.querySelectorAll('[data-shop]').forEach(function (a) { a.href = fsShopU
 
 // ============ Sticky Mobile CTA ============
 const stickyCta = document.getElementById('stickyCta');
-const conversionSection = document.getElementById('kontakt');
-if (stickyCta && conversionSection) {
-  const stickyIo = new IntersectionObserver((entries) => {
-    entries.forEach(e => { if (e.isIntersecting) stickyCta.classList.remove('visible'); });
-  }, { threshold: 0.1 });
-  stickyIo.observe(conversionSection);
+const contactSection = document.getElementById('kontakt');
+if (stickyCta && contactSection) {
+  new IntersectionObserver(entries => entries.forEach(e => { if (e.isIntersecting) stickyCta.classList.remove('visible'); }), { threshold: 0.1 }).observe(contactSection);
   let stickyTicking = false;
   window.addEventListener('scroll', () => {
-    if (stickyTicking) return;
-    stickyTicking = true;
+    if (stickyTicking) return; stickyTicking = true;
     requestAnimationFrame(() => {
       const winHeight = window.innerHeight;
       const scrollPercent = window.scrollY / (document.documentElement.scrollHeight - winHeight);
-      const kontaktTop = conversionSection.getBoundingClientRect().top;
-      if (scrollPercent > 0.25 && kontaktTop > winHeight * 0.5) stickyCta.classList.add('visible');
-      else stickyCta.classList.remove('visible');
+      const top = contactSection.getBoundingClientRect().top;
+      stickyCta.classList.toggle('visible', scrollPercent > 0.25 && top > winHeight * 0.5);
       stickyTicking = false;
     });
   }, { passive: true });
@@ -81,20 +76,8 @@ if (stickyCta && conversionSection) {
 const navBurger = document.getElementById('navBurger');
 const navMobile = document.getElementById('navMobile');
 const navMobileClose = document.getElementById('navMobileClose');
-function openMobileMenu() {
-  navMobile.hidden = false;
-  requestAnimationFrame(() => navMobile.classList.add('open'));
-  navBurger.classList.add('open');
-  navBurger.setAttribute('aria-expanded', 'true');
-  document.body.style.overflow = 'hidden';
-}
-function closeMobileMenu() {
-  navMobile.classList.remove('open');
-  navBurger.classList.remove('open');
-  navBurger.setAttribute('aria-expanded', 'false');
-  document.body.style.overflow = '';
-  setTimeout(() => { navMobile.hidden = true; }, 300);
-}
+function openMobileMenu() { navMobile.hidden = false; requestAnimationFrame(() => navMobile.classList.add('open')); navBurger.classList.add('open'); navBurger.setAttribute('aria-expanded', 'true'); document.body.style.overflow = 'hidden'; }
+function closeMobileMenu() { navMobile.classList.remove('open'); navBurger.classList.remove('open'); navBurger.setAttribute('aria-expanded', 'false'); document.body.style.overflow = ''; setTimeout(() => { navMobile.hidden = true; }, 300); }
 /* Leiste: „Kontakt ▾“ öffnet das Auswahlfenster (Klick daneben, Escape oder Auswahl schließt) */
 (function () {
   const wrap = document.getElementById('kcWrap'), btn = document.getElementById('kcBtn');
@@ -111,59 +94,21 @@ navMobileClose?.addEventListener('click', closeMobileMenu);
 document.querySelectorAll('.nav-mobile-links a, .nav-mobile-cta').forEach(a => a.addEventListener('click', closeMobileMenu));
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !navMobile.hidden) closeMobileMenu(); });
 
-// ============ Reveal ============
-const io = new IntersectionObserver((entries) => {
-  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
-}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+// ============ Reveal + Nav ============
+const io = new IntersectionObserver((entries) => { entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }); }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
 document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+const nav = document.querySelector('.nav');
+let navTicking = false;
+window.addEventListener('scroll', () => { if (navTicking) return; navTicking = true; requestAnimationFrame(() => { nav.classList.toggle('scrolled', window.scrollY > 20); navTicking = false; }); }, { passive: true });
 
 // ============ FAQ ============
 document.querySelectorAll('.faq-item').forEach(item => {
-  const q = item.querySelector('.faq-q');
-  const a = item.querySelector('.faq-a');
-  q.addEventListener('click', () => {
-    const open = item.classList.toggle('open');
-    a.style.maxHeight = open ? a.scrollHeight + 'px' : '0';
-  });
+  const q = item.querySelector('.faq-q'), a = item.querySelector('.faq-a');
+  q.addEventListener('click', () => { const open = item.classList.toggle('open'); a.style.maxHeight = open ? a.scrollHeight + 'px' : '0'; });
 });
 
-// ============ Nav scrolled ============
-const nav = document.querySelector('.nav');
-let navTicking = false;
-window.addEventListener('scroll', () => {
-  if (navTicking) return;
-  navTicking = true;
-  requestAnimationFrame(() => { nav.classList.toggle('scrolled', window.scrollY > 20); navTicking = false; });
-}, { passive: true });
-
-// ============ Routine: Morgens / Abends ============
-(function () {
-  const stage = document.getElementById('routineStage');
-  const time = document.getElementById('rtTime');
-  if (!stage) return;
-  document.querySelectorAll('.rt-toggle button').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.rt-toggle button').forEach(b => { b.classList.remove('on'); b.setAttribute('aria-selected', 'false'); });
-      btn.classList.add('on'); btn.setAttribute('aria-selected', 'true');
-      const mode = btn.dataset.mode;
-      stage.dataset.mode = mode;
-      time.innerHTML = mode === 'abend'
-        ? '<span class="l-de">Abends · ca. 2 Minuten</span><span class="l-en">Evening · about 2 minutes</span>'
-        : '<span class="l-de">Morgens · ca. 3 Minuten</span><span class="l-en">Morning · about 3 minutes</span>';
-    });
-  });
-})();
-
-// ============ Produkte: Gruppen + Fenster ============
-document.querySelectorAll('.pr-tab').forEach(tab => {
-  tab.addEventListener('click', () => {
-    document.querySelectorAll('.pr-tab').forEach(t => t.classList.remove('on'));
-    document.querySelectorAll('.pr-group').forEach(g => g.classList.toggle('on', g.dataset.group === tab.dataset.group));
-    tab.classList.add('on');
-  });
-});
-
-/* Produkttexte: Beschreibung, Anwendung und Hauttyp nah am offiziellen Wortlaut des Herstellers (fitline.com, Oktober 2026). */
+// ============ Produkt-Fenster ============
+/* Produkttexte nah am offiziellen Wortlaut des Herstellers (fitline.com DE, Oktober 2026). */
 const PRODUCTS = {
   cleansing: { id: '0116127', name: 'Cleansing Lotion', tag: { de: 'Schritt 1 · Reinigen', en: 'Step 1 · Cleanse' }, price: '26,90 €', size: '200 ml',
     desc: { de: 'Die milde Reinigungslotion entfernt Make-up und Schmutz, ohne die Haut auszutrocknen. Für ein frisches, seidig-zartes Hautgefühl ohne Spannungsgefühl.', en: 'The mild cleansing lotion removes make-up and dirt without drying out the skin. For a fresh, silky-soft skin feeling without tightness.' },
@@ -237,7 +182,7 @@ const PRODUCTS = {
     pros: { de: ['4ever enriched (Tag)', '4ever overnight enriched (Nacht)'], en: ['4ever enriched (day)', '4ever overnight enriched (night)'] } }
 };
 const LBL = {
-  desc: { de: 'Beschreibung', en: 'Description' }, use: { de: 'Anwendung', en: 'How to use' }, skin: { de: 'Für wen', en: 'Who it\'s for' },
+  desc: { de: 'Was es ist', en: 'What it is' }, use: { de: 'Anwendung', en: 'How to use' }, skin: { de: 'Für wen', en: 'Who it\'s for' },
   pros: { de: 'Laut Hersteller', en: 'According to the manufacturer' }, shop: { de: 'Im Hersteller-Shop ansehen', en: 'View in manufacturer\'s shop' },
   src: { de: 'Vollständige Inhaltsstoffe und alle Angaben auf der offiziellen Produktseite.', en: 'Full ingredients and all details on the official product page.' }
 };
@@ -249,7 +194,7 @@ function renderModal() {
   const p = PRODUCTS[pmCurrent]; if (!p) return;
   const L = fsLang();
   document.getElementById('pmBody').innerHTML =
-    '<span class="pc-tag">' + esc(p.tag[L]) + '</span>' +
+    '<span class="pm-tag">' + esc(p.tag[L]) + '</span>' +
     '<h3 id="pmTitle">' + esc(p.name) + '</h3>' +
     '<div class="pm-price"><strong>' + esc(p.price) + '</strong> · ' + esc(p.size) + '</div>' +
     '<div class="pm-block"><h4>' + LBL.desc[L] + '</h4><p>' + esc(p.desc[L]) + '</p></div>' +
@@ -259,194 +204,33 @@ function renderModal() {
     '<div class="pm-actions"><a class="btn btn-primary" href="' + fsShopUrl(p.id) + '" target="_blank" rel="noopener">' + LBL.shop[L] + ' <span class="arr">→</span></a></div>' +
     '<p class="pm-src foot-note">' + LBL.src[L] + '</p>';
 }
-function openModal(key) {
-  pmCurrent = key; renderModal();
-  pmModal.classList.add('open'); pmModal.setAttribute('aria-hidden', 'false');
-  document.body.style.overflow = 'hidden';
-}
-function closeModal() {
-  pmModal.classList.remove('open'); pmModal.setAttribute('aria-hidden', 'true');
-  document.body.style.overflow = '';
-}
+function openModal(key) { pmCurrent = key; renderModal(); pmModal.classList.add('open'); pmModal.setAttribute('aria-hidden', 'false'); document.body.style.overflow = 'hidden'; }
+function closeModal() { pmModal.classList.remove('open'); pmModal.setAttribute('aria-hidden', 'true'); document.body.style.overflow = ''; }
 document.querySelectorAll('[data-open]').forEach(b => b.addEventListener('click', () => openModal(b.dataset.open)));
 pmModal.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', closeModal));
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && pmModal.classList.contains('open')) closeModal(); });
 
-// ============ Wünsche (Schritt 1) + Antworttexte ============
-const cwItems = document.querySelectorAll('.cw-item');
-const cwBar = document.querySelector('.cw-bar');
-const cwCount = document.querySelector('.cw-count b');
-const convResponse = document.getElementById('convResponse');
-const convTitle = document.getElementById('convTitle');
-const convTxt = document.getElementById('convTxt');
-const convActions = document.getElementById('convActions');
-const responses = [
-  { de: ['Setz dein erstes Häkchen', 'Klick an, was auf dich zutrifft. Dann weiß ich schon mal, worauf wir im Beauty-Check schauen.'], en: ['Tick your first box', 'Tick what applies to you. Then I already know what we\'ll look at in the beauty check.'], show: false },
-  { de: ['Ein Wunsch reicht schon.', 'Genau dafür ist der Beauty-Check da. Lass uns kurz reden, dauert eine halbe Stunde.'], en: ['One wish is enough.', 'That\'s exactly what the beauty check is for. Let\'s talk briefly, it takes half an hour.'], show: true },
-  { de: ['Zwei Wünsche. Guter Start.', 'Beides lässt sich in einer Routine unterbringen. Ich zeig dir, wie.'], en: ['Two wishes. Good start.', 'Both fit into one routine. I\'ll show you how.'], show: true },
-  { de: ['Drei Wünsche. Dann lohnt es sich.', 'Statt einzeln zu probieren, schauen wir einmal in Ruhe auf das Ganze.'], en: ['Three wishes. Then it\'s worth it.', 'Instead of trying things one by one, let\'s look at the whole picture once, in peace.'], show: true },
-  { de: ['Vier Wünsche. Du weißt, was du willst.', 'Das macht den Beauty-Check einfach: Wir sortieren, was zuerst dran ist.'], en: ['Four wishes. You know what you want.', 'That makes the beauty check easy: we sort out what comes first.'], show: true },
-  { de: ['Alle fünf. Dann los.', 'Meld dich, und wir bauen dir eine Routine, die wirklich zu dir passt.'], en: ['All five. Let\'s go.', 'Get in touch and we\'ll build you a routine that really fits you.'], show: true }
-];
-function updateSelfCheck() {
-  const checked = document.querySelectorAll('.cw-item.checked').length;
-  cwBar.style.width = (checked / cwItems.length * 100) + '%';
-  cwCount.textContent = checked;
-  const r = responses[checked];
-  convResponse.dataset.checked = checked;
-  convTitle.innerHTML = '<span class="l-de">' + esc(r.de[0]) + '</span><span class="l-en">' + esc(r.en[0]) + '</span>';
-  convTxt.innerHTML = '<span class="l-de">' + esc(r.de[1]) + '</span><span class="l-en">' + esc(r.en[1]) + '</span>';
-  convActions.hidden = !r.show;
-}
-cwItems.forEach((item, idx) => {
-  item.dataset.idx = idx;
-  item.addEventListener('click', () => { item.classList.toggle('checked'); updateSelfCheck(); });
-});
-function selectedGoals(lang) {
-  return [...document.querySelectorAll('.cw-item.checked')].map(el => el.getAttribute('data-goal-' + lang) || '').filter(Boolean);
-}
-function renderSelectedSummary() {
-  const summary = document.getElementById('stepSummary');
-  if (!summary) return;
-  const L = fsLang();
-  const goals = selectedGoals(L);
-  if (goals.length === 0) { summary.hidden = true; return; }
-  const and = L === 'en' ? ' and ' : ' und ';
-  const list = goals.length === 1 ? '<b>' + goals[0] + '</b>' : goals.slice(0, -1).map(g => '<b>' + g + '</b>').join(', ') + and + '<b>' + goals[goals.length - 1] + '</b>';
-  summary.hidden = false;
-  summary.innerHTML = (L === 'en' ? 'What we\'ll look at: ' : 'Worauf wir schauen: ') + list + '.';
-}
-
-// ============ Multi-Step Card ============
-const convCard = document.getElementById('convCard');
-document.getElementById('openContactStep')?.addEventListener('click', () => goToStep('2'));
-document.getElementById('stepBack')?.addEventListener('click', () => goToStep('1'));
-function goToStep(step) {
-  convCard.dataset.step = step;
-  if (step === '2') { renderSelectedSummary(); setTimeout(() => document.getElementById('cf-name')?.focus(), 200); }
-  convCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
-}
-
-// Beratungsart (vor Ort / Video / Telefon)
+// ============ Kontakt: Beratungsart + Absenden ============
 (function () {
   const hidden = document.getElementById('beratungsart');
-  const opts = document.querySelectorAll('.ba-opt');
-  const sync = () => { hidden.value = document.querySelector('.ba-opt.on')?.dataset.val || ''; };
-  opts.forEach(o => o.addEventListener('click', () => { opts.forEach(x => x.classList.remove('on')); o.classList.add('on'); sync(); }));
-  sync();
+  const chips = document.querySelectorAll('#chips .chip');
+  chips.forEach(c => c.addEventListener('click', () => { chips.forEach(x => x.classList.remove('on')); c.classList.add('on'); hidden.value = c.dataset.val; }));
 })();
-
-// Confetti burst
-function fireConfetti() {
-  const canvas = document.getElementById('confettiCanvas');
-  if (!canvas) return;
-  const rect = canvas.getBoundingClientRect();
-  const dpr = window.devicePixelRatio || 1;
-  canvas.width = Math.max(1, Math.floor(rect.width * dpr));
-  canvas.height = Math.max(1, Math.floor(rect.height * dpr));
-  const ctx = canvas.getContext('2d');
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  const W = rect.width, H = rect.height;
-  const cs = getComputedStyle(document.documentElement);
-  const colors = [cs.getPropertyValue('--green').trim() || '#C26A72', cs.getPropertyValue('--accent').trim() || '#E2B8A4', '#F4C22F', '#7BA5C9', '#FFFFFF'];
-  const pieces = [];
-  for (let i = 0; i < 110; i++) {
-    pieces.push({ x: W / 2 + (Math.random() - 0.5) * 60, y: H * 0.28 + (Math.random() - 0.5) * 20, vx: (Math.random() - 0.5) * 10, vy: -Math.random() * 11 - 4, s: 6 + Math.random() * 6, c: colors[i % colors.length], r: Math.random() * Math.PI * 2, vr: (Math.random() - 0.5) * 0.35, shape: Math.random() < 0.35 ? 'circle' : 'rect' });
-  }
-  const g = 0.38; let last = performance.now();
-  function frame(t) {
-    const dt = Math.min(32, t - last) / 16.67; last = t;
-    ctx.clearRect(0, 0, W, H); let alive = 0;
-    for (const p of pieces) {
-      p.vy += g * dt; p.x += p.vx * dt; p.y += p.vy * dt; p.r += p.vr * dt;
-      if (p.y < H + 40) alive++;
-      ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.r); ctx.fillStyle = p.c;
-      if (p.shape === 'circle') { ctx.beginPath(); ctx.arc(0, 0, p.s * 0.35, 0, Math.PI * 2); ctx.fill(); } else { ctx.fillRect(-p.s / 2, -p.s / 3, p.s, p.s * 0.6); }
-      ctx.restore();
-    }
-    if (alive > 0) requestAnimationFrame(frame); else ctx.clearRect(0, 0, W, H);
-  }
-  requestAnimationFrame(frame);
-}
-
-// Method Tabs
-document.querySelectorAll('.method-tab').forEach(tab => {
-  tab.addEventListener('click', () => { document.querySelectorAll('.method-tab').forEach(t => t.classList.remove('active')); tab.classList.add('active'); });
-});
-
-// ============ Country Picker ============
-const countries = [
-  {n:"Deutschland",i:"DE",d:"+49"},{n:"Österreich",i:"AT",d:"+43"},{n:"Schweiz",i:"CH",d:"+41"},
-  {n:"Liechtenstein",i:"LI",d:"+423"},{n:"Luxemburg",i:"LU",d:"+352"},{n:"Vereinigte Staaten",i:"US",d:"+1"},
-  {n:"Vereinigtes Königreich",i:"GB",d:"+44"},{n:"Frankreich",i:"FR",d:"+33"},{n:"Italien",i:"IT",d:"+39"},
-  {n:"Spanien",i:"ES",d:"+34"},{n:"Portugal",i:"PT",d:"+351"},{n:"Niederlande",i:"NL",d:"+31"},
-  {n:"Belgien",i:"BE",d:"+32"},{n:"Irland",i:"IE",d:"+353"},{n:"Dänemark",i:"DK",d:"+45"},
-  {n:"Schweden",i:"SE",d:"+46"},{n:"Norwegen",i:"NO",d:"+47"},{n:"Finnland",i:"FI",d:"+358"},
-  {n:"Polen",i:"PL",d:"+48"},{n:"Tschechien",i:"CZ",d:"+420"},{n:"Slowakei",i:"SK",d:"+421"},
-  {n:"Ungarn",i:"HU",d:"+36"},{n:"Slowenien",i:"SI",d:"+386"},{n:"Kroatien",i:"HR",d:"+385"},
-  {n:"Serbien",i:"RS",d:"+381"},{n:"Griechenland",i:"GR",d:"+30"},{n:"Rumänien",i:"RO",d:"+40"},
-  {n:"Bulgarien",i:"BG",d:"+359"},{n:"Türkei",i:"TR",d:"+90"},{n:"Ukraine",i:"UA",d:"+380"},
-  {n:"Russland",i:"RU",d:"+7"},{n:"Kanada",i:"CA",d:"+1"},{n:"Australien",i:"AU",d:"+61"},
-  {n:"Indien",i:"IN",d:"+91"},{n:"Vereinigte Arabische Emirate",i:"AE",d:"+971"},{n:"Südafrika",i:"ZA",d:"+27"}
-];
-function isoToFlag(iso) { return iso.toUpperCase().replace(/./g, c => String.fromCodePoint(127397 + c.charCodeAt())); }
-const countryPicker = document.getElementById('countryPicker');
-const countryDropdown = document.getElementById('countryDropdown');
-const countrySearch = document.getElementById('countrySearch');
-const countryList = document.getElementById('countryList');
-const pickerFlag = document.getElementById('pickerFlag');
-const pickerDial = document.getElementById('pickerDial');
-let selectedCountry = countries[0];
-function renderCountries(filter = '') {
-  const q = filter.trim().toLowerCase();
-  const filtered = q ? countries.filter(c => c.n.toLowerCase().includes(q) || c.d.includes(q) || c.i.toLowerCase().includes(q)) : countries;
-  if (filtered.length === 0) { countryList.innerHTML = '<div class="country-empty">Kein Land gefunden</div>'; return; }
-  countryList.innerHTML = filtered.map(c => '<div class="country-item" data-iso="' + c.i + '" data-dial="' + c.d + '" role="option"><span class="country-flag">' + isoToFlag(c.i) + '</span><span class="country-item-name">' + c.n + '</span><span class="country-item-dial">' + c.d + '</span></div>').join('');
-  countryList.querySelectorAll('.country-item').forEach(el => {
-    el.addEventListener('click', () => {
-      selectedCountry = { i: el.dataset.iso, d: el.dataset.dial };
-      pickerFlag.textContent = isoToFlag(el.dataset.iso); pickerDial.textContent = el.dataset.dial;
-      countryDropdown.hidden = true; countrySearch.value = ''; renderCountries();
-      document.getElementById('cf-phone')?.focus();
-    });
-  });
-}
-countryPicker?.addEventListener('click', (e) => {
-  e.stopPropagation();
-  countryDropdown.hidden = !countryDropdown.hidden;
-  if (!countryDropdown.hidden) { renderCountries(); setTimeout(() => countrySearch.focus(), 50); }
-});
-countrySearch?.addEventListener('input', (e) => renderCountries(e.target.value));
-document.addEventListener('click', (e) => { if (!e.target.closest('.phone-field') && !e.target.closest('.country-dropdown')) countryDropdown.hidden = true; });
-
-// ============ Form Submit (AJAX an den FinestSites-Worker) ============
 document.getElementById('contactForm')?.addEventListener('submit', (e) => {
   e.preventDefault();
   const form = e.target;
-  const fd = new FormData(form);
   const submitBtn = form.querySelector('button[type="submit"]');
-  const method = document.querySelector('.method-tab.active')?.dataset.method || 'phone';
   const body = {};
-  fd.forEach((v, k) => { body[k] = String(v); });
-  body.method = method;
-  body.phone_full = (selectedCountry.d + ' ' + (body.phone || '')).trim();
-  body.country_code = selectedCountry.i;
+  new FormData(form).forEach((v, k) => { body[k] = String(v); });
   body.sprache = fsLang();
-  const goals = selectedGoals('de');
-  body.wuensche = goals.length ? goals.join(' · ') : '— keine Häkchen gesetzt —';
-  body.wuensche_anzahl = String(goals.length) + ' / 5';
   if (submitBtn) { submitBtn.disabled = true; submitBtn.style.opacity = '0.6'; }
   fetch(form.action, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: JSON.stringify(body) })
   .then(r => {
     if (!r.ok) throw new Error('submit_failed');
     const firstName = String(body.name || '').trim().split(/\s+/)[0];
-    if (firstName) {
-      const de = document.getElementById('successNameDe'), en = document.getElementById('successNameEn');
-      if (de) de.textContent = ', ' + firstName;
-      if (en) en.textContent = ', ' + firstName;
-    }
-    goToStep('3');
-    setTimeout(fireConfetti, 220);
+    if (firstName) { const de = document.getElementById('successNameDe'), en = document.getElementById('successNameEn'); if (de) de.textContent = ', ' + firstName; if (en) en.textContent = ', ' + firstName; }
+    document.getElementById('cform').classList.add('sent');
+    document.getElementById('cform').scrollIntoView({ behavior: 'smooth', block: 'center' });
   })
   .catch(() => {
     if (submitBtn) { submitBtn.disabled = false; submitBtn.style.opacity = '1'; }
@@ -465,7 +249,6 @@ function fsSetLang(lang) {
     if (v) el.setAttribute('placeholder', v);
   });
   if (pmCurrent && pmModal.classList.contains('open')) renderModal();
-  if (convCard.dataset.step === '2') renderSelectedSummary();
 }
 (function initLang(){
   var lang = document.documentElement.getAttribute('data-lang') || 'de';

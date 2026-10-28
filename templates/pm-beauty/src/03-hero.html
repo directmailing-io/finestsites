@@ -1,50 +1,21 @@
 <!-- HERO -->
 <section class="hero">
-  <div class="hero-bg-image">
-    <img loading="eager" fetchpriority="high" decoding="async" src="assets/hero/{{hero_variante}}.webp" alt="" width="1536" height="1024">
-    <div class="ai-badge" title="Dieses Bild wurde mit KI erstellt (EU Kennzeichnung)">
-      <img loading="lazy" decoding="async" src="assets/ai-label.svg" alt="AI generated">
+  <div class="hero-copy">
+    <h1 class="reveal"><span class="l-de">Schönheit von innen <em>&amp;</em> außen</span><span class="l-en">Beauty from the inside <em>&amp;</em> out</span></h1>
+    <p class="sub reveal"><span class="l-de">Eine Routine, die in fünf Minuten erledigt ist. Ein Glas am Tag, das dazugehört. Und jemand, der dir ehrlich sagt, was zu deiner Haut passt.</span><span class="l-en">A routine that takes five minutes. One glass a day that goes with it. And someone who tells you honestly what suits your skin.</span></p>
+    <div class="hero-ctas reveal">
+      <a href="#kontakt" class="btn btn-primary"><span class="l-de">Beauty-Check vereinbaren</span><span class="l-en">Book a beauty check</span> <span class="arr">→</span></a>
+      <a href="#konzept" class="link-more"><span class="l-de">Wie das funktioniert</span><span class="l-en">How it works</span></a>
     </div>
+    <div class="hero-contacts"><p class="mc-title"><span class="l-de">Schreib mir direkt</span><span class="l-en">Message me directly</span></p><div class="mc-grid">{{#if whatsapp_nummer}}<a class="mc-wa kc-ch" href="https://wa.me/{{whatsapp_nummer}}?text=Hi%20{{vorname}}%2C%20ich%20interessiere%20mich%20f%C3%BCr%20den%20Beauty-Check." target="_blank" rel="noopener"><span class="mc-ic"><svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91C21.95 6.45 17.5 2 12.04 2zm0 18.15c-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.2 8.2 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.25-8.24 4.54 0 8.24 3.7 8.24 8.24 0 4.55-3.7 8.24-8.24 8.24zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.12-.17.25-.64.81-.78.97-.14.17-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.02-.38.11-.51.11-.11.25-.29.37-.43.13-.15.17-.25.25-.42.08-.17.04-.31-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.41-.42-.56-.43h-.48c-.17 0-.43.06-.66.31-.22.25-.86.85-.86 2.07 0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.67-1.18.21-.58.21-1.07.14-1.18-.06-.1-.22-.16-.47-.28z"/></svg></span><span class="l-de">Schreib mir auf WhatsApp</span><span class="l-en">Message me on WhatsApp</span></a>{{/if}}{{#if instagram_url}}<a class="mc-pill kc-ch" href="{{instagram_url}}" target="_blank" rel="noopener"><span class="kc-sic kc-ig"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><rect x="2.5" y="2.5" width="19" height="19" rx="5.5"/><circle cx="12" cy="12" r="4.3"/><circle cx="17.6" cy="6.4" r="1.2" fill="currentColor" stroke="none"/></svg></span><span class="mc-lbl">Instagram</span></a>{{/if}}{{#if facebook_url}}<a class="mc-pill kc-ch" href="{{facebook_url}}" target="_blank" rel="noopener"><span class="kc-sic kc-fb"><svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M13.9 21.8v-8.2h2.8l.4-3.3h-3.2V8.2c0-.9.3-1.6 1.6-1.6h1.7V3.7c-.3 0-1.3-.1-2.5-.1-2.5 0-4.2 1.5-4.2 4.3v2.4H7.7v3.3h2.8v8.2z"/></svg></span><span class="mc-lbl">Facebook</span></a>{{/if}}</div></div>
+    <div class="hero-facts reveal"><span class="l-de">Kostenlos</span><span class="l-en">Free</span><span class="l-de">Unverbindlich</span><span class="l-en">No strings</span><span class="l-de">Persönlich</span><span class="l-en">Personal</span></div>
   </div>
-
-  <div class="hero-inner">
-    <div class="hero-content">
-      <div class="hero-pill">
-        <span class="dot"></span>
-        <span class="l-de">Beauty-Check · kostenlos &amp; unverbindlich</span><span class="l-en">Beauty check · free &amp; no strings</span>
-      </div>
-
-      <h1 class="reveal"><span class="l-de">Schönheit von innen <span class="mark">&amp; außen.</span></span><span class="l-en">Beauty from the inside <span class="mark">&amp; out.</span></span></h1>
-
-      <p class="sub reveal"><span class="l-de">Du hast meine Story gesehen und fragst dich, was dahintersteckt? Hier zeig ich dir, wie ich meine Haut pflege: <strong>von außen</strong> mit einer einfachen Routine, <strong>von innen</strong> mit einem Glas am Tag. Und wenn du magst, schauen wir gemeinsam, was zu dir passt.</span><span class="l-en">Saw my story and wondered what's behind it? Here's how I care for my skin: <strong>on the outside</strong> with a simple routine, <strong>on the inside</strong> with one glass a day. And if you like, we'll figure out together what suits you.</span></p>
-
-      <div class="hero-ctas reveal">
-        <a href="#kontakt" class="btn btn-primary"><span class="l-de">Beauty-Check vereinbaren</span><span class="l-en">Book a beauty check</span> <span class="arr">→</span></a>
-        <a href="#konzept" class="btn btn-ghost"><span class="l-de">Wie das funktioniert</span><span class="l-en">How it works</span></a>
-      </div>
-      <div class="hero-contacts"><p class="mc-title"><span class="l-de">Schreib mir direkt</span><span class="l-en">Message me directly</span></p><div class="mc-grid">{{#if whatsapp_nummer}}<a class="mc-wa kc-ch" href="https://wa.me/{{whatsapp_nummer}}?text=Hi%20{{vorname}}%2C%20ich%20interessiere%20mich%20f%C3%BCr%20den%20Beauty-Check." target="_blank" rel="noopener"><span class="mc-ic"><svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91C21.95 6.45 17.5 2 12.04 2zm0 18.15c-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.2 8.2 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.25-8.24 4.54 0 8.24 3.7 8.24 8.24 0 4.55-3.7 8.24-8.24 8.24zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.12-.17.25-.64.81-.78.97-.14.17-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.02-.38.11-.51.11-.11.25-.29.37-.43.13-.15.17-.25.25-.42.08-.17.04-.31-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.41-.42-.56-.43h-.48c-.17 0-.43.06-.66.31-.22.25-.86.85-.86 2.07 0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.67-1.18.21-.58.21-1.07.14-1.18-.06-.1-.22-.16-.47-.28z"/></svg></span><span class="l-de">Schreib mir auf WhatsApp</span><span class="l-en">Message me on WhatsApp</span></a>{{/if}}{{#if instagram_url}}<a class="mc-pill kc-ch" href="{{instagram_url}}" target="_blank" rel="noopener"><span class="kc-sic kc-ig"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><rect x="2.5" y="2.5" width="19" height="19" rx="5.5"/><circle cx="12" cy="12" r="4.3"/><circle cx="17.6" cy="6.4" r="1.2" fill="currentColor" stroke="none"/></svg></span><span class="mc-lbl">Instagram</span></a>{{/if}}{{#if facebook_url}}<a class="mc-pill kc-ch" href="{{facebook_url}}" target="_blank" rel="noopener"><span class="kc-sic kc-fb"><svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M13.9 21.8v-8.2h2.8l.4-3.3h-3.2V8.2c0-.9.3-1.6 1.6-1.6h1.7V3.7c-.3 0-1.3-.1-2.5-.1-2.5 0-4.2 1.5-4.2 4.3v2.4H7.7v3.3h2.8v8.2z"/></svg></span><span class="mc-lbl">Facebook</span></a>{{/if}}</div></div>
-
-      <div class="hero-signals">
-        <div class="hero-signal">
-          <svg class="ico" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="8"/><path d="M6 10l3 3 5-6"/></svg>
-          <span class="l-de">Kostenlos &amp; unverbindlich</span><span class="l-en">Free &amp; no strings</span>
-        </div>
-        <div class="sep"></div>
-        <div class="hero-signal">
-          <svg class="ico" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="7" r="3.5"/><path d="M3.5 17c0-3.3 2.9-5.5 6.5-5.5s6.5 2.2 6.5 5.5"/></svg>
-          <span class="l-de">Persönlich, keine Hotline</span><span class="l-en">Personal, no hotline</span>
-        </div>
-        <div class="sep"></div>
-        <div class="hero-signal">
-          <svg class="ico" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2.5l2.3 4.7 5.2.8-3.7 3.6.9 5.2L10 14.3l-4.7 2.5.9-5.2L2.5 8l5.2-.8z"/></svg>
-          <span class="l-de">Du entscheidest</span><span class="l-en">You decide</span>
-        </div>
-      </div>
-    </div>
+  <div class="hero-media">
+    <img loading="eager" fetchpriority="high" decoding="async" src="assets/hero/{{hero_variante}}.webp" alt="" width="1536" height="1024">
   </div>
 </section>
 
-<!-- PM-International Disclaimer (Pflicht laut Richtlinie: sichtbar oben auf der Seite) -->
+<!-- PM-International Hinweis (Pflicht laut Richtlinie: sichtbar oben auf der Seite) -->
 <div class="pm-disclaimer">
   <div class="pm-disclaimer-inner">
     <img loading="eager" decoding="async" class="pm-disclaimer-avatar" src="{{profilbild}}" alt="{{vorname}} {{nachname}}">
