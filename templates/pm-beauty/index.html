@@ -1783,7 +1783,7 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape' && pmModal.cl
 // ============ Skinscan: Ring aus kurzen Strichen, das Leuchten läuft im Kreis ============
 (function () {
   const svg = document.getElementById('scanRing'); if (!svg) return;
-  const cx = 50, cy = 70, rx = 33, ry = 40, N = 64, ns = 'http://www.w3.org/2000/svg';
+  const cx = 50, cy = 75, rx = 34, ry = 45, N = 64, ns = 'http://www.w3.org/2000/svg';
   for (let i = 0; i < N; i++) {
     const a = (i / N) * Math.PI * 2;
     const nx = Math.cos(a) / rx, ny = Math.sin(a) / ry, len = Math.hypot(nx, ny);
