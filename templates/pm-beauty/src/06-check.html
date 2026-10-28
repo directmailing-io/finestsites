@@ -1,0 +1,34 @@
+<!-- BEAUTY-CHECK -->
+<section class="check" id="check">
+  <div class="check-grid">
+    <div class="check-img reveal">
+      <img loading="lazy" decoding="async" src="assets/check.webp" alt="" width="1536" height="1024">
+      <div class="ai-badge" title="Dieses Bild wurde mit KI erstellt (EU Kennzeichnung)"><img loading="lazy" decoding="async" src="assets/ai-label.svg" alt="AI generated"></div>
+    </div>
+    <div class="check-copy">
+      <div class="section-tag"><span class="l-de">Der Beauty-Check</span><span class="l-en">The beauty check</span></div>
+      <h2><span class="l-de">Wir schauen gemeinsam, <span class="mark">was zu dir passt.</span></span><span class="l-en">Let's find out together <span class="mark">what suits you.</span></span></h2>
+      <p class="lead"><span class="l-de">Kein Verkaufsgespräch, sondern eine halbe Stunde für deine Haut. Du erzählst, ich höre zu, und am Ende hast du eine Routine, die zu deinem Alltag passt.</span><span class="l-en">Not a sales pitch, but half an hour for your skin. You talk, I listen, and in the end you have a routine that fits your life.</span></p>
+
+      <ol class="ck-steps">
+        <li class="ck-step"><span class="n">1</span><div><b><span class="l-de">Kurz kennenlernen</span><span class="l-en">A quick hello</span></b><p><span class="l-de">Wie fühlt sich deine Haut an, was wünschst du dir, wie viel Zeit willst du investieren? Ein paar Fragen, kein Fragebogen.</span><span class="l-en">How does your skin feel, what do you wish for, how much time do you want to spend? A few questions, no questionnaire.</span></p></div></li>
+        <li class="ck-step"><span class="n">2</span><div><b><span class="l-de">Gemeinsam hinschauen</span><span class="l-en">Take a closer look</span></b><p><span class="l-de">Vor Ort, per Video oder am Telefon. Wir sprechen über Hauttyp, Routine und was du bisher benutzt.</span><span class="l-en">In person, by video or on the phone. We talk about skin type, routine and what you've used so far.</span></p></div></li>
+        <li class="ck-step"><span class="n">3</span><div><b><span class="l-de">Deine Empfehlung</span><span class="l-en">Your recommendation</span></b><p><span class="l-de">Du bekommst eine klare Reihenfolge für morgens und abends. Ob du etwas ausprobierst, entscheidest du in Ruhe.</span><span class="l-en">You get a clear order for morning and evening. Whether you try something is entirely your call.</span></p></div></li>
+      </ol>
+
+      {{#if scanner_anzeigen=an}}
+      <div class="ck-scan">
+        <b><span class="l-de">Auf Wunsch: Hautanalyse mit dem FitLine AI Scanner</span><span class="l-en">Optional: skin analysis with the FitLine AI Scanner</span></b>
+        <p><span class="l-de">Ein Selfie bei Tageslicht in der FitLine-App, und du bekommst eine kosmetische Einschätzung zu Feuchtigkeit, Poren, Fältchen, Ausstrahlung und mehr. Wir schauen uns das Ergebnis gemeinsam an.</span><span class="l-en">A daylight selfie in the FitLine app gives you a cosmetic assessment of hydration, pores, fine lines, radiance and more. We look at the result together.</span></p>
+        <p class="foot-note"><span class="l-de">Die Analyse ist eine kosmetische Einschätzung per App und keine medizinische Untersuchung. Das Foto wird in der App aufgenommen, nicht auf dieser Seite.</span><span class="l-en">The analysis is a cosmetic assessment via the app, not a medical examination. The photo is taken in the app, not on this website.</span></p>
+      </div>
+      {{/if}}
+
+      <div class="ck-ctas">
+        <a href="#kontakt" class="btn btn-primary"><span class="l-de">Beauty-Check vereinbaren</span><span class="l-en">Book a beauty check</span> <span class="arr">→</span></a>
+        {{#if whatsapp_nummer}}<a href="https://wa.me/{{whatsapp_nummer}}?text=Hi%20{{vorname}}%2C%20ich%20interessiere%20mich%20f%C3%BCr%20den%20Beauty-Check." target="_blank" rel="noopener" class="btn btn-ghost"><span class="l-de">Lieber per WhatsApp</span><span class="l-en">Rather on WhatsApp</span></a>{{/if}}
+      </div>
+      <p class="ck-note"><span class="l-de">Kostenlos, unverbindlich, ohne Kaufpflicht.{{#if region}} Vor Ort {{region}}, sonst per Video oder Telefon.{{/if}}</span><span class="l-en">Free, no strings, no obligation to buy.{{#if region}} In person {{region}}, otherwise by video or phone.{{/if}}</span></p>
+    </div>
+  </div>
+</section>

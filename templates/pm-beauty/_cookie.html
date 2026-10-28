@@ -1,0 +1,326 @@
+<!-- ═══════════════════════════════════════════════════════════════
+     DSGVO Cookie Consent  ·  § 25 TDDDG + DSGVO Art. 6, 7
+     · Ablehnen und Akzeptieren gleichwertig (Art. 7 Abs. 4)
+     · Non-essentials sind default AUS (Art. 4 Nr. 11 — aktive Handlung)
+     · Consent versioniert + zeitgestempelt gespeichert
+     · Widerruf jederzeit über schwebenden 🍪-Button
+     · Andere Scripts hören auf window "fs:consent" und lesen window.fsConsent()
+     ═══════════════════════════════════════════════════════════════ -->
+<style id="fs-cookie-css">
+  #fs-ck-wrap {
+    position: fixed; inset: 0; z-index: 99999;
+    display: flex; align-items: flex-end; justify-content: center;
+    padding: 24px;
+    pointer-events: none;
+  }
+  #fs-ck-wrap.fs-ck-open { pointer-events: auto; }
+
+  #fs-ck-banner {
+    background: rgba(29, 36, 25, 0.96);
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 22px;
+    box-shadow:
+      0 20px 60px rgba(0, 0, 0, 0.45),
+      0 0 0 1px rgba(255, 255, 255, 0.04) inset;
+    max-width: 560px;
+    width: 100%;
+    padding: 28px 30px 24px;
+    transform: translateY(140%);
+    opacity: 0;
+    transition: transform 0.5s cubic-bezier(0.22, 1.2, 0.36, 1), opacity 0.35s ease;
+    will-change: transform, opacity;
+    color: #fff;
+  }
+  #fs-ck-banner.fs-ck-visible { transform: translateY(0); opacity: 1; }
+
+  .fs-ck-header { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+  .fs-ck-icon {
+    width: 36px; height: 36px;
+    background: color-mix(in oklab, var(--green) 25%, transparent);
+    border-radius: 50%;
+    display: grid; place-items: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+  .fs-ck-title { font-size: 16px; font-weight: 700; margin: 0; letter-spacing: -0.01em; }
+
+  .fs-ck-body {
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.72);
+    margin: 0 0 20px;
+  }
+  .fs-ck-body a {
+    color: color-mix(in oklab, var(--green) 60%, white 40%);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .fs-ck-body a:hover { color: #fff; }
+
+  .fs-ck-cats { display: none; margin-bottom: 20px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 14px; }
+  .fs-ck-cats.fs-ck-cats-open { display: block; }
+  .fs-ck-cat {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .fs-ck-cat:last-child { border-bottom: none; }
+  .fs-ck-cat-info { flex: 1; min-width: 0; margin-right: 16px; }
+  .fs-ck-cat-name { font-size: 13px; font-weight: 600; display: block; color: #fff; }
+  .fs-ck-cat-desc { font-size: 12px; color: rgba(255,255,255,0.55); display: block; margin-top: 2px; line-height: 1.45; }
+
+  .fs-ck-toggle { position: relative; width: 42px; height: 24px; flex-shrink: 0; display: block; }
+  .fs-ck-toggle input { opacity: 0; width: 0; height: 0; position: absolute; }
+  .fs-ck-slider {
+    position: absolute; inset: 0;
+    background: rgba(255,255,255,0.16);
+    border-radius: 9999px;
+    cursor: pointer;
+    transition: background 0.22s;
+  }
+  .fs-ck-slider::after {
+    content: '';
+    position: absolute;
+    left: 3px; top: 3px;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: #fff;
+    transition: transform 0.24s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.35);
+  }
+  .fs-ck-toggle input:checked + .fs-ck-slider { background: var(--green); }
+  .fs-ck-toggle input:checked + .fs-ck-slider::after { transform: translateX(18px); }
+  .fs-ck-toggle input:disabled + .fs-ck-slider { opacity: 0.6; cursor: not-allowed; }
+
+  .fs-ck-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    align-items: stretch;
+  }
+  .fs-ck-btn {
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 12px 18px;
+    border-radius: 9999px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    line-height: 1.1;
+  }
+  /* Reject und Accept haben gleiche Größe & Position → DSGVO Art. 7 */
+  .fs-ck-btn-reject {
+    background: rgba(255,255,255,0.1);
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.18);
+  }
+  .fs-ck-btn-reject:hover { background: rgba(255,255,255,0.16); }
+  .fs-ck-btn-accept {
+    background: var(--green);
+    color: #fff;
+    box-shadow: 0 2px 14px color-mix(in oklab, var(--green) 55%, transparent);
+  }
+  .fs-ck-btn-accept:hover { filter: brightness(1.08); transform: translateY(-1px); }
+  .fs-ck-settings-link {
+    grid-column: 1 / -1;
+    font-size: 12.5px;
+    color: rgba(255,255,255,0.55);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px 6px;
+    font-family: inherit;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    justify-self: center;
+    transition: color 0.15s;
+    margin-top: 2px;
+  }
+  .fs-ck-settings-link:hover { color: rgba(255,255,255,0.85); }
+
+  #fs-ck-reopener {
+    position: fixed;
+    bottom: 18px; left: 18px;
+    z-index: 9998;
+    width: 42px; height: 42px;
+    border-radius: 50%;
+    background: rgba(29, 36, 25, 0.92);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid color-mix(in oklab, var(--green) 40%, transparent);
+    cursor: pointer;
+    display: none;
+    align-items: center; justify-content: center;
+    font-size: 18px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.35);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    padding: 0;
+  }
+  #fs-ck-reopener:hover { transform: scale(1.08); }
+
+  @media (max-width: 520px) {
+    #fs-ck-wrap { padding: 12px; }
+    #fs-ck-banner { padding: 22px 20px 20px; border-radius: 20px; }
+    .fs-ck-btn { padding: 12px 12px; font-size: 13.5px; }
+  }
+</style>
+
+<div id="fs-ck-wrap">
+  <div id="fs-ck-banner" role="dialog" aria-modal="false" aria-labelledby="fs-ck-title" tabindex="-1">
+    <div class="fs-ck-header">
+      <div class="fs-ck-icon" aria-hidden="true">🍪</div>
+      <p class="fs-ck-title" id="fs-ck-title"><span class="l-de">Deine Privatsphäre</span><span class="l-en">Your privacy</span></p>
+    </div>
+    <p class="fs-ck-body">
+      <span class="l-de">Wir setzen nur technisch notwendige Cookies, damit die Seite funktioniert. Für Statistiken oder Marketing brauchen wir deine Einwilligung — du kannst frei wählen. Details in unserer <a href="/datenschutz" target="_blank" rel="noopener">Datenschutzerklärung</a>.</span><span class="l-en">We only set essential cookies to make the site work. For statistics or marketing we need your consent — your choice. Details in our <a href="/datenschutz" target="_blank" rel="noopener">privacy policy</a>.</span>
+    </p>
+
+    <div class="fs-ck-cats" id="fs-ck-cats">
+      <div class="fs-ck-cat">
+        <div class="fs-ck-cat-info">
+          <span class="fs-ck-cat-name"><span class="l-de">Technisch notwendig</span><span class="l-en">Essential</span></span>
+          <span class="fs-ck-cat-desc"><span class="l-de">Grundfunktionen wie Sprachwahl und Kontaktformular — immer aktiv.</span><span class="l-en">Basic functions like language choice and contact form — always on.</span></span>
+        </div>
+        <label class="fs-ck-toggle" aria-label="Technisch notwendig (immer aktiv)">
+          <input type="checkbox" checked disabled>
+          <span class="fs-ck-slider"></span>
+        </label>
+      </div>
+      <div class="fs-ck-cat">
+        <div class="fs-ck-cat-info">
+          <span class="fs-ck-cat-name"><span class="l-de">Statistik</span><span class="l-en">Statistics</span></span>
+          <span class="fs-ck-cat-desc"><span class="l-de">Anonyme Auswertung, wie Besucher die Seite nutzen (z.&nbsp;B. Aufrufe, Verweildauer).</span><span class="l-en">Anonymous analytics on how visitors use the site (e.g. pageviews, time on page).</span></span>
+        </div>
+        <label class="fs-ck-toggle" aria-label="Statistik-Cookies erlauben">
+          <input type="checkbox" id="fs-ck-chk-stats">
+          <span class="fs-ck-slider"></span>
+        </label>
+      </div>
+      <div class="fs-ck-cat">
+        <div class="fs-ck-cat-info">
+          <span class="fs-ck-cat-name">Marketing</span>
+          <span class="fs-ck-cat-desc"><span class="l-de">Für personalisierte Werbung und Retargeting (z.&nbsp;B. Meta Pixel).</span><span class="l-en">Personalized ads and retargeting (e.g. Meta Pixel).</span></span>
+        </div>
+        <label class="fs-ck-toggle" aria-label="Marketing-Cookies erlauben">
+          <input type="checkbox" id="fs-ck-chk-mkt">
+          <span class="fs-ck-slider"></span>
+        </label>
+      </div>
+    </div>
+
+    <div class="fs-ck-actions">
+      <button class="fs-ck-btn fs-ck-btn-reject" id="fs-ck-reject" type="button"><span class="l-de">Alles ablehnen</span><span class="l-en">Reject all</span></button>
+      <button class="fs-ck-btn fs-ck-btn-accept" id="fs-ck-accept" type="button"><span class="l-de">Alles akzeptieren</span><span class="l-en">Accept all</span></button>
+      <button class="fs-ck-settings-link" id="fs-ck-settings-btn" type="button"><span class="l-de">Einstellungen anpassen ›</span><span class="l-en">Adjust settings ›</span></button>
+    </div>
+  </div>
+</div>
+
+<button id="fs-ck-reopener" type="button" aria-label="Cookie-Einstellungen öffnen" title="Cookie-Einstellungen">🍪</button>
+
+<script id="fs-cookie-js">(function() {
+  'use strict';
+  var KEY = 'fs_consent_v1';
+  var wrap = document.getElementById('fs-ck-wrap');
+  var banner = document.getElementById('fs-ck-banner');
+  var cats = document.getElementById('fs-ck-cats');
+  var reopener = document.getElementById('fs-ck-reopener');
+  var chkStats = document.getElementById('fs-ck-chk-stats');
+  var chkMkt = document.getElementById('fs-ck-chk-mkt');
+  var settingsBtn = document.getElementById('fs-ck-settings-btn');
+  var settingsOpen = false;
+
+  function loadConsent() {
+    try { return JSON.parse(localStorage.getItem(KEY) || 'null'); } catch(e) { return null; }
+  }
+  function saveConsent(stats, mkt) {
+    var c = {
+      v: 1,
+      ts: new Date().toISOString(),
+      necessary: true,
+      statistics: !!stats,
+      marketing: !!mkt
+    };
+    try { localStorage.setItem(KEY, JSON.stringify(c)); } catch(e) {}
+    window.dispatchEvent(new CustomEvent('fs:consent', { detail: c }));
+    return c;
+  }
+  // Globaler Getter für spätere Analytics-/Pixel-Skripte
+  window.fsConsent = function() { return loadConsent(); };
+
+  function showReopener() { reopener.style.display = 'flex'; }
+  function hideReopener() { reopener.style.display = 'none'; }
+
+  function hideBanner() {
+    banner.classList.remove('fs-ck-visible');
+    setTimeout(function() { wrap.classList.remove('fs-ck-open'); }, 520);
+    showReopener();
+  }
+  function showBanner() {
+    wrap.classList.add('fs-ck-open');
+    hideReopener();
+    requestAnimationFrame(function() {
+      requestAnimationFrame(function() {
+        banner.classList.add('fs-ck-visible');
+      });
+    });
+  }
+  function setSettingsOpen(open) {
+    settingsOpen = open;
+    if (open) {
+      cats.classList.add('fs-ck-cats-open');
+      settingsBtn.innerHTML = '<span class="l-de">Auswahl speichern ›</span><span class="l-en">Save selection ›</span>';
+    } else {
+      cats.classList.remove('fs-ck-cats-open');
+      settingsBtn.innerHTML = '<span class="l-de">Einstellungen anpassen ›</span><span class="l-en">Adjust settings ›</span>';
+    }
+    // Sprachschalter neu anwenden (l-de/l-en toggle nach DOM-Änderung)
+    document.documentElement.getAttribute('data-lang'); // no-op, aber CSS greift automatisch
+  }
+
+  document.getElementById('fs-ck-accept').addEventListener('click', function() {
+    chkStats.checked = true; chkMkt.checked = true;
+    saveConsent(true, true);
+    hideBanner();
+  });
+  document.getElementById('fs-ck-reject').addEventListener('click', function() {
+    chkStats.checked = false; chkMkt.checked = false;
+    saveConsent(false, false);
+    hideBanner();
+  });
+  settingsBtn.addEventListener('click', function() {
+    if (!settingsOpen) {
+      setSettingsOpen(true);
+    } else {
+      saveConsent(chkStats.checked, chkMkt.checked);
+      hideBanner();
+      setSettingsOpen(false);
+    }
+  });
+  reopener.addEventListener('click', function() {
+    var c = loadConsent();
+    if (c) { chkStats.checked = !!c.statistics; chkMkt.checked = !!c.marketing; }
+    setSettingsOpen(false);
+    showBanner();
+  });
+
+  var existing = loadConsent();
+  if (!existing) {
+    // Kleine Verzögerung — Seite malt zuerst, Banner slidet dann ein
+    setTimeout(showBanner, 900);
+  } else {
+    showReopener();
+    // Bestehende Einwilligung erneut broadcasten (falls andere Scripts erst später laden)
+    setTimeout(function() {
+      window.dispatchEvent(new CustomEvent('fs:consent', { detail: existing }));
+    }, 0);
+  }
+})();</script>
+<!-- ═══════════════ End Cookie Consent ═══════════════ -->
+
+</body>
+</html>

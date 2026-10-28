@@ -1,0 +1,345 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Beauty-Seite Konzept</title>
+<style>
+:root {
+  --bg: #FAF8F6; --card: #FFFFFF; --ink: #1F1A17; --body: #3F3833; --muted: #7A706A; --line: #ECE6E1;
+  --accent: #B56A5A; --accent-soft: #F7EDEA; --sage: #5F7A64; --sage-soft: #EAF0EA;
+  --berry: #7A2E46; --berry-soft: #F6E8ED; --cream: #F3E7DA;
+  --amber: #9A5B13; --amber-soft: #FFF6EA; --red: #A12C2C; --red-soft: #FBEDED;
+  --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Inter, system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #161311; --card: #201C19; --ink: #F5EFEA; --body: #D9D0C9; --muted: #A89C93; --line: #3A332E;
+    --accent: #E09C8C; --accent-soft: #3A2723; --sage: #9DBBA2; --sage-soft: #23302A;
+    --berry: #E7A2B8; --berry-soft: #3A2129; --cream: #3A3029;
+    --amber: #E6B46E; --amber-soft: #352A1B; --red: #F0A0A0; --red-soft: #3A2222;
+  }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--body); font-family: var(--font); font-size: 16px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+.wrap { max-width: 1060px; margin: 0 auto; padding: 0 16px; }
+header.hero { padding: 56px 0 28px; }
+.kicker { font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); }
+h1 { font-size: clamp(2rem, 5vw, 3rem); line-height: 1.12; color: var(--ink); margin: 10px 0 12px; letter-spacing: -.02em; }
+h2 { font-size: clamp(1.45rem, 3.2vw, 2rem); color: var(--ink); margin: 0 0 8px; letter-spacing: -.01em; }
+h3 { font-size: 1.15rem; color: var(--ink); margin: 26px 0 8px; }
+h4 { margin: 0 0 6px; font-size: 16px; color: var(--ink); }
+.lead { color: var(--muted); font-size: 17.5px; max-width: 820px; margin: 0 0 20px; }
+section { padding: 44px 0; border-top: 1px solid var(--line); }
+nav.toc { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; }
+nav.toc a { font-size: 14px; font-weight: 600; color: var(--ink); text-decoration: none; padding: 6px 12px; border: 1px solid var(--line); border-radius: 999px; background: var(--card); }
+.grid { display: grid; gap: 14px; }
+@media (min-width: 760px) { .g2 { grid-template-columns: 1fr 1fr; } .g3 { grid-template-columns: repeat(3, 1fr); } .g4 { grid-template-columns: repeat(4, 1fr); } }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 18px 20px; }
+.card p, .card li { font-size: 15px; color: var(--muted); }
+.card p { margin: 4px 0 0; }
+.card ul { padding-left: 18px; margin: 6px 0 0; }
+.core { background: var(--ink); color: var(--bg); border-radius: 20px; padding: 28px 26px; }
+.core h2 { color: var(--bg); }
+.core p { color: color-mix(in srgb, var(--bg) 78%, transparent); margin: 0 0 10px; }
+.core .big { font-size: clamp(1.35rem, 3.4vw, 2rem); font-weight: 700; line-height: 1.25; letter-spacing: -.01em; color: var(--bg); margin: 6px 0 16px; }
+.pill { display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; padding: 2px 9px; border-radius: 99px; margin-bottom: 6px; white-space: nowrap; }
+.p-in { background: var(--berry-soft); color: var(--berry); }
+.p-out { background: var(--accent-soft); color: var(--accent); }
+.p-ok { background: var(--sage-soft); color: var(--sage); }
+.p-opt { background: var(--amber-soft); color: var(--amber); }
+.p-no { background: var(--red-soft); color: var(--red); }
+.note { border-radius: 14px; padding: 14px 16px; margin: 16px 0; font-size: 15px; }
+.n-warn { background: var(--amber-soft); color: var(--amber); }
+.n-ok { background: var(--sage-soft); color: var(--sage); }
+table { width: 100%; border-collapse: collapse; background: var(--card); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; font-size: 14.5px; }
+th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-size: 12px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); background: color-mix(in srgb, var(--card) 90%, var(--line)); }
+tr:last-child td { border-bottom: 0; }
+.tablewrap { overflow-x: auto; }
+code { font-size: 13px; background: var(--accent-soft); padding: 1px 5px; border-radius: 5px; color: var(--ink); }
+
+/* Ziel-Weiche */
+.fork { display: grid; gap: 14px; margin-top: 16px; }
+@media (min-width: 760px) { .fork { grid-template-columns: 1fr auto 1fr; align-items: stretch; } }
+.fork .mid { display: flex; align-items: center; justify-content: center; font-weight: 700; color: var(--muted); font-size: 14px; }
+
+/* Baukasten */
+.kit { display: grid; gap: 14px; }
+@media (min-width: 860px) { .kit { grid-template-columns: 1.1fr 1fr; } }
+.layer { border-radius: 16px; padding: 16px 18px; border: 1px solid var(--line); background: var(--card); }
+.layer.base { border: 2px solid var(--ink); }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.chip { font-size: 13.5px; padding: 5px 10px; border-radius: 99px; background: var(--cream); color: var(--ink); white-space: nowrap; }
+.chip.in { background: var(--berry-soft); color: var(--berry); }
+.chip small { color: var(--muted); margin-left: 4px; }
+
+/* Visual-Skizzen */
+.vis { display: grid; gap: 18px; }
+@media (min-width: 900px) { .vis { grid-template-columns: repeat(3, 1fr); } }
+.mock { border-radius: 18px; overflow: hidden; border: 1px solid var(--line); background: var(--card); }
+.mock .frame { height: 300px; position: relative; overflow: hidden; }
+.mock .cap { padding: 14px 16px; }
+.mock .cap p { margin: 4px 0 0; font-size: 14.5px; color: var(--muted); }
+/* A: Zwei Hälften */
+.va .l { position: absolute; inset: 0 50% 0 0; background: linear-gradient(160deg, #5A1E33 0%, #8E3550 55%, #C76B7F 100%); }
+.va .r { position: absolute; inset: 0 0 0 50%; background: linear-gradient(200deg, #FBF5EE 0%, #EFDFCF 60%, #E2C9B3 100%); }
+.va .portrait { position: absolute; left: 50%; bottom: 0; transform: translateX(-50%); width: 120px; height: 190px; border-radius: 60px 60px 0 0; background: linear-gradient(#D9B9A4, #B48A72); border: 3px solid #fff; }
+.va .t { position: absolute; top: 18px; width: 100%; text-align: center; font-weight: 800; font-size: 22px; letter-spacing: -.02em; }
+.va .t span:first-child { color: #fff; } .va .t span:last-child { color: #3A2A22; }
+.va .lab { position: absolute; bottom: 14px; font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
+.va .lab.l1 { left: 14px; color: #F6D9E1; } .va .lab.r1 { right: 14px; color: #6A5244; }
+/* B: Ritual Tag/Nacht */
+.vb .frame { background: linear-gradient(180deg, #F6EEE6, #EAD8C7); }
+.vb .night { position: absolute; inset: 0 0 0 55%; background: linear-gradient(180deg, #2A2236, #1A1522); }
+.vb .shelf { position: absolute; left: 0; right: 0; bottom: 70px; height: 2px; background: rgba(0,0,0,.12); }
+.vb .obj { position: absolute; bottom: 72px; border-radius: 10px 10px 4px 4px; }
+.vb .o1 { left: 12%; width: 34px; height: 90px; background: #fff; box-shadow: 0 6px 18px rgba(0,0,0,.08); }
+.vb .o2 { left: 28%; width: 60px; height: 44px; border-radius: 22px 22px 8px 8px; background: #F9F3EC; box-shadow: 0 6px 18px rgba(0,0,0,.08); }
+.vb .o3 { left: 66%; width: 52px; height: 52px; border-radius: 26px 26px 8px 8px; background: #3B3248; }
+.vb .glass { position: absolute; left: 44%; bottom: 72px; width: 34px; height: 70px; border-radius: 4px 4px 10px 10px; background: linear-gradient(#ffffff55 0 22%, #A23A5C 22%); border: 1px solid rgba(255,255,255,.6); }
+.vb .tog { position: absolute; top: 16px; left: 50%; transform: translateX(-50%); display: flex; background: rgba(255,255,255,.85); border-radius: 99px; padding: 4px; font-size: 12px; font-weight: 700; }
+.vb .tog span { padding: 5px 12px; border-radius: 99px; color: #3A2A22; } .vb .tog span.on { background: #1F1A17; color: #fff; }
+.vb .lab { position: absolute; bottom: 22px; left: 0; right: 0; text-align: center; font-size: 12px; color: #6A5244; font-weight: 600; }
+/* C: Check-Ergebnis */
+.vc .frame { background: var(--cream); display: flex; align-items: center; justify-content: center; }
+.vc .res { width: 78%; background: #fff; border-radius: 16px; padding: 14px; box-shadow: 0 12px 30px rgba(0,0,0,.08); color: #1F1A17; font-size: 12.5px; }
+.vc .res b { font-size: 14px; display: block; margin-bottom: 6px; }
+.vc .row { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #F0E8E2; }
+.vc .row:last-of-type { border: 0; }
+.vc .tag { font-size: 10px; font-weight: 700; padding: 1px 7px; border-radius: 99px; background: #F6E8ED; color: #7A2E46; }
+.vc .btns { display: flex; gap: 6px; margin-top: 10px; }
+.vc .btns span { flex: 1; text-align: center; padding: 7px 4px; border-radius: 10px; font-weight: 700; font-size: 11.5px; }
+.vc .b1 { background: #1F1A17; color: #fff; } .vc .b2 { border: 1px solid #1F1A17; }
+
+/* Seitenaufbau */
+.flow { display: grid; gap: 22px; }
+@media (min-width: 860px) { .flow { grid-template-columns: 280px 1fr; align-items: start; } .phone { position: sticky; top: 20px; } }
+.phone { border: 1px solid var(--line); border-radius: 34px; padding: 14px 10px; background: var(--card); max-width: 280px; width: 100%; margin: 0 auto; }
+.phone .blk { border-radius: 12px; padding: 8px 11px; margin: 6px 0; font-size: 12.5px; line-height: 1.35; border: 1px solid var(--line); color: var(--ink); }
+.phone .blk small { display: block; color: var(--muted); font-size: 11px; }
+.b-hero { background: linear-gradient(90deg, var(--berry-soft) 50%, var(--cream) 50%); min-height: 96px; }
+.b-dark { background: var(--ink); color: var(--bg) !important; }
+.b-dark small { color: color-mix(in srgb, var(--bg) 70%, transparent) !important; }
+.b-in { background: var(--berry-soft); }
+.steps { counter-reset: s; list-style: none; padding: 0; margin: 0; }
+.steps > li { counter-increment: s; position: relative; padding: 0 0 18px 46px; }
+.steps > li::before { content: counter(s); position: absolute; left: 0; top: 0; width: 30px; height: 30px; border-radius: 50%; background: var(--accent); color: #fff; font-weight: 700; font-size: 14px; display: flex; align-items: center; justify-content: center; }
+.steps > li h4 { margin-top: 3px; }
+.steps > li p { margin: 2px 0 0; color: var(--muted); font-size: 15px; }
+.usp { display: grid; gap: 12px; }
+@media (min-width: 760px) { .usp { grid-template-columns: repeat(3, 1fr); } .usp .wide { grid-column: span 2; } }
+.usp .card b.n { font-size: 30px; color: var(--accent); font-weight: 800; letter-spacing: -.02em; display: block; line-height: 1; margin-bottom: 6px; }
+footer { padding: 30px 0 60px; color: var(--muted); font-size: 13.5px; border-top: 1px solid var(--line); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <div class="kicker">Konzept v2 · Beauty-Template · beautylove.net · 28.10.2026</div>
+  <h1>Schönheit von innen &amp; außen.</h1>
+  <p class="lead">Überarbeitet nach Daniels Feedback: Beauty-Check als Herzstück, selbst bestellen als zweiter Weg, Baukasten statt „alles für alle“, ein starkes Visual für innen &amp; außen und die Vorteile wie bei Dailyoptimal. Ohne Produktfotos mit Logo, ohne Erfahrungen, Video erst später.</p>
+  <nav class="toc">
+    <a href="#ziel">Ziel</a><a href="#baukasten">Braucht jeder alles?</a><a href="#visual">Visual</a><a href="#aufbau">Seitenaufbau</a><a href="#check">Beauty-Check</a><a href="#vorteile">Vorteile</a><a href="#bilder">Bilder</a><a href="#domain">Domain</a><a href="#offen">Offene Punkte</a>
+  </nav>
+</header>
+
+<section id="ziel">
+  <div class="core">
+    <div class="kicker" style="color:var(--accent-soft)">Ziel der Seite</div>
+    <div class="big">„Finde in 2 Minuten heraus, was deine Haut braucht. Dann entscheidest du: mit mir besprechen oder direkt bestellen.“</div>
+    <p>Jede Besucherin landet am Ende bei <b>ihrer</b> Routine statt bei 20 Produkten. Der Beauty-Check ist der Einstieg, die Hautanalyse mit dem FitLine AI Scanner das persönliche Upgrade, der Shop-Link der schnelle Weg für alle, die schon wissen, was sie wollen.</p>
+  </div>
+  <div class="fork">
+    <div class="card"><span class="pill p-out">Weg 1 · Beratung</span><h4>Mit mir besprechen</h4><p>Ergebnis des Beauty-Checks geht direkt ans Anfrageformular. Wenn die Partnerin den Scanner hat: „Hautanalyse mit dem FitLine AI Scanner anfragen“.</p></div>
+    <div class="mid">oder</div>
+    <div class="card"><span class="pill p-ok">Weg 2 · Selbst bestellen</span><h4>Direkt zum Shop</h4><p>Die empfohlenen Produkte mit offiziellem Preis, jeweils mit Link in den Shop der Partnerin (Teampartner-Nummer automatisch). Keine Rabatte, kein eigener Warenkorb.</p></div>
+  </div>
+</section>
+
+<section id="baukasten">
+  <h2>Braucht jede jedes Produkt? Nein.</h2>
+  <p class="lead">Die Antwort ist ein Baukasten: eine schlanke Basis, die für fast alle passt, und Ergänzungen nur bei einem konkreten Wunsch. Das macht den Einstieg günstiger und glaubwürdiger, und der Beauty-Check hat eine echte Aufgabe: die richtigen Ergänzungen auswählen.</p>
+  <div class="kit">
+    <div>
+      <div class="layer base">
+        <span class="pill p-ok">Die Basis · für jede Haut</span>
+        <h4>Reinigen · Pflegen · von innen</h4>
+        <div class="chips">
+          <span class="chip">Cleansing Lotion<small>26,90 €</small></span>
+          <span class="chip">Tagespflege nach Hauttyp<small>64,90 €</small></span>
+          <span class="chip">4ever overnight enriched<small>64,90 €</small></span>
+          <span class="chip in">Beauty-Drink<small>47,50 €</small></span>
+        </div>
+        <p style="margin:10px 0 0;font-size:14.5px;color:var(--muted)">Tagespflege: <b>4ever</b> für normale bis Mischhaut, <b>4ever enriched</b> für trockene oder reifere Haut. Tag + Nacht gibt es als Starter Set für 123,90 € (statt 129,80 €).</p>
+      </div>
+      <div class="layer" style="margin-top:12px">
+        <span class="pill p-opt">Ergänzungen · nur wenn gewünscht</span>
+        <div class="tablewrap" style="margin-top:6px"><table>
+          <tr><th>Wunsch im Check</th><th>Ergänzung</th></tr>
+          <tr><td>„Mehr Frische &amp; Glow“</td><td>Activize Serum (48,90 €), Tonic (26,90 €)</td></tr>
+          <tr><td>„Ebenmäßigerer Teint“</td><td>Dark Spot Corrector (58,90 €)</td></tr>
+          <tr><td>„Müde wirkende Augenpartie“</td><td>Augencreme (49,90 €)</td></tr>
+          <tr><td>„Für besondere Anlässe“</td><td>Ultimate Young (79,00 €)</td></tr>
+        </table></div>
+      </div>
+    </div>
+    <div>
+      <div class="layer">
+        <span class="pill p-out">Einsteiger-Wege</span>
+        <ul style="margin:6px 0 0;padding-left:18px;font-size:15px;color:var(--muted)">
+          <li><b>Jung / erstmal ausprobieren:</b> Einsteiger-Set Young Care, 59,90 € (Reinigungsschaum, Tonic, Balancing Creme)</li>
+          <li><b>Normal bis Mischhaut:</b> Starter Set 4ever, 123,90 €</li>
+          <li><b>Trocken / reifer:</b> Starter Set 4ever enriched, 123,90 €</li>
+          <li><b>Männer:</b> Men Face Rich &amp; Hydrating, 29,90 € (Schalter im Editor)</li>
+        </ul>
+      </div>
+      <div class="layer" style="margin-top:12px">
+        <span class="pill p-no">Nicht auf der Beauty-Seite</span>
+        <p style="font-size:14.5px;color:var(--muted);margin:6px 0 0">Active Gel (Sport/Gelenke), Dental+ (Zahnpflege), Q10 Oxy Repair Intensive (Linie „med“), Cell Kapseln + Cell Lotion (eigenes Körper-Thema, ggf. später als Schalter), AI Scanner Starter Set (Partner-Set).</p>
+      </div>
+      <p class="note n-ok"><b>Wichtig für die Texte:</b> Die Seite sagt nie „du brauchst“. Sie sagt „passt zu deinem Wunsch“. So bleibt es eine Empfehlung, kein Befund.</p>
+    </div>
+  </div>
+</section>
+
+<section id="visual">
+  <h2>Das Visual für „innen &amp; außen“</h2>
+  <p class="lead">Drei Richtungen, alle ohne Produktfotos mit Logo und ohne „KI-Look“ (keine Blobs, keine Kachel-Gitter). Meine Empfehlung: <b>A für den Start</b>, <b>B für die Routine</b>, <b>C als Ergebnis des Beauty-Checks</b>. Die Skizzen zeigen nur Komposition und Stimmung, die echten Bilder wären Fotos.</p>
+  <div class="vis">
+    <div class="mock va">
+      <div class="frame">
+        <div class="l"></div><div class="r"></div>
+        <div class="t"><span>innen </span><span>&amp; außen</span></div>
+        <div class="portrait"></div>
+        <span class="lab l1">Beeren · Glas · Tiefe</span><span class="lab r1">Creme · Licht · Haut</span>
+      </div>
+      <div class="cap"><h4>A · Zwei Hälften</h4><p>Der Start teilt sich: links ein satter Beerenton (der Drink, Makro-Foto von Beeren und einem Glas), rechts helle Cremetextur. In der Mitte das Porträt der Partnerin auf der Naht. Beim Scrollen schieben sich beide Hälften zusammen, die Überschrift wird eins. Ein Bild, das die Botschaft ohne Text erklärt.</p></div>
+    </div>
+    <div class="mock vb">
+      <div class="frame">
+        <div class="night"></div><div class="shelf"></div>
+        <div class="obj o1"></div><div class="obj o2"></div><div class="glass"></div><div class="obj o3"></div>
+        <div class="tog"><span class="on">Morgens</span><span>Abends</span></div>
+        <div class="lab">Stillleben ohne Etiketten · Licht wechselt</div>
+      </div>
+      <div class="cap"><h4>B · Das Ritual</h4><p>Die Routine als ruhiges Stillleben im Bad: neutrale Flakons ohne Etikett, Cremetupfer, ein Glas. Ein Umschalter „Morgens / Abends“ wechselt Licht und Schritte (Tag: Reinigen, Serum, 4ever, Drink · Abend: Reinigen, Augencreme, overnight). Zeigt: ein paar Minuten am Tag.</p></div>
+    </div>
+    <div class="mock vc">
+      <div class="frame">
+        <div class="res"><b>Deine Routine</b>
+          <div class="row"><span>Reinigen</span><span>Cleansing Lotion</span></div>
+          <div class="row"><span>Pflegen Tag</span><span>4ever enriched</span></div>
+          <div class="row"><span>Pflegen Nacht</span><span>overnight enriched</span></div>
+          <div class="row"><span>Von innen</span><span class="tag">Beauty-Drink</span></div>
+          <div class="row"><span>Dein Wunsch: Glow</span><span>+ Activize Serum</span></div>
+          <div class="btns"><span class="b1">Mit mir besprechen</span><span class="b2">Selbst bestellen</span></div>
+        </div>
+      </div>
+      <div class="cap"><h4>C · Das Ergebnis</h4><p>Nach dem Beauty-Check eine Karte „Deine Routine“: Basis plus die Ergänzung zum Wunsch, innen farblich abgesetzt. Darunter die zwei Wege. Optisch wie eine schön gesetzte Rezeptkarte, nicht wie ein Shop.</p></div>
+    </div>
+  </div>
+  <p class="note n-warn"><b>Bildmaterial:</b> Makro-Fotos (Beeren, Glas, Cremetextur, Wassertropfen, Haut im Tageslicht) und neutrale Flakons ohne Etikett. Erzeugen wir selbst (Bildgenerierung oder lizenzfreie Fotos), Produktabbildungen mit FitLine-Logo werden nicht verwendet. Wichtig: keine nachgebauten Verpackungen, die wie FitLine-Produkte aussehen.</p>
+</section>
+
+<section id="aufbau">
+  <h2>Seitenaufbau</h2>
+  <p class="lead">Neun Abschnitte. Ohne Erfahrungen und ohne Video (kommt später). Der Beauty-Check steht weit oben, weil er das Ziel der Seite ist.</p>
+  <div class="flow">
+    <div class="phone" aria-hidden="true">
+      <div class="blk b-hero"><b>1 · Start</b><small>Visual A, Porträt, „Beauty-Check starten“</small></div>
+      <div class="blk"><b>2 · Innen &amp; außen</b><small>Was von außen, was von innen</small></div>
+      <div class="blk b-dark"><b>3 · Beauty-Check</b><small>5 Fragen → deine Routine (Visual C)</small></div>
+      <div class="blk"><b>4 · Deine Routine</b><small>Morgens / abends (Visual B)</small></div>
+      <div class="blk b-in"><b>5 · Von innen</b><small>Beauty-Drink, zugelassene Angaben</small></div>
+      <div class="blk"><b>6 · Die Vorteile</b><small>„6 Gründe“ wie bei Dailyoptimal</small></div>
+      <div class="blk"><b>7 · Produkte &amp; Sets</b><small>Basis, Ergänzungen, Sets, Detailfenster</small></div>
+      <div class="blk b-dark"><b>8 · Hautanalyse mit mir</b><small>FitLine AI Scanner (Schalter)</small></div>
+      <div class="blk"><b>9 · Über mich, Fragen, Kontakt</b><small>Formular + WhatsApp + Shop-Link</small></div>
+    </div>
+    <ol class="steps">
+      <li><h4>Start</h4><p>Visual A mit Porträt der Partnerin. Überschrift „Schönheit von innen &amp; außen.“, ein Satz darunter, Hauptknopf <b>Beauty-Check starten</b>, zweiter Knopf <b>Produkte ansehen</b>. Oben sichtbar „Unabhängige Teampartnerin“.</p></li>
+      <li><h4>Innen &amp; außen</h4><p>Zwei Spalten, die sich im Visual-Stil fortsetzen. Außen: reinigen, Feuchtigkeit, Hautbarriere unterstützen (offizielle Vorteile der Pflege). Innen: ein Glas am Tag mit Vitamin C, Biotin, Zink (zugelassene Angaben).</p></li>
+      <li><h4>Beauty-Check</h4><p>Fünf Fragen, eine pro Bildschirm, große antippbare Antworten. Ergebnis ist die Routine-Karte (Visual C) mit den zwei Wegen. Ablauf und Zuordnung siehe unten.</p></li>
+      <li><h4>Deine Routine</h4><p>Visual B mit Umschalter Morgens/Abends. Jeder Schritt: wofür, welches Produkt, wie lange. Basis und Ergänzungen farblich getrennt.</p></li>
+      <li><h4>Von innen</h4><p>Der Beauty-Drink in Ruhe: Beerengeschmack, 1 Glas täglich, Kollagenpeptide als Zutat, Nährstoffe pro Portion. Je Nährstoff nur der zugelassene Satz, Pflichthinweise darunter.</p></li>
+      <li><h4>Die Vorteile</h4><p>Wie „Die Vorteile · 7 Gründe“ bei Dailyoptimal, als ruhiges Raster mit Zahl und kurzem Satz. Inhalte siehe unten.</p></li>
+      <li><h4>Produkte &amp; Sets</h4><p>Gruppiert in Basis / Ergänzungen / Sets. Statt Produktfotos: Textur-Bild oder Farbfläche je Produkt, Name, offizieller Kurztext, Preis, Knopf „Im Shop ansehen“. Antippen öffnet das Detailfenster mit Beschreibung, Anwendung, Hauttyp und vollständigen Inhaltsstoffen.</p></li>
+      <li><h4>Hautanalyse mit mir</h4><p>Nur wenn die Partnerin den Scanner hat. „Hautanalyse mit dem FitLine AI Scanner“: drei Schritte, was die App auswertet (aufklappbar), fester Hinweis „kosmetische Einschätzung, keine medizinische Untersuchung“, FAQ zum Foto.</p></li>
+      <li><h4>Über mich, Fragen, Kontakt</h4><p>Kurz und persönlich. Fragen: Muss ich alles kaufen? (Nein, Baukasten) · Was kostet der Check? · Was passiert mit meinem Foto? · Vegan? · Versand und 30-Tage-Geld-zurück-Garantie. Kontaktformular mit vorausgefülltem Check-Ergebnis, WhatsApp, Shop-Link.</p></li>
+    </ol>
+  </div>
+</section>
+
+<section id="check">
+  <h2>Der Beauty-Check</h2>
+  <p class="lead">Kein Hauttest im medizinischen Sinn, sondern Wünsche und Gewohnheiten. Fünf Fragen, unter zwei Minuten, Ergebnis sofort auf der Seite.</p>
+  <div class="tablewrap"><table>
+    <tr><th>#</th><th>Frage</th><th>Antworten</th><th>Wofür</th></tr>
+    <tr><td>1</td><td>Wie fühlt sich deine Haut am Nachmittag meist an?</td><td>Eher spannend / trocken · Ausgeglichen · Glänzt in der T-Zone</td><td>4ever oder 4ever enriched</td></tr>
+    <tr><td>2</td><td>Was wünschst du dir am meisten?</td><td>Mehr Feuchtigkeit · Frische &amp; Glow · Ebenmäßigerer Teint · Wache Augenpartie · Vorbeugen</td><td>Ergänzung</td></tr>
+    <tr><td>3</td><td>Wie viel Zeit nimmst du dir für deine Pflege?</td><td>2 Minuten · 5 Minuten · Ich genieße das Ritual</td><td>Basis allein oder mit Ergänzungen</td></tr>
+    <tr><td>4</td><td>Wie ist deine bisherige Routine?</td><td>Kaum etwas · Reinigung + Creme · Schon mit Serum</td><td>Einstieg: Young Care vs. Starter Set</td></tr>
+    <tr><td>5</td><td>Pflege von innen: interessiert dich das?</td><td>Ja, gern · Erstmal nur außen</td><td>Beauty-Drink in der Routine ja/nein</td></tr>
+  </table></div>
+  <p class="note n-warn"><b>Nicht fragen:</b> Hauterkrankungen, Unreinheiten, Medikamente, Alter, Fotos. Antworten nur kosmetisch und wunschorientiert (PM-Hinweis vom 08.10.2026). Die Zuordnung ist eine feste Regel im Template, keine KI.</p>
+</section>
+
+<section id="vorteile">
+  <h2>Die Vorteile · 6 Gründe</h2>
+  <p class="lead">Im Stil von Dailyoptimal. Jede Aussage hat eine Quelle in den offiziellen Produkttexten (Dossiers in <code>docs/beauty/produkte/</code>).</p>
+  <div class="usp">
+    <div class="card wide"><b class="n">1</b><h4>Innen und außen aus einer Hand</h4><p>Pflege für die Haut und ein Glas mit Nährstoffen, die zur Erhaltung normaler Haut beitragen. FitLine nennt das selbst „Beauty von innen und außen“. Mit NTC®, dem Nährstoff-Transport-Konzept von PM.</p></div>
+    <div class="card"><b class="n">2</b><h4>Eine Routine statt zehn Tiegel</h4><p>Basis aus Reinigen, Tag, Nacht und innen. Ergänzungen nur bei konkretem Wunsch.</p></div>
+    <div class="card"><b class="n">3</b><h4>Moderne Wirkstoffe</h4><p>Hyaluron, Ceramid, Peptid und Bakuchiol in 4ever; Ectoin und Sheabutter in enriched; Niacinamid im Dark Spot Corrector.</p></div>
+    <div class="card"><b class="n">4</b><h4>Tag und Nacht abgestimmt</h4><p>Tagespflege mit Anti-Pollution-Filter, Nachtpflege mit Fokus auf das Mikrobiom und die Hautbarriere.</p></div>
+    <div class="card"><b class="n">5</b><h4>Persönlich statt Algorithmus</h4><p>Beauty-Check auf der Seite, auf Wunsch Hautanalyse mit dem FitLine AI Scanner und eine Ansprechpartnerin, die nachfragt.</p></div>
+    <div class="card"><b class="n">6</b><h4>30 Tage Geld-zurück-Garantie</h4><p>Offizielle Garantie von FitLine auf den Produktseiten. Bestellung direkt beim Hersteller, Lieferung in 2–4 Werktagen.</p></div>
+  </div>
+  <p class="note n-warn"><b>Bewusst nicht als Vorteil:</b> „Made in Germany“, „dermatologisch getestet“/Dermatest, „ohne Tierversuche“, „nachhaltig“, „vegan“ pauschal (gilt nicht für alle Produkte). Erst wenn PM es belegt, kann es dazu.</p>
+</section>
+
+<section id="bilder">
+  <h2>Bilder ohne Logos</h2>
+  <div class="grid g3">
+    <div class="card"><h4>Produkte</h4><p>Textur statt Packung: Cremetupfer, Serumtropfen, Schaum, Beeren im Glas. Je Produkt eine Farbe aus dem Farbthema.</p></div>
+    <div class="card"><h4>Menschen</h4><p>Nur das Porträt der Partnerin (Upload im Editor). Keine Model-Gesichter, die einen Effekt suggerieren.</p></div>
+    <div class="card"><h4>Stimmung</h4><p>Bad im Morgenlicht, Abendlicht, Handtuch, Stein, Wasser. Ruhig, warm, ohne Text im Bild.</p></div>
+  </div>
+</section>
+
+<section id="domain">
+  <h2>Domain: beautylove.net</h2>
+  <p class="lead">Geprüft in Cloudflare: Im Konto liegen 10 Zonen. Sieben sind vergeben (womenplus, myevnt, lnko, dailyoptimal, wellpreneur, cellrestart, vitalprofil), unbenutzt sind <b>beautylove.net</b>, betterperform.net und mamapreneur.io.</p>
+  <div class="grid g3">
+    <div class="card"><span class="pill p-ok">Empfehlung</span><h4>beautylove.net</h4><p>Passt inhaltlich genau, neutral (keine PM-/FitLine-/Produktnamen, wie die PM-Markenrichtlinie verlangt). Adresse: <code>name.beautylove.net</code>. Zone aktiv, aber noch ohne DNS-Einträge.</p></div>
+    <div class="card"><h4>betterperform.net</h4><p>Klingt nach Sport und Leistung, eher für ein Fitness-Template.</p></div>
+    <div class="card"><h4>mamapreneur.io</h4><p>Zielgruppe Mütter im Business, passt nicht zu Beauty.</p></div>
+  </div>
+  <p class="note n-ok"><b>Einrichtung später (beim Bau):</b> Wildcard <code>*.beautylove.net</code> proxied, Worker-Route + Zone-ID in <code>wrangler.toml</code>, Worker-Deploy vom App-Server, Test über <code>/.finestsites/health</code>.</p>
+</section>
+
+<section id="offen">
+  <h2>Offene Punkte</h2>
+  <div class="tablewrap"><table>
+    <tr><th>Punkt</th><th>Stand</th></tr>
+    <tr><td>Inhaltsstoffe Webseite vs. Etikett</td><td>Wird gerade Produkt für Produkt geprüft (<code>docs/beauty/inci-abgleich.md</code>). Erst danach kommen Inhaltsstoffe ins Detailfenster.</td></tr>
+    <tr><td>Produktauswahl / Baukasten wie oben</td><td>Daniel</td></tr>
+    <tr><td>Beauty-Check: Fragen und Zuordnung</td><td>Daniel</td></tr>
+    <tr><td>Visual-Richtung A + B + C</td><td>Daniel; danach zwei, drei echte Bildentwürfe zur Auswahl</td></tr>
+    <tr><td>Cell-Linie später als Schalter „Körper“?</td><td>Daniel</td></tr>
+    <tr><td>Sperrliste für Beauty erweitern (Rosazea, Botox, Filler, Kollagen-Boost …)</td><td>vor dem Bau</td></tr>
+    <tr><td>FitLine AI Scanner namentlich</td><td>✓ erlaubt (Daniel, 28.10.2026)</td></tr>
+    <tr><td>Produktfotos mit Logo</td><td>✓ nicht erlaubt, Texturen/Stimmungsbilder stattdessen</td></tr>
+    <tr><td>Erfahrungen</td><td>✓ erstmal keine</td></tr>
+    <tr><td>Video</td><td>✓ später, nicht im ersten Wurf</td></tr>
+  </table></div>
+</section>
+
+<footer>
+  Grundlage: <code>docs/beauty/README.md</code>, Produktdossiers <code>docs/beauty/produkte/</code>, Scanner <code>docs/beauty/scanner/</code>, Rechtsrahmen <code>docs/beauty/02-rechtsrahmen-und-formulierungen.md</code>. Keine anwaltliche Prüfung.
+</footer>
+</div>
+</body>
+</html>
