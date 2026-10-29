@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Schönheit von innen &amp; außen · {{vorname}}</title>
-<meta name="description" content="Die Beauty-Empfehlung von {{vorname}}: Pflege von außen, ein Drink von innen und ein kostenloser Beauty-Check, der dir zeigt, was deine Haut braucht.">
+<meta name="description" content="Die Beauty-Empfehlung von {{vorname}}: Pflege von außen, ein Beauty-Drink von innen. Lass dich kostenlos und unverbindlich im Beauty-Check beraten.">
 <meta name="theme-color" content="#FDF7EF">
 
 <!-- Sprache früh setzen — verhindert Flackern beim ersten Layout-Paint. -->
@@ -24,13 +24,15 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" as="image" href="assets/hero/{{hero_variante}}.webp" fetchpriority="high" type="image/webp">
-<link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300..600;1,14..32,300..400&family=Instrument+Serif:ital@1&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://api.fontshare.com" crossorigin>
+<link href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600&display=swap" rel="stylesheet">
 
 <style>
 :root {
-  --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --display: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --mono: 'DM Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font: 'General Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --display: 'Instrument Serif', Georgia, 'Times New Roman', serif;
+  --mono: 'General Sans', -apple-system, BlinkMacSystemFont, sans-serif;
   --serif: 'Instrument Serif', Georgia, serif;
   --pad-x: clamp(20px, 4vw, 56px);
   --max: 1280px;
@@ -1200,6 +1202,28 @@ footer { background: var(--bg-2); }
   .contact-card img { width: 44px; height: 44px; }
   .contact-card-btns { grid-column: 1 / -1; }
 }
+
+/* ============ SCHRIFTPAAR: Instrument Serif (Überschriften) + General Sans (Text) ============ */
+h1, h2, h3, .faq-q, .pr-row .t b, .split-word b, .intro p.big, .bento-card .big, .guar-badge b, .pm-sheet h3 { font-family: var(--display); font-weight: 400; }
+h1 { font-size: clamp(54px, 8vw, 124px); line-height: 0.95; letter-spacing: -0.02em; }
+h2 { font-size: clamp(40px, 5vw, 72px); line-height: 1; letter-spacing: -0.015em; }
+h3 { font-size: clamp(26px, 2.4vw, 36px); line-height: 1.05; letter-spacing: -0.01em; }
+h1 em, h2 em { font-family: var(--display); font-style: italic; font-size: 1em; line-height: inherit; letter-spacing: -0.01em; }
+.split-word b { font-size: clamp(64px, 11vw, 190px); letter-spacing: -0.02em; line-height: 0.9; }
+.intro p.big { font-size: clamp(32px, 3.8vw, 56px); line-height: 1.1; letter-spacing: -0.01em; }
+.intro p.big em { font-family: var(--display); font-style: italic; }
+.bento-card .big { font-size: clamp(80px, 8vw, 128px); letter-spacing: -0.02em; }
+.guar-badge b { font-size: 52px; letter-spacing: 0; }
+.pr-row .t b { font-size: clamp(24px, 2.2vw, 32px); letter-spacing: -0.01em; line-height: 1.05; }
+.faq-q { font-size: clamp(22px, 1.9vw, 27px); letter-spacing: -0.005em; }
+.pm-sheet h3 { font-size: clamp(30px, 3.2vw, 40px); }
+.pr-cta h3, .split-col h3, .men-copy h2 { font-weight: 400; }
+.bento-card.photo h3, .bento-card.faces h3 { font-size: clamp(26px, 2.3vw, 34px); }
+/* Kennzeichen/Eyebrows in General Sans, versal mit Laufweite */
+.eye, .bento-card .eyebrow, .split-word small, .pm-tag, .pm-fact small, .pm-block h4 { font-family: var(--font); font-weight: 600; letter-spacing: 0.1em; }
+.split-col li b { font-family: var(--font); font-weight: 600; }
+body { font-feature-settings: "ss01" 0; }
+.hero h1 { max-width: none; } .hero h1 .nw { white-space: nowrap; }
 </style>
 </head>
 
@@ -1220,7 +1244,7 @@ footer { background: var(--bg-2); }
     <div class="kc-wrap" id="kcWrap">
       <button type="button" class="kc-btn" id="kcBtn" aria-expanded="false" aria-controls="kcDrop"><span class="l-de">Kontakt</span><svg class="kc-chev" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5l3 3 3-3" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button>
       <div class="kc-drop" id="kcDrop">
-        {{#if whatsapp_nummer}}<a class="kc-item kc-ch" href="https://wa.me/{{whatsapp_nummer}}?text=Hi%20{{vorname}}%2C%20ich%20interessiere%20mich%20f%C3%BCr%20den%20Beauty-Check." target="_blank" rel="noopener"><span class="kc-ic kc-wa"><svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91C21.95 6.45 17.5 2 12.04 2zm0 18.15c-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.2 8.2 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.25-8.24 4.54 0 8.24 3.7 8.24 8.24 0 4.55-3.7 8.24-8.24 8.24zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.12-.17.25-.64.81-.78.97-.14.17-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.02-.38.11-.51.11-.11.25-.29.37-.43.13-.15.17-.25.25-.42.08-.17.04-.31-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.41-.42-.56-.43h-.48c-.17 0-.43.06-.66.31-.22.25-.86.85-.86 2.07 0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.67-1.18.21-.58.21-1.07.14-1.18-.06-.1-.22-.16-.47-.28z"/></svg></span><span><b><span class="l-de">Schreib mir auf WhatsApp</span></b><small><span class="l-de">Kurze Frage? Gern direkt.</span></small></span></a>{{/if}}
+        {{#if whatsapp_nummer}}<a class="kc-item kc-ch" href="https://wa.me/{{whatsapp_nummer}}?text=Hi%20{{vorname}}%2C%20ich%20interessiere%20mich%20f%C3%BCr%20den%20Beauty-Check." target="_blank" rel="noopener"><span class="kc-ic kc-wa"><svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91C21.95 6.45 17.5 2 12.04 2zm0 18.15c-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.2 8.2 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.25-8.24 4.54 0 8.24 3.7 8.24 8.24 0 4.55-3.7 8.24-8.24 8.24zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.12-.17.25-.64.81-.78.97-.14.17-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.02-.38.11-.51.11-.11.25-.29.37-.43.13-.15.17-.25.25-.42.08-.17.04-.31-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.41-.42-.56-.43h-.48c-.17 0-.43.06-.66.31-.22.25-.86.85-.86 2.07 0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.67-1.18.21-.58.21-1.07.14-1.18-.06-.1-.22-.16-.47-.28z"/></svg></span><span><b><span class="l-de">Schreib mir auf WhatsApp</span></b><small><span class="l-de">Ich beantworte deine Fragen.</span></small></span></a>{{/if}}
         <a class="kc-item" href="#kontakt"><span class="kc-ic kc-check"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg></span><span><b><span class="l-de">Beauty-Check sichern</span></b><small><span class="l-de">Kostenlos, unverbindlich, persönlich.</span></small></span></a>
         <div class="kc-soc"><div class="kc-sep"></div><div class="kc-title"><span class="l-de">Folge mir auf</span></div><div class="kc-pills">{{#if instagram_url}}<a class="kc-pill kc-ch" href="{{instagram_url}}" target="_blank" rel="noopener"><span class="kc-sic kc-ig"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><rect x="2.5" y="2.5" width="19" height="19" rx="5.5"/><circle cx="12" cy="12" r="4.3"/><circle cx="17.6" cy="6.4" r="1.2" fill="currentColor" stroke="none"/></svg></span>Instagram</a>{{/if}}{{#if facebook_url}}<a class="kc-pill kc-ch" href="{{facebook_url}}" target="_blank" rel="noopener"><span class="kc-sic kc-fb"><svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M13.9 21.8v-8.2h2.8l.4-3.3h-3.2V8.2c0-.9.3-1.6 1.6-1.6h1.7V3.7c-.3 0-1.3-.1-2.5-.1-2.5 0-4.2 1.5-4.2 4.3v2.4H7.7v3.3h2.8v8.2z"/></svg></span>Facebook</a>{{/if}}</div></div>
       </div>
@@ -1271,8 +1295,8 @@ footer { background: var(--bg-2); }
   <img loading="eager" fetchpriority="high" decoding="async" src="assets/hero/{{hero_variante}}.webp" alt="" width="1536" height="1024">
   <div class="hero-copy">
     <span class="hero-who"><img loading="eager" decoding="async" src="{{profilbild}}" alt="">Die Beauty-Empfehlung von {{vorname}}</span>
-    <h1 class="reveal">Schönheit von <em>innen</em> &amp; <em>außen</em></h1>
-    <p class="sub reveal">Mein Konzept für gute Haut: eine Pflege von außen, ein Drink von innen und ein kostenloser Beauty-Check, in dem ich dir zeige, was deine Haut wirklich braucht</p>
+    <h1 class="reveal">Schönheit von<br><span class="nw"><em>innen</em> &amp; <em>außen</em></span></h1>
+    <p class="sub reveal">Pflege von außen, ein Beauty-Drink von innen. Ich zeige dir, was zu dir passt. Im kostenlosen Beauty-Check, persönlich und ohne Kaufpflicht.</p>
     <div class="hero-ctas reveal">
       <a href="#kontakt" class="btn btn-primary">Beauty-Check sichern <span class="arr">→</span></a>
       <a href="#produkte" class="btn btn-light">Meine Empfehlung ansehen</a>
@@ -1297,7 +1321,7 @@ footer { background: var(--bg-2); }
 <section class="intro">
   <div class="intro-inner">
     <span class="eye">Mein Konzept</span>
-    <p class="big reveal">Gute Haut braucht beides: eine Pflege, die <em>von außen</em> versorgt, und Nährstoffe, die <em>von innen</em> dazukommen. Genau das benutze ich selbst, jeden Tag.</p>
+    <p class="big reveal">Mein Vorschlag: Pflege von <em>außen</em> und ein Beauty-Drink von <em>innen</em>. Welche Produkte passen zu dir? Das finden wir gemeinsam heraus.</p>
   </div>
 </section>
 
@@ -1305,58 +1329,58 @@ footer { background: var(--bg-2); }
 <section class="split" id="prinzip">
   <div class="split-stage">
     <img class="cut" loading="lazy" decoding="async" src="assets/split-cut.webp" alt="" width="716" height="885">
-    <div class="split-word l"><small>Pflege für die Haut</small><b>Außen</b><span class="pt">Reinigen, Tagescreme, Nachtcreme. Morgens und abends, ein paar Minuten.</span></div>
-    <div class="split-word r"><small>Ein Drink am Tag</small><b>Innen</b><span class="pt">Ein Glas mit Biotin, Zink und Vitamin C. Beerengeschmack, in Wasser angerührt.</span></div>
+    <div class="split-word l"><small>Pflege für die Haut</small><b>Außen</b><span class="pt">Reinigen, mit Tonic klären und eincremen. Morgens und abends.</span></div>
+    <div class="split-word r"><small>Ein Drink am Tag</small><b>Innen</b><span class="pt">Nahrungsergänzung mit Biotin, Zink und Vitamin C. In Wasser angerührt, mit Beerengeschmack.</span></div>
   </div>
 
   <div class="split-cols">
     <div class="split-col l">
       <span class="eye">Außen</span>
-      <h3>Drei Schritte, die deine Haut jeden Tag bekommt</h3>
+      <h3>Deine Pflege in drei Schritten</h3>
       <ul>
-        <li><b>01</b>Reinigen – Make-up und Schmutz weg, ohne auszutrocknen</li>
-        <li><b>02</b>Klären – das Tonic bereitet die Haut auf die Creme vor</li>
-        <li><b>03</b>Pflegen – tagsüber die passende Tagescreme, nachts die Nachtcreme</li>
+        <li><b>01</b>Reinigen: Make-up und Schmutz sanft entfernen</li>
+        <li><b>02</b>Klären: mit Tonic auf die Pflege vorbereiten</li>
+        <li><b>03</b>Pflegen: morgens Tagescreme, abends Nachtcreme</li>
       </ul>
-      <p>Welche Tagescreme zu dir passt, hängt von deiner Haut ab. Das klären wir im Beauty-Check.</p>
+      <p>Welche Tagescreme passt zu deiner Haut? Dabei helfe ich dir im Beauty-Check.</p>
     </div>
     <div class="split-col r">
       <span class="eye light">Innen</span>
-      <h3>Ein Glas am Tag, das von innen dazukommt</h3>
+      <h3>Dazu: ein Beauty-Drink am Tag</h3>
       <ul>
         <li><b>C</b>Vitamin C trägt zu einer normalen Kollagenbildung für eine normale Funktion der Haut bei¹</li>
-        <li><b>B</b>Biotin trägt zur Erhaltung normaler Haut und Haare bei¹</li>
-        <li><b>Zn</b>Zink trägt zur Erhaltung normaler Haut, Haare und Nägel bei¹</li>
+        <li><b>B</b>Biotin trägt zur Erhaltung normaler Haut und normaler Haare bei¹</li>
+        <li><b>Zn</b>Zink trägt zur Erhaltung normaler Haut, normaler Haare und normaler Nägel bei¹</li>
       </ul>
-      <p>Der Beauty-Drink: in Wasser anrühren, trinken, fertig. Schmeckt nach Beeren.</p>
+      <p>Einmal täglich 5 gestrichene Messlöffel (6,5 g) in 150 ml stilles Wasser einrühren.</p>
     </div>
   </div>
 
-  <p class="foot-note split-note">¹ Zugelassene Angaben nach VO (EU) 432/2012. Nahrungsergänzungsmittel sind kein Ersatz für eine ausgewogene, abwechslungsreiche Ernährung und eine gesunde Lebensweise.</p>
+  <p class="foot-note split-note">¹ Zugelassene Angaben nach VO (EU) 432/2012. Nahrungsergänzungsmittel sind kein Ersatz für eine ausgewogene, abwechslungsreiche Ernährung und eine gesunde Lebensweise. Die empfohlene tägliche Verzehrmenge nicht überschreiten. Außerhalb der Reichweite von kleinen Kindern aufbewahren.</p>
 </section>
 
 <!-- BEAUTY-CHECK -->
 <section class="check" id="check">
   <div class="check-grid">
     <div class="check-visual reveal">
-      {{#if scanner_anzeigen=an}}<img class="hand" loading="lazy" decoding="async" src="assets/scan-hand.webp" alt="Hautanalyse auf dem Handy" width="528" height="1029"><span class="eye light tag" style="background:rgba(60,30,20,0.55);border-color:transparent">Hautanalyse in der Beratung</span>{{/if}}
+      {{#if scanner_anzeigen=an}}<img class="hand" loading="lazy" decoding="async" src="assets/scan-hand.webp" alt="Hautanalyse auf dem Handy" width="528" height="1029"><span class="eye light tag" style="background:rgba(60,30,20,0.55);border-color:transparent">Gemeinsam im Beauty-Check</span>{{/if}}
       {{#unless scanner_anzeigen=an}}<img class="selfie" loading="lazy" decoding="async" src="assets/scan-selfie.webp" alt="" width="1024" height="1024"><span class="eye light tag">Beauty-Check</span>{{/unless}}
     </div>
     <div class="check-copy">
       <span class="eye">So läuft es ab</span>
-      <h2>Dein Beauty-Check <em>mit mir</em></h2>
-      <p class="lead">{{#if scanner_anzeigen=an}}Die Hautanalyse machen wir gemeinsam in der Beratung: Ein Selfie, und du siehst, wie es deiner Haut geht. Du brauchst keine App und keine Vorbereitung, ich kümmere mich um alles.{{/if}}{{#unless scanner_anzeigen=an}}Du erzählst mir von deiner Haut, ich schaue mit dir hin und sage dir ehrlich, was sie braucht. Keine Vorbereitung nötig.{{/unless}}</p>
+      <h2>Welche Pflege passt zu <em>dir</em>?</h2>
+      <p class="lead">{{#if scanner_anzeigen=an}}Im Beauty-Check schauen wir uns deine Haut anhand eines Selfies gemeinsam an. Die App nutze ich. Du brauchst keine eigene App und keine Vorbereitung.{{/if}}{{#unless scanner_anzeigen=an}}Im Beauty-Check sprechen wir über deine Haut, deine bisherige Pflege und deine Wünsche. Du brauchst nichts vorzubereiten.{{/unless}}</p>
       <ol class="ck-steps">
         <li><i>1</i><div><b>Termin sichern</b><span>Per Video, Telefon oder WhatsApp, etwa 30 Minuten</span></div></li>
-        <li><i>2</i><div><b>{{#if scanner_anzeigen=an}}Hautanalyse zusammen{{/if}}{{#unless scanner_anzeigen=an}}Gemeinsam hinschauen{{/unless}}</b><span>{{#if scanner_anzeigen=an}}Feuchtigkeit, Poren, Fältchen, Hauttyp – wir schauen uns die Werte gemeinsam an{{/if}}{{#unless scanner_anzeigen=an}}Wie fühlt sich deine Haut an, was stört dich, was wünschst du dir{{/unless}}</span></div></li>
-        <li><i>3</i><div><b>Deine Empfehlung</b><span>Nur das, was zu deiner Haut passt, nichts, was du nicht brauchst</span></div></li>
+        <li><i>2</i><div><b>{{#if scanner_anzeigen=an}}Gemeinsam anschauen{{/if}}{{#unless scanner_anzeigen=an}}Deine Wünsche besprechen{{/unless}}</b><span>{{#if scanner_anzeigen=an}}Wir besprechen die kosmetische Einschätzung der App und deine Pflegewünsche{{/if}}{{#unless scanner_anzeigen=an}}Was nutzt du bisher, was wünschst du dir von deiner Pflege?{{/unless}}</span></div></li>
+        <li><i>3</i><div><b>Meine Empfehlung für dich</b><span>Ich erkläre dir, welche Produkte ich dir empfehle und warum</span></div></li>
       </ol>
-      <div class="ck-then">Was ich dir danach empfehle: die Basis aus Reinigung, Tonic, Tages- und Nachtcreme plus Beauty-Drink, und nur bei einem konkreten Wunsch ein Extra. <a href="#produkte">Alle Produkte ansehen</a></div>
+      <div class="ck-then">Wir starten mit der Basis: Reinigung, Tonic, Tages- und Nachtpflege plus Beauty-Drink. Extras empfehle ich nur passend zu deinen Wünschen. <a href="#produkte">Alle Produkte ansehen</a></div>
       <div class="ck-ctas">
         <a href="#kontakt" class="btn btn-primary">Beauty-Check sichern <span class="arr">→</span></a>
         <span class="ck-free">Kostenlos und unverbindlich</span>
       </div>
-      {{#if scanner_anzeigen=an}}<p class="ck-note">Die Hautanalyse ist eine kosmetische Einschätzung, keine medizinische Untersuchung.</p>{{/if}}
+      {{#if scanner_anzeigen=an}}<p class="ck-note">Der Beauty-Check ist eine kosmetische Einschätzung, keine medizinische Untersuchung.</p>{{/if}}
     </div>
   </div>
 </section>
@@ -1367,39 +1391,39 @@ footer { background: var(--bg-2); }
     <img loading="lazy" decoding="async" src="assets/lineup.webp" alt="" width="1536" height="1024">
     <div class="s-head">
       <span class="eye">Meine Empfehlung</span>
-      <h2>Was dir zur <em>Auswahl</em> steht</h2>
-      <p>Vier Schritte für jede Haut, dazu ein paar Extras, falls du einen konkreten Wunsch hast. Tipp auf ein Produkt für Details</p>
+      <h2>Die Basis. Und Extras nach <em>Wunsch</em></h2>
+      <p>Hier siehst du meine Auswahl für innen und außen. Was zu dir passt, besprechen wir gemeinsam. Tippe auf ein Produkt für Details.</p>
     </div>
   </div>
 
   <div class="pr-rows">
     <button type="button" class="pr-row" data-open="cleansing"><img loading="lazy" decoding="async" src="assets/produkte/cleansing-lotion.webp" alt=""><span class="t"><b>Reinigen</b><span>Cleansing Lotion · entfernt Make-up und Schmutz, ohne auszutrocknen</span><span class="pr-meta"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>Morgens</i><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg>Abends</i><em>alle Hauttypen</em></span></span><span class="more">+</span></button>
     <button type="button" class="pr-row" data-open="tonic"><img loading="lazy" decoding="async" src="assets/produkte/tonic.webp" alt=""><span class="t"><b>Klären</b><span>Tonic · erfrischt und bereitet die Haut auf die Creme vor</span><span class="pr-meta"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>Morgens</i><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg>Abends</i><em>alle Hauttypen</em></span></span><span class="more">+</span></button>
-    <button type="button" class="pr-row" data-open="4ever"><img loading="lazy" decoding="async" src="assets/produkte/4ever.webp" alt=""><span class="t"><b>Tagescreme</b><span>4ever für normale bis Mischhaut · 4ever enriched für trockene, reifere Haut</span><span class="pr-meta"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>Morgens</i><em>je nach Hauttyp</em></span></span><span class="more">+</span></button>
-    <button type="button" class="pr-row" data-open="overnight"><img loading="lazy" decoding="async" src="assets/produkte/4ever-overnight.webp" alt=""><span class="t"><b>Nachtcreme</b><span>4ever overnight enriched · unterstützt die Haut, während du schläfst</span><span class="pr-meta"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg>Abends</i><em>alle Hauttypen</em></span></span><span class="more">+</span></button>
-    <button type="button" class="pr-row" data-open="beauty"><img loading="lazy" decoding="async" src="assets/produkte/beauty-drink.webp" alt=""><span class="t"><b>Von innen</b><span>Beauty-Drink · Beerengeschmack mit Biotin, Zink und Vitamin C¹</span><span class="pr-meta"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12l-1.2 16a2 2 0 0 1-2 1.8H9.2a2 2 0 0 1-2-1.8z"/><path d="M6.6 10h10.8"/></svg>1 Glas am Tag</i></span></span><span class="more">+</span></button>
+    <button type="button" class="pr-row" data-open="4ever"><img loading="lazy" decoding="async" src="assets/produkte/4ever.webp" alt=""><span class="t"><b>Tagsüber pflegen</b><span>4ever für normale bis Mischhaut · 4ever enriched für trockene, reifere Haut</span><span class="pr-meta"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>Morgens</i><em>je nach Hauttyp</em></span></span><span class="more">+</span></button>
+    <button type="button" class="pr-row" data-open="overnight"><img loading="lazy" decoding="async" src="assets/produkte/4ever-overnight.webp" alt=""><span class="t"><b>Nachts pflegen</b><span>4ever overnight enriched · reichhaltige Pflege für die Nacht</span><span class="pr-meta"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg>Abends</i><em>alle Hauttypen</em></span></span><span class="more">+</span></button>
+    <button type="button" class="pr-row" data-open="beauty"><img loading="lazy" decoding="async" src="assets/produkte/beauty-drink.webp" alt=""><span class="t"><b>Von innen ergänzen</b><span>Beauty-Drink · Nahrungsergänzung mit Biotin, Zink und Vitamin C¹</span><span class="pr-meta"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12l-1.2 16a2 2 0 0 1-2 1.8H9.2a2 2 0 0 1-2-1.8z"/><path d="M6.6 10h10.8"/></svg>1 Glas am Tag</i></span></span><span class="more">+</span></button>
   </div>
 
-  <div class="pr-sub"><h3>Extras</h3><span>nur, wenn du einen konkreten Wunsch hast</span></div>
+  <div class="pr-sub"><h3>Extras</h3><span>passend zu deinen Wünschen</span></div>
   <div class="pr-cards">
     <button type="button" class="pr-card" data-open="serum"><span class="im"><img loading="lazy" decoding="async" src="assets/produkte/activize-serum.webp" alt=""></span><span class="chip">vor der Creme</span><span class="cap"><b>Für mehr Glow</b><span>Activize Serum</span></span></button>
     <button type="button" class="pr-card" data-open="augen"><span class="im"><img loading="lazy" decoding="async" src="assets/produkte/augencreme.webp" alt=""></span><span class="chip">morgens &amp; abends</span><span class="cap"><b>Für die Augenpartie</b><span>Augencreme</span></span></button>
-    <button type="button" class="pr-card" data-open="darkspot"><span class="im"><img loading="lazy" decoding="async" src="assets/produkte/dark-spot-corrector.webp" alt=""></span><span class="chip">vor dem Serum</span><span class="cap"><b>Für einen ebenmäßigen Teint</b><span>Dark Spot Corrector</span></span></button>
+    <button type="button" class="pr-card" data-open="darkspot"><span class="im"><img loading="lazy" decoding="async" src="assets/produkte/dark-spot-corrector.webp" alt=""></span><span class="chip">morgens & abends</span><span class="cap"><b>Für einen ebenmäßigeren Teint</b><span>Dark Spot Corrector</span></span></button>
     <button type="button" class="pr-card" data-open="ultimate"><span class="im"><img loading="lazy" decoding="async" src="assets/produkte/ultimate-young.webp" alt=""></span><span class="chip">bei Bedarf</span><span class="cap"><b>Für besondere Anlässe</b><span>Ultimate Young</span></span></button>
   </div>
 
-  <div class="pr-sub"><h3>Sets zum Starten</h3><span>günstiger als einzeln</span></div>
+  <div class="pr-sub"><h3>Sets zum Starten</h3><span>vom Hersteller zusammengestellt</span></div>
   <div class="pr-cards three">
     <button type="button" class="pr-card" data-open="set-young"><span class="im"><img loading="lazy" decoding="async" src="assets/produkte/set-young-care.webp" alt=""></span><span class="chip">3 Produkte</span><span class="cap"><b>Für den Einstieg</b><span>Young Care Set · Reinigung, Tonic, Creme</span></span></button>
-    <button type="button" class="pr-card" data-open="set-4ever"><span class="im"><img loading="lazy" decoding="async" src="assets/produkte/set-4ever.webp" alt=""></span><span class="chip">Tag &amp; Nacht</span><span class="cap"><b>Für normale Haut</b><span>Starter Set 4ever</span></span></button>
+    <button type="button" class="pr-card" data-open="set-4ever"><span class="im"><img loading="lazy" decoding="async" src="assets/produkte/set-4ever.webp" alt=""></span><span class="chip">Tag &amp; Nacht</span><span class="cap"><b>Für normale bis Mischhaut</b><span>Starter Set 4ever</span></span></button>
     <button type="button" class="pr-card" data-open="set-enriched"><span class="im"><img loading="lazy" decoding="async" src="assets/produkte/set-4ever-enriched.webp" alt=""></span><span class="chip">Tag &amp; Nacht</span><span class="cap"><b>Für trockene Haut</b><span>Starter Set 4ever enriched</span></span></button>
   </div>
 
   <div class="pr-cta reveal">
     <div class="pr-cta-copy">
       <span class="eye light">Beauty-Check</span>
-      <h3>Du brauchst nicht alles. <em>Ich berate dich</em></h3>
-      <p>Im Beauty-Check schauen wir gemeinsam auf deine Haut, und du bekommst nur das, was wirklich zu dir passt.</p>
+      <h3>Du brauchst nicht <em>alles</em>. Ich berate dich</h3>
+      <p>Du musst dich jetzt nicht entscheiden. Im Beauty-Check gehen wir die Auswahl gemeinsam durch. Danach entscheidest du in Ruhe.</p>
       <a href="#kontakt" class="btn btn-light">Beauty-Check sichern <span class="arr">→</span></a>
     </div>
     <div class="pr-cta-who">
@@ -1409,7 +1433,7 @@ footer { background: var(--bg-2); }
     </div>
   </div>
 
-  <p class="foot-note pr-note">Verkauf und Versand ausschließlich über den offiziellen Shop des Herstellers (PM-International AG), dort stehen Preise und alle Inhaltsstoffe. ¹ Biotin und Zink tragen zur Erhaltung normaler Haut und Haare bei, Zink zur Erhaltung normaler Nägel, Vitamin C zu einer normalen Kollagenbildung für eine normale Funktion der Haut. <a class="link-more" data-shop="" href="#" target="_blank" rel="noopener">Zum Shop →</a></p>
+  <p class="foot-note pr-note">Verkauf und Versand nur über den offiziellen Shop des Herstellers (PM-International AG). Dort findest du alle Inhaltsstoffe und die offiziellen Preise. ¹ Biotin trägt zur Erhaltung normaler Haut und normaler Haare bei. Zink trägt zur Erhaltung normaler Haut, normaler Haare und normaler Nägel bei. Vitamin C trägt zu einer normalen Kollagenbildung für eine normale Funktion der Haut bei. Einmal täglich 6,5 g in 150 ml stilles Wasser einrühren. Nahrungsergänzungsmittel sind kein Ersatz für eine ausgewogene, abwechslungsreiche Ernährung und eine gesunde Lebensweise. Die empfohlene tägliche Verzehrmenge nicht überschreiten. Außerhalb der Reichweite von kleinen Kindern aufbewahren. <a class="link-more" data-shop="" href="#" target="_blank" rel="noopener">Zum Shop →</a></p>
 </section>
 
 <!-- Produkt-Fenster -->
@@ -1429,11 +1453,11 @@ footer { background: var(--bg-2); }
     <div class="men-copy">
       <div class="men-text">
         <span class="eye light">Für Männer</span>
-        <h2>Ein Produkt. <em>Alles drin</em></h2>
-        <p>Men Face: Feuchtigkeitspflege, Rasurpflege und Schutz vor Umwelteinflüssen in einem Schritt. Morgens nach dem Waschen auftragen, fertig.</p>
+        <h2>Einfach <em>pflegen</em>. Morgens und abends</h2>
+        <p>Feuchtigkeit und Pflege in einem Schritt: Men Face. Morgens und abends nach der Reinigung auftragen. Auch für Bartträger geeignet.</p>
         <button type="button" class="btn btn-light" data-open="men">Details ansehen <span class="arr">→</span></button>
       </div>
-      <button type="button" class="men-prod" data-open="men"><img loading="lazy" decoding="async" src="assets/produkte/men-face.webp" alt="Men Face"><span><b>Men Face</b>All-in-one Gesichtspflege</span></button>
+      <button type="button" class="men-prod" data-open="men"><img loading="lazy" decoding="async" src="assets/produkte/men-face.webp" alt="Men Face"><span><b>Für die Gesichtspflege</b>Men Face</span></button>
     </div>
   </div>
 </section>
@@ -1442,38 +1466,38 @@ footer { background: var(--bg-2); }
 <!-- USPs · Bento -->
 <section class="why" id="vorteile">
   <div class="s-head">
-    <span class="eye">Warum diese Produkte</span>
-    <h2>Was diese Produkte <em>anders</em> macht</h2>
+    <span class="eye">Gut zu wissen</span>
+    <h2>Was hinter den Produkten <em>steckt</em></h2>
   </div>
 
   <div class="bento">
     <article class="bento-card photo tall reveal">
       <img loading="lazy" decoding="async" src="assets/drink.webp" alt="" width="1024" height="1024">
       <div class="bento-over">
-        <span class="eyebrow">Nicht nur von außen</span>
-        <h3>Der Beauty-Drink kommt von innen dazu</h3>
-        <p>Biotin und Zink tragen zur Erhaltung normaler Haut und Haare bei, Vitamin C zur normalen Kollagenbildung.¹ Ein Glas am Tag, Beerengeschmack.</p>
+        <span class="eyebrow">Von innen ergänzen</span>
+        <h3>Ein Drink mit Vitaminen und Mineralstoffen</h3>
+        <p>Vitamin C trägt zu einer normalen Kollagenbildung für eine normale Funktion der Haut bei.¹ Der Beauty-Drink enthält außerdem Biotin und Zink.</p>
       </div>
     </article>
 
     <article class="bento-card photo wide reveal">
       <img loading="lazy" decoding="async" src="assets/ntc.webp" alt="" width="1024" height="1024">
       <div class="bento-over">
-        <span class="eyebrow">Patentierte Technologie · NTC®</span>
-        <h3>Nährstoffe dorthin, wo sie gebraucht werden</h3>
-        <p>„Das exklusive Nährstoff-Transportkonzept (NTC®) bringt die Nährstoffe, wenn sie gebraucht werden, dorthin, wo sie gebraucht werden – auf die Zellebene von innen und außen.“ Über 100 Patente stehen dahinter.²</p>
+        <span class="eyebrow">NTC®</span>
+        <h3>So beschreibt der Hersteller sein Konzept</h3>
+        <p>„Das exklusive Nährstoff-Transportkonzept (NTC®) bringt die Nährstoffe, wenn sie gebraucht werden, dorthin, wo sie gebraucht werden – auf die Zellebene von innen und außen.“ Laut Hersteller schützen über 100 Patente die NTC®-Technologie.²</p>
       </div>
     </article>
 
     <article class="bento-card stat reveal">
       <b class="big">1993</b>
       <h3>Seit über 30 Jahren</h3>
-      <p>Produktion nach GMP-Standard, regelmäßig unabhängig geprüft, nachvollziehbar per QR-Code auf jedem Produkt. Du bestellst direkt beim Hersteller.</p>
+      <p>Laut Hersteller: Produktion nach GMP-Standard und regelmäßige unabhängige Prüfungen durch ELAB Analytik. Prüfinformationen sind per QR-Code auf den Produkten abrufbar.</p>
     </article>
 
     <article class="bento-card reveal">
       <span class="eyebrow">Was drin ist</span>
-      <h3>Wirkstoffe, die man kennt</h3>
+      <h3>Bekannte Inhaltsstoffe</h3>
       <div class="bento-chips"><span>Hyaluron</span><span>Ceramid</span><span>Peptid</span><span>Bakuchiol</span><span>Ectoin</span><span>Niacinamid</span><span>Q10</span></div>
     </article>
 
@@ -1485,19 +1509,19 @@ footer { background: var(--bg-2); }
         <img loading="lazy" decoding="async" src="assets/skin-asian.webp" alt="" width="1024" height="1024">
       </div>
       <div class="bento-over">
-        <span class="eyebrow">Für jede Haut</span>
-        <h3>Ob 20 oder 60, Frau oder Mann</h3>
-        <p>Zwei Tagescremes für normale und trockene Haut, eine Nachtcreme für alle, ein eigenes Produkt für Männer. Was zu dir passt, klären wir im Beauty-Check.</p>
+        <span class="eyebrow">Passend zu deiner Haut</span>
+        <h3>Dein Hauttyp gibt die Richtung vor</h3>
+        <p>Tagespflege für normale bis Mischhaut oder trockene Haut, dazu Nachtpflege. Im Beauty-Check helfe ich dir bei der Auswahl.</p>
       </div>
     </article>
 
     <article class="bento-card sand reveal">
       <div class="guar-badge"><b>30</b><span>Tage</span></div>
-      <h3>Geld-zurück-Garantie</h3>
-      <p>Passt ein Produkt nicht, schickst du es innerhalb von 30 Tagen zurück. Garantiegeber ist der Hersteller, Bedingungen laut Shop.</p>
+      <h3>Geld-zurück-Garantie des Herstellers</h3>
+      <p>Der Hersteller bietet eine 30-Tage-Geld-zurück-Garantie. Voraussetzungen und Ablauf findest du im offiziellen Shop.</p>
     </article>
   </div>
-  <p class="foot-note wrap" style="margin-top:18px">¹ Zugelassene Angaben nach VO (EU) 432/2012 für den Beauty-Drink (Nahrungsergänzungsmittel). ² Markenaussage des Herstellers (PM-International AG); NTC® ist eine eingetragene Marke der PM-International AG.</p>
+  <p class="foot-note wrap" style="margin-top:18px">¹ Zugelassene Angabe nach VO (EU) 432/2012 für den Beauty-Drink. Einmal täglich 6,5 g in 150 ml stilles Wasser einrühren. Nahrungsergänzungsmittel sind kein Ersatz für eine ausgewogene, abwechslungsreiche Ernährung und eine gesunde Lebensweise. Die empfohlene tägliche Verzehrmenge nicht überschreiten. Außerhalb der Reichweite von kleinen Kindern aufbewahren. ² Markenaussage des Herstellers (PM-International AG); NTC® ist eine eingetragene Marke der PM-International AG.</p>
 </section>
 
 <!-- ÜBER MICH -->
@@ -1512,9 +1536,9 @@ footer { background: var(--bg-2); }
       <h2>{{{about_intro_de_html}}}</h2>
       <div class="about-text">{{about_me_html}}</div>
       <div class="about-pills">
-        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg>Beauty-Check kostenlos</span>
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg>Kostenloser Beauty-Check</span>
         <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="13" height="12" rx="2"/><path d="M16 10l5-3v10l-5-3z"/></svg>Per Video, Telefon oder WhatsApp</span>
-        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-6.5 7-11a7 7 0 1 0-14 0c0 4.5 7 11 7 11z"/></svg>Ehrliche Empfehlung, keine Kaufpflicht</span>
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-6.5 7-11a7 7 0 1 0-14 0c0 4.5 7 11 7 11z"/></svg>Persönliche Empfehlung, keine Kaufpflicht</span>
       </div>
     </div>
   </div>
@@ -1525,18 +1549,18 @@ footer { background: var(--bg-2); }
   <div class="s-head">
     <span class="eye">Mein Vorschlag</span>
     <h2>Empfohlene Routine</h2>
-    <p>So sieht das bei mir aus. Fünf Minuten morgens, drei abends.</p>
+    <p>Mein Vorschlag für morgens und abends. Die Tagescreme wählen wir passend zu deiner Haut.</p>
   </div>
   <div class="rt-cols reveal">
     <div class="rt-col">
-      <h3>Morgens<span class="t">5 Minuten</span></h3>
+      <h3>Morgens<span class="t">Für den Tag</span></h3>
       <div class="rt-step"><i>1</i><b>Reinigen</b><small>Cleansing Lotion</small></div>
       <div class="rt-step"><i>2</i><b>Klären</b><small>Tonic</small></div>
-      <div class="rt-step"><i>3</i><b>Tagescreme</b><small>4ever</small></div>
-      <div class="rt-step"><i>4</i><b>Ein Glas trinken</b><small>Beauty-Drink</small></div>
+      <div class="rt-step"><i>3</i><b>Tagescreme</b><small>4ever oder 4ever enriched</small></div>
+      <div class="rt-step"><i>4</i><b>Einmal täglich trinken</b><small>Beauty-Drink</small></div>
     </div>
     <div class="rt-col">
-      <h3>Abends<span class="t">3 Minuten</span></h3>
+      <h3>Abends<span class="t">Für die Nacht</span></h3>
       <div class="rt-step"><i>1</i><b>Reinigen</b><small>Cleansing Lotion</small></div>
       <div class="rt-step"><i>2</i><b>Klären</b><small>Tonic</small></div>
       <div class="rt-step"><i>3</i><b>Nachtcreme</b><small>4ever overnight enriched</small></div>
@@ -1551,23 +1575,23 @@ footer { background: var(--bg-2); }
     <div class="faq-list">
       <div class="faq-item">
         <button class="faq-q"><span class="l-de">Muss ich alles kaufen?</span> <span class="faq-plus"></span></button>
-        <div class="faq-a"><div class="faq-a-inner"><span class="l-de">Nein. Reinigung, Tagespflege, Nachtpflege und der Drink sind die Basis. Alles andere nur, wenn du einen konkreten Wunsch hast.</span></div></div>
+        <div class="faq-a"><div class="faq-a-inner"><span class="l-de">Nein, du musst nichts kaufen. Meine Basis-Empfehlung umfasst Reinigung, Tonic, Tages- und Nachtpflege plus Beauty-Drink. Was davon zu dir passt, besprechen wir. Extras nur nach Wunsch.</span></div></div>
       </div>
       <div class="faq-item">
         <button class="faq-q"><span class="l-de">Was kostet der Beauty-Check?</span> <span class="faq-plus"></span></button>
-        <div class="faq-a"><div class="faq-a-inner"><span class="l-de">Nichts. Kostenlos, unverbindlich, etwa eine halbe Stunde. Ob du danach etwas bestellst, entscheidest du.</span></div></div>
+        <div class="faq-a"><div class="faq-a-inner"><span class="l-de">Der Beauty-Check ist kostenlos und unverbindlich. Wir nehmen uns etwa 30 Minuten. Ob du danach bestellst, entscheidest du.</span></div></div>
       </div>
       <div class="faq-item">
         <button class="faq-q"><span class="l-de">Wie läuft der Beauty-Check ab?</span> <span class="faq-plus"></span></button>
-        <div class="faq-a"><div class="faq-a-inner"><span class="l-de">Per Videocall, am Telefon oder über WhatsApp. Am besten ungeschminkt, dann sehen wir deine Haut, wie sie ist.</span></div></div>
+        <div class="faq-a"><div class="faq-a-inner"><span class="l-de">Per Video, Telefon oder WhatsApp. Wir sprechen über deine Pflege und deine Wünsche. Du brauchst nichts vorzubereiten.</span></div></div>
       </div>
       <div class="faq-item">
         <button class="faq-q"><span class="l-de">Wo bestelle ich?</span> <span class="faq-plus"></span></button>
-        <div class="faq-a"><div class="faq-a-inner"><span class="l-de">Im offiziellen Hersteller-Shop über meinen Link. Offizielle Preise, Lieferung in 2 bis 4 Werktagen, 30 Tage Geld-zurück-Garantie. Ich habe kein Lager und verkaufe nichts selbst.</span></div></div>
+        <div class="faq-a"><div class="faq-a-inner"><span class="l-de">Im offiziellen Shop des Herstellers über meinen Link, zu dessen offiziellen Kundenpreisen. Lieferung laut Shop in 2 bis 4 Werktagen. Dort stehen auch die Bedingungen der 30-Tage-Geld-zurück-Garantie.</span></div></div>
       </div>
       <div class="faq-item">
         <button class="faq-q"><span class="l-de">Verdienst du daran?</span> <span class="faq-plus"></span></button>
-        <div class="faq-a"><div class="faq-a-inner"><span class="l-de">Ja, ich bin {{#if geschlecht=weiblich}}selbstständige Vertriebspartnerin{{/if}}{{#if geschlecht=maennlich}}selbstständiger Vertriebspartner{{/if}} und bekomme eine Provision, wenn du über meinen Link bestellst. Für dich bleibt der Preis gleich. Deshalb sage ich dir auch ehrlich, wenn du etwas nicht brauchst.</span></div></div>
+        <div class="faq-a"><div class="faq-a-inner"><span class="l-de">Ja. Ich bin {{#if geschlecht=weiblich}}selbstständige Vertriebspartnerin{{/if}}{{#if geschlecht=maennlich}}selbstständiger Vertriebspartner{{/if}} und erhalte eine Provision, wenn du über meinen Link bestellst. Es gelten die offiziellen Kundenpreise des Herstellers. Die Beratung verpflichtet dich zu keinem Kauf.</span></div></div>
       </div>
     </div>
   </div>
@@ -1578,7 +1602,7 @@ footer { background: var(--bg-2); }
   <div class="s-head">
     <span class="eye light">Kostenlos &amp; unverbindlich</span>
     <h2><span class="l-de">Beauty-Check mit <strong>{{vorname}}</strong> sichern</span></h2>
-    <p><span class="l-de">Drei kurze Fragen, dann melde ich mich bei dir. Kostenlos und unverbindlich.</span></p>
+    <p><span class="l-de">Beantworte drei kurze Fragen. Ich melde mich persönlich bei dir, um deinen Beauty-Check zu vereinbaren.</span></p>
   </div>
 
   <div class="cform" id="cform" data-step="1">
@@ -1593,11 +1617,11 @@ footer { background: var(--bg-2); }
 
       <!-- Schritt 1 -->
       <div class="f-step on" data-step="1">
-        <h3><span class="l-de">Was trifft auf dich zu?</span></h3>
+        <h3><span class="l-de">Wobei darf ich dir helfen?</span></h3>
         <div class="f-opts" data-single>
-          <button type="button" class="f-opt" data-val="einfacher"><b><span class="l-de">Ich will meine Pflege einfacher machen</span></b></button>
-          <button type="button" class="f-opt" data-val="passend"><b><span class="l-de">Ich will wissen, was zu meiner Haut passt</span></b></button>
-          <button type="button" class="f-opt" data-val="kennenlernen"><b><span class="l-de">Ich will das Ganze erst mal kennenlernen</span></b></button>
+          <button type="button" class="f-opt" data-val="einfacher"><b><span class="l-de">Meine Pflege vereinfachen</span></b></button>
+          <button type="button" class="f-opt" data-val="passend"><b><span class="l-de">Passende Pflege finden</span></b></button>
+          <button type="button" class="f-opt" data-val="kennenlernen"><b><span class="l-de">Das Konzept kennenlernen</span></b></button>
         </div>
         <div class="f-nav"><span></span><button type="button" class="btn btn-primary f-next" disabled><span class="l-de">Weiter</span> <span class="arr">→</span></button></div>
       </div>
@@ -1607,12 +1631,12 @@ footer { background: var(--bg-2); }
         <h3><span class="l-de">Was wünschst du dir?</span></h3>
         <p class="f-hint"><span class="l-de">Mehrere Antworten möglich.</span></p>
         <div class="f-opts f-opts-grid" data-multi>
-          <button type="button" class="f-opt" data-val="Feuchtigkeit & Frische"><b><span class="l-de">Mehr Feuchtigkeit und Frische</span></b></button>
-          <button type="button" class="f-opt" data-val="Ebenmäßiger Teint"><b><span class="l-de">Ein gleichmäßigeres Hautbild</span></b></button>
-          <button type="button" class="f-opt" data-val="Augenpartie"><b><span class="l-de">Eine wache Augenpartie</span></b></button>
-          <button type="button" class="f-opt" data-val="Pflege von innen"><b><span class="l-de">Pflege von innen kennenlernen</span></b></button>
+          <button type="button" class="f-opt" data-val="Feuchtigkeit & Frische"><b><span class="l-de">Feuchtigkeit und Frische</span></b></button>
+          <button type="button" class="f-opt" data-val="Ebenmäßiger Teint"><b><span class="l-de">Ein ebenmäßigeres Hautbild</span></b></button>
+          <button type="button" class="f-opt" data-val="Augenpartie"><b><span class="l-de">Eine gepflegte Augenpartie</span></b></button>
+          <button type="button" class="f-opt" data-val="Pflege von innen"><b><span class="l-de">Den Beauty-Drink kennenlernen</span></b></button>
           <button type="button" class="f-opt" data-val="Weniger Aufwand"><b><span class="l-de">Weniger Aufwand im Alltag</span></b></button>
-          <button type="button" class="f-opt" data-val="Für Männer"><b><span class="l-de">Etwas Passendes für Männer</span></b></button>
+          <button type="button" class="f-opt" data-val="Für Männer"><b><span class="l-de">Pflege für Männer</span></b></button>
         </div>
         <div class="f-nav"><button type="button" class="f-back"><span class="l-de">← Zurück</span></button><button type="button" class="btn btn-primary f-next" disabled><span class="l-de">Weiter</span> <span class="arr">→</span></button></div>
       </div>
@@ -1631,15 +1655,15 @@ footer { background: var(--bg-2); }
             <button type="button" class="chip" data-val="email"><span class="l-de">E-Mail</span></button>
           </div>
         </div>
-        <label class="f-check"><input type="checkbox" id="cf-consent" required><span><span class="l-de">Ich bin einverstanden, dass meine Angaben zur Kontaktaufnahme verwendet werden.</span></span></label>
+        <label class="f-check"><input type="checkbox" id="cf-consent" required><span><span class="l-de">Ich bin einverstanden, dass meine Angaben zur Kontaktaufnahme für den Beauty-Check verwendet werden.</span></span></label>
         <div class="f-nav"><button type="button" class="f-back"><span class="l-de">← Zurück</span></button><button type="submit" class="btn btn-primary"><span class="l-de">Beauty-Check sichern</span> <span class="arr">→</span></button></div>
       </div>
     </form>
 
     <div class="cform-ok">
       <div class="ok-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
-      <h3><span class="l-de">Danke<span id="successNameDe"></span>!</span></h3>
-      <p><span class="l-de">Deine Anfrage ist bei mir. Ich melde mich innerhalb von 24 Stunden persönlich bei dir.</span></p>
+      <h3><span class="l-de">Danke<span id="successNameDe"></span></span></h3>
+      <p><span class="l-de">Deine Anfrage ist angekommen. Ich melde mich persönlich bei dir, um einen Termin zu vereinbaren.</span></p>
     </div>
   </div>
 
@@ -1653,7 +1677,7 @@ footer { background: var(--bg-2); }
   </div>
 
   <div class="contact-shop">
-    <p><span class="l-de">Du weißt schon, was du willst? Dann bestell direkt im Shop des Herstellers, 30 Tage Geld-zurück-Garantie.</span></p>
+    <p><span class="l-de">Du weißt schon, was du möchtest? Bestell direkt im offiziellen Shop des Herstellers.</span></p>
     <a data-shop="" href="#" target="_blank" rel="noopener"><span class="l-de">Zum Shop</span> →</a>
   </div>
 </section>
@@ -1706,7 +1730,7 @@ footer { background: var(--bg-2); }
     </div>
 
     <div class="footer-disclaimer">
-      <p><span class="l-de">{{vorname}} {{nachname}} ist {{#if geschlecht=weiblich}}selbstständige Vertriebspartnerin{{/if}}{{#if geschlecht=maennlich}}selbstständiger Vertriebspartner{{/if}} der PM-International AG. Dies ist keine offizielle Webseite der PM-International AG; FitLine® und NTC® sind eingetragene Marken der PM-International AG. Die Pflegeprodukte sind kosmetische Mittel. Der Beauty-Drink ist ein Nahrungsergänzungsmittel und kein Ersatz für eine ausgewogene, abwechslungsreiche Ernährung und eine gesunde Lebensweise; die empfohlene tägliche Verzehrmenge nicht überschreiten, außerhalb der Reichweite von kleinen Kindern aufbewahren. Alle Produktangaben entsprechen den offiziellen Angaben des Herstellers. Diese Seite dient der Information und stellt keine medizinische Beratung dar. Ergebnisse können von Person zu Person unterschiedlich sein. Verkauf und Versand erfolgen ausschließlich über den offiziellen Shop der PM-International AG.</span></p>
+      <p><span class="l-de">{{vorname}} {{nachname}} ist {{#if geschlecht=weiblich}}selbstständige Vertriebspartnerin{{/if}}{{#if geschlecht=maennlich}}selbstständiger Vertriebspartner{{/if}} der PM-International AG. Dies ist keine offizielle Webseite der PM-International AG. FitLine® und NTC® sind eingetragene Marken der PM-International AG. Die Pflegeprodukte sind kosmetische Mittel. Der Beauty-Drink ist ein Nahrungsergänzungsmittel. Nahrungsergänzungsmittel sind kein Ersatz für eine ausgewogene, abwechslungsreiche Ernährung und eine gesunde Lebensweise. Die empfohlene tägliche Verzehrmenge nicht überschreiten. Außerhalb der Reichweite von kleinen Kindern aufbewahren. Die Produktinformationen beruhen auf Herstellerangaben. Der Beauty-Check ist eine kosmetische Einschätzung, keine medizinische Untersuchung. Verkauf und Versand erfolgen ausschließlich über den offiziellen Shop der PM-International AG.</span></p>
     </div>
   </div>
 </footer>
@@ -1777,81 +1801,81 @@ document.querySelectorAll('.faq-item').forEach(item => {
 /* Produkttexte nah am offiziellen Wortlaut des Herstellers (fitline.com DE, Oktober 2026). */
 const PRODUCTS = {
   cleansing: { id: '0116127', name: 'Cleansing Lotion', tag: { de: 'Schritt 1 · Reinigen', en: 'Step 1 · Cleanse' }, when: { de: "Morgens & abends", en: "Morning & night" }, actives: ["Sonnenblumenöl", "Milde Zucker-Tenside", "Kamillenextrakt", "Glycerin", "Ergothionein"], price: '26,90 €', size: '200 ml',
-    desc: { de: 'Die milde Reinigungslotion entfernt Make-up und Schmutz, ohne die Haut auszutrocknen. Für ein frisches, seidig-zartes Hautgefühl ohne Spannungsgefühl.', en: 'The mild cleansing lotion removes make-up and dirt without drying out the skin. For a fresh, silky-soft skin feeling without tightness.' },
-    use: { de: 'Morgens und abends auf das feuchte Gesicht geben, sanft einmassieren und mit lauwarmem Wasser abspülen.', en: 'Morning and evening, apply to damp skin, massage in gently and rinse off with lukewarm water.' },
+    desc: { de: 'Die milde Reinigung entfernt Make-up und Schmutz, ohne auszutrocknen. Für ein frisches, seidig-zartes Hautgefühl.', en: 'The mild cleansing lotion removes make-up and dirt without drying out the skin. For a fresh, silky-soft skin feeling without tightness.' },
+    use: { de: 'Morgens und abends auf Gesicht, Hals und Dekolleté auftragen, sanft einmassieren und mit lauwarmem Wasser abspülen.', en: 'Morning and evening, apply to damp skin, massage in gently and rinse off with lukewarm water.' },
     skin: { de: 'Für alle Hauttypen, auch trockene und sensible Haut.', en: 'For all skin types, including dry and sensitive skin.' },
-    pros: { de: ['Optimale Reinigung', 'Frisches Hautgefühl', 'Verfeinertes & geklärtes Hautbild', 'Ohne Spannungsgefühl', 'Vegan'], en: ['Thorough cleansing', 'Fresh skin feeling', 'Refined & clarified complexion', 'No tight feeling', 'Vegan'] } },
+    pros: { de: ['Sanfte Reinigung', 'Frisches Hautgefühl', 'Verfeinertes und geklärtes Hautbild', 'Seidig-zartes Hautgefühl', 'Vegan'], en: ['Thorough cleansing', 'Fresh skin feeling', 'Refined & clarified complexion', 'No tight feeling', 'Vegan'] } },
   tonic: { id: '0116007', name: 'Tonic', tag: { de: 'Schritt 2 · Klären', en: 'Step 2 · Tone' }, when: { de: "Morgens & abends", en: "Morning & night" }, actives: ["Kamillenextrakt", "Glycerin", "Squalan", "Vitamin E", "Ergothionein"], price: '26,90 €', size: '200 ml',
-    desc: { de: 'Das erfrischende und klärende Tonic schließt den Säureschutzmantel der Haut und bereitet sie optimal auf die nachfolgende Pflege vor.', en: 'The refreshing, clarifying tonic closes the skin\'s acid mantle and prepares it for the care that follows.' },
-    use: { de: 'Morgens und abends nach der Reinigung auf ein Wattepad geben und Gesicht, Hals und Dekolleté sanft abreiben.', en: 'Morning and evening after cleansing, apply to a cotton pad and gently wipe over face, neck and décolleté.' },
+    desc: { de: 'Erfrischt und klärt die Haut. Bereitet sie auf die anschließende Pflege vor.', en: 'The refreshing, clarifying tonic closes the skin\'s acid mantle and prepares it for the care that follows.' },
+    use: { de: 'Morgens und abends nach der Reinigung auf ein Wattepad geben. Gesicht, Hals und Dekolleté sanft abreiben.', en: 'Morning and evening after cleansing, apply to a cotton pad and gently wipe over face, neck and décolleté.' },
     skin: { de: 'Für alle Hauttypen.', en: 'For all skin types.' },
-    pros: { de: ['Frisches Hautgefühl', 'Verfeinertes & geklärtes Hautbild', 'Bereitet die Haut auf die Pflege vor'], en: ['Fresh skin feeling', 'Refined & clarified complexion', 'Prepares the skin for care'] } },
+    pros: { de: ['Frisches Hautgefühl', 'Verfeinertes und geklärtes Hautbild', 'Vorbereitung auf die Pflege'], en: ['Fresh skin feeling', 'Refined & clarified complexion', 'Prepares the skin for care'] } },
   '4ever': { id: '0116122', name: '4ever', tag: { de: 'Tagespflege · normale bis Mischhaut', en: 'Day cream · normal to combination skin' }, when: { de: "Morgens", en: "Morning" }, actives: ["Hyaluron", "Ceramid NP", "Peptid", "Bakuchiol", "Goji-Extrakt", "Squalan", "UV-Filter (Anti-Pollution)"], price: '64,90 €', size: '50 ml',
-    desc: { de: 'Die Tagespflege mit Hyaluron, Ceramid, Peptid, Bakuchiol und Goji-Extrakt. Versorgt die Haut intensiv mit Feuchtigkeit, unterstützt die Hautbarriere und schützt mit Anti-Pollution-Filter vor Umwelteinflüssen.', en: 'The day cream with hyaluronic acid, ceramide, peptide, bakuchiol and goji extract. Intensively hydrates, supports the skin barrier and protects against environmental influences with an anti-pollution filter.' },
-    use: { de: 'Morgens nach Reinigung, Tonic und Serum auf Gesicht, Hals und Dekolleté auftragen.', en: 'In the morning after cleanser, tonic and serum, apply to face, neck and décolleté.' },
-    skin: { de: 'Normale bis Mischhaut. Vegan.', en: 'Normal to combination skin. Vegan.' },
-    pros: { de: ['Intensive Feuchtigkeitsversorgung', 'Unterstützung der Hautbarriere', 'Anti-Pollution-Filter', 'Anti-Aging'], en: ['Intensive hydration', 'Skin barrier support', 'Anti-pollution filter', 'Anti-ageing'] } },
+    desc: { de: 'Die Tagespflege spendet intensive Feuchtigkeit und unterstützt die Hautbarriere. Für ein glattes, geschmeidiges Hautgefühl.', en: 'The day cream with hyaluronic acid, ceramide, peptide, bakuchiol and goji extract. Intensively hydrates, supports the skin barrier and protects against environmental influences with an anti-pollution filter.' },
+    use: { de: 'Morgens nach der Reinigung auf Gesicht, Hals und Dekolleté auftragen und sanft einmassieren.', en: 'In the morning after cleanser, tonic and serum, apply to face, neck and décolleté.' },
+    skin: { de: 'Für normale bis Mischhaut. Vegan.', en: 'Normal to combination skin. Vegan.' },
+    pros: { de: ['Intensive Feuchtigkeit', 'Unterstützung der Hautbarriere', 'Geschmeidiges Hautgefühl', 'Strahlender Teint'], en: ['Intensive hydration', 'Skin barrier support', 'Anti-pollution filter', 'Anti-ageing'] } },
   '4ever-enriched': { id: '0116220', name: '4ever enriched', tag: { de: 'Tagespflege · trockene bis reife Haut', en: 'Day cream · dry to mature skin' }, when: { de: "Morgens", en: "Morning" }, actives: ["Peptid", "Sheabutter", "Ectoin", "Hafer", "Avocadoöl", "Hyaluron", "Ceramid NP", "Q10"], price: '64,90 €', size: '50 ml',
-    desc: { de: 'Die reichhaltige Tagespflege mit Peptid, Sheabutter und Ectoin. Intensive, hautberuhigende Pflege mit langanhaltender Feuchtigkeit und Anti-Pollution-Schutz.', en: 'The rich day cream with peptide, shea butter and ectoin. Intensive, soothing care with long-lasting hydration and anti-pollution protection.' },
-    use: { de: 'Morgens nach Reinigung, Tonic und Serum auf Gesicht, Hals und Dekolleté auftragen.', en: 'In the morning after cleanser, tonic and serum, apply to face, neck and décolleté.' },
-    skin: { de: 'Trockene und reife Haut.', en: 'Dry and mature skin.' },
-    pros: { de: ['Intensive & hautberuhigende Pflege', 'Langanhaltende Feuchtigkeit', 'Anti-Pollution', 'Anti-Aging'], en: ['Intensive & soothing care', 'Long-lasting hydration', 'Anti-pollution', 'Anti-ageing'] } },
+    desc: { de: 'Reichhaltige Tagespflege für trockene Haut. Spendet langanhaltende Feuchtigkeit und hinterlässt ein weiches, gepflegtes Hautgefühl.', en: 'The rich day cream with peptide, shea butter and ectoin. Intensive, soothing care with long-lasting hydration and anti-pollution protection.' },
+    use: { de: 'Morgens nach der Reinigung auf Gesicht, Hals und Dekolleté auftragen und sanft einmassieren.', en: 'In the morning after cleanser, tonic and serum, apply to face, neck and décolleté.' },
+    skin: { de: 'Für trockene und reife Haut.', en: 'Dry and mature skin.' },
+    pros: { de: ['Reichhaltige Pflege', 'Langanhaltende Feuchtigkeit', 'Weiches Hautgefühl', 'Geschmeidiges Hautgefühl'], en: ['Intensive & soothing care', 'Long-lasting hydration', 'Anti-pollution', 'Anti-ageing'] } },
   overnight: { id: '0116223', name: '4ever overnight enriched', tag: { de: 'Nachtpflege · alle Hauttypen', en: 'Night cream · all skin types' }, when: { de: "Abends", en: "Evening" }, actives: ["Lactobacillus-Ferment", "Betain", "Spilanthes-Extrakt", "Jojobaöl", "Squalan", "Q10", "Vitamin E"], price: '64,90 €', size: '50 ml',
-    desc: { de: 'Die Nachtpflege zu beiden Tagescremes. Unterstützt über Nacht das Mikrobiom und die Hautbarriere, ohne Lichtschutzfilter, damit die Haut regenerieren kann.', en: 'The night cream for both day creams. Supports the microbiome and skin barrier overnight, without UV filters, so the skin can regenerate.' },
-    use: { de: 'Abends nach Reinigung, Tonic und Serum auf Gesicht, Hals und Dekolleté auftragen.', en: 'In the evening after cleanser, tonic and serum, apply to face, neck and décolleté.' },
+    desc: { de: 'Reichhaltige Nachtpflege als Ergänzung zu beiden Tagescremes. Pflegt die Haut intensiv und kann die Hautbarriere unterstützen.', en: 'The night cream for both day creams. Supports the microbiome and skin barrier overnight, without UV filters, so the skin can regenerate.' },
+    use: { de: 'Abends nach der Reinigung auf Gesicht, Hals und Dekolleté auftragen und sanft einmassieren.', en: 'In the evening after cleanser, tonic and serum, apply to face, neck and décolleté.' },
     skin: { de: 'Für alle Hauttypen, besonders normale bis trockene Haut.', en: 'For all skin types, especially normal to dry skin.' },
-    pros: { de: ['Unterstützung des Mikrobioms', 'Unterstützung der Hautbarriere', 'Anti-Aging'], en: ['Microbiome support', 'Skin barrier support', 'Anti-ageing'] } },
+    pros: { de: ['Reichhaltige Nachtpflege', 'Unterstützung der Hautbarriere', 'Intensive Pflege'], en: ['Microbiome support', 'Skin barrier support', 'Anti-ageing'] } },
   beauty: { id: '0709028', name: 'Beauty-Drink', tag: { de: 'Von innen · Nahrungsergänzung', en: 'From the inside · food supplement' }, when: { de: "1 × täglich, z. B. morgens", en: "Once a day, e.g. in the morning" }, actives: ["Kollagenpeptide (Rind)", "Vitamin C", "Biotin", "Zink", "Niacin", "Vitamin B2", "Vitamin E", "Kupfer"], price: '47,50 €', size: '30 Portionen',
-    desc: { de: 'Trinkpulver mit fruchtigem Beerengeschmack, Kollagenpeptiden, Vitaminen und Mineralstoffen. Vitamin C trägt zu einer normalen Kollagenbildung für eine normale Funktion der Haut bei. Biotin und Zink tragen zur Erhaltung normaler Haut und Haare bei, Zink zur Erhaltung normaler Nägel.', en: 'Drink powder with fruity berry flavour, collagen peptides, vitamins and minerals. Vitamin C contributes to normal collagen formation for the normal function of the skin. Biotin and zinc contribute to the maintenance of normal skin and hair, zinc to the maintenance of normal nails.' },
-    use: { de: '1 × täglich 5 gestrichene Messlöffel (6,5 g) in 150 ml stilles Wasser einrühren. Die empfohlene tägliche Verzehrmenge nicht überschreiten.', en: 'Once a day, stir 5 level scoops (6.5 g) into 150 ml of still water. Do not exceed the recommended daily intake.' },
-    skin: { de: 'Nahrungsergänzungsmittel sind kein Ersatz für eine ausgewogene, abwechslungsreiche Ernährung und eine gesunde Lebensweise. Enthält Kollagenpeptide vom Rind.', en: 'Food supplements are not a substitute for a balanced, varied diet and a healthy lifestyle. Contains bovine collagen peptides.' },
-    pros: { de: ['Beerengeschmack, ohne Zuckerzusatz, mit Stevia', 'Vitamin C, Biotin, Zink, Niacin, Vitamin B2, Vitamin E', 'Mit NTC® Nährstoff-Transportkonzept'], en: ['Berry flavour, no added sugar, with stevia', 'Vitamin C, biotin, zinc, niacin, vitamin B2, vitamin E', 'With the NTC® nutrient transport concept'] } },
+    desc: { de: 'Trinkpulver mit Beerengeschmack, Kollagenpeptiden, Vitaminen und Mineralstoffen. Vitamin C trägt zu einer normalen Kollagenbildung für eine normale Funktion der Haut bei¹. Biotin trägt zur Erhaltung normaler Haut und normaler Haare bei¹. Zink trägt zur Erhaltung normaler Haut, normaler Haare und normaler Nägel bei¹.', en: 'Drink powder with fruity berry flavour, collagen peptides, vitamins and minerals. Vitamin C contributes to normal collagen formation for the normal function of the skin. Biotin and zinc contribute to the maintenance of normal skin and hair, zinc to the maintenance of normal nails.' },
+    use: { de: 'Einmal täglich 5 gestrichene Messlöffel (6,5 g) in 150 ml stilles Wasser einrühren. Die empfohlene tägliche Verzehrmenge nicht überschreiten. Außerhalb der Reichweite von kleinen Kindern aufbewahren.', en: 'Once a day, stir 5 level scoops (6.5 g) into 150 ml of still water. Do not exceed the recommended daily intake.' },
+    skin: { de: '¹ Zugelassene Angaben nach VO (EU) 432/2012. Nahrungsergänzungsmittel sind kein Ersatz für eine ausgewogene, abwechslungsreiche Ernährung und eine gesunde Lebensweise. Enthält Kollagenpeptide vom Rind.', en: 'Food supplements are not a substitute for a balanced, varied diet and a healthy lifestyle. Contains bovine collagen peptides.' },
+    pros: { de: ['Beerengeschmack', 'Mit Vitaminen und Mineralstoffen', 'Mit Kollagenpeptiden vom Rind'], en: ['Berry flavour, no added sugar, with stevia', 'Vitamin C, biotin, zinc, niacin, vitamin B2, vitamin E', 'With the NTC® nutrient transport concept'] } },
   serum: { id: '0116116', name: 'Activize Serum', tag: { de: 'Ergänzung · Frische & Glow', en: 'Extra · freshness & glow' }, when: { de: "Morgens & abends, vor der Creme", en: "Morning & night, before the cream" }, actives: ["Guarana", "Vitamin C (Ascorbyl Glucoside)", "Niacinamid (B3)", "Panthenol (B5)", "Biotin", "Koffein", "Hyaluron", "Q10"], price: '48,90 €', size: '30 ml',
-    desc: { de: 'Das Serum überträgt den Wirkstoffkomplex aus Guarana, Vitamin C und B-Vitaminen in die Hautpflege. Für natürlichen Glow, ein verfeinertes Hautbild und einen ebenmäßigen Hautton.', en: 'The serum brings the active complex of guarana, vitamin C and B vitamins into skin care. For a natural glow, refined pores and an even skin tone.' },
-    use: { de: 'Morgens und abends nach Reinigung und Tonic auftragen, 1 bis 2 Minuten einziehen lassen, dann die Tages- oder Nachtpflege.', en: 'Morning and evening after cleanser and tonic, let it absorb for 1 to 2 minutes, then apply day or night cream.' },
-    skin: { de: 'Für alle Hauttypen.', en: 'For all skin types.' },
-    pros: { de: ['Natürlicher Glow', 'Porenverfeinernd', 'Ebenmäßiger Hautton', 'Energie & Vitalisierung'], en: ['Natural glow', 'Pore-refining', 'Even skin tone', 'Energy & vitalisation'] } },
-  darkspot: { id: '0116222', name: 'Dark Spot Corrector', tag: { de: 'Ergänzung · ebenmäßiger Teint', en: 'Extra · even complexion' }, when: { de: "Morgens & abends, vor dem Serum", en: "Morning & night, before the serum" }, actives: ["Niacinamid", "Kojisäure", "Gluconolacton (PHA)", "Allantoin", "Gerstenextrakt", "Jojobaöl", "Squalan"], price: '58,90 €', size: '30 ml',
-    desc: { de: 'Mit Niacinamid. Kann dazu beitragen, das Erscheinungsbild von Pigmentflecken zu reduzieren, unterstützt die natürliche Hauterneuerung, spendet Feuchtigkeit und unterstützt die Hautbarriere.', en: 'With niacinamide. Can help reduce the appearance of dark spots, supports natural skin renewal, hydrates and supports the skin barrier.' },
-    use: { de: 'Morgens und abends auf die gereinigte Haut auftragen, danach Serum und Pflege wie gewohnt.', en: 'Morning and evening on cleansed skin, then serum and cream as usual.' },
-    skin: { de: 'Für alle Hauttypen mit Wunsch nach einem gleichmäßigeren Teint.', en: 'For all skin types wishing for a more even complexion.' },
-    pros: { de: ['Unterstützt die natürliche Hauterneuerung', 'Feuchtigkeit', 'Unterstützung der Hautbarriere', 'Strahlkraft & Reinheit'], en: ['Supports natural skin renewal', 'Hydration', 'Skin barrier support', 'Radiance & clarity'] } },
+    desc: { de: 'Ergänzende Pflege mit Guarana, Vitamin C und B-Vitaminen. Für natürlichen Glow und ein verfeinertes, ebenmäßigeres Hautbild.', en: 'The serum brings the active complex of guarana, vitamin C and B vitamins into skin care. For a natural glow, refined pores and an even skin tone.' },
+    use: { de: 'Morgens und abends 2 Pumpstöße auf die gereinigte Haut von Gesicht, Hals und Dekolleté auftragen und sanft einmassieren. Augen- und Lippenpartie aussparen. 1 bis 2 Minuten einwirken lassen, danach die Gesichtspflege auftragen.', en: 'Morning and evening after cleanser and tonic, let it absorb for 1 to 2 minutes, then apply day or night cream.' },
+    skin: { de: 'Für normale, trockene, Mischhaut und ölige Haut.', en: 'For all skin types.' },
+    pros: { de: ['Natürlicher Glow', 'Verfeinertes Hautbild', 'Ebenmäßiger Hautton', 'Frische'], en: ['Natural glow', 'Pore-refining', 'Even skin tone', 'Energy & vitalisation'] } },
+  darkspot: { id: '0116222', name: 'Dark Spot Corrector', tag: { de: 'Ergänzung · ebenmäßiger Teint', en: 'Extra · even complexion' }, when: { de: 'Morgens & abends', en: "Morning & night, before the serum" }, actives: ["Niacinamid", "Kojisäure", "Gluconolacton (PHA)", "Allantoin", "Gerstenextrakt", "Jojobaöl", "Squalan"], price: '58,90 €', size: '30 ml',
+    desc: { de: 'Gezielte Pflege mit Niacinamid. Kann einen ebenmäßigeren Teint unterstützen, spendet Feuchtigkeit und unterstützt die Hautbarriere.', en: 'With niacinamide. Can help reduce the appearance of dark spots, supports natural skin renewal, hydrates and supports the skin barrier.' },
+    use: { de: 'Morgens und abends nach der Reinigung 3 Pumpstöße auf Gesicht, Hals und Dekolleté auftragen. Sanft einmassieren, bis das Elixier eingezogen ist.', en: 'Morning and evening on cleansed skin, then serum and cream as usual.' },
+    skin: { de: 'Für alle Hauttypen. Bei Wunsch nach einem ebenmäßigeren Teint.', en: 'For all skin types wishing for a more even complexion.' },
+    pros: { de: ['Ebenmäßiger wirkender Teint', 'Feuchtigkeit', 'Unterstützung der Hautbarriere', 'Strahlenderes Hautbild'], en: ['Supports natural skin renewal', 'Hydration', 'Skin barrier support', 'Radiance & clarity'] } },
   augen: { id: '0116093', name: 'Augencreme', tag: { de: 'Ergänzung · Augenpartie', en: 'Extra · eye area' }, when: { de: "Morgens & abends", en: "Morning & night" }, actives: ["Hyaluron", "Peptide", "Rosskastanie", "Süßholzwurzel", "Grüntee", "Glycerin"], price: '49,90 €', size: '15 ml',
-    desc: { de: 'Die leichte Augenpflege hilft, dunkle Augenringe sowie Linien und Fältchen abzumildern. Frei von Kriechölen, damit nichts ins Auge wandert.', en: 'The light eye cream helps to soften dark circles as well as lines and wrinkles. Free from creeping oils, so nothing migrates into the eye.' },
-    use: { de: 'Morgens und abends nach der Reinigung sanft um die Augenpartie eintupfen, danach die Tages- oder Nachtpflege.', en: 'Morning and evening after cleansing, gently pat around the eye area, then apply day or night cream.' },
+    desc: { de: 'Feuchtigkeitsspendende Pflege für die Augenpartie. Frei von Kriechölen.', en: 'The light eye cream helps to soften dark circles as well as lines and wrinkles. Free from creeping oils, so nothing migrates into the eye.' },
+    use: { de: 'Morgens und abends auf die gereinigte Augenpartie auftragen und sanft einmassieren. Danach die Gesichtspflege auftragen.', en: 'Morning and evening after cleansing, gently pat around the eye area, then apply day or night cream.' },
     skin: { de: 'Für alle Hauttypen.', en: 'For all skin types.' },
-    pros: { de: ['Anti-Augenringe', 'Schutz', 'Frei von Kriechölen', 'Anti-Aging'], en: ['Anti dark circles', 'Protection', 'Free from creeping oils', 'Anti-ageing'] } },
-  ultimate: { id: '0116050', name: 'Ultimate Young', tag: { de: 'Ergänzung · Soforteffekt', en: 'Extra · instant effect' }, when: { de: "Bei Bedarf, über Creme oder Make-up", en: "As needed, over cream or make-up" }, actives: ["Silikate (Soforteffekt)", "Mineralpigmente (Skin Tone Matcher)", "Q10", "Grüntee", "Rooibos", "Granatapfel", "Vitamin E"], price: '79,00 €', size: '15 ml',
-    desc: { de: 'Das Highlight mit Soforteffekt für besondere Anlässe: seidig glatte, ebenmäßige Haut für ein paar Stunden. Kein Langzeitprodukt, sondern der Feinschliff obendrauf.', en: 'The highlight with an instant effect for special occasions: silky smooth, even skin for a few hours. Not a long-term product, but the finishing touch on top.' },
-    use: { de: 'Eine kleine Menge über der Tagespflege oder dem Make-up auftragen und einziehen lassen.', en: 'Apply a small amount over your day cream or make-up and let it absorb.' },
+    pros: { de: ['Pflege für die Augenpartie', 'Feuchtigkeit', 'Frei von Kriechölen', 'Frisches Erscheinungsbild'], en: ['Anti dark circles', 'Protection', 'Free from creeping oils', 'Anti-ageing'] } },
+  ultimate: { id: '0116050', name: 'Ultimate Young', tag: { de: 'Ergänzung · ebenmäßiges Hautbild', en: 'Extra · instant effect' }, when: { de: "Bei Bedarf, über Creme oder Make-up", en: "As needed, over cream or make-up" }, actives: ["Silikate (Soforteffekt)", "Mineralpigmente (Skin Tone Matcher)", "Q10", "Grüntee", "Rooibos", "Granatapfel", "Vitamin E"], price: '79,00 €', size: '15 ml',
+    desc: { de: 'Ergänzende Pflege für ein glatteres, ebenmäßigeres Hautbild. Lässt sich über Tagespflege oder Make-up auftragen.', en: 'The highlight with an instant effect for special occasions: silky smooth, even skin for a few hours. Not a long-term product, but the finishing touch on top.' },
+    use: { de: 'Vor jeder Anwendung kräftig schütteln. Hauchdünn und gleichmäßig über Tagespflege oder Make-up auftragen. Unter Make-up fällt der optische Effekt schwächer aus. Nicht in die Augen bringen. Bei Augenkontakt mit viel Wasser ausspülen.', en: 'Apply a small amount over your day cream or make-up and let it absorb.' },
     skin: { de: 'Für alle Hauttypen.', en: 'For all skin types.' },
-    pros: { de: ['Seidig glatte & ebenmäßige Haut', 'Einfache Anwendung', 'Straffend'], en: ['Silky smooth & even skin', 'Easy to use', 'Firming'] } },
-  men: { id: '0116109', name: 'Men Face Rich & Hydrating', tag: { de: 'Für Männer · All-in-One', en: 'For men · all-in-one' }, when: { de: "Morgens & abends", en: "Morning & night" }, actives: ["Hyaluron", "Niacinamid", "Koffein", "Panthenol", "Ceramid NP", "Q10", "Oligopeptid"], price: '29,90 €', size: '50 ml',
-    desc: { de: 'Die All-in-One-Gesichtspflege für Männer: Feuchtigkeit und Pflege in einem Schritt, mit Niacinamid, Koffein, Ceramid und Q10 und dem NTC® Nährstoff-Transportkonzept.', en: 'The all-in-one face care for men: hydration and care in one step, with niacinamide, caffeine, ceramide and Q10 and the NTC® nutrient transport concept.' },
-    use: { de: 'Morgens und abends nach der Reinigung auf Gesicht und Hals auftragen.', en: 'Morning and evening after cleansing, apply to face and neck.' },
+    pros: { de: ['Glatteres Hautbild', 'Ebenmäßigeres Hautbild', 'Einfache Anwendung'], en: ['Silky smooth & even skin', 'Easy to use', 'Firming'] } },
+  men: { id: '0116109', name: 'Men Face Rich & Hydrating', tag: { de: 'Für Männer · Gesichtspflege', en: 'For men · all-in-one' }, when: { de: "Morgens & abends", en: "Morning & night" }, actives: ["Hyaluron", "Niacinamid", "Koffein", "Panthenol", "Ceramid NP", "Q10", "Oligopeptid"], price: '29,90 €', size: '50 ml',
+    desc: { de: 'Feuchtigkeit und Pflege in einem Schritt. Die leichte Gesichtspflege ist auch für Bartträger geeignet.', en: 'The all-in-one face care for men: hydration and care in one step, with niacinamide, caffeine, ceramide and Q10 and the NTC® nutrient transport concept.' },
+    use: { de: 'Morgens und abends auf die gereinigte Haut auftragen und sanft einmassieren.', en: 'Morning and evening after cleansing, apply to face and neck.' },
     skin: { de: 'Für alle Hauttypen. Vegan, glutenfrei.', en: 'For all skin types. Vegan, gluten-free.' },
-    pros: { de: ['Feuchtigkeit und Pflege in einem Schritt', 'Mit Niacinamid, Koffein, Ceramid, Q10', 'Vegan'], en: ['Hydration and care in one step', 'With niacinamide, caffeine, ceramide, Q10', 'Vegan'] } },
+    pros: { de: ['Feuchtigkeit und Pflege', 'Leichte Textur, auch für Bartträger', 'Vegan'], en: ['Hydration and care in one step', 'With niacinamide, caffeine, ceramide, Q10', 'Vegan'] } },
   'set-young': { id: '9116472', name: 'Einsteiger-Set Young Care', tag: { de: 'Set · Einstieg', en: 'Set · starter' }, when: { de: "Morgens & abends", en: "Morning & night" }, actives: ["Reinigungsschaum", "Tonic", "Balancing Creme"], price: '59,90 €', size: '3 Produkte',
-    desc: { de: 'Die komplette, leichte Routine für den Anfang: Reinigungsschaum, Tonic und Balancing Creme. Einzeln 63,50 €.', en: 'The complete, light routine for starting out: cleansing foam, tonic and balancing cream. 63.50 € if bought separately.' },
-    use: { de: 'Morgens und abends: Reinigungsschaum, dann Tonic auf ein Wattepad, dann die Balancing Creme.', en: 'Morning and evening: cleansing foam, then tonic on a cotton pad, then the balancing cream.' },
-    skin: { de: 'Für jüngere Haut und alle, die erst einmal einfach starten wollen.', en: 'For younger skin and anyone who wants to start simply.' },
+    desc: { de: 'Reinigen, klären, pflegen: Reinigungsschaum, Tonic und Balancing Creme im Set. Einzeln 63,50 €.', en: 'The complete, light routine for starting out: cleansing foam, tonic and balancing cream. 63.50 € if bought separately.' },
+    use: { de: 'Morgens und abends: Reinigungsschaum auf die feuchte Haut auftragen, einmassieren und abspülen. Tonic mit einem Wattepad auftragen. Danach die Balancing Creme sanft einmassieren.', en: 'Morning and evening: cleansing foam, then tonic on a cotton pad, then the balancing cream.' },
+    skin: { de: 'Für junge Haut, Mischhaut und ölige Haut.', en: 'For younger skin and anyone who wants to start simply.' },
     pros: { de: ['Reinigungsschaum', 'Tonic', 'Balancing Creme'], en: ['Cleansing foam', 'Tonic', 'Balancing cream'] } },
   'set-4ever': { id: '9116562', name: 'Starter Set 4ever', tag: { de: 'Set · Tag + Nacht', en: 'Set · day + night' }, when: { de: "Morgens 4ever, abends overnight", en: "4ever in the morning, overnight at night" }, actives: ["4ever (Tag)", "4ever overnight enriched (Nacht)"], price: '123,90 €', size: '2 × 50 ml',
-    desc: { de: '4ever Tagespflege und 4ever overnight enriched Nachtpflege im Set. Einzeln 129,80 €.', en: '4ever day cream and 4ever overnight enriched night cream as a set. 129.80 € if bought separately.' },
-    use: { de: 'Morgens 4ever, abends 4ever overnight enriched, jeweils nach Reinigung und Tonic.', en: '4ever in the morning, 4ever overnight enriched in the evening, each after cleanser and tonic.' },
-    skin: { de: 'Normale bis Mischhaut.', en: 'Normal to combination skin.' },
+    desc: { de: 'Pflege für Tag und Nacht: 4ever Tagespflege und 4ever overnight enriched Nachtpflege im Set. Einzeln 129,80 €.', en: '4ever day cream and 4ever overnight enriched night cream as a set. 129.80 € if bought separately.' },
+    use: { de: 'Morgens 4ever, abends 4ever overnight enriched. Nach der Reinigung auf Gesicht, Hals und Dekolleté auftragen und sanft einmassieren.', en: '4ever in the morning, 4ever overnight enriched in the evening, each after cleanser and tonic.' },
+    skin: { de: 'Für normale bis Mischhaut.', en: 'Normal to combination skin.' },
     pros: { de: ['4ever (Tag)', '4ever overnight enriched (Nacht)'], en: ['4ever (day)', '4ever overnight enriched (night)'] } },
   'set-enriched': { id: '9116563', name: 'Starter Set 4ever enriched', tag: { de: 'Set · Tag + Nacht', en: 'Set · day + night' }, when: { de: "Morgens enriched, abends overnight", en: "enriched in the morning, overnight at night" }, actives: ["4ever enriched (Tag)", "4ever overnight enriched (Nacht)"], price: '123,90 €', size: '2 × 50 ml',
-    desc: { de: '4ever enriched Tagespflege und 4ever overnight enriched Nachtpflege im Set, für trockene und reifere Haut. Einzeln 129,80 €.', en: '4ever enriched day cream and 4ever overnight enriched night cream as a set, for dry and mature skin. 129.80 € if bought separately.' },
-    use: { de: 'Morgens 4ever enriched, abends 4ever overnight enriched, jeweils nach Reinigung und Tonic.', en: '4ever enriched in the morning, 4ever overnight enriched in the evening, each after cleanser and tonic.' },
-    skin: { de: 'Trockene und reife Haut.', en: 'Dry and mature skin.' },
+    desc: { de: 'Reichhaltige Pflege für Tag und Nacht: 4ever enriched und 4ever overnight enriched im Set. Einzeln 129,80 €.', en: '4ever enriched day cream and 4ever overnight enriched night cream as a set, for dry and mature skin. 129.80 € if bought separately.' },
+    use: { de: 'Morgens 4ever enriched, abends 4ever overnight enriched. Nach der Reinigung auf Gesicht, Hals und Dekolleté auftragen und sanft einmassieren.', en: '4ever enriched in the morning, 4ever overnight enriched in the evening, each after cleanser and tonic.' },
+    skin: { de: 'Für trockene und reife Haut.', en: 'Dry and mature skin.' },
     pros: { de: ['4ever enriched (Tag)', '4ever overnight enriched (Nacht)'], en: ['4ever enriched (day)', '4ever overnight enriched (night)'] } }
 };
 const LBL = {
-  desc: { de: 'Was es ist', en: 'What it is' }, use: { de: 'So wendest du es an', en: 'How to use' }, skin: { de: 'Hauttyp', en: 'Skin type' }, when: { de: 'Wann', en: 'When' }, actives: { de: 'Was drin ist (Auswahl)', en: 'What\'s inside (selection)' },
-  pros: { de: 'Laut Hersteller', en: 'According to the manufacturer' }, shop: { de: 'Direkt bestellen', en: 'Order now' }, price: { de: 'Kundenpreis', en: 'Customer price' },
-  note: { de: 'Das ist der reguläre Kundenpreis im Shop des Herstellers. Im Beauty-Check schauen wir, ob ein Kundenprogramm des Herstellers für dich infrage kommt.', en: 'This is the regular customer price in the manufacturer\'s shop. In the beauty check we look at whether one of the manufacturer\'s customer programmes suits you.' },
-  src: { de: 'Auswahl der Inhaltsstoffe laut Hersteller. Die vollständige Liste steht auf der offiziellen Produktseite.', en: 'Selected ingredients as listed by the manufacturer. The full list is on the official product page.' }
+  desc: { de: 'Was es ist', en: 'What it is' }, use: { de: 'So nutzt du es', en: 'How to use' }, skin: { de: 'Für wen · Hinweise', en: 'Skin type' }, when: { de: 'Wann', en: 'When' }, actives: { de: 'Inhaltsstoffe im Überblick', en: 'What\'s inside (selection)' },
+  pros: { de: 'Laut Hersteller', en: 'According to the manufacturer' }, shop: { de: 'Direkt bestellen', en: 'Order now' }, price: { de: 'Offizieller Kundenpreis', en: 'Customer price' },
+  note: { de: 'Regulärer Kundenpreis des Herstellers. Es gelten die Angaben im offiziellen Shop. Im Beauty-Check besprechen wir auch, ob ein Kundenprogramm des Herstellers für dich infrage kommt.', en: 'This is the regular customer price in the manufacturer\'s shop. In the beauty check we look at whether one of the manufacturer\'s customer programmes suits you.' },
+  src: { de: 'Ausgewählte Inhaltsstoffe laut Hersteller. Die vollständige Liste findest du im offiziellen Shop.', en: 'Selected ingredients as listed by the manufacturer. The full list is on the official product page.' }
 };
 function fsLang() { return document.documentElement.getAttribute('data-lang') === 'en' ? 'en' : 'de'; }
 function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }

@@ -2,24 +2,24 @@
 <section class="check" id="check">
   <div class="check-grid">
     <div class="check-visual reveal">
-      {{#if scanner_anzeigen=an}}<img class="hand" loading="lazy" decoding="async" src="assets/scan-hand.webp" alt="Hautanalyse auf dem Handy" width="528" height="1029"><span class="eye light tag" style="background:rgba(60,30,20,0.55);border-color:transparent">Hautanalyse in der Beratung</span>{{/if}}
+      {{#if scanner_anzeigen=an}}<img class="hand" loading="lazy" decoding="async" src="assets/scan-hand.webp" alt="Hautanalyse auf dem Handy" width="528" height="1029"><span class="eye light tag" style="background:rgba(60,30,20,0.55);border-color:transparent">Gemeinsam im Beauty-Check</span>{{/if}}
       {{#unless scanner_anzeigen=an}}<img class="selfie" loading="lazy" decoding="async" src="assets/scan-selfie.webp" alt="" width="1024" height="1024"><span class="eye light tag">Beauty-Check</span>{{/unless}}
     </div>
     <div class="check-copy">
       <span class="eye">So läuft es ab</span>
-      <h2>Dein Beauty-Check <em>mit mir</em></h2>
-      <p class="lead">{{#if scanner_anzeigen=an}}Die Hautanalyse machen wir gemeinsam in der Beratung: Ein Selfie, und du siehst, wie es deiner Haut geht. Du brauchst keine App und keine Vorbereitung, ich kümmere mich um alles.{{/if}}{{#unless scanner_anzeigen=an}}Du erzählst mir von deiner Haut, ich schaue mit dir hin und sage dir ehrlich, was sie braucht. Keine Vorbereitung nötig.{{/unless}}</p>
+      <h2>Welche Pflege passt zu <em>dir</em>?</h2>
+      <p class="lead">{{#if scanner_anzeigen=an}}Im Beauty-Check schauen wir uns deine Haut anhand eines Selfies gemeinsam an. Die App nutze ich. Du brauchst keine eigene App und keine Vorbereitung.{{/if}}{{#unless scanner_anzeigen=an}}Im Beauty-Check sprechen wir über deine Haut, deine bisherige Pflege und deine Wünsche. Du brauchst nichts vorzubereiten.{{/unless}}</p>
       <ol class="ck-steps">
         <li><i>1</i><div><b>Termin sichern</b><span>Per Video, Telefon oder WhatsApp, etwa 30 Minuten</span></div></li>
-        <li><i>2</i><div><b>{{#if scanner_anzeigen=an}}Hautanalyse zusammen{{/if}}{{#unless scanner_anzeigen=an}}Gemeinsam hinschauen{{/unless}}</b><span>{{#if scanner_anzeigen=an}}Feuchtigkeit, Poren, Fältchen, Hauttyp – wir schauen uns die Werte gemeinsam an{{/if}}{{#unless scanner_anzeigen=an}}Wie fühlt sich deine Haut an, was stört dich, was wünschst du dir{{/unless}}</span></div></li>
-        <li><i>3</i><div><b>Deine Empfehlung</b><span>Nur das, was zu deiner Haut passt, nichts, was du nicht brauchst</span></div></li>
+        <li><i>2</i><div><b>{{#if scanner_anzeigen=an}}Gemeinsam anschauen{{/if}}{{#unless scanner_anzeigen=an}}Deine Wünsche besprechen{{/unless}}</b><span>{{#if scanner_anzeigen=an}}Wir besprechen die kosmetische Einschätzung der App und deine Pflegewünsche{{/if}}{{#unless scanner_anzeigen=an}}Was nutzt du bisher, was wünschst du dir von deiner Pflege?{{/unless}}</span></div></li>
+        <li><i>3</i><div><b>Meine Empfehlung für dich</b><span>Ich erkläre dir, welche Produkte ich dir empfehle und warum</span></div></li>
       </ol>
-      <div class="ck-then">Was ich dir danach empfehle: die Basis aus Reinigung, Tonic, Tages- und Nachtcreme plus Beauty-Drink, und nur bei einem konkreten Wunsch ein Extra. <a href="#produkte">Alle Produkte ansehen</a></div>
+      <div class="ck-then">Wir starten mit der Basis: Reinigung, Tonic, Tages- und Nachtpflege plus Beauty-Drink. Extras empfehle ich nur passend zu deinen Wünschen. <a href="#produkte">Alle Produkte ansehen</a></div>
       <div class="ck-ctas">
         <a href="#kontakt" class="btn btn-primary">Beauty-Check sichern <span class="arr">→</span></a>
         <span class="ck-free">Kostenlos und unverbindlich</span>
       </div>
-      {{#if scanner_anzeigen=an}}<p class="ck-note">Die Hautanalyse ist eine kosmetische Einschätzung, keine medizinische Untersuchung.</p>{{/if}}
+      {{#if scanner_anzeigen=an}}<p class="ck-note">Der Beauty-Check ist eine kosmetische Einschätzung, keine medizinische Untersuchung.</p>{{/if}}
     </div>
   </div>
 </section>

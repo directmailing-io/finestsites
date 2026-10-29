@@ -317,7 +317,7 @@
       "section": "Inhalte",
       "required": true,
       "max_length": 1500,
-      "default_value": "<p>Kurz zu mir: Ich komme aus [Ort] und achte seit [Zeitraum] bewusst auf meine Haut, von außen und von innen. Ich kenne die Produkte aus meinem eigenen Alltag und zeige dir gern, was zu dir passt. Ohne Druck, ohne Verkaufsshow.</p>",
+      "default_value": "<p>Ich helfe dir, eine Pflege auszuwählen, die zu deiner Haut und deinem Alltag passt. Im kostenlosen Beauty-Check besprechen wir deine Wünsche. Du entscheidest in Ruhe, ob du etwas bestellen möchtest.</p>",
       "preview_value": "<p>Ich bin Anna, 38, Mama von zwei Kindern und lange auf der Suche nach einer Pflege gewesen, die ich wirklich durchhalte. Heute habe ich eine Routine, die in fünf Minuten erledigt ist, und ein Glas am Morgen, das dazugehört.</p><p>Genau das zeige ich dir: ehrlich, persönlich und nur, wenn es zu dir passt.</p>",
       "compliance_check": true,
       "placeholder_text": "Stell dich vor: Wer bist du, warum achtest du auf deine Haut, wie bist du zu dieser Routine gekommen? Locker und persönlich, max. 1.500 Zeichen. Bitte keine Wirkversprechen und keine Hautbeschwerden nennen. Die englische Fassung erstellen wir automatisch beim Speichern."

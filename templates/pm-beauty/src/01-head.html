@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Schönheit von innen &amp; außen · {{vorname}}</title>
-<meta name="description" content="Die Beauty-Empfehlung von {{vorname}}: Pflege von außen, ein Drink von innen und ein kostenloser Beauty-Check, der dir zeigt, was deine Haut braucht.">
+<meta name="description" content="Die Beauty-Empfehlung von {{vorname}}: Pflege von außen, ein Beauty-Drink von innen. Lass dich kostenlos und unverbindlich im Beauty-Check beraten.">
 <meta name="theme-color" content="#FDF7EF">
 
 <!-- Sprache früh setzen — verhindert Flackern beim ersten Layout-Paint. -->
@@ -24,13 +24,15 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" as="image" href="assets/hero/{{hero_variante}}.webp" fetchpriority="high" type="image/webp">
-<link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300..600;1,14..32,300..400&family=Instrument+Serif:ital@1&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://api.fontshare.com" crossorigin>
+<link href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600&display=swap" rel="stylesheet">
 
 <style>
 :root {
-  --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --display: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --mono: 'DM Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font: 'General Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --display: 'Instrument Serif', Georgia, 'Times New Roman', serif;
+  --mono: 'General Sans', -apple-system, BlinkMacSystemFont, sans-serif;
   --serif: 'Instrument Serif', Georgia, serif;
   --pad-x: clamp(20px, 4vw, 56px);
   --max: 1280px;
@@ -501,5 +503,27 @@ footer { background: var(--bg-2); }
   .contact-card img { width: 44px; height: 44px; }
   .contact-card-btns { grid-column: 1 / -1; }
 }
+
+/* ============ SCHRIFTPAAR: Instrument Serif (Überschriften) + General Sans (Text) ============ */
+h1, h2, h3, .faq-q, .pr-row .t b, .split-word b, .intro p.big, .bento-card .big, .guar-badge b, .pm-sheet h3 { font-family: var(--display); font-weight: 400; }
+h1 { font-size: clamp(54px, 8vw, 124px); line-height: 0.95; letter-spacing: -0.02em; }
+h2 { font-size: clamp(40px, 5vw, 72px); line-height: 1; letter-spacing: -0.015em; }
+h3 { font-size: clamp(26px, 2.4vw, 36px); line-height: 1.05; letter-spacing: -0.01em; }
+h1 em, h2 em { font-family: var(--display); font-style: italic; font-size: 1em; line-height: inherit; letter-spacing: -0.01em; }
+.split-word b { font-size: clamp(64px, 11vw, 190px); letter-spacing: -0.02em; line-height: 0.9; }
+.intro p.big { font-size: clamp(32px, 3.8vw, 56px); line-height: 1.1; letter-spacing: -0.01em; }
+.intro p.big em { font-family: var(--display); font-style: italic; }
+.bento-card .big { font-size: clamp(80px, 8vw, 128px); letter-spacing: -0.02em; }
+.guar-badge b { font-size: 52px; letter-spacing: 0; }
+.pr-row .t b { font-size: clamp(24px, 2.2vw, 32px); letter-spacing: -0.01em; line-height: 1.05; }
+.faq-q { font-size: clamp(22px, 1.9vw, 27px); letter-spacing: -0.005em; }
+.pm-sheet h3 { font-size: clamp(30px, 3.2vw, 40px); }
+.pr-cta h3, .split-col h3, .men-copy h2 { font-weight: 400; }
+.bento-card.photo h3, .bento-card.faces h3 { font-size: clamp(26px, 2.3vw, 34px); }
+/* Kennzeichen/Eyebrows in General Sans, versal mit Laufweite */
+.eye, .bento-card .eyebrow, .split-word small, .pm-tag, .pm-fact small, .pm-block h4 { font-family: var(--font); font-weight: 600; letter-spacing: 0.1em; }
+.split-col li b { font-family: var(--font); font-weight: 600; }
+body { font-feature-settings: "ss01" 0; }
+.hero h1 { max-width: none; } .hero h1 .nw { white-space: nowrap; }
 </style>
 </head>
