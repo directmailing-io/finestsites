@@ -1,9 +1,12 @@
 <!-- PRODUKTE -->
 <section class="products" id="produkte">
-  <div class="s-head">
-    <span class="eye">Die Produkte</span>
-    <h2>Was dir zur Auswahl steht</h2>
-    <p>Vier Schritte für jede Haut. Dazu ein paar Extras, falls du sie willst. Tipp auf ein Produkt für Details.</p>
+  <div class="pr-stage">
+    <img loading="lazy" decoding="async" src="assets/lineup.webp" alt="" width="1536" height="1024">
+    <div class="s-head">
+      <span class="eye">Meine Empfehlung</span>
+      <h2>Was dir zur Auswahl steht</h2>
+      <p>Vier Schritte für jede Haut, dazu ein paar Extras, falls du einen konkreten Wunsch hast. Tipp auf ein Produkt für Details</p>
+    </div>
   </div>
 
   <div class="pr-rows">
@@ -20,7 +23,6 @@
     <button type="button" class="pr-card" data-open="augen"><span class="im"><img loading="lazy" decoding="async" src="assets/produkte/augencreme.webp" alt=""></span><span class="chip">morgens &amp; abends</span><span class="cap"><b>Für die Augenpartie</b><span>Augencreme</span></span></button>
     <button type="button" class="pr-card" data-open="darkspot"><span class="im"><img loading="lazy" decoding="async" src="assets/produkte/dark-spot-corrector.webp" alt=""></span><span class="chip">vor dem Serum</span><span class="cap"><b>Für einen ebenmäßigen Teint</b><span>Dark Spot Corrector</span></span></button>
     <button type="button" class="pr-card" data-open="ultimate"><span class="im"><img loading="lazy" decoding="async" src="assets/produkte/ultimate-young.webp" alt=""></span><span class="chip">bei Bedarf</span><span class="cap"><b>Für besondere Anlässe</b><span>Ultimate Young</span></span></button>
-    {{#if maenner_anzeigen=an}}<button type="button" class="pr-card" data-open="men"><span class="im"><img loading="lazy" decoding="async" src="assets/produkte/men-face.webp" alt=""></span><span class="chip">alles in einem</span><span class="cap"><b>Für Männer</b><span>Men Face</span></span></button>{{/if}}
   </div>
 
   <div class="pr-sub"><h3>Sets zum Starten</h3><span>günstiger als einzeln</span></div>
@@ -33,34 +35,14 @@
   <div class="pr-cta reveal">
     <div class="pr-cta-copy">
       <span class="eye light">Beauty-Check</span>
-      <h3>Du brauchst nicht alles. <em>Ich berate dich.</em></h3>
-      <p>{{#if scanner_anzeigen=an}}Im Beauty-Check siehst du deine Werte und bekommst nur das, was zu deiner Haut passt.{{/if}}{{#unless scanner_anzeigen=an}}Im Beauty-Check schauen wir gemeinsam auf deine Haut und du bekommst nur das, was zu dir passt.{{/unless}}</p>
+      <h3>Du brauchst nicht alles. <em>Ich berate dich</em></h3>
+      <p>{{#if scanner_anzeigen=an}}Im Beauty-Check schauen wir gemeinsam auf deine Haut und ihre Werte, und du bekommst nur das, was wirklich zu dir passt.{{/if}}{{#unless scanner_anzeigen=an}}Im Beauty-Check schauen wir gemeinsam auf deine Haut und du bekommst nur das, was wirklich zu dir passt.{{/unless}}</p>
       <a href="#kontakt" class="btn btn-light">Beauty-Check sichern <span class="arr">→</span></a>
     </div>
-    <!-- Ergebnis-Ansicht, nachgebaut wie in der App (neutral, ohne Marken) -->
-    <div class="phone" aria-hidden="true">
-      <div class="phone-screen">
-        <div class="ph-tabs"><span class="on">Analyse</span><span>Produkte</span></div>
-        <div class="ph-gauge">
-          <svg viewBox="0 0 120 68"><path d="M12 62 A48 48 0 0 1 108 62" fill="none" stroke="#E9EDEA" stroke-width="11" stroke-linecap="round"/><path d="M12 62 A48 48 0 0 1 108 62" fill="none" stroke="#2DBE6C" stroke-width="11" stroke-linecap="round" pathLength="100" stroke-dasharray="84 100"/></svg>
-          <b>84 %</b>
-          <small>Geschätztes Hautalter: 31</small>
-        </div>
-        <p class="ph-text">Sieht gut aus! Deine Haut ist gut versorgt, ein paar Kleinigkeiten lohnen einen Blick.</p>
-        <div class="ph-sub">Hautdetails</div>
-        <div class="ph-tiles">
-          <div><i class="d"></i><span>Feuchtigkeit</span><u style="--v:78%"></u><em class="g">Gut</em></div>
-          <div><i class="w"></i><span>Fältchen</span><u style="--v:70%"></u><em class="g">Gut</em></div>
-          <div><i class="r"></i><span>Rötungen</span><u style="--v:82%"></u><em class="g">Gut</em></div>
-          <div><i class="s"></i><span>Pigmentflecken</span><u style="--v:48%;--c:#E4B23A"></u><em class="o">Okay</em></div>
-          <div><i class="p"></i><span>Poren</span><u style="--v:36%;--c:#E35D5D"></u><em class="l">Niedrig</em></div>
-          <div><i class="t"></i><span>Textur</span><u style="--v:66%"></u><em class="g">Gut</em></div>
-        </div>
-      </div>
-    </div>
+    {{#if scanner_anzeigen=an}}<img loading="lazy" decoding="async" src="assets/scan-hand.webp" alt="" width="528" height="1029">{{/if}}{{#unless scanner_anzeigen=an}}<img loading="lazy" decoding="async" src="assets/scan-selfie.webp" alt="" width="1024" height="1024" style="border-radius:var(--r-sm);transform:none;filter:none">{{/unless}}
   </div>
 
-  <p class="foot-note pr-note">Verkauf und Versand ausschließlich über den offiziellen Shop des Herstellers (PM-International AG), dort stehen Preise und alle Inhaltsstoffe. Die Ergebnis-Ansicht ist ein Beispiel mit Beispielwerten. ¹ Biotin und Zink tragen zur Erhaltung normaler Haut und Haare bei, Zink zur Erhaltung normaler Nägel, Vitamin C zu einer normalen Kollagenbildung für eine normale Funktion der Haut. <a class="link-more" data-shop="" href="#" target="_blank" rel="noopener">Zum Shop →</a></p>
+  <p class="foot-note pr-note">Verkauf und Versand ausschließlich über den offiziellen Shop des Herstellers (PM-International AG), dort stehen Preise und alle Inhaltsstoffe. ¹ Biotin und Zink tragen zur Erhaltung normaler Haut und Haare bei, Zink zur Erhaltung normaler Nägel, Vitamin C zu einer normalen Kollagenbildung für eine normale Funktion der Haut. <a class="link-more" data-shop="" href="#" target="_blank" rel="noopener">Zum Shop →</a></p>
 </section>
 
 <!-- Produkt-Fenster -->

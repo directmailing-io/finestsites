@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Schönheit von innen &amp; außen · {{vorname}}</title>
-<meta name="description" content="Pflege von außen, ein Drink von innen und ein kostenloser Beauty-Check mit {{vorname}}, der dir zeigt, was deine Haut braucht.">
+<meta name="description" content="Die Beauty-Empfehlung von {{vorname}}: Pflege von außen, ein Drink von innen und ein kostenloser Beauty-Check, der dir zeigt, was deine Haut braucht.">
 <meta name="theme-color" content="#FDF7EF">
 
 <!-- Sprache früh setzen — verhindert Flackern beim ersten Layout-Paint. -->
@@ -24,16 +24,19 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" as="image" href="assets/hero/{{hero_variante}}.webp" fetchpriority="high" type="image/webp">
-<link href="https://fonts.googleapis.com/css2?family=Hedvig+Letters+Serif:opsz@12..24&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
 :root {
-  --font: 'Figtree', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --display: 'Hedvig Letters Serif', Georgia, 'Times New Roman', serif;
+  --font: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --display: 'Cormorant Garamond', 'Cormorant', Georgia, serif;
   --pad-x: clamp(20px, 4vw, 56px);
   --max: 1280px;
   --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
   --r: 24px; --r-sm: 16px; --r-xs: 12px;
+  /* Feste Farben des Innen/außen-Bildes (unabhängig vom Thema) */
+  --aussen: #FBAB6B; --aussen-deep: #5B2A10; --aussen-soft: #FDE3CC;
+  --innen: #7F2734; --innen-deep: #5E1A26; --innen-soft: #F4E1E8;
 }
 
 /* ============ FARBTHEMEN ============ */
@@ -86,22 +89,21 @@ body { font-family: var(--font); background: var(--bg); color: var(--ink-2); lin
 img { display: block; max-width: 100%; }
 a { color: inherit; text-decoration: none; }
 button { font-family: inherit; cursor: pointer; border: 0; background: none; color: inherit; }
-h1, h2, h3 { font-family: var(--display); font-weight: 400; letter-spacing: 0; line-height: 1.08; color: var(--ink); }
-h1 { font-size: clamp(44px, 6vw, 86px); line-height: 1.02; }
-h2 { font-size: clamp(36px, 4.4vw, 64px); }
-h3 { font-size: clamp(22px, 2.1vw, 30px); line-height: 1.15; }
+h1, h2, h3 { font-family: var(--display); font-weight: 500; letter-spacing: -0.01em; line-height: 1.04; color: var(--ink); }
+h1 { font-size: clamp(50px, 7vw, 104px); line-height: 0.98; }
+h2 { font-size: clamp(40px, 5vw, 76px); }
+h3 { font-size: clamp(24px, 2.3vw, 34px); line-height: 1.1; }
+h1 em, h2 em, h3 em { font-style: italic; font-weight: 500; }
 p { color: var(--ink-2); }
 .wrap { max-width: var(--max); margin: 0 auto; }
 .lead { font-size: clamp(16px, 1.25vw, 18px); line-height: 1.6; color: var(--ink-2); }
 .foot-note { font-size: 12.5px; line-height: 1.55; color: var(--ink-3); }
 section { padding: clamp(64px, 9vh, 120px) var(--pad-x); position: relative; }
-/* Eyebrow-Pill mit Punkt (wie in den Referenzen) */
-.eye { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px 6px 10px; border-radius: 100px; background: var(--paper); border: 1px solid var(--line); font-size: 11.5px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-2); }
-.eye::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--green); }
-.eye.light { background: rgba(255,255,255,0.18); border-color: rgba(255,255,255,0.3); color: #fff; backdrop-filter: blur(8px); }
-.eye.light::before { background: #fff; }
-.s-head { max-width: 820px; margin: 0 auto clamp(32px, 4vh, 52px); text-align: center; display: flex; flex-direction: column; align-items: center; gap: 16px; }
-.s-head h2 { max-width: 20ch; }
+/* Eyebrow-Pill (ohne Punkt – Daniels Vorgabe) */
+.eye { display: inline-flex; align-items: center; padding: 7px 13px; border-radius: 100px; background: var(--paper); border: 1px solid var(--line); font-size: 11.5px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-2); }
+.eye.light { background: rgba(255,255,255,0.16); border-color: rgba(255,255,255,0.3); color: #fff; backdrop-filter: blur(8px); }
+.s-head { max-width: 860px; margin: 0 auto clamp(32px, 4vh, 52px); text-align: center; display: flex; flex-direction: column; align-items: center; gap: 16px; }
+.s-head h2 { max-width: 18ch; }
 .s-head p { max-width: 560px; font-size: 17px; }
 .arr { display: inline-block; transition: transform .2s var(--ease); }
 
@@ -806,112 +808,130 @@ img {
 
 
 
-/* ============ Übernommene Leiste/Knöpfe/FAQ/Fußzeile an den Referenz-Stil anpassen ============ */
+/* ============ Übernommene Leiste/Knöpfe/FAQ/Fußzeile an den Stil anpassen ============ */
 .wrap { padding: 0; }
 .lang-switch[hidden] { display: none !important; }
 .nav { background: transparent; border-bottom: 0; }
 .nav.scrolled { background: rgba(253, 247, 239, 0.9); backdrop-filter: blur(12px); border-bottom: 1px solid var(--line); }
 .nav-inner { padding: 14px var(--pad-x); }
-.nav-links { gap: 22px; font-size: 14.5px; white-space: nowrap; font-weight: 500; }
-.brand { font-weight: 600; } .brand-text { white-space: nowrap; }
-.nav-cta { white-space: nowrap; background: var(--ink); color: #fff; font-weight: 600; padding: 10px 18px; }
+.nav-links { gap: 22px; font-size: 14.5px; white-space: nowrap; font-weight: 600; }
+.brand { font-weight: 700; } .brand-text { white-space: nowrap; }
+.nav-cta { white-space: nowrap; background: var(--ink); color: #fff; font-weight: 700; padding: 10px 18px; }
 .nav-cta:hover { background: var(--green-dark); color: #fff; }
-.btn { font-weight: 600; font-size: 15px; padding: 13px 22px; border-radius: 100px; }
+.btn { font-weight: 700; font-size: 15px; padding: 14px 24px; border-radius: 100px; }
 .btn-primary { background: var(--green); color: #fff; box-shadow: none; }
 .btn-primary:hover { background: var(--green-dark); color: #fff; }
 .btn-ghost { background: var(--paper); color: var(--ink); border: 1px solid var(--line-2); }
 .btn-ghost:hover { background: var(--bg-2); }
 .btn-light { background: #fff; color: var(--ink); }
 .btn-light:hover { background: var(--bg-2); color: var(--ink); }
+.btn-dark { background: var(--ink); color: #fff; }
+.btn-dark:hover { background: var(--green-dark); color: #fff; }
 #faq { background: var(--paper); border-top: 1px solid var(--line); }
 .faq-wrap { max-width: 760px; margin: 0 auto; }
 #faq h2 { text-align: center; margin-bottom: 32px; }
 .faq-list { background: var(--bg); border: 1px solid var(--line); border-radius: var(--r); padding: 6px 26px; }
-.faq-q { font-family: var(--display); font-size: clamp(19px, 1.7vw, 23px); font-weight: 400; color: var(--ink); padding: 20px 0; }
+.faq-q { font-family: var(--display); font-size: clamp(22px, 1.9vw, 26px); font-weight: 500; color: var(--ink); padding: 20px 0; }
 .faq-a-inner { font-size: 15.5px; color: var(--ink-2); padding-bottom: 20px; }
-footer { background: var(--green-deep); }
 .pm-disclaimer { background: var(--paper); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+/* Fußzeile: hell, ohne Trennlinien, FinestSites gut sichtbar */
+footer { background: var(--bg-2); }
+.footer-cols { border-bottom: 0; margin-bottom: 28px; padding-bottom: 0; }
+.footer-bottom { align-items: center; }
+.footer-made { gap: 10px; font-size: 14px; color: var(--ink); font-weight: 600; }
+.footer-made a img { height: 24px; opacity: 1; }
+.footer-made .heart { margin: 0 5px; }
+.footer-disclaimer { border-top: 0; padding-top: 8px; margin-top: 20px; }
 
-/* ============ HERO: Bildkarte mit Text ============ */
-.hero { padding: 92px var(--pad-x) 0; background: var(--bg); }
-.hero-card { position: relative; max-width: 1360px; margin: 0 auto; height: clamp(520px, 78vh, 820px); border-radius: var(--r); overflow: hidden; background: var(--bg-2); }
-.hero-card img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 78% 22%; }
-.hero-card::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(253,247,239,0.92) 0%, rgba(253,247,239,0.75) 32%, rgba(253,247,239,0) 60%); }
-.hero-copy { position: absolute; left: clamp(22px, 4vw, 64px); right: clamp(22px, 4vw, 64px); bottom: clamp(26px, 5vh, 60px); z-index: 2; max-width: 640px; display: flex; flex-direction: column; align-items: flex-start; gap: 18px; }
-.hero h1 { max-width: 11ch; }
-.hero h1 em { font-style: italic; color: var(--green-dark); }
-.hero p.sub { font-size: clamp(16px, 1.3vw, 19px); max-width: 480px; line-height: 1.55; color: var(--ink-2); }
+/* ============ HERO: Vollbild ============ */
+.hero { padding: 0; min-height: 100svh; min-height: 100vh; position: relative; display: flex; align-items: flex-end; background: var(--bg-2); overflow: hidden; }
+.hero > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 72% 20%; }
+.hero::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(253,247,239,0.94) 0%, rgba(253,247,239,0.78) 34%, rgba(253,247,239,0) 62%), linear-gradient(180deg, rgba(253,247,239,0) 55%, rgba(253,247,239,0.55) 100%); }
+.hero-copy { position: relative; z-index: 2; width: 100%; max-width: var(--max); margin: 0 auto; padding: 120px var(--pad-x) clamp(36px, 6vh, 72px); display: flex; flex-direction: column; align-items: flex-start; gap: 20px; }
+.hero-who { display: inline-flex; align-items: center; gap: 10px; padding: 6px 14px 6px 6px; border-radius: 100px; background: rgba(255,255,255,0.75); border: 1px solid rgba(255,255,255,0.9); backdrop-filter: blur(8px); font-size: 13px; font-weight: 700; color: var(--ink); }
+.hero-who img { width: 30px; height: 30px; border-radius: 50%; object-fit: cover; }
+.hero h1 { max-width: 10ch; }
+.hero h1 em { color: var(--green-dark); }
+.hero p.sub { font-size: clamp(16px, 1.3vw, 19px); max-width: 500px; line-height: 1.55; color: var(--ink-2); }
 .hero-ctas { display: flex; gap: 10px; flex-wrap: wrap; }
 .hero-facts { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
-.hero-facts > span { display: inline-flex; align-items: center; gap: 7px; padding: 8px 13px; border-radius: 100px; background: rgba(255,255,255,0.7); border: 1px solid rgba(255,255,255,0.8); font-size: 13px; font-weight: 500; color: var(--ink); backdrop-filter: blur(6px); }
+.hero-facts > span { display: inline-flex; align-items: center; gap: 7px; padding: 8px 13px; border-radius: 100px; background: rgba(255,255,255,0.7); border: 1px solid rgba(255,255,255,0.8); font-size: 13px; font-weight: 600; color: var(--ink); backdrop-filter: blur(6px); }
 .hero-facts svg { width: 15px; height: 15px; color: var(--green-dark); }
 
 /* ============ INTRO-STATEMENT ============ */
 .intro { text-align: center; padding-bottom: clamp(40px, 6vh, 72px); }
-.intro-inner { max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 22px; }
-.intro p.big { font-family: var(--display); font-size: clamp(28px, 3.4vw, 48px); line-height: 1.2; color: var(--ink); }
+.intro-inner { max-width: 960px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 22px; }
+.intro p.big { font-family: var(--display); font-size: clamp(30px, 3.8vw, 56px); line-height: 1.12; color: var(--ink); font-weight: 500; }
 .intro p.big em { font-style: italic; color: var(--green-dark); }
 
-/* ============ INNEN & AUSSEN ============ */
-.duo { padding-top: 0; }
-.duo-stage { position: relative; max-width: 1360px; margin: 0 auto; height: clamp(420px, 56vw, 760px); border-radius: var(--r); overflow: hidden; background: #F4E6D5; }
-.duo-stage img { width: 100%; height: 100%; object-fit: cover; object-position: 72% 30%; }
-.duo-words { position: absolute; left: clamp(22px, 4vw, 64px); top: 50%; transform: translateY(-50%); z-index: 2; display: flex; flex-direction: column; gap: 22px; color: var(--ink); max-width: 34%; }
-.duo-words .w { font-family: var(--display); font-size: clamp(44px, 6.5vw, 104px); line-height: 1; }
-.duo-words .w small { display: block; font-family: var(--font); font-size: clamp(12px, 1vw, 14px); font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-2); margin-bottom: 8px; }
-.duo-words .w em { font-style: italic; color: var(--green-dark); }
-.duo-cards { max-width: 1360px; margin: 14px auto 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
-.duo-card { position: relative; border-radius: var(--r); overflow: hidden; min-height: 300px; display: flex; flex-direction: column; justify-content: flex-end; padding: 26px; background: var(--paper); border: 1px solid var(--line); gap: 8px; }
-.duo-card.img { color: #fff; border: 0; }
-.duo-card.img > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-.duo-card.img::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(30,15,10,0) 35%, rgba(30,15,10,0.72) 100%); }
-.duo-card > * { position: relative; z-index: 2; }
-.duo-card .eye { align-self: flex-start; margin-bottom: 4px; }
-.duo-card h3 { color: inherit; font-size: clamp(26px, 2.4vw, 34px); }
-.duo-card p { font-size: 15.5px; color: inherit; opacity: .92; max-width: 34ch; }
-.duo-card.img h3 { color: #fff; }
-.duo-card.dark { background: var(--green-deep); color: #fff; border: 0; }
-.duo-card.dark h3 { color: #fff; }
-.duo-card.dark p { color: rgba(255,255,255,0.82); }
-.duo-note { max-width: 1360px; margin: 16px auto 0; }
+/* ============ INNEN & AUSSEN · Vollbild-Split ============ */
+.split { padding: 0; }
+.split-stage { position: relative; width: 100%; height: clamp(560px, 100vh, 980px); overflow: hidden; background: linear-gradient(90deg, var(--aussen) 50%, var(--innen) 50%); }
+.split-stage img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%; }
+.split-word { position: absolute; top: clamp(72px, 10vh, 110px); z-index: 2; display: flex; flex-direction: column; gap: 6px; }
+.split-word.l { left: clamp(20px, 5vw, 80px); color: var(--aussen-deep); }
+.split-word.r { right: clamp(20px, 5vw, 80px); color: #fff; text-align: right; align-items: flex-end; }
+.split-word b { font-family: var(--display); font-weight: 500; font-size: clamp(64px, 11vw, 190px); line-height: 0.9; letter-spacing: -0.02em; }
+.split-word small { font-size: clamp(12px, 1vw, 15px); font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; opacity: .85; }
+.split-word .pt { max-width: 22ch; font-size: clamp(14px, 1.15vw, 18px); line-height: 1.5; margin-top: 10px; opacity: .92; }
+.split-cols { display: grid; grid-template-columns: 1fr 1fr; }
+.split-col { padding: clamp(32px, 5vw, 72px) clamp(20px, 5vw, 80px); display: flex; flex-direction: column; gap: 14px; }
+.split-col.l { background: var(--aussen); color: var(--aussen-deep); }
+.split-col.r { background: var(--innen); color: #fff; }
+.split-col .eye { align-self: flex-start; }
+.split-col.l .eye { background: rgba(255,255,255,0.5); border-color: rgba(91,42,16,0.18); color: var(--aussen-deep); }
+.split-col h3 { color: inherit; font-size: clamp(30px, 3vw, 46px); max-width: 16ch; }
+.split-col p { color: inherit; opacity: .9; font-size: 16.5px; max-width: 44ch; }
+.split-col ul { list-style: none; display: grid; gap: 8px; margin-top: 4px; }
+.split-col li { display: flex; gap: 10px; align-items: baseline; font-size: 15.5px; opacity: .92; }
+.split-col li b { font-family: var(--display); font-size: 22px; font-weight: 500; min-width: 22px; }
+.split-col.r li b { color: #F2B8A0; }
+.split-note { padding: 18px var(--pad-x) 0; max-width: var(--max); margin: 0 auto; }
+.split-sum { padding: clamp(40px, 6vh, 72px) var(--pad-x) 0; text-align: center; }
+.split-sum p { font-family: var(--display); font-size: clamp(26px, 3vw, 44px); line-height: 1.15; color: var(--ink); max-width: 24ch; margin: 0 auto; }
+.split-sum p em { color: var(--green-dark); }
 
 /* ============ BEAUTY-CHECK ============ */
-.check-grid { max-width: var(--max); margin: 0 auto; display: grid; grid-template-columns: minmax(300px, 460px) 1fr; gap: clamp(28px, 5vw, 80px); align-items: center; }
-.check-phone { position: relative; aspect-ratio: 2 / 3; border-radius: var(--r); overflow: hidden; background: var(--bg-2); }
-.check-phone img { width: 100%; height: 100%; object-fit: cover; }
-.check-phone .tag { position: absolute; left: 16px; top: 16px; z-index: 3; }
-.scan-ring { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; }
-.scan-ring line { stroke: #4CCB7F; stroke-linecap: round; vector-effect: non-scaling-stroke; stroke-width: 6px; opacity: .35; animation: scanPulse 3.2s linear infinite; filter: drop-shadow(0 0 2px rgba(61,210,122,0.6)); }
-@keyframes scanPulse { 0% { opacity: .3; } 8% { opacity: 1; } 22% { opacity: .55; } 100% { opacity: .3; } }
-@media (prefers-reduced-motion: reduce) { .scan-ring line { animation: none; opacity: .8; } }
+.check-grid { max-width: var(--max); margin: 0 auto; display: grid; grid-template-columns: minmax(300px, 480px) 1fr; gap: clamp(28px, 5vw, 80px); align-items: center; }
+.check-visual { position: relative; border-radius: var(--r); background: radial-gradient(120% 90% at 50% 100%, var(--green-soft) 0%, var(--bg-2) 70%); padding: 40px 36px 0; display: flex; justify-content: center; align-items: flex-end; overflow: hidden; min-height: 560px; }
+.check-visual img.hand { width: 78%; max-width: 380px; height: auto; display: block; transform: translateY(6%); filter: drop-shadow(0 30px 40px rgba(60,30,20,0.25)); }
+.check-visual img.selfie { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.check-visual .tag { position: absolute; left: 16px; top: 16px; z-index: 3; }
 .check-copy { display: flex; flex-direction: column; align-items: flex-start; gap: 18px; }
 .check-copy h2 { max-width: 14ch; }
-.check-copy .lead { max-width: 480px; }
+.check-copy .lead { max-width: 520px; }
 .ck-steps { list-style: none; width: 100%; max-width: 560px; background: var(--paper); border: 1px solid var(--line); border-radius: var(--r); padding: 6px 22px; }
 .ck-steps li { display: grid; grid-template-columns: 38px 1fr; gap: 12px; align-items: center; padding: 16px 0; border-bottom: 1px solid var(--line); }
 .ck-steps li:last-child { border-bottom: 0; }
-.ck-steps i { width: 32px; height: 32px; border-radius: 50%; background: var(--green-soft); color: var(--green-dark); font-style: normal; font-weight: 600; font-size: 13.5px; display: flex; align-items: center; justify-content: center; }
-.ck-steps b { display: block; font-weight: 600; color: var(--ink); font-size: 16.5px; }
+.ck-steps i { width: 32px; height: 32px; border-radius: 50%; background: var(--green-soft); color: var(--green-dark); font-style: normal; font-weight: 700; font-size: 13.5px; display: flex; align-items: center; justify-content: center; }
+.ck-steps b { display: block; font-weight: 700; color: var(--ink); font-size: 16.5px; }
 .ck-steps span { display: block; font-size: 14px; color: var(--ink-2); margin-top: 1px; }
 .ck-ctas { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
 .ck-free { font-size: 14px; color: var(--ink-3); }
 .ck-note { font-size: 12.5px; color: var(--ink-3); max-width: 520px; }
+.ck-then { width: 100%; max-width: 560px; margin-top: 6px; padding: 18px 22px; border-radius: var(--r-sm); background: var(--green-soft); color: var(--green-deep); font-size: 15px; line-height: 1.5; }
+.ck-then b { font-weight: 700; }
+.ck-then a { font-weight: 700; border-bottom: 1px solid currentColor; }
 
 /* ============ PRODUKTE ============ */
-.products { background: var(--paper); border-top: 1px solid var(--line); }
-.pr-rows { max-width: 1040px; margin: 0 auto; display: grid; gap: 10px; }
+.products { background: var(--paper); padding-top: 0; }
+.pr-stage { position: relative; height: clamp(440px, 64vh, 720px); overflow: hidden; background: var(--bg-2); margin: 0 calc(-1 * var(--pad-x)); }
+.pr-stage img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 60%; }
+.pr-stage::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(255,252,248,0.72) 0%, rgba(255,252,248,0.45) 28%, rgba(255,252,248,0) 50%, var(--paper) 100%); }
+.pr-stage .s-head { position: absolute; left: var(--pad-x); right: var(--pad-x); top: clamp(48px, 9vh, 96px); z-index: 2; margin: 0 auto; }
+.pr-rows { max-width: 1040px; margin: -40px auto 0; position: relative; z-index: 2; display: grid; gap: 10px; }
 .pr-row { display: grid; grid-template-columns: 84px 1fr auto; gap: 20px; align-items: center; width: 100%; text-align: left; padding: 16px 20px 16px 16px; background: var(--bg); border: 1px solid var(--line); border-radius: var(--r-sm); transition: border-color .2s, transform .2s var(--ease); }
 .pr-row:hover { border-color: var(--line-2); transform: translateY(-1px); }
 .pr-row img { width: 84px; height: 84px; border-radius: var(--r-xs); object-fit: cover; }
 .pr-row .t { display: flex; flex-direction: column; gap: 3px; }
-.pr-row .t b { font-family: var(--display); font-weight: 400; font-size: clamp(22px, 2vw, 28px); color: var(--ink); line-height: 1.1; }
+.pr-row .t b { font-family: var(--display); font-weight: 500; font-size: clamp(24px, 2.2vw, 32px); color: var(--ink); line-height: 1.05; }
 .pr-row .t span { font-size: 14.5px; color: var(--ink-2); }
-.pr-row .t em { font-style: normal; font-size: 12.5px; font-weight: 600; color: var(--green-dark); }
+.pr-row .t em { font-style: normal; font-size: 12.5px; font-weight: 700; color: var(--green-dark); }
 .pr-row .more { display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--line-2); color: var(--ink); background: var(--paper); font-size: 22px; line-height: 1; }
 .pr-sub { max-width: 1040px; margin: clamp(36px, 5vh, 56px) auto 16px; display: flex; align-items: baseline; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
-.pr-sub h3 { font-size: clamp(26px, 2.4vw, 34px); }
+.pr-sub h3 { font-size: clamp(28px, 2.6vw, 38px); }
 .pr-sub span { font-size: 14.5px; color: var(--ink-3); }
-.pr-cards { max-width: 1040px; margin: 0 auto; display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+.pr-cards { max-width: 1040px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
 .pr-cards.three { grid-template-columns: repeat(3, 1fr); }
 .pr-card { position: relative; border-radius: var(--r-sm); overflow: hidden; background: var(--bg); border: 1px solid var(--line); text-align: left; display: flex; flex-direction: column; transition: border-color .2s, transform .2s var(--ease); }
 .pr-card:hover { border-color: var(--line-2); transform: translateY(-1px); }
@@ -919,37 +939,17 @@ footer { background: var(--green-deep); }
 .pr-card img { width: 100%; height: 100%; object-fit: cover; transition: transform .6s var(--ease); }
 .pr-card:hover img { transform: scale(1.04); }
 .pr-card .cap { padding: 12px 14px 14px; display: flex; flex-direction: column; gap: 2px; }
-.pr-card b { font-weight: 600; font-size: 15px; line-height: 1.25; color: var(--ink); }
+.pr-card b { font-weight: 700; font-size: 15px; line-height: 1.25; color: var(--ink); }
 .pr-card .cap span { font-size: 12.5px; color: var(--ink-3); }
-.pr-card .chip { position: absolute; top: 10px; left: 10px; z-index: 2; padding: 5px 9px; border-radius: 100px; background: rgba(255,255,255,0.88); color: var(--ink); font-size: 11px; font-weight: 600; }
-.pr-cta { max-width: 1040px; margin: clamp(40px, 6vh, 64px) auto 0; background: var(--green-deep); color: #fff; border-radius: var(--r); padding: clamp(28px, 4vw, 52px); display: grid; grid-template-columns: 1.15fr minmax(260px, 320px); gap: 40px; align-items: center; overflow: hidden; }
+.pr-card .chip { position: absolute; top: 10px; left: 10px; z-index: 2; padding: 5px 9px; border-radius: 100px; background: rgba(255,255,255,0.88); color: var(--ink); font-size: 11px; font-weight: 700; }
+.pr-cta { max-width: 1040px; margin: clamp(40px, 6vh, 64px) auto 0; background: var(--green-deep); color: #fff; border-radius: var(--r); padding: clamp(28px, 4vw, 52px); display: grid; grid-template-columns: 1.2fr minmax(240px, 300px); gap: 40px; align-items: center; overflow: hidden; }
 .pr-cta-copy { display: flex; flex-direction: column; align-items: flex-start; gap: 16px; }
-.pr-cta h3 { color: #fff; font-size: clamp(32px, 3.4vw, 50px); max-width: 14ch; line-height: 1.08; }
-.pr-cta h3 em { font-style: italic; color: var(--accent); }
+.pr-cta h3 { color: #fff; font-size: clamp(34px, 3.8vw, 56px); max-width: 14ch; line-height: 1.02; }
+.pr-cta h3 em { color: var(--accent); }
 .pr-cta p { color: rgba(255,255,255,0.8); font-size: 16px; max-width: 440px; }
+.pr-cta img { width: 100%; max-width: 260px; justify-self: center; transform: translateY(14%); filter: drop-shadow(0 30px 40px rgba(0,0,0,0.45)); }
 .pr-note { max-width: 1040px; margin: 16px auto 0; }
-.link-more { font-weight: 600; color: var(--ink); border-bottom: 1px solid var(--line-2); padding-bottom: 1px; }
-/* Handy-Ansicht der Ergebnis-Seite */
-.phone { width: 100%; max-width: 310px; justify-self: center; background: #111; border-radius: 40px; padding: 10px; box-shadow: 0 30px 60px -30px rgba(0,0,0,0.6), inset 0 0 0 2px #2a2a2a; }
-.phone-screen { background: #fff; border-radius: 31px; padding: 18px 14px 16px; color: #1a1a1a; }
-.ph-tabs { display: flex; background: #F2F3F5; border-radius: 100px; padding: 3px; font-size: 12px; font-weight: 600; margin-bottom: 14px; }
-.ph-tabs span { flex: 1; text-align: center; padding: 7px 0; border-radius: 100px; color: #777; }
-.ph-tabs span.on { background: #fff; color: #1a1a1a; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
-.ph-gauge { text-align: center; }
-.ph-gauge svg { width: 150px; display: block; margin: 0 auto -58px; }
-.ph-gauge b { display: block; font-size: 34px; font-weight: 700; color: #2DBE6C; letter-spacing: -0.02em; }
-.ph-gauge small { display: block; font-size: 11.5px; color: #777; margin-top: 2px; }
-.ph-text { font-size: 11.5px; line-height: 1.45; color: #555; text-align: center; margin: 10px 4px 12px; }
-.ph-sub { font-size: 12.5px; font-weight: 700; margin: 0 2px 8px; }
-.ph-tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
-.ph-tiles > div { background: #FBEFF3; border-radius: 12px; padding: 9px 10px; position: relative; }
-.ph-tiles i { display: block; width: 16px; height: 16px; border-radius: 5px; margin-bottom: 5px; }
-.ph-tiles i.d { background: #4FA3F7; } .ph-tiles i.w { background: #C9A86A; } .ph-tiles i.r { background: #F26A5B; } .ph-tiles i.s { background: #8C5B3E; } .ph-tiles i.p { background: #9B6BE0; } .ph-tiles i.t { background: #3AAED8; }
-.ph-tiles span { font-size: 10.5px; color: #333; display: block; }
-.ph-tiles u { display: block; text-decoration: none; height: 4px; border-radius: 100px; background: #E8DCE1; margin-top: 7px; position: relative; overflow: hidden; }
-.ph-tiles u::after { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: var(--v, 50%); background: var(--c, #2DBE6C); border-radius: 100px; }
-.ph-tiles em { position: absolute; right: 8px; top: 8px; font-style: normal; font-size: 8.5px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 2px 6px; border-radius: 100px; }
-.ph-tiles em.g { background: #DFF5E7; color: #1E8F4C; } .ph-tiles em.o { background: #FBEFD2; color: #9A6A08; } .ph-tiles em.l { background: #FBE0E0; color: #B03030; }
+.link-more { font-weight: 700; color: var(--ink); border-bottom: 1px solid var(--line-2); padding-bottom: 1px; }
 
 /* Produkt-Fenster */
 .pm-modal { position: fixed; inset: 0; z-index: 200; display: none; align-items: flex-end; justify-content: center; }
@@ -959,49 +959,73 @@ footer { background: var(--green-deep); }
 @keyframes sheetUp { from { transform: translateY(24px); opacity: 0; } to { transform: none; opacity: 1; } }
 .pm-close { position: absolute; top: 16px; right: 16px; width: 38px; height: 38px; border-radius: 50%; background: var(--bg); display: flex; align-items: center; justify-content: center; color: var(--ink); }
 .pm-close svg { width: 18px; height: 18px; }
-.pm-tag { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600; color: var(--ink-3); margin-bottom: 10px; display: block; }
-.pm-sheet h3 { font-size: clamp(30px, 3.4vw, 40px); margin-bottom: 6px; padding-right: 48px; }
+.pm-tag { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 700; color: var(--ink-3); margin-bottom: 10px; display: block; }
+.pm-sheet h3 { font-size: clamp(34px, 3.6vw, 44px); margin-bottom: 6px; padding-right: 48px; }
 .pm-price { font-size: 15px; color: var(--ink-3); margin-bottom: 18px; }
-.pm-price strong { color: var(--ink); font-weight: 600; }
+.pm-price strong { color: var(--ink); font-weight: 700; }
 .pm-facts { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px; }
 .pm-fact { background: var(--bg); border-radius: var(--r-xs); padding: 12px 14px; }
-.pm-fact small { display: block; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 3px; font-weight: 600; }
+.pm-fact small { display: block; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 3px; font-weight: 700; }
 .pm-fact span { font-size: 14.5px; color: var(--ink); }
 .pm-block { margin-top: 18px; }
-.pm-block h4 { font-size: 11.5px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 8px; }
+.pm-block h4 { font-size: 11.5px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 8px; }
 .pm-block p, .pm-block li { font-size: 15.5px; line-height: 1.55; color: var(--ink-2); }
 .pm-block ul { list-style: none; display: grid; gap: 6px; }
 .pm-block li { display: flex; gap: 9px; }
 .pm-block li::before { content: '–'; color: var(--green-dark); flex-shrink: 0; }
 .pm-actives { display: flex; flex-wrap: wrap; gap: 6px; }
-.pm-actives span { padding: 6px 11px; border-radius: 100px; background: var(--green-soft); color: var(--green-dark); font-size: 13px; font-weight: 500; }
+.pm-actives span { padding: 6px 11px; border-radius: 100px; background: var(--green-soft); color: var(--green-dark); font-size: 13px; font-weight: 600; }
 .pm-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 24px; }
 .pm-src { margin-top: 16px; }
 @media (min-width: 720px) { .pm-modal { align-items: center; padding: 24px; } .pm-sheet { border-radius: 28px; padding: 36px 36px 32px; } }
+
+/* ============ MÄNNER ============ */
+.men { padding: 0; background: #2B2623; color: #fff; }
+.men-stage { position: relative; height: clamp(480px, 70vh, 760px); overflow: hidden; }
+.men-stage > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 20% 30%; }
+.men-stage::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(43,38,35,0) 40%, rgba(43,38,35,0.35) 100%); }
+.men-copy { position: absolute; z-index: 2; right: clamp(20px, 6vw, 96px); top: 50%; transform: translateY(-50%); width: min(560px, 50%); display: grid; grid-template-columns: 1fr 200px; gap: 28px; align-items: center; }
+.men-copy h2 { color: #fff; font-size: clamp(40px, 4.6vw, 70px); }
+.men-copy h2 em { color: #E8C9A6; }
+.men-copy p { color: rgba(255,255,255,0.82); font-size: 16px; max-width: 34ch; }
+.men-text { display: flex; flex-direction: column; align-items: flex-start; gap: 14px; }
+.men-prod { background: #fff; border-radius: var(--r); overflow: hidden; text-align: left; box-shadow: 0 30px 60px -20px rgba(0,0,0,0.6); display: flex; flex-direction: column; color: var(--ink); }
+.men-prod img { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; }
+.men-prod span { padding: 12px 14px 14px; font-size: 13px; color: var(--ink-2); }
+.men-prod span b { display: block; font-weight: 700; font-size: 15px; color: var(--ink); }
 
 /* ============ VORTEILE · Bento ============ */
 .bento { max-width: var(--max); margin: 0 auto; display: grid; grid-template-columns: repeat(3, 1fr); grid-auto-rows: minmax(240px, auto); gap: 14px; }
 .bento-card { background: var(--paper); border: 1px solid var(--line); border-radius: var(--r); padding: 28px 26px; display: flex; flex-direction: column; gap: 10px; position: relative; overflow: hidden; }
 .bento-card.tall { grid-row: span 2; }
 .bento-card.wide { grid-column: span 2; }
-.bento-card .eyebrow { font-size: 11.5px; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600; color: var(--ink-3); }
+.bento-card .eyebrow { font-size: 11.5px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 700; color: var(--ink-3); }
 .bento-card h3 { max-width: 18ch; }
 .bento-card p { font-size: 15px; line-height: 1.5; max-width: 480px; }
-.bento-card.photo { padding: 0; justify-content: flex-end; min-height: 320px; color: #fff; border: 0; }
+.bento-card.photo { padding: 0; justify-content: flex-end; min-height: 340px; color: #fff; border: 0; }
 .bento-card.photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-.bento-card.photo::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(30,15,10,0) 30%, rgba(30,15,10,0.74) 100%); }
+.bento-card.photo::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(30,15,10,0) 30%, rgba(30,15,10,0.76) 100%); }
 .bento-over { position: relative; z-index: 2; padding: 26px; display: flex; flex-direction: column; gap: 8px; }
 .bento-card.photo .eyebrow { color: rgba(255,255,255,0.78); }
 .bento-card.photo h3 { color: #fff; }
-.bento-card.photo p { color: rgba(255,255,255,0.86); }
+.bento-card.photo p { color: rgba(255,255,255,0.88); }
 .bento-card.stat { justify-content: center; }
-.bento-card .big { font-family: var(--display); font-size: clamp(64px, 6vw, 96px); line-height: 1; color: var(--green-dark); }
+.bento-card .big { font-family: var(--display); font-weight: 500; font-size: clamp(72px, 7vw, 110px); line-height: 0.95; color: var(--green-dark); }
 .bento-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
-.bento-chips span { padding: 8px 13px; border-radius: 100px; background: var(--green-soft); color: var(--green-deep); font-size: 14px; font-weight: 500; }
+.bento-chips span { padding: 8px 13px; border-radius: 100px; background: var(--green-soft); color: var(--green-deep); font-size: 14px; font-weight: 600; }
 .bento-card.sand { background: var(--bg-2); border-color: transparent; }
 .guar-badge { width: 104px; height: 104px; border-radius: 50%; border: 1.5px solid var(--green-dark); color: var(--green-deep); display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 8px; }
-.guar-badge b { font-family: var(--display); font-size: 44px; line-height: 1; }
-.guar-badge span { font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 600; margin-top: 2px; }
+.guar-badge b { font-family: var(--display); font-weight: 500; font-size: 48px; line-height: 1; }
+.guar-badge span { font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 700; margin-top: 2px; }
+/* Für jede Haut: vier Gesichter */
+.bento-card.faces { padding: 0; border: 0; background: var(--bg-2); min-height: 340px; justify-content: flex-end; }
+.faces-grid { position: absolute; inset: 0; display: grid; grid-template-columns: repeat(4, 1fr); }
+.faces-grid img { width: 100%; height: 100%; object-fit: cover; }
+.bento-card.faces::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(30,15,10,0) 40%, rgba(30,15,10,0.78) 100%); }
+.bento-card.faces .bento-over { color: #fff; }
+.bento-card.faces .eyebrow { color: rgba(255,255,255,0.78); }
+.bento-card.faces h3 { color: #fff; }
+.bento-card.faces p { color: rgba(255,255,255,0.88); }
 
 /* ============ ÜBER MICH ============ */
 .about { background: var(--bg-2); }
@@ -1009,30 +1033,30 @@ footer { background: var(--green-deep); }
 .about-photo { position: relative; aspect-ratio: 4 / 5; border-radius: var(--r); overflow: hidden; background: var(--paper); }
 .about-photo img { width: 100%; height: 100%; object-fit: cover; }
 .about-photo .cap { position: absolute; left: 14px; right: 14px; bottom: 14px; padding: 14px 16px; border-radius: var(--r-sm); background: rgba(40,20,15,0.42); backdrop-filter: blur(10px); color: #fff; }
-.about-photo .cap b { display: block; font-family: var(--display); font-weight: 400; font-size: 22px; }
+.about-photo .cap b { display: block; font-family: var(--display); font-weight: 500; font-size: 26px; }
 .about-photo .cap span { font-size: 13px; opacity: .85; }
 .about-copy { display: flex; flex-direction: column; align-items: flex-start; gap: 18px; }
 .about-copy h2 .accent, .about-copy h2 em { font-style: italic; color: var(--green-dark); }
 .about-text p { font-size: 16.5px; margin-bottom: 12px; max-width: 560px; }
 .about-pills { display: flex; flex-wrap: wrap; gap: 8px; }
-.about-pills span { display: inline-flex; align-items: center; gap: 8px; padding: 9px 14px; border-radius: 100px; background: var(--paper); border: 1px solid var(--line); font-size: 14px; font-weight: 500; color: var(--ink); }
+.about-pills span { display: inline-flex; align-items: center; gap: 8px; padding: 9px 14px; border-radius: 100px; background: var(--paper); border: 1px solid var(--line); font-size: 14px; font-weight: 600; color: var(--ink); }
 .about-pills svg { width: 15px; height: 15px; color: var(--green-dark); }
 
 /* ============ ROUTINE ============ */
 .rt-cols { max-width: var(--max); margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 .rt-col { background: var(--paper); border: 1px solid var(--line); border-radius: var(--r); padding: 26px 26px 14px; }
 .rt-col h3 { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 10px; padding-bottom: 12px; border-bottom: 1px solid var(--line); }
-.rt-col h3 .t { font-family: var(--font); font-size: 13px; color: var(--ink-3); font-weight: 500; }
+.rt-col h3 .t { font-family: var(--font); font-size: 13px; color: var(--ink-3); font-weight: 600; }
 .rt-step { display: grid; grid-template-columns: 32px 1fr auto; gap: 12px; align-items: center; padding: 13px 0; border-bottom: 1px solid var(--line); }
 .rt-step:last-child { border-bottom: 0; }
-.rt-step i { width: 28px; height: 28px; border-radius: 50%; background: var(--green-soft); color: var(--green-dark); font-style: normal; font-size: 12.5px; font-weight: 600; display: flex; align-items: center; justify-content: center; }
-.rt-step b { font-weight: 600; font-size: 16px; color: var(--ink); }
+.rt-step i { width: 28px; height: 28px; border-radius: 50%; background: var(--green-soft); color: var(--green-dark); font-style: normal; font-size: 12.5px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+.rt-step b { font-weight: 700; font-size: 16px; color: var(--ink); }
 .rt-step small { font-size: 13px; color: var(--ink-3); text-align: right; }
 
 /* ============ KONTAKT · 3 Schritte ============ */
 .contact { background: var(--green-deep); color: #fff; }
 .contact .s-head h2 { color: #fff; }
-.contact .s-head h2 strong { font-weight: 400; font-style: italic; color: var(--accent); }
+.contact .s-head h2 strong { font-weight: 500; font-style: italic; color: var(--accent); }
 .contact .s-head p { color: rgba(255,255,255,0.78); }
 .cform { background: var(--paper); color: var(--ink); border-radius: var(--r); padding: 30px; max-width: 640px; margin: 0 auto; }
 .f-progress { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 26px; }
@@ -1049,20 +1073,20 @@ footer { background: var(--green-deep); }
 .f-opt::before { content: ''; position: absolute; left: 16px; top: 18px; width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid var(--line-2); background: var(--paper); transition: all .15s; }
 .f-opt.on { background: var(--green-soft); border-color: var(--green); }
 .f-opt.on::before { background: var(--green); border-color: var(--green); box-shadow: inset 0 0 0 3px var(--paper); }
-.f-opt b { display: block; font-weight: 600; font-size: 15px; color: var(--ink); }
+.f-opt b { display: block; font-weight: 700; font-size: 15px; color: var(--ink); }
 .f-opt > span { display: block; font-size: 13px; color: var(--ink-3); margin-top: 2px; }
 .f-opts-grid .f-opt { padding: 14px 14px 14px 44px; }
 .f-opts-grid .f-opt::before { top: 15px; left: 14px; }
 .f-nav { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 22px; }
-.f-back { font-size: 14px; font-weight: 500; color: var(--ink-3); padding: 10px 0; }
+.f-back { font-size: 14px; font-weight: 600; color: var(--ink-3); padding: 10px 0; }
 .f-back:hover { color: var(--ink); }
 .f-nav .btn[disabled] { opacity: .45; cursor: not-allowed; }
 .cform .f-row { margin-bottom: 12px; }
 .cform input[type="text"], .cform input[type="email"], .cform input[type="tel"] { width: 100%; font: inherit; font-size: 16px; padding: 14px 16px; border-radius: var(--r-sm); border: 1px solid var(--line-2); background: var(--bg); color: var(--ink); outline: none; transition: border-color .2s, box-shadow .2s; }
 .cform input:focus { border-color: var(--green); box-shadow: 0 0 0 3px var(--green-soft); background: var(--paper); }
-.f-label { display: block; font-size: 13px; font-weight: 600; color: var(--ink-2); margin: 4px 0 8px; }
+.f-label { display: block; font-size: 13px; font-weight: 700; color: var(--ink-2); margin: 4px 0 8px; }
 .chips { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-.chip { padding: 11px 8px; border-radius: var(--r-sm); border: 1px solid var(--line-2); background: var(--bg); font-size: 14px; font-weight: 500; color: var(--ink-2); text-align: center; transition: all .15s; }
+.chip { padding: 11px 8px; border-radius: var(--r-sm); border: 1px solid var(--line-2); background: var(--bg); font-size: 14px; font-weight: 600; color: var(--ink-2); text-align: center; transition: all .15s; }
 .chip.on { background: var(--green-soft); border-color: var(--green); color: var(--green-deep); }
 .f-check { display: flex; gap: 10px; align-items: flex-start; font-size: 13.5px; color: var(--ink-2); margin-top: 14px; cursor: pointer; }
 .f-check input { margin-top: 3px; accent-color: var(--green); width: 16px; height: 16px; }
@@ -1075,56 +1099,71 @@ footer { background: var(--green-deep); }
 .cform-ok p { font-size: 15.5px; }
 .contact-card { max-width: 640px; margin: 14px auto 0; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.14); border-radius: var(--r); padding: 16px 18px; display: grid; grid-template-columns: 52px 1fr auto; gap: 14px; align-items: center; }
 .contact-card img { width: 52px; height: 52px; border-radius: 50%; object-fit: cover; }
-.contact-card b { display: block; font-weight: 600; font-size: 15.5px; }
+.contact-card b { display: block; font-weight: 700; font-size: 15.5px; }
 .contact-card > div > span { display: block; font-size: 13px; color: rgba(255,255,255,0.65); }
 .contact-card-btns { display: flex; gap: 8px; }
-.contact-card-btns a { display: inline-flex; align-items: center; gap: 7px; padding: 9px 14px; border-radius: 100px; border: 1px solid rgba(255,255,255,0.22); font-size: 13.5px; font-weight: 600; color: #fff; }
+.contact-card-btns a { display: inline-flex; align-items: center; gap: 7px; padding: 9px 14px; border-radius: 100px; border: 1px solid rgba(255,255,255,0.22); font-size: 13.5px; font-weight: 700; color: #fff; }
 .contact-card-btns svg { width: 15px; height: 15px; }
 .contact-shop { max-width: 640px; margin: 26px auto 0; padding-top: 22px; border-top: 1px solid rgba(255,255,255,0.14); display: flex; justify-content: space-between; gap: 16px; align-items: center; flex-wrap: wrap; }
 .contact-shop p { color: rgba(255,255,255,0.72); font-size: 14.5px; max-width: 420px; }
-.contact-shop a { color: #fff; font-weight: 500; border-bottom: 1px solid rgba(255,255,255,0.4); padding-bottom: 2px; white-space: nowrap; }
+.contact-shop a { color: #fff; font-weight: 600; border-bottom: 1px solid rgba(255,255,255,0.4); padding-bottom: 2px; white-space: nowrap; }
 
 /* ============ RESPONSIVE ============ */
 @media (max-width: 1024px) {
-  .hero-card { height: auto; aspect-ratio: 4 / 5; max-height: 760px; }
-  .hero-card::after { background: linear-gradient(180deg, rgba(253,247,239,0) 30%, rgba(253,247,239,0.92) 72%); }
-  .hero-card img { object-position: 70% 0; }
-  .duo-stage { height: auto; aspect-ratio: 4 / 3; }
-  .duo-stage img { object-position: 80% 30%; }
-  .duo-words { top: auto; bottom: 24px; transform: none; max-width: 60%; }
-  .duo-cards { grid-template-columns: 1fr; }
-  .duo-card { min-height: 240px; }
+  .hero > img { object-position: 68% 10%; }
+  .hero::after { background: linear-gradient(180deg, rgba(253,247,239,0) 32%, rgba(253,247,239,0.9) 68%); }
+  .split-stage { height: auto; aspect-ratio: 3 / 4; }
+  .split-word b { font-size: clamp(48px, 13vw, 96px); }
+  .split-word .pt { display: none; }
+  .split-cols { grid-template-columns: 1fr; }
   .check-grid { grid-template-columns: 1fr; }
-  .check-phone { max-width: 420px; }
+  .check-visual { max-width: 480px; min-height: 480px; }
   .pr-cards { grid-template-columns: repeat(3, 1fr); }
   .pr-cta { grid-template-columns: 1fr; }
+  .pr-cta img { transform: none; }
+  .men-stage { height: auto; }
+  .men-stage > img { position: relative; height: auto; aspect-ratio: 4 / 3; object-position: 30% 20%; }
+  .men-stage::after { display: none; }
+  .men-copy { position: static; transform: none; width: auto; padding: 28px var(--pad-x) 40px; grid-template-columns: 1fr 180px; }
   .bento { grid-template-columns: 1fr 1fr; }
   .bento-card.wide { grid-column: span 2; }
-  .bento-card.tall { grid-row: span 1; }
+  .bento-card.tall { grid-row: span 1; min-height: 360px; }
   .about-grid { grid-template-columns: 1fr; }
   .about-photo { max-width: 440px; }
 }
 @media (max-width: 760px) {
   section { padding: 56px var(--pad-x); }
-  .hero { padding-top: 76px; }
-  /* Handy: Bild oben, Text darunter – nichts liegt über dem Gesicht */
-  .hero-card { aspect-ratio: auto; height: auto; max-height: none; display: flex; flex-direction: column; }
-  .hero-card::after { display: none; }
-  .hero-card img { position: relative; inset: auto; height: auto; aspect-ratio: 4 / 4.4; object-position: 60% 15%; }
-  .hero-copy { position: static; max-width: none; padding: 22px 18px 24px; gap: 14px; }
-  .hero h1 { font-size: clamp(38px, 10.5vw, 48px); }
+  .hero { min-height: 0; align-items: stretch; flex-direction: column; background: var(--bg); }
+  .hero > img { position: relative; height: auto; aspect-ratio: 4 / 4.6; object-position: 60% 15%; margin-top: 64px; }
+  .hero::after { display: none; }
+  .hero-copy { padding: 22px var(--pad-x) 32px; gap: 14px; }
+  .hero h1 { font-size: clamp(44px, 12vw, 56px); }
   .hero-ctas { flex-direction: column; align-items: stretch; width: 100%; }
   .hero-ctas .btn { justify-content: center; }
-  .duo-stage { aspect-ratio: auto; height: auto; overflow: visible; background: none; border-radius: 0; }
-  .duo-stage img { aspect-ratio: 4 / 5; height: auto; object-position: 64% 30%; border-radius: var(--r); }
-  .duo-words { position: static; transform: none; max-width: none; flex-direction: row; gap: 28px; padding: 16px 6px 0; }
-  .duo-words .w { font-size: clamp(40px, 12vw, 56px); }
+  .split-stage { aspect-ratio: 2 / 3; }
+  .split-word { top: 18px; }
+  .split-word.l { left: 18px; } .split-word.r { right: 18px; }
+  .split-word b { font-size: clamp(40px, 12vw, 60px); }
+  .split-word small { font-size: 11px; }
+  .split-col { padding: 30px 20px; }
+  .check-visual { min-height: 0; padding: 28px 24px 0; }
+  .check-visual img.hand { width: 82%; }
+  .pr-stage { height: auto; display: flex; flex-direction: column; background: var(--paper); }
+  .pr-stage .s-head { position: static; order: -1; padding: 56px var(--pad-x) 20px; margin: 0 auto; }
+  .pr-stage img { height: auto; aspect-ratio: 4 / 3; }
+  .pr-stage::after { background: linear-gradient(180deg, rgba(255,252,248,0) 60%, var(--paper) 100%); }
+  .pr-rows { margin-top: -24px; }
   .pr-row { grid-template-columns: 64px 1fr; }
   .pr-row img { width: 64px; height: 64px; }
   .pr-row .more { display: none; }
   .pr-cards, .pr-cards.three { grid-template-columns: repeat(2, 1fr); }
+  .men-copy { grid-template-columns: 1fr; }
+  .men-prod { max-width: 220px; }
   .bento { grid-template-columns: 1fr; grid-auto-rows: auto; }
   .bento-card, .bento-card.wide, .bento-card.tall { grid-column: span 1; grid-row: span 1; }
+  .faces-grid { grid-template-columns: 1fr 1fr; }
+  .bento-card.faces { min-height: 520px; }
+  .bento-card.faces::after { background: linear-gradient(180deg, rgba(30,15,10,0) 45%, rgba(30,15,10,0.85) 100%); }
   .rt-cols { grid-template-columns: 1fr; }
   .f-opts-grid { grid-template-columns: 1fr; }
   .chips { grid-template-columns: 1fr; }
@@ -1132,7 +1171,6 @@ footer { background: var(--green-deep); }
   .contact-card { grid-template-columns: 44px 1fr; }
   .contact-card img { width: 44px; height: 44px; }
   .contact-card-btns { grid-column: 1 / -1; }
-  .phone { max-width: 290px; }
 }
 </style>
 </head>
@@ -1200,23 +1238,21 @@ footer { background: var(--green-deep); }
   </div>
 </div>
 
-<!-- HERO: Bildkarte -->
+<!-- HERO: Vollbild -->
 <section class="hero">
-  <div class="hero-card">
-    <img loading="eager" fetchpriority="high" decoding="async" src="assets/hero/{{hero_variante}}.webp" alt="" width="1536" height="1024">
-    <div class="hero-copy">
-      <span class="eye">Beauty-Check · kostenlos</span>
-      <h1 class="reveal">Schönheit von innen <em>&amp;</em> außen</h1>
-      <p class="sub reveal">Pflege für die Haut, ein Drink für innen und ein kostenloser Beauty-Check, der dir zeigt, was deine Haut wirklich braucht.</p>
-      <div class="hero-ctas reveal">
-        <a href="#kontakt" class="btn btn-primary">Beauty-Check sichern <span class="arr">→</span></a>
-        <a href="#produkte" class="btn btn-light">Zu den Produkten</a>
-      </div>
-      <div class="hero-facts reveal">
-        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 5-3.5 8.5-7 10-3.5-1.5-7-5-7-10V6z"/></svg>Patentierte Technologie</span>
-        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Hersteller seit 1993</span>
-        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>30 Tage Geld-zurück</span>
-      </div>
+  <img loading="eager" fetchpriority="high" decoding="async" src="assets/hero/{{hero_variante}}.webp" alt="" width="1536" height="1024">
+  <div class="hero-copy">
+    <span class="hero-who"><img loading="eager" decoding="async" src="{{profilbild}}" alt="">Die Beauty-Empfehlung von {{vorname}}</span>
+    <h1 class="reveal">Schönheit von innen <em>&amp;</em> außen</h1>
+    <p class="sub reveal">Das ist mein Konzept für gute Haut: eine Pflege von außen, ein Drink von innen und ein kostenloser Beauty-Check, in dem ich dir zeige, was deine Haut wirklich braucht</p>
+    <div class="hero-ctas reveal">
+      <a href="#kontakt" class="btn btn-primary">Beauty-Check sichern <span class="arr">→</span></a>
+      <a href="#produkte" class="btn btn-light">Meine Empfehlung ansehen</a>
+    </div>
+    <div class="hero-facts reveal">
+      <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 5-3.5 8.5-7 10-3.5-1.5-7-5-7-10V6z"/></svg>Patentierte Technologie</span>
+      <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Hersteller seit 1993</span>
+      <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>30 Tage Geld-zurück</span>
     </div>
   </div>
 </section>
@@ -1232,74 +1268,86 @@ footer { background: var(--green-deep); }
 <!-- INTRO-STATEMENT -->
 <section class="intro">
   <div class="intro-inner">
-    <span class="eye">Das Prinzip</span>
-    <p class="big reveal">Gute Haut braucht beides: eine Pflege, die <em>von außen</em> versorgt, und Nährstoffe, die <em>von innen</em> dazukommen. Kurz, einfach, jeden Tag.</p>
+    <span class="eye">Mein Konzept</span>
+    <p class="big reveal">Gute Haut braucht beides: eine Pflege, die <em>von außen</em> versorgt, und Nährstoffe, die <em>von innen</em> dazukommen. Genau das benutze ich selbst, jeden Tag.</p>
   </div>
 </section>
 
-<!-- INNEN & AUSSEN -->
-<section class="duo" id="prinzip">
-  <div class="duo-stage reveal">
-    <img loading="lazy" decoding="async" src="assets/duo.webp" alt="" width="1536" height="1024">
-    <div class="duo-words">
-      <div class="w"><small>Pflege für die Haut</small>Außen</div>
-      <div class="w r"><small>Ein Drink am Tag</small>Innen</div>
+<!-- INNEN & AUSSEN · Vollbild-Split -->
+<section class="split" id="prinzip">
+  <div class="split-stage">
+    <picture>
+      <source media="(max-width: 760px)" srcset="assets/split-m.webp">
+      <img loading="lazy" decoding="async" src="assets/split.webp" alt="" width="1536" height="1024">
+    </picture>
+    <div class="split-word l"><small>Pflege für die Haut</small><b>Außen</b><span class="pt">Reinigen, Tagescreme, Nachtcreme. Morgens und abends, ein paar Minuten.</span></div>
+    <div class="split-word r"><small>Ein Drink am Tag</small><b>Innen</b><span class="pt">Ein Glas mit Biotin, Zink und Vitamin C. Beerengeschmack, in Wasser angerührt.</span></div>
+  </div>
+
+  <div class="split-cols">
+    <div class="split-col l">
+      <span class="eye">Außen</span>
+      <h3>Drei Schritte, die deine Haut jeden Tag bekommt</h3>
+      <ul>
+        <li><b>1</b>Reinigen – Make-up und Schmutz weg, ohne auszutrocknen</li>
+        <li><b>2</b>Klären – das Tonic bereitet die Haut auf die Creme vor</li>
+        <li><b>3</b>Pflegen – tagsüber die passende Tagescreme, nachts die Nachtcreme</li>
+      </ul>
+      <p>Welche Tagescreme zu dir passt, hängt von deiner Haut ab. Das klären wir im Beauty-Check.</p>
+    </div>
+    <div class="split-col r">
+      <span class="eye light">Innen</span>
+      <h3>Ein Glas am Tag, das von innen dazukommt</h3>
+      <ul>
+        <li><b>C</b>Vitamin C trägt zu einer normalen Kollagenbildung für eine normale Funktion der Haut bei¹</li>
+        <li><b>B</b>Biotin trägt zur Erhaltung normaler Haut und Haare bei¹</li>
+        <li><b>Zn</b>Zink trägt zur Erhaltung normaler Haut, Haare und Nägel bei¹</li>
+      </ul>
+      <p>Der Beauty-Drink: in Wasser anrühren, trinken, fertig. Schmeckt nach Beeren.</p>
     </div>
   </div>
 
-  <div class="duo-cards">
-    <div class="duo-card img">
-      <img loading="lazy" decoding="async" src="assets/aussen.webp" alt="" width="1024" height="1024">
-      <span class="eye light">Außen</span>
-      <h3>Reinigen, Tagescreme, Nachtcreme.</h3>
-      <p>Morgens und abends, ein paar Minuten. Mehr nicht.</p>
-    </div>
-    <div class="duo-card img">
-      <img loading="lazy" decoding="async" src="assets/innen.webp" alt="" width="1024" height="1024">
-      <span class="eye light">Innen</span>
-      <h3>Ein Glas am Tag.</h3>
-      <p>Mit Biotin, Zink und Vitamin C.¹ Beerengeschmack, in Wasser angerührt.</p>
-    </div>
-    <div class="duo-card dark">
-      <span class="eye light">Zusammen</span>
-      <h3>Eine Routine, die bleibt.</h3>
-      <p>Weil sie kurz ist und zu dir passt. Was genau zu dir passt, klären wir im Beauty-Check.</p>
-    </div>
+  <div class="split-sum">
+    <p class="reveal">Zusammen ergibt das eine Routine, die <em>kurz</em> ist, zu dir passt und deshalb <em>bleibt</em></p>
   </div>
-  <p class="foot-note duo-note">¹ Biotin und Zink tragen zur Erhaltung normaler Haut und Haare bei, Zink zur Erhaltung normaler Nägel, Vitamin C zu einer normalen Kollagenbildung für eine normale Funktion der Haut. Nahrungsergänzungsmittel sind kein Ersatz für eine ausgewogene, abwechslungsreiche Ernährung und eine gesunde Lebensweise.</p>
+  <p class="foot-note split-note">¹ Zugelassene Angaben nach VO (EU) 432/2012. Nahrungsergänzungsmittel sind kein Ersatz für eine ausgewogene, abwechslungsreiche Ernährung und eine gesunde Lebensweise.</p>
 </section>
 
 <!-- BEAUTY-CHECK -->
 <section class="check" id="check">
   <div class="check-grid">
-    <div class="check-phone reveal">
-      {{#if scanner_anzeigen=an}}<img loading="lazy" decoding="async" src="assets/scan-face.webp" alt="" width="1024" height="1536"><svg class="scan-ring" id="scanRing" viewBox="0 0 100 150" preserveAspectRatio="none" aria-hidden="true"></svg><span class="eye light tag">Hautanalyse per App</span>{{/if}}
-      {{#unless scanner_anzeigen=an}}<img loading="lazy" decoding="async" src="assets/scan-selfie.webp" alt="" width="1024" height="1024"><span class="eye light tag">Beauty-Check</span>{{/unless}}
+    <div class="check-visual reveal">
+      {{#if scanner_anzeigen=an}}<img class="hand" loading="lazy" decoding="async" src="assets/scan-hand.webp" alt="Hautanalyse auf dem Handy" width="528" height="1029"><span class="eye light tag" style="background:rgba(60,30,20,0.55);border-color:transparent">Hautanalyse in der Beratung</span>{{/if}}
+      {{#unless scanner_anzeigen=an}}<img class="selfie" loading="lazy" decoding="async" src="assets/scan-selfie.webp" alt="" width="1024" height="1024"><span class="eye light tag">Beauty-Check</span>{{/unless}}
     </div>
     <div class="check-copy">
       <span class="eye">So läuft es ab</span>
-      <h2>Dein Beauty-Check</h2>
-      <p class="lead">{{#if scanner_anzeigen=an}}Ein Selfie, und du siehst, wie es deiner Haut geht. Ich sage dir, was sie braucht. Fertig.{{/if}}{{#unless scanner_anzeigen=an}}Du erzählst mir von deiner Haut. Ich sage dir, was sie braucht. Fertig.{{/unless}}</p>
+      <h2>Dein Beauty-Check mit mir</h2>
+      <p class="lead">{{#if scanner_anzeigen=an}}Die Hautanalyse machen wir gemeinsam in der Beratung: Ein Selfie, und du siehst, wie es deiner Haut geht. Du brauchst keine App und keine Vorbereitung, ich kümmere mich um alles.{{/if}}{{#unless scanner_anzeigen=an}}Du erzählst mir von deiner Haut, ich schaue mit dir hin und sage dir ehrlich, was sie braucht. Keine Vorbereitung nötig.{{/unless}}</p>
       <ol class="ck-steps">
-        <li><i>1</i><div><b>{{#if scanner_anzeigen=an}}Selfie machen{{/if}}{{#unless scanner_anzeigen=an}}Kurz erzählen{{/unless}}</b><span>{{#if scanner_anzeigen=an}}Dauert eine Minute.{{/if}}{{#unless scanner_anzeigen=an}}Wie fühlt sich deine Haut an?{{/unless}}</span></div></li>
-        <li><i>2</i><div><b>{{#if scanner_anzeigen=an}}Deine Werte sehen{{/if}}{{#unless scanner_anzeigen=an}}Gemeinsam hinschauen{{/unless}}</b><span>{{#if scanner_anzeigen=an}}Feuchtigkeit, Poren, Fältchen, Ausstrahlung.{{/if}}{{#unless scanner_anzeigen=an}}Per Video, Telefon oder WhatsApp.{{/unless}}</span></div></li>
-        <li><i>3</i><div><b>Deine Routine bekommen</b><span>Nur das, was zu dir passt.</span></div></li>
+        <li><i>1</i><div><b>Termin sichern</b><span>Per Video, Telefon oder WhatsApp, etwa 30 Minuten</span></div></li>
+        <li><i>2</i><div><b>{{#if scanner_anzeigen=an}}Hautanalyse zusammen{{/if}}{{#unless scanner_anzeigen=an}}Gemeinsam hinschauen{{/unless}}</b><span>{{#if scanner_anzeigen=an}}Feuchtigkeit, Poren, Fältchen, Hauttyp – wir schauen uns die Werte gemeinsam an{{/if}}{{#unless scanner_anzeigen=an}}Wie fühlt sich deine Haut an, was stört dich, was wünschst du dir{{/unless}}</span></div></li>
+        <li><i>3</i><div><b>Deine Empfehlung</b><span>Nur das, was zu deiner Haut passt, nichts, was du nicht brauchst</span></div></li>
       </ol>
+      <div class="ck-then">Was ich dir danach empfehle: die Basis aus Reinigung, Tonic, Tages- und Nachtcreme plus Beauty-Drink, und nur bei einem konkreten Wunsch ein Extra. <a href="#produkte">Alle Produkte ansehen</a></div>
       <div class="ck-ctas">
         <a href="#kontakt" class="btn btn-primary">Beauty-Check sichern <span class="arr">→</span></a>
         <span class="ck-free">Kostenlos und unverbindlich</span>
       </div>
-      {{#if scanner_anzeigen=an}}<p class="ck-note">Die Hautanalyse in der App ist eine kosmetische Einschätzung, keine medizinische Untersuchung.</p>{{/if}}
+      {{#if scanner_anzeigen=an}}<p class="ck-note">Die Hautanalyse ist eine kosmetische Einschätzung, keine medizinische Untersuchung.</p>{{/if}}
     </div>
   </div>
 </section>
 
 <!-- PRODUKTE -->
 <section class="products" id="produkte">
-  <div class="s-head">
-    <span class="eye">Die Produkte</span>
-    <h2>Was dir zur Auswahl steht</h2>
-    <p>Vier Schritte für jede Haut. Dazu ein paar Extras, falls du sie willst. Tipp auf ein Produkt für Details.</p>
+  <div class="pr-stage">
+    <img loading="lazy" decoding="async" src="assets/lineup.webp" alt="" width="1536" height="1024">
+    <div class="s-head">
+      <span class="eye">Meine Empfehlung</span>
+      <h2>Was dir zur Auswahl steht</h2>
+      <p>Vier Schritte für jede Haut, dazu ein paar Extras, falls du einen konkreten Wunsch hast. Tipp auf ein Produkt für Details</p>
+    </div>
   </div>
 
   <div class="pr-rows">
@@ -1316,7 +1364,6 @@ footer { background: var(--green-deep); }
     <button type="button" class="pr-card" data-open="augen"><span class="im"><img loading="lazy" decoding="async" src="assets/produkte/augencreme.webp" alt=""></span><span class="chip">morgens &amp; abends</span><span class="cap"><b>Für die Augenpartie</b><span>Augencreme</span></span></button>
     <button type="button" class="pr-card" data-open="darkspot"><span class="im"><img loading="lazy" decoding="async" src="assets/produkte/dark-spot-corrector.webp" alt=""></span><span class="chip">vor dem Serum</span><span class="cap"><b>Für einen ebenmäßigen Teint</b><span>Dark Spot Corrector</span></span></button>
     <button type="button" class="pr-card" data-open="ultimate"><span class="im"><img loading="lazy" decoding="async" src="assets/produkte/ultimate-young.webp" alt=""></span><span class="chip">bei Bedarf</span><span class="cap"><b>Für besondere Anlässe</b><span>Ultimate Young</span></span></button>
-    {{#if maenner_anzeigen=an}}<button type="button" class="pr-card" data-open="men"><span class="im"><img loading="lazy" decoding="async" src="assets/produkte/men-face.webp" alt=""></span><span class="chip">alles in einem</span><span class="cap"><b>Für Männer</b><span>Men Face</span></span></button>{{/if}}
   </div>
 
   <div class="pr-sub"><h3>Sets zum Starten</h3><span>günstiger als einzeln</span></div>
@@ -1329,34 +1376,14 @@ footer { background: var(--green-deep); }
   <div class="pr-cta reveal">
     <div class="pr-cta-copy">
       <span class="eye light">Beauty-Check</span>
-      <h3>Du brauchst nicht alles. <em>Ich berate dich.</em></h3>
-      <p>{{#if scanner_anzeigen=an}}Im Beauty-Check siehst du deine Werte und bekommst nur das, was zu deiner Haut passt.{{/if}}{{#unless scanner_anzeigen=an}}Im Beauty-Check schauen wir gemeinsam auf deine Haut und du bekommst nur das, was zu dir passt.{{/unless}}</p>
+      <h3>Du brauchst nicht alles. <em>Ich berate dich</em></h3>
+      <p>{{#if scanner_anzeigen=an}}Im Beauty-Check schauen wir gemeinsam auf deine Haut und ihre Werte, und du bekommst nur das, was wirklich zu dir passt.{{/if}}{{#unless scanner_anzeigen=an}}Im Beauty-Check schauen wir gemeinsam auf deine Haut und du bekommst nur das, was wirklich zu dir passt.{{/unless}}</p>
       <a href="#kontakt" class="btn btn-light">Beauty-Check sichern <span class="arr">→</span></a>
     </div>
-    <!-- Ergebnis-Ansicht, nachgebaut wie in der App (neutral, ohne Marken) -->
-    <div class="phone" aria-hidden="true">
-      <div class="phone-screen">
-        <div class="ph-tabs"><span class="on">Analyse</span><span>Produkte</span></div>
-        <div class="ph-gauge">
-          <svg viewBox="0 0 120 68"><path d="M12 62 A48 48 0 0 1 108 62" fill="none" stroke="#E9EDEA" stroke-width="11" stroke-linecap="round"/><path d="M12 62 A48 48 0 0 1 108 62" fill="none" stroke="#2DBE6C" stroke-width="11" stroke-linecap="round" pathLength="100" stroke-dasharray="84 100"/></svg>
-          <b>84 %</b>
-          <small>Geschätztes Hautalter: 31</small>
-        </div>
-        <p class="ph-text">Sieht gut aus! Deine Haut ist gut versorgt, ein paar Kleinigkeiten lohnen einen Blick.</p>
-        <div class="ph-sub">Hautdetails</div>
-        <div class="ph-tiles">
-          <div><i class="d"></i><span>Feuchtigkeit</span><u style="--v:78%"></u><em class="g">Gut</em></div>
-          <div><i class="w"></i><span>Fältchen</span><u style="--v:70%"></u><em class="g">Gut</em></div>
-          <div><i class="r"></i><span>Rötungen</span><u style="--v:82%"></u><em class="g">Gut</em></div>
-          <div><i class="s"></i><span>Pigmentflecken</span><u style="--v:48%;--c:#E4B23A"></u><em class="o">Okay</em></div>
-          <div><i class="p"></i><span>Poren</span><u style="--v:36%;--c:#E35D5D"></u><em class="l">Niedrig</em></div>
-          <div><i class="t"></i><span>Textur</span><u style="--v:66%"></u><em class="g">Gut</em></div>
-        </div>
-      </div>
-    </div>
+    {{#if scanner_anzeigen=an}}<img loading="lazy" decoding="async" src="assets/scan-hand.webp" alt="" width="528" height="1029">{{/if}}{{#unless scanner_anzeigen=an}}<img loading="lazy" decoding="async" src="assets/scan-selfie.webp" alt="" width="1024" height="1024" style="border-radius:var(--r-sm);transform:none;filter:none">{{/unless}}
   </div>
 
-  <p class="foot-note pr-note">Verkauf und Versand ausschließlich über den offiziellen Shop des Herstellers (PM-International AG), dort stehen Preise und alle Inhaltsstoffe. Die Ergebnis-Ansicht ist ein Beispiel mit Beispielwerten. ¹ Biotin und Zink tragen zur Erhaltung normaler Haut und Haare bei, Zink zur Erhaltung normaler Nägel, Vitamin C zu einer normalen Kollagenbildung für eine normale Funktion der Haut. <a class="link-more" data-shop="" href="#" target="_blank" rel="noopener">Zum Shop →</a></p>
+  <p class="foot-note pr-note">Verkauf und Versand ausschließlich über den offiziellen Shop des Herstellers (PM-International AG), dort stehen Preise und alle Inhaltsstoffe. ¹ Biotin und Zink tragen zur Erhaltung normaler Haut und Haare bei, Zink zur Erhaltung normaler Nägel, Vitamin C zu einer normalen Kollagenbildung für eine normale Funktion der Haut. <a class="link-more" data-shop="" href="#" target="_blank" rel="noopener">Zum Shop →</a></p>
 </section>
 
 <!-- Produkt-Fenster -->
@@ -1368,6 +1395,24 @@ footer { background: var(--green-deep); }
   </div>
 </div>
 
+{{#if maenner_anzeigen=an}}
+<!-- FÜR MÄNNER -->
+<section class="men" id="maenner">
+  <div class="men-stage">
+    <img loading="lazy" decoding="async" src="assets/man.webp" alt="" width="1536" height="1024">
+    <div class="men-copy">
+      <div class="men-text">
+        <span class="eye light">Für Männer</span>
+        <h2>Ein Produkt. <em>Alles drin</em></h2>
+        <p>Men Face: Feuchtigkeitspflege, Rasurpflege und Schutz vor Umwelteinflüssen in einem Schritt. Morgens nach dem Waschen auftragen, fertig.</p>
+        <button type="button" class="btn btn-light" data-open="men">Details ansehen <span class="arr">→</span></button>
+      </div>
+      <button type="button" class="men-prod" data-open="men"><img loading="lazy" decoding="async" src="assets/produkte/men-face.webp" alt="Men Face"><span><b>Men Face</b>All-in-one Gesichtspflege</span></button>
+    </div>
+  </div>
+</section>
+{{/if}}
+
 <!-- USPs · Bento -->
 <section class="why" id="vorteile">
   <div class="s-head">
@@ -1377,51 +1422,56 @@ footer { background: var(--green-deep); }
 
   <div class="bento">
     <article class="bento-card photo tall reveal">
-      <img loading="lazy" decoding="async" src="assets/innen.webp" alt="" width="1024" height="1024">
+      <img loading="lazy" decoding="async" src="assets/drink.webp" alt="" width="1024" height="1024">
       <div class="bento-over">
         <span class="eyebrow">Nicht nur von außen</span>
-        <h3>Der Beauty-Drink wirkt von innen mit.</h3>
-        <p>Biotin und Zink tragen zur Erhaltung normaler Haut und Haare bei, Vitamin C zur normalen Kollagenbildung.¹ Ein Glas am Tag.</p>
+        <h3>Der Beauty-Drink kommt von innen dazu</h3>
+        <p>Biotin und Zink tragen zur Erhaltung normaler Haut und Haare bei, Vitamin C zur normalen Kollagenbildung.¹ Ein Glas am Tag, Beerengeschmack.</p>
       </div>
     </article>
 
     <article class="bento-card photo wide reveal">
-      <img loading="lazy" decoding="async" src="assets/aussen.webp" alt="" width="1024" height="1024">
+      <img loading="lazy" decoding="async" src="assets/ntc.webp" alt="" width="1024" height="1024">
       <div class="bento-over">
-        <span class="eyebrow">Patentierte Technologie</span>
-        <h3>NTC®: Nährstoffe kommen an, wo sie gebraucht werden.</h3>
-        <p>Das Nährstoff-Transportkonzept des Herstellers, über 100 Patente stehen dahinter.</p>
+        <span class="eyebrow">Patentierte Technologie · NTC®</span>
+        <h3>Nährstoffe dorthin, wo sie gebraucht werden</h3>
+        <p>„Das exklusive Nährstoff-Transportkonzept (NTC®) bringt die Nährstoffe, wenn sie gebraucht werden, dorthin, wo sie gebraucht werden – auf die Zellebene von innen und außen.“ Über 100 Patente stehen dahinter.²</p>
       </div>
     </article>
 
     <article class="bento-card stat reveal">
       <b class="big">1993</b>
-      <h3>Seit über 30 Jahren.</h3>
-      <p>Du bestellst direkt beim Hersteller, zu offiziellen Preisen. Lieferung in 2 bis 4 Werktagen.</p>
+      <h3>Seit über 30 Jahren</h3>
+      <p>Produktion nach GMP-Standard, regelmäßig unabhängig geprüft, nachvollziehbar per QR-Code auf jedem Produkt. Du bestellst direkt beim Hersteller.</p>
     </article>
 
     <article class="bento-card reveal">
       <span class="eyebrow">Was drin ist</span>
-      <h3>Wirkstoffe, die man kennt.</h3>
+      <h3>Wirkstoffe, die man kennt</h3>
       <div class="bento-chips"><span>Hyaluron</span><span>Ceramid</span><span>Peptid</span><span>Bakuchiol</span><span>Ectoin</span><span>Niacinamid</span><span>Q10</span></div>
     </article>
 
-    <article class="bento-card photo reveal">
-      <img loading="lazy" decoding="async" src="assets/routine-morgen.webp" alt="" width="1536" height="1024">
+    <article class="bento-card faces wide reveal">
+      <div class="faces-grid">
+        <img loading="lazy" decoding="async" src="assets/skin-young.webp" alt="" width="1024" height="1024">
+        <img loading="lazy" decoding="async" src="assets/skin-mature.webp" alt="" width="1024" height="1024">
+        <img loading="lazy" decoding="async" src="assets/skin-man.webp" alt="" width="1024" height="1024">
+        <img loading="lazy" decoding="async" src="assets/skin-asian.webp" alt="" width="1024" height="1024">
+      </div>
       <div class="bento-over">
         <span class="eyebrow">Für jede Haut</span>
-        <h3>Zwei Tagescremes. Eine Nacht.</h3>
-        <p>4ever für normale, 4ever enriched für trockene Haut. Nachts für alle dieselbe.</p>
+        <h3>Ob 20 oder 60, Frau oder Mann</h3>
+        <p>Zwei Tagescremes für normale und trockene Haut, eine Nachtcreme für alle, ein eigenes Produkt für Männer. Was zu dir passt, klären wir im Beauty-Check.</p>
       </div>
     </article>
 
-    <article class="bento-card sand wide reveal">
+    <article class="bento-card sand reveal">
       <div class="guar-badge"><b>30</b><span>Tage</span></div>
-      <h3>Geld-zurück-Garantie.</h3>
+      <h3>Geld-zurück-Garantie</h3>
       <p>Passt ein Produkt nicht, schickst du es innerhalb von 30 Tagen zurück. Garantiegeber ist der Hersteller, Bedingungen laut Shop.</p>
     </article>
   </div>
-  <p class="foot-note wrap" style="margin-top:18px">¹ Zugelassene Angaben nach VO (EU) 432/2012 für den Beauty-Drink (Nahrungsergänzungsmittel). NTC® ist eine eingetragene Marke der PM-International AG.</p>
+  <p class="foot-note wrap" style="margin-top:18px">¹ Zugelassene Angaben nach VO (EU) 432/2012 für den Beauty-Drink (Nahrungsergänzungsmittel). ² Markenaussage des Herstellers (PM-International AG); NTC® ist eine eingetragene Marke der PM-International AG.</p>
 </section>
 
 <!-- ÜBER MICH -->
@@ -1594,7 +1644,7 @@ footer { background: var(--green-deep); }
     <div class="footer-cols">
       <div class="footer-col">
         <div class="footer-col-title"><span class="l-de">Die Seite</span></div>
-        <a href="#konzept"><span class="l-de">Innen &amp; außen</span></a>
+        <a href="#prinzip"><span class="l-de">Innen &amp; außen</span></a>
         <a href="#routine"><span class="l-de">Die Routine</span></a>
         <a href="#check"><span class="l-de">Beauty-Check</span></a>
       </div>
