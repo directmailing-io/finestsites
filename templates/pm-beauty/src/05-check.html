@@ -1,4 +1,4 @@
-<!-- SKINSCAN / BEAUTY-CHECK -->
+<!-- BEAUTY-CHECK -->
 <section class="check" id="check">
   <div class="check-grid">
     <div class="check-phone reveal">
@@ -6,18 +6,18 @@
       {{#unless scanner_anzeigen=an}}<img loading="lazy" decoding="async" src="assets/scan-selfie.webp" alt="" width="1024" height="1024">{{/unless}}
     </div>
     <div class="check-copy">
-      <h2>{{#if scanner_anzeigen=an}}<span class="l-de">Dein Skinscan</span><span class="l-en">Your skin scan</span>{{/if}}{{#unless scanner_anzeigen=an}}<span class="l-de">Dein Beauty-Check</span><span class="l-en">Your beauty check</span>{{/unless}}</h2>
-      <p class="lead"><span class="l-de">{{#if scanner_anzeigen=an}}Ein Selfie bei Tageslicht. Die App schaut auf Feuchtigkeit, Poren, Fältchen und Ausstrahlung. Danach schauen wir gemeinsam, was du wirklich brauchst.{{/if}}{{#unless scanner_anzeigen=an}}Eine halbe Stunde für deine Haut. Du erzählst, ich höre zu, und am Ende weißt du, was du brauchst und was nicht.{{/unless}}</span><span class="l-en">{{#if scanner_anzeigen=an}}One daylight selfie. The app looks at hydration, pores, fine lines and radiance. Then we look together at what you really need.{{/if}}{{#unless scanner_anzeigen=an}}Half an hour for your skin. You talk, I listen, and in the end you know what you need and what you don't.{{/unless}}</span></p>
+      <h2><span class="l-de">Was braucht <strong>deine</strong> Haut?</span><span class="l-en">What does <strong>your</strong> skin need?</span></h2>
+      <p class="lead"><span class="l-de">{{#if scanner_anzeigen=an}}Ein Selfie bei Tageslicht reicht. Die App schaut auf Feuchtigkeit, Poren, Fältchen und Ausstrahlung und zeigt dir deine Werte. Ich erkläre dir, was sie bedeuten.{{/if}}{{#unless scanner_anzeigen=an}}Du erzählst mir, wie sich deine Haut anfühlt und was du dir wünschst. Ich sage dir ehrlich, was du brauchst und was nicht.{{/unless}}</span><span class="l-en">{{#if scanner_anzeigen=an}}One daylight selfie is enough. The app looks at hydration, pores, fine lines and radiance and shows you your values. I explain what they mean.{{/if}}{{#unless scanner_anzeigen=an}}You tell me how your skin feels and what you wish for. I'll tell you honestly what you need and what you don't.{{/unless}}</span></p>
       <ol class="ck-steps">
-        <li><i>1</i><div><span class="l-de">Kurz kennenlernen</span><span class="l-en">A quick hello</span><span><span class="l-de">Wie fühlt sich deine Haut an, was wünschst du dir?</span><span class="l-en">How does your skin feel, what do you wish for?</span></span></div></li>
-        <li><i>2</i><div>{{#if scanner_anzeigen=an}}<span class="l-de">Selfie und Auswertung</span><span class="l-en">Selfie and analysis</span><span><span class="l-de">Elf Werte in der App. Wir schauen sie gemeinsam an.</span><span class="l-en">Eleven values in the app. We look at them together.</span></span>{{/if}}{{#unless scanner_anzeigen=an}}<span class="l-de">Gemeinsam hinschauen</span><span class="l-en">Take a closer look</span><span><span class="l-de">Vor Ort, per Video oder am Telefon.</span><span class="l-en">In person, by video or on the phone.</span></span>{{/unless}}</div></li>
-        <li><i>3</i><div><span class="l-de">Deine Routine</span><span class="l-en">Your routine</span><span><span class="l-de">Morgens, abends, innen. Ob du startest, entscheidest du.</span><span class="l-en">Morning, evening, inside. Whether you start is up to you.</span></span></div></li>
+        <li><i>1</i><div>{{#if scanner_anzeigen=an}}<span class="l-de">Selfie machen</span><span class="l-en">Take a selfie</span><span><span class="l-de">In der App, dauert eine Minute.</span><span class="l-en">In the app, takes a minute.</span></span>{{/if}}{{#unless scanner_anzeigen=an}}<span class="l-de">Kurz erzählen</span><span class="l-en">Tell me briefly</span><span><span class="l-de">Wie fühlt sich deine Haut an?</span><span class="l-en">How does your skin feel?</span></span>{{/unless}}</div></li>
+        <li><i>2</i><div><span class="l-de">Werte verstehen</span><span class="l-en">Understand the values</span><span><span class="l-de">Wir schauen sie gemeinsam an.</span><span class="l-en">We look at them together.</span></span></div></li>
+        <li><i>3</i><div><span class="l-de">Deine Routine bekommen</span><span class="l-en">Get your routine</span><span><span class="l-de">Nur das, was zu dir passt.</span><span class="l-en">Only what suits you.</span></span></div></li>
       </ol>
       <div class="ck-ctas">
-        <a href="#kontakt" class="btn btn-primary">{{#if scanner_anzeigen=an}}<span class="l-de">Skinscan vereinbaren</span><span class="l-en">Book a skin scan</span>{{/if}}{{#unless scanner_anzeigen=an}}<span class="l-de">Beauty-Check vereinbaren</span><span class="l-en">Book a beauty check</span>{{/unless}} <span class="arr">→</span></a>
-        {{#if whatsapp_nummer}}<a href="https://wa.me/{{whatsapp_nummer}}?text=Hi%20{{vorname}}%2C%20ich%20interessiere%20mich%20f%C3%BCr%20den%20Skinscan." target="_blank" rel="noopener" class="link-more"><span class="l-de">Lieber per WhatsApp</span><span class="l-en">Rather on WhatsApp</span></a>{{/if}}
+        <a href="#kontakt" class="btn btn-primary"><span class="l-de">Beauty-Check sichern</span><span class="l-en">Get a beauty check</span> <span class="arr">→</span></a>
+        <span class="ck-free"><span class="l-de">Kostenlos, per Video, Telefon oder WhatsApp</span><span class="l-en">Free, by video, phone or WhatsApp</span></span>
       </div>
-      <p class="ck-note"><span class="l-de">Kostenlos und unverbindlich.{{#if region}} Vor Ort {{region}}, sonst per Video oder Telefon.{{/if}}{{#if scanner_anzeigen=an}} Der Skinscan ist eine kosmetische Einschätzung per App, keine medizinische Untersuchung.{{/if}}</span><span class="l-en">Free and without obligation.{{#if region}} In person {{region}}, otherwise by video or phone.{{/if}}{{#if scanner_anzeigen=an}} The skin scan is a cosmetic assessment via the app, not a medical examination.{{/if}}</span></p>
+      {{#if scanner_anzeigen=an}}<p class="ck-note"><span class="l-de">Die Hautanalyse in der App ist eine kosmetische Einschätzung, keine medizinische Untersuchung.</span><span class="l-en">The skin analysis in the app is a cosmetic assessment, not a medical examination.</span></p>{{/if}}
     </div>
   </div>
 </section>

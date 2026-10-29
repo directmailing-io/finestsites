@@ -102,7 +102,7 @@ p { color: var(--ink-2); }
 .foot-note { font-size: 13px; line-height: 1.55; color: var(--ink-3); }
 section { padding: clamp(72px, 10vh, 130px) var(--pad-x); position: relative; }
 .s-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 32px; margin-bottom: clamp(36px, 5vh, 64px); }
-.s-head h2 { max-width: 20ch; }
+.s-head h2 { max-width: 26ch; }
 .s-head p { max-width: 420px; font-size: 16.5px; }
 .s-num { display: none; }
 
@@ -809,6 +809,9 @@ img {
 
 /* Übernommene Regeln anpassen */
 .wrap { padding: 0; }
+.nav-links { gap: 22px; font-size: 14.5px; white-space: nowrap; }
+.nav-cta { white-space: nowrap; }
+.brand-text { white-space: nowrap; }
 .brand { font-weight: 600; }
 .nav-cta { font-weight: 600; }
 .btn-primary { font-weight: 600; }
@@ -825,8 +828,9 @@ img {
 .hero-ctas { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; margin-bottom: 30px; }
 .link-more { font-weight: 500; color: var(--ink); border-bottom: 1px solid var(--line-2); padding-bottom: 2px; transition: border-color .2s; }
 .link-more:hover { border-color: var(--ink); }
-.hero-facts { font-size: 14px; color: var(--ink-3); display: flex; gap: 12px; flex-wrap: wrap; }
-.hero-facts span + span::before { content: '·'; margin-right: 12px; }
+.hero-facts { font-size: 13.5px; color: var(--ink-2); display: flex; gap: 8px 22px; flex-wrap: wrap; padding-top: 22px; border-top: 1px solid var(--line); }
+.hero-facts > span { display: inline-flex; align-items: center; gap: 7px; font-weight: 500; }
+.hero-facts svg { width: 17px; height: 17px; color: var(--green-dark); flex-shrink: 0; }
 
 /* ============ KENNST DU DAS ============ */
 .know { background: var(--bg); padding-bottom: clamp(40px, 6vh, 72px); }
@@ -837,16 +841,26 @@ img {
 .know-bridge { max-width: var(--max); margin: 26px auto 0; font-family: var(--display); font-size: clamp(20px, 2vw, 28px); font-weight: 300; color: var(--ink); line-height: 1.35; }
 
 /* ============ INNEN & AUSSEN ============ */
-.duo { background: var(--paper); }
-.duo-stage { position: relative; max-width: var(--max); margin: 0 auto; aspect-ratio: 16 / 9; border-radius: var(--r); overflow: hidden; background: var(--bg-2); }
-.duo-stage img { width: 100%; height: 100%; object-fit: cover; object-position: center 20%; }
-.duo-word { position: absolute; top: 50%; transform: translateY(-50%); font-family: var(--display); font-size: clamp(44px, 9vw, 150px); font-weight: 300; letter-spacing: -0.02em; line-height: 1; color: var(--ink); mix-blend-mode: multiply; opacity: .85; }
-.duo-word.left { left: clamp(20px, 5vw, 72px); }
-.duo-word.right { right: clamp(20px, 5vw, 72px); }
-.duo-cols { max-width: var(--max); margin: clamp(28px, 4vh, 48px) auto 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(20px, 3vw, 48px); }
-.duo-col h3 { margin-bottom: 8px; }
-.duo-col p { font-size: 16.5px; max-width: 360px; }
-.duo-note { max-width: var(--max); margin: 28px auto 0; }
+:root { --aussen: #F1DDD2; --aussen-ink: #A3623F; --innen: #E6C4D1; --innen-ink: #7A2E46; }
+html[data-theme="salbei"] { --aussen: #E7E9DC; --aussen-ink: #6B7A55; --innen: #DCE5E0; --innen-ink: #2F5A4A; }
+html[data-theme="sand"] { --aussen: #F0E2D0; --aussen-ink: #9A6B3E; --innen: #E8D3CB; --innen-ink: #7F4A3C; }
+.duo { background: var(--paper); padding-top: 0; }
+.duo-stage { position: relative; height: clamp(420px, 60vw, 760px); overflow: hidden; display: grid; grid-template-columns: 1fr 1fr; }
+.duo-half { position: relative; display: flex; align-items: center; }
+.duo-half.aussen { background: var(--aussen); justify-content: flex-start; padding-left: clamp(20px, 6vw, 96px); }
+.duo-half.innen { background: var(--innen); justify-content: flex-end; padding-right: clamp(20px, 6vw, 96px); }
+.duo-word { font-family: var(--display); font-size: clamp(40px, 8.5vw, 140px); font-weight: 300; letter-spacing: -0.02em; line-height: 1; }
+.duo-half.aussen .duo-word { color: var(--aussen-ink); }
+.duo-half.innen .duo-word { color: var(--innen-ink); }
+.duo-person { position: absolute; left: 50%; bottom: 0; transform: translateX(-50%); height: 104%; width: auto; max-width: none; object-fit: contain; object-position: bottom; filter: drop-shadow(0 30px 40px rgba(60,20,30,0.25)); }
+.duo-cols { max-width: var(--max); margin: clamp(28px, 4vh, 48px) auto 0; padding: 0 var(--pad-x); display: grid; grid-template-columns: 1fr 1fr; gap: clamp(20px, 3vw, 48px); }
+.duo-col h3 { margin-bottom: 6px; }
+.duo-col.c-aussen h3 { color: var(--aussen-ink); }
+.duo-col.c-innen h3 { color: var(--innen-ink); }
+.duo-col p { font-size: 17px; max-width: 460px; }
+.duo-result { max-width: var(--max); margin: 26px auto 0; padding: 0 var(--pad-x); font-family: var(--display); font-size: clamp(22px, 2.4vw, 34px); font-weight: 300; line-height: 1.3; color: var(--ink); }
+.duo-result strong { font-weight: 500; }
+.duo-note { max-width: var(--max); margin: 22px auto 0; padding: 0 var(--pad-x); }
 
 /* ============ ROUTINE ============ */
 .routine { background: var(--bg); }
@@ -872,7 +886,7 @@ img {
 .check-phone img { width: 100%; height: 100%; object-fit: cover; }
 /* Skinscan: Ring aus kurzen grünen Strichen um das Gesicht, das Leuchten wandert im Kreis */
 .scan-ring { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; }
-.scan-ring line { stroke: #3DD27A; stroke-linecap: round; vector-effect: non-scaling-stroke; stroke-width: 4px; opacity: .35; animation: scanPulse 3.2s linear infinite; filter: drop-shadow(0 0 2px rgba(61,210,122,0.6)); }
+.scan-ring line { stroke: #4CCB7F; stroke-linecap: round; vector-effect: non-scaling-stroke; stroke-width: 6px; opacity: .35; animation: scanPulse 3.2s linear infinite; filter: drop-shadow(0 0 2px rgba(61,210,122,0.6)); }
 @keyframes scanPulse { 0% { opacity: .3; } 8% { opacity: 1; } 22% { opacity: .55; } 100% { opacity: .3; } }
 @media (prefers-reduced-motion: reduce) { .scan-ring line { animation: none; opacity: .8; } }
 .check-copy h2 { margin: 14px 0 20px; max-width: 12ch; }
@@ -883,6 +897,7 @@ img {
 .ck-steps i { font-style: normal; font-size: 15px; font-weight: 600; color: var(--green-dark); line-height: 1; }
 .ck-steps li span { display: block; font-size: 14.5px; color: var(--ink-3); margin-top: 2px; }
 .ck-ctas { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; }
+.ck-free { font-size: 14px; color: var(--ink-3); }
 .ck-note { margin-top: 18px; font-size: 13.5px; color: var(--ink-3); max-width: 520px; }
 
 /* ============ VORTEILE · Bento ============ */
@@ -912,39 +927,49 @@ img {
 .guar-badge span { font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 600; margin-top: 4px; }
 
 /* ============ PRODUKTE ============ */
-.products { background: var(--paper); }
-.pr-groups { max-width: var(--max); margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: clamp(24px, 4vw, 56px) clamp(32px, 5vw, 80px); }
-.pr-group h3 { font-size: 15px; font-family: var(--font); font-weight: 500; letter-spacing: 0.06em; color: var(--ink-3); margin-bottom: 6px; padding-bottom: 10px; border-bottom: 1px solid var(--line-2); display: flex; justify-content: space-between; }
-.pr-group h3 em { font-style: normal; color: var(--ink-3); letter-spacing: 0; font-weight: 400; }
-.pr-row { width: 100%; display: grid; grid-template-columns: 64px 1fr 22px; gap: 16px; align-items: center; padding: 13px 0; border-bottom: 1px solid var(--line); text-align: left; transition: background .15s; border-radius: 10px; }
-.pr-row:hover { background: var(--bg); }
-.pr-row:last-child { border-bottom: 0; }
-.pr-thumb { width: 64px; height: 64px; border-radius: 16px; background: var(--bg); overflow: hidden; display: flex; align-items: center; justify-content: center; color: var(--green-dark); }
-.pr-thumb img { width: 100%; height: 100%; object-fit: cover; }
-.pr-thumb.noimg img { display: none; }
-.pr-thumb svg { width: 20px; height: 20px; opacity: .55; display: none; }
-.pr-thumb.noimg svg { display: block; }
-.pr-row b { display: block; font-weight: 500; font-size: 17px; color: var(--ink); }
-.pr-row span { display: block; font-size: 14px; color: var(--ink-3); margin-top: 1px; }
-.pr-row .meta { display: flex; flex-wrap: wrap; gap: 4px 10px; margin-top: 5px; font-size: 12.5px; color: var(--ink-2); }
-.pr-row .meta i { font-style: normal; display: inline-flex; align-items: center; gap: 5px; }
-.pr-row .meta i::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: var(--green); }
-.pr-row .chev { width: 22px; height: 22px; color: var(--ink-3); }
-.pr-cta { max-width: var(--max); margin: clamp(28px, 4vh, 48px) auto 0; background: var(--green-deep); color: #fff; border-radius: var(--r); padding: clamp(28px, 4vw, 44px); display: grid; grid-template-columns: 1fr minmax(260px, 340px); gap: 32px; align-items: center; }
-.pr-cta-side { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.14); border-radius: var(--r-sm); padding: 20px; display: grid; gap: 12px; }
-.pr-cta-side .who { display: flex; align-items: center; gap: 12px; }
-.pr-cta-side .who img { width: 48px; height: 48px; border-radius: 50%; object-fit: cover; }
-.pr-cta-side .who b { display: block; font-size: 15px; }
-.pr-cta-side .who span { font-size: 13px; color: rgba(255,255,255,0.65); }
-.pr-cta-side ul { list-style: none; display: grid; gap: 6px; font-size: 14px; color: rgba(255,255,255,0.85); }
-.pr-cta-side li { display: flex; gap: 8px; align-items: center; }
-.pr-cta-side li::before { content: '✓'; color: var(--accent); font-weight: 700; }
-.pr-cta h3 { color: #fff; font-size: clamp(24px, 2.6vw, 36px); max-width: 18ch; margin-bottom: 8px; }
-.pr-cta p { color: rgba(255,255,255,0.78); font-size: 16px; max-width: 520px; }
+.products { background: var(--paper); padding: 0 0 clamp(72px, 10vh, 130px); }
+.pr-stage { position: relative; height: clamp(300px, 42vw, 560px); overflow: hidden; background: var(--bg-2); }
+.pr-stage img { width: 100%; height: 100%; object-fit: cover; object-position: center 35%; }
+.pr-stage::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(255,253,252,0) 55%, var(--paper) 100%); }
+.pr-stage-copy { max-width: var(--max); margin: -10px auto 0; padding: 0 var(--pad-x); position: relative; z-index: 2; }
+.pr-stage-copy p { font-size: 17px; max-width: 520px; margin-top: 10px; }
+.pr-wrap { max-width: var(--max); margin: 0 auto; padding: clamp(28px, 4vh, 48px) var(--pad-x) 0; display: grid; gap: clamp(28px, 4vh, 44px); }
+.pr-block-head { display: flex; align-items: baseline; gap: 14px; margin-bottom: 14px; }
+.pr-block-head h3 { font-size: clamp(20px, 2vw, 26px); }
+.pr-block-head > span { font-size: 14px; color: var(--ink-3); }
+.pr-tiles { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+.pr-tiles.small { grid-template-columns: repeat(5, 1fr); }
+.pr-tiles.three { grid-template-columns: repeat(3, 1fr); max-width: 760px; }
+.pr-tile { position: relative; text-align: center; background: var(--bg); border: 1px solid var(--line); border-radius: var(--r); padding: 16px 12px 16px; display: flex; flex-direction: column; align-items: center; gap: 4px; transition: transform .2s var(--ease), box-shadow .2s, border-color .2s; }
+.pr-tile:hover { transform: translateY(-3px); box-shadow: 0 18px 36px -22px rgba(60,20,30,0.3); border-color: var(--line-2); }
+.pr-tile img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: var(--r-sm); margin-bottom: 8px; }
+.pr-tile b { font-weight: 500; font-size: 15px; color: var(--ink); line-height: 1.25; }
+.pr-tile b small { font-weight: 400; color: var(--ink-3); font-size: 12px; }
+.pr-tile > span:last-child { font-size: 13px; color: var(--ink-3); }
+.pr-step { position: absolute; left: 12px; top: 12px; width: 26px; height: 26px; border-radius: 50%; background: var(--paper); border: 1px solid var(--line-2); font-size: 12.5px; font-weight: 600; color: var(--green-dark); display: flex; align-items: center; justify-content: center; }
+.pr-tile.innen .pr-step { background: var(--innen); color: var(--innen-ink); border-color: transparent; }
+.pr-tiles.small .pr-tile { padding: 12px 10px 14px; }
+.pr-tiles.small .pr-tile b { font-size: 14px; }
+.pr-cta { background: var(--green-deep); color: #fff; border-radius: var(--r); padding: clamp(28px, 4vw, 44px); display: grid; grid-template-columns: 1.15fr 1fr; gap: 32px; align-items: center; }
+.pr-cta h3 { color: #fff; font-size: clamp(26px, 2.8vw, 38px); margin-bottom: 10px; max-width: 16ch; }
+.pr-cta h3 strong { font-weight: 500; color: var(--accent); }
+.pr-cta p { color: rgba(255,255,255,0.78); font-size: 16px; max-width: 480px; margin-bottom: 22px; }
 .pr-cta .btn-primary { background: #fff; color: var(--green-deep); }
 .pr-cta .btn-primary:hover { background: var(--green-soft); color: var(--green-deep); }
-.pr-foot { max-width: var(--max); margin: 22px auto 0; display: flex; justify-content: space-between; gap: 20px; align-items: center; flex-wrap: wrap; }
-.pr-foot .foot-note { max-width: 640px; }
+/* Ergebnis-UI (Beispiel, neutral gestaltet) */
+.result-ui { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.14); border-radius: var(--r); padding: 20px 20px 16px; display: grid; gap: 14px; max-width: 400px; justify-self: end; width: 100%; }
+.ru-head { display: flex; justify-content: space-between; font-size: 13px; color: rgba(255,255,255,0.7); }
+.ru-head em { font-style: normal; color: #fff; }
+.ru-score { display: grid; grid-template-columns: 110px 1fr; align-items: center; gap: 14px; }
+.ru-score svg { width: 110px; }
+.ru-score b { display: block; font-family: var(--display); font-size: 40px; font-weight: 300; line-height: 1; }
+.ru-score > span { font-size: 13px; color: rgba(255,255,255,0.65); }
+.ru-tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.ru-tiles > div { background: rgba(255,255,255,0.08); border-radius: var(--r-sm); padding: 10px 12px; font-size: 13px; color: rgba(255,255,255,0.85); }
+.ru-tiles i { display: block; height: 5px; border-radius: 100px; background: rgba(255,255,255,0.14); margin-top: 8px; position: relative; overflow: hidden; }
+.ru-tiles i::after { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: var(--v, 50%); background: var(--c, #3DD27A); border-radius: 100px; }
+.ru-foot { font-size: 12px; color: rgba(255,255,255,0.55); }
+.pr-note { margin-top: 6px; }
 
 /* Produkt-Fenster */
 .pm-modal { position: fixed; inset: 0; z-index: 200; display: none; align-items: flex-end; justify-content: center; }
@@ -1051,6 +1076,9 @@ img {
 
 /* ============ RESPONSIVE ============ */
 @media (max-width: 1024px) {
+  .pr-tiles, .pr-tiles.small { grid-template-columns: repeat(3, 1fr); }
+  .pr-cta { grid-template-columns: 1fr; }
+  .result-ui { justify-self: stretch; max-width: none; }
   .hero { grid-template-columns: 1fr; min-height: 0; }
   .hero-media { order: 1; min-height: 0; aspect-ratio: 4 / 3; }
   .hero-media::before { background: linear-gradient(180deg, transparent 55%, var(--bg) 100%); }
@@ -1077,10 +1105,14 @@ img {
   .hero-ctas { flex-direction: column; align-items: stretch; gap: 12px; }
   .hero-ctas .btn { justify-content: center; }
   .hero-ctas .link-more { text-align: center; border: 0; }
-  .duo-stage { aspect-ratio: 4 / 5; border-radius: 22px; }
-  .duo-stage img { object-position: center 25%; }
-  .duo-word { display: none; }
+  .duo-stage { height: auto; aspect-ratio: 4 / 5; }
+  .duo-half { align-items: flex-start; padding-top: 22px; }
+  .duo-half.aussen { padding-left: 18px; } .duo-half.innen { padding-right: 18px; }
+  .duo-word { font-size: clamp(30px, 10vw, 44px); }
+  .duo-person { height: 88%; }
   .duo-cols { grid-template-columns: 1fr; gap: 18px; }
+  .pr-tiles, .pr-tiles.small, .pr-tiles.three { grid-template-columns: repeat(2, 1fr); }
+  .pr-stage { height: auto; aspect-ratio: 16 / 10; }
   .bento { grid-template-columns: 1fr; }
   .bento-card, .bento-card.span2, .bento-card.span3 { grid-column: span 1; min-height: 0; }
   .bento-guar { grid-template-columns: 1fr; }
@@ -1112,9 +1144,7 @@ img {
       <span class="brand-text">{{vorname}} {{nachname}}</span>
     </a>
     <div class="nav-links">
-      <a href="#prinzip"><span class="l-de">Innen &amp; außen</span><span class="l-en">Inside &amp; out</span></a>
-      <a href="#check"><span class="l-de">Skinscan</span><span class="l-en">Skin scan</span></a>
-      <a href="#routine"><span class="l-de">Die Routine</span><span class="l-en">The routine</span></a>
+      <a href="#check"><span class="l-de">Beauty-Check</span><span class="l-en">Beauty check</span></a>
       <a href="#produkte"><span class="l-de">Produkte</span><span class="l-en">Products</span></a>
       <a href="#ueber"><span class="l-de">Über mich</span><span class="l-en">About me</span></a>
     </div>
@@ -1122,7 +1152,7 @@ img {
       <button type="button" class="kc-btn" id="kcBtn" aria-expanded="false" aria-controls="kcDrop"><span class="l-de">Kontakt</span><span class="l-en">Contact</span><svg class="kc-chev" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5l3 3 3-3" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button>
       <div class="kc-drop" id="kcDrop">
         {{#if whatsapp_nummer}}<a class="kc-item kc-ch" href="https://wa.me/{{whatsapp_nummer}}?text=Hi%20{{vorname}}%2C%20ich%20interessiere%20mich%20f%C3%BCr%20den%20Beauty-Check." target="_blank" rel="noopener"><span class="kc-ic kc-wa"><svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91C21.95 6.45 17.5 2 12.04 2zm0 18.15c-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.2 8.2 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.25-8.24 4.54 0 8.24 3.7 8.24 8.24 0 4.55-3.7 8.24-8.24 8.24zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.12-.17.25-.64.81-.78.97-.14.17-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.02-.38.11-.51.11-.11.25-.29.37-.43.13-.15.17-.25.25-.42.08-.17.04-.31-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.41-.42-.56-.43h-.48c-.17 0-.43.06-.66.31-.22.25-.86.85-.86 2.07 0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.67-1.18.21-.58.21-1.07.14-1.18-.06-.1-.22-.16-.47-.28z"/></svg></span><span><b><span class="l-de">Schreib mir auf WhatsApp</span><span class="l-en">Message me on WhatsApp</span></b><small><span class="l-de">Kurze Frage? Gern direkt.</span><span class="l-en">Quick question? Go ahead.</span></small></span></a>{{/if}}
-        <a class="kc-item" href="#kontakt"><span class="kc-ic kc-check"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg></span><span><b><span class="l-de">Skinscan vereinbaren</span><span class="l-en">Book a skin scan</span></b><small><span class="l-de">Kostenlos, unverbindlich, persönlich.</span><span class="l-en">Free, no strings, personal.</span></small></span></a>
+        <a class="kc-item" href="#kontakt"><span class="kc-ic kc-check"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg></span><span><b><span class="l-de">Beauty-Check sichern</span><span class="l-en">Get a beauty check</span></b><small><span class="l-de">Kostenlos, unverbindlich, persönlich.</span><span class="l-en">Free, no strings, personal.</span></small></span></a>
         <div class="kc-soc"><div class="kc-sep"></div><div class="kc-title"><span class="l-de">Folge mir auf</span><span class="l-en">Follow me on</span></div><div class="kc-pills">{{#if instagram_url}}<a class="kc-pill kc-ch" href="{{instagram_url}}" target="_blank" rel="noopener"><span class="kc-sic kc-ig"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><rect x="2.5" y="2.5" width="19" height="19" rx="5.5"/><circle cx="12" cy="12" r="4.3"/><circle cx="17.6" cy="6.4" r="1.2" fill="currentColor" stroke="none"/></svg></span>Instagram</a>{{/if}}{{#if facebook_url}}<a class="kc-pill kc-ch" href="{{facebook_url}}" target="_blank" rel="noopener"><span class="kc-sic kc-fb"><svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M13.9 21.8v-8.2h2.8l.4-3.3h-3.2V8.2c0-.9.3-1.6 1.6-1.6h1.7V3.7c-.3 0-1.3-.1-2.5-.1-2.5 0-4.2 1.5-4.2 4.3v2.4H7.7v3.3h2.8v8.2z"/></svg></span>Facebook</a>{{/if}}</div></div>
       </div>
     </div>
@@ -1136,7 +1166,7 @@ img {
         <span>EN</span>
       </button>
     </div>
-    <a href="#kontakt" class="nav-cta"><span class="l-de">Skinscan vereinbaren</span><span class="l-en">Book a skin scan</span></a>
+    <a href="#kontakt" class="nav-cta"><span class="l-de">Beauty-Check sichern</span><span class="l-en">Get a beauty check</span></a>
     <button type="button" class="nav-burger" id="navBurger" aria-label="Menü öffnen" aria-expanded="false">
       <span></span><span></span><span></span>
     </button>
@@ -1157,35 +1187,38 @@ img {
     </div>
     <nav class="nav-mobile-links">
       <a href="#prinzip"><span class="l-de">Innen &amp; außen</span><span class="l-en">Inside &amp; out</span></a>
-      <a href="#check"><span class="l-de">Skinscan</span><span class="l-en">Skin scan</span></a>
-      <a href="#routine"><span class="l-de">Die Routine</span><span class="l-en">The routine</span></a>
+      <a href="#check"><span class="l-de">Beauty-Check</span><span class="l-en">Beauty check</span></a>
       <a href="#produkte"><span class="l-de">Produkte</span><span class="l-en">Products</span></a>
       <a href="#ueber"><span class="l-de">Über mich</span><span class="l-en">About me</span></a>
       <a href="#faq"><span class="l-de">Fragen</span><span class="l-en">FAQ</span></a>
     </nav>
     <div class="menu-contacts"><p class="mc-title"><span class="l-de">Schreib mir direkt</span><span class="l-en">Message me directly</span></p><div class="mc-grid">{{#if whatsapp_nummer}}<a class="mc-wa kc-ch" href="https://wa.me/{{whatsapp_nummer}}?text=Hi%20{{vorname}}%2C%20ich%20interessiere%20mich%20f%C3%BCr%20den%20Beauty-Check." target="_blank" rel="noopener"><span class="mc-ic"><svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91C21.95 6.45 17.5 2 12.04 2zm0 18.15c-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.2 8.2 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.25-8.24 4.54 0 8.24 3.7 8.24 8.24 0 4.55-3.7 8.24-8.24 8.24zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.12-.17.25-.64.81-.78.97-.14.17-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.02-.38.11-.51.11-.11.25-.29.37-.43.13-.15.17-.25.25-.42.08-.17.04-.31-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.41-.42-.56-.43h-.48c-.17 0-.43.06-.66.31-.22.25-.86.85-.86 2.07 0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.67-1.18.21-.58.21-1.07.14-1.18-.06-.1-.22-.16-.47-.28z"/></svg></span><span class="l-de">Schreib mir auf WhatsApp</span><span class="l-en">Message me on WhatsApp</span></a>{{/if}}{{#if instagram_url}}<a class="mc-pill kc-ch" href="{{instagram_url}}" target="_blank" rel="noopener"><span class="kc-sic kc-ig"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><rect x="2.5" y="2.5" width="19" height="19" rx="5.5"/><circle cx="12" cy="12" r="4.3"/><circle cx="17.6" cy="6.4" r="1.2" fill="currentColor" stroke="none"/></svg></span><span class="mc-lbl">Instagram</span></a>{{/if}}{{#if facebook_url}}<a class="mc-pill kc-ch" href="{{facebook_url}}" target="_blank" rel="noopener"><span class="kc-sic kc-fb"><svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M13.9 21.8v-8.2h2.8l.4-3.3h-3.2V8.2c0-.9.3-1.6 1.6-1.6h1.7V3.7c-.3 0-1.3-.1-2.5-.1-2.5 0-4.2 1.5-4.2 4.3v2.4H7.7v3.3h2.8v8.2z"/></svg></span><span class="mc-lbl">Facebook</span></a>{{/if}}</div></div>
-    <a href="#kontakt" class="btn btn-primary nav-mobile-cta"><span class="l-de">Skinscan vereinbaren</span><span class="l-en">Book a skin scan</span> <span class="arr">→</span></a>
+    <a href="#kontakt" class="btn btn-primary nav-mobile-cta"><span class="l-de">Beauty-Check sichern</span><span class="l-en">Get a beauty check</span> <span class="arr">→</span></a>
   </div>
 </div>
 
 <!-- HERO -->
 <section class="hero">
   <div class="hero-copy">
-    <h1 class="reveal"><span class="l-de">Du wünschst dir <em>bessere Haut?</em></span><span class="l-en">Wishing for <em>better skin?</em></span></h1>
-    <p class="sub reveal"><span class="l-de">Dann fang nicht mit zehn Tiegeln an, sondern mit einem Blick auf deine Haut. Ich zeig dir, was sie braucht: von außen, von innen, in fünf Minuten am Tag.</span><span class="l-en">Then don't start with ten jars, start with a look at your skin. I'll show you what it needs: outside, inside, five minutes a day.</span></p>
+    <h1 class="reveal"><span class="l-de">Schönheit von innen <em>&amp;</em> außen</span><span class="l-en">Beauty from the inside <em>&amp;</em> out</span></h1>
+    <p class="sub reveal"><span class="l-de">Pflege, die deine Haut von außen versorgt. Ein Drink, der sie von innen unterstützt. Und ein kostenloser Beauty-Check, der dir zeigt, was du wirklich brauchst.</span><span class="l-en">Care that looks after your skin from the outside. A drink that supports it from the inside. And a free beauty check that shows you what you really need.</span></p>
     <div class="hero-ctas reveal">
-      <a href="#kontakt" class="btn btn-primary"><span class="l-de">Skinscan vereinbaren</span><span class="l-en">Book a skin scan</span> <span class="arr">→</span></a>
-      <a href="#konzept" class="link-more"><span class="l-de">Erst mal lesen</span><span class="l-en">Read first</span></a>
+      <a href="#kontakt" class="btn btn-primary"><span class="l-de">Beauty-Check sichern</span><span class="l-en">Get a beauty check</span> <span class="arr">→</span></a>
+      <a href="#produkte" class="link-more"><span class="l-de">Zu den Produkten</span><span class="l-en">See the products</span></a>
     </div>
     <div class="hero-contacts"><p class="mc-title"><span class="l-de">Schreib mir direkt</span><span class="l-en">Message me directly</span></p><div class="mc-grid">{{#if whatsapp_nummer}}<a class="mc-wa kc-ch" href="https://wa.me/{{whatsapp_nummer}}?text=Hi%20{{vorname}}%2C%20ich%20interessiere%20mich%20f%C3%BCr%20den%20Beauty-Check." target="_blank" rel="noopener"><span class="mc-ic"><svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91C21.95 6.45 17.5 2 12.04 2zm0 18.15c-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.2 8.2 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.25-8.24 4.54 0 8.24 3.7 8.24 8.24 0 4.55-3.7 8.24-8.24 8.24zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.12-.17.25-.64.81-.78.97-.14.17-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.02-.38.11-.51.11-.11.25-.29.37-.43.13-.15.17-.25.25-.42.08-.17.04-.31-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.41-.42-.56-.43h-.48c-.17 0-.43.06-.66.31-.22.25-.86.85-.86 2.07 0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.67-1.18.21-.58.21-1.07.14-1.18-.06-.1-.22-.16-.47-.28z"/></svg></span><span class="l-de">Schreib mir auf WhatsApp</span><span class="l-en">Message me on WhatsApp</span></a>{{/if}}{{#if instagram_url}}<a class="mc-pill kc-ch" href="{{instagram_url}}" target="_blank" rel="noopener"><span class="kc-sic kc-ig"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><rect x="2.5" y="2.5" width="19" height="19" rx="5.5"/><circle cx="12" cy="12" r="4.3"/><circle cx="17.6" cy="6.4" r="1.2" fill="currentColor" stroke="none"/></svg></span><span class="mc-lbl">Instagram</span></a>{{/if}}{{#if facebook_url}}<a class="mc-pill kc-ch" href="{{facebook_url}}" target="_blank" rel="noopener"><span class="kc-sic kc-fb"><svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M13.9 21.8v-8.2h2.8l.4-3.3h-3.2V8.2c0-.9.3-1.6 1.6-1.6h1.7V3.7c-.3 0-1.3-.1-2.5-.1-2.5 0-4.2 1.5-4.2 4.3v2.4H7.7v3.3h2.8v8.2z"/></svg></span><span class="mc-lbl">Facebook</span></a>{{/if}}</div></div>
-    <div class="hero-facts reveal"><span class="l-de">Kostenlos</span><span class="l-en">Free</span><span class="l-de">30 Minuten</span><span class="l-en">30 minutes</span><span class="l-de">Keine Kaufpflicht</span><span class="l-en">No obligation to buy</span></div>
+    <div class="hero-facts reveal">
+      <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 5-3.5 8.5-7 10-3.5-1.5-7-5-7-10V6z"/></svg><span class="l-de">Patentierte Technologie</span><span class="l-en">Patented technology</span></span>
+      <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span class="l-de">Hersteller seit 1993</span><span class="l-en">Manufacturer since 1993</span></span>
+      <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg><span class="l-de">30 Tage Geld-zurück</span><span class="l-en">30-day money-back</span></span>
+    </div>
   </div>
   <div class="hero-media">
     <img loading="eager" fetchpriority="high" decoding="async" src="assets/hero/{{hero_variante}}.webp" alt="" width="1536" height="1024">
   </div>
 </section>
 
-<!-- PM-International Hinweis (Pflicht laut Richtlinie: sichtbar oben auf der Seite) -->
+<!-- Hinweis Vertriebspartner (Pflicht laut Richtlinie: sichtbar oben auf der Seite) -->
 <div class="pm-disclaimer">
   <div class="pm-disclaimer-inner">
     <img loading="eager" decoding="async" class="pm-disclaimer-avatar" src="{{profilbild}}" alt="{{vorname}} {{nachname}}">
@@ -1196,44 +1229,30 @@ img {
   </div>
 </div>
 
-<!-- KENNST DU DAS -->
-<section class="know" id="konzept">
-  <div class="s-head wrap">
-    <h2><span class="l-de">Kennst du das?</span><span class="l-en">Sound familiar?</span></h2>
-  </div>
-  <div class="know-grid reveal">
-    <div class="know-card"><div class="q"><span class="l-de">„Zehn Tiegel im Bad, und ich weiß nicht, was zuerst kommt.“</span><span class="l-en">"Ten jars in the bathroom and no idea what goes first."</span></div><p><span class="l-de">Viel gekauft, wenig System. Die Hälfte steht nach zwei Wochen nur noch rum.</span><span class="l-en">Lots bought, no system. Half of it just sits there after two weeks.</span></p></div>
-    <div class="know-card"><div class="q"><span class="l-de">„Jede Woche ein neuer Tipp, und keiner passt zu mir.“</span><span class="l-en">"A new tip every week, and none of them fit me."</span></div><p><span class="l-de">Was der einen hilft, muss bei dir nicht passen. Deine Haut ist nicht der Algorithmus.</span><span class="l-en">What works for one person may not fit you. Your skin isn't the algorithm.</span></p></div>
-    <div class="know-card"><div class="q"><span class="l-de">„Ich will etwas, das ich wirklich durchhalte.“</span><span class="l-en">"I want something I'll actually stick with."</span></div><p><span class="l-de">Pflege wirkt nur, wenn du sie machst. Also muss sie kurz sein und zu deinem Alltag passen.</span><span class="l-en">Skin care only works if you do it. So it has to be short and fit your day.</span></p></div>
-  </div>
-  <p class="know-bridge reveal"><span class="l-de">Genau da setze ich an: erst schauen, was deine Haut braucht. Dann eine Routine, die bleibt.</span><span class="l-en">That's exactly where I start: first see what your skin needs. Then a routine that stays.</span></p>
-</section>
-
 <!-- INNEN & AUSSEN -->
 <section class="duo" id="prinzip">
   <div class="duo-stage reveal">
-    <img loading="lazy" decoding="async" src="assets/key-wide.webp" alt="" width="1536" height="1024">
-    <div class="duo-word left"><span class="l-de">Außen</span><span class="l-en">Outside</span></div>
-    <div class="duo-word right"><span class="l-de">Innen</span><span class="l-en">Inside</span></div>
+    <div class="duo-half aussen"><span class="duo-word"><span class="l-de">Außen</span><span class="l-en">Outside</span></span></div>
+    <div class="duo-half innen"><span class="duo-word"><span class="l-de">Innen</span><span class="l-en">Inside</span></span></div>
+    <img class="duo-person" loading="lazy" decoding="async" src="assets/cutout.webp" alt="" width="1024" height="1536">
   </div>
   <div class="duo-cols">
-    <div class="duo-col">
+    <div class="duo-col c-aussen">
       <h3><span class="l-de">Außen</span><span class="l-en">Outside</span></h3>
-      <p><span class="l-de">Reinigen, klären, pflegen. Morgens und abends ein paar Minuten.</span><span class="l-en">Cleanse, tone, nourish. A few minutes morning and night.</span></p>
+      <p><span class="l-de">Reinigen, Tagescreme, Nachtcreme. Morgens und abends ein paar Minuten.</span><span class="l-en">Cleanse, day cream, night cream. A few minutes morning and night.</span></p>
     </div>
-    <div class="duo-col">
+    <div class="duo-col c-innen">
       <h3><span class="l-de">Innen</span><span class="l-en">Inside</span></h3>
-      <p><span class="l-de">Ein Glas am Tag mit Vitamin C, Biotin und Zink.¹ Beerengeschmack, dauert eine Minute.</span><span class="l-en">One glass a day with vitamin C, biotin and zinc.¹ Berry flavour, takes a minute.</span></p>
-    </div>
-    <div class="duo-col">
-      <h3><span class="l-de">Zusammen</span><span class="l-en">Together</span></h3>
-      <p><span class="l-de">Kein Hexenwerk. Eine Routine, die du wirklich durchhältst.</span><span class="l-en">No magic. A routine you'll actually keep.</span></p>
+      <p><span class="l-de">Ein Glas am Tag mit Biotin, Zink und Vitamin C.¹ Beerengeschmack, in Wasser angerührt.</span><span class="l-en">One glass a day with biotin, zinc and vitamin C.¹ Berry flavour, stirred into water.</span></p>
     </div>
   </div>
-  <p class="foot-note duo-note"><span class="l-de">¹ Vitamin C trägt zu einer normalen Kollagenbildung für eine normale Funktion der Haut bei. Biotin und Zink tragen zur Erhaltung normaler Haut und Haare bei, Zink zur Erhaltung normaler Nägel. Nahrungsergänzungsmittel sind kein Ersatz für eine ausgewogene, abwechslungsreiche Ernährung und eine gesunde Lebensweise.</span><span class="l-en">¹ Vitamin C contributes to normal collagen formation for the normal function of the skin. Biotin and zinc contribute to the maintenance of normal skin and hair, zinc to the maintenance of normal nails. Food supplements are not a substitute for a balanced, varied diet and a healthy lifestyle.</span></p>
+  <div class="duo-result reveal">
+    <span class="l-de"><strong>Zusammen:</strong> eine Routine, die du wirklich durchhältst, weil sie kurz ist und zu dir passt.</span><span class="l-en"><strong>Together:</strong> a routine you'll actually keep, because it's short and fits you.</span>
+  </div>
+  <p class="foot-note duo-note"><span class="l-de">¹ Biotin und Zink tragen zur Erhaltung normaler Haut und Haare bei, Zink zur Erhaltung normaler Nägel, Vitamin C zu einer normalen Kollagenbildung für eine normale Funktion der Haut. Nahrungsergänzungsmittel sind kein Ersatz für eine ausgewogene, abwechslungsreiche Ernährung und eine gesunde Lebensweise.</span><span class="l-en">¹ Biotin and zinc contribute to the maintenance of normal skin and hair, zinc to the maintenance of normal nails, vitamin C to normal collagen formation for the normal function of the skin. Food supplements are not a substitute for a balanced, varied diet and a healthy lifestyle.</span></p>
 </section>
 
-<!-- SKINSCAN / BEAUTY-CHECK -->
+<!-- BEAUTY-CHECK -->
 <section class="check" id="check">
   <div class="check-grid">
     <div class="check-phone reveal">
@@ -1241,118 +1260,84 @@ img {
       {{#unless scanner_anzeigen=an}}<img loading="lazy" decoding="async" src="assets/scan-selfie.webp" alt="" width="1024" height="1024">{{/unless}}
     </div>
     <div class="check-copy">
-      <h2>{{#if scanner_anzeigen=an}}<span class="l-de">Dein Skinscan</span><span class="l-en">Your skin scan</span>{{/if}}{{#unless scanner_anzeigen=an}}<span class="l-de">Dein Beauty-Check</span><span class="l-en">Your beauty check</span>{{/unless}}</h2>
-      <p class="lead"><span class="l-de">{{#if scanner_anzeigen=an}}Ein Selfie bei Tageslicht. Die App schaut auf Feuchtigkeit, Poren, Fältchen und Ausstrahlung. Danach schauen wir gemeinsam, was du wirklich brauchst.{{/if}}{{#unless scanner_anzeigen=an}}Eine halbe Stunde für deine Haut. Du erzählst, ich höre zu, und am Ende weißt du, was du brauchst und was nicht.{{/unless}}</span><span class="l-en">{{#if scanner_anzeigen=an}}One daylight selfie. The app looks at hydration, pores, fine lines and radiance. Then we look together at what you really need.{{/if}}{{#unless scanner_anzeigen=an}}Half an hour for your skin. You talk, I listen, and in the end you know what you need and what you don't.{{/unless}}</span></p>
+      <h2><span class="l-de">Was braucht <strong>deine</strong> Haut?</span><span class="l-en">What does <strong>your</strong> skin need?</span></h2>
+      <p class="lead"><span class="l-de">{{#if scanner_anzeigen=an}}Ein Selfie bei Tageslicht reicht. Die App schaut auf Feuchtigkeit, Poren, Fältchen und Ausstrahlung und zeigt dir deine Werte. Ich erkläre dir, was sie bedeuten.{{/if}}{{#unless scanner_anzeigen=an}}Du erzählst mir, wie sich deine Haut anfühlt und was du dir wünschst. Ich sage dir ehrlich, was du brauchst und was nicht.{{/unless}}</span><span class="l-en">{{#if scanner_anzeigen=an}}One daylight selfie is enough. The app looks at hydration, pores, fine lines and radiance and shows you your values. I explain what they mean.{{/if}}{{#unless scanner_anzeigen=an}}You tell me how your skin feels and what you wish for. I'll tell you honestly what you need and what you don't.{{/unless}}</span></p>
       <ol class="ck-steps">
-        <li><i>1</i><div><span class="l-de">Kurz kennenlernen</span><span class="l-en">A quick hello</span><span><span class="l-de">Wie fühlt sich deine Haut an, was wünschst du dir?</span><span class="l-en">How does your skin feel, what do you wish for?</span></span></div></li>
-        <li><i>2</i><div>{{#if scanner_anzeigen=an}}<span class="l-de">Selfie und Auswertung</span><span class="l-en">Selfie and analysis</span><span><span class="l-de">Elf Werte in der App. Wir schauen sie gemeinsam an.</span><span class="l-en">Eleven values in the app. We look at them together.</span></span>{{/if}}{{#unless scanner_anzeigen=an}}<span class="l-de">Gemeinsam hinschauen</span><span class="l-en">Take a closer look</span><span><span class="l-de">Vor Ort, per Video oder am Telefon.</span><span class="l-en">In person, by video or on the phone.</span></span>{{/unless}}</div></li>
-        <li><i>3</i><div><span class="l-de">Deine Routine</span><span class="l-en">Your routine</span><span><span class="l-de">Morgens, abends, innen. Ob du startest, entscheidest du.</span><span class="l-en">Morning, evening, inside. Whether you start is up to you.</span></span></div></li>
+        <li><i>1</i><div>{{#if scanner_anzeigen=an}}<span class="l-de">Selfie machen</span><span class="l-en">Take a selfie</span><span><span class="l-de">In der App, dauert eine Minute.</span><span class="l-en">In the app, takes a minute.</span></span>{{/if}}{{#unless scanner_anzeigen=an}}<span class="l-de">Kurz erzählen</span><span class="l-en">Tell me briefly</span><span><span class="l-de">Wie fühlt sich deine Haut an?</span><span class="l-en">How does your skin feel?</span></span>{{/unless}}</div></li>
+        <li><i>2</i><div><span class="l-de">Werte verstehen</span><span class="l-en">Understand the values</span><span><span class="l-de">Wir schauen sie gemeinsam an.</span><span class="l-en">We look at them together.</span></span></div></li>
+        <li><i>3</i><div><span class="l-de">Deine Routine bekommen</span><span class="l-en">Get your routine</span><span><span class="l-de">Nur das, was zu dir passt.</span><span class="l-en">Only what suits you.</span></span></div></li>
       </ol>
       <div class="ck-ctas">
-        <a href="#kontakt" class="btn btn-primary">{{#if scanner_anzeigen=an}}<span class="l-de">Skinscan vereinbaren</span><span class="l-en">Book a skin scan</span>{{/if}}{{#unless scanner_anzeigen=an}}<span class="l-de">Beauty-Check vereinbaren</span><span class="l-en">Book a beauty check</span>{{/unless}} <span class="arr">→</span></a>
-        {{#if whatsapp_nummer}}<a href="https://wa.me/{{whatsapp_nummer}}?text=Hi%20{{vorname}}%2C%20ich%20interessiere%20mich%20f%C3%BCr%20den%20Skinscan." target="_blank" rel="noopener" class="link-more"><span class="l-de">Lieber per WhatsApp</span><span class="l-en">Rather on WhatsApp</span></a>{{/if}}
+        <a href="#kontakt" class="btn btn-primary"><span class="l-de">Beauty-Check sichern</span><span class="l-en">Get a beauty check</span> <span class="arr">→</span></a>
+        <span class="ck-free"><span class="l-de">Kostenlos, per Video, Telefon oder WhatsApp</span><span class="l-en">Free, by video, phone or WhatsApp</span></span>
       </div>
-      <p class="ck-note"><span class="l-de">Kostenlos und unverbindlich.{{#if region}} Vor Ort {{region}}, sonst per Video oder Telefon.{{/if}}{{#if scanner_anzeigen=an}} Der Skinscan ist eine kosmetische Einschätzung per App, keine medizinische Untersuchung.{{/if}}</span><span class="l-en">Free and without obligation.{{#if region}} In person {{region}}, otherwise by video or phone.{{/if}}{{#if scanner_anzeigen=an}} The skin scan is a cosmetic assessment via the app, not a medical examination.{{/if}}</span></p>
+      {{#if scanner_anzeigen=an}}<p class="ck-note"><span class="l-de">Die Hautanalyse in der App ist eine kosmetische Einschätzung, keine medizinische Untersuchung.</span><span class="l-en">The skin analysis in the app is a cosmetic assessment, not a medical examination.</span></p>{{/if}}
     </div>
   </div>
-</section>
-
-<!-- ROUTINE -->
-<section class="routine" id="routine">
-  <div class="s-head wrap">
-    <h2><span class="l-de">Meine Routine</span><span class="l-en">My routine</span></h2>
-    <p><span class="l-de">Fünf Minuten morgens, drei abends. Mehr ist es nicht.</span><span class="l-en">Five minutes in the morning, three at night. That's all.</span></p>
-  </div>
-
-  <div class="rt-banner reveal">
-    <figure><img loading="lazy" decoding="async" src="assets/routine-morgen.webp" alt="" width="1536" height="1024"><figcaption><span class="l-de">Morgens</span><span class="l-en">Morning</span></figcaption></figure>
-    <figure><img loading="lazy" decoding="async" src="assets/routine-abend.webp" alt="" width="1536" height="1024"><figcaption><span class="l-de">Abends</span><span class="l-en">Evening</span></figcaption></figure>
-  </div>
-
-  <div class="rt-cols reveal">
-    <div class="rt-col">
-      <h3><span class="l-de">Morgens</span><span class="l-en">Morning</span><span class="t"><span class="l-de">5 Minuten</span><span class="l-en">5 minutes</span></span></h3>
-      <div class="rt-step"><i>1</i><b><span class="l-de">Reinigen</span><span class="l-en">Cleanse</span></b><small>Cleansing Lotion</small></div>
-      <div class="rt-step"><i>2</i><b><span class="l-de">Klären</span><span class="l-en">Tone</span></b><small>Tonic</small></div>
-      <div class="rt-step"><i>3</i><b>Serum</b><small>Activize Serum</small></div>
-      <div class="rt-step"><i>4</i><b><span class="l-de">Tagespflege</span><span class="l-en">Day cream</span></b><small>4ever <span class="l-de">oder</span><span class="l-en">or</span> 4ever enriched</small></div>
-      <div class="rt-step"><i>5</i><b><span class="l-de">Trinken</span><span class="l-en">Drink</span></b><small>Beauty-Drink</small></div>
-    </div>
-    <div class="rt-col">
-      <h3><span class="l-de">Abends</span><span class="l-en">Evening</span><span class="t"><span class="l-de">3 Minuten</span><span class="l-en">3 minutes</span></span></h3>
-      <div class="rt-step"><i>1</i><b><span class="l-de">Reinigen</span><span class="l-en">Cleanse</span></b><small>Cleansing Lotion</small></div>
-      <div class="rt-step"><i>2</i><b><span class="l-de">Klären</span><span class="l-en">Tone</span></b><small>Tonic</small></div>
-      <div class="rt-step"><i>3</i><b>Serum</b><small>Activize Serum</small></div>
-      <div class="rt-step"><i>4</i><b><span class="l-de">Nachtpflege</span><span class="l-en">Night cream</span></b><small>4ever overnight enriched</small></div>
-    </div>
-  </div>
-  <p class="rt-foot"><span class="l-de">Das ist die Basis. Ob du alles davon brauchst, klären wir im Beauty-Check.</span><span class="l-en">That's the basics. Whether you need all of it, we'll sort out in the beauty check.</span></p>
 </section>
 
 <!-- PRODUKTE -->
 <section class="products" id="produkte">
-  <div class="s-head wrap">
-    <h2><span class="l-de">Was zur Auswahl steht</span><span class="l-en">What there is to choose from</span></h2>
-    <p><span class="l-de">Nicht alles davon ist für dich. Tipp auf ein Produkt: Was drin ist, wann du es nimmst und für welche Haut es passt.</span><span class="l-en">Not all of this is for you. Tap a product: what's in it, when to use it and which skin it suits.</span></p>
+  <div class="pr-stage">
+    <img loading="lazy" decoding="async" src="assets/lineup.webp" alt="" width="1536" height="1024">
+  </div>
+  <div class="pr-stage-copy">
+    <h2><span class="l-de">Was dir zur <strong>Auswahl</strong> steht</span><span class="l-en">What you can <strong>choose</strong> from</span></h2>
+    <p><span class="l-de">Vier Schritte für alle. Dazu ein paar Extras, falls du sie willst.</span><span class="l-en">Four steps for everyone. Plus a few extras, if you want them.</span></p>
   </div>
 
-  <div class="pr-groups">
-    <div class="pr-group">
-      <h3><span class="l-de">Reinigen</span><span class="l-en">Cleanse</span><em><span class="l-de">morgens &amp; abends</span><span class="l-en">morning &amp; night</span></em></h3>
-      <button type="button" class="pr-row" data-open="cleansing"><span class="pr-thumb"><img loading="lazy" decoding="async" src="assets/produkte/cleansing-lotion.webp" alt="" onerror="this.parentNode.classList.add('noimg')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 3c-3 4-6 6.5-6 10a6 6 0 0 0 12 0c0-3.5-3-6-6-10z"/></svg></span><span><b>Cleansing Lotion</b><span><span class="l-de">Milde Reinigung, ohne Spannungsgefühl</span><span class="l-en">Mild cleanser, no tight feeling</span></span><span class="meta"><i><span class="l-de">Morgens &amp; abends</span><span class="l-en">Morning &amp; night</span></i><i><span class="l-de">Alle Hauttypen</span><span class="l-en">All skin types</span></i></span></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
-      <button type="button" class="pr-row" data-open="tonic"><span class="pr-thumb"><img loading="lazy" decoding="async" src="assets/produkte/tonic.webp" alt="" onerror="this.parentNode.classList.add('noimg')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 3c-3 4-6 6.5-6 10a6 6 0 0 0 12 0c0-3.5-3-6-6-10z"/></svg></span><span><b>Tonic</b><span><span class="l-de">Klärt und bereitet die Haut vor</span><span class="l-en">Clarifies and preps the skin</span></span><span class="meta"><i><span class="l-de">Morgens &amp; abends</span><span class="l-en">Morning &amp; night</span></i><i><span class="l-de">Alle Hauttypen</span><span class="l-en">All skin types</span></i></span></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
+  <div class="pr-wrap">
+    <div class="pr-block">
+      <div class="pr-block-head"><h3><span class="l-de">Die Basis</span><span class="l-en">The basics</span></h3><span><span class="l-de">für jede Haut</span><span class="l-en">for every skin</span></span></div>
+      <div class="pr-tiles five">
+        <button type="button" class="pr-tile" data-open="cleansing"><span class="pr-step">1</span><img loading="lazy" decoding="async" src="assets/produkte/cleansing-lotion.webp" alt=""><b>Cleansing Lotion</b><span><span class="l-de">Reinigen</span><span class="l-en">Cleanse</span></span></button>
+        <button type="button" class="pr-tile" data-open="tonic"><span class="pr-step">2</span><img loading="lazy" decoding="async" src="assets/produkte/tonic.webp" alt=""><b>Tonic</b><span><span class="l-de">Klären</span><span class="l-en">Tone</span></span></button>
+        <button type="button" class="pr-tile" data-open="4ever"><span class="pr-step">3</span><img loading="lazy" decoding="async" src="assets/produkte/4ever.webp" alt=""><b>4ever <small class="l-de">oder</small><small class="l-en">or</small> enriched</b><span><span class="l-de">Tagescreme, je nach Hauttyp</span><span class="l-en">Day cream, by skin type</span></span></button>
+        <button type="button" class="pr-tile" data-open="overnight"><span class="pr-step">4</span><img loading="lazy" decoding="async" src="assets/produkte/4ever-overnight.webp" alt=""><b>4ever overnight</b><span><span class="l-de">Nachtcreme</span><span class="l-en">Night cream</span></span></button>
+        <button type="button" class="pr-tile innen" data-open="beauty"><span class="pr-step">+</span><img loading="lazy" decoding="async" src="assets/produkte/beauty-drink.webp" alt=""><b>Beauty-Drink</b><span><span class="l-de">Von innen, 1 × täglich</span><span class="l-en">From the inside, once a day</span></span></button>
+      </div>
     </div>
 
-    <div class="pr-group">
-      <h3><span class="l-de">Innen</span><span class="l-en">Inside</span><em><span class="l-de">einmal am Tag</span><span class="l-en">once a day</span></em></h3>
-      <button type="button" class="pr-row" data-open="beauty"><span class="pr-thumb"><img loading="lazy" decoding="async" src="assets/produkte/beauty-drink.webp" alt="" onerror="this.parentNode.classList.add('noimg')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 3h10l-1 18H8z"/><path d="M7.5 10h9"/></svg></span><span><b>Beauty-Drink</b><span><span class="l-de">Beerengeschmack, Vitamin C, Biotin, Zink¹</span><span class="l-en">Berry flavour, vitamin C, biotin, zinc¹</span></span><span class="meta"><i><span class="l-de">1 × täglich</span><span class="l-en">Once a day</span></i><i><span class="l-de">Für alle</span><span class="l-en">For everyone</span></i></span></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
+    <div class="pr-block">
+      <div class="pr-block-head"><h3><span class="l-de">Extras</span><span class="l-en">Extras</span></h3><span><span class="l-de">nur, wenn du sie willst</span><span class="l-en">only if you want them</span></span></div>
+      <div class="pr-tiles small">
+        <button type="button" class="pr-tile" data-open="serum"><img loading="lazy" decoding="async" src="assets/produkte/activize-serum.webp" alt=""><b>Activize Serum</b><span><span class="l-de">Frische &amp; Glow</span><span class="l-en">Freshness &amp; glow</span></span></button>
+        <button type="button" class="pr-tile" data-open="augen"><img loading="lazy" decoding="async" src="assets/produkte/augencreme.webp" alt=""><b><span class="l-de">Augencreme</span><span class="l-en">Eye cream</span></b><span><span class="l-de">Augenpartie</span><span class="l-en">Eye area</span></span></button>
+        <button type="button" class="pr-tile" data-open="darkspot"><img loading="lazy" decoding="async" src="assets/produkte/dark-spot-corrector.webp" alt=""><b>Dark Spot Corrector</b><span><span class="l-de">Ebenmäßiger Teint</span><span class="l-en">Even complexion</span></span></button>
+        <button type="button" class="pr-tile" data-open="ultimate"><img loading="lazy" decoding="async" src="assets/produkte/ultimate-young.webp" alt=""><b>Ultimate Young</b><span><span class="l-de">Soforteffekt</span><span class="l-en">Instant effect</span></span></button>
+        {{#if maenner_anzeigen=an}}<button type="button" class="pr-tile" data-open="men"><img loading="lazy" decoding="async" src="assets/produkte/men-face.webp" alt=""><b>Men Face</b><span><span class="l-de">Für Männer</span><span class="l-en">For men</span></span></button>{{/if}}
+      </div>
     </div>
 
-    <div class="pr-group">
-      <h3><span class="l-de">Pflegen</span><span class="l-en">Nourish</span><em><span class="l-de">Tag &amp; Nacht</span><span class="l-en">day &amp; night</span></em></h3>
-      <button type="button" class="pr-row" data-open="serum"><span class="pr-thumb"><img loading="lazy" decoding="async" src="assets/produkte/activize-serum.webp" alt="" onerror="this.parentNode.classList.add('noimg')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 3c-3 4-6 6.5-6 10a6 6 0 0 0 12 0c0-3.5-3-6-6-10z"/></svg></span><span><b>Activize Serum</b><span><span class="l-de">Frische und Glow, vor der Creme</span><span class="l-en">Freshness and glow, before the cream</span></span><span class="meta"><i><span class="l-de">Morgens &amp; abends</span><span class="l-en">Morning &amp; night</span></i><i><span class="l-de">Alle Hauttypen</span><span class="l-en">All skin types</span></i></span></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
-      <button type="button" class="pr-row" data-open="4ever"><span class="pr-thumb"><img loading="lazy" decoding="async" src="assets/produkte/4ever.webp" alt="" onerror="this.parentNode.classList.add('noimg')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 3c-3 4-6 6.5-6 10a6 6 0 0 0 12 0c0-3.5-3-6-6-10z"/></svg></span><span><b>4ever</b><span><span class="l-de">Tagespflege, normale bis Mischhaut</span><span class="l-en">Day cream, normal to combination skin</span></span><span class="meta"><i><span class="l-de">Morgens</span><span class="l-en">Morning</span></i><i><span class="l-de">Normal bis Mischhaut</span><span class="l-en">Normal to combination</span></i></span></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
-      <button type="button" class="pr-row" data-open="4ever-enriched"><span class="pr-thumb"><img loading="lazy" decoding="async" src="assets/produkte/4ever-enriched.webp" alt="" onerror="this.parentNode.classList.add('noimg')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 3c-3 4-6 6.5-6 10a6 6 0 0 0 12 0c0-3.5-3-6-6-10z"/></svg></span><span><b>4ever enriched</b><span><span class="l-de">Tagespflege, trockene bis reife Haut</span><span class="l-en">Day cream, dry to mature skin</span></span><span class="meta"><i><span class="l-de">Morgens</span><span class="l-en">Morning</span></i><i><span class="l-de">Trocken bis reif</span><span class="l-en">Dry to mature</span></i></span></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
-      <button type="button" class="pr-row" data-open="overnight"><span class="pr-thumb"><img loading="lazy" decoding="async" src="assets/produkte/4ever-overnight.webp" alt="" onerror="this.parentNode.classList.add('noimg')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></span><span><b>4ever overnight enriched</b><span><span class="l-de">Nachtpflege für alle Hauttypen</span><span class="l-en">Night cream for all skin types</span></span><span class="meta"><i><span class="l-de">Abends</span><span class="l-en">Evening</span></i><i><span class="l-de">Alle Hauttypen</span><span class="l-en">All skin types</span></i></span></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
+    <div class="pr-block">
+      <div class="pr-block-head"><h3><span class="l-de">Sets zum Starten</span><span class="l-en">Starter sets</span></h3><span><span class="l-de">günstiger als einzeln</span><span class="l-en">cheaper than individually</span></span></div>
+      <div class="pr-tiles small three">
+        <button type="button" class="pr-tile" data-open="set-young"><img loading="lazy" decoding="async" src="assets/produkte/set-young-care.webp" alt=""><b>Young Care</b><span><span class="l-de">Einstieg, jüngere Haut</span><span class="l-en">Starter, younger skin</span></span></button>
+        <button type="button" class="pr-tile" data-open="set-4ever"><img loading="lazy" decoding="async" src="assets/produkte/set-4ever.webp" alt=""><b>Starter Set 4ever</b><span><span class="l-de">Tag &amp; Nacht, normale Haut</span><span class="l-en">Day &amp; night, normal skin</span></span></button>
+        <button type="button" class="pr-tile" data-open="set-enriched"><img loading="lazy" decoding="async" src="assets/produkte/set-4ever-enriched.webp" alt=""><b>Starter Set enriched</b><span><span class="l-de">Tag &amp; Nacht, trockene Haut</span><span class="l-en">Day &amp; night, dry skin</span></span></button>
+      </div>
     </div>
 
-    <div class="pr-group">
-      <h3><span class="l-de">Wenn du magst</span><span class="l-en">If you like</span><em><span class="l-de">Ergänzungen</span><span class="l-en">extras</span></em></h3>
-      <button type="button" class="pr-row" data-open="augen"><span class="pr-thumb"><img loading="lazy" decoding="async" src="assets/produkte/augencreme.webp" alt="" onerror="this.parentNode.classList.add('noimg')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6z"/><circle cx="12" cy="12" r="3"/></svg></span><span><b><span class="l-de">Augencreme</span><span class="l-en">Eye cream</span></b><span><span class="l-de">Für die Augenpartie</span><span class="l-en">For the eye area</span></span><span class="meta"><i><span class="l-de">Morgens &amp; abends</span><span class="l-en">Morning &amp; night</span></i><i><span class="l-de">Alle Hauttypen</span><span class="l-en">All skin types</span></i></span></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
-      <button type="button" class="pr-row" data-open="darkspot"><span class="pr-thumb"><img loading="lazy" decoding="async" src="assets/produkte/dark-spot-corrector.webp" alt="" onerror="this.parentNode.classList.add('noimg')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 3c-3 4-6 6.5-6 10a6 6 0 0 0 12 0c0-3.5-3-6-6-10z"/></svg></span><span><b>Dark Spot Corrector</b><span><span class="l-de">Für einen ebenmäßigeren Teint</span><span class="l-en">For a more even complexion</span></span><span class="meta"><i><span class="l-de">Morgens &amp; abends</span><span class="l-en">Morning &amp; night</span></i><i><span class="l-de">Alle Hauttypen</span><span class="l-en">All skin types</span></i></span></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
-      <button type="button" class="pr-row" data-open="ultimate"><span class="pr-thumb"><img loading="lazy" decoding="async" src="assets/produkte/ultimate-young.webp" alt="" onerror="this.parentNode.classList.add('noimg')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2.5l2.3 4.7 5.2.8-3.7 3.6.9 5.2L12 14.3l-4.7 2.5.9-5.2L4.5 8l5.2-.8z"/></svg></span><span><b>Ultimate Young</b><span><span class="l-de">Soforteffekt für besondere Anlässe</span><span class="l-en">Instant effect for special occasions</span></span><span class="meta"><i><span class="l-de">Bei Bedarf</span><span class="l-en">As needed</span></i><i><span class="l-de">Alle Hauttypen</span><span class="l-en">All skin types</span></i></span></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
-      {{#if maenner_anzeigen=an}}
-      <button type="button" class="pr-row" data-open="men"><span class="pr-thumb"><img loading="lazy" decoding="async" src="assets/produkte/men-face.webp" alt="" onerror="this.parentNode.classList.add('noimg')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg></span><span><b>Men Face Rich &amp; Hydrating</b><span><span class="l-de">Alles in einem Schritt, für Männer</span><span class="l-en">All in one step, for men</span></span><span class="meta"><i><span class="l-de">Morgens &amp; abends</span><span class="l-en">Morning &amp; night</span></i><i><span class="l-de">Männerhaut</span><span class="l-en">Men's skin</span></i></span></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
-      {{/if}}
+    <div class="pr-cta reveal">
+      <div class="pr-cta-copy">
+        <h3><span class="l-de">Du brauchst nicht alles. <strong>Ich berate dich.</strong></span><span class="l-en">You don't need everything. <strong>I'll advise you.</strong></span></h3>
+        <p><span class="l-de">{{#if scanner_anzeigen=an}}Im Beauty-Check schauen wir auf deine Werte und du bekommst nur das, was zu deiner Haut passt.{{/if}}{{#unless scanner_anzeigen=an}}Im Beauty-Check schauen wir gemeinsam auf deine Haut und du bekommst nur das, was zu dir passt.{{/unless}}</span><span class="l-en">{{#if scanner_anzeigen=an}}In the beauty check we look at your values and you get only what suits your skin.{{/if}}{{#unless scanner_anzeigen=an}}In the beauty check we look at your skin together and you get only what suits you.{{/unless}}</span></p>
+        <a href="#kontakt" class="btn btn-primary"><span class="l-de">Beauty-Check sichern</span><span class="l-en">Get a beauty check</span> <span class="arr">→</span></a>
+      </div>
+      <div class="result-ui" aria-hidden="true">
+        <div class="ru-head"><span class="l-de">Dein Hautbild</span><span class="l-en">Your skin profile</span><em>{{vorname}}</em></div>
+        <div class="ru-score"><svg viewBox="0 0 120 70"><path d="M10 65 A50 50 0 0 1 110 65" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="10" stroke-linecap="round"/><path class="ru-arc" d="M10 65 A50 50 0 0 1 110 65" fill="none" stroke="#3DD27A" stroke-width="10" stroke-linecap="round" pathLength="100" stroke-dasharray="84 100"/></svg><b>84 %</b><span class="l-de">Gesamt</span><span class="l-en">Overall</span></div>
+        <div class="ru-tiles">
+          <div><span class="l-de">Feuchtigkeit</span><span class="l-en">Hydration</span><i style="--v:78%"></i></div>
+          <div><span class="l-de">Ausstrahlung</span><span class="l-en">Radiance</span><i style="--v:86%"></i></div>
+          <div><span class="l-de">Poren</span><span class="l-en">Pores</span><i style="--v:62%;--c:#E4B23A"></i></div>
+          <div><span class="l-de">Fältchen</span><span class="l-en">Fine lines</span><i style="--v:71%"></i></div>
+        </div>
+        <div class="ru-foot"><span class="l-de">Beispielwerte · Empfehlung: 4ever + Beauty-Drink</span><span class="l-en">Sample values · recommendation: 4ever + Beauty-Drink</span></div>
+      </div>
     </div>
 
-    <div class="pr-group">
-      <h3><span class="l-de">Zum Starten</span><span class="l-en">To get started</span><em><span class="l-de">Sets</span><span class="l-en">sets</span></em></h3>
-      <button type="button" class="pr-row" data-open="set-young"><span class="pr-thumb"><img loading="lazy" decoding="async" src="assets/produkte/set-young-care.webp" alt="" onerror="this.parentNode.classList.add('noimg')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a4 4 0 0 1 8 0v2"/></svg></span><span><b><span class="l-de">Einsteiger-Set Young Care</span><span class="l-en">Young Care starter set</span></b><span><span class="l-de">Reinigung, Tonic und Creme für den Anfang</span><span class="l-en">Cleanser, tonic and cream to start</span></span><span class="meta"><i><span class="l-de">Morgens &amp; abends</span><span class="l-en">Morning &amp; night</span></i><i><span class="l-de">Jüngere Haut, Einstieg</span><span class="l-en">Younger skin, starter</span></i></span></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
-      <button type="button" class="pr-row" data-open="set-4ever"><span class="pr-thumb"><img loading="lazy" decoding="async" src="assets/produkte/set-4ever.webp" alt="" onerror="this.parentNode.classList.add('noimg')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a4 4 0 0 1 8 0v2"/></svg></span><span><b>Starter Set 4ever</b><span><span class="l-de">Tag und Nacht, normale bis Mischhaut</span><span class="l-en">Day and night, normal to combination skin</span></span><span class="meta"><i><span class="l-de">Tag &amp; Nacht</span><span class="l-en">Day &amp; night</span></i><i><span class="l-de">Normal bis Mischhaut</span><span class="l-en">Normal to combination</span></i></span></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
-      <button type="button" class="pr-row" data-open="set-enriched"><span class="pr-thumb"><img loading="lazy" decoding="async" src="assets/produkte/set-4ever-enriched.webp" alt="" onerror="this.parentNode.classList.add('noimg')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a4 4 0 0 1 8 0v2"/></svg></span><span><b>Starter Set 4ever enriched</b><span><span class="l-de">Tag und Nacht, trockene bis reife Haut</span><span class="l-en">Day and night, dry to mature skin</span></span><span class="meta"><i><span class="l-de">Tag &amp; Nacht</span><span class="l-en">Day &amp; night</span></i><i><span class="l-de">Trocken bis reif</span><span class="l-en">Dry to mature</span></i></span></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
-    </div>
-  </div>
-
-  <div class="pr-cta reveal">
-    <div>
-      <h3>{{#if scanner_anzeigen=an}}<span class="l-de">Du weißt nicht, was du nehmen sollst?</span><span class="l-en">Not sure what to pick?</span>{{/if}}{{#unless scanner_anzeigen=an}}<span class="l-de">Du weißt nicht, was zu dir passt?</span><span class="l-en">Not sure what suits you?</span>{{/unless}}</h3>
-      <p>{{#if scanner_anzeigen=an}}<span class="l-de">Melde dich, wir machen zusammen den Skinscan. Danach weißt du, was deine Haut braucht und was nicht.</span><span class="l-en">Get in touch and we'll do the skin scan together. Afterwards you'll know what your skin needs and what it doesn't.</span>{{/if}}{{#unless scanner_anzeigen=an}}<span class="l-de">Melde dich, wir schauen gemeinsam auf deine Haut. Danach weißt du, was du brauchst und was nicht.</span><span class="l-en">Get in touch and we'll look at your skin together. Afterwards you'll know what you need and what you don't.</span>{{/unless}}</p>
-    </div>
-    <div class="pr-cta-side">
-      <div class="who"><img loading="lazy" decoding="async" src="{{profilbild}}" alt="{{vorname}} {{nachname}}"><div><b>{{vorname}} {{nachname}}</b><span class="l-de">{{#if geschlecht=weiblich}}Deine Beraterin{{/if}}{{#if geschlecht=maennlich}}Dein Berater{{/if}}</span><span class="l-en">Your advisor</span></div></div>
-      <ul>
-        <li><span class="l-de">Kostenlos und unverbindlich</span><span class="l-en">Free and without obligation</span></li>
-        <li><span class="l-de">Etwa 30 Minuten</span><span class="l-en">About 30 minutes</span></li>
-        <li><span class="l-de">Vor Ort, per Video oder Telefon</span><span class="l-en">In person, by video or phone</span></li>
-      </ul>
-      <a href="#kontakt" class="btn btn-primary">{{#if scanner_anzeigen=an}}<span class="l-de">Skinscan vereinbaren</span><span class="l-en">Book a skin scan</span>{{/if}}{{#unless scanner_anzeigen=an}}<span class="l-de">Beauty-Check vereinbaren</span><span class="l-en">Book a beauty check</span>{{/unless}} <span class="arr">→</span></a>
-    </div>
-  </div>
-
-  <div class="pr-foot">
-    <p class="foot-note"><span class="l-de">Verkauf und Versand ausschließlich über den offiziellen Shop der PM-International AG, dort stehen Preise und alle Inhaltsstoffe. ¹ Vitamin C trägt zu einer normalen Kollagenbildung für eine normale Funktion der Haut bei; Biotin und Zink tragen zur Erhaltung normaler Haut und Haare bei; Zink trägt zur Erhaltung normaler Nägel bei.</span><span class="l-en">Sales and shipping exclusively via the official PM-International AG shop, where prices and full ingredients are listed. ¹ Vitamin C contributes to normal collagen formation for the normal function of the skin; biotin and zinc contribute to the maintenance of normal skin and hair; zinc contributes to the maintenance of normal nails.</span></p>
-    <a class="link-more" data-shop="" href="#" target="_blank" rel="noopener"><span class="l-de">Alle Produkte im Hersteller-Shop</span><span class="l-en">All products in the manufacturer's shop</span> →</a>
+    <p class="foot-note pr-note"><span class="l-de">Verkauf und Versand ausschließlich über den offiziellen Shop des Herstellers (PM-International AG), dort stehen Preise und alle Inhaltsstoffe. ¹ Biotin und Zink tragen zur Erhaltung normaler Haut und Haare bei, Zink zur Erhaltung normaler Nägel, Vitamin C zu einer normalen Kollagenbildung für eine normale Funktion der Haut.</span><span class="l-en">Sales and shipping exclusively via the manufacturer's official shop (PM-International AG), where prices and full ingredients are listed. ¹ Biotin and zinc contribute to the maintenance of normal skin and hair, zinc to the maintenance of normal nails, vitamin C to normal collagen formation for the normal function of the skin.</span> <a class="link-more" data-shop="" href="#" target="_blank" rel="noopener"><span class="l-de">Zum Shop</span><span class="l-en">To the shop</span> →</a></p>
   </div>
 </section>
 
@@ -1365,18 +1350,37 @@ img {
   </div>
 </div>
 
-<!-- VORTEILE · Bento wie Dailyoptimal -->
+<!-- USPs · Bento -->
 <section class="why" id="vorteile">
   <div class="s-head wrap">
-    <h2><span class="l-de">Warum ich genau <strong>diese Linie</strong> nehme</span><span class="l-en">Why I use <strong>this line</strong></span></h2>
-    <p><span class="l-de">Sechs Gründe, die den Unterschied gemacht haben.</span><span class="l-en">Six reasons that made the difference.</span></p>
+    <h2><span class="l-de">Was diese Produkte <strong>anders</strong> macht</span><span class="l-en">What makes these products <strong>different</strong></span></h2>
   </div>
 
   <div class="bento wrap">
     <article class="bento-card dark span2 reveal">
       <span class="eyebrow"><span class="l-de">Patentierte Technologie</span><span class="l-en">Patented technology</span></span>
-      <h3><span class="l-de">Das NTC®. Damit Nährstoffe ankommen, wo sie gebraucht werden.</span><span class="l-en">NTC®. So nutrients arrive where they're needed.</span></h3>
-      <p><span class="l-de">Das Nährstoff-Transportkonzept von PM-International bringt die Nährstoffe dann, wenn sie gebraucht werden, dorthin, wo sie gebraucht werden: auf die Zellebene, von innen und außen. Über 100 nationale und internationale Patente stehen hinter diesem Ansatz.</span><span class="l-en">PM-International's nutrient transport concept delivers nutrients when they're needed, to where they're needed: to the cellular level, from the inside and out. More than 100 national and international patents stand behind this approach.</span></p>
+      <h3><span class="l-de">NTC®: Damit Nährstoffe ankommen, wo sie gebraucht werden.</span><span class="l-en">NTC®: so nutrients arrive where they're needed.</span></h3>
+      <p><span class="l-de">Das Nährstoff-Transportkonzept des Herstellers bringt die Nährstoffe dorthin, wo die Haut sie braucht: auf die Zellebene, von innen und außen. Über 100 Patente stehen dahinter.</span><span class="l-en">The manufacturer's nutrient transport concept delivers nutrients to where the skin needs them: to the cellular level, from the inside and out. More than 100 patents stand behind it.</span></p>
+    </article>
+
+    <article class="bento-card reveal">
+      <span class="eyebrow"><span class="l-de">Was drin ist</span><span class="l-en">What's inside</span></span>
+      <h3><span class="l-de">Wirkstoffe, die man kennt.</span><span class="l-en">Actives you know.</span></h3>
+      <div class="bento-chips">
+        <span>Hyaluron</span><span>Ceramid</span><span>Peptid</span><span>Bakuchiol</span><span>Ectoin</span><span>Niacinamid</span><span>Q10</span>
+      </div>
+    </article>
+
+    <article class="bento-card innen reveal">
+      <span class="eyebrow"><span class="l-de">Nicht nur von außen</span><span class="l-en">Not just from the outside</span></span>
+      <h3><span class="l-de">Der Beauty-Drink wirkt von innen mit.</span><span class="l-en">The beauty drink joins in from the inside.</span></h3>
+      <p><span class="l-de">Biotin und Zink tragen zur Erhaltung normaler Haut und Haare bei, Vitamin C zur normalen Kollagenbildung.¹ Ein Glas am Tag.</span><span class="l-en">Biotin and zinc contribute to the maintenance of normal skin and hair, vitamin C to normal collagen formation.¹ One glass a day.</span></p>
+    </article>
+
+    <article class="bento-card reveal">
+      <span class="eyebrow"><span class="l-de">Der Hersteller</span><span class="l-en">The manufacturer</span></span>
+      <h3><span class="l-de">Seit 1993. Direkt vom Hersteller.</span><span class="l-en">Since 1993. Straight from the maker.</span></h3>
+      <p><span class="l-de">Du bestellst im offiziellen Shop, zu offiziellen Preisen, Lieferung in 2 bis 4 Werktagen. Kein Zwischenhändler.</span><span class="l-en">You order from the official shop, at official prices, delivery in 2 to 4 working days. No middleman.</span></p>
     </article>
 
     <article class="bento-card reveal">
@@ -1385,41 +1389,16 @@ img {
       <ul class="bento-list">
         <li><b>4ever</b><span class="l-de">normale bis Mischhaut</span><span class="l-en">normal to combination</span></li>
         <li><b>4ever enriched</b><span class="l-de">trockene bis reife Haut</span><span class="l-en">dry to mature</span></li>
-        <li><b>overnight enriched</b><span class="l-de">nachts, für alle</span><span class="l-en">at night, for everyone</span></li>
+        <li><b>overnight</b><span class="l-de">nachts, für alle</span><span class="l-en">at night, for everyone</span></li>
       </ul>
-    </article>
-
-    <article class="bento-card reveal">
-      <span class="eyebrow"><span class="l-de">Was drin ist</span><span class="l-en">What's inside</span></span>
-      <h3><span class="l-de">Moderne Wirkstoffe.</span><span class="l-en">Modern actives.</span></h3>
-      <div class="bento-chips">
-        <span>Hyaluron</span><span>Ceramid</span><span>Peptid</span><span>Bakuchiol</span><span>Ectoin</span><span>Niacinamid</span><span>Q10</span><span>Koffein</span>
-      </div>
-      <p class="small"><span class="l-de">In Tagespflege, Nachtpflege, Serum und Dark Spot Corrector, laut Hersteller.</span><span class="l-en">In day cream, night cream, serum and Dark Spot Corrector, according to the manufacturer.</span></p>
-    </article>
-
-    <article class="bento-card reveal">
-      <span class="eyebrow"><span class="l-de">Von innen</span><span class="l-en">From the inside</span></span>
-      <h3><span class="l-de">Ein Glas am Tag.</span><span class="l-en">One glass a day.</span></h3>
-      <ul class="bento-list">
-        <li><b>Vitamin C</b><span class="l-de">normale Kollagenbildung für die Haut¹</span><span class="l-en">normal collagen formation for the skin¹</span></li>
-        <li><b>Biotin, Zink</b><span class="l-de">Erhaltung normaler Haut und Haare¹</span><span class="l-en">maintenance of normal skin and hair¹</span></li>
-        <li><b>Zink</b><span class="l-de">Erhaltung normaler Nägel¹</span><span class="l-en">maintenance of normal nails¹</span></li>
-      </ul>
-    </article>
-
-    <article class="bento-card reveal">
-      <span class="eyebrow"><span class="l-de">Der Hersteller</span><span class="l-en">The manufacturer</span></span>
-      <h3><span class="l-de">Seit 1993. Direkt vom Hersteller.</span><span class="l-en">Since 1993. Straight from the maker.</span></h3>
-      <p><span class="l-de">Alle Produkte werden exklusiv für die PM-International Gruppe entwickelt und hergestellt. Du bestellst direkt dort, zu offiziellen Preisen, Lieferung in 2 bis 4 Werktagen.</span><span class="l-en">All products are developed and made exclusively for the PM-International group. You order directly from them, at official prices, delivery in 2 to 4 working days.</span></p>
     </article>
 
     <article class="bento-card sand span3 reveal">
       <div class="bento-guar">
         <div>
-          <span class="eyebrow"><span class="l-de">Volle Zufriedenheit oder Geld zurück</span><span class="l-en">Full satisfaction or your money back</span></span>
+          <span class="eyebrow"><span class="l-de">Ohne Risiko</span><span class="l-en">No risk</span></span>
           <h3><span class="l-de">30 Tage Geld-zurück-Garantie.</span><span class="l-en">30-day money-back guarantee.</span></h3>
-          <p><span class="l-de">Wenn dir ein Produkt nicht passt, schickst du es innerhalb von 30 Tagen zurück und bekommst dein Geld wieder. Garantiegeber: PM-International AG, Bedingungen laut Hersteller-Shop.</span><span class="l-en">If a product isn't right for you, send it back within 30 days and get your money back. Guarantor: PM-International AG, terms as per the manufacturer's shop.</span></p>
+          <p><span class="l-de">Passt ein Produkt nicht zu dir, schickst du es innerhalb von 30 Tagen zurück und bekommst dein Geld wieder. Garantiegeber ist der Hersteller, Bedingungen laut Shop.</span><span class="l-en">If a product isn't right for you, send it back within 30 days and get your money back. The guarantor is the manufacturer, terms as per the shop.</span></p>
         </div>
         <div class="guar-badge"><b>30</b><span class="l-de">Tage</span><span class="l-en">days</span></div>
       </div>
@@ -1448,7 +1427,7 @@ img {
 <!-- FAQ -->
 <section id="faq">
   <div class="faq-wrap">
-    <h2><span class="l-de">Kurz gefragt</span><span class="l-en">Quick questions</span></h2>
+    <h2><span class="l-de">Antworten auf häufige Fragen</span><span class="l-en">Answers to common questions</span></h2>
     <div class="faq-list">
       <div class="faq-item">
         <button class="faq-q"><span class="l-de">Muss ich alles kaufen?</span><span class="l-en">Do I have to buy everything?</span> <span class="faq-plus"></span></button>
@@ -1459,8 +1438,8 @@ img {
         <div class="faq-a"><div class="faq-a-inner"><span class="l-de">Nichts. Kostenlos, unverbindlich, etwa eine halbe Stunde. Ob du danach etwas bestellst, entscheidest du.</span><span class="l-en">Nothing. Free, no obligation, about half an hour. Whether you order anything afterwards is up to you.</span></div></div>
       </div>
       <div class="faq-item">
-        <button class="faq-q"><span class="l-de">Online oder vor Ort?</span><span class="l-en">Online or in person?</span> <span class="faq-plus"></span></button>
-        <div class="faq-a"><div class="faq-a-inner"><span class="l-de">Wie du magst: vor Ort, per Videocall oder am Telefon. Am besten ungeschminkt, dann sehen wir deine Haut, wie sie ist.</span><span class="l-en">Whatever you prefer: in person, by video call or on the phone. Ideally without make-up, so we see your skin as it is.</span></div></div>
+        <button class="faq-q"><span class="l-de">Wie läuft der Beauty-Check ab?</span><span class="l-en">How does the beauty check work?</span> <span class="faq-plus"></span></button>
+        <div class="faq-a"><div class="faq-a-inner"><span class="l-de">Per Videocall, am Telefon oder über WhatsApp. Am besten ungeschminkt, dann sehen wir deine Haut, wie sie ist.</span><span class="l-en">By video call, on the phone or via WhatsApp. Ideally without make-up, so we see your skin as it is.</span></div></div>
       </div>
       <div class="faq-item">
         <button class="faq-q"><span class="l-de">Wo bestelle ich?</span><span class="l-en">Where do I order?</span> <span class="faq-plus"></span></button>
@@ -1474,11 +1453,34 @@ img {
   </div>
 </section>
 
-<!-- KONTAKT: drei Schritte wie bei Dailyoptimal -->
+<!-- MEINE ROUTINE -->
+<section class="routine" id="routine">
+  <div class="s-head wrap">
+    <h2><span class="l-de">Meine Routine</span><span class="l-en">My routine</span></h2>
+    <p><span class="l-de">So sieht das bei mir aus. Fünf Minuten morgens, drei abends.</span><span class="l-en">This is what it looks like for me. Five minutes in the morning, three at night.</span></p>
+  </div>
+  <div class="rt-cols reveal">
+    <div class="rt-col">
+      <h3><span class="l-de">Morgens</span><span class="l-en">Morning</span><span class="t"><span class="l-de">5 Minuten</span><span class="l-en">5 minutes</span></span></h3>
+      <div class="rt-step"><i>1</i><b><span class="l-de">Reinigen</span><span class="l-en">Cleanse</span></b><small>Cleansing Lotion</small></div>
+      <div class="rt-step"><i>2</i><b><span class="l-de">Klären</span><span class="l-en">Tone</span></b><small>Tonic</small></div>
+      <div class="rt-step"><i>3</i><b><span class="l-de">Tagescreme</span><span class="l-en">Day cream</span></b><small>4ever</small></div>
+      <div class="rt-step"><i>4</i><b><span class="l-de">Ein Glas trinken</span><span class="l-en">Drink a glass</span></b><small>Beauty-Drink</small></div>
+    </div>
+    <div class="rt-col">
+      <h3><span class="l-de">Abends</span><span class="l-en">Evening</span><span class="t"><span class="l-de">3 Minuten</span><span class="l-en">3 minutes</span></span></h3>
+      <div class="rt-step"><i>1</i><b><span class="l-de">Reinigen</span><span class="l-en">Cleanse</span></b><small>Cleansing Lotion</small></div>
+      <div class="rt-step"><i>2</i><b><span class="l-de">Klären</span><span class="l-en">Tone</span></b><small>Tonic</small></div>
+      <div class="rt-step"><i>3</i><b><span class="l-de">Nachtcreme</span><span class="l-en">Night cream</span></b><small>4ever overnight enriched</small></div>
+    </div>
+  </div>
+</section>
+
+<!-- KONTAKT: drei Schritte -->
 <section class="contact" id="kontakt">
   <div class="contact-head">
-    <h2><span class="l-de">Wie kann ich dir helfen?</span><span class="l-en">How can I help you?</span></h2>
-    <p class="lead"><span class="l-de">Drei kurze Fragen, dann weiß ich, worauf wir schauen. Kostenlos und unverbindlich.</span><span class="l-en">Three short questions, then I know what we'll look at. Free and without obligation.</span></p>
+    <h2><span class="l-de">Beauty-Check mit <strong>{{vorname}}</strong> sichern</span><span class="l-en">Get your beauty check with <strong>{{vorname}}</strong></span></h2>
+    <p class="lead"><span class="l-de">Drei kurze Fragen, dann melde ich mich bei dir. Kostenlos und unverbindlich.</span><span class="l-en">Three short questions, then I'll get in touch. Free and without obligation.</span></p>
   </div>
 
   <div class="cform" id="cform" data-step="1">
@@ -1489,16 +1491,15 @@ img {
       <input type="text" name="_honeypot" style="position:absolute;left:-9999px;opacity:0" tabindex="-1" autocomplete="off">
       <input type="hidden" name="anliegen" id="f-anliegen" value="">
       <input type="hidden" name="wuensche" id="f-wuensche" value="">
-      <input type="hidden" name="beratungsart" id="beratungsart" value="video">
+      <input type="hidden" name="kontaktweg" id="beratungsart" value="whatsapp">
 
       <!-- Schritt 1 -->
       <div class="f-step on" data-step="1">
         <h3><span class="l-de">Was trifft auf dich zu?</span><span class="l-en">What applies to you?</span></h3>
-        <p class="f-hint"><span class="l-de">Damit ich dich besser vorbereitet beraten kann.</span><span class="l-en">So I can prepare better for you.</span></p>
         <div class="f-opts" data-single>
-          <button type="button" class="f-opt" data-val="einfacher"><b><span class="l-de">Ich will meine Pflege einfacher machen</span><span class="l-en">I want to simplify my skin care</span></b><span><span class="l-de">Weniger Tiegel, klare Reihenfolge</span><span class="l-en">Fewer jars, a clear order</span></span></button>
-          <button type="button" class="f-opt" data-val="passend"><b><span class="l-de">Ich will wissen, was zu meiner Haut passt</span><span class="l-en">I want to know what suits my skin</span></b><span><span class="l-de">Hauttyp, Routine, Empfehlung</span><span class="l-en">Skin type, routine, recommendation</span></span></button>
-          <button type="button" class="f-opt" data-val="kennenlernen"><b><span class="l-de">Ich will das erst mal kennenlernen</span><span class="l-en">I'd like to get to know it first</span></b><span><span class="l-de">Was steckt dahinter, was kostet es</span><span class="l-en">What's behind it, what it costs</span></span></button>
+          <button type="button" class="f-opt" data-val="einfacher"><b><span class="l-de">Ich will meine Pflege einfacher machen</span><span class="l-en">I want to simplify my skin care</span></b></button>
+          <button type="button" class="f-opt" data-val="passend"><b><span class="l-de">Ich will wissen, was zu meiner Haut passt</span><span class="l-en">I want to know what suits my skin</span></b></button>
+          <button type="button" class="f-opt" data-val="kennenlernen"><b><span class="l-de">Ich will das Ganze erst mal kennenlernen</span><span class="l-en">I'd like to get to know it first</span></b></button>
         </div>
         <div class="f-nav"><span></span><button type="button" class="btn btn-primary f-next" disabled><span class="l-de">Weiter</span><span class="l-en">Next</span> <span class="arr">→</span></button></div>
       </div>
@@ -1521,28 +1522,26 @@ img {
       <!-- Schritt 3 -->
       <div class="f-step" data-step="3">
         <h3><span class="l-de">Wie erreiche ich dich?</span><span class="l-en">How do I reach you?</span></h3>
-        <p class="f-hint"><span class="l-de">Name und E-Mail reichen, der Rest ist optional.</span><span class="l-en">Name and email are enough, the rest is optional.</span></p>
         <div class="f-row"><input type="text" id="cf-name" name="name" required autocomplete="name" data-de-placeholder="Dein Name" data-en-placeholder="Your name" placeholder="Dein Name"></div>
         <div class="f-row"><input type="email" id="cf-email" name="email" required autocomplete="email" data-de-placeholder="Deine E-Mail" data-en-placeholder="Your email" placeholder="Deine E-Mail"></div>
         <div class="f-row"><input type="tel" id="cf-phone" name="phone" autocomplete="tel" data-de-placeholder="Telefon oder WhatsApp (optional)" data-en-placeholder="Phone or WhatsApp (optional)" placeholder="Telefon oder WhatsApp (optional)"></div>
         <div class="f-row">
-          <span class="f-label"><span class="l-de">Am liebsten</span><span class="l-en">Preferably</span></span>
+          <span class="f-label"><span class="l-de">Am liebsten per</span><span class="l-en">Preferably via</span></span>
           <div class="chips" id="chips">
-            <button type="button" class="chip" data-val="vor-ort"><span class="l-de">Vor Ort</span><span class="l-en">In person</span></button>
-            <button type="button" class="chip on" data-val="video"><span class="l-de">Videocall</span><span class="l-en">Video call</span></button>
-            <button type="button" class="chip" data-val="telefon"><span class="l-de">Telefon</span><span class="l-en">Phone</span></button>
+            <button type="button" class="chip on" data-val="whatsapp">WhatsApp</button>
+            <button type="button" class="chip" data-val="anruf"><span class="l-de">Anruf</span><span class="l-en">Call</span></button>
+            <button type="button" class="chip" data-val="email"><span class="l-de">E-Mail</span><span class="l-en">Email</span></button>
           </div>
         </div>
         <label class="f-check"><input type="checkbox" id="cf-consent" required><span><span class="l-de">Ich bin einverstanden, dass meine Angaben zur Kontaktaufnahme verwendet werden.</span><span class="l-en">I agree that my details may be used to contact me.</span></span></label>
-        <div class="f-nav"><button type="button" class="f-back"><span class="l-de">← Zurück</span><span class="l-en">← Back</span></button><button type="submit" class="btn btn-primary"><span class="l-de">Anfrage senden</span><span class="l-en">Send request</span> <span class="arr">→</span></button></div>
-        <p class="foot-note f-privacy"><span class="l-de">Kein Newsletter, keine Weitergabe. Nur ich melde mich.</span><span class="l-en">No newsletter, no sharing. Only I will reply.</span></p>
+        <div class="f-nav"><button type="button" class="f-back"><span class="l-de">← Zurück</span><span class="l-en">← Back</span></button><button type="submit" class="btn btn-primary"><span class="l-de">Beauty-Check sichern</span><span class="l-en">Get my beauty check</span> <span class="arr">→</span></button></div>
       </div>
     </form>
 
     <div class="cform-ok">
       <div class="ok-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
       <h3><span class="l-de">Danke<span id="successNameDe"></span>!</span><span class="l-en">Thanks<span id="successNameEn"></span>!</span></h3>
-      <p><span class="l-de">Deine Anfrage ist bei mir. Ich melde mich innerhalb von 24 Stunden persönlich, und wir machen einen Termin aus.</span><span class="l-en">Your request has reached me. I'll get back to you personally within 24 hours and we'll set a date.</span></p>
+      <p><span class="l-de">Deine Anfrage ist bei mir. Ich melde mich innerhalb von 24 Stunden persönlich bei dir.</span><span class="l-en">Your request has reached me. I'll get back to you personally within 24 hours.</span></p>
     </div>
   </div>
 
@@ -1550,20 +1549,20 @@ img {
     <img loading="lazy" decoding="async" src="{{profilbild}}" alt="{{vorname}} {{nachname}}">
     <div><b>{{vorname}} {{nachname}}</b><span class="l-de">{{#if geschlecht=weiblich}}Deine persönliche Beraterin{{/if}}{{#if geschlecht=maennlich}}Dein persönlicher Berater{{/if}}</span><span class="l-en">Your personal advisor</span></div>
     <div class="contact-card-btns">
-      {{#if whatsapp_nummer}}<a href="https://wa.me/{{whatsapp_nummer}}?text=Hi%20{{vorname}}%2C%20ich%20interessiere%20mich%20f%C3%BCr%20den%20Skinscan." target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91C21.95 6.45 17.5 2 12.04 2zm0 18.15c-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.2 8.2 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.25-8.24 4.54 0 8.24 3.7 8.24 8.24 0 4.55-3.7 8.24-8.24 8.24z"/></svg>WhatsApp</a>{{/if}}
+      {{#if whatsapp_nummer}}<a href="https://wa.me/{{whatsapp_nummer}}?text=Hi%20{{vorname}}%2C%20ich%20interessiere%20mich%20f%C3%BCr%20den%20Beauty-Check." target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91C21.95 6.45 17.5 2 12.04 2zm0 18.15c-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.2 8.2 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.25-8.24 4.54 0 8.24 3.7 8.24 8.24 0 4.55-3.7 8.24-8.24 8.24z"/></svg>WhatsApp</a>{{/if}}
       <a href="mailto:{{email_benachrichtigung}}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M3 7l9 6 9-6"/></svg>E-Mail</a>
     </div>
   </div>
 
   <div class="contact-shop">
-    <p><span class="l-de">Du weißt schon, was du willst? Dann bestell direkt beim Hersteller, 30 Tage Geld-zurück-Garantie.</span><span class="l-en">Already know what you want? Then order directly from the manufacturer, 30-day money-back guarantee.</span></p>
-    <a data-shop="" href="#" target="_blank" rel="noopener"><span class="l-de">Zum Hersteller-Shop</span><span class="l-en">To the manufacturer's shop</span> →</a>
+    <p><span class="l-de">Du weißt schon, was du willst? Dann bestell direkt im Shop des Herstellers, 30 Tage Geld-zurück-Garantie.</span><span class="l-en">Already know what you want? Then order directly from the manufacturer's shop, 30-day money-back guarantee.</span></p>
+    <a data-shop="" href="#" target="_blank" rel="noopener"><span class="l-de">Zum Shop</span><span class="l-en">To the shop</span> →</a>
   </div>
 </section>
 
 <!-- Sticky Mobile CTA -->
 <a href="#kontakt" class="sticky-cta" id="stickyCta">
-  <span class="l-de">Skinscan anfragen</span><span class="l-en">Request skin scan</span>
+  <span class="l-de">Beauty-Check sichern</span><span class="l-en">Get a beauty check</span>
   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
 </a>
 
@@ -1783,15 +1782,15 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape' && pmModal.cl
 // ============ Skinscan: Ring aus kurzen Strichen, das Leuchten läuft im Kreis ============
 (function () {
   const svg = document.getElementById('scanRing'); if (!svg) return;
-  const cx = 50, cy = 75, rx = 34, ry = 45, N = 64, ns = 'http://www.w3.org/2000/svg';
+  const cx = 50, cy = 75, rx = 38, ry = 48, N = 60, ns = 'http://www.w3.org/2000/svg';
   for (let i = 0; i < N; i++) {
     const a = (i / N) * Math.PI * 2;
     const nx = Math.cos(a) / rx, ny = Math.sin(a) / ry, len = Math.hypot(nx, ny);
     const ux = nx / len, uy = ny / len;
     const px = cx + rx * Math.cos(a), py = cy + ry * Math.sin(a);
     const l = document.createElementNS(ns, 'line');
-    l.setAttribute('x1', px - ux * 1.2); l.setAttribute('y1', py - uy * 1.2);
-    l.setAttribute('x2', px + ux * 2.4); l.setAttribute('y2', py + uy * 2.4);
+    l.setAttribute('x1', px - ux * 1.5); l.setAttribute('y1', py - uy * 1.5);
+    l.setAttribute('x2', px + ux * 3.0); l.setAttribute('y2', py + uy * 3.0);
     l.style.animationDelay = (-(i / N) * 3.2) + 's';
     svg.appendChild(l);
   }

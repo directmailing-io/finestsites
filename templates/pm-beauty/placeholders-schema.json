@@ -50,8 +50,20 @@
       "section": "Profil",
       "required": true,
       "card_options": [
-        { "color": "#FDF2F8", "label": "Weiblich", "value": "weiblich", "card_type": "color", "description": "Vertriebspartnerin, selbstständige …" },
-        { "color": "#EFF6FF", "label": "Männlich", "value": "maennlich", "card_type": "color", "description": "Vertriebspartner, selbstständiger …" }
+        {
+          "color": "#FDF2F8",
+          "label": "Weiblich",
+          "value": "weiblich",
+          "card_type": "color",
+          "description": "Vertriebspartnerin, selbstständige …"
+        },
+        {
+          "color": "#EFF6FF",
+          "label": "Männlich",
+          "value": "maennlich",
+          "card_type": "color",
+          "description": "Vertriebspartner, selbstständiger …"
+        }
       ],
       "default_value": "weiblich",
       "preview_value": "weiblich",
@@ -125,19 +137,6 @@
       "contact": true
     },
     {
-      "key": "region",
-      "type": "text",
-      "label": "Wo bist du vor Ort? (optional)",
-      "order": 13,
-      "section": "Kontakt",
-      "required": false,
-      "max_length": 60,
-      "default_value": "",
-      "preview_value": "in und um München",
-      "placeholder_text": "Wenn du den Beauty-Check auch persönlich anbietest: Schreib, wo. Steht dann unter dem Beauty-Check, z. B. „Vor Ort in und um München, sonst per Video oder Telefon“.",
-      "input_placeholder": "z. B. in und um München"
-    },
-    {
       "key": "farbthema",
       "type": "card_select",
       "label": "Farbthema",
@@ -145,10 +144,34 @@
       "section": "Design",
       "required": true,
       "card_options": [
-        { "color": "#C26A72", "label": "Rosé", "value": "rose", "card_type": "color", "description": "Warm, weich, feminin." },
-        { "color": "#B88A5A", "label": "Sand", "value": "sand", "card_type": "color", "description": "Natürlich, ruhig, edel." },
-        { "color": "#7B9A86", "label": "Salbei", "value": "salbei", "card_type": "color", "description": "Frisch, klar, pflanzlich." },
-        { "color": "#8A4A72", "label": "Pflaume", "value": "pflaume", "card_type": "color", "description": "Tief, elegant, abends." }
+        {
+          "color": "#C26A72",
+          "label": "Rosé",
+          "value": "rose",
+          "card_type": "color",
+          "description": "Warm, weich, feminin."
+        },
+        {
+          "color": "#B88A5A",
+          "label": "Sand",
+          "value": "sand",
+          "card_type": "color",
+          "description": "Natürlich, ruhig, edel."
+        },
+        {
+          "color": "#7B9A86",
+          "label": "Salbei",
+          "value": "salbei",
+          "card_type": "color",
+          "description": "Frisch, klar, pflanzlich."
+        },
+        {
+          "color": "#8A4A72",
+          "label": "Pflaume",
+          "value": "pflaume",
+          "card_type": "color",
+          "description": "Tief, elegant, abends."
+        }
       ],
       "default_value": "rose",
       "preview_value": "rose",
@@ -163,10 +186,34 @@
       "section": "Design",
       "required": true,
       "card_options": [
-        { "label": "Frau, natürlich", "value": "frau", "card_type": "image", "image_url": "/templates/pm-beauty/hero-previews/frau.webp", "description": "Anfang 30, Morgenlicht im Bad." },
-        { "label": "Frau, elegant", "value": "frau-50", "card_type": "image", "image_url": "/templates/pm-beauty/hero-previews/frau-50.webp", "description": "Um die 50, warm und entspannt." },
-        { "label": "Mann", "value": "mann", "card_type": "image", "image_url": "/templates/pm-beauty/hero-previews/mann.webp", "description": "Um die 40, locker im Bad." },
-        { "label": "Ohne Person", "value": "stillleben", "card_type": "image", "image_url": "/templates/pm-beauty/hero-previews/stillleben.webp", "description": "Creme, Glas und Beeren im Licht." }
+        {
+          "label": "Frau, natürlich",
+          "value": "frau",
+          "card_type": "image",
+          "image_url": "/templates/pm-beauty/hero-previews/frau.webp",
+          "description": "Anfang 30, Morgenlicht im Bad."
+        },
+        {
+          "label": "Frau, elegant",
+          "value": "frau-50",
+          "card_type": "image",
+          "image_url": "/templates/pm-beauty/hero-previews/frau-50.webp",
+          "description": "Um die 50, warm und entspannt."
+        },
+        {
+          "label": "Mann",
+          "value": "mann",
+          "card_type": "image",
+          "image_url": "/templates/pm-beauty/hero-previews/mann.webp",
+          "description": "Um die 40, locker im Bad."
+        },
+        {
+          "label": "Ohne Person",
+          "value": "stillleben",
+          "card_type": "image",
+          "image_url": "/templates/pm-beauty/hero-previews/stillleben.webp",
+          "description": "Creme, Glas und Beeren im Licht."
+        }
       ],
       "default_value": "frau",
       "preview_value": "frau",
@@ -175,13 +222,26 @@
     {
       "key": "scanner_anzeigen",
       "type": "card_select",
-      "label": "Hautanalyse mit dem FitLine AI Scanner anbieten?",
+      "label": "Hautanalyse per App anbieten?",
       "order": 30,
       "section": "Sektionen",
       "required": true,
       "card_options": [
-        { "label": "Anzeigen", "value": "an", "card_type": "image", "image_url": "/templates/pm-beauty/section-previews/section-scanner.webp", "description": "Beim Beauty-Check steht der Hinweis auf die Hautanalyse per App." },
-        { "color": "#F1F5F9", "label": "Ausblenden", "value": "aus", "card_type": "color", "image_url": "", "description": "Der Beauty-Check kommt ohne Hautanalyse aus." }
+        {
+          "label": "Anzeigen",
+          "value": "an",
+          "card_type": "image",
+          "image_url": "/templates/pm-beauty/section-previews/section-scanner.webp",
+          "description": "Beim Beauty-Check steht die Hautanalyse per App mit Scan-Bild."
+        },
+        {
+          "color": "#F1F5F9",
+          "label": "Ausblenden",
+          "value": "aus",
+          "card_type": "color",
+          "image_url": "",
+          "description": "Der Beauty-Check kommt ohne Hautanalyse aus."
+        }
       ],
       "display_mode": "section_toggle",
       "default_value": "aus",
@@ -190,7 +250,7 @@
       "toggle_off_value": "aus",
       "preview_interactive": true,
       "preview_anchor": "check",
-      "placeholder_text": "Nur einschalten, wenn der AI Scanner in deiner FitLine-App freigeschaltet ist. Dann steht beim Beauty-Check: „Auf Wunsch: Hautanalyse mit dem FitLine AI Scanner“."
+      "placeholder_text": "Nur einschalten, wenn der AI Scanner in deiner FitLine-App freigeschaltet ist. Dann zeigt die Seite den Beauty-Check mit Hautanalyse per App."
     },
     {
       "key": "maenner_anzeigen",
@@ -200,8 +260,21 @@
       "section": "Sektionen",
       "required": true,
       "card_options": [
-        { "label": "Anzeigen", "value": "an", "card_type": "image", "image_url": "/templates/pm-beauty/section-previews/section-men.webp", "description": "Men Face erscheint bei den Ergänzungen." },
-        { "color": "#F1F5F9", "label": "Ausblenden", "value": "aus", "card_type": "color", "image_url": "", "description": "Die Männerpflege wird nicht gezeigt." }
+        {
+          "label": "Anzeigen",
+          "value": "an",
+          "card_type": "image",
+          "image_url": "/templates/pm-beauty/section-previews/section-men.webp",
+          "description": "Men Face erscheint bei den Ergänzungen."
+        },
+        {
+          "color": "#F1F5F9",
+          "label": "Ausblenden",
+          "value": "aus",
+          "card_type": "color",
+          "image_url": "",
+          "description": "Die Männerpflege wird nicht gezeigt."
+        }
       ],
       "display_mode": "section_toggle",
       "default_value": "an",
@@ -257,7 +330,6 @@
     "email_benachrichtigung": "anna@example.com",
     "team_partner_number": "40237198",
     "whatsapp_nummer": "491761234567",
-    "region": "in und um München",
     "farbthema": "rose",
     "hero_variante": "frau",
     "scanner_anzeigen": "an",

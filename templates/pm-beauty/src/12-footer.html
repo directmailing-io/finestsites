@@ -214,15 +214,15 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape' && pmModal.cl
 // ============ Skinscan: Ring aus kurzen Strichen, das Leuchten läuft im Kreis ============
 (function () {
   const svg = document.getElementById('scanRing'); if (!svg) return;
-  const cx = 50, cy = 75, rx = 34, ry = 45, N = 64, ns = 'http://www.w3.org/2000/svg';
+  const cx = 50, cy = 75, rx = 38, ry = 48, N = 60, ns = 'http://www.w3.org/2000/svg';
   for (let i = 0; i < N; i++) {
     const a = (i / N) * Math.PI * 2;
     const nx = Math.cos(a) / rx, ny = Math.sin(a) / ry, len = Math.hypot(nx, ny);
     const ux = nx / len, uy = ny / len;
     const px = cx + rx * Math.cos(a), py = cy + ry * Math.sin(a);
     const l = document.createElementNS(ns, 'line');
-    l.setAttribute('x1', px - ux * 1.2); l.setAttribute('y1', py - uy * 1.2);
-    l.setAttribute('x2', px + ux * 2.4); l.setAttribute('y2', py + uy * 2.4);
+    l.setAttribute('x1', px - ux * 1.5); l.setAttribute('y1', py - uy * 1.5);
+    l.setAttribute('x2', px + ux * 3.0); l.setAttribute('y2', py + uy * 3.0);
     l.style.animationDelay = (-(i / N) * 3.2) + 's';
     svg.appendChild(l);
   }
