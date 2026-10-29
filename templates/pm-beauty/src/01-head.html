@@ -24,16 +24,22 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" as="image" href="assets/hero/{{hero_variante}}.webp" fetchpriority="high" type="image/webp">
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
-<link rel="preconnect" href="https://api.fontshare.com" crossorigin>
-<link href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600&display=swap" rel="stylesheet">
+<!-- Wunsch-Schriften (lizenzpflichtig): Sang Bleu Sunrise + Sofia Pro. Greifen automatisch, sobald die Dateien in assets/fonts/ liegen.
+     Bis dahin ähnliche freie Schriften als Ersatz: Gloock (statt Sang Bleu Sunrise) und Outfit (statt Sofia Pro). -->
+<link href="https://fonts.googleapis.com/css2?family=Gloock&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+@font-face { font-family: 'Sang Bleu Sunrise'; src: local('Sang Bleu Sunrise'), local('SangBleuSunrise-Regular'), url('assets/fonts/SangBleuSunrise-Regular.woff2') format('woff2'); font-weight: 400; font-display: swap; }
+@font-face { font-family: 'Sofia Pro'; src: local('Sofia Pro'), local('SofiaPro-Regular'), url('assets/fonts/SofiaPro-Regular.woff2') format('woff2'); font-weight: 400; font-display: swap; }
+@font-face { font-family: 'Sofia Pro'; src: local('Sofia Pro Medium'), local('SofiaPro-Medium'), url('assets/fonts/SofiaPro-Medium.woff2') format('woff2'); font-weight: 500; font-display: swap; }
+@font-face { font-family: 'Sofia Pro'; src: local('Sofia Pro SemiBold'), local('SofiaPro-SemiBold'), url('assets/fonts/SofiaPro-SemiBold.woff2') format('woff2'); font-weight: 600; font-display: swap; }
+</style>
 
 <style>
 :root {
-  --font: 'General Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --display: 'Instrument Serif', Georgia, 'Times New Roman', serif;
-  --mono: 'General Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-  --serif: 'Instrument Serif', Georgia, serif;
+  --font: 'Sofia Pro', 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --display: 'Sang Bleu Sunrise', 'Gloock', Georgia, 'Times New Roman', serif;
+  --mono: var(--font);
+  --serif: var(--display);
   --pad-x: clamp(20px, 4vw, 56px);
   --max: 1280px;
   --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
@@ -504,26 +510,56 @@ footer { background: var(--bg-2); }
   .contact-card-btns { grid-column: 1 / -1; }
 }
 
-/* ============ SCHRIFTPAAR: Instrument Serif (Überschriften) + General Sans (Text) ============ */
+/* ============ SCHRIFTPAAR: Sang Bleu Sunrise (Überschriften) + Sofia Pro (Text) ============ */
 h1, h2, h3, .faq-q, .pr-row .t b, .split-word b, .intro p.big, .bento-card .big, .guar-badge b, .pm-sheet h3 { font-family: var(--display); font-weight: 400; }
-h1 { font-size: clamp(54px, 8vw, 124px); line-height: 0.95; letter-spacing: -0.02em; }
-h2 { font-size: clamp(40px, 5vw, 72px); line-height: 1; letter-spacing: -0.015em; }
-h3 { font-size: clamp(26px, 2.4vw, 36px); line-height: 1.05; letter-spacing: -0.01em; }
-h1 em, h2 em { font-family: var(--display); font-style: italic; font-size: 1em; line-height: inherit; letter-spacing: -0.01em; }
-.split-word b { font-size: clamp(64px, 11vw, 190px); letter-spacing: -0.02em; line-height: 0.9; }
-.intro p.big { font-size: clamp(32px, 3.8vw, 56px); line-height: 1.1; letter-spacing: -0.01em; }
-.intro p.big em { font-family: var(--display); font-style: italic; }
-.bento-card .big { font-size: clamp(80px, 8vw, 128px); letter-spacing: -0.02em; }
-.guar-badge b { font-size: 52px; letter-spacing: 0; }
-.pr-row .t b { font-size: clamp(24px, 2.2vw, 32px); letter-spacing: -0.01em; line-height: 1.05; }
-.faq-q { font-size: clamp(22px, 1.9vw, 27px); letter-spacing: -0.005em; }
-.pm-sheet h3 { font-size: clamp(30px, 3.2vw, 40px); }
-.pr-cta h3, .split-col h3, .men-copy h2 { font-weight: 400; }
-.bento-card.photo h3, .bento-card.faces h3 { font-size: clamp(26px, 2.3vw, 34px); }
-/* Kennzeichen/Eyebrows in General Sans, versal mit Laufweite */
+h1 { font-size: clamp(48px, 6.6vw, 104px); line-height: 1.02; letter-spacing: -0.025em; }
+h2 { font-size: clamp(36px, 4.2vw, 62px); line-height: 1.06; letter-spacing: -0.02em; }
+h3 { font-size: clamp(23px, 2vw, 30px); line-height: 1.12; letter-spacing: -0.01em; }
+/* Zweifarbige Überschriften: Akzentwort in der Themenfarbe */
+h1 em, h2 em, h3 em { font-family: var(--display); font-style: normal; font-weight: 400; font-size: 1em; line-height: inherit; letter-spacing: inherit; color: var(--green); }
+.split-word b { font-size: clamp(60px, 10vw, 170px); letter-spacing: -0.03em; line-height: 0.92; }
+.bento-card .big { font-size: clamp(72px, 7vw, 112px); letter-spacing: -0.03em; }
+.guar-badge b { font-size: 46px; letter-spacing: 0; }
+.pr-row .t b { font-size: clamp(21px, 1.9vw, 27px); letter-spacing: -0.01em; line-height: 1.1; }
+.faq-q { font-size: clamp(19px, 1.6vw, 23px); }
+.pm-sheet h3 { font-size: clamp(26px, 2.8vw, 34px); }
+.pr-cta h3 em, .contact .s-head h2 strong, .men-copy h2 em { color: var(--accent); }
+.bento-card.photo h3, .bento-card.faces h3 { font-size: clamp(23px, 2vw, 30px); }
 .eye, .bento-card .eyebrow, .split-word small, .pm-tag, .pm-fact small, .pm-block h4 { font-family: var(--font); font-weight: 600; letter-spacing: 0.1em; }
 .split-col li b { font-family: var(--font); font-weight: 600; }
-body { font-feature-settings: "ss01" 0; }
 .hero h1 { max-width: none; } .hero h1 .nw { white-space: nowrap; }
+
+/* ============ INTRO zweigeteilt (Außen | Innen) ============ */
+.intro { position: relative; padding: 0; display: grid; grid-template-columns: 1fr 1fr; text-align: left; }
+.intro-eye { position: absolute; left: 50%; top: clamp(28px, 5vh, 52px); transform: translateX(-50%); z-index: 2; background: var(--paper); }
+.intro-half { padding: clamp(84px, 12vh, 128px) clamp(20px, 4vw, 64px) clamp(36px, 6vh, 64px); display: flex; flex-direction: column; gap: 10px; }
+.intro-half.l { background: var(--aussen); color: var(--aussen-deep); align-items: flex-end; text-align: right; }
+.intro-half.r { background: var(--innen); color: #fff; align-items: flex-start; text-align: left; }
+.intro p.big { font-size: clamp(26px, 3.4vw, 52px); line-height: 1.08; letter-spacing: -0.02em; color: inherit; max-width: 14ch; }
+.intro-half.l p.big em { color: #fff; }
+.intro-half.r p.big em { color: var(--aussen); }
+.intro p.small { font-size: clamp(14px, 1.1vw, 17px); opacity: .85; color: inherit; }
+.split-stage { border-top: 0; }
+
+/* ============ INNEN-KARTE: Nährstoff-Kacheln ============ */
+.nutri { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 6px; }
+.nutri > div { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.14); border-radius: var(--r-sm); padding: 16px 14px 14px; display: flex; flex-direction: column; gap: 3px; }
+.nutri b { font-family: var(--display); font-weight: 400; font-size: 40px; line-height: 1; color: var(--aussen); margin-bottom: 6px; }
+.nutri .n { font-weight: 600; font-size: 15px; color: #fff; }
+.nutri .for { font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: rgba(255,255,255,0.65); }
+.nutri small { font-size: 12.5px; line-height: 1.4; color: rgba(255,255,255,0.78); margin-top: 6px; }
+.drink-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+.drink-tags span { padding: 7px 12px; border-radius: 100px; background: rgba(255,255,255,0.12); color: #fff; font-size: 13px; font-weight: 500; }
+@media (max-width: 760px) {
+  .intro-half { padding: 88px 14px 28px; }
+  .intro-eye { top: 26px; }
+  .split-word b { font-size: clamp(34px, 10.5vw, 46px); }
+  .intro p.big { font-size: clamp(21px, 6vw, 28px); }
+  .intro p.small { font-size: 12.5px; }
+  .nutri { grid-template-columns: 1fr; }
+  .nutri > div { display: grid; grid-template-columns: 48px 1fr; column-gap: 12px; }
+  .nutri b { grid-row: span 3; font-size: 32px; margin: 0; align-self: center; }
+  .nutri small { margin-top: 2px; }
+}
 </style>
 </head>
