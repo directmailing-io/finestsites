@@ -183,7 +183,8 @@ const PRODUCTS = {
 };
 const LBL = {
   desc: { de: 'Was es ist', en: 'What it is' }, use: { de: 'So wendest du es an', en: 'How to use' }, skin: { de: 'Hauttyp', en: 'Skin type' }, when: { de: 'Wann', en: 'When' }, actives: { de: 'Was drin ist (Auswahl)', en: 'What\'s inside (selection)' },
-  pros: { de: 'Laut Hersteller', en: 'According to the manufacturer' }, shop: { de: 'Im Hersteller-Shop ansehen', en: 'View in manufacturer\'s shop' },
+  pros: { de: 'Laut Hersteller', en: 'According to the manufacturer' }, shop: { de: 'Direkt bestellen', en: 'Order now' }, price: { de: 'Kundenpreis', en: 'Customer price' },
+  note: { de: 'Das ist der reguläre Kundenpreis im Shop des Herstellers. Im Beauty-Check schauen wir, ob ein Kundenprogramm des Herstellers für dich infrage kommt.', en: 'This is the regular customer price in the manufacturer\'s shop. In the beauty check we look at whether one of the manufacturer\'s customer programmes suits you.' },
   src: { de: 'Auswahl der Inhaltsstoffe laut Hersteller. Die vollständige Liste steht auf der offiziellen Produktseite.', en: 'Selected ingredients as listed by the manufacturer. The full list is on the official product page.' }
 };
 function fsLang() { return document.documentElement.getAttribute('data-lang') === 'en' ? 'en' : 'de'; }
@@ -193,16 +194,16 @@ let pmCurrent = null;
 function renderModal() {
   const p = PRODUCTS[pmCurrent]; if (!p) return;
   const L = fsLang();
+  const IMG = { cleansing: 'cleansing-lotion', tonic: 'tonic', '4ever': '4ever', '4ever-enriched': '4ever-enriched', overnight: '4ever-overnight', beauty: 'beauty-drink', serum: 'activize-serum', darkspot: 'dark-spot-corrector', augen: 'augencreme', ultimate: 'ultimate-young', men: 'men-face', 'set-young': 'set-young-care', 'set-4ever': 'set-4ever', 'set-enriched': 'set-4ever-enriched' };
   document.getElementById('pmBody').innerHTML =
-    '<span class="pm-tag">' + esc(p.tag[L]) + '</span>' +
+    '<div class="pm-head"><img src="assets/produkte/' + (IMG[pmCurrent] || pmCurrent) + '.webp" alt="" onerror="this.style.display=\'none\'"><div><span class="pm-tag">' + esc(p.tag[L]) + '</span>' +
     '<h3 id="pmTitle">' + esc(p.name) + '</h3>' +
-    '<div class="pm-price"><strong>' + esc(p.price) + '</strong> · ' + esc(p.size) + '</div>' +
+    '<div class="pm-price"><strong>' + esc(p.price) + '</strong> · ' + esc(p.size) + ' <span>· ' + LBL.price[L] + '</span></div></div></div>' +
     '<div class="pm-facts"><div class="pm-fact"><small>' + LBL.when[L] + '</small><span>' + esc(p.when[L]) + '</span></div><div class="pm-fact"><small>' + LBL.skin[L] + '</small><span>' + esc(p.skin[L]) + '</span></div></div>' +
-    '<div class="pm-block"><h4>' + LBL.desc[L] + '</h4><p>' + esc(p.desc[L]) + '</p></div>' +
-    '<div class="pm-block"><h4>' + LBL.actives[L] + '</h4><div class="pm-actives">' + p.actives.map(x => '<span>' + esc(x) + '</span>').join('') + '</div></div>' +
-    '<div class="pm-block"><h4>' + LBL.use[L] + '</h4><p>' + esc(p.use[L]) + '</p></div>' +
-    '<div class="pm-block"><h4>' + LBL.pros[L] + '</h4><ul>' + p.pros[L].map(x => '<li>' + esc(x) + '</li>').join('') + '</ul></div>' +
-    '<div class="pm-actions"><a class="btn btn-primary" href="' + fsShopUrl(p.id) + '" target="_blank" rel="noopener">' + LBL.shop[L] + ' <span class="arr">→</span></a></div>' +
+    '<div class="pm-block"><p class="pm-desc">' + esc(p.desc[L]) + '</p></div>' +
+    '<div class="pm-block"><h4>' + LBL.pros[L] + '</h4><ul class="pm-pros">' + p.pros[L].map(x => '<li>' + esc(x) + '</li>').join('') + '</ul></div>' +
+    '<div class="pm-block pm-two"><div><h4>' + LBL.use[L] + '</h4><p>' + esc(p.use[L]) + '</p></div><div><h4>' + LBL.actives[L] + '</h4><div class="pm-actives">' + p.actives.map(x => '<span>' + esc(x) + '</span>').join('') + '</div></div></div>' +
+    '<div class="pm-actions"><a class="btn btn-primary" href="' + fsShopUrl(p.id) + '" target="_blank" rel="noopener">' + LBL.shop[L] + ' <span class="arr">→</span></a><p class="pm-note">' + LBL.note[L] + '</p></div>' +
     '<p class="pm-src foot-note">' + LBL.src[L] + '</p>';
 }
 function openModal(key) { pmCurrent = key; renderModal(); pmModal.classList.add('open'); pmModal.setAttribute('aria-hidden', 'false'); document.body.style.overflow = 'hidden'; }
