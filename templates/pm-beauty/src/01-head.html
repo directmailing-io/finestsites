@@ -24,20 +24,22 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" as="image" href="assets/hero/{{hero_variante}}.webp" fetchpriority="high" type="image/webp">
-<!-- Wunsch-Schriften (lizenzpflichtig): Sang Bleu Sunrise + Sofia Pro. Greifen automatisch, sobald die Dateien in assets/fonts/ liegen.
-     Bis dahin ähnliche freie Schriften als Ersatz: Gloock (statt Sang Bleu Sunrise) und Outfit (statt Sofia Pro). -->
-<link href="https://fonts.googleapis.com/css2?family=Gloock&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<!-- Schriften im Stil von theworldofboudoir.com: dort „Editor's Note“ Light + Light Italic (lizenzpflichtig) für Überschriften,
+     Open Sans für Text, Montserrat Bold für kleine Versal-Kennzeichen. Freier, sehr ähnlicher Ersatz für Editor's Note: Boska Light/Italic (Fontshare).
+     Liegt die lizenzierte Datei unter assets/fonts/EditorsNote-Light.woff2, wird sie automatisch verwendet. -->
+<link rel="preconnect" href="https://api.fontshare.com" crossorigin>
+<link href="https://api.fontshare.com/v2/css?f[]=boska@300,301,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600&family=Montserrat:wght@600;700&display=swap" rel="stylesheet">
 <style>
-@font-face { font-family: 'Sang Bleu Sunrise'; src: local('Sang Bleu Sunrise'), local('SangBleuSunrise-Regular'), url('assets/fonts/SangBleuSunrise-Regular.woff2') format('woff2'); font-weight: 400; font-display: swap; }
-@font-face { font-family: 'Sofia Pro'; src: local('Sofia Pro'), local('SofiaPro-Regular'), url('assets/fonts/SofiaPro-Regular.woff2') format('woff2'); font-weight: 400; font-display: swap; }
-@font-face { font-family: 'Sofia Pro'; src: local('Sofia Pro Medium'), local('SofiaPro-Medium'), url('assets/fonts/SofiaPro-Medium.woff2') format('woff2'); font-weight: 500; font-display: swap; }
-@font-face { font-family: 'Sofia Pro'; src: local('Sofia Pro SemiBold'), local('SofiaPro-SemiBold'), url('assets/fonts/SofiaPro-SemiBold.woff2') format('woff2'); font-weight: 600; font-display: swap; }
+@font-face { font-family: 'Editors Note'; src: local("Editor's Note Light"), url('assets/fonts/EditorsNote-Light.woff2') format('woff2'); font-weight: 300; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Editors Note'; src: local("Editor's Note Light Italic"), url('assets/fonts/EditorsNote-LightItalic.woff2') format('woff2'); font-weight: 300; font-style: italic; font-display: swap; }
 </style>
 
 <style>
 :root {
-  --font: 'Sofia Pro', 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --display: 'Sang Bleu Sunrise', 'Gloock', Georgia, 'Times New Roman', serif;
+  --font: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --display: 'Editors Note', 'Boska', Georgia, 'Times New Roman', serif;
+  --label: 'Montserrat', -apple-system, BlinkMacSystemFont, sans-serif;
   --mono: var(--font);
   --serif: var(--display);
   --pad-x: clamp(20px, 4vw, 56px);
@@ -507,24 +509,51 @@ footer { background: var(--bg-2); }
   .contact-card-btns { grid-column: 1 / -1; }
 }
 
-/* ============ SCHRIFTPAAR: Sang Bleu Sunrise (Überschriften) + Sofia Pro (Text) ============ */
-h1, h2, h3, .faq-q, .pr-row .t b, .split-word b, .intro p.big, .bento-card .big, .guar-badge b, .pm-sheet h3 { font-family: var(--display); font-weight: 400; }
-h1 { font-size: clamp(48px, 6.6vw, 104px); line-height: 1.02; letter-spacing: -0.025em; }
-h2 { font-size: clamp(36px, 4.2vw, 62px); line-height: 1.06; letter-spacing: -0.02em; }
-h3 { font-size: clamp(23px, 2vw, 30px); line-height: 1.12; letter-spacing: -0.01em; }
-/* Zweifarbige Überschriften: Akzentwort in der Themenfarbe */
-h1 em, h2 em, h3 em { font-family: var(--display); font-style: normal; font-weight: 400; font-size: 1em; line-height: inherit; letter-spacing: inherit; color: var(--green); }
-.split-word b { font-size: clamp(60px, 10vw, 170px); letter-spacing: -0.03em; line-height: 0.92; }
-.bento-card .big { font-size: clamp(72px, 7vw, 112px); letter-spacing: -0.03em; }
-.guar-badge b { font-size: 46px; letter-spacing: 0; }
-.pr-row .t b { font-size: clamp(21px, 1.9vw, 27px); letter-spacing: -0.01em; line-height: 1.1; }
-.faq-q { font-size: clamp(19px, 1.6vw, 23px); }
-.pm-sheet h3 { font-size: clamp(26px, 2.8vw, 34px); }
+/* ============ SCHRIFTEN im Boudoir-Stil: leichte Serif + Kursiv-Akzent, Open Sans, Montserrat-Versalien ============ */
+h1, h2, h3, .faq-q, .pr-row .t b, .split-word b, .intro-card .big, .bento-card .big, .guar-badge b, .pm-sheet h3 { font-family: var(--display); font-weight: 300; }
+h1 { font-size: clamp(50px, 7vw, 110px); line-height: 1; letter-spacing: -0.02em; }
+h2 { font-size: clamp(38px, 4.6vw, 66px); line-height: 1.05; letter-spacing: -0.015em; }
+h3 { font-size: clamp(24px, 2.2vw, 32px); line-height: 1.12; letter-spacing: -0.01em; }
+h1 em, h2 em, h3 em, .intro-card .big em { font-family: var(--display); font-style: italic; font-weight: 300; font-size: 1em; line-height: inherit; letter-spacing: inherit; color: var(--green); }
+.split-word b { font-size: clamp(64px, 10.5vw, 180px); letter-spacing: -0.025em; line-height: 0.92; }
+.bento-card .big { font-size: clamp(76px, 7.5vw, 120px); letter-spacing: -0.02em; }
+.guar-badge b { font-size: 48px; }
+.pr-row .t b { font-size: clamp(23px, 2vw, 30px); letter-spacing: -0.01em; line-height: 1.05; }
+.faq-q { font-size: clamp(21px, 1.8vw, 26px); }
+.pm-sheet h3 { font-size: clamp(30px, 3vw, 38px); }
 .pr-cta h3 em, .contact .s-head h2 strong, .men-copy h2 em { color: var(--accent); }
-.bento-card.photo h3, .bento-card.faces h3 { font-size: clamp(23px, 2vw, 30px); }
-.eye, .bento-card .eyebrow, .split-word small, .pm-tag, .pm-fact small, .pm-block h4 { font-family: var(--font); font-weight: 600; letter-spacing: 0.1em; }
-.split-col li b { font-family: var(--font); font-weight: 600; }
+.contact .s-head h2 strong { font-style: italic; font-weight: 300; }
+.bento-card.photo h3, .bento-card.faces h3 { font-size: clamp(25px, 2.2vw, 32px); }
+body { font-family: var(--font); font-size: 15.5px; }
+/* Kennzeichen, Eyebrows, Buttons: Montserrat versal mit Laufweite (wie Boudoir) */
+.eye, .bento-card .eyebrow, .split-word small, .pm-tag, .pm-fact small, .pm-block h4, .rt-time, .footer-col-title { font-family: var(--label); font-weight: 700; font-size: 10.5px; letter-spacing: 0.2em; text-transform: uppercase; }
+.btn, .nav-cta, .sticky-cta { font-family: var(--label); font-weight: 700; font-size: 11.5px; letter-spacing: 0.16em; text-transform: uppercase; padding: 16px 26px; }
+.split-col li b { font-family: var(--label); font-weight: 700; font-size: 11px; letter-spacing: .1em; }
 .hero h1 { max-width: none; } .hero h1 .nw { white-space: nowrap; }
+.intro-sub { font-size: 14px; color: var(--ink-3); max-width: 46ch; }
+
+/* ============ ROUTINE: Morgens · Tagsüber · Abends ============ */
+.rt3 { max-width: var(--max); margin: 0 auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.rt-card { background: var(--paper); border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; display: flex; flex-direction: column; }
+.rt-card.accent { background: var(--innen); border-color: transparent; color: #fff; }
+.rt-img { position: relative; aspect-ratio: 4 / 3; overflow: hidden; }
+.rt-img img { width: 100%; height: 100%; object-fit: cover; }
+.rt-time { position: absolute; left: 14px; top: 14px; display: inline-flex; align-items: center; gap: 7px; padding: 8px 12px; border-radius: 100px; background: rgba(255,255,255,0.9); color: var(--ink); }
+.rt-time svg { width: 14px; height: 14px; }
+.rt-body { padding: 22px 22px 18px; display: flex; flex-direction: column; gap: 4px; }
+.rt-body h3 { margin-bottom: 10px; }
+.rt-card.accent h3 { color: #fff; }
+.rt3 .rt-step { display: grid; grid-template-columns: 52px 1fr 28px; gap: 12px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--line); }
+.rt-card.accent .rt-step { border-bottom-color: rgba(255,255,255,0.16); }
+.rt3 .rt-step:last-of-type { border-bottom: 0; }
+.rt3 .rt-step img { width: 52px; height: 52px; border-radius: 12px; object-fit: cover; }
+.rt3 .rt-step b { display: block; font-weight: 600; font-size: 15.5px; color: var(--ink); }
+.rt3 .rt-step small { display: block; font-size: 13px; color: var(--ink-3); text-align: left; }
+.rt-card.accent .rt-step b { color: #fff; } .rt-card.accent .rt-step small { color: rgba(255,255,255,0.72); }
+.rt3 .rt-step i { width: 28px; height: 28px; border-radius: 50%; background: var(--green-soft); color: var(--green-dark); font-style: normal; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+.rt-card.accent .rt-step i { background: rgba(255,255,255,0.16); color: #fff; }
+.rt-note { font-size: 13.5px; color: rgba(255,255,255,0.8); margin-top: 8px; }
+@media (max-width: 1024px) { .rt3 { grid-template-columns: 1fr; max-width: 560px; } .rt-img { aspect-ratio: 16 / 9; } }
 
 /* ============ Tagline auf der Split-Bühne ============ */
 .intro-card-wrap { padding: clamp(56px, 8vh, 96px) var(--pad-x) clamp(40px, 6vh, 72px); background: linear-gradient(90deg, var(--aussen) 50%, var(--innen) 50%); }
