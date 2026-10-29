@@ -527,7 +527,10 @@ h1 em, h2 em, h3 em { font-family: var(--display); font-style: normal; font-weig
 .hero h1 { max-width: none; } .hero h1 .nw { white-space: nowrap; }
 
 /* ============ Tagline auf der Split-Bühne ============ */
-.split-eye { position: absolute; left: 50%; top: 28px; transform: translateX(-50%); z-index: 3; background: var(--paper); }
+.intro-card-wrap { padding: clamp(56px, 8vh, 96px) var(--pad-x); }
+.intro-card { max-width: 860px; margin: 0 auto; background: var(--paper); border: 1px solid var(--line); border-radius: var(--r); padding: clamp(32px, 4.5vw, 56px); text-align: center; display: flex; flex-direction: column; align-items: center; gap: 20px; box-shadow: 0 20px 50px -30px rgba(60,30,20,0.25); }
+.intro-card .big { font-family: var(--display); font-size: clamp(26px, 2.8vw, 40px); line-height: 1.18; letter-spacing: -0.015em; color: var(--ink); max-width: 30ch; }
+.intro-card .big em { font-style: normal; color: var(--green); }
 .split { padding-bottom: clamp(56px, 8vh, 96px); }
 
 /* ============ INNEN-KARTE: schlichte Nährstoff-Liste ============ */
@@ -550,7 +553,7 @@ h1 em, h2 em, h3 em { font-family: var(--display); font-style: normal; font-weig
 .pm-save b { font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); }
 .pm-save p { color: rgba(255,255,255,0.9); font-size: 16px; line-height: 1.45; }
 .pm-save .btn { margin-top: 6px; background: #fff; color: var(--ink); }
-.pm-actions { margin-top: 14px; }
+.pm-actions { margin-top: 24px; flex-direction: row !important; align-items: center !important; gap: 10px; flex-wrap: wrap; }
 .pm-direct { font-size: 14px; font-weight: 600; color: var(--ink-2); border-bottom: 1px solid var(--line-2); padding-bottom: 1px; }
 
 /* ============ Footer-Credit wie in allen Templates (cellRESET-Standard) ============ */

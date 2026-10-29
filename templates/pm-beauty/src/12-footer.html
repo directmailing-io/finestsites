@@ -234,7 +234,7 @@ const ING = {
 };
 const LBL = {
   desc: { de: 'Was es ist', en: 'What it is' }, use: { de: 'So nutzt du es', en: 'How to use' }, skin: { de: 'Für wen · Hinweise', en: 'Skin type' }, when: { de: 'Wann', en: 'When' }, actives: { de: 'Was drin ist – tipp für Wofür?', en: 'What\'s inside (selection)' },
-  pros: { de: 'Laut Hersteller', en: 'According to the manufacturer' }, shop: { de: 'Lieber direkt bestellen', en: 'Order directly' }, price: { de: 'Offizieller Kundenpreis', en: 'Customer price' },
+  pros: { de: 'Laut Hersteller', en: 'According to the manufacturer' }, shop: { de: 'Direkt bestellen', en: 'Order directly' }, price: { de: 'Offizieller Kundenpreis', en: 'Customer price' },
   note: { de: 'Bevor du bestellst: Im Beauty-Check schaue ich mit dir, wie du am günstigsten an deine Produkte kommst – über die Kundenvorteile des Herstellers.', en: 'Before you order: in the beauty check I show you how to get your products at the best price through the manufacturer\'s customer benefits.' },
   saveT: { de: 'Spar-Tipp', en: 'Saving tip' }, check: { de: 'Beauty-Check sichern', en: 'Book a beauty check' },
   src: { de: 'Ausgewählte Inhaltsstoffe laut Hersteller. Die vollständige Liste findest du im offiziellen Shop.', en: 'Selected ingredients as listed by the manufacturer. The full list is on the official product page.' }
@@ -243,7 +243,7 @@ function fsLang() { return document.documentElement.getAttribute('data-lang') ==
 function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
 const pmModal = document.getElementById('pmModal');
 document.addEventListener('click', function (e) {
-  if (e.target.closest('.pm-save a')) { closeModal(); return; }
+  if (e.target.closest('.pm-check')) { closeModal(); return; }
   const b = e.target.closest('.pm-ing'); if (!b || !pmCurrent) return;
   const name = PRODUCTS[pmCurrent].actives[+b.dataset.i]; const box = document.getElementById('pmIngInfo');
   const same = b.classList.contains('on');
@@ -265,8 +265,7 @@ function renderModal() {
     '<div class="pm-block"><h4>' + LBL.pros[L] + '</h4><ul class="pm-pros">' + p.pros[L].map(x => '<li>' + esc(x) + '</li>').join('') + '</ul></div>' +
     '<div class="pm-block"><h4>' + LBL.actives[L] + '</h4><div class="pm-actives">' + p.actives.map((x, i) => ING[x] ? '<button type="button" class="pm-ing" data-i="' + i + '">' + esc(x) + '<i>?</i></button>' : '<span>' + esc(x) + '</span>').join('') + '</div><div class="pm-ing-info" id="pmIngInfo" hidden></div></div>' +
     '<div class="pm-block"><h4>' + LBL.use[L] + '</h4><p>' + esc(p.use[L]) + '</p></div>' +
-    '<div class="pm-save"><b>' + LBL.saveT[L] + '</b><p>' + LBL.note[L] + '</p><a class="btn btn-primary" href="#kontakt" data-close>' + LBL.check[L] + ' <span class="arr">→</span></a></div>' +
-    '<div class="pm-actions"><a class="pm-direct" href="' + fsShopUrl(p.id) + '" target="_blank" rel="noopener">' + LBL.shop[L] + ' →</a></div>' +
+    '<div class="pm-actions"><a class="btn btn-primary pm-check" href="#kontakt">' + LBL.check[L] + ' <span class="arr">→</span></a><a class="btn btn-ghost" href="' + fsShopUrl(p.id) + '" target="_blank" rel="noopener">' + LBL.shop[L] + '</a></div>' +
     '<p class="pm-src foot-note">' + LBL.src[L] + '</p>';
 }
 function openModal(key) { pmCurrent = key; renderModal(); pmModal.classList.add('open'); pmModal.setAttribute('aria-hidden', 'false'); document.body.style.overflow = 'hidden'; }
