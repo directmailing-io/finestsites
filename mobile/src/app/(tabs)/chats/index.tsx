@@ -125,7 +125,7 @@ export default function ChatsScreen() {
     <EmptyState
       icon={MessagesSquare}
       title="Noch keine Chats"
-      text="Schalte den Chat zuerst im Editor deiner Webseite ein (unter „Domain“). Sobald dann ein Besucher schreibt, erscheint das Gespräch hier – mit Mitteilung, wenn du sie erlaubt hast."
+      text="Schalte den Chat zuerst im Editor deiner Webseite ein (Bereich „Kontakt“ oder „Profil“). Sobald dann ein Besucher schreibt, erscheint das Gespräch hier – mit Mitteilung, wenn du sie erlaubt hast."
     />
   );
 

@@ -400,7 +400,7 @@ function DnsRecordTable({ type, name, value, typeWidth = 80, nameWidth = 100, co
  */
 type VisitorChatState = { available: boolean; enabled: boolean; avvAccepted: boolean; consentLine: string; avvUrl: string }
 
-function VisitorChatPanel({ siteId }: { siteId: string }) {
+function VisitorChatPanel({ siteId, className = '' }: { siteId: string; className?: string }) {
   const openExternal = useOpenExternal()
   const [state, setState] = useState<VisitorChatState | null>(null)
   const [saving, setSaving] = useState(false)
@@ -464,7 +464,7 @@ function VisitorChatPanel({ siteId }: { siteId: string }) {
   }
 
   return (
-    <div className="bg-white rounded-[20px] p-6 mt-5"
+    <div className={`bg-white rounded-[20px] p-6 ${className}`}
       style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.05)', border: '1px solid #F0F0F0' }}>
       <div className="flex items-start gap-4">
         <div className="w-10 h-10 rounded-[13px] flex items-center justify-center flex-shrink-0"
@@ -524,7 +524,7 @@ function VisitorChatPanel({ siteId }: { siteId: string }) {
       ) : (
         <>
           <p className="mt-4 text-xs leading-relaxed" style={{ color: '#9CA3AF' }}>
-            Gilt sofort für die veröffentlichte Seite, unabhängig vom Veröffentlichen.
+            Gilt sofort für deine Seite, du musst dafür nicht neu veröffentlichen.
           </p>
           {!enabled && !error && (
             <p className="mt-1.5 text-xs leading-relaxed" style={{ color: '#6B7280' }}>
@@ -3884,6 +3884,8 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
   }
 
   const isDomainSection = activeSection === DOMAIN_SECTION
+  // Bereich, in dem die Karte „Besucher-Chat“ steht – dort, wo Laien Kontaktwege suchen
+  const chatSection = sections.find(s => /^kontakt$/i.test(s)) ?? sections.find(s => /^profil$/i.test(s)) ?? sections[0]
   const activeIdx = activeSection ? sections.indexOf(activeSection) : 0
   const isFirst = activeIdx === 0
   const isLast  = activeIdx === sections.length - 1
@@ -4471,7 +4473,6 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
                   initialDomain={site.custom_domain ?? null}
                   initialStatus={site.custom_domain_status ?? null}
                 />
-                <VisitorChatPanel siteId={site.id} />
               </>
             )}
 
@@ -4497,6 +4498,11 @@ function SiteEditPageInner({ params }: { params: Promise<{ id: string }> }) {
                   </p>
                 )}
               </div>
+            )}
+
+            {/* Besucher-Chat: ganz oben in „Kontakt“, sonst in „Profil“ (rendert nur bei freigeschaltetem Konto) */}
+            {!isDomainSection && (activeSection ?? sections[0]) === chatSection && (
+              <VisitorChatPanel siteId={site.id} className="mb-4" />
             )}
 
             {/* Fields */}
